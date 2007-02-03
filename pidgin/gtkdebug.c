@@ -87,7 +87,7 @@ static void regex_show_all(DebugWindow *win);
 static gint
 debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 {
-	gaim_prefs_disconnect_by_handle(gaim_gtk_debug_get_handle());
+	gaim_prefs_disconnect_by_handle(pidgin_debug_get_handle());
 
 #ifdef HAVE_REGEX_H
 	if(debug_win->timer != 0) {
@@ -198,7 +198,7 @@ find_cb(GtkWidget *w, DebugWindow *win)
 	gtk_entry_set_activates_default(GTK_ENTRY(f->entry), TRUE);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(f->entry));
 	g_signal_connect(G_OBJECT(f->entry), "changed",
-					 G_CALLBACK(gaim_gtk_set_sensitive_if_input),
+					 G_CALLBACK(pidgin_set_sensitive_if_input),
 					 win->find);
 	gtk_box_pack_start(GTK_BOX(hbox), f->entry, FALSE, FALSE, 0);
 
@@ -712,7 +712,7 @@ debug_window_new(void)
 	g_signal_connect(G_OBJECT(win->window), "configure_event",
 	                 G_CALLBACK(configure_cb), win);
 
-	handle = gaim_gtk_debug_get_handle();
+	handle = pidgin_debug_get_handle();
 	
 #ifdef HAVE_REGEX_H
 	/* the list store for all the messages */
@@ -874,7 +874,7 @@ debug_window_new(void)
 	}
 
 	/* Add the gtkimhtml */
-	frame = gaim_gtk_create_imhtml(FALSE, &win->text, NULL, NULL);
+	frame = pidgin_create_imhtml(FALSE, &win->text, NULL, NULL);
 	gtk_imhtml_set_format_functions(GTK_IMHTML(win->text),
 									GTK_IMHTML_ALL ^ GTK_IMHTML_SMILEY ^ GTK_IMHTML_IMAGE);
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
@@ -898,9 +898,9 @@ debug_enabled_cb(const char *name, GaimPrefType type,
 				 gconstpointer value, gpointer data)
 {
 	if (value)
-		gaim_gtk_debug_window_show();
+		pidgin_debug_window_show();
 	else
-		gaim_gtk_debug_window_hide();
+		pidgin_debug_window_hide();
 }
 
 static void
@@ -956,7 +956,7 @@ gaim_glib_dummy_print_handler(const gchar *string)
 #endif
 
 void
-gaim_gtk_debug_init(void)
+pidgin_debug_init(void)
 {
 	/* Debug window preferences. */
 	/*
@@ -1010,13 +1010,13 @@ gaim_gtk_debug_init(void)
 }
 
 void
-gaim_gtk_debug_uninit(void)
+pidgin_debug_uninit(void)
 {
 	gaim_debug_set_ui_ops(NULL);
 }
 
 void
-gaim_gtk_debug_window_show(void)
+pidgin_debug_window_show(void)
 {
 	if (debug_win == NULL)
 		debug_win = debug_window_new();
@@ -1027,7 +1027,7 @@ gaim_gtk_debug_window_show(void)
 }
 
 void
-gaim_gtk_debug_window_hide(void)
+pidgin_debug_window_hide(void)
 {
 	if (debug_win != NULL) {
 		gtk_widget_destroy(debug_win->window);
@@ -1036,7 +1036,7 @@ gaim_gtk_debug_window_hide(void)
 }
 
 static void
-gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
+pidgin_debug_print(GaimDebugLevel level, const char *category,
 					 const char *arg_s)
 {
 #ifdef HAVE_REGEX_H
@@ -1106,17 +1106,17 @@ gaim_gtk_debug_print(GaimDebugLevel level, const char *category,
 
 static GaimDebugUiOps ops =
 {
-	gaim_gtk_debug_print,
+	pidgin_debug_print,
 };
 
 GaimDebugUiOps *
-gaim_gtk_debug_get_ui_ops(void)
+pidgin_debug_get_ui_ops(void)
 {
 	return &ops;
 }
 
 void *
-gaim_gtk_debug_get_handle() {
+pidgin_debug_get_handle() {
 	static int handle;
 
 	return &handle;

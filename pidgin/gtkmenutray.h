@@ -20,60 +20,60 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef GAIM_GTK_MENU_TRAY_H
-#define GAIM_GTK_MENU_TRAY_H
+#ifndef PIDGIN_MENU_TRAY_H
+#define PIDGIN_MENU_TRAY_H
 
 #include <gtk/gtkhbox.h>
 #include <gtk/gtkmenuitem.h>
 #include <gtk/gtktooltips.h>
 
-#define GAIM_GTK_TYPE_MENU_TRAY				(gaim_gtk_menu_tray_get_gtype())
-#define GAIM_GTK_MENU_TRAY(obj)				(GTK_CHECK_CAST((obj), GAIM_GTK_TYPE_MENU_TRAY, GaimGtkMenuTray))
-#define GAIM_GTK_MENU_TRAY_CLASS(klass)		(GTK_CHECK_CLASS_CAST((klass), GAIM_GTK_TYPE_MENU_TRAY, GaimGtkMenuTrayClass))
-#define GAIM_GTK_IS_MENU_TRAY(obj)			(GTK_CHECK_TYPE((obj), GAIM_GTK_TYPE_MENU_TRAY))
-#define GAIM_GTK_IS_MENU_TRAY_CLASS(klass)	(GTK_CHECK_CLASS_TYPE((klass), GAIM_GTK_TYPE_MENU_TRAY))
-#define GAIM_GTK_MENU_TRAY_GET_CLASS(obj)	(GTK_CHECK_GET_CLASS((obj), GAIM_GTK_TYPE_MENU_TRAY, GaimGtkMenuTrayClass))
+#define PIDGIN_TYPE_MENU_TRAY				(pidgin_menu_tray_get_gtype())
+#define PIDGIN_MENU_TRAY(obj)				(GTK_CHECK_CAST((obj), PIDGIN_TYPE_MENU_TRAY, PidginMenuTray))
+#define PIDGIN_MENU_TRAY_CLASS(klass)		(GTK_CHECK_CLASS_CAST((klass), PIDGIN_TYPE_MENU_TRAY, PidginMenuTrayClass))
+#define PIDGIN_IS_MENU_TRAY(obj)			(GTK_CHECK_TYPE((obj), PIDGIN_TYPE_MENU_TRAY))
+#define PIDGIN_IS_MENU_TRAY_CLASS(klass)	(GTK_CHECK_CLASS_TYPE((klass), PIDGIN_TYPE_MENU_TRAY))
+#define PIDGIN_MENU_TRAY_GET_CLASS(obj)	(GTK_CHECK_GET_CLASS((obj), PIDGIN_TYPE_MENU_TRAY, PidginMenuTrayClass))
 
-typedef struct _GaimGtkMenuTray				GaimGtkMenuTray;
-typedef struct _GaimGtkMenuTrayClass		GaimGtkMenuTrayClass;
+typedef struct _PidginMenuTray				PidginMenuTray;
+typedef struct _PidginMenuTrayClass		PidginMenuTrayClass;
 
-/** A GaimGtkMenuTray */
-struct _GaimGtkMenuTray {
+/** A PidginMenuTray */
+struct _PidginMenuTray {
 	GtkMenuItem gparent;					/**< The parent instance */
 	GtkWidget *tray;						/**< The tray */
 	GtkTooltips *tooltips;					/**< Tooltips */
 };
 
-/** A GaimGtkMenuTrayClass */
-struct _GaimGtkMenuTrayClass {
+/** A PidginMenuTrayClass */
+struct _PidginMenuTrayClass {
 	GtkMenuItemClass gparent;				/**< The parent class */
 };
 
 G_BEGIN_DECLS
 
 /**
- * Registers the GaimGtkMenuTray class if necessary and returns the
+ * Registers the PidginMenuTray class if necessary and returns the
  * type ID assigned to it.
  *
- * @return The GaimGtkMenuTray type ID
+ * @return The PidginMenuTray type ID
  */
-GType gaim_gtk_menu_tray_get_gtype(void);
+GType pidgin_menu_tray_get_gtype(void);
 
 /**
- * Creates a new GaimGtkMenuTray
+ * Creates a new PidginMenuTray
  *
- * @return A new GaimGtkMenuTray
+ * @return A new PidginMenuTray
  */
-GtkWidget *gaim_gtk_menu_tray_new(void);
+GtkWidget *pidgin_menu_tray_new(void);
 
 /**
- * Gets the box for the GaimGtkMenuTray
+ * Gets the box for the PidginMenuTray
  *
- * @param menu_tray The GaimGtkMenuTray
+ * @param menu_tray The PidginMenuTray
  *
  * @return The box that this menu tray is using
  */
-GtkWidget *gaim_gtk_menu_tray_get_box(GaimGtkMenuTray *menu_tray);
+GtkWidget *pidgin_menu_tray_get_box(PidginMenuTray *menu_tray);
 
 /**
  * Appends a widget into the tray
@@ -82,7 +82,7 @@ GtkWidget *gaim_gtk_menu_tray_get_box(GaimGtkMenuTray *menu_tray);
  * @param widget    The widget
  * @param tooltip   The tooltip for this widget (widget requires its own X-window)
  */
-void gaim_gtk_menu_tray_append(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
+void pidgin_menu_tray_append(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
 /**
  * Prepends a widget into the tray
@@ -91,7 +91,7 @@ void gaim_gtk_menu_tray_append(GaimGtkMenuTray *menu_tray, GtkWidget *widget, co
  * @param widget    The widget
  * @param tooltip   The tooltip for this widget (widget requires its own X-window)
  */
-void gaim_gtk_menu_tray_prepend(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
+void pidgin_menu_tray_prepend(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
 /**
  * Set the tooltip for a widget
@@ -100,8 +100,8 @@ void gaim_gtk_menu_tray_prepend(GaimGtkMenuTray *menu_tray, GtkWidget *widget, c
  * @param widget    The widget
  * @param tooltip   The tooltip to set for the widget (widget requires its own X-window)
  */
-void gaim_gtk_menu_tray_set_tooltip(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
+void pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip);
 
 G_END_DECLS
 
-#endif /* GAIM_GTK_MENU_TRAY_H */
+#endif /* PIDGIN_MENU_TRAY_H */

@@ -279,7 +279,7 @@ static void session_set_array(SmcConn conn, gchar *name, gchar *array[]) {
 /* setup functions */
 
 void
-gaim_gtk_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir)
+pidgin_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir)
 {
 #ifdef USE_SM
 	SmcCallbacks callbacks;
@@ -291,7 +291,7 @@ gaim_gtk_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir)
 	if (session != NULL) {
 		/* session is already established, what the hell is going on? */
 		gaim_debug(GAIM_DEBUG_WARNING, "Session Management",
-				   "Duplicated call to gaim_gtk_session_init!\n");
+				   "Duplicated call to pidgin_session_init!\n");
 		return;
 	}
 
@@ -386,7 +386,7 @@ gaim_gtk_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir)
 }
 
 void
-gaim_gtk_session_end()
+pidgin_session_end()
 {
 #ifdef USE_SM
 	if (session == NULL) /* no session to close */

@@ -625,10 +625,10 @@ spellchk_new_attach(GaimConversation *conv)
 	spellchk *spell;
 	GtkTextBuffer *buffer;
 	GtkTextIter start, end;
-	GaimGtkConversation *gtkconv;
+	PidginConversation *gtkconv;
 	GtkTextView *view;
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	view = GTK_TEXT_VIEW(gtkconv->entry);
 
@@ -2142,7 +2142,7 @@ plugin_unload(GaimPlugin *plugin)
 	/* Detach from existing conversations */
 	for (convs = gaim_get_conversations(); convs != NULL; convs = convs->next)
 	{
-		GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION((GaimConversation *)convs->data);
+		PidginConversation *gtkconv = PIDGIN_CONVERSATION((GaimConversation *)convs->data);
 		spellchk *spell = g_object_get_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY);
 
 		g_signal_handlers_disconnect_by_func(gtkconv->entry, message_send_cb, spell);
@@ -2177,7 +2177,7 @@ get_config_frame(GaimPlugin *plugin)
 	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
 	gtk_container_set_border_width (GTK_CONTAINER(ret), GAIM_HIG_BORDER);
 
-	vbox = gaim_gtk_make_frame(ret, _("Text Replacements"));
+	vbox = pidgin_make_frame(ret, _("Text Replacements"));
 	gtk_container_set_border_width(GTK_CONTAINER(vbox), 4);
 	gtk_widget_show(vbox);
 
@@ -2266,7 +2266,7 @@ get_config_frame(GaimPlugin *plugin)
 
 	gtk_widget_show(button);
 
-	vbox = gaim_gtk_make_frame(ret, _("Add a new text replacement"));
+	vbox = pidgin_make_frame(ret, _("Add a new text replacement"));
 
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
@@ -2338,8 +2338,8 @@ get_config_frame(GaimPlugin *plugin)
 	gtk_widget_show(button);
 
 #if 0
-	vbox = gaim_gtk_make_frame(ret, _("General Text Replacement Options"));
-	gaim_gtk_prefs_checkbox(_("Enable replacement of last word on send"),
+	vbox = pidgin_make_frame(ret, _("General Text Replacement Options"));
+	pidgin_prefs_checkbox(_("Enable replacement of last word on send"),
 	                        "/plugins/gtk/spellchk/last_word_replace", vbox);
 #endif
 
@@ -2347,7 +2347,7 @@ get_config_frame(GaimPlugin *plugin)
 	return ret;
 }
 
-static GaimGtkPluginUiInfo ui_info =
+static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,
 	0 /* page_num (Reserved) */
@@ -2359,7 +2359,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,
-	GAIM_GTK_PLUGIN_TYPE,
+	PIDGIN_PLUGIN_TYPE,
 	0,
 	NULL,
 	GAIM_PRIORITY_DEFAULT,

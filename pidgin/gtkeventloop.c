@@ -30,29 +30,29 @@
 #include "win32dep.h"
 #endif
 
-#define GAIM_GTK_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
-#define GAIM_GTK_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
+#define PIDGIN_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
+#define PIDGIN_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
 
-typedef struct _GaimGtkIOClosure {
+typedef struct _PidginIOClosure {
 	GaimInputFunction function;
 	guint result;
 	gpointer data;
 
-} GaimGtkIOClosure;
+} PidginIOClosure;
 
-static void gaim_gtk_io_destroy(gpointer data)
+static void pidgin_io_destroy(gpointer data)
 {
 	g_free(data);
 }
 
-static gboolean gaim_gtk_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
+static gboolean pidgin_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
 {
-	GaimGtkIOClosure *closure = data;
+	PidginIOClosure *closure = data;
 	GaimInputCondition gaim_cond = 0;
 
-	if (condition & GAIM_GTK_READ_COND)
+	if (condition & PIDGIN_READ_COND)
 		gaim_cond |= GAIM_INPUT_READ;
-	if (condition & GAIM_GTK_WRITE_COND)
+	if (condition & PIDGIN_WRITE_COND)
 		gaim_cond |= GAIM_INPUT_WRITE;
 
 #if 0
@@ -67,7 +67,7 @@ static gboolean gaim_gtk_io_invoke(GIOChannel *source, GIOCondition condition, g
 		gaim_debug(GAIM_DEBUG_MISC, "gtk_eventloop",
 			   "CLOSURE received GIOCondition of 0x%x, which does not"
 			   " match 0x%x (READ) or 0x%x (WRITE)\n",
-			   condition, GAIM_GTK_READ_COND, GAIM_GTK_WRITE_COND);
+			   condition, PIDGIN_READ_COND, PIDGIN_WRITE_COND);
 #endif /* DEBUG */
 
 		return TRUE;
@@ -80,10 +80,10 @@ static gboolean gaim_gtk_io_invoke(GIOChannel *source, GIOCondition condition, g
 	return TRUE;
 }
 
-static guint gaim_gtk_input_add(gint fd, GaimInputCondition condition, GaimInputFunction function,
+static guint pidgin_input_add(gint fd, GaimInputCondition condition, GaimInputFunction function,
 							   gpointer data)
 {
-	GaimGtkIOClosure *closure = g_new0(GaimGtkIOClosure, 1);
+	PidginIOClosure *closure = g_new0(PidginIOClosure, 1);
 	GIOChannel *channel;
 	GIOCondition cond = 0;
 
@@ -91,9 +91,9 @@ static guint gaim_gtk_input_add(gint fd, GaimInputCondition condition, GaimInput
 	closure->data = data;
 
 	if (condition & GAIM_INPUT_READ)
-		cond |= GAIM_GTK_READ_COND;
+		cond |= PIDGIN_READ_COND;
 	if (condition & GAIM_INPUT_WRITE)
-		cond |= GAIM_GTK_WRITE_COND;
+		cond |= PIDGIN_WRITE_COND;
 
 #ifdef _WIN32
 	channel = wgaim_g_io_channel_win32_new_socket(fd);
@@ -101,7 +101,7 @@ static guint gaim_gtk_input_add(gint fd, GaimInputCondition condition, GaimInput
 	channel = g_io_channel_unix_new(fd);
 #endif
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
-					      gaim_gtk_io_invoke, closure, gaim_gtk_io_destroy);
+					      pidgin_io_invoke, closure, pidgin_io_destroy);
 
 #if 0
 	gaim_debug(GAIM_DEBUG_MISC, "gtk_eventloop",
@@ -117,12 +117,12 @@ static GaimEventLoopUiOps eventloop_ops =
 {
 	g_timeout_add,
 	(guint (*)(guint))g_source_remove,
-	gaim_gtk_input_add,
+	pidgin_input_add,
 	(guint (*)(guint))g_source_remove
 };
 
 GaimEventLoopUiOps *
-gaim_gtk_eventloop_get_ui_ops(void)
+pidgin_eventloop_get_ui_ops(void)
 {
 	return &eventloop_ops;
 }

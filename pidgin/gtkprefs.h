@@ -23,20 +23,20 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef _GAIM_GTKPREFS_H_
-#define _GAIM_GTKPREFS_H_
+#ifndef _PIDGINPREFS_H_
+#define _PIDGINPREFS_H_
 
 #include "prefs.h"
 
 /**
  * Initializes all UI-specific preferences.
  */
-void gaim_gtk_prefs_init(void);
+void pidgin_prefs_init(void);
 
 /**
  * Shows the preferences dialog.
  */
-void gaim_gtk_prefs_show(void);
+void pidgin_prefs_show(void);
 
 /**
  * Add a new checkbox for a boolean preference
@@ -45,7 +45,7 @@ void gaim_gtk_prefs_show(void);
  * @param key   The key of the gaim bool pref that will be represented by the checkbox
  * @param page  The page to which the new checkbox will be added
  */
-GtkWidget *gaim_gtk_prefs_checkbox(const char *title, const char *key,
+GtkWidget *pidgin_prefs_checkbox(const char *title, const char *key,
 		GtkWidget *page);
 
 /**
@@ -61,7 +61,7 @@ GtkWidget *gaim_gtk_prefs_checkbox(const char *title, const char *key,
  *              used to set the widgets to sensitive or insensitive based on the 
  *              value of a checkbox.
  */
-GtkWidget *gaim_gtk_prefs_labeled_spin_button(GtkWidget *page,
+GtkWidget *pidgin_prefs_labeled_spin_button(GtkWidget *page,
 		const gchar *title, const char *key, int min, int max, GtkSizeGroup *sg);
 
 /**
@@ -76,7 +76,7 @@ GtkWidget *gaim_gtk_prefs_labeled_spin_button(GtkWidget *page,
  *               the widgets to sensitive or insensitive based on the value of a
  *               checkbox.
  */
-GtkWidget *gaim_gtk_prefs_labeled_entry(GtkWidget *page, const gchar *title,
+GtkWidget *pidgin_prefs_labeled_entry(GtkWidget *page, const gchar *title,
 										const char *key, GtkSizeGroup *sg);
 
 /**
@@ -89,7 +89,7 @@ GtkWidget *gaim_gtk_prefs_labeled_entry(GtkWidget *page, const gchar *title,
  * @param ...   The choices to be added to the dropdown, choices should be
  *              paired as label/value
  */
-GtkWidget *gaim_gtk_prefs_dropdown(GtkWidget *page, const gchar *title,
+GtkWidget *pidgin_prefs_dropdown(GtkWidget *page, const gchar *title,
 		GaimPrefType type, const char *key, ...);
 
 /**
@@ -102,13 +102,13 @@ GtkWidget *gaim_gtk_prefs_dropdown(GtkWidget *page, const gchar *title,
  * @param menuitems The choices to be added to the dropdown, choices should
  *                  be paired as label/value
  */
-GtkWidget *gaim_gtk_prefs_dropdown_from_list(GtkWidget *page,
+GtkWidget *pidgin_prefs_dropdown_from_list(GtkWidget *page,
 		const gchar * title, GaimPrefType type, const char *key,
 		GList *menuitems);
 
 /**
  * Rename legacy prefs and delete some that no longer exist.
  */
-void gaim_gtk_prefs_update_old(void);
+void pidgin_prefs_update_old(void);
 
-#endif /* _GAIM_GTKPREFS_H_ */
+#endif /* _PIDGINPREFS_H_ */

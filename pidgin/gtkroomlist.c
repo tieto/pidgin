@@ -34,7 +34,7 @@
 
 #include "gtkroomlist.h"
 
-typedef struct _GaimGtkRoomlistDialog {
+typedef struct _PidginRoomlistDialog {
 	GtkWidget *window;
 	GtkWidget *account_widget;
 	GtkWidget *progress;
@@ -52,15 +52,15 @@ typedef struct _GaimGtkRoomlistDialog {
 	gboolean pg_needs_pulse;
 	gboolean pg_to_active;
 	guint pg_update_to;
-} GaimGtkRoomlistDialog;
+} PidginRoomlistDialog;
 
-typedef struct _GaimGtkRoomlist {
-	GaimGtkRoomlistDialog *dialog;
+typedef struct _PidginRoomlist {
+	PidginRoomlistDialog *dialog;
 	GtkTreeStore *model;
 	GtkWidget *tree;
 	GHashTable *cats; /**< Meow. */
 	gint num_rooms, total_rooms;
-} GaimGtkRoomlist;
+} PidginRoomlist;
 
 enum {
 	NAME_COLUMN = 0,
@@ -72,9 +72,9 @@ static GList *roomlists = NULL;
 
 static gint delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 {
-	GaimGtkRoomlistDialog *dialog;
+	PidginRoomlistDialog *dialog;
 
-	dialog = (GaimGtkRoomlistDialog *) d;
+	dialog = (PidginRoomlistDialog *) d;
 
 	if (dialog->roomlist && gaim_roomlist_get_in_progress(dialog->roomlist))
 		gaim_roomlist_cancel_get_list(dialog->roomlist);
@@ -97,15 +97,15 @@ static gint delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 }
 
 static void dialog_select_account_cb(GObject *w, GaimAccount *account,
-                                     GaimGtkRoomlistDialog *dialog)
+                                     PidginRoomlistDialog *dialog)
 {
 	dialog->account = account;
 }
 
-static void list_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
+static void list_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 {
 	GaimConnection *gc;
-	GaimGtkRoomlist *rl;
+	PidginRoomlist *rl;
 
 	gc = gaim_account_get_connection(dialog->account);
 	if (!gc)
@@ -142,7 +142,7 @@ static void list_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
 	gtk_widget_set_sensitive(dialog->join_button, FALSE);
 }
 
-static void stop_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
+static void stop_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 {
 	gaim_roomlist_cancel_get_list(dialog->roomlist);
 
@@ -155,7 +155,7 @@ static void stop_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
 	gtk_widget_set_sensitive(dialog->join_button, FALSE);
 }
 
-static void close_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
+static void close_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 {
 	GtkWidget *window = dialog->window;
 
@@ -169,12 +169,12 @@ struct _menu_cb_info {
 };
 
 static void
-selection_changed_cb(GtkTreeSelection *selection, GaimGtkRoomlist *grl) {
+selection_changed_cb(GtkTreeSelection *selection, PidginRoomlist *grl) {
 	GtkTreeIter iter;
 	GValue val;
 	GaimRoomlistRoom *room;
 	static struct _menu_cb_info *info;
-	GaimGtkRoomlistDialog *dialog;
+	PidginRoomlistDialog *dialog;
 
 	dialog = grl->dialog;
 
@@ -223,10 +223,10 @@ static void do_add_room_cb(GtkWidget *w, struct _menu_cb_info *info)
 	g_free(name);
 }
 
-static void add_room_to_blist_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
+static void add_room_to_blist_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 {
 	GaimRoomlist *rl = dialog->roomlist;
-	GaimGtkRoomlist *grl = rl->ui_data;
+	PidginRoomlist *grl = rl->ui_data;
 	struct _menu_cb_info *info;
 
 	info = (struct _menu_cb_info*)g_object_get_data(G_OBJECT(button), "room-info");
@@ -240,10 +240,10 @@ static void do_join_cb(GtkWidget *w, struct _menu_cb_info *info)
 	gaim_roomlist_room_join(info->list, info->room);
 }
 
-static void join_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
+static void join_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 {
 	GaimRoomlist *rl = dialog->roomlist;
-	GaimGtkRoomlist *grl = rl->ui_data;
+	PidginRoomlist *grl = rl->ui_data;
 	struct _menu_cb_info *info;
 
 	info = (struct _menu_cb_info*)g_object_get_data(G_OBJECT(button), "room-info");
@@ -255,7 +255,7 @@ static void join_button_cb(GtkButton *button, GaimGtkRoomlistDialog *dialog)
 static void row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *arg2,
                       GaimRoomlist *list)
 {
-	GaimGtkRoomlist *grl = list->ui_data;
+	PidginRoomlist *grl = list->ui_data;
 	GtkTreeIter iter;
 	GaimRoomlistRoom *room;
 	GValue val;
@@ -277,7 +277,7 @@ static void row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColu
 static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, GaimRoomlist *list)
 {
 	GtkTreePath *path;
-	GaimGtkRoomlist *grl = list->ui_data;
+	PidginRoomlist *grl = list->ui_data;
 	GValue val;
 	GaimRoomlistRoom *room;
 	GtkTreeIter iter;
@@ -341,7 +341,7 @@ static gboolean account_filter_func(GaimAccount *account)
 }
 
 gboolean
-gaim_gtk_roomlist_is_showable()
+pidgin_roomlist_is_showable()
 {
 	GList *c;
 	GaimConnection *gc;
@@ -356,10 +356,10 @@ gaim_gtk_roomlist_is_showable()
 	return FALSE;
 }
 
-static GaimGtkRoomlistDialog *
-gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *account)
+static PidginRoomlistDialog *
+pidgin_roomlist_dialog_new_with_account(GaimAccount *account)
 {
-	GaimGtkRoomlistDialog *dialog;
+	PidginRoomlistDialog *dialog;
 	GtkWidget *window;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
@@ -367,7 +367,7 @@ gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *account)
 	GtkWidget *bbox;
 	GtkWidget *label;
 
-	dialog = g_new0(GaimGtkRoomlistDialog, 1);
+	dialog = g_new0(PidginRoomlistDialog, 1);
 	dialog->account = account;
 
 	/* Create the window. */
@@ -400,11 +400,11 @@ gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *account)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_widget_show(label);
 
-	dialog->account_widget = gaim_gtk_account_option_menu_new(dialog->account, FALSE,
+	dialog->account_widget = pidgin_account_option_menu_new(dialog->account, FALSE,
 	                         G_CALLBACK(dialog_select_account_cb), account_filter_func, dialog);
 
 	if (!dialog->account) /* this is normally null, and we normally don't care what the first selected item is */
-		dialog->account = gaim_gtk_account_option_menu_get_selected(dialog->account_widget);
+		dialog->account = pidgin_account_option_menu_get_selected(dialog->account_widget);
 
 	gtk_box_pack_start(GTK_BOX(account_hbox), dialog->account_widget, TRUE, TRUE, 0);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), GTK_WIDGET(dialog->account_widget));
@@ -481,27 +481,27 @@ gaim_gtk_roomlist_dialog_new_with_account(GaimAccount *account)
 	return dialog;
 }
 
-void gaim_gtk_roomlist_dialog_show_with_account(GaimAccount *account)
+void pidgin_roomlist_dialog_show_with_account(GaimAccount *account)
 {
-	GaimGtkRoomlistDialog *dialog;
+	PidginRoomlistDialog *dialog;
 
-	dialog = gaim_gtk_roomlist_dialog_new_with_account(account);
+	dialog = pidgin_roomlist_dialog_new_with_account(account);
 	if (!dialog)
 		return;
 
 	list_button_cb(GTK_BUTTON(dialog->list_button), dialog);
 }
 
-void gaim_gtk_roomlist_dialog_show(void)
+void pidgin_roomlist_dialog_show(void)
 {
-	gaim_gtk_roomlist_dialog_new_with_account(NULL);
+	pidgin_roomlist_dialog_new_with_account(NULL);
 }
 
-static void gaim_gtk_roomlist_new(GaimRoomlist *list)
+static void pidgin_roomlist_new(GaimRoomlist *list)
 {
-	GaimGtkRoomlist *rl;
+	PidginRoomlist *rl;
 
-	rl = g_new0(GaimGtkRoomlist, 1);
+	rl = g_new0(PidginRoomlist, 1);
 
 	list->ui_data = rl;
 
@@ -564,9 +564,9 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 	return result;
 }
 
-static void gaim_gtk_roomlist_set_fields(GaimRoomlist *list, GList *fields)
+static void pidgin_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 {
-	GaimGtkRoomlist *grl = list->ui_data;
+	PidginRoomlist *grl = list->ui_data;
 	gint columns = NUM_OF_COLUMNS;
 	int j;
 	GtkTreeStore *model;
@@ -660,10 +660,10 @@ static void gaim_gtk_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 
 }
 
-static gboolean gaim_gtk_progress_bar_pulse(gpointer data)
+static gboolean pidgin_progress_bar_pulse(gpointer data)
 {
 	GaimRoomlist *list = data;
-	GaimGtkRoomlist *rl = list->ui_data;
+	PidginRoomlist *rl = list->ui_data;
 
 	if (!rl || !rl->dialog || !rl->dialog->pg_needs_pulse) {
 		if (rl && rl->dialog)
@@ -677,9 +677,9 @@ static gboolean gaim_gtk_progress_bar_pulse(gpointer data)
 	return TRUE;
 }
 
-static void gaim_gtk_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *room)
+static void pidgin_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *room)
 {
-	GaimGtkRoomlist *rl = list->ui_data;
+	PidginRoomlist *rl = list->ui_data;
 	GtkTreeRowReference *rr, *parentrr = NULL;
 	GtkTreePath *path;
 	GtkTreeIter iter, parent, child;
@@ -695,7 +695,7 @@ static void gaim_gtk_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *roo
 		if (!rl->dialog->pg_to_active) {
 			rl->dialog->pg_to_active = TRUE;
 			gaim_roomlist_ref(list);
-			rl->dialog->pg_update_to = g_timeout_add(100, gaim_gtk_progress_bar_pulse, list);
+			rl->dialog->pg_update_to = g_timeout_add(100, pidgin_progress_bar_pulse, list);
 			gtk_progress_bar_pulse(GTK_PROGRESS_BAR(rl->dialog->progress));
 		} else {
 			rl->dialog->pg_needs_pulse = TRUE;
@@ -746,9 +746,9 @@ static void gaim_gtk_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *roo
 	}
 }
 
-static void gaim_gtk_roomlist_in_progress(GaimRoomlist *list, gboolean flag)
+static void pidgin_roomlist_in_progress(GaimRoomlist *list, gboolean flag)
 {
-	GaimGtkRoomlist *rl = list->ui_data;
+	PidginRoomlist *rl = list->ui_data;
 
 	if (!rl || !rl->dialog)
 		return;
@@ -768,9 +768,9 @@ static void gaim_gtk_roomlist_in_progress(GaimRoomlist *list, gboolean flag)
 	}
 }
 
-static void gaim_gtk_roomlist_destroy(GaimRoomlist *list)
+static void pidgin_roomlist_destroy(GaimRoomlist *list)
 {
-	GaimGtkRoomlist *rl;
+	PidginRoomlist *rl;
 
 	roomlists = g_list_remove(roomlists, list);
 
@@ -784,16 +784,16 @@ static void gaim_gtk_roomlist_destroy(GaimRoomlist *list)
 }
 
 static GaimRoomlistUiOps ops = {
-	gaim_gtk_roomlist_dialog_show_with_account,
-	gaim_gtk_roomlist_new,
-	gaim_gtk_roomlist_set_fields,
-	gaim_gtk_roomlist_add_room,
-	gaim_gtk_roomlist_in_progress,
-	gaim_gtk_roomlist_destroy
+	pidgin_roomlist_dialog_show_with_account,
+	pidgin_roomlist_new,
+	pidgin_roomlist_set_fields,
+	pidgin_roomlist_add_room,
+	pidgin_roomlist_in_progress,
+	pidgin_roomlist_destroy
 };
 
 
-void gaim_gtk_roomlist_init(void)
+void pidgin_roomlist_init(void)
 {
 	gaim_roomlist_set_ui_ops(&ops);
 }

@@ -42,7 +42,7 @@
 #define PREF_CHATS      PREF_PREFIX "/chats"
 
 static int
-imhtml_expose_cb(GtkWidget *widget, GdkEventExpose *event, GaimGtkConversation *gtkconv)
+imhtml_expose_cb(GtkWidget *widget, GdkEventExpose *event, PidginConversation *gtkconv)
 {
 	int y, last_y, offset;
 	GdkRectangle visible_rect;
@@ -90,7 +90,7 @@ imhtml_expose_cb(GtkWidget *widget, GdkEventExpose *event, GaimGtkConversation *
 }
 
 static void
-update_marker_for_gtkconv(GaimGtkConversation *gtkconv)
+update_marker_for_gtkconv(PidginConversation *gtkconv)
 {
 	GtkTextIter iter;
 	GtkTextBuffer *buffer;
@@ -109,15 +109,15 @@ update_marker_for_gtkconv(GaimGtkConversation *gtkconv)
 }
 
 static gboolean
-focus_removed(GtkWidget *widget, GdkEventVisibility *event, GaimGtkWindow *win)
+focus_removed(GtkWidget *widget, GdkEventVisibility *event, PidginWindow *win)
 {
 	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
+	PidginConversation *gtkconv;
 
-	conv = gaim_gtk_conv_window_get_active_conversation(win);
+	conv = pidgin_conv_window_get_active_conversation(win);
 	g_return_val_if_fail(conv != NULL, FALSE);
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkconv = PIDGIN_CONVERSATION(conv);
 	update_marker_for_gtkconv(gtkconv);
 
 	return FALSE;
@@ -125,11 +125,11 @@ focus_removed(GtkWidget *widget, GdkEventVisibility *event, GaimGtkWindow *win)
 
 #if 0
 static gboolean
-window_resized(GtkWidget *w, GdkEventConfigure *event, GaimGtkWindow *win)
+window_resized(GtkWidget *w, GdkEventConfigure *event, PidginWindow *win)
 {
 	GList *list;
 
-	list = gaim_gtk_conv_window_get_gtkconvs(win);
+	list = pidgin_conv_window_get_gtkconvs(win);
 	
 	for (; list; list = list->next)
 		update_marker_for_gtkconv(list->data);
@@ -138,7 +138,7 @@ window_resized(GtkWidget *w, GdkEventConfigure *event, GaimGtkWindow *win)
 }
 
 static gboolean
-imhtml_resize_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *gtkconv)
+imhtml_resize_cb(GtkWidget *w, GtkAllocation *allocation, PidginConversation *gtkconv)
 {
 	gtk_widget_queue_draw(w);
 	return FALSE;
@@ -146,21 +146,21 @@ imhtml_resize_cb(GtkWidget *w, GtkAllocation *allocation, GaimGtkConversation *g
 #endif
 
 static void
-page_switched(GtkWidget *widget, GtkWidget *page, gint num, GaimGtkWindow *win)
+page_switched(GtkWidget *widget, GtkWidget *page, gint num, PidginWindow *win)
 {
 	focus_removed(NULL, NULL, win);
 }
 
 static void
-detach_from_gtkconv(GaimGtkConversation *gtkconv, gpointer null)
+detach_from_gtkconv(PidginConversation *gtkconv, gpointer null)
 {
 	g_signal_handlers_disconnect_by_func(G_OBJECT(gtkconv->imhtml), imhtml_expose_cb, gtkconv);
 }
 
 static void
-detach_from_gaim_gtk_window(GaimGtkWindow *win, gpointer null)
+detach_from_pidgin_window(PidginWindow *win, gpointer null)
 {
-	g_list_foreach(gaim_gtk_conv_window_get_gtkconvs(win), (GFunc)detach_from_gtkconv, NULL);
+	g_list_foreach(pidgin_conv_window_get_gtkconvs(win), (GFunc)detach_from_gtkconv, NULL);
 	g_signal_handlers_disconnect_by_func(G_OBJECT(win->notebook), page_switched, win);
 	g_signal_handlers_disconnect_by_func(G_OBJECT(win->window), focus_removed, win);
 
@@ -168,7 +168,7 @@ detach_from_gaim_gtk_window(GaimGtkWindow *win, gpointer null)
 }
 
 static void
-attach_to_gtkconv(GaimGtkConversation *gtkconv, gpointer null)
+attach_to_gtkconv(PidginConversation *gtkconv, gpointer null)
 {
 	detach_from_gtkconv(gtkconv, NULL);
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "expose_event",
@@ -176,9 +176,9 @@ attach_to_gtkconv(GaimGtkConversation *gtkconv, gpointer null)
 }
 
 static void
-attach_to_gaim_gtk_window(GaimGtkWindow *win, gpointer null)
+attach_to_pidgin_window(PidginWindow *win, gpointer null)
 {
-	g_list_foreach(gaim_gtk_conv_window_get_gtkconvs(win), (GFunc)attach_to_gtkconv, NULL);
+	g_list_foreach(pidgin_conv_window_get_gtkconvs(win), (GFunc)attach_to_gtkconv, NULL);
 
 	g_signal_connect(G_OBJECT(win->window), "focus_out_event",
 					 G_CALLBACK(focus_removed), win);
@@ -192,28 +192,28 @@ attach_to_gaim_gtk_window(GaimGtkWindow *win, gpointer null)
 static void
 detach_from_all_windows()
 {
-	g_list_foreach(gaim_gtk_conv_windows_get_list(), (GFunc)detach_from_gaim_gtk_window, NULL);
+	g_list_foreach(pidgin_conv_windows_get_list(), (GFunc)detach_from_pidgin_window, NULL);
 }
 
 static void
 attach_to_all_windows()
 {
-	g_list_foreach(gaim_gtk_conv_windows_get_list(), (GFunc)attach_to_gaim_gtk_window, NULL);
+	g_list_foreach(pidgin_conv_windows_get_list(), (GFunc)attach_to_pidgin_window, NULL);
 }
 
 static void
 conv_created(GaimConversation *conv, gpointer null)
 {
-	GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
-	GaimGtkWindow *win;
+	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
+	PidginWindow *win;
 
 	if (!gtkconv)
 		return;
 
-	win = gaim_gtkconv_get_window(gtkconv);
+	win = pidgin_conv_get_window(gtkconv);
 
-	detach_from_gaim_gtk_window(win, NULL);
-	attach_to_gaim_gtk_window(win, NULL);
+	detach_from_pidgin_window(win, NULL);
+	attach_to_pidgin_window(win, NULL);
 }
 
 static gboolean
@@ -268,7 +268,7 @@ static GaimPluginInfo info = {
 	GAIM_MAJOR_VERSION,			/* Gaim Major Version	*/
 	GAIM_MINOR_VERSION,			/* Gaim Minor Version	*/
 	GAIM_PLUGIN_STANDARD,		/* plugin type			*/
-	GAIM_GTK_PLUGIN_TYPE,		/* ui requirement		*/
+	PIDGIN_PLUGIN_TYPE,		/* ui requirement		*/
 	0,							/* flags				*/
 	NULL,						/* dependencies			*/
 	GAIM_PRIORITY_DEFAULT,		/* priority				*/

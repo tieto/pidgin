@@ -236,9 +236,9 @@ ui_main()
 	char *icon_path;
 #endif
 
-	gaim_gtkthemes_init();
+	pidginthemes_init();
 
-	gaim_gtk_blist_setup_sort_methods();
+	pidgin_blist_setup_sort_methods();
 
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
@@ -262,60 +262,60 @@ ui_main()
 static void
 debug_init(void)
 {
-	gaim_debug_set_ui_ops(gaim_gtk_debug_get_ui_ops());
-	gaim_gtk_debug_init();
+	gaim_debug_set_ui_ops(pidgin_debug_get_ui_ops());
+	pidgin_debug_init();
 }
 
 static void
-gaim_gtk_ui_init(void)
+pidgin_ui_init(void)
 {
 	/* Set the UI operation structures. */
-	gaim_accounts_set_ui_ops(gaim_gtk_accounts_get_ui_ops());
-	gaim_xfers_set_ui_ops(gaim_gtk_xfers_get_ui_ops());
-	gaim_blist_set_ui_ops(gaim_gtk_blist_get_ui_ops());
-	gaim_notify_set_ui_ops(gaim_gtk_notify_get_ui_ops());
-	gaim_privacy_set_ui_ops(gaim_gtk_privacy_get_ui_ops());
-	gaim_request_set_ui_ops(gaim_gtk_request_get_ui_ops());
-	gaim_sound_set_ui_ops(gaim_gtk_sound_get_ui_ops());
-	gaim_connections_set_ui_ops(gaim_gtk_connections_get_ui_ops());
-	gaim_whiteboard_set_ui_ops(gaim_gtk_whiteboard_get_ui_ops());
+	gaim_accounts_set_ui_ops(pidgin_accounts_get_ui_ops());
+	gaim_xfers_set_ui_ops(pidgin_xfers_get_ui_ops());
+	gaim_blist_set_ui_ops(pidgin_blist_get_ui_ops());
+	gaim_notify_set_ui_ops(pidgin_notify_get_ui_ops());
+	gaim_privacy_set_ui_ops(pidgin_privacy_get_ui_ops());
+	gaim_request_set_ui_ops(pidgin_request_get_ui_ops());
+	gaim_sound_set_ui_ops(pidgin_sound_get_ui_ops());
+	gaim_connections_set_ui_ops(pidgin_connections_get_ui_ops());
+	gaim_whiteboard_set_ui_ops(pidgin_whiteboard_get_ui_ops());
 #ifdef USE_SCREENSAVER
-	gaim_idle_set_ui_ops(gaim_gtk_idle_get_ui_ops());
+	gaim_idle_set_ui_ops(pidgin_idle_get_ui_ops());
 #endif
 
-	gaim_gtk_stock_init();
-	gaim_gtk_account_init();
-	gaim_gtk_connection_init();
-	gaim_gtk_blist_init();
-	gaim_gtk_status_init();
-	gaim_gtk_conversations_init();
-	gaim_gtk_pounces_init();
-	gaim_gtk_privacy_init();
-	gaim_gtk_xfers_init();
-	gaim_gtk_roomlist_init();
-	gaim_gtk_log_init();
+	pidgin_stock_init();
+	pidgin_account_init();
+	pidgin_connection_init();
+	pidgin_blist_init();
+	pidgin_status_init();
+	pidgin_conversations_init();
+	pidgin_pounces_init();
+	pidgin_privacy_init();
+	pidgin_xfers_init();
+	pidgin_roomlist_init();
+	pidgin_log_init();
 }
 
 static void
-gaim_gtk_quit(void)
+pidgin_quit(void)
 {
 #ifdef USE_SM
 	/* unplug */
-	gaim_gtk_session_end();
+	pidgin_session_end();
 #endif
 
 	/* Save the plugins we have loaded for next time. */
-	gaim_gtk_plugins_save();
+	pidgin_plugins_save();
 
 	/* Uninit */
-	gaim_gtk_conversations_uninit();
-	gaim_gtk_status_uninit();
-	gaim_gtk_docklet_uninit();
-	gaim_gtk_blist_uninit();
-	gaim_gtk_connection_uninit();
-	gaim_gtk_account_uninit();
-	gaim_gtk_xfers_uninit();
-	gaim_gtk_debug_uninit();
+	pidgin_conversations_uninit();
+	pidgin_status_uninit();
+	pidgin_docklet_uninit();
+	pidgin_blist_uninit();
+	pidgin_connection_uninit();
+	pidgin_account_uninit();
+	pidgin_xfers_uninit();
+	pidgin_debug_uninit();
 
 	/* and end it all... */
 	gtk_main_quit();
@@ -323,14 +323,14 @@ gaim_gtk_quit(void)
 
 static GaimCoreUiOps core_ops =
 {
-	gaim_gtk_prefs_init,
+	pidgin_prefs_init,
 	debug_init,
-	gaim_gtk_ui_init,
-	gaim_gtk_quit
+	pidgin_ui_init,
+	pidgin_quit
 };
 
 static GaimCoreUiOps *
-gaim_gtk_core_get_ui_ops(void)
+pidgin_core_get_ui_ops(void)
 {
 	return &core_ops;
 }
@@ -691,8 +691,8 @@ int main(int argc, char *argv[])
 	gtkwgaim_init(hint);
 #endif
 
-	gaim_core_set_ui_ops(gaim_gtk_core_get_ui_ops());
-	gaim_eventloop_set_ui_ops(gaim_gtk_eventloop_get_ui_ops());
+	gaim_core_set_ui_ops(pidgin_core_get_ui_ops());
+	gaim_eventloop_set_ui_ops(pidgin_eventloop_get_ui_ops());
 
 	/*
 	 * Set plugin search directories. Give priority to the plugins
@@ -703,7 +703,7 @@ int main(int argc, char *argv[])
 	g_free(search_path);
 	gaim_plugins_add_search_path(LIBDIR);
 
-	if (!gaim_core_init(GAIM_GTK_UI)) {
+	if (!gaim_core_init(PIDGIN_UI)) {
 		fprintf(stderr,
 				"Initialization of the " PIDGIN_NAME " core failed. Dumping core.\n"
 				"Please report this!\n");
@@ -717,11 +717,11 @@ int main(int argc, char *argv[])
 	/* TODO: Move prefs loading into gaim_prefs_init() */
 	gaim_prefs_load();
 	gaim_prefs_update_old();
-	gaim_gtk_prefs_update_old();
+	pidgin_prefs_update_old();
 
 	/* load plugins we had when we quit */
 	gaim_plugins_load_saved("/gaim/gtk/plugins/loaded");
-	gaim_gtk_docklet_init();
+	pidgin_docklet_init();
 
 	/* TODO: Move pounces loading into gaim_pounces_init() */
 	gaim_pounces_load();
@@ -745,7 +745,7 @@ int main(int argc, char *argv[])
 	ui_main();
 
 #ifdef USE_SM
-	gaim_gtk_session_init(argv[0], opt_session_arg, opt_config_dir_arg);
+	pidgin_session_init(argv[0], opt_session_arg, opt_config_dir_arg);
 #endif
 	if (opt_session_arg != NULL) {
 		g_free(opt_session_arg);
@@ -763,7 +763,7 @@ int main(int argc, char *argv[])
 	gaim_blist_show();
 
 	if (gaim_prefs_get_bool("/gaim/gtk/debug/enabled"))
-		gaim_gtk_debug_window_show();
+		pidgin_debug_window_show();
 
 	if (opt_login) {
 		dologin_ret = dologin_named(opt_login_arg);
@@ -799,7 +799,7 @@ int main(int argc, char *argv[])
 
 	if ((accounts = gaim_accounts_get_all_active()) == NULL)
 	{
-		gaim_gtk_accounts_window_show();
+		pidgin_accounts_window_show();
 	}
 	else
 	{

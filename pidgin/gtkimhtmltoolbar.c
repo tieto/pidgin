@@ -459,7 +459,7 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 	}
 
 #if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	if (gaim_gtk_check_if_dir(filename, GTK_FILE_SELECTION(widget))) {
+	if (pidgin_check_if_dir(filename, GTK_FILE_SELECTION(widget))) {
 		g_free(filename);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 		return;
@@ -653,9 +653,9 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	}
 
 	if (toolbar->sml)
-		smileys = gaim_gtkthemes_get_proto_smileys(toolbar->sml);
+		smileys = pidginthemes_get_proto_smileys(toolbar->sml);
 	else
-		smileys = gaim_gtkthemes_get_proto_smileys(NULL);
+		smileys = pidginthemes_get_proto_smileys(NULL);
 
 	while(smileys) {
 		GtkIMHtmlSmiley *smiley = smileys->data;

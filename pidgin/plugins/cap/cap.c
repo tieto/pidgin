@@ -714,7 +714,7 @@ static void add_plugin_functionality(GaimPlugin *plugin) {
 	/*gaim_signal_connect(gaim_blist_get_handle(), "blist-node-extended-menu", plugin,
 			GAIM_CALLBACK(blist_node_extended_menu), NULL);*/
 
-	gaim_signal_connect(gaim_gtk_blist_get_handle(), "drawing-tooltip", plugin,
+	gaim_signal_connect(pidgin_blist_get_handle(), "drawing-tooltip", plugin,
 			GAIM_CALLBACK(drawing_tooltip), NULL);
 
 	gaim_signal_connect(gaim_connections_get_handle(), "signed-on", plugin,
@@ -765,7 +765,7 @@ static void remove_plugin_functionality(GaimPlugin *plugin) {
 	/*gaim_signal_disconnect(gaim_blist_get_handle(), "blist-node-extended-menu", plugin,
 			GAIM_CALLBACK(blist_node_extended_menu));*/
 
-	gaim_signal_disconnect(gaim_gtk_blist_get_handle(), "drawing-tooltip", plugin,
+	gaim_signal_disconnect(pidgin_blist_get_handle(), "drawing-tooltip", plugin,
 			GAIM_CALLBACK(drawing_tooltip));
 
 	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-on", plugin,
@@ -807,7 +807,7 @@ static CapPrefsUI * create_cap_prefs_ui() {
 
 	ui->ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ui->ret), 10);
-	ui->cap_vbox = gaim_gtk_make_frame(ui->ret, _("Statistics Configuration"));
+	ui->cap_vbox = pidgin_make_frame(ui->ret, _("Statistics Configuration"));
 
 	/* msg_difference spinner */
 	ui->msg_difference_label = gtk_label_new(_("Maximum response timeout:"));
@@ -916,7 +916,7 @@ static void numeric_spinner_prefs_cb(GtkSpinButton *spinbutton, gpointer user_da
 	gaim_prefs_set_int(user_data, gtk_spin_button_get_value_as_int(spinbutton));
 }
 
-static GaimGtkPluginUiInfo ui_info = {
+static PidginPluginUiInfo ui_info = {
 	get_config_frame,
 	0 /* page_num (reserved) */
 };
@@ -926,7 +926,7 @@ static GaimPluginInfo info = {
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,							/**< type		*/
-	GAIM_GTK_PLUGIN_TYPE,							/**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,							/**< ui_requirement */
 	0,												/**< flags		*/
 	NULL,											/**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,							/**< priority		*/

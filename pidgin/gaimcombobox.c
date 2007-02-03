@@ -414,7 +414,7 @@ gtk_combo_box_get_type (void)
         };
 
       combo_box_type = g_type_register_static (GTK_TYPE_BIN,
-                                               "GaimGtkComboBox",
+                                               "PidginComboBox",
                                                &combo_box_info,
                                                0);
 

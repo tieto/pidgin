@@ -22,25 +22,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKPRIVACY_H_
-#define _GAIM_GTKPRIVACY_H_
+#ifndef _PIDGINPRIVACY_H_
+#define _PIDGINPRIVACY_H_
 
 #include "privacy.h"
 
 /**
  * Initializes the GTK+ privacy subsystem.
  */
-void gaim_gtk_privacy_init(void);
+void pidgin_privacy_init(void);
 
 /**
  * Shows the privacy dialog.
  */
-void gaim_gtk_privacy_dialog_show(void);
+void pidgin_privacy_dialog_show(void);
 
 /**
  * Hides the privacy dialog.
  */
-void gaim_gtk_privacy_dialog_hide(void);
+void pidgin_privacy_dialog_hide(void);
 
 /**
  * Requests confirmation to add a user to the allow list for an account,
@@ -51,7 +51,7 @@ void gaim_gtk_privacy_dialog_hide(void);
  * @param account The account.
  * @param name    The name of the user to add.
  */
-void gaim_gtk_request_add_permit(GaimAccount *account, const char *name);
+void pidgin_request_add_permit(GaimAccount *account, const char *name);
 
 /**
  * Requests confirmation to add a user to the block list for an account,
@@ -62,13 +62,13 @@ void gaim_gtk_request_add_permit(GaimAccount *account, const char *name);
  * @param account The account.
  * @param name    The name of the user to add.
  */
-void gaim_gtk_request_add_block(GaimAccount *account, const char *name);
+void pidgin_request_add_block(GaimAccount *account, const char *name);
 
 /**
  * Returns the UI operations structure for the GTK+ privacy subsystem.
  *
  * @return The GTK+ UI privacy operations structure.
  */
-GaimPrivacyUiOps *gaim_gtk_privacy_get_ui_ops(void);
+GaimPrivacyUiOps *pidgin_privacy_get_ui_ops(void);
 
-#endif /* _GAIM_GTKPRIVACY_H_ */
+#endif /* _PIDGINPRIVACY_H_ */

@@ -2811,7 +2811,7 @@ static const char *yahoo_list_emblem(GaimBuddy *b)
 
 	if (!b || !(account = b->account) || !(gc = gaim_account_get_connection(account)) ||
 					     !(yd = gc->proto_data))
-		return;
+		return NULL;
 
 	f = yahoo_friend_find(gc, b->name);
 	if (!f) {

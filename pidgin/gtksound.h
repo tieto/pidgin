@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKSOUND_H_
-#define _GAIM_GTKSOUND_H_
+#ifndef _PIDGINSOUND_H_
+#define _PIDGINSOUND_H_
 
 #include "sound.h"
 
@@ -38,7 +38,7 @@
  * @param event The event.
  * @return The option.
  */
-const char *gaim_gtk_sound_get_event_option(GaimSoundEventID event);
+const char *pidgin_sound_get_event_option(GaimSoundEventID event);
 
 /**
  * Get the label for an event.
@@ -46,22 +46,22 @@ const char *gaim_gtk_sound_get_event_option(GaimSoundEventID event);
  * @param event The event.
  * @return The label.
  */
-const char *gaim_gtk_sound_get_event_label(GaimSoundEventID event);
+const char *pidgin_sound_get_event_label(GaimSoundEventID event);
 
 /**
  * Gets GTK+ sound UI ops.
  *
  * @return The UI operations structure.
  */
-GaimSoundUiOps *gaim_gtk_sound_get_ui_ops(void);
+GaimSoundUiOps *pidgin_sound_get_ui_ops(void);
 
 /**
  * Get the handle for the GTK+ sound system.
  *
  * @return The handle to the sound system
  */
-void *gaim_gtk_sound_get_handle(void);
+void *pidgin_sound_get_handle(void);
 
 /*@}*/
 
-#endif /* _GAIM_GTKSOUND_H_ */
+#endif /* _PIDGINSOUND_H_ */

@@ -30,24 +30,24 @@
 
 #include "gtkcellrendererprogress.h"
 
-static void gaim_gtk_cell_renderer_progress_get_property  (GObject                    *object,
+static void pidgin_cell_renderer_progress_get_property  (GObject                    *object,
 						      guint                       param_id,
 						      GValue                     *value,
 						      GParamSpec                 *pspec);
-static void gaim_gtk_cell_renderer_progress_set_property  (GObject                    *object,
+static void pidgin_cell_renderer_progress_set_property  (GObject                    *object,
 						      guint                       param_id,
 						      const GValue               *value,
 						      GParamSpec                 *pspec);
-static void gaim_gtk_cell_renderer_progress_init       (GaimGtkCellRendererProgress      *cellprogress);
-static void gaim_gtk_cell_renderer_progress_class_init (GaimGtkCellRendererProgressClass *class);
-static void gaim_gtk_cell_renderer_progress_get_size   (GtkCellRenderer            *cell,
+static void pidgin_cell_renderer_progress_init       (PidginCellRendererProgress      *cellprogress);
+static void pidgin_cell_renderer_progress_class_init (PidginCellRendererProgressClass *class);
+static void pidgin_cell_renderer_progress_get_size   (GtkCellRenderer            *cell,
 						   GtkWidget                  *widget,
 						   GdkRectangle               *cell_area,
 						   gint                       *x_offset,
 						   gint                       *y_offset,
 						   gint                       *width,
 						   gint                       *height);
-static void gaim_gtk_cell_renderer_progress_render     (GtkCellRenderer            *cell,
+static void pidgin_cell_renderer_progress_render     (GtkCellRenderer            *cell,
 						   GdkWindow                  *window,
 						   GtkWidget                  *widget,
 						   GdkRectangle               *background_area,
@@ -55,7 +55,7 @@ static void gaim_gtk_cell_renderer_progress_render     (GtkCellRenderer         
 						   GdkRectangle               *expose_area,
 						   guint                       flags);
 #if 0
-static gboolean gaim_gtk_cell_renderer_progress_activate  (GtkCellRenderer            *cell,
+static gboolean pidgin_cell_renderer_progress_activate  (GtkCellRenderer            *cell,
 						      GdkEvent                   *event,
 						      GtkWidget                  *widget,
 						      const gchar                *path,
@@ -63,7 +63,7 @@ static gboolean gaim_gtk_cell_renderer_progress_activate  (GtkCellRenderer      
 						      GdkRectangle               *cell_area,
 						      guint                       flags);
 #endif
-static void  gaim_gtk_cell_renderer_progress_finalize (GObject *gobject);
+static void  pidgin_cell_renderer_progress_finalize (GObject *gobject);
 
 enum {
 	LAST_SIGNAL
@@ -79,7 +79,7 @@ enum {
 static gpointer parent_class;
 /* static guint progress_cell_renderer_signals [LAST_SIGNAL]; */
 
-GType  gaim_gtk_cell_renderer_progress_get_type (void)
+GType  pidgin_cell_renderer_progress_get_type (void)
 {
 	static GType cell_progress_type = 0;
 	
@@ -87,47 +87,47 @@ GType  gaim_gtk_cell_renderer_progress_get_type (void)
 		{
 			static const GTypeInfo cell_progress_info =
 				{
-					sizeof (GaimGtkCellRendererProgressClass),
+					sizeof (PidginCellRendererProgressClass),
 					NULL,           /* base_init */
 					NULL,           /* base_finalize */
-					(GClassInitFunc) gaim_gtk_cell_renderer_progress_class_init,
+					(GClassInitFunc) pidgin_cell_renderer_progress_class_init,
 					NULL,           /* class_finalize */
 					NULL,           /* class_data */
-					sizeof (GaimGtkCellRendererProgress),
+					sizeof (PidginCellRendererProgress),
 					0,              /* n_preallocs */
-					(GInstanceInitFunc) gaim_gtk_cell_renderer_progress_init,
+					(GInstanceInitFunc) pidgin_cell_renderer_progress_init,
 					NULL		/* value_table */
 				};
 			
 			cell_progress_type =
 				g_type_register_static (GTK_TYPE_CELL_RENDERER,
-										"GaimGtkCellRendererProgress",
+										"PidginCellRendererProgress",
 										&cell_progress_info, 0);
 		}
 	
 	return cell_progress_type;
 }
 
-static void gaim_gtk_cell_renderer_progress_init (GaimGtkCellRendererProgress *cellprogress)
+static void pidgin_cell_renderer_progress_init (PidginCellRendererProgress *cellprogress)
 {
 	GTK_CELL_RENDERER(cellprogress)->mode = GTK_CELL_RENDERER_MODE_INERT;
 	GTK_CELL_RENDERER(cellprogress)->xpad = 2;
 	GTK_CELL_RENDERER(cellprogress)->ypad = 2;
 }
 
-static void gaim_gtk_cell_renderer_progress_class_init (GaimGtkCellRendererProgressClass *class)
+static void pidgin_cell_renderer_progress_class_init (PidginCellRendererProgressClass *class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS(class);
 	GtkCellRendererClass *cell_class = GTK_CELL_RENDERER_CLASS(class);
 	
 	parent_class = g_type_class_peek_parent (class);
-	object_class->finalize = gaim_gtk_cell_renderer_progress_finalize;
+	object_class->finalize = pidgin_cell_renderer_progress_finalize;
 
-	object_class->get_property = gaim_gtk_cell_renderer_progress_get_property;
-	object_class->set_property = gaim_gtk_cell_renderer_progress_set_property;
+	object_class->get_property = pidgin_cell_renderer_progress_get_property;
+	object_class->set_property = pidgin_cell_renderer_progress_set_property;
 	
-	cell_class->get_size = gaim_gtk_cell_renderer_progress_get_size;
-	cell_class->render   = gaim_gtk_cell_renderer_progress_render;
+	cell_class->get_size = pidgin_cell_renderer_progress_get_size;
+	cell_class->render   = pidgin_cell_renderer_progress_render;
 	
 	g_object_class_install_property (object_class,
 					 PROP_PERCENTAGE,
@@ -152,21 +152,21 @@ static void gaim_gtk_cell_renderer_progress_class_init (GaimGtkCellRendererProgr
 							    G_PARAM_READABLE | G_PARAM_WRITABLE));
 }
 
-static void gaim_gtk_cell_renderer_progress_finalize (GObject *object)
+static void pidgin_cell_renderer_progress_finalize (GObject *object)
 {
 /*
-	GaimGtkCellRendererProgress *cellprogress = GAIM_GTK_CELL_RENDERER_PROGRESS(object);
+	PidginCellRendererProgress *cellprogress = PIDGIN_CELL_RENDERER_PROGRESS(object);
 */
 
 	(* G_OBJECT_CLASS (parent_class)->finalize) (object);
 }
 
-static void gaim_gtk_cell_renderer_progress_get_property (GObject    *object,
+static void pidgin_cell_renderer_progress_get_property (GObject    *object,
 						     guint      param_id,
 						     GValue     *value,
 						     GParamSpec *psec)
 {
-	GaimGtkCellRendererProgress *cellprogress = GAIM_GTK_CELL_RENDERER_PROGRESS(object);
+	PidginCellRendererProgress *cellprogress = PIDGIN_CELL_RENDERER_PROGRESS(object);
 
 	switch (param_id)
 		{
@@ -185,12 +185,12 @@ static void gaim_gtk_cell_renderer_progress_get_property (GObject    *object,
 		}
 }
 
-static void gaim_gtk_cell_renderer_progress_set_property (GObject      *object,
+static void pidgin_cell_renderer_progress_set_property (GObject      *object,
 						     guint        param_id,
 						     const GValue *value,
 						     GParamSpec   *pspec)
 {
-	GaimGtkCellRendererProgress *cellprogress = GAIM_GTK_CELL_RENDERER_PROGRESS (object);
+	PidginCellRendererProgress *cellprogress = PIDGIN_CELL_RENDERER_PROGRESS (object);
 
 	switch (param_id)
 		{
@@ -212,12 +212,12 @@ static void gaim_gtk_cell_renderer_progress_set_property (GObject      *object,
 		}
 }
 
-GtkCellRenderer *gaim_gtk_cell_renderer_progress_new(void)
+GtkCellRenderer *pidgin_cell_renderer_progress_new(void)
 {
 	return g_object_new(GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS, NULL);
 }
 
-static void gaim_gtk_cell_renderer_progress_get_size (GtkCellRenderer *cell,
+static void pidgin_cell_renderer_progress_get_size (GtkCellRenderer *cell,
 						 GtkWidget       *widget,
 						 GdkRectangle    *cell_area,
 						 gint            *x_offset,
@@ -253,7 +253,7 @@ static void gaim_gtk_cell_renderer_progress_get_size (GtkCellRenderer *cell,
 }
 
 
-static void gaim_gtk_cell_renderer_progress_render (GtkCellRenderer *cell,
+static void pidgin_cell_renderer_progress_render (GtkCellRenderer *cell,
 					       GdkWindow       *window,
 					       GtkWidget       *widget,
 					       GdkRectangle    *background_area,
@@ -261,7 +261,7 @@ static void gaim_gtk_cell_renderer_progress_render (GtkCellRenderer *cell,
 					       GdkRectangle    *expose_area,
 					       guint            flags)
 {
-	GaimGtkCellRendererProgress *cellprogress = (GaimGtkCellRendererProgress *) cell;
+	PidginCellRendererProgress *cellprogress = (PidginCellRendererProgress *) cell;
 	
 	gint width, height;
 	GtkStateType state;

@@ -36,7 +36,7 @@
 GSList *smiley_themes = NULL;
 struct smiley_theme *current_smiley_theme;
 
-gboolean gaim_gtkthemes_smileys_disabled()
+gboolean pidginthemes_smileys_disabled()
 {
 	if (!current_smiley_theme)
 		return 1;
@@ -44,7 +44,7 @@ gboolean gaim_gtkthemes_smileys_disabled()
 	return strcmp(current_smiley_theme->name, "none") == 0;
 }
 
-void gaim_gtkthemes_smiley_themeize(GtkWidget *imhtml)
+void pidginthemes_smiley_themeize(GtkWidget *imhtml)
 {
 	struct smiley_list *list;
 	if (!current_smiley_theme)
@@ -63,7 +63,7 @@ void gaim_gtkthemes_smiley_themeize(GtkWidget *imhtml)
 	}
 }
 
-void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load)
+void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 {
 	FILE *f = g_fopen(file, "r");
 	char buf[256];
@@ -249,14 +249,14 @@ void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load)
 			GaimConversation *conv = cnv->data;
 
 			if (GAIM_IS_GTK_CONVERSATION(conv)) {
-				gaim_gtkthemes_smiley_themeize(GAIM_GTK_CONVERSATION(conv)->imhtml);
-				gaim_gtkthemes_smiley_themeize(GAIM_GTK_CONVERSATION(conv)->entry);
+				pidginthemes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
+				pidginthemes_smiley_themeize(PIDGIN_CONVERSATION(conv)->entry);
 			}
 		}
 	}
 }
 
-void gaim_gtkthemes_smiley_theme_probe()
+void pidginthemes_smiley_theme_probe()
 {
 	GDir *dir;
 	const gchar *file;
@@ -277,7 +277,7 @@ void gaim_gtkthemes_smiley_theme_probe()
 				 * We set the second argument to FALSE so that it doesn't load
 				 * the theme yet.
 				 */
-				gaim_gtkthemes_load_smiley_theme(path, FALSE);
+				pidginthemes_load_smiley_theme(path, FALSE);
 				g_free(path);
 			}
 			g_dir_close(dir);
@@ -288,7 +288,7 @@ void gaim_gtkthemes_smiley_theme_probe()
 	}
 }
 
-GSList *gaim_gtkthemes_get_proto_smileys(const char *id) {
+GSList *pidginthemes_get_proto_smileys(const char *id) {
 	GaimPlugin *proto;
 	struct smiley_list *list, *def;
 
@@ -314,18 +314,18 @@ GSList *gaim_gtkthemes_get_proto_smileys(const char *id) {
 	return list ? list->smileys : def->smileys;
 }
 
-void gaim_gtkthemes_init()
+void pidginthemes_init()
 {
 	GSList *l;
 	const char *current_theme =
 		gaim_prefs_get_string("/gaim/gtk/smileys/theme");
 
-	gaim_gtkthemes_smiley_theme_probe();
+	pidginthemes_smiley_theme_probe();
 
 	for (l = smiley_themes; l; l = l->next) {
 		struct smiley_theme *smile = l->data;
 		if (smile->name && strcmp(current_theme, smile->name) == 0) {
-			gaim_gtkthemes_load_smiley_theme(smile->path, TRUE);
+			pidginthemes_load_smiley_theme(smile->path, TRUE);
 			break;
 		}
 	}
@@ -333,7 +333,7 @@ void gaim_gtkthemes_init()
 	/* If we still don't have a smiley theme, choose the first one */
 	if (!current_smiley_theme && smiley_themes) {
 		struct smiley_theme *smile = smiley_themes->data;
-		gaim_gtkthemes_load_smiley_theme(smile->path, TRUE);
+		pidginthemes_load_smiley_theme(smile->path, TRUE);
 	}
 
 }

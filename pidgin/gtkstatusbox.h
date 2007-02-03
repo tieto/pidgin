@@ -184,4 +184,4 @@ char *gtk_gaim_status_box_get_message(GtkGaimStatusBox *status_box);
 
 G_END_DECLS
 
-#endif /* __GTK_GAIM_GTK_STATUS_COMBO_BOX_H__ */
+#endif /* __GTK_PIDGIN_STATUS_COMBO_BOX_H__ */

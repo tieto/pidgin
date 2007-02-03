@@ -125,6 +125,7 @@ SMILEYS = 	act-up.png \
 		shame.png \
 		sheep.png \
 		shock.png \
+		shout.png \
 		shut-mouth.png \
 		sick.png \
 		sigarette.png \

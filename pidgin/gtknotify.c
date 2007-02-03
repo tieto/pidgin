@@ -88,7 +88,7 @@ struct _GaimMailDialog
 
 static GaimMailDialog *mail_dialog = NULL;
 
-static void *gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
+static void *pidgin_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 									const char **subjects,
 									const char **froms, const char **tos,
 									const char **urls);
@@ -199,7 +199,7 @@ searchresults_callback_wrapper_cb(GtkWidget *widget, GaimNotifySearchResultsButt
 }
 
 static void *
-gaim_gtk_notify_message(GaimNotifyMsgType type, const char *title,
+pidgin_notify_message(GaimNotifyMsgType type, const char *title,
 						const char *primary, const char *secondary)
 {
 	GtkWidget *dialog;
@@ -297,10 +297,10 @@ selection_changed_cb(GtkTreeSelection *sel, GaimMailDialog *dialog)
 }
 
 static void *
-gaim_gtk_notify_email(GaimConnection *gc, const char *subject, const char *from,
+pidgin_notify_email(GaimConnection *gc, const char *subject, const char *from,
 					  const char *to, const char *url)
 {
-	return gaim_gtk_notify_emails(gc, 1, (subject != NULL),
+	return pidgin_notify_emails(gc, 1, (subject != NULL),
 								  (subject == NULL ? NULL : &subject),
 								  (from    == NULL ? NULL : &from),
 								  (to      == NULL ? NULL : &to),
@@ -308,7 +308,7 @@ gaim_gtk_notify_email(GaimConnection *gc, const char *subject, const char *from,
 }
 
 static GtkWidget *
-gaim_gtk_get_mail_dialog()
+pidgin_get_mail_dialog()
 {
 	if (mail_dialog == NULL) {
 		GtkWidget *dialog = NULL;
@@ -355,7 +355,7 @@ gaim_gtk_get_mail_dialog()
 		mail_dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(mail_dialog->treemodel));
 		gtk_tree_view_set_search_column(GTK_TREE_VIEW(mail_dialog->treeview), GAIM_MAIL_TEXT);
 		gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(mail_dialog->treeview),
-			             gaim_gtk_tree_view_search_equal_func, NULL, NULL);
+			             pidgin_tree_view_search_equal_func, NULL, NULL);
 
 		g_signal_connect(G_OBJECT(dialog), "response",
 						 G_CALLBACK(email_response_cb), mail_dialog);
@@ -391,14 +391,14 @@ gaim_gtk_get_mail_dialog()
  * count > 0 mean non-detailed.
  */
 static void *
-gaim_gtk_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *notification, const char *url, int count)
+pidgin_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *notification, const char *url, int count)
 {
 	GaimNotifyMailData *data = NULL;
 	GtkTreeIter iter;
 	GdkPixbuf *icon;
 	gboolean new_n = TRUE;
 
-	icon = gaim_gtk_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
+	icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
 	if (count > 0) {
 		/* Allow only one non-detailed email notification for each account */
@@ -441,7 +441,7 @@ gaim_gtk_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *no
 }
 
 static void *
-gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
+pidgin_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 					   const char **subjects, const char **froms,
 					   const char **tos, const char **urls)
 {
@@ -451,7 +451,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 	GaimNotifyMailData *data = NULL;
 
 	account = gaim_connection_get_account(gc);
-	dialog = gaim_gtk_get_mail_dialog();  /* This creates mail_dialog if necessary */
+	dialog = pidgin_get_mail_dialog();  /* This creates mail_dialog if necessary */
  
 	mail_dialog->total_count += count;
 	if (detailed) {
@@ -490,7 +490,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 			g_free(from_text);
 			g_free(subject_text);
 
-			data = gaim_gtk_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, 0);
+			data = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, 0);
 			g_free(notification);
 
 			if (urls != NULL)
@@ -501,7 +501,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 						   "%s has %d new messages.",
 						   (int)count),
 						   *tos, (int)count);
-		data = gaim_gtk_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, count);
+		data = pidgin_notify_add_mail(mail_dialog->treemodel, account, notification, urls ? *urls : NULL, count);
 		g_free(notification);
 	}
 
@@ -514,7 +514,7 @@ gaim_gtk_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 		mail_dialog->in_use = TRUE;     /* So that _set_headline doesn't accidentally
 										   remove the notifications when replacing an
 										   old notification. */
-		gaim_gtk_blist_set_headline(label_text, 
+		pidgin_blist_set_headline(label_text, 
 					    pixbuf, G_CALLBACK(gtk_widget_show_all), dialog,
 					    (GDestroyNotify)reset_mail_dialog);
 		mail_dialog->in_use = FALSE;
@@ -540,7 +540,7 @@ formatted_input_cb(GtkWidget *win, GdkEventKey *event, gpointer data)
 }
 
 static void *
-gaim_gtk_notify_formatted(const char *title, const char *primary,
+pidgin_notify_formatted(const char *title, const char *primary,
 						  const char *secondary, const char *text)
 {
 	GtkWidget *window;
@@ -586,8 +586,8 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 	gtk_widget_show(label);
 
 	/* Add the imhtml */
-	frame = gaim_gtk_create_imhtml(FALSE, &imhtml, NULL, NULL);
-	gtk_widget_set_name(imhtml, "gaim_gtknotify_imhtml");
+	frame = pidgin_create_imhtml(FALSE, &imhtml, NULL, NULL);
+	gtk_widget_set_name(imhtml, "pidginnotify_imhtml");
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml),
 			gtk_imhtml_get_format_functions(GTK_IMHTML(imhtml)) | GTK_IMHTML_IMAGE);
 	gtk_widget_set_size_request(imhtml, 300, 250);
@@ -625,7 +625,7 @@ gaim_gtk_notify_formatted(const char *title, const char *primary,
 }
 
 static void
-gaim_gtk_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResults *results,
+pidgin_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResults *results,
 									   void *data_)
 {
 	GaimNotifySearchResultsData *data = data_;
@@ -638,7 +638,7 @@ gaim_gtk_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResul
 
 	gtk_list_store_clear(data->model);
 
-	pixbuf = gaim_gtk_create_prpl_icon(gaim_connection_get_account(gc), 0.5);
+	pixbuf = pidgin_create_prpl_icon(gaim_connection_get_account(gc), 0.5);
 
 	/* +1 is for the automagically created Status column. */
 	col_num = gaim_notify_searchresults_get_columns_count(results) + 1;
@@ -666,7 +666,7 @@ gaim_gtk_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResul
 }
 
 static void *
-gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
+pidgin_notify_searchresults(GaimConnection *gc, const char *title,
 							  const char *primary, const char *secondary,
 							  GaimNotifySearchResults *results, gpointer user_data)
 {
@@ -839,7 +839,7 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 	data->window = window;
 
 	/* Insert rows. */
-	gaim_gtk_notify_searchresults_new_rows(gc, results, data);
+	pidgin_notify_searchresults_new_rows(gc, results, data);
 
 	/* Show the window */
 	gtk_widget_show(window);
@@ -847,7 +847,7 @@ gaim_gtk_notify_searchresults(GaimConnection *gc, const char *title,
 }
 
 static void *
-gaim_gtk_notify_userinfo(GaimConnection *gc, const char *who,
+pidgin_notify_userinfo(GaimConnection *gc, const char *who,
 						 GaimNotifyUserInfo *user_info)
 {
 	char *primary, *info;
@@ -855,14 +855,14 @@ gaim_gtk_notify_userinfo(GaimConnection *gc, const char *who,
 
 	primary = g_strdup_printf(_("Info for %s"), who);
 	info = gaim_notify_user_info_get_text_with_newline(user_info, "<br />");
-	ui_handle = gaim_gtk_notify_formatted(_("Buddy Information"), primary, NULL, info);
+	ui_handle = pidgin_notify_formatted(_("Buddy Information"), primary, NULL, info);
 	g_free(info);
 	g_free(primary);
 	return ui_handle;
 }
 
 static void
-gaim_gtk_close_notify(GaimNotifyType type, void *ui_handle)
+pidgin_close_notify(GaimNotifyType type, void *ui_handle)
 {
 	if (type == GAIM_NOTIFY_EMAIL || type == GAIM_NOTIFY_EMAILS)
 	{
@@ -934,7 +934,7 @@ uri_command(const char *command, gboolean sync)
 #endif /* _WIN32 */
 
 static void *
-gaim_gtk_notify_uri(const char *uri)
+pidgin_notify_uri(const char *uri)
 {
 #ifndef _WIN32
 	char *escaped = g_shell_quote(uri);
@@ -1094,19 +1094,19 @@ gaim_gtk_notify_uri(const char *uri)
 
 static GaimNotifyUiOps ops =
 {
-	gaim_gtk_notify_message,
-	gaim_gtk_notify_email,
-	gaim_gtk_notify_emails,
-	gaim_gtk_notify_formatted,
-	gaim_gtk_notify_searchresults,
-	gaim_gtk_notify_searchresults_new_rows,
-	gaim_gtk_notify_userinfo,
-	gaim_gtk_notify_uri,
-	gaim_gtk_close_notify
+	pidgin_notify_message,
+	pidgin_notify_email,
+	pidgin_notify_emails,
+	pidgin_notify_formatted,
+	pidgin_notify_searchresults,
+	pidgin_notify_searchresults_new_rows,
+	pidgin_notify_userinfo,
+	pidgin_notify_uri,
+	pidgin_close_notify
 };
 
 GaimNotifyUiOps *
-gaim_gtk_notify_get_ui_ops(void)
+pidgin_notify_get_ui_ops(void)
 {
 	return &ops;
 }

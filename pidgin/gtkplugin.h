@@ -22,32 +22,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKPLUGIN_H_
-#define _GAIM_GTKPLUGIN_H_
+#ifndef _PIDGINPLUGIN_H_
+#define _PIDGINPLUGIN_H_
 
 #include "gtkgaim.h"
 #include "plugin.h"
 
-typedef struct _GaimGtkPluginUiInfo GaimGtkPluginUiInfo;
+typedef struct _PidginPluginUiInfo PidginPluginUiInfo;
 
 /**
  * A GTK+ UI structure for plugins.
  */
-struct _GaimGtkPluginUiInfo
+struct _PidginPluginUiInfo
 {
 	GtkWidget *(*get_config_frame)(GaimPlugin *plugin);
 
 	int page_num;                                         /**< Reserved */
 };
 
-#define GAIM_GTK_PLUGIN_TYPE GAIM_GTK_UI
+#define PIDGIN_PLUGIN_TYPE PIDGIN_UI
 
 #define GAIM_IS_GTK_PLUGIN(plugin) \
 	((plugin)->info != NULL && (plugin)->info->ui_info != NULL && \
-	 !strcmp((plugin)->info->ui_requirement, GAIM_GTK_PLUGIN_TYPE))
+	 !strcmp((plugin)->info->ui_requirement, PIDGIN_PLUGIN_TYPE))
 
-#define GAIM_GTK_PLUGIN_UI_INFO(plugin) \
-	((GaimGtkPluginUiInfo *)(plugin)->info->ui_info)
+#define PIDGIN_PLUGIN_UI_INFO(plugin) \
+	((PidginPluginUiInfo *)(plugin)->info->ui_info)
 
 /**
  * Returns the configuration frame widget for a GTK+ plugin, if one
@@ -58,16 +58,16 @@ struct _GaimGtkPluginUiInfo
  * @return The frame, if the plugin is a GTK+ plugin and provides a
  *         configuration frame.
  */
-GtkWidget *gaim_gtk_plugin_get_config_frame(GaimPlugin *plugin);
+GtkWidget *pidgin_plugin_get_config_frame(GaimPlugin *plugin);
 
 /**
  * Saves all loaded plugins.
  */
-void gaim_gtk_plugins_save(void);
+void pidgin_plugins_save(void);
 
 /**
  * Shows the Plugins dialog
  */
-void gaim_gtk_plugin_dialog_show(void);
+void pidgin_plugin_dialog_show(void);
 
-#endif /* _GAIM_GTKPLUGIN_H_ */
+#endif /* _PIDGINPLUGIN_H_ */

@@ -84,7 +84,7 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 		else
 			break;
 
-		gaim_gtk_docklet_clicked(type);
+		pidgin_docklet_clicked(type);
 		break;
 	}
 	default:
@@ -136,7 +136,7 @@ static void systray_init_icon(HWND hWnd, HICON icon) {
 	wgaim_nid.hIcon = icon;
 	lstrcpy(wgaim_nid.szTip, PIDGIN_NAME);
 	Shell_NotifyIcon(NIM_ADD, &wgaim_nid);
-	gaim_gtk_docklet_embedded();
+	pidgin_docklet_embedded();
 }
 
 static void systray_change_icon(HICON icon) {
@@ -186,11 +186,11 @@ static void wgaim_tray_set_tooltip(gchar *tooltip) {
 	Shell_NotifyIcon(NIM_MODIFY, &wgaim_nid);
 }
 
-static void wgaim_tray_minimize(GaimGtkBuddyList *gtkblist) {
+static void wgaim_tray_minimize(PidginBuddyList *gtkblist) {
 	MinimizeWndToTray(GDK_WINDOW_HWND(gtkblist->window->window));
 }
 
-static void wgaim_tray_maximize(GaimGtkBuddyList *gtkblist) {
+static void wgaim_tray_maximize(PidginBuddyList *gtkblist) {
 	RestoreWndFromTray(GDK_WINDOW_HWND(gtkblist->window->window));
 }
 
@@ -228,10 +228,10 @@ static void wgaim_tray_create() {
 	/* Create icon in systray */
 	systray_init_icon(systray_hwnd, sysicon_disconn);
 
-	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-hiding",
-			gaim_gtk_docklet_get_handle(), GAIM_CALLBACK(wgaim_tray_minimize), NULL);
-	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-unhiding",
-			gaim_gtk_docklet_get_handle(), GAIM_CALLBACK(wgaim_tray_maximize), NULL);
+	gaim_signal_connect(pidgin_blist_get_handle(), "gtkblist-hiding",
+			pidgin_docklet_get_handle(), GAIM_CALLBACK(wgaim_tray_minimize), NULL);
+	gaim_signal_connect(pidgin_blist_get_handle(), "gtkblist-unhiding",
+			pidgin_docklet_get_handle(), GAIM_CALLBACK(wgaim_tray_maximize), NULL);
 
 	gaim_debug(GAIM_DEBUG_INFO, "docklet", "created\n");
 }
@@ -239,7 +239,7 @@ static void wgaim_tray_create() {
 static void wgaim_tray_destroy() {
 	systray_remove_nid();
 	DestroyWindow(systray_hwnd);
-	gaim_gtk_docklet_remove();
+	pidgin_docklet_remove();
 }
 
 static struct docklet_ui_ops wgaim_tray_ops =
@@ -254,5 +254,5 @@ static struct docklet_ui_ops wgaim_tray_ops =
 
 /* Used by docklet's plugin load func */
 void docklet_ui_init() {
-	gaim_gtk_docklet_set_ui_ops(&wgaim_tray_ops);
+	pidgin_docklet_set_ui_ops(&wgaim_tray_ops);
 }

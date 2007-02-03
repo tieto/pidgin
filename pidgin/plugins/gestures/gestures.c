@@ -38,7 +38,7 @@ static void
 stroke_close(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
+	PidginConversation *gtkconv;
 
 	conv = (GaimConversation *)data;
 
@@ -46,14 +46,14 @@ stroke_close(GtkWidget *widget, void *data)
 	if (!GAIM_IS_GTK_CONVERSATION(conv))
 		return;
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	gstroke_cleanup(gtkconv->imhtml);
 	gaim_conversation_destroy(conv);
 }
 
 static void
-switch_page(GaimGtkWindow *win, GtkDirectionType dir)
+switch_page(PidginWindow *win, GtkDirectionType dir)
 {
 	int count, current;
 
@@ -81,11 +81,11 @@ static void
 stroke_prev_tab(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
-	GaimGtkWindow *win;
+	PidginConversation *gtkconv;
+	PidginWindow *win;
 
 	conv  = (GaimConversation *)data;
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkconv = PIDGIN_CONVERSATION(conv);
 	win   = gtkconv->win;
 
 	switch_page(win, GTK_DIR_LEFT);
@@ -95,10 +95,10 @@ static void
 stroke_next_tab(GtkWidget *widget, void *data)
 {
 	GaimConversation *conv;
-	GaimGtkWindow *win;
+	PidginWindow *win;
 
 	conv  = (GaimConversation *)data;
-	win   = GAIM_GTK_CONVERSATION(conv)->win;
+	win   = PIDGIN_CONVERSATION(conv)->win;
 
 	switch_page(win, GTK_DIR_RIGHT);
 }
@@ -106,29 +106,29 @@ stroke_next_tab(GtkWidget *widget, void *data)
 static void
 stroke_new_win(GtkWidget *widget, void *data)
 {
-	GaimGtkWindow *new_win, *old_win;
+	PidginWindow *new_win, *old_win;
 	GaimConversation *conv;
 
 	conv    = (GaimConversation *)data;
-	old_win = GAIM_GTK_CONVERSATION(conv)->win;
+	old_win = PIDGIN_CONVERSATION(conv)->win;
 
-	if (gaim_gtk_conv_window_get_gtkconv_count(old_win) <= 1)
+	if (pidgin_conv_window_get_gtkconv_count(old_win) <= 1)
 		return;
 
-	new_win = gaim_gtk_conv_window_new();
+	new_win = pidgin_conv_window_new();
 
-	gaim_gtk_conv_window_remove_gtkconv(old_win, GAIM_GTK_CONVERSATION(conv));
-	gaim_gtk_conv_window_add_gtkconv(new_win, GAIM_GTK_CONVERSATION(conv));
+	pidgin_conv_window_remove_gtkconv(old_win, PIDGIN_CONVERSATION(conv));
+	pidgin_conv_window_add_gtkconv(new_win, PIDGIN_CONVERSATION(conv));
 
-	gaim_gtk_conv_window_show(new_win);
+	pidgin_conv_window_show(new_win);
 }
 
 static void
 attach_signals(GaimConversation *conv)
 {
-	GaimGtkConversation *gtkconv;
+	PidginConversation *gtkconv;
 
-	gtkconv = GAIM_GTK_CONVERSATION(conv);
+	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	gstroke_enable(gtkconv->imhtml);
 	gstroke_signal_connect(gtkconv->imhtml, "14789",  stroke_close,    conv);
@@ -198,7 +198,7 @@ static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
 	GaimConversation *conv;
-	GaimGtkConversation *gtkconv;
+	PidginConversation *gtkconv;
 	GList *l;
 
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
@@ -207,7 +207,7 @@ plugin_unload(GaimPlugin *plugin)
 		if (!GAIM_IS_GTK_CONVERSATION(conv))
 			continue;
 
-		gtkconv = GAIM_GTK_CONVERSATION(conv);
+		gtkconv = PIDGIN_CONVERSATION(conv);
 
 		gstroke_cleanup(gtkconv->imhtml);
 		gstroke_disable(gtkconv->imhtml);
@@ -232,7 +232,7 @@ get_config_frame(GaimPlugin *plugin)
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
 
 	/* Configuration frame */
-	vbox = gaim_gtk_make_frame(ret, _("Mouse Gestures Configuration"));
+	vbox = pidgin_make_frame(ret, _("Mouse Gestures Configuration"));
 
 #if 0
 	/* Mouse button drop-down menu */
@@ -268,7 +268,7 @@ get_config_frame(GaimPlugin *plugin)
 	return ret;
 }
 
-static GaimGtkPluginUiInfo ui_info =
+static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,
 	0 /* page_num (Reserved) */
@@ -280,7 +280,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */

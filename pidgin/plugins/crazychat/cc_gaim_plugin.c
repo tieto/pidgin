@@ -130,14 +130,14 @@ static gboolean plugin_unload(GaimPlugin *plugin);
 
 #define CRAZYCHAT_PLUGIN_ID "gtk-crazychat"
 
-static GaimGtkPluginUiInfo ui_info = {
+static PidginPluginUiInfo ui_info = {
 	get_config_frame				/**< get_config_frame */
 };
 
 static GaimPluginInfo info = {
 	2,						  /**< api_version    */
 	GAIM_PLUGIN_STANDARD,				  /**< type           */
-	GAIM_GTK_PLUGIN_TYPE,				  /**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,				  /**< ui_requirement */
 	0,						  /**< flags          */
 	NULL,						  /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,				  /**< priority       */
@@ -292,7 +292,7 @@ static GtkWidget *get_config_frame(GaimPlugin *plugin)
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
 
 	/* make the network configuration frame */
-	frame = gaim_gtk_make_frame(ret, _("Network Configuration"));
+	frame = pidgin_make_frame(ret, _("Network Configuration"));
 	gtk_widget_show(frame);
 
 	/* add boxes for packing purposes */
@@ -326,7 +326,7 @@ static GtkWidget *get_config_frame(GaimPlugin *plugin)
 	gtk_widget_show(spinner);
 
 	/* make the feature configuration frame */
-	frame = gaim_gtk_make_frame(ret, _("Feature Calibration"));
+	frame = pidgin_make_frame(ret, _("Feature Calibration"));
 	gtk_widget_show(frame);
 
 	/* add hbox for packing purposes */
@@ -412,7 +412,7 @@ static gboolean cc_signed_on(GaimConnection *gc, void *plugin)
 	gaim_signal_disconnect
 	    (gaim_connections_get_handle(), "signed-on",
 	     plugin, GAIM_CALLBACK(cc_signed_on));
-	gaim_signal_connect(GAIM_GTK_BLIST
+	gaim_signal_connect(PIDGIN_BLIST
 			    (gaim_get_blist()),
 			    "drawing-menu", plugin,
 			    GAIM_CALLBACK(cc_buddy_menu), NULL);
@@ -435,7 +435,7 @@ static gboolean plugin_load(GaimPlugin *plugin)
 	cc_init(&cc_info);
 	buddy_list = gaim_get_blist();
 	if (buddy_list) {
-		gaim_signal_connect(GAIM_GTK_BLIST
+		gaim_signal_connect(PIDGIN_BLIST
 				    (buddy_list),
 				    "drawing-menu", plugin,
 				    GAIM_CALLBACK(cc_buddy_menu), NULL);
@@ -463,7 +463,7 @@ static gboolean plugin_unload(GaimPlugin *plugin)
 	extra = (struct crazychat*) plugin->info->extra_info;
 	cc_destroy(extra);
 	conv_handle = gaim_conversations_get_handle();
-	gaim_signal_disconnect(GAIM_GTK_BLIST
+	gaim_signal_disconnect(PIDGIN_BLIST
 			       (gaim_get_blist()),
 			       "drawing-menu", plugin,
 			       GAIM_CALLBACK(cc_buddy_menu));

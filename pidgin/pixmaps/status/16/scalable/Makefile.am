@@ -5,6 +5,7 @@ EXTRA_DIST = 	available.svg \
 		extended-away.svg \
 		log-in.svg \
 		log-out.svg \
+		message-pending.svg \
 		offline.svg \
 		person.svg
 

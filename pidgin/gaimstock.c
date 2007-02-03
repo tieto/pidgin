@@ -146,18 +146,22 @@ static struct SizedStockIcon {
   gboolean medium;
   gboolean huge;
 } const sized_stock_icons [] = {
-	{ PIDGIN_STOCK_STATUS_AVAILABLE,"status", "available.png", 	TRUE, TRUE, TRUE, FALSE },
-	{ PIDGIN_STOCK_STATUS_AWAY, 	"status", "away.png", 		TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_AVAILABLE,   "status", "available.png", 	TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_AVAILABLE_I, "status", "available_i.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_STATUS_AWAY, 	   "status", "away.png",	TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_AWAY_I, 	"status", "away_i.png",		TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_BUSY, 	"status", "busy.png", 		TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_BUSY_I, 	"status", "busy_i.png", 	TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_CHAT, 	"status", "chat.png",		TRUE, TRUE, TRUE, FALSE },
-	{ PIDGIN_STOCK_STATUS_INVISIBLE,"status", "invisible.png",      TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_XA, 	"status", "extended-away.png",	TRUE, TRUE, TRUE, FALSE },
+	{ PIDGIN_STOCK_STATUS_XA_I, 	"status", "extended-away_i.png",TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_LOGIN, 	"status", "log-in.png",		TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_LOGOUT, 	"status", "log-out.png",	TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_OFFLINE, 	"status", "offline.png",	TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_PERSON, 	"status", "person.png",		TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_OPERATOR,	"status", "operator.png",	TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_HALFOP, 	"status", "half-operator.png",	TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_STATUS_MESSAGE, 	"status", "message-pending.png",TRUE, FALSE, FALSE, FALSE },
 
 	{ PIDGIN_STOCK_DIALOG_AUTH,	"dialogs", "auth.png",		TRUE, FALSE, FALSE, TRUE },
 	{ PIDGIN_STOCK_DIALOG_COOL,	"dialogs", "cool.png", 		FALSE, FALSE, FALSE, TRUE },
@@ -216,7 +220,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir,
 }
 
 void
-gaim_gtk_stock_init(void)
+pidgin_stock_init(void)
 {
 	static gboolean stock_initted = FALSE;
 	GtkIconFactory *icon_factory;

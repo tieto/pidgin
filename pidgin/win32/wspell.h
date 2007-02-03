@@ -24,26 +24,26 @@
 #define _WSPELL_H_
 #include <gtkspell/gtkspell.h>
 
-void wgaim_gtkspell_init(void);
+void wpidginspell_init(void);
 
-extern GtkSpell* (*wgaim_gtkspell_new_attach)(GtkTextView*, const gchar*, GError**);
+extern GtkSpell* (*wpidginspell_new_attach)(GtkTextView*, const gchar*, GError**);
 #define gtkspell_new_attach( view, lang, error ) \
-wgaim_gtkspell_new_attach( view, lang, error )
+wpidginspell_new_attach( view, lang, error )
 
-extern GtkSpell* (*wgaim_gtkspell_get_from_text_view)(GtkTextView*);
+extern GtkSpell* (*wpidginspell_get_from_text_view)(GtkTextView*);
 #define gtkspell_get_from_text_view( view ) \
-wgaim_gtkspell_get_from_text_view( view )
+wpidginspell_get_from_text_view( view )
 
-extern void (*wgaim_gtkspell_detach)(GtkSpell*);
+extern void (*wpidginspell_detach)(GtkSpell*);
 #define gtkspell_detach( spell ) \
-wgaim_gtkspell_detach( spell )
+wpidginspell_detach( spell )
 
-extern gboolean (*wgaim_gtkspell_set_language)(GtkSpell*,	const gchar*, GError**);
+extern gboolean (*wpidginspell_set_language)(GtkSpell*,	const gchar*, GError**);
 #define gtkspell_set_language( spell, lang, error ) \
-wgaim_gtkspell_set_language( spell, lang, error )
+wpidginspell_set_language( spell, lang, error )
 
-extern void (*wgaim_gtkspell_recheck_all)(GtkSpell*);
+extern void (*wpidginspell_recheck_all)(GtkSpell*);
 #define gtkspell_recheck_all( spell ) \
-wgaim_gtkspell_recheck_all( spell )
+wpidginspell_recheck_all( spell )
 
 #endif /* _WSPELL_H_ */

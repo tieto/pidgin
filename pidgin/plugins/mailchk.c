@@ -60,12 +60,12 @@ check_timeout(gpointer data)
 	if (count == -1)
 		return FALSE;
 
-	if (!list || !GAIM_IS_GTK_BLIST(list) || !(GAIM_GTK_BLIST(list)->vbox))
+	if (!list || !GAIM_IS_GTK_BLIST(list) || !(PIDGIN_BLIST(list)->vbox))
 		return TRUE;
 
 	if (!mail) {
 		/* guess we better build it then :P */
-		GtkWidget *vbox = GAIM_GTK_BLIST(list)->vbox;
+		GtkWidget *vbox = PIDGIN_BLIST(list)->vbox;
 
 		mail = gtk_label_new("No mail messages.");
 		gtk_box_pack_start(GTK_BOX(vbox), mail, FALSE, FALSE, 0);
@@ -101,7 +101,7 @@ static void
 signoff_cb(GaimConnection *gc)
 {
 	GaimBuddyList *list = gaim_get_blist();
-	if ((!list || !GAIM_IS_GTK_BLIST(list) || !GAIM_GTK_BLIST(list)->vbox) && timer) {
+	if ((!list || !GAIM_IS_GTK_BLIST(list) || !PIDGIN_BLIST(list)->vbox) && timer) {
 		g_source_remove(timer);
 		timer = 0;
 	}
@@ -122,7 +122,7 @@ plugin_load(GaimPlugin *plugin)
 		return FALSE;
 	}
 
-	if (list && GAIM_IS_GTK_BLIST(list) && GAIM_GTK_BLIST(list)->vbox)
+	if (list && GAIM_IS_GTK_BLIST(list) && PIDGIN_BLIST(list)->vbox)
 		timer = g_timeout_add(2000, check_timeout, NULL);
 
 	gaim_signal_connect(conn_handle, "signed-on",
@@ -152,7 +152,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,
-	GAIM_GTK_PLUGIN_TYPE,
+	PIDGIN_PLUGIN_TYPE,
 	0,
 	NULL,
 	GAIM_PRIORITY_DEFAULT,

@@ -23,8 +23,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /* #warning ***gtkgaim*** */
-#ifndef _GAIM_GTKGAIM_H_
-#define _GAIM_GTKGAIM_H_
+#ifndef _PIDGINGAIM_H_
+#define _PIDGINGAIM_H_
 
 #ifndef _WIN32
 # include <gdk/gdkx.h>
@@ -39,7 +39,7 @@
 /**
  * Our UI's identifier.
  */
-#define GAIM_GTK_UI "gtk-gaim"
+#define PIDGIN_UI "gtk-gaim"
 
 #ifndef _WIN32
 # define GAIM_ALERT_TITLE ""
@@ -88,5 +88,5 @@
  */
 #define GAIM_INVISIBLE_CHAR (gunichar)0x2022
 
-#endif /* _GAIM_GTKGAIM_H_ */
+#endif /* _PIDGINGAIM_H_ */
 

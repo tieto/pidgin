@@ -95,18 +95,22 @@
 #define GAIM_STOCK_VOICE_CHAT      "gaim-voice-chat"
 
 /* Status icons */
-#define PIDGIN_STOCK_STATUS_AVAILABLE "pidgin-status-available"
-#define PIDGIN_STOCK_STATUS_AWAY      "pidgin-status-away"
-#define PIDGIN_STOCK_STATUS_BUSY      "pidgin-status-busy"
-#define PIDGIN_STOCK_STATUS_CHAT      "pidgin-status-chat"
-#define PIDGIN_STOCK_STATUS_INVISIBLE "pidgin-status-invisible"
-#define PIDGIN_STOCK_STATUS_XA        "pidgin-status-xa"
-#define PIDGIN_STOCK_STATUS_LOGIN     "pidgin-status-login"
-#define PIDGIN_STOCK_STATUS_LOGOUT    "pidgin-status-logout"
-#define PIDGIN_STOCK_STATUS_OFFLINE   "pidgin-status-offline"
-#define PIDGIN_STOCK_STATUS_PERSON    "pidgin-status-person"
-#define PIDGIN_STOCK_STATUS_OPERATOR  "pidgin-status-operator"
-#define PIDGIN_STOCK_STATUS_HALFOP    "pidgin-status-halfop"
+#define PIDGIN_STOCK_STATUS_AVAILABLE  "pidgin-status-available"
+#define PIDGIN_STOCK_STATUS_AVAILABLE_I "pidgin-status-available-i"
+#define PIDGIN_STOCK_STATUS_AWAY       "pidgin-status-away"
+#define PIDGIN_STOCK_STATUS_AWAY_I     "pidgin-status-away-i"
+#define PIDGIN_STOCK_STATUS_BUSY       "pidgin-status-busy"
+#define PIDGIN_STOCK_STATUS_BUSY_I     "pidgin-status-busy-i"
+#define PIDGIN_STOCK_STATUS_CHAT       "pidgin-status-chat"
+#define PIDGIN_STOCK_STATUS_XA         "pidgin-status-xa"
+#define PIDGIN_STOCK_STATUS_XA_I       "pidgin-status-xa-i"
+#define PIDGIN_STOCK_STATUS_LOGIN      "pidgin-status-login"
+#define PIDGIN_STOCK_STATUS_LOGOUT     "pidgin-status-logout"
+#define PIDGIN_STOCK_STATUS_OFFLINE    "pidgin-status-offline"
+#define PIDGIN_STOCK_STATUS_PERSON     "pidgin-status-person"
+#define PIDGIN_STOCK_STATUS_OPERATOR   "pidgin-status-operator"
+#define PIDGIN_STOCK_STATUS_HALFOP     "pidgin-status-halfop"
+#define PIDGIN_STOCK_STATUS_MESSAGE    "pidgin-status-message"
 
 /* Dialog icons */
 #define PIDGIN_STOCK_DIALOG_AUTH	"pidgin-dialog-auth"
@@ -139,6 +143,6 @@
 /**
  * Sets up the gaim stock repository.
  */
-void gaim_gtk_stock_init(void);
+void pidgin_stock_init(void);
 
 #endif /* _GAIM_STOCK_H_ */

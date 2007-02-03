@@ -285,7 +285,7 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 	{
 		/* Add the account type stuff. */
 		dialog->accounts_menu =
-			gaim_gtk_account_option_menu_new(account, FALSE,
+			pidgin_account_option_menu_new(account, FALSE,
 											 G_CALLBACK(select_account_cb),
 											 NULL, dialog);
 		add_pref_box(sg, vbox, _("Account type:"), dialog->accounts_menu);

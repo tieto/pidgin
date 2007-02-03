@@ -59,7 +59,7 @@ docklet_x11_embedded_cb(GtkWidget *widget, void *data)
 	
 	g_source_remove(embed_timeout);
 	embed_timeout = 0;
-	gaim_gtk_docklet_embedded();
+	pidgin_docklet_embedded();
 }
 
 static void
@@ -67,7 +67,7 @@ docklet_x11_destroyed_cb(GtkWidget *widget, void *data)
 {
 	gaim_debug(GAIM_DEBUG_INFO, "docklet", "destroyed\n");
 
-	gaim_gtk_docklet_remove();
+	pidgin_docklet_remove();
 
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
@@ -81,7 +81,7 @@ docklet_x11_clicked_cb(GtkWidget *button, GdkEventButton *event, void *data)
 	if (event->type != GDK_BUTTON_RELEASE)
 		return;
 
-	gaim_gtk_docklet_clicked(event->button);
+	pidgin_docklet_clicked(event->button);
 }
 
 static void
@@ -210,7 +210,7 @@ docklet_x11_destroy()
 	if (embed_timeout)
 		g_source_remove(embed_timeout);
 	
-	gaim_gtk_docklet_remove();
+	pidgin_docklet_remove();
 	
 	g_signal_handlers_disconnect_by_func(G_OBJECT(docklet), G_CALLBACK(docklet_x11_destroyed_cb), NULL);
 	gtk_widget_destroy(GTK_WIDGET(docklet));
@@ -236,7 +236,7 @@ docklet_x11_embed_timeout_cb()
 	 * area becomes available.
 	 */
 	gaim_debug_info("docklet", "failed to embed within timeout\n");
-	gaim_gtk_docklet_remove();
+	pidgin_docklet_remove();
 	
 	return FALSE;
 }
@@ -280,7 +280,7 @@ docklet_x11_create()
 	 * get embedded.  Ideally, we would only call docklet_embedded() when the
 	 * icon was actually embedded.
 	 */
-	gaim_gtk_docklet_embedded();
+	pidgin_docklet_embedded();
 	embed_timeout = g_timeout_add(EMBED_TIMEOUT, docklet_x11_embed_timeout_cb, NULL);
 
 	gaim_debug(GAIM_DEBUG_INFO, "docklet", "created\n");
@@ -303,5 +303,5 @@ static struct docklet_ui_ops ui_ops =
 void
 docklet_ui_init()
 {
-	gaim_gtk_docklet_set_ui_ops(&ui_ops);
+	pidgin_docklet_set_ui_ops(&ui_ops);
 }

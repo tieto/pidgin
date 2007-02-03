@@ -173,7 +173,7 @@ static gboolean listen_for_blist_visible_cb(gpointer data) {
 static void blist_create_cb(GaimBuddyList *gaim_blist, void *data) {
 	gaim_debug_info(WINPREFS_PLUGIN_ID, "buddy list created\n");
 
-	blist = GAIM_GTK_BLIST(gaim_blist)->window;
+	blist = PIDGIN_BLIST(gaim_blist)->window;
 
 	if(gaim_prefs_get_bool(PREF_DBLIST_DOCKABLE)) {
 		blist_set_dockable(TRUE);
@@ -252,17 +252,17 @@ static gboolean plugin_load(GaimPlugin *plugin) {
 	handle = plugin;
 
 	/* blist docking init */
-	if(gaim_get_blist() && GAIM_GTK_BLIST(gaim_get_blist())
-			&& GAIM_GTK_BLIST(gaim_get_blist())->window) {
+	if(gaim_get_blist() && PIDGIN_BLIST(gaim_get_blist())
+			&& PIDGIN_BLIST(gaim_get_blist())->window) {
 		blist_create_cb(gaim_get_blist(), NULL);
 	}
 
 	/* This really shouldn't happen anymore generally, but if for some strange
 	   reason, the blist is recreated, we need to set it up again. */
-	gaim_signal_connect(gaim_gtk_blist_get_handle(), "gtkblist-created",
+	gaim_signal_connect(pidgin_blist_get_handle(), "gtkblist-created",
 		plugin, GAIM_CALLBACK(blist_create_cb), NULL);
 
-	gaim_signal_connect(gaim_gtk_conversations_get_handle(),
+	gaim_signal_connect(pidgin_conversations_get_handle(),
 		"displaying-chat-msg", plugin, GAIM_CALLBACK(gtkwgaim_conv_chat_blink),
 		NULL);
 
@@ -303,7 +303,7 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	/* Display Installed GTK+ Runtime Version */
 	if(gtk_version) {
 		GtkWidget *label;
-		vbox = gaim_gtk_make_frame(ret, _("GTK+ Runtime Version"));
+		vbox = pidgin_make_frame(ret, _("GTK+ Runtime Version"));
 		label = gtk_label_new(gtk_version);
 		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 		gtk_widget_show(label);
@@ -311,7 +311,7 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	}
 
 	/* Autostart */
-	vbox = gaim_gtk_make_frame(ret, _("Startup"));
+	vbox = pidgin_make_frame(ret, _("Startup"));
 	button = gtk_check_button_new_with_mnemonic(_("_Start " PIDGIN_NAME " on Windows startup"));
 	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
 
@@ -324,12 +324,12 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	gtk_widget_show(button);
 
 	/* Buddy List */
-	vbox = gaim_gtk_make_frame(ret, _("Buddy List"));
-	gaim_gtk_prefs_checkbox(_("_Dockable Buddy List"),
+	vbox = pidgin_make_frame(ret, _("Buddy List"));
+	pidgin_prefs_checkbox(_("_Dockable Buddy List"),
 							PREF_DBLIST_DOCKABLE, vbox);
 
 	/* Blist On Top */
-	gaim_gtk_prefs_dropdown(vbox, _("_Keep Buddy List window on top:"),
+	pidgin_prefs_dropdown(vbox, _("_Keep Buddy List window on top:"),
 		GAIM_PREF_INT, PREF_BLIST_ON_TOP,
 		_("Never"), BLIST_TOP_NEVER,
 		_("Always"), BLIST_TOP_ALWAYS,
@@ -338,15 +338,15 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 		NULL);
 
 	/* Conversations */
-	vbox = gaim_gtk_make_frame(ret, _("Conversations"));
-	gaim_gtk_prefs_checkbox(_("_Flash window when chat messages are received"),
+	vbox = pidgin_make_frame(ret, _("Conversations"));
+	pidgin_prefs_checkbox(_("_Flash window when chat messages are received"),
 							PREF_CHAT_BLINK, vbox);
 
 	gtk_widget_show_all(ret);
 	return ret;
 }
 
-static GaimGtkPluginUiInfo ui_info =
+static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,
 	0
@@ -358,7 +358,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,
-	GAIM_GTK_PLUGIN_TYPE,
+	PIDGIN_PLUGIN_TYPE,
 	0,
 	NULL,
 	GAIM_PRIORITY_DEFAULT,

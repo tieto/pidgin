@@ -87,7 +87,7 @@ get_config_frame(GaimPlugin *plugin)
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
 
-	frame = gaim_gtk_make_frame(ret, _("Point values to use when..."));
+	frame = pidgin_make_frame(ret, _("Point values to use when..."));
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
@@ -127,7 +127,7 @@ get_config_frame(GaimPlugin *plugin)
 	g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(pref_update), "/core/contact/last_match");
 	gtk_box_pack_start(GTK_BOX(hbox), check, FALSE, FALSE, 0);
 
-	frame = gaim_gtk_make_frame(ret, _("Point values to use for account..."));
+	frame = pidgin_make_frame(ret, _("Point values to use for account..."));
 
 	vbox = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
@@ -141,7 +141,7 @@ get_config_frame(GaimPlugin *plugin)
 	adj = gtk_adjustment_new(0, -500, 500, 1, 1, 1);
 	spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
 
-	optmenu = gaim_gtk_account_option_menu_new(NULL, TRUE,
+	optmenu = pidgin_account_option_menu_new(NULL, TRUE,
 																						 G_CALLBACK(select_account),
 																						 NULL, spin);
 	gtk_box_pack_start(GTK_BOX(hbox), optmenu, FALSE, FALSE, 0);
@@ -161,7 +161,7 @@ get_config_frame(GaimPlugin *plugin)
 	return ret;
 }
 
-static GaimGtkPluginUiInfo ui_info =
+static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,
 	0 /* page_num (Reserved) */
@@ -173,7 +173,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */

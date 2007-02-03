@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKTHEMES_H_
-#define _GAIM_GTKTHEMES_H_
+#ifndef _PIDGINTHEMES_H_
+#define _PIDGINTHEMES_H_
 
 struct smiley_list {
 	char *sml;
@@ -44,10 +44,10 @@ struct smiley_theme {
 extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
 
-void gaim_gtkthemes_init(void);
-gboolean gaim_gtkthemes_smileys_disabled(void);
-void gaim_gtkthemes_smiley_themeize(GtkWidget *);
-void gaim_gtkthemes_smiley_theme_probe(void);
-void gaim_gtkthemes_load_smiley_theme(const char *file, gboolean load);
-GSList *gaim_gtkthemes_get_proto_smileys(const char *id);
-#endif /* _GAIM_GTKDIALOGS_H_ */
+void pidginthemes_init(void);
+gboolean pidginthemes_smileys_disabled(void);
+void pidginthemes_smiley_themeize(GtkWidget *);
+void pidginthemes_smiley_theme_probe(void);
+void pidginthemes_load_smiley_theme(const char *file, gboolean load);
+GSList *pidginthemes_get_proto_smileys(const char *id);
+#endif /* _PIDGINDIALOGS_H_ */

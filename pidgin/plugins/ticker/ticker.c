@@ -116,7 +116,7 @@ static void buddy_ticker_set_pixmap(GaimContact *c) {
 	if(!td->icon)
 		td->icon = gtk_image_new();
 
-	pixbuf = gaim_gtk_blist_get_status_icon((GaimBlistNode*)c,
+	pixbuf = pidgin_blist_get_status_icon((GaimBlistNode*)c,
 			GAIM_STATUS_ICON_SMALL);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(td->icon), pixbuf);
 	g_object_unref(G_OBJECT(pixbuf));
@@ -346,7 +346,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */

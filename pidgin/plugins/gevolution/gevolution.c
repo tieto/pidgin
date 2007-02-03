@@ -408,7 +408,7 @@ get_config_frame(GaimPlugin *plugin)
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
 
 	/* Configuration frame */
-	vbox = gaim_gtk_make_frame(ret, _("Evolution Integration Configuration"));
+	vbox = pidgin_make_frame(ret, _("Evolution Integration Configuration"));
 
 	/* Label */
 	label = gtk_label_new(_("Select all accounts that buddies should be "
@@ -477,7 +477,7 @@ get_config_frame(GaimPlugin *plugin)
 
 		gtk_list_store_append(model, &iter);
 
-		pixbuf = gaim_gtk_create_prpl_icon(account, 0.5);
+		pixbuf = pidgin_create_prpl_icon(account, 0.5);
 		if ((pixbuf != NULL) && (!gaim_account_is_connected(account)))
 			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
@@ -500,7 +500,7 @@ get_config_frame(GaimPlugin *plugin)
 	return ret;
 }
 
-static GaimGtkPluginUiInfo ui_info =
+static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,	/**< get_config_frame */
 	0			/**< page_num */
@@ -512,7 +512,7 @@ static GaimPluginInfo info =
 	GAIM_MAJOR_VERSION,
 	GAIM_MINOR_VERSION,
 	GAIM_PLUGIN_STANDARD,                             /**< type           */
-	GAIM_GTK_PLUGIN_TYPE,                             /**< ui_requirement */
+	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
 	GAIM_PRIORITY_DEFAULT,                            /**< priority       */

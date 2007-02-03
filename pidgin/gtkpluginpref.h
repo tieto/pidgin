@@ -23,8 +23,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef _GAIM_GTKPLUGINPREF_H_
-#define _GAIM_GTKPLUGINPREF_H_
+#ifndef _PIDGINPLUGINPREF_H_
+#define _PIDGINPLUGINPREF_H_
 
 #include "pluginpref.h"
 
@@ -40,10 +40,10 @@ extern "C" {
  * @param frame GaimPluginPrefFrame
  * @return The gtk preference frame
  */
-GtkWidget *gaim_gtk_plugin_pref_create_frame(GaimPluginPrefFrame *frame);
+GtkWidget *pidgin_plugin_pref_create_frame(GaimPluginPrefFrame *frame);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _GAIM_GTKPLUGINPREF_H_ */
+#endif /* _PIDGINPLUGINPREF_H_ */

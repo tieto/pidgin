@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GTKPOUNCE_H_
-#define _GAIM_GTKPOUNCE_H_
+#ifndef _PIDGINPOUNCE_H_
+#define _PIDGINPOUNCE_H_
 
 #include "pounce.h"
 
@@ -34,29 +34,29 @@
  * @param name       The optional name to pounce on.
  * @param cur_pounce The current buddy pounce, if editing an existing one.
  */
-void gaim_gtk_pounce_editor_show(GaimAccount *account, const char *name,
+void pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 								GaimPounce *cur_pounce);
 
 /**
  * Shows the pounces manager window.
  */
-void gaim_gtk_pounces_manager_show(void);
+void pidgin_pounces_manager_show(void);
 
 /**
  * Hides the pounces manager window.
  */
-void gaim_gtk_pounces_manager_hide(void);
+void pidgin_pounces_manager_hide(void);
 
 /**
  * Returns the gtkpounces handle
  *
  * @return The handle to the GTK+ pounces system
  */
-void *gaim_gtk_pounces_get_handle(void);
+void *pidgin_pounces_get_handle(void);
 
 /**
  * Initializes the GTK+ pounces subsystem.
  */
-void gaim_gtk_pounces_init(void);
+void pidgin_pounces_init(void);
 
-#endif /* _GAIM_GTKPOUNCE_H_ */
+#endif /* _PIDGINPOUNCE_H_ */

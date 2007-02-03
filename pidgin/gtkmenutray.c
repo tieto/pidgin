@@ -46,7 +46,7 @@ static GObjectClass *parent_class = NULL;
  * Item Stuff
  *****************************************************************************/
 static void
-gaim_gtk_menu_tray_select(GtkItem *item) {
+pidgin_menu_tray_select(GtkItem *item) {
 	/* this may look like nothing, but it's really overriding the
 	 * GtkMenuItem's select function so that it doesn't get highlighted like
 	 * a normal menu item would.
@@ -54,7 +54,7 @@ gaim_gtk_menu_tray_select(GtkItem *item) {
 }
 
 static void
-gaim_gtk_menu_tray_deselect(GtkItem *item) {
+pidgin_menu_tray_deselect(GtkItem *item) {
 	/* Probably not necessary, but I'd rather be safe than sorry.  We're
 	 * overridding the select, so it makes sense to override deselect as well.
 	 */
@@ -68,14 +68,14 @@ gaim_gtk_menu_tray_deselect(GtkItem *item) {
  * Object Stuff
  *****************************************************************************/
 static void
-gaim_gtk_menu_tray_get_property(GObject *obj, guint param_id, GValue *value,
+pidgin_menu_tray_get_property(GObject *obj, guint param_id, GValue *value,
 								GParamSpec *pspec)
 {
-	GaimGtkMenuTray *menu_tray = GAIM_GTK_MENU_TRAY(obj);
+	PidginMenuTray *menu_tray = PIDGIN_MENU_TRAY(obj);
 
 	switch(param_id) {
 		case PROP_BOX:
-			g_value_set_object(value, gaim_gtk_menu_tray_get_box(menu_tray));
+			g_value_set_object(value, pidgin_menu_tray_get_box(menu_tray));
 			break;
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID(obj, param_id, pspec);
@@ -84,14 +84,14 @@ gaim_gtk_menu_tray_get_property(GObject *obj, guint param_id, GValue *value,
 }
 
 static void
-gaim_gtk_menu_tray_finalize(GObject *obj) {
+pidgin_menu_tray_finalize(GObject *obj) {
 #if 0
 	/* This _might_ be leaking, but I have a sneaking suspicion that the widget is
 	 * getting destroyed in GtkContainer's finalize function.  But if were are
 	 * leaking here, be sure to figure out why this causes a crash.
 	 *	-- Gary
 	 */
-	GaimGtkMenuTray *tray = GAIM_GTK_MENU_TRAY(obj);
+	PidginMenuTray *tray = PIDGIN_MENU_TRAY(obj);
 
 	if(GTK_IS_WIDGET(tray->tray))
 		gtk_widget_destroy(GTK_WIDGET(tray->tray));
@@ -101,18 +101,18 @@ gaim_gtk_menu_tray_finalize(GObject *obj) {
 }
 
 static void
-gaim_gtk_menu_tray_class_init(GaimGtkMenuTrayClass *klass) {
+pidgin_menu_tray_class_init(PidginMenuTrayClass *klass) {
 	GObjectClass *object_class = G_OBJECT_CLASS(klass);
 	GtkItemClass *item_class = GTK_ITEM_CLASS(klass);
 	GParamSpec *pspec;
 
 	parent_class = g_type_class_peek_parent(klass);
 
-	object_class->finalize = gaim_gtk_menu_tray_finalize;
-	object_class->get_property = gaim_gtk_menu_tray_get_property;
+	object_class->finalize = pidgin_menu_tray_finalize;
+	object_class->get_property = pidgin_menu_tray_get_property;
 
-	item_class->select = gaim_gtk_menu_tray_select;
-	item_class->deselect = gaim_gtk_menu_tray_deselect;
+	item_class->select = pidgin_menu_tray_select;
+	item_class->deselect = pidgin_menu_tray_deselect;
 
 	pspec = g_param_spec_object("box", "The box",
 								"The box",
@@ -122,7 +122,7 @@ gaim_gtk_menu_tray_class_init(GaimGtkMenuTrayClass *klass) {
 }
 
 static void
-gaim_gtk_menu_tray_init(GaimGtkMenuTray *menu_tray) {
+pidgin_menu_tray_init(PidginMenuTray *menu_tray) {
 	GtkWidget *widget = GTK_WIDGET(menu_tray);
 #if GTK_CHECK_VERSION(2,2,0)
 	GtkSettings *settings;
@@ -158,25 +158,25 @@ gaim_gtk_menu_tray_init(GaimGtkMenuTray *menu_tray) {
  * API
  *****************************************************************************/
 GType
-gaim_gtk_menu_tray_get_gtype(void) {
+pidgin_menu_tray_get_gtype(void) {
 	static GType type = 0;
 
 	if(type == 0) {
 		static const GTypeInfo info = {
-			sizeof(GaimGtkMenuTrayClass),
+			sizeof(PidginMenuTrayClass),
 			NULL,
 			NULL,
-			(GClassInitFunc)gaim_gtk_menu_tray_class_init,
+			(GClassInitFunc)pidgin_menu_tray_class_init,
 			NULL,
 			NULL,
-			sizeof(GaimGtkMenuTray),
+			sizeof(PidginMenuTray),
 			0,
-			(GInstanceInitFunc)gaim_gtk_menu_tray_init,
+			(GInstanceInitFunc)pidgin_menu_tray_init,
 			NULL
 		};
 
 		type = g_type_register_static(GTK_TYPE_MENU_ITEM,
-									  "GaimGtkMenuTray",
+									  "PidginMenuTray",
 									  &info, 0);
 	}
 
@@ -184,21 +184,21 @@ gaim_gtk_menu_tray_get_gtype(void) {
 }
 
 GtkWidget *
-gaim_gtk_menu_tray_new() {
-	return g_object_new(GAIM_GTK_TYPE_MENU_TRAY, NULL);
+pidgin_menu_tray_new() {
+	return g_object_new(PIDGIN_TYPE_MENU_TRAY, NULL);
 }
 
 GtkWidget *
-gaim_gtk_menu_tray_get_box(GaimGtkMenuTray *menu_tray) {
-	g_return_val_if_fail(GAIM_GTK_IS_MENU_TRAY(menu_tray), NULL);
+pidgin_menu_tray_get_box(PidginMenuTray *menu_tray) {
+	g_return_val_if_fail(PIDGIN_IS_MENU_TRAY(menu_tray), NULL);
 	return menu_tray->tray;
 }
 
 static void
-gaim_gtk_menu_tray_add(GaimGtkMenuTray *menu_tray, GtkWidget *widget,
+pidgin_menu_tray_add(PidginMenuTray *menu_tray, GtkWidget *widget,
 					   const char *tooltip, gboolean prepend)
 {
-	g_return_if_fail(GAIM_GTK_IS_MENU_TRAY(menu_tray));
+	g_return_if_fail(PIDGIN_IS_MENU_TRAY(menu_tray));
 	g_return_if_fail(GTK_IS_WIDGET(widget));
 
 	if (GTK_WIDGET_NO_WINDOW(widget))
@@ -211,7 +211,7 @@ gaim_gtk_menu_tray_add(GaimGtkMenuTray *menu_tray, GtkWidget *widget,
 		widget = event;
 	}
 
-	gaim_gtk_menu_tray_set_tooltip(menu_tray, widget, tooltip);
+	pidgin_menu_tray_set_tooltip(menu_tray, widget, tooltip);
 
 	if (prepend)
 		gtk_box_pack_start(GTK_BOX(menu_tray->tray), widget, FALSE, FALSE, 0);
@@ -220,19 +220,19 @@ gaim_gtk_menu_tray_add(GaimGtkMenuTray *menu_tray, GtkWidget *widget,
 }
 
 void
-gaim_gtk_menu_tray_append(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
+pidgin_menu_tray_append(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
 {
-	gaim_gtk_menu_tray_add(menu_tray, widget, tooltip, FALSE);
+	pidgin_menu_tray_add(menu_tray, widget, tooltip, FALSE);
 }
 
 void
-gaim_gtk_menu_tray_prepend(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
+pidgin_menu_tray_prepend(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
 {
-	gaim_gtk_menu_tray_add(menu_tray, widget, tooltip, TRUE);
+	pidgin_menu_tray_add(menu_tray, widget, tooltip, TRUE);
 }
 
 void
-gaim_gtk_menu_tray_set_tooltip(GaimGtkMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
+pidgin_menu_tray_set_tooltip(PidginMenuTray *menu_tray, GtkWidget *widget, const char *tooltip)
 {
 	if (!menu_tray->tooltips)
 		return;

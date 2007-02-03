@@ -32,37 +32,37 @@
 /******************************************************************************
  * Prototypes
  *****************************************************************************/
-static void gaim_gtk_whiteboard_create(GaimWhiteboard *wb);
+static void pidgin_whiteboard_create(GaimWhiteboard *wb);
 
-static void gaim_gtk_whiteboard_destroy(GaimWhiteboard *wb);
-static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, GaimGtkWhiteboard *gtkwb);
+static void pidgin_whiteboard_destroy(GaimWhiteboard *wb);
+static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, PidginWhiteboard *gtkwb);
 
-/*static void gaim_gtkwhiteboard_button_start_press(GtkButton *button, gpointer data); */
+/*static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data); */
 
-static gboolean gaim_gtk_whiteboard_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
-static gboolean gaim_gtk_whiteboard_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
+static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
+static gboolean pidgin_whiteboard_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 
-static gboolean gaim_gtk_whiteboard_brush_down(GtkWidget *widget, GdkEventButton *event, gpointer data);
-static gboolean gaim_gtk_whiteboard_brush_motion(GtkWidget *widget, GdkEventMotion *event, gpointer data);
-static gboolean gaim_gtk_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *event, gpointer data);
+static gboolean pidgin_whiteboard_brush_down(GtkWidget *widget, GdkEventButton *event, gpointer data);
+static gboolean pidgin_whiteboard_brush_motion(GtkWidget *widget, GdkEventMotion *event, gpointer data);
+static gboolean pidgin_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *event, gpointer data);
 
-static void gaim_gtk_whiteboard_draw_brush_point(GaimWhiteboard *wb,
+static void pidgin_whiteboard_draw_brush_point(GaimWhiteboard *wb,
 												  int x, int y, int color, int size);
-static void gaim_gtk_whiteboard_draw_brush_line(GaimWhiteboard *wb, int x0, int y0,
+static void pidgin_whiteboard_draw_brush_line(GaimWhiteboard *wb, int x0, int y0,
 												int x1, int y1, int color, int size);
 
-static void gaim_gtk_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int height);
-static void gaim_gtk_whiteboard_set_brush(GaimWhiteboard *wb, int size, int color);
-static void gaim_gtk_whiteboard_clear(GaimWhiteboard *wb);
+static void pidgin_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int height);
+static void pidgin_whiteboard_set_brush(GaimWhiteboard *wb, int size, int color);
+static void pidgin_whiteboard_clear(GaimWhiteboard *wb);
 
-static void gaim_gtk_whiteboard_button_clear_press(GtkWidget *widget, gpointer data);
-static void gaim_gtk_whiteboard_button_save_press(GtkWidget *widget, gpointer data);
+static void pidgin_whiteboard_button_clear_press(GtkWidget *widget, gpointer data);
+static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data);
 
-static void gaim_gtk_whiteboard_set_canvas_as_icon(GaimGtkWhiteboard *gtkwb);
+static void pidgin_whiteboard_set_canvas_as_icon(PidginWhiteboard *gtkwb);
 
-static void gaim_gtk_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color);
+static void pidgin_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color);
 
-static void color_select_dialog(GtkWidget *widget, GaimGtkWhiteboard *gtkwb);
+static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb);
 
 /******************************************************************************
  * Globals
@@ -79,24 +79,24 @@ static int BrushState = BRUSH_STATE_UP;
 
 static GaimWhiteboardUiOps ui_ops =
 {
-	gaim_gtk_whiteboard_create,
-	gaim_gtk_whiteboard_destroy,
-	gaim_gtk_whiteboard_set_dimensions,
-	gaim_gtk_whiteboard_set_brush,
-	gaim_gtk_whiteboard_draw_brush_point,
-	gaim_gtk_whiteboard_draw_brush_line,
-	gaim_gtk_whiteboard_clear
+	pidgin_whiteboard_create,
+	pidgin_whiteboard_destroy,
+	pidgin_whiteboard_set_dimensions,
+	pidgin_whiteboard_set_brush,
+	pidgin_whiteboard_draw_brush_point,
+	pidgin_whiteboard_draw_brush_line,
+	pidgin_whiteboard_clear
 };
 
 /******************************************************************************
  * API
  *****************************************************************************/
-GaimWhiteboardUiOps *gaim_gtk_whiteboard_get_ui_ops(void)
+GaimWhiteboardUiOps *pidgin_whiteboard_get_ui_ops(void)
 {
 	return &ui_ops;
 }
 
-static void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
+static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 {
 	GaimBuddy *buddy;
 	GtkWidget *window;
@@ -119,7 +119,7 @@ static void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 	GtkWidget *save_button;
 	GtkWidget *color_button;
 
-	GaimGtkWhiteboard *gtkwb = g_new0(GaimGtkWhiteboard, 1);
+	PidginWhiteboard *gtkwb = g_new0(PidginWhiteboard, 1);
 
 	gtkwb->wb = wb;
 	wb->ui_data = gtkwb;
@@ -208,20 +208,20 @@ static void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 
 	/* Signals used to handle backing pixmap */
 	g_signal_connect(G_OBJECT(drawing_area), "expose_event",
-					 G_CALLBACK(gaim_gtk_whiteboard_expose_event), gtkwb);
+					 G_CALLBACK(pidgin_whiteboard_expose_event), gtkwb);
 
 	g_signal_connect(G_OBJECT(drawing_area), "configure_event",
-					 G_CALLBACK(gaim_gtk_whiteboard_configure_event), gtkwb);
+					 G_CALLBACK(pidgin_whiteboard_configure_event), gtkwb);
 
 	/* Event signals */
 	g_signal_connect(G_OBJECT(drawing_area), "button_press_event",
-					 G_CALLBACK(gaim_gtk_whiteboard_brush_down), gtkwb);
+					 G_CALLBACK(pidgin_whiteboard_brush_down), gtkwb);
 
 	g_signal_connect(G_OBJECT(drawing_area), "motion_notify_event",
-					 G_CALLBACK(gaim_gtk_whiteboard_brush_motion), gtkwb);
+					 G_CALLBACK(pidgin_whiteboard_brush_motion), gtkwb);
 
 	g_signal_connect(G_OBJECT(drawing_area), "button_release_event",
-					 G_CALLBACK(gaim_gtk_whiteboard_brush_up), gtkwb);
+					 G_CALLBACK(pidgin_whiteboard_brush_up), gtkwb);
 
 	gtk_widget_set_events(drawing_area,
 						  GDK_EXPOSURE_MASK |
@@ -242,7 +242,7 @@ static void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 	gtk_box_pack_start(GTK_BOX(vbox_controls), clear_button, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_widget_show(clear_button);
 	g_signal_connect(G_OBJECT(clear_button), "clicked",
-					 G_CALLBACK(gaim_gtk_whiteboard_button_clear_press), gtkwb);
+					 G_CALLBACK(pidgin_whiteboard_button_clear_press), gtkwb);
 
 	/* Add a save button */
 	save_button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
@@ -250,7 +250,7 @@ static void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 	gtk_widget_show(save_button);
 
 	g_signal_connect(G_OBJECT(save_button), "clicked",
-					 G_CALLBACK(gaim_gtk_whiteboard_button_save_press), gtkwb);
+					 G_CALLBACK(pidgin_whiteboard_button_save_press), gtkwb);
 
 	/* Add a color selector */
 	color_button = gtk_button_new_from_stock(GTK_STOCK_SELECT_COLOR);
@@ -262,7 +262,7 @@ static void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 	/* Make all this (window) visible */
 	gtk_widget_show(window);
 
-	gaim_gtk_whiteboard_set_canvas_as_icon(gtkwb);
+	pidgin_whiteboard_set_canvas_as_icon(gtkwb);
 
 	/* TODO Specific protocol/whiteboard assignment here? Needs a UI Op? */
 	/* Set default brush size and color */
@@ -272,9 +272,9 @@ static void gaim_gtk_whiteboard_create(GaimWhiteboard *wb)
 	*/
 }
 
-static void gaim_gtk_whiteboard_destroy(GaimWhiteboard *wb)
+static void pidgin_whiteboard_destroy(GaimWhiteboard *wb)
 {
-	GaimGtkWhiteboard *gtkwb;
+	PidginWhiteboard *gtkwb;
 
 	g_return_if_fail(wb != NULL);
 	gtkwb = wb->ui_data;
@@ -298,7 +298,7 @@ static void gaim_gtk_whiteboard_destroy(GaimWhiteboard *wb)
 	wb->ui_data = NULL;
 }
 
-static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, GaimGtkWhiteboard *gtkwb)
+static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, PidginWhiteboard *gtkwb)
 {
 	GaimWhiteboard *wb;
 
@@ -316,7 +316,7 @@ static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, GaimGtkW
  * and use new prpl_info member?)
  */
 #if 0
-static void gaim_gtkwhiteboard_button_start_press(GtkButton *button, gpointer data)
+static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data)
 {
 	GaimConversation *conv = data;
 	GaimAccount *account = gaim_conversation_get_account(conv);
@@ -347,9 +347,9 @@ static void gaim_gtkwhiteboard_button_start_press(GtkButton *button, gpointer da
 }
 #endif
 
-static gboolean gaim_gtk_whiteboard_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
+static gboolean pidgin_whiteboard_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data)
 {
-	GaimGtkWhiteboard *gtkwb = (GaimGtkWhiteboard*)data;
+	PidginWhiteboard *gtkwb = (PidginWhiteboard*)data;
 
 	GdkPixmap *pixmap = gtkwb->pixmap;
 
@@ -373,9 +373,9 @@ static gboolean gaim_gtk_whiteboard_configure_event(GtkWidget *widget, GdkEventC
 	return TRUE;
 }
 
-static gboolean gaim_gtk_whiteboard_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+static gboolean pidgin_whiteboard_expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
-	GaimGtkWhiteboard *gtkwb = (GaimGtkWhiteboard*)(data);
+	PidginWhiteboard *gtkwb = (PidginWhiteboard*)(data);
 	GdkPixmap *pixmap = gtkwb->pixmap;
 
 	gdk_draw_drawable(widget->window,
@@ -388,9 +388,9 @@ static gboolean gaim_gtk_whiteboard_expose_event(GtkWidget *widget, GdkEventExpo
 	return FALSE;
 }
 
-static gboolean gaim_gtk_whiteboard_brush_down(GtkWidget *widget, GdkEventButton *event, gpointer data)
+static gboolean pidgin_whiteboard_brush_down(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
-	GaimGtkWhiteboard *gtkwb = (GaimGtkWhiteboard*)data;
+	PidginWhiteboard *gtkwb = (PidginWhiteboard*)data;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 
 	GaimWhiteboard *wb = gtkwb->wb;
@@ -424,7 +424,7 @@ static gboolean gaim_gtk_whiteboard_brush_down(GtkWidget *widget, GdkEventButton
 		draw_list = g_list_append(draw_list, GINT_TO_POINTER(LastX));
 		draw_list = g_list_append(draw_list, GINT_TO_POINTER(LastY));
 
-		gaim_gtk_whiteboard_draw_brush_point(gtkwb->wb,
+		pidgin_whiteboard_draw_brush_point(gtkwb->wb,
 											 event->x, event->y,
 											 gtkwb->brush_color, gtkwb->brush_size);
 	}
@@ -434,7 +434,7 @@ static gboolean gaim_gtk_whiteboard_brush_down(GtkWidget *widget, GdkEventButton
 	return TRUE;
 }
 
-static gboolean gaim_gtk_whiteboard_brush_motion(GtkWidget *widget, GdkEventMotion *event, gpointer data)
+static gboolean pidgin_whiteboard_brush_motion(GtkWidget *widget, GdkEventMotion *event, gpointer data)
 {
 	int x;
 	int y;
@@ -443,7 +443,7 @@ static gboolean gaim_gtk_whiteboard_brush_motion(GtkWidget *widget, GdkEventMoti
 
 	GdkModifierType state;
 
-	GaimGtkWhiteboard *gtkwb = (GaimGtkWhiteboard*)data;
+	PidginWhiteboard *gtkwb = (PidginWhiteboard*)data;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 
 	GaimWhiteboard *wb = gtkwb->wb;
@@ -506,7 +506,7 @@ static gboolean gaim_gtk_whiteboard_brush_motion(GtkWidget *widget, GdkEventMoti
 		draw_list = g_list_append(draw_list, GINT_TO_POINTER(dx));
 		draw_list = g_list_append(draw_list, GINT_TO_POINTER(dy));
 
-		gaim_gtk_whiteboard_draw_brush_line(gtkwb->wb,
+		pidgin_whiteboard_draw_brush_line(gtkwb->wb,
 											LastX, LastY,
 											x, y,
 											gtkwb->brush_color, gtkwb->brush_size);
@@ -521,9 +521,9 @@ static gboolean gaim_gtk_whiteboard_brush_motion(GtkWidget *widget, GdkEventMoti
 	return TRUE;
 }
 
-static gboolean gaim_gtk_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *event, gpointer data)
+static gboolean pidgin_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
-	GaimGtkWhiteboard *gtkwb = (GaimGtkWhiteboard*)data;
+	PidginWhiteboard *gtkwb = (PidginWhiteboard*)data;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 
 	GaimWhiteboard *wb = gtkwb->wb;
@@ -565,7 +565,7 @@ static gboolean gaim_gtk_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *
 		/* Send draw list to prpl draw_list handler */
 		gaim_whiteboard_send_draw_list(gtkwb->wb, draw_list);
 
-		gaim_gtk_whiteboard_set_canvas_as_icon(gtkwb);
+		pidgin_whiteboard_set_canvas_as_icon(gtkwb);
 
 		/* The brush stroke is finished, clear the list for another one */
 		if(draw_list)
@@ -577,9 +577,9 @@ static gboolean gaim_gtk_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *
 	return TRUE;
 }
 
-static void gaim_gtk_whiteboard_draw_brush_point(GaimWhiteboard *wb, int x, int y, int color, int size)
+static void pidgin_whiteboard_draw_brush_point(GaimWhiteboard *wb, int x, int y, int color, int size)
 {
-	GaimGtkWhiteboard *gtkwb = wb->ui_data;
+	PidginWhiteboard *gtkwb = wb->ui_data;
 	GtkWidget *widget = gtkwb->drawing_area;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 
@@ -594,7 +594,7 @@ static void gaim_gtk_whiteboard_draw_brush_point(GaimWhiteboard *wb, int x, int 
 	update_rect.height = size;
 
 	/* Interpret and convert color */
-	gaim_gtk_whiteboard_rgb24_to_rgb48(color, &col);
+	pidgin_whiteboard_rgb24_to_rgb48(color, &col);
 
 	gdk_gc_set_rgb_fg_color(gfx_con, &col);
 	/* gdk_gc_set_rgb_bg_color(gfx_con, &col); */
@@ -630,7 +630,7 @@ static void gaim_gtk_whiteboard_draw_brush_point(GaimWhiteboard *wb, int x, int 
 }
 
 /* Uses Bresenham's algorithm (as provided by Wikipedia) */
-static void gaim_gtk_whiteboard_draw_brush_line(GaimWhiteboard *wb, int x0, int y0, int x1, int y1, int color, int size)
+static void pidgin_whiteboard_draw_brush_line(GaimWhiteboard *wb, int x0, int y0, int x1, int y1, int color, int size)
 {
 	int temp;
 
@@ -674,9 +674,9 @@ static void gaim_gtk_whiteboard_draw_brush_line(GaimWhiteboard *wb, int x0, int 
 		ystep = -1;
 
 	if(steep)
-		gaim_gtk_whiteboard_draw_brush_point(wb, y, x, color, size);
+		pidgin_whiteboard_draw_brush_point(wb, y, x, color, size);
 	else
-		gaim_gtk_whiteboard_draw_brush_point(wb, x, y, color, size);
+		pidgin_whiteboard_draw_brush_point(wb, x, y, color, size);
 
 	while(x != x1)
 	{
@@ -690,31 +690,31 @@ static void gaim_gtk_whiteboard_draw_brush_line(GaimWhiteboard *wb, int x0, int 
 		}
 
 		if(steep)
-			gaim_gtk_whiteboard_draw_brush_point(wb, y, x, color, size);
+			pidgin_whiteboard_draw_brush_point(wb, y, x, color, size);
 		else
-			gaim_gtk_whiteboard_draw_brush_point(wb, x, y, color, size);
+			pidgin_whiteboard_draw_brush_point(wb, x, y, color, size);
 	}
 }
 
-static void gaim_gtk_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int height)
+static void pidgin_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int height)
 {
-	GaimGtkWhiteboard *gtkwb = wb->ui_data;
+	PidginWhiteboard *gtkwb = wb->ui_data;
 
 	gtkwb->width = width;
 	gtkwb->height = height;
 }
 
-static void gaim_gtk_whiteboard_set_brush(GaimWhiteboard *wb, int size, int color)
+static void pidgin_whiteboard_set_brush(GaimWhiteboard *wb, int size, int color)
 {
-	GaimGtkWhiteboard *gtkwb = wb->ui_data;
+	PidginWhiteboard *gtkwb = wb->ui_data;
 
 	gtkwb->brush_size = size;
 	gtkwb->brush_color = color;
 }
 
-static void gaim_gtk_whiteboard_clear(GaimWhiteboard *wb)
+static void pidgin_whiteboard_clear(GaimWhiteboard *wb)
 {
-	GaimGtkWhiteboard *gtkwb = wb->ui_data;
+	PidginWhiteboard *gtkwb = wb->ui_data;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 	GtkWidget *drawing_area = gtkwb->drawing_area;
 
@@ -731,21 +731,21 @@ static void gaim_gtk_whiteboard_clear(GaimWhiteboard *wb)
 							   drawing_area->allocation.height);
 }
 
-static void gaim_gtk_whiteboard_button_clear_press(GtkWidget *widget, gpointer data)
+static void pidgin_whiteboard_button_clear_press(GtkWidget *widget, gpointer data)
 {
-	GaimGtkWhiteboard *gtkwb = (GaimGtkWhiteboard*)(data);
+	PidginWhiteboard *gtkwb = (PidginWhiteboard*)(data);
 
-	gaim_gtk_whiteboard_clear(gtkwb->wb);
+	pidgin_whiteboard_clear(gtkwb->wb);
 
-	gaim_gtk_whiteboard_set_canvas_as_icon(gtkwb);
+	pidgin_whiteboard_set_canvas_as_icon(gtkwb);
 
 	/* Do protocol specific clearing procedures */
 	gaim_whiteboard_send_clear(gtkwb->wb);
 }
 
-static void gaim_gtk_whiteboard_button_save_press(GtkWidget *widget, gpointer data)
+static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data)
 {
-	GaimGtkWhiteboard *gtkwb = (GaimGtkWhiteboard*)(data);
+	PidginWhiteboard *gtkwb = (PidginWhiteboard*)(data);
 	GdkPixbuf *pixbuf;
 
 	GtkWidget *dialog;
@@ -810,7 +810,7 @@ static void gaim_gtk_whiteboard_button_save_press(GtkWidget *widget, gpointer da
 	}
 }
 
-static void gaim_gtk_whiteboard_set_canvas_as_icon(GaimGtkWhiteboard *gtkwb)
+static void pidgin_whiteboard_set_canvas_as_icon(PidginWhiteboard *gtkwb)
 {
 	GdkPixbuf *pixbuf;
 
@@ -825,7 +825,7 @@ static void gaim_gtk_whiteboard_set_canvas_as_icon(GaimGtkWhiteboard *gtkwb)
 	gtk_window_set_icon((GtkWindow*)(gtkwb->window), pixbuf);
 }
 
-static void gaim_gtk_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color)
+static void pidgin_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color)
 {
 	color->red   = (color_rgb >> 8) | 0xFF;
 	color->green = (color_rgb & 0xFF00) | 0xFF;
@@ -833,7 +833,7 @@ static void gaim_gtk_whiteboard_rgb24_to_rgb48(int color_rgb, GdkColor *color)
 }
 
 static void
-change_color_cb(GtkColorSelection *selection, GaimGtkWhiteboard *gtkwb)
+change_color_cb(GtkColorSelection *selection, PidginWhiteboard *gtkwb)
 {
 	GdkColor color;
 	int old_size = 5;
@@ -855,7 +855,7 @@ static void color_selection_dialog_destroy(GtkWidget *w, GtkWidget *destroy)
 	gtk_widget_destroy(destroy);
 }
 
-static void color_select_dialog(GtkWidget *widget, GaimGtkWhiteboard *gtkwb)
+static void color_select_dialog(GtkWidget *widget, PidginWhiteboard *gtkwb)
 {
 	GdkColor color;
 	GtkColorSelectionDialog *dialog;
@@ -873,7 +873,7 @@ static void color_select_dialog(GtkWidget *widget, GaimGtkWhiteboard *gtkwb)
 
 	gtk_color_selection_set_has_palette(GTK_COLOR_SELECTION(dialog->colorsel), TRUE);
 
-	gaim_gtk_whiteboard_rgb24_to_rgb48(gtkwb->brush_color, &color);
+	pidgin_whiteboard_rgb24_to_rgb48(gtkwb->brush_color, &color);
 	gtk_color_selection_set_current_color(GTK_COLOR_SELECTION(dialog->colorsel), &color);
 
 	gtk_widget_show_all(GTK_WIDGET(dialog));

@@ -25,8 +25,8 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef _GAIM_GTKSOURCEITER_H_
-#define _GAIM_GTKSOURCEITER_H_
+#ifndef _PIDGINSOURCEITER_H_
+#define _PIDGINSOURCEITER_H_
 
 #include <gtk/gtktextiter.h>
 
@@ -58,4 +58,4 @@ gboolean gtk_source_iter_find_matching_bracket	(GtkTextIter         *iter);
 
 G_END_DECLS
 
-#endif /* _GAIM_GTKSOURCEITER_H_ */
+#endif /* _PIDGINSOURCEITER_H_ */
