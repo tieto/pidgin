@@ -4,7 +4,7 @@
  *
  * gaim
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -283,7 +283,7 @@ gboolean pidgin_check_if_dir(const char *path, GtkFileSelection *filesel);
  * Sets up GtkSpell for the given GtkTextView, reporting errors
  * if encountered.
  *
- * This does nothing if Gaim is not compiled with GtkSpell support.
+ * This does nothing if Pidgin is not compiled with GtkSpell support.
  *
  * @param textview The textview widget to setup spellchecking for.
  */
@@ -409,7 +409,7 @@ GdkPixbuf *pidgin_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size
 GdkPixbuf *pidgin_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *status_type, double scale_factor);
 
 /**
- * Create a Gaim running-man icon with the status emblem overlayed
+ * Create a Pidgin running-man icon with the status emblem overlayed
  * in the lower right corner.
  *
  * @param primitive    The status type to set the emblem for.

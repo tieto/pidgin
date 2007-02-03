@@ -4,7 +4,7 @@
  *
  * gaim
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -31,7 +31,7 @@
 /*@{*/
 
 /**
- * Register this instance of Gaim with the user's current session
+ * Register this instance of Pidgin with the user's current session
  * manager.
  *
  * @param argv0       The first argument passed into the program.  This
@@ -43,7 +43,7 @@
 void pidgin_session_init(gchar *argv0, gchar *previous_id, gchar *config_dir);
 
 /**
- * Unregister this instance of Gaim with the user's current session
+ * Unregister this instance of Pidgin with the user's current session
  * manager.
  */
 void pidgin_session_end(void);

@@ -87,7 +87,7 @@ static void insert_cap_status_count_failed(const char *buddy_name, const char *a
 static void insert_cap_success(CapStatistics *stats);
 static void insert_cap_failure(CapStatistics *stats);
 static gboolean max_message_difference_cb(gpointer data);
-/* Gaim Signal Handlers */
+/* Pidgin Signal Handlers */
 /* sent-im-msg */
 static void sent_im_msg(GaimAccount *account, const char *receiver, const char *message);
 /* received-im-msg */
