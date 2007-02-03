@@ -3064,7 +3064,19 @@ gaim_gtk_blist_get_status_icon(GaimBlistNode *node, GaimStatusIconSize size)
 	}
 	
 	if(buddy) {
-		GaimPresence *p = gaim_buddy_get_presence(buddy);
+	  	GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+									     gaim_buddy_get_name(buddy),
+									     gaim_buddy_get_account(buddy));
+		GaimPresence *p;
+		if(conv != NULL) {
+			GaimGtkConversation *gtkconv = GAIM_GTK_CONVERSATION(conv);
+			if(gtkconv != NULL && gaim_gtkconv_is_hidden(gtkconv) && size == GAIM_STATUS_ICON_SMALL) {
+				return gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_MESSAGE,
+							       icon_size, "GtkTreeView");
+			}
+		}
+		p = gaim_buddy_get_presence(buddy);
+	       
 		if (GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
 			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGIN,
 					icon_size, "GtkTreeView");
@@ -3222,6 +3234,19 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 	struct _gaim_gtk_blist_node *gtkcontactnode = NULL;
 	char *idletime = NULL, *statustext = NULL;
 	time_t t;
+	GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+								     gaim_buddy_get_name(b),
+								     gaim_buddy_get_account(b));
+	GaimGtkConversation *gtkconv;
+	gboolean hidden_conv = FALSE;
+
+	if(conv != NULL) {
+		gtkconv = GAIM_GTK_CONVERSATION(conv);
+		if(gtkconv != NULL && gaim_gtkconv_is_hidden(gtkconv)) {
+			hidden_conv = TRUE;
+		}
+	}
+	
 	/* XXX Good luck cleaning up this crap */
 
 	contact = (GaimContact*)((GaimBlistNode*)b)->parent;
@@ -3243,9 +3268,19 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 			text = g_strdup_printf("<span color='%s'>%s</span>",
 					       dim_grey(), esc);
 			g_free(esc);
+			if (hidden_conv) {
+				char *tmp = text;
+				text = g_strdup_printf("<b>%s</b>", text);
+				g_free(tmp);
+			}
 			return text;
 		}
 		else
+			if (hidden_conv) {
+				char *tmp = esc;
+				esc = g_strdup_printf("<b>%s</b>", esc);
+				g_free(tmp);
+			}
 			return esc;
 	}
 
@@ -3366,7 +3401,13 @@ static gchar *gaim_gtk_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 	g_free(idletime);
 	g_free(statustext);
 	g_free(esc);
-
+	
+	if (hidden_conv) {
+		char *tmp = text;
+		text = g_strdup_printf("<b>%s</b>", tmp);
+		g_free(tmp);
+	}
+	
 	return text;
 }
 
