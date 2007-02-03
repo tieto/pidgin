@@ -257,7 +257,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		return;
 	}
 
-	for (child = xmlnode_get_child(query, "category"); child; 
+	for (child = xmlnode_get_child(query, "identity"); child; 
 	     child = xmlnode_get_next_twin(child)) {
 		const char *category, *type, *name;
 		category = xmlnode_get_attrib(child, "category");
@@ -273,8 +273,10 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 
 		g_free(js->server_name);
 		js->server_name = g_strdup(name);
-		if (!strcmp(name, "Google Talk"))
-			js->googletalk = TRUE;
+		if (!strcmp(name, "Google Talk")) {
+		  printf("ADSFADFAFAFADF !!!!\n");
+		  js->googletalk = TRUE;
+		}
 	}
 
 	for (child = xmlnode_get_child(query, "feature"); child; 

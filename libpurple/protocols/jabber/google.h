@@ -39,6 +39,8 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item);
 void jabber_google_roster_add_deny(GaimConnection *gc, const char *who);
 void jabber_google_roster_rem_deny(GaimConnection *gc, const char *who);
 
+char *jabber_google_format_to_html(const char *text);
+
 
 
 #endif   /* _GAIM_GOOGLE_H_ */
