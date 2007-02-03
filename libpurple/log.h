@@ -80,15 +80,15 @@ struct _GaimLogLogger {
 	GList *(*list)(GaimLogType type, const char *name, GaimAccount *account);
 
 	/** Given one of the logs returned by the logger's list function,
-	 * this returns the contents of the log in GtkIMHtml markup */
+	 *  this returns the contents of the log in GtkIMHtml markup */
 	char *(*read)(GaimLog *log, GaimLogReadFlags *flags);
 
 	/** Given one of the logs returned by the logger's list function,
-	 * this returns the size of the log in bytes */
+	 *  this returns the size of the log in bytes */
 	int (*size)(GaimLog *log);
 
 	/** Returns the total size of all the logs. If this is undefined a default
-	 * implementation is used */
+	 *  implementation is used */
 	int (*total_size)(GaimLogType type, const char *name, GaimAccount *account);
 
 	/** This function returns a sorted GList of available system GaimLogs */
@@ -103,6 +103,12 @@ struct _GaimLogLogger {
 	 *  Loggers which implement this function must create a GaimLogSet,
 	 *  then call @a cb with @a sets and the newly created GaimLogSet. */
 	void (*get_log_sets)(GaimLogSetCallback cb, GHashTable *sets);
+
+	/* Attempts to delete the specified log, indicating success or failure */
+	gboolean (*delete)(GaimLog *log);
+
+	/* Tests whether a log is deletable */
+	gboolean (*is_deletable)(GaimLog *log);
 };
 
 /**
@@ -281,6 +287,26 @@ int gaim_log_get_size(GaimLog *log);
 int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *account);
 
 /**
+ * Tests whether a log is deletable
+ *
+ * A return value of @c FALSE indicates that gaim_log_delete() will fail on this
+ * log, unless something changes between the two calls.  A return value of @c TRUE,
+ * however, does not guarantee the log can be deleted.
+ *
+ * @param log                 The log
+ * @return                    A boolean indicating if the log is deletable
+ */
+gboolean gaim_log_is_deletable(GaimLog *log);
+
+/**
+ * Deletes a log
+ *
+ * @param log                 The log
+ * @return                    A boolean indicating success or failure
+ */
+gboolean gaim_log_delete(GaimLog *log);
+
+/**
  * Returns the default logger directory Gaim uses for a given account
  * and username.  This would be where Gaim stores logs created by
  * the built-in text or HTML loggers.
@@ -332,6 +358,11 @@ void gaim_log_set_free(GaimLogSet *set);
  * set to a GaimLogCommonLoggerData struct containing the log
  * file handle and log path.
  *
+ * This function is intended to be used as a "common"
+ * implementation of a logger's @c write function.
+ * It should only be passed to gaim_log_logger_new() and never
+ * called directly.
+ *
  * @param log   The log to write to.
  * @param ext   The file extension to give to this log file.
  */
@@ -339,8 +370,12 @@ void gaim_log_common_writer(GaimLog *log, const char *ext);
 
 /**
  * Returns a sorted GList of GaimLogs of the requested type.
+ *
  * This function should only be used with logs that are written
- * with gaim_log_common_writer().
+ * with gaim_log_common_writer().  It's intended to be used as
+ * a "common" implementation of a logger's @c list function.
+ * It should only be passed to gaim_log_logger_new() and never
+ * called directly.
  *
  * @param type     The type of the logs being listed.
  * @param name     The name of the log.
@@ -356,10 +391,13 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name,
 
 /**
  * Returns the total size of all the logs for a given user, with
- * a given extension.  This is the "common" implemention of a
- * logger's total_size function.
+ * a given extension.
+ *
  * This function should only be used with logs that are written
- * with gaim_log_common_writer().
+ * with gaim_log_common_writer().  It's intended to be used as
+ * a "common" implementation of a logger's @c total_size function.
+ * It should only be passed to gaim_log_logger_new() and never
+ * called directly.
  *
  * @param type     The type of the logs being sized.
  * @param name     The name of the logs to size
@@ -375,14 +413,49 @@ int gaim_log_common_total_sizer(GaimLogType type, const char *name,
 
 /**
  * Returns the size of a given GaimLog.
+ *
  * This function should only be used with logs that are written
- * with gaim_log_common_writer().
+ * with gaim_log_common_writer().  It's intended to be used as
+ * a "common" implementation of a logger's @c size function.
+ * It should only be passed to gaim_log_logger_new() and never
+ * called directly.
  *
  * @param log      The GaimLog to size.
  *
  * @return An integer indicating the size of the log in bytes.
  */
 int gaim_log_common_sizer(GaimLog *log);
+
+/**
+ * Deletes a log
+ *
+ * This function should only be used with logs that are written
+ * with gaim_log_common_writer().  It's intended to be used as
+ * a "common" implementation of a logger's @c delete function.
+ * It should only be passed to gaim_log_logger_new() and never
+ * called directly.
+ *
+ * @param log      The GaimLog to delete.
+ *
+ * @return A boolean indicating success or failure.
+ */
+gboolean gaim_log_common_deleter(GaimLog *log);
+
+/**
+ * Checks to see if a log is deletable
+ *
+ * This function should only be used with logs that are written
+ * with gaim_log_common_writer().  It's intended to be used as
+ * a "common" implementation of a logger's @c is_deletable function.
+ * It should only be passed to gaim_log_logger_new() and never
+ * called directly.
+ *
+ * @param log      The GaimLog to check.
+ *
+ * @return A boolean indicating if the log is deletable.
+ */
+gboolean gaim_log_common_is_deletable(GaimLog *log);
+
 /*@}*/
 
 /******************************************/
@@ -398,8 +471,9 @@ int gaim_log_common_sizer(GaimLog *log);
  * @param functions    The number of functions being passed. The following
  *                     functions are currently available (in order): @c create,
  *                     @c write, @c finalize, @c list, @c read, @c size,
- *                     @c total_size, @c list_syslog, @c get_log_sets. For
- *                     details on these functions, see GaimLogLogger.
+ *                     @c total_size, @c list_syslog, @c get_log_sets,
+ *                     @c delete, @c is_deletable.
+ *                     For details on these functions, see GaimLogLogger.
  *                     Functions may not be skipped. For example, passing
  *                     @c create and @c write is acceptable (for a total of
  *                     two functions). Passing @c create and @c finalize,
