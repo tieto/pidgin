@@ -590,11 +590,11 @@ regex_menu_cb(GtkWidget *item, const gchar *pref) {
 
 static void
 regex_popup_cb(GtkEntry *entry, GtkWidget *menu, DebugWindow *win) {
-	gaim_separator(menu);
-	gaim_new_check_item(menu, _("Invert"),
+	pidgin_separator(menu);
+	pidgin_new_check_item(menu, _("Invert"),
 						G_CALLBACK(regex_menu_cb),
 						"/gaim/gtk/debug/invert", win->invert);
-	gaim_new_check_item(menu, _("Highlight matches"),
+	pidgin_new_check_item(menu, _("Highlight matches"),
 						G_CALLBACK(regex_menu_cb),
 						"/gaim/gtk/debug/highlight", win->highlight);
 }

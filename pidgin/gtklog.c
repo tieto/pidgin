@@ -414,7 +414,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	g_signal_connect (G_OBJECT(lv->treeview), "row-activated",
 			G_CALLBACK(log_row_activated_cb),
 			lv);
-	gaim_set_accessible_label(lv->treeview, lv->label);
+	pidgin_set_accessible_label(lv->treeview, lv->label);
 
 	/* Log size ************/
 	if(log_size) {

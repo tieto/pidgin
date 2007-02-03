@@ -245,7 +245,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, GtkGaimStatusBox *bo
 
 		box->icon_box_menu = gtk_menu_new();
 
-		menu_item = gaim_new_item_from_stock(box->icon_box_menu, _("Remove"), GTK_STOCK_REMOVE,
+		menu_item = pidgin_new_item_from_stock(box->icon_box_menu, _("Remove"), GTK_STOCK_REMOVE,
 						     G_CALLBACK(remove_buddy_icon_cb),
 						     box, 0, 0, NULL);
 		if (gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon") == NULL)
@@ -2016,7 +2016,7 @@ gtk_gaim_status_box_redisplay_buddy_icon(GtkGaimStatusBox *status_box)
 	}
 
 	if (status_box->buddy_icon != NULL) {
-	        status_box->icon_opaque = gaim_gdk_pixbuf_is_opaque(status_box->buddy_icon);
+	        status_box->icon_opaque = pidgin_gdk_pixbuf_is_opaque(status_box->buddy_icon);
 		gtk_image_set_from_pixbuf(GTK_IMAGE(status_box->icon), status_box->buddy_icon);
 		status_box->buddy_icon_hover = gdk_pixbuf_copy(status_box->buddy_icon);
 		do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 32);

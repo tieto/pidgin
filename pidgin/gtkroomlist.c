@@ -303,9 +303,9 @@ static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, GaimRoomlist
 	info.room = room;
 
 	menu = gtk_menu_new();
-	gaim_new_item_from_stock(menu, _("_Join"), GAIM_STOCK_CHAT,
+	pidgin_new_item_from_stock(menu, _("_Join"), GAIM_STOCK_CHAT,
 		                         G_CALLBACK(do_join_cb), &info, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("_Add"), GTK_STOCK_ADD,
+	pidgin_new_item_from_stock(menu, _("_Add"), GTK_STOCK_ADD,
 		                         G_CALLBACK(do_add_room_cb), &info, 0, 0, NULL);
 
 	gtk_widget_show_all(menu);
@@ -443,16 +443,16 @@ pidgin_roomlist_dialog_new_with_account(GaimAccount *account)
 	gtk_widget_show(dialog->stop_button);
 
 	/* list button */
-	dialog->list_button = gaim_pixbuf_button_from_stock(_("_Get List"), GTK_STOCK_REFRESH,
-	                                                    GAIM_BUTTON_HORIZONTAL);
+	dialog->list_button = pidgin_pixbuf_button_from_stock(_("_Get List"), GTK_STOCK_REFRESH,
+	                                                    PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), dialog->list_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(dialog->list_button), "clicked",
 	                 G_CALLBACK(list_button_cb), dialog);
 	gtk_widget_show(dialog->list_button);
 
 	/* add button */
-	dialog->add_button = gaim_pixbuf_button_from_stock(_("_Add Chat"), GTK_STOCK_ADD,
-	                                                    GAIM_BUTTON_HORIZONTAL);
+	dialog->add_button = pidgin_pixbuf_button_from_stock(_("_Add Chat"), GTK_STOCK_ADD,
+	                                                    PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), dialog->add_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(dialog->add_button), "clicked",
 	                 G_CALLBACK(add_room_to_blist_cb), dialog);
@@ -460,8 +460,8 @@ pidgin_roomlist_dialog_new_with_account(GaimAccount *account)
 	gtk_widget_show(dialog->add_button);
 
 	/* join button */
-	dialog->join_button = gaim_pixbuf_button_from_stock(_("_Join"), GAIM_STOCK_CHAT,
-	                                                    GAIM_BUTTON_HORIZONTAL);
+	dialog->join_button = pidgin_pixbuf_button_from_stock(_("_Join"), GAIM_STOCK_CHAT,
+	                                                    PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), dialog->join_button, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(dialog->join_button), "clicked",
 					 G_CALLBACK(join_button_cb), dialog);

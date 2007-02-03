@@ -958,9 +958,9 @@ pidgin_notify_uri(const char *uri)
 	else if (!strcmp(web_browser, "epiphany") ||
 		!strcmp(web_browser, "galeon"))
 	{
-		if (place == GAIM_BROWSER_NEW_WINDOW)
+		if (place == PIDGIN_BROWSER_NEW_WINDOW)
 			command = g_strdup_printf("%s -w %s", web_browser, escaped);
-		else if (place == GAIM_BROWSER_NEW_TAB)
+		else if (place == PIDGIN_BROWSER_NEW_TAB)
 			command = g_strdup_printf("%s -n %s", web_browser, escaped);
 		else
 			command = g_strdup_printf("%s %s", web_browser, escaped);
@@ -998,15 +998,15 @@ pidgin_notify_uri(const char *uri)
 		if (!strcmp(web_browser, "firefox"))
 			args = "-a firefox";
 
-		if (place == GAIM_BROWSER_NEW_WINDOW)
+		if (place == PIDGIN_BROWSER_NEW_WINDOW)
 			remote_command = g_strdup_printf("%s %s -remote "
 											 "openURL(%s,new-window)",
 											 web_browser, args, escaped);
-		else if (place == GAIM_BROWSER_NEW_TAB)
+		else if (place == PIDGIN_BROWSER_NEW_TAB)
 			remote_command = g_strdup_printf("%s %s -remote "
 											 "openURL(%s,new-tab)",
 											 web_browser, args, escaped);
-		else if (place == GAIM_BROWSER_CURRENT)
+		else if (place == PIDGIN_BROWSER_CURRENT)
 			remote_command = g_strdup_printf("%s %s -remote "
 											 "openURL(%s)",
 											 web_browser, args, escaped);
@@ -1015,13 +1015,13 @@ pidgin_notify_uri(const char *uri)
 	{
 		command = g_strdup_printf("netscape %s", escaped);
 
-		if (place == GAIM_BROWSER_NEW_WINDOW)
+		if (place == PIDGIN_BROWSER_NEW_WINDOW)
 		{
 			remote_command = g_strdup_printf("netscape -remote "
 											 "openURL(%s,new-window)",
 											 escaped);
 		}
-		else if (place == GAIM_BROWSER_CURRENT)
+		else if (place == PIDGIN_BROWSER_CURRENT)
 		{
 			remote_command = g_strdup_printf("netscape -remote "
 											 "openURL(%s)", escaped);
@@ -1029,11 +1029,11 @@ pidgin_notify_uri(const char *uri)
 	}
 	else if (!strcmp(web_browser, "opera"))
 	{
-		if (place == GAIM_BROWSER_NEW_WINDOW)
+		if (place == PIDGIN_BROWSER_NEW_WINDOW)
 			command = g_strdup_printf("opera -newwindow %s", escaped);
-		else if (place == GAIM_BROWSER_NEW_TAB)
+		else if (place == PIDGIN_BROWSER_NEW_TAB)
 			command = g_strdup_printf("opera -newpage %s", escaped);
-		else if (place == GAIM_BROWSER_CURRENT)
+		else if (place == PIDGIN_BROWSER_CURRENT)
 		{
 			remote_command = g_strdup_printf("opera -remote "
 											 "openURL(%s)", escaped);

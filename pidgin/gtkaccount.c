@@ -189,7 +189,7 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, GAIM_HIG_BORDER);
 	gtk_widget_show(widget);
-	gaim_set_accessible_label (widget, label);
+	pidgin_set_accessible_label (widget, label);
 
 	return hbox;
 }
@@ -593,7 +593,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_container_add(GTK_CONTAINER(button), dialog->icon_entry);
 	gtk_widget_show(dialog->icon_entry);
 	/* TODO: Uh, isn't this next line pretty useless? */
-	gaim_set_accessible_label (dialog->icon_entry, label);
+	pidgin_set_accessible_label (dialog->icon_entry, label);
 	dialog->cached_icon_path = NULL;
 	dialog->icon_path = NULL;
 

@@ -278,8 +278,8 @@ get_config_frame(GaimPlugin *plugin)
 		hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-		button = gaim_pixbuf_button_from_stock(" Color", GTK_STOCK_SELECT_COLOR,
-				GAIM_BUTTON_HORIZONTAL);
+		button = pidgin_pixbuf_button_from_stock(" Color", GTK_STOCK_SELECT_COLOR,
+				PIDGIN_BUTTON_HORIZONTAL);
 		gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 		g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(set_color),
 				formats[i].prefix);

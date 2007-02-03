@@ -32,19 +32,19 @@
 
 typedef enum
 {
-	GAIM_BUTTON_HORIZONTAL,
-	GAIM_BUTTON_VERTICAL
+	PIDGIN_BUTTON_HORIZONTAL,
+	PIDGIN_BUTTON_VERTICAL
 
-} GaimButtonOrientation;
+} PidginButtonOrientation;
 
 typedef enum
 {
-	GAIM_BUTTON_NONE = 0,
-	GAIM_BUTTON_TEXT,
-	GAIM_BUTTON_IMAGE,
-	GAIM_BUTTON_TEXT_IMAGE
+	PIDGIN_BUTTON_NONE = 0,
+	PIDGIN_BUTTON_TEXT,
+	PIDGIN_BUTTON_IMAGE,
+	PIDGIN_BUTTON_TEXT_IMAGE
 
-} GaimButtonStyle;
+} PidginButtonStyle;
 
 typedef enum
 {
@@ -56,12 +56,12 @@ typedef enum
 #ifndef _WIN32
 typedef enum
 {
-	GAIM_BROWSER_DEFAULT = 0,
-	GAIM_BROWSER_CURRENT,
-	GAIM_BROWSER_NEW_WINDOW,
-	GAIM_BROWSER_NEW_TAB
+	PIDGIN_BROWSER_DEFAULT = 0,
+	PIDGIN_BROWSER_CURRENT,
+	PIDGIN_BROWSER_NEW_WINDOW,
+	PIDGIN_BROWSER_NEW_TAB
 
-} GaimBrowserPlace;
+} PidginBrowserPlace;
 #endif /* _WIN32 */
 
 /**
@@ -70,7 +70,7 @@ typedef enum
  *
  * @param imhtml The gtkimhtml widget to setup.
  */
-void gaim_setup_imhtml(GtkWidget *imhtml);
+void pidgin_setup_imhtml(GtkWidget *imhtml);
 
 /**
  * Create an GtkIMHtml widget and associated GtkIMHtmlToolbar widget.  This
@@ -131,7 +131,7 @@ void pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle);
  *
  * @param menu The menu to add a separator to.
  */
-void gaim_separator(GtkWidget *menu);
+void pidgin_separator(GtkWidget *menu);
 
 /**
  * Creates a menu item.
@@ -141,7 +141,7 @@ void gaim_separator(GtkWidget *menu);
  *
  * @return The newly created menu item.
  */
-GtkWidget *gaim_new_item(GtkWidget *menu, const char *str);
+GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str);
 
 /**
  * Creates a check menu item.
@@ -154,7 +154,7 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str);
  *
  * @return The newly created menu item.
  */
-GtkWidget *gaim_new_check_item(GtkWidget *menu, const char *str,
+GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
 		GtkSignalFunc sf, gpointer data, gboolean checked);
 
 /**
@@ -172,7 +172,7 @@ GtkWidget *gaim_new_check_item(GtkWidget *menu, const char *str,
  *
  * @return The newly created menu item.
  */
-GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str,
+GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str,
 									const char *icon, GtkSignalFunc sf,
 									gpointer data, guint accel_key,
 									guint accel_mods, char *mod);
@@ -186,8 +186,8 @@ GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str,
  *
  * @return The button.
  */
-GtkWidget *gaim_pixbuf_button_from_stock(const char *text, const char *icon,
-										 GaimButtonOrientation style);
+GtkWidget *pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
+										 PidginButtonOrientation style);
 
 /**
  * Creates a toolbar button with the stock icon.
@@ -196,7 +196,7 @@ GtkWidget *gaim_pixbuf_button_from_stock(const char *text, const char *icon,
  *
  * @return The button.
  */
-GtkWidget *gaim_pixbuf_toolbar_button_from_stock(const char *stock);
+GtkWidget *pidgin_pixbuf_toolbar_button_from_stock(const char *stock);
 
 /**
  * Creates a HIG preferences frame.
@@ -334,7 +334,7 @@ gboolean pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
  * @param w The widget that we want to name.
  * @param l A GtkLabel that we want to use as the ATK name for the widget.
  */
-void gaim_set_accessible_label(GtkWidget *w, GtkWidget *l);
+void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
 
 /**
  * A valid GtkMenuPositionFunc.  This is used to determine where 
@@ -364,7 +364,7 @@ void pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
  * @param account Account to be used (may be NULL if conv is not NULL)
  * @param who Buddy name (may be NULL if conv is not NULL)
  */
-void gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who);
+void pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who);
 
 /**
  * Convenience wrapper for gaim_buddy_icon_get_scale_size
@@ -552,7 +552,7 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent);
  * @param pixbuf  The pixbug
  * @return TRUE if the pixbuf is opaque around the edges, FALSE otherwise
  */
-gboolean gaim_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf);
+gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf);
 
 #if !GTK_CHECK_VERSION(2,2,0)
 /**

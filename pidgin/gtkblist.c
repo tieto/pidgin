@@ -632,7 +632,7 @@ rebuild_joinchat_entries(PidginJoinChatData *data)
 			focus = FALSE;
 		}
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), input);
-		gaim_set_accessible_label(input, label);
+		pidgin_set_accessible_label(input, label);
 		g_object_set_data(G_OBJECT(input), "identifier", (gpointer)pce->identifier);
 		g_object_set_data(G_OBJECT(input), "is_spin", GINT_TO_POINTER(pce->is_int));
 		g_object_set_data(G_OBJECT(input), "required", GINT_TO_POINTER(pce->required));
@@ -743,7 +743,7 @@ pidgin_blist_joinchat_show(void)
 	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label),
 								  GTK_WIDGET(data->account_menu));
-	gaim_set_accessible_label (data->account_menu, label);
+	pidgin_set_accessible_label (data->account_menu, label);
 
 	data->entries_box = gtk_vbox_new(FALSE, 5);
 	gtk_container_add(GTK_CONTAINER(vbox), data->entries_box);
@@ -1006,7 +1006,7 @@ void pidgin_append_blist_node_privacy_menu(GtkWidget *menu, GaimBlistNode *node)
 	account = gaim_buddy_get_account(buddy);
 	permitted = gaim_privacy_check(account, gaim_buddy_get_name(buddy));
 
-	gaim_new_item_from_stock(menu, permitted ? _("_Block") : _("Un_block"),
+	pidgin_new_item_from_stock(menu, permitted ? _("_Block") : _("Un_block"),
 						GAIM_STOCK_BLOCK, G_CALLBACK(toggle_privacy),
 						node, 0 ,0, NULL);
 }
@@ -1057,31 +1057,31 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 	}
 
 	if (prpl_info && prpl_info->get_info) {
-		gaim_new_item_from_stock(menu, _("Get _Info"), GAIM_STOCK_INFO,
+		pidgin_new_item_from_stock(menu, _("Get _Info"), GAIM_STOCK_INFO,
 				G_CALLBACK(gtk_blist_menu_info_cb), buddy, 0, 0, NULL);
 	}
-	gaim_new_item_from_stock(menu, _("I_M"), GAIM_STOCK_IM,
+	pidgin_new_item_from_stock(menu, _("I_M"), GAIM_STOCK_IM,
 			G_CALLBACK(gtk_blist_menu_im_cb), buddy, 0, 0, NULL);
 	if (prpl_info && prpl_info->send_file) {
 		if (!prpl_info->can_receive_file ||
 			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
 		{
-			gaim_new_item_from_stock(menu, _("_Send File"),
+			pidgin_new_item_from_stock(menu, _("_Send File"),
 									 GAIM_STOCK_FILE_TRANSFER,
 									 G_CALLBACK(gtk_blist_menu_send_file_cb),
 									 buddy, 0, 0, NULL);
 		}
 	}
 
-	gaim_new_item_from_stock(menu, _("Add Buddy _Pounce"), GAIM_STOCK_POUNCE,
+	pidgin_new_item_from_stock(menu, _("Add Buddy _Pounce"), GAIM_STOCK_POUNCE,
 			G_CALLBACK(gtk_blist_menu_bp_cb), buddy, 0, 0, NULL);
 
 	if(((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
-		gaim_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
+		pidgin_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
 				G_CALLBACK(gtk_blist_menu_showlog_cb),
 				contact, 0, 0, NULL);
 	} else if (!sub) {
-		gaim_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
+		pidgin_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
 				G_CALLBACK(gtk_blist_menu_showlog_cb), buddy, 0, 0, NULL);
 	}
 
@@ -1092,20 +1092,20 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 	pidgin_append_blist_node_extended_menu(menu, (GaimBlistNode *)buddy);
 
 	if (((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
-		gaim_separator(menu);
+		pidgin_separator(menu);
 
-		gaim_new_item_from_stock(menu, _("Alias..."), GAIM_STOCK_ALIAS,
+		pidgin_new_item_from_stock(menu, _("Alias..."), GAIM_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb),
 				contact, 0, 0, NULL);
-		gaim_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
+		pidgin_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
 				G_CALLBACK(pidgin_blist_remove_cb),
 				contact, 0, 0, NULL);
 	} else if (!sub || contact_expanded) {
-		gaim_separator(menu);
+		pidgin_separator(menu);
 
-		gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
+		pidgin_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
-		gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
+		pidgin_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
 				G_CALLBACK(pidgin_blist_remove_cb), buddy,
 				0, 0, NULL);
 	}
@@ -1152,14 +1152,14 @@ create_group_menu (GaimBlistNode *node, GaimGroup *g)
 	GtkWidget *item;
 
 	menu = gtk_menu_new();
-	gaim_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
+	pidgin_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
 				 G_CALLBACK(pidgin_blist_add_buddy_cb), node, 0, 0, NULL);
-	item = gaim_new_item_from_stock(menu, _("Add a C_hat"), GTK_STOCK_ADD,
+	item = pidgin_new_item_from_stock(menu, _("Add a C_hat"), GTK_STOCK_ADD,
 				 G_CALLBACK(pidgin_blist_add_chat_cb), node, 0, 0, NULL);
 	gtk_widget_set_sensitive(item, pidgin_blist_joinchat_is_showable());
-	gaim_new_item_from_stock(menu, _("_Delete Group"), GTK_STOCK_REMOVE,
+	pidgin_new_item_from_stock(menu, _("_Delete Group"), GTK_STOCK_REMOVE,
 				 G_CALLBACK(pidgin_blist_remove_cb), node, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("_Rename"), NULL,
+	pidgin_new_item_from_stock(menu, _("_Rename"), NULL,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
 
 	pidgin_append_blist_node_extended_menu(menu, node);
@@ -1177,21 +1177,21 @@ create_chat_menu(GaimBlistNode *node, GaimChat *c) {
 	autojoin = (gaim_blist_node_get_bool(node, "gtk-autojoin") ||
 			(gaim_blist_node_get_string(node, "gtk-autojoin") != NULL));
 
-	gaim_new_item_from_stock(menu, _("_Join"), GAIM_STOCK_CHAT,
+	pidgin_new_item_from_stock(menu, _("_Join"), GAIM_STOCK_CHAT,
 			G_CALLBACK(gtk_blist_menu_join_cb), node, 0, 0, NULL);
-	gaim_new_check_item(menu, _("Auto-Join"),
+	pidgin_new_check_item(menu, _("Auto-Join"),
 			G_CALLBACK(gtk_blist_menu_autojoin_cb), node, autojoin);
-	gaim_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
+	pidgin_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
 			G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
 	pidgin_append_blist_node_proto_menu(menu, c->account->gc, node);
 	pidgin_append_blist_node_extended_menu(menu, node);
 
-	gaim_separator(menu);
+	pidgin_separator(menu);
 
-	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
+	pidgin_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
+	pidgin_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
 				 G_CALLBACK(pidgin_blist_remove_cb), node, 0, 0, NULL);
 
 	return menu;
@@ -1204,20 +1204,20 @@ create_contact_menu (GaimBlistNode *node)
 
 	menu = gtk_menu_new();
 
-	gaim_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
+	pidgin_new_item_from_stock(menu, _("View _Log"), GAIM_STOCK_LOG,
 				 G_CALLBACK(gtk_blist_menu_showlog_cb),
 				 node, 0, 0, NULL);
 
-	gaim_separator(menu);
+	pidgin_separator(menu);
 
-	gaim_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
+	pidgin_new_item_from_stock(menu, _("_Alias..."), GAIM_STOCK_ALIAS,
 				 G_CALLBACK(gtk_blist_menu_alias_cb), node, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
+	pidgin_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
 				 G_CALLBACK(pidgin_blist_remove_cb), node, 0, 0, NULL);
 
-	gaim_separator(menu);
+	pidgin_separator(menu);
 
-	gaim_new_item_from_stock(menu, _("_Collapse"), GTK_STOCK_ZOOM_OUT,
+	pidgin_new_item_from_stock(menu, _("_Collapse"), GTK_STOCK_ZOOM_OUT,
 				 G_CALLBACK(pidgin_blist_collapse_contact_cb),
 				 node, 0, 0, NULL);
 
@@ -1237,15 +1237,15 @@ create_buddy_menu(GaimBlistNode *node, GaimBuddy *b) {
 	pidgin_blist_make_buddy_menu(menu, b, FALSE);
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
-		gaim_separator(menu);
+		pidgin_separator(menu);
 
 		if(gtknode->contact_expanded) {
-			gaim_new_item_from_stock(menu, _("_Collapse"),
+			pidgin_new_item_from_stock(menu, _("_Collapse"),
 						 GTK_STOCK_ZOOM_OUT,
 						 G_CALLBACK(pidgin_blist_collapse_contact_cb),
 						 node, 0, 0, NULL);
 		} else {
-			gaim_new_item_from_stock(menu, _("_Expand"),
+			pidgin_new_item_from_stock(menu, _("_Expand"),
 						 GTK_STOCK_ZOOM_IN,
 						 G_CALLBACK(pidgin_blist_expand_contact_cb), node,
 						 0, 0, NULL);
@@ -2041,7 +2041,7 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 
 				if (GAIM_BLIST_NODE_IS_BUDDY(node) || GAIM_BLIST_NODE_IS_CONTACT(node)) {
 					GaimBuddy *b = GAIM_BLIST_NODE_IS_BUDDY(node) ? (GaimBuddy*)node : gaim_contact_get_priority_buddy((GaimContact*)node);
-					gaim_dnd_file_manage(sd, b->account, b->name);
+					pidgin_dnd_file_manage(sd, b->account, b->name);
 					gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 				} else {
 					gtk_drag_finish(dc, FALSE, FALSE, t);
@@ -2345,7 +2345,7 @@ static void pidgin_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, Gai
 	{
 		struct tooltip_data *td = l->data;
 
-		if (td->avatar && gaim_gdk_pixbuf_is_opaque(td->avatar))
+		if (td->avatar && pidgin_gdk_pixbuf_is_opaque(td->avatar))
 			gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
 					NULL, gtkblist->tipwindow, "tooltip",
 					max_width - (td->avatar_width+ TOOLTIP_BORDER)-1,
@@ -5231,7 +5231,7 @@ pidgin_blist_request_add_buddy(GaimAccount *account, const char *username,
 										  GTK_RESPONSE_OK, FALSE);
 
 	gtk_entry_set_activates_default (GTK_ENTRY(data->entry), TRUE);
-	gaim_set_accessible_label (data->entry, label);
+	pidgin_set_accessible_label (data->entry, label);
 
 	g_signal_connect(G_OBJECT(data->entry), "changed",
 					 G_CALLBACK(pidgin_set_sensitive_if_input),
@@ -5252,7 +5252,7 @@ pidgin_blist_request_add_buddy(GaimAccount *account, const char *username,
 		gtk_widget_grab_focus(GTK_WIDGET(data->entry_for_alias));
 
 	gtk_entry_set_activates_default (GTK_ENTRY(data->entry_for_alias), TRUE);
-	gaim_set_accessible_label (data->entry_for_alias, label);
+	pidgin_set_accessible_label (data->entry_for_alias, label);
 
 	label = gtk_label_new(_("Group:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -5261,7 +5261,7 @@ pidgin_blist_request_add_buddy(GaimAccount *account, const char *username,
 	data->combo = gtk_combo_new();
 	gtk_combo_set_popdown_strings(GTK_COMBO(data->combo), groups_tree());
 	gtk_table_attach_defaults(GTK_TABLE(table), data->combo, 1, 2, 2, 3);
-	gaim_set_accessible_label (data->combo, label);
+	pidgin_set_accessible_label (data->combo, label);
 
 	/* Set up stuff for the account box */
 	label = gtk_label_new(_("Account:"));
@@ -5272,7 +5272,7 @@ pidgin_blist_request_add_buddy(GaimAccount *account, const char *username,
 			G_CALLBACK(add_buddy_select_account_cb), NULL, data);
 
 	gtk_table_attach_defaults(GTK_TABLE(table), data->account_box, 1, 2, 3, 4);
-	gaim_set_accessible_label (data->account_box, label);
+	pidgin_set_accessible_label (data->account_box, label);
 	/* End of account box */
 
 	g_signal_connect(G_OBJECT(data->window), "response",
@@ -5461,7 +5461,7 @@ rebuild_addchat_entries(PidginAddChatData *data)
 			focus = FALSE;
 		}
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), input);
-		gaim_set_accessible_label(input, label);
+		pidgin_set_accessible_label(input, label);
 		g_object_set_data(G_OBJECT(input), "identifier", (gpointer)pce->identifier);
 		g_object_set_data(G_OBJECT(input), "is_spin", GINT_TO_POINTER(pce->is_int));
 		g_object_set_data(G_OBJECT(input), "required", GINT_TO_POINTER(pce->required));
@@ -5589,7 +5589,7 @@ pidgin_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 			G_CALLBACK(addchat_select_account_cb),
 			chat_account_filter_func, data);
 	gtk_box_pack_start(GTK_BOX(rowbox), data->account_menu, TRUE, TRUE, 0);
-	gaim_set_accessible_label (data->account_menu, label);
+	pidgin_set_accessible_label (data->account_menu, label);
 
 	data->entries_box = gtk_vbox_new(FALSE, 5);
 	gtk_container_set_border_width(GTK_CONTAINER(data->entries_box), 0);
@@ -5610,7 +5610,7 @@ pidgin_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 		gtk_entry_set_text(GTK_ENTRY(data->alias_entry), alias);
 	gtk_box_pack_end(GTK_BOX(rowbox), data->alias_entry, TRUE, TRUE, 0);
 	gtk_entry_set_activates_default(GTK_ENTRY(data->alias_entry), TRUE);
-	gaim_set_accessible_label (data->alias_entry, label);
+	pidgin_set_accessible_label (data->alias_entry, label);
 
 	rowbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
@@ -5629,7 +5629,7 @@ pidgin_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 		gtk_entry_set_text(GTK_ENTRY(GTK_COMBO(data->group_combo)->entry),
 						   group->name);
 	}
-	gaim_set_accessible_label (data->group_combo, label);
+	pidgin_set_accessible_label (data->group_combo, label);
 
 	g_signal_connect(G_OBJECT(data->window), "response",
 					 G_CALLBACK(add_chat_resp_cb), data);
@@ -6219,7 +6219,7 @@ build_plugin_actions(GtkWidget *menu, GaimPlugin *plugin)
 			gtk_widget_show(menuitem);
 		}
 		else
-			gaim_separator(menu);
+			pidgin_separator(menu);
 	}
 
 	g_list_free(actions);
@@ -6317,7 +6317,7 @@ pidgin_blist_update_accounts_menu(void)
 			gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
 			gtk_widget_show(menuitem);
 
-			gaim_separator(submenu);
+			pidgin_separator(submenu);
 
 			gc = gaim_account_get_connection(account);
 			if (gc && GAIM_CONNECTION_IS_CONNECTED(gc)) {
@@ -6341,7 +6341,7 @@ pidgin_blist_update_accounts_menu(void)
 							g_object_set_data_full(G_OBJECT(menuitem), "plugin_action", action, (GDestroyNotify)gaim_plugin_action_free);
 							gtk_widget_show(menuitem);
 						} else
-							gaim_separator(submenu);
+							pidgin_separator(submenu);
 					}
 				} else {
 					menuitem = gtk_menu_item_new_with_label(_("No actions available"));
@@ -6356,7 +6356,7 @@ pidgin_blist_update_accounts_menu(void)
 				gtk_widget_show(menuitem);
 			}
 
-			gaim_separator(submenu);
+			pidgin_separator(submenu);
 
 			menuitem = gtk_menu_item_new_with_mnemonic(_("_Disable"));
 			g_signal_connect(G_OBJECT(menuitem), "activate",
@@ -6369,7 +6369,7 @@ pidgin_blist_update_accounts_menu(void)
 	}
 
 	if(disabled_accounts) {
-		gaim_separator(accountmenu);
+		pidgin_separator(accountmenu);
 		menuitem = gtk_menu_item_new_with_label(_("Enable Account"));
 		gtk_menu_shell_append(GTK_MENU_SHELL(accountmenu), menuitem);
 		gtk_widget_show(menuitem);

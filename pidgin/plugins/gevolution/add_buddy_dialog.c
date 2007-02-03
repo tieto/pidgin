@@ -577,8 +577,8 @@ gevo_add_buddy_dialog_show(GaimAccount *account, const char *username,
 	gtk_widget_show(bbox);
 
 	/* "New Person" button */
-	button = gaim_pixbuf_button_from_stock(_("New Person"), GTK_STOCK_NEW,
-										   GAIM_BUTTON_HORIZONTAL);
+	button = pidgin_pixbuf_button_from_stock(_("New Person"), GTK_STOCK_NEW,
+										   PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_show(button);
 
@@ -594,8 +594,8 @@ gevo_add_buddy_dialog_show(GaimAccount *account, const char *username,
 					 G_CALLBACK(cancel_cb), dialog);
 
 	/* "Select Buddy" button */
-	button = gaim_pixbuf_button_from_stock(_("Select Buddy"), GTK_STOCK_APPLY,
-										   GAIM_BUTTON_HORIZONTAL);
+	button = pidgin_pixbuf_button_from_stock(_("Select Buddy"), GTK_STOCK_APPLY,
+										   PIDGIN_BUTTON_HORIZONTAL);
 	dialog->select_button = button;
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(button, FALSE);

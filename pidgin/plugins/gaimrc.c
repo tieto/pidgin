@@ -455,8 +455,8 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	                                hbox);
 	gtk_size_group_add_widget(labelsg, check);
 
-	widget = gaim_pixbuf_button_from_stock("", GTK_STOCK_SELECT_FONT,
-	                                       GAIM_BUTTON_HORIZONTAL);
+	widget = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_FONT,
+	                                       PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(hbox), widget, FALSE, FALSE, 0);
 	gtk_size_group_add_widget(widgetsg, widget);
 	gtk_widget_set_sensitive(widget,
@@ -515,7 +515,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 		                                color_prefs_set[i], hbox);
 		gtk_size_group_add_widget(labelsg, check);
 
-		color_widgets[i] = gaim_pixbuf_button_from_stock("", GTK_STOCK_SELECT_COLOR, GAIM_BUTTON_HORIZONTAL);
+		color_widgets[i] = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_COLOR, PIDGIN_BUTTON_HORIZONTAL);
 		gtk_size_group_add_widget(widgetsg, color_widgets[i]);
 		gtk_box_pack_start(GTK_BOX(hbox), color_widgets[i], FALSE,
 		                   FALSE, 0);
@@ -560,7 +560,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 		                                font_prefs_set[i], hbox);
 		gtk_size_group_add_widget(labelsg, check);
 
-		font_widgets[i] = gaim_pixbuf_button_from_stock("", GTK_STOCK_SELECT_FONT, GAIM_BUTTON_HORIZONTAL);
+		font_widgets[i] = pidgin_pixbuf_button_from_stock("", GTK_STOCK_SELECT_FONT, PIDGIN_BUTTON_HORIZONTAL);
 		gtk_size_group_add_widget(widgetsg, font_widgets[i]);
 		gtk_box_pack_start(GTK_BOX(hbox), font_widgets[i], FALSE,
 		                   FALSE, 0);

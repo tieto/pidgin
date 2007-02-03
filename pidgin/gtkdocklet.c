@@ -474,7 +474,7 @@ docklet_status_submenu()
 
 	popular_statuses = gaim_savedstatuses_get_popular(6);
 	if (popular_statuses != NULL)
-		gaim_separator(submenu);
+		pidgin_separator(submenu);
 	for (cur = popular_statuses; cur != NULL; cur = cur->next)
 	{
 		GaimSavedStatus *saved_status = cur->data;
@@ -486,7 +486,7 @@ docklet_status_submenu()
 	}
 	g_list_free(popular_statuses);
 
-	gaim_separator(submenu);
+	pidgin_separator(submenu);
 
 	new_menu_item_with_gaim_icon(submenu, _("New..."), GAIM_STATUS_AVAILABLE, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
 	new_menu_item_with_gaim_icon(submenu, _("Saved..."), GAIM_STATUS_AVAILABLE, G_CALLBACK(pidgin_status_window_show), NULL, 0, 0, NULL);
@@ -529,22 +529,22 @@ docklet_menu() {
 	}
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	gaim_separator(menu);
+	pidgin_separator(menu);
 
-	menuitem = gaim_new_item_from_stock(menu, _("New Message..."), GAIM_STOCK_IM, G_CALLBACK(pidgindialogs_im), NULL, 0, 0, NULL);
+	menuitem = pidgin_new_item_from_stock(menu, _("New Message..."), GAIM_STOCK_IM, G_CALLBACK(pidgindialogs_im), NULL, 0, 0, NULL);
 	if (status == DOCKLET_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
 	menuitem = docklet_status_submenu();
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	gaim_separator(menu);
+	pidgin_separator(menu);
 
-	gaim_new_item_from_stock(menu, _("Accounts"), GAIM_STOCK_ACCOUNTS, G_CALLBACK(pidgin_accounts_window_show), NULL, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Plugins"), GAIM_STOCK_PLUGIN, G_CALLBACK(pidgin_plugin_dialog_show), NULL, 0, 0, NULL);
-	gaim_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(pidgin_prefs_show), NULL, 0, 0, NULL);
+	pidgin_new_item_from_stock(menu, _("Accounts"), GAIM_STOCK_ACCOUNTS, G_CALLBACK(pidgin_accounts_window_show), NULL, 0, 0, NULL);
+	pidgin_new_item_from_stock(menu, _("Plugins"), GAIM_STOCK_PLUGIN, G_CALLBACK(pidgin_plugin_dialog_show), NULL, 0, 0, NULL);
+	pidgin_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(pidgin_prefs_show), NULL, 0, 0, NULL);
 
-	gaim_separator(menu);
+	pidgin_separator(menu);
 
 	menuitem = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
 	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
@@ -558,13 +558,13 @@ docklet_menu() {
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blink), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
-	gaim_separator(menu);
+	pidgin_separator(menu);
 
 	/* TODO: need a submenu to change status, this needs to "link"
 	 * to the status in the buddy list gtkstatusbox
 	 */
 
-	gaim_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(gaim_core_quit), NULL, 0, 0, NULL);
+	pidgin_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(gaim_core_quit), NULL, 0, 0, NULL);
 
 #ifdef _WIN32
 	g_signal_connect(menu, "leave-notify-event", G_CALLBACK(docklet_menu_leave_enter), NULL);

@@ -1606,7 +1606,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 	menu = gtk_menu_new();
 
 	if (!is_me) {
-		button = gaim_new_item_from_stock(menu, _("IM"), GAIM_STOCK_IM,
+		button = pidgin_new_item_from_stock(menu, _("IM"), GAIM_STOCK_IM,
 					G_CALLBACK(menu_chat_im_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 		if (gc == NULL)
@@ -1617,7 +1617,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 
 		if (prpl_info && prpl_info->send_file)
 		{
-			button = gaim_new_item_from_stock(menu, _("Send File"),
+			button = pidgin_new_item_from_stock(menu, _("Send File"),
 				GAIM_STOCK_FILE_TRANSFER, G_CALLBACK(menu_chat_send_file_cb),
 				PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
@@ -1632,10 +1632,10 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 
 
 		if (gaim_conv_chat_is_user_ignored(GAIM_CONV_CHAT(conv), who))
-			button = gaim_new_item_from_stock(menu, _("Un-Ignore"), GAIM_STOCK_IGNORE,
+			button = pidgin_new_item_from_stock(menu, _("Un-Ignore"), GAIM_STOCK_IGNORE,
 							G_CALLBACK(ignore_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 		else
-			button = gaim_new_item_from_stock(menu, _("Ignore"), GAIM_STOCK_IGNORE,
+			button = pidgin_new_item_from_stock(menu, _("Ignore"), GAIM_STOCK_IGNORE,
 							G_CALLBACK(ignore_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 		if (gc == NULL)
@@ -1645,7 +1645,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 	}
 
 	if (prpl_info && (prpl_info->get_info || prpl_info->get_cb_info)) {
-		button = gaim_new_item_from_stock(menu, _("Info"), GAIM_STOCK_INFO,
+		button = pidgin_new_item_from_stock(menu, _("Info"), GAIM_STOCK_INFO,
 						G_CALLBACK(menu_chat_info_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 		if (gc == NULL)
@@ -1655,7 +1655,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 	}
 
 	if (prpl_info && prpl_info->get_cb_away) {
-		button = gaim_new_item_from_stock(menu, _("Get Away Message"), GAIM_STOCK_AWAY,
+		button = pidgin_new_item_from_stock(menu, _("Get Away Message"), GAIM_STOCK_AWAY,
 					G_CALLBACK(menu_chat_get_away_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 		if (gc == NULL)
@@ -1666,10 +1666,10 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 
 	if (!is_me && prpl_info && !(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 		if ((buddy = gaim_find_buddy(conv->account, who)) != NULL)
-			button = gaim_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
+			button = pidgin_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
 						G_CALLBACK(menu_chat_add_remove_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 		else
-			button = gaim_new_item_from_stock(menu, _("Add"), GTK_STOCK_ADD,
+			button = pidgin_new_item_from_stock(menu, _("Add"), GTK_STOCK_ADD,
 						G_CALLBACK(menu_chat_add_remove_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 		if (gc == NULL)
@@ -1678,7 +1678,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 		g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	}
 
-	button = gaim_new_item_from_stock(menu, _("Last said"), GTK_STOCK_INDEX,
+	button = pidgin_new_item_from_stock(menu, _("Last said"), GTK_STOCK_INDEX,
 						G_CALLBACK(menu_last_said_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 	g_object_set_data_full(G_OBJECT(button), "user_data", g_strdup(who), g_free);
 	if (!get_mark_for_user(PIDGIN_CONVERSATION(conv), who))
@@ -2562,26 +2562,26 @@ icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 	if (gtkconv->u.im->anim &&
 		!(gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)))
 	{
-		gaim_new_check_item(menu, _("Animate"),
+		pidgin_new_check_item(menu, _("Animate"),
 							G_CALLBACK(toggle_icon_animate_cb), gtkconv,
 							gtkconv->u.im->icon_timer);
 	}
 
-	gaim_new_item_from_stock(menu, _("Hide Icon"), NULL, G_CALLBACK(remove_icon),
+	pidgin_new_item_from_stock(menu, _("Hide Icon"), NULL, G_CALLBACK(remove_icon),
 							 gtkconv, 0, 0, NULL);
 
-	gaim_new_item_from_stock(menu, _("Save Icon As..."), GTK_STOCK_SAVE_AS,
+	pidgin_new_item_from_stock(menu, _("Save Icon As..."), GTK_STOCK_SAVE_AS,
 							 G_CALLBACK(icon_menu_save_cb), gtkconv,
 							 0, 0, NULL);
 
-	gaim_new_item_from_stock(menu, _("Set Custom Icon..."), NULL,
+	pidgin_new_item_from_stock(menu, _("Set Custom Icon..."), NULL,
 							 G_CALLBACK(set_custom_icon_cb), gtkconv,
 							 0, 0, NULL);
 
 	/* Is there a custom icon for this person? */
 	pref = custom_icon_pref_name(gtkconv);
 	if (pref && *pref) {
-		gaim_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
+		pidgin_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
 							G_CALLBACK(remove_custom_icon_cb), gtkconv,
 							0, 0, NULL);
 	}
@@ -3988,7 +3988,7 @@ entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	g_return_if_fail(menu != NULL);
 	g_return_if_fail(gtkconv != NULL);
 
-	menuitem = gaim_new_item_from_stock(NULL, _("_Send"), GAIM_STOCK_SEND,
+	menuitem = pidgin_new_item_from_stock(NULL, _("_Send"), GAIM_STOCK_SEND,
 										G_CALLBACK(send_menu_cb), gtkconv,
 										0, 0, NULL);
 	if (gtk_text_buffer_get_char_count(imhtml->text_buffer) == 0)
@@ -4458,7 +4458,7 @@ conv_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 	}
 	else if (sd->target == gdk_atom_intern("text/uri-list", FALSE)) {
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
-			gaim_dnd_file_manage(sd, gaim_conversation_get_account(conv), gaim_conversation_get_name(conv));
+			pidgin_dnd_file_manage(sd, gaim_conversation_get_account(conv), gaim_conversation_get_name(conv));
 		gtk_drag_finish(dc, TRUE, (dc->action == GDK_ACTION_MOVE), t);
 	}
 	else
@@ -7587,7 +7587,7 @@ right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, PidginWindow *
 	g_object_set_data(G_OBJECT(notebook->menu), "clicked_tab", gtkconv);
 
 	menu = notebook->menu;
-	gaim_separator(GTK_WIDGET(menu));
+	pidgin_separator(GTK_WIDGET(menu));
 
 	item = gtk_menu_item_new_with_label(_("Close other tabs"));
 	gtk_widget_show(item);
@@ -7601,7 +7601,7 @@ right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, PidginWindow *
 	g_signal_connect(G_OBJECT(item), "activate",
 					G_CALLBACK(close_window), win);
 
-	gaim_separator(menu);
+	pidgin_separator(menu);
 
 	item = gtk_menu_item_new_with_label(_("Detach this tab"));
 	gtk_widget_show(item);

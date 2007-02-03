@@ -403,7 +403,7 @@ privacy_dialog_new(void)
 												G_CALLBACK(select_account_cb), NULL, dialog);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, FALSE, FALSE, 0);
 	gtk_widget_show(dropdown);
-	gaim_set_accessible_label (dropdown, label);
+	pidgin_set_accessible_label (dropdown, label);
 	dialog->account = pidgin_account_option_menu_get_selected(dropdown);
 
 	/* Add the drop-down list with the allow/block types. */
@@ -415,7 +415,7 @@ privacy_dialog_new(void)
 	menu = gtk_menu_new();
 
 	for (i = 0; i < menu_entry_count; i++) {
-		gaim_new_item(menu, _(menu_entries[i].text));
+		pidgin_new_item(menu, _(menu_entries[i].text));
 
 		if (menu_entries[i].num == dialog->account->perm_deny)
 			selected = i;

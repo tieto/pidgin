@@ -123,7 +123,7 @@ pidgin_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 		gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 	}
 
-	gaim_set_accessible_label (spin, label);
+	pidgin_set_accessible_label (spin, label);
 
 	return hbox;
 }
@@ -167,7 +167,7 @@ pidgin_prefs_labeled_entry(GtkWidget *page, const gchar *title,
 		gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 	}
 
-	gaim_set_accessible_label(entry, label);
+	pidgin_set_accessible_label(entry, label);
 
 	return hbox;
 }
@@ -239,7 +239,7 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 
 	if (label != NULL) {
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), dropdown);
-		gaim_set_accessible_label (dropdown, label);
+		pidgin_set_accessible_label (dropdown, label);
 	}
 
 	if (type == GAIM_PREF_INT)
@@ -696,7 +696,7 @@ theme_page()
 
 	gtk_widget_show_all(ret);
 
-	gaim_set_accessible_label (view, label);
+	pidgin_set_accessible_label (view, label);
 
 	return ret;
 }
@@ -1058,7 +1058,7 @@ network_page()
 		gtk_entry_set_text(GTK_ENTRY(entry),
 		                   gaim_network_get_my_ip(-1));
 
-	gaim_set_accessible_label (entry, label);
+	pidgin_set_accessible_label (entry, label);
 
 
 	if (gaim_prefs_get_bool("/core/network/auto_ip")) {
@@ -1128,7 +1128,7 @@ network_page()
 
 		hbox = gtk_hbox_new(TRUE, 5);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-		gaim_set_accessible_label (entry, label);
+		pidgin_set_accessible_label (entry, label);
 
 		label = gtk_label_new_with_mnemonic(_("_Port:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
@@ -1147,7 +1147,7 @@ network_page()
 
 			gtk_entry_set_text(GTK_ENTRY(entry), buf);
 		}
-		gaim_set_accessible_label (entry, label);
+		pidgin_set_accessible_label (entry, label);
 
 		label = gtk_label_new_with_mnemonic(_("_User:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
@@ -1165,7 +1165,7 @@ network_page()
 
 		hbox = gtk_hbox_new(TRUE, 5);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-		gaim_set_accessible_label (entry, label);
+		pidgin_set_accessible_label (entry, label);
 
 		label = gtk_label_new_with_mnemonic(_("Pa_ssword:"));
 		gtk_misc_set_alignment(GTK_MISC(label), 1.0, 0.5);
@@ -1183,7 +1183,7 @@ network_page()
 		if (proxy_info != NULL && gaim_proxy_info_get_password(proxy_info) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry),
 					   gaim_proxy_info_get_password(proxy_info));
-		gaim_set_accessible_label (entry, label);
+		pidgin_set_accessible_label (entry, label);
 	}
 
 	gtk_widget_show_all(ret);
@@ -1298,10 +1298,10 @@ browser_page()
 		hbox = gtk_hbox_new(FALSE, 0);
 		label = pidgin_prefs_dropdown(hbox, _("_Open link in:"), GAIM_PREF_INT,
 			"/gaim/gtk/browsers/place",
-			_("Browser default"), GAIM_BROWSER_DEFAULT,
-			_("Existing window"), GAIM_BROWSER_CURRENT,
-			_("New window"), GAIM_BROWSER_NEW_WINDOW,
-			_("New tab"), GAIM_BROWSER_NEW_TAB,
+			_("Browser default"), PIDGIN_BROWSER_DEFAULT,
+			_("Existing window"), PIDGIN_BROWSER_CURRENT,
+			_("New window"), PIDGIN_BROWSER_NEW_WINDOW,
+			_("New tab"), PIDGIN_BROWSER_NEW_TAB,
 			NULL);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_size_group_add_widget(sg, label);
@@ -1334,7 +1334,7 @@ browser_page()
 					   gaim_prefs_get_path("/gaim/gtk/browsers/command"));
 	g_signal_connect(G_OBJECT(entry), "focus-out-event",
 					 G_CALLBACK(manual_browser_set), NULL);
-	gaim_set_accessible_label (entry, label);
+	pidgin_set_accessible_label (entry, label);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -1633,7 +1633,7 @@ sound_page()
 			!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"),
 					"custom"));
 
-	gaim_set_accessible_label (entry, label);
+	pidgin_set_accessible_label (entry, label);
 #endif /* _WIN32 */
 
 	vbox = pidgin_make_frame (ret, _("Sound Options"));
@@ -2034,7 +2034,7 @@ pidgin_prefs_init(void)
 #ifndef _WIN32
 	/* Browsers */
 	gaim_prefs_add_none("/gaim/gtk/browsers");
-	gaim_prefs_add_int("/gaim/gtk/browsers/place", GAIM_BROWSER_DEFAULT);
+	gaim_prefs_add_int("/gaim/gtk/browsers/place", PIDGIN_BROWSER_DEFAULT);
 	gaim_prefs_add_path("/gaim/gtk/browsers/command", "");
 	gaim_prefs_add_string("/gaim/gtk/browsers/browser", "mozilla");
 #endif

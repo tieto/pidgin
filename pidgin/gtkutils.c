@@ -87,7 +87,7 @@ static GtkIMHtmlFuncs gtkimhtml_cbs = {
 };
 
 void
-gaim_setup_imhtml(GtkWidget *imhtml)
+pidgin_setup_imhtml(GtkWidget *imhtml)
 {
 	g_return_if_fail(imhtml != NULL);
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
@@ -170,7 +170,7 @@ pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **tool
 		gtk_imhtmltoolbar_attach(GTK_IMHTMLTOOLBAR(toolbar), imhtml);
 		gtk_imhtmltoolbar_associate_smileys(GTK_IMHTMLTOOLBAR(toolbar), "default");
 	}
-	gaim_setup_imhtml(imhtml);
+	pidgin_setup_imhtml(imhtml);
 
 	gtk_container_add(GTK_CONTAINER(sw), imhtml);
 
@@ -237,7 +237,7 @@ pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle)
 		gtk_widget_show(to_toggle);
 }
 
-void gaim_separator(GtkWidget *menu)
+void pidgin_separator(GtkWidget *menu)
 {
 	GtkWidget *menuitem;
 
@@ -246,7 +246,7 @@ void gaim_separator(GtkWidget *menu)
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 }
 
-GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
+GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str)
 {
 	GtkWidget *menuitem;
 	GtkWidget *label;
@@ -265,11 +265,11 @@ GtkWidget *gaim_new_item(GtkWidget *menu, const char *str)
 	gtk_widget_add_accelerator(menuitem, "activate", accel, str[0],
 				   GDK_MOD1_MASK, GTK_ACCEL_LOCKED);
 */
-	gaim_set_accessible_label (menuitem, label);
+	pidgin_set_accessible_label (menuitem, label);
 	return menuitem;
 }
 
-GtkWidget *gaim_new_check_item(GtkWidget *menu, const char *str,
+GtkWidget *pidgin_new_check_item(GtkWidget *menu, const char *str,
 		GtkSignalFunc sf, gpointer data, gboolean checked)
 {
 	GtkWidget *menuitem;
@@ -289,7 +289,7 @@ GtkWidget *gaim_new_check_item(GtkWidget *menu, const char *str,
 }
 
 GtkWidget *
-gaim_pixbuf_toolbar_button_from_stock(const char *icon)
+pidgin_pixbuf_toolbar_button_from_stock(const char *icon)
 {
 	GtkWidget *button, *image, *bbox;
 
@@ -309,14 +309,14 @@ gaim_pixbuf_toolbar_button_from_stock(const char *icon)
 }
 
 GtkWidget *
-gaim_pixbuf_button_from_stock(const char *text, const char *icon,
-							  GaimButtonOrientation style)
+pidgin_pixbuf_button_from_stock(const char *text, const char *icon,
+							  PidginButtonOrientation style)
 {
 	GtkWidget *button, *image, *label, *bbox, *ibox, *lbox = NULL;
 
 	button = gtk_button_new();
 
-	if (style == GAIM_BUTTON_HORIZONTAL) {
+	if (style == PIDGIN_BUTTON_HORIZONTAL) {
 		bbox = gtk_hbox_new(FALSE, 0);
 		ibox = gtk_hbox_new(FALSE, 0);
 		if (text)
@@ -342,7 +342,7 @@ gaim_pixbuf_button_from_stock(const char *text, const char *icon,
 		gtk_label_set_text_with_mnemonic(GTK_LABEL(label), text);
 		gtk_label_set_mnemonic_widget(GTK_LABEL(label), button);
 		gtk_box_pack_start(GTK_BOX(lbox), label, FALSE, TRUE, 0);
-		gaim_set_accessible_label (button, label);
+		pidgin_set_accessible_label (button, label);
 	}
 
 	gtk_widget_show_all(bbox);
@@ -351,7 +351,7 @@ gaim_pixbuf_button_from_stock(const char *text, const char *icon,
 }
 
 
-GtkWidget *gaim_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
+GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const char *icon, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
 {
 	GtkWidget *menuitem;
 	/*
@@ -413,7 +413,7 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
-	gaim_set_accessible_label (vbox, label);
+	pidgin_set_accessible_label (vbox, label);
 
 	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
@@ -527,7 +527,7 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_show(item);
-		gaim_set_accessible_label (item, label);
+		pidgin_set_accessible_label (item, label);
 
 		if (id != NULL && !strcmp(plugin->info->id, id))
 			selected_index = i;
@@ -684,7 +684,7 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 		gtk_widget_show(item);
-		gaim_set_accessible_label (item, label);
+		pidgin_set_accessible_label (item, label);
 
 		if (default_account != NULL && account == default_account)
 			selected_index = i;
@@ -1078,7 +1078,7 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 }
 
 void
-gaim_set_accessible_label (GtkWidget *w, GtkWidget *l)
+pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
 {
 	AtkObject *acc, *label;
 	AtkObject *rel_obj[1];
@@ -1385,7 +1385,7 @@ static void dnd_set_icon_cancel_cb(_DndData *data)
 }
 
 void
-gaim_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who)
+pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who)
 {
 	GList *tmp;
 	GdkPixbuf *pb;
@@ -1698,7 +1698,7 @@ pidgin_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
                             gpointer object)
 {
 	if (act == NULL) {
-		gaim_separator(menu);
+		pidgin_separator(menu);
 	} else {
 		GtkWidget *menuitem;
 
@@ -3132,7 +3132,7 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 }
 
 
-gboolean gaim_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
+gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
         int width, height, rowstride, i;
         unsigned char *pixels;
         unsigned char *row;

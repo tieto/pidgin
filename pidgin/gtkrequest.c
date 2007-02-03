@@ -429,7 +429,7 @@ pidgin_request_input(const char *title, const char *primary,
 		}
 	}
 
-	gaim_set_accessible_label (entry, label);
+	pidgin_set_accessible_label (entry, label);
 	data->u.input.entry = entry;
 
 	/* Show everything. */

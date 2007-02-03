@@ -576,8 +576,8 @@ pidgin_status_window_show(void)
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 
 	/* Use button */
-	button = gaim_pixbuf_button_from_stock(_("_Use"), GTK_STOCK_EXECUTE,
-										  GAIM_BUTTON_HORIZONTAL);
+	button = pidgin_pixbuf_button_from_stock(_("_Use"), GTK_STOCK_EXECUTE,
+										  PIDGIN_BUTTON_HORIZONTAL);
 	dialog->use_button = button;
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	gtk_widget_set_sensitive(button, FALSE);
@@ -1210,16 +1210,16 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 					 G_CALLBACK(status_editor_cancel_cb), dialog);
 
 	/* Use button */
-	button = gaim_pixbuf_button_from_stock(_("_Use"), GTK_STOCK_EXECUTE,
-										   GAIM_BUTTON_HORIZONTAL);
+	button = pidgin_pixbuf_button_from_stock(_("_Use"), GTK_STOCK_EXECUTE,
+										   PIDGIN_BUTTON_HORIZONTAL);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(status_editor_ok_cb), dialog);
 
 	/* Save & Use button */
-	button = gaim_pixbuf_button_from_stock(_("Sa_ve & Use"), GTK_STOCK_OK,
-										   GAIM_BUTTON_HORIZONTAL);
+	button = pidgin_pixbuf_button_from_stock(_("Sa_ve & Use"), GTK_STOCK_OK,
+										   PIDGIN_BUTTON_HORIZONTAL);
 	dialog->saveanduse_button = GTK_BUTTON(button);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
 	if (dialog->original_title == NULL)
