@@ -666,7 +666,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		smileys = smileys->next;
 	}
 
-	GAIM_DIALOG(dialog);
+	PIDGIN_DIALOG(dialog);
 
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");

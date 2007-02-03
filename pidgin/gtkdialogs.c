@@ -307,7 +307,7 @@ void pidgindialogs_about()
 		return;
 	}
 
-	GAIM_DIALOG(about);
+	PIDGIN_DIALOG(about);
 	gtk_window_set_title(GTK_WINDOW(about), _("About " PIDGIN_NAME));
 	gtk_window_set_role(GTK_WINDOW(about), "about");
 	gtk_window_set_resizable(GTK_WINDOW(about), TRUE);

@@ -51,8 +51,8 @@ void pidgindialogs_merge_groups(GaimGroup *, const char *);
 /**
  * Our UI's identifier.
  */
-#define GAIM_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_TOPLEVEL); \
+#define PIDGIN_DIALOG(x)	x = gtk_window_new(GTK_WINDOW_TOPLEVEL); \
 			gtk_window_set_type_hint(GTK_WINDOW(x), GDK_WINDOW_TYPE_HINT_DIALOG)
-#define GAIM_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
+#define PIDGIN_WINDOW_ICONIFIED(x) (gdk_window_get_state(GTK_WIDGET(x)->window) & GDK_WINDOW_STATE_ICONIFIED)
 
 #endif /* _PIDGINDIALOGS_H_ */

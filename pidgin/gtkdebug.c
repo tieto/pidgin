@@ -699,7 +699,7 @@ debug_window_new(void)
 	width  = gaim_prefs_get_int("/gaim/gtk/debug/width");
 	height = gaim_prefs_get_int("/gaim/gtk/debug/height");
 
-	GAIM_DIALOG(win->window);
+	PIDGIN_DIALOG(win->window);
 	gaim_debug_info("gtkdebug", "Setting dimensions to %d, %d\n",
 					width, height);
 

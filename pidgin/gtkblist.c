@@ -5034,7 +5034,7 @@ static void pidgin_blist_set_visible(GaimBuddyList *list, gboolean show)
 		return;
 
 	if (show) {
-		if(!GAIM_WINDOW_ICONIFIED(gtkblist->window) && !GTK_WIDGET_VISIBLE(gtkblist->window))
+		if(!PIDGIN_WINDOW_ICONIFIED(gtkblist->window) && !GTK_WIDGET_VISIBLE(gtkblist->window))
 			gaim_signal_emit(pidgin_blist_get_handle(), "gtkblist-unhiding", gtkblist);
 		pidgin_blist_restore_position();
 		gtk_window_present(GTK_WINDOW(gtkblist->window));
@@ -5664,7 +5664,7 @@ pidgin_blist_toggle_visibility()
 {
 	if (gtkblist && gtkblist->window) {
 		if (GTK_WIDGET_VISIBLE(gtkblist->window)) {
-			gaim_blist_set_visible(GAIM_WINDOW_ICONIFIED(gtkblist->window) || gtk_blist_obscured);
+			gaim_blist_set_visible(PIDGIN_WINDOW_ICONIFIED(gtkblist->window) || gtk_blist_obscured);
 		} else {
 			gaim_blist_set_visible(TRUE);
 		}
