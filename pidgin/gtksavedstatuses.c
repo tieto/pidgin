@@ -33,7 +33,7 @@
 
 #include "gtkblist.h"
 #include "gtkexpander.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtksavedstatuses.h"
@@ -1701,7 +1701,7 @@ GtkWidget *pidgin_status_menu(GaimSavedStatus *current_status, GCallback callbac
 
 			/* Overlay a disk in the bottom left corner */
 			emblem = gtk_widget_render_icon(GTK_WIDGET(combobox),
-						GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU, "GtkGaimStatusMenu");
+						GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU, "PidginStatusMenu");
 			if (emblem != NULL)
 			{
 				int width = gdk_pixbuf_get_width(pixbuf) / 2;

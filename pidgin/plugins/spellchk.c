@@ -31,7 +31,7 @@
  */
 
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #include "debug.h"
 #include "notify.h"

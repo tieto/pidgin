@@ -26,7 +26,7 @@
 #define _PIDGINUTILS_H_
 
 #include "gtkconv.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 #include "prpl.h"
 #include "util.h"
 

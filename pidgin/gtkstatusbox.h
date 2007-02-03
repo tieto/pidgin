@@ -24,8 +24,8 @@
  */
 
 
-#ifndef __GTK_GAIM_STATUS_BOX_H__
-#define __GTK_GAIM_STATUS_BOX_H__
+#ifndef __PIDGIN_STATUS_BOX_H__
+#define __PIDGIN_STATUS_BOX_H__
 
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
@@ -37,12 +37,12 @@
 
 G_BEGIN_DECLS
 
-#define GTK_GAIM_TYPE_STATUS_BOX             (gtk_gaim_status_box_get_type ())
-#define GTK_GAIM_STATUS_BOX(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_GAIM_TYPE_STATUS_BOX, GtkGaimStatusBox))
-#define GTK_GAIM_STATUS_BOX_CLASS(vtable)    (G_TYPE_CHECK_CLASS_CAST ((vtable), GTK_GAIM_TYPE_STATUS_BOX, GtkGaimStatusBoxClass))
-#define GTK_GAIM_IS_STATUS_BOX(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_GAIM_TYPE_STATUS_BOX))
-#define GTK_GAIM_IS_STATUS_BOX_CLASS(vtable) (G_TYPE_CHECK_CLASS_TYPE ((vtable), GTK_GAIM_TYPE_STATUS_BOX))
-#define GTK_GAIM_STATUS_BOX_GET_CLASS(inst)  (G_TYPE_INSTANCE_GET_CLASS ((inst), GTK_GAIM_TYPE_STATUS_BOX, GtkGaimStatusBoxClass))
+#define PIDGIN_TYPE_STATUS_BOX             (pidgin_status_box_get_type ())
+#define PIDGIN_STATUS_BOX(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_STATUS_BOX, PidginStatusBox))
+#define PIDGIN_STATUS_BOX_CLASS(vtable)    (G_TYPE_CHECK_CLASS_CAST ((vtable), PIDGIN_TYPE_STATUS_BOX, PidginStatusBoxClass))
+#define PIDGIN_IS_STATUS_BOX(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_STATUS_BOX))
+#define PIDGIN_IS_STATUS_BOX_CLASS(vtable) (G_TYPE_CHECK_CLASS_TYPE ((vtable), PIDGIN_TYPE_STATUS_BOX))
+#define PIDGIN_STATUS_BOX_GET_CLASS(inst)  (G_TYPE_INSTANCE_GET_CLASS ((inst), PIDGIN_TYPE_STATUS_BOX, PidginStatusBoxClass))
 
 /**
  * This is a hidden field in the GtkStatusBox that identifies the
@@ -52,18 +52,18 @@ G_BEGIN_DECLS
  */
 typedef enum
 {
-	GTK_GAIM_STATUS_BOX_TYPE_SEPARATOR,
-	GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE,
-	GTK_GAIM_STATUS_BOX_TYPE_POPULAR,
-	GTK_GAIM_STATUS_BOX_TYPE_CUSTOM,
-	GTK_GAIM_STATUS_BOX_TYPE_SAVED,
-	GTK_GAIM_STATUS_BOX_NUM_TYPES
-} GtkGaimStatusBoxItemType;
+	PIDGIN_STATUS_BOX_TYPE_SEPARATOR,
+	PIDGIN_STATUS_BOX_TYPE_PRIMITIVE,
+	PIDGIN_STATUS_BOX_TYPE_POPULAR,
+	PIDGIN_STATUS_BOX_TYPE_CUSTOM,
+	PIDGIN_STATUS_BOX_TYPE_SAVED,
+	PIDGIN_STATUS_BOX_NUM_TYPES
+} PidginStatusBoxItemType;
 
-typedef struct _GtkGaimStatusBox      GtkGaimStatusBox;
-typedef struct _GtkGaimStatusBoxClass GtkGaimStatusBoxClass;
+typedef struct _PidginStatusBox      PidginStatusBox;
+typedef struct _PidginStatusBoxClass PidginStatusBoxClass;
 
-struct _GtkGaimStatusBox
+struct _PidginStatusBox
 {
 	GtkContainer parent_instance;
 
@@ -140,7 +140,7 @@ struct _GtkGaimStatusBox
 	GtkTreeRowReference *active_row;
 };
 
-struct _GtkGaimStatusBoxClass
+struct _PidginStatusBoxClass
 {
 	GtkContainerClass parent_class;
 
@@ -155,32 +155,32 @@ struct _GtkGaimStatusBoxClass
 };
 
 
-GType         gtk_gaim_status_box_get_type         (void) G_GNUC_CONST;
-GtkWidget    *gtk_gaim_status_box_new              (void);
-GtkWidget    *gtk_gaim_status_box_new_with_account (GaimAccount *);
+GType         pidgin_status_box_get_type         (void) G_GNUC_CONST;
+GtkWidget    *pidgin_status_box_new              (void);
+GtkWidget    *pidgin_status_box_new_with_account (GaimAccount *);
 
 void
-gtk_gaim_status_box_add(GtkGaimStatusBox *status_box, GtkGaimStatusBoxItemType type, GdkPixbuf *pixbuf, const char *text, const char *sec_text, gpointer data);
+pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type, GdkPixbuf *pixbuf, const char *text, const char *sec_text, gpointer data);
 
 void
-gtk_gaim_status_box_add_separator(GtkGaimStatusBox *status_box);
+pidgin_status_box_add_separator(PidginStatusBox *status_box);
 
 void
-gtk_gaim_status_box_set_network_available(GtkGaimStatusBox *status_box, gboolean available);
+pidgin_status_box_set_network_available(PidginStatusBox *status_box, gboolean available);
 
 void
-gtk_gaim_status_box_set_connecting(GtkGaimStatusBox *status_box, gboolean connecting);
+pidgin_status_box_set_connecting(PidginStatusBox *status_box, gboolean connecting);
 
 void
-gtk_gaim_status_box_pulse_connecting(GtkGaimStatusBox *status_box);
+pidgin_status_box_pulse_connecting(PidginStatusBox *status_box);
 
 void
-gtk_gaim_status_box_set_buddy_icon(GtkGaimStatusBox *status_box, const char *filename);
+pidgin_status_box_set_buddy_icon(PidginStatusBox *status_box, const char *filename);
 
 const char *
-gtk_gaim_status_box_get_buddy_icon(GtkGaimStatusBox *status_box);
+pidgin_status_box_get_buddy_icon(PidginStatusBox *status_box);
 
-char *gtk_gaim_status_box_get_message(GtkGaimStatusBox *status_box);
+char *pidgin_status_box_get_message(PidginStatusBox *status_box);
 
 G_END_DECLS
 

@@ -52,7 +52,7 @@ typedef enum {
 
 } PidginStatusIconSize;
 
-#include "gtkgaim.h"
+#include "pidgin.h"
 #include "blist.h"
 
 /**************************************************************************

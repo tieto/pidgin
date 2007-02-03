@@ -24,7 +24,7 @@
 #ifndef _PIDGINDIALOGS_H_
 #define _PIDGINDIALOGS_H_
 
-#include "gtkgaim.h"
+#include "pidgin.h"
 
 #include "account.h"
 #include "conversation.h"

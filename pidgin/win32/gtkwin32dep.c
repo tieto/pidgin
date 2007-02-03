@@ -56,7 +56,7 @@
  *  GLOBALS
  */
 HINSTANCE gaimexe_hInstance = 0;
-HINSTANCE gtkgaimdll_hInstance = 0;
+HINSTANCE pidgindll_hInstance = 0;
 HWND messagewin_hwnd;
 static int gtkwin32_handle;
 
@@ -360,7 +360,7 @@ void gtkwgaim_cleanup(void) {
 
 /* DLL initializer */
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
-	gtkgaimdll_hInstance = hinstDLL;
+	pidgindll_hInstance = hinstDLL;
 	return TRUE;
 }
 

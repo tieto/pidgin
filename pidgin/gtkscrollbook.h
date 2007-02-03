@@ -23,8 +23,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __GTK_GAIM_SCROLL_BOOK_H__
-#define __GTK_GAIM_SCROLL_BOOK_H__
+#ifndef __PIDGIN_SCROLL_BOOK_H__
+#define __PIDGIN_SCROLL_BOOK_H__
 
 #include <gtk/gtk.h>
 
@@ -34,17 +34,17 @@
 
 G_BEGIN_DECLS
 
-#define GTK_GAIM_TYPE_SCROLL_BOOK             (gtk_gaim_scroll_book_get_type ())
-#define GTK_GAIM_SCROLL_BOOK(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), GTK_GAIM_TYPE_SCROLL_BOOK, GtkGaimScrollBook))
-#define GTK_GAIM_SCROLL_BOOK_CLASS(vtable)    (G_TYPE_CHECK_CLASS_CAST ((vtable), GTK_GAIM_TYPE_SCROLL_BOOK, GtkGaimScrollBookClass))
-#define GTK_GAIM_IS_SCROLL_BOOK(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), GTK_GAIM_TYPE_SCROLL_BOOK))
-#define GTK_GAIM_IS_SCROLL_BOOK_CLASS(vtable) (G_TYPE_CHECK_CLASS_TYPE ((vtable), GTK_GAIM_TYPE_SCROLL_BOOK))
-#define GTK_GAIM_SCROLL_BOOK_GET_CLASS(inst)  (G_TYPE_INSTANCE_GET_CLASS ((inst), GTK_GAIM_TYPE_SCROLL_BOOK, GtkGaimScrollBookClass))
+#define PIDGIN_TYPE_SCROLL_BOOK             (pidgin_scroll_book_get_type ())
+#define PIDGIN_SCROLL_BOOK(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), PIDGIN_TYPE_SCROLL_BOOK, PidginScrollBook))
+#define PIDGIN_SCROLL_BOOK_CLASS(vtable)    (G_TYPE_CHECK_CLASS_CAST ((vtable), PIDGIN_TYPE_SCROLL_BOOK, PidginScrollBookClass))
+#define PIDGIN_IS_SCROLL_BOOK(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_SCROLL_BOOK))
+#define PIDGIN_IS_SCROLL_BOOK_CLASS(vtable) (G_TYPE_CHECK_CLASS_TYPE ((vtable), PIDGIN_TYPE_SCROLL_BOOK))
+#define PIDGIN_SCROLL_BOOK_GET_CLASS(inst)  (G_TYPE_INSTANCE_GET_CLASS ((inst), PIDGIN_TYPE_SCROLL_BOOK, PidginScrollBookClass))
 
-typedef struct _GtkGaimScrollBook      GtkGaimScrollBook;
-typedef struct _GtkGaimScrollBookClass GtkGaimScrollBookClass;
+typedef struct _PidginScrollBook      PidginScrollBook;
+typedef struct _PidginScrollBookClass PidginScrollBookClass;
 
-struct _GtkGaimScrollBook
+struct _PidginScrollBook
 {
 	GtkVBox parent_instance;
 
@@ -63,7 +63,7 @@ struct _GtkGaimScrollBook
 };
 
 
-struct _GtkGaimScrollBookClass
+struct _PidginScrollBookClass
 {
 	GtkComboBoxClass parent_class;
 
@@ -75,9 +75,9 @@ struct _GtkGaimScrollBookClass
 };
 
 
-GType         gtk_gaim_scroll_book_get_type         (void) G_GNUC_CONST;
-GtkWidget    *gtk_gaim_scroll_book_new              (void);
+GType         pidgin_scroll_book_get_type         (void) G_GNUC_CONST;
+GtkWidget    *pidgin_scroll_book_new              (void);
 
 G_END_DECLS
 
-#endif  /* __GTK_GAIM_SCROLL_BOOK_H__ */
+#endif  /* __PIDGIN_SCROLL_BOOK_H__ */

@@ -20,7 +20,7 @@
  */
 #include "internal.h"
 #include "gtkblist.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 #include "gtkutils.h"
 
 #include "debug.h"

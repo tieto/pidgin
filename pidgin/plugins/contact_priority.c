@@ -19,7 +19,7 @@
  */
 
 #include "internal.h"
-#include "gtkgaim.h"
+#include "pidgin.h"
 #include "gtkplugin.h"
 #include "gtkutils.h"
 #include "prefs.h"
