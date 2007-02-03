@@ -45,6 +45,7 @@
 #include "gnttree.h"
 #include "gntutils.h"
 #include "gntwindow.h"
+#include "gntpounce.h"
 
 #include "gntblist.h"
 #include "gntconv.h"
@@ -883,6 +884,17 @@ rename_blist_node(GaimBlistNode *node, const char *newname)
 }
 
 static void
+gg_blist_pounce_node_cb(GaimBlistNode *node, GaimBlistNode *selected)
+{
+	GaimBuddy *b;
+	if (GAIM_BLIST_NODE_IS_CONTACT(node))
+		b = gaim_contact_get_priority_buddy((GaimContact *)node);
+	else
+		b = (GaimBuddy *)node;
+	gg_pounce_editor_show(b->account, b->name, NULL);
+}
+
+static void
 gg_blist_rename_node_cb(GaimBlistNode *node, GaimBlistNode *selected)
 {
 	const char *name = NULL;
@@ -1123,8 +1135,10 @@ draw_context_menu(GGBlist *ggblist)
 			add_custom_action(GNT_MENU(context), _("Place tagged"),
 					GAIM_CALLBACK(gg_blist_place_tagged), node);
 		}
-		
+
 		if (GAIM_BLIST_NODE_IS_BUDDY(node) || GAIM_BLIST_NODE_IS_CONTACT(node)) {
+			add_custom_action(GNT_MENU(context), _("Add Buddy Pounce"),
+					GAIM_CALLBACK(gg_blist_pounce_node_cb), node);
 			add_custom_action(GNT_MENU(context), _("Toggle Tag"),
 					GAIM_CALLBACK(gg_blist_toggle_tag_buddy), node);
 		}
@@ -1692,6 +1706,7 @@ savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old)
 	GList *list;
 	GaimStatusPrimitive prim;
 	const char *message;
+	gboolean found = FALSE, saved = TRUE;
 
 	if (!ggblist)
 		return;
@@ -1708,19 +1723,26 @@ savedstatus_changed(GaimSavedStatus *now, GaimSavedStatus *old)
 	/* Rebuild the status dropdown */
 	populate_status_dropdown();
 
-	list = g_object_get_data(G_OBJECT(ggblist->status), "list of statuses");
-	for (; list; list = list->next)
-	{
-		StatusBoxItem *item = list->data;
-		if (item->type == STATUS_PRIMITIVE && item->u.prim == prim)
+	while (!found) {
+		list = g_object_get_data(G_OBJECT(ggblist->status), "list of statuses");
+		for (; list; list = list->next)
 		{
-			char *mess = gaim_unescape_html(message);
-			gnt_combo_box_set_selected(GNT_COMBO_BOX(ggblist->status), item);
-			gnt_entry_set_text(GNT_ENTRY(ggblist->statustext), mess);
-			gnt_widget_draw(ggblist->status);
-			g_free(mess);
-			break;
+			StatusBoxItem *item = list->data;
+			if ((saved && item->type != STATUS_PRIMITIVE && item->u.saved == now) ||
+					(!saved && item->type == STATUS_PRIMITIVE && item->u.prim == prim))
+			{
+				char *mess = gaim_unescape_html(message);
+				gnt_combo_box_set_selected(GNT_COMBO_BOX(ggblist->status), item);
+				gnt_entry_set_text(GNT_ENTRY(ggblist->statustext), mess);
+				gnt_widget_draw(ggblist->status);
+				g_free(mess);
+				found = TRUE;
+				break;
+			}
 		}
+		if (!saved)
+			break;
+		saved = FALSE;
 	}
 
 	g_signal_handlers_unblock_matched(ggblist->status, G_SIGNAL_MATCH_FUNC,

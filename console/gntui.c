@@ -28,6 +28,7 @@
 #include "gntdebug.h"
 #include "gntnotify.h"
 #include "gntplugin.h"
+#include "gntpounce.h"
 #include "gntprefs.h"
 #include "gntrequest.h"
 #include "gntstatus.h"
@@ -67,8 +68,11 @@ void gnt_ui_init()
 	gg_request_init();
 	gaim_request_set_ui_ops(gg_request_get_ui_ops());
 
+	gg_pounces_init();
+
 	gnt_register_action(_("Accounts"), gg_accounts_show_all);
 	gnt_register_action(_("Buddy List"), gg_blist_show);
+	gnt_register_action(_("Buddy Pounces"), gg_pounces_manager_show);
 	gnt_register_action(_("Debug Window"), gg_debug_window_show);
 	gnt_register_action(_("Plugins"), gg_plugins_show_all);
 	gnt_register_action(_("Preferences"), gg_prefs_show_all);
@@ -98,6 +102,8 @@ void gnt_ui_uninit()
 
 	gaim_request_set_ui_ops(NULL);
 	gg_request_uninit();
+
+	gg_pounces_uninit();
 
 	gnt_quit();
 #endif
