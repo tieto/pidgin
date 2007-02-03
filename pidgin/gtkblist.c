@@ -3476,7 +3476,7 @@ unseen_conv_menu()
 		menu = NULL;
 	}
 
-	convs = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT, TRUE, 0);
+	convs = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_IM, PIDGIN_UNSEEN_TEXT, TRUE, 0);
 	if (!convs)
 		/* no conversations added, don't show the menu */
 		return;
@@ -3498,7 +3498,7 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 	switch (event->button) {
 		case 1:
 			convs = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
-															GAIM_UNSEEN_TEXT, TRUE, 1);
+															PIDGIN_UNSEEN_TEXT, TRUE, 1);
 			if (convs) {
 				pidgin_conv_present_conversation((GaimConversation*)convs->data);
 				g_list_free(convs);
@@ -3532,7 +3532,7 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 		gtkblist->menutrayicon = NULL;
 	}
 
-	convs = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_IM, GAIM_UNSEEN_TEXT, TRUE, 0);
+	convs = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_IM, PIDGIN_UNSEEN_TEXT, TRUE, 0);
 	if (convs) {
 		GtkWidget *img = NULL;
 		GString *tooltip_text = NULL;

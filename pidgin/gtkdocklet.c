@@ -94,11 +94,11 @@ get_pending_list(guint max)
 	GList *l_chat = NULL;
 
 	l_im = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
-						       GAIM_UNSEEN_TEXT,
+						       PIDGIN_UNSEEN_TEXT,
 						       FALSE, max);
 
 	l_chat = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_CHAT,
-		 					 GAIM_UNSEEN_NICK,
+		 					 PIDGIN_UNSEEN_NICK,
 							 FALSE, max);
 
 	if (l_im != NULL && l_chat != NULL)

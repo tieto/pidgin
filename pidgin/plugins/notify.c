@@ -528,7 +528,7 @@ handle_count_xprop(PidginWindow *gaimwin)
 	g_return_if_fail(window != NULL);
 
 	if (_GaimUnseenCount == GDK_NONE) {
-		_GaimUnseenCount = gdk_atom_intern("_GAIM_UNSEEN_COUNT", FALSE);
+		_GaimUnseenCount = gdk_atom_intern("_PIDGIN_UNSEEN_COUNT", FALSE);
 	}
 
 	if (_Cardinal == GDK_NONE) {

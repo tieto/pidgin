@@ -599,7 +599,7 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		reset_default_size(gtkconv);
 		gtkconv->entry_growing = FALSE;
 	}
-	gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
+	gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
 }
 
 static void
@@ -4546,7 +4546,7 @@ private_gtkconv_new(GaimConversation *conv, gboolean hidden)
 	/* Setup some initial variables. */
 	gtkconv->sg       = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	gtkconv->tooltips = gtk_tooltips_new();
-	gtkconv->unseen_state = GAIM_UNSEEN_NONE;
+	gtkconv->unseen_state = PIDGIN_UNSEEN_NONE;
 	gtkconv->unseen_count = 0;
 
 	if (conv_type == GAIM_CONV_TYPE_IM) {
@@ -5162,17 +5162,17 @@ pidgin_conv_write_conv(GaimConversation *conv, const char *name, const char *ali
 	/* Tab highlighting stuff */
 	if (!(flags & GAIM_MESSAGE_SEND) && !pidgin_conv_has_focus(conv))
 	{
-		GaimUnseenState unseen = GAIM_UNSEEN_NONE;
+		GaimUnseenState unseen = PIDGIN_UNSEEN_NONE;
 
 		if ((flags & GAIM_MESSAGE_NICK) == GAIM_MESSAGE_NICK)
-			unseen = GAIM_UNSEEN_NICK;
+			unseen = PIDGIN_UNSEEN_NICK;
 		else if (((flags & GAIM_MESSAGE_SYSTEM) == GAIM_MESSAGE_SYSTEM) ||
 			  ((flags & GAIM_MESSAGE_ERROR) == GAIM_MESSAGE_ERROR))
-			unseen = GAIM_UNSEEN_EVENT;
+			unseen = PIDGIN_UNSEEN_EVENT;
 		else if ((flags & GAIM_MESSAGE_NO_LOG) == GAIM_MESSAGE_NO_LOG)
-			unseen = GAIM_UNSEEN_NO_LOG;
+			unseen = PIDGIN_UNSEEN_NO_LOG;
 		else
-			unseen = GAIM_UNSEEN_TEXT;
+			unseen = PIDGIN_UNSEEN_TEXT;
 
 		gtkconv_set_unseen(gtkconv, unseen);
 	}
@@ -5890,17 +5890,17 @@ pidgin_conv_update_fields(GaimConversation *conv, PidginConvFields fields)
 			atk_object_set_description(accessibility_obj, _("Stopped Typing"));
 			strncpy(style, "color=\"#D1940C\"", sizeof(style));
 		}
-		else if (gtkconv->unseen_state == GAIM_UNSEEN_NICK)
+		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)
 		{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
 			strncpy(style, "color=\"#0D4E91\" style=\"italic\" weight=\"bold\"", sizeof(style));
 		}
-		else if (gtkconv->unseen_state == GAIM_UNSEEN_TEXT)
+		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)
 		{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
 			strncpy(style, "color=\"#DF421E\" weight=\"bold\"", sizeof(style));
 		}
-		else if (gtkconv->unseen_state == GAIM_UNSEEN_EVENT)
+		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
 		{
 			atk_object_set_description(accessibility_obj, _("New Event"));
 			strncpy(style, "color=\"#868272\" style=\"italic\"", sizeof(style));
@@ -7082,7 +7082,7 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 	{
 		PidginConversation *gtkconv = l->data;
 		if (gaim_conversation_get_type(gtkconv->active_conv) == GAIM_CONV_TYPE_IM &&
-				gtkconv->unseen_state >= GAIM_UNSEEN_TEXT)
+				gtkconv->unseen_state >= PIDGIN_UNSEEN_TEXT)
 		{
 			build_warn_close_dialog(win);
 			gtk_widget_show_all(warn_close_dialog);
@@ -7099,14 +7099,14 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 static void
 gtkconv_set_unseen(PidginConversation *gtkconv, GaimUnseenState state)
 {
-	if (state == GAIM_UNSEEN_NONE)
+	if (state == PIDGIN_UNSEEN_NONE)
 	{
 		gtkconv->unseen_count = 0;
-		gtkconv->unseen_state = GAIM_UNSEEN_NONE;
+		gtkconv->unseen_state = PIDGIN_UNSEEN_NONE;
 	}
 	else
 	{
-		if (state >= GAIM_UNSEEN_TEXT)
+		if (state >= PIDGIN_UNSEEN_TEXT)
 			gtkconv->unseen_count++;
 
 		if (state > gtkconv->unseen_state)
@@ -7127,7 +7127,7 @@ focus_win_cb(GtkWidget *w, GdkEventFocus *e, gpointer d)
 	PidginWindow *win = d;
 	PidginConversation *gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 
-	gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
+	gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
 
 	return FALSE;
 }
@@ -7635,7 +7635,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	/* clear unseen flag if conversation is not hidden */
 	if(!pidgin_conv_is_hidden(gtkconv)) {
-		gtkconv_set_unseen(gtkconv, GAIM_UNSEEN_NONE);
+		gtkconv_set_unseen(gtkconv, PIDGIN_UNSEEN_NONE);
 	}
 
 	/* Update the menubar */

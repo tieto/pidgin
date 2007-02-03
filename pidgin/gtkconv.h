@@ -34,11 +34,11 @@ typedef struct _PidginConversation PidginConversation;
  */
 typedef enum
 {
-	GAIM_UNSEEN_NONE,   /**< No unseen text in the conversation. */
-	GAIM_UNSEEN_EVENT,  /**< Unseen events in the conversation.  */
-	GAIM_UNSEEN_NO_LOG, /**< Unseen text with NO_LOG flag.       */
-	GAIM_UNSEEN_TEXT,   /**< Unseen text in the conversation.    */
-	GAIM_UNSEEN_NICK    /**< Unseen text and the nick was said.  */
+	PIDGIN_UNSEEN_NONE,   /**< No unseen text in the conversation. */
+	PIDGIN_UNSEEN_EVENT,  /**< Unseen events in the conversation.  */
+	PIDGIN_UNSEEN_NO_LOG, /**< Unseen text with NO_LOG flag.       */
+	PIDGIN_UNSEEN_TEXT,   /**< Unseen text in the conversation.    */
+	PIDGIN_UNSEEN_NICK    /**< Unseen text and the nick was said.  */
 } GaimUnseenState;
 
 enum {
