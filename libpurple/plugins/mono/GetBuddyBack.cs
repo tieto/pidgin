@@ -1,7 +1,14 @@
 using Gaim;
 
-public class GetBuddyBack : GaimPlugin
+public class GetBuddyBack : Plugin
 {
+	private static PluginInfo info = new PluginInfo("C# Get Buddy Back", "0.1", "Prints when a Buddy returns", "Longer Description", "Eoin Coffey", "urled");
+
+	public GetBuddyBack()
+		: base (info)
+	{
+	}
+
 	public void HandleSig(object[] args)
 	{
 		Buddy buddy = (Buddy)args[0];
@@ -23,10 +30,5 @@ public class GetBuddyBack : GaimPlugin
 	
 	public override void Destroy()
 	{
-	}
-	
-	public override GaimPluginInfo Info()
-	{
-		return new GaimPluginInfo("C# Get Buddy Back", "0.1", "Prints when a Buddy returns", "Longer Description", "Eoin Coffey", "urled");
 	}
 }

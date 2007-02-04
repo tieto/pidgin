@@ -1026,7 +1026,7 @@ AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
 dnl #######################################################################
 dnl # Check for Mono support
 dnl #######################################################################
-AC_ARG_ENABLE(mono, [AC_HELP_STRING([--enable-mono], [compile with Mono runtime support])], , enable_mono=no)
+AC_ARG_ENABLE(mono, [AC_HELP_STRING([--enable-mono], [compile with Mono runtime support (experimental)])], , enable_mono=no)
 if test x"$enable_mono" = x"yes" ; then
 	AC_MSG_CHECKING(for Mono compile flags)
 	MONO_CFLAGS=`pkg-config --cflags mono 2> /dev/null`
