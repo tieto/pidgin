@@ -73,9 +73,9 @@ struct _GaimWhiteboardPrplOps
 {
 	void (*start)(GaimWhiteboard *wb);                                   /**< start function */
 	void (*end)(GaimWhiteboard *wb);                                     /**< end function */
-	void (*get_dimensions)(GaimWhiteboard *wb, int *width, int *height); /**< get_dimensions function */
+	void (*get_dimensions)(const GaimWhiteboard *wb, int *width, int *height); /**< get_dimensions function */
 	void (*set_dimensions)(GaimWhiteboard *wb, int width, int height);   /**< set_dimensions function */
-	void (*get_brush) (GaimWhiteboard *wb, int *size, int *color);       /**< get the brush size and color */
+	void (*get_brush) (const GaimWhiteboard *wb, int *size, int *color); /**< get the brush size and color */
 	void (*set_brush) (GaimWhiteboard *wb, int size, int color);         /**< set the brush size and color */
 	void (*send_draw_list)(GaimWhiteboard *wb, GList *draw_list);        /**< send_draw_list function */
 	void (*clear)(GaimWhiteboard *wb);                                   /**< clear function */
@@ -138,7 +138,7 @@ void gaim_whiteboard_start(GaimWhiteboard *wb);
  *
  * @return The whiteboard if found, otherwise @c NULL.
  */
-GaimWhiteboard *gaim_whiteboard_get_session(GaimAccount *account, const char *who);
+GaimWhiteboard *gaim_whiteboard_get_session(const GaimAccount *account, const char *who);
 
 /**
  * Destorys a drawing list for a whiteboard
@@ -156,7 +156,7 @@ void gaim_whiteboard_draw_list_destroy(GList *draw_list);
  *
  * @return TRUE if the values of width and height were set.
  */
-gboolean gaim_whiteboard_get_dimensions(GaimWhiteboard *wb, int *width, int *height);
+gboolean gaim_whiteboard_get_dimensions(const GaimWhiteboard *wb, int *width, int *height);
 
 /**
  * Sets the dimensions for a whiteboard.
@@ -231,7 +231,7 @@ void gaim_whiteboard_send_brush(GaimWhiteboard *wb, int size, int color);
  *
  * @return	TRUE if the size and color were set.
  */
-gboolean gaim_whiteboard_get_brush(GaimWhiteboard *wb, int *size, int *color);
+gboolean gaim_whiteboard_get_brush(const GaimWhiteboard *wb, int *size, int *color);
 
 /**
  * Sets the size and color of the brush.

@@ -249,7 +249,7 @@ xmlnode *xmlnode_from_str(const char *str, gssize size);
  *
  * @return A new copy of the src node.
  */
-xmlnode *xmlnode_copy(xmlnode *src);
+xmlnode *xmlnode_copy(const xmlnode *src);
 
 /**
  * Frees a node and all of it's children.

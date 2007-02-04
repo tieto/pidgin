@@ -97,7 +97,7 @@ void gaim_circ_buffer_append(GaimCircBuffer *buf, gconstpointer src, gsize len);
  *
  * @return the number of bytes that can be read from the GaimCircBuffer
  */
-gsize gaim_circ_buffer_get_max_read(GaimCircBuffer *buf);
+gsize gaim_circ_buffer_get_max_read(const GaimCircBuffer *buf);
 
 /**
  * Mark the number of bytes that have been read from the buffer.
