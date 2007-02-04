@@ -1,16 +1,16 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::GtkUI::Utils  PACKAGE = Gaim::GtkUI::Utils  PREFIX = gaim_gtk_
+MODULE = Pidgin::Utils  PACKAGE = Pidgin::Utils  PREFIX = pidgin_
 PROTOTYPES: ENABLE
 
 gboolean
-gaim_gtk_save_accels(data)
+pidgin_save_accels(data)
 	gpointer data
 
 void
-gaim_gtk_load_accels()
+pidgin_load_accels()
 
 gchar_own *
-gaim_gtk_convert_buddy_icon(plugin, path)
+pidgin_convert_buddy_icon(plugin, path)
 	Gaim::Plugin plugin
 	const char * path

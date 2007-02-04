@@ -1,13 +1,13 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::GtkUI::Plugin  PACKAGE = Gaim::GtkUI::Plugins  PREFIX = gaim_gtk_plugins_
+MODULE = Pidgin::Plugin  PACKAGE = Pidgin::Plugins  PREFIX = pidgin_plugins_
 PROTOTYPES: ENABLE
 
 void
-gaim_gtk_plugins_save()
+pidgin_plugins_save()
 
-MODULE = Gaim::GtkUI::Plugin  PACKAGE = Gaim::GtkUI::Plugin::Dialog  PREFIX = gaim_gtk_plugin_dialog_
+MODULE = Pidgin::Plugin  PACKAGE = Pidgin::Plugin::Dialog  PREFIX = pidgin_plugin_dialog_
 PROTOTYPES: ENABLE
 
 void
-gaim_gtk_plugin_dialog_show()
+pidgin_plugin_dialog_show()

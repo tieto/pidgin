@@ -1,16 +1,16 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::GtkUI::Debug  PACKAGE = Gaim::GtkUI::Debug  PREFIX = gaim_gtk_debug_
+MODULE = Pidgin::Debug  PACKAGE = Pidgin::Debug  PREFIX = pidgin_debug_
 PROTOTYPES: ENABLE
 
 Gaim::Handle
-gaim_gtk_debug_get_handle()
+pidgin_debug_get_handle()
 
-MODULE = Gaim::GtkUI::Debug  PACKAGE = Gaim::GtkUI::Debug::Window  PREFIX = gaim_gtk_debug_window_
+MODULE = Pidgin::Debug  PACKAGE = Pidgin::Debug::Window  PREFIX = pidgin_debug_window_
 PROTOTYPES: ENABLE
 
 void
-gaim_gtk_debug_window_show()
+pidgin_debug_window_show()
 
 void
-gaim_gtk_debug_window_hide()
+pidgin_debug_window_hide()
