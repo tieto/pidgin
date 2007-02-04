@@ -1478,4 +1478,370 @@
 
 #define gaim_find_prpl  purple_find_prpl
 
+/* from request.h */
+
+#define GAIM_DEFAULT_ACTION_NONE  PURPLE_DEFAULT_ACTION_NONE
+
+#define GAIM_REQUEST_INPUT   PURPLE_REQUEST_INPUT
+#define GAIM_REQUEST_CHOICE  PURPLE_REQUEST_CHOICE
+#define GAIM_REQUEST_ACTION  PURPLE_REQUEST_ACTION
+#define GAIM_REQUEST_FIELDS  PURPLE_REQUEST_FIELDS
+#define GAIM_REQUEST_FILE    PURPLE_REQUEST_FILE
+#define GAIM_REQUEST_FOLDER  PURPLE_REQUEST_FOLDER
+#define GaimRequestType  PurpleRequestType
+
+#define GAIM_REQUEST_FIELD_NONE     PURPLE_REQUEST_FIELD_NONE
+#define GAIM_REQUEST_FIELD_STRING   PURPLE_REQUEST_FIELD_STRING
+#define GAIM_REQUEST_FIELD_INTEGER  PURPLE_REQUEST_FIELD_INTEGER
+#define GAIM_REQUEST_FIELD_BOOLEAN  PURPLE_REQUEST_FIELD_BOOLEAN
+#define GAIM_REQUEST_FIELD_CHOICE   PURPLE_REQUEST_FIELD_CHOICE
+#define GAIM_REQUEST_FIELD_LIST     PURPLE_REQUEST_FIELD_LIST
+#define GAIM_REQUEST_FIELD_LABEL    PURPLE_REQUEST_FIELD_LABEL
+#define GAIM_REQUEST_FIELD_IMAGE    PURPLE_REQUEST_FIELD_IMAGE
+#define GAIM_REQUEST_FIELD_ACCOUNT  PURPLE_REQUEST_FIELD_ACCOUNT
+#define GaimRequestFieldType  PurpleRequestFieldType
+
+#define GaimRequestFields  PurpleRequestFields
+
+#define GaimRequestFieldGroup  PurpleRequestFieldGroup
+
+#define GaimRequestField  PurpleRequestField
+
+#define GaimRequestUiOps  PurpleRequestUiOps
+
+#define GaimRequestInputCb   PurpleRequestInputCb
+#define GaimRequestActionCb  PurpleRequestActionCb
+#define GaimRequestChoiceCb  PurpleRequestChoiceCb
+#define GaimRequestFieldsCb  PurpleRequestFieldsCb
+#define GaimRequestFileCb    PurpleRequestFileCb
+
+#define gaim_request_fields_new                  purple_request_fields_new
+#define gaim_request_fields_destroy              purple_request_fields_destroy
+#define gaim_request_fields_add_group            purple_request_fields_add_group
+#define gaim_request_fields_get_groups           purple_request_fields_get_groups
+#define gaim_request_fields_exists               purple_request_fields_exists
+#define gaim_request_fields_get_required         purple_request_fields_get_required
+#define gaim_request_fields_is_field_required    purple_request_fields_is_field_required
+#define gaim_request_fields_all_required_filled  purple_request_fields_all_required_filled
+#define gaim_request_fields_get_field            purple_request_fields_get_field
+#define gaim_request_fields_get_string           purple_request_fields_get_string
+#define gaim_request_fields_get_integer          purple_request_fields_get_integer
+#define gaim_request_fields_get_bool             purple_request_fields_get_bool
+#define gaim_request_fields_get_choice           purple_request_fields_get_choice
+#define gaim_request_fields_get_account          purple_request_fields_get_account
+
+#define gaim_request_field_group_new         purple_request_field_group_new
+#define gaim_request_field_group_destroy     purple_request_field_group_destroy
+#define gaim_request_field_group_add_field   purple_request_field_group_add_field
+#define gaim_request_field_group_get_title   purple_request_field_group_get_title
+#define gaim_request_field_group_get_fields  purple_request_field_group_get_fields
+
+#define gaim_request_field_new            purple_request_field_new
+#define gaim_request_field_destroy        purple_request_field_destroy
+#define gaim_request_field_set_label      purple_request_field_set_label
+#define gaim_request_field_set_visible    purple_request_field_set_visible
+#define gaim_request_field_set_type_hint  purple_request_field_set_type_hint
+#define gaim_request_field_set_required   purple_request_field_set_required
+#define gaim_request_field_get_type       purple_request_field_get_type
+#define gaim_request_field_get_id         purple_request_field_get_id
+#define gaim_request_field_get_label      purple_request_field_get_label
+#define gaim_request_field_is_visible     purple_request_field_is_visible
+#define gaim_request_field_get_type_hint  purple_request_field_get_type_hint
+#define gaim_request_field_is_required    purple_request_field_is_required
+
+#define gaim_request_field_string_new           purple_request_field_string_new
+#define gaim_request_field_string_set_default_value \
+	purple_request_field_string_set_default_value
+#define gaim_request_field_string_set_value     purple_request_field_string_set_value
+#define gaim_request_field_string_set_masked    purple_request_field_string_set_masked
+#define gaim_request_field_string_set_editable  purple_request_field_string_set_editable
+#define gaim_request_field_string_get_default_value \
+	purple_request_field_string_get_default_value
+#define gaim_request_field_string_get_value     purple_request_field_string_get_value
+#define gaim_request_field_string_is_multiline  purple_request_field_string_is_multiline
+#define gaim_request_field_string_is_masked     purple_request_field_string_is_masked
+#define gaim_request_field_string_is_editable   purple_request_field_string_is_editable
+
+#define gaim_request_field_int_new        purple_request_field_int_new
+#define gaim_request_field_int_set_default_value \
+	purple_request_field_int_set_default_value
+#define gaim_request_field_int_set_value  purple_request_field_int_set_value
+#define gaim_request_field_int_get_default_value \
+	purple_request_field_int_get_default_value
+#define gaim_request_field_int_get_value  purple_request_field_int_get_value
+
+#define gaim_request_field_bool_new        purple_request_field_bool_new
+#define gaim_request_field_bool_set_default_value \
+	purple_request_field_book_set_default_value
+#define gaim_request_field_bool_set_value  purple_request_field_bool_set_value
+#define gaim_request_field_bool_get_default_value \
+	purple_request_field_bool_get_default_value
+#define gaim_request_field_bool_get_value  purple_request_field_bool_get_value
+
+#define gaim_request_field_choice_new         purple_request_field_choice_new
+#define gaim_request_field_choice_add         purple_request_field_choice_add
+#define gaim_request_field_choice_set_default_value \
+	purple_request_field_choice_set_default_value
+#define gaim_request_field_choice_set_value   purple_request_field_choice_set_value
+#define gaim_request_field_choice_get_default_value \
+	purple_request_field_choice_get_default_value
+#define gaim_request_field_choice_get_value   purple_request_field_choice_get_value
+#define gaim_request_field_choice_get_labels  purple_request_field_choice_get_labels
+
+#define gaim_request_field_list_new               purple_request_field_list_new
+#define gaim_request_field_list_set_multi_select  purple_request_field_list_set_multi_select
+#define gaim_request_field_list_get_multi_select  purple_request_field_list_get_multi_select
+#define gaim_request_field_list_get_data          purple_request_field_list_get_data
+#define gaim_request_field_list_add               purple_request_field_list_add
+#define gaim_request_field_list_add_selected      purple_request_field_list_add_selected
+#define gaim_request_field_list_clear_selected    purple_request_field_list_clear_selected
+#define gaim_request_field_list_set_selected      purple_request_field_list_set_selected
+#define gaim_request_field_list_is_selected       purple_request_field_list_is_selected
+#define gaim_request_field_list_get_selected      purple_request_field_list_get_selected
+#define gaim_request_field_list_get_items         purple_request_field_list_get_items
+
+#define gaim_request_field_label_new  purple_request_field_label_new
+
+#define gaim_request_field_image_new          purple_request_field_image_new
+#define gaim_request_field_image_set_scale    purple_request_field_image_set_scale
+#define gaim_request_field_image_get_buffer   purple_request_field_image_get_buffer
+#define gaim_request_field_image_get_size     purple_request_field_image_get_size
+#define gaim_request_field_image_get_scale_x  purple_request_field_image_get_scale_x
+#define gaim_request_field_image_get_scale_y  purple_request_field_image_get_scale_y
+
+#define gaim_request_field_account_new                purple_request_field_account_new
+#define gaim_request_field_account_set_default_value  purple_request_field_account_set_default_value
+#define gaim_request_field_account_set_value          purple_request_field_account_set_value
+#define gaim_request_field_account_set_show_all       purple_request_field_account_set_show_all
+#define gaim_request_field_account_set_filter         purple_request_field_account_set_filter
+#define gaim_request_field_account_get_default_value  purple_request_field_account_get_default_value
+#define gaim_request_field_account_get_value          purple_request_field_account_get_value
+#define gaim_request_field_account_get_show_all       purple_request_field_account_get_show_all
+#define gaim_request_field_account_get_filter         purple_request_field_account_get_filter
+
+#define gaim_request_input              purple_request_input
+#define gaim_request_choice             purple_request_choice
+#define gaim_request_choice_varg        purple_request_choice_varg
+#define gaim_request_action             purple_request_action
+#define gaim_request_action_varg        purple_request_action_varg
+#define gaim_request_fields             purple_request_fields
+#define gaim_request_close              purple_request_close
+#define gaim_request_close_with_handle  purple_request_close_with_handle
+
+#define gaim_request_yes_no         purple_request_yes_no
+#define gaim_request_ok_cancel      purple_request_ok_cancel
+#define gaim_request_accept_cancel  purple_request_accept_cancel
+
+#define gaim_request_file    purple_request_file
+#define gaim_request_folder  purple_request_folder
+
+#define gaim_request_set_ui_ops  purple_request_set_ui_ops
+#define gaim_request_get_ui_ops  purple_request_get_ui_ops
+
+/* from roomlist.h */
+
+#define GaimRoomlist       PurpleRoomlist
+#define GaimRoomlistRoom   PurpleRoomlistRoom
+#define GaimRoomlistField  PurpleRoomlistField
+#define GaimRoomlistUiOps  PurpleRoomlistUiOps
+
+#define GAIM_ROOMLIST_ROOMTYPE_CATEGORY  PURPLE_ROOMLIST_ROOMTYPE_CATEGORY
+#define GAIM_ROOMLIST_ROOMTYPE_ROOM      PURPLE_ROOMLIST_ROOMTYPE_ROOM
+#define GaimRoomlistRoomType  PurpleRoomlistRoomType
+
+#define GAIM_ROOMLIST_FIELD_BOOL    PURPLE_ROOMLIST_BOOL
+#define GAIM_ROOMLIST_FIELD_INT     PURPLE_ROOMLIST_INT
+#define GAIM_ROOMLIST_FIELD_STRING  PURPLE_ROOMLIST_STRING
+#define GaimRoomlistFieldType  PurpleRoomlistFieldType
+
+#define gaim_roomlist_show_with_account  purple_roomlist_show_with_account
+#define gaim_roomlist_new                purple_roomlist_new
+#define gaim_roomlist_ref                purple_roomlist_ref
+#define gaim_roomlist_unref              purple_roomlist_unref
+#define gaim_roomlist_set_fields         purple_roomlist_set_fields
+#define gaim_roomlist_set_in_progress    purple_roomlist_set_in_progress
+#define gaim_roomlist_get_in_progress    purple_roomlist_get_in_progress
+#define gaim_roomlist_room_add           purple_roomlist_room_add
+
+#define gaim_roomlist_get_list         purple_roomlist_get_list
+#define gaim_roomlist_cancel_get_list  purple_roomlist_cancel_get_list
+#define gaim_roomlist_expand_category  purple_roomlist_expand_category
+
+#define gaim_roomlist_room_new        purple_roomlist_room_new
+#define gaim_roomlist_room_add_field  purple_roomlist_room_add_field
+#define gaim_roomlist_room_join       purple_roomlist_room_join
+#define gaim_roomlist_field_new       purple_roomlist_field_new
+
+#define gaim_roomlist_set_ui_ops  purple_roomlist_set_ui_ops
+#define gaim_roomlist_get_ui_ops  purple_roomlist_get_ui_ops
+
+/* from savedstatuses.h */
+
+#define GaimSavedStatus     PurpleSavedStatus
+#define GaimSavedStatusSub  PurpleSavedStatusSub
+
+#define gaim_savedstatus_new              purple_savedstatus_new
+#define gaim_savedstatus_set_title        purple_savedstatus_set_title
+#define gaim_savedstatus_set_type         purple_savedstatus_set_type
+#define gaim_savedstatus_set_message      purple_savedstatus_set_message
+#define gaim_savedstatus_set_substatus    purple_savedstatus_set_substatus
+#define gaim_savedstatus_unset_substatus  purple_savedstatus_unset_substatus
+#define gaim_savedstatus_delete           purple_savedstatus_delete
+
+#define gaim_savedstatuses_get_all              purple_savedstatuses_get_all
+#define gaim_savedstatuses_get_popular          purple_savedstatuses_get_popular
+#define gaim_savedstatus_get_current            purple_savedstatus_get_current
+#define gaim_savedstatus_get_default            purple_savedstatus_get_default
+#define gaim_savedstatus_get_idleaway           purple_savedstatus_get_idleaway
+#define gaim_savedstatus_is_idleaway            purple_savedstatus_is_idleaway
+#define gaim_savedstatus_set_idleaway           purple_savedstatus_set_idleaway
+#define gaim_savedstatus_get_startup            purple_savedstatus_get_startup
+#define gaim_savedstatus_find                   purple_savedstatus_find
+#define gaim_savedstatus_find_by_creation_time  purple_savedstatus_find_by_creation_time
+#define gaim_savedstatus_find_transient_by_type_and_message \
+	purple_savedstatus_find_transient_by_type_and_message
+
+#define gaim_savedstatus_is_transient           purple_savedstatus_is_transient
+#define gaim_savedstatus_get_title              purple_savedstatus_get_title
+#define gaim_savedstatus_get_type               purple_savedstatus_get_type
+#define gaim_savedstatus_get_message            purple_savedstatus_get_message
+#define gaim_savedstatus_get_creation_time      purple_savedstatus_get_creation_time
+#define gaim_savedstatus_has_substatuses        purple_savedstatus_has_substatuses
+#define gaim_savedstatus_get_substatus          purple_savedstatus_get_substatus
+#define gaim_savedstatus_substatus_get_type     purple_savedstatus_substatus_get_type
+#define gaim_savedstatus_substatus_get_message  purple_savedstatus_substatus_get_message
+#define gaim_savedstatus_activate               purple_savedstatus_activate
+#define gaim_savedstatus_activate_for_account   purple_savedstatus_activate_for_account
+
+#define gaim_savedstatuses_get_handle  purple_savedstatuses_get_handle
+#define gaim_savedstatuses_init        purple_savedstatuses_init
+#define gaim_savedstatuses_uninit      purple_savedstatuses_uninit
+
+/* from signals.h */
+
+#define GAIM_CALLBACK  PURPLE_CALLBACK
+
+#define GaimCallback           PurpleCallback
+#define GaimSignalMarshalFunc  PurpleSignalMarshalFunc
+
+#define GAIM_SIGNAL_PRIORITY_DEFAULT  PURPLE_SIGNAL_PRIORITY_DEFAULT
+#define GAIM_SIGNAL_PRIORITY_HIGHEST  PURPLE_SIGNAL_PRIORITY_HIGHEST
+#define GAIM_SIGNAL_PRIORITY_LOWEST   PURPLE_SIGNAL_PRIORITY_LOWEST
+
+#define gaim_signal_register    purple_signal_register
+#define gaim_signal_unregister  purple_signal_unregister
+
+#define gaim_signals_unregister_by_instance  purple_signals_unregister_by_instance
+
+#define gaim_signal_get_values              purple_signal_get_values
+#define gaim_signal_connect_priority        purple_signal_connect_priority
+#define gaim_signal_connect                 purple_signal_connect
+#define gaim_signal_connect_priority_vargs  purple_signal_connect_priority_vargs
+#define gaim_signal_connect_vargs           purple_signal_connect_vargs
+#define gaim_signal_disconnect              purple_signal_disconnect
+
+#define gaim_signals_disconnect_by_handle  purple_signals_disconnect_by_handle
+
+#define gaim_signal_emit                 purple_signal_emit
+#define gaim_signal_emit_vargs           purple_signal_emit_vargs
+#define gaim_signal_emit_return_1        purple_signal_emit_vargs
+#define gaim_signal_emit_vargs_return_1  purple_signal_emit_vargs_return_1
+
+#define gaim_signals_init    purple_signals_init
+#define gaim_signals_uninit  purple_signals_uninit
+
+#define gaim_marshal_VOID \
+	purple_marshal_VOID
+#define gaim_marshal_VOID__INT \
+	purple_marshal_VOID__INT
+#define gaim_marshal_VOID__INT_INT \
+	purple_marshal_VOID_INT_INT
+#define gaim_marshal_VOID__POINTER \
+	purple_marshal_VOID__POINTER
+#define gaim_marshal_VOID__POINTER_UINT \
+	purple_marshal_VOID__POINTER_UINT
+#define gaim_marshal_VOID__POINTER_INT_INT \
+	purple_marshal_VOID__POINTER_INT_INT
+#define gaim_marshal_VOID__POINTER_POINTER \
+	purple_marshal_VOID__POINTER_POINTER
+#define gaim_marshal_VOID__POINTER_POINTER_UINT \
+	purple_marshal_VOID__POINTER_POINTER_UINT
+#define gaim_marshal_VOID__POINTER_POINTER_UINT_UINT \
+	purple_marshal_VOID__POINTER_POINTER_UINT_UINT
+#define gaim_marshal_VOID__POINTER_POINTER_POINTER \
+	purple_marshal_VOID__POINTER_POINTER_POINTER
+#define gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER \
+	purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER
+#define gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER_POINTER \
+	purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_POINTER
+#define gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT \
+	purple_marshal_VOID__POINTER_POINTER_POINTER_UINT
+#define gaim_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT \
+	purple_marshal_VOID__POINTER_POINTER_POINTER_POINTER_UINT
+#define gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT \
+	purple_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT
+
+#define gaim_marshal_INT__INT \
+	purple_marshal_INT__INT
+#define gaim_marshal_INT__INT_INT \
+	purple_marshal_INT__INT_INT
+#define gaim_marshal_INT__POINTER_POINTER_POINTER_POINTER_POINTER \
+	purple_marshal_INT__POINTER_POINTER_POINTER_POINTER_POINTER
+
+#define gaim_marshal_BOOLEAN__POINTER \
+	purple_marshal_BOOLEAN__POINTER
+#define gaim_marshal_BOOLEAN__POINTER_POINTER \
+	purple_marshal_BOOLEAN__POINTER_POINTER
+#define gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER \
+	purple_marshal_BOOLEAN__POINTER_POINTER_POINTER
+#define gaim_marshal_BOOLEAN__POINTER_POINTER_UINT \
+	purple_marshal_BOOLEAN__POINTER_POINTER_UINT
+#define gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT \
+	purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_UINT
+#define gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER \
+	purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER
+#define gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER \
+	purple_marshal_BOOLEAN__POINTER_POINTER_POINTER_POINTER_POINTER
+
+#define gaim_marshal_BOOLEAN__INT_POINTER \
+	purple_marshal_BOOLEAN__INT_POINTER
+
+#define gaim_marshal_POINTER__POINTER_INT \
+	purple_marshal_POINTER__POINTER_INT
+#define gaim_marshal_POINTER__POINTER_INT64 \
+	purple_marshal_POINTER__POINTER_INT64
+#define gaim_marshal_POINTER__POINTER_INT_BOOLEAN \
+	purple_marshal_POINTER__POINTER_INT_BOOLEAN
+#define gaim_marshal_POINTER__POINTER_INT64_BOOLEAN \
+	purple_marshal_POINTER__POINTER_INT64_BOOLEAN
+#define gaim_marshal_POINTER__POINTER_POINTER \
+	purple_marshal_POINTER__POINTER_POINTER
+
+/* from sound.h */
+
+#define GAIM_SOUND_BUDDY_ARRIVE    PURPLE_SOUND_BUDDY_ARRIVE
+#define GAIM_SOUND_BUDDY_LEAVE     PURPLE_SOUND_BUDDY_LEAVE
+#define GAIM_SOUND_RECEIVE         PURPLE_SOUND_RECEIVE
+#define GAIM_SOUND_FIRST_RECEIVE   PURPLE_SOUND_FIRST_RECEIVE
+#define GAIM_SOUND_SEND            PURPLE_SOUND_SEND
+#define GAIM_SOUND_CHAT_JOIN       PURPLE_SOUND_CHAT_JOIN
+#define GAIM_SOUND_CHAT_LEAVE      PURPLE_SOUND_CHAT_LEAVE
+#define GAIM_SOUND_CHAT_YOU_SAY    PURPLE_SOUND_CHAT_YOU_SAY
+#define GAIM_SOUND_CHAT_SAY        PURPLE_SOUND_CHAT_SAY
+#define GAIM_SOUND_POUNCE_DEFAULT  PURPLE_SOUND_POUNCE_DEFAULT
+#define GAIM_SOUND_CHAT_NICK       PURPLE_SOUND_CHAT_NICK
+#define GAIM_NUM_SOUNDS            PURPLE_NUM_SOUNDS
+#define GaimSoundEventID  PurpleSoundEventID
+
+#define GaimSoundUiOps  PurpleSoundUiOps
+
+#define gaim_sound_play_file   purple_sound_play_file
+#define gaim_sound_play_event  purple_sound_play_event
+#define gaim_sound_set_ui_ops  purple_sound_set_ui_ops
+#define gaim_sound_get_ui_ops  purple_sound_get_ui_ops
+#define gaim_sound_init        purple_sound_init
+#define gaim_sound_uninit      purple_sound_uninit
+
+#define gaim_sounds_get_handle  purple_sounds_get_handle
+
 #endif /* _GAIM_COMPAT_H_ */
