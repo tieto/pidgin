@@ -2234,7 +2234,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(GaimBlistNode *node,
  *
  * 
  */
-#define STATUS_SIZE 32
+#define STATUS_SIZE 22
 #define TOOLTIP_BORDER 12
 #define SMALL_SPACE 6
 #define LARGE_SPACE 12
@@ -3044,7 +3044,7 @@ pidgin_blist_get_status_icon(GaimBlistNode *node, PidginStatusIconSize size)
 	struct _pidgin_blist_node *gtkbuddynode = NULL;
 	GaimBuddy *buddy = NULL;
 	GaimChat *chat = NULL;
-	GtkIconSize icon_size = gtk_icon_size_from_name((size == PIDGIN_STATUS_ICON_LARGE) ? PIDGIN_ICON_SIZE_TANGO_MEDIUM :
+	GtkIconSize icon_size = gtk_icon_size_from_name((size == PIDGIN_STATUS_ICON_LARGE) ? PIDGIN_ICON_SIZE_TANGO_SMALL :
 											 PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
