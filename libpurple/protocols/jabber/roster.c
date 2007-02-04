@@ -53,7 +53,7 @@ static void remove_gaim_buddies(JabberStream *js, const char *jid)
 	g_slist_free(buddies);
 }
 
-static void add_gaim_buddies_in_groups(JabberStream *js, const char *jid,
+static void add_gaim_buddies_to_groups(JabberStream *js, const char *jid,
 		const char *alias, GSList *groups)
 {
 	GSList *buddies, *g2, *l;
@@ -228,7 +228,7 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			if (js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 				if (!jabber_google_roster_incoming(js, item))
 					continue;
-			add_gaim_buddies_in_groups(js, jid, name, groups);
+			add_gaim_buddies_to_groups(js, jid, name, groups);
 		}
 	}
 }
