@@ -590,7 +590,7 @@ void gaim_log_init(void)
 
 	gaim_prefs_add_string("/core/logging/format", "txt");
 
-	html_logger = gaim_log_logger_new("html", _("HTML"), 8,
+	html_logger = gaim_log_logger_new("html", _("HTML"), 11,
 									  NULL,
 									  html_logger_write,
 									  html_logger_finalize,
@@ -604,7 +604,7 @@ void gaim_log_init(void)
 									  gaim_log_common_is_deletable);
 	gaim_log_logger_add(html_logger);
 
-	txt_logger = gaim_log_logger_new("txt", _("Plain text"), 8,
+	txt_logger = gaim_log_logger_new("txt", _("Plain text"), 11,
 									 NULL,
 									 txt_logger_write,
 									 txt_logger_finalize,
@@ -1027,13 +1027,20 @@ gboolean gaim_log_common_is_deletable(GaimLog *log)
 	if (data->path == NULL)
 		return FALSE;
 
+#ifndef _WIN32
 	dirname = g_path_get_dirname(data->path);
 	if (g_access(dirname, W_OK) == 0)
 	{
 		g_free(dirname);
 		return TRUE;
 	}
+	gaim_debug_info("log", "access(%s) failed: %s\n", dirname, strerror(errno));
 	g_free(dirname);
+#else
+	/* Unless and until someone writes equivalent win32 code,
+	 * we'll assume the file is deletable. */
+	return TRUE;
+#endif
 
 	return FALSE;
 }
