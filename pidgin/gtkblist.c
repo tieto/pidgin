@@ -2977,6 +2977,10 @@ pidgin_blist_get_emblem(GaimBlistNode *node)
 	const char *name = NULL;
 	char *filename, *path;
 	GdkPixbuf *ret;
+	GaimPresence *p;
+
+
+
 	if(GAIM_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
 			buddy = gaim_contact_get_priority_buddy((GaimContact*)node);
@@ -2995,7 +2999,17 @@ pidgin_blist_get_emblem(GaimBlistNode *node)
 	
 	if (!gaim_privacy_check(buddy->account, gaim_buddy_get_name(buddy))) {
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "blocked.png", NULL);
-		return gdk_pixbuf_new_from_file(path, NULL);	
+		ret = gdk_pixbuf_new_from_file(path, NULL);
+		g_free(path);
+		return ret;
+	}
+	
+	p = gaim_buddy_get_presence(buddy);
+	if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_MOBILE)) {
+		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "mobile.png", NULL);
+		ret = gdk_pixbuf_new_from_file(path, NULL);
+		g_free(path);
+		return ret;	
 	}
 
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(buddy->account));

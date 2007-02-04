@@ -162,6 +162,31 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 		serv_got_typing_stopped(gaim_account_get_connection(account), name);
 }
 
+void gaim_prpl_got_user_status_deactive(GaimAccount *account, const char *name,
+					const char *status_id)
+{
+	GSList *list;
+	GaimBuddy *buddy;
+	GaimPresence *presence;
+	GaimStatus *status;
+	GaimStatus *old_status;
+	va_list args;
+
+	g_return_if_fail(account   != NULL);
+	g_return_if_fail(name      != NULL);
+	g_return_if_fail(status_id != NULL);
+	g_return_if_fail(gaim_account_is_connected(account) || gaim_account_is_connecting(account));
+
+	if ((buddy = gaim_find_buddy(account, name)) == NULL)
+		return;
+
+	presence = gaim_buddy_get_presence(buddy);
+	status   = gaim_presence_get_status(presence, status_id);
+
+	g_return_if_fail(status != NULL);
+	gaim_status_set_active(status, FALSE);
+}
+
 static void
 do_prpl_change_account_status(GaimAccount *account,
 								GaimStatus *old_status, GaimStatus *new_status)
