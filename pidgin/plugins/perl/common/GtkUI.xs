@@ -28,7 +28,7 @@ GAIM_PERL_BOOT_PROTO(GtkUI__Themes);
 GAIM_PERL_BOOT_PROTO(GtkUI__Utils);
 GAIM_PERL_BOOT_PROTO(GtkUI__Xfer);
 
-MODULE = Gaim::GtkUI  PACKAGE = Gaim::GtkUI  PREFIX = gaim_gtk_
+MODULE = Gaim::GtkUI  PACKAGE = Gaim::GtkUI  PREFIX = pidgin_
 PROTOTYPES: ENABLE
 
 BOOT:

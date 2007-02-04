@@ -1,7 +1,7 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::GtkUI::Prefs  PACKAGE = Gaim::GtkUI::Prefs  PREFIX = gaim_gtk_prefs_
+MODULE = Pidgin::Prefs  PACKAGE = Pidgin::Prefs  PREFIX = pidgin_prefs_
 PROTOTYPES: ENABLE
 
 void
-gaim_gtk_prefs_show()
+pidgin_prefs_show()
