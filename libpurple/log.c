@@ -1045,6 +1045,32 @@ gboolean gaim_log_common_is_deletable(GaimLog *log)
 	return FALSE;
 }
 
+static char *process_txt_log(char *txt, char *to_free)
+{
+	char *tmp;
+
+	/* The to_free argument allows us to save a
+	 * g_strdup() in some cases. */
+
+	if (to_free == NULL)
+		to_free = txt;
+
+	/* g_markup_escape_text requires valid UTF-8 */
+	if (!g_utf8_validate(txt, -1, NULL))
+	{
+		tmp = gaim_utf8_salvage(txt);
+		g_free(to_free);
+		to_free = txt = tmp;
+	}
+
+	tmp = g_markup_escape_text(txt, -1);
+	g_free(to_free);
+	txt = gaim_markup_linkify(tmp);
+	g_free(tmp);
+
+	return txt;
+}
+
 #if 0 /* Maybe some other time. */
 /****************
  ** XML LOGGER **
@@ -1416,16 +1442,11 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 		return g_strdup(_("<font color=\"red\"><b>Unable to find log path!</b></font>"));
 	if (g_file_get_contents(data->path, &read, NULL, NULL)) {
 		minus_header = strchr(read, '\n');
-		if (!minus_header)
-			minus_header = g_strdup(read);
+
+		if (minus_header)
+			return process_txt_log(minus_header + 1, read);
 		else
-			minus_header = g_strdup(minus_header + 1);
-		g_free(read);
-		minus_header2 = g_markup_escape_text(minus_header, -1);
-		g_free(minus_header);
-		read = gaim_markup_linkify(minus_header2);
-		g_free(minus_header2);
-		return read;
+			return process_txt_log(read, NULL);
 	}
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
@@ -1730,15 +1751,13 @@ static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	fclose(file);
 	read[data->length] = '\0';
 	*flags = 0;
-	if(strstr(read, "<BR>"))
+	if (strstr(read, "<BR>"))
+	{
 		*flags |= GAIM_LOG_READ_NO_NEWLINE;
-	else {
-		tmp = g_markup_escape_text(read, -1);
-		g_free(read);
-		read = gaim_markup_linkify(tmp);
-		g_free(tmp);
+		return read;
 	}
-	return read;
+
+	return process_txt_log(read, NULL);
 }
 
 static int old_logger_size (GaimLog *log)
