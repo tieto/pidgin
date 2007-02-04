@@ -4,30 +4,30 @@
  * I thought about using the one from libgtk2-perl but wasn't sure how to go
  * about doing that.
 Gtk::Widget
-gaim_gtk_menu_tray_new()
+pidgin_menu_tray_new()
 
 Gtk::Widget
-gaim_gtk_menu_tray_get_box(menu_tray)
-	Gaim::GtkUI::MenuTray menu_tray
+pidgin_menu_tray_get_box(menu_tray)
+	Pidgin::MenuTray menu_tray
 
 void
-gaim_gtk_menu_tray_append(menu_tray, widget, tooltip)
-	Gaim::GtkUI::MenuTray menu_tray
+pidgin_menu_tray_append(menu_tray, widget, tooltip)
+	Pidgin::MenuTray menu_tray
 	Gtk::Widget widget
 	const char * tooltip
 
 void
-gaim_gtk_menu_tray_prepend(menu_tray, widget, tooltip)
-	Gaim::GtkUI::MenuTray menu_tray
+pidgin_menu_tray_prepend(menu_tray, widget, tooltip)
+	Pidgin::MenuTray menu_tray
 	Gtk::Widget widget
 	const char * tooltip
 
 void
-gaim_gtk_menu_tray_set_tooltip(menu_tray, widget, tooltip)
-	Gaim::GtkUI::MenuTray menu_tray
+pidgin_menu_tray_set_tooltip(menu_tray, widget, tooltip)
+	Pidgin::MenuTray menu_tray
 	Gtk::Widget widget
 	const char * tooltip
 */
 
-MODULE = Gaim::GtkUI::MenuTray  PACKAGE = Gaim::GtkUI::MenuTray  PREFIX = gaim_gtk_menu_tray
+MODULE = Pidgin::MenuTray  PACKAGE = Pidgin::MenuTray  PREFIX = pidgin_menu_tray
 PROTOTYPES: ENABLE

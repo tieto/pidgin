@@ -27,6 +27,7 @@
 
 #include "buddy.h"
 #include "chat.h"
+#include "google.h"
 #include "message.h"
 #include "xmlnode.h"
 
@@ -98,6 +99,12 @@ static void handle_chat(JabberMessage *jm)
 			if(jbr->thread_id)
 				g_free(jbr->thread_id);
 			jbr->thread_id = g_strdup(jbr->thread_id);
+		}
+		
+		if (jm->js->googletalk && jm->xhtml == NULL) {
+			char *tmp = jm->body;
+			jm->body = jabber_google_format_to_html(jm->body);
+			g_free(tmp);
 		}
 		serv_got_im(jm->js->gc, from, jm->xhtml ? jm->xhtml : jm->body, 0,
 				jm->sent);
@@ -255,7 +262,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	if(type) {
 		if(!strcmp(type, "normal"))
 			jm->type = JABBER_MESSAGE_NORMAL;
-		else if(!strcmp(type, "chat"))
+	else if(!strcmp(type, "chat"))
 			jm->type = JABBER_MESSAGE_CHAT;
 		else if(!strcmp(type, "groupchat"))
 			jm->type = JABBER_MESSAGE_GROUPCHAT;

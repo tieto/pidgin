@@ -58,6 +58,7 @@
 #define OSCAR_STATUS_ID_OCCUPIED    "occupied"
 #define OSCAR_STATUS_ID_FREE4CHAT   "free4chat"
 #define OSCAR_STATUS_ID_CUSTOM      "custom"
+#define OSCAR_STATUS_ID_MOBILE	    "mobile"
 
 #define AIMHASHDATA "http://gaim.sourceforge.net/aim_data.php3"
 
@@ -1767,6 +1768,13 @@ static int gaim_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame *f
 											 info->status, info->status_len);
 	}
 
+	if (info->flags & AIM_FLAG_WIRELESS || info->capabilities & OSCAR_CAPABILITY_HIPTOP)
+	{
+		gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_MOBILE, NULL);
+	} else {
+		gaim_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
+	}
+
 	if (have_status_message)
 	{
 		gaim_prpl_got_user_status(account, info->sn, status_id,
@@ -1881,7 +1889,7 @@ static int gaim_parse_offgoing(OscarData *od, FlapConnection *conn, FlapFrame *f
 	va_end(ap);
 
 	gaim_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_OFFLINE, NULL);
-
+	gaim_prpl_got_user_status_deactive(account, info->sn, OSCAR_STATUS_ID_MOBILE);
 	g_hash_table_remove(od->buddyinfo, gaim_normalize(gc->account, info->sn));
 
 	return 1;
@@ -5431,10 +5439,6 @@ const char* oscar_list_emblem(GaimBuddy *b)
 	if (userinfo != NULL ) {
 		if (userinfo->flags & AIM_FLAG_ADMINISTRATOR)
 			return "admin";
-		if (userinfo->flags & AIM_FLAG_WIRELESS)
-			return "mobile";
-		if (userinfo->capabilities & OSCAR_CAPABILITY_HIPTOP)
-			return "mobile";
 		if (userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
 			return "bot";
 		if (userinfo->flags & AIM_FLAG_AOL)
@@ -5716,6 +5720,9 @@ oscar_status_types(GaimAccount *account)
 	type = gaim_status_type_new_full(GAIM_STATUS_INVISIBLE,
 									 OSCAR_STATUS_ID_INVISIBLE,
 									 NULL, TRUE, TRUE, FALSE);
+	status_types = g_list_prepend(status_types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_MOBILE, OSCAR_STATUS_ID_MOBILE, NULL, FALSE, FALSE, TRUE);
 	status_types = g_list_prepend(status_types, type);
 
 	/* ICQ-specific status types */

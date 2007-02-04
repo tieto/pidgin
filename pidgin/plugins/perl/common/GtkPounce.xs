@@ -1,25 +1,25 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::GtkUI::Pounce  PACKAGE = Gaim::GtkUI::Pounce  PREFIX = gaim_gtk_pounce_
+MODULE = Pidgin::Pounce  PACKAGE = Pidgin::Pounce  PREFIX = pidgin_pounce_
 PROTOTYPES: ENABLE
 
 void
-gaim_gtk_pounce_editor_show(account, name, cur_pounce)
+pidgin_pounce_editor_show(account, name, cur_pounce)
 	Gaim::Account account
 	const char * name
 	Gaim::Pounce cur_pounce
 
-MODULE = Gaim::GtkUI::Pounce  PACKAGE = Gaim::GtkUI::Pounces  PREFIX = gaim_gtk_pounces_
+MODULE = Pidgin::Pounce  PACKAGE = Pidgin::Pounces  PREFIX = pidgin_pounces_
 PROTOTYPES: ENABLE
 
 Gaim::Handle
-gaim_gtk_pounces_get_handle()
+pidgin_pounces_get_handle()
 
-MODULE = Gaim::GtkUI::Pounce  PACKAGE = Gaim::GtkUI::Pounces::Manager  PREFIX = gaim_gtk_pounces_manager_
+MODULE = Pidgin::Pounce  PACKAGE = Pidgin::Pounces::Manager  PREFIX = pidgin_pounces_manager_
 PROTOTYPES: ENABLE
 
 void
-gaim_gtk_pounces_manager_show()
+pidgin_pounces_manager_show()
 
 void
-gaim_gtk_pounces_manager_hide()
+pidgin_pounces_manager_hide()

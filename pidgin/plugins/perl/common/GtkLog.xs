@@ -1,23 +1,23 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::GtkUI::Log  PACKAGE = Gaim::GtkUI::Log  PREFIX = gaim_gtk_log_
+MODULE = Pidgin::Log  PACKAGE = Pidgin::Log  PREFIX = pidgin_log_
 PROTOTYPES: ENABLE
 
 Gaim::Handle
-gaim_gtk_log_get_handle()
+pidgin_log_get_handle()
 
 void
-gaim_gtk_log_show(type, screenname, account)
+pidgin_log_show(type, screenname, account)
 	Gaim::LogType type
 	const char * screenname
 	Gaim::Account account
 
 void
-gaim_gtk_log_show_contact(contact)
+pidgin_log_show_contact(contact)
 	Gaim::BuddyList::Contact contact
 
-MODULE = Gaim::GtkUI::Log  PACKAGE = Gaim::GtkUI::SysLog  PREFIX = gaim_gtk_syslog_
+MODULE = Pidgin::Log  PACKAGE = Pidgin::SysLog  PREFIX = pidgin_syslog_
 PROTOTYPES: ENABLE
 
 void
-gaim_gtk_syslog_show()
+pidgin_syslog_show()

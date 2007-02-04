@@ -1549,18 +1549,20 @@ gboolean
 gaim_presence_is_status_primitive_active(const GaimPresence *presence,
 		GaimStatusPrimitive primitive)
 {
-	GaimStatus *status;
-	GaimStatusType *status_type;
+	GList *l;
 
 	g_return_val_if_fail(presence  != NULL,              FALSE);
 	g_return_val_if_fail(primitive != GAIM_STATUS_UNSET, FALSE);
 
-	status      = gaim_presence_get_active_status(presence);
-	status_type = gaim_status_get_type(status);
+	for (l = gaim_presence_get_statuses(presence);
+	     l != NULL; l = l->next)	{
+		GaimStatus *temp_status = l->data;
+		GaimStatusType *type = gaim_status_get_type(temp_status);
 
-	if (gaim_status_type_get_primitive(status_type) == primitive)
-		return TRUE;
-
+		if (gaim_status_type_get_primitive(type) == primitive &&
+		    gaim_status_is_active(temp_status))
+			return TRUE;
+	}
 	return FALSE;
 }
 

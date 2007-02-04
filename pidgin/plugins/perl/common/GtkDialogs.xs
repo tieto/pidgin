@@ -1,52 +1,52 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::GtkUI::Dialogs  PACKAGE = Gaim::GtkUI::Dialogs  PREFIX = gaim_gtkdialogs_
+MODULE = Pidgin::Dialogs  PACKAGE = Pidgin::Dialogs  PREFIX = pidgindialogs_
 PROTOTYPES: ENABLE
 
 void
-gaim_gtkdialogs_destroy_all()
+pidgindialogs_destroy_all()
 
 void
-gaim_gtkdialogs_about()
+pidgindialogs_about()
 
 void
-gaim_gtkdialogs_im()
+pidgindialogs_im()
 
 void
-gaim_gtkdialogs_im_with_user(account, username)
+pidgindialogs_im_with_user(account, username)
 	Gaim::Account account
 	const char * username
 
 void
-gaim_gtkdialogs_info()
+pidgindialogs_info()
 
 void
-gaim_gtkdialogs_log()
+pidgindialogs_log()
 
 void
-gaim_gtkdialogs_alias_contact(contact)
+pidgindialogs_alias_contact(contact)
 	Gaim::BuddyList::Contact contact
 
 void
-gaim_gtkdialogs_alias_buddy(buddy)
+pidgindialogs_alias_buddy(buddy)
 	Gaim::BuddyList::Buddy buddy
 
 void
-gaim_gtkdialogs_alias_chat(chat)
+pidgindialogs_alias_chat(chat)
 	Gaim::BuddyList::Chat chat
 
 void
-gaim_gtkdialogs_remove_buddy(buddy)
+pidgindialogs_remove_buddy(buddy)
 	Gaim::BuddyList::Buddy buddy
 
 void
-gaim_gtkdialogs_remove_group(group)
+pidgindialogs_remove_group(group)
 	Gaim::BuddyList::Group group
 
 void
-gaim_gtkdialogs_remove_chat(chat)
+pidgindialogs_remove_chat(chat)
 	Gaim::BuddyList::Chat chat
 
 void
-gaim_gtkdialogs_remove_contact(contact)
+pidgindialogs_remove_contact(contact)
 	Gaim::BuddyList::Contact contact

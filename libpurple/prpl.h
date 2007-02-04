@@ -388,7 +388,7 @@ void gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
 								   time_t login_time);
 
 /**
- * Notifies Gaim that a user's status has changed.
+ * Notifies Gaim that a user's status has been activated.
  *
  * This is meant to be called from protocol plugins.
  *
@@ -400,6 +400,19 @@ void gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
  */
 void gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 							   const char *status_id, ...);
+
+/**
+ * Notifies libpurple that a user's status has been deactivated
+ *
+ * This is meant to be called from protocol plugins.
+ *
+ * @param account   The account the user is on.
+ * @param name      The screen name of the user.
+ * @param status_id The status ID.
+ */
+void gaim_prpl_got_user_status_deactive(GaimAccount *account, const char *name,
+					const char *status_id);
+ 
 /**
  * Informs the server that an account's status changed.
  *

@@ -1,4 +1,4 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::GtkUI::PluginPref  PACKAGE = Gaim::GtkUI::PluginPref  PREFIX = gaim_gtk_plugin_pref_
+MODULE = Pidgin::PluginPref  PACKAGE = Pidgin::PluginPref  PREFIX = pidgin_plugin_pref_
 PROTOTYPES: ENABLE
