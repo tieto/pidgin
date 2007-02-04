@@ -257,8 +257,6 @@ static const char *_qq_list_emblem(GaimBuddy *b)
 	qq_buddy *q_bud = b->proto_data;
 
 	if (q_bud) {
-		if (q_bud->comm_flag & QQ_COMM_FLAG_BIND_MOBILE)
-			return "mobile";
 		if (q_bud->comm_flag & QQ_COMM_FLAG_QQ_MEMBER)
 			return "qq_member";
 		/*
@@ -290,6 +288,10 @@ static GList *_qq_away_states(GaimAccount *ga)
 
 	status = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
 			"offline", _("QQ: Offline"), FALSE, TRUE, FALSE);
+	types = g_list_append(types, status);
+
+	status = gaim_status_type_new_full(GAIM_STATUS_MOBILE,
+			"mobile", NULL, FALSE, FALSE, TRUE);
 	types = g_list_append(types, status);
 
 	return types;

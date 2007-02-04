@@ -164,6 +164,11 @@ void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud)
 		}
 		gaim_debug(GAIM_DEBUG_INFO, "QQ", "set buddy %d to %s\n", q_bud->uid, status_id);
 		gaim_prpl_got_user_status(gc->account, name, status_id, NULL);
+
+		if (q_bud->comm_flag & QQ_COMM_FLAG_BIND_MOBILE && q_bud->status != QQ_BUDDY_OFFLINE)
+			gaim_prpl_got_user_status(gc->account, name, "mobile", NULL);
+		else
+			gaim_prpl_got_user_status_deactive(gc->account, name, "mobile");
 	} else {
 		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "unknown buddy: %d\n", q_bud->uid);
 	}
