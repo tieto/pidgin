@@ -5681,6 +5681,7 @@ gray_stuff_out(GaimGtkConversation *gtkconv)
 		gtk_widget_show(win->menu.invite);
 		gtk_widget_show(win->menu.alias);
 		gtk_widget_hide(win->menu.block);
+		gtk_widget_hide(win->menu.unblock);
 		gtk_widget_hide(win->menu.show_icon);
 
 		if ((account == NULL) || gaim_blist_find_chat(account, gaim_conversation_get_name(conv)) == NULL) {
