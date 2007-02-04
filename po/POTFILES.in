@@ -83,6 +83,7 @@ pidgin/plugins/spellchk.c
 pidgin/plugins/ticker/ticker.c
 pidgin/plugins/timestamp.c
 pidgin/plugins/timestamp_format.c
+pidgin/plugins/xmppconsole.c
 pidgin/plugins/win32/transparency/win2ktrans.c
 pidgin/plugins/win32/winprefs/winprefs.c
 libpurple/account.c
