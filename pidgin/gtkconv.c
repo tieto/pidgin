@@ -6807,7 +6807,7 @@ pidgin_conversations_init(void)
 #else
 #error Unkown size of time_t
 #endif
-	                     gaim_value_new(GAIM_TYPE_POINTER), 3,
+	                     gaim_value_new(GAIM_TYPE_STRING), 3,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_CONVERSATION),
 #if SIZEOF_TIME_T == 4

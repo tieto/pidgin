@@ -26,13 +26,16 @@
 #include "pidgin.h"
 
 #include "account.h"
+#include "debug.h"
+#include "log.h"
+#include "notify.h"
+#include "request.h"
+#include "util.h"
+
 #include "gtkblist.h"
 #include "gtkimhtml.h"
 #include "gtklog.h"
 #include "gtkutils.h"
-#include "log.h"
-#include "notify.h"
-#include "util.h"
 
 static GHashTable *log_viewers = NULL;
 static void populate_log_tree(PidginLogViewer *lv);
@@ -184,6 +187,8 @@ static void destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
 	} else
 		syslog_viewer = NULL;
 
+	gaim_request_close_with_handle(lv);
+
 	g_list_foreach(lv->logs, (GFunc)gaim_log_free, NULL);
 	g_list_free(lv->logs);
 
@@ -198,6 +203,139 @@ static void log_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeView
 		gtk_tree_view_collapse_row(tv, path);
 	else
 		gtk_tree_view_expand_row(tv, path, FALSE);
+}
+
+static void delete_log_cb(GaimLog *log)
+{
+	if (!gaim_log_delete(log))
+	{
+		gaim_notify_error(NULL, NULL, "Log Deletion Failed",
+		                  "Check permissions and try again.");
+	}
+}
+
+static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
+{
+	PidginLogViewer *lv = data[0];
+	GaimLog *log = data[1];
+	const char *time = log_get_date(log);
+	const char *name;
+	char *tmp;
+
+	if (log->type == GAIM_LOG_IM)
+	{
+		GaimBuddy *buddy = gaim_find_buddy(log->account, log->name);
+		if (buddy != NULL)
+			name = gaim_buddy_get_contact_alias(buddy);
+		else
+			name = log->name;
+
+		tmp = g_strdup_printf(_("Are you sure you want to permanently delete the log of the "
+		                        "conversation with %s which started at %s?"), name, time);
+	}
+	else if (log->type == GAIM_LOG_CHAT)
+	{
+		GaimChat *chat = gaim_blist_find_chat(log->account, log->name);
+		if (chat != NULL)
+			name = gaim_chat_get_name(chat);
+		else
+			name = log->name;
+
+		tmp = g_strdup_printf(_("Are you sure you want to permanently delete the log of the "
+		                        "conversation in %s which started at %s?"), name, time);
+	}
+	else if (log->type == GAIM_LOG_SYSTEM)
+	{
+		tmp = g_strdup_printf(_("Are you sure you want to permanently delete the system log "
+		                        "which started at %s?"), time);
+	}
+	else
+		g_return_if_reached();
+
+	gaim_request_action(lv, NULL, "Delete Log?", tmp,
+	                    0, log, 2, _("Delete"), delete_log_cb, _("Cancel"), NULL);
+	g_free(tmp);
+}
+
+static void log_show_popup_menu(GtkWidget *treeview, GdkEventButton *event, gpointer *data)
+{
+	GtkWidget *menu = gtk_menu_new();
+	GtkWidget *menuitem = gtk_menu_item_new_with_label("Delete Log...");
+
+	if (!gaim_log_is_deletable((GaimLog *)data[1]))
+		gtk_widget_set_sensitive(menuitem, FALSE);
+
+	g_signal_connect(menuitem, "activate", G_CALLBACK(log_delete_log_cb), data);
+	g_object_set_data_full(menuitem, "log-viewer-data", data, g_free);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	gtk_widget_show_all(menu);
+
+	gtk_menu_popup(GTK_MENU(menu), NULL, (GtkMenuPositionFunc)data[2], NULL, NULL,
+	               (event != NULL) ? event->button : 0,
+	               gdk_event_get_time((GdkEvent *)event));
+}
+
+static gboolean log_button_press_cb(GtkWidget *treeview, GdkEventButton *event, PidginLogViewer *lv)
+{
+	if (event->type == GDK_BUTTON_PRESS && event->button == 3)
+	{
+		GtkTreePath *path;
+		GtkTreeIter iter;
+		GValue val;
+		GaimLog *log;
+		gpointer *data;
+
+		if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), event->x, event->y, &path, NULL, NULL, NULL))
+			return FALSE;
+		gtk_tree_model_get_iter(GTK_TREE_MODEL(lv->treestore), &iter, path);
+		val.g_type = 0;
+		gtk_tree_model_get_value(GTK_TREE_MODEL(lv->treestore), &iter, 1, &val);
+
+		log = g_value_get_pointer(&val);
+
+		if (log == NULL)
+			return FALSE;
+
+		data = g_new(gpointer, 3);
+		data[0] = lv;
+		data[1] = log;
+		data[2] = NULL;
+
+		log_show_popup_menu(treeview, event, data);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+static gboolean log_popup_menu_cb(GtkWidget *treeview, PidginLogViewer *lv)
+{
+	GtkTreeSelection *sel;
+	GtkTreeIter iter;
+	GValue val;
+	GaimLog *log;
+	gpointer *data;
+
+	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(lv));
+	if (!gtk_tree_selection_get_selected(sel, NULL, &iter))
+		return FALSE;
+
+	val.g_type = 0;
+	gtk_tree_model_get_value(GTK_TREE_MODEL(lv->treestore),
+	                         &iter, NODE_COLUMN, &val);
+
+	log = g_value_get_pointer(&val);
+
+	if (log == NULL)
+		return FALSE;
+
+	data = g_new(gpointer, 3);
+	data[0] = lv;
+	data[1] = log;
+	data[2] = pidgin_treeview_popup_menu_position_func;
+
+	log_show_popup_menu(treeview, NULL, data);
+	return TRUE;
 }
 
 static gboolean search_find_cb(gpointer data)
@@ -415,6 +553,9 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 			G_CALLBACK(log_row_activated_cb),
 			lv);
 	pidgin_set_accessible_label(lv->treeview, lv->label);
+
+	g_signal_connect(lv->treeview, "button-press-event", G_CALLBACK(log_button_press_cb), lv);
+	g_signal_connect(lv->treeview, "popup-menu", G_CALLBACK(log_popup_menu_cb), lv);
 
 	/* Log size ************/
 	if(log_size) {

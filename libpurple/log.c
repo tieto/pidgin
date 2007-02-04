@@ -248,6 +248,31 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
 	return size;
 }
 
+gboolean gaim_log_is_deletable(GaimLog *log)
+{
+	g_return_val_if_fail(log != NULL, FALSE);
+	g_return_val_if_fail(log->logger != NULL, FALSE);
+
+	if (log->logger->delete == NULL)
+		return FALSE;
+
+	if (log->logger->is_deletable != NULL)
+		return log->logger->is_deletable(log);
+
+	return TRUE;
+}
+
+gboolean gaim_log_delete(GaimLog *log)
+{
+	g_return_val_if_fail(log != NULL, FALSE);
+	g_return_val_if_fail(log->logger != NULL, FALSE);
+
+	if (log->logger->delete != NULL)
+		return log->logger->delete(log);
+
+	return FALSE;
+}
+
 char *
 gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *account)
 {
@@ -318,7 +343,9 @@ GaimLogLogger *gaim_log_logger_new(const char *id, const char *name, int functio
 				int(*size)(GaimLog*),
 				int(*total_size)(GaimLogType type, const char *name, GaimAccount *account),
 				GList*(*list_syslog)(GaimAccount *account),
-				void(*get_log_sets)(GaimLogSetCallback cb, GHashTable *sets))
+				void(*get_log_sets)(GaimLogSetCallback cb, GHashTable *sets),
+				gboolean(*delete)(GaimLog *log),
+				gboolean(*is_deletable)(GaimLog *log))
 {
 #endif
 	GaimLogLogger *logger;
@@ -352,8 +379,12 @@ GaimLogLogger *gaim_log_logger_new(const char *id, const char *name, int functio
 		logger->list_syslog = va_arg(args, void *);
 	if (functions >= 9)
 		logger->get_log_sets = va_arg(args, void *);
+	if (functions >= 10)
+		logger->delete = va_arg(args, void *);
+	if (functions >= 11)
+		logger->is_deletable = va_arg(args, void *);
 
-	if (functions > 9)
+	if (functions >= 12)
 		gaim_debug_info("log", "Dropping new functions for logger: %s (%s)\n", name, id);
 
 	va_end(args);
@@ -559,7 +590,7 @@ void gaim_log_init(void)
 
 	gaim_prefs_add_string("/core/logging/format", "txt");
 
-	html_logger = gaim_log_logger_new("html", _("HTML"), 8,
+	html_logger = gaim_log_logger_new("html", _("HTML"), 11,
 									  NULL,
 									  html_logger_write,
 									  html_logger_finalize,
@@ -567,10 +598,13 @@ void gaim_log_init(void)
 									  html_logger_read,
 									  gaim_log_common_sizer,
 									  html_logger_total_size,
-									  html_logger_list_syslog);
+									  html_logger_list_syslog,
+									  NULL,
+									  gaim_log_common_deleter,
+									  gaim_log_common_is_deletable);
 	gaim_log_logger_add(html_logger);
 
-	txt_logger = gaim_log_logger_new("txt", _("Plain text"), 8,
+	txt_logger = gaim_log_logger_new("txt", _("Plain text"), 11,
 									 NULL,
 									 txt_logger_write,
 									 txt_logger_finalize,
@@ -578,7 +612,10 @@ void gaim_log_init(void)
 									 txt_logger_read,
 									 gaim_log_common_sizer,
 									 txt_logger_total_size,
-									 txt_logger_list_syslog);
+									 txt_logger_list_syslog,
+									 NULL,
+									 gaim_log_common_deleter,
+									 gaim_log_common_is_deletable);
 	gaim_log_logger_add(txt_logger);
 
 	old_logger = gaim_log_logger_new("old", _("Old flat format"), 9,
@@ -601,7 +638,7 @@ void gaim_log_init(void)
 #else
 #error Unknown size of time_t
 #endif
-	                     gaim_value_new(GAIM_TYPE_POINTER), 2,
+	                     gaim_value_new(GAIM_TYPE_STRING), 2,
 	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
 	                                    GAIM_SUBTYPE_LOG),
 #if SIZEOF_TIME_T == 4
@@ -817,6 +854,8 @@ int gaim_log_common_sizer(GaimLog *log)
 	struct stat st;
 	GaimLogCommonLoggerData *data = log->logger_data;
 
+	g_return_val_if_fail(data != NULL, 0);
+
 	if (!data->path || g_stat(data->path, &st))
 		st.st_size = 0;
 
@@ -941,6 +980,95 @@ static void log_get_log_sets_common(GHashTable *sets)
 	}
 	g_free(log_path);
 	g_dir_close(log_dir);
+}
+
+gboolean gaim_log_common_deleter(GaimLog *log)
+{
+	GaimLogCommonLoggerData *data;
+	int ret;
+
+	g_return_val_if_fail(log != NULL, FALSE);
+
+	data = log->logger_data;
+	if (data == NULL)
+		return FALSE;
+
+	if (data->path == NULL)
+		return FALSE;
+
+	ret = g_unlink(data->path);
+	if (ret == 0)
+		return TRUE;
+	else if (ret == -1)
+	{
+		gaim_debug_error("log", "Failed to delete: %s - %s\n", data->path, strerror(errno));
+	}
+	else
+	{
+		/* I'm not sure that g_unlink() will ever return
+		 * something other than 0 or -1. -- rlaager */
+		gaim_debug_error("log", "Failed to delete: %s\n", data->path);
+	}
+
+	return FALSE;
+}
+
+gboolean gaim_log_common_is_deletable(GaimLog *log)
+{
+	GaimLogCommonLoggerData *data;
+	gchar *dirname;
+
+	g_return_val_if_fail(log != NULL, FALSE);
+
+	data = log->logger_data;
+	if (data == NULL)
+		return FALSE;
+
+	if (data->path == NULL)
+		return FALSE;
+
+#ifndef _WIN32
+	dirname = g_path_get_dirname(data->path);
+	if (g_access(dirname, W_OK) == 0)
+	{
+		g_free(dirname);
+		return TRUE;
+	}
+	gaim_debug_info("log", "access(%s) failed: %s\n", dirname, strerror(errno));
+	g_free(dirname);
+#else
+	/* Unless and until someone writes equivalent win32 code,
+	 * we'll assume the file is deletable. */
+	return TRUE;
+#endif
+
+	return FALSE;
+}
+
+static char *process_txt_log(char *txt, char *to_free)
+{
+	char *tmp;
+
+	/* The to_free argument allows us to save a
+	 * g_strdup() in some cases. */
+
+	if (to_free == NULL)
+		to_free = txt;
+
+	/* g_markup_escape_text requires valid UTF-8 */
+	if (!g_utf8_validate(txt, -1, NULL))
+	{
+		tmp = gaim_utf8_salvage(txt);
+		g_free(to_free);
+		to_free = txt = tmp;
+	}
+
+	tmp = g_markup_escape_text(txt, -1);
+	g_free(to_free);
+	txt = gaim_markup_linkify(tmp);
+	g_free(tmp);
+
+	return txt;
 }
 
 #if 0 /* Maybe some other time. */
@@ -1314,16 +1442,11 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 		return g_strdup(_("<font color=\"red\"><b>Unable to find log path!</b></font>"));
 	if (g_file_get_contents(data->path, &read, NULL, NULL)) {
 		minus_header = strchr(read, '\n');
-		if (!minus_header)
-			minus_header = g_strdup(read);
+
+		if (minus_header)
+			return process_txt_log(minus_header + 1, read);
 		else
-			minus_header = g_strdup(minus_header + 1);
-		g_free(read);
-		minus_header2 = g_markup_escape_text(minus_header, -1);
-		g_free(minus_header);
-		read = gaim_markup_linkify(minus_header2);
-		g_free(minus_header2);
-		return read;
+			return process_txt_log(read, NULL);
 	}
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
@@ -1628,15 +1751,13 @@ static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	fclose(file);
 	read[data->length] = '\0';
 	*flags = 0;
-	if(strstr(read, "<BR>"))
+	if (strstr(read, "<BR>"))
+	{
 		*flags |= GAIM_LOG_READ_NO_NEWLINE;
-	else {
-		tmp = g_markup_escape_text(read, -1);
-		g_free(read);
-		read = gaim_markup_linkify(tmp);
-		g_free(tmp);
+		return read;
 	}
-	return read;
+
+	return process_txt_log(read, NULL);
 }
 
 static int old_logger_size (GaimLog *log)
