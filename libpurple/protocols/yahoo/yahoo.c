@@ -176,6 +176,11 @@ static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFrien
 		gaim_prpl_got_user_idle(gaim_connection_get_account(gc), name, TRUE, f->idle);
 	else
 		gaim_prpl_got_user_idle(gaim_connection_get_account(gc), name, FALSE, 0);
+
+	if (f->sms)
+		gaim_prpl_got_user_status(gaim_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE, NULL);
+	else
+		gaim_prpl_got_user_status_deactive(gaim_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE);
 }
 
 static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
@@ -300,8 +305,10 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			if (strtol(pair->value, NULL, 10) == 0) {
 				if (f)
 					f->status = YAHOO_STATUS_OFFLINE;
-				if (name)
+				if (name) {
 					gaim_prpl_got_user_status(account, name, "offline", NULL);
+			                gaim_prpl_got_user_status_deactive(account, name, YAHOO_STATUS_TYPE_MOBILE);
+				}
 				break;
 			}
 			break;
@@ -2821,8 +2828,6 @@ static const char *yahoo_list_emblem(GaimBuddy *b)
 	presence = gaim_buddy_get_presence(b);
 
 	if (gaim_presence_is_online(presence)) {
-		if (f->sms)
-			return "mobile";
 		if (yahoo_friend_get_game(f))
 			return "game";
 		if (f->protocol == 2)
@@ -3471,6 +3476,9 @@ static GList *yahoo_status_types(GaimAccount *account)
 	types = g_list_append(types, type);
 
 	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, YAHOO_STATUS_TYPE_OFFLINE, NULL, TRUE);
+	types = g_list_append(types, type);
+
+	type = gaim_status_type_new_full(GAIM_STATUS_MOBILE, YAHOO_STATUS_TYPE_MOBILE, NULL, FALSE, FALSE, TRUE);
 	types = g_list_append(types, type);
 
 	return types;

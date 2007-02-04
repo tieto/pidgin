@@ -66,6 +66,7 @@
 #define YAHOO_STATUS_TYPE_STEPPEDOUT "steppedout"
 #define YAHOO_STATUS_TYPE_AWAY "away"
 #define YAHOO_STATUS_TYPE_INVISIBLE "invisible"
+#define YAHOO_STATUS_TYPE_MOBILE "mobile"
 
 enum yahoo_status {
 	YAHOO_STATUS_AVAILABLE = 0,
