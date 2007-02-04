@@ -55,24 +55,24 @@
  */
 /** @cond */
 #if (!GTK_CHECK_VERSION(2,4,0))
-#define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
-#include "gtkexpander.h"
+# define GTK_WRAP_WORD_CHAR GTK_WRAP_WORD
+# include "gtkexpander.h"
 #endif
 /** @endcond */
 
 /*
  * We include the sources for GtkComboBox and GtkCellView because
- * they don't exist in older version of Gtk+, and we use them
+ * they don't exist in older versions of GTK+, and we use them
  * in a few places.
  */
 #if !GTK_CHECK_VERSION(2,6,0)
 #   include "gtkcellview.h"
 #   include "gtkcellviewmenuitem.h"
+#   include "gaimcombobox.h"
 #   if !GTK_CHECK_VERSION(2,4,0)
 #       include "gtkcelllayout.h"
-#       include "gaimcombobox.h"
-#   endif /* Gtk 2.4 */
-#endif /* Gtk 2.6 */
+#   endif /* Less than GTK+ 2.4 */
+#endif /* Less than GTK+ 2.6 */
 
 /*
  * Spacings between components, as defined by the

@@ -1,7 +1,14 @@
 using Gaim;
 
-public class MPlugin : GaimPlugin
+public class MPlugin : Plugin
 {
+	private static PluginInfo info = new PluginInfo("C# Plugin", "0.1", "Test C# Plugin", "Longer Description", "Eoin Coffey", "urled");
+
+	public MPlugin()
+		: base(info)
+	{
+	}
+
 	public void HandleSig(object[] args)
 	{
 		Buddy buddy = (Buddy)args[0];
@@ -27,10 +34,5 @@ public class MPlugin : GaimPlugin
 	public override void Destroy()
 	{
 		Debug.debug(Debug.INFO, "mplug", "destroying...\n");
-	}
-	
-	public override GaimPluginInfo Info()
-	{
-		return new GaimPluginInfo("C# Plugin", "0.1", "Test C# Plugin", "Longer Description", "Eoin Coffey", "urled");
 	}
 }

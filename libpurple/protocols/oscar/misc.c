@@ -70,7 +70,10 @@ aim_genericreq_l(OscarData *od, FlapConnection *conn, guint16 family, guint16 su
 	aim_snacid_t snacid;
 
 	if (!longdata)
-		return aim_genericreq_n(od, conn, family, subtype);
+	{
+		aim_genericreq_n(od, conn, family, subtype);
+		return;
+	}
 
 	frame = flap_frame_new(od, 0x02, 10+4);
 
@@ -89,7 +92,10 @@ aim_genericreq_s(OscarData *od, FlapConnection *conn, guint16 family, guint16 su
 	aim_snacid_t snacid;
 
 	if (!shortdata)
-		return aim_genericreq_n(od, conn, family, subtype);
+	{
+		aim_genericreq_n(od, conn, family, subtype);
+		return;
+	}
 
 	frame = flap_frame_new(od, 0x02, 10+2);
 
