@@ -81,8 +81,15 @@ msn_user_update(MsnUser *user)
 
 	account = user->userlist->session->account;
 
-	if (user->status != NULL)
-		gaim_prpl_got_user_status(account, user->passport, user->status, NULL);
+	if (user->status != NULL) {
+		if (!strcmp(user->status, "offline") && user->mobile) {
+			gaim_prpl_got_user_status(account, user->passport, "available", NULL);
+			gaim_prpl_got_user_status(account, user->passport, "mobile", NULL);
+		} else {
+			gaim_prpl_got_user_status(account, user->passport, user->status, NULL);
+			gaim_prpl_got_user_status_deactive(account, user->passport, "mobile");
+		}
+	}
 
 	if (user->idle)
 		gaim_prpl_got_user_idle(account, user->passport, TRUE, -1);

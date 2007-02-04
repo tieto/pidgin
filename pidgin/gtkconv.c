@@ -3195,10 +3195,7 @@ create_sendto_item(GtkWidget *menu, GtkSizeGroup *sg, GSList **group, GaimBuddy 
 	gchar *text;
 
 	/* Create a pixmap for the protocol icon. */
-	if (buddy != NULL)
-		pixbuf = pidgin_blist_get_status_icon((GaimBlistNode*)buddy, PIDGIN_STATUS_ICON_SMALL);
-	else
-		pixbuf = pidgin_create_prpl_icon(account, 0.5);
+	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 
 	/* Now convert it to GtkImage */
 	if (pixbuf == NULL)

@@ -479,16 +479,6 @@ msn_list_icon(GaimAccount *a, GaimBuddy *b)
 	return "msn";
 }
 
-static const char* 
-msn_list_emblem(GaimBuddy *b)
-{
-	MsnUser *user;
-	user = b->proto_data;
-		if (user && user->mobile)
-			return "mobile";
-	return NULL;
-}
-
 static char *
 msn_status_text(GaimBuddy *buddy)
 {
@@ -576,7 +566,11 @@ msn_status_types(GaimAccount *account)
 	status = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
 			NULL, NULL, FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
-
+	
+	status = gaim_status_type_new_full(GAIM_STATUS_MOBILE,
+			"mobile", NULL, FALSE, FALSE, TRUE);
+	types = g_list_append(types, status);
+	
 	return types;
 }
 
@@ -743,11 +737,22 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 			GaimMessageFlags flags)
 {
 	GaimAccount *account;
+	GaimBuddy *buddy = gaim_find_buddy(gc->account, who);
 	MsnMessage *msg;
 	char *msgformat;
 	char *msgtext;
 
 	account = gaim_connection_get_account(gc);
+
+	if (buddy) {
+	        GaimPresence *p = gaim_buddy_get_presence(buddy);
+        	if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_MOBILE)) {
+			char *text = gaim_markup_strip_html(message);
+			send_to_mobile(gc, who, text);
+			g_free(text);
+			return;
+		}
+	}
 
 	msn_import_html(message, &msgformat, &msgtext);
 
@@ -1930,7 +1935,7 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* protocol_options */
 	{"png", 0, 0, 96, 96, 0, GAIM_ICON_SCALE_SEND},	/* icon_spec */
 	msn_list_icon,			/* list_icon */
-	msn_list_emblem,		/* list_emblems */
+	NULL,				/* list_emblems */
 	msn_status_text,		/* status_text */
 	msn_tooltip_text,		/* tooltip_text */
 	msn_status_types,		/* away_states */
