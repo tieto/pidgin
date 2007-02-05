@@ -2731,7 +2731,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ N_("/Conversation/_Find..."), NULL, menu_find_cb, 0,
 			"<StockItem>", GTK_STOCK_FIND },
-	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, "<StockItem>", PIDGIN_STOCK_LOG },
+	{ N_("/Conversation/View _Log"), NULL, menu_view_log_cb, 0, "<Item>", NULL },
 	{ N_("/Conversation/_Save As..."), NULL, menu_save_as_cb, 0,
 			"<StockItem>", GTK_STOCK_SAVE_AS },
 	{ N_("/Conversation/Clea_r Scrollback"), "<CTL>L", menu_clear_cb, 0, "<StockItem>", GTK_STOCK_CLEAR },
@@ -2740,17 +2740,17 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", PIDGIN_STOCK_FILE_TRANSFER },
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
-			0, "<StockItem>", PIDGIN_STOCK_POUNCE },
+			0, "<Item>", NULL },
 	{ N_("/Conversation/_Get Info"), "<CTL>O", menu_get_info_cb, 0,
 			"<StockItem>", PIDGIN_STOCK_INFO },
 	{ N_("/Conversation/In_vite..."), NULL, menu_invite_cb, 0,
-			"<StockItem>", PIDGIN_STOCK_INVITE },
+			"<Item>", NULL },
 	{ N_("/Conversation/M_ore"), NULL, NULL, 0, "<Branch>", NULL },
 
 	{ "/Conversation/sep2", NULL, NULL, 0, "<Separator>", NULL },
 
 	{ N_("/Conversation/Al_ias..."), NULL, menu_alias_cb, 0,
-			"<StockItem>", PIDGIN_STOCK_EDIT },
+			"<Item>", NULL },
 	{ N_("/Conversation/_Block..."), NULL, menu_block_cb, 0,
 			"<StockItem>", PIDGIN_STOCK_BLOCK },
 	{ N_("/Conversation/_Unblock..."), NULL, menu_unblock_cb, 0,
@@ -2761,13 +2761,6 @@ static GtkItemFactoryEntry menu_items[] =
 			"<StockItem>", GTK_STOCK_REMOVE },
 
 	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>", NULL },
-
-	{ N_("/Conversation/Insert Lin_k..."), NULL, menu_insert_link_cb, 0,
-			"<StockItem>", PIDGIN_STOCK_LINK },
-	{ N_("/Conversation/Insert Imag_e..."), NULL, menu_insert_image_cb, 0,
-			"<StockItem>", PIDGIN_STOCK_IMAGE },
-
-	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>", NULL },
 
 	{ N_("/Conversation/_Close"), NULL, menu_close_conv_cb, 0,
 			"<StockItem>", GTK_STOCK_CLOSE },
@@ -5700,6 +5693,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_widget_show(win->menu.invite);
 		gtk_widget_show(win->menu.alias);
 		gtk_widget_hide(win->menu.block);
+		gtk_widget_hide(win->menu.unblock);
 		gtk_widget_hide(win->menu.show_icon);
 
 		if ((account == NULL) || gaim_blist_find_chat(account, gaim_conversation_get_name(conv)) == NULL) {

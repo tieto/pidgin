@@ -2717,9 +2717,9 @@ static GtkItemFactoryEntry blist_menu[] =
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgindialogs_im, 0, "<StockItem>", PIDGIN_STOCK_IM },
-	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", pidgin_blist_joinchat_show, 0, "<StockItem>", PIDGIN_STOCK_CHAT },
+	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", pidgin_blist_joinchat_show, 0, "<Item>", NULL },
 	{ N_("/Buddies/Get User _Info..."), "<CTL>I", pidgindialogs_info, 0, "<StockItem>", PIDGIN_STOCK_INFO },
-	{ N_("/Buddies/View User _Log..."), "<CTL>L", pidgindialogs_log, 0, "<StockItem>", PIDGIN_STOCK_LOG },
+	{ N_("/Buddies/View User _Log..."), "<CTL>L", pidgindialogs_log, 0, "<Item>", NULL },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, pidgin_blist_edit_mode_cb, 1, "<CheckItem>", NULL },
 	{ N_("/Buddies/Show _Empty Groups"), NULL, pidgin_blist_show_empty_groups_cb, 1, "<CheckItem>", NULL },
@@ -2735,25 +2735,25 @@ static GtkItemFactoryEntry blist_menu[] =
 
 	/* Accounts menu */
 	{ N_("/_Accounts"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Accounts/Add\\/Edit"), "<CTL>A", pidgin_accounts_window_show, 0, "<StockItem>", PIDGIN_STOCK_ACCOUNTS },
+	{ N_("/Accounts/Add\\/Edit"), "<CTL>A", pidgin_accounts_window_show, 0, "<Item>", NULL },
 
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_pounces_manager_show, 0, "<StockItem>", PIDGIN_STOCK_POUNCE },
+	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_pounces_manager_show, 0, "<Item>", NULL },
 	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_PLUGIN },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
-	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_DIALOG_ERROR },
+	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Tools/_File Transfers"), "<CTL>T", pidginxfer_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_FILE_TRANSFER },
-	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<StockItem>", GTK_STOCK_INDEX },
-	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<StockItem>", PIDGIN_STOCK_LOG },
+	{ N_("/Tools/_File Transfers"), "<CTL>T", pidginxfer_dialog_show, 0, "<Item>", NULL },
+	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
+	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 
 	/* Help */
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
-	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<StockItem>", PIDGIN_STOCK_DEBUG },
+	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
 	{ N_("/Help/_About"), NULL, pidgindialogs_about, 0,  "<StockItem>", PIDGIN_STOCK_ABOUT },
 };
 
