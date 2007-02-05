@@ -146,7 +146,7 @@ static GaimPluginInfo info =
 	N_("This plugin allows the user to customize "
 	   "conversation and logging message timestamp "
 	   "formats."),
-	"Richard Laager <rlaager@users.sf.net>",          /**< author         */
+	"Richard Laager <rlaager@pidgin.im>",             /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
