@@ -889,10 +889,11 @@ AC_SUBST(CFLAGS)
 AC_PATH_PROG(gaimpath, gaim)
 
 dnl #######################################################################
-dnl # Check for DBUS libraries
+dnl # Check for D-Bus libraries
 dnl #######################################################################
 
-AC_ARG_ENABLE(dbus, [AC_HELP_STRING([--enable-dbus], [enable DBUS support])], , enable_dbus=yes)
+AC_ARG_ENABLE(dbus, [AC_HELP_STRING([--enable-dbus], [enable D-Bus support])], , enable_dbus=yes)
+AC_ARG_ENABLE(nm, [AC_HELP_STRING([--enable-nm], [enable NetworkManager support (buggy) (requires D-Bus)])], enable_libnm=yes, enable_libnm=no)
 
 if test "x$enable_dbus" = "xyes" ; then
 	AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
@@ -908,18 +909,24 @@ if test "x$enable_dbus" = "xyes" ; then
 		enable_dbus=no
 	])
 
-dnl     Check for libnm_glib; if we don't have it, oh well
-	LIBNM_CFLAGS=""
-	LIBNM_LIBS=""
-	PKG_CHECK_MODULES(LIBNM, libnm_glib,
-	[
-    		AC_DEFINE(HAVE_LIBNM, 1, [Check to see if we have NetworkManager])
-	],
-	[
-                AC_MSG_RESULT(no)
-	])
-	AC_SUBST(LIBNM_CFLAGS)
-	AC_SUBST(LIBNM_LIBS)
+dnl Check for libnm_glib; if we don't have it, oh well
+	if test "x$enable_libnm" = "xyes" ; then
+		LIBNM_CFLAGS=""
+		LIBNM_LIBS=""
+		PKG_CHECK_MODULES(LIBNM, libnm_glib,
+		[
+			AC_DEFINE(HAVE_LIBNM, 1, [Check to see if we have NetworkManager])
+			enable_libnm=yes
+		],
+		[
+			AC_MSG_RESULT(no)
+			enable_libnm=no
+		])
+		AC_SUBST(LIBNM_CFLAGS)
+		AC_SUBST(LIBNM_LIBS)
+	fi
+else
+	enable_libnm=no
 fi
 
 dnl #######################################################################
@@ -928,7 +935,7 @@ dnl #######################################################################
 
 dnl Python scripts are used to auto-generate about 3000 lines of C
 dnl and XML code that wraps (part of) the existing Gaim API so that
-dnl it is now accessible through DBUS.
+dnl it is now accessible through D-Bus.
 
 dnl Python is only required if --enable-dbus is used, and only for
 dnl the build process to generate the code, not for running gaim.
@@ -1011,14 +1018,14 @@ if test x"$enable_dbus" = "xyes" ; then
 		fi
 	fi
 	AC_MSG_RESULT([$DBUS_SERVICES_DIR])
-	AC_DEFINE(HAVE_DBUS, 1, [Define if we are re using DBUS.])
+	AC_DEFINE(HAVE_DBUS, 1, [Define if we are re using D-Bus.])
 fi
 AC_SUBST(DBUS_SERVICES_DIR)
 
 if test "x$enable_dbus" = "xyes" ; then
-	echo "Building with DBUS support"
+	echo "Building with D-Bus support"
 else
-	echo "Building without DBUS support"
+	echo "Building without D-Bus support"
 fi
 
 AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
@@ -1890,7 +1897,7 @@ AC_OUTPUT([Makefile
 		   gaim.apspec
 		   gaim.service
 		   doc/Makefile
-		   doc/gaim.1
+		   doc/pidgin.1
 		   doc/gaim-text.1
 		   m4macros/Makefile
 		   pidgin/Makefile
@@ -1985,10 +1992,11 @@ echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo Build with GStreamer support.. : $enable_gst
-echo Build with DBUS support....... : $enable_dbus
+echo Build with D-Bus support...... : $enable_dbus
 if test "x$enable_dbus" = "xyes" ; then
-	eval eval echo DBUS services directory....... : $DBUS_SERVICES_DIR
+	eval eval echo D-Bus services directory...... : $DBUS_SERVICES_DIR
 fi
+echo Build with NetworkManager..... : $enable_libnm
 echo SSL Library/Libraries......... : $msg_ssl
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos

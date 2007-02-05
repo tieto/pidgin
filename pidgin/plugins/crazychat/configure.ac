@@ -1443,7 +1443,7 @@ AC_OUTPUT([Makefile
 		   Doxyfile
 		   gaim.apspec
 		   doc/Makefile
-		   doc/gaim.1
+		   doc/pidgin.1
 		   intl/Makefile
 		   m4macros/Makefile
 		   pixmaps/Makefile

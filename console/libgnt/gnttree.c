@@ -1195,17 +1195,16 @@ void gnt_tree_remove(GntTree *tree, gpointer key)
 				tree->top = get_prev(row);
 			else
 				tree->top = get_next(row);
-			if (tree->current == row)
-				tree->current = tree->top;
 		}
-		else if (tree->current == row)
+		if (tree->current == row)
 		{
 			if (tree->current != tree->root)
 				tree->current = get_prev(row);
 			else
 				tree->current = get_next(row);
+			tree_selection_changed(tree, row, tree->current);
 		}
-		else if (tree->bottom == row)
+		if (tree->bottom == row)
 		{
 			tree->bottom = get_prev(row);
 		}

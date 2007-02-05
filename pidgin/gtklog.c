@@ -205,13 +205,40 @@ static void log_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeView
 		gtk_tree_view_expand_row(tv, path, FALSE);
 }
 
-static void delete_log_cb(GaimLog *log)
+static void delete_log_cleanup_cb(gpointer *data)
 {
-	if (!gaim_log_delete(log))
+	g_free(data[1]); /* iter */
+	g_free(data);
+}
+
+static void delete_log_cb(gpointer *data)
+{
+	if (!gaim_log_delete((GaimLog *)data[2]))
 	{
 		gaim_notify_error(NULL, NULL, "Log Deletion Failed",
 		                  "Check permissions and try again.");
 	}
+	else
+	{
+		GtkTreeStore *treestore = data[0];
+		GtkTreeIter *iter = (GtkTreeIter *)data[1];
+		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(treestore), iter);
+		gboolean first = !gtk_tree_path_prev(path);
+
+		if (!gtk_tree_store_remove(treestore, iter) && first)
+		{
+			/* iter was the last child at its level */
+
+			if (gtk_tree_path_up(path))
+			{
+				gtk_tree_model_get_iter(GTK_TREE_MODEL(treestore), iter, path);
+				gtk_tree_store_remove(treestore, iter);
+			}
+		}
+		gtk_tree_path_free(path);
+	}
+
+	delete_log_cleanup_cb(data);
 }
 
 static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
@@ -221,6 +248,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	const char *time = log_get_date(log);
 	const char *name;
 	char *tmp;
+	gpointer *data2;
 
 	if (log->type == GAIM_LOG_IM)
 	{
@@ -252,8 +280,17 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	else
 		g_return_if_reached();
 
+	/* The only way to free data in all cases is to tie it to the menuitem with
+	 * g_object_set_data_full().  But, since we need to get some data down to
+	 * delete_log_cb() to delete the log from the log viewer after the file is
+	 * deleted, we have to allocate a new data array and make sure it gets freed
+	 * either way. */
+	data2 = g_new(gpointer, 3);
+	data2[0] = lv->treestore;
+	data2[1] = data[3]; /* iter */
+	data2[2] = log;
 	gaim_request_action(lv, NULL, "Delete Log?", tmp,
-	                    0, log, 2, _("Delete"), delete_log_cb, _("Cancel"), NULL);
+	                    0, data2, 2, _("Delete"), delete_log_cb, _("Cancel"), delete_log_cleanup_cb);
 	g_free(tmp);
 }
 
@@ -266,11 +303,11 @@ static void log_show_popup_menu(GtkWidget *treeview, GdkEventButton *event, gpoi
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
 	g_signal_connect(menuitem, "activate", G_CALLBACK(log_delete_log_cb), data);
-	g_object_set_data_full(menuitem, "log-viewer-data", data, g_free);
+	g_object_set_data_full(G_OBJECT(menuitem), "log-viewer-data", data, g_free);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 	gtk_widget_show_all(menu);
 
-	gtk_menu_popup(GTK_MENU(menu), NULL, (GtkMenuPositionFunc)data[2], NULL, NULL,
+	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, (GtkMenuPositionFunc)data[2], NULL,
 	               (event != NULL) ? event->button : 0,
 	               gdk_event_get_time((GdkEvent *)event));
 }
@@ -280,26 +317,31 @@ static gboolean log_button_press_cb(GtkWidget *treeview, GdkEventButton *event, 
 	if (event->type == GDK_BUTTON_PRESS && event->button == 3)
 	{
 		GtkTreePath *path;
-		GtkTreeIter iter;
+		GtkTreeIter *iter;
 		GValue val;
 		GaimLog *log;
 		gpointer *data;
 
 		if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), event->x, event->y, &path, NULL, NULL, NULL))
 			return FALSE;
-		gtk_tree_model_get_iter(GTK_TREE_MODEL(lv->treestore), &iter, path);
+		iter = g_new(GtkTreeIter, 1);
+		gtk_tree_model_get_iter(GTK_TREE_MODEL(lv->treestore), iter, path);
 		val.g_type = 0;
-		gtk_tree_model_get_value(GTK_TREE_MODEL(lv->treestore), &iter, 1, &val);
+		gtk_tree_model_get_value(GTK_TREE_MODEL(lv->treestore), iter, 1, &val);
 
 		log = g_value_get_pointer(&val);
 
 		if (log == NULL)
+		{
+			g_free(iter);
 			return FALSE;
+		}
 
-		data = g_new(gpointer, 3);
+		data = g_new(gpointer, 4);
 		data[0] = lv;
 		data[1] = log;
 		data[2] = NULL;
+		data[3] = iter;
 
 		log_show_popup_menu(treeview, event, data);
 		return TRUE;
@@ -311,28 +353,32 @@ static gboolean log_button_press_cb(GtkWidget *treeview, GdkEventButton *event, 
 static gboolean log_popup_menu_cb(GtkWidget *treeview, PidginLogViewer *lv)
 {
 	GtkTreeSelection *sel;
-	GtkTreeIter iter;
+	GtkTreeIter *iter;
 	GValue val;
 	GaimLog *log;
 	gpointer *data;
 
+	iter = g_new(GtkTreeIter, 1);
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(lv));
-	if (!gtk_tree_selection_get_selected(sel, NULL, &iter))
+	if (!gtk_tree_selection_get_selected(sel, NULL, iter))
+	{
 		return FALSE;
+	}
 
 	val.g_type = 0;
 	gtk_tree_model_get_value(GTK_TREE_MODEL(lv->treestore),
-	                         &iter, NODE_COLUMN, &val);
+	                         iter, NODE_COLUMN, &val);
 
 	log = g_value_get_pointer(&val);
 
 	if (log == NULL)
 		return FALSE;
 
-	data = g_new(gpointer, 3);
+	data = g_new(gpointer, 4);
 	data[0] = lv;
 	data[1] = log;
 	data[2] = pidgin_treeview_popup_menu_position_func;
+	data[3] = iter;
 
 	log_show_popup_menu(treeview, NULL, data);
 	return TRUE;

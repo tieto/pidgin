@@ -57,12 +57,11 @@ static char *timestamp_cb_common(GaimConversation *conv,
                                  gboolean force,
                                  const char *dates)
 {
-	g_return_val_if_fail(conv != NULL, NULL);
 	g_return_val_if_fail(dates != NULL, NULL);
 
 	if (show_date ||
 	    !strcmp(dates, "always") ||
-	    (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT && !strcmp(dates, "chats")))
+	    (conv != NULL && gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT && !strcmp(dates, "chats")))
 	{
 		struct tm *tm = localtime(&t);
 		if (force)
@@ -147,7 +146,7 @@ static GaimPluginInfo info =
 	N_("This plugin allows the user to customize "
 	   "conversation and logging message timestamp "
 	   "formats."),
-	"Richard Laager <rlaager@users.sf.net>",          /**< author         */
+	"Richard Laager <rlaager@pidgin.im>",             /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */

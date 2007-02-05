@@ -583,7 +583,7 @@ xmlnode_from_str(const char *str, gssize size)
 }
 
 xmlnode *
-xmlnode_copy(xmlnode *src)
+xmlnode_copy(const xmlnode *src)
 {
 	xmlnode *ret;
 	xmlnode *child;
