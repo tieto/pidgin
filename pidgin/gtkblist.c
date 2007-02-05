@@ -1074,7 +1074,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 		}
 	}
 
-	pidgin_new_item_from_stock(menu, _("Add Buddy _Pounce"), PIDGIN_STOCK_POUNCE,
+	pidgin_new_item_from_stock(menu, _("Add Buddy _Pounce"), NULL,
 			G_CALLBACK(gtk_blist_menu_bp_cb), buddy, 0, 0, NULL);
 
 	if(((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
@@ -1082,11 +1082,10 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 				G_CALLBACK(gtk_blist_menu_showlog_cb),
 				contact, 0, 0, NULL);
 	} else if (!sub) {
-		pidgin_new_item_from_stock(menu, _("View _Log"), PIDGIN_STOCK_LOG,
+		pidgin_new_item_from_stock(menu, _("View _Log"), NULL,
 				G_CALLBACK(gtk_blist_menu_showlog_cb), buddy, 0, 0, NULL);
 	}
 
-	pidgin_append_blist_node_privacy_menu(menu, (GaimBlistNode *)buddy);
 
 	pidgin_append_blist_node_proto_menu(menu, buddy->account->gc,
 										  (GaimBlistNode *)buddy);
@@ -1094,7 +1093,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 
 	if (((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
 		pidgin_separator(menu);
-
+		pidgin_append_blist_node_privacy_menu(menu, (GaimBlistNode *)buddy);
 		pidgin_new_item_from_stock(menu, _("Alias..."), PIDGIN_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb),
 				contact, 0, 0, NULL);
@@ -1103,7 +1102,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 				contact, 0, 0, NULL);
 	} else if (!sub || contact_expanded) {
 		pidgin_separator(menu);
-
+		pidgin_append_blist_node_privacy_menu(menu, (GaimBlistNode *)buddy);
 		pidgin_new_item_from_stock(menu, _("_Alias..."), PIDGIN_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb), buddy, 0, 0, NULL);
 		pidgin_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
