@@ -1214,36 +1214,6 @@ menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
-menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
-{
-	PidginWindow *win = data;
-	PidginConversation *gtkconv;
-	GtkIMHtmlToolbar *toolbar;
-
-	gtkconv    = pidgin_conv_window_get_active_gtkconv(win);
-	toolbar = GTK_IMHTMLTOOLBAR(gtkconv->toolbar);
-
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link),
-		!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->link)));
-}
-
-static void
-menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
-{
-	PidginWindow *win = data;
-	GaimConversation *conv;
-	PidginConversation *gtkconv;
-	GtkIMHtmlToolbar *toolbar;
-
-	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
-	conv    = gtkconv->active_conv;
-	toolbar = GTK_IMHTMLTOOLBAR(gtkconv->toolbar);
-
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image),
-		!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->image)));
-}
-
-static void
 menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
@@ -2975,18 +2945,6 @@ setup_menubar(PidginWindow *win)
 	win->menu.remove =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/Remove..."));
-
-	/* --- */
-
-	win->menu.insert_link =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Conversation/Insert Link..."));
-
-	win->menu.insert_image =
-		gtk_item_factory_get_widget(win->menu.item_factory,
-		                            N_("/Conversation/Insert Image..."));
-
-	/* --- */
 
 	win->menu.logging =
 		gtk_item_factory_get_widget(win->menu.item_factory,
@@ -5679,8 +5637,6 @@ gray_stuff_out(PidginConversation *gtkconv)
 			gtk_widget_hide(win->menu.add);
 		}
 
-		gtk_widget_show(win->menu.insert_link);
-		gtk_widget_show(win->menu.insert_image);
 		gtk_widget_show(win->menu.show_icon);
 	} else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT) {
 		/* Show stuff that applies to Chats, hide stuff that applies to IMs */
@@ -5706,8 +5662,6 @@ gray_stuff_out(PidginConversation *gtkconv)
 			gtk_widget_show(win->menu.remove);
 		}
 
-		gtk_widget_show(win->menu.insert_link);
-		gtk_widget_hide(win->menu.insert_image);
 	}
 
 	/*
@@ -5749,8 +5703,6 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_widget_set_sensitive(win->menu.add_pounce, TRUE);
 		gtk_widget_set_sensitive(win->menu.get_info, (prpl_info->get_info != NULL));
 		gtk_widget_set_sensitive(win->menu.invite, (prpl_info->chat_invite != NULL));
-		gtk_widget_set_sensitive(win->menu.insert_link, (conv->features & GAIM_CONNECTION_HTML));
-		gtk_widget_set_sensitive(win->menu.insert_image, (prpl_info->options & OPT_PROTO_IM_IMAGE) && !(conv->features & GAIM_CONNECTION_NO_IMAGES));
 
 		if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
 		{
@@ -5785,8 +5737,6 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_widget_set_sensitive(win->menu.alias, FALSE);
 		gtk_widget_set_sensitive(win->menu.add, FALSE);
 		gtk_widget_set_sensitive(win->menu.remove, FALSE);
-		gtk_widget_set_sensitive(win->menu.insert_link, TRUE);
-		gtk_widget_set_sensitive(win->menu.insert_image, FALSE);
 	}
 
 	/*
