@@ -1897,7 +1897,7 @@ AC_OUTPUT([Makefile
 		   gaim.apspec
 		   gaim.service
 		   doc/Makefile
-		   doc/gaim.1
+		   doc/pidgin.1
 		   doc/gaim-text.1
 		   m4macros/Makefile
 		   pidgin/Makefile
