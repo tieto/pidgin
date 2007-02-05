@@ -220,7 +220,22 @@ static void delete_log_cb(gpointer *data)
 	}
 	else
 	{
-		gtk_tree_store_remove((GtkTreeStore *)data[0], (GtkTreeIter *)data[1]);
+		GtkTreeStore *treestore = data[0];
+		GtkTreeIter *iter = (GtkTreeIter *)data[1];
+		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(treestore), iter);
+		gboolean first = !gtk_tree_path_prev(path);
+
+		if (!gtk_tree_store_remove(treestore, iter) && first)
+		{
+			/* iter was the last child at its level */
+
+			if (gtk_tree_path_up(path))
+			{
+				gtk_tree_model_get_iter(GTK_TREE_MODEL(treestore), iter, path);
+				gtk_tree_store_remove(treestore, iter);
+			}
+		}
+		gtk_tree_path_free(path);
 	}
 
 	delete_log_cleanup_cb(data);
