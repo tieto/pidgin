@@ -126,6 +126,7 @@ static gboolean pidgin_blist_refresh_timer(GaimBuddyList *list);
 static void pidgin_blist_update_buddy(GaimBuddyList *list, GaimBlistNode *node, gboolean statusChange);
 static void pidgin_blist_selection_changed(GtkTreeSelection *selection, gpointer data);
 static void pidgin_blist_update(GaimBuddyList *list, GaimBlistNode *node);
+static void pidgin_blist_update_group(GaimBuddyList *list, GaimBlistNode *node);
 static void pidgin_blist_update_contact(GaimBuddyList *list, GaimBlistNode *node);
 static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full);
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
@@ -3953,6 +3954,22 @@ paint_headline_hbox  (GtkWidget      *widget,
 	return FALSE;
 }
 
+/* This assumes there are not things like groupless buddies or multi-leveled groups.
+ * I'm sure other things in this code assumes that also.
+ */
+static void
+treeview_style_set (GtkWidget *widget,
+		    GtkStyle *prev_style,
+		    gpointer data)
+{
+	GaimBuddyList *list = data;
+	GaimBlistNode *node = list->root;
+	while (node) {
+		pidgin_blist_update_group(list, node);
+		node = node->next;
+	}
+}
+
 static void
 headline_style_set (GtkWidget *widget,
 		    GtkStyle  *prev_style)
@@ -4216,8 +4233,10 @@ static void pidgin_blist_show(GaimBuddyList *list)
 
 	gtk_widget_show(gtkblist->treeview);
 	gtk_widget_set_name(gtkblist->treeview, "pidginblist_treeview");
-/*	gtk_tree_view_set_rules_hint(GTK_TREE_VIEW(gtkblist->treeview), TRUE); */
 
+	g_signal_connect(gtkblist->treeview,
+			 "style-set",
+			 G_CALLBACK(treeview_style_set), list);
 	/* Set up selection stuff */
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview));
 	g_signal_connect(G_OBJECT(selection), "changed", G_CALLBACK(pidgin_blist_selection_changed), NULL);
