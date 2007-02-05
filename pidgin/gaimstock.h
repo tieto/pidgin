@@ -32,11 +32,9 @@
 /**************************************************************************/
 /*@{*/
 #define PIDGIN_STOCK_ABOUT           "pidgin-about"
-#define PIDGIN_STOCK_ACCOUNTS        "pidgin-accounts"
 #define PIDGIN_STOCK_ACTION          "pidgin-action"
 #define PIDGIN_STOCK_ALIAS           "pidgin-alias"
 #define PIDGIN_STOCK_AWAY            "pidgin-away"
-#define PIDGIN_STOCK_BGCOLOR         "pidgin-bgcolor"
 #define PIDGIN_STOCK_BLOCK           "pidgin-block"
 #define PIDGIN_STOCK_UNBLOCK         "pidgin-unblock"
 #define PIDGIN_STOCK_CHAT            "pidgin-chat"
@@ -58,29 +56,16 @@
 #define PIDGIN_STOCK_ICON_ONLINE     "pidgin-icon-online"
 #define PIDGIN_STOCK_ICON_ONLINE_MSG "pidgin-icon-online-msg"
 #define PIDGIN_STOCK_IGNORE          "pidgin-ignore"
-#define PIDGIN_STOCK_IM              "pidgin-im"
-#define PIDGIN_STOCK_IMAGE           "pidgin-image"
-#define PIDGIN_STOCK_INFO            "pidgin-info"
 #define PIDGIN_STOCK_INVITE          "pidgin-invite"
-#define PIDGIN_STOCK_LINK            "pidgin-link"
-#define PIDGIN_STOCK_LOG             "pidgin-log"
 #define PIDGIN_STOCK_MODIFY          "pidgin-modify"
 #define PIDGIN_STOCK_OPEN_MAIL       "pidgin-stock-open-mail"
 #define PIDGIN_STOCK_PAUSE           "pidgin-pause"
-#define PIDGIN_STOCK_PENDING         "pidgin-pending"
-#define PIDGIN_STOCK_PLUGIN          "pidgin-plugin"
 #define PIDGIN_STOCK_POUNCE          "pidgin-pounce"
-#define PIDGIN_STOCK_SEND            "pidgin-send"
 #define PIDGIN_STOCK_SIGN_OFF        "pidgin-sign-off"
 #define PIDGIN_STOCK_SIGN_ON         "pidgin-sign-on"
-#define PIDGIN_STOCK_SMILEY          "pidgin-smiley"
-#define PIDGIN_STOCK_TEXT_BIGGER     "pidgin-text-bigger"
 #define PIDGIN_STOCK_TEXT_NORMAL     "pidgin-text-normal"
-#define PIDGIN_STOCK_TEXT_SMALLER    "pidgin-text-smaller"
 #define PIDGIN_STOCK_TYPED           "pidgin-typed"
-#define PIDGIN_STOCK_TYPING          "pidgin-typing"
 #define PIDGIN_STOCK_UPLOAD          "pidgin-upload"
-#define PIDGIN_STOCK_VOICE_CHAT      "pidgin-voice-chat"
 
 /* Status icons */
 #define PIDGIN_STOCK_STATUS_AVAILABLE  "pidgin-status-available"
@@ -119,6 +104,20 @@
 #define PIDGIN_STOCK_ANIMATION_TYPING2	"pidgin-anim-typing2"
 #define PIDGIN_STOCK_ANIMATION_TYPING3	"pidgin-anim-typing3"
 
+/* Toolbar (and menu) icons */
+#define PIDGIN_STOCK_TOOLBAR_ACCOUNTS     "pidgin-accounts"
+#define PIDGIN_STOCK_TOOLBAR_BGCOLOR      "pidgin-bgcolor"
+#define PIDGIN_STOCK_TOOLBAR_FGCOLOR      "pidgin-fgcolor"
+#define PIDGIN_STOCK_TOOLBAR_SMILEY       "pidgin-smiley"
+#define PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER "pidgin-text-smaller"
+#define PIDGIN_STOCK_TOOLBAR_TEXT_LARGER  "pidgin-text-larger"
+#define PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE "pidgin-insert-image"
+#define PIDGIN_STOCK_TOOLBAR_INSERT_LINK  "pidgin-insert-link"
+#define PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW  "pidgin-message-new"
+#define PIDGIN_STOCK_TOOLBAR_PLUGINS      "pidgin-plugins"
+#define PIDGIN_STOCK_TOOLBAR_TYPING       "pidgin-typing"
+#define PIDGIN_STOCK_TOOLBAR_USER_INFO    "pidgin-info"
+#define PIDGIN_STOCK_TOOLBAR_PENDING      "pidgin-pending"
 /*@}*/
 
 /**

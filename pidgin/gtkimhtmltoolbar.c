@@ -912,7 +912,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 
 	toolbar->tooltips = gtk_tooltips_new();
 
-	gtk_box_set_spacing(GTK_BOX(toolbar), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(toolbar), 3);
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
 	/* Bold */
@@ -953,7 +953,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
 
 	/* Increase font size */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TEXT_BIGGER);
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_TEXT_LARGER);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button,
@@ -965,7 +965,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->larger_size = button;
 
 	/* Decrease font size */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TEXT_SMALLER);
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button,
@@ -994,7 +994,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->font = button;
 
 	/* Foreground Color */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_FGCOLOR);
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_FGCOLOR);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button,
@@ -1006,7 +1006,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->fgcolor = button;
 
 	/* Background Color */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_BGCOLOR);
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_BGCOLOR);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button,
@@ -1038,7 +1038,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
 
 	/* Insert Link */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_LINK);
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT_LINK);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Insert link"), NULL);
@@ -1048,7 +1048,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->link = button;
 
 	/* Insert IM Image */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_IMAGE);
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Insert image"), NULL);
@@ -1059,7 +1059,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->image = button;
 
 	/* Insert Smiley */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_SMILEY);
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Insert smiley"), NULL);

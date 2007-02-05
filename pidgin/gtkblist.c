@@ -1058,10 +1058,10 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 	}
 
 	if (prpl_info && prpl_info->get_info) {
-		pidgin_new_item_from_stock(menu, _("Get _Info"), PIDGIN_STOCK_INFO,
+		pidgin_new_item_from_stock(menu, _("Get _Info"), PIDGIN_STOCK_TOOLBAR_USER_INFO,
 				G_CALLBACK(gtk_blist_menu_info_cb), buddy, 0, 0, NULL);
 	}
-	pidgin_new_item_from_stock(menu, _("I_M"), PIDGIN_STOCK_IM,
+	pidgin_new_item_from_stock(menu, _("I_M"), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW,
 			G_CALLBACK(gtk_blist_menu_im_cb), buddy, 0, 0, NULL);
 	if (prpl_info && prpl_info->send_file) {
 		if (!prpl_info->can_receive_file ||
@@ -1078,7 +1078,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub) {
 			G_CALLBACK(gtk_blist_menu_bp_cb), buddy, 0, 0, NULL);
 
 	if(((GaimBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
-		pidgin_new_item_from_stock(menu, _("View _Log"), PIDGIN_STOCK_LOG,
+		pidgin_new_item_from_stock(menu, _("View _Log"), NULL,
 				G_CALLBACK(gtk_blist_menu_showlog_cb),
 				contact, 0, 0, NULL);
 	} else if (!sub) {
@@ -1181,7 +1181,7 @@ create_chat_menu(GaimBlistNode *node, GaimChat *c) {
 			G_CALLBACK(gtk_blist_menu_join_cb), node, 0, 0, NULL);
 	pidgin_new_check_item(menu, _("Auto-Join"),
 			G_CALLBACK(gtk_blist_menu_autojoin_cb), node, autojoin);
-	pidgin_new_item_from_stock(menu, _("View _Log"), PIDGIN_STOCK_LOG,
+	pidgin_new_item_from_stock(menu, _("View _Log"), NULL,
 			G_CALLBACK(gtk_blist_menu_showlog_cb), node, 0, 0, NULL);
 
 	pidgin_append_blist_node_proto_menu(menu, c->account->gc, node);
@@ -1204,7 +1204,7 @@ create_contact_menu (GaimBlistNode *node)
 
 	menu = gtk_menu_new();
 
-	pidgin_new_item_from_stock(menu, _("View _Log"), PIDGIN_STOCK_LOG,
+	pidgin_new_item_from_stock(menu, _("View _Log"), NULL,
 				 G_CALLBACK(gtk_blist_menu_showlog_cb),
 				 node, 0, 0, NULL);
 
@@ -2716,9 +2716,9 @@ static GtkItemFactoryEntry blist_menu[] =
 {
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgindialogs_im, 0, "<StockItem>", PIDGIN_STOCK_IM },
+	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgindialogs_im, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW },
 	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", pidgin_blist_joinchat_show, 0, "<Item>", NULL },
-	{ N_("/Buddies/Get User _Info..."), "<CTL>I", pidgindialogs_info, 0, "<StockItem>", PIDGIN_STOCK_INFO },
+	{ N_("/Buddies/Get User _Info..."), "<CTL>I", pidgindialogs_info, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_USER_INFO },
 	{ N_("/Buddies/View User _Log..."), "<CTL>L", pidgindialogs_log, 0, "<Item>", NULL },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, pidgin_blist_edit_mode_cb, 1, "<CheckItem>", NULL },
@@ -2740,7 +2740,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	/* Tools */
 	{ N_("/_Tools"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Tools/Buddy _Pounces"), NULL, pidgin_pounces_manager_show, 0, "<Item>", NULL },
-	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_PLUGIN },
+	{ N_("/Tools/Plu_gins"), "<CTL>U", pidgin_plugin_dialog_show, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_PLUGINS },
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
@@ -3567,7 +3567,8 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 		if(tooltip_text->len > 0) {
 			/* get rid of the last newline */
 			g_string_truncate(tooltip_text, tooltip_text->len -1);
-			img = gtk_image_new_from_stock(PIDGIN_STOCK_PENDING, GTK_ICON_SIZE_MENU);
+			img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_PENDING, 
+							gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 
 			gtkblist->menutrayicon = gtk_event_box_new();
 			gtk_container_add(GTK_CONTAINER(gtkblist->menutrayicon), img);

@@ -300,7 +300,7 @@ pidgin_pixbuf_toolbar_button_from_stock(const char *icon)
 
 	gtk_container_add (GTK_CONTAINER(button), bbox);
 
-	image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU);
+	image = gtk_image_new_from_stock(icon, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
 
 	gtk_widget_show_all(bbox);
@@ -372,7 +372,7 @@ GtkWidget *pidgin_new_item_from_stock(GtkWidget *menu, const char *str, const ch
 		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
 
 	if (icon != NULL) {
-		image = gtk_image_new_from_stock(icon, GTK_ICON_SIZE_MENU);
+		image = gtk_image_new_from_stock(icon, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);
 	}
 /* FIXME: this isn't right

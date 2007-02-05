@@ -531,7 +531,7 @@ docklet_menu() {
 
 	pidgin_separator(menu);
 
-	menuitem = pidgin_new_item_from_stock(menu, _("New Message..."), PIDGIN_STOCK_IM, G_CALLBACK(pidgindialogs_im), NULL, 0, 0, NULL);
+	menuitem = pidgin_new_item_from_stock(menu, _("New Message..."), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, G_CALLBACK(pidgindialogs_im), NULL, 0, 0, NULL);
 	if (status == DOCKLET_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
@@ -540,8 +540,8 @@ docklet_menu() {
 
 	pidgin_separator(menu);
 
-	pidgin_new_item_from_stock(menu, _("Accounts"), PIDGIN_STOCK_ACCOUNTS, G_CALLBACK(pidgin_accounts_window_show), NULL, 0, 0, NULL);
-	pidgin_new_item_from_stock(menu, _("Plugins"), PIDGIN_STOCK_PLUGIN, G_CALLBACK(pidgin_plugin_dialog_show), NULL, 0, 0, NULL);
+	pidgin_new_item_from_stock(menu, _("Accounts"), NULL, G_CALLBACK(pidgin_accounts_window_show), NULL, 0, 0, NULL);
+	pidgin_new_item_from_stock(menu, _("Plugins"), NULL, G_CALLBACK(pidgin_plugin_dialog_show), NULL, 0, 0, NULL);
 	pidgin_new_item_from_stock(menu, _("Preferences"), GTK_STOCK_PREFERENCES, G_CALLBACK(pidgin_prefs_show), NULL, 0, 0, NULL);
 
 	pidgin_separator(menu);

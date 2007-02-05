@@ -1576,7 +1576,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 	menu = gtk_menu_new();
 
 	if (!is_me) {
-		button = pidgin_new_item_from_stock(menu, _("IM"), PIDGIN_STOCK_IM,
+		button = pidgin_new_item_from_stock(menu, _("IM"), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW,
 					G_CALLBACK(menu_chat_im_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 		if (gc == NULL)
@@ -1615,7 +1615,7 @@ create_chat_menu(GaimConversation *conv, const char *who, GaimConnection *gc)
 	}
 
 	if (prpl_info && (prpl_info->get_info || prpl_info->get_cb_info)) {
-		button = pidgin_new_item_from_stock(menu, _("Info"), PIDGIN_STOCK_INFO,
+		button = pidgin_new_item_from_stock(menu, _("Info"), PIDGIN_STOCK_TOOLBAR_USER_INFO,
 						G_CALLBACK(menu_chat_info_cb), PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 		if (gc == NULL)
@@ -2695,7 +2695,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/_Conversation"), NULL, NULL, 0, "<Branch>", NULL },
 
 	{ N_("/Conversation/New Instant _Message..."), "<CTL>M", menu_new_conv_cb,
-			0, "<StockItem>", PIDGIN_STOCK_IM },
+			0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW },
 
 	{ "/Conversation/sep0", NULL, NULL, 0, "<Separator>", NULL },
 
@@ -2712,7 +2712,7 @@ static GtkItemFactoryEntry menu_items[] =
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
 			0, "<Item>", NULL },
 	{ N_("/Conversation/_Get Info"), "<CTL>O", menu_get_info_cb, 0,
-			"<StockItem>", PIDGIN_STOCK_INFO },
+			"<StockItem>", PIDGIN_STOCK_TOOLBAR_USER_INFO },
 	{ N_("/Conversation/In_vite..."), NULL, menu_invite_cb, 0,
 			"<Item>", NULL },
 	{ N_("/Conversation/M_ore"), NULL, NULL, 0, "<Branch>", NULL },
@@ -3045,7 +3045,7 @@ update_typing_icon(PidginConversation *gtkconv)
 		return;
 
 	if (gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
-		stock_id = PIDGIN_STOCK_TYPING;
+		stock_id = PIDGIN_STOCK_TOOLBAR_TYPING;
 		tooltip = _("User is typing...");
 	} else {
 		stock_id = PIDGIN_STOCK_TYPED;
@@ -3936,7 +3936,7 @@ entry_popup_menu_cb(GtkIMHtml *imhtml, GtkMenu *menu, gpointer data)
 	g_return_if_fail(menu != NULL);
 	g_return_if_fail(gtkconv != NULL);
 
-	menuitem = pidgin_new_item_from_stock(NULL, _("_Send"), PIDGIN_STOCK_SEND,
+	menuitem = pidgin_new_item_from_stock(NULL, _("_Send"), NULL,
 										G_CALLBACK(send_menu_cb), gtkconv,
 										0, 0, NULL);
 	if (gtk_text_buffer_get_char_count(imhtml->text_buffer) == 0)

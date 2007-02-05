@@ -37,14 +37,12 @@ static struct StockIcon
 } const stock_icons[] =
 {
 	{ PIDGIN_STOCK_ABOUT,           "buttons", "about_menu.png"           },
-	{ PIDGIN_STOCK_ACCOUNTS,        "buttons", "accounts.png"             },
 	{ PIDGIN_STOCK_ACTION,          NULL,      GTK_STOCK_EXECUTE          },
 #if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_ALIAS,           NULL,      GTK_STOCK_EDIT             },
 #else
 	{ PIDGIN_STOCK_ALIAS,           "buttons", "edit.png"                 },
 #endif
-	{ PIDGIN_STOCK_BGCOLOR,         "buttons", "change-bgcolor-small.png" },
 	{ PIDGIN_STOCK_BLOCK,           NULL,      GTK_STOCK_STOP             },
 	{ PIDGIN_STOCK_UNBLOCK,         NULL,      GTK_STOCK_STOP /* XXX: */  },
 	{ PIDGIN_STOCK_CHAT,            NULL,      GTK_STOCK_JUMP_TO          },
@@ -78,54 +76,32 @@ static struct StockIcon
 	{ PIDGIN_STOCK_ICON_ONLINE,     "icons",   "online.png"               },
 	{ PIDGIN_STOCK_ICON_ONLINE_MSG, "icons",   "msgunread.png"            },
 	{ PIDGIN_STOCK_IGNORE,          NULL,      GTK_STOCK_DIALOG_ERROR     },
-	{ PIDGIN_STOCK_IM,              "buttons", "send-im.png"		    },
-	{ PIDGIN_STOCK_IMAGE,           "buttons", "insert-image-small.png"   },
-#if GTK_CHECK_VERSION(2,8,0)
-	{ PIDGIN_STOCK_INFO,            NULL,      GTK_STOCK_INFO             },
-#else
-	{ PIDGIN_STOCK_INFO,            "buttons", "info.png"                 },
-#endif
 	{ PIDGIN_STOCK_INVITE,          NULL,      GTK_STOCK_JUMP_TO          },
-	{ PIDGIN_STOCK_LINK,            "buttons", "insert-link-small.png"    },
-	{ PIDGIN_STOCK_LOG,             NULL,      GTK_STOCK_DND_MULTIPLE     },
 	{ PIDGIN_STOCK_MODIFY,          NULL,      GTK_STOCK_PREFERENCES      },
 #if GTK_CHECK_VERSION(2,6,0)
 	{ PIDGIN_STOCK_PAUSE,           NULL,      GTK_STOCK_MEDIA_PAUSE      },
 #else
 	{ PIDGIN_STOCK_PAUSE,           "buttons", "pause.png"                },
 #endif
-	{ PIDGIN_STOCK_PENDING,         "buttons", "send-im.png"              },
-#if GTK_CHECK_VERSION(2,6,0)
-	{ PIDGIN_STOCK_PLUGIN,          NULL,      GTK_STOCK_DISCONNECT       },
-#else
-	{ PIDGIN_STOCK_PLUGIN,          "icons",   "stock_disconnect_16.png"  },
-#endif
 	{ PIDGIN_STOCK_POUNCE,          NULL,      GTK_STOCK_REDO             },
 	{ PIDGIN_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
-	{ PIDGIN_STOCK_SEND,            "buttons", "send-im.png"              },
 	{ PIDGIN_STOCK_SIGN_ON,         NULL,      GTK_STOCK_EXECUTE          },
 	{ PIDGIN_STOCK_SIGN_OFF,        NULL,      GTK_STOCK_CLOSE            },
-	{ PIDGIN_STOCK_SMILEY,          "buttons", "insert-smiley-small.png"  },
-	{ PIDGIN_STOCK_TEXT_BIGGER,     "buttons", "text_bigger.png"          },
-	{ PIDGIN_STOCK_TEXT_NORMAL,     "buttons", "text_normal.png"          },
-	{ PIDGIN_STOCK_TEXT_SMALLER,    "buttons", "text_smaller.png"         },
 	{ PIDGIN_STOCK_TYPED,           "gaim",    "typed.png"                },
-	{ PIDGIN_STOCK_TYPING,          "gaim",    "typing.png"               },
-	{ PIDGIN_STOCK_VOICE_CHAT,      "gaim",    "phone.png"                },
 	{ PIDGIN_STOCK_UPLOAD,          NULL,      GTK_STOCK_GO_UP            },
 };
 
 static const GtkStockItem stock_items[] =
 {
-	{ PIDGIN_STOCK_ALIAS,      N_("_Alias"),      0, 0, NULL },
-	{ PIDGIN_STOCK_CHAT,       N_("_Join"),       0, 0, NULL },
-	{ PIDGIN_STOCK_CLOSE_TABS, N_("Close _tabs"), 0, 0, NULL },
-	{ PIDGIN_STOCK_IM,         N_("I_M"),         0, 0, NULL },
-	{ PIDGIN_STOCK_INFO,       N_("_Get Info"),   0, 0, NULL },
-	{ PIDGIN_STOCK_INVITE,     N_("_Invite"),     0, 0, NULL },
-	{ PIDGIN_STOCK_MODIFY,     N_("_Modify"),     0, 0, NULL },
-	{ PIDGIN_STOCK_OPEN_MAIL,  N_("_Open Mail"),  0, 0, NULL },
-	{ PIDGIN_STOCK_PAUSE,      N_("_Pause"),      0, 0, NULL },
+	{ PIDGIN_STOCK_ALIAS,               N_("_Alias"),      0, 0, NULL },
+	{ PIDGIN_STOCK_CHAT,                N_("_Join"),       0, 0, NULL },
+	{ PIDGIN_STOCK_CLOSE_TABS,          N_("Close _tabs"), 0, 0, NULL },
+	{ PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, N_("I_M"),         0, 0, NULL },
+	{ PIDGIN_STOCK_TOOLBAR_USER_INFO,   N_("_Get Info"),   0, 0, NULL },
+	{ PIDGIN_STOCK_INVITE,              N_("_Invite"),     0, 0, NULL },
+	{ PIDGIN_STOCK_MODIFY,              N_("_Modify"),     0, 0, NULL },
+	{ PIDGIN_STOCK_OPEN_MAIL,           N_("_Open Mail"),  0, 0, NULL },
+	{ PIDGIN_STOCK_PAUSE,               N_("_Pause"),      0, 0, NULL },
 };
 
 static struct SizedStockIcon {
@@ -170,6 +146,19 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_ANIMATION_TYPING1,  "animations", "typing1.png",TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_ANIMATION_TYPING2,  "animations", "typing2.png",TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_ANIMATION_TYPING3,  "animations", "typing3.png",TRUE, FALSE, FALSE, FALSE },
+
+	{ PIDGIN_STOCK_TOOLBAR_ACCOUNTS, "toolbar", "accounts.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_BGCOLOR, "toolbar", "change-bgcolor.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_FGCOLOR, "toolbar", "change-fgcolor.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_SMILEY, "toolbar", "emote-select.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER, "toolbar", "font-size-down.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_TEXT_LARGER, "toolbar", "font-size-up.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, "toolbar", "insert-image.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_INSERT_LINK, "toolbar", "insert-link.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, "toolbar", "message-new.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_PLUGINS, "toolbar", "plugins.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_TYPING, "toolbar", "typing.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_PENDING, "status", "message-pending.png", TRUE, FALSE, FALSE, FALSE },
 };
 
 static gchar *
@@ -207,6 +196,18 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir,
         gtk_icon_source_set_state_wildcarded(source, TRUE);
         gtk_icon_set_add_source(iconset, source);
 	gtk_icon_source_free(source);
+
+	if (sizeid == gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL)) {
+		source = gtk_icon_source_new();
+	        gtk_icon_source_set_filename(source, filename);
+        	gtk_icon_source_set_direction_wildcarded(source, TRUE);
+	        gtk_icon_source_set_size(source, GTK_ICON_SIZE_MENU);
+	        gtk_icon_source_set_size_wildcarded(source, FALSE);
+        	gtk_icon_source_set_state_wildcarded(source, TRUE);
+	        gtk_icon_set_add_source(iconset, source);
+	        gtk_icon_source_free(source);
+	}
+
         g_free(filename);
 }
 

@@ -1926,6 +1926,9 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/status/22/scalable/Makefile
 		   pidgin/pixmaps/status/32/Makefile
 		   pidgin/pixmaps/status/32/scalable/Makefile
+		   pidgin/pixmaps/toolbar/Makefile
+		   pidgin/pixmaps/toolbar/16/Makefile
+		   pidgin/pixmaps/toolbar/16/scalable/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile

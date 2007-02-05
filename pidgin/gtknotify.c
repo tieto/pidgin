@@ -795,10 +795,10 @@ pidgin_notify_searchresults(GaimConnection *gc, const char *title,
 				button = gtk_button_new_from_stock(GTK_STOCK_ADD);
 				break;
 			case GAIM_NOTIFY_BUTTON_INFO:
-				button = gtk_button_new_from_stock(PIDGIN_STOCK_INFO);
+				button = gtk_button_new_from_stock(PIDGIN_STOCK_TOOLBAR_USER_INFO);
 				break;
 			case GAIM_NOTIFY_BUTTON_IM:
-				button = gtk_button_new_from_stock(PIDGIN_STOCK_IM);
+				button = gtk_button_new_from_stock(PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW);
 				break;
 			case GAIM_NOTIFY_BUTTON_JOIN:
 				button = gtk_button_new_from_stock(PIDGIN_STOCK_CHAT);
