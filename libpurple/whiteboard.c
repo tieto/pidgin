@@ -101,9 +101,9 @@ void gaim_whiteboard_start(GaimWhiteboard *wb)
  * usernames 'me' and 'who'.  Returns a pointer to a matching whiteboard
  * session; if none match, it returns NULL.
  */
-GaimWhiteboard *gaim_whiteboard_get_session(GaimAccount *account, const char *who)
+GaimWhiteboard *gaim_whiteboard_get_session(const GaimAccount *account, const char *who)
 {
-	GaimWhiteboard *wb = NULL;
+	GaimWhiteboard *wb;
 
 	GList *l = wbList;
 
@@ -127,7 +127,7 @@ void gaim_whiteboard_draw_list_destroy(GList *draw_list)
 	g_list_free(draw_list);
 }
 
-gboolean gaim_whiteboard_get_dimensions(GaimWhiteboard *wb, int *width, int *height)
+gboolean gaim_whiteboard_get_dimensions(const GaimWhiteboard *wb, int *width, int *height)
 {
 	GaimWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
 
@@ -188,7 +188,7 @@ void gaim_whiteboard_send_brush(GaimWhiteboard *wb, int size, int color)
 		prpl_ops->set_brush(wb, size, color);
 }
 
-gboolean gaim_whiteboard_get_brush(GaimWhiteboard *wb, int *size, int *color)
+gboolean gaim_whiteboard_get_brush(const GaimWhiteboard *wb, int *size, int *color)
 {
 	GaimWhiteboardPrplOps *prpl_ops = wb->prpl_ops;
 

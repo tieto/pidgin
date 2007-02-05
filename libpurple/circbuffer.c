@@ -122,8 +122,8 @@ void gaim_circ_buffer_append(GaimCircBuffer *buf, gconstpointer src, gsize len) 
 	buf->bufused += len;
 }
 
-gsize gaim_circ_buffer_get_max_read(GaimCircBuffer *buf) {
-	int max_read;
+gsize gaim_circ_buffer_get_max_read(const GaimCircBuffer *buf) {
+	gsize max_read;
 
 	g_return_val_if_fail(buf != NULL, 0);
 

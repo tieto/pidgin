@@ -518,9 +518,9 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 
 #ifndef _WIN32
 #ifdef HAVE_DBUS
-	g_string_append_printf(str, "    <b>D-BUS:</b> Enabled<br/>");
+	g_string_append_printf(str, "    <b>D-Bus:</b> Enabled<br/>");
 #else
-	g_string_append_printf(str, "    <b>D-BUS:</b> Disabled<br/>");
+	g_string_append_printf(str, "    <b>D-Bus:</b> Disabled<br/>");
 #endif
 
 #ifdef HAVE_EVOLUTION_ADDRESSBOOK
