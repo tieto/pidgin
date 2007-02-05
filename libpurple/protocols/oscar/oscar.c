@@ -5442,7 +5442,7 @@ const char* oscar_list_emblem(GaimBuddy *b)
 		if (userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
 			return "bot";
 		if (userinfo->flags & AIM_FLAG_AOL)
-			return "aolclient";
+			return "aol-client";
 		if (userinfo->capabilities & OSCAR_CAPABILITY_SECUREIM)
 			return "secure";
 	}
