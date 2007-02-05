@@ -2137,7 +2137,7 @@ static GaimPluginInfo info =
 	   "WARNING: This plugin is still alpha code and "
 	   "may crash frequently.  Use it at your own risk!"),
 
-	"Richard Laager <rlaager@users.sf.net>",          /**< author         */
+	"Richard Laager <rlaager@pidgin.im>",             /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
