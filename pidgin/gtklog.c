@@ -32,6 +32,7 @@
 #include "request.h"
 #include "util.h"
 
+#include "gaimstock.h"
 #include "gtkblist.h"
 #include "gtkimhtml.h"
 #include "gtklog.h"
@@ -489,7 +490,7 @@ static void populate_log_tree(PidginLogViewer *lv)
 }
 
 static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *logs,
-						const char *title, GdkPixbuf *pixbuf, int log_size)
+						const char *title, GtkWidget *icon, int log_size)
 {
 	PidginLogViewer *lv;
 	GtkWidget *title_box;
@@ -548,16 +549,12 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	gtk_window_set_role(GTK_WINDOW(lv->window), "log_viewer");
 
 	/* Icon *************/
-	if (pixbuf != NULL) {
-		GtkWidget *icon;
-
+	if (icon != NULL) {
 		title_box = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
 		gtk_container_set_border_width(GTK_CONTAINER(title_box), GAIM_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), title_box, FALSE, FALSE, 0);
 
-		icon = gtk_image_new_from_pixbuf(pixbuf);
 		gtk_box_pack_start(GTK_BOX(title_box), icon, FALSE, FALSE, 0);
-		g_object_unref(G_OBJECT(pixbuf));
 	} else
 		title_box = GTK_DIALOG(lv->window)->vbox;
 
@@ -687,7 +684,7 @@ void pidgin_log_show(GaimLogType type, const char *screenname, GaimAccount *acco
 	}
 
 	display_log_viewer(ht, gaim_log_get_logs(type, screenname, account),
-			title, pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM), 
+			title, gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), 
 			gaim_log_get_total_size(type, screenname, account));
 	g_free(title);
 }
@@ -697,8 +694,8 @@ void pidgin_log_show_contact(GaimContact *contact) {
 	GaimBlistNode *child;
 	PidginLogViewer *lv = NULL;
 	GList *logs = NULL;
-	char *filename;
 	GdkPixbuf *pixbuf;
+	GtkWidget *image = gtk_image_new();;
 	const char *name = NULL;
 	char *title;
 	int total_log_size = 0;
@@ -726,17 +723,17 @@ void pidgin_log_show_contact(GaimContact *contact) {
 	}
 	logs = g_list_sort(logs, gaim_log_compare);
 
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "icons", "online.png", NULL);
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	g_free(filename);
-
+        pixbuf = gtk_widget_render_icon (image, PIDGIN_STOCK_STATUS_PERSON,
+	                                 gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL), "GtkWindow");
+	gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
+	
 	if (contact->alias != NULL)
 		name = contact->alias;
 	else if (contact->priority != NULL)
 		name = gaim_buddy_get_contact_alias(contact->priority);
 
 	title = g_strdup_printf(_("Conversations with %s"), name);
-	display_log_viewer(ht, logs, title, pixbuf, total_log_size);
+	display_log_viewer(ht, logs, title, image, total_log_size);
 	g_free(title);
 }
 
