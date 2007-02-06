@@ -4825,7 +4825,8 @@ pidgin_conv_write_conv(GaimConversation *conv, const char *name, const char *ali
 	gc = gaim_account_get_connection(account);
 	g_return_if_fail(gc != NULL);
 
-	displaying = g_strdup(message);
+	/* Make sure URLs are clickable */
+	displaying = gaim_markup_linkify(message);
 	plugin_return = GPOINTER_TO_INT(gaim_signal_emit_return_1(
 							pidgin_conversations_get_handle(), (type == GAIM_CONV_TYPE_IM ?
 							"displaying-im-msg" : "displaying-chat-msg"),
