@@ -473,11 +473,6 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	if (cnv == NULL)
 		cnv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, name, gc->account);
 
-	/* Make sure URLs are clickable */
-	buffy = gaim_markup_linkify(message);
-	g_free(message);
-	message = buffy;
-
 	/*
 	 * XXX: Should we be setting this here, or relying on prpls to set it?
 	 */
@@ -749,7 +744,6 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	GSList *bcs;
 	GaimConversation *conv = NULL;
 	GaimConvChat *chat = NULL;
-	char *buf;
 	char *buffy, *angel;
 	int plugin_return;
 
@@ -798,13 +792,9 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	gaim_signal_emit(gaim_conversations_get_handle(), "received-chat-msg", g->account,
 					 who, message, conv, flags);
 
-	/* Make sure URLs are clickable */
-	buf = gaim_markup_linkify(message);
-
-	gaim_conv_chat_write(chat, who, buf, flags, mtime);
+	gaim_conv_chat_write(chat, who, message, flags, mtime);
 
 	g_free(angel);
-	g_free(buf);
 	g_free(buffy);
 }
 
