@@ -89,7 +89,7 @@ clean:
 	$(MAKE) -C $(GAIM_PO_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
 	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
-	rm -f $(GAIM_CONFIG_H) gaim*.exe
+	rm -f $(GAIM_CONFIG_H) VERSION gaim*.exe
 
 uninstall:
 	rm -rf $(GAIM_INSTALL_PERLMOD_DIR) $(GAIM_INSTALL_PLUGINS_DIR) $(GAIM_INSTALL_PO_DIR) $(GAIM_INSTALL_DIR) $(GAIM_INSTALL_DIR).release
