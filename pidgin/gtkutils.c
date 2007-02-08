@@ -2583,6 +2583,8 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		int i;
 		GError *error = NULL;
 		GdkPixbuf *scale;
+		gboolean success = FALSE;
+
 		g_strfreev(pixbuf_formats);
 
 		pixbuf = gdk_pixbuf_new_from_file(path, &error);
@@ -2614,25 +2616,33 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 
 		for (i = 0; prpl_formats[i]; i++) {
 			gaim_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
-			if (strcmp(prpl_formats[i], "png") == 0) {
+			/* The "compression" param wasn't supported until gdk-pixbuf 2.8.
+			 * Using it in previous versions causes the save to fail (and an assert message).  */
+			if ((gdk_pixbuf_major_version > 2 || (gdk_pixbuf_major_version == 2
+						&& gdk_pixbuf_minor_version >= 8))
+					&& strcmp(prpl_formats[i], "png") == 0) {
 				if (gdk_pixbuf_save(pixbuf, filename, prpl_formats[i],
-					&error, "compression", "9", NULL))
-				/* Success! */
-				break;
+						&error, "compression", "9", NULL)) {
+					success = TRUE;
+					break;
+				}
 			} else if (gdk_pixbuf_save(pixbuf, filename, prpl_formats[i],
 					&error, NULL)) {
-				/* Success! */
+				success = TRUE;
 				break;
 			}
-			gaim_debug_warning("buddyicon", "Could not convert to %s: %s\n", prpl_formats[i], error->message);
+
+			/* The NULL checking is necessary due to this bug:
+			 * http://bugzilla.gnome.org/show_bug.cgi?id=405539 */
+			gaim_debug_warning("buddyicon", "Could not convert to %s: %s\n", prpl_formats[i],
+				(error && error->message) ? error->message : "Unknown error");
 			g_error_free(error);
 			error = NULL;
 		}
 		g_strfreev(prpl_formats);
 		g_object_unref(G_OBJECT(pixbuf));
-		if (error) {
-			gaim_debug_error("buddyicon", "Could not convert icon to usable format: %s\n", error->message);
-			g_error_free(error);
+		if (!success) {
+			gaim_debug_error("buddyicon", "Could not convert icon to usable format.\n");
 			g_free(random);
 			g_free(filename);
 			return NULL;
