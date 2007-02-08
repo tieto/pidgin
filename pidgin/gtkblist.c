@@ -2317,7 +2317,8 @@ static void pidgin_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, Gai
 	int max_avatar_width;
 	GList *l;
 	int prpl_col = 0;
-
+        GtkTextDirection dir = gtk_widget_get_direction(widget);
+	
 	if(gtkblist->tooltipdata == NULL)
 		return;
 
@@ -2338,7 +2339,10 @@ static void pidgin_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, Gai
 	}
 
 	max_width = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + max_text_width + SMALL_SPACE + max_avatar_width + TOOLTIP_BORDER;
-	prpl_col = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + max_text_width - PRPL_SIZE;
+	if (dir == GTK_TEXT_DIR_RTL)
+		prpl_col = TOOLTIP_BORDER + max_avatar_width + SMALL_SPACE;
+	else
+		prpl_col = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + max_text_width - PRPL_SIZE;
 
 	current_height = 12;
 	for(l = gtkblist->tooltipdata; l; l = l->next)
@@ -2346,18 +2350,31 @@ static void pidgin_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, Gai
 		struct tooltip_data *td = l->data;
 
 		if (td->avatar && pidgin_gdk_pixbuf_is_opaque(td->avatar))
-			gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
-					NULL, gtkblist->tipwindow, "tooltip",
-					max_width - (td->avatar_width+ TOOLTIP_BORDER)-1,
-					current_height-1,td->avatar_width+2, td->avatar_height+2);
+			if (dir == GTK_TEXT_DIR_RTL)
+				gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+						NULL, gtkblist->tipwindow, "tooltip",
+						TOOLTIP_BORDER -1, current_height -1, td->avatar_width +2, td->avatar_height + 2);
+			else
+				gtk_paint_flat_box(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+						NULL, gtkblist->tipwindow, "tooltip",
+						max_width - (td->avatar_width+ TOOLTIP_BORDER)-1,
+						current_height-1,td->avatar_width+2, td->avatar_height+2);
 
 #if GTK_CHECK_VERSION(2,2,0)
-		gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
-				0, 0, TOOLTIP_BORDER, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+		if (dir == GTK_TEXT_DIR_RTL)
+			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
+					0, 0, max_width - TOOLTIP_BORDER - STATUS_SIZE, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+		else
+			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->status_icon,
+					0, 0, TOOLTIP_BORDER, current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 		if(td->avatar)
-			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
-					td->avatar, 0, 0, max_width - (td->avatar_width + TOOLTIP_BORDER),
-					current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
+			if (dir == GTK_TEXT_DIR_RTL)
+				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
+						td->avatar, 0, 0, TOOLTIP_BORDER, current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
+			else
+				gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL,
+						td->avatar, 0, 0, max_width - (td->avatar_width + TOOLTIP_BORDER),
+						current_height, -1 , -1, GDK_RGB_DITHER_NONE, 0, 0);
 		if (!td->avatar_is_prpl_icon)
 			gdk_draw_pixbuf(GDK_DRAWABLE(gtkblist->tipwindow->window), NULL, td->prpl_icon,
 					0, 0,
@@ -2373,14 +2390,27 @@ static void pidgin_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, Gai
 					max_width - (td->avatar_width + TOOLTIP_BORDER),
 					current_height, -1, -1, GDK_RGB_DITHER_NONE, 0, 0);
 #endif
-
-		gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-				NULL, gtkblist->tipwindow, "tooltip",
-				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height, td->name_layout);
-
-		gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
-				NULL, gtkblist->tipwindow, "tooltip",
-				TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height + td->name_height, td->layout);
+		if (dir == GTK_TEXT_DIR_RTL) {
+			gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+					NULL, gtkblist->tipwindow, "tooltip",
+					max_width  -(TOOLTIP_BORDER + STATUS_SIZE +SMALL_SPACE) - PANGO_PIXELS(300000), 
+					current_height, td->name_layout);
+		} else {
+			gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+					NULL, gtkblist->tipwindow, "tooltip",
+					TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height, td->name_layout);
+		}
+		if (dir != GTK_TEXT_DIR_RTL) {
+			gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+					NULL, gtkblist->tipwindow, "tooltip",
+					TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE, current_height + td->name_height, td->layout);
+		} else {
+			gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
+					NULL, gtkblist->tipwindow, "tooltip",
+					max_width - (TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE) - PANGO_PIXELS(300000),
+					current_height + td->name_height,
+					td->layout);
+		}
 
 		current_height += MAX(td->name_height + td->height, td->avatar_height) + TOOLTIP_BORDER;
 	}
