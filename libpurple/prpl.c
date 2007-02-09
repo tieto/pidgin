@@ -165,12 +165,9 @@ gaim_prpl_got_user_status(GaimAccount *account, const char *name,
 void gaim_prpl_got_user_status_deactive(GaimAccount *account, const char *name,
 					const char *status_id)
 {
-	GSList *list;
 	GaimBuddy *buddy;
 	GaimPresence *presence;
 	GaimStatus *status;
-	GaimStatus *old_status;
-	va_list args;
 
 	g_return_if_fail(account   != NULL);
 	g_return_if_fail(name      != NULL);
@@ -246,31 +243,20 @@ gaim_prpl_change_account_status(GaimAccount *account,
 GList *
 gaim_prpl_get_statuses(GaimAccount *account, GaimPresence *presence)
 {
-	GaimPlugin *prpl;
-	GaimPluginProtocolInfo *prpl_info;
 	GList *statuses = NULL;
-	GList *l, *list;
+	const GList *l;
 	GaimStatus *status;
 
 	g_return_val_if_fail(account  != NULL, NULL);
 	g_return_val_if_fail(presence != NULL, NULL);
 
-	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
-
-	if (prpl == NULL)
-		return NULL;
-
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
-	if (prpl_info == NULL || prpl_info->status_types == NULL)
-		return NULL;
-
-	for (l = list = prpl_info->status_types(account); l != NULL; l = l->next)
+	for (l = gaim_account_get_status_types(account); l != NULL; l = l->next)
 	{
 		status = gaim_status_new((GaimStatusType *)l->data, presence);
-		statuses = g_list_append(statuses, status);
+		statuses = g_list_prepend(statuses, status);
 	}
 
-	g_list_free(list);
+	statuses = g_list_reverse(statuses);
 
 	return statuses;
 }
