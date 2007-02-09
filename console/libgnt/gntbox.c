@@ -62,7 +62,7 @@ gnt_box_draw(GntWidget *widget)
 		else
 			wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_TITLE_D));
 		mvwaddch(widget->window, 0, pos-1, ACS_RTEE | COLOR_PAIR(GNT_COLOR_NORMAL));
-		mvwprintw(widget->window, 0, pos, title);
+		mvwaddstr(widget->window, 0, pos, title);
 		mvwaddch(widget->window, 0, right, ACS_LTEE | COLOR_PAIR(GNT_COLOR_NORMAL));
 		g_free(title);
 	}

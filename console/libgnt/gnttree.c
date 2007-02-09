@@ -330,7 +330,7 @@ redraw_tree(GntTree *tree)
 		
 		for (i = 0; i < tree->ncol; i++)
 		{
-			mvwprintw(widget->window, pos, x + i, tree->columns[i].title);
+			mvwaddstr(widget->window, pos, x + i, tree->columns[i].title);
 			x += tree->columns[i].width;
 		}
 		if (pos)
@@ -409,7 +409,7 @@ redraw_tree(GntTree *tree)
 		}
 
 		wbkgdset(widget->window, '\0' | attr);
-		mvwprintw(widget->window, i, pos, str);
+		mvwaddstr(widget->window, i, pos, str);
 		whline(widget->window, ' ', scrcol - wr);
 		tree->bottom = row;
 		g_free(str);

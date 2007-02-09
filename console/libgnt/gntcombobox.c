@@ -56,7 +56,7 @@ gnt_combo_box_draw(GntWidget *widget)
 	s = (char*)gnt_util_onscreen_width_to_pointer(text, widget->priv.width - 4, &len);
 	*s = '\0';
 
-	mvwprintw(widget->window, 1, 1, text);
+	mvwaddstr(widget->window, 1, 1, text);
 	whline(widget->window, ' ' | COLOR_PAIR(type), widget->priv.width - 4 - len);
 	mvwaddch(widget->window, 1, widget->priv.width - 3, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL));
 	mvwaddch(widget->window, 1, widget->priv.width - 2, ACS_DARROW | COLOR_PAIR(GNT_COLOR_NORMAL));
