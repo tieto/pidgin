@@ -1,4 +1,4 @@
-SIBDIRS = scalable
+SUBDIRS = scalable
 
 EXTRA_DIST = 	auth.png \
 		error.png \
