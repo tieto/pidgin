@@ -22,7 +22,7 @@ gnt_button_draw(GntWidget *widget)
 		type = GNT_COLOR_NORMAL;
 	
 	wbkgdset(widget->window, '\0' | COLOR_PAIR(type));
-	mvwprintw(widget->window, 1, 2, button->priv->text);
+	mvwaddstr(widget->window, 1, 2, button->priv->text);
 
 	GNTDEBUG;
 }
