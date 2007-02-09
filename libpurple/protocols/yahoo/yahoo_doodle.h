@@ -122,12 +122,12 @@ void yahoo_doodle_command_send_shutdown(GaimConnection *gc, const char *to);
 
 void yahoo_doodle_start(GaimWhiteboard *wb);
 void yahoo_doodle_end(GaimWhiteboard *wb);
-void yahoo_doodle_get_dimensions(GaimWhiteboard *wb, int *width, int *height);
+void yahoo_doodle_get_dimensions(const GaimWhiteboard *wb, int *width, int *height);
 void yahoo_doodle_send_draw_list(GaimWhiteboard *wb, GList *draw_list);
 void yahoo_doodle_clear(GaimWhiteboard *wb);
 
 void yahoo_doodle_draw_stroke(GaimWhiteboard *wb, GList *draw_list);
-void yahoo_doodle_get_brush(GaimWhiteboard *wb, int *size, int *color);
+void yahoo_doodle_get_brush(const GaimWhiteboard *wb, int *size, int *color);
 void yahoo_doodle_set_brush(GaimWhiteboard *wb, int size, int color);
 
 #endif /* _YAHOO_DOODLE_H_ */

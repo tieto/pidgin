@@ -496,7 +496,7 @@ void yahoo_doodle_end(GaimWhiteboard *wb)
 	g_free(wb->proto_data);
 }
 
-void yahoo_doodle_get_dimensions(GaimWhiteboard *wb, int *width, int *height)
+void yahoo_doodle_get_dimensions(const GaimWhiteboard *wb, int *width, int *height)
 {
 	/* standard Doodle canvases are of one size:  368x256 */
 	*width = DOODLE_CANVAS_WIDTH;
@@ -586,7 +586,7 @@ void yahoo_doodle_draw_stroke(GaimWhiteboard *wb, GList *draw_list)
 	}
 }
 
-void yahoo_doodle_get_brush(GaimWhiteboard *wb, int *size, int *color)
+void yahoo_doodle_get_brush(const GaimWhiteboard *wb, int *size, int *color)
 {
 	doodle_session *ds = (doodle_session *)wb->proto_data;
 	*size = ds->brush_size;
