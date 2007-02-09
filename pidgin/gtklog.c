@@ -695,7 +695,7 @@ void pidgin_log_show_contact(GaimContact *contact) {
 	PidginLogViewer *lv = NULL;
 	GList *logs = NULL;
 	GdkPixbuf *pixbuf;
-	GtkWidget *image = gtk_image_new();;
+	GtkWidget *image = gtk_image_new();
 	const char *name = NULL;
 	char *title;
 	int total_log_size = 0;
