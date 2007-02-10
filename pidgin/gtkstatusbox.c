@@ -836,10 +836,9 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 static void
 add_popular_statuses(PidginStatusBox *statusbox)
 {
-       	GtkIconSize icon_size;
+	GtkIconSize icon_size;
 	GList *list, *cur;
-	GdkPixbuf *pixbuf, *emblem;
-	int width, height;
+	GdkPixbuf *pixbuf;
 
 	list = gaim_savedstatuses_get_popular(6);
 	if (list == NULL)
@@ -858,24 +857,24 @@ add_popular_statuses(PidginStatusBox *statusbox)
 		GaimStatusPrimitive prim;
 
 		/* Get an appropriate status icon */
-	      	prim = gaim_savedstatus_get_type(saved);
+		prim = gaim_savedstatus_get_type(saved);
 
-            	if (prim == GAIM_STATUS_UNAVAILABLE)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), PIDGIN_STOCK_STATUS_BUSY,
-                       	        	                  icon_size, "PidginStatusBox");
-            	else if (prim == GAIM_STATUS_AWAY)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), PIDGIN_STOCK_STATUS_AWAY,
-                        	                         icon_size, "PidginStatusBox");
-            	else if (prim == GAIM_STATUS_EXTENDED_AWAY)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), PIDGIN_STOCK_STATUS_XA,
-                        	                         icon_size, "PidginStatusBox");
-            	else if (prim == GAIM_STATUS_OFFLINE)
-               		pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), PIDGIN_STOCK_STATUS_OFFLINE,
-                        	                         icon_size, "PidginStatusBox");
-            	else
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox), PIDGIN_STOCK_STATUS_AVAILABLE,
-                        	                         icon_size, "PidginStatusBox");
-      
+		if (prim == GAIM_STATUS_UNAVAILABLE)
+			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
+					PIDGIN_STOCK_STATUS_BUSY, icon_size, "PidginStatusBox");
+		else if (prim == GAIM_STATUS_AWAY)
+			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
+					PIDGIN_STOCK_STATUS_AWAY, icon_size, "PidginStatusBox");
+		else if (prim == GAIM_STATUS_EXTENDED_AWAY)
+			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
+					PIDGIN_STOCK_STATUS_XA, icon_size, "PidginStatusBox");
+		else if (prim == GAIM_STATUS_OFFLINE)
+			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
+					PIDGIN_STOCK_STATUS_OFFLINE, icon_size, "PidginStatusBox");
+		else
+			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
+					PIDGIN_STOCK_STATUS_AVAILABLE, icon_size, "PidginStatusBox");
+
 		if (gaim_savedstatus_is_transient(saved))
 		{
 			/*

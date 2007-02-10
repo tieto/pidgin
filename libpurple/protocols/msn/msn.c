@@ -745,12 +745,12 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 	account = gaim_connection_get_account(gc);
 
 	if (buddy) {
-	        GaimPresence *p = gaim_buddy_get_presence(buddy);
-        	if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_MOBILE)) {
+		GaimPresence *p = gaim_buddy_get_presence(buddy);
+		if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_MOBILE)) {
 			char *text = gaim_markup_strip_html(message);
 			send_to_mobile(gc, who, text);
 			g_free(text);
-			return;
+			return 1;
 		}
 	}
 

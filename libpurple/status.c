@@ -1549,7 +1549,7 @@ gboolean
 gaim_presence_is_status_primitive_active(const GaimPresence *presence,
 		GaimStatusPrimitive primitive)
 {
-	GList *l;
+	const GList *l;
 
 	g_return_val_if_fail(presence  != NULL,              FALSE);
 	g_return_val_if_fail(primitive != GAIM_STATUS_UNSET, FALSE);

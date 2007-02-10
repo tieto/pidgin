@@ -24,7 +24,7 @@ gnt_label_draw(GntWidget *widget)
 	chtype flag = gnt_text_format_flag_to_chtype(label->flags);
 
 	wbkgdset(widget->window, '\0' | flag);
-	mvwprintw(widget->window, 0, 0, label->text);
+	mvwaddstr(widget->window, 0, 0, label->text);
 
 	GNTDEBUG;
 }

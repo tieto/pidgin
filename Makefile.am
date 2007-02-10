@@ -1,4 +1,4 @@
-EXTRA_DIST = config.rpath m4/ChangeLog  \
+EXTRA_DIST = \
 		COPYRIGHT \
 		ChangeLog.API \
 		ChangeLog.win32 \

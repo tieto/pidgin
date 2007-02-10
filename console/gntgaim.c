@@ -70,15 +70,15 @@ gnt_core_get_ui_ops()
 
 /* Anything IO-related is directly copied from gtkgaim's source tree */
 
-#define GAIM_GTK_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
-#define GAIM_GTK_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
+#define GAIM_GNT_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
+#define GAIM_GNT_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
 
-typedef struct _GaimGtkIOClosure {
+typedef struct _GaimGntIOClosure {
 	GaimInputFunction function;
 	guint result;
 	gpointer data;
 
-} GaimGtkIOClosure;
+} GaimGntIOClosure;
 
 static void gaim_gnt_io_destroy(gpointer data)
 {
@@ -87,12 +87,12 @@ static void gaim_gnt_io_destroy(gpointer data)
 
 static gboolean gaim_gnt_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
 {
-	GaimGtkIOClosure *closure = data;
+	GaimGntIOClosure *closure = data;
 	GaimInputCondition gaim_cond = 0;
 
-	if (condition & GAIM_GTK_READ_COND)
+	if (condition & GAIM_GNT_READ_COND)
 		gaim_cond |= GAIM_INPUT_READ;
-	if (condition & GAIM_GTK_WRITE_COND)
+	if (condition & GAIM_GNT_WRITE_COND)
 		gaim_cond |= GAIM_INPUT_WRITE;
 
 #if 0
@@ -107,7 +107,7 @@ static gboolean gaim_gnt_io_invoke(GIOChannel *source, GIOCondition condition, g
 		gaim_debug_misc("gnt_eventloop",
 			   "CLOSURE received GIOCondition of 0x%x, which does not"
 			   " match 0x%x (READ) or 0x%x (WRITE)\n",
-			   condition, GAIM_GTK_READ_COND, GAIM_GTK_WRITE_COND);
+			   condition, GAIM_GNT_READ_COND, GAIM_GNT_WRITE_COND);
 #endif /* DEBUG */
 
 		return TRUE;
@@ -123,7 +123,7 @@ static gboolean gaim_gnt_io_invoke(GIOChannel *source, GIOCondition condition, g
 static guint gnt_input_add(gint fd, GaimInputCondition condition, GaimInputFunction function,
 							   gpointer data)
 {
-	GaimGtkIOClosure *closure = g_new0(GaimGtkIOClosure, 1);
+	GaimGntIOClosure *closure = g_new0(GaimGntIOClosure, 1);
 	GIOChannel *channel;
 	GIOCondition cond = 0;
 
@@ -131,9 +131,9 @@ static guint gnt_input_add(gint fd, GaimInputCondition condition, GaimInputFunct
 	closure->data = data;
 
 	if (condition & GAIM_INPUT_READ)
-		cond |= GAIM_GTK_READ_COND;
+		cond |= GAIM_GNT_READ_COND;
 	if (condition & GAIM_INPUT_WRITE)
-		cond |= GAIM_GTK_WRITE_COND;
+		cond |= GAIM_GNT_WRITE_COND;
 
 	channel = g_io_channel_unix_new(fd);
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,

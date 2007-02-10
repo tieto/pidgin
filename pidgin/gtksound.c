@@ -436,7 +436,6 @@ pidgin_sound_play_file(const char *filename)
 
 		if(!g_spawn_command_line_async(command, &error)) {
 			gaim_debug_error("gtksound", "sound command could not be launched: %s\n", error->message);
-			g_free(command);
 			g_error_free(error);
 		}
 
