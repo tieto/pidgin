@@ -1006,7 +1006,7 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 	/* extract their Yahoo! ID and put it in. Don't bother marking has_info as
 	 * true, since the Yahoo! ID will always be there */
 	if (!gaim_markup_extract_info_field(stripped, stripped_len, user_info,
-			strings->yahoo_id_string, 10, "\n", 0,
+			strings->yahoo_id_string, (yd->jp ? 2 : 10), "\n", 0,
 			NULL, _("Yahoo! ID"), 0, NULL, NULL))
 		;
 #endif
@@ -1033,7 +1033,7 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 
 	/* extract their Email address and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
-			strings->my_email_string, 1, " ", 0,
+			strings->my_email_string, (yd->jp ? 4 : 1), " ", 0,
 			strings->private_string, _("E-Mail"), 0, NULL, NULL);
 
 	/* extract the Nickname if it exists */
@@ -1043,27 +1043,27 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 
 	/* extract their RealName and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
-			strings->realname_string, 1, "\n", '\n',
+			strings->realname_string, (yd->jp ? 3 : 1), "\n", '\n',
 			NULL, _("Real Name"), 0, NULL, NULL);
 
 	/* extract their Location and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
-			strings->location_string, 2, "\n", '\n',
+			strings->location_string, (yd->jp ? 4 : 2), "\n", '\n',
 			NULL, _("Location"), 0, NULL, NULL);
 
 	/* extract their Age and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
-			strings->age_string, 3, "\n", '\n',
+			strings->age_string, (yd->jp ? 2 : 3), "\n", '\n',
 			NULL, _("Age"), 0, NULL, NULL);
 
 	/* extract their MaritalStatus and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
-			strings->maritalstatus_string, 3, "\n", '\n',
+			strings->maritalstatus_string, (yd->jp ? 2 : 3), "\n", '\n',
 			strings->no_answer_string, _("Marital Status"), 0, NULL, NULL);
 
 	/* extract their Gender and put it in */
 	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
-			strings->gender_string, 3, "\n", '\n',
+			strings->gender_string, (yd->jp ? 2 : 3), "\n", '\n',
 			strings->no_answer_string, _("Gender"), 0, NULL, NULL);
 
 	/* extract their Occupation and put it in */
@@ -1081,7 +1081,7 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 	 */
 
 	if (!gaim_markup_extract_info_field(stripped, stripped_len, user_info,
-			strings->hobbies_string, 1, strings->latest_news_string,
+			strings->hobbies_string, (yd->jp ? 3 : 1), strings->latest_news_string,
 			'\n', "\n", _("Hobbies"), 0, NULL, NULL))
 	{
 		if (!gaim_markup_extract_info_field(stripped, stripped_len, user_info,
@@ -1103,7 +1103,7 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 			'\n', "\n", _("Latest News"), 0, NULL, NULL))
 	{
 		found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
-				strings->latest_news_string, 1, strings->links_string,
+				strings->latest_news_string, (yd->jp ? 2 : 1), strings->links_string,
 				'\n', "\n", _("Latest News"), 0, NULL, NULL);
 	}
 	else
@@ -1162,8 +1162,8 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 
 		/* extract the Last Updated date and put it in */
 		found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
-				last_updated_utf8_string, 1, " ", '\n', NULL,
-				_("Last Update"), 0, NULL, yahoo_info_date_reformat);
+				last_updated_utf8_string, (yd->jp ? 2 : 1), (yd->jp ? "\n" : " "), (yd->jp ? 0 : '\n'), NULL,
+				_("Last Update"), 0, NULL, (yd->jp ? NULL : yahoo_info_date_reformat));
 	}
 	} /* if (profile_state == PROFILE_STATE_DEFAULT) */
 
