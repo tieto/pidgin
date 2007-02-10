@@ -1978,6 +1978,7 @@ AC_OUTPUT([Makefile
 		   console/plugins/Makefile
 		   po/Makefile.in
 		   gaim.pc
+		   gaim-uninstalled.pc
 		   gaim.spec
 		  ])
 

@@ -4932,7 +4932,9 @@ pidgin_conv_write_conv(GaimConversation *conv, const char *name, const char *ali
 
 
 	/* TODO: These colors should not be hardcoded so log.c can use them */
-	if (flags & GAIM_MESSAGE_SYSTEM) {
+	if (flags & GAIM_MESSAGE_RAW) {
+		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), message, gtk_font_options_all);
+	} else if (flags & GAIM_MESSAGE_SYSTEM) {
 		g_snprintf(buf2, sizeof(buf2),
 			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
 			   sml_attrib ? sml_attrib : "", mdate, displaying);
@@ -4952,8 +4954,6 @@ pidgin_conv_write_conv(GaimConversation *conv, const char *name, const char *ali
 			   sml_attrib ? sml_attrib : "", displaying);
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
-	} else if (flags & GAIM_MESSAGE_RAW) {
-		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), displaying, gtk_font_options_all);
 	} else {
 		char *new_message = g_memdup(displaying, length);
 		char *alias_escaped = (alias ? g_markup_escape_text(alias, strlen(alias)) : g_strdup(""));
