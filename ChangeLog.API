@@ -256,6 +256,7 @@ version 2.0.0:
 	* gaim_account_supports_offline_message()
 	* gaim_conversation_close_logs(), to force a conversation's log(s) to
 	  be closed.  New logs will be opened as necessary.
+	* gaim_got_protocol_handler_uri()
 	* gaim_plugin_get_id()
 	* gaim_plugin_get_name()
 	* gaim_plugin_get_version()
@@ -417,6 +418,7 @@ version 2.0.0:
 	* "log-displaying"
 	* "savedstatus-changed"
 	* "sendto-extended-menu"
+	* "uri-handler"
 
 	Signals - Removed:
 	* "account-away": replaced by account-status-changed
