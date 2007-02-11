@@ -1786,14 +1786,14 @@ static int gaim_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame *f
 		GaimBuddy *b = gaim_find_buddy(account, info->sn);
 		GaimStatus *status;
 		const char *active_status_id;
-		
+
 		status = gaim_presence_get_active_status(gaim_buddy_get_presence(b));
 		active_status_id = gaim_status_get_id(status);
-		
+
 		if (!active_status_id || strcmp(active_status_id, status_id))
 			gaim_prpl_got_user_status(account, info->sn, status_id, NULL);
 	}
-	
+
 	/* Login time stuff */
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
 		signon = info->onlinesince;
