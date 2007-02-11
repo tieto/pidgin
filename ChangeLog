@@ -193,7 +193,7 @@ version 2.0.0:
 	* Sametime protocol support
 	  Requires the meanwhile library: http://meanwhile.sourceforge.net
 	* QQ protocol support (Mark Huetsch, Google Summer of Code)
-	* Removed support for the Napster and TOC protocols
+	* Removed the Napster and TOC protocols plugins
 
 	Other Noteworthy Changes:
 	* UPnP and NAT traversal support (Adam J. Warrington, Google Summer of
@@ -1809,7 +1809,7 @@ version 0.10.0 (09/11/2000):
 	* Redesigned preferences dialog
 	* Redesigned conversation dialog
 	* Removed the Lag-O-Meter (Lag-O-Meter is now a plugin)
-	* SOCKS 4a/5 proxy works
+	* SOCKS 4/5 proxy works
 	* Buddy Pounces are now saved in .gaimrc
 	* Buddy Chats are now saved in .gaimrc
 	* Ability to merge gaim, aim2, aim4 buddylists. Thanks again bmiller!
@@ -1879,7 +1879,7 @@ version 0.9.16 (05/31/2000):
 	  lists, unfortunately).  (Thanks Syd)
 	* Font selection dialog
 	* Small changes to the Oscar/libfaim stuff (see libfaim/README.gaim)
-	* SOCKS 4a proxy support
+	* SOCKS 4 proxy support
 	* Better proxy support overall (you can get people's info now! :) )
 	* Two-way file transfer (you can get and send files, but you still
 	  can't initiate either)
