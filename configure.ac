@@ -1946,6 +1946,7 @@ AC_OUTPUT([Makefile
 		   pidgin/plugins/perl/common/Makefile.PL
 		   pidgin/plugins/ticker/Makefile
 		   pidgin/sounds/Makefile
+		   libpurple/example/Makefile
 		   libpurple/gconf/Makefile
 		   libpurple/purple.pc
 		   libpurple/plugins/Makefile

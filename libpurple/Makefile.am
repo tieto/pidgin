@@ -27,7 +27,7 @@ endif
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = purple.pc
 
-SUBDIRS = $(GCONF_DIR) plugins protocols tests
+SUBDIRS = $(GCONF_DIR) plugins protocols tests . example
 
 gaim_coresources = \
 	account.c \
