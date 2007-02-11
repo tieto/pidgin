@@ -1901,6 +1901,7 @@ AC_OUTPUT([Makefile
 		   doc/gaim-text.1
 		   m4macros/Makefile
 		   pidgin/Makefile
+		   pidgin/pidgin.pc
 		   pidgin/pixmaps/Makefile
 		   pidgin/pixmaps/animations/Makefile
 		   pidgin/pixmaps/animations/16/Makefile
@@ -1946,6 +1947,7 @@ AC_OUTPUT([Makefile
 		   pidgin/plugins/ticker/Makefile
 		   pidgin/sounds/Makefile
 		   libpurple/gconf/Makefile
+		   libpurple/purple.pc
 		   libpurple/plugins/Makefile
 		   libpurple/plugins/mono/Makefile
 		   libpurple/plugins/mono/api/Makefile

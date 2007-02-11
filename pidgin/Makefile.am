@@ -3,6 +3,7 @@ EXTRA_DIST = \
 		getopt.h \
 		getopt1.c \
 		Makefile.mingw \
+		pidgin.pc.in \
 		win32/IdleTracker/Makefile.mingw \
 		win32/IdleTracker/idletrack.c \
 		win32/IdleTracker/idletrack.h \
@@ -57,7 +58,10 @@ EXTRA_DIST = \
 
 if ENABLE_GTK
 
-SUBDIRS = pixmaps plugins sounds
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = pidgin.pc
+
+SUBDIRS = plugins 
 
 bin_PROGRAMS = pidgin
 

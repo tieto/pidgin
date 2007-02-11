@@ -6,6 +6,7 @@ EXTRA_DIST = \
 		gaim-send \
 		gaim-send-async \
 		gaim-url-handler \
+		purple.pc.in \
 		Makefile.mingw \
 		win32/global.mak \
 		win32/libc_interface.c \
@@ -22,6 +23,9 @@ EXTRA_DIST = \
 if USE_GCONFTOOL
 GCONF_DIR=gconf
 endif
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = purple.pc
 
 SUBDIRS = $(GCONF_DIR) plugins protocols tests
 
