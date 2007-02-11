@@ -83,6 +83,13 @@ gaim_core_init(const char *ui)
 	/* The signals subsystem is important and should be first. */
 	gaim_signals_init();
 
+	gaim_signal_register(core, "uri-handler",
+		gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+		gaim_value_new(GAIM_TYPE_BOOLEAN), 3,
+		gaim_value_new(GAIM_TYPE_STRING), /* Protocol */
+		gaim_value_new(GAIM_TYPE_STRING), /* Command */
+		gaim_value_new(GAIM_TYPE_BOXED, "GHashTable *")); /* Parameters */
+
 	gaim_signal_register(core, "quitting", gaim_marshal_VOID, NULL, 0);
 
 	/* The prefs subsystem needs to be initialized before static protocols

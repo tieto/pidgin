@@ -23,6 +23,7 @@
 #include "internal.h"
 
 #include "conversation.h"
+#include "core.h"
 #include "debug.h"
 #include "notify.h"
 #include "prpl.h"
@@ -2995,6 +2996,69 @@ gaim_str_binary_to_ascii(const unsigned char *binary, guint len)
 /**************************************************************************
  * URI/URL Functions
  **************************************************************************/
+
+void gaim_got_protocol_handler_uri(const char *uri)
+{
+	char proto[11];
+	const char *tmp, *param_string;
+	char *cmd;
+	GHashTable *params = NULL;
+	int len;
+
+	if (!(tmp = strchr(uri, ':')) || tmp == uri) {
+		gaim_debug_error("util", "Malformed protocol handler message - missing protocol.\n");
+		return;
+	}
+
+	len = MIN(sizeof(proto) - 1, (tmp - uri));
+
+	strncpy(proto, uri, len);
+	proto[len] = '\0';
+
+	tmp++;
+	gaim_debug_info("util", "Processing message '%s' for protocol '%s'.\n", tmp, proto);
+
+	if ((param_string = strchr(tmp, '?'))) {
+		const char *keyend = NULL, *pairstart;
+		char *key, *value = NULL;
+
+		cmd = g_strndup(tmp, (param_string - tmp));
+		param_string++;
+
+		params = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+		pairstart = tmp = param_string;
+
+		while (*tmp || *pairstart) {
+			if (*tmp == '&' || !(*tmp)) {
+				/* If there is no explicit value */
+				if (keyend == NULL)
+					keyend = tmp;
+
+				if (keyend && keyend != pairstart) {
+					key = g_strndup(pairstart, (keyend - pairstart));
+					/* If there is an explicit value */
+					if (keyend != tmp && keyend != (tmp - 1))
+						value = g_strndup(keyend + 1, (tmp - keyend - 1));
+					g_hash_table_insert(params, key, value);
+				}
+				keyend = value = NULL;
+				pairstart = (*tmp) ? tmp + 1 : tmp;
+			} else if (*tmp == '=')
+				keyend = tmp;
+
+			if (*tmp)
+				tmp++;
+		}
+	} else
+		cmd = g_strdup(tmp);
+
+	gaim_signal_emit_return_1(gaim_get_core(), "uri-handler", proto, cmd, params);
+
+	g_free(cmd);
+	if (params)
+		g_hash_table_destroy(params);
+}
+
 gboolean
 gaim_url_parse(const char *url, char **ret_host, int *ret_port,
 			   char **ret_path, char **ret_user, char **ret_passwd)
