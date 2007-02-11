@@ -302,7 +302,7 @@ static void gtk_blist_join_chat(GaimChat *chat)
 											   chat->account);
 
 	if (conv != NULL)
-		pidgin_conv_present_conversation(conv);
+		gaim_conversation_present(conv);
 
 	serv_join_chat(chat->account->gc, chat->components);
 }
@@ -3549,7 +3549,7 @@ menutray_press_cb(GtkWidget *widget, GdkEventButton *event)
 			convs = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
 															PIDGIN_UNSEEN_TEXT, TRUE, 1);
 			if (convs) {
-				pidgin_conv_present_conversation((GaimConversation*)convs->data);
+				gaim_conversation_present((GaimConversation*)convs->data);
 				g_list_free(convs);
 			}
 			break;
