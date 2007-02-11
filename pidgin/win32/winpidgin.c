@@ -433,7 +433,8 @@ static void winpidgin_set_locale() {
 	putenv(envstr);
 }
 
-#define WM_FOCUS_REQUEST (WM_APP + 13)
+#define PIDGIN_WM_FOCUS_REQUEST (WM_APP + 13)
+#define PIDGIN_WM_PROTOCOL_HANDLE (WM_APP + 14)
 
 static BOOL winpidgin_set_running() {
 	HANDLE h;
@@ -443,7 +444,7 @@ static BOOL winpidgin_set_running() {
 			HWND msg_win;
 
 			if((msg_win = FindWindow(TEXT("WinpidginMsgWinCls"), NULL)))
-				if(SendMessage(msg_win, WM_FOCUS_REQUEST, (WPARAM) NULL, (LPARAM) NULL))
+				if(SendMessage(msg_win, PIDGIN_WM_FOCUS_REQUEST, (WPARAM) NULL, (LPARAM) NULL))
 					return FALSE;
 
 			/* If we get here, the focus request wasn't successful */
@@ -458,12 +459,67 @@ static BOOL winpidgin_set_running() {
 	return TRUE;
 }
 
+#define PROTO_HANDLER_SWITCH "--protocolhandler="
 
-#ifdef __GNUC__
-#  ifndef _stdcall
-#    define _stdcall  __attribute__((stdcall))
-#  endif
-#endif
+static void handle_protocol(char *cmd) {
+	char *remote_msg, *tmp1, *tmp2;
+	int len;
+	SIZE_T len_written;
+	HWND msg_win;
+	DWORD pid;
+	HANDLE process;
+
+	/* The start of the message */
+	tmp1 = cmd + strlen(PROTO_HANDLER_SWITCH);
+
+	/* The end of the message */
+	if ((tmp2 = strchr(tmp1, ' ')))
+		len = (tmp2 - tmp1);
+	else
+		len = strlen(tmp1);
+
+	if (len == 0) {
+		printf("No protocol message specified.\n");
+		return;
+	}
+
+	if (!(msg_win = FindWindow(TEXT("WinpidginMsgWinCls"), NULL))) {
+		printf("Unable to find an instance of Pidgin to handle protocol message.\n");
+		return;
+	}
+
+	GetWindowThreadProcessId(msg_win, &pid);
+	if (!(process = OpenProcess(PROCESS_VM_OPERATION | PROCESS_VM_WRITE, FALSE, pid))) {
+		DWORD dw = GetLastError();
+		const char *err_msg = get_win32_error_message(dw);
+		printf("Unable to open Pidgin process. (%u) %s\n", (UINT) dw, err_msg);
+		return;
+	}
+
+	printf("Trying to handle protocol message:\n'%*s'\n", len, tmp1);
+
+	/* MEM_COMMIT initializes the memory to zero,
+	 * so we don't need to worry that our section of tmp1 isn't nul-terminated */
+	if ((remote_msg = (char*) VirtualAllocEx(process, NULL, len + 1, MEM_COMMIT, PAGE_READWRITE))) {
+		if (WriteProcessMemory(process, remote_msg, tmp1, len, &len_written)) {
+			if (!SendMessage(msg_win, PIDGIN_WM_PROTOCOL_HANDLE, len_written, (LPARAM) remote_msg))
+				printf("Unable to send protocol message to Pidgin instance.\n");
+		} else {
+			DWORD dw = GetLastError();
+			const char *err_msg = get_win32_error_message(dw);
+			printf("Unable to write to remote memory. (%u) %s\n", (UINT) dw, err_msg);
+		}
+
+		VirtualFreeEx(process, remote_msg, 0, MEM_RELEASE);
+	} else {
+		DWORD dw = GetLastError();
+		const char *err_msg = get_win32_error_message(dw);
+		printf("Unable to allocate remote memory. (%u) %s\n", (UINT) dw, err_msg);
+	}
+
+	CloseHandle(process);
+}
+
 
 int _stdcall
 WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
@@ -471,6 +527,7 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	char errbuf[512];
 	char pidgindir[MAX_PATH];
 	HMODULE hmod;
+	char *tmp;
 
 	/* If debug or help or version flag used, create console for output */
 	if (strstr(lpszCmdLine, "-d") || strstr(lpszCmdLine, "-h") || strstr(lpszCmdLine, "-v")) {
@@ -491,10 +548,16 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 		}
 	}
 
+	/* If this is a protocol handler invocation, deal with it accordingly */
+	if ((tmp = strstr(lpszCmdLine, PROTO_HANDLER_SWITCH)) != NULL) {
+		handle_protocol(tmp);
+		return 0;
+	}
+
 	/* Load exception handler if we have it */
 	if (GetModuleFileName(NULL, pidgindir, MAX_PATH) != 0) {
-		char *tmp = pidgindir;
 		char *prev = NULL;
+		tmp = pidgindir;
 
 		while ((tmp = strchr(tmp, '\\'))) {
 			prev = tmp;

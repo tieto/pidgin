@@ -1016,7 +1016,9 @@ gboolean gaim_log_common_deleter(GaimLog *log)
 gboolean gaim_log_common_is_deletable(GaimLog *log)
 {
 	GaimLogCommonLoggerData *data;
+#ifndef _WIN32
 	gchar *dirname;
+#endif
 
 	g_return_val_if_fail(log != NULL, FALSE);
 
@@ -1435,7 +1437,7 @@ static GList *txt_logger_list_syslog(GaimAccount *account)
 
 static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 {
-	char *read, *minus_header, *minus_header2;
+	char *read, *minus_header;
 	GaimLogCommonLoggerData *data = log->logger_data;
 	*flags = 0;
 	if (!data || !data->path)
@@ -1745,7 +1747,7 @@ static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 {
 	struct old_logger_data *data = log->logger_data;
 	FILE *file = g_fopen(gaim_stringref_value(data->pathref), "rb");
-	char *tmp, *read = g_malloc(data->length + 1);
+	char *read = g_malloc(data->length + 1);
 	fseek(file, data->offset, SEEK_SET);
 	fread(read, data->length, 1, file);
 	fclose(file);

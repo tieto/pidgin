@@ -817,6 +817,8 @@ char *gaim_str_binary_to_ascii(const unsigned char *binary, guint len);
 /**************************************************************************/
 /*@{*/
 
+void gaim_got_protocol_handler_uri(const char *uri);
+
 /**
  * Parses a URL, returning its host, port, file path, username and password.
  *
