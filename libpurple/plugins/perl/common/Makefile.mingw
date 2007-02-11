@@ -12,7 +12,7 @@ AUTOSPLIT = lib/auto/Gaim/autosplit.ix
 EXTUTILS ?= C:/perl/lib/ExtUtils
 PERL_PLUGIN_TOP := ..
 
-CFLAGS += -Wno-comment
+CFLAGS += -Wno-comment -Wno-unused
 
 ##
 ## INCLUDE PATHS
