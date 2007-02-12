@@ -3605,7 +3605,7 @@ static int gaim_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	else
 		message = NULL;
 	tmp = gaim_markup_strip_html(message);
-	aim_srv_setstatusmsg(od, tmp);
+	aim_srv_setextrainfo(od, FALSE, 0, TRUE, tmp);
 	g_free(tmp);
 
 	aim_srv_setidle(od, 0);
@@ -4411,7 +4411,7 @@ oscar_set_extendedstatus(GaimConnection *gc)
 	else if (!strcmp(status_id, OSCAR_STATUS_ID_CUSTOM))
 		data |= AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY;
 
-	aim_srv_setextstatus(od, data);
+	aim_srv_setextrainfo(od, TRUE, data, FALSE, NULL);
 }
 
 static void
@@ -4492,7 +4492,7 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 			}
 		}
 
-		aim_srv_setstatusmsg(od, status_text);
+		aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text);
 		g_free(status_text);
 
 		/* This is needed for us to un-set any previous away message. */

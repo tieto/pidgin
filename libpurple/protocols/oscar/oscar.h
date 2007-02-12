@@ -625,8 +625,7 @@ void oscar_data_destroy(OscarData *);
 /* 0x0014 */ void aim_srv_setprivacyflags(OscarData *od, FlapConnection *conn, guint32);
 /* 0x0016 */ void aim_srv_nop(OscarData *od, FlapConnection *conn);
 /* 0x0017 */ void aim_srv_setversions(OscarData *od, FlapConnection *conn);
-/* 0x001e */ int aim_srv_setstatusmsg(OscarData *od, const char *msg);
-/* 0x001e */ int aim_srv_setextstatus(OscarData *od, guint32 status);
+/* 0x001e */ int aim_srv_setextrainfo(OscarData *od, gboolean seticqstatus, guint32 icqstatus, gboolean setavailmsg, const char *availmsg);
 
 
 void aim_bos_reqrights(OscarData *od, FlapConnection *conn);

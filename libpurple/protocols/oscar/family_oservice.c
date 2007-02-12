@@ -779,8 +779,8 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 	return 1;
 }
 
-/*
- * Subtype 0x001e - Set various account settings (mostly ICQ related).
+/**
+ * Subtype 0x001e - Extended Status/Extra Info.
  *
  * These settings are transient, not server-stored (i.e. they only
  * apply to this session, and must be re-set the next time you sign
@@ -791,36 +791,67 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
  * if your status is visible on ICQ web sites, and you can set
  * your IP address info and what not.
  *
+ * You can also set your "available" message.  This is currently
+ * only supported by iChat, Gaim and other 3rd party clients.
+ *
  * These are the same TLVs seen in user info.  You can
  * also set 0x0008 and 0x000c.
- *
- * TODO: Combine this with the function below.
  */
 int
-aim_srv_setextstatus(OscarData *od, guint32 status)
+aim_srv_setextrainfo(OscarData *od,
+		gboolean seticqstatus, guint32 icqstatus,
+		gboolean setavailmsg, const char *availmsg)
 {
 	FlapConnection *conn;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
 	aim_tlvlist_t *tl = NULL;
-	guint32 data;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM)))
 		return -EINVAL;
 
-	data = AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_DIRECTREQUIREAUTH | status;
+	if (seticqstatus)
+	{
+		aim_tlvlist_add_32(&tl, 0x0006, icqstatus |
+				AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_DIRECTREQUIREAUTH);
+	}
 
-	frame = flap_frame_new(od, 0x02, 10 + 8);
+#if 0
+	if (other_stuff_that_isnt_implemented)
+	{
+		aim_tlvlist_add_raw(&tl, 0x000c, 0x0025,
+				chunk_of_x25_bytes_with_ip_address_etc);
+		aim_tlvlist_add_raw(&tl, 0x0011, 0x0005, unknown 0x01 61 10 f6 41);
+		aim_tlvlist_add_16(&tl, 0x0012, unknown 0x00 00);
+	}
+#endif
+
+	if (setavailmsg)
+	{
+		int availmsglen;
+		ByteStream tmpbs;
+
+		availmsglen = (availmsg != NULL) ? strlen(availmsg) : 0;
+
+		byte_stream_new(&tmpbs, availmsglen + 8);
+		byte_stream_put16(&tmpbs, 0x0002);
+		byte_stream_put8(&tmpbs, 0x04);
+		byte_stream_put8(&tmpbs, availmsglen + 4);
+		byte_stream_put16(&tmpbs, availmsglen);
+		if (availmsglen > 0)
+			byte_stream_putstr(&tmpbs, availmsg);
+		byte_stream_put16(&tmpbs, 0x0000);
+
+		aim_tlvlist_add_raw(&tl, 0x001d,
+				byte_stream_curpos(&tmpbs), tmpbs.data);
+		g_free(tmpbs.data);
+	}
+
+	frame = flap_frame_new(od, 0x02, 10 + aim_tlvlist_size(&tl));
 
 	snacid = aim_cachesnac(od, 0x0001, 0x001e, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, 0x0001, 0x001e, 0x0000, snacid);
 
-	aim_tlvlist_add_32(&tl, 0x0006, data);
-#if 0
-	aim_tlvlist_add_raw(&tl, 0x000c, 0x0025, chunk_of_x25_bytes_with_ip_address_etc);
-	aim_tlvlist_add_raw(&tl, 0x0011, 0x0005, unknown 0x01 61 10 f6 41);
-	aim_tlvlist_add_16(&tl, 0x0012, unknown 0x00 00);
-#endif
 	aim_tlvlist_write(&frame->data, &tl);
 	aim_tlvlist_free(&tl);
 
@@ -829,54 +860,7 @@ aim_srv_setextstatus(OscarData *od, guint32 status)
 	return 0;
 }
 
-/*
- * Subtype 0x001e - Extended Status.
- *
- * Sets your "available" message.  This is currently only supported by iChat
- * and Gaim.
- *
- * These are the same TLVs seen in user info.  You can
- * also set 0x0008 and 0x000c.
- *
- * TODO: Combine this with the above function.
- */
-int
-aim_srv_setstatusmsg(OscarData *od, const char *msg)
-{
-	FlapConnection *conn;
-	FlapFrame *frame;
-	aim_snacid_t snacid;
-	int msglen;
-
-	if (!od || !(conn = flap_connection_findbygroup(od, 0x0004)))
-		return -EINVAL;
-
-	if (msg == NULL)
-		msglen = 0;
-	else
-		msglen = strlen(msg);
-
-	frame = flap_frame_new(od, 0x02, 10 + 4 + msglen + 8);
-
-	snacid = aim_cachesnac(od, 0x0001, 0x001e, 0x0000, NULL, 0);
-	aim_putsnac(&frame->data, 0x0001, 0x001e, 0x0000, snacid);
-
-	byte_stream_put16(&frame->data, 0x001d); /* userinfo TLV type */
-	byte_stream_put16(&frame->data, msglen + 8); /* total length of userinfo TLV data */
-	byte_stream_put16(&frame->data, 0x0002);
-	byte_stream_put8(&frame->data, 0x04);
-	byte_stream_put8(&frame->data, msglen+4);
-	byte_stream_put16(&frame->data, msglen);
-	if (msglen > 0)
-		byte_stream_putstr(&frame->data, msg);
-	byte_stream_put16(&frame->data, 0x0000);
-
-	flap_connection_send(conn, frame);
-
-	return 0;
-}
-
-/*
+/**
  * Starting this past week (26 Mar 2001, say), AOL has started sending
  * this nice little extra SNAC.  AFAIK, it has never been used until now.
  *
