@@ -87,3 +87,4 @@ void oscar_send_file(GaimConnection *gc, const char *who, const char *file);
 GaimXfer *oscar_new_xfer(GaimConnection *gc, const char *who);
 gboolean oscar_offline_message(const GaimBuddy *buddy);
 GList *oscar_actions(GaimPlugin *plugin, gpointer context);
+void oscar_init(GaimPluginProtocolInfo *prpl_info);
