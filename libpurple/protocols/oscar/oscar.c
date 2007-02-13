@@ -3569,7 +3569,7 @@ static int gaim_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	GaimConnection *gc;
 	GaimAccount *account;
 	GaimStatus *status;
-	const char *message;
+	const char *message, *itmsurl;
 	char *tmp;
 	va_list ap;
 	guint16 maxpermits, maxdenies;
@@ -3605,7 +3605,8 @@ static int gaim_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	else
 		message = NULL;
 	tmp = gaim_markup_strip_html(message);
-	aim_srv_setextrainfo(od, FALSE, 0, TRUE, tmp);
+	itmsurl = gaim_status_get_attr_string(status, "itmsurl");
+	aim_srv_setextrainfo(od, FALSE, 0, TRUE, tmp, itmsurl);
 	g_free(tmp);
 
 	aim_srv_setidle(od, 0);
@@ -4411,7 +4412,7 @@ oscar_set_extendedstatus(GaimConnection *gc)
 	else if (!strcmp(status_id, OSCAR_STATUS_ID_CUSTOM))
 		data |= AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY;
 
-	aim_srv_setextrainfo(od, TRUE, data, FALSE, NULL);
+	aim_srv_setextrainfo(od, TRUE, data, FALSE, NULL, NULL);
 }
 
 static void
@@ -4477,7 +4478,7 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 	}
 	else if (primitive == GAIM_STATUS_AVAILABLE)
 	{
-		const char *status_html;
+		const char *status_html, *itmsurl;
 		char *status_text = NULL;
 
 		status_html = gaim_status_get_attr_string(status, "message");
@@ -4491,8 +4492,9 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 				strcpy(tmp, "...");
 			}
 		}
+		itmsurl = gaim_status_get_attr_string(status, "itmsurl");
 
-		aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text);
+		aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text, itmsurl);
 		g_free(status_text);
 
 		/* This is needed for us to un-set any previous away message. */
@@ -5702,6 +5704,8 @@ oscar_status_types(GaimAccount *account)
 										   OSCAR_STATUS_ID_AVAILABLE,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
+										   gaim_value_new(GAIM_TYPE_STRING),
+										   "itmsurl", _("iTunes Music Store Link"),
 										   gaim_value_new(GAIM_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 

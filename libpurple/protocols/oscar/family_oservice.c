@@ -800,7 +800,7 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
 int
 aim_srv_setextrainfo(OscarData *od,
 		gboolean seticqstatus, guint32 icqstatus,
-		gboolean setavailmsg, const char *availmsg)
+		gboolean setavailmsg, const char *availmsg, const char *itmsurl)
 {
 	FlapConnection *conn;
 	FlapFrame *frame;
@@ -828,18 +828,27 @@ aim_srv_setextrainfo(OscarData *od,
 
 	if (setavailmsg)
 	{
-		int availmsglen;
+		int availmsglen, itmsurllen;
 		ByteStream tmpbs;
 
 		availmsglen = (availmsg != NULL) ? strlen(availmsg) : 0;
+		itmsurllen = (itmsurl != NULL) ? strlen(itmsurl) : 0;
 
-		byte_stream_new(&tmpbs, availmsglen + 8);
+		byte_stream_new(&tmpbs, availmsglen + 8 + itmsurllen + 8);
 		byte_stream_put16(&tmpbs, 0x0002);
-		byte_stream_put8(&tmpbs, 0x04);
+		byte_stream_put8(&tmpbs, 0x04); /* Flags */
 		byte_stream_put8(&tmpbs, availmsglen + 4);
 		byte_stream_put16(&tmpbs, availmsglen);
 		if (availmsglen > 0)
 			byte_stream_putstr(&tmpbs, availmsg);
+		byte_stream_put16(&tmpbs, 0x0000);
+
+		byte_stream_put16(&tmpbs, 0x0009);
+		byte_stream_put8(&tmpbs, 0x04); /* Flags */
+		byte_stream_put8(&tmpbs, itmsurllen + 4);
+		byte_stream_put16(&tmpbs, itmsurllen);
+		if (itmsurllen > 0)
+			byte_stream_putstr(&tmpbs, itmsurl);
 		byte_stream_put16(&tmpbs, 0x0000);
 
 		aim_tlvlist_add_raw(&tl, 0x001d,
