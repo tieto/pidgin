@@ -475,8 +475,13 @@ jabber_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error,
 		gpointer data)
 {
 	GaimConnection *gc = data;
-	JabberStream *js = gc->proto_data;
+	JabberStream *js;
 
+	/* If the connection is already disconnected, we don't need to do anything else */
+	if(!GAIM_CONNECTION_IS_VALID(gc))
+		return;
+
+	js = gc->proto_data;
 	js->gsc = NULL;
 
 	switch(error) {
