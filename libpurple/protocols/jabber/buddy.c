@@ -642,7 +642,9 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 		}
 		if(jbir) {
 			if(jbir->idle_seconds > 0) {
-				gaim_notify_user_info_add_pair(user_info, _("Idle"), gaim_str_seconds_to_string(jbir->idle_seconds));
+				char *idle = gaim_str_seconds_to_string(jbir->idle_seconds);
+				gaim_notify_user_info_add_pair(user_info, _("Idle"), idle);
+				g_free(idle);
 			}
 		}
 		if(jbr && jbr->client.name) {
@@ -680,7 +682,9 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 
 			if(jbir) {
 				if(jbir->idle_seconds > 0) {
-					gaim_notify_user_info_add_pair(user_info, _("Idle"), gaim_str_seconds_to_string(jbir->idle_seconds));
+					char *idle = gaim_str_seconds_to_string(jbir->idle_seconds);
+					gaim_notify_user_info_add_pair(user_info, _("Idle"), idle);
+					g_free(idle);
 				}
 			}
 			if(jbr && jbr->client.name) {
@@ -729,6 +733,7 @@ static void jabber_buddy_info_remove_id(JabberBuddyInfo *jbi, const char *id)
 	while(l) {
 		if(!strcmp(id, l->data)) {
 			jbi->ids = g_slist_remove(jbi->ids, l->data);
+			g_free(l->data);			
 			return;
 		}
 		l = l->next;
