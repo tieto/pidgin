@@ -352,7 +352,7 @@ gaim_upnp_parse_description_response(const gchar* httpResponse, gsize len,
 			start = start ? start + 3 : baseURL;
 			path = strchr(start, '/');
 			length = path ? path - baseURL : strlen(baseURL);
-			controlURL = g_strdup_printf("%.*s%s", length, baseURL, tmp);
+			controlURL = g_strdup_printf("%.*s%s", (int)length, baseURL, tmp);
 		} else {
 			controlURL = g_strdup_printf("%s%s", baseURL, tmp);
 		}

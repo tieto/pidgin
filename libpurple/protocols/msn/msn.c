@@ -35,6 +35,7 @@
 #include "state.h"
 #include "util.h"
 #include "cmds.h"
+#include "core.h"
 #include "prpl.h"
 #include "msn-utils.h"
 #include "version.h"
@@ -1928,6 +1929,71 @@ static gboolean msn_unload(GaimPlugin *plugin)
 	return TRUE;
 }
 
+static GaimAccount *find_acct(const char *prpl, const char *acct_id)
+{
+	GaimAccount *acct = NULL;
+
+	/* If we have a specific acct, use it */
+	if (acct_id) {
+		acct = gaim_accounts_find(acct_id, prpl);
+		if (acct && !gaim_account_is_connected(acct))
+			acct = NULL;
+	} else { /* Otherwise find an active account for the protocol */
+		GList *l = gaim_accounts_get_all();
+		while (l) {
+			if (!strcmp(prpl, gaim_account_get_protocol_id(l->data))
+					&& gaim_account_is_connected(l->data)) {
+				acct = l->data;
+				break;
+			}
+			l = l->next;
+		}
+	}
+
+	return acct;
+}
+
+static gboolean msn_uri_handler(const char *proto, const char *cmd, GHashTable *params)
+{
+	char *acct_id = g_hash_table_lookup(params, "account");
+	GaimAccount *acct;
+
+	if (g_ascii_strcasecmp(proto, "msnim"))
+		return FALSE;
+
+	acct = find_acct("prpl-msn", acct_id);
+
+	if (!acct)
+		return FALSE;
+
+	/* msnim:chat?contact=user@domain.tld */
+	if (!g_ascii_strcasecmp(cmd, "Chat")) {
+		char *sname = g_hash_table_lookup(params, "contact");
+		if (sname) {
+			GaimConversation *conv = gaim_find_conversation_with_account(
+				GAIM_CONV_TYPE_IM, sname, acct);
+			if (conv == NULL)
+				conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, sname);
+			gaim_conversation_present(conv);
+		}
+		/*else
+			**If pidgindialogs_im() was in the core, we could use it here.
+			 * It is all gaim_request_* based, but I'm not sure it really belongs in the core
+			pidgindialogs_im();*/
+
+		return TRUE;
+	}
+	/* msnim:add?contact=user@domain.tld */
+	else if (!g_ascii_strcasecmp(cmd, "Add")) {
+		char *name = g_hash_table_lookup(params, "contact");
+		gaim_blist_request_add_buddy(acct, name, NULL, NULL);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+
 static GaimPluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_MAIL_CHECK,
@@ -2055,6 +2121,9 @@ init_plugin(GaimPlugin *plugin)
 	                  _("nudge: nudge a user to get their attention"), NULL);
 
 	gaim_prefs_remove("/plugins/prpl/msn");
+
+	gaim_signal_connect(gaim_get_core(), "uri-handler", plugin,
+		GAIM_CALLBACK(msn_uri_handler), NULL);
 }
 
 GAIM_INIT_PLUGIN(msn, init_plugin, info);

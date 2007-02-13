@@ -10,5 +10,5 @@ Name: Gaim
 Description: Gaim is a GTK2-based instant messenger application.
 Version: @VERSION@
 Requires: glib-2.0
-Cflags: -I${includedir}/gaim
-Libs: -L${libdir} -lgaim
+Cflags: -I${pc_top_builddir}/${pcfiledir}/libpurple -I${pc_top_builddir}/${pcfiledir}/pidgin
+Libs: ${pc_top_builddir}/${pcfiledir}/libpurple/libpurple.la

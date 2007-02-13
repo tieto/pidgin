@@ -130,25 +130,10 @@ init_plugin(GaimPlugin *plugin)
 {
 	GaimAccountOption *option;
 
-	option = gaim_account_option_string_new(_("Server"), "server", OSCAR_DEFAULT_LOGIN_SERVER);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	option = gaim_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+	oscar_init(GAIM_PLUGIN_PROTOCOL_INFO(plugin));
 
 	option = gaim_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	option = gaim_account_option_bool_new(
-		_("Always use ICQ proxy server for file transfers\n(slower, but does not reveal your IP address)"), "always_use_rv_proxy",
-		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	/* Preferences */
-	gaim_prefs_add_none("/plugins/prpl/oscar");
-	gaim_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
-	gaim_prefs_add_bool("/plugins/prpl/oscar/show_idle", FALSE);
-	gaim_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
 }
 
 GAIM_INIT_PLUGIN(icq, init_plugin, info);

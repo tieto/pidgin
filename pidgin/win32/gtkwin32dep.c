@@ -49,6 +49,7 @@
 #include "gtkwin32dep.h"
 #include "win32dep.h"
 #include "gtkconv.h"
+#include "util.h"
 #include "wspell.h"
 
 /*
@@ -192,13 +193,19 @@ void winpidgin_notify_uri(const char *uri) {
 	winpidgin_shell_execute(uri, "open", "http");
 }
 
-#define WM_FOCUS_REQUEST (WM_APP + 13)
+#define PIDGIN_WM_FOCUS_REQUEST (WM_APP + 13)
+#define PIDGIN_WM_PROTOCOL_HANDLE (WM_APP + 14)
 
 static LRESULT CALLBACK message_window_handler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
-	if (msg == WM_FOCUS_REQUEST) {
+	if (msg == PIDGIN_WM_FOCUS_REQUEST) {
 		gaim_debug_info("winpidgin", "Got external Buddy List focus request.");
 		gaim_blist_set_visible(TRUE);
+		return TRUE;
+	} else if (msg == PIDGIN_WM_PROTOCOL_HANDLE) {
+		char *proto_msg = (char *) lparam;
+		gaim_debug_info("winpidgin", "Got protocol handler request: %s\n", proto_msg ? proto_msg : "");
+		gaim_got_protocol_handler_uri(proto_msg);
 		return TRUE;
 	}
 

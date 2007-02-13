@@ -1786,14 +1786,14 @@ static int gaim_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame *f
 		GaimBuddy *b = gaim_find_buddy(account, info->sn);
 		GaimStatus *status;
 		const char *active_status_id;
-		
+
 		status = gaim_presence_get_active_status(gaim_buddy_get_presence(b));
 		active_status_id = gaim_status_get_id(status);
-		
+
 		if (!active_status_id || strcmp(active_status_id, status_id))
 			gaim_prpl_got_user_status(account, info->sn, status_id, NULL);
 	}
-	
+
 	/* Login time stuff */
 	if (info->present & AIM_USERINFO_PRESENT_ONLINESINCE)
 		signon = info->onlinesince;
@@ -3605,7 +3605,7 @@ static int gaim_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	else
 		message = NULL;
 	tmp = gaim_markup_strip_html(message);
-	aim_srv_setstatusmsg(od, tmp);
+	aim_srv_setextrainfo(od, FALSE, 0, TRUE, tmp);
 	g_free(tmp);
 
 	aim_srv_setidle(od, 0);
@@ -4411,7 +4411,7 @@ oscar_set_extendedstatus(GaimConnection *gc)
 	else if (!strcmp(status_id, OSCAR_STATUS_ID_CUSTOM))
 		data |= AIM_ICQ_STATE_OUT | AIM_ICQ_STATE_AWAY;
 
-	aim_srv_setextstatus(od, data);
+	aim_srv_setextrainfo(od, TRUE, data, FALSE, NULL);
 }
 
 static void
@@ -4492,7 +4492,7 @@ oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *ra
 			}
 		}
 
-		aim_srv_setstatusmsg(od, status_text);
+		aim_srv_setextrainfo(od, FALSE, 0, TRUE, status_text);
 		g_free(status_text);
 
 		/* This is needed for us to un-set any previous away message. */
@@ -6512,5 +6512,132 @@ oscar_offline_message(const GaimBuddy *buddy)
 	od = (OscarData *)gc->proto_data;
 
 	return (od->icq && aim_sn_is_icq(gaim_account_get_username(account)));
+}
+
+/* TODO: Find somewhere to put this instead of including it in a bunch of places.
+ * Maybe just change gaim_accounts_find() to return anything for the prpl if there is no acct_id.
+ */
+static GaimAccount *find_acct(const char *prpl, const char *acct_id)
+{
+	GaimAccount *acct = NULL;
+
+	/* If we have a specific acct, use it */
+	if (acct_id) {
+		acct = gaim_accounts_find(acct_id, prpl);
+		if (acct && !gaim_account_is_connected(acct))
+			acct = NULL;
+	} else { /* Otherwise find an active account for the protocol */
+		GList *l = gaim_accounts_get_all();
+		while (l) {
+			if (!strcmp(prpl, gaim_account_get_protocol_id(l->data))
+					&& gaim_account_is_connected(l->data)) {
+				acct = l->data;
+				break;
+			}
+			l = l->next;
+		}
+	}
+
+	return acct;
+}
+
+
+static gboolean oscar_uri_handler(const char *proto, const char *cmd, GHashTable *params)
+{
+	char *acct_id = g_hash_table_lookup(params, "account");
+	char prpl[11];
+	GaimAccount *acct;
+
+	if (g_ascii_strcasecmp(proto, "aim") && g_ascii_strcasecmp(proto, "icq"))
+		return FALSE;
+
+	g_snprintf(prpl, sizeof(prpl), "prpl-%s", proto);
+
+	acct = find_acct(prpl, acct_id);
+
+	if (!acct)
+		return FALSE;
+
+	/* aim:GoIM?screenname=SCREENNAME&message=MESSAGE */
+	if (!g_ascii_strcasecmp(cmd, "GoIM")) {
+		char *sname = g_hash_table_lookup(params, "screenname");
+		if (sname) {
+			char *message = g_hash_table_lookup(params, "message");
+
+			GaimConversation *conv = gaim_find_conversation_with_account(
+				GAIM_CONV_TYPE_IM, sname, acct);
+			if (conv == NULL)
+				conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, sname);
+			gaim_conversation_present(conv);
+
+			if (message) {
+				/* Spaces are encoded as '+' */
+				g_strdelimit(message, "+", ' ');
+				gaim_conv_im_send(GAIM_CONV_IM(conv), message);
+			}
+		}
+		/*else
+			**If pidgindialogs_im() was in the core, we could use it here.
+			 * It is all gaim_request_* based, but I'm not sure it really belongs in the core
+			pidgindialogs_im();*/
+
+		return TRUE;
+	}
+	/* aim:GoChat?roomname=CHATROOMNAME&exchange=4 */
+	else if (!g_ascii_strcasecmp(cmd, "GoChat")) {
+		char *rname = g_hash_table_lookup(params, "roomname");
+		if (rname) {
+			/* This is somewhat hacky, but the params aren't useful after this command */
+			g_hash_table_insert(params, g_strdup("exchange"), g_strdup("4"));
+			g_hash_table_insert(params, g_strdup("room"), g_strdup(rname));
+			serv_join_chat(gaim_account_get_connection(acct), params);
+		}
+		/*else
+			** Same as above (except that this would have to be re-written using gaim_request_*)
+			pidgin_blist_joinchat_show(); */
+
+		return TRUE;
+	}
+	/* aim:AddBuddy?screenname=SCREENNAME&groupname=GROUPNAME*/
+	else if (!g_ascii_strcasecmp(cmd, "AddBuddy")) {
+		char *sname = g_hash_table_lookup(params, "screenname");
+		char *gname = g_hash_table_lookup(params, "groupname");
+		gaim_blist_request_add_buddy(acct, sname, gname, NULL);
+		return TRUE;
+	}
+
+	return FALSE;
+}
+
+void oscar_init(GaimPluginProtocolInfo *prpl_info)
+{
+	GaimAccountOption *option;
+	static gboolean init = FALSE;
+
+	option = gaim_account_option_string_new(_("Server"), "server", OSCAR_DEFAULT_LOGIN_SERVER);
+	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+
+	option = gaim_account_option_int_new(_("Port"), "port", OSCAR_DEFAULT_LOGIN_PORT);
+	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+
+	option = gaim_account_option_bool_new(
+		_("Always use ICQ proxy server for file transfers\n(slower, but does not reveal your IP address)"), "always_use_rv_proxy",
+		OSCAR_DEFAULT_ALWAYS_USE_RV_PROXY);
+	prpl_info->protocol_options = g_list_append(prpl_info->protocol_options, option);
+
+	if (init)
+		return;
+	init = TRUE;
+
+	/* Preferences */
+	gaim_prefs_add_none("/plugins/prpl/oscar");
+	gaim_prefs_add_bool("/plugins/prpl/oscar/recent_buddies", FALSE);
+	gaim_prefs_add_bool("/plugins/prpl/oscar/show_idle", FALSE);
+	gaim_prefs_remove("/plugins/prpl/oscar/always_use_rv_proxy");
+
+	/* protocol handler */
+	/* TODO: figure out a good instance to use here */
+	gaim_signal_connect(gaim_get_core(), "uri-handler", &init,
+		GAIM_CALLBACK(oscar_uri_handler), NULL);
 }
 
