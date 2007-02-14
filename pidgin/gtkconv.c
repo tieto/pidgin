@@ -218,7 +218,7 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, PidginConversation *gt
 	if (!GTK_WIDGET_VISIBLE(w))
 		return FALSE;
 
-	if (!GAIM_IS_GTK_CONVERSATION(conv))
+	if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 		return FALSE;
 
 	if (gtkconv->auto_resize) {
@@ -2934,10 +2934,10 @@ setup_menubar(PidginWindow *win)
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/Block..."));
 
-	win->menu.unblock = 
+	win->menu.unblock =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 					    N_("/Conversation/Unblock..."));
-	
+
 	win->menu.add =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/Add..."));
@@ -4184,7 +4184,7 @@ setup_chat_pane(PidginConversation *gtkconv)
 	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", gtkconv);
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry_buffer), "changed",
                                  G_CALLBACK(resize_imhtml_cb), gtkconv);
-	
+
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
 	                 G_CALLBACK(entry_key_press_cb), gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "message_send",
@@ -4795,7 +4795,7 @@ pidgin_conv_write_conv(GaimConversation *conv, const char *name, const char *ali
 	gboolean plugin_return;
 	char *bracket;
 	int tag_count = 0;
-	
+
 	g_return_if_fail(conv != NULL);
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	g_return_if_fail(gtkconv != NULL);
@@ -6000,7 +6000,7 @@ pidgin_conv_update_buddy_icon(GaimConversation *conv)
 	GaimBuddyIcon *icon;
 
 	g_return_if_fail(conv != NULL);
-	g_return_if_fail(GAIM_IS_GTK_CONVERSATION(conv));
+	g_return_if_fail(PIDGIN_IS_PIDGIN_CONVERSATION(conv));
 	g_return_if_fail(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM);
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -6151,7 +6151,7 @@ pidgin_conv_update_buttons_by_protocol(GaimConversation *conv)
 {
 	PidginWindow *win;
 
-	if (!GAIM_IS_GTK_CONVERSATION(conv))
+	if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 		return;
 
 	win = PIDGIN_CONVERSATION(conv)->win;
@@ -6240,7 +6240,7 @@ close_on_tabs_pref_cb(const char *name, GaimPrefType type,
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
 		conv = (GaimConversation *)l->data;
 
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
+		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 			continue;
 
 		gtkconv = PIDGIN_CONVERSATION(conv);
@@ -6266,7 +6266,7 @@ spellcheck_pref_cb(const char *name, GaimPrefType type,
 
 		conv = (GaimConversation *)cl->data;
 
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
+		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 			continue;
 
 		gtkconv = PIDGIN_CONVERSATION(conv);
@@ -6311,7 +6311,7 @@ show_timestamps_pref_cb(const char *name, GaimPrefType type,
 	{
 		conv = (GaimConversation *)l->data;
 
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
+		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 			continue;
 
 		gtkconv = PIDGIN_CONVERSATION(conv);
@@ -6339,7 +6339,7 @@ show_formatting_toolbar_pref_cb(const char *name, GaimPrefType type,
 	{
 		conv = (GaimConversation *)l->data;
 
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
+		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 			continue;
 
 		gtkconv = PIDGIN_CONVERSATION(conv);

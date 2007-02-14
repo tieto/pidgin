@@ -905,11 +905,11 @@ pidginxfer_dialog_show(PidginXferDialog *dialog)
 	PidginXferDialog *tmp;
 
 	if (dialog == NULL) {
-		tmp = gaim_get_gtkxfer_dialog();
+		tmp = pidgin_get_xfer_dialog();
 
 		if (tmp == NULL) {
 			tmp = pidginxfer_dialog_new();
-			gaim_set_gtkxfer_dialog(tmp);
+			pidgin_set_xfer_dialog(tmp);
 		}
 
 		gtk_widget_show(tmp->window);
@@ -1244,13 +1244,13 @@ pidgin_xfers_uninit(void)
 }
 
 void
-gaim_set_gtkxfer_dialog(PidginXferDialog *dialog)
+pidgin_set_xfer_dialog(PidginXferDialog *dialog)
 {
 	xfer_dialog = dialog;
 }
 
 PidginXferDialog *
-gaim_get_gtkxfer_dialog(void)
+pidgin_get_xfer_dialog(void)
 {
 	return xfer_dialog;
 }

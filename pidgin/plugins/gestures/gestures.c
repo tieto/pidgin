@@ -43,7 +43,7 @@ stroke_close(GtkWidget *widget, void *data)
 	conv = (GaimConversation *)data;
 
 	/* Double-check */
-	if (!GAIM_IS_GTK_CONVERSATION(conv))
+	if (!PIDGIN_IS_PIDGIN_CONVERSATIONON(conv))
 		return;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -144,7 +144,7 @@ attach_signals(GaimConversation *conv)
 static void
 new_conv_cb(GaimConversation *conv)
 {
-	if (GAIM_IS_GTK_CONVERSATION(conv))
+	if (PIDGIN_IS_PIDGIN_CONVERSATIONON(conv))
 		attach_signals(conv);
 }
 
@@ -181,7 +181,7 @@ plugin_load(GaimPlugin *plugin)
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
 		conv = (GaimConversation *)l->data;
 
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
+		if (!PIDGIN_IS_PIDGIN_CONVERSATIONON(conv))
 			continue;
 
 		attach_signals(conv);
@@ -204,7 +204,7 @@ plugin_unload(GaimPlugin *plugin)
 	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
 		conv = (GaimConversation *)l->data;
 
-		if (!GAIM_IS_GTK_CONVERSATION(conv))
+		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 			continue;
 
 		gtkconv = PIDGIN_CONVERSATION(conv);
