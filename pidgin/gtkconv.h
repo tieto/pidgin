@@ -55,7 +55,7 @@ enum {
 #define PIDGIN_CONVERSATION(conv) \
 	((PidginConversation *)(conv)->ui_data)
 
-#define GAIM_IS_GTK_CONVERSATION(conv) \
+#define PIDGIN_IS_PIDGIN_CONVERSATION(conv) \
 	(gaim_conversation_get_ui_ops(conv) == \
 	 pidgin_conversations_get_conv_ui_ops())
 
@@ -134,7 +134,7 @@ struct _PidginConversation
 	gboolean entry_growing; /* True if the size of the entry was set
 				 * automatically by typing too much to fit
 				 * in one line */
-	
+
 	GtkWidget *close; /* "x" on the tab */
 	GtkWidget *icon;
 	GtkWidget *tab_label;

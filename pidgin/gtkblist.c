@@ -2232,13 +2232,13 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(GaimBlistNode *node,
  *                 |                                         |
  *                 +---- TOOLTIP_BORDER                      +---- TOOLTIP_BORDER
  *
- * 
+ *
  */
 #define STATUS_SIZE 22
 #define TOOLTIP_BORDER 12
 #define SMALL_SPACE 6
 #define LARGE_SPACE 12
-#define PRPL_SIZE 16 
+#define PRPL_SIZE 16
 struct tooltip_data {
 	PangoLayout *layout;
 	PangoLayout *name_layout;
@@ -2318,7 +2318,7 @@ static void pidgin_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, Gai
 	GList *l;
 	int prpl_col = 0;
         GtkTextDirection dir = gtk_widget_get_direction(widget);
-	
+
 	if(gtkblist->tooltipdata == NULL)
 		return;
 
@@ -2398,7 +2398,7 @@ static void pidgin_blist_paint_tip(GtkWidget *widget, GdkEventExpose *event, Gai
 		if (dir == GTK_TEXT_DIR_RTL) {
 			gtk_paint_layout(style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
 					NULL, gtkblist->tipwindow, "tooltip",
-					max_width  -(TOOLTIP_BORDER + STATUS_SIZE +SMALL_SPACE) - PANGO_PIXELS(300000), 
+					max_width  -(TOOLTIP_BORDER + STATUS_SIZE +SMALL_SPACE) - PANGO_PIXELS(300000),
 					current_height, td->name_layout);
 		} else {
 			gtk_paint_layout (style, gtkblist->tipwindow->window, GTK_STATE_NORMAL, FALSE,
@@ -3031,20 +3031,20 @@ pidgin_blist_get_emblem(GaimBlistNode *node)
 	} else {
 		return NULL;
 	}
-	
+
 	if (!gaim_privacy_check(buddy->account, gaim_buddy_get_name(buddy))) {
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "blocked.png", NULL);
 		ret = gdk_pixbuf_new_from_file(path, NULL);
 		g_free(path);
 		return ret;
 	}
-	
+
 	p = gaim_buddy_get_presence(buddy);
 	if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_MOBILE)) {
 		path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", "mobile.png", NULL);
 		ret = gdk_pixbuf_new_from_file(path, NULL);
 		g_free(path);
-		return ret;	
+		return ret;
 	}
 
 	prpl = gaim_find_prpl(gaim_account_get_protocol_id(buddy->account));
@@ -3062,7 +3062,7 @@ pidgin_blist_get_emblem(GaimBlistNode *node)
 
 	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", "16", filename, NULL);
 	ret = gdk_pixbuf_new_from_file(path, NULL);
-	
+
 	g_free(filename);
 	g_free(path);
 
@@ -3116,7 +3116,7 @@ pidgin_blist_get_status_icon(GaimBlistNode *node, PidginStatusIconSize size)
 			protoname = prpl_info->list_icon(account, buddy);
 		}
 	}
-	
+
 	if(buddy) {
 	  	GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
 									     gaim_buddy_get_name(buddy),
@@ -3130,7 +3130,7 @@ pidgin_blist_get_status_icon(GaimBlistNode *node, PidginStatusIconSize size)
 			}
 		}
 		p = gaim_buddy_get_presence(buddy);
-	       
+
 		if (GAIM_BUDDY_IS_ONLINE(buddy) && gtkbuddynode && gtkbuddynode->recent_signonoff)
 			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_LOGIN,
 					icon_size, "GtkTreeView");
@@ -3201,7 +3201,7 @@ static gchar *pidgin_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 			hidden_conv = TRUE;
 		}
 	}
-	
+
 	/* XXX Good luck cleaning up this crap */
 
 	contact = (GaimContact*)((GaimBlistNode*)b)->parent;
@@ -3356,13 +3356,13 @@ static gchar *pidgin_blist_get_name_markup(GaimBuddy *b, gboolean selected)
 	g_free(idletime);
 	g_free(statustext);
 	g_free(esc);
-	
+
 	if (hidden_conv) {
 		char *tmp = text;
 		text = g_strdup_printf("<b>%s</b>", tmp);
 		g_free(tmp);
 	}
-	
+
 	return text;
 }
 
@@ -3589,7 +3589,7 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 		tooltip_text = g_string_new("");
 		l = convs;
 		while (l != NULL) {
-			if (GAIM_IS_GTK_CONVERSATION(l->data)) {
+			if (PIDGIN_IS_PIDGIN_CONVERSATION(l->data)) {
 				PidginConversation *gtkconv = PIDGIN_CONVERSATION((GaimConversation *)l->data);
 
 				g_string_append_printf(tooltip_text,
@@ -3602,7 +3602,7 @@ conversation_updated_cb(GaimConversation *conv, GaimConvUpdateType type,
 		if(tooltip_text->len > 0) {
 			/* get rid of the last newline */
 			g_string_truncate(tooltip_text, tooltip_text->len -1);
-			img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_PENDING, 
+			img = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_PENDING,
 							gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 
 			gtkblist->menutrayicon = gtk_event_box_new();

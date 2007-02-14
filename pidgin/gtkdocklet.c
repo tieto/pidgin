@@ -143,7 +143,7 @@ docklet_update_status()
 		if (ui_ops->set_tooltip) {
 			GString *tooltip_text = g_string_new("");
 			for (l = convs, count = 0 ; l != NULL ; l = l->next, count++) {
-				if (GAIM_IS_GTK_CONVERSATION(l->data)) {
+				if (PIDGIN_IS_PIDGIN_CONVERSATION(l->data)) {
 					PidginConversation *gtkconv = PIDGIN_CONVERSATION((GaimConversation *)l->data);
 					if (count == DOCKLET_TOOLTIP_LINE_LIMIT - 1)
 						g_string_append(tooltip_text, _("Right-click for more unread messages...\n"));

@@ -63,10 +63,10 @@ typedef enum {
  */
 struct _PidginBuddyList {
 	GtkWidget *window;
-	GtkWidget *notebook;            /**< The notebook that switches between the real buddy list and the helpful 
+	GtkWidget *notebook;            /**< The notebook that switches between the real buddy list and the helpful
 					   instructions page */
 	GtkWidget *main_vbox;           /**< This vbox contains the menu and notebook */
-	GtkWidget *vbox;                /**< This is the vbox that everything important gets packed into.  
+	GtkWidget *vbox;                /**< This is the vbox that everything important gets packed into.
 					   Your plugin might want to pack something in it itself.  Go, plugins! */
 
 	GtkWidget *treeview;            /**< It's a treeview... d'uh. */
@@ -100,7 +100,7 @@ struct _PidginBuddyList {
 
 	GdkCursor *hand_cursor;         /**< Hand cursor */
 	GdkCursor *arrow_cursor;        /**< Arrow cursor */
-	
+
 	GtkWidget *scrollbook;          /**< Scrollbook for alerts */
 	GtkWidget *headline_hbox;       /**< Hbox for headline notification */
 	GtkWidget *headline_label;	/**< Label for headline notifications */
@@ -110,14 +110,14 @@ struct _PidginBuddyList {
 	gpointer headline_data;         /**< User data for headline notifications */
 	GDestroyNotify headline_destroy; /**< Callback to use for destroying the headline-data */
 	gboolean changing_style;        /**< True when changing GTK+ theme style */
-	
+
 	GtkWidget *error_buttons;        /**< Box containing the connection error buttons */
 	GtkWidget *statusbox;            /**< The status selector dropdown */
 	GdkPixbuf *empty_avatar;         /**< A 32x32 transparent pixbuf */
 };
 
 #define PIDGIN_BLIST(list) ((PidginBuddyList *)(list)->ui_data)
-#define GAIM_IS_GTK_BLIST(list) \
+#define PIDGIN_IS_PIDGIN_BLIST(list) \
 	((list)->ui_ops == pidgin_blist_get_ui_ops())
 
 /**************************************************************************
@@ -183,7 +183,7 @@ void pidgin_blist_update_refresh_timeout(void);
  * Returns the blist emblem
  *
  * @param node   The node to return an emblem for
- * 
+ *
  * @return  A newly created GdkPixbuf, or NULL
  */
 GdkPixbuf *
@@ -214,9 +214,9 @@ gboolean pidgin_blist_node_is_contact_expanded(GaimBlistNode *node);
 void pidgin_blist_toggle_visibility(void);
 
 /**
- * Increases the reference count of visibility managers. Callers should 
- * call the complementary remove function when no longer managing 
- * visibility. 
+ * Increases the reference count of visibility managers. Callers should
+ * call the complementary remove function when no longer managing
+ * visibility.
  *
  * A visibility manager is something that provides some method for
  * showing the buddy list after it is hidden (e.g. docklet plugin).
@@ -349,7 +349,7 @@ void pidgin_blist_update_account_error_state(GaimAccount *account, const char *m
  *
  * This is currently used for mail notification, but could theoretically be used for anything.
  * Only the most recent headline will be shown.
- * 
+ *
  * @param text	    Pango Markup for the label text
  * @param pixbuf    The GdkPixbuf for the icon
  * @param callback  The callback to call when headline is clicked

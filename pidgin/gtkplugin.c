@@ -51,7 +51,7 @@ pidgin_plugin_get_config_frame(GaimPlugin *plugin)
 
 	g_return_val_if_fail(plugin != NULL, NULL);
 
-	if (GAIM_IS_GTK_PLUGIN(plugin) && plugin->info->ui_info
+	if (PIDGIN_IS_PIDGIN_PLUGIN(plugin) && plugin->info->ui_info
 		&& PIDGIN_PLUGIN_UI_INFO(plugin)->get_config_frame)
 	{
 		PidginPluginUiInfo *ui_info;
@@ -175,7 +175,7 @@ static void plugin_loading_common(GaimPlugin *plugin, GtkTreeView *view, gboolea
 				{
 					gtk_widget_set_sensitive(pref_button,
 						loaded
-						&& ((GAIM_IS_GTK_PLUGIN(plug) && plug->info->ui_info
+						&& ((PIDGIN_IS_PIDGIN_PLUGIN(plug) && plug->info->ui_info
 							&& PIDGIN_PLUGIN_UI_INFO(plug)->get_config_frame)
 						 || (plug->info->prefs_info
 							&& plug->info->prefs_info->get_plugin_pref_frame)));
@@ -307,7 +307,7 @@ static void plugin_toggled_stage_two(GaimPlugin *plug, GtkTreeModel *model, GtkT
 
 	gtk_widget_set_sensitive(pref_button,
 		gaim_plugin_is_loaded(plug)
-		&& ((GAIM_IS_GTK_PLUGIN(plug) && plug->info->ui_info
+		&& ((PIDGIN_IS_PIDGIN_PLUGIN(plug) && plug->info->ui_info
 			&& PIDGIN_PLUGIN_UI_INFO(plug)->get_config_frame)
 		 || (plug->info->prefs_info
 			&& plug->info->prefs_info->get_plugin_pref_frame)));
@@ -416,7 +416,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 
 	gtk_widget_set_sensitive(pref_button,
 		gaim_plugin_is_loaded(plug)
-		&& ((GAIM_IS_GTK_PLUGIN(plug) && plug->info->ui_info
+		&& ((PIDGIN_IS_PIDGIN_PLUGIN(plug) && plug->info->ui_info
 			&& PIDGIN_PLUGIN_UI_INFO(plug)->get_config_frame)
 		 || (plug->info->prefs_info
 			&& plug->info->prefs_info->get_plugin_pref_frame)));

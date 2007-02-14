@@ -248,7 +248,7 @@ void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 		for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
 			GaimConversation *conv = cnv->data;
 
-			if (GAIM_IS_GTK_CONVERSATION(conv)) {
+			if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
 				pidginthemes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
 				pidginthemes_smiley_themeize(PIDGIN_CONVERSATION(conv)->entry);
 			}

@@ -122,18 +122,18 @@ void pidgin_xfers_init(void);
 void pidgin_xfers_uninit(void);
 
 /**
- * Sets gaim's main file transfer dialog.
+ * Sets pidgin's main file transfer dialog.
  *
  * @param dialog The main dialog.
  */
-void gaim_set_gtkxfer_dialog(PidginXferDialog *dialog);
+void pidgin_set_xfer_dialog(PidginXferDialog *dialog);
 
 /**
- * Returns gaim's main file transfer dialog.
+ * Returns pirgin's main file transfer dialog.
  *
  * @return The main dialog.
  */
-PidginXferDialog *gaim_get_gtkxfer_dialog(void);
+PidginXferDialog *pidgin_get_xfer_dialog(void);
 
 /**
  * Returns the UI operations structure for the GTK+ file transfer UI.

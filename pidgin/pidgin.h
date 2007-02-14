@@ -23,8 +23,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 /* #warning ***pidgin*** */
-#ifndef _PIDGINGAIM_H_
-#define _PIDGINGAIM_H_
+#ifndef _PIDGIN_H_
+#define _PIDGIN_H_
 
 #ifndef _WIN32
 # include <gdk/gdkx.h>
@@ -44,7 +44,7 @@
 #ifndef _WIN32
 # define GAIM_ALERT_TITLE ""
 #else
-# define GAIM_ALERT_TITLE PIDGIN_NAME 
+# define GAIM_ALERT_TITLE PIDGIN_NAME
 #endif
 
 /*
@@ -88,5 +88,5 @@
  */
 #define GAIM_INVISIBLE_CHAR (gunichar)0x2022
 
-#endif /* _PIDGINGAIM_H_ */
+#endif /* _PIDGIN_H_ */
 
