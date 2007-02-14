@@ -176,11 +176,12 @@ void jabber_roster_parse(JabberStream *js, xmlnode *packet)
 			char *jid_norm;
 			const char *username;
 
-			jid_norm = jabber_normalize(js->gc->account, jid);
+			jid_norm = g_strdup(jabber_normalize(js->gc->account, jid));
 			username = gaim_account_get_username(js->gc->account);
 			me = g_utf8_collate(jid_norm,
 			                    jabber_normalize(js->gc->account,
 			                                     username));
+			g_free(jid_norm);
 
 			if(me == 0)
 				jb->subscription = JABBER_SUB_BOTH;
