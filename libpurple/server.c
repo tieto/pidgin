@@ -223,7 +223,7 @@ serv_got_alias(GaimConnection *gc, const char *who, const char *alias)
 
 		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, b->name, account);
 
-		if (conv != NULL && alias != NULL)
+		if (conv != NULL && alias != NULL && strcmp(alias, who))
 		{
 			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
 										who, alias);
