@@ -1844,4 +1844,144 @@
 
 #define gaim_sounds_get_handle  purple_sounds_get_handle
 
+/* from sslconn.h */
+
+#define GAIM_SSL_DEFAULT_PORT  PURPLE_SSL_DEFAULT_PORT
+
+#define GAIM_SSL_HANDSHAKE_FAILED  PURPLE_SSL_HANDSHAKE_FAILED
+#define GAIM_SSL_CONNECT_FAILED    PURPLE_SSL_CONNECT_FAILED
+#define GaimSslErrorType  PurpleSslErrorType
+
+#define GaimSslConnection  PurpleSslConnection
+
+#define GaimSslInputFunction  PurpleSslInputFunction
+#define GaimSslErrorFunction  PurpleSslErrorFunction
+
+#define GaimSslOps  PurpleSslOps
+
+#define gaim_ssl_is_supported  purple_ssl_is_supported
+#define gaim_ssl_connect       purple_ssl_connect
+#define gaim_ssl_connect_fd    purple_ssl_connect_fd
+#define gaim_ssl_input_add     purple_ssl_input_add
+#define gaim_ssl_close         purple_ssl_close
+#define gaim_ssl_read          purple_ssl_read
+#define gaim_ssl_write         purple_ssl_write
+
+#define gaim_ssl_set_ops  purple_ssl_set_ops
+#define gaim_ssl_get_ops  purple_ssl_get_ops
+#define gaim_ssl_init     purple_ssl_init
+#define gaim_ssl_uninit   purple_ssl_uninit
+
+/* from status.h */
+
+#define GaimStatusType  PurpleStatusType
+#define GaimStatusAttr  PurpleStatusAttr
+#define GaimPresence    PurplePresence
+#define GaimStatus      PurpleStatus
+
+#define GAIM_PRESENCE_CONTEXT_UNSET    PURPLE_PRESENCE_CONTEXT_UNSET
+#define GAIM_PRESENCE_CONTEXT_ACCOUNT  PURPLE_PRESENCE_CONTEXT_ACCOUNT
+#define GAIM_PRESENCE_CONTEXT_CONV     PURPLE_PRESENCE_CONTEXT_CONV
+#define GAIM_PRESENCE_CONTEXT_BUDDY    PURPLE_PRESENCE_CONTEXT_BUDDY
+#define GaimPresenceContext  PurplePresenceContext
+
+#define GAIM_STATUS_UNSET           PURPLE_STATUS_UNSET
+#define GAIM_STATUS_OFFLINE         PURPLE_STATUS_OFFLINE
+#define GAIM_STATUS_AVAILABLE       PURPLE_STATUS_AVAILABLE
+#define GAIM_STATUS_UNAVAILABLE     PURPLE_STATUS_UNAVAILABLE
+#define GAIM_STATUS_INVISIBLE       PURPLE_STATUS_INVISIBLE
+#define GAIM_STATUS_AWAY            PURPLE_STATUS_AWAY
+#define GAIM_STATUS_EXTENDED_AWAY   PURPLE_STATUS_EXTENDED_AWAY
+#define GAIM_STATUS_MOBILE          PURPLE_STATUS_MOBILE
+#define GAIM_STATUS_NUM_PRIMITIVES  PURPLE_STATUS_NUM_PRIMITIVES
+#define GaimStatusPrimitive  PurpleStatusPrimitive
+
+#define gaim_primitive_get_id_from_type    purple_primitive_get_id_from_type
+#define gaim_primitive_get_name_from_type  purple_primitive_get_name_from_type
+#define gaim_primitive_get_type_from_id    purple_primitive_get_type_from_id
+
+#define gaim_status_type_new_full          purple_status_type_new_full
+#define gaim_status_type_new               purple_status_type_new
+#define gaim_status_type_new_with_attrs    purple_status_type_new_with_attrs
+#define gaim_status_type_destroy           purple_status_type_destroy
+#define gaim_status_type_set_primary_attr  purple_status_type_set_primary_attr
+#define gaim_status_type_add_attr          purple_status_type_add_attr
+#define gaim_status_type_add_attrs         purple_status_type_add_attrs
+#define gaim_status_type_add_attrs_vargs   purple_status_type_add_attrs_vargs
+#define gaim_status_type_get_primitive     purple_status_type_get_primitive
+#define gaim_status_type_get_id            purple_status_type_get_id
+#define gaim_status_type_get_name          purple_status_type_get_name
+#define gaim_status_type_is_saveable       purple_status_type_is_saveable
+#define gaim_status_type_is_user_settable  purple_status_type_is_user_settable
+#define gaim_status_type_is_independent    purple_status_type_is_independent
+#define gaim_status_type_is_exclusive      purple_status_type_is_exclusive
+#define gaim_status_type_is_available      purple_status_type_is_available
+#define gaim_status_type_get_primary_attr  purple_status_type_get_primary_attr
+#define gaim_status_type_get_attr          purple_status_type_get_attr
+#define gaim_status_type_get_attrs         purple_status_type_get_attrs
+#define gaim_status_type_find_with_id      purple_status_type_find_with_id
+
+#define gaim_status_attr_new        purple_status_attr_new
+#define gaim_status_attr_destroy    purple_status_attr_destroy
+#define gaim_status_attr_get_id     purple_status_attr_get_id
+#define gaim_status_attr_get_name   purple_status_attr_get_name
+#define gaim_status_attr_get_value  purple_status_attr_get_value
+
+#define gaim_status_new                         purple_status_new
+#define gaim_status_destroy                     purple_status_destroy
+#define gaim_status_set_active                  purple_status_set_active
+#define gaim_status_set_active_with_attrs       purple_status_set_active_with_attrs
+#define gaim_status_set_active_with_attrs_list  purple_status_set_active_with_attrs_list
+#define gaim_status_set_attr_boolean            purple_status_set_attr_boolean
+#define gaim_status_set_attr_int                purple_status_set_attr_int
+#define gaim_status_set_attr_string             purple_status_set_attr_string
+#define gaim_status_get_type                    purple_status_get_type
+#define gaim_status_get_presence                purple_status_get_presence
+#define gaim_status_get_id                      purple_status_get_id
+#define gaim_status_get_name                    purple_status_get_name
+#define gaim_status_is_independent              purple_status_is_independent
+#define gaim_status_is_exclusive                purple_status_is_exclusive
+#define gaim_status_is_available                purple_status_is_available
+#define gaim_status_is_active                   purple_status_is_active
+#define gaim_status_is_online                   purple_status_is_online
+#define gaim_status_get_attr_value              purple_status_get_attr_value
+#define gaim_status_get_attr_boolean            purple_status_get_attr_boolean
+#define gaim_status_get_attr_int                purple_status_get_attr_int
+#define gaim_status_get_attr_string             purple_status_get_attr_string
+#define gaim_status_compare                     purple_status_compare
+
+#define gaim_presence_new                purple_presence_new
+#define gaim_presence_new_for_account    purple_presence_new_for_account
+#define gaim_presence_new_for_conv       purple_presence_new_for_conv
+#define gaim_presence_new_for_buddy      purple_presence_new_for_buddy
+#define gaim_presence_destroy            purple_presence_destroy
+#define gaim_presence_remove_buddy       purple_presence_remove_buddy
+#define gaim_presence_add_status         purple_presence_add_status
+#define gaim_presence_add_list           purple_presence_add_list
+#define gaim_presence_set_status_active  purple_presence_set_status_active
+#define gaim_presence_switch_status      purple_presence_switch_status
+#define gaim_presence_set_idle           purple_presence_set_idle
+#define gaim_presence_set_login_time     purple_presence_set_login_time
+#define gaim_presence_get_context        purple_presence_get_context
+#define gaim_presence_get_account        purple_presence_get_account
+#define gaim_presence_get_conversation   purple_presence_get_conversation
+#define gaim_presence_get_chat_user      purple_presence_get_chat_user
+#define gaim_presence_get_buddies        purple_presence_get_buddies
+#define gaim_presence_get_statuses       purple_presence_get_statuses
+#define gaim_presence_get_status         purple_presence_get_status
+#define gaim_presence_get_active_status  purple_presence_get_active_status
+#define gaim_presence_is_available       purple_presence_is_available
+#define gaim_presence_is_online          purple_presence_is_online
+#define gaim_presence_is_status_active   purple_presence_is_status_active
+#define gaim_presence_is_status_primitive_active \
+	purple_presence_is_status_primitive_active
+#define gaim_presence_is_idle            purple_presence_is_idle
+#define gaim_presence_get_idle_time      purple_presence_get_idle_time
+#define gaim_presence_get_login_time     purple_presence_get_login_time
+#define gaim_presence_compare            purple_presence_compare
+
+#define gaim_status_get_handle  purple_status_get_handle
+#define gaim_status_init        purple_status_init
+#define gaim_status_uninit      purple_status_uninit
+
 #endif /* _GAIM_COMPAT_H_ */
