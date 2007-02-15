@@ -26,13 +26,13 @@
 #include "gntconn.h"
 #include "gntconv.h"
 #include "gntdebug.h"
+#include "gntft.h"
 #include "gntnotify.h"
 #include "gntplugin.h"
 #include "gntpounce.h"
 #include "gntprefs.h"
 #include "gntrequest.h"
 #include "gntstatus.h"
-
 #include "internal.h"
 
 #include <prefs.h>
@@ -70,10 +70,14 @@ void gnt_ui_init()
 
 	gg_pounces_init();
 
+	gg_xfers_init();
+	gaim_xfers_set_ui_ops(gg_xfers_get_ui_ops());
+
 	gnt_register_action(_("Accounts"), gg_accounts_show_all);
 	gnt_register_action(_("Buddy List"), gg_blist_show);
 	gnt_register_action(_("Buddy Pounces"), gg_pounces_manager_show);
 	gnt_register_action(_("Debug Window"), gg_debug_window_show);
+	gnt_register_action(_("File Transfers"), gg_xfer_dialog_show);
 	gnt_register_action(_("Plugins"), gg_plugins_show_all);
 	gnt_register_action(_("Preferences"), gg_prefs_show_all);
 	gnt_register_action(_("Statuses"), gg_savedstatus_show_all);
@@ -104,6 +108,9 @@ void gnt_ui_uninit()
 	gg_request_uninit();
 
 	gg_pounces_uninit();
+
+	gg_xfers_uninit();
+	gaim_xfers_set_ui_ops(NULL);
 
 	gnt_quit();
 #endif

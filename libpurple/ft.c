@@ -35,8 +35,15 @@
 #define FT_MAX_BUFFER_SIZE     65535
 
 static GaimXferUiOps *xfer_ui_ops = NULL;
+static GList *xfers;
 
 static int gaim_xfer_choose_file(GaimXfer *xfer);
+
+GList *
+gaim_xfers_get_all()
+{
+	return xfers;
+}
 
 GaimXfer *
 gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
@@ -63,6 +70,7 @@ gaim_xfer_new(GaimAccount *account, GaimXferType type, const char *who)
 	if (ui_ops != NULL && ui_ops->new_xfer != NULL)
 		ui_ops->new_xfer(xfer);
 
+	xfers = g_list_prepend(xfers, xfer);
 	return xfer;
 }
 
@@ -90,6 +98,7 @@ gaim_xfer_destroy(GaimXfer *xfer)
 	g_free(xfer->local_filename);
 
 	g_free(xfer);
+	xfers = g_list_remove(xfers, xfer);
 }
 
 void

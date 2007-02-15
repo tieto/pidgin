@@ -163,6 +163,13 @@ GaimXfer *gaim_xfer_new(GaimAccount *account,
 								GaimXferType type, const char *who);
 
 /**
+ * Returns all xfers
+ *
+ * @return all current xfers with refs
+ */
+GList *gaim_xfers_get_all(void);
+
+/**
  * Increases the reference count on a GaimXfer.
  * Please call gaim_xfer_unref later.
  *

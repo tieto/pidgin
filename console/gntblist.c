@@ -37,15 +37,16 @@
 #include "gntbox.h"
 #include "gntcombobox.h"
 #include "gntentry.h"
+#include "gntft.h"
 #include "gntlabel.h"
 #include "gntline.h"
 #include "gntmenu.h"
 #include "gntmenuitem.h"
 #include "gntmenuitemcheck.h"
+#include "gntpounce.h"
 #include "gnttree.h"
 #include "gntutils.h"
 #include "gntwindow.h"
-#include "gntpounce.h"
 
 #include "gntblist.h"
 #include "gntconv.h"
@@ -797,6 +798,24 @@ gg_blist_get_buddy_info_cb(GaimBuddy *buddy, GaimBlistNode *selected)
 }
 
 static void
+gg_blist_menu_send_file_cb(GaimBuddy *buddy, GaimBlistNode *selected)
+{
+	serv_send_file(buddy->account->gc, buddy->name, NULL);
+}
+
+static void
+gg_blist_pounce_node_cb(GaimBlistNode *node, GaimBlistNode *selected)
+{
+	GaimBuddy *b;
+	if (GAIM_BLIST_NODE_IS_CONTACT(node))
+		b = gaim_contact_get_priority_buddy((GaimContact *)node);
+	else
+		b = (GaimBuddy *)node;
+	gg_pounce_editor_show(b->account, b->name, NULL);
+}
+
+
+static void
 create_buddy_menu(GntMenu *menu, GaimBuddy *buddy)
 {
 	GaimPluginProtocolInfo *prpl_info;
@@ -808,18 +827,17 @@ create_buddy_menu(GntMenu *menu, GaimBuddy *buddy)
 				GAIM_CALLBACK(gg_blist_get_buddy_info_cb), buddy);
 	}
 
-#if 0
-	add_custom_action(tree, _("Add Buddy Pounce"),
-			GAIM_CALLBACK(gg_blist_add_buddy_pounce_cb)), buddy);
+	add_custom_action(menu, _("Add Buddy Pounce"),
+			GAIM_CALLBACK(gg_blist_pounce_node_cb), buddy);
 
 	if (prpl_info && prpl_info->send_file)
 	{
 		if (!prpl_info->can_receive_file ||
 			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
-			add_custom_action(tree, _("Send File"),
-					GAIM_CALLBACK(gg_blist_show_file_cb)), buddy);
+			add_custom_action(menu, _("Send File"),
+					GAIM_CALLBACK(gg_blist_menu_send_file_cb), buddy);
 	}
-
+#if 0
 	add_custom_action(tree, _("View Log"),
 			GAIM_CALLBACK(gg_blist_view_log_cb)), buddy);
 #endif
@@ -881,17 +899,6 @@ rename_blist_node(GaimBlistNode *node, const char *newname)
 		gaim_blist_rename_group((GaimGroup*)node, name);
 	else
 		g_return_if_reached();
-}
-
-static void
-gg_blist_pounce_node_cb(GaimBlistNode *node, GaimBlistNode *selected)
-{
-	GaimBuddy *b;
-	if (GAIM_BLIST_NODE_IS_CONTACT(node))
-		b = gaim_contact_get_priority_buddy((GaimContact *)node);
-	else
-		b = (GaimBuddy *)node;
-	gg_pounce_editor_show(b->account, b->name, NULL);
 }
 
 static void
@@ -1137,8 +1144,6 @@ draw_context_menu(GGBlist *ggblist)
 		}
 
 		if (GAIM_BLIST_NODE_IS_BUDDY(node) || GAIM_BLIST_NODE_IS_CONTACT(node)) {
-			add_custom_action(GNT_MENU(context), _("Add Buddy Pounce"),
-					GAIM_CALLBACK(gg_blist_pounce_node_cb), node);
 			add_custom_action(GNT_MENU(context), _("Toggle Tag"),
 					GAIM_CALLBACK(gg_blist_toggle_tag_buddy), node);
 		}

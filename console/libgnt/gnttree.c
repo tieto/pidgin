@@ -512,7 +512,8 @@ gnt_tree_map(GntWidget *widget)
 static void
 tree_selection_changed(GntTree *tree, GntTreeRow *old, GntTreeRow *current)
 {
-	g_signal_emit(tree, signals[SIG_SELECTION_CHANGED], 0, old->key, current->key);
+	g_signal_emit(tree, signals[SIG_SELECTION_CHANGED], 0, old ? old->key : NULL,
+				current ? current->key : NULL);
 }
 
 static gboolean
@@ -678,7 +679,8 @@ gnt_tree_destroy(GntWidget *widget)
 	int i;
 
 	end_search(tree);
-	g_hash_table_destroy(tree->hash);
+	if (tree->hash)
+		g_hash_table_destroy(tree->hash);
 	g_list_free(tree->list);
 
 	for (i = 0; i < tree->ncol; i++)
