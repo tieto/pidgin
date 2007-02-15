@@ -172,7 +172,9 @@ EXPORT void winpidgin_remove_idlehooks() {
 		CloseHandle(hMapObject);
 }
 
-int WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved) {
+/* suppress gcc "no previous prototype" warning */
+BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved);
+BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpReserved) {
 	switch(dwReason) {
 		case DLL_PROCESS_ATTACH:
 			g_hInstance = hInstance;

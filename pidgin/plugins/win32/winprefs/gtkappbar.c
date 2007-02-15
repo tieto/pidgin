@@ -4,7 +4,7 @@
  * File: gtkappbar.c
  * Date: August 2, 2003
  * Description: Appbar functionality for Windows GTK+ applications
- * 
+ *
  * Copyright (C) 2003, Herman Bloggs <hermanator12002@yahoo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -128,21 +128,17 @@ static void get_default_workarea(RECT *rect) {
 }
 
 /* Retrieve the rectangle of the active work area at a point */
-static RECT get_rect_at_point(POINT pt) {
-	RECT rc;
-	if (!get_rect_at_point_multimonitor(pt, &rc)) {
-		get_default_workarea(&rc);
+static void get_rect_at_point(POINT pt, RECT *rc) {
+	if (!get_rect_at_point_multimonitor(pt, rc)) {
+		get_default_workarea(rc);
 	}
-	return rc;
 }
 
 /* Retrieve the rectangle of the active work area of a window*/
-static RECT get_rect_of_window(HWND window) {
-	RECT rc;
-	if (!get_rect_of_window_multimonitor(window, &rc)) {
-		get_default_workarea(&rc);
+static void get_rect_of_window(HWND window, RECT *rc) {
+	if (!get_rect_of_window_multimonitor(window, rc)) {
+		get_default_workarea(rc);
 	}
-	return rc;
 }
 
 static void get_window_normal_rc(HWND hwnd, RECT *rc) {
@@ -173,7 +169,7 @@ static void set_toolbar(HWND hwnd, gboolean val) {
 	
 /*	This really should be the following, but SWP_FRAMECHANGED strangely causes initermittent problems "Show Desktop" done more than once.
  *	Not having SWP_FRAMECHANGED *should* cause the Style not to be applied, but i haven't noticed any problems
- *			SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED); 
+ *			SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
  */
 }
 /** Register the window as an appbar */
@@ -212,15 +208,15 @@ static void gtk_appbar_querypos(GtkAppBar *ab, HWND hwnd, RECT rcWorkspace) {
 	APPBARDATA abd;
 	guint iWidth = 0;
 
-        if(!ab->registered)
-                gtk_appbar_register(ab, hwnd);
+	if(!ab->registered)
+		gtk_appbar_register(ab, hwnd);
 
 	abd.hWnd = hwnd;
 	abd.cbSize = sizeof(APPBARDATA);
 	abd.uEdge = ab->side;
 
 	iWidth = ab->docked_rect.right - ab->docked_rect.left;
-        
+
 	abd.rc.top = rcWorkspace.top;
 	abd.rc.bottom = rcWorkspace.bottom;
 	switch (abd.uEdge)
@@ -288,7 +284,7 @@ static GdkFilterReturn wnd_moving(GtkAppBar *ab, GdkXEvent *xevent) {
         gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_moving\n");
 
         GetCursorPos(&cp);
-	monRect = get_rect_at_point(cp);
+	get_rect_at_point(cp, &monRect);
 
 	dockAreaWidth = (monRect.right - monRect.left) / 10;
         /* Which part of the screen are we in ? */
@@ -318,7 +314,7 @@ static GdkFilterReturn wnd_moving(GtkAppBar *ab, GdkXEvent *xevent) {
                 rc->bottom = rc->top + ab->undocked_height;
         }
 
-        /* Switch to toolbar/regular caption*/ 
+        /* Switch to toolbar/regular caption*/
         if(ab->docking)
                 set_toolbar(msg->hwnd, TRUE);
         else if(!ab->docked)
@@ -453,7 +449,7 @@ static GdkFilterReturn wnd_size(GtkAppBar *ab, GdkXEvent *xevent) {
 
 static GdkFilterReturn wnd_nchittest(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
-        
+
         if(ab->docked) {
                 UINT ret = DefWindowProc(msg->hwnd, msg->message, msg->wParam, msg->lParam);
 
@@ -463,7 +459,7 @@ static GdkFilterReturn wnd_nchittest(GtkAppBar *ab, GdkXEvent *xevent) {
                 case HTBOTTOMRIGHT:
                 case HTTOP:
                 case HTTOPLEFT:
-                case HTTOPRIGHT: 
+                case HTTOPRIGHT:
                         return GDK_FILTER_REMOVE;
                 case HTLEFT:
                         if(ab->side == ABE_LEFT)
@@ -499,7 +495,7 @@ static GdkFilterReturn wnd_initmenupopup(GtkAppBar *ab, GdkXEvent *xevent) {
 
 static GdkFilterReturn gtk_appbar_callback(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
-	RECT orig;
+	RECT orig, windowRect;
 
         switch (msg->wParam) {
         case ABN_STATECHANGE:
@@ -519,18 +515,18 @@ static GdkFilterReturn gtk_appbar_callback(GtkAppBar *ab, GdkXEvent *xevent) {
 		}
 
                 break;
-        
-    	case ABN_POSCHANGED:
-                gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_POSCHANGED\n");
-        	CopyRect(&orig, &(ab->docked_rect));
-		gtk_appbar_querypos(ab, msg->hwnd, get_rect_of_window(msg->hwnd));
+	case ABN_POSCHANGED:
+		gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_POSCHANGED\n");
+		CopyRect(&orig, &(ab->docked_rect));
+		get_rect_of_window(msg->hwnd, &windowRect);
+		gtk_appbar_querypos(ab, msg->hwnd, windowRect);
 		if (EqualRect(&orig, &(ab->docked_rect)) == 0) {
-			MoveWindow(msg->hwnd, ab->docked_rect.left, ab->docked_rect.top, 
+			MoveWindow(msg->hwnd, ab->docked_rect.left, ab->docked_rect.top,
 				ab->docked_rect.right - ab->docked_rect.left,
 				ab->docked_rect.bottom - ab->docked_rect.top, TRUE);
 		}
                 gtk_appbar_setpos(ab, msg->hwnd);
-        	break;
+		break;
 #if 0
 	default:
 		gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: %d\n", msg->wParam);
@@ -577,7 +573,7 @@ static GdkFilterReturn gtk_appbar_event_filter(GdkXEvent *xevent, GdkEvent *even
 }
 
 void gtk_appbar_dock(GtkAppBar *ab, UINT side) {
-        RECT orig;
+	RECT orig, windowRect;
 
         gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_dock\n");
 
@@ -587,12 +583,12 @@ void gtk_appbar_dock(GtkAppBar *ab, UINT side) {
         ab->side = side;
         get_window_normal_rc(GDK_WINDOW_HWND(ab->win->window), &(ab->docked_rect));
         CopyRect(&orig, &(ab->docked_rect));
-	gtk_appbar_querypos(ab, GDK_WINDOW_HWND(ab->win->window),
-			get_rect_of_window(GDK_WINDOW_HWND(ab->win->window)));
+	get_rect_of_window(GDK_WINDOW_HWND(ab->win->window), &windowRect);
+	gtk_appbar_querypos(ab, GDK_WINDOW_HWND(ab->win->window), windowRect);
         if(EqualRect(&orig, &(ab->docked_rect)) == 0)
                 MoveWindow(GDK_WINDOW_HWND(ab->win->window),
                            ab->docked_rect.left,
-                           ab->docked_rect.top, 
+                           ab->docked_rect.top,
                            ab->docked_rect.right - ab->docked_rect.left,
                            ab->docked_rect.bottom - ab->docked_rect.top, TRUE);
         gtk_appbar_setpos(ab, GDK_WINDOW_HWND(ab->win->window));

@@ -455,6 +455,8 @@ static char *pidgin_find_binary_location(void *symbol, void *data)
 
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
+/* suppress gcc "no previous prototype" warning */
+int pidgin_main(HINSTANCE hint, int argc, char *argv[]);
 int pidgin_main(HINSTANCE hint, int argc, char *argv[])
 #else
 int main(int argc, char *argv[])
@@ -726,7 +728,7 @@ int main(int argc, char *argv[])
 	/* TODO: Move pounces loading into gaim_pounces_init() */
 	gaim_pounces_load();
 
-	
+
 	/* HACK BY SEANEGAN:
 	 * We've renamed prpl-oscar to prpl-aim and prpl-icq, accordingly.
 	 * Let's do that change right here... after everything's loaded, but
@@ -741,7 +743,7 @@ int main(int argc, char *argv[])
 				gaim_account_set_protocol_id(account, "prpl-aim");
 		}
 	}
-	
+
 	ui_main();
 
 #ifdef USE_SM

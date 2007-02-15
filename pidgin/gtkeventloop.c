@@ -63,7 +63,7 @@ static gboolean pidgin_io_invoke(GIOChannel *source, GIOCondition condition, gpo
 
 #ifdef _WIN32
 	if(! gaim_cond) {
-#if DEBUG
+#ifdef DEBUG
 		gaim_debug(GAIM_DEBUG_MISC, "gtk_eventloop",
 			   "CLOSURE received GIOCondition of 0x%x, which does not"
 			   " match 0x%x (READ) or 0x%x (WRITE)\n",

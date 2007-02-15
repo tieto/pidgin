@@ -24,7 +24,7 @@
 #define _WSPELL_H_
 #include <gtkspell/gtkspell.h>
 
-void wpidginspell_init(void);
+void winpidgin_spell_init(void);
 
 extern GtkSpell* (*wpidginspell_new_attach)(GtkTextView*, const gchar*, GError**);
 #define gtkspell_new_attach( view, lang, error ) \
@@ -38,7 +38,7 @@ extern void (*wpidginspell_detach)(GtkSpell*);
 #define gtkspell_detach( spell ) \
 wpidginspell_detach( spell )
 
-extern gboolean (*wpidginspell_set_language)(GtkSpell*,	const gchar*, GError**);
+extern gboolean (*wpidginspell_set_language)(GtkSpell*, const gchar*, GError**);
 #define gtkspell_set_language( spell, lang, error ) \
 wpidginspell_set_language( spell, lang, error )
 

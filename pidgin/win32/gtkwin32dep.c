@@ -329,7 +329,7 @@ void winpidgin_init(HINSTANCE hint) {
 	if(!winpidgin_set_idlehooks())
 		gaim_debug_error("winpidgin", "Failed to initialize idle tracker\n");
 
-	wpidginspell_init();
+	winpidgin_spell_init();
 	gaim_debug_info("winpidgin", "GTK+ :%u.%u.%u\n",
 		gtk_major_version, gtk_minor_version, gtk_micro_version);
 
@@ -365,6 +365,8 @@ void winpidgin_cleanup(void) {
 }
 
 /* DLL initializer */
+/* suppress gcc "no previous prototype" warning */
+BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved);
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
 	dll_hInstance = hinstDLL;
 	return TRUE;
