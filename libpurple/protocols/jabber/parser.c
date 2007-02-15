@@ -54,9 +54,10 @@ jabber_parser_element_start_libxml(void *user_data,
 				js->protocol_version = JABBER_PROTO_1_0;
 				g_free(attrib);
 			} else if(!xmlStrcmp(attributes[i], (xmlChar*) "id")) {
-				if(js->stream_id)
-					g_free(js->stream_id);
+				g_free(js->stream_id);
 				js->stream_id = attrib;
+			} else {
+				g_free(attrib);	
 			}
 		}
 		if(js->protocol_version == JABBER_PROTO_0_9)
