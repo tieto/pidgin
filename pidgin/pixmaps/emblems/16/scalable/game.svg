@@ -7,16 +7,19 @@
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/s odipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.44.1"
    version="1.0"
-   sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh/emblems"
-   sodipodi:docname="game.svg">
+   sodipodi:docbase="/home/hbons/GUI/Tango/Gaim Refresh/emblems/scalable"
+   sodipodi:docname="game.svg"
+   inkscape:export-filename="/home/hbons/GUI/Tango/Gaim Refresh/emblems/game.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <linearGradient
@@ -50,7 +53,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="39.000665"
      inkscape:cx="14.206455"
-     inkscape:cy="7.7484057"
+     inkscape:cy="7.7355854"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showguides="true"
@@ -60,7 +63,7 @@
      inkscape:window-width="1268"
      inkscape:window-height="971"
      inkscape:window-x="6"
-     inkscape:window-y="21">
+     inkscape:window-y="47">
     <sodipodi:guide
        orientation="vertical"
        position="-845.97209"
@@ -86,7 +89,7 @@
        d="M 3.9835017,1.4980972 L 11.999829,1.4980972 C 13.394769,1.4980972 14.517772,2.6210999 14.517772,4.0160406 L 14.517772,11.982734 C 14.517772,13.377675 13.394769,14.500678 11.999829,14.500678 L 3.9835017,14.500678 C 2.588561,14.500678 1.4655583,13.377675 1.4655583,11.982734 L 1.4655583,4.0160406 C 1.4655583,2.6210999 2.588561,1.4980972 3.9835017,1.4980972 z "
        id="path2254" />
     <path
-       style="fill:#2e3436;fill-opacity:1;fill-rule:evenodd;stroke:#2e3436;stroke-width:1.00000036;stroke-miterlimit:4;stroke-opacity:1"
+       style="fill:#f13d3d;fill-opacity:1;fill-rule:evenodd;stroke:#a40000;stroke-width:1.00000036;stroke-miterlimit:4;stroke-opacity:1"
        d="M 4.0064655,1.4999056 L 11.99231,1.4999056 C 13.381945,1.4999056 14.500677,2.6226961 14.500677,4.0173732 L 14.500677,11.982561 C 14.500677,13.377238 13.381945,14.500029 11.99231,14.500029 L 4.0064655,14.500029 C 2.6168293,14.500029 1.4980971,13.377238 1.4980971,11.982561 L 1.4980971,4.0173732 C 1.4980971,2.6226961 2.6168293,1.4999056 4.0064655,1.4999056 z "
        id="rect2233" />
     <path
