@@ -396,9 +396,6 @@ init_libgaim(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-	/* XXX: Don't puke */
-	freopen(".error", "w", stderr);
-
 	signal(SIGPIPE, SIG_IGN);
 
 	/* Initialize the libgaim stuff */

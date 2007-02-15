@@ -13,7 +13,7 @@
 #define GNT_IS_BINDABLE_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_BINDABLE))
 #define GNT_BINDABLE_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_BINDABLE, GntBindableClass))
 
-#define	GNTDEBUG	fprintf(stderr, "%s\n", __FUNCTION__)
+#define	GNTDEBUG	g_printerr("%s\n", __FUNCTION__)
 
 typedef struct _GnBindable			GntBindable;
 typedef struct _GnBindableClass		GntBindableClass;

@@ -135,6 +135,10 @@ print_stderr(const char *string)
 }
 
 static void
+suppress_error_messages(const char *message)
+{}
+
+static void
 toggle_pause(GntWidget *w, gpointer n)
 {
 	debug.paused = !debug.paused;
@@ -283,6 +287,7 @@ void gg_debug_init()
 	REGISTER_G_LOG_HANDLER("GThread");
 
 	g_set_print_handler(print_stderr);   /* Redirect the debug messages to stderr */
+	g_set_printerr_handler(suppress_error_messages);
 
 	gaim_prefs_add_none(PREF_ROOT);
 	gaim_prefs_add_none(PREF_ROOT "/size");
