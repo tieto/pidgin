@@ -37,7 +37,7 @@ void
 pidgin_conv_get_gtkconv(conv)
 	Gaim::Conversation conv
 PPCODE:
-	if (conv != NULL && GAIM_IS_GTK_CONVERSATION(conv))
+	if (conv != NULL && PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 		XPUSHs(sv_2mortal(gaim_perl_bless_object(
 				PIDGIN_CONVERSATION(conv),
 				"Pidgin::Conversation")));
