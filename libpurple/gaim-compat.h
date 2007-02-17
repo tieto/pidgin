@@ -2152,4 +2152,126 @@
 #define gaim_unescape_filename  purple_unescape_filename
 #define gaim_escape_filename    purple_escape_filename
 
+/* from value.h */
+
+#define GAIM_TYPE_UNKNOWN  PURPLE_TYPE_UNKNOWN
+#define GAIM_TYPE_SUBTYPE  PURPLE_TYPE_SUBTYPE
+#define GAIM_TYPE_CHAR     PURPLE_TYPE_CHAR
+#define GAIM_TYPE_UCHAR    PURPLE_TYPE_UCHAR
+#define GAIM_TYPE_BOOLEAN  PURPLE_TYPE_BOOLEAN
+#define GAIM_TYPE_SHORT    PURPLE_TYPE_SHORT
+#define GAIM_TYPE_USHORT   PURPLE_TYPE_USHORT
+#define GAIM_TYPE_INT      PURPLE_TYPE_INT
+#define GAIM_TYPE_UINT     PURPLE_TYPE_UINT
+#define GAIM_TYPE_LONG     PURPLE_TYPE_LONG
+#define GAIM_TYPE_ULONG    PURPLE_TYPE_ULONG
+#define GAIM_TYPE_INT64    PURPLE_TYPE_INT64
+#define GAIM_TYPE_UINT64   PURPLE_TYPE_UINT64
+#define GAIM_TYPE_STRING   PURPLE_TYPE_STRING
+#define GAIM_TYPE_OBJECT   PURPLE_TYPE_OBJECT
+#define GAIM_TYPE_POINTER  PURPLE_TYPE_POINTER
+#define GAIM_TYPE_ENUM     PURPLE_TYPE_ENUM
+#define GAIM_TYPE_BOXED    PURPLE_TYPE_BOXED
+#define GaimType  PurpleType
+
+
+#define GAIM_SUBTYPE_UNKNOWN       PURPLE_SUBTYPE_UNKNOWN
+#define GAIM_SUBTYPE_ACCOUNT       PURPLE_SUBTYPE_ACCOUNT
+#define GAIM_SUBTYPE_BLIST         PURPLE_SUBTYPE_BLIST
+#define GAIM_SUBTYPE_BLIST_BUDDY   PURPLE_SUBTYPE_BLIST_BUDDY
+#define GAIM_SUBTYPE_BLIST_GROUP   PURPLE_SUBTYPE_BLIST_GROUP
+#define GAIM_SUBTYPE_BLIST_CHAT    PURPLE_SUBTYPE_BLIST_CHAT
+#define GAIM_SUBTYPE_BUDDY_ICON    PURPLE_SUBTYPE_BUDDY_ICON
+#define GAIM_SUBTYPE_CONNECTION    PURPLE_SUBTYPE_CONNECTION
+#define GAIM_SUBTYPE_CONVERSATION  PURPLE_SUBTYPE_CONVERSATION
+#define GAIM_SUBTYPE_PLUGIN        PURPLE_SUBTYPE_PLUGIN
+#define GAIM_SUBTYPE_BLIST_NODE    PURPLE_SUBTYPE_BLIST_NODE
+#define GAIM_SUBTYPE_CIPHER        PURPLE_SUBTYPE_CIPHER
+#define GAIM_SUBTYPE_STATUS        PURPLE_SUBTYPE_STATUS
+#define GAIM_SUBTYPE_LOG           PURPLE_SUBTYPE_LOG
+#define GAIM_SUBTYPE_XFER          PURPLE_SUBTYPE_XFER
+#define GAIM_SUBTYPE_SAVEDSTATUS   PURPLE_SUBTYPE_SAVEDSTATUS
+#define GAIM_SUBTYPE_XMLNODE       PURPLE_SUBTYPE_XMLNODE
+#define GAIM_SUBTYPE_USERINFO      PURPLE_SUBTYPE_USERINFO
+#define GaimSubType  PurpleSubType
+
+#define GaimValue  PurpleValue
+
+#define gaim_value_new                purple_value_new
+#define gaim_value_new_outgoing       purple_value_new_outgoing
+#define gaim_value_destroy            purple_value_destroy
+#define gaim_value_dup                purple_value_dup
+#define gaim_value_get_type           purple_value_get_type
+#define gaim_value_get_subtype        purple_value_get_subtype
+#define gaim_value_get_specific_type  purple_value_get_specific_type
+#define gaim_value_is_outgoing        purple_value_is_outgoing
+#define gaim_value_set_char           purple_value_set_char
+#define gaim_value_set_uchar          purple_value_set_uchar
+#define gaim_value_set_boolean        purple_value_set_boolean
+#define gaim_value_set_short          purple_value_set_short
+#define gaim_value_set_ushort         purple_value_set_ushort
+#define gaim_value_set_int            purple_value_set_int
+#define gaim_value_set_uint           purple_value_set_uint
+#define gaim_value_set_long           purple_value_set_long
+#define gaim_value_set_ulong          purple_value_set_ulong
+#define gaim_value_set_int64          purple_value_set_int64
+#define gaim_value_set_uint64         purple_value_set_uint64
+#define gaim_value_set_string         purple_value_set_string
+#define gaim_value_set_object         purple_value_set_object
+#define gaim_value_set_pointer        purple_value_set_pointer
+#define gaim_value_set_enum           purple_value_set_enum
+#define gaim_value_set_boxed          purple_value_set_boxed
+#define gaim_value_get_char           purple_value_get_char
+#define gaim_value_get_uchar          purple_value_get_uchar
+#define gaim_value_get_boolean        purple_value_get_boolean
+#define gaim_value_get_short          purple_value_get_short
+#define gaim_value_get_ushort         purple_value_get_ushort
+#define gaim_value_get_int            purple_value_get_int
+#define gaim_value_get_uint           purple_value_get_uint
+#define gaim_value_get_long           purple_value_get_long
+#define gaim_value_get_ulong          purple_value_get_ulong
+#define gaim_value_get_int64          purple_value_get_int64
+#define gaim_value_get_uint64         purple_value_get_uint64
+#define gaim_value_get_string         purple_value_get_string
+#define gaim_value_get_object         purple_value_get_object
+#define gaim_value_get_pointer        purple_value_get_pointer
+#define gaim_value_get_enum           purple_value_get_enum
+#define gaim_value_get_boxed          purple_value_get_boxed
+
+/* from version.h */
+
+#define GAIM_MAJOR_VERSION  PURPLE_MAJOR_VERSION
+#define GAIM_MINOR_VERSION  PURPLE_MINOR_VERSION
+#define GAIM_MICRO_VERSION  PURPLE_MICRO_VERSION
+
+#define GAIM_VERSION_CHECK  PURPLE_VERSION_CHECK
+
+/* from whiteboard.h */
+
+#ifndef _GAIM_WHITEBOARD_H_
+#define _GAIM_WHITEBOARD_H_
+
+#define GaimWhiteboardPrplOps  PurpleWhiteboardPrplOps
+#define GaimWhiteboard         PurpleWhiteboard
+#define GaimWhiteboardUiOps    PurpleWhiteboardUiOps
+
+#define gaim_whiteboard_set_ui_ops    purple_whiteboard_set_ui_ops
+#define gaim_whiteboard_set_prpl_ops  purple_whiteboard_set_prpl_ops
+
+#define gaim_whiteboard_create             purple_whiteboard_create
+#define gaim_whiteboard_destroy            purple_whiteboard_destroy
+#define gaim_whiteboard_start              purple_whiteboard_start
+#define gaim_whiteboard_get_session        purple_whiteboard_get_session
+#define gaim_whiteboard_draw_list_destroy  purple_whiteboard_draw_list_destroy
+#define gaim_whiteboard_get_dimensions     purple_whiteboard_get_dimensions
+#define gaim_whiteboard_set_dimensions     purple_whiteboard_set_dimensions
+#define gaim_whiteboard_draw_point         purple_whiteboard_draw_point
+#define gaim_whiteboard_send_draw_list     purple_whiteboard_send_draw_list
+#define gaim_whiteboard_draw_line          purple_whiteboard_draw_line
+#define gaim_whiteboard_clear              purple_whiteboard_clear
+#define gaim_whiteboard_send_clear         purple_whiteboard_send_clear
+#define gaim_whiteboard_send_brush         purple_whiteboard_send_brush
+#define gaim_whiteboard_get_brush          purple_whiteboard_get_brush
+#define gaim_whiteboard_set_brush          purple_whiteboard_set_brush
+
 #endif /* _GAIM_COMPAT_H_ */
