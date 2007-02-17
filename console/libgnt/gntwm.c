@@ -41,6 +41,7 @@ static void gnt_wm_win_resized(GntWM *wm, GntNode *node);
 static void gnt_wm_win_moved(GntWM *wm, GntNode *node);
 static void gnt_wm_give_focus(GntWM *wm, GntWidget *widget);
 static void update_window_in_list(GntWM *wm, GntWidget *wid);
+static void shift_window(GntWM *wm, GntWidget *widget, int dir);
 
 static gboolean write_already(gpointer data);
 static int write_timeout;
@@ -373,12 +374,50 @@ window_list_activate(GntTree *tree, GntWM *wm)
 	gnt_wm_raise_window(wm, widget);
 }
 
+static void
+populate_window_list(GntWM *wm)
+{
+	GList *iter;
+	GntTree *tree = GNT_TREE(wm->windows->tree);
+	for (iter = wm->list; iter; iter = iter->next) {
+		GntBox *box = GNT_BOX(iter->data);
+
+		gnt_tree_add_row_last(tree, box,
+				gnt_tree_create_row(tree, box->title), NULL);
+		update_window_in_list(wm, GNT_WIDGET(box));
+	}
+}
+
+static gboolean
+window_list_key_pressed(GntWidget *widget, const char *text, GntWM *wm)
+{
+	if (text[1] == 0 && wm->ordered) {
+		GntWidget *sel = gnt_tree_get_selection_data(GNT_TREE(widget));
+		switch (text[0]) {
+			case '-':
+			case '<':
+				shift_window(wm, sel, -1);
+				break;
+			case '+':
+			case '>':
+				shift_window(wm, sel, 1);
+				break;
+			default:
+				return FALSE;
+		}
+		gnt_tree_remove_all(GNT_TREE(widget));
+		populate_window_list(wm);
+		gnt_tree_set_selected(GNT_TREE(widget), sel);
+		return TRUE;
+	}
+	return FALSE;
+}
+
 static gboolean
 window_list(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
 	GntWidget *tree, *win;
-	GList *iter;
 
 	if (wm->_list.window || wm->menu)
 		return TRUE;
@@ -393,17 +432,12 @@ window_list(GntBindable *bindable, GList *null)
 	tree = wm->windows->tree;
 
 	gnt_box_set_title(GNT_BOX(win), "Window List");
-
-	for (iter = wm->list; iter; iter = iter->next) {
-		GntBox *box = GNT_BOX(iter->data);
-
-		gnt_tree_add_row_last(GNT_TREE(tree), box,
-				gnt_tree_create_row(GNT_TREE(tree), box->title), NULL);
-		update_window_in_list(wm, GNT_WIDGET(box));
-	}
+	
+	populate_window_list(wm);
 
 	gnt_tree_set_selected(GNT_TREE(tree), wm->ordered->data);
 	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(window_list_activate), wm);
+	g_signal_connect(G_OBJECT(tree), "key_pressed", G_CALLBACK(window_list_key_pressed), wm);
 
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, getmaxx(stdscr) / 3);
 	gnt_widget_set_size(tree, 0, getmaxy(stdscr) / 2);
