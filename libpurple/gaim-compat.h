@@ -1984,4 +1984,172 @@
 #define gaim_status_init        purple_status_init
 #define gaim_status_uninit      purple_status_uninit
 
+/* from stringref.h */
+
+#define GaimStringref  PurpleStringref
+
+#define gaim_stringref_new        purple_stringref_new
+#define gaim_stringref_new_noref  purple_stringref_new_noref
+#define gaim_stringref_printf     purple_stringref_printf
+#define gaim_stringref_ref        purple_stringref_ref
+#define gaim_stringref_unref      purple_stringref_unref
+#define gaim_stringref_value      purple_stringref_value
+#define gaim_stringref_cmp        purple_stringref_cmp
+#define gaim_stringref_len        purple_stringref_len
+
+/* from stun.h */
+
+#define GaimStunNatDiscovery  PurpleStunNatDiscovery
+
+#define GAIM_STUN_STATUS_UNDISCOVERED  PURPLE_STUN_STATUS_UNDISCOVERED
+#define GAIM_STUN_STATUS_UNKNOWN       PURPLE_STUN_STATUS_UNKNOWN
+#define GAIM_STUN_STATUS_DISCOVERING   PURPLE_STUN_STATUS_DISCOVERING
+#define GAIM_STUN_STATUS_DISCOVERED    PURPLE_STUN_STATUS_DISCOVERED
+#define GaimStunStatus  PurpleStunStatus
+
+#define GAIM_STUN_NAT_TYPE_PUBLIC_IP             PURPLE_STUN_NAT_TYPE_PUBLIC_IP
+#define GAIM_STUN_NAT_TYPE_UNKNOWN_NAT           PURPLE_STUN_NAT_TYPE_UNKNOWN_NAT
+#define GAIM_STUN_NAT_TYPE_FULL_CONE             PURPLE_STUN_NAT_TYPE_FULL_CONE
+#define GAIM_STUN_NAT_TYPE_RESTRICTED_CONE       PURPLE_STUN_NAT_TYPE_RESTRICTED_CONE
+#define GAIM_STUN_NAT_TYPE_PORT_RESTRICTED_CONE  PURPLE_STUN_NAT_TYPE_PORT_RESTRICTED_CONE
+#define GAIM_STUN_NAT_TYPE_SYMMETRIC             PURPLE_STUN_NAT_TYPE_SYMMETRIC
+#define GaimStunNatType  PurpleStunNatType
+
+/* why didn't this have a Gaim prefix before? */
+#define StunCallback  PurpleStunCallback
+
+#define gaim_stun_discover  purple_stun_discover
+#define gaim_stun_init      purple_stun_init
+
+/* from upnp.h */
+
+/* suggested rename: PurpleUPnpMappingHandle */
+#define UPnPMappingAddRemove  PurpleUPnPMappingAddRemove
+
+#define GaimUPnPCallback  PurpleUPnPCallback
+
+#define gaim_upnp_discover             purple_upnp_discover
+#define gaim_upnp_get_public_ip        purple_upnp_get_public_ip
+#define gaim_upnp_cancel_port_mapping  purple_upnp_cancel_port_mapping
+#define gaim_upnp_set_port_mapping     purple_upnp_set_port_mapping
+
+#define gaim_upnp_remove_port_mapping  purple_upnp_remove_port_mapping
+
+/* from util.h */
+
+#define GaimUtilFetchUrlData  PurpleUtilFetchUrlData
+#define GaimMenuAction        PurpleMenuAction
+
+#define GaimInfoFieldFormatCallback  PurpleIntoFieldFormatCallback
+
+#define GaimKeyValuePair  PurpleKeyValuePair
+
+#define gaim_menu_action_new   purple_menu_action_new
+#define gaim_menu_action_free  purple_menu_action_free
+
+#define gaim_base16_encode   purple_base16_encode
+#define gaim_base16_decode   purple_base16_decode
+#define gaim_base64_encode   purple_base64_encode
+#define gaim_base64_decode   purple_base64_decode
+#define gaim_quotedp_decode  purple_quotedp_decode
+
+#define gaim_mime_decode_field  purple_mime_deco_field
+
+#define gaim_utf8_strftime      purple_utf8_strftime
+#define gaim_date_format_short  purple_date_format_short
+#define gaim_date_format_long   purple_date_format_long
+#define gaim_date_format_full   purple_date_format_full
+#define gaim_time_format        purple_time_format
+#define gaim_time_build         purple_time_build
+
+#define GAIM_NO_TZ_OFF  PURPLE_NO_TZ_OFF
+
+#define gaim_str_to_time  purple_str_to_time
+
+#define gaim_markup_find_tag            purple_markup_find_tag
+#define gaim_markup_extract_info_field  purple_markup_extract_info_field
+#define gaim_markup_html_to_xhtml       purple_markup_html_to_xhtml
+#define gaim_markup_strip_html          purple_markup_strip_html
+#define gaim_markup_linkify             purple_markup_linkify
+#define gaim_markup_slice               purple_markup_slice
+#define gaim_markup_get_tag_name        purple_markup_get_tag_name
+#define gaim_unescape_html              purple_unescape_html
+
+#define gaim_home_dir  purple_home_dir
+#define gaim_user_dir  purple_user_dir
+
+#define gaim_util_set_user_dir  purple_util_set_user_dir
+
+#define gaim_build_dir  purple_build_dir
+
+#define gaim_util_write_data_to_file  purple_util_write_data_to_file
+
+#define gaim_util_read_xml_from_file  purple_util_read_xml_from_file
+
+#define gaim_mkstemp  purple_mkstemp
+
+#define gaim_program_is_valid  purple_program_is_valid
+
+#define gaim_running_gnome  purple_running_gnome
+#define gaim_running_kde    purple_running_kde
+#define gaim_running_osx    purple_running_osx
+
+#define gaim_fd_get_ip  purple_fd_get_ip
+
+#define gaim_normalize         purple_normalize
+#define gaim_normalize_nocase  purple_normalize_nocase
+
+#define gaim_strdup_withhtml  purple_strdup_withhtml
+
+#define gaim_str_has_prefix  purple_str_has_prefix
+#define gaim_str_has_suffix  purple_str_has_suffix
+#define gaim_str_add_cr      purple_str_add_cr
+#define gaim_str_strip_char  purple_str_strip_char
+
+#define gaim_util_chrreplace  purple_util_chrreplace
+
+#define gaim_strreplace  purple_strreplace
+
+#define gaim_utf8_ncr_encode  purple_utf8_ncr_encode
+#define gaim_utf8_ncr_decode  purple_utf8_ncr_decode
+
+#define gaim_strcasereplace  purple_strcasereplace
+#define gaim_strcasestr      purple_strcasestr
+
+#define gaim_str_size_to_units      purple_str_size_to_units
+#define gaim_str_seconds_to_string  purple_str_seconds_to_string
+#define gaim_str_binary_to_ascii    purple_str_binary_to_ascii
+
+
+#define gaim_got_protocol_handler_uri  purple_got_protocol_handler_uri
+
+#define gaim_url_parse  purple_url_parse
+
+#define GaimUtilFetchUrlCallback  PurpleUtilFetchUrlCallback
+#define gaim_util_fetch_url          purple_util_fetch_url
+#define gaim_util_fetch_url_request  purple_util_fetch_url_request
+#define gaim_util_fetch_url_cancel   purple_util_fetch_url_cancel
+
+#define gaim_url_decode  purple_url_decode
+#define gaim_url_encode  purple_url_encode
+
+#define gaim_email_is_valid  purple_email_is_valid
+
+#define gaim_uri_list_extract_uris       purple_uri_list_extract_uris
+#define gaim_uri_list_extract_filenames  purple_uri_list_extract_filenames
+
+#define gaim_utf8_try_convert  purple_utf8_try_convert
+#define gaim_utf8_salvage      purple_utf8_salvage
+#define gaim_utf8_strcasecmp   purple_utf8_strcasecmp
+#define gaim_utf8_has_word     purple_utf8_has_word
+
+#define gaim_print_utf8_to_console  purple_print_utf8_to_console
+
+#define gaim_message_meify  purple_message_meify
+
+#define gaim_text_strip_mnemonic  purple_text_strip_mnemonic
+
+#define gaim_unescape_filename  purple_unescape_filename
+#define gaim_escape_filename    purple_escape_filename
+
 #endif /* _GAIM_COMPAT_H_ */
