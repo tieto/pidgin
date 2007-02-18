@@ -34,6 +34,14 @@
 
 #include "gntgaim.h"
 #include "gntrequest.h"
+#include "util.c"
+
+typedef struct
+{
+	void *user_data;
+	GntWidget *entry, *dialog;
+	GCallback *cbs;
+} GaimGntFileRequest;
 
 static GntWidget *
 setup_request_window(const char *title, const char *primary,
@@ -510,6 +518,81 @@ gg_request_fields(const char *title, const char *primary,
 	return window;
 }
 
+static void
+file_cancel_cb(GntWidget *wid, gpointer fq)
+{
+	GaimGntFileRequest *data = fq;
+	if (data->cbs[1] != NULL)
+		((GaimRequestFileCb)data->cbs[1])(data->user_data, NULL);
+
+	gaim_request_close(GAIM_REQUEST_FILE, data->dialog);
+}
+
+static void
+file_ok_cb(GntWidget *wid, gpointer fq)
+{
+	GaimGntFileRequest *data = fq;
+	if (data->cbs[0] != NULL)
+		((GaimRequestFileCb)data->cbs[0])(data->user_data, gnt_entry_get_text(GNT_ENTRY(data->entry)));
+
+	gaim_request_close(GAIM_REQUEST_FILE, data->dialog);
+}
+
+static void
+file_request_destroy(GaimGntFileRequest *data)
+{
+	g_free(data->cbs);
+	g_free(data);
+}
+
+static void *
+gg_request_file(const char *title, const char *filename,
+				gboolean savedialog,
+				GCallback ok_cb, GCallback cancel_cb,
+				void *user_data)
+{
+	GntWidget *window = gnt_vbox_new(FALSE);
+	GntWidget *entry, *hbox, *button;
+	GaimGntFileRequest *data = g_new0(GaimGntFileRequest, 1);
+
+	data->user_data = user_data;
+	data->cbs = g_new0(GCallback, 2);
+	data->cbs[0] = ok_cb;
+	data->cbs[1] = cancel_cb;
+	data->dialog = window;
+	data->entry = entry = gnt_entry_new(g_strconcat(gaim_home_dir(), G_DIR_SEPARATOR_S, filename, NULL));
+	gnt_widget_set_size(entry, 30, 1);
+	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
+	gnt_box_set_title(GNT_BOX(window), title ? title : (savedialog ? _("Save File...") : _("Open File...")));
+#if 0
+	/* After the string freeze */
+	gnt_box_add_widget(GNT_BOX(window), gnt_label_new(_("Please enter a full path for a file")));
+#endif
+	gnt_box_add_widget(GNT_BOX(window), entry);
+
+	hbox = gnt_hbox_new(TRUE);
+	gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
+
+	button = gnt_button_new(_("Cancel"));
+	g_signal_connect(G_OBJECT(button), "activate",
+		G_CALLBACK(file_cancel_cb), data);
+	gnt_box_add_widget(GNT_BOX(hbox), button);
+
+	button = gnt_button_new(_("OK"));
+	g_signal_connect(G_OBJECT(button), "activate",
+		G_CALLBACK(file_ok_cb), data);
+	gnt_box_add_widget(GNT_BOX(hbox), button);
+
+	gnt_box_add_widget(GNT_BOX(window), hbox);
+
+	g_signal_connect_swapped(G_OBJECT(window), "destroy",
+			G_CALLBACK(file_request_destroy), data);
+
+	gnt_widget_show(window);
+
+	return window;
+}
+
 static GaimRequestUiOps uiops =
 {
 	.request_input = gg_request_input,
@@ -517,8 +600,8 @@ static GaimRequestUiOps uiops =
 	.request_choice = gg_request_choice,
 	.request_action = gg_request_action,
 	.request_fields = gg_request_fields,
-	.request_file = NULL,                  /* No plans for these */
-	.request_folder = NULL
+	.request_file = gg_request_file,
+	.request_folder = NULL                        /* No plans for this */
 };
 
 GaimRequestUiOps *gg_request_get_ui_ops()
