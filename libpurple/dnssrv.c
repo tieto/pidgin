@@ -21,6 +21,7 @@
  */
 
 #include "internal.h"
+#include "util.h"
 
 #ifndef _WIN32
 #include <resolv.h>
@@ -104,6 +105,10 @@ resolve(int in, int out)
 	guint16 type, dlen, pref, weight, port;
 	gchar query[256];
 
+#ifdef HAVE_SIGNAL_H
+	gaim_restore_default_signal_handlers();
+#endif
+	
 	if (read(in, query, 256) <= 0)
 		_exit(0);
 

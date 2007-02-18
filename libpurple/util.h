@@ -1071,6 +1071,13 @@ const char *gaim_escape_filename(const char *str);
  * This should not be used by plugins.
  */
 const char *_gaim_oscar_convert(const char *act, const char *protocol);
+
+/**
+ * Restore default signal handlers for signals which might reasonably have
+ * handlers. This should be called by a fork()'d child process, since child processes
+ * inherit the handlers of the parent.
+ */
+void gaim_restore_default_signal_handlers(void);
 #ifdef __cplusplus
 }
 #endif
