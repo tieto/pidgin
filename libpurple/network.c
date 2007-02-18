@@ -47,6 +47,10 @@
 #include "stun.h"
 #include "upnp.h"
 
+#ifdef ENABLE_NAT_PMP
+#include "nat-pmp.h"
+#endif
+
 /*
  * Calling sizeof(struct ifreq) isn't always correct on
  * Mac OS X (and maybe others).
@@ -75,6 +79,9 @@ struct _GaimNetworkListenData {
 	GaimNetworkListenCallback cb;
 	gpointer cb_data;
 	UPnPMappingAddRemove *mapping_data;
+#ifdef ENABLE_NAT_PMP
+	gboolean has_pmp_mapping;
+#endif
 };
 
 #ifdef HAVE_LIBNM
@@ -192,6 +199,13 @@ gaim_network_get_my_ip(int fd)
 	if (ip != NULL)
 	  return ip;
 
+#ifdef ENABLE_NAT_PMP
+	/* Attempt to ge tthe IP from a NAT device using NAT-PMP */
+	ip = gaim_pmp_get_public_ip();
+	if (ip != NULL)
+		return ip;
+#endif
+
 	/* Just fetch the IP of the local system */
 	return gaim_network_get_local_system_ip(fd);
 }
@@ -244,6 +258,7 @@ gaim_network_do_listen(unsigned short port, int socket_type, GaimNetworkListenCa
 	int listenfd = -1;
 	const int on = 1;
 	GaimNetworkListenData *listen_data;
+	unsigned short actual_port;
 #ifdef HAVE_GETADDRINFO
 	int errnum;
 	struct addrinfo hints, *res, *next;
@@ -320,8 +335,10 @@ gaim_network_do_listen(unsigned short port, int socket_type, GaimNetworkListenCa
 	}
 	fcntl(listenfd, F_SETFL, O_NONBLOCK);
 
-	gaim_debug_info("network", "Listening on port: %hu\n", gaim_network_get_port_from_fd(listenfd));
+	actual_port = gaim_network_get_port_from_fd(listenfd);
 
+	gaim_debug_info("network", "Listening on port: %hu\n", actual_port);
+	
 	listen_data = g_new0(GaimNetworkListenData, 1);
 	listen_data->listenfd = listenfd;
 	listen_data->adding = TRUE;
@@ -329,8 +346,15 @@ gaim_network_do_listen(unsigned short port, int socket_type, GaimNetworkListenCa
 	listen_data->cb = cb;
 	listen_data->cb_data = cb_data;
 
+#ifdef ENABLE_NAT_PMP
+	/* Attempt a NAT-PMP Mapping, which will return immediately */
+	listen_data->has_pmp_mapping = (gaim_pmp_create_map(((socket_type == SOCK_STREAM) ? GAIM_PMP_TYPE_TCP : GAIM_PMP_TYPE_UDP),
+														actual_port, actual_port, GAIM_PMP_LIFETIME) != NULL);	
+#endif
+	
+	/* Attempt a UPnP Mapping */
 	listen_data->mapping_data = gaim_upnp_set_port_mapping(
-					gaim_network_get_port_from_fd(listenfd),
+					actual_port,
 					(socket_type == SOCK_STREAM) ? "TCP" : "UDP",
 					gaim_network_set_upnp_port_mapping_cb, listen_data);
 
@@ -373,6 +397,12 @@ void gaim_network_listen_cancel(GaimNetworkListenData *listen_data)
 {
 	if (listen_data->mapping_data != NULL)
 		gaim_upnp_cancel_port_mapping(listen_data->mapping_data);
+
+#ifdef ENABLE_NAT_PMP
+	if (listen_data->has_pmp_mapping)
+		gaim_pmp_destroy_map(((listen_data->socket_type == SOCK_STREAM) ? GAIM_PMP_TYPE_TCP : GAIM_PMP_TYPE_UDP),
+							 gaim_network_get_port_from_fd(listen_data->listenfd));
+#endif
 
 	g_free(listen_data);
 }
