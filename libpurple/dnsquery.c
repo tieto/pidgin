@@ -157,11 +157,7 @@ gaim_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 #endif
 
 #ifdef HAVE_SIGNAL_H
-	signal(SIGHUP, SIG_DFL);
-	signal(SIGINT, SIG_DFL);
-	signal(SIGQUIT, SIG_DFL);
-	signal(SIGCHLD, SIG_DFL);
-	signal(SIGTERM, SIG_DFL);
+	gaim_restore_default_signal_handlers();	
 	signal(SIGTRAP, trap_gdb_bug);
 #endif
 
