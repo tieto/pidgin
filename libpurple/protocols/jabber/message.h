@@ -22,6 +22,7 @@
 #ifndef _GAIM_JABBER_MESSAGE_H_
 #define _GAIM_JABBER_MESSAGE_H_
 
+#include "buddy.h"
 #include "jabber.h"
 #include "xmlnode.h"
 
@@ -72,6 +73,6 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 int jabber_message_send_chat(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags);
 
 unsigned int jabber_send_typing(GaimConnection *gc, const char *who, GaimTypingState state);
-
+void jabber_message_conv_closed(JabberStream *js, const char *who);
 
 #endif /* _GAIM_JABBER_MESSAGE_H_ */

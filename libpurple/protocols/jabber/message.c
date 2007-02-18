@@ -78,12 +78,26 @@ static void handle_chat(JabberMessage *jm)
 	}
 
 	if(!jm->xhtml && !jm->body) {
-		if(JM_STATE_COMPOSING == jm->chat_state)
+		if(JM_STATE_COMPOSING == jm->chat_state) {
 			serv_got_typing(jm->js->gc, from, 0, GAIM_TYPING);
-		else if(JM_STATE_PAUSED == jm->chat_state)
+		} else if(JM_STATE_PAUSED == jm->chat_state) {
 			serv_got_typing(jm->js->gc, from, 0, GAIM_TYPED);
-		else
+		} else if(JM_STATE_GONE == jm->chat_state) {
+			GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+					from, jm->js->gc->account);
+			if (conv) {
+#if 0  /* String freeze */
+				gaim_conversation_write(conv, "",
+						  "So and so has left the conversation.",
+						  GAIM_MESSAGE_INFO, time(NULL));
+#endif
+				
+			}
 			serv_got_typing_stopped(jm->js->gc, from);
+			
+		} else {
+			serv_got_typing_stopped(jm->js->gc, from);
+		}
 	} else {
 		if(jbr) {
 			if(JM_TS_JEP_0085 == (jm->typing_style & JM_TS_JEP_0085)) {
@@ -635,3 +649,15 @@ unsigned int jabber_send_typing(GaimConnection *gc, const char *who, GaimTypingS
 	return 0;
 }
 
+void jabber_message_conv_closed(JabberStream *js, const char *who)
+{
+	JabberMessage *jm = g_new0(JabberMessage, 1);
+	jm->js = js;
+	jm->type = JABBER_MESSAGE_CHAT;
+	jm->to = g_strdup(who);
+	jm->id = jabber_get_next_id(jm->js);
+	jm->typing_style = JM_TS_JEP_0085;
+	jm->chat_state = JM_STATE_GONE;
+	jabber_message_send(jm);
+	jabber_message_free(jm);
+}

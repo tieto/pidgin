@@ -1431,6 +1431,8 @@ static void jabber_convo_closed(GaimConnection *gc, const char *who)
 			g_free(jbr->thread_id);
 			jbr->thread_id = NULL;
 		}
+		if(jbr->chat_states == JABBER_CHAT_STATES_SUPPORTED)
+			jabber_message_conv_closed(js, who);
 	}
 
 	jabber_id_free(jid);
