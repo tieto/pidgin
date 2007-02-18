@@ -21,6 +21,7 @@
  */
 
 #include "internal.h"
+#include "util.h"
 
 #ifndef _WIN32
 #include <resolv.h>
