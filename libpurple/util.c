@@ -4124,7 +4124,9 @@ void gaim_restore_default_signal_handlers(void)
 	signal(SIGILL,  SIG_DFL);	/* 4:  illegal instruction (not reset when caught) */
 	signal(SIGTRAP, SIG_DFL);	/* 5:  trace trap (not reset when caught) */
 	signal(SIGABRT, SIG_DFL);	/* 6:  abort program */
+#ifdef SIGEMT
 	signal(SIGEMT,  SIG_DFL);	/* 7:  EMT instruction */
+#endif
 	signal(SIGFPE,  SIG_DFL);	/* 8:  floating point exception */
 	signal(SIGBUS,  SIG_DFL);	/* 10: bus error */
 	signal(SIGSEGV, SIG_DFL);	/* 11: segmentation violation */
