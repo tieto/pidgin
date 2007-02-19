@@ -4117,6 +4117,7 @@ const char *_gaim_oscar_convert(const char *act, const char *protocol)
 
 void gaim_restore_default_signal_handlers(void)
 {
+#ifndef _WIN32
 #ifdef HAVE_SIGNAL_H
 	signal(SIGHUP, SIG_DFL);	/* 1: terminal line hangup */
 	signal(SIGINT, SIG_DFL);	/* 2: interrupt program */
@@ -4133,7 +4134,6 @@ void gaim_restore_default_signal_handlers(void)
 	signal(SIGEMT,  SIG_DFL);	/* 7:  EMT instruction (Non-POSIX) */
 #endif /* SIGEMT */
 
-#endif
 	signal(SIGFPE,  SIG_DFL);	/* 8:  floating point exception */
 	signal(SIGBUS,  SIG_DFL);	/* 10: bus error */
 	signal(SIGSEGV, SIG_DFL);	/* 11: segmentation violation */
@@ -4145,4 +4145,5 @@ void gaim_restore_default_signal_handlers(void)
 	signal(SIGXCPU, SIG_DFL);	/* 24: exceeded CPU time limit */
 	signal(SIGXFSZ, SIG_DFL);	/* 25: exceeded file size limit */	
 #endif /* HAVE_SIGNAL_H */
+#endif /* !_WIN32 */
 }
