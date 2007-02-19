@@ -85,13 +85,30 @@ static void handle_chat(JabberMessage *jm)
 		} else if(JM_STATE_GONE == jm->chat_state) {
 			GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
 					from, jm->js->gc->account);
-			if (conv) {
-#if 0  /* String freeze */
-				gaim_conversation_write(conv, "",
-						  "So and so has left the conversation.",
-						  GAIM_MESSAGE_INFO, time(NULL));
+			if (conv && jid->node && jid->domain) {
+#if 0  /* String freeze... make sure to mark the message for translation */
+				char buf[256];
+				GaimBuddy *buddy;
+
+				g_snprintf(buf, sizeof(buf), "%s@%s", jid->node, jid->domain);
+
+				if ((buddy = gaim_find_buddy(jm->js->gc->account, buf))) {
+					const char *who;
+					char *escaped;
+
+					who = gaim_buddy_get_alias(buddy);
+					escaped = g_markup_escape_text(who, -1);
+
+					g_snprintf(buf, sizeof(buf),
+					           "%s has left the conversation.", escaped);
+
+					/* At some point when we restructure GaimConversation,
+					 * this should be able to be implemented by removing the
+					 * user from the conversation like we do with chats now. */
+					gaim_conversation_write(conv, "", buf,
+					                        GAIM_MESSAGE_SYSTEM, time(NULL));
+				}
 #endif
-				
 			}
 			serv_got_typing_stopped(jm->js->gc, from);
 			
