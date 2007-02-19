@@ -602,11 +602,11 @@ static void jabber_buddy_info_destroy(JabberBuddyInfo *jbi)
 	/* Remove the timeout, which would otherwise trigger jabber_buddy_get_info_timeout() */
 	if (jbi->timeout_handle > 0)
 		gaim_timeout_remove(jbi->timeout_handle);
-	
+
 	g_free(jbi->jid);
 	g_hash_table_destroy(jbi->resources);
 	g_free(jbi->vcard_text);
-	g_free(jbi);	
+	g_free(jbi);
 }
 
 static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
@@ -694,7 +694,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 				gaim_notify_user_info_add_pair(user_info,
 											   _("Client"), tmp);
 				g_free(tmp);
-				
+
 				if(jbr->client.os) {
 					gaim_notify_user_info_add_pair(user_info, _("Operating System"), jbr->client.os);
 				}
@@ -726,14 +726,16 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 static void jabber_buddy_info_remove_id(JabberBuddyInfo *jbi, const char *id)
 {
 	GSList *l = jbi->ids;
+	char *comp_id;
 
 	if(!id)
 		return;
 
 	while(l) {
-		if(!strcmp(id, l->data)) {
-			jbi->ids = g_slist_remove(jbi->ids, l->data);
-			g_free(l->data);			
+		comp_id = l->data;
+		if(!strcmp(id, comp_id)) {
+			jbi->ids = g_slist_remove(jbi->ids, comp_id);
+			g_free(comp_id);
 			return;
 		}
 		l = l->next;
@@ -1093,7 +1095,7 @@ void jabber_buddy_remove_all_pending_buddy_info_requests(JabberStream *js)
 			g_slist_free(jbi->ids);
 			jabber_buddy_info_destroy(jbi);
 
-			l = l->next;			
+			l = l->next;
 		}
 
 		g_slist_free(js->pending_buddy_info_requests);
