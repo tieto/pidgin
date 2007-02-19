@@ -274,7 +274,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		g_free(js->server_name);
 		js->server_name = g_strdup(name);
 		if (!strcmp(name, "Google Talk")) {
-		  printf("ADSFADFAFAFADF !!!!\n");
+		  gaim_debug_info("jabber", "Google Talk!");
 		  js->googletalk = TRUE;
 		}
 	}
