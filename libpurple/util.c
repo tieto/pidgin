@@ -4124,7 +4124,15 @@ void gaim_restore_default_signal_handlers(void)
 	signal(SIGILL,  SIG_DFL);	/* 4:  illegal instruction (not reset when caught) */
 	signal(SIGTRAP, SIG_DFL);	/* 5:  trace trap (not reset when caught) */
 	signal(SIGABRT, SIG_DFL);	/* 6:  abort program */
-	signal(SIGEMT,  SIG_DFL);	/* 7:  EMT instruction */
+
+#ifdef SIGPOLL
+	signal(SIGPOLL,  SIG_DFL);	/* 7:  pollable event (POSIX) */	
+#endif /* SIGPOLL */
+
+#ifdef SIGEMT
+	signal(SIGEMT,  SIG_DFL);	/* 7:  EMT instruction (Non-POSIX) */
+#endif /* SIGEMT */
+
 	signal(SIGFPE,  SIG_DFL);	/* 8:  floating point exception */
 	signal(SIGBUS,  SIG_DFL);	/* 10: bus error */
 	signal(SIGSEGV, SIG_DFL);	/* 11: segmentation violation */
@@ -4135,5 +4143,5 @@ void gaim_restore_default_signal_handlers(void)
 	signal(SIGCHLD, SIG_DFL);	/* 20: child status has changed */
 	signal(SIGXCPU, SIG_DFL);	/* 24: exceeded CPU time limit */
 	signal(SIGXFSZ, SIG_DFL);	/* 25: exceeded file size limit */	
-#endif
+#endif /* HAVE_SIGNAL_H */
 }
