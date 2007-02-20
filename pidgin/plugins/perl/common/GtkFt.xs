@@ -4,11 +4,11 @@ MODULE = Pidgin::Xfer  PACKAGE = Pidgin::Xfer  PREFIX = pidgin_xfer_
 PROTOTYPES: ENABLE
 
 void
-gaim_set_gtkxfer_dialog(dialog)
+pidgin_set_xfer_dialog(dialog)
 	Pidgin::Xfer::Dialog dialog
 
 Pidgin::Xfer::Dialog
-gaim_get_gtkxfer_dialog()
+pidgin_get_xfer_dialog()
 
 MODULE = Pidgin::Xfer  PACKAGE = Pidgin::Xfer::Dialog  PREFIX = pidginxfer_dialog_
 PROTOTYPES: ENABLE
