@@ -34,7 +34,7 @@ gaim_timeout_add(guint interval, GSourceFunc function, gpointer data)
 	return ops->timeout_add(interval, function, data);
 }
 
-guint
+gboolean
 gaim_timeout_remove(guint tag)
 {
 	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();
@@ -50,7 +50,7 @@ gaim_input_add(int source, GaimInputCondition condition, GaimInputFunction func,
 	return ops->input_add(source, condition, func, user_data);
 }
 
-guint
+gboolean
 gaim_input_remove(guint tag)
 {
 	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();

@@ -57,7 +57,7 @@ struct _GaimEventLoopUiOps
 	 * Removes a callback timer.
 	 * @see gaim_timeout_remove, g_source_remove
 	 */
-	guint (*timeout_remove)(guint handle);
+	gboolean (*timeout_remove)(guint handle);
 
 	/**
 	 * Adds an input handler.
@@ -70,7 +70,7 @@ struct _GaimEventLoopUiOps
 	 * Removes an input handler.
 	 * @see gaim_input_remove, g_source_remove
 	 */
-	guint (*input_remove)(guint handle);
+	gboolean (*input_remove)(guint handle);
 };
 
 /**************************************************************************/
@@ -97,7 +97,7 @@ guint gaim_timeout_add(guint interval, GSourceFunc function, gpointer data);
  *
  * @return Something.
  */
-guint gaim_timeout_remove(guint handle);
+gboolean gaim_timeout_remove(guint handle);
 
 /**
  * Adds an input handler.
@@ -119,7 +119,7 @@ guint gaim_input_add(int fd, GaimInputCondition cond,
  * @param handle The handle of the input handler. Note that this is the return
  * value from gaim_input_add, <i>not</i> the file descriptor.
  */
-guint gaim_input_remove(guint handle);
+gboolean gaim_input_remove(guint handle);
 
 /*@}*/
 

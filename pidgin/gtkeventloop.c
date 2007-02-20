@@ -116,9 +116,9 @@ static guint pidgin_input_add(gint fd, GaimInputCondition condition, GaimInputFu
 static GaimEventLoopUiOps eventloop_ops =
 {
 	g_timeout_add,
-	(guint (*)(guint))g_source_remove,
+	g_source_remove,
 	pidgin_input_add,
-	(guint (*)(guint))g_source_remove
+	g_source_remove
 };
 
 GaimEventLoopUiOps *
