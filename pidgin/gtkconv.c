@@ -3338,6 +3338,7 @@ generate_invite_user_names(GaimConnection *gc)
 static GdkPixbuf *
 get_chat_buddy_status_icon(GaimConvChat *chat, const char *name, GaimConvChatBuddyFlags flags)
 {
+        PidginConversation *gtkconv = PIDGIN_CONVERSATION(chat->conv);
 	GdkPixbuf *pixbuf, *scale, *scale2;
 	char *filename;
 	const char *image = NULL;
@@ -3345,21 +3346,20 @@ get_chat_buddy_status_icon(GaimConvChat *chat, const char *name, GaimConvChatBud
 	if (flags & GAIM_CBFLAGS_FOUNDER) {
 		image = "founder.png";
 	} else if (flags & GAIM_CBFLAGS_OP) {
-		image = "op.png";
+		image = PIDGIN_STOCK_STATUS_OPERATOR;
 	} else if (flags & GAIM_CBFLAGS_HALFOP) {
-		image = "halfop.png";
+		image = PIDGIN_STOCK_STATUS_HALFOP;
 	} else if (flags & GAIM_CBFLAGS_VOICE) {
-		image = "voice.png";
+		image = PIDGIN_STOCK_STATUS_VOICE;
 	} else if ((!flags) && gaim_conv_chat_is_user_ignored(chat, name)) {
 		image = "ignored.png";
 	} else {
 		return NULL;
 	}
 
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status", "default", image, NULL);
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	g_free(filename);
-
+	pixbuf = gtk_widget_render_icon (gtkconv->tab_cont, image, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL),
+				 	 "GtkTreeView");
+	
 	if (!pixbuf)
 		return NULL;
 

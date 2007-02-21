@@ -83,6 +83,7 @@
 #define PIDGIN_STOCK_STATUS_PERSON     "pidgin-status-person"
 #define PIDGIN_STOCK_STATUS_OPERATOR   "pidgin-status-operator"
 #define PIDGIN_STOCK_STATUS_HALFOP     "pidgin-status-halfop"
+#define PIDGIN_STOCK_STATUS_VOICE      "pidgin-status-voice"
 #define PIDGIN_STOCK_STATUS_MESSAGE    "pidgin-status-message"
 
 /* Dialog icons */

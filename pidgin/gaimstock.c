@@ -128,6 +128,7 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_STATUS_PERSON, 	"status", "person.png",		TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_OPERATOR,	"status", "operator.png",	TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_HALFOP, 	"status", "half-operator.png",	TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_STATUS_VOICE, 	"status", "voice.png",		TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_MESSAGE, 	"status", "message-pending.png",TRUE, FALSE, FALSE, FALSE },
 
 	{ PIDGIN_STOCK_DIALOG_AUTH,	"dialogs", "auth.png",		TRUE, FALSE, FALSE, TRUE },

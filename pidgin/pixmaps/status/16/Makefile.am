@@ -15,7 +15,8 @@ EXTRA_DIST = 	available.png \
 		message-pending.png \
 		offline.png \
 		operator.png \
-		person.png
+		person.png \
+		voice.png
 
 pidginstatuspixdir = $(datadir)/pixmaps/pidgin/status/16
 
