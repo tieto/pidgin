@@ -1187,6 +1187,8 @@ cache_pixbufs(PidginStatusBox *status_box)
 								     icon_size, "PidginStatusBox");
 	status_box->typing_pixbufs[3] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING3,
 								     icon_size, "PidginStatusBox");
+	status_box->typing_pixbufs[4] =  gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_TYPING4,
+								     icon_size, "PidginStatusBox");
 }
 
 static void account_enabled_cb(GaimAccount *acct, PidginStatusBox *status_box) {
@@ -2053,7 +2055,7 @@ pidgin_status_box_pulse_connecting(PidginStatusBox *status_box)
 static void
 pidgin_status_box_pulse_typing(PidginStatusBox *status_box)
 {
-	if (status_box->typing_index == 3)
+	if (status_box->typing_index == 4)
 		status_box->typing_index = 0;
 	else
 		status_box->typing_index++;

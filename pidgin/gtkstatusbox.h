@@ -110,7 +110,7 @@ struct _PidginStatusBox
 	int connecting_index;
 	GdkPixbuf *connecting_pixbufs[4];
 	int typing_index;
-	GdkPixbuf *typing_pixbufs[4];
+	GdkPixbuf *typing_pixbufs[6];
 
 	gboolean network_available;
 	gboolean connecting;

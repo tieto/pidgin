@@ -146,6 +146,7 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_ANIMATION_TYPING1,  "animations", "typing1.png",TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_ANIMATION_TYPING2,  "animations", "typing2.png",TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_ANIMATION_TYPING3,  "animations", "typing3.png",TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_ANIMATION_TYPING4,  "animations", "typing4.png",TRUE, FALSE, FALSE, FALSE },
 
 	{ PIDGIN_STOCK_TOOLBAR_ACCOUNTS, "toolbar", "accounts.png", TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_BGCOLOR, "toolbar", "change-bgcolor.png", TRUE, FALSE, FALSE, FALSE },
