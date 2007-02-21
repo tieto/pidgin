@@ -119,6 +119,17 @@
 #define PIDGIN_STOCK_TOOLBAR_TYPING       "pidgin-typing"
 #define PIDGIN_STOCK_TOOLBAR_USER_INFO    "pidgin-info"
 #define PIDGIN_STOCK_TOOLBAR_PENDING      "pidgin-pending"
+
+/* Tray icons */
+#define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-available"
+#define PIDGIN_STOCK_TRAY_AWAY	  	  "pidgin-tray-away"
+#define PIDGIN_STOCK_TRAY_BUSY            "pidgin-tray-busy"
+#define PIDGIN_STOCK_TRAY_XA              "pidgin-tray-xa"
+#define PIDGIN_STOCK_TRAY_OFFLINE         "pidgin-tray-offline"
+#define PIDGIN_STOCK_TRAY_CONNECT         "pidgin-tray-connect"
+#define PIDGIN_STOCK_TRAY_PENDING         "pidgin-tray-pending"
+
+
 /*@}*/
 
 /**

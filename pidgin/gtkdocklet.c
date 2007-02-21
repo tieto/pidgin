@@ -67,8 +67,7 @@ docklet_blink_icon()
 	blinked = !blinked;
 
 	switch (status) {
-		case DOCKLET_STATUS_ONLINE_PENDING:
-		case DOCKLET_STATUS_AWAY_PENDING:
+		case DOCKLET_STATUS_PENDING:
 			if (blinked) {
 				if (ui_ops && ui_ops->blank_icon)
 					ui_ops->blank_icon();
@@ -114,8 +113,10 @@ docklet_update_status()
 {
 	GList *convs, *l;
 	int count;
+	GaimSavedStatus *saved_status;
+	GaimStatusPrimitive prim;
 	DockletStatus newstatus = DOCKLET_STATUS_OFFLINE;
-	gboolean pending = FALSE;
+	gboolean pending = FALSE, connecting = FALSE;
 
 	/* determine if any ims have unseen messages */
 	convs = get_pending_list(DOCKLET_TOOLTIP_LINE_LIMIT);
@@ -170,19 +171,7 @@ docklet_update_status()
 		ui_ops->set_tooltip(NULL);
 	}
 
-	/* iterate through all accounts and determine which
-	 * status to show in the tray icon based on the following
-	 * ranks (highest encountered rank will be used):
-	 *
-	 *     1) OFFLINE
-	 *     2) ONLINE
-	 *     3) ONLINE_PENDING
-	 *     4) AWAY
-	 *     5) AWAY_PENDING
-	 *     6) CONNECTING
-	 */
 	for(l = gaim_accounts_get_all(); l != NULL; l = l->next) {
-		DockletStatus tmpstatus = DOCKLET_STATUS_OFFLINE;
 
 		GaimAccount *account = (GaimAccount*)l->data;
 		GaimStatus *account_status;
@@ -194,28 +183,26 @@ docklet_update_status()
 			continue;
 
 		account_status = gaim_account_get_active_status(account);
-
-		if (gaim_account_is_connecting(account)) {
-			tmpstatus = DOCKLET_STATUS_CONNECTING;
-		} else if (gaim_status_is_online(account_status)) {
-			if (!gaim_status_is_available(account_status)) {
-				if (pending)
-					tmpstatus = DOCKLET_STATUS_AWAY_PENDING;
-				else
-					tmpstatus = DOCKLET_STATUS_AWAY;
-			}
-			else {
-				if (pending)
-					tmpstatus = DOCKLET_STATUS_ONLINE_PENDING;
-				else
-					tmpstatus = DOCKLET_STATUS_ONLINE;
-			}
-		}
-
-		if (tmpstatus > newstatus)
-			newstatus = tmpstatus;
+		if (gaim_account_is_connecting(account))
+			connecting = TRUE;
 	}
-
+	
+	saved_status = gaim_savedstatus_get_current();
+        prim = gaim_savedstatus_get_type(saved_status);
+	
+	if (connecting)
+		newstatus = DOCKLET_STATUS_CONNECTING;
+	else if (prim == GAIM_STATUS_UNAVAILABLE)
+		newstatus = DOCKLET_STATUS_BUSY;
+	else if (prim == GAIM_STATUS_AWAY)
+		newstatus = DOCKLET_STATUS_AWAY;
+	else if (prim == GAIM_STATUS_EXTENDED_AWAY)
+        	newstatus = DOCKLET_STATUS_XA;
+        else if (prim == GAIM_STATUS_OFFLINE)
+        	newstatus = DOCKLET_STATUS_OFFLINE;
+	else
+		newstatus = DOCKLET_STATUS_AVAILABLE;
+			      
 	/* update the icon if we changed status */
 	if (status != newstatus) {
 		status = newstatus;
@@ -225,8 +212,7 @@ docklet_update_status()
 
 		/* and schedule the blinker function if messages are pending */
 		if (gaim_prefs_get_bool("/gaim/gtk/docklet/blink") &&
-		    (status == DOCKLET_STATUS_ONLINE_PENDING
-		     || status == DOCKLET_STATUS_AWAY_PENDING)
+		    status == DOCKLET_STATUS_PENDING
 		    && docklet_blinking_timer == 0) {
 			docklet_blinking_timer = g_timeout_add(500, docklet_blink_icon, NULL);
 		}
@@ -512,7 +498,7 @@ docklet_menu() {
 
 	menuitem = gtk_menu_item_new_with_label(_("Unread Messages"));
 
-	if (status == DOCKLET_STATUS_ONLINE_PENDING || status == DOCKLET_STATUS_AWAY_PENDING) {
+	if (status == DOCKLET_STATUS_PENDING) {
 		GtkWidget *submenu = gtk_menu_new();
 		GList *l = get_pending_list(0);
 		if (l == NULL) {
@@ -584,7 +570,7 @@ pidgin_docklet_clicked(int button_type)
 {
 	switch (button_type) {
 		case 1:
-			if (status == DOCKLET_STATUS_ONLINE_PENDING || status == DOCKLET_STATUS_AWAY_PENDING) {
+			if (status == DOCKLET_STATUS_PENDING) {
 				GList *l = get_pending_list(1);
 				if (l != NULL) {
 					gaim_conversation_present((GaimConversation *)l->data);

@@ -1068,6 +1068,8 @@ gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 	saved_status->usage_count++;
 	saved_statuses = g_list_remove(saved_statuses, saved_status);
 	saved_statuses = g_list_insert_sorted(saved_statuses, saved_status, saved_statuses_sort_func);
+	gaim_prefs_set_int("/core/savedstatus/default",
+					   gaim_savedstatus_get_creation_time(saved_status));
 
 	accounts = gaim_accounts_get_all_active();
 	for (node = accounts; node != NULL; node = node->next)
@@ -1081,8 +1083,6 @@ gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 
 	g_list_free(accounts);
 
-	gaim_prefs_set_int("/core/savedstatus/default",
-					   gaim_savedstatus_get_creation_time(saved_status));
 	gaim_savedstatus_set_idleaway(FALSE);
 
 	gaim_signal_emit(gaim_savedstatuses_get_handle(), "savedstatus-changed",

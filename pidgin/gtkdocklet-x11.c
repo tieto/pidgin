@@ -93,27 +93,30 @@ docklet_x11_update_icon(DockletStatus icon)
 
 	switch (icon) {
 		case DOCKLET_STATUS_OFFLINE:
-			icon_name = PIDGIN_STOCK_ICON_OFFLINE;
+			icon_name = PIDGIN_STOCK_TRAY_OFFLINE;
 			break;
 		case DOCKLET_STATUS_CONNECTING:
-			icon_name = PIDGIN_STOCK_ICON_CONNECT;
+			icon_name = PIDGIN_STOCK_TRAY_CONNECT;
 			break;
-		case DOCKLET_STATUS_ONLINE:
-			icon_name = PIDGIN_STOCK_ICON_ONLINE;
+		case DOCKLET_STATUS_AVAILABLE:
+			icon_name = PIDGIN_STOCK_TRAY_AVAILABLE;
 			break;
-		case DOCKLET_STATUS_ONLINE_PENDING:
-			icon_name = PIDGIN_STOCK_ICON_ONLINE_MSG;
+		case DOCKLET_STATUS_PENDING:
+			icon_name = PIDGIN_STOCK_TRAY_PENDING;
 			break;
 		case DOCKLET_STATUS_AWAY:
-			icon_name = PIDGIN_STOCK_ICON_AWAY;
+			icon_name = PIDGIN_STOCK_TRAY_AWAY;
 			break;
-		case DOCKLET_STATUS_AWAY_PENDING:
-			icon_name = PIDGIN_STOCK_ICON_AWAY_MSG;
+		case DOCKLET_STATUS_BUSY:
+			icon_name = PIDGIN_STOCK_TRAY_BUSY;
+			break;
+		case DOCKLET_STATUS_XA:
+			icon_name = PIDGIN_STOCK_TRAY_XA;
 			break;
 	}
 
 	if(icon_name)
-		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR);
+		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 
 #if 0
 	GdkPixbuf *p;

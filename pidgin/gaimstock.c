@@ -160,6 +160,14 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_TOOLBAR_PLUGINS, "toolbar", "plugins.png", TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_TYPING, "toolbar", "typing.png", TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_PENDING, "status", "message-pending.png", TRUE, FALSE, FALSE, FALSE },
+	
+	{ PIDGIN_STOCK_TRAY_AVAILABLE, "tray", "tray-online.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TRAY_AWAY, "tray", "tray-away.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TRAY_BUSY, "tray", "tray-busy.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TRAY_XA, "tray", "tray-extended-away.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TRAY_OFFLINE, "tray", "tray-offline.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TRAY_CONNECT, "tray", "tray-online.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TRAY_PENDING, "tray", "tray-message.png", TRUE, FALSE, FALSE, FALSE }
 };
 
 static gchar *
