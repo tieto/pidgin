@@ -1168,6 +1168,16 @@ cache_pixbufs(PidginStatusBox *status_box)
 								     icon_size, "PidginStatusBox");
 	status_box->connecting_pixbufs[3] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT3,
 								     icon_size, "PidginStatusBox");
+	status_box->connecting_pixbufs[4] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT4,
+								     icon_size, "PidginStatusBox");
+	status_box->connecting_pixbufs[5] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT5,
+								     icon_size, "PidginStatusBox");
+	status_box->connecting_pixbufs[6] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT6,
+								     icon_size, "PidginStatusBox");
+	status_box->connecting_pixbufs[7] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT7,
+								     icon_size, "PidginStatusBox");
+	status_box->connecting_pixbufs[8] = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_ANIMATION_CONNECT8,
+								     icon_size, "PidginStatusBox");
 
 	if (status_box->typing_pixbufs[0] != NULL)
 		gdk_pixbuf_unref(status_box->typing_pixbufs[0]);
@@ -2045,7 +2055,7 @@ pidgin_status_box_pulse_connecting(PidginStatusBox *status_box)
 {
 	if (!status_box)
 		return;
-	if (status_box->connecting_index == 3)
+	if (status_box->connecting_index == 8)
 		status_box->connecting_index = 0;
 	else
 		status_box->connecting_index++;
