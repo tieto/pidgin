@@ -201,6 +201,7 @@ static void recent_buddies_cb(const char *name, GaimPrefType type, gconstpointer
 void oscar_set_info(GaimConnection *gc, const char *info);
 static void oscar_set_info_and_status(GaimAccount *account, gboolean setinfo, const char *rawinfo, gboolean setstatus, GaimStatus *status);
 static void oscar_set_extendedstatus(GaimConnection *gc);
+static void oscar_format_screenname(GaimConnection *gc, const char *nick); 
 static gboolean gaim_ssi_rerequestdata(gpointer data);
 
 static void oscar_free_name_data(struct name_data *data) {
@@ -3591,6 +3592,8 @@ static int gaim_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	if (gaim_account_get_user_info(account) != NULL)
 		serv_set_info(gc, gaim_account_get_user_info(account));
 
+	oscar_format_screenname(gc, account->username);
+
 	/* Set our available message based on the current status */
 	status = gaim_account_get_active_status(account);
 	if (gaim_status_is_available(status))
@@ -4004,12 +4007,6 @@ static int gaim_info_change(OscarData *od, FlapConnection *conn, FlapFrame *fr, 
 		g_free(dialog_top);
 		g_free(dialog_msg);
 		return 1;
-	}
-
-	if (sn != NULL) {
-		char *dialog_msg = g_strdup_printf(_("Your screen name is currently formatted as follows:\n%s"), sn);
-		gaim_notify_info(gc, NULL, _("Account Info"), dialog_msg);
-		g_free(dialog_msg);
 	}
 
 	if (email != NULL) {
@@ -6034,16 +6031,6 @@ static void oscar_format_screenname(GaimConnection *gc, const char *nick) {
 	}
 }
 
-static void oscar_show_format_screenname(GaimPluginAction *action)
-{
-	GaimConnection *gc = (GaimConnection *) action->context;
-	gaim_request_input(gc, NULL, _("New screen name formatting:"), NULL,
-					   gaim_connection_get_display_name(gc), FALSE, FALSE, NULL,
-					   _("_OK"), G_CALLBACK(oscar_format_screenname),
-					   _("_Cancel"), NULL,
-					   gc);
-}
-
 static void oscar_confirm_account(GaimPluginAction *action)
 {
 	GaimConnection *gc;
@@ -6365,10 +6352,6 @@ oscar_actions(GaimPlugin *plugin, gpointer context)
 	else
 	{
 		/* AIM actions */
-		act = gaim_plugin_action_new(_("Format Screen Name..."),
-				oscar_show_format_screenname);
-		menu = g_list_prepend(menu, act);
-
 		act = gaim_plugin_action_new(_("Confirm Account"),
 				oscar_confirm_account);
 		menu = g_list_prepend(menu, act);
