@@ -1910,28 +1910,8 @@ void gaim_blist_remove_group(GaimGroup *group)
 	node = (GaimBlistNode *)group;
 
 	/* Make sure the group is empty */
-	if (node->child) {
-		char *buf;
-		int count = 0;
-		GaimBlistNode *child;
-
-		for (child = node->child; child != NULL; child = child->next)
-			count++;
-
-		buf = g_strdup_printf(ngettext("%d buddy from group %s was not removed "
-									   "because it belongs to an account which is "
-									   "disabled or offline.  This buddy and the "
-									   "group were not removed.\n",
-									   "%d buddies from group %s were not "
-									   "removed because they belong to accounts "
-									   "which are currently disabled or offline.  "
-									   "These buddies and the group were not "
-									   "removed.\n", count),
-							  count, group->name);
-		gaim_notify_error(NULL, NULL, _("Group not removed"), buf);
-		g_free(buf);
+	if (node->child)
 		return;
-	}
 
 	/* Remove the node from its parent */
 	if (gaimbuddylist->root == node)

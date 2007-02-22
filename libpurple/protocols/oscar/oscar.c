@@ -2713,7 +2713,6 @@ static int gaim_parse_clientauto(OscarData *od, FlapConnection *conn, FlapFrame 
 static int gaim_parse_genericerr(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	va_list ap;
 	guint16 reason;
-	char *m;
 
 	va_start(ap, fr);
 	reason = (guint16) va_arg(ap, unsigned int);
@@ -2722,12 +2721,6 @@ static int gaim_parse_genericerr(OscarData *od, FlapConnection *conn, FlapFrame 
 	gaim_debug_error("oscar",
 			   "snac threw error (reason 0x%04hx: %s)\n", reason,
 			   (reason < msgerrreasonlen) ? msgerrreason[reason] : "unknown");
-
-	m = g_strdup_printf(_("SNAC threw error: %s\n"),
-			reason < msgerrreasonlen ? _(msgerrreason[reason]) : _("Unknown error"));
-	gaim_notify_error(od->gc, NULL, m, NULL);
-	g_free(m);
-
 	return 1;
 }
 
