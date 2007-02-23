@@ -129,7 +129,7 @@ guint gaim_input_add(int fd, GaimInputCondition cond,
  * @param handle The handle of the input handler. Note that this is the return
  * value from gaim_input_add, <i>not</i> the file descriptor.
  */
-guint gaim_input_remove(guint handle);
+gboolean gaim_input_remove(guint handle);
 
 /**
  * Get the current error status for an input.
