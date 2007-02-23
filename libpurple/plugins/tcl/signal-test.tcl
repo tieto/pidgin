@@ -100,6 +100,14 @@ gaim::signal connect update-idle {
 }
 }
 
+gaim::signal connect [gaim::plugins handle] plugin-load args {
+	gaim::debug -info "tcl signal" "plugin-load [list $args]"
+}
+
+gaim::signal connect [gaim::plugins handle] plugin-unload args {
+	gaim::debug -info "tcl signal" "plugin-unload [list $args]"
+}
+
 proc plugin_init { } {
 	list "Tcl Signal Test" \
              "$gaim::version" \

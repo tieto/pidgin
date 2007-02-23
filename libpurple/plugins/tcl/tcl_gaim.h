@@ -104,6 +104,7 @@ Tcl_ObjCmdProc tcl_cmd_conversation;
 Tcl_ObjCmdProc tcl_cmd_core;
 Tcl_ObjCmdProc tcl_cmd_debug;
 Tcl_ObjCmdProc tcl_cmd_notify;
+Tcl_ObjCmdProc tcl_cmd_plugins;
 Tcl_ObjCmdProc tcl_cmd_prefs;
 Tcl_ObjCmdProc tcl_cmd_presence;
 Tcl_ObjCmdProc tcl_cmd_send_im;
