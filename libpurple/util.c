@@ -4144,12 +4144,5 @@ void gaim_restore_default_signal_handlers(void)
 	signal(SIGCHLD, SIG_DFL);	/* 20: child status has changed */
 	signal(SIGXCPU, SIG_DFL);	/* 24: exceeded CPU time limit */
 	signal(SIGXFSZ, SIG_DFL);	/* 25: exceeded file size limit */	
-<<<<<<< variant A
 #endif /* HAVE_SIGNAL_H */
 #endif /* !_WIN32 */
->>>>>>> variant B
-#endif /* HAVE_SIGNAL_H */
-####### Ancestor
-#endif
-======= end
-}
