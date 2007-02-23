@@ -386,14 +386,14 @@ static void
 socket_ready_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	GaimProxyConnectData *connect_data = data;
-	socklen_t len;
 	int error = 0;
 	int ret;
 
-	gaim_debug_info("proxy", "Connected.\n");
+	gaim_debug_info("proxy", "Connected to %s:%d.\n",
+					connect_data->host, connect_data->port);
 
 	/*
-	 * getsockopt after a non-blocking connect returns -1 if something is
+	 * gaim_input_get_error after a non-blocking connect returns -1 if something is
 	 * really messed up (bad descriptor, usually). Otherwise, it returns 0 and
 	 * error holds what connect would have returned if it blocked until now.
 	 * Thus, error == 0 is success, error == EINPROGRESS means "try again",
@@ -403,17 +403,21 @@ socket_ready_cb(gpointer data, gint source, GaimInputCondition cond)
 	 * be overly optimistic sometimes. select is just a hint that you might be
 	 * able to do something.)
 	 */
-	len = sizeof(error);
-	ret = getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len);
+	ret = gaim_input_get_error(connect_data->fd, &error);
 
-	if (ret == 0 && error == EINPROGRESS)
+	if (ret == 0 && error == EINPROGRESS) {
 		/* No worries - we'll be called again later */
 		/* TODO: Does this ever happen? */
+		gaim_debug_info("proxy", "(ret == 0 && error == EINPROGRESS)");
 		return;
+	}
 
 	if (ret != 0 || error != 0) {
 		if (ret != 0)
 			error = errno;
+		gaim_debug_info("proxy", "Error connecting to %s:%d (%s).\n",
+						connect_data->host, connect_data->port, strerror(error));
+
 		gaim_proxy_connect_data_disconnect(connect_data, strerror(error));
 		return;
 	}
@@ -466,14 +470,12 @@ proxy_connect_none(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
 		/*
 		 * The connection happened IMMEDIATELY... strange, but whatever.
 		 */
-		socklen_t len;
 		int error = ETIMEDOUT;
 		int ret;
 
 		gaim_debug_info("proxy", "Connected immediately.\n");
 
-		len = sizeof(error);
-		ret = getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len);
+		ret = gaim_input_get_error(connect_data->fd, &error);
 		if ((ret != 0) || (error != 0))
 		{
 			if (ret != 0)
@@ -783,13 +785,13 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 {
 	GString *request;
 	GaimProxyConnectData *connect_data;
-	socklen_t len;
 	int error = ETIMEDOUT;
 	int ret;
 
-	gaim_debug_info("proxy", "Connected.\n");
-
 	connect_data = data;
+
+	gaim_debug_info("proxy", "Connected to %s:%d.\n",
+		connect_data->host, connect_data->port);
 
 	if (connect_data->inpa > 0)
 	{
@@ -797,8 +799,7 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		connect_data->inpa = 0;
 	}
 
-	len = sizeof(error);
-	ret = getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len);
+	ret = gaim_input_get_error(connect_data->fd, &error);
 	if ((ret != 0) || (error != 0))
 	{
 		if (ret != 0)
@@ -947,7 +948,6 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	unsigned char packet[9];
 	struct hostent *hp;
 	GaimProxyConnectData *connect_data = data;
-	socklen_t len;
 	int error = ETIMEDOUT;
 	int ret;
 
@@ -959,8 +959,7 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		connect_data->inpa = 0;
 	}
 
-	len = sizeof(error);
-	ret = getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len);
+	ret = gaim_input_get_error(connect_data->fd, &error);
 	if ((ret != 0) || (error != 0))
 	{
 		if (ret != 0)
@@ -1515,7 +1514,6 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	unsigned char buf[5];
 	int i;
 	GaimProxyConnectData *connect_data = data;
-	socklen_t len;
 	int error = ETIMEDOUT;
 	int ret;
 
@@ -1527,8 +1525,7 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		connect_data->inpa = 0;
 	}
 
-	len = sizeof(error);
-	ret = getsockopt(connect_data->fd, SOL_SOCKET, SO_ERROR, &error, &len);
+	ret = gaim_input_get_error(connect_data->fd, &error);
 	if ((ret != 0) || (error != 0))
 	{
 		if (ret != 0)

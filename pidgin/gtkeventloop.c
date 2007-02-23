@@ -118,7 +118,8 @@ static GaimEventLoopUiOps eventloop_ops =
 	g_timeout_add,
 	g_source_remove,
 	pidgin_input_add,
-	g_source_remove
+	g_source_remove,
+	NULL /* input_get_error */
 };
 
 GaimEventLoopUiOps *
