@@ -143,7 +143,7 @@ gboolean gaim_input_remove(guint handle);
  * @return 0 if there is no error; -1 if there is an error, in which case errno will be set.
  */
 int
-gaim_input_get_error(int fd, int *errno);
+gaim_input_get_error(int fd, int *error);
 
 
 /*@}*/
