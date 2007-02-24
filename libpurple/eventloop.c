@@ -66,7 +66,6 @@ gaim_input_get_error(int fd, int *error)
 
 	if (ops->input_get_error)
 	{
-		errno = 0;
 		int ret = ops->input_get_error(fd, error);
 		errno = *error;
 		return ret;
