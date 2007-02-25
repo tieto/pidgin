@@ -1171,18 +1171,17 @@ GList *gnt_tree_get_selection_text_list(GntTree *tree)
 void gnt_tree_remove(GntTree *tree, gpointer key)
 {
 	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
+	static int depth = 0; /* Only redraw after all child nodes are removed */
 	if (row)
 	{
 		gboolean redraw = FALSE;
 
 		if (row->child) {
-			GntTreeRow *ch = row->child;
-			while (ch) {
-				GntTreeRow *n = ch->next;
-				tree->list = g_list_remove(tree->list, ch->key);
-				g_hash_table_remove(tree->hash, ch->key);
-				ch = n;
+			depth++;
+			while (row->child) {
+				gnt_tree_remove(tree, row->child->key);
 			}
+			depth--;
 		}
 
 		if (get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) >= 0)
@@ -1218,11 +1217,11 @@ void gnt_tree_remove(GntTree *tree, gpointer key)
 			row->parent->child = row->next;
 		if (row->prev)
 			row->prev->next = row->next;
-		
+
 		g_hash_table_remove(tree->hash, key);
 		tree->list = g_list_remove(tree->list, key);
 
-		if (redraw)
+		if (redraw && depth == 0)
 		{
 			redraw_tree(tree);
 		}
