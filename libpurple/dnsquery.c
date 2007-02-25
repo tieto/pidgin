@@ -477,7 +477,7 @@ handle_next_queued_request()
     	handle_next_queued_request();
     	return;
     }
-
+	
 	/*
 	 * If we have any children, attempt to have them perform the DNS
 	 * query.  If we're able to send the query then resolver will be
@@ -935,10 +935,10 @@ gaim_dnsquery_get_host(GaimDnsQueryData *query_data)
 	return query_data->hostname;
 }
 
-int
+unsigned short
 gaim_dnsquery_get_port(GaimDnsQueryData *query_data)
 {
-	g_return_val_if_fail(query_data != NULL, -1);
+	g_return_val_if_fail(query_data != NULL, 0);
 
 	return query_data->port;	
 }
@@ -952,8 +952,9 @@ gaim_dnsquery_set_ui_ops(GaimDnsQueryUiOps *ops)
 GaimDnsQueryUiOps *
 gaim_dnsquery_get_ui_ops(void)
 {
-	g_return_val_if_fail(dns_query_ui_ops != NULL, NULL);
-
+	/* It is perfectly acceptable for dns_query_ui_ops to be NULL; this just
+	 * means that the default platform-specific implementation will be used.
+	 */
 	return dns_query_ui_ops;
 }
 

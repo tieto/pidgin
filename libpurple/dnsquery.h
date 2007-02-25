@@ -121,7 +121,7 @@ char *gaim_dnsquery_get_host(GaimDnsQueryData *query_data);
  * @param query_data The DNS query
  * @return The port.
  */
-int gaim_dnsquery_get_port(GaimDnsQueryData *query_data);
+unsigned short gaim_dnsquery_get_port(GaimDnsQueryData *query_data);
 
 /**
  * Initializes the DNS query subsystem.
