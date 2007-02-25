@@ -108,6 +108,11 @@ gaim::signal connect [gaim::plugins handle] plugin-unload args {
 	gaim::debug -info "tcl signal" "plugin-unload [list $args]"
 }
 
+gaim::signal connect [gaim::savedstatuses handle] savedstatus-changed args {
+	gaim::debug -info "tcl signal" "savedstatus-changed [list $args]"
+	gaim::debug -info "tcl signal" "gaim::savedstatus current = [gaim::savedstatus current]"
+}
+
 proc plugin_init { } {
 	list "Tcl Signal Test" \
              "$gaim::version" \

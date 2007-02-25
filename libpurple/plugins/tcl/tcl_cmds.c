@@ -29,6 +29,7 @@
 #include "server.h"
 #include "notify.h"
 #include "blist.h"
+#include "savedstatuses.h"
 #include "debug.h"
 #include "prefs.h"
 #include "core.h"
@@ -1268,6 +1269,46 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 			Tcl_ListObjAppendElement(interp, list, elem);
 		}
 		Tcl_SetObjResult(interp, list);
+		break;
+	}
+
+	return TCL_OK;
+}
+
+int tcl_cmd_savedstatus(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CONST objv[])
+{
+	Tcl_Obj *result = Tcl_GetObjResult(interp);
+	const char *cmds[] = { "current", "handle", NULL };
+	enum { CMD_SAVEDSTATUS_CURRENT, CMD_SAVEDSTATUS_HANDLE } cmd;
+	int error;
+	GaimSavedStatus *saved_status;
+
+	if (objc < 2) {
+		Tcl_WrongNumArgs(interp, 1, objv, "subcommand ?args?");
+		return TCL_ERROR;
+	}
+
+	if ((error = Tcl_GetIndexFromObj(interp, objv[1], cmds, "subcommand", 0, (int *)&cmd)) != TCL_OK)
+		return error;
+
+	switch (cmd) {
+	case CMD_SAVEDSTATUS_CURRENT:
+		if (objc != 2) {
+			Tcl_WrongNumArgs(interp, 2, objv, "");
+			return TCL_ERROR;
+		}
+		if ((saved_status = gaim_savedstatus_get_current()) == NULL)
+			return TCL_ERROR;
+		Tcl_ListObjAppendElement(interp, result, Tcl_NewStringObj(gaim_savedstatus_get_title(saved_status), -1));
+		Tcl_ListObjAppendElement(interp, result, Tcl_NewIntObj(gaim_savedstatus_get_type(saved_status)));
+		Tcl_ListObjAppendElement(interp, result, Tcl_NewStringObj(gaim_savedstatus_get_message(saved_status), -1));
+		break;
+	case CMD_SAVEDSTATUS_HANDLE:
+		if (objc != 2) {
+			Tcl_WrongNumArgs(interp, 2, objv, "");
+			return TCL_ERROR;
+		}
+		Tcl_SetIntObj(result, (int)gaim_savedstatuses_get_handle());
 		break;
 	}
 
