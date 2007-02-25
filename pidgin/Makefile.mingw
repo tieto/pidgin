@@ -123,7 +123,8 @@ GTKGAIM_LIBS =	\
 		-latk-1.0 \
 		-lpango-1.0 \
 		-lgdk-win32-2.0 \
-		-lgdk_pixbuf-2.0
+		-lgdk_pixbuf-2.0 \
+		-lgdi32
 
 include $(GAIM_COMMON_RULES)
 
