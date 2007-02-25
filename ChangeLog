@@ -192,7 +192,8 @@ version 2.0.0:
 	* SIP/SIMPLE support (Thomas Butter, Google Summer of Code)
 	* Sametime protocol support
 	  Requires the meanwhile library: http://meanwhile.sourceforge.net
-	* QQ protocol support (Mark Huetsch, Google Summer of Code)
+	* QQ protocol support (Mark Huetsch, Google Summer of Code, and the
+	  developers of the OpenQ project)
 	* Removed the Napster and TOC protocols plugins
 
 	Other Noteworthy Changes:
