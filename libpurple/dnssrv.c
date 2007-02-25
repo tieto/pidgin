@@ -67,6 +67,8 @@ struct _GaimSrvQueryData {
 	char *query;
 	char *error_message;
 	GSList *results;
+#else
+	pid_t pid;
 #endif
 };
 
@@ -188,6 +190,7 @@ resolved(gpointer data, gint source, GaimInputCondition cond)
 	GaimSrvResponse *tmp;
 	int i;
 	GaimSrvCallback cb = query_data->cb;
+	int status;
 
 	read(source, &size, sizeof(int));
 	gaim_debug_info("dnssrv","found %d SRV entries\n", size);
@@ -197,6 +200,7 @@ resolved(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	cb(res, size, query_data->extradata);
+	waitpid(query_data->pid, &status, 0);
 
 	gaim_srv_cancel(query_data);
 }
@@ -344,6 +348,7 @@ gaim_srv_resolve(const char *protocol, const char *transport, const char *domain
 	query_data = g_new0(GaimSrvQueryData, 1);
 	query_data->cb = cb;
 	query_data->extradata = extradata;
+	query_data->pid = pid;
 	query_data->handle = gaim_input_add(out[0], GAIM_INPUT_READ, resolved, query_data);
 
 	g_free(query);
