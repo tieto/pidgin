@@ -138,6 +138,7 @@ static int tcl_init_interp(Tcl_Interp *interp)
 	Tcl_CreateObjCommand(interp, "::gaim::prefs", tcl_cmd_prefs, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::presence", tcl_cmd_presence, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::send_im", tcl_cmd_send_im, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::gaim::savedstatus", tcl_cmd_savedstatus, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::signal", tcl_cmd_signal, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::status", tcl_cmd_status, (ClientData)NULL, NULL);
 	Tcl_CreateObjCommand(interp, "::gaim::status_attr", tcl_cmd_status_attr, (ClientData)NULL, NULL);
