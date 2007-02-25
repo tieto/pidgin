@@ -161,7 +161,7 @@ void gnt_colors_parse(GKeyFile *kfile)
 		while (nkeys--)
 		{
 			gsize len;
-			char *key = keys[nkeys];
+			gchar *key = keys[nkeys];
 			char **list = g_key_file_get_string_list(kfile, "colors", key, &len, NULL);
 			if (len == 3)
 			{
@@ -170,8 +170,9 @@ void gnt_colors_parse(GKeyFile *kfile)
 				int b = atoi(list[2]);
 				int color = -1;
 
-				g_ascii_strdown(key, -1);
+				key = g_ascii_strdown(key, -1);
 				color = get_color(key);
+				g_free(key);
 				if (color == -1)
 					continue;
 
@@ -204,17 +205,21 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 	while (nkeys--)
 	{
 		gsize len;
-		char *key = keys[nkeys];
+		gchar *key = keys[nkeys];
 		char **list = g_key_file_get_string_list(kfile, "colorpairs", key, &len, NULL);
 		if (len == 2)
 		{
 			GntColorType type = 0;
-			int fg = get_color(g_ascii_strdown(list[0], -1));
-			int bg = get_color(g_ascii_strdown(list[1], -1));
+			gchar *fgc = g_ascii_strdown(list[0], -1);
+			gchar *bgc = g_ascii_strdown(list[1], -1);
+			int fg = get_color(fgc);
+			int bg = get_color(bgc);
+			g_free(fgc);
+			g_free(bgc);
 			if (fg == -1 || bg == -1)
 				continue;
 
-			g_ascii_strdown(key, -1);
+			key = g_ascii_strdown(key, -1);
 
 			if (strcmp(key, "normal") == 0)
 				type = GNT_COLOR_NORMAL;
@@ -234,8 +239,11 @@ void gnt_color_pairs_parse(GKeyFile *kfile)
 				type = GNT_COLOR_DISABLED;
 			else if (strcmp(key, "urgent") == 0)
 				type = GNT_COLOR_URGENT;
-			else
+			else {
+				g_free(key);
 				continue;
+			}
+			g_free(key);
 
 			init_pair(type, fg, bg);
 		}

@@ -23,6 +23,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "eventloop.h"
+#include "internal.h"
 
 static GaimEventLoopUiOps *eventloop_ui_ops = NULL;
 
@@ -56,6 +57,26 @@ gaim_input_remove(guint tag)
 	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();
 
 	return ops->input_remove(tag);
+}
+
+int
+gaim_input_get_error(int fd, int *error)
+{
+	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();
+
+	if (ops->input_get_error)
+	{
+		int ret = ops->input_get_error(fd, error);
+		errno = *error;
+		return ret;
+	}
+	else
+	{
+		socklen_t len;
+		len = sizeof(*error);
+
+		return getsockopt(fd, SOL_SOCKET, SO_ERROR, error, &len);
+	}
 }
 
 void

@@ -71,6 +71,16 @@ struct _GaimEventLoopUiOps
 	 * @see gaim_input_remove, g_source_remove
 	 */
 	gboolean (*input_remove)(guint handle);
+	
+	
+	/**
+	 * Get the current error status for an input.
+	 * Implementation of this UI op is optional. Implement it if the UI's sockets
+	 * or event loop needs to customize determination of socket error status.
+	 * @see gaim_input_get_error, getsockopt
+	 */
+	int (*input_get_error)(int fd, int *error);
+
 };
 
 /**************************************************************************/
@@ -120,6 +130,21 @@ guint gaim_input_add(int fd, GaimInputCondition cond,
  * value from gaim_input_add, <i>not</i> the file descriptor.
  */
 gboolean gaim_input_remove(guint handle);
+
+/**
+ * Get the current error status for an input.
+ * The return value and error follow getsockopt() with a level of SOL_SOCKET and an
+ * option name of SO_ERROR, and this is how the error is determined if the UI does not
+ * implement the input_get_error UI op.
+ *
+ * @param fd        The input file descriptor.
+ * @param errno		A pointer to an int which on return will have the error, or 0 if no error.
+ *
+ * @return 0 if there is no error; -1 if there is an error, in which case errno will be set.
+ */
+int
+gaim_input_get_error(int fd, int *error);
+
 
 /*@}*/
 

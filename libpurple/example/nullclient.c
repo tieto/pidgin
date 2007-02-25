@@ -107,7 +107,8 @@ static GaimEventLoopUiOps glib_eventloops =
 	g_timeout_add,
 	g_source_remove,
 	glib_input_add,
-	g_source_remove
+	g_source_remove,
+	NULL
 };
 /*** End of the eventloop functions. ***/
 
