@@ -119,13 +119,13 @@ gaim_dnsquery_failed(GaimDnsQueryData *query_data, const gchar *error_message)
 static gboolean
 gaim_dnsquery_ui_resolve(GaimDnsQueryData *query_data)
 {
-    GaimDnsQueryUiOps *ops = gaim_dnsquery_get_ui_ops();
+	GaimDnsQueryUiOps *ops = gaim_dnsquery_get_ui_ops();
 
-    if (ops && ops->resolve_host)
-    {
-        if (ops->resolve_host(query_data, gaim_dnsquery_resolved, gaim_dnsquery_failed))
-            return TRUE;
-    }
+	if (ops && ops->resolve_host)
+	{
+		if (ops->resolve_host(query_data, gaim_dnsquery_resolved, gaim_dnsquery_failed))
+			return TRUE;
+	}
 
 	return FALSE;
 }
@@ -390,9 +390,9 @@ gaim_dnsquery_resolver_new(gboolean show_debug)
 
 /**
  * @return TRUE if the request was sent succesfully.  FALSE
- *         if the request could not be sent.  This isn't
- *         necessarily an error.  If the child has expired,
- *         for example, we won't be able to send the message.
+ * 		if the request could not be sent.  This isn't
+ * 		necessarily an error.  If the child has expired,
+ * 		for example, we won't be able to send the message.
  */
 static gboolean
 send_dns_request_to_child(GaimDnsQueryData *query_data,
@@ -471,13 +471,13 @@ handle_next_queued_request()
 	query_data = queued_requests->data;
 	queued_requests = g_slist_delete_link(queued_requests, queued_requests);
 
-    if (gaim_dnsquery_ui_resolve(query_data))
-    {
-        /* The UI is handling the resolve; we're done */
-    	handle_next_queued_request();
-    	return;
-    }
-	
+	if (gaim_dnsquery_ui_resolve(query_data))
+	{
+		/* The UI is handling the resolve; we're done */
+		handle_next_queued_request();
+		return;
+	}
+
 	/*
 	 * If we have any children, attempt to have them perform the DNS
 	 * query.  If we're able to send the query then resolver will be
@@ -601,7 +601,7 @@ gaim_dnsquery_a(const char *hostname, int port,
 	GaimDnsQueryData *query_data;
 
 	g_return_val_if_fail(hostname != NULL, NULL);
-	g_return_val_if_fail(port     != 0, NULL);
+	g_return_val_if_fail(port	  != 0, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
 	query_data = g_new(GaimDnsQueryData, 1);
@@ -727,11 +727,11 @@ resolve_host(gpointer data)
 	query_data = data;
 	query_data->timeout = 0;
 
-    if (gaim_dnsquery_ui_resolve(query_data))
-    {
-        /* The UI is handling the resolve; we're done */
-    	return FALSE;
-    }
+	if (gaim_dnsquery_ui_resolve(query_data))
+	{
+		/* The UI is handling the resolve; we're done */
+		return FALSE;
+	}
 
 	if (inet_aton(query_data->hostname, &sin.sin_addr))
 	{
@@ -774,7 +774,7 @@ gaim_dnsquery_a(const char *hostname, int port,
 	GaimDnsQueryData *query_data;
 
 	g_return_val_if_fail(hostname != NULL, NULL);
-	g_return_val_if_fail(port     != 0, NULL);
+	g_return_val_if_fail(port	  != 0, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
 	gaim_debug_info("dnsquery", "Performing DNS lookup for %s\n", hostname);
@@ -817,11 +817,11 @@ resolve_host(gpointer data)
 	query_data = data;
 	query_data->timeout = 0;
 
-    if (gaim_dnsquery_ui_resolve(query_data))
-    {
-        /* The UI is handling the resolve; we're done */
-    	return FALSE;
-    }
+	if (gaim_dnsquery_ui_resolve(query_data))
+	{
+		/* The UI is handling the resolve; we're done */
+		return FALSE;
+	}
 
 	if (!inet_aton(query_data->hostname, &sin.sin_addr)) {
 		struct hostent *hp;
@@ -854,7 +854,7 @@ gaim_dnsquery_a(const char *hostname, int port,
 	GaimDnsQueryData *query_data;
 
 	g_return_val_if_fail(hostname != NULL, NULL);
-	g_return_val_if_fail(port     != 0, NULL);
+	g_return_val_if_fail(port	  != 0, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
 	query_data = g_new(GaimDnsQueryData, 1);
@@ -881,10 +881,10 @@ gaim_dnsquery_a(const char *hostname, int port,
 void
 gaim_dnsquery_destroy(GaimDnsQueryData *query_data)
 {
-    GaimDnsQueryUiOps *ops = gaim_dnsquery_get_ui_ops();
+	GaimDnsQueryUiOps *ops = gaim_dnsquery_get_ui_ops();
 
-    if (ops && ops->destroy)
-        ops->destroy(query_data);
+	if (ops && ops->destroy)
+		ops->destroy(query_data);
 
 #if defined(__unix__) || defined(__APPLE__)
 	queued_requests = g_slist_remove(queued_requests, query_data);
@@ -940,7 +940,7 @@ gaim_dnsquery_get_port(GaimDnsQueryData *query_data)
 {
 	g_return_val_if_fail(query_data != NULL, 0);
 
-	return query_data->port;	
+	return query_data->port;
 }
 
 void

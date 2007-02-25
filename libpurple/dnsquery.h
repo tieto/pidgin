@@ -49,14 +49,14 @@ typedef void  (*GaimDnsQueryFailedCallback) (GaimDnsQueryData *query_data, const
  */
 typedef struct
 {
-    /* If implemented, the UI is responsible for DNS queries */
-    gboolean (*resolve_host)(GaimDnsQueryData *query_data, GaimDnsQueryResolvedCallback resolved_cb, GaimDnsQueryFailedCallback failed_cb);
-    
-    /* After destroy is called, query_data will be feed, so this must
-     * cancel any further use of it the UI would do. Unneeded if 
-     * resolve_host is not implemented.
-     */
-    void (*destroy)(GaimDnsQueryData *query_data);
+	/* If implemented, the UI is responsible for DNS queries */
+	gboolean (*resolve_host)(GaimDnsQueryData *query_data, GaimDnsQueryResolvedCallback resolved_cb, GaimDnsQueryFailedCallback failed_cb);
+
+	/* After destroy is called, query_data will be feed, so this must
+	 * cancel any further use of it the UI would do. Unneeded if 
+	 * resolve_host is not implemented.
+	 */
+	void (*destroy)(GaimDnsQueryData *query_data);
 } GaimDnsQueryUiOps;
 
 #ifdef __cplusplus
