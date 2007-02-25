@@ -938,7 +938,7 @@ gaim_dnsquery_get_host(GaimDnsQueryData *query_data)
 int
 gaim_dnsquery_get_port(GaimDnsQueryData *query_data)
 {
-	g_return_val_if_fail(query_data != NULL, NULL);
+	g_return_val_if_fail(query_data != NULL, -1);
 
 	return query_data->port;	
 }
