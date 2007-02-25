@@ -186,11 +186,11 @@ docklet_update_status()
 		if (gaim_account_is_connecting(account))
 			connecting = TRUE;
 	}
-	
+
 	saved_status = gaim_savedstatus_get_current();
-        prim = gaim_savedstatus_get_type(saved_status);
+	prim = gaim_savedstatus_get_type(saved_status);
 	if (pending)
-		newstatus = DOCKLET_STATUS_PENDING;	
+		newstatus = DOCKLET_STATUS_PENDING;
 	else if (connecting)
 		newstatus = DOCKLET_STATUS_CONNECTING;
 	else if (prim == GAIM_STATUS_UNAVAILABLE)
@@ -198,12 +198,12 @@ docklet_update_status()
 	else if (prim == GAIM_STATUS_AWAY)
 		newstatus = DOCKLET_STATUS_AWAY;
 	else if (prim == GAIM_STATUS_EXTENDED_AWAY)
-        	newstatus = DOCKLET_STATUS_XA;
-        else if (prim == GAIM_STATUS_OFFLINE)
-        	newstatus = DOCKLET_STATUS_OFFLINE;
+		newstatus = DOCKLET_STATUS_XA;
+	else if (prim == GAIM_STATUS_OFFLINE)
+		newstatus = DOCKLET_STATUS_OFFLINE;
 	else
 		newstatus = DOCKLET_STATUS_AVAILABLE;
-			      
+
 	/* update the icon if we changed status */
 	if (status != newstatus) {
 		status = newstatus;

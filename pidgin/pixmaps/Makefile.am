@@ -48,18 +48,7 @@ EXTRA_DIST = \
 		typing.png			\
 		Makefile.mingw			\
 		gaim-install.ico		\
-		gaim.ico			\
-		gaim_16.ico			\
-		gaim_4bit_16.ico		\
-		gaim_away_16.ico		\
-		gaim_away_4bit_16.ico		\
-		gaim_blank_4bit_16.ico		\
-		gaim_msgpend_16.ico		\
-		gaim_msgpend_4bit_16.ico	\
-		gaim_msgunread_16.ico		\
-		gaim_msgunread_4bit_16.ico	\
-		gaim_offline_16.ico		\
-		gaim_offline_4bit_16.ico
+		gaim.ico			
 
 
 gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
