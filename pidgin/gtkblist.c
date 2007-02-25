@@ -2301,8 +2301,11 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
 		td->avatar_is_prpl_icon = TRUE;
 	}
 #endif
-	td->avatar_width = gdk_pixbuf_get_width(td->avatar);
-	td->avatar_height = gdk_pixbuf_get_height(td->avatar);
+
+	if (td->avatar) {
+		td->avatar_width = gdk_pixbuf_get_width(td->avatar);
+		td->avatar_height = gdk_pixbuf_get_height(td->avatar);
+	}
 
 	g_free(node_name);
 	g_free(tooltip_text);

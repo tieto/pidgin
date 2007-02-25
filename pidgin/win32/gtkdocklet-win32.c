@@ -45,8 +45,7 @@
  *  LOCALS
  */
 static HWND systray_hwnd = NULL;
-static const char *prev_icon_name = NULL;
-static HICON prev_hicon = NULL;
+static HICON cached_icons[DOCKLET_STATUS_CONNECTING + 1];
 static GtkWidget *image = NULL;
 static NOTIFYICONDATA _nicon_data;
 
@@ -456,28 +455,11 @@ static HICON load_hicon_from_stock(const char *stock) {
 }
 
 
-
-static void systray_change_icon(const char *icon_name) {
-	HICON hicon;
-
-	/* Avoid looking up the icon if it hasn't really changed.
-	 * This will happen when re-displaying the icon when blinking.  */
-	if (icon_name == prev_icon_name) {
-		hicon = prev_hicon;
-		prev_hicon = NULL;
-	} else
-		hicon = load_hicon_from_stock(icon_name);
-
+static void systray_change_icon(HICON hicon) {
 	g_return_if_fail(hicon != NULL);
 
 	_nicon_data.hIcon = hicon;
 	Shell_NotifyIcon(NIM_MODIFY, &_nicon_data);
-
-	if (prev_hicon)
-		DestroyIcon(prev_hicon);
-	prev_hicon = hicon;
-	prev_icon_name = icon_name;
-
 }
 
 static void systray_remove_nid(void) {
@@ -485,11 +467,14 @@ static void systray_remove_nid(void) {
 }
 
 static void winpidgin_tray_update_icon(DockletStatus icon) {
-	const gchar *icon_name = NULL;
 
 	g_return_if_fail(image != NULL);
+	g_return_if_fail(icon < (sizeof(cached_icons) / sizeof(HICON)));
 
-	switch (icon) {
+	/* Look up and cache the HICON if we don't already have it */
+	if (cached_icons[icon] == NULL) {
+		const gchar *icon_name = NULL;
+		switch (icon) {
 		case DOCKLET_STATUS_OFFLINE:
 			icon_name = PIDGIN_STOCK_TRAY_OFFLINE;
 			break;
@@ -511,10 +496,14 @@ static void winpidgin_tray_update_icon(DockletStatus icon) {
 		case DOCKLET_STATUS_XA:
 			icon_name = PIDGIN_STOCK_TRAY_XA;
 			break;
+		}
+
+		g_return_if_fail(icon_name != NULL);
+
+		cached_icons[icon] = load_hicon_from_stock(icon_name);
 	}
 
-	if(icon_name)
-		systray_change_icon(icon_name);
+	systray_change_icon(cached_icons[icon]);
 }
 
 static void winpidgin_tray_blank_icon() {
@@ -567,9 +556,16 @@ static void winpidgin_tray_create() {
 }
 
 static void winpidgin_tray_destroy() {
+	int cached_cnt = sizeof(cached_icons) / sizeof(HICON);
 	systray_remove_nid();
 	DestroyWindow(systray_hwnd);
 	pidgin_docklet_remove();
+
+	while (--cached_cnt >= 0) {
+		if (cached_icons[cached_cnt] != NULL)
+			DestroyIcon(cached_icons[cached_cnt]);
+		cached_icons[cached_cnt] = NULL;
+	}
 
 	g_object_unref(image);
 	image = NULL;
@@ -587,5 +583,8 @@ static struct docklet_ui_ops winpidgin_tray_ops =
 
 /* Used by docklet's plugin load func */
 void docklet_ui_init() {
+	/* Initialize the cached icons to NULL */
+	ZeroMemory(cached_icons, sizeof(cached_icons));
+
 	pidgin_docklet_set_ui_ops(&winpidgin_tray_ops);
 }
