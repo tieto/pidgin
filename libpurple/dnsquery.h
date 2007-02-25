@@ -27,6 +27,7 @@
 
 #include <glib.h>
 #include "eventloop.h"
+#include "account.h"
 
 typedef struct _GaimDnsQueryData GaimDnsQueryData;
 
@@ -37,8 +38,26 @@ typedef struct _GaimDnsQueryData GaimDnsQueryData;
  */
 typedef void (*GaimDnsQueryConnectFunction)(GSList *hosts, gpointer data, const char *error_message);
 
+/**
+ * Callbacks used by the UI if it handles resolving DNS
+ */
+typedef void  (*GaimDnsQueryResolvedCallback) (GaimDnsQueryData *query_data, GSList *hosts);
+typedef void  (*GaimDnsQueryFailedCallback) (GaimDnsQueryData *query_data, const gchar *error_message);
 
-#include "account.h"
+/**
+ * DNS Request UI operations
+ */
+typedef struct
+{
+    /* If implemented, the UI is responsible for DNS queries */
+    gboolean (*resolve_host)(GaimDnsQueryData *query_data, GaimDnsQueryResolvedCallback resolved_cb, GaimDnsQueryFailedCallback failed_cb);
+    
+    /* After destroy is called, query_data will be feed, so this must
+     * cancel any further use of it the UI would do. Unneeded if 
+     * resolve_host is not implemented.
+     */
+    void (*destroy)(GaimDnsQueryData *query_data);
+} GaimDnsQueryUiOps;
 
 #ifdef __cplusplus
 extern "C" {
@@ -70,6 +89,39 @@ GaimDnsQueryData *gaim_dnsquery_a(const char *hostname, int port, GaimDnsQueryCo
  *        is freed by this function.
  */
 void gaim_dnsquery_destroy(GaimDnsQueryData *query_data);
+
+/**
+ * Sets the UI operations structure to be used when doing a DNS
+ * resolve.  The UI operations need only be set if the UI wants to
+ * handle the resolve itself; otherwise, leave it as NULL.
+ *
+ * @param ops The UI operations structure.
+ */
+void gaim_dnsquery_set_ui_ops(GaimDnsQueryUiOps *ops);
+
+/**
+ * Returns the UI operations structure to be used when doing a DNS
+ * resolve.
+ *
+ * @return The UI operations structure.
+ */
+GaimDnsQueryUiOps *gaim_dnsquery_get_ui_ops(void);
+
+/**
+ * Get the host associated with a GaimDnsQueryData
+ *
+ * @param query_data The DNS query
+ * @return The host.
+ */
+char *gaim_dnsquery_get_host(GaimDnsQueryData *query_data);
+
+/**
+ * Get the port associated with a GaimDnsQueryData
+ *
+ * @param query_data The DNS query
+ * @return The port.
+ */
+int gaim_dnsquery_get_port(GaimDnsQueryData *query_data);
 
 /**
  * Initializes the DNS query subsystem.

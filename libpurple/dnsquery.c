@@ -35,6 +35,8 @@
  * DNS query API
  **************************************************************************/
 
+static GaimDnsQueryUiOps *dns_query_ui_ops = NULL;
+
 typedef struct _GaimDnsQueryResolverProcess GaimDnsQueryResolverProcess;
 
 struct _GaimDnsQueryData {
@@ -114,6 +116,20 @@ gaim_dnsquery_failed(GaimDnsQueryData *query_data, const gchar *error_message)
 	gaim_dnsquery_destroy(query_data);
 }
 
+static gboolean
+gaim_dnsquery_ui_resolve(GaimDnsQueryData *query_data)
+{
+    GaimDnsQueryUiOps *ops = gaim_dnsquery_get_ui_ops();
+
+    if (ops && ops->resolve_host)
+    {
+        if (ops->resolve_host(query_data, gaim_dnsquery_resolved, gaim_dnsquery_failed))
+            return TRUE;
+    }
+
+	return FALSE;
+}
+
 #if defined(__unix__) || defined(__APPLE__)
 
 /*
@@ -157,7 +173,7 @@ gaim_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 #endif
 
 #ifdef HAVE_SIGNAL_H
-	gaim_restore_default_signal_handlers();	
+	gaim_restore_default_signal_handlers();
 	signal(SIGTRAP, trap_gdb_bug);
 #endif
 
@@ -455,6 +471,13 @@ handle_next_queued_request()
 	query_data = queued_requests->data;
 	queued_requests = g_slist_delete_link(queued_requests, queued_requests);
 
+    if (gaim_dnsquery_ui_resolve(query_data))
+    {
+        /* The UI is handling the resolve; we're done */
+    	handle_next_queued_request();
+    	return;
+    }
+
 	/*
 	 * If we have any children, attempt to have them perform the DNS
 	 * query.  If we're able to send the query then resolver will be
@@ -704,6 +727,12 @@ resolve_host(gpointer data)
 	query_data = data;
 	query_data->timeout = 0;
 
+    if (gaim_dnsquery_ui_resolve(query_data))
+    {
+        /* The UI is handling the resolve; we're done */
+    	return FALSE;
+    }
+
 	if (inet_aton(query_data->hostname, &sin.sin_addr))
 	{
 		/*
@@ -788,6 +817,12 @@ resolve_host(gpointer data)
 	query_data = data;
 	query_data->timeout = 0;
 
+    if (gaim_dnsquery_ui_resolve(query_data))
+    {
+        /* The UI is handling the resolve; we're done */
+    	return FALSE;
+    }
+
 	if (!inet_aton(query_data->hostname, &sin.sin_addr)) {
 		struct hostent *hp;
 		if(!(hp = gethostbyname(query_data->hostname))) {
@@ -846,6 +881,11 @@ gaim_dnsquery_a(const char *hostname, int port,
 void
 gaim_dnsquery_destroy(GaimDnsQueryData *query_data)
 {
+    GaimDnsQueryUiOps *ops = gaim_dnsquery_get_ui_ops();
+
+    if (ops && ops->destroy)
+        ops->destroy(query_data);
+
 #if defined(__unix__) || defined(__APPLE__)
 	queued_requests = g_slist_remove(queued_requests, query_data);
 
@@ -885,6 +925,36 @@ gaim_dnsquery_destroy(GaimDnsQueryData *query_data)
 
 	g_free(query_data->hostname);
 	g_free(query_data);
+}
+
+char *
+gaim_dnsquery_get_host(GaimDnsQueryData *query_data)
+{
+	g_return_val_if_fail(query_data != NULL, NULL);
+
+	return query_data->hostname;
+}
+
+int
+gaim_dnsquery_get_port(GaimDnsQueryData *query_data)
+{
+	g_return_val_if_fail(query_data != NULL, NULL);
+
+	return query_data->port;	
+}
+
+void
+gaim_dnsquery_set_ui_ops(GaimDnsQueryUiOps *ops)
+{
+	dns_query_ui_ops = ops;
+}
+
+GaimDnsQueryUiOps *
+gaim_dnsquery_get_ui_ops(void)
+{
+	g_return_val_if_fail(dns_query_ui_ops != NULL, NULL);
+
+	return dns_query_ui_ops;
 }
 
 void
