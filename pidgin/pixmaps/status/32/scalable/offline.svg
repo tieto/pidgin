@@ -7,17 +7,17 @@
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/s odipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="32"
    height="32"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.44.1"
    version="1.0"
-   sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh/status/32"
-   sodipodi:docname="offline32.svg"
-   inkscape:export-filename="/home/hbons/Desktop/Gaim Refresh/status/32/offline32.png"
+   sodipodi:docbase="/home/hbons/GUI/Tango/Gaim Refresh/status/32/scalable"
+   sodipodi:docname="offline.svg"
+   inkscape:export-filename="/home/hbons/GUI/Tango/Gaim Refresh/status/32/offline.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90">
   <defs
@@ -120,7 +120,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="16.976026"
      inkscape:cx="19.582303"
-     inkscape:cy="17.229766"
+     inkscape:cy="17.200313"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -128,7 +128,7 @@
      inkscape:window-width="1268"
      inkscape:window-height="971"
      inkscape:window-x="6"
-     inkscape:window-y="21" />
+     inkscape:window-y="23" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -165,7 +165,7 @@
        d="M 17.393564 10.457643 A 6.6449099 2.3675451 0 1 1  4.1037445,10.457643 A 6.6449099 2.3675451 0 1 1  17.393564 10.457643 z"
        transform="matrix(2.182121,0,0,1.391928,-7.954869,12.14827)" />
     <path
-       style="fill:#888a85;fill-opacity:1;stroke:#555753;stroke-width:0.99999875;stroke-miterlimit:4;stroke-opacity:1"
+       style="fill:#888a85;fill-opacity:1;stroke:#2e3436;stroke-width:0.99999875;stroke-miterlimit:4;stroke-opacity:1"
        d="M 26.256921,26.256907 C 20.600315,31.913529 11.419537,31.914486 5.7641107,26.259045 C 0.10868503,20.603602 0.1096427,11.422797 5.7662484,5.7661742 C 11.422853,0.1095522 20.603631,0.10859439 26.259058,5.7640366 C 31.914483,11.419479 31.913526,20.600284 26.256921,26.256907 z "
        id="path2187" />
     <path

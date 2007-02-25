@@ -5,6 +5,7 @@ EXTRA_DIST = 	aol-client.png \
 		bot.png \
 		external.png \
 		female.png \
+		founder.png \
 		free-for-chat.png \
 		game.png \
 		male.png \

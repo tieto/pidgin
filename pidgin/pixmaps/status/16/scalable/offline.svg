@@ -7,19 +7,19 @@
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/s odipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16"
    height="16"
    id="svg2"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.44.1"
    version="1.0"
-   inkscape:export-filename="/home/hbons/Desktop/Gaim Refresh/status/16/available16.png"
+   inkscape:export-filename="/home/hbons/GUI/Tango/Gaim Refresh/status/16/offline.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
-   sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh/status/16/scalable"
-   sodipodi:docname="offline16.svg">
+   sodipodi:docbase="/home/hbons/GUI/Tango/Gaim Refresh/status/16/scalable"
+   sodipodi:docname="offline.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -161,7 +161,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="25.992076"
      inkscape:cx="16.806787"
-     inkscape:cy="8.1662141"
+     inkscape:cy="8.1469775"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -169,7 +169,7 @@
      inkscape:window-width="1268"
      inkscape:window-height="968"
      inkscape:window-x="6"
-     inkscape:window-y="21" />
+     inkscape:window-y="23" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -204,7 +204,7 @@
        x="-74"
        y="-17" />
     <path
-       style="fill:#888a85;fill-opacity:1;stroke:#555753;stroke-width:0.99999827;stroke-miterlimit:4;stroke-opacity:1"
+       style="fill:#888a85;fill-opacity:1;stroke:#2e3436;stroke-width:0.99999827;stroke-miterlimit:4;stroke-opacity:1"
        d="M 13.307074,13.307079 C 10.376958,16.237198 5.6213214,16.237693 2.6918157,13.308187 C -0.23769028,10.378679 -0.23719421,5.623042 2.692923,2.6929237 C 5.62304,-0.23719442 10.378675,-0.23769056 13.308181,2.6918165 C 16.237687,5.6213234 16.237192,10.376962 13.307074,13.307079 z "
        id="path2187" />
     <path

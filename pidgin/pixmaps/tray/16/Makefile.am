@@ -1,5 +1,6 @@
 TRAY_ICONS =	tray-away.png \
 		tray-busy.png \
+		tray-connecting.png \
 		tray-extended-away.png \
 		tray-message.png \
 		tray-offline.png \
@@ -7,6 +8,7 @@ TRAY_ICONS =	tray-away.png \
 
 EXTRA_DIST = 	tray-away.ico \
 		tray-busy.ico \
+		tray-connecting.ico \
 		tray-extended-away.ico \
 		tray-message.ico \
 		tray-offline.ico \
