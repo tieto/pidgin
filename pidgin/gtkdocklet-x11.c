@@ -116,7 +116,7 @@ docklet_x11_update_icon(DockletStatus icon)
 	}
 
 	if(icon_name)
-		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
+		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL));
 
 #if 0
 	GdkPixbuf *p;
