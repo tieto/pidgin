@@ -189,8 +189,9 @@ docklet_update_status()
 	
 	saved_status = gaim_savedstatus_get_current();
         prim = gaim_savedstatus_get_type(saved_status);
-	
-	if (connecting)
+	if (pending)
+		newstatus = DOCKLET_STATUS_PENDING;	
+	else if (connecting)
 		newstatus = DOCKLET_STATUS_CONNECTING;
 	else if (prim == GAIM_STATUS_UNAVAILABLE)
 		newstatus = DOCKLET_STATUS_BUSY;

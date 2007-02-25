@@ -9,14 +9,11 @@ EXTRA_DIST = 	available.png \
 		chat.png \
 		extended-away.png \
 		extended-away_i.png \
-		half-operator.png \
 		log-in.png \
 		log-out.png \
 		message-pending.png \
 		offline.png \
-		operator.png \
-		person.png \
-		voice.png
+		person.png 
 
 pidginstatuspixdir = $(datadir)/pixmaps/pidgin/status/16
 

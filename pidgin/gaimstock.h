@@ -75,10 +75,14 @@
 #define PIDGIN_STOCK_STATUS_LOGOUT     "pidgin-status-logout"
 #define PIDGIN_STOCK_STATUS_OFFLINE    "pidgin-status-offline"
 #define PIDGIN_STOCK_STATUS_PERSON     "pidgin-status-person"
+#define PIDGIN_STOCK_STATUS_MESSAGE    "pidgin-status-message"
+
+/* Chat room emblems */
+#define PIDGIN_STOCK_STATUS_IGNORED    "pidgin-status-ignored"
+#define PIDGIN_STOCK_STATUS_FOUNDER    "pidgin-status-founder"
 #define PIDGIN_STOCK_STATUS_OPERATOR   "pidgin-status-operator"
 #define PIDGIN_STOCK_STATUS_HALFOP     "pidgin-status-halfop"
 #define PIDGIN_STOCK_STATUS_VOICE      "pidgin-status-voice"
-#define PIDGIN_STOCK_STATUS_MESSAGE    "pidgin-status-message"
 
 /* Dialog icons */
 #define PIDGIN_STOCK_DIALOG_AUTH	"pidgin-dialog-auth"

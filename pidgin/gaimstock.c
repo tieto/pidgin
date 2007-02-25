@@ -120,10 +120,13 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_STATUS_LOGOUT, 	"status", "log-out.png",	TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_OFFLINE, 	"status", "offline.png",	TRUE, TRUE, TRUE, FALSE },
 	{ PIDGIN_STOCK_STATUS_PERSON, 	"status", "person.png",		TRUE, TRUE, TRUE, FALSE },
-	{ PIDGIN_STOCK_STATUS_OPERATOR,	"status", "operator.png",	TRUE, FALSE, FALSE, FALSE },
-	{ PIDGIN_STOCK_STATUS_HALFOP, 	"status", "half-operator.png",	TRUE, FALSE, FALSE, FALSE },
-	{ PIDGIN_STOCK_STATUS_VOICE, 	"status", "voice.png",		TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_MESSAGE, 	"status", "message-pending.png",TRUE, FALSE, FALSE, FALSE },
+	
+	{ PIDGIN_STOCK_STATUS_IGNORED,	"emblems", "blocked.png",	TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_STATUS_FOUNDER,	"emblems", "founder.png",	TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_STATUS_OPERATOR,	"emblems", "operator.png",	TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_STATUS_HALFOP, 	"emblems", "half-operator.png",	TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_STATUS_VOICE, 	"emblems", "voice.png",		TRUE, FALSE, FALSE, FALSE },
 
 	{ PIDGIN_STOCK_DIALOG_AUTH,	"dialogs", "auth.png",		TRUE, FALSE, FALSE, TRUE },
 	{ PIDGIN_STOCK_DIALOG_COOL,	"dialogs", "cool.png", 		FALSE, FALSE, FALSE, TRUE },
@@ -166,7 +169,7 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_TRAY_BUSY, "tray", "tray-busy.png", TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TRAY_XA, "tray", "tray-extended-away.png", TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TRAY_OFFLINE, "tray", "tray-offline.png", TRUE, FALSE, FALSE, FALSE },
-	{ PIDGIN_STOCK_TRAY_CONNECT, "tray", "tray-online.png", TRUE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TRAY_CONNECT, "tray", "tray-connecting.png", TRUE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TRAY_PENDING, "tray", "tray-message.png", TRUE, FALSE, FALSE, FALSE }
 };
 

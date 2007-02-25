@@ -3344,7 +3344,7 @@ get_chat_buddy_status_icon(GaimConvChat *chat, const char *name, GaimConvChatBud
 	const char *image = NULL;
 
 	if (flags & GAIM_CBFLAGS_FOUNDER) {
-		image = "founder.png";
+		image = PIDGIN_STOCK_STATUS_FOUNDER;
 	} else if (flags & GAIM_CBFLAGS_OP) {
 		image = PIDGIN_STOCK_STATUS_OPERATOR;
 	} else if (flags & GAIM_CBFLAGS_HALFOP) {
@@ -3352,7 +3352,7 @@ get_chat_buddy_status_icon(GaimConvChat *chat, const char *name, GaimConvChatBud
 	} else if (flags & GAIM_CBFLAGS_VOICE) {
 		image = PIDGIN_STOCK_STATUS_VOICE;
 	} else if ((!flags) && gaim_conv_chat_is_user_ignored(chat, name)) {
-		image = "ignored.png";
+		image = PIDGIN_STOCK_STATUS_IGNORED;
 	} else {
 		return NULL;
 	}

@@ -8,9 +8,11 @@ EXTRA_DIST = 	aol-client.png \
 		founder.png \
 		free-for-chat.png \
 		game.png \
+		half-operator.png \
 		male.png \
 		mobile.png \
 		not-authorized.png \
+		operator.png \
 		qq-member.png \
 		secure.png \
 		unavailable.png \
