@@ -388,45 +388,14 @@ void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, G
 GdkPixbuf *pidgin_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size);
 
 /**
- * Create a protocol icon with the status emblem overlayed in
- * the lower right corner.
+ * Creates a status icon for a given primitve
  *
- * @param account      The account.
- * @param status_type  The status type of the emblem to overlay.
- * @param scale_factor The amount to scale to the original image.
- *                     The default size is 32x32 pixels.  A scale
- *                     factor of 1 means no scaling will be done.
- *                     A scale factor of 0.5 means the length
- *                     and width will be 16 pixels each.
- *
- * @return A newly-created pixbuf with a reference count of 1,
- *         or NULL if any of several error conditions occurred:
- *         the file could not be opened, there was no loader
- *         for the file's format, there was not enough memory
- *         to allocate the image buffer, or the image file
- *         contained invalid data.
+ * @param primitive  The status primitive
+ * @param w          The widget to render this
+ * @param size       The icon size to render at
+ * @retrun A GdkPixbuf, created from stock
  */
-GdkPixbuf *pidgin_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *status_type, double scale_factor);
-
-/**
- * Create a Pidgin running-man icon with the status emblem overlayed
- * in the lower right corner.
- *
- * @param primitive    The status type to set the emblem for.
- * @param scale_factor The amount to scale to the original image.
- *                     The default size is 32x32 pixels.  A scale
- *                     factor of 1 means no scaling will be done.
- *                     A scale factor of 0.5 means the length
- *                     and width will be 16 pixels each.
- *
- * @return A newly-created pixbuf with a reference count of 1,
- *         or NULL if any of several error conditions occurred:
- *         the file could not be opened, there was no loader for
- *         the file's format, there was not enough memory to
- *         allocate the image buffer, or the image file contained
- *         invalid data.
- */
-GdkPixbuf *pidgin_create_gaim_icon_with_status(GaimStatusPrimitive primitive, double scale_factor);
+GdkPixbuf * pidgin_create_status_icon(GaimStatusPrimitive primitive, GtkWidget *w, const char *size);
 
 
 /**

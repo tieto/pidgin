@@ -1552,6 +1552,31 @@ void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, G
 		*height = 100;
 }
 
+GdkPixbuf * pidgin_create_status_icon(GaimStatusPrimitive prim, GtkWidget *w, const char *size)
+{
+	GtkIconSize icon_size = gtk_icon_size_from_name(size);
+	GdkPixbuf *pixbuf = NULL;
+
+	if (prim == GAIM_STATUS_UNAVAILABLE)
+        	pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_BUSY,
+                                                 icon_size, "GtkWidget");
+        else if (prim == GAIM_STATUS_AWAY)
+                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AWAY,
+                                                 icon_size, "GtkWidget");
+        else if (prim == GAIM_STATUS_EXTENDED_AWAY)
+                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
+                                                 icon_size, "GtkWidget");
+        else if (prim == GAIM_STATUS_OFFLINE)
+                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,
+                                                 icon_size, "GtkWidget");
+        else
+                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AVAILABLE,
+                                                 icon_size, "GtkWidget");
+	return pixbuf;
+
+}
+
+
 GdkPixbuf *
 pidgin_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size)
 {
@@ -1590,94 +1615,6 @@ pidgin_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size)
 	g_free(filename);
 
 	return pixbuf;
-}
-
-static GdkPixbuf *
-overlay_status_onto_icon(GdkPixbuf *pixbuf, GaimStatusPrimitive primitive)
-{
-	const char *type_name;
-	char basename[256];
-	char *filename;
-	GdkPixbuf *emblem;
-
-	type_name = gaim_primitive_get_id_from_type(primitive);
-
-	g_snprintf(basename, sizeof(basename), "%s.png", type_name);
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "status",
-								"default", basename, NULL);
-	emblem = gdk_pixbuf_new_from_file(filename, NULL);
-	g_free(filename);
-
-	if (emblem != NULL) {
-		int width, height, emblem_width, emblem_height;
-		int new_emblem_width, new_emblem_height;
-
-		width = gdk_pixbuf_get_width(pixbuf);
-		height = gdk_pixbuf_get_height(pixbuf);
-		emblem_width = gdk_pixbuf_get_width(emblem);
-		emblem_height = gdk_pixbuf_get_height(emblem);
-
-		/*
-		 * Figure out how big to make the emblem.  Normally the emblem
-		 * will have half the width of the pixbuf.  But we don't make
-		 * an emblem any smaller than 10 pixels because it becomes
-		 * unrecognizable, unless the width of the pixbuf is less than
-		 * 10 pixels, in which case we make the emblem width the same
-		 * as the pixbuf width.
-		 */
-		new_emblem_width = MAX(width / 2, MIN(width, 10));
-		new_emblem_height = MAX(height / 2, MIN(height, 10));
-
-		/* Overlay emblem onto the bottom right corner of pixbuf */
-		gdk_pixbuf_composite(emblem, pixbuf,
-				width - new_emblem_width, height - new_emblem_height,
-				new_emblem_width, new_emblem_height,
-				width - new_emblem_width, height - new_emblem_height,
-				(double)new_emblem_width / (double)emblem_width,
-				(double)new_emblem_height / (double)emblem_height,
-				GDK_INTERP_BILINEAR,
-				255);
-		g_object_unref(emblem);
-	}
-
-	return pixbuf;
-}
-
-GdkPixbuf *
-pidgin_create_prpl_icon_with_status(GaimAccount *account, GaimStatusType *status_type, double scale_factor)
-{
-	GdkPixbuf *pixbuf;
-
-	pixbuf = pidgin_create_prpl_icon(account, scale_factor);
-	if (pixbuf == NULL)
-		return NULL;
-
-	/*
-	 * TODO: Let the prpl pick the emblem on a per status basis,
-	 *       and only use the primitive as a fallback?
-	 */
-
-	return overlay_status_onto_icon(pixbuf,
-				gaim_status_type_get_primitive(status_type));
-}
-
-GdkPixbuf *
-pidgin_create_gaim_icon_with_status(GaimStatusPrimitive primitive, double scale_factor)
-{
-	gchar *filename;
-	GdkPixbuf *orig, *pixbuf;
-
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim.png", NULL);
-	orig = gdk_pixbuf_new_from_file(filename, NULL);
-	g_free(filename);
-	if (orig == NULL)
-		return NULL;
-
-	pixbuf = gdk_pixbuf_scale_simple(orig, 32*scale_factor,
-					32*scale_factor, GDK_INTERP_BILINEAR);
-	g_object_unref(G_OBJECT(orig));
-
-	return overlay_status_onto_icon(pixbuf, primitive);
 }
 
 static void

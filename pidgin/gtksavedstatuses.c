@@ -1538,7 +1538,7 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 			continue;
 
 		id = gaim_status_type_get_id(status_type);
-		pixbuf = pidgin_create_prpl_icon_with_status(account, status_type, PIDGIN_PRPL_ICON_MEDIUM);
+		pixbuf = pidgin_create_status_icon(gaim_status_type_get_primitive(status_type), combo, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 		name = gaim_status_type_get_name(status_type);
 
 		gtk_list_store_append(dialog->model, &iter);
@@ -1633,12 +1633,12 @@ saved_status_sort_alphabetically_func(gconstpointer a, gconstpointer b)
 				  gaim_savedstatus_get_title(saved_status_b));
 }
 
-static gboolean pidgin_status_menu_add_primitive(GtkListStore *model, GaimStatusPrimitive primitive,
+static gboolean pidgin_status_menu_add_primitive(GtkListStore *model, GtkWidget *w, GaimStatusPrimitive primitive,
 	GaimSavedStatus *current_status)
 {
 	GtkTreeIter iter;
 	gboolean currently_selected = FALSE;
-	GdkPixbuf *pixbuf = pidgin_create_gaim_icon_with_status(primitive, 0.5);
+	GdkPixbuf *pixbuf = pidgin_create_status_icon(primitive, w, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
@@ -1672,19 +1672,19 @@ GtkWidget *pidgin_status_menu(GaimSavedStatus *current_status, GCallback callbac
 
 	combobox = gtk_combo_box_new();
 
-	if (pidgin_status_menu_add_primitive(model, GAIM_STATUS_AVAILABLE, current_status))
+	if (pidgin_status_menu_add_primitive(model, combobox, GAIM_STATUS_AVAILABLE, current_status))
 		index = i;
 	i++;
 
-	if (pidgin_status_menu_add_primitive(model, GAIM_STATUS_AWAY, current_status))
+	if (pidgin_status_menu_add_primitive(model, combobox, GAIM_STATUS_AWAY, current_status))
 		index = i;
 	i++;
 
-	if (pidgin_status_menu_add_primitive(model, GAIM_STATUS_INVISIBLE, current_status))
+	if (pidgin_status_menu_add_primitive(model, combobox, GAIM_STATUS_INVISIBLE, current_status))
 		index = i;
 	i++;
 
-	if (pidgin_status_menu_add_primitive(model, GAIM_STATUS_OFFLINE, current_status))
+	if (pidgin_status_menu_add_primitive(model, combobox, GAIM_STATUS_OFFLINE, current_status))
 		index = i;
 	i++;
 
@@ -1696,8 +1696,8 @@ GtkWidget *pidgin_status_menu(GaimSavedStatus *current_status, GCallback callbac
 		if (!gaim_savedstatus_is_transient(status))
 		{
 			/* Get an appropriate status icon */
-			pixbuf = pidgin_create_gaim_icon_with_status(
-					gaim_savedstatus_get_type(status), 0.5);
+			pixbuf = pidgin_create_status_icon(gaim_savedstatus_get_type(status),
+							combobox, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 			/* Overlay a disk in the bottom left corner */
 			emblem = gtk_widget_render_icon(GTK_WIDGET(combobox),

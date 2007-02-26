@@ -423,7 +423,7 @@ new_menu_item_with_gaim_icon(GtkWidget *menu, const char *str, GaimStatusPrimiti
 	if (sf)
 		g_signal_connect(G_OBJECT(menuitem), "activate", sf, data);
 
-	pixbuf = pidgin_create_gaim_icon_with_status(primitive, 0.5);
+	pixbuf = pidgin_create_status_icon(primitive, menu, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 	image = gtk_image_new_from_pixbuf(pixbuf);
 	g_object_unref(pixbuf);
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(menuitem), image);

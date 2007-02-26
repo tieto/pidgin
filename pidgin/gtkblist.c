@@ -3919,7 +3919,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	/* Create the icon */
 	if ((status_type = gaim_account_get_status_type_with_primitive(account,
 							GAIM_STATUS_OFFLINE))) {
-		pixbuf = pidgin_create_prpl_icon_with_status(account, status_type, 0.5);
+		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 		if (pixbuf != NULL) {
 			image = gtk_image_new_from_pixbuf(pixbuf);
 			g_object_unref(pixbuf);
@@ -6347,7 +6347,6 @@ pidgin_blist_update_accounts_menu(void)
 		GtkWidget *image = NULL;
 		GaimConnection *gc = NULL;
 		GaimAccount *account = NULL;
-		GaimStatus *status = NULL;
 		GdkPixbuf *pixbuf = NULL;
 
 		account = accounts->data;
@@ -6359,8 +6358,7 @@ pidgin_blist_update_accounts_menu(void)
 			menuitem = gtk_image_menu_item_new_with_label(buf);
 			accel_path_buf = g_strconcat(N_("<GaimMain>/Accounts/"), buf, NULL);
 			g_free(buf);
-			status = gaim_account_get_active_status(account);
-			pixbuf = pidgin_create_prpl_icon_with_status(account, gaim_status_get_type(status), 0.5);
+			pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 			if (pixbuf != NULL)
 			{
 				if (!gaim_account_is_connected(account))
