@@ -22,7 +22,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include "notify.h"
+#include "account.h"
+#include "core.h"
+#include "request.h"
 
 #include "gntconn.h"
 #include "gntgaim.h"
@@ -40,7 +42,11 @@ gg_connection_report_disconnect(GaimConnection *gc, const char *text)
 	secondary = g_strdup_printf(_("%s was disconnected due to the following error:\n%s"),
 			act, text);
 
-	gaim_notify_error(account, _("Connection Error"), primary, secondary);
+	gaim_request_action(account, _("Connection Error"), primary, secondary, 1,
+						account, 2,
+						_("OK"), NULL,
+						_("Connect"),
+						GAIM_CALLBACK(gaim_account_connect));
 
 	g_free(act);
 	g_free(primary);
