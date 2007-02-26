@@ -154,6 +154,7 @@ static GList *xa_list = NULL;
 static GList *login_list = NULL;
 static GList *logout_list = NULL;
 static GList *offline_list = NULL;
+static GHashTable *prpl_lists = NULL;
 
 static gboolean update_send_to_selection(PidginWindow *win);
 static void generate_send_to_items(PidginWindow *win);
@@ -2212,14 +2213,46 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 /**************************************************************************
  * A bunch of buddy icon functions
  **************************************************************************/
-const GList *
-pidgin_conv_get_tab_icons(GaimConversation *conv)
+
+static GList *get_prpl_icon_list(GaimAccount *account)
 {
 	GList *l = NULL;
+	GdkPixbuf *pixbuf;
+	GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gaim_find_prpl(gaim_account_get_protocol_id(account)));
+	const char *prpl = prpl_info->list_icon(account, NULL);
+	char *filename, *path;
+	l = g_hash_table_lookup(prpl_lists, prpl);
+	if (l)
+		return l;
+	filename = g_strdup_printf("%s.png", prpl);
+	
+	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "16", filename, NULL);
+	pixbuf = gdk_pixbuf_new_from_file(path, NULL);
+	if (pixbuf)
+		l = g_list_append(l, pixbuf);
+	g_free(path);
+	
+	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", filename, NULL);
+        pixbuf = gdk_pixbuf_new_from_file(path, NULL);
+        if (pixbuf)
+                l = g_list_append(l, pixbuf);
+        g_free(path);
+	
+	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "48", filename, NULL);
+        pixbuf = gdk_pixbuf_new_from_file(path, NULL);
+        if (pixbuf)
+                l = g_list_append(l, pixbuf);
+        g_free(path);
+	
+	g_hash_table_insert(prpl_lists, g_strdup(prpl), l);
+	return l;
+}
+
+static GList *
+pidgin_conv_get_tab_icons(GaimConversation *conv)
+{
 	GaimAccount *account = NULL;
 	const char *name = NULL;
-	GdkPixbuf *status = NULL;
-	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
 
 	g_return_val_if_fail(conv != NULL, NULL);
 
@@ -2248,9 +2281,7 @@ pidgin_conv_get_tab_icons(GaimConversation *conv)
 		}
 	}
 
-	status = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_LARGE);
-	l = g_list_append(l, status);
-	return l;
+	return get_prpl_icon_list(account);
 }
 
 GdkPixbuf *
@@ -7731,6 +7762,7 @@ create_icon_lists(GtkWidget *w)
 	logout_list = make_status_icon_list(PIDGIN_STOCK_STATUS_LOGOUT, w);
 	offline_list = make_status_icon_list(PIDGIN_STOCK_STATUS_OFFLINE, w);
 	away_list = make_status_icon_list(PIDGIN_STOCK_STATUS_AWAY, w);
+	prpl_lists = g_hash_table_new(g_str_hash, g_str_equal);
 }
 
 PidginWindow *
