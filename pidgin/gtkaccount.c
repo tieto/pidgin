@@ -2577,9 +2577,9 @@ pidgin_account_init(void)
 			default_avatar = NULL;
 		}
 	}
-		
-printf("AVATAR: %s\n", default_avatar);
+
 	gaim_prefs_add_path("/gaim/gtk/accounts/buddyicon", default_avatar);
+	g_free(default_avatar);
 
 	gaim_signal_register(pidgin_account_get_handle(), "account-modified",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
