@@ -283,7 +283,7 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 			sasl_encode(js->sasl, &data[pos], towrite, &out, &olen);
 			pos += towrite;
 
-			if (js->writeh > 0)
+			if (js->writeh == 0)
 				ret = jabber_do_send(js, out, olen);
 			else {
 				ret = -1;

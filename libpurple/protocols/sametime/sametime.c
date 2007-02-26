@@ -4810,13 +4810,13 @@ static int mw_prpl_chat_send(GaimConnection *gc,
   msg = gaim_markup_strip_html(message);
 
   if(conf) {
-    ret = ! mwConference_sendText(conf, message);
+    ret = ! mwConference_sendText(conf, msg);
 
   } else {
     struct mwPlace *place = ID_TO_PLACE(pd, id);
     g_return_val_if_fail(place != NULL, 0);
 
-    ret = ! mwPlace_sendText(place, message);
+    ret = ! mwPlace_sendText(place, msg);
   }
 
   g_free(msg);
