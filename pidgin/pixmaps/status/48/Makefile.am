@@ -1,3 +1,5 @@
+SUBDIRS = rtl
+
 EXTRA_DIST = 	available.png \
 		away.png \
 		busy.png \

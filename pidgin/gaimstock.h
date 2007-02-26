@@ -142,6 +142,7 @@
 #define PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL    "pidgin-icon-size-tango-extra-small"
 #define PIDGIN_ICON_SIZE_TANGO_SMALL          "pidgin-icon-size-tango-small"
 #define PIDGIN_ICON_SIZE_TANGO_MEDIUM         "pidgin-icon-size-tango-medium"
+#define PIDGIN_ICON_SIZE_TANGO_LARGE          "pidgin-icon-size-tango-large"
 #define PIDGIN_ICON_SIZE_TANGO_HUGE           "pidgin-icon-size-tango-huge"
 /**
  * Sets up the gaim stock repository.

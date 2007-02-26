@@ -1,4 +1,4 @@
-SUBDIRS = scalable
+SUBDIRS = rtl scalable
 
 EXTRA_DIST = 	available.png \
 		away.png \
