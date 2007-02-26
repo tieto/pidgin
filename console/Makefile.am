@@ -1,5 +1,10 @@
 if ENABLE_GNT
 
+EXTRA_DIST = \
+		getopt.c \
+		getopt.h \
+		getopt1.c
+
 SUBDIRS = libgnt plugins
 
 bin_PROGRAMS = gaim-text
