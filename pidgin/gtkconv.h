@@ -84,6 +84,7 @@ struct _PidginImPane
 	GtkWidget *sep2;
 	GtkWidget *check;
 	GtkWidget *progress;
+	guint32 typing_timer;
 
 	/* Buddy icon stuff */
 	GtkWidget *icon_container;

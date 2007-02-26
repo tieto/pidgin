@@ -3105,6 +3105,40 @@ got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 	}
 }
 
+static gboolean
+typing_animation(gpointer data) {
+	PidginConversation *gtkconv = data;
+	const char *stock_id = NULL;
+	PidginWindow *gtkwin = gtkconv->win;
+	switch (rand() % 5) {
+	case 0:
+		stock_id = PIDGIN_STOCK_ANIMATION_TYPING0;
+		break;
+	case 1:
+		stock_id = PIDGIN_STOCK_ANIMATION_TYPING1;
+		break;
+	case 2:
+		stock_id = PIDGIN_STOCK_ANIMATION_TYPING2;
+		break;
+	case 3:
+		stock_id = PIDGIN_STOCK_ANIMATION_TYPING3;
+		break;
+	case 4:
+		stock_id = PIDGIN_STOCK_ANIMATION_TYPING4;
+		break;
+	}
+	if (gtkwin->menu.typing_icon == NULL) {
+		 gtkwin->menu.typing_icon = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
+ 		 pidgin_menu_tray_append(PIDGIN_MENU_TRAY(gtkwin->menu.tray),
+                                                                  gtkwin->menu.typing_icon,
+                                                                  _("User is typing..."));
+	} else {
+		gtk_image_set_from_stock(GTK_IMAGE(gtkwin->menu.typing_icon), stock_id, GTK_ICON_SIZE_MENU);
+	}
+	gtk_widget_show(gtkwin->menu.typing_icon);
+	return TRUE;
+}
+
 static void
 update_typing_icon(PidginConversation *gtkconv)
 {
@@ -3123,19 +3157,27 @@ update_typing_icon(PidginConversation *gtkconv)
 		gtk_widget_hide(gtkwin->menu.typing_icon);
 	}
 
-	if (!im || (gaim_conv_im_get_typing_state(im) == GAIM_NOT_TYPING))
+	if (!im || (gaim_conv_im_get_typing_state(im) == GAIM_NOT_TYPING)) {
+		if (gtkconv->u.im->typing_timer != 0)
+			g_source_remove(gtkconv->u.im->typing_timer);
 		return;
+	}
 
 	if (gaim_conv_im_get_typing_state(im) == GAIM_TYPING) {
-		stock_id = PIDGIN_STOCK_TOOLBAR_TYPING;
+		if (gtkconv->u.im->typing_timer == 0) {
+			gtkconv->u.im->typing_timer = g_timeout_add(250, typing_animation, gtkconv);
+		}
+		stock_id = PIDGIN_STOCK_ANIMATION_TYPING1;
 		tooltip = _("User is typing...");
 	} else {
-		stock_id = PIDGIN_STOCK_TYPED;
+		stock_id = PIDGIN_STOCK_ANIMATION_TYPING0;
 		tooltip = _("User has typed something and stopped");
+		g_source_remove(gtkconv->u.im->typing_timer);
+		gtkconv->u.im->typing_timer = 0;
 	}
 
 	if (gtkwin->menu.typing_icon == NULL)
-	{
+	{	
 		gtkwin->menu.typing_icon = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
 		pidgin_menu_tray_append(PIDGIN_MENU_TRAY(gtkwin->menu.tray),
 								  gtkwin->menu.typing_icon,
@@ -4398,6 +4440,7 @@ setup_im_pane(PidginConversation *gtkconv)
 	focus_chain = g_list_prepend(focus_chain, gtkconv->entry);
 	gtk_container_set_focus_chain(GTK_CONTAINER(vbox2), focus_chain);
 
+	gtkconv->u.im->typing_timer = 0;
 	return paned;
 }
 
