@@ -14,5 +14,5 @@ EXTRA_DIST = 	tray-away.ico \
 		tray-offline.ico \
 		tray-online.ico 
 
-pidgintraypixdir = $(datadir)/pixmaps/pidgin/tray/16
+pidgintraypixdir = $(datadir)/pixmaps/pidgin/tray/22
 pidgintraypix_DATA = $(TRAY_ICONS)

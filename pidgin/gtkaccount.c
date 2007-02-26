@@ -2563,11 +2563,23 @@ pidgin_account_get_handle(void) {
 void
 pidgin_account_init(void)
 {
+	char *default_avatar = NULL;
 	gaim_prefs_add_none("/gaim/gtk/accounts");
 	gaim_prefs_add_none("/gaim/gtk/accounts/dialog");
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/width",  520);
 	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/height", 321);
-	gaim_prefs_add_path("/gaim/gtk/accounts/buddyicon", NULL);
+	default_avatar = g_build_filename(g_get_home_dir(), ".face.icon", NULL);
+	if (!g_file_test(default_avatar, G_FILE_TEST_EXISTS)) {
+		g_free(default_avatar);
+		default_avatar = g_build_filename(g_get_home_dir(), ".face", NULL);
+		if (!g_file_test(default_avatar, G_FILE_TEST_EXISTS)) {
+			g_free(default_avatar);
+			default_avatar = NULL;
+		}
+	}
+		
+printf("AVATAR: %s\n", default_avatar);
+	gaim_prefs_add_path("/gaim/gtk/accounts/buddyicon", default_avatar);
 
 	gaim_signal_register(pidgin_account_get_handle(), "account-modified",
 						 gaim_marshal_VOID__POINTER, NULL, 1,
