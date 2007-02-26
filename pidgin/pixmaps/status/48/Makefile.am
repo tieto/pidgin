@@ -5,7 +5,6 @@ EXTRA_DIST = 	available.png \
 		busy.png \
 		chat.png \
 		extended-away.png \
-		invisible.png \
 		log-in.png \
 		log-out.png \
 		offline.png \

@@ -146,6 +146,14 @@ static GtkWidget *warn_close_dialog = NULL;
 static PidginWindow *hidden_convwin = NULL;
 static GList *window_list = NULL;
 
+/* Lists of status icons at all available sizes for use as window icons */
+static GList *available_list = NULL;
+static GList *away_list = NULL;
+static GList *busy_list = NULL;
+static GList *xa_list = NULL;
+static GList *login_list = NULL;
+static GList *logout_list = NULL;
+static GList *offline_list = NULL;
 
 static gboolean update_send_to_selection(PidginWindow *win);
 static void generate_send_to_items(PidginWindow *win);
@@ -2204,9 +2212,10 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 /**************************************************************************
  * A bunch of buddy icon functions
  **************************************************************************/
-GdkPixbuf *
-pidgin_conv_get_tab_icon(GaimConversation *conv, gboolean small_icon)
+const GList *
+pidgin_conv_get_tab_icons(GaimConversation *conv)
 {
+	GList *l = NULL;
 	GaimAccount *account = NULL;
 	const char *name = NULL;
 	GdkPixbuf *status = NULL;
@@ -2224,29 +2233,71 @@ pidgin_conv_get_tab_icon(GaimConversation *conv, gboolean small_icon)
 	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) {
 		GaimBuddy *b = gaim_find_buddy(account, name);
 		if (b != NULL) {
-			/* I hate this hack.  It fixes a bug where the pending message icon
-			 * displays in the conv tab even though it shouldn't.
-			 * A better solution would be great. */
-			if (ops && ops->update)
-				ops->update(NULL, (GaimBlistNode*)b);
-
-			status = pidgin_blist_get_status_icon((GaimBlistNode*)b,
-				(small_icon ? PIDGIN_STATUS_ICON_SMALL : PIDGIN_STATUS_ICON_LARGE));
+                	GaimPresence *p;
+	                p = gaim_buddy_get_presence(b);
+			if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_AWAY))
+				return away_list;
+			if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_UNAVAILABLE))
+				return busy_list;
+			if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_EXTENDED_AWAY))
+				return xa_list;
+			if (gaim_presence_is_status_primitive_active(p, GAIM_STATUS_OFFLINE))
+				return offline_list;
+			else
+				return available_list;
 		}
 	}
 
-	/* If they don't have a buddy icon, then use the PRPL icon */
-	if (status == NULL)
-		status = pidgin_create_prpl_icon(account, small_icon ? PIDGIN_PRPL_ICON_SMALL : PIDGIN_PRPL_ICON_LARGE);
-
-	return status;
+	status = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_LARGE);
+	l = g_list_append(l, status);
+	return l;
 }
+
+GdkPixbuf *
+pidgin_conv_get_tab_icon(GaimConversation *conv, gboolean small_icon)
+{
+        GaimAccount *account = NULL;
+        const char *name = NULL;
+        GdkPixbuf *status = NULL;
+        GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
+
+        g_return_val_if_fail(conv != NULL, NULL);
+
+        account = gaim_conversation_get_account(conv);
+        name = gaim_conversation_get_name(conv);
+
+        g_return_val_if_fail(account != NULL, NULL);
+        g_return_val_if_fail(name != NULL, NULL);
+
+        /* Use the buddy icon, if possible */
+        if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) {
+                GaimBuddy *b = gaim_find_buddy(account, name);
+                if (b != NULL) {
+                        /* I hate this hack.  It fixes a bug where the pending message icon
+                          * displays in the conv tab even though it shouldn't.
+                          * A better solution would be great. */
+                        if (ops && ops->update)
+                                ops->update(NULL, (GaimBlistNode*)b);
+
+                        status = pidgin_blist_get_status_icon((GaimBlistNode*)b,
+                                (small_icon ? PIDGIN_STATUS_ICON_SMALL : PIDGIN_STATUS_ICON_LARGE));
+                }
+        }
+
+        /* If they don't have a buddy icon, then use the PRPL icon */
+        if (status == NULL)
+                status = pidgin_create_prpl_icon(account, small_icon ? PIDGIN_PRPL_ICON_SMALL : PIDGIN_PRPL_ICON_LARGE);
+
+        return status;
+}
+
 
 static void
 update_tab_icon(GaimConversation *conv)
 {
 	PidginConversation *gtkconv;
 	PidginWindow *win;
+	GList *l;	
 	GdkPixbuf *status = NULL;
 
 	g_return_if_fail(conv != NULL);
@@ -2270,9 +2321,9 @@ update_tab_icon(GaimConversation *conv)
 		(gaim_conversation_get_type(conv) != GAIM_CONV_TYPE_IM ||
 		 gtkconv->u.im->anim == NULL))
 	{
-		status = pidgin_conv_get_tab_icon(conv, FALSE);
+		l = pidgin_conv_get_tab_icons(conv);
 
-		gtk_window_set_icon(GTK_WINDOW(win->window), status);
+		gtk_window_set_icon_list(GTK_WINDOW(win->window), l);
 
 		if (status != NULL)
 			g_object_unref(status);
@@ -5745,16 +5796,18 @@ gray_stuff_out(PidginConversation *gtkconv)
 	 */
 	if (pidgin_conv_window_is_active_conversation(conv))
 	{
+		GList *l = NULL;
 		if ((gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM) &&
 				(gtkconv->u.im->anim))
 		{
 			window_icon =
 				gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
 			g_object_ref(window_icon);
+			l = g_list_append(l, window_icon);
 		} else {
-			window_icon = pidgin_conv_get_tab_icon(conv, FALSE);
+			l = pidgin_conv_get_tab_icons(conv);
 		}
-		gtk_window_set_icon(GTK_WINDOW(win->window), window_icon);
+		gtk_window_set_icon_list(GTK_WINDOW(win->window), l);
 		if (window_icon != NULL)
 			g_object_unref(G_OBJECT(window_icon));
 	}
@@ -7653,6 +7706,33 @@ pidgin_conv_windows_get_list()
 	return window_list;
 }
 
+static GList* 
+make_status_icon_list(const char *stock, GtkWidget *w)
+{
+	GList *l = NULL;
+	l = g_list_append(l, gtk_widget_render_icon (w, stock,
+                                       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL), "GtkWindow"));
+	l = g_list_append(l, gtk_widget_render_icon (w, stock,
+                                       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL), "GtkWindow"));
+	l = g_list_append(l, gtk_widget_render_icon (w, stock,
+                                       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MEDIUM), "GtkWindow"));
+	l = g_list_append(l, gtk_widget_render_icon (w, stock,
+                                       gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_LARGE), "GtkWindow"));
+	return l;
+}
+
+static void 
+create_icon_lists(GtkWidget *w) 
+{
+	available_list = make_status_icon_list(PIDGIN_STOCK_STATUS_AVAILABLE, w);
+	busy_list = make_status_icon_list(PIDGIN_STOCK_STATUS_BUSY, w);
+	xa_list = make_status_icon_list(PIDGIN_STOCK_STATUS_XA, w);
+	login_list = make_status_icon_list(PIDGIN_STOCK_STATUS_LOGIN, w);
+	logout_list = make_status_icon_list(PIDGIN_STOCK_STATUS_LOGOUT, w);
+	offline_list = make_status_icon_list(PIDGIN_STOCK_STATUS_OFFLINE, w);
+	away_list = make_status_icon_list(PIDGIN_STOCK_STATUS_AWAY, w);
+}
+
 PidginWindow *
 pidgin_conv_window_new()
 {
@@ -7671,6 +7751,10 @@ pidgin_conv_window_new()
 	gtk_window_set_resizable(GTK_WINDOW(win->window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(win->window), 0);
 	GTK_WINDOW(win->window)->allow_shrink = TRUE;
+
+	if (available_list == NULL) {
+		create_icon_lists(win->window);
+	}
 
 	g_signal_connect(G_OBJECT(win->window), "delete_event",
 	                 G_CALLBACK(close_win_cb), win);
