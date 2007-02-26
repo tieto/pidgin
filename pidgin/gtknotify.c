@@ -323,6 +323,8 @@ pidgin_get_mail_dialog()
 						     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 						     NULL);
 		gtk_window_set_role(GTK_WINDOW(dialog), "new_mail_detailed");
+		g_signal_connect(G_OBJECT(dialog), "focus-in-event",
+					G_CALLBACK(pidgin_set_urgent), NULL);
 
 		gtk_dialog_add_button(GTK_DIALOG(dialog),
 					 _("Open All Messages"), GTK_RESPONSE_ACCEPT);
@@ -521,7 +523,8 @@ pidgin_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 		g_free(label_text);
 		if (pixbuf)
 			g_object_unref(pixbuf);
-	}
+	} else if (!GTK_WIDGET_HAS_FOCUS(dialog))
+		pidgin_set_urgent(GTK_WINDOW(dialog), TRUE);
 
 	return NULL;
 }
