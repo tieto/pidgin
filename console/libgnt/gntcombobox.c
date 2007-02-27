@@ -33,6 +33,18 @@ set_selection(GntComboBox *box, gpointer key)
 }
 
 static void
+hide_popup(GntComboBox *box, gboolean set)
+{
+	gnt_widget_set_size(box->dropdown,
+		box->dropdown->priv.width - 1, box->dropdown->priv.height);
+	if (set)
+		set_selection(box, gnt_tree_get_selection_data(GNT_TREE(box->dropdown)));
+	else
+		gnt_tree_set_selected(GNT_TREE(box->dropdown), box->selected);
+	gnt_widget_hide(box->dropdown->parent);
+}
+
+static void
 gnt_combo_box_draw(GntWidget *widget)
 {
 	GntComboBox *box = GNT_COMBO_BOX(widget);
@@ -121,12 +133,11 @@ gnt_combo_box_key_pressed(GntWidget *widget, const char *text)
 			{
 				case '\r':
 				case '\t':
-					set_selection(box, gnt_tree_get_selection_data(GNT_TREE(box->dropdown)));
-				case 27:
-					gnt_tree_set_selected(GNT_TREE(box->dropdown), box->selected);
-					gnt_widget_hide(box->dropdown->parent);
+					hide_popup(box, TRUE);
 					return TRUE;
-					break;
+				case 27:
+					hide_popup(box, FALSE);
+					return TRUE;
 			}
 		}
 		if (gnt_widget_key_pressed(box->dropdown, text))
@@ -159,7 +170,7 @@ gnt_combo_box_lost_focus(GntWidget *widget)
 {
 	GntComboBox *combo = GNT_COMBO_BOX(widget);
 	if (GNT_WIDGET_IS_FLAG_SET(combo->dropdown->parent, GNT_WIDGET_MAPPED))
-		gnt_widget_hide(GNT_COMBO_BOX(widget)->dropdown->parent);
+		hide_popup(combo, FALSE);
 	widget_lost_focus(widget);
 }
 
@@ -177,14 +188,20 @@ gnt_combo_box_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 			gnt_widget_key_pressed(box->dropdown, GNT_KEY_DOWN);
 	} else if (event == GNT_LEFT_MOUSE_DOWN) {
 		if (dshowing) {
-			set_selection(box, gnt_tree_get_selection_data(GNT_TREE(box->dropdown)));
-			gnt_widget_hide(box->dropdown->parent);
+			hide_popup(box, TRUE);
 		} else {
 			popup_dropdown(GNT_COMBO_BOX(widget));
 		}
 	} else
 		return FALSE;
 	return TRUE;
+}
+
+static void
+gnt_combo_box_size_changed(GntWidget *widget, int oldw, int oldh)
+{
+	GntComboBox *box = GNT_COMBO_BOX(widget);
+	gnt_widget_set_size(box->dropdown, widget->priv.width - 1, box->dropdown->priv.height);
 }
 
 static void
@@ -198,6 +215,7 @@ gnt_combo_box_class_init(GntComboBoxClass *klass)
 	parent_class->size_request = gnt_combo_box_size_request;
 	parent_class->key_pressed = gnt_combo_box_key_pressed;
 	parent_class->clicked = gnt_combo_box_clicked;
+	parent_class->size_changed = gnt_combo_box_size_changed;
 
 	widget_lost_focus = parent_class->lost_focus;
 	parent_class->lost_focus = gnt_combo_box_lost_focus;
