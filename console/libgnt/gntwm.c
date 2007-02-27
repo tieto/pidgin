@@ -19,6 +19,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define IDLE_CHECK_INTERVAL 5 /* 5 seconds */
+
 enum
 {
 	SIG_NEW_WIN,
@@ -45,6 +47,8 @@ static void shift_window(GntWM *wm, GntWidget *widget, int dir);
 
 static gboolean write_already(gpointer data);
 static int write_timeout;
+static time_t last_active_time;
+static gboolean idle_update;
 
 static GList *
 g_list_bring_to_front(GList *list, gpointer data)
@@ -230,6 +234,15 @@ read_window_positions(GntWM *wm)
 #endif
 }
 
+static gboolean check_idle(gpointer n)
+{
+	if (idle_update) {
+		time(&last_active_time);
+		idle_update = FALSE;
+	}
+	return TRUE;
+}
+
 static void
 gnt_wm_init(GTypeInstance *instance, gpointer class)
 {
@@ -243,6 +256,8 @@ gnt_wm_init(GTypeInstance *instance, gpointer class)
 	wm->positions = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	if (gnt_style_get_bool(GNT_STYLE_REMPOS, TRUE))
 		read_window_positions(wm);
+	g_timeout_add(IDLE_CHECK_INTERVAL * 1000, check_idle, NULL);
+	time(&last_active_time);
 }
 
 static void
@@ -1089,9 +1104,16 @@ void gnt_wm_window_close(GntWM *wm, GntWidget *widget)
 	draw_taskbar(wm, FALSE);
 }
 
+time_t gnt_wm_get_idle_time()
+{
+	return time(NULL) - last_active_time;
+}
+
 void gnt_wm_process_input(GntWM *wm, const char *keys)
 {
 	keys = gnt_bindable_remap_keys(GNT_BINDABLE(wm), keys);
+
+	idle_update = TRUE;
 
 	if (gnt_bindable_perform_action_key(GNT_BINDABLE(wm), keys))
 		return;
@@ -1344,6 +1366,7 @@ void gnt_wm_update_window(GntWM *wm, GntWidget *widget)
 
 gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntWidget *widget)
 {
+	idle_update = TRUE;
 	gboolean ret = TRUE;
 	g_signal_emit(wm, signals[SIG_MOUSE_CLICK], 0, event, x, y, widget, &ret);
 	return ret;
