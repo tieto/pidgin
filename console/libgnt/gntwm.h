@@ -22,6 +22,8 @@ typedef struct
 {
 	GntWidget *me;
 
+	WINDOW *window;
+	int scroll;
 	PANEL *panel;
 } GntNode;
 

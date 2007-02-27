@@ -119,6 +119,20 @@ draw_taskbar(GntWM *wm, gboolean reposition)
 
 	wrefresh(taskbar);
 }
+
+static void
+copy_win(GntWidget *widget, GntNode *node)
+{
+	WINDOW *src, *dst;
+	int shadow;
+	if (!node)
+		return;
+	src = widget->window;
+	dst = node->window;
+	shadow = gnt_widget_has_shadow(widget) ? 1 : 0;
+	copywin(src, dst, node->scroll, 0, 0, 0, getmaxy(dst) - 1, getmaxx(dst) - 1, 0);
+}
+
 static gboolean
 update_screen(GntWM *wm)
 {
@@ -337,6 +351,55 @@ switch_window_n(GntBindable *bind, GList *list)
 	}
 	return TRUE;
 }
+
+static gboolean
+window_scroll_up(GntBindable *bindable, GList *null)
+{
+	GntWM *wm = GNT_WM(bindable);
+	GntWidget *window;
+	GntNode *node;
+	int w, h;
+
+	if (!wm->ordered)
+		return TRUE;
+
+	window = wm->ordered->data;
+	node = g_hash_table_lookup(wm->nodes, window);
+	if (!node)
+		return TRUE;
+
+	if (node->scroll) {
+		node->scroll--;
+		copy_win(window, node);
+		update_screen(wm);
+	}
+}
+
+static gboolean
+window_scroll_down(GntBindable *bindable, GList *null)
+{
+	GntWM *wm = GNT_WM(bindable);
+	GntWidget *window;
+	GntNode *node;
+	int w, h;
+
+	if (!wm->ordered)
+		return TRUE;
+
+	window = wm->ordered->data;
+	node = g_hash_table_lookup(wm->nodes, window);
+	if (!node)
+		return TRUE;
+
+	gnt_widget_get_size(window, &w, &h);
+	if (h - node->scroll > getmaxy(node->window)) {
+		node->scroll++;
+		copy_win(window, node);
+		update_screen(wm);
+	}
+	return TRUE;
+}
+
 static gboolean
 window_close(GntBindable *bindable, GList *null)
 {
@@ -718,7 +781,7 @@ reverse_char(WINDOW *d, int y, int x, gboolean set)
 }
 
 static void
-window_reverse(GntWidget *win, gboolean set)
+window_reverse(GntWidget *win, gboolean set, GntWM *wm)
 {
 	int i;
 	int w, h;
@@ -743,7 +806,8 @@ window_reverse(GntWidget *win, gboolean set)
 	for (i = 0; i < h; i += reverse_char(d, i, 0, set));
 	for (i = 0; i < h; i += reverse_char(d, i, w-1, set));
 
-	wrefresh(win->window);
+	copy_win(win, g_hash_table_lookup(wm->nodes, win));
+	update_screen(wm);
 }
 
 static gboolean
@@ -756,7 +820,7 @@ start_move(GntBindable *bindable, GList *null)
 		return TRUE;
 
 	wm->mode = GNT_KP_MODE_MOVE;
-	window_reverse(GNT_WIDGET(wm->ordered->data), TRUE);
+	window_reverse(GNT_WIDGET(wm->ordered->data), TRUE, wm);
 
 	return TRUE;
 }
@@ -771,7 +835,7 @@ start_resize(GntBindable *bindable, GList *null)
 		return TRUE;
 
 	wm->mode = GNT_KP_MODE_RESIZE;
-	window_reverse(GNT_WIDGET(wm->ordered->data), TRUE);
+	window_reverse(GNT_WIDGET(wm->ordered->data), TRUE, wm);
 
 	return TRUE;
 }
@@ -934,6 +998,10 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" "l", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "switch-window-n", switch_window_n,
 				NULL, NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-scroll-down", window_scroll_down,
+				"\033" GNT_KEY_CTRL_J, NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-scroll-up", window_scroll_up,
+				"\033" GNT_KEY_CTRL_K, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 	GNTDEBUG;
@@ -994,6 +1062,7 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 
 	node = g_new0(GntNode, 1);
 	node->me = widget;
+	node->scroll = 0;
 
 	g_hash_table_replace(wm->nodes, widget, node);
 
@@ -1001,7 +1070,38 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 
 	transient = !!GNT_WIDGET_IS_FLAG_SET(node->me, GNT_WIDGET_TRANSIENT);
 
-	node->panel = new_panel(node->me->window);
+#if 1
+	{
+		int x, y, w, h, maxx, maxy;
+		gboolean shadow = TRUE;
+
+		if (!gnt_widget_has_shadow(widget))
+			shadow = FALSE;
+		x = widget->priv.x;
+		y = widget->priv.y;
+		w = widget->priv.width;
+		h = widget->priv.height;
+
+		getmaxyx(stdscr, maxy, maxx);
+		maxy -= 1;              /* room for the taskbar */
+		maxy -= shadow;
+		maxx -= shadow;
+
+		x = MAX(0, x);
+		y = MAX(0, y);
+		if (x + w >= maxx)
+			x = MAX(0, maxx - w);
+		if (y + h >= maxy)
+			y = MAX(0, maxy - h);
+
+		w = MIN(w, maxx);
+		h = MIN(h, maxy);
+		node->window = newwin(h + shadow, w + shadow, y, x);
+		copy_win(widget, node);
+	}
+#endif
+
+	node->panel = new_panel(node->window);
 	set_panel_userptr(node->panel, node);
 
 	if (!transient) {
@@ -1146,7 +1246,7 @@ void gnt_wm_process_input(GntWM *wm, const char *keys)
 			}
 			if (ox != x || oy != y) {
 				gnt_screen_move_widget(widget, x, y);
-				window_reverse(widget, TRUE);
+				window_reverse(widget, TRUE, wm);
 				return;
 			}
 		} else if (wm->mode == GNT_KP_MODE_RESIZE) {
@@ -1163,12 +1263,12 @@ void gnt_wm_process_input(GntWM *wm, const char *keys)
 			}
 			if (oh != h || ow != w) {
 				gnt_screen_resize_widget(widget, w, h);
-				window_reverse(widget, TRUE);
+				window_reverse(widget, TRUE, wm);
 				return;
 			}
 		}
 		if (strcmp(keys, "\r") == 0 || strcmp(keys, "\033") == 0) {
-			window_reverse(widget, FALSE);
+			window_reverse(widget, FALSE, wm);
 			wm->mode = GNT_KP_MODE_NORMAL;
 		}
 		return;
@@ -1209,8 +1309,7 @@ void gnt_wm_process_input(GntWM *wm, const char *keys)
 static void
 gnt_wm_win_resized(GntWM *wm, GntNode *node)
 {
-	refresh_node(node->me, node, NULL);
-	replace_panel(node->panel, node->me->window);
+	/*refresh_node(node->me, node, NULL);*/
 }
 
 static void
@@ -1223,6 +1322,8 @@ void gnt_wm_resize_window(GntWM *wm, GntWidget *widget, int width, int height)
 {
 	gboolean ret = TRUE;
 	GntNode *node;
+	int shadow;
+	int maxx, maxy;
 	
 	while (widget->parent)
 		widget = widget->parent;
@@ -1236,6 +1337,14 @@ void gnt_wm_resize_window(GntWM *wm, GntWidget *widget, int width, int height)
 	hide_panel(node->panel);
 	gnt_widget_set_size(widget, width, height);
 	gnt_widget_draw(widget);
+
+	shadow = gnt_widget_has_shadow(widget) ? 1 : 0;
+	maxx = getmaxx(stdscr) - shadow;
+	maxy = getmaxy(stdscr) - 1 - shadow;
+	height = MIN(height, maxy);
+	width = MIN(width, maxx);
+	wresize(node->window, height + shadow, width + shadow);
+	replace_panel(node->panel, node->window);
 
 	g_signal_emit(wm, signals[SIG_RESIZED], 0, node);
 
@@ -1360,6 +1469,7 @@ void gnt_wm_update_window(GntWM *wm, GntWidget *widget)
 	} else
 		g_signal_emit(wm, signals[SIG_UPDATE_WIN], 0, node);
 
+	copy_win(widget, node);
 	update_screen(wm);
 	draw_taskbar(wm, FALSE);
 }
