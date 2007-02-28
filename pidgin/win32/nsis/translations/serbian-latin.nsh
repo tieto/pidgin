@@ -11,14 +11,14 @@
 !define GTK_INSTALLER_NEEDED			"GTK+ okolina za izvršavanje ili nije naðena ili se moraunaprediti.$\rMolimo instalirajte v${GTK_MIN_VERSION} ili veæu GTK+ okoline za izvršavanje"
 
 ; Components Page
-!define GAIM_SECTION_TITLE			"Gaim klijent za brze poruke (neophodno)"
+!define PIDGIN_SECTION_TITLE			"Gaim klijent za brze poruke (neophodno)"
 !define GTK_SECTION_TITLE			"GTK+ okolina za izvršavanje (neophodno)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ teme"
 !define GTK_NOTHEME_SECTION_TITLE		"Bez teme"
 !define GTK_WIMP_SECTION_TITLE		"Wimp tema"
 !define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve tema"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue tema"
-!define GAIM_SECTION_DESCRIPTION		"Osnovne Gaim datoteke i dinamièke biblioteke"
+!define PIDGIN_SECTION_DESCRIPTION		"Osnovne Gaim datoteke i dinamièke biblioteke"
 !define GTK_SECTION_DESCRIPTION		"Skup oruða za grafièko okruženje, za više platformi, koristi ga Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ teme menjaju izgled i naèin rada GTK+ aplikacija."
 !define GTK_NO_THEME_DESC			"Ne instaliraj GTK+ temu"
@@ -30,7 +30,7 @@
 !define GTK_UPGRADE_PROMPT			"Naðena je stara verzija GTK+ izvršne okoline. Da li želite da je unapredite?$\rPrimedba: Ukoliko to ne uradite, Gaim možda neæe raditi."
 
 ; Gaim Section Prompts and Texts
-!define GAIM_UNINSTALL_DESC			"Gaim (samo uklanjanje)"
+!define PIDGIN_UNINSTALL_DESC			"Gaim (samo uklanjanje)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Greška prilikom instalacije GTK+ okoline za izvršavanje."
@@ -40,5 +40,5 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Nemate ovlašæenja za instalaciju GTK+ teme."
 
 ; Uninstall Section Prompts
-!define un.GAIM_UNINSTALL_ERROR_1         "Program za uklanjanje instalacije ne može da pronaðe stavke registra za Gaim.$\rVerovatno je ovu aplikaciju instalirao drugi korisnik."
-!define un.GAIM_UNINSTALL_ERROR_2         "Nemate ovlašæenja za deinstalaciju ove aplikacije."
+!define un.PIDGIN_UNINSTALL_ERROR_1         "Program za uklanjanje instalacije ne može da pronaðe stavke registra za Gaim.$\rVerovatno je ovu aplikaciju instalirao drugi korisnik."
+!define un.PIDGIN_UNINSTALL_ERROR_2         "Nemate ovlašæenja za deinstalaciju ove aplikacije."

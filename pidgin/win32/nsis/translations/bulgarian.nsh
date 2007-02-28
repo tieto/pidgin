@@ -12,14 +12,14 @@
 !define GTK_INSTALLER_NEEDED			"GTK+ runtime липсва или трябва да бъде обновена.$\rМоля инсталирайте версия v${GTK_MIN_VERSION} или по-нова"
 
 ; Components Page
-!define GAIM_SECTION_TITLE			"Gaim Клиент за Бързи Съобщения (изисква се)"
+!define PIDGIN_SECTION_TITLE			"Gaim Клиент за Бързи Съобщения (изисква се)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime Среда (required)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ Теми"
 !define GTK_NOTHEME_SECTION_TITLE		"Без Тема"
 !define GTK_WIMP_SECTION_TITLE		"Wimp Тема"
 !define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve Тема"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Тема"
-!define GAIM_SECTION_DESCRIPTION		"Файлове на ядрото на Gaim и библиотеки"
+!define PIDGIN_SECTION_DESCRIPTION		"Файлове на ядрото на Gaim и библиотеки"
 !define GTK_SECTION_DESCRIPTION		"Мултиплатфорен кит за графичен изглед, използван от Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ темите могат да променят Изгледа на GTK+ приложения."
 !define GTK_NO_THEME_DESC			"Не инсталирайте GTK+ тема"
@@ -31,7 +31,7 @@
 !define GTK_UPGRADE_PROMPT			"Стара версия GTK+ runtime е открита. Искате ли да обновите?$\rNote: Gaim може да не сработи ако не го направите."
 
 ; Gaim Section Prompts and Texts
-!define GAIM_UNINSTALL_DESC			"Gaim (само премахване)"
+!define PIDGIN_UNINSTALL_DESC			"Gaim (само премахване)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Грешка при инсталиране на GTK+ runtime."
@@ -41,5 +41,5 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Нямате права за да инсталирате GTK+ тема."
 
 ; Uninstall Section Prompts
-!define un.GAIM_UNINSTALL_ERROR_1         "Деисталатоа не може да намери записи в регистъра за Gaim.$\rВероятно е бил инсталиран от друг потребител."
-!define un.GAIM_UNINSTALL_ERROR_2         "Нямате права да деинсталирате тази програма."
+!define un.PIDGIN_UNINSTALL_ERROR_1         "Деисталатоа не може да намери записи в регистъра за Gaim.$\rВероятно е бил инсталиран от друг потребител."
+!define un.PIDGIN_UNINSTALL_ERROR_2         "Нямате права да деинсталирате тази програма."
