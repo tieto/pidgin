@@ -1275,16 +1275,20 @@ GntTreeRow *gnt_tree_add_choice(GntTree *tree, void *key, GntTreeRow *row, void 
 	g_return_val_if_fail(!r || !r->choice, NULL);
 
 	if (bigbro == NULL) {
-		r = g_hash_table_lookup(tree->hash, parent);
-		if (!r)
-			r = tree->root;
-		else
-			r = r->child;
-		if (r) {
-			while (r->next)
-				r = r->next;
-			bigbro = r->key;
-		} 
+		if (tree->compare)
+			bigbro = find_position(tree, key, parent);
+		else {
+			r = g_hash_table_lookup(tree->hash, parent);
+			if (!r)
+				r = tree->root;
+			else
+				r = r->child;
+			if (r) {
+				while (r->next)
+					r = r->next;
+				bigbro = r->key;
+			} 
+		}
 	}
 	row = gnt_tree_add_row_after(tree, key, row, parent, bigbro);
 	row->choice = TRUE;
