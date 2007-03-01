@@ -2,7 +2,7 @@
 ;;
 ;;  dutch.nsh
 ;;
-;;  Default language strings for the Windows Gaim NSIS installer.
+;;  Default language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Vincent van Adrighem <vincent@dirck.mine.nu>
@@ -10,7 +10,7 @@
 ;;
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Er is al een installatie actief."
-!define PIDGIN_IS_RUNNING			"Gaim wordt op dit moment uitgevoerd. Sluit Gaim af en start de installatie opnieuw."
+!define PIDGIN_IS_RUNNING			"Pidgin wordt op dit moment uitgevoerd. Sluit Pidgin af en start de installatie opnieuw."
 !define GTK_INSTALLER_NEEDED			"De GTK+ runtime-omgeving is niet aanwezig of moet vernieuwd worden.$\rInstalleer v${GTK_MIN_VERSION} of nieuwer van de GTK+ runtime-omgeving"
 
 
@@ -19,15 +19,15 @@
 !define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) wordt uitgegeven onder de GPL licentie. Deze licentie wordt hier slechts ter informatie aangeboden. $_CLICK"
 
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"Gaim Instant Messaging Client (vereist)"
+!define PIDGIN_SECTION_TITLE			"Pidgin Instant Messaging Client (vereist)"
 !define GTK_SECTION_TITLE			"GTK+ runtime-omgeving (vereist)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ thema's"
 !define GTK_NOTHEME_SECTION_TITLE		"Geen thema"
 !define GTK_WIMP_SECTION_TITLE		"Wimp thema"
 !define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve thema"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue thema"
-!define PIDGIN_SECTION_DESCRIPTION		"Gaim hoofdbestanden en dlls"
-!define GTK_SECTION_DESCRIPTION		"Een multi-platform gebruikersinterface, gebruikt door Gaim"
+!define PIDGIN_SECTION_DESCRIPTION		"Pidgin hoofdbestanden en dlls"
+!define GTK_SECTION_DESCRIPTION		"Een multi-platform gebruikersinterface, gebruikt door Pidgin"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ thema's veranderen het uiterlijk en gedrag van GTK+ programma's."
 !define GTK_NO_THEME_DESC			"Geen GTK+ thema installeren"
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) is een GTK+ thema wat goed past in een windows omgeving."
@@ -35,13 +35,13 @@
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Het Lighthouseblue thema."
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Er is een oude versie van GTK+ gevonden. Wilt u deze bijwerken?$\rLet op: Gaim werkt misschien niet als u dit niet doet."
+!define GTK_UPGRADE_PROMPT			"Er is een oude versie van GTK+ gevonden. Wilt u deze bijwerken?$\rLet op: $(^Name) werkt misschien niet als u dit niet doet."
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		"Neem een kijkje op de Windows Gaim webpagina"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"Neem een kijkje op de Windows Pidgin webpagina"
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (alleen verwijderen)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (alleen verwijderen)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fout bij installatie van GTK+ runtime omgeving."
@@ -51,7 +51,7 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"U heeft geen toestemming om een GTK+ thema te installeren."
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1         "Het verwijderingsprogramma voor Gaim kon geen register-ingangen voor Gaim vinden.$\rWaarschijnlijk heeft een andere gebruiker het programma geïnstalleerd."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"Het verwijderingsprogramma voor Pidgin kon geen register-ingangen voor Pidgin vinden.$\rWaarschijnlijk heeft een andere gebruiker het programma geïnstalleerd."
 !define un.PIDGIN_UNINSTALL_ERROR_2         "U mag dit programma niet verwijderen."
 
 

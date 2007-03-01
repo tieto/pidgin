@@ -1,7 +1,7 @@
 ;;
 ;;  romanian.nsh
 ;;
-;;  Romanian language strings for the Windows Gaim NSIS installer.
+;;  Romanian language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1250
 ;;
 ;;  Author: Miºu Moldovan <dumol@gnome.ro>, (c) 2004 - 2005.
@@ -9,7 +9,7 @@
 
 ; Startup Checks
 !define INSTALLER_IS_RUNNING                     "Instalarea este deja pornitã."
-!define PIDGIN_IS_RUNNING                  "O instanþã a programului Gaim este deja pornitã. Închideþi-o ºi încercaþi din nou."
+!define PIDGIN_IS_RUNNING                  "O instanþã a programului Pidgin este deja pornitã. Închideþi-o ºi încercaþi din nou."
 !define GTK_INSTALLER_NEEDED			"Mediul GTK+ nu e prezent sau aveþi o versiune prea veche.$\rInstalaþi cel puþin versiunea v${GTK_MIN_VERSION} a mediului GTK+"
 
 ; License Page
@@ -27,25 +27,25 @@
 !define PIDGIN_SHORTCUTS_SECTION_TITLE "Scurtãturi"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE "Desktop"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "Meniu Start"
-!define PIDGIN_SECTION_DESCRIPTION		"Fiºiere Gaim ºi dll-uri"
-!define GTK_SECTION_DESCRIPTION		"Un mediu de dezvoltare multiplatformã utilizat de Gaim"
+!define PIDGIN_SECTION_DESCRIPTION		"Fiºiere Pidgin ºi dll-uri"
+!define GTK_SECTION_DESCRIPTION		"Un mediu de dezvoltare multiplatformã utilizat de Pidgin"
 !define GTK_THEMES_SECTION_DESCRIPTION	"Temele GTK+ schimbã aparenþa aplicaþiilor GTK+."
 !define GTK_NO_THEME_DESC			"Fãrã teme GTK+"
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp este o temã GTK+ ce imitã mediul grafic Windows."
 !define GTK_BLUECURVE_THEME_DESC		"Tema Bluecurve."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Tema Lighthouseblue."
-!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   "Scurtãturi pentru pornirea Gaim"
-!define PIDGIN_DESKTOP_SHORTCUT_DESC   "Creeazã iconiþe Gaim pe Desktop"
-!define PIDGIN_STARTMENU_SHORTCUT_DESC   "Creeazã o intrare Gaim în meniul Start"
+!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   "Scurtãturi pentru pornirea Pidgin"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC   "Creeazã iconiþe Pidgin pe Desktop"
+!define PIDGIN_STARTMENU_SHORTCUT_DESC   "Creeazã o intrare Pidgin în meniul Start"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Aveþi o versiune veche a mediului GTK+. Doriþi sã o actualizaþi?$\rNotã: E posibil ca Gaim sã nu funcþioneze cu versiunea veche."
+!define GTK_UPGRADE_PROMPT			"Aveþi o versiune veche a mediului GTK+. Doriþi sã o actualizaþi?$\rNotã: E posibil ca $(^Name) sã nu funcþioneze cu versiunea veche."
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE               "Vizitaþi pagina de web Windows Gaim"
+!define PIDGIN_FINISH_VISIT_WEB_SITE               "Vizitaþi pagina de web Windows Pidgin"
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (doar dezinstalare)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (doar dezinstalare)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Eroare la instalarea mediului GTK+."
@@ -55,5 +55,5 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Nu aveþi drepturile de acces necesare instalãrii unei teme GTK+."
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1         "Programul de dezinstalare nu a gãsit intrãri Gaim în regiºtri.$\rProbabil un alt utilizator a instalat aceastã aplicaþie."
+!define un.PIDGIN_UNINSTALL_ERROR_1         "Programul de dezinstalare nu a gãsit intrãri Pidgin în regiºtri.$\rProbabil un alt utilizator a instalat aceastã aplicaþie."
 !define un.PIDGIN_UNINSTALL_ERROR_2         "Nu aveþi drepturile de acces necesare dezinstalãrii acestei aplicaþii."

@@ -1,7 +1,7 @@
 ;;
 ;;  serbian-latin.nsh
 ;;
-;;  Serbian (Latin) language strings for the Windows Gaim NSIS installer.
+;;  Serbian (Latin) language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1250
 ;;
 ;;  Author: Danilo Segan <dsegan@gmx.net>
@@ -11,15 +11,15 @@
 !define GTK_INSTALLER_NEEDED			"GTK+ okolina za izvršavanje ili nije naðena ili se moraunaprediti.$\rMolimo instalirajte v${GTK_MIN_VERSION} ili veæu GTK+ okoline za izvršavanje"
 
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"Gaim klijent za brze poruke (neophodno)"
+!define PIDGIN_SECTION_TITLE			"Pidgin klijent za brze poruke (neophodno)"
 !define GTK_SECTION_TITLE			"GTK+ okolina za izvršavanje (neophodno)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ teme"
 !define GTK_NOTHEME_SECTION_TITLE		"Bez teme"
 !define GTK_WIMP_SECTION_TITLE		"Wimp tema"
 !define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve tema"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue tema"
-!define PIDGIN_SECTION_DESCRIPTION		"Osnovne Gaim datoteke i dinamièke biblioteke"
-!define GTK_SECTION_DESCRIPTION		"Skup oruða za grafièko okruženje, za više platformi, koristi ga Gaim"
+!define PIDGIN_SECTION_DESCRIPTION		"Osnovne Pidgin datoteke i dinamièke biblioteke"
+!define GTK_SECTION_DESCRIPTION		"Skup oruða za grafièko okruženje, za više platformi, koristi ga Pidgin "
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ teme menjaju izgled i naèin rada GTK+ aplikacija."
 !define GTK_NO_THEME_DESC			"Ne instaliraj GTK+ temu"
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows imitator) je GTK tema koja se dobro uklapa u Windows radno okruženje."
@@ -27,10 +27,10 @@
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Lighthouseblue tema."
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Naðena je stara verzija GTK+ izvršne okoline. Da li želite da je unapredite?$\rPrimedba: Ukoliko to ne uradite, Gaim možda neæe raditi."
+!define GTK_UPGRADE_PROMPT			"Naðena je stara verzija GTK+ izvršne okoline. Da li želite da je unapredite?$\rPrimedba: Ukoliko to ne uradite, $(^Name) možda neæe raditi."
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (samo uklanjanje)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (samo uklanjanje)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Greška prilikom instalacije GTK+ okoline za izvršavanje."
@@ -40,5 +40,5 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Nemate ovlašæenja za instalaciju GTK+ teme."
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1         "Program za uklanjanje instalacije ne može da pronaðe stavke registra za Gaim.$\rVerovatno je ovu aplikaciju instalirao drugi korisnik."
+!define un.PIDGIN_UNINSTALL_ERROR_1         "Program za uklanjanje instalacije ne može da pronaðe stavke registra za Pidgin.$\rVerovatno je ovu aplikaciju instalirao drugi korisnik."
 !define un.PIDGIN_UNINSTALL_ERROR_2         "Nemate ovlašæenja za deinstalaciju ove aplikacije."

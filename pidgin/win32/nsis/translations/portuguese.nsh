@@ -1,7 +1,7 @@
 ;;
 ;;  portuguese.nsh
 ;;
-;;  Portuguese (PT) language strings for the Windows Gaim NSIS installer.
+;;  Portuguese (PT) language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Duarte Henriques <duarte.henriques@gmail.com>, 2003-2005.
@@ -10,7 +10,7 @@
 
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"O instalador já está a ser executado."
-!define PIDGIN_IS_RUNNING			"Uma instância do Gaim já está a ser executada. Saia do Gaim e tente de novo."
+!define PIDGIN_IS_RUNNING			"Uma instância do Pidgin já está a ser executada. Saia do Pidgin e tente de novo."
 !define GTK_INSTALLER_NEEDED			"O ambiente de GTK+ está ausente ou precisa de ser actualizado.$\rPor favor instale a versão v${GTK_MIN_VERSION} ou mais recente do ambiente de GTK+."
 
 ; License Page
@@ -18,7 +18,7 @@
 !define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) está disponível sob a licença GNU General Public License (GPL). O texto da licença é fornecido aqui meramente a título informativo. $_CLICK"
 
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"Cliente de Mensagens Instantâneas Gaim (obrigatório)"
+!define PIDGIN_SECTION_TITLE			"Cliente de Mensagens Instantâneas Pidgin (obrigatório)"
 !define GTK_SECTION_TITLE			"Ambiente de Execução GTK+ (obrigatório)"
 !define GTK_THEMES_SECTION_TITLE		"Temas do GTK+"
 !define GTK_NOTHEME_SECTION_TITLE		"Nenhum tema"
@@ -28,25 +28,25 @@
 !define PIDGIN_SHORTCUTS_SECTION_TITLE "Atalhos"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE "Ambiente de Trabalho"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "Menu de Iniciar"
-!define PIDGIN_SECTION_DESCRIPTION		"Ficheiros e bibliotecas principais do Gaim"
-!define GTK_SECTION_DESCRIPTION		"Um conjunto de ferramentas de interface gráfica multi-plataforma, usado pelo Gaim"
+!define PIDGIN_SECTION_DESCRIPTION		"Ficheiros e bibliotecas principais do Pidgin"
+!define GTK_SECTION_DESCRIPTION		"Um conjunto de ferramentas de interface gráfica multi-plataforma, usado pelo Pidgin"
 !define GTK_THEMES_SECTION_DESCRIPTION	"Os Temas do GTK+ podem mudar a aparência dos programas GTK+."
 !define GTK_NO_THEME_DESC			"Não instalar um tema do GTK+"
 !define GTK_WIMP_THEME_DESC			"O tema GTK-Wimp (Windows impersonator, personificador do Windows) é um tema GTK+ que combina bem com o ambiente de trabalho do Windows."
 !define GTK_BLUECURVE_THEME_DESC		"O tema Bluecurve."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"O tema Lighthouseblue."
-!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   "Atalhos para iniciar o Gaim"
-!define PIDGIN_DESKTOP_SHORTCUT_DESC   "Criar um atalho para o Gaim no Ambiente de Trabalho"
-!define PIDGIN_STARTMENU_SHORTCUT_DESC   "Criar uma entrada para o Gaim na Barra de Iniciar"
+!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   "Atalhos para iniciar o Pidgin"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC   "Criar um atalho para o Pidgin no Ambiente de Trabalho"
+!define PIDGIN_STARTMENU_SHORTCUT_DESC   "Criar uma entrada para o Pidgin na Barra de Iniciar"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Foi encontrada uma versão antiga do ambiente de execução GTK+. Deseja actualizá-lo?$\rNota: O Gaim poderá não funcionar se não o fizer."
+!define GTK_UPGRADE_PROMPT			"Foi encontrada uma versão antiga do ambiente de execução GTK+. Deseja actualizá-lo?$\rNota: O $(^Name) poderá não funcionar se não o fizer."
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		"Visite a Página Web do Gaim para Windows"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"Visite a Página Web do Pidgin para Windows"
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (remover apenas)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (remover apenas)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Erro ao instalar o ambiente de execução GTK+."
@@ -56,5 +56,5 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS	"Não tem permissão para instalar um tema do GTK+."
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1		"O desinstalador não encontrou entradas de registo do Gaim.$\rÉ provável que outro utilizador tenha instalado este programa."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"O desinstalador não encontrou entradas de registo do Pidgin.$\rÉ provável que outro utilizador tenha instalado este programa."
 !define un.PIDGIN_UNINSTALL_ERROR_2		"Não tem permissão para desinstalar este programa."

@@ -1,7 +1,7 @@
 ;;
 ;;  korean.nsh
 ;;
-;;  Korean language strings for the Windows Gaim NSIS installer.
+;;  Korean language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 949
 ;;
 ;;  Author: Kyung-uk Son <vvs740@chol.com>
@@ -29,8 +29,8 @@
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"옛날 버전 GTK+ 런타임을 찾았습니다. 업그레이드할까요?$\rNote: 업그레이드하지 않으면 가임이 동작하지 않을 수도 있습니다."
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (remove only)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (remove only)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"GTK+ 런타임 설치 중 오류 발생."

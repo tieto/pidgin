@@ -1,14 +1,14 @@
 ;;
 ;;  lithuanian.nsh
 ;;
-;;  Lithuanian translation strings for the Windows Gaim NSIS installer.
+;;  Lithuanian translation strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1257
 ;;
 ;;  Version 1
 
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Diegimo programa jau paleista."
-!define PIDGIN_IS_RUNNING				"Ðiuo metu Gaim yra paleistas. Uþdarykite ðià programà ir pabandykite ið naujo."
+!define PIDGIN_IS_RUNNING				"Ðiuo metu Pidgin yra paleistas. Uþdarykite ðià programà ir pabandykite ið naujo."
 !define GTK_INSTALLER_NEEDED			"GTK+ vykdymo meto aplinkos nëra arba ji turi bûti atnaujinta.$\rÁdiekite v${GTK_MIN_VERSION} arba naujesnæ GTK+ vykdymo meto aplinkos versijà"
 
 ; License Page
@@ -16,7 +16,7 @@
 !define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) yra iðleistas GNU bendrosios vieðosios licenzijos (GPL) sàlygomis.  Licenzija èia yra pateikta tik susipaþinimo tikslams. $_CLICK"
 
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"Gaim pokalbiø klientas (bûtinas)"
+!define PIDGIN_SECTION_TITLE			"Pidgin pokalbiø klientas (bûtinas)"
 !define GTK_SECTION_TITLE			"GTK+ vykdymo meto aplinka (bûtina)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ apipavidalinimai"
 !define GTK_NOTHEME_SECTION_TITLE		"Jokio apipavidalinimo"
@@ -26,25 +26,25 @@
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"Nuorodos"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Darbalaukyje"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Pradiniame meniu"
-!define PIDGIN_SECTION_DESCRIPTION		"Pagrindiniai Gaim failai"
-!define GTK_SECTION_DESCRIPTION			"Daugiaplatforminis vartotojo sàsajos priemoniø komplektas, naudojamas Gaim."
+!define PIDGIN_SECTION_DESCRIPTION		"Pagrindiniai Pidgin failai"
+!define GTK_SECTION_DESCRIPTION			"Daugiaplatforminis vartotojo sàsajos priemoniø komplektas, naudojamas Pidgin."
 !define GTK_THEMES_SECTION_DESCRIPTION		"GTK+ apipavidalinimai gali pakeisti GTK+ programø iðvaizdà."
 !define GTK_NO_THEME_DESC			"Neádiegti GTK+ apipavidalinimo."
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows imitatorius) yra gerai Windows aplinkoje derantis GTK apipavidalinimas."
 !define GTK_BLUECURVE_THEME_DESC		"Bluecurve apipavidalinimas."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC		"Lighthouseblue apipavidalinimas."
-!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Gaim paleidimo nuorodos"
-!define PIDGIN_DESKTOP_SHORTCUT_DESC		"Sukurti nuorodà á Gaim darbastalyje."
-!define PIDGIN_STARTMENU_SHORTCUT_DESC		"Sukurti pradinio meniu áraðà, skirtà Gaim."
+!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Pidgin paleidimo nuorodos"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC		"Sukurti nuorodà á Pidgin darbastalyje."
+!define PIDGIN_STARTMENU_SHORTCUT_DESC		"Sukurti pradinio meniu áraðà, skirtà Pidgin."
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Rasta sena GTK+ vykdymo meto aplinkos versija. Ar norite jà atnaujinti?$\rPastaba: sklandþiam Gaim darbui atnaujinimas gali bûti reikalingas."
+!define GTK_UPGRADE_PROMPT			"Rasta sena GTK+ vykdymo meto aplinkos versija. Ar norite jà atnaujinti?$\rPastaba: sklandþiam $(^Name) darbui atnaujinimas gali bûti reikalingas."
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		"Aplankyti Windows Gaim tinklalapá"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"Aplankyti Windows Pidgin tinklalapá"
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (tik paðalinti)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (tik paðalinti)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"GTK+ vykdymo meto aplinkos diegimo klaida."
@@ -54,7 +54,7 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Neturite teisiø ádiegti GTK+ apipavidalinimà."
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1		"Ðalinimo programa nerado Gaim registro áraðø.$\rGalbût kitas vartotojas instaliavo ðià programà."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"Ðalinimo programa nerado Pidgin registro áraðø.$\rGalbût kitas vartotojas instaliavo ðià programà."
 !define un.PIDGIN_UNINSTALL_ERROR_2		"Neturite teisiø paðalinti ðios programos."
 
 ; Spellcheck Section Prompts

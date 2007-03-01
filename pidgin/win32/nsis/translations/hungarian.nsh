@@ -1,7 +1,7 @@
 ;;
 ;;  hungarian.nsh
 ;;
-;;  Default language strings for the Windows Gaim NSIS installer.
+;;  Default language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1250
 ;;
 ;;  Authors: Sutto Zoltan <suttozoltan@chello.hu>, 2003
@@ -11,14 +11,14 @@
 ; Startup Checks
 !define GTK_INSTALLER_NEEDED			"A GTK+ futtató környezet hiányzik vagy frissítése szükséges.$\rKérem telepítse a v${GTK_MIN_VERSION} vagy magasabb verziójú GTK+ futtató környezetet."
 !define INSTALLER_IS_RUNNING			"A telepíto már fut."
-!define PIDGIN_IS_RUNNING				"Jelenleg fut a Gaim egy példánya. Lépjen ki a Gaimból és azután próbálja újra."
+!define PIDGIN_IS_RUNNING				"Jelenleg fut a Pidgin egy példánya. Lépjen ki a Pidginból és azután próbálja újra."
 
 ; License Page
 !define PIDGIN_LICENSE_BUTTON			"Tovább >"
 !define PIDGIN_LICENSE_BOTTOM_TEXT		"A $(^Name) a GNU General Public License (GPL) alatt kerül terjesztésre. Az itt olvasható licenc csak tájékoztatási célt szolgál. $_CLICK"
 
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"Gaim azonnali üzeno kliens (szükséges)"
+!define PIDGIN_SECTION_TITLE			"Pidgin azonnali üzeno kliens (szükséges)"
 !define GTK_SECTION_TITLE			"GTK+ futtató környezet (szükséges)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ témák"
 !define GTK_NOTHEME_SECTION_TITLE		"Nincs téma"
@@ -28,25 +28,25 @@
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"Parancsikonok"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Asztal"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Start Menü"
-!define PIDGIN_SECTION_DESCRIPTION		"Gaim fájlok és dll-ek"
-!define GTK_SECTION_DESCRIPTION			"A Gaim által használt többplatformos grafikus környezet"
+!define PIDGIN_SECTION_DESCRIPTION		"Pidgin fájlok és dll-ek"
+!define GTK_SECTION_DESCRIPTION			"A Pidgin által használt többplatformos grafikus környezet"
 !define GTK_THEMES_SECTION_DESCRIPTION		"A GTK+ témák megváltoztatják a GTK+ alkalmazások kinézetét."
 !define GTK_NO_THEME_DESC			"Ne telepítse a GTK+ témákat"
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows utánzat) egy Windows környezettel harmonizáló GTK téma."
 !define GTK_BLUECURVE_THEME_DESC		"A Bluecurve téma."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC		"A Lighthouseblue téma."
-!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Parancsikonok a Gaim indításához"
-!define PIDGIN_DESKTOP_SHORTCUT_DESC		"Parancsikon létrehozása a Gaimhoz az asztalon"
-!define PIDGIN_STARTMENU_SHORTCUT_DESC		"Start Menü bejegyzés létrehozása a Gaimhoz"
+!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Parancsikonok a Pidgin indításához"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC		"Parancsikon létrehozása a Pidginhoz az asztalon"
+!define PIDGIN_STARTMENU_SHORTCUT_DESC		"Start Menü bejegyzés létrehozása a Pidginhoz"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Egy régi verziójú GTK+ futtatókörnyezet van telepítve. Kívánja frissíteni?$\rMegjegyzés: a Gaim nem fog muködni, ha nem frissíti."
+!define GTK_UPGRADE_PROMPT			"Egy régi verziójú GTK+ futtatókörnyezet van telepítve. Kívánja frissíteni?$\rMegjegyzés: a $(^Name) nem fog muködni, ha nem frissíti."
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		"A Windows Gaim weboldalának felkeresése"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"A Windows Pidgin weboldalának felkeresése"
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (csak eltávolítás)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (csak eltávolítás)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Hiba a GTK+ futtatókörnyezet telepítése közben."
@@ -56,7 +56,7 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Nincs jogosultsága a GTK+ témák telepítéséhez."
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1		"Az eltávolító nem találta a Gaim registry bejegyzéseket.$\rValószínüleg egy másik felhasználó telepítette az alkalmazást."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"Az eltávolító nem találta a Pidgin registry bejegyzéseket.$\rValószínüleg egy másik felhasználó telepítette az alkalmazást."
 !define un.PIDGIN_UNINSTALL_ERROR_2		"Nincs jogosultsága az alkalmazás eltávolításához."
 
 ; Spellcheck Section Prompts

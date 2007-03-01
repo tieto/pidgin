@@ -2,7 +2,7 @@
 ;;
 ;;  german.nsh
 ;;
-;;  German language strings for the Windows Gaim NSIS installer.
+;;  German language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Bjoern Voigt <bjoern@cs.tu-berlin.de>, 2006.
@@ -11,7 +11,7 @@
  
 ; Startup checks
 !define INSTALLER_IS_RUNNING			"Der Installer läuft schon."
-!define PIDGIN_IS_RUNNING				"Eine Instanz von Gaim läuft momentan schon. Beenden Sie Gaim und versuchen Sie es nochmal."
+!define PIDGIN_IS_RUNNING				"Eine Instanz von Pidgin läuft momentan schon. Beenden Sie Pidgin und versuchen Sie es nochmal."
 !define GTK_INSTALLER_NEEDED			"Die GTK+ Runtime Umgebung fehlt entweder oder muß aktualisiert werden.$\rBitte installieren Sie v${GTK_MIN_VERSION} oder höher der GTK+ Runtime"
  
 ; License Page
@@ -19,7 +19,7 @@
 !define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) wird unter der GNU General Public License (GPL) veröffentlicht. Die Lizenz dient hier nur der Information. $_CLICK"
  
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"Gaim Instant Messaging Client (erforderlich)"
+!define PIDGIN_SECTION_TITLE			"Pidgin Instant Messaging Client (erforderlich)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime Umgebung (erforderlich)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ Themen"
 !define GTK_NOTHEME_SECTION_TITLE		"Kein Thema"
@@ -29,25 +29,25 @@
 !define PIDGIN_SHORTCUTS_SECTION_TITLE	"Verknüpfungen"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Desktop"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Startmenü"
-!define PIDGIN_SECTION_DESCRIPTION		"Gaim-Basisdateien und -DLLs"
-!define GTK_SECTION_DESCRIPTION		"Ein Multi-Plattform-GUI-Toolkit, verwendet von Gaim"
+!define PIDGIN_SECTION_DESCRIPTION		"Pidgin-Basisdateien und -DLLs"
+!define GTK_SECTION_DESCRIPTION		"Ein Multi-Plattform-GUI-Toolkit, verwendet von Pidgin"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ Themen können Aussehen und Bedienung von GTK+ Anwendungen verändern."
 !define GTK_NO_THEME_DESC			"Installiere kein GTK+ Thema"
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows Imitator) ist ein GTK Theme, das sich besonders gut in den Windows Desktop integriert."
 !define GTK_BLUECURVE_THEME_DESC		"Das Bluecurve Thema."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Das Lighthouseblue Thema."
-!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Verknüpfungen zum Starten von Gaim"
-!define PIDGIN_DESKTOP_SHORTCUT_DESC   "Erstellt eine Verknüpfung zu Gaim auf dem Desktop"
-!define PIDGIN_STARTMENU_SHORTCUT_DESC   "Erstellt einen Eintrag für Gaim im Startmenü"
+!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Verknüpfungen zum Starten von Pidgin"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC   "Erstellt eine Verknüpfung zu Pidgin auf dem Desktop"
+!define PIDGIN_STARTMENU_SHORTCUT_DESC   "Erstellt einen Eintrag für Pidgin im Startmenü"
  
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Eine alte Version der GTK+ Runtime wurde gefunden. Möchten Sie aktualisieren?$\rHinweis: Gaim funktioniert evtl. nicht, wenn Sie nicht aktualisieren."
+!define GTK_UPGRADE_PROMPT			"Eine alte Version der GTK+ Runtime wurde gefunden. Möchten Sie aktualisieren?$\rHinweis: $(^Name) funktioniert evtl. nicht, wenn Sie nicht aktualisieren."
  
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		"Besuchen Sie die Windows Gaim Webseite"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"Besuchen Sie die Windows Pidgin Webseite"
  
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (nur entfernen)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (nur entfernen)"
  
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fehler beim Installieren der GTK+ Runtime."
@@ -57,7 +57,7 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Sie haben keine Berechtigung, um ein GTK+ Theme zu installieren."
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1		"Der Deinstaller konnte keine Registrierungsschlüssel für Gaim finden.$\rEs ist wahrscheinlich, daß ein anderer Benutzer diese Anwendunng installiert hat."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"Der Deinstaller konnte keine Registrierungsschlüssel für Pidgin finden.$\rEs ist wahrscheinlich, daß ein anderer Benutzer diese Anwendunng installiert hat."
 !define un.PIDGIN_UNINSTALL_ERROR_2		"Sie haben keine Berechtigung, diese Anwendung zu deinstallieren."
 
 ; Spellcheck Section Prompts

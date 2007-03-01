@@ -1,7 +1,7 @@
 ;;
 ;;  valencian.nsh
 ;;
-;;  Valencian language strings for the Windows Gaim NSIS installer.
+;;  Valencian language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1252
 ;;
 ;;  Version 3
@@ -13,7 +13,7 @@
 
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"L'instalador encara està eixecutant-se."
-!define PIDGIN_IS_RUNNING				"Una instancia de Gaim està eixecutant-se. Ix del Gaim i torna a intentar-ho."
+!define PIDGIN_IS_RUNNING				"Una instancia de Pidgin està eixecutant-se. Ix del Pidgin i torna a intentar-ho."
 !define GTK_INSTALLER_NEEDED			"L'entorn d'eixecucio GTK+ no es troba o necessita ser actualisat.$\rPer favor instala la versio${GTK_MIN_VERSION} o superior de l'entorn GTK+"
 
 ; License Page
@@ -21,7 +21,7 @@
 !define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) es distribuit baix llicencia GNU General Public License (GPL). La llicencia es proporcionada per proposits informatius aci. $_CLICK"
 
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"Client Mensageria Instantanea Gaim (necessari)"
+!define PIDGIN_SECTION_TITLE			"Client Mensageria Instantanea Pidgin (necessari)"
 !define GTK_SECTION_TITLE			"Entorn d'Eixecucio GTK+ (necessari)"
 !define GTK_THEMES_SECTION_TITLE		"Temes GTK+"
 !define GTK_NOTHEME_SECTION_TITLE		"Sense Tema"
@@ -31,25 +31,25 @@
 !define PIDGIN_SHORTCUTS_SECTION_TITLE 		"Enllaços directes"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE 	"Escritori"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE 	"Menu d'Inici"
-!define PIDGIN_SECTION_DESCRIPTION		"Archius i dlls del nucleu de Gaim"
-!define GTK_SECTION_DESCRIPTION			"Una ferramenta multi-plataforma GUI, usada per Gaim"
+!define PIDGIN_SECTION_DESCRIPTION		"Archius i dlls del nucleu de Pidgin"
+!define GTK_SECTION_DESCRIPTION			"Una ferramenta multi-plataforma GUI, usada per Pidgin"
 !define GTK_THEMES_SECTION_DESCRIPTION		"Els Temes GTK+ poden canviar l'aspecte de les aplicacions GTK+."
 !define GTK_NO_THEME_DESC			"No instalar un tema GTK+"
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (imitador Windows) es un tema GTK que s'integra perfectament en l'entorn d'escritori de Windows."
 !define GTK_BLUECURVE_THEME_DESC		"El tema Bluecurve."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC		"El tema Lighthouseblue."
-!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   	"Enllaços directes per a iniciar Gaim"
-!define PIDGIN_DESKTOP_SHORTCUT_DESC   		"Crear un enllaç directe a Gaim en l'Escritori"
-!define PIDGIN_STARTMENU_SHORTCUT_DESC   		"Crear una entrada per a Gaim en Menu Inici"
+!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   	"Enllaços directes per a iniciar Pidgin"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC   		"Crear un enllaç directe a Pidgin en l'Escritori"
+!define PIDGIN_STARTMENU_SHORTCUT_DESC   		"Crear una entrada per a Pidgin en Menu Inici"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Una versio antiua de l'entorn GTK+ fon trobada. ¿Vols actualisar-la?$\rNota: Gaim no funcionarà si no ho fas."
+!define GTK_UPGRADE_PROMPT			"Una versio antiua de l'entorn GTK+ fon trobada. ¿Vols actualisar-la?$\rNota: $(^Name) no funcionarà si no ho fas."
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		"Visita la pagina de Gaim per a Windows"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"Visita la pagina de Pidgin per a Windows"
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (nomes borrar)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (nomes borrar)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Erro instalant l'entorn GTK+."
@@ -59,7 +59,7 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"No tens permissos per a instalar un tema GTK+."
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1		"El desinstalador podria no trobar les entrades del registre de Gaim.$\rProbablement un atre usuari instalà esta aplicacio."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"El desinstalador podria no trobar les entrades del registre de Pidgin.$\rProbablement un atre usuari instalà esta aplicacio."
 !define un.PIDGIN_UNINSTALL_ERROR_2		"No tens permis per a desinstalar esta aplicacio."
 
 ; Spellcheck Section Prompts

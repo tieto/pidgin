@@ -1,7 +1,7 @@
 ;;
 ;;  portuguese-br.nsh
 ;;
-;;  Portuguese (BR) language strings for the Windows Gaim NSIS installer.
+;;  Portuguese (BR) language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: Maurício de Lemos Rodrigues Collares Neto <mauricioc@myrealbox.com>, 2003-2005.
@@ -16,7 +16,7 @@
 !define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) é distribuído sob a licença GPL. Esta licença é disponibilizada aqui apenas para fins informativos. $_CLICK" 
 
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"Cliente de mensagens instantâneas Gaim (requerido)"
+!define PIDGIN_SECTION_TITLE			"Cliente de mensagens instantâneas Pidgin (requerido)"
 !define GTK_SECTION_TITLE			"Ambiente de tempo de execução do GTK+ (requerido)"
 !define GTK_THEMES_SECTION_TITLE		"Temas do GTK+"
 !define GTK_NOTHEME_SECTION_TITLE		"Nenhum tema"
@@ -26,22 +26,22 @@
 !define PIDGIN_SHORTCUTS_SECTION_TITLE "Atalhos"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE "Área de Trabalho"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "Menu Iniciar"
-!define PIDGIN_SECTION_DESCRIPTION		"Arquivos e bibliotecas principais do Gaim"
-!define GTK_SECTION_DESCRIPTION		"Um conjunto de ferramentas multi-plataforma para interface do usuário, usado pelo Gaim"
+!define PIDGIN_SECTION_DESCRIPTION		"Arquivos e bibliotecas principais do Pidgin"
+!define GTK_SECTION_DESCRIPTION		"Um conjunto de ferramentas multi-plataforma para interface do usuário, usado pelo Pidgin"
 !define GTK_THEMES_SECTION_DESCRIPTION	"Os temas do GTK+ podem mudar a aparência e o funcionamento dos aplicativos GTK+."
 !define GTK_NO_THEME_DESC			"Não instalar um tema do GTK+"
 !define GTK_WIMP_THEME_DESC			"O tema 'GTK-Wimp' ('Windows impersonator', personificador do Windows) é um tema GTK que combina bem com o ambiente de área de trabalho do Windows."
 !define GTK_BLUECURVE_THEME_DESC		"O tema 'Bluecurve'."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	"O tema 'Lighthouseblue'."
-!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   "Atalhos para iniciar o Gaim"
-!define PIDGIN_DESKTOP_SHORTCUT_DESC   "Crie um atalho para o Gaim na Área de Trabalho"
-!define PIDGIN_STARTMENU_SHORTCUT_DESC   "Crie uma entrada no Menu Iniciar para o Gaim"
+!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   "Atalhos para iniciar o Pidgin"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC   "Crie um atalho para o Pidgin na Área de Trabalho"
+!define PIDGIN_STARTMENU_SHORTCUT_DESC   "Crie uma entrada no Menu Iniciar para o Pidgin"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Uma versão antiga do ambiente de tempo de execução do GTK+ foi encontrada. Você deseja atualizá-lo?$\rNota: O Gaim poderá não funcionar a menos que você o faça."
+!define GTK_UPGRADE_PROMPT			"Uma versão antiga do ambiente de tempo de execução do GTK+ foi encontrada. Você deseja atualizá-lo?$\rNota: O $(^Name) poderá não funcionar a menos que você o faça."
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (apenas remover)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (apenas remover)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Erro ao instalar o ambiente de tempo de execução do GTK+."
@@ -51,8 +51,8 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Você não tem permissão para instalar um tema do GTK+."
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		"Visite a página da web do Gaim para Windows"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"Visite a página da web do Pidgin para Windows"
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1		"O desinstalador não pôde encontrar entradas de registro do Gaim.$\rÉ provável que outro usuário tenha instalado esta aplicação."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"O desinstalador não pôde encontrar entradas de registro do Pidgin.$\rÉ provável que outro usuário tenha instalado esta aplicação."
 !define un.PIDGIN_UNINSTALL_ERROR_2		"Você não tem permissão para desinstalar essa aplicação."

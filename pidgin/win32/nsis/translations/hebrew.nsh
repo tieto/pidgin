@@ -1,7 +1,7 @@
 ;;
 ;;  hebrew.nsh
 ;;
-;;  Hebrew language strings for the Windows Gaim NSIS installer.
+;;  Hebrew language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1255
 ;;
 ;;  Author: Eugene Shcherbina <eugene@websterworlds.com>
@@ -16,14 +16,14 @@
 !define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) .הרישיון נמצא כאן בשביל מידע בלבד .GPL משוחרר תחת רישיון $_CLICK"
 
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"(חובה) .GAIM תוכנת"
+!define PIDGIN_SECTION_TITLE			"(חובה) .Pidgin תוכנת"
 !define GTK_SECTION_TITLE			"(חובה) .GTK+ סביבת"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ מראות של"
 !define GTK_NOTHEME_SECTION_TITLE		"ללא מראה"
 !define GTK_WIMP_SECTION_TITLE		"Wimp מראה"
 !define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve מראה"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue מראה"
-!define PIDGIN_SECTION_DESCRIPTION		".בסיססים DLL-ו GAIM קבצי"
+!define PIDGIN_SECTION_DESCRIPTION		".בסיססים DLL-ו Pidgin קבצי"
 !define GTK_SECTION_DESCRIPTION		".מולטי-פלטפורמיים GUI כלי"
 !define GTK_THEMES_SECTION_DESCRIPTION	" .GTK+ יכולים לשנות את המראה של תוכנות GTK+ מראות"
 !define GTK_NO_THEME_DESC			".GTK+ לא להתקין מראה של"
@@ -32,13 +32,13 @@
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC	".Lighthouseblueהמראה של"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"A?נמצאה. לשדרג GTK+ סביבה ישנה של$\rNote: .יכול לא לעבוד אם לא GAIM"
+!define GTK_UPGRADE_PROMPT			"A?נמצאה. לשדרג GTK+ סביבה ישנה של$\rNote: .יכול לא לעבוד אם לא $(^Name)"
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		".GAIMבקרו באתר של"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		".Pidginבקרו באתר של"
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"GAIM (מחיקה בלבד)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (מחיקה בלבד)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			".GTK+ שגיאה בהתקנת סביבת"

@@ -2,7 +2,7 @@
 ;;
 ;;  catalan.nsh
 ;;
-;;  Catalan language strings for the Windows Gaim NSIS installer.
+;;  Catalan language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1252
 ;;
 ;;  Author: "Bernat López" <bernatl@adequa.net>
@@ -11,7 +11,7 @@
 
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"L'instal.lador encara està executant-se."
-!define PIDGIN_IS_RUNNING				"Hi ha una instància del Gaim executant-se. Surt del Gaim i torna a intentar-ho."
+!define PIDGIN_IS_RUNNING			"Hi ha una instància del Pidgin executant-se. Surt del Pidgin i torna a intentar-ho."
 !define GTK_INSTALLER_NEEDED			"L'entorn d'execució GTK+ no existeix o necessita ésser actualitzat.$\rSius plau instal.la la versió${GTK_MIN_VERSION} o superior de l'entonr GTK+"
 
 ; License Page
@@ -19,7 +19,7 @@
 !define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) és distribuït sota llicència GPL. Podeu consultar la llicència, només per proposits informatius, aquí.  $_CLICK"
 
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"Client Gaim de Missatgeria Instantània (necessari)"
+!define PIDGIN_SECTION_TITLE			"Client Pidgin de Missatgeria Instantània (necessari)"
 !define GTK_SECTION_TITLE			"Entorn d'Execució GTK+ (necessari)"
 !define GTK_THEMES_SECTION_TITLE		"Temes GTK+"
 !define GTK_NOTHEME_SECTION_TITLE		"Sense tema"
@@ -29,26 +29,26 @@
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"Enllaços directes"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Escriptori"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Menu Inici"
-!define PIDGIN_SECTION_DESCRIPTION		"Fitxers i dlls del nucli de Gaim"
-!define GTK_SECTION_DESCRIPTION			"Una eina IGU multiplataforma, utilitzada per Gaim"
+!define PIDGIN_SECTION_DESCRIPTION		"Fitxers i dlls del nucli de Pidgin"
+!define GTK_SECTION_DESCRIPTION			"Una eina IGU multiplataforma, utilitzada per Pidgin"
 !define GTK_THEMES_SECTION_DESCRIPTION		"Els temes GTK+ poden modificar l'aspecte de les aplicacions GTK+."
 !define GTK_NO_THEME_DESC			"No instal.lis un tema GTK+"
 !define GTK_WIMP_THEME_DESC			"GTK-Imwi (imitador Windows) és un tema GTK que s'integra perfectament en un entorn d'escriptori Windows."
 !define GTK_BLUECURVE_THEME_DESC		"El tema Corba Blava."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC		"The Lighthouseblue theme."
-!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Enllaços directes per iniciar el Gaim"
-!define PIDGIN_DESKTOP_SHORTCUT_DESC		"Afegir un enllaç directe al Gaim a l'Escriptori"
-!define PIDGIN_STARTMENU_SHORTCUT_DESC		"Crear una entrada Gaim al Menu Inici"
+!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Enllaços directes per iniciar el Pidgin"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC		"Afegir un enllaç directe al Pidgin a l'Escriptori"
+!define PIDGIN_STARTMENU_SHORTCUT_DESC		"Crear una entrada Pidgin al Menu Inici"
 
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"S'ha trobat una versió antiga de l'entorn d'execució GTK. Vols actualitzar-la?$\rNota: Gaim no funcionarà sino ho fas."
+!define GTK_UPGRADE_PROMPT			"S'ha trobat una versió antiga de l'entorn d'execució GTK. Vols actualitzar-la?$\rNota: $(^Name) no funcionarà sino ho fas."
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		"Visita la pàgina web de Gaim per Windows"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"Visita la pàgina web de Pidgin per Windows"
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (només esborrar)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (només esborrar)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Error installlant l'entorn d'execució GTK+."
@@ -58,7 +58,7 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"No tens permisos per instal.lar un tema GTK+."
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1		"L'instal.lador podria no trobar les entrades del registre de Gaim.$\rProbablement un altre usuari ha instal.lat aquesta aplicació."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"L'instal.lador podria no trobar les entrades del registre de Pidgin.$\rProbablement un altre usuari ha instal.lat aquesta aplicació."
 !define un.PIDGIN_UNINSTALL_ERROR_2		"No tens permís per desinstal.lar aquesta aplicació."
 
 ; Spellcheck Section Prompts

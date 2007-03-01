@@ -2,7 +2,7 @@
 ;;
 ;;  slovak.nsh
 ;;
-;;  Slovak language strings for the Windows Gaim NSIS installer.
+;;  Slovak language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1250
 ;;
 ;;  Author: dominik@internetkosice.sk
@@ -10,7 +10,7 @@
 
 ; Startup Checks
 !define INSTALLER_IS_RUNNING			"Inötal·cia je uû spusten·"
-!define PIDGIN_IS_RUNNING				"Gaim je pr·ve spusten˝. Vypnite ho a sk˙ste znova."
+!define PIDGIN_IS_RUNNING				"Pidgin je pr·ve spusten˝. Vypnite ho a sk˙ste znova."
 !define GTK_INSTALLER_NEEDED			"GTK+ runtime prostredie ch˝ba alebo musÌ byù upgradovanÈ.$\rNainötalujte, prosÌm, GTK+ runtime verziu v${GTK_MIN_VERSION}, alebo novöiu"
 
 ; License Page
@@ -18,7 +18,7 @@
 !define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) je vydan˝ pod GPL licenciou. T·to licencia je len pre informaËnÈ ˙Ëely. $_CLICK"
 
 ; Components Page
-!define PIDGIN_SECTION_TITLE			"Gaim Instant Messaging Klient (nevyhnutnÈ)"
+!define PIDGIN_SECTION_TITLE			"Pidgin Instant Messaging Klient (nevyhnutnÈ)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime prostredie (nevyhnutnÈ)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ tÈmy"
 !define GTK_NOTHEME_SECTION_TITLE		"éiadna grafick· tÈma"
@@ -28,25 +28,25 @@
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"Z·stupcovia"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Plocha"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"ätart Menu"
-!define PIDGIN_SECTION_DESCRIPTION		"Jadro Gaim-u a nevyhnutnÈ DLL s˙bory"
-!define GTK_SECTION_DESCRIPTION			"MultiplatformovÈ GUI n·stroje, pouûÌvanÈ Gaim-om"
+!define PIDGIN_SECTION_DESCRIPTION		"Jadro Pidgin-u a nevyhnutnÈ DLL s˙bory"
+!define GTK_SECTION_DESCRIPTION			"MultiplatformovÈ GUI n·stroje, pouûÌvanÈ Pidgin-om"
 !define GTK_THEMES_SECTION_DESCRIPTION		"Pomocou GTK+ grafick˝ch tÈm mÙûete zmeniù vzhæad GTK+ aplik·ciÌ."
 !define GTK_NO_THEME_DESC			"Neinötalovaù GTK+ grafick˙ tÈmu"
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) je GTK grafick· tÈma, ktor· pekne ladÌ s prostredÌm Windows."
 !define GTK_BLUECURVE_THEME_DESC		"Bluecurve grafick· tÈma."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC		"Lighthouseblue grafick· tÈma"
-!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Z·stupcovia pre Gaim"
-!define PIDGIN_DESKTOP_SHORTCUT_DESC		"Vytvoriù z·stupcu pre Gaim na pracovnej ploche"
-!define PIDGIN_STARTMENU_SHORTCUT_DESC		"Vytvoriù odkaz na Gaim v ätart Menu"
+!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Z·stupcovia pre Pidgin"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC		"Vytvoriù z·stupcu pre Pidgin na pracovnej ploche"
+!define PIDGIN_STARTMENU_SHORTCUT_DESC		"Vytvoriù odkaz na Pidgin v ätart Menu"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Bola n·jden· staröia verzia GTK+ runtime. Prajete si upgradovaù s˙Ëasn˙ verziu?$\rPozn·mka: Gaim nemusÌ po upgradovanÌ fungovaù spr·vne."
+!define GTK_UPGRADE_PROMPT			"Bola n·jden· staröia verzia GTK+ runtime. Prajete si upgradovaù s˙Ëasn˙ verziu?$\rPozn·mka: $(^Name) nemusÌ po upgradovanÌ fungovaù spr·vne."
 
 ; Installer Finish Page
-!define PIDGIN_FINISH_VISIT_WEB_SITE		"NavötÌviù webstr·nku Windows Gaim"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"NavötÌviù webstr·nku Windows Pidgin"
 
-; Gaim Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"Gaim (len odstr·niù)"
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (len odstr·niù)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Chyba pri inötal·cii GTK+ runtime."
@@ -56,7 +56,7 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Nem·te opr·vnenie na inötal·ciu GTK+ grafickej tÈmy."
 
 ; Uninstall Section Prompts
-!define un.PIDGIN_UNINSTALL_ERROR_1		"Inötal·toru sa nepodarilo n·jsù poloûky v registri pre Gaim.$\rJe moûnÈ, ûe t˙to aplik·ciu nainötaloval in˝ pouûÌvateæ."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"Inötal·toru sa nepodarilo n·jsù poloûky v registri pre Pidgin.$\rJe moûnÈ, ûe t˙to aplik·ciu nainötaloval in˝ pouûÌvateæ."
 !define un.PIDGIN_UNINSTALL_ERROR_2		"Nem·te opr·vnenie na odinötal·ciu tejto aplik·cie."
 
 ; Spellcheck Section Prompts
