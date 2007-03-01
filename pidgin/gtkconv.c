@@ -2355,9 +2355,6 @@ update_tab_icon(GaimConversation *conv)
 		l = pidgin_conv_get_tab_icons(conv);
 
 		gtk_window_set_icon_list(GTK_WINDOW(win->window), l);
-
-		if (status != NULL)
-			g_object_unref(status);
 	}
 }
 
