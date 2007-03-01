@@ -47,7 +47,6 @@ EXTRA_DIST = \
 		typed.png			\
 		typing.png			\
 		Makefile.mingw			\
-		gaim-install.ico		\
 		gaim.ico			
 
 

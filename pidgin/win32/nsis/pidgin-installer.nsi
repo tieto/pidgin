@@ -1,4 +1,4 @@
-; Installer script for win32 Gaim
+; Installer script for win32 Pidgin
 ; Original Author: Herman Bloggs <hermanator12002@yahoo.com>
 ; Updated By: Daniel Atallah <daniel_atallah@yahoo.com>
 
@@ -21,12 +21,12 @@ Var SPELLCHECK_SEL
 Name $name
 
 !ifdef WITH_GTK
-OutFile "gaim-${GAIM_VERSION}.exe"
+OutFile "pidgin-${PIDGIN_VERSION}.exe"
 !else
 !ifdef DEBUG
-OutFile "gaim-${GAIM_VERSION}-debug.exe"
+OutFile "pidgin-${PIDGIN_VERSION}-debug.exe"
 !else
-OutFile "gaim-${GAIM_VERSION}-no-gtk.exe"
+OutFile "pidgin-${PIDGIN_VERSION}-no-gtk.exe"
 !endif
 !endif
 
@@ -54,74 +54,82 @@ SetDateSave on
 ;--------------------------------
 ;Defines
 
-!define GAIM_NSIS_INCLUDE_PATH			".\gtk\win32\nsis"
-!define GAIM_INSTALLER_DEPS			"..\win32-dev\gaim-inst-deps"
+!define PIDGIN_NSIS_INCLUDE_PATH		"."
+!define PIDGIN_INSTALLER_DEPS			"..\..\..\..\win32-dev\pidgin-inst-deps"
 
-!define GAIM_REG_KEY				"SOFTWARE\gaim"
-!define GAIM_UNINSTALL_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Gaim"
-!define HKLM_APP_PATHS_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\gaim.exe"
-!define GAIM_STARTUP_RUN_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
-!define GAIM_UNINST_EXE				"gaim-uninst.exe"
+; Remove these and the stuff that uses them at some point
+!define OLD_GAIM_REG_KEY			"SOFTWARE\gaim"
+!define OLD_GAIM_UNINSTALL_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Gaim"
+!define OLD_GAIM_UNINST_EXE			"gaim-uninst.exe"
+
+!define PIDGIN_REG_KEY				"SOFTWARE\pidgin"
+!define PIDGIN_UNINSTALL_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Pidgin"
+
+!define HKLM_APP_PATHS_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\pidgin.exe"
+!define STARTUP_RUN_KEY				"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
+!define PIDGIN_UNINST_EXE			"pidgin-uninst.exe"
 
 !define GTK_MIN_VERSION				"2.6.10"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl58.dll"
 !define GTK_DEFAULT_INSTALL_PATH		"$COMMONFILES\GTK\2.0"
-!define GTK_RUNTIME_INSTALLER			"..\gtk_installer\gtk-runtime*.exe"
+!define GTK_RUNTIME_INSTALLER			"..\..\..\..\gtk_installer\gtk-runtime*.exe"
 
 !define ASPELL_REG_KEY				"SOFTWARE\Aspell"
-!define DOWNLOADER_URL				"http://gaim.sourceforge.net/win32/download_redir.php"
+!define DOWNLOADER_URL				"http://www.pidgin.im/win32/download_redir.php"
 
 ;--------------------------------
 ;Version resource
-VIProductVersion "${GAIM_PRODUCT_VERSION}"
-VIAddVersionKey "ProductName" "Gaim"
-VIAddVersionKey "FileVersion" "${GAIM_VERSION}"
-VIAddVersionKey "ProductVersion" "${GAIM_VERSION}"
+VIProductVersion "${PIDGIN_PRODUCT_VERSION}"
+VIAddVersionKey "ProductName" "Pidgin"
+VIAddVersionKey "FileVersion" "${PIDGIN_VERSION}"
+VIAddVersionKey "ProductVersion" "${PIDGIN_VERSION}"
 VIAddVersionKey "LegalCopyright" ""
 !ifdef WITH_GTK
-VIAddVersionKey "FileDescription" "Gaim Installer (w/ GTK+ Installer)"
+VIAddVersionKey "FileDescription" "Pidgin Installer (w/ GTK+ Installer)"
 !else
 !ifdef DEBUG
-VIAddVersionKey "FileDescription" "Gaim Installer (Debug Version)"
+VIAddVersionKey "FileDescription" "Pidgin Installer (Debug Version)"
 !else
-VIAddVersionKey "FileDescription" "Gaim Installer (w/o GTK+ Installer)"
+VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
 !endif
 !endif
 
 ;--------------------------------
 ;Modern UI Configuration
 
-  !define MUI_ICON				".\gtk\pixmaps\gaim-install.ico"
-  !define MUI_UNICON				".\gtk\pixmaps\gaim-install.ico"
-  !define MUI_WELCOMEFINISHPAGE_BITMAP		".\gtk\win32\nsis\gaim-intro.bmp"
+  !define MUI_ICON				".\pixmaps\pidgin-install.ico"
+  !define MUI_UNICON				".\pixmaps\pidgin-install.ico"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP		".\pixmaps\pidgin-intro.bmp"
   !define MUI_HEADERIMAGE
-  !define MUI_HEADERIMAGE_BITMAP		".\gtk\win32\nsis\gaim-header.bmp"
+  !define MUI_HEADERIMAGE_BITMAP		".\pixmaps\pidgin-header.bmp"
 
   ; Alter License section
-  !define MUI_LICENSEPAGE_BUTTON		$(GAIM_LICENSE_BUTTON)
-  !define MUI_LICENSEPAGE_TEXT_BOTTOM		$(GAIM_LICENSE_BOTTOM_TEXT)
+  !define MUI_LICENSEPAGE_BUTTON		$(PIDGIN_LICENSE_BUTTON)
+  !define MUI_LICENSEPAGE_TEXT_BOTTOM		$(PIDGIN_LICENSE_BOTTOM_TEXT)
+
+;TODO: Maybe try to copy the old Gaim installer Lang Reg. key?
 
   !define MUI_LANGDLL_REGISTRY_ROOT "HKCU"
-  !define MUI_LANGDLL_REGISTRY_KEY ${GAIM_REG_KEY}
+  !define MUI_LANGDLL_REGISTRY_KEY ${PIDGIN_REG_KEY}
   !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
   !define MUI_COMPONENTSPAGE_SMALLDESC
   !define MUI_ABORTWARNING
 
   ;Finish Page config
-  !define MUI_FINISHPAGE_RUN			"$INSTDIR\gaim.exe"
+  !define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
-  !define MUI_FINISHPAGE_LINK			$(GAIM_FINISH_VISIT_WEB_SITE)
-  !define MUI_FINISHPAGE_LINK_LOCATION          "http://gaim.sourceforge.net/win32"
+  !define MUI_FINISHPAGE_LINK			$(PIDGIN_FINISH_VISIT_WEB_SITE)
+  !define MUI_FINISHPAGE_LINK_LOCATION		"http://www.pidgin.im/win32"
 
 ;--------------------------------
 ;Pages
 
   !define MUI_PAGE_CUSTOMFUNCTION_PRE		preWelcomePage
   !insertmacro MUI_PAGE_WELCOME
-  !insertmacro MUI_PAGE_LICENSE			"./COPYING"
+  !insertmacro MUI_PAGE_LICENSE			"../../../COPYING"
   !insertmacro MUI_PAGE_COMPONENTS
 
 !ifdef WITH_GTK
@@ -132,7 +140,7 @@ VIAddVersionKey "FileDescription" "Gaim Installer (w/o GTK+ Installer)"
   !insertmacro MUI_PAGE_DIRECTORY
 !endif
 
-  ; Gaim install dir page
+  ; Pidgin install dir page
   !insertmacro MUI_PAGE_DIRECTORY
 
   !insertmacro MUI_PAGE_INSTFILES
@@ -185,40 +193,40 @@ VIAddVersionKey "FileDescription" "Gaim Installer (w/o GTK+ Installer)"
 ;--------------------------------
 ;Translations
 
-  !define GAIM_DEFAULT_LANGFILE "${GAIM_NSIS_INCLUDE_PATH}\translations\english.nsh"
+  !define PIDGIN_DEFAULT_LANGFILE "${PIDGIN_NSIS_INCLUDE_PATH}\translations\english.nsh"
 
-  !include "${GAIM_NSIS_INCLUDE_PATH}\langmacros.nsh"
+  !include "${PIDGIN_NSIS_INCLUDE_PATH}\langmacros.nsh"
 
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "ALBANIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\albanian.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "BULGARIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\bulgarian.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "CATALAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\catalan.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "CZECH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\czech.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "DANISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\danish.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "DUTCH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\dutch.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "ENGLISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\english.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "FINNISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\finnish.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "FRENCH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\french.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "GERMAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\german.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "HEBREW"		"${GAIM_NSIS_INCLUDE_PATH}\translations\hebrew.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "HUNGARIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\hungarian.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "ITALIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\italian.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "JAPANESE"		"${GAIM_NSIS_INCLUDE_PATH}\translations\japanese.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "KOREAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\korean.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "KURDISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\kurdish.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "LITHUANIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\lithuanian.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "NORWEGIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\norwegian.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "POLISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\polish.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "PORTUGUESE"		"${GAIM_NSIS_INCLUDE_PATH}\translations\portuguese.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "PORTUGUESEBR"	"${GAIM_NSIS_INCLUDE_PATH}\translations\portuguese-br.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "ROMANIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\romanian.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "RUSSIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\russian.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SERBIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\serbian-latin.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SIMPCHINESE"	"${GAIM_NSIS_INCLUDE_PATH}\translations\simp-chinese.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SLOVAK"		"${GAIM_NSIS_INCLUDE_PATH}\translations\slovak.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SLOVENIAN"		"${GAIM_NSIS_INCLUDE_PATH}\translations\slovenian.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SPANISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\spanish.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "SWEDISH"		"${GAIM_NSIS_INCLUDE_PATH}\translations\swedish.nsh"
-  !insertmacro GAIM_MACRO_INCLUDE_LANGFILE "TRADCHINESE"	"${GAIM_NSIS_INCLUDE_PATH}\translations\trad-chinese.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ALBANIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\albanian.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "BULGARIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\bulgarian.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "CATALAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\catalan.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "CZECH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\czech.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "DANISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\danish.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "DUTCH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\dutch.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ENGLISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\english.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "FINNISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\finnish.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "FRENCH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\french.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "GERMAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\german.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "HEBREW"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\hebrew.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "HUNGARIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\hungarian.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ITALIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\italian.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "JAPANESE"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\japanese.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "KOREAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\korean.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "KURDISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\kurdish.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "LITHUANIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\lithuanian.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "NORWEGIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\norwegian.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "POLISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\polish.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "PORTUGUESE"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\portuguese.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "PORTUGUESEBR"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\portuguese-br.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ROMANIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\romanian.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "RUSSIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\russian.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SERBIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\serbian-latin.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SIMPCHINESE"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\simp-chinese.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SLOVAK"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\slovak.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SLOVENIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\slovenian.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SPANISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\spanish.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "SWEDISH"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\swedish.nsh"
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "TRADCHINESE"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\trad-chinese.nsh"
 
 ;--------------------------------
 ;Reserve Files
@@ -234,39 +242,46 @@ VIAddVersionKey "FileDescription" "Gaim Installer (w/o GTK+ Installer)"
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;--------------------------------
-;Uninstall any old version of Gaim
+;Uninstall any old version of Pidgin (or Gaim)
 
-Section -SecUninstallOldGaim
+Section -SecUninstallOldPidgin
   ; Check install rights..
   Call CheckUserInstallRights
   Pop $R0
 
-  ;If gaim is currently set to run on startup,
+  ;First try to uninstall Pidgin
+  StrCpy $R4 ${PIDGIN_REG_KEY}
+  StrCpy $R5 ${PIDGIN_UNINSTALL_KEY}
+  StrCpy $R6 ${PIDGIN_UNINST_EXE}
+  StrCpy $R7 "Pidgin"
+
+  start_comparison:
+  ;If pidgin is currently set to run on startup,
   ;  save the section of the Registry where the setting is before uninstalling,
   ;  so we can put it back after installing the new version
   ClearErrors
-  ReadRegStr $STARTUP_RUN_KEY HKCU "${GAIM_STARTUP_RUN_KEY}" "Gaim"
+  ReadRegStr $STARTUP_RUN_KEY HKCU "${STARTUP_RUN_KEY}" $R7
   IfErrors +3
   StrCpy $STARTUP_RUN_KEY "HKCU"
   Goto +4
   ClearErrors
-  ReadRegStr $STARTUP_RUN_KEY HKLM "${GAIM_STARTUP_RUN_KEY}" "Gaim"
+  ReadRegStr $STARTUP_RUN_KEY HKLM "${STARTUP_RUN_KEY}" $R7
   IfErrors +2
   StrCpy $STARTUP_RUN_KEY "HKLM"
 
-  StrCmp $R0 "HKLM" gaim_hklm
-  StrCmp $R0 "HKCU" gaim_hkcu done
+  StrCmp $R0 "HKLM" compare_hklm
+  StrCmp $R0 "HKCU" compare_hkcu done
 
-  gaim_hkcu:
-      ReadRegStr $R1 HKCU ${GAIM_REG_KEY} ""
-      ReadRegStr $R2 HKCU ${GAIM_REG_KEY} "Version"
-      ReadRegStr $R3 HKCU "${GAIM_UNINSTALL_KEY}" "UninstallString"
+  compare_hkcu:
+      ReadRegStr $R1 HKCU $R4 ""
+      ReadRegStr $R2 HKCU $R4 "Version"
+      ReadRegStr $R3 HKCU "$R5" "UninstallString"
       Goto try_uninstall
 
-  gaim_hklm:
-      ReadRegStr $R1 HKLM ${GAIM_REG_KEY} ""
-      ReadRegStr $R2 HKLM ${GAIM_REG_KEY} "Version"
-      ReadRegStr $R3 HKLM "${GAIM_UNINSTALL_KEY}" "UninstallString"
+  compare_hklm:
+      ReadRegStr $R1 HKLM $R4 ""
+      ReadRegStr $R2 HKLM $R4 "Version"
+      ReadRegStr $R3 HKLM "$R5" "UninstallString"
 
   ; If previous version exists .. remove
   try_uninstall:
@@ -280,23 +295,32 @@ Section -SecUninstallOldGaim
           SetOverwrite on
           ; Need to copy uninstaller outside of the install dir
           ClearErrors
-          CopyFiles /SILENT $R3 "$TEMP\${GAIM_UNINST_EXE}"
+          CopyFiles /SILENT $R3 "$TEMP\$R6"
           SetOverwrite off
           IfErrors uninstall_problem
             ; Ready to uninstall..
             ClearErrors
-            ExecWait '"$TEMP\${GAIM_UNINST_EXE}" /S _?=$R1'
+            ExecWait '"$TEMP\$R6" /S _?=$R1'
             IfErrors exec_error
-              Delete "$TEMP\${GAIM_UNINST_EXE}"
+              Delete "$TEMP\$R6"
             Goto done
 
             exec_error:
-              Delete "$TEMP\${GAIM_UNINST_EXE}"
+              Delete "$TEMP\$R6"
               Goto uninstall_problem
 
         uninstall_problem:
+          ; If we couldn't uninstall Pidgin, try to uninstall Gaim
+          StrCmp $R4 ${PIDGIN_REG_KEY} cannot_uninstall
+          StrCpy $R4 ${OLD_GAIM_REG_KEY}
+          StrCpy $R5 ${OLD_GAIM_UNINSTALL_KEY}
+          StrCpy $R6 ${OLD_GAIM_UNINST_EXE}
+          StrCpy $R7 "Gaim"
+          Goto start_comparison
+
+          cannot_uninstall:
           ; We can't uninstall.  Either the user must manually uninstall or we ignore and reinstall over it.
-          MessageBox MB_OKCANCEL $(GAIM_PROMPT_CONTINUE_WITHOUT_UNINSTALL) /SD IDOK IDOK done
+          MessageBox MB_OKCANCEL $(PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL) /SD IDOK IDOK done
           Quit
   done:
 SectionEnd
@@ -358,7 +382,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
   ; end got_install rights
 
   gtk_no_install_rights:
-    ; Install GTK+ to Gaim install dir
+    ; Install GTK+ to Pidgin install dir
     StrCpy $GTK_FOLDER $INSTDIR
     ClearErrors
     ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
@@ -379,9 +403,9 @@ SectionEnd ; end of GTK+ section
 !endif
 
 ;--------------------------------
-;Gaim Install Section
+;Pidgin Install Section
 
-Section $(GAIM_SECTION_TITLE) SecGaim
+Section $(PIDGIN_SECTION_TITLE) SecPidgin
   SectionIn 1 RO
 
   ; Check install rights..
@@ -390,49 +414,49 @@ Section $(GAIM_SECTION_TITLE) SecGaim
 
   ; Get GTK+ lib dir if we have it..
 
-  StrCmp $R0 "NONE" gaim_none
-  StrCmp $R0 "HKLM" gaim_hklm gaim_hkcu
+  StrCmp $R0 "NONE" pidgin_none
+  StrCmp $R0 "HKLM" pidgin_hklm pidgin_hkcu
 
-  gaim_hklm:
+  pidgin_hklm:
     ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
-    WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "" "$INSTDIR\gaim.exe"
+    WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "" "$INSTDIR\pidgin.exe"
     WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R1\bin"
-    WriteRegStr HKLM ${GAIM_REG_KEY} "" "$INSTDIR"
-    WriteRegStr HKLM ${GAIM_REG_KEY} "Version" "${GAIM_VERSION}"
-    WriteRegStr HKLM "${GAIM_UNINSTALL_KEY}" "DisplayName" $(GAIM_UNINSTALL_DESC)
-    WriteRegStr HKLM "${GAIM_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${GAIM_UNINST_EXE}"
+    WriteRegStr HKLM ${PIDGIN_REG_KEY} "" "$INSTDIR"
+    WriteRegStr HKLM ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayName" $(PIDGIN_UNINSTALL_DESC)
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${PIDGIN_UNINST_EXE}"
     ; Sets scope of the desktop and Start Menu entries for all users.
     SetShellVarContext "all"
-    Goto gaim_install_files
+    Goto pidgin_install_files
 
-  gaim_hkcu:
+  pidgin_hkcu:
     ReadRegStr $R1 HKCU ${GTK_REG_KEY} "Path"
-    StrCmp $R1 "" 0 gaim_hkcu1
+    StrCmp $R1 "" 0 +2
       ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
-    gaim_hkcu1:
-    WriteRegStr HKCU ${GAIM_REG_KEY} "" "$INSTDIR"
-    WriteRegStr HKCU ${GAIM_REG_KEY} "Version" "${GAIM_VERSION}"
-    WriteRegStr HKCU "${GAIM_UNINSTALL_KEY}" "DisplayName" $(GAIM_UNINSTALL_DESC)
-    WriteRegStr HKCU "${GAIM_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${GAIM_UNINST_EXE}"
-    Goto gaim_install_files
 
-  gaim_none:
+    WriteRegStr HKCU ${PIDGIN_REG_KEY} "" "$INSTDIR"
+    WriteRegStr HKCU ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayName" $(PIDGIN_UNINSTALL_DESC)
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${PIDGIN_UNINST_EXE}"
+    Goto pidgin_install_files
+
+  pidgin_none:
     ReadRegStr $R1 HKLM ${GTK_REG_KEY} "Path"
 
-  gaim_install_files:
+  pidgin_install_files:
     SetOutPath "$INSTDIR"
-    ; Gaim files
+    ; Pidgin files
     SetOverwrite on
-    File /r ${GAIM_INSTALL_DIR}\*.*
+    File /r ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
     !ifdef DEBUG
-    File "${GAIM_INSTALLER_DEPS}\exchndl.dll"
+    File "${PIDGIN_INSTALLER_DEPS}\exchndl.dll"
     !endif
 
     ; Install shfolder.dll if need be..
     SearchPath $R4 "shfolder.dll"
     StrCmp $R4 "" 0 got_shfolder
       SetOutPath "$SYSDIR"
-      File "${GAIM_INSTALLER_DEPS}\shfolder.dll"
+      File "${PIDGIN_INSTALLER_DEPS}\shfolder.dll"
       SetOutPath "$INSTDIR"
     got_shfolder:
 
@@ -468,31 +492,31 @@ Section $(GAIM_SECTION_TITLE) SecGaim
 
     ; write out uninstaller
     SetOverwrite on
-    WriteUninstaller "$INSTDIR\${GAIM_UNINST_EXE}"
+    WriteUninstaller "$INSTDIR\${PIDGIN_UNINST_EXE}"
     SetOverwrite off
 
-    ; If we previously had gaim setup to run on startup, make it do so again
+    ; If we previously had pidgin set up to run on startup, make it do so again
     StrCmp $STARTUP_RUN_KEY "HKCU" +1 +2
-    WriteRegStr HKCU "${GAIM_STARTUP_RUN_KEY}" "Gaim" "$INSTDIR\gaim.exe"
+    WriteRegStr HKCU "${STARTUP_RUN_KEY}" "Pidgin" "$INSTDIR\pidgin.exe"
     StrCmp $STARTUP_RUN_KEY "HKLM" +1 +2
-    WriteRegStr HKLM "${GAIM_STARTUP_RUN_KEY}" "Gaim" "$INSTDIR\gaim.exe"
+    WriteRegStr HKLM "${STARTUP_RUN_KEY}" "Pidgin" "$INSTDIR\pidgin.exe"
 
   done:
-SectionEnd ; end of default Gaim section
+SectionEnd ; end of default Pidgin section
 
 ;--------------------------------
 ;Shortcuts
 
-SectionGroup /e $(GAIM_SHORTCUTS_SECTION_TITLE) SecShortcuts
-  Section /o $(GAIM_DESKTOP_SHORTCUT_SECTION_TITLE) SecDesktopShortcut
+SectionGroup /e $(PIDGIN_SHORTCUTS_SECTION_TITLE) SecShortcuts
+  Section /o $(PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE) SecDesktopShortcut
     SetOverwrite on
-    CreateShortCut "$DESKTOP\Gaim.lnk" "$INSTDIR\gaim.exe"
+    CreateShortCut "$DESKTOP\Pidgin.lnk" "$INSTDIR\pidgin.exe"
     SetOverwrite off
   SectionEnd
-  Section $(GAIM_STARTMENU_SHORTCUT_SECTION_TITLE) SecStartMenuShortcut
+  Section $(PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE) SecStartMenuShortcut
     SetOverwrite on
-    CreateDirectory "$SMPROGRAMS\Gaim"
-    CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" "$INSTDIR\gaim.exe"
+    CreateDirectory "$SMPROGRAMS\Pidgin"
+    CreateShortCut "$SMPROGRAMS\Pidgin\Pidgin.lnk" "$INSTDIR\pidgin.exe"
     SetOverwrite off
   SectionEnd
 SectionGroupEnd
@@ -525,92 +549,92 @@ SectionGroupEnd
 ;--------------------------------
 ;Spell Checking
 
-SectionGroup /e $(GAIM_SPELLCHECK_SECTION_TITLE) SecSpellCheck
-  Section /o $(GAIM_SPELLCHECK_BRETON) SecSpellCheckBreton
+SectionGroup /e $(PIDGIN_SPELLCHECK_SECTION_TITLE) SecSpellCheck
+  Section /o $(PIDGIN_SPELLCHECK_BRETON) SecSpellCheckBreton
     Push ${SecSpellCheckBreton}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_CATALAN) SecSpellCheckCatalan
+  Section /o $(PIDGIN_SPELLCHECK_CATALAN) SecSpellCheckCatalan
     Push ${SecSpellCheckCatalan}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_CZECH) SecSpellCheckCzech
+  Section /o $(PIDGIN_SPELLCHECK_CZECH) SecSpellCheckCzech
     Push ${SecSpellCheckCzech}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_WELSH) SecSpellCheckWelsh
+  Section /o $(PIDGIN_SPELLCHECK_WELSH) SecSpellCheckWelsh
     Push ${SecSpellCheckWelsh}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_DANISH) SecSpellCheckDanish
+  Section /o $(PIDGIN_SPELLCHECK_DANISH) SecSpellCheckDanish
     Push ${SecSpellCheckDanish}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_GERMAN) SecSpellCheckGerman
+  Section /o $(PIDGIN_SPELLCHECK_GERMAN) SecSpellCheckGerman
     Push ${SecSpellCheckGerman}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_GREEK) SecSpellCheckGreek
+  Section /o $(PIDGIN_SPELLCHECK_GREEK) SecSpellCheckGreek
     Push ${SecSpellCheckGreek}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_ENGLISH) SecSpellCheckEnglish
+  Section /o $(PIDGIN_SPELLCHECK_ENGLISH) SecSpellCheckEnglish
     Push ${SecSpellCheckEnglish}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_ESPERANTO) SecSpellCheckEsperanto
+  Section /o $(PIDGIN_SPELLCHECK_ESPERANTO) SecSpellCheckEsperanto
     Push ${SecSpellCheckEsperanto}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_SPANISH) SecSpellCheckSpanish
+  Section /o $(PIDGIN_SPELLCHECK_SPANISH) SecSpellCheckSpanish
     Push ${SecSpellCheckSpanish}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_FAROESE) SecSpellCheckFaroese
+  Section /o $(PIDGIN_SPELLCHECK_FAROESE) SecSpellCheckFaroese
     Push ${SecSpellCheckFaroese}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_FRENCH) SecSpellCheckFrench
+  Section /o $(PIDGIN_SPELLCHECK_FRENCH) SecSpellCheckFrench
     Push ${SecSpellCheckFrench}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_ITALIAN) SecSpellCheckItalian
+  Section /o $(PIDGIN_SPELLCHECK_ITALIAN) SecSpellCheckItalian
     Push ${SecSpellCheckItalian}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_DUTCH) SecSpellCheckDutch
+  Section /o $(PIDGIN_SPELLCHECK_DUTCH) SecSpellCheckDutch
     Push ${SecSpellCheckDutch}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_NORWEGIAN) SecSpellCheckNorwegian
+  Section /o $(PIDGIN_SPELLCHECK_NORWEGIAN) SecSpellCheckNorwegian
     Push ${SecSpellCheckNorwegian}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_POLISH) SecSpellCheckPolish
+  Section /o $(PIDGIN_SPELLCHECK_POLISH) SecSpellCheckPolish
     Push ${SecSpellCheckPolish}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_PORTUGUESE) SecSpellCheckPortuguese
+  Section /o $(PIDGIN_SPELLCHECK_PORTUGUESE) SecSpellCheckPortuguese
     Push ${SecSpellCheckPortuguese}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_ROMANIAN) SecSpellCheckRomanian
+  Section /o $(PIDGIN_SPELLCHECK_ROMANIAN) SecSpellCheckRomanian
     Push ${SecSpellCheckRomanian}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_RUSSIAN) SecSpellCheckRussian
+  Section /o $(PIDGIN_SPELLCHECK_RUSSIAN) SecSpellCheckRussian
     Push ${SecSpellCheckRussian}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_SLOVAK) SecSpellCheckSlovak
+  Section /o $(PIDGIN_SPELLCHECK_SLOVAK) SecSpellCheckSlovak
     Push ${SecSpellCheckSlovak}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_SWEDISH) SecSpellCheckSwedish
+  Section /o $(PIDGIN_SPELLCHECK_SWEDISH) SecSpellCheckSwedish
     Push ${SecSpellCheckSwedish}
     Call InstallAspellAndDict
   SectionEnd
-  Section /o $(GAIM_SPELLCHECK_UKRAINIAN) SecSpellCheckUkrainian
+  Section /o $(PIDGIN_SPELLCHECK_UKRAINIAN) SecSpellCheckUkrainian
     Push ${SecSpellCheckUkrainian}
     Call InstallAspellAndDict
   SectionEnd
@@ -627,29 +651,28 @@ Section Uninstall
   StrCmp $R0 "HKCU" try_hkcu try_hklm
 
   try_hkcu:
-    ReadRegStr $R0 HKCU ${GAIM_REG_KEY} ""
+    ReadRegStr $R0 HKCU ${PIDGIN_REG_KEY} ""
     StrCmp $R0 $INSTDIR 0 cant_uninstall
       ; HKCU install path matches our INSTDIR.. so uninstall
-      DeleteRegKey HKCU ${GAIM_REG_KEY}
-      DeleteRegKey HKCU "${GAIM_UNINSTALL_KEY}"
+      DeleteRegKey HKCU ${PIDGIN_REG_KEY}
+      DeleteRegKey HKCU "${PIDGIN_UNINSTALL_KEY}"
       Goto cont_uninstall
 
   try_hklm:
-    ReadRegStr $R0 HKLM ${GAIM_REG_KEY} ""
+    ReadRegStr $R0 HKLM ${PIDGIN_REG_KEY} ""
     StrCmp $R0 $INSTDIR 0 try_hkcu
       ; HKLM install path matches our INSTDIR.. so uninstall
-      DeleteRegKey HKLM ${GAIM_REG_KEY}
-      DeleteRegKey HKLM "${GAIM_UNINSTALL_KEY}"
+      DeleteRegKey HKLM ${PIDGIN_REG_KEY}
+      DeleteRegKey HKLM "${PIDGIN_UNINSTALL_KEY}"
       DeleteRegKey HKLM "${HKLM_APP_PATHS_KEY}"
       ; Sets start menu and desktop scope to all users..
       SetShellVarContext "all"
 
   cont_uninstall:
     ; The WinPrefs plugin may have left this behind..
-    DeleteRegValue HKCU "${GAIM_STARTUP_RUN_KEY}" "Gaim"
-    DeleteRegValue HKLM "${GAIM_STARTUP_RUN_KEY}" "Gaim"
-    ; Remove Language preference info
-    DeleteRegKey HKCU ${GAIM_REG_KEY} ;${MUI_LANGDLL_REGISTRY_ROOT} ${MUI_LANGDLL_REGISTRY_KEY}
+    DeleteRegValue HKCU "${STARTUP_RUN_KEY}" "Pidgin"
+    DeleteRegValue HKLM "${STARTUP_RUN_KEY}" "Pidgin"
+    ; Remove Language preference info (TODO: check if NSIS removes this)
 
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"
@@ -721,27 +744,27 @@ Section Uninstall
     Delete "$INSTDIR\silcclient.dll"
     Delete "$INSTDIR\softokn3.dll"
     Delete "$INSTDIR\ssl3.dll"
-    Delete "$INSTDIR\${GAIM_UNINST_EXE}"
+    Delete "$INSTDIR\${PIDGIN_UNINST_EXE}"
     !ifdef DEBUG
     Delete "$INSTDIR\exchndl.dll"
     !endif
     Delete "$INSTDIR\install.log"
 
-    ;Try to remove Gaim install dir .. if empty
+    ;Try to remove Pidgin install dir .. if empty
     RMDir "$INSTDIR"
 
     ; Shortcuts..
-    RMDir /r "$SMPROGRAMS\Gaim"
-    Delete "$DESKTOP\Gaim.lnk"
+    RMDir /r "$SMPROGRAMS\Pidgin"
+    Delete "$DESKTOP\Pidgin.lnk"
 
     Goto done
 
   cant_uninstall:
-    MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_1) /SD IDOK
+    MessageBox MB_OK $(un.PIDGIN_UNINSTALL_ERROR_1) /SD IDOK
     Quit
 
   no_rights:
-    MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_2) /SD IDOK
+    MessageBox MB_OK $(un.PIDGIN_UNINSTALL_ERROR_2) /SD IDOK
     Quit
 
   done:
@@ -750,8 +773,8 @@ SectionEnd ; end of uninstall section
 ;--------------------------------
 ;Descriptions
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGaim} \
-        $(GAIM_SECTION_DESCRIPTION)
+  !insertmacro MUI_DESCRIPTION_TEXT ${SecPidgin} \
+        $(PIDGIN_SECTION_DESCRIPTION)
 !ifdef WITH_GTK
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtk} \
         $(GTK_SECTION_DESCRIPTION)
@@ -768,58 +791,58 @@ SectionEnd ; end of uninstall section
         $(GTK_LIGHTHOUSEBLUE_THEME_DESC)
 
   !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} \
-        $(GAIM_SHORTCUTS_SECTION_DESCRIPTION)
+        $(PIDGIN_SHORTCUTS_SECTION_DESCRIPTION)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDesktopShortcut} \
-        $(GAIM_DESKTOP_SHORTCUT_DESC)
+        $(PIDGIN_DESKTOP_SHORTCUT_DESC)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecStartMenuShortcut} \
-        $(GAIM_STARTMENU_SHORTCUT_DESC)
+        $(PIDGIN_STARTMENU_SHORTCUT_DESC)
 
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheck} \
-        $(GAIM_SPELLCHECK_SECTION_DESCRIPTION)
+        $(PIDGIN_SPELLCHECK_SECTION_DESCRIPTION)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckBreton} \
-        "$(GAIM_SPELLCHECK_BRETON) (862kb)"
+        "$(PIDGIN_SPELLCHECK_BRETON) (862kb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckCatalan} \
-        "$(GAIM_SPELLCHECK_CATALAN) (3.9Mb)"
+        "$(PIDGIN_SPELLCHECK_CATALAN) (3.9Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckCzech} \
-        "$(GAIM_SPELLCHECK_CZECH) (17Mb)"
+        "$(PIDGIN_SPELLCHECK_CZECH) (17Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckWelsh} \
-        "$(GAIM_SPELLCHECK_WELSH) (4.2Mb)"
+        "$(PIDGIN_SPELLCHECK_WELSH) (4.2Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckDanish} \
-        "$(GAIM_SPELLCHECK_DANISH) (6.9Mb)"
+        "$(PIDGIN_SPELLCHECK_DANISH) (6.9Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckGerman} \
-        "$(GAIM_SPELLCHECK_GERMAN) (5.4Mb)"
+        "$(PIDGIN_SPELLCHECK_GERMAN) (5.4Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckGreek} \
-        "$(GAIM_SPELLCHECK_GREEK) (7.1Mb)"
+        "$(PIDGIN_SPELLCHECK_GREEK) (7.1Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckEnglish} \
-        "$(GAIM_SPELLCHECK_ENGLISH) (2.3Mb)"
+        "$(PIDGIN_SPELLCHECK_ENGLISH) (2.3Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckEsperanto} \
-        "$(GAIM_SPELLCHECK_ESPERANTO) (5.7Mb)"
+        "$(PIDGIN_SPELLCHECK_ESPERANTO) (5.7Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSpanish} \
-        "$(GAIM_SPELLCHECK_SPANISH) (7.0Mb)"
+        "$(PIDGIN_SPELLCHECK_SPANISH) (7.0Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckFaroese} \
-        "$(GAIM_SPELLCHECK_FAROESE) (913kb)"
+        "$(PIDGIN_SPELLCHECK_FAROESE) (913kb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckFrench} \
-        "$(GAIM_SPELLCHECK_FRENCH) (9.3Mb)"
+        "$(PIDGIN_SPELLCHECK_FRENCH) (9.3Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckItalian} \
-        "$(GAIM_SPELLCHECK_ITALIAN) (770kb)"
+        "$(PIDGIN_SPELLCHECK_ITALIAN) (770kb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckDutch} \
-        "$(GAIM_SPELLCHECK_DUTCH) (3.7Mb)"
+        "$(PIDGIN_SPELLCHECK_DUTCH) (3.7Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckNorwegian} \
-        "$(GAIM_SPELLCHECK_NORWEGIAN) (3.2Mb)"
+        "$(PIDGIN_SPELLCHECK_NORWEGIAN) (3.2Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckPolish} \
-        "$(GAIM_SPELLCHECK_POLISH) (9.3Mb)"
+        "$(PIDGIN_SPELLCHECK_POLISH) (9.3Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckPortuguese} \
-        "$(GAIM_SPELLCHECK_PORTUGUESE) (5.5Mb)"
+        "$(PIDGIN_SPELLCHECK_PORTUGUESE) (5.5Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckRomanian} \
-        "$(GAIM_SPELLCHECK_ROMANIAN) (906kb)"
+        "$(PIDGIN_SPELLCHECK_ROMANIAN) (906kb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckRussian} \
-        "$(GAIM_SPELLCHECK_RUSSIAN) (11Mb)"
+        "$(PIDGIN_SPELLCHECK_RUSSIAN) (11Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSlovak} \
-        "$(GAIM_SPELLCHECK_SLOVAK) (8.0Mb)"
+        "$(PIDGIN_SPELLCHECK_SLOVAK) (8.0Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckSwedish} \
-        "$(GAIM_SPELLCHECK_SWEDISH) (2.2Mb)"
+        "$(PIDGIN_SPELLCHECK_SWEDISH) (2.2Mb)"
   !insertmacro MUI_DESCRIPTION_TEXT ${SecSpellCheckUkrainian} \
-        "$(GAIM_SPELLCHECK_UKRAINIAN) (12Mb)"
+        "$(PIDGIN_SPELLCHECK_UKRAINIAN) (12Mb)"
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 ;--------------------------------
@@ -931,7 +954,7 @@ Function VerifyDir
 
   dir_exists:
     ClearErrors
-    FileOpen $1 "$0\gaimfoo.bar" w
+    FileOpen $1 "$0\pidginfoo.bar" w
     IfErrors PathBad PathGood
 
     DirGood:
@@ -944,7 +967,7 @@ Function VerifyDir
 
     PathBad:
       FileClose $1
-      Delete "$0\gaimfoo.bar"
+      Delete "$0\pidginfoo.bar"
       PathBad1:
       StrCpy $0 "0"
       Push $0
@@ -952,7 +975,7 @@ Function VerifyDir
 
     PathGood:
       FileClose $1
-      Delete "$0\gaimfoo.bar"
+      Delete "$0\pidginfoo.bar"
       PathGood1:
       StrCpy $0 "1"
       Push $0
@@ -1074,9 +1097,10 @@ FunctionEnd
 !macro RunCheckMacro UN
 Function ${UN}RunCheck
   Push $R0
-  System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
+;TODO - fix this before committing
+  System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "__pidgin_is_running") i .R0'
   IntCmp $R0 0 done
-    MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) /SD IDOK
+    MessageBox MB_OK|MB_ICONEXCLAMATION $(PIDGIN_IS_RUNNING) /SD IDOK
     Abort
   done:
   Pop $R0
@@ -1087,13 +1111,13 @@ FunctionEnd
 
 Function .onInit
   Push $R0
-  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "gaim_installer_running") i .r1 ?e'
+  System::Call 'kernel32::CreateMutexA(i 0, i 0, t "pidgin_installer_running") i .r1 ?e'
   Pop $R0
   StrCmp $R0 0 +3
     MessageBox MB_OK|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING) /SD IDOK
     Abort
   Call RunCheck
-  StrCpy $name "Gaim ${GAIM_VERSION}"
+  StrCpy $name "Pidgin ${PIDGIN_VERSION}"
   StrCpy $GTK_THEME_SEL ${SecGtkWimp}
   StrCpy $SPELLCHECK_SEL ""
 
@@ -1109,7 +1133,7 @@ Function .onInit
   StrCpy $ISSILENT "/NOUI"
 
   ; GTK installer has two silent states.. one with Message boxes, one without
-  ; If gaim installer was run silently, we want to supress gtk installer msg boxes.
+  ; If pidgin installer was run silently, we want to supress gtk installer msg boxes.
   IfSilent 0 set_gtk_normal
       StrCpy $ISSILENT "/S"
   set_gtk_normal:
@@ -1129,13 +1153,21 @@ Function .onInit
   ; If install path was set on the command, use it.
   StrCmp $INSTDIR "" 0 instdir_done
 
-  ;  If gaim is currently intalled, we should default to where it is currently installed
+  ;  If pidgin or gaim is currently installed, we should default to where it is currently installed
   ClearErrors
-  ReadRegStr $INSTDIR HKCU "${GAIM_REG_KEY}" ""
+  ReadRegStr $INSTDIR HKCU "${PIDGIN_REG_KEY}" ""
   IfErrors +2
   StrCmp $INSTDIR "" 0 instdir_done
   ClearErrors
-  ReadRegStr $INSTDIR HKLM "${GAIM_REG_KEY}" ""
+  ReadRegStr $INSTDIR HKLM "${PIDGIN_REG_KEY}" ""
+  IfErrors +2
+  StrCmp $INSTDIR "" 0 instdir_done
+  ClearErrors
+  ReadRegStr $INSTDIR HKCU "${OLD_GAIM_REG_KEY}" ""
+  IfErrors +2
+  StrCmp $INSTDIR "" 0 instdir_done
+  ClearErrors
+  ReadRegStr $INSTDIR HKLM "${OLD_GAIM_REG_KEY}" ""
   IfErrors +2
   StrCmp $INSTDIR "" 0 instdir_done
 
@@ -1143,13 +1175,13 @@ Function .onInit
   Pop $R0
 
   StrCmp $R0 "HKLM" 0 user_dir
-    StrCpy $INSTDIR "$PROGRAMFILES\Gaim"
+    StrCpy $INSTDIR "$PROGRAMFILES\Pidgin"
     Goto instdir_done
   user_dir:
     Push $SMPROGRAMS
     ${GetParent} $SMPROGRAMS $R2
     ${GetParent} $R2 $R2
-    StrCpy $INSTDIR "$R2\Gaim"
+    StrCpy $INSTDIR "$R2\Pidgin"
 
   instdir_done:
   Pop $R0
@@ -1157,7 +1189,7 @@ FunctionEnd
 
 Function un.onInit
   Call un.RunCheck
-  StrCpy $name "Gaim ${GAIM_VERSION}"
+  StrCpy $name "Pidgin ${PIDGIN_VERSION}"
 
   ; Get stored language preference
   !insertmacro MUI_UNGETLANGUAGE
@@ -1326,7 +1358,7 @@ FunctionEnd
 
 Function postGtkDirPage
   Push $R0
-  StrCpy $name "Gaim ${GAIM_VERSION}"
+  StrCpy $name "Pidgin ${PIDGIN_VERSION}"
   Push $GTK_FOLDER
   Call VerifyDir
   Pop $R0
@@ -1565,7 +1597,7 @@ Function InstallAspellAndDict
     Pop $R1
     StrCmp $R1 "" +3
     StrCmp $R1 "cancel" done
-    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_ERROR) : $R1" /SD IDCANCEL IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_SPELLCHECK_ERROR) : $R1" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
   retry_dict:
     Push $R0
@@ -1573,7 +1605,7 @@ Function InstallAspellAndDict
     Pop $R1
     StrCmp $R1 "" +3
     StrCmp $R1 "cancel" done
-    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_DICT_ERROR) : $R1" /SD IDCANCEL IDRETRY retry_dict
+    MessageBox MB_RETRYCANCEL "$(PIDGIN_SPELLCHECK_DICT_ERROR) : $R1" /SD IDCANCEL IDRETRY retry_dict
 
   done:
 
@@ -1598,7 +1630,7 @@ Function InstallAspell
 
   ; We need to download and install aspell
   StrCpy $R1 "$TEMP\aspell_installer.exe"
-  StrCpy $R2 "${DOWNLOADER_URL}?version=${GAIM_VERSION}&dl_pkg=aspell_core"
+  StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=aspell_core"
   DetailPrint "Downloading Aspell... ($R2)"
   NSISdl::download $R2 $R1
   Pop $R0
@@ -1638,7 +1670,7 @@ Function InstallAspellDictionary
 
   ; We need to download and install aspell
   StrCpy $R1 "$TEMP\aspell_dict-$R0.exe"
-  StrCpy $R3 "${DOWNLOADER_URL}?version=${GAIM_VERSION}&dl_pkg=lang_$R0"
+  StrCpy $R3 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=lang_$R0"
   DetailPrint "Downloading the Aspell $R0 Dictionary... ($R3)"
   NSISdl::download $R3 $R1
   Pop $R3

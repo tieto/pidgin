@@ -20,9 +20,11 @@ EXTRA_DIST = \
 		win32/winpidgin.c \
 		win32/wspell.c \
 		win32/wspell.h \
-		win32/nsis/gaim-header.bmp \
-		win32/nsis/gaim-intro.bmp \
-		win32/nsis/gaim-plugin.nsh \
+		win32/nsis/pixmaps/pidgin-header.bmp \
+		win32/nsis/pixmaps/pidgin-intro.bmp \
+		win32/nsis/pixmaps/pidgin-install.ico \
+		win32/nsis/pidgin-installer.nsi \
+		win32/nsis/pidgin-plugin.nsh \
 		win32/nsis/langmacros.nsh \
 		win32/nsis/translations/albanian.nsh \
 		win32/nsis/translations/bulgarian.nsh \

@@ -13,18 +13,18 @@
 !define GTK_INSTALLER_NEEDED			"The GTK+ runtime environment không có hoặc cần được nâng cấp.$\rHãy cài đặt GTK+ runtime v${GTK_MIN_VERSION} hoặc mới hơn"
 
 ; License Page
-!define GAIM_LICENSE_BUTTON			"Tiếp theo >"
-!define GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) được phát hành theo giấy  phép GPL. Giấy phép thấy ở đây chỉ là để cung cấp thông tin mà thôi. $_CLICK"
+!define PIDGIN_LICENSE_BUTTON			"Tiếp theo >"
+!define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) được phát hành theo giấy  phép GPL. Giấy phép thấy ở đây chỉ là để cung cấp thông tin mà thôi. $_CLICK"
 
 ; Components Page
-!define GAIM_SECTION_TITLE			"Trình Khách Thông Điệp Tức Thời Gaim  (phải có)"
+!define PIDGIN_SECTION_TITLE			"Trình Khách Thông Điệp Tức Thời Gaim  (phải có)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime Environment (phải có)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ Theme"
 !define GTK_NOTHEME_SECTION_TITLE		"Không có Theme"
 !define GTK_WIMP_SECTION_TITLE		"Wimp Theme"
 !define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve Theme"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Theme"
-!define GAIM_SECTION_DESCRIPTION		"Các tập tin Gaim chính và dlls"
+!define PIDGIN_SECTION_DESCRIPTION		"Các tập tin Gaim chính và dlls"
 !define GTK_SECTION_DESCRIPTION		"Bộ công cụ giao diện đồ họa đa nền để dùng cho Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ Themes có thể thay đổi diệm mạo và sác thái của các ứng dụng GTK+."
 !define GTK_NO_THEME_DESC			"Không cài đặt GTK+ theme"
@@ -36,10 +36,10 @@
 !define GTK_UPGRADE_PROMPT			"Phát hiện thấy có phiên bản cũ của  GTK+ runtime. Bạn muốn nâng cấp không?$\rNote: Gaim có thể không chạy nếu không nâng cấp."
 
 ; Installer Finish Page
-!define GAIM_FINISH_VISIT_WEB_SITE		"Hãy xem trang chủ Windows Gaim"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"Hãy xem trang chủ Windows Gaim"
 
 ; Gaim Section Prompts and Texts
-!define GAIM_UNINSTALL_DESC			"Gaim (chỉ bỏ cài đặt)"
+!define PIDGIN_UNINSTALL_DESC			"Gaim (chỉ bỏ cài đặt)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Lỗi cài đặt GTK+ runtime."
@@ -49,5 +49,5 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Bạn không có quyền hạn để cài đặt GTK+ theme."
 
 ; Uninstall Section Prompts
-!define un.GAIM_UNINSTALL_ERROR_1		"Trình gỡ cài đặt không tìm được các  registry entry cho Gaim.$\rCó thể là chương trình được người dùng khác cài đặt."
-!define un.GAIM_UNINSTALL_ERROR_2		"Bạn không có quyền hạn để gỡ bỏ chương trình này."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"Trình gỡ cài đặt không tìm được các  registry entry cho Gaim.$\rCó thể là chương trình được người dùng khác cài đặt."
+!define un.PIDGIN_UNINSTALL_ERROR_2		"Bạn không có quyền hạn để gỡ bỏ chương trình này."

@@ -12,18 +12,18 @@
 !define GTK_INSTALLER_NEEDED			"Runtime œrodowiska GTK+ zosta³ zagubiony lub wymaga upgrade-u.$\r Proszê zainstaluj v${GTK_MIN_VERSION} albo wy¿sz¹ wersjê runtime-u GTK+."
 
 ; License Page
-!define GAIM_LICENSE_BUTTON			"Dalej >"
-!define GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) jest wydzielone w licencji GPL. Udziela siê licencji wy³¹cznie do celów informacyjnych. $_CLICK"
+!define PIDGIN_LICENSE_BUTTON			"Dalej >"
+!define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) jest wydzielone w licencji GPL. Udziela siê licencji wy³¹cznie do celów informacyjnych. $_CLICK"
 
 ; Components Page
-!define GAIM_SECTION_TITLE			"Wymagany jest Gaim Instant Messaging Client"
+!define PIDGIN_SECTION_TITLE			"Wymagany jest Gaim Instant Messaging Client"
 !define GTK_SECTION_TITLE			"Wymagany jest runtime œrodowiska GTK+"
 !define GTK_THEMES_SECTION_TITLE		"Temat GTK+"
 !define GTK_NOTHEME_SECTION_TITLE		"Brak tematów"
 !define GTK_WIMP_SECTION_TITLE		"Temat Wimp"
 !define GTK_BLUECURVE_SECTION_TITLE		"Temat Bluecurve "
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Temat Light House Blue"
-!define GAIM_SECTION_DESCRIPTION		"Zbiory Core Gaim oraz dll"
+!define PIDGIN_SECTION_DESCRIPTION		"Zbiory Core Gaim oraz dll"
 !define GTK_SECTION_DESCRIPTION		"Wieloplatformowe narzêdzie GUI, u¿ywane w Gaim"
 !define GTK_THEMES_SECTION_DESCRIPTION	"Tematy GTK+ mog¹ zmieniæ wygl¹d i dzia³anie aplikacji GTK+ ."
 !define GTK_NO_THEME_DESC			"Nie instaluj tematów GTK+"
@@ -35,10 +35,10 @@
 !define GTK_UPGRADE_PROMPT			"Znaleziono star¹ wersjê runtime-u GTK+. Czy chcesz upgrade-owaæ?$\rNote: Gaim mo¿e nie dzia³aæ jeœli nie wykonasz procedury."
 
 ; Installer Finish Page
-!define GAIM_FINISH_VISIT_WEB_SITE		"WejdŸ na stronê Gaim Web Page"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"WejdŸ na stronê Gaim Web Page"
 
 ; Gaim Section Prompts and Texts
-!define GAIM_UNINSTALL_DESC			"Gaim (usuñ program)"
+!define PIDGIN_UNINSTALL_DESC			"Gaim (usuñ program)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"B³¹d instalacji runtime-a GTK+."
@@ -48,5 +48,5 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Nie masz uprawnieñ do zainstalowania tematu GTK+."
 
 ; Uninstall Section Prompts
-!define un.GAIM_UNINSTALL_ERROR_1		"Deinstalator nie mo¿e znaleŸæ rejestrów dla Gaim.$\r Wskazuje to na to, ¿e instalacjê przeprowadzi³ inny u¿ytkownik."
-!define un.GAIM_UNINSTALL_ERROR_2		"Nie masz uprawnieñ do deinstalacji tej aplikacji."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"Deinstalator nie mo¿e znaleŸæ rejestrów dla Gaim.$\r Wskazuje to na to, ¿e instalacjê przeprowadzi³ inny u¿ytkownik."
+!define un.PIDGIN_UNINSTALL_ERROR_2		"Nie masz uprawnieñ do deinstalacji tej aplikacji."
