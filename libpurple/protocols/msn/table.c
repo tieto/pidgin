@@ -41,7 +41,7 @@ msn_table_new()
 
 	table = g_new0(MsnTable, 1);
 
-	table->cmds = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
+	table->cmds = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, (GDestroyNotify)g_hash_table_destroy);
 	table->msgs = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 	table->errors = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 
