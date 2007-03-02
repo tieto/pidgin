@@ -3,6 +3,8 @@
 #include "gntmenu.h"
 #include "gntstyle.h"
 #include "gntwm.h"
+#include "gntwindow.h"
+#include "gntlabel.h"
 
 #include "blist.h"
 
@@ -165,6 +167,32 @@ toggle_buddylist(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
+static gboolean
+toggle_clipboard(GntBindable *bindable, GList *n)
+{
+	static GntWidget *clip;
+	gchar *text;
+	int maxx, maxy;
+	if (clip) {
+		gnt_widget_destroy(clip);
+		clip = NULL;
+		return TRUE;
+	}
+	getmaxyx(stdscr, maxy, maxx);
+	text = gnt_get_clipboard_string();
+	clip = gnt_hwindow_new(FALSE);
+	GNT_WIDGET_SET_FLAGS(clip, GNT_WIDGET_TRANSIENT);
+	GNT_WIDGET_UNSET_FLAGS(clip, GNT_WIDGET_NO_BORDER);
+	gnt_box_set_pad(GNT_BOX(clip), 0);
+	gnt_box_add_widget(GNT_BOX(clip), gnt_label_new(" "));
+	gnt_box_add_widget(GNT_BOX(clip), gnt_label_new(text));
+	gnt_box_add_widget(GNT_BOX(clip), gnt_label_new(" "));
+	gnt_widget_set_position(clip, 0, 0);
+	gnt_widget_draw(clip);
+	g_free(text);
+	return TRUE;
+}
+
 static void
 s_class_init(SClass *klass)
 {
@@ -179,6 +207,8 @@ s_class_init(SClass *klass)
 
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-buddylist",
 				toggle_buddylist, "\033" "b", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard",
+				toggle_clipboard, "\033" "C", NULL);
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 	GNTDEBUG;
 }

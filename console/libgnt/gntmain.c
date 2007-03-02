@@ -10,6 +10,7 @@
 #include "gnt.h"
 #include "gntbox.h"
 #include "gntcolors.h"
+#include "gntclipboard.h"
 #include "gntkeys.h"
 #include "gntmenu.h"
 #include "gntstyle.h"
@@ -48,6 +49,7 @@ static void setup_io();
 static gboolean refresh_screen();
 
 GntWM *wm;
+static GntClipboard *clipboard;
 
 /**
  * Mouse support:
@@ -347,6 +349,8 @@ void gnt_init()
 	g_type_init();
 
 	init_wm();
+
+	clipboard = g_object_new(GNT_TYPE_CLIPBOARD, NULL);
 }
 
 void gnt_main()
@@ -475,3 +479,16 @@ gboolean gnt_screen_menu_show(gpointer newmenu)
 	return TRUE;
 }
 
+void gnt_set_clipboard_string(gchar *string)
+{
+	gnt_clipboard_set_string(clipboard, string);
+}
+
+GntClipboard *gnt_get_clipboard()
+{
+	return clipboard;
+}
+gchar *gnt_get_clipboard_string()
+{
+	return gnt_clipboard_get_string(clipboard);
+}

@@ -32,6 +32,10 @@ typedef struct
 
 static GntWidgetClass *parent_class = NULL;
 
+static gchar *select_start;
+static gchar *select_end;
+static gboolean double_click;
+
 static void
 gnt_text_view_draw(GntWidget *widget)
 {
@@ -54,9 +58,29 @@ gnt_text_view_draw(GntWidget *widget)
 			GntTextSegment *seg = iter->data;
 			char *end = view->string->str + seg->end;
 			char back = *end;
+			chtype fl = seg->flags;
 			*end = '\0';
-			wattrset(widget->window, seg->flags);
-			wprintw(widget->window, "%s", (view->string->str + seg->start));
+			if (select_start < view->string->str + seg->start && select_end > view->string->str + seg->end) {
+				fl |= A_REVERSE;
+				wattrset(widget->window, fl);
+				wprintw(widget->window, "%s", (view->string->str + seg->start));
+			} else if (select_start && select_end &&
+				((select_start >= view->string->str + seg->start && select_start <= view->string->str + seg->end) ||
+				(select_end <= view->string->str + seg->end && select_start <= view->string->str + seg->start))) {
+				char *cur = view->string->str + seg->start;
+				while (*cur != '\0') {
+					if (cur >= select_start && cur <= select_end)
+						fl |= A_REVERSE;
+					else
+						fl = seg->flags;
+					wattrset(widget->window, fl);
+					waddch(widget->window, *cur);
+					cur++;
+				}
+			} else {
+				wattrset(widget->window, fl);
+				wprintw(widget->window, "%s", (view->string->str + seg->start));
+			}
 			*end = back;
 		}
 		wattroff(widget->window, A_UNDERLINE | A_BLINK | A_REVERSE);
@@ -160,6 +184,66 @@ gnt_text_view_destroy(GntWidget *widget)
 	g_string_free(view->string, TRUE);
 }
 
+static char *
+gnt_text_view_get_p(GntTextView *view, int x, int y)
+{
+	int i;
+	GntWidget *wid = GNT_WIDGET(view);
+	GntTextLine *line;
+	GList *lines;
+	GList *segs;
+	GntTextSegment *seg;
+
+	y = wid->priv.height - y;
+	if (g_list_length(view->list) < y) {
+		x = 0;
+		y = g_list_length(view->list);
+	}
+
+	lines = g_list_nth(view->list, y - 1);
+
+	line = lines->data;
+	for (i = y; line && !line->segments; i++)
+		line = g_list_nth_data(lines, i);
+	if (!line) /* no valid line */
+		return NULL;
+	segs = line->segments;
+	seg = (GntTextSegment *)segs->data;
+	i = 0;
+	return view->string->str + seg->start + x;
+}
+
+static GString *
+select_word_text(GntTextView *view, gchar *c)
+{
+	gchar *start = c;
+	gchar *end = c;
+	gchar *t;
+	while (t = g_utf8_prev_char(start)) {
+		if (!g_ascii_isspace(*t)) {
+			if (start == view->string->str)
+				break;
+			start = t;
+		} else
+			break;
+	}
+	while (t = g_utf8_next_char(end)) {
+		if (!g_ascii_isspace(*t))
+			end = t;
+		else
+			break;
+	}
+	select_start = start;
+	select_end = end;
+	return g_string_new_len(start, end - start + 1);
+}
+
+static gboolean too_slow(gpointer n)
+{
+	double_click = FALSE;
+	return FALSE;
+}
+
 static gboolean
 gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 {
@@ -167,6 +251,36 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 		gnt_text_view_scroll(GNT_TEXT_VIEW(widget), -1);
 	} else if (event == GNT_MOUSE_SCROLL_DOWN) {
 		gnt_text_view_scroll(GNT_TEXT_VIEW(widget), 1);
+	} else if (event == GNT_LEFT_MOUSE_DOWN) {
+		select_start = gnt_text_view_get_p(GNT_TEXT_VIEW(widget), x - widget->priv.x, y - widget->priv.y);
+		g_timeout_add(500, too_slow, NULL);
+	} else if (event == GNT_MOUSE_UP) {
+		if (select_start) {
+			GString *clip;
+			select_end = gnt_text_view_get_p(GNT_TEXT_VIEW(widget), x - widget->priv.x, y - widget->priv.y);
+			if (select_end < select_start) {
+				gchar *t = select_start;
+				select_start = select_end;
+				select_end = t;
+			}
+			if (select_start == select_end) {
+				if (double_click) {
+					clip = select_word_text(GNT_TEXT_VIEW(widget), select_start);
+					double_click = FALSE;
+				} else {
+					double_click = TRUE;
+					select_start = 0;
+					select_end = 0;
+					gnt_widget_draw(widget);
+					return;
+				}
+			} else {
+				clip = g_string_new_len(select_start, select_end - select_start + 1);
+			}
+			gnt_widget_draw(widget);
+			gnt_set_clipboard_string(clip->str);
+			g_string_free(clip, TRUE);
+		}
 	} else
 		return FALSE;
 	return TRUE;
