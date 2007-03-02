@@ -109,8 +109,6 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
   !define MUI_LICENSEPAGE_BUTTON		$(PIDGIN_LICENSE_BUTTON)
   !define MUI_LICENSEPAGE_TEXT_BOTTOM		$(PIDGIN_LICENSE_BOTTOM_TEXT)
 
-;TODO: Maybe try to copy the old Gaim installer Lang Reg. key?
-
   !define MUI_LANGDLL_REGISTRY_ROOT "HKCU"
   !define MUI_LANGDLL_REGISTRY_KEY ${PIDGIN_REG_KEY}
   !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
@@ -1097,8 +1095,7 @@ FunctionEnd
 !macro RunCheckMacro UN
 Function ${UN}RunCheck
   Push $R0
-;TODO - fix this before committing
-  System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "__pidgin_is_running") i .R0'
+  System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "pidgin_is_running") i .R0'
   IntCmp $R0 0 done
     MessageBox MB_OK|MB_ICONEXCLAMATION $(PIDGIN_IS_RUNNING) /SD IDOK
     Abort
@@ -1120,6 +1117,15 @@ Function .onInit
   StrCpy $name "Pidgin ${PIDGIN_VERSION}"
   StrCpy $GTK_THEME_SEL ${SecGtkWimp}
   StrCpy $SPELLCHECK_SEL ""
+
+  ;Try to copy the old Gaim installer Lang Reg. key
+  ClearErrors
+  ReadRegStr $R0 HKCU "${PIDGIN_REG_KEY}" "Installer Language"
+  IfErrors 0 +5
+  ClearErrors
+  ReadRegStr $R0 HKCU "SOFTWARE\gaim" "Installer Language"
+  IfErrors +2
+  WriteRegStr HKCU "${PIDGIN_REG_KEY}" "Installer Language" "$R0"
 
   !insertmacro SetSectionFlag ${SecGtkThemes} ${SF_RO}
   !insertmacro UnselectSection ${SecGtkThemes}
