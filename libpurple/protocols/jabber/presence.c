@@ -392,7 +392,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		static int i = 1;
 		char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 
-		if(state == JABBER_BUDDY_STATE_ERROR) {
+		if(state == JABBER_BUDDY_STATE_ERROR && jid->resource == NULL) {
 			char *title, *msg = jabber_parse_error(js, packet);
 
 			if(chat->conv) {

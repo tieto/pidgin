@@ -3592,7 +3592,8 @@ static int gaim_bosrights(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	if (gaim_account_get_user_info(account) != NULL)
 		serv_set_info(gc, gaim_account_get_user_info(account));
 
-	oscar_format_screenname(gc, account->username);
+	if (!od->icq)
+		oscar_format_screenname(gc, account->username);
 
 	/* Set our available message based on the current status */
 	status = gaim_account_get_active_status(account);

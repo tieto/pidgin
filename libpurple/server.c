@@ -448,6 +448,7 @@ void serv_got_im(GaimConnection *gc, const char *who, const char *msg,
 	 * been given us by the prpls. So we create temp holders and pass
 	 * those instead. It's basically just to avoid segfaults.
 	 */
+	/* TODO: MAX(message, BUF_LONG) is pretty ugly. */
 	buffy = g_malloc(MAX(strlen(msg) + 1, BUF_LONG));
 	strcpy(buffy, msg);
 	angel = g_strdup(who);
@@ -771,7 +772,7 @@ void serv_got_chat_in(GaimConnection *g, int id, const char *who,
 	 * data is binary, plugins don't see it. Bitch all you want; i really
 	 * don't want you to be dealing with it.
 	 */
-
+	/* TODO: MAX(message, BUF_LONG) is pretty ugly. */
 	buffy = g_malloc(MAX(strlen(message) + 1, BUF_LONG));
 	strcpy(buffy, message);
 	angel = g_strdup(who);

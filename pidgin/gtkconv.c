@@ -2355,9 +2355,6 @@ update_tab_icon(GaimConversation *conv)
 		l = pidgin_conv_get_tab_icons(conv);
 
 		gtk_window_set_icon_list(GTK_WINDOW(win->window), l);
-
-		if (status != NULL)
-			g_object_unref(status);
 	}
 }
 
@@ -5882,8 +5879,10 @@ gray_stuff_out(PidginConversation *gtkconv)
 			l = pidgin_conv_get_tab_icons(conv);
 		}
 		gtk_window_set_icon_list(GTK_WINDOW(win->window), l);
-		if (window_icon != NULL)
+		if (window_icon != NULL) {
 			g_object_unref(G_OBJECT(window_icon));
+			g_list_free(l);
+		}
 	}
 }
 
