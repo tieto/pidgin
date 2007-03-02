@@ -201,16 +201,17 @@ gnt_text_view_get_p(GntTextView *view, int x, int y)
 	}
 
 	lines = g_list_nth(view->list, y - 1);
+	do {
+		line = lines->data;
+		lines = lines->next;
+	} while (line && !line->segments);
 
-	line = lines->data;
-	for (i = y; line && !line->segments; i++)
-		line = g_list_nth_data(lines, i);
 	if (!line) /* no valid line */
 		return NULL;
 	segs = line->segments;
 	seg = (GntTextSegment *)segs->data;
 	i = 0;
-	return view->string->str + seg->start + x;
+	return view->string->str + seg->start + MIN(x, line->length);
 }
 
 static GString *
