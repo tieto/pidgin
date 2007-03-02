@@ -835,7 +835,7 @@ gnt_tree_init(GTypeInstance *instance, gpointer class)
 	tree->show_separator = TRUE;
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X | GNT_WIDGET_GROW_Y);
 	widget->priv.minw = 4;
-	widget->priv.minh = 4;
+	widget->priv.minh = 1;
 	GNTDEBUG;
 }
 
