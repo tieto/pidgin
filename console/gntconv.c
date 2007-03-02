@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include <cmds.h>
+#include <idle.h>
 #include <prefs.h>
 #include <util.h>
 
@@ -152,6 +153,7 @@ entry_key_pressed(GntWidget *w, const char *key, GGConv *ggconv)
 					g_return_val_if_reached(FALSE);
 			}
 			g_free(escape);
+			gaim_idle_touch();
 		}
 		gnt_entry_add_to_history(GNT_ENTRY(ggconv->entry), text);
 		gnt_entry_clear(GNT_ENTRY(ggconv->entry));
