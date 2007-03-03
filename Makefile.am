@@ -15,7 +15,6 @@ EXTRA_DIST = \
 		gaim.apspec.in \
 		pidgin.desktop.in \
 		gaim.service.in \
-		gaim-installer.nsi \
 		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in \

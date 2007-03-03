@@ -41,6 +41,7 @@
 #include "gntgaim.h"
 #include "gntprefs.h"
 #include "gntui.h"
+#include "gntidle.h"
 
 #define _GNU_SOURCE
 #include <getopt.h>
@@ -339,6 +340,7 @@ init_libgaim(int argc, char **argv)
 
 	gaim_core_set_ui_ops(gnt_core_get_ui_ops());
 	gaim_eventloop_set_ui_ops(gnt_eventloop_get_ui_ops());
+	gaim_idle_set_ui_ops(gg_idle_get_ui_ops());
 
 	path = g_build_filename(gaim_user_dir(), "plugins", NULL);
 	gaim_plugins_add_search_path(path);

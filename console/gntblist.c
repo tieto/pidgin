@@ -2073,7 +2073,9 @@ create_menu()
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENUITEM(item), send_im_select, NULL);
 
-	item = gnt_menuitem_new(_("Toggle offline buddies"));
+	item = gnt_menuitem_check_new(_("Toggle offline buddies"));
+	gnt_menuitem_check_set_checked(GNT_MENUITEM_CHECK(item),
+				gaim_prefs_get_bool(PREF_ROOT "/showoffline"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENUITEM(item), show_offline_cb, NULL);
 

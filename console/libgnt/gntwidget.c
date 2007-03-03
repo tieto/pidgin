@@ -323,6 +323,7 @@ gnt_widget_draw(GntWidget *widget)
 
 	if (widget->window == NULL)
 	{
+#if 0
 		int x, y, maxx, maxy, w, h;
 		int oldw, oldh;
 		gboolean shadow = TRUE;
@@ -355,9 +356,9 @@ gnt_widget_draw(GntWidget *widget)
 			widget->priv.height = h - shadow;
 			g_signal_emit(widget, signals[SIG_SIZE_CHANGED], 0, oldw, oldh);
 		}
-
-		widget->window = newwin(widget->priv.height + shadow, widget->priv.width + shadow,
-						widget->priv.y, widget->priv.x);
+#else
+		widget->window = newpad(150, 350);  /* XXX: */
+#endif
 		init_widget(widget);
 	}
 
@@ -524,7 +525,6 @@ gnt_widget_set_size(GntWidget *widget, int width, int height)
 
 		if (widget->window)
 		{
-			wresize(widget->window, height + shadow, width + shadow);
 			init_widget(widget);
 		}
 		if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_MAPPED))

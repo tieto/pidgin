@@ -171,6 +171,11 @@ static void sighandler(int sig);
  * function that can be called by applications to disable forking
  * during initialization.  But it's not in 0.10.0, so we shouldn't
  * use it.
+ *
+ * All of this child process reaping stuff is currently only used for
+ * processes that were forked to play sounds.  It's not needed for
+ * forked DNS child, which have their own waitpid() call.  It might
+ * be wise to move this code into gtksound.c.
  */
 static void
 clean_pid()

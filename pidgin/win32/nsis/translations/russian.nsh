@@ -12,18 +12,18 @@
 !define GTK_INSTALLER_NEEDED			"Окружение для запуска GTK+ недоступно или нуждается в обновлении.$\rПожалуйста установите v${GTK_MIN_VERSION} или более старшую версию GTK+."
 
 ; License Page
-!define GAIM_LICENSE_BUTTON			"Следующее >"
-!define GAIM_LICENSE_BOTTOM_TEXT		"$(^Name) выпущено под лицензией GPL. Лицензия приведена здесь для ознакомительных целей. $_CLICK"
+!define PIDGIN_LICENSE_BUTTON			"Следующее >"
+!define PIDGIN_LICENSE_BOTTOM_TEXT		"$(^Name) выпущено под лицензией GPL. Лицензия приведена здесь для ознакомительных целей. $_CLICK"
 
 ; Components Page
-!define GAIM_SECTION_TITLE			"Gaim - Клиент для мгновенного обмена сообщениями по различным протоколам (необходимо)."
+!define PIDGIN_SECTION_TITLE			"Gaim - Клиент для мгновенного обмена сообщениями по различным протоколам (необходимо)."
 !define GTK_SECTION_TITLE			"GTK+ окружение для запуска (необходимо)."
 !define GTK_THEMES_SECTION_TITLE		"Темы для GTK+."
 !define GTK_NOTHEME_SECTION_TITLE		"Без темы."
 !define GTK_WIMP_SECTION_TITLE		"Тема 'Wimp Theme'"
 !define GTK_BLUECURVE_SECTION_TITLE		"Тема 'Bluecurve'."
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Тема 'Light House Blue'."
-!define GAIM_SECTION_DESCRIPTION		"Основная часть Gaim и библиотеки."
+!define PIDGIN_SECTION_DESCRIPTION		"Основная часть Gaim и библиотеки."
 !define GTK_SECTION_DESCRIPTION		"Мультиплатформенный графический инструментарий, используемый Gaim."
 !define GTK_THEMES_SECTION_DESCRIPTION	"Темы для GTK+ изменяют его внешний вид и восприятие пользователем."
 !define GTK_NO_THEME_DESC			"Не устанавливать темы для GTK+."
@@ -35,10 +35,10 @@
 !define GTK_UPGRADE_PROMPT			"Найдена старая версия GTK+. Вы не хотели бы обновить её ?$\rПримечание: Gaim может не работать если Вы не сделаете этого."
 
 ; Installer Finish Page
-!define GAIM_FINISH_VISIT_WEB_SITE		"Посетите веб-страницу Gaim для пользователей Windows."
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"Посетите веб-страницу Gaim для пользователей Windows."
 
 ; Gaim Section Prompts and Texts
-!define GAIM_UNINSTALL_DESC			"Gaim (только удаление)"
+!define PIDGIN_UNINSTALL_DESC			"Gaim (только удаление)"
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Ошибка при установке окружения GTK+."
@@ -48,5 +48,5 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"У Вас нет прав на установление темы для GTK+."
 
 ; Uninstall Section Prompts
-!define un.GAIM_UNINSTALL_ERROR_1		"Программа удаления не может найти данные Gaim в регистре..$\rВероятно это приложение установил другой пользователь."
-!define un.GAIM_UNINSTALL_ERROR_2		"У Вас нет прав на удаление этого приложения."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"Программа удаления не может найти данные Gaim в регистре..$\rВероятно это приложение установил другой пользователь."
+!define un.PIDGIN_UNINSTALL_ERROR_2		"У Вас нет прав на удаление этого приложения."

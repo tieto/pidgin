@@ -52,8 +52,12 @@
 
 /* #define YAHOO_DEBUG */
 
+/* #define TRY_WEBMESSENGER_LOGIN 0 */
+
 static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *, GaimGroup *);
+#ifdef TRY_WEBMESSENGER_LOGIN
 static void yahoo_login_page_cb(GaimUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message);
+#endif
 static void yahoo_set_status(GaimAccount *account, GaimStatus *status);
 
 static void
@@ -1885,7 +1889,9 @@ static void yahoo_process_ignore(GaimConnection *gc, struct yahoo_packet *pkt) {
 
 static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 {
+#ifdef TRY_WEBMESSENGER_LOGIN
 	struct yahoo_data *yd = gc->proto_data;
+#endif
 	GSList *l = pkt->hash;
 	int err = 0;
 	char *msg;
@@ -1908,6 +1914,7 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 		msg = g_strdup(_("Invalid screen name."));
 		break;
 	case 13:
+#ifdef TRY_WEBMESSENGER_LOGIN
 		if (!yd->wm) {
 			GaimUtilFetchUrlData *url_data;
 			yd->wm = TRUE;
@@ -1921,6 +1928,7 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 				yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 			return;
 		}
+#endif
 		msg = g_strdup(_("Incorrect password."));
 		break;
 	case 14:
@@ -2364,6 +2372,7 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
 }
 
+#ifdef TRY_WEBMESSENGER_LOGIN
 static void yahoo_got_web_connected(gpointer data, gint source, const gchar *error_message)
 {
 	GaimConnection *gc = data;
@@ -2585,6 +2594,13 @@ yahoo_login_page_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
+	if (error_message != NULL)
+	{
+		/* TODO: Include error_message in the message below */
+		gaim_connection_error(gc, _("Unable to connect."));
+		return;
+	}
+
 	url = g_string_append(url, sn);
 	url = g_string_append(url, "&passwd=");
 
@@ -2636,6 +2652,7 @@ yahoo_login_page_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 
 	gaim_cipher_context_destroy(context);
 }
+#endif
 
 static void yahoo_server_check(GaimAccount *account)
 {

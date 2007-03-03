@@ -299,6 +299,26 @@ history_next(GntBindable *bind, GList *null)
 }
 
 static gboolean
+clipboard_paste(GntBindable *bind, GList *n)
+{
+	GntEntry *entry = GNT_ENTRY(bind);
+	gchar *i;
+	gchar *text = i = gnt_get_clipboard_string();
+	while (*i != '\0') {
+		i = g_utf8_next_char(i);
+		if (*i == '\r' || *i == '\n')
+			*i = ' ';
+	}
+	char *a = g_strndup(entry->start, entry->cursor - entry->start);
+	char *all = g_strconcat(a, text, entry->cursor, NULL);
+	gnt_entry_set_text_internal(entry, all);
+	g_free(a);
+	g_free(text);
+	g_free(all);
+	return TRUE;
+}
+
+static gboolean
 suggest_show(GntBindable *bind, GList *null)
 {
 	return show_suggest_dropdown(GNT_ENTRY(bind));
@@ -673,6 +693,8 @@ gnt_entry_class_init(GntEntryClass *klass)
 				GNT_KEY_CTRL_DOWN, NULL);
 	gnt_bindable_class_register_action(bindable, "history-next", history_next,
 				GNT_KEY_CTRL_UP, NULL);
+	gnt_bindable_class_register_action(bindable, "clipboard-past", clipboard_paste,
+				GNT_KEY_CTRL_V, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 	GNTDEBUG;

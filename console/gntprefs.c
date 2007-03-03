@@ -23,12 +23,15 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include <prefs.h>
+#include <savedstatuses.h>
 
 #include "gntgaim.h"
 #include "gntprefs.h"
 #include "gntrequest.h"
 
 #include <string.h>
+
+static GList *freestrings;  /* strings to be freed when the pref-window is closed */
 
 void gg_prefs_init()
 {
@@ -55,6 +58,36 @@ static GList *
 get_log_options()
 {
 	return gaim_log_logger_get_options();
+}
+
+static GList *
+get_idle_options()
+{
+	GList *list = NULL;
+	list = g_list_append(list, "Based on keyboard use"); /* XXX: string freeze */
+	list = g_list_append(list, "system");
+	list = g_list_append(list, (char*)_("From last sent message"));
+	list = g_list_append(list, "gaim");
+	list = g_list_append(list, (char*)_("Never"));
+	list = g_list_append(list, "never");
+	return list;
+}
+
+static GList *
+get_status_titles()
+{
+	GList *list = NULL;
+	const GList *iter;
+	for (iter = gaim_savedstatuses_get_all(); iter; iter = iter->next) {
+		char *str;
+		if (gaim_savedstatus_is_transient(iter->data))
+			continue;
+		str = g_strdup_printf("%ld", gaim_savedstatus_get_creation_time(iter->data));
+		list = g_list_append(list, (char*)gaim_savedstatus_get_title(iter->data));
+		list = g_list_append(list, str);
+		freestrings = g_list_prepend(freestrings, str);
+	}
+	return list;
 }
 
 static GaimRequestField *
@@ -85,20 +118,24 @@ get_pref_field(Prefs *prefs)
 	else
 	{
 		GList *list = prefs->lv(), *iter;
-		field = gaim_request_field_list_new(prefs->pref, _(prefs->label));
+		if (list)
+			field = gaim_request_field_list_new(prefs->pref, _(prefs->label));
 		for (iter = list; iter; iter = iter->next)
 		{
 			gboolean select = FALSE;
 			const char *data = iter->data;
+			int idata;
 			iter = iter->next;
 			switch (prefs->type)
 			{
 				case GAIM_PREF_BOOLEAN:
-					if (gaim_prefs_get_bool(prefs->pref) == GPOINTER_TO_INT(iter->data))
+					sscanf(iter->data, "%d", &idata);
+					if (gaim_prefs_get_bool(prefs->pref) == idata)
 						select = TRUE;
 					break;
 				case GAIM_PREF_INT:
-					if (gaim_prefs_get_int(prefs->pref) == GPOINTER_TO_INT(iter->data))
+					sscanf(iter->data, "%d", &idata);
+					if (gaim_prefs_get_int(prefs->pref) == idata)
 						select = TRUE;
 					break;
 				case GAIM_PREF_STRING:
@@ -140,6 +177,24 @@ static Prefs logging[] =
 	{GAIM_PREF_NONE, NULL, NULL, NULL},
 };
 
+/* XXX: Translate after the freeze */
+static Prefs idle[] =
+{
+	{GAIM_PREF_STRING, "/core/away/idle_reporting", "Report Idle time", get_idle_options},
+	{GAIM_PREF_BOOLEAN, "/core/away/away_when_idle", "Change status when idle", NULL},
+	{GAIM_PREF_INT, "/core/away/mins_before_away", "Minutes before changing status", NULL},
+	{GAIM_PREF_INT, "/core/savedstatus/idleaway", "Change status to", get_status_titles},
+	{GAIM_PREF_NONE, NULL, NULL, NULL},
+};
+
+static void
+free_strings()
+{
+	g_list_foreach(freestrings, (GFunc)g_free, NULL);
+	g_list_free(freestrings);
+	freestrings = NULL;
+}
+
 static void
 save_cb(void *data, GaimRequestFields *allfields)
 {
@@ -179,6 +234,8 @@ save_cb(void *data, GaimRequestFields *allfields)
 			switch (pt)
 			{
 				case GAIM_PREF_INT:
+					if (type == GAIM_REQUEST_FIELD_LIST) /* Lists always return string */
+						sscanf(val, "%ld", (long int *)&val);
 					gaim_prefs_set_int(id, GPOINTER_TO_INT(val));
 					break;
 				case GAIM_PREF_BOOLEAN:
@@ -192,6 +249,7 @@ save_cb(void *data, GaimRequestFields *allfields)
 			}
 		}
 	}
+	free_strings();
 }
 
 static void
@@ -206,7 +264,8 @@ add_pref_group(GaimRequestFields *fields, const char *title, Prefs *prefs)
 	for (i = 0; prefs[i].pref; i++)
 	{
 		field = get_pref_field(prefs + i);
-		gaim_request_field_group_add_field(group, field);
+		if (field)
+			gaim_request_field_group_add_field(group, field);
 	}
 }
 
@@ -219,8 +278,9 @@ void gg_prefs_show_all()
 	add_pref_group(fields, _("Buddy List"), blist);
 	add_pref_group(fields, _("Conversations"), convs);
 	add_pref_group(fields, _("Logging"), logging);
+	add_pref_group(fields, _("Idle"), idle);
 
 	gaim_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
-			_("Save"), G_CALLBACK(save_cb), _("Cancel"), NULL, NULL);
+			_("Save"), G_CALLBACK(save_cb), _("Cancel"), free_strings, NULL);
 }
 

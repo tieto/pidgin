@@ -7,7 +7,7 @@ int main()
 
 	noecho();
 
-	while ((ch = getch()) != 27) {
+	while ((ch = getch())) {
 		printw("%d ", ch);
 		refresh();
 	}

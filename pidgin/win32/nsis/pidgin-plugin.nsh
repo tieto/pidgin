@@ -1,106 +1,106 @@
 ;;
-;; Windows Gaim NSIS installer plugin helper utilities
+;; Windows Pidgin NSIS installer plugin helper utilities
 ;; Copyright 2005, Daniel Atallah <daniel_atallah@yahoo.com>
 ;;
 ;; Include in plugin installer scripts using:
-;;   !addincludedir "${PATH_TO_GAIM_SRC}\gtkgaim\win32\nsis"
-;;   !include "gaim-plugin.nsh"
+;;   !addincludedir "${PATH_TO_PIDGIN_SRC}\pidgin\win32\nsis"
+;;   !include "pidgin-plugin.nsh"
 ;;
 
-!define GAIM_REG_KEY              "SOFTWARE\gaim"
+!define PIDGIN_REG_KEY              "SOFTWARE\pidgin"
 
-!define GAIM_VERSION_OK           0
-!define GAIM_VERSION_INCOMPATIBLE 1
-!define GAIM_VERSION_UNDEFINED    2
+!define PIDGIN_VERSION_OK           0
+!define PIDGIN_VERSION_INCOMPATIBLE 1
+!define PIDGIN_VERSION_UNDEFINED    2
 
-; Extract the Gaim Version from the registry
+; Extract the Pidgin Version from the registry
 ; This will set the Error flag if unable to determine the value
 ; Pop the value of the stack after calling this to get the value (unless Error Flag is set)
-Function GetGaimVersion
+Function GetPidginVersion
   Push $R0
 
-  ; Read the gaim version
+  ; Read the pidgin version
   ClearErrors
-  ReadRegStr $R0 HKLM ${GAIM_REG_KEY} "Version"
-  IfErrors +1 GetGaimVersion_found
+  ReadRegStr $R0 HKLM ${PIDGIN_REG_KEY} "Version"
+  IfErrors +1 GetPidginVersion_found
   ; fall back to the HKCU registry key
-  ReadRegStr $R0 HKCU ${GAIM_REG_KEY} "Version"
-  IfErrors GetGaimVersion_done ; Keep the error flag set
+  ReadRegStr $R0 HKCU ${PIDGIN_REG_KEY} "Version"
+  IfErrors GetPidginVersion_done ; Keep the error flag set
 
-  GetGaimVersion_found:
+  GetPidginVersion_found:
   Push $R0 ; Push the value onto the stack
   Exch
 
-  GetGaimVersion_done:
+  GetPidginVersion_done:
   ; restore $R0
   Pop $R0
 FunctionEnd
 
-; Check that the currently installed gaim version is compatible
+; Check that the currently installed Pidgin version is compatible
 ; with the plugin version we are installing
-; Push the Plugin's Gaim Version onto the Stack before calling
+; Push the Plugin's Pidgin Version onto the Stack before calling
 ; After calling, the top of the Stack will contain the result of the check:
-;   GAIM_VERSION_OK - If the installed gaim version is compatible w/ the version specified
-;   GAIM_VERSION_INCOMPATIBLE - If the installed gaim version isn't compatible w/ the version specified
-;   GAIM_VERSION_UNDEFINED - If the installed gaim version can't be determined 
-Function CheckGaimVersion
+;   PIDGIN_VERSION_OK - If the installed Pidgin version is compatible w/ the version specified
+;   PIDGIN_VERSION_INCOMPATIBLE - If the installed Pidgin version isn't compatible w/ the version specified
+;   PIDGIN_VERSION_UNDEFINED - If the installed Pidgin version can't be determined 
+Function CheckPidginVersion
   ; Save the Variable values that we will use in the stack
   Push $R4
   Exch
-  Pop $R4 ; Get the plugin's Gaim Version
+  Pop $R4 ; Get the plugin's Pidgin Version
   Push $R0
   Push $R1
   Push $R2
 
-  ; Read the gaim version
-  Call GetGaimVersion
-  IfErrors checkGaimVersion_noGaimInstallFound
+  ; Read the pidgin version
+  Call GetPidginVersion
+  IfErrors checkPidginVersion_noPidginInstallFound
   Pop $R0
 
   ;If they are exactly the same, we don't need to look at anything else
-  StrCmp $R0 $R4 checkGaimVersion_VersionOK 
+  StrCmp $R0 $R4 checkPidginVersion_VersionOK 
 
   ; Versions are in the form of X.Y.Z
-  ; If X is different or plugin's Y > gaim's Y, then we shouldn't install
+  ; If X is different or plugin's Y > pidgin's Y, then we shouldn't install
 
   ;Check the Major Version
   Push $R0
   Push 0
   Call GetVersionComponent
-  IfErrors checkGaimVersion_noGaimInstallFound ;We couldn't extract 'X' from the installed gaim version
+  IfErrors checkPidginVersion_noPidginInstallFound ;We couldn't extract 'X' from the installed pidgin version
   Pop $R2
   Push $R4
   Push 0
   Call GetVersionComponent
-  IfErrors checkGaimVersion_BadVersion ; this isn't a valid version, so don't bother even checking
+  IfErrors checkPidginVersion_BadVersion ; this isn't a valid version, so don't bother even checking
   Pop $R1
   ;Check that both versions' X is the same
-  StrCmp $R1 $R2 +1 checkGaimVersion_BadVersion
+  StrCmp $R1 $R2 +1 checkPidginVersion_BadVersion
 
   ;Check the Minor Version
   Push $R0
   Push 1
   Call GetVersionComponent
-  IfErrors checkGaimVersion_noGaimInstallFound ;We couldn't extract 'Y' from the installed gaim version
+  IfErrors checkPidginVersion_noPidginInstallFound ;We couldn't extract 'Y' from the installed pidgin version
   Pop $R2
   Push $R4
   Push 1
   Call GetVersionComponent
-  IfErrors checkGaimVersion_BadVersion ; this isn't a valid version, so don't bother even checking
+  IfErrors checkPidginVersion_BadVersion ; this isn't a valid version, so don't bother even checking
   Pop $R1
-  ;Check that plugin's Y <= gaim's Y
-  IntCmp $R1 $R2 checkGaimVersion_VersionOK checkGaimVersion_VersionOK checkGaimVersion_BadVersion
+  ;Check that plugin's Y <= pidgin's Y
+  IntCmp $R1 $R2 checkPidginVersion_VersionOK checkPidginVersion_VersionOK checkPidginVersion_BadVersion
 
-  checkGaimVersion_BadVersion:
-    Push ${GAIM_VERSION_INCOMPATIBLE}
-    goto checkGaimVersion_done
-  checkGaimVersion_noGaimInstallFound:
-    Push ${GAIM_VERSION_UNDEFINED}
-    goto checkGaimVersion_done
-  checkGaimVersion_VersionOK:
-    Push ${GAIM_VERSION_OK}
+  checkPidginVersion_BadVersion:
+    Push ${PIDGIN_VERSION_INCOMPATIBLE}
+    goto checkPidginVersion_done
+  checkPidginVersion_noPidginInstallFound:
+    Push ${PIDGIN_VERSION_UNDEFINED}
+    goto checkPidginVersion_done
+  checkPidginVersion_VersionOK:
+    Push ${PIDGIN_VERSION_OK}
 
-  checkGaimVersion_done:
+  checkPidginVersion_done:
   ; Restore the Variables that we used
   Exch
   Pop $R2

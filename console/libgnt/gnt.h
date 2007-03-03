@@ -1,5 +1,6 @@
 #include <glib.h>
 #include "gntwidget.h"
+#include "gntclipboard.h"
 #include "gntcolors.h"
 #include "gntkeys.h"
 
@@ -33,3 +34,8 @@ gboolean gnt_screen_menu_show(gpointer menu);
 
 void gnt_quit();
 
+GntClipboard *gnt_get_clipboard();
+
+gchar *gnt_get_clipboard_string();
+
+void gnt_set_clipboard_string(gchar *);

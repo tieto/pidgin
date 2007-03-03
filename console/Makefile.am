@@ -17,6 +17,7 @@ gaim_text_SOURCES = \
 	gntdebug.c \
 	gntft.c \
 	gntgaim.c \
+	gntidle.c \
 	gntnotify.c \
 	gntplugin.c \
 	gntpounce.c \
@@ -33,6 +34,7 @@ gaim_text_headers = \
 	gntdebug.h \
 	gntft.h \
 	gntgaim.h \
+	gntidle.h \
 	gntnotify.h \
 	gntplugin.h \
 	gntpounce.h \
