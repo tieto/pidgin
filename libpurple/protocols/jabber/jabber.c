@@ -504,6 +504,10 @@ static void tls_init(JabberStream *js)
 
 static void jabber_login_connect(JabberStream *js, const char *server, int port)
 {
+#ifdef HAVE_CYRUS_SASL
+	js->serverFQDN = g_strdup(server);
+#endif
+
 	if (gaim_proxy_connect(js->gc, js->gc->account, server,
 			port, jabber_login_callback, js->gc) == NULL)
 		gaim_connection_error(js->gc, _("Unable to create socket"));
@@ -1007,6 +1011,8 @@ static void jabber_close(GaimConnection *gc)
 		g_string_free(js->sasl_mechs, TRUE);
 	if(js->sasl_cb)
 		g_free(js->sasl_cb);
+	if(js->serverFQDN)
+		g_free(js->serverFQDN);
 #endif
 	g_free(js->server_name);
 	g_free(js->gmail_last_time);

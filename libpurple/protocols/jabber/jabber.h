@@ -123,7 +123,7 @@ typedef struct _JabberStream
 	GSList *pending_avatar_requests;
 
 	GSList *pending_buddy_info_requests;
-		
+
 	GaimCircBuffer *write_buffer;
 	guint writeh;
 
@@ -132,7 +132,7 @@ typedef struct _JabberStream
 	JabberCapabilities server_caps;
 	gboolean googletalk;
 	char *server_name;
-  
+
 	char *gmail_last_time;
 	char *gmail_last_tid;
 
@@ -145,6 +145,7 @@ typedef struct _JabberStream
 	int sasl_state;
 	int sasl_maxbuf;
 	GString *sasl_mechs;
+	char *serverFQDN;
 #endif
 
 } JabberStream;

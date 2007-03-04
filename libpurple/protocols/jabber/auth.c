@@ -207,13 +207,8 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 
 	do {
 		again = FALSE;
-		/* Use the user's domain for compatibility with the old
-		 * DIGESTMD5 code. Note that this may cause problems where
-		 * the user's domain doesn't match the FQDN of the jabber
-		 * service
-		 */
 
-		js->sasl_state = sasl_client_new("xmpp", js->user->domain, NULL, NULL, js->sasl_cb, 0, &js->sasl);
+		js->sasl_state = sasl_client_new("xmpp", js->serverFQDN, NULL, NULL, js->sasl_cb, 0, &js->sasl);
 		if (js->sasl_state==SASL_OK) {
 			sasl_setprop(js->sasl, SASL_SEC_PROPS, &secprops);
 			gaim_debug_info("sasl", "Mechs found: %s\n", js->sasl_mechs->str);
@@ -260,6 +255,12 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 * The manpage says that "mech" will contain the chosen mechanism on success.
 				 * Presumably, if we get here that isn't the case and we shouldn't try again?
 				 * I suspect that this never happens.
+				 */
+				/*
+				 * SXW: Yes, this is right. What this handles is the situation where a
+				 * mechanism, say GSSAPI, is tried. If that mechanism fails, it may be
+				 * due to mechanism specific issues, so we want to try one of the other
+				 * supported mechanisms. This code handles that case
 				 */
 				if (mech && strlen(mech) > 0) {
 					char *pos;
