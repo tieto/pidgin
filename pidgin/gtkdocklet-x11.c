@@ -115,37 +115,16 @@ docklet_x11_update_icon(DockletStatus icon)
 			break;
 	}
 
-	if(icon_name)
-		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL));
-
-#if 0
-	GdkPixbuf *p;
-	GdkBitmap *mask = NULL;
-
-	p = gtk_widget_render_icon(GTK_WIDGET(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
-
-	if (p && (gdk_pixbuf_get_colorspace(p) == GDK_COLORSPACE_RGB) && (gdk_pixbuf_get_bits_per_sample(p) == 8)
-	   && (gdk_pixbuf_get_has_alpha(p)) && (gdk_pixbuf_get_n_channels(p) == 4)) {
-		int len = gdk_pixbuf_get_width(p) * gdk_pixbuf_get_height(p);
-		guchar *data = gdk_pixbuf_get_pixels(p);
-		guchar *bitmap = g_malloc((len / 8) + 1);
-		int i;
-
-		for (i = 0; i < len; i++)
-			if (data[i*4 + 3] > 55)
-				bitmap[i/8] |= 1 << i % 8;
-			else
-				bitmap[i/8] &= ~(1 << i % 8);
-
-		mask = gdk_bitmap_create_from_data(GDK_DRAWABLE(GTK_WIDGET(image)->window), bitmap, gdk_pixbuf_get_width(p), gdk_pixbuf_get_height(p));
-		g_free(bitmap);
+	if(icon_name) {
+		int icon_size;
+		GtkAllocation alloc = GTK_WIDGET(docklet)->allocation;
+		printf("height: %d\n", alloc.height);
+		if (alloc.height < 22)
+			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+		else
+			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL);
+		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, icon_size);
 	}
-
-	if (mask)
-		gdk_window_shape_combine_mask(image->window, mask, 0, 0);
-
-	g_object_unref(G_OBJECT(p));
-#endif
 }
 
 static void
