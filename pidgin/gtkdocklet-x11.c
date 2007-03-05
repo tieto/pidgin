@@ -118,7 +118,6 @@ docklet_x11_update_icon(DockletStatus icon)
 	if(icon_name) {
 		int icon_size;
 		GtkAllocation alloc = GTK_WIDGET(docklet)->allocation;
-		printf("height: %d\n", alloc.height);
 		if (alloc.height < 22)
 			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 		else
