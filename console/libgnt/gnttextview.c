@@ -204,9 +204,9 @@ gnt_text_view_get_p(GntTextView *view, int x, int y)
 	do {
 		line = lines->data;
 		lines = lines->next;
-	} while (line && !line->segments);
+	} while (line && !line->segments && lines);
 
-	if (!line) /* no valid line */
+	if (!line || !line->segments) /* no valid line */
 		return NULL;
 	segs = line->segments;
 	seg = (GntTextSegment *)segs->data;

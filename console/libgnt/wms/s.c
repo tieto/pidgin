@@ -182,7 +182,7 @@ toggle_clipboard(GntBindable *bindable, GList *n)
 	text = gnt_get_clipboard_string();
 	clip = gnt_hwindow_new(FALSE);
 	GNT_WIDGET_SET_FLAGS(clip, GNT_WIDGET_TRANSIENT);
-	GNT_WIDGET_UNSET_FLAGS(clip, GNT_WIDGET_NO_BORDER);
+	GNT_WIDGET_SET_FLAGS(clip, GNT_WIDGET_NO_BORDER);
 	gnt_box_set_pad(GNT_BOX(clip), 0);
 	gnt_box_add_widget(GNT_BOX(clip), gnt_label_new(" "));
 	gnt_box_add_widget(GNT_BOX(clip), gnt_label_new(text));
