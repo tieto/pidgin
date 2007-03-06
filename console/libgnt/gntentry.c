@@ -693,7 +693,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 				GNT_KEY_CTRL_DOWN, NULL);
 	gnt_bindable_class_register_action(bindable, "history-next", history_next,
 				GNT_KEY_CTRL_UP, NULL);
-	gnt_bindable_class_register_action(bindable, "clipboard-past", clipboard_paste,
+	gnt_bindable_class_register_action(bindable, "clipboard-paste", clipboard_paste,
 				GNT_KEY_CTRL_V, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
