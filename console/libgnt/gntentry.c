@@ -302,15 +302,15 @@ static gboolean
 clipboard_paste(GntBindable *bind, GList *n)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
-	gchar *i;
-	gchar *text = i = gnt_get_clipboard_string();
+	gchar *i, *text, *a, *all;
+	text = i = gnt_get_clipboard_string();
 	while (*i != '\0') {
 		i = g_utf8_next_char(i);
 		if (*i == '\r' || *i == '\n')
 			*i = ' ';
 	}
-	char *a = g_strndup(entry->start, entry->cursor - entry->start);
-	char *all = g_strconcat(a, text, entry->cursor, NULL);
+	a = g_strndup(entry->start, entry->cursor - entry->start);
+	all = g_strconcat(a, text, entry->cursor, NULL);
 	gnt_entry_set_text_internal(entry, all);
 	g_free(a);
 	g_free(text);

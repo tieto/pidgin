@@ -1476,8 +1476,8 @@ void gnt_wm_update_window(GntWM *wm, GntWidget *widget)
 
 gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntWidget *widget)
 {
-	idle_update = TRUE;
 	gboolean ret = TRUE;
+	idle_update = TRUE;
 	g_signal_emit(wm, signals[SIG_MOUSE_CLICK], 0, event, x, y, widget, &ret);
 	return ret;
 }
