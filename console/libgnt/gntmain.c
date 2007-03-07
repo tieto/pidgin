@@ -181,7 +181,6 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
 	char keys[256];
 	int rd = read(STDIN_FILENO, keys, sizeof(keys) - 1);
-	int processed;
 	char *k;
 	if (rd < 0)
 	{
@@ -204,7 +203,6 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	if (mouse_enabled && detect_mouse_action(keys))
 		return TRUE;
 
-	processed = 0;
 	k = keys;
 	while (rd) {
 		char back;
