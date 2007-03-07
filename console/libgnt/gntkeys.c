@@ -50,11 +50,15 @@ void gnt_keys_refine(char *text)
 
 /**
  * The key-bindings will be saved in a tree. When a keystroke happens, GNT will
- * find the longest sequence that matches a binding and return the length.
+ * find the sequence that matches a binding and return the length.
+ * A sequence should not be a prefix of another sequence. If it is, then only
+ * the shortest one will be processed. If we want to change that, we will need
+ * to allow getting the k-th prefix that matches the input, and pay attention
+ * to the return value of gnt_wm_process_input in gntmain.c.
  */
 #define SIZE 256
 
-#define HAS_CHILD     1 << 0
+#define IS_END         1 << 0
 struct _node
 {
 	struct _node *next[SIZE];
@@ -62,13 +66,15 @@ struct _node
 	int flags;
 };
 
-static struct _node root = {.ref = 1, .flags = HAS_CHILD};
+static struct _node root = {.ref = 1, .flags = 0};
 
 static void add_path(struct _node *node, const char *path)
 {
 	struct _node *n = NULL;
-	if (!path || !*path)
+	if (!path || !*path) {
+		node->flags |= IS_END;
 		return;
+	}
 	while (*path && node->next[*path]) {
 		node = node->next[*path];
 		node->ref++;
@@ -79,7 +85,6 @@ static void add_path(struct _node *node, const char *path)
 	n = g_new0(struct _node, 1);
 	n->ref = 1;
 	node->next[*path++] = n;
-	node->flags |= HAS_CHILD;
 	add_path(n, path);
 }
 
@@ -115,12 +120,12 @@ int gnt_keys_find_combination(const char *path)
 	int depth = 0;
 	struct _node *n = &root;
 
-	while (*path && n->next[*path] && (n->flags & HAS_CHILD)) {
+	while (*path && n->next[*path] && !(n->flags & IS_END)) {
 		n = n->next[*path++];
 		depth++;
 	}
 
-	if (n->flags & HAS_CHILD)
+	if (!(n->flags & IS_END))
 		depth = 0;
 	return depth;
 }

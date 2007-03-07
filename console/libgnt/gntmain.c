@@ -194,7 +194,6 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	else if (rd == 0)
 	{
 		endwin();
-		return;
 		printf("EOF\n");
 		raise(SIGABRT);
 	}
@@ -212,7 +211,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		int p = MAX(1, gnt_keys_find_combination(k));
 		back = k[p];
 		k[p] = '\0';
-		gnt_wm_process_input(wm, k);
+		gnt_wm_process_input(wm, k);     /* XXX: */
 		k[p] = back;
 		rd -= p;
 		k += p;
