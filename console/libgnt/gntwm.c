@@ -875,6 +875,8 @@ refresh_screen(GntBindable *bindable, GList *null)
 static void
 gnt_wm_class_init(GntWMClass *klass)
 {
+	int i;
+
 	klass->new_window = gnt_wm_new_window_real;
 	klass->decorate_window = NULL;
 	klass->close_window = NULL;
@@ -1004,6 +1006,14 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" GNT_KEY_CTRL_K, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
+
+	/* Make sure Alt+x are detected properly. */
+	for (i = '0'; i <= '9'; i++) {
+		char str[] = "\033X";
+		str[1] = i;
+		gnt_keys_add_combination(str);
+	}
+
 	GNTDEBUG;
 }
 
@@ -1209,14 +1219,16 @@ time_t gnt_wm_get_idle_time()
 	return time(NULL) - last_active_time;
 }
 
-void gnt_wm_process_input(GntWM *wm, const char *keys)
+gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 {
+	gboolean ret = FALSE;
+
 	keys = gnt_bindable_remap_keys(GNT_BINDABLE(wm), keys);
 
 	idle_update = TRUE;
 
 	if (gnt_bindable_perform_action_key(GNT_BINDABLE(wm), keys))
-		return;
+		return TRUE;
 
 	/* Do some manual checking */
 	if (wm->ordered && wm->mode != GNT_KP_MODE_NORMAL) {
@@ -1247,7 +1259,7 @@ void gnt_wm_process_input(GntWM *wm, const char *keys)
 			if (ox != x || oy != y) {
 				gnt_screen_move_widget(widget, x, y);
 				window_reverse(widget, TRUE, wm);
-				return;
+				return TRUE;
 			}
 		} else if (wm->mode == GNT_KP_MODE_RESIZE) {
 			if (strcmp(keys, GNT_KEY_LEFT) == 0) {
@@ -1264,14 +1276,14 @@ void gnt_wm_process_input(GntWM *wm, const char *keys)
 			if (oh != h || ow != w) {
 				gnt_screen_resize_widget(widget, w, h);
 				window_reverse(widget, TRUE, wm);
-				return;
+				return TRUE;
 			}
 		}
 		if (strcmp(keys, "\r") == 0 || strcmp(keys, "\033") == 0) {
 			window_reverse(widget, FALSE, wm);
 			wm->mode = GNT_KP_MODE_NORMAL;
 		}
-		return;
+		return TRUE;
 	}
 
 	wm->event_stack = TRUE;
@@ -1281,7 +1293,7 @@ void gnt_wm_process_input(GntWM *wm, const char *keys)
 		if (wm->_list.window) {
 			gnt_widget_destroy(wm->_list.window);
 			wm->event_stack = FALSE;
-			return;
+			return TRUE;
 		}
 	} else if (keys[0] == '\033' && isdigit(keys[1]) && keys[2] == '\0') {
 		/* Alt+x for quick switch */
@@ -1294,16 +1306,17 @@ void gnt_wm_process_input(GntWM *wm, const char *keys)
 		list = g_list_append(list, GINT_TO_POINTER(n - 1));
 		switch_window_n(GNT_BINDABLE(wm), list);
 		g_list_free(list);
-		return;
+		return TRUE;
 	}
 
 	if (wm->menu)
-		gnt_widget_key_pressed(GNT_WIDGET(wm->menu), keys);
+		ret = gnt_widget_key_pressed(GNT_WIDGET(wm->menu), keys);
 	else if (wm->_list.window)
-		gnt_widget_key_pressed(wm->_list.window, keys);
+		ret = gnt_widget_key_pressed(wm->_list.window, keys);
 	else if (wm->ordered)
-		gnt_widget_key_pressed(GNT_WIDGET(wm->ordered->data), keys);
+		ret = gnt_widget_key_pressed(GNT_WIDGET(wm->ordered->data), keys);
 	wm->event_stack = FALSE;
+	return ret;
 }
 
 static void

@@ -181,6 +181,8 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
 	char keys[256];
 	int rd = read(STDIN_FILENO, keys, sizeof(keys) - 1);
+	int processed;
+	char *k;
 	if (rd < 0)
 	{
 		int ch = getch(); /* This should return ERR, but let's see what it really returns */
@@ -192,6 +194,7 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	else if (rd == 0)
 	{
 		endwin();
+		return;
 		printf("EOF\n");
 		raise(SIGABRT);
 	}
@@ -201,8 +204,19 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 
 	if (mouse_enabled && detect_mouse_action(keys))
 		return TRUE;
-	
-	gnt_wm_process_input(wm, keys);
+
+	processed = 0;
+	k = keys;
+	while (rd) {
+		char back;
+		int p = MAX(1, gnt_keys_find_combination(k));
+		back = k[p];
+		k[p] = '\0';
+		gnt_wm_process_input(wm, k);
+		k[p] = back;
+		rd -= p;
+		k += p;
+	}
 
 	return TRUE;
 }
