@@ -51,6 +51,20 @@ static gboolean refresh_screen();
 GntWM *wm;
 static GntClipboard *clipboard;
 
+#define HOLDING_ESCAPE  (escape_stuff.timer != 0)
+
+static struct {
+	int timer;
+} escape_stuff;
+
+static gboolean
+escape_timeout(gpointer data)
+{
+	gnt_wm_process_input(wm, "\033");
+	escape_stuff.timer = 0;
+	return FALSE;
+}
+
 /**
  * Mouse support:
  *  - bring a window on top if you click on its taskbar
@@ -180,7 +194,7 @@ static gboolean
 io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 {
 	char keys[256];
-	int rd = read(STDIN_FILENO, keys, sizeof(keys) - 1);
+	int rd = read(STDIN_FILENO, keys + HOLDING_ESCAPE, sizeof(keys) - 1 - HOLDING_ESCAPE);
 	char *k;
 	if (rd < 0)
 	{
@@ -197,16 +211,31 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		raise(SIGABRT);
 	}
 
+	rd += HOLDING_ESCAPE;
 	keys[rd] = 0;
-	gnt_keys_refine(keys);
-
 	if (mouse_enabled && detect_mouse_action(keys))
 		return TRUE;
 
+	if (HOLDING_ESCAPE)
+		keys[0] = '\033';
 	k = keys;
 	while (rd) {
 		char back;
-		int p = MAX(1, gnt_keys_find_combination(k));
+		int p;
+
+		if (k[0] == '\033' && rd == 1) {
+			if (escape_stuff.timer) {
+				gnt_wm_process_input(wm, "\033\033");
+				g_source_remove(escape_stuff.timer);
+				escape_stuff.timer = 0;
+				break;
+			}
+			escape_stuff.timer = g_timeout_add(250, escape_timeout, NULL);
+			break;
+		}
+
+		gnt_keys_refine(k);
+		p = MAX(1, gnt_keys_find_combination(k));
 		back = k[p];
 		k[p] = '\0';
 		gnt_wm_process_input(wm, k);     /* XXX: */
@@ -223,6 +252,7 @@ setup_io()
 {
 	int result;
 	channel = g_io_channel_unix_new(STDIN_FILENO);
+	g_io_channel_set_close_on_unref(channel, TRUE);
 
 #if 0
 	g_io_channel_set_encoding(channel, NULL, NULL);
