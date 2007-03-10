@@ -1357,8 +1357,8 @@ gaim_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			gaim_connection_error(gc, _("Authentication failed"));
 			break;
 		}
-		gaim_debug_error("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
-		gaim_debug_error("oscar", "Error URL: %s\n", info->errorurl);
+		gaim_debug_info("oscar", "Login Error Code 0x%04hx\n", info->errorcode);
+		gaim_debug_info("oscar", "Error URL: %s\n", info->errorurl);
 		od->killme = TRUE;
 		return 1;
 	}
