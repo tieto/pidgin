@@ -174,6 +174,11 @@ msn_import_html(const char *html, char **attributes, char **message)
 	char fonteffect[4];
 	char fontcolor[7];
 
+	gboolean haveBold = FALSE;
+	gboolean haveItalic = FALSE;
+	gboolean haveUnderline = FALSE;
+	gboolean haveStrikethrough = FALSE;
+
 	g_return_if_fail(html       != NULL);
 	g_return_if_fail(attributes != NULL);
 	g_return_if_fail(message    != NULL);
@@ -197,22 +202,38 @@ msn_import_html(const char *html, char **attributes, char **message)
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "i>", 2))
 			{
-				strcat(fonteffect, "I");
+				if ( haveItalic == FALSE )
+				{
+					strcat(fonteffect, "I");
+					haveItalic = TRUE;
+				}
 				c += 3;
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "b>", 2))
 			{
-				strcat(fonteffect, "B");
+				if ( haveBold == FALSE )
+				{
+					strcat(fonteffect, "B");
+					haveBold = TRUE;
+				}
 				c += 3;
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "u>", 2))
 			{
-				strcat(fonteffect, "U");
+				if ( haveUnderline == FALSE )
+				{
+					strcat(fonteffect, "U");
+					haveUnderline = TRUE;
+				}
 				c += 3;
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "s>", 2))
 			{
-				strcat(fonteffect, "S");
+				if ( haveStrikethrough == FALSE )
+				{
+					strcat(fonteffect, "S");
+					haveStrikethrough = TRUE;
+				}
 				c += 3;
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "a href=\"", 8))
