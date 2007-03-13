@@ -83,7 +83,8 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 	gnutls_data->handshake_handler = 0;
 
 	if(ret != 0) {
-		gaim_debug_error("gnutls", "Handshake failed. Error %d\n", ret);
+		gaim_debug_error("gnutls", "Handshake failed. Error %s\n",
+			gnutls_strerror(ret));
 
 		if(gsc->error_cb != NULL)
 			gsc->error_cb(gsc, GAIM_SSL_HANDSHAKE_FAILED,
@@ -156,8 +157,16 @@ ssl_gnutls_read(GaimSslConnection *gsc, void *data, size_t len)
 		s = -1;
 		errno = EAGAIN;
 	} else if(s < 0) {
-		gaim_debug_error("gnutls", "receive failed: %d\n", s);
-		s = 0;
+		gaim_debug_error("gnutls", "receive failed: %s\n",
+				gnutls_strerror(s));
+		s = -1;
+		/*
+		 * TODO: Set errno to something more appropriate.  Or even
+		 *       better: allow ssl plugins to keep track of their
+		 *       own error message, then add a new ssl_ops function
+		 *       that returns the error message.
+		 */
+		errno = EIO;
 	}
 
 	return s;
@@ -177,8 +186,16 @@ ssl_gnutls_write(GaimSslConnection *gsc, const void *data, size_t len)
 		s = -1;
 		errno = EAGAIN;
 	} else if(s < 0) {
-		gaim_debug_error("gnutls", "send failed: %d\n", s);
-		s = 0;
+		gaim_debug_error("gnutls", "send failed: %s\n",
+				gnutls_strerror(s));
+		s = -1;
+		/*
+		 * TODO: Set errno to something more appropriate.  Or even
+		 *       better: allow ssl plugins to keep track of their
+		 *       own error message, then add a new ssl_ops function
+		 *       that returns the error message.
+		 */
+		errno = EIO;
 	}
 
 	return s;
