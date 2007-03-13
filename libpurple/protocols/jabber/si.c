@@ -783,7 +783,7 @@ static void jabber_si_xfer_init(GaimXfer *xfer)
 			return;
 
 		/* XXX: for now, send to the first resource available */
-		if(g_list_length(jb->resources) >= 1) {
+		if(jb->resources != NULL) {
 			char **who_v = g_strsplit(xfer->who, "/", 2);
 			char *who;
 

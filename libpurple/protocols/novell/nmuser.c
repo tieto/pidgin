@@ -1534,13 +1534,12 @@ _handle_multiple_get_details_joinconf_cb(NMUser * user, NMERR_T ret_code,
 		}
 
 		/* Time to callback? */
-		if (g_slist_length(list) == 0) {
+		if (list == NULL) {
 			nm_response_cb cb = nm_request_get_callback(request);
 
 			if (cb) {
 				cb(user, 0, conference, conference);
 			}
-			g_slist_free(list);
 			nm_release_request(request);
 		}
 	}
