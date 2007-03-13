@@ -434,7 +434,11 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 	GaimConnectionUiOps *ops;
 
 	g_return_if_fail(gc   != NULL);
-	g_return_if_fail(text != NULL);
+
+	if (text != NULL) {
+		g_critical("gaim_connection_error: check `text != NULL' failed");
+		text = _("Unknown error");
+	}
 
 	/* If we've already got one error, we don't need any more */
 	if (gc->disconnect_timeout)
