@@ -121,6 +121,8 @@ int gnt_keys_find_combination(const char *path)
 	struct _node *n = &root;
 
 	while (*path && n->next[*path] && !(n->flags & IS_END)) {
+		if (g_utf8_find_next_char(path, NULL) - path > 1)
+			return 0;
 		n = n->next[*path++];
 		depth++;
 	}

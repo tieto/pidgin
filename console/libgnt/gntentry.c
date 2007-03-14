@@ -563,7 +563,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				if (entry->end + len - entry->start >= entry->buffer)
 				{
 					/* This will cause the buffer to grow */
-					char *tmp = g_strdup_printf("%s%*s", entry->start, len, "");
+					char *tmp = g_strdup(entry->start);
 					gnt_entry_set_text_internal(entry, tmp);
 					g_free(tmp);
 				}
