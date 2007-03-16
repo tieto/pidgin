@@ -439,3 +439,15 @@ funniest and the spec.in?
 (15:58:51) LSchiere: you test things?
 (15:59:06) SimGuy: seanegan: by experience, I think we've determined you do
 not :)
+
+(07:52:07 PM) clueless21: are you one of the gaim makers?
+(07:52:14 PM) Nathan Walp: yes
+(07:52:24 PM) clueless21:  cool
+(07:52:37 PM) clueless21:  if your busy, i can leave you alone...
+(07:53:03 PM) Nathan Walp: if you have a question I can answer it
+(07:53:34 PM) clueless21:  umm... well i don't exactly know what gaim does and what it's for. i don't know if i should get it
+(07:53:46 PM) Nathan Walp: it is an IM client
+(07:53:57 PM) clueless21:  o. what's it do?
+(07:54:03 PM) clueless21:  what's an im client?
+(07:54:25 PM) Nathan Walp: it lets you chat with other people, like we are chatting now
+(07:54:45 PM) clueless21:  oooooooooo... thanks
