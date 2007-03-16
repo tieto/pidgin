@@ -47,6 +47,7 @@ SetDateSave on
 
 !include "WordFunc.nsh"
 !insertmacro VersionCompare
+!insertmacro WordFind
 
 !include "TextFunc.nsh"
 !insertmacro ConfigWriteS
@@ -899,15 +900,65 @@ Function WriteGtkThemeConfig
   Pop $0
 FunctionEnd
 
+; Default the URI handler checkboxes if Pidgin is the current handler or if there is no handler
+Function SelectURIHandlerSelections
+  Push $R0
+  Push $R1
+  Push $R2
+  Push $R3
+
+  ; Start with the first URI handler
+  IntOp $R0 ${SecURIHandlers} + 1
+
+  start:
+  ; If it is the end of the section group, stop
+  SectionGetFlags $R0 $R1
+  IntOp $R2 $R1 & ${SF_SECGRPEND}
+  IntCmp $R2 ${SF_SECGRPEND} done
+
+  SectionGetText $R0 $R2
+  ;Strip the trailing ':'
+  StrLen $R3 $R2
+  IntOp $R3 $R3 - 1
+  StrCpy $R2 $R2 $R3
+
+  ClearErrors
+  ReadRegStr $R3 HKCR "$R2" ""
+  IfErrors default_on ;there is no current handler
+
+  ; Check if Pidgin is the current handler
+  ClearErrors
+  ReadRegStr $R3 HKCR "$R2\shell\Open\command" ""
+  IfErrors end_loop
+  ${WordFind} "$R3" "pidgin.exe" "E+1{" $R3
+  IfErrors end_loop default_on
+
+  ;We default the URI handler checkbox on
+  default_on:
+  IntOp $R1 $R1 | ${SF_SELECTED} ; Select
+  SectionSetFlags $R0 $R1
+
+  end_loop:
+  IntOp $R0 $R0 + 1 ;Advance to the next section
+  Goto start
+
+  done:
+  Pop $R3
+  Pop $R2
+  Pop $R1
+  Pop $R0
+FunctionEnd ;SelectURIHandlerSections
+
 
 Function RegisterURIHandler
   Exch $R0
-  WriteRegStr HKEY_CLASSES_ROOT "$R0" "" "URL:$R0"
-  WriteRegStr HKEY_CLASSES_ROOT "$R0" "URL Protocol" ""
-  WriteRegStr HKEY_CLASSES_ROOT "$R0\DefaultIcon" "" "$INSTDIR\pidgin.exe"
-  WriteRegStr HKEY_CLASSES_ROOT "$R0\shell" "" ""
-  WriteRegStr HKEY_CLASSES_ROOT "$R0\shell\Open" "" ""
-  WriteRegStr HKEY_CLASSES_ROOT "$R0\shell\Open\command" "" "$INSTDIR\pidgin.exe --protocolhandler=%1"
+  DeleteRegKey HKCR "$R0"
+  WriteRegStr HKCR "$R0" "" "URL:$R0"
+  WriteRegStr HKCR "$R0" "URL Protocol" ""
+  WriteRegStr HKCR "$R0\DefaultIcon" "" "$INSTDIR\pidgin.exe"
+  WriteRegStr HKCR "$R0\shell" "" ""
+  WriteRegStr HKCR "$R0\shell\Open" "" ""
+  WriteRegStr HKCR "$R0\shell\Open\command" "" "$INSTDIR\pidgin.exe --protocolhandler=%1"
   Pop $R0
 FunctionEnd
 
@@ -1166,6 +1217,9 @@ Function .onInit
   ;Mark the dictionaries that are already installed as readonly
   Call SelectAndDisableInstalledDictionaries
 
+  ;Preselect the URI handlers as appropriate
+  Call SelectURIHandlerSelections
+
   StrCpy $ISSILENT "/NOUI"
 
   ; GTK installer has two silent states.. one with Message boxes, one without
@@ -1198,14 +1252,16 @@ Function .onInit
   ReadRegStr $INSTDIR HKLM "${PIDGIN_REG_KEY}" ""
   IfErrors +2
   StrCmp $INSTDIR "" 0 instdir_done
-  ClearErrors
-  ReadRegStr $INSTDIR HKCU "${OLD_GAIM_REG_KEY}" ""
-  IfErrors +2
-  StrCmp $INSTDIR "" 0 instdir_done
-  ClearErrors
-  ReadRegStr $INSTDIR HKLM "${OLD_GAIM_REG_KEY}" ""
-  IfErrors +2
-  StrCmp $INSTDIR "" 0 instdir_done
+
+  ;If we wanted to reuse the previous gaim installation dir, this would be the way to do it:
+  ;ClearErrors
+  ;ReadRegStr $INSTDIR HKCU "${OLD_GAIM_REG_KEY}" ""
+  ;IfErrors +2
+  ;StrCmp $INSTDIR "" 0 instdir_done
+  ;ClearErrors
+  ;ReadRegStr $INSTDIR HKLM "${OLD_GAIM_REG_KEY}" ""
+  ;IfErrors +2
+  ;StrCmp $INSTDIR "" 0 instdir_done
 
   Call CheckUserInstallRights
   Pop $R0
