@@ -155,6 +155,7 @@ register_binding(GntBindableClass *klass, const char *name, const char *trigger,
 
 	if (name == NULL || *name == '\0') {
 		g_hash_table_remove(klass->bindings, (char*)trigger);
+		gnt_keys_del_combination(trigger);
 		return;
 	}
 
@@ -171,6 +172,7 @@ register_binding(GntBindableClass *klass, const char *name, const char *trigger,
 	param->action = action;
 	param->list = list;
 	g_hash_table_replace(klass->bindings, g_strdup(trigger), param);
+	gnt_keys_add_combination(trigger);
 }
 
 void gnt_bindable_register_binding(GntBindableClass *klass, const char *name,

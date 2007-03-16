@@ -357,7 +357,7 @@ gnt_widget_draw(GntWidget *widget)
 			g_signal_emit(widget, signals[SIG_SIZE_CHANGED], 0, oldw, oldh);
 		}
 #else
-		widget->window = newpad(150, 350);  /* XXX: */
+		widget->window = newpad(widget->priv.height + 20, widget->priv.width + 20);  /* XXX: */
 #endif
 		init_widget(widget);
 	}
@@ -520,6 +520,10 @@ gnt_widget_set_size(GntWidget *widget, int width, int height)
 
 		widget->priv.width = width;
 		widget->priv.height = height;
+		if (width >= getmaxx(widget->window) || height >= getmaxy(widget->window)) {
+			delwin(widget->window);
+			widget->window = newpad(height + 20, width + 20);
+		}
 
 		g_signal_emit(widget, signals[SIG_SIZE_CHANGED], 0, oldw, oldh);
 
@@ -581,7 +585,8 @@ update_queue_callback(gpointer data)
 
 	if (!g_object_get_data(G_OBJECT(widget), "gnt:queue_update"))
 		return FALSE;
-	gnt_screen_update(widget);
+	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_MAPPED))
+		gnt_screen_update(widget);
 	g_object_set_data(G_OBJECT(widget), "gnt:queue_update", NULL);
 	return FALSE;
 }

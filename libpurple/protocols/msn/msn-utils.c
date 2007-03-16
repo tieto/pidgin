@@ -174,6 +174,11 @@ msn_import_html(const char *html, char **attributes, char **message)
 	char fonteffect[4];
 	char fontcolor[7];
 
+	gboolean has_bold = FALSE;
+	gboolean has_italic = FALSE;
+	gboolean has_underline = FALSE;
+	gboolean has_strikethrough = FALSE;
+
 	g_return_if_fail(html       != NULL);
 	g_return_if_fail(attributes != NULL);
 	g_return_if_fail(message    != NULL);
@@ -197,22 +202,38 @@ msn_import_html(const char *html, char **attributes, char **message)
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "i>", 2))
 			{
-				strcat(fonteffect, "I");
+				if (!has_italic)
+				{
+					strcat(fonteffect, "I");
+					has_italic = TRUE;
+				}
 				c += 3;
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "b>", 2))
 			{
-				strcat(fonteffect, "B");
+				if (!has_bold)
+				{
+					strcat(fonteffect, "B");
+					has_bold = TRUE;
+				}
 				c += 3;
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "u>", 2))
 			{
-				strcat(fonteffect, "U");
+				if (!has_underline)
+				{
+					strcat(fonteffect, "U");
+					has_underline = TRUE;
+				}
 				c += 3;
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "s>", 2))
 			{
-				strcat(fonteffect, "S");
+				if (!has_strikethrough)
+				{
+					strcat(fonteffect, "S");
+					has_strikethrough = TRUE;
+				}
 				c += 3;
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "a href=\"", 8))

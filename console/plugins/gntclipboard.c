@@ -30,6 +30,9 @@
 #include <X11/Xatom.h>
 #endif
 
+#include <sys/types.h>
+#include <signal.h>
+
 #include <glib.h>
 
 #include <plugin.h>
@@ -39,11 +42,11 @@
 
 #include <gntplugin.h>
 
-static gboolean stop = FALSE;
+static pid_t child = 0;
 
 static gulong sig_handle;
 
-static gpointer *
+static void
 set_clip(gchar *string)
 {
 #ifdef HAVE_X11
@@ -54,16 +57,16 @@ set_clip(gchar *string)
 	Display *dpy = XOpenDisplay(NULL);
 
 	if (!dpy)
-		return NULL;
+		return;
 	ids = getenv("WINDOWID");
 	if (ids == NULL)
-		return NULL;
+		return;
 	w = atoi(ids);
 	XSetSelectionOwner(dpy, XA_PRIMARY, w, CurrentTime);
 	XFlush(dpy);
 	XSelectInput(dpy, w, StructureNotifyMask);
-	while (!stop) {
-		XNextEvent(dpy, &e);
+	while (TRUE) {
+		XNextEvent(dpy, &e); /* this blocks. */
 		req = &e.xselectionrequest;
 		if (e.type == SelectionRequest) {
 			XChangeProperty(dpy,
@@ -83,33 +86,38 @@ set_clip(gchar *string)
 			XSendEvent(dpy, req->requestor, 0, 0, &respond);
 			XFlush (dpy);
 		} else if (e.type == SelectionClear) {
-			return NULL;
+			return;
 		}
 	}
 #endif
-	return NULL;
+	return;
 }
 
 static void
 clipboard_changed(GntWM *wm, gchar *string)
 {
 #ifdef HAVE_X11
-	static GThread *thread = NULL;
-	if (thread) {
-		stop = TRUE;
-		thread = g_thread_join(thread);
+	if (child) {
+		kill(child, SIGTERM);
 	}
-	g_thread_create((GThreadFunc)set_clip, string, TRUE, NULL);
+	if ((child = fork() == 0)) {
+		set_clip(string);
+		_exit(0);
+	}
 #endif
 }
 
 static gboolean
 plugin_load(GaimPlugin *plugin)
 {
-	if (!XOpenDisplay(NULL))
+	if (!XOpenDisplay(NULL)) {
 		gaim_debug_warning("gntclipboard", "Couldn't find X display\n");
-	if (!getenv("WINDOWID"))
+		return FALSE;
+	}
+	if (!getenv("WINDOWID")) {
 		gaim_debug_warning("gntclipboard", "Couldn't find window\n");
+		return FALSE;
+	}
 	sig_handle = g_signal_connect(G_OBJECT(gnt_get_clipboard()), "clipboard_changed", G_CALLBACK(clipboard_changed), NULL);
 	return TRUE;
 }
@@ -117,6 +125,10 @@ plugin_load(GaimPlugin *plugin)
 static gboolean
 plugin_unload(GaimPlugin *plugin)
 {
+	if (child) {
+		kill(child, SIGTERM);
+		child = 0;
+	}
 	g_signal_handler_disconnect(G_OBJECT(gnt_get_clipboard()), sig_handle);
 	return TRUE;
 }
@@ -151,7 +163,6 @@ static GaimPluginInfo info =
 static void
 init_plugin(GaimPlugin *plugin)
 {
-	g_thread_init(NULL);
 }
 
 GAIM_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)

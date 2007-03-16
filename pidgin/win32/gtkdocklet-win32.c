@@ -443,7 +443,7 @@ pixbuf_to_hicon (GdkPixbuf *pixbuf)
 static HICON load_hicon_from_stock(const char *stock) {
 	HICON hicon = NULL;
 	GdkPixbuf *pixbuf = gtk_widget_render_icon(image, stock,
-		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL), NULL);
+		gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL), NULL);
 
 	if (pixbuf) {
 		hicon = pixbuf_to_hicon(pixbuf);

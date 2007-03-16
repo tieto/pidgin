@@ -151,7 +151,7 @@ void gnt_wm_window_decorate(GntWM *wm, GntWidget *widget);
 
 void gnt_wm_window_close(GntWM *wm, GntWidget *widget);
 
-void gnt_wm_process_input(GntWM *wm, const char *string);
+gboolean gnt_wm_process_input(GntWM *wm, const char *string);
 
 gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntWidget *widget);
 

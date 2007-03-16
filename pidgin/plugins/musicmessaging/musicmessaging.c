@@ -235,16 +235,19 @@ static gboolean send_change_confirmed (const int session, const char *command, c
 static int
 mmconv_from_conv_loc(GaimConversation *conv)
 {
+	GList *l;
 	MMConversation *mmconv_current = NULL;
 	guint i;
 	
-	for (i = 0; i < g_list_length(conversations); i++)
+	i = 0;
+	for (l = conversations; l != NULL; l = l->next)
 	{
-		mmconv_current = (MMConversation *)g_list_nth_data(conversations, i);
+		mmconv_current = l->data;
 		if (conv == mmconv_current->conv)
 		{
 			return i;
 		}
+		i++;
 	}
 	return -1;
 }
@@ -295,9 +298,9 @@ static gboolean
 plugin_unload(GaimPlugin *plugin) {
 	MMConversation *mmconv = NULL;
 	
-	while (g_list_length(conversations) > 0)
+	while (conversations != NULL)
 	{
-		mmconv = g_list_first(conversations)->data;
+		mmconv = conversations->data;
 		conv_destroyed(mmconv->conv);
 	}
 	return TRUE;

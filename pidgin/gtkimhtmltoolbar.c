@@ -672,7 +672,7 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	gtk_window_set_role(GTK_WINDOW(dialog), "smiley_dialog");
 	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_MOUSE);
 
-	if (g_slist_length(unique_smileys)) {
+	if (unique_smileys != NULL) {
 		struct smiley_button_list *ls, *it, *it_tmp;
 		GtkWidget *line;
 		int line_width = 0;

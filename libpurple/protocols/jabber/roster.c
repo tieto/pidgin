@@ -380,7 +380,7 @@ void jabber_roster_remove_buddy(GaimConnection *gc, GaimBuddy *buddy,
 	GSList *groups = NULL;
 
 	buddies = g_slist_remove(buddies, buddy);
-	if(g_slist_length(buddies)) {
+	if(buddies != NULL) {
 		GaimBuddy *tmpbuddy;
 		GaimGroup *tmpgroup;
 

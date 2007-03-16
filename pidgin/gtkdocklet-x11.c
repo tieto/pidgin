@@ -40,6 +40,8 @@ static GtkWidget *image = NULL;
 static GtkTooltips *tooltips = NULL;
 static GdkPixbuf *blank_icon = NULL;
 static int embed_timeout = 0;
+static DockletStatus icon_status = 0;
+static int docklet_height = 0;
 
 /* protos */
 static void docklet_x11_create(void);
@@ -115,37 +117,25 @@ docklet_x11_update_icon(DockletStatus icon)
 			break;
 	}
 
-	if(icon_name)
-		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL));
+	if(icon_name) {
+		int icon_size;
+		if (docklet_height < 22)
+			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+		else
+			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL);
 
-#if 0
-	GdkPixbuf *p;
-	GdkBitmap *mask = NULL;
-
-	p = gtk_widget_render_icon(GTK_WIDGET(image), icon_name, GTK_ICON_SIZE_LARGE_TOOLBAR, NULL);
-
-	if (p && (gdk_pixbuf_get_colorspace(p) == GDK_COLORSPACE_RGB) && (gdk_pixbuf_get_bits_per_sample(p) == 8)
-	   && (gdk_pixbuf_get_has_alpha(p)) && (gdk_pixbuf_get_n_channels(p) == 4)) {
-		int len = gdk_pixbuf_get_width(p) * gdk_pixbuf_get_height(p);
-		guchar *data = gdk_pixbuf_get_pixels(p);
-		guchar *bitmap = g_malloc((len / 8) + 1);
-		int i;
-
-		for (i = 0; i < len; i++)
-			if (data[i*4 + 3] > 55)
-				bitmap[i/8] |= 1 << i % 8;
-			else
-				bitmap[i/8] &= ~(1 << i % 8);
-
-		mask = gdk_bitmap_create_from_data(GDK_DRAWABLE(GTK_WIDGET(image)->window), bitmap, gdk_pixbuf_get_width(p), gdk_pixbuf_get_height(p));
-		g_free(bitmap);
+		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, icon_size);
 	}
+	icon_status = icon;
+}
 
-	if (mask)
-		gdk_window_shape_combine_mask(image->window, mask, 0, 0);
-
-	g_object_unref(G_OBJECT(p));
-#endif
+static void
+docklet_x11_resize_icon(GtkWidget *widget)
+{
+	if (docklet_height == widget->allocation.height)
+		return;
+	docklet_height = widget->allocation.height;
+	docklet_x11_update_icon(icon_status);
 }
 
 static void
@@ -263,8 +253,8 @@ docklet_x11_create()
 
 	g_signal_connect(G_OBJECT(docklet), "embedded", G_CALLBACK(docklet_x11_embedded_cb), NULL);
 	g_signal_connect(G_OBJECT(docklet), "destroy", G_CALLBACK(docklet_x11_destroyed_cb), NULL);
+	g_signal_connect(G_OBJECT(docklet), "size-allocate", G_CALLBACK(docklet_x11_resize_icon), NULL);
 	g_signal_connect(G_OBJECT(box), "button-release-event", G_CALLBACK(docklet_x11_clicked_cb), NULL);
-
 	gtk_container_add(GTK_CONTAINER(box), image);
 	gtk_container_add(GTK_CONTAINER(docklet), box);
 

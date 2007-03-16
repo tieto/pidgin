@@ -82,6 +82,10 @@ extern char *gnt_key_cright;
 void gnt_init_keys();
 void gnt_keys_refine(char *text);
 
+void gnt_keys_add_combination(const char *path);
+void gnt_keys_del_combination(const char *path);
+int gnt_keys_find_combination(const char *path);
+
 
 /* A lot of commonly used variable names are defined in <term.h>. 
  * #undef them to make life easier for everyone. */

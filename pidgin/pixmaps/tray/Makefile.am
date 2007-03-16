@@ -1,4 +1,4 @@
-SUBDIRS = 22
+SUBDIRS = 16 22
 
 EXTRA_DIST = \
 	Makefile.mingw \

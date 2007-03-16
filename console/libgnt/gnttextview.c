@@ -69,13 +69,17 @@ gnt_text_view_draw(GntWidget *widget)
 				(select_end <= view->string->str + seg->end && select_start <= view->string->str + seg->start))) {
 				char *cur = view->string->str + seg->start;
 				while (*cur != '\0') {
+					gchar *last = g_utf8_next_char(cur);
+					gchar *str;
 					if (cur >= select_start && cur <= select_end)
 						fl |= A_REVERSE;
 					else
 						fl = seg->flags;
+					str = g_strndup(cur, last - cur);
 					wattrset(widget->window, fl);
-					waddch(widget->window, *cur);
-					cur++;
+					waddstr(widget->window, str);
+					g_free(str);
+					cur = g_utf8_next_char(cur);
 				}
 			} else {
 				wattrset(widget->window, fl);
@@ -187,31 +191,43 @@ gnt_text_view_destroy(GntWidget *widget)
 static char *
 gnt_text_view_get_p(GntTextView *view, int x, int y)
 {
-	int i;
+	int i = 0;
 	GntWidget *wid = GNT_WIDGET(view);
 	GntTextLine *line;
 	GList *lines;
 	GList *segs;
 	GntTextSegment *seg;
+	gchar *pos;
 
 	y = wid->priv.height - y;
 	if (g_list_length(view->list) < y) {
 		x = 0;
-		y = g_list_length(view->list);
+		y = g_list_length(view->list) - 1;
 	}
 
 	lines = g_list_nth(view->list, y - 1);
+	if (!lines)
+		return NULL;
 	do {
 		line = lines->data;
 		lines = lines->next;
-	} while (line && !line->segments);
+	} while (line && !line->segments && lines);
 
-	if (!line) /* no valid line */
+	if (!line || !line->segments) /* no valid line */
 		return NULL;
 	segs = line->segments;
 	seg = (GntTextSegment *)segs->data;
-	i = 0;
-	return view->string->str + seg->start + MIN(x, line->length);
+	pos = view->string->str + seg->start;
+	x = MIN(x, line->length);
+	while (++i <= x) {
+		gunichar *u;
+		pos = g_utf8_next_char(pos);
+		u = g_utf8_to_ucs4(pos, -1, NULL, NULL, NULL);
+		if (u && g_unichar_iswide_cjk(*u))
+			i++;
+		g_free(u);
+	}
+	return pos;
 }
 
 static GString *
@@ -219,7 +235,7 @@ select_word_text(GntTextView *view, gchar *c)
 {
 	gchar *start = c;
 	gchar *end = c;
-	gchar *t;
+	gchar *t, *endsize;
 	while (t = g_utf8_prev_char(start)) {
 		if (!g_ascii_isspace(*t)) {
 			if (start == view->string->str)
@@ -236,7 +252,8 @@ select_word_text(GntTextView *view, gchar *c)
 	}
 	select_start = start;
 	select_end = end;
-	return g_string_new_len(start, end - start + 1);
+	endsize = g_utf8_next_char(select_end); /* End at the correct byte */
+	return g_string_new_len(start, endsize - start);
 }
 
 static gboolean too_slow(gpointer n)
@@ -276,7 +293,8 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 					return;
 				}
 			} else {
-				clip = g_string_new_len(select_start, select_end - select_start + 1);
+				gchar *endsize = g_utf8_next_char(select_end); /* End at the correct byte */
+				clip = g_string_new_len(select_start, endsize - select_start);
 			}
 			gnt_widget_draw(widget);
 			gnt_set_clipboard_string(clip->str);

@@ -333,7 +333,6 @@ gg_create_conversation(GaimConversation *conv)
 	gnt_entry_set_always_suggest(GNT_ENTRY(ggc->entry), FALSE);
 
 	g_signal_connect_after(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(entry_key_pressed), ggc);
-	g_signal_connect(G_OBJECT(ggc->entry), "text_changed", G_CALLBACK(send_typing_notification), ggc);
 	g_signal_connect(G_OBJECT(ggc->window), "destroy", G_CALLBACK(closing_window), ggc);
 
 	gnt_widget_set_position(ggc->window, gaim_prefs_get_int(PREF_ROOT "/position/x"),
@@ -343,10 +342,13 @@ gg_create_conversation(GaimConversation *conv)
 	g_signal_connect(G_OBJECT(ggc->tv), "size_changed", G_CALLBACK(size_changed_cb), NULL);
 	g_signal_connect(G_OBJECT(ggc->window), "position_set", G_CALLBACK(save_position_cb), NULL);
 
-	gaim_signal_connect(gaim_conversations_get_handle(), "buddy-typing", gg_conv_get_handle(),
-	                GAIM_CALLBACK(update_buddy_typing), NULL);
-	gaim_signal_connect(gaim_conversations_get_handle(), "buddy-typing-stopped", gg_conv_get_handle(),
-	                GAIM_CALLBACK(update_buddy_typing), NULL);
+	if (type == GAIM_CONV_TYPE_IM) {
+		g_signal_connect(G_OBJECT(ggc->entry), "text_changed", G_CALLBACK(send_typing_notification), ggc);
+		gaim_signal_connect(gaim_conversations_get_handle(), "buddy-typing", gg_conv_get_handle(),
+						GAIM_CALLBACK(update_buddy_typing), NULL);
+		gaim_signal_connect(gaim_conversations_get_handle(), "buddy-typing-stopped", gg_conv_get_handle(),
+						GAIM_CALLBACK(update_buddy_typing), NULL);
+	}
 
 	g_free(title);
 }

@@ -302,15 +302,15 @@ static gboolean
 clipboard_paste(GntBindable *bind, GList *n)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
-	gchar *i;
-	gchar *text = i = gnt_get_clipboard_string();
+	gchar *i, *text, *a, *all;
+	text = i = gnt_get_clipboard_string();
 	while (*i != '\0') {
 		i = g_utf8_next_char(i);
 		if (*i == '\r' || *i == '\n')
 			*i = ' ';
 	}
-	char *a = g_strndup(entry->start, entry->cursor - entry->start);
-	char *all = g_strconcat(a, text, entry->cursor, NULL);
+	a = g_strndup(entry->start, entry->cursor - entry->start);
+	all = g_strconcat(a, text, entry->cursor, NULL);
 	gnt_entry_set_text_internal(entry, all);
 	g_free(a);
 	g_free(text);
@@ -563,7 +563,7 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 				if (entry->end + len - entry->start >= entry->buffer)
 				{
 					/* This will cause the buffer to grow */
-					char *tmp = g_strdup_printf("%s%*s", entry->start, len, "");
+					char *tmp = g_strdup(entry->start);
 					gnt_entry_set_text_internal(entry, tmp);
 					g_free(tmp);
 				}
@@ -693,7 +693,7 @@ gnt_entry_class_init(GntEntryClass *klass)
 				GNT_KEY_CTRL_DOWN, NULL);
 	gnt_bindable_class_register_action(bindable, "history-next", history_next,
 				GNT_KEY_CTRL_UP, NULL);
-	gnt_bindable_class_register_action(bindable, "clipboard-past", clipboard_paste,
+	gnt_bindable_class_register_action(bindable, "clipboard-paste", clipboard_paste,
 				GNT_KEY_CTRL_V, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
