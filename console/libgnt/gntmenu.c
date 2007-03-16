@@ -134,7 +134,8 @@ gnt_menu_key_pressed(GntWidget *widget, const char *text)
 	int current = menu->selected;
 
 	if (menu->submenu) {
-		return (gnt_widget_key_pressed(GNT_WIDGET(menu->submenu), text));
+		do menu = menu->submenu; while (menu->submenu);
+		return (gnt_widget_key_pressed(GNT_WIDGET(menu), text));
 	}
 
 	if (text[0] == 27 && text[1] == 0) {

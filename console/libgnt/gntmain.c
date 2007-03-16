@@ -360,6 +360,7 @@ void gnt_init()
 	noecho();
 	curs_set(0);
 
+	gnt_init_keys();
 	gnt_init_styles();
 
 	filename = g_build_filename(g_get_home_dir(), ".gntrc", NULL);
@@ -367,7 +368,6 @@ void gnt_init()
 	g_free(filename);
 
 	gnt_init_colors();
-	gnt_init_keys();
 
 	wbkgdset(stdscr, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
 	refresh();
