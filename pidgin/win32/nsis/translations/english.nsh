@@ -60,6 +60,9 @@
 ; GTK+ Themes section
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_NO_THEME_INSTALL_RIGHTS		"You do not have permission to install a GTK+ theme."
 
+; URL Handler section
+!insertmacro PIDGIN_MACRO_DEFAULT_STRING URI_HANDLERS_SECTION_TITLE		"URI Handlers"
+
 ; Uninstall Section Prompts
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING un.PIDGIN_UNINSTALL_ERROR_1		"The uninstaller could not find registry entries for Pidgin.$\rIt is likely that another user installed this application."
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING un.PIDGIN_UNINSTALL_ERROR_2		"You do not have permission to uninstall this application."

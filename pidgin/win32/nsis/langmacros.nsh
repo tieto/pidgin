@@ -25,7 +25,7 @@
   !include "${PIDGIN_DEFAULT_LANGFILE}"
   !undef INSERT_DEFAULT
 
-  ; GAIM Language file Version 3
+  ; Pidgin Language file Version 3
   ; String labels should match those from the default language file.
 
   ; Startup checks
@@ -76,6 +76,9 @@
 
   ; GTK+ Themes section
   !insertmacro PIDGIN_MACRO_LANGSTRING_INSERT GTK_NO_THEME_INSTALL_RIGHTS		${CUR_LANG}
+
+  ; URI Handler section
+  !insertmacro PIDGIN_MACRO_LANGSTRING_INSERT URI_HANDLERS_SECTION_TITLE		${CUR_LANG}
 
   ; Uninstall Section Prompts
   !insertmacro PIDGIN_MACRO_LANGSTRING_INSERT un.PIDGIN_UNINSTALL_ERROR_1		${CUR_LANG}

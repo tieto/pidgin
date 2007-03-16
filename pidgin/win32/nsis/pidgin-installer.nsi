@@ -281,7 +281,7 @@ Section -SecUninstallOldPidgin
       ReadRegStr $R2 HKLM $R4 "Version"
       ReadRegStr $R3 HKLM "$R5" "UninstallString"
 
-  ; If previous version exists .. remove
+  ; If a previous version exists, remove it
   try_uninstall:
     StrCmp $R1 "" done
       ; Version key started with 0.60a3. Prior versions can't be
@@ -289,7 +289,7 @@ Section -SecUninstallOldPidgin
       StrCmp $R2 "" uninstall_problem
         ; Check if we have uninstall string..
         IfFileExists $R3 0 uninstall_problem
-          ; Have uninstall string.. go ahead and uninstall.
+          ; Have uninstall string, go ahead and uninstall.
           SetOverwrite on
           ; Need to copy uninstaller outside of the install dir
           ClearErrors
@@ -369,7 +369,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
 
   have_gtk:
     StrCpy $GTK_FOLDER $R6
-    StrCmp $R1 "NONE" done ; If we have no rights.. can't re-install..
+    StrCmp $R1 "NONE" done ; If we have no rights, we can't re-install
     ; Even if we have a sufficient version of GTK+, we give user choice to re-install.
     ClearErrors
     ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT'
@@ -484,7 +484,7 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
 
     SetOutPath "$INSTDIR"
 
-    ; If we don't have install rights.. we're done
+    ; If we don't have install rights we're done
     StrCmp $R0 "NONE" done
     SetOverwrite off
 
@@ -541,6 +541,23 @@ SectionGroup /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
   Section /o $(GTK_LIGHTHOUSEBLUE_SECTION_TITLE) SecGtkLighthouseblue
     Push "Lighthouseblue"
     Call WriteGtkThemeConfig
+  SectionEnd
+SectionGroupEnd
+
+;--------------------------------
+;URI Handling
+SectionGroup /e $(URI_HANDLERS_SECTION_TITLE) SecURIHandlers
+  Section /o "aim:" SecURI_AIM
+    Push "aim"
+    Call RegisterURIHandler
+  SectionEnd
+  Section /o "msnim:" SecURI_MSNIM
+    Push "msnim"
+    Call RegisterURIHandler
+  SectionEnd
+  Section /o "ymsgr:" SecURI_YMSGR
+    Push "ymsgr"
+    Call RegisterURIHandler
   SectionEnd
 SectionGroupEnd
 
@@ -651,7 +668,7 @@ Section Uninstall
   try_hkcu:
     ReadRegStr $R0 HKCU ${PIDGIN_REG_KEY} ""
     StrCmp $R0 $INSTDIR 0 cant_uninstall
-      ; HKCU install path matches our INSTDIR.. so uninstall
+      ; HKCU install path matches our INSTDIR so uninstall
       DeleteRegKey HKCU ${PIDGIN_REG_KEY}
       DeleteRegKey HKCU "${PIDGIN_UNINSTALL_KEY}"
       Goto cont_uninstall
@@ -659,7 +676,7 @@ Section Uninstall
   try_hklm:
     ReadRegStr $R0 HKLM ${PIDGIN_REG_KEY} ""
     StrCmp $R0 $INSTDIR 0 try_hkcu
-      ; HKLM install path matches our INSTDIR.. so uninstall
+      ; HKLM install path matches our INSTDIR so uninstall
       DeleteRegKey HKLM ${PIDGIN_REG_KEY}
       DeleteRegKey HKLM "${PIDGIN_UNINSTALL_KEY}"
       DeleteRegKey HKLM "${HKLM_APP_PATHS_KEY}"
@@ -748,7 +765,7 @@ Section Uninstall
     !endif
     Delete "$INSTDIR\install.log"
 
-    ;Try to remove Pidgin install dir .. if empty
+    ;Try to remove Pidgin install dir (only if empty)
     RMDir "$INSTDIR"
 
     ; Shortcuts..
@@ -881,6 +898,19 @@ Function WriteGtkThemeConfig
   Pop $1
   Pop $0
 FunctionEnd
+
+
+Function RegisterURIHandler
+  Exch $R0
+  WriteRegStr HKEY_CLASSES_ROOT "$R0" "" "URL:$R0"
+  WriteRegStr HKEY_CLASSES_ROOT "$R0" "URL Protocol" ""
+  WriteRegStr HKEY_CLASSES_ROOT "$R0\DefaultIcon" "" "$INSTDIR\pidgin.exe"
+  WriteRegStr HKEY_CLASSES_ROOT "$R0\shell" "" ""
+  WriteRegStr HKEY_CLASSES_ROOT "$R0\shell\Open" "" ""
+  WriteRegStr HKEY_CLASSES_ROOT "$R0\shell\Open\command" "" "$INSTDIR\pidgin.exe --protocolhandler=%1"
+  Pop $R0
+FunctionEnd
+
 
 !macro CheckUserInstallRightsMacro UN
 Function ${UN}CheckUserInstallRights
@@ -1044,7 +1074,7 @@ Function DoWeNeedGtk
       StrCmp $0 "" no_gtk have_gtk
 
   have_gtk:
-    ; GTK+ is already installed.. check version.
+    ; GTK+ is already installed; check version.
     ${VersionCompare} ${GTK_INSTALL_VERSION} $0 $3
     IntCmp $3 1 +1 good_version good_version
     ${VersionCompare} ${GTK_MIN_VERSION} $0 $3
@@ -1083,7 +1113,7 @@ Function DoWeNeedGtk
 
   done:
   ; The top two items on the stack are what we want to return
-  Exch 4 
+  Exch 4
   Pop $0
   Exch 4
   Pop $3
