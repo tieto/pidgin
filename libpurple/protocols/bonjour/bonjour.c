@@ -297,7 +297,7 @@ bonjour_status_text(GaimBuddy *buddy)
 	presence = gaim_buddy_get_presence(buddy);
 
 	if (gaim_presence_is_online(presence) && !gaim_presence_is_available(presence))
-		return g_strdup("Away");
+		return g_strdup(_("Away"));
 
 	return NULL;
 }
@@ -346,7 +346,7 @@ static GaimPluginProtocolInfo prpl_info =
 	/* {"png", 0, 0, 96, 96, 0, GAIM_ICON_SCALE_DISPLAY}, */ /* icon_spec */
 	NO_BUDDY_ICONS, /* not yet */                            /* icon_spec */
 	bonjour_list_icon,                                       /* list_icon */
-	NULL, 		                      			 /* list_emblem */
+	NULL,													 /* list_emblem */
 	bonjour_status_text,                                     /* status_text */
 	bonjour_tooltip_text,                                    /* tooltip_text */
 	bonjour_status_types,                                    /* status_types */
