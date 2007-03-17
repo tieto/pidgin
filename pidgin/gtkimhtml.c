@@ -477,8 +477,8 @@ gtk_imhtml_tip (gpointer data)
 						pango_font_metrics_get_descent(font_metrics));
 
 	gtk_widget_set_size_request (imhtml->tip_window, w, h);
-	gtk_widget_show (imhtml->tip_window);
 	gtk_window_move (GTK_WINDOW(imhtml->tip_window), x, y);
+	gtk_widget_show (imhtml->tip_window);
 
 	pango_font_metrics_unref(font_metrics);
 	g_object_unref(layout);
