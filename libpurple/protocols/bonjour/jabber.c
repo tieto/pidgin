@@ -531,10 +531,10 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 	xmlnode *message_x_node = NULL;
 	GaimBuddy *gb = NULL;
 	BonjourBuddy *bb = NULL;
-	char *conv_message = NULL;
 	GaimConversation *conversation = NULL;
 	char *message_from_ui = NULL;
 	char *stripped_message = NULL;
+	gint ret;
 
 	gb = gaim_find_buddy(data->account, to);
 	if (gb == NULL)
@@ -547,9 +547,11 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 	message_body_node = xmlnode_new("body");
 	stripped_message = gaim_markup_strip_html(body);
 	xmlnode_insert_data(message_body_node, stripped_message, strlen(stripped_message));
+	g_free(stripped_message);
 
 	message_from_ui = g_strconcat("<font>", body, "</font>", NULL);
 	message_html_body_font_node = xmlnode_from_str(message_from_ui, strlen(message_from_ui));
+	g_free(message_from_ui);
 
 	message_html_body_node = xmlnode_new("body");
 	xmlnode_insert_child(message_html_body_node, message_html_body_font_node);
@@ -571,6 +573,7 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 	xmlnode_insert_child(message_node, message_x_node);
 
 	message = xmlnode_to_str(message_node, &message_length);
+	xmlnode_free(message_node);
 
 	/* Check if there is a previously open conversation */
 	if (bb->conversation == NULL)
@@ -591,9 +594,10 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 		{
 				gaim_debug_error("bonjour", "Unable to start a conversation\n");
 				gaim_debug_warning("bonjour", "send error: %s\n", strerror(errno));
-				conv_message = g_strdup(_("Unable to send the message, the conversation couldn't be started."));
 				conversation = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, bb->name, data->account);
-				gaim_conversation_write(conversation, NULL, conv_message, GAIM_MESSAGE_SYSTEM, time(NULL));
+				gaim_conversation_write(conversation, NULL, 
+										_("Unable to send the message, the conversation couldn't be started."),
+										GAIM_MESSAGE_SYSTEM, time(NULL));
 				close(bb->conversation->socket);
 				gaim_input_remove(bb->conversation->watcher_id);
 
@@ -601,6 +605,7 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 				g_free(bb->conversation->buddy_name);
 				g_free(bb->conversation);
 				bb->conversation = NULL;
+				g_free(message);
 				return 0;
 		}
 
@@ -608,7 +613,10 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 	}
 
 	/* Send the message */
-	if (_send_data(bb->conversation->socket, message) == -1)
+	ret = _send_data(bb->conversation->socket, message) == -1;
+	g_free(message);
+
+	if (ret == -1)
 		return -10000;
 
 	return 1;
