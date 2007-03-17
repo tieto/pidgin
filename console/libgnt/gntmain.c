@@ -7,6 +7,9 @@
 
 #include <gmodule.h>
 
+#include <sys/types.h>
+#include <sys/wait.h>
+
 #include "gnt.h"
 #include "gntbox.h"
 #include "gntcolors.h"
@@ -28,9 +31,6 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-
-#include <sys/types.h>
-#include <sys/wait.h>
 
 /**
  * Notes: Interesting functions to look at:
