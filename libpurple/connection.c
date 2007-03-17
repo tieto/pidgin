@@ -435,7 +435,7 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 
 	g_return_if_fail(gc   != NULL);
 
-	if (text != NULL) {
+	if (text == NULL) {
 		g_critical("gaim_connection_error: check `text != NULL' failed");
 		text = _("Unknown error");
 	}
