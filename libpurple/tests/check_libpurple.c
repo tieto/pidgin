@@ -7,7 +7,7 @@
 #include "tests.h"
 
 /******************************************************************************
- * libgaim goodies
+ * libpurple goodies
  *****************************************************************************/
 static guint
 gaim_check_input_add(gint fd, GaimInputCondition condition,
@@ -31,7 +31,7 @@ gaim_check_init(void) {
 	gaim_eventloop_set_ui_ops(&eventloop_ui_ops);
 
 	/* build our fake home directory */
-	home_dir = g_build_path(BUILDDIR, "libgaim", "tests", "home", NULL);
+	home_dir = g_build_path(BUILDDIR, "libpurple", "tests", "home", NULL);
 	gaim_util_set_user_dir(home_dir);
 	g_free(home_dir);
 
@@ -58,7 +58,7 @@ int main(void)
 	srunner_add_suite(sr, jabber_jutil_suite());
 	srunner_add_suite(sr, util_suite());
 
-	/* make this a libgaim "ui" */
+	/* make this a libpurple "ui" */
 	gaim_check_init();
 
 	srunner_run_all (sr, CK_NORMAL);
