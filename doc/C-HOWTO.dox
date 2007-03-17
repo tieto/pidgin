@@ -22,13 +22,10 @@
   generally set the prefix to /usr/local.  This shouldn't be a problem, except
   that most packages compile and install Gaim with /usr as the prefix.
 
-  All plugins must have @c GAIM_PLUGINS defined.  You can choose to include
-  @c internal.h to do this, but if you choose to do it this way it must be
-  included before any other Gaim files.  Likewise, if you choose to manually
-  define @c GAIM_PLUGINS, the definition must be before including any Gaim
-  files.  Failure to do so will produce the 'plugin foo could not be loaded for
-  an unknown reason'.  This is one of the hardest unknown reasons to track
-  down, so let's try to avoid it at all costs ;)
+  All plugins must have @c GAIM_PLUGINS defined, the definition must be before
+  including any Gaim files.  Failure to do so will produce the 'plugin foo
+  could not be loaded for an unknown reason'.  This is one of the hardest
+  unknown reasons to track down, so let's try to avoid it at all costs ;)
 
  @section hello_world Hello World!
   I know every tutorial has a hello world, so why should Gaim be any different?
