@@ -416,9 +416,6 @@ if test "x$enable_consoleui" = "xyes"; then
 			GNT_LIBS=""
 			GNT_CFLAGS=""
 			enable_consoleui=no
-			AC_MSG_RESULT([no])
-		else
-			AC_MSG_RESULT([yes])
 		fi
 	else
 		# ncursesw was not found. Look for plain old ncurses
@@ -721,7 +718,7 @@ for i in $STATIC_PRPLS ; do
 		oscar)		static_oscar=yes ;;
 		aim)		static_oscar=yes ;;
 		icq)		static_oscar=yes ;;
-		qq)		static_qq=yes ;;
+		qq)			static_qq=yes ;;
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
 		simple)		static_simple=yes ;;
@@ -774,7 +771,7 @@ for i in $DYNAMIC_PRPLS ; do
 		oscar)		dynamic_oscar=yes ;;
 		aim)		dynamic_oscar=yes ;;
 		icq)		dynamic_oscar=yes ;;
-		qq)		dynamic_qq=yes ;;
+		qq)			dynamic_qq=yes ;;
 		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
 		simple)		dynamic_simple=yes ;;
@@ -825,7 +822,7 @@ if test "x$GCC" = "xyes"; then
 	dnl
 	dnl Consider adding -Wfloat-equal.
 	dnl	This leads to warnings with Perl.
-	dnl 		Perhaps we could write ugly configure magic and pass -Wno-float-equal down to that subdirectory.
+	dnl		Perhaps we could write ugly configure magic and pass -Wno-float-equal down to that subdirectory.
 	dnl		On the other hand, it's probably actually broken, so maybe the Perl folks should fix that?
 	dnl
 	dnl Consider removing -Wno-sign-compare (from the -Wextra set) and fixing all those cases.
@@ -915,7 +912,7 @@ dnl Check for libnm_glib; if we don't have it, oh well
 		LIBNM_LIBS=""
 		PKG_CHECK_MODULES(LIBNM, libnm_glib,
 		[
-			AC_DEFINE(HAVE_LIBNM, 1, [Check to see if we have NetworkManager])
+			AC_DEFINE(HAVE_LIBNM, 1, [Define if you have NetworkManager])
 			enable_libnm=yes
 		],
 		[
@@ -1018,7 +1015,7 @@ if test x"$enable_dbus" = "xyes" ; then
 		fi
 	fi
 	AC_MSG_RESULT([$DBUS_SERVICES_DIR])
-	AC_DEFINE(HAVE_DBUS, 1, [Define if we are re using D-Bus.])
+	AC_DEFINE(HAVE_DBUS, 1, [Define if we are using D-Bus.])
 fi
 AC_SUBST(DBUS_SERVICES_DIR)
 
@@ -1035,17 +1032,15 @@ dnl # Check for Mono support
 dnl #######################################################################
 AC_ARG_ENABLE(mono, [AC_HELP_STRING([--enable-mono], [compile with Mono runtime support (experimental)])], , enable_mono=no)
 if test x"$enable_mono" = x"yes" ; then
-	AC_MSG_CHECKING(for Mono compile flags)
-	MONO_CFLAGS=`pkg-config --cflags mono 2> /dev/null`
-	if test $? != 0 ; then
-		AC_MSG_RESULT([not found, building without mono.])
-		MONO_CFLAGS=
-		MONO_LIBS=
+	PKG_CHECK_MODULES(MONO, mono, [
+		AC_SUBST(MONO_CFLAGS)
+		AC_SUBST(MONO_LIBS)
+		enable_mono=yes
+	], [
+		AC_MSG_RESULT(no)
 		enable_mono=no
-	else
-		MONO_LIBS=`pkg-config --libs mono 2> /dev/null`
-		AC_MSG_RESULT(ok)
-
+	])
+	if test x"$enable_mono" = x"yes"; then
 		oldLIBS="$LIBS"
 		LIBS="$LIBS $MONO_LIBS"
 		AC_MSG_CHECKING(for libmono)
@@ -1254,7 +1249,9 @@ if test "x$enable_gnutls" != "xno"; then
 		        "x$gnutls_includes" != "x"; then
 			have_gnutls_includes="yes"
 
-			GNUTLS_CFLAGS="-I$with_gnutls_includes"
+			if test "x$with_gnutls_includes" != "xNONE/include"; then
+				GNUTLS_CFLAGS="-I$with_gnutls_includes"
+			fi
 		else
 			GNUTLS_CFLAGS=""
 		fi
@@ -1836,8 +1833,12 @@ fi
 dnl #######################################################################
 dnl # Check for check
 dnl #######################################################################
-PKG_CHECK_MODULES(CHECK, check >= 0.9.4, have_check=yes, have_check=no)
-AM_CONDITIONAL(HAVE_CHECK, test "x$have_check" = "xyes")
+PKG_CHECK_MODULES(CHECK,[check >= 0.9.4],:,[
+					ifdef([AM_PATH_CHECK],
+					[AM_PATH_CHECK],
+					[AC_MSG_RESULT([no, testing is disabled])])
+				  ])
+AM_CONDITIONAL(HAVE_CHECK, [test "x$CHECK_LIBS" != "x"])
 AC_SUBST(CHECK_CFLAGS)
 AC_SUBST(CHECK_LIBS)
 
