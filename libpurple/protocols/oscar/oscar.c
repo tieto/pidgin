@@ -2757,7 +2757,7 @@ static int gaim_parse_msgerr(OscarData *od, FlapConnection *conn, FlapFrame *fr,
 #endif
 
 	/* Data is assumed to be the destination sn */
-	buf = g_strdup_printf(_("Unable to send message: %s"), (reason < msgerrreasonlen) ? msgerrreason[reason] : _("Unknown reason."));
+	buf = g_strdup_printf(_("Unable to send message: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
 	if (!gaim_conv_present_error(data, gaim_connection_get_account(gc), buf)) {
 		g_free(buf);
 		buf = g_strdup_printf(_("Unable to send message to %s:"), data ? data : "(unknown)");

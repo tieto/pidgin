@@ -1,0 +1,125 @@
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+ <title>/translation/trunk/gaim/kn.po - Sampada Dev - Trac</title><link rel="start" href="/wiki" /><link rel="search" href="/search" /><link rel="help" href="/wiki/TracGuide" /><link rel="stylesheet" href="/chrome/common/css/trac.css" type="text/css" /><link rel="stylesheet" href="/chrome/common/css/code.css" type="text/css" /><link rel="stylesheet" href="/chrome/common/css/browser.css" type="text/css" /><link rel="icon" href="/chrome/site/favicon.ico" type="image/x-icon" /><link rel="shortcut icon" href="/chrome/site/favicon.ico" type="image/x-icon" /><link rel="up" href="/browser/translation/trunk/gaim" title="Parent directory" /><link rel="alternate" href="/browser/translation/trunk/gaim/kn.po?format=raw" title="Original Format" type="text/plain" /><style type="text/css">
+#metanav ul li {
+ font: normal 12px verdana,'Bitstream Vera Sans',helvetica,arial,sans-serif;
+}
+
+</style>
+ <script type="text/javascript" src="/chrome/common/js/trac.js"></script>
+</head>
+<body>
+
+
+<div id="banner">
+
+<div id="header"><a id="logo" href="http://dev.sampada.net"><img src="/chrome/site/sampada_blue_logo.gif" alt="Sampada Dev" /></a><hr /></div>
+
+<form id="search" action="/search" method="get">
+ <div>
+  <label for="proj-search">Search:</label>
+  <input type="text" id="proj-search" name="q" size="10" accesskey="f" value="" />
+  <input type="submit" value="Search" />
+  <input type="hidden" name="wiki" value="on" />
+  <input type="hidden" name="changeset" value="on" />
+  <input type="hidden" name="ticket" value="on" />
+ </div>
+</form>
+
+
+
+<div id="metanav" class="nav"><ul><li class="first"><a href="/login">Login</a></li><li><a href="/settings">Settings</a></li><li><a accesskey="6" href="/wiki/TracGuide">Help/Guide</a></li><li class="last"><a href="/about">About Trac</a></li></ul></div>
+</div>
+
+<div id="mainnav" class="nav"><ul><li class="first"><a accesskey="1" href="/wiki">Wiki</a></li><li><a accesskey="2" href="/timeline">Timeline</a></li><li class="active"><a href="/browser">Browse Source</a></li><li><a accesskey="4" href="/search">Search</a></li><li class="last"><a href="/report">View Tickets</a></li></ul></div>
+<div id="main">
+
+
+
+
+<div id="ctxtnav" class="nav">
+ <ul>
+  <li class="first"><a href="/changeset/3/translation/trunk/gaim/kn.po">
+   Last Change</a></li>
+  <li class="last"><a href="/log/translation/trunk/gaim/kn.po">
+   Revision Log</a></li>
+ </ul>
+</div>
+
+
+<div id="searchable">
+<div id="content" class="browser">
+ <h1><a class="first" title="Go to root directory" href="/browser">root</a><span class="sep">/</span><a title="View translation" href="/browser/translation">translation</a><span class="sep">/</span><a title="View trunk" href="/browser/translation/trunk">trunk</a><span class="sep">/</span><a title="View gaim" href="/browser/translation/trunk/gaim">gaim</a><span class="sep">/</span><a title="View kn.po" href="/browser/translation/trunk/gaim/kn.po">kn.po</a></h1>
+
+ <div id="jumprev">
+  <form action="" method="get">
+   <div>
+    <label for="rev">View revision:</label>
+    <input type="text" id="rev" name="rev" value="" size="4" />
+   </div>
+  </form>
+ </div>
+
+ 
+
+ 
+  <table id="info" summary="Revision info"><tr>
+    <th scope="col">
+     Revision <a href="/changeset/3">3</a>, 405.6 kB
+     (checked in by hpn, 2 weeks ago)
+    </th></tr><tr>
+    <td class="message"><p>
+Adding reviewed Gaim translations tested against the latest svn version <br />
+</p>
+</td>
+   </tr>
+  </table>
+  <div id="preview">
+    <strong>HTML preview not available</strong>, since the file size exceeds
+    262144 bytes. Try <a href="/browser/translation/trunk/gaim/kn.po?format=raw">downloading</a> the file instead.
+  </div>
+
+ <div id="help">
+  <strong>Note:</strong> See <a href="/wiki/TracBrowser">TracBrowser</a> for help on using the browser.
+ </div>
+
+  <div id="anydiff">
+   <form action="/anydiff" method="get">
+    <div class="buttons">
+     <input type="hidden" name="new_path" value="/translation/trunk/gaim/kn.po" />
+     <input type="hidden" name="old_path" value="/translation/trunk/gaim/kn.po" />
+     <input type="hidden" name="new_rev" value="" />
+     <input type="hidden" name="old_rev" value="" />
+     <input type="submit" value="View changes..." title="Prepare an Arbitrary Diff" />
+    </div>
+   </form>
+  </div>
+
+</div>
+</div>
+<script type="text/javascript">searchHighlight()</script>
+<div id="altlinks"><h3>Download in other formats:</h3><ul><li class="first last"><a href="/browser/translation/trunk/gaim/kn.po?format=raw">Original Format</a></li></ul></div>
+
+</div>
+
+<div id="footer">
+ <hr />
+ <a id="tracpowered" href="http://trac.edgewall.org/"><img src="/chrome/common/trac_logo_mini.png" height="30" width="107"
+   alt="Trac Powered"/></a>
+ <p class="left">
+  Powered by <a href="/about"><strong>Trac 0.10.3</strong></a><br />
+  By <a href="http://www.edgewall.org/">Edgewall Software</a>.
+ </p>
+ <p class="right">
+  <a href="http://sampada.info">Sampada Initiative</a>, 2006. <br /> <a href="http://sampada.net">Sampada Community</a> <br />
+ </p>
+</div>
+
+
+
+ </body>
+</html>
+
