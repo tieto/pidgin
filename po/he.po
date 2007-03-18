@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: he\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-20 00:00-0500\n"
+"POT-Creation-Date: 2007-02-12 00:00-0500\n"
 "PO-Revision-Date: 2006-03-21 08:51+0200\n"
 "Last-Translator: Shalom Craimer <scraimer at gmail dot com>\n"
 "Language-Team: Hebrew <he@li.org>\n"
@@ -795,7 +795,6 @@ msgstr ""
 "אתר: %s\n"
 "קובץ: %s\n"
 
-
 #: ../console/gntplugin.c:155
 msgid "Plugin need to be loaded before you can configure it."
 msgstr "על התוסף להיות טעון לפני שניתן לשנות לו הגדרות."
@@ -1298,9 +1297,8 @@ msgstr ""
 "<span size='larger' weight='bold'>ברוכים הבאים לגיים!</span>\n"
 "\n"
 "אין ברשותך שם חשבונות מוגדרים. להתחיל התחברות עם גיים יש ללחוץ על הכפתור "
-"<b>הוסף</b> שלמטה ולהגדיר את החשבון הראשון שלך. אם ברצונך שגיים "
-"יתחבר לכמה חשבונות, יש ללחוץ על <b>הוסף</b> שוב על-מנת להגדיר את "
-"כולם.\n"
+"<b>הוסף</b> שלמטה ולהגדיר את החשבון הראשון שלך. אם ברצונך שגיים יתחבר לכמה "
+"חשבונות, יש ללחוץ על <b>הוסף</b> שוב על-מנת להגדיר את כולם.\n"
 "\n"
 "ניתן גם לחזור לחלון זה על מנת להוסיף, לערוך, או להסיר חשבונות על-ידי "
 "<b>חשבונות->הוסף/ערוך</b> שבחלון רשימת אנשי-הקשר"
@@ -1696,10 +1694,9 @@ msgid ""
 msgstr ""
 "<span weight='bold' size='larger'>ברוכים הבאים לגיים!</span>\n"
 "\n"
-"אין ברשותך חשבונות מופעלים. ניתן להפעיל את החשבונות שלך מתוך חלון <b>חשבונות</"
-"b> דרך <b>חשבונות->הוסף/ערוך</b>. ברגע שיהיו חשבונות פעילים, תהיה אפשרות "
-"להתחבר, לקבוע את המצב שלך, ולדבר עם חבריך."
-
+"אין ברשותך חשבונות מופעלים. ניתן להפעיל את החשבונות שלך מתוך חלון "
+"<b>חשבונות</b> דרך <b>חשבונות->הוסף/ערוך</b>. ברגע שיהיו חשבונות פעילים, "
+"תהיה אפשרות להתחבר, לקבוע את המצב שלך, ולדבר עם חבריך."
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
@@ -1805,9 +1802,7 @@ msgid ""
 msgstr ""
 "%s\n"
 "\n"
-"גיים לא ינסה לחבר מחדש את חשבון זה שתתקנ/י את השגיאה "
-"ותפעיל/י את החשבון מחדש."
-
+"גיים לא ינסה לחבר מחדש את חשבון זה שתתקנ/י את השגיאה ותפעיל/י את החשבון מחדש."
 
 #: ../gtk/gtkconv.c:766 ../gtk/gtkconv.c:792
 msgid "That buddy is not on the same protocol as this chat."
@@ -2532,14 +2527,13 @@ msgid ""
 "the 'COPYRIGHT' file for the complete list of contributors.  We provide no "
 "warranty for this program.<BR><BR>"
 msgstr ""
-"גיים הינה תוכנת שליחת הודעות מיידיות מודולרית המאפשרת שימוש ב AIM, MSN, "
-" Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novel GroupWise, Lotus Sametime, "
+"גיים הינה תוכנת שליחת הודעות מיידיות מודולרית המאפשרת שימוש ב AIM, MSN,  "
+"Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novel GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu, QQ ובכולם בו-זמנית. התוכנה נכתבה בעזרת GTK+."
-"<BR><BR>מותר לערוך שינויים ולהפיץ את התוכנה תחת הנחיות רישיון ה"
-"GPL (גרסא 2 והלאה). "
-"יותר). העתק של ה-GPL מוכל בתוך הקובץ 'COPYING' המופץ עם גיים. גיים היא תחת "
-"זכויות המפתחים והתורמים לפיתוח. ראה את הקובץ 'COPYRIGHT' לרשימה מלאה של "
-"התורמים. איננו מספקים שום אחריות לתוכנה זו.<BR><BR>"
+"<BR><BR>מותר לערוך שינויים ולהפיץ את התוכנה תחת הנחיות רישיון הGPL (גרסא 2 "
+"והלאה). יותר). העתק של ה-GPL מוכל בתוך הקובץ 'COPYING' המופץ עם גיים. גיים "
+"היא תחת זכויות המפתחים והתורמים לפיתוח. ראה את הקובץ 'COPYRIGHT' לרשימה מלאה "
+"של התורמים. איננו מספקים שום אחריות לתוכנה זו.<BR><BR>"
 
 #: ../gtk/gtkdialogs.c:350
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
@@ -4331,8 +4325,7 @@ msgstr "כישלון בעת פתיחת הקובץ '%s': %s"
 #, c-format
 msgid ""
 "Failed to load image '%s': reason not known, probably a corrupt image file"
-msgstr ""
-"כישלון בעת טעינת התמונה '%s': סיבה לא ידועה, כנראה קובץ תמונה פגום"
+msgstr "כישלון בעת טעינת התמונה '%s': סיבה לא ידועה, כנראה קובץ תמונה פגום"
 
 #: ../gtk/gtkwhiteboard.c:756 ../gtk/gtkwhiteboard.c:775
 msgid "Save File"
@@ -4396,8 +4389,8 @@ msgid ""
 "The contact availability plugin (cap) is used to display statistical "
 "information about buddies in a users contact list."
 msgstr ""
-"התוסף לניבוי זמינות אנשי-קשר מציג מידע סטטיסטי על החברים ברשימת אנשי הקשר "
-"של המשתמש."
+"התוסף לניבוי זמינות אנשי-קשר מציג מידע סטטיסטי על החברים ברשימת אנשי הקשר של "
+"המשתמש."
 
 #: ../gtk/plugins/contact_priority.c:61
 msgid "Buddy is idle"
@@ -5321,6 +5314,53 @@ msgid ""
 "timestamp formats."
 msgstr "תוסף זה מאפשר למשתמש לקבוע אפשרויות שיחה וחותמות-זמן ליומני שיחה."
 
+#: ../gtk/plugins/xmppconsole.c:665
+msgid "<font color='#777777'>Logged out.</font>"
+msgstr "<font color='#777777'>התנתק.</font>"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: ../gtk/plugins/xmppconsole.c:745 ../gtk/plugins/xmppconsole.c:841
+#: ../gtk/plugins/xmppconsole.c:860
+msgid "XMPP Console"
+msgstr "קונוסליית XMPP"
+
+#: ../gtk/plugins/xmppconsole.c:753
+msgid "Account: "
+msgstr "חשבון: "
+
+#: ../gtk/plugins/xmppconsole.c:780
+msgid "<font color='#777777'>Not connected to XMPP</font>"
+msgstr "<font color='#777777'>לא מחובר אל XMPP</font>"
+
+#: ../gtk/plugins/xmppconsole.c:790
+msgid "Insert an <iq/> stanza."
+msgstr "הוסף סטנזת <iq/>."
+
+#: ../gtk/plugins/xmppconsole.c:799
+msgid "Insert a <presence/> stanza."
+msgstr "הוסף סטנזת <presence/>."
+
+#: ../gtk/plugins/xmppconsole.c:808
+msgid "Insert a <message/> stanza."
+msgstr "הוסף סטנזת <message/>."
+
+#. *< name
+#. *< version
+#. *  summary
+#: ../gtk/plugins/xmppconsole.c:863
+msgid "Send and receive raw XMPP stanzas."
+msgstr "שלח וקבל סטנזות XMPP גולמיות."
+
+#. *  description
+#: ../gtk/plugins/xmppconsole.c:865
+msgid "This plugin is useful for debbuging XMPP servers or clients."
+msgstr "תוסף זה שימושי לניפוי באגים בשרתים ולקוחות של XMPP."
+
 #: ../gtk/plugins/win32/transparency/win2ktrans.c:183
 #: ../gtk/plugins/win32/transparency/win2ktrans.c:569
 #: ../gtk/plugins/win32/transparency/win2ktrans.c:616
@@ -5640,7 +5680,8 @@ msgstr "שגיאה ב-resolving %s: %d"
 msgid ""
 "Error reading from resolver process:\n"
 "%s"
-msgstr "שגיאה בקריאה מתהליך ה-resolver:\n"
+msgstr ""
+"שגיאה בקריאה מתהליך ה-resolver:\n"
 "%s"
 
 #: ../libgaim/dnsquery.c:558
@@ -6228,8 +6269,7 @@ msgstr "מירב הפעמים"
 msgid ""
 "I am currently not available. Please leave your message, and I will get back "
 "to you as soon as possible."
-msgstr ""
-"אינני זמין כרגע. אנא השאר/י לי את הודעתך, ואני אחזור אליך בהקדם."
+msgstr "אינני זמין כרגע. אנא השאר/י לי את הודעתך, ואני אחזור אליך בהקדם."
 
 #: ../libgaim/plugins/buddynote.c:46 ../libgaim/protocols/msn/msn.c:1611
 #: ../libgaim/protocols/msn/msn.c:1641
@@ -6536,8 +6576,8 @@ msgstr ""
 "בעת צפייה ביומני-שיחה, תוסף זה יכלול יומנים מתוכנות צ'אט אחרות. כרגע, זה "
 "כולל Adium, MSN Messenger, Trillian.\n"
 "\n"
-"אזהרה: תוסף זה עדיין בשלבי פיתוח מוקדמים וייתכן ויקרוס לעיתים קרובות.  "
-"יש להשתמש בו על חשבון סיכונך האישי בלבד!"
+"אזהרה: תוסף זה עדיין בשלבי פיתוח מוקדמים וייתכן ויקרוס לעיתים קרובות.  יש "
+"להשתמש בו על חשבון סיכונך האישי בלבד!"
 
 #: ../libgaim/plugins/mono/loader/mono.c:213
 msgid "Mono Plugin Loader"
@@ -6837,8 +6877,8 @@ msgid ""
 "Unable to detect ActiveTCL installation. If you wish to use TCL plugins, "
 "install ActiveTCL from http://www.activestate.com\n"
 msgstr ""
-"לא היה ניתן לזהות ActiveTCL מתוקן. אם ברצונך להשתמש בתוספי TCL, "
-"יש להתקין ActiveTCL מתוך http://www.activestate.com\n"
+"לא היה ניתן לזהות ActiveTCL מתוקן. אם ברצונך להשתמש בתוספי TCL, יש להתקין "
+"ActiveTCL מתוך http://www.activestate.com\n"
 
 #. Send a message about the connection error
 #: ../libgaim/protocols/bonjour/bonjour.c:111
@@ -10261,8 +10301,8 @@ msgid ""
 "(There was an error receiving this message.  Either you and %s have "
 "different encodings selected, or %s has a buggy client.)"
 msgstr ""
-"(הייתה תקלה בקבלת הודעה זו. או שלך ולמשתמש %s יש קידודים שונים,"
-"או שלמשתמש %s יש תוכנה עם באגים.)"
+"(הייתה תקלה בקבלת הודעה זו. או שלך ולמשתמש %s יש קידודים שונים,או שלמשתמש %s "
+"יש תוכנה עם באגים.)"
 
 #: ../libgaim/protocols/oscar/oscar.c:621
 msgid "Voice"
@@ -10390,7 +10430,7 @@ msgid ""
 msgstr ""
 "לא ניתן להתחבר לשרת האימות:\n"
 "%s"
- 
+
 #: ../libgaim/protocols/oscar/oscar.c:982
 #, c-format
 msgid ""
@@ -10508,8 +10548,7 @@ msgstr "גיים לא הצליח להשיג קוד התחברות תקף של AI
 #: ../libgaim/protocols/oscar/oscar.c:1601
 #, c-format
 msgid "You may be disconnected shortly.  Check %s for updates."
-msgstr ""
-"ייתכן ותנותק/י בקרוב. יש לבדוק את %s לעידכונים."
+msgstr "ייתכן ותנותק/י בקרוב. יש לבדוק את %s לעידכונים."
 
 #: ../libgaim/protocols/oscar/oscar.c:1604
 msgid "Gaim was unable to get a valid login hash."
