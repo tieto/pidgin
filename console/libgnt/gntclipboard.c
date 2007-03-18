@@ -23,7 +23,6 @@ gnt_clipboard_class_init(GntClipboardClass *klass)
 
 }
 
-static GObjectClass *parent_class = NULL;
 /******************************************************************************
  * GntClipboard API
  *****************************************************************************/
@@ -63,6 +62,7 @@ gnt_clipboard_get_gtype(void)
 			sizeof(GntClipboard),
 			0,						/* n_preallocs		*/
 			gnt_clipboard_init,		/* instance_init	*/
+			NULL					/* value_table		*/
 		};
 
 		type = g_type_register_static(G_TYPE_OBJECT,

@@ -57,7 +57,7 @@ GType gnt_text_view_get_gtype(void);
 
 /* XXX: For now, don't set a textview to have any border.
  *      If you want borders real bad, put it in a box. */
-GntWidget *gnt_text_view_new();
+GntWidget *gnt_text_view_new(void);
 
 /* scroll > 0 means scroll up, < 0 means scroll down, == 0 means scroll to the end */
 void gnt_text_view_scroll(GntTextView *view, int scroll);

@@ -48,6 +48,7 @@ gnt_menuitem_get_gtype(void)
 			sizeof(GntMenuItem),
 			0,						/* n_preallocs		*/
 			gnt_menuitem_init,			/* instance_init	*/
+			NULL					/* value_table		*/
 		};
 
 		type = g_type_register_static(G_TYPE_OBJECT,

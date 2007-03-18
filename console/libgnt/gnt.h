@@ -4,11 +4,11 @@
 #include "gntcolors.h"
 #include "gntkeys.h"
 
-void gnt_init();
+void gnt_init(void);
 
-void gnt_main();
+void gnt_main(void);
 
-gboolean gnt_ascii_only();
+gboolean gnt_ascii_only(void);
 
 void gnt_screen_occupy(GntWidget *widget);
 
@@ -32,10 +32,10 @@ void gnt_register_action(const char *label, void (*callback)());
 
 gboolean gnt_screen_menu_show(gpointer menu);
 
-void gnt_quit();
+void gnt_quit(void);
 
-GntClipboard *gnt_get_clipboard();
+GntClipboard *gnt_get_clipboard(void);
 
-gchar *gnt_get_clipboard_string();
+gchar *gnt_get_clipboard_string(void);
 
 void gnt_set_clipboard_string(gchar *);

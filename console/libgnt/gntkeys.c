@@ -234,6 +234,7 @@ print_path(struct _node *node, int depth)
 }
 
 /* this is purely for debugging purposes. */
+void gnt_keys_print_combinations(void);
 void gnt_keys_print_combinations()
 {
 	g_printerr("--------\n");

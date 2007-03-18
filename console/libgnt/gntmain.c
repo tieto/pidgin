@@ -44,7 +44,7 @@ static GIOChannel *channel = NULL;
 static gboolean ascii_only;
 static gboolean mouse_enabled;
 
-static void setup_io();
+static void setup_io(void);
 
 static gboolean refresh_screen();
 

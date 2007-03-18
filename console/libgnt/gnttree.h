@@ -75,7 +75,7 @@ G_BEGIN_DECLS
 
 GType gnt_tree_get_gtype(void);
 
-GntWidget *gnt_tree_new();      /* A tree with just one column */
+GntWidget *gnt_tree_new(void);      /* A tree with just one column */
 
 GntWidget *gnt_tree_new_with_columns(int columns);
 

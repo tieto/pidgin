@@ -265,6 +265,7 @@ gnt_widget_get_gtype(void)
 			sizeof(GntWidget),
 			0,						/* n_preallocs		*/
 			gnt_widget_init,					/* instance_init	*/
+			NULL					/* value_table		*/
 		};
 
 		type = g_type_register_static(GNT_TYPE_BINDABLE,

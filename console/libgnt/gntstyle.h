@@ -21,7 +21,7 @@ void gnt_styles_get_keyremaps(GType type, GHashTable *hash);
 
 void gnt_style_read_actions(GType type, GntBindableClass *klass);
 
-void gnt_init_styles();
+void gnt_init_styles(void);
 
-void gnt_uninit_styles();
+void gnt_uninit_styles(void);
 

@@ -44,7 +44,7 @@ G_BEGIN_DECLS
 
 GType gnt_combo_box_get_gtype(void);
 
-GntWidget *gnt_combo_box_new();
+GntWidget *gnt_combo_box_new(void);
 
 void gnt_combo_box_add_data(GntComboBox *box, gpointer key, const char *text);
 

@@ -79,6 +79,7 @@ gnt_window_get_gtype(void)
 			sizeof(GntWindow),
 			0,						/* n_preallocs		*/
 			gnt_window_init,			/* instance_init	*/
+			NULL					/* value_table		*/
 		};
 
 		type = g_type_register_static(GNT_TYPE_BOX,

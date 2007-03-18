@@ -236,7 +236,7 @@ select_word_text(GntTextView *view, gchar *c)
 	gchar *start = c;
 	gchar *end = c;
 	gchar *t, *endsize;
-	while (t = g_utf8_prev_char(start)) {
+	while ((t = g_utf8_prev_char(start))) {
 		if (!g_ascii_isspace(*t)) {
 			if (start == view->string->str)
 				break;
@@ -244,7 +244,7 @@ select_word_text(GntTextView *view, gchar *c)
 		} else
 			break;
 	}
-	while (t = g_utf8_next_char(end)) {
+	while ((t = g_utf8_next_char(end))) {
 		if (!g_ascii_isspace(*t))
 			end = t;
 		else
@@ -290,7 +290,7 @@ gnt_text_view_clicked(GntWidget *widget, GntMouseEvent event, int x, int y)
 					select_start = 0;
 					select_end = 0;
 					gnt_widget_draw(widget);
-					return;
+					return TRUE;
 				}
 			} else {
 				gchar *endsize = g_utf8_next_char(select_end); /* End at the correct byte */
@@ -421,6 +421,7 @@ gnt_text_view_get_gtype(void)
 			sizeof(GntTextView),
 			0,						/* n_preallocs		*/
 			gnt_text_view_init,			/* instance_init	*/
+			NULL					/* value_table		*/
 		};
 
 		type = g_type_register_static(GNT_TYPE_WIDGET,

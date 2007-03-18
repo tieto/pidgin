@@ -79,7 +79,7 @@ extern char *gnt_key_cright;
 /**
  * This will do stuff with the terminal settings and stuff.
  */
-void gnt_init_keys();
+void gnt_init_keys(void);
 void gnt_keys_refine(char *text);
 const char *gnt_key_translate(const char *name);
 

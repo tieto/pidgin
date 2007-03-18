@@ -45,7 +45,7 @@ GType gnt_window_get_gtype(void);
 #define gnt_vwindow_new(homo) gnt_window_box_new(homo, TRUE)
 #define gnt_hwindow_new(homo) gnt_window_box_new(homo, FALSE)
 
-GntWidget *gnt_window_new();
+GntWidget *gnt_window_new(void);
 
 GntWidget *gnt_window_box_new(gboolean homo, gboolean vert);
 

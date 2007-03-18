@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "gntwm.h"
 #include "gntstyle.h"
@@ -337,7 +338,7 @@ switch_window_n(GntBindable *bind, GList *list)
 		n = GPOINTER_TO_INT(list->data);
 	else
 		n = 0;
-	
+
 	w = wm->ordered->data;
 
 	if ((l = g_list_nth(wm->list, n)) != NULL)
@@ -358,7 +359,6 @@ window_scroll_up(GntBindable *bindable, GList *null)
 	GntWM *wm = GNT_WM(bindable);
 	GntWidget *window;
 	GntNode *node;
-	int w, h;
 
 	if (!wm->ordered)
 		return TRUE;
@@ -373,6 +373,7 @@ window_scroll_up(GntBindable *bindable, GList *null)
 		copy_win(window, node);
 		update_screen(wm);
 	}
+	return TRUE;
 }
 
 static gboolean
@@ -1036,6 +1037,7 @@ gnt_wm_get_gtype(void)
 			sizeof(GntWM),
 			0,						/* n_preallocs		*/
 			gnt_wm_init,			/* instance_init	*/
+			NULL					/* value_table		*/
 		};
 
 		type = g_type_register_static(GNT_TYPE_BINDABLE,
@@ -1369,7 +1371,7 @@ static void
 write_gdi(gpointer key, gpointer value, gpointer data)
 {
 	GntPosition *p = value;
-	fprintf(data, ".%s = %d;%d\n", key, p->x, p->y);
+	fprintf(data, ".%s = %d;%d\n", (char *)key, p->x, p->y);
 }
 
 static gboolean

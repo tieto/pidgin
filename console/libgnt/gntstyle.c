@@ -84,7 +84,7 @@ refine(char *text)
 static char *
 parse_key(const char *key)
 {
-	return gnt_key_translate(key);
+	return (char *)gnt_key_translate(key);
 }
 
 void gnt_style_read_actions(GType type, GntBindableClass *klass)

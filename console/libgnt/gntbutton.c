@@ -112,6 +112,7 @@ gnt_button_get_gtype(void) {
 			sizeof(GntButton),
 			0,						/* n_preallocs		*/
 			gnt_button_init,			/* instance_init	*/
+			NULL					/* value_table		*/
 		};
 
 		type = g_type_register_static(GNT_TYPE_WIDGET,

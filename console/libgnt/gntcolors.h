@@ -33,9 +33,9 @@ enum
 };
 
 /* populate some default colors */
-void gnt_init_colors();
+void gnt_init_colors(void);
 
-void gnt_uninit_colors();
+void gnt_uninit_colors(void);
 
 #if GLIB_CHECK_VERSION(2,6,0)
 void gnt_colors_parse(GKeyFile *kfile);

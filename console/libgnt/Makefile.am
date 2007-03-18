@@ -61,7 +61,8 @@ CLEANFILES = \
 	gntmarshal.c
 
 gntmarshal.c: genmarshal gntmarshal.h
-	cat genmarshal | glib-genmarshal --prefix=gnt_closure_marshal --body > $@
+	echo "#include \"gntmarshal.h\"" > $@
+	cat genmarshal | glib-genmarshal --prefix=gnt_closure_marshal --body >> $@
 
 gntmarshal.h: genmarshal
 	cat genmarshal | glib-genmarshal --prefix=gnt_closure_marshal --header > $@
@@ -78,4 +79,5 @@ libgnt_la_LIBADD = \
 
 AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
-	$(GNT_CFLAGS)
+	$(GNT_CFLAGS) \
+	$(DEBUG_CFLAGS)
