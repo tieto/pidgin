@@ -30,6 +30,7 @@ AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
-	$(PLUGIN_CFLAGS) \
-	$(NSS_CFLAGS) \
-	$(GNUTLS_CFLAGS)
+	$(PLUGIN_CFLAGS)
+
+ssl_gnutls_la_CFLAGS = $(AM_CPPFLAGS) $(GNUTLS_CFLAGS)
+ssl_nss_la_CFLAGS = $(AM_CPPFLAGS) $(NSS_CFLAGS)

@@ -5,6 +5,10 @@
 
 #include "config.h"
 
+#include <ctype.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "gntwm.h"
 #include "gntstyle.h"
 #include "gntmarshal.h"
@@ -14,10 +18,6 @@
 #include "gnttextview.h"
 #include "gnttree.h"
 #include "gntutils.h"
-
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
 
 #define IDLE_CHECK_INTERVAL 5 /* 5 seconds */
 

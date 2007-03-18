@@ -125,19 +125,24 @@ char *
 msn_object_to_string(const MsnObject *obj)
 {
 	char *str;
+	const char *sha1c;
 
 	g_return_val_if_fail(obj != NULL, NULL);
 
+	sha1c = msn_object_get_sha1c(obj);
+
 	str = g_strdup_printf("<msnobj Creator=\"%s\" Size=\"%d\" Type=\"%d\" "
-						  "Location=\"%s\" Friendly=\"%s\" SHA1D=\"%s\" "
-						  "SHA1C=\"%s\"/>",
+						  "Location=\"%s\" Friendly=\"%s\" SHA1D=\"%s\""
+						  "%s%s%s/>",
 						  msn_object_get_creator(obj),
 						  msn_object_get_size(obj),
 						  msn_object_get_type(obj),
 						  msn_object_get_location(obj),
 						  msn_object_get_friendly(obj),
 						  msn_object_get_sha1d(obj),
-						  msn_object_get_sha1c(obj));
+						  sha1c ? " SHA1C=\"" : "",
+						  sha1c ? sha1c : "",
+						  sha1c ? "\"" : "");
 
 	return str;
 }

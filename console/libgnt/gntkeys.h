@@ -81,6 +81,7 @@ extern char *gnt_key_cright;
  */
 void gnt_init_keys();
 void gnt_keys_refine(char *text);
+const char *gnt_key_translate(const char *name);
 
 void gnt_keys_add_combination(const char *path);
 void gnt_keys_del_combination(const char *path);

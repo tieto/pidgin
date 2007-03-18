@@ -446,10 +446,8 @@ gaim_connection_error(GaimConnection *gc, const char *text)
 
 	ops = gaim_connections_get_ui_ops();
 
-	if (ops != NULL) {
-		if (ops->report_disconnect != NULL)
-			ops->report_disconnect(gc, text);
-	}
+	if (ops != NULL && ops->report_disconnect != NULL)
+		ops->report_disconnect(gc, text);
 
 	gc->disconnect_timeout = gaim_timeout_add(0, gaim_connection_disconnect_cb,
 			gaim_connection_get_account(gc));

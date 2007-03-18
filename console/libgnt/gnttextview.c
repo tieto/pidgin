@@ -223,7 +223,7 @@ gnt_text_view_get_p(GntTextView *view, int x, int y)
 		gunichar *u;
 		pos = g_utf8_next_char(pos);
 		u = g_utf8_to_ucs4(pos, -1, NULL, NULL, NULL);
-		if (u && g_unichar_iswide_cjk(*u))
+		if (u && g_unichar_iswide(*u))
 			i++;
 		g_free(u);
 	}

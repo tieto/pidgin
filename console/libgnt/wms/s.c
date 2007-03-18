@@ -1,3 +1,6 @@
+#include <string.h>
+#include <sys/types.h>
+
 #include "gnt.h"
 #include "gntbox.h"
 #include "gntmenu.h"
@@ -7,8 +10,6 @@
 #include "gntlabel.h"
 
 #include "blist.h"
-
-#include <string.h>
 
 #define TYPE_S				(s_get_gtype())
 
