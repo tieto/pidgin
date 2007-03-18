@@ -1983,11 +1983,11 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/yahoo/Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
-		   console/Makefile
-		   console/libgnt/Makefile
-		   console/libgnt/gnt.pc
-		   console/libgnt/wms/Makefile
-		   console/plugins/Makefile
+		   finch/Makefile
+		   finch/libgnt/Makefile
+		   finch/libgnt/gnt.pc
+		   finch/libgnt/wms/Makefile
+		   finch/plugins/Makefile
 		   po/Makefile.in
 		   gaim.pc
 		   gaim-uninstalled.pc

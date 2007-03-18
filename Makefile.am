@@ -48,7 +48,7 @@ GTK_DIR=pidgin
 endif
 
 if ENABLE_GNT
-GNT_DIR=console
+GNT_DIR=finch
 endif
 
 SUBDIRS = libpurple doc $(GNT_DIR) $(GTK_DIR) m4macros po

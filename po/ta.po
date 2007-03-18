@@ -8981,10 +8981,10 @@ msgstr "அனுமதி மறுத்தல் தகவல்:"
 
 #: ../src/protocols/oscar/oscar.c:4793
 #, c-format
-msgid ""
-"The user %u wants to add %s to their buddy list for the following reason:\n"
-"%s"
-msgstr "பயனர் %u %s ஐ தன் நண்பர் பட்டியலில் பின்வரும் காரணத்திற்காக சேர்க்க விரும்புகிறார்.:\n"
+#msgid ""
+#"The user %u wants to add %s to their buddy list for the following reason:\n"
+#"%s"
+#msgstr "பயனர் %u %s ஐ தன் நண்பர் பட்டியலில் பின்வரும் காரணத்திற்காக சேர்க்க விரும்புகிறார்.:\n"
 
 #: ../src/protocols/oscar/oscar.c:4803
 #: ../src/protocols/oscar/oscar.c:7480
