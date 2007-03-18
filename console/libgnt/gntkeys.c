@@ -88,7 +88,6 @@ void gnt_init_keys()
 		}
 
 		for (a = 0; alts[a]; a++) {
-			if (a == 0 && c == 0) continue;
 			for (ch = 0; ch < 26; ch++) {
 				char str[2] = {'a' + ch, 0}, code[4] = "\0\0\0\0";
 				int ind = 0;
@@ -100,7 +99,7 @@ void gnt_init_keys()
 		}
 	}
 	c = 0;
-	for (a = 1; alts[a]; a++) {
+	for (a = 0; alts[a]; a++) {
 		/* Upper-case alphabets */
 		for (ch = 0; ch < 26; ch++) {
 			char str[2] = {'A' + ch, 0}, code[] = {'\033', 'A' + ch, 0};
