@@ -92,9 +92,9 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 		case GAIM_PLUGIN_PREF_NONE:
 		default:
 			if (format == GAIM_STRING_FORMAT_TYPE_NONE)
-				box = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+				box = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 			else
-				box = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+				box = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
 			gtk_widget_show(box);
 			gtk_box_pack_start(GTK_BOX(parent), box, FALSE, FALSE, 0);
@@ -117,7 +117,7 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 				{
 					gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 					if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
-						gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
+						gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
 				}
 				g_signal_connect(G_OBJECT(entry), "changed",
 								 G_CALLBACK(entry_cb),
@@ -134,7 +134,7 @@ make_string_pref(GtkWidget *parent, GaimPluginPref *pref, GtkSizeGroup *sg) {
 				GtkWidget *toolbar;
 				GtkWidget *frame;
 
-				hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+				hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 				gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 0);
 				gtk_widget_show(hbox);
 
@@ -213,7 +213,7 @@ pidgin_plugin_pref_create_frame(GaimPluginPrefFrame *frame) {
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	parent = ret = gtk_vbox_new(FALSE, 16);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 	gtk_widget_show(ret);
 
 	for(pp = gaim_plugin_pref_frame_get_prefs(frame);

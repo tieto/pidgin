@@ -128,12 +128,12 @@ static void pidgin_blist_selection_changed(GtkTreeSelection *selection, gpointer
 static void pidgin_blist_update(GaimBuddyList *list, GaimBlistNode *node);
 static void pidgin_blist_update_group(GaimBuddyList *list, GaimBlistNode *node);
 static void pidgin_blist_update_contact(GaimBuddyList *list, GaimBlistNode *node);
-static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full);
+static char *pidgin_get_tooltip_text(GaimBlistNode *node, gboolean full);
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
 static gboolean get_iter_from_node(GaimBlistNode *node, GtkTreeIter *iter);
 static void redo_buddy_list(GaimBuddyList *list, gboolean remove, gboolean rerender);
 static void pidgin_blist_collapse_contact_cb(GtkWidget *w, GaimBlistNode *node);
-static char *gaim_get_group_title(GaimBlistNode *gnode, gboolean expanded);
+static char *pidgin_get_group_title(GaimBlistNode *gnode, gboolean expanded);
 
 static void pidgin_blist_tooltip_destroy(void);
 
@@ -590,7 +590,7 @@ rebuild_joinchat_entries(PidginJoinChatData *data)
 
 		pce = tmp->data;
 
-		rowbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+		rowbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 		gtk_box_pack_start(GTK_BOX(data->entries_box), rowbox, FALSE, FALSE, 0);
 
 		label = gtk_label_new_with_mnemonic(pce->label);
@@ -619,7 +619,7 @@ rebuild_joinchat_entries(PidginJoinChatData *data)
 			{
 				gtk_entry_set_visibility(GTK_ENTRY(input), FALSE);
 				if (gtk_entry_get_invisible_char(GTK_ENTRY(input)) == '*')
-					gtk_entry_set_invisible_char(GTK_ENTRY(input), GAIM_INVISIBLE_CHAR);
+					gtk_entry_set_invisible_char(GTK_ENTRY(input), PIDGIN_INVISIBLE_CHAR);
 			}
 			gtk_box_pack_end(GTK_BOX(rowbox), input, TRUE, TRUE, 0);
 			g_signal_connect(G_OBJECT(input), "changed",
@@ -706,14 +706,14 @@ pidgin_blist_joinchat_show(void)
 		GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 		PIDGIN_STOCK_CHAT, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
-	gtk_container_set_border_width(GTK_CONTAINER(data->window), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(data->window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BORDER);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(
-		GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BOX_SPACE);
+		GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_role(GTK_WINDOW(data->window), "join_chat");
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
@@ -728,7 +728,7 @@ pidgin_blist_joinchat_show(void)
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-	rowbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	rowbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(vbox), rowbox, TRUE, TRUE, 0);
 
 	data->sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
@@ -774,7 +774,7 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		char *title;
 
-		title = gaim_get_group_title(node, TRUE);
+		title = pidgin_get_group_title(node, TRUE);
 
 		gtk_tree_store_set(gtkblist->treemodel, iter,
 		   NAME_COLUMN, title,
@@ -798,7 +798,7 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 	if (GAIM_BLIST_NODE_IS_GROUP(node)) {
 		char *title;
 
-		title = gaim_get_group_title(node, FALSE);
+		title = pidgin_get_group_title(node, FALSE);
 
 		gtk_tree_store_set(gtkblist->treemodel, iter,
 		   NAME_COLUMN, title,
@@ -2270,7 +2270,7 @@ static struct tooltip_data * create_tip_for_node(GaimBlistNode *node, gboolean f
 	td->status_icon = pidgin_blist_get_status_icon(node, PIDGIN_STATUS_ICON_LARGE);
 	td->avatar = pidgin_blist_get_buddy_icon(node, !full, FALSE, TRUE);
 	td->prpl_icon = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
-	tooltip_text = gaim_get_tooltip_text(node, full);
+	tooltip_text = pidgin_get_tooltip_text(node, full);
 	td->layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
 	td->name_layout = gtk_widget_create_pango_layout(gtkblist->tipwindow, NULL);
 
@@ -2799,7 +2799,7 @@ static GtkItemFactoryEntry blist_menu[] =
  * Private Utility functions                             *
  *********************************************************/
 
-static char *gaim_get_tooltip_text(GaimBlistNode *node, gboolean full)
+static char *pidgin_get_tooltip_text(GaimBlistNode *node, gboolean full)
 {
 	GString *str = g_string_new("");
 	GaimPlugin *prpl;
@@ -3925,7 +3925,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 			g_object_unref(pixbuf);
 
 			gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE,
-			                   GAIM_HIG_BOX_SPACE);
+			                   PIDGIN_HIG_BOX_SPACE);
 		}
 	}
 
@@ -3937,7 +3937,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
 	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE,
-	                   GAIM_HIG_BOX_SPACE);
+	                   PIDGIN_HIG_BOX_SPACE);
 
 	/* Create the actual button and put the icon and text on it */
 	button = gtk_button_new();
@@ -4052,7 +4052,7 @@ blist_focus_cb(GtkWidget *widget, gpointer data, PidginBuddyList *gtkblist)
 static GtkWidget *
 kiosk_page()
 {
-	GtkWidget *ret = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	GtkWidget *ret = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	GtkWidget *label;
 	GtkWidget *entry;
 	GtkWidget *bbox;
@@ -4088,7 +4088,7 @@ kiosk_page()
 	label = gtk_label_new(NULL);
 	gtk_box_pack_start(GTK_BOX(ret), label, TRUE, TRUE, 0);
 
-	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 
 	gtk_widget_show_all(ret);
 	return ret;
@@ -4754,7 +4754,7 @@ static void pidgin_blist_update_group(GaimBuddyList *list, GaimBlistNode *node)
 		expanded = gtk_tree_view_row_expanded(GTK_TREE_VIEW(gtkblist->treeview), path);
 		gtk_tree_path_free(path);
 
-		title = gaim_get_group_title(gnode, expanded);
+		title = pidgin_get_group_title(gnode, expanded);
 
 		gtk_tree_store_set(gtkblist->treemodel, &iter,
 				   STATUS_ICON_VISIBLE_COLUMN, FALSE,
@@ -4774,7 +4774,7 @@ static void pidgin_blist_update_group(GaimBuddyList *list, GaimBlistNode *node)
 	}
 }
 
-static char *gaim_get_group_title(GaimBlistNode *gnode, gboolean expanded)
+static char *pidgin_get_group_title(GaimBlistNode *gnode, gboolean expanded)
 {
 	GaimGroup *group;
 	GdkColor textcolor;
@@ -5248,15 +5248,15 @@ pidgin_blist_request_add_buddy(GaimAccount *account, const char *username,
 			NULL);
 
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
-	gtk_container_set_border_width(GTK_CONTAINER(data->window), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(data->window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_role(GTK_WINDOW(data->window), "add_buddy");
 	gtk_window_set_type_hint(GTK_WINDOW(data->window),
 							 GDK_WINDOW_TYPE_HINT_DIALOG);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
@@ -5275,7 +5275,7 @@ pidgin_blist_request_add_buddy(GaimAccount *account, const char *username,
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 	g_signal_connect(G_OBJECT(data->window), "destroy",
@@ -5518,7 +5518,7 @@ rebuild_addchat_entries(PidginAddChatData *data)
 			{
 				gtk_entry_set_visibility(GTK_ENTRY(input), FALSE);
 				if (gtk_entry_get_invisible_char(GTK_ENTRY(input)) == '*')
-					gtk_entry_set_invisible_char(GTK_ENTRY(input), GAIM_INVISIBLE_CHAR);
+					gtk_entry_set_invisible_char(GTK_ENTRY(input), PIDGIN_INVISIBLE_CHAR);
 			}
 			gtk_box_pack_end(GTK_BOX(rowbox), input, TRUE, TRUE, 0);
 			g_signal_connect(G_OBJECT(input), "changed",
@@ -5624,15 +5624,15 @@ pidgin_blist_request_add_chat(GaimAccount *account, GaimGroup *group,
 		NULL);
 
 	gtk_dialog_set_default_response(GTK_DIALOG(data->window), GTK_RESPONSE_OK);
-	gtk_container_set_border_width(GTK_CONTAINER(data->window), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(data->window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(data->window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(data->window)->vbox), PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_role(GTK_WINDOW(data->window), "add_chat");
 	gtk_window_set_type_hint(GTK_WINDOW(data->window),
 							 GDK_WINDOW_TYPE_HINT_DIALOG);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(data->window)->vbox), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);

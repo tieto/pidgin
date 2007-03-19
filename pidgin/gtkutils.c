@@ -400,7 +400,7 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	GtkWidget *vbox, *label, *hbox;
 	char *labeltitle;
 
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(parent), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
@@ -415,7 +415,7 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	gtk_widget_show(label);
 	pidgin_set_accessible_label (vbox, label);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -423,7 +423,7 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
@@ -2359,7 +2359,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 										current_folder);
 
 	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(
 		GTK_BOX(GTK_FILE_SELECTION(dialog->icon_filesel)->main_vbox),
 		hbox, FALSE, FALSE, 0);
@@ -2909,7 +2909,7 @@ void *pidgin_make_mini_dialog(GaimConnection *gc, const char *icon_name,
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
 	vbox = gtk_vbox_new(FALSE,0);
-        gtk_container_set_border_width(GTK_CONTAINER(vbox), GAIM_HIG_BOX_SPACE);
+        gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BOX_SPACE);
 
 	g_object_set_data(G_OBJECT(vbox), "gc" ,gc);
 	minidialogs = g_slist_prepend(minidialogs, vbox);
@@ -2943,7 +2943,7 @@ void *pidgin_make_mini_dialog(GaimConnection *gc, const char *icon_name,
         gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
         gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
-	hbox2 = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox2 = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
 
 	va_start(args, user_data);

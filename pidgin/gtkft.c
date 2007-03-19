@@ -703,8 +703,8 @@ make_info_table(PidginXferDialog *dialog)
 
 	/* Setup the initial table */
 	dialog->table = table = gtk_table_new(9, 2, FALSE);
-	gtk_table_set_row_spacings(GTK_TABLE(table), GAIM_HIG_BOX_SPACE);
-	gtk_table_set_col_spacings(GTK_TABLE(table), GAIM_HIG_BOX_SPACE);
+	gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
+	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 
 	/* Setup the labels */
 	for (i = 0; i < sizeof(labels) / sizeof(*labels); i++) {
@@ -761,18 +761,18 @@ pidginxfer_dialog_new(void)
 	dialog->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(window), "file transfer");
 	gtk_window_set_title(GTK_WINDOW(window), _("File Transfers"));
-	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Create the parent vbox for everything. */
-	vbox1 = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox1 = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(window), vbox1);
 	gtk_widget_show(vbox1);
 
 	/* Create the main vbox for top half of the window. */
-	vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox1), vbox2, TRUE, TRUE, 0);
 	gtk_widget_show(vbox2);
 
@@ -816,7 +816,7 @@ pidginxfer_dialog_new(void)
 
 	/* Now the button box for the buttons */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox1), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);

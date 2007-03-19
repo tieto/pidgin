@@ -632,8 +632,8 @@ theme_page()
 	GtkWidget *label;
 	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below. New themes can be installed by dragging and dropping them onto the theme list."));
 
@@ -808,8 +808,8 @@ interface_page()
 	GtkSizeGroup *sg;
 	GList *names = NULL;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 	
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -892,8 +892,8 @@ conv_page()
 	GtkWidget *imhtml;
 	GtkWidget *frame;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 
 	vbox = pidgin_make_frame(ret, _("Conversations"));
 
@@ -1009,15 +1009,15 @@ network_page()
 	GtkSizeGroup *sg;
 	GaimProxyInfo *proxy_info = NULL;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	vbox = pidgin_make_frame (ret, _("IP Address"));
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	pidgin_prefs_labeled_entry(vbox,_("ST_UN server:"),
 			"/core/network/stun_server", sg);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 	label = gtk_label_new(NULL);
@@ -1176,7 +1176,7 @@ network_page()
 		gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 1, 2, GTK_FILL , 0, 0, 0);
 		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 		if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
-			gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
+			gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYPASS);
 
@@ -1280,8 +1280,8 @@ browser_page()
 	GtkSizeGroup *sg;
 	GList *browsers = NULL;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = pidgin_make_frame (ret, _("Browser Selection"));
@@ -1348,8 +1348,8 @@ logging_page()
 	GtkWidget *vbox;
 	GList *names;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 
 	vbox = pidgin_make_frame (ret, _("Logging"));
@@ -1587,8 +1587,8 @@ sound_page()
 	const char *cmd;
 #endif
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -1607,7 +1607,7 @@ sound_page()
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("Sound c_ommand:\n(%s for filename)"));
@@ -1647,7 +1647,7 @@ sound_page()
 				NULL);
 
 #ifdef USE_GSTREAMER
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("Volume:"));
@@ -1744,7 +1744,7 @@ sound_page()
 	g_object_unref(G_OBJECT(event_store));
 	gtk_container_add(GTK_CONTAINER(sw), event_view);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	sound_entry = gtk_entry_new();
 	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
@@ -1753,7 +1753,7 @@ sound_page()
 	g_free(pref);
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
 	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
-	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	button = gtk_button_new_with_label(_("Test"));
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(test_sound), NULL);
@@ -1798,8 +1798,8 @@ away_page()
 	GtkWidget *menu;
 	GtkSizeGroup *sg;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -1950,11 +1950,11 @@ void pidgin_prefs_show(void)
 	gtk_window_set_role(GTK_WINDOW(prefs), "preferences");
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Preferences"));
 	gtk_window_set_resizable (GTK_WINDOW(prefs), FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(prefs), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(prefs), PIDGIN_HIG_BORDER);
 	g_signal_connect(G_OBJECT(prefs), "destroy",
 					 G_CALLBACK(delete_prefs), NULL);
 
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(prefs), vbox);
 	gtk_widget_show(vbox);
 
@@ -1965,7 +1965,7 @@ void pidgin_prefs_show(void)
 
 	/* The buttons to press! */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
 	gtk_widget_show (bbox);

@@ -541,7 +541,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	/* Steal the "HELP" response and use it to trigger browsing to the logs folder */
 	gtk_dialog_add_button(GTK_DIALOG(lv->window), _("_Browse logs folder"), GTK_RESPONSE_HELP);
 #endif
-	gtk_container_set_border_width (GTK_CONTAINER(lv->window), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER(lv->window), PIDGIN_HIG_BOX_SPACE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(lv->window), FALSE);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(lv->window)->vbox), 0);
 	g_signal_connect(G_OBJECT(lv->window), "response",
@@ -550,8 +550,8 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 
 	/* Icon *************/
 	if (icon != NULL) {
-		title_box = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-		gtk_container_set_border_width(GTK_CONTAINER(title_box), GAIM_HIG_BOX_SPACE);
+		title_box = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_set_border_width(GTK_CONTAINER(title_box), PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), title_box, FALSE, FALSE, 0);
 
 		gtk_box_pack_start(GTK_BOX(title_box), icon, FALSE, FALSE, 0);
@@ -570,7 +570,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 
 	/* Pane *************/
 	pane = gtk_hpaned_new();
-	gtk_container_set_border_width(GTK_CONTAINER(pane), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(pane), PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), pane, TRUE, TRUE, 0);
 
 	/* List *************/
@@ -614,7 +614,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	}
 
 	/* A fancy little box ************/
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_paned_add2(GTK_PANED(pane), vbox);
 
 	/* Viewer ************/
@@ -625,7 +625,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	gtk_widget_show(frame);
 
 	/* Search box **********/
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	lv->entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), lv->entry, TRUE, TRUE, 0);

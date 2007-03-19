@@ -259,8 +259,8 @@ get_config_frame(GaimPlugin *plugin)
 	GtkWidget *frame;
 	int i;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 
 	for (i = 0; formats[i].prefix; i++)
 	{
@@ -272,10 +272,10 @@ get_config_frame(GaimPlugin *plugin)
 		f = gaim_prefs_get_int(tmp);
 
 		frame = pidgin_make_frame(ret, _(formats[i].text));
-		vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+		vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), vbox, FALSE, FALSE, 0);
 
-		hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 		button = pidgin_pixbuf_button_from_stock(" Color", GTK_STOCK_SELECT_COLOR,

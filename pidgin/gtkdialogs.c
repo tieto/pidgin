@@ -43,7 +43,7 @@ static GList *dialogwindows = NULL;
 
 static GtkWidget *about = NULL;
 
-struct _GaimGroupMergeObject {
+struct _PidginGroupMergeObject {
 	GaimGroup* parent;
 	char *new_name;
 };
@@ -321,11 +321,11 @@ void pidgindialogs_about()
 	gtk_window_set_resizable(GTK_WINDOW(about), TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(about), 340, 450);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(hbox), GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(hbox), PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(about), hbox);
 
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(hbox), vbox);
 
 	/* Generate a logo with a version number */
@@ -777,17 +777,17 @@ pidgindialogs_ee(const char *ee)
 	if (strlen(gtk_label_get_label(GTK_LABEL(label))) <= 0)
 		return FALSE;
 
-	window = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, NULL, 0, GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
+	window = gtk_dialog_new_with_buttons(PIDGIN_ALERT_TITLE, NULL, 0, GTK_STOCK_CLOSE, GTK_RESPONSE_OK, NULL);
 	gtk_dialog_set_default_response (GTK_DIALOG(window), GTK_RESPONSE_OK);
 	g_signal_connect(G_OBJECT(window), "response", G_CALLBACK(gtk_widget_destroy), NULL);
 
-	gtk_container_set_border_width (GTK_CONTAINER(window), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER(window), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(window), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), GAIM_HIG_BORDER);
-	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(window)->vbox), PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width (GTK_CONTAINER(GTK_DIALOG(window)->vbox), PIDGIN_HIG_BOX_SPACE);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(window)->vbox), hbox);
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_COOL, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_HUGE));
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
@@ -1054,14 +1054,14 @@ pidgindialogs_remove_contact(GaimContact *contact)
 	}
 }
 
-static void free_ggmo(struct _GaimGroupMergeObject *ggp)
+static void free_ggmo(struct _PidginGroupMergeObject *ggp)
 {
 	g_free(ggp->new_name);
 	g_free(ggp);
 }
 
 static void
-pidgindialogs_merge_groups_cb(struct _GaimGroupMergeObject *GGP)
+pidgindialogs_merge_groups_cb(struct _PidginGroupMergeObject *GGP)
 {
 	gaim_blist_rename_group(GGP->parent, GGP->new_name);
 	free_ggmo(GGP);
@@ -1071,7 +1071,7 @@ void
 pidgindialogs_merge_groups(GaimGroup *source, const char *new_name)
 {
 	gchar *text;
-	struct _GaimGroupMergeObject *ggp;
+	struct _PidginGroupMergeObject *ggp;
 
 	g_return_if_fail(source != NULL);
 	g_return_if_fail(new_name != NULL);
@@ -1080,7 +1080,7 @@ pidgindialogs_merge_groups(GaimGroup *source, const char *new_name)
 				_("You are about to merge the group called %s into the group "
 				"called %s. Do you want to continue?"), source->name, new_name);
 
-	ggp = g_new(struct _GaimGroupMergeObject, 1);
+	ggp = g_new(struct _PidginGroupMergeObject, 1);
 	ggp->parent = source;
 	ggp->new_name = g_strdup(new_name);
 	

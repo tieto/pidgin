@@ -166,7 +166,7 @@ static GList *generate_invite_user_names(GaimConnection *gc);
 static void add_chat_buddy_common(GaimConversation *conv, GaimConvChatBuddy *cb, const char *old_name);
 static gboolean tab_complete(GaimConversation *conv);
 static void pidgin_conv_updated(GaimConversation *conv, GaimConvUpdateType type);
-static void gtkconv_set_unseen(PidginConversation *gtkconv, GaimUnseenState state);
+static void gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state);
 static void update_typing_icon(PidginConversation *gtkconv);
 static const char *item_factory_translate_func (const char *path, gpointer func_data);
 gboolean pidgin_conv_has_focus(GaimConversation *conv);
@@ -859,7 +859,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 		gtk_dialog_set_default_response(GTK_DIALOG(invite_dialog),
 		                                GTK_RESPONSE_OK);
-		gtk_container_set_border_width(GTK_CONTAINER(invite_dialog), GAIM_HIG_BOX_SPACE);
+		gtk_container_set_border_width(GTK_CONTAINER(invite_dialog), PIDGIN_HIG_BOX_SPACE);
 		gtk_window_set_resizable(GTK_WINDOW(invite_dialog), FALSE);
 		gtk_dialog_set_has_separator(GTK_DIALOG(invite_dialog), FALSE);
 
@@ -868,11 +868,11 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		/* Setup the outside spacing. */
 		vbox = GTK_DIALOG(invite_dialog)->vbox;
 
-		gtk_box_set_spacing(GTK_BOX(vbox), GAIM_HIG_BORDER);
-		gtk_container_set_border_width(GTK_CONTAINER(vbox), GAIM_HIG_BOX_SPACE);
+		gtk_box_set_spacing(GTK_BOX(vbox), PIDGIN_HIG_BORDER);
+		gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BOX_SPACE);
 
 		/* Setup the inner hbox and put the dialog's icon in it. */
-		hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
@@ -891,14 +891,14 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 		/* hbox for the table, and to give it some spacing on the left. */
-		hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 		/* Setup the table we're going to use to lay stuff out. */
 		table = gtk_table_new(2, 2, FALSE);
-		gtk_table_set_row_spacings(GTK_TABLE(table), GAIM_HIG_BOX_SPACE);
-		gtk_table_set_col_spacings(GTK_TABLE(table), GAIM_HIG_BOX_SPACE);
-		gtk_container_set_border_width(GTK_CONTAINER(table), GAIM_HIG_BORDER);
+		gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
+		gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
+		gtk_container_set_border_width(GTK_CONTAINER(table), PIDGIN_HIG_BORDER);
 		gtk_box_pack_start(GTK_BOX(vbox), table, FALSE, FALSE, 0);
 
 		/* Now the Buddy label */
@@ -1166,14 +1166,14 @@ menu_find_cb(gpointer data, guint action, GtkWidget *widget)
 	g_signal_connect(G_OBJECT(gtkwin->dialogs.search), "response",
 					 G_CALLBACK(do_search_cb), s);
 
-	gtk_container_set_border_width(GTK_CONTAINER(gtkwin->dialogs.search), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(gtkwin->dialogs.search), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(gtkwin->dialogs.search), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(gtkwin->dialogs.search), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(gtkwin->dialogs.search)->vbox), GAIM_HIG_BORDER);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(gtkwin->dialogs.search)->vbox), PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(
-		GTK_CONTAINER(GTK_DIALOG(gtkwin->dialogs.search)->vbox), GAIM_HIG_BOX_SPACE);
+		GTK_CONTAINER(GTK_DIALOG(gtkwin->dialogs.search)->vbox), PIDGIN_HIG_BOX_SPACE);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(gtkwin->dialogs.search)->vbox),
 					  hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
@@ -2685,7 +2685,7 @@ pidgin_conv_present_conversation(GaimConversation *conv)
 
 GList *
 pidgin_conversations_find_unseen_list(GaimConversationType type,
-										GaimUnseenState min_state,
+										PidginUnseenState min_state,
 										gboolean hidden_only,
 										guint max_count)
 {
@@ -4103,10 +4103,10 @@ static void resize_imhtml_cb(PidginConversation *gtkconv)
         height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
 	gtk_widget_size_request(gtkconv->lower_hbox, &sr);
-	if (sr.height < height + GAIM_HIG_BOX_SPACE) {
+	if (sr.height < height + PIDGIN_HIG_BOX_SPACE) {
 		gtkconv->auto_resize = TRUE;
 		gtkconv->entry_growing = TRUE;
-	        gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height + GAIM_HIG_BOX_SPACE);
+	        gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height + PIDGIN_HIG_BOX_SPACE);
 	        g_idle_add(reset_auto_resize_cb, gtkconv);
 	}
 }
@@ -4143,13 +4143,13 @@ setup_chat_pane(PidginConversation *gtkconv)
 	gtk_widget_show(vpaned);
 
 	/* Setup the top part of the pane. */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_paned_pack1(GTK_PANED(vpaned), vbox, TRUE, TRUE);
 	gtk_widget_show(vbox);
 
 	if (prpl_info->options & OPT_PROTO_CHAT_TOPIC)
 	{
-		hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 		gtk_widget_show(hbox);
 
@@ -4200,7 +4200,7 @@ setup_chat_pane(PidginConversation *gtkconv)
 						   G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	/* Build the right pane. */
-	lbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	lbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_paned_pack2(GTK_PANED(hpaned), lbox, FALSE, TRUE);
 	gtk_widget_show(lbox);
 
@@ -4275,15 +4275,15 @@ setup_chat_pane(PidginConversation *gtkconv)
 	gtk_container_add(GTK_CONTAINER(sw), list);
 
 	/* Setup the bottom half of the conversation window */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, TRUE);
 	gtk_widget_show(vbox);
 
-	gtkconv->lower_hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtkconv->lower_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->lower_hbox, TRUE, TRUE, 0);
 	gtk_widget_show(gtkconv->lower_hbox);
 
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_end(GTK_BOX(gtkconv->lower_hbox), vbox, TRUE, TRUE, 0);
 	gtk_widget_show(vbox);
 
@@ -4345,7 +4345,7 @@ setup_im_pane(PidginConversation *gtkconv)
 	gtk_widget_show(paned);
 
 	/* Setup the top part of the pane */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_paned_pack1(GTK_PANED(paned), vbox, TRUE, TRUE);
 	gtk_widget_show(vbox);
 
@@ -4374,15 +4374,15 @@ setup_im_pane(PidginConversation *gtkconv)
 	                 G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	/* Setup the bottom half of the conversation window */
-	vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, TRUE);
 	gtk_widget_show(vbox2);
 
-	gtkconv->lower_hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtkconv->lower_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->lower_hbox, TRUE, TRUE, 0);
 	gtk_widget_show(gtkconv->lower_hbox);
 
-	vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_end(GTK_BOX(gtkconv->lower_hbox), vbox2, TRUE, TRUE, 0);
 	gtk_widget_show(vbox2);
 
@@ -4669,9 +4669,9 @@ private_gtkconv_new(GaimConversation *conv, gboolean hidden)
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
 
 	/* Setup the container for the tab. */
-	gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	gtkconv->tab_cont = tab_cont = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	g_object_set_data(G_OBJECT(tab_cont), "PidginConversation", gtkconv);
-	gtk_container_set_border_width(GTK_CONTAINER(tab_cont), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(tab_cont), PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(tab_cont), pane);
 	gtk_widget_show(pane);
 
@@ -5256,7 +5256,7 @@ pidgin_conv_write_conv(GaimConversation *conv, const char *name, const char *ali
 	/* Tab highlighting stuff */
 	if (!(flags & GAIM_MESSAGE_SEND) && !pidgin_conv_has_focus(conv))
 	{
-		GaimUnseenState unseen = PIDGIN_UNSEEN_NONE;
+		PidginUnseenState unseen = PIDGIN_UNSEEN_NONE;
 
 		if ((flags & GAIM_MESSAGE_NICK) == GAIM_MESSAGE_NICK)
 			unseen = PIDGIN_UNSEEN_NICK;
@@ -6325,8 +6325,8 @@ pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right)
 			continue;
 
 		if (horiz) {
-			if (x_rel >= tab->allocation.x - GAIM_HIG_BOX_SPACE &&
-					x_rel <= tab->allocation.x + tab->allocation.width + GAIM_HIG_BOX_SPACE) {
+			if (x_rel >= tab->allocation.x - PIDGIN_HIG_BOX_SPACE &&
+					x_rel <= tab->allocation.x + tab->allocation.width + PIDGIN_HIG_BOX_SPACE) {
 				page_num = i;
 
 				if (to_right && x_rel >= tab->allocation.x + tab->allocation.width/2)
@@ -6335,8 +6335,8 @@ pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right)
 				break;
 			}
 		} else {
-			if (y_rel >= tab->allocation.y - GAIM_HIG_BOX_SPACE &&
-					y_rel <= tab->allocation.y + tab->allocation.height + GAIM_HIG_BOX_SPACE) {
+			if (y_rel >= tab->allocation.y - PIDGIN_HIG_BOX_SPACE &&
+					y_rel <= tab->allocation.y + tab->allocation.height + PIDGIN_HIG_BOX_SPACE) {
 				page_num = i;
 
 				if (to_right && y_rel >= tab->allocation.y + tab->allocation.height/2)
@@ -6605,7 +6605,7 @@ static void
 conv_placement_pref_cb(const char *name, GaimPrefType type,
 					   gconstpointer value, gpointer data)
 {
-	GaimConvPlacementFunc func;
+	PidginConvPlacementFunc func;
 
 	if (strcmp(name, "/gaim/gtk/conversations/placement"))
 		return;
@@ -7189,7 +7189,7 @@ close_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 }
 
 static void
-gtkconv_set_unseen(PidginConversation *gtkconv, GaimUnseenState state)
+gtkconv_set_unseen(PidginConversation *gtkconv, PidginUnseenState state)
 {
 	if (state == PIDGIN_UNSEEN_NONE)
 	{
@@ -7979,10 +7979,10 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 		angle = 270;
 
 	if (angle)
-		gtkconv->tabby = tabby = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+		gtkconv->tabby = tabby = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	else
-		gtkconv->tabby = tabby = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-	gtkconv->menu_tabby = menu_tabby = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+		gtkconv->tabby = tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtkconv->menu_tabby = menu_tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	/* Close button. */
 	gtkconv->close = gtk_button_new();
@@ -8274,12 +8274,12 @@ typedef struct
 {
 	char *id;
 	char *name;
-	GaimConvPlacementFunc fnc;
+	PidginConvPlacementFunc fnc;
 
 } ConvPlacementData;
 
 static GList *conv_placement_fncs = NULL;
-static GaimConvPlacementFunc place_conv = NULL;
+static PidginConvPlacementFunc place_conv = NULL;
 
 /* This one places conversations in the last made window. */
 static void
@@ -8451,7 +8451,7 @@ get_conv_placement_data(const char *id)
 
 static void
 add_conv_placement_fnc(const char *id, const char *name,
-                       GaimConvPlacementFunc fnc)
+                       PidginConvPlacementFunc fnc)
 {
 	ConvPlacementData *data;
 
@@ -8501,7 +8501,7 @@ pidgin_conv_placement_get_options(void)
 
 void
 pidgin_conv_placement_add_fnc(const char *id, const char *name,
-                            GaimConvPlacementFunc fnc)
+                            PidginConvPlacementFunc fnc)
 {
 	g_return_if_fail(id   != NULL);
 	g_return_if_fail(name != NULL);
@@ -8542,7 +8542,7 @@ pidgin_conv_placement_get_name(const char *id)
 	return data->name;
 }
 
-GaimConvPlacementFunc
+PidginConvPlacementFunc
 pidgin_conv_placement_get_fnc(const char *id)
 {
 	ConvPlacementData *data;
@@ -8558,7 +8558,7 @@ pidgin_conv_placement_get_fnc(const char *id)
 }
 
 void
-pidgin_conv_placement_set_current_func(GaimConvPlacementFunc func)
+pidgin_conv_placement_set_current_func(PidginConvPlacementFunc func)
 {
 	g_return_if_fail(func != NULL);
 
@@ -8569,7 +8569,7 @@ pidgin_conv_placement_set_current_func(GaimConvPlacementFunc func)
 		place_conv = NULL;
 }
 
-GaimConvPlacementFunc
+PidginConvPlacementFunc
 pidgin_conv_placement_get_current_func(void)
 {
 	return place_conv;

@@ -554,7 +554,7 @@ pidgin_status_window_show(void)
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 	gtk_window_set_role(GTK_WINDOW(win), "statuses");
 	gtk_window_set_title(GTK_WINDOW(win), _("Saved Statuses"));
-	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(status_window_destroy_cb), dialog);
@@ -562,7 +562,7 @@ pidgin_status_window_show(void)
 					 G_CALLBACK(configure_cb), dialog);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
 
 	/* List of saved status states */
@@ -571,7 +571,7 @@ pidgin_status_window_show(void)
 
 	/* Button box. */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 
@@ -1088,19 +1088,19 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	gtk_window_set_role(GTK_WINDOW(win), "status");
 	gtk_window_set_title(GTK_WINDOW(win), _("Status"));
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(status_editor_destroy_cb), dialog);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	/* Title */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("_Title:"));
@@ -1119,7 +1119,7 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 					 G_CALLBACK(editor_title_changed_cb), dialog);
 
 	/* Status type */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("_Status:"));
@@ -1135,7 +1135,7 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, TRUE, TRUE, 0);
 
 	/* Status message */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("_Message:"));
@@ -1158,7 +1158,7 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	gtk_box_pack_start(GTK_BOX(vbox), expander, FALSE, FALSE, 0);
 
 	/* Setup the box that the expander will cover */
-	dbox = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	dbox = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_add(GTK_CONTAINER(expander), dbox);
 
 	/* Different status message treeview */
@@ -1198,7 +1198,7 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 
 	/* Button box */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 
@@ -1428,19 +1428,19 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 	gtk_window_set_title(GTK_WINDOW(win), tmp);
 	g_free(tmp);
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(substatus_editor_destroy_cb), dialog);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	/* Status type */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("_Status:"));
@@ -1471,7 +1471,7 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 	gtk_box_pack_start(GTK_BOX(hbox), combo, FALSE, FALSE, 0);
 
 	/* Status mesage */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("_Message:"));
@@ -1486,7 +1486,7 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 
 	/* Button box */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 

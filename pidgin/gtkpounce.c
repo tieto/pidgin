@@ -504,25 +504,25 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 						 (cur_pounce == NULL
 						  ? _("New Buddy Pounce") : _("Edit Buddy Pounce")));
 
-	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Create the parent vbox for everything. */
-	vbox1 = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox1 = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(window), vbox1);
 	gtk_widget_show(vbox1);
 
 	/* Create the vbox that will contain all the prefs stuff. */
-	vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox1), vbox2, TRUE, TRUE, 0);
 
 	/* Create the "Pounce on Whom" frame. */
 	frame = pidgin_make_frame(vbox2, _("Pounce on Whom"));
 
 	/* Account: */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -542,7 +542,7 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 	pidgin_set_accessible_label (dialog->account_menu, label);
 
 	/* Buddy: */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -576,7 +576,7 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 
 	table = gtk_table_new(5, 2, FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), table);
-	gtk_table_set_col_spacings(GTK_TABLE(table), GAIM_HIG_BORDER);
+	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BORDER);
 	gtk_widget_show(table);
 
 	dialog->signon =
@@ -637,7 +637,7 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 
 	table = gtk_table_new(3, 5, FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), table);
-	gtk_table_set_col_spacings(GTK_TABLE(table), GAIM_HIG_BORDER);
+	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BORDER);
 	gtk_widget_show(table);
 
 	dialog->open_win
@@ -706,7 +706,7 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 	gtk_table_attach(GTK_TABLE(table), dialog->play_sound_test, 3, 4, 4, 5,
 					 GTK_FILL | GTK_EXPAND, 0, 0, 0);
 
-	gtk_table_set_row_spacings(GTK_TABLE(table), GAIM_HIG_BOX_SPACE / 2);
+	gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE / 2);
 
 	gtk_widget_show(dialog->open_win);
 	gtk_widget_show(dialog->popup);
@@ -777,7 +777,7 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 
 	table = gtk_table_new(2, 1, FALSE);
 	gtk_container_add(GTK_CONTAINER(frame), table);
-	gtk_table_set_col_spacings(GTK_TABLE(table), GAIM_HIG_BORDER);
+	gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BORDER);
 	gtk_widget_show(table);
 
 	dialog->on_away =
@@ -795,7 +795,7 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 
 	/* Now the button box! */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox1), bbox, FALSE, FALSE, 0);
 	gtk_widget_show(bbox);
@@ -1323,7 +1323,7 @@ pidgin_pounces_manager_show(void)
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 	gtk_window_set_role(GTK_WINDOW(win), "pounces");
 	gtk_window_set_title(GTK_WINDOW(win), _("Buddy Pounces"));
-	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(pounces_manager_destroy_cb), dialog);
@@ -1331,7 +1331,7 @@ pidgin_pounces_manager_show(void)
 					 G_CALLBACK(pounces_manager_configure_cb), dialog);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
 	gtk_widget_show(vbox);
 
@@ -1341,7 +1341,7 @@ pidgin_pounces_manager_show(void)
 
 	/* Button box. */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);

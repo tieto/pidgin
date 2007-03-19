@@ -172,14 +172,14 @@ find_cb(GtkWidget *w, DebugWindow *win)
 	g_signal_connect(G_OBJECT(win->find), "response",
 					G_CALLBACK(do_find_cb), f);
 
-	gtk_container_set_border_width(GTK_CONTAINER(win->find), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(win->find), PIDGIN_HIG_BOX_SPACE);
 	gtk_window_set_resizable(GTK_WINDOW(win->find), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(win->find), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(win->find)->vbox), GAIM_HIG_BORDER);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(win->find)->vbox), PIDGIN_HIG_BORDER);
 	gtk_container_set_border_width(
-		GTK_CONTAINER(GTK_DIALOG(win->find)->vbox), GAIM_HIG_BOX_SPACE);
+		GTK_CONTAINER(GTK_DIALOG(win->find)->vbox), PIDGIN_HIG_BOX_SPACE);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(win->find)->vbox),
 					  hbox);
 	img = gtk_image_new_from_stock(PIDGIN_STOCK_DIALOG_QUESTION,

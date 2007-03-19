@@ -132,15 +132,15 @@ PidginWindow *pidgin_conv_window_last_with_type(GaimConversationType type);
  **************************************************************************/
 /*@{*/
 
-typedef void (*GaimConvPlacementFunc)(PidginConversation *);
+typedef void (*PidginConvPlacementFunc)(PidginConversation *);
 
 GList *pidgin_conv_placement_get_options(void);
-void pidgin_conv_placement_add_fnc(const char *id, const char *name, GaimConvPlacementFunc fnc);
+void pidgin_conv_placement_add_fnc(const char *id, const char *name, PidginConvPlacementFunc fnc);
 void pidgin_conv_placement_remove_fnc(const char *id);
 const char *pidgin_conv_placement_get_name(const char *id);
-GaimConvPlacementFunc pidgin_conv_placement_get_fnc(const char *id);
-void pidgin_conv_placement_set_current_func(GaimConvPlacementFunc func);
-GaimConvPlacementFunc pidgin_conv_placement_get_current_func(void);
+PidginConvPlacementFunc pidgin_conv_placement_get_fnc(const char *id);
+void pidgin_conv_placement_set_current_func(PidginConvPlacementFunc func);
+PidginConvPlacementFunc pidgin_conv_placement_get_current_func(void);
 void pidgin_conv_placement_place(PidginConversation *gtkconv);
 
 /*@}*/

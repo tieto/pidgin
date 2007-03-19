@@ -370,13 +370,13 @@ privacy_dialog_new(void)
 	gtk_window_set_resizable(GTK_WINDOW(dialog->win), FALSE);
 	gtk_window_set_role(GTK_WINDOW(dialog->win), "privacy");
 	gtk_window_set_title(GTK_WINDOW(dialog->win), _("Privacy"));
-	gtk_container_set_border_width(GTK_CONTAINER(dialog->win), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog->win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(dialog->win), "delete_event",
 					 G_CALLBACK(destroy_cb), dialog);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(dialog->win), vbox);
 	gtk_widget_show(vbox);
 
@@ -389,7 +389,7 @@ privacy_dialog_new(void)
 	gtk_widget_show(label);
 
 	/* Hbox for the accounts drop-down and label. */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 

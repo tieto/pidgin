@@ -470,7 +470,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 		if (box == NULL)
 			break;
 
-		dialog = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, GTK_WINDOW(d),
+		dialog = gtk_dialog_new_with_buttons(PIDGIN_ALERT_TITLE, GTK_WINDOW(d),
 						     GTK_DIALOG_NO_SEPARATOR | GTK_DIALOG_DESTROY_WITH_PARENT,
 						     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 						     NULL);

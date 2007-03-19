@@ -42,9 +42,9 @@
 #define PIDGIN_UI "pidgin"
 
 #ifndef _WIN32
-# define GAIM_ALERT_TITLE ""
+# define PIDGIN_ALERT_TITLE ""
 #else
-# define GAIM_ALERT_TITLE PIDGIN_NAME
+# define PIDGIN_ALERT_TITLE PIDGIN_NAME
 #endif
 
 /*
@@ -78,15 +78,15 @@
  * Spacings between components, as defined by the
  * GNOME Human Interface Guidelines.
  */
-#define GAIM_HIG_CAT_SPACE     18
-#define GAIM_HIG_BORDER        12
-#define GAIM_HIG_BOX_SPACE      6
+#define PIDGIN_HIG_CAT_SPACE     18
+#define PIDGIN_HIG_BORDER        12
+#define PIDGIN_HIG_BOX_SPACE      6
 
 /*
  * See GNOME bug #307304 for some discussion about the invisible
  * character.  0x25cf is a good choice, too.
  */
-#define GAIM_INVISIBLE_CHAR (gunichar)0x2022
+#define PIDGIN_INVISIBLE_CHAR (gunichar)0x2022
 
 #endif /* _PIDGIN_H_ */
 

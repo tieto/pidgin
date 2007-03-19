@@ -45,7 +45,7 @@ typedef struct
 	GtkWidget *label;
 	GtkTreeIter iter;
 	int count;
-} GaimNotifyMailData;
+} PidginNotifyMailData;
 
 typedef struct
 {
@@ -56,14 +56,14 @@ typedef struct
 	gpointer user_data;
 	GaimNotifySearchResults *results;
 
-} GaimNotifySearchResultsData;
+} PidginNotifySearchResultsData;
 
 typedef struct
 {
 	GaimNotifySearchButton *button;
-	GaimNotifySearchResultsData *data;
+	PidginNotifySearchResultsData *data;
 
-} GaimNotifySearchResultsButtonData;
+} PidginNotifySearchResultsButtonData;
 
 enum
 {
@@ -102,7 +102,7 @@ message_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
 static void
 email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
 {
-	GaimNotifyMailData *data = NULL;
+	PidginNotifyMailData *data = NULL;
 	GtkTreeIter iter;
 
 	if (id == GTK_RESPONSE_YES)
@@ -162,15 +162,15 @@ formatted_close_cb(GtkWidget *win, GdkEvent *event, void *user_data)
 }
 
 static void
-searchresults_close_cb(GaimNotifySearchResultsData *data, GdkEvent *event, gpointer user_data)
+searchresults_close_cb(PidginNotifySearchResultsData *data, GdkEvent *event, gpointer user_data)
 {
 	gaim_notify_close(GAIM_NOTIFY_SEARCHRESULTS, data);
 }
 
 static void
-searchresults_callback_wrapper_cb(GtkWidget *widget, GaimNotifySearchResultsButtonData *bd)
+searchresults_callback_wrapper_cb(GtkWidget *widget, PidginNotifySearchResultsButtonData *bd)
 {
-	GaimNotifySearchResultsData *data = bd->data;
+	PidginNotifySearchResultsData *data = bd->data;
 
 	GtkTreeSelection *selection;
 	GtkTreeModel *model;
@@ -235,7 +235,7 @@ pidgin_notify_message(GaimNotifyMsgType type, const char *title,
 		gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 	}
 
-	dialog = gtk_dialog_new_with_buttons(title ? title : GAIM_ALERT_TITLE,
+	dialog = gtk_dialog_new_with_buttons(title ? title : PIDGIN_ALERT_TITLE,
 										 NULL, 0, GTK_STOCK_CLOSE,
 										 GTK_RESPONSE_CLOSE, NULL);
 
@@ -244,13 +244,13 @@ pidgin_notify_message(GaimNotifyMsgType type, const char *title,
 	g_signal_connect(G_OBJECT(dialog), "response",
 					 G_CALLBACK(message_response_cb), dialog);
 
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BOX_SPACE);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	if (img != NULL)
@@ -281,7 +281,7 @@ selection_changed_cb(GtkTreeSelection *sel, PidginMailDialog *dialog)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
-	GaimNotifyMailData *data;
+	PidginNotifyMailData *data;
 	gboolean active = TRUE;
 
 	if (gtk_tree_selection_get_selected(sel, &model, &iter) == FALSE)
@@ -340,10 +340,10 @@ pidgin_get_mail_dialog()
 						 PIDGIN_STOCK_OPEN_MAIL, GTK_RESPONSE_YES);
 
 		/* Setup the dialog */
-		gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BOX_SPACE);
-		gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BOX_SPACE);
+		gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BOX_SPACE);
+		gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BOX_SPACE);
 		gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
+		gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
 
 		/* Vertical box */
 		vbox = GTK_DIALOG(dialog)->vbox;
@@ -402,7 +402,7 @@ pidgin_get_mail_dialog()
 static void *
 pidgin_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *notification, const char *url, int count)
 {
-	GaimNotifyMailData *data = NULL;
+	PidginNotifyMailData *data = NULL;
 	GtkTreeIter iter;
 	GdkPixbuf *icon;
 	gboolean new_n = TRUE;
@@ -427,7 +427,7 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *noti
 	}
 
 	if (new_n) {
-		data = g_new0(GaimNotifyMailData, 1);
+		data = g_new0(PidginNotifyMailData, 1);
 		gtk_tree_store_append(treemodel, &iter, NULL);
 	}
 
@@ -457,7 +457,7 @@ pidgin_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 	GtkWidget *dialog = NULL;
 	char *notification;
 	GaimAccount *account;
-	GaimNotifyMailData *data = NULL;
+	PidginNotifyMailData *data = NULL;
 
 	account = gaim_connection_get_account(gc);
 	dialog = pidgin_get_mail_dialog();  /* This creates mail_dialog if necessary */
@@ -566,13 +566,13 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), title);
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(formatted_close_cb), NULL);
 
 	/* Setup the main vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 	gtk_widget_show(vbox);
 
@@ -638,7 +638,7 @@ static void
 pidgin_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResults *results,
 									   void *data_)
 {
-	GaimNotifySearchResultsData *data = data_;
+	PidginNotifySearchResultsData *data = data_;
 	GtkListStore *model = data->model;
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf;
@@ -693,14 +693,14 @@ pidgin_notify_searchresults(GaimConnection *gc, const char *title,
 	GtkWidget *button_area;
 	GtkWidget *label;
 	GtkWidget *sw;
-	GaimNotifySearchResultsData *data;
+	PidginNotifySearchResultsData *data;
 	char *label_text;
 	char *primary_esc, *secondary_esc;
 
 	g_return_val_if_fail(gc != NULL, NULL);
 	g_return_val_if_fail(results != NULL, NULL);
 
-	data = g_malloc(sizeof(GaimNotifySearchResultsData));
+	data = g_malloc(sizeof(PidginNotifySearchResultsData));
 	data->user_data = user_data;
 	data->results = results;
 
@@ -708,13 +708,13 @@ pidgin_notify_searchresults(GaimConnection *gc, const char *title,
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(window), (title ? title :_("Search Results")));
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect_swapped(G_OBJECT(window), "delete_event",
 							 G_CALLBACK(searchresults_close_cb), data);
 
 	/* Setup the main vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 	gtk_widget_show(vbox);
 
@@ -784,7 +784,7 @@ pidgin_notify_searchresults(GaimConnection *gc, const char *title,
 	button_area = gtk_hbutton_box_new();
 	gtk_box_pack_start(GTK_BOX(vbox), button_area, FALSE, FALSE, 0);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(button_area), GTK_BUTTONBOX_END);
-	gtk_box_set_spacing(GTK_BOX(button_area), GAIM_HIG_BORDER);
+	gtk_box_set_spacing(GTK_BOX(button_area), PIDGIN_HIG_BORDER);
 	gtk_widget_show(button_area);
 
 	for (i = 0; i < g_list_length(results->buttons); i++) {
@@ -820,12 +820,12 @@ pidgin_notify_searchresults(GaimConnection *gc, const char *title,
 				gaim_debug_warning("gtknotify", "Incorrect button type: %d\n", b->type);
 		}
 		if (button != NULL) {
-			GaimNotifySearchResultsButtonData *bd;
+			PidginNotifySearchResultsButtonData *bd;
 
 			gtk_box_pack_start(GTK_BOX(button_area), button, FALSE, FALSE, 0);
 			gtk_widget_show(button);
 
-			bd = g_new0(GaimNotifySearchResultsButtonData, 1);
+			bd = g_new0(PidginNotifySearchResultsButtonData, 1);
 			bd->button = b;
 			bd->data = data;
 
@@ -876,14 +876,14 @@ pidgin_close_notify(GaimNotifyType type, void *ui_handle)
 {
 	if (type == GAIM_NOTIFY_EMAIL || type == GAIM_NOTIFY_EMAILS)
 	{
-		GaimNotifyMailData *data = (GaimNotifyMailData *)ui_handle;
+		PidginNotifyMailData *data = (PidginNotifyMailData *)ui_handle;
 
 		g_free(data->url);
 		g_free(data);
 	}
 	else if (type == GAIM_NOTIFY_SEARCHRESULTS)
 	{
-		GaimNotifySearchResultsData *data = (GaimNotifySearchResultsData *)ui_handle;
+		PidginNotifySearchResultsData *data = (PidginNotifySearchResultsData *)ui_handle;
 
 		gtk_widget_destroy(data->window);
 		gaim_notify_searchresults_free(data->results);

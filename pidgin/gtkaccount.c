@@ -177,7 +177,7 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 	GtkWidget *hbox;
 	GtkWidget *label;
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(parent), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -187,7 +187,7 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, GAIM_HIG_BORDER);
+	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(widget);
 	pidgin_set_accessible_label (widget, label);
 
@@ -396,7 +396,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->login_frame);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -483,7 +483,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	dialog->password_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->password_entry), FALSE);
 	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->password_entry)) == '*')
-		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->password_entry), GAIM_INVISIBLE_CHAR);
+		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->password_entry), PIDGIN_INVISIBLE_CHAR);
 	dialog->password_box = add_pref_box(dialog, vbox, _("Password:"),
 										  dialog->password_entry);
 
@@ -558,7 +558,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->user_frame);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -574,7 +574,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->icon_check);
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->icon_check, FALSE, FALSE, 0);
 
-	dialog->icon_hbox = hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	dialog->icon_hbox = hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_set_sensitive(hbox, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
@@ -601,8 +601,8 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 0);
 	gtk_widget_show(vbox2);
 
-	hbox2 = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, GAIM_HIG_BORDER);
+	hbox2 = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox2), hbox2, FALSE, FALSE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(hbox2);
 
 	button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
@@ -691,7 +691,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->protocol_frame);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -779,7 +779,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				{
 					gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 					if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
-						gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
+						gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
 				}
 
 				if (str_value != NULL)
@@ -979,7 +979,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->proxy_frame);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(frame), vbox);
 	gtk_widget_show(vbox);
 
@@ -989,8 +989,8 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	add_pref_box(dialog, vbox, _("Proxy _type:"), dialog->proxy_dropdown);
 
 	/* Setup the second vbox, which may be hidden at times. */
-	dialog->proxy_vbox = vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, GAIM_HIG_BORDER);
+	dialog->proxy_vbox = vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(vbox2);
 
 	/* Host */
@@ -1013,7 +1013,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	dialog->proxy_pass_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->proxy_pass_entry), FALSE);
 	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry)) == '*')
-		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry), GAIM_INVISIBLE_CHAR);
+		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->proxy_pass_entry), PIDGIN_INVISIBLE_CHAR);
 	add_pref_box(dialog, vbox2, _("Pa_ssword:"), dialog->proxy_pass_entry);
 
 	if (dialog->account != NULL &&
@@ -1431,13 +1431,13 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
 
-	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(account_win_destroy_cb), dialog);
 
 	/* Setup the vbox */
-	main_vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	main_vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), main_vbox);
 	gtk_widget_show(main_vbox);
 
@@ -1446,8 +1446,8 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	gtk_widget_show(GTK_WIDGET(notebook));
 
 	/* Setup the inner vbox */
-	dialog->top_vbox = vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(vbox), GAIM_HIG_BORDER);
+	dialog->top_vbox = vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BORDER);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), vbox,
 			gtk_label_new_with_mnemonic(_("_Basic")));
 	gtk_widget_show(vbox);
@@ -1457,8 +1457,8 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	add_user_options(dialog, vbox);
 
 	/* Setup the page with 'Advanced'. */
-	dialog->bottom_vbox = dbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
-	gtk_container_set_border_width(GTK_CONTAINER(dbox), GAIM_HIG_BORDER);
+	dialog->bottom_vbox = dbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(dbox), PIDGIN_HIG_BORDER);
 	gtk_notebook_append_page(GTK_NOTEBOOK(notebook), dbox,
 			gtk_label_new_with_mnemonic(_("_Advanced")));
 	gtk_widget_show(dbox);
@@ -1469,7 +1469,7 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 
 	/* Setup the button box */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(main_vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
@@ -2268,7 +2268,7 @@ pidgin_accounts_window_show(void)
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
 	gtk_window_set_role(GTK_WINDOW(win), "accounts");
 	gtk_window_set_title(GTK_WINDOW(win), _("Accounts"));
-	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(accedit_win_destroy_cb), accounts_window);
@@ -2276,7 +2276,7 @@ pidgin_accounts_window_show(void)
 					 G_CALLBACK(configure_cb), accounts_window);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), vbox);
 	gtk_widget_show(vbox);
 
@@ -2287,7 +2287,7 @@ pidgin_accounts_window_show(void)
 
 	/* Button box. */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);

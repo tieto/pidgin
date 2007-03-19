@@ -375,22 +375,22 @@ pidgin_roomlist_dialog_new_with_account(GaimAccount *account)
 	gtk_window_set_role(GTK_WINDOW(window), "room list");
 	gtk_window_set_title(GTK_WINDOW(window), _("Room List"));
 
-	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Create the parent vbox for everything. */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 	gtk_widget_show(vbox);
 
-	vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(vbox), vbox2);
 	gtk_widget_show(vbox2);
 
 	/* accounts dropdown list */
-	account_hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	account_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox2), account_hbox, FALSE, FALSE, 0);
 	gtk_widget_show(account_hbox);
 
@@ -429,7 +429,7 @@ pidgin_roomlist_dialog_new_with_account(GaimAccount *account)
 
 	/* button box */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
