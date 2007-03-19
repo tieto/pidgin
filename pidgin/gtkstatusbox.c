@@ -50,7 +50,7 @@
 
 #include "pidgin.h"
 #include "gtksavedstatuses.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkstatusbox.h"
 #include "gtkutils.h"
 

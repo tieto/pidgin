@@ -35,7 +35,7 @@
 #include "gtkft.h"
 #include "prefs.h"
 #include "gtkexpander.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkutils.h"
 
 #define PIDGINXFER(xfer) \

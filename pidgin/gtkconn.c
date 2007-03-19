@@ -33,7 +33,7 @@
 #include "gtkconn.h"
 #include "gtkdialogs.h"
 #include "gtkstatusbox.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkutils.h"
 #include "util.h"
 
@@ -45,12 +45,12 @@
 typedef struct {
 	int delay;
 	guint timeout;
-} GaimAutoRecon;
+} PidginAutoRecon;
 
 /**
  * Contains accounts that are auto-reconnecting.
  * The key is a pointer to the GaimAccount and the
- * value is a pointer to a GaimAutoRecon.
+ * value is a pointer to a PidginAutoRecon.
  */
 static GHashTable *hash = NULL;
 
@@ -102,7 +102,7 @@ pidgin_connection_disconnected(GaimConnection *gc)
 static void
 free_auto_recon(gpointer data)
 {
-	GaimAutoRecon *info = data;
+	PidginAutoRecon *info = data;
 
 	if (info->timeout != 0)
 		g_source_remove(info->timeout);
@@ -114,7 +114,7 @@ static gboolean
 do_signon(gpointer data)
 {
 	GaimAccount *account = data;
-	GaimAutoRecon *info;
+	PidginAutoRecon *info;
 	GaimStatus *status;
 
 	gaim_debug_info("autorecon", "do_signon called\n");
@@ -139,7 +139,7 @@ static void
 pidgin_connection_report_disconnect(GaimConnection *gc, const char *text)
 {
 	GaimAccount *account = NULL;
-	GaimAutoRecon *info;
+	PidginAutoRecon *info;
 
 	account = gaim_connection_get_account(gc);
 	info = g_hash_table_lookup(hash, account);
@@ -147,7 +147,7 @@ pidgin_connection_report_disconnect(GaimConnection *gc, const char *text)
 	pidgin_blist_update_account_error_state(account, text);
 	if (!gc->wants_to_die) {
 		if (info == NULL) {
-			info = g_new0(GaimAutoRecon, 1);
+			info = g_new0(PidginAutoRecon, 1);
 			g_hash_table_insert(hash, account, info);
 			info->delay = g_random_int_range(INITIAL_RECON_DELAY_MIN, INITIAL_RECON_DELAY_MAX);
 		} else {

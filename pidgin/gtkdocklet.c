@@ -39,7 +39,7 @@
 #include "gtksavedstatuses.h"
 #include "gtksound.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkdocklet.h"
 #include "gtkdialogs.h"
 

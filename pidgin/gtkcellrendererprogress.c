@@ -214,7 +214,7 @@ static void pidgin_cell_renderer_progress_set_property (GObject      *object,
 
 GtkCellRenderer *pidgin_cell_renderer_progress_new(void)
 {
-	return g_object_new(GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS, NULL);
+	return g_object_new(PIDGIN_TYPE_GTK_CELL_RENDERER_PROGRESS, NULL);
 }
 
 static void pidgin_cell_renderer_progress_get_size (GtkCellRenderer *cell,

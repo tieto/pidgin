@@ -34,7 +34,7 @@
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 
 #ifdef HAVE_REGEX_H
 # include <regex.h>

@@ -29,7 +29,7 @@
 #include "imgstore.h"
 #include "notify.h"
 #include "request.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "util.h"
 
 #include "gtkdialogs.h"

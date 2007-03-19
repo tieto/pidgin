@@ -39,7 +39,7 @@
 #include "gtkblist.h"
 #include "gtkdialogs.h"
 #include "gtkpounce.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkutils.h"
 
 /**

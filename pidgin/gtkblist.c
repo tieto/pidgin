@@ -36,7 +36,7 @@
 #include "plugin.h"
 #include "request.h"
 #include "signals.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "util.h"
 
 #include "gtkaccount.h"

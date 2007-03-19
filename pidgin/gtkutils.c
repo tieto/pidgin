@@ -57,7 +57,7 @@
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
 

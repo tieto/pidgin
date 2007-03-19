@@ -32,7 +32,7 @@
 #include "request.h"
 #include "util.h"
 
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkblist.h"
 #include "gtkimhtml.h"
 #include "gtklog.h"

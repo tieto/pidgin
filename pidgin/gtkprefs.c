@@ -48,7 +48,7 @@
 #include "gtksound.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 
 #define PROXYHOST 0
 #define PROXYPORT 1

@@ -37,7 +37,7 @@
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 #include "gtksavedstatuses.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkutils.h"
 
 /*

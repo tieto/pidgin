@@ -26,7 +26,7 @@
 #include "internal.h"
 #include "pidgin.h"
 
-#include "gaimstock.h"
+#include "pidginstock.h"
 
 static struct StockIcon
 {

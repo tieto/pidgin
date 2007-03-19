@@ -64,7 +64,7 @@
 #include "gtkprivacy.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 
 #include "gtknickcolors.h"
 
@@ -7089,7 +7089,7 @@ pidgin_conversations_uninit(void)
 #include "gtkprefs.h"
 #include "gtkprivacy.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
 

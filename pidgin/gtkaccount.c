@@ -44,7 +44,7 @@
 #include "gtkdialogs.h"
 #include "gtkutils.h"
 #include "gtkstatusbox.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 
 enum
 {

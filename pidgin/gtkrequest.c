@@ -32,7 +32,7 @@
 #include "gtkimhtmltoolbar.h"
 #include "gtkrequest.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 
 #include <gdk/gdkkeysyms.h>
 

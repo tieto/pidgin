@@ -30,7 +30,7 @@
 #include "connection.h"
 #include "debug.h"
 #include "prefs.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "util.h"
 
 #include "gtkblist.h"
