@@ -384,18 +384,18 @@ finch_request_fields(const char *title, const char *primary,
 			}
 			else if (type == PURPLE_REQUEST_FIELD_STRING)
 			{
-				const char *hint = gaim_request_field_get_type_hint(field);
+				const char *hint = purple_request_field_get_type_hint(field);
 				GntWidget *entry = gnt_entry_new(
 							purple_request_field_string_get_default_value(field));
 				gnt_entry_set_masked(GNT_ENTRY(entry),
 						purple_request_field_string_is_masked(field));
-				if (gaim_str_has_prefix(hint, "screenname")) {
-					GaimBlistNode *node = gaim_blist_get_root();
-					gboolean offline = gaim_str_has_suffix(hint, "all");
-					for (; node; node = gaim_blist_node_next(node, offline)) {
-						if (!GAIM_BLIST_NODE_IS_BUDDY(node))
+				if (purple_str_has_prefix(hint, "screenname")) {
+					PurpleBlistNode *node = purple_blist_get_root();
+					gboolean offline = purple_str_has_suffix(hint, "all");
+					for (; node; node = purple_blist_node_next(node, offline)) {
+						if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
 							continue;
-						gnt_entry_add_suggest(GNT_ENTRY(entry), gaim_buddy_get_name((GaimBuddy*)node));
+						gnt_entry_add_suggest(GNT_ENTRY(entry), purple_buddy_get_name((PurpleBuddy*)node));
 					}
 					gnt_entry_set_always_suggest(GNT_ENTRY(entry), TRUE);
 				}
