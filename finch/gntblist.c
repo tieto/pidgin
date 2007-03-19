@@ -304,6 +304,7 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 
 	field = purple_request_field_string_new("group", _("Group"), grp, FALSE);
 	purple_request_field_group_add_field(group, field);
+	purple_request_field_set_type_hint(field, "group");
 
 	field = purple_request_field_account_new("account", _("Account"), NULL);
 	purple_request_field_account_set_show_all(field, FALSE);

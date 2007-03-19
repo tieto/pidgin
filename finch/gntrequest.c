@@ -398,6 +398,12 @@ finch_request_fields(const char *title, const char *primary,
 						gnt_entry_add_suggest(GNT_ENTRY(entry), purple_buddy_get_name((PurpleBuddy*)node));
 					}
 					gnt_entry_set_always_suggest(GNT_ENTRY(entry), TRUE);
+				} else if (hint && !strcmp(hint, "group")) {
+					PurpleBlistNode *node;
+					for (node = purple_blist_get_root(); node; node = node->next) {
+						if (PURPLE_BLIST_NODE_IS_GROUP(node))
+							gnt_entry_add_suggest(GNT_ENTRY(entry), ((PurpleGroup *)node)->name);
+					}
 				}
 				gnt_box_add_widget(GNT_BOX(hbox), entry);
 				field->ui_data = entry;
