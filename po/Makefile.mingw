@@ -6,7 +6,7 @@
 GAIM_TOP := ..
 include $(GAIM_TOP)/libpurple/win32/global.mak
 
-PACKAGE = gaim
+PACKAGE = pidgin
 
 .SUFFIXES:
 .SUFFIXES: .po .gmo

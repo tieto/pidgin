@@ -53,7 +53,6 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##  SOURCES, OBJECTS
 ##
 GTKGAIM_C_SRC =	\
-			gaimstock.c \
 			gtkaccount.c \
 			gtkblist.c \
 			gtkconn.c \
@@ -89,6 +88,7 @@ GTKGAIM_C_SRC =	\
 			gtkthemes.c \
 			gtkutils.c \
 			gtkwhiteboard.c \
+			pidginstock.c \
 			win32/MinimizeToTray.c \
 			win32/gtkdocklet-win32.c \
 			win32/gtkwin32dep.c \
@@ -137,7 +137,7 @@ all: $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll
 	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE)
 
 win32/pidgin_exe_rc.rc: win32/pidgin_exe_rc.rc.in $(GAIM_TOP)/VERSION
-	sed -e 's/@GAIM_VERSION@/$(GAIM_VERSION)/g' \
+	sed -e 's/@PIDGIN_VERSION@/$(GAIM_VERSION)/g' \
 	    -e 's/@ORIGINAL_FILENAME@/$(EXE_NAME)/' \
 	    $@.in > $@
 
@@ -152,7 +152,7 @@ install: install_shallow all
 	$(MAKE) -C $(GAIM_GTK_IDLETRACK_TOP) -f $(GAIM_WIN32_MAKEFILE) install
 
 win32/pidgin_dll_rc.rc: win32/pidgin_dll_rc.rc.in $(GAIM_TOP)/VERSION
-	sed -e 's/@GAIM_VERSION@/$(GAIM_VERSION)/g' \
+	sed -e 's/@PIDGIN_VERSION@/$(GAIM_VERSION)/g' \
 	    $@.in > $@
 
 $(EXE_OBJECTS) $(GTKGAIM_OBJECTS): $(GAIM_CONFIG_H)

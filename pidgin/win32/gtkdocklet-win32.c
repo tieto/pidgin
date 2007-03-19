@@ -34,7 +34,7 @@
 #include "MinimizeToTray.h"
 #include "gtkwin32dep.h"
 #include "gtkdocklet.h"
-#include "purplestock.h"
+#include "pidginstock.h"
 
 /*
  *  DEFINES, MACROS & DATA TYPES
