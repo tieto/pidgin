@@ -1,9 +1,9 @@
 /**
  * @file cmdproc.c MSN command processor functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -94,7 +94,7 @@ show_debug_cmd(MsnCmdProc *cmdproc, gboolean incoming, const char *command)
 		show[len - 2] = '\0';
 	}
 
-	gaim_debug_misc("msn", "%c: %s %03d: %s\n", tmp,
+	purple_debug_misc("msn", "%c: %s %03d: %s\n", tmp,
 					names[servconn->type], servconn->num, show);
 
 	g_free(show);
@@ -230,7 +230,7 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if (msn_message_get_content_type(msg) == NULL)
 	{
-		gaim_debug_misc("msn", "failed to find message content\n");
+		purple_debug_misc("msn", "failed to find message content\n");
 		return;
 	}
 
@@ -239,7 +239,7 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if (cb == NULL)
 	{
-		gaim_debug_warning("msn", "Unhandled content-type '%s'\n",
+		purple_debug_warning("msn", "Unhandled content-type '%s'\n",
 						   msn_message_get_content_type(msg));
 
 		return;
@@ -259,7 +259,7 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (trans != NULL)
 		if (trans->timer)
-			gaim_timeout_remove(trans->timer);
+			purple_timeout_remove(trans->timer);
 
 	if (g_ascii_isdigit(cmd->command[0]))
 	{
@@ -285,7 +285,7 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 #if 1
 				msn_error_handle(cmdproc->session, error);
 #else
-				gaim_debug_warning("msn", "Unhandled error '%s'\n",
+				purple_debug_warning("msn", "Unhandled error '%s'\n",
 								   cmd->command);
 #endif
 			}
@@ -314,7 +314,7 @@ msn_cmdproc_process_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 	else
 	{
-		gaim_debug_warning("msn", "Unhandled command '%s'\n",
+		purple_debug_warning("msn", "Unhandled command '%s'\n",
 						   cmd->command);
 	}
 

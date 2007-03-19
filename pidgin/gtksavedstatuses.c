@@ -2,9 +2,9 @@
  * @file gtksavedstatus.c GTK+ Saved Status Editor UI
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -67,14 +67,14 @@ enum
  */
 enum
 {
-	/** A hidden column containing a pointer to the GaimAccount. */
+	/** A hidden column containing a pointer to the PurpleAccount. */
 	STATUS_EDITOR_COLUMN_ACCOUNT,
 	/** A hidden column containing a pointer to the editor for this substatus. */
 	STATUS_EDITOR_COLUMN_WINDOW,
 	STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS,
 	STATUS_EDITOR_COLUMN_ICON,
 	STATUS_EDITOR_COLUMN_SCREENNAME,
-	/** A hidden column containing the ID of this GaimStatusType. */
+	/** A hidden column containing the ID of this PurpleStatusType. */
 	STATUS_EDITOR_COLUMN_STATUS_ID,
 	STATUS_EDITOR_COLUMN_STATUS_NAME,
 	STATUS_EDITOR_COLUMN_STATUS_MESSAGE,
@@ -83,13 +83,13 @@ enum
 
 /**
  * These are used in the GtkComboBox to select the specific
- * GaimStatusType when setting a substatus for a particular saved
+ * PurpleStatusType when setting a substatus for a particular saved
  * status.
  */
 enum
 {
 	SUBSTATUS_COLUMN_ICON,
-	/** A hidden column containing the ID of this GaimStatusType. */
+	/** A hidden column containing the ID of this PurpleStatusType. */
 	SUBSTATUS_COLUMN_STATUS_ID,
 	SUBSTATUS_COLUMN_STATUS_NAME,
 	SUBSTATUS_NUM_COLUMNS
@@ -122,7 +122,7 @@ typedef struct
 typedef struct
 {
 	StatusEditor *status_editor;
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	GtkWidget *window;
 	GtkListStore *model;
@@ -225,13 +225,13 @@ status_window_use_cb(GtkButton *button, StatusWindow *dialog)
 								&iter, list->data))
 	{
 		gchar *title;
-		GaimSavedStatus *saved_status;
+		PurpleSavedStatus *saved_status;
 		gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter,
 						   STATUS_WINDOW_COLUMN_TITLE, &title,
 						   -1);
-		saved_status = gaim_savedstatus_find(title);
+		saved_status = purple_savedstatus_find(title);
 		g_free(title);
-		gaim_savedstatus_activate(saved_status);
+		purple_savedstatus_activate(saved_status);
 	}
 
 	g_list_foreach(list, (GFunc)gtk_tree_path_free, NULL);
@@ -249,10 +249,10 @@ status_window_modify_foreach(GtkTreeModel *model, GtkTreePath *path,
 							 GtkTreeIter *iter, gpointer user_data)
 {
 	gchar *title;
-	GaimSavedStatus *saved_status;
+	PurpleSavedStatus *saved_status;
 
 	gtk_tree_model_get(model, iter, STATUS_WINDOW_COLUMN_TITLE, &title, -1);
-	saved_status = gaim_savedstatus_find(title);
+	saved_status = purple_savedstatus_find(title);
 	g_free(title);
 	pidgin_status_editor_show(TRUE, saved_status);
 }
@@ -287,7 +287,7 @@ status_window_delete_confirm_cb(gpointer data)
 		title = l->data;
 		if (status_window_find_savedstatus(&iter, title))
 			gtk_list_store_remove(status_window->model, &iter);
-		gaim_savedstatus_delete(title);
+		purple_savedstatus_delete(title);
 		g_free(title);
 	}
 	g_list_free(sel_titles);
@@ -330,7 +330,7 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 	else
 		title = g_strdup(_("Are you sure you want to delete the selected saved statuses?"));
 
-	gaim_request_action(dialog, NULL, title,
+	purple_request_action(dialog, NULL, title,
 		 NULL, 0, sel_titles, 2,
 		_("Delete"), status_window_delete_confirm_cb,
 		_("Cancel"), status_window_delete_cancel_cb);
@@ -362,19 +362,19 @@ status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 }
 
 static void
-add_status_to_saved_status_list(GtkListStore *model, GaimSavedStatus *saved_status)
+add_status_to_saved_status_list(GtkListStore *model, PurpleSavedStatus *saved_status)
 {
 	GtkTreeIter iter;
 	const char *title;
 	const char *type;
 	char *message;
 
-	if (gaim_savedstatus_is_transient(saved_status))
+	if (purple_savedstatus_is_transient(saved_status))
 		return;
 
-	title = gaim_savedstatus_get_title(saved_status);
-	type = gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status));
-	message = gaim_markup_strip_html(gaim_savedstatus_get_message(saved_status));
+	title = purple_savedstatus_get_title(saved_status);
+	type = purple_primitive_get_name_from_type(purple_savedstatus_get_type(saved_status));
+	message = purple_markup_strip_html(purple_savedstatus_get_message(saved_status));
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
@@ -392,7 +392,7 @@ populate_saved_status_list(StatusWindow *dialog)
 
 	gtk_list_store_clear(dialog->model);
 
-	for (saved_statuses = gaim_savedstatuses_get_all(); saved_statuses != NULL;
+	for (saved_statuses = purple_savedstatuses_get_all(); saved_statuses != NULL;
 			saved_statuses = g_list_next(saved_statuses))
 	{
 	  add_status_to_saved_status_list(dialog->model, saved_statuses->data);
@@ -407,7 +407,7 @@ search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *ite
 
 	gtk_tree_model_get(model, iter, column, &haystack, -1);
 
-	result = (gaim_strcasestr(haystack, key) == NULL);
+	result = (purple_strcasestr(haystack, key) == NULL);
 
 	g_free(haystack);
 
@@ -521,8 +521,8 @@ configure_cb(GtkWidget *widget, GdkEventConfigure *event, StatusWindow *dialog)
 {
 	if (GTK_WIDGET_VISIBLE(widget))
 	{
-		gaim_prefs_set_int("/gaim/gtk/status/dialog/width",  event->width);
-		gaim_prefs_set_int("/gaim/gtk/status/dialog/height", event->height);
+		purple_prefs_set_int("/purple/gtk/status/dialog/width",  event->width);
+		purple_prefs_set_int("/purple/gtk/status/dialog/height", event->height);
 	}
 
 	return FALSE;
@@ -547,8 +547,8 @@ pidgin_status_window_show(void)
 
 	status_window = dialog = g_new0(StatusWindow, 1);
 
-	width  = gaim_prefs_get_int("/gaim/gtk/status/dialog/width");
-	height = gaim_prefs_get_int("/gaim/gtk/status/dialog/height");
+	width  = purple_prefs_get_int("/purple/gtk/status/dialog/width");
+	height = purple_prefs_get_int("/purple/gtk/status/dialog/height");
 
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
@@ -629,8 +629,8 @@ pidgin_status_window_hide(void)
 	if (status_window->window != NULL)
 		gtk_widget_destroy(status_window->window);
 
-	gaim_request_close_with_handle(status_window);
-	gaim_notify_close_with_handle(status_window);
+	purple_request_close_with_handle(status_window);
+	purple_notify_close_with_handle(status_window);
 	g_free(status_window);
 	status_window = NULL;
 }
@@ -706,9 +706,9 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 {
 	StatusEditor *dialog = user_data;
 	const char *title;
-	GaimStatusPrimitive type;
+	PurpleStatusPrimitive type;
 	char *message, *unformatted;
-	GaimSavedStatus *saved_status = NULL;
+	PurpleSavedStatus *saved_status = NULL;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 
@@ -719,17 +719,17 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 	 * then show an error dialog and don't do anything.
 	 */
 	if (((button == dialog->saveanduse_button) || (button == dialog->save_button)) &&
-		(gaim_savedstatus_find(title) != NULL) &&
+		(purple_savedstatus_find(title) != NULL) &&
 		((dialog->original_title == NULL) || (strcmp(title, dialog->original_title))))
 	{
-		gaim_notify_error(status_window, NULL, _("Title already in use.  You must "
+		purple_notify_error(status_window, NULL, _("Title already in use.  You must "
 						  "choose a unique title."), NULL);
 		return;
 	}
 
-	type = gtk_option_menu_get_history(dialog->type) + (GAIM_STATUS_UNSET + 1);
+	type = gtk_option_menu_get_history(dialog->type) + (PURPLE_STATUS_UNSET + 1);
 	message = gtk_imhtml_get_markup(dialog->message);
-	unformatted = gaim_markup_strip_html(message);
+	unformatted = purple_markup_strip_html(message);
 
 	/*
 	 * If we're editing an old status, then lookup the old status.
@@ -740,7 +740,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 	{
 		GtkTreeIter iter;
 
-		saved_status = gaim_savedstatus_find(dialog->original_title);
+		saved_status = purple_savedstatus_find(dialog->original_title);
 
 		if (status_window_find_savedstatus(&iter, dialog->original_title))
 			gtk_list_store_remove(status_window->model, &iter);
@@ -751,33 +751,33 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 		/* This is a new status */
 		if ((button == dialog->saveanduse_button)
 				|| (button == dialog->save_button))
-			saved_status = gaim_savedstatus_new(title, type);
+			saved_status = purple_savedstatus_new(title, type);
 		else
-			saved_status = gaim_savedstatus_new(NULL, type);
+			saved_status = purple_savedstatus_new(NULL, type);
 	}
 	else
 	{
 		/* Modify the old status */
 		if (strcmp(title, dialog->original_title))
-			gaim_savedstatus_set_title(saved_status, title);
-		gaim_savedstatus_set_type(saved_status, type);
+			purple_savedstatus_set_title(saved_status, title);
+		purple_savedstatus_set_type(saved_status, type);
 	}
 
 	if (*unformatted == '\0')
-		gaim_savedstatus_set_message(saved_status, NULL);
+		purple_savedstatus_set_message(saved_status, NULL);
 	else
-		gaim_savedstatus_set_message(saved_status, message);
+		purple_savedstatus_set_message(saved_status, message);
 
 	/* Set any substatuses */
 	model = GTK_TREE_MODEL(dialog->model);
 	if (gtk_tree_model_get_iter_first(model, &iter))
 	{
 		do {
-			GaimAccount *account;
+			PurpleAccount *account;
 			gboolean enabled;
 			char *id;
 			char *message;
-			GaimStatusType *type;
+			PurpleStatusType *type;
 
 			gtk_tree_model_get(model, &iter,
 							   STATUS_EDITOR_COLUMN_ACCOUNT, &account,
@@ -787,12 +787,12 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 							   -1);
 			if (enabled)
 			{
-				type = gaim_account_get_status_type(account, id);
-				gaim_savedstatus_set_substatus(saved_status, account, type, message);
+				type = purple_account_get_status_type(account, id);
+				purple_savedstatus_set_substatus(saved_status, account, type, message);
 			}
 			else
 			{
-				gaim_savedstatus_unset_substatus(saved_status, account);
+				purple_savedstatus_unset_substatus(saved_status, account);
 			}
 			g_free(id);
 			g_free(message);
@@ -811,7 +811,7 @@ status_editor_ok_cb(GtkButton *button, gpointer user_data)
 
 	/* If they clicked on "Save & Use" or "Use," then activate the status */
 	if (button != dialog->save_button)
-		gaim_savedstatus_activate(saved_status);
+		purple_savedstatus_activate(saved_status);
 
 	g_free(dialog);
 }
@@ -829,7 +829,7 @@ editor_title_changed_cb(GtkWidget *widget, gpointer user_data)
 }
 
 static GtkWidget *
-create_status_type_menu(GaimStatusPrimitive type)
+create_status_type_menu(PurpleStatusPrimitive type)
 {
 	int i;
 	GtkWidget *dropdown;
@@ -839,27 +839,27 @@ create_status_type_menu(GaimStatusPrimitive type)
 	dropdown = gtk_option_menu_new();
 	menu = gtk_menu_new();
 
-	for (i = GAIM_STATUS_UNSET + 1; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
+	for (i = PURPLE_STATUS_UNSET + 1; i < PURPLE_STATUS_NUM_PRIMITIVES; i++)
 	{
-		item = gtk_menu_item_new_with_label(gaim_primitive_get_name_from_type(i));
+		item = gtk_menu_item_new_with_label(purple_primitive_get_name_from_type(i));
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	}
 
-	gtk_menu_set_active(GTK_MENU(menu), type - (GAIM_STATUS_UNSET + 1));
+	gtk_menu_set_active(GTK_MENU(menu), type - (PURPLE_STATUS_UNSET + 1));
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(dropdown), menu);
 	gtk_widget_show_all(menu);
 
 	return dropdown;
 }
 
-static void edit_substatus(StatusEditor *status_editor, GaimAccount *account);
+static void edit_substatus(StatusEditor *status_editor, PurpleAccount *account);
 
 static void
 edit_substatus_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *col, gpointer user_data)
 {
 	StatusEditor *dialog = user_data;
 	GtkTreeIter iter;
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter,
@@ -875,7 +875,7 @@ status_editor_substatus_cb(GtkCellRendererToggle *renderer, gchar *path_str, gpo
 	StatusEditor *dialog = (StatusEditor *)data;
 	GtkTreeIter iter;
 	gboolean enabled;
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	gtk_tree_model_get_iter_from_string(GTK_TREE_MODEL(dialog->model), &iter, path_str);
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter,
@@ -963,34 +963,34 @@ status_editor_add_columns(StatusEditor *dialog)
 }
 
 static void
-status_editor_set_account(GtkListStore *store, GaimAccount *account,
-						  GtkTreeIter *iter, GaimSavedStatusSub *substatus)
+status_editor_set_account(GtkListStore *store, PurpleAccount *account,
+						  GtkTreeIter *iter, PurpleSavedStatusSub *substatus)
 {
 	GdkPixbuf *pixbuf;
 	const char *id = NULL, *name = NULL, *message = NULL;
 
 	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
-	if ((pixbuf != NULL) && !gaim_account_is_connected(account))
+	if ((pixbuf != NULL) && !purple_account_is_connected(account))
 	{
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 	}
 
 	if (substatus != NULL)
 	{
-		const GaimStatusType *type;
+		const PurpleStatusType *type;
 
-		type = gaim_savedstatus_substatus_get_type(substatus);
-		id = gaim_status_type_get_id(type);
-		name = gaim_status_type_get_name(type);
-		if (gaim_status_type_get_attr(type, "message"))
-			message = gaim_savedstatus_substatus_get_message(substatus);
+		type = purple_savedstatus_substatus_get_type(substatus);
+		id = purple_status_type_get_id(type);
+		name = purple_status_type_get_name(type);
+		if (purple_status_type_get_attr(type, "message"))
+			message = purple_savedstatus_substatus_get_message(substatus);
 	}
 
 	gtk_list_store_set(store, iter,
 			STATUS_EDITOR_COLUMN_ACCOUNT, account,
 			STATUS_EDITOR_COLUMN_ENABLE_SUBSTATUS, (substatus != NULL),
 			STATUS_EDITOR_COLUMN_ICON, pixbuf,
-			STATUS_EDITOR_COLUMN_SCREENNAME, gaim_account_get_username(account),
+			STATUS_EDITOR_COLUMN_SCREENNAME, purple_account_get_username(account),
 			STATUS_EDITOR_COLUMN_STATUS_ID, id,
 			STATUS_EDITOR_COLUMN_STATUS_NAME, name,
 			STATUS_EDITOR_COLUMN_STATUS_MESSAGE, message,
@@ -1001,8 +1001,8 @@ status_editor_set_account(GtkListStore *store, GaimAccount *account,
 }
 
 static void
-status_editor_add_account(StatusEditor *dialog, GaimAccount *account,
-						  GaimSavedStatusSub *substatus)
+status_editor_add_account(StatusEditor *dialog, PurpleAccount *account,
+						  PurpleSavedStatusSub *substatus)
 {
 	GtkTreeIter iter;
 
@@ -1012,19 +1012,19 @@ status_editor_add_account(StatusEditor *dialog, GaimAccount *account,
 }
 
 static void
-status_editor_populate_list(StatusEditor *dialog, GaimSavedStatus *saved_status)
+status_editor_populate_list(StatusEditor *dialog, PurpleSavedStatus *saved_status)
 {
 	GList *iter;
-	GaimSavedStatusSub *substatus;
+	PurpleSavedStatusSub *substatus;
 
 	gtk_list_store_clear(dialog->model);
 
-	for (iter = gaim_accounts_get_all(); iter != NULL; iter = iter->next)
+	for (iter = purple_accounts_get_all(); iter != NULL; iter = iter->next)
 	{
-		GaimAccount *account = (GaimAccount *)iter->data;
+		PurpleAccount *account = (PurpleAccount *)iter->data;
 
 		if (saved_status != NULL)
-			substatus = gaim_savedstatus_get_substatus(saved_status, account);
+			substatus = purple_savedstatus_get_substatus(saved_status, account);
 		else
 			substatus = NULL;
 
@@ -1033,7 +1033,7 @@ status_editor_populate_list(StatusEditor *dialog, GaimSavedStatus *saved_status)
 }
 
 void
-pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
+pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 {
 	GtkTreeIter iter;
 	StatusEditor *dialog;
@@ -1057,11 +1057,11 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	if (edit)
 	{
 		g_return_if_fail(saved_status != NULL);
-		g_return_if_fail(!gaim_savedstatus_is_transient(saved_status));
+		g_return_if_fail(!purple_savedstatus_is_transient(saved_status));
 	}
 
 	/* Find a possible window for this saved status and present it */
-	if (edit && status_window_find_savedstatus(&iter, gaim_savedstatus_get_title(saved_status)))
+	if (edit && status_window_find_savedstatus(&iter, purple_savedstatus_get_title(saved_status)))
 	{
 		gtk_tree_model_get(GTK_TREE_MODEL(status_window->model), &iter,
 							STATUS_WINDOW_COLUMN_WINDOW, &dialog,
@@ -1074,7 +1074,7 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	}
 
 	dialog = g_new0(StatusEditor, 1);
-	if (edit && status_window_find_savedstatus(&iter, gaim_savedstatus_get_title(saved_status)))
+	if (edit && status_window_find_savedstatus(&iter, purple_savedstatus_get_title(saved_status)))
 	{
 		gtk_list_store_set(status_window->model, &iter,
 							STATUS_WINDOW_COLUMN_WINDOW, dialog,
@@ -1082,7 +1082,7 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	}
 
 	if (edit)
-		dialog->original_title = g_strdup(gaim_savedstatus_get_title(saved_status));
+		dialog->original_title = g_strdup(purple_savedstatus_get_title(saved_status));
 
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(win), "status");
@@ -1111,9 +1111,9 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	entry = gtk_entry_new();
 	dialog->title = GTK_ENTRY(entry);
 	if ((saved_status != NULL)
-			&& !gaim_savedstatus_is_transient(saved_status)
-			&& (gaim_savedstatus_get_title(saved_status) != NULL))
-		gtk_entry_set_text(GTK_ENTRY(entry), gaim_savedstatus_get_title(saved_status));
+			&& !purple_savedstatus_is_transient(saved_status)
+			&& (purple_savedstatus_get_title(saved_status) != NULL))
+		gtk_entry_set_text(GTK_ENTRY(entry), purple_savedstatus_get_title(saved_status));
 	gtk_box_pack_start(GTK_BOX(hbox), entry, TRUE, TRUE, 0);
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(editor_title_changed_cb), dialog);
@@ -1128,9 +1128,9 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	gtk_size_group_add_widget(sg, label);
 
 	if (saved_status != NULL)
-		dropdown = create_status_type_menu(gaim_savedstatus_get_type(saved_status));
+		dropdown = create_status_type_menu(purple_savedstatus_get_type(saved_status));
 	else
-		dropdown = create_status_type_menu(GAIM_STATUS_AWAY);
+		dropdown = create_status_type_menu(PURPLE_STATUS_AWAY);
 	dialog->type = GTK_OPTION_MENU(dropdown);
 	gtk_box_pack_start(GTK_BOX(hbox), dropdown, TRUE, TRUE, 0);
 
@@ -1149,9 +1149,9 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 	focus_chain = g_list_prepend(focus_chain, dialog->message);
 	gtk_container_set_focus_chain(GTK_CONTAINER(hbox), focus_chain);
 
-	if ((saved_status != NULL) && (gaim_savedstatus_get_message(saved_status) != NULL))
+	if ((saved_status != NULL) && (purple_savedstatus_get_message(saved_status) != NULL))
 		gtk_imhtml_append_text(GTK_IMHTML(text),
-							   gaim_savedstatus_get_message(saved_status), 0);
+							   purple_savedstatus_get_message(saved_status), 0);
 
 	/* Different status message expander */
 	expander = gtk_expander_new_with_mnemonic(_("Use a _different status for some accounts"));
@@ -1194,7 +1194,7 @@ pidgin_status_editor_show(gboolean edit, GaimSavedStatus *saved_status)
 
 	/* Expand the treeview if we have substatuses */
 	gtk_expander_set_expanded(GTK_EXPANDER(expander),
-		(saved_status != NULL) && gaim_savedstatus_has_substatuses(saved_status));
+		(saved_status != NULL) && purple_savedstatus_has_substatuses(saved_status));
 
 	/* Button box */
 	bbox = gtk_hbutton_box_new();
@@ -1252,17 +1252,17 @@ substatus_selection_changed_cb(GtkComboBox *box, gpointer user_data)
 	SubStatusEditor *select = user_data;
 	GtkTreeIter iter;
 	char *id;
-	GaimStatusType *type;
+	PurpleStatusType *type;
 
 	if (!gtk_combo_box_get_active_iter(box, &iter))
 		return;
 	gtk_tree_model_get(GTK_TREE_MODEL(select->model), &iter,
 					   SUBSTATUS_COLUMN_STATUS_ID, &id,
 					   -1);
-	type = gaim_account_get_status_type(select->account, id);
+	type = purple_account_get_status_type(select->account, id);
 	g_free(id);
 
-	if (gaim_status_type_get_attr(type, "message") == NULL)
+	if (purple_status_type_get_attr(type, "message") == NULL)
 	{
 		gtk_widget_set_sensitive(GTK_WIDGET(select->message), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(select->toolbar), FALSE);
@@ -1277,10 +1277,10 @@ substatus_selection_changed_cb(GtkComboBox *box, gpointer user_data)
 static gboolean
 status_editor_find_account_in_treemodel(GtkTreeIter *iter,
 										StatusEditor *status_editor,
-										GaimAccount *account)
+										PurpleAccount *account)
 {
 	GtkTreeModel *model;
-	GaimAccount *cur;
+	PurpleAccount *cur;
 
 	g_return_val_if_fail(status_editor != NULL, FALSE);
 	g_return_val_if_fail(account       != NULL, FALSE);
@@ -1341,7 +1341,7 @@ substatus_editor_ok_cb(GtkButton *button, gpointer user_data)
 	SubStatusEditor *dialog = user_data;
 	StatusEditor *status_editor;
 	GtkTreeIter iter;
-	GaimStatusType *type;
+	PurpleStatusType *type;
 	char *id = NULL;
 	char *message = NULL;
 	const char *name = NULL;
@@ -1356,10 +1356,10 @@ substatus_editor_ok_cb(GtkButton *button, gpointer user_data)
 	gtk_tree_model_get(GTK_TREE_MODEL(dialog->model), &iter,
 					   SUBSTATUS_COLUMN_STATUS_ID, &id,
 					   -1);
-	type = gaim_account_get_status_type(dialog->account, id);
-	if (gaim_status_type_get_attr(type, "message") != NULL)
+	type = purple_account_get_status_type(dialog->account, id);
+	if (purple_status_type_get_attr(type, "message") != NULL)
 		message = gtk_imhtml_get_text(GTK_IMHTML(dialog->message), NULL, NULL);
-	name = gaim_status_type_get_name(type);
+	name = purple_status_type_get_name(type);
 
 	status_editor = dialog->status_editor;
 
@@ -1381,7 +1381,7 @@ substatus_editor_ok_cb(GtkButton *button, gpointer user_data)
 }
 
 static void
-edit_substatus(StatusEditor *status_editor, GaimAccount *account)
+edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 {
 	char *tmp;
 	SubStatusEditor *dialog;
@@ -1424,7 +1424,7 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(win), "substatus");
-	tmp = g_strdup_printf(_("Status for %s"), gaim_account_get_username(account));
+	tmp = g_strdup_printf(_("Status for %s"), purple_account_get_username(account));
 	gtk_window_set_title(GTK_WINDOW(win), tmp);
 	g_free(tmp);
 	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
@@ -1508,38 +1508,38 @@ edit_substatus(StatusEditor *status_editor, GaimAccount *account)
 	/* TODO: Get the current values from our parent's list store, not the saved_status! */
 	if (status_editor->original_title != NULL)
 	{
-		GaimSavedStatus *saved_status = NULL;
-		GaimSavedStatusSub *substatus = NULL;
+		PurpleSavedStatus *saved_status = NULL;
+		PurpleSavedStatusSub *substatus = NULL;
 
-		saved_status = gaim_savedstatus_find(status_editor->original_title);
+		saved_status = purple_savedstatus_find(status_editor->original_title);
 		if (saved_status != NULL)
-			substatus = gaim_savedstatus_get_substatus(saved_status, account);
+			substatus = purple_savedstatus_get_substatus(saved_status, account);
 
 		if (substatus != NULL)
 		{
 			gtk_imhtml_append_text(dialog->message,
-								   gaim_savedstatus_substatus_get_message(substatus),
+								   purple_savedstatus_substatus_get_message(substatus),
 								   0);
-			status_id = gaim_status_type_get_id(gaim_savedstatus_substatus_get_type(substatus));
+			status_id = purple_status_type_get_id(purple_savedstatus_substatus_get_type(substatus));
 		}
 		/* TODO: Else get the generic status type from our parent */
 	}
 
-	for (list = gaim_account_get_status_types(account); list; list = list->next)
+	for (list = purple_account_get_status_types(account); list; list = list->next)
 	{
-		GaimStatusType *status_type;
+		PurpleStatusType *status_type;
 		GdkPixbuf *pixbuf;
 		const char *id, *name;
 
 		status_type = list->data;
 
 		/* Only allow users to select statuses that are flagged as "user settable" */
-		if (!gaim_status_type_is_user_settable(status_type))
+		if (!purple_status_type_is_user_settable(status_type))
 			continue;
 
-		id = gaim_status_type_get_id(status_type);
-		pixbuf = pidgin_create_status_icon(gaim_status_type_get_primitive(status_type), combo, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
-		name = gaim_status_type_get_name(status_type);
+		id = purple_status_type_get_id(status_type);
+		pixbuf = pidgin_create_status_icon(purple_status_type_get_primitive(status_type), combo, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+		name = purple_status_type_get_name(status_type);
 
 		gtk_list_store_append(dialog->model, &iter);
 		gtk_list_store_set(dialog->model, &iter,
@@ -1588,7 +1588,7 @@ enum {
 	/*
 	 * This value depends on SS_MENU_TYPE_COLUMN.  For _SAVEDSTATUS types,
 	 * this is the creation time.  For _PRIMITIVE types,
-	 * this is the GaimStatusPrimitive.
+	 * this is the PurpleStatusPrimitive.
 	 */
 	SS_MENU_DATA_COLUMN,
 
@@ -1596,12 +1596,12 @@ enum {
 };
 
 static void
-status_menu_cb(GtkComboBox *widget, void(*callback)(GaimSavedStatus*))
+status_menu_cb(GtkComboBox *widget, void(*callback)(PurpleSavedStatus*))
 {
 	GtkTreeIter iter;
 	int type;
 	gpointer data;
-	GaimSavedStatus *status = NULL;
+	PurpleSavedStatus *status = NULL;
 
 	if (!gtk_combo_box_get_active_iter(widget, &iter))
 		return;
@@ -1613,13 +1613,13 @@ status_menu_cb(GtkComboBox *widget, void(*callback)(GaimSavedStatus*))
 
 	if (type == SS_MENU_ENTRY_TYPE_PRIMITIVE)
 	{
-		GaimStatusPrimitive primitive = GPOINTER_TO_INT(data);
-		status = gaim_savedstatus_find_transient_by_type_and_message(primitive, NULL);
+		PurpleStatusPrimitive primitive = GPOINTER_TO_INT(data);
+		status = purple_savedstatus_find_transient_by_type_and_message(primitive, NULL);
 		if (status == NULL)
-			status = gaim_savedstatus_new(NULL, primitive);
+			status = purple_savedstatus_new(NULL, primitive);
 	}
 	else if (type == SS_MENU_ENTRY_TYPE_SAVEDSTATUS)
-		status = gaim_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
+		status = purple_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
 
 	callback(status);
 }
@@ -1627,14 +1627,14 @@ status_menu_cb(GtkComboBox *widget, void(*callback)(GaimSavedStatus*))
 static gint
 saved_status_sort_alphabetically_func(gconstpointer a, gconstpointer b)
 {
-	const GaimSavedStatus *saved_status_a = a;
-	const GaimSavedStatus *saved_status_b = b;
-	return g_utf8_collate(gaim_savedstatus_get_title(saved_status_a),
-				  gaim_savedstatus_get_title(saved_status_b));
+	const PurpleSavedStatus *saved_status_a = a;
+	const PurpleSavedStatus *saved_status_b = b;
+	return g_utf8_collate(purple_savedstatus_get_title(saved_status_a),
+				  purple_savedstatus_get_title(saved_status_b));
 }
 
-static gboolean pidgin_status_menu_add_primitive(GtkListStore *model, GtkWidget *w, GaimStatusPrimitive primitive,
-	GaimSavedStatus *current_status)
+static gboolean pidgin_status_menu_add_primitive(GtkListStore *model, GtkWidget *w, PurpleStatusPrimitive primitive,
+	PurpleSavedStatus *current_status)
 {
 	GtkTreeIter iter;
 	gboolean currently_selected = FALSE;
@@ -1644,19 +1644,19 @@ static gboolean pidgin_status_menu_add_primitive(GtkListStore *model, GtkWidget 
 	gtk_list_store_set(model, &iter,
 			   SS_MENU_TYPE_COLUMN, SS_MENU_ENTRY_TYPE_PRIMITIVE,
 			   SS_MENU_ICON_COLUMN, pixbuf,
-			   SS_MENU_TEXT_COLUMN, gaim_primitive_get_name_from_type(primitive),
+			   SS_MENU_TEXT_COLUMN, purple_primitive_get_name_from_type(primitive),
 			   SS_MENU_DATA_COLUMN, GINT_TO_POINTER(primitive),
 			   -1);
 
-	if (gaim_savedstatus_is_transient(current_status)
-			&& !gaim_savedstatus_has_substatuses(current_status)
-			&& gaim_savedstatus_get_type(current_status) == primitive)
+	if (purple_savedstatus_is_transient(current_status)
+			&& !purple_savedstatus_has_substatuses(current_status)
+			&& purple_savedstatus_get_type(current_status) == primitive)
 		currently_selected = TRUE;
 
 	return currently_selected;
 }
 
-GtkWidget *pidgin_status_menu(GaimSavedStatus *current_status, GCallback callback)
+GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callback)
 {
 	GtkWidget *combobox;
 	GtkListStore *model;
@@ -1672,31 +1672,31 @@ GtkWidget *pidgin_status_menu(GaimSavedStatus *current_status, GCallback callbac
 
 	combobox = gtk_combo_box_new();
 
-	if (pidgin_status_menu_add_primitive(model, combobox, GAIM_STATUS_AVAILABLE, current_status))
+	if (pidgin_status_menu_add_primitive(model, combobox, PURPLE_STATUS_AVAILABLE, current_status))
 		index = i;
 	i++;
 
-	if (pidgin_status_menu_add_primitive(model, combobox, GAIM_STATUS_AWAY, current_status))
+	if (pidgin_status_menu_add_primitive(model, combobox, PURPLE_STATUS_AWAY, current_status))
 		index = i;
 	i++;
 
-	if (pidgin_status_menu_add_primitive(model, combobox, GAIM_STATUS_INVISIBLE, current_status))
+	if (pidgin_status_menu_add_primitive(model, combobox, PURPLE_STATUS_INVISIBLE, current_status))
 		index = i;
 	i++;
 
-	if (pidgin_status_menu_add_primitive(model, combobox, GAIM_STATUS_OFFLINE, current_status))
+	if (pidgin_status_menu_add_primitive(model, combobox, PURPLE_STATUS_OFFLINE, current_status))
 		index = i;
 	i++;
 
-	sorted = g_list_copy((GList *)gaim_savedstatuses_get_all());
+	sorted = g_list_copy((GList *)purple_savedstatuses_get_all());
 	sorted = g_list_sort(sorted, saved_status_sort_alphabetically_func);
 	for (cur = sorted; cur; cur = cur->next)
 	{
-		GaimSavedStatus *status = (GaimSavedStatus *) cur->data;
-		if (!gaim_savedstatus_is_transient(status))
+		PurpleSavedStatus *status = (PurpleSavedStatus *) cur->data;
+		if (!purple_savedstatus_is_transient(status))
 		{
 			/* Get an appropriate status icon */
-			pixbuf = pidgin_create_status_icon(gaim_savedstatus_get_type(status),
+			pixbuf = pidgin_create_status_icon(purple_savedstatus_get_type(status),
 							combobox, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 			/* Overlay a disk in the bottom left corner */
@@ -1716,8 +1716,8 @@ GtkWidget *pidgin_status_menu(GaimSavedStatus *current_status, GCallback callbac
 			gtk_list_store_set(model, &iter,
 				SS_MENU_TYPE_COLUMN, SS_MENU_ENTRY_TYPE_SAVEDSTATUS,
 				SS_MENU_ICON_COLUMN, pixbuf,
-				SS_MENU_TEXT_COLUMN, gaim_savedstatus_get_title(status),
-				SS_MENU_DATA_COLUMN, GINT_TO_POINTER(gaim_savedstatus_get_creation_time(status)),
+				SS_MENU_TEXT_COLUMN, purple_savedstatus_get_title(status),
+				SS_MENU_DATA_COLUMN, GINT_TO_POINTER(purple_savedstatus_get_creation_time(status)),
 				-1);
 
 			if (status == current_status)
@@ -1759,10 +1759,10 @@ pidgin_status_get_handle(void)
 void
 pidgin_status_init(void)
 {
-	gaim_prefs_add_none("/gaim/gtk/status");
-	gaim_prefs_add_none("/gaim/gtk/status/dialog");
-	gaim_prefs_add_int("/gaim/gtk/status/dialog/width",  550);
-	gaim_prefs_add_int("/gaim/gtk/status/dialog/height", 250);
+	purple_prefs_add_none("/purple/gtk/status");
+	purple_prefs_add_none("/purple/gtk/status/dialog");
+	purple_prefs_add_int("/purple/gtk/status/dialog/width",  550);
+	purple_prefs_add_int("/purple/gtk/status/dialog/height", 250);
 }
 
 void

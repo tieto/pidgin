@@ -1,9 +1,9 @@
 /**
  * @file msnslp.c MSNSLP support
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -76,13 +76,13 @@ get_token(const char *str, const char *start, const char *end)
  **************************************************************************/
 
 static void
-msn_xfer_init(GaimXfer *xfer)
+msn_xfer_init(PurpleXfer *xfer)
 {
 	MsnSlpCall *slpcall;
 	/* MsnSlpLink *slplink; */
 	char *content;
 
-	gaim_debug_info("msn", "xfer_init\n");
+	purple_debug_info("msn", "xfer_init\n");
 
 	slpcall = xfer->data;
 
@@ -98,7 +98,7 @@ msn_xfer_init(GaimXfer *xfer)
 }
 
 void
-msn_xfer_cancel(GaimXfer *xfer)
+msn_xfer_cancel(PurpleXfer *xfer)
 {
 	MsnSlpCall *slpcall;
 	char *content;
@@ -108,7 +108,7 @@ msn_xfer_cancel(GaimXfer *xfer)
 
 	slpcall = xfer->data;
 
-	if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL)
+	if (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL)
 	{
 		if (slpcall->started)
 		{
@@ -133,24 +133,24 @@ msn_xfer_cancel(GaimXfer *xfer)
 void
 msn_xfer_progress_cb(MsnSlpCall *slpcall, gsize total_length, gsize len, gsize offset)
 {
-	GaimXfer *xfer;
+	PurpleXfer *xfer;
 
 	xfer = slpcall->xfer;
 
 	xfer->bytes_sent = (offset + len);
 	xfer->bytes_remaining = total_length - (offset + len);
 
-	gaim_xfer_update_progress(xfer);
+	purple_xfer_update_progress(xfer);
 }
 
 void
 msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session)
 {
-	if ((gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_DONE) &&
-		(gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_CANCEL_REMOTE) &&
-		(gaim_xfer_get_status(slpcall->xfer) != GAIM_XFER_STATUS_CANCEL_LOCAL))
+	if ((purple_xfer_get_status(slpcall->xfer) != PURPLE_XFER_STATUS_DONE) &&
+		(purple_xfer_get_status(slpcall->xfer) != PURPLE_XFER_STATUS_CANCEL_REMOTE) &&
+		(purple_xfer_get_status(slpcall->xfer) != PURPLE_XFER_STATUS_CANCEL_LOCAL))
 	{
-		gaim_xfer_cancel_remote(slpcall->xfer);
+		purple_xfer_cancel_remote(slpcall->xfer);
 	}
 }
 
@@ -158,7 +158,7 @@ void
 msn_xfer_completed_cb(MsnSlpCall *slpcall, const guchar *body,
 					  gsize size)
 {
-	gaim_xfer_set_completed(slpcall->xfer, TRUE);
+	purple_xfer_set_completed(slpcall->xfer, TRUE);
 }
 
 /**************************************************************************
@@ -184,7 +184,7 @@ got_transresp(MsnSlpCall *slpcall, const char *nonce,
 
 	for (c = ip_addrs; *c != NULL; c++)
 	{
-		gaim_debug_info("msn", "ip_addr = %s\n", *c);
+		purple_debug_info("msn", "ip_addr = %s\n", *c);
 		if (msn_directconn_connect(directconn, *c, port))
 			break;
 	}
@@ -269,14 +269,14 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		slplink = slpcall->slplink;
 
-		msnobj_data = (char *)gaim_base64_decode(context, &len);
+		msnobj_data = (char *)purple_base64_decode(context, &len);
 		obj = msn_object_new_from_string(msnobj_data);
 		type = msn_object_get_type(obj);
 		g_free(msnobj_data);
 
 		if (!(type == MSN_OBJECT_USERTILE))
 		{
-			gaim_debug_error("msn", "Wrong object?\n");
+			purple_debug_error("msn", "Wrong object?\n");
 			msn_object_destroy(obj);
 			g_return_if_reached();
 		}
@@ -285,7 +285,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		if (file_name == NULL)
 		{
-			gaim_debug_error("msn", "Wrong object.\n");
+			purple_debug_error("msn", "Wrong object.\n");
 			msn_object_destroy(obj);
 			g_return_if_reached();
 		}
@@ -320,8 +320,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 	else if (!strcmp(euf_guid, "5D3E02AB-6190-11D3-BBBB-00C04F795683"))
 	{
 		/* File Transfer */
-		GaimAccount *account;
-		GaimXfer *xfer;
+		PurpleAccount *account;
+		PurpleXfer *xfer;
 		char *bin;
 		gsize bin_len;
 		guint32 file_size;
@@ -337,11 +337,11 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 		slpcall->pending = TRUE;
 
-		xfer = gaim_xfer_new(account, GAIM_XFER_RECEIVE,
+		xfer = purple_xfer_new(account, PURPLE_XFER_RECEIVE,
 							 slpcall->slplink->remote_user);
 		if (xfer)
 		{
-			bin = (char *)gaim_base64_decode(context, &bin_len);
+			bin = (char *)purple_base64_decode(context, &bin_len);
 			file_size = GUINT32_FROM_LE(*((gsize *)bin + 2));
 
 			uni_name = (gunichar2 *)(bin + 20);
@@ -355,16 +355,16 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 
 			g_free(bin);
 
-			gaim_xfer_set_filename(xfer, file_name);
-			gaim_xfer_set_size(xfer, file_size);
-			gaim_xfer_set_init_fnc(xfer, msn_xfer_init);
-			gaim_xfer_set_request_denied_fnc(xfer, msn_xfer_cancel);
-			gaim_xfer_set_cancel_recv_fnc(xfer, msn_xfer_cancel);
+			purple_xfer_set_filename(xfer, file_name);
+			purple_xfer_set_size(xfer, file_size);
+			purple_xfer_set_init_fnc(xfer, msn_xfer_init);
+			purple_xfer_set_request_denied_fnc(xfer, msn_xfer_cancel);
+			purple_xfer_set_cancel_recv_fnc(xfer, msn_xfer_cancel);
 
 			slpcall->xfer = xfer;
 			xfer->data = slpcall;
 
-			gaim_xfer_request(xfer);
+			purple_xfer_request(xfer);
 		}
 	}
 }
@@ -445,7 +445,7 @@ got_invite(MsnSlpCall *slpcall,
 			char *ip_port;
 			int port;
 
-			/* ip_addr = gaim_prefs_get_string("/core/ft/public_ip"); */
+			/* ip_addr = purple_prefs_get_string("/core/ft/public_ip"); */
 			ip_port = "5190";
 			listening = "true";
 			nonce = rand_guid();
@@ -582,7 +582,7 @@ got_ok(MsnSlpCall *slpcall,
 	else if (!strcmp(type, "application/x-msnmsgr-transreqbody"))
 	{
 		/* Do we get this? */
-		gaim_debug_info("msn", "OK with transreqbody\n");
+		purple_debug_info("msn", "OK with transreqbody\n");
 	}
 	else if (!strcmp(type, "application/x-msnmsgr-transrespbody"))
 	{
@@ -621,7 +621,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 
 	if (body == NULL)
 	{
-		gaim_debug_warning("msn", "received bogus message\n");
+		purple_debug_warning("msn", "received bogus message\n");
 		return NULL;
 	}
 
@@ -692,7 +692,7 @@ msn_slp_sip_recv(MsnSlpLink *slplink, const char *body)
 				temp[offset] = '\0';
 			}
 
-			gaim_debug_error("msn", "Received non-OK result: %s\n", temp);
+			purple_debug_error("msn", "Received non-OK result: %s\n", temp);
 
 			slpcall->wasted = TRUE;
 
@@ -753,7 +753,7 @@ msn_p2p_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		if (slplink->swboard != NULL)
 			slplink->swboard->slplinks = g_list_prepend(slplink->swboard->slplinks, slplink);
 		else
-			gaim_debug_error("msn", "msn_p2p_msg, swboard is NULL, ouch!\n");
+			purple_debug_error("msn", "msn_p2p_msg, swboard is NULL, ouch!\n");
 	}
 
 	msn_slplink_process_msg(slplink, msg);
@@ -764,24 +764,24 @@ got_emoticon(MsnSlpCall *slpcall,
 			 const guchar *data, gsize size)
 {
 
-	GaimConversation *conv;
-	GaimConnection *gc;
+	PurpleConversation *conv;
+	PurpleConnection *gc;
 	const char *who;
 
 	gc = slpcall->slplink->session->account->gc;
 	who = slpcall->slplink->remote_user;
 
-	if ((conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, who, gc->account))) {
+	if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, gc->account))) {
 
 		/* FIXME: it would be better if we wrote the data as we received it
 		          instead of all at once, calling write multiple times and
 		          close once at the very end
 		*/
-		gaim_conv_custom_smiley_write(conv, slpcall->data_info, data, size);
-		gaim_conv_custom_smiley_close(conv, slpcall->data_info);
+		purple_conv_custom_smiley_write(conv, slpcall->data_info, data, size);
+		purple_conv_custom_smiley_close(conv, slpcall->data_info);
 	}
 #ifdef MSN_DEBUG_UD
-	gaim_debug_info("msn", "Got smiley: %s\n", slpcall->data_info);
+	purple_debug_info("msn", "Got smiley: %s\n", slpcall->data_info);
 #endif
 }
 
@@ -797,11 +797,11 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	guint tok;
 	size_t body_len;
 
-	GaimConversation *conv;
+	PurpleConversation *conv;
 
 	session = cmdproc->servconn->session;
 
-	if (!gaim_account_get_bool(session->account, "custom_smileys", TRUE))
+	if (!purple_account_get_bool(session->account, "custom_smileys", TRUE))
 		return;
 
 	body = msn_message_get_bin_data(msg, &body_len);
@@ -819,7 +819,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 
 		smile = tokens[tok];
-		obj = msn_object_new_from_string(gaim_url_decode(tokens[tok + 1]));
+		obj = msn_object_new_from_string(purple_url_decode(tokens[tok + 1]));
 
 		if (obj == NULL)
 			break;
@@ -829,7 +829,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 		slplink = msn_session_get_slplink(session, who);
 
-		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, who,
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who,
 												   session->account);
 
 		/* If the conversation doesn't exist then this is a custom smiley
@@ -839,10 +839,10 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		 * the conversation doesn't exist then we cannot associate the new
 		 * smiley with its GtkIMHtml widget. */
 		if (!conv) {
-			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, session->account, who);
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, session->account, who);
 		}
 
-		if (gaim_conv_custom_smiley_add(conv, smile, "sha1", sha1c, TRUE)) {
+		if (purple_conv_custom_smiley_add(conv, smile, "sha1", sha1c, TRUE)) {
 			msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 		}
 
@@ -855,22 +855,22 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 }
 
 static gboolean
-buddy_icon_cached(GaimConnection *gc, MsnObject *obj)
+buddy_icon_cached(PurpleConnection *gc, MsnObject *obj)
 {
-	GaimAccount *account;
-	GaimBuddy *buddy;
+	PurpleAccount *account;
+	PurpleBuddy *buddy;
 	const char *old;
 	const char *new;
 
 	g_return_val_if_fail(obj != NULL, FALSE);
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
-	buddy = gaim_find_buddy(account, msn_object_get_creator(obj));
+	buddy = purple_find_buddy(account, msn_object_get_creator(obj));
 	if (buddy == NULL)
 		return FALSE;
 
-	old = gaim_blist_node_get_string((GaimBlistNode *)buddy, "icon_checksum");
+	old = purple_blist_node_get_string((PurpleBlistNode *)buddy, "icon_checksum");
 	new = msn_object_get_sha1c(obj);
 
 	if (new == NULL)
@@ -878,7 +878,7 @@ buddy_icon_cached(GaimConnection *gc, MsnObject *obj)
 
 	/* If the old and new checksums are the same, and the file actually exists,
 	 * then return TRUE */
-	if (old != NULL && !strcmp(old, new) && (gaim_buddy_icons_find(account, gaim_buddy_get_name(buddy)) != NULL))
+	if (old != NULL && !strcmp(old, new) && (purple_buddy_icons_find(account, purple_buddy_get_name(buddy)) != NULL))
 		return TRUE;
 
 	return FALSE;
@@ -892,13 +892,13 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 	g_return_if_fail(userlist != NULL);
 
 #ifdef MSN_DEBUG_UD
-	gaim_debug_info("msn", "Releasing buddy icon request\n");
+	purple_debug_info("msn", "Releasing buddy icon request\n");
 #endif
 
 	if (userlist->buddy_icon_window > 0)
 	{
 		GQueue *queue;
-		GaimAccount *account;
+		PurpleAccount *account;
 		const char *username;
 
 		queue = userlist->buddy_icon_requests;
@@ -915,7 +915,7 @@ msn_release_buddy_icon_request(MsnUserList *userlist)
 		msn_request_user_display(user);
 
 #ifdef MSN_DEBUG_UD
-		gaim_debug_info("msn", "msn_release_buddy_icon_request(): buddy_icon_window-- yields =%d\n",
+		purple_debug_info("msn", "msn_release_buddy_icon_request(): buddy_icon_window-- yields =%d\n",
 						userlist->buddy_icon_window);
 #endif
 	}
@@ -944,7 +944,7 @@ msn_release_buddy_icon_request_timeout(gpointer data)
 void
 msn_queue_buddy_icon_request(MsnUser *user)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	MsnObject *obj;
 	GQueue *queue;
 
@@ -959,18 +959,18 @@ msn_queue_buddy_icon_request(MsnUser *user)
 		/* It seems the user has not set a msnobject */
 		GSList *sl, *list;
 
-		list = gaim_find_buddies(account, user->passport);
+		list = purple_find_buddies(account, user->passport);
 
 		for (sl = list; sl != NULL; sl = sl->next)
 		{
-			GaimBuddy *buddy = (GaimBuddy *)sl->data;
+			PurpleBuddy *buddy = (PurpleBuddy *)sl->data;
 			if (buddy->icon)
-				gaim_blist_node_remove_setting((GaimBlistNode*)buddy, "icon_checksum");
+				purple_blist_node_remove_setting((PurpleBlistNode*)buddy, "icon_checksum");
 		}
 		g_slist_free(list);
 
 		/* TODO: I think we need better buddy icon core functions. */
-		gaim_buddy_icons_set_for_user(account, user->passport, NULL, 0);
+		purple_buddy_icons_set_for_user(account, user->passport, NULL, 0);
 
 		return;
 	}
@@ -983,7 +983,7 @@ msn_queue_buddy_icon_request(MsnUser *user)
 		queue = userlist->buddy_icon_requests;
 
 #ifdef MSN_DEBUG_UD
-		gaim_debug_info("msn", "Queueing buddy icon request for %s (buddy_icon_window = %i)\n",
+		purple_debug_info("msn", "Queueing buddy icon request for %s (buddy_icon_window = %i)\n",
 						user->passport, userlist->buddy_icon_window);
 #endif
 
@@ -1000,29 +1000,29 @@ got_user_display(MsnSlpCall *slpcall,
 {
 	MsnUserList *userlist;
 	const char *info;
-	GaimAccount *account;
+	PurpleAccount *account;
 	GSList *sl, *list;
 
 	g_return_if_fail(slpcall != NULL);
 
 	info = slpcall->data_info;
 #ifdef MSN_DEBUG_UD
-	gaim_debug_info("msn", "Got User Display: %s\n", slpcall->slplink->remote_user);
+	purple_debug_info("msn", "Got User Display: %s\n", slpcall->slplink->remote_user);
 #endif
 
 	userlist = slpcall->slplink->session->userlist;
 	account = slpcall->slplink->session->account;
 
 	/* TODO: I think we need better buddy icon core functions. */
-	gaim_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
+	purple_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
 								  (void *)data, size);
 
-	list = gaim_find_buddies(account, slpcall->slplink->remote_user);
+	list = purple_find_buddies(account, slpcall->slplink->remote_user);
 
 	for (sl = list; sl != NULL; sl = sl->next)
 	{
-		GaimBuddy *buddy = (GaimBuddy *)sl->data;
-		gaim_blist_node_set_string((GaimBlistNode*)buddy, "icon_checksum", info);
+		PurpleBuddy *buddy = (PurpleBuddy *)sl->data;
+		purple_blist_node_set_string((PurpleBlistNode*)buddy, "icon_checksum", info);
 	}
 	g_slist_free(list);
 
@@ -1030,7 +1030,7 @@ got_user_display(MsnSlpCall *slpcall,
 	/* Free one window slot */
 	userlist->buddy_icon_window++;
 
-	gaim_debug_info("msn", "got_user_display(): buddy_icon_window++ yields =%d\n",
+	purple_debug_info("msn", "got_user_display(): buddy_icon_window++ yields =%d\n",
 					userlist->buddy_icon_window);
 
 	msn_release_buddy_icon_request(userlist);
@@ -1045,7 +1045,7 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 	g_return_if_fail(session != NULL);
 
 #ifdef MSN_DEBUG_UD
-	gaim_debug_info("msn", "End User Display\n");
+	purple_debug_info("msn", "End User Display\n");
 #endif
 
 	userlist = session->userlist;
@@ -1066,18 +1066,18 @@ end_user_display(MsnSlpCall *slpcall, MsnSession *session)
 		userlist->buddy_icon_window++;
 
 		/* Clear our pending timeout */
-		gaim_timeout_remove(userlist->buddy_icon_request_timer);
+		purple_timeout_remove(userlist->buddy_icon_request_timer);
 	}
 
 	/* Wait BUDDY_ICON_DELAY ms before freeing our window slot and requesting the next icon. */
-	userlist->buddy_icon_request_timer = gaim_timeout_add(BUDDY_ICON_DELAY, 
+	userlist->buddy_icon_request_timer = purple_timeout_add(BUDDY_ICON_DELAY, 
 														  msn_release_buddy_icon_request_timeout, userlist);
 }
 
 void
 msn_request_user_display(MsnUser *user)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	MsnSession *session;
 	MsnSlpLink *slplink;
 	MsnObject *obj;
@@ -1093,7 +1093,7 @@ msn_request_user_display(MsnUser *user)
 	info = msn_object_get_sha1c(obj);
 
 	if (g_ascii_strcasecmp(user->passport,
-						   gaim_account_get_username(account)))
+						   purple_account_get_username(account)))
 	{
 		msn_slplink_request_object(slplink, info, got_user_display,
 								   end_user_display, obj);
@@ -1106,7 +1106,7 @@ msn_request_user_display(MsnUser *user)
 		GSList *sl, *list;
 
 #ifdef MSN_DEBUG_UD
-		gaim_debug_info("msn", "Requesting our own user display\n");
+		purple_debug_info("msn", "Requesting our own user display\n");
 #endif
 
 		my_obj = msn_user_get_object(session->user);
@@ -1120,15 +1120,15 @@ msn_request_user_display(MsnUser *user)
 		}
 
 		/* TODO: I think we need better buddy icon core functions. */
-		gaim_buddy_icons_set_for_user(account, user->passport, (void *)data, len);
+		purple_buddy_icons_set_for_user(account, user->passport, (void *)data, len);
 		g_free(data);
 
-		list = gaim_find_buddies(account, user->passport);
+		list = purple_find_buddies(account, user->passport);
 
 		for (sl = list; sl != NULL; sl = sl->next)
 		{
-			GaimBuddy *buddy = (GaimBuddy *)sl->data;
-			gaim_blist_node_set_string((GaimBlistNode*)buddy, "icon_checksum", info);
+			PurpleBuddy *buddy = (PurpleBuddy *)sl->data;
+			purple_blist_node_set_string((PurpleBlistNode*)buddy, "icon_checksum", info);
 		}
 		g_slist_free(list);
 
@@ -1136,7 +1136,7 @@ msn_request_user_display(MsnUser *user)
 		session->userlist->buddy_icon_window++;
 
 #ifdef MSN_DEBUG_UD
-		gaim_debug_info("msn", "msn_request_user_display(): buddy_icon_window++ yields =%d\n",
+		purple_debug_info("msn", "msn_request_user_display(): buddy_icon_window++ yields =%d\n",
 						session->userlist->buddy_icon_window);
 #endif
 

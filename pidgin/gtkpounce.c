@@ -2,9 +2,9 @@
  * @file gtkpounce.c GTK+ Buddy Pounce API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -48,7 +48,7 @@
  */
 enum
 {
-	/* Hidden column containing the GaimPounce */
+	/* Hidden column containing the PurplePounce */
 	POUNCES_MANAGER_COLUMN_POUNCE,
 	POUNCES_MANAGER_COLUMN_ICON,
 	POUNCES_MANAGER_COLUMN_TARGET,
@@ -60,8 +60,8 @@ enum
 typedef struct
 {
 	/* Pounce data */
-	GaimPounce  *pounce;
-	GaimAccount *account;
+	PurplePounce  *pounce;
+	PurpleAccount *account;
 
 	/* The window */
 	GtkWidget *window;
@@ -152,10 +152,10 @@ filesel(GtkWidget *widget, gpointer data)
 	entry = (GtkWidget *)data;
 	name = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	gaim_request_file(entry, _("Select a file"), name, FALSE,
+	purple_request_file(entry, _("Select a file"), name, FALSE,
 					  G_CALLBACK(pounce_update_entry_fields), NULL, entry);
 	g_signal_connect_swapped(G_OBJECT(entry), "destroy",
-			G_CALLBACK(gaim_request_close_with_handle), entry);
+			G_CALLBACK(purple_request_close_with_handle), entry);
 }
 
 static void
@@ -166,31 +166,31 @@ pounce_test_sound(GtkWidget *w, GtkWidget *entry)
 	filename = gtk_entry_get_text(GTK_ENTRY(entry));
 
 	if (filename != NULL && *filename != '\0')
-		gaim_sound_play_file(filename, NULL);
+		purple_sound_play_file(filename, NULL);
 	else
-		gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT, NULL);
+		purple_sound_play_event(PURPLE_SOUND_POUNCE_DEFAULT, NULL);
 }
 
 static void
-add_pounce_to_treeview(GtkListStore *model, GaimPounce *pounce)
+add_pounce_to_treeview(GtkListStore *model, PurplePounce *pounce)
 {
 	GtkTreeIter iter;
-	GaimAccount *account;
-	GaimPounceEvent events;
+	PurpleAccount *account;
+	PurplePounceEvent events;
 	gboolean recurring;
 	const char *pouncer;
 	const char *pouncee;
 	GdkPixbuf *pixbuf;
 
-	account = gaim_pounce_get_pouncer(pounce);
+	account = purple_pounce_get_pouncer(pounce);
 
-	events = gaim_pounce_get_events(pounce);
+	events = purple_pounce_get_events(pounce);
 
 	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 
-	pouncer = gaim_account_get_username(account);
-	pouncee = gaim_pounce_get_pouncee(pounce);
-	recurring = gaim_pounce_get_save(pounce);
+	pouncer = purple_account_get_username(account);
+	pouncee = purple_pounce_get_pouncee(pounce);
+	recurring = purple_pounce_get_save(pounce);
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
@@ -212,7 +212,7 @@ populate_pounces_list(PouncesManager *dialog)
 
 	gtk_list_store_clear(dialog->model);
 
-	for (pounces = gaim_pounces_get_all(); pounces != NULL;
+	for (pounces = purple_pounces_get_all(); pounces != NULL;
 			pounces = g_list_next(pounces))
 	{
 		add_pounce_to_treeview(dialog->model, pounces->data);
@@ -230,7 +230,7 @@ update_pounces(void)
 }
 
 static void
-signed_on_off_cb(GaimConnection *gc, gpointer user_data)
+signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 {
 	update_pounces();
 }
@@ -240,52 +240,52 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 {
 	const char *name;
 	const char *message, *command, *sound, *reason;
-	GaimPounceEvent events   = GAIM_POUNCE_NONE;
-	GaimPounceOption options = GAIM_POUNCE_OPTION_NONE;
+	PurplePounceEvent events   = PURPLE_POUNCE_NONE;
+	PurplePounceOption options = PURPLE_POUNCE_OPTION_NONE;
 
 	name = gtk_entry_get_text(GTK_ENTRY(dialog->buddy_entry));
 
 	if (*name == '\0')
 	{
-		gaim_notify_error(NULL, NULL,
+		purple_notify_error(NULL, NULL,
 						  _("Please enter a buddy to pounce."), NULL);
 		return;
 	}
 
 	/* Options */
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->on_away)))
-		options |= GAIM_POUNCE_OPTION_AWAY;
+		options |= PURPLE_POUNCE_OPTION_AWAY;
 
 	/* Events */
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->signon)))
-		events |= GAIM_POUNCE_SIGNON;
+		events |= PURPLE_POUNCE_SIGNON;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->signoff)))
-		events |= GAIM_POUNCE_SIGNOFF;
+		events |= PURPLE_POUNCE_SIGNOFF;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->away)))
-		events |= GAIM_POUNCE_AWAY;
+		events |= PURPLE_POUNCE_AWAY;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->away_return)))
-		events |= GAIM_POUNCE_AWAY_RETURN;
+		events |= PURPLE_POUNCE_AWAY_RETURN;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->idle)))
-		events |= GAIM_POUNCE_IDLE;
+		events |= PURPLE_POUNCE_IDLE;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->idle_return)))
-		events |= GAIM_POUNCE_IDLE_RETURN;
+		events |= PURPLE_POUNCE_IDLE_RETURN;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->typing)))
-		events |= GAIM_POUNCE_TYPING;
+		events |= PURPLE_POUNCE_TYPING;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->typed)))
-		events |= GAIM_POUNCE_TYPED;
+		events |= PURPLE_POUNCE_TYPED;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->stop_typing)))
-		events |= GAIM_POUNCE_TYPING_STOPPED;
+		events |= PURPLE_POUNCE_TYPING_STOPPED;
 
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->message_recv)))
-		events |= GAIM_POUNCE_MESSAGE_RECEIVED;
+		events |= PURPLE_POUNCE_MESSAGE_RECEIVED;
 
 	/* Data fields */
 	message = gtk_entry_get_text(GTK_ENTRY(dialog->send_msg_entry));
@@ -300,50 +300,50 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 
 	if (dialog->pounce == NULL)
 	{
-		dialog->pounce = gaim_pounce_new(PIDGIN_UI, dialog->account,
+		dialog->pounce = purple_pounce_new(PIDGIN_UI, dialog->account,
 										 name, events, options);
 	}
 	else {
-		gaim_pounce_set_events(dialog->pounce, events);
-		gaim_pounce_set_options(dialog->pounce, options);
-		gaim_pounce_set_pouncer(dialog->pounce, dialog->account);
-		gaim_pounce_set_pouncee(dialog->pounce, name);
+		purple_pounce_set_events(dialog->pounce, events);
+		purple_pounce_set_options(dialog->pounce, options);
+		purple_pounce_set_pouncer(dialog->pounce, dialog->account);
+		purple_pounce_set_pouncee(dialog->pounce, name);
 	}
 
 	/* Actions */
-	gaim_pounce_action_set_enabled(dialog->pounce, "open-window",
+	purple_pounce_action_set_enabled(dialog->pounce, "open-window",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->open_win)));
-	gaim_pounce_action_set_enabled(dialog->pounce, "popup-notify",
+	purple_pounce_action_set_enabled(dialog->pounce, "popup-notify",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->popup)));
-	gaim_pounce_action_set_enabled(dialog->pounce, "send-message",
+	purple_pounce_action_set_enabled(dialog->pounce, "send-message",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->send_msg)));
-	gaim_pounce_action_set_enabled(dialog->pounce, "execute-command",
+	purple_pounce_action_set_enabled(dialog->pounce, "execute-command",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->exec_cmd)));
-	gaim_pounce_action_set_enabled(dialog->pounce, "play-sound",
+	purple_pounce_action_set_enabled(dialog->pounce, "play-sound",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->play_sound)));
 
-	gaim_pounce_action_set_attribute(dialog->pounce, "send-message",
+	purple_pounce_action_set_attribute(dialog->pounce, "send-message",
 									 "message", message);
-	gaim_pounce_action_set_attribute(dialog->pounce, "execute-command",
+	purple_pounce_action_set_attribute(dialog->pounce, "execute-command",
 									 "command", command);
-	gaim_pounce_action_set_attribute(dialog->pounce, "play-sound",
+	purple_pounce_action_set_attribute(dialog->pounce, "play-sound",
 									 "filename", sound);
-	gaim_pounce_action_set_attribute(dialog->pounce, "popup-notify",
+	purple_pounce_action_set_attribute(dialog->pounce, "popup-notify",
 									 "reason", reason);
 
 	/* Set the defaults for next time. */
-	gaim_prefs_set_bool("/gaim/gtk/pounces/default_actions/open-window",
+	purple_prefs_set_bool("/purple/gtk/pounces/default_actions/open-window",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->open_win)));
-	gaim_prefs_set_bool("/gaim/gtk/pounces/default_actions/popup-notify",
+	purple_prefs_set_bool("/purple/gtk/pounces/default_actions/popup-notify",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->popup)));
-	gaim_prefs_set_bool("/gaim/gtk/pounces/default_actions/send-message",
+	purple_prefs_set_bool("/purple/gtk/pounces/default_actions/send-message",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->send_msg)));
-	gaim_prefs_set_bool("/gaim/gtk/pounces/default_actions/execute-command",
+	purple_prefs_set_bool("/purple/gtk/pounces/default_actions/execute-command",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->exec_cmd)));
-	gaim_prefs_set_bool("/gaim/gtk/pounces/default_actions/play-sound",
+	purple_prefs_set_bool("/purple/gtk/pounces/default_actions/play-sound",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->play_sound)));
 
-	gaim_pounce_set_save(dialog->pounce,
+	purple_pounce_set_save(dialog->pounce,
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->save_pounce)));
 
 	update_pounces();
@@ -352,7 +352,7 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 }
 
 static void
-pounce_choose_cb(GtkWidget *item, GaimAccount *account,
+pounce_choose_cb(GtkWidget *item, PurpleAccount *account,
 				 PidginPounceDialog *dialog)
 {
 	dialog->account = account;
@@ -384,17 +384,17 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 {
 	PidginPounceDialog *dialog;
 
-	if (sd->target == gdk_atom_intern("GAIM_BLIST_NODE", FALSE))
+	if (sd->target == gdk_atom_intern("PURPLE_BLIST_NODE", FALSE))
 	{
-		GaimBlistNode *node = NULL;
-		GaimBuddy *buddy;
+		PurpleBlistNode *node = NULL;
+		PurpleBuddy *buddy;
 
 		memcpy(&node, sd->data, sizeof(node));
 
-		if (GAIM_BLIST_NODE_IS_CONTACT(node))
-			buddy = gaim_contact_get_priority_buddy((GaimContact *)node);
-		else if (GAIM_BLIST_NODE_IS_BUDDY(node))
-			buddy = (GaimBuddy *)node;
+		if (PURPLE_BLIST_NODE_IS_CONTACT(node))
+			buddy = purple_contact_get_priority_buddy((PurpleContact *)node);
+		else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+			buddy = (PurpleBuddy *)node;
 		else
 			return;
 
@@ -410,14 +410,14 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 	{
 		char *protocol = NULL;
 		char *username = NULL;
-		GaimAccount *account;
+		PurpleAccount *account;
 
 		if (pidgin_parse_x_im_contact((const char *)sd->data, FALSE, &account,
 										&protocol, &username, NULL))
 		{
 			if (account == NULL)
 			{
-				gaim_notify_error(NULL, NULL,
+				purple_notify_error(NULL, NULL,
 					_("You are not currently signed on with an account that "
 					  "can add that buddy."), NULL);
 			}
@@ -440,13 +440,13 @@ pounce_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 static const GtkTargetEntry dnd_targets[] =
 {
-	{"GAIM_BLIST_NODE", GTK_TARGET_SAME_APP, 0},
+	{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, 0},
 	{"application/x-im-contact", 0, 1}
 };
 
 void
-pidgin_pounce_editor_show(GaimAccount *account, const char *name,
-							GaimPounce *cur_pounce)
+pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
+							PurplePounce *cur_pounce)
 {
 	PidginPounceDialog *dialog;
 	GtkWidget *window;
@@ -463,14 +463,14 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 
 	g_return_if_fail((cur_pounce != NULL) ||
 	                 (account != NULL) ||
-	                 (gaim_accounts_get_all() != NULL));
+	                 (purple_accounts_get_all() != NULL));
 
 	dialog = g_new0(PidginPounceDialog, 1);
 
 	if (cur_pounce != NULL)
 	{
 		dialog->pounce  = cur_pounce;
-		dialog->account = gaim_pounce_get_pouncer(cur_pounce);
+		dialog->account = purple_pounce_get_pouncer(cur_pounce);
 	}
 	else if (account != NULL)
 	{
@@ -479,16 +479,16 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 	}
 	else
 	{
-		GList *connections = gaim_connections_get_all();
-		GaimConnection *gc;
+		GList *connections = purple_connections_get_all();
+		PurpleConnection *gc;
 
 		if (connections != NULL)
 		{
-			gc = (GaimConnection *)connections->data;
-			dialog->account = gaim_connection_get_account(gc);
+			gc = (PurpleConnection *)connections->data;
+			dialog->account = purple_connection_get_account(gc);
 		}
 		else
-			dialog->account = gaim_accounts_get_all()->data;
+			dialog->account = purple_accounts_get_all()->data;
 
 		dialog->pounce  = NULL;
 	}
@@ -565,7 +565,7 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 
 	if (cur_pounce != NULL) {
 		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry),
-						   gaim_pounce_get_pouncee(cur_pounce));
+						   purple_pounce_get_pouncee(cur_pounce));
 	}
 	else if (name != NULL) {
 		gtk_entry_set_text(GTK_ENTRY(dialog->buddy_entry), name);
@@ -841,73 +841,73 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 	/* Set the values of stuff. */
 	if (cur_pounce != NULL)
 	{
-		GaimPounceEvent events   = gaim_pounce_get_events(cur_pounce);
-		GaimPounceOption options = gaim_pounce_get_options(cur_pounce);
+		PurplePounceEvent events   = purple_pounce_get_events(cur_pounce);
+		PurplePounceOption options = purple_pounce_get_options(cur_pounce);
 		const char *value;
 
 		/* Options */
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->on_away),
-									(options & GAIM_POUNCE_OPTION_AWAY));
+									(options & PURPLE_POUNCE_OPTION_AWAY));
 
 		/* Events */
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->signon),
-									(events & GAIM_POUNCE_SIGNON));
+									(events & PURPLE_POUNCE_SIGNON));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->signoff),
-									(events & GAIM_POUNCE_SIGNOFF));
+									(events & PURPLE_POUNCE_SIGNOFF));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->away),
-									(events & GAIM_POUNCE_AWAY));
+									(events & PURPLE_POUNCE_AWAY));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->away_return),
-									(events & GAIM_POUNCE_AWAY_RETURN));
+									(events & PURPLE_POUNCE_AWAY_RETURN));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->idle),
-									(events & GAIM_POUNCE_IDLE));
+									(events & PURPLE_POUNCE_IDLE));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->idle_return),
-									(events & GAIM_POUNCE_IDLE_RETURN));
+									(events & PURPLE_POUNCE_IDLE_RETURN));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->typing),
-									(events & GAIM_POUNCE_TYPING));
+									(events & PURPLE_POUNCE_TYPING));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->typed),
-									(events & GAIM_POUNCE_TYPED));
+									(events & PURPLE_POUNCE_TYPED));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->stop_typing),
-									(events & GAIM_POUNCE_TYPING_STOPPED));
+									(events & PURPLE_POUNCE_TYPING_STOPPED));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->message_recv),
-									(events & GAIM_POUNCE_MESSAGE_RECEIVED));
+									(events & PURPLE_POUNCE_MESSAGE_RECEIVED));
 
 		/* Actions */
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->open_win),
-			gaim_pounce_action_is_enabled(cur_pounce, "open-window"));
+			purple_pounce_action_is_enabled(cur_pounce, "open-window"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->popup),
-			gaim_pounce_action_is_enabled(cur_pounce, "popup-notify"));
+			purple_pounce_action_is_enabled(cur_pounce, "popup-notify"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->send_msg),
-			gaim_pounce_action_is_enabled(cur_pounce, "send-message"));
+			purple_pounce_action_is_enabled(cur_pounce, "send-message"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->exec_cmd),
-			gaim_pounce_action_is_enabled(cur_pounce, "execute-command"));
+			purple_pounce_action_is_enabled(cur_pounce, "execute-command"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->play_sound),
-			gaim_pounce_action_is_enabled(cur_pounce, "play-sound"));
+			purple_pounce_action_is_enabled(cur_pounce, "play-sound"));
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->save_pounce),
-			gaim_pounce_get_save(cur_pounce));
+			purple_pounce_get_save(cur_pounce));
 
-		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
+		if ((value = purple_pounce_action_get_attribute(cur_pounce,
 													  "send-message",
 													  "message")) != NULL)
 		{
 			gtk_entry_set_text(GTK_ENTRY(dialog->send_msg_entry), value);
 		}
 
-		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
+		if ((value = purple_pounce_action_get_attribute(cur_pounce,
 													  "popup-notify",
 													  "reason")) != NULL)
 		{
 			gtk_entry_set_text(GTK_ENTRY(dialog->popup_entry), value);
 		}
 
-		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
+		if ((value = purple_pounce_action_get_attribute(cur_pounce,
 													  "execute-command",
 													  "command")) != NULL)
 		{
 			gtk_entry_set_text(GTK_ENTRY(dialog->exec_cmd_entry), value);
 		}
 
-		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
+		if ((value = purple_pounce_action_get_attribute(cur_pounce,
 													  "play-sound",
 													  "filename")) != NULL)
 		{
@@ -916,10 +916,10 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 	}
 	else
 	{
-		GaimBuddy *buddy = NULL;
+		PurpleBuddy *buddy = NULL;
 
 		if (name != NULL)
-			buddy = gaim_find_buddy(account, name);
+			buddy = purple_find_buddy(account, name);
 
 		/* Set some defaults */
 		if (buddy == NULL)
@@ -929,7 +929,7 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 		}
 		else
 		{
-			if (!GAIM_BUDDY_IS_ONLINE(buddy))
+			if (!PURPLE_BUDDY_IS_ONLINE(buddy))
 			{
 				gtk_toggle_button_set_active(
 					GTK_TOGGLE_BUTTON(dialog->signon), TRUE);
@@ -937,9 +937,9 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 			else
 			{
 				gboolean default_set = FALSE;
-				GaimPresence *presence = gaim_buddy_get_presence(buddy);
+				PurplePresence *presence = purple_buddy_get_presence(buddy);
 
-				if (gaim_presence_is_idle(presence))
+				if (purple_presence_is_idle(presence))
 				{
 					gtk_toggle_button_set_active(
 						GTK_TOGGLE_BUTTON(dialog->idle_return), TRUE);
@@ -947,7 +947,7 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 					default_set = TRUE;
 				}
 
-				if (!gaim_presence_is_available(presence))
+				if (!purple_presence_is_available(presence))
 				{
 					gtk_toggle_button_set_active(
 						GTK_TOGGLE_BUTTON(dialog->away_return), TRUE);
@@ -964,15 +964,15 @@ pidgin_pounce_editor_show(GaimAccount *account, const char *name,
 		}
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->open_win),
-			gaim_prefs_get_bool("/gaim/gtk/pounces/default_actions/open-window"));
+			purple_prefs_get_bool("/purple/gtk/pounces/default_actions/open-window"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->popup),
-			gaim_prefs_get_bool("/gaim/gtk/pounces/default_actions/popup-notify"));
+			purple_prefs_get_bool("/purple/gtk/pounces/default_actions/popup-notify"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->send_msg),
-			gaim_prefs_get_bool("/gaim/gtk/pounces/default_actions/send-message"));
+			purple_prefs_get_bool("/purple/gtk/pounces/default_actions/send-message"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->exec_cmd),
-			gaim_prefs_get_bool("/gaim/gtk/pounces/default_actions/execute-command"));
+			purple_prefs_get_bool("/purple/gtk/pounces/default_actions/execute-command"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->play_sound),
-			gaim_prefs_get_bool("/gaim/gtk/pounces/default_actions/play-sound"));
+			purple_prefs_get_bool("/purple/gtk/pounces/default_actions/play-sound"));
 	}
 
 	gtk_widget_show_all(vbox2);
@@ -983,18 +983,18 @@ static gboolean
 pounces_manager_configure_cb(GtkWidget *widget, GdkEventConfigure *event, PouncesManager *dialog)
 {
 	if (GTK_WIDGET_VISIBLE(widget)) {
-		gaim_prefs_set_int("/gaim/gtk/pounces/dialog/width",  event->width);
-		gaim_prefs_set_int("/gaim/gtk/pounces/dialog/height", event->height);
+		purple_prefs_set_int("/purple/gtk/pounces/dialog/width",  event->width);
+		purple_prefs_set_int("/purple/gtk/pounces/dialog/height", event->height);
 	}
 
 	return FALSE;
 }
 
 static gboolean
-pounces_manager_find_pounce(GtkTreeIter *iter, GaimPounce *pounce)
+pounces_manager_find_pounce(GtkTreeIter *iter, PurplePounce *pounce)
 {
 	GtkTreeModel *model = GTK_TREE_MODEL(pounces_manager->model);
-	GaimPounce *p;
+	PurplePounce *p;
 
 	if (!gtk_tree_model_get_iter_first(model, iter))
 		return FALSE;
@@ -1034,9 +1034,9 @@ count_selected_helper(GtkTreeModel *model, GtkTreePath *path,
 #endif
 
 static void
-pounces_manager_connection_cb(GaimConnection *gc, GtkWidget *add_button)
+pounces_manager_connection_cb(PurpleConnection *gc, GtkWidget *add_button)
 {
-	gtk_widget_set_sensitive(add_button, (gaim_connections_get_all() != NULL));
+	gtk_widget_set_sensitive(add_button, (purple_connections_get_all() != NULL));
 }
 
 static void
@@ -1049,7 +1049,7 @@ static void
 pounces_manager_modify_foreach(GtkTreeModel *model, GtkTreePath *path,
 							 GtkTreeIter *iter, gpointer user_data)
 {
-	GaimPounce *pounce;
+	PurplePounce *pounce;
 
 	gtk_tree_model_get(model, iter, POUNCES_MANAGER_COLUMN_POUNCE, &pounce, -1);
 	pidgin_pounce_editor_show(NULL, NULL, pounce);
@@ -1067,33 +1067,33 @@ pounces_manager_modify_cb(GtkButton *button, gpointer user_data)
 }
 
 static void
-pounces_manager_delete_confirm_cb(GaimPounce *pounce)
+pounces_manager_delete_confirm_cb(PurplePounce *pounce)
 {
 	GtkTreeIter iter;
 
 	if (pounces_manager && pounces_manager_find_pounce(&iter, pounce))
 		gtk_list_store_remove(pounces_manager->model, &iter);
 
-	gaim_request_close_with_handle(pounce);
-	gaim_pounce_destroy(pounce);
+	purple_request_close_with_handle(pounce);
+	purple_pounce_destroy(pounce);
 }
 
 static void
 pounces_manager_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 							   GtkTreeIter *iter, gpointer user_data)
 {
-	GaimPounce *pounce;
-	GaimAccount *account;
+	PurplePounce *pounce;
+	PurpleAccount *account;
 	const char *pouncer, *pouncee;
 	char *buf;
 
 	gtk_tree_model_get(model, iter, POUNCES_MANAGER_COLUMN_POUNCE, &pounce, -1);
-	account = gaim_pounce_get_pouncer(pounce);
-	pouncer = gaim_account_get_username(account);
-	pouncee = gaim_pounce_get_pouncee(pounce);
+	account = purple_pounce_get_pouncer(pounce);
+	pouncer = purple_account_get_username(account);
+	pouncee = purple_pounce_get_pouncee(pounce);
 
 	buf = g_strdup_printf(_("Are you sure you want to delete the pounce on %s for %s?"), pouncee, pouncer);
-	gaim_request_action(pounce, NULL, buf, NULL, 0, pounce, 2,
+	purple_request_action(pounce, NULL, buf, NULL, 0, pounce, 2,
 						_("Delete"), pounces_manager_delete_confirm_cb,
 						_("Cancel"), NULL);
 	g_free(buf);
@@ -1138,7 +1138,7 @@ pounce_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, gpointer us
 	PouncesManager *dialog = user_data;
 	GtkTreePath *path;
 	GtkTreeIter iter;
-	GaimPounce *pounce;
+	PurplePounce *pounce;
 
 	/* Figure out which node was clicked */
 	if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(dialog->treeview), event->x, event->y, &path, NULL, NULL, NULL))
@@ -1162,7 +1162,7 @@ pounces_manager_recurring_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 							gpointer user_data)
 {
 	PouncesManager *dialog = user_data;
-	GaimPounce *pounce;
+	PurplePounce *pounce;
 	gboolean recurring;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	GtkTreeIter iter;
@@ -1173,7 +1173,7 @@ pounces_manager_recurring_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 					   POUNCES_MANAGER_COLUMN_RECURRING, &recurring,
 					   -1);
 
-	gaim_pounce_set_save(pounce, !recurring);
+	purple_pounce_set_save(pounce, !recurring);
 
 	update_pounces();
 }
@@ -1186,7 +1186,7 @@ search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *ite
 
 	gtk_tree_model_get(model, iter, column, &haystack, -1);
 
-	result = (gaim_strcasestr(haystack, key) == NULL);
+	result = (purple_strcasestr(haystack, key) == NULL);
 
 	g_free(haystack);
 
@@ -1316,8 +1316,8 @@ pidgin_pounces_manager_show(void)
 
 	pounces_manager = dialog = g_new0(PouncesManager, 1);
 
-	width  = gaim_prefs_get_int("/gaim/gtk/pounces/dialog/width");
-	height = gaim_prefs_get_int("/gaim/gtk/pounces/dialog/height");
+	width  = purple_prefs_get_int("/purple/gtk/pounces/dialog/width");
+	height = purple_prefs_get_int("/purple/gtk/pounces/dialog/height");
 
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
@@ -1349,11 +1349,11 @@ pidgin_pounces_manager_show(void)
 	/* Add button */
 	button = gtk_button_new_from_stock(GTK_STOCK_ADD);
 	gtk_box_pack_start(GTK_BOX(bbox), button, FALSE, FALSE, 0);
-	gtk_widget_set_sensitive(button, (gaim_accounts_get_all() != NULL));
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-						pounces_manager, GAIM_CALLBACK(pounces_manager_connection_cb), button);
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
-						pounces_manager, GAIM_CALLBACK(pounces_manager_connection_cb), button);
+	gtk_widget_set_sensitive(button, (purple_accounts_get_all() != NULL));
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+						pounces_manager, PURPLE_CALLBACK(pounces_manager_connection_cb), button);
+	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+						pounces_manager, PURPLE_CALLBACK(pounces_manager_connection_cb), button);
 	gtk_widget_show(button);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
@@ -1399,48 +1399,48 @@ pidgin_pounces_manager_hide(void)
 	if (pounces_manager->window != NULL)
 		gtk_widget_destroy(pounces_manager->window);
 
-	gaim_signals_disconnect_by_handle(pounces_manager);
+	purple_signals_disconnect_by_handle(pounces_manager);
 
 	g_free(pounces_manager);
 	pounces_manager = NULL;
 }
 
 static void
-pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
+pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 {
-	GaimConversation *conv;
-	GaimAccount *account;
-	GaimBuddy *buddy;
+	PurpleConversation *conv;
+	PurpleAccount *account;
+	PurpleBuddy *buddy;
 	const char *pouncee;
 	const char *alias;
 
-	pouncee = gaim_pounce_get_pouncee(pounce);
-	account = gaim_pounce_get_pouncer(pounce);
+	pouncee = purple_pounce_get_pouncee(pounce);
+	account = purple_pounce_get_pouncer(pounce);
 
-	buddy = gaim_find_buddy(account, pouncee);
+	buddy = purple_find_buddy(account, pouncee);
 	if (buddy != NULL)
 	{
-		alias = gaim_buddy_get_alias(buddy);
+		alias = purple_buddy_get_alias(buddy);
 		if (alias == NULL)
 			alias = pouncee;
 	}
 	else
 		alias = pouncee;
 
-	if (gaim_pounce_action_is_enabled(pounce, "open-window"))
+	if (purple_pounce_action_is_enabled(pounce, "open-window"))
 	{
-		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, pouncee, account);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pouncee, account);
 
 		if (conv == NULL)
-			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, pouncee);
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, pouncee);
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "popup-notify"))
+	if (purple_pounce_action_is_enabled(pounce, "popup-notify"))
 	{
 		char *tmp;
 		const char *name_shown;
 		const char *reason;
-		reason = gaim_pounce_action_get_attribute(pounce, "popup-notify",
+		reason = purple_pounce_action_get_attribute(pounce, "popup-notify",
 														  "reason");
 
 		/*
@@ -1448,76 +1448,76 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 		 * confusion about what protocol a pounce is for.
 		 */
 		tmp = g_strdup_printf(
-				   (events & GAIM_POUNCE_TYPING) ?
+				   (events & PURPLE_POUNCE_TYPING) ?
 				   _("%s has started typing to you (%s)") :
-				   (events & GAIM_POUNCE_TYPED) ?
+				   (events & PURPLE_POUNCE_TYPED) ?
 				   _("%s has paused while typing to you (%s)") :
-				   (events & GAIM_POUNCE_SIGNON) ?
+				   (events & PURPLE_POUNCE_SIGNON) ?
 				   _("%s has signed on (%s)") :
-				   (events & GAIM_POUNCE_IDLE_RETURN) ?
+				   (events & PURPLE_POUNCE_IDLE_RETURN) ?
 				   _("%s has returned from being idle (%s)") :
-				   (events & GAIM_POUNCE_AWAY_RETURN) ?
+				   (events & PURPLE_POUNCE_AWAY_RETURN) ?
 				   _("%s has returned from being away (%s)") :
-				   (events & GAIM_POUNCE_TYPING_STOPPED) ?
+				   (events & PURPLE_POUNCE_TYPING_STOPPED) ?
 				   _("%s has stopped typing to you (%s)") :
-				   (events & GAIM_POUNCE_SIGNOFF) ?
+				   (events & PURPLE_POUNCE_SIGNOFF) ?
 				   _("%s has signed off (%s)") :
-				   (events & GAIM_POUNCE_IDLE) ?
+				   (events & PURPLE_POUNCE_IDLE) ?
 				   _("%s has become idle (%s)") :
-				   (events & GAIM_POUNCE_AWAY) ?
+				   (events & PURPLE_POUNCE_AWAY) ?
 				   _("%s has gone away. (%s)") :
-				   (events & GAIM_POUNCE_MESSAGE_RECEIVED) ?
+				   (events & PURPLE_POUNCE_MESSAGE_RECEIVED) ?
 				   _("%s has sent you a message. (%s)") :
 				   _("Unknown pounce event. Please report this!"),
-				   alias, gaim_account_get_protocol_name(account));
+				   alias, purple_account_get_protocol_name(account));
 
 		/*
 		 * Ok here is where I change the second argument, title, from
 		 * NULL to the account alias if we have it or the account
 		 * name if that's all we have
 		 */
-		if ((name_shown = gaim_account_get_alias(account)) == NULL)
-			name_shown = gaim_account_get_username(account);
+		if ((name_shown = purple_account_get_alias(account)) == NULL)
+			name_shown = purple_account_get_username(account);
 
 		if (reason == NULL)
 		{
-			gaim_notify_info(NULL, name_shown, tmp, gaim_date_format_full(NULL));
+			purple_notify_info(NULL, name_shown, tmp, purple_date_format_full(NULL));
 		}
 		else
 		{
-			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, gaim_date_format_full(NULL));
-			gaim_notify_info(NULL, name_shown, tmp, tmp2);
+			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, purple_date_format_full(NULL));
+			purple_notify_info(NULL, name_shown, tmp, tmp2);
 			g_free(tmp2);
 		}
 		g_free(tmp);
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "send-message"))
+	if (purple_pounce_action_is_enabled(pounce, "send-message"))
 	{
 		const char *message;
 
-		message = gaim_pounce_action_get_attribute(pounce, "send-message",
+		message = purple_pounce_action_get_attribute(pounce, "send-message",
 												   "message");
 
 		if (message != NULL)
 		{
-			conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, pouncee, account);
+			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pouncee, account);
 
 			if (conv == NULL)
-				conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, pouncee);
+				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, pouncee);
 
-			gaim_conversation_write(conv, NULL, message,
-									GAIM_MESSAGE_SEND, time(NULL));
+			purple_conversation_write(conv, NULL, message,
+									PURPLE_MESSAGE_SEND, time(NULL));
 
 			serv_send_im(account->gc, (char *)pouncee, (char *)message, 0);
 		}
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "execute-command"))
+	if (purple_pounce_action_is_enabled(pounce, "execute-command"))
 	{
 		const char *command;
 
-		command = gaim_pounce_action_get_attribute(pounce,
+		command = purple_pounce_action_get_attribute(pounce,
 				"execute-command", "command");
 
 		if (command != NULL)
@@ -1584,7 +1584,7 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 				message = g_win32_error_message(GetLastError());
 			}
 
-			gaim_debug_info("pounce",
+			purple_debug_info("pounce",
 					"Pounce execute command called for: "
 					"%s\n%s%s%s",
 						command,
@@ -1596,34 +1596,34 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 		}
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "play-sound"))
+	if (purple_pounce_action_is_enabled(pounce, "play-sound"))
 	{
 		const char *sound;
 
-		sound = gaim_pounce_action_get_attribute(pounce,
+		sound = purple_pounce_action_get_attribute(pounce,
 												 "play-sound", "filename");
 
 		if (sound != NULL)
-			gaim_sound_play_file(sound, account);
+			purple_sound_play_file(sound, account);
 		else
-			gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT, account);
+			purple_sound_play_event(PURPLE_SOUND_POUNCE_DEFAULT, account);
 	}
 }
 
 static void
-free_pounce(GaimPounce *pounce)
+free_pounce(PurplePounce *pounce)
 {
 	update_pounces();
 }
 
 static void
-new_pounce(GaimPounce *pounce)
+new_pounce(PurplePounce *pounce)
 {
-	gaim_pounce_action_register(pounce, "open-window");
-	gaim_pounce_action_register(pounce, "popup-notify");
-	gaim_pounce_action_register(pounce, "send-message");
-	gaim_pounce_action_register(pounce, "execute-command");
-	gaim_pounce_action_register(pounce, "play-sound");
+	purple_pounce_action_register(pounce, "open-window");
+	purple_pounce_action_register(pounce, "popup-notify");
+	purple_pounce_action_register(pounce, "send-message");
+	purple_pounce_action_register(pounce, "execute-command");
+	purple_pounce_action_register(pounce, "play-sound");
 
 	update_pounces();
 }
@@ -1638,29 +1638,29 @@ pidgin_pounces_get_handle() {
 void
 pidgin_pounces_init(void)
 {
-	gaim_pounces_register_handler(PIDGIN_UI, pounce_cb, new_pounce,
+	purple_pounces_register_handler(PIDGIN_UI, pounce_cb, new_pounce,
 								  free_pounce);
 
-	gaim_prefs_add_none("/gaim/gtk/pounces");
-	gaim_prefs_add_none("/gaim/gtk/pounces/default_actions");
-	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/open-window",
+	purple_prefs_add_none("/purple/gtk/pounces");
+	purple_prefs_add_none("/purple/gtk/pounces/default_actions");
+	purple_prefs_add_bool("/purple/gtk/pounces/default_actions/open-window",
 						FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/popup-notify",
+	purple_prefs_add_bool("/purple/gtk/pounces/default_actions/popup-notify",
 						TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/send-message",
+	purple_prefs_add_bool("/purple/gtk/pounces/default_actions/send-message",
 						FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/execute-command",
+	purple_prefs_add_bool("/purple/gtk/pounces/default_actions/execute-command",
 						FALSE);
-	gaim_prefs_add_bool("/gaim/gtk/pounces/default_actions/play-sound",
+	purple_prefs_add_bool("/purple/gtk/pounces/default_actions/play-sound",
 						FALSE);
-	gaim_prefs_add_none("/gaim/gtk/pounces/dialog");
-	gaim_prefs_add_int("/gaim/gtk/pounces/dialog/width",  520);
-	gaim_prefs_add_int("/gaim/gtk/pounces/dialog/height", 321);
+	purple_prefs_add_none("/purple/gtk/pounces/dialog");
+	purple_prefs_add_int("/purple/gtk/pounces/dialog/width",  520);
+	purple_prefs_add_int("/purple/gtk/pounces/dialog/height", 321);
 
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
 						pidgin_pounces_get_handle(),
-						GAIM_CALLBACK(signed_on_off_cb), NULL);
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						PURPLE_CALLBACK(signed_on_off_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-off",
 						pidgin_pounces_get_handle(),
-						GAIM_CALLBACK(signed_on_off_cb), NULL);
+						PURPLE_CALLBACK(signed_on_off_cb), NULL);
 }

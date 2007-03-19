@@ -1,5 +1,5 @@
 /*
- * Evolution integration plugin for Gaim
+ * Evolution integration plugin for Purple
  *
  * Copyright (C) 2003 Christian Hammond.
  *
@@ -44,7 +44,7 @@ typedef struct
 
 typedef struct
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	char *username;
 
 	EBook *book;
@@ -67,8 +67,8 @@ typedef struct
 {
 	gboolean person_only;
 
-	GaimAccount *account;
-	GaimBuddy *buddy;
+	PurpleAccount *account;
+	PurpleBuddy *buddy;
 
 	EBook *book;
 	EContact *contact;
@@ -88,7 +88,7 @@ typedef struct
 
 typedef struct
 {
-	GaimBuddy *buddy;
+	PurpleBuddy *buddy;
 
 	EBook *book;
 
@@ -105,32 +105,32 @@ typedef struct
 
 } GevoAssociateBuddyDialog;
 
-void gevo_add_buddy_dialog_show(GaimAccount *account, const char *username,
+void gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 								const char *group, const char *alias);
 void gevo_add_buddy_dialog_add_person(GevoAddBuddyDialog *dialog,
 									  EContact *contact,
-									  const char *name, GaimAccount *account,
+									  const char *name, PurpleAccount *account,
 									  const char *screenname);
 
 void gevo_new_person_dialog_show(EBook *book, EContact *contact,
-								 GaimAccount *account, const char *username,
-								 const char *group, GaimBuddy *buddy,
+								 PurpleAccount *account, const char *username,
+								 const char *group, PurpleBuddy *buddy,
 								 gboolean person_only);
 
-void gevo_add_buddy(GaimAccount *account, const char *group_name,
+void gevo_add_buddy(PurpleAccount *account, const char *group_name,
 					const char *screenname, const char *alias);
 GList *gevo_get_groups(void);
 
-EContactField gevo_prpl_get_field(GaimAccount *account, GaimBuddy *buddy);
-gboolean gevo_prpl_is_supported(GaimAccount *account, GaimBuddy *buddy);
+EContactField gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy);
+gboolean gevo_prpl_is_supported(PurpleAccount *account, PurpleBuddy *buddy);
 gboolean gevo_load_addressbook(const gchar *uri, EBook **book, GError **error);
-char *gevo_get_email_for_buddy(GaimBuddy *buddy);
+char *gevo_get_email_for_buddy(PurpleBuddy *buddy);
 
-GevoAssociateBuddyDialog *gevo_associate_buddy_dialog_new(GaimBuddy *buddy);
+GevoAssociateBuddyDialog *gevo_associate_buddy_dialog_new(PurpleBuddy *buddy);
 
 GtkTreeModel *gevo_addrbooks_model_new(void);
 void gevo_addrbooks_model_unref(GtkTreeModel *model);
 void gevo_addrbooks_model_populate(GtkTreeModel *model);
-EContact *gevo_search_buddy_in_contacts(GaimBuddy *buddy, EBookQuery *query);
+EContact *gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query);
 
 #endif /* _GEVOLUTION_H_ */

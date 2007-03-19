@@ -1,9 +1,9 @@
 /**
  * @file group_info.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -61,7 +61,7 @@ static void _qq_group_set_members_all_offline(qq_group *group)
 }
 
 /* send packet to get detailed information of one group */
-void qq_send_cmd_group_get_group_info(GaimConnection *gc, qq_group *group)
+void qq_send_cmd_group_get_group_info(PurpleConnection *gc, qq_group *group)
 {
 	guint8 *raw_data, *cursor;
 	gint bytes, data_len;
@@ -77,14 +77,14 @@ void qq_send_cmd_group_get_group_info(GaimConnection *gc, qq_group *group)
 	bytes += create_packet_dw(raw_data, &cursor, group->internal_group_id);
 
 	if (bytes != data_len)
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail create packet for %s\n", qq_group_cmd_get_desc(QQ_GROUP_CMD_GET_GROUP_INFO));
 	else
 		qq_send_group_cmd(gc, group, raw_data, data_len);
 }
 
 /* send packet to get online group member, called by keep_alive */
-void qq_send_cmd_group_get_online_members(GaimConnection *gc, qq_group *group)
+void qq_send_cmd_group_get_online_members(PurpleConnection *gc, qq_group *group)
 {
 	guint8 *raw_data, *cursor;
 	gint bytes, data_len;
@@ -92,8 +92,8 @@ void qq_send_cmd_group_get_online_members(GaimConnection *gc, qq_group *group)
 	g_return_if_fail(group != NULL);
 
 	/* only get online members when conversation window is on */
-	if (NULL == gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,group->group_name_utf8, gaim_connection_get_account(gc))) {
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+	if (NULL == purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,group->group_name_utf8, purple_connection_get_account(gc))) {
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 			   "Conv windows for \"%s\" is not on, do not get online members\n", group->group_name_utf8);
 		return;
 	}
@@ -107,14 +107,14 @@ void qq_send_cmd_group_get_online_members(GaimConnection *gc, qq_group *group)
 	bytes += create_packet_dw(raw_data, &cursor, group->internal_group_id);
 
 	if (bytes != data_len)
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail create packet for %s\n", qq_group_cmd_get_desc(QQ_GROUP_CMD_GET_ONLINE_MEMBER));
 	else
 		qq_send_group_cmd(gc, group, raw_data, data_len);
 }
 
 /* send packet to get info for each group member */
-void qq_send_cmd_group_get_members_info(GaimConnection *gc, qq_group *group)
+void qq_send_cmd_group_get_members_info(PurpleConnection *gc, qq_group *group)
 {
 	guint8 *raw_data, *cursor;
 	gint bytes, data_len, i;
@@ -129,7 +129,7 @@ void qq_send_cmd_group_get_members_info(GaimConnection *gc, qq_group *group)
 	}
 
 	if (i <= 0) {
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "No group member needs to to update info now.\n");
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "No group member needs to to update info now.\n");
 		return;
 	}
 
@@ -150,18 +150,18 @@ void qq_send_cmd_group_get_members_info(GaimConnection *gc, qq_group *group)
 	}
 
 	if (bytes != data_len)
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail create packet for %s\n", qq_group_cmd_get_desc(QQ_GROUP_CMD_GET_MEMBER_INFO));
 	else
 		qq_send_group_cmd(gc, group, raw_data, data_len);
 }
 
-void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
 {
 	qq_group *group;
 	qq_buddy *member;
 	qq_data *qd;
-	GaimConversation *gaim_conv;
+	PurpleConversation *purple_conv;
 	guint8 organization, role;
 	guint16 unknown, max_members;
 	guint32 member_uid, internal_group_id, external_group_id;
@@ -215,35 +215,35 @@ void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len
 		read_packet_b(data, cursor, len, &role);
 
 		if(organization != 0 || role != 0) {
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "group member %d: organization=%d, role=%d\n", member_uid, organization, role);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "group member %d: organization=%d, role=%d\n", member_uid, organization, role);
 		}
 		member = qq_group_find_or_add_member(gc, group, member_uid);
 		if (member != NULL)
 			member->role = role;
 	}
         if(*cursor > (data + len)) {
-                         gaim_debug(GAIM_DEBUG_ERROR, "QQ", "group_cmd_get_group_info: Dangerous error! maybe protocol changed, notify me!");
+                         purple_debug(PURPLE_DEBUG_ERROR, "QQ", "group_cmd_get_group_info: Dangerous error! maybe protocol changed, notify me!");
         }
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "group \"%s\" has %d members\n", group->group_name_utf8, i);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "group \"%s\" has %d members\n", group->group_name_utf8, i);
 
 	if (group->creator_uid == qd->uid)
 		group->my_status = QQ_GROUP_MEMBER_STATUS_IS_ADMIN;
 
 	qq_group_refresh(gc, group);
 
-	gaim_conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, 
-			group->group_name_utf8, gaim_connection_get_account(gc));
-	if(NULL == gaim_conv) {
-                gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+	purple_conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, 
+			group->group_name_utf8, purple_connection_get_account(gc));
+	if(NULL == purple_conv) {
+                purple_debug(PURPLE_DEBUG_WARNING, "QQ",
                            "Conv windows for \"%s\" is not on, do not set topic\n", group->group_name_utf8);
 	}
 	else {
-		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(gaim_conv), NULL, group->notice_utf8);
+		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(purple_conv), NULL, group->notice_utf8);
 	}
 }
 
-void qq_process_group_cmd_get_online_members(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+void qq_process_group_cmd_get_online_members(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
 {
 	guint32 internal_group_id, member_uid;
 	guint8 unknown;
@@ -254,7 +254,7 @@ void qq_process_group_cmd_get_online_members(guint8 *data, guint8 **cursor, gint
 	g_return_if_fail(data != NULL && len > 0);
 
 	if (data + len - *cursor < 4) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Invalid group online member reply, discard it!\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Invalid group online member reply, discard it!\n");
 		return;
 	}
 
@@ -266,7 +266,7 @@ void qq_process_group_cmd_get_online_members(guint8 *data, guint8 **cursor, gint
 
 	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	if (group == NULL) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 				"We have no group info for internal id [%d]\n", internal_group_id);
 		return;
 	}
@@ -281,15 +281,15 @@ void qq_process_group_cmd_get_online_members(guint8 *data, guint8 **cursor, gint
 			member->status = QQ_BUDDY_ONLINE_NORMAL;
 	}
         if(*cursor > (data + len)) {
-                         gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+                         purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 					 "group_cmd_get_online_members: Dangerous error! maybe protocol changed, notify developers!");
         }
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Group \"%s\" has %d online members\n", group->group_name_utf8, i);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Group \"%s\" has %d online members\n", group->group_name_utf8, i);
 }
 
 /* process the reply to get_members_info packet */
-void qq_process_group_cmd_get_members_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+void qq_process_group_cmd_get_members_info(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
 {
 	guint32 internal_group_id, member_uid;
 	guint16 unknown;
@@ -326,8 +326,8 @@ void qq_process_group_cmd_get_members_info(guint8 *data, guint8 **cursor, gint l
 		member->last_refresh = time(NULL);
 	}
         if(*cursor > (data + len)) {
-                         gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+                         purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 					 "group_cmd_get_members_info: Dangerous error! maybe protocol changed, notify developers!");
         }
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Group \"%s\" obtained %d member info\n", group->group_name_utf8, i);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Group \"%s\" obtained %d member info\n", group->group_name_utf8, i);
 }

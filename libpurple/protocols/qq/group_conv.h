@@ -1,9 +1,9 @@
 /**
  * @file group_conv.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -28,7 +28,7 @@
 #include "connection.h"
 #include "group.h"
 
-void qq_group_conv_show_window(GaimConnection *gc, qq_group *group);
-void qq_group_conv_refresh_online_member(GaimConnection *gc, qq_group *group);
+void qq_group_conv_show_window(PurpleConnection *gc, qq_group *group);
+void qq_group_conv_refresh_online_member(PurpleConnection *gc, qq_group *group);
 
 #endif

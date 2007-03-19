@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -69,7 +69,7 @@ int aim__registermodule(OscarData *od, int (*modfirst)(OscarData *, aim_module_t
 	mod->next = (aim_module_t *)od->modlistv;
 	od->modlistv = mod;
 
-	gaim_debug_misc("oscar", "registered module %s (family 0x%04x, version = 0x%04x, tool 0x%04x, tool version 0x%04x)\n", mod->name, mod->family, mod->version, mod->toolid, mod->toolversion);
+	purple_debug_misc("oscar", "registered module %s (family 0x%04x, version = 0x%04x, tool 0x%04x, tool version 0x%04x)\n", mod->name, mod->family, mod->version, mod->toolid, mod->toolversion);
 
 	return 0;
 }
@@ -271,15 +271,15 @@ static int bleck(OscarData *od, FlapFrame *frame, ...)
 		subtype = byte_stream_get16(&frame->data);
 
 		if ((family < maxf) && (subtype+1 < maxs) && (literals[family][subtype] != NULL))
-			gaim_debug_misc("oscar", "bleck: channel %s: null handler for %04x/%04x (%s)\n", channels[frame->channel], family, subtype, literals[family][subtype+1]);
+			purple_debug_misc("oscar", "bleck: channel %s: null handler for %04x/%04x (%s)\n", channels[frame->channel], family, subtype, literals[family][subtype+1]);
 		else
-			gaim_debug_misc("oscar", "bleck: channel %s: null handler for %04x/%04x (no literal)\n", channels[frame->channel], family, subtype);
+			purple_debug_misc("oscar", "bleck: channel %s: null handler for %04x/%04x (no literal)\n", channels[frame->channel], family, subtype);
 	} else {
 
 		if (frame->channel <= maxchannels)
-			gaim_debug_misc("oscar", "bleck: channel %s (0x%02x)\n", channels[frame->channel], frame->channel);
+			purple_debug_misc("oscar", "bleck: channel %s (0x%02x)\n", channels[frame->channel], frame->channel);
 		else
-			gaim_debug_misc("oscar", "bleck: unknown channel 0x%02x\n", frame->channel);
+			purple_debug_misc("oscar", "bleck: unknown channel 0x%02x\n", frame->channel);
 
 	}
 

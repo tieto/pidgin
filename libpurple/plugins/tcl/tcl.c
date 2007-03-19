@@ -1,7 +1,7 @@
 /**
- * @file tcl.c Gaim Tcl plugin bindings
+ * @file tcl.c Purple Tcl plugin bindings
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Ethan Blanton <eblanton@cs.purdue.edu>
  *
@@ -35,7 +35,7 @@
 #include <string.h>
 
 #include "tcl_glib.h"
-#include "tcl_gaim.h"
+#include "tcl_purple.h"
 
 #include "internal.h"
 #include "connection.h"
@@ -46,28 +46,28 @@
 #include "version.h"
 
 struct tcl_plugin_data {
-	GaimPlugin *plugin;
+	PurplePlugin *plugin;
 	Tcl_Interp *interp;
 };
 
-GaimStringref *GaimTclRefAccount;
-GaimStringref *GaimTclRefConnection;
-GaimStringref *GaimTclRefConversation;
-GaimStringref *GaimTclRefPointer;
-GaimStringref *GaimTclRefPlugin;
-GaimStringref *GaimTclRefPresence;
-GaimStringref *GaimTclRefStatus;
-GaimStringref *GaimTclRefStatusAttr;
-GaimStringref *GaimTclRefStatusType;
-GaimStringref *GaimTclRefXfer;
+PurpleStringref *PurpleTclRefAccount;
+PurpleStringref *PurpleTclRefConnection;
+PurpleStringref *PurpleTclRefConversation;
+PurpleStringref *PurpleTclRefPointer;
+PurpleStringref *PurpleTclRefPlugin;
+PurpleStringref *PurpleTclRefPresence;
+PurpleStringref *PurpleTclRefStatus;
+PurpleStringref *PurpleTclRefStatusAttr;
+PurpleStringref *PurpleTclRefStatusType;
+PurpleStringref *PurpleTclRefXfer;
 
 static GHashTable *tcl_plugins = NULL;
 
-GaimPlugin *_tcl_plugin;
+PurplePlugin *_tcl_plugin;
 
 static gboolean tcl_loaded = FALSE;
 
-GaimPlugin *tcl_interp_get_plugin(Tcl_Interp *interp)
+PurplePlugin *tcl_interp_get_plugin(Tcl_Interp *interp)
 {
 	struct tcl_plugin_data *data;
 
@@ -82,29 +82,29 @@ static int tcl_init_interp(Tcl_Interp *interp)
 {
 	char *rcfile;
 	char init[] =
-		"namespace eval ::gaim {\n"
+		"namespace eval ::purple {\n"
 		"	namespace export account buddy connection conversation\n"
 		"	namespace export core debug notify prefs send_im\n"
 		"	namespace export signal unload\n"
 		"	namespace eval _callback { }\n"
 		"\n"
 		"	proc conv_send { account who text } {\n"
-		"		set gc [gaim::account connection $account]\n"
-		"		set convo [gaim::conversation new $account $who]\n"
-		"		set myalias [gaim::account alias $account]\n"
+		"		set gc [purple::account connection $account]\n"
+		"		set convo [purple::conversation new $account $who]\n"
+		"		set myalias [purple::account alias $account]\n"
 		"\n"
 		"		if {![string length $myalias]} {\n"
-		"			set myalias [gaim::account username $account]\n"
+		"			set myalias [purple::account username $account]\n"
 		"		}\n"
 		"\n"
-		"		gaim::send_im $gc $who $text\n"
-		"		gaim::conversation write $convo	send $myalias $text\n"
+		"		purple::send_im $gc $who $text\n"
+		"		purple::conversation write $convo	send $myalias $text\n"
 		"	}\n"
 		"}\n"
 		"\n"
 		"proc bgerror { message } {\n"
 		"	global errorInfo\n"
-		"	gaim::notify -error \"Tcl Error\" \"Tcl Error: $message\" \"$errorInfo\"\n"
+		"	purple::notify -error \"Tcl Error\" \"Tcl Error: $message\" \"$errorInfo\"\n"
 		"}\n";
 
 	if (Tcl_EvalEx(interp, init, -1, TCL_EVAL_GLOBAL) != TCL_OK) {
@@ -112,38 +112,38 @@ static int tcl_init_interp(Tcl_Interp *interp)
 	}
 
 	Tcl_SetVar(interp, "argc", "0", TCL_GLOBAL_ONLY);
-	Tcl_SetVar(interp, "argv0", "gaim", TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, "argv0", "purple", TCL_GLOBAL_ONLY);
 	Tcl_SetVar(interp, "tcl_interactive", "0", TCL_GLOBAL_ONLY);
-	rcfile = g_strdup_printf("%s" G_DIR_SEPARATOR_S "tclrc", gaim_user_dir());
+	rcfile = g_strdup_printf("%s" G_DIR_SEPARATOR_S "tclrc", purple_user_dir());
 	Tcl_SetVar(interp, "tcl_rcFileName", rcfile, TCL_GLOBAL_ONLY);
 	g_free(rcfile);
 
-	Tcl_SetVar(interp, "::gaim::version", VERSION, TCL_GLOBAL_ONLY);
-	Tcl_SetVar(interp, "::gaim::user_dir", gaim_user_dir(), TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, "::purple::version", VERSION, TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, "::purple::user_dir", purple_user_dir(), TCL_GLOBAL_ONLY);
 #ifdef HAVE_TK
-	Tcl_SetVar(interp, "::gaim::tk_available", "1", TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, "::purple::tk_available", "1", TCL_GLOBAL_ONLY);
 #else
-	Tcl_SetVar(interp, "::gaim::tk_available", "0", TCL_GLOBAL_ONLY);
+	Tcl_SetVar(interp, "::purple::tk_available", "0", TCL_GLOBAL_ONLY);
 #endif /* HAVE_TK */
 
-	Tcl_CreateObjCommand(interp, "::gaim::account", tcl_cmd_account, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::buddy", tcl_cmd_buddy, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::cmd", tcl_cmd_cmd, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::connection", tcl_cmd_connection, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::conversation", tcl_cmd_conversation, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::core", tcl_cmd_core, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::debug", tcl_cmd_debug, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::notify", tcl_cmd_notify, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::plugins", tcl_cmd_plugins, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::prefs", tcl_cmd_prefs, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::presence", tcl_cmd_presence, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::send_im", tcl_cmd_send_im, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::savedstatus", tcl_cmd_savedstatus, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::signal", tcl_cmd_signal, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::status", tcl_cmd_status, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::status_attr", tcl_cmd_status_attr, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::status_type", tcl_cmd_status_type, (ClientData)NULL, NULL);
-	Tcl_CreateObjCommand(interp, "::gaim::unload", tcl_cmd_unload, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::account", tcl_cmd_account, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::buddy", tcl_cmd_buddy, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::cmd", tcl_cmd_cmd, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::connection", tcl_cmd_connection, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::conversation", tcl_cmd_conversation, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::core", tcl_cmd_core, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::debug", tcl_cmd_debug, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::notify", tcl_cmd_notify, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::plugins", tcl_cmd_plugins, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::prefs", tcl_cmd_prefs, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::presence", tcl_cmd_presence, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::send_im", tcl_cmd_send_im, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::savedstatus", tcl_cmd_savedstatus, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::signal", tcl_cmd_signal, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::status", tcl_cmd_status, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::status_attr", tcl_cmd_status_attr, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::status_type", tcl_cmd_status_type, (ClientData)NULL, NULL);
+	Tcl_CreateObjCommand(interp, "::purple::unload", tcl_cmd_unload, (ClientData)NULL, NULL);
 
 	return 0;
 }
@@ -162,14 +162,14 @@ static Tcl_Interp *tcl_create_interp()
 		Tcl_DeleteInterp(interp);
 		return NULL;
 	}
-	Tcl_StaticPackage(interp, "gaim", tcl_init_interp, NULL);
+	Tcl_StaticPackage(interp, "purple", tcl_init_interp, NULL);
 
 	return interp;
 }
 
-static gboolean tcl_probe_plugin(GaimPlugin *plugin)
+static gboolean tcl_probe_plugin(PurplePlugin *plugin)
 {
-	GaimPluginInfo *info;
+	PurplePluginInfo *info;
 	Tcl_Interp *interp;
 	Tcl_Parse parse;
 	Tcl_Obj *result, **listitems;
@@ -197,7 +197,7 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 	}
 
 	if (ferror(fp)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "tcl", "error reading %s (%s)\n", plugin->path, strerror(errno));
+		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "error reading %s (%s)\n", plugin->path, strerror(errno));
 		g_free(buf);
 		fclose(fp);
 		return FALSE;
@@ -212,7 +212,7 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 	next = buf;
 	do {
 		if (Tcl_ParseCommand(interp, next, len, 0, &parse) == TCL_ERROR) {
-			gaim_debug(GAIM_DEBUG_ERROR, "tcl", "parse error in %s: %s\n", plugin->path,
+			purple_debug(PURPLE_DEBUG_ERROR, "tcl", "parse error in %s: %s\n", plugin->path,
 				   Tcl_GetString(Tcl_GetObjResult(interp)));
 			err = 1;
 			break;
@@ -238,12 +238,12 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 			result = Tcl_GetObjResult(interp);
 			if (Tcl_ListObjGetElements(interp, result, &nelems, &listitems) == TCL_OK) {
 				if ((nelems == 6) || (nelems == 7)) {
-					info = g_new0(GaimPluginInfo, 1);
+					info = g_new0(PurplePluginInfo, 1);
 
-					info->magic = GAIM_PLUGIN_MAGIC;
-					info->major_version = GAIM_MAJOR_VERSION;
-					info->minor_version = GAIM_MINOR_VERSION;
-					info->type = GAIM_PLUGIN_STANDARD;
+					info->magic = PURPLE_PLUGIN_MAGIC;
+					info->major_version = PURPLE_MAJOR_VERSION;
+					info->minor_version = PURPLE_MINOR_VERSION;
+					info->type = PURPLE_PLUGIN_STANDARD;
 					info->dependencies = g_list_append(info->dependencies, "core-tcl");
 
 					info->name = g_strdup(Tcl_GetString(listitems[0]));
@@ -260,7 +260,7 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 
 					plugin->info = info;
 
-					if (gaim_plugin_register(plugin))
+					if (purple_plugin_register(plugin))
 						status = TRUE;
 				}
 			}
@@ -272,7 +272,7 @@ static gboolean tcl_probe_plugin(GaimPlugin *plugin)
 	return status;
 }
 
-static gboolean tcl_load_plugin(GaimPlugin *plugin)
+static gboolean tcl_load_plugin(PurplePlugin *plugin)
 {
 	struct tcl_plugin_data *data;
 	Tcl_Interp *interp;
@@ -281,7 +281,7 @@ static gboolean tcl_load_plugin(GaimPlugin *plugin)
 	plugin->extra = NULL;
 
 	if ((interp = tcl_create_interp()) == NULL) {
-		gaim_debug(GAIM_DEBUG_ERROR, "tcl", "Could not initialize Tcl interpreter\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "Could not initialize Tcl interpreter\n");
 		return FALSE;
 	}
 
@@ -289,7 +289,7 @@ static gboolean tcl_load_plugin(GaimPlugin *plugin)
 
 	if (Tcl_EvalFile(interp, plugin->path) != TCL_OK) {
 		result = Tcl_GetObjResult(interp);
-		gaim_debug(GAIM_DEBUG_ERROR, "tcl",
+		purple_debug(PURPLE_DEBUG_ERROR, "tcl",
 		           "Error evaluating %s: %s\n", plugin->path,
 		           Tcl_GetString(result));
 		Tcl_DeleteInterp(interp);
@@ -308,7 +308,7 @@ static gboolean tcl_load_plugin(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static gboolean tcl_unload_plugin(GaimPlugin *plugin)
+static gboolean tcl_unload_plugin(PurplePlugin *plugin)
 {
 	struct tcl_plugin_data *data;
 
@@ -319,7 +319,7 @@ static gboolean tcl_unload_plugin(GaimPlugin *plugin)
 
 	if (data != NULL) {
 		g_hash_table_remove(tcl_plugins, (gpointer)(data->interp));
-		gaim_signals_disconnect_by_handle(data->interp);
+		purple_signals_disconnect_by_handle(data->interp);
 		tcl_cmd_cleanup(data->interp);
 		tcl_signal_cleanup(data->interp);
 		Tcl_Release((ClientData)data->interp);
@@ -330,7 +330,7 @@ static gboolean tcl_unload_plugin(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static void tcl_destroy_plugin(GaimPlugin *plugin)
+static void tcl_destroy_plugin(PurplePlugin *plugin)
 {
 	if (plugin->info != NULL) {
 		g_free(plugin->info->id);
@@ -344,25 +344,25 @@ static void tcl_destroy_plugin(GaimPlugin *plugin)
 	return;
 }
 
-static gboolean tcl_load(GaimPlugin *plugin)
+static gboolean tcl_load(PurplePlugin *plugin)
 {
 	if(!tcl_loaded)
 		return FALSE;
 	tcl_glib_init();
 	tcl_cmd_init();
 	tcl_signal_init();
-	gaim_tcl_ref_init();
+	purple_tcl_ref_init();
 
-	GaimTclRefAccount = gaim_stringref_new("Account");
-	GaimTclRefConnection = gaim_stringref_new("Connection");
-	GaimTclRefConversation = gaim_stringref_new("Conversation");
-	GaimTclRefPointer = gaim_stringref_new("Pointer");
-	GaimTclRefPlugin = gaim_stringref_new("Plugin");
-	GaimTclRefPresence = gaim_stringref_new("Presence");
-	GaimTclRefStatus = gaim_stringref_new("Status");
-	GaimTclRefStatusAttr = gaim_stringref_new("StatusAttr");
-	GaimTclRefStatusType = gaim_stringref_new("StatusType");
-	GaimTclRefXfer = gaim_stringref_new("Xfer");
+	PurpleTclRefAccount = purple_stringref_new("Account");
+	PurpleTclRefConnection = purple_stringref_new("Connection");
+	PurpleTclRefConversation = purple_stringref_new("Conversation");
+	PurpleTclRefPointer = purple_stringref_new("Pointer");
+	PurpleTclRefPlugin = purple_stringref_new("Plugin");
+	PurpleTclRefPresence = purple_stringref_new("Presence");
+	PurpleTclRefStatus = purple_stringref_new("Status");
+	PurpleTclRefStatusAttr = purple_stringref_new("StatusAttr");
+	PurpleTclRefStatusType = purple_stringref_new("StatusType");
+	PurpleTclRefXfer = purple_stringref_new("Xfer");
 
 	tcl_plugins = g_hash_table_new(g_direct_hash, g_direct_equal);
 
@@ -373,26 +373,26 @@ static gboolean tcl_load(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static gboolean tcl_unload(GaimPlugin *plugin)
+static gboolean tcl_unload(PurplePlugin *plugin)
 {
 	g_hash_table_destroy(tcl_plugins);
 	tcl_plugins = NULL;
 
-	gaim_stringref_unref(GaimTclRefAccount);
-	gaim_stringref_unref(GaimTclRefConnection);
-	gaim_stringref_unref(GaimTclRefConversation);
-	gaim_stringref_unref(GaimTclRefPointer);
-	gaim_stringref_unref(GaimTclRefPlugin);
-	gaim_stringref_unref(GaimTclRefPresence);
-	gaim_stringref_unref(GaimTclRefStatus);
-	gaim_stringref_unref(GaimTclRefStatusAttr);
-	gaim_stringref_unref(GaimTclRefStatusType);
-	gaim_stringref_unref(GaimTclRefXfer);
+	purple_stringref_unref(PurpleTclRefAccount);
+	purple_stringref_unref(PurpleTclRefConnection);
+	purple_stringref_unref(PurpleTclRefConversation);
+	purple_stringref_unref(PurpleTclRefPointer);
+	purple_stringref_unref(PurpleTclRefPlugin);
+	purple_stringref_unref(PurpleTclRefPresence);
+	purple_stringref_unref(PurpleTclRefStatus);
+	purple_stringref_unref(PurpleTclRefStatusAttr);
+	purple_stringref_unref(PurpleTclRefStatusType);
+	purple_stringref_unref(PurpleTclRefXfer);
 
 	return TRUE;
 }
 
-static GaimPluginLoaderInfo tcl_loader_info =
+static PurplePluginLoaderInfo tcl_loader_info =
 {
 	NULL,
 	tcl_probe_plugin,
@@ -401,23 +401,23 @@ static GaimPluginLoaderInfo tcl_loader_info =
 	tcl_destroy_plugin,
 };
 
-static GaimPluginInfo tcl_info =
+static PurplePluginInfo tcl_info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_LOADER,
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_LOADER,
 	NULL,
 	0,
 	NULL,
-	GAIM_PRIORITY_DEFAULT,
+	PURPLE_PRIORITY_DEFAULT,
 	"core-tcl",
 	N_("Tcl Plugin Loader"),
 	VERSION,
 	N_("Provides support for loading Tcl plugins"),
 	N_("Provides support for loading Tcl plugins"),
 	"Ethan Blanton <eblanton@cs.purdue.edu>",
-	GAIM_WEBSITE,
+	PURPLE_WEBSITE,
 	tcl_load,
 	tcl_unload,
 	NULL,
@@ -443,27 +443,27 @@ static gboolean tcl_win32_init() {
 	char *version = NULL;
 	gboolean retval = FALSE;
 
-	if ((version = wgaim_read_reg_string(HKEY_LOCAL_MACHINE, regkey, "CurrentVersion"))
-			|| (version = wgaim_read_reg_string(HKEY_CURRENT_USER, regkey, "CurrentVersion"))) {
+	if ((version = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, regkey, "CurrentVersion"))
+			|| (version = wpurple_read_reg_string(HKEY_CURRENT_USER, regkey, "CurrentVersion"))) {
 		char *path;
 		char *regkey2;
 
 		regkey2 = g_strdup_printf("%s%s\\", regkey, version);
-		if ((path = wgaim_read_reg_string(HKEY_LOCAL_MACHINE, regkey2, NULL)) || (path = wgaim_read_reg_string(HKEY_CURRENT_USER, regkey2, NULL))) {
+		if ((path = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, regkey2, NULL)) || (path = wpurple_read_reg_string(HKEY_CURRENT_USER, regkey2, NULL))) {
 			char *tclpath;
 			char *tkpath;
 
-			gaim_debug(GAIM_DEBUG_INFO, "tcl", "Loading ActiveTCL version %s from \"%s\"\n", version, path);
+			purple_debug(PURPLE_DEBUG_INFO, "tcl", "Loading ActiveTCL version %s from \"%s\"\n", version, path);
 
 			tclpath = g_build_filename(path, "bin", "tcl84.dll", NULL);
 			tkpath = g_build_filename(path, "bin", "tk84.dll", NULL);
 
-			if(!(wtcl_CreateInterp = (LPFNTCLCREATEINTERP) wgaim_find_and_loadproc(tclpath, "Tcl_CreateInterp"))) {
-				gaim_debug(GAIM_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tcl_CreateInterp\n");
+			if(!(wtcl_CreateInterp = (LPFNTCLCREATEINTERP) wpurple_find_and_loadproc(tclpath, "Tcl_CreateInterp"))) {
+				purple_debug(PURPLE_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tcl_CreateInterp\n");
 			} else {
-				if(!(wtk_Init = (LPFNTKINIT) wgaim_find_and_loadproc(tkpath, "Tk_Init"))) {
+				if(!(wtk_Init = (LPFNTKINIT) wpurple_find_and_loadproc(tkpath, "Tk_Init"))) {
 					HMODULE mod;
-					gaim_debug(GAIM_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tk_Init\n");
+					purple_debug(PURPLE_DEBUG_INFO, "tcl", "tcl_win32_init error loading Tk_Init\n");
 					if((mod = GetModuleHandle("tcl84.dll")))
 						FreeLibrary(mod);
 				} else {
@@ -480,14 +480,14 @@ static gboolean tcl_win32_init() {
 	g_free(version);
 
 	if (!retval)
-		gaim_debug(GAIM_DEBUG_INFO, "tcl", _("Unable to detect ActiveTCL installation. If you wish to use TCL plugins, install ActiveTCL from http://www.activestate.com\n"));
+		purple_debug(PURPLE_DEBUG_INFO, "tcl", _("Unable to detect ActiveTCL installation. If you wish to use TCL plugins, install ActiveTCL from http://www.activestate.com\n"));
 
 	return retval;
 }
 
 #endif /* _WIN32 */
 
-static void tcl_init_plugin(GaimPlugin *plugin)
+static void tcl_init_plugin(PurplePlugin *plugin)
 {
 #ifdef USE_TCL_STUBS
 	Tcl_Interp *interp = NULL;
@@ -503,18 +503,18 @@ static void tcl_init_plugin(GaimPlugin *plugin)
 		return;
 
 	if(!Tcl_InitStubs(interp, TCL_VERSION, 0)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "tcl", "Tcl_InitStubs: %s\n", interp->result);
+		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "Tcl_InitStubs: %s\n", interp->result);
 		return;
 	}
 #endif
 
-	Tcl_FindExecutable("gaim");
+	Tcl_FindExecutable("purple");
 
 #if defined(USE_TK_STUBS) && defined(HAVE_TK)
 	Tk_Init(interp);
 
 	if(!Tk_InitStubs(interp, TK_VERSION, 0)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "tcl", "Error Tk_InitStubs: %s\n", interp->result);
+		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "Error Tk_InitStubs: %s\n", interp->result);
 		Tcl_DeleteInterp(interp);
 		return;
 	}
@@ -526,4 +526,4 @@ static void tcl_init_plugin(GaimPlugin *plugin)
 	tcl_loader_info.exts = g_list_append(tcl_loader_info.exts, "tcl");
 }
 
-GAIM_INIT_PLUGIN(tcl, tcl_init_plugin, tcl_info)
+PURPLE_INIT_PLUGIN(tcl, tcl_init_plugin, tcl_info)

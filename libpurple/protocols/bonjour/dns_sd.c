@@ -27,22 +27,22 @@ static sw_result HOWL_API
 _publish_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_discovery_publish_status status, sw_opaque extra)
 {
-	gaim_debug_warning("bonjour", "_publish_reply --> Start\n");
+	purple_debug_warning("bonjour", "_publish_reply --> Start\n");
 
 	/* Check the answer from the mDNS daemon */
 	switch (status)
 	{
 		case SW_DISCOVERY_PUBLISH_STARTED :
-			gaim_debug_info("bonjour", "_publish_reply --> Service started\n");
+			purple_debug_info("bonjour", "_publish_reply --> Service started\n");
 			break;
 		case SW_DISCOVERY_PUBLISH_STOPPED :
-			gaim_debug_info("bonjour", "_publish_reply --> Service stopped\n");
+			purple_debug_info("bonjour", "_publish_reply --> Service stopped\n");
 			break;
 		case SW_DISCOVERY_PUBLISH_NAME_COLLISION :
-			gaim_debug_info("bonjour", "_publish_reply --> Name collision\n");
+			purple_debug_info("bonjour", "_publish_reply --> Name collision\n");
 			break;
 		case SW_DISCOVERY_PUBLISH_INVALID :
-			gaim_debug_info("bonjour", "_publish_reply --> Service invalid\n");
+			purple_debug_info("bonjour", "_publish_reply --> Service invalid\n");
 			break;
 	}
 
@@ -58,7 +58,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_opaque extra)
 {
 	BonjourBuddy *buddy;
-	GaimAccount *account = (GaimAccount*)extra;
+	PurpleAccount *account = (PurpleAccount*)extra;
 	gchar *txtvers = NULL;
 	gchar *version = NULL;
 	gchar *first = NULL;
@@ -129,7 +129,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 	}
 
 	/* Add or update the buddy in our buddy list */
-	bonjour_buddy_add_to_gaim(account, buddy);
+	bonjour_buddy_add_to_purple(account, buddy);
 
 	/* Free all the temporal strings */
 	g_free(txtvers);
@@ -155,49 +155,49 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_opaque_t extra)
 {
 	sw_discovery_resolve_id rid;
-	GaimAccount *account = (GaimAccount*)extra;
-	GaimBuddy *gb = NULL;
+	PurpleAccount *account = (PurpleAccount*)extra;
+	PurpleBuddy *gb = NULL;
 
 	switch (status)
 	{
 		case SW_DISCOVERY_BROWSE_INVALID:
-			gaim_debug_warning("bonjour", "_browser_reply --> Invalid\n");
+			purple_debug_warning("bonjour", "_browser_reply --> Invalid\n");
 			break;
 		case SW_DISCOVERY_BROWSE_RELEASE:
-			gaim_debug_warning("bonjour", "_browser_reply --> Release\n");
+			purple_debug_warning("bonjour", "_browser_reply --> Release\n");
 			break;
 		case SW_DISCOVERY_BROWSE_ADD_DOMAIN:
-			gaim_debug_warning("bonjour", "_browser_reply --> Add domain\n");
+			purple_debug_warning("bonjour", "_browser_reply --> Add domain\n");
 			break;
 		case SW_DISCOVERY_BROWSE_ADD_DEFAULT_DOMAIN:
-			gaim_debug_warning("bonjour", "_browser_reply --> Add default domain\n");
+			purple_debug_warning("bonjour", "_browser_reply --> Add default domain\n");
 			break;
 		case SW_DISCOVERY_BROWSE_REMOVE_DOMAIN:
-			gaim_debug_warning("bonjour", "_browser_reply --> Remove domain\n");
+			purple_debug_warning("bonjour", "_browser_reply --> Remove domain\n");
 			break;
 		case SW_DISCOVERY_BROWSE_ADD_SERVICE:
 			/* A new peer has joined the network and uses iChat bonjour */
-			gaim_debug_info("bonjour", "_browser_reply --> Add service\n");
+			purple_debug_info("bonjour", "_browser_reply --> Add service\n");
 			if (g_ascii_strcasecmp(name, account->username) != 0)
 			{
 				if (sw_discovery_resolve(discovery, interface_index, name, type,
 						domain, _resolve_reply, extra, &rid) != SW_OKAY)
 				{
-					gaim_debug_warning("bonjour", "_browser_reply --> Cannot send resolve\n");
+					purple_debug_warning("bonjour", "_browser_reply --> Cannot send resolve\n");
 				}
 			}
 			break;
 		case SW_DISCOVERY_BROWSE_REMOVE_SERVICE:
-			gaim_debug_info("bonjour", "_browser_reply --> Remove service\n");
-			gb = gaim_find_buddy((GaimAccount*)extra, name);
+			purple_debug_info("bonjour", "_browser_reply --> Remove service\n");
+			gb = purple_find_buddy((PurpleAccount*)extra, name);
 			if (gb != NULL)
 			{
 				bonjour_buddy_delete(gb->proto_data);
-				gaim_blist_remove_buddy(gb);
+				purple_blist_remove_buddy(gb);
 			}
 			break;
 		case SW_DISCOVERY_BROWSE_RESOLVED:
-			gaim_debug_info("bonjour", "_browse_reply --> Resolved\n");
+			purple_debug_info("bonjour", "_browse_reply --> Resolved\n");
 			break;
 		default:
 			break;
@@ -216,7 +216,7 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	/* Fill the data for the service */
 	if (sw_text_record_init(&dns_data) != SW_OKAY)
 	{
-		gaim_debug_error("bonjour", "Unable to initialize the data for the mDNS.\n");
+		purple_debug_error("bonjour", "Unable to initialize the data for the mDNS.\n");
 		return -1;
 	}
 
@@ -261,7 +261,7 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	}
 	if (publish_result != SW_OKAY)
 	{
-		gaim_debug_error("bonjour", "Unable to publish or change the status of the _presence._tcp service.\n");
+		purple_debug_error("bonjour", "Unable to publish or change the status of the _presence._tcp service.\n");
 		return -1;
 	}
 
@@ -272,7 +272,7 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 }
 
 static void
-_dns_sd_handle_packets(gpointer data, gint source, GaimInputCondition condition)
+_dns_sd_handle_packets(gpointer data, gint source, PurpleInputCondition condition)
 {
 	sw_discovery_read_socket((sw_discovery)data);
 }
@@ -325,18 +325,18 @@ bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *s
 gboolean
 bonjour_dns_sd_start(BonjourDnsSd *data)
 {
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 	gint dns_sd_socket;
 	sw_discovery_oid session_id;
 
 	account = data->account;
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
 	/* Initialize the dns-sd data and session */
 	if (sw_discovery_init(&data->session) != SW_OKAY)
 	{
-		gaim_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
+		purple_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
 
 		/* In Avahi, sw_discovery_init frees data->session but doesn't clear it */
 		data->session = NULL;
@@ -351,14 +351,14 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	if (sw_discovery_browse(data->session, 0, ICHAT_SERVICE, NULL, _browser_reply,
 			data->account, &session_id) != SW_OKAY)
 	{
-		gaim_debug_error("bonjour", "Unable to get service.");
+		purple_debug_error("bonjour", "Unable to get service.");
 		return FALSE;
 	}
 
 	/* Get the socket that communicates with the mDNS daemon and bind it to a */
 	/* callback that will handle the dns_sd packets */
 	dns_sd_socket = sw_discovery_socket(data->session);
-	gc->inpa = gaim_input_add(dns_sd_socket, GAIM_INPUT_READ,
+	gc->inpa = purple_input_add(dns_sd_socket, PURPLE_INPUT_READ,
 									_dns_sd_handle_packets, data->session);
 
 	return TRUE;
@@ -370,8 +370,8 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 void
 bonjour_dns_sd_stop(BonjourDnsSd *data)
 {
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 
 	if (data->session == NULL)
 		return;
@@ -379,8 +379,8 @@ bonjour_dns_sd_stop(BonjourDnsSd *data)
 	sw_discovery_cancel(data->session, data->session_id);
 
 	account = data->account;
-	gc = gaim_account_get_connection(account);
-	gaim_input_remove(gc->inpa);
+	gc = purple_account_get_connection(account);
+	purple_input_remove(gc->inpa);
 
 	g_free(data->session);
 	data->session = NULL;

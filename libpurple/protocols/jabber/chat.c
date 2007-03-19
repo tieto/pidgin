@@ -1,5 +1,5 @@
 /*
- * gaim - Jabber Protocol Plugin
+ * purple - Jabber Protocol Plugin
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -32,7 +32,7 @@
 #include "presence.h"
 #include "xdata.h"
 
-GList *jabber_chat_info(GaimConnection *gc)
+GList *jabber_chat_info(PurpleConnection *gc)
 {
 	GList *m = NULL;
 	struct proto_chat_entry *pce;
@@ -64,7 +64,7 @@ GList *jabber_chat_info(GaimConnection *gc)
 	return m;
 }
 
-GHashTable *jabber_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+GHashTable *jabber_chat_info_defaults(PurpleConnection *gc, const char *chat_name)
 {
 	GHashTable *defaults;
 	JabberStream *js = gc->proto_data;
@@ -135,17 +135,17 @@ JabberChat *jabber_chat_find_by_id(JabberStream *js, int id)
 	return chat;
 }
 
-JabberChat *jabber_chat_find_by_conv(GaimConversation *conv)
+JabberChat *jabber_chat_find_by_conv(PurpleConversation *conv)
 {
-	GaimAccount *account = gaim_conversation_get_account(conv);
-	GaimConnection *gc = gaim_account_get_connection(account);
+	PurpleAccount *account = purple_conversation_get_account(conv);
+	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js = gc->proto_data;
-	int id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
+	int id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
 
 	return jabber_chat_find_by_id(js, id);
 }
 
-void jabber_chat_invite(GaimConnection *gc, int id, const char *msg,
+void jabber_chat_invite(PurpleConnection *gc, int id, const char *msg,
 		const char *name)
 {
 	JabberStream *js = gc->proto_data;
@@ -197,15 +197,15 @@ char *jabber_get_chat_name(GHashTable *data) {
 	return chat_name;
 }
 
-void jabber_chat_join(GaimConnection *gc, GHashTable *data)
+void jabber_chat_join(PurpleConnection *gc, GHashTable *data)
 {
 	JabberChat *chat;
 	char *room, *server, *handle, *passwd;
 	xmlnode *presence, *x;
 	char *tmp, *room_jid, *full_jid;
 	JabberStream *js = gc->proto_data;
-	GaimPresence *gpresence;
-	GaimStatus *status;
+	PurplePresence *gpresence;
+	PurpleStatus *status;
 	JabberBuddyState state;
 	char *msg;
 	int priority;
@@ -223,19 +223,19 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 
 	if(!jabber_nodeprep_validate(room)) {
 		char *buf = g_strdup_printf(_("%s is not a valid room name"), room);
-		gaim_notify_error(gc, _("Invalid Room Name"), _("Invalid Room Name"),
+		purple_notify_error(gc, _("Invalid Room Name"), _("Invalid Room Name"),
 				buf);
 		g_free(buf);
 		return;
 	} else if(!jabber_nameprep_validate(server)) {
 		char *buf = g_strdup_printf(_("%s is not a valid server name"), server);
-		gaim_notify_error(gc, _("Invalid Server Name"),
+		purple_notify_error(gc, _("Invalid Server Name"),
 				_("Invalid Server Name"), buf);
 		g_free(buf);
 		return;
 	} else if(!jabber_resourceprep_validate(handle)) {
 		char *buf = g_strdup_printf(_("%s is not a valid room handle"), handle);
-		gaim_notify_error(gc, _("Invalid Room Handle"),
+		purple_notify_error(gc, _("Invalid Room Handle"),
 				_("Invalid Room Handle"), buf);
 	}
 
@@ -258,10 +258,10 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 
 	g_hash_table_insert(js->chats, room_jid, chat);
 
-	gpresence = gaim_account_get_presence(gc->account);
-	status = gaim_presence_get_active_status(gpresence);
+	gpresence = purple_account_get_presence(gc->account);
+	status = purple_presence_get_active_status(gpresence);
 
-	gaim_status_to_jabber(status, &state, &msg, &priority);
+	purple_status_to_jabber(status, &state, &msg, &priority);
 
 	presence = jabber_presence_create(state, msg, priority);
 	full_jid = g_strdup_printf("%s/%s", room_jid, handle);
@@ -281,7 +281,7 @@ void jabber_chat_join(GaimConnection *gc, GHashTable *data)
 	xmlnode_free(presence);
 }
 
-void jabber_chat_leave(GaimConnection *gc, int id)
+void jabber_chat_leave(PurpleConnection *gc, int id)
 {
 	JabberStream *js = gc->proto_data;
 	JabberChat *chat = jabber_chat_find_by_id(js, id);
@@ -307,7 +307,7 @@ void jabber_chat_destroy(JabberChat *chat)
 void jabber_chat_free(JabberChat *chat)
 {
 	if(chat->config_dialog_handle)
-		gaim_request_close(chat->config_dialog_type, chat->config_dialog_handle);
+		purple_request_close(chat->config_dialog_type, chat->config_dialog_handle);
 
 	g_free(chat->room);
 	g_free(chat->server);
@@ -316,12 +316,12 @@ void jabber_chat_free(JabberChat *chat)
 	g_free(chat);
 }
 
-gboolean jabber_chat_find_buddy(GaimConversation *conv, const char *name)
+gboolean jabber_chat_find_buddy(PurpleConversation *conv, const char *name)
 {
-	return gaim_conv_chat_find_user(GAIM_CONV_CHAT(conv), name);
+	return purple_conv_chat_find_user(PURPLE_CONV_CHAT(conv), name);
 }
 
-char *jabber_chat_buddy_real_name(GaimConnection *gc, int id, const char *who)
+char *jabber_chat_buddy_real_name(PurpleConnection *gc, int id, const char *who)
 {
 	JabberStream *js = gc->proto_data;
 	JabberChat *chat;
@@ -387,7 +387,7 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 				continue;
 
 			if(!strcmp(xmlns, "jabber:x:data")) {
-				chat->config_dialog_type = GAIM_REQUEST_FIELDS;
+				chat->config_dialog_type = PURPLE_REQUEST_FIELDS;
 				chat->config_dialog_handle = jabber_x_data_request(js, x, jabber_chat_room_configure_x_data_cb, chat);
 				return;
 			}
@@ -395,7 +395,7 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 	} else if(!strcmp(type, "error")) {
 		char *msg = jabber_parse_error(js, packet);
 
-		gaim_notify_error(js->gc, _("Configuration error"), _("Configuration error"), msg);
+		purple_notify_error(js->gc, _("Configuration error"), _("Configuration error"), msg);
 
 		if(msg)
 			g_free(msg);
@@ -404,7 +404,7 @@ static void jabber_chat_room_configure_cb(JabberStream *js, xmlnode *packet, gpo
 
 	msg = g_strdup_printf("Unable to configure room %s", from);
 
-	gaim_notify_info(js->gc, _("Unable to configure"), _("Unable to configure"), msg);
+	purple_notify_info(js->gc, _("Unable to configure"), _("Unable to configure"), msg);
 	g_free(msg);
 
 }
@@ -419,7 +419,7 @@ void jabber_chat_request_room_configure(JabberChat *chat) {
 	chat->config_dialog_handle = NULL;
 
 	if(!chat->muc) {
-		gaim_notify_error(chat->js->gc, _("Room Configuration Error"), _("Room Configuration Error"),
+		purple_notify_error(chat->js->gc, _("Room Configuration Error"), _("Room Configuration Error"),
 				_("This room is not capable of being configured"));
 		return;
 	}
@@ -469,7 +469,7 @@ static void jabber_chat_register_x_data_result_cb(JabberStream *js, xmlnode *pac
 	if(type && !strcmp(type, "error")) {
 		char *msg = jabber_parse_error(js, packet);
 
-		gaim_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
+		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
 
 		if(msg)
 			g_free(msg);
@@ -538,7 +538,7 @@ static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer 
 	} else if(!strcmp(type, "error")) {
 		char *msg = jabber_parse_error(js, packet);
 
-		gaim_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
+		purple_notify_error(js->gc, _("Registration error"), _("Registration error"), msg);
 
 		if(msg)
 			g_free(msg);
@@ -547,7 +547,7 @@ static void jabber_chat_register_cb(JabberStream *js, xmlnode *packet, gpointer 
 
 	msg = g_strdup_printf("Unable to configure room %s", from);
 
-	gaim_notify_info(js->gc, _("Unable to configure"), _("Unable to configure"), msg);
+	purple_notify_info(js->gc, _("Unable to configure"), _("Unable to configure"), msg);
 	g_free(msg);
 
 }
@@ -579,30 +579,30 @@ void jabber_chat_change_topic(JabberChat *chat, const char *topic)
 		jm = g_new0(JabberMessage, 1);
 		jm->js = chat->js;
 		jm->type = JABBER_MESSAGE_GROUPCHAT;
-		jm->subject = gaim_markup_strip_html(topic);
+		jm->subject = purple_markup_strip_html(topic);
 		jm->to = g_strdup_printf("%s@%s", chat->room, chat->server);
 		jabber_message_send(jm);
 		jabber_message_free(jm);
 	} else {
-		const char *cur = gaim_conv_chat_get_topic(GAIM_CONV_CHAT(chat->conv));
+		const char *cur = purple_conv_chat_get_topic(PURPLE_CONV_CHAT(chat->conv));
 		char *buf, *tmp, *tmp2;
 
 		if(cur) {
 			tmp = g_markup_escape_text(cur, -1);
-			tmp2 = gaim_markup_linkify(tmp);
+			tmp2 = purple_markup_linkify(tmp);
 			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
 			g_free(tmp);
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "", buf,
-				GAIM_MESSAGE_SYSTEM | GAIM_MESSAGE_NO_LOG, time(NULL));
+		purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", buf,
+				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 	}
 
 }
 
-void jabber_chat_set_topic(GaimConnection *gc, int id, const char *topic)
+void jabber_chat_set_topic(PurpleConnection *gc, int id, const char *topic)
 {
 	JabberStream *js = gc->proto_data;
 	JabberChat *chat = jabber_chat_find_by_id(js, id);
@@ -618,23 +618,23 @@ void jabber_chat_change_nick(JabberChat *chat, const char *nick)
 {
 	xmlnode *presence;
 	char *full_jid;
-	GaimPresence *gpresence;
-	GaimStatus *status;
+	PurplePresence *gpresence;
+	PurpleStatus *status;
 	JabberBuddyState state;
 	char *msg;
 	int priority;
 
 	if(!chat->muc) {
-		gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "",
+		purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "",
 				_("Nick changing not supported in non-MUC chatrooms"),
-				GAIM_MESSAGE_SYSTEM, time(NULL));
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 		return;
 	}
 
-	gpresence = gaim_account_get_presence(chat->js->gc->account);
-	status = gaim_presence_get_active_status(gpresence);
+	gpresence = purple_account_get_presence(chat->js->gc->account);
+	status = purple_presence_get_active_status(gpresence);
 
-	gaim_status_to_jabber(status, &state, &msg, &priority);
+	purple_status_to_jabber(status, &state, &msg, &priority);
 
 	presence = jabber_presence_create(state, msg, priority);
 	full_jid = g_strdup_printf("%s@%s/%s", chat->room, chat->server, nick);
@@ -676,10 +676,10 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 
 	if(!(type = xmlnode_get_attrib(packet, "type")) || strcmp(type, "result")) {
 		char *err = jabber_parse_error(js,packet);
-		gaim_notify_error(js->gc, _("Error"),
+		purple_notify_error(js->gc, _("Error"),
 				_("Error retrieving room list"), err);
-		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
-		gaim_roomlist_unref(js->roomlist);
+		purple_roomlist_set_in_progress(js->roomlist, FALSE);
+		purple_roomlist_unref(js->roomlist);
 		js->roomlist = NULL;
 		g_free(err);
 		return;
@@ -687,10 +687,10 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 
 	if(!(query = xmlnode_get_child(packet, "query"))) {
 		char *err = jabber_parse_error(js, packet);
-		gaim_notify_error(js->gc, _("Error"),
+		purple_notify_error(js->gc, _("Error"),
 				_("Error retrieving room list"), err);
-		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
-		gaim_roomlist_unref(js->roomlist);
+		purple_roomlist_set_in_progress(js->roomlist, FALSE);
+		purple_roomlist_unref(js->roomlist);
 		js->roomlist = NULL;
 		g_free(err);
 		return;
@@ -699,7 +699,7 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 	for(item = xmlnode_get_child(query, "item"); item;
 			item = xmlnode_get_next_twin(item)) {
 		const char *name;
-		GaimRoomlistRoom *room;
+		PurpleRoomlistRoom *room;
 		JabberID *jid;
 
 		if(!(jid = jabber_id_new(xmlnode_get_attrib(item, "jid"))))
@@ -707,23 +707,23 @@ static void roomlist_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer
 		name = xmlnode_get_attrib(item, "name");
 
 
-		room = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_ROOM, jid->node, NULL);
-		gaim_roomlist_room_add_field(js->roomlist, room, jid->node);
-		gaim_roomlist_room_add_field(js->roomlist, room, jid->domain);
-		gaim_roomlist_room_add_field(js->roomlist, room, name ? name : "");
-		gaim_roomlist_room_add(js->roomlist, room);
+		room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, jid->node, NULL);
+		purple_roomlist_room_add_field(js->roomlist, room, jid->node);
+		purple_roomlist_room_add_field(js->roomlist, room, jid->domain);
+		purple_roomlist_room_add_field(js->roomlist, room, name ? name : "");
+		purple_roomlist_room_add(js->roomlist, room);
 
 		jabber_id_free(jid);
 	}
-	gaim_roomlist_set_in_progress(js->roomlist, FALSE);
-	gaim_roomlist_unref(js->roomlist);
+	purple_roomlist_set_in_progress(js->roomlist, FALSE);
+	purple_roomlist_unref(js->roomlist);
 	js->roomlist = NULL;
 }
 
 static void roomlist_cancel_cb(JabberStream *js, const char *server) {
 	if(js->roomlist) {
-		gaim_roomlist_set_in_progress(js->roomlist, FALSE);
-		gaim_roomlist_unref(js->roomlist);
+		purple_roomlist_set_in_progress(js->roomlist, FALSE);
+		purple_roomlist_unref(js->roomlist);
 		js->roomlist = NULL;
 	}
 }
@@ -736,11 +736,11 @@ static void roomlist_ok_cb(JabberStream *js, const char *server)
 		return;
 
 	if(!server || !*server) {
-		gaim_notify_error(js->gc, _("Invalid Server"), _("Invalid Server"), NULL);
+		purple_notify_error(js->gc, _("Invalid Server"), _("Invalid Server"), NULL);
 		return;
 	}
 
-	gaim_roomlist_set_in_progress(js->roomlist, TRUE);
+	purple_roomlist_set_in_progress(js->roomlist, TRUE);
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
 
@@ -751,58 +751,58 @@ static void roomlist_ok_cb(JabberStream *js, const char *server)
 	jabber_iq_send(iq);
 }
 
-char *jabber_roomlist_room_serialize(GaimRoomlistRoom *room)
+char *jabber_roomlist_room_serialize(PurpleRoomlistRoom *room)
 {
 
 	return g_strdup_printf("%s@%s", (char*)room->fields->data, (char*)room->fields->next->data);
 }
 
-GaimRoomlist *jabber_roomlist_get_list(GaimConnection *gc)
+PurpleRoomlist *jabber_roomlist_get_list(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 	GList *fields = NULL;
-	GaimRoomlistField *f;
+	PurpleRoomlistField *f;
 
 	if(js->roomlist)
-		gaim_roomlist_unref(js->roomlist);
+		purple_roomlist_unref(js->roomlist);
 
-	js->roomlist = gaim_roomlist_new(gaim_connection_get_account(js->gc));
+	js->roomlist = purple_roomlist_new(purple_connection_get_account(js->gc));
 
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "room", TRUE);
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", "room", TRUE);
 	fields = g_list_append(fields, f);
 
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "server", TRUE);
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", "server", TRUE);
 	fields = g_list_append(fields, f);
 
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, _("Description"), "description", FALSE);
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, _("Description"), "description", FALSE);
 	fields = g_list_append(fields, f);
 
-	gaim_roomlist_set_fields(js->roomlist, fields);
+	purple_roomlist_set_fields(js->roomlist, fields);
 
 
-	gaim_request_input(gc, _("Enter a Conference Server"), _("Enter a Conference Server"),
+	purple_request_input(gc, _("Enter a Conference Server"), _("Enter a Conference Server"),
 			_("Select a conference server to query"),
 			js->chat_servers ? js->chat_servers->data : "conference.jabber.org",
 			FALSE, FALSE, NULL,
-			_("Find Rooms"), GAIM_CALLBACK(roomlist_ok_cb),
-			_("Cancel"), GAIM_CALLBACK(roomlist_cancel_cb), js);
+			_("Find Rooms"), PURPLE_CALLBACK(roomlist_ok_cb),
+			_("Cancel"), PURPLE_CALLBACK(roomlist_cancel_cb), js);
 
 	return js->roomlist;
 }
 
-void jabber_roomlist_cancel(GaimRoomlist *list)
+void jabber_roomlist_cancel(PurpleRoomlist *list)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	JabberStream *js;
 
-	gc = gaim_account_get_connection(list->account);
+	gc = purple_account_get_connection(list->account);
 	js = gc->proto_data;
 
-	gaim_roomlist_set_in_progress(list, FALSE);
+	purple_roomlist_set_in_progress(list, FALSE);
 
 	if (js->roomlist == list) {
 		js->roomlist = NULL;
-		gaim_roomlist_unref(list);
+		purple_roomlist_unref(list);
 	}
 }
 

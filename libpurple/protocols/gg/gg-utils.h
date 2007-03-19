@@ -1,7 +1,7 @@
 /**
  * @file gg-utils.h
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2005  Bartosz Oler <bartosz@bzimage.us>
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _GAIM_GG_UTILS_H
-#define _GAIM_GG_UTILS_H
+#ifndef _PURPLE_GG_UTILS_H
+#define _PURPLE_GG_UTILS_H
 
 #include "internal.h"
 
@@ -79,19 +79,19 @@ charset_convert(const gchar *locstr, const char *encsrc, const char *encdst);
  * @return UIN of an account.
  */
 uin_t
-ggp_get_uin(GaimAccount *account);
+ggp_get_uin(PurpleAccount *account);
 
 /**
  * Returns the best name of a buddy from the buddylist.
  *
- * @param gc  GaimConnection instance.
+ * @param gc  PurpleConnection instance.
  * @param uin UIN of the buddy.
  *
  * @return Name of the buddy, or UIN converted to string.
  */
 char *
-ggp_buddy_get_name(GaimConnection *gc, const uin_t uin);
+ggp_buddy_get_name(PurpleConnection *gc, const uin_t uin);
 
-#endif /* _GAIM_GG_UTILS_H */
+#endif /* _PURPLE_GG_UTILS_H */
 
 /* vim: set ts=8 sts=0 sw=8 noet: */

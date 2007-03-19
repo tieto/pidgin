@@ -1,9 +1,9 @@
 /**
  * @file buddy_info.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -84,18 +84,18 @@ typedef struct _contact_info {
         gchar *unknown6;        /* always 0x2D */
 } contact_info;
 
-void qq_refresh_buddy_and_myself(contact_info *info, GaimConnection *gc);
-void qq_send_packet_get_info(GaimConnection *gc, guint32 uid, gboolean show_window);
-void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile);
-void qq_set_buddy_icon_for_user(GaimAccount *account, const gchar *who, const gchar *iconfile);
-void qq_prepare_modify_info(GaimConnection *gc);
-void qq_process_modify_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
-void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc);
+void qq_send_packet_get_info(PurpleConnection *gc, guint32 uid, gboolean show_window);
+void qq_set_my_buddy_icon(PurpleConnection *gc, const gchar *iconfile);
+void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const gchar *iconfile);
+void qq_prepare_modify_info(PurpleConnection *gc);
+void qq_process_modify_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_process_get_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
 void qq_info_query_free(qq_data *qd);
-void qq_send_packet_get_level(GaimConnection *gc, guint32 uid);
+void qq_send_packet_get_level(PurpleConnection *gc, guint32 uid);
 /*
-void qq_send_packet_get_buddies_levels(GaimConnection *gc);
+void qq_send_packet_get_buddies_levels(PurpleConnection *gc);
 */
-void qq_process_get_level_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
 
 #endif

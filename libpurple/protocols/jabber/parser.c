@@ -1,5 +1,5 @@
 /*
- * gaim - Jabber XML parser stuff
+ * purple - Jabber XML parser stuff
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -87,7 +87,7 @@ jabber_parser_element_start_libxml(void *user_data,
 			attrib[attrib_len] = '\0';
 
 			txt = attrib;
-			attrib = gaim_unescape_html(txt);
+			attrib = purple_unescape_html(txt);
 			g_free(txt);
 			xmlnode_set_attrib_with_namespace(node, (const char*) attributes[i], attrib_ns, attrib);
 			g_free(attrib);
@@ -190,7 +190,7 @@ void jabber_parser_process(JabberStream *js, const char *buf, int len)
 		js->context = xmlCreatePushParserCtxt(&jabber_parser_libxml, js, buf, len, NULL);
 		xmlParseChunk(js->context, "", 0, 0);
 	} else if (xmlParseChunk(js->context, buf, len, 0) < 0) {
-		gaim_connection_error(js->gc, _("XML Parse error"));
+		purple_connection_error(js->gc, _("XML Parse error"));
 	}
 }
 

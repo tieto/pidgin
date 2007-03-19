@@ -2,7 +2,7 @@
  * @file gtknotify.h GTK+ Notification API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -32,6 +32,6 @@
  *
  * @return The GTK+ UI notify operations structure.
  */
-GaimNotifyUiOps *pidgin_notify_get_ui_ops(void);
+PurpleNotifyUiOps *pidgin_notify_get_ui_ops(void);
 
 #endif /* _PIDGINNOTIFY_H_ */

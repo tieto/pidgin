@@ -2,7 +2,7 @@
  * @file gtkaccount.h GTK+ Account Editor UI
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -52,14 +52,14 @@ void pidgin_accounts_window_hide(void);
  * @param account The associated account, or @c NULL for an Add dialog.
  */
 void pidgin_account_dialog_show(PidginAccountDialogType type,
-								  GaimAccount *account);
+								  PurpleAccount *account);
 
 /**
  * Returns the GTK+ account UI ops
  *
  * @return The UI operations structure.
  */
-GaimAccountUiOps *pidgin_accounts_get_ui_ops(void);
+PurpleAccountUiOps *pidgin_accounts_get_ui_ops(void);
 
 /**
  * Returns the gtkaccounts handle

@@ -29,11 +29,11 @@ static gboolean _scroll_imhtml_to_end(gpointer data)
 	return FALSE;
 }
 
-static void historize(GaimConversation *c)
+static void historize(PurpleConversation *c)
 {
-	GaimAccount *account = gaim_conversation_get_account(c);
-	const char *name = gaim_conversation_get_name(c);
-	GaimConversationType convtype;
+	PurpleAccount *account = purple_conversation_get_account(c);
+	const char *name = purple_conversation_get_name(c);
+	PurpleConversationType convtype;
 	GList *logs = NULL;
 	const char *alias = name;
 	guint flags;
@@ -43,43 +43,43 @@ static void historize(GaimConversation *c)
 	char *header;
 	char *protocol;
 
-	convtype = gaim_conversation_get_type(c);
+	convtype = purple_conversation_get_type(c);
 	gtkconv = PIDGIN_CONVERSATION(c);
-	if (convtype == GAIM_CONV_TYPE_IM && g_list_length(gtkconv->convs) < 2)
+	if (convtype == PURPLE_CONV_TYPE_IM && g_list_length(gtkconv->convs) < 2)
 	{
 		GSList *buddies;
 		GSList *cur;
 
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */
-		if (!gaim_prefs_get_bool("/core/logging/log_ims"))
+		if (!purple_prefs_get_bool("/core/logging/log_ims"))
 			return;
 
 		/* Find buddies for this conversation. */
-	        buddies = gaim_find_buddies(account, name);
+	        buddies = purple_find_buddies(account, name);
 
 		/* If we found at least one buddy, save the first buddy's alias. */
 		if (buddies != NULL)
-			alias = gaim_buddy_get_contact_alias((GaimBuddy *)buddies->data);
+			alias = purple_buddy_get_contact_alias((PurpleBuddy *)buddies->data);
 
 	        for (cur = buddies; cur != NULL; cur = cur->next)
 	        {
-	                GaimBlistNode *node = cur->data;
+	                PurpleBlistNode *node = cur->data;
 	                if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
 	                {
-				GaimBlistNode *node2;
+				PurpleBlistNode *node2;
 
-				alias = gaim_buddy_get_contact_alias((GaimBuddy *)node);
+				alias = purple_buddy_get_contact_alias((PurpleBuddy *)node);
 
 				/* We've found a buddy that matches this conversation.  It's part of a
-				 * GaimContact with more than one GaimBuddy.  Loop through the GaimBuddies
+				 * PurpleContact with more than one PurpleBuddy.  Loop through the PurpleBuddies
 				 * in the contact and get all the logs. */
 				for (node2 = node->parent->child ; node2 != NULL ; node2 = node2->next)
 				{
 					logs = g_list_concat(
-						gaim_log_get_logs(GAIM_LOG_IM,
-							gaim_buddy_get_name((GaimBuddy *)node2),
-							gaim_buddy_get_account((GaimBuddy *)node2)),
+						purple_log_get_logs(PURPLE_LOG_IM,
+							purple_buddy_get_name((PurpleBuddy *)node2),
+							purple_buddy_get_account((PurpleBuddy *)node2)),
 						logs);
 				}
 				break;
@@ -88,37 +88,37 @@ static void historize(GaimConversation *c)
 	        g_slist_free(buddies);
 
 		if (logs == NULL)
-			logs = gaim_log_get_logs(GAIM_LOG_IM, name, account);
+			logs = purple_log_get_logs(PURPLE_LOG_IM, name, account);
 		else
-			logs = g_list_sort(logs, gaim_log_compare);
+			logs = g_list_sort(logs, purple_log_compare);
 	}
-	else if (convtype == GAIM_CONV_TYPE_CHAT)
+	else if (convtype == PURPLE_CONV_TYPE_CHAT)
 	{
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */
-		if (!gaim_prefs_get_bool("/core/logging/log_chats"))
+		if (!purple_prefs_get_bool("/core/logging/log_chats"))
 			return;
 
-		logs = gaim_log_get_logs(GAIM_LOG_CHAT, name, account);
+		logs = purple_log_get_logs(PURPLE_LOG_CHAT, name, account);
 	}
 
 	if (logs == NULL)
 		return;
 
-	history = gaim_log_read((GaimLog*)logs->data, &flags);
+	history = purple_log_read((PurpleLog*)logs->data, &flags);
 	gtkconv = PIDGIN_CONVERSATION(c);
-	if (flags & GAIM_LOG_READ_NO_NEWLINE)
+	if (flags & PURPLE_LOG_READ_NO_NEWLINE)
 		options |= GTK_IMHTML_NO_NEWLINE;
 
 	protocol = g_strdup(gtk_imhtml_get_protocol_name(GTK_IMHTML(gtkconv->imhtml)));
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->imhtml),
-							      gaim_account_get_protocol_name(((GaimLog*)logs->data)->account));
+							      purple_account_get_protocol_name(((PurpleLog*)logs->data)->account));
 
 	if (gtk_text_buffer_get_char_count(gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->imhtml))))
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), "<BR>", options);
 
 	header = g_strdup_printf(_("<b>Conversation with %s on %s:</b><br>"), alias,
-							 gaim_date_format_full(localtime(&((GaimLog *)logs->data)->time)));
+							 purple_date_format_full(localtime(&((PurpleLog *)logs->data)->time)));
 	gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), header, options);
 	g_free(header);
 
@@ -134,39 +134,39 @@ static void historize(GaimConversation *c)
 	g_object_ref(G_OBJECT(gtkconv->imhtml));
 	g_idle_add(_scroll_imhtml_to_end, gtkconv->imhtml);
 
-	g_list_foreach(logs, (GFunc)gaim_log_free, NULL);
+	g_list_foreach(logs, (GFunc)purple_log_free, NULL);
 	g_list_free(logs);
 }
 
 static void
-history_prefs_check(GaimPlugin *plugin)
+history_prefs_check(PurplePlugin *plugin)
 {
-	if (!gaim_prefs_get_bool("/core/logging/log_ims") &&
-	    !gaim_prefs_get_bool("/core/logging/log_chats"))
+	if (!purple_prefs_get_bool("/core/logging/log_ims") &&
+	    !purple_prefs_get_bool("/core/logging/log_chats"))
 	{
-		gaim_notify_warning(plugin, NULL, _("History Plugin Requires Logging"),
+		purple_notify_warning(plugin, NULL, _("History Plugin Requires Logging"),
 							_("Logging can be enabled from Tools -> Preferences -> Logging.\n\n"
 							  "Enabling logs for instant messages and/or chats will activate "
 							  "history for the same conversation type(s)."));
 	}
 }
 
-static void history_prefs_cb(const char *name, GaimPrefType type,
+static void history_prefs_cb(const char *name, PurplePrefType type,
 							 gconstpointer val, gpointer data)
 {
-	history_prefs_check((GaimPlugin *)data);
+	history_prefs_check((PurplePlugin *)data);
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	gaim_signal_connect(gaim_conversations_get_handle(),
+	purple_signal_connect(purple_conversations_get_handle(),
 						"conversation-created",
-						plugin, GAIM_CALLBACK(historize), NULL);
+						plugin, PURPLE_CALLBACK(historize), NULL);
 
-	gaim_prefs_connect_callback(plugin, "/core/logging/log_ims",
+	purple_prefs_connect_callback(plugin, "/core/logging/log_ims",
 								history_prefs_cb, plugin);
-	gaim_prefs_connect_callback(plugin, "/core/logging/log_chats",
+	purple_prefs_connect_callback(plugin, "/core/logging/log_chats",
 								history_prefs_cb, plugin);
 
 	history_prefs_check(plugin);
@@ -174,16 +174,16 @@ plugin_load(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,
 	PIDGIN_PLUGIN_TYPE,
 	0,
 	NULL,
-	GAIM_PRIORITY_DEFAULT,
+	PURPLE_PRIORITY_DEFAULT,
 	HISTORY_PLUGIN_ID,
 	N_("History"),
 	VERSION,
@@ -191,7 +191,7 @@ static GaimPluginInfo info =
 	N_("When a new conversation is opened this plugin will insert "
 	   "the last conversation into the current conversation."),
 	"Sean Egan <seanegan@gmail.com>",
-	GAIM_WEBSITE,
+	PURPLE_WEBSITE,
 	plugin_load,
 	NULL,
 	NULL,
@@ -202,8 +202,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(history, init_plugin, info)
+PURPLE_INIT_PLUGIN(history, init_plugin, info)

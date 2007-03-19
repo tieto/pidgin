@@ -2,9 +2,9 @@
  * @file gntconn.h GNT Connection API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -35,9 +35,9 @@
 /**
  * Get the ui-functions.
  *
- * @return The GaimConnectionUiOps structure populated with the appropriate functions.
+ * @return The PurpleConnectionUiOps structure populated with the appropriate functions.
  */
-GaimConnectionUiOps *finch_connections_get_ui_ops(void);
+PurpleConnectionUiOps *finch_connections_get_ui_ops(void);
 
 /**
  * Perform necessary initializations.

@@ -1,9 +1,9 @@
 /**
  * @file state.h State functions and definitions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -59,6 +59,6 @@ const char *msn_away_get_text(MsnAwayType type);
 
 const char *msn_state_get_text(MsnAwayType state);
 
-MsnAwayType msn_state_from_account(GaimAccount *account);
+MsnAwayType msn_state_from_account(PurpleAccount *account);
 
 #endif /* _MSN_STATE_H_ */

@@ -2,9 +2,9 @@
  * @file gtknotify.c GTK+ Notification API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -40,7 +40,7 @@
 
 typedef struct
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	char *url;
 	GtkWidget *label;
 	GtkTreeIter iter;
@@ -49,18 +49,18 @@ typedef struct
 
 typedef struct
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	GtkListStore *model;
 	GtkWidget *treeview;
 	GtkWidget *window;
 	gpointer user_data;
-	GaimNotifySearchResults *results;
+	PurpleNotifySearchResults *results;
 
 } PidginNotifySearchResultsData;
 
 typedef struct
 {
-	GaimNotifySearchButton *button;
+	PurpleNotifySearchButton *button;
 	PidginNotifySearchResultsData *data;
 
 } PidginNotifySearchResultsButtonData;
@@ -88,7 +88,7 @@ struct _PidginMailDialog
 
 static PidginMailDialog *mail_dialog = NULL;
 
-static void *pidgin_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
+static void *pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 									const char **subjects,
 									const char **froms, const char **tos,
 									const char **urls);
@@ -96,7 +96,7 @@ static void *pidgin_notify_emails(GaimConnection *gc, size_t count, gboolean det
 static void
 message_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
 {
-	gaim_notify_close(GAIM_NOTIFY_MESSAGE, widget);
+	purple_notify_close(PURPLE_NOTIFY_MESSAGE, widget);
 }
 
 static void
@@ -115,10 +115,10 @@ email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
 		{
 			gtk_tree_model_get(GTK_TREE_MODEL(dialog->treemodel), &iter,
 								PIDGIN_MAIL_DATA, &data, -1);
-			gaim_notify_uri(NULL, data->url);
+			purple_notify_uri(NULL, data->url);
 
 			gtk_tree_store_remove(dialog->treemodel, &iter);
-			gaim_notify_close(GAIM_NOTIFY_EMAILS, data);
+			purple_notify_close(PURPLE_NOTIFY_EMAILS, data);
 
 			if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mail_dialog->treemodel), &iter))
 				return;
@@ -134,10 +134,10 @@ email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
 								PIDGIN_MAIL_DATA, &data, -1);
 
 			if (id == GTK_RESPONSE_ACCEPT)
-				gaim_notify_uri(NULL, data->url);
+				purple_notify_uri(NULL, data->url);
 
 			gtk_tree_store_remove(dialog->treemodel, &iter);
-			gaim_notify_close(GAIM_NOTIFY_EMAILS, data);
+			purple_notify_close(PURPLE_NOTIFY_EMAILS, data);
 		}
 	}
 	gtk_widget_destroy(dialog->dialog);
@@ -158,13 +158,13 @@ reset_mail_dialog(GtkDialog *dialog)
 static void
 formatted_close_cb(GtkWidget *win, GdkEvent *event, void *user_data)
 {
-	gaim_notify_close(GAIM_NOTIFY_FORMATTED, win);
+	purple_notify_close(PURPLE_NOTIFY_FORMATTED, win);
 }
 
 static void
 searchresults_close_cb(PidginNotifySearchResultsData *data, GdkEvent *event, gpointer user_data)
 {
-	gaim_notify_close(GAIM_NOTIFY_SEARCHRESULTS, data);
+	purple_notify_close(PURPLE_NOTIFY_SEARCHRESULTS, data);
 }
 
 static void
@@ -175,7 +175,7 @@ searchresults_callback_wrapper_cb(GtkWidget *widget, PidginNotifySearchResultsBu
 	GtkTreeSelection *selection;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	GaimNotifySearchButton *button;
+	PurpleNotifySearchButton *button;
 	GList *row = NULL;
 	gchar *str;
 	int i;
@@ -193,13 +193,13 @@ searchresults_callback_wrapper_cb(GtkWidget *widget, PidginNotifySearchResultsBu
 	}
 
 	button = bd->button;
-	button->callback(gaim_account_get_connection(data->account), row, data->user_data);
+	button->callback(purple_account_get_connection(data->account), row, data->user_data);
 	g_list_foreach(row, (GFunc)g_free, NULL);
 	g_list_free(row);
 }
 
 static void *
-pidgin_notify_message(GaimNotifyMsgType type, const char *title,
+pidgin_notify_message(PurpleNotifyMsgType type, const char *title,
 						const char *primary, const char *secondary)
 {
 	GtkWidget *dialog;
@@ -212,15 +212,15 @@ pidgin_notify_message(GaimNotifyMsgType type, const char *title,
 
 	switch (type)
 	{
-		case GAIM_NOTIFY_MSG_ERROR:
+		case PURPLE_NOTIFY_MSG_ERROR:
 			icon_name = PIDGIN_STOCK_DIALOG_ERROR;
 			break;
 
-		case GAIM_NOTIFY_MSG_WARNING:
+		case PURPLE_NOTIFY_MSG_WARNING:
 			icon_name = PIDGIN_STOCK_DIALOG_WARNING;
 			break;
 
-		case GAIM_NOTIFY_MSG_INFO:
+		case PURPLE_NOTIFY_MSG_INFO:
 			icon_name = PIDGIN_STOCK_DIALOG_INFO;
 			break;
 
@@ -297,7 +297,7 @@ selection_changed_cb(GtkTreeSelection *sel, PidginMailDialog *dialog)
 }
 
 static void *
-pidgin_notify_email(GaimConnection *gc, const char *subject, const char *from,
+pidgin_notify_email(PurpleConnection *gc, const char *subject, const char *from,
 					  const char *to, const char *url)
 {
 	return pidgin_notify_emails(gc, 1, (subject != NULL),
@@ -400,7 +400,7 @@ pidgin_get_mail_dialog()
  * count > 0 mean non-detailed.
  */
 static void *
-pidgin_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *notification, const char *url, int count)
+pidgin_notify_add_mail(GtkTreeStore *treemodel, PurpleAccount *account, char *notification, const char *url, int count)
 {
 	PidginNotifyMailData *data = NULL;
 	GtkTreeIter iter;
@@ -450,16 +450,16 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *noti
 }
 
 static void *
-pidgin_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
+pidgin_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 					   const char **subjects, const char **froms,
 					   const char **tos, const char **urls)
 {
 	GtkWidget *dialog = NULL;
 	char *notification;
-	GaimAccount *account;
+	PurpleAccount *account;
 	PidginNotifyMailData *data = NULL;
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 	dialog = pidgin_get_mail_dialog();  /* This creates mail_dialog if necessary */
  
 	mail_dialog->total_count += count;
@@ -541,7 +541,7 @@ formatted_input_cb(GtkWidget *win, GdkEventKey *event, gpointer data)
 {
 	if (event->keyval == GDK_Escape)
 	{
-		gaim_notify_close(GAIM_NOTIFY_FORMATTED, win);
+		purple_notify_close(PURPLE_NOTIFY_FORMATTED, win);
 
 		return TRUE;
 	}
@@ -615,7 +615,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 					 G_CALLBACK(formatted_input_cb), NULL);
 
 	/* Add the text to the gtkimhtml */
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/show_incoming_formatting"))
+	if (!purple_prefs_get_bool("/purple/gtk/conversations/show_incoming_formatting"))
 		options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
 
 	options |= GTK_IMHTML_NO_COMMENTS;
@@ -624,7 +624,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	options |= GTK_IMHTML_NO_SCROLL;
 
 	/* Make sure URLs are clickable */
-	linked_text = gaim_markup_linkify(text);
+	linked_text = purple_markup_linkify(text);
 	gtk_imhtml_append_text(GTK_IMHTML(imhtml), linked_text, options);
 	g_free(linked_text);
 
@@ -635,7 +635,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 }
 
 static void
-pidgin_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResults *results,
+pidgin_notify_searchresults_new_rows(PurpleConnection *gc, PurpleNotifySearchResults *results,
 									   void *data_)
 {
 	PidginNotifySearchResultsData *data = data_;
@@ -648,13 +648,13 @@ pidgin_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResults
 
 	gtk_list_store_clear(data->model);
 
-	pixbuf = pidgin_create_prpl_icon(gaim_connection_get_account(gc), 0.5);
+	pixbuf = pidgin_create_prpl_icon(purple_connection_get_account(gc), 0.5);
 
 	/* +1 is for the automagically created Status column. */
-	col_num = gaim_notify_searchresults_get_columns_count(results) + 1;
+	col_num = purple_notify_searchresults_get_columns_count(results) + 1;
 
-	for (i = 0; i < gaim_notify_searchresults_get_rows_count(results); i++) {
-		GList *row = gaim_notify_searchresults_row_get(results, i);
+	for (i = 0; i < purple_notify_searchresults_get_rows_count(results); i++) {
+		GList *row = purple_notify_searchresults_row_get(results, i);
 
 		gtk_list_store_append(model, &iter);
 		gtk_list_store_set(model, &iter, 0, pixbuf, -1);
@@ -676,9 +676,9 @@ pidgin_notify_searchresults_new_rows(GaimConnection *gc, GaimNotifySearchResults
 }
 
 static void *
-pidgin_notify_searchresults(GaimConnection *gc, const char *title,
+pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 							  const char *primary, const char *secondary,
-							  GaimNotifySearchResults *results, gpointer user_data)
+							  PurpleNotifySearchResults *results, gpointer user_data)
 {
 	GtkWidget *window;
 	GtkWidget *treeview;
@@ -737,7 +737,7 @@ pidgin_notify_searchresults(GaimConnection *gc, const char *title,
 	g_free(label_text);
 
 	/* +1 is for the automagically created Status column. */
-	col_num = gaim_notify_searchresults_get_columns_count(results) + 1;
+	col_num = purple_notify_searchresults_get_columns_count(results) + 1;
 
 	/* Setup the list model */
 	col_types = g_new0(GType, col_num);
@@ -776,7 +776,7 @@ pidgin_notify_searchresults(GaimConnection *gc, const char *title,
 		renderer = gtk_cell_renderer_text_new();
 
 		gtk_tree_view_insert_column_with_attributes(GTK_TREE_VIEW(treeview), -1,
-				gaim_notify_searchresults_column_get_title(results, i-1),
+				purple_notify_searchresults_column_get_title(results, i-1),
 				renderer, "text", i, NULL);
 	}
 
@@ -788,36 +788,36 @@ pidgin_notify_searchresults(GaimConnection *gc, const char *title,
 	gtk_widget_show(button_area);
 
 	for (i = 0; i < g_list_length(results->buttons); i++) {
-		GaimNotifySearchButton *b = g_list_nth_data(results->buttons, i);
+		PurpleNotifySearchButton *b = g_list_nth_data(results->buttons, i);
 		GtkWidget *button = NULL;
 		switch (b->type) {
-			case GAIM_NOTIFY_BUTTON_LABELED:
+			case PURPLE_NOTIFY_BUTTON_LABELED:
 				if(b->label) {
 					button = gtk_button_new_with_label(b->label);
 				} else {
-					gaim_debug_warning("gtknotify", "Missing button label");
+					purple_debug_warning("gtknotify", "Missing button label");
 				}
 				break;
-			case GAIM_NOTIFY_BUTTON_CONTINUE:
+			case PURPLE_NOTIFY_BUTTON_CONTINUE:
 				button = gtk_button_new_from_stock(GTK_STOCK_GO_FORWARD);
 				break;
-			case GAIM_NOTIFY_BUTTON_ADD:
+			case PURPLE_NOTIFY_BUTTON_ADD:
 				button = gtk_button_new_from_stock(GTK_STOCK_ADD);
 				break;
-			case GAIM_NOTIFY_BUTTON_INFO:
+			case PURPLE_NOTIFY_BUTTON_INFO:
 				button = gtk_button_new_from_stock(PIDGIN_STOCK_TOOLBAR_USER_INFO);
 				break;
-			case GAIM_NOTIFY_BUTTON_IM:
+			case PURPLE_NOTIFY_BUTTON_IM:
 				button = gtk_button_new_from_stock(PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW);
 				break;
-			case GAIM_NOTIFY_BUTTON_JOIN:
+			case PURPLE_NOTIFY_BUTTON_JOIN:
 				button = gtk_button_new_from_stock(PIDGIN_STOCK_CHAT);
 				break;
-			case GAIM_NOTIFY_BUTTON_INVITE:
+			case PURPLE_NOTIFY_BUTTON_INVITE:
 				button = gtk_button_new_from_stock(PIDGIN_STOCK_INVITE);
 				break;
 			default:
-				gaim_debug_warning("gtknotify", "Incorrect button type: %d\n", b->type);
+				purple_debug_warning("gtknotify", "Incorrect button type: %d\n", b->type);
 		}
 		if (button != NULL) {
 			PidginNotifySearchResultsButtonData *bd;
@@ -857,14 +857,14 @@ pidgin_notify_searchresults(GaimConnection *gc, const char *title,
 }
 
 static void *
-pidgin_notify_userinfo(GaimConnection *gc, const char *who,
-						 GaimNotifyUserInfo *user_info)
+pidgin_notify_userinfo(PurpleConnection *gc, const char *who,
+						 PurpleNotifyUserInfo *user_info)
 {
 	char *primary, *info;
 	void *ui_handle;
 
 	primary = g_strdup_printf(_("Info for %s"), who);
-	info = gaim_notify_user_info_get_text_with_newline(user_info, "<br />");
+	info = purple_notify_user_info_get_text_with_newline(user_info, "<br />");
 	ui_handle = pidgin_notify_formatted(_("Buddy Information"), primary, NULL, info);
 	g_free(info);
 	g_free(primary);
@@ -872,21 +872,21 @@ pidgin_notify_userinfo(GaimConnection *gc, const char *who,
 }
 
 static void
-pidgin_close_notify(GaimNotifyType type, void *ui_handle)
+pidgin_close_notify(PurpleNotifyType type, void *ui_handle)
 {
-	if (type == GAIM_NOTIFY_EMAIL || type == GAIM_NOTIFY_EMAILS)
+	if (type == PURPLE_NOTIFY_EMAIL || type == PURPLE_NOTIFY_EMAILS)
 	{
 		PidginNotifyMailData *data = (PidginNotifyMailData *)ui_handle;
 
 		g_free(data->url);
 		g_free(data);
 	}
-	else if (type == GAIM_NOTIFY_SEARCHRESULTS)
+	else if (type == PURPLE_NOTIFY_SEARCHRESULTS)
 	{
 		PidginNotifySearchResultsData *data = (PidginNotifySearchResultsData *)ui_handle;
 
 		gtk_widget_destroy(data->window);
-		gaim_notify_searchresults_free(data->results);
+		purple_notify_searchresults_free(data->results);
 
 		g_free(data);
 	}
@@ -902,13 +902,13 @@ uri_command(const char *command, gboolean sync)
 	GError *error = NULL;
 	gint ret = 0;
 
-	gaim_debug_misc("gtknotify", "Executing %s\n", command);
+	purple_debug_misc("gtknotify", "Executing %s\n", command);
 
-	if (!gaim_program_is_valid(command))
+	if (!purple_program_is_valid(command))
 	{
 		tmp = g_strdup_printf(_("The browser command \"%s\" is invalid."),
 							  command ? command : "(none)");
-		gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+		purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 		g_free(tmp);
 
 	}
@@ -920,7 +920,7 @@ uri_command(const char *command, gboolean sync)
 		{
 			tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
 										command, error->message);
-			gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 			g_free(tmp);
 			g_error_free(error);
 		}
@@ -933,7 +933,7 @@ uri_command(const char *command, gboolean sync)
 		{
 			tmp = g_strdup_printf(_("Error launching \"%s\": %s"),
 										command, error->message);
-			gaim_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
+			purple_notify_error(NULL, NULL, _("Unable to open URL"), tmp);
 			g_free(tmp);
 			g_error_free(error);
 		}
@@ -953,15 +953,15 @@ pidgin_notify_uri(const char *uri)
 	const char *web_browser;
 	int place;
 
-	web_browser = gaim_prefs_get_string("/gaim/gtk/browsers/browser");
-	place = gaim_prefs_get_int("/gaim/gtk/browsers/place");
+	web_browser = purple_prefs_get_string("/purple/gtk/browsers/browser");
+	place = purple_prefs_get_int("/purple/gtk/browsers/place");
 
 	/* if they are running gnome, use the gnome web browser */
-	if (gaim_running_gnome() == TRUE)
+	if (purple_running_gnome() == TRUE)
 	{
 		command = g_strdup_printf("gnome-open %s", escaped);
 	}
-	else if (gaim_running_osx() == TRUE)
+	else if (purple_running_osx() == TRUE)
 	{
 		command = g_strdup_printf("open %s", escaped);
 	}
@@ -1057,18 +1057,18 @@ pidgin_notify_uri(const char *uri)
 	{
 		const char *web_command;
 
-		web_command = gaim_prefs_get_path("/gaim/gtk/browsers/command");
+		web_command = purple_prefs_get_path("/purple/gtk/browsers/command");
 
 		if (web_command == NULL || *web_command == '\0')
 		{
-			gaim_notify_error(NULL, NULL, _("Unable to open URL"),
+			purple_notify_error(NULL, NULL, _("Unable to open URL"),
 							  _("The 'Manual' browser command has been "
 								"chosen, but no command has been set."));
 			return NULL;
 		}
 
 		if (strstr(web_command, "%s"))
-			command = gaim_strreplace(web_command, "%s", escaped);
+			command = purple_strreplace(web_command, "%s", escaped);
 		else
 		{
 			/*
@@ -1102,7 +1102,7 @@ pidgin_notify_uri(const char *uri)
 	return NULL;
 }
 
-static GaimNotifyUiOps ops =
+static PurpleNotifyUiOps ops =
 {
 	pidgin_notify_message,
 	pidgin_notify_email,
@@ -1115,7 +1115,7 @@ static GaimNotifyUiOps ops =
 	pidgin_close_notify
 };
 
-GaimNotifyUiOps *
+PurpleNotifyUiOps *
 pidgin_notify_get_ui_ops(void)
 {
 	return &ops;

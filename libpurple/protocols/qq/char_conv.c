@@ -1,9 +1,9 @@
 /**
  * @file char_conv.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -58,7 +58,7 @@ const gchar qq_smiley_map[QQ_SMILEY_AMOUNT] = {
 };
 
 
-const gchar *gaim_smiley_map[QQ_SMILEY_AMOUNT] = {
+const gchar *purple_smiley_map[QQ_SMILEY_AMOUNT] = {
 	"/jy", "/pz", "/se", "/fd", "/dy", "/ll", "/hx", "/bz",
 	"/shui", "/dk	", "/gg", "/fn", "/tp", "/cy", "/wx", "/ng",
 	"/kuk", "/feid", "/zk", "/tu", "/tx", "/ka", "/by", "/am",
@@ -115,8 +115,8 @@ static gchar *_my_convert(const gchar *str, gssize len, const gchar *to_charset,
 		return ret;	/* conversion is OK */
 	else {			/* conversion error */
 		gchar *failed = hex_dump_to_str((guint8 *) str, (len == -1) ? strlen(str) : len);
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "%s\n", error->message);
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Dump failed text\n%s", failed);
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "%s\n", error->message);
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Dump failed text\n%s", failed);
 		g_free(failed);
 		g_error_free(error);
 		return g_strdup(QQ_NULL_MSG);
@@ -138,8 +138,8 @@ gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_chars
 	return len + 1;
 }
 
-/* convert QQ formatted msg to Gaim formatted msg (and UTF-8) */
-gchar *qq_encode_to_gaim(guint8 *data, gint len, const gchar *msg)
+/* convert QQ formatted msg to Purple formatted msg (and UTF-8) */
+gchar *qq_encode_to_purple(guint8 *data, gint len, const gchar *msg)
 {
 	GString *encoded;
 	guint8 font_attr, font_size, color[3], bar, *cursor;
@@ -179,7 +179,7 @@ gchar *qq_encode_to_gaim(guint8 *data, gint len, const gchar *msg)
 	g_string_append_printf(encoded,
 			       "<font color=\"%s\"><font face=\"%s\"><font size=\"%d\">",
 			       color_code, font_name, font_size / 3);
-	gaim_debug(GAIM_DEBUG_INFO, "QQ_MESG",
+	purple_debug(PURPLE_DEBUG_INFO, "QQ_MESG",
 		   "recv <font color=\"%s\"><font face=\"%s\"><font size=\"%d\">\n",
 		   color_code, font_name, font_size / 3);
 	g_string_append(encoded, msg_utf8);
@@ -219,9 +219,9 @@ gchar *qq_to_utf8(const gchar *str, const gchar *from_charset)
 	return _my_convert(str, -1, UTF8, from_charset);
 }
 
-/* QQ uses binary code for smiley, while gaim uses strings. 
+/* QQ uses binary code for smiley, while purple uses strings. 
  * There is a mapping relation between these two. */
-gchar *qq_smiley_to_gaim(gchar *text)
+gchar *qq_smiley_to_purple(gchar *text)
 {
 	gint index;
 	gchar qq_smiley, *cur_seg, **segments, *ret;
@@ -241,7 +241,7 @@ gchar *qq_smiley_to_gaim(gchar *text)
 		if (index >= QQ_SMILEY_AMOUNT) {
 			g_string_append(converted, QQ_NULL_SMILEY);
 		} else {
-			g_string_append(converted, gaim_smiley_map[index]);
+			g_string_append(converted, purple_smiley_map[index]);
 			g_string_append(converted, (cur_seg + 1));
 		}
 	}
@@ -251,8 +251,8 @@ gchar *qq_smiley_to_gaim(gchar *text)
 	return ret;
 }
 
-/* convert smiley from gaim style to qq binary code */
-gchar *gaim_smiley_to_qq(gchar *text)
+/* convert smiley from purple style to qq binary code */
+gchar *purple_smiley_to_qq(gchar *text)
 {
 	gchar *begin, *cursor, *ret;
 	gint index;
@@ -262,8 +262,8 @@ gchar *gaim_smiley_to_qq(gchar *text)
 
 	for (index = 0; index < QQ_SMILEY_AMOUNT; index++) {
 		begin = cursor = converted->str;
-		while ((cursor = g_strstr_len(cursor, -1, gaim_smiley_map[index]))) {
-			g_string_erase(converted, (cursor - begin), strlen(gaim_smiley_map[index]));
+		while ((cursor = g_strstr_len(cursor, -1, purple_smiley_map[index]))) {
+			g_string_erase(converted, (cursor - begin), strlen(purple_smiley_map[index]));
 			g_string_insert_c(converted, (cursor - begin), 0x14);
 			g_string_insert_c(converted, (cursor - begin + 1), qq_smiley_map[index]);
 			cursor++;

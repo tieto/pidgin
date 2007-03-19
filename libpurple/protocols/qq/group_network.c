@@ -1,9 +1,9 @@
 /**
  * @file group_network.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -79,7 +79,7 @@ const gchar *qq_group_cmd_get_desc(qq_group_cmd cmd)
 }
 
 /* default process of reply error */
-static void _qq_process_group_cmd_reply_error_default(guint8 reply, guint8 *cursor, gint len, GaimConnection *gc)
+static void _qq_process_group_cmd_reply_error_default(guint8 reply, guint8 *cursor, gint len, PurpleConnection *gc)
 {
 	gchar *msg, *msg_utf8;
 	g_return_if_fail(cursor != NULL && len > 0);
@@ -88,24 +88,24 @@ static void _qq_process_group_cmd_reply_error_default(guint8 reply, guint8 *curs
 	msg_utf8 = qq_to_utf8(msg, QQ_CHARSET_DEFAULT);
 	g_free(msg);
 	msg = g_strdup_printf(_("Code [0x%02X]: %s"), reply, msg_utf8);
-	gaim_notify_error(gc, NULL, _("Group Operation Error"), msg);
+	purple_notify_error(gc, NULL, _("Group Operation Error"), msg);
 	g_free(msg);
 	g_free(msg_utf8);
 }
 
 /* default process, dump only */
-static void _qq_process_group_cmd_reply_default(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+static void _qq_process_group_cmd_reply_default(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
 {
 	gchar *hex_dump;
 	g_return_if_fail(data != NULL && len > 0);
 
 	hex_dump = hex_dump_to_str(data, len);
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Dump unprocessed group cmd reply:\n%s", hex_dump);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Dump unprocessed group cmd reply:\n%s", hex_dump);
 	g_free(hex_dump);
 }
 
 /* The lower layer command of send group cmd */
-void qq_send_group_cmd(GaimConnection *gc, qq_group *group, guint8 *raw_data, gint data_len)
+void qq_send_group_cmd(PurpleConnection *gc, qq_group *group, guint8 *raw_data, gint data_len)
 {
 	qq_data *qd;
 	group_packet *p;
@@ -128,7 +128,7 @@ void qq_send_group_cmd(GaimConnection *gc, qq_group *group, guint8 *raw_data, gi
 }
 
 /* the main entry of group cmd processing, called by qq_recv_core.c */
-void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *gc)
+void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc)
 {
 	qq_group *group;
 	qq_data *qd;
@@ -143,13 +143,13 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 	data = g_newa(guint8, len);
 
 	if (!qq_group_find_internal_group_id_by_seq(gc, seq, &internal_group_id)) {
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "We have no record of group cmd, seq [%d]\n", seq);
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "We have no record of group cmd, seq [%d]\n", seq);
 		return;
 	}
 
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
 		if (len <= 2) {
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Group cmd reply is too short, only %d bytes\n", len);
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Group cmd reply is too short, only %d bytes\n", len);
 			return;
 		}
 
@@ -161,7 +161,7 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 		group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 
 		if (reply != QQ_GROUP_CMD_REPLY_OK) {
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 				   "Group cmd reply says cmd %s fails\n", qq_group_cmd_get_desc(sub_cmd));
 
 			if (group != NULL)
@@ -170,7 +170,7 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 			switch (reply) {	/* this should be all errors */
 			case QQ_GROUP_CMD_REPLY_NOT_MEMBER:
 				if (group != NULL) {
-					gaim_debug(GAIM_DEBUG_WARNING,
+					purple_debug(PURPLE_DEBUG_WARNING,
 						   "QQ",
 						   "You are not a member of group \"%s\"\n", group->group_name_utf8);
 					group->my_status = QQ_GROUP_MEMBER_STATUS_NOT_MEMBER;
@@ -179,8 +179,8 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 				break;
 			case QQ_GROUP_CMD_REPLY_SEARCH_ERROR:
 				if (qd->roomlist != NULL) {
-					if (gaim_roomlist_get_in_progress(qd->roomlist))
-						gaim_roomlist_set_in_progress(qd->roomlist, FALSE);
+					if (purple_roomlist_get_in_progress(qd->roomlist))
+						purple_roomlist_set_in_progress(qd->roomlist, FALSE);
 				}
 				_qq_process_group_cmd_reply_error_default(reply, cursor, len - bytes, gc);
 				break;
@@ -237,12 +237,12 @@ void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 				qq_group_conv_refresh_online_member(gc, group);
 			break;
 		default:
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 				   "Group cmd %s is processed by default\n", qq_group_cmd_get_desc(sub_cmd));
 			_qq_process_group_cmd_reply_default(data, &cursor, len, gc);
 		}
 
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt group cmd reply\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt group cmd reply\n");
 	}
 }

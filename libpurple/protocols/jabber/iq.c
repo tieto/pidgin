@@ -1,5 +1,5 @@
 /*
- * gaim - Jabber Protocol Plugin
+ * purple - Jabber Protocol Plugin
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -191,13 +191,13 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 
 		query = xmlnode_get_child(iq->node, "query");
 
-		date = gaim_utf8_strftime("%Y%m%dT%T", now);
+		date = purple_utf8_strftime("%Y%m%dT%T", now);
 		xmlnode_insert_data(xmlnode_new_child(query, "utc"), date, -1);
 
-		date = gaim_utf8_strftime("%Z", now);
+		date = purple_utf8_strftime("%Z", now);
 		xmlnode_insert_data(xmlnode_new_child(query, "tz"), date, -1);
 
-		date = gaim_utf8_strftime("%d %b %Y %T", now);
+		date = purple_utf8_strftime("%d %b %Y %T", now);
 		xmlnode_insert_data(xmlnode_new_child(query, "display"), date, -1);
 
 		jabber_iq_send(iq);
@@ -215,7 +215,7 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 
 	if(type && !strcmp(type, "get")) {
 
-		if(!gaim_prefs_get_bool("/plugins/prpl/jabber/hide_os")) {
+		if(!purple_prefs_get_bool("/plugins/prpl/jabber/hide_os")) {
 			struct utsname osinfo;
 
 			uname(&osinfo);

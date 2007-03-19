@@ -10,18 +10,18 @@
 #include "gtkplugin.h"
 #include "gtkdialogs.h"
 
-#define GAIMINC_PLUGIN_ID "core-gaiminc"
+#define PURPLEINC_PLUGIN_ID "core-purpleinc"
 
 static void
-echo_hi(GaimConnection *gc)
+echo_hi(PurpleConnection *gc)
 {
 	/* this doesn't do much, just lets you know who we are :) */
 	pidgindialogs_about();
 }
 
 static gboolean
-reverse(GaimAccount *account, char **who, char **message,
-		GaimConversation *conv, int *flags)
+reverse(PurpleAccount *account, char **who, char **message,
+		PurpleConversation *conv, int *flags)
 {
 	/* this will drive you insane. whenever you receive a message,
 	 * the text of the message (HTML and all) will be reversed. */
@@ -34,7 +34,7 @@ reverse(GaimAccount *account, char **who, char **message,
 
 	l = strlen(*message);
 
-	if (!strcmp(*who, gaim_account_get_username(account)))
+	if (!strcmp(*who, purple_account_get_username(account)))
 		return FALSE;
 
 	for (i = 0; i < l/2; i++) {
@@ -46,12 +46,12 @@ reverse(GaimAccount *account, char **who, char **message,
 }
 
 static void
-bud(GaimBuddy *who)
+bud(PurpleBuddy *who)
 {
-	GaimAccount *acct = who->account;
-	GaimConversation *conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, who->name);
+	PurpleAccount *acct = who->account;
+	PurpleConversation *conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, who->name);
 
-	gaim_conv_im_send(GAIM_CONV_IM(conv), "Hello!");
+	purple_conv_im_send(PURPLE_CONV_IM(conv), "Hello!");
 }
 
 /*
@@ -59,35 +59,35 @@ bud(GaimBuddy *who)
  */
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 	/* this is for doing something fun when we sign on */
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-						plugin, GAIM_CALLBACK(echo_hi), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+						plugin, PURPLE_CALLBACK(echo_hi), NULL);
 
 	/* this is for doing something fun when we get a message */
-	gaim_signal_connect(gaim_conversations_get_handle(), "receiving-im-msg",
-						plugin, GAIM_CALLBACK(reverse), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "receiving-im-msg",
+						plugin, PURPLE_CALLBACK(reverse), NULL);
 
 	/* this is for doing something fun when a buddy comes online */
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on",
-						plugin, GAIM_CALLBACK(bud), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on",
+						plugin, PURPLE_CALLBACK(bud), NULL);
 
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
-	GAIMINC_PLUGIN_ID,                                /**< id             */
+	PURPLEINC_PLUGIN_ID,                                /**< id             */
 	N_(PIDGIN_NAME " Demonstration Plugin"),                  /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
@@ -99,7 +99,7 @@ static GaimPluginInfo info =
 	   "- It sends a message to people on your list immediately"
 	   " when they sign on"),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	NULL,                                             /**< unload         */
@@ -112,8 +112,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(gaiminc, init_plugin, info)
+PURPLE_INIT_PLUGIN(purpleinc, init_plugin, info)

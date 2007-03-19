@@ -1,9 +1,9 @@
 /**
  * @file group_find.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -33,7 +33,7 @@
 
 /* find the internal_group_id by the reply packet sequence
  * return TRUE if we have a record of it, return FALSE if not */
-gboolean qq_group_find_internal_group_id_by_seq(GaimConnection *gc, guint16 seq, guint32 *internal_group_id)
+gboolean qq_group_find_internal_group_id_by_seq(PurpleConnection *gc, guint16 seq, guint32 *internal_group_id)
 {
 	GList *list;
 	qq_data *qd;
@@ -96,17 +96,17 @@ void qq_group_remove_member_by_uid(qq_group *group, guint32 uid)
 	}
 }
 
-qq_buddy *qq_group_find_or_add_member(GaimConnection *gc, qq_group *group, guint32 member_uid)
+qq_buddy *qq_group_find_or_add_member(PurpleConnection *gc, qq_group *group, guint32 member_uid)
 {
 	qq_buddy *member, *q_bud;
-	GaimBuddy *buddy;
+	PurpleBuddy *buddy;
 	g_return_val_if_fail(group != NULL && member_uid > 0, NULL);
 
 	member = qq_group_find_member_by_uid(group, member_uid);
 	if (member == NULL) {	/* first appear during my session */
 		member = g_new0(qq_buddy, 1);
 		member->uid = member_uid;
-		buddy = gaim_find_buddy(gaim_connection_get_account(gc), uid_to_gaim_name(member_uid));
+		buddy = purple_find_buddy(purple_connection_get_account(gc), uid_to_purple_name(member_uid));
 		if (buddy != NULL) {
 			q_bud = (qq_buddy *) buddy->proto_data;
 			if (q_bud != NULL && q_bud->nickname != NULL)
@@ -121,23 +121,23 @@ qq_buddy *qq_group_find_or_add_member(GaimConnection *gc, qq_group *group, guint
 }
 
 /* find a qq_group by chatroom channel */
-qq_group *qq_group_find_by_channel(GaimConnection *gc, gint channel)
+qq_group *qq_group_find_by_channel(PurpleConnection *gc, gint channel)
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	qq_data *qd;
 	qq_group *group;
 	GList *list;
 
 	qd = (qq_data *) gc->proto_data;
 
-	conv = gaim_find_chat(gc, channel);
+	conv = purple_find_chat(gc, channel);
 	g_return_val_if_fail(conv != NULL, NULL);
 
 	list = qd->groups;
 	group = NULL;
 	while (list != NULL) {
 		group = (qq_group *) list->data;
-		if (!g_ascii_strcasecmp(gaim_conversation_get_name(conv), group->group_name_utf8))
+		if (!g_ascii_strcasecmp(purple_conversation_get_name(conv), group->group_name_utf8))
 			break;
 		list = list->next;
 	}
@@ -146,7 +146,7 @@ qq_group *qq_group_find_by_channel(GaimConnection *gc, gint channel)
 }
 
 /* find a qq_group by its id, flag is QQ_INTERNAL_ID or QQ_EXTERNAL_ID */
-qq_group *qq_group_find_by_id(GaimConnection *gc, guint32 id, gboolean flag)
+qq_group *qq_group_find_by_id(PurpleConnection *gc, guint32 id, gboolean flag)
 {
 	GList *list;
 	qq_group *group;

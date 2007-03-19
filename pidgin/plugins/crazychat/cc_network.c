@@ -22,7 +22,7 @@
 /* --- begin type declarations --- */
 
 struct accept_args {
-	GaimAccount *account;
+	PurpleAccount *account;
 	struct crazychat *cc;
 	char *name;
 	guint32 peer_ip;
@@ -30,7 +30,7 @@ struct accept_args {
 };
 
 struct sock_accept_args {
-	GaimAccount *account;
+	PurpleAccount *account;
 	struct cc_session *session;
 };
 
@@ -38,10 +38,10 @@ struct sock_accept_args {
 
 /**
  * Creates a server socket and sends a response to the peer.
- * @param account		the gaim account sending the ready msg
+ * @param account		the purple account sending the ready msg
  * @param session		the peer CrazyChat session
  */
-static void cc_net_send_ready(GaimAccount *account, struct cc_session *session);
+static void cc_net_send_ready(PurpleAccount *account, struct cc_session *session);
 
 /**
  * Handles responses from the CrazyChat session invite dialog box.
@@ -65,7 +65,7 @@ static gboolean accept_cb(struct sock_accept_args *args);
  * @param account		the account the session is part of
  * @param session		the CrazyChat network session
  */
-static void init_cc_net_session(GaimAccount *account,
+static void init_cc_net_session(PurpleAccount *account,
 		struct cc_session *session);
 
 /**
@@ -93,34 +93,34 @@ static int __send(int s, char *buf, int len);
 
 /* --- begin function definitions --- */
 
-void cc_net_send_invite(struct crazychat *cc, char *name, GaimAccount *account)
+void cc_net_send_invite(struct crazychat *cc, char *name, PurpleAccount *account)
 {
 	struct cc_session *session;
-	GaimConversation *conv;
-	GaimConvIm *im;
+	PurpleConversation *conv;
+	PurpleConvIm *im;
 	char buf[BUFSIZ];
 	
 	session = cc_find_session(cc, name);
 	if (session) return; /* already have a session with this guy */
 	session = cc_add_session(cc, name);
 	session->state = INVITE;
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, name, account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, name, account);
 	if (!conv) {
-		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
 	}
-	im = gaim_conversation_get_im_data(conv);
+	im = purple_conversation_get_im_data(conv);
 	snprintf(buf, BUFSIZ, "%s%s!%d", CRAZYCHAT_INVITE_CODE,
-		gaim_network_get_my_ip(-1), cc->tcp_port);
+		purple_network_get_my_ip(-1), cc->tcp_port);
 	Debug("Sent invite to %s for port: %d\n", name, cc->tcp_port);
-	gaim_conv_im_send(im, buf);
+	purple_conv_im_send(im, buf);
 }
 
-void cc_net_recv_invite(GaimAccount *account, struct crazychat *cc, char *name,
+void cc_net_recv_invite(PurpleAccount *account, struct crazychat *cc, char *name,
 		const char *peer_ip, const char *peer_port)
 {
 	struct cc_session *session;
-	GaimConversation *conv;
-	GaimConvWindow *convwin;
+	PurpleConversation *conv;
+	PurpleConvWindow *convwin;
 	char buf[BUFSIZ];
 	struct accept_args *args;
 
@@ -131,8 +131,8 @@ void cc_net_recv_invite(GaimAccount *account, struct crazychat *cc, char *name,
 	session = cc_find_session(cc, name);
 	if (!session) {
 		Debug("Creating a CrazyChat session invite dialog box!\n");
-		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, name, account);
-		if (conv) convwin = gaim_conversation_get_window(conv);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, name, account);
+		if (conv) convwin = purple_conversation_get_window(conv);
 		else convwin = NULL;
 		/* pop gtk window asking if want to accept */
 		GtkWidget *dialog =
@@ -163,7 +163,7 @@ void cc_net_recv_invite(GaimAccount *account, struct crazychat *cc, char *name,
 	}
 }
 
-void cc_net_recv_accept(GaimAccount *account, struct crazychat *cc, char *name,
+void cc_net_recv_accept(PurpleAccount *account, struct crazychat *cc, char *name,
 		const char *peer_ip)
 {
 	struct cc_session *session;
@@ -181,7 +181,7 @@ void cc_net_recv_accept(GaimAccount *account, struct crazychat *cc, char *name,
 	}
 }
 
-static void cc_net_send_ready(GaimAccount *account, struct cc_session *session)
+static void cc_net_send_ready(PurpleAccount *account, struct cc_session *session)
 {
 	struct sock_accept_args *args;
 	
@@ -196,7 +196,7 @@ static void cc_net_send_ready(GaimAccount *account, struct cc_session *session)
 	struct sockaddr_in my_addr;
 	my_addr.sin_family = AF_INET;
 	my_addr.sin_port = htons(session->cc->tcp_port);
-	assert(inet_aton(gaim_network_get_my_ip(-1),
+	assert(inet_aton(purple_network_get_my_ip(-1),
 			&my_addr.sin_addr));
 	memset(&my_addr.sin_zero, 0, sizeof(my_addr.sin_zero));
 	assert(bind(session->tcp_sock, (struct sockaddr*)&my_addr,
@@ -205,16 +205,16 @@ static void cc_net_send_ready(GaimAccount *account, struct cc_session *session)
 	assert(listen(session->tcp_sock, 1) != -1);
 
 	/* socket created, send the ready message */
-	GaimConversation *conv;
-	GaimConvIm *im;
+	PurpleConversation *conv;
+	PurpleConvIm *im;
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, session->name, account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, session->name, account);
 	if (!conv) {
-		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account,
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account,
 				session->name);
 	}
-	im = gaim_conversation_get_im_data(conv);
-	gaim_conv_im_send(im, CRAZYCHAT_READY_CODE);
+	im = purple_conversation_get_im_data(conv);
+	purple_conv_im_send(im, CRAZYCHAT_READY_CODE);
 
 	/* register timer callback for checking socket connection */
 	args = (struct sock_accept_args*)malloc(sizeof(*args));
@@ -225,7 +225,7 @@ static void cc_net_send_ready(GaimAccount *account, struct cc_session *session)
 		(GSourceFunc)accept_cb, args);
 }
 
-void cc_net_recv_ready(GaimAccount *account, struct crazychat *cc, char *name)
+void cc_net_recv_ready(PurpleAccount *account, struct crazychat *cc, char *name)
 {
 	struct cc_session *session;
 	struct sockaddr_in server_addr, my_addr;
@@ -259,8 +259,8 @@ static void invite_handler(GtkDialog *dialog, gint response, struct accept_args 
 {
 	struct cc_session *session;
 	char buf[BUFSIZ];
-	GaimConversation *conv;
-	GaimConvIm *im;
+	PurpleConversation *conv;
+	PurpleConvIm *im;
 	
 	if (response == GTK_RESPONSE_ACCEPT) {
 		assert(args);
@@ -271,15 +271,15 @@ static void invite_handler(GtkDialog *dialog, gint response, struct accept_args 
 		session->peer_ip = args->peer_ip;
 		session->peer_port = args->peer_port;
 		snprintf(buf, BUFSIZ, "%s%s", CRAZYCHAT_ACCEPT_CODE,
-			gaim_network_get_my_ip(-1));
-		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_ANY, args->name,
+			purple_network_get_my_ip(-1));
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, args->name,
 				args->account);
 		if (!conv) {
-			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM,
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
 				args->account, args->name);
 		}
-		im = gaim_conversation_get_im_data(conv);
-		gaim_conv_im_send(im, buf);
+		im = purple_conversation_get_im_data(conv);
+		purple_conv_im_send(im, buf);
 	}
 	free(args->name);
 	free(args);
@@ -291,7 +291,7 @@ static gboolean accept_cb(struct sock_accept_args *args)
 	fd_set fds;
 	struct timeval zero;
 	int ret;
-	GaimAccount *account;
+	PurpleAccount *account;
 	struct cc_session *session;
 
 	assert(args);
@@ -348,7 +348,7 @@ static gboolean accept_cb(struct sock_accept_args *args)
 	return TRUE;
 }
 
-static void init_cc_net_session(GaimAccount *account,
+static void init_cc_net_session(PurpleAccount *account,
 		struct cc_session *session)
 {
 	struct sockaddr_in my_addr;
@@ -375,7 +375,7 @@ static void init_cc_net_session(GaimAccount *account,
 	
 	my_addr.sin_family = AF_INET;
 	my_addr.sin_port = htons(session->cc->udp_port);
-	assert(inet_aton(gaim_network_get_my_ip(-1),
+	assert(inet_aton(purple_network_get_my_ip(-1),
 				&my_addr.sin_addr));
 	memset(my_addr.sin_zero, 0, sizeof(my_addr.sin_zero));
 	assert(!bind(session->udp_sock, (struct sockaddr*)&my_addr,

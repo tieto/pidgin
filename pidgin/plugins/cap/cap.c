@@ -1,5 +1,5 @@
 /*
- * Contact Availability Prediction plugin for Gaim
+ * Contact Availability Prediction plugin for Purple
  *
  * Copyright (C) 2006 Geoffrey Foster.
  *
@@ -30,17 +30,17 @@ static void generate_prediction(CapStatistics *statistics) {
 	}
 }
 
-static double generate_prediction_for(GaimBuddy *buddy) {
+static double generate_prediction_for(PurpleBuddy *buddy) {
 	double prediction = 1.0f;
 	gboolean generated = FALSE;
 	gchar *buddy_name = buddy->name;
-	const gchar *protocol_id = gaim_account_get_protocol_id(buddy->account);
-	const gchar *account_id = gaim_account_get_username(buddy->account);
-	const gchar *status_id = gaim_status_get_id(get_status_for(buddy));
+	const gchar *protocol_id = purple_account_get_protocol_id(buddy->account);
+	const gchar *account_id = purple_account_get_username(buddy->account);
+	const gchar *status_id = purple_status_get_id(get_status_for(buddy));
 	time_t t = time(NULL);
 	struct tm *current_time = localtime(&t);
 	int current_minute = current_time->tm_min + current_time->tm_hour * 60;
-	int threshold = gaim_prefs_get_int("/plugins/gtk/cap/threshold");
+	int threshold = purple_prefs_get_int("/plugins/gtk/cap/threshold");
 	int min_minute = (current_minute - threshold) % 1440;
 	int max_minute = (current_minute + threshold) % 1440;
 	char *sql;
@@ -94,7 +94,7 @@ static double generate_prediction_for(GaimBuddy *buddy) {
 	sqlite3_free(sql);
 
 	
-	if(strcmp(gaim_status_get_id(get_status_for(buddy)), "offline") == 0) {
+	if(strcmp(purple_status_get_id(get_status_for(buddy)), "offline") == 0) {
 		/* This is kind of stupid, change it. */
 		if(prediction == 1.0f)
 			prediction = 0.0f;
@@ -106,7 +106,7 @@ static double generate_prediction_for(GaimBuddy *buddy) {
 		return -1;
 }
 
-static CapStatistics * get_stats_for(GaimBuddy *buddy) {
+static CapStatistics * get_stats_for(PurpleBuddy *buddy) {
 	gchar *buddy_name;
 	CapStatistics *stats;
 
@@ -151,7 +151,7 @@ insert_cap_msg_count_success(const char *buddy_name, const char *account, const 
 		buddy_name, account, protocol, minute);
 	char *sql_ins_up = NULL;
 
-	gaim_debug_info("cap", "%s\n", sql_select);
+	purple_debug_info("cap", "%s\n", sql_select);
 
 	sqlite3_prepare(_db, sql_select, -1, &stmt, &tail);
 	
@@ -165,7 +165,7 @@ insert_cap_msg_count_success(const char *buddy_name, const char *account, const 
 			"buddy=%Q AND account=%Q AND protocol=%Q AND minute_val=%d;",
 			buddy_name, account, protocol, minute);
 	} else {
-		gaim_debug_info("cap", "%d\n", rc);
+		purple_debug_info("cap", "%d\n", rc);
 		sqlite3_finalize(stmt);
 		sqlite3_free(sql_select);
 		return;
@@ -188,7 +188,7 @@ insert_cap_status_count_success(const char *buddy_name, const char *account, con
 		buddy_name, account, protocol, status_id);
 	char *sql_ins_up = NULL;
 
-	gaim_debug_info("cap", "%s\n", sql_select);
+	purple_debug_info("cap", "%s\n", sql_select);
 
 	sqlite3_prepare(_db, sql_select, -1, &stmt, &tail);
 	
@@ -202,7 +202,7 @@ insert_cap_status_count_success(const char *buddy_name, const char *account, con
 			"buddy=%Q AND account=%Q AND protocol=%Q AND status=%Q;",
 			buddy_name, account, protocol, status_id);
 	} else {
-		gaim_debug_info("cap", "%d\n", rc);
+		purple_debug_info("cap", "%d\n", rc);
 		sqlite3_finalize(stmt);
 		sqlite3_free(sql_select);
 		return;
@@ -225,7 +225,7 @@ insert_cap_msg_count_failed(const char *buddy_name, const char *account, const c
 		buddy_name, account, protocol, minute);
 	char *sql_ins_up = NULL;
 
-	gaim_debug_info("cap", "%s\n", sql_select);
+	purple_debug_info("cap", "%s\n", sql_select);
 
 	sqlite3_prepare(_db, sql_select, -1, &stmt, &tail);
 	
@@ -239,7 +239,7 @@ insert_cap_msg_count_failed(const char *buddy_name, const char *account, const c
 			"buddy=%Q AND account=%Q AND protocol=%Q AND minute_val=%d;",
 			buddy_name, account, protocol, minute);
 	} else {
-		gaim_debug_info("cap", "%d\n", rc);
+		purple_debug_info("cap", "%d\n", rc);
 		sqlite3_finalize(stmt);
 		sqlite3_free(sql_select);
 		return;
@@ -262,7 +262,7 @@ insert_cap_status_count_failed(const char *buddy_name, const char *account, cons
 		buddy_name, account, protocol, status_id);
 	char *sql_ins_up = NULL;
 
-	gaim_debug_info("cap", "%s\n", sql_select);
+	purple_debug_info("cap", "%s\n", sql_select);
 
 	sqlite3_prepare(_db, sql_select, -1, &stmt, &tail);
 	
@@ -276,7 +276,7 @@ insert_cap_status_count_failed(const char *buddy_name, const char *account, cons
 			"buddy=%Q AND account=%Q AND protocol=%Q AND status=%Q;",
 			buddy_name, account, protocol, status_id);
 	} else {
-		gaim_debug_info("cap", "%d\n", rc);
+		purple_debug_info("cap", "%d\n", rc);
 		sqlite3_finalize(stmt);
 		sqlite3_free(sql_select);
 		return;
@@ -291,11 +291,11 @@ insert_cap_status_count_failed(const char *buddy_name, const char *account, cons
 
 static void insert_cap_success(CapStatistics *stats) {
 	gchar *buddy_name = stats->buddy->name;
-	const gchar *protocol_id = gaim_account_get_protocol_id(stats->buddy->account);
-	const gchar *account_id = gaim_account_get_username(stats->buddy->account);
+	const gchar *protocol_id = purple_account_get_protocol_id(stats->buddy->account);
+	const gchar *account_id = purple_account_get_username(stats->buddy->account);
 	const gchar *status_id = (stats->last_message_status_id) ?
 		stats->last_message_status_id :
-		gaim_status_get_id(get_status_for(stats->buddy));
+		purple_status_get_id(get_status_for(stats->buddy));
 	struct tm *current_time;
 	int minute;
 	
@@ -317,11 +317,11 @@ static void insert_cap_success(CapStatistics *stats) {
 
 static void insert_cap_failure(CapStatistics *stats) {
 	gchar *buddy_name = stats->buddy->name;
-	const gchar *protocol_id = gaim_account_get_protocol_id(stats->buddy->account);
-	const gchar *account_id = gaim_account_get_username(stats->buddy->account);
+	const gchar *protocol_id = purple_account_get_protocol_id(stats->buddy->account);
+	const gchar *account_id = purple_account_get_username(stats->buddy->account);
 	const gchar *status_id = (stats->last_message_status_id) ?
 		stats->last_message_status_id :
-		gaim_status_get_id(get_status_for(stats->buddy));
+		purple_status_get_id(get_status_for(stats->buddy));
 	struct tm *current_time = localtime(&stats->last_message);
 	int minute = current_time->tm_min + current_time->tm_hour * 60;
 
@@ -335,33 +335,33 @@ static void insert_cap_failure(CapStatistics *stats) {
 
 static gboolean max_message_difference_cb(gpointer data) {
 	CapStatistics *stats = data;
-	gaim_debug_info("cap", "Max Message Difference timeout occured\n");
+	purple_debug_info("cap", "Max Message Difference timeout occured\n");
 	insert_cap_failure(stats);
 	stats->timeout_source_id = 0;
 	return FALSE;
 }
 
-/* Gaim Signal Handlers */
+/* Purple Signal Handlers */
 
 /* sent-im-msg */
-static void sent_im_msg(GaimAccount *account, const char *receiver, const char *message) {
-	GaimBuddy *buddy;
+static void sent_im_msg(PurpleAccount *account, const char *receiver, const char *message) {
+	PurpleBuddy *buddy;
 	guint interval, words;
 	CapStatistics *stats = NULL;
 
-	buddy = gaim_find_buddy(account, receiver);
+	buddy = purple_find_buddy(account, receiver);
 
 	if (buddy == NULL)
 		return;
 
-	interval = gaim_prefs_get_int("/plugins/gtk/cap/max_msg_difference") * 1000 * 60;
+	interval = purple_prefs_get_int("/plugins/gtk/cap/max_msg_difference") * 1000 * 60;
 	words = word_count(message);
 
 	stats = get_stats_for(buddy);
 
-	insert_word_count(gaim_account_get_username(account), receiver, words);
+	insert_word_count(purple_account_get_username(account), receiver, words);
 	stats->last_message = time(NULL);
-	stats->last_message_status_id = gaim_status_get_id(get_status_for(buddy));
+	stats->last_message_status_id = purple_status_get_id(get_status_for(buddy));
 	if(stats->timeout_source_id != 0)
 		g_source_remove(stats->timeout_source_id);
 
@@ -370,12 +370,12 @@ static void sent_im_msg(GaimAccount *account, const char *receiver, const char *
 
 /* received-im-msg */
 static void
-received_im_msg(GaimAccount *account, char *sender, char *message, GaimConversation *conv, GaimMessageFlags flags) {
-	GaimBuddy *buddy;
+received_im_msg(PurpleAccount *account, char *sender, char *message, PurpleConversation *conv, PurpleMessageFlags flags) {
+	PurpleBuddy *buddy;
 	CapStatistics *stats;
 	/* guint words = word_count(message); */
 
-	buddy = gaim_find_buddy(account, sender);
+	buddy = purple_find_buddy(account, sender);
 
 	if (buddy == NULL)
 		return;
@@ -387,7 +387,7 @@ received_im_msg(GaimAccount *account, char *sender, char *message, GaimConversat
 	/* If we are waiting for a response from a prior message
 	 * then cancel the timeout callback. */
 	if(stats->timeout_source_id != 0) {
-		gaim_debug_info("cap", "Cancelling timeout callback\n");
+		purple_debug_info("cap", "Cancelling timeout callback\n");
 		g_source_remove(stats->timeout_source_id);
 		stats->timeout_source_id = 0;
 	}
@@ -401,18 +401,18 @@ received_im_msg(GaimAccount *account, char *sender, char *message, GaimConversat
 }
 
 /* buddy-status-changed */
-static void buddy_status_changed(GaimBuddy *buddy, GaimStatus *old_status, GaimStatus *status) {
+static void buddy_status_changed(PurpleBuddy *buddy, PurpleStatus *old_status, PurpleStatus *status) {
 	CapStatistics *stats = get_stats_for(buddy);
-	insert_status_change_from_gaim_status(stats, status);
+	insert_status_change_from_purple_status(stats, status);
 }
 
 /* buddy-signed-on */
-static void buddy_signed_on(GaimBuddy *buddy) {
+static void buddy_signed_on(PurpleBuddy *buddy) {
 	CapStatistics *stats = get_stats_for(buddy);
 	
 	/* If the statistic object existed but doesn't have a buddy pointer associated
 	 * with it then reassociate one with it. The pointer being null is a result
-	 * of a buddy with existing stats signing off and Gaim sticking around. */
+	 * of a buddy with existing stats signing off and Purple sticking around. */
 	if(!stats->buddy) {
 		stats->buddy = buddy;
 	}
@@ -421,7 +421,7 @@ static void buddy_signed_on(GaimBuddy *buddy) {
 }
 
 /* buddy-signed-off */
-static void buddy_signed_off(GaimBuddy *buddy) {
+static void buddy_signed_off(PurpleBuddy *buddy) {
 	CapStatistics *stats = get_stats_for(buddy);
 
 	/* We don't necessarily want to delete a buddies generated statistics every time they go offline.
@@ -433,28 +433,28 @@ static void buddy_signed_off(GaimBuddy *buddy) {
 	stats->last_seen = time(NULL);
 }
 
-static void buddy_idle(GaimBuddy *buddy, gboolean old_idle, gboolean idle) {
+static void buddy_idle(PurpleBuddy *buddy, gboolean old_idle, gboolean idle) {
 }
 
-static void blist_node_extended_menu(GaimBlistNode *node, GList **menu) {
-	GaimBuddy *buddy;
-	GaimMenuAction *menu_action;
-	gaim_debug_info("cap", "got extended blist menu\n");
-	gaim_debug_info("cap", "is buddy: %d\n", GAIM_BLIST_NODE_IS_BUDDY(node));
-	gaim_debug_info("cap", "is contact: %d\n", GAIM_BLIST_NODE_IS_CONTACT(node));
-	gaim_debug_info("cap", "is group: %d\n", GAIM_BLIST_NODE_IS_GROUP(node));
+static void blist_node_extended_menu(PurpleBlistNode *node, GList **menu) {
+	PurpleBuddy *buddy;
+	PurpleMenuAction *menu_action;
+	purple_debug_info("cap", "got extended blist menu\n");
+	purple_debug_info("cap", "is buddy: %d\n", PURPLE_BLIST_NODE_IS_BUDDY(node));
+	purple_debug_info("cap", "is contact: %d\n", PURPLE_BLIST_NODE_IS_CONTACT(node));
+	purple_debug_info("cap", "is group: %d\n", PURPLE_BLIST_NODE_IS_GROUP(node));
 	/* Probably only concerned with buddy/contact types. Contacts = meta-buddies (grouped msn/jabber/etc.) */
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
-	buddy = (GaimBuddy *)node;
-	menu_action = gaim_menu_action_new(_("Display Statistics"),
-			GAIM_CALLBACK(display_statistics_action_cb), NULL, NULL);
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	buddy = (PurpleBuddy *)node;
+	menu_action = purple_menu_action_new(_("Display Statistics"),
+			PURPLE_CALLBACK(display_statistics_action_cb), NULL, NULL);
 	*menu = g_list_append(*menu, menu_action);
 }
 
 /* drawing-tooltip */
-static void drawing_tooltip(GaimBlistNode *node, GString *text, gboolean full) {
-	if(node->type == GAIM_BLIST_BUDDY_NODE) {
-		GaimBuddy *buddy = (GaimBuddy *)node;
+static void drawing_tooltip(PurpleBlistNode *node, GString *text, gboolean full) {
+	if(node->type == PURPLE_BLIST_BUDDY_NODE) {
+		PurpleBuddy *buddy = (PurpleBuddy *)node;
 		CapStatistics *stats = get_stats_for(buddy);
 		/* get the probability that this buddy will respond and add to the tooltip */
 		if(stats->prediction->probability >= 0.0) {
@@ -467,14 +467,14 @@ static void drawing_tooltip(GaimBlistNode *node, GString *text, gboolean full) {
 }
 
 /* signed-on */
-static void signed_on(GaimConnection *gc) {
-	GaimAccount *account = gaim_connection_get_account(gc);
-	const char *my_gaim_name = gaim_account_get_username(account);
-	gchar *my_name = g_strdup(my_gaim_name);
+static void signed_on(PurpleConnection *gc) {
+	PurpleAccount *account = purple_connection_get_account(gc);
+	const char *my_purple_name = purple_account_get_username(account);
+	gchar *my_name = g_strdup(my_purple_name);
 	time_t *last_offline = g_hash_table_lookup(_my_offline_times, my_name);
 
-	const gchar *account_id = gaim_account_get_username(account);
-	const gchar *protocol_id = gaim_account_get_protocol_id(account);
+	const gchar *account_id = purple_account_get_username(account);
+	const gchar *protocol_id = purple_account_get_protocol_id(account);
 	char *sql;
 
 	sql = sqlite3_mprintf("insert into cap_my_usage values(%Q, %Q, %d, now());", account_id, protocol_id, 1);
@@ -482,7 +482,7 @@ static void signed_on(GaimConnection *gc) {
 	sqlite3_free(sql);
 
 	if(last_offline) {
-		if(difftime(*last_offline, time(NULL)) > gaim_prefs_get_int("/plugins/gtk/cap/max_seen_difference") * 60) {
+		if(difftime(*last_offline, time(NULL)) > purple_prefs_get_int("/plugins/gtk/cap/max_seen_difference") * 60) {
 			/* reset all of the last_message times to -1 */
 			g_hash_table_foreach(_my_offline_times, reset_all_last_message_times, NULL);
 		}
@@ -492,16 +492,16 @@ static void signed_on(GaimConnection *gc) {
 }
 
 /* signed-off */
-static void signed_off(GaimConnection *gc) {
+static void signed_off(PurpleConnection *gc) {
 	/* Here we record the time you (the user) sign off of an account.
 	 * The account username is the key in the hashtable and the sign off time_t
 	 * (equal to the sign off time) is the value. */
-	GaimAccount *account = gaim_connection_get_account(gc);
-	const char *my_gaim_name = gaim_account_get_username(account);
-	gchar *my_name = g_strdup(my_gaim_name);
+	PurpleAccount *account = purple_connection_get_account(gc);
+	const char *my_purple_name = purple_account_get_username(account);
+	gchar *my_name = g_strdup(my_purple_name);
 	time_t *offline_time = g_malloc(sizeof(time_t));
-	const gchar *account_id = gaim_account_get_username(account);
-	const gchar *protocol_id = gaim_account_get_protocol_id(account);
+	const gchar *account_id = purple_account_get_username(account);
+	const gchar *protocol_id = purple_account_get_protocol_id(account);
 	char *sql;
 
 	sql = sqlite3_mprintf("insert into cap_my_usage values(%Q, %Q, %d, now());", account_id, protocol_id, 0);
@@ -517,9 +517,9 @@ static void reset_all_last_message_times(gpointer key, gpointer value, gpointer 
 	stats->last_message = -1;
 }
 
-static GaimStatus * get_status_for(GaimBuddy *buddy) {
-	GaimPresence *presence = gaim_buddy_get_presence(buddy);
-	GaimStatus *status = gaim_presence_get_active_status(presence);
+static PurpleStatus * get_status_for(PurpleBuddy *buddy) {
+	PurplePresence *presence = purple_buddy_get_presence(buddy);
+	PurpleStatus *status = purple_presence_get_active_status(presence);
 	return status;
 }
 
@@ -591,7 +591,7 @@ static gboolean create_database_connection() {
 		return TRUE;
 
 	/* build the path */
-	path = g_build_filename(gaim_user_dir(), "cap.db", (gchar *)NULL);
+	path = g_build_filename(purple_user_dir(), "cap.db", (gchar *)NULL);
 
 	/* make database connection here */
 	rc = sqlite3_open(path, &_db);
@@ -601,7 +601,7 @@ static gboolean create_database_connection() {
 	
 	/* Add tables here */
 	create_tables();
-	gaim_debug_info("cap", "Database connection successfully made.\n");
+	purple_debug_info("cap", "Database connection successfully made.\n");
 	return TRUE;
 }
 static void destroy_database_connection() {
@@ -622,10 +622,10 @@ static guint word_count(const gchar *string) {
 }
 
 static void insert_status_change(CapStatistics *statistics) {
-	insert_status_change_from_gaim_status(statistics, get_status_for(statistics->buddy));
+	insert_status_change_from_purple_status(statistics, get_status_for(statistics->buddy));
 }
 
-static void insert_status_change_from_gaim_status(CapStatistics *statistics, GaimStatus *status) {
+static void insert_status_change_from_purple_status(CapStatistics *statistics, PurpleStatus *status) {
 	char *sql;
 	int rc;
 	const gchar *status_id;
@@ -636,17 +636,17 @@ static void insert_status_change_from_gaim_status(CapStatistics *statistics, Gai
 	/* It would seem that some protocols receive periodic updates of the buddies status.
 	 * Check to make sure the last status is not the same as current status to prevent
 	 * to many duplicated useless database entries. */
-	if(strcmp(statistics->last_status_id, gaim_status_get_id(status)) == 0)
+	if(strcmp(statistics->last_status_id, purple_status_get_id(status)) == 0)
 		return;
 
-	status_id = gaim_status_get_id(status);
+	status_id = purple_status_get_id(status);
 	buddy_name = statistics->buddy->name;
-	protocol_id = gaim_account_get_protocol_id(statistics->buddy->account);
-	account_id = gaim_account_get_username(statistics->buddy->account);
+	protocol_id = purple_account_get_protocol_id(statistics->buddy->account);
+	account_id = purple_account_get_username(statistics->buddy->account);
 
-	statistics->last_status_id = gaim_status_get_id(status);
+	statistics->last_status_id = purple_status_get_id(status);
 
-	gaim_debug_info("cap", "Executing: insert into cap_status (buddy, account, protocol, status, event_time) values(%s, %s, %s, %s, now());\n", buddy_name, account_id, protocol_id, status_id);
+	purple_debug_info("cap", "Executing: insert into cap_status (buddy, account, protocol, status, event_time) values(%s, %s, %s, %s, now());\n", buddy_name, account_id, protocol_id, status_id);
 
 	sql = sqlite3_mprintf("insert into cap_status values (%Q, %Q, %Q, %Q, now());", buddy_name, account_id, protocol_id, status_id);
 	rc = sqlite3_exec(_db, sql, NULL, NULL, NULL);
@@ -660,22 +660,22 @@ static void insert_word_count(const char *sender, const char *receiver, guint co
 }
 
 /* Callbacks */
-void display_statistics_action_cb(GaimBlistNode *node, gpointer data) {
-	GaimBuddy *buddy;
+void display_statistics_action_cb(PurpleBlistNode *node, gpointer data) {
+	PurpleBuddy *buddy;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
-	buddy = (GaimBuddy *)node;
-	gaim_debug_info("cap", "Statistics for %s requested.\n", buddy->name);
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
+	buddy = (PurpleBuddy *)node;
+	purple_debug_info("cap", "Statistics for %s requested.\n", buddy->name);
 }
 
-/* Gaim plugin specific code */
+/* Purple plugin specific code */
 
-static gboolean plugin_load(GaimPlugin *plugin) {
+static gboolean plugin_load(PurplePlugin *plugin) {
 	_plugin_pointer = plugin;
 	_signals_connected = FALSE;
 
 	/* buddy_stats is a hashtable where strings are keys
-	 * and the keys are a buddies account id (GaimBuddy.name).
+	 * and the keys are a buddies account id (PurpleBuddy.name).
 	 * keys/values are automatically deleted */
 	_buddy_stats = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, destroy_stats);
 	
@@ -689,42 +689,42 @@ static gboolean plugin_load(GaimPlugin *plugin) {
 	return TRUE;
 }
 
-static void add_plugin_functionality(GaimPlugin *plugin) {
+static void add_plugin_functionality(PurplePlugin *plugin) {
 	if(_signals_connected)
 		return;
 
-	gaim_debug_info("cap", "Adding plugin functionality.\n");
+	purple_debug_info("cap", "Adding plugin functionality.\n");
 	
 	/* Connect all the signals */
-	gaim_signal_connect(gaim_conversations_get_handle(), "sent-im-msg", plugin,
-			GAIM_CALLBACK(sent_im_msg), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "sent-im-msg", plugin,
+			PURPLE_CALLBACK(sent_im_msg), NULL);
 
-	gaim_signal_connect(gaim_conversations_get_handle(), "received-im-msg", plugin,
-			GAIM_CALLBACK(received_im_msg), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "received-im-msg", plugin,
+			PURPLE_CALLBACK(received_im_msg), NULL);
 
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-status-changed", plugin,
-			GAIM_CALLBACK(buddy_status_changed), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-status-changed", plugin,
+			PURPLE_CALLBACK(buddy_status_changed), NULL);
 
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on", plugin,
-			GAIM_CALLBACK(buddy_signed_on), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", plugin,
+			PURPLE_CALLBACK(buddy_signed_on), NULL);
 
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-off", plugin,
-			GAIM_CALLBACK(buddy_signed_off), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", plugin,
+			PURPLE_CALLBACK(buddy_signed_off), NULL);
 
-	/*gaim_signal_connect(gaim_blist_get_handle(), "blist-node-extended-menu", plugin,
-			GAIM_CALLBACK(blist_node_extended_menu), NULL);*/
+	/*purple_signal_connect(purple_blist_get_handle(), "blist-node-extended-menu", plugin,
+			PURPLE_CALLBACK(blist_node_extended_menu), NULL);*/
 
-	gaim_signal_connect(pidgin_blist_get_handle(), "drawing-tooltip", plugin,
-			GAIM_CALLBACK(drawing_tooltip), NULL);
+	purple_signal_connect(pidgin_blist_get_handle(), "drawing-tooltip", plugin,
+			PURPLE_CALLBACK(drawing_tooltip), NULL);
 
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on", plugin,
-			GAIM_CALLBACK(signed_on), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-on", plugin,
+			PURPLE_CALLBACK(signed_on), NULL);
 	
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-off", plugin,
-			GAIM_CALLBACK(signed_off), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-off", plugin,
+			PURPLE_CALLBACK(signed_off), NULL);
 
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-idle-changed", plugin,
-			GAIM_CALLBACK(buddy_idle), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-idle-changed", plugin,
+			PURPLE_CALLBACK(buddy_idle), NULL);
 
 	_signals_connected = TRUE;
 }
@@ -737,45 +737,45 @@ static void cancel_conversation_timeouts(gpointer key, gpointer value, gpointer 
 	}
 }
 
-static void remove_plugin_functionality(GaimPlugin *plugin) {
+static void remove_plugin_functionality(PurplePlugin *plugin) {
 	if(!_signals_connected)
 		return;
 
-	gaim_debug_info("cap", "Removing plugin functionality.\n");
+	purple_debug_info("cap", "Removing plugin functionality.\n");
 
 	/* If there are any timeouts waiting to be processed then cancel them */
 	g_hash_table_foreach(_buddy_stats, cancel_conversation_timeouts, NULL);
 	
 	/* Connect all the signals */
-	gaim_signal_disconnect(gaim_conversations_get_handle(), "sent-im-msg", plugin,
-			GAIM_CALLBACK(sent_im_msg));
+	purple_signal_disconnect(purple_conversations_get_handle(), "sent-im-msg", plugin,
+			PURPLE_CALLBACK(sent_im_msg));
 
-	gaim_signal_disconnect(gaim_conversations_get_handle(), "received-im-msg", plugin,
-			GAIM_CALLBACK(received_im_msg));
+	purple_signal_disconnect(purple_conversations_get_handle(), "received-im-msg", plugin,
+			PURPLE_CALLBACK(received_im_msg));
 
-	gaim_signal_disconnect(gaim_blist_get_handle(), "buddy-status-changed", plugin,
-			GAIM_CALLBACK(buddy_status_changed));
+	purple_signal_disconnect(purple_blist_get_handle(), "buddy-status-changed", plugin,
+			PURPLE_CALLBACK(buddy_status_changed));
 
-	gaim_signal_disconnect(gaim_blist_get_handle(), "buddy-signed-on", plugin,
-			GAIM_CALLBACK(buddy_signed_on));
+	purple_signal_disconnect(purple_blist_get_handle(), "buddy-signed-on", plugin,
+			PURPLE_CALLBACK(buddy_signed_on));
 
-	gaim_signal_disconnect(gaim_blist_get_handle(), "buddy-signed-off", plugin,
-			GAIM_CALLBACK(buddy_signed_off));
+	purple_signal_disconnect(purple_blist_get_handle(), "buddy-signed-off", plugin,
+			PURPLE_CALLBACK(buddy_signed_off));
 
-	/*gaim_signal_disconnect(gaim_blist_get_handle(), "blist-node-extended-menu", plugin,
-			GAIM_CALLBACK(blist_node_extended_menu));*/
+	/*purple_signal_disconnect(purple_blist_get_handle(), "blist-node-extended-menu", plugin,
+			PURPLE_CALLBACK(blist_node_extended_menu));*/
 
-	gaim_signal_disconnect(pidgin_blist_get_handle(), "drawing-tooltip", plugin,
-			GAIM_CALLBACK(drawing_tooltip));
+	purple_signal_disconnect(pidgin_blist_get_handle(), "drawing-tooltip", plugin,
+			PURPLE_CALLBACK(drawing_tooltip));
 
-	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-on", plugin,
-			GAIM_CALLBACK(signed_on));
+	purple_signal_disconnect(purple_connections_get_handle(), "signed-on", plugin,
+			PURPLE_CALLBACK(signed_on));
 	
-	gaim_signal_disconnect(gaim_connections_get_handle(), "signed-off", plugin,
-			GAIM_CALLBACK(signed_off));
+	purple_signal_disconnect(purple_connections_get_handle(), "signed-off", plugin,
+			PURPLE_CALLBACK(signed_off));
 
-	gaim_signal_disconnect(gaim_blist_get_handle(), "buddy-idle-changed", plugin,
-			GAIM_CALLBACK(buddy_idle));
+	purple_signal_disconnect(purple_blist_get_handle(), "buddy-idle-changed", plugin,
+			PURPLE_CALLBACK(buddy_idle));
 
 	_signals_connected = FALSE;
 }
@@ -787,8 +787,8 @@ static void write_stats_on_unload(gpointer key, gpointer value, gpointer user_da
 	}
 }
 
-static gboolean plugin_unload(GaimPlugin *plugin) {
-	gaim_debug_info("cap", "CAP plugin unloading\n");
+static gboolean plugin_unload(PurplePlugin *plugin) {
+	purple_debug_info("cap", "CAP plugin unloading\n");
 	
 	/* clean up memory allocations */
 	if(_buddy_stats) {
@@ -873,18 +873,18 @@ static CapPrefsUI * create_cap_prefs_ui() {
 	gtk_box_pack_start(GTK_BOX(ui->cap_vbox), ui->table_layout, FALSE, FALSE, 0);
 
 	/* Set the input areas to contain the configuration values from
-	 * gaim prefs.
+	 * purple prefs.
 	 */
-	if(gaim_prefs_exists("/plugins/gtk/cap/max_msg_difference")) {
-		int max_msg_diff = gaim_prefs_get_int("/plugins/gtk/cap/max_msg_difference");
+	if(purple_prefs_exists("/plugins/gtk/cap/max_msg_difference")) {
+		int max_msg_diff = purple_prefs_get_int("/plugins/gtk/cap/max_msg_difference");
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->msg_difference_input),  max_msg_diff);
 	}
-	if(gaim_prefs_exists("/plugins/gtk/cap/max_seen_difference")) {
-		int max_seen_diff = gaim_prefs_get_int("/plugins/gtk/cap/max_seen_difference");
+	if(purple_prefs_exists("/plugins/gtk/cap/max_seen_difference")) {
+		int max_seen_diff = purple_prefs_get_int("/plugins/gtk/cap/max_seen_difference");
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->last_seen_input), max_seen_diff);
 	}
-	if(gaim_prefs_exists("/plugins/gtk/cap/threshold")) {
-		int threshold = gaim_prefs_get_int("/plugins/gtk/cap/threshold");
+	if(purple_prefs_exists("/plugins/gtk/cap/threshold")) {
+		int threshold = purple_prefs_get_int("/plugins/gtk/cap/threshold");
 		gtk_spin_button_set_value(GTK_SPIN_BUTTON(ui->threshold_input), threshold);
 	}
 
@@ -913,7 +913,7 @@ static void cap_prefs_ui_destroy_cb(GtkObject *object, gpointer user_data) {
 }
 
 static void numeric_spinner_prefs_cb(GtkSpinButton *spinbutton, gpointer user_data) {
-	gaim_prefs_set_int(user_data, gtk_spin_button_get_value_as_int(spinbutton));
+	purple_prefs_set_int(user_data, gtk_spin_button_get_value_as_int(spinbutton));
 }
 
 static PidginPluginUiInfo ui_info = {
@@ -921,15 +921,15 @@ static PidginPluginUiInfo ui_info = {
 	0 /* page_num (reserved) */
 };
 
-static GaimPluginInfo info = {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,							/**< type		*/
+static PurplePluginInfo info = {
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,							/**< type		*/
 	PIDGIN_PLUGIN_TYPE,							/**< ui_requirement */
 	0,												/**< flags		*/
 	NULL,											/**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,							/**< priority		*/
+	PURPLE_PRIORITY_DEFAULT,							/**< priority		*/
 	CAP_PLUGIN_ID,									/**< id			*/
 	N_("Contact Availability Prediction"),				/**< name		*/
 	VERSION,										/**< version		*/
@@ -937,7 +937,7 @@ static GaimPluginInfo info = {
 	N_("The contact availability plugin (cap) is used to display statistical information about buddies in a users contact list."),
 	/**  description	*/
 	"Geoffrey Foster <geoffrey.foster@gmail.com>",	/**< author		*/
-	GAIM_WEBSITE,									/**< homepage		*/
+	PURPLE_WEBSITE,									/**< homepage		*/
 	plugin_load,									/**< load		*/
 	plugin_unload,									/**< unload		*/
 	NULL,											/**< destroy		*/
@@ -947,7 +947,7 @@ static GaimPluginInfo info = {
 	NULL
 };
 
-static GtkWidget * get_config_frame(GaimPlugin *plugin) {
+static GtkWidget * get_config_frame(PurplePlugin *plugin) {
 	CapPrefsUI *ui = create_cap_prefs_ui();
 
 	/*
@@ -958,11 +958,11 @@ static GtkWidget * get_config_frame(GaimPlugin *plugin) {
 	return ui->ret;
 }
 
-static void init_plugin(GaimPlugin *plugin) {
-	gaim_prefs_add_none("/plugins/gtk/cap");
-	gaim_prefs_add_int("/plugins/gtk/cap/max_seen_difference", 1);
-	gaim_prefs_add_int("/plugins/gtk/cap/max_msg_difference", 10);
-	gaim_prefs_add_int("/plugins/gtk/cap/threshold", 5);
+static void init_plugin(PurplePlugin *plugin) {
+	purple_prefs_add_none("/plugins/gtk/cap");
+	purple_prefs_add_int("/plugins/gtk/cap/max_seen_difference", 1);
+	purple_prefs_add_int("/plugins/gtk/cap/max_msg_difference", 10);
+	purple_prefs_add_int("/plugins/gtk/cap/threshold", 5);
 }
 
-GAIM_INIT_PLUGIN(cap, init_plugin, info);
+PURPLE_INIT_PLUGIN(cap, init_plugin, info);

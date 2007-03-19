@@ -2,9 +2,9 @@
  * @file nat-pmp.c NAT-PMP Implementation
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -190,19 +190,19 @@ double_timeout(struct timeval *to)
 }
 
 /*!
- *	gaim_pmp_get_public_ip() will return the publicly facing IP address of the 
+ *	purple_pmp_get_public_ip() will return the publicly facing IP address of the 
  *	default NAT gateway. The function will return NULL if:
  *		- The gateway doesn't support NAT-PMP
  *		- The gateway errors in some other spectacular fashion
  */
 char *
-gaim_pmp_get_public_ip()
+purple_pmp_get_public_ip()
 {
 	struct sockaddr_in *gateway = default_gw();
 	
 	if (gateway == NULL)
 	{
-		gaim_debug_info("nat-pmp", "Cannot request public IP from a NULL gateway!\n");
+		purple_debug_info("nat-pmp", "Cannot request public IP from a NULL gateway!\n");
 		return NULL;
 	}
 	if (gateway->sin_port != PMP_PORT)
@@ -232,21 +232,21 @@ gaim_pmp_get_public_ip()
 	while (req_attempts < 10)
 	{	
 #ifdef PMP_DEBUG
-		gaim_debug_info("nat-pmp", "Attempting to retrieve the public ip address for the NAT device at: %s\n", inet_ntoa(gateway->sin_addr));
-		gaim_debug_info("nat-pmp", "\tTimeout: %ds %dus, Request #: %d\n", req_timeout.tv_sec, req_timeout.tv_usec, req_attempts);
+		purple_debug_info("nat-pmp", "Attempting to retrieve the public ip address for the NAT device at: %s\n", inet_ntoa(gateway->sin_addr));
+		purple_debug_info("nat-pmp", "\tTimeout: %ds %dus, Request #: %d\n", req_timeout.tv_sec, req_timeout.tv_usec, req_attempts);
 #endif
 		struct sockaddr_in addr;
 		socklen_t len = sizeof(struct sockaddr_in);
 
 		if (sendto(sendfd, &req, sizeof(req), 0, (struct sockaddr *)(gateway), sizeof(struct sockaddr)) < 0)
 		{
-			gaim_debug_info("nat-pmp", "There was an error sending the NAT-PMP public IP request! (%s)\n", strerror(errno));
+			purple_debug_info("nat-pmp", "There was an error sending the NAT-PMP public IP request! (%s)\n", strerror(errno));
 			return NULL;
 		}
 		
 		if (setsockopt(sendfd, SOL_SOCKET, SO_RCVTIMEO, &req_timeout, sizeof(req_timeout)) < 0)
 		{
-			gaim_debug_info("nat-pmp", "There was an error setting the socket's options! (%s)\n", strerror(errno));
+			purple_debug_info("nat-pmp", "There was an error setting the socket's options! (%s)\n", strerror(errno));
 			return NULL;
 		}		
 		
@@ -254,7 +254,7 @@ gaim_pmp_get_public_ip()
 		{			
 			if ( (errno != EAGAIN) || (req_attempts == 9) )
 			{
-				gaim_debug_info("nat-pmp", "There was an error receiving the response from the NAT-PMP device! (%s)\n", strerror(errno));
+				purple_debug_info("nat-pmp", "There was an error receiving the response from the NAT-PMP device! (%s)\n", strerror(errno));
 				return NULL;
 			}
 			else
@@ -265,7 +265,7 @@ gaim_pmp_get_public_ip()
 		
 		if (addr.sin_addr.s_addr != gateway->sin_addr.s_addr)
 		{
-			gaim_debug_info("nat-pmp", "Response was not received from our gateway! Instead from: %s\n", inet_ntoa(addr.sin_addr));
+			purple_debug_info("nat-pmp", "Response was not received from our gateway! Instead from: %s\n", inet_ntoa(addr.sin_addr));
 			goto iterate;
 		}
 		else
@@ -283,14 +283,14 @@ iterate:
 		return NULL;
 	
 #ifdef PMP_DEBUG
-	gaim_debug_info("nat-pmp", "Response received from NAT-PMP device:\n");
-	gaim_debug_info("nat-pmp", "version: %d\n", resp.version);
-	gaim_debug_info("nat-pmp", "opcode: %d\n", resp.opcode);
-	gaim_debug_info("nat-pmp", "resultcode: %d\n", ntohs(resp.resultcode));
-	gaim_debug_info("nat-pmp", "epoch: %d\n", ntohl(resp.epoch));
+	purple_debug_info("nat-pmp", "Response received from NAT-PMP device:\n");
+	purple_debug_info("nat-pmp", "version: %d\n", resp.version);
+	purple_debug_info("nat-pmp", "opcode: %d\n", resp.opcode);
+	purple_debug_info("nat-pmp", "resultcode: %d\n", ntohs(resp.resultcode));
+	purple_debug_info("nat-pmp", "epoch: %d\n", ntohl(resp.epoch));
 	struct in_addr in;
 	in.s_addr = resp.address;
-	gaim_debug_info("nat-pmp", "address: %s\n", inet_ntoa(in));
+	purple_debug_info("nat-pmp", "address: %s\n", inet_ntoa(in));
 #endif	
 
 	publicsockaddr->sin_addr.s_addr = resp.address;
@@ -302,13 +302,13 @@ iterate:
  *	will return NULL on error, or a pointer to the pmp_map_response_t type
  */
 pmp_map_response_t *
-gaim_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
+purple_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
 {
 	struct sockaddr_in *gateway = default_gw();
 	
 	if (gateway == NULL)
 	{
-		gaim_debug_info("nat-pmp", "Cannot create mapping on a NULL gateway!\n");
+		purple_debug_info("nat-pmp", "Cannot create mapping on a NULL gateway!\n");
 		return NULL;
 	}
 	if (gateway->sin_port != PMP_PORT)
@@ -340,19 +340,19 @@ gaim_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uin
 	while (req_attempts < 10)
 	{	
 #ifdef PMP_DEBUG
-		gaim_debug_info("nat-pmp", "Attempting to create a NAT-PMP mapping the private port %d, and the public port %d\n", privateport, publicport);
-		gaim_debug_info("nat-pmp", "\tTimeout: %ds %dus, Request #: %d\n", req_timeout.tv_sec, req_timeout.tv_usec, req_attempts);
+		purple_debug_info("nat-pmp", "Attempting to create a NAT-PMP mapping the private port %d, and the public port %d\n", privateport, publicport);
+		purple_debug_info("nat-pmp", "\tTimeout: %ds %dus, Request #: %d\n", req_timeout.tv_sec, req_timeout.tv_usec, req_attempts);
 #endif
 
 		if (sendto(sendfd, &req, sizeof(req), 0, (struct sockaddr *)(gateway), sizeof(struct sockaddr)) < 0)
 		{
-			gaim_debug_info("nat-pmp", "There was an error sending the NAT-PMP mapping request! (%s)\n", strerror(errno));
+			purple_debug_info("nat-pmp", "There was an error sending the NAT-PMP mapping request! (%s)\n", strerror(errno));
 			return NULL;
 		}
 		
 		if (setsockopt(sendfd, SOL_SOCKET, SO_RCVTIMEO, &req_timeout, sizeof(req_timeout)) < 0)
 		{
-			gaim_debug_info("nat-pmp", "There was an error setting the socket's options! (%s)\n", strerror(errno));
+			purple_debug_info("nat-pmp", "There was an error setting the socket's options! (%s)\n", strerror(errno));
 			return NULL;
 		}		
 		
@@ -360,7 +360,7 @@ gaim_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uin
 		{			
 			if ( (errno != EAGAIN) || (req_attempts == 9) )
 			{
-				gaim_debug_info("nat-pmp", "There was an error receiving the response from the NAT-PMP device! (%s)\n", strerror(errno));
+				purple_debug_info("nat-pmp", "There was an error receiving the response from the NAT-PMP device! (%s)\n", strerror(errno));
 				return NULL;
 			}
 			else
@@ -371,7 +371,7 @@ gaim_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uin
 		
 		if (resp->opcode != (req.opcode + 128))
 		{
-			gaim_debug_info("nat-pmp", "The opcode for the response from the NAT device does not match the request opcode!\n");
+			purple_debug_info("nat-pmp", "The opcode for the response from the NAT device does not match the request opcode!\n");
 			goto iterate;
 		}
 		
@@ -383,14 +383,14 @@ iterate:
 	}
 	
 #ifdef PMP_DEBUG
-	gaim_debug_info("nat-pmp", "Response received from NAT-PMP device:\n");
-	gaim_debug_info("nat-pmp", "version: %d\n", resp->version);
-	gaim_debug_info("nat-pmp", "opcode: %d\n", resp->opcode);
-	gaim_debug_info("nat-pmp", "resultcode: %d\n", ntohs(resp->resultcode));
-	gaim_debug_info("nat-pmp", "epoch: %d\n", ntohl(resp->epoch));
-	gaim_debug_info("nat-pmp", "privateport: %d\n", ntohs(resp->privateport));
-	gaim_debug_info("nat-pmp", "publicport: %d\n", ntohs(resp->publicport));
-	gaim_debug_info("nat-pmp", "lifetime: %d\n", ntohl(resp->lifetime));
+	purple_debug_info("nat-pmp", "Response received from NAT-PMP device:\n");
+	purple_debug_info("nat-pmp", "version: %d\n", resp->version);
+	purple_debug_info("nat-pmp", "opcode: %d\n", resp->opcode);
+	purple_debug_info("nat-pmp", "resultcode: %d\n", ntohs(resp->resultcode));
+	purple_debug_info("nat-pmp", "epoch: %d\n", ntohl(resp->epoch));
+	purple_debug_info("nat-pmp", "privateport: %d\n", ntohs(resp->privateport));
+	purple_debug_info("nat-pmp", "publicport: %d\n", ntohs(resp->publicport));
+	purple_debug_info("nat-pmp", "lifetime: %d\n", ntohl(resp->lifetime));
 #endif	
 
 	return resp;
@@ -401,13 +401,13 @@ iterate:
  *	will return NULL on error, or a pointer to the pmp_map_response_t type
  */
 pmp_map_response_t *
-gaim_pmp_destroy_map(uint8_t type, uint16_t privateport)
+purple_pmp_destroy_map(uint8_t type, uint16_t privateport)
 {
 	pmp_map_response_t *response = NULL;
 	
-	if ((response = gaim_pmp_create_map(type, privateport, 0, 0)) == NULL)
+	if ((response = purple_pmp_create_map(type, privateport, 0, 0)) == NULL)
 	{
-		gaim_debug_info("nat-pmp", "Failed to properly destroy mapping for %d!\n", privateport);
+		purple_debug_info("nat-pmp", "Failed to properly destroy mapping for %d!\n", privateport);
 		return NULL;
 	}
 	else
@@ -417,19 +417,19 @@ gaim_pmp_destroy_map(uint8_t type, uint16_t privateport)
 }
 #else /* #ifdef NET_RT_DUMP2 */
 char *
-gaim_pmp_get_public_ip()
+purple_pmp_get_public_ip()
 {
 	return NULL;
 }
 
 pmp_map_response_t *
-gaim_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
+purple_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
 {
 	return NULL;
 }
 
 pmp_map_response_t *
-gaim_pmp_destroy_map(uint8_t type, uint16_t privateport)
+purple_pmp_destroy_map(uint8_t type, uint16_t privateport)
 {
 	return NULL;
 }

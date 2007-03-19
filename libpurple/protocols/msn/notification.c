@@ -1,9 +1,9 @@
 /**
  * @file notification.c Notification server functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -91,7 +91,7 @@ connect_cb(MsnServConn *servconn)
 {
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
-	GaimAccount *account;
+	PurpleAccount *account;
 	char **a, **c, *vers;
 	int i;
 
@@ -155,13 +155,13 @@ msn_notification_disconnect(MsnNotification *notification)
 static void
 group_error_helper(MsnSession *session, const char *msg, int group_id, int error)
 {
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 	char *reason = NULL;
 	char *title = NULL;
 
 	account = session->account;
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
 	if (error == 224)
 	{
@@ -185,9 +185,9 @@ group_error_helper(MsnSession *session, const char *msg, int group_id, int error
 	}
 
 	title = g_strdup_printf(_("%s on %s (%s)"), msg,
-						  gaim_account_get_username(account),
-						  gaim_account_get_protocol_name(account));
-	gaim_notify_error(gc, NULL, title, reason);
+						  purple_account_get_username(account),
+						  purple_account_get_protocol_name(account));
+	purple_notify_error(gc, NULL, title, reason);
 	g_free(title);
 	g_free(reason);
 }
@@ -211,31 +211,31 @@ msn_got_login_params(MsnSession *session, const char *login_params)
 static void
 cvr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	account = cmdproc->session->account;
 
 	msn_cmdproc_send(cmdproc, "USR", "TWN I %s",
-					 gaim_account_get_username(account));
+					 purple_account_get_username(account));
 }
 
 static void
 usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
 	if (!g_ascii_strcasecmp(cmd->params[1], "OK"))
 	{
 		/* OK */
-		const char *friendly = gaim_url_decode(cmd->params[3]);
+		const char *friendly = purple_url_decode(cmd->params[3]);
 
-		gaim_connection_set_display_name(gc, friendly);
+		purple_connection_set_display_name(gc, friendly);
 
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_SYN);
 
@@ -296,7 +296,7 @@ static void
 ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	GaimAccount *account;
+	PurpleAccount *account;
 	gboolean protocol_supported = FALSE;
 	char proto_str[8];
 	size_t i;
@@ -324,7 +324,7 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_cmdproc_send(cmdproc, "CVR",
 					 "0x0409 winnt 5.1 i386 MSNMSGR 6.0.0602 MSMSGS %s",
-					 gaim_account_get_username(account));
+					 purple_account_get_username(account));
 }
 
 /**************************************************************************
@@ -405,23 +405,23 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnTransaction *trans;
 	char buf[33];
 	const char *challenge_resp;
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 	guchar digest[16];
 	int i;
 
-	cipher = gaim_ciphers_find_cipher("md5");
-	context = gaim_cipher_context_new(cipher, NULL);
+	cipher = purple_ciphers_find_cipher("md5");
+	context = purple_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, (const guchar *)cmd->params[1],
+	purple_cipher_context_append(context, (const guchar *)cmd->params[1],
 							   strlen(cmd->params[1]));
 
 	challenge_resp = "VT6PX?UQTM4WM%YR";
 
-	gaim_cipher_context_append(context, (const guchar *)challenge_resp,
+	purple_cipher_context_append(context, (const guchar *)challenge_resp,
 							   strlen(challenge_resp));
-	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	gaim_cipher_context_destroy(context);
+	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_destroy(context);
 
 	for (i = 0; i < 16; i++)
 		g_snprintf(buf + (i*2), 3, "%02x", digest[i]);
@@ -450,7 +450,7 @@ add_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	list     = cmd->params[1];
 	passport = cmd->params[3];
-	friendly = gaim_url_decode(cmd->params[4]);
+	friendly = purple_url_decode(cmd->params[4]);
 
 	session = cmdproc->session;
 
@@ -479,8 +479,8 @@ static void
 add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 {
 	MsnSession *session;
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 	const char *list, *passport;
 	char *reason = NULL;
 	char *msg = NULL;
@@ -488,7 +488,7 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 	params = g_strsplit(trans->params, " ", 0);
 
 	list     = params[0];
@@ -496,16 +496,16 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	if (!strcmp(list, "FL"))
 		msg = g_strdup_printf(_("Unable to add user on %s (%s)"),
-							  gaim_account_get_username(account),
-							  gaim_account_get_protocol_name(account));
+							  purple_account_get_username(account),
+							  purple_account_get_protocol_name(account));
 	else if (!strcmp(list, "BL"))
 		msg = g_strdup_printf(_("Unable to block user on %s (%s)"),
-							  gaim_account_get_username(account),
-							  gaim_account_get_protocol_name(account));
+							  purple_account_get_username(account),
+							  purple_account_get_protocol_name(account));
 	else if (!strcmp(list, "AL"))
 		msg = g_strdup_printf(_("Unable to permit user on %s (%s)"),
-							  gaim_account_get_username(account),
-							  gaim_account_get_protocol_name(account));
+							  purple_account_get_username(account),
+							  purple_account_get_protocol_name(account));
 
 	if (!strcmp(list, "FL"))
 	{
@@ -535,18 +535,18 @@ add_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	if (msg != NULL)
 	{
-		gaim_notify_error(gc, NULL, msg, reason);
+		purple_notify_error(gc, NULL, msg, reason);
 		g_free(msg);
 	}
 
 	if (!strcmp(list, "FL"))
 	{
-		GaimBuddy *buddy;
+		PurpleBuddy *buddy;
 
-		buddy = gaim_find_buddy(account, passport);
+		buddy = purple_find_buddy(account, passport);
 
 		if (buddy != NULL)
-			gaim_blist_remove_buddy(buddy);
+			purple_blist_remove_buddy(buddy);
 	}
 
 	g_free(reason);
@@ -565,7 +565,7 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	group_id = atoi(cmd->params[3]);
 
-	group_name = gaim_url_decode(cmd->params[2]);
+	group_name = purple_url_decode(cmd->params[2]);
 
 	msn_group_new(session->userlist, group_id, group_name);
 
@@ -610,19 +610,19 @@ static void
 iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
 	const char *state, *passport, *friendly;
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
 	state    = cmd->params[1];
 	passport = cmd->params[2];
-	friendly = gaim_url_decode(cmd->params[3]);
+	friendly = purple_url_decode(cmd->params[3]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
 
@@ -632,7 +632,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (session->protocol_ver >= 9 && cmd->param_count == 6)
 	{
-		msnobj = msn_object_new_from_string(gaim_url_decode(cmd->params[5]));
+		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[5]));
 		msn_user_set_object(user, msnobj);
 	}
 
@@ -644,7 +644,7 @@ static void
 ipg_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 {
 #if 0
-	gaim_debug_misc("msn", "Incoming Page: {%s}\n", payload);
+	purple_debug_misc("msn", "Incoming Page: {%s}\n", payload);
 #endif
 }
 
@@ -659,8 +659,8 @@ static void
 nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 	MsnUser *user;
 	MsnObject *msnobj;
 	int clientid;
@@ -668,11 +668,11 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	session = cmdproc->session;
 	account = session->account;
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
 	state    = cmd->params[0];
 	passport = cmd->params[1];
-	friendly = gaim_url_decode(cmd->params[2]);
+	friendly = purple_url_decode(cmd->params[2]);
 
 	user = msn_userlist_find_user(session->userlist, passport);
 
@@ -688,7 +688,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		if (cmd->param_count == 5)
 		{
 			msnobj =
-				msn_object_new_from_string(gaim_url_decode(cmd->params[4]));
+				msn_object_new_from_string(purple_url_decode(cmd->params[4]));
 			msn_user_set_object(user, msnobj);
 		}
 		else
@@ -738,7 +738,7 @@ not_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload, size_t len)
 {
 #if 0
 	MSN_SET_PARAMS("NOT %d\r\n%s", cmdproc->servconn->payload, payload);
-	gaim_debug_misc("msn", "Notification: {%s}\n", payload);
+	purple_debug_misc("msn", "Notification: {%s}\n", payload);
 #endif
 }
 
@@ -755,14 +755,14 @@ rea_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	/* TODO: This might be for us too */
 
 	MsnSession *session;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	const char *friendly;
 
 	session = cmdproc->session;
 	gc = session->account->gc;
-	friendly = gaim_url_decode(cmd->params[3]);
+	friendly = purple_url_decode(cmd->params[3]);
 
-	gaim_connection_set_display_name(gc, friendly);
+	purple_connection_set_display_name(gc, friendly);
 }
 
 static void
@@ -779,11 +779,11 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		value = cmd->params[3];
 		if (!strcmp(type, "PHH"))
-			msn_user_set_home_phone(session->user, gaim_url_decode(value));
+			msn_user_set_home_phone(session->user, purple_url_decode(value));
 		else if (!strcmp(type, "PHW"))
-			msn_user_set_work_phone(session->user, gaim_url_decode(value));
+			msn_user_set_work_phone(session->user, purple_url_decode(value));
 		else if (!strcmp(type, "PHM"))
-			msn_user_set_mobile_phone(session->user, gaim_url_decode(value));
+			msn_user_set_mobile_phone(session->user, purple_url_decode(value));
 	}
 	else
 	{
@@ -805,7 +805,7 @@ reg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	session = cmdproc->session;
 	group_id = atoi(cmd->params[2]);
-	group_name = gaim_url_decode(cmd->params[3]);
+	group_name = purple_url_decode(cmd->params[3]);
 
 	msn_userlist_rename_group_id(session->userlist, group_id, group_name);
 }
@@ -928,11 +928,11 @@ static void
 url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	GaimAccount *account;
+	PurpleAccount *account;
 	const char *rru;
 	const char *url;
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 	guchar digest[16];
 	FILE *fd;
 	char *buf;
@@ -949,14 +949,14 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	buf = g_strdup_printf("%s%lu%s",
 			   session->passport_info.mspauth,
 			   time(NULL) - session->passport_info.sl,
-			   gaim_connection_get_password(account->gc));
+			   purple_connection_get_password(account->gc));
 
-	cipher = gaim_ciphers_find_cipher("md5");
-	context = gaim_cipher_context_new(cipher, NULL);
+	cipher = purple_ciphers_find_cipher("md5");
+	context = purple_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, (const guchar *)buf, strlen(buf));
-	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	gaim_cipher_context_destroy(context);
+	purple_cipher_context_append(context, (const guchar *)buf, strlen(buf));
+	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_destroy(context);
 
 	g_free(buf);
 
@@ -974,9 +974,9 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		g_free(session->passport_info.file);
 	}
 
-	if ((fd = gaim_mkstemp(&session->passport_info.file, FALSE)) == NULL)
+	if ((fd = purple_mkstemp(&session->passport_info.file, FALSE)) == NULL)
 	{
-		gaim_debug_error("msn",
+		purple_debug_error("msn",
 						 "Error opening temp passport file: %s\n",
 						 strerror(errno));
 	}
@@ -996,9 +996,9 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 				url);
 		fprintf(fd, "<input type=\"hidden\" name=\"mode\" value=\"ttl\">\n");
 		fprintf(fd, "<input type=\"hidden\" name=\"login\" value=\"%s\">\n",
-				gaim_account_get_username(account));
+				purple_account_get_username(account));
 		fprintf(fd, "<input type=\"hidden\" name=\"username\" value=\"%s\">\n",
-				gaim_account_get_username(account));
+				purple_account_get_username(account));
 		if (session->passport_info.sid != NULL)
 			fprintf(fd, "<input type=\"hidden\" name=\"sid\" value=\"%s\">\n",
 					session->passport_info.sid);
@@ -1022,7 +1022,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		if (fclose(fd))
 		{
-			gaim_debug_error("msn",
+			purple_debug_error("msn",
 							 "Error closing temp passport file: %s\n",
 							 strerror(errno));
 
@@ -1100,7 +1100,7 @@ xfr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (strcmp(cmd->params[1], "SB") && strcmp(cmd->params[1], "NS"))
 	{
 		/* Maybe we can have a generic bad command error. */
-		gaim_debug_error("msn", "Bad XFR command (%s)\n", cmd->params[1]);
+		purple_debug_error("msn", "Bad XFR command (%s)\n", cmd->params[1]);
 		return;
 	}
 
@@ -1108,7 +1108,7 @@ xfr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (!strcmp(cmd->params[1], "SB"))
 	{
-		gaim_debug_error("msn", "This shouldn't be handled here.\n");
+		purple_debug_error("msn", "This shouldn't be handled here.\n");
 	}
 	else if (!strcmp(cmd->params[1], "NS"))
 	{
@@ -1183,7 +1183,7 @@ static void
 initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSession *session;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	GHashTable *table;
 	const char *unread;
 
@@ -1205,7 +1205,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		return;
 	}
 
-	if (!gaim_account_get_check_mail(session->account))
+	if (!purple_account_get_check_mail(session->account))
 		return;
 
 	table = msn_message_get_hashtable_from_body(msg);
@@ -1224,7 +1224,7 @@ initial_email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			passport = msn_user_get_passport(session->user);
 			url = session->passport_info.file;
 
-			gaim_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
+			purple_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
 							   &passport, &url, NULL, NULL);
 		}
 	}
@@ -1236,7 +1236,7 @@ static void
 email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSession *session;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	GHashTable *table;
 	char *from, *subject, *tmp;
 
@@ -1258,7 +1258,7 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		return;
 	}
 
-	if (!gaim_account_get_check_mail(session->account))
+	if (!purple_account_get_check_mail(session->account))
 		return;
 
 	table = msn_message_get_hashtable_from_body(msg);
@@ -1267,13 +1267,13 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	tmp = g_hash_table_lookup(table, "From");
 	if (tmp != NULL)
-		from = gaim_mime_decode_field(tmp);
+		from = purple_mime_decode_field(tmp);
 
 	tmp = g_hash_table_lookup(table, "Subject");
 	if (tmp != NULL)
-		subject = gaim_mime_decode_field(tmp);
+		subject = purple_mime_decode_field(tmp);
 
-	gaim_notify_email(gc,
+	purple_notify_email(gc,
 					  (subject != NULL ? subject : ""),
 					  (from != NULL ?  from : ""),
 					  msn_user_get_passport(session->user),
@@ -1329,7 +1329,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		}
 
 		if (*buf != '\0')
-			gaim_notify_info(cmdproc->session->account->gc, NULL, buf, NULL);
+			purple_notify_info(cmdproc->session->account->gc, NULL, buf, NULL);
 	}
 
 	g_hash_table_destroy(table);

@@ -1,7 +1,7 @@
 /*
- * Gaim
+ * Purple
  *
- * Gaim is the legal property of its developers, whose names are too
+ * Purple is the legal property of its developers, whose names are too
  * numerous to list here. Please refer to the COPYRIGHT file distributed
  * with this source distribution
  *
@@ -29,7 +29,7 @@
 #include <glib/glist.h>
 #include <glib/gstring.h>
 
-/* this should become "util.h" if we ever get this into gaim proper */
+/* this should become "util.h" if we ever get this into purple proper */
 #include "debug.h"
 #include "mime.h"
 #include "util.h"
@@ -46,14 +46,14 @@ struct mime_fields {
 	GList *keys;
 };
 
-struct _GaimMimeDocument {
+struct _PurpleMimeDocument {
 	struct mime_fields fields;
 	GList *parts;
 };
 
-struct _GaimMimePart {
+struct _PurpleMimePart {
 	struct mime_fields fields;
-	struct _GaimMimeDocument *doc;
+	struct _PurpleMimeDocument *doc;
 	GString *data;
 };
 
@@ -215,12 +215,12 @@ fields_destroy(struct mime_fields *mf)
 }
 
 
-static GaimMimePart *
-part_new(GaimMimeDocument *doc)
+static PurpleMimePart *
+part_new(PurpleMimeDocument *doc)
 {
-	GaimMimePart *part;
+	PurpleMimePart *part;
 
-	part = g_new0(GaimMimePart, 1);
+	part = g_new0(PurpleMimePart, 1);
 	fields_init(&part->fields);
 	part->doc = doc;
 	part->data = g_string_new(NULL);
@@ -232,7 +232,7 @@ part_new(GaimMimeDocument *doc)
 
 
 static void
-part_load(GaimMimePart *part, const char *buf, gsize len)
+part_load(PurpleMimePart *part, const char *buf, gsize len)
 {
 
 	char *b = (char *) buf;
@@ -249,7 +249,7 @@ part_load(GaimMimePart *part, const char *buf, gsize len)
 
 
 static void
-part_write(GaimMimePart *part, GString *str)
+part_write(PurpleMimePart *part, GString *str)
 {
 	fields_write(&part->fields, str);
 	g_string_append_printf(str, "%s\r\n\r\n", part->data->str);
@@ -257,7 +257,7 @@ part_write(GaimMimePart *part, GString *str)
 
 
 static void
-part_free(GaimMimePart *part)
+part_free(PurpleMimePart *part)
 {
 
 	fields_destroy(&part->fields);
@@ -269,8 +269,8 @@ part_free(GaimMimePart *part)
 }
 
 
-GaimMimePart *
-gaim_mime_part_new(GaimMimeDocument *doc)
+PurpleMimePart *
+purple_mime_part_new(PurpleMimeDocument *doc)
 {
 	g_return_val_if_fail(doc != NULL, NULL);
 	return part_new(doc);
@@ -278,7 +278,7 @@ gaim_mime_part_new(GaimMimeDocument *doc)
 
 
 const GList *
-gaim_mime_part_get_fields(GaimMimePart *part)
+purple_mime_part_get_fields(PurpleMimePart *part)
 {
 	g_return_val_if_fail(part != NULL, NULL);
 	return part->fields.keys;
@@ -286,7 +286,7 @@ gaim_mime_part_get_fields(GaimMimePart *part)
 
 
 const char *
-gaim_mime_part_get_field(GaimMimePart *part, const char *field)
+purple_mime_part_get_field(PurpleMimePart *part, const char *field)
 {
 	g_return_val_if_fail(part != NULL, NULL);
 	return fields_get(&part->fields, field);
@@ -294,19 +294,19 @@ gaim_mime_part_get_field(GaimMimePart *part, const char *field)
 
 
 char *
-gaim_mime_part_get_field_decoded(GaimMimePart *part, const char *field)
+purple_mime_part_get_field_decoded(PurpleMimePart *part, const char *field)
 {
 	const char *f;
 
 	g_return_val_if_fail(part != NULL, NULL);
 
 	f = fields_get(&part->fields, field);
-	return gaim_mime_decode_field(f);
+	return purple_mime_decode_field(f);
 }
 
 
 void
-gaim_mime_part_set_field(GaimMimePart *part, const char *field, const char *value)
+purple_mime_part_set_field(PurpleMimePart *part, const char *field, const char *value)
 {
 	g_return_if_fail(part != NULL);
 	fields_set(&part->fields, field, value);
@@ -314,7 +314,7 @@ gaim_mime_part_set_field(GaimMimePart *part, const char *field, const char *valu
 
 
 const char *
-gaim_mime_part_get_data(GaimMimePart *part)
+purple_mime_part_get_data(PurpleMimePart *part)
 {
 	g_return_val_if_fail(part != NULL, NULL);
 	g_return_val_if_fail(part->data != NULL, NULL);
@@ -324,7 +324,7 @@ gaim_mime_part_get_data(GaimMimePart *part)
 
 
 void
-gaim_mime_part_get_data_decoded(GaimMimePart *part, guchar **data, gsize *len)
+purple_mime_part_get_data_decoded(PurpleMimePart *part, guchar **data, gsize *len)
 {
 	const char *enc;
 
@@ -334,7 +334,7 @@ gaim_mime_part_get_data_decoded(GaimMimePart *part, guchar **data, gsize *len)
 
 	g_return_if_fail(part->data != NULL);
 
-	enc = gaim_mime_part_get_field(part, "content-transfer-encoding");
+	enc = purple_mime_part_get_field(part, "content-transfer-encoding");
 
 	if(! enc) {
 		*data = (guchar *)g_strdup(part->data->str);
@@ -349,16 +349,16 @@ gaim_mime_part_get_data_decoded(GaimMimePart *part, guchar **data, gsize *len)
 		*len = part->data->len;
 
 	} else if(! g_ascii_strcasecmp(enc, "base16")) {
-		*data = gaim_base16_decode(part->data->str, len);
+		*data = purple_base16_decode(part->data->str, len);
 
 	} else if(! g_ascii_strcasecmp(enc, "base64")) {
-		*data = gaim_base64_decode(part->data->str, len);
+		*data = purple_base64_decode(part->data->str, len);
 
 	} else if(! g_ascii_strcasecmp(enc, "quoted-printable")) {
-		*data = gaim_quotedp_decode(part->data->str, len);
+		*data = purple_quotedp_decode(part->data->str, len);
 
 	} else {
-		gaim_debug_warning("mime", "gaim_mime_part_get_data_decoded:"
+		purple_debug_warning("mime", "purple_mime_part_get_data_decoded:"
 					 " unknown encoding '%s'\n", enc);
 		*data = NULL;
 		*len = 0;
@@ -367,7 +367,7 @@ gaim_mime_part_get_data_decoded(GaimMimePart *part, guchar **data, gsize *len)
 
 
 gsize
-gaim_mime_part_get_length(GaimMimePart *part)
+purple_mime_part_get_length(PurpleMimePart *part)
 {
 	g_return_val_if_fail(part != NULL, 0);
 	g_return_val_if_fail(part->data != NULL, 0);
@@ -377,7 +377,7 @@ gaim_mime_part_get_length(GaimMimePart *part)
 
 
 void
-gaim_mime_part_set_data(GaimMimePart *part, const char *data)
+purple_mime_part_set_data(PurpleMimePart *part, const char *data)
 {
 	g_return_if_fail(part != NULL);
 	g_string_free(part->data, TRUE);
@@ -385,12 +385,12 @@ gaim_mime_part_set_data(GaimMimePart *part, const char *data)
 }
 
 
-GaimMimeDocument *
-gaim_mime_document_new()
+PurpleMimeDocument *
+purple_mime_document_new()
 {
-	GaimMimeDocument *doc;
+	PurpleMimeDocument *doc;
 
-	doc = g_new0(GaimMimeDocument, 1);
+	doc = g_new0(PurpleMimeDocument, 1);
 	fields_init(&doc->fields);
 
 	return doc;
@@ -398,7 +398,7 @@ gaim_mime_document_new()
 
 
 static void
-doc_parts_load(GaimMimeDocument *doc, const char *boundary, const char *buf, gsize len)
+doc_parts_load(PurpleMimeDocument *doc, const char *boundary, const char *buf, gsize len)
 {
 	char *b = (char *) buf;
 	gsize n = len;
@@ -430,7 +430,7 @@ doc_parts_load(GaimMimeDocument *doc, const char *boundary, const char *buf, gsi
 
 			sl = tail - b;
 			if(sl) {
-				GaimMimePart *part = part_new(doc);
+				PurpleMimePart *part = part_new(doc);
 				part_load(part, b, sl);
 			}
 		}
@@ -440,17 +440,17 @@ doc_parts_load(GaimMimeDocument *doc, const char *boundary, const char *buf, gsi
 }
 
 
-GaimMimeDocument *
-gaim_mime_document_parsen(const char *buf, gsize len)
+PurpleMimeDocument *
+purple_mime_document_parsen(const char *buf, gsize len)
 {
-	GaimMimeDocument *doc;
+	PurpleMimeDocument *doc;
 
 	char *b = (char *) buf;
 	gsize n = len;
 
 	g_return_val_if_fail(buf != NULL, NULL);
 
-	doc = gaim_mime_document_new();
+	doc = purple_mime_document_new();
 
 	if (!len)
 		return doc;
@@ -459,7 +459,7 @@ gaim_mime_document_parsen(const char *buf, gsize len)
 
 	{
 		const char *ct = fields_get(&doc->fields, "content-type");
-		if(ct && gaim_str_has_prefix(ct, "multipart")) {
+		if(ct && purple_str_has_prefix(ct, "multipart")) {
 			char *bd = strrchr(ct, '=');
 			if(bd++) {
 				doc_parts_load(doc, bd, b, n);
@@ -471,16 +471,16 @@ gaim_mime_document_parsen(const char *buf, gsize len)
 }
 
 
-GaimMimeDocument *
-gaim_mime_document_parse(const char *buf)
+PurpleMimeDocument *
+purple_mime_document_parse(const char *buf)
 {
 	g_return_val_if_fail(buf != NULL, NULL);
-	return gaim_mime_document_parsen(buf, strlen(buf));
+	return purple_mime_document_parsen(buf, strlen(buf));
 }
 
 
 void
-gaim_mime_document_write(GaimMimeDocument *doc, GString *str)
+purple_mime_document_write(PurpleMimeDocument *doc, GString *str)
 {
 	const char *bd = NULL;
 
@@ -489,7 +489,7 @@ gaim_mime_document_write(GaimMimeDocument *doc, GString *str)
 
 	{
 		const char *ct = fields_get(&doc->fields, "content-type");
-		if(ct && gaim_str_has_prefix(ct, "multipart")) {
+		if(ct && purple_str_has_prefix(ct, "multipart")) {
 			char *b = strrchr(ct, '=');
 			if(b++) bd = b;
 		}
@@ -514,7 +514,7 @@ gaim_mime_document_write(GaimMimeDocument *doc, GString *str)
 
 
 const GList *
-gaim_mime_document_get_fields(GaimMimeDocument *doc)
+purple_mime_document_get_fields(PurpleMimeDocument *doc)
 {
 	g_return_val_if_fail(doc != NULL, NULL);
 	return doc->fields.keys;
@@ -522,7 +522,7 @@ gaim_mime_document_get_fields(GaimMimeDocument *doc)
 
 
 const char *
-gaim_mime_document_get_field(GaimMimeDocument *doc, const char *field)
+purple_mime_document_get_field(PurpleMimeDocument *doc, const char *field)
 {
 	g_return_val_if_fail(doc != NULL, NULL);
 	return fields_get(&doc->fields, field);
@@ -530,7 +530,7 @@ gaim_mime_document_get_field(GaimMimeDocument *doc, const char *field)
 
 
 void
-gaim_mime_document_set_field(GaimMimeDocument *doc, const char *field, const char *value)
+purple_mime_document_set_field(PurpleMimeDocument *doc, const char *field, const char *value)
 {
 	g_return_if_fail(doc != NULL);
 	fields_set(&doc->fields, field, value);
@@ -538,7 +538,7 @@ gaim_mime_document_set_field(GaimMimeDocument *doc, const char *field, const cha
 
 
 const GList *
-gaim_mime_document_get_parts(GaimMimeDocument *doc)
+purple_mime_document_get_parts(PurpleMimeDocument *doc)
 {
 	g_return_val_if_fail(doc != NULL, NULL);
 	return doc->parts;
@@ -546,7 +546,7 @@ gaim_mime_document_get_parts(GaimMimeDocument *doc)
 
 
 void
-gaim_mime_document_free(GaimMimeDocument *doc)
+purple_mime_document_free(PurpleMimeDocument *doc)
 {
 	if (!doc)
 		return;

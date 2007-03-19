@@ -1,9 +1,9 @@
 /**
  * @file qq.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -78,10 +78,10 @@ struct _qq_data {
 	gboolean logged_in;		/* used by qq-add_buddy */
 	gboolean use_tcp;		/* network in tcp or udp */
 
-	GaimProxyType proxy_type;
-	GaimConnection *gc;
+	PurpleProxyType proxy_type;
+	PurpleConnection *gc;
 
-	GaimXfer *xfer;			/* file transfer handler */
+	PurpleXfer *xfer;			/* file transfer handler */
 	struct sockaddr_in dest_sin;
 
 	/* from real connction */
@@ -102,7 +102,7 @@ struct _qq_data {
 	guint8 window[1 << 13];		/* check up for duplicated packet */
 	gint sendqueue_timeout;
 
-	GaimRoomlist *roomlist;
+	PurpleRoomlist *roomlist;
 	gint channel;			/* the id for opened chat conversation */
 
 	GList *groups;
@@ -122,6 +122,6 @@ struct _qq_data {
 	gboolean modifying_face;
 };
 
-void qq_function_not_implemented(GaimConnection *gc);
+void qq_function_not_implemented(PurpleConnection *gc);
 
 #endif

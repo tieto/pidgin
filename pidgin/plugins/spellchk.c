@@ -1,11 +1,11 @@
 /*
- * Gaim - Replace certain misspelled words with their correct form.
+ * Purple - Replace certain misspelled words with their correct form.
  *
  * Signification changes were made by Benjamin Kahn ("xkahn") and
  * Richard Laager ("rlaager") in April 2005--you may want to contact
  * them if you have questions.
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -595,7 +595,7 @@ message_send_cb(GtkWidget *widget, spellchk *spell)
 	}
 
 #if 0
-	if (!gaim_prefs_get_bool("/plugins/gtk/spellchk/last_word_replace"))
+	if (!purple_prefs_get_bool("/plugins/gtk/spellchk/last_word_replace"))
 		return;
 #endif
 
@@ -620,7 +620,7 @@ message_send_cb(GtkWidget *widget, spellchk *spell)
 }
 
 static void
-spellchk_new_attach(GaimConversation *conv)
+spellchk_new_attach(PurpleConversation *conv)
 {
 	spellchk *spell;
 	GtkTextBuffer *buffer;
@@ -1774,7 +1774,7 @@ static void load_conf()
 	gboolean complete = TRUE;
 	gboolean case_sensitive = FALSE;
 
-	buf = g_build_filename(gaim_user_dir(), "dict", NULL);
+	buf = g_build_filename(purple_user_dir(), "dict", NULL);
 	g_file_get_contents(buf, &ibuf, &size, NULL);
 	g_free(buf);
 	if (!ibuf) {
@@ -1962,7 +1962,7 @@ static void list_add_new()
 				g_value_unset(&bad_val);
 				g_free(tmpword);
 
-				gaim_notify_error(NULL, _("Duplicate Correction"),
+				purple_notify_error(NULL, _("Duplicate Correction"),
 					_("The specified word already exists in the correction list."),
 					gtk_entry_get_text(GTK_ENTRY(bad_entry)));
 				return;
@@ -2070,7 +2070,7 @@ static void save_list()
 		} while (gtk_tree_model_iter_next(GTK_TREE_MODEL(model), &iter));
 	}
 
-	gaim_util_write_data_to_file("dict", data->str, -1);
+	purple_util_write_data_to_file("dict", data->str, -1);
 
 	g_string_free(data, TRUE);
 }
@@ -2115,34 +2115,34 @@ static void on_entry_changed(GtkEditable *editable, gpointer data)
  */
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	void *conv_handle = gaim_conversations_get_handle();
+	void *conv_handle = purple_conversations_get_handle();
 	GList *convs;
 
 	load_conf();
 
 	/* Attach to existing conversations */
-	for (convs = gaim_get_conversations(); convs != NULL; convs = convs->next)
+	for (convs = purple_get_conversations(); convs != NULL; convs = convs->next)
 	{
-		spellchk_new_attach((GaimConversation *)convs->data);
+		spellchk_new_attach((PurpleConversation *)convs->data);
 	}
 
-	gaim_signal_connect(conv_handle, "conversation-created",
-			    plugin, GAIM_CALLBACK(spellchk_new_attach), NULL);
+	purple_signal_connect(conv_handle, "conversation-created",
+			    plugin, PURPLE_CALLBACK(spellchk_new_attach), NULL);
 
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	GList *convs;
 
 	/* Detach from existing conversations */
-	for (convs = gaim_get_conversations(); convs != NULL; convs = convs->next)
+	for (convs = purple_get_conversations(); convs != NULL; convs = convs->next)
 	{
-		PidginConversation *gtkconv = PIDGIN_CONVERSATION((GaimConversation *)convs->data);
+		PidginConversation *gtkconv = PIDGIN_CONVERSATION((PurpleConversation *)convs->data);
 		spellchk *spell = g_object_get_data(G_OBJECT(gtkconv->entry), SPELLCHK_OBJECT_KEY);
 
 		g_signal_handlers_disconnect_by_func(gtkconv->entry, message_send_cb, spell);
@@ -2161,7 +2161,7 @@ static void whole_words_button_toggled(GtkToggleButton *complete_toggle, GtkTogg
 }
 
 static GtkWidget *
-get_config_frame(GaimPlugin *plugin)
+get_config_frame(PurplePlugin *plugin)
 {
 	GtkWidget *ret, *vbox, *win;
 	GtkWidget *hbox, *label;
@@ -2353,23 +2353,23 @@ static PidginPluginUiInfo ui_info =
 	0 /* page_num (Reserved) */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,
 	PIDGIN_PLUGIN_TYPE,
 	0,
 	NULL,
-	GAIM_PRIORITY_DEFAULT,
+	PURPLE_PRIORITY_DEFAULT,
 	SPELLCHECK_PLUGIN_ID,
 	N_("Text replacement"),
 	VERSION,
 	N_("Replaces text in outgoing messages according to user-defined rules."),
 	N_("Replaces text in outgoing messages according to user-defined rules."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",
-	GAIM_WEBSITE,
+	PURPLE_WEBSITE,
 	plugin_load,
 	plugin_unload,
 	NULL,
@@ -2380,14 +2380,14 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 #if 0
-	gaim_prefs_add_none("/plugins");
-	gaim_prefs_add_none("/plugins/gtk");
-	gaim_prefs_add_none("/plugins/gtk/spellchk");
-	gaim_prefs_add_bool("/plugins/gtk/spellchk/last_word_replace", TRUE);
+	purple_prefs_add_none("/plugins");
+	purple_prefs_add_none("/plugins/gtk");
+	purple_prefs_add_none("/plugins/gtk/spellchk");
+	purple_prefs_add_bool("/plugins/gtk/spellchk/last_word_replace", TRUE);
 #endif
 }
 
-GAIM_INIT_PLUGIN(spellcheck, init_plugin, info)
+PURPLE_INIT_PLUGIN(spellcheck, init_plugin, info)

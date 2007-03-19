@@ -10,32 +10,32 @@
  * libpurple goodies
  *****************************************************************************/
 static guint
-gaim_check_input_add(gint fd, GaimInputCondition condition,
-                     GaimInputFunction function, gpointer data)
+purple_check_input_add(gint fd, PurpleInputCondition condition,
+                     PurpleInputFunction function, gpointer data)
 {
 	/* this is a no-op for now, feel free to implement it */
 	return 0;
 }
 
-static GaimEventLoopUiOps eventloop_ui_ops = {
+static PurpleEventLoopUiOps eventloop_ui_ops = {
 	g_timeout_add,
 	(guint (*)(guint))g_source_remove,
-	gaim_check_input_add,
+	purple_check_input_add,
 	(guint (*)(guint))g_source_remove,
 };
 
 static void
-gaim_check_init(void) {
+purple_check_init(void) {
 	gchar *home_dir;
 
-	gaim_eventloop_set_ui_ops(&eventloop_ui_ops);
+	purple_eventloop_set_ui_ops(&eventloop_ui_ops);
 
 	/* build our fake home directory */
 	home_dir = g_build_path(BUILDDIR, "libpurple", "tests", "home", NULL);
-	gaim_util_set_user_dir(home_dir);
+	purple_util_set_user_dir(home_dir);
 	g_free(home_dir);
 
-	gaim_core_init("check");
+	purple_core_init("check");
 }
 
 /******************************************************************************
@@ -59,13 +59,13 @@ int main(void)
 	srunner_add_suite(sr, util_suite());
 
 	/* make this a libpurple "ui" */
-	gaim_check_init();
+	purple_check_init();
 
 	srunner_run_all (sr, CK_NORMAL);
 	number_failed = srunner_ntests_failed (sr);
 	srunner_free (sr);
 
-	gaim_core_quit();
+	purple_core_quit();
 
 	return (number_failed == 0) ? EXIT_SUCCESS : EXIT_FAILURE;
 }

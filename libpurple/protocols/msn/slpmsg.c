@@ -1,9 +1,9 @@
 /**
  * @file slpmsg.h SLP Message functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -37,7 +37,7 @@ msn_slpmsg_new(MsnSlpLink *slplink)
 	slpmsg = g_new0(MsnSlpMessage, 1);
 
 #ifdef MSN_DEBUG_SLPMSG
-	gaim_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
+	purple_debug_info("msn", "slpmsg new (%p)\n", slpmsg);
 #endif
 
 	slpmsg->slplink = slplink;
@@ -57,7 +57,7 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	g_return_if_fail(slpmsg != NULL);
 
 #ifdef MSN_DEBUG_SLPMSG
-	gaim_debug_info("msn", "slpmsg destroy (%p)\n", slpmsg);
+	purple_debug_info("msn", "slpmsg destroy (%p)\n", slpmsg);
 #endif
 
 	slplink = slpmsg->slplink;
@@ -84,7 +84,7 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 		MsnMessage *msg = cur->data;
 
 #ifdef MSN_DEBUG_SLPMSG
-		gaim_debug_info("msn", "Unlink slpmsg callbacks.\n");
+		purple_debug_info("msn", "Unlink slpmsg callbacks.\n");
 #endif
 
 		msg->ack_cb = NULL;

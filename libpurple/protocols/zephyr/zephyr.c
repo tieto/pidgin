@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*- */
 /*
- * gaim
+ * purple
  *
  * Copyright (C) 1998-2001, Mark Spencer <markster@marko.net>
  * Some code borrowed from GtkZephyr, by
@@ -62,14 +62,14 @@ typedef struct _zephyr_account zephyr_account;
 typedef struct _parse_tree parse_tree;
 
 typedef enum {
-	GAIM_ZEPHYR_NONE, /* Non-kerberized ZEPH0.2 */
-	GAIM_ZEPHYR_KRB4, /* ZEPH0.2 w/ KRB4 support */
-	GAIM_ZEPHYR_TZC,  /* tzc executable proxy */
-	GAIM_ZEPHYR_INTERGALACTIC_KRB4, /* Kerberized ZEPH0.3 */
+	PURPLE_ZEPHYR_NONE, /* Non-kerberized ZEPH0.2 */
+	PURPLE_ZEPHYR_KRB4, /* ZEPH0.2 w/ KRB4 support */
+	PURPLE_ZEPHYR_TZC,  /* tzc executable proxy */
+	PURPLE_ZEPHYR_INTERGALACTIC_KRB4, /* Kerberized ZEPH0.3 */
 } zephyr_connection_type;
 
 struct _zephyr_account {
-	GaimAccount* account;
+	PurpleAccount* account;
 	char *username;
 	char *realm;
 	char *encoding;
@@ -105,11 +105,11 @@ parse_tree null_parse_tree = {
 	0,
 };
 
-#define use_none(zephyr) ((zephyr->connection_type == GAIM_ZEPHYR_NONE)?1:0)
-#define use_krb4(zephyr) ((zephyr->connection_type == GAIM_ZEPHYR_KRB4)?1:0)
-#define use_tzc(zephyr) ((zephyr->connection_type == GAIM_ZEPHYR_TZC)?1:0)
+#define use_none(zephyr) ((zephyr->connection_type == PURPLE_ZEPHYR_NONE)?1:0)
+#define use_krb4(zephyr) ((zephyr->connection_type == PURPLE_ZEPHYR_KRB4)?1:0)
+#define use_tzc(zephyr) ((zephyr->connection_type == PURPLE_ZEPHYR_TZC)?1:0)
 
-#define use_zeph02(zephyr) (  (zephyr->connection_type == GAIM_ZEPHYR_NONE)?1: ((zephyr->connection_type == GAIM_ZEPHYR_KRB4)?1:0))
+#define use_zeph02(zephyr) (  (zephyr->connection_type == PURPLE_ZEPHYR_NONE)?1: ((zephyr->connection_type == PURPLE_ZEPHYR_KRB4)?1:0))
 
 /* struct I need for zephyr_to_html */
 struct _zframe {
@@ -147,7 +147,7 @@ struct _zephyr_triple {
 					return TRUE;
 
 #define z_call_s(func, err)	if (func != ZERR_NONE) {\
-					gaim_connection_error(gc, err);\
+					purple_connection_error(gc, err);\
 					return;\
 				}
 
@@ -180,7 +180,7 @@ static Code_t zephyr_subscribe_to(zephyr_account* zephyr, char* class, char *ins
 }
 
 char *local_zephyr_normalize(zephyr_account* zephyr,const char *);
-static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic);
+static void zephyr_chat_set_topic(PurpleConnection * gc, int id, const char *topic);
 char* zephyr_tzc_deescape_str(const char *message);
 
 static char *zephyr_strip_local_realm(zephyr_account* zephyr,const char* user){
@@ -213,16 +213,16 @@ static char *zephyr_strip_local_realm(zephyr_account* zephyr,const char* user){
 /* just for debugging */
 static void handle_unknown(ZNotice_t notice)
 {
-	gaim_debug_error("zephyr","z_packet: %s\n", notice.z_packet);
-	gaim_debug_error("zephyr","z_version: %s\n", notice.z_version);
-	gaim_debug_error("zephyr","z_kind: %d\n", (int)(notice.z_kind));
-	gaim_debug_error("zephyr","z_class: %s\n", notice.z_class);
-	gaim_debug_error("zephyr","z_class_inst: %s\n", notice.z_class_inst);
-	gaim_debug_error("zephyr","z_opcode: %s\n", notice.z_opcode);
-	gaim_debug_error("zephyr","z_sender: %s\n", notice.z_sender);
-	gaim_debug_error("zephyr","z_recipient: %s\n", notice.z_recipient);
-	gaim_debug_error("zephyr","z_message: %s\n", notice.z_message);
-	gaim_debug_error("zephyr","z_message_len: %d\n", notice.z_message_len);
+	purple_debug_error("zephyr","z_packet: %s\n", notice.z_packet);
+	purple_debug_error("zephyr","z_version: %s\n", notice.z_version);
+	purple_debug_error("zephyr","z_kind: %d\n", (int)(notice.z_kind));
+	purple_debug_error("zephyr","z_class: %s\n", notice.z_class);
+	purple_debug_error("zephyr","z_class_inst: %s\n", notice.z_class_inst);
+	purple_debug_error("zephyr","z_opcode: %s\n", notice.z_opcode);
+	purple_debug_error("zephyr","z_sender: %s\n", notice.z_sender);
+	purple_debug_error("zephyr","z_recipient: %s\n", notice.z_recipient);
+	purple_debug_error("zephyr","z_message: %s\n", notice.z_message);
+	purple_debug_error("zephyr","z_message_len: %d\n", notice.z_message_len);
 }
 
 
@@ -263,35 +263,35 @@ static gboolean triple_subset(zephyr_triple * zt1, zephyr_triple * zt2)
 {
 
 	if (!zt2) {
-		gaim_debug_error("zephyr","zt2 doesn't exist\n"); 
+		purple_debug_error("zephyr","zt2 doesn't exist\n"); 
 		return FALSE;
 	}
 	if (!zt1) {
-		gaim_debug_error("zephyr","zt1 doesn't exist\n");
+		purple_debug_error("zephyr","zt1 doesn't exist\n");
 		return FALSE;
 	}
 	if (!(zt1->class)) {
-		gaim_debug_error("zephyr","zt1c doesn't exist\n");
+		purple_debug_error("zephyr","zt1c doesn't exist\n");
 		return FALSE;
 	}
 	if (!(zt1->instance)) {
-		gaim_debug_error("zephyr","zt1i doesn't exist\n");
+		purple_debug_error("zephyr","zt1i doesn't exist\n");
 		return FALSE;
 	}
 	if (!(zt1->recipient)) {
-		gaim_debug_error("zephyr","zt1r doesn't exist\n");
+		purple_debug_error("zephyr","zt1r doesn't exist\n");
 		return FALSE;
 	}
 	if (!(zt2->class)) {
-		gaim_debug_error("zephyr","zt2c doesn't exist\n");
+		purple_debug_error("zephyr","zt2c doesn't exist\n");
 		return FALSE;
 	}
 	if (!(zt2->recipient)) {
-		gaim_debug_error("zephyr","zt2r doesn't exist\n");
+		purple_debug_error("zephyr","zt2r doesn't exist\n");
 		return FALSE;
 	}
 	if (!(zt2->instance)) {
-		gaim_debug_error("zephyr","zt2i doesn't exist\n");
+		purple_debug_error("zephyr","zt2i doesn't exist\n");
 		return FALSE;
 	}
 
@@ -304,7 +304,7 @@ static gboolean triple_subset(zephyr_triple * zt1, zephyr_triple * zt2)
 	if (g_ascii_strcasecmp(zt2->recipient, zt1->recipient)) {
 		return FALSE;
 	}
-	gaim_debug_info("zephyr","<%s,%s,%s> is in <%s,%s,%s>\n",zt1->class,zt1->instance,zt1->recipient,zt2->class,zt2->instance,zt2->recipient);
+	purple_debug_info("zephyr","<%s,%s,%s> is in <%s,%s,%s>\n",zt1->class,zt1->instance,zt1->recipient,zt2->class,zt2->instance,zt2->recipient);
 	return TRUE;
 }
 
@@ -340,7 +340,7 @@ static zephyr_triple *find_sub_by_id(zephyr_account *zephyr,int id)
    Converts strings to utf-8 if necessary using user specified encoding
 */
 
-static gchar *zephyr_recv_convert(GaimConnection *gc,gchar *string, int len)
+static gchar *zephyr_recv_convert(PurpleConnection *gc,gchar *string, int len)
 {
 	gchar *utf8;
 	GError *err = NULL;
@@ -350,7 +350,7 @@ static gchar *zephyr_recv_convert(GaimConnection *gc,gchar *string, int len)
 	} else {
 		utf8 = g_convert(string, len, "UTF-8", zephyr->encoding, NULL, NULL, &err);
 		if (err) {
-			gaim_debug_error("zephyr", "recv conversion error: %s\n", err->message);
+			purple_debug_error("zephyr", "recv conversion error: %s\n", err->message);
 			utf8 = g_strdup(_("(There was an error converting this message.	 Check the 'Encoding' option in the Account Editor)"));
 			g_error_free(err);
 		}
@@ -388,7 +388,7 @@ static char *html_to_zephyr(const char *message)
 	frames->has_closer = FALSE;
 	frames->closer_mask = 15;
 
-	gaim_debug_info("zephyr","html received %s\n",message);
+	purple_debug_info("zephyr","html received %s\n",message);
 	while (*message) {
 		if (frames->closing && !g_ascii_strncasecmp(message, frames->closing, strlen(frames->closing))) {
 			zframe *popped;
@@ -600,7 +600,7 @@ static char *html_to_zephyr(const char *message)
 	ret = frames->text->str;
 	g_string_free(frames->text, FALSE);
 	g_free(frames);
-	gaim_debug_info("zephyr","zephyr outputted  %s\n",ret);
+	purple_debug_info("zephyr","zephyr outputted  %s\n",ret);
 	return ret;
 }
 
@@ -746,18 +746,18 @@ static gboolean pending_zloc(zephyr_account *zephyr,char *who)
 
 /* Called when the server notifies us a message couldn't get sent */
 
-static void message_failed(GaimConnection *gc, ZNotice_t notice, struct sockaddr_in from)
+static void message_failed(PurpleConnection *gc, ZNotice_t notice, struct sockaddr_in from)
 {
 	if (g_ascii_strcasecmp(notice.z_class, "message")) {
 		gchar* chat_failed = g_strdup_printf(_("Unable to send to chat %s,%s,%s"),notice.z_class,notice.z_class_inst,notice.z_recipient);
-		gaim_notify_error(gc,"",chat_failed,NULL);
+		purple_notify_error(gc,"",chat_failed,NULL);
 		g_free(chat_failed);
 	} else {
-		gaim_notify_error(gc, notice.z_recipient, _("User is offline"), NULL);
+		purple_notify_error(gc, notice.z_recipient, _("User is offline"), NULL);
 	}
 }
 
-static void handle_message(GaimConnection *gc,ZNotice_t notice)
+static void handle_message(PurpleConnection *gc,ZNotice_t notice)
 {
 	zephyr_account* zephyr = gc->proto_data;
 
@@ -767,45 +767,45 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 		if (!g_ascii_strcasecmp(notice.z_opcode, LOCATE_LOCATE)) {
 			int nlocs;
 			char *user;
-			GaimBuddy *b;
+			PurpleBuddy *b;
 			/* XXX add real error reporting */
 			if (ZParseLocations(&notice, NULL, &nlocs, &user) != ZERR_NONE)
 				return;
 
-			if ((b = gaim_find_buddy(gc->account, user)) == NULL) {
+			if ((b = purple_find_buddy(gc->account, user)) == NULL) {
 				char* stripped_user = zephyr_strip_local_realm(zephyr,user);
-				b = gaim_find_buddy(gc->account,stripped_user);
+				b = purple_find_buddy(gc->account,stripped_user);
 				g_free(stripped_user);
 			}
 			if ((b && pending_zloc(zephyr,b->name)) || pending_zloc(zephyr,user)) {
 				ZLocations_t locs;
 				int one = 1;
-				GaimNotifyUserInfo *user_info = gaim_notify_user_info_new();
+				PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
 				char *tmp;
 
-				gaim_notify_user_info_add_pair(user_info, _("User"), (b ? b->name : user));
+				purple_notify_user_info_add_pair(user_info, _("User"), (b ? b->name : user));
 				if (b && b->alias)
-					gaim_notify_user_info_add_pair(user_info, _("Alias"), b->alias);
+					purple_notify_user_info_add_pair(user_info, _("Alias"), b->alias);
 
 				if (!nlocs) {
-					gaim_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
+					purple_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
 				}
 				for (; nlocs > 0; nlocs--) {
 					/* XXX add real error reporting */
 					
 					ZGetLocations(&locs, &one);
 					tmp = g_strdup_printf(_("<br>At %s since %s"), locs.host, locs.time);	
-					gaim_notify_user_info_add_pair(user_info, _("Location"), tmp);
+					purple_notify_user_info_add_pair(user_info, _("Location"), tmp);
 					g_free(tmp);
 				}
-				gaim_notify_userinfo(gc, (b ? b->name : user), 
+				purple_notify_userinfo(gc, (b ? b->name : user), 
 						     user_info, NULL, NULL);
-				gaim_notify_user_info_destroy(user_info);
+				purple_notify_user_info_destroy(user_info);
 			} else {
 				if (nlocs>0) 
-					gaim_prpl_got_user_status(gc->account, b ? b->name : user, "available", NULL);
+					purple_prpl_got_user_status(gc->account, b ? b->name : user, "available", NULL);
 				else 
-					gaim_prpl_got_user_status(gc->account, b ? b->name : user, "offline", NULL);
+					purple_prpl_got_user_status(gc->account, b ? b->name : user, "offline", NULL);
 			}
 
 			g_free(user);
@@ -813,27 +813,27 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 	} else {
 		char *buf, *buf2, *buf3;
 		char *send_inst;
-		GaimConversation *gconv1;
-		GaimConvChat *gcc;
+		PurpleConversation *gconv1;
+		PurpleConvChat *gcc;
 		char *ptr = (char *) notice.z_message + (strlen(notice.z_message) + 1);
 		int len; 
 		char *sendertmp = g_strdup_printf("%s", zephyr->username);
 		int signature_length = strlen(notice.z_message);
 		int message_has_no_body = 0;
-		GaimMessageFlags flags = 0;
+		PurpleMessageFlags flags = 0;
 		gchar *tmpescape;
 
 		/* Need to deal with 0 length  messages to handle typing notification (OPCODE) ping messages */
-		/* One field zephyrs would have caused gaim to crash */
+		/* One field zephyrs would have caused purple to crash */
 		if ( (notice.z_message_len == 0) || (signature_length >= notice.z_message_len - 1)) {
 			message_has_no_body = 1;
 			len = 0;
-			gaim_debug_info("zephyr","message_size %d %d %d\n",len,notice.z_message_len,signature_length);
+			purple_debug_info("zephyr","message_size %d %d %d\n",len,notice.z_message_len,signature_length);
 			buf3 = g_strdup("");
 						
 		} else {
 			len =  notice.z_message_len - ( signature_length +1);
-			gaim_debug_info("zephyr","message_size %d %d %d\n",len,notice.z_message_len,signature_length);
+			purple_debug_info("zephyr","message_size %d %d %d\n",len,notice.z_message_len,signature_length);
 			buf = g_malloc(len + 1);
 			g_snprintf(buf, len + 1, "%s", ptr);
 			g_strchomp(buf);
@@ -849,11 +849,11 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 		    && !g_ascii_strcasecmp(notice.z_recipient,zephyr->username)) {
 			gchar* stripped_sender;
 			if (!g_ascii_strcasecmp(notice.z_message, "Automated reply:"))
-				flags |= GAIM_MESSAGE_AUTO_RESP;
+				flags |= PURPLE_MESSAGE_AUTO_RESP;
 			stripped_sender = zephyr_strip_local_realm(zephyr,notice.z_sender);
 			
 			if (!g_ascii_strcasecmp(notice.z_opcode,"PING"))
-				serv_got_typing(gc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, GAIM_TYPING);
+				serv_got_typing(gc,stripped_sender,ZEPHYR_TYPING_RECV_TIMEOUT, PURPLE_TYPING);
 			else {
 				/* Based on the values of
 				   account->permit_deny,
@@ -864,31 +864,31 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 				gboolean in_deny;
 
 				switch (gc->account->perm_deny) {
-				case GAIM_PRIVACY_ALLOW_ALL: 
+				case PURPLE_PRIVACY_ALLOW_ALL: 
 					in_deny = 0; break;
-				case GAIM_PRIVACY_DENY_ALL: 
+				case PURPLE_PRIVACY_DENY_ALL: 
 					in_deny = 1; break;
-				case GAIM_PRIVACY_ALLOW_USERS: /* See if stripped_sender is in gc->account->permit and allow appropriately */
+				case PURPLE_PRIVACY_ALLOW_USERS: /* See if stripped_sender is in gc->account->permit and allow appropriately */
 					in_deny = 1;
 					for(l=gc->account->permit;l!=NULL;l=l->next) {
-						if (!gaim_utf8_strcasecmp(stripped_sender, gaim_normalize(gc->account, (char *)l->data))) {
+						if (!purple_utf8_strcasecmp(stripped_sender, purple_normalize(gc->account, (char *)l->data))) {
 							in_deny=0;
 							break;
 						} 
 					}
 					break;
-				case GAIM_PRIVACY_DENY_USERS: /* See if stripped_sender is in gc->account->deny and deny if so */ 
+				case PURPLE_PRIVACY_DENY_USERS: /* See if stripped_sender is in gc->account->deny and deny if so */ 
 					in_deny = 0;
 					for(l=gc->account->deny;l!=NULL;l=l->next) {
-						if (!gaim_utf8_strcasecmp(stripped_sender, gaim_normalize(gc->account, (char *)l->data))) {
+						if (!purple_utf8_strcasecmp(stripped_sender, purple_normalize(gc->account, (char *)l->data))) {
 							in_deny=1;
 							break;
 						} 
 					}
 					break;
-				case GAIM_PRIVACY_ALLOW_BUDDYLIST: 
+				case PURPLE_PRIVACY_ALLOW_BUDDYLIST: 
 					in_deny = 1;
-					if (gaim_find_buddy(gc->account,stripped_sender)!=NULL) {
+					if (purple_find_buddy(gc->account,stripped_sender)!=NULL) {
 						in_deny = 0;
 					}
 					break;
@@ -926,19 +926,19 @@ static void handle_message(GaimConnection *gc,ZNotice_t notice)
 			send_inst = g_strdup_printf("%s %s",sendertmp,notice.z_class_inst);					
 			send_inst_utf8 = zephyr_recv_convert(gc,send_inst, strlen(send_inst));
 			if (!send_inst_utf8) {
-				gaim_debug_error("zephyr","send_inst %s became null\n", send_inst);
+				purple_debug_error("zephyr","send_inst %s became null\n", send_inst);
 				send_inst_utf8 = "malformed instance";
 			}
 
-			gconv1 = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
+			gconv1 = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
 														 zt2->name, gc->account);
-			gcc = gaim_conversation_get_chat_data(gconv1);
+			gcc = purple_conversation_get_chat_data(gconv1);
 
-			if (!gaim_conv_chat_find_user(gcc, sendertmp)) {
+			if (!purple_conv_chat_find_user(gcc, sendertmp)) {
 				gchar ipaddr[INET_ADDRSTRLEN];
 				inet_ntop(AF_INET, &notice.z_sender_addr.s_addr, ipaddr, sizeof(ipaddr));
 
-				gaim_conv_chat_add_user(gcc, sendertmp, ipaddr, GAIM_CBFLAGS_NONE, TRUE);
+				purple_conv_chat_add_user(gcc, sendertmp, ipaddr, PURPLE_CBFLAGS_NONE, TRUE);
 			}
 			g_free(sendertmp);
 			serv_got_chat_in(gc, zt2->id, send_inst_utf8, 0, buf3, time(NULL));
@@ -1082,7 +1082,7 @@ static parse_tree *parse_buffer(gchar* source, gboolean do_parse) {
 				/* In case we surpass maxchildren, ignore this */
 				ptree->children[ptree->num_children++] = parse_buffer( newstr, do_parse);
 			} else {
-				gaim_debug_error("zephyr","too many children in tzc output. skipping\n");
+				purple_debug_error("zephyr","too many children in tzc output. skipping\n");
 			}
 			g_free(newstr);
 			p = end + 1;
@@ -1116,7 +1116,7 @@ static parse_tree  *read_from_tzc(zephyr_account* zephyr){
 		bufcur++;
 		if ((bufcur - buf) > (bufsize - 1)) {
 			if ((buf = realloc(buf, bufsize * 2)) == NULL) {
-				gaim_debug_error("zephyr","Ran out of memory");
+				purple_debug_error("zephyr","Ran out of memory");
 				exit(-1);
 			} else {
 				bufcur = buf + bufsize;
@@ -1135,7 +1135,7 @@ static parse_tree  *read_from_tzc(zephyr_account* zephyr){
 
 static gint check_notify_tzc(gpointer data)
 {
-	GaimConnection *gc = (GaimConnection *)data;
+	PurpleConnection *gc = (PurpleConnection *)data;
 	zephyr_account* zephyr = gc->proto_data;
 	parse_tree *newparsetree = read_from_tzc(zephyr);
 	if (newparsetree != NULL) {
@@ -1145,7 +1145,7 @@ static gint check_notify_tzc(gpointer data)
 				ZNotice_t notice;
 				parse_tree *msgnode = tree_child(find_node(newparsetree,"message"),2);
 				parse_tree *bodynode = tree_child(msgnode,1);
-				/*				char *zsig = g_strdup(" "); */ /* gaim doesn't care about zsigs */
+				/*				char *zsig = g_strdup(" "); */ /* purple doesn't care about zsigs */
 				char *msg  = zephyr_tzc_deescape_str(bodynode->contents);
 				size_t bufsize = strlen(msg) + 3;
 				char *buf = g_new0(char,bufsize);
@@ -1176,15 +1176,15 @@ static gint check_notify_tzc(gpointer data)
 				/* check_loc or zephyr_zloc respectively */
 				/* XXX fix */
 				char *user; 
-				GaimBuddy *b;
+				PurpleBuddy *b;
 				int nlocs = 0;
 				parse_tree *locations;
 				gchar *locval;
 				user = tree_child(find_node(newparsetree,"user"),2)->contents;
 
-				if ((b = gaim_find_buddy(gc->account, user)) == NULL) {
+				if ((b = purple_find_buddy(gc->account, user)) == NULL) {
 					gchar *stripped_user = zephyr_strip_local_realm(zephyr,user);
-					b = gaim_find_buddy(gc->account, stripped_user);
+					b = purple_find_buddy(gc->account, stripped_user);
 					g_free(stripped_user);
 				}
 				locations = find_node(newparsetree,"locations");
@@ -1197,32 +1197,32 @@ static gint check_notify_tzc(gpointer data)
 				}
 	
 				if ((b && pending_zloc(zephyr,b->name)) || pending_zloc(zephyr,user) || pending_zloc(zephyr,local_zephyr_normalize(zephyr,user))){
-					GaimNotifyUserInfo *user_info = gaim_notify_user_info_new();
+					PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
 					char *tmp;
 
-					gaim_notify_user_info_add_pair(user_info, _("User"), (b ? b->name : user));
+					purple_notify_user_info_add_pair(user_info, _("User"), (b ? b->name : user));
 
 					if (b && b->alias)
-						gaim_notify_user_info_add_pair(user_info, _("Alias"), b->alias);
+						purple_notify_user_info_add_pair(user_info, _("Alias"), b->alias);
 											
 					if (!nlocs) {
-						gaim_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
+						purple_notify_user_info_add_pair(user_info, NULL, _("Hidden or not logged-in"));
 					} else {
 						tmp = g_strdup_printf(_("<br>At %s since %s"),
 									  tree_child(tree_child(tree_child(tree_child(locations,2),0),0),2)->contents,
 									  tree_child(tree_child(tree_child(tree_child(locations,2),0),2),2)->contents);
-						gaim_notify_user_info_add_pair(user_info, _("Location"), tmp);
+						purple_notify_user_info_add_pair(user_info, _("Location"), tmp);
 						g_free(tmp);
 					}
 
-					gaim_notify_userinfo(gc, b ? b->name : user,
+					purple_notify_userinfo(gc, b ? b->name : user,
 							     user_info, NULL, NULL);
-					gaim_notify_user_info_destroy(user_info);
+					purple_notify_user_info_destroy(user_info);
 				} else {
 					if (nlocs>0) 
-						gaim_prpl_got_user_status(gc->account, b ? b->name : user, "available", NULL);
+						purple_prpl_got_user_status(gc->account, b ? b->name : user, "available", NULL);
 					else 
-						gaim_prpl_got_user_status(gc->account, b ? b->name : user, "offline", NULL);
+						purple_prpl_got_user_status(gc->account, b ? b->name : user, "offline", NULL);
 				}
 			}
 			else if (!g_ascii_strncasecmp(spewtype,"subscribed",10)) {
@@ -1244,7 +1244,7 @@ static gint check_notify_tzc(gpointer data)
 static gint check_notify_zeph02(gpointer data)
 {
 	/* XXX add real error reporting */
-	GaimConnection *gc = (GaimConnection*) data;
+	PurpleConnection *gc = (PurpleConnection*) data;
 	while (ZPending()) {
 		ZNotice_t notice;
 		struct sockaddr_in from;
@@ -1264,11 +1264,11 @@ static gint check_notify_zeph02(gpointer data)
 			}
 			break;
 		case CLIENTACK:
-			gaim_debug_error("zephyr", "Client ack received\n");
+			purple_debug_error("zephyr", "Client ack received\n");
 		default:
 			/* we'll just ignore things for now */
 			handle_unknown(notice);
-			gaim_debug_error("zephyr", "Unhandled notice.\n");
+			purple_debug_error("zephyr", "Unhandled notice.\n");
 			break;
 		}
 		/* XXX add real error reporting */
@@ -1282,21 +1282,21 @@ static gint check_notify_zeph02(gpointer data)
 
 static gint check_loc(gpointer_data)
 {
-        GaimBlistNode *gnode, *cnode, *bnode;
+        PurpleBlistNode *gnode, *cnode, *bnode;
         ZLocations_t locations;
         int numlocs;
         int one = 1;
 
-	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
-		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
+		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		for (cnode = gnode->child; cnode; cnode = cnode->next) {
-			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
 			for (bnode = cnode->child; bnode; bnode = bnode->next) {
-				GaimBuddy *b = (GaimBuddy *) bnode;
+				PurpleBuddy *b = (PurpleBuddy *) bnode;
 
-				if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				if (b->account->gc == zgc) {
 					char *chk;
@@ -1320,9 +1320,9 @@ static gint check_loc(gpointer_data)
 
 static gint check_loc(gpointer data)
 {
-	GaimBlistNode *gnode, *cnode, *bnode;
+	PurpleBlistNode *gnode, *cnode, *bnode;
 	ZAsyncLocateData_t ald;
-	GaimConnection *gc = (GaimConnection *)data;
+	PurpleConnection *gc = (PurpleConnection *)data;
 	zephyr_account *zephyr = gc->proto_data;
 
 	if (use_zeph02(zephyr)) {
@@ -1331,22 +1331,22 @@ static gint check_loc(gpointer data)
 		ald.version = NULL;
 	}
 
-	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
-		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
+		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		for (cnode = gnode->child; cnode; cnode = cnode->next) {
-			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
 			for (bnode = cnode->child; bnode; bnode = bnode->next) {
-				GaimBuddy *b = (GaimBuddy *) bnode;
+				PurpleBuddy *b = (PurpleBuddy *) bnode;
 
-				if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				if (b->account->gc == gc) {
 					const char *chk;
 
 					chk = local_zephyr_normalize(zephyr,b->name);
-					gaim_debug_info("zephyr","chk: %s b->name %s\n",chk,b->name);
+					purple_debug_info("zephyr","chk: %s b->name %s\n",chk,b->name);
 					/* XXX add real error reporting */
 					/* doesn't matter if this fails or not; we'll just move on to the next one */
 					if (use_zeph02(zephyr)) {
@@ -1359,9 +1359,9 @@ static gint check_loc(gpointer data)
 							for(i=0;i<numlocs;i++) {
 								ZGetLocations(&locations,&one);
 								if (nlocs>0) 
-									gaim_prpl_got_user_status(gc->account,b->name,"available",NULL);
+									purple_prpl_got_user_status(gc->account,b->name,"available",NULL);
 								else 
-									gaim_prpl_got_user_status(gc->account,b->name,"offline",NULL);
+									purple_prpl_got_user_status(gc->account,b->name,"offline",NULL);
 							}
 						}
 #else
@@ -1421,14 +1421,14 @@ static void zephyr_inithosts(zephyr_account *zephyr)
 	struct hostent *hent;
 	
 	if (gethostname(zephyr->ourhost, sizeof(zephyr->ourhost)) == -1) {
-		gaim_debug_error("zephyr", "unable to retrieve hostname, %%host%% and %%canon%% will be wrong in subscriptions and have been set to unknown\n");
+		purple_debug_error("zephyr", "unable to retrieve hostname, %%host%% and %%canon%% will be wrong in subscriptions and have been set to unknown\n");
 		g_strlcpy(zephyr->ourhost, "unknown", sizeof(zephyr->ourhost));
 		g_strlcpy(zephyr->ourhostcanon, "unknown", sizeof(zephyr->ourhostcanon));
 		return;
 	}
 	
 	if (!(hent = gethostbyname(zephyr->ourhost))) {
-		gaim_debug_error("zephyr", "unable to resolve hostname, %%canon%% will be wrong in subscriptions.and has been set to the value of %%host%%, %s\n",zephyr->ourhost);
+		purple_debug_error("zephyr", "unable to resolve hostname, %%canon%% will be wrong in subscriptions.and has been set to the value of %%host%%, %s\n",zephyr->ourhost);
 		g_strlcpy(zephyr->ourhostcanon, zephyr->ourhost, sizeof(zephyr->ourhostcanon));
 		return;
 	}
@@ -1450,7 +1450,7 @@ static void process_zsubs(zephyr_account *zephyr)
 	gchar *fname;
 	gchar buff[BUFSIZ];
 
-	fname = g_strdup_printf("%s/.zephyr.subs", gaim_home_dir());
+	fname = g_strdup_printf("%s/.zephyr.subs", purple_home_dir());
 	f = g_fopen(fname, "r");
 	if (f) {
 		char **triple;
@@ -1519,7 +1519,7 @@ static void process_zsubs(zephyr_account *zephyr)
 
 					if (zephyr_subscribe_to(zephyr,z_class, z_instance, recip,z_galaxy) != ZERR_NONE) {
 
-						gaim_debug_error("zephyr", "Couldn't subscribe to %s, %s, %s\n", z_class,z_instance,recip);
+						purple_debug_error("zephyr", "Couldn't subscribe to %s, %s, %s\n", z_class,z_instance,recip);
 					}
 
 					zephyr->subscrips = g_slist_append(zephyr->subscrips, new_triple(zephyr,z_class,z_instance,recip));
@@ -1535,29 +1535,29 @@ static void process_zsubs(zephyr_account *zephyr)
 	}
 }
 
-static void process_anyone(GaimConnection *gc)
+static void process_anyone(PurpleConnection *gc)
 {
 	FILE *fd;
 	gchar buff[BUFSIZ], *filename;
-	GaimGroup *g;
-	GaimBuddy *b;
+	PurpleGroup *g;
+	PurpleBuddy *b;
 
-	if (!(g = gaim_find_group(_("Anyone")))) {
-		g = gaim_group_new(_("Anyone"));
-		gaim_blist_add_group(g, NULL);
+	if (!(g = purple_find_group(_("Anyone")))) {
+		g = purple_group_new(_("Anyone"));
+		purple_blist_add_group(g, NULL);
 	}
 
-	filename = g_strconcat(gaim_home_dir(), "/.anyone", NULL);
+	filename = g_strconcat(purple_home_dir(), "/.anyone", NULL);
 	if ((fd = g_fopen(filename, "r")) != NULL) {
 		while (fgets(buff, BUFSIZ, fd)) {
 			strip_comments(buff);
 			if (buff[0]) {
-				if (!(b = gaim_find_buddy(gc->account, buff))) {
+				if (!(b = purple_find_buddy(gc->account, buff))) {
 					char *stripped_user = zephyr_strip_local_realm(gc->proto_data,buff);
-					gaim_debug_info("zephyr","stripped_user %s\n",stripped_user);
-					if (!(b = gaim_find_buddy(gc->account,stripped_user))){
-						b = gaim_buddy_new(gc->account, stripped_user, NULL);
-						gaim_blist_add_buddy(b, NULL, g, NULL);
+					purple_debug_info("zephyr","stripped_user %s\n",stripped_user);
+					if (!(b = purple_find_buddy(gc->account,stripped_user))){
+						b = purple_buddy_new(gc->account, stripped_user, NULL);
+						purple_blist_add_buddy(b, NULL, g, NULL);
 					} 
 					g_free(stripped_user);
 				}
@@ -1586,23 +1586,23 @@ static char* normalize_zephyr_exposure(const char* exposure) {
 	return EXPOSE_REALMVIS;
 }
 
-static void zephyr_login(GaimAccount * account)
+static void zephyr_login(PurpleAccount * account)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	zephyr_account *zephyr;
 	gboolean read_anyone; 
 	gboolean read_zsubs; 
 	gchar *exposure;
 
-	gc = gaim_account_get_connection(account);
-	read_anyone = gaim_account_get_bool(gc->account,"read_anyone",TRUE);
-	read_zsubs = gaim_account_get_bool(gc->account,"read_zsubs",TRUE);
-	exposure = (gchar *)gaim_account_get_string(gc->account, "exposure_level", EXPOSE_REALMVIS); 
+	gc = purple_account_get_connection(account);
+	read_anyone = purple_account_get_bool(gc->account,"read_anyone",TRUE);
+	read_zsubs = purple_account_get_bool(gc->account,"read_zsubs",TRUE);
+	exposure = (gchar *)purple_account_get_string(gc->account, "exposure_level", EXPOSE_REALMVIS); 
 
 #ifdef WIN32
-	username = gaim_account_get_username(account);
+	username = purple_account_get_username(account);
 #endif
-	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_NO_URLDESC;
+	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC;
 	gc->proto_data = zephyr=g_new0(zephyr_account,1); 
 
 	zephyr->account = account;
@@ -1610,56 +1610,56 @@ static void zephyr_login(GaimAccount * account)
 	/* Make sure that the exposure (visibility) is set to a sane value */
 	zephyr->exposure=g_strdup(normalize_zephyr_exposure(exposure));
 
-	if (gaim_account_get_bool(gc->account,"use_tzc",0)) {
-		zephyr->connection_type = GAIM_ZEPHYR_TZC;
+	if (purple_account_get_bool(gc->account,"use_tzc",0)) {
+		zephyr->connection_type = PURPLE_ZEPHYR_TZC;
 	} else {
-		zephyr->connection_type = GAIM_ZEPHYR_KRB4;
+		zephyr->connection_type = PURPLE_ZEPHYR_KRB4;
 	}
 
-	zephyr->encoding = (char *)gaim_account_get_string(gc->account, "encoding", ZEPHYR_FALLBACK_CHARSET);
-	gaim_connection_update_progress(gc, _("Connecting"), 0, 8);
+	zephyr->encoding = (char *)purple_account_get_string(gc->account, "encoding", ZEPHYR_FALLBACK_CHARSET);
+	purple_connection_update_progress(gc, _("Connecting"), 0, 8);
 
 	/* XXX z_call_s should actually try to report the com_err determined error */
 	if (use_tzc(zephyr)) {
 		pid_t pid;
-		/*		  gaim_connection_error(gc,"tzc not supported yet"); */
+		/*		  purple_connection_error(gc,"tzc not supported yet"); */
 		if ((pipe(zephyr->totzc) != 0) || (pipe(zephyr->fromtzc) != 0)) {
-			gaim_debug_error("zephyr", "pipe creation failed. killing\n");
+			purple_debug_error("zephyr", "pipe creation failed. killing\n");
 			exit(-1);
 		}
 		
 		pid = fork();
 		
 		if (pid == -1) {
-			gaim_debug_error("zephyr", "forking failed\n");
+			purple_debug_error("zephyr", "forking failed\n");
 			exit(-1);
 		}
 		if (pid == 0) {
 			unsigned int i=0;
 			gboolean found_ps = FALSE;
-			gchar ** tzc_cmd_array = g_strsplit(gaim_account_get_string(gc->account,"tzc_command","/usr/bin/tzc -e %s")," ",0);
+			gchar ** tzc_cmd_array = g_strsplit(purple_account_get_string(gc->account,"tzc_command","/usr/bin/tzc -e %s")," ",0);
 			if (close(1) == -1) {
-				gaim_debug_error("zephyr", "stdout couldn't be closed. dying\n");
+				purple_debug_error("zephyr", "stdout couldn't be closed. dying\n");
 				exit(-1);
 			}
 			if (dup2(zephyr->fromtzc[1], 1) == -1) {
-				gaim_debug_error("zephyr", "dup2 of stdout failed \n");
+				purple_debug_error("zephyr", "dup2 of stdout failed \n");
 				exit(-1);
 			}
 			if (close(zephyr->fromtzc[1]) == -1) {
-				gaim_debug_error("zephyr", "closing of piped stdout failed\n");
+				purple_debug_error("zephyr", "closing of piped stdout failed\n");
 				exit(-1);
 			}
 			if (close(0) == -1) {
-				gaim_debug_error("zephyr", "stdin couldn't be closed. dying\n");
+				purple_debug_error("zephyr", "stdin couldn't be closed. dying\n");
 				exit(-1);
 			}
 			if (dup2(zephyr->totzc[0], 0) == -1) {
-				gaim_debug_error("zephyr", "dup2 of stdin failed \n");
+				purple_debug_error("zephyr", "dup2 of stdin failed \n");
 				exit(-1);
 			}
 			if (close(zephyr->totzc[0]) == -1) {
-				gaim_debug_error("zephyr", "closing of piped stdin failed\n");
+				purple_debug_error("zephyr", "closing of piped stdin failed\n");
 				exit(-1);
 			}
 			/* tzc_command should really be of the form 
@@ -1683,7 +1683,7 @@ static void zephyr_login(GaimAccount * account)
 			}
 
 			if (!found_ps) {
-				gaim_connection_error(gc,"Tzc command needs %s to set the exposure\n");
+				purple_connection_error(gc,"Tzc command needs %s to set the exposure\n");
 				return;
 			}
 
@@ -1708,7 +1708,7 @@ static void zephyr_login(GaimAccount * account)
 			tv.tv_sec = 10;
 			tv.tv_usec = 0;
 
-			gaim_debug_info("zephyr", "about to read from tzc\n");
+			purple_debug_info("zephyr", "about to read from tzc\n");
 
 			select(zephyr->fromtzc[ZEPHYR_FD_READ] + 1, &rfds, NULL, NULL, NULL);
 
@@ -1740,7 +1740,7 @@ static void zephyr_login(GaimAccount * account)
 				ptr++;
 			}
 			if (ptr >=bufcur) {
-				gaim_connection_error(gc,"invalid output by tzc (or bad parsing code)");
+				purple_connection_error(gc,"invalid output by tzc (or bad parsing code)");
 				free(buf);
 				return;
 			}
@@ -1752,7 +1752,7 @@ static void zephyr_login(GaimAccount * account)
 				else if (*ptr == ')') {
 					parenlevel--;
 				}
-				gaim_debug_info("zephyr","tzc parenlevel is %d\n",parenlevel);
+				purple_debug_info("zephyr","tzc parenlevel is %d\n",parenlevel);
 				switch (parenlevel) {
 				case 0: 
 					break;
@@ -1762,7 +1762,7 @@ static void zephyr_login(GaimAccount * account)
 					while((*ptr != '(') && (*ptr != ')') && (ptr <bufcur)) 
 						ptr++;
 					if (ptr >= bufcur) 
-						gaim_debug_error("zephyr","tzc parsing error\n");
+						purple_debug_error("zephyr","tzc parsing error\n");
 					break;
 				case 2: 
 					/* You are probably at
@@ -1783,7 +1783,7 @@ static void zephyr_login(GaimAccount * account)
 							ptr++;
 						}
 					}
-					gaim_debug_info("zephyr","tempstr parsed\n");
+					purple_debug_info("zephyr","tempstr parsed\n");
 					/* tempstr should now be a tempstridx length string containing all characters 
 					   from that after the first ( to the one before the last paren ). */
 					/* We should have the following possible lisp strings but we don't care 
@@ -1794,7 +1794,7 @@ static void zephyr_login(GaimAccount * account)
 						gchar* username = g_malloc0(100);
 						int username_idx=0;
 						char *realm;
-						gaim_debug_info("zephyr","zephyrid found\n");
+						purple_debug_info("zephyr","zephyrid found\n");
 						tempstridx+=8;
 						while(tempstr[tempstridx] !='"' && tempstridx < 20000)
 							tempstridx++;
@@ -1806,7 +1806,7 @@ static void zephyr_login(GaimAccount * account)
 						if ((realm = strchr(username,'@'))) 
 							zephyr->realm = g_strdup_printf("%s",realm+1);
 						else {
-							realm = (gchar *)gaim_account_get_string(gc->account,"realm","");
+							realm = (gchar *)purple_account_get_string(gc->account,"realm","");
 							if (!*realm) {
 								realm = "local-realm";
 							}
@@ -1819,21 +1819,21 @@ static void zephyr_login(GaimAccount * account)
 							
 						g_free(username);
 					}  else {
-						gaim_debug_info("zephyr", "something that's not zephyr id found %s\n",tempstr);
+						purple_debug_info("zephyr", "something that's not zephyr id found %s\n",tempstr);
 					}
 					
 					/* We don't care about anything else yet */
 					g_free(tempstr);
 					break;
 				default:
-					gaim_debug_info("zephyr","parenlevel is not 1 or 2\n");
+					purple_debug_info("zephyr","parenlevel is not 1 or 2\n");
 					/* This shouldn't be happening */
 					break;
 				}
 				if (parenlevel==0)
 					break;
 			} /* while (ptr < bufcur) */
-			gaim_debug_info("zephyr", "tzc startup done\n");
+			purple_debug_info("zephyr", "tzc startup done\n");
 		free(buf);
 		}
 	}
@@ -1843,7 +1843,7 @@ static void zephyr_login(GaimAccount * account)
 		z_call_s(ZOpenPort(&(zephyr->port)), "Couldn't open port");
 		z_call_s(ZSetLocation((char *)zephyr->exposure), "Couldn't set location");
 
-		realm = (gchar *)gaim_account_get_string(gc->account,"realm","");
+		realm = (gchar *)purple_account_get_string(gc->account,"realm","");
 		if (!*realm) {
 			realm = ZGetRealm();
 		}
@@ -1852,14 +1852,14 @@ static void zephyr_login(GaimAccount * account)
 		zephyr->username = g_strdup(ZGetSender());
 
 		/*		zephyr->realm = g_strdup(ZGetRealm()); */
-		gaim_debug_info("zephyr","realm: %s\n",zephyr->realm);
+		purple_debug_info("zephyr","realm: %s\n",zephyr->realm);
 	}
 	else {
-		gaim_connection_error(gc,"Only ZEPH0.2 supported currently");
+		purple_connection_error(gc,"Only ZEPH0.2 supported currently");
 		return;
 	}
-	gaim_debug_info("zephyr","does it get here\n");
-	gaim_debug_info("zephyr"," realm: %s username:%s\n", zephyr->realm, zephyr->username);
+	purple_debug_info("zephyr","does it get here\n");
+	purple_debug_info("zephyr"," realm: %s username:%s\n", zephyr->realm, zephyr->username);
 
 	/* For now */
 	zephyr->galaxy = NULL;
@@ -1869,12 +1869,12 @@ static void zephyr_login(GaimAccount * account)
 	if (zephyr_subscribe_to(zephyr,"MESSAGE","PERSONAL",zephyr->username,NULL) != ZERR_NONE) {
 		/* XXX don't translate this yet. It could be written better */
 		/* XXX error messages could be handled with more detail */
-		gaim_notify_error(account->gc, NULL,
+		purple_notify_error(account->gc, NULL,
 				  "Unable to subscribe to messages", "Unable to subscribe to initial messages");
 		return;
 	}
 
-	gaim_connection_set_state(gc, GAIM_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTED);
 
 	if (read_anyone)
 		process_anyone(gc);
@@ -1882,11 +1882,11 @@ static void zephyr_login(GaimAccount * account)
 		process_zsubs(zephyr);
 
 	if (use_zeph02(zephyr)) {
-		zephyr->nottimer = gaim_timeout_add(100, check_notify_zeph02, gc);
+		zephyr->nottimer = purple_timeout_add(100, check_notify_zeph02, gc);
 	} else if (use_tzc(zephyr)) {
-		zephyr->nottimer = gaim_timeout_add(100, check_notify_tzc, gc);
+		zephyr->nottimer = purple_timeout_add(100, check_notify_tzc, gc);
 	} 
-	zephyr->loctimer = gaim_timeout_add(20000, check_loc, gc); 
+	zephyr->loctimer = purple_timeout_add(20000, check_loc, gc); 
 
 }
 
@@ -1904,7 +1904,7 @@ static void write_zsubs(zephyr_account *zephyr)
 
 	char **triple;
 
-	fname = g_strdup_printf("%s/.zephyr.subs", gaim_home_dir());
+	fname = g_strdup_printf("%s/.zephyr.subs", purple_home_dir());
 	fd = g_fopen(fname, "w");
 
 	if (!fd) {
@@ -1959,30 +1959,30 @@ static void write_zsubs(zephyr_account *zephyr)
 	fclose(fd);
 }
 
-static void write_anyone(GaimConnection *gc)
+static void write_anyone(PurpleConnection *gc)
 {
-	GaimBlistNode *gnode, *cnode, *bnode;
-	GaimBuddy *b;
+	PurpleBlistNode *gnode, *cnode, *bnode;
+	PurpleBuddy *b;
 	char *fname;
 	FILE *fd;
 	zephyr_account* zephyr = gc->proto_data;
-	fname = g_strdup_printf("%s/.anyone", gaim_home_dir());
+	fname = g_strdup_printf("%s/.anyone", purple_home_dir());
 	fd = g_fopen(fname, "w");
 	if (!fd) {
 		g_free(fname);
 		return;
 	}
 
-	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
-		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
+		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		for (cnode = gnode->child; cnode; cnode = cnode->next) {
-			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
 			for (bnode = cnode->child; bnode; bnode = bnode->next) {
-				if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
-				b = (GaimBuddy *) bnode;
+				b = (PurpleBuddy *) bnode;
 				if (b->account == gc->account) {
 					gchar *stripped_user = zephyr_strip_local_realm(zephyr,b->name);
 					fprintf(fd, "%s\n", stripped_user);
@@ -1996,7 +1996,7 @@ static void write_anyone(GaimConnection *gc)
 	g_free(fname);
 }
 
-static void zephyr_close(GaimConnection * gc)
+static void zephyr_close(PurpleConnection * gc)
 {
 	GList *l;
 	GSList *s;
@@ -2010,10 +2010,10 @@ static void zephyr_close(GaimConnection * gc)
 	}
 	g_list_free(zephyr->pending_zloc_names);
 
-	if (gaim_account_get_bool(gc->account, "write_anyone", FALSE))
+	if (purple_account_get_bool(gc->account, "write_anyone", FALSE))
 		write_anyone(gc);
 
-	if (gaim_account_get_bool(gc->account, "write_zsubs", FALSE))
+	if (purple_account_get_bool(gc->account, "write_zsubs", FALSE))
 		write_zsubs(gc->proto_data);
 
 	s = zephyr->subscrips;
@@ -2024,10 +2024,10 @@ static void zephyr_close(GaimConnection * gc)
 	g_slist_free(zephyr->subscrips);
 
 	if (zephyr->nottimer)
-		gaim_timeout_remove(zephyr->nottimer);
+		purple_timeout_remove(zephyr->nottimer);
 	zephyr->nottimer = 0;
 	if (zephyr->loctimer)
-		gaim_timeout_remove(zephyr->loctimer);
+		purple_timeout_remove(zephyr->loctimer);
 	zephyr->loctimer = 0;
 	gc = NULL;
 	if (use_zeph02(zephyr)) {
@@ -2039,16 +2039,16 @@ static void zephyr_close(GaimConnection * gc)
 		if (kill(tzc_pid,SIGTERM) == -1) {
 			int err=errno;
 			if (err==EINVAL) {
-				gaim_debug_error("zephyr","An invalid signal was specified when killing tzc\n");
+				purple_debug_error("zephyr","An invalid signal was specified when killing tzc\n");
 			} 
 			else if (err==ESRCH) {
-				gaim_debug_error("zephyr","Tzc's pid didn't exist while killing tzc\n");
+				purple_debug_error("zephyr","Tzc's pid didn't exist while killing tzc\n");
 			}
 			else if (err==EPERM) {
-				gaim_debug_error("zephyr","gaim didn't have permission to kill tzc\n");
+				purple_debug_error("zephyr","purple didn't have permission to kill tzc\n");
 			}
 			else {
-				gaim_debug_error("zephyr","miscellaneous error while attempting to close tzc\n");
+				purple_debug_error("zephyr","miscellaneous error while attempting to close tzc\n");
 			}
 		}
 	}
@@ -2067,12 +2067,12 @@ static const char * zephyr_get_signature()
 	return sig;
 }
 
-static int zephyr_chat_send(GaimConnection * gc, int id, const char *im, GaimMessageFlags flags)
+static int zephyr_chat_send(PurpleConnection * gc, int id, const char *im, PurpleMessageFlags flags)
 {
 	zephyr_triple *zt;
 	const char *sig;
-	GaimConversation *gconv1;
-	GaimConvChat *gcc;
+	PurpleConversation *gconv1;
+	PurpleConvChat *gcc;
 	char *inst;
 	char *recipient;
 	zephyr_account *zephyr = gc->proto_data;
@@ -2084,11 +2084,11 @@ static int zephyr_chat_send(GaimConnection * gc, int id, const char *im, GaimMes
 
 	sig = zephyr_get_signature();
 
-	gconv1 = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, zt->name,
+	gconv1 = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, zt->name,
 												 gc->account);
-	gcc = gaim_conversation_get_chat_data(gconv1);
+	gcc = purple_conversation_get_chat_data(gconv1);
 
-	if (!(inst = (char *)gaim_conv_chat_get_topic(gcc)))
+	if (!(inst = (char *)purple_conv_chat_get_topic(gcc)))
 		inst = g_strdup("PERSONAL");
 
 	if (!g_ascii_strcasecmp(zt->recipient, "*"))
@@ -2101,11 +2101,11 @@ static int zephyr_chat_send(GaimConnection * gc, int id, const char *im, GaimMes
 }
 
 
-static int zephyr_send_im(GaimConnection * gc, const char *who, const char *im, GaimMessageFlags flags)
+static int zephyr_send_im(PurpleConnection * gc, const char *who, const char *im, PurpleMessageFlags flags)
 {
 	const char *sig;
 	zephyr_account *zephyr = gc->proto_data;
-	if (flags & GAIM_MESSAGE_AUTO_RESP)
+	if (flags & PURPLE_MESSAGE_AUTO_RESP)
 		sig = "Automated reply:";
 	else {
 		sig = zephyr_get_signature();
@@ -2189,7 +2189,7 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 	char *html_buf;
 	char *html_buf2;
 	html_buf = html_to_zephyr(im);
-	html_buf2 = gaim_unescape_html(html_buf);
+	html_buf2 = purple_unescape_html(html_buf);
 
 	if(use_tzc(zephyr)) {
 		char* zsendstr;
@@ -2217,12 +2217,12 @@ static int zephyr_send_message(zephyr_account *zephyr,char* zclass, char* instan
 		notice.z_message_len = strlen(html_buf2) + strlen(sig) + 2;
 		notice.z_message = buf;
 		notice.z_opcode = g_strdup(opcode);
-		gaim_debug_info("zephyr","About to send notice");
+		purple_debug_info("zephyr","About to send notice");
 		if (! ZSendNotice(&notice, ZAUTH) == ZERR_NONE) {
 			/* XXX handle errors here */
 			return 0;
 		}
-		gaim_debug_info("zephyr","notice sent");
+		purple_debug_info("zephyr","notice sent");
 		g_free(buf);
 	}
 
@@ -2251,7 +2251,7 @@ char *local_zephyr_normalize(zephyr_account *zephyr,const char *orig)
 	return buf;
 }
 
-static void zephyr_zloc(GaimConnection *gc, const char *who)
+static void zephyr_zloc(PurpleConnection *gc, const char *who)
 {
 	ZAsyncLocateData_t ald;
 	zephyr_account *zephyr = gc->proto_data;
@@ -2272,19 +2272,19 @@ static void zephyr_zloc(GaimConnection *gc, const char *who)
 	}
 }
 
-static void zephyr_set_status(GaimAccount *account, GaimStatus *status) {
-	zephyr_account *zephyr = gaim_account_get_connection(account)->proto_data;
-	GaimStatusPrimitive primitive = gaim_status_type_get_primitive(gaim_status_get_type(status));
+static void zephyr_set_status(PurpleAccount *account, PurpleStatus *status) {
+	zephyr_account *zephyr = purple_account_get_connection(account)->proto_data;
+	PurpleStatusPrimitive primitive = purple_status_type_get_primitive(purple_status_get_type(status));
 
 	if (zephyr->away) {
 		g_free(zephyr->away);
 		zephyr->away=NULL;
 	}
 
-	if (primitive == GAIM_STATUS_AWAY) {
-		zephyr->away = g_strdup(gaim_status_get_attr_string(status,"message"));
+	if (primitive == PURPLE_STATUS_AWAY) {
+		zephyr->away = g_strdup(purple_status_get_attr_string(status,"message"));
 	} 
-	else if (primitive == GAIM_STATUS_AVAILABLE) {
+	else if (primitive == PURPLE_STATUS_AVAILABLE) {
 		if (use_zeph02(zephyr)) {
 			ZSetLocation(zephyr->exposure);
 		}
@@ -2294,7 +2294,7 @@ static void zephyr_set_status(GaimAccount *account, GaimStatus *status) {
 			g_free(zexpstr);
 		}
 	} 
-	else if (primitive == GAIM_STATUS_INVISIBLE) {
+	else if (primitive == PURPLE_STATUS_INVISIBLE) {
 		/* XXX handle errors */
 		if (use_zeph02(zephyr)) {
 			ZSetLocation(EXPOSE_OPSTAFF);
@@ -2306,9 +2306,9 @@ static void zephyr_set_status(GaimAccount *account, GaimStatus *status) {
 	}
 }
 
-static GList *zephyr_status_types(GaimAccount *account) 
+static GList *zephyr_status_types(PurpleAccount *account) 
 {
-	GaimStatusType *type;
+	PurpleStatusType *type;
 	GList *types = NULL;
 
 	/* zephyr has several exposures 
@@ -2325,25 +2325,25 @@ static GList *zephyr_status_types(GaimAccount *account)
 	   Away won't change their exposure but will set an auto away message (for IMs only)
 	*/
 
-	type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, NULL, NULL, TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE);
 	types = g_list_append(types,type);
 
-	type = gaim_status_type_new(GAIM_STATUS_INVISIBLE, NULL, NULL, TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_INVISIBLE, NULL, NULL, TRUE);
 	types = g_list_append(types,type);
 
-	type = gaim_status_type_new_with_attrs(
-					       GAIM_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
-					       "message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+	type = purple_status_type_new_with_attrs(
+					       PURPLE_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
+					       "message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 					       NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, NULL, NULL, TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_OFFLINE, NULL, NULL, TRUE);
 	types = g_list_append(types,type);
 
 	return types;
 }
 
-static GList *zephyr_chat_info(GaimConnection * gc)
+static GList *zephyr_chat_info(PurpleConnection * gc)
 {
 	GList *m = NULL;
 	struct proto_chat_entry *pce;
@@ -2371,10 +2371,10 @@ static GList *zephyr_chat_info(GaimConnection * gc)
 
 /* Called when the server notifies us a message couldn't get sent */
 
-static void zephyr_subscribe_failed(GaimConnection *gc,char * z_class, char *z_instance, char * z_recipient, char* z_galaxy)
+static void zephyr_subscribe_failed(PurpleConnection *gc,char * z_class, char *z_instance, char * z_recipient, char* z_galaxy)
 {
 	gchar* subscribe_failed = g_strdup_printf(_("Attempt to subscribe to %s,%s,%s failed"), z_class, z_instance,z_recipient);
-	gaim_notify_error(gc,"", subscribe_failed, NULL);
+	purple_notify_error(gc,"", subscribe_failed, NULL);
 	g_free(subscribe_failed);
 }
 
@@ -2392,7 +2392,7 @@ static char *zephyr_get_chat_name(GHashTable *data) {
 }
 
 
-static void zephyr_join_chat(GaimConnection * gc, GHashTable * data)
+static void zephyr_join_chat(PurpleConnection * gc, GHashTable * data)
 {
 	/*	ZSubscription_t sub; */
 	zephyr_triple *zt1, *zt2;
@@ -2459,7 +2459,7 @@ static void zephyr_join_chat(GaimConnection * gc, GHashTable * data)
 	zephyr_chat_set_topic(gc,zt1->id,instname);
 }
 
-static void zephyr_chat_leave(GaimConnection * gc, int id)
+static void zephyr_chat_leave(PurpleConnection * gc, int id)
 {
 	zephyr_triple *zt;
 	zephyr_account *zephyr = gc->proto_data;
@@ -2471,17 +2471,17 @@ static void zephyr_chat_leave(GaimConnection * gc, int id)
 	}
 }
 
-static GaimChat *zephyr_find_blist_chat(GaimAccount *account, const char *name)
+static PurpleChat *zephyr_find_blist_chat(PurpleAccount *account, const char *name)
 {
-	GaimBlistNode *gnode, *cnode;
+	PurpleBlistNode *gnode, *cnode;
 
 	/* XXX needs to be %host%,%canon%, and %me% clean */
-	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+	for(gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
-			GaimChat *chat = (GaimChat*)cnode;
+			PurpleChat *chat = (PurpleChat*)cnode;
 			char *zclass, *inst, *recip;
 			char** triple;
-			if(!GAIM_BLIST_NODE_IS_CHAT(cnode))
+			if(!PURPLE_BLIST_NODE_IS_CHAT(cnode))
 				continue;
 			if(chat->account !=account)
 				continue;
@@ -2491,7 +2491,7 @@ static GaimChat *zephyr_find_blist_chat(GaimAccount *account, const char *name)
 				inst = g_strdup("");
 			if(!(recip = g_hash_table_lookup(chat->components, "recipient")))
 				recip = g_strdup("");
-			/*			gaim_debug_info("zephyr","in zephyr_find_blist_chat name: %s\n",name?name:""); */
+			/*			purple_debug_info("zephyr","in zephyr_find_blist_chat name: %s\n",name?name:""); */
 			triple = g_strsplit(name,",",3);
 			if (!g_ascii_strcasecmp(triple[0],zclass) && !g_ascii_strcasecmp(triple[1],inst) && !g_ascii_strcasecmp(triple[2],recip))
 				return chat;
@@ -2500,23 +2500,23 @@ static GaimChat *zephyr_find_blist_chat(GaimAccount *account, const char *name)
 	}
 	return NULL;
 }
-static const char *zephyr_list_icon(GaimAccount * a, GaimBuddy * b)
+static const char *zephyr_list_icon(PurpleAccount * a, PurpleBuddy * b)
 {
 	return "zephyr";
 }
 
-static unsigned int zephyr_send_typing(GaimConnection *gc, const char *who, GaimTypingState state) {
+static unsigned int zephyr_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state) {
 	gchar *recipient;
 	zephyr_account *zephyr = gc->proto_data;
 	if (use_tzc(zephyr)) 
 		return 0;
 
-	if (state == GAIM_NOT_TYPING)
+	if (state == PURPLE_NOT_TYPING)
 		return 0;
 
 	/* XXX We probably should care if this fails. Or maybe we don't want to */
 	if (!who) {
-		gaim_debug_info("zephyr", "who is null\n");
+		purple_debug_info("zephyr", "who is null\n");
 		recipient = local_zephyr_normalize(zephyr,"");
 	} else {
 		char *comma = strrchr(who, ',');
@@ -2529,25 +2529,25 @@ static unsigned int zephyr_send_typing(GaimConnection *gc, const char *who, Gaim
 		recipient = local_zephyr_normalize(zephyr,who);
 	}
 
-	gaim_debug_info("zephyr","about to send typing notification to %s\n",recipient);
+	purple_debug_info("zephyr","about to send typing notification to %s\n",recipient);
 	zephyr_send_message(zephyr,"MESSAGE","PERSONAL",recipient,"","","PING");
-	gaim_debug_info("zephyr","sent typing notification\n");
+	purple_debug_info("zephyr","sent typing notification\n");
 
 	/*
 	 * TODO: Is this correct?  It means we will call
-	 *       serv_send_typing(gc, who, GAIM_TYPING) once every 15 seconds
-	 *       until the Gaim user stops typing.
+	 *       serv_send_typing(gc, who, PURPLE_TYPING) once every 15 seconds
+	 *       until the Purple user stops typing.
 	 */
 	return ZEPHYR_TYPING_SEND_TIMEOUT;
 }
 
 
 
-static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic)
+static void zephyr_chat_set_topic(PurpleConnection * gc, int id, const char *topic)
 {
 	zephyr_triple *zt;
-	GaimConversation *gconv;
-	GaimConvChat *gcc;
+	PurpleConversation *gconv;
+	PurpleConvChat *gcc;
 	gchar *topic_utf8;
 	zephyr_account* zephyr = gc->proto_data;
 	char *sender = (char *)zephyr->username;
@@ -2556,59 +2556,59 @@ static void zephyr_chat_set_topic(GaimConnection * gc, int id, const char *topic
 	/* find_sub_by_id can return NULL */
 	if (!zt) 
 		return;
-	gconv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, zt->name,
+	gconv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, zt->name,
 												gc->account);
-	gcc = gaim_conversation_get_chat_data(gconv);
+	gcc = purple_conversation_get_chat_data(gconv);
 
 	topic_utf8 = zephyr_recv_convert(gc,(gchar *)topic,strlen(topic));
-	gaim_conv_chat_set_topic(gcc,sender,topic_utf8);
+	purple_conv_chat_set_topic(gcc,sender,topic_utf8);
 	g_free(topic_utf8);
 	return;
 }
 
 /*  commands */
 
-static GaimCmdRet zephyr_gaim_cmd_msg(GaimConversation *conv,
+static PurpleCmdRet zephyr_purple_cmd_msg(PurpleConversation *conv,
 				      const char *cmd, char **args, char **error, void *data)
 {
 	char *recipient;
-	zephyr_account *zephyr = gaim_conversation_get_gc(conv)->proto_data;
+	zephyr_account *zephyr = purple_conversation_get_gc(conv)->proto_data;
 	if (!g_ascii_strcasecmp(args[0],"*"))
-		return GAIM_CMD_RET_FAILED;  /* "*" is not a valid argument */
+		return PURPLE_CMD_RET_FAILED;  /* "*" is not a valid argument */
 	else 
 		recipient = local_zephyr_normalize(zephyr,args[0]);
 
 	if (strlen(recipient) < 1)
-		return GAIM_CMD_RET_FAILED; /* a null recipient is a chat message, not an IM */
+		return PURPLE_CMD_RET_FAILED; /* a null recipient is a chat message, not an IM */
 
 	if (zephyr_send_message(zephyr,"MESSAGE","PERSONAL",recipient,args[1],zephyr_get_signature(),""))
-		return GAIM_CMD_RET_OK;
+		return PURPLE_CMD_RET_OK;
 	else 
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 }
 
-static GaimCmdRet zephyr_gaim_cmd_zlocate(GaimConversation *conv,
+static PurpleCmdRet zephyr_purple_cmd_zlocate(PurpleConversation *conv,
 					  const char *cmd, char **args, char **error, void *data)
 {
-	zephyr_zloc(gaim_conversation_get_gc(conv),args[0]);
-	return GAIM_CMD_RET_OK;
+	zephyr_zloc(purple_conversation_get_gc(conv),args[0]);
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet zephyr_gaim_cmd_instance(GaimConversation *conv,
+static PurpleCmdRet zephyr_purple_cmd_instance(PurpleConversation *conv,
 					   const char *cmd, char **args, char **error, void *data)
 {
 	/* Currently it sets the instance with leading spaces and
 	 * all. This might not be the best thing to do, though having
 	 * one word isn't ideal either.	 */
 
-	GaimConvChat *gcc = gaim_conversation_get_chat_data(conv);
+	PurpleConvChat *gcc = purple_conversation_get_chat_data(conv);
 	int id = gcc->id;
 	const char* instance = args[0];
-	zephyr_chat_set_topic(gaim_conversation_get_gc(conv),id,instance);
-	return GAIM_CMD_RET_OK;
+	zephyr_chat_set_topic(purple_conversation_get_gc(conv),id,instance);
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet zephyr_gaim_cmd_joinchat_cir(GaimConversation *conv,
+static PurpleCmdRet zephyr_purple_cmd_joinchat_cir(PurpleConversation *conv,
 					       const char *cmd, char **args, char **error, void *data)
 {
 	/* Join a new zephyr chat */
@@ -2616,166 +2616,166 @@ static GaimCmdRet zephyr_gaim_cmd_joinchat_cir(GaimConversation *conv,
 	g_hash_table_insert(triple,"class",args[0]);
 	g_hash_table_insert(triple,"instance",args[1]);
 	g_hash_table_insert(triple,"recipient",args[2]);
-	zephyr_join_chat(gaim_conversation_get_gc(conv),triple);
-	return GAIM_CMD_RET_OK;
+	zephyr_join_chat(purple_conversation_get_gc(conv),triple);
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet zephyr_gaim_cmd_zi(GaimConversation *conv,
+static PurpleCmdRet zephyr_purple_cmd_zi(PurpleConversation *conv,
 				     const char *cmd, char **args, char **error, void *data)
 {
 	/* args = instance, message */
-	zephyr_account *zephyr = gaim_conversation_get_gc(conv)->proto_data;
+	zephyr_account *zephyr = purple_conversation_get_gc(conv)->proto_data;
 	if ( zephyr_send_message(zephyr,"message",args[0],"",args[1],zephyr_get_signature(),""))
-		return GAIM_CMD_RET_OK;
+		return PURPLE_CMD_RET_OK;
 	else 
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 }
 
-static GaimCmdRet zephyr_gaim_cmd_zci(GaimConversation *conv,
+static PurpleCmdRet zephyr_purple_cmd_zci(PurpleConversation *conv,
 				      const char *cmd, char **args, char **error, void *data)
 {
 	/* args = class, instance, message */
-	zephyr_account *zephyr = gaim_conversation_get_gc(conv)->proto_data;
+	zephyr_account *zephyr = purple_conversation_get_gc(conv)->proto_data;
 	if ( zephyr_send_message(zephyr,args[0],args[1],"",args[2],zephyr_get_signature(),""))
-		return GAIM_CMD_RET_OK;
+		return PURPLE_CMD_RET_OK;
 	else 
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 }
 
-static GaimCmdRet zephyr_gaim_cmd_zcir(GaimConversation *conv,
+static PurpleCmdRet zephyr_purple_cmd_zcir(PurpleConversation *conv,
 				       const char *cmd, char **args, char **error, void *data)
 {
 	/* args = class, instance, recipient, message */
-	zephyr_account *zephyr = gaim_conversation_get_gc(conv)->proto_data;
+	zephyr_account *zephyr = purple_conversation_get_gc(conv)->proto_data;
 	if ( zephyr_send_message(zephyr,args[0],args[1],args[2],args[3],zephyr_get_signature(),"")) 
-		return GAIM_CMD_RET_OK;
+		return PURPLE_CMD_RET_OK;
 	else
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 }
 
-static GaimCmdRet zephyr_gaim_cmd_zir(GaimConversation *conv,
+static PurpleCmdRet zephyr_purple_cmd_zir(PurpleConversation *conv,
 				      const char *cmd, char **args, char **error, void *data)
 {
 	/* args = instance, recipient, message */
-	zephyr_account *zephyr = gaim_conversation_get_gc(conv)->proto_data;
+	zephyr_account *zephyr = purple_conversation_get_gc(conv)->proto_data;
 	if ( zephyr_send_message(zephyr,"message",args[0],args[1],args[2],zephyr_get_signature(),"")) 
-		return GAIM_CMD_RET_OK;
+		return PURPLE_CMD_RET_OK;
 	else
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 }
 
-static GaimCmdRet zephyr_gaim_cmd_zc(GaimConversation *conv,
+static PurpleCmdRet zephyr_purple_cmd_zc(PurpleConversation *conv,
 				     const char *cmd, char **args, char **error, void *data)
 {
 	/* args = class, message */
-	zephyr_account *zephyr = gaim_conversation_get_gc(conv)->proto_data;
+	zephyr_account *zephyr = purple_conversation_get_gc(conv)->proto_data;
 	if ( zephyr_send_message(zephyr,args[0],"PERSONAL","",args[1],zephyr_get_signature(),"")) 
-		return GAIM_CMD_RET_OK;
+		return PURPLE_CMD_RET_OK;
 	else
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 }
 
 static void zephyr_register_slash_commands()
 {
 
-	gaim_cmd_register("msg","ws", GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("msg","ws", PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_msg, _("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"), NULL);
+			  zephyr_purple_cmd_msg, _("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"), NULL);
 
-	gaim_cmd_register("zlocate","w", GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zlocate","w", PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_zlocate, _("zlocate &lt;nick&gt;: Locate user"), NULL);
+			  zephyr_purple_cmd_zlocate, _("zlocate &lt;nick&gt;: Locate user"), NULL);
 
-	gaim_cmd_register("zl","w", GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zl","w", PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_zlocate, _("zl &lt;nick&gt;: Locate user"), NULL);
+			  zephyr_purple_cmd_zlocate, _("zl &lt;nick&gt;: Locate user"), NULL);
 
-	gaim_cmd_register("instance","s", GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("instance","s", PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_instance, _("instance &lt;instance&gt;: Set the instance to be used on this class"), NULL);
+			  zephyr_purple_cmd_instance, _("instance &lt;instance&gt;: Set the instance to be used on this class"), NULL);
 
-	gaim_cmd_register("inst","s", GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("inst","s", PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_instance, _("inst &lt;instance&gt;: Set the instance to be used on this class"), NULL);
+			  zephyr_purple_cmd_instance, _("inst &lt;instance&gt;: Set the instance to be used on this class"), NULL);
 
-	gaim_cmd_register("topic","s", GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("topic","s", PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_instance, _("topic &lt;instance&gt;: Set the instance to be used on this class"), NULL);
+			  zephyr_purple_cmd_instance, _("topic &lt;instance&gt;: Set the instance to be used on this class"), NULL);
 
-	gaim_cmd_register("sub", "www", GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("sub", "www", PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_joinchat_cir,
+			  zephyr_purple_cmd_joinchat_cir,
 			  _("sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"), NULL);
 
-	gaim_cmd_register("zi","ws", GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zi","ws", PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_zi, _("zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"), NULL);
+			  zephyr_purple_cmd_zi, _("zi &lt;instance&gt;: Send a message to &lt;message,<i>instance</i>,*&gt;"), NULL);
 
-	gaim_cmd_register("zci","wws",GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zci","wws",PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_zci,
+			  zephyr_purple_cmd_zci,
 			  _("zci &lt;class&gt; &lt;instance&gt;: Send a message to &lt;<i>class</i>,<i>instance</i>,*&gt;"), NULL);
 
-	gaim_cmd_register("zcir","wwws",GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zcir","wwws",PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_zcir,
+			  zephyr_purple_cmd_zcir,
 			  _("zcir &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;<i>class</i>,<i>instance</i>,<i>recipient</i>&gt;"), NULL);
 
-	gaim_cmd_register("zir","wws",GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zir","wws",PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_zir,
+			  zephyr_purple_cmd_zir,
 			  _("zir &lt;instance&gt; &lt;recipient&gt;: Send a message to &lt;MESSAGE,<i>instance</i>,<i>recipient</i>&gt;"), NULL);
 
-	gaim_cmd_register("zc","ws", GAIM_CMD_P_PRPL,
-			  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("zc","ws", PURPLE_CMD_P_PRPL,
+			  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			  "prpl-zephyr",
-			  zephyr_gaim_cmd_zc, _("zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"), NULL);
+			  zephyr_purple_cmd_zc, _("zc &lt;class&gt;: Send a message to &lt;<i>class</i>,PERSONAL,*&gt;"), NULL);
 
 }
 
 
 static void
-zephyr_add_deny(GaimConnection *gc, const char *who)
+zephyr_add_deny(PurpleConnection *gc, const char *who)
 {
-	gaim_privacy_deny_add(gc->account,who,1);
+	purple_privacy_deny_add(gc->account,who,1);
 }
 
 static void
-zephyr_remove_deny(GaimConnection *gc, const char *who)
+zephyr_remove_deny(PurpleConnection *gc, const char *who)
 {
-	gaim_privacy_deny_remove(gc->account,who,1);
+	purple_privacy_deny_remove(gc->account,who,1);
 }
 
 static void
-zephyr_add_permit(GaimConnection *gc, const char *who)
+zephyr_add_permit(PurpleConnection *gc, const char *who)
 {
-	gaim_privacy_permit_add(gc->account,who,1);
+	purple_privacy_permit_add(gc->account,who,1);
 }
 
 static void
-zephyr_remove_permit(GaimConnection *gc, const char *who)
+zephyr_remove_permit(PurpleConnection *gc, const char *who)
 {
-	gaim_privacy_permit_remove(gc->account,who,1);
+	purple_privacy_permit_remove(gc->account,who,1);
 }
 
 static void
-zephyr_set_permit_deny(GaimConnection *gc)
+zephyr_set_permit_deny(PurpleConnection *gc)
 {
 	/* This doesn't have to do anything, since really, we can just check account->perm_deny when deciding whether to di */
 	return;
 }
-static int zephyr_resubscribe(GaimConnection *gc)
+static int zephyr_resubscribe(PurpleConnection *gc)
 {
 	/* Resubscribe to the in-memory list of subscriptions and also
 	   unsubscriptions*/
@@ -2793,17 +2793,17 @@ static int zephyr_resubscribe(GaimConnection *gc)
 }
 
 
-static void zephyr_action_resubscribe(GaimPluginAction *action)
+static void zephyr_action_resubscribe(PurplePluginAction *action)
 {
 
-	GaimConnection *gc = (GaimConnection *) action->context;
+	PurpleConnection *gc = (PurpleConnection *) action->context;
 	zephyr_resubscribe(gc);
 }
 
 
-static void zephyr_action_get_subs_from_server(GaimPluginAction *action)
+static void zephyr_action_get_subs_from_server(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
+	PurpleConnection *gc = (PurpleConnection *) action->context;
 	zephyr_account *zephyr = gc->proto_data;
 	gchar *title;
 	int retval, nsubs, one,i;
@@ -2814,50 +2814,50 @@ static void zephyr_action_get_subs_from_server(GaimPluginAction *action)
 		title = g_strdup_printf("Server subscriptions for %s", zephyr->username);
 		
 		if (zephyr->port == 0) {
-			gaim_debug_error("zephyr", "error while retrieving port");
+			purple_debug_error("zephyr", "error while retrieving port");
 			return;
 		} 
 		if ((retval = ZRetrieveSubscriptions(zephyr->port,&nsubs)) != ZERR_NONE) {
 			/* XXX better error handling */
-			gaim_debug_error("zephyr", "error while retrieving subscriptions from server");
+			purple_debug_error("zephyr", "error while retrieving subscriptions from server");
 			return;
 		}
 		for(i=0;i<nsubs;i++) {
 			one = 1;
 			if ((retval = ZGetSubscriptions(&subs,&one)) != ZERR_NONE) {
 				/* XXX better error handling */
-				gaim_debug_error("zephyr", "error while retrieving individual subscription");
+				purple_debug_error("zephyr", "error while retrieving individual subscription");
 				return;
 			}
 			g_string_append_printf(subout, "Class %s Instance %s Recipient %s<br>",
 					       subs.zsub_class, subs.zsub_classinst,
 					       subs.zsub_recipient);
 		}
-		gaim_notify_formatted(gc, title, title, NULL,  subout->str, NULL, NULL);
+		purple_notify_formatted(gc, title, title, NULL,  subout->str, NULL, NULL);
 	} else {
 		/* XXX fix */
-		gaim_notify_error(gc,"","tzc doesn't support this action",NULL);
+		purple_notify_error(gc,"","tzc doesn't support this action",NULL);
 	}
 }
 
 
-static GList *zephyr_actions(GaimPlugin *plugin, gpointer context)
+static GList *zephyr_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *list = NULL;
-	GaimPluginAction *act = NULL;
+	PurplePluginAction *act = NULL;
 
-	act = gaim_plugin_action_new(_("Resubscribe"), zephyr_action_resubscribe);
+	act = purple_plugin_action_new(_("Resubscribe"), zephyr_action_resubscribe);
 	list = g_list_append(list, act);
 
-	act = gaim_plugin_action_new(_("Retrieve subscriptions from server"), zephyr_action_get_subs_from_server);
+	act = purple_plugin_action_new(_("Retrieve subscriptions from server"), zephyr_action_get_subs_from_server);
 	list = g_list_append(list,act);
 
 	return list;
 }
 
-static GaimPlugin *my_protocol = NULL;
+static PurplePlugin *my_protocol = NULL;
 
-static GaimPluginProtocolInfo prpl_info = {
+static PurplePluginProtocolInfo prpl_info = {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_NO_PASSWORD,
 	NULL,					/* ??? user_splits */
 	NULL,					/* ??? protocol_options */
@@ -2922,15 +2922,15 @@ static GaimPluginProtocolInfo prpl_info = {
 	NULL,					/* roomlist_room_serialize */
 };
 
-static GaimPluginInfo info = {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_PROTOCOL,				  /**< type	      */
+static PurplePluginInfo info = {
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_PROTOCOL,				  /**< type	      */
 	NULL,						  /**< ui_requirement */
 	0,							  /**< flags	      */
 	NULL,						  /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,				  /**< priority	      */
+	PURPLE_PRIORITY_DEFAULT,				  /**< priority	      */
 
 	"prpl-zephyr",					   /**< id	       */
 	"Zephyr",						 /**< name	     */
@@ -2940,7 +2940,7 @@ static GaimPluginInfo info = {
 	/**  description    */
 	N_("Zephyr Protocol Plugin"),
 	NULL,						  /**< author	      */
-	GAIM_WEBSITE,					  /**< homepage	      */
+	PURPLE_WEBSITE,					  /**< homepage	      */
 
 	NULL,						  /**< load	      */
 	NULL,						  /**< unload	      */
@@ -2952,40 +2952,40 @@ static GaimPluginInfo info = {
 	zephyr_actions,
 };
 
-static void init_plugin(GaimPlugin * plugin)
+static void init_plugin(PurplePlugin * plugin)
 {
-	GaimAccountOption *option;
+	PurpleAccountOption *option;
 	char *tmp = get_exposure_level();
 
-	option = gaim_account_option_bool_new(_("Use tzc"), "use_tzc", FALSE);
+	option = purple_account_option_bool_new(_("Use tzc"), "use_tzc", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("tzc command"), "tzc_command", "/usr/bin/tzc -e %s");
+	option = purple_account_option_string_new(_("tzc command"), "tzc_command", "/usr/bin/tzc -e %s");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_bool_new(_("Export to .anyone"), "write_anyone", FALSE);
+	option = purple_account_option_bool_new(_("Export to .anyone"), "write_anyone", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_bool_new(_("Export to .zephyr.subs"), "write_zsubs", FALSE);
+	option = purple_account_option_bool_new(_("Export to .zephyr.subs"), "write_zsubs", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_bool_new(_("Import from .anyone"), "read_anyone", TRUE);
+	option = purple_account_option_bool_new(_("Import from .anyone"), "read_anyone", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
  
-	option = gaim_account_option_bool_new(_("Import from .zephyr.subs"), "read_zsubs", TRUE);
+	option = purple_account_option_bool_new(_("Import from .zephyr.subs"), "read_zsubs", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
  
-	option = gaim_account_option_string_new(_("Realm"), "realm", "");
+	option = purple_account_option_string_new(_("Realm"), "realm", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 	
-	option = gaim_account_option_string_new(_("Exposure"), "exposure_level", tmp?tmp: EXPOSE_REALMVIS);
+	option = purple_account_option_string_new(_("Exposure"), "exposure_level", tmp?tmp: EXPOSE_REALMVIS);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Encoding"), "encoding", ZEPHYR_FALLBACK_CHARSET);
+	option = purple_account_option_string_new(_("Encoding"), "encoding", ZEPHYR_FALLBACK_CHARSET);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	my_protocol = plugin;
 	zephyr_register_slash_commands();
 }
 
-GAIM_INIT_PLUGIN(zephyr, init_plugin, info);
+PURPLE_INIT_PLUGIN(zephyr, init_plugin, info);

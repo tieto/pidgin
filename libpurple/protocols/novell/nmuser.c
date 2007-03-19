@@ -477,8 +477,8 @@ nm_send_message(NMUser * user, NMMessage * message, nm_response_cb callback)
 
 		rtfized = nm_rtfize_text(text);
 
-		gaim_debug_info("novell", "message text is: %s\n", text);
-		gaim_debug_info("novell", "message rtf is: %s\n", rtfized);
+		purple_debug_info("novell", "message text is: %s\n", text);
+		purple_debug_info("novell", "message rtf is: %s\n", rtfized);
 
 		tmp = nm_field_add_pointer(tmp, NM_A_SZ_MESSAGE_BODY, 0, NMFIELD_METHOD_VALID, 0,
 								   rtfized, NMFIELD_TYPE_UTF8);
@@ -1749,7 +1749,7 @@ nm_call_handler(NMUser * user, NMRequest * request, NMField * fields)
 		} else {
 
 			/* Nothing to do, just print debug message  */
-			gaim_debug(GAIM_DEBUG_INFO, "novell",
+			purple_debug(PURPLE_DEBUG_INFO, "novell",
 					   "nm_call_handler(): Unknown request command, %s\n", cmd);
 
 		}
@@ -2134,12 +2134,12 @@ nm_rtfize_text(char *text)
 				bytes = 6;
 			} else {
 				/* should never happen ... bogus utf-8! */
-				gaim_debug_info("novell", "bogus utf-8 lead byte: 0x%X\n", pch[0]);
+				purple_debug_info("novell", "bogus utf-8 lead byte: 0x%X\n", pch[0]);
 				uc = 0x003F;
 				bytes = 1;
 			}
 			uni_str = g_strdup_printf("\\u%d?", uc);
-			gaim_debug_info("novell", "unicode escaped char %s\n", uni_str);
+			purple_debug_info("novell", "unicode escaped char %s\n", uni_str);
 			gstr = g_string_append(gstr, uni_str);
 			pch += bytes;
 			g_free(uni_str);

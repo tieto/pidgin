@@ -2,9 +2,9 @@
  * @file accountopt.c Account Options API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -25,17 +25,17 @@
 #include "accountopt.h"
 #include "util.h"
 
-GaimAccountOption *
-gaim_account_option_new(GaimPrefType type, const char *text,
+PurpleAccountOption *
+purple_account_option_new(PurplePrefType type, const char *text,
 						const char *pref_name)
 {
-	GaimAccountOption *option;
+	PurpleAccountOption *option;
 
-	g_return_val_if_fail(type      != GAIM_PREF_NONE, NULL);
+	g_return_val_if_fail(type      != PURPLE_PREF_NONE, NULL);
 	g_return_val_if_fail(text      != NULL,           NULL);
 	g_return_val_if_fail(pref_name != NULL,           NULL);
 
-	option = g_new0(GaimAccountOption, 1);
+	option = g_new0(PurpleAccountOption, 1);
 
 	option->type      = type;
 	option->text      = g_strdup(text);
@@ -44,13 +44,13 @@ gaim_account_option_new(GaimPrefType type, const char *text,
 	return option;
 }
 
-GaimAccountOption *
-gaim_account_option_bool_new(const char *text, const char *pref_name,
+PurpleAccountOption *
+purple_account_option_bool_new(const char *text, const char *pref_name,
 							 gboolean default_value)
 {
-	GaimAccountOption *option;
+	PurpleAccountOption *option;
 
-	option = gaim_account_option_new(GAIM_PREF_BOOLEAN, text, pref_name);
+	option = purple_account_option_new(PURPLE_PREF_BOOLEAN, text, pref_name);
 
 	if (option == NULL)
 		return NULL;
@@ -60,13 +60,13 @@ gaim_account_option_bool_new(const char *text, const char *pref_name,
 	return option;
 }
 
-GaimAccountOption *
-gaim_account_option_int_new(const char *text, const char *pref_name,
+PurpleAccountOption *
+purple_account_option_int_new(const char *text, const char *pref_name,
 							int default_value)
 {
-	GaimAccountOption *option;
+	PurpleAccountOption *option;
 
-	option = gaim_account_option_new(GAIM_PREF_INT, text, pref_name);
+	option = purple_account_option_new(PURPLE_PREF_INT, text, pref_name);
 
 	if (option == NULL)
 		return NULL;
@@ -76,13 +76,13 @@ gaim_account_option_int_new(const char *text, const char *pref_name,
 	return option;
 }
 
-GaimAccountOption *
-gaim_account_option_string_new(const char *text, const char *pref_name,
+PurpleAccountOption *
+purple_account_option_string_new(const char *text, const char *pref_name,
 							   const char *default_value)
 {
-	GaimAccountOption *option;
+	PurpleAccountOption *option;
 
-	option = gaim_account_option_new(GAIM_PREF_STRING, text, pref_name);
+	option = purple_account_option_new(PURPLE_PREF_STRING, text, pref_name);
 
 	if (option == NULL)
 		return NULL;
@@ -92,13 +92,13 @@ gaim_account_option_string_new(const char *text, const char *pref_name,
 	return option;
 }
 
-GaimAccountOption *
-gaim_account_option_list_new(const char *text, const char *pref_name,
+PurpleAccountOption *
+purple_account_option_list_new(const char *text, const char *pref_name,
 							 GList *list)
 {
-	GaimAccountOption *option;
+	PurpleAccountOption *option;
 
-	option = gaim_account_option_new(GAIM_PREF_STRING_LIST, text, pref_name);
+	option = purple_account_option_new(PURPLE_PREF_STRING_LIST, text, pref_name);
 
 	if (option == NULL)
 		return NULL;
@@ -109,18 +109,18 @@ gaim_account_option_list_new(const char *text, const char *pref_name,
 }
 
 void
-gaim_account_option_destroy(GaimAccountOption *option)
+purple_account_option_destroy(PurpleAccountOption *option)
 {
 	g_return_if_fail(option != NULL);
 
 	g_free(option->text);
 	g_free(option->pref_name);
 
-	if (option->type == GAIM_PREF_STRING)
+	if (option->type == PURPLE_PREF_STRING)
 	{
 		g_free(option->default_value.string);
 	}
-	else if (option->type == GAIM_PREF_STRING_LIST)
+	else if (option->type == PURPLE_PREF_STRING_LIST)
 	{
 		if (option->default_value.list != NULL)
 		{
@@ -133,50 +133,50 @@ gaim_account_option_destroy(GaimAccountOption *option)
 }
 
 void
-gaim_account_option_set_default_bool(GaimAccountOption *option,
+purple_account_option_set_default_bool(PurpleAccountOption *option,
 									 gboolean value)
 {
 	g_return_if_fail(option != NULL);
-	g_return_if_fail(option->type == GAIM_PREF_BOOLEAN);
+	g_return_if_fail(option->type == PURPLE_PREF_BOOLEAN);
 
 	option->default_value.boolean = value;
 }
 
 void
-gaim_account_option_set_default_int(GaimAccountOption *option, int value)
+purple_account_option_set_default_int(PurpleAccountOption *option, int value)
 {
 	g_return_if_fail(option != NULL);
-	g_return_if_fail(option->type == GAIM_PREF_INT);
+	g_return_if_fail(option->type == PURPLE_PREF_INT);
 
 	option->default_value.integer = value;
 }
 
 void
-gaim_account_option_set_default_string(GaimAccountOption *option,
+purple_account_option_set_default_string(PurpleAccountOption *option,
 									   const char *value)
 {
 	g_return_if_fail(option != NULL);
-	g_return_if_fail(option->type == GAIM_PREF_STRING);
+	g_return_if_fail(option->type == PURPLE_PREF_STRING);
 
 	g_free(option->default_value.string);
 	option->default_value.string = g_strdup(value);
 }
 
 void
-gaim_account_option_set_masked(GaimAccountOption *option, gboolean masked)
+purple_account_option_set_masked(PurpleAccountOption *option, gboolean masked)
 {
 	g_return_if_fail(option != NULL);
-	g_return_if_fail(option->type == GAIM_PREF_STRING);
+	g_return_if_fail(option->type == PURPLE_PREF_STRING);
 
 	option->masked = masked;
 }
 
 
 void
-gaim_account_option_set_list(GaimAccountOption *option, GList *values)
+purple_account_option_set_list(PurpleAccountOption *option, GList *values)
 {
 	g_return_if_fail(option != NULL);
-	g_return_if_fail(option->type == GAIM_PREF_STRING_LIST);
+	g_return_if_fail(option->type == PURPLE_PREF_STRING_LIST);
 
 	if (option->default_value.list != NULL)
 	{
@@ -188,17 +188,17 @@ gaim_account_option_set_list(GaimAccountOption *option, GList *values)
 }
 
 void
-gaim_account_option_add_list_item(GaimAccountOption *option,
+purple_account_option_add_list_item(PurpleAccountOption *option,
 								  const char *key, const char *value)
 {
-	GaimKeyValuePair *kvp;
+	PurpleKeyValuePair *kvp;
 
 	g_return_if_fail(option != NULL);
 	g_return_if_fail(key    != NULL);
 	g_return_if_fail(value  != NULL);
-	g_return_if_fail(option->type == GAIM_PREF_STRING_LIST);
+	g_return_if_fail(option->type == PURPLE_PREF_STRING_LIST);
 
-	kvp = g_new0(GaimKeyValuePair, 1);
+	kvp = g_new0(PurpleKeyValuePair, 1);
 	kvp->key = g_strdup(key);
 	kvp->value = g_strdup(value);
 
@@ -206,16 +206,16 @@ gaim_account_option_add_list_item(GaimAccountOption *option,
 											   kvp);
 }
 
-GaimPrefType
-gaim_account_option_get_type(const GaimAccountOption *option)
+PurplePrefType
+purple_account_option_get_type(const PurpleAccountOption *option)
 {
-	g_return_val_if_fail(option != NULL, GAIM_PREF_NONE);
+	g_return_val_if_fail(option != NULL, PURPLE_PREF_NONE);
 
 	return option->type;
 }
 
 const char *
-gaim_account_option_get_text(const GaimAccountOption *option)
+purple_account_option_get_text(const PurpleAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, NULL);
 
@@ -223,7 +223,7 @@ gaim_account_option_get_text(const GaimAccountOption *option)
 }
 
 const char *
-gaim_account_option_get_setting(const GaimAccountOption *option)
+purple_account_option_get_setting(const PurpleAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, NULL);
 
@@ -231,39 +231,39 @@ gaim_account_option_get_setting(const GaimAccountOption *option)
 }
 
 gboolean
-gaim_account_option_get_default_bool(const GaimAccountOption *option)
+purple_account_option_get_default_bool(const PurpleAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, FALSE);
-	g_return_val_if_fail(option->type == GAIM_PREF_BOOLEAN, FALSE);
+	g_return_val_if_fail(option->type == PURPLE_PREF_BOOLEAN, FALSE);
 
 	return option->default_value.boolean;
 }
 
 int
-gaim_account_option_get_default_int(const GaimAccountOption *option)
+purple_account_option_get_default_int(const PurpleAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, -1);
-	g_return_val_if_fail(option->type == GAIM_PREF_INT, -1);
+	g_return_val_if_fail(option->type == PURPLE_PREF_INT, -1);
 
 	return option->default_value.integer;
 }
 
 const char *
-gaim_account_option_get_default_string(const GaimAccountOption *option)
+purple_account_option_get_default_string(const PurpleAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, NULL);
-	g_return_val_if_fail(option->type == GAIM_PREF_STRING, NULL);
+	g_return_val_if_fail(option->type == PURPLE_PREF_STRING, NULL);
 
 	return option->default_value.string;
 }
 
 const char *
-gaim_account_option_get_default_list_value(const GaimAccountOption *option)
+purple_account_option_get_default_list_value(const PurpleAccountOption *option)
 {
-	GaimKeyValuePair *kvp;
+	PurpleKeyValuePair *kvp;
 
 	g_return_val_if_fail(option != NULL, NULL);
-	g_return_val_if_fail(option->type == GAIM_PREF_STRING_LIST, NULL);
+	g_return_val_if_fail(option->type == PURPLE_PREF_STRING_LIST, NULL);
 
 	if (option->default_value.list == NULL)
 		return NULL;
@@ -274,19 +274,19 @@ gaim_account_option_get_default_list_value(const GaimAccountOption *option)
 }
 
 gboolean
-gaim_account_option_get_masked(const GaimAccountOption *option)
+purple_account_option_get_masked(const PurpleAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, FALSE);
-	g_return_val_if_fail(option->type == GAIM_PREF_STRING, FALSE);
+	g_return_val_if_fail(option->type == PURPLE_PREF_STRING, FALSE);
 
 	return option->masked;
 }
 
 const GList *
-gaim_account_option_get_list(const GaimAccountOption *option)
+purple_account_option_get_list(const PurpleAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, NULL);
-	g_return_val_if_fail(option->type == GAIM_PREF_STRING_LIST, NULL);
+	g_return_val_if_fail(option->type == PURPLE_PREF_STRING_LIST, NULL);
 
 	return option->default_value.list;
 }
@@ -294,16 +294,16 @@ gaim_account_option_get_list(const GaimAccountOption *option)
 /**************************************************************************
  * Account User Split API
  **************************************************************************/
-GaimAccountUserSplit *
-gaim_account_user_split_new(const char *text, const char *default_value,
+PurpleAccountUserSplit *
+purple_account_user_split_new(const char *text, const char *default_value,
 							char sep)
 {
-	GaimAccountUserSplit *split;
+	PurpleAccountUserSplit *split;
 
 	g_return_val_if_fail(text != NULL, NULL);
 	g_return_val_if_fail(sep != 0, NULL);
 
-	split = g_new0(GaimAccountUserSplit, 1);
+	split = g_new0(PurpleAccountUserSplit, 1);
 
 	split->text = g_strdup(text);
 	split->field_sep = sep;
@@ -313,7 +313,7 @@ gaim_account_user_split_new(const char *text, const char *default_value,
 }
 
 void
-gaim_account_user_split_destroy(GaimAccountUserSplit *split)
+purple_account_user_split_destroy(PurpleAccountUserSplit *split)
 {
 	g_return_if_fail(split != NULL);
 
@@ -323,7 +323,7 @@ gaim_account_user_split_destroy(GaimAccountUserSplit *split)
 }
 
 const char *
-gaim_account_user_split_get_text(const GaimAccountUserSplit *split)
+purple_account_user_split_get_text(const PurpleAccountUserSplit *split)
 {
 	g_return_val_if_fail(split != NULL, NULL);
 
@@ -331,7 +331,7 @@ gaim_account_user_split_get_text(const GaimAccountUserSplit *split)
 }
 
 const char *
-gaim_account_user_split_get_default_value(const GaimAccountUserSplit *split)
+purple_account_user_split_get_default_value(const PurpleAccountUserSplit *split)
 {
 	g_return_val_if_fail(split != NULL, NULL);
 
@@ -339,7 +339,7 @@ gaim_account_user_split_get_default_value(const GaimAccountUserSplit *split)
 }
 
 char
-gaim_account_user_split_get_separator(const GaimAccountUserSplit *split)
+purple_account_user_split_get_separator(const PurpleAccountUserSplit *split)
 {
 	g_return_val_if_fail(split != NULL, 0);
 

@@ -1,9 +1,9 @@
 /**
  * @file sendqueue.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -38,7 +38,7 @@
 typedef struct _gc_and_packet gc_and_packet;
 
 struct _gc_and_packet {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	qq_sendpacket *packet;
 };
 
@@ -75,7 +75,7 @@ void qq_sendqueue_free(qq_data *qd)
 		g_free(p);
 		i++;
 	}
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "%d packets in sendqueue are freed!\n", i);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "%d packets in sendqueue are freed!\n", i);
 }
 
 /* FIXME We shouldn't be dropping packets, but for now we have to because
@@ -83,14 +83,14 @@ void qq_sendqueue_free(qq_data *qd)
  * Given enough time, a buildup of those packets would crash the client. */
 gboolean qq_sendqueue_timeout_callback(gpointer data)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	qq_data *qd;
 	GList *list;
 	qq_sendpacket *p;
 	time_t now;
 	gint wait_time;
 
-	gc = (GaimConnection *) data;
+	gc = (PurpleConnection *) data;
 	qd = (qq_data *) gc->proto_data;
 	now = time(NULL);
 	list = qd->sendqueue;
@@ -118,8 +118,8 @@ gboolean qq_sendqueue_timeout_callback(gpointer data)
 			switch (p->cmd) {
 			case QQ_CMD_KEEP_ALIVE:
 				if (qd->logged_in) {
-					gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Connection lost!\n");
-					gaim_connection_error(gc, _("Connection lost"));
+					purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Connection lost!\n");
+					purple_connection_error(gc, _("Connection lost"));
 					qd->logged_in = FALSE;
 				}
 				p->resend_times = -1;
@@ -127,11 +127,11 @@ gboolean qq_sendqueue_timeout_callback(gpointer data)
 			case QQ_CMD_LOGIN:
 			case QQ_CMD_REQUEST_LOGIN_TOKEN:
 				if (!qd->logged_in)	/* cancel login progress */
-					gaim_connection_error(gc, _("Login failed, no reply"));
+					purple_connection_error(gc, _("Login failed, no reply"));
 				p->resend_times = -1;
 				break;
 			default:{
-				gaim_debug(GAIM_DEBUG_WARNING, "QQ", 
+				purple_debug(PURPLE_DEBUG_WARNING, "QQ", 
 					"%s packet sent %d times but not acked. Not resending it.\n", 
 					qq_get_cmd_desc(p->cmd), QQ_RESEND_MAX);
 				}
@@ -142,7 +142,7 @@ gboolean qq_sendqueue_timeout_callback(gpointer data)
 			if (difftime(now, p->sendtime) > (wait_time * (p->resend_times + 1))) {
 				qq_proxy_write(qd, p->buf, p->len);
 				p->resend_times++;
-				gaim_debug(GAIM_DEBUG_INFO,
+				purple_debug(PURPLE_DEBUG_INFO,
 					   "QQ", "<<< [%05d] send again for %d times!\n", 
 					   p->send_seq, p->resend_times);
 			}

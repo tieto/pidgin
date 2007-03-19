@@ -2,9 +2,9 @@
  * @file gtkconn.c GTK+ Connection API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -49,35 +49,35 @@ typedef struct {
 
 /**
  * Contains accounts that are auto-reconnecting.
- * The key is a pointer to the GaimAccount and the
+ * The key is a pointer to the PurpleAccount and the
  * value is a pointer to a PidginAutoRecon.
  */
 static GHashTable *hash = NULL;
 
 static void
-pidgin_connection_connect_progress(GaimConnection *gc,
+pidgin_connection_connect_progress(PurpleConnection *gc,
 		const char *text, size_t step, size_t step_count)
 {
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	if (!gtkblist)
 		return;
 	pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
-					   (gaim_connections_get_connecting() != NULL));
+					   (purple_connections_get_connecting() != NULL));
 	pidgin_status_box_pulse_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox));
 }
 
 static void
-pidgin_connection_connected(GaimConnection *gc)
+pidgin_connection_connected(PurpleConnection *gc)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	PidginBuddyList *gtkblist;
 
-	account  = gaim_connection_get_account(gc);
+	account  = purple_connection_get_account(gc);
 	gtkblist = pidgin_blist_get_default_gtk_blist();
 
 	if (gtkblist != NULL)
 		pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
-					   (gaim_connections_get_connecting() != NULL));
+					   (purple_connections_get_connecting() != NULL));
 
 	g_hash_table_remove(hash, account);
 
@@ -85,15 +85,15 @@ pidgin_connection_connected(GaimConnection *gc)
 }
 
 static void
-pidgin_connection_disconnected(GaimConnection *gc)
+pidgin_connection_disconnected(PurpleConnection *gc)
 {
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 	if (!gtkblist)
 		return;
 	pidgin_status_box_set_connecting(PIDGIN_STATUS_BOX(gtkblist->statusbox),
-					   (gaim_connections_get_connecting() != NULL));
+					   (purple_connections_get_connecting() != NULL));
 
-	if (gaim_connections_get_all() != NULL)
+	if (purple_connections_get_all() != NULL)
 		return;
 
 	pidgindialogs_destroy_all();
@@ -113,35 +113,35 @@ free_auto_recon(gpointer data)
 static gboolean
 do_signon(gpointer data)
 {
-	GaimAccount *account = data;
+	PurpleAccount *account = data;
 	PidginAutoRecon *info;
-	GaimStatus *status;
+	PurpleStatus *status;
 
-	gaim_debug_info("autorecon", "do_signon called\n");
+	purple_debug_info("autorecon", "do_signon called\n");
 	g_return_val_if_fail(account != NULL, FALSE);
 	info = g_hash_table_lookup(hash, account);
 
 	if (info)
 		info->timeout = 0;
 
-	status = gaim_account_get_active_status(account);
-	if (gaim_status_is_online(status))
+	status = purple_account_get_active_status(account);
+	if (purple_status_is_online(status))
 	{
-		gaim_debug_info("autorecon", "calling gaim_account_connect\n");
-		gaim_account_connect(account);
-		gaim_debug_info("autorecon", "done calling gaim_account_connect\n");
+		purple_debug_info("autorecon", "calling purple_account_connect\n");
+		purple_account_connect(account);
+		purple_debug_info("autorecon", "done calling purple_account_connect\n");
 	}
 
 	return FALSE;
 }
 
 static void
-pidgin_connection_report_disconnect(GaimConnection *gc, const char *text)
+pidgin_connection_report_disconnect(PurpleConnection *gc, const char *text)
 {
-	GaimAccount *account = NULL;
+	PurpleAccount *account = NULL;
 	PidginAutoRecon *info;
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 	info = g_hash_table_lookup(hash, account);
 
 	pidgin_blist_update_account_error_state(account, text);
@@ -161,25 +161,25 @@ pidgin_connection_report_disconnect(GaimConnection *gc, const char *text)
 		if (info != NULL)
 			g_hash_table_remove(hash, account);
 
-		if (gaim_account_get_alias(account))
+		if (purple_account_get_alias(account))
 		{
 			n = g_strdup_printf("%s (%s) (%s)",
-					gaim_account_get_username(account),
-					gaim_account_get_alias(account),
-					gaim_account_get_protocol_name(account));
+					purple_account_get_username(account),
+					purple_account_get_alias(account),
+					purple_account_get_protocol_name(account));
 		}
 		else
 		{
 			n = g_strdup_printf("%s (%s)",
-					gaim_account_get_username(account),
-					gaim_account_get_protocol_name(account));
+					purple_account_get_username(account),
+					purple_account_get_protocol_name(account));
 		}
 
 		p = g_strdup_printf(_("%s disconnected"), n);
 		s = g_strdup_printf(_("%s\n\n"
 				PIDGIN_NAME " will not attempt to reconnect the account until you "
 				"correct the error and re-enable the account."), text);
-		gaim_notify_error(NULL, NULL, p, s);
+		purple_notify_error(NULL, NULL, p, s);
 		g_free(p);
 		g_free(s);
 		g_free(n);
@@ -189,22 +189,22 @@ pidgin_connection_report_disconnect(GaimConnection *gc, const char *text)
 		 * disconnected by wants_to_die?  This happens when you sign
 		 * on from somewhere else, or when you enter an invalid password.
 		 */
-		gaim_account_set_enabled(account, PIDGIN_UI, FALSE);
+		purple_account_set_enabled(account, PIDGIN_UI, FALSE);
 	}
 }
 
 static void pidgin_connection_network_connected ()
 {
-	GList *list = gaim_accounts_get_all_active();
+	GList *list = purple_accounts_get_all_active();
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
 
 	if(gtkblist)
 		pidgin_status_box_set_network_available(PIDGIN_STATUS_BOX(gtkblist->statusbox), TRUE);
 
 	while (list) {
-		GaimAccount *account = (GaimAccount*)list->data;
+		PurpleAccount *account = (PurpleAccount*)list->data;
 		g_hash_table_remove(hash, account);
-		if (gaim_account_is_disconnected(account))
+		if (purple_account_is_disconnected(account))
 			do_signon(account);
 		list = list->next;
 	}
@@ -212,35 +212,35 @@ static void pidgin_connection_network_connected ()
 
 static void pidgin_connection_network_disconnected ()
 {
-	GList *l = gaim_accounts_get_all_active();
+	GList *l = purple_accounts_get_all_active();
 	PidginBuddyList *gtkblist = pidgin_blist_get_default_gtk_blist();
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimConnection *gc = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *gc = NULL;
 	
 	if(gtkblist)
 		pidgin_status_box_set_network_available(PIDGIN_STATUS_BOX(gtkblist->statusbox), FALSE);
 
 	while (l) {
-		GaimAccount *a = (GaimAccount*)l->data;
-		if (!gaim_account_is_disconnected(a)) {
-			gc = gaim_account_get_connection(a);
+		PurpleAccount *a = (PurpleAccount*)l->data;
+		if (!purple_account_is_disconnected(a)) {
+			gc = purple_account_get_connection(a);
 			if (gc && gc->prpl) 
-				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 			if (prpl_info) {
 				if (prpl_info->keepalive)
 					prpl_info->keepalive(gc);
 				else
-					gaim_account_disconnect(a);
+					purple_account_disconnect(a);
 			}
 		}
 		l = l->next;
 	}
 }
 
-static void pidgin_connection_notice(GaimConnection *gc, const char *text)
+static void pidgin_connection_notice(PurpleConnection *gc, const char *text)
 { }
 
-static GaimConnectionUiOps conn_ui_ops =
+static PurpleConnectionUiOps conn_ui_ops =
 {
 	pidgin_connection_connect_progress,
 	pidgin_connection_connected,
@@ -251,14 +251,14 @@ static GaimConnectionUiOps conn_ui_ops =
 	pidgin_connection_network_disconnected
 };
 
-GaimConnectionUiOps *
+PurpleConnectionUiOps *
 pidgin_connections_get_ui_ops(void)
 {
 	return &conn_ui_ops;
 }
 
 static void
-account_removed_cb(GaimAccount *account, gpointer user_data)
+account_removed_cb(PurpleAccount *account, gpointer user_data)
 {
 	g_hash_table_remove(hash, account);
 
@@ -285,15 +285,15 @@ pidgin_connection_init(void)
 							g_direct_hash, g_direct_equal,
 							NULL, free_auto_recon);
 
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
+	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 						pidgin_connection_get_handle(),
-						GAIM_CALLBACK(account_removed_cb), NULL);
+						PURPLE_CALLBACK(account_removed_cb), NULL);
 }
 
 void
 pidgin_connection_uninit(void)
 {
-	gaim_signals_disconnect_by_handle(pidgin_connection_get_handle());
+	purple_signals_disconnect_by_handle(pidgin_connection_get_handle());
 
 	g_hash_table_destroy(hash);
 }

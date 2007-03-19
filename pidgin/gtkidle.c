@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -52,7 +52,7 @@
  *
  * In Debian bug #271639, jwz says:
  *
- * Gaim should simply ask xscreensaver how long the user has been idle:
+ * Purple should simply ask xscreensaver how long the user has been idle:
  *   % xscreensaver-command -time
  *   XScreenSaver 4.18: screen blanked since Tue Sep 14 14:10:45 2004
  *
@@ -117,7 +117,7 @@ pidgin_get_time_idle()
 }
 #endif /* USE_SCREENSAVER || HAVE_IOKIT */
 
-static GaimIdleUiOps ui_ops =
+static PurpleIdleUiOps ui_ops =
 {
 #if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
 	pidgin_get_time_idle
@@ -126,7 +126,7 @@ static GaimIdleUiOps ui_ops =
 #endif /* USE_SCREENSAVER || HAVE_IOKIT */
 };
 
-GaimIdleUiOps *
+PurpleIdleUiOps *
 pidgin_idle_get_ui_ops()
 {
 	return &ui_ops;

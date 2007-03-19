@@ -1,7 +1,7 @@
 /**
  * @file message.h Message handlers
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
  *
@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_JABBER_MESSAGE_H_
-#define _GAIM_JABBER_MESSAGE_H_
+#ifndef _PURPLE_JABBER_MESSAGE_H_
+#define _PURPLE_JABBER_MESSAGE_H_
 
 #include "buddy.h"
 #include "jabber.h"
@@ -68,11 +68,11 @@ void jabber_message_free(JabberMessage *jm);
 void jabber_message_send(JabberMessage *jm);
 
 void jabber_message_parse(JabberStream *js, xmlnode *packet);
-int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
-		GaimMessageFlags flags);
-int jabber_message_send_chat(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags);
+int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *msg,
+		PurpleMessageFlags flags);
+int jabber_message_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags);
 
-unsigned int jabber_send_typing(GaimConnection *gc, const char *who, GaimTypingState state);
+unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state);
 void jabber_message_conv_closed(JabberStream *js, const char *who);
 
-#endif /* _GAIM_JABBER_MESSAGE_H_ */
+#endif /* _PURPLE_JABBER_MESSAGE_H_ */

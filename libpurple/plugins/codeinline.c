@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -26,10 +26,10 @@
 #include "util.h"
 #include "version.h"
 
-GaimPlugin *plugin_handle = NULL;
+PurplePlugin *plugin_handle = NULL;
 
-static gboolean outgoing_msg_cb(GaimAccount *account, const char *who, char **message,
-					GaimConversation *conv, GaimMessageFlags flags, gpointer null)
+static gboolean outgoing_msg_cb(PurpleAccount *account, const char *who, char **message,
+					PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
 {
   char *m;
   char **ms = g_strsplit(*message, "<u>", -1);
@@ -45,29 +45,29 @@ static gboolean outgoing_msg_cb(GaimAccount *account, const char *who, char **me
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-     void *handle = gaim_conversations_get_handle();
+     void *handle = purple_conversations_get_handle();
      plugin_handle = plugin;
-     gaim_signal_connect(handle, "writing-im-msg", plugin,
-                GAIM_CALLBACK(outgoing_msg_cb), NULL);
-     gaim_signal_connect(handle, "sending-im-msg", plugin,
-		GAIM_CALLBACK(outgoing_msg_cb), NULL);
+     purple_signal_connect(handle, "writing-im-msg", plugin,
+                PURPLE_CALLBACK(outgoing_msg_cb), NULL);
+     purple_signal_connect(handle, "sending-im-msg", plugin,
+		PURPLE_CALLBACK(outgoing_msg_cb), NULL);
 
      return TRUE;
 }
 
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-     GAIM_PLUGIN_MAGIC,
-     GAIM_MAJOR_VERSION,
-     GAIM_MINOR_VERSION,     
-     GAIM_PLUGIN_STANDARD,
+     PURPLE_PLUGIN_MAGIC,
+     PURPLE_MAJOR_VERSION,
+     PURPLE_MINOR_VERSION,     
+     PURPLE_PLUGIN_STANDARD,
      NULL,
      0,
      NULL,
-     GAIM_PRIORITY_DEFAULT,
+     PURPLE_PRIORITY_DEFAULT,
      "codeinline",
      "Code Inline",
      "1.0",
@@ -75,7 +75,7 @@ static GaimPluginInfo info =
      "Changes the formatting of any outgoing text such that "
      "anything underlined will be received green and monospace.",
      "Sean Egan <seanegan@gmail.com>",
-     "http://gaim.sourceforge.net",
+     "http://purple.sourceforge.net",
      plugin_load,
      NULL,
      NULL,
@@ -86,8 +86,8 @@ static GaimPluginInfo info =
 };
 
  static void
- init_plugin(GaimPlugin *plugin)
+ init_plugin(PurplePlugin *plugin)
  {
  }
 
-GAIM_INIT_PLUGIN(urlcatcher, init_plugin, info)
+PURPLE_INIT_PLUGIN(urlcatcher, init_plugin, info)

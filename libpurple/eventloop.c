@@ -1,10 +1,10 @@
 /**
- * @file eventloop.c Gaim Event Loop API
+ * @file eventloop.c Purple Event Loop API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -25,44 +25,44 @@
 #include "eventloop.h"
 #include "internal.h"
 
-static GaimEventLoopUiOps *eventloop_ui_ops = NULL;
+static PurpleEventLoopUiOps *eventloop_ui_ops = NULL;
 
 guint
-gaim_timeout_add(guint interval, GSourceFunc function, gpointer data)
+purple_timeout_add(guint interval, GSourceFunc function, gpointer data)
 {
-	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();
+	PurpleEventLoopUiOps *ops = purple_eventloop_get_ui_ops();
 
 	return ops->timeout_add(interval, function, data);
 }
 
 gboolean
-gaim_timeout_remove(guint tag)
+purple_timeout_remove(guint tag)
 {
-	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();
+	PurpleEventLoopUiOps *ops = purple_eventloop_get_ui_ops();
 
 	return ops->timeout_remove(tag);
 }
 
 guint
-gaim_input_add(int source, GaimInputCondition condition, GaimInputFunction func, gpointer user_data)
+purple_input_add(int source, PurpleInputCondition condition, PurpleInputFunction func, gpointer user_data)
 {
-	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();
+	PurpleEventLoopUiOps *ops = purple_eventloop_get_ui_ops();
 
 	return ops->input_add(source, condition, func, user_data);
 }
 
 gboolean
-gaim_input_remove(guint tag)
+purple_input_remove(guint tag)
 {
-	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();
+	PurpleEventLoopUiOps *ops = purple_eventloop_get_ui_ops();
 
 	return ops->input_remove(tag);
 }
 
 int
-gaim_input_get_error(int fd, int *error)
+purple_input_get_error(int fd, int *error)
 {
-	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();
+	PurpleEventLoopUiOps *ops = purple_eventloop_get_ui_ops();
 
 	if (ops->input_get_error)
 	{
@@ -80,13 +80,13 @@ gaim_input_get_error(int fd, int *error)
 }
 
 void
-gaim_eventloop_set_ui_ops(GaimEventLoopUiOps *ops)
+purple_eventloop_set_ui_ops(PurpleEventLoopUiOps *ops)
 {
 	eventloop_ui_ops = ops;
 }
 
-GaimEventLoopUiOps *
-gaim_eventloop_get_ui_ops(void)
+PurpleEventLoopUiOps *
+purple_eventloop_get_ui_ops(void)
 {
 	g_return_val_if_fail(eventloop_ui_ops != NULL, NULL);
 

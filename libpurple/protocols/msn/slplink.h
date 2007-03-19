@@ -1,9 +1,9 @@
 /**
  * @file slplink.h MSNSLP Link support
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -84,7 +84,7 @@ MsnSlpMessage *msn_slplink_message_find(MsnSlpLink *slplink, long session_id, lo
 void msn_slplink_append_slp_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg);
 void msn_slplink_remove_slp_msg(MsnSlpLink *slplink,
 								MsnSlpMessage *slpmsg);
-void msn_slplink_request_ft(MsnSlpLink *slplink, GaimXfer *xfer);
+void msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer);
 
 void msn_slplink_request_object(MsnSlpLink *slplink,
 								const char *info,

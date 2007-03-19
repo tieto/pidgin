@@ -1,9 +1,9 @@
 /**
  * @file directconn.c MSN direct connection functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -98,7 +98,7 @@ create_listener(int port)
 
 	if (getaddrinfo(NULL, port_str, &hints, &res) != 0)
 	{
-		gaim_debug_error("msn", "Could not get address info: %s.\n",
+		purple_debug_error("msn", "Could not get address info: %s.\n",
 						 port_str);
 		return -1;
 	}
@@ -120,7 +120,7 @@ create_listener(int port)
 
 	if (c == NULL)
 	{
-		gaim_debug_error("msn", "Could not find socket: %s.\n", port_str);
+		purple_debug_error("msn", "Could not find socket: %s.\n", port_str);
 		return -1;
 	}
 
@@ -264,19 +264,19 @@ msn_directconn_send_msg(MsnDirectConn *directconn, MsnMessage *msg)
 static void
 msn_directconn_process_msg(MsnDirectConn *directconn, MsnMessage *msg)
 {
-	gaim_debug_info("msn", "directconn: process_msg\n");
+	purple_debug_info("msn", "directconn: process_msg\n");
 
 	msn_slplink_process_msg(directconn->slplink, msg);
 }
 
 static void
-read_cb(gpointer data, gint source, GaimInputCondition cond)
+read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnDirectConn* directconn;
 	char *body;
 	size_t len, body_len;
 
-	gaim_debug_info("msn", "read_cb: %d, %d\n", source, cond);
+	purple_debug_info("msn", "read_cb: %d, %d\n", source, cond);
 
 	directconn = data;
 
@@ -286,7 +286,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (len <= 0)
 	{
 		/* ERROR */
-		gaim_debug_error("msn", "error reading\n");
+		purple_debug_error("msn", "error reading\n");
 
 		msn_directconn_destroy(directconn);
 
@@ -295,12 +295,12 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	body_len = GUINT32_FROM_LE(body_len);
 
-	gaim_debug_info("msn", "body_len=%d\n", body_len);
+	purple_debug_info("msn", "body_len=%d\n", body_len);
 
 	if (body_len <= 0)
 	{
 		/* ERROR */
-		gaim_debug_error("msn", "error reading\n");
+		purple_debug_error("msn", "error reading\n");
 
 		msn_directconn_destroy(directconn);
 
@@ -314,11 +314,11 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		/* Let's read the data. */
 		len = read(directconn->fd, body, body_len);
 
-		gaim_debug_info("msn", "len=%d\n", len);
+		purple_debug_info("msn", "len=%d\n", len);
 	}
 	else
 	{
-		gaim_debug_error("msn", "Failed to allocate memory for read\n");
+		purple_debug_error("msn", "Failed to allocate memory for read\n");
 		len = 0;
 	}
 
@@ -346,7 +346,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	else
 	{
 		/* ERROR */
-		gaim_debug_error("msn", "error reading\n");
+		purple_debug_error("msn", "error reading\n");
 
 		msn_directconn_destroy(directconn);
 	}
@@ -358,7 +358,7 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 	MsnDirectConn* directconn;
 	int fd;
 
-	gaim_debug_misc("msn", "directconn: connect_cb: %d\n", source);
+	purple_debug_misc("msn", "directconn: connect_cb: %d\n", source);
 
 	directconn = data;
 	directconn->connect_data = NULL;
@@ -378,7 +378,7 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 
 	if (fd > 0)
 	{
-		directconn->inpa = gaim_input_add(fd, GAIM_INPUT_READ, read_cb,
+		directconn->inpa = purple_input_add(fd, PURPLE_INPUT_READ, read_cb,
 										  directconn);
 
 		if (TRUE)
@@ -396,10 +396,10 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 	else
 	{
 		/* ERROR */
-		gaim_debug_error("msn", "could not add input\n");
+		purple_debug_error("msn", "could not add input\n");
 
 		if (directconn->inpa)
-			gaim_input_remove(directconn->inpa);
+			purple_input_remove(directconn->inpa);
 
 		close(directconn->fd);
 	}
@@ -423,7 +423,7 @@ msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 	}
 #endif
 
-	directconn->connect_data = gaim_proxy_connect(NULL, session->account,
+	directconn->connect_data = purple_proxy_connect(NULL, session->account,
 			host, port, connect_cb, directconn);
 
 	if (directconn->connect_data != NULL)
@@ -448,7 +448,7 @@ msn_directconn_listen(MsnDirectConn *directconn)
 
 	directconn->fd = fd;
 
-	directconn->inpa = gaim_input_add(fd, GAIM_INPUT_READ, connect_cb,
+	directconn->inpa = purple_input_add(fd, PURPLE_INPUT_READ, connect_cb,
 		directconn);
 
 	directconn->port = port;
@@ -466,7 +466,7 @@ msn_directconn_new(MsnSlpLink *slplink)
 	directconn->slplink = slplink;
 
 	if (slplink->directconn != NULL)
-		gaim_debug_info("msn", "got_transresp: LEAK\n");
+		purple_debug_info("msn", "got_transresp: LEAK\n");
 
 	slplink->directconn = directconn;
 
@@ -477,10 +477,10 @@ void
 msn_directconn_destroy(MsnDirectConn *directconn)
 {
 	if (directconn->connect_data != NULL)
-		gaim_proxy_connect_cancel(directconn->connect_data);
+		purple_proxy_connect_cancel(directconn->connect_data);
 
 	if (directconn->inpa != 0)
-		gaim_input_remove(directconn->inpa);
+		purple_input_remove(directconn->inpa);
 
 	if (directconn->fd >= 0)
 		close(directconn->fd);

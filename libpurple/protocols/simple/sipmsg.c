@@ -1,7 +1,7 @@
 /**
  * @file sipmsg.c
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2005 Thomas Butter <butter@uni-mannheim.de>
  *
@@ -118,13 +118,13 @@ struct sipmsg *sipmsg_parse_header(const gchar *header) {
 void sipmsg_print(const struct sipmsg *msg) {
 	GSList *cur;
 	struct siphdrelement *elem;
-	gaim_debug(GAIM_DEBUG_MISC, "simple", "SIP MSG\n");
-	gaim_debug(GAIM_DEBUG_MISC, "simple", "response: %d\nmethod: %s\nbodylen: %d\n",msg->response,msg->method,msg->bodylen);
-	if(msg->target) gaim_debug(GAIM_DEBUG_MISC, "simple", "target: %s\n",msg->target);
+	purple_debug(PURPLE_DEBUG_MISC, "simple", "SIP MSG\n");
+	purple_debug(PURPLE_DEBUG_MISC, "simple", "response: %d\nmethod: %s\nbodylen: %d\n",msg->response,msg->method,msg->bodylen);
+	if(msg->target) purple_debug(PURPLE_DEBUG_MISC, "simple", "target: %s\n",msg->target);
 	cur = msg->headers;
 	while(cur) {
 		elem = cur->data;
-		gaim_debug(GAIM_DEBUG_MISC, "simple", "name: %s value: %s\n",elem->name, elem->value);
+		purple_debug(PURPLE_DEBUG_MISC, "simple", "name: %s value: %s\n",elem->name, elem->value);
 		cur = g_slist_next(cur);
 	}
 }

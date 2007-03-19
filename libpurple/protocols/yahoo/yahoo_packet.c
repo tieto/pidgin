@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -80,7 +80,7 @@ void yahoo_packet_hash(struct yahoo_packet *pkt, const char *fmt, ...)
 			yahoo_packet_hash_str(pkt, key, strval);
 			break;
 		default:
-			gaim_debug_error("yahoo", "Invalid format character '%c'\n", *cur);
+			purple_debug_error("yahoo", "Invalid format character '%c'\n", *cur);
 			break;
 		}
 	}
@@ -178,7 +178,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 			{
 				char *esc;
 				esc = g_strescape(pair->value, NULL);
-				gaim_debug(GAIM_DEBUG_MISC, "yahoo",
+				purple_debug(PURPLE_DEBUG_MISC, "yahoo",
 						   "Key: %d  \tValue: %s\n", pair->key, esc);
 				g_free(esc);
 			}
@@ -233,48 +233,48 @@ void yahoo_packet_dump(guchar *data, int len)
 #ifdef YAHOO_DEBUG
 	int i;
 
-	gaim_debug(GAIM_DEBUG_MISC, "yahoo", "");
+	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
 
 	for (i = 0; i + 1 < len; i += 2) {
 		if ((i % 16 == 0) && i) {
-			gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
-			gaim_debug(GAIM_DEBUG_MISC, "yahoo", "");
+			purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
+			purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
 		}
 
-		gaim_debug(GAIM_DEBUG_MISC, NULL, "%02x%02x ", data[i], data[i + 1]);
+		purple_debug(PURPLE_DEBUG_MISC, NULL, "%02x%02x ", data[i], data[i + 1]);
 	}
 	if (i < len)
-		gaim_debug(GAIM_DEBUG_MISC, NULL, "%02x", data[i]);
+		purple_debug(PURPLE_DEBUG_MISC, NULL, "%02x", data[i]);
 
-	gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
-	gaim_debug(GAIM_DEBUG_MISC, "yahoo", "");
+	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
+	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
 
 	for (i = 0; i < len; i++) {
 		if ((i % 16 == 0) && i) {
-			gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
-			gaim_debug(GAIM_DEBUG_MISC, "yahoo", "");
+			purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
+			purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
 		}
 
 		if (g_ascii_isprint(data[i]))
-			gaim_debug(GAIM_DEBUG_MISC, NULL, "%c ", data[i]);
+			purple_debug(PURPLE_DEBUG_MISC, NULL, "%c ", data[i]);
 		else
-			gaim_debug(GAIM_DEBUG_MISC, NULL, ". ");
+			purple_debug(PURPLE_DEBUG_MISC, NULL, ". ");
 	}
 
-	gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
+	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
 #endif
 }
 
 static void
-yahoo_packet_send_can_write(gpointer data, gint source, GaimInputCondition cond)
+yahoo_packet_send_can_write(gpointer data, gint source, PurpleInputCondition cond)
 {
 	struct yahoo_data *yd = data;
 	int ret, writelen;
 
-	writelen = gaim_circ_buffer_get_max_read(yd->txbuf);
+	writelen = purple_circ_buffer_get_max_read(yd->txbuf);
 
 	if (writelen == 0) {
-		gaim_input_remove(yd->txhandler);
+		purple_input_remove(yd->txhandler);
 		yd->txhandler = -1;
 		return;
 	}
@@ -285,11 +285,11 @@ yahoo_packet_send_can_write(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	else if (ret < 0) {
 		/* TODO: what to do here - do we really have to disconnect? */
-		gaim_connection_error(yd->gc, _("Write Error"));
+		purple_connection_error(yd->gc, _("Write Error"));
 		return;
 	}
 
-	gaim_circ_buffer_mark_read(yd->txbuf, ret);
+	purple_circ_buffer_mark_read(yd->txbuf, ret);
 }
 
 
@@ -346,16 +346,16 @@ int yahoo_packet_send(struct yahoo_packet *pkt, struct yahoo_data *yd)
 	if (ret < 0 && errno == EAGAIN)
 		ret = 0;
 	else if (ret <= 0) {
-		gaim_debug_warning("yahoo", "Only wrote %d of %d bytes!", ret, len);
+		purple_debug_warning("yahoo", "Only wrote %d of %d bytes!", ret, len);
 		g_free(data);
 		return ret;
 	}
 
 	if (ret < len) {
 		if (yd->txhandler == -1)
-			yd->txhandler = gaim_input_add(yd->fd, GAIM_INPUT_WRITE,
+			yd->txhandler = purple_input_add(yd->fd, PURPLE_INPUT_WRITE,
 				yahoo_packet_send_can_write, yd);
-		gaim_circ_buffer_append(yd->txbuf, data + ret, len - ret);
+		purple_circ_buffer_append(yd->txbuf, data + ret, len - ret);
 	}
 
 	g_free(data);

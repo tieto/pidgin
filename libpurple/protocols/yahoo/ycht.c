@@ -1,12 +1,12 @@
 /**
  * @file ycht.c The Yahoo! protocol plugin, YCHT protocol stuff.
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2004 Timothy Ringenbach <omarvo@hotmail.com>
  * Liberal amounts of code borrowed from the rest of the Yahoo! prpl.
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -54,7 +54,7 @@
  ************************************************************************************/
 static void ycht_process_login(YchtConn *ycht, YchtPkt *pkt)
 {
-	GaimConnection *gc = ycht->gc;
+	PurpleConnection *gc = ycht->gc;
 	struct yahoo_data *yd = gc->proto_data;
 
 	if (ycht->logged_in)
@@ -69,7 +69,7 @@ static void ycht_process_login(YchtConn *ycht, YchtPkt *pkt)
 
 static void ycht_process_logout(YchtConn *ycht, YchtPkt *pkt)
 {
-	GaimConnection *gc = ycht->gc;
+	PurpleConnection *gc = ycht->gc;
 	struct yahoo_data *yd = gc->proto_data;
 
 	yd->chat_online = FALSE;
@@ -79,8 +79,8 @@ static void ycht_process_logout(YchtConn *ycht, YchtPkt *pkt)
 static void ycht_process_chatjoin(YchtConn *ycht, YchtPkt *pkt)
 {
 	char *room, *topic;
-	GaimConnection *gc = ycht->gc;
-	GaimConversation *c = NULL;
+	PurpleConnection *gc = ycht->gc;
+	PurpleConversation *c = NULL;
 	gboolean new_room = FALSE;
 	char **members;
 	int i;
@@ -107,19 +107,19 @@ static void ycht_process_chatjoin(YchtConn *ycht, YchtPkt *pkt)
 		ycht->changing_rooms = FALSE;
 		c = serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
 	} else {
-		c = gaim_find_chat(gc, YAHOO_CHAT_ID);
+		c = purple_find_chat(gc, YAHOO_CHAT_ID);
 	}
 
 	if (topic)
-		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
+		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(c), NULL, topic);
 
 	for (i = 0; members[i]; i++) {
 		if (new_room) {
-			/*if (!strcmp(members[i], gaim_connection_get_display_name(ycht->gc)))
+			/*if (!strcmp(members[i], purple_connection_get_display_name(ycht->gc)))
 				continue;*/
-			gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), members[i], NULL, GAIM_CBFLAGS_NONE, TRUE);
+			purple_conv_chat_add_user(PURPLE_CONV_CHAT(c), members[i], NULL, PURPLE_CBFLAGS_NONE, TRUE);
 		} else {
-			yahoo_chat_add_user(GAIM_CONV_CHAT(c), members[i], NULL);
+			yahoo_chat_add_user(PURPLE_CONV_CHAT(c), members[i], NULL);
 		}
 	}
 
@@ -134,9 +134,9 @@ static void ycht_process_chatpart(YchtConn *ycht, YchtPkt *pkt)
 	who = g_list_nth_data(pkt->data, 1);
 
 	if (who && room) {
-		GaimConversation *c = gaim_find_chat(ycht->gc, YAHOO_CHAT_ID);
-		if (c && !gaim_utf8_strcasecmp(gaim_conversation_get_name(c), room))
-			gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c), who, NULL);
+		PurpleConversation *c = purple_find_chat(ycht->gc, YAHOO_CHAT_ID);
+		if (c && !purple_utf8_strcasecmp(purple_conversation_get_name(c), room))
+			purple_conv_chat_remove_user(PURPLE_CONV_CHAT(c), who, NULL);
 
 	}
 }
@@ -144,8 +144,8 @@ static void ycht_process_chatpart(YchtConn *ycht, YchtPkt *pkt)
 static void ycht_progress_chatmsg(YchtConn *ycht, YchtPkt *pkt)
 {
 	char *who, *what, *msg;
-	GaimConversation *c;
-	GaimConnection *gc = ycht->gc;
+	PurpleConversation *c;
+	PurpleConnection *gc = ycht->gc;
 
 	who = g_list_nth_data(pkt->data, 1);
 	what = g_list_nth_data(pkt->data, 2);
@@ -153,7 +153,7 @@ static void ycht_progress_chatmsg(YchtConn *ycht, YchtPkt *pkt)
 	if (!who || !what)
 		return;
 
-	c = gaim_find_chat(gc, YAHOO_CHAT_ID);
+	c = purple_find_chat(gc, YAHOO_CHAT_ID);
 	if (!c)
 		return;
 
@@ -174,7 +174,7 @@ static void ycht_progress_chatmsg(YchtConn *ycht, YchtPkt *pkt)
 static void ycht_progress_online_friends(YchtConn *ycht, YchtPkt *pkt)
 {
 #if 0
-	GaimConnection *gc = ycht->gc;
+	PurpleConnection *gc = ycht->gc;
 	struct yahoo_data *yd = gc->proto_data;
 
 	if (ycht->logged_in)
@@ -196,35 +196,35 @@ static void ycht_packet_dump(const guchar *data, int len)
 #ifdef YAHOO_YCHT_DEBUG
 	int i;
 
-	gaim_debug(GAIM_DEBUG_MISC, "yahoo", "");
+	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
 
 	for (i = 0; i + 1 < len; i += 2) {
 		if ((i % 16 == 0) && i) {
-			gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
-			gaim_debug(GAIM_DEBUG_MISC, "yahoo", "");
+			purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
+			purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
 		}
 
-		gaim_debug(GAIM_DEBUG_MISC, NULL, "%02hhx%02hhx ", data[i], data[i + 1]);
+		purple_debug(PURPLE_DEBUG_MISC, NULL, "%02hhx%02hhx ", data[i], data[i + 1]);
 	}
 	if (i < len)
-		gaim_debug(GAIM_DEBUG_MISC, NULL, "%02hhx", data[i]);
+		purple_debug(PURPLE_DEBUG_MISC, NULL, "%02hhx", data[i]);
 
-	gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
-	gaim_debug(GAIM_DEBUG_MISC, "yahoo", "");
+	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
+	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
 
 	for (i = 0; i < len; i++) {
 		if ((i % 16 == 0) && i) {
-			gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
-			gaim_debug(GAIM_DEBUG_MISC, "yahoo", "");
+			purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
+			purple_debug(PURPLE_DEBUG_MISC, "yahoo", "");
 		}
 
 		if (g_ascii_isprint(data[i]))
-			gaim_debug(GAIM_DEBUG_MISC, NULL, "%c ", data[i]);
+			purple_debug(PURPLE_DEBUG_MISC, NULL, "%c ", data[i]);
 		else
-			gaim_debug(GAIM_DEBUG_MISC, NULL, ". ");
+			purple_debug(PURPLE_DEBUG_MISC, NULL, ". ");
 	}
 
-	gaim_debug(GAIM_DEBUG_MISC, NULL, "\n");
+	purple_debug(PURPLE_DEBUG_MISC, NULL, "\n");
 #endif
 }
 
@@ -265,15 +265,15 @@ static int ycht_packet_length(YchtPkt *pkt)
 	return ret;
 }
 
-static void ycht_packet_send_write_cb(gpointer data, gint source, GaimInputCondition cond)
+static void ycht_packet_send_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	YchtConn *ycht = data;
 	int ret, writelen;
 
-	writelen = gaim_circ_buffer_get_max_read(ycht->txbuf);
+	writelen = purple_circ_buffer_get_max_read(ycht->txbuf);
 
 	if (writelen == 0) {
-		gaim_input_remove(ycht->tx_handler);
+		purple_input_remove(ycht->tx_handler);
 		ycht->tx_handler = 0;
 		return;
 	}
@@ -285,13 +285,13 @@ static void ycht_packet_send_write_cb(gpointer data, gint source, GaimInputCondi
 	else if (ret <= 0) {
 		/* TODO: error handling */
 /*
-		gaim_connection_error(gaim_account_get_connection(irc->account),
+		purple_connection_error(purple_account_get_connection(irc->account),
 			      _("Server has disconnected"));
 */
 		return;
 	}
 
-	gaim_circ_buffer_mark_read(ycht->txbuf, ret);
+	purple_circ_buffer_mark_read(ycht->txbuf, ret);
 
 }
 
@@ -341,10 +341,10 @@ static void ycht_packet_send(YchtConn *ycht, YchtPkt *pkt)
 
 	if (written < len) {
 		if (!ycht->tx_handler)
-			ycht->tx_handler = gaim_input_add(ycht->fd,
-				GAIM_INPUT_WRITE, ycht_packet_send_write_cb,
+			ycht->tx_handler = purple_input_add(ycht->fd,
+				PURPLE_INPUT_WRITE, ycht_packet_send_write_cb,
 				ycht);
-		gaim_circ_buffer_append(ycht->txbuf, buf + written,
+		purple_circ_buffer_append(ycht->txbuf, buf + written,
 			len - written);
 	}
 
@@ -364,7 +364,7 @@ static void ycht_packet_read(YchtPkt *pkt, const char *buf, int len)
 		len -= needle - pos + strlen(YCHT_SEP);
 		pos = needle + strlen(YCHT_SEP);
 		tmp2 = g_strescape(tmp, NULL);
-		gaim_debug_misc("yahoo", "Data[%d]:\t%s\n", i++, tmp2);
+		purple_debug_misc("yahoo", "Data[%d]:\t%s\n", i++, tmp2);
 		g_free(tmp2);
 	}
 
@@ -372,11 +372,11 @@ static void ycht_packet_read(YchtPkt *pkt, const char *buf, int len)
 		tmp = g_strndup(pos, len);
 		pkt->data = g_list_append(pkt->data, tmp);
 		tmp2 = g_strescape(tmp, NULL);
-		gaim_debug_misc("yahoo", "Data[%d]:\t%s\n", i, tmp2);
+		purple_debug_misc("yahoo", "Data[%d]:\t%s\n", i, tmp2);
 		g_free(tmp2);
 	};
 
-	gaim_debug_misc("yahoo", "--==End of incoming YCHT packet==--\n");
+	purple_debug_misc("yahoo", "--==End of incoming YCHT packet==--\n");
 }
 
 static void ycht_packet_process(YchtConn *ycht, YchtPkt *pkt)
@@ -405,7 +405,7 @@ static void ycht_packet_process(YchtConn *ycht, YchtPkt *pkt)
 		ycht_progress_online_friends(ycht, pkt);
 		break;
 	default:
-		gaim_debug_warning("yahoo", "YCHT: warning, unhandled service 0x%02x\n", pkt->service);
+		purple_debug_warning("yahoo", "YCHT: warning, unhandled service 0x%02x\n", pkt->service);
 	}
 }
 
@@ -438,12 +438,12 @@ void ycht_connection_close(YchtConn *ycht)
 	if (ycht->fd > 0)
 		close(ycht->fd);
 	if (ycht->inpa)
-		gaim_input_remove(ycht->inpa);
+		purple_input_remove(ycht->inpa);
 
 	if (ycht->tx_handler)
-		gaim_input_remove(ycht->tx_handler);
+		purple_input_remove(ycht->tx_handler);
 
-	gaim_circ_buffer_destroy(ycht->txbuf);
+	purple_circ_buffer_destroy(ycht->txbuf);
 
 	g_free(ycht->rxqueue);
 
@@ -453,11 +453,11 @@ void ycht_connection_close(YchtConn *ycht)
 static void ycht_connection_error(YchtConn *ycht, const gchar *error)
 {
 
-	gaim_notify_info(ycht->gc, NULL, _("Connection problem with the YCHT server."), error);
+	purple_notify_info(ycht->gc, NULL, _("Connection problem with the YCHT server."), error);
 	ycht_connection_close(ycht);
 }
 
-static void ycht_pending(gpointer data, gint source, GaimInputCondition cond)
+static void ycht_pending(gpointer data, gint source, PurpleInputCondition cond)
 {
 	YchtConn *ycht = data;
 	char buf[1024];
@@ -498,7 +498,7 @@ static void ycht_pending(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		if (strncmp("YCHT", (char *)ycht->rxqueue, 4) != 0)
-			gaim_debug_error("yahoo", "YCHT: protocol error.\n");
+			purple_debug_error("yahoo", "YCHT: protocol error.\n");
 
 		pos += 4; /* YCHT */
 
@@ -506,14 +506,14 @@ static void ycht_pending(gpointer data, gint source, GaimInputCondition cond)
 		service = yahoo_get32(ycht->rxqueue + pos); pos += 4;
 		status = yahoo_get16(ycht->rxqueue + pos); pos += 2;
 		pktlen  = yahoo_get16(ycht->rxqueue + pos); pos += 2;
-		gaim_debug(GAIM_DEBUG_MISC, "yahoo",
+		purple_debug(PURPLE_DEBUG_MISC, "yahoo",
 				   "ycht: %d bytes to read, rxlen is %d\n", pktlen, ycht->rxlen);
 
 		if (ycht->rxlen < (YCHT_HEADER_LEN + pktlen))
 			return;
 
-		gaim_debug_misc("yahoo", "--==Incoming YCHT packet==--\n");
-		gaim_debug(GAIM_DEBUG_MISC, "yahoo",
+		purple_debug_misc("yahoo", "--==Incoming YCHT packet==--\n");
+		purple_debug(PURPLE_DEBUG_MISC, "yahoo",
 			   "YCHT Service: 0x%02x Version: 0x%02x Status: 0x%02x\n",
 			   service, version, status);
 		ycht_packet_dump(ycht->rxqueue, YCHT_HEADER_LEN + pktlen);
@@ -540,7 +540,7 @@ static void ycht_pending(gpointer data, gint source, GaimInputCondition cond)
 static void ycht_got_connected(gpointer data, gint source, const gchar *error_message)
 {
 	YchtConn *ycht = data;
-	GaimConnection *gc = ycht->gc;
+	PurpleConnection *gc = ycht->gc;
 	struct yahoo_data *yd = gc->proto_data;
 	YchtPkt *pkt;
 	char *buf;
@@ -554,7 +554,7 @@ static void ycht_got_connected(gpointer data, gint source, const gchar *error_me
 
 	pkt = ycht_packet_new(YCHT_VERSION, YCHT_SERVICE_LOGIN, 0);
 
-	buf = g_strdup_printf("%s\001Y=%s; T=%s", gaim_connection_get_display_name(gc), yd->cookie_y, yd->cookie_t);
+	buf = g_strdup_printf("%s\001Y=%s; T=%s", purple_connection_get_display_name(gc), yd->cookie_y, yd->cookie_t);
 	ycht_packet_append(pkt, buf);
 	g_free(buf);
 
@@ -562,14 +562,14 @@ static void ycht_got_connected(gpointer data, gint source, const gchar *error_me
 
 	ycht_packet_free(pkt);
 
-	ycht->inpa = gaim_input_add(ycht->fd, GAIM_INPUT_READ, ycht_pending, ycht);
+	ycht->inpa = purple_input_add(ycht->fd, PURPLE_INPUT_READ, ycht_pending, ycht);
 }
 
-void ycht_connection_open(GaimConnection *gc)
+void ycht_connection_open(PurpleConnection *gc)
 {
 	YchtConn *ycht;
 	struct yahoo_data *yd = gc->proto_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
 
 	ycht = g_new0(YchtConn, 1);
 	ycht->gc = gc;
@@ -577,9 +577,9 @@ void ycht_connection_open(GaimConnection *gc)
 
 	yd->ycht = ycht;
 
-	if (gaim_proxy_connect(NULL, account,
-	                       gaim_account_get_string(account, "ycht-server",  YAHOO_YCHT_HOST),
-	                       gaim_account_get_int(account, "ycht-port", YAHOO_YCHT_PORT),
+	if (purple_proxy_connect(NULL, account,
+	                       purple_account_get_string(account, "ycht-server",  YAHOO_YCHT_HOST),
+	                       purple_account_get_int(account, "ycht-port", YAHOO_YCHT_PORT),
 	                       ycht_got_connected, ycht) == NULL)
 	{
 		ycht_connection_error(ycht, _("Connection problem"));
@@ -616,7 +616,7 @@ int ycht_chat_send(YchtConn *ycht, const char *room, const char *what)
 	char *msg1, *msg2, *buf;
 
 	if (strcmp(room, ycht->room))
-		gaim_debug_warning("yahoo", "uhoh, sending to the wrong room!\n");
+		purple_debug_warning("yahoo", "uhoh, sending to the wrong room!\n");
 
 	pkt = ycht_packet_new(YCHT_VERSION, YCHT_SERVICE_CHATMSG, 0);
 

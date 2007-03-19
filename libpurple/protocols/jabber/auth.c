@@ -1,5 +1,5 @@
 /*
- * gaim - Jabber Protocol Plugin
+ * purple - Jabber Protocol Plugin
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -41,12 +41,12 @@ jabber_process_starttls(JabberStream *js, xmlnode *packet)
 	xmlnode *starttls;
 
 	if((starttls = xmlnode_get_child(packet, "starttls"))) {
-		if(gaim_ssl_is_supported()) {
+		if(purple_ssl_is_supported()) {
 			jabber_send_raw(js,
 					"<starttls xmlns='urn:ietf:params:xml:ns:xmpp-tls'/>", -1);
 			return TRUE;
 		} else if(xmlnode_get_child(starttls, "required")) {
-			gaim_connection_error(js->gc, _("Server requires TLS/SSL for login.  No TLS/SSL support found."));
+			purple_connection_error(js->gc, _("Server requires TLS/SSL for login.  No TLS/SSL support found."));
 			return TRUE;
 		}
 	}
@@ -72,9 +72,9 @@ static void finish_plaintext_authentication(JabberStream *js)
 		response = g_string_append(response, js->user->node);
 		response = g_string_append_len(response, "\0", 1);
 		response = g_string_append(response,
-				gaim_connection_get_password(js->gc));
+				purple_connection_get_password(js->gc));
 
-		enc_out = gaim_base64_encode((guchar *)response->str, response->len);
+		enc_out = purple_base64_encode((guchar *)response->str, response->len);
 
 		xmlnode_set_attrib(auth, "mechanism", "PLAIN");
 		xmlnode_insert_data(auth, enc_out, -1);
@@ -94,22 +94,22 @@ static void finish_plaintext_authentication(JabberStream *js)
 		x = xmlnode_new_child(query, "resource");
 		xmlnode_insert_data(x, js->user->resource, -1);
 		x = xmlnode_new_child(query, "password");
-		xmlnode_insert_data(x, gaim_connection_get_password(js->gc), -1);
+		xmlnode_insert_data(x, purple_connection_get_password(js->gc), -1);
 		jabber_iq_set_callback(iq, auth_old_result_cb, NULL);
 		jabber_iq_send(iq);
 	}
 }
 
-static void allow_plaintext_auth(GaimAccount *account)
+static void allow_plaintext_auth(PurpleAccount *account)
 {
-	gaim_account_set_bool(account, "auth_plain_in_clear", TRUE);
+	purple_account_set_bool(account, "auth_plain_in_clear", TRUE);
 
 	finish_plaintext_authentication(account->gc->proto_data);
 }
 
-static void disallow_plaintext_auth(GaimAccount *account)
+static void disallow_plaintext_auth(PurpleAccount *account)
 {
-	gaim_connection_error(account->gc, _("Server requires plaintext authentication over an unencrypted stream"));
+	purple_connection_error(account->gc, _("Server requires plaintext authentication over an unencrypted stream"));
 }
 
 #ifdef HAVE_CYRUS_SASL
@@ -150,7 +150,7 @@ static int jabber_sasl_cb_simple(void *ctx, int id, const char **res, unsigned *
 static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secret_t **secret)
 {
 	JabberStream *js = (JabberStream *)ctx;
-	const char *pw = gaim_account_get_password(js->gc->account);
+	const char *pw = purple_account_get_password(js->gc->account);
 	size_t len;
 	static sasl_secret_t *x = NULL;
 
@@ -170,9 +170,9 @@ static int jabber_sasl_cb_secret(sasl_conn_t *conn, void *ctx, int id, sasl_secr
 	return SASL_OK;
 }
 
-static void allow_cyrus_plaintext_auth(GaimAccount *account)
+static void allow_cyrus_plaintext_auth(PurpleAccount *account)
 {
-	gaim_account_set_bool(account, "auth_plain_in_clear", TRUE);
+	purple_account_set_bool(account, "auth_plain_in_clear", TRUE);
 
 	jabber_auth_start_cyrus(account->gc->proto_data);
 }
@@ -194,7 +194,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 	if (!js->gsc) {
 		secprops.max_ssf = -1;
 		secprops.maxbufsize = 4096;
-		plaintext = gaim_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE);
+		plaintext = purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE);
 		if (!plaintext)
 			secprops.security_flags |= SASL_SEC_NOPLAINTEXT;
 	} else {
@@ -211,7 +211,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 		js->sasl_state = sasl_client_new("xmpp", js->serverFQDN, NULL, NULL, js->sasl_cb, 0, &js->sasl);
 		if (js->sasl_state==SASL_OK) {
 			sasl_setprop(js->sasl, SASL_SEC_PROPS, &secprops);
-			gaim_debug_info("sasl", "Mechs found: %s\n", js->sasl_mechs->str);
+			purple_debug_info("sasl", "Mechs found: %s\n", js->sasl_mechs->str);
 			js->sasl_state = sasl_client_start(js->sasl, js->sasl_mechs->str, NULL, &clientout, &coutlen, &mech);
 		}
 		switch (js->sasl_state) {
@@ -223,11 +223,11 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				/* No mechanisms do what we want. See if we can add
 				 * plaintext ones to the list. */
 
-				if (!gaim_account_get_password(js->gc->account)) {
-					gaim_connection_error(js->gc, _("Server couldn't authenticate you without a password"));
+				if (!purple_account_get_password(js->gc->account)) {
+					purple_connection_error(js->gc, _("Server couldn't authenticate you without a password"));
 					return;
 				} else if (!plaintext) {
-					gaim_request_yes_no(js->gc, _("Plaintext Authentication"),
+					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
 							_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 							2, js->gc->account,
@@ -235,7 +235,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 							disallow_plaintext_auth);
 					return;
 				} else {
-					gaim_connection_error(js->gc, _("Server does not use any supported authentication method"));
+					purple_connection_error(js->gc, _("Server does not use any supported authentication method"));
 					return;
 				}
 				/* not reached */
@@ -248,7 +248,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 
 				/* For everything else, fail the mechanism and try again */
 			default:
-				gaim_debug_info("sasl", "sasl_state is %d, failing the mech and trying again\n", js->sasl_state);
+				purple_debug_info("sasl", "sasl_state is %d, failing the mech and trying again\n", js->sasl_state);
 
 				/*
 				 * DAA: is this right?
@@ -282,7 +282,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 			if (coutlen == 0) {
 				xmlnode_insert_data(auth, "=", -1);
 			} else {
-				enc_out = gaim_base64_encode((unsigned char*)clientout, coutlen);
+				enc_out = purple_base64_encode((unsigned char*)clientout, coutlen);
 				xmlnode_insert_data(auth, enc_out, -1);
 				g_free(enc_out);
 			}
@@ -290,7 +290,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 		jabber_send(js, auth);
 		xmlnode_free(auth);
 	} else {
-		gaim_connection_error(js->gc, "SASL authentication failed\n");
+		purple_connection_error(js->gc, "SASL authentication failed\n");
 	}
 }
 
@@ -298,7 +298,7 @@ static int
 jabber_sasl_cb_log(void *context, int level, const char *message)
 {
 	if(level <= SASL_LOG_TRACE)
-		gaim_debug_info("sasl", "%s\n", message);
+		purple_debug_info("sasl", "%s\n", message);
 
 	return SASL_OK;
 }
@@ -325,7 +325,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	mechs = xmlnode_get_child(packet, "mechanisms");
 
 	if(!mechs) {
-		gaim_connection_error(js->gc, _("Invalid response from server."));
+		purple_connection_error(js->gc, _("Invalid response from server."));
 		return;
 	}
 
@@ -371,7 +371,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	js->sasl_cb[id].context = (void *)js;
 	id++;
 
-	if (gaim_account_get_password(js->gc->account)) {
+	if (purple_account_get_password(js->gc->account)) {
 		js->sasl_cb[id].id = SASL_CB_PASS;
 		js->sasl_cb[id].proc = jabber_sasl_cb_secret;
 		js->sasl_cb[id].context = (void *)js;
@@ -401,8 +401,8 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 	} else if(plain) {
 		js->auth_type = JABBER_AUTH_PLAIN;
 
-		if(js->gsc == NULL && !gaim_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
-			gaim_request_yes_no(js->gc, _("Plaintext Authentication"),
+		if(js->gsc == NULL && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
+			purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 					_("Plaintext Authentication"),
 					_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 					2, js->gc->account, allow_plaintext_auth,
@@ -411,7 +411,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 		}
 		finish_plaintext_authentication(js);
 	} else {
-		gaim_connection_error(js->gc,
+		purple_connection_error(js->gc,
 				_("Server does not use any supported authentication method"));
 	}
 #endif
@@ -434,7 +434,7 @@ static void auth_old_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			js->gc->wants_to_die = TRUE;
 		}
 
-		gaim_connection_error(js->gc, msg);
+		purple_connection_error(js->gc, msg);
 		g_free(msg);
 	}
 }
@@ -444,14 +444,14 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	JabberIq *iq;
 	xmlnode *query, *x;
 	const char *type = xmlnode_get_attrib(packet, "type");
-	const char *pw = gaim_connection_get_password(js->gc);
+	const char *pw = purple_connection_get_password(js->gc);
 
 	if(!type) {
-		gaim_connection_error(js->gc, _("Invalid response from server."));
+		purple_connection_error(js->gc, _("Invalid response from server."));
 		return;
 	} else if(!strcmp(type, "error")) {
 		char *msg = jabber_parse_error(js, packet);
-		gaim_connection_error(js->gc, msg);
+		purple_connection_error(js->gc, msg);
 		g_free(msg);
 	} else if(!strcmp(type, "result")) {
 		query = xmlnode_get_child(packet, "query");
@@ -470,7 +470,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			x = xmlnode_new_child(query, "digest");
 			s = g_strdup_printf("%s%s", js->stream_id, pw);
 
-			gaim_cipher_digest_region("sha1", (guchar *)s, strlen(s),
+			purple_cipher_digest_region("sha1", (guchar *)s, strlen(s),
 									  sizeof(hashval), hashval, NULL);
 
 			p = h;
@@ -482,9 +482,9 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			jabber_iq_send(iq);
 
 		} else if(xmlnode_get_child(query, "password")) {
-			if(js->gsc == NULL && !gaim_account_get_bool(js->gc->account,
+			if(js->gsc == NULL && !purple_account_get_bool(js->gc->account,
 						"auth_plain_in_clear", FALSE)) {
-				gaim_request_yes_no(js->gc, _("Plaintext Authentication"),
+				purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 						_("Plaintext Authentication"),
 						_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
 						2, js->gc->account, allow_plaintext_auth,
@@ -493,7 +493,7 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 			}
 			finish_plaintext_authentication(js);
 		} else {
-			gaim_connection_error(js->gc,
+			purple_connection_error(js->gc,
 					_("Server does not use any supported authentication method"));
 			return;
 		}
@@ -545,8 +545,8 @@ static char *
 generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		const char *cnonce, const char *a2, const char *realm)
 {
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 	guchar result[16];
 	size_t a1len;
 
@@ -561,37 +561,37 @@ generate_response_value(JabberID *jid, const char *passwd, const char *nonce,
 		convpasswd = g_strdup(passwd);
 	}
 
-	cipher = gaim_ciphers_find_cipher("md5");
-	context = gaim_cipher_context_new(cipher, NULL);
+	cipher = purple_ciphers_find_cipher("md5");
+	context = purple_cipher_context_new(cipher, NULL);
 
 	x = g_strdup_printf("%s:%s:%s", convnode, realm, convpasswd ? convpasswd : "");
-	gaim_cipher_context_append(context, (const guchar *)x, strlen(x));
-	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_context_append(context, (const guchar *)x, strlen(x));
+	purple_cipher_context_digest(context, sizeof(result), result, NULL);
 
 	a1 = g_strdup_printf("xxxxxxxxxxxxxxxx:%s:%s", nonce, cnonce);
 	a1len = strlen(a1);
 	g_memmove(a1, result, 16);
 
-	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, (const guchar *)a1, a1len);
-	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_context_reset(context, NULL);
+	purple_cipher_context_append(context, (const guchar *)a1, a1len);
+	purple_cipher_context_digest(context, sizeof(result), result, NULL);
 
-	ha1 = gaim_base16_encode(result, 16);
+	ha1 = purple_base16_encode(result, 16);
 
-	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, (const guchar *)a2, strlen(a2));
-	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_context_reset(context, NULL);
+	purple_cipher_context_append(context, (const guchar *)a2, strlen(a2));
+	purple_cipher_context_digest(context, sizeof(result), result, NULL);
 
-	ha2 = gaim_base16_encode(result, 16);
+	ha2 = purple_base16_encode(result, 16);
 
 	kd = g_strdup_printf("%s:%s:00000001:%s:auth:%s", ha1, nonce, cnonce, ha2);
 
-	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, (const guchar *)kd, strlen(kd));
-	gaim_cipher_context_digest(context, sizeof(result), result, NULL);
-	gaim_cipher_context_destroy(context);
+	purple_cipher_context_reset(context, NULL);
+	purple_cipher_context_append(context, (const guchar *)kd, strlen(kd));
+	purple_cipher_context_digest(context, sizeof(result), result, NULL);
+	purple_cipher_context_destroy(context);
 
-	z = gaim_base16_encode(result, 16);
+	z = purple_base16_encode(result, 16);
 
 	g_free(convnode);
 	g_free(convpasswd);
@@ -615,12 +615,12 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		GHashTable *parts;
 
 		if(!enc_in) {
-			gaim_connection_error(js->gc, _("Invalid response from server."));
+			purple_connection_error(js->gc, _("Invalid response from server."));
 			return;
 		}
 
-		dec_in = (char *)gaim_base64_decode(enc_in, NULL);
-		gaim_debug(GAIM_DEBUG_MISC, "jabber", "decoded challenge (%d): %s\n",
+		dec_in = (char *)purple_base64_decode(enc_in, NULL);
+		purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded challenge (%d): %s\n",
 				strlen(dec_in), dec_in);
 
 		parts = parse_challenge(dec_in);
@@ -636,7 +636,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 						"<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl' />",
 						-1);
 			} else {
-				gaim_connection_error(js->gc, _("Invalid challenge from server"));
+				purple_connection_error(js->gc, _("Invalid challenge from server"));
 			}
 			g_free(js->expected_rspauth);
 		} else {
@@ -665,12 +665,12 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 
 			a2 = g_strdup_printf("AUTHENTICATE:xmpp/%s", realm);
 			auth_resp = generate_response_value(js->user,
-					gaim_connection_get_password(js->gc), nonce, cnonce, a2, realm);
+					purple_connection_get_password(js->gc), nonce, cnonce, a2, realm);
 			g_free(a2);
 
 			a2 = g_strdup_printf(":xmpp/%s", realm);
 			js->expected_rspauth = generate_response_value(js->user,
-					gaim_connection_get_password(js->gc), nonce, cnonce, a2, realm);
+					purple_connection_get_password(js->gc), nonce, cnonce, a2, realm);
 			g_free(a2);
 
 
@@ -687,9 +687,9 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			g_free(auth_resp);
 			g_free(cnonce);
 
-			enc_out = gaim_base64_encode((guchar *)response->str, response->len);
+			enc_out = purple_base64_encode((guchar *)response->str, response->len);
 
-			gaim_debug(GAIM_DEBUG_MISC, "jabber", "decoded response (%d): %s\n", response->len, response->str);
+			purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded response (%d): %s\n", response->len, response->str);
 
 			buf = g_strdup_printf("<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>%s</response>", enc_out);
 
@@ -716,21 +716,21 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		gsize declen;
 		xmlnode *response;
 
-		dec_in = gaim_base64_decode(enc_in, &declen);
+		dec_in = purple_base64_decode(enc_in, &declen);
 
 		js->sasl_state = sasl_client_step(js->sasl, (char*)dec_in, declen,
 						  NULL, &c_out, &clen);
 		g_free(enc_in);
 		g_free(dec_in);
 		if (js->sasl_state != SASL_CONTINUE && js->sasl_state != SASL_OK) {
-			gaim_debug_error("jabber", "Error is %d : %s\n",js->sasl_state,sasl_errdetail(js->sasl));
-			gaim_connection_error(js->gc, _("SASL error"));
+			purple_debug_error("jabber", "Error is %d : %s\n",js->sasl_state,sasl_errdetail(js->sasl));
+			purple_connection_error(js->gc, _("SASL error"));
 			return;
 		} else {
 			response = xmlnode_new("response");
 			xmlnode_set_namespace(response, "urn:ietf:params:xml:ns:xmpp-sasl");
 			if (c_out) {
-				enc_out = gaim_base64_encode((unsigned char*)c_out, clen);
+				enc_out = purple_base64_encode((unsigned char*)c_out, clen);
 				xmlnode_insert_data(response, enc_out, -1);
 				g_free(enc_out);
 			}
@@ -749,7 +749,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 #endif
 
 	if(!ns || strcmp(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
-		gaim_connection_error(js->gc, _("Invalid response from server."));
+		purple_connection_error(js->gc, _("Invalid response from server."));
 		return;
 	}
 
@@ -765,7 +765,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 		gsize declen = 0;
 
 		if(enc_in != NULL)
-			dec_in = gaim_base64_decode(enc_in, &declen);
+			dec_in = purple_base64_decode(enc_in, &declen);
 
 		js->sasl_state = sasl_client_step(js->sasl, (char*)dec_in, declen, NULL, &c_out, &clen);
 
@@ -774,7 +774,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 
 		if (js->sasl_state != SASL_OK) {
 			/* This should never happen! */
-			gaim_connection_error(js->gc, _("Invalid response from server."));
+			purple_connection_error(js->gc, _("Invalid response from server."));
 		}
 	}
 	/* If we've negotiated a security layer, we need to enable it */
@@ -793,9 +793,9 @@ void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet)
 	char *msg = jabber_parse_error(js, packet);
 
 	if(!msg) {
-		gaim_connection_error(js->gc, _("Invalid response from server."));
+		purple_connection_error(js->gc, _("Invalid response from server."));
 	} else {
-		gaim_connection_error(js->gc, msg);
+		purple_connection_error(js->gc, msg);
 		g_free(msg);
 	}
 }

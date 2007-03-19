@@ -1,7 +1,7 @@
 /**
  * @file xdata.h utility functions
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
  *
@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_JABBER_XDATA_H_
-#define _GAIM_JABBER_XDATA_H_
+#ifndef _PURPLE_JABBER_XDATA_H_
+#define _PURPLE_JABBER_XDATA_H_
 
 #include "jabber.h"
 #include "xmlnode.h"
@@ -28,4 +28,4 @@
 typedef void (*jabber_x_data_cb)(JabberStream *js, xmlnode *result, gpointer user_data);
 void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb cb, gpointer user_data);
 
-#endif /* _GAIM_JABBER_XDATA_H_ */
+#endif /* _PURPLE_JABBER_XDATA_H_ */

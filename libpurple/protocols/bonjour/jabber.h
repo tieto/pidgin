@@ -1,9 +1,9 @@
 /**
- * @file jabber.h The Gaim interface to mDNS and peer to peer Jabber.
+ * @file jabber.h The Purple interface to mDNS and peer to peer Jabber.
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -36,7 +36,7 @@ typedef struct _BonjourJabber
 	gint port;
 	gint socket;
 	gint watcher_id;
-	GaimAccount* account;
+	PurpleAccount* account;
 } BonjourJabber;
 
 typedef struct _BonjourJabberConversation
@@ -58,7 +58,7 @@ gint bonjour_jabber_start(BonjourJabber *data);
 
 int bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body);
 
-void bonjour_jabber_close_conversation(BonjourJabber *data, GaimBuddy *gb);
+void bonjour_jabber_close_conversation(BonjourJabber *data, PurpleBuddy *gb);
 
 void bonjour_jabber_stop(BonjourJabber *data);
 

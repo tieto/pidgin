@@ -31,7 +31,7 @@
 #include <glib.h>
 #include <gtk/gtk.h>
 
-/* Gaim headers */
+/* Purple headers */
 #include <gtkconv.h>
 #include <gtkimhtml.h>
 #include <gtkplugin.h>
@@ -49,11 +49,11 @@ imhtml_expose_cb(GtkWidget *widget, GdkEventExpose *event, PidginConversation *g
 	GtkTextIter iter;
 	GdkRectangle buf;
 	int pad;
-	GaimConversation *conv = gtkconv->active_conv;
-	GaimConversationType type = gaim_conversation_get_type(conv);
+	PurpleConversation *conv = gtkconv->active_conv;
+	PurpleConversationType type = purple_conversation_get_type(conv);
 
-	if ((type == GAIM_CONV_TYPE_CHAT && !gaim_prefs_get_bool(PREF_CHATS)) ||
-			(type == GAIM_CONV_TYPE_IM && !gaim_prefs_get_bool(PREF_IMS)))
+	if ((type == PURPLE_CONV_TYPE_CHAT && !purple_prefs_get_bool(PREF_CHATS)) ||
+			(type == PURPLE_CONV_TYPE_IM && !purple_prefs_get_bool(PREF_IMS)))
 		return FALSE;
 
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(widget), &visible_rect);
@@ -111,7 +111,7 @@ update_marker_for_gtkconv(PidginConversation *gtkconv)
 static gboolean
 focus_removed(GtkWidget *widget, GdkEventVisibility *event, PidginWindow *win)
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 
 	conv = pidgin_conv_window_get_active_conversation(win);
@@ -202,7 +202,7 @@ attach_to_all_windows()
 }
 
 static void
-conv_created(GaimConversation *conv, gpointer null)
+conv_created(PurpleConversation *conv, gpointer null)
 {
 	PidginConversation *gtkconv = PIDGIN_CONVERSATION(conv);
 	PidginWindow *win;
@@ -217,61 +217,61 @@ conv_created(GaimConversation *conv, gpointer null)
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 	attach_to_all_windows();
 
-	gaim_signal_connect(gaim_conversations_get_handle(), "conversation-created",
-						plugin, GAIM_CALLBACK(conv_created), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "conversation-created",
+						plugin, PURPLE_CALLBACK(conv_created), NULL);
 
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	detach_from_all_windows();
 
 	return TRUE;
 }
 
-static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin)
+static PurplePluginPrefFrame *
+get_plugin_pref_frame(PurplePlugin *plugin)
 {
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *pref;
+	PurplePluginPrefFrame *frame;
+	PurplePluginPref *pref;
 
-	frame = gaim_plugin_pref_frame_new();
+	frame = purple_plugin_pref_frame_new();
 
-	pref = gaim_plugin_pref_new_with_label(_("Draw Markerline in "));
-	gaim_plugin_pref_frame_add(frame, pref);
+	pref = purple_plugin_pref_new_with_label(_("Draw Markerline in "));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_name_and_label(PREF_IMS,
+	pref = purple_plugin_pref_new_with_name_and_label(PREF_IMS,
 					_("_IM windows"));
-	gaim_plugin_pref_frame_add(frame, pref);
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_name_and_label(PREF_CHATS,
+	pref = purple_plugin_pref_new_with_name_and_label(PREF_CHATS,
 					_("C_hat windows"));
-	gaim_plugin_pref_frame_add(frame, pref);
+	purple_plugin_pref_frame_add(frame, pref);
 
 	return frame;
 }
 
-static GaimPluginUiInfo prefs_info = {
+static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
 	0,
 	NULL,
 };
 
-static GaimPluginInfo info = {
-	GAIM_PLUGIN_MAGIC,			/* Magic				*/
-	GAIM_MAJOR_VERSION,			/* Gaim Major Version	*/
-	GAIM_MINOR_VERSION,			/* Gaim Minor Version	*/
-	GAIM_PLUGIN_STANDARD,		/* plugin type			*/
+static PurplePluginInfo info = {
+	PURPLE_PLUGIN_MAGIC,			/* Magic				*/
+	PURPLE_MAJOR_VERSION,			/* Purple Major Version	*/
+	PURPLE_MINOR_VERSION,			/* Purple Minor Version	*/
+	PURPLE_PLUGIN_STANDARD,		/* plugin type			*/
 	PIDGIN_PLUGIN_TYPE,		/* ui requirement		*/
 	0,							/* flags				*/
 	NULL,						/* dependencies			*/
-	GAIM_PRIORITY_DEFAULT,		/* priority				*/
+	PURPLE_PRIORITY_DEFAULT,		/* priority				*/
 
 	PLUGIN_ID,					/* plugin id			*/
 	PLUGIN_NAME,			/* name					*/
@@ -279,7 +279,7 @@ static GaimPluginInfo info = {
 	PLUGIN_SUMMARY,			/* summary				*/
 	PLUGIN_DESCRIPTION,		/* description			*/
 	PLUGIN_AUTHOR,				/* author				*/
-	GAIM_WEBSITE,				/* website				*/
+	PURPLE_WEBSITE,				/* website				*/
 
 	plugin_load,				/* load					*/
 	plugin_unload,				/* unload				*/
@@ -292,11 +292,11 @@ static GaimPluginInfo info = {
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	gaim_prefs_add_none(PREF_PREFIX);
-	gaim_prefs_add_bool(PREF_IMS, FALSE);
-	gaim_prefs_add_bool(PREF_CHATS, TRUE);
+	purple_prefs_add_none(PREF_PREFIX);
+	purple_prefs_add_bool(PREF_IMS, FALSE);
+	purple_prefs_add_bool(PREF_CHATS, TRUE);
 }
 
-GAIM_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
+PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)

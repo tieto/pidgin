@@ -1,5 +1,5 @@
 /*
- * Evolution integration plugin for Gaim
+ * Evolution integration plugin for Purple
  *
  * Copyright (C) 2003 Christian Hammond.
  *
@@ -161,7 +161,7 @@ static void
 add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 		GList *list, const char *id)
 {
-	GaimAccount *account = NULL;
+	PurpleAccount *account = NULL;
 	GList *l;
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf;
@@ -169,13 +169,13 @@ add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 	if (list == NULL)
 		return;
 
-	for (l = gaim_connections_get_all(); l != NULL; l = l->next)
+	for (l = purple_connections_get_all(); l != NULL; l = l->next)
 	{
-		GaimConnection *gc = (GaimConnection *)l->data;
+		PurpleConnection *gc = (PurpleConnection *)l->data;
 
-		account = gaim_connection_get_account(gc);
+		account = purple_connection_get_account(gc);
 
-		if (!strcmp(gaim_account_get_protocol_id(account), id))
+		if (!strcmp(purple_account_get_protocol_id(account), id))
 			break;
 
 		account = NULL;
@@ -193,7 +193,7 @@ add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 		if (account_name == NULL)
 			continue;
 
-		if (gaim_find_buddy(dialog->account, account_name) != NULL)
+		if (purple_find_buddy(dialog->account, account_name) != NULL)
 			continue;
 
 		gtk_list_store_append(dialog->model, &iter);
@@ -205,8 +205,8 @@ add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 						   COLUMN_DATA, contact,
 						   -1);
 
-		if (!strcmp(gaim_account_get_protocol_id(account),
-					gaim_account_get_protocol_id(dialog->account)) &&
+		if (!strcmp(purple_account_get_protocol_id(account),
+					purple_account_get_protocol_id(dialog->account)) &&
 			dialog->username != NULL &&
 			!strcmp(account_name, dialog->username))
 		{
@@ -252,7 +252,7 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 
 	if (!gevo_load_addressbook(uri, &book, NULL))
 	{
-		gaim_debug_error("evolution",
+		purple_debug_error("evolution",
 						 "Error retrieving default addressbook\n");
 
 		return;
@@ -262,7 +262,7 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 
 	if (query == NULL)
 	{
-		gaim_debug_error("evolution", "Error in creating query\n");
+		purple_debug_error("evolution", "Error in creating query\n");
 
 		g_object_unref(book);
 
@@ -275,7 +275,7 @@ populate_treeview(GevoAddBuddyDialog *dialog, const gchar *uri)
 
 	if (!status)
 	{
-		gaim_debug_error("evolution", "Error %d in getting card list\n",
+		purple_debug_error("evolution", "Error %d in getting card list\n",
 						 status);
 
 		g_object_unref(book);
@@ -418,7 +418,7 @@ clear_cb(GtkWidget *w, GevoAddBuddyDialog *dialog)
 }
 
 void
-gevo_add_buddy_dialog_show(GaimAccount *account, const char *username,
+gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 						   const char *group, const char *alias)
 {
 	GevoAddBuddyDialog *dialog;
@@ -437,7 +437,7 @@ gevo_add_buddy_dialog_show(GaimAccount *account, const char *username,
 	dialog->account =
 		(account != NULL
 		 ? account
-		 : gaim_connection_get_account(gaim_connections_get_all()->data));
+		 : purple_connection_get_account(purple_connections_get_all()->data));
 
 	if (username != NULL)
 		dialog->username = g_strdup(username);
@@ -611,7 +611,7 @@ gevo_add_buddy_dialog_show(GaimAccount *account, const char *username,
 void
 gevo_add_buddy_dialog_add_person(GevoAddBuddyDialog *dialog,
 								 EContact *contact, const char *name,
-								 GaimAccount *account, const char *screenname)
+								 PurpleAccount *account, const char *screenname)
 {
 	GdkPixbuf *pixbuf;
 	GtkTreeIter iter;

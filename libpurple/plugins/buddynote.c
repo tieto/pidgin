@@ -26,24 +26,24 @@
 #include <version.h>
 
 static void
-dont_do_it_cb(GaimBlistNode *node, const char *note)
+dont_do_it_cb(PurpleBlistNode *node, const char *note)
 {
 }
 
 static void
-do_it_cb(GaimBlistNode *node, const char *note)
+do_it_cb(PurpleBlistNode *node, const char *note)
 {
-	gaim_blist_node_set_string(node, "notes", note);
+	purple_blist_node_set_string(node, "notes", note);
 }
 
 static void
-buddynote_edit_cb(GaimBlistNode *node, gpointer data)
+buddynote_edit_cb(PurpleBlistNode *node, gpointer data)
 {
 	const char *note;
 
-	note = gaim_blist_node_get_string(node, "notes");
+	note = purple_blist_node_get_string(node, "notes");
 
-	gaim_request_input(node, _("Notes"),
+	purple_request_input(node, _("Notes"),
 					   _("Enter your notes below..."),
 					   NULL,
 					   note, TRUE, FALSE, "html",
@@ -53,35 +53,35 @@ buddynote_edit_cb(GaimBlistNode *node, gpointer data)
 }
 
 static void
-buddynote_extended_menu_cb(GaimBlistNode *node, GList **m)
+buddynote_extended_menu_cb(PurpleBlistNode *node, GList **m)
 {
-	GaimMenuAction *bna = NULL;
+	PurpleMenuAction *bna = NULL;
 
 	*m = g_list_append(*m, bna);
-	bna = gaim_menu_action_new(_("Edit Notes..."), GAIM_CALLBACK(buddynote_edit_cb), NULL, NULL);
+	bna = purple_menu_action_new(_("Edit Notes..."), PURPLE_CALLBACK(buddynote_edit_cb), NULL, NULL);
 	*m = g_list_append(*m, bna);
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 
-	gaim_signal_connect(gaim_blist_get_handle(), "blist-node-extended-menu",
-						plugin, GAIM_CALLBACK(buddynote_extended_menu_cb), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "blist-node-extended-menu",
+						plugin, PURPLE_CALLBACK(buddynote_extended_menu_cb), NULL);
 
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,								/**< major version	*/
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,							/**< type			*/
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,								/**< major version	*/
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,							/**< type			*/
 	NULL,											/**< ui_requirement	*/
 	0,												/**< flags			*/
 	NULL,											/**< dependencies	*/
-	GAIM_PRIORITY_DEFAULT,							/**< priority		*/
+	PURPLE_PRIORITY_DEFAULT,							/**< priority		*/
 
 	"core-plugin_pack-buddynote",					/**< id				*/
 	N_("Buddy Notes"),								/**< name			*/
@@ -90,7 +90,7 @@ static GaimPluginInfo info =
 	N_("Adds the option to store notes for buddies "
 	   "on your buddy list."),						/**  description	*/
 	"Stu Tomlinson <stu@nosnilmot.com>",			/**< author			*/
-	GAIM_WEBSITE,									/**< homepage		*/
+	PURPLE_WEBSITE,									/**< homepage		*/
 
 	plugin_load,									/**< load			*/
 	NULL,											/**< unload			*/
@@ -104,7 +104,7 @@ static GaimPluginInfo info =
 
 
 static void
-init_plugin(GaimPlugin *plugin) {
+init_plugin(PurplePlugin *plugin) {
 }
 
-GAIM_INIT_PLUGIN(buddynote, init_plugin, info)
+PURPLE_INIT_PLUGIN(buddynote, init_plugin, info)

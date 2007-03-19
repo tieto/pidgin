@@ -2,9 +2,9 @@
  * @file gntpounce.c GNT Buddy Pounce API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -33,7 +33,7 @@
 #include <gntline.h>
 #include <gnttree.h>
 #include "internal.h"
-#include "gntgaim.h"
+#include "finch.h"
 
 #include "account.h"
 #include "conversation.h"
@@ -50,8 +50,8 @@
 typedef struct
 {
 	/* Pounce data */
-	GaimPounce  *pounce;
-	GaimAccount *account;
+	PurplePounce  *pounce;
+	PurpleAccount *account;
 
 	/* The window */
 	GntWidget *window;
@@ -90,7 +90,7 @@ typedef struct
 	/* Buttons */
 	GntWidget *save_button;
 
-} GaimGntPounceDialog;
+} PurpleGntPounceDialog;
 
 typedef struct
 {
@@ -106,7 +106,7 @@ static PouncesManager *pounces_manager = NULL;
  * Callbacks
  **************************************************************************/
 static gint
-delete_win_cb(GntWidget *w, GaimGntPounceDialog *dialog)
+delete_win_cb(GntWidget *w, PurpleGntPounceDialog *dialog)
 {
 	gnt_widget_destroy(dialog->window);
 	g_free(dialog);
@@ -115,21 +115,21 @@ delete_win_cb(GntWidget *w, GaimGntPounceDialog *dialog)
 }
 
 static void
-cancel_cb(GntWidget *w, GaimGntPounceDialog *dialog)
+cancel_cb(GntWidget *w, PurpleGntPounceDialog *dialog)
 {
 	gnt_widget_destroy(dialog->window);
 }
 
 static void
-add_pounce_to_treeview(GntTree *tree, GaimPounce *pounce)
+add_pounce_to_treeview(GntTree *tree, PurplePounce *pounce)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	const char *pouncer;
 	const char *pouncee;
 
-	account = gaim_pounce_get_pouncer(pounce);
-	pouncer = gaim_account_get_username(account);
-	pouncee = gaim_pounce_get_pouncee(pounce);
+	account = purple_pounce_get_pouncer(pounce);
+	pouncer = purple_account_get_username(account);
+	pouncee = purple_pounce_get_pouncee(pounce);
 	gnt_tree_add_row_last(tree, pounce,
 		gnt_tree_create_row(tree, pouncer, pouncee), NULL);
 }
@@ -141,7 +141,7 @@ populate_pounces_list(PouncesManager *dialog)
 
 	gnt_tree_remove_all(GNT_TREE(dialog->tree));
 
-	for (pounces = gaim_pounces_get_all(); pounces != NULL;
+	for (pounces = purple_pounces_get_all(); pounces != NULL;
 			pounces = g_list_next(pounces))
 	{
 		add_pounce_to_treeview(GNT_TREE(dialog->tree), pounces->data);
@@ -159,62 +159,62 @@ update_pounces(void)
 }
 
 static void
-signed_on_off_cb(GaimConnection *gc, gpointer user_data)
+signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 {
 	update_pounces();
 }
 
 static void
-save_pounce_cb(GntWidget *w, GaimGntPounceDialog *dialog)
+save_pounce_cb(GntWidget *w, PurpleGntPounceDialog *dialog)
 {
 	const char *name;
 	const char *message, *command, *reason;
-	GaimPounceEvent events   = GAIM_POUNCE_NONE;
-	GaimPounceOption options = GAIM_POUNCE_OPTION_NONE;
+	PurplePounceEvent events   = PURPLE_POUNCE_NONE;
+	PurplePounceOption options = PURPLE_POUNCE_OPTION_NONE;
 
 	name = gnt_entry_get_text(GNT_ENTRY(dialog->buddy_entry));
 
 	if (*name == '\0')
 	{
-		gaim_notify_error(NULL, NULL,
+		purple_notify_error(NULL, NULL,
 						  _("Please enter a buddy to pounce."), NULL);
 		return;
 	}
 
 	/* Options */
 	if (gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->on_away)))
-		options |= GAIM_POUNCE_OPTION_AWAY;
+		options |= PURPLE_POUNCE_OPTION_AWAY;
 
 	/* Events */
 	if (gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->signon)))
-		events |= GAIM_POUNCE_SIGNON;
+		events |= PURPLE_POUNCE_SIGNON;
 
 	if (gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->signoff)))
-		events |= GAIM_POUNCE_SIGNOFF;
+		events |= PURPLE_POUNCE_SIGNOFF;
 
 	if (gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->away)))
-		events |= GAIM_POUNCE_AWAY;
+		events |= PURPLE_POUNCE_AWAY;
 
 	if (gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->away_return)))
-		events |= GAIM_POUNCE_AWAY_RETURN;
+		events |= PURPLE_POUNCE_AWAY_RETURN;
 
 	if (gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->idle)))
-		events |= GAIM_POUNCE_IDLE;
+		events |= PURPLE_POUNCE_IDLE;
 
 	if (gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->idle_return)))
-		events |= GAIM_POUNCE_IDLE_RETURN;
+		events |= PURPLE_POUNCE_IDLE_RETURN;
 
 	if (gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->typing)))
-		events |= GAIM_POUNCE_TYPING;
+		events |= PURPLE_POUNCE_TYPING;
 
 	if (gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->typed)))
-		events |= GAIM_POUNCE_TYPED;
+		events |= PURPLE_POUNCE_TYPED;
 
 	if (gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->stop_typing)))
-		events |= GAIM_POUNCE_TYPING_STOPPED;
+		events |= PURPLE_POUNCE_TYPING_STOPPED;
 
 	if (gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->message_recv)))
-		events |= GAIM_POUNCE_MESSAGE_RECEIVED;
+		events |= PURPLE_POUNCE_MESSAGE_RECEIVED;
 
 	/* Data fields */
 	message = gnt_entry_get_text(GNT_ENTRY(dialog->send_msg_entry));
@@ -226,51 +226,51 @@ save_pounce_cb(GntWidget *w, GaimGntPounceDialog *dialog)
 	if (*command == '\0') command = NULL;
 
 	if (dialog->pounce == NULL) {
-		dialog->pounce = gaim_pounce_new(GAIM_GNT_UI, dialog->account,
+		dialog->pounce = purple_pounce_new(FINCH_UI, dialog->account,
 										 name, events, options);
 	} else {
-		gaim_pounce_set_events(dialog->pounce, events);
-		gaim_pounce_set_options(dialog->pounce, options);
-		gaim_pounce_set_pouncer(dialog->pounce, dialog->account);
-		gaim_pounce_set_pouncee(dialog->pounce, name);
+		purple_pounce_set_events(dialog->pounce, events);
+		purple_pounce_set_options(dialog->pounce, options);
+		purple_pounce_set_pouncer(dialog->pounce, dialog->account);
+		purple_pounce_set_pouncee(dialog->pounce, name);
 	}
 
 	/* Actions */
-	gaim_pounce_action_set_enabled(dialog->pounce, "open-window",
+	purple_pounce_action_set_enabled(dialog->pounce, "open-window",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->open_win)));
-	gaim_pounce_action_set_enabled(dialog->pounce, "popup-notify",
+	purple_pounce_action_set_enabled(dialog->pounce, "popup-notify",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->popup)));
-	gaim_pounce_action_set_enabled(dialog->pounce, "send-message",
+	purple_pounce_action_set_enabled(dialog->pounce, "send-message",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->send_msg)));
-	gaim_pounce_action_set_enabled(dialog->pounce, "execute-command",
+	purple_pounce_action_set_enabled(dialog->pounce, "execute-command",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->exec_cmd)));
-	gaim_pounce_action_set_enabled(dialog->pounce, "play-beep",
+	purple_pounce_action_set_enabled(dialog->pounce, "play-beep",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->play_sound)));
 
-	gaim_pounce_action_set_attribute(dialog->pounce, "send-message",
+	purple_pounce_action_set_attribute(dialog->pounce, "send-message",
 									 "message", message);
-	gaim_pounce_action_set_attribute(dialog->pounce, "execute-command",
+	purple_pounce_action_set_attribute(dialog->pounce, "execute-command",
 									 "command", command);
-	gaim_pounce_action_set_attribute(dialog->pounce, "popup-notify",
+	purple_pounce_action_set_attribute(dialog->pounce, "popup-notify",
 									 "reason", reason);
 
 	/* Set the defaults for next time. */
-	gaim_prefs_set_bool("/gaim/gnt/pounces/default_actions/open-window",
+	purple_prefs_set_bool("/purple/gnt/pounces/default_actions/open-window",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->open_win)));
-	gaim_prefs_set_bool("/gaim/gnt/pounces/default_actions/popup-notify",
+	purple_prefs_set_bool("/purple/gnt/pounces/default_actions/popup-notify",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->popup)));
-	gaim_prefs_set_bool("/gaim/gnt/pounces/default_actions/send-message",
+	purple_prefs_set_bool("/purple/gnt/pounces/default_actions/send-message",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->send_msg)));
-	gaim_prefs_set_bool("/gaim/gnt/pounces/default_actions/execute-command",
+	purple_prefs_set_bool("/purple/gnt/pounces/default_actions/execute-command",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->exec_cmd)));
-	gaim_prefs_set_bool("/gaim/gnt/pounces/default_actions/play-beep",
+	purple_prefs_set_bool("/purple/gnt/pounces/default_actions/play-beep",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->play_sound)));
 
-	gaim_pounce_set_save(dialog->pounce,
+	purple_pounce_set_save(dialog->pounce,
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->save_pounce)));
 
-	gaim_pounce_set_pouncer(dialog->pounce,
-		(GaimAccount *)gnt_combo_box_get_selected_data(GNT_COMBO_BOX(dialog->account_menu)));
+	purple_pounce_set_pouncer(dialog->pounce,
+		(PurpleAccount *)gnt_combo_box_get_selected_data(GNT_COMBO_BOX(dialog->account_menu)));
 
 	update_pounces();
 
@@ -279,10 +279,10 @@ save_pounce_cb(GntWidget *w, GaimGntPounceDialog *dialog)
 
 
 void
-finch_pounce_editor_show(GaimAccount *account, const char *name,
-							GaimPounce *cur_pounce)
+finch_pounce_editor_show(PurpleAccount *account, const char *name,
+							PurplePounce *cur_pounce)
 {
-	GaimGntPounceDialog *dialog;
+	PurpleGntPounceDialog *dialog;
 	GntWidget *window;
 	GntWidget *bbox;
 	GntWidget *hbox;
@@ -292,25 +292,25 @@ finch_pounce_editor_show(GaimAccount *account, const char *name,
 
 	g_return_if_fail((cur_pounce != NULL) ||
 	                 (account != NULL) ||
-	                 (gaim_accounts_get_all() != NULL));
+	                 (purple_accounts_get_all() != NULL));
 
-	dialog = g_new0(GaimGntPounceDialog, 1);
+	dialog = g_new0(PurpleGntPounceDialog, 1);
 
 	if (cur_pounce != NULL) {
 		dialog->pounce  = cur_pounce;
-		dialog->account = gaim_pounce_get_pouncer(cur_pounce);
+		dialog->account = purple_pounce_get_pouncer(cur_pounce);
 	} else if (account != NULL) {
 		dialog->pounce  = NULL;
 		dialog->account = account;
 	} else {
-		GList *connections = gaim_connections_get_all();
-		GaimConnection *gc;
+		GList *connections = purple_connections_get_all();
+		PurpleConnection *gc;
 
 		if (connections != NULL) {
-			gc = (GaimConnection *)connections->data;
-			dialog->account = gaim_connection_get_account(gc);
+			gc = (PurpleConnection *)connections->data;
+			dialog->account = purple_connection_get_account(gc);
 		} else
-			dialog->account = gaim_accounts_get_all()->data;
+			dialog->account = purple_accounts_get_all()->data;
 
 		dialog->pounce  = NULL;
 	}
@@ -332,16 +332,16 @@ finch_pounce_editor_show(GaimAccount *account, const char *name,
 	/* Account: */
 	gnt_box_add_widget(GNT_BOX(window), gnt_label_new(_("Account:")));
 	dialog->account_menu = combo = gnt_combo_box_new();
-	list = gaim_accounts_get_all();
+	list = purple_accounts_get_all();
 	for (; list; list = list->next)
 	{
-		GaimAccount *account;
+		PurpleAccount *account;
 		char *text;
 
 		account = list->data;
 		text = g_strdup_printf("%s (%s)",
-				gaim_account_get_username(account),
-				gaim_account_get_protocol_name(account));
+				purple_account_get_username(account),
+				purple_account_get_protocol_name(account));
 		gnt_combo_box_add_data(GNT_COMBO_BOX(combo), account, text);
 		g_free(text);
 	}
@@ -361,7 +361,7 @@ finch_pounce_editor_show(GaimAccount *account, const char *name,
 
 	if (cur_pounce != NULL) {
 		gnt_entry_set_text(GNT_ENTRY(dialog->buddy_entry),
-						   gaim_pounce_get_pouncee(cur_pounce));
+						   purple_pounce_get_pouncee(cur_pounce));
 	} else if (name != NULL) {
 		gnt_entry_set_text(GNT_ENTRY(dialog->buddy_entry), name);
 	}
@@ -470,66 +470,66 @@ finch_pounce_editor_show(GaimAccount *account, const char *name,
 	/* Set the values of stuff. */
 	if (cur_pounce != NULL)
 	{
-		GaimPounceEvent events   = gaim_pounce_get_events(cur_pounce);
-		GaimPounceOption options = gaim_pounce_get_options(cur_pounce);
+		PurplePounceEvent events   = purple_pounce_get_events(cur_pounce);
+		PurplePounceOption options = purple_pounce_get_options(cur_pounce);
 		const char *value;
 
 		/* Options */
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->on_away),
-									(options & GAIM_POUNCE_OPTION_AWAY));
+									(options & PURPLE_POUNCE_OPTION_AWAY));
 
 		/* Events */
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->signon),
-									(events & GAIM_POUNCE_SIGNON));
+									(events & PURPLE_POUNCE_SIGNON));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->signoff),
-									(events & GAIM_POUNCE_SIGNOFF));
+									(events & PURPLE_POUNCE_SIGNOFF));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->away),
-									(events & GAIM_POUNCE_AWAY));
+									(events & PURPLE_POUNCE_AWAY));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->away_return),
-									(events & GAIM_POUNCE_AWAY_RETURN));
+									(events & PURPLE_POUNCE_AWAY_RETURN));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->idle),
-									(events & GAIM_POUNCE_IDLE));
+									(events & PURPLE_POUNCE_IDLE));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->idle_return),
-									(events & GAIM_POUNCE_IDLE_RETURN));
+									(events & PURPLE_POUNCE_IDLE_RETURN));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->typing),
-									(events & GAIM_POUNCE_TYPING));
+									(events & PURPLE_POUNCE_TYPING));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->typed),
-									(events & GAIM_POUNCE_TYPED));
+									(events & PURPLE_POUNCE_TYPED));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->stop_typing),
-									(events & GAIM_POUNCE_TYPING_STOPPED));
+									(events & PURPLE_POUNCE_TYPING_STOPPED));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->message_recv),
-									(events & GAIM_POUNCE_MESSAGE_RECEIVED));
+									(events & PURPLE_POUNCE_MESSAGE_RECEIVED));
 
 		/* Actions */
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->open_win),
-			gaim_pounce_action_is_enabled(cur_pounce, "open-window"));
+			purple_pounce_action_is_enabled(cur_pounce, "open-window"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->popup),
-			gaim_pounce_action_is_enabled(cur_pounce, "popup-notify"));
+			purple_pounce_action_is_enabled(cur_pounce, "popup-notify"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->send_msg),
-			gaim_pounce_action_is_enabled(cur_pounce, "send-message"));
+			purple_pounce_action_is_enabled(cur_pounce, "send-message"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->exec_cmd),
-			gaim_pounce_action_is_enabled(cur_pounce, "execute-command"));
+			purple_pounce_action_is_enabled(cur_pounce, "execute-command"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->play_sound),
-			gaim_pounce_action_is_enabled(cur_pounce, "play-beep"));
+			purple_pounce_action_is_enabled(cur_pounce, "play-beep"));
 
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->save_pounce),
-			gaim_pounce_get_save(cur_pounce));
+			purple_pounce_get_save(cur_pounce));
 
-		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
+		if ((value = purple_pounce_action_get_attribute(cur_pounce,
 		                                              "send-message",
 		                                              "message")) != NULL)
 		{
 			gnt_entry_set_text(GNT_ENTRY(dialog->send_msg_entry), value);
 		}
 
-		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
+		if ((value = purple_pounce_action_get_attribute(cur_pounce,
 		                                              "popup-notify",
 		                                              "reason")) != NULL)
 		{
 			gnt_entry_set_text(GNT_ENTRY(dialog->popup_entry), value);
 		}
 
-		if ((value = gaim_pounce_action_get_attribute(cur_pounce,
+		if ((value = purple_pounce_action_get_attribute(cur_pounce,
 		                                              "execute-command",
 		                                              "command")) != NULL)
 		{
@@ -538,24 +538,24 @@ finch_pounce_editor_show(GaimAccount *account, const char *name,
 	}
 	else
 	{
-		GaimBuddy *buddy = NULL;
+		PurpleBuddy *buddy = NULL;
 
 		if (name != NULL)
-			buddy = gaim_find_buddy(account, name);
+			buddy = purple_find_buddy(account, name);
 
 		/* Set some defaults */
 		if (buddy == NULL) {
 			gnt_check_box_set_checked(
 				GNT_CHECK_BOX(dialog->signon), TRUE);
 		} else {
-			if (!GAIM_BUDDY_IS_ONLINE(buddy)) {
+			if (!PURPLE_BUDDY_IS_ONLINE(buddy)) {
 				gnt_check_box_set_checked(
 					GNT_CHECK_BOX(dialog->signon), TRUE);
 			} else {
 				gboolean default_set = FALSE;
-				GaimPresence *presence = gaim_buddy_get_presence(buddy);
+				PurplePresence *presence = purple_buddy_get_presence(buddy);
 
-				if (gaim_presence_is_idle(presence))
+				if (purple_presence_is_idle(presence))
 				{
 					gnt_check_box_set_checked(
 						GNT_CHECK_BOX(dialog->idle_return), TRUE);
@@ -563,7 +563,7 @@ finch_pounce_editor_show(GaimAccount *account, const char *name,
 					default_set = TRUE;
 				}
 
-				if (!gaim_presence_is_available(presence))
+				if (!purple_presence_is_available(presence))
 				{
 					gnt_check_box_set_checked(
 						GNT_CHECK_BOX(dialog->away_return), TRUE);
@@ -580,15 +580,15 @@ finch_pounce_editor_show(GaimAccount *account, const char *name,
 		}
 
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->open_win),
-			gaim_prefs_get_bool("/gaim/gnt/pounces/default_actions/open-window"));
+			purple_prefs_get_bool("/purple/gnt/pounces/default_actions/open-window"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->popup),
-			gaim_prefs_get_bool("/gaim/gnt/pounces/default_actions/popup-notify"));
+			purple_prefs_get_bool("/purple/gnt/pounces/default_actions/popup-notify"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->send_msg),
-			gaim_prefs_get_bool("/gaim/gnt/pounces/default_actions/send-message"));
+			purple_prefs_get_bool("/purple/gnt/pounces/default_actions/send-message"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->exec_cmd),
-			gaim_prefs_get_bool("/gaim/gnt/pounces/default_actions/execute-command"));
+			purple_prefs_get_bool("/purple/gnt/pounces/default_actions/execute-command"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->play_sound),
-			gaim_prefs_get_bool("/gaim/gnt/pounces/default_actions/play-beep"));
+			purple_prefs_get_bool("/purple/gnt/pounces/default_actions/play-beep"));
 	}
 
 	gnt_widget_show(window);
@@ -619,17 +619,17 @@ static void
 pounces_manager_modify_cb(GntButton *button, gpointer user_data)
 {
 	PouncesManager *dialog = user_data;
-	GaimPounce *pounce = gnt_tree_get_selection_data(GNT_TREE(dialog->tree));
+	PurplePounce *pounce = gnt_tree_get_selection_data(GNT_TREE(dialog->tree));
 	finch_pounce_editor_show(NULL, NULL, pounce);
 }
 
 static void
-pounces_manager_delete_confirm_cb(GaimPounce *pounce)
+pounces_manager_delete_confirm_cb(PurplePounce *pounce)
 {
 	gnt_tree_remove(GNT_TREE(pounces_manager->tree), pounce);
 
-	gaim_request_close_with_handle(pounce);
-	gaim_pounce_destroy(pounce);
+	purple_request_close_with_handle(pounce);
+	purple_pounce_destroy(pounce);
 }
 
 
@@ -637,17 +637,17 @@ static void
 pounces_manager_delete_cb(GntButton *button, gpointer user_data)
 {
 	PouncesManager *dialog = user_data;
-	GaimPounce *pounce;
-	GaimAccount *account;
+	PurplePounce *pounce;
+	PurpleAccount *account;
 	const char *pouncer, *pouncee;
 	char *buf;
 
-	pounce = (GaimPounce *)gnt_tree_get_selection_data(GNT_TREE(dialog->tree));
-	account = gaim_pounce_get_pouncer(pounce);
-	pouncer = gaim_account_get_username(account);
-	pouncee = gaim_pounce_get_pouncee(pounce);
+	pounce = (PurplePounce *)gnt_tree_get_selection_data(GNT_TREE(dialog->tree));
+	account = purple_pounce_get_pouncer(pounce);
+	pouncer = purple_account_get_username(account);
+	pouncee = purple_pounce_get_pouncee(pounce);
 	buf = g_strdup_printf(_("Are you sure you want to delete the pounce on %s for %s?"), pouncee, pouncer);
-	gaim_request_action(pounce, NULL, buf, NULL, 0, pounce, 2,
+	purple_request_action(pounce, NULL, buf, NULL, 0, pounce, 2,
 						_("Delete"), pounces_manager_delete_confirm_cb,
 						_("Cancel"), NULL);
 	g_free(buf);
@@ -739,48 +739,48 @@ finch_pounces_manager_hide(void)
 	if (pounces_manager->window != NULL)
 		gnt_widget_destroy(pounces_manager->window);
 
-	gaim_signals_disconnect_by_handle(pounces_manager);
+	purple_signals_disconnect_by_handle(pounces_manager);
 
 	g_free(pounces_manager);
 	pounces_manager = NULL;
 }
 
 static void
-pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
+pounce_cb(PurplePounce *pounce, PurplePounceEvent events, void *data)
 {
-	GaimConversation *conv;
-	GaimAccount *account;
-	GaimBuddy *buddy;
+	PurpleConversation *conv;
+	PurpleAccount *account;
+	PurpleBuddy *buddy;
 	const char *pouncee;
 	const char *alias;
 
-	pouncee = gaim_pounce_get_pouncee(pounce);
-	account = gaim_pounce_get_pouncer(pounce);
+	pouncee = purple_pounce_get_pouncee(pounce);
+	account = purple_pounce_get_pouncer(pounce);
 
-	buddy = gaim_find_buddy(account, pouncee);
+	buddy = purple_find_buddy(account, pouncee);
 	if (buddy != NULL)
 	{
-		alias = gaim_buddy_get_alias(buddy);
+		alias = purple_buddy_get_alias(buddy);
 		if (alias == NULL)
 			alias = pouncee;
 	}
 	else
 		alias = pouncee;
 
-	if (gaim_pounce_action_is_enabled(pounce, "open-window"))
+	if (purple_pounce_action_is_enabled(pounce, "open-window"))
 	{
-		conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, pouncee, account);
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pouncee, account);
 
 		if (conv == NULL)
-			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, pouncee);
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, pouncee);
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "popup-notify"))
+	if (purple_pounce_action_is_enabled(pounce, "popup-notify"))
 	{
 		char *tmp;
 		const char *name_shown;
 		const char *reason;
-		reason = gaim_pounce_action_get_attribute(pounce, "popup-notify",
+		reason = purple_pounce_action_get_attribute(pounce, "popup-notify",
 														  "reason");
 
 		/*
@@ -788,76 +788,76 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 		 * confusion about what protocol a pounce is for.
 		 */
 		tmp = g_strdup_printf(
-				   (events & GAIM_POUNCE_TYPING) ?
+				   (events & PURPLE_POUNCE_TYPING) ?
 				   _("%s has started typing to you (%s)") :
-				   (events & GAIM_POUNCE_TYPED) ?
+				   (events & PURPLE_POUNCE_TYPED) ?
 				   _("%s has paused while typing to you (%s)") :
-				   (events & GAIM_POUNCE_SIGNON) ?
+				   (events & PURPLE_POUNCE_SIGNON) ?
 				   _("%s has signed on (%s)") :
-				   (events & GAIM_POUNCE_IDLE_RETURN) ?
+				   (events & PURPLE_POUNCE_IDLE_RETURN) ?
 				   _("%s has returned from being idle (%s)") :
-				   (events & GAIM_POUNCE_AWAY_RETURN) ?
+				   (events & PURPLE_POUNCE_AWAY_RETURN) ?
 				   _("%s has returned from being away (%s)") :
-				   (events & GAIM_POUNCE_TYPING_STOPPED) ?
+				   (events & PURPLE_POUNCE_TYPING_STOPPED) ?
 				   _("%s has stopped typing to you (%s)") :
-				   (events & GAIM_POUNCE_SIGNOFF) ?
+				   (events & PURPLE_POUNCE_SIGNOFF) ?
 				   _("%s has signed off (%s)") :
-				   (events & GAIM_POUNCE_IDLE) ?
+				   (events & PURPLE_POUNCE_IDLE) ?
 				   _("%s has become idle (%s)") :
-				   (events & GAIM_POUNCE_AWAY) ?
+				   (events & PURPLE_POUNCE_AWAY) ?
 				   _("%s has gone away. (%s)") :
-				   (events & GAIM_POUNCE_MESSAGE_RECEIVED) ?
+				   (events & PURPLE_POUNCE_MESSAGE_RECEIVED) ?
 				   _("%s has sent you a message. (%s)") :
 				   _("Unknown pounce event. Please report this!"),
-				   alias, gaim_account_get_protocol_name(account));
+				   alias, purple_account_get_protocol_name(account));
 
 		/*
 		 * Ok here is where I change the second argument, title, from
 		 * NULL to the account alias if we have it or the account
 		 * name if that's all we have
 		 */
-		if ((name_shown = gaim_account_get_alias(account)) == NULL)
-			name_shown = gaim_account_get_username(account);
+		if ((name_shown = purple_account_get_alias(account)) == NULL)
+			name_shown = purple_account_get_username(account);
 
 		if (reason == NULL)
 		{
-			gaim_notify_info(NULL, name_shown, tmp, gaim_date_format_full(NULL));
+			purple_notify_info(NULL, name_shown, tmp, purple_date_format_full(NULL));
 		}
 		else
 		{
-			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, gaim_date_format_full(NULL));
-			gaim_notify_info(NULL, name_shown, tmp, tmp2);
+			char *tmp2 = g_strdup_printf("%s\n\n%s", reason, purple_date_format_full(NULL));
+			purple_notify_info(NULL, name_shown, tmp, tmp2);
 			g_free(tmp2);
 		}
 		g_free(tmp);
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "send-message"))
+	if (purple_pounce_action_is_enabled(pounce, "send-message"))
 	{
 		const char *message;
 
-		message = gaim_pounce_action_get_attribute(pounce, "send-message",
+		message = purple_pounce_action_get_attribute(pounce, "send-message",
 												   "message");
 
 		if (message != NULL)
 		{
-			conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, pouncee, account);
+			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pouncee, account);
 
 			if (conv == NULL)
-				conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, pouncee);
+				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, pouncee);
 
-			gaim_conversation_write(conv, NULL, message,
-									GAIM_MESSAGE_SEND, time(NULL));
+			purple_conversation_write(conv, NULL, message,
+									PURPLE_MESSAGE_SEND, time(NULL));
 
 			serv_send_im(account->gc, (char *)pouncee, (char *)message, 0);
 		}
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "execute-command"))
+	if (purple_pounce_action_is_enabled(pounce, "execute-command"))
 	{
 		const char *command;
 
-		command = gaim_pounce_action_get_attribute(pounce,
+		command = purple_pounce_action_get_attribute(pounce,
 				"execute-command", "command");
 
 		if (command != NULL)
@@ -886,26 +886,26 @@ pounce_cb(GaimPounce *pounce, GaimPounceEvent events, void *data)
 		}
 	}
 
-	if (gaim_pounce_action_is_enabled(pounce, "play-beep"))
+	if (purple_pounce_action_is_enabled(pounce, "play-beep"))
 	{
 		beep();
 	}
 }
 
 static void
-free_pounce(GaimPounce *pounce)
+free_pounce(PurplePounce *pounce)
 {
 	update_pounces();
 }
 
 static void
-new_pounce(GaimPounce *pounce)
+new_pounce(PurplePounce *pounce)
 {
-	gaim_pounce_action_register(pounce, "open-window");
-	gaim_pounce_action_register(pounce, "popup-notify");
-	gaim_pounce_action_register(pounce, "send-message");
-	gaim_pounce_action_register(pounce, "execute-command");
-	gaim_pounce_action_register(pounce, "play-beep");
+	purple_pounce_action_register(pounce, "open-window");
+	purple_pounce_action_register(pounce, "popup-notify");
+	purple_pounce_action_register(pounce, "send-message");
+	purple_pounce_action_register(pounce, "execute-command");
+	purple_pounce_action_register(pounce, "play-beep");
 
 	update_pounces();
 }
@@ -921,36 +921,36 @@ finch_pounces_get_handle()
 void
 finch_pounces_init(void)
 {
-	gaim_pounces_register_handler(GAIM_GNT_UI, pounce_cb, new_pounce,
+	purple_pounces_register_handler(FINCH_UI, pounce_cb, new_pounce,
 								  free_pounce);
 
-	gaim_prefs_add_none("/gaim/gnt/pounces");
-	gaim_prefs_add_none("/gaim/gnt/pounces/default_actions");
-	gaim_prefs_add_bool("/gaim/gnt/pounces/default_actions/open-window",
+	purple_prefs_add_none("/purple/gnt/pounces");
+	purple_prefs_add_none("/purple/gnt/pounces/default_actions");
+	purple_prefs_add_bool("/purple/gnt/pounces/default_actions/open-window",
 						FALSE);
-	gaim_prefs_add_bool("/gaim/gnt/pounces/default_actions/popup-notify",
+	purple_prefs_add_bool("/purple/gnt/pounces/default_actions/popup-notify",
 						TRUE);
-	gaim_prefs_add_bool("/gaim/gnt/pounces/default_actions/send-message",
+	purple_prefs_add_bool("/purple/gnt/pounces/default_actions/send-message",
 						FALSE);
-	gaim_prefs_add_bool("/gaim/gnt/pounces/default_actions/execute-command",
+	purple_prefs_add_bool("/purple/gnt/pounces/default_actions/execute-command",
 						FALSE);
-	gaim_prefs_add_bool("/gaim/gnt/pounces/default_actions/play-beep",
+	purple_prefs_add_bool("/purple/gnt/pounces/default_actions/play-beep",
 						FALSE);
-	gaim_prefs_add_none("/gaim/gnt/pounces/dialog");
+	purple_prefs_add_none("/purple/gnt/pounces/dialog");
 
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
 						finch_pounces_get_handle(),
-						GAIM_CALLBACK(signed_on_off_cb), NULL);
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						PURPLE_CALLBACK(signed_on_off_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-off",
 						finch_pounces_get_handle(),
-						GAIM_CALLBACK(signed_on_off_cb), NULL);
+						PURPLE_CALLBACK(signed_on_off_cb), NULL);
 }
 
 /* XXX: There's no such thing in pidgin. Perhaps there should be? */
 void finch_pounces_uninit()
 {
-	gaim_pounces_register_handler(GAIM_GNT_UI, NULL, NULL, NULL);
+	purple_pounces_register_handler(FINCH_UI, NULL, NULL, NULL);
 
-	gaim_signals_disconnect_by_handle(finch_pounces_get_handle());
+	purple_signals_disconnect_by_handle(finch_pounces_get_handle());
 }
 

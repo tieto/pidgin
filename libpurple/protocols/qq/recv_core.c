@@ -1,9 +1,9 @@
 /**
  * @file recv_core.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -60,7 +60,7 @@ struct _qq_recv_msg_header {
 
 /* check whether one sequence number is duplicated or not
  * return TRUE if it is duplicated, otherwise FALSE */
-static gboolean _qq_check_packet_set_window(guint16 seq, GaimConnection *gc)
+static gboolean _qq_check_packet_set_window(guint16 seq, PurpleConnection *gc)
 {
 	qq_data *qd;
 	guint8 *byte, mask;
@@ -76,7 +76,7 @@ static gboolean _qq_check_packet_set_window(guint16 seq, GaimConnection *gc)
 }
 
 /* default process, decrypt and dump */
-static void _qq_process_packet_default(guint8 *buf, gint buf_len, guint16 cmd, guint16 seq, GaimConnection *gc)
+static void _qq_process_packet_default(guint8 *buf, gint buf_len, guint16 cmd, guint16 seq, PurpleConnection *gc)
 {
 	qq_data *qd;
 	guint8 *data;
@@ -93,18 +93,18 @@ static void _qq_process_packet_default(guint8 *buf, gint buf_len, guint16 cmd, g
 	_qq_show_packet("Processing unknown packet", buf, len);
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
 		gchar *hex_dump = hex_dump_to_str(data, len);
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 			   ">>> [%d] %s, %d bytes -> [default] decrypt and dump\n%s",
 			   seq, qq_get_cmd_desc(cmd), buf_len, hex_dump);
 		g_free(hex_dump);
 		try_dump_as_gbk(data, len);
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Fail decrypt packet with default process\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Fail decrypt packet with default process\n");
 	}
 }
 
 /* process the incoming packet from qq_pending */
-static void _qq_packet_process(guint8 *buf, gint buf_len, GaimConnection *gc)
+static void _qq_packet_process(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint len, bytes_expected, bytes_read;
@@ -120,7 +120,7 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, GaimConnection *gc)
 
 	if (buf_len < bytes_expected) {
 		gchar *hex_dump = hex_dump_to_str(buf, buf_len);
-		gaim_debug(GAIM_DEBUG_ERROR,
+		purple_debug(PURPLE_DEBUG_ERROR,
 			   "QQ", "Received packet is too short, dump and drop\n%s", hex_dump);
 		g_free(hex_dump);
 		return;
@@ -133,8 +133,8 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, GaimConnection *gc)
 	if (qd->use_tcp) {
 		bytes_read += read_packet_w(buf, &cursor, buf_len, &buf_len_read);
 		if (buf_len_read != buf_len) {	/* wrong */
-			gaim_debug
-			    (GAIM_DEBUG_ERROR,
+			purple_debug
+			    (PURPLE_DEBUG_ERROR,
 			     "QQ",
 			     "TCP read %d bytes, header says %d bytes, use header anyway\n", buf_len, buf_len_read);
 			buf_len = buf_len_read;	/* we believe header is more accurate */
@@ -148,7 +148,7 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, GaimConnection *gc)
 	bytes_read += read_packet_w(buf, &cursor, buf_len, &header.seq);
 
 	if (bytes_read != bytes_expected) {	/* read error */
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail reading packet header, expect %d bytes, read %d bytes\n", 
 			   bytes_expected, bytes_read);
 		return;
@@ -156,14 +156,14 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, GaimConnection *gc)
 
 	if ((buf[buf_len - 1] != QQ_PACKET_TAIL) || (header.header_tag != QQ_PACKET_TAG)) {
 		gchar *hex_dump = hex_dump_to_str(buf, buf_len);
-		gaim_debug(GAIM_DEBUG_ERROR,
+		purple_debug(PURPLE_DEBUG_ERROR,
 			   "QQ", "Unknown QQ proctocol, dump and drop\n%s", hex_dump);
 		g_free(hex_dump);
 		return;
 	}
 
 	if (QQ_DEBUG)
-		gaim_debug(GAIM_DEBUG_INFO, "QQ",
+		purple_debug(PURPLE_DEBUG_INFO, "QQ",
 			   "==> [%05d] %s, from (%s)\n",
 			   header.seq, qq_get_cmd_desc(header.cmd), qq_get_source_str(header.source_tag));
 
@@ -201,7 +201,7 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, GaimConnection *gc)
 		 * this must be put after processing b4_packet
 		 * as these packets will be passed in twice */
 		if (_qq_check_packet_set_window(header.seq, gc)) {
-			gaim_debug(GAIM_DEBUG_WARNING,
+			purple_debug(PURPLE_DEBUG_WARNING,
 				   "QQ", "dup [%05d] %s, discard...\n", header.seq, qq_get_cmd_desc(header.cmd));
 			return;
 		}
@@ -210,7 +210,7 @@ static void _qq_packet_process(guint8 *buf, gint buf_len, GaimConnection *gc)
 			/* we do not check duplication for server ack */
 			qq_sendqueue_remove(qd, header.seq);
 			if (QQ_DEBUG)
-				gaim_debug(GAIM_DEBUG_INFO, "QQ",
+				purple_debug(PURPLE_DEBUG_INFO, "QQ",
 					   "ack [%05d] %s, remove from sendqueue\n",
 					   header.seq, qq_get_cmd_desc(header.cmd));
 		}
@@ -296,17 +296,17 @@ void qq_b4_packets_free(qq_data *qd)
 	}
 }
 
-void qq_input_pending(gpointer data, gint source, GaimInputCondition cond)
+void qq_input_pending(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	qq_data *qd;
 	guint8 *buf;
 	gint len;
 
-	gc = (GaimConnection *) data;
+	gc = (PurpleConnection *) data;
 
-	if(cond != GAIM_INPUT_READ) {
-		gaim_connection_error(gc, _("Socket error"));
+	if(cond != PURPLE_INPUT_READ) {
+		purple_connection_error(gc, _("Socket error"));
 		return;
 	}
 
@@ -316,7 +316,7 @@ void qq_input_pending(gpointer data, gint source, GaimInputCondition cond)
 	/* here we have UDP proxy suppport */
 	len = qq_proxy_read(qd, buf, MAX_PACKET_SIZE);
 	if (len <= 0) {
-		gaim_connection_error(gc, _("Unable to read from socket"));
+		purple_connection_error(gc, _("Unable to read from socket"));
 		return;
 	} else {
 		_qq_packet_process(buf, len, gc);

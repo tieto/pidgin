@@ -1,5 +1,5 @@
 /**
- * Send commands to Gaim via ~/.gaim/control
+ * Send commands to Purple via ~/.purple/control
  *
  * Originally by Eric Warmenhoven <eric@warmenhoven.org>
  * Compile fixes/mini hacks Alex Bennee <alex@bennee.com>
@@ -45,7 +45,7 @@ run_commands()
 	char *command, *arg1, *arg2;
 	FILE *file;
 
-	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", gaim_user_dir());
+	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", purple_user_dir());
 
 	file = g_fopen(filename, "r+");
 	while (fgets(buffer, sizeof(buffer), file)) {
@@ -53,52 +53,52 @@ run_commands()
 		/* Read the next command */
 		if (buffer[strlen(buffer) - 1] == '\n')
 			buffer[strlen(buffer) - 1] = 0;
-		gaim_debug_misc("filectl", "read: %s\n", buffer);
+		purple_debug_misc("filectl", "read: %s\n", buffer);
 		command = getarg(buffer, 0, 0);
 
 		if (!strncasecmp(command, "login", 6)) {
-			GaimAccount *account;
+			PurpleAccount *account;
 
 			arg1 = getarg(buffer, 1, 0);
 			arg2 = getarg(buffer, 2, 1);
 
-			account = gaim_accounts_find(arg1, arg2);
+			account = purple_accounts_find(arg1, arg2);
 			if (account != NULL) /* username found */
-				gaim_account_connect(account);
+				purple_account_connect(account);
 
 			free(arg1);
 			free(arg2);
 
 		} else if (!strncasecmp(command, "logout", 7)) {
-			GaimAccount *account;
+			PurpleAccount *account;
 
 			arg1 = getarg(buffer, 1, 1);
 			arg2 = getarg(buffer, 2, 1);
 
-			account = gaim_accounts_find(arg1, arg2);
+			account = purple_accounts_find(arg1, arg2);
 			if (account != NULL)
 			{
-				gaim_account_disconnect(account);
+				purple_account_disconnect(account);
 			}
 			else if (arg1 == NULL)
-				gaim_connections_disconnect_all();
+				purple_connections_disconnect_all();
 
 			free(arg1);
 			free(arg2);
 
-/* gaim_find_conversation() is gone in 2.0.0. */
+/* purple_find_conversation() is gone in 2.0.0. */
 #if 0
 		} else if (!strncasecmp(command, "send", 4)) {
-			GaimConversation *conv;
+			PurpleConversation *conv;
 
 			arg1 = getarg(buffer, 1, 0);
 			arg2 = getarg(buffer, 2, 1);
 
-			conv = gaim_find_conversation(GAIM_CONV_TYPE_ANY, arg1);
+			conv = purple_find_conversation(PURPLE_CONV_TYPE_ANY, arg1);
 			if (conv != NULL)
 			{
 				/*
-				gaim_conversation_write(conv, arg2, WFLAG_SEND, NULL, time(NULL), -1);
+				purple_conversation_write(conv, arg2, WFLAG_SEND, NULL, time(NULL), -1);
 				serv_send_im(conv->gc, arg1, arg2, 0);
 				*/
 			}
@@ -113,16 +113,16 @@ run_commands()
 			free(arg1);
 
 		} else if (!strncasecmp(command, "hide", 4)) {
-			gaim_blist_set_visible(FALSE);
+			purple_blist_set_visible(FALSE);
 
 		} else if (!strncasecmp(command, "unhide", 6)) {
-			gaim_blist_set_visible(TRUE);
+			purple_blist_set_visible(TRUE);
 
 		} else if (!strncasecmp(command, "back", 4)) {
 			/* do_im_back(); */
 
 		} else if (!strncasecmp(command, "quit", 4)) {
-			gaim_core_quit();
+			purple_core_quit();
 
 		}
 
@@ -146,7 +146,7 @@ init_file()
 	struct stat finfo;
 	char filename[256];
 
-	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", gaim_user_dir());
+	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", purple_user_dir());
 
 	if ((g_stat(filename, &finfo) == 0) && (finfo.st_size > 0))
 		run_commands();
@@ -162,12 +162,12 @@ check_file()
 	struct stat finfo;
 	char filename[256];
 
-	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", gaim_user_dir());
+	sprintf(filename, "%s" G_DIR_SEPARATOR_S "control", purple_user_dir());
 
 	if ((g_stat(filename, &finfo) == 0) && (finfo.st_size > 0))
 	{
 		if (mtime != finfo.st_mtime) {
-			gaim_debug_info("filectl", "control changed, checking\n");
+			purple_debug_info("filectl", "control changed, checking\n");
 			run_commands();
 		}
 	}
@@ -217,32 +217,32 @@ getarg(char *line, int which, int remain)
  */
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 	init_file();
-	check = gaim_timeout_add(5000, (GSourceFunc)check_file, NULL);
+	check = purple_timeout_add(5000, (GSourceFunc)check_file, NULL);
 
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
-	gaim_timeout_remove(check);
+	purple_timeout_remove(check);
 
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	FILECTL_PLUGIN_ID,                                /**< id             */
 	N_("File Control"),                               /**< name           */
@@ -252,7 +252,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Allows control by entering commands in a file."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	GAIM_WEBSITE,                                          /**< homepage       */
+	PURPLE_WEBSITE,                                          /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -263,8 +263,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(filectl, init_plugin, info)
+PURPLE_INIT_PLUGIN(filectl, init_plugin, info)

@@ -91,7 +91,7 @@ Code_t Z_SendLocation(class, opcode, auth, format)
 	    } else {
 #endif
 #ifdef WIN32
-              	    strncpy(mytty, "WinGaim", sizeof(mytty));
+              	    strncpy(mytty, "WinPurple", sizeof(mytty));
 #else
 		    ttyp = ttyname(0);
 		    if (ttyp && *ttyp) {

@@ -1,7 +1,7 @@
 /**
  * @file search.c
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2005  Bartosz Oler <bartosz@bzimage.us>
  *
@@ -132,70 +132,70 @@ void ggp_search_destroy(GGPSearches *searches)
 }
 /* }}} */
 
-/* guint32 ggp_search_start(GaimConnection *gc, GGPSearchForm *form) {{{ */
-guint32 ggp_search_start(GaimConnection *gc, GGPSearchForm *form)
+/* guint32 ggp_search_start(PurpleConnection *gc, GGPSearchForm *form) {{{ */
+guint32 ggp_search_start(PurpleConnection *gc, GGPSearchForm *form)
 {
 	GGPInfo *info = gc->proto_data;
 	gg_pubdir50_t req;
 	guint seq;
 
-	gaim_debug_info("gg", "It's time to perform a search...\n");
+	purple_debug_info("gg", "It's time to perform a search...\n");
 
 	if ((req = gg_pubdir50_new(GG_PUBDIR50_SEARCH)) == NULL) {
-		gaim_debug_error("gg",
+		purple_debug_error("gg",
 			"ggp_bmenu_show_details: Unable to create req variable.\n");
 		return 0;
 	}
 
 	if (form->uin != NULL) {
-		gaim_debug_info("gg", "    uin: %s\n", form->uin);
+		purple_debug_info("gg", "    uin: %s\n", form->uin);
 		gg_pubdir50_add(req, GG_PUBDIR50_UIN, form->uin);
 	} else {
 		if (form->lastname != NULL) {
-			gaim_debug_info("gg", "    lastname: %s\n", form->lastname);
+			purple_debug_info("gg", "    lastname: %s\n", form->lastname);
 			gg_pubdir50_add(req, GG_PUBDIR50_LASTNAME, form->lastname);
 		}
 
 		if (form->firstname != NULL) {
-			gaim_debug_info("gg", "    firstname: %s\n", form->firstname);
+			purple_debug_info("gg", "    firstname: %s\n", form->firstname);
 			gg_pubdir50_add(req, GG_PUBDIR50_FIRSTNAME, form->firstname);
 		}
 
 		if (form->nickname != NULL) {
-			gaim_debug_info("gg", "    nickname: %s\n", form->nickname);
+			purple_debug_info("gg", "    nickname: %s\n", form->nickname);
 			gg_pubdir50_add(req, GG_PUBDIR50_NICKNAME, form->nickname);
 		}
 
 		if (form->city != NULL) {
-			gaim_debug_info("gg", "    city: %s\n", form->city);
+			purple_debug_info("gg", "    city: %s\n", form->city);
 			gg_pubdir50_add(req, GG_PUBDIR50_CITY, form->city);
 		}
 
 		if (form->birthyear != NULL) {
-			gaim_debug_info("gg", "    birthyear: %s\n", form->birthyear);
+			purple_debug_info("gg", "    birthyear: %s\n", form->birthyear);
 			gg_pubdir50_add(req, GG_PUBDIR50_BIRTHYEAR, form->birthyear);
 		}
 
 		if (form->gender != NULL) {
-			gaim_debug_info("gg", "    gender: %s\n", form->gender);
+			purple_debug_info("gg", "    gender: %s\n", form->gender);
 			gg_pubdir50_add(req, GG_PUBDIR50_GENDER, form->gender);
 		}
 
 		if (form->active != NULL) {
-			gaim_debug_info("gg", "    active: %s\n", form->active);
+			purple_debug_info("gg", "    active: %s\n", form->active);
 			gg_pubdir50_add(req, GG_PUBDIR50_ACTIVE, form->active);
 		}
 	}
 
-	gaim_debug_info("gg", "offset: %s\n", form->offset);
+	purple_debug_info("gg", "offset: %s\n", form->offset);
 	gg_pubdir50_add(req, GG_PUBDIR50_START, g_strdup(form->offset));
 
 	if ((seq = gg_pubdir50(info->session, req)) == 0) {
-		gaim_debug_warning("gg", "ggp_bmenu_show_details: Search failed.\n");
+		purple_debug_warning("gg", "ggp_bmenu_show_details: Search failed.\n");
 		return 0;
 	}
 
-	gaim_debug_info("gg", "search sequence number: %d\n", seq);
+	purple_debug_info("gg", "search sequence number: %d\n", seq);
 	gg_pubdir50_free(req);
 
 	return seq;

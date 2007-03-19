@@ -1,9 +1,9 @@
 /**
  * file login_logout.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -32,9 +32,9 @@
 #define QQ_LOGIN_MODE_AWAY	    0x1e
 #define QQ_LOGIN_MODE_HIDDEN        0x28
 
-void qq_send_packet_request_login_token(GaimConnection *gc);
-void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
-void qq_process_login_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
-void qq_send_packet_logout(GaimConnection *gc);
+void qq_send_packet_request_login_token(PurpleConnection *gc);
+void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_send_packet_logout(PurpleConnection *gc);
 
 #endif

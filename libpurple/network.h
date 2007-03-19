@@ -2,9 +2,9 @@
  * @file network.h Network API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_NETWORK_H_
-#define _GAIM_NETWORK_H_
+#ifndef _PURPLE_NETWORK_H_
+#define _PURPLE_NETWORK_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,9 +34,9 @@ extern "C" {
 /**************************************************************************/
 /*@{*/
 
-typedef struct _GaimNetworkListenData GaimNetworkListenData;
+typedef struct _PurpleNetworkListenData PurpleNetworkListenData;
 
-typedef void (*GaimNetworkListenCallback) (int listenfd, gpointer data);
+typedef void (*PurpleNetworkListenCallback) (int listenfd, gpointer data);
 
 /**
  * Converts a dot-decimal IP address to an array of unsigned
@@ -50,7 +50,7 @@ typedef void (*GaimNetworkListenCallback) (int listenfd, gpointer data);
  *         is statically allocated and should not be
  *         freed.
  */
-const unsigned char *gaim_network_ip_atoi(const char *ip);
+const unsigned char *purple_network_ip_atoi(const char *ip);
 
 /**
  * Sets the IP address of the local system in preferences.  This
@@ -60,22 +60,22 @@ const unsigned char *gaim_network_ip_atoi(const char *ip);
  *
  * @param ip The local IP address.
  */
-void gaim_network_set_public_ip(const char *ip);
+void purple_network_set_public_ip(const char *ip);
 
 /**
  * Returns the IP address of the local system set in preferences.
  *
- * This returns the value set via gaim_network_set_public_ip().
- * You probably want to use gaim_network_get_my_ip() instead.
+ * This returns the value set via purple_network_set_public_ip().
+ * You probably want to use purple_network_get_my_ip() instead.
  *
  * @return The local IP address set in preferences.
  */
-const char *gaim_network_get_public_ip(void);
+const char *purple_network_get_public_ip(void);
 
 /**
  * Returns the IP address of the local system.
  *
- * You probably want to use gaim_network_get_my_ip() instead.
+ * You probably want to use purple_network_get_my_ip() instead.
  *
  * @note The returned string is a pointer to a static buffer. If this
  *       function is called twice, it may be important to make a copy
@@ -84,7 +84,7 @@ const char *gaim_network_get_public_ip(void);
  * @param fd The fd to use to help figure out the IP, or else -1.
  * @return The local IP address.
  */
-const char *gaim_network_get_local_system_ip(int fd);
+const char *purple_network_get_local_system_ip(int fd);
 
 /**
  * Returns the IP address that should be used anywhere a
@@ -93,7 +93,7 @@ const char *gaim_network_get_local_system_ip(int fd);
  *
  * If the user has manually specified an IP address via
  * preferences, then this IP is returned.  Otherwise the
- * IP address returned by gaim_network_get_local_system_ip()
+ * IP address returned by purple_network_get_local_system_ip()
  * is returned.
  *
  * @note The returned string is a pointer to a static buffer. If this
@@ -103,17 +103,17 @@ const char *gaim_network_get_local_system_ip(int fd);
  * @param fd The fd to use to help figure out the IP, or -1.
  * @return The local IP address to be used.
  */
-const char *gaim_network_get_my_ip(int fd);
+const char *purple_network_get_my_ip(int fd);
 
 /**
  * Attempts to open a listening port ONLY on the specified port number.
- * You probably want to use gaim_network_listen_range() instead of this.
+ * You probably want to use purple_network_listen_range() instead of this.
  * This function is useful, for example, if you wanted to write a telnet
- * server as a Gaim plugin, and you HAD to listen on port 23.  Why anyone
+ * server as a Purple plugin, and you HAD to listen on port 23.  Why anyone
  * would want to do that is beyond me.
  *
  * This opens a listening port. The caller will want to set up a watcher
- * of type GAIM_INPUT_READ on the fd returned in cb. It will probably call
+ * of type PURPLE_INPUT_READ on the fd returned in cb. It will probably call
  * accept in the watcher callback, and then possibly remove the watcher and close
  * the listening socket, and add a new watcher on the new socket accept
  * returned.
@@ -130,8 +130,8 @@ const char *gaim_network_get_my_ip(int fd);
  *         the pending listener, or NULL if unable to obtain a local
  *         socket to listen on.
  */
-GaimNetworkListenData *gaim_network_listen(unsigned short port,
-		int socket_type, GaimNetworkListenCallback cb, gpointer cb_data);
+PurpleNetworkListenData *purple_network_listen(unsigned short port,
+		int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data);
 
 /**
  * Opens a listening port selected from a range of ports.  The range of
@@ -142,7 +142,7 @@ GaimNetworkListenData *gaim_network_listen(unsigned short port,
  * Otherwise a port is chosen at random by the operating system.
  *
  * This opens a listening port. The caller will want to set up a watcher
- * of type GAIM_INPUT_READ on the fd returned in cb. It will probably call
+ * of type PURPLE_INPUT_READ on the fd returned in cb. It will probably call
  * accept in the watcher callback, and then possibly remove the watcher and close
  * the listening socket, and add a new watcher on the new socket accept
  * returned.
@@ -163,29 +163,29 @@ GaimNetworkListenData *gaim_network_listen(unsigned short port,
  *         the pending listener, or NULL if unable to obtain a local
  *         socket to listen on.
  */
-GaimNetworkListenData *gaim_network_listen_range(unsigned short start,
+PurpleNetworkListenData *purple_network_listen_range(unsigned short start,
 		unsigned short end, int socket_type,
-		GaimNetworkListenCallback cb, gpointer cb_data);
+		PurpleNetworkListenCallback cb, gpointer cb_data);
 
 /**
  * This can be used to cancel any in-progress listener connection
- * by passing in the return value from either gaim_network_listen()
- * or gaim_network_listen_range().
+ * by passing in the return value from either purple_network_listen()
+ * or purple_network_listen_range().
  *
  * @param listen_data This listener attempt will be canceled and
  *        the struct will be freed.
  */
-void gaim_network_listen_cancel(GaimNetworkListenData *listen_data);
+void purple_network_listen_cancel(PurpleNetworkListenData *listen_data);
 
 /**
  * Gets a port number from a file descriptor.
  *
  * @param fd The file descriptor. This should be a tcp socket. The current
  *           implementation probably dies on anything but IPv4. Perhaps this
- *           possible bug will inspire new and valuable contributors to Gaim.
+ *           possible bug will inspire new and valuable contributors to Purple.
  * @return The port number, in host byte order.
  */
-unsigned short gaim_network_get_port_from_fd(int fd);
+unsigned short purple_network_get_port_from_fd(int fd);
 
 /**
  * Detects if there is an available Internet connection. Note that this call
@@ -194,17 +194,17 @@ unsigned short gaim_network_get_port_from_fd(int fd);
  *
  * @return TRUE if the Internet is available
  */
-gboolean gaim_network_is_available(void);
+gboolean purple_network_is_available(void);
 
 /**
  * Initializes the network subsystem.
  */
-void gaim_network_init(void);
+void purple_network_init(void);
 
 /**
  * Shuts down the network subsystem.
  */
-void gaim_network_uninit(void);
+void purple_network_uninit(void);
 
 /*@}*/
 
@@ -212,4 +212,4 @@ void gaim_network_uninit(void);
 }
 #endif
 
-#endif /* _GAIM_NETWORK_H_ */
+#endif /* _PURPLE_NETWORK_H_ */

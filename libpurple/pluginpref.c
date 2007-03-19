@@ -1,7 +1,7 @@
 /**
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -30,48 +30,48 @@
 #include "pluginpref.h"
 #include "prefs.h"
 
-struct _GaimPluginPrefFrame
+struct _PurplePluginPrefFrame
 {
 	GList *prefs;
 };
 
-struct _GaimPluginPref
+struct _PurplePluginPref
 {
 	char *name;
 	char *label;
 
-	GaimPluginPrefType type;
+	PurplePluginPrefType type;
 
 	int min;
 	int max;
 	GList *choices;
 	unsigned int max_length;
 	gboolean masked;
-	GaimStringFormatType format;
+	PurpleStringFormatType format;
 };
 
-GaimPluginPrefFrame *
-gaim_plugin_pref_frame_new()
+PurplePluginPrefFrame *
+purple_plugin_pref_frame_new()
 {
-	GaimPluginPrefFrame *frame;
+	PurplePluginPrefFrame *frame;
 
-	frame = g_new0(GaimPluginPrefFrame, 1);
+	frame = g_new0(PurplePluginPrefFrame, 1);
 
 	return frame;
 }
 
 void
-gaim_plugin_pref_frame_destroy(GaimPluginPrefFrame *frame)
+purple_plugin_pref_frame_destroy(PurplePluginPrefFrame *frame)
 {
 	g_return_if_fail(frame != NULL);
 
-	g_list_foreach(frame->prefs, (GFunc)gaim_plugin_pref_destroy, NULL);
+	g_list_foreach(frame->prefs, (GFunc)purple_plugin_pref_destroy, NULL);
 	g_list_free(frame->prefs);
 	g_free(frame);
 }
 
 void
-gaim_plugin_pref_frame_add(GaimPluginPrefFrame *frame, GaimPluginPref *pref)
+purple_plugin_pref_frame_add(PurplePluginPrefFrame *frame, PurplePluginPref *pref)
 {
 	g_return_if_fail(frame != NULL);
 	g_return_if_fail(pref  != NULL);
@@ -80,7 +80,7 @@ gaim_plugin_pref_frame_add(GaimPluginPrefFrame *frame, GaimPluginPref *pref)
 }
 
 GList *
-gaim_plugin_pref_frame_get_prefs(GaimPluginPrefFrame *frame)
+purple_plugin_pref_frame_get_prefs(PurplePluginPrefFrame *frame)
 {
 	g_return_val_if_fail(frame        != NULL, NULL);
 	g_return_val_if_fail(frame->prefs != NULL, NULL);
@@ -88,51 +88,51 @@ gaim_plugin_pref_frame_get_prefs(GaimPluginPrefFrame *frame)
 	return frame->prefs;
 }
 
-GaimPluginPref *
-gaim_plugin_pref_new()
+PurplePluginPref *
+purple_plugin_pref_new()
 {
-	GaimPluginPref *pref;
+	PurplePluginPref *pref;
 
-	pref = g_new0(GaimPluginPref, 1);
+	pref = g_new0(PurplePluginPref, 1);
 
 	return pref;
 }
 
-GaimPluginPref *
-gaim_plugin_pref_new_with_name(const char *name)
+PurplePluginPref *
+purple_plugin_pref_new_with_name(const char *name)
 {
-	GaimPluginPref *pref;
+	PurplePluginPref *pref;
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	pref = g_new0(GaimPluginPref, 1);
+	pref = g_new0(PurplePluginPref, 1);
 	pref->name = g_strdup(name);
 
 	return pref;
 }
 
-GaimPluginPref *
-gaim_plugin_pref_new_with_label(const char *label)
+PurplePluginPref *
+purple_plugin_pref_new_with_label(const char *label)
 {
-	GaimPluginPref *pref;
+	PurplePluginPref *pref;
 
 	g_return_val_if_fail(label != NULL, NULL);
 
-	pref = g_new0(GaimPluginPref, 1);
+	pref = g_new0(PurplePluginPref, 1);
 	pref->label = g_strdup(label);
 
 	return pref;
 }
 
-GaimPluginPref *
-gaim_plugin_pref_new_with_name_and_label(const char *name, const char *label)
+PurplePluginPref *
+purple_plugin_pref_new_with_name_and_label(const char *name, const char *label)
 {
-	GaimPluginPref *pref;
+	PurplePluginPref *pref;
 
 	g_return_val_if_fail(name  != NULL, NULL);
 	g_return_val_if_fail(label != NULL, NULL);
 
-	pref = g_new0(GaimPluginPref, 1);
+	pref = g_new0(PurplePluginPref, 1);
 	pref->name = g_strdup(name);
 	pref->label = g_strdup(label);
 
@@ -140,7 +140,7 @@ gaim_plugin_pref_new_with_name_and_label(const char *name, const char *label)
 }
 
 void
-gaim_plugin_pref_destroy(GaimPluginPref *pref)
+purple_plugin_pref_destroy(PurplePluginPref *pref)
 {
 	g_return_if_fail(pref != NULL);
 
@@ -151,7 +151,7 @@ gaim_plugin_pref_destroy(GaimPluginPref *pref)
 }
 
 void
-gaim_plugin_pref_set_name(GaimPluginPref *pref, const char *name)
+purple_plugin_pref_set_name(PurplePluginPref *pref, const char *name)
 {
 	g_return_if_fail(pref != NULL);
 	g_return_if_fail(name != NULL);
@@ -161,7 +161,7 @@ gaim_plugin_pref_set_name(GaimPluginPref *pref, const char *name)
 }
 
 const char *
-gaim_plugin_pref_get_name(GaimPluginPref *pref)
+purple_plugin_pref_get_name(PurplePluginPref *pref)
 {
 	g_return_val_if_fail(pref != NULL, NULL);
 
@@ -169,7 +169,7 @@ gaim_plugin_pref_get_name(GaimPluginPref *pref)
 }
 
 void
-gaim_plugin_pref_set_label(GaimPluginPref *pref, const char *label)
+purple_plugin_pref_set_label(PurplePluginPref *pref, const char *label)
 {
 	g_return_if_fail(pref  != NULL);
 	g_return_if_fail(label != NULL);
@@ -179,7 +179,7 @@ gaim_plugin_pref_set_label(GaimPluginPref *pref, const char *label)
 }
 
 const char *
-gaim_plugin_pref_get_label(GaimPluginPref *pref)
+purple_plugin_pref_get_label(PurplePluginPref *pref)
 {
 	g_return_val_if_fail(pref != NULL, NULL);
 
@@ -187,17 +187,17 @@ gaim_plugin_pref_get_label(GaimPluginPref *pref)
 }
 
 void
-gaim_plugin_pref_set_bounds(GaimPluginPref *pref, int min, int max)
+purple_plugin_pref_set_bounds(PurplePluginPref *pref, int min, int max)
 {
 	int tmp;
 
 	g_return_if_fail(pref       != NULL);
 	g_return_if_fail(pref->name != NULL);
 
-	if (gaim_prefs_get_type(pref->name) != GAIM_PREF_INT)
+	if (purple_prefs_get_type(pref->name) != PURPLE_PREF_INT)
 	{
-		gaim_debug_info("pluginpref",
-				"gaim_plugin_pref_set_bounds: %s is not an integer pref\n",
+		purple_debug_info("pluginpref",
+				"purple_plugin_pref_set_bounds: %s is not an integer pref\n",
 				pref->name);
 		return;
 	}
@@ -213,15 +213,15 @@ gaim_plugin_pref_set_bounds(GaimPluginPref *pref, int min, int max)
 	pref->max = max;
 }
 
-void gaim_plugin_pref_get_bounds(GaimPluginPref *pref, int *min, int *max)
+void purple_plugin_pref_get_bounds(PurplePluginPref *pref, int *min, int *max)
 {
 	g_return_if_fail(pref       != NULL);
 	g_return_if_fail(pref->name != NULL);
 
-	if (gaim_prefs_get_type(pref->name) != GAIM_PREF_INT)
+	if (purple_prefs_get_type(pref->name) != PURPLE_PREF_INT)
 	{
-		gaim_debug(GAIM_DEBUG_INFO, "pluginpref",
-				"gaim_plugin_pref_get_bounds: %s is not an integer pref\n",
+		purple_debug(PURPLE_DEBUG_INFO, "pluginpref",
+				"purple_plugin_pref_get_bounds: %s is not an integer pref\n",
 				pref->name);
 		return;
 	}
@@ -231,34 +231,34 @@ void gaim_plugin_pref_get_bounds(GaimPluginPref *pref, int *min, int *max)
 }
 
 void
-gaim_plugin_pref_set_type(GaimPluginPref *pref, GaimPluginPrefType type)
+purple_plugin_pref_set_type(PurplePluginPref *pref, PurplePluginPrefType type)
 {
 	g_return_if_fail(pref != NULL);
 
 	pref->type = type;
 }
 
-GaimPluginPrefType
-gaim_plugin_pref_get_type(GaimPluginPref *pref)
+PurplePluginPrefType
+purple_plugin_pref_get_type(PurplePluginPref *pref)
 {
-	g_return_val_if_fail(pref != NULL, GAIM_PLUGIN_PREF_NONE);
+	g_return_val_if_fail(pref != NULL, PURPLE_PLUGIN_PREF_NONE);
 
 	return pref->type;
 }
 
 void
-gaim_plugin_pref_add_choice(GaimPluginPref *pref, const char *label, gpointer choice)
+purple_plugin_pref_add_choice(PurplePluginPref *pref, const char *label, gpointer choice)
 {
 	g_return_if_fail(pref  != NULL);
 	g_return_if_fail(label != NULL);
-	g_return_if_fail(choice || gaim_prefs_get_type(pref->name) == GAIM_PREF_INT);
+	g_return_if_fail(choice || purple_prefs_get_type(pref->name) == PURPLE_PREF_INT);
 
 	pref->choices = g_list_append(pref->choices, (gpointer)label);
 	pref->choices = g_list_append(pref->choices, choice);
 }
 
 GList *
-gaim_plugin_pref_get_choices(GaimPluginPref *pref)
+purple_plugin_pref_get_choices(PurplePluginPref *pref)
 {
 	g_return_val_if_fail(pref != NULL, NULL);
 
@@ -266,7 +266,7 @@ gaim_plugin_pref_get_choices(GaimPluginPref *pref)
 }
 
 void
-gaim_plugin_pref_set_max_length(GaimPluginPref *pref, unsigned int max_length)
+purple_plugin_pref_set_max_length(PurplePluginPref *pref, unsigned int max_length)
 {
 	g_return_if_fail(pref != NULL);
 
@@ -274,7 +274,7 @@ gaim_plugin_pref_set_max_length(GaimPluginPref *pref, unsigned int max_length)
 }
 
 unsigned int
-gaim_plugin_pref_get_max_length(GaimPluginPref *pref)
+purple_plugin_pref_get_max_length(PurplePluginPref *pref)
 {
 	g_return_val_if_fail(pref != NULL, 0);
 
@@ -282,7 +282,7 @@ gaim_plugin_pref_get_max_length(GaimPluginPref *pref)
 }
 
 void
-gaim_plugin_pref_set_masked(GaimPluginPref *pref, gboolean masked)
+purple_plugin_pref_set_masked(PurplePluginPref *pref, gboolean masked)
 {
 	g_return_if_fail(pref != NULL);
 
@@ -290,7 +290,7 @@ gaim_plugin_pref_set_masked(GaimPluginPref *pref, gboolean masked)
 }
 
 gboolean
-gaim_plugin_pref_get_masked(GaimPluginPref *pref)
+purple_plugin_pref_get_masked(PurplePluginPref *pref)
 {
 	g_return_val_if_fail(pref != NULL, FALSE);
 
@@ -298,21 +298,21 @@ gaim_plugin_pref_get_masked(GaimPluginPref *pref)
 }
 
 void
-gaim_plugin_pref_set_format_type(GaimPluginPref *pref, GaimStringFormatType format)
+purple_plugin_pref_set_format_type(PurplePluginPref *pref, PurpleStringFormatType format)
 {
 	g_return_if_fail(pref != NULL);
-	g_return_if_fail(pref->type == GAIM_PLUGIN_PREF_STRING_FORMAT);
+	g_return_if_fail(pref->type == PURPLE_PLUGIN_PREF_STRING_FORMAT);
 
 	pref->format = format;
 }
 
-GaimStringFormatType
-gaim_plugin_pref_get_format_type(GaimPluginPref *pref)
+PurpleStringFormatType
+purple_plugin_pref_get_format_type(PurplePluginPref *pref)
 {
 	g_return_val_if_fail(pref != NULL, 0);
 
-	if (pref->type != GAIM_PLUGIN_PREF_STRING_FORMAT)
-		return GAIM_STRING_FORMAT_TYPE_NONE;
+	if (pref->type != PURPLE_PLUGIN_PREF_STRING_FORMAT)
+		return PURPLE_STRING_FORMAT_TYPE_NONE;
 
 	return pref->format;
 }

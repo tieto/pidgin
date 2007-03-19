@@ -108,14 +108,14 @@ clipboard_changed(GntWM *wm, gchar *string)
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 	if (!XOpenDisplay(NULL)) {
-		gaim_debug_warning("gntclipboard", "Couldn't find X display\n");
+		purple_debug_warning("gntclipboard", "Couldn't find X display\n");
 		return FALSE;
 	}
 	if (!getenv("WINDOWID")) {
-		gaim_debug_warning("gntclipboard", "Couldn't find window\n");
+		purple_debug_warning("gntclipboard", "Couldn't find window\n");
 		return FALSE;
 	}
 	sig_handle = g_signal_connect(G_OBJECT(gnt_get_clipboard()), "clipboard_changed", G_CALLBACK(clipboard_changed), NULL);
@@ -123,7 +123,7 @@ plugin_load(GaimPlugin *plugin)
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	if (child) {
 		kill(child, SIGTERM);
@@ -133,16 +133,16 @@ plugin_unload(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,
-	GAIM_GNT_PLUGIN_TYPE,
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,
+	FINCH_PLUGIN_TYPE,
 	0,
 	NULL,
-	GAIM_PRIORITY_DEFAULT,
+	PURPLE_PRIORITY_DEFAULT,
 	"gntclipboard",
 	N_("GntClipboard"),
 	VERSION,
@@ -150,7 +150,7 @@ static GaimPluginInfo info =
 	N_("When the gnt clipboard contents change, "
 		"the contents are made available to X, if possible."),
 	"Richard Nelson <wabz@whatsbeef.net>",
-	"http://gaim.sourceforge.net",
+	"http://purple.sourceforge.net",
 	plugin_load,
 	plugin_unload,
 	NULL,
@@ -161,8 +161,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
+PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)

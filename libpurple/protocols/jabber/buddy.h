@@ -1,7 +1,7 @@
 /**
  * @file buddy.h Buddy handlers
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
  *
@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_JABBER_BUDDY_H_
-#define _GAIM_JABBER_BUDDY_H_
+#ifndef _PURPLE_JABBER_BUDDY_H_
+#define _PURPLE_JABBER_BUDDY_H_
 
 #include "jabber.h"
 
@@ -83,15 +83,15 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 void jabber_buddy_resource_free(JabberBuddyResource *jbr);
 void jabber_buddy_remove_resource(JabberBuddy *jb, const char *resource);
 const char *jabber_buddy_get_status_msg(JabberBuddy *jb);
-void jabber_buddy_get_info(GaimConnection *gc, const char *who);
-void jabber_buddy_get_info_chat(GaimConnection *gc, int id,
+void jabber_buddy_get_info(PurpleConnection *gc, const char *who);
+void jabber_buddy_get_info_chat(PurpleConnection *gc, int id,
 		const char *resource);
 
-GList *jabber_blist_node_menu(GaimBlistNode *node);
+GList *jabber_blist_node_menu(PurpleBlistNode *node);
 
-void jabber_set_info(GaimConnection *gc, const char *info);
-void jabber_setup_set_info(GaimPluginAction *action);
-void jabber_set_buddy_icon(GaimConnection *gc, const char *iconfile);
+void jabber_set_info(PurpleConnection *gc, const char *info);
+void jabber_setup_set_info(PurplePluginAction *action);
+void jabber_set_buddy_icon(PurpleConnection *gc, const char *iconfile);
 
 const char *jabber_buddy_state_get_name(JabberBuddyState state);
 const char *jabber_buddy_state_get_status_id(JabberBuddyState state);
@@ -99,8 +99,8 @@ const char *jabber_buddy_state_get_show(JabberBuddyState state);
 JabberBuddyState jabber_buddy_status_id_get_state(const char *id);
 JabberBuddyState jabber_buddy_show_get_state(const char *id);
 
-void jabber_user_search_begin(GaimPluginAction *);
+void jabber_user_search_begin(PurplePluginAction *);
 
 void jabber_buddy_remove_all_pending_buddy_info_requests(JabberStream *js);
 
-#endif /* _GAIM_JABBER_BUDDY_H_ */
+#endif /* _PURPLE_JABBER_BUDDY_H_ */

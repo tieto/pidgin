@@ -2,9 +2,9 @@
  * @file gtkimhtml.c GTK+ IMHtml
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -170,9 +170,9 @@ clipboard_win32_to_html(char *clipboard) {
 #if 0 /* Debugging for Windows clipboard */
 	FILE *fd;
 
-	gaim_debug_info("imhtml clipboard", "from clipboard: %s\n", clipboard);
+	purple_debug_info("imhtml clipboard", "from clipboard: %s\n", clipboard);
 
-	fd = g_fopen("e:\\gaimcb.txt", "wb");
+	fd = g_fopen("e:\\purplecb.txt", "wb");
 	fprintf(fd, "%s", clipboard);
 	fclose(fd);
 #endif
@@ -208,7 +208,7 @@ clipboard_win32_to_html(char *clipboard) {
 	html = g_strstrip(html);
 
 #if 0 /* Debugging for Windows clipboard */
-	gaim_debug_info("imhtml clipboard", "HTML fragment: '%s'\n", html);
+	purple_debug_info("imhtml clipboard", "HTML fragment: '%s'\n", html);
 #endif
 
 	return html;
@@ -284,7 +284,7 @@ static gboolean clipboard_paste_html_win32(GtkIMHtml *imhtml) {
 
 		if (error_reading_clipboard) {
 			gchar *err_msg = g_win32_error_message(GetLastError());
-			gaim_debug_info("html clipboard",
+			purple_debug_info("html clipboard",
 					"Unable to read clipboard data: %s\n",
 					err_msg ? err_msg : "Unknown Error");
 			g_free(err_msg);
@@ -439,7 +439,7 @@ gtk_imhtml_tip (gpointer data)
 		char *tmp = pango_font_description_to_string(
 					imhtml->tip_window->style->font_desc);
 
-		gaim_debug(GAIM_DEBUG_ERROR, "gtk_imhtml_tip",
+		purple_debug(PURPLE_DEBUG_ERROR, "gtk_imhtml_tip",
 			"pango_context_load_font() couldn't load font: '%s'\n",
 			tmp);
 		g_free(tmp);
@@ -863,7 +863,7 @@ ucs2_to_utf8_with_bom_check(gchar *data, guint len) {
 	utf8_ret = g_convert(data, len, "UTF-8", fromcode, NULL, NULL, &error);
 
 	if (error) {
-		gaim_debug_warning("gtkimhtml", "g_convert error: %s\n", error->message);
+		purple_debug_warning("gtkimhtml", "g_convert error: %s\n", error->message);
 		g_error_free(error);
 	}
 	return utf8_ret;
@@ -1031,7 +1031,7 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		{
 		int i;
 
-		gaim_debug_misc("gtkimhtml", "In paste_received_cb():\n\tformat = %d, length = %d\n\t",
+		purple_debug_misc("gtkimhtml", "In paste_received_cb():\n\tformat = %d, length = %d\n\t",
 	                        selection_data->format, selection_data->length);
 
 		for (i = 0; i < (/*(selection_data->format / 8) **/ selection_data->length); i++) {
@@ -1056,13 +1056,13 @@ static void paste_received_cb (GtkClipboard *clipboard, GtkSelectionData *select
 		g_free(text);
 		text = utf8;
 		if (!text) {
-			gaim_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in paste_received_cb\n");
+			purple_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in paste_received_cb\n");
 			return;
 		}
 	}
 
 	if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
-		gaim_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in paste_received_cb\n");
+		purple_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in paste_received_cb\n");
 		g_free(text);
 		return;
 	}
@@ -1619,13 +1619,13 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 		switch (info) {
 		case GTK_IMHTML_DRAG_URL:
 			/* TODO: Is it really ok to change sd->data...? */
-			gaim_str_strip_char((char *)sd->data, '\r');
+			purple_str_strip_char((char *)sd->data, '\r');
 
 			links = g_strsplit((char *)sd->data, "\n", 0);
 			while((link = links[i]) != NULL){
-				if(gaim_str_has_prefix(link, "http://") ||
-				   gaim_str_has_prefix(link, "https://") ||
-				   gaim_str_has_prefix(link, "ftp://"))
+				if(purple_str_has_prefix(link, "http://") ||
+				   purple_str_has_prefix(link, "https://") ||
+				   purple_str_has_prefix(link, "ftp://"))
 				{
 					gchar *label;
 
@@ -1667,11 +1667,11 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 				utf8 = ucs2_to_utf8_with_bom_check(text, sd->length);
 
 				if (!utf8) {
-					gaim_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in drag_rcv_cb\n");
+					purple_debug_warning("gtkimhtml", "g_convert from UCS-2 failed in drag_rcv_cb\n");
 					return;
 				}
 			} else if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
-				gaim_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in drag_rcv_cb\n");
+				purple_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in drag_rcv_cb\n");
 				return;
 			}
 
@@ -1681,7 +1681,7 @@ gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guin
 			}
 		case GTK_IMHTML_DRAG_TEXT:
 			if (!(*text) || !g_utf8_validate(text, -1, NULL)) {
-				gaim_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in drag_rcv_cb\n");
+				purple_debug_warning("gtkimhtml", "empty string or invalid UTF-8 in drag_rcv_cb\n");
 				return;
 			} else {
 				char *tmp = g_markup_escape_text(text, -1);
@@ -2222,20 +2222,20 @@ static int gtk_imhtml_is_protocol(const char *text)
 }
 
 /*
- <KingAnt> marv: The two IM image functions in oscar are gaim_odc_send_im and gaim_odc_incoming
+ <KingAnt> marv: The two IM image functions in oscar are purple_odc_send_im and purple_odc_incoming
 
 
 [19:58] <Robot101> marv: images go into the imgstore, a refcounted... well.. hash. :)
 [19:59] <KingAnt> marv: I think the image tag used by the core is something like <img id="#"/>
 [19:59] Ro0tSiEgE robert42 RobFlynn Robot101 ross22 roz
-[20:00] <KingAnt> marv: Where the ID is the what is returned when you add the image to the imgstore using gaim_imgstore_add
+[20:00] <KingAnt> marv: Where the ID is the what is returned when you add the image to the imgstore using purple_imgstore_add
 [20:00] <marv> Robot101: so how does the image get passed to serv_got_im() and serv_send_im()? just as the <img id="#" and then the prpl looks it up from the store?
 [20:00] <KingAnt> marv: Right
 [20:00] <marv> alright
 
 Here's my plan with IMImages. make gtk_imhtml_[append|insert]_text_with_images instead just
 gtkimhtml_[append|insert]_text (hrm maybe it should be called html instead of text), add a
-function for gaim to register for look up images, i.e. gtk_imhtml_set_get_img_fnc, so that
+function for purple to register for look up images, i.e. gtk_imhtml_set_get_img_fnc, so that
 images can be looked up like that, instead of passing a GSList of them.
  */
 
@@ -3397,7 +3397,7 @@ gtk_imhtml_image_save(GtkWidget *w, GtkIMHtmlImage *image)
  * So, um, AIM Direct IM lets you send any file, not just images.  You can
  * just insert a sound or a file or whatever in a conversation.  It's
  * basically like file transfer, except there is an icon to open the file
- * embedded in the conversation.  Someone should make the Gaim core handle
+ * embedded in the conversation.  Someone should make the Purple core handle
  * all of that.
  */
 static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlImage *image)
@@ -4005,7 +4005,7 @@ gtk_imhtml_clear_formatting(GtkIMHtml *imhtml)
  * I had this crazy idea about changing the text cursor color to reflex the foreground color
  * of the text about to be entered. This is the place you'd do it, along with the place where
  * we actually set a new foreground color.
- * I may not do this, because people will bitch about Gaim overriding their gtk theme's cursor
+ * I may not do this, because people will bitch about Purple overriding their gtk theme's cursor
  * colors.
  *
  * Just in case I do do this, I asked about what to set the secondary text cursor to.
@@ -4432,7 +4432,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 	GdkPixbufAnimation *annipixbuf = NULL;
 	GtkWidget *icon = NULL;
 	GtkTextChildAnchor *anchor;
-	char *unescaped = gaim_unescape_html(smiley);
+	char *unescaped = purple_unescape_html(smiley);
 	GtkIMHtmlSmiley *imhtml_smiley = gtk_imhtml_smiley_get(imhtml, sml, unescaped);
 
 	if (imhtml->format_functions & GTK_IMHTML_SMILEY) {
@@ -4706,7 +4706,7 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 				}
 
 				if (tmp == NULL)
-					gaim_debug_warning("gtkimhtml", "empty queue, more closing tags than open tags!\n");
+					purple_debug_warning("gtkimhtml", "empty queue, more closing tags than open tags!\n");
 				else
 					g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tag)));
 

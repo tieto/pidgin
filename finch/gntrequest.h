@@ -2,9 +2,9 @@
  * @file gntrequest.h GNT Request API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -35,9 +35,9 @@
 /**
  * Get the ui-functions.
  *
- * @return The GaimRequestUiOps structure populated with the appropriate functions.
+ * @return The PurpleRequestUiOps structure populated with the appropriate functions.
  */
-GaimRequestUiOps *finch_request_get_ui_ops(void);
+PurpleRequestUiOps *finch_request_get_ui_ops(void);
 
 /**
  * Perform necessary initializations.

@@ -1,9 +1,9 @@
 /**
  * @file buddy_list.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -60,7 +60,7 @@ typedef struct _qq_friends_online_entry {
 } qq_friends_online_entry;
 
 /* get a list of online_buddies */
-void qq_send_packet_get_buddies_online(GaimConnection *gc, guint8 position)
+void qq_send_packet_get_buddies_online(PurpleConnection *gc, guint8 position)
 {
 	qq_data *qd;
 	guint8 *raw_data, *cursor;
@@ -87,7 +87,7 @@ void qq_send_packet_get_buddies_online(GaimConnection *gc, guint8 position)
 
 /* position starts with 0x0000, 
  * server may return a position tag if list is too long for one packet */
-void qq_send_packet_get_buddies_list(GaimConnection *gc, guint16 position)
+void qq_send_packet_get_buddies_list(PurpleConnection *gc, guint16 position)
 {
 	guint8 *raw_data, *cursor;
 	gint data_len;
@@ -108,7 +108,7 @@ void qq_send_packet_get_buddies_list(GaimConnection *gc, guint16 position)
 }
 
 /* get all list, buddies & Quns with groupsid support */
-void qq_send_packet_get_all_list_with_group(GaimConnection *gc, guint32 position)
+void qq_send_packet_get_all_list_with_group(PurpleConnection *gc, guint32 position)
 {
 	guint8 *raw_data, *cursor;
 	gint data_len;
@@ -142,17 +142,17 @@ static void _qq_buddies_online_reply_dump_unclear(qq_friends_online_entry *fe)
 	g_string_append_printf(dump, "034:     %02x   (comm_flag)\n", fe->comm_flag);
 	g_string_append_printf(dump, "035-036: %04x (unknown)\n", fe->unknown2);
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Online buddy entry, %s", dump->str);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Online buddy entry, %s", dump->str);
 	g_string_free(dump, TRUE);
 }
 
 /* process the reply packet for get_buddies_online packet */
-void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint len, bytes;
 	guint8 *data, *cursor, position;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	qq_friends_online_entry *fe;
 
@@ -163,7 +163,7 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnecti
 	data = g_newa(guint8, len);
 	cursor = data;
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "processing get_buddies_online_reply\n");
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "processing get_buddies_online_reply\n");
 	
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
 
@@ -191,7 +191,7 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnecti
 			bytes += read_packet_b(data, &cursor, len, &fe->ending);	/* 0x00 */
 
 			if (fe->s->uid == 0 || bytes != QQ_ONLINE_BUDDY_ENTRY_LEN) {
-				gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+				purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 						"uid=0 or entry complete len(%d) != %d", 
 						bytes, QQ_ONLINE_BUDDY_ENTRY_LEN);
 				g_free(fe->s->ip);
@@ -203,7 +203,7 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnecti
 				_qq_buddies_online_reply_dump_unclear(fe);
 
 			/* update buddy information */
-			b = gaim_find_buddy(gaim_connection_get_account(gc), uid_to_gaim_name(fe->s->uid));
+			b = purple_find_buddy(purple_connection_get_account(gc), uid_to_purple_name(fe->s->uid));
 			q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 
 			if (q_bud != NULL) {	/* we find one and update qq_buddy */
@@ -216,7 +216,7 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnecti
 				q_bud->comm_flag = fe->comm_flag;
 				qq_update_buddy_contact(gc, q_bud);
 			} else {
-				gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+				purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 						"Got an online buddy %d, but not in my buddy list\n", fe->s->uid);
 			}
 
@@ -225,12 +225,12 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnecti
 		}
 		
 		if(cursor > (data + len)) {
-			 gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+			 purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 					"qq_process_get_buddies_online_reply: Dangerous error! maybe protocol changed, notify developers!\n");
 		}
 
 		if (position != QQ_FRIENDS_ONLINE_POSITION_END) {
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Has more online buddies, position from %d\n", position);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Has more online buddies, position from %d\n", position);
 
 			qq_send_packet_get_buddies_online(gc, position);
 		} else {
@@ -239,12 +239,12 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnecti
 		}
 
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt buddies online");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt buddies online");
 	}
 }
 
 /* process reply for get_buddies_list */
-void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
 	qq_buddy *q_bud;
@@ -252,7 +252,7 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, GaimConnection
 	guint16 position, unknown;
 	guint8 *data, *cursor, pascal_len;
 	gchar *name;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
@@ -295,7 +295,7 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, GaimConnection
 			bytes_expected = 12 + pascal_len;
 
 			if (q_bud->uid == 0 || bytes != bytes_expected) {
-				gaim_debug(GAIM_DEBUG_INFO, "QQ",
+				purple_debug(PURPLE_DEBUG_INFO, "QQ",
 					   "Buddy entry, expect %d bytes, read %d bytes\n", bytes_expected, bytes);
 				g_free(q_bud->nickname);
 				g_free(q_bud);
@@ -305,13 +305,13 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, GaimConnection
 			}
 
 			if (QQ_DEBUG) {
-				gaim_debug(GAIM_DEBUG_INFO, "QQ",
+				purple_debug(PURPLE_DEBUG_INFO, "QQ",
 					   "buddy [%09d]: flag1=0x%02x, comm_flag=0x%02x\n",
 					   q_bud->uid, q_bud->flag1, q_bud->comm_flag);
 			}
 
-			name = uid_to_gaim_name(q_bud->uid);
-			b = gaim_find_buddy(gc->account, name);
+			name = uid_to_purple_name(q_bud->uid);
+			b = purple_find_buddy(gc->account, name);
 			g_free(name);
 
 			if (b == NULL)
@@ -323,21 +323,21 @@ void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, GaimConnection
 		}
 
 		if(cursor > (data + len)) {
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 					"qq_process_get_buddies_list_reply: Dangerous error! maybe protocol changed, notify developers!");
                 }
 		if (position == QQ_FRIENDS_LIST_POSITION_END) {
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Get friends list done, %d buddies\n", i);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Get friends list done, %d buddies\n", i);
 			qq_send_packet_get_buddies_online(gc, QQ_FRIENDS_ONLINE_POSITION_START);
 		} else {
 			qq_send_packet_get_buddies_list(gc, position);
 		}
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt buddies list");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt buddies list");
 	}
 }
 
-void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint len, i, j;
@@ -360,7 +360,7 @@ void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, GaimCon
 		g_return_if_fail(sub_cmd == 0x01);
 		read_packet_b(data, &cursor, len, &reply_code);
 		if(0 != reply_code) {
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", 
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", 
 					"Get all list with group reply, reply_code(%d) is not zero", reply_code);
 		}
 		read_packet_dw(data, &cursor, len, &unknown);
@@ -376,11 +376,11 @@ void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, GaimCon
 			/* 05: groupid*4 */ /* seems to always be 0 */
 			read_packet_b(data, &cursor, len, &groupid);
 			/*
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "groupid: %i\n", groupid);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "groupid: %i\n", groupid);
 			groupid >>= 2;
 			*/
 			if (uid == 0 || (type != 0x1 && type != 0x4)) {
-				gaim_debug(GAIM_DEBUG_INFO, "QQ",
+				purple_debug(PURPLE_DEBUG_INFO, "QQ",
 					   "Buddy entry, uid=%d, type=%d", uid, type);
 				continue;
 			} 
@@ -404,11 +404,11 @@ void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, GaimCon
 			}
 		}
 		if(cursor > (data + len)) {
-			 gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+			 purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 					"qq_process_get_all_list_with_group_reply: Dangerous error! maybe protocol changed, notify developers!");
 		}
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Get all list done, %d buddies and %d Quns\n", i, j);
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Get all list done, %d buddies and %d Quns\n", i, j);
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt all list with group");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt all list with group");
 	}
 }

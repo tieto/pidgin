@@ -1,5 +1,5 @@
 /* 
- * System tray icon (aka docklet) plugin for Gaim
+ * System tray icon (aka docklet) plugin for Purple
  * 
  * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
  * Copyright (C) 2003 Herman Bloggs <hermanator12002@yahoo.com>

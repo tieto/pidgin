@@ -2,7 +2,7 @@
  * @file gtkstatusbox.c GTK+ Status Selection Widget
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -47,7 +47,7 @@ G_BEGIN_DECLS
 /**
  * This is a hidden field in the GtkStatusBox that identifies the
  * item in the list store.  The item could be a normal
- * GaimStatusPrimitive, or it could be something special like the
+ * PurpleStatusPrimitive, or it could be something special like the
  * "Custom..." item, or "Saved..." or a GtkSeparator.
  */
 typedef enum
@@ -79,11 +79,11 @@ struct _PidginStatusBox
 	 */
 	GtkListStore *dropdown_store;
 
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	/* This will be non-NULL and contain a sample account
 	 * when all enabled accounts use the same statuses */
-	GaimAccount *token_status_account;
+	PurpleAccount *token_status_account;
 
 	GtkWidget *vbox, *sw;
 	GtkWidget *imhtml;
@@ -157,7 +157,7 @@ struct _PidginStatusBoxClass
 
 GType         pidgin_status_box_get_type         (void) G_GNUC_CONST;
 GtkWidget    *pidgin_status_box_new              (void);
-GtkWidget    *pidgin_status_box_new_with_account (GaimAccount *);
+GtkWidget    *pidgin_status_box_new_with_account (PurpleAccount *);
 
 void
 pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type, GdkPixbuf *pixbuf, const char *text, const char *sec_text, gpointer data);

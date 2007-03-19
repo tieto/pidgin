@@ -55,12 +55,12 @@ static gboolean
 check_timeout(gpointer data)
 {
 	gint count = check_mail();
-	GaimBuddyList *list = gaim_get_blist();
+	PurpleBuddyList *list = purple_get_blist();
 
 	if (count == -1)
 		return FALSE;
 
-	if (!list || !GAIM_IS_GTK_BLIST(list) || !(PIDGIN_BLIST(list)->vbox))
+	if (!list || !PURPLE_IS_GTK_BLIST(list) || !(PIDGIN_BLIST(list)->vbox))
 		return TRUE;
 
 	if (!mail) {
@@ -75,7 +75,7 @@ check_timeout(gpointer data)
 	}
 
 	if (count & NEW_MAIL)
-		gaim_sound_play_event(GAIM_SOUND_POUNCE_DEFAULT, NULL);
+		purple_sound_play_event(PURPLE_SOUND_POUNCE_DEFAULT, NULL);
 
 	if (count & UNREAD_MAIL)
 		gtk_label_set_text(GTK_LABEL(mail), "You have new mail!");
@@ -88,20 +88,20 @@ check_timeout(gpointer data)
 }
 
 static void
-signon_cb(GaimConnection *gc)
+signon_cb(PurpleConnection *gc)
 {
-	GaimBuddyList *list = gaim_get_blist();
-	if (list && GAIM_IS_GTK_BLIST(list) && !timer) {
+	PurpleBuddyList *list = purple_get_blist();
+	if (list && PURPLE_IS_GTK_BLIST(list) && !timer) {
 		check_timeout(NULL); /* we want the box to be drawn immediately */
 		timer = g_timeout_add(2000, check_timeout, NULL);
 	}
 }
 
 static void
-signoff_cb(GaimConnection *gc)
+signoff_cb(PurpleConnection *gc)
 {
-	GaimBuddyList *list = gaim_get_blist();
-	if ((!list || !GAIM_IS_GTK_BLIST(list) || !PIDGIN_BLIST(list)->vbox) && timer) {
+	PurpleBuddyList *list = purple_get_blist();
+	if ((!list || !PURPLE_IS_GTK_BLIST(list) || !PIDGIN_BLIST(list)->vbox) && timer) {
 		g_source_remove(timer);
 		timer = 0;
 	}
@@ -112,29 +112,29 @@ signoff_cb(GaimConnection *gc)
  */
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	GaimBuddyList *list = gaim_get_blist();
-	void *conn_handle = gaim_connections_get_handle();
+	PurpleBuddyList *list = purple_get_blist();
+	void *conn_handle = purple_connections_get_handle();
 
 	if (!check_timeout(NULL)) {
-		gaim_debug_warning("mailchk", "Could not read $MAIL or /var/spool/mail/$USER");
+		purple_debug_warning("mailchk", "Could not read $MAIL or /var/spool/mail/$USER");
 		return FALSE;
 	}
 
-	if (list && GAIM_IS_GTK_BLIST(list) && PIDGIN_BLIST(list)->vbox)
+	if (list && PURPLE_IS_GTK_BLIST(list) && PIDGIN_BLIST(list)->vbox)
 		timer = g_timeout_add(2000, check_timeout, NULL);
 
-	gaim_signal_connect(conn_handle, "signed-on",
-						plugin, GAIM_CALLBACK(signon_cb), NULL);
-	gaim_signal_connect(conn_handle, "signed-off",
-						plugin, GAIM_CALLBACK(signoff_cb), NULL);
+	purple_signal_connect(conn_handle, "signed-on",
+						plugin, PURPLE_CALLBACK(signon_cb), NULL);
+	purple_signal_connect(conn_handle, "signed-off",
+						plugin, PURPLE_CALLBACK(signoff_cb), NULL);
 
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	if (timer)
 		g_source_remove(timer);
@@ -146,16 +146,16 @@ plugin_unload(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,
 	PIDGIN_PLUGIN_TYPE,
 	0,
 	NULL,
-	GAIM_PRIORITY_DEFAULT,
+	PURPLE_PRIORITY_DEFAULT,
 	MAILCHK_PLUGIN_ID,
 	N_("Mail Checker"),
 	VERSION,
@@ -163,7 +163,7 @@ static GaimPluginInfo info =
 	N_("Adds a small box to the buddy list that"
 	   " shows if you have new mail."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",
-	GAIM_WEBSITE,
+	PURPLE_WEBSITE,
 	plugin_load,
 	plugin_unload,
 	NULL,
@@ -174,8 +174,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(mailchk, init_plugin, info)
+PURPLE_INIT_PLUGIN(mailchk, init_plugin, info)

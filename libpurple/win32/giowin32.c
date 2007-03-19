@@ -821,7 +821,7 @@ static GIOFuncs win32_channel_sock_funcs = {
 };
 
 GIOChannel *
-wgaim_g_io_channel_win32_new_socket (int socket)
+wpurple_g_io_channel_win32_new_socket (int socket)
 {
   GIOWin32Channel *win32_channel = g_new (GIOWin32Channel, 1);
   GIOChannel *channel = (GIOChannel *)win32_channel;

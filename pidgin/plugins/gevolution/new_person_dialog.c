@@ -1,5 +1,5 @@
 /*
- * Evolution integration plugin for Gaim
+ * Evolution integration plugin for Purple
  *
  * Copyright (C) 2003 Christian Hammond.
  *
@@ -136,7 +136,7 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 		full_name = e_contact_name_to_string(name);
 		e_contact_set(contact, E_CONTACT_FULL_NAME, full_name);
 
-		im_service = gaim_account_get_protocol_id(dialog->account);
+		im_service = purple_account_get_protocol_id(dialog->account);
 
 		if (*email)
 			e_contact_set(contact, E_CONTACT_EMAIL_1, (gpointer)email);
@@ -171,7 +171,7 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 		{
 			if (!e_book_add_contact(dialog->book, contact, NULL))
 			{
-				gaim_debug_error("evolution", "Error adding contact to book\n");
+				purple_debug_error("evolution", "Error adding contact to book\n");
 
 				g_object_unref(contact);
 				delete_win_cb(NULL, NULL, dialog);
@@ -182,7 +182,7 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 		{
 			if (!e_book_commit_contact(dialog->book, contact, NULL))
 			{
-				gaim_debug_error("evolution", "Error adding contact to book\n");
+				purple_debug_error("evolution", "Error adding contact to book\n");
 
 				g_object_unref(contact);
 				delete_win_cb(NULL, NULL, dialog);
@@ -213,7 +213,7 @@ add_cb(GtkWidget *w, GevoNewPersonDialog *dialog)
 }
 
 static void
-select_account_cb(GObject *w, GaimAccount *account,
+select_account_cb(GObject *w, PurpleAccount *account,
 				  GevoNewPersonDialog *dialog)
 {
 	dialog->account = account;
@@ -221,8 +221,8 @@ select_account_cb(GObject *w, GaimAccount *account,
 
 void
 gevo_new_person_dialog_show(EBook *book, EContact *contact,
-							GaimAccount *account, const char *username,
-							const char *group, GaimBuddy *buddy,
+							PurpleAccount *account, const char *username,
+							const char *group, PurpleBuddy *buddy,
 							gboolean person_only)
 {
 	GevoNewPersonDialog *dialog;

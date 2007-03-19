@@ -1,9 +1,9 @@
 /**
  * @file send_file.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -54,7 +54,7 @@ enum
 static int _qq_in_same_lan(ft_info *info)
 {
 	if (info->remote_internet_ip == info->local_internet_ip) return 1;
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", 
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", 
 			"Not in the same LAN, remote internet ip[%x], local internet ip[%x]\n",  
 			info->remote_internet_ip
 			, info->local_internet_ip);
@@ -77,7 +77,7 @@ static int _qq_xfer_init_udp_channel(ft_info *info)
 }
 
 /* these 2 functions send and recv buffer from/to UDP channel */
-static ssize_t _qq_xfer_udp_recv(guint8 *buf, size_t len, GaimXfer *xfer)
+static ssize_t _qq_xfer_udp_recv(guint8 *buf, size_t len, PurpleXfer *xfer)
 {
 	struct sockaddr_in sin;
 	socklen_t sinlen;
@@ -87,14 +87,14 @@ static ssize_t _qq_xfer_udp_recv(guint8 *buf, size_t len, GaimXfer *xfer)
 	info = (ft_info *) xfer->data;
 	sinlen = sizeof(sin);
 	r = recvfrom(info->recv_fd, buf, len, 0, (struct sockaddr *) &sin, &sinlen);
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", 
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", 
 			"==> recv %d bytes from File UDP Channel, remote ip[%s], remote port[%d]\n",
 			r, inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
 	return r;
 }
 
 /*
-static ssize_t _qq_xfer_udp_send(const char *buf, size_t len, GaimXfer *xfer)
+static ssize_t _qq_xfer_udp_send(const char *buf, size_t len, PurpleXfer *xfer)
 {
 	ft_info *info;
 
@@ -102,7 +102,7 @@ static ssize_t _qq_xfer_udp_send(const char *buf, size_t len, GaimXfer *xfer)
 	return send(info->sender_fd, buf, len, 0);
 }
 */
-static ssize_t _qq_xfer_udp_send(const guint8 *buf, size_t len, GaimXfer *xfer)
+static ssize_t _qq_xfer_udp_send(const guint8 *buf, size_t len, PurpleXfer *xfer)
 {
 	struct sockaddr_in sin;
 	ft_info *info;
@@ -120,7 +120,7 @@ static ssize_t _qq_xfer_udp_send(const guint8 *buf, size_t len, GaimXfer *xfer)
 		sin.sin_port = g_htons(info->remote_minor_port);
 		sin.sin_addr.s_addr = g_htonl(info->remote_real_ip);
 	}
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "sending to channel: %d.%d.%d.%d:%d\n",
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "sending to channel: %d.%d.%d.%d:%d\n",
 			sin.sin_addr.s_addr & 0xff,
 			(sin.sin_addr.s_addr >> 8) & 0xff,
 			(sin.sin_addr.s_addr >> 16) & 0xff,
@@ -130,26 +130,26 @@ static ssize_t _qq_xfer_udp_send(const guint8 *buf, size_t len, GaimXfer *xfer)
 	return sendto(info->sender_fd, buf, len, 0, (struct sockaddr *) &sin, sizeof(sin));
 }
 
-/* user-defined functions for gaim_xfer_read and gaim_xfer_write */
+/* user-defined functions for purple_xfer_read and purple_xfer_write */
 
 /*
-static ssize_t _qq_xfer_read(char **buf, GaimXfer *xfer)
+static ssize_t _qq_xfer_read(char **buf, PurpleXfer *xfer)
 {
 	*buf = g_newa(char, QQ_FILE_FRAGMENT_MAXLEN + 100);
 	return _qq_xfer_udp_recv(*buf, QQ_FILE_FRAGMENT_MAXLEN + 100, xfer);
 }
 */
 
-gssize _qq_xfer_write(const guint8 *buf, size_t len, GaimXfer *xfer)
+gssize _qq_xfer_write(const guint8 *buf, size_t len, PurpleXfer *xfer)
 {
 	return _qq_xfer_udp_send(buf, len, xfer);
 }
 
-static void _qq_xfer_recv_packet(gpointer data, gint source, GaimInputCondition condition)
+static void _qq_xfer_recv_packet(gpointer data, gint source, PurpleInputCondition condition)
 {
-	GaimXfer *xfer = (GaimXfer *) data;
-	GaimAccount *account = gaim_xfer_get_account(xfer);
-	GaimConnection *gc = gaim_account_get_connection(account);
+	PurpleXfer *xfer = (PurpleXfer *) data;
+	PurpleAccount *account = purple_xfer_get_account(xfer);
+	PurpleConnection *gc = purple_account_get_connection(account);
 	guint8 *buf;
 	gint size;
 	/* FIXME: It seems that the transfer never use a packet
@@ -167,37 +167,37 @@ static void _qq_xfer_recv_packet(gpointer data, gint source, GaimInputCondition 
 
 /* start file transfer process */
 /*
-static void _qq_xfer_send_start (GaimXfer *xfer)
+static void _qq_xfer_send_start (PurpleXfer *xfer)
 {
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 	ft_info *info;
 
-	account = gaim_xfer_get_account(xfer);
-	gc = gaim_account_get_connection(account);
+	account = purple_xfer_get_account(xfer);
+	gc = purple_account_get_connection(account);
 	info = (ft_info *) xfer->data;
 }
 */
 
 /*
-static void _qq_xfer_send_ack (GaimXfer *xfer, const char *buffer, size_t len)
+static void _qq_xfer_send_ack (PurpleXfer *xfer, const char *buffer, size_t len)
 {
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 
-	account = gaim_xfer_get_account(xfer);
-	gc = gaim_account_get_connection(account);
+	account = purple_xfer_get_account(xfer);
+	gc = purple_account_get_connection(account);
 	qq_process_recv_file(gc, (guint8 *) buffer, len);
 }
 */
 
 /*
-static void _qq_xfer_recv_start(GaimXfer *xfer)
+static void _qq_xfer_recv_start(PurpleXfer *xfer)
 {
 }
 */
 
-static void _qq_xfer_end(GaimXfer *xfer)
+static void _qq_xfer_end(PurpleXfer *xfer)
 {
 	ft_info *info;
 	g_return_if_fail(xfer != NULL && xfer->data != NULL);
@@ -206,20 +206,20 @@ static void _qq_xfer_end(GaimXfer *xfer)
 	qq_xfer_close_file(xfer);
 	if (info->dest_fp != NULL) {
 		fclose(info->dest_fp);
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "file closed\n");
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "file closed\n");
 	}
 	if (info->major_fd != 0) {
 		close(info->major_fd);
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "major port closed\n");
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "major port closed\n");
 	}
 	if (info->minor_fd != 0) {
 		close(info->minor_fd);
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "minor port closed\n");
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "minor port closed\n");
 	}
 	/*
 	if (info->buffer != NULL) {
-		munmap(info->buffer, gaim_xfer_get_size(xfer));
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "file mapping buffer is freed.\n");
+		munmap(info->buffer, purple_xfer_get_size(xfer));
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "file mapping buffer is freed.\n");
 	}
 	*/
 	g_free(info);
@@ -234,7 +234,7 @@ static void qq_show_conn_info(ft_info *info)
 	real_ip_str = gen_ip_str((guint8 *) &ip);
 	ip = g_htonl(info->remote_internet_ip);
 	internet_ip_str = gen_ip_str((guint8 *) &ip);
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "remote internet ip[%s:%d], major port[%d], real ip[%s], minor port[%d]\n",
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "remote internet ip[%s:%d], major port[%d], real ip[%s], minor port[%d]\n",
 			internet_ip_str, info->remote_internet_port,
 			info->remote_major_port, real_ip_str, info->remote_minor_port
 		  );
@@ -374,7 +374,7 @@ in_addr_t get_real_ip()
 }
 #endif
 
-static void _qq_xfer_init_socket(GaimXfer *xfer)
+static void _qq_xfer_init_socket(PurpleXfer *xfer)
 {
 	gint sockfd, listen_port = 0, i; 
 	socklen_t sin_len;
@@ -388,8 +388,8 @@ static void _qq_xfer_init_socket(GaimXfer *xfer)
 	/* debug 
 	info->local_real_ip = 0x7f000001;
 	*/
-	info->local_real_ip = g_ntohl(inet_addr(gaim_network_get_my_ip(-1)));
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "local real ip is %x", info->local_real_ip);
+	info->local_real_ip = g_ntohl(inet_addr(purple_network_get_my_ip(-1)));
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "local real ip is %x", info->local_real_ip);
 
 	for (i = 0; i < 2; i++) {
 		sockfd = socket(PF_INET, SOCK_DGRAM, 0);
@@ -408,13 +408,13 @@ static void _qq_xfer_init_socket(GaimXfer *xfer)
 			case 0:
 				info->local_major_port = listen_port;
 				info->major_fd = sockfd;
-				gaim_debug(GAIM_DEBUG_INFO, "QQ", "UDP Major Channel created on port[%d]\n",
+				purple_debug(PURPLE_DEBUG_INFO, "QQ", "UDP Major Channel created on port[%d]\n",
 						info->local_major_port);
 				break;
 			case 1:
 				info->local_minor_port = listen_port;
 				info->minor_fd = sockfd;
-				gaim_debug(GAIM_DEBUG_INFO, "QQ", "UDP Minor Channel created on port[%d]\n",
+				purple_debug(PURPLE_DEBUG_INFO, "QQ", "UDP Minor Channel created on port[%d]\n",
 						info->local_minor_port);
 				break;
 		}
@@ -425,11 +425,11 @@ static void _qq_xfer_init_socket(GaimXfer *xfer)
 	} else {
 		info->sender_fd = info->recv_fd = info->major_fd;
 	}
-/*	xfer->watcher = gaim_input_add(info->recv_fd, GAIM_INPUT_READ, _qq_xfer_recv_packet, xfer); */
+/*	xfer->watcher = purple_input_add(info->recv_fd, PURPLE_INPUT_READ, _qq_xfer_recv_packet, xfer); */
 }
 
 /* create the QQ_FILE_TRANS_REQ packet with file infomations */
-static void _qq_send_packet_file_request (GaimConnection *gc, guint32 to_uid, gchar *filename, gint filesize)
+static void _qq_send_packet_file_request (PurpleConnection *gc, guint32 to_uid, gchar *filename, gint filesize)
 {
 	qq_data *qd;
 	guint8 *cursor, *raw_data;
@@ -476,7 +476,7 @@ static void _qq_send_packet_file_request (GaimConnection *gc, guint32 to_uid, gc
 		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data,
 			     cursor - raw_data);
 	else
-		gaim_debug (GAIM_DEBUG_INFO, "qq_send_packet_file_request",
+		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file_request",
 			    "%d bytes expected but got %d bytes\n",
 			    packet_len, bytes);
 
@@ -484,7 +484,7 @@ static void _qq_send_packet_file_request (GaimConnection *gc, guint32 to_uid, gc
 }
 
 /* tell the buddy we want to accept the file */
-static void _qq_send_packet_file_accept(GaimConnection *gc, guint32 to_uid)
+static void _qq_send_packet_file_accept(PurpleConnection *gc, guint32 to_uid)
 {
 	qq_data *qd;
 	guint8 *cursor, *raw_data;
@@ -496,7 +496,7 @@ static void _qq_send_packet_file_accept(GaimConnection *gc, guint32 to_uid)
 	qd = (qq_data *) gc->proto_data;
 	info = (ft_info *) qd->xfer->data;
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "I've accepted the file transfer request from %d\n", to_uid);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "I've accepted the file transfer request from %d\n", to_uid);
 	_qq_xfer_init_socket(qd->xfer);
 
 	packet_len = 79;
@@ -518,14 +518,14 @@ static void _qq_send_packet_file_accept(GaimConnection *gc, guint32 to_uid)
 		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data,
 			     cursor - raw_data);
 	else
-		gaim_debug (GAIM_DEBUG_INFO, "qq_send_packet_file_accept",
+		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file_accept",
 			    "%d bytes expected but got %d bytes\n",
 			    packet_len, bytes);
 }
 
-static void _qq_send_packet_file_notifyip(GaimConnection *gc, guint32 to_uid)
+static void _qq_send_packet_file_notifyip(PurpleConnection *gc, guint32 to_uid)
 {
-	GaimXfer *xfer;
+	PurpleXfer *xfer;
 	ft_info *info;
 	qq_data *qd;
 	guint8 *cursor, *raw_data;
@@ -539,30 +539,30 @@ static void _qq_send_packet_file_notifyip(GaimConnection *gc, guint32 to_uid)
 	raw_data = g_newa (guint8, packet_len);
 	cursor = raw_data;
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "<== sending qq file notify ip packet\n");
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "<== sending qq file notify ip packet\n");
 	bytes = _qq_create_packet_file_header(raw_data, &cursor, to_uid, QQ_FILE_TRANS_NOTIFY, qd, TRUE);
 	bytes += qq_fill_conn_info(raw_data, &cursor, info);
 	if (packet_len == bytes)
 		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data,
 			     cursor - raw_data);
 	else
-		gaim_debug (GAIM_DEBUG_INFO, "qq_send_packet_file_notify",
+		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file_notify",
 			    "%d bytes expected but got %d bytes\n",
 			    packet_len, bytes);
 
-	if (xfer->watcher) gaim_input_remove(xfer->watcher);
-	xfer->watcher = gaim_input_add(info->recv_fd, GAIM_INPUT_READ, _qq_xfer_recv_packet, xfer);
-	gaim_input_add(info->major_fd, GAIM_INPUT_READ, _qq_xfer_recv_packet, xfer);
+	if (xfer->watcher) purple_input_remove(xfer->watcher);
+	xfer->watcher = purple_input_add(info->recv_fd, PURPLE_INPUT_READ, _qq_xfer_recv_packet, xfer);
+	purple_input_add(info->major_fd, PURPLE_INPUT_READ, _qq_xfer_recv_packet, xfer);
 }
 
 /* tell the buddy we don't want the file */
-static void _qq_send_packet_file_reject (GaimConnection *gc, guint32 to_uid)
+static void _qq_send_packet_file_reject (PurpleConnection *gc, guint32 to_uid)
 {
 	qq_data *qd;
 	guint8 *cursor, *raw_data;
 	gint packet_len, bytes;
 
-	gaim_debug(GAIM_DEBUG_INFO, "_qq_send_packet_file_reject", "start");
+	purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_reject", "start");
 	qd = (qq_data *) gc->proto_data;
 
 	packet_len = 64;
@@ -576,19 +576,19 @@ static void _qq_send_packet_file_reject (GaimConnection *gc, guint32 to_uid)
 		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data,
 			     cursor - raw_data);
 	else
-		gaim_debug (GAIM_DEBUG_INFO, "qq_send_packet_file",
+		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file",
 			    "%d bytes expected but got %d bytes\n",
 			    packet_len, bytes);
 }
 
 /* tell the buddy to cancel transfer */
-static void _qq_send_packet_file_cancel (GaimConnection *gc, guint32 to_uid)
+static void _qq_send_packet_file_cancel (PurpleConnection *gc, guint32 to_uid)
 {
 	qq_data *qd;
 	guint8 *cursor, *raw_data;
 	gint packet_len, bytes;
 
-	gaim_debug(GAIM_DEBUG_INFO, "_qq_send_packet_file_cancel", "start\n");
+	purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_cancel", "start\n");
 	qd = (qq_data *) gc->proto_data;
 
 	packet_len = 64;
@@ -596,99 +596,99 @@ static void _qq_send_packet_file_cancel (GaimConnection *gc, guint32 to_uid)
 	cursor = raw_data;
 	bytes = 0;
 
-	gaim_debug(GAIM_DEBUG_INFO, "_qq_send_packet_file_cancel", "before create header\n");
+	purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_cancel", "before create header\n");
 	bytes = _qq_create_packet_file_header(raw_data, &cursor, to_uid, QQ_FILE_TRANS_CANCEL, qd, TRUE);
-	gaim_debug(GAIM_DEBUG_INFO, "_qq_send_packet_file_cancel", "end create header\n");
+	purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_cancel", "end create header\n");
 
 	if (packet_len == bytes) {
-		gaim_debug(GAIM_DEBUG_INFO, "_qq_send_packet_file_cancel", "before send cmd\n");
+		purple_debug(PURPLE_DEBUG_INFO, "_qq_send_packet_file_cancel", "before send cmd\n");
 		qq_send_cmd (gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data,
 			     cursor - raw_data);
 	}
 	else
-		gaim_debug (GAIM_DEBUG_INFO, "qq_send_packet_file",
+		purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file",
 			    "%d bytes expected but got %d bytes\n",
 			    packet_len, bytes);
 
-	gaim_debug (GAIM_DEBUG_INFO, "qq_send_packet_file_cancel", "end\n");
+	purple_debug (PURPLE_DEBUG_INFO, "qq_send_packet_file_cancel", "end\n");
 }
 
 /* request to send a file */
 static void
-_qq_xfer_init (GaimXfer * xfer)
+_qq_xfer_init (PurpleXfer * xfer)
 {
-	GaimConnection *gc;
-	GaimAccount *account;
+	PurpleConnection *gc;
+	PurpleAccount *account;
 	guint32 to_uid;
 	gchar *filename, *filename_without_path;
 
 	g_return_if_fail (xfer != NULL);
-	account = gaim_xfer_get_account(xfer);
-	gc = gaim_account_get_connection(account);
+	account = purple_xfer_get_account(xfer);
+	gc = purple_account_get_connection(account);
 
-	to_uid = gaim_name_to_uid (xfer->who);
+	to_uid = purple_name_to_uid (xfer->who);
 	g_return_if_fail (to_uid != 0);
 
-	filename = (gchar *) gaim_xfer_get_local_filename (xfer);
+	filename = (gchar *) purple_xfer_get_local_filename (xfer);
 	g_return_if_fail (filename != NULL);
 
 	filename_without_path = strrchr (filename, '/') + 1;
 
 	_qq_send_packet_file_request (gc, to_uid, filename_without_path,
-			gaim_xfer_get_size(xfer));
+			purple_xfer_get_size(xfer));
 }
 
 /* cancel the transfer of receiving files */
-static void _qq_xfer_cancel(GaimXfer *xfer)
+static void _qq_xfer_cancel(PurpleXfer *xfer)
 {
-	GaimConnection *gc;
-	GaimAccount *account;
+	PurpleConnection *gc;
+	PurpleAccount *account;
 	guint16 *seq;
 
 	g_return_if_fail (xfer != NULL);
 	seq = (guint16 *) xfer->data;
-	account = gaim_xfer_get_account(xfer);
-	gc = gaim_account_get_connection(account);
+	account = purple_xfer_get_account(xfer);
+	gc = purple_account_get_connection(account);
 
-	switch (gaim_xfer_get_status(xfer)) {
-		case GAIM_XFER_STATUS_CANCEL_LOCAL:
-			_qq_send_packet_file_cancel(gc, gaim_name_to_uid(xfer->who));
+	switch (purple_xfer_get_status(xfer)) {
+		case PURPLE_XFER_STATUS_CANCEL_LOCAL:
+			_qq_send_packet_file_cancel(gc, purple_name_to_uid(xfer->who));
 			break;
-		case GAIM_XFER_STATUS_CANCEL_REMOTE:
-			_qq_send_packet_file_cancel(gc, gaim_name_to_uid(xfer->who));
+		case PURPLE_XFER_STATUS_CANCEL_REMOTE:
+			_qq_send_packet_file_cancel(gc, purple_name_to_uid(xfer->who));
 			break;
-		case GAIM_XFER_STATUS_NOT_STARTED:
+		case PURPLE_XFER_STATUS_NOT_STARTED:
 			break;
-		case GAIM_XFER_STATUS_UNKNOWN:
-			_qq_send_packet_file_reject(gc, gaim_name_to_uid(xfer->who));
+		case PURPLE_XFER_STATUS_UNKNOWN:
+			_qq_send_packet_file_reject(gc, purple_name_to_uid(xfer->who));
 			break;
-		case GAIM_XFER_STATUS_DONE:
+		case PURPLE_XFER_STATUS_DONE:
 			break;
-		case GAIM_XFER_STATUS_ACCEPTED:
+		case PURPLE_XFER_STATUS_ACCEPTED:
 			break;
-		case GAIM_XFER_STATUS_STARTED:
+		case PURPLE_XFER_STATUS_STARTED:
 			break;
 	}
 }
 
 /* init the transfer of receiving files */
-static void _qq_xfer_recv_init(GaimXfer *xfer)
+static void _qq_xfer_recv_init(PurpleXfer *xfer)
 {
-	GaimConnection *gc;
-	GaimAccount *account;
+	PurpleConnection *gc;
+	PurpleAccount *account;
 	ft_info *info;
 
 	g_return_if_fail (xfer != NULL && xfer->data != NULL);
 	info = (ft_info *) xfer->data;
-	account = gaim_xfer_get_account(xfer);
-	gc = gaim_account_get_connection(account);
+	account = purple_xfer_get_account(xfer);
+	gc = purple_account_get_connection(account);
 
-	_qq_send_packet_file_accept(gc, gaim_name_to_uid(xfer->who));
+	_qq_send_packet_file_accept(gc, purple_name_to_uid(xfer->who));
 }
 
 /* process reject im for file transfer request */
 void qq_process_recv_file_reject (guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, GaimConnection *gc)
+		guint32 sender_uid, PurpleConnection *gc)
 {
 	gchar *msg, *filename;
 	qq_data *qd;
@@ -698,16 +698,16 @@ void qq_process_recv_file_reject (guint8 *data, guint8 **cursor, gint data_len,
 	g_return_if_fail (qd->xfer != NULL);
 
 	if (*cursor >= (data + data_len - 1)) {
-		gaim_debug (GAIM_DEBUG_WARNING, "QQ",
+		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
 			    "Received file reject message is empty\n");
 		return;
 	}
-	filename = strrchr(gaim_xfer_get_local_filename(qd->xfer), '/') + 1;
+	filename = strrchr(purple_xfer_get_local_filename(qd->xfer), '/') + 1;
 	msg = g_strdup_printf(_("%d has declined the file %s"),
 		 sender_uid, filename);
 
-	gaim_notify_warning (gc, _("File Send"), msg, NULL);
-	gaim_xfer_request_denied(qd->xfer);
+	purple_notify_warning (gc, _("File Send"), msg, NULL);
+	purple_xfer_request_denied(qd->xfer);
 	qd->xfer = NULL;
 
 	g_free (msg);
@@ -715,7 +715,7 @@ void qq_process_recv_file_reject (guint8 *data, guint8 **cursor, gint data_len,
 
 /* process cancel im for file transfer request */
 void qq_process_recv_file_cancel (guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, GaimConnection *gc)
+		guint32 sender_uid, PurpleConnection *gc)
 {
 	gchar *msg, *filename;
 	qq_data *qd;
@@ -723,20 +723,20 @@ void qq_process_recv_file_cancel (guint8 *data, guint8 **cursor, gint data_len,
 	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
 	g_return_if_fail (qd->xfer != NULL
-			&& gaim_xfer_get_filename(qd->xfer) != NULL);
+			&& purple_xfer_get_filename(qd->xfer) != NULL);
 
 	if (*cursor >= (data + data_len - 1)) {
-		gaim_debug (GAIM_DEBUG_WARNING, "QQ",
+		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
 			    "Received file reject message is empty\n");
 		return;
 	}
-	filename = strrchr(gaim_xfer_get_local_filename(qd->xfer), '/') + 1;
+	filename = strrchr(purple_xfer_get_local_filename(qd->xfer), '/') + 1;
 	msg = g_strdup_printf
 		(_("%d canceled the transfer of %s"),
 		 sender_uid, filename);
 
-	gaim_notify_warning (gc, _("File Send"), msg, NULL);
-	gaim_xfer_cancel_remote(qd->xfer);
+	purple_notify_warning (gc, _("File Send"), msg, NULL);
+	purple_xfer_cancel_remote(qd->xfer);
 	qd->xfer = NULL;
 
 	g_free (msg);
@@ -744,18 +744,18 @@ void qq_process_recv_file_cancel (guint8 *data, guint8 **cursor, gint data_len,
 
 /* process accept im for file transfer request */
 void qq_process_recv_file_accept(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, GaimConnection *gc)
+		guint32 sender_uid, PurpleConnection *gc)
 {
 	qq_data *qd;
 	ft_info *info;
-	GaimXfer *xfer;
+	PurpleXfer *xfer;
 
 	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
 	xfer = qd->xfer;
 
 	if (*cursor >= (data + data_len - 1)) {
-		gaim_debug (GAIM_DEBUG_WARNING, "QQ",
+		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
 			    "Received file reject message is empty\n");
 		return;
 	}
@@ -772,20 +772,20 @@ void qq_process_recv_file_accept(guint8 *data, guint8 **cursor, gint data_len,
 
 /* process request from buddy's im for file transfer request */
 void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, GaimConnection * gc)
+		guint32 sender_uid, PurpleConnection * gc)
 {
 	qq_data *qd;
-	GaimXfer *xfer;
+	PurpleXfer *xfer;
 	gchar *sender_name, **fileinfo;
 	ft_info *info;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 	qq_buddy *q_bud;
 
 	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
 
 	if (*cursor >= (data + data_len - 1)) {
-		gaim_debug (GAIM_DEBUG_WARNING, "QQ",
+		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
 			    "Received file reject message is empty\n");
 		return;
 	}
@@ -803,14 +803,14 @@ void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len,
 	fileinfo = g_strsplit((gchar *) (data + 81 + 12), "\x1f", 2);
 	g_return_if_fail (fileinfo != NULL && fileinfo[0] != NULL && fileinfo[1] != NULL);
 
-	sender_name = uid_to_gaim_name(sender_uid);
+	sender_name = uid_to_purple_name(sender_uid);
 
 	/* FACE from IP detector, ignored by gfhuang */
 	if(g_ascii_strcasecmp(fileinfo[0], "FACE") == 0) {
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 			    "Received a FACE ip detect from qq-%d, so he/she must be online :)\n", sender_uid);
 
-		b = gaim_find_buddy(gc->account, sender_name);
+		b = purple_find_buddy(gc->account, sender_name);
 		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 		if (q_bud) {
 			if(0 != info->remote_real_ip) {
@@ -827,50 +827,50 @@ void qq_process_recv_file_request(guint8 *data, guint8 **cursor, gint data_len,
 				qq_update_buddy_contact(gc, q_bud);
 			}
 			else 
-				gaim_debug(GAIM_DEBUG_INFO, "QQ", "buddy %d is already online\n", sender_uid);
+				purple_debug(PURPLE_DEBUG_INFO, "QQ", "buddy %d is already online\n", sender_uid);
 
 		}
 		else 
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "buddy %d is not in my friendlist\n", sender_uid);
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "buddy %d is not in my friendlist\n", sender_uid);
 
 		g_free(sender_name);	    
 		g_strfreev(fileinfo);
 		return;
 	}
 	
-	xfer = gaim_xfer_new(gaim_connection_get_account(gc),
-			GAIM_XFER_RECEIVE,
+	xfer = purple_xfer_new(purple_connection_get_account(gc),
+			PURPLE_XFER_RECEIVE,
 			sender_name);
 	if (xfer)
 	{
-		gaim_xfer_set_filename(xfer, fileinfo[0]);
-		gaim_xfer_set_size(xfer, atoi(fileinfo[1]));
+		purple_xfer_set_filename(xfer, fileinfo[0]);
+		purple_xfer_set_size(xfer, atoi(fileinfo[1]));
 
-		gaim_xfer_set_init_fnc(xfer, _qq_xfer_recv_init);
-		gaim_xfer_set_request_denied_fnc(xfer, _qq_xfer_cancel);
-		gaim_xfer_set_cancel_recv_fnc(xfer, _qq_xfer_cancel);
-		gaim_xfer_set_end_fnc(xfer, _qq_xfer_end);
-		gaim_xfer_set_write_fnc(xfer, _qq_xfer_write);
+		purple_xfer_set_init_fnc(xfer, _qq_xfer_recv_init);
+		purple_xfer_set_request_denied_fnc(xfer, _qq_xfer_cancel);
+		purple_xfer_set_cancel_recv_fnc(xfer, _qq_xfer_cancel);
+		purple_xfer_set_end_fnc(xfer, _qq_xfer_end);
+		purple_xfer_set_write_fnc(xfer, _qq_xfer_write);
 
 		xfer->data = info;
 		qd->xfer = xfer;
 
-		gaim_xfer_request(xfer);
+		purple_xfer_request(xfer);
 	}
 
 	g_free(sender_name);
 	g_strfreev(fileinfo);
 }
 
-static void _qq_xfer_send_notify_ip_ack(gpointer data, gint source, GaimInputCondition cond)
+static void _qq_xfer_send_notify_ip_ack(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimXfer *xfer = (GaimXfer *) data;
-	GaimAccount *account = gaim_xfer_get_account(xfer);
-	GaimConnection *gc = gaim_account_get_connection(account);
+	PurpleXfer *xfer = (PurpleXfer *) data;
+	PurpleAccount *account = purple_xfer_get_account(xfer);
+	PurpleConnection *gc = purple_account_get_connection(account);
 	ft_info *info = (ft_info *) xfer->data;
 
-	gaim_input_remove(xfer->watcher);
-	xfer->watcher = gaim_input_add(info->recv_fd, GAIM_INPUT_READ, _qq_xfer_recv_packet, xfer);
+	purple_input_remove(xfer->watcher);
+	xfer->watcher = purple_input_add(info->recv_fd, PURPLE_INPUT_READ, _qq_xfer_recv_packet, xfer);
 	qq_send_file_ctl_packet(gc, QQ_FILE_CMD_NOTIFY_IP_ACK, info->to_uid, 0);
 	/*
 	info->use_major = TRUE;
@@ -880,17 +880,17 @@ static void _qq_xfer_send_notify_ip_ack(gpointer data, gint source, GaimInputCon
 }
 
 void qq_process_recv_file_notify(guint8 *data, guint8 **cursor, gint data_len, 
-		guint32 sender_uid, GaimConnection *gc)
+		guint32 sender_uid, PurpleConnection *gc)
 {
 	qq_data *qd;
 	ft_info *info;
-	GaimXfer *xfer;
+	PurpleXfer *xfer;
 
 	g_return_if_fail (data != NULL && data_len != 0);
 	qd = (qq_data *) gc->proto_data;
 
 	if (*cursor >= (data + data_len - 1)) {
-		gaim_debug (GAIM_DEBUG_WARNING, "QQ",
+		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
 			    "Received file notify message is empty\n");
 		return;
 	}
@@ -905,42 +905,42 @@ void qq_process_recv_file_notify(guint8 *data, guint8 **cursor, gint data_len,
 
 	_qq_xfer_init_udp_channel(info);
 
-	xfer->watcher = gaim_input_add(info->sender_fd, GAIM_INPUT_WRITE, _qq_xfer_send_notify_ip_ack, xfer);
+	xfer->watcher = purple_input_add(info->sender_fd, PURPLE_INPUT_WRITE, _qq_xfer_send_notify_ip_ack, xfer);
 }
 
 /* temp placeholder until a working function can be implemented */
-gboolean qq_can_receive_file(GaimConnection *gc, const char *who)
+gboolean qq_can_receive_file(PurpleConnection *gc, const char *who)
 {
 	return TRUE;
 }
 
-void qq_send_file(GaimConnection *gc, const char *who, const char *file)
+void qq_send_file(PurpleConnection *gc, const char *who, const char *file)
 {
 	qq_data *qd;
-	GaimXfer *xfer;
+	PurpleXfer *xfer;
 
 	qd = (qq_data *) gc->proto_data;
 
-	xfer = gaim_xfer_new (gc->account, GAIM_XFER_SEND,
+	xfer = purple_xfer_new (gc->account, PURPLE_XFER_SEND,
 			      who);
 	if (xfer)
 	{
-		gaim_xfer_set_init_fnc (xfer, _qq_xfer_init);
-		gaim_xfer_set_cancel_send_fnc (xfer, _qq_xfer_cancel);
-		gaim_xfer_set_write_fnc(xfer, _qq_xfer_write);
+		purple_xfer_set_init_fnc (xfer, _qq_xfer_init);
+		purple_xfer_set_cancel_send_fnc (xfer, _qq_xfer_cancel);
+		purple_xfer_set_write_fnc(xfer, _qq_xfer_write);
 
 		qd->xfer = xfer;
-		gaim_xfer_request(xfer);
+		purple_xfer_request(xfer);
 	}
 }
 
 /*
-static void qq_send_packet_request_key(GaimConnection *gc, guint8 key)
+static void qq_send_packet_request_key(PurpleConnection *gc, guint8 key)
 {
 	qq_send_cmd(gc, QQ_CMD_REQUEST_KEY, TRUE, 0, TRUE, &key, 1);
 }
 
-static void qq_process_recv_request_key(GaimConnection *gc)
+static void qq_process_recv_request_key(PurpleConnection *gc)
 {
 }
 */

@@ -1,5 +1,5 @@
 /*
- * Evolution integration plugin for Gaim
+ * Evolution integration plugin for Purple
  *
  * Copyright (C) 2003 Christian Hammond.
  *
@@ -156,7 +156,7 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 
 	if (!gevo_load_addressbook(uri, &book, NULL))
 	{
-		gaim_debug_error("evolution",
+		purple_debug_error("evolution",
 						 "Error retrieving addressbook\n");
 
 		return;
@@ -166,7 +166,7 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 
 	if (query == NULL)
 	{
-		gaim_debug_error("evolution", "Error in creating query\n");
+		purple_debug_error("evolution", "Error in creating query\n");
 
 		g_object_unref(book);
 
@@ -179,7 +179,7 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 
 	if (!status)
 	{
-		gaim_debug_error("evolution", "Error %d in getting card list\n",
+		purple_debug_error("evolution", "Error %d in getting card list\n",
 						 status);
 
 		g_object_unref(book);
@@ -187,7 +187,7 @@ populate_treeview(GevoAssociateBuddyDialog *dialog, const gchar *uri)
 		return;
 	}
 
-	prpl_id = gaim_account_get_protocol_id(dialog->buddy->account);
+	prpl_id = purple_account_get_protocol_id(dialog->buddy->account);
 
 	for (c = cards; c != NULL; c = c->next)
 	{
@@ -299,7 +299,7 @@ assoc_buddy_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 	e_contact_set(contact, protocol_field, list);
 
 	if (!e_book_commit_contact(dialog->book, contact, NULL))
-		gaim_debug_error("evolution", "Error adding contact to book\n");
+		purple_debug_error("evolution", "Error adding contact to book\n");
 
 	/* Free the list. */
 	g_list_foreach(list, (GFunc)g_free, NULL);
@@ -309,7 +309,7 @@ assoc_buddy_cb(GtkWidget *w, GevoAssociateBuddyDialog *dialog)
 }
 
 GevoAssociateBuddyDialog *
-gevo_associate_buddy_dialog_new(GaimBuddy *buddy)
+gevo_associate_buddy_dialog_new(PurpleBuddy *buddy)
 {
 	GevoAssociateBuddyDialog *dialog;
 	GtkWidget *button;

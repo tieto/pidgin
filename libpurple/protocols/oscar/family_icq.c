@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -378,7 +378,7 @@ int aim_icq_sendsms(OscarData *od, const char *name, const char *msg, const char
 
 	time(&t);
 	tm = gmtime(&t);
-	timestr = gaim_utf8_strftime("%a, %d %b %Y %T %Z", tm);
+	timestr = purple_utf8_strftime("%a, %d %b %Y %T %Z", tm);
 
 	/* The length of xml included the null terminating character */
 	xmllen = 225 + strlen(name) + strlen(msg) + strlen(od->sn) + strlen(alias) + strlen(timestr) + 1;
@@ -482,7 +482,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 
 	if (!(tl = aim_tlvlist_read(bs)) || !(datatlv = aim_tlv_gettlv(tl, 0x0001, 1))) {
 		aim_tlvlist_free(&tl);
-		gaim_debug_misc("oscar", "corrupt ICQ response\n");
+		purple_debug_misc("oscar", "corrupt ICQ response\n");
 		return 0;
 	}
 
@@ -493,7 +493,7 @@ icqresponse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *f
 	cmd = byte_stream_getle16(&qbs);
 	reqid = byte_stream_getle16(&qbs);
 
-	gaim_debug_misc("oscar", "icq response: %d bytes, %ld, 0x%04x, 0x%04x\n", cmdlen, ouruin, cmd, reqid);
+	purple_debug_misc("oscar", "icq response: %d bytes, %ld, 0x%04x, 0x%04x\n", cmdlen, ouruin, cmd, reqid);
 
 	if (cmd == 0x0041) { /* offline message */
 		struct aim_icq_offlinemsg msg;

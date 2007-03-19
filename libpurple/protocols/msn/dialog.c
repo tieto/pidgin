@@ -1,9 +1,9 @@
 /**
  * @file dialog.c Dialog functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -27,7 +27,7 @@
 
 typedef struct
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	char *who;
 	char *group;
 	gboolean add;
@@ -39,19 +39,19 @@ typedef struct
 static void
 msn_complete_sync_issue(MsnAddRemData *data)
 {
-	GaimBuddy *buddy;
-	GaimGroup *group = NULL;
+	PurpleBuddy *buddy;
+	PurpleGroup *group = NULL;
 
 	if (data->group != NULL)
-		group = gaim_find_group(data->group);
+		group = purple_find_group(data->group);
 	
 	if (group != NULL)
-		buddy = gaim_find_buddy_in_group(gaim_connection_get_account(data->gc), data->who, group);
+		buddy = purple_find_buddy_in_group(purple_connection_get_account(data->gc), data->who, group);
 	else
-		buddy = gaim_find_buddy(gaim_connection_get_account(data->gc), data->who);
+		buddy = purple_find_buddy(purple_connection_get_account(data->gc), data->who);
 	
 	if (buddy != NULL)
-		gaim_blist_remove_buddy(buddy);
+		purple_blist_remove_buddy(buddy);
 }
 
 static void
@@ -94,13 +94,13 @@ void
 msn_show_sync_issue(MsnSession *session, const char *passport,
 					const char *group_name)
 {
-	GaimConnection *gc;
-	GaimAccount *account;
+	PurpleConnection *gc;
+	PurpleAccount *account;
 	MsnAddRemData *data;
 	char *msg, *reason;
 
 	account = session->account;
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
 	data        = g_new0(MsnAddRemData, 1);
 	data->who   = g_strdup(passport);
@@ -108,8 +108,8 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 	data->gc    = gc;
 
 	msg = g_strdup_printf(_("Buddy list synchronization issue in %s (%s)"),
-						  gaim_account_get_username(account),
-						  gaim_account_get_protocol_name(account));
+						  purple_account_get_username(account),
+						  purple_account_get_protocol_name(account));
 
 	if (group_name != NULL)
 	{
@@ -127,7 +127,7 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 								 passport);
 	}
 
-	gaim_request_action(gc, NULL, msg, reason, GAIM_DEFAULT_ACTION_NONE, 
+	purple_request_action(gc, NULL, msg, reason, PURPLE_DEFAULT_ACTION_NONE, 
 						data, 2,
 						_("Yes"), G_CALLBACK(msn_add_cb),
 						_("No"), G_CALLBACK(msn_rem_cb));

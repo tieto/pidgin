@@ -1,9 +1,9 @@
 /**
- * @file version.h Gaim Versioning
+ * @file version.h Purple Versioning
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -21,14 +21,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_VERSION_H_
-#define _GAIM_VERSION_H_
+#ifndef _PURPLE_VERSION_H_
+#define _PURPLE_VERSION_H_
 
-#define GAIM_MAJOR_VERSION 2
-#define GAIM_MINOR_VERSION 0
-#define GAIM_MICRO_VERSION 0
+#define PURPLE_MAJOR_VERSION 2
+#define PURPLE_MINOR_VERSION 0
+#define PURPLE_MICRO_VERSION 0
 
-#define GAIM_VERSION_CHECK(x,y,z) ((x) == GAIM_MAJOR_VERSION && ((y) < GAIM_MINOR_VERSION || ((y) == GAIM_MINOR_VERSION && (z) <= GAIM_MICRO_VERSION)))
+#define PURPLE_VERSION_CHECK(x,y,z) ((x) == PURPLE_MAJOR_VERSION && ((y) < PURPLE_MINOR_VERSION || ((y) == PURPLE_MINOR_VERSION && (z) <= PURPLE_MICRO_VERSION)))
 
 #ifdef __cplusplus
 extern "C" {
@@ -38,5 +38,5 @@ extern "C" {
 }
 #endif
 
-#endif /* _GAIM_VERSION_H_ */
+#endif /* _PURPLE_VERSION_H_ */
 

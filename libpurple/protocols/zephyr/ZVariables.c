@@ -116,7 +116,7 @@ static int get_localvarfile(bfr)
     const char *envptr;
 #ifndef WIN32
     struct passwd *pwd;
-    envptr = gaim_home_dir();
+    envptr = purple_home_dir();
 #else
     envptr = getenv("HOME");
     if (!envptr)

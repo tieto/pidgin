@@ -2,9 +2,9 @@
  * @file gtkaccount.c GTK+ Account Editor UI
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -60,7 +60,7 @@ enum
 
 typedef struct
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	char *username;
 	char *alias;
 
@@ -86,12 +86,12 @@ typedef struct
 {
 	PidginAccountDialogType type;
 
-	GaimAccount *account;
+	PurpleAccount *account;
 	char *protocol_id;
-	GaimPlugin *plugin;
-	GaimPluginProtocolInfo *prpl_info;
+	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prpl_info;
 
-	GaimProxyType new_proxy_type;
+	PurpleProxyType new_proxy_type;
 
 	GList *user_split_entries;
 	GList *protocol_opt_entries;
@@ -148,7 +148,7 @@ typedef struct
 	gboolean pulse_to_grey;
 	float pulse_value;
 	int timeout;
-	GaimAccount *account;
+	PurpleAccount *account;
 	GtkTreeModel *model;
 
 } PidginPulseData;
@@ -157,9 +157,9 @@ typedef struct
 static AccountsWindow *accounts_window = NULL;
 static GHashTable *account_pref_wins;
 
-static void add_account_to_liststore(GaimAccount *account, gpointer user_data);
+static void add_account_to_liststore(PurpleAccount *account, gpointer user_data);
 static void set_account(GtkListStore *store, GtkTreeIter *iter,
-						  GaimAccount *account, GdkPixbuf *global_buddyicon);
+						  PurpleAccount *account, GdkPixbuf *global_buddyicon);
 
 /**************************************************************************
  * Add/Modify Account dialog
@@ -205,21 +205,21 @@ set_dialog_icon(AccountPrefsDialog *dialog, gchar *new_cached_icon_path, gchar *
 	dialog->cached_icon_path = new_cached_icon_path;
 	dialog->icon_path = new_icon_path;
 
-	filename = gaim_buddy_icons_get_full_path(dialog->cached_icon_path);
+	filename = purple_buddy_icons_get_full_path(dialog->cached_icon_path);
 	if (filename != NULL) {
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 		g_free(filename);
 	}
 
 	if (pixbuf && dialog->prpl_info &&
-	    (dialog->prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_DISPLAY))
+	    (dialog->prpl_info->icon_spec.scale_rules & PURPLE_ICON_SCALE_DISPLAY))
 	{
 		/* Scale the icon to something reasonable */
 		int width, height;
 		GdkPixbuf *scale;
 
 		pidgin_buddy_icon_get_scale_size(pixbuf, &dialog->prpl_info->icon_spec,
-				GAIM_ICON_SCALE_DISPLAY, &width, &height);
+				PURPLE_ICON_SCALE_DISPLAY, &width, &height);
 		scale = gdk_pixbuf_scale_simple(pixbuf, width, height, GDK_INTERP_BILINEAR);
 
 		g_object_unref(G_OBJECT(pixbuf));
@@ -231,7 +231,7 @@ set_dialog_icon(AccountPrefsDialog *dialog, gchar *new_cached_icon_path, gchar *
 		/* Show a placeholder icon */
 		gchar *filename;
 		filename = g_build_filename(DATADIR, "pixmaps",
-				"gaim", "insert-image.png", NULL);
+				"purple", "insert-image.png", NULL);
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 		g_free(filename);
 	}
@@ -245,9 +245,9 @@ static void
 set_account_protocol_cb(GtkWidget *item, const char *id,
 						AccountPrefsDialog *dialog)
 {
-	GaimPlugin *new_plugin;
+	PurplePlugin *new_plugin;
 
-	new_plugin = gaim_find_prpl(id);
+	new_plugin = purple_find_prpl(id);
 
 	if (new_plugin == dialog->plugin)
 		return;
@@ -256,14 +256,14 @@ set_account_protocol_cb(GtkWidget *item, const char *id,
 
 	if (dialog->plugin != NULL)
 	{
-		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
+		dialog->prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 
 		g_free(dialog->protocol_id);
 		dialog->protocol_id = g_strdup(dialog->plugin->info->id);
 	}
 
 	if (dialog->account != NULL)
-		gaim_account_clear_settings(dialog->account);
+		purple_account_clear_settings(dialog->account);
 
 	add_login_options(dialog,    dialog->top_vbox);
 	add_user_options(dialog,     dialog->top_vbox);
@@ -338,7 +338,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			/* It looks like we're dealing with a local file. Let's
 			 * just untar it in the right place */
 			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
-				gaim_debug(GAIM_DEBUG_ERROR, "buddyicon", "%s\n",
+				purple_debug(PURPLE_DEBUG_ERROR, "buddyicon", "%s\n",
 					   (converr ? converr->message :
 					    "g_filename_from_uri error"));
 				return;
@@ -354,7 +354,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 }
 
 static void
-update_editable(GaimConnection *gc, AccountPrefsDialog *dialog)
+update_editable(PurpleConnection *gc, AccountPrefsDialog *dialog)
 {
 	gboolean set;
 	GList *l;
@@ -362,10 +362,10 @@ update_editable(GaimConnection *gc, AccountPrefsDialog *dialog)
 	if (dialog->account == NULL)
 		return;
 
-	if (gc != NULL && dialog->account != gaim_connection_get_account(gc))
+	if (gc != NULL && dialog->account != purple_connection_get_account(gc))
 		return;
 
-	set = !(gaim_account_is_connected(dialog->account) || gaim_account_is_connecting(dialog->account));
+	set = !(purple_account_is_connected(dialog->account) || purple_account_is_connecting(dialog->account));
 	gtk_widget_set_sensitive(dialog->protocol_menu, set);
 	gtk_widget_set_sensitive(dialog->screenname_entry, set);
 
@@ -421,7 +421,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		user_splits = dialog->prpl_info->user_splits;
 
 	if (dialog->account != NULL)
-		username = g_strdup(gaim_account_get_username(dialog->account));
+		username = g_strdup(purple_account_get_username(dialog->account));
 
 	if (dialog->user_split_entries != NULL) {
 		g_list_free(dialog->user_split_entries);
@@ -429,10 +429,10 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	}
 
 	for (l = user_splits; l != NULL; l = l->next) {
-		GaimAccountUserSplit *split = l->data;
+		PurpleAccountUserSplit *split = l->data;
 		char *buf;
 
-		buf = g_strdup_printf("%s:", gaim_account_user_split_get_text(split));
+		buf = g_strdup_printf("%s:", purple_account_user_split_get_text(split));
 
 		entry = gtk_entry_new();
 
@@ -450,13 +450,13 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		 l = l->prev, l2 = l2->prev) {
 
 		GtkWidget *entry = l->data;
-		GaimAccountUserSplit *split = l2->data;
+		PurpleAccountUserSplit *split = l2->data;
 		const char *value = NULL;
 		char *c;
 
 		if (dialog->account != NULL) {
 			c = strrchr(username,
-						gaim_account_user_split_get_separator(split));
+						purple_account_user_split_get_separator(split));
 
 			if (c != NULL) {
 				*c = '\0';
@@ -467,7 +467,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		}
 
 		if (value == NULL)
-			value = gaim_account_user_split_get_default_value(split);
+			value = purple_account_user_split_get_default_value(split);
 
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), value);
@@ -502,17 +502,17 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Set the fields. */
 	if (dialog->account != NULL) {
-		if (gaim_account_get_password(dialog->account))
+		if (purple_account_get_password(dialog->account))
 			gtk_entry_set_text(GTK_ENTRY(dialog->password_entry),
-							   gaim_account_get_password(dialog->account));
+							   purple_account_get_password(dialog->account));
 
-		if (gaim_account_get_alias(dialog->account))
+		if (purple_account_get_alias(dialog->account))
 			gtk_entry_set_text(GTK_ENTRY(dialog->alias_entry),
-							   gaim_account_get_alias(dialog->account));
+							   purple_account_get_alias(dialog->account));
 
 		gtk_toggle_button_set_active(
 				GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
-				gaim_account_get_remember_password(dialog->account));
+				purple_account_get_remember_password(dialog->account));
 	}
 
 	if (dialog->prpl_info != NULL &&
@@ -524,9 +524,9 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Do not let the user change the protocol/screenname while connected. */
 	update_editable(NULL, dialog);
-	gaim_signal_connect(gaim_connections_get_handle(), "signing-on", dialog,
+	purple_signal_connect(purple_connections_get_handle(), "signing-on", dialog,
 					G_CALLBACK(update_editable), dialog);
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-off", dialog,
+	purple_signal_connect(purple_connections_get_handle(), "signed-off", dialog,
 					G_CALLBACK(update_editable), dialog);
 }
 
@@ -621,15 +621,15 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	if (dialog->account != NULL) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->new_mail_check),
-					     gaim_account_get_check_mail(dialog->account));
+					     purple_account_get_check_mail(dialog->account));
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->icon_check),
-					     !gaim_account_get_bool(dialog->account, "use-global-buddyicon",
+					     !purple_account_get_bool(dialog->account, "use-global-buddyicon",
 								       TRUE));
 		set_dialog_icon(dialog,
-				g_strdup(gaim_account_get_ui_string(dialog->account,
+				g_strdup(purple_account_get_ui_string(dialog->account,
 						PIDGIN_UI, "non-global-buddyicon-cached-path", NULL)),
-				g_strdup(gaim_account_get_ui_string(dialog->account, 
+				g_strdup(purple_account_get_ui_string(dialog->account, 
 						PIDGIN_UI, "non-global-buddyicon-path", NULL)));
 	} else {
 		set_dialog_icon(dialog, NULL, NULL);
@@ -647,15 +647,15 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 static void
 add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
-	GaimAccountOption *option;
-	GaimAccount *account;
+	PurpleAccountOption *option;
+	PurpleAccount *account;
 	GtkWidget *frame, *vbox, *check, *entry, *combo;
 	const GList *list, *node;
 	gint i, idx, int_value;
 	GtkListStore *model;
 	GtkTreeIter iter;
 	GtkCellRenderer *renderer;
-	GaimKeyValuePair *kvp;
+	PurpleKeyValuePair *kvp;
 	GList *l;
 	char buf[1024];
 	char *title;
@@ -697,26 +697,26 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	for (l = dialog->prpl_info->protocol_options; l != NULL; l = l->next)
 	{
-		option = (GaimAccountOption *)l->data;
+		option = (PurpleAccountOption *)l->data;
 
-		switch (gaim_account_option_get_type(option))
+		switch (purple_account_option_get_type(option))
 		{
-			case GAIM_PREF_BOOLEAN:
+			case PURPLE_PREF_BOOLEAN:
 				if (account == NULL ||
-					strcmp(gaim_account_get_protocol_id(account),
+					strcmp(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
-					bool_value = gaim_account_option_get_default_bool(option);
+					bool_value = purple_account_option_get_default_bool(option);
 				}
 				else
 				{
-					bool_value = gaim_account_get_bool(account,
-						gaim_account_option_get_setting(option),
-						gaim_account_option_get_default_bool(option));
+					bool_value = purple_account_get_bool(account,
+						purple_account_option_get_setting(option),
+						purple_account_option_get_default_bool(option));
 				}
 
 				check = gtk_check_button_new_with_label(
-					gaim_account_option_get_text(option));
+					purple_account_option_get_text(option));
 
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check),
 											 bool_value);
@@ -729,18 +729,18 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 				break;
 
-			case GAIM_PREF_INT:
+			case PURPLE_PREF_INT:
 				if (account == NULL ||
-					strcmp(gaim_account_get_protocol_id(account),
+					strcmp(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
-					int_value = gaim_account_option_get_default_int(option);
+					int_value = purple_account_option_get_default_int(option);
 				}
 				else
 				{
-					int_value = gaim_account_get_int(account,
-						gaim_account_option_get_setting(option),
-						gaim_account_option_get_default_int(option));
+					int_value = purple_account_get_int(account,
+						purple_account_option_get_setting(option),
+						purple_account_option_get_default_int(option));
 				}
 
 				g_snprintf(buf, sizeof(buf), "%d", int_value);
@@ -749,7 +749,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				gtk_entry_set_text(GTK_ENTRY(entry), buf);
 
 				title = g_strdup_printf("%s:",
-						gaim_account_option_get_text(option));
+						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, entry);
 
@@ -760,22 +760,22 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 				break;
 
-			case GAIM_PREF_STRING:
+			case PURPLE_PREF_STRING:
 				if (account == NULL ||
-					strcmp(gaim_account_get_protocol_id(account),
+					strcmp(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
-					str_value = gaim_account_option_get_default_string(option);
+					str_value = purple_account_option_get_default_string(option);
 				}
 				else
 				{
-					str_value = gaim_account_get_string(account,
-						gaim_account_option_get_setting(option),
-						gaim_account_option_get_default_string(option));
+					str_value = purple_account_get_string(account,
+						purple_account_option_get_setting(option),
+						purple_account_option_get_default_string(option));
 				}
 
 				entry = gtk_entry_new();
-				if (gaim_account_option_get_masked(option))
+				if (purple_account_option_get_masked(option))
 				{
 					gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 					if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
@@ -786,7 +786,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
 
 				title = g_strdup_printf("%s:",
-						gaim_account_option_get_text(option));
+						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, entry);
 
@@ -797,31 +797,31 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 				break;
 
-			case GAIM_PREF_STRING_LIST:
+			case PURPLE_PREF_STRING_LIST:
 				i = 0;
 				idx = 0;
 
 				if (account == NULL ||
-					strcmp(gaim_account_get_protocol_id(account),
+					strcmp(purple_account_get_protocol_id(account),
 						   dialog->protocol_id))
 				{
-					str_value = gaim_account_option_get_default_list_value(option);
+					str_value = purple_account_option_get_default_list_value(option);
 				}
 				else
 				{
-					str_value = gaim_account_get_string(account,
-						gaim_account_option_get_setting(option),
-						gaim_account_option_get_default_list_value(option));
+					str_value = purple_account_get_string(account,
+						purple_account_option_get_setting(option),
+						purple_account_option_get_default_list_value(option));
 				}
 
-				list = gaim_account_option_get_list(option);
+				list = purple_account_option_get_list(option);
 				model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_POINTER);
 				combo = gtk_combo_box_new_with_model(GTK_TREE_MODEL(model));
 
-				/* Loop through list of GaimKeyValuePair items */
+				/* Loop through list of PurpleKeyValuePair items */
 				for (node = list; node != NULL; node = node->next) {
 					if (node->data != NULL) {
-						kvp = (GaimKeyValuePair *) node->data;
+						kvp = (PurpleKeyValuePair *) node->data;
 						if ((kvp->value != NULL) && (str_value != NULL) &&
 						    !g_utf8_collate(kvp->value, str_value))
 							idx = i;
@@ -847,7 +847,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 						renderer, "text", 0, NULL);
 
 				title = g_strdup_printf("%s:",
-						gaim_account_option_get_text(option));
+						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, combo);
 
@@ -878,39 +878,39 @@ make_proxy_dropdown(void)
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
-			0, gaim_running_gnome() ? _("Use GNOME Proxy Settings")
+			0, purple_running_gnome() ? _("Use GNOME Proxy Settings")
 			:_("Use Global Proxy Settings"),
-			1, GAIM_PROXY_USE_GLOBAL,
+			1, PURPLE_PROXY_USE_GLOBAL,
 			-1);
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
 			0, _("No Proxy"),
-			1, GAIM_PROXY_NONE,
+			1, PURPLE_PROXY_NONE,
 			-1);
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
 			0, _("HTTP"),
-			1, GAIM_PROXY_HTTP,
+			1, PURPLE_PROXY_HTTP,
 			-1);
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
 			0, _("SOCKS 4"),
-			1, GAIM_PROXY_SOCKS4,
+			1, PURPLE_PROXY_SOCKS4,
 			-1);
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
 			0, _("SOCKS 5"),
-			1, GAIM_PROXY_SOCKS5,
+			1, PURPLE_PROXY_SOCKS5,
 			-1);
 
 	gtk_list_store_append(model, &iter);
 	gtk_list_store_set(model, &iter,
 			0, _("Use Environmental Settings"),
-			1, GAIM_PROXY_USE_ENVVAR,
+			1, PURPLE_PROXY_USE_ENVVAR,
 			-1);
 
 	renderer = gtk_cell_renderer_text_new();
@@ -927,9 +927,9 @@ proxy_type_changed_cb(GtkWidget *menu, AccountPrefsDialog *dialog)
 	dialog->new_proxy_type =
 		gtk_combo_box_get_active(GTK_COMBO_BOX(menu)) - 1;
 
-	if (dialog->new_proxy_type == GAIM_PROXY_USE_GLOBAL ||
-		dialog->new_proxy_type == GAIM_PROXY_NONE ||
-		dialog->new_proxy_type == GAIM_PROXY_USE_ENVVAR) {
+	if (dialog->new_proxy_type == PURPLE_PROXY_USE_GLOBAL ||
+		dialog->new_proxy_type == PURPLE_PROXY_NONE ||
+		dialog->new_proxy_type == PURPLE_PROXY_USE_ENVVAR) {
 
 		gtk_widget_hide_all(dialog->proxy_vbox);
 	}
@@ -964,7 +964,7 @@ port_popup_cb(GtkWidget *w, GtkMenu *menu, gpointer data)
 static void
 add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
-	GaimProxyInfo *proxy_info;
+	PurpleProxyInfo *proxy_info;
 	GtkWidget *frame;
 	GtkWidget *vbox;
 	GtkWidget *vbox2;
@@ -1017,9 +1017,9 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	add_pref_box(dialog, vbox2, _("Pa_ssword:"), dialog->proxy_pass_entry);
 
 	if (dialog->account != NULL &&
-		(proxy_info = gaim_account_get_proxy_info(dialog->account)) != NULL) {
+		(proxy_info = purple_account_get_proxy_info(dialog->account)) != NULL) {
 
-		GaimProxyType type = gaim_proxy_info_get_type(proxy_info);
+		PurpleProxyType type = purple_proxy_info_get_type(proxy_info);
 		const char *value;
 		int int_val;
 
@@ -1029,15 +1029,15 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
 				type + 1);
 
-		if (type == GAIM_PROXY_USE_GLOBAL || type == GAIM_PROXY_NONE ||
-				type == GAIM_PROXY_USE_ENVVAR)
+		if (type == PURPLE_PROXY_USE_GLOBAL || type == PURPLE_PROXY_NONE ||
+				type == PURPLE_PROXY_USE_ENVVAR)
 			gtk_widget_hide_all(vbox2);
 
 
-		if ((value = gaim_proxy_info_get_host(proxy_info)) != NULL)
+		if ((value = purple_proxy_info_get_host(proxy_info)) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_host_entry), value);
 
-		if ((int_val = gaim_proxy_info_get_port(proxy_info)) != 0) {
+		if ((int_val = purple_proxy_info_get_port(proxy_info)) != 0) {
 			char buf[11];
 
 			g_snprintf(buf, sizeof(buf), "%d", int_val);
@@ -1045,14 +1045,14 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_port_entry), buf);
 		}
 
-		if ((value = gaim_proxy_info_get_username(proxy_info)) != NULL)
+		if ((value = purple_proxy_info_get_username(proxy_info)) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_user_entry), value);
 
-		if ((value = gaim_proxy_info_get_password(proxy_info)) != NULL)
+		if ((value = purple_proxy_info_get_password(proxy_info)) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(dialog->proxy_pass_entry), value);
 	}
 	else {
-		dialog->new_proxy_type = GAIM_PROXY_USE_GLOBAL;
+		dialog->new_proxy_type = PURPLE_PROXY_USE_GLOBAL;
 		gtk_combo_box_set_active(GTK_COMBO_BOX(dialog->proxy_dropdown),
 				dialog->new_proxy_type + 1);
 		gtk_widget_hide_all(vbox2);
@@ -1077,12 +1077,12 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 
 	if (dialog->cached_icon_path != NULL)
 	{
-		const char *icon = gaim_account_get_ui_string(dialog->account, PIDGIN_UI, "non-global-buddyicon-cached-path", NULL);
+		const char *icon = purple_account_get_ui_string(dialog->account, PIDGIN_UI, "non-global-buddyicon-cached-path", NULL);
 		if (dialog->cached_icon_path != NULL && (icon == NULL || strcmp(dialog->cached_icon_path, icon)))
 		{
 			/* The user set an icon, which would've been cached by convert_buddy_icon,
 			 * but didn't save the changes. Delete the cache file. */
-			char *filename = g_build_filename(gaim_buddy_icons_get_cache_dir(), dialog->cached_icon_path, NULL);
+			char *filename = g_build_filename(purple_buddy_icons_get_cache_dir(), dialog->cached_icon_path, NULL);
 			g_unlink(filename);
 			g_free(filename);
 		}
@@ -1095,7 +1095,7 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 	if (dialog->icon_filesel)
 		gtk_widget_destroy(dialog->icon_filesel);
 
-	gaim_signals_disconnect_by_handle(dialog);
+	purple_signals_disconnect_by_handle(dialog);
 
 	g_free(dialog);
 }
@@ -1106,24 +1106,24 @@ cancel_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	account_win_destroy_cb(NULL, NULL, dialog);
 }
 
-static GaimAccount*
+static PurpleAccount*
 ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
-	GaimProxyInfo *proxy_info = NULL;
+	PurpleProxyInfo *proxy_info = NULL;
 	GList *l, *l2;
 	const char *value;
 	char *username;
 	char *tmp;
 	gboolean new = FALSE, icon_change = FALSE;
-	GaimAccount *account;
-	GaimPluginProtocolInfo *prpl_info;
+	PurpleAccount *account;
+	PurplePluginProtocolInfo *prpl_info;
 
 	if (dialog->account == NULL)
 	{
 		const char *screenname;
 
 		screenname = gtk_entry_get_text(GTK_ENTRY(dialog->screenname_entry));
-		account = gaim_account_new(screenname, dialog->protocol_id);
+		account = purple_account_new(screenname, dialog->protocol_id);
 		new = TRUE;
 	}
 	else
@@ -1131,53 +1131,53 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		account = dialog->account;
 
 		/* Protocol */
-		gaim_account_set_protocol_id(account, dialog->protocol_id);
+		purple_account_set_protocol_id(account, dialog->protocol_id);
 	}
 
 	/* Alias */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->alias_entry));
 
 	if (*value != '\0')
-		gaim_account_set_alias(account, value);
+		purple_account_set_alias(account, value);
 	else
-		gaim_account_set_alias(account, NULL);
+		purple_account_set_alias(account, NULL);
 
 	/* Buddy Icon */
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 	if (prpl_info != NULL && prpl_info->icon_spec.format != NULL)
 	{
-		if (new || gaim_account_get_bool(account, "use-global-buddyicon", TRUE) ==
+		if (new || purple_account_get_bool(account, "use-global-buddyicon", TRUE) ==
 			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)))
 		{
 			icon_change = TRUE;
 		}
-		gaim_account_set_bool(account, "use-global-buddyicon", !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
-		gaim_account_set_ui_string(account, PIDGIN_UI, "non-global-buddyicon-cached-path", dialog->cached_icon_path);
-		gaim_account_set_ui_string(account, PIDGIN_UI, "non-global-buddyicon-path", dialog->icon_path);
+		purple_account_set_bool(account, "use-global-buddyicon", !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
+		purple_account_set_ui_string(account, PIDGIN_UI, "non-global-buddyicon-cached-path", dialog->cached_icon_path);
+		purple_account_set_ui_string(account, PIDGIN_UI, "non-global-buddyicon-path", dialog->icon_path);
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)))
 		{
-			gaim_account_set_buddy_icon_path(account, dialog->icon_path);
-			gaim_account_set_buddy_icon(account, dialog->cached_icon_path);
+			purple_account_set_buddy_icon_path(account, dialog->icon_path);
+			purple_account_set_buddy_icon(account, dialog->cached_icon_path);
 		}
-		else if (gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon") && icon_change)
+		else if (purple_prefs_get_path("/purple/gtk/accounts/buddyicon") && icon_change)
 		{
-			const char *filename = gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon");
+			const char *filename = purple_prefs_get_path("/purple/gtk/accounts/buddyicon");
 			char *icon = pidgin_convert_buddy_icon(dialog->plugin, filename);
-			gaim_account_set_buddy_icon_path(account, filename);
-			gaim_account_set_buddy_icon(account, icon);
+			purple_account_set_buddy_icon_path(account, filename);
+			purple_account_set_buddy_icon(account, icon);
 			g_free(icon);
 		}
 	}
 
 
 	/* Remember Password */
-	gaim_account_set_remember_password(account,
+	purple_account_set_remember_password(account,
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->remember_pass_check)));
 
 	/* Check Mail */
 	if (dialog->prpl_info && dialog->prpl_info->options & OPT_PROTO_MAIL_CHECK)
-		gaim_account_set_check_mail(account,
+		purple_account_set_check_mail(account,
 			gtk_toggle_button_get_active(
 					GTK_TOGGLE_BUTTON(dialog->new_mail_check)));
 
@@ -1190,10 +1190,10 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	 * the account editor (but has not checked the 'save' box), then we
 	 * don't want to prompt them.
 	 */
-	if ((gaim_account_get_remember_password(account) || new) && (*value != '\0'))
-		gaim_account_set_password(account, value);
+	if ((purple_account_get_remember_password(account) || new) && (*value != '\0'))
+		purple_account_set_password(account, value);
 	else
-		gaim_account_set_password(account, NULL);
+		purple_account_set_password(account, NULL);
 
 	/* Build the username string. */
 	username =
@@ -1206,17 +1206,17 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			 l != NULL && l2 != NULL;
 			 l = l->next, l2 = l2->next)
 		{
-			GaimAccountUserSplit *split = l->data;
+			PurpleAccountUserSplit *split = l->data;
 			GtkEntry *entry = l2->data;
 			char sep[2] = " ";
 
 			value = gtk_entry_get_text(entry);
 
-			*sep = gaim_account_user_split_get_separator(split);
+			*sep = purple_account_user_split_get_separator(split);
 
 			tmp = g_strconcat(username, sep,
 					(*value ? value :
-					 gaim_account_user_split_get_default_value(split)),
+					 purple_account_user_split_get_default_value(split)),
 					NULL);
 
 			g_free(username);
@@ -1224,7 +1224,7 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		}
 	}
 
-	gaim_account_set_username(account, username);
+	purple_account_set_username(account, username);
 	g_free(username);
 
 	/* Add the protocol settings */
@@ -1234,8 +1234,8 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 				l != NULL && l2 != NULL;
 				l = l->next, l2 = l2->next) {
 
-			GaimPrefType type;
-			GaimAccountOption *option = l->data;
+			PurplePrefType type;
+			PurpleAccountOption *option = l->data;
 			GtkWidget *widget = l2->data;
 			GtkTreeIter iter;
 			const char *setting;
@@ -1243,31 +1243,31 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			int int_value;
 			gboolean bool_value;
 
-			type = gaim_account_option_get_type(option);
+			type = purple_account_option_get_type(option);
 
-			setting = gaim_account_option_get_setting(option);
+			setting = purple_account_option_get_setting(option);
 
 			switch (type) {
-				case GAIM_PREF_STRING:
+				case PURPLE_PREF_STRING:
 					value = gtk_entry_get_text(GTK_ENTRY(widget));
-					gaim_account_set_string(account, setting, value);
+					purple_account_set_string(account, setting, value);
 					break;
 
-				case GAIM_PREF_INT:
+				case PURPLE_PREF_INT:
 					int_value = atoi(gtk_entry_get_text(GTK_ENTRY(widget)));
-					gaim_account_set_int(account, setting, int_value);
+					purple_account_set_int(account, setting, int_value);
 					break;
 
-				case GAIM_PREF_BOOLEAN:
+				case PURPLE_PREF_BOOLEAN:
 					bool_value =
 						gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget));
-					gaim_account_set_bool(account, setting, bool_value);
+					purple_account_set_bool(account, setting, bool_value);
 					break;
 
-				case GAIM_PREF_STRING_LIST:
+				case PURPLE_PREF_STRING_LIST:
 					gtk_combo_box_get_active_iter(GTK_COMBO_BOX(widget), &iter);
 					gtk_tree_model_get(gtk_combo_box_get_model(GTK_COMBO_BOX(widget)), &iter, 1, &value2, -1);
-					gaim_account_set_string(account, setting, value2);
+					purple_account_set_string(account, setting, value2);
 					break;
 
 				default:
@@ -1277,57 +1277,57 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	}
 
 	/* Set the proxy stuff. */
-	proxy_info = gaim_account_get_proxy_info(account);
+	proxy_info = purple_account_get_proxy_info(account);
 
 	/* Create the proxy info if it doesn't exist. */
 	if (proxy_info == NULL) {
-		proxy_info = gaim_proxy_info_new();
-		gaim_account_set_proxy_info(account, proxy_info);
+		proxy_info = purple_proxy_info_new();
+		purple_account_set_proxy_info(account, proxy_info);
 	}
 
 	/* Set the proxy info type. */
-	gaim_proxy_info_set_type(proxy_info, dialog->new_proxy_type);
+	purple_proxy_info_set_type(proxy_info, dialog->new_proxy_type);
 
 	/* Host */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_host_entry));
 
 	if (*value != '\0')
-		gaim_proxy_info_set_host(proxy_info, value);
+		purple_proxy_info_set_host(proxy_info, value);
 	else
-		gaim_proxy_info_set_host(proxy_info, NULL);
+		purple_proxy_info_set_host(proxy_info, NULL);
 
 	/* Port */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_port_entry));
 
 	if (*value != '\0')
-		gaim_proxy_info_set_port(proxy_info, atoi(value));
+		purple_proxy_info_set_port(proxy_info, atoi(value));
 	else
-		gaim_proxy_info_set_port(proxy_info, 0);
+		purple_proxy_info_set_port(proxy_info, 0);
 
 	/* Username */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_user_entry));
 
 	if (*value != '\0')
-		gaim_proxy_info_set_username(proxy_info, value);
+		purple_proxy_info_set_username(proxy_info, value);
 	else
-		gaim_proxy_info_set_username(proxy_info, NULL);
+		purple_proxy_info_set_username(proxy_info, NULL);
 
 	/* Password */
 	value = gtk_entry_get_text(GTK_ENTRY(dialog->proxy_pass_entry));
 
 	if (*value != '\0')
-		gaim_proxy_info_set_password(proxy_info, value);
+		purple_proxy_info_set_password(proxy_info, value);
 	else
-		gaim_proxy_info_set_password(proxy_info, NULL);
+		purple_proxy_info_set_password(proxy_info, NULL);
 
 	/* If there are no values set then proxy_info NULL */
-	if ((gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_USE_GLOBAL) &&
-		(gaim_proxy_info_get_host(proxy_info) == NULL) &&
-		(gaim_proxy_info_get_port(proxy_info) == 0) &&
-		(gaim_proxy_info_get_username(proxy_info) == NULL) &&
-		(gaim_proxy_info_get_password(proxy_info) == NULL))
+	if ((purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_GLOBAL) &&
+		(purple_proxy_info_get_host(proxy_info) == NULL) &&
+		(purple_proxy_info_get_port(proxy_info) == 0) &&
+		(purple_proxy_info_get_username(proxy_info) == NULL) &&
+		(purple_proxy_info_get_password(proxy_info) == NULL))
 	{
-		gaim_account_set_proxy_info(account, NULL);
+		purple_account_set_proxy_info(account, NULL);
 		proxy_info = NULL;
 	}
 
@@ -1337,18 +1337,18 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 
 	/* If this is a new account, add it to our list */
 	if (new)
-		gaim_accounts_add(account);
+		purple_accounts_add(account);
 	else
-		gaim_signal_emit(pidgin_account_get_handle(), "account-modified", account);
+		purple_signal_emit(pidgin_account_get_handle(), "account-modified", account);
 
 	/* If this is a new account, then sign on! */
 	if (new && !dialog->registering) {
-		const GaimSavedStatus *saved_status;
+		const PurpleSavedStatus *saved_status;
 
-		saved_status = gaim_savedstatus_get_current();
+		saved_status = purple_savedstatus_get_current();
 		if (saved_status != NULL) {
-			gaim_savedstatus_activate_for_account(saved_status, account);
-			gaim_account_set_enabled(account, PIDGIN_UI, TRUE);
+			purple_savedstatus_activate_for_account(saved_status, account);
+			purple_account_set_enabled(account, PIDGIN_UI, TRUE);
 		}
 	}
 
@@ -1358,13 +1358,13 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 static void
 register_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	dialog->registering = TRUE;
 
 	account = ok_account_prefs_cb(NULL, dialog);
 
-	gaim_account_register(account);
+	purple_account_register(account);
 }
 
 
@@ -1376,7 +1376,7 @@ static const GtkTargetEntry dnd_targets[] = {
 
 void
 pidgin_account_dialog_show(PidginAccountDialogType type,
-							 GaimAccount *account)
+							 PurpleAccount *account)
 {
 	AccountPrefsDialog *dialog;
 	GtkWidget *win;
@@ -1407,18 +1407,18 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 
 	if (dialog->account == NULL) {
 		/* Select the first prpl in the list*/
-		GList *prpl_list = gaim_plugins_get_protocols();
+		GList *prpl_list = purple_plugins_get_protocols();
 		if (prpl_list != NULL)
-			dialog->protocol_id = g_strdup(((GaimPlugin *) prpl_list->data)->info->id);
+			dialog->protocol_id = g_strdup(((PurplePlugin *) prpl_list->data)->info->id);
 	}
 	else
 	{
 		dialog->protocol_id =
-			g_strdup(gaim_account_get_protocol_id(dialog->account));
+			g_strdup(purple_account_get_protocol_id(dialog->account));
 	}
 
-	if ((dialog->plugin = gaim_find_prpl(dialog->protocol_id)) != NULL)
-		dialog->prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(dialog->plugin);
+	if ((dialog->plugin = purple_find_prpl(dialog->protocol_id)) != NULL)
+		dialog->prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 
 
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1531,9 +1531,9 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
  * Accounts Dialog
  **************************************************************************/
 static void
-signed_on_off_cb(GaimConnection *gc, gpointer user_data)
+signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	PidginPulseData *pulse_data;
 	GtkTreeModel *model;
 	GtkTreeIter iter;
@@ -1544,9 +1544,9 @@ signed_on_off_cb(GaimConnection *gc, gpointer user_data)
 	if (accounts_window == NULL)
 		return;
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 	model = GTK_TREE_MODEL(accounts_window->model);
-	index = g_list_index(gaim_accounts_get_all(), account);
+	index = g_list_index(purple_accounts_get_all(), account);
 
 	if (gtk_tree_model_iter_nth_child(model, &iter, NULL, index))
 	{
@@ -1564,7 +1564,7 @@ signed_on_off_cb(GaimConnection *gc, gpointer user_data)
 		}
 
 		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
-		if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
+		if ((pixbuf != NULL) && purple_account_is_disconnected(account))
 			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
 		gtk_list_store_set(accounts_window->model, &iter,
@@ -1583,10 +1583,10 @@ signed_on_off_cb(GaimConnection *gc, gpointer user_data)
  * GtkListStore
  */
 static gboolean
-accounts_window_find_account_in_treemodel(GtkTreeIter *iter, GaimAccount *account)
+accounts_window_find_account_in_treemodel(GtkTreeIter *iter, PurpleAccount *account)
 {
 	GtkTreeModel *model;
-	GaimAccount *cur;
+	PurpleAccount *cur;
 
 	g_return_val_if_fail(account != NULL, FALSE);
 	g_return_val_if_fail(accounts_window != NULL, FALSE);
@@ -1611,7 +1611,7 @@ accounts_window_find_account_in_treemodel(GtkTreeIter *iter, GaimAccount *accoun
 }
 
 static void
-account_removed_cb(GaimAccount *account, gpointer user_data)
+account_removed_cb(PurpleAccount *account, gpointer user_data)
 {
 	AccountPrefsDialog *dialog;
 	GtkTreeIter iter;
@@ -1627,12 +1627,12 @@ account_removed_cb(GaimAccount *account, gpointer user_data)
 	if (accounts_window_find_account_in_treemodel(&iter, account))
 		gtk_list_store_remove(accounts_window->model, &iter);
 
-	if (gaim_accounts_get_all() == NULL)
+	if (purple_accounts_get_all() == NULL)
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook), 0);
 }
 
 static void
-account_abled_cb(GaimAccount *account, gpointer user_data)
+account_abled_cb(PurpleAccount *account, gpointer user_data)
 {
 	GtkTreeIter iter;
 
@@ -1651,11 +1651,11 @@ drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 				 GtkSelectionData *data, guint info, guint time,
 				 AccountsWindow *dialog)
 {
-	if (data->target == gdk_atom_intern("GAIM_ACCOUNT", FALSE)) {
+	if (data->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE)) {
 		GtkTreeRowReference *ref;
 		GtkTreePath *source_row;
 		GtkTreeIter iter;
-		GaimAccount *account = NULL;
+		PurpleAccount *account = NULL;
 		GValue val;
 
 		ref = g_object_get_data(G_OBJECT(ctx), "gtk-tree-view-source-row");
@@ -1674,7 +1674,7 @@ drag_data_get_cb(GtkWidget *widget, GdkDragContext *ctx,
 
 		account = g_value_get_pointer(&val);
 
-		gtk_selection_data_set(data, gdk_atom_intern("GAIM_ACCOUNT", FALSE),
+		gtk_selection_data_set(data, gdk_atom_intern("PURPLE_ACCOUNT", FALSE),
 							   8, (void *)&account, sizeof(account));
 
 		gtk_tree_path_free(source_row);
@@ -1686,7 +1686,7 @@ move_account_after(GtkListStore *store, GtkTreeIter *iter,
 				   GtkTreeIter *position)
 {
 	GtkTreeIter new_iter;
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(store), iter,
 					   COLUMN_DATA, &account,
@@ -1704,7 +1704,7 @@ move_account_before(GtkListStore *store, GtkTreeIter *iter,
 					GtkTreeIter *position)
 {
 	GtkTreeIter new_iter;
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	gtk_tree_model_get(GTK_TREE_MODEL(store), iter,
 					   COLUMN_DATA, &account,
@@ -1722,9 +1722,9 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 					  guint x, guint y, GtkSelectionData *sd,
 					  guint info, guint t, AccountsWindow *dialog)
 {
-	if (sd->target == gdk_atom_intern("GAIM_ACCOUNT", FALSE) && sd->data) {
+	if (sd->target == gdk_atom_intern("PURPLE_ACCOUNT", FALSE) && sd->data) {
 		gint dest_index;
-		GaimAccount *a = NULL;
+		PurpleAccount *a = NULL;
 		GtkTreePath *path = NULL;
 		GtkTreeViewDropPosition position;
 
@@ -1734,7 +1734,7 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 											  &path, &position)) {
 
 			GtkTreeIter iter;
-			GaimAccount *account;
+			PurpleAccount *account;
 			GValue val;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(dialog->model), &iter, path);
@@ -1749,13 +1749,13 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 				case GTK_TREE_VIEW_DROP_INTO_OR_AFTER:
 					move_account_after(dialog->model, &dialog->drag_iter,
 									   &iter);
-					dest_index = g_list_index(gaim_accounts_get_all(),
+					dest_index = g_list_index(purple_accounts_get_all(),
 											  account) + 1;
 					break;
 
 				case GTK_TREE_VIEW_DROP_BEFORE:
 				case GTK_TREE_VIEW_DROP_INTO_OR_BEFORE:
-					dest_index = g_list_index(gaim_accounts_get_all(),
+					dest_index = g_list_index(purple_accounts_get_all(),
 											  account);
 
 					move_account_before(dialog->model, &dialog->drag_iter,
@@ -1766,7 +1766,7 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 					return;
 			}
 
-			gaim_accounts_reorder(a, dest_index);
+			purple_accounts_reorder(a, dest_index);
 		}
 	}
 }
@@ -1783,12 +1783,12 @@ static gboolean
 configure_cb(GtkWidget *w, GdkEventConfigure *event, AccountsWindow *dialog)
 {
 	if (GTK_WIDGET_VISIBLE(w)) {
-		int old_width = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/width");
+		int old_width = purple_prefs_get_int("/purple/gtk/accounts/dialog/width");
 		int col_width;
 		int difference;
 
-		gaim_prefs_set_int("/gaim/gtk/accounts/dialog/width",  event->width);
-		gaim_prefs_set_int("/gaim/gtk/accounts/dialog/height", event->height);
+		purple_prefs_set_int("/purple/gtk/accounts/dialog/width",  event->width);
+		purple_prefs_set_int("/purple/gtk/accounts/dialog/height", event->height);
 
 		col_width = gtk_tree_view_column_get_width(dialog->screenname_col);
 
@@ -1822,7 +1822,7 @@ static void
 modify_account_sel(GtkTreeModel *model, GtkTreePath *path,
 				   GtkTreeIter *iter, gpointer data)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	gtk_tree_model_get(model, iter, COLUMN_DATA, &account, -1);
 
@@ -1841,16 +1841,16 @@ modify_account_cb(GtkWidget *w, AccountsWindow *dialog)
 }
 
 static void
-delete_account_cb(GaimAccount *account)
+delete_account_cb(PurpleAccount *account)
 {
-	gaim_accounts_delete(account);
+	purple_accounts_delete(account);
 }
 
 static void
 ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
 					   GtkTreeIter *iter, gpointer data)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	gtk_tree_model_get(model, iter, COLUMN_DATA, &account, -1);
 
@@ -1858,10 +1858,10 @@ ask_delete_account_sel(GtkTreeModel *model, GtkTreePath *path,
 		char *buf;
 
 		buf = g_strdup_printf(_("Are you sure you want to delete %s?"),
-							  gaim_account_get_username(account));
+							  purple_account_get_username(account));
 
-		gaim_request_close_with_handle(account);
-		gaim_request_action(account, NULL, buf, NULL, 0, account, 2,
+		purple_request_close_with_handle(account);
+		purple_request_action(account, NULL, buf, NULL, 0, account, 2,
 							_("Delete"), delete_account_cb,
 							_("Cancel"), NULL);
 		g_free(buf);
@@ -1893,11 +1893,11 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 			   gpointer data)
 {
 	AccountsWindow *dialog = (AccountsWindow *)data;
-	GaimAccount *account;
+	PurpleAccount *account;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	GtkTreeIter iter;
 	gboolean enabled;
-	const GaimSavedStatus *saved_status;
+	const PurpleSavedStatus *saved_status;
 
 	gtk_tree_model_get_iter_from_string(model, &iter, path_str);
 	gtk_tree_model_get(model, &iter,
@@ -1911,11 +1911,11 @@ enabled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 	 */
 	if (!enabled)
 	{
-		saved_status = gaim_savedstatus_get_current();
-		gaim_savedstatus_activate_for_account(saved_status, account);
+		saved_status = purple_savedstatus_get_current();
+		purple_savedstatus_activate_for_account(saved_status, account);
 	}
 
-	gaim_account_set_enabled(account, PIDGIN_UI, !enabled);
+	purple_account_set_enabled(account, PIDGIN_UI, !enabled);
 }
 
 static void
@@ -1975,23 +1975,23 @@ add_columns(GtkWidget *treeview, AccountsWindow *dialog)
 }
 
 static void
-set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account, GdkPixbuf *global_buddyicon)
+set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkPixbuf *global_buddyicon)
 {
 	GdkPixbuf *pixbuf, *buddyicon = NULL;
 	const char *path = NULL;
 
 	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
-	if ((pixbuf != NULL) && gaim_account_is_disconnected(account))
+	if ((pixbuf != NULL) && purple_account_is_disconnected(account))
 		gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
-	if (gaim_account_get_bool(account, "use-global-buddyicon", TRUE)) {
+	if (purple_account_get_bool(account, "use-global-buddyicon", TRUE)) {
 		if (global_buddyicon != NULL)
 			buddyicon = g_object_ref(G_OBJECT(global_buddyicon));
 		/* This is for when set_account() is called for a single account */
 		else
-			path = gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon");
+			path = purple_prefs_get_path("/purple/gtk/accounts/buddyicon");
 	} else
-		path = gaim_account_get_ui_string(account, PIDGIN_UI, "non-global-buddyicon-path", NULL);
+		path = purple_account_get_ui_string(account, PIDGIN_UI, "non-global-buddyicon-path", NULL);
 
 	if (path != NULL) {
 		GdkPixbuf *buddyicon_pixbuf = gdk_pixbuf_new_from_file(path, NULL);
@@ -2004,9 +2004,9 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account, GdkPix
 	gtk_list_store_set(store, iter,
 			COLUMN_ICON, pixbuf,
 			COLUMN_BUDDYICON, buddyicon,
-			COLUMN_SCREENNAME, gaim_account_get_username(account),
-			COLUMN_ENABLED, gaim_account_get_enabled(account, PIDGIN_UI),
-			COLUMN_PROTOCOL, gaim_account_get_protocol_name(account),
+			COLUMN_SCREENNAME, purple_account_get_username(account),
+			COLUMN_ENABLED, purple_account_get_enabled(account, PIDGIN_UI),
+			COLUMN_PROTOCOL, purple_account_get_protocol_name(account),
 			COLUMN_DATA, account,
 			-1);
 
@@ -2017,7 +2017,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, GaimAccount *account, GdkPix
 }
 
 static void
-add_account_to_liststore(GaimAccount *account, gpointer user_data)
+add_account_to_liststore(PurpleAccount *account, gpointer user_data)
 {
 	GtkTreeIter iter;
 	GdkPixbuf *global_buddyicon = user_data;
@@ -2041,7 +2041,7 @@ populate_accounts_list(AccountsWindow *dialog)
 
 	gtk_list_store_clear(dialog->model);
 
-	if ((path = gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon")) != NULL) {
+	if ((path = purple_prefs_get_path("/purple/gtk/accounts/buddyicon")) != NULL) {
 		GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(path, NULL);
 		if (pixbuf != NULL) {
 			global_buddyicon = gdk_pixbuf_scale_simple(pixbuf, 22, 22, GDK_INTERP_HYPER);
@@ -2049,9 +2049,9 @@ populate_accounts_list(AccountsWindow *dialog)
 		}
 	}
 
-	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
+	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
 		ret = TRUE;
-		add_account_to_liststore((GaimAccount *)l->data, global_buddyicon);
+		add_account_to_liststore((PurpleAccount *)l->data, global_buddyicon);
 	}
 
 	if (global_buddyicon != NULL)
@@ -2091,7 +2091,7 @@ account_treeview_double_click_cb(GtkTreeView *treeview, GdkEventButton *event, g
 	GtkTreePath *path;
 	GtkTreeViewColumn *column;
 	GtkTreeIter iter;
-	GaimAccount *account;
+	PurpleAccount *account;
 	const gchar *title;
 
 	dialog = (AccountsWindow *)user_data;
@@ -2126,7 +2126,7 @@ create_accounts_list(AccountsWindow *dialog)
 	GtkWidget *label;
 	GtkWidget *treeview;
 	GtkTreeSelection *sel;
-	GtkTargetEntry gte[] = {{"GAIM_ACCOUNT", GTK_TARGET_SAME_APP, 0}};
+	GtkTargetEntry gte[] = {{"PURPLE_ACCOUNT", GTK_TARGET_SAME_APP, 0}};
 	char *pretty;
 
 	frame = gtk_frame_new(NULL);
@@ -2222,7 +2222,7 @@ create_accounts_list(AccountsWindow *dialog)
 }
 
 static void
-account_modified_cb(GaimAccount *account, AccountsWindow *window)
+account_modified_cb(PurpleAccount *account, AccountsWindow *window)
 {
 	GtkTreeIter iter;
 
@@ -2233,11 +2233,11 @@ account_modified_cb(GaimAccount *account, AccountsWindow *window)
 }
 
 static void
-global_buddyicon_changed(const char *name, GaimPrefType type,
+global_buddyicon_changed(const char *name, PurplePrefType type,
 			gconstpointer value, gpointer window)
 {
 	GList *list;
-	for (list = gaim_accounts_get_all(); list; list = list->next) {
+	for (list = purple_accounts_get_all(); list; list = list->next) {
 		account_modified_cb(list->data, window);
 	}
 }
@@ -2261,8 +2261,8 @@ pidgin_accounts_window_show(void)
 
 	accounts_window = dialog = g_new0(AccountsWindow, 1);
 
-	width  = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/width");
-	height = gaim_prefs_get_int("/gaim/gtk/accounts/dialog/height");
+	width  = purple_prefs_get_int("/purple/gtk/accounts/dialog/width");
+	height = purple_prefs_get_int("/purple/gtk/accounts/dialog/height");
 
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
@@ -2328,11 +2328,11 @@ pidgin_accounts_window_show(void)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(close_accounts_cb), dialog);
 
-	gaim_signal_connect(pidgin_account_get_handle(), "account-modified",
+	purple_signal_connect(pidgin_account_get_handle(), "account-modified",
 	                    accounts_window,
-	                    GAIM_CALLBACK(account_modified_cb), accounts_window);
-	gaim_prefs_connect_callback(accounts_window,
-	                    "/gaim/gtk/accounts/buddyicon",
+	                    PURPLE_CALLBACK(account_modified_cb), accounts_window);
+	purple_prefs_connect_callback(accounts_window,
+	                    "/purple/gtk/accounts/buddyicon",
 	                    global_buddyicon_changed, accounts_window);
 
 	gtk_widget_show(win);
@@ -2344,17 +2344,17 @@ pidgin_accounts_window_hide(void)
 	if (accounts_window == NULL)
 		return;
 
-	gaim_signals_disconnect_by_handle(accounts_window);
-	gaim_prefs_disconnect_by_handle(accounts_window);
+	purple_signals_disconnect_by_handle(accounts_window);
+	purple_prefs_disconnect_by_handle(accounts_window);
 
 	g_free(accounts_window);
 	accounts_window = NULL;
 
 	/* See if we're the main window here. */
-	if (PIDGIN_BLIST(gaim_get_blist())->window == NULL &&
-		gaim_connections_get_all() == NULL) {
+	if (PIDGIN_BLIST(purple_get_blist())->window == NULL &&
+		purple_connections_get_all() == NULL) {
 
-		gaim_core_quit();
+		purple_core_quit();
 	}
 }
 
@@ -2369,11 +2369,11 @@ free_add_user_data(PidginAccountAddUserData *data)
 static void
 add_user_cb(PidginAccountAddUserData *data)
 {
-	GaimConnection *gc = gaim_account_get_connection(data->account);
+	PurpleConnection *gc = purple_account_get_connection(data->account);
 
-	if (g_list_find(gaim_connections_get_all(), gc))
+	if (g_list_find(purple_connections_get_all(), gc))
 	{
-		gaim_blist_request_add_buddy(data->account, data->username,
+		purple_blist_request_add_buddy(data->account, data->username,
 									 NULL, data->alias);
 	}
 
@@ -2381,7 +2381,7 @@ add_user_cb(PidginAccountAddUserData *data)
 }
 
 static char *
-make_info(GaimAccount *account, GaimConnection *gc, const char *remote_user,
+make_info(PurpleAccount *account, PurpleConnection *gc, const char *remote_user,
           const char *id, const char *alias, const char *msg)
 {
 	if (msg != NULL && *msg == '\0')
@@ -2394,23 +2394,23 @@ make_info(GaimAccount *account, GaimConnection *gc, const char *remote_user,
 	                       (alias != NULL ? ")"   : ""),
 	                       (id != NULL
 	                        ? id
-	                        : (gaim_connection_get_display_name(gc) != NULL
-	                           ? gaim_connection_get_display_name(gc)
-	                           : gaim_account_get_username(account))),
+	                        : (purple_connection_get_display_name(gc) != NULL
+	                           ? purple_connection_get_display_name(gc)
+	                           : purple_account_get_username(account))),
 	                       (msg != NULL ? ": " : "."),
 	                       (msg != NULL ? msg  : ""));
 }
 
 static void
-pidgin_accounts_notify_added(GaimAccount *account, const char *remote_user,
+pidgin_accounts_notify_added(PurpleAccount *account, const char *remote_user,
                                const char *id, const char *alias,
                                const char *msg)
 {
 	char *buffer;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	GtkWidget *alert;
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
 	alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_INFO, buffer,
@@ -2421,16 +2421,16 @@ pidgin_accounts_notify_added(GaimAccount *account, const char *remote_user,
 }
 
 static void
-pidgin_accounts_request_add(GaimAccount *account, const char *remote_user,
+pidgin_accounts_request_add(PurpleAccount *account, const char *remote_user,
                               const char *id, const char *alias,
                               const char *msg)
 {
 	char *buffer;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	PidginAccountAddUserData *data;
 	GtkWidget *alert;
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
 	data = g_new0(PidginAccountAddUserData, 1);
 	data->account  = account;
@@ -2448,19 +2448,19 @@ pidgin_accounts_request_add(GaimAccount *account, const char *remote_user,
 }
 
 struct auth_and_add {
-	GaimAccountRequestAuthorizationCb auth_cb;
-	GaimAccountRequestAuthorizationCb deny_cb;
+	PurpleAccountRequestAuthorizationCb auth_cb;
+	PurpleAccountRequestAuthorizationCb deny_cb;
 	void *data;
 	char *username;
 	char *alias;
-	GaimAccount *account;
+	PurpleAccount *account;
 };
 
 static void
 authorize_and_add_cb(struct auth_and_add *aa)
 {
 	aa->auth_cb(aa->data);
-	gaim_blist_request_add_buddy(aa->account, aa->username,
+	purple_blist_request_add_buddy(aa->account, aa->username,
 	 	                    NULL, aa->alias);
 
 	g_free(aa->username);
@@ -2479,15 +2479,15 @@ deny_no_add_cb(struct auth_and_add *aa)
 }
 
 static void *
-pidgin_accounts_request_authorization(GaimAccount *account, const char *remote_user,
+pidgin_accounts_request_authorization(PurpleAccount *account, const char *remote_user,
 					const char *id, const char *alias, const char *message, gboolean on_list,
 					GCallback auth_cb, GCallback deny_cb, void *user_data)
 {
 	char *buffer;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	GtkWidget *alert;
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 	if (message != NULL && *message == '\0')
 		message = NULL;
 
@@ -2498,17 +2498,17 @@ pidgin_accounts_request_authorization(GaimAccount *account, const char *remote_u
 		                (alias != NULL ? ")"   : ""),
 		                (id != NULL
 		                ? id
-		                : (gaim_connection_get_display_name(gc) != NULL
-		                ? gaim_connection_get_display_name(gc)
-		                : gaim_account_get_username(account))),
+		                : (purple_connection_get_display_name(gc) != NULL
+		                ? purple_connection_get_display_name(gc)
+		                : purple_account_get_username(account))),
 		                (message != NULL ? ": " : "."),
 		                (message != NULL ? message  : ""));
 
 
 	if (!on_list) {
 		struct auth_and_add *aa = g_new0(struct auth_and_add, 1);
-		aa->auth_cb = (GaimAccountRequestAuthorizationCb)auth_cb;
-		aa->deny_cb = (GaimAccountRequestAuthorizationCb)deny_cb;
+		aa->auth_cb = (PurpleAccountRequestAuthorizationCb)auth_cb;
+		aa->deny_cb = (PurpleAccountRequestAuthorizationCb)deny_cb;
 		aa->data = user_data;
 		aa->username = g_strdup(remote_user);
 		aa->alias = g_strdup(alias);
@@ -2538,7 +2538,7 @@ pidgin_accounts_request_close(void *ui_handle)
 	
 }
 
-static GaimAccountUiOps ui_ops =
+static PurpleAccountUiOps ui_ops =
 {
 	pidgin_accounts_notify_added,
 	NULL,
@@ -2547,7 +2547,7 @@ static GaimAccountUiOps ui_ops =
 	pidgin_accounts_request_close
 };
 
-GaimAccountUiOps *
+PurpleAccountUiOps *
 pidgin_accounts_get_ui_ops(void)
 {
 	return &ui_ops;
@@ -2564,10 +2564,10 @@ void
 pidgin_account_init(void)
 {
 	char *default_avatar = NULL;
-	gaim_prefs_add_none("/gaim/gtk/accounts");
-	gaim_prefs_add_none("/gaim/gtk/accounts/dialog");
-	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/width",  520);
-	gaim_prefs_add_int("/gaim/gtk/accounts/dialog/height", 321);
+	purple_prefs_add_none("/purple/gtk/accounts");
+	purple_prefs_add_none("/purple/gtk/accounts/dialog");
+	purple_prefs_add_int("/purple/gtk/accounts/dialog/width",  520);
+	purple_prefs_add_int("/purple/gtk/accounts/dialog/height", 321);
 	default_avatar = g_build_filename(g_get_home_dir(), ".face.icon", NULL);
 	if (!g_file_test(default_avatar, G_FILE_TEST_EXISTS)) {
 		g_free(default_avatar);
@@ -2578,33 +2578,33 @@ pidgin_account_init(void)
 		}
 	}
 
-	gaim_prefs_add_path("/gaim/gtk/accounts/buddyicon", default_avatar);
+	purple_prefs_add_path("/purple/gtk/accounts/buddyicon", default_avatar);
 	g_free(default_avatar);
 
-	gaim_signal_register(pidgin_account_get_handle(), "account-modified",
-						 gaim_marshal_VOID__POINTER, NULL, 1,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_ACCOUNT));
+	purple_signal_register(pidgin_account_get_handle(), "account-modified",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_ACCOUNT));
 
-	/* Setup some gaim signal handlers. */
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
+	/* Setup some purple signal handlers. */
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
 						pidgin_account_get_handle(),
-						GAIM_CALLBACK(signed_on_off_cb), NULL);
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+						PURPLE_CALLBACK(signed_on_off_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-off",
 						pidgin_account_get_handle(),
-						GAIM_CALLBACK(signed_on_off_cb), NULL);
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-added",
+						PURPLE_CALLBACK(signed_on_off_cb), NULL);
+	purple_signal_connect(purple_accounts_get_handle(), "account-added",
 						pidgin_account_get_handle(),
-						GAIM_CALLBACK(add_account_to_liststore), NULL);
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
+						PURPLE_CALLBACK(add_account_to_liststore), NULL);
+	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 						pidgin_account_get_handle(),
-						GAIM_CALLBACK(account_removed_cb), NULL);
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-disabled",
+						PURPLE_CALLBACK(account_removed_cb), NULL);
+	purple_signal_connect(purple_accounts_get_handle(), "account-disabled",
 						pidgin_account_get_handle(),
-						GAIM_CALLBACK(account_abled_cb), GINT_TO_POINTER(FALSE));
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-enabled",
+						PURPLE_CALLBACK(account_abled_cb), GINT_TO_POINTER(FALSE));
+	purple_signal_connect(purple_accounts_get_handle(), "account-enabled",
 						pidgin_account_get_handle(),
-						GAIM_CALLBACK(account_abled_cb), GINT_TO_POINTER(TRUE));
+						PURPLE_CALLBACK(account_abled_cb), GINT_TO_POINTER(TRUE));
 
 	account_pref_wins =
 		g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, NULL);
@@ -2620,7 +2620,7 @@ pidgin_account_uninit(void)
 	 */
 	g_hash_table_destroy(account_pref_wins);
 
-	gaim_signals_disconnect_by_handle(pidgin_account_get_handle());
-	gaim_signals_unregister_by_instance(pidgin_account_get_handle());
+	purple_signals_disconnect_by_handle(pidgin_account_get_handle());
+	purple_signals_unregister_by_instance(pidgin_account_get_handle());
 }
 

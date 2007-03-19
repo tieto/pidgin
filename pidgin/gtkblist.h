@@ -2,7 +2,7 @@
  * @file gtkblist.h GTK+ Buddy List API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -91,12 +91,12 @@ struct _PidginBuddyList {
 	GdkRectangle contact_rect;       /**< This is the bounding rectangle of the contact node
 					      and its children.  This is used for auto-expand on
 					      mouseover. */
-	GaimBlistNode *mouseover_contact; /**< This is the contact currently mouse-over expanded */
+	PurpleBlistNode *mouseover_contact; /**< This is the contact currently mouse-over expanded */
 
 	GtkWidget *tipwindow;            /**< The window used by the tooltip */
 	GList *tooltipdata;              /**< The data for each "chunk" of the tooltip */
 
-	GaimBlistNode *selected_node;    /**< The currently selected node */
+	PurpleBlistNode *selected_node;    /**< The currently selected node */
 
 	GdkCursor *hand_cursor;         /**< Hand cursor */
 	GdkCursor *arrow_cursor;        /**< Arrow cursor */
@@ -146,7 +146,7 @@ void pidgin_blist_uninit(void);
  *
  * @return The GTK+ list operations structure.
  */
-GaimBlistUiOps *pidgin_blist_get_ui_ops(void);
+PurpleBlistUiOps *pidgin_blist_get_ui_ops(void);
 
 /**
  * Returns the default gtk buddy list
@@ -166,7 +166,7 @@ PidginBuddyList *pidgin_blist_get_default_gtk_blist(void);
  * @param buddy The buddy whose menu to get
  * @param sub   TRUE if this is a sub-menu, FALSE otherwise
  */
-void pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean sub);
+void pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub);
 
 /**
  * Refreshes all the nodes of the buddy list.
@@ -174,7 +174,7 @@ void pidgin_blist_make_buddy_menu(GtkWidget *menu, GaimBuddy *buddy, gboolean su
  *
  * @param list   This is the core list that gets updated from
  */
-void pidgin_blist_refresh(GaimBuddyList *list);
+void pidgin_blist_refresh(PurpleBuddyList *list);
 
 void pidgin_blist_update_columns(void);
 void pidgin_blist_update_refresh_timeout(void);
@@ -187,12 +187,12 @@ void pidgin_blist_update_refresh_timeout(void);
  * @return  A newly created GdkPixbuf, or NULL
  */
 GdkPixbuf *
-pidgin_blist_get_emblem(GaimBlistNode *node);
+pidgin_blist_get_emblem(PurpleBlistNode *node);
 
 /**
  * Useful for the buddy ticker
  */
-GdkPixbuf *pidgin_blist_get_status_icon(GaimBlistNode *node,
+GdkPixbuf *pidgin_blist_get_status_icon(PurpleBlistNode *node,
 		PidginStatusIconSize size);
 
 /**
@@ -204,7 +204,7 @@ GdkPixbuf *pidgin_blist_get_status_icon(GaimBlistNode *node,
  * @param node The node in question.
  * @return A boolean indicating if @a node is part of an expanded contact.
  */
-gboolean pidgin_blist_node_is_contact_expanded(GaimBlistNode *node);
+gboolean pidgin_blist_node_is_contact_expanded(PurpleBlistNode *node);
 
 /**
  * Intelligently toggles the visibility of the buddy list. If the buddy
@@ -241,7 +241,7 @@ void pidgin_blist_add_alert(GtkWidget *widget);
  * @name GTK+ Buddy List sorting functions
  **************************************************************************/
 
-typedef void (*pidgin_blist_sort_function)(GaimBlistNode *new, GaimBuddyList *blist, GtkTreeIter group, GtkTreeIter *cur, GtkTreeIter *iter);
+typedef void (*pidgin_blist_sort_function)(PurpleBlistNode *new, PurpleBuddyList *blist, GtkTreeIter group, GtkTreeIter *cur, GtkTreeIter *iter);
 
 /**
  * Gets the current list of sort methods.
@@ -316,22 +316,22 @@ gboolean pidgin_blist_joinchat_is_showable(void);
 void pidgin_blist_joinchat_show(void);
 
 /**
- * Appends the privacy menu items for a GaimBlistNode
+ * Appends the privacy menu items for a PurpleBlistNode
  * TODO: Rename these.
  */
-void pidgin_append_blist_node_privacy_menu(GtkWidget *menu, GaimBlistNode *node);
+void pidgin_append_blist_node_privacy_menu(GtkWidget *menu, PurpleBlistNode *node);
 
 /**
- * Appends the protocol specific menu items for a GaimBlistNode
+ * Appends the protocol specific menu items for a PurpleBlistNode
  * TODO: Rename these.
  */
-void pidgin_append_blist_node_proto_menu (GtkWidget *menu, GaimConnection *gc, GaimBlistNode *node);
+void pidgin_append_blist_node_proto_menu (GtkWidget *menu, PurpleConnection *gc, PurpleBlistNode *node);
 
 /**
- * Appends the extended menu items for a GaimBlistNode
+ * Appends the extended menu items for a PurpleBlistNode
  * TODO: Rename these.
  */
-void pidgin_append_blist_node_extended_menu(GtkWidget *menu, GaimBlistNode *node);
+void pidgin_append_blist_node_extended_menu(GtkWidget *menu, PurpleBlistNode *node);
 
 /**
  * Used by the connection API to tell the blist if an account
@@ -342,7 +342,7 @@ void pidgin_append_blist_node_extended_menu(GtkWidget *menu, GaimBlistNode *node
  * @param message The connection error message, or NULL if this
  *        account is no longer in an error state.
  */
-void pidgin_blist_update_account_error_state(GaimAccount *account, const char *message);
+void pidgin_blist_update_account_error_state(PurpleAccount *account, const char *message);
 
 /**
  * Sets a headline notification

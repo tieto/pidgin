@@ -1,10 +1,10 @@
 /**
- * @file cipher.h Gaim Cipher API
+ * @file cipher.h Purple Cipher API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,86 +22,86 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef GAIM_CIPHER_H
-#define GAIM_CIPHER_H
+#ifndef PURPLE_CIPHER_H
+#define PURPLE_CIPHER_H
 
 #include <glib.h>
 
-#define GAIM_CIPHER(obj)			((GaimCipher *)(obj))			/**< GaimCipher typecast helper			*/
-#define GAIM_CIPHER_OPS(obj)		((GaimCipherOps *)(obj))		/**< GaimCipherInfo typecase helper		*/
-#define GAIM_CIPHER_CONTEXT(obj)	((GaimCipherContext *)(obj))	/**< GaimCipherContext typecast helper	*/
+#define PURPLE_CIPHER(obj)			((PurpleCipher *)(obj))			/**< PurpleCipher typecast helper			*/
+#define PURPLE_CIPHER_OPS(obj)		((PurpleCipherOps *)(obj))		/**< PurpleCipherInfo typecase helper		*/
+#define PURPLE_CIPHER_CONTEXT(obj)	((PurpleCipherContext *)(obj))	/**< PurpleCipherContext typecast helper	*/
 
-typedef struct _GaimCipher			GaimCipher;			/**< A handle to a GaimCipher	*/
-typedef struct _GaimCipherOps		GaimCipherOps;		/**< Ops for a GaimCipher		*/
-typedef struct _GaimCipherContext	GaimCipherContext;	/**< A context for a GaimCipher	*/
+typedef struct _PurpleCipher			PurpleCipher;			/**< A handle to a PurpleCipher	*/
+typedef struct _PurpleCipherOps		PurpleCipherOps;		/**< Ops for a PurpleCipher		*/
+typedef struct _PurpleCipherContext	PurpleCipherContext;	/**< A context for a PurpleCipher	*/
 
 
 /**
  * The operation flags for a cipher
  */
-typedef enum _GaimCipherCaps {
-	GAIM_CIPHER_CAPS_SET_OPT			= 1 << 1,		/**< Set option flag	*/
-	GAIM_CIPHER_CAPS_GET_OPT			= 1 << 2,		/**< Get option flag	*/
-	GAIM_CIPHER_CAPS_INIT				= 1 << 3,		/**< Init flag			*/
-	GAIM_CIPHER_CAPS_RESET				= 1 << 4,		/**< Reset flag			*/
-	GAIM_CIPHER_CAPS_UNINIT				= 1 << 5,		/**< Uninit flag		*/
-	GAIM_CIPHER_CAPS_SET_IV				= 1 << 6,		/**< Set IV flag		*/
-	GAIM_CIPHER_CAPS_APPEND				= 1 << 7,		/**< Append flag		*/
-	GAIM_CIPHER_CAPS_DIGEST				= 1 << 8,		/**< Digest flag		*/
-	GAIM_CIPHER_CAPS_ENCRYPT			= 1 << 9,		/**< Encrypt flag		*/
-	GAIM_CIPHER_CAPS_DECRYPT			= 1 << 10,		/**< Decrypt flag		*/
-	GAIM_CIPHER_CAPS_SET_SALT			= 1 << 11,		/**< Set salt flag		*/
-	GAIM_CIPHER_CAPS_GET_SALT_SIZE		= 1 << 12,		/**< Get salt size flag	*/
-	GAIM_CIPHER_CAPS_SET_KEY			= 1 << 13,		/**< Set key flag		*/
-	GAIM_CIPHER_CAPS_GET_KEY_SIZE		= 1 << 14,		/**< Get key size flag	*/
-	GAIM_CIPHER_CAPS_UNKNOWN			= 1 << 16		/**< Unknown			*/
-} GaimCipherCaps;
+typedef enum _PurpleCipherCaps {
+	PURPLE_CIPHER_CAPS_SET_OPT			= 1 << 1,		/**< Set option flag	*/
+	PURPLE_CIPHER_CAPS_GET_OPT			= 1 << 2,		/**< Get option flag	*/
+	PURPLE_CIPHER_CAPS_INIT				= 1 << 3,		/**< Init flag			*/
+	PURPLE_CIPHER_CAPS_RESET				= 1 << 4,		/**< Reset flag			*/
+	PURPLE_CIPHER_CAPS_UNINIT				= 1 << 5,		/**< Uninit flag		*/
+	PURPLE_CIPHER_CAPS_SET_IV				= 1 << 6,		/**< Set IV flag		*/
+	PURPLE_CIPHER_CAPS_APPEND				= 1 << 7,		/**< Append flag		*/
+	PURPLE_CIPHER_CAPS_DIGEST				= 1 << 8,		/**< Digest flag		*/
+	PURPLE_CIPHER_CAPS_ENCRYPT			= 1 << 9,		/**< Encrypt flag		*/
+	PURPLE_CIPHER_CAPS_DECRYPT			= 1 << 10,		/**< Decrypt flag		*/
+	PURPLE_CIPHER_CAPS_SET_SALT			= 1 << 11,		/**< Set salt flag		*/
+	PURPLE_CIPHER_CAPS_GET_SALT_SIZE		= 1 << 12,		/**< Get salt size flag	*/
+	PURPLE_CIPHER_CAPS_SET_KEY			= 1 << 13,		/**< Set key flag		*/
+	PURPLE_CIPHER_CAPS_GET_KEY_SIZE		= 1 << 14,		/**< Get key size flag	*/
+	PURPLE_CIPHER_CAPS_UNKNOWN			= 1 << 16		/**< Unknown			*/
+} PurpleCipherCaps;
 
 /**
  * The operations of a cipher.  Every cipher must implement one of these.
  */
-struct _GaimCipherOps {
+struct _PurpleCipherOps {
 	/** The set option function	*/
-	void (*set_option)(GaimCipherContext *context, const gchar *name, void *value);
+	void (*set_option)(PurpleCipherContext *context, const gchar *name, void *value);
 
 	/** The get option function */
-	void *(*get_option)(GaimCipherContext *context, const gchar *name);
+	void *(*get_option)(PurpleCipherContext *context, const gchar *name);
 
 	/** The init function */
-	void (*init)(GaimCipherContext *context, void *extra);
+	void (*init)(PurpleCipherContext *context, void *extra);
 
 	/** The reset function */
-	void (*reset)(GaimCipherContext *context, void *extra);
+	void (*reset)(PurpleCipherContext *context, void *extra);
 
 	/** The uninit function */
-	void (*uninit)(GaimCipherContext *context);
+	void (*uninit)(PurpleCipherContext *context);
 
 	/** The set initialization vector function */
-	void (*set_iv)(GaimCipherContext *context, guchar *iv, size_t len);
+	void (*set_iv)(PurpleCipherContext *context, guchar *iv, size_t len);
 
 	/** The append data function */
-	void (*append)(GaimCipherContext *context, const guchar *data, size_t len);
+	void (*append)(PurpleCipherContext *context, const guchar *data, size_t len);
 
 	/** The digest function */
-	gboolean (*digest)(GaimCipherContext *context, size_t in_len, guchar digest[], size_t *out_len);
+	gboolean (*digest)(PurpleCipherContext *context, size_t in_len, guchar digest[], size_t *out_len);
 
 	/** The encrypt function */
-	int (*encrypt)(GaimCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+	int (*encrypt)(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
 
 	/** The decrypt function */
-	int (*decrypt)(GaimCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+	int (*decrypt)(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
 
 	/** The set salt function */
-	void (*set_salt)(GaimCipherContext *context, guchar *salt);
+	void (*set_salt)(PurpleCipherContext *context, guchar *salt);
 
 	/** The get salt size function */
-	size_t (*get_salt_size)(GaimCipherContext *context);
+	size_t (*get_salt_size)(PurpleCipherContext *context);
 
 	/** The set key function */
-	void (*set_key)(GaimCipherContext *context, const guchar *key);
+	void (*set_key)(PurpleCipherContext *context, const guchar *key);
 
 	/** The get key size function */
-	size_t (*get_key_size)(GaimCipherContext *context);
+	size_t (*get_key_size)(PurpleCipherContext *context);
 };
 
 #ifdef __cplusplus
@@ -109,7 +109,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 /*****************************************************************************/
-/** @name GaimCipher API													 */
+/** @name PurpleCipher API													 */
 /*****************************************************************************/
 /*@{*/
 
@@ -120,7 +120,7 @@ extern "C" {
  *
  * @return The cipher's name
  */
-const gchar *gaim_cipher_get_name(GaimCipher *cipher);
+const gchar *purple_cipher_get_name(PurpleCipher *cipher);
 
 /**
  * Gets a cipher's capabilities
@@ -129,7 +129,7 @@ const gchar *gaim_cipher_get_name(GaimCipher *cipher);
  *
  * @return The cipher's info
  */
-guint gaim_cipher_get_capabilities(GaimCipher *cipher);
+guint purple_cipher_get_capabilities(PurpleCipher *cipher);
 
 /**
  * Gets a digest from a cipher
@@ -143,11 +143,11 @@ guint gaim_cipher_get_capabilities(GaimCipher *cipher);
  *
  * @return @c TRUE if successful, @c FALSE otherwise
  */
-gboolean gaim_cipher_digest_region(const gchar *name, const guchar *data, size_t data_len, size_t in_len, guchar digest[], size_t *out_len);
+gboolean purple_cipher_digest_region(const gchar *name, const guchar *data, size_t data_len, size_t in_len, guchar digest[], size_t *out_len);
 
 /*@}*/
 /******************************************************************************/
-/** @name GaimCiphers API													  */
+/** @name PurpleCiphers API													  */
 /******************************************************************************/
 /*@{*/
 
@@ -158,7 +158,7 @@ gboolean gaim_cipher_digest_region(const gchar *name, const guchar *data, size_t
  *
  * @return The cipher handle or @c NULL
  */
-GaimCipher *gaim_ciphers_find_cipher(const gchar *name);
+PurpleCipher *purple_ciphers_find_cipher(const gchar *name);
 
 /**
  * Registers a cipher as a usable cipher
@@ -168,7 +168,7 @@ GaimCipher *gaim_ciphers_find_cipher(const gchar *name);
  *
  * @return The handle to the new cipher or @c NULL if it failed
  */
-GaimCipher *gaim_ciphers_register_cipher(const gchar *name, GaimCipherOps *ops);
+PurpleCipher *purple_ciphers_register_cipher(const gchar *name, PurpleCipherOps *ops);
 
 /**
  * Unregisters a cipher
@@ -177,7 +177,7 @@ GaimCipher *gaim_ciphers_register_cipher(const gchar *name, GaimCipherOps *ops);
  *
  * @return Whether or not the cipher was successfully unloaded
  */
-gboolean gaim_ciphers_unregister_cipher(GaimCipher *cipher);
+gboolean purple_ciphers_unregister_cipher(PurpleCipher *cipher);
 
 /**
  * Gets the list of ciphers
@@ -185,11 +185,11 @@ gboolean gaim_ciphers_unregister_cipher(GaimCipher *cipher);
  * @return The list of available ciphers
  * @note This list should not be modified, it is owned by the cipher core
  */
-GList *gaim_ciphers_get_ciphers(void);
+GList *purple_ciphers_get_ciphers(void);
 
 /*@}*/
 /******************************************************************************/
-/** @name GaimCipher Subsystem API											  */
+/** @name PurpleCipher Subsystem API											  */
 /******************************************************************************/
 /*@{*/
 
@@ -198,21 +198,21 @@ GList *gaim_ciphers_get_ciphers(void);
  *
  * @return The handle to the cipher subsystem
  */
-gpointer gaim_ciphers_get_handle(void);
+gpointer purple_ciphers_get_handle(void);
 
 /**
  * Initializes the cipher core
  */
-void gaim_ciphers_init(void);
+void purple_ciphers_init(void);
 
 /**
  * Uninitializes the cipher core
  */
-void gaim_ciphers_uninit(void);
+void purple_ciphers_uninit(void);
 
 /*@}*/
 /******************************************************************************/
-/** @name GaimCipherContext API												  */
+/** @name PurpleCipherContext API												  */
 /******************************************************************************/
 /*@{*/
 
@@ -223,7 +223,7 @@ void gaim_ciphers_uninit(void);
  * @param name    The name of the option
  * @param value   The value to set
  */
-void gaim_cipher_context_set_option(GaimCipherContext *context, const gchar *name, gpointer value);
+void purple_cipher_context_set_option(PurpleCipherContext *context, const gchar *name, gpointer value);
 
 /**
  * Gets the vale of an option on a cipher context
@@ -232,7 +232,7 @@ void gaim_cipher_context_set_option(GaimCipherContext *context, const gchar *nam
  * @param name    The name of the option
  * @return The value of the option
  */
-gpointer gaim_cipher_context_get_option(GaimCipherContext *context, const gchar *name);
+gpointer purple_cipher_context_get_option(PurpleCipherContext *context, const gchar *name);
 
 /**
  * Creates a new cipher context and initializes it
@@ -242,7 +242,7 @@ gpointer gaim_cipher_context_get_option(GaimCipherContext *context, const gchar 
  *
  * @return The new cipher context
  */
-GaimCipherContext *gaim_cipher_context_new(GaimCipher *cipher, void *extra);
+PurpleCipherContext *purple_cipher_context_new(PurpleCipher *cipher, void *extra);
 
 /**
  * Creates a new cipher context by the cipher name and initializes it
@@ -252,7 +252,7 @@ GaimCipherContext *gaim_cipher_context_new(GaimCipher *cipher, void *extra);
  *
  * @return The new cipher context
  */
-GaimCipherContext *gaim_cipher_context_new_by_name(const gchar *name, void *extra);
+PurpleCipherContext *purple_cipher_context_new_by_name(const gchar *name, void *extra);
 
 /**
  * Resets a cipher context to it's default value
@@ -261,14 +261,14 @@ GaimCipherContext *gaim_cipher_context_new_by_name(const gchar *name, void *extr
  * @param context The context to reset
  * @param extra   Extra data for the specific cipher
  */
-void gaim_cipher_context_reset(GaimCipherContext *context, gpointer extra);
+void purple_cipher_context_reset(PurpleCipherContext *context, gpointer extra);
 
 /**
  * Destorys a cipher context and deinitializes it
  *
  * @param context The cipher context to destory
  */
-void gaim_cipher_context_destroy(GaimCipherContext *context);
+void purple_cipher_context_destroy(PurpleCipherContext *context);
 
 /**
  * Sets the initialization vector for a context
@@ -278,7 +278,7 @@ void gaim_cipher_context_destroy(GaimCipherContext *context);
  * @param iv      The initialization vector to set
  * @param len     The len of the IV
  */
-void gaim_cipher_context_set_iv(GaimCipherContext *context, guchar *iv, size_t len);
+void purple_cipher_context_set_iv(PurpleCipherContext *context, guchar *iv, size_t len);
 
 /**
  * Appends data to the context
@@ -287,7 +287,7 @@ void gaim_cipher_context_set_iv(GaimCipherContext *context, guchar *iv, size_t l
  * @param data    The data to append
  * @param len     The length of the data
  */
-void gaim_cipher_context_append(GaimCipherContext *context, const guchar *data, size_t len);
+void purple_cipher_context_append(PurpleCipherContext *context, const guchar *data, size_t len);
 
 /**
  * Digests a context
@@ -297,7 +297,7 @@ void gaim_cipher_context_append(GaimCipherContext *context, const guchar *data, 
  * @param digest  The return buffer for the digest
  * @param out_len The length of the returned value
  */
-gboolean gaim_cipher_context_digest(GaimCipherContext *context, size_t in_len, guchar digest[], size_t *out_len);
+gboolean purple_cipher_context_digest(PurpleCipherContext *context, size_t in_len, guchar digest[], size_t *out_len);
 
 /**
  * Converts a guchar digest into a hex string
@@ -307,7 +307,7 @@ gboolean gaim_cipher_context_digest(GaimCipherContext *context, size_t in_len, g
  * @param digest_s The return buffer for the string digest
  * @param out_len  The length of the returned value
  */
-gboolean gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t in_len, gchar digest_s[], size_t *out_len);
+gboolean purple_cipher_context_digest_to_str(PurpleCipherContext *context, size_t in_len, gchar digest_s[], size_t *out_len);
 
 /**
  * Encrypts data using the context
@@ -320,7 +320,7 @@ gboolean gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t in
  *
  * @return A cipher specific status code
  */
-gint gaim_cipher_context_encrypt(GaimCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+gint purple_cipher_context_encrypt(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
 
 /**
  * Decrypts data using the context
@@ -333,7 +333,7 @@ gint gaim_cipher_context_encrypt(GaimCipherContext *context, const guchar data[]
  *
  * @return A cipher specific status code
  */
-gint gaim_cipher_context_decrypt(GaimCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
+gint purple_cipher_context_decrypt(PurpleCipherContext *context, const guchar data[], size_t len, guchar output[], size_t *outlen);
 
 /**
  * Sets the salt on a context
@@ -341,7 +341,7 @@ gint gaim_cipher_context_decrypt(GaimCipherContext *context, const guchar data[]
  * @param context The context who's salt to set
  * @param salt    The salt
  */
-void gaim_cipher_context_set_salt(GaimCipherContext *context, guchar *salt);
+void purple_cipher_context_set_salt(PurpleCipherContext *context, guchar *salt);
 
 /**
  * Gets the size of the salt if the cipher supports it
@@ -350,7 +350,7 @@ void gaim_cipher_context_set_salt(GaimCipherContext *context, guchar *salt);
  *
  * @return The size of the salt
  */
-size_t gaim_cipher_context_get_salt_size(GaimCipherContext *context);
+size_t purple_cipher_context_get_salt_size(PurpleCipherContext *context);
 
 /**
  * Sets the key on a context
@@ -358,7 +358,7 @@ size_t gaim_cipher_context_get_salt_size(GaimCipherContext *context);
  * @param context The context who's key to set
  * @param key     The key
  */
-void gaim_cipher_context_set_key(GaimCipherContext *context, const guchar *key);
+void purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key);
 
 /**
  * Gets the key size for a context
@@ -367,7 +367,7 @@ void gaim_cipher_context_set_key(GaimCipherContext *context, const guchar *key);
  *
  * @return The size of the key
  */
-size_t gaim_cipher_context_get_key_size(GaimCipherContext *context);
+size_t purple_cipher_context_get_key_size(PurpleCipherContext *context);
 
 /**
  * Sets the cipher data for a context
@@ -375,7 +375,7 @@ size_t gaim_cipher_context_get_key_size(GaimCipherContext *context);
  * @param context The context who's cipher data to set
  * @param data    The cipher data to set
  */
-void gaim_cipher_context_set_data(GaimCipherContext *context, gpointer data);
+void purple_cipher_context_set_data(PurpleCipherContext *context, gpointer data);
 
 /**
  * Gets the cipher data for a context
@@ -384,11 +384,11 @@ void gaim_cipher_context_set_data(GaimCipherContext *context, gpointer data);
  *
  * @return The cipher data
  */
-gpointer gaim_cipher_context_get_data(GaimCipherContext *context);
+gpointer purple_cipher_context_get_data(PurpleCipherContext *context);
 
 /*@}*/
 /*****************************************************************************/
-/** @name Gaim Cipher HTTP Digest Helper Functions							 */
+/** @name Purple Cipher HTTP Digest Helper Functions							 */
 /*****************************************************************************/
 /*@{*/
 
@@ -406,7 +406,7 @@ gpointer gaim_cipher_context_get_data(GaimCipherContext *context);
  *
  * @return The session key, or @c NULL if an error occurred.
  */
-gchar *gaim_cipher_http_digest_calculate_session_key(
+gchar *purple_cipher_http_digest_calculate_session_key(
 		const gchar *algorithm, const gchar *username,
 		const gchar *realm, const gchar *password,
 		const gchar *nonce, const gchar *client_nonce);
@@ -423,11 +423,11 @@ gchar *gaim_cipher_http_digest_calculate_session_key(
  * @param nonce             The nonce provided by the server
  * @param nonce_count       The nonce count
  * @param client_nonce      The nonce provided by the client
- * @param session_key       The session key from gaim_cipher_http_digest_calculate_session_key()
+ * @param session_key       The session key from purple_cipher_http_digest_calculate_session_key()
  *
  * @return The hashed response, or @c NULL if an error occurred.
  */
-gchar *gaim_cipher_http_digest_calculate_response(
+gchar *purple_cipher_http_digest_calculate_response(
 		const gchar *algorithm, const gchar *method,
 		const gchar *digest_uri, const gchar *qop,
 		const gchar *entity, const gchar *nonce,
@@ -440,4 +440,4 @@ gchar *gaim_cipher_http_digest_calculate_response(
 }
 #endif /* __cplusplus */
 
-#endif /* GAIM_CIPHER_H */
+#endif /* PURPLE_CIPHER_H */

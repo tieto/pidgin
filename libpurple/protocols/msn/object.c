@@ -1,9 +1,9 @@
 /**
  * @file object.c MSNObject API
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -95,7 +95,7 @@ msn_object_new_from_string(const char *str)
 	if (obj->creator == NULL || obj->size == 0 || obj->type == 0
 			|| obj->location == NULL || obj->friendly == NULL
 			|| obj->sha1d == NULL || obj->sha1c == NULL) {
-		gaim_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
+		purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
 		msn_object_destroy(obj);
 		obj = NULL;
 	}

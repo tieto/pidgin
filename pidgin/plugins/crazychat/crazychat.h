@@ -7,7 +7,7 @@
 #include <netinet/in.h>
 #include <gtk/gtk.h>
 #include "filter.h"
-#include "gaim.h"
+#include "purple.h"
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"

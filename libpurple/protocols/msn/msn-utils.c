@@ -1,9 +1,9 @@
 /**
  * @file msn-utils.c Utility functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -110,7 +110,7 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 		}
 	}
 
-	cur = g_strdup(gaim_url_decode(pre->str));
+	cur = g_strdup(purple_url_decode(pre->str));
 	g_string_free(pre, TRUE);
 
 	if (pre_ret != NULL)
@@ -118,7 +118,7 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 	else
 		g_free(cur);
 
-	cur = g_strdup(gaim_url_decode(post->str));
+	cur = g_strdup(purple_url_decode(post->str));
 	g_string_free(post, TRUE);
 
 	if (post_ret != NULL)
@@ -129,7 +129,7 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 
 /*
  * We need this because we're only supposed to encode spaces in the font
- * names. gaim_url_encode() isn't acceptable.
+ * names. purple_url_encode() isn't acceptable.
  */
 static const char *
 encode_spaces(const char *str)

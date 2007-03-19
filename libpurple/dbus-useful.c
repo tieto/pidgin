@@ -6,23 +6,23 @@
 #include "util.h"
 
 
-GaimAccount *
-gaim_accounts_find_ext(const char *name, const char *protocol_id,
-		       gboolean (*account_test)(const GaimAccount *account))
+PurpleAccount *
+purple_accounts_find_ext(const char *name, const char *protocol_id,
+		       gboolean (*account_test)(const PurpleAccount *account))
 {
-	GaimAccount *result = NULL;
+	PurpleAccount *result = NULL;
 	GList *l;
 	char *who;
 
 	if (name)
-		who = g_strdup(gaim_normalize(NULL, name));
+		who = g_strdup(purple_normalize(NULL, name));
 	else
 		who = NULL;
 
-	for (l = gaim_accounts_get_all(); l != NULL; l = l->next) {
-		GaimAccount *account = (GaimAccount *)l->data;
+	for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
+		PurpleAccount *account = (PurpleAccount *)l->data;
 
-		if (who && strcmp(gaim_normalize(NULL, gaim_account_get_username(account)), who))
+		if (who && strcmp(purple_normalize(NULL, purple_account_get_username(account)), who))
 			continue;
 
 		if (protocol_id && strcmp(account->protocol_id, protocol_id))
@@ -40,14 +40,14 @@ gaim_accounts_find_ext(const char *name, const char *protocol_id,
 	return result;
 }
 
-GaimAccount *gaim_accounts_find_any(const char *name, const char *protocol)
+PurpleAccount *purple_accounts_find_any(const char *name, const char *protocol)
 {
-	return gaim_accounts_find_ext(name, protocol, NULL);
+	return purple_accounts_find_ext(name, protocol, NULL);
 }
 
-GaimAccount *gaim_accounts_find_connected(const char *name, const char *protocol)
+PurpleAccount *purple_accounts_find_connected(const char *name, const char *protocol)
 {
-	return gaim_accounts_find_ext(name, protocol, gaim_account_is_connected);
+	return purple_accounts_find_ext(name, protocol, purple_account_is_connected);
 }
 
 

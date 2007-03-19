@@ -2,7 +2,7 @@
  * @file gtkroomlist.h GTK+ Room List UI
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -50,6 +50,6 @@ void pidgin_roomlist_dialog_show(void);
  *
  * @param account The account to use.
  */
-void pidgin_roomlist_dialog_show_with_account(GaimAccount *account);
+void pidgin_roomlist_dialog_show_with_account(PurpleAccount *account);
 
 #endif /* _PIDGINROOMLIST_H_ */

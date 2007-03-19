@@ -2,9 +2,9 @@
  * @file gntplugin.c GNT Plugins API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -31,7 +31,7 @@
 
 #include "notify.h"
 
-#include "gntgaim.h"
+#include "finch.h"
 #include "gntplugin.h"
 
 static struct
@@ -45,11 +45,11 @@ static struct
 static GHashTable *confwins;
 
 static void
-decide_conf_button(GaimPlugin *plugin)
+decide_conf_button(PurplePlugin *plugin)
 {
-	if (gaim_plugin_is_loaded(plugin) && 
-		((GAIM_IS_GNT_PLUGIN(plugin) &&
-			GAIM_GNT_PLUGIN_UI_INFO(plugin) != NULL) ||
+	if (purple_plugin_is_loaded(plugin) && 
+		((PURPLE_IS_GNT_PLUGIN(plugin) &&
+			FINCH_PLUGIN_UI_INFO(plugin) != NULL) ||
 		(plugin->info->prefs_info &&
 			plugin->info->prefs_info->get_plugin_pref_frame)))
 		gnt_widget_set_visible(plugins.conf, TRUE);
@@ -61,19 +61,19 @@ decide_conf_button(GaimPlugin *plugin)
 }
 
 static void
-plugin_toggled_cb(GntWidget *tree, GaimPlugin *plugin, gpointer null)
+plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 {
 	if (gnt_tree_get_choice(GNT_TREE(tree), plugin))
 	{
-		if(!gaim_plugin_load(plugin))
-			gaim_notify_error(NULL, "ERROR", "loading plugin failed", NULL);
+		if(!purple_plugin_load(plugin))
+			purple_notify_error(NULL, "ERROR", "loading plugin failed", NULL);
 	}
 	else
 	{
 		GntWidget *win;
 
-		if (!gaim_plugin_unload(plugin))
-			gaim_notify_error(NULL, "ERROR", "unloading plugin failed", NULL);
+		if (!purple_plugin_unload(plugin))
+			purple_notify_error(NULL, "ERROR", "unloading plugin failed", NULL);
 
 		if ((win = g_hash_table_lookup(confwins, plugin)) != NULL)
 		{
@@ -88,13 +88,13 @@ plugin_toggled_cb(GntWidget *tree, GaimPlugin *plugin, gpointer null)
 void
 finch_plugins_save_loaded(void)
 {
-	gaim_plugins_save_loaded("/gaim/gnt/plugins/loaded");
+	purple_plugins_save_loaded("/purple/gnt/plugins/loaded");
 }
 
 static void
 selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer null)
 {
-	GaimPlugin *plugin = current;
+	PurplePlugin *plugin = current;
 	char *text;
 
 	/* XXX: Use formatting and stuff */
@@ -118,7 +118,7 @@ reset_plugin_window(GntWidget *window, gpointer null)
 }
 
 static int
-plugin_compare(GaimPlugin *p1, GaimPlugin *p2)
+plugin_compare(PurplePlugin *p1, PurplePlugin *p2)
 {
 	char *s1 = g_utf8_strup(p1->info->name, -1);
 	char *s2 = g_utf8_strup(p2->info->name, -1);
@@ -143,15 +143,15 @@ remove_confwin(GntWidget *window, gpointer plugin)
 static void
 configure_plugin_cb(GntWidget *button, gpointer null)
 {
-	GaimPlugin *plugin;
+	PurplePlugin *plugin;
 	FinchPluginFrame callback;
 
 	g_return_if_fail(plugins.tree != NULL);
 
 	plugin = gnt_tree_get_selection_data(GNT_TREE(plugins.tree));
-	if (!gaim_plugin_is_loaded(plugin))
+	if (!purple_plugin_is_loaded(plugin))
 	{
-		gaim_notify_error(plugin, _("Error"),
+		purple_notify_error(plugin, _("Error"),
 			_("Plugin need to be loaded before you can configure it."), NULL);
 		return;
 	}
@@ -159,8 +159,8 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	if (confwins && g_hash_table_lookup(confwins, plugin))
 		return;
 
-	if (GAIM_IS_GNT_PLUGIN(plugin) &&
-			(callback = GAIM_GNT_PLUGIN_UI_INFO(plugin)) != NULL)
+	if (PURPLE_IS_GNT_PLUGIN(plugin) &&
+			(callback = FINCH_PLUGIN_UI_INFO(plugin)) != NULL)
 	{
 		GntWidget *window = gnt_vbox_new(FALSE);
 		GntWidget *box, *button;
@@ -190,13 +190,13 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	else if (plugin->info->prefs_info &&
 			plugin->info->prefs_info->get_plugin_pref_frame)
 	{
-		gaim_notify_info(plugin, _("..."),
+		purple_notify_info(plugin, _("..."),
 			_("Still need to do something about this."), NULL);
 		return;
 	}
 	else
 	{
-		gaim_notify_info(plugin, _("Error"),
+		purple_notify_info(plugin, _("Error"),
 			_("No configuration options for this plugin."), NULL);
 		return;
 	}
@@ -209,7 +209,7 @@ void finch_plugins_show_all()
 	if (plugins.window)
 		return;
 
-	gaim_plugins_probe(G_MODULE_SUFFIX);
+	purple_plugins_probe(G_MODULE_SUFFIX);
 
 	plugins.window = window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
@@ -236,18 +236,18 @@ void finch_plugins_show_all()
 	gnt_widget_set_size(aboot, 40, 20);
 	gnt_box_add_widget(GNT_BOX(box), aboot);
 
-	for (iter = gaim_plugins_get_all(); iter; iter = iter->next)
+	for (iter = purple_plugins_get_all(); iter; iter = iter->next)
 	{
-		GaimPlugin *plug = iter->data;
+		PurplePlugin *plug = iter->data;
 
-		if (plug->info->type != GAIM_PLUGIN_STANDARD ||
-			(plug->info->flags & GAIM_PLUGIN_FLAG_INVISIBLE) ||
+		if (plug->info->type != PURPLE_PLUGIN_STANDARD ||
+			(plug->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE) ||
 			plug->error)
 			continue;
 
 		gnt_tree_add_choice(GNT_TREE(tree), plug,
 				gnt_tree_create_row(GNT_TREE(tree), plug->info->name), NULL, NULL);
-		gnt_tree_set_choice(GNT_TREE(tree), plug, gaim_plugin_is_loaded(plug));
+		gnt_tree_set_choice(GNT_TREE(tree), plug, purple_plugin_is_loaded(plug));
 	}
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, 30);
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(plugin_toggled_cb), NULL);

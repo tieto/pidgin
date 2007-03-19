@@ -1,7 +1,7 @@
 /**
  * @file ssl-nss.c Mozilla NSS SSL plugin.
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  *
@@ -48,9 +48,9 @@ typedef struct
 	PRFileDesc *in;
 	guint handshake_handler;
 
-} GaimSslNssData;
+} PurpleSslNssData;
 
-#define GAIM_SSL_NSS_DATA(gsc) ((GaimSslNssData *)gsc->private_data)
+#define PURPLE_SSL_NSS_DATA(gsc) ((PurpleSslNssData *)gsc->private_data)
 
 static const PRIOMethods *_nss_methods = NULL;
 static PRDescIdentity _identity;
@@ -120,7 +120,7 @@ ssl_nss_init_nss(void)
 	g_free(lib);
 	NSS_SetDomesticPolicy();
 
-	_identity = PR_GetUniqueIdentity("Gaim");
+	_identity = PR_GetUniqueIdentity("Purple");
 	_nss_methods = PR_GetDefaultIOMethods();
 }
 
@@ -142,7 +142,7 @@ ssl_auth_cert(void *arg, PRFileDesc *socket, PRBool checksig,
 								certUsageSSLClient, pinArg);
 
 	if (status != SECSuccess) {
-		gaim_debug_error("nss", "CERT_VerifyCertNow failed\n");
+		purple_debug_error("nss", "CERT_VerifyCertNow failed\n");
 		CERT_DestroyCertificate(cert);
 		return status;
 	}
@@ -187,7 +187,7 @@ ssl_bad_cert(void *arg, PRFileDesc *socket)
 			break;
 	}
 
-	gaim_debug_error("nss", "Bad certificate: %d\n", err);
+	purple_debug_error("nss", "Bad certificate: %d\n", err);
 
 	return status;
 }
@@ -207,10 +207,10 @@ ssl_nss_uninit(void)
 }
 
 static void
-ssl_nss_handshake_cb(gpointer data, int fd, GaimInputCondition cond)
+ssl_nss_handshake_cb(gpointer data, int fd, PurpleInputCondition cond)
 {
-	GaimSslConnection *gsc = (GaimSslConnection *)data;
-	GaimSslNssData *nss_data = gsc->private_data;
+	PurpleSslConnection *gsc = (PurpleSslConnection *)data;
+	PurpleSslNssData *nss_data = gsc->private_data;
 
 	/* I don't think this the best way to do this...
 	 * It seems to work because it'll eventually use the cached value
@@ -220,26 +220,26 @@ ssl_nss_handshake_cb(gpointer data, int fd, GaimInputCondition cond)
 		if (errno == EAGAIN || errno == EWOULDBLOCK)
 			return;
 
-		gaim_debug_error("nss", "Handshake failed %d\n", PR_GetError());
+		purple_debug_error("nss", "Handshake failed %d\n", PR_GetError());
 
 		if (gsc->error_cb != NULL)
-			gsc->error_cb(gsc, GAIM_SSL_HANDSHAKE_FAILED, gsc->connect_cb_data);
+			gsc->error_cb(gsc, PURPLE_SSL_HANDSHAKE_FAILED, gsc->connect_cb_data);
 
-		gaim_ssl_close(gsc);
+		purple_ssl_close(gsc);
 
 		return;
 	}
 
-	gaim_input_remove(nss_data->handshake_handler);
+	purple_input_remove(nss_data->handshake_handler);
 	nss_data->handshake_handler = 0;
 
 	gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
 }
 
 static void
-ssl_nss_connect(GaimSslConnection *gsc)
+ssl_nss_connect(PurpleSslConnection *gsc)
 {
-	GaimSslNssData *nss_data = g_new0(GaimSslNssData, 1);
+	PurpleSslNssData *nss_data = g_new0(PurpleSslNssData, 1);
 	PRSocketOptionData socket_opt;
 
 	gsc->private_data = nss_data;
@@ -248,12 +248,12 @@ ssl_nss_connect(GaimSslConnection *gsc)
 
 	if (nss_data->fd == NULL)
 	{
-		gaim_debug_error("nss", "nss_data->fd == NULL!\n");
+		purple_debug_error("nss", "nss_data->fd == NULL!\n");
 
 		if (gsc->error_cb != NULL)
-			gsc->error_cb(gsc, GAIM_SSL_CONNECT_FAILED, gsc->connect_cb_data);
+			gsc->error_cb(gsc, PURPLE_SSL_CONNECT_FAILED, gsc->connect_cb_data);
 
-		gaim_ssl_close((GaimSslConnection *)gsc);
+		purple_ssl_close((PurpleSslConnection *)gsc);
 
 		return;
 	}
@@ -262,18 +262,18 @@ ssl_nss_connect(GaimSslConnection *gsc)
 	socket_opt.value.non_blocking = PR_TRUE;
 
 	if (PR_SetSocketOption(nss_data->fd, &socket_opt) != PR_SUCCESS)
-		gaim_debug_warning("nss", "unable to set socket into non-blocking mode: %d\n", PR_GetError());
+		purple_debug_warning("nss", "unable to set socket into non-blocking mode: %d\n", PR_GetError());
 
 	nss_data->in = SSL_ImportFD(NULL, nss_data->fd);
 
 	if (nss_data->in == NULL)
 	{
-		gaim_debug_error("nss", "nss_data->in == NUL!\n");
+		purple_debug_error("nss", "nss_data->in == NUL!\n");
 
 		if (gsc->error_cb != NULL)
-			gsc->error_cb(gsc, GAIM_SSL_CONNECT_FAILED, gsc->connect_cb_data);
+			gsc->error_cb(gsc, PURPLE_SSL_CONNECT_FAILED, gsc->connect_cb_data);
 
-		gaim_ssl_close((GaimSslConnection *)gsc);
+		purple_ssl_close((PurpleSslConnection *)gsc);
 
 		return;
 	}
@@ -297,16 +297,16 @@ ssl_nss_connect(GaimSslConnection *gsc)
 #endif
 	SSL_ResetHandshake(nss_data->in, PR_FALSE);
 
-	nss_data->handshake_handler = gaim_input_add(gsc->fd,
-		GAIM_INPUT_READ, ssl_nss_handshake_cb, gsc);
+	nss_data->handshake_handler = purple_input_add(gsc->fd,
+		PURPLE_INPUT_READ, ssl_nss_handshake_cb, gsc);
 
-	ssl_nss_handshake_cb(gsc, gsc->fd, GAIM_INPUT_READ);
+	ssl_nss_handshake_cb(gsc, gsc->fd, PURPLE_INPUT_READ);
 }
 
 static void
-ssl_nss_close(GaimSslConnection *gsc)
+ssl_nss_close(PurpleSslConnection *gsc)
 {
-	GaimSslNssData *nss_data = GAIM_SSL_NSS_DATA(gsc);
+	PurpleSslNssData *nss_data = PURPLE_SSL_NSS_DATA(gsc);
 
 	if(!nss_data)
 		return;
@@ -315,17 +315,17 @@ ssl_nss_close(GaimSslConnection *gsc)
 	/* if (nss_data->fd) PR_Close(nss_data->fd); */
 
 	if (nss_data->handshake_handler)
-		gaim_input_remove(nss_data->handshake_handler);
+		purple_input_remove(nss_data->handshake_handler);
 
 	g_free(nss_data);
 	gsc->private_data = NULL;
 }
 
 static size_t
-ssl_nss_read(GaimSslConnection *gsc, void *data, size_t len)
+ssl_nss_read(PurpleSslConnection *gsc, void *data, size_t len)
 {
 	ssize_t ret;
-	GaimSslNssData *nss_data = GAIM_SSL_NSS_DATA(gsc);
+	PurpleSslNssData *nss_data = PURPLE_SSL_NSS_DATA(gsc);
 
 	ret = PR_Read(nss_data->in, data, len);
 
@@ -336,10 +336,10 @@ ssl_nss_read(GaimSslConnection *gsc, void *data, size_t len)
 }
 
 static size_t
-ssl_nss_write(GaimSslConnection *gsc, const void *data, size_t len)
+ssl_nss_write(PurpleSslConnection *gsc, const void *data, size_t len)
 {
 	ssize_t ret;
-	GaimSslNssData *nss_data = GAIM_SSL_NSS_DATA(gsc);
+	PurpleSslNssData *nss_data = PURPLE_SSL_NSS_DATA(gsc);
 
 	if(!nss_data)
 		return 0;
@@ -352,7 +352,7 @@ ssl_nss_write(GaimSslConnection *gsc, const void *data, size_t len)
 	return ret;
 }
 
-static GaimSslOps ssl_ops =
+static PurpleSslOps ssl_ops =
 {
 	ssl_nss_init,
 	ssl_nss_uninit,
@@ -366,11 +366,11 @@ static GaimSslOps ssl_ops =
 
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 #ifdef HAVE_NSS
-	if (!gaim_ssl_get_ops()) {
-		gaim_ssl_set_ops(&ssl_ops);
+	if (!purple_ssl_get_ops()) {
+		purple_ssl_set_ops(&ssl_ops);
 	}
 
 	/* Init NSS now, so others can use it even if sslconn never does */
@@ -383,27 +383,27 @@ plugin_load(GaimPlugin *plugin)
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 #ifdef HAVE_NSS
-	if (gaim_ssl_get_ops() == &ssl_ops) {
-		gaim_ssl_set_ops(NULL);
+	if (purple_ssl_get_ops() == &ssl_ops) {
+		purple_ssl_set_ops(NULL);
 	}
 #endif
 
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
-	GAIM_PLUGIN_FLAG_INVISIBLE,                       /**< flags          */
+	PURPLE_PLUGIN_FLAG_INVISIBLE,                       /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	SSL_NSS_PLUGIN_ID,                             /**< id             */
 	N_("NSS"),                                        /**< name           */
@@ -413,7 +413,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Provides SSL support through Mozilla NSS."),
 	"Christian Hammond <chipx86@gnupdate.org>",
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -426,8 +426,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(ssl_nss, init_plugin, info)
+PURPLE_INIT_PLUGIN(ssl_nss, init_plugin, info)

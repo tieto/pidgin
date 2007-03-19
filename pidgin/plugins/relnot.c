@@ -23,8 +23,8 @@
 #include <config.h>
 #endif
 
-#ifndef GAIM_PLUGINS
-#define GAIM_PLUGINS
+#ifndef PURPLE_PLUGINS
+#define PURPLE_PLUGINS
 #endif
 
 #include "internal.h"
@@ -44,7 +44,7 @@
 #define MIN_CHECK_INTERVAL 60 * 60 * 24
 
 static void
-version_fetch_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
+version_fetch_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		const gchar *changelog, size_t len, const gchar *error_message)
 {
 	char *cur_ver, *formatted;
@@ -70,10 +70,10 @@ version_fetch_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	message = g_string_new("");
 	g_string_append_printf(message, _("You are using " PIDGIN_NAME " version %s.  The "
 			"current version is %s.<hr>"),
-			gaim_core_get_version(), cur_ver);
+			purple_core_get_version(), cur_ver);
 
 	if(*changelog) {
-		formatted = gaim_strdup_withhtml(changelog);
+		formatted = purple_strdup_withhtml(changelog);
 		g_string_append_printf(message, _("<b>ChangeLog:</b>\n%s<br><br>"),
 				formatted);
 		g_free(formatted);
@@ -83,7 +83,7 @@ version_fetch_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 			"<a href=\"http://pidgin.im/\">"
 			"http://pidgin.im</a>."), cur_ver);
 
-	gaim_notify_formatted(NULL, _("New Version Available"),
+	purple_notify_formatted(NULL, _("New Version Available"),
 			_("New Version Available"), NULL, message->str,
 			NULL, NULL);
 
@@ -94,23 +94,23 @@ version_fetch_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 static void
 do_check(void)
 {
-	int last_check = gaim_prefs_get_int("/plugins/gtk/relnot/last_check");
+	int last_check = purple_prefs_get_int("/plugins/gtk/relnot/last_check");
 	if(!last_check || time(NULL) - last_check > MIN_CHECK_INTERVAL) {
-		char *url = g_strdup_printf("http://gaim.sourceforge.net/version.php?version=%s&build=%s", gaim_core_get_version(),
+		char *url = g_strdup_printf("http://purple.sourceforge.net/version.php?version=%s&build=%s", purple_core_get_version(),
 #ifdef _WIN32
-				"gaim-win32"
+				"purple-win32"
 #else
-				"gaim"
+				"purple"
 #endif
 		);
-		gaim_util_fetch_url(url, TRUE, NULL, FALSE, version_fetch_cb, NULL);
-		gaim_prefs_set_int("/plugins/gtk/relnot/last_check", time(NULL));
+		purple_util_fetch_url(url, TRUE, NULL, FALSE, version_fetch_cb, NULL);
+		purple_prefs_set_int("/plugins/gtk/relnot/last_check", time(NULL));
 		g_free(url);
 	}
 }
 
 static void
-signed_on_cb(GaimConnection *gc, void *data) {
+signed_on_cb(PurpleConnection *gc, void *data) {
 	do_check();
 }
 
@@ -118,28 +118,28 @@ signed_on_cb(GaimConnection *gc, void *data) {
  * Plugin stuff
  **************************************************************************/
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-						plugin, GAIM_CALLBACK(signed_on_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+						plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
 
 	/* we don't check if we're offline */
-	if(gaim_connections_get_all())
+	if(purple_connections_get_all())
 		do_check();
 
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	"gtk-relnot",                                     /**< id             */
 	N_("Release Notification"),                       /**< name           */
@@ -150,7 +150,7 @@ static GaimPluginInfo info =
 	N_("Checks periodically for new releases and notifies the user "
 			"with the ChangeLog."),
 	"Nathan Walp <faceprint@faceprint.com>",          /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	NULL,                                             /**< unload         */
@@ -163,10 +163,10 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	gaim_prefs_add_none("/plugins/gtk/relnot");
-	gaim_prefs_add_int("/plugins/gtk/relnot/last_check", 0);
+	purple_prefs_add_none("/plugins/gtk/relnot");
+	purple_prefs_add_int("/plugins/gtk/relnot/last_check", 0);
 }
 
-GAIM_INIT_PLUGIN(relnot, init_plugin, info)
+PURPLE_INIT_PLUGIN(relnot, init_plugin, info)

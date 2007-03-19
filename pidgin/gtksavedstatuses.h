@@ -2,7 +2,7 @@
  * @file gtksavedstatuses.h GTK+ Saved Status Editor UI
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -50,12 +50,12 @@ void pidgin_status_window_hide(void);
  *               with the transient status using the status
  *               parameter to this function.
  * @param status If edit is TRUE then this should be a
- *               pointer to the GaimSavedStatus to edit.
+ *               pointer to the PurpleSavedStatus to edit.
  *               If edit is FALSE then this can be NULL,
  *               or you can pass in a saved status to
  *               seed the initial values of the new status.
  */
-void pidgin_status_editor_show(gboolean edit, GaimSavedStatus *status);
+void pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *status);
 
 /**
  * Creates a dropdown menu of saved statuses and calls a callback
@@ -65,7 +65,7 @@ void pidgin_status_editor_show(gboolean edit, GaimSavedStatus *status);
  * @param callback The callback to call when the selection changes
  * @return         The menu widget
  */
-GtkWidget *pidgin_status_menu(GaimSavedStatus *status, GCallback callback);
+GtkWidget *pidgin_status_menu(PurpleSavedStatus *status, GCallback callback);
 
 /**
  * Returns the GTK+ status handle.

@@ -1,7 +1,7 @@
 /**
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -43,35 +43,35 @@ void gnt_ui_init()
 	gnt_init();
 #endif
 
-	gaim_prefs_add_none("/gaim/gnt");
+	purple_prefs_add_none("/purple/gnt");
 	
 	/* Accounts */
 	finch_accounts_init();
-	gaim_accounts_set_ui_ops(finch_accounts_get_ui_ops());
+	purple_accounts_set_ui_ops(finch_accounts_get_ui_ops());
 
 	/* Connections */
 	finch_connections_init();
-	gaim_connections_set_ui_ops(finch_connections_get_ui_ops());
+	purple_connections_set_ui_ops(finch_connections_get_ui_ops());
 
 	/* Initialize the buddy list */
 	finch_blist_init();
-	gaim_blist_set_ui_ops(finch_blist_get_ui_ops());
+	purple_blist_set_ui_ops(finch_blist_get_ui_ops());
 
 	/* Now the conversations */
 	finch_conversation_init();
-	gaim_conversations_set_ui_ops(finch_conv_get_ui_ops());
+	purple_conversations_set_ui_ops(finch_conv_get_ui_ops());
 
 	/* Notify */
 	finch_notify_init();
-	gaim_notify_set_ui_ops(finch_notify_get_ui_ops());
+	purple_notify_set_ui_ops(finch_notify_get_ui_ops());
 
 	finch_request_init();
-	gaim_request_set_ui_ops(finch_request_get_ui_ops());
+	purple_request_set_ui_ops(finch_request_get_ui_ops());
 
 	finch_pounces_init();
 
 	finch_xfers_init();
-	gaim_xfers_set_ui_ops(finch_xfers_get_ui_ops());
+	purple_xfers_set_ui_ops(finch_xfers_get_ui_ops());
 
 	gnt_register_action(_("Accounts"), finch_accounts_show_all);
 	gnt_register_action(_("Buddy List"), finch_blist_show);
@@ -89,28 +89,28 @@ void gnt_ui_init()
 
 void gnt_ui_uninit()
 {
-	gaim_accounts_set_ui_ops(NULL);
+	purple_accounts_set_ui_ops(NULL);
 	finch_accounts_uninit();
 
-	gaim_connections_set_ui_ops(NULL);
+	purple_connections_set_ui_ops(NULL);
 	finch_connections_uninit();
 
-	gaim_blist_set_ui_ops(NULL);
+	purple_blist_set_ui_ops(NULL);
 	finch_blist_uninit();
 
-	gaim_conversations_set_ui_ops(NULL);
+	purple_conversations_set_ui_ops(NULL);
 	finch_conversation_uninit();
 
-	gaim_notify_set_ui_ops(NULL);
+	purple_notify_set_ui_ops(NULL);
 	finch_notify_uninit();
 
-	gaim_request_set_ui_ops(NULL);
+	purple_request_set_ui_ops(NULL);
 	finch_request_uninit();
 
 	finch_pounces_uninit();
 
 	finch_xfers_uninit();
-	gaim_xfers_set_ui_ops(NULL);
+	purple_xfers_set_ui_ops(NULL);
 
 	gnt_quit();
 #endif

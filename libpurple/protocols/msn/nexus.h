@@ -1,9 +1,9 @@
 /**
  * @file nexus.h MSN Nexus functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -33,13 +33,13 @@ struct _MsnNexus
 	char *login_host;
 	char *login_path;
 	GHashTable *challenge_data;
-	GaimSslConnection *gsc;
+	PurpleSslConnection *gsc;
 
 	guint input_handler;
 
 	char *write_buf;
 	gsize written_len;
-	GaimInputFunction written_cb;
+	PurpleInputFunction written_cb;
 
 	char *read_buf;
 	gsize read_len;

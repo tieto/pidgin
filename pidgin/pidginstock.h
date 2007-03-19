@@ -2,7 +2,7 @@
  * @file gtkstock.h GTK+ Stock resources
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -145,7 +145,7 @@
 #define PIDGIN_ICON_SIZE_TANGO_LARGE          "pidgin-icon-size-tango-large"
 #define PIDGIN_ICON_SIZE_TANGO_HUGE           "pidgin-icon-size-tango-huge"
 /**
- * Sets up the gaim stock repository.
+ * Sets up the purple stock repository.
  */
 void pidgin_stock_init(void);
 

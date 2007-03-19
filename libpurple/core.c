@@ -1,10 +1,10 @@
 /**
- * @file core.c Gaim Core API
+ * @file core.c Purple Core API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -49,54 +49,54 @@
 #  include "dbus-server.h"
 #endif
 
-struct GaimCore
+struct PurpleCore
 {
 	char *ui;
 
 	void *reserved;
 };
 
-static GaimCoreUiOps *_ops  = NULL;
-static GaimCore      *_core = NULL;
+static PurpleCoreUiOps *_ops  = NULL;
+static PurpleCore      *_core = NULL;
 
 STATIC_PROTO_INIT
 
 gboolean
-gaim_core_init(const char *ui)
+purple_core_init(const char *ui)
 {
-	GaimCoreUiOps *ops;
-	GaimCore *core;
+	PurpleCoreUiOps *ops;
+	PurpleCore *core;
 
 	g_return_val_if_fail(ui != NULL, FALSE);
-	g_return_val_if_fail(gaim_get_core() == NULL, FALSE);
+	g_return_val_if_fail(purple_get_core() == NULL, FALSE);
 
 #ifdef _WIN32
-	wgaim_init();
+	wpurple_init();
 #endif
 
-	_core = core = g_new0(GaimCore, 1);
+	_core = core = g_new0(PurpleCore, 1);
 	core->ui = g_strdup(ui);
 	core->reserved = NULL;
 
-	ops = gaim_core_get_ui_ops();
+	ops = purple_core_get_ui_ops();
 
 	/* The signals subsystem is important and should be first. */
-	gaim_signals_init();
+	purple_signals_init();
 
-	gaim_signal_register(core, "uri-handler",
-		gaim_marshal_BOOLEAN__POINTER_POINTER_POINTER,
-		gaim_value_new(GAIM_TYPE_BOOLEAN), 3,
-		gaim_value_new(GAIM_TYPE_STRING), /* Protocol */
-		gaim_value_new(GAIM_TYPE_STRING), /* Command */
-		gaim_value_new(GAIM_TYPE_BOXED, "GHashTable *")); /* Parameters */
+	purple_signal_register(core, "uri-handler",
+		purple_marshal_BOOLEAN__POINTER_POINTER_POINTER,
+		purple_value_new(PURPLE_TYPE_BOOLEAN), 3,
+		purple_value_new(PURPLE_TYPE_STRING), /* Protocol */
+		purple_value_new(PURPLE_TYPE_STRING), /* Command */
+		purple_value_new(PURPLE_TYPE_BOXED, "GHashTable *")); /* Parameters */
 
-	gaim_signal_register(core, "quitting", gaim_marshal_VOID, NULL, 0);
+	purple_signal_register(core, "quitting", purple_marshal_VOID, NULL, 0);
 
 	/* The prefs subsystem needs to be initialized before static protocols
 	 * for protocol prefs to work. */
-	gaim_prefs_init();
+	purple_prefs_init();
 
-	gaim_debug_init();
+	purple_debug_init();
 
 	if (ops != NULL)
 	{
@@ -108,7 +108,7 @@ gaim_core_init(const char *ui)
 	}
 
 #ifdef HAVE_DBUS
-	gaim_dbus_init();
+	purple_dbus_init();
 #endif
 
 	/* Initialize all static protocols. */
@@ -117,37 +117,37 @@ gaim_core_init(const char *ui)
 	/* Since plugins get probed so early we should probably initialize their
 	 * subsystem right away too.
 	 */
-	gaim_plugins_init();
-	gaim_plugins_probe(G_MODULE_SUFFIX);
+	purple_plugins_init();
+	purple_plugins_probe(G_MODULE_SUFFIX);
 
 	/* Accounts use status and buddy icons, so initialize these before accounts */
-	gaim_status_init();
-	gaim_buddy_icons_init();
+	purple_status_init();
+	purple_buddy_icons_init();
 
-	gaim_accounts_init();
-	gaim_savedstatuses_init();
-	gaim_ciphers_init();
-	gaim_notify_init();
-	gaim_connections_init();
-	gaim_conversations_init();
-	gaim_blist_init();
-	gaim_log_init();
-	gaim_network_init();
-	gaim_privacy_init();
-	gaim_pounces_init();
-	gaim_proxy_init();
-	gaim_dnsquery_init();
-	gaim_sound_init();
-	gaim_ssl_init();
-	gaim_stun_init();
-	gaim_xfers_init();
-	gaim_idle_init();
+	purple_accounts_init();
+	purple_savedstatuses_init();
+	purple_ciphers_init();
+	purple_notify_init();
+	purple_connections_init();
+	purple_conversations_init();
+	purple_blist_init();
+	purple_log_init();
+	purple_network_init();
+	purple_privacy_init();
+	purple_pounces_init();
+	purple_proxy_init();
+	purple_dnsquery_init();
+	purple_sound_init();
+	purple_ssl_init();
+	purple_stun_init();
+	purple_xfers_init();
+	purple_idle_init();
 
 	/*
 	 * Call this early on to try to auto-detect our IP address and
 	 * hopefully save some time later.
 	 */
-	gaim_network_get_my_ip(-1);
+	purple_network_get_my_ip(-1);
 
 	if (ops != NULL && ops->ui_init != NULL)
 		ops->ui_init();
@@ -156,46 +156,46 @@ gaim_core_init(const char *ui)
 }
 
 void
-gaim_core_quit(void)
+purple_core_quit(void)
 {
-	GaimCoreUiOps *ops;
-	GaimCore *core = gaim_get_core();
+	PurpleCoreUiOps *ops;
+	PurpleCore *core = purple_get_core();
 
 	g_return_if_fail(core != NULL);
 
 	/* The self destruct sequence has been initiated */
-	gaim_signal_emit(gaim_get_core(), "quitting");
+	purple_signal_emit(purple_get_core(), "quitting");
 
 	/* Transmission ends */
-	gaim_connections_disconnect_all();
+	purple_connections_disconnect_all();
 
 	/* Save .xml files, remove signals, etc. */
-	gaim_idle_uninit();
-	gaim_ssl_uninit();
-	gaim_pounces_uninit();
-	gaim_blist_uninit();
-	gaim_ciphers_uninit();
-	gaim_notify_uninit();
-	gaim_conversations_uninit();
-	gaim_connections_uninit();
-	gaim_buddy_icons_uninit();
-	gaim_accounts_uninit();
-	gaim_savedstatuses_uninit();
-	gaim_status_uninit();
-	gaim_prefs_uninit();
-	gaim_xfers_uninit();
-	gaim_proxy_uninit();
-	gaim_dnsquery_uninit();
+	purple_idle_uninit();
+	purple_ssl_uninit();
+	purple_pounces_uninit();
+	purple_blist_uninit();
+	purple_ciphers_uninit();
+	purple_notify_uninit();
+	purple_conversations_uninit();
+	purple_connections_uninit();
+	purple_buddy_icons_uninit();
+	purple_accounts_uninit();
+	purple_savedstatuses_uninit();
+	purple_status_uninit();
+	purple_prefs_uninit();
+	purple_xfers_uninit();
+	purple_proxy_uninit();
+	purple_dnsquery_uninit();
 
-	gaim_debug_info("main", "Unloading all plugins\n");
-	gaim_plugins_destroy_all();
+	purple_debug_info("main", "Unloading all plugins\n");
+	purple_plugins_destroy_all();
 
-	ops = gaim_core_get_ui_ops();
+	ops = purple_core_get_ui_ops();
 	if (ops != NULL && ops->quit != NULL)
 		ops->quit();
 
 	/*
-	 * gaim_sound_uninit() should be called as close to
+	 * purple_sound_uninit() should be called as close to
 	 * shutdown as possible.  This is because the call
 	 * to ao_shutdown() can sometimes leave our
 	 * environment variables in an unusable state, which
@@ -205,63 +205,63 @@ gaim_core_quit(void)
 	 *
 	 * TODO: Eventually move this call higher up with the others.
 	 */
-	gaim_sound_uninit();
+	purple_sound_uninit();
 
-	gaim_plugins_uninit();
-	gaim_signals_uninit();
+	purple_plugins_uninit();
+	purple_signals_uninit();
 
 #ifdef HAVE_DBUS
-	gaim_dbus_uninit();
+	purple_dbus_uninit();
 #endif
 
 	g_free(core->ui);
 	g_free(core);
 
 #ifdef _WIN32
-	wgaim_cleanup();
+	wpurple_cleanup();
 #endif
 
 	_core = NULL;
 }
 
 gboolean
-gaim_core_quit_cb(gpointer unused)
+purple_core_quit_cb(gpointer unused)
 {
-	gaim_core_quit();
+	purple_core_quit();
 
 	return FALSE;
 }
 
 const char *
-gaim_core_get_version(void)
+purple_core_get_version(void)
 {
 	return VERSION;
 }
 
 const char *
-gaim_core_get_ui(void)
+purple_core_get_ui(void)
 {
-	GaimCore *core = gaim_get_core();
+	PurpleCore *core = purple_get_core();
 
 	g_return_val_if_fail(core != NULL, NULL);
 
 	return core->ui;
 }
 
-GaimCore *
-gaim_get_core(void)
+PurpleCore *
+purple_get_core(void)
 {
 	return _core;
 }
 
 void
-gaim_core_set_ui_ops(GaimCoreUiOps *ops)
+purple_core_set_ui_ops(PurpleCoreUiOps *ops)
 {
 	_ops = ops;
 }
 
-GaimCoreUiOps *
-gaim_core_get_ui_ops(void)
+PurpleCoreUiOps *
+purple_core_get_ui_ops(void)
 {
 	return _ops;
 }

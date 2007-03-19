@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * File: wgaimerror.h
+ * File: wpurpleerror.h
  * Date: October 14, 2002
  * Description: Convert Winsock errors to Unix errors
  *
@@ -22,8 +22,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
-#ifndef _WGAIMERROR_H
-#define _WGAIMERROR_H
+#ifndef _WPURPLEERROR_H
+#define _WPURPLEERROR_H
 
 /* Here we define unix socket errors as windows socket errors */
 
@@ -55,4 +55,4 @@
 #define ECONNRESET WSAECONNRESET
 #define EHOSTUNREACH WSAEHOSTUNREACH
 
-#endif /* end _WGAIMERROR_H */
+#endif /* end _WPURPLEERROR_H */

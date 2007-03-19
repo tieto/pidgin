@@ -28,31 +28,31 @@
 #define CONTACT_PRIORITY_PLUGIN_ID "gtk-contact-priority"
 
 static void
-select_account(GtkWidget *widget, GaimAccount *account, gpointer data)
+select_account(GtkWidget *widget, PurpleAccount *account, gpointer data)
 {
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(data),
-														(gdouble)gaim_account_get_int(account, "score", 0));
+														(gdouble)purple_account_get_int(account, "score", 0));
 }
 
 static void
 account_update(GtkWidget *widget, GtkOptionMenu *optmenu)
 {
-	GaimAccount *account = NULL;
+	PurpleAccount *account = NULL;
 
 	account = g_object_get_data(G_OBJECT(gtk_menu_get_active(GTK_MENU(gtk_option_menu_get_menu(optmenu)))), "account");
-	gaim_account_set_int(account, "score", gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget)));
+	purple_account_set_int(account, "score", gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget)));
 }
 
 static void
 pref_update(GtkWidget *widget, char *pref)
 {
-	if (gaim_prefs_get_type(pref) == GAIM_PREF_INT)
-		gaim_prefs_set_int(pref, gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget)));
-	if (gaim_prefs_get_type(pref) == GAIM_PREF_BOOLEAN)
-		gaim_prefs_set_bool(pref, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
+	if (purple_prefs_get_type(pref) == PURPLE_PREF_INT)
+		purple_prefs_set_int(pref, gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(widget)));
+	if (purple_prefs_get_type(pref) == PURPLE_PREF_BOOLEAN)
+		purple_prefs_set_bool(pref, gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(widget)));
 }
 
-static struct GaimContactPriorityStatuses
+static struct PurpleContactPriorityStatuses
 {
 	const char *id;
 	const char *description;
@@ -70,17 +70,17 @@ static struct GaimContactPriorityStatuses
 };
 
 static GtkWidget *
-get_config_frame(GaimPlugin *plugin)
+get_config_frame(PurplePlugin *plugin)
 {
 	GtkWidget *ret = NULL, *hbox = NULL, *frame = NULL, *vbox = NULL;
 	GtkWidget *label = NULL, *spin = NULL, *check = NULL;
 	GtkWidget *optmenu = NULL;
 	GtkObject *adj = NULL;
 	GtkSizeGroup *sg = NULL;
-	GaimAccount *account = NULL;
+	PurpleAccount *account = NULL;
 	int i;
 
-	gboolean last_match = gaim_prefs_get_bool("/core/contact/last_match");
+	gboolean last_match = purple_prefs_get_bool("/core/contact/last_match");
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -105,7 +105,7 @@ get_config_frame(GaimPlugin *plugin)
 		gtk_size_group_add_widget(sg, label);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
 
-		adj = gtk_adjustment_new(gaim_prefs_get_int(pref), -500, 500, 1, 1, 1);
+		adj = gtk_adjustment_new(purple_prefs_get_int(pref), -500, 500, 1, 1, 1);
 		spin = gtk_spin_button_new((GtkAdjustment *)adj, 1, 0);
 		g_signal_connect(G_OBJECT(spin), "value-changed", G_CALLBACK(pref_update), pref);
 		gtk_box_pack_start(GTK_BOX(hbox), spin, FALSE, FALSE, 0);
@@ -150,7 +150,7 @@ get_config_frame(GaimPlugin *plugin)
 	account = g_object_get_data(G_OBJECT(gtk_menu_get_active(GTK_MENU(gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu))))),
 															"account");
 	gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin),
-														(gdouble)gaim_account_get_int(account, "score", 0));
+														(gdouble)purple_account_get_int(account, "score", 0));
 	gtk_spin_button_set_adjustment(GTK_SPIN_BUTTON(spin), GTK_ADJUSTMENT(adj));
 	g_signal_connect(G_OBJECT(spin), "value-changed",
 									 G_CALLBACK(account_update), optmenu);
@@ -167,16 +167,16 @@ static PidginPluginUiInfo ui_info =
 	0 /* page_num (Reserved) */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	CONTACT_PRIORITY_PLUGIN_ID,                       /**< id             */
 	N_("Contact Priority"),                           /**< name           */
@@ -186,7 +186,7 @@ static GaimPluginInfo info =
                                                     /**< description    */
 	N_("Allows for changing the point values of idle/away/offline states for buddies in contact priority computations."),
 	"Etan Reisner <deryni@eden.rutgers.edu>",         /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	NULL,                                             /**< unload         */
@@ -198,8 +198,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(contactpriority, init_plugin, info)
+PURPLE_INIT_PLUGIN(contactpriority, init_plugin, info)

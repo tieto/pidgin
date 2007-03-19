@@ -2,9 +2,9 @@
  * @file roomlist.h Room List API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -23,13 +23,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _GAIM_ROOMLIST_H_
-#define _GAIM_ROOMLIST_H_
+#ifndef _PURPLE_ROOMLIST_H_
+#define _PURPLE_ROOMLIST_H_
 
-typedef struct _GaimRoomlist GaimRoomlist;
-typedef struct _GaimRoomlistRoom GaimRoomlistRoom;
-typedef struct _GaimRoomlistField GaimRoomlistField;
-typedef struct _GaimRoomlistUiOps GaimRoomlistUiOps;
+typedef struct _PurpleRoomlist PurpleRoomlist;
+typedef struct _PurpleRoomlistRoom PurpleRoomlistRoom;
+typedef struct _PurpleRoomlistField PurpleRoomlistField;
+typedef struct _PurpleRoomlistUiOps PurpleRoomlistUiOps;
 
 /**
  * The types of rooms.
@@ -38,21 +38,21 @@ typedef struct _GaimRoomlistUiOps GaimRoomlistUiOps;
  */
 typedef enum
 {
-	GAIM_ROOMLIST_ROOMTYPE_CATEGORY = 0x01, /**< It's a category, but not a room you can join. */
-	GAIM_ROOMLIST_ROOMTYPE_ROOM = 0x02      /**< It's a room, like the kind you can join. */
+	PURPLE_ROOMLIST_ROOMTYPE_CATEGORY = 0x01, /**< It's a category, but not a room you can join. */
+	PURPLE_ROOMLIST_ROOMTYPE_ROOM = 0x02      /**< It's a room, like the kind you can join. */
 
-} GaimRoomlistRoomType;
+} PurpleRoomlistRoomType;
 
 /**
  * The types of fields.
  */
 typedef enum
 {
-	GAIM_ROOMLIST_FIELD_BOOL,
-	GAIM_ROOMLIST_FIELD_INT,
-	GAIM_ROOMLIST_FIELD_STRING /**< We do a g_strdup on the passed value if it's this type. */
+	PURPLE_ROOMLIST_FIELD_BOOL,
+	PURPLE_ROOMLIST_FIELD_INT,
+	PURPLE_ROOMLIST_FIELD_STRING /**< We do a g_strdup on the passed value if it's this type. */
 
-} GaimRoomlistFieldType;
+} PurpleRoomlistFieldType;
 
 #include "account.h"
 #include "glib.h"
@@ -64,8 +64,8 @@ typedef enum
 /**
  * Represents a list of rooms for a given connection on a given protocol.
  */
-struct _GaimRoomlist {
-	GaimAccount *account; /**< The account this list belongs to. */
+struct _PurpleRoomlist {
+	PurpleAccount *account; /**< The account this list belongs to. */
 	GList *fields; /**< The fields. */
 	GList *rooms; /**< The list of rooms. */
 	gboolean in_progress; /**< The listing is in progress. */
@@ -77,19 +77,19 @@ struct _GaimRoomlist {
 /**
  * Represents a room.
  */
-struct _GaimRoomlistRoom {
-	GaimRoomlistRoomType type; /**< The type of room. */
+struct _PurpleRoomlistRoom {
+	PurpleRoomlistRoomType type; /**< The type of room. */
 	gchar *name; /**< The name of the room. */
 	GList *fields; /**< Other fields. */
-	GaimRoomlistRoom *parent; /**< The parent room, or NULL. */
+	PurpleRoomlistRoom *parent; /**< The parent room, or NULL. */
 	gboolean expanded_once; /**< A flag the UI uses to avoid multiple expand prpl cbs. */
 };
 
 /**
  * A field a room might have.
  */
-struct _GaimRoomlistField {
-	GaimRoomlistFieldType type; /**< The type of field. */
+struct _PurpleRoomlistField {
+	PurpleRoomlistFieldType type; /**< The type of field. */
 	gchar *label; /**< The i18n user displayed name of the field. */
 	gchar *name; /**< The internal name of the field. */
 	gboolean hidden; /**< Hidden? */
@@ -98,13 +98,13 @@ struct _GaimRoomlistField {
 /**
  * The room list ops to be filled out by the UI.
  */
-struct _GaimRoomlistUiOps {
-	void (*show_with_account)(GaimAccount *account); /**< Force the ui to pop up a dialog and get the list */
-	void (*create)(GaimRoomlist *list); /**< A new list was created. */
-	void (*set_fields)(GaimRoomlist *list, GList *fields); /**< Sets the columns. */
-	void (*add_room)(GaimRoomlist *list, GaimRoomlistRoom *room); /**< Add a room to the list. */
-	void (*in_progress)(GaimRoomlist *list, gboolean flag); /**< Are we fetching stuff still? */
-	void (*destroy)(GaimRoomlist *list); /**< We're destroying list. */
+struct _PurpleRoomlistUiOps {
+	void (*show_with_account)(PurpleAccount *account); /**< Force the ui to pop up a dialog and get the list */
+	void (*create)(PurpleRoomlist *list); /**< A new list was created. */
+	void (*set_fields)(PurpleRoomlist *list, GList *fields); /**< Sets the columns. */
+	void (*add_room)(PurpleRoomlist *list, PurpleRoomlistRoom *room); /**< Add a room to the list. */
+	void (*in_progress)(PurpleRoomlist *list, gboolean flag); /**< Are we fetching stuff still? */
+	void (*destroy)(PurpleRoomlist *list); /**< We're destroying list. */
 };
 
 
@@ -126,7 +126,7 @@ extern "C" {
  *
  * @param account The account to get the list on.
  */
-void gaim_roomlist_show_with_account(GaimAccount *account);
+void purple_roomlist_show_with_account(PurpleAccount *account);
 
 /**
  * Returns a newly created room list object.
@@ -136,14 +136,14 @@ void gaim_roomlist_show_with_account(GaimAccount *account);
  * @param account The account that's listing rooms.
  * @return The new room list handle.
  */
-GaimRoomlist *gaim_roomlist_new(GaimAccount *account);
+PurpleRoomlist *purple_roomlist_new(PurpleAccount *account);
 
 /**
  * Increases the reference count on the room list.
  *
  * @param list The object to ref.
  */
-void gaim_roomlist_ref(GaimRoomlist *list);
+void purple_roomlist_ref(PurpleRoomlist *list);
 
 /**
  * Decreases the reference count on the room list.
@@ -153,18 +153,18 @@ void gaim_roomlist_ref(GaimRoomlist *list);
  * @param list The room list object to unref and possibly
  *             destroy.
  */
-void gaim_roomlist_unref(GaimRoomlist *list);
+void purple_roomlist_unref(PurpleRoomlist *list);
 
 /**
  * Set the different field types and their names for this protocol.
  *
- * This must be called before gaim_roomlist_room_add().
+ * This must be called before purple_roomlist_room_add().
  *
  * @param list The room list.
- * @param fields A GList of GaimRoomlistField's. UI's are encouraged
+ * @param fields A GList of PurpleRoomlistField's. UI's are encouraged
  *               to default to displaying them in the order given.
  */
-void gaim_roomlist_set_fields(GaimRoomlist *list, GList *fields);
+void purple_roomlist_set_fields(PurpleRoomlist *list, GList *fields);
 
 /**
  * Set the "in progress" state of the room list.
@@ -175,7 +175,7 @@ void gaim_roomlist_set_fields(GaimRoomlist *list, GList *fields);
  * @param list The room list.
  * @param in_progress We're downloading it, or we're not.
  */
-void gaim_roomlist_set_in_progress(GaimRoomlist *list, gboolean in_progress);
+void purple_roomlist_set_in_progress(PurpleRoomlist *list, gboolean in_progress);
 
 /**
  * Gets the "in progress" state of the room list.
@@ -186,27 +186,27 @@ void gaim_roomlist_set_in_progress(GaimRoomlist *list, gboolean in_progress);
  * @param list The room list.
  * @return True if we're downloading it, or false if we're not.
  */
-gboolean gaim_roomlist_get_in_progress(GaimRoomlist *list);
+gboolean purple_roomlist_get_in_progress(PurpleRoomlist *list);
 
 /**
  * Adds a room to the list of them.
  *
  * @param list The room list.
  * @param room The room to add to the list. The GList of fields must be in the same
-               order as was given in gaim_roomlist_set_fields().
+               order as was given in purple_roomlist_set_fields().
 */
-void gaim_roomlist_room_add(GaimRoomlist *list, GaimRoomlistRoom *room);
+void purple_roomlist_room_add(PurpleRoomlist *list, PurpleRoomlistRoom *room);
 
 /**
- * Returns a GaimRoomlist structure from the prpl, and
+ * Returns a PurpleRoomlist structure from the prpl, and
  * instructs the prpl to start fetching the list.
  *
- * @param gc The GaimConnection to have get a list.
+ * @param gc The PurpleConnection to have get a list.
  *
- * @return A GaimRoomlist* or @c NULL if the protocol
+ * @return A PurpleRoomlist* or @c NULL if the protocol
  *         doesn't support that.
  */
-GaimRoomlist *gaim_roomlist_get_list(GaimConnection *gc);
+PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc);
 
 /**
  * Tells the prpl to stop fetching the list.
@@ -216,7 +216,7 @@ GaimRoomlist *gaim_roomlist_get_list(GaimConnection *gc);
  *
  * @param list The room list to cancel a get_list on.
  */
-void gaim_roomlist_cancel_get_list(GaimRoomlist *list);
+void purple_roomlist_cancel_get_list(PurpleRoomlist *list);
 
 /**
  * Tells the prpl that a category was expanded.
@@ -226,10 +226,10 @@ void gaim_roomlist_cancel_get_list(GaimRoomlist *list);
  *
  * @param list     The room list.
  * @param category The category that was expanded. The expression
- *                 (category->type & GAIM_ROOMLIST_ROOMTYPE_CATEGORY)
+ *                 (category->type & PURPLE_ROOMLIST_ROOMTYPE_CATEGORY)
  *                 must be true.
  */
-void gaim_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *category);
+void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *category);
 
 /*@}*/
 
@@ -247,8 +247,8 @@ void gaim_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *categor
  *
  * @return A new room.
  */
-GaimRoomlistRoom *gaim_roomlist_room_new(GaimRoomlistRoomType type, const gchar *name,
-                                         GaimRoomlistRoom *parent);
+PurpleRoomlistRoom *purple_roomlist_room_new(PurpleRoomlistRoomType type, const gchar *name,
+                                         PurpleRoomlistRoom *parent);
 
 /**
  * Adds a field to a room.
@@ -257,15 +257,15 @@ GaimRoomlistRoom *gaim_roomlist_room_new(GaimRoomlistRoomType type, const gchar 
  * @param room The room.
  * @param field The field to append. Strings get g_strdup'd internally.
  */
-void gaim_roomlist_room_add_field(GaimRoomlist *list, GaimRoomlistRoom *room, gconstpointer field);
+void purple_roomlist_room_add_field(PurpleRoomlist *list, PurpleRoomlistRoom *room, gconstpointer field);
 
 /**
- * Join a room, given a GaimRoomlistRoom and it's associated GaimRoomlist.
+ * Join a room, given a PurpleRoomlistRoom and it's associated PurpleRoomlist.
  *
  * @param list The room list the room belongs to.
  * @param room The room to join.
  */
-void gaim_roomlist_room_join(GaimRoomlist *list, GaimRoomlistRoom *room);
+void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room);
 
 /*@}*/
 
@@ -282,10 +282,10 @@ void gaim_roomlist_room_join(GaimRoomlist *list, GaimRoomlistRoom *room);
  * @param name   The internal name of the field.
  * @param hidden Hide the field.
  *
- * @return A new GaimRoomlistField, ready to be added to a GList and passed to
- *         gaim_roomlist_set_fields().
+ * @return A new PurpleRoomlistField, ready to be added to a GList and passed to
+ *         purple_roomlist_set_fields().
  */
-GaimRoomlistField *gaim_roomlist_field_new(GaimRoomlistFieldType type,
+PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
                                            const gchar *label, const gchar *name,
                                            gboolean hidden);
 /*@}*/
@@ -296,19 +296,19 @@ GaimRoomlistField *gaim_roomlist_field_new(GaimRoomlistFieldType type,
 /*@{*/
 
 /**
- * Sets the UI operations structure to be used in all gaim room lists.
+ * Sets the UI operations structure to be used in all purple room lists.
  *
  * @param ops The UI operations structure.
  */
-void gaim_roomlist_set_ui_ops(GaimRoomlistUiOps *ops);
+void purple_roomlist_set_ui_ops(PurpleRoomlistUiOps *ops);
 
 /**
- * Returns the gaim window UI operations structure to be used in
+ * Returns the purple window UI operations structure to be used in
  * new windows.
  *
- * @return A filled-out GaimRoomlistUiOps structure.
+ * @return A filled-out PurpleRoomlistUiOps structure.
  */
-GaimRoomlistUiOps *gaim_roomlist_get_ui_ops(void);
+PurpleRoomlistUiOps *purple_roomlist_get_ui_ops(void);
 
 /*@}*/
 
@@ -316,4 +316,4 @@ GaimRoomlistUiOps *gaim_roomlist_get_ui_ops(void);
 }
 #endif
 
-#endif /* _GAIM_ROOMLIST_H_ */
+#endif /* _PURPLE_ROOMLIST_H_ */

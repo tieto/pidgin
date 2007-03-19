@@ -57,7 +57,7 @@ nm_create_user_record()
 
 	user_record->ref_count = 1;
 
-	gaim_debug(GAIM_DEBUG_INFO, "novell", "Creating user_record, total=%d\n",
+	purple_debug(PURPLE_DEBUG_INFO, "novell", "Creating user_record, total=%d\n",
 			   count++);
 
 	return user_record;
@@ -279,7 +279,7 @@ nm_release_user_record(NMUserRecord * user_record)
 {
 	if (--(user_record->ref_count) == 0) {
 
-		gaim_debug(GAIM_DEBUG_INFO, "novell",
+		purple_debug(PURPLE_DEBUG_INFO, "novell",
 				   "Releasing user_record, total=%d\n", --count);
 
 		if (user_record->dn) {

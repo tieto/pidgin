@@ -1,9 +1,9 @@
 /*
- * gaim
+ * purple
  *
  * File: wspell.c
  * Date: March, 2003
- * Description: Windows Gaim gtkspell interface.
+ * Description: Windows Purple gtkspell interface.
  *
  * Copyright (C) 2002-2003, Herman Bloggs <hermanator12002@yahoo.com>
  *
@@ -55,20 +55,20 @@ gboolean          (*wpidginspell_set_language)            (GtkSpell*,
 void              (*wpidginspell_recheck_all)             (GtkSpell*) = wgtkspell_recheck_all;
 
 static void load_gtkspell() {
-	wpidginspell_new_attach = (void*) wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_new_attach" );
-	wpidginspell_get_from_text_view = (void*) wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_get_from_text_view");
-	wpidginspell_detach = (void*) wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_detach");
-	wpidginspell_set_language = (void*) wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_set_language");
-	wpidginspell_recheck_all = (void*) wgaim_find_and_loadproc("libgtkspell.dll", "gtkspell_recheck_all");
+	wpidginspell_new_attach = (void*) wpurple_find_and_loadproc("libgtkspell.dll", "gtkspell_new_attach" );
+	wpidginspell_get_from_text_view = (void*) wpurple_find_and_loadproc("libgtkspell.dll", "gtkspell_get_from_text_view");
+	wpidginspell_detach = (void*) wpurple_find_and_loadproc("libgtkspell.dll", "gtkspell_detach");
+	wpidginspell_set_language = (void*) wpurple_find_and_loadproc("libgtkspell.dll", "gtkspell_set_language");
+	wpidginspell_recheck_all = (void*) wpurple_find_and_loadproc("libgtkspell.dll", "gtkspell_recheck_all");
 }
 
 static char* lookup_aspell_path() {
 	const char *tmp;
 
-	if ((tmp = g_getenv("GAIM_ASPELL_DIR")))
+	if ((tmp = g_getenv("PURPLE_ASPELL_DIR")))
 		return g_strdup(tmp);
 
-	return wgaim_read_reg_string(HKEY_LOCAL_MACHINE, "Software\\Aspell", "Path");
+	return wpurple_read_reg_string(HKEY_LOCAL_MACHINE, "Software\\Aspell", "Path");
 }
 
 void winpidgin_spell_init() {
@@ -78,7 +78,7 @@ void winpidgin_spell_init() {
 		char *tmp = g_strconcat(aspell_path, "\\aspell-15.dll", NULL);
 		if (g_file_test(tmp, G_FILE_TEST_EXISTS)) {
 			const char *path = g_getenv("PATH");
-			gaim_debug_info("wspell", "Found Aspell in %s\n", aspell_path);
+			purple_debug_info("wspell", "Found Aspell in %s\n", aspell_path);
 
 			g_free(tmp);
 
@@ -90,12 +90,12 @@ void winpidgin_spell_init() {
 
 			load_gtkspell();
 		} else {
-			gaim_debug_warning("wspell", "Couldn't find aspell-15.dll\n");
+			purple_debug_warning("wspell", "Couldn't find aspell-15.dll\n");
 		}
 
 		g_free(tmp);
 		g_free(aspell_path);
 	} else {
-		gaim_debug_warning("wspell", "Couldn't find path for Aspell\n");
+		purple_debug_warning("wspell", "Couldn't find path for Aspell\n");
 	}
 }

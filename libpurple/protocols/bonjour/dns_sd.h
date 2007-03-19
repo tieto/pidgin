@@ -30,7 +30,7 @@ typedef struct _BonjourDnsSd
 {
 	sw_discovery session;
 	sw_discovery_oid session_id;
-	GaimAccount *account;
+	PurpleAccount *account;
 	gchar *name;
 	gchar *txtvers;
 	gchar *version;

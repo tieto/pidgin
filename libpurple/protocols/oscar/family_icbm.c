@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -1241,7 +1241,7 @@ static int outgoingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 	channel = byte_stream_get16(bs);
 
 	if (channel != 0x01) {
-		gaim_debug_misc("oscar", "icbm: ICBM recieved on unsupported channel.  Ignoring. (chan = %04x)\n", channel);
+		purple_debug_misc("oscar", "icbm: ICBM recieved on unsupported channel.  Ignoring. (chan = %04x)\n", channel);
 		return 0;
 	}
 
@@ -1461,7 +1461,7 @@ static int incomingim_ch1_parsemsgs(OscarData *od, aim_userinfo_t *userinfo, gui
 		msglen = byte_stream_get16(&mbs);
 		if (msglen > byte_stream_empty(&mbs))
 		{
-			gaim_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.", userinfo->sn);
+			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.", userinfo->sn);
 			break;
 		}
 
@@ -1569,7 +1569,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 		if (length > byte_stream_empty(bs))
 		{
-			gaim_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+			purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
 			break;
 		}
 
@@ -1592,7 +1592,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 			args.featureslen = byte_stream_get16(bs);
 			if (args.featureslen > byte_stream_empty(bs))
 			{
-				gaim_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
 				break;
 			}
 			if (args.featureslen == 0)
@@ -1656,7 +1656,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 
 			if (length > byte_stream_empty(bs))
 			{
-				gaim_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
+				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
 				break;
 			}
 			free(args.extdata);
@@ -1667,7 +1667,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 				args.extdata = byte_stream_getraw(bs, args.extdatalen);
 
 		} else {
-			gaim_debug_misc("oscar", "incomingim_ch1: unknown TLV 0x%04x (len %d)\n", type, length);
+			purple_debug_misc("oscar", "incomingim_ch1: unknown TLV 0x%04x (len %d)\n", type, length);
 		}
 
 		/*
@@ -1731,7 +1731,7 @@ incomingim_ch2_buddylist(OscarData *od, FlapConnection *conn, aim_module_t *mod,
 			bnlen = byte_stream_get16(servdata);
 			bn = byte_stream_getstr(servdata, bnlen);
 
-			gaim_debug_misc("oscar", "got a buddy list from %s: group %s, buddy %s\n", userinfo->sn, gn, bn);
+			purple_debug_misc("oscar", "got a buddy list from %s: group %s, buddy %s\n", userinfo->sn, gn, bn);
 
 			free(bn);
 		}
@@ -1916,7 +1916,7 @@ static int incomingim_ch2(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	cookie2 = byte_stream_getraw(&bbs, 8);
 	if (memcmp(cookie, cookie2, 8) != 0)
 	{
-		gaim_debug_warning("oscar",
+		purple_debug_warning("oscar",
 				"Cookies don't match in rendezvous ICBM, bailing out.\n");
 		free(cookie2);
 		return 1;
@@ -2206,7 +2206,7 @@ static int incomingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 		aim_tlvlist_free(&tlvlist);
 
 	} else {
-		gaim_debug_misc("oscar", "icbm: ICBM received on an unsupported channel.  Ignoring.  (chan = %04x)\n", channel);
+		purple_debug_misc("oscar", "icbm: ICBM received on an unsupported channel.  Ignoring.  (chan = %04x)\n", channel);
 	}
 
 	aim_info_free(&userinfo);
@@ -2428,7 +2428,7 @@ static int msgack(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFr
  * Subtype 0x0014 - Send a mini typing notification (mtn) packet.
  *
  * This is supported by winaim5 and newer, MacAIM bleh and newer, iChat bleh and newer,
- * and Gaim 0.60 and newer.
+ * and Purple 0.60 and newer.
  *
  */
 int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2)
@@ -2482,7 +2482,7 @@ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2)
  * Subtype 0x0014 - Receive a mini typing notification (mtn) packet.
  *
  * This is supported by winaim5 and newer, MacAIM bleh and newer, iChat bleh and newer,
- * and Gaim 0.60 and newer.
+ * and Purple 0.60 and newer.
  *
  */
 static int mtn_receive(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)

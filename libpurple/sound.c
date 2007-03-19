@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -26,15 +26,15 @@
 #include "prefs.h"
 #include "sound.h"
 
-static GaimSoundUiOps *sound_ui_ops = NULL;
+static PurpleSoundUiOps *sound_ui_ops = NULL;
 
 #define STATUS_AVAILABLE 1
 #define STATUS_AWAY 2
 
 static gboolean
-gaim_sound_play_required(const GaimAccount *account)
+purple_sound_play_required(const PurpleAccount *account)
 {
-	gint pref_status = gaim_prefs_get_int("/core/sound/while_status");
+	gint pref_status = purple_prefs_get_int("/core/sound/while_status");
 
 	if (pref_status == 3)
 	{
@@ -44,27 +44,27 @@ gaim_sound_play_required(const GaimAccount *account)
 
 	if (account != NULL)
 	{
-		GaimStatus *status = gaim_account_get_active_status(account);
+		PurpleStatus *status = purple_account_get_active_status(account);
 
-		if (gaim_status_is_online(status))
+		if (purple_status_is_online(status))
 		{
-			gboolean available = gaim_status_is_available(status);
+			gboolean available = purple_status_is_available(status);
 			return (( available && pref_status == STATUS_AVAILABLE) ||
 			        (!available && pref_status == STATUS_AWAY));
 		}
 	}
 
 	/* We get here a couple of ways.  Either the request has been OK'ed
-	 * by gaim_sound_play_event() and we're here because the UI has
-	 * called gaim_sound_play_file(), or we're here for something
+	 * by purple_sound_play_event() and we're here because the UI has
+	 * called purple_sound_play_file(), or we're here for something
 	 * not related to an account (like testing a sound). */
 	return TRUE;
 }
 
 void
-gaim_sound_play_file(const char *filename, const GaimAccount *account)
+purple_sound_play_file(const char *filename, const PurpleAccount *account)
 {
-	if (!gaim_sound_play_required(account))
+	if (!purple_sound_play_required(account))
 		return;
 
 	if(sound_ui_ops && sound_ui_ops->play_file)
@@ -72,16 +72,16 @@ gaim_sound_play_file(const char *filename, const GaimAccount *account)
 }
 
 void
-gaim_sound_play_event(GaimSoundEventID event, const GaimAccount *account)
+purple_sound_play_event(PurpleSoundEventID event, const PurpleAccount *account)
 {
-	if (!gaim_sound_play_required(account))
+	if (!purple_sound_play_required(account))
 		return;
 
 	if(sound_ui_ops && sound_ui_ops->play_event) {
 		int plugin_return;
 
-		plugin_return = GPOINTER_TO_INT(gaim_signal_emit_return_1(
-			gaim_sounds_get_handle(), "playing-sound-event",
+		plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
+			purple_sounds_get_handle(), "playing-sound-event",
 			event, account));
 
 		if (plugin_return)
@@ -92,7 +92,7 @@ gaim_sound_play_event(GaimSoundEventID event, const GaimAccount *account)
 }
 
 void
-gaim_sound_set_ui_ops(GaimSoundUiOps *ops)
+purple_sound_set_ui_ops(PurpleSoundUiOps *ops)
 {
 	if(sound_ui_ops && sound_ui_ops->uninit)
 		sound_ui_ops->uninit();
@@ -103,43 +103,43 @@ gaim_sound_set_ui_ops(GaimSoundUiOps *ops)
 		sound_ui_ops->init();
 }
 
-GaimSoundUiOps *
-gaim_sound_get_ui_ops(void)
+PurpleSoundUiOps *
+purple_sound_get_ui_ops(void)
 {
 	return sound_ui_ops;
 }
 
 void
-gaim_sound_init()
+purple_sound_init()
 {
-	void *handle = gaim_sounds_get_handle();
+	void *handle = purple_sounds_get_handle();
 
 	/**********************************************************************
 	 * Register signals
 	**********************************************************************/
 
-	gaim_signal_register(handle, "playing-sound-event",
-	                     gaim_marshal_BOOLEAN__INT_POINTER,
-	                     gaim_value_new(GAIM_TYPE_BOOLEAN), 2,
-	                     gaim_value_new(GAIM_TYPE_INT),
-	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
-	                                    GAIM_SUBTYPE_ACCOUNT));
+	purple_signal_register(handle, "playing-sound-event",
+	                     purple_marshal_BOOLEAN__INT_POINTER,
+	                     purple_value_new(PURPLE_TYPE_BOOLEAN), 2,
+	                     purple_value_new(PURPLE_TYPE_INT),
+	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                    PURPLE_SUBTYPE_ACCOUNT));
 
-	gaim_prefs_add_none("/core/sound");
-	gaim_prefs_add_int("/core/sound/while_status", STATUS_AVAILABLE);
+	purple_prefs_add_none("/core/sound");
+	purple_prefs_add_int("/core/sound/while_status", STATUS_AVAILABLE);
 }
 
 void
-gaim_sound_uninit()
+purple_sound_uninit()
 {
 	if(sound_ui_ops && sound_ui_ops->uninit)
 		sound_ui_ops->uninit();
 
-	gaim_signals_unregister_by_instance(gaim_sounds_get_handle());
+	purple_signals_unregister_by_instance(purple_sounds_get_handle());
 }
 
 void *
-gaim_sounds_get_handle()
+purple_sounds_get_handle()
 {
 	static int handle;
 

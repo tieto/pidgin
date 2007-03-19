@@ -1,5 +1,5 @@
 /*
- * gaim - Jabber Protocol Plugin
+ * purple - Jabber Protocol Plugin
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -63,12 +63,12 @@ static void handle_chat(JabberMessage *jm)
 		from = g_strdup(jm->from);
 	} else  if(jid->node) {
 		if(jid->resource) {
-			GaimConversation *conv;
+			PurpleConversation *conv;
 
 			from = g_strdup_printf("%s@%s", jid->node, jid->domain);
-			conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, from, jm->js->gc->account);
+			conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, from, jm->js->gc->account);
 			if(conv) {
-				gaim_conversation_set_name(conv, jm->from);
+				purple_conversation_set_name(conv, jm->from);
 				}
 			g_free(from);
 		}
@@ -79,34 +79,34 @@ static void handle_chat(JabberMessage *jm)
 
 	if(!jm->xhtml && !jm->body) {
 		if(JM_STATE_COMPOSING == jm->chat_state) {
-			serv_got_typing(jm->js->gc, from, 0, GAIM_TYPING);
+			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPING);
 		} else if(JM_STATE_PAUSED == jm->chat_state) {
-			serv_got_typing(jm->js->gc, from, 0, GAIM_TYPED);
+			serv_got_typing(jm->js->gc, from, 0, PURPLE_TYPED);
 		} else if(JM_STATE_GONE == jm->chat_state) {
-			GaimConversation *conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 					from, jm->js->gc->account);
 			if (conv && jid->node && jid->domain) {
 #if 0  /* String freeze... make sure to mark the message for translation */
 				char buf[256];
-				GaimBuddy *buddy;
+				PurpleBuddy *buddy;
 
 				g_snprintf(buf, sizeof(buf), "%s@%s", jid->node, jid->domain);
 
-				if ((buddy = gaim_find_buddy(jm->js->gc->account, buf))) {
+				if ((buddy = purple_find_buddy(jm->js->gc->account, buf))) {
 					const char *who;
 					char *escaped;
 
-					who = gaim_buddy_get_alias(buddy);
+					who = purple_buddy_get_alias(buddy);
 					escaped = g_markup_escape_text(who, -1);
 
 					g_snprintf(buf, sizeof(buf),
 					           "%s has left the conversation.", escaped);
 
-					/* At some point when we restructure GaimConversation,
+					/* At some point when we restructure PurpleConversation,
 					 * this should be able to be implemented by removing the
 					 * user from the conversation like we do with chats now. */
-					gaim_conversation_write(conv, "", buf,
-					                        GAIM_MESSAGE_SYSTEM, time(NULL));
+					purple_conversation_write(conv, "", buf,
+					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
 #endif
 			}
@@ -188,7 +188,7 @@ static void handle_headline(JabberMessage *jm)
 		}
 	}
 
-	gaim_notify_formatted(jm->js->gc, title, jm->subject ? jm->subject : title,
+	purple_notify_formatted(jm->js->gc, title, jm->subject ? jm->subject : title,
 			NULL, body->str, NULL, NULL);
 
 	g_free(title);
@@ -209,17 +209,17 @@ static void handle_groupchat(JabberMessage *jm)
 		return;
 
 	if(jm->subject) {
-		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(chat->conv), jid->resource,
+		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(chat->conv), jid->resource,
 				jm->subject);
 		if(!jm->xhtml && !jm->body) {
 			char *msg, *tmp, *tmp2;
 			tmp = g_markup_escape_text(jm->subject, -1);
-			tmp2 = gaim_markup_linkify(tmp);
+			tmp2 = purple_markup_linkify(tmp);
 			if(jid->resource)
 				msg = g_strdup_printf(_("%s has set the topic to: %s"), jid->resource, tmp2);
 			else
 				msg = g_strdup_printf(_("The topic is: %s"), tmp2);
-			gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "", msg, GAIM_MESSAGE_SYSTEM, jm->sent);
+			purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "", msg, PURPLE_MESSAGE_SYSTEM, jm->sent);
 			g_free(tmp);
 			g_free(tmp2);
 			g_free(msg);
@@ -229,12 +229,12 @@ static void handle_groupchat(JabberMessage *jm)
 	if(jm->xhtml || jm->body) {
 		if(jid->resource)
 			serv_got_chat_in(jm->js->gc, chat->id, jid->resource,
-							jm->delayed ? GAIM_MESSAGE_DELAYED : 0,
+							jm->delayed ? PURPLE_MESSAGE_DELAYED : 0,
 							jm->xhtml ? jm->xhtml : jm->body, jm->sent);
 		else if(chat->muc)
-			gaim_conv_chat_write(GAIM_CONV_CHAT(chat->conv), "",
+			purple_conv_chat_write(PURPLE_CONV_CHAT(chat->conv), "",
 							jm->xhtml ? jm->xhtml : jm->body,
-							GAIM_MESSAGE_SYSTEM, jm->sent);
+							PURPLE_MESSAGE_SYSTEM, jm->sent);
 	}
 
 	jabber_id_free(jid);
@@ -269,7 +269,7 @@ static void handle_error(JabberMessage *jm)
 	buf = g_strdup_printf(_("Message delivery to %s failed: %s"),
 			jm->from, jm->error ? jm->error : "");
 
-	gaim_notify_formatted(jm->js->gc, _("Jabber Message Error"), _("Jabber Message Error"), buf,
+	purple_notify_formatted(jm->js->gc, _("Jabber Message Error"), _("Jabber Message Error"), buf,
 			jm->xhtml ? jm->xhtml : jm->body, NULL, NULL);
 
 	g_free(buf);
@@ -322,7 +322,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(child->name, "body")) {
 			if(!jm->body) {
 				char *msg = xmlnode_to_str(child, NULL);
-				jm->body = gaim_strdup_withhtml(msg);
+				jm->body = purple_strdup_withhtml(msg);
 				g_free(msg);
 			}
 		} else if(!strcmp(child->name, "html")) {
@@ -369,7 +369,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				const char *timestamp = xmlnode_get_attrib(child, "stamp");
 				jm->delayed = TRUE;
 				if(timestamp)
-					jm->sent = gaim_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
+					jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
 			} else if(xmlns && !strcmp(xmlns, "jabber:x:conference") &&
 					jm->type != JABBER_MESSAGE_GROUPCHAT_INVITE &&
 					jm->type != JABBER_MESSAGE_ERROR) {
@@ -422,7 +422,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			handle_error(jm);
 			break;
 		case JABBER_MESSAGE_OTHER:
-			gaim_debug(GAIM_DEBUG_INFO, "jabber",
+			purple_debug(PURPLE_DEBUG_INFO, "jabber",
 					"Received message of unknown type: %s\n", type);
 			break;
 	}
@@ -517,7 +517,7 @@ void jabber_message_send(JabberMessage *jm)
 		if(child) {
 			xmlnode_insert_child(message, child);
 		} else {
-			gaim_debug(GAIM_DEBUG_ERROR, "jabber",
+			purple_debug(PURPLE_DEBUG_ERROR, "jabber",
 					"XHTML translation/validation failed, returning: %s\n",
 					jm->xhtml);
 		}
@@ -528,8 +528,8 @@ void jabber_message_send(JabberMessage *jm)
 	xmlnode_free(message);
 }
 
-int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
-		GaimMessageFlags flags)
+int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *msg,
+		PurpleMessageFlags flags)
 {
 	JabberMessage *jm;
 	JabberBuddy *jb;
@@ -572,7 +572,7 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 
 	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", msg);
 
-	gaim_markup_html_to_xhtml(buf, &xhtml, &jm->body);
+	purple_markup_html_to_xhtml(buf, &xhtml, &jm->body);
 	g_free(buf);
 
 	if(!jbr || jbr->capabilities & JABBER_CAP_XHTML)
@@ -585,7 +585,7 @@ int jabber_message_send_im(GaimConnection *gc, const char *who, const char *msg,
 	return 1;
 }
 
-int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg, GaimMessageFlags flags)
+int jabber_message_send_chat(PurpleConnection *gc, int id, const char *msg, PurpleMessageFlags flags)
 {
 	JabberChat *chat;
 	JabberMessage *jm;
@@ -608,7 +608,7 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg, GaimMe
 	jm->id = jabber_get_next_id(jm->js);
 
 	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", msg);
-	gaim_markup_html_to_xhtml(buf, &jm->xhtml, &jm->body);
+	purple_markup_html_to_xhtml(buf, &jm->xhtml, &jm->body);
 	g_free(buf);
 
 	if(!chat->xhtml) {
@@ -622,7 +622,7 @@ int jabber_message_send_chat(GaimConnection *gc, int id, const char *msg, GaimMe
 	return 1;
 }
 
-unsigned int jabber_send_typing(GaimConnection *gc, const char *who, GaimTypingState state)
+unsigned int jabber_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 {
 	JabberMessage *jm;
 	JabberBuddy *jb;
@@ -644,9 +644,9 @@ unsigned int jabber_send_typing(GaimConnection *gc, const char *who, GaimTypingS
 	jm->to = g_strdup(who);
 	jm->id = jabber_get_next_id(jm->js);
 
-	if(GAIM_TYPING == state)
+	if(PURPLE_TYPING == state)
 		jm->chat_state = JM_STATE_COMPOSING;
-	else if(GAIM_TYPED == state)
+	else if(PURPLE_TYPED == state)
 		jm->chat_state = JM_STATE_PAUSED;
 	else
 		jm->chat_state = JM_STATE_ACTIVE;

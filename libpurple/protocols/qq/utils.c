@@ -1,9 +1,9 @@
 /**
  * @file utils.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -94,16 +94,16 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 	for (i = 0; segments[i] != NULL; i++) {;
 	}
 	if (i < expected_fields) {	/* not enough fields */
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Invalid data, expect %d fields, found only %d, discard\n", expected_fields, i);
 		g_strfreev(segments);
 		return NULL;
 	} else if (i > expected_fields) {	/* more fields, OK */
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 			   "Dangerous data, expect %d fields, found %d, return all\n", expected_fields, i);
 		/* free up those not used */
 		for (j = expected_fields; j < i; j++) {
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "field[%d] is %s\n", j, segments[j]);
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "field[%d] is %s\n", j, segments[j]);
 			g_free(segments[j]);
 		}
 
@@ -117,18 +117,18 @@ gchar **split_data(guint8 *data, gint len, const gchar *delimit, gint expected_f
 guint8 *_gen_session_md5(gint uid, guint8 *session_key)
 {
 	guint8 *src, md5_str[QQ_KEY_LENGTH];
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 
 	src = g_newa(guint8, 20);
 	memcpy(src, &uid, 4);
 	memcpy(src, session_key, QQ_KEY_LENGTH);
 
-	cipher = gaim_ciphers_find_cipher("md5");
-	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, src, 20);
-	gaim_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
-	gaim_cipher_context_destroy(context);
+	cipher = purple_ciphers_find_cipher("md5");
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, src, 20);
+	purple_cipher_context_digest(context, sizeof(md5_str), md5_str, NULL);
+	purple_cipher_context_destroy(context);
 
 	return g_memdup(md5_str, QQ_KEY_LENGTH);
 }
@@ -159,8 +159,8 @@ guint8 *str_ip_gen(gchar *str) {
 	return ip;
 }
 
-/* convert Gaim name to original QQ UID */
-guint32 gaim_name_to_uid(const gchar *const name)
+/* convert Purple name to original QQ UID */
+guint32 purple_name_to_uid(const gchar *const name)
 {
 	guint32 ret;
 	g_return_val_if_fail(name != NULL, 0);
@@ -172,22 +172,22 @@ guint32 gaim_name_to_uid(const gchar *const name)
 		return ret;
 }
 
-/* convert a QQ UID to a unique name of Gaim
+/* convert a QQ UID to a unique name of Purple
  * the return needs to be freed */
-gchar *uid_to_gaim_name(guint32 uid)
+gchar *uid_to_purple_name(guint32 uid)
 {
 	return g_strdup_printf(QQ_NAME_FORMAT, uid);
 }
 
 /* convert name displayed in a chat channel to original QQ UID */
-gchar *chat_name_to_gaim_name(const gchar *const name)
+gchar *chat_name_to_purple_name(const gchar *const name)
 {
 	const gchar *tmp;
 	gchar *ret;
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	tmp = (gchar *) gaim_strcasestr(name, "(qq-");
+	tmp = (gchar *) purple_strcasestr(name, "(qq-");
 	ret = g_strndup(tmp + 4, strlen(name) - (tmp - name) - 4 - 1);
 
 	return ret;
@@ -214,7 +214,7 @@ void try_dump_as_gbk(const guint8 *const data, gint len)
 	msg_utf8 = i < len ? qq_to_utf8((gchar *) &incoming[i], QQ_CHARSET_DEFAULT) : NULL;
 
 	if (msg_utf8 != NULL) {
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Try extract GB msg: %s\n", msg_utf8);
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Try extract GB msg: %s\n", msg_utf8);
 		g_free(msg_utf8);
 	}
 }
@@ -253,7 +253,7 @@ guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 	hex_buffer = strstrip(buffer);
 
 	if (strlen(hex_buffer) % 2 != 0) {
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 			"Unable to convert an odd number of nibbles to a string of bytes!\n");
 		g_free(hex_buffer);
 		return NULL;
@@ -268,7 +268,7 @@ guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 		} else if (g_ascii_isalpha(*cursor) && (gint) *cursor - 87 < 16) {
 			nibble1 = (gint) *cursor - 87;
 		} else {
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 				"Invalid char \'%c\' found in hex string!\n", *cursor);
 			g_free(hex_str);
 			return NULL;
@@ -280,7 +280,7 @@ guint8 *hex_str_to_bytes(const gchar *const buffer, gint *out_len)
 		} else if (g_ascii_isalpha(*cursor) && (gint) (*cursor - 87) < 16) {
 			nibble2 = (gint) *cursor - 87;
 		} else {
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 				"Invalid char found in hex string!\n");
 			g_free(hex_str);
 			return NULL;
@@ -341,12 +341,12 @@ gchar *face_to_icon_str(gint face)
 }
 
 /* return the location of the buddy icon dir
- * any application using libgaim but not installing the QQ buddy icons
+ * any application using libpurple but not installing the QQ buddy icons
  * under datadir needs to set the pref below, or buddy icons won't work */
 const char *qq_buddy_icon_dir(void)
 {
-	if (gaim_prefs_exists("/prpl/qq/buddy_icon_dir"))
-		return gaim_prefs_get_string("/prpl/qq/buddy_icon_dir");
+	if (purple_prefs_exists("/prpl/qq/buddy_icon_dir"))
+		return purple_prefs_get_string("/prpl/qq/buddy_icon_dir");
 	else
 		return QQ_BUDDY_ICON_DIR;
 }
@@ -356,8 +356,8 @@ const char *qq_win32_buddy_icon_dir(void)
 {
         static char *dir = NULL;
         if (dir == NULL)
-                dir = g_build_filename(wgaim_install_dir(), "pixmaps",
-                        "gaim", "buddy_icons", "qq", NULL);
+                dir = g_build_filename(wpurple_install_dir(), "pixmaps",
+                        "purple", "buddy_icons", "qq", NULL);
         return dir;
 }
 #endif

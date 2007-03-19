@@ -1,5 +1,5 @@
 /**
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -18,8 +18,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _GAIM_GOOGLE_H_
-#define _GAIM_GOOGLE_H_
+#ifndef _PURPLE_GOOGLE_H_
+#define _PURPLE_GOOGLE_H_
 
 /* This is a place for Google Talk-specific XMPP extensions to live
  * such that they don't intermingle with code for the XMPP RFCs and XEPs :) */
@@ -36,11 +36,11 @@ void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *it
  * if this roster item should continue to be processed
  */
 gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item);
-void jabber_google_roster_add_deny(GaimConnection *gc, const char *who);
-void jabber_google_roster_rem_deny(GaimConnection *gc, const char *who);
+void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who);
+void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who);
 
 char *jabber_google_format_to_html(const char *text);
 
 
 
-#endif   /* _GAIM_GOOGLE_H_ */
+#endif   /* _PURPLE_GOOGLE_H_ */

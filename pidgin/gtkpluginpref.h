@@ -2,7 +2,7 @@
  * @file gtkpluginpref.h GTK+ Plugin Preferences
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -35,12 +35,12 @@ extern "C" {
 #endif
 
 /**
- * Creates a Gtk Preference frame for a GaimPluginPrefFrame
+ * Creates a Gtk Preference frame for a PurplePluginPrefFrame
  *
- * @param frame GaimPluginPrefFrame
+ * @param frame PurplePluginPrefFrame
  * @return The gtk preference frame
  */
-GtkWidget *pidgin_plugin_pref_create_frame(GaimPluginPrefFrame *frame);
+GtkWidget *pidgin_plugin_pref_create_frame(PurplePluginPrefFrame *frame);
 
 #ifdef __cplusplus
 }

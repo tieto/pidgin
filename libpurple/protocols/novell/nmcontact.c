@@ -64,7 +64,7 @@ nm_create_contact()
 
 	contact->ref_count = 1;
 
-	gaim_debug(GAIM_DEBUG_INFO, "novell", "Creating contact, total=%d\n",
+	purple_debug(PURPLE_DEBUG_INFO, "novell", "Creating contact, total=%d\n",
 			   count++);
 
 	return contact;
@@ -229,7 +229,7 @@ nm_release_contact(NMContact * contact)
 
 	if (--(contact->ref_count) == 0) {
 
-		gaim_debug(GAIM_DEBUG_INFO, "novell",
+		purple_debug(PURPLE_DEBUG_INFO, "novell",
 				   "Releasing contact, total=%d\n", --count);
 
 		if (contact->display_name) {

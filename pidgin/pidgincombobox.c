@@ -1,4 +1,4 @@
-/* gaimcombobox.c
+/* purplecombobox.c
  * Copyright (C) 2002, 2003  Kristian Rietveld <kris@gtk.org>
  *
  * This library is free software; you can redistribute it and/or

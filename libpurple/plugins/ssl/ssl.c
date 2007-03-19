@@ -1,7 +1,7 @@
 /**
  * @file ssl.c Main SSL plugin
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  *
@@ -27,19 +27,19 @@
 
 #define SSL_PLUGIN_ID "core-ssl"
 
-static GaimPlugin *ssl_plugin = NULL;
+static PurplePlugin *ssl_plugin = NULL;
 
 static gboolean
-probe_ssl_plugins(GaimPlugin *my_plugin)
+probe_ssl_plugins(PurplePlugin *my_plugin)
 {
-	GaimPlugin *plugin;
+	PurplePlugin *plugin;
 	GList *l;
 
 	ssl_plugin = NULL;
 
-	for (l = gaim_plugins_get_all(); l != NULL; l = l->next)
+	for (l = purple_plugins_get_all(); l != NULL; l = l->next)
 	{
-		plugin = (GaimPlugin *)l->data;
+		plugin = (PurplePlugin *)l->data;
 
 		if (plugin == my_plugin)
 			continue;
@@ -47,7 +47,7 @@ probe_ssl_plugins(GaimPlugin *my_plugin)
 		if (plugin->info != NULL && plugin->info->id != NULL &&
 			strncmp(plugin->info->id, "ssl-", 4) == 0)
 		{
-			if (gaim_plugin_is_loaded(plugin) || gaim_plugin_load(plugin))
+			if (purple_plugin_is_loaded(plugin) || purple_plugin_load(plugin))
 			{
 				ssl_plugin = plugin;
 
@@ -60,18 +60,18 @@ probe_ssl_plugins(GaimPlugin *my_plugin)
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 	return probe_ssl_plugins(plugin);
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	if (ssl_plugin != NULL &&
-		g_list_find(gaim_plugins_get_loaded(), ssl_plugin) != NULL)
+		g_list_find(purple_plugins_get_loaded(), ssl_plugin) != NULL)
 	{
-		gaim_plugin_unload(ssl_plugin);
+		purple_plugin_unload(ssl_plugin);
 	}
 
 	ssl_plugin = NULL;
@@ -79,16 +79,16 @@ plugin_unload(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
     NULL,                                             /**< ui_requirement */
-	GAIM_PLUGIN_FLAG_INVISIBLE,                       /**< flags          */
+	PURPLE_PLUGIN_FLAG_INVISIBLE,                       /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	SSL_PLUGIN_ID,                                    /**< id             */
 	N_("SSL"),                                        /**< name           */
@@ -98,7 +98,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Provides a wrapper around SSL support libraries."),
 	"Christian Hammond <chipx86@gnupdate.org>",
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -111,8 +111,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(ssl, init_plugin, info)
+PURPLE_INIT_PLUGIN(ssl, init_plugin, info)

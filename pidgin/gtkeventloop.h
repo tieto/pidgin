@@ -2,7 +2,7 @@
  * @file gtkeventloop.h Pidgin GTK+ Event Loop Implementation
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -32,6 +32,6 @@
  *
  * @return The GTK+ event loop UI operations structure.
  */
-GaimEventLoopUiOps *pidgin_eventloop_get_ui_ops(void);
+PurpleEventLoopUiOps *pidgin_eventloop_get_ui_ops(void);
 
 #endif /* _PIDGINEVENTLOOP_H_ */

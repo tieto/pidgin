@@ -1,7 +1,7 @@
 /**
  * @file roster.h Roster manipulation
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
  *
@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_JABBER_ROSTER_H_
-#define _GAIM_JABBER_ROSTER_H_
+#ifndef _PURPLE_JABBER_ROSTER_H_
+#define _PURPLE_JABBER_ROSTER_H_
 
 #include "jabber.h"
 
@@ -28,15 +28,15 @@ void jabber_roster_request(JabberStream *js);
 
 void jabber_roster_parse(JabberStream *js, xmlnode *packet);
 
-void jabber_roster_add_buddy(GaimConnection *gc, GaimBuddy *buddy,
-		GaimGroup *group);
-void jabber_roster_alias_change(GaimConnection *gc, const char *name,
+void jabber_roster_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
+		PurpleGroup *group);
+void jabber_roster_alias_change(PurpleConnection *gc, const char *name,
 		const char *alias);
-void jabber_roster_group_change(GaimConnection *gc, const char *name,
+void jabber_roster_group_change(PurpleConnection *gc, const char *name,
 		const char *old_group, const char *new_group);
-void jabber_roster_group_rename(GaimConnection *gc, const char *old_name,
-		GaimGroup *group, GList *moved_buddies);
-void jabber_roster_remove_buddy(GaimConnection *gc, GaimBuddy *buddy,
-		GaimGroup *group);
+void jabber_roster_group_rename(PurpleConnection *gc, const char *old_name,
+		PurpleGroup *group, GList *moved_buddies);
+void jabber_roster_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
+		PurpleGroup *group);
 
-#endif /* _GAIM_JABBER_ROSTER_H_ */
+#endif /* _PURPLE_JABBER_ROSTER_H_ */

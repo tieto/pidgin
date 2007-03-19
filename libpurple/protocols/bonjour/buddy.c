@@ -82,14 +82,14 @@ bonjour_buddy_check(BonjourBuddy *buddy)
  * the buddy.
  */
 void
-bonjour_buddy_add_to_gaim(GaimAccount *account, BonjourBuddy *bonjour_buddy)
+bonjour_buddy_add_to_purple(PurpleAccount *account, BonjourBuddy *bonjour_buddy)
 {
-	GaimBuddy *buddy;
-	GaimGroup *group;
+	PurpleBuddy *buddy;
+	PurpleGroup *group;
 	const char *status_id, *first, *last;
 	char *alias;
 
-	/* Translate between the Bonjour status and the Gaim status */
+	/* Translate between the Bonjour status and the Purple status */
 	if (g_ascii_strcasecmp("dnd", bonjour_buddy->status) == 0)
 		status_id = BONJOUR_STATUS_ID_AWAY;
 	else
@@ -109,32 +109,32 @@ bonjour_buddy_add_to_gaim(GaimAccount *account, BonjourBuddy *bonjour_buddy)
 							(last && *last ? last : ""));
 
 	/* Make sure the Bonjour group exists in our buddy list */
-	group = gaim_find_group(BONJOUR_GROUP_NAME); /* Use the buddy's domain, instead? */
+	group = purple_find_group(BONJOUR_GROUP_NAME); /* Use the buddy's domain, instead? */
 	if (group == NULL)
 	{
-		group = gaim_group_new(BONJOUR_GROUP_NAME);
-		gaim_blist_add_group(group, NULL);
+		group = purple_group_new(BONJOUR_GROUP_NAME);
+		purple_blist_add_group(group, NULL);
 	}
 
 	/* Make sure the buddy exists in our buddy list */
-	buddy = gaim_find_buddy(account, bonjour_buddy->name);
+	buddy = purple_find_buddy(account, bonjour_buddy->name);
 	if (buddy == NULL)
 	{
-		buddy = gaim_buddy_new(account, bonjour_buddy->name, alias);
+		buddy = purple_buddy_new(account, bonjour_buddy->name, alias);
 		buddy->proto_data = bonjour_buddy;
-		gaim_blist_node_set_flags((GaimBlistNode *)buddy, GAIM_BLIST_NODE_FLAG_NO_SAVE);
-		gaim_blist_add_buddy(buddy, NULL, group, NULL);
+		purple_blist_node_set_flags((PurpleBlistNode *)buddy, PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+		purple_blist_add_buddy(buddy, NULL, group, NULL);
 	}
 
 	/* Set the user's status */
 	if (bonjour_buddy->msg != NULL)
-		gaim_prpl_got_user_status(account, buddy->name, status_id,
+		purple_prpl_got_user_status(account, buddy->name, status_id,
 								  "message", bonjour_buddy->msg,
 								  NULL);
 	else
-		gaim_prpl_got_user_status(account, buddy->name, status_id,
+		purple_prpl_got_user_status(account, buddy->name, status_id,
 								  NULL);
-	gaim_prpl_got_user_idle(account, buddy->name, FALSE, 0);
+	purple_prpl_got_user_idle(account, buddy->name, FALSE, 0);
 
 	g_free(alias);
 }

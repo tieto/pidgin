@@ -1,7 +1,7 @@
 /*
- * gaim - WinGaim Options Plugin
+ * purple - WinPurple Options Plugin
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -60,7 +60,7 @@ static const char *PREF_CHAT_BLINK = "/plugins/gtk/win32/winprefs/chat_blink";
 /* Deprecated */
 static const char *PREF_DBLIST_ON_TOP = "/plugins/gtk/win32/winprefs/dblist_on_top";
 
-static GaimPlugin *handle = NULL;
+static PurplePlugin *handle = NULL;
 static GtkAppBar *blist_ab = NULL;
 static GtkWidget *blist = NULL;
 static guint blist_visible_cb_id = 0;
@@ -79,12 +79,12 @@ enum {
 
 static void blist_save_state() {
 	if(blist_ab) {
-		if(gaim_prefs_get_bool(PREF_DBLIST_DOCKABLE) && blist_ab->docked) {
-			gaim_prefs_set_int(PREF_DBLIST_HEIGHT, blist_ab->undocked_height);
-			gaim_prefs_set_int(PREF_DBLIST_SIDE, blist_ab->side);
-			gaim_prefs_set_bool(PREF_DBLIST_DOCKED, blist_ab->docked);
+		if(purple_prefs_get_bool(PREF_DBLIST_DOCKABLE) && blist_ab->docked) {
+			purple_prefs_set_int(PREF_DBLIST_HEIGHT, blist_ab->undocked_height);
+			purple_prefs_set_int(PREF_DBLIST_SIDE, blist_ab->side);
+			purple_prefs_set_bool(PREF_DBLIST_DOCKED, blist_ab->docked);
 		} else
-			gaim_prefs_set_bool(PREF_DBLIST_DOCKED, FALSE);
+			purple_prefs_set_bool(PREF_DBLIST_DOCKED, FALSE);
 	}
 }
 
@@ -101,12 +101,12 @@ static void blist_set_ontop(gboolean val) {
 
 static void blist_dock_cb(gboolean val) {
 	if(val) {
-		gaim_debug_info(WINPREFS_PLUGIN_ID, "Blist Docking...\n");
-		if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) != BLIST_TOP_NEVER)
+		purple_debug_info(WINPREFS_PLUGIN_ID, "Blist Docking...\n");
+		if(purple_prefs_get_int(PREF_BLIST_ON_TOP) != BLIST_TOP_NEVER)
 			blist_set_ontop(TRUE);
 	} else {
-		gaim_debug_info(WINPREFS_PLUGIN_ID, "Blist Undocking...\n");
-		if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
+		purple_debug_info(WINPREFS_PLUGIN_ID, "Blist Undocking...\n");
+		if(purple_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
 			blist_set_ontop(TRUE);
 		else
 			blist_set_ontop(FALSE);
@@ -125,7 +125,7 @@ static void blist_set_dockable(gboolean val) {
 			blist_ab = NULL;
 		}
 
-		if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
+		if(purple_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
 			blist_set_ontop(TRUE);
 		else
 			blist_set_ontop(FALSE);
@@ -136,25 +136,25 @@ static void blist_set_dockable(gboolean val) {
 
 /* We need this because the blist destroy cb won't be called before the
    plugin is unloaded, when quitting */
-static void gaim_quit_cb() {
-	gaim_debug_info(WINPREFS_PLUGIN_ID, "gaim_quit_cb: removing appbar\n");
+static void purple_quit_cb() {
+	purple_debug_info(WINPREFS_PLUGIN_ID, "purple_quit_cb: removing appbar\n");
 	blist_save_state();
 	blist_set_dockable(FALSE);
 }
 
 /* Listen for the first time the window stops being withdrawn */
-static void blist_visible_cb(const char *pref, GaimPrefType type,
+static void blist_visible_cb(const char *pref, PurplePrefType type,
 		gconstpointer value, gpointer user_data) {
-	if(gaim_prefs_get_bool(pref)) {
+	if(purple_prefs_get_bool(pref)) {
 		gtk_appbar_dock(blist_ab,
-			gaim_prefs_get_int(PREF_DBLIST_SIDE));
+			purple_prefs_get_int(PREF_DBLIST_SIDE));
 
-		if(gaim_prefs_get_int(PREF_BLIST_ON_TOP)
+		if(purple_prefs_get_int(PREF_BLIST_ON_TOP)
 				== BLIST_TOP_DOCKED)
 			blist_set_ontop(TRUE);
 
 		/* We only need to be notified about this once */
-		gaim_prefs_disconnect_callback(blist_visible_cb_id);
+		purple_prefs_disconnect_callback(blist_visible_cb_id);
 	}
 }
 
@@ -163,27 +163,27 @@ static void blist_visible_cb(const char *pref, GaimPrefType type,
 static gboolean listen_for_blist_visible_cb(gpointer data) {
 	if (handle != NULL)
 		blist_visible_cb_id =
-			gaim_prefs_connect_callback(handle,
-				"/gaim/gtk/blist/list_visible",
+			purple_prefs_connect_callback(handle,
+				"/purple/gtk/blist/list_visible",
 				blist_visible_cb, NULL);
 
 	return FALSE;
 }
 
-static void blist_create_cb(GaimBuddyList *gaim_blist, void *data) {
-	gaim_debug_info(WINPREFS_PLUGIN_ID, "buddy list created\n");
+static void blist_create_cb(PurpleBuddyList *purple_blist, void *data) {
+	purple_debug_info(WINPREFS_PLUGIN_ID, "buddy list created\n");
 
-	blist = PIDGIN_BLIST(gaim_blist)->window;
+	blist = PIDGIN_BLIST(purple_blist)->window;
 
-	if(gaim_prefs_get_bool(PREF_DBLIST_DOCKABLE)) {
+	if(purple_prefs_get_bool(PREF_DBLIST_DOCKABLE)) {
 		blist_set_dockable(TRUE);
-		if(gaim_prefs_get_bool(PREF_DBLIST_DOCKED)) {
-			blist_ab->undocked_height = gaim_prefs_get_int(PREF_DBLIST_HEIGHT);
+		if(purple_prefs_get_bool(PREF_DBLIST_DOCKED)) {
+			blist_ab->undocked_height = purple_prefs_get_int(PREF_DBLIST_HEIGHT);
 			if(!(gdk_window_get_state(blist->window)
 					& GDK_WINDOW_STATE_WITHDRAWN)) {
 				gtk_appbar_dock(blist_ab,
-					gaim_prefs_get_int(PREF_DBLIST_SIDE));
-				if(gaim_prefs_get_int(PREF_BLIST_ON_TOP)
+					purple_prefs_get_int(PREF_DBLIST_SIDE));
+				if(purple_prefs_get_int(PREF_BLIST_ON_TOP)
 						== BLIST_TOP_DOCKED)
 					blist_set_ontop(TRUE);
 			} else {
@@ -192,7 +192,7 @@ static void blist_create_cb(GaimBuddyList *gaim_blist, void *data) {
 		}
 	}
 
-	if(gaim_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
+	if(purple_prefs_get_int(PREF_BLIST_ON_TOP) == BLIST_TOP_ALWAYS)
 		blist_set_ontop(TRUE);
 
 }
@@ -204,28 +204,28 @@ winprefs_set_autostart(GtkWidget *w) {
 	char *runval = NULL;
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
-		runval = g_strdup_printf("%s" G_DIR_SEPARATOR_S "gaim.exe", wgaim_install_dir());
+		runval = g_strdup_printf("%s" G_DIR_SEPARATOR_S "purple.exe", wpurple_install_dir());
 
-	if(!wgaim_write_reg_string(HKEY_CURRENT_USER, RUNKEY, "Gaim", runval)
+	if(!wpurple_write_reg_string(HKEY_CURRENT_USER, RUNKEY, "Purple", runval)
 		/* For Win98 */
-		&& !wgaim_write_reg_string(HKEY_LOCAL_MACHINE, RUNKEY, "Gaim", runval))
-			gaim_debug_error(WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
+		&& !wpurple_write_reg_string(HKEY_LOCAL_MACHINE, RUNKEY, "Purple", runval))
+			purple_debug_error(WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
 
 	g_free(runval);
 }
 
 static void
-winprefs_set_blist_dockable(const char *pref, GaimPrefType type,
+winprefs_set_blist_dockable(const char *pref, PurplePrefType type,
 		gconstpointer value, gpointer user_data)
 {
 	blist_set_dockable(GPOINTER_TO_INT(value));
 }
 
 static void
-winprefs_set_blist_ontop(const char *pref, GaimPrefType type,
+winprefs_set_blist_ontop(const char *pref, PurplePrefType type,
 		gconstpointer value, gpointer user_data)
 {
-	gint setting = gaim_prefs_get_int(PREF_BLIST_ON_TOP);
+	gint setting = purple_prefs_get_int(PREF_BLIST_ON_TOP);
 	if((setting == BLIST_TOP_DOCKED && blist_ab && blist_ab->docked)
 		|| setting == BLIST_TOP_ALWAYS)
 		blist_set_ontop(TRUE);
@@ -234,10 +234,10 @@ winprefs_set_blist_ontop(const char *pref, GaimPrefType type,
 }
 
 static gboolean
-winpidgin_conv_chat_blink(GaimAccount *account, const char *who, char **message,
-		GaimConversation *conv, GaimMessageFlags flags, void *data)
+winpidgin_conv_chat_blink(PurpleAccount *account, const char *who, char **message,
+		PurpleConversation *conv, PurpleMessageFlags flags, void *data)
 {
-	if(gaim_prefs_get_bool(PREF_CHAT_BLINK))
+	if(purple_prefs_get_bool(PREF_CHAT_BLINK))
 		winpidgin_conv_blink(conv, flags);
 
 	return FALSE;
@@ -248,36 +248,36 @@ winpidgin_conv_chat_blink(GaimAccount *account, const char *who, char **message,
  *  EXPORTED FUNCTIONS
  */
 
-static gboolean plugin_load(GaimPlugin *plugin) {
+static gboolean plugin_load(PurplePlugin *plugin) {
 	handle = plugin;
 
 	/* blist docking init */
-	if(gaim_get_blist() && PIDGIN_BLIST(gaim_get_blist())
-			&& PIDGIN_BLIST(gaim_get_blist())->window) {
-		blist_create_cb(gaim_get_blist(), NULL);
+	if(purple_get_blist() && PIDGIN_BLIST(purple_get_blist())
+			&& PIDGIN_BLIST(purple_get_blist())->window) {
+		blist_create_cb(purple_get_blist(), NULL);
 	}
 
 	/* This really shouldn't happen anymore generally, but if for some strange
 	   reason, the blist is recreated, we need to set it up again. */
-	gaim_signal_connect(pidgin_blist_get_handle(), "gtkblist-created",
-		plugin, GAIM_CALLBACK(blist_create_cb), NULL);
+	purple_signal_connect(pidgin_blist_get_handle(), "gtkblist-created",
+		plugin, PURPLE_CALLBACK(blist_create_cb), NULL);
 
-	gaim_signal_connect(pidgin_conversations_get_handle(),
-		"displaying-chat-msg", plugin, GAIM_CALLBACK(winpidgin_conv_chat_blink),
+	purple_signal_connect(pidgin_conversations_get_handle(),
+		"displaying-chat-msg", plugin, PURPLE_CALLBACK(winpidgin_conv_chat_blink),
 		NULL);
 
-	gaim_signal_connect((void*)gaim_get_core(), "quitting", plugin,
-		GAIM_CALLBACK(gaim_quit_cb), NULL);
+	purple_signal_connect((void*)purple_get_core(), "quitting", plugin,
+		PURPLE_CALLBACK(purple_quit_cb), NULL);
 
-	gaim_prefs_connect_callback(handle, PREF_BLIST_ON_TOP,
+	purple_prefs_connect_callback(handle, PREF_BLIST_ON_TOP,
 		winprefs_set_blist_ontop, NULL);
-	gaim_prefs_connect_callback(handle, PREF_DBLIST_DOCKABLE,
+	purple_prefs_connect_callback(handle, PREF_DBLIST_DOCKABLE,
 		winprefs_set_blist_dockable, NULL);
 
 	return TRUE;
 }
 
-static gboolean plugin_unload(GaimPlugin *plugin) {
+static gboolean plugin_unload(PurplePlugin *plugin) {
 	blist_set_dockable(FALSE);
 	blist_set_ontop(FALSE);
 
@@ -286,7 +286,7 @@ static gboolean plugin_unload(GaimPlugin *plugin) {
 	return TRUE;
 }
 
-static GtkWidget* get_config_frame(GaimPlugin *plugin) {
+static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 	GtkWidget *ret;
 	GtkWidget *vbox;
 	GtkWidget *button;
@@ -315,8 +315,8 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 	button = gtk_check_button_new_with_mnemonic(_("_Start " PIDGIN_NAME " on Windows startup"));
 	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
 
-	if ((run_key_val = wgaim_read_reg_string(HKEY_CURRENT_USER, RUNKEY, "Gaim"))
-			|| (run_key_val = wgaim_read_reg_string(HKEY_LOCAL_MACHINE, RUNKEY, "Gaim"))) {
+	if ((run_key_val = wpurple_read_reg_string(HKEY_CURRENT_USER, RUNKEY, "Purple"))
+			|| (run_key_val = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, RUNKEY, "Purple"))) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
 		g_free(run_key_val);
 	}
@@ -330,7 +330,7 @@ static GtkWidget* get_config_frame(GaimPlugin *plugin) {
 
 	/* Blist On Top */
 	pidgin_prefs_dropdown(vbox, _("_Keep Buddy List window on top:"),
-		GAIM_PREF_INT, PREF_BLIST_ON_TOP,
+		PURPLE_PREF_INT, PREF_BLIST_ON_TOP,
 		_("Never"), BLIST_TOP_NEVER,
 		_("Always"), BLIST_TOP_ALWAYS,
 		/* XXX: Did this ever work? */
@@ -352,23 +352,23 @@ static PidginPluginUiInfo ui_info =
 	0
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,
 	PIDGIN_PLUGIN_TYPE,
 	0,
 	NULL,
-	GAIM_PRIORITY_DEFAULT,
+	PURPLE_PRIORITY_DEFAULT,
 	WINPREFS_PLUGIN_ID,
 	N_("Pidgwin Options"),
 	VERSION,
 	N_("Options specific to Windows " PIDGIN_NAME "."),
 	N_("Provides options specific to Windows " PIDGIN_NAME ", such as buddy list docking."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",
-	GAIM_WEBSITE,
+	PURPLE_WEBSITE,
 	plugin_load,
 	plugin_unload,
 	NULL,
@@ -379,30 +379,30 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	gaim_prefs_add_none("/plugins/gtk");
-	gaim_prefs_add_none("/plugins/gtk/win32");
-	gaim_prefs_add_none("/plugins/gtk/win32/winprefs");
-	gaim_prefs_add_bool(PREF_DBLIST_DOCKABLE, FALSE);
-	gaim_prefs_add_bool(PREF_DBLIST_DOCKED, FALSE);
-	gaim_prefs_add_int(PREF_DBLIST_HEIGHT, 0);
-	gaim_prefs_add_int(PREF_DBLIST_SIDE, 0);
-	gaim_prefs_add_bool(PREF_CHAT_BLINK, FALSE);
+	purple_prefs_add_none("/plugins/gtk");
+	purple_prefs_add_none("/plugins/gtk/win32");
+	purple_prefs_add_none("/plugins/gtk/win32/winprefs");
+	purple_prefs_add_bool(PREF_DBLIST_DOCKABLE, FALSE);
+	purple_prefs_add_bool(PREF_DBLIST_DOCKED, FALSE);
+	purple_prefs_add_int(PREF_DBLIST_HEIGHT, 0);
+	purple_prefs_add_int(PREF_DBLIST_SIDE, 0);
+	purple_prefs_add_bool(PREF_CHAT_BLINK, FALSE);
 
 	/* Convert old preferences */
-	if(gaim_prefs_exists(PREF_DBLIST_ON_TOP)) {
+	if(purple_prefs_exists(PREF_DBLIST_ON_TOP)) {
 		gint blist_top = BLIST_TOP_NEVER;
-		if(gaim_prefs_get_bool(PREF_BLIST_ON_TOP))
+		if(purple_prefs_get_bool(PREF_BLIST_ON_TOP))
 			blist_top = BLIST_TOP_ALWAYS;
-		else if(gaim_prefs_get_bool(PREF_DBLIST_ON_TOP))
+		else if(purple_prefs_get_bool(PREF_DBLIST_ON_TOP))
 			blist_top = BLIST_TOP_DOCKED;
-		gaim_prefs_remove(PREF_BLIST_ON_TOP);
-		gaim_prefs_remove(PREF_DBLIST_ON_TOP);
-		gaim_prefs_add_int(PREF_BLIST_ON_TOP, blist_top);
+		purple_prefs_remove(PREF_BLIST_ON_TOP);
+		purple_prefs_remove(PREF_DBLIST_ON_TOP);
+		purple_prefs_add_int(PREF_BLIST_ON_TOP, blist_top);
 	} else
-		gaim_prefs_add_int(PREF_BLIST_ON_TOP, BLIST_TOP_NEVER);
+		purple_prefs_add_int(PREF_BLIST_ON_TOP, BLIST_TOP_NEVER);
 }
 
-GAIM_INIT_PLUGIN(winprefs, init_plugin, info)
+PURPLE_INIT_PLUGIN(winprefs, init_plugin, info)
 

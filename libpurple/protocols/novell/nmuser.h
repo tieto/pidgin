@@ -211,7 +211,7 @@ void nm_deinitialize_user(NMUser * user);
  *  @param	user		The User to login -- must be initialized
  *	@param	pwd			The password of the user
  *  @param  my_addr		The address of the client machine
- *  @param	user_agent	String describing the client (eg. "Gaim/0.76 (Linux; 2.4.20)")
+ *  @param	user_agent	String describing the client (eg. "Purple/0.76 (Linux; 2.4.20)")
  *	@param	callback	Function to call when we get the response from the server
  *  @param 	data		User defined data to be passed to the callback function
  *

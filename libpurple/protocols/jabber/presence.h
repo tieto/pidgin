@@ -1,7 +1,7 @@
 /**
  * @file presence.h Presence
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
  *
@@ -19,19 +19,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_JABBER_PRESENCE_H_
-#define _GAIM_JABBER_PRESENCE_H_
+#ifndef _PURPLE_JABBER_PRESENCE_H_
+#define _PURPLE_JABBER_PRESENCE_H_
 
 #include "buddy.h"
 #include "jabber.h"
 #include "xmlnode.h"
 
-void jabber_presence_send(GaimAccount *account, GaimStatus *status);
+void jabber_presence_send(PurpleAccount *account, PurpleStatus *status);
 xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority);
 void jabber_presence_parse(JabberStream *js, xmlnode *packet);
 void jabber_presence_subscription_set(JabberStream *js, const char *who,
 		const char *type);
-void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *status);
-void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, char **msg, int *priority);
+void jabber_presence_fake_to_self(JabberStream *js, const PurpleStatus *status);
+void purple_status_to_jabber(const PurpleStatus *status, JabberBuddyState *state, char **msg, int *priority);
 
-#endif /* _GAIM_JABBER_PRESENCE_H_ */
+#endif /* _PURPLE_JABBER_PRESENCE_H_ */

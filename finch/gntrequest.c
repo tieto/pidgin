@@ -2,9 +2,9 @@
  * @file gntrequest.c GNT Request API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -32,7 +32,7 @@
 #include <gntline.h>
 #include <gnttree.h>
 
-#include "gntgaim.h"
+#include "finch.h"
 #include "gntrequest.h"
 #include "util.c"
 
@@ -41,11 +41,11 @@ typedef struct
 	void *user_data;
 	GntWidget *entry, *dialog;
 	GCallback *cbs;
-} GaimGntFileRequest;
+} PurpleGntFileRequest;
 
 static GntWidget *
 setup_request_window(const char *title, const char *primary,
-		const char *secondary, GaimRequestType type)
+		const char *secondary, PurpleRequestType type)
 {
 	GntWidget *window;
 
@@ -60,7 +60,7 @@ setup_request_window(const char *title, const char *primary,
 	if (secondary)
 		gnt_box_add_widget(GNT_BOX(window), gnt_label_new(secondary));
 
-	g_signal_connect_swapped(G_OBJECT(window), "destroy", G_CALLBACK(gaim_request_close),
+	g_signal_connect_swapped(G_OBJECT(window), "destroy", G_CALLBACK(purple_request_close),
 			GINT_TO_POINTER(type));
 
 	return window;
@@ -95,7 +95,7 @@ setup_button_box(gpointer userdata, gpointer cb, gpointer data, ...)
 static void
 notify_input_cb(GntWidget *button, GntWidget *entry)
 {
-	GaimRequestInputCb callback = g_object_get_data(G_OBJECT(button), "activate-callback");
+	PurpleRequestInputCb callback = g_object_get_data(G_OBJECT(button), "activate-callback");
 	gpointer data = g_object_get_data(G_OBJECT(button), "activate-userdata");
 	const char *text = gnt_entry_get_text(GNT_ENTRY(entry));
 
@@ -105,7 +105,7 @@ notify_input_cb(GntWidget *button, GntWidget *entry)
 	while (button->parent)
 		button = button->parent;
 
-	gaim_request_close(GAIM_REQUEST_INPUT, button);
+	purple_request_close(PURPLE_REQUEST_INPUT, button);
 }
 
 static void *
@@ -118,7 +118,7 @@ finch_request_input(const char *title, const char *primary,
 {
 	GntWidget *window, *box, *entry;
 
-	window = setup_request_window(title, primary, secondary, GAIM_REQUEST_INPUT);
+	window = setup_request_window(title, primary, secondary, PURPLE_REQUEST_INPUT);
 
 	entry = gnt_entry_new(default_value);
 	if (masked)
@@ -135,7 +135,7 @@ finch_request_input(const char *title, const char *primary,
 }
 
 static void
-finch_close_request(GaimRequestType type, gpointer ui_handle)
+finch_close_request(PurpleRequestType type, gpointer ui_handle)
 {
 	GntWidget *widget = GNT_WIDGET(ui_handle);
 	while (widget->parent)
@@ -146,7 +146,7 @@ finch_close_request(GaimRequestType type, gpointer ui_handle)
 static void
 request_choice_cb(GntWidget *button, GntComboBox *combo)
 {
-	GaimRequestChoiceCb callback = g_object_get_data(G_OBJECT(button), "activate-callback");
+	PurpleRequestChoiceCb callback = g_object_get_data(G_OBJECT(button), "activate-callback");
 	gpointer data = g_object_get_data(G_OBJECT(button), "activate-userdata");
 	int choice = GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo))) - 1;
 
@@ -156,7 +156,7 @@ request_choice_cb(GntWidget *button, GntComboBox *combo)
 	while (button->parent)
 		button = button->parent;
 
-	gaim_request_close(GAIM_REQUEST_INPUT, button);
+	purple_request_close(PURPLE_REQUEST_INPUT, button);
 }
 
 static void *
@@ -170,7 +170,7 @@ finch_request_choice(const char *title, const char *primary,
 	const char *text;
 	int val;
 
-	window = setup_request_window(title, primary, secondary, GAIM_REQUEST_CHOICE);
+	window = setup_request_window(title, primary, secondary, PURPLE_REQUEST_CHOICE);
 
 	combo = gnt_combo_box_new();
 	gnt_box_add_widget(GNT_BOX(window), combo);
@@ -193,14 +193,14 @@ finch_request_choice(const char *title, const char *primary,
 static void
 request_action_cb(GntWidget *button, GntWidget *window)
 {
-	GaimRequestActionCb callback = g_object_get_data(G_OBJECT(button), "activate-callback");
+	PurpleRequestActionCb callback = g_object_get_data(G_OBJECT(button), "activate-callback");
 	gpointer data = g_object_get_data(G_OBJECT(button), "activate-userdata");
 	int id = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(button), "activate-id"));
 
 	if (callback)
 		callback(data, id);
 
-	gaim_request_close(GAIM_REQUEST_ACTION, window);
+	purple_request_close(PURPLE_REQUEST_ACTION, window);
 }
 
 static void*
@@ -212,14 +212,14 @@ finch_request_action(const char *title, const char *primary,
 	GntWidget *window, *box, *button;
 	int i;
 
-	window = setup_request_window(title, primary, secondary, GAIM_REQUEST_ACTION);
+	window = setup_request_window(title, primary, secondary, PURPLE_REQUEST_ACTION);
 
 	box = gnt_hbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(window), box);
 	for (i = 0; i < actioncount; i++)
 	{
 		const char *text = va_arg(actions, const char *);
-		GaimRequestActionCb callback = va_arg(actions, GaimRequestActionCb);
+		PurpleRequestActionCb callback = va_arg(actions, PurpleRequestActionCb);
 
 		button = gnt_button_new(text);
 		gnt_box_add_widget(GNT_BOX(box), button);
@@ -236,66 +236,66 @@ finch_request_action(const char *title, const char *primary,
 }
 
 static void
-request_fields_cb(GntWidget *button, GaimRequestFields *fields)
+request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 {
-	GaimRequestFieldsCb callback = g_object_get_data(G_OBJECT(button), "activate-callback");
+	PurpleRequestFieldsCb callback = g_object_get_data(G_OBJECT(button), "activate-callback");
 	gpointer data = g_object_get_data(G_OBJECT(button), "activate-userdata");
 	GList *list;
 
-	/* Update the data of the fields. GtkGaim does this differently. Instead of
+	/* Update the data of the fields. GtkPurple does this differently. Instead of
 	 * updating the fields at the end like here, it updates the appropriate field
 	 * instantly whenever a change is made. That allows it to make sure the
 	 * 'required' fields are entered before the user can hit OK. It's not the case
 	 * here, althought it can be done. I am not honouring the 'required' fields
 	 * for the moment. */
-	for (list = gaim_request_fields_get_groups(fields); list; list = list->next)
+	for (list = purple_request_fields_get_groups(fields); list; list = list->next)
 	{
-		GaimRequestFieldGroup *group = list->data;
-		GList *fields = gaim_request_field_group_get_fields(group);
+		PurpleRequestFieldGroup *group = list->data;
+		GList *fields = purple_request_field_group_get_fields(group);
 		
 		for (; fields ; fields = fields->next)
 		{
-			GaimRequestField *field = fields->data;
-			GaimRequestFieldType type = gaim_request_field_get_type(field);
-			if (type == GAIM_REQUEST_FIELD_BOOLEAN)
+			PurpleRequestField *field = fields->data;
+			PurpleRequestFieldType type = purple_request_field_get_type(field);
+			if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 			{
 				GntWidget *check = field->ui_data;
 				gboolean value = gnt_check_box_get_checked(GNT_CHECK_BOX(check));
-				gaim_request_field_bool_set_value(field, value);
+				purple_request_field_bool_set_value(field, value);
 			}
-			else if (type == GAIM_REQUEST_FIELD_STRING)
+			else if (type == PURPLE_REQUEST_FIELD_STRING)
 			{
 				GntWidget *entry = field->ui_data;
 				const char *text = gnt_entry_get_text(GNT_ENTRY(entry));
-				gaim_request_field_string_set_value(field, (text && *text) ? text : NULL);
+				purple_request_field_string_set_value(field, (text && *text) ? text : NULL);
 			}
-			else if (type == GAIM_REQUEST_FIELD_INTEGER)
+			else if (type == PURPLE_REQUEST_FIELD_INTEGER)
 			{
 				GntWidget *entry = field->ui_data;
 				const char *text = gnt_entry_get_text(GNT_ENTRY(entry));
 				int value = (text && *text) ? atoi(text) : 0;
-				gaim_request_field_int_set_value(field, value);
+				purple_request_field_int_set_value(field, value);
 			}
-			else if (type == GAIM_REQUEST_FIELD_CHOICE)
+			else if (type == PURPLE_REQUEST_FIELD_CHOICE)
 			{
 				GntWidget *combo = field->ui_data;
 				int id;
 				id = GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo)));
-				gaim_request_field_choice_set_value(field, id);
+				purple_request_field_choice_set_value(field, id);
 			}
-			else if (type == GAIM_REQUEST_FIELD_LIST)
+			else if (type == PURPLE_REQUEST_FIELD_LIST)
 			{
 				GList *list = NULL;
-				if (gaim_request_field_list_get_multi_select(field))
+				if (purple_request_field_list_get_multi_select(field))
 				{
 					const GList *iter;
 					GntWidget *tree = field->ui_data;
 
-					iter = gaim_request_field_list_get_items(field);
+					iter = purple_request_field_list_get_items(field);
 					for (; iter; iter = iter->next)
 					{
 						const char *text = iter->data;
-						gpointer key = gaim_request_field_list_get_data(field, text);
+						gpointer key = purple_request_field_list_get_data(field, text);
 						if (gnt_tree_get_choice(GNT_TREE(tree), key))
 							list = g_list_prepend(list, key);
 					}
@@ -307,14 +307,14 @@ request_fields_cb(GntWidget *button, GaimRequestFields *fields)
 					list = g_list_append(list, data);
 				}
 
-				gaim_request_field_list_set_selected(field, list);
+				purple_request_field_list_set_selected(field, list);
 				g_list_free(list);
 			}
-			else if (type == GAIM_REQUEST_FIELD_ACCOUNT)
+			else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
 			{
 				GntWidget *combo = field->ui_data;
-				GaimAccount *acc = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo));
-				gaim_request_field_account_set_value(field, acc);
+				PurpleAccount *acc = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(combo));
+				purple_request_field_account_set_value(field, acc);
 			}
 		}
 	}
@@ -325,12 +325,12 @@ request_fields_cb(GntWidget *button, GaimRequestFields *fields)
 	while (button->parent)
 		button = button->parent;
 
-	gaim_request_close(GAIM_REQUEST_FIELDS, button);
+	purple_request_close(PURPLE_REQUEST_FIELDS, button);
 }
 
 static void *
 finch_request_fields(const char *title, const char *primary,
-		const char *secondary, GaimRequestFields *allfields,
+		const char *secondary, PurpleRequestFields *allfields,
 		const char *ok, GCallback ok_cb,
 		const char *cancel, GCallback cancel_cb,
 		void *userdata)
@@ -338,7 +338,7 @@ finch_request_fields(const char *title, const char *primary,
 	GntWidget *window, *box;
 	GList *grlist;
 
-	window = setup_request_window(title, primary, secondary, GAIM_REQUEST_FIELDS);
+	window = setup_request_window(title, primary, secondary, PURPLE_REQUEST_FIELDS);
 
 	/* This is how it's going to work: the request-groups are going to be
 	 * stacked vertically one after the other. A GntLine will be separating
@@ -346,12 +346,12 @@ finch_request_fields(const char *title, const char *primary,
 	box = gnt_vbox_new(FALSE);
 	gnt_box_set_pad(GNT_BOX(box), 0);
 	gnt_box_set_fill(GNT_BOX(box), TRUE);
-	for (grlist = gaim_request_fields_get_groups(allfields); grlist; grlist = grlist->next)
+	for (grlist = purple_request_fields_get_groups(allfields); grlist; grlist = grlist->next)
 	{
-		GaimRequestFieldGroup *group = grlist->data;
-		GList *fields = gaim_request_field_group_get_fields(group);
+		PurpleRequestFieldGroup *group = grlist->data;
+		GList *fields = purple_request_field_group_get_fields(group);
 		GntWidget *hbox;
-		const char *title = gaim_request_field_group_get_title(group);
+		const char *title = purple_request_field_group_get_title(group);
 
 		if (title)
 			gnt_box_add_widget(GNT_BOX(box),
@@ -360,41 +360,41 @@ finch_request_fields(const char *title, const char *primary,
 		for (; fields ; fields = fields->next)
 		{
 			/* XXX: Break each of the fields into a separate function? */
-			GaimRequestField *field = fields->data;
-			GaimRequestFieldType type = gaim_request_field_get_type(field);
-			const char *label = gaim_request_field_get_label(field);
+			PurpleRequestField *field = fields->data;
+			PurpleRequestFieldType type = purple_request_field_get_type(field);
+			const char *label = purple_request_field_get_label(field);
 				
 			hbox = gnt_hbox_new(TRUE);   /* hrm */
 			gnt_box_add_widget(GNT_BOX(box), hbox);
 			
-			if (type != GAIM_REQUEST_FIELD_BOOLEAN && label)
+			if (type != PURPLE_REQUEST_FIELD_BOOLEAN && label)
 			{
 				GntWidget *l = gnt_label_new(label);
 				gnt_widget_set_size(l, 0, 1);
 				gnt_box_add_widget(GNT_BOX(hbox), l);
 			}
 
-			if (type == GAIM_REQUEST_FIELD_BOOLEAN)
+			if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 			{
 				GntWidget *check = gnt_check_box_new(label);
 				gnt_check_box_set_checked(GNT_CHECK_BOX(check),
-						gaim_request_field_bool_get_default_value(field));
+						purple_request_field_bool_get_default_value(field));
 				gnt_box_add_widget(GNT_BOX(hbox), check);
 				field->ui_data = check;
 			}
-			else if (type == GAIM_REQUEST_FIELD_STRING)
+			else if (type == PURPLE_REQUEST_FIELD_STRING)
 			{
 				GntWidget *entry = gnt_entry_new(
-							gaim_request_field_string_get_default_value(field));
+							purple_request_field_string_get_default_value(field));
 				gnt_entry_set_masked(GNT_ENTRY(entry),
-						gaim_request_field_string_is_masked(field));
+						purple_request_field_string_is_masked(field));
 				gnt_box_add_widget(GNT_BOX(hbox), entry);
 				field->ui_data = entry;
 			}
-			else if (type == GAIM_REQUEST_FIELD_INTEGER)
+			else if (type == PURPLE_REQUEST_FIELD_INTEGER)
 			{
 				char str[256];
-				int val = gaim_request_field_int_get_default_value(field);
+				int val = purple_request_field_int_get_default_value(field);
 				GntWidget *entry;
 				
 				snprintf(str, sizeof(str), "%d", val);
@@ -403,7 +403,7 @@ finch_request_fields(const char *title, const char *primary,
 				gnt_box_add_widget(GNT_BOX(hbox), entry);
 				field->ui_data = entry;
 			}
-			else if (type == GAIM_REQUEST_FIELD_CHOICE)
+			else if (type == PURPLE_REQUEST_FIELD_CHOICE)
 			{
 				int id;
 				const GList *list;
@@ -411,33 +411,33 @@ finch_request_fields(const char *title, const char *primary,
 				gnt_box_add_widget(GNT_BOX(hbox), combo);
 				field->ui_data = combo;
 
-				list = gaim_request_field_choice_get_labels(field);
+				list = purple_request_field_choice_get_labels(field);
 				for (id = 1; list; list = list->next, id++)
 				{
 					gnt_combo_box_add_data(GNT_COMBO_BOX(combo),
 							GINT_TO_POINTER(id), list->data);
 				}
 				gnt_combo_box_set_selected(GNT_COMBO_BOX(combo),
-						GINT_TO_POINTER(gaim_request_field_choice_get_default_value(field)));
+						GINT_TO_POINTER(purple_request_field_choice_get_default_value(field)));
 			}
-			else if (type == GAIM_REQUEST_FIELD_LIST)
+			else if (type == PURPLE_REQUEST_FIELD_LIST)
 			{
 				const GList *list;
-				gboolean multi = gaim_request_field_list_get_multi_select(field);
+				gboolean multi = purple_request_field_list_get_multi_select(field);
 				if (multi)
 				{
 					GntWidget *tree = gnt_tree_new();
 					gnt_box_add_widget(GNT_BOX(hbox), tree);
 					field->ui_data = tree;
 
-					list = gaim_request_field_list_get_items(field);
+					list = purple_request_field_list_get_items(field);
 					for (; list; list = list->next)
 					{
 						const char *text = list->data;
-						gpointer key = gaim_request_field_list_get_data(field, text);
+						gpointer key = purple_request_field_list_get_data(field, text);
 						gnt_tree_add_choice(GNT_TREE(tree), key,
 								gnt_tree_create_row(GNT_TREE(tree), text), NULL, NULL);
-						if (gaim_request_field_list_is_selected(field, text))
+						if (purple_request_field_list_is_selected(field, text))
 							gnt_tree_set_choice(GNT_TREE(tree), key, TRUE);
 					}
 				}
@@ -448,48 +448,48 @@ finch_request_fields(const char *title, const char *primary,
 					gnt_box_add_widget(GNT_BOX(hbox), combo);
 					field->ui_data = combo;
 
-					list = gaim_request_field_list_get_items(field);
+					list = purple_request_field_list_get_items(field);
 					for (; list; list = list->next)
 					{
 						const char *text = list->data;
-						gpointer key = gaim_request_field_list_get_data(field, text);
+						gpointer key = purple_request_field_list_get_data(field, text);
 						gnt_combo_box_add_data(GNT_COMBO_BOX(combo), key, text);
-						if (gaim_request_field_list_is_selected(field, text))
+						if (purple_request_field_list_is_selected(field, text))
 							gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), key);
 					}
 				}
 			}
-			else if (type == GAIM_REQUEST_FIELD_ACCOUNT)
+			else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
 			{
 				gboolean all;
-				GaimAccount *def;
+				PurpleAccount *def;
 				GList *list;
 				GntWidget *combo = gnt_combo_box_new();
 				gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
 				gnt_box_add_widget(GNT_BOX(hbox), combo);
 				field->ui_data = combo;
 
-				all = gaim_request_field_account_get_show_all(field);
-				def = gaim_request_field_account_get_default_value(field);
+				all = purple_request_field_account_get_show_all(field);
+				def = purple_request_field_account_get_default_value(field);
 
 				if (all)
-					list = gaim_accounts_get_all();
+					list = purple_accounts_get_all();
 				else
-					list = gaim_connections_get_all();
+					list = purple_connections_get_all();
 
 				for (; list; list = list->next)
 				{
-					GaimAccount *account;
+					PurpleAccount *account;
 					char *text;
 
 					if (all)
 						account = list->data;
 					else
-						account = gaim_connection_get_account(list->data);
+						account = purple_connection_get_account(list->data);
 
 					text = g_strdup_printf("%s (%s)",
-							gaim_account_get_username(account),
-							gaim_account_get_protocol_name(account));
+							purple_account_get_username(account),
+							purple_account_get_protocol_name(account));
 					gnt_combo_box_add_data(GNT_COMBO_BOX(combo), account, text);
 					g_free(text);
 					if (account == def)
@@ -521,25 +521,25 @@ finch_request_fields(const char *title, const char *primary,
 static void
 file_cancel_cb(GntWidget *wid, gpointer fq)
 {
-	GaimGntFileRequest *data = fq;
+	PurpleGntFileRequest *data = fq;
 	if (data->cbs[1] != NULL)
-		((GaimRequestFileCb)data->cbs[1])(data->user_data, NULL);
+		((PurpleRequestFileCb)data->cbs[1])(data->user_data, NULL);
 
-	gaim_request_close(GAIM_REQUEST_FILE, data->dialog);
+	purple_request_close(PURPLE_REQUEST_FILE, data->dialog);
 }
 
 static void
 file_ok_cb(GntWidget *wid, gpointer fq)
 {
-	GaimGntFileRequest *data = fq;
+	PurpleGntFileRequest *data = fq;
 	if (data->cbs[0] != NULL)
-		((GaimRequestFileCb)data->cbs[0])(data->user_data, gnt_entry_get_text(GNT_ENTRY(data->entry)));
+		((PurpleRequestFileCb)data->cbs[0])(data->user_data, gnt_entry_get_text(GNT_ENTRY(data->entry)));
 
-	gaim_request_close(GAIM_REQUEST_FILE, data->dialog);
+	purple_request_close(PURPLE_REQUEST_FILE, data->dialog);
 }
 
 static void
-file_request_destroy(GaimGntFileRequest *data)
+file_request_destroy(PurpleGntFileRequest *data)
 {
 	g_free(data->cbs);
 	g_free(data);
@@ -553,14 +553,14 @@ finch_request_file(const char *title, const char *filename,
 {
 	GntWidget *window = gnt_vbox_new(FALSE);
 	GntWidget *entry, *hbox, *button;
-	GaimGntFileRequest *data = g_new0(GaimGntFileRequest, 1);
+	PurpleGntFileRequest *data = g_new0(PurpleGntFileRequest, 1);
 
 	data->user_data = user_data;
 	data->cbs = g_new0(GCallback, 2);
 	data->cbs[0] = ok_cb;
 	data->cbs[1] = cancel_cb;
 	data->dialog = window;
-	data->entry = entry = gnt_entry_new(g_strconcat(gaim_home_dir(), G_DIR_SEPARATOR_S, filename, NULL));
+	data->entry = entry = gnt_entry_new(g_strconcat(purple_home_dir(), G_DIR_SEPARATOR_S, filename, NULL));
 	gnt_widget_set_size(entry, 30, 1);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 	gnt_box_set_title(GNT_BOX(window), title ? title : (savedialog ? _("Save File...") : _("Open File...")));
@@ -593,7 +593,7 @@ finch_request_file(const char *title, const char *filename,
 	return window;
 }
 
-static GaimRequestUiOps uiops =
+static PurpleRequestUiOps uiops =
 {
 	.request_input = finch_request_input,
 	.close_request = finch_close_request,
@@ -604,7 +604,7 @@ static GaimRequestUiOps uiops =
 	.request_folder = NULL                        /* No plans for this */
 };
 
-GaimRequestUiOps *finch_request_get_ui_ops()
+PurpleRequestUiOps *finch_request_get_ui_ops()
 {
 	return &uiops;
 }

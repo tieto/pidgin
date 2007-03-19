@@ -33,7 +33,7 @@
 /* System headers */
 #include <glib.h>
 
-/* Gaim headers */
+/* Purple headers */
 #include <account.h>
 #include <accountopt.h>
 #include <blist.h>
@@ -54,11 +54,11 @@
 #define	PREFS_MAXSEND		PREFS_PREFIX "/maxsend"
 #define	PREFS_USESTATUS		PREFS_PREFIX "/usestatus"
 
-typedef struct _GaimAutoReply GaimAutoReply;
+typedef struct _PurpleAutoReply PurpleAutoReply;
 
-struct _GaimAutoReply
+struct _PurpleAutoReply
 {
-	GaimBuddy *buddy;
+	PurpleBuddy *buddy;
 	char *reply;
 };
 
@@ -75,178 +75,178 @@ static GHashTable *options = NULL;
  * Returns the auto-reply message for buddy
  */
 static const char *
-get_autoreply_message(GaimBuddy *buddy, GaimAccount *account)
+get_autoreply_message(PurpleBuddy *buddy, PurpleAccount *account)
 {
 	const char *reply = NULL;
 	UseStatusMessage use_status;
 
-	use_status = gaim_prefs_get_int(PREFS_USESTATUS);
+	use_status = purple_prefs_get_int(PREFS_USESTATUS);
 	if (use_status == STATUS_ALWAYS)
 	{
-		GaimStatus *status = gaim_account_get_active_status(account);
-		GaimStatusType *type = gaim_status_get_type(status);
-		if (gaim_status_type_get_attr(type, "message") != NULL)
-			reply = gaim_status_get_attr_string(status, "message");
+		PurpleStatus *status = purple_account_get_active_status(account);
+		PurpleStatusType *type = purple_status_get_type(status);
+		if (purple_status_type_get_attr(type, "message") != NULL)
+			reply = purple_status_get_attr_string(status, "message");
 		else
-			reply = gaim_savedstatus_get_message(gaim_savedstatus_get_current());
+			reply = purple_savedstatus_get_message(purple_savedstatus_get_current());
 	}
 
 	if (!reply && buddy)
 	{
 		/* Is there any special auto-reply for this buddy? */
-		reply = gaim_blist_node_get_string((GaimBlistNode*)buddy, "autoreply");
+		reply = purple_blist_node_get_string((PurpleBlistNode*)buddy, "autoreply");
 
-		if (!reply && GAIM_BLIST_NODE_IS_BUDDY((GaimBlistNode*)buddy))
+		if (!reply && PURPLE_BLIST_NODE_IS_BUDDY((PurpleBlistNode*)buddy))
 		{
 			/* Anything for the contact, then? */
-			reply = gaim_blist_node_get_string(((GaimBlistNode*)buddy)->parent, "autoreply");
+			reply = purple_blist_node_get_string(((PurpleBlistNode*)buddy)->parent, "autoreply");
 		}
 	}
 
 	if (!reply)
 	{
 		/* Is there any specific auto-reply for this account? */
-		reply = gaim_account_get_string(account, "autoreply", NULL);
+		reply = purple_account_get_string(account, "autoreply", NULL);
 	}
 
 	if (!reply)
 	{
 		/* Get the global auto-reply message */
-		reply = gaim_prefs_get_string(PREFS_GLOBAL);
+		reply = purple_prefs_get_string(PREFS_GLOBAL);
 	}
 
 	if (*reply == ' ')
 		reply = NULL;
 
 	if (!reply && use_status == STATUS_FALLBACK)
-		reply = gaim_status_get_attr_string(gaim_account_get_active_status(account), "message");
+		reply = purple_status_get_attr_string(purple_account_get_active_status(account), "message");
 
 	return reply;
 }
 
 static void
-written_msg(GaimAccount *account, const char *who, const char *message,
-				GaimConversation *conv, GaimMessageFlags flags, gpointer null)
+written_msg(PurpleAccount *account, const char *who, const char *message,
+				PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
 {
-	GaimBuddy *buddy;
-	GaimPresence *presence;
+	PurpleBuddy *buddy;
+	PurplePresence *presence;
 	const char *reply = NULL;
 	gboolean trigger = FALSE;
 
-	if (!(flags & GAIM_MESSAGE_RECV))
+	if (!(flags & PURPLE_MESSAGE_RECV))
 		return;
 
 	if (!message || !*message)
 		return;
 
 	/* Do not send an autoreply for an autoreply */
-	if (flags & GAIM_MESSAGE_AUTO_RESP)
+	if (flags & PURPLE_MESSAGE_AUTO_RESP)
 		return;
 
-	g_return_if_fail(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM);
+	g_return_if_fail(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM);
 
-	presence = gaim_account_get_presence(account);
+	presence = purple_account_get_presence(account);
 
-	if (gaim_prefs_get_bool(PREFS_AWAY) && !gaim_presence_is_available(presence))
+	if (purple_prefs_get_bool(PREFS_AWAY) && !purple_presence_is_available(presence))
 		trigger = TRUE;
-	if (gaim_prefs_get_bool(PREFS_IDLE) && gaim_presence_is_idle(presence))
+	if (purple_prefs_get_bool(PREFS_IDLE) && purple_presence_is_idle(presence))
 	   trigger = TRUE;
 
 	if (!trigger)
 		return;	
 
-	buddy = gaim_find_buddy(account, who);
+	buddy = purple_find_buddy(account, who);
 	reply = get_autoreply_message(buddy, account);
 
 	if (reply)
 	{
-		GaimConnection *gc;
-		GaimMessageFlags flag = GAIM_MESSAGE_SEND;
+		PurpleConnection *gc;
+		PurpleMessageFlags flag = PURPLE_MESSAGE_SEND;
 		time_t last_sent, now;
 		int count_sent, maxsend;
 
-		last_sent = GPOINTER_TO_INT(gaim_conversation_get_data(conv, "autoreply_lastsent"));
+		last_sent = GPOINTER_TO_INT(purple_conversation_get_data(conv, "autoreply_lastsent"));
 		now = time(NULL);
 
 		/* Have we spent enough time after our last autoreply? */
-		if (now - last_sent >= (gaim_prefs_get_int(PREFS_MINTIME)*60))
+		if (now - last_sent >= (purple_prefs_get_int(PREFS_MINTIME)*60))
 		{
-			count_sent = GPOINTER_TO_INT(gaim_conversation_get_data(conv, "autoreply_count"));
-			maxsend = gaim_prefs_get_int(PREFS_MAXSEND);
+			count_sent = GPOINTER_TO_INT(purple_conversation_get_data(conv, "autoreply_count"));
+			maxsend = purple_prefs_get_int(PREFS_MAXSEND);
 
 			/* Have we sent the autoreply enough times? */
 			if (count_sent < maxsend || maxsend == -1)
 			{
-				gaim_conversation_set_data(conv, "autoreply_count", GINT_TO_POINTER(++count_sent));
-				gaim_conversation_set_data(conv, "autoreply_lastsent", GINT_TO_POINTER(now));
-				gc = gaim_account_get_connection(account);
-				if (gc->flags & GAIM_CONNECTION_AUTO_RESP)
-					flag |= GAIM_MESSAGE_AUTO_RESP;
+				purple_conversation_set_data(conv, "autoreply_count", GINT_TO_POINTER(++count_sent));
+				purple_conversation_set_data(conv, "autoreply_lastsent", GINT_TO_POINTER(now));
+				gc = purple_account_get_connection(account);
+				if (gc->flags & PURPLE_CONNECTION_AUTO_RESP)
+					flag |= PURPLE_MESSAGE_AUTO_RESP;
 				serv_send_im(gc, who, reply, flag);
-				gaim_conv_im_write(GAIM_CONV_IM(conv), NULL, reply, flag, time(NULL));
+				purple_conv_im_write(PURPLE_CONV_IM(conv), NULL, reply, flag, time(NULL));
 			}
 		}
 	}
 }
 
 static void
-set_auto_reply_cb(GaimBlistNode *node, char *message)
+set_auto_reply_cb(PurpleBlistNode *node, char *message)
 {
 	if (!message || !*message)
 		message = " ";
-	gaim_blist_node_set_string(node, "autoreply", message);
+	purple_blist_node_set_string(node, "autoreply", message);
 }
 
 static void
-set_auto_reply(GaimBlistNode *node, gpointer plugin)
+set_auto_reply(PurpleBlistNode *node, gpointer plugin)
 {
 	char *message;
-	GaimBuddy *buddy;
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleBuddy *buddy;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 
-	if (GAIM_BLIST_NODE_IS_BUDDY(node))
-		buddy = (GaimBuddy *)node;
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+		buddy = (PurpleBuddy *)node;
 	else
-		buddy = gaim_contact_get_priority_buddy((GaimContact*)node);
+		buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
 
-	account = gaim_buddy_get_account(buddy);
-	gc = gaim_account_get_connection(account);
+	account = purple_buddy_get_account(buddy);
+	gc = purple_account_get_connection(account);
 
 	/* XXX: There should be a way to reset to the default/account-default autoreply */
 
 	message = g_strdup_printf(_("Set autoreply message for %s"),
-					gaim_buddy_get_contact_alias(buddy));
-	gaim_request_input(plugin, _("Set Autoreply Message"), message,
+					purple_buddy_get_contact_alias(buddy));
+	purple_request_input(plugin, _("Set Autoreply Message"), message,
 					_("The following message will be sent to the buddy when "
 						"the buddy sends you a message and autoreply is enabled."),
 					get_autoreply_message(buddy, account), TRUE, FALSE,
-					(gc->flags & GAIM_CONNECTION_HTML) ? "html" : NULL,
+					(gc->flags & PURPLE_CONNECTION_HTML) ? "html" : NULL,
 					_("_Save"), G_CALLBACK(set_auto_reply_cb),
 					_("_Cancel"), NULL, node);
 	g_free(message);
 }
 
 static void
-context_menu(GaimBlistNode *node, GList **menu, gpointer plugin)
+context_menu(PurpleBlistNode *node, GList **menu, gpointer plugin)
 {
-	GaimMenuAction *action;
+	PurpleMenuAction *action;
 
-	if (!GAIM_BLIST_NODE_IS_BUDDY(node) && !GAIM_BLIST_NODE_IS_CONTACT(node))
+	if (!PURPLE_BLIST_NODE_IS_BUDDY(node) && !PURPLE_BLIST_NODE_IS_CONTACT(node))
 		return;
 
-	action = gaim_menu_action_new(_("Set _Autoreply Message"),
-					GAIM_CALLBACK(set_auto_reply), plugin, NULL);
+	action = purple_menu_action_new(_("Set _Autoreply Message"),
+					PURPLE_CALLBACK(set_auto_reply), plugin, NULL);
 	(*menu) = g_list_prepend(*menu, action);
 }
 
 static void
-add_option_for_protocol(GaimPlugin *plg)
+add_option_for_protocol(PurplePlugin *plg)
 {
-	GaimPluginProtocolInfo *info = GAIM_PLUGIN_PROTOCOL_INFO(plg);
-	GaimAccountOption *option;
+	PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(plg);
+	PurpleAccountOption *option;
 
-	option = gaim_account_option_string_new(_("Autoreply message"), "autoreply", NULL);
+	option = purple_account_option_string_new(_("Autoreply message"), "autoreply", NULL);
 	info->protocol_options = g_list_append(info->protocol_options, option);
 
 	if (!g_hash_table_lookup(options, plg))
@@ -254,23 +254,23 @@ add_option_for_protocol(GaimPlugin *plg)
 }
 
 static void
-remove_option_for_protocol(GaimPlugin *plg)
+remove_option_for_protocol(PurplePlugin *plg)
 {
-	GaimPluginProtocolInfo *info = GAIM_PLUGIN_PROTOCOL_INFO(plg);
-	GaimAccountOption *option = g_hash_table_lookup(options, plg);
+	PurplePluginProtocolInfo *info = PURPLE_PLUGIN_PROTOCOL_INFO(plg);
+	PurpleAccountOption *option = g_hash_table_lookup(options, plg);
 
 	if (g_list_find(info->protocol_options, option))
 	{
 		info->protocol_options = g_list_remove(info->protocol_options, option);
-		gaim_account_option_destroy(option);
+		purple_account_option_destroy(option);
 		g_hash_table_remove(options, plg);
 	}
 }
 
 static void
-plugin_load_cb(GaimPlugin *plugin, gboolean load)
+plugin_load_cb(PurplePlugin *plugin, gboolean load)
 {
-	if (plugin->info && plugin->info->type == GAIM_PLUGIN_PROTOCOL)
+	if (plugin->info && plugin->info->type == PURPLE_PLUGIN_PROTOCOL)
 	{
 		if (load)
 			add_option_for_protocol(plugin);
@@ -280,22 +280,22 @@ plugin_load_cb(GaimPlugin *plugin, gboolean load)
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 	GList *list;
 
-	gaim_signal_connect(gaim_conversations_get_handle(), "wrote-im-msg", plugin,
-						GAIM_CALLBACK(written_msg), NULL);
-	gaim_signal_connect(gaim_blist_get_handle(), "blist-node-extended-menu", plugin,
-						GAIM_CALLBACK(context_menu), plugin);
-	gaim_signal_connect(gaim_plugins_get_handle(), "plugin-load", plugin,
-						GAIM_CALLBACK(plugin_load_cb), GINT_TO_POINTER(TRUE));
-	gaim_signal_connect(gaim_plugins_get_handle(), "plugin-unload", plugin,
-						GAIM_CALLBACK(plugin_load_cb), GINT_TO_POINTER(FALSE));
+	purple_signal_connect(purple_conversations_get_handle(), "wrote-im-msg", plugin,
+						PURPLE_CALLBACK(written_msg), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "blist-node-extended-menu", plugin,
+						PURPLE_CALLBACK(context_menu), plugin);
+	purple_signal_connect(purple_plugins_get_handle(), "plugin-load", plugin,
+						PURPLE_CALLBACK(plugin_load_cb), GINT_TO_POINTER(TRUE));
+	purple_signal_connect(purple_plugins_get_handle(), "plugin-unload", plugin,
+						PURPLE_CALLBACK(plugin_load_cb), GINT_TO_POINTER(FALSE));
 
 	/* Perhaps it's necessary to do this after making sure the prpl-s have been loaded? */
 	options = g_hash_table_new(g_direct_hash, g_direct_equal);
-	list = gaim_plugins_get_protocols();
+	list = purple_plugins_get_protocols();
 	while (list)
 	{
 		add_option_for_protocol(list->data);
@@ -306,14 +306,14 @@ plugin_load(GaimPlugin *plugin)
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	GList *list;
 
 	if (options == NULL)
 		return TRUE;
 
-	list = gaim_plugins_get_protocols();
+	list = purple_plugins_get_protocols();
 	while (list)
 	{
 		remove_option_for_protocol(list->data);
@@ -325,81 +325,81 @@ plugin_unload(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin)
+static PurplePluginPrefFrame *
+get_plugin_pref_frame(PurplePlugin *plugin)
 {
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *pref;
+	PurplePluginPrefFrame *frame;
+	PurplePluginPref *pref;
 
-	frame = gaim_plugin_pref_frame_new();
+	frame = purple_plugin_pref_frame_new();
 
-	pref = gaim_plugin_pref_new_with_label(_("Send autoreply messages when"));
-	gaim_plugin_pref_frame_add(frame, pref);
+	pref = purple_plugin_pref_new_with_label(_("Send autoreply messages when"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_name_and_label(PREFS_AWAY,
+	pref = purple_plugin_pref_new_with_name_and_label(PREFS_AWAY,
 					_("When my account is _away"));
-	gaim_plugin_pref_frame_add(frame, pref);
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_name_and_label(PREFS_IDLE,
+	pref = purple_plugin_pref_new_with_name_and_label(PREFS_IDLE,
 					_("When my account is _idle"));
-	gaim_plugin_pref_frame_add(frame, pref);
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_name_and_label(PREFS_GLOBAL,
+	pref = purple_plugin_pref_new_with_name_and_label(PREFS_GLOBAL,
 					_("_Default reply"));
-	gaim_plugin_pref_set_type(pref, GAIM_PLUGIN_PREF_STRING_FORMAT);
-	gaim_plugin_pref_set_format_type(pref,
-				GAIM_STRING_FORMAT_TYPE_MULTILINE | GAIM_STRING_FORMAT_TYPE_HTML);
-	gaim_plugin_pref_frame_add(frame, pref);
+	purple_plugin_pref_set_type(pref, PURPLE_PLUGIN_PREF_STRING_FORMAT);
+	purple_plugin_pref_set_format_type(pref,
+				PURPLE_STRING_FORMAT_TYPE_MULTILINE | PURPLE_STRING_FORMAT_TYPE_HTML);
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_label(_("Status message"));
-	gaim_plugin_pref_frame_add(frame, pref);
+	pref = purple_plugin_pref_new_with_label(_("Status message"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_name_and_label(PREFS_USESTATUS,
+	pref = purple_plugin_pref_new_with_name_and_label(PREFS_USESTATUS,
 						_("Autoreply with status message"));
-	gaim_plugin_pref_set_type(pref, GAIM_PLUGIN_PREF_CHOICE);
-	gaim_plugin_pref_add_choice(pref, _("Never"),	
+	purple_plugin_pref_set_type(pref, PURPLE_PLUGIN_PREF_CHOICE);
+	purple_plugin_pref_add_choice(pref, _("Never"),	
 						GINT_TO_POINTER(STATUS_NEVER));
-	gaim_plugin_pref_add_choice(pref, _("Always when there is a status message"),
+	purple_plugin_pref_add_choice(pref, _("Always when there is a status message"),
 						GINT_TO_POINTER(STATUS_ALWAYS));
-	gaim_plugin_pref_add_choice(pref, _("Only when there's no autoreply message"),
+	purple_plugin_pref_add_choice(pref, _("Only when there's no autoreply message"),
 						GINT_TO_POINTER(STATUS_FALLBACK));
 
-	gaim_plugin_pref_frame_add(frame, pref);
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_label(_("Delay between autoreplies"));
-	gaim_plugin_pref_frame_add(frame, pref);
+	pref = purple_plugin_pref_new_with_label(_("Delay between autoreplies"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_name_and_label(PREFS_MINTIME,
+	pref = purple_plugin_pref_new_with_name_and_label(PREFS_MINTIME,
 					_("_Minimum delay (mins)"));
-	gaim_plugin_pref_set_bounds(pref, 0, 9999);
-	gaim_plugin_pref_frame_add(frame, pref);
+	purple_plugin_pref_set_bounds(pref, 0, 9999);
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_label(_("Times to send autoreplies"));
-	gaim_plugin_pref_frame_add(frame, pref);
+	pref = purple_plugin_pref_new_with_label(_("Times to send autoreplies"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_name_and_label(PREFS_MAXSEND,
+	pref = purple_plugin_pref_new_with_name_and_label(PREFS_MAXSEND,
 					_("Ma_ximum count"));
-	gaim_plugin_pref_set_bounds(pref, 0, 9999);
-	gaim_plugin_pref_frame_add(frame, pref);
+	purple_plugin_pref_set_bounds(pref, 0, 9999);
+	purple_plugin_pref_frame_add(frame, pref);
 
 	return frame;
 }
 
-static GaimPluginUiInfo prefs_info = {
+static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
 	0,
 	NULL
 };
 
-static GaimPluginInfo info = {
-	GAIM_PLUGIN_MAGIC,			/* Magic				*/
-	GAIM_MAJOR_VERSION,			/* Gaim Major Version	*/
-	GAIM_MINOR_VERSION,			/* Gaim Minor Version	*/
-	GAIM_PLUGIN_STANDARD,			/* plugin type			*/
+static PurplePluginInfo info = {
+	PURPLE_PLUGIN_MAGIC,			/* Magic				*/
+	PURPLE_MAJOR_VERSION,			/* Purple Major Version	*/
+	PURPLE_MINOR_VERSION,			/* Purple Minor Version	*/
+	PURPLE_PLUGIN_STANDARD,			/* plugin type			*/
 	NULL,					/* ui requirement		*/
 	0,					/* flags				*/
 	NULL,					/* dependencies			*/
-	GAIM_PRIORITY_DEFAULT,			/* priority				*/
+	PURPLE_PRIORITY_DEFAULT,			/* priority				*/
 
 	PLUGIN_ID,				/* plugin id			*/
 	PLUGIN_NAME,				/* name					*/
@@ -407,7 +407,7 @@ static GaimPluginInfo info = {
 	PLUGIN_SUMMARY,				/* summary				*/
 	PLUGIN_DESCRIPTION,			/* description			*/
 	PLUGIN_AUTHOR,				/* author				*/
-	GAIM_WEBSITE,				/* website				*/
+	PURPLE_WEBSITE,				/* website				*/
 
 	plugin_load,				/* load					*/
 	plugin_unload,				/* unload				*/
@@ -420,16 +420,16 @@ static GaimPluginInfo info = {
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	gaim_prefs_add_none(PREFS_PREFIX);
-	gaim_prefs_add_bool(PREFS_IDLE, TRUE);
-	gaim_prefs_add_bool(PREFS_AWAY, TRUE);
-	gaim_prefs_add_string(PREFS_GLOBAL, _("I am currently not available. Please leave your message, "
+	purple_prefs_add_none(PREFS_PREFIX);
+	purple_prefs_add_bool(PREFS_IDLE, TRUE);
+	purple_prefs_add_bool(PREFS_AWAY, TRUE);
+	purple_prefs_add_string(PREFS_GLOBAL, _("I am currently not available. Please leave your message, "
 							"and I will get back to you as soon as possible."));
-	gaim_prefs_add_int(PREFS_MINTIME, 10);
-	gaim_prefs_add_int(PREFS_MAXSEND, 10);
-	gaim_prefs_add_int(PREFS_USESTATUS, STATUS_NEVER);
+	purple_prefs_add_int(PREFS_MINTIME, 10);
+	purple_prefs_add_int(PREFS_MAXSEND, 10);
+	purple_prefs_add_int(PREFS_USESTATUS, STATUS_NEVER);
 }
 
-GAIM_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
+PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)

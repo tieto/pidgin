@@ -2,9 +2,9 @@
  * @file gntdebug.c GNT Debug API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -30,13 +30,13 @@
 #include <gntline.h>
 
 #include "gntdebug.h"
-#include "gntgaim.h"
+#include "finch.h"
 #include "util.h"
 
 #include <stdio.h>
 #include <string.h>
 
-#define PREF_ROOT "/gaim/gnt/debug"
+#define PREF_ROOT "/purple/gnt/debug"
 
 static struct
 {
@@ -67,7 +67,7 @@ debug_window_kpress_cb(GntWidget *wid, const char *key, GntTextView *view)
 }
 
 static void
-finch_debug_print(GaimDebugLevel level, const char *category,
+finch_debug_print(PurpleDebugLevel level, const char *category,
 		const char *args)
 {
 	if (debug.window && !debug.paused)
@@ -78,7 +78,7 @@ finch_debug_print(GaimDebugLevel level, const char *category,
 		if (debug.timestamps) {
 			const char *mdate;
 			time_t mtime = time(NULL);
-			mdate = gaim_utf8_strftime("%H:%M:%S ", localtime(&mtime));
+			mdate = purple_utf8_strftime("%H:%M:%S ", localtime(&mtime));
 			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview),
 					mdate, flag);
 		}
@@ -90,10 +90,10 @@ finch_debug_print(GaimDebugLevel level, const char *category,
 
 		switch (level)
 		{
-			case GAIM_DEBUG_WARNING:
+			case PURPLE_DEBUG_WARNING:
 				flag |= GNT_TEXT_FLAG_UNDERLINE;
-			case GAIM_DEBUG_ERROR:
-			case GAIM_DEBUG_FATAL:
+			case PURPLE_DEBUG_ERROR:
+			case PURPLE_DEBUG_FATAL:
 				flag |= GNT_TEXT_FLAG_BOLD;
 				break;
 			default:
@@ -106,12 +106,12 @@ finch_debug_print(GaimDebugLevel level, const char *category,
 	}
 }
 
-static GaimDebugUiOps uiops =
+static PurpleDebugUiOps uiops =
 {
 	finch_debug_print,
 };
 
-GaimDebugUiOps *finch_debug_get_ui_ops()
+PurpleDebugUiOps *finch_debug_get_ui_ops()
 {
 	return &uiops;
 }
@@ -148,47 +148,47 @@ static void
 toggle_timestamps(GntWidget *w, gpointer n)
 {
 	debug.timestamps = !debug.timestamps;
-	gaim_prefs_set_bool("/core/debug/timestamps", debug.timestamps);
+	purple_prefs_set_bool("/core/debug/timestamps", debug.timestamps);
 }
 
 /* Xerox */
 static void
-gaim_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
+purple_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 					  const gchar *msg, gpointer user_data)
 {
-	GaimDebugLevel level;
+	PurpleDebugLevel level;
 	char *new_msg = NULL;
 	char *new_domain = NULL;
 
 	if ((flags & G_LOG_LEVEL_ERROR) == G_LOG_LEVEL_ERROR)
-		level = GAIM_DEBUG_ERROR;
+		level = PURPLE_DEBUG_ERROR;
 	else if ((flags & G_LOG_LEVEL_CRITICAL) == G_LOG_LEVEL_CRITICAL)
-		level = GAIM_DEBUG_FATAL;
+		level = PURPLE_DEBUG_FATAL;
 	else if ((flags & G_LOG_LEVEL_WARNING) == G_LOG_LEVEL_WARNING)
-		level = GAIM_DEBUG_WARNING;
+		level = PURPLE_DEBUG_WARNING;
 	else if ((flags & G_LOG_LEVEL_MESSAGE) == G_LOG_LEVEL_MESSAGE)
-		level = GAIM_DEBUG_INFO;
+		level = PURPLE_DEBUG_INFO;
 	else if ((flags & G_LOG_LEVEL_INFO) == G_LOG_LEVEL_INFO)
-		level = GAIM_DEBUG_INFO;
+		level = PURPLE_DEBUG_INFO;
 	else if ((flags & G_LOG_LEVEL_DEBUG) == G_LOG_LEVEL_DEBUG)
-		level = GAIM_DEBUG_MISC;
+		level = PURPLE_DEBUG_MISC;
 	else
 	{
-		gaim_debug_warning("gntdebug",
+		purple_debug_warning("gntdebug",
 				   "Unknown glib logging level in %d\n", flags);
 
-		level = GAIM_DEBUG_MISC; /* This will never happen. */
+		level = PURPLE_DEBUG_MISC; /* This will never happen. */
 	}
 
 	if (msg != NULL)
-		new_msg = gaim_utf8_try_convert(msg);
+		new_msg = purple_utf8_try_convert(msg);
 
 	if (domain != NULL)
-		new_domain = gaim_utf8_try_convert(domain);
+		new_domain = purple_utf8_try_convert(domain);
 
 	if (new_msg != NULL)
 	{
-		gaim_debug(level, (new_domain != NULL ? new_domain : "g_log"),
+		purple_debug(level, (new_domain != NULL ? new_domain : "g_log"),
 				   "%s\n", new_msg);
 
 		g_free(new_msg);
@@ -202,14 +202,14 @@ size_changed_cb(GntWidget *widget, int oldw, int oldh)
 {
 	int w, h;
 	gnt_widget_get_size(widget, &w, &h);
-	gaim_prefs_set_int(PREF_ROOT "/size/width", w);
-	gaim_prefs_set_int(PREF_ROOT "/size/height", h);
+	purple_prefs_set_int(PREF_ROOT "/size/width", w);
+	purple_prefs_set_int(PREF_ROOT "/size/height", h);
 }
 
 void finch_debug_window_show()
 {
 	debug.paused = FALSE;
-	debug.timestamps = gaim_prefs_get_bool("/core/debug/timestamps");
+	debug.timestamps = purple_prefs_get_bool("/core/debug/timestamps");
 	if (debug.window == NULL)
 	{
 		GntWidget *wid, *box;
@@ -222,8 +222,8 @@ void finch_debug_window_show()
 		debug.tview = gnt_text_view_new();
 		gnt_box_add_widget(GNT_BOX(debug.window), debug.tview);
 		gnt_widget_set_size(debug.tview,
-				gaim_prefs_get_int(PREF_ROOT "/size/width"),
-				gaim_prefs_get_int(PREF_ROOT "/size/height"));
+				purple_prefs_get_int(PREF_ROOT "/size/width"),
+				purple_prefs_get_int(PREF_ROOT "/size/height"));
 		g_signal_connect(G_OBJECT(debug.tview), "size_changed", G_CALLBACK(size_changed_cb), NULL);
 
 		gnt_box_add_widget(GNT_BOX(debug.window), gnt_line_new(FALSE));
@@ -277,7 +277,7 @@ void finch_debug_init()
 #define REGISTER_G_LOG_HANDLER(name) \
 	g_log_set_handler((name), G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \
 					  | G_LOG_FLAG_RECURSION, \
-					  gaim_glib_log_handler, NULL)
+					  purple_glib_log_handler, NULL)
 
 	/* Register the glib log handlers. */
 	REGISTER_G_LOG_HANDLER(NULL);
@@ -289,12 +289,12 @@ void finch_debug_init()
 	g_set_print_handler(print_stderr);   /* Redirect the debug messages to stderr */
 	g_set_printerr_handler(suppress_error_messages);
 
-	gaim_prefs_add_none(PREF_ROOT);
-	gaim_prefs_add_none(PREF_ROOT "/size");
-	gaim_prefs_add_int(PREF_ROOT "/size/width", 60);
-	gaim_prefs_add_int(PREF_ROOT "/size/height", 15);
+	purple_prefs_add_none(PREF_ROOT);
+	purple_prefs_add_none(PREF_ROOT "/size");
+	purple_prefs_add_int(PREF_ROOT "/size/width", 60);
+	purple_prefs_add_int(PREF_ROOT "/size/height", 15);
 
-	if (gaim_debug_is_enabled())
+	if (purple_debug_is_enabled())
 		g_timeout_add(0, start_with_debugwin, NULL);
 }
 

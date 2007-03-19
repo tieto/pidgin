@@ -2,9 +2,9 @@
  * @file gtkdialogs.c GTK+ Dialogs
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -44,7 +44,7 @@ static GList *dialogwindows = NULL;
 static GtkWidget *about = NULL;
 
 struct _PidginGroupMergeObject {
-	GaimGroup* parent;
+	PurpleGroup* parent;
 	char *new_name;
 };
 
@@ -106,7 +106,7 @@ static struct developer patch_writers[] = {
 static struct developer retired_developers[] = {
 	{"Herman Bloggs",		N_("win32 port"), "herman@bluedigits.com"},
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
-	{"Rob Flynn",			N_("maintainer"), "gaim@robflynn.com"},
+	{"Rob Flynn",			N_("maintainer"), "purple@robflynn.com"},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
@@ -257,7 +257,7 @@ static void destroy_about()
 }
 
 /* This function puts the version number onto the pixmap we use in the 'about' 
- * screen in Gaim. */
+ * screen in Purple. */
 static void
 pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	GdkPixmap *pixmap;
@@ -331,7 +331,7 @@ void pidgindialogs_about()
 	/* Generate a logo with a version number */
 	logo = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_widget_realize(logo);
-	filename = g_build_filename(DATADIR, "pixmaps", "gaim", "logo.png", NULL);
+	filename = g_build_filename(DATADIR, "pixmaps", "purple", "logo.png", NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 	pidgin_logo_versionize(&pixbuf, logo);
@@ -363,7 +363,7 @@ void pidgindialogs_about()
 		  "warranty for this program.<BR><BR>"));
 
 	g_string_append(str, "<FONT SIZE=\"4\">URL:</FONT> <A HREF=\""
-					GAIM_WEBSITE "\">" GAIM_WEBSITE "</A><BR/><BR/>");
+					PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");
 #ifdef _WIN32
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
 						   "#pidgwin on irc.freenode.net<BR><BR>"));
@@ -495,7 +495,7 @@ void pidgindialogs_about()
 #endif
 #endif
 
-#ifdef GAIM_PLUGINS
+#ifdef PURPLE_PLUGINS
 	g_string_append(str, "  <b>Plugins:</b> Enabled<br/>");
 #else
 	g_string_append(str, "  <b>Plugins:</b> Disabled<br/>");
@@ -673,13 +673,13 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 }
 
 static void
-pidgindialogs_im_cb(gpointer data, GaimRequestFields *fields)
+pidgindialogs_im_cb(gpointer data, PurpleRequestFields *fields)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	const char *username;
 
-	account  = gaim_request_fields_get_account(fields, "account");
-	username = gaim_request_fields_get_string(fields,  "screenname");
+	account  = purple_request_fields_get_account(fields, "account");
+	username = purple_request_fields_get_string(fields,  "screenname");
 
 	pidgindialogs_im_with_user(account, username);
 }
@@ -687,29 +687,29 @@ pidgindialogs_im_cb(gpointer data, GaimRequestFields *fields)
 void
 pidgindialogs_im(void)
 {
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
-	fields = gaim_request_fields_new();
+	fields = purple_request_fields_new();
 
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
 
-	field = gaim_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
-	gaim_request_field_set_type_hint(field, "screenname");
-	gaim_request_field_set_required(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	field = purple_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
+	purple_request_field_set_type_hint(field, "screenname");
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_account_new("account", _("_Account"), NULL);
-	gaim_request_field_set_type_hint(field, "account");
-	gaim_request_field_set_visible(field,
-		(gaim_connections_get_all() != NULL &&
-		 gaim_connections_get_all()->next != NULL));
-	gaim_request_field_set_required(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	field = purple_request_field_account_new("account", _("_Account"), NULL);
+	purple_request_field_set_type_hint(field, "account");
+	purple_request_field_set_visible(field,
+		(purple_connections_get_all() != NULL &&
+		 purple_connections_get_all()->next != NULL));
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	gaim_request_fields(gaim_get_blist(), _("New Instant Message"),
+	purple_request_fields(purple_get_blist(), _("New Instant Message"),
 						NULL,
 						_("Please enter the screen name or alias of the person "
 						  "you would like to IM."),
@@ -720,19 +720,19 @@ pidgindialogs_im(void)
 }
 
 void
-pidgindialogs_im_with_user(GaimAccount *account, const char *username)
+pidgindialogs_im_with_user(PurpleAccount *account, const char *username)
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 
 	g_return_if_fail(account != NULL);
 	g_return_if_fail(username != NULL);
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, username, account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, username, account);
 
 	if (conv == NULL)
-		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, username);
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, username);
 
-	gaim_conversation_present(conv);
+	purple_conversation_present(conv);
 }
 
 static gboolean
@@ -742,7 +742,7 @@ pidgindialogs_ee(const char *ee)
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *img;
-	gchar *norm = gaim_strreplace(ee, "rocksmyworld", "");
+	gchar *norm = purple_strreplace(ee, "rocksmyworld", "");
 
 	label = gtk_label_new(NULL);
 	if (!strcmp(norm, "zilding"))
@@ -801,22 +801,22 @@ pidgindialogs_ee(const char *ee)
 }
 
 static void
-pidgindialogs_info_cb(gpointer data, GaimRequestFields *fields)
+pidgindialogs_info_cb(gpointer data, PurpleRequestFields *fields)
 {
 	char *username;
 	gboolean found = FALSE;
-	GaimAccount *account;
+	PurpleAccount *account;
 
-	account  = gaim_request_fields_get_account(fields, "account");
+	account  = purple_request_fields_get_account(fields, "account");
 
-	username = g_strdup(gaim_normalize(account,
-		gaim_request_fields_get_string(fields,  "screenname")));
+	username = g_strdup(purple_normalize(account,
+		purple_request_fields_get_string(fields,  "screenname")));
 
-	if (username != NULL && gaim_str_has_suffix(username, "rocksmyworld"))
+	if (username != NULL && purple_str_has_suffix(username, "rocksmyworld"))
 		found = pidgindialogs_ee(username);
 
 	if (!found && username != NULL && *username != '\0' && account != NULL)
-		serv_get_info(gaim_account_get_connection(account), username);
+		serv_get_info(purple_account_get_connection(account), username);
 
 	g_free(username);
 }
@@ -824,29 +824,29 @@ pidgindialogs_info_cb(gpointer data, GaimRequestFields *fields)
 void
 pidgindialogs_info(void)
 {
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
-	fields = gaim_request_fields_new();
+	fields = purple_request_fields_new();
 
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
 
-	field = gaim_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
-	gaim_request_field_set_type_hint(field, "screenname");
-	gaim_request_field_set_required(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	field = purple_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
+	purple_request_field_set_type_hint(field, "screenname");
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_account_new("account", _("_Account"), NULL);
-	gaim_request_field_set_type_hint(field, "account");
-	gaim_request_field_set_visible(field,
-		(gaim_connections_get_all() != NULL &&
-		 gaim_connections_get_all()->next != NULL));
-	gaim_request_field_set_required(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	field = purple_request_field_account_new("account", _("_Account"), NULL);
+	purple_request_field_set_type_hint(field, "account");
+	purple_request_field_set_visible(field,
+		(purple_connections_get_all() != NULL &&
+		 purple_connections_get_all()->next != NULL));
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	gaim_request_fields(gaim_get_blist(), _("Get User Info"),
+	purple_request_fields(purple_get_blist(), _("Get User Info"),
 						NULL,
 						_("Please enter the screen name or alias of the person "
 						  "whose info you would like to view."),
@@ -857,16 +857,16 @@ pidgindialogs_info(void)
 }
 
 static void
-pidgindialogs_log_cb(gpointer data, GaimRequestFields *fields)
+pidgindialogs_log_cb(gpointer data, PurpleRequestFields *fields)
 {
 	char *username;
-	GaimAccount *account;
+	PurpleAccount *account;
 	GSList *cur;
 
-	account  = gaim_request_fields_get_account(fields, "account");
+	account  = purple_request_fields_get_account(fields, "account");
 
-	username = g_strdup(gaim_normalize(account,
-		gaim_request_fields_get_string(fields,  "screenname")));
+	username = g_strdup(purple_normalize(account,
+		purple_request_fields_get_string(fields,  "screenname")));
 
 	if (username != NULL && *username != '\0' && account != NULL)
 	{
@@ -875,13 +875,13 @@ pidgindialogs_log_cb(gpointer data, GaimRequestFields *fields)
 
 		pidgin_set_cursor(gtkblist->window, GDK_WATCH);
 
-		buddies = gaim_find_buddies(account, username);
+		buddies = purple_find_buddies(account, username);
 		for (cur = buddies; cur != NULL; cur = cur->next)
 		{
-			GaimBlistNode *node = cur->data;
+			PurpleBlistNode *node = cur->data;
 			if ((node != NULL) && ((node->prev != NULL) || (node->next != NULL)))
 			{
-				pidgin_log_show_contact((GaimContact *)node->parent);
+				pidgin_log_show_contact((PurpleContact *)node->parent);
 				g_slist_free(buddies);
 				pidgin_clear_cursor(gtkblist->window);
 				g_free(username);
@@ -890,7 +890,7 @@ pidgindialogs_log_cb(gpointer data, GaimRequestFields *fields)
 		}
 		g_slist_free(buddies);
 
-		pidgin_log_show(GAIM_LOG_IM, username, account);
+		pidgin_log_show(PURPLE_LOG_IM, username, account);
 
 		pidgin_clear_cursor(gtkblist->window);
 	}
@@ -904,40 +904,40 @@ pidgindialogs_log_cb(gpointer data, GaimRequestFields *fields)
 void
 pidgindialogs_log(void)
 {
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
-	fields = gaim_request_fields_new();
+	fields = purple_request_fields_new();
 
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
 
-	field = gaim_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
-	gaim_request_field_set_type_hint(field, "screenname-all");
-	gaim_request_field_set_required(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	field = purple_request_field_string_new("screenname", _("_Name"), NULL, FALSE);
+	purple_request_field_set_type_hint(field, "screenname-all");
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_account_new("account", _("_Account"), NULL);
+	field = purple_request_field_account_new("account", _("_Account"), NULL);
 
-	/* gaim_request_field_account_new() only sets a default value if you're
+	/* purple_request_field_account_new() only sets a default value if you're
 	 * connected, and it sets it from the list of connected accounts.  Since
 	 * we're going to set show_all here, it makes sense to use the first
 	 * account, not the first connected account. */
-	if (gaim_accounts_get_all() != NULL) {
-		gaim_request_field_account_set_default_value(field, gaim_accounts_get_all()->data);
-		gaim_request_field_account_set_value(field, gaim_accounts_get_all()->data);
+	if (purple_accounts_get_all() != NULL) {
+		purple_request_field_account_set_default_value(field, purple_accounts_get_all()->data);
+		purple_request_field_account_set_value(field, purple_accounts_get_all()->data);
 	}
 
-	gaim_request_field_set_type_hint(field, "account");
-	gaim_request_field_account_set_show_all(field, TRUE);
-	gaim_request_field_set_visible(field,
-		(gaim_accounts_get_all() != NULL &&
-		 gaim_accounts_get_all()->next != NULL));
-	gaim_request_field_set_required(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_set_type_hint(field, "account");
+	purple_request_field_account_set_show_all(field, TRUE);
+	purple_request_field_set_visible(field,
+		(purple_accounts_get_all() != NULL &&
+		 purple_accounts_get_all()->next != NULL));
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	gaim_request_fields(gaim_get_blist(), _("View User Log"),
+	purple_request_fields(purple_get_blist(), _("View User Log"),
 						NULL,
 						_("Please enter the screen name or alias of the person "
 						  "whose log you would like to view."),
@@ -948,17 +948,17 @@ pidgindialogs_log(void)
 }
 
 static void
-pidgindialogs_alias_contact_cb(GaimContact *contact, const char *new_alias)
+pidgindialogs_alias_contact_cb(PurpleContact *contact, const char *new_alias)
 {
-	gaim_contact_set_alias(contact, new_alias);
+	purple_contact_set_alias(contact, new_alias);
 }
 
 void
-pidgindialogs_alias_contact(GaimContact *contact)
+pidgindialogs_alias_contact(PurpleContact *contact)
 {
 	g_return_if_fail(contact != NULL);
 
-	gaim_request_input(NULL, _("Alias Contact"), NULL,
+	purple_request_input(NULL, _("Alias Contact"), NULL,
 					   _("Enter an alias for this contact."),
 					   contact->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgindialogs_alias_contact_cb),
@@ -966,14 +966,14 @@ pidgindialogs_alias_contact(GaimContact *contact)
 }
 
 static void
-pidgindialogs_alias_buddy_cb(GaimBuddy *buddy, const char *new_alias)
+pidgindialogs_alias_buddy_cb(PurpleBuddy *buddy, const char *new_alias)
 {
-	gaim_blist_alias_buddy(buddy, new_alias);
+	purple_blist_alias_buddy(buddy, new_alias);
 	serv_alias_buddy(buddy);
 }
 
 void
-pidgindialogs_alias_buddy(GaimBuddy *buddy)
+pidgindialogs_alias_buddy(PurpleBuddy *buddy)
 {
 	gchar *secondary;
 
@@ -981,7 +981,7 @@ pidgindialogs_alias_buddy(GaimBuddy *buddy)
 
 	secondary = g_strdup_printf(_("Enter an alias for %s."), buddy->name);
 
-	gaim_request_input(NULL, _("Alias Buddy"), NULL,
+	purple_request_input(NULL, _("Alias Buddy"), NULL,
 					   secondary, buddy->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgindialogs_alias_buddy_cb),
 					   _("Cancel"), NULL, buddy);
@@ -990,17 +990,17 @@ pidgindialogs_alias_buddy(GaimBuddy *buddy)
 }
 
 static void
-pidgindialogs_alias_chat_cb(GaimChat *chat, const char *new_alias)
+pidgindialogs_alias_chat_cb(PurpleChat *chat, const char *new_alias)
 {
-	gaim_blist_alias_chat(chat, new_alias);
+	purple_blist_alias_chat(chat, new_alias);
 }
 
 void
-pidgindialogs_alias_chat(GaimChat *chat)
+pidgindialogs_alias_chat(PurpleChat *chat)
 {
 	g_return_if_fail(chat != NULL);
 
-	gaim_request_input(NULL, _("Alias Chat"), NULL,
+	purple_request_input(NULL, _("Alias Chat"), NULL,
 					   _("Enter an alias for this chat."),
 					   chat->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgindialogs_alias_chat_cb),
@@ -1008,31 +1008,31 @@ pidgindialogs_alias_chat(GaimChat *chat)
 }
 
 static void
-pidgindialogs_remove_contact_cb(GaimContact *contact)
+pidgindialogs_remove_contact_cb(PurpleContact *contact)
 {
-	GaimBlistNode *bnode, *cnode;
-	GaimGroup *group;
+	PurpleBlistNode *bnode, *cnode;
+	PurpleGroup *group;
 
-	cnode = (GaimBlistNode *)contact;
-	group = (GaimGroup*)cnode->parent;
+	cnode = (PurpleBlistNode *)contact;
+	group = (PurpleGroup*)cnode->parent;
 	for (bnode = cnode->child; bnode; bnode = bnode->next) {
-		GaimBuddy *buddy = (GaimBuddy*)bnode;
-		if (gaim_account_is_connected(buddy->account))
-			gaim_account_remove_buddy(buddy->account, buddy, group);
+		PurpleBuddy *buddy = (PurpleBuddy*)bnode;
+		if (purple_account_is_connected(buddy->account))
+			purple_account_remove_buddy(buddy->account, buddy, group);
 	}
-	gaim_blist_remove_contact(contact);
+	purple_blist_remove_contact(contact);
 }
 
 void
-pidgindialogs_remove_contact(GaimContact *contact)
+pidgindialogs_remove_contact(PurpleContact *contact)
 {
-	GaimBuddy *buddy = gaim_contact_get_priority_buddy(contact);
+	PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
 
 	g_return_if_fail(contact != NULL);
 	g_return_if_fail(buddy != NULL);
 
-	if (((GaimBlistNode*)contact)->child == (GaimBlistNode*)buddy &&
-			!((GaimBlistNode*)buddy)->next) {
+	if (((PurpleBlistNode*)contact)->child == (PurpleBlistNode*)buddy &&
+			!((PurpleBlistNode*)buddy)->next) {
 		pidgindialogs_remove_buddy(buddy);
 	} else {
 		gchar *text;
@@ -1046,7 +1046,7 @@ pidgindialogs_remove_contact(GaimContact *contact)
 						"want to continue?", contact->totalsize - 1),
 					buddy->name, contact->totalsize - 1);
 
-		gaim_request_action(contact, NULL, _("Remove Contact"), text, 0, contact, 2,
+		purple_request_action(contact, NULL, _("Remove Contact"), text, 0, contact, 2,
 				_("_Remove Contact"), G_CALLBACK(pidgindialogs_remove_contact_cb),
 				_("Cancel"), NULL);
 
@@ -1063,12 +1063,12 @@ static void free_ggmo(struct _PidginGroupMergeObject *ggp)
 static void
 pidgindialogs_merge_groups_cb(struct _PidginGroupMergeObject *GGP)
 {
-	gaim_blist_rename_group(GGP->parent, GGP->new_name);
+	purple_blist_rename_group(GGP->parent, GGP->new_name);
 	free_ggmo(GGP);
 }
 
 void
-pidgindialogs_merge_groups(GaimGroup *source, const char *new_name)
+pidgindialogs_merge_groups(PurpleGroup *source, const char *new_name)
 {
 	gchar *text;
 	struct _PidginGroupMergeObject *ggp;
@@ -1084,7 +1084,7 @@ pidgindialogs_merge_groups(GaimGroup *source, const char *new_name)
 	ggp->parent = source;
 	ggp->new_name = g_strdup(new_name);
 	
-	gaim_request_action(source, NULL, _("Merge Groups"), text, 0, ggp, 2,
+	purple_request_action(source, NULL, _("Merge Groups"), text, 0, ggp, 2,
 			_("_Merge Groups"), G_CALLBACK(pidgindialogs_merge_groups_cb),
 			_("Cancel"), G_CALLBACK(free_ggmo));
 
@@ -1092,44 +1092,44 @@ pidgindialogs_merge_groups(GaimGroup *source, const char *new_name)
 }
 
 static void
-pidgindialogs_remove_group_cb(GaimGroup *group)
+pidgindialogs_remove_group_cb(PurpleGroup *group)
 {
-	GaimBlistNode *cnode, *bnode;
+	PurpleBlistNode *cnode, *bnode;
 
-	cnode = ((GaimBlistNode*)group)->child;
+	cnode = ((PurpleBlistNode*)group)->child;
 
 	while (cnode) {
-		if (GAIM_BLIST_NODE_IS_CONTACT(cnode)) {
+		if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
 			bnode = cnode->child;
 			cnode = cnode->next;
 			while (bnode) {
-				GaimBuddy *buddy;
-				if (GAIM_BLIST_NODE_IS_BUDDY(bnode)) {
-					buddy = (GaimBuddy*)bnode;
+				PurpleBuddy *buddy;
+				if (PURPLE_BLIST_NODE_IS_BUDDY(bnode)) {
+					buddy = (PurpleBuddy*)bnode;
 					bnode = bnode->next;
-					if (gaim_account_is_connected(buddy->account)) {
-						gaim_account_remove_buddy(buddy->account, buddy, group);
-						gaim_blist_remove_buddy(buddy);
+					if (purple_account_is_connected(buddy->account)) {
+						purple_account_remove_buddy(buddy->account, buddy, group);
+						purple_blist_remove_buddy(buddy);
 					}
 				} else {
 					bnode = bnode->next;
 				}
 			}
-		} else if (GAIM_BLIST_NODE_IS_CHAT(cnode)) {
-			GaimChat *chat = (GaimChat *)cnode;
+		} else if (PURPLE_BLIST_NODE_IS_CHAT(cnode)) {
+			PurpleChat *chat = (PurpleChat *)cnode;
 			cnode = cnode->next;
-			if (gaim_account_is_connected(chat->account))
-				gaim_blist_remove_chat(chat);
+			if (purple_account_is_connected(chat->account))
+				purple_blist_remove_chat(chat);
 		} else {
 			cnode = cnode->next;
 		}
 	}
 
-	gaim_blist_remove_group(group);
+	purple_blist_remove_group(group);
 }
 
 void
-pidgindialogs_remove_group(GaimGroup *group)
+pidgindialogs_remove_group(PurpleGroup *group)
 {
 	gchar *text;
 
@@ -1138,7 +1138,7 @@ pidgindialogs_remove_group(GaimGroup *group)
 	text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"),
 						   group->name);
 
-	gaim_request_action(group, NULL, _("Remove Group"), text, 0, group, 2,
+	purple_request_action(group, NULL, _("Remove Group"), text, 0, group, 2,
 						_("_Remove Group"), G_CALLBACK(pidgindialogs_remove_group_cb),
 						_("Cancel"), NULL);
 
@@ -1147,26 +1147,26 @@ pidgindialogs_remove_group(GaimGroup *group)
 
 /* XXX - Some of this should be moved into the core, methinks. */
 static void
-pidgindialogs_remove_buddy_cb(GaimBuddy *buddy)
+pidgindialogs_remove_buddy_cb(PurpleBuddy *buddy)
 {
-	GaimGroup *group;
+	PurpleGroup *group;
 	gchar *name;
-	GaimAccount *account;
+	PurpleAccount *account;
 
-	group = gaim_buddy_get_group(buddy);
+	group = purple_buddy_get_group(buddy);
 	name = g_strdup(buddy->name); /* b->name is a crasher after remove_buddy */
 	account = buddy->account;
 
-	gaim_debug_info("blist", "Removing '%s' from buddy list.\n", buddy->name);
-	/* TODO - Should remove from blist first... then call gaim_account_remove_buddy()? */
-	gaim_account_remove_buddy(buddy->account, buddy, group);
-	gaim_blist_remove_buddy(buddy);
+	purple_debug_info("blist", "Removing '%s' from buddy list.\n", buddy->name);
+	/* TODO - Should remove from blist first... then call purple_account_remove_buddy()? */
+	purple_account_remove_buddy(buddy->account, buddy, group);
+	purple_blist_remove_buddy(buddy);
 
 	g_free(name);
 }
 
 void
-pidgindialogs_remove_buddy(GaimBuddy *buddy)
+pidgindialogs_remove_buddy(PurpleBuddy *buddy)
 {
 	gchar *text;
 
@@ -1175,7 +1175,7 @@ pidgindialogs_remove_buddy(GaimBuddy *buddy)
 	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"),
 						   buddy->name);
 
-	gaim_request_action(buddy, NULL, _("Remove Buddy"), text, 0, buddy, 2,
+	purple_request_action(buddy, NULL, _("Remove Buddy"), text, 0, buddy, 2,
 						_("_Remove Buddy"), G_CALLBACK(pidgindialogs_remove_buddy_cb),
 						_("Cancel"), NULL);
 
@@ -1183,24 +1183,24 @@ pidgindialogs_remove_buddy(GaimBuddy *buddy)
 }
 
 static void
-pidgindialogs_remove_chat_cb(GaimChat *chat)
+pidgindialogs_remove_chat_cb(PurpleChat *chat)
 {
-	gaim_blist_remove_chat(chat);
+	purple_blist_remove_chat(chat);
 }
 
 void
-pidgindialogs_remove_chat(GaimChat *chat)
+pidgindialogs_remove_chat(PurpleChat *chat)
 {
 	const gchar *name;
 	gchar *text;
 
 	g_return_if_fail(chat != NULL);
 
-	name = gaim_chat_get_name(chat);
+	name = purple_chat_get_name(chat);
 	text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"),
 			name ? name : "");
 
-	gaim_request_action(chat, NULL, _("Remove Chat"), text, 0, chat, 2,
+	purple_request_action(chat, NULL, _("Remove Chat"), text, 0, chat, 2,
 						_("_Remove Chat"), G_CALLBACK(pidgindialogs_remove_chat_cb),
 						_("Cancel"), NULL);
 

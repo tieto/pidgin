@@ -1,9 +1,9 @@
 /**
  * @file session.c MSN session functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -28,7 +28,7 @@
 #include "dialog.h"
 
 MsnSession *
-msn_session_new(GaimAccount *account)
+msn_session_new(PurpleAccount *account)
 {
 	MsnSession *session;
 
@@ -41,7 +41,7 @@ msn_session_new(GaimAccount *account)
 	session->userlist = msn_userlist_new(session);
 
 	session->user = msn_user_new(session->userlist,
-								 gaim_account_get_username(account), NULL);
+								 purple_account_get_username(account), NULL);
 
 	session->protocol_ver = 9;
 	session->conv_seq = 1;
@@ -105,7 +105,7 @@ msn_session_connect(MsnSession *session, const char *host, int port,
 
 	if (session->notification == NULL)
 	{
-		gaim_debug_error("msn", "This shouldn't happen\n");
+		purple_debug_error("msn", "This shouldn't happen\n");
 		g_return_val_if_reached(FALSE);
 	}
 
@@ -155,7 +155,7 @@ msn_session_find_swboard(MsnSession *session, const char *username)
 }
 
 MsnSwitchBoard *
-msn_session_find_swboard_with_conv(MsnSession *session, GaimConversation *conv)
+msn_session_find_swboard_with_conv(MsnSession *session, PurpleConversation *conv)
 {
 	GList *l;
 
@@ -222,8 +222,8 @@ msn_session_get_swboard(MsnSession *session, const char *username,
 static void
 msn_session_sync_users(MsnSession *session)
 {
-	GaimBlistNode *gnode, *cnode, *bnode;
-	GaimConnection *gc = gaim_account_get_connection(session->account);
+	PurpleBlistNode *gnode, *cnode, *bnode;
+	PurpleConnection *gc = purple_account_get_connection(session->account);
 
 	g_return_if_fail(gc != NULL);
 
@@ -231,24 +231,24 @@ msn_session_sync_users(MsnSession *session)
 	 * being logged in. This no longer happens, so we manually iterate
 	 * over the whole buddy list to identify sync issues. */
 
-	for (gnode = gaim_blist_get_root(); gnode; gnode = gnode->next) {
-		GaimGroup *group = (GaimGroup *)gnode;
+	for (gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
+		PurpleGroup *group = (PurpleGroup *)gnode;
 		const char *group_name = group->name;
-		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
+		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
-			if(!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
 			for(bnode = cnode->child; bnode; bnode = bnode->next) {
-				GaimBuddy *b;
-				if(!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				PurpleBuddy *b;
+				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
-				b = (GaimBuddy *)bnode;
-				if(gaim_buddy_get_account(b) == gaim_connection_get_account(gc)) {
+				b = (PurpleBuddy *)bnode;
+				if(purple_buddy_get_account(b) == purple_connection_get_account(gc)) {
 					MsnUser *remote_user;
 					gboolean found = FALSE;
 
-					remote_user = msn_userlist_find_user(session->userlist, gaim_buddy_get_name(b));
+					remote_user = msn_userlist_find_user(session->userlist, purple_buddy_get_name(b));
 
 					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP))
 					{
@@ -273,7 +273,7 @@ msn_session_sync_users(MsnSession *session)
 					{
 						/* The user was not on the server list or not in that group
 						 * on the server list */
-						msn_show_sync_issue(session, gaim_buddy_get_name(b), group_name);
+						msn_show_sync_issue(session, purple_buddy_get_name(b), group_name);
 					}
 				}
 			}
@@ -285,10 +285,10 @@ void
 msn_session_set_error(MsnSession *session, MsnErrorType error,
 					  const char *info)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	char *msg;
 
-	gc = gaim_account_get_connection(session->account);
+	gc = purple_account_get_connection(session->account);
 
 	switch (error)
 	{
@@ -332,7 +332,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 
 	msn_session_disconnect(session);
 
-	gaim_connection_error(gc, msg);
+	purple_connection_error(gc, msg);
 
 	g_free(msg);
 }
@@ -358,7 +358,7 @@ get_login_step_text(MsnSession *session)
 void
 msn_session_set_login_step(MsnSession *session, MsnLoginStep step)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 
 	/* Prevent the connection progress going backwards, eg. if we get
 	 * transferred several times during login */
@@ -375,24 +375,24 @@ msn_session_set_login_step(MsnSession *session, MsnLoginStep step)
 
 	session->login_step = step;
 
-	gaim_connection_update_progress(gc, get_login_step_text(session), step,
+	purple_connection_update_progress(gc, get_login_step_text(session), step,
 									MSN_LOGIN_STEPS);
 }
 
 void
 msn_session_finish_login(MsnSession *session)
 {
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 	char *icon;
 
 	if (session->logged_in)
 		return;
 
 	account = session->account;
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
-	icon = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(session->account));
+	icon = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(session->account));
 	msn_user_set_buddy_icon(session->user, icon);
 	g_free(icon);
 
@@ -400,7 +400,7 @@ msn_session_finish_login(MsnSession *session)
 
 	msn_change_status(session);
 
-	gaim_connection_set_state(gc, GAIM_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTED);
 
 	/* Sync users */
 	msn_session_sync_users(session);

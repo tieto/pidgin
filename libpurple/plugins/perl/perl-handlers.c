@@ -15,23 +15,23 @@ static GList *timeout_handlers = NULL;
 #endif
 
 void
-gaim_perl_plugin_action_cb(GaimPluginAction *action)
+purple_perl_plugin_action_cb(PurplePluginAction *action)
 {
 	SV **callback;
 	HV *hv = NULL;
 	gchar *hvname;
-	GaimPlugin *plugin;
-	GaimPerlScript *gps;
+	PurplePlugin *plugin;
+	PurplePerlScript *gps;
 	dSP;
 
 	plugin = action->plugin;
-	gps = (GaimPerlScript *)plugin->info->extra_info;
+	gps = (PurplePerlScript *)plugin->info->extra_info;
 	hvname = g_strdup_printf("%s::plugin_actions", gps->package);
 	hv = get_hv(hvname, FALSE);
 	g_free(hvname);
 
 	if (hv == NULL)
-		croak("No plugin_actions hash found in \"%s\" plugin.", gaim_plugin_get_name(plugin));
+		croak("No plugin_actions hash found in \"%s\" plugin.", purple_plugin_get_name(plugin));
 
 	ENTER;
 	SAVETMPS;
@@ -39,10 +39,10 @@ gaim_perl_plugin_action_cb(GaimPluginAction *action)
 	callback = hv_fetch(hv, action->label, strlen(action->label), 0);
 
 	if (callback == NULL || *callback == NULL)
-		croak("No plugin_action function named \"%s\" in \"%s\" plugin.", action->label, gaim_plugin_get_name(plugin));
+		croak("No plugin_action function named \"%s\" in \"%s\" plugin.", action->label, purple_plugin_get_name(plugin));
 
 	PUSHMARK(sp);
-	XPUSHs(gaim_perl_bless_object(gps->plugin, "Gaim::Plugin"));
+	XPUSHs(purple_perl_bless_object(gps->plugin, "Purple::Plugin"));
 	PUTBACK;
 
 	call_sv(*callback, G_VOID | G_DISCARD);
@@ -54,25 +54,25 @@ gaim_perl_plugin_action_cb(GaimPluginAction *action)
 }
 
 GList *
-gaim_perl_plugin_actions(GaimPlugin *plugin, gpointer context)
+purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *l = NULL;
-	GaimPerlScript *gps;
+	PurplePerlScript *gps;
 	int i = 0, count = 0;
 	dSP;
 
-	gps = (GaimPerlScript *)plugin->info->extra_info;
+	gps = (PurplePerlScript *)plugin->info->extra_info;
 
 	ENTER;
 	SAVETMPS;
 
 	PUSHMARK(SP);
-	XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin, "Gaim::Plugin")));
+	XPUSHs(sv_2mortal(purple_perl_bless_object(plugin, "Purple::Plugin")));
 	/* XXX This *will* cease working correctly if context gets changed to
-	 * ever be able to hold anything other than a GaimConnection */
+	 * ever be able to hold anything other than a PurpleConnection */
 	if (context != NULL)
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(context,
-		                                         "Gaim::Connection")));
+		XPUSHs(sv_2mortal(purple_perl_bless_object(context,
+		                                         "Purple::Connection")));
 	else
 		XPUSHs(&PL_sv_undef);
 	PUTBACK;
@@ -87,13 +87,13 @@ gaim_perl_plugin_actions(GaimPlugin *plugin, gpointer context)
 	for (i = 0; i < count; i++) {
 		SV *sv;
 		gchar *label;
-		GaimPluginAction *act = NULL;
+		PurplePluginAction *act = NULL;
 
 		sv = POPs;
 		label = SvPV_nolen(sv);
 		/* XXX I think this leaks, but doing it without the strdup
 		 * just showed garbage */
-		act = gaim_plugin_action_new(g_strdup(label), gaim_perl_plugin_action_cb);
+		act = purple_plugin_action_new(g_strdup(label), purple_perl_plugin_action_cb);
 		l = g_list_prepend(l, act);
 	}
 
@@ -104,18 +104,18 @@ gaim_perl_plugin_actions(GaimPlugin *plugin, gpointer context)
 	return l;
 }
 
-#ifdef GAIM_GTKPERL
+#ifdef PURPLE_GTKPERL
 GtkWidget *
-gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin)
+purple_perl_gtk_get_plugin_frame(PurplePlugin *plugin)
 {
 	SV * sv;
 	int count;
 	MAGIC *mg;
 	GtkWidget *ret;
-	GaimPerlScript *gps;
+	PurplePerlScript *gps;
 	dSP;
 
-	gps = (GaimPerlScript *)plugin->info->extra_info;
+	gps = (PurplePerlScript *)plugin->info->extra_info;
 
 	ENTER;
 	SAVETMPS;
@@ -142,17 +142,17 @@ gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin)
 }
 #endif
 
-GaimPluginPrefFrame *
-gaim_perl_get_plugin_frame(GaimPlugin *plugin)
+PurplePluginPrefFrame *
+purple_perl_get_plugin_frame(PurplePlugin *plugin)
 {
 	/* Sets up the Perl Stack for our call back into the script to run the
 	 * plugin_pref... sub */
 	int count;
-	GaimPerlScript *gps;
-	GaimPluginPrefFrame *ret_frame;
+	PurplePerlScript *gps;
+	PurplePluginPrefFrame *ret_frame;
 	dSP;
 
-	gps = (GaimPerlScript *)plugin->info->extra_info;
+	gps = (PurplePerlScript *)plugin->info->extra_info;
 
 	ENTER;
 	SAVETMPS;
@@ -168,7 +168,7 @@ gaim_perl_get_plugin_frame(GaimPlugin *plugin)
 	if (count != 1)
 		croak("call_pv: Did not return the correct number of values.\n");
 	/* the frame was created in a perl sub and is returned */
-	ret_frame = (GaimPluginPrefFrame *)gaim_perl_ref_object(POPs);
+	ret_frame = (PurplePluginPrefFrame *)purple_perl_ref_object(POPs);
 
 	/* Tidy up the Perl stack */
 	PUTBACK;
@@ -179,7 +179,7 @@ gaim_perl_get_plugin_frame(GaimPlugin *plugin)
 }
 
 static void
-destroy_timeout_handler(GaimPerlTimeoutHandler *handler)
+destroy_timeout_handler(PurplePerlTimeoutHandler *handler)
 {
 	timeout_handlers = g_list_remove(timeout_handlers, handler);
 
@@ -193,7 +193,7 @@ destroy_timeout_handler(GaimPerlTimeoutHandler *handler)
 }
 
 static void
-destroy_signal_handler(GaimPerlSignalHandler *handler)
+destroy_signal_handler(PurplePerlSignalHandler *handler)
 {
 	signal_handlers = g_list_remove(signal_handlers, handler);
 
@@ -210,7 +210,7 @@ destroy_signal_handler(GaimPerlSignalHandler *handler)
 static int
 perl_timeout_cb(gpointer data)
 {
-	GaimPerlTimeoutHandler *handler = (GaimPerlTimeoutHandler *)data;
+	PurplePerlTimeoutHandler *handler = (PurplePerlTimeoutHandler *)data;
 
 	dSP;
 	ENTER;
@@ -235,12 +235,12 @@ typedef void *DATATYPE;
 static void *
 perl_signal_cb(va_list args, void *data)
 {
-	GaimPerlSignalHandler *handler = (GaimPerlSignalHandler *)data;
+	PurplePerlSignalHandler *handler = (PurplePerlSignalHandler *)data;
 	void *ret_val = NULL;
 	int i;
 	int count;
 	int value_count;
-	GaimValue *ret_value, **values;
+	PurpleValue *ret_value, **values;
 	SV **sv_args;
 	DATATYPE **copy_args;
 	STRLEN na;
@@ -250,14 +250,14 @@ perl_signal_cb(va_list args, void *data)
 	SAVETMPS;
 	PUSHMARK(sp);
 
-	gaim_signal_get_values(handler->instance, handler->signal,
+	purple_signal_get_values(handler->instance, handler->signal,
 	                       &ret_value, &value_count, &values);
 
 	sv_args   = g_new(SV *,    value_count);
 	copy_args = g_new(void **, value_count);
 
 	for (i = 0; i < value_count; i++) {
-		sv_args[i] = gaim_perl_sv_from_vargs(values[i],
+		sv_args[i] = purple_perl_sv_from_vargs(values[i],
 		                                     (va_list*)&args,
 		                                     &copy_args[i]);
 
@@ -276,7 +276,7 @@ perl_signal_cb(va_list args, void *data)
 		if (count != 1)
 			croak("Uh oh! call_sv returned %i != 1", i);
 		else
-			ret_val = gaim_perl_data_from_sv(ret_value, POPs);
+			ret_val = purple_perl_data_from_sv(ret_value, POPs);
 	} else {
 		call_sv(handler->callback, G_SCALAR);
 
@@ -284,44 +284,44 @@ perl_signal_cb(va_list args, void *data)
 	}
 
 	if (SvTRUE(ERRSV)) {
-		gaim_debug_error("perl",
+		purple_debug_error("perl",
 		                 "Perl function exited abnormally: %s\n",
 		                 SvPV(ERRSV, na));
 	}
 
 	/* See if any parameters changed. */
 	for (i = 0; i < value_count; i++) {
-		if (gaim_value_is_outgoing(values[i])) {
-			switch (gaim_value_get_type(values[i])) {
-				case GAIM_TYPE_BOOLEAN:
+		if (purple_value_is_outgoing(values[i])) {
+			switch (purple_value_get_type(values[i])) {
+				case PURPLE_TYPE_BOOLEAN:
 					*((gboolean *)copy_args[i]) = SvIV(sv_args[i]);
 					break;
 
-				case GAIM_TYPE_INT:
+				case PURPLE_TYPE_INT:
 					*((int *)copy_args[i]) = SvIV(sv_args[i]);
 					break;
 
-				case GAIM_TYPE_UINT:
+				case PURPLE_TYPE_UINT:
 					*((unsigned int *)copy_args[i]) = SvUV(sv_args[i]);
 					break;
 
-				case GAIM_TYPE_LONG:
+				case PURPLE_TYPE_LONG:
 					*((long *)copy_args[i]) = SvIV(sv_args[i]);
 					break;
 
-				case GAIM_TYPE_ULONG:
+				case PURPLE_TYPE_ULONG:
 					*((unsigned long *)copy_args[i]) = SvUV(sv_args[i]);
 					break;
 
-				case GAIM_TYPE_INT64:
+				case PURPLE_TYPE_INT64:
 					*((gint64 *)copy_args[i]) = SvIV(sv_args[i]);
 					break;
 
-				case GAIM_TYPE_UINT64:
+				case PURPLE_TYPE_UINT64:
 					*((guint64 *)copy_args[i]) = SvUV(sv_args[i]);
 					break;
 
-				case GAIM_TYPE_STRING:
+				case PURPLE_TYPE_STRING:
 					if (strcmp(*((char **)copy_args[i]), SvPVX(sv_args[i]))) {
 						g_free(*((char **)copy_args[i]));
 						*((char **)copy_args[i]) =
@@ -329,11 +329,11 @@ perl_signal_cb(va_list args, void *data)
 					}
 					break;
 
-				case GAIM_TYPE_POINTER:
+				case PURPLE_TYPE_POINTER:
 					*((void **)copy_args[i]) = (void *)SvIV(sv_args[i]);
 					break;
 
-				case GAIM_TYPE_BOXED:
+				case PURPLE_TYPE_BOXED:
 					*((void **)copy_args[i]) = (void *)SvIV(sv_args[i]);
 					break;
 
@@ -342,7 +342,7 @@ perl_signal_cb(va_list args, void *data)
 			}
 
 #if 0
-			*((void **)copy_args[i]) = gaim_perl_data_from_sv(values[i],
+			*((void **)copy_args[i]) = purple_perl_data_from_sv(values[i],
 															  sv_args[i]);
 #endif
 		}
@@ -355,19 +355,19 @@ perl_signal_cb(va_list args, void *data)
 	g_free(sv_args);
 	g_free(copy_args);
 
-	gaim_debug_misc("perl", "ret_val = %p\n", ret_val);
+	purple_debug_misc("perl", "ret_val = %p\n", ret_val);
 
 	return ret_val;
 }
 
-static GaimPerlSignalHandler *
-find_signal_handler(GaimPlugin *plugin, void *instance, const char *signal)
+static PurplePerlSignalHandler *
+find_signal_handler(PurplePlugin *plugin, void *instance, const char *signal)
 {
-	GaimPerlSignalHandler *handler;
+	PurplePerlSignalHandler *handler;
 	GList *l;
 
 	for (l = signal_handlers; l != NULL; l = l->next) {
-		handler = (GaimPerlSignalHandler *)l->data;
+		handler = (PurplePerlSignalHandler *)l->data;
 
 		if (handler->plugin == plugin &&
 			handler->instance == instance &&
@@ -380,16 +380,16 @@ find_signal_handler(GaimPlugin *plugin, void *instance, const char *signal)
 }
 
 void
-gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, SV *callback, SV *data)
+purple_perl_timeout_add(PurplePlugin *plugin, int seconds, SV *callback, SV *data)
 {
-	GaimPerlTimeoutHandler *handler;
+	PurplePerlTimeoutHandler *handler;
 
 	if (plugin == NULL) {
 		croak("Invalid handle in adding perl timeout handler.\n");
 		return;
 	}
 
-	handler = g_new0(GaimPerlTimeoutHandler, 1);
+	handler = g_new0(PurplePerlTimeoutHandler, 1);
 
 	handler->plugin   = plugin;
 	handler->callback = (callback != NULL && callback != &PL_sv_undef
@@ -403,15 +403,15 @@ gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, SV *callback, SV *data)
 }
 
 void
-gaim_perl_timeout_clear_for_plugin(GaimPlugin *plugin)
+purple_perl_timeout_clear_for_plugin(PurplePlugin *plugin)
 {
-	GaimPerlTimeoutHandler *handler;
+	PurplePerlTimeoutHandler *handler;
 	GList *l, *l_next;
 
 	for (l = timeout_handlers; l != NULL; l = l_next) {
 		l_next = l->next;
 
-		handler = (GaimPerlTimeoutHandler *)l->data;
+		handler = (PurplePerlTimeoutHandler *)l->data;
 
 		if (handler->plugin == plugin)
 			destroy_timeout_handler(handler);
@@ -419,20 +419,20 @@ gaim_perl_timeout_clear_for_plugin(GaimPlugin *plugin)
 }
 
 void
-gaim_perl_timeout_clear(void)
+purple_perl_timeout_clear(void)
 {
 	while (timeout_handlers != NULL)
 		destroy_timeout_handler(timeout_handlers->data);
 }
 
 void
-gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
+purple_perl_signal_connect(PurplePlugin *plugin, void *instance,
                          const char *signal, SV *callback, SV *data,
                          int priority)
 {
-	GaimPerlSignalHandler *handler;
+	PurplePerlSignalHandler *handler;
 
-	handler = g_new0(GaimPerlSignalHandler, 1);
+	handler = g_new0(PurplePerlSignalHandler, 1);
 	handler->plugin   = plugin;
 	handler->instance = instance;
 	handler->signal   = g_strdup(signal);
@@ -444,16 +444,16 @@ gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
 
 	signal_handlers = g_list_append(signal_handlers, handler);
 
-	gaim_signal_connect_priority_vargs(instance, signal, plugin,
-	                                   GAIM_CALLBACK(perl_signal_cb),
+	purple_signal_connect_priority_vargs(instance, signal, plugin,
+	                                   PURPLE_CALLBACK(perl_signal_cb),
 	                                   handler, priority);
 }
 
 void
-gaim_perl_signal_disconnect(GaimPlugin *plugin, void *instance,
+purple_perl_signal_disconnect(PurplePlugin *plugin, void *instance,
                             const char *signal)
 {
-	GaimPerlSignalHandler *handler;
+	PurplePerlSignalHandler *handler;
 
 	handler = find_signal_handler(plugin, instance, signal);
 
@@ -467,15 +467,15 @@ gaim_perl_signal_disconnect(GaimPlugin *plugin, void *instance,
 }
 
 void
-gaim_perl_signal_clear_for_plugin(GaimPlugin *plugin)
+purple_perl_signal_clear_for_plugin(PurplePlugin *plugin)
 {
-	GaimPerlSignalHandler *handler;
+	PurplePerlSignalHandler *handler;
 	GList *l, *l_next;
 
 	for (l = signal_handlers; l != NULL; l = l_next) {
 		l_next = l->next;
 
-		handler = (GaimPerlSignalHandler *)l->data;
+		handler = (PurplePerlSignalHandler *)l->data;
 
 		if (handler->plugin == plugin)
 			destroy_signal_handler(handler);
@@ -483,19 +483,19 @@ gaim_perl_signal_clear_for_plugin(GaimPlugin *plugin)
 }
 
 void
-gaim_perl_signal_clear(void)
+purple_perl_signal_clear(void)
 {
 	while (signal_handlers != NULL)
 		destroy_signal_handler(signal_handlers->data);
 }
 
-static GaimCmdRet
-perl_cmd_cb(GaimConversation *conv, const gchar *command,
+static PurpleCmdRet
+perl_cmd_cb(PurpleConversation *conv, const gchar *command,
             gchar **args, gchar **error, void *data)
 {
-	int i = 0, count, ret_value = GAIM_CMD_RET_OK;
+	int i = 0, count, ret_value = PURPLE_CMD_RET_OK;
 	SV *cmdSV, *tmpSV, *convSV;
-	GaimPerlCmdHandler *handler = (GaimPerlCmdHandler *)data;
+	PurplePerlCmdHandler *handler = (PurplePerlCmdHandler *)data;
 
 	dSP;
 	ENTER;
@@ -503,7 +503,7 @@ perl_cmd_cb(GaimConversation *conv, const gchar *command,
 	PUSHMARK(SP);
 
 	/* Push the conversation onto the perl stack */
-	convSV = sv_2mortal(gaim_perl_bless_object(conv, "Gaim::Conversation"));
+	convSV = sv_2mortal(purple_perl_bless_object(conv, "Purple::Conversation"));
 	XPUSHs(convSV);
 
 	/* Push the command string onto the perl stack */
@@ -541,15 +541,15 @@ perl_cmd_cb(GaimConversation *conv, const gchar *command,
 	return ret_value;
 }
 
-GaimCmdId
-gaim_perl_cmd_register(GaimPlugin *plugin, const gchar *command,
-                       const gchar *args, GaimCmdPriority priority,
-                       GaimCmdFlag flag, const gchar *prpl_id, SV *callback,
+PurpleCmdId
+purple_perl_cmd_register(PurplePlugin *plugin, const gchar *command,
+                       const gchar *args, PurpleCmdPriority priority,
+                       PurpleCmdFlag flag, const gchar *prpl_id, SV *callback,
                        const gchar *helpstr, SV *data)
 {
-	GaimPerlCmdHandler *handler;
+	PurplePerlCmdHandler *handler;
 
-	handler          = g_new0(GaimPerlCmdHandler, 1);
+	handler          = g_new0(PurplePerlCmdHandler, 1);
 	handler->plugin  = plugin;
 	handler->cmd     = g_strdup(command);
 	handler->prpl_id = g_strdup(prpl_id);
@@ -566,15 +566,15 @@ gaim_perl_cmd_register(GaimPlugin *plugin, const gchar *command,
 
 	cmd_handlers = g_list_append(cmd_handlers, handler);
 
-	handler->id = gaim_cmd_register(command, args, priority, flag, prpl_id,
-	                                GAIM_CMD_FUNC(perl_cmd_cb), helpstr,
+	handler->id = purple_cmd_register(command, args, priority, flag, prpl_id,
+	                                PURPLE_CMD_FUNC(perl_cmd_cb), helpstr,
 	                                handler);
 
 	return handler->id;
 }
 
 static void
-destroy_cmd_handler(GaimPerlCmdHandler *handler)
+destroy_cmd_handler(PurplePerlCmdHandler *handler)
 {
 	cmd_handlers = g_list_remove(cmd_handlers, handler);
 
@@ -590,12 +590,12 @@ destroy_cmd_handler(GaimPerlCmdHandler *handler)
 }
 
 void
-gaim_perl_cmd_clear_for_plugin(GaimPlugin *plugin)
+purple_perl_cmd_clear_for_plugin(PurplePlugin *plugin)
 {
 	GList *l, *l_next;
 
 	for (l = cmd_handlers; l != NULL; l = l_next) {
-		GaimPerlCmdHandler *handler = (GaimPerlCmdHandler *)l->data;
+		PurplePerlCmdHandler *handler = (PurplePerlCmdHandler *)l->data;
 
 		l_next = l->next;
 
@@ -604,13 +604,13 @@ gaim_perl_cmd_clear_for_plugin(GaimPlugin *plugin)
 	}
 }
 
-static GaimPerlCmdHandler *
-find_cmd_handler(GaimCmdId id)
+static PurplePerlCmdHandler *
+find_cmd_handler(PurpleCmdId id)
 {
 	GList *l;
 
 	for (l = cmd_handlers; l != NULL; l = l->next) {
-		GaimPerlCmdHandler *handler = (GaimPerlCmdHandler *)l->data;
+		PurplePerlCmdHandler *handler = (PurplePerlCmdHandler *)l->data;
 
 		if (handler->id == id)
 			return handler;
@@ -620,9 +620,9 @@ find_cmd_handler(GaimCmdId id)
 }
 
 void
-gaim_perl_cmd_unregister(GaimCmdId id)
+purple_perl_cmd_unregister(PurpleCmdId id)
 {
-	GaimPerlCmdHandler *handler;
+	PurplePerlCmdHandler *handler;
 
 	handler = find_cmd_handler(id);
 
@@ -631,6 +631,6 @@ gaim_perl_cmd_unregister(GaimCmdId id)
 		return;
 	}
 
-	gaim_cmd_unregister(id);
+	purple_cmd_unregister(id);
 	destroy_cmd_handler(handler);
 }

@@ -2,9 +2,9 @@
  * @file roomlist.c Room List API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -32,26 +32,26 @@
 #include "server.h"
 
 
-static GaimRoomlistUiOps *ops = NULL;
+static PurpleRoomlistUiOps *ops = NULL;
 
 /**************************************************************************/
 /** @name Room List API                                                   */
 /**************************************************************************/
 /*@{*/
 
-void gaim_roomlist_show_with_account(GaimAccount *account)
+void purple_roomlist_show_with_account(PurpleAccount *account)
 {
 	if (ops && ops->show_with_account)
 		ops->show_with_account(account);
 }
 
-GaimRoomlist *gaim_roomlist_new(GaimAccount *account)
+PurpleRoomlist *purple_roomlist_new(PurpleAccount *account)
 {
-	GaimRoomlist *list;
+	PurpleRoomlist *list;
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	list = g_new0(GaimRoomlist, 1);
+	list = g_new0(PurpleRoomlist, 1);
 	list->account = account;
 	list->rooms = NULL;
 	list->fields = NULL;
@@ -63,21 +63,21 @@ GaimRoomlist *gaim_roomlist_new(GaimAccount *account)
 	return list;
 }
 
-void gaim_roomlist_ref(GaimRoomlist *list)
+void purple_roomlist_ref(PurpleRoomlist *list)
 {
 	g_return_if_fail(list != NULL);
 
 	list->ref++;
-	gaim_debug_misc("roomlist", "reffing list, ref count now %d\n", list->ref);
+	purple_debug_misc("roomlist", "reffing list, ref count now %d\n", list->ref);
 }
 
-static void gaim_roomlist_room_destroy(GaimRoomlist *list, GaimRoomlistRoom *r)
+static void purple_roomlist_room_destroy(PurpleRoomlist *list, PurpleRoomlistRoom *r)
 {
 	GList *l, *j;
 
 	for (l = list->fields, j = r->fields; l && j; l = l->next, j = j->next) {
-		GaimRoomlistField *f = l->data;
-		if (f->type == GAIM_ROOMLIST_FIELD_STRING)
+		PurpleRoomlistField *f = l->data;
+		if (f->type == PURPLE_ROOMLIST_FIELD_STRING)
 			g_free(j->data);
 	}
 
@@ -86,47 +86,47 @@ static void gaim_roomlist_room_destroy(GaimRoomlist *list, GaimRoomlistRoom *r)
 	g_free(r);
 }
 
-static void gaim_roomlist_field_destroy(GaimRoomlistField *f)
+static void purple_roomlist_field_destroy(PurpleRoomlistField *f)
 {
 	g_free(f->label);
 	g_free(f->name);
 	g_free(f);
 }
 
-static void gaim_roomlist_destroy(GaimRoomlist *list)
+static void purple_roomlist_destroy(PurpleRoomlist *list)
 {
 	GList *l;
 
-	gaim_debug_misc("roomlist", "destroying list %p\n", list);
+	purple_debug_misc("roomlist", "destroying list %p\n", list);
 
 	if (ops && ops->destroy)
 		ops->destroy(list);
 
 	for (l = list->rooms; l; l = l->next) {
-		GaimRoomlistRoom *r = l->data;
-		gaim_roomlist_room_destroy(list, r);
+		PurpleRoomlistRoom *r = l->data;
+		purple_roomlist_room_destroy(list, r);
 	}
 	g_list_free(list->rooms);
 
-	g_list_foreach(list->fields, (GFunc)gaim_roomlist_field_destroy, NULL);
+	g_list_foreach(list->fields, (GFunc)purple_roomlist_field_destroy, NULL);
 	g_list_free(list->fields);
 
 	g_free(list);
 }
 
-void gaim_roomlist_unref(GaimRoomlist *list)
+void purple_roomlist_unref(PurpleRoomlist *list)
 {
 	g_return_if_fail(list != NULL);
 	g_return_if_fail(list->ref > 0);
 
 	list->ref--;
 
-	gaim_debug_misc("roomlist", "unreffing list, ref count now %d\n", list->ref);
+	purple_debug_misc("roomlist", "unreffing list, ref count now %d\n", list->ref);
 	if (list->ref == 0)
-		gaim_roomlist_destroy(list);
+		purple_roomlist_destroy(list);
 }
 
-void gaim_roomlist_set_fields(GaimRoomlist *list, GList *fields)
+void purple_roomlist_set_fields(PurpleRoomlist *list, GList *fields)
 {
 	g_return_if_fail(list != NULL);
 
@@ -136,7 +136,7 @@ void gaim_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 		ops->set_fields(list, fields);
 }
 
-void gaim_roomlist_set_in_progress(GaimRoomlist *list, gboolean in_progress)
+void purple_roomlist_set_in_progress(PurpleRoomlist *list, gboolean in_progress)
 {
 	g_return_if_fail(list != NULL);
 
@@ -146,14 +146,14 @@ void gaim_roomlist_set_in_progress(GaimRoomlist *list, gboolean in_progress)
 		ops->in_progress(list, in_progress);
 }
 
-gboolean gaim_roomlist_get_in_progress(GaimRoomlist *list)
+gboolean purple_roomlist_get_in_progress(PurpleRoomlist *list)
 {
 	g_return_val_if_fail(list != NULL, FALSE);
 
 	return list->in_progress;
 }
 
-void gaim_roomlist_room_add(GaimRoomlist *list, GaimRoomlistRoom *room)
+void purple_roomlist_room_add(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 {
 	g_return_if_fail(list != NULL);
 	g_return_if_fail(room != NULL);
@@ -164,52 +164,52 @@ void gaim_roomlist_room_add(GaimRoomlist *list, GaimRoomlistRoom *room)
 		ops->add_room(list, room);
 }
 
-GaimRoomlist *gaim_roomlist_get_list(GaimConnection *gc)
+PurpleRoomlist *purple_roomlist_get_list(PurpleConnection *gc)
 {
-	GaimPluginProtocolInfo *prpl_info = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	g_return_val_if_fail(gc != NULL, NULL);
 
 	if (gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info && prpl_info->roomlist_get_list)
 		return prpl_info->roomlist_get_list(gc);
 	return NULL;
 }
 
-void gaim_roomlist_cancel_get_list(GaimRoomlist *list)
+void purple_roomlist_cancel_get_list(PurpleRoomlist *list)
 {
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimConnection *gc;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *gc;
 
 	g_return_if_fail(list != NULL);
 
-	gc = gaim_account_get_connection(list->account);
+	gc = purple_account_get_connection(list->account);
 
 	g_return_if_fail(gc != NULL);
 
 	if (gc != NULL && gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info && prpl_info->roomlist_cancel)
 		prpl_info->roomlist_cancel(list);
 }
 
-void gaim_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *category)
+void purple_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *category)
 {
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimConnection *gc;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *gc;
 
 	g_return_if_fail(list != NULL);
 	g_return_if_fail(category != NULL);
-	g_return_if_fail(category->type & GAIM_ROOMLIST_ROOMTYPE_CATEGORY);
+	g_return_if_fail(category->type & PURPLE_ROOMLIST_ROOMTYPE_CATEGORY);
 
-	gc = gaim_account_get_connection(list->account);
+	gc = purple_account_get_connection(list->account);
 	g_return_if_fail(gc != NULL);
 
 	if (gc->prpl != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if (prpl_info && prpl_info->roomlist_expand_category)
 		prpl_info->roomlist_expand_category(list, category);
@@ -222,14 +222,14 @@ void gaim_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *categor
 /**************************************************************************/
 /*@{*/
 
-GaimRoomlistRoom *gaim_roomlist_room_new(GaimRoomlistRoomType type, const gchar *name,
-                                         GaimRoomlistRoom *parent)
+PurpleRoomlistRoom *purple_roomlist_room_new(PurpleRoomlistRoomType type, const gchar *name,
+                                         PurpleRoomlistRoom *parent)
 {
-	GaimRoomlistRoom *room;
+	PurpleRoomlistRoom *room;
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	room = g_new0(GaimRoomlistRoom, 1);
+	room = g_new0(PurpleRoomlistRoom, 1);
 	room->type = type;
 	room->name = g_strdup(name);
 	room->parent = parent;
@@ -237,9 +237,9 @@ GaimRoomlistRoom *gaim_roomlist_room_new(GaimRoomlistRoomType type, const gchar 
 	return room;
 }
 
-void gaim_roomlist_room_add_field(GaimRoomlist *list, GaimRoomlistRoom *room, gconstpointer field)
+void purple_roomlist_room_add_field(PurpleRoomlist *list, PurpleRoomlistRoom *room, gconstpointer field)
 {
-	GaimRoomlistField *f;
+	PurpleRoomlistField *f;
 
 	g_return_if_fail(list != NULL);
 	g_return_if_fail(room != NULL);
@@ -253,26 +253,26 @@ void gaim_roomlist_room_add_field(GaimRoomlist *list, GaimRoomlistRoom *room, gc
 	g_return_if_fail(f != NULL);
 
 	switch(f->type) {
-		case GAIM_ROOMLIST_FIELD_STRING:
+		case PURPLE_ROOMLIST_FIELD_STRING:
 			room->fields = g_list_append(room->fields, g_strdup(field));
 			break;
-		case GAIM_ROOMLIST_FIELD_BOOL:
-		case GAIM_ROOMLIST_FIELD_INT:
+		case PURPLE_ROOMLIST_FIELD_BOOL:
+		case PURPLE_ROOMLIST_FIELD_INT:
 			room->fields = g_list_append(room->fields, GINT_TO_POINTER(field));
 			break;
 	}
 }
 
-void gaim_roomlist_room_join(GaimRoomlist *list, GaimRoomlistRoom *room)
+void purple_roomlist_room_join(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 {
 	GHashTable *components;
 	GList *l, *j;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 
 	g_return_if_fail(list != NULL);
 	g_return_if_fail(room != NULL);
 
-	gc = gaim_account_get_connection(list->account);
+	gc = purple_account_get_connection(list->account);
 	if (!gc)
 		return;
 
@@ -280,7 +280,7 @@ void gaim_roomlist_room_join(GaimRoomlist *list, GaimRoomlistRoom *room)
 
 	g_hash_table_replace(components, "name", room->name);
 	for (l = list->fields, j = room->fields; l && j; l = l->next, j = j->next) {
-		GaimRoomlistField *f = l->data;
+		PurpleRoomlistField *f = l->data;
 
 		g_hash_table_replace(components, f->name, j->data);
 	}
@@ -297,16 +297,16 @@ void gaim_roomlist_room_join(GaimRoomlist *list, GaimRoomlistRoom *room)
 /**************************************************************************/
 /*@{*/
 
-GaimRoomlistField *gaim_roomlist_field_new(GaimRoomlistFieldType type,
+PurpleRoomlistField *purple_roomlist_field_new(PurpleRoomlistFieldType type,
                                            const gchar *label, const gchar *name,
                                            gboolean hidden)
 {
-	GaimRoomlistField *f;
+	PurpleRoomlistField *f;
 
 	g_return_val_if_fail(label != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	f = g_new0(GaimRoomlistField, 1);
+	f = g_new0(PurpleRoomlistField, 1);
 
 	f->type = type;
 	f->label = g_strdup(label);
@@ -324,12 +324,12 @@ GaimRoomlistField *gaim_roomlist_field_new(GaimRoomlistFieldType type,
 /*@{*/
 
 
-void gaim_roomlist_set_ui_ops(GaimRoomlistUiOps *ui_ops)
+void purple_roomlist_set_ui_ops(PurpleRoomlistUiOps *ui_ops)
 {
 	ops = ui_ops;
 }
 
-GaimRoomlistUiOps *gaim_roomlist_get_ui_ops(void)
+PurpleRoomlistUiOps *purple_roomlist_get_ui_ops(void)
 {
 	return ops;
 }

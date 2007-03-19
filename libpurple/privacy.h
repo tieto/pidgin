@@ -2,9 +2,9 @@
  * @file privacy.h Privacy API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,22 +22,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_PRIVACY_H_
-#define _GAIM_PRIVACY_H_
+#ifndef _PURPLE_PRIVACY_H_
+#define _PURPLE_PRIVACY_H_
 
 #include "account.h"
 
 /**
  * Privacy data types.
  */
-typedef enum _GaimPrivacyType
+typedef enum _PurplePrivacyType
 {
-	GAIM_PRIVACY_ALLOW_ALL = 1,
-	GAIM_PRIVACY_DENY_ALL,
-	GAIM_PRIVACY_ALLOW_USERS,
-	GAIM_PRIVACY_DENY_USERS,
-	GAIM_PRIVACY_ALLOW_BUDDYLIST
-} GaimPrivacyType;
+	PURPLE_PRIVACY_ALLOW_ALL = 1,
+	PURPLE_PRIVACY_DENY_ALL,
+	PURPLE_PRIVACY_ALLOW_USERS,
+	PURPLE_PRIVACY_DENY_USERS,
+	PURPLE_PRIVACY_ALLOW_BUDDYLIST
+} PurplePrivacyType;
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,12 +48,12 @@ extern "C" {
  */
 typedef struct
 {
-	void (*permit_added)(GaimAccount *account, const char *name);
-	void (*permit_removed)(GaimAccount *account, const char *name);
-	void (*deny_added)(GaimAccount *account, const char *name);
-	void (*deny_removed)(GaimAccount *account, const char *name);
+	void (*permit_added)(PurpleAccount *account, const char *name);
+	void (*permit_removed)(PurpleAccount *account, const char *name);
+	void (*deny_added)(PurpleAccount *account, const char *name);
+	void (*deny_removed)(PurpleAccount *account, const char *name);
 
-} GaimPrivacyUiOps;
+} PurplePrivacyUiOps;
 
 /**
  * Adds a user to the account's permit list.
@@ -65,7 +65,7 @@ typedef struct
  *
  * @return TRUE if the user was added successfully, or @c FALSE otherwise.
  */
-gboolean gaim_privacy_permit_add(GaimAccount *account, const char *name,
+gboolean purple_privacy_permit_add(PurpleAccount *account, const char *name,
 								 gboolean local_only);
 
 /**
@@ -78,7 +78,7 @@ gboolean gaim_privacy_permit_add(GaimAccount *account, const char *name,
  *
  * @return TRUE if the user was removed successfully, or @c FALSE otherwise.
  */
-gboolean gaim_privacy_permit_remove(GaimAccount *account, const char *name,
+gboolean purple_privacy_permit_remove(PurpleAccount *account, const char *name,
 									gboolean local_only);
 
 /**
@@ -91,7 +91,7 @@ gboolean gaim_privacy_permit_remove(GaimAccount *account, const char *name,
  *
  * @return TRUE if the user was added successfully, or @c FALSE otherwise.
  */
-gboolean gaim_privacy_deny_add(GaimAccount *account, const char *name,
+gboolean purple_privacy_deny_add(PurpleAccount *account, const char *name,
 							   gboolean local_only);
 
 /**
@@ -104,20 +104,20 @@ gboolean gaim_privacy_deny_add(GaimAccount *account, const char *name,
  *
  * @return TRUE if the user was removed successfully, or @c FALSE otherwise.
  */
-gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *name,
+gboolean purple_privacy_deny_remove(PurpleAccount *account, const char *name,
 								  gboolean local_only);
 
 /**
  * Allow a user to send messages. If current privacy setting for the account is:
- *		GAIM_PRIVACY_ALLOW_USERS:	The user is added to the allow-list.
- *		GAIM_PRIVACY_DENY_USERS	:	The user is removed from the deny-list.
- *		GAIM_PRIVACY_ALLOW_ALL	:	No changes made.
- *		GAIM_PRIVACY_DENY_ALL	:	The privacy setting is changed to
- *									GAIM_PRIVACY_ALLOW_USERS and the user
+ *		PURPLE_PRIVACY_ALLOW_USERS:	The user is added to the allow-list.
+ *		PURPLE_PRIVACY_DENY_USERS	:	The user is removed from the deny-list.
+ *		PURPLE_PRIVACY_ALLOW_ALL	:	No changes made.
+ *		PURPLE_PRIVACY_DENY_ALL	:	The privacy setting is changed to
+ *									PURPLE_PRIVACY_ALLOW_USERS and the user
  *									is added to the allow-list.
- *		GAIM_PRIVACY_ALLOW_BUDDYLIST: No changes made if the user is already in
+ *		PURPLE_PRIVACY_ALLOW_BUDDYLIST: No changes made if the user is already in
  *									the buddy-list. Otherwise the setting is
- *									changed to GAIM_PRIVACY_ALLOW_USERS, all the
+ *									changed to PURPLE_PRIVACY_ALLOW_USERS, all the
  *									buddies are added to the allow-list, and the
  *									user is also added to the allow-list.
  * 
@@ -127,20 +127,20 @@ gboolean gaim_privacy_deny_remove(GaimAccount *account, const char *name,
  * @param restore	Should the previous allow/deny list be restored if the
  *					privacy setting is changed.
  */
-void gaim_privacy_allow(GaimAccount *account, const char *who, gboolean local,
+void purple_privacy_allow(PurpleAccount *account, const char *who, gboolean local,
 						gboolean restore);
 
 /**
  * Block messages from a user. If current privacy setting for the account is:
- *		GAIM_PRIVACY_ALLOW_USERS:	The user is removed from the allow-list.
- *		GAIM_PRIVACY_DENY_USERS	:	The user is added to the deny-list.
- *		GAIM_PRIVACY_DENY_ALL	:	No changes made.
- *		GAIM_PRIVACY_ALLOW_ALL	:	The privacy setting is changed to
- *									GAIM_PRIVACY_DENY_USERS and the user is
+ *		PURPLE_PRIVACY_ALLOW_USERS:	The user is removed from the allow-list.
+ *		PURPLE_PRIVACY_DENY_USERS	:	The user is added to the deny-list.
+ *		PURPLE_PRIVACY_DENY_ALL	:	No changes made.
+ *		PURPLE_PRIVACY_ALLOW_ALL	:	The privacy setting is changed to
+ *									PURPLE_PRIVACY_DENY_USERS and the user is
  *									added to the deny-list.
- *		GAIM_PRIVACY_ALLOW_BUDDYLIST: If the user is not in the buddy-list,
+ *		PURPLE_PRIVACY_ALLOW_BUDDYLIST: If the user is not in the buddy-list,
  *									then no changes made. Otherwise, the setting
- *									is changed to GAIM_PRIVACY_ALLOW_USERS, all
+ *									is changed to PURPLE_PRIVACY_ALLOW_USERS, all
  *									the buddies are added to the allow-list, and
  *									this user is removed from the list.
  *
@@ -150,7 +150,7 @@ void gaim_privacy_allow(GaimAccount *account, const char *who, gboolean local,
  * @param restore	Should the previous allow/deny list be restored if the
  *					privacy setting is changed.
  */
-void gaim_privacy_deny(GaimAccount *account, const char *who, gboolean local,
+void purple_privacy_deny(PurpleAccount *account, const char *who, gboolean local,
 						gboolean restore);
 
 /**
@@ -161,29 +161,29 @@ void gaim_privacy_deny(GaimAccount *account, const char *who, gboolean local,
  *
  * @return @c FALSE if the specified account's privacy settings block the user or @c TRUE otherwise. The meaning of "block" is protocol-dependent and generally relates to status and/or sending of messages.
  */
-gboolean gaim_privacy_check(GaimAccount *account, const char *who);
+gboolean purple_privacy_check(PurpleAccount *account, const char *who);
 
 /**
  * Sets the UI operations structure for the privacy subsystem.
  *
  * @param ops The UI operations structure.
  */
-void gaim_privacy_set_ui_ops(GaimPrivacyUiOps *ops);
+void purple_privacy_set_ui_ops(PurplePrivacyUiOps *ops);
 
 /**
  * Returns the UI operations structure for the privacy subsystem.
  *
  * @return The UI operations structure.
  */
-GaimPrivacyUiOps *gaim_privacy_get_ui_ops(void);
+PurplePrivacyUiOps *purple_privacy_get_ui_ops(void);
 
 /**
  * Initializes the privacy subsystem.
  */
-void gaim_privacy_init(void);
+void purple_privacy_init(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _GAIM_PRIVACY_H_ */
+#endif /* _PURPLE_PRIVACY_H_ */

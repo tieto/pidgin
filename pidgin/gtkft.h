@@ -2,7 +2,7 @@
  * @file gtkft.h GTK+ File Transfer UI
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -75,7 +75,7 @@ void pidginxfer_dialog_hide(PidginXferDialog *dialog);
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer.
  */
-void pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, GaimXfer *xfer);
+void pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer);
 
 /**
  * Removes a file transfer from the dialog.
@@ -84,7 +84,7 @@ void pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, GaimXfer *xfer);
  * @param xfer   The file transfer.
  */
 void pidginxfer_dialog_remove_xfer(PidginXferDialog *dialog,
-									 GaimXfer *xfer);
+									 PurpleXfer *xfer);
 
 /**
  * Indicate in a file transfer dialog that a transfer was canceled.
@@ -93,7 +93,7 @@ void pidginxfer_dialog_remove_xfer(PidginXferDialog *dialog,
  * @param xfer   The file transfer that was canceled.
  */
 void pidginxfer_dialog_cancel_xfer(PidginXferDialog *dialog,
-									 GaimXfer *xfer);
+									 PurpleXfer *xfer);
 
 /**
  * Updates the information for a transfer in the dialog.
@@ -102,7 +102,7 @@ void pidginxfer_dialog_cancel_xfer(PidginXferDialog *dialog,
  * @param xfer   The file transfer.
  */
 void pidginxfer_dialog_update_xfer(PidginXferDialog *dialog,
-									 GaimXfer *xfer);
+									 PurpleXfer *xfer);
 
 /*@}*/
 
@@ -140,7 +140,7 @@ PidginXferDialog *pidgin_get_xfer_dialog(void);
  *
  * @return The GTK+ file transfer UI operations structure.
  */
-GaimXferUiOps *pidgin_xfers_get_ui_ops(void);
+PurpleXferUiOps *pidgin_xfers_get_ui_ops(void);
 
 /*@}*/
 

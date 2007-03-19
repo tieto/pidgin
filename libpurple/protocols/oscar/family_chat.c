@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -80,7 +80,7 @@ aim_chat_getconn(OscarData *od, const char *name)
 		if (conn->type != SNAC_FAMILY_CHAT)
 			continue;
 		if (!conn->internal) {
-			gaim_debug_misc("oscar", "faim: chat: chat connection with no name! (fd = %d)\n", conn->fd);
+			purple_debug_misc("oscar", "faim: chat: chat connection with no name! (fd = %d)\n", conn->fd);
 			continue;
 		}
 
@@ -172,7 +172,7 @@ infoupdate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	detaillevel = byte_stream_get8(bs);
 
 	if (detaillevel != 0x02) {
-		gaim_debug_misc("oscar", "faim: chat_roomupdateinfo: detail level %d not supported\n", detaillevel);
+		purple_debug_misc("oscar", "faim: chat_roomupdateinfo: detail level %d not supported\n", detaillevel);
 		return 1;
 	}
 
@@ -501,7 +501,7 @@ incomingim_ch3(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	channel = byte_stream_get16(bs);
 
 	if (channel != 0x0003) {
-		gaim_debug_misc("oscar", "faim: chat_incoming: unknown channel! (0x%04x)\n", channel);
+		purple_debug_misc("oscar", "faim: chat_incoming: unknown channel! (0x%04x)\n", channel);
 		return 0;
 	}
 

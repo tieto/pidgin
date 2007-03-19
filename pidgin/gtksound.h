@@ -2,7 +2,7 @@
  * @file gtksound.h GTK+ Sound API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -38,7 +38,7 @@
  * @param event The event.
  * @return The option.
  */
-const char *pidgin_sound_get_event_option(GaimSoundEventID event);
+const char *pidgin_sound_get_event_option(PurpleSoundEventID event);
 
 /**
  * Get the label for an event.
@@ -46,14 +46,14 @@ const char *pidgin_sound_get_event_option(GaimSoundEventID event);
  * @param event The event.
  * @return The label.
  */
-const char *pidgin_sound_get_event_label(GaimSoundEventID event);
+const char *pidgin_sound_get_event_label(PurpleSoundEventID event);
 
 /**
  * Gets GTK+ sound UI ops.
  *
  * @return The UI operations structure.
  */
-GaimSoundUiOps *pidgin_sound_get_ui_ops(void);
+PurpleSoundUiOps *pidgin_sound_get_ui_ops(void);
 
 /**
  * Get the handle for the GTK+ sound system.

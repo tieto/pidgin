@@ -27,13 +27,13 @@ static struct crazychat cc_info;
 /* --- begin function declarations --- */
 
 /**
- * Called by gaim plugin to start CrazyChat
+ * Called by purple plugin to start CrazyChat
  * @param cc	the crazychat struct
  */
 static void cc_init(struct crazychat *cc);
 
 /**
- * Called by gaim plugin to destroy CrazyChat
+ * Called by purple plugin to destroy CrazyChat
  * @param cc	the crazychat struct
  */
 static void cc_destroy(struct crazychat *cc);
@@ -44,14 +44,14 @@ static void cc_destroy(struct crazychat *cc);
  * @param menu	the buddy menu widget
  * @param b	the buddy whose menu this is
  */
-static gboolean cc_buddy_menu(GtkWidget *menu, GaimBuddy *b);
+static gboolean cc_buddy_menu(GtkWidget *menu, PurpleBuddy *b);
 
 /**
  * Buddy menu callback.  Initiates the CrazyChat session.
  * @param item	the gtk buddy menu item
  * @param b	the buddy whose menu the item was in
  */
-static void cc_menu_cb(GtkMenuItem *item, GaimBuddy *b);
+static void cc_menu_cb(GtkMenuItem *item, PurpleBuddy *b);
 
 /**
  * IM callback.  Handles receiving a CrazyChat session request.
@@ -61,7 +61,7 @@ static void cc_menu_cb(GtkMenuItem *item, GaimBuddy *b);
  * @param flags		IM flags
  * @param data		user data
  */
-static gboolean receive_im_cb(GaimAccount *account, char **sender,
+static gboolean receive_im_cb(PurpleAccount *account, char **sender,
 		char **message,	int *flags, void *data);
 
 /**
@@ -71,15 +71,15 @@ static gboolean receive_im_cb(GaimAccount *account, char **sender,
  * @param message	the message we are displaying
  * @param data		user data
  */
-static gboolean display_im_cb(GaimAccount *account, const char *who, char **message,
-			GaimConnection *conv, GaimMessageFlags flags, void *data);
+static gboolean display_im_cb(PurpleAccount *account, const char *who, char **message,
+			PurpleConnection *conv, PurpleMessageFlags flags, void *data);
 
 /**
  * Callback for CrazyChat plugin configuration frame
  * @param plugin	the plugin data
  * @return	the configuration frame
  */
-static GtkWidget *get_config_frame(GaimPlugin *plugin);
+static GtkWidget *get_config_frame(PurplePlugin *plugin);
 
 /**
  * TCP port callback.  Changes the port used to listen for new CC sessions
@@ -105,10 +105,10 @@ static void features_enable_cb(struct crazychat *cc);
 /**
  * User signed on callback.  Now we have a buddy list to connect a signal
  * handler to.
- * @param gc		the gaim connection we are signed on
+ * @param gc		the purple connection we are signed on
  * @param plugin	our plugin struct
  */
-static gboolean cc_signed_on(GaimConnection *gc, void *plugin);
+static gboolean cc_signed_on(PurpleConnection *gc, void *plugin);
 
 /**
  * Plugin loading callback.  If a buddy list exists, connect our buddy menu
@@ -116,13 +116,13 @@ static gboolean cc_signed_on(GaimConnection *gc, void *plugin);
  * signal handler so we know when we get a buddy list.
  * @param plugin	our plugin struct
  */
-static gboolean plugin_load(GaimPlugin *plugin);
+static gboolean plugin_load(PurplePlugin *plugin);
 
 /**
  * Plugin unloading callback.  Disconnect all handlers and free data.
  * @param plugin	our plugin struct
  */
-static gboolean plugin_unload(GaimPlugin *plugin);
+static gboolean plugin_unload(PurplePlugin *plugin);
 
 
 /* --- end function declarations --- */
@@ -134,13 +134,13 @@ static PidginPluginUiInfo ui_info = {
 	get_config_frame				/**< get_config_frame */
 };
 
-static GaimPluginInfo info = {
+static PurplePluginInfo info = {
 	2,						  /**< api_version    */
-	GAIM_PLUGIN_STANDARD,				  /**< type           */
+	PURPLE_PLUGIN_STANDARD,				  /**< type           */
 	PIDGIN_PLUGIN_TYPE,				  /**< ui_requirement */
 	0,						  /**< flags          */
 	NULL,						  /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,				  /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,				  /**< priority       */
 
 	CRAZYCHAT_PLUGIN_ID,				  /**< id             */
 	N_("Crazychat"),				  /**< name           */
@@ -148,13 +148,13 @@ static GaimPluginInfo info = {
 							  /**  summary        */
 	N_("Plugin to establish a Crazychat session."),
 							  /**  description    */
-	N_("Uses Gaim to obtain buddy ips to connect for a Crazychat session"),
+	N_("Uses Purple to obtain buddy ips to connect for a Crazychat session"),
 	"\n"
 	"William Chan <chanman@stanford.edu>\n"
 	"Ian Spiro <ispiro@stanford.edu>\n"
 	"Charlie Stockman<stockman@stanford.edu>\n"
 	"Steve Yelderman<scy@stanford.edu>",		  /**< author         */
-	GAIM_WEBSITE,					  /**< homepage       */
+	PURPLE_WEBSITE,					  /**< homepage       */
 
 	plugin_load,					  /**< load           */
 	plugin_unload,					  /**< unload         */
@@ -195,7 +195,7 @@ static void cc_destroy(struct crazychat *cc)
 	memset(cc, 0, sizeof(*cc));
 }
 
-static gboolean cc_buddy_menu(GtkWidget *menu, GaimBuddy *b)
+static gboolean cc_buddy_menu(GtkWidget *menu, PurpleBuddy *b)
 {
 	GtkWidget *menuitem;
 
@@ -206,7 +206,7 @@ static gboolean cc_buddy_menu(GtkWidget *menu, GaimBuddy *b)
 	return FALSE;
 }
 
-static void cc_menu_cb(GtkMenuItem *item, GaimBuddy *b)
+static void cc_menu_cb(GtkMenuItem *item, PurpleBuddy *b)
 {
 	assert(item);
 	assert(b);
@@ -215,7 +215,7 @@ static void cc_menu_cb(GtkMenuItem *item, GaimBuddy *b)
 	cc_net_send_invite(&cc_info, b->name, b->account);
 }
 
-static gboolean receive_im_cb(GaimAccount *account, char **sender,
+static gboolean receive_im_cb(PurpleAccount *account, char **sender,
 		char **message,	int *flags, void *data)
 {
 	struct crazychat *cc;
@@ -247,7 +247,7 @@ static gboolean receive_im_cb(GaimAccount *account, char **sender,
 	return FALSE;
 }
 
-static gboolean display_im_cb(GaimAccount *account, GaimConversation *conv,
+static gboolean display_im_cb(PurpleAccount *account, PurpleConversation *conv,
 		char **message, void *data)
 {
 	struct crazychat *cc;
@@ -268,7 +268,7 @@ static gboolean display_im_cb(GaimAccount *account, GaimConversation *conv,
 	return FALSE;
 }
 
-static GtkWidget *get_config_frame(GaimPlugin *plugin)
+static GtkWidget *get_config_frame(PurplePlugin *plugin)
 {
 	GtkWidget *ret;
 	GtkWidget *frame;
@@ -402,52 +402,52 @@ static void features_enable_cb(struct crazychat *cc)
 	}
 }
 
-static gboolean cc_signed_on(GaimConnection *gc, void *plugin)
+static gboolean cc_signed_on(PurpleConnection *gc, void *plugin)
 {
 	struct crazychat *extra;
 	void *conv_handle;
 
 	assert(plugin);
-	extra = (struct crazychat*)((GaimPlugin*)plugin)->info->extra_info;
-	gaim_signal_disconnect
-	    (gaim_connections_get_handle(), "signed-on",
-	     plugin, GAIM_CALLBACK(cc_signed_on));
-	gaim_signal_connect(PIDGIN_BLIST
-			    (gaim_get_blist()),
+	extra = (struct crazychat*)((PurplePlugin*)plugin)->info->extra_info;
+	purple_signal_disconnect
+	    (purple_connections_get_handle(), "signed-on",
+	     plugin, PURPLE_CALLBACK(cc_signed_on));
+	purple_signal_connect(PIDGIN_BLIST
+			    (purple_get_blist()),
 			    "drawing-menu", plugin,
-			    GAIM_CALLBACK(cc_buddy_menu), NULL);
-	conv_handle = gaim_conversations_get_handle();
-	gaim_signal_connect(conv_handle, "received-im-msg", plugin,
-		GAIM_CALLBACK(receive_im_cb), extra);
-	gaim_signal_connect(conv_handle, "displaying-im-msg", plugin,
-		GAIM_CALLBACK(display_im_cb), extra);
+			    PURPLE_CALLBACK(cc_buddy_menu), NULL);
+	conv_handle = purple_conversations_get_handle();
+	purple_signal_connect(conv_handle, "received-im-msg", plugin,
+		PURPLE_CALLBACK(receive_im_cb), extra);
+	purple_signal_connect(conv_handle, "displaying-im-msg", plugin,
+		PURPLE_CALLBACK(display_im_cb), extra);
 	return FALSE;
 }
 
-static gboolean plugin_load(GaimPlugin *plugin)
+static gboolean plugin_load(PurplePlugin *plugin)
 {
-	GaimBuddyList *buddy_list;
+	PurpleBuddyList *buddy_list;
 	void *conv_handle;
 
 	if (cc_init_gtk_gl())
 		return FALSE;
 
 	cc_init(&cc_info);
-	buddy_list = gaim_get_blist();
+	buddy_list = purple_get_blist();
 	if (buddy_list) {
-		gaim_signal_connect(PIDGIN_BLIST
+		purple_signal_connect(PIDGIN_BLIST
 				    (buddy_list),
 				    "drawing-menu", plugin,
-				    GAIM_CALLBACK(cc_buddy_menu), NULL);
-		conv_handle = gaim_conversations_get_handle();
-		gaim_signal_connect(conv_handle, "received-im-msg", plugin,
-			GAIM_CALLBACK(receive_im_cb), &cc_info);
-		gaim_signal_connect(conv_handle, "displaying-im-msg", plugin,
-			GAIM_CALLBACK(display_im_cb), &cc_info);
+				    PURPLE_CALLBACK(cc_buddy_menu), NULL);
+		conv_handle = purple_conversations_get_handle();
+		purple_signal_connect(conv_handle, "received-im-msg", plugin,
+			PURPLE_CALLBACK(receive_im_cb), &cc_info);
+		purple_signal_connect(conv_handle, "displaying-im-msg", plugin,
+			PURPLE_CALLBACK(display_im_cb), &cc_info);
 	} else {
-		gaim_signal_connect
-		    (gaim_connections_get_handle(), "signed-on",
-		     plugin, GAIM_CALLBACK(cc_signed_on), plugin);
+		purple_signal_connect
+		    (purple_connections_get_handle(), "signed-on",
+		     plugin, PURPLE_CALLBACK(cc_signed_on), plugin);
 	}
 
 	Debug("CrazyChat plugin loaded.\n");
@@ -455,31 +455,31 @@ static gboolean plugin_load(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static gboolean plugin_unload(GaimPlugin *plugin)
+static gboolean plugin_unload(PurplePlugin *plugin)
 {
 	void *conv_handle;
 	struct crazychat *extra;
 	assert(plugin);
 	extra = (struct crazychat*) plugin->info->extra_info;
 	cc_destroy(extra);
-	conv_handle = gaim_conversations_get_handle();
-	gaim_signal_disconnect(PIDGIN_BLIST
-			       (gaim_get_blist()),
+	conv_handle = purple_conversations_get_handle();
+	purple_signal_disconnect(PIDGIN_BLIST
+			       (purple_get_blist()),
 			       "drawing-menu", plugin,
-			       GAIM_CALLBACK(cc_buddy_menu));
-	gaim_signal_disconnect(conv_handle, "received-im", plugin,
-			       GAIM_CALLBACK(receive_im_cb));
-	gaim_signal_disconnect(conv_handle, "displaying-im-msg", plugin,
-			       GAIM_CALLBACK(display_im_cb));
+			       PURPLE_CALLBACK(cc_buddy_menu));
+	purple_signal_disconnect(conv_handle, "received-im", plugin,
+			       PURPLE_CALLBACK(receive_im_cb));
+	purple_signal_disconnect(conv_handle, "displaying-im-msg", plugin,
+			       PURPLE_CALLBACK(display_im_cb));
 	Debug("CrazyChat plugin unloaded.\n");
 	return TRUE;
 }
 
-static void init_plugin(GaimPlugin *plugin)
+static void init_plugin(PurplePlugin *plugin)
 {
 	gtk_gl_init(NULL, NULL);
 	memset(&cc_info, 0, sizeof(cc_info));
 	Debug("CrazyChat plugin initialized\n");
 }
 
-GAIM_INIT_PLUGIN(crazychat, init_plugin, info)
+PURPLE_INIT_PLUGIN(crazychat, init_plugin, info)

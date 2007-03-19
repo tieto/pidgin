@@ -7,7 +7,7 @@ extern PerlInterpreter *my_perl;
 
 static GHashTable *object_stashes = NULL;
 
-void gaim_perl_normalize_script_name(char *name)
+void purple_perl_normalize_script_name(char *name)
 {
 	char *c;
 
@@ -65,7 +65,7 @@ newSVGChar(const char *str)
 }
 
 SV *
-gaim_perl_bless_object(void *object, const char *stash_name)
+purple_perl_bless_object(void *object, const char *stash_name)
 {
 	HV *stash;
 	HV *hv;
@@ -80,13 +80,13 @@ gaim_perl_bless_object(void *object, const char *stash_name)
 	stash = gv_stashpv(stash_name, 1);
 
 	hv = newHV();
-	hv_store(hv, "_gaim", 5, create_sv_ptr(object), 0);
+	hv_store(hv, "_purple", 5, create_sv_ptr(object), 0);
 
 	return sv_bless(newRV_noinc((SV *)hv), stash);
 }
 
 gboolean
-gaim_perl_is_ref_object(SV *o)
+purple_perl_is_ref_object(SV *o)
 {
 	SV **sv;
 	HV *hv;
@@ -94,7 +94,7 @@ gaim_perl_is_ref_object(SV *o)
 	hv = hvref(o);
 
 	if (hv != NULL) {
-		sv = hv_fetch(hv, "_gaim", 5, 0);
+		sv = hv_fetch(hv, "_purple", 5, 0);
 
 		if (sv != NULL)
 			return TRUE;
@@ -104,7 +104,7 @@ gaim_perl_is_ref_object(SV *o)
 }
 
 void *
-gaim_perl_ref_object(SV *o)
+purple_perl_ref_object(SV *o)
 {
 	SV **sv;
 	HV *hv;
@@ -118,7 +118,7 @@ gaim_perl_ref_object(SV *o)
 	if (hv == NULL)
 		return NULL;
 
-	sv = hv_fetch(hv, "_gaim", 5, 0);
+	sv = hv_fetch(hv, "_purple", 5, 0);
 
 	if (sv == NULL)
 		croak("variable is damaged");
@@ -202,7 +202,7 @@ execute_perl(const char *function, int argc, char **args)
 	 * return value.
 	 */
 	if (SvTRUE(ERRSV)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "perl",
+		purple_debug(PURPLE_DEBUG_ERROR, "perl",
 				   "Perl function %s exited abnormally: %s\n",
 				   function, SvPV(ERRSV, na));
 		POPs;
@@ -211,7 +211,7 @@ execute_perl(const char *function, int argc, char **args)
 		 * This should NEVER happen.  G_SCALAR ensures that we WILL
 		 * have 1 parameter.
 		 */
-		gaim_debug(GAIM_DEBUG_ERROR, "perl",
+		purple_debug(PURPLE_DEBUG_ERROR, "perl",
 				   "Perl error from %s: expected 1 return value, "
 				   "but got %d\n", function, count);
 	} else
@@ -245,65 +245,65 @@ execute_perl(const char *function, int argc, char **args)
 
 #if 0
 gboolean
-gaim_perl_value_from_sv(GaimValue *value, SV *sv)
+purple_perl_value_from_sv(PurpleValue *value, SV *sv)
 {
-	switch (gaim_value_get_type(value))
+	switch (purple_value_get_type(value))
 	{
-		case GAIM_TYPE_CHAR:
+		case PURPLE_TYPE_CHAR:
 			if ((tmp = SvGChar(sv)) != NULL)
-				gaim_value_set_char(value, tmp[0]);
+				purple_value_set_char(value, tmp[0]);
 			else
 				return FALSE;
 			break;
 
-		case GAIM_TYPE_UCHAR:
+		case PURPLE_TYPE_UCHAR:
 			if ((tmp = SvPV_nolen(sv)) != NULL)
-				gaim_value_set_uchar(value, tmp[0]);
+				purple_value_set_uchar(value, tmp[0]);
 			else
 				return FALSE;
 			break;
 
-		case GAIM_TYPE_BOOLEAN:
-			gaim_value_set_boolean(value, SvTRUE(sv));
+		case PURPLE_TYPE_BOOLEAN:
+			purple_value_set_boolean(value, SvTRUE(sv));
 			break;
 
-		case GAIM_TYPE_INT:
-			gaim_value_set_int(value, SvIV(sv));
+		case PURPLE_TYPE_INT:
+			purple_value_set_int(value, SvIV(sv));
 			break;
 
-		case GAIM_TYPE_UINT:
-			gaim_value_set_uint(value, SvIV(sv));
+		case PURPLE_TYPE_UINT:
+			purple_value_set_uint(value, SvIV(sv));
 			break;
 
-		case GAIM_TYPE_LONG:
-			gaim_value_set_long(value, SvIV(sv));
+		case PURPLE_TYPE_LONG:
+			purple_value_set_long(value, SvIV(sv));
 			break;
 
-		case GAIM_TYPE_ULONG:
-			gaim_value_set_ulong(value, SvIV(sv));
+		case PURPLE_TYPE_ULONG:
+			purple_value_set_ulong(value, SvIV(sv));
 			break;
 
-		case GAIM_TYPE_INT64:
-			gaim_value_set_int64(value, SvIV(sv));
+		case PURPLE_TYPE_INT64:
+			purple_value_set_int64(value, SvIV(sv));
 			break;
 
-		case GAIM_TYPE_UINT64:
-			gaim_value_set_uint64(value, SvIV(sv));
+		case PURPLE_TYPE_UINT64:
+			purple_value_set_uint64(value, SvIV(sv));
 			break;
 
-		case GAIM_TYPE_STRING:
-			gaim_value_set_string(value, SvGChar(sv));
+		case PURPLE_TYPE_STRING:
+			purple_value_set_string(value, SvGChar(sv));
 			break;
 
-		case GAIM_TYPE_POINTER:
-			gaim_value_set_pointer(value, (void *)SvIV(sv));
+		case PURPLE_TYPE_POINTER:
+			purple_value_set_pointer(value, (void *)SvIV(sv));
 			break;
 
-		case GAIM_TYPE_BOXED:
-			if (!strcmp(gaim_value_get_specific_type(value), "SV"))
-				gaim_value_set_boxed(value, (sv == &PL_sv_undef ? NULL : sv));
+		case PURPLE_TYPE_BOXED:
+			if (!strcmp(purple_value_get_specific_type(value), "SV"))
+				purple_value_set_boxed(value, (sv == &PL_sv_undef ? NULL : sv));
 			else
-				gaim_value_set_boxed(value, sv);
+				purple_value_set_boxed(value, sv);
 			break;
 
 		default:
@@ -314,58 +314,58 @@ gaim_perl_value_from_sv(GaimValue *value, SV *sv)
 }
 
 SV *
-gaim_perl_sv_from_value(const GaimValue *value, va_list list)
+purple_perl_sv_from_value(const PurpleValue *value, va_list list)
 {
-	switch (gaim_value_get_type(value))
+	switch (purple_value_get_type(value))
 	{
-		case GAIM_TYPE_BOOLEAN:
-			return newSViv(gaim_value_get_boolean(value));
+		case PURPLE_TYPE_BOOLEAN:
+			return newSViv(purple_value_get_boolean(value));
 			break;
 
-		case GAIM_TYPE_INT:
-			return newSViv(gaim_value_get_int(value));
+		case PURPLE_TYPE_INT:
+			return newSViv(purple_value_get_int(value));
 			break;
 
-		case GAIM_TYPE_UINT:
-			return newSVuv(gaim_value_get_uint(value));
+		case PURPLE_TYPE_UINT:
+			return newSVuv(purple_value_get_uint(value));
 			break;
 
-		case GAIM_TYPE_LONG:
-			return newSViv(gaim_value_get_long(value));
+		case PURPLE_TYPE_LONG:
+			return newSViv(purple_value_get_long(value));
 			break;
 
-		case GAIM_TYPE_ULONG:
-			return newSVuv(gaim_value_get_ulong(value));
+		case PURPLE_TYPE_ULONG:
+			return newSVuv(purple_value_get_ulong(value));
 			break;
 
-		case GAIM_TYPE_INT64:
-			return newSViv(gaim_value_get_int64(value));
+		case PURPLE_TYPE_INT64:
+			return newSViv(purple_value_get_int64(value));
 			break;
 
-		case GAIM_TYPE_UINT64:
-			return newSVuv(gaim_value_get_int64(value));
+		case PURPLE_TYPE_UINT64:
+			return newSVuv(purple_value_get_int64(value));
 			break;
 
-		case GAIM_TYPE_STRING:
-			return newSVGChar(gaim_value_get_string(value));
+		case PURPLE_TYPE_STRING:
+			return newSVGChar(purple_value_get_string(value));
 			break;
 
-		case GAIM_TYPE_POINTER:
-			return newSViv((IV)gaim_value_get_pointer(value));
+		case PURPLE_TYPE_POINTER:
+			return newSViv((IV)purple_value_get_pointer(value));
 			break;
 
-		case GAIM_TYPE_BOXED:
-			if (!strcmp(gaim_value_get_specific_type(value), "SV"))
+		case PURPLE_TYPE_BOXED:
+			if (!strcmp(purple_value_get_specific_type(value), "SV"))
 			{
-				SV *sv = (SV *)gaim_perl_get_boxed(value);
+				SV *sv = (SV *)purple_perl_get_boxed(value);
 
 				return (sv == NULL ? &PL_sv_undef : sv);
 			}
 
 			/* Uh.. I dunno. Try this? */
-			return sv_2mortal(gaim_perl_bless_object(
-					gaim_perl_get_boxed(value),
-					gaim_value_get_specific_type(value)));
+			return sv_2mortal(purple_perl_bless_object(
+					purple_perl_get_boxed(value),
+					purple_value_get_specific_type(value)));
 
 		default:
 			return FALSE;
@@ -376,21 +376,21 @@ gaim_perl_sv_from_value(const GaimValue *value, va_list list)
 #endif
 
 void *
-gaim_perl_data_from_sv(GaimValue *value, SV *sv)
+purple_perl_data_from_sv(PurpleValue *value, SV *sv)
 {
 	STRLEN na;
 
-	switch (gaim_value_get_type(value)) {
-		case GAIM_TYPE_BOOLEAN: return (void *)SvIV(sv);
-		case GAIM_TYPE_INT:     return (void *)SvIV(sv);
-		case GAIM_TYPE_UINT:    return (void *)SvUV(sv);
-		case GAIM_TYPE_LONG:    return (void *)SvIV(sv);
-		case GAIM_TYPE_ULONG:   return (void *)SvUV(sv);
-		case GAIM_TYPE_INT64:   return (void *)SvIV(sv);
-		case GAIM_TYPE_UINT64:  return (void *)SvUV(sv);
-		case GAIM_TYPE_STRING:  return g_strdup((void *)SvPV(sv, na));
-		case GAIM_TYPE_POINTER: return (void *)SvIV(sv);
-		case GAIM_TYPE_BOXED:   return (void *)SvIV(sv);
+	switch (purple_value_get_type(value)) {
+		case PURPLE_TYPE_BOOLEAN: return (void *)SvIV(sv);
+		case PURPLE_TYPE_INT:     return (void *)SvIV(sv);
+		case PURPLE_TYPE_UINT:    return (void *)SvUV(sv);
+		case PURPLE_TYPE_LONG:    return (void *)SvIV(sv);
+		case PURPLE_TYPE_ULONG:   return (void *)SvUV(sv);
+		case PURPLE_TYPE_INT64:   return (void *)SvIV(sv);
+		case PURPLE_TYPE_UINT64:  return (void *)SvUV(sv);
+		case PURPLE_TYPE_STRING:  return g_strdup((void *)SvPV(sv, na));
+		case PURPLE_TYPE_POINTER: return (void *)SvIV(sv);
+		case PURPLE_TYPE_BOXED:   return (void *)SvIV(sv);
 
 		default:
 			return NULL;
@@ -400,177 +400,177 @@ gaim_perl_data_from_sv(GaimValue *value, SV *sv)
 }
 
 static SV *
-gaim_perl_sv_from_subtype(const GaimValue *value, void *arg)
+purple_perl_sv_from_subtype(const PurpleValue *value, void *arg)
 {
 	const char *stash = NULL;
 
-	switch (gaim_value_get_subtype(value)) {
-		case GAIM_SUBTYPE_ACCOUNT:
-			stash = "Gaim::Account";
+	switch (purple_value_get_subtype(value)) {
+		case PURPLE_SUBTYPE_ACCOUNT:
+			stash = "Purple::Account";
 			break;
-		case GAIM_SUBTYPE_BLIST:
-			stash = "Gaim::BuddyList";
+		case PURPLE_SUBTYPE_BLIST:
+			stash = "Purple::BuddyList";
 			break;
-		case GAIM_SUBTYPE_BLIST_BUDDY:
-			stash = "Gaim::BuddyList::Buddy";
+		case PURPLE_SUBTYPE_BLIST_BUDDY:
+			stash = "Purple::BuddyList::Buddy";
 			break;
-		case GAIM_SUBTYPE_BLIST_GROUP:
-			stash = "Gaim::BuddyList::Group";
+		case PURPLE_SUBTYPE_BLIST_GROUP:
+			stash = "Purple::BuddyList::Group";
 			break;
-		case GAIM_SUBTYPE_BLIST_CHAT:
-			stash = "Gaim::BuddyList::Chat";
+		case PURPLE_SUBTYPE_BLIST_CHAT:
+			stash = "Purple::BuddyList::Chat";
 			break;
-		case GAIM_SUBTYPE_BUDDY_ICON:
-			stash = "Gaim::Buddy::Icon";
+		case PURPLE_SUBTYPE_BUDDY_ICON:
+			stash = "Purple::Buddy::Icon";
 			break;
-		case GAIM_SUBTYPE_CONNECTION:
-			stash = "Gaim::Connection";
+		case PURPLE_SUBTYPE_CONNECTION:
+			stash = "Purple::Connection";
 			break;
-		case GAIM_SUBTYPE_CONVERSATION:
-			stash = "Gaim::Conversation";
+		case PURPLE_SUBTYPE_CONVERSATION:
+			stash = "Purple::Conversation";
 			break;
-		case GAIM_SUBTYPE_PLUGIN:
-			stash = "Gaim::Plugin";
+		case PURPLE_SUBTYPE_PLUGIN:
+			stash = "Purple::Plugin";
 			break;
-		case GAIM_SUBTYPE_BLIST_NODE:
-			stash = "Gaim::BuddyList::Node";
+		case PURPLE_SUBTYPE_BLIST_NODE:
+			stash = "Purple::BuddyList::Node";
 			break;
-		case GAIM_SUBTYPE_CIPHER:
-			stash = "Gaim::Cipher";
+		case PURPLE_SUBTYPE_CIPHER:
+			stash = "Purple::Cipher";
 			break;
-		case GAIM_SUBTYPE_STATUS:
-			stash = "Gaim::Status";
+		case PURPLE_SUBTYPE_STATUS:
+			stash = "Purple::Status";
 			break;
-		case GAIM_SUBTYPE_LOG:
-			stash = "Gaim::Log";
+		case PURPLE_SUBTYPE_LOG:
+			stash = "Purple::Log";
 			break;
-		case GAIM_SUBTYPE_XFER:
-			stash = "Gaim::Xfer";
+		case PURPLE_SUBTYPE_XFER:
+			stash = "Purple::Xfer";
 			break;
-		case GAIM_SUBTYPE_XMLNODE:
-			stash = "Gaim::XMLNode";
+		case PURPLE_SUBTYPE_XMLNODE:
+			stash = "Purple::XMLNode";
 			break;
 
 		default:
-			stash = "Gaim"; /* ? */
+			stash = "Purple"; /* ? */
 	}
 
-	return sv_2mortal(gaim_perl_bless_object(arg, stash));
+	return sv_2mortal(purple_perl_bless_object(arg, stash));
 }
 
 SV *
-gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args, void ***copy_arg)
+purple_perl_sv_from_vargs(const PurpleValue *value, va_list *args, void ***copy_arg)
 {
-	if (gaim_value_is_outgoing(value)) {
-		switch (gaim_value_get_type(value)) {
-			case GAIM_TYPE_SUBTYPE:
+	if (purple_value_is_outgoing(value)) {
+		switch (purple_value_get_type(value)) {
+			case PURPLE_TYPE_SUBTYPE:
 				if ((*copy_arg = va_arg(*args, void **)) == NULL)
 					return &PL_sv_undef;
 
-				return gaim_perl_sv_from_subtype(value, *(void **)*copy_arg);
+				return purple_perl_sv_from_subtype(value, *(void **)*copy_arg);
 
-			case GAIM_TYPE_BOOLEAN:
+			case PURPLE_TYPE_BOOLEAN:
 				if ((*copy_arg = (void *)va_arg(*args, gboolean *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(gboolean *)*copy_arg);
 
-			case GAIM_TYPE_INT:
+			case PURPLE_TYPE_INT:
 				if ((*copy_arg = (void *)va_arg(*args, int *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(int *)*copy_arg);
 
-			case GAIM_TYPE_UINT:
+			case PURPLE_TYPE_UINT:
 				if ((*copy_arg = (void *)va_arg(*args, unsigned int *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVuv(*(unsigned int *)*copy_arg);
 
-			case GAIM_TYPE_LONG:
+			case PURPLE_TYPE_LONG:
 				if ((*copy_arg = (void *)va_arg(*args, long *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(long *)*copy_arg);
 
-			case GAIM_TYPE_ULONG:
+			case PURPLE_TYPE_ULONG:
 				if ((*copy_arg = (void *)va_arg(*args,
 												unsigned long *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVuv(*(unsigned long *)*copy_arg);
 
-			case GAIM_TYPE_INT64:
+			case PURPLE_TYPE_INT64:
 				if ((*copy_arg = (void *)va_arg(*args, gint64 *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv(*(gint64 *)*copy_arg);
 
-			case GAIM_TYPE_UINT64:
+			case PURPLE_TYPE_UINT64:
 				if ((*copy_arg = (void *)va_arg(*args, guint64 *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVuv(*(guint64 *)*copy_arg);
 
-			case GAIM_TYPE_STRING:
+			case PURPLE_TYPE_STRING:
 				if ((*copy_arg = (void *)va_arg(*args, char **)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVGChar(*(char **)*copy_arg);
 
-			case GAIM_TYPE_POINTER:
+			case PURPLE_TYPE_POINTER:
 				if ((*copy_arg = va_arg(*args, void **)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv((IV)*(void **)*copy_arg);
 
-			case GAIM_TYPE_BOXED:
+			case PURPLE_TYPE_BOXED:
 				/* Uh.. I dunno. Try this? */
 				if ((*copy_arg = va_arg(*args, void **)) == NULL)
 					return &PL_sv_undef;
 
-				return sv_2mortal(gaim_perl_bless_object(
+				return sv_2mortal(purple_perl_bless_object(
 						*(void **)*copy_arg,
-						gaim_value_get_specific_type(value)));
+						purple_value_get_specific_type(value)));
 
 			default:
 				/* If this happens, things are going to get screwed up... */
 				return NULL;
 		}
 	} else {
-		switch (gaim_value_get_type(value)) {
-			case GAIM_TYPE_SUBTYPE:
+		switch (purple_value_get_type(value)) {
+			case PURPLE_TYPE_SUBTYPE:
 				if ((*copy_arg = va_arg(*args, void *)) == NULL)
 					return &PL_sv_undef;
 
-				return gaim_perl_sv_from_subtype(value, *copy_arg);
+				return purple_perl_sv_from_subtype(value, *copy_arg);
 
-			case GAIM_TYPE_BOOLEAN:
+			case PURPLE_TYPE_BOOLEAN:
 				*copy_arg = GINT_TO_POINTER( va_arg(*args, gboolean) );
 
 				return newSViv((gboolean)GPOINTER_TO_INT(*copy_arg));
 
-			case GAIM_TYPE_INT:
+			case PURPLE_TYPE_INT:
 				*copy_arg = GINT_TO_POINTER( va_arg(*args, int) );
 
 				return newSViv(GPOINTER_TO_INT(*copy_arg));
 
-			case GAIM_TYPE_UINT:
+			case PURPLE_TYPE_UINT:
 				*copy_arg = GUINT_TO_POINTER(va_arg(*args, unsigned int));
 
 				return newSVuv(GPOINTER_TO_UINT(*copy_arg));
 
-			case GAIM_TYPE_LONG:
+			case PURPLE_TYPE_LONG:
 				*copy_arg = (void *)va_arg(*args, long);
 
 				return newSViv((long)*copy_arg);
 
-			case GAIM_TYPE_ULONG:
+			case PURPLE_TYPE_ULONG:
 				*copy_arg = (void *)va_arg(*args, unsigned long);
 
 				return newSVuv((unsigned long)*copy_arg);
 
-			case GAIM_TYPE_INT64:
+			case PURPLE_TYPE_INT64:
 #if 0
 				/* XXX This yells and complains. */
 				*copy_arg = va_arg(*args, gint64);
@@ -579,7 +579,7 @@ gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args, void ***copy_arg)
 #endif
 				break;
 
-			case GAIM_TYPE_UINT64:
+			case PURPLE_TYPE_UINT64:
 				/* XXX This also yells and complains. */
 #if 0
 				*copy_arg = (void *)va_arg(*args, guint64);
@@ -588,25 +588,25 @@ gaim_perl_sv_from_vargs(const GaimValue *value, va_list *args, void ***copy_arg)
 #endif
 				break;
 
-			case GAIM_TYPE_STRING:
+			case PURPLE_TYPE_STRING:
 				if ((*copy_arg = (void *)va_arg(*args, char *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSVGChar((char *)*copy_arg);
 
-			case GAIM_TYPE_POINTER:
+			case PURPLE_TYPE_POINTER:
 				if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)
 					return &PL_sv_undef;
 
 				return newSViv((IV)*copy_arg);
 
-			case GAIM_TYPE_BOXED:
+			case PURPLE_TYPE_BOXED:
 				/* Uh.. I dunno. Try this? */
 				if ((*copy_arg = (void *)va_arg(*args, void *)) == NULL)
 					return &PL_sv_undef;
 
-				return sv_2mortal(gaim_perl_bless_object(*copy_arg,
-						gaim_value_get_specific_type(value)));
+				return sv_2mortal(purple_perl_bless_object(*copy_arg,
+						purple_value_get_specific_type(value)));
 
 			default:
 				/* If this happens, things are going to get screwed up... */

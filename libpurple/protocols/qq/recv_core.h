@@ -1,9 +1,9 @@
 /**
  * @file recv_core.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -31,6 +31,6 @@
 
 void qq_b4_packets_free(qq_data *qd);
 
-void qq_input_pending(gpointer data, gint source, GaimInputCondition cond);
+void qq_input_pending(gpointer data, gint source, PurpleInputCondition cond);
 
 #endif

@@ -1,9 +1,9 @@
 /**
  * @file sys_msg.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -28,6 +28,6 @@
 #include <glib.h>
 #include "connection.h"
 
-void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *gc);
+void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc);
 
 #endif

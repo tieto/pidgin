@@ -2,7 +2,7 @@
  * @file gtkconvwin.h GTK+ Conversation Window API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -115,15 +115,15 @@ void pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkco
 void pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv);
 PidginConversation *pidgin_conv_window_get_gtkconv_at_index(const PidginWindow *win, int index);
 PidginConversation *pidgin_conv_window_get_active_gtkconv(const PidginWindow *win);
-GaimConversation *pidgin_conv_window_get_active_conversation(const PidginWindow *win);
-gboolean pidgin_conv_window_is_active_conversation(const GaimConversation *conv);
+PurpleConversation *pidgin_conv_window_get_active_conversation(const PidginWindow *win);
+gboolean pidgin_conv_window_is_active_conversation(const PurpleConversation *conv);
 gboolean pidgin_conv_window_has_focus(PidginWindow *win);
 PidginWindow *pidgin_conv_window_get_at_xy(int x, int y);
 GList *pidgin_conv_window_get_gtkconvs(PidginWindow *win);
 guint pidgin_conv_window_get_gtkconv_count(PidginWindow *win);
 
-PidginWindow *pidgin_conv_window_first_with_type(GaimConversationType type);
-PidginWindow *pidgin_conv_window_last_with_type(GaimConversationType type);
+PidginWindow *pidgin_conv_window_first_with_type(PurpleConversationType type);
+PidginWindow *pidgin_conv_window_last_with_type(PurpleConversationType type);
 
 /*@}*/
 

@@ -1,10 +1,10 @@
 /**
- * @file dbus-bindings.h Gaim DBUS Bindings
+ * @file dbus-bindings.h Purple DBUS Bindings
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef _GAIM_DBUS_BINDINGS_H_
-#define _GAIM_DBUS_BINDINGS_H_
+#ifndef _PURPLE_DBUS_BINDINGS_H_
+#define _PURPLE_DBUS_BINDINGS_H_
 
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib-lowlevel.h>
@@ -35,63 +35,63 @@
 extern "C" {
 #endif
 
-gint gaim_dbus_pointer_to_id(gpointer node);
-gpointer gaim_dbus_id_to_pointer(gint id, GaimDBusType *type);
-gint  gaim_dbus_pointer_to_id_error(gpointer ptr, DBusError *error);
-gpointer gaim_dbus_id_to_pointer_error(gint id, GaimDBusType *type,
+gint purple_dbus_pointer_to_id(gpointer node);
+gpointer purple_dbus_id_to_pointer(gint id, PurpleDBusType *type);
+gint  purple_dbus_pointer_to_id_error(gpointer ptr, DBusError *error);
+gpointer purple_dbus_id_to_pointer_error(gint id, PurpleDBusType *type,
 				       const char *typename, DBusError *error);
 
 #define NULLIFY(id) id = empty_to_null(id)
 
 #define CHECK_ERROR(error) if (dbus_error_is_set(error)) return NULL;
 
-#define GAIM_DBUS_ID_TO_POINTER(ptr, id, type, error)			\
+#define PURPLE_DBUS_ID_TO_POINTER(ptr, id, type, error)			\
     G_STMT_START {							\
-	ptr = (type*) gaim_dbus_id_to_pointer_error			\
-	    (id, GAIM_DBUS_TYPE(type), #type, error);			\
+	ptr = (type*) purple_dbus_id_to_pointer_error			\
+	    (id, PURPLE_DBUS_TYPE(type), #type, error);			\
 	CHECK_ERROR(error);						\
     } G_STMT_END
 
 
-#define GAIM_DBUS_POINTER_TO_ID(id, ptr, error)				\
+#define PURPLE_DBUS_POINTER_TO_ID(id, ptr, error)				\
     G_STMT_START {							\
-	id = gaim_dbus_pointer_to_id_error(ptr,error);			\
+	id = purple_dbus_pointer_to_id_error(ptr,error);			\
 	CHECK_ERROR(error);						\
     } G_STMT_END
 
 
 dbus_bool_t
-gaim_dbus_message_get_args (DBusMessage     *message,
+purple_dbus_message_get_args (DBusMessage     *message,
 			    DBusError       *error,
 			    int              first_arg_type,
 			    ...);
 dbus_bool_t
-gaim_dbus_message_get_args_valist (DBusMessage     *message,
+purple_dbus_message_get_args_valist (DBusMessage     *message,
 				   DBusError       *error,
 				   int              first_arg_type,
 				   va_list          var_args);
 
 dbus_bool_t
-gaim_dbus_message_iter_get_args (DBusMessageIter *iter,
+purple_dbus_message_iter_get_args (DBusMessageIter *iter,
 				 DBusError       *error,
 				 int              first_arg_type,
 				 ...);
 
 dbus_bool_t
-gaim_dbus_message_iter_get_args_valist (DBusMessageIter *iter,
+purple_dbus_message_iter_get_args_valist (DBusMessageIter *iter,
 					DBusError       *error,
 					int              first_arg_type,
 					va_list          var_args);
 
-dbus_int32_t* gaim_dbusify_GList(GList *list, gboolean free_memory, 
+dbus_int32_t* purple_dbusify_GList(GList *list, gboolean free_memory, 
 				 dbus_int32_t *len);
-dbus_int32_t* gaim_dbusify_GSList(GSList *list, gboolean free_memory,
+dbus_int32_t* purple_dbusify_GSList(GSList *list, gboolean free_memory,
 				  dbus_int32_t *len);
-gpointer* gaim_GList_to_array(GList *list, gboolean free_memory,
+gpointer* purple_GList_to_array(GList *list, gboolean free_memory,
 			      dbus_int32_t *len);
-gpointer* gaim_GSList_to_array(GSList *list, gboolean free_memory,
+gpointer* purple_GSList_to_array(GSList *list, gboolean free_memory,
 			      dbus_int32_t *len);
-GHashTable *gaim_dbus_iter_hash_table(DBusMessageIter *iter, DBusError *error);
+GHashTable *purple_dbus_iter_hash_table(DBusMessageIter *iter, DBusError *error);
 
 const char* empty_to_null(const char *str);
 const char* null_to_empty(const char *s);
@@ -100,11 +100,11 @@ typedef struct {
     const char *name;
     const char *parameters;
     DBusMessage* (*handler)(DBusMessage *request, DBusError *error);
-} GaimDBusBinding;
+} PurpleDBusBinding;
 
-void gaim_dbus_register_bindings(void *handle, GaimDBusBinding *bindings);
+void purple_dbus_register_bindings(void *handle, PurpleDBusBinding *bindings);
 
-DBusConnection *gaim_dbus_get_connection(void);
+DBusConnection *purple_dbus_get_connection(void);
 
 #ifdef __cplusplus
 }

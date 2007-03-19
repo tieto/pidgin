@@ -2,9 +2,9 @@
  * @file gtkft.c GTK+ File Transfer UI
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -48,7 +48,7 @@ struct _PidginXferDialog
 
 	gint num_transfers;
 
-	GaimXfer *selected_xfer;
+	PurpleXfer *selected_xfer;
 
 	GtkWidget *window;
 	GtkWidget *tree;
@@ -109,7 +109,7 @@ enum
  * Utility Functions
  **************************************************************************/
 static void
-get_xfer_info_strings(GaimXfer *xfer, char **kbsec, char **time_elapsed,
+get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 					  char **time_remaining)
 {
 	PidginXferUiData *data;
@@ -124,8 +124,8 @@ get_xfer_info_strings(GaimXfer *xfer, char **kbsec, char **time_elapsed,
 	else
 		now = time(NULL);
 
-	kb_sent = gaim_xfer_get_bytes_sent(xfer) / 1024.0;
-	kb_rem  = gaim_xfer_get_bytes_remaining(xfer) / 1024.0;
+	kb_sent = purple_xfer_get_bytes_sent(xfer) / 1024.0;
+	kb_rem  = purple_xfer_get_bytes_remaining(xfer) / 1024.0;
 	elapsed = (xfer->start_time > 0 ? now - xfer->start_time : 0);
 	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 
@@ -155,13 +155,13 @@ get_xfer_info_strings(GaimXfer *xfer, char **kbsec, char **time_elapsed,
 	}
 
 	if (time_remaining != NULL) {
-		if (gaim_xfer_get_size(xfer) == 0) {
+		if (purple_xfer_get_size(xfer) == 0) {
 			*time_remaining = g_strdup(_("Unknown"));
 		}
-		else if (gaim_xfer_is_completed(xfer)) {
+		else if (purple_xfer_is_completed(xfer)) {
 			*time_remaining = g_strdup(_("Finished"));
 		}
-		else if (gaim_xfer_is_canceled(xfer)) {
+		else if (purple_xfer_is_canceled(xfer)) {
 			*time_remaining = g_strdup(_("Canceled"));
 		}
 		else if (kb_sent <= 0) {
@@ -199,17 +199,17 @@ update_title_progress(PidginXferDialog *dialog)
 	/* Find all active transfers */
 	while (valid) {
 		GValue val;
-		GaimXfer *xfer = NULL;
+		PurpleXfer *xfer = NULL;
 
 		val.g_type = 0;
 		gtk_tree_model_get_value(GTK_TREE_MODEL(dialog->model),
 				&iter, COLUMN_DATA, &val);
 
 		xfer = g_value_get_pointer(&val);
-		if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_STARTED) {
+		if (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_STARTED) {
 			num_active_xfers++;
-			total_bytes_xferred += gaim_xfer_get_bytes_sent(xfer);
-			total_file_size += gaim_xfer_get_size(xfer);
+			total_bytes_xferred += purple_xfer_get_bytes_sent(xfer);
+			total_file_size += purple_xfer_get_size(xfer);
 		}
 
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(dialog->model), &iter);
@@ -235,7 +235,7 @@ update_title_progress(PidginXferDialog *dialog)
 }
 
 static void
-update_detailed_info(PidginXferDialog *dialog, GaimXfer *xfer)
+update_detailed_info(PidginXferDialog *dialog, PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 	char *kbsec, *time_elapsed, *time_remaining;
@@ -249,11 +249,11 @@ update_detailed_info(PidginXferDialog *dialog, GaimXfer *xfer)
 	get_xfer_info_strings(xfer, &kbsec, &time_elapsed, &time_remaining);
 
 	status = g_strdup_printf("%ld%% (%ld of %ld bytes)",
-							 (unsigned long)(gaim_xfer_get_progress(xfer)*100),
-							 (unsigned long)gaim_xfer_get_bytes_sent(xfer),
-							 (unsigned long)gaim_xfer_get_size(xfer));
+							 (unsigned long)(purple_xfer_get_progress(xfer)*100),
+							 (unsigned long)purple_xfer_get_bytes_sent(xfer),
+							 (unsigned long)purple_xfer_get_size(xfer));
 
-	if (gaim_xfer_is_completed(xfer)) {
+	if (purple_xfer_is_completed(xfer)) {
 
 		GdkPixbuf *pixbuf = NULL;
 
@@ -268,7 +268,7 @@ update_detailed_info(PidginXferDialog *dialog, GaimXfer *xfer)
 		g_object_unref(pixbuf);
 	}
 
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+	if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
 		gtk_label_set_markup(GTK_LABEL(dialog->local_user_desc_label),
 							 _("<b>Receiving As:</b>"));
 		gtk_label_set_markup(GTK_LABEL(dialog->remote_user_desc_label),
@@ -282,18 +282,18 @@ update_detailed_info(PidginXferDialog *dialog, GaimXfer *xfer)
 	}
 
 	gtk_label_set_text(GTK_LABEL(dialog->local_user_label),
-								 gaim_account_get_username(xfer->account));
+								 purple_account_get_username(xfer->account));
 	gtk_label_set_text(GTK_LABEL(dialog->remote_user_label), xfer->who);
 	gtk_label_set_text(GTK_LABEL(dialog->protocol_label),
-								 gaim_account_get_protocol_name(xfer->account));
+								 purple_account_get_protocol_name(xfer->account));
 
-	if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+	if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
 		gtk_label_set_text(GTK_LABEL(dialog->filename_label),
-					   gaim_xfer_get_filename(xfer));
+					   purple_xfer_get_filename(xfer));
 	} else {
 		char *tmp;
 
-		tmp = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
+		tmp = g_path_get_basename(purple_xfer_get_local_filename(xfer));
 		utf8 = g_filename_to_utf8(tmp, -1, NULL, NULL, NULL);
 		g_free(tmp);
 
@@ -301,7 +301,7 @@ update_detailed_info(PidginXferDialog *dialog, GaimXfer *xfer)
 		g_free(utf8);
 	}
 
-	utf8 = g_filename_to_utf8((gaim_xfer_get_local_filename(xfer)), -1, NULL, NULL, NULL);
+	utf8 = g_filename_to_utf8((purple_xfer_get_local_filename(xfer)), -1, NULL, NULL, NULL);
 	gtk_label_set_text(GTK_LABEL(dialog->localfile_label), utf8);
 	g_free(utf8);
 
@@ -313,7 +313,7 @@ update_detailed_info(PidginXferDialog *dialog, GaimXfer *xfer)
 					   time_remaining);
 
 	gtk_progress_bar_set_fraction(GTK_PROGRESS_BAR(dialog->progress),
-								  gaim_xfer_get_progress(xfer));
+								  purple_xfer_get_progress(xfer));
 
 	g_free(kbsec);
 	g_free(time_elapsed);
@@ -322,7 +322,7 @@ update_detailed_info(PidginXferDialog *dialog, GaimXfer *xfer)
 }
 
 static void
-update_buttons(PidginXferDialog *dialog, GaimXfer *xfer)
+update_buttons(PidginXferDialog *dialog, PurpleXfer *xfer)
 {
 	if (dialog->selected_xfer == NULL) {
 		gtk_widget_set_sensitive(dialog->expander, FALSE);
@@ -340,19 +340,19 @@ update_buttons(PidginXferDialog *dialog, GaimXfer *xfer)
 	if (dialog->selected_xfer != xfer)
 		return;
 
-	if (gaim_xfer_is_completed(xfer)) {
+	if (purple_xfer_is_completed(xfer)) {
 		gtk_widget_hide(dialog->stop_button);
 		gtk_widget_show(dialog->remove_button);
 
 #ifdef _WIN32
 		/* If using Win32... */
-		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+		if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
 			gtk_widget_set_sensitive(dialog->open_button, TRUE);
 		} else {
 			gtk_widget_set_sensitive(dialog->open_button, FALSE);
 		}
 #else
-		if (gaim_xfer_get_type(xfer) == GAIM_XFER_RECEIVE) {
+		if (purple_xfer_get_type(xfer) == PURPLE_XFER_RECEIVE) {
 			gtk_widget_set_sensitive(dialog->open_button, TRUE);
 		} else {
 			gtk_widget_set_sensitive (dialog->open_button, FALSE);
@@ -362,7 +362,7 @@ update_buttons(PidginXferDialog *dialog, GaimXfer *xfer)
 		gtk_widget_set_sensitive(dialog->resume_button, FALSE);
 
 		gtk_widget_set_sensitive(dialog->remove_button, TRUE);
-	} else if (gaim_xfer_is_canceled(xfer)) {
+	} else if (purple_xfer_is_canceled(xfer)) {
 		gtk_widget_hide(dialog->stop_button);
 		gtk_widget_show(dialog->remove_button);
 
@@ -418,7 +418,7 @@ static void
 toggle_keep_open_cb(GtkWidget *w, PidginXferDialog *dialog)
 {
 	dialog->keep_open = !dialog->keep_open;
-	gaim_prefs_set_bool("/gaim/gtk/filetransfer/keep_open",
+	purple_prefs_set_bool("/purple/gtk/filetransfer/keep_open",
 						dialog->keep_open);
 }
 
@@ -426,7 +426,7 @@ static void
 toggle_clear_finished_cb(GtkWidget *w, PidginXferDialog *dialog)
 {
 	dialog->auto_clear = !dialog->auto_clear;
-	gaim_prefs_set_bool("/gaim/gtk/filetransfer/clear_finished",
+	purple_prefs_set_bool("/purple/gtk/filetransfer/clear_finished",
 						dialog->auto_clear);
 }
 
@@ -434,7 +434,7 @@ static void
 selection_changed_cb(GtkTreeSelection *selection, PidginXferDialog *dialog)
 {
 	GtkTreeIter iter;
-	GaimXfer *xfer = NULL;
+	PurpleXfer *xfer = NULL;
 
 	if (gtk_tree_selection_get_selected(selection, NULL, &iter)) {
 		GValue val;
@@ -471,7 +471,7 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 	int code;
 	if (G_WIN32_HAVE_WIDECHAR_API ()) {
 		wchar_t *wc_filename = g_utf8_to_utf16(
-				gaim_xfer_get_local_filename(
+				purple_xfer_get_local_filename(
 					dialog->selected_xfer),
 				-1, NULL, NULL, NULL);
 
@@ -481,7 +481,7 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 		g_free(wc_filename);
 	} else {
 		char *l_filename = g_locale_from_utf8(
-				gaim_xfer_get_local_filename(
+				purple_xfer_get_local_filename(
 					dialog->selected_xfer),
 				-1, NULL, NULL, NULL);
 
@@ -493,33 +493,33 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 
 	if (code == SE_ERR_ASSOCINCOMPLETE || code == SE_ERR_NOASSOC)
 	{
-		gaim_notify_error(dialog, NULL,
+		purple_notify_error(dialog, NULL,
 				_("There is no application configured to open this type of file."), NULL);
 	}
 	else if (code < 32)
 	{
-		gaim_notify_error(dialog, NULL,
+		purple_notify_error(dialog, NULL,
 				_("An error occurred while opening the file."), NULL);
-		gaim_debug_warning("ft", "filename: %s; code: %d\n",
-				gaim_xfer_get_local_filename(dialog->selected_xfer), code);
+		purple_debug_warning("ft", "filename: %s; code: %d\n",
+				purple_xfer_get_local_filename(dialog->selected_xfer), code);
 	}
 #else
-	const char *filename = gaim_xfer_get_local_filename(dialog->selected_xfer);
+	const char *filename = purple_xfer_get_local_filename(dialog->selected_xfer);
 	char *command = NULL;
 	char *tmp = NULL;
 	GError *error = NULL;
 
-	if (gaim_running_gnome())
+	if (purple_running_gnome())
 	{
 		char *escaped = g_shell_quote(filename);
 		command = g_strdup_printf("gnome-open %s", escaped);
 		g_free(escaped);
 	}
-	else if (gaim_running_kde())
+	else if (purple_running_kde())
 	{
 		char *escaped = g_shell_quote(filename);
 
-		if (gaim_str_has_suffix(filename, ".desktop"))
+		if (purple_str_has_suffix(filename, ".desktop"))
 			command = g_strdup_printf("kfmclient openURL %s 'text/plain'", escaped);
 		else
 			command = g_strdup_printf("kfmclient openURL %s", escaped);
@@ -527,19 +527,19 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 	}
 	else
 	{
-		gaim_notify_uri(NULL, filename);
+		purple_notify_uri(NULL, filename);
 		return;
 	}
 
-	if (gaim_program_is_valid(command))
+	if (purple_program_is_valid(command))
 	{
 		gint exit_status;
 		if (!g_spawn_command_line_sync(command, NULL, NULL, &exit_status, &error))
 		{
 			tmp = g_strdup_printf(_("Error launching %s: %s"),
-							gaim_xfer_get_local_filename(dialog->selected_xfer),
+							purple_xfer_get_local_filename(dialog->selected_xfer),
 							error->message);
-			gaim_notify_error(dialog, NULL, _("Unable to open file."), tmp);
+			purple_notify_error(dialog, NULL, _("Unable to open file."), tmp);
 			g_free(tmp);
 			g_error_free(error);
 		}
@@ -548,7 +548,7 @@ open_button_cb(GtkButton *button, PidginXferDialog *dialog)
 			char *primary = g_strdup_printf(_("Error running %s"), command);
 			char *secondary = g_strdup_printf(_("Process returned error code %d"),
 									exit_status);
-			gaim_notify_error(dialog, NULL, primary, secondary);
+			purple_notify_error(dialog, NULL, primary, secondary);
 			g_free(tmp);
 		}
 	}
@@ -574,7 +574,7 @@ remove_button_cb(GtkButton *button, PidginXferDialog *dialog)
 static void
 stop_button_cb(GtkButton *button, PidginXferDialog *dialog)
 {
-	gaim_xfer_cancel_local(dialog->selected_xfer);
+	purple_xfer_cancel_local(dialog->selected_xfer);
 }
 
 static void
@@ -753,9 +753,9 @@ pidginxfer_dialog_new(void)
 
 	dialog = g_new0(PidginXferDialog, 1);
 	dialog->keep_open =
-		gaim_prefs_get_bool("/gaim/gtk/filetransfer/keep_open");
+		purple_prefs_get_bool("/purple/gtk/filetransfer/keep_open");
 	dialog->auto_clear =
-		gaim_prefs_get_bool("/gaim/gtk/filetransfer/clear_finished");
+		purple_prefs_get_bool("/purple/gtk/filetransfer/clear_finished");
 
 	/* Create the window. */
 	dialog->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -892,7 +892,7 @@ pidginxfer_dialog_destroy(PidginXferDialog *dialog)
 {
 	g_return_if_fail(dialog != NULL);
 
-	gaim_notify_close_with_handle(dialog);
+	purple_notify_close_with_handle(dialog);
 
 	gtk_widget_destroy(dialog->window);
 
@@ -923,16 +923,16 @@ pidginxfer_dialog_hide(PidginXferDialog *dialog)
 {
 	g_return_if_fail(dialog != NULL);
 
-	gaim_notify_close_with_handle(dialog);
+	purple_notify_close_with_handle(dialog);
 
 	gtk_widget_hide(dialog->window);
 }
 
 void
-pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, GaimXfer *xfer)
+pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
-	GaimXferType type;
+	PurpleXferType type;
 	GdkPixbuf *pixbuf;
 	char *size_str, *remaining_str;
 	char *lfilename, *utf8;
@@ -940,7 +940,7 @@ pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, GaimXfer *xfer)
 	g_return_if_fail(dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	gaim_xfer_ref(xfer);
+	purple_xfer_ref(xfer);
 
 	data = PIDGINXFER(xfer);
 	data->in_list = TRUE;
@@ -949,27 +949,27 @@ pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, GaimXfer *xfer)
 
 	data->last_updated_time = 0;
 
-	type = gaim_xfer_get_type(xfer);
+	type = purple_xfer_get_type(xfer);
 
-	size_str      = gaim_str_size_to_units(gaim_xfer_get_size(xfer));
-	remaining_str = gaim_str_size_to_units(gaim_xfer_get_bytes_remaining(xfer));
+	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
+	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
 
 	pixbuf = gtk_widget_render_icon(dialog->window,
-									(type == GAIM_XFER_RECEIVE
+									(type == PURPLE_XFER_RECEIVE
 									 ? PIDGIN_STOCK_DOWNLOAD
 									 : PIDGIN_STOCK_UPLOAD),
 									GTK_ICON_SIZE_MENU, NULL);
 
 	gtk_list_store_append(dialog->model, &data->iter);
-	lfilename = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
+	lfilename = g_path_get_basename(purple_xfer_get_local_filename(xfer));
 	utf8 = g_filename_to_utf8(lfilename, -1, NULL, NULL, NULL);
 	g_free(lfilename);
 	lfilename = utf8;
 	gtk_list_store_set(dialog->model, &data->iter,
 					   COLUMN_STATUS, pixbuf,
 					   COLUMN_PROGRESS, 0.0,
-					   COLUMN_FILENAME, (type == GAIM_XFER_RECEIVE)
-					                     ? gaim_xfer_get_filename(xfer)
+					   COLUMN_FILENAME, (type == PURPLE_XFER_RECEIVE)
+					                     ? purple_xfer_get_filename(xfer)
 							     : lfilename,
 					   COLUMN_SIZE, size_str,
 					   COLUMN_REMAINING, _("Waiting for transfer to begin"),
@@ -992,7 +992,7 @@ pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, GaimXfer *xfer)
 
 void
 pidginxfer_dialog_remove_xfer(PidginXferDialog *dialog,
-								GaimXfer *xfer)
+								PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 
@@ -1016,12 +1016,12 @@ pidginxfer_dialog_remove_xfer(PidginXferDialog *dialog,
 	ensure_row_selected(dialog);
 
 	update_title_progress(dialog);
-	gaim_xfer_unref(xfer);
+	purple_xfer_unref(xfer);
 }
 
 void
 pidginxfer_dialog_cancel_xfer(PidginXferDialog *dialog,
-								GaimXfer *xfer)
+								PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 	GdkPixbuf *pixbuf;
@@ -1038,7 +1038,7 @@ pidginxfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 	if (!data->in_list)
 		return;
 
-	if ((gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL) && (dialog->auto_clear)) {
+	if ((purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL) && (dialog->auto_clear)) {
 		pidginxfer_dialog_remove_xfer(dialog, xfer);
 		return;
 	}
@@ -1052,7 +1052,7 @@ pidginxfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 									PIDGIN_STOCK_FILE_CANCELED,
 									GTK_ICON_SIZE_MENU, NULL);
 
-	if (gaim_xfer_is_canceled(xfer))
+	if (purple_xfer_is_canceled(xfer))
 		status = _("Canceled");
 	else
 		status = _("Failed");
@@ -1069,7 +1069,7 @@ pidginxfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 
 void
 pidginxfer_dialog_update_xfer(PidginXferDialog *dialog,
-								GaimXfer *xfer)
+								PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 	char *size_str, *remaining_str;
@@ -1089,23 +1089,23 @@ pidginxfer_dialog_update_xfer(PidginXferDialog *dialog,
 
 	current_time = time(NULL);
 	if (((current_time - data->last_updated_time) == 0) &&
-		(!gaim_xfer_is_completed(xfer)))
+		(!purple_xfer_is_completed(xfer)))
 	{
 		/* Don't update the window more than once per second */
 		return;
 	}
 	data->last_updated_time = current_time;
 
-	size_str      = gaim_str_size_to_units(gaim_xfer_get_size(xfer));
-	remaining_str = gaim_str_size_to_units(gaim_xfer_get_bytes_remaining(xfer));
+	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
+	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
 
 	gtk_list_store_set(xfer_dialog->model, &data->iter,
-					   COLUMN_PROGRESS, gaim_xfer_get_progress(xfer),
+					   COLUMN_PROGRESS, purple_xfer_get_progress(xfer),
 					   COLUMN_SIZE, size_str,
 					   COLUMN_REMAINING, remaining_str,
 					   -1);
 
-	if (gaim_xfer_is_completed(xfer))
+	if (purple_xfer_is_completed(xfer))
 	{
 		GdkPixbuf *pixbuf;
 
@@ -1127,7 +1127,7 @@ pidginxfer_dialog_update_xfer(PidginXferDialog *dialog,
 	if (xfer == dialog->selected_xfer)
 		update_detailed_info(xfer_dialog, xfer);
 
-	if (gaim_xfer_is_completed(xfer) && dialog->auto_clear)
+	if (purple_xfer_is_completed(xfer) && dialog->auto_clear)
 		pidginxfer_dialog_remove_xfer(dialog, xfer);
 	else
 		update_buttons(dialog, xfer);
@@ -1143,14 +1143,14 @@ pidginxfer_dialog_update_xfer(PidginXferDialog *dialog,
 	while (valid)
 	{
 		GValue val;
-		GaimXfer *next;
+		PurpleXfer *next;
 
 		val.g_type = 0;
 		gtk_tree_model_get_value(GTK_TREE_MODEL(dialog->model),
 				&iter, COLUMN_DATA, &val);
 
 		next = g_value_get_pointer(&val);
-		if (!gaim_xfer_is_completed(next))
+		if (!purple_xfer_is_completed(next))
 			return;
 
 		valid = gtk_tree_model_iter_next(GTK_TREE_MODEL(dialog->model), &iter);
@@ -1164,7 +1164,7 @@ pidginxfer_dialog_update_xfer(PidginXferDialog *dialog,
  * File Transfer UI Ops
  **************************************************************************/
 static void
-pidginxfer_new_xfer(GaimXfer *xfer)
+pidginxfer_new_xfer(PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 
@@ -1174,7 +1174,7 @@ pidginxfer_new_xfer(GaimXfer *xfer)
 }
 
 static void
-pidginxfer_destroy(GaimXfer *xfer)
+pidginxfer_destroy(PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 
@@ -1187,7 +1187,7 @@ pidginxfer_destroy(GaimXfer *xfer)
 }
 
 static void
-pidginxfer_add_xfer(GaimXfer *xfer)
+pidginxfer_add_xfer(PurpleXfer *xfer)
 {
 	if (xfer_dialog == NULL)
 		xfer_dialog = pidginxfer_dialog_new();
@@ -1196,26 +1196,26 @@ pidginxfer_add_xfer(GaimXfer *xfer)
 }
 
 static void
-pidginxfer_update_progress(GaimXfer *xfer, double percent)
+pidginxfer_update_progress(PurpleXfer *xfer, double percent)
 {
 	pidginxfer_dialog_update_xfer(xfer_dialog, xfer);
 }
 
 static void
-pidginxfer_cancel_local(GaimXfer *xfer)
+pidginxfer_cancel_local(PurpleXfer *xfer)
 {
 	if (xfer_dialog)
 		pidginxfer_dialog_cancel_xfer(xfer_dialog, xfer);
 }
 
 static void
-pidginxfer_cancel_remote(GaimXfer *xfer)
+pidginxfer_cancel_remote(PurpleXfer *xfer)
 {
 	if (xfer_dialog)
 		pidginxfer_dialog_cancel_xfer(xfer_dialog, xfer);
 }
 
-static GaimXferUiOps ops =
+static PurpleXferUiOps ops =
 {
 	pidginxfer_new_xfer,
 	pidginxfer_destroy,
@@ -1231,9 +1231,9 @@ static GaimXferUiOps ops =
 void
 pidgin_xfers_init(void)
 {
-	gaim_prefs_add_none("/gaim/gtk/filetransfer");
-	gaim_prefs_add_bool("/gaim/gtk/filetransfer/clear_finished", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/filetransfer/keep_open", FALSE);
+	purple_prefs_add_none("/purple/gtk/filetransfer");
+	purple_prefs_add_bool("/purple/gtk/filetransfer/clear_finished", TRUE);
+	purple_prefs_add_bool("/purple/gtk/filetransfer/keep_open", FALSE);
 }
 
 void
@@ -1255,7 +1255,7 @@ pidgin_get_xfer_dialog(void)
 	return xfer_dialog;
 }
 
-GaimXferUiOps *
+PurpleXferUiOps *
 pidgin_xfers_get_ui_ops(void)
 {
 	return &ops;

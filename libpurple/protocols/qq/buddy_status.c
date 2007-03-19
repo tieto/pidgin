@@ -1,9 +1,9 @@
 /**
  * @file buddy_status.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -55,7 +55,7 @@ void qq_buddy_status_dump_unclear(qq_buddy_status *s)
 	g_string_append_printf(dump, "012:     %02x   (status)\n", s->status);
 	g_string_append_printf(dump, "013-014:     %04x   (client_version)\n", s->client_version);
 	/* g_string_append_printf(dump, "015-030:     %s   (unknown key)\n", s->unknown_key); */
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Buddy status entry, %s", dump->str);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Buddy status entry, %s", dump->str);
 	_qq_show_packet("Unknown key", s->unknown_key, QQ_KEY_LENGTH);
 	g_string_free(dump, TRUE);
 }
@@ -116,19 +116,19 @@ gboolean is_online(guint8 status)
 }
 
  /* Help calculate the correct icon index to tell the server. */
-gint get_icon_offset(GaimConnection *gc)
+gint get_icon_offset(PurpleConnection *gc)
 { 
-	GaimAccount *account;
-	GaimPresence *presence; 
+	PurpleAccount *account;
+	PurplePresence *presence; 
 
-	account = gaim_connection_get_account(gc);
-	presence = gaim_account_get_presence(account);
+	account = purple_connection_get_account(gc);
+	presence = purple_account_get_presence(account);
 
-	if (gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE)) {
+	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE)) {
 		return 2;
-	} else if (gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_AWAY)
-			|| gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_EXTENDED_AWAY)
-			|| gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_UNAVAILABLE)) {
+	} else if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_AWAY)
+			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_EXTENDED_AWAY)
+			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_UNAVAILABLE)) {
 		return 1;
         } else {
 		return 0;
@@ -136,27 +136,27 @@ gint get_icon_offset(GaimConnection *gc)
 }
 
 /* send a packet to change my online status */
-void qq_send_packet_change_status(GaimConnection *gc)
+void qq_send_packet_change_status(PurpleConnection *gc)
 {
 	qq_data *qd;
 	guint8 *raw_data, *cursor, away_cmd;
 	guint32 misc_status;
 	gboolean fake_video;
-	GaimAccount *account;
-	GaimPresence *presence; 
+	PurpleAccount *account;
+	PurplePresence *presence; 
 
-	account = gaim_connection_get_account(gc);
-	presence = gaim_account_get_presence(account);
+	account = purple_connection_get_account(gc);
+	presence = purple_account_get_presence(account);
 
 	qd = (qq_data *) gc->proto_data;
 	if (!qd->logged_in)
 		return;
 
-	if (gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE)) {
+	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE)) {
 		away_cmd = QQ_BUDDY_ONLINE_INVISIBLE;
-	} else if (gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_AWAY)
-			|| gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_EXTENDED_AWAY)
-			|| gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_UNAVAILABLE)) {
+	} else if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_AWAY)
+			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_EXTENDED_AWAY)
+			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_UNAVAILABLE)) {
 		away_cmd = QQ_BUDDY_ONLINE_AWAY;
 	} else {
 		away_cmd = QQ_BUDDY_ONLINE_NORMAL;
@@ -166,7 +166,7 @@ void qq_send_packet_change_status(GaimConnection *gc)
 	cursor = raw_data;
 	misc_status = 0x00000000;
 
-	fake_video = gaim_prefs_get_bool("/plugins/prpl/qq/show_fake_video");
+	fake_video = purple_prefs_get_bool("/plugins/prpl/qq/show_fake_video");
 	if (fake_video)
 		misc_status |= QQ_MISC_STATUS_HAVING_VIIDEO;
 
@@ -179,12 +179,12 @@ void qq_send_packet_change_status(GaimConnection *gc)
 }
 
 /* parse the reply packet for change_status */
-void qq_process_change_status_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_change_status_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint len;
 	guint8 *data, *cursor, reply;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	gchar *name;
 
@@ -198,28 +198,28 @@ void qq_process_change_status_reply(guint8 *buf, gint buf_len, GaimConnection *g
 		cursor = data;
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_CHANGE_ONLINE_STATUS_REPLY_OK) {
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Change status fail\n");
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Change status fail\n");
 		} else {
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Change status OK\n");
-			name = uid_to_gaim_name(qd->uid);
-			b = gaim_find_buddy(gc->account, name);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Change status OK\n");
+			name = uid_to_purple_name(qd->uid);
+			b = purple_find_buddy(gc->account, name);
 			g_free(name);
 			q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 			qq_update_buddy_contact(gc, q_bud);
 		}
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt chg status reply\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt chg status reply\n");
 	}
 }
 
 /* it is a server message indicating that one of my buddies has changed its status */
-void qq_process_friend_change_status(guint8 *buf, gint buf_len, GaimConnection *gc) 
+void qq_process_friend_change_status(guint8 *buf, gint buf_len, PurpleConnection *gc) 
 {
 	qq_data *qd;
 	gint len, bytes;
 	guint32 my_uid;
 	guint8 *data, *cursor;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	qq_buddy_status *s;
 	gchar *name;
@@ -242,19 +242,19 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, GaimConnection *
 		bytes += read_packet_dw(data, &cursor, len, &my_uid);
 
 		if (bytes != 35) {
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "bytes(%d) != 35\n", bytes);
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "bytes(%d) != 35\n", bytes);
 			g_free(s->ip);
 			g_free(s->unknown_key);
 			g_free(s);
 			return;
 		}
 
-		name = uid_to_gaim_name(s->uid);
-		b = gaim_find_buddy(gc->account, name);
+		name = uid_to_purple_name(s->uid);
+		b = purple_find_buddy(gc->account, name);
 		g_free(name);
 		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 		if (q_bud) {
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "s->uid = %d, q_bud->uid = %d\n", s->uid , q_bud->uid);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "s->uid = %d, q_bud->uid = %d\n", s->uid , q_bud->uid);
 			if(0 != *((guint32 *)s->ip)) { 
 				g_memmove(q_bud->ip, s->ip, 4);
 				q_bud->port = s->port;
@@ -266,7 +266,7 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, GaimConnection *
 				qq_send_packet_get_level(gc, q_bud->uid);
 			qq_update_buddy_contact(gc, q_bud);
 		} else {
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 					"got information of unknown buddy %d\n", s->uid);
 		}
 
@@ -274,6 +274,6 @@ void qq_process_friend_change_status(guint8 *buf, gint buf_len, GaimConnection *
 		g_free(s->unknown_key);
 		g_free(s);
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt buddy status change packet\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt buddy status change packet\n");
 	}
 }

@@ -1,9 +1,9 @@
 /**
  * @file keep_alive.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -44,7 +44,7 @@
 #define QQ_UPDATE_ONLINE_INTERVAL   300	/* in sec */
 
 /* send keep-alive packet to QQ server (it is a heart-beat) */
-void qq_send_packet_keep_alive(GaimConnection *gc)
+void qq_send_packet_keep_alive(PurpleConnection *gc)
 {
 	qq_data *qd;
 	guint8 *raw_data, *cursor;
@@ -62,7 +62,7 @@ void qq_send_packet_keep_alive(GaimConnection *gc)
 }
 
 /* parse the return of keep-alive packet, it includes some system information */
-void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, GaimConnection *gc) 
+void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, PurpleConnection *gc) 
 {
 	qq_data *qd;
 	gint len;
@@ -82,13 +82,13 @@ void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 		/* segments[0] and segment[1] are all 0x30 ("0") */
 		qd->all_online = strtol(segments[2], NULL, 10);
 		if(0 == qd->all_online)
-			gaim_connection_error(gc, _("Keep alive error, seems connection lost!"));
+			purple_connection_error(gc, _("Keep alive error, seems connection lost!"));
 		g_free(qd->my_ip);
 		qd->my_ip = g_strdup(segments[3]);
 		qd->my_port = strtol(segments[4], NULL, 10);
 		g_strfreev(segments);
 	} else
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt keep alive reply\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt keep alive reply\n");
 
 	/* we refresh buddies's online status periodically */
 	/* qd->last_get_online is updated when setting get_buddies_online packet */
@@ -98,7 +98,7 @@ void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 
 /* refresh all buddies online/offline,
  * after receiving reply for get_buddies_online packet */
-void qq_refresh_all_buddy_status(GaimConnection *gc)
+void qq_refresh_all_buddy_status(PurpleConnection *gc)
 {
 	time_t now;
 	GList *list;
@@ -121,23 +121,23 @@ void qq_refresh_all_buddy_status(GaimConnection *gc)
 }
 
 /*TODO: maybe this should be qq_update_buddy_status() ?*/
-void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud)
+void qq_update_buddy_contact(PurpleConnection *gc, qq_buddy *q_bud)
 {
 	gchar *name;
-	GaimBuddy *bud;
+	PurpleBuddy *bud;
 	gchar *status_id;
 	
 	g_return_if_fail(q_bud != NULL);
 
-	name = uid_to_gaim_name(q_bud->uid);
-	bud = gaim_find_buddy(gc->account, name);
+	name = uid_to_purple_name(q_bud->uid);
+	bud = purple_find_buddy(gc->account, name);
 	g_return_if_fail(bud != NULL);
 
 	if (bud != NULL) {
-		gaim_blist_server_alias_buddy(bud, q_bud->nickname); /* server */
+		purple_blist_server_alias_buddy(bud, q_bud->nickname); /* server */
 		q_bud->last_refresh = time(NULL);
 
-		/* gaim supports signon and idle time
+		/* purple supports signon and idle time
 		 * but it is not much use for QQ, I do not use them */
 		/* serv_got_update(gc, name, online, 0, q_bud->signon, q_bud->idle, bud->uc); */
 		status_id = "available";
@@ -159,20 +159,20 @@ void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud)
 			break;
 		default:
 			status_id = "invisible";
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "unknown status: %x\n", q_bud->status);
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "unknown status: %x\n", q_bud->status);
 			break;
 		}
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "set buddy %d to %s\n", q_bud->uid, status_id);
-		gaim_prpl_got_user_status(gc->account, name, status_id, NULL);
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "set buddy %d to %s\n", q_bud->uid, status_id);
+		purple_prpl_got_user_status(gc->account, name, status_id, NULL);
 
 		if (q_bud->comm_flag & QQ_COMM_FLAG_BIND_MOBILE && q_bud->status != QQ_BUDDY_OFFLINE)
-			gaim_prpl_got_user_status(gc->account, name, "mobile", NULL);
+			purple_prpl_got_user_status(gc->account, name, "mobile", NULL);
 		else
-			gaim_prpl_got_user_status_deactive(gc->account, name, "mobile");
+			purple_prpl_got_user_status_deactive(gc->account, name, "mobile");
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "unknown buddy: %d\n", q_bud->uid);
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "unknown buddy: %d\n", q_bud->uid);
 	}
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "qq_update_buddy_contact, client=%04x\n", q_bud->client_version);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "qq_update_buddy_contact, client=%04x\n", q_bud->client_version);
 	g_free(name);
 }

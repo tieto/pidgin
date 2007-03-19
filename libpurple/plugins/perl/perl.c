@@ -1,5 +1,5 @@
 /*
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  *
@@ -97,17 +97,17 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 
 PerlInterpreter *my_perl = NULL;
 
-static GaimPluginUiInfo ui_info =
+static PurplePluginUiInfo ui_info =
 {
-	gaim_perl_get_plugin_frame,
+	purple_perl_get_plugin_frame,
 	0,   /* page_num (Reserved) */
 	NULL /* frame (Reserved)    */
 };
 
-#ifdef GAIM_GTKPERL
-static GaimGtkPluginUiInfo gtk_ui_info =
+#ifdef PURPLE_GTKPERL
+static PurpleGtkPluginUiInfo gtk_ui_info =
 {
-	gaim_perl_gtk_get_plugin_frame,
+	purple_perl_gtk_get_plugin_frame,
 	0 /* page_num (Reserved) */
 };
 #endif
@@ -141,7 +141,7 @@ perl_init(void)
 		 * contents. This allows to have a really local $/ without
 		 * introducing temp variables to hold the old value. Just a
 		 * question of style:) */
-		"package Gaim::PerlLoader;"
+		"package Purple::PerlLoader;"
 		"use Symbol;"
 
 		"sub load_file {"
@@ -205,7 +205,7 @@ perl_end(void)
 	PERL_SET_CONTEXT(my_perl);
 	perl_eval_pv(
 		"foreach my $lib (@DynaLoader::dl_modules) {"
-		  "if ($lib =~ /^Gaim\\b/) {"
+		  "if ($lib =~ /^Purple\\b/) {"
 		    "$lib .= '::deinit();';"
 		    "eval $lib;"
 		  "}"
@@ -220,7 +220,7 @@ perl_end(void)
 }
 
 void
-gaim_perl_callXS(void (*subaddr)(pTHX_ CV *cv), CV *cv, SV **mark)
+purple_perl_callXS(void (*subaddr)(pTHX_ CV *cv), CV *cv, SV **mark)
 {
 	dSP;
 
@@ -231,7 +231,7 @@ gaim_perl_callXS(void (*subaddr)(pTHX_ CV *cv), CV *cv, SV **mark)
 }
 
 static gboolean
-probe_perl_plugin(GaimPlugin *plugin)
+probe_perl_plugin(PurplePlugin *plugin)
 {
 	/* XXX This would be much faster if I didn't create a new
 	 *     PerlInterpreter every time I probed a plugin */
@@ -271,18 +271,18 @@ probe_perl_plugin(GaimPlugin *plugin)
 		if (perl_api_ver != 2)
 			status = FALSE;
 		else {
-			GaimPluginInfo *info;
-			GaimPerlScript *gps;
+			PurplePluginInfo *info;
+			PurplePerlScript *gps;
 			char *basename;
 			STRLEN len;
 
-			info = g_new0(GaimPluginInfo, 1);
-			gps  = g_new0(GaimPerlScript, 1);
+			info = g_new0(PurplePluginInfo, 1);
+			gps  = g_new0(PurplePerlScript, 1);
 
-			info->magic = GAIM_PLUGIN_MAGIC;
-			info->major_version = GAIM_MAJOR_VERSION;
-			info->minor_version = GAIM_MINOR_VERSION;
-			info->type = GAIM_PLUGIN_STANDARD;
+			info->magic = PURPLE_PLUGIN_MAGIC;
+			info->major_version = PURPLE_MAJOR_VERSION;
+			info->minor_version = PURPLE_MINOR_VERSION;
+			info->type = PURPLE_PLUGIN_STANDARD;
 
 			info->dependencies = g_list_append(info->dependencies,
 			                                   PERL_PLUGIN_ID);
@@ -290,8 +290,8 @@ probe_perl_plugin(GaimPlugin *plugin)
 			gps->plugin = plugin;
 
 			basename = g_path_get_basename(plugin->path);
-			gaim_perl_normalize_script_name(basename);
-			gps->package = g_strdup_printf("Gaim::Script::%s",
+			purple_perl_normalize_script_name(basename);
+			gps->package = g_strdup_printf("Purple::Script::%s",
 			                               basename);
 			g_free(basename);
 
@@ -301,10 +301,10 @@ probe_perl_plugin(GaimPlugin *plugin)
 			/* Set id here in case we don't find one later. */
 			info->id = g_strdup(SvPV(*key, len));
 
-#ifdef GAIM_GTKPERL
+#ifdef PURPLE_GTKPERL
 			if ((key = hv_fetch(plugin_info, "GTK_UI",
 			                    strlen("GTK_UI"), 0)))
-				info->ui_requirement = GAIM_GTK_PLUGIN_TYPE;
+				info->ui_requirement = PURPLE_GTK_PLUGIN_TYPE;
 #endif
 
 			if ((key = hv_fetch(plugin_info, "url",
@@ -348,8 +348,8 @@ probe_perl_plugin(GaimPlugin *plugin)
 		/********************************************************/
 		/* Only one of the next two options should be present   */
 		/*                                                      */
-		/* prefs_info - Uses non-GUI (read GTK) gaim API calls  */
-		/*              and creates a GaimPluginPrefInfo type.  */
+		/* prefs_info - Uses non-GUI (read GTK) purple API calls  */
+		/*              and creates a PurplePluginPrefInfo type.  */
 		/*                                                      */
 		/* gtk_prefs_info - Requires gtk2-perl be installed by  */
 		/*                  the user and he must create a       */
@@ -367,7 +367,7 @@ probe_perl_plugin(GaimPlugin *plugin)
 				info->prefs_info = &ui_info;
 			}
 
-#ifdef GAIM_GTKPERL
+#ifdef PURPLE_GTKPERL
 			if ((key = hv_fetch(plugin_info, "gtk_prefs_info",
 			                    strlen("gtk_prefs_info"), 0))) {
 				/* key now is the name of the Perl sub that
@@ -384,13 +384,13 @@ probe_perl_plugin(GaimPlugin *plugin)
 				gps->plugin_action_sub = g_strdup_printf("%s::%s",
 				                                         gps->package,
 				                                         SvPV(*key, len));
-				info->actions = gaim_perl_plugin_actions;
+				info->actions = purple_perl_plugin_actions;
 			}
 
 			plugin->info = info;
 			info->extra_info = gps;
 
-			status = gaim_plugin_register(plugin);
+			status = purple_plugin_register(plugin);
 		}
 	}
 
@@ -402,15 +402,15 @@ probe_perl_plugin(GaimPlugin *plugin)
 }
 
 static gboolean
-load_perl_plugin(GaimPlugin *plugin)
+load_perl_plugin(PurplePlugin *plugin)
 {
-	GaimPerlScript *gps = (GaimPerlScript *)plugin->info->extra_info;
+	PurplePerlScript *gps = (PurplePerlScript *)plugin->info->extra_info;
 	char *atmp[3] = { plugin->path, NULL, NULL };
 
 	if (gps == NULL || gps->load_sub == NULL)
 		return FALSE;
 
-	gaim_debug(GAIM_DEBUG_INFO, "perl", "Loading perl script\n");
+	purple_debug(PURPLE_DEBUG_INFO, "perl", "Loading perl script\n");
 
 	if (my_perl == NULL)
 		perl_init();
@@ -420,7 +420,7 @@ load_perl_plugin(GaimPlugin *plugin)
 	atmp[1] = gps->package;
 
 	PERL_SET_CONTEXT(my_perl);
-	execute_perl("Gaim::PerlLoader::load_n_eval", 2, atmp);
+	execute_perl("Purple::PerlLoader::load_n_eval", 2, atmp);
 
 	{
 		dSP;
@@ -429,8 +429,8 @@ load_perl_plugin(GaimPlugin *plugin)
 		ENTER;
 		SAVETMPS;
 		PUSHMARK(sp);
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin,
-		                                         "Gaim::Plugin")));
+		XPUSHs(sv_2mortal(purple_perl_bless_object(plugin,
+		                                         "Purple::Plugin")));
 		PUTBACK;
 
 		perl_call_pv(gps->load_sub, G_EVAL | G_SCALAR);
@@ -439,7 +439,7 @@ load_perl_plugin(GaimPlugin *plugin)
 		if (SvTRUE(ERRSV)) {
 			STRLEN len;
 
-			gaim_debug(GAIM_DEBUG_ERROR, "perl",
+			purple_debug(PURPLE_DEBUG_ERROR, "perl",
 			           "Perl function %s exited abnormally: %s\n",
 			           gps->load_sub, SvPV(ERRSV, len));
 		}
@@ -466,7 +466,7 @@ destroy_package(const char *package)
 	XPUSHs(sv_2mortal(newSVpv(package, strlen(package))));
 	PUTBACK;
 
-	perl_call_pv("Gaim::PerlLoader::destroy_package",
+	perl_call_pv("Purple::PerlLoader::destroy_package",
 	             G_VOID | G_EVAL | G_DISCARD);
 
 	SPAGAIN;
@@ -477,14 +477,14 @@ destroy_package(const char *package)
 }
 
 static gboolean
-unload_perl_plugin(GaimPlugin *plugin)
+unload_perl_plugin(PurplePlugin *plugin)
 {
-	GaimPerlScript *gps = (GaimPerlScript *)plugin->info->extra_info;
+	PurplePerlScript *gps = (PurplePerlScript *)plugin->info->extra_info;
 
 	if (gps == NULL)
 		return FALSE;
 
-	gaim_debug(GAIM_DEBUG_INFO, "perl", "Unloading perl script\n");
+	purple_debug(PURPLE_DEBUG_INFO, "perl", "Unloading perl script\n");
 
 	if (gps->unload_sub != NULL) {
 		dSP;
@@ -493,8 +493,8 @@ unload_perl_plugin(GaimPlugin *plugin)
 		ENTER;
 		SAVETMPS;
 		PUSHMARK(sp);
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(plugin,
-		                                         "Gaim::Plugin")));
+		XPUSHs(sv_2mortal(purple_perl_bless_object(plugin,
+		                                         "Purple::Plugin")));
 		PUTBACK;
 
 		perl_call_pv(gps->unload_sub, G_EVAL | G_SCALAR);
@@ -503,7 +503,7 @@ unload_perl_plugin(GaimPlugin *plugin)
 		if (SvTRUE(ERRSV)) {
 			STRLEN len;
 
-			gaim_debug(GAIM_DEBUG_ERROR, "perl",
+			purple_debug(PURPLE_DEBUG_ERROR, "perl",
 			           "Perl function %s exited abnormally: %s\n",
 			           gps->load_sub, SvPV(ERRSV, len));
 		}
@@ -513,9 +513,9 @@ unload_perl_plugin(GaimPlugin *plugin)
 		LEAVE;
 	}
 
-	gaim_perl_cmd_clear_for_plugin(plugin);
-	gaim_perl_signal_clear_for_plugin(plugin);
-	gaim_perl_timeout_clear_for_plugin(plugin);
+	purple_perl_cmd_clear_for_plugin(plugin);
+	purple_perl_signal_clear_for_plugin(plugin);
+	purple_perl_timeout_clear_for_plugin(plugin);
 
 	destroy_package(gps->package);
 
@@ -523,10 +523,10 @@ unload_perl_plugin(GaimPlugin *plugin)
 }
 
 static void
-destroy_perl_plugin(GaimPlugin *plugin)
+destroy_perl_plugin(PurplePlugin *plugin)
 {
 	if (plugin->info != NULL) {
-		GaimPerlScript *gps;
+		PurplePerlScript *gps;
 
 		g_free(plugin->info->name);
 		g_free(plugin->info->version);
@@ -535,13 +535,13 @@ destroy_perl_plugin(GaimPlugin *plugin)
 		g_free(plugin->info->author);
 		g_free(plugin->info->homepage);
 
-		gps = (GaimPerlScript *)plugin->info->extra_info;
+		gps = (PurplePerlScript *)plugin->info->extra_info;
 		if (gps != NULL) {
 			g_free(gps->load_sub);
 			g_free(gps->unload_sub);
 			g_free(gps->package);
 			g_free(gps->prefs_sub);
-#ifdef GAIM_GTKPERL
+#ifdef PURPLE_GTKPERL
 			g_free(gps->gtk_prefs_sub);
 #endif
 			g_free(gps);
@@ -551,20 +551,20 @@ destroy_perl_plugin(GaimPlugin *plugin)
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	perl_end();
 
 	return TRUE;
 }
 
-static GaimPluginLoaderInfo loader_info =
+static PurplePluginLoaderInfo loader_info =
 {
 	NULL,                                             /**< exts           */
 	probe_perl_plugin,                                /**< probe          */
@@ -573,16 +573,16 @@ static GaimPluginLoaderInfo loader_info =
 	destroy_perl_plugin                               /**< destroy        */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_LOADER,                               /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_LOADER,                               /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	PERL_PLUGIN_ID,                                   /**< id             */
 	N_("Perl Plugin Loader"),                         /**< name           */
@@ -590,7 +590,7 @@ static GaimPluginInfo info =
 	N_("Provides support for loading perl plugins."), /**< summary        */
 	N_("Provides support for loading perl plugins."), /**< description    */
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -603,9 +603,9 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 	loader_info.exts = g_list_append(loader_info.exts, "pl");
 }
 
-GAIM_INIT_PLUGIN(perl, init_plugin, info)
+PURPLE_INIT_PLUGIN(perl, init_plugin, info)

@@ -2,9 +2,9 @@
  * @file account.h Account API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -24,17 +24,17 @@
  *
  * @see @ref account-signals
  */
-#ifndef _GAIM_ACCOUNT_H_
-#define _GAIM_ACCOUNT_H_
+#ifndef _PURPLE_ACCOUNT_H_
+#define _PURPLE_ACCOUNT_H_
 
 #include <glib-object.h>
 #include <glib.h>
 
-typedef struct _GaimAccountUiOps GaimAccountUiOps;
-typedef struct _GaimAccount      GaimAccount;
+typedef struct _PurpleAccountUiOps PurpleAccountUiOps;
+typedef struct _PurpleAccount      PurpleAccount;
 
-typedef gboolean (*GaimFilterAccountFunc)(GaimAccount *account);
-typedef void (*GaimAccountRequestAuthorizationCb)(void *);
+typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
+typedef void (*PurpleAccountRequestAuthorizationCb)(void *);
 
 #include "connection.h"
 #include "log.h"
@@ -47,27 +47,27 @@ typedef void (*GaimAccountRequestAuthorizationCb)(void *);
  */
 typedef enum
 {
-	GAIM_ACCOUNT_REQUEST_AUTHORIZATION = 0 /* Account authorization request */
-} GaimAccountRequestType;
+	PURPLE_ACCOUNT_REQUEST_AUTHORIZATION = 0 /* Account authorization request */
+} PurpleAccountRequestType;
 
-struct _GaimAccountUiOps
+struct _PurpleAccountUiOps
 {
 	/* A buddy we already have added us to their buddy list. */
-	void (*notify_added)(GaimAccount *account, const char *remote_user,
+	void (*notify_added)(PurpleAccount *account, const char *remote_user,
 	                    const char *id, const char *alias,
 	                     const char *message);
-	void (*status_changed)(GaimAccount *account, GaimStatus *status);
+	void (*status_changed)(PurpleAccount *account, PurpleStatus *status);
 	/* Someone we don't have on our list added us. Will prompt to add them. */
-	void (*request_add)(GaimAccount *account, const char *remote_user,
+	void (*request_add)(PurpleAccount *account, const char *remote_user,
 	                    const char *id, const char *alias,
 	                    const char *message);
-	void *(*request_authorize)(GaimAccount *account, const char *remote_user, const char *id,
+	void *(*request_authorize)(PurpleAccount *account, const char *remote_user, const char *id,
 				 const char *alias, const char *message, gboolean on_list, 
 				 GCallback authorize_cb, GCallback deny_cb, void *user_data);
 	void (*close_account_request)(void *ui_handle);
 };
 
-struct _GaimAccount
+struct _PurpleAccount
 {
 	char *username;             /**< The username.                          */
 	char *alias;                /**< How you appear to yourself.            */
@@ -81,13 +81,13 @@ struct _GaimAccount
 
 	char *protocol_id;          /**< The ID of the protocol.                */
 
-	GaimConnection *gc;         /**< The connection handle.                 */
+	PurpleConnection *gc;         /**< The connection handle.                 */
 	gboolean disconnecting;     /**< The account is currently disconnecting */
 
 	GHashTable *settings;       /**< Protocol-specific settings.            */
 	GHashTable *ui_settings;    /**< UI-specific settings.                  */
 
-	GaimProxyInfo *proxy_info;  /**< Proxy information.  This will be set   */
+	PurpleProxyInfo *proxy_info;  /**< Proxy information.  This will be set   */
 								/*   to NULL when the account inherits      */
 								/*   proxy settings from global prefs.      */
 
@@ -97,8 +97,8 @@ struct _GaimAccount
 
 	GList *status_types;        /**< Status types.                          */
 
-	GaimPresence *presence;     /**< Presence.                              */
-	GaimLog *system_log;        /**< The system log                         */
+	PurplePresence *presence;     /**< Presence.                              */
+	PurpleLog *system_log;        /**< The system log                         */
 
 	void *ui_data;              /**< The UI can put data here.              */
 };
@@ -120,35 +120,35 @@ extern "C" {
  *
  * @return The new account.
  */
-GaimAccount *gaim_account_new(const char *username, const char *protocol_id);
+PurpleAccount *purple_account_new(const char *username, const char *protocol_id);
 
 /**
  * Destroys an account.
  *
  * @param account The account to destroy.
  */
-void gaim_account_destroy(GaimAccount *account);
+void purple_account_destroy(PurpleAccount *account);
 
 /**
  * Connects to an account.
  *
  * @param account The account to connect to.
  */
-void gaim_account_connect(GaimAccount *account);
+void purple_account_connect(PurpleAccount *account);
 
 /**
  * Registers an account.
  *
  * @param account The account to register.
  */
-void gaim_account_register(GaimAccount *account);
+void purple_account_register(PurpleAccount *account);
 
 /**
  * Disconnects from an account.
  *
  * @param account The account to disconnect from.
  */
-void gaim_account_disconnect(GaimAccount *account);
+void purple_account_disconnect(PurpleAccount *account);
 
 /**
  * Notifies the user that the account was added to a remote user's
@@ -163,7 +163,7 @@ void gaim_account_disconnect(GaimAccount *account);
  * @param alias       The optional alias of the user.
  * @param message     The optional message sent from the user adding you.
  */
-void gaim_account_notify_added(GaimAccount *account, const char *remote_user,
+void purple_account_notify_added(PurpleAccount *account, const char *remote_user,
                                const char *id, const char *alias,
                                const char *message);
 
@@ -182,7 +182,7 @@ void gaim_account_notify_added(GaimAccount *account, const char *remote_user,
  * @param alias       The optional alias of the user.
  * @param message     The optional message sent from the user adding you.
  */
-void gaim_account_request_add(GaimAccount *account, const char *remote_user,
+void purple_account_request_add(PurpleAccount *account, const char *remote_user,
                               const char *id, const char *alias,
                               const char *message);
 
@@ -204,30 +204,30 @@ void gaim_account_request_add(GaimAccount *account, const char *remote_user,
  *
  * @return A UI-specific handle.
  */
-void *gaim_account_request_authorization(GaimAccount *account, const char *remote_user,
+void *purple_account_request_authorization(PurpleAccount *account, const char *remote_user,
 					const char *id, const char *alias, const char *message, gboolean on_list,
 					GCallback auth_cb, GCallback deny_cb, void *user_data);
 
 /**
- * Close account requests registered for the given GaimAccount
+ * Close account requests registered for the given PurpleAccount
  *
  * @param handle	   The account for which requests should be closed
  */
-void gaim_account_request_close_with_account(GaimAccount *account);
+void purple_account_request_close_with_account(PurpleAccount *account);
 
 /**
  * Close the account request for the given ui handle
  *
  * @param handle	   The ui specific handle for which requests should be closed
  */
-void gaim_account_request_close(void *ui_handle);
+void purple_account_request_close(void *ui_handle);
 
 /**
  * Requests information from the user to change the account's password.
  *
  * @param account The account to change the password on.
  */
-void gaim_account_request_change_password(GaimAccount *account);
+void purple_account_request_change_password(PurpleAccount *account);
 
 /**
  * Requests information from the user to change the account's
@@ -235,7 +235,7 @@ void gaim_account_request_change_password(GaimAccount *account);
  *
  * @param account The account to change the user information on.
  */
-void gaim_account_request_change_user_info(GaimAccount *account);
+void purple_account_request_change_user_info(PurpleAccount *account);
 
 /**
  * Sets the account's username.
@@ -243,7 +243,7 @@ void gaim_account_request_change_user_info(GaimAccount *account);
  * @param account  The account.
  * @param username The username.
  */
-void gaim_account_set_username(GaimAccount *account, const char *username);
+void purple_account_set_username(PurpleAccount *account, const char *username);
 
 /**
  * Sets the account's password.
@@ -251,7 +251,7 @@ void gaim_account_set_username(GaimAccount *account, const char *username);
  * @param account  The account.
  * @param password The password.
  */
-void gaim_account_set_password(GaimAccount *account, const char *password);
+void purple_account_set_password(PurpleAccount *account, const char *password);
 
 /**
  * Sets the account's alias.
@@ -259,7 +259,7 @@ void gaim_account_set_password(GaimAccount *account, const char *password);
  * @param account The account.
  * @param alias   The alias.
  */
-void gaim_account_set_alias(GaimAccount *account, const char *alias);
+void purple_account_set_alias(PurpleAccount *account, const char *alias);
 
 /**
  * Sets the account's user information
@@ -267,7 +267,7 @@ void gaim_account_set_alias(GaimAccount *account, const char *alias);
  * @param account   The account.
  * @param user_info The user information.
  */
-void gaim_account_set_user_info(GaimAccount *account, const char *user_info);
+void purple_account_set_user_info(PurpleAccount *account, const char *user_info);
 
 /**
  * Sets the account's buddy icon.
@@ -275,7 +275,7 @@ void gaim_account_set_user_info(GaimAccount *account, const char *user_info);
  * @param account The account.
  * @param icon    The buddy icon file.
  */
-void gaim_account_set_buddy_icon(GaimAccount *account, const char *icon);
+void purple_account_set_buddy_icon(PurpleAccount *account, const char *icon);
 
 /**
  * Sets the account's buddy icon path.
@@ -283,7 +283,7 @@ void gaim_account_set_buddy_icon(GaimAccount *account, const char *icon);
  * @param account The account.
  * @param info	  The buddy icon non-cached path.
  */
-void gaim_account_set_buddy_icon_path(GaimAccount *account, const char *path);
+void purple_account_set_buddy_icon_path(PurpleAccount *account, const char *path);
 
 /**
  * Sets the account's protocol ID.
@@ -291,7 +291,7 @@ void gaim_account_set_buddy_icon_path(GaimAccount *account, const char *path);
  * @param account     The account.
  * @param protocol_id The protocol ID.
  */
-void gaim_account_set_protocol_id(GaimAccount *account,
+void purple_account_set_protocol_id(PurpleAccount *account,
 								  const char *protocol_id);
 
 /**
@@ -300,7 +300,7 @@ void gaim_account_set_protocol_id(GaimAccount *account,
  * @param account The account.
  * @param gc      The connection.
  */
-void gaim_account_set_connection(GaimAccount *account, GaimConnection *gc);
+void purple_account_set_connection(PurpleAccount *account, PurpleConnection *gc);
 
 /**
  * Sets whether or not this account should save its password.
@@ -308,7 +308,7 @@ void gaim_account_set_connection(GaimAccount *account, GaimConnection *gc);
  * @param account The account.
  * @param value   @c TRUE if it should remember the password.
  */
-void gaim_account_set_remember_password(GaimAccount *account, gboolean value);
+void purple_account_set_remember_password(PurpleAccount *account, gboolean value);
 
 /**
  * Sets whether or not this account should check for mail.
@@ -316,7 +316,7 @@ void gaim_account_set_remember_password(GaimAccount *account, gboolean value);
  * @param account The account.
  * @param value   @c TRUE if it should check for mail.
  */
-void gaim_account_set_check_mail(GaimAccount *account, gboolean value);
+void purple_account_set_check_mail(PurpleAccount *account, gboolean value);
 
 /**
  * Sets whether or not this account is enabled for the specified
@@ -326,7 +326,7 @@ void gaim_account_set_check_mail(GaimAccount *account, gboolean value);
  * @param ui      The UI.
  * @param value   @c TRUE if it is enabled.
  */
-void gaim_account_set_enabled(GaimAccount *account, const char *ui,
+void purple_account_set_enabled(PurpleAccount *account, const char *ui,
 			      gboolean value);
 
 /**
@@ -335,7 +335,7 @@ void gaim_account_set_enabled(GaimAccount *account, const char *ui,
  * @param account The account.
  * @param info    The proxy information.
  */
-void gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info);
+void purple_account_set_proxy_info(PurpleAccount *account, PurpleProxyInfo *info);
 
 /**
  * Sets the account's status types.
@@ -343,11 +343,11 @@ void gaim_account_set_proxy_info(GaimAccount *account, GaimProxyInfo *info);
  * @param account      The account.
  * @param status_types The list of status types.
  */
-void gaim_account_set_status_types(GaimAccount *account, GList *status_types);
+void purple_account_set_status_types(PurpleAccount *account, GList *status_types);
 
 /**
  * Activates or deactivates a status.  All changes to the statuses of
- * an account go through this function or gaim_account_set_status_list.
+ * an account go through this function or purple_account_set_status_list.
  *
  * Only independent statuses can be deactivated with this. To deactivate
  * an exclusive status, activate a different (and exclusive?) status.
@@ -358,13 +358,13 @@ void gaim_account_set_status_types(GaimAccount *account, GList *status_types);
  * @param ...       Pairs of attributes for the new status passed in
  *                  as a NULL-terminated list of id/value pairs.
  */
-void gaim_account_set_status(GaimAccount *account, const char *status_id,
+void purple_account_set_status(PurpleAccount *account, const char *status_id,
 							 gboolean active, ...);
 
 
 /**
  * Activates or deactivates a status.  All changes to the statuses of
- * an account go through this function or gaim_account_set_status.
+ * an account go through this function or purple_account_set_status.
  *
  * Only independent statuses can be deactivated with this. To deactivate
  * an exclusive status, activate a different (and exclusive?) status.
@@ -374,7 +374,7 @@ void gaim_account_set_status(GaimAccount *account, const char *status_id,
  * @param active    The active state.
  * @param attrs		A list of attributes in key/value pairs
  */
-void gaim_account_set_status_list(GaimAccount *account,
+void purple_account_set_status_list(PurpleAccount *account,
 								  const char *status_id,
 								  gboolean active, GList *attrs);
 
@@ -383,7 +383,7 @@ void gaim_account_set_status_list(GaimAccount *account,
  *
  * @param account The account.
  */
-void gaim_account_clear_settings(GaimAccount *account);
+void purple_account_clear_settings(PurpleAccount *account);
 
 /**
  * Sets a protocol-specific integer setting for an account.
@@ -392,7 +392,7 @@ void gaim_account_clear_settings(GaimAccount *account);
  * @param name    The name of the setting.
  * @param value   The setting's value.
  */
-void gaim_account_set_int(GaimAccount *account, const char *name, int value);
+void purple_account_set_int(PurpleAccount *account, const char *name, int value);
 
 /**
  * Sets a protocol-specific string setting for an account.
@@ -401,7 +401,7 @@ void gaim_account_set_int(GaimAccount *account, const char *name, int value);
  * @param name    The name of the setting.
  * @param value   The setting's value.
  */
-void gaim_account_set_string(GaimAccount *account, const char *name,
+void purple_account_set_string(PurpleAccount *account, const char *name,
 							 const char *value);
 
 /**
@@ -411,7 +411,7 @@ void gaim_account_set_string(GaimAccount *account, const char *name,
  * @param name    The name of the setting.
  * @param value   The setting's value.
  */
-void gaim_account_set_bool(GaimAccount *account, const char *name,
+void purple_account_set_bool(PurpleAccount *account, const char *name,
 						   gboolean value);
 
 /**
@@ -422,7 +422,7 @@ void gaim_account_set_bool(GaimAccount *account, const char *name,
  * @param name    The name of the setting.
  * @param value   The setting's value.
  */
-void gaim_account_set_ui_int(GaimAccount *account, const char *ui,
+void purple_account_set_ui_int(PurpleAccount *account, const char *ui,
 							 const char *name, int value);
 
 /**
@@ -433,7 +433,7 @@ void gaim_account_set_ui_int(GaimAccount *account, const char *ui,
  * @param name    The name of the setting.
  * @param value   The setting's value.
  */
-void gaim_account_set_ui_string(GaimAccount *account, const char *ui,
+void purple_account_set_ui_string(PurpleAccount *account, const char *ui,
 								const char *name, const char *value);
 
 /**
@@ -444,7 +444,7 @@ void gaim_account_set_ui_string(GaimAccount *account, const char *ui,
  * @param name    The name of the setting.
  * @param value   The setting's value.
  */
-void gaim_account_set_ui_bool(GaimAccount *account, const char *ui,
+void purple_account_set_ui_bool(PurpleAccount *account, const char *ui,
 							  const char *name, gboolean value);
 
 /**
@@ -454,7 +454,7 @@ void gaim_account_set_ui_bool(GaimAccount *account, const char *ui,
  *
  * @return @c TRUE if connected, or @c FALSE otherwise.
  */
-gboolean gaim_account_is_connected(const GaimAccount *account);
+gboolean purple_account_is_connected(const PurpleAccount *account);
 
 /**
  * Returns whether or not the account is connecting.
@@ -463,7 +463,7 @@ gboolean gaim_account_is_connected(const GaimAccount *account);
  *
  * @return @c TRUE if connecting, or @c FALSE otherwise.
  */
-gboolean gaim_account_is_connecting(const GaimAccount *account);
+gboolean purple_account_is_connecting(const PurpleAccount *account);
 
 /**
  * Returns whether or not the account is disconnected.
@@ -472,7 +472,7 @@ gboolean gaim_account_is_connecting(const GaimAccount *account);
  *
  * @return @c TRUE if disconnected, or @c FALSE otherwise.
  */
-gboolean gaim_account_is_disconnected(const GaimAccount *account);
+gboolean purple_account_is_disconnected(const PurpleAccount *account);
 
 /**
  * Returns the account's username.
@@ -481,7 +481,7 @@ gboolean gaim_account_is_disconnected(const GaimAccount *account);
  *
  * @return The username.
  */
-const char *gaim_account_get_username(const GaimAccount *account);
+const char *purple_account_get_username(const PurpleAccount *account);
 
 /**
  * Returns the account's password.
@@ -490,7 +490,7 @@ const char *gaim_account_get_username(const GaimAccount *account);
  *
  * @return The password.
  */
-const char *gaim_account_get_password(const GaimAccount *account);
+const char *purple_account_get_password(const PurpleAccount *account);
 
 /**
  * Returns the account's alias.
@@ -499,7 +499,7 @@ const char *gaim_account_get_password(const GaimAccount *account);
  *
  * @return The alias.
  */
-const char *gaim_account_get_alias(const GaimAccount *account);
+const char *purple_account_get_alias(const PurpleAccount *account);
 
 /**
  * Returns the account's user information.
@@ -508,7 +508,7 @@ const char *gaim_account_get_alias(const GaimAccount *account);
  *
  * @return The user information.
  */
-const char *gaim_account_get_user_info(const GaimAccount *account);
+const char *purple_account_get_user_info(const PurpleAccount *account);
 
 /**
  * Returns the account's buddy icon filename.
@@ -517,7 +517,7 @@ const char *gaim_account_get_user_info(const GaimAccount *account);
  *
  * @return The buddy icon filename.
  */
-const char *gaim_account_get_buddy_icon(const GaimAccount *account);
+const char *purple_account_get_buddy_icon(const PurpleAccount *account);
 
 /**
  * Gets the account's buddy icon path.
@@ -526,7 +526,7 @@ const char *gaim_account_get_buddy_icon(const GaimAccount *account);
  *
  * @return The buddy icon's non-cached path.
  */
-const char *gaim_account_get_buddy_icon_path(const GaimAccount *account);
+const char *purple_account_get_buddy_icon_path(const PurpleAccount *account);
 
 /**
  * Returns the account's protocol ID.
@@ -535,7 +535,7 @@ const char *gaim_account_get_buddy_icon_path(const GaimAccount *account);
  *
  * @return The protocol ID.
  */
-const char *gaim_account_get_protocol_id(const GaimAccount *account);
+const char *purple_account_get_protocol_id(const PurpleAccount *account);
 
 /**
  * Returns the account's protocol name.
@@ -544,7 +544,7 @@ const char *gaim_account_get_protocol_id(const GaimAccount *account);
  *
  * @return The protocol name.
  */
-const char *gaim_account_get_protocol_name(const GaimAccount *account);
+const char *purple_account_get_protocol_name(const PurpleAccount *account);
 
 /**
  * Returns the account's connection.
@@ -553,7 +553,7 @@ const char *gaim_account_get_protocol_name(const GaimAccount *account);
  *
  * @return The connection.
  */
-GaimConnection *gaim_account_get_connection(const GaimAccount *account);
+PurpleConnection *purple_account_get_connection(const PurpleAccount *account);
 
 /**
  * Returns whether or not this account should save its password.
@@ -562,7 +562,7 @@ GaimConnection *gaim_account_get_connection(const GaimAccount *account);
  *
  * @return @c TRUE if it should remember the password.
  */
-gboolean gaim_account_get_remember_password(const GaimAccount *account);
+gboolean purple_account_get_remember_password(const PurpleAccount *account);
 
 /**
  * Returns whether or not this account should check for mail.
@@ -571,7 +571,7 @@ gboolean gaim_account_get_remember_password(const GaimAccount *account);
  *
  * @return @c TRUE if it should check for mail.
  */
-gboolean gaim_account_get_check_mail(const GaimAccount *account);
+gboolean purple_account_get_check_mail(const PurpleAccount *account);
 
 /**
  * Returns whether or not this account is enabled for the
@@ -582,7 +582,7 @@ gboolean gaim_account_get_check_mail(const GaimAccount *account);
  *
  * @return @c TRUE if it enabled on this UI.
  */
-gboolean gaim_account_get_enabled(const GaimAccount *account,
+gboolean purple_account_get_enabled(const PurpleAccount *account,
 				  const char *ui);
 
 /**
@@ -592,24 +592,24 @@ gboolean gaim_account_get_enabled(const GaimAccount *account,
  *
  * @return The proxy information.
  */
-GaimProxyInfo *gaim_account_get_proxy_info(const GaimAccount *account);
+PurpleProxyInfo *purple_account_get_proxy_info(const PurpleAccount *account);
 
 /**
  * Returns the active status for this account.  This looks through
- * the GaimPresence associated with this account and returns the
- * GaimStatus that has its active flag set to "TRUE."  There can be
- * only one active GaimStatus in a GaimPresence.
+ * the PurplePresence associated with this account and returns the
+ * PurpleStatus that has its active flag set to "TRUE."  There can be
+ * only one active PurpleStatus in a PurplePresence.
  *
  * @param account   The account.
  *
  * @return The active status.
  */
-GaimStatus *gaim_account_get_active_status(const GaimAccount *account);
+PurpleStatus *purple_account_get_active_status(const PurpleAccount *account);
 
 /**
  * Returns the account status with the specified ID.
  *
- * Note that this works differently than gaim_buddy_get_status() in that
+ * Note that this works differently than purple_buddy_get_status() in that
  * it will only return NULL if the status was not registered.
  *
  * @param account   The account.
@@ -617,7 +617,7 @@ GaimStatus *gaim_account_get_active_status(const GaimAccount *account);
  *
  * @return The status, or NULL if it was never registered.
  */
-GaimStatus *gaim_account_get_status(const GaimAccount *account,
+PurpleStatus *purple_account_get_status(const PurpleAccount *account,
 									const char *status_id);
 
 /**
@@ -628,23 +628,23 @@ GaimStatus *gaim_account_get_status(const GaimAccount *account,
  *
  * @return The status type if found, or NULL.
  */
-GaimStatusType *gaim_account_get_status_type(const GaimAccount *account,
+PurpleStatusType *purple_account_get_status_type(const PurpleAccount *account,
 											 const char *id);
 
 /**
  * Returns the account status type with the specified primitive.
  * Note: It is possible for an account to have more than one
- * GaimStatusType with the same primitive.  In this case, the
- * first GaimStatusType is returned.
+ * PurpleStatusType with the same primitive.  In this case, the
+ * first PurpleStatusType is returned.
  *
  * @param account   The account.
  * @param primitive The type of the status type to find.
  *
  * @return The status if found, or NULL.
  */
-GaimStatusType *gaim_account_get_status_type_with_primitive(
-							const GaimAccount *account,
-							GaimStatusPrimitive primitive);
+PurpleStatusType *purple_account_get_status_type_with_primitive(
+							const PurpleAccount *account,
+							PurpleStatusPrimitive primitive);
 
 /**
  * Returns the account's presence.
@@ -653,7 +653,7 @@ GaimStatusType *gaim_account_get_status_type_with_primitive(
  *
  * @return The account's presence.
  */
-GaimPresence *gaim_account_get_presence(const GaimAccount *account);
+PurplePresence *purple_account_get_presence(const PurpleAccount *account);
 
 /**
  * Returns whether or not an account status is active.
@@ -663,7 +663,7 @@ GaimPresence *gaim_account_get_presence(const GaimAccount *account);
  *
  * @return TRUE if active, or FALSE if not.
  */
-gboolean gaim_account_is_status_active(const GaimAccount *account,
+gboolean purple_account_is_status_active(const PurpleAccount *account,
 									   const char *status_id);
 
 /**
@@ -673,7 +673,7 @@ gboolean gaim_account_is_status_active(const GaimAccount *account,
  *
  * @return The account's status types.
  */
-const GList *gaim_account_get_status_types(const GaimAccount *account);
+const GList *purple_account_get_status_types(const PurpleAccount *account);
 
 /**
  * Returns a protocol-specific integer setting for an account.
@@ -684,7 +684,7 @@ const GList *gaim_account_get_status_types(const GaimAccount *account);
  *
  * @return The value.
  */
-int gaim_account_get_int(const GaimAccount *account, const char *name,
+int purple_account_get_int(const PurpleAccount *account, const char *name,
 						 int default_value);
 
 /**
@@ -696,7 +696,7 @@ int gaim_account_get_int(const GaimAccount *account, const char *name,
  *
  * @return The value.
  */
-const char *gaim_account_get_string(const GaimAccount *account,
+const char *purple_account_get_string(const PurpleAccount *account,
 									const char *name,
 									const char *default_value);
 
@@ -709,7 +709,7 @@ const char *gaim_account_get_string(const GaimAccount *account,
  *
  * @return The value.
  */
-gboolean gaim_account_get_bool(const GaimAccount *account, const char *name,
+gboolean purple_account_get_bool(const PurpleAccount *account, const char *name,
 							   gboolean default_value);
 
 /**
@@ -722,7 +722,7 @@ gboolean gaim_account_get_bool(const GaimAccount *account, const char *name,
  *
  * @return The value.
  */
-int gaim_account_get_ui_int(const GaimAccount *account, const char *ui,
+int purple_account_get_ui_int(const PurpleAccount *account, const char *ui,
 							const char *name, int default_value);
 
 /**
@@ -735,7 +735,7 @@ int gaim_account_get_ui_int(const GaimAccount *account, const char *ui,
  *
  * @return The value.
  */
-const char *gaim_account_get_ui_string(const GaimAccount *account,
+const char *purple_account_get_ui_string(const PurpleAccount *account,
 									   const char *ui, const char *name,
 									   const char *default_value);
 
@@ -749,7 +749,7 @@ const char *gaim_account_get_ui_string(const GaimAccount *account,
  *
  * @return The value.
  */
-gboolean gaim_account_get_ui_bool(const GaimAccount *account, const char *ui,
+gboolean purple_account_get_ui_bool(const PurpleAccount *account, const char *ui,
 								  const char *name, gboolean default_value);
 
 
@@ -766,14 +766,14 @@ gboolean gaim_account_get_ui_bool(const GaimAccount *account, const char *ui,
  *       if the log has already been closed, which not all loggers deal
  *       with appropriately.
  */
-GaimLog *gaim_account_get_log(GaimAccount *account, gboolean create);
+PurpleLog *purple_account_get_log(PurpleAccount *account, gboolean create);
 
 /**
  * Frees the system log of an account
  *
  * @param account The account.
  */
-void gaim_account_destroy_log(GaimAccount *account);
+void purple_account_destroy_log(PurpleAccount *account);
 
 /**
  * Adds a buddy to the server-side buddy list for the specified account.
@@ -781,14 +781,14 @@ void gaim_account_destroy_log(GaimAccount *account);
  * @param account The account.
  * @param buddy The buddy to add.
  */
-void gaim_account_add_buddy(GaimAccount *account, GaimBuddy *buddy);
+void purple_account_add_buddy(PurpleAccount *account, PurpleBuddy *buddy);
 /**
  * Adds a list of buddies to the server-side buddy list.
  *
  * @param account The account.
- * @param buddies The list of GaimBlistNodes representing the buddies to add.
+ * @param buddies The list of PurpleBlistNodes representing the buddies to add.
  */
-void gaim_account_add_buddies(GaimAccount *account, GList *buddies);
+void purple_account_add_buddies(PurpleAccount *account, GList *buddies);
 
 /**
  * Removes a buddy from the server-side buddy list.
@@ -797,8 +797,8 @@ void gaim_account_add_buddies(GaimAccount *account, GList *buddies);
  * @param buddy The buddy to remove.
  * @param group The group to remove the buddy from.
  */
-void gaim_account_remove_buddy(GaimAccount *account, GaimBuddy *buddy,
-								GaimGroup *group);
+void purple_account_remove_buddy(PurpleAccount *account, PurpleBuddy *buddy,
+								PurpleGroup *group);
 
 /**
  * Removes a list of buddies from the server-side buddy list.
@@ -811,7 +811,7 @@ void gaim_account_remove_buddy(GaimAccount *account, GaimBuddy *buddy,
  * @param groups The list of groups to remove buddies from.  Each node of this
  *               list should match the corresponding node of buddies.
  */
-void gaim_account_remove_buddies(GaimAccount *account, GList *buddies,
+void purple_account_remove_buddies(PurpleAccount *account, GList *buddies,
 									GList *groups);
 
 /**
@@ -820,7 +820,7 @@ void gaim_account_remove_buddies(GaimAccount *account, GList *buddies,
  * @param account The account.
  * @param group The group to remove.
  */
-void gaim_account_remove_group(GaimAccount *account, GaimGroup *group);
+void purple_account_remove_group(PurpleAccount *account, PurpleGroup *group);
 
 /**
  * Changes the password on the specified account.
@@ -829,7 +829,7 @@ void gaim_account_remove_group(GaimAccount *account, GaimGroup *group);
  * @param orig_pw The old password.
  * @param new_pw The new password.
  */
-void gaim_account_change_password(GaimAccount *account, const char *orig_pw,
+void purple_account_change_password(PurpleAccount *account, const char *orig_pw,
 									const char *new_pw);
 
 /**
@@ -838,7 +838,7 @@ void gaim_account_change_password(GaimAccount *account, const char *orig_pw,
  * @param account The account
  * @param buddy   The buddy
  */
-gboolean gaim_account_supports_offline_message(GaimAccount *account, GaimBuddy *buddy);
+gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleBuddy *buddy);
 
 /*@}*/
 
@@ -852,14 +852,14 @@ gboolean gaim_account_supports_offline_message(GaimAccount *account, GaimBuddy *
  *
  * @param account The account.
  */
-void gaim_accounts_add(GaimAccount *account);
+void purple_accounts_add(PurpleAccount *account);
 
 /**
  * Removes an account from the list of accounts.
  *
  * @param account The account.
  */
-void gaim_accounts_remove(GaimAccount *account);
+void purple_accounts_remove(PurpleAccount *account);
 
 /**
  * Deletes an account.
@@ -870,7 +870,7 @@ void gaim_accounts_remove(GaimAccount *account);
  *
  * @param account The account.
  */
-void gaim_accounts_delete(GaimAccount *account);
+void purple_accounts_delete(PurpleAccount *account);
 
 /**
  * Reorders an account.
@@ -878,14 +878,14 @@ void gaim_accounts_delete(GaimAccount *account);
  * @param account   The account to reorder.
  * @param new_index The new index for the account.
  */
-void gaim_accounts_reorder(GaimAccount *account, gint new_index);
+void purple_accounts_reorder(PurpleAccount *account, gint new_index);
 
 /**
  * Returns a list of all accounts.
  *
  * @return A list of all accounts.
  */
-GList *gaim_accounts_get_all(void);
+GList *purple_accounts_get_all(void);
 
 /**
  * Returns a list of all enabled accounts
@@ -894,7 +894,7 @@ GList *gaim_accounts_get_all(void);
  *         by the caller, and must be g_list_free()d to avoid
  *         leaking the nodes.
  */
-GList *gaim_accounts_get_all_active(void);
+GList *purple_accounts_get_all_active(void);
 
 /**
  * Finds an account with the specified name and protocol id.
@@ -904,7 +904,7 @@ GList *gaim_accounts_get_all_active(void);
  *
  * @return The account, if found, or @c FALSE otherwise.
  */
-GaimAccount *gaim_accounts_find(const char *name, const char *protocol);
+PurpleAccount *purple_accounts_find(const char *name, const char *protocol);
 
 /**
  * This is called by the core after all subsystems and what
@@ -915,7 +915,7 @@ GaimAccount *gaim_accounts_find(const char *name, const char *protocol);
  * You probably shouldn't call this unless you really know
  * what you're doing.
  */
-void gaim_accounts_restore_current_statuses(void);
+void purple_accounts_restore_current_statuses(void);
 
 /*@}*/
 
@@ -929,14 +929,14 @@ void gaim_accounts_restore_current_statuses(void);
  *
  * @param ops The UI operations structure.
  */
-void gaim_accounts_set_ui_ops(GaimAccountUiOps *ops);
+void purple_accounts_set_ui_ops(PurpleAccountUiOps *ops);
 
 /**
  * Returns the UI operations structure used for accounts.
  *
  * @return The UI operations structure in use.
  */
-GaimAccountUiOps *gaim_accounts_get_ui_ops(void);
+PurpleAccountUiOps *purple_accounts_get_ui_ops(void);
 
 /*@}*/
 
@@ -951,17 +951,17 @@ GaimAccountUiOps *gaim_accounts_get_ui_ops(void);
  *
  * @return The accounts subsystem handle.
  */
-void *gaim_accounts_get_handle(void);
+void *purple_accounts_get_handle(void);
 
 /**
  * Initializes the accounts subsystem.
  */
-void gaim_accounts_init(void);
+void purple_accounts_init(void);
 
 /**
  * Uninitializes the accounts subsystem.
  */
-void gaim_accounts_uninit(void);
+void purple_accounts_uninit(void);
 
 /*@}*/
 
@@ -969,4 +969,4 @@ void gaim_accounts_uninit(void);
 }
 #endif
 
-#endif /* _GAIM_ACCOUNT_H_ */
+#endif /* _PURPLE_ACCOUNT_H_ */

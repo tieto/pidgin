@@ -1,9 +1,9 @@
 /**
  * @file error.c Error functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -263,7 +263,7 @@ msn_error_handle(MsnSession *session, unsigned int type)
 	g_snprintf(buf, sizeof(buf), _("MSN Error: %s\n"),
 			   msn_error_get_text(type, &debug));
 	if (debug)
-		gaim_debug_warning("msn", "error %d: %s\n", type, buf);
+		purple_debug_warning("msn", "error %d: %s\n", type, buf);
 	else
-		gaim_notify_error(session->account->gc, NULL, buf, NULL);
+		purple_notify_error(session->account->gc, NULL, buf, NULL);
 }

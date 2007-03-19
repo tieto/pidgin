@@ -1,9 +1,9 @@
 /**
  * @file group_find.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -34,9 +34,9 @@
 
 qq_buddy *qq_group_find_member_by_uid(qq_group *group, guint32 uid);
 void qq_group_remove_member_by_uid(qq_group *group, guint32 uid);
-qq_buddy *qq_group_find_or_add_member(GaimConnection *gc, qq_group *group, guint32 member_uid);
-gboolean qq_group_find_internal_group_id_by_seq(GaimConnection *gc, guint16 seq, guint32 *internal_group_id);
-qq_group *qq_group_find_by_channel(GaimConnection *gc, gint channel);
-qq_group *qq_group_find_by_id(GaimConnection *gc, guint32 id, gboolean flag);
+qq_buddy *qq_group_find_or_add_member(PurpleConnection *gc, qq_group *group, guint32 member_uid);
+gboolean qq_group_find_internal_group_id_by_seq(PurpleConnection *gc, guint16 seq, guint32 *internal_group_id);
+qq_group *qq_group_find_by_channel(PurpleConnection *gc, gint channel);
+qq_group *qq_group_find_by_id(PurpleConnection *gc, guint32 id, gboolean flag);
 
 #endif

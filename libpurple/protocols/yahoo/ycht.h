@@ -1,11 +1,11 @@
 /**
  * @file ycht.h The Yahoo! protocol plugin, YCHT protocol stuff.
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2004 Timothy Ringenbach <omarvo@hotmail.com>
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -24,8 +24,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _GAIM_YCHT_H_
-#define _GAIM_YCHT_H_
+#ifndef _PURPLE_YCHT_H_
+#define _PURPLE_YCHT_H_
 
 /* #define YAHOO_YCHT_DEBUG */
 
@@ -64,7 +64,7 @@ yahoo: --==End of incoming YCHT packet==--
 #define YCHT_SEP "\xc0\x80"
 
 typedef struct _YchtConn {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	gchar *room;
 	int room_id;
 	gint fd;
@@ -73,7 +73,7 @@ typedef struct _YchtConn {
 	gboolean changing_rooms;
 	guchar *rxqueue;
 	guint rxlen;
-	GaimCircBuffer *txbuf;
+	PurpleCircBuffer *txbuf;
 	guint tx_handler;
 } YchtConn;
 
@@ -84,7 +84,7 @@ typedef struct {
 	GList *data;
 } YchtPkt;
 
-void ycht_connection_open(GaimConnection *gc);
+void ycht_connection_open(PurpleConnection *gc);
 void ycht_connection_close(YchtConn *ycht);
 
 void ycht_chat_join(YchtConn *ycht, const char *room);
@@ -94,4 +94,4 @@ void ycht_chat_send_invite(YchtConn *ycht, const char *room, const char *buddy, 
 void ycht_chat_goto_user(YchtConn *ycht, const char *name);
 void ycht_chat_send_keepalive(YchtConn *ycht);
 
-#endif /* _GAIM_YCHT_H_ */
+#endif /* _PURPLE_YCHT_H_ */

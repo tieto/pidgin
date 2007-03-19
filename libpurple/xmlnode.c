@@ -1,9 +1,9 @@
 /**
  * @file xmlnode.c XML DOM functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -51,7 +51,7 @@ new_node(const char *name, XMLNodeType type)
 	node->name = g_strdup(name);
 	node->type = type;
 
-	GAIM_DBUS_REGISTER_POINTER(node, xmlnode);
+	PURPLE_DBUS_REGISTER_POINTER(node, xmlnode);
 
 	return node;
 }
@@ -278,7 +278,7 @@ xmlnode_free(xmlnode *node)
 	g_free(node->data);
 	g_free(node->xmlns);
 
-	GAIM_DBUS_UNREGISTER_POINTER(node);
+	PURPLE_DBUS_UNREGISTER_POINTER(node);
 	g_free(node);
 }
 
@@ -471,7 +471,7 @@ xmlnode_parser_element_start_libxml(void *user_data,
 			memcpy(attrib, attributes[i+3], attrib_len);
 			attrib[attrib_len] = '\0';
 			txt = attrib;
-			attrib = gaim_unescape_html(txt);
+			attrib = purple_unescape_html(txt);
 			g_free(txt);
 			xmlnode_set_attrib(node, (const char*) attributes[i], attrib);
 			g_free(attrib);

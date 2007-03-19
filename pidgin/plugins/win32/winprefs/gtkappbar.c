@@ -1,5 +1,5 @@
 /*
- * gaim - WinGaim Options Plugin
+ * purple - WinPurple Options Plugin
  *
  * File: gtkappbar.c
  * Date: August 2, 2003
@@ -37,19 +37,19 @@
 
 #define APPBAR_CALLBACK 	WM_USER + 1010
 
-typedef HMONITOR WINAPI gaim_MonitorFromPoint(POINT, DWORD);
-typedef HMONITOR WINAPI gaim_MonitorFromWindow(HWND, DWORD);
-typedef BOOL WINAPI gaim_GetMonitorInfo(HMONITOR, LPMONITORINFO);
+typedef HMONITOR WINAPI purple_MonitorFromPoint(POINT, DWORD);
+typedef HMONITOR WINAPI purple_MonitorFromWindow(HWND, DWORD);
+typedef BOOL WINAPI purple_GetMonitorInfo(HMONITOR, LPMONITORINFO);
 
 /* Retrieve the rectangular display area from the specified monitor
  * Return TRUE if successful, otherwise FALSE
  */
 static gboolean
 get_rect_from_monitor(HMODULE hmod, HMONITOR monitor, RECT *rect) {
-	gaim_GetMonitorInfo *the_GetMonitorInfo;
+	purple_GetMonitorInfo *the_GetMonitorInfo;
 	MONITORINFO info;
 
-	if (!(the_GetMonitorInfo = (gaim_GetMonitorInfo*)
+	if (!(the_GetMonitorInfo = (purple_GetMonitorInfo*)
 		GetProcAddress(hmod, "GetMonitorInfoA"))) {
 		return FALSE;
 	}
@@ -71,14 +71,14 @@ get_rect_from_monitor(HMODULE hmod, HMONITOR monitor, RECT *rect) {
 static gboolean
 get_rect_at_point_multimonitor(POINT pt, RECT *rect) {
 	HMODULE hmod;
-	gaim_MonitorFromPoint *the_MonitorFromPoint;
+	purple_MonitorFromPoint *the_MonitorFromPoint;
 	HMONITOR monitor;
 
 	if (!(hmod = GetModuleHandle("user32"))) {
 		return FALSE;
 	}
 
-	if (!(the_MonitorFromPoint = (gaim_MonitorFromPoint*)
+	if (!(the_MonitorFromPoint = (purple_MonitorFromPoint*)
 		GetProcAddress(hmod, "MonitorFromPoint"))) {
 		return FALSE;
 	}
@@ -96,14 +96,14 @@ get_rect_at_point_multimonitor(POINT pt, RECT *rect) {
 static gboolean
 get_rect_of_window_multimonitor(HWND window, RECT *rect) {
 	HMODULE hmod;
-	gaim_MonitorFromWindow *the_MonitorFromWindow;
+	purple_MonitorFromWindow *the_MonitorFromWindow;
 	HMONITOR monitor;
 
 	if (!(hmod = GetModuleHandle("user32"))) {
 		return FALSE;
 	}
 
-	if (!(the_MonitorFromWindow = (gaim_MonitorFromWindow*)
+	if (!(the_MonitorFromWindow = (purple_MonitorFromWindow*)
 		GetProcAddress(hmod, "MonitorFromWindow"))) {
 		return FALSE;
 	}
@@ -148,7 +148,7 @@ static void get_window_normal_rc(HWND hwnd, RECT *rc) {
 }
 #if 0
 static void print_rect(RECT *rc) {
-        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "RECT: L:%ld R:%ld T:%ld B:%ld\n",
+        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "RECT: L:%ld R:%ld T:%ld B:%ld\n",
                    rc->left, rc->right, rc->top, rc->bottom);
 }
 #endif
@@ -281,7 +281,7 @@ static GdkFilterReturn wnd_moving(GtkAppBar *ab, GdkXEvent *xevent) {
         int side = -1;
 	long dockAreaWidth = 0;
 
-        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_moving\n");
+        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_moving\n");
 
         GetCursorPos(&cp);
 	get_rect_at_point(cp, &monRect);
@@ -326,7 +326,7 @@ static GdkFilterReturn wnd_moving(GtkAppBar *ab, GdkXEvent *xevent) {
 static GdkFilterReturn wnd_sizing(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
 
-        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_sizing\n");
+        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_sizing\n");
         if(ab->docked) {
                 RECT *rc = (RECT*)msg->lParam;
                 if(ab->side == ABE_LEFT && msg->wParam == WMSZ_RIGHT) {
@@ -346,7 +346,7 @@ static GdkFilterReturn wnd_activate(GtkAppBar *ab, GdkXEvent *xevent) {
 	if (ab->registered) {
 		APPBARDATA abd;
 		MSG *msg = (MSG*)xevent;
-		gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_activate\n");
+		purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_activate\n");
 
 		abd.hWnd = msg->hwnd;
 		abd.cbSize = sizeof(APPBARDATA);
@@ -360,7 +360,7 @@ static GdkFilterReturn wnd_poschanged(GtkAppBar *ab, GdkXEvent *xevent) {
 	if (ab->registered) {
 		APPBARDATA abd;
 		MSG *msg = (MSG*)xevent;
-		gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_poschanged\n");
+		purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_poschanged\n");
 
 		abd.hWnd = msg->hwnd;
 		abd.cbSize = sizeof(APPBARDATA);
@@ -374,7 +374,7 @@ static GdkFilterReturn wnd_poschanging(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
         WINDOWPOS *wpos = (WINDOWPOS*)msg->lParam;
 
-        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_poschanging\n");
+        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_poschanging\n");
 
         if(ab->docked || ab->docking) {
                 wpos->x = ab->docked_rect.left;
@@ -391,7 +391,7 @@ static GdkFilterReturn wnd_poschanging(GtkAppBar *ab, GdkXEvent *xevent) {
 static GdkFilterReturn wnd_exitsizemove(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
 
-        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_exitsizemove\n");
+        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_exitsizemove\n");
         if(ab->docking) {
                 gtk_appbar_setpos(ab, msg->hwnd);
                 ab->docking = FALSE;
@@ -409,15 +409,15 @@ static GdkFilterReturn wnd_exitsizemove(GtkAppBar *ab, GdkXEvent *xevent) {
 static GdkFilterReturn wnd_showwindow(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
 
-        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_showwindow\n");
+        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_showwindow\n");
         if(msg->wParam && ab->docked) {
 		ab->iconized = FALSE;
-                gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "shown\n");
+                purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "shown\n");
                 ab->docked = FALSE;
                 gtk_appbar_dock(ab, ab->side);
         }
         else if(!msg->wParam && ab->docked) {
-                gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "hidden\n");
+                purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "hidden\n");
                 gtk_appbar_unregister(ab, GDK_WINDOW_HWND(ab->win->window));
                 set_toolbar(GDK_WINDOW_HWND(ab->win->window), FALSE);
                 ab->docked = TRUE;
@@ -429,17 +429,17 @@ static GdkFilterReturn wnd_showwindow(GtkAppBar *ab, GdkXEvent *xevent) {
 static GdkFilterReturn wnd_size(GtkAppBar *ab, GdkXEvent *xevent) {
         MSG *msg = (MSG*)xevent;
 
-        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_size\n");
+        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_size\n");
 
         if(msg->wParam == SIZE_MINIMIZED) {
-                gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "Minimize\n");
+                purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "Minimize\n");
                 if(ab->docked) {
                         gtk_appbar_unregister(ab, GDK_WINDOW_HWND(ab->win->window));
                         ab->docked = TRUE;
                 }
         }
         else if(msg->wParam == SIZE_RESTORED) {
-                gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "Restore\n");
+                purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "Restore\n");
 		if (!ab->iconized && ab->docked) {
                         gtk_appbar_dock(ab, ab->side);
                 }
@@ -480,11 +480,11 @@ static GdkFilterReturn wnd_initmenupopup(GtkAppBar *ab, GdkXEvent *xevent) {
 
         if(ab->docked && HIWORD(msg->lParam)) {
                 HMENU sysmenu = GetSystemMenu(msg->hwnd, FALSE);
-                gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "wnd_initpopupmenu: docked: %d ismenu: %d\n", ab->docked, IsMenu(sysmenu));
+                purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "wnd_initpopupmenu: docked: %d ismenu: %d\n", ab->docked, IsMenu(sysmenu));
                 if(EnableMenuItem(sysmenu, SC_MAXIMIZE, MF_BYCOMMAND|MF_GRAYED)<0)
-                        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "SC_MAXIMIZE Menu item does not exist\n");
+                        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "SC_MAXIMIZE Menu item does not exist\n");
                 if(EnableMenuItem(sysmenu, SC_MOVE, MF_BYCOMMAND|MF_GRAYED)<0)
-                        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "SC_MOVE Menu item does not exist\n");
+                        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "SC_MOVE Menu item does not exist\n");
                 return GDK_FILTER_CONTINUE;
         }
         else
@@ -499,11 +499,11 @@ static GdkFilterReturn gtk_appbar_callback(GtkAppBar *ab, GdkXEvent *xevent) {
 
         switch (msg->wParam) {
         case ABN_STATECHANGE:
-                gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_STATECHANGE\n");
+                purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_STATECHANGE\n");
 	        break;
 
         case ABN_FULLSCREENAPP:
-                gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_FULLSCREENAPP: %d\n", (BOOL)msg->lParam);
+                purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_FULLSCREENAPP: %d\n", (BOOL)msg->lParam);
 		if (!ab->iconized && ab->docked) {
 		if ((BOOL)msg->lParam) {
 			SetWindowPos(msg->hwnd, HWND_BOTTOM, 0, 0, 0, 0,
@@ -516,7 +516,7 @@ static GdkFilterReturn gtk_appbar_callback(GtkAppBar *ab, GdkXEvent *xevent) {
 
                 break;
 	case ABN_POSCHANGED:
-		gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_POSCHANGED\n");
+		purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: ABN_POSCHANGED\n");
 		CopyRect(&orig, &(ab->docked_rect));
 		get_rect_of_window(msg->hwnd, &windowRect);
 		gtk_appbar_querypos(ab, msg->hwnd, windowRect);
@@ -529,7 +529,7 @@ static GdkFilterReturn gtk_appbar_callback(GtkAppBar *ab, GdkXEvent *xevent) {
 		break;
 #if 0
 	default:
-		gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: %d\n", msg->wParam);
+		purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "gtk_appbar_callback: %d\n", msg->wParam);
 #endif
         }
         return GDK_FILTER_CONTINUE;
@@ -566,7 +566,7 @@ static GdkFilterReturn gtk_appbar_event_filter(GdkXEvent *xevent, GdkEvent *even
                 return gtk_appbar_callback(data, xevent);
 #if 0
 	default:
-		gaim_debug_info("gtkappbar", "gtk_appbar_event_filter %d\n", msg->message);
+		purple_debug_info("gtkappbar", "gtk_appbar_event_filter %d\n", msg->message);
 #endif
         }
         return GDK_FILTER_CONTINUE;
@@ -575,7 +575,7 @@ static GdkFilterReturn gtk_appbar_event_filter(GdkXEvent *xevent, GdkEvent *even
 void gtk_appbar_dock(GtkAppBar *ab, UINT side) {
 	RECT orig, windowRect;
 
-        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_dock\n");
+        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "gtk_appbar_dock\n");
 
         if(!ab || !IsWindow(GDK_WINDOW_HWND(ab->win->window)))
                 return;
@@ -605,7 +605,7 @@ void gtk_appbar_add_dock_cb(GtkAppBar *ab, GtkAppBarDockCB dock_cb) {
 GtkAppBar *gtk_appbar_add(GtkWidget *win) {
         GtkAppBar *ab;
 
-        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_add\n");
+        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "gtk_appbar_add\n");
 
         if(!win)
                 return NULL;
@@ -623,7 +623,7 @@ GtkAppBar *gtk_appbar_add(GtkWidget *win) {
 }
 
 void gtk_appbar_remove(GtkAppBar *ab) {
-        gaim_debug(GAIM_DEBUG_INFO, "gtkappbar", "gtk_appbar_remove\n");
+        purple_debug(PURPLE_DEBUG_INFO, "gtkappbar", "gtk_appbar_remove\n");
 
         if(!ab)
                 return;

@@ -34,7 +34,7 @@
 #include "MinimizeToTray.h"
 #include "gtkwin32dep.h"
 #include "gtkdocklet.h"
-#include "gaimstock.h"
+#include "purplestock.h"
 
 /*
  *  DEFINES, MACROS & DATA TYPES
@@ -54,16 +54,16 @@ static LRESULT CALLBACK systray_mainmsg_handler(HWND hwnd, UINT msg, WPARAM wpar
 
 	switch(msg) {
 	case WM_CREATE:
-		gaim_debug_info("docklet", "WM_CREATE\n");
+		purple_debug_info("docklet", "WM_CREATE\n");
 		taskbarRestartMsg = RegisterWindowMessage("TaskbarCreated");
 		break;
 
 	case WM_TIMER:
-		gaim_debug_info("docklet", "WM_TIMER\n");
+		purple_debug_info("docklet", "WM_TIMER\n");
 		break;
 
 	case WM_DESTROY:
-		gaim_debug_info("docklet", "WM_DESTROY\n");
+		purple_debug_info("docklet", "WM_DESTROY\n");
 		break;
 
 	case WM_TRAYMESSAGE:
@@ -449,7 +449,7 @@ static HICON load_hicon_from_stock(const char *stock) {
 		hicon = pixbuf_to_hicon(pixbuf);
 		g_object_unref(pixbuf);
 	} else
-		gaim_debug_error("Unable to load pixbuf for %s.\n", stock);
+		purple_debug_error("Unable to load pixbuf for %s.\n", stock);
 
 	return hicon;
 }
@@ -547,12 +547,12 @@ static void winpidgin_tray_create() {
 	/* Create icon in systray */
 	systray_init_icon(systray_hwnd);
 
-	gaim_signal_connect(pidgin_blist_get_handle(), "gtkblist-hiding",
-			pidgin_docklet_get_handle(), GAIM_CALLBACK(winpidgin_tray_minimize), NULL);
-	gaim_signal_connect(pidgin_blist_get_handle(), "gtkblist-unhiding",
-			pidgin_docklet_get_handle(), GAIM_CALLBACK(winpidgin_tray_maximize), NULL);
+	purple_signal_connect(pidgin_blist_get_handle(), "gtkblist-hiding",
+			pidgin_docklet_get_handle(), PURPLE_CALLBACK(winpidgin_tray_minimize), NULL);
+	purple_signal_connect(pidgin_blist_get_handle(), "gtkblist-unhiding",
+			pidgin_docklet_get_handle(), PURPLE_CALLBACK(winpidgin_tray_maximize), NULL);
 
-	gaim_debug_info("docklet", "created\n");
+	purple_debug_info("docklet", "created\n");
 }
 
 static void winpidgin_tray_destroy() {

@@ -2,7 +2,7 @@
  * @file gtkutils.h GTK+ utility functions
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -234,27 +234,27 @@ GtkWidget *pidgin_protocol_option_menu_new(const char *id,
  *
  * @return The drop-down option menu.
  */
-GtkWidget *pidgin_account_option_menu_new(GaimAccount *default_account,
+GtkWidget *pidgin_account_option_menu_new(PurpleAccount *default_account,
 		gboolean show_all, GCallback cb,
-		GaimFilterAccountFunc filter_func, gpointer user_data);
+		PurpleFilterAccountFunc filter_func, gpointer user_data);
 
 /**
  * Gets the currently selected account from an account drop down box.
  *
  * @param optmenu The GtkOptionMenu created by
  *        pidgin_account_option_menu_new.
- * @return Returns the GaimAccount that is currently selected.
+ * @return Returns the PurpleAccount that is currently selected.
  */
-GaimAccount *pidgin_account_option_menu_get_selected(GtkWidget *optmenu);
+PurpleAccount *pidgin_account_option_menu_get_selected(GtkWidget *optmenu);
 
 /**
  * Sets the currently selected account for an account drop down box.
  *
  * @param optmenu The GtkOptionMenu created by
  *        pidgin_account_option_menu_new.
- * @param account The GaimAccount to select.
+ * @param account The PurpleAccount to select.
  */
-void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, GaimAccount *account);
+void pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *account);
 
 /**
  * Add autocompletion of screenames to an entry.
@@ -323,7 +323,7 @@ void pidgin_load_accels(void);
  *         FALSE otherwise.
  */
 gboolean pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
-									 GaimAccount **ret_account,
+									 PurpleAccount **ret_account,
 									 char **ret_protocol, char **ret_username,
 									 char **ret_alias);
 
@@ -364,12 +364,12 @@ void pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
  * @param account Account to be used (may be NULL if conv is not NULL)
  * @param who Buddy name (may be NULL if conv is not NULL)
  */
-void pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who);
+void pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char *who);
 
 /**
- * Convenience wrapper for gaim_buddy_icon_get_scale_size
+ * Convenience wrapper for purple_buddy_icon_get_scale_size
  */
-void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, GaimIconScaleRules rules, int *width, int *height);
+void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec, PurpleIconScaleRules rules, int *width, int *height);
 
 /**
  * Returns the base image to represent the account, based on
@@ -385,7 +385,7 @@ void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, G
  *         to allocate the image buffer, or the image file
  *         contained invalid data.
  */
-GdkPixbuf *pidgin_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size);
+GdkPixbuf *pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size);
 
 /**
  * Creates a status icon for a given primitve
@@ -395,17 +395,17 @@ GdkPixbuf *pidgin_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size
  * @param size       The icon size to render at
  * @retrun A GdkPixbuf, created from stock
  */
-GdkPixbuf * pidgin_create_status_icon(GaimStatusPrimitive primitive, GtkWidget *w, const char *size);
+GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive primitive, GtkWidget *w, const char *size);
 
 
 /**
- * Append a GaimMenuAction to a menu.
+ * Append a PurpleMenuAction to a menu.
  *
  * @param menu    The menu to append to.
- * @param act     The GaimMenuAction to append.
+ * @param act     The PurpleMenuAction to append.
  * @param gobject The object to be passed to the action callback.
  */
-void pidgin_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
+void pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
                                  gpointer gobject);
 
 /**
@@ -449,7 +449,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
  * @param path       The path of a buddy icon to convert
  * @return           The name of a new buddy icon
  */
-char* pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path);
+char* pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path);
 
 #if !GTK_CHECK_VERSION(2,6,0)
 /**
@@ -470,7 +470,7 @@ GdkPixbuf *gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, in
  * @param filename  The path of the custom icon. If this is @c NULL, then any
  *                  previously set custom buddy icon for the user is removed.
  */
-void pidgin_set_custom_buddy_icon(GaimAccount *account, const char *who, const char *filename);
+void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename);
 
 /**
  * Converts "->" and "<-" in strings to Unicode arrow characters, for use in referencing
@@ -490,7 +490,7 @@ char *pidgin_make_pretty_arrows(const char *str);
  * @param user_data      Data to pass to the callbacks
  * @param ...            a NULL-terminated list of button labels and callbacks
  */
-void *pidgin_make_mini_dialog(GaimConnection *handle, const char* stock_id, 
+void *pidgin_make_mini_dialog(PurpleConnection *handle, const char* stock_id, 
 				const char *primary, const char *secondary,
 				void *user_data,  ...);
 

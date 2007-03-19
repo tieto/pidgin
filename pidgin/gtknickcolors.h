@@ -2,7 +2,7 @@
  * @file gtknickcolors.h GTK+ Conversation API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.

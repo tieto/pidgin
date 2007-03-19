@@ -1,9 +1,9 @@
 /**
  * @file group_join.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -41,13 +41,13 @@ enum {
 	QQ_GROUP_AUTH_REQUEST_REJECT = 0x03
 };
 
-void qq_send_cmd_group_auth(GaimConnection *gc, qq_group *group, guint8 opt, guint32 uid, const gchar *reason_utf8);
-void qq_group_join(GaimConnection *gc, GHashTable *data);
-void qq_send_cmd_group_join_group(GaimConnection *gc, qq_group *group);
-void qq_group_exit(GaimConnection *gc, GHashTable *data);
-void qq_send_cmd_group_exit_group(GaimConnection *gc, qq_group *group);
-void qq_process_group_cmd_exit_group(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
-void qq_process_group_cmd_join_group_auth(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
-void qq_process_group_cmd_join_group(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
+void qq_send_cmd_group_auth(PurpleConnection *gc, qq_group *group, guint8 opt, guint32 uid, const gchar *reason_utf8);
+void qq_group_join(PurpleConnection *gc, GHashTable *data);
+void qq_send_cmd_group_join_group(PurpleConnection *gc, qq_group *group);
+void qq_group_exit(PurpleConnection *gc, GHashTable *data);
+void qq_send_cmd_group_exit_group(PurpleConnection *gc, qq_group *group);
+void qq_process_group_cmd_exit_group(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
+void qq_process_group_cmd_join_group_auth(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
+void qq_process_group_cmd_join_group(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
 
 #endif

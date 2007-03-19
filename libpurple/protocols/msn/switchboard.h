@@ -1,9 +1,9 @@
 /**
  * @file switchboard.h MSN switchboard functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -76,7 +76,7 @@ struct _MsnSwitchBoard
 	char *auth_key;
 	char *session_id;
 
-	GaimConversation *conv; /**< The conversation that displays the
+	PurpleConversation *conv; /**< The conversation that displays the
 							  messages of this switchboard, or @c NULL if
 							  this is a helper switchboard. */
 

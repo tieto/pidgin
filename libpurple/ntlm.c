@@ -1,7 +1,7 @@
 /**
  * @file ntlm.c
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2005 Thomas Butter <butter@uni-mannheim.de>
  *
@@ -108,7 +108,7 @@ struct type3_message {
 
 /* TODO: Will this work on both little-endian and big-endian machines? */
 gchar *
-gaim_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
+purple_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 {
 	int hostnamelen;
 	int domainlen;
@@ -137,20 +137,20 @@ gaim_ntlm_gen_type1(const gchar *hostname, const gchar *domain)
 	memcpy(msg + tmsg->host_off, hostname, hostnamelen);
 	memcpy(msg + tmsg->dom_off, domain, domainlen);
 
-	tmp = gaim_base64_encode(msg, sizeof(struct type1_message) + hostnamelen + domainlen);
+	tmp = purple_base64_encode(msg, sizeof(struct type1_message) + hostnamelen + domainlen);
 	g_free(msg);
 
 	return tmp;
 }
 
 guint8 *
-gaim_ntlm_parse_type2(const gchar *type2, guint32 *flags)
+purple_ntlm_parse_type2(const gchar *type2, guint32 *flags)
 {
 	gsize retlen;
 	struct type2_message *tmsg;
 	static guint8 nonce[8];
 
-	tmsg = (struct type2_message*)gaim_base64_decode(type2, &retlen);
+	tmsg = (struct type2_message*)purple_base64_decode(type2, &retlen);
 	memcpy(nonce, tmsg->nonce, 8);
 	if (flags != NULL)
 		*flags = tmsg->flags;
@@ -177,20 +177,20 @@ setup_des_key(const guint8 key_56[], guint8 *key)
 }
 
 /*
- * helper function for gaim cipher.c
+ * helper function for purple cipher.c
  */
 static void
 des_ecb_encrypt(const guint8 *plaintext, guint8 *result, const guint8 *key)
 {
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 	gsize outlen;
 
-	cipher = gaim_ciphers_find_cipher("des");
-	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_set_key(context, key);
-	gaim_cipher_context_encrypt(context, plaintext, 8, result, &outlen);
-	gaim_cipher_context_destroy(context);
+	cipher = purple_ciphers_find_cipher("des");
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_set_key(context, key);
+	purple_cipher_context_encrypt(context, plaintext, 8, result, &outlen);
+	purple_cipher_context_destroy(context);
 }
 
 /*
@@ -226,7 +226,7 @@ gensesskey(char *buffer, const char *oldkey)
 }
 
 gchar *
-gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, const guint8 *nonce, guint32 *flags)
+purple_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *hostname, const gchar *domain, const guint8 *nonce, guint32 *flags)
 {
 	char lm_pw[14];
 	unsigned char lm_hpw[21];
@@ -242,8 +242,8 @@ gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *host
 	unsigned char magic[] = { 0x4B, 0x47, 0x53, 0x21, 0x40, 0x23, 0x24, 0x25 };
 	unsigned char nt_hpw[21];
 	char nt_pw[128];
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 	char *tmp;
 	int idx;
 	gchar *ucs2le;
@@ -332,11 +332,11 @@ gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *host
 		nt_pw[2 * idx + 1] = 0;
 	}
 
-	cipher = gaim_ciphers_find_cipher("md4");
-	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, (guint8 *)nt_pw, 2 * lennt);
-	gaim_cipher_context_digest(context, 21, nt_hpw, NULL);
-	gaim_cipher_context_destroy(context);
+	cipher = purple_ciphers_find_cipher("md4");
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, (guint8 *)nt_pw, 2 * lennt);
+	purple_cipher_context_digest(context, 21, nt_hpw, NULL);
+	purple_cipher_context_destroy(context);
 
 	memset(nt_hpw + 16, 0, 5);
 	calc_resp(nt_hpw, nonce, nt_resp);
@@ -353,7 +353,7 @@ gaim_ntlm_gen_type3(const gchar *username, const gchar *passw, const gchar *host
 	/*tmsg->flags2 = 0x0a280105;
 	tmsg->flags3 = 0x0f000000;*/
 
-	tmp = gaim_base64_encode((guchar *)tmsg, msglen);
+	tmp = purple_base64_encode((guchar *)tmsg, msglen);
 	g_free(tmsg);
 
 	return tmp;

@@ -2,9 +2,9 @@
  * @file gtkstatusbox.c GTK+ Status Selection Widget
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -67,7 +67,7 @@ static void imhtml_changed_cb(GtkTextBuffer *buffer, void *data);
 static void imhtml_format_changed_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *data);
 static void remove_typing_cb(PidginStatusBox *box);
 static void update_size (PidginStatusBox *box);
-static gint get_statusbox_index(PidginStatusBox *box, GaimSavedStatus *saved_status);
+static gint get_statusbox_index(PidginStatusBox *box, PurpleSavedStatus *saved_status);
 
 static void pidgin_status_box_pulse_typing(PidginStatusBox *status_box);
 static void pidgin_status_box_refresh(PidginStatusBox *status_box);
@@ -108,7 +108,7 @@ enum {
 	/*
 	 * This value depends on TYPE_COLUMN.  For POPULAR types,
 	 * this is the creation time.  For PRIMITIVE types,
-	 * this is the GaimStatusPrimitive.
+	 * this is the PurpleStatusPrimitive.
 	 */
 	DATA_COLUMN,
 
@@ -176,20 +176,20 @@ pidgin_status_box_get_property(GObject *object, guint param_id,
 }
 
 static void
-update_to_reflect_account_status(PidginStatusBox *status_box, GaimAccount *account, GaimStatus *newstatus)
+update_to_reflect_account_status(PidginStatusBox *status_box, PurpleAccount *account, PurpleStatus *newstatus)
 {
 	const GList *l;
 	int status_no = -1;
-	const GaimStatusType *statustype = NULL;
+	const PurpleStatusType *statustype = NULL;
 	const char *message;
 
-	statustype = gaim_status_type_find_with_id((GList *)gaim_account_get_status_types(account),
-	                                           (char *)gaim_status_type_get_id(gaim_status_get_type(newstatus)));
+	statustype = purple_status_type_find_with_id((GList *)purple_account_get_status_types(account),
+	                                           (char *)purple_status_type_get_id(purple_status_get_type(newstatus)));
 
-	for (l = gaim_account_get_status_types(account); l != NULL; l = l->next) {
-		GaimStatusType *status_type = (GaimStatusType *)l->data;
+	for (l = purple_account_get_status_types(account); l != NULL; l = l->next) {
+		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
 
-		if (!gaim_status_type_is_user_settable(status_type))
+		if (!purple_status_type_is_user_settable(status_type))
 			continue;
 		status_no++;
 		if (statustype == status_type)
@@ -205,7 +205,7 @@ update_to_reflect_account_status(PidginStatusBox *status_box, GaimAccount *accou
 		status_box->active_row = gtk_tree_row_reference_new(GTK_TREE_MODEL(status_box->dropdown_store), path);
 		gtk_tree_path_free(path);
 
-		message = gaim_status_get_attr_string(newstatus, "message");
+		message = purple_status_get_attr_string(newstatus, "message");
 
 		if (!message || !*message)
 		{
@@ -226,7 +226,7 @@ update_to_reflect_account_status(PidginStatusBox *status_box, GaimAccount *accou
 }
 
 static void
-account_status_changed_cb(GaimAccount *account, GaimStatus *oldstatus, GaimStatus *newstatus, PidginStatusBox *status_box)
+account_status_changed_cb(PurpleAccount *account, PurpleStatus *oldstatus, PurpleStatus *newstatus, PidginStatusBox *status_box)
 {
 	if (status_box->account == account)
 		update_to_reflect_account_status(status_box, account, newstatus);
@@ -248,7 +248,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 		menu_item = pidgin_new_item_from_stock(box->icon_box_menu, _("Remove"), GTK_STOCK_REMOVE,
 						     G_CALLBACK(remove_buddy_icon_cb),
 						     box, 0, 0, NULL);
-		if (gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon") == NULL)
+		if (purple_prefs_get_path("/purple/gtk/accounts/buddyicon") == NULL)
 			gtk_widget_set_sensitive(menu_item, FALSE);
 
 		gtk_menu_popup(GTK_MENU(box->icon_box_menu), NULL, NULL, NULL, NULL,
@@ -280,7 +280,7 @@ icon_box_dnd_cb(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			gchar *tmp, *rtmp;
 		
 			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
-				gaim_debug(GAIM_DEBUG_ERROR, "buddyicon", "%s\n",
+				purple_debug(PURPLE_DEBUG_ERROR, "buddyicon", "%s\n",
 					   (converr ? converr->message :
 					    "g_filename_from_uri error"));
 				return;
@@ -331,15 +331,15 @@ setup_icon_box(PidginStatusBox *status_box)
 	gtk_widget_show(status_box->icon_box);
 
 	if (status_box->account &&
-		!gaim_account_get_bool(status_box->account, "use-global-buddyicon", TRUE))
+		!purple_account_get_bool(status_box->account, "use-global-buddyicon", TRUE))
 	{
-		char *string = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(status_box->account));
+		char *string = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(status_box->account));
 		pidgin_status_box_set_buddy_icon(status_box, string);
 		g_free(string);
 	}
 	else
 	{
-		pidgin_status_box_set_buddy_icon(status_box, gaim_prefs_get_path("/gaim/gtk/accounts/buddyicon"));
+		pidgin_status_box_set_buddy_icon(status_box, purple_prefs_get_path("/purple/gtk/accounts/buddyicon"));
 	}
 
 	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
@@ -403,9 +403,9 @@ pidgin_status_box_set_property(GObject *object, guint param_id,
 	case PROP_ICON_SEL:
 		if (g_value_get_boolean(value)) {
 			if (statusbox->account) {
-				GaimPlugin *plug = gaim_plugins_find_with_id(gaim_account_get_protocol_id(statusbox->account));
+				PurplePlugin *plug = purple_plugins_find_with_id(purple_account_get_protocol_id(statusbox->account));
 				if (plug) {
-					GaimPluginProtocolInfo *prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plug);
+					PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
 					if (prplinfo && prplinfo->icon_spec.format != NULL)
 						setup_icon_box(statusbox);
 				}
@@ -433,8 +433,8 @@ pidgin_status_box_finalize(GObject *obj)
 {
 	PidginStatusBox *statusbox = PIDGIN_STATUS_BOX(obj);
 
-	gaim_signals_disconnect_by_handle(statusbox);
-	gaim_prefs_disconnect_by_handle(statusbox);
+	purple_signals_disconnect_by_handle(statusbox);
+	purple_prefs_disconnect_by_handle(statusbox);
 
 	gdk_cursor_unref(statusbox->hand_cursor);
 	gdk_cursor_unref(statusbox->arrow_cursor);
@@ -511,12 +511,12 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	GtkIconSize icon_size;
 	GtkStyle *style;
 	char aa_color[8];
-	GaimSavedStatus *saved_status;
+	PurpleSavedStatus *saved_status;
 	char *primary, *secondary, *text;
 	GdkPixbuf *pixbuf;
 	GtkTreePath *path;
 	gboolean account_status = FALSE;
-	GaimAccount *acct = (status_box->token_status_account) ? status_box->token_status_account : status_box->account;
+	PurpleAccount *acct = (status_box->token_status_account) ? status_box->token_status_account : status_box->account;
 
 	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 	
@@ -526,10 +526,10 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 		 style->text_aa[GTK_STATE_NORMAL].green >> 8,
 		 style->text_aa[GTK_STATE_NORMAL].blue >> 8);
 
-	saved_status = gaim_savedstatus_get_current();
+	saved_status = purple_savedstatus_get_current();
 
 	if (status_box->account || (status_box->token_status_account
-			&& gaim_savedstatus_is_transient(saved_status)))
+			&& purple_savedstatus_is_transient(saved_status)))
 		account_status = TRUE;
 
 	/* Primary */
@@ -550,17 +550,17 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 						   DATA_COLUMN, &data,
 						   -1);
 		if (type == PIDGIN_STATUS_BOX_TYPE_PRIMITIVE)
-			primary = g_strdup(gaim_primitive_get_name_from_type(GPOINTER_TO_INT(data)));
+			primary = g_strdup(purple_primitive_get_name_from_type(GPOINTER_TO_INT(data)));
 		else
 			/* This should never happen, but just in case... */
 			primary = g_strdup("New status");
 	}
 	else if (account_status)
-		primary = g_strdup(gaim_status_get_name(gaim_account_get_active_status(acct)));
-	else if (gaim_savedstatus_is_transient(saved_status))
-		primary = g_strdup(gaim_primitive_get_name_from_type(gaim_savedstatus_get_type(saved_status)));
+		primary = g_strdup(purple_status_get_name(purple_account_get_active_status(acct)));
+	else if (purple_savedstatus_is_transient(saved_status))
+		primary = g_strdup(purple_primitive_get_name_from_type(purple_savedstatus_get_type(saved_status)));
 	else
-		primary = g_markup_escape_text(gaim_savedstatus_get_title(saved_status), -1);
+		primary = g_markup_escape_text(purple_savedstatus_get_title(saved_status), -1);
 
 	/* Secondary */
 	if (status_box->typing != 0)
@@ -569,17 +569,17 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 		secondary = g_strdup(_("Connecting"));
 	else if (!status_box->network_available)
 		secondary = g_strdup(_("Waiting for network connection"));
-	else if (gaim_savedstatus_is_transient(saved_status))
+	else if (purple_savedstatus_is_transient(saved_status))
 		secondary = NULL;
 	else
 	{
 		const char *message;
 		char *tmp;
-		message = gaim_savedstatus_get_message(saved_status);
+		message = purple_savedstatus_get_message(saved_status);
 		if (message != NULL)
 		{
-			tmp = gaim_markup_strip_html(message);
-			gaim_util_chrreplace(tmp, '\n', ' ');
+			tmp = purple_markup_strip_html(message);
+			purple_util_chrreplace(tmp, '\n', ' ');
 			secondary = g_markup_escape_text(tmp, -1);
 			g_free(tmp);
 		}
@@ -594,26 +594,26 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 		pixbuf = status_box->connecting_pixbufs[status_box->connecting_index];
 	else
 	  {
-	    GaimStatusType *status_type;
-	    GaimStatusPrimitive prim;
+	    PurpleStatusType *status_type;
+	    PurpleStatusPrimitive prim;
 	    GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 	    if (account_status) {
-	    	status_type = gaim_status_get_type(gaim_account_get_active_status(acct));
-	        prim = gaim_status_type_get_primitive(status_type);
+	    	status_type = purple_status_get_type(purple_account_get_active_status(acct));
+	        prim = purple_status_type_get_primitive(status_type);
 	    } else {
-	    	prim = gaim_savedstatus_get_type(saved_status);
+	    	prim = purple_savedstatus_get_type(saved_status);
 	    }
 
-	    if (prim == GAIM_STATUS_UNAVAILABLE)
+	    if (prim == PURPLE_STATUS_UNAVAILABLE)
 	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_BUSY,
 		   			         icon_size, "PidginStatusBox");
-	    else if (prim == GAIM_STATUS_AWAY)
+	    else if (prim == PURPLE_STATUS_AWAY)
 	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AWAY,
 		 			         icon_size, "PidginStatusBox");
-	    else if (prim == GAIM_STATUS_EXTENDED_AWAY)
+	    else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
 	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_XA,
 					         icon_size, "PidginStatusBox");
-	    else if (prim == GAIM_STATUS_OFFLINE)
+	    else if (prim == PURPLE_STATUS_OFFLINE)
 	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_OFFLINE,
 					         icon_size, "PidginStatusBox");
 	    else
@@ -622,14 +622,14 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 #if 0
 		if (account_status)
 			pixbuf = pidgin_create_prpl_icon_with_status(acct,
-						gaim_status_get_type(gaim_account_get_active_status(acct)),
+						purple_status_get_type(purple_account_get_active_status(acct)),
 						0.5);
 		else
-			pixbuf = pidgin_create_gaim_icon_with_status(
-						gaim_savedstatus_get_type(saved_status),
+			pixbuf = pidgin_create_purple_icon_with_status(
+						purple_savedstatus_get_type(saved_status),
 						0.5);
 
-		if (!gaim_savedstatus_is_transient(saved_status))
+		if (!purple_savedstatus_is_transient(saved_status))
 		{
 			GdkPixbuf *emblem;
 
@@ -653,7 +653,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 
 	if (status_box->account != NULL) {
 		text = g_strdup_printf("%s - <span size=\"smaller\" color=\"%s\">%s</span>",
-				       gaim_account_get_username(status_box->account),
+				       purple_account_get_username(status_box->account),
 				       aa_color, secondary ? secondary : primary);
 	} else if (secondary != NULL) {
 		text = g_strdup_printf("%s<span size=\"smaller\" color=\"%s\"> - %s</span>",
@@ -684,15 +684,15 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	update_size(status_box);
 }
 
-static GaimStatusType *
-find_status_type_by_index(const GaimAccount *account, gint active)
+static PurpleStatusType *
+find_status_type_by_index(const PurpleAccount *account, gint active)
 {
-	const GList *l = gaim_account_get_status_types(account);
+	const GList *l = purple_account_get_status_types(account);
 	gint i;
 
 	for (i = 0; l; l = l->next) {
-		GaimStatusType *status_type = l->data;
-		if (!gaim_status_type_is_user_settable(status_type))
+		PurpleStatusType *status_type = l->data;
+		if (!purple_status_type_is_user_settable(status_type))
 			continue;
 
 		if (active == i)
@@ -716,8 +716,8 @@ find_status_type_by_index(const GaimAccount *account, gint active)
 static void
 status_menu_refresh_iter(PidginStatusBox *status_box)
 {
-	GaimSavedStatus *saved_status;
-	GaimStatusPrimitive primitive;
+	PurpleSavedStatus *saved_status;
+	PurpleStatusPrimitive primitive;
 	gint index;
 	const char *message;
 	GtkTreePath *path = NULL;
@@ -726,7 +726,7 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 	if (status_box->account)
 		return;
 
-	saved_status = gaim_savedstatus_get_current();
+	saved_status = purple_savedstatus_get_current();
 
 	/*
 	 * Suppress the "changed" signal because the status
@@ -738,11 +738,11 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 	 * If there is a token-account, then select the primitive from the
 	 * dropdown using a loop. Otherwise select from the default list.
 	 */
-	primitive = gaim_savedstatus_get_type(saved_status);
-	if (!status_box->token_status_account && gaim_savedstatus_is_transient(saved_status) &&
-		((primitive == GAIM_STATUS_AVAILABLE) || (primitive == GAIM_STATUS_AWAY) ||
-		 (primitive == GAIM_STATUS_INVISIBLE) || (primitive == GAIM_STATUS_OFFLINE)) &&
-		(!gaim_savedstatus_has_substatuses(saved_status)))
+	primitive = purple_savedstatus_get_type(saved_status);
+	if (!status_box->token_status_account && purple_savedstatus_is_transient(saved_status) &&
+		((primitive == PURPLE_STATUS_AVAILABLE) || (primitive == PURPLE_STATUS_AWAY) ||
+		 (primitive == PURPLE_STATUS_INVISIBLE) || (primitive == PURPLE_STATUS_OFFLINE)) &&
+		(!purple_savedstatus_has_substatuses(saved_status)))
 	{
 		index = get_statusbox_index(status_box, saved_status);
 		path = gtk_tree_path_new_from_indices(index, -1);
@@ -765,17 +765,17 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 
 				/* This is a special case because Primitives for the token_status_account are actually
 				 * saved statuses with substatuses for the enabled accounts */
-				if (status_box->token_status_account && gaim_savedstatus_is_transient(saved_status)
+				if (status_box->token_status_account && purple_savedstatus_is_transient(saved_status)
 					&& type == PIDGIN_STATUS_BOX_TYPE_PRIMITIVE && primitive == GPOINTER_TO_INT(data))
 				{
 					char *name;
-					const char *acct_status_name = gaim_status_get_name(
-						gaim_account_get_active_status(status_box->token_status_account));
+					const char *acct_status_name = purple_status_get_name(
+						purple_account_get_active_status(status_box->token_status_account));
 
 					gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 							TEXT_COLUMN, &name, -1);
 
-					if (!gaim_savedstatus_has_substatuses(saved_status)
+					if (!purple_savedstatus_has_substatuses(saved_status)
 						|| !strcmp(name, acct_status_name))
 					{
 						/* Found! */
@@ -786,7 +786,7 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 					g_free(name);
 				
 				} else if ((type == PIDGIN_STATUS_BOX_TYPE_POPULAR) &&
-						(GPOINTER_TO_INT(data) == gaim_savedstatus_get_creation_time(saved_status)))
+						(GPOINTER_TO_INT(data) == purple_savedstatus_get_creation_time(saved_status)))
 				{
 					/* Found! */
 					path = gtk_tree_model_get_path(GTK_TREE_MODEL(status_box->dropdown_store), &iter);
@@ -804,8 +804,8 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 	} else
 		status_box->active_row = NULL;
 
-	message = gaim_savedstatus_get_message(saved_status);
-	if (!gaim_savedstatus_is_transient(saved_status) || !message || !*message)
+	message = purple_savedstatus_get_message(saved_status);
+	if (!purple_savedstatus_is_transient(saved_status) || !message || !*message)
 	{
 		status_box->imhtml_visible = FALSE;
 		gtk_widget_hide_all(status_box->vbox);
@@ -840,7 +840,7 @@ add_popular_statuses(PidginStatusBox *statusbox)
 	GList *list, *cur;
 	GdkPixbuf *pixbuf;
 
-	list = gaim_savedstatuses_get_popular(6);
+	list = purple_savedstatuses_get_popular(6);
 	if (list == NULL)
 		/* Odd... oh well, nothing we can do about it. */
 		return;
@@ -851,45 +851,45 @@ add_popular_statuses(PidginStatusBox *statusbox)
 
 	for (cur = list; cur != NULL; cur = cur->next)
 	{
-		GaimSavedStatus *saved = cur->data;
+		PurpleSavedStatus *saved = cur->data;
 		const gchar *message;
 		gchar *stripped = NULL;
-		GaimStatusPrimitive prim;
+		PurpleStatusPrimitive prim;
 
 		/* Get an appropriate status icon */
-		prim = gaim_savedstatus_get_type(saved);
+		prim = purple_savedstatus_get_type(saved);
 
-		if (prim == GAIM_STATUS_UNAVAILABLE)
+		if (prim == PURPLE_STATUS_UNAVAILABLE)
 			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
 					PIDGIN_STOCK_STATUS_BUSY, icon_size, "PidginStatusBox");
-		else if (prim == GAIM_STATUS_AWAY)
+		else if (prim == PURPLE_STATUS_AWAY)
 			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
 					PIDGIN_STOCK_STATUS_AWAY, icon_size, "PidginStatusBox");
-		else if (prim == GAIM_STATUS_EXTENDED_AWAY)
+		else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
 			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
 					PIDGIN_STOCK_STATUS_XA, icon_size, "PidginStatusBox");
-		else if (prim == GAIM_STATUS_OFFLINE)
+		else if (prim == PURPLE_STATUS_OFFLINE)
 			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
 					PIDGIN_STOCK_STATUS_OFFLINE, icon_size, "PidginStatusBox");
 		else
 			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
 					PIDGIN_STOCK_STATUS_AVAILABLE, icon_size, "PidginStatusBox");
 
-		if (gaim_savedstatus_is_transient(saved))
+		if (purple_savedstatus_is_transient(saved))
 		{
 			/*
 			 * Transient statuses do not have a title, so the savedstatus
-			 * API returns the message when gaim_savedstatus_get_title() is
+			 * API returns the message when purple_savedstatus_get_title() is
 			 * called, so we don't need to get the message a second time.
 			 */
 		}
 		else
 		{
-			message = gaim_savedstatus_get_message(saved);
+			message = purple_savedstatus_get_message(saved);
 			if (message != NULL)
 			{
-				stripped = gaim_markup_strip_html(message);
-				gaim_util_chrreplace(stripped, '\n', ' ');
+				stripped = purple_markup_strip_html(message);
+				purple_util_chrreplace(stripped, '\n', ' ');
 			}
 #if 0
 			/* Overlay a disk in the bottom left corner */
@@ -908,8 +908,8 @@ add_popular_statuses(PidginStatusBox *statusbox)
 		}
 
 		pidgin_status_box_add(statusbox, PIDGIN_STATUS_BOX_TYPE_POPULAR,
-				pixbuf, gaim_savedstatus_get_title(saved), stripped,
-				GINT_TO_POINTER(gaim_savedstatus_get_creation_time(saved)));
+				pixbuf, purple_savedstatus_get_title(saved), stripped,
+				GINT_TO_POINTER(purple_savedstatus_get_creation_time(saved)));
 		g_free(stripped);
 		if (pixbuf != NULL)
 			g_object_unref(G_OBJECT(pixbuf));
@@ -920,33 +920,33 @@ add_popular_statuses(PidginStatusBox *statusbox)
 
 /* This returns NULL if the active accounts don't have identical
  * statuses and a token account if they do */
-static GaimAccount* check_active_accounts_for_identical_statuses()
+static PurpleAccount* check_active_accounts_for_identical_statuses()
 {
-	GaimAccount *acct = NULL, *acct2;
-	GList *tmp, *tmp2, *active_accts = gaim_accounts_get_all_active();
+	PurpleAccount *acct = NULL, *acct2;
+	GList *tmp, *tmp2, *active_accts = purple_accounts_get_all_active();
 	const GList *s, *s1, *s2;
 
 	for (tmp = active_accts; tmp; tmp = tmp->next) {
 		acct = tmp->data;
-		s = gaim_account_get_status_types(acct);
+		s = purple_account_get_status_types(acct);
 		for (tmp2 = tmp->next; tmp2; tmp2 = tmp2->next) {
 			acct2 = tmp2->data;
 
 			/* Only actually look at the statuses if the accounts use the same prpl */
-			if (strcmp(gaim_account_get_protocol_id(acct), gaim_account_get_protocol_id(acct2))) {
+			if (strcmp(purple_account_get_protocol_id(acct), purple_account_get_protocol_id(acct2))) {
 				acct = NULL;
 				break;
 			}
 
-			s2 = gaim_account_get_status_types(acct2);
+			s2 = purple_account_get_status_types(acct2);
 
 			s1 = s;
 			while (s1 && s2) {
-				GaimStatusType *st1 = s1->data, *st2 = s2->data;
+				PurpleStatusType *st1 = s1->data, *st2 = s2->data;
 				/* TODO: Are these enough to consider the statuses identical? */
-				if (gaim_status_type_get_primitive(st1) != gaim_status_type_get_primitive(st2)
-						|| strcmp(gaim_status_type_get_id(st1), gaim_status_type_get_id(st2))
-						|| strcmp(gaim_status_type_get_name(st1), gaim_status_type_get_name(st2))) {
+				if (purple_status_type_get_primitive(st1) != purple_status_type_get_primitive(st2)
+						|| strcmp(purple_status_type_get_id(st1), purple_status_type_get_id(st2))
+						|| strcmp(purple_status_type_get_name(st1), purple_status_type_get_name(st2))) {
 					acct = NULL;
 					break;
 				}
@@ -969,33 +969,33 @@ static GaimAccount* check_active_accounts_for_identical_statuses()
 }
 
 static void
-add_account_statuses(PidginStatusBox *status_box, GaimAccount *account)
+add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 {
 	/* Per-account */
 	const GList *l;
 	GdkPixbuf *pixbuf;
 
-	for (l = gaim_account_get_status_types(account); l != NULL; l = l->next)
+	for (l = purple_account_get_status_types(account); l != NULL; l = l->next)
 	{
-		GaimStatusType *status_type = (GaimStatusType *)l->data;
-		GaimStatusPrimitive prim;
+		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
+		PurpleStatusPrimitive prim;
 		GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
-		if (!gaim_status_type_is_user_settable(status_type))
+		if (!purple_status_type_is_user_settable(status_type))
 			continue;
 
-            	prim = gaim_status_type_get_primitive(status_type);
+            	prim = purple_status_type_get_primitive(status_type);
 
-            	if (prim == GAIM_STATUS_UNAVAILABLE)
+            	if (prim == PURPLE_STATUS_UNAVAILABLE)
                 	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_BUSY,
                        		                          icon_size, "PidginStatusBox");
-            	else if (prim == GAIM_STATUS_AWAY)
+            	else if (prim == PURPLE_STATUS_AWAY)
                 	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AWAY,
                        		                          icon_size, "PidginStatusBox");
-            	else if (prim == GAIM_STATUS_EXTENDED_AWAY)
+            	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
                 	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_XA,
                         	                         icon_size, "PidginStatusBox");
-            	else if (prim == GAIM_STATUS_OFFLINE)
+            	else if (prim == PURPLE_STATUS_OFFLINE)
                 	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_OFFLINE,
                         	                         icon_size, "PidginStatusBox");
             	else
@@ -1004,9 +1004,9 @@ add_account_statuses(PidginStatusBox *status_box, GaimAccount *account)
 
 		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box),
 					PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf,
-					gaim_status_type_get_name(status_type),
+					purple_status_type_get_name(status_type),
 					NULL,
-					GINT_TO_POINTER(gaim_status_type_get_primitive(status_type)));
+					GINT_TO_POINTER(purple_status_type_get_primitive(status_type)));
 		if (pixbuf != NULL)
 			g_object_unref(pixbuf);
 	}
@@ -1046,10 +1046,10 @@ pidgin_status_box_regenerate(PidginStatusBox *status_box)
 			pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_STATUS_AVAILABLE_I,
 			                                  icon_size, "PidginStatusBox");
 
-			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf, _("Available"), NULL, GINT_TO_POINTER(GAIM_STATUS_AVAILABLE));
-			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf2, _("Away"), NULL, GINT_TO_POINTER(GAIM_STATUS_AWAY));
-			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf4, _("Invisible"), NULL, GINT_TO_POINTER(GAIM_STATUS_INVISIBLE));
-			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf3, _("Offline"), NULL, GINT_TO_POINTER(GAIM_STATUS_OFFLINE));
+			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf, _("Available"), NULL, GINT_TO_POINTER(PURPLE_STATUS_AVAILABLE));
+			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf2, _("Away"), NULL, GINT_TO_POINTER(PURPLE_STATUS_AWAY));
+			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf4, _("Invisible"), NULL, GINT_TO_POINTER(PURPLE_STATUS_INVISIBLE));
+			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf3, _("Offline"), NULL, GINT_TO_POINTER(PURPLE_STATUS_OFFLINE));
 
 			if (pixbuf2)	g_object_unref(G_OBJECT(pixbuf2));
 			if (pixbuf3)	g_object_unref(G_OBJECT(pixbuf3));
@@ -1069,7 +1069,7 @@ pidgin_status_box_regenerate(PidginStatusBox *status_box)
 	} else {
 		add_account_statuses(status_box, status_box->account);
 		update_to_reflect_account_status(status_box, status_box->account,
-			gaim_account_get_active_status(status_box->account));
+			purple_account_get_active_status(status_box->account));
 	}
 	gtk_tree_view_set_model(GTK_TREE_VIEW(status_box->tree_view), GTK_TREE_MODEL(status_box->dropdown_store));
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(status_box->tree_view), TEXT_COLUMN);
@@ -1111,7 +1111,7 @@ static int imhtml_remove_focus(GtkWidget *w, GdkEventKey *event, PidginStatusBox
 		status_box->typing = 0;
 		if (status_box->account != NULL)
 			update_to_reflect_account_status(status_box, status_box->account,
-							gaim_account_get_active_status(status_box->account));
+							purple_account_get_active_status(status_box->account));
 		else {
 			status_menu_refresh_iter(status_box);
 			pidgin_status_box_refresh(status_box);
@@ -1201,8 +1201,8 @@ cache_pixbufs(PidginStatusBox *status_box)
 								     icon_size, "PidginStatusBox");
 }
 
-static void account_enabled_cb(GaimAccount *acct, PidginStatusBox *status_box) {
-	GaimAccount *initial_token_acct = status_box->token_status_account;
+static void account_enabled_cb(PurpleAccount *acct, PidginStatusBox *status_box) {
+	PurpleAccount *initial_token_acct = status_box->token_status_account;
 
 	status_box->token_status_account = check_active_accounts_for_identical_statuses();
 
@@ -1214,14 +1214,14 @@ static void account_enabled_cb(GaimAccount *acct, PidginStatusBox *status_box) {
 }
 
 static void
-current_savedstatus_changed_cb(GaimSavedStatus *now, GaimSavedStatus *old, PidginStatusBox *status_box)
+current_savedstatus_changed_cb(PurpleSavedStatus *now, PurpleSavedStatus *old, PidginStatusBox *status_box)
 {
 	/* Make sure our current status is added to the list of popular statuses */
 	pidgin_status_box_regenerate(status_box);
 }
 
 static void
-spellcheck_prefs_cb(const char *name, GaimPrefType type,
+spellcheck_prefs_cb(const char *name, PurplePrefType type,
 					gconstpointer value, gpointer data)
 {
 #ifdef USE_GTKSPELL
@@ -1414,35 +1414,35 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 {
 
 	if (box->account) {
-		GaimPlugin *plug = gaim_find_prpl(gaim_account_get_protocol_id(box->account));
+		PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(box->account));
 		if (plug) {
-			GaimPluginProtocolInfo *prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plug);
+			PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
 			if (prplinfo && prplinfo->icon_spec.format) {
 				char *icon = NULL;
 				if (filename)
 					icon = pidgin_convert_buddy_icon(plug, filename);
-				gaim_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
-				gaim_account_set_ui_string(box->account, PIDGIN_UI, "non-global-buddyicon-cached-path", icon);
-				gaim_account_set_buddy_icon_path(box->account, filename);
-				gaim_account_set_buddy_icon(box->account, icon);
+				purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
+				purple_account_set_ui_string(box->account, PIDGIN_UI, "non-global-buddyicon-cached-path", icon);
+				purple_account_set_buddy_icon_path(box->account, filename);
+				purple_account_set_buddy_icon(box->account, icon);
 				g_free(icon);
 			}
 		}
 	} else {
 		GList *accounts;
-		for (accounts = gaim_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
-			GaimAccount *account = accounts->data;
-			GaimPlugin *plug = gaim_find_prpl(gaim_account_get_protocol_id(account));
+		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
+			PurpleAccount *account = accounts->data;
+			PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(account));
 			if (plug) {
-				GaimPluginProtocolInfo *prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plug);
+				PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
 				if (prplinfo != NULL &&
-				    gaim_account_get_bool(account, "use-global-buddyicon", TRUE) &&
+				    purple_account_get_bool(account, "use-global-buddyicon", TRUE) &&
 				    prplinfo->icon_spec.format) {
 					char *icon = NULL;
 					if (filename)
 						icon = pidgin_convert_buddy_icon(plug, filename);
-					gaim_account_set_buddy_icon_path(account, filename);
-					gaim_account_set_buddy_icon(account, icon);
+					purple_account_set_buddy_icon_path(account, filename);
+					purple_account_set_buddy_icon(account, icon);
 					g_free(icon);
 				}
 			}
@@ -1456,7 +1456,7 @@ remove_buddy_icon_cb(GtkWidget *w, PidginStatusBox *box)
 {
 	if (box->account == NULL)
 		/* The pref-connect callback does the actual work */
-		gaim_prefs_set_path("/gaim/gtk/accounts/buddyicon", NULL);
+		purple_prefs_set_path("/purple/gtk/accounts/buddyicon", NULL);
 	else
 		buddy_icon_set_cb(NULL, box);
 
@@ -1471,7 +1471,7 @@ icon_choose_cb(const char *filename, gpointer data)
 	if (filename) {
 		if (box->account == NULL)
 			/* The pref-connect callback does the actual work */
-			gaim_prefs_set_path("/gaim/gtk/accounts/buddyicon", filename);
+			purple_prefs_set_path("/purple/gtk/accounts/buddyicon", filename);
 		else
 			buddy_icon_set_cb(filename, box);
 	}
@@ -1480,7 +1480,7 @@ icon_choose_cb(const char *filename, gpointer data)
 }
 
 static void
-update_buddyicon_cb(const char *name, GaimPrefType type,
+update_buddyicon_cb(const char *name, PurplePrefType type,
 		    gconstpointer value, gpointer data)
 {
 	buddy_icon_set_cb(value, (PidginStatusBox*) data);
@@ -1572,7 +1572,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 
 	GTK_WIDGET_SET_FLAGS (status_box, GTK_NO_WINDOW);
 	status_box->imhtml_visible = FALSE;
-	status_box->network_available = gaim_network_is_available();
+	status_box->network_available = purple_network_is_available();
 	status_box->connecting = FALSE;
 	status_box->typing = 0;
 	status_box->toggle_button = gtk_toggle_button_new();
@@ -1692,7 +1692,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	g_signal_connect_swapped(G_OBJECT(status_box->imhtml), "message_send", G_CALLBACK(remove_typing_cb), status_box);
 	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
 #ifdef USE_GTKSPELL
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+	if (purple_prefs_get_bool("/purple/gtk/conversations/spellcheck"))
 		pidgin_setup_gtkspell(GTK_TEXT_VIEW(status_box->imhtml));
 #endif
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
@@ -1717,23 +1717,23 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	cache_pixbufs(status_box);
 	pidgin_status_box_regenerate(status_box);
 
-	gaim_signal_connect(gaim_savedstatuses_get_handle(), "savedstatus-changed",
+	purple_signal_connect(purple_savedstatuses_get_handle(), "savedstatus-changed",
 						status_box,
-						GAIM_CALLBACK(current_savedstatus_changed_cb),
+						PURPLE_CALLBACK(current_savedstatus_changed_cb),
 						status_box);
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-enabled", status_box,
-						GAIM_CALLBACK(account_enabled_cb),
+	purple_signal_connect(purple_accounts_get_handle(), "account-enabled", status_box,
+						PURPLE_CALLBACK(account_enabled_cb),
 						status_box);
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-disabled", status_box,
-						GAIM_CALLBACK(account_enabled_cb),
+	purple_signal_connect(purple_accounts_get_handle(), "account-disabled", status_box,
+						PURPLE_CALLBACK(account_enabled_cb),
 						status_box);
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-status-changed", status_box,
-						GAIM_CALLBACK(account_status_changed_cb),
+	purple_signal_connect(purple_accounts_get_handle(), "account-status-changed", status_box,
+						PURPLE_CALLBACK(account_status_changed_cb),
 						status_box);
 
-	gaim_prefs_connect_callback(status_box, "/gaim/gtk/conversations/spellcheck",
+	purple_prefs_connect_callback(status_box, "/purple/gtk/conversations/spellcheck",
 								spellcheck_prefs_cb, status_box);
-	gaim_prefs_connect_callback(status_box, "/gaim/gtk/accounts/buddyicon",
+	purple_prefs_connect_callback(status_box, "/purple/gtk/accounts/buddyicon",
 	                            update_buddyicon_cb, status_box);
 }
 
@@ -1894,7 +1894,7 @@ pidgin_status_box_new()
 }
 
 GtkWidget *
-pidgin_status_box_new_with_account(GaimAccount *account)
+pidgin_status_box_new_with_account(PurpleAccount *account)
 {
 	return g_object_new(PIDGIN_TYPE_STATUS_BOX, "account", account,
 	                    "iconsel", TRUE, NULL);
@@ -1917,7 +1917,7 @@ pidgin_status_box_new_with_account(GaimAccount *account)
  *                   (non-markedup) (this function escapes it).
  * @param data       Data to be associated with this row in the dropdown
  *                   menu.  For primitives this is the value of the
- *                   GaimStatusPrimitive.  For saved statuses this is the
+ *                   PurpleStatusPrimitive.  For saved statuses this is the
  *                   creation timestamp.
  */
 void
@@ -2021,7 +2021,7 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 		/* Show a placeholder icon */
 		gchar *filename;
 		filename = g_build_filename(DATADIR, "pixmaps",
-				"gaim", "insert-image.png", NULL);
+				"purple", "insert-image.png", NULL);
 		status_box->buddy_icon = gdk_pixbuf_new_from_file(filename, NULL);
 		g_free(filename);
 	}
@@ -2093,7 +2093,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 	GtkTreeIter iter;
 	GtkTreePath *path;
 	char *message;
-	GaimSavedStatus *saved_status = NULL;
+	PurpleSavedStatus *saved_status = NULL;
 	gboolean changed = TRUE;
 	
 	path = gtk_tree_row_reference_get_path(status_box->active_row);
@@ -2133,47 +2133,47 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 	}
 
 	if (status_box->account == NULL) {
-		GaimStatusType *acct_status_type = NULL;
-		GaimStatusPrimitive primitive = GPOINTER_TO_INT(data);
+		PurpleStatusType *acct_status_type = NULL;
+		PurpleStatusPrimitive primitive = GPOINTER_TO_INT(data);
 		/* Global */
 		/* Save the newly selected status to prefs.xml and status.xml */
 
 		/* Has the status really been changed? */
 		if (status_box->token_status_account) {
 			gint active;
-			GaimStatus *status;
+			PurpleStatus *status;
 			const char *id = NULL;
 			GtkTreePath *path = gtk_tree_row_reference_get_path(status_box->active_row);
 			active = gtk_tree_path_get_indices(path)[0];
 			
 			gtk_tree_path_free(path);
 
-			status = gaim_account_get_active_status(status_box->token_status_account);
+			status = purple_account_get_active_status(status_box->token_status_account);
 
 			 acct_status_type = find_status_type_by_index(status_box->token_status_account, active);
-			id = gaim_status_type_get_id(acct_status_type);
+			id = purple_status_type_get_id(acct_status_type);
 
-			if (strncmp(id, gaim_status_get_id(status), strlen(id)) == 0)
+			if (strncmp(id, purple_status_get_id(status), strlen(id)) == 0)
 			{
 				/* Selected status and previous status is the same */
-				if (!message_changed(message, gaim_status_get_attr_string(status, "message")))
+				if (!message_changed(message, purple_status_get_attr_string(status, "message")))
 				{
-					GaimSavedStatus *ss = gaim_savedstatus_get_current();
+					PurpleSavedStatus *ss = purple_savedstatus_get_current();
 					/* Make sure that statusbox displays the correct thing.
 					 * It can get messed up if the previous selection was a
 					 * saved status that wasn't supported by this account */
-					if ((gaim_savedstatus_get_type(ss) == primitive)
-							&& gaim_savedstatus_is_transient(ss)
-							&& gaim_savedstatus_has_substatuses(ss))
+					if ((purple_savedstatus_get_type(ss) == primitive)
+							&& purple_savedstatus_is_transient(ss)
+							&& purple_savedstatus_has_substatuses(ss))
 						changed = FALSE;
 				}
 			}
 		} else {
-			saved_status = gaim_savedstatus_get_current();
-			if (gaim_savedstatus_get_type(saved_status) == primitive &&
-			    !gaim_savedstatus_has_substatuses(saved_status))
+			saved_status = purple_savedstatus_get_current();
+			if (purple_savedstatus_get_type(saved_status) == primitive &&
+			    !purple_savedstatus_has_substatuses(saved_status))
 			{
-				if (!message_changed(gaim_savedstatus_get_message(saved_status), message))
+				if (!message_changed(purple_savedstatus_get_message(saved_status), message))
 					changed = FALSE;
 			}
 		}
@@ -2182,25 +2182,25 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 		{
 			/* Manually find the appropriate transient acct */
 			if (status_box->token_status_account) {
-				const GList *iter = gaim_savedstatuses_get_all();
-				GList *tmp, *active_accts = gaim_accounts_get_all_active();
+				const GList *iter = purple_savedstatuses_get_all();
+				GList *tmp, *active_accts = purple_accounts_get_all_active();
 
 				for (; iter != NULL; iter = iter->next) {
-					GaimSavedStatus *ss = iter->data;
-					const char *ss_msg = gaim_savedstatus_get_message(ss);
-					if ((gaim_savedstatus_get_type(ss) == primitive) && gaim_savedstatus_is_transient(ss) &&
-						gaim_savedstatus_has_substatuses(ss) && /* Must have substatuses */
+					PurpleSavedStatus *ss = iter->data;
+					const char *ss_msg = purple_savedstatus_get_message(ss);
+					if ((purple_savedstatus_get_type(ss) == primitive) && purple_savedstatus_is_transient(ss) &&
+						purple_savedstatus_has_substatuses(ss) && /* Must have substatuses */
 						!message_changed(ss_msg, message))
 					{
 						gboolean found = FALSE;
 						/* The currently enabled accounts must have substatuses for all the active accts */
 						for(tmp = active_accts; tmp != NULL; tmp = tmp->next) {
-							GaimAccount *acct = tmp->data;
-							GaimSavedStatusSub *sub = gaim_savedstatus_get_substatus(ss, acct);
+							PurpleAccount *acct = tmp->data;
+							PurpleSavedStatusSub *sub = purple_savedstatus_get_substatus(ss, acct);
 							if (sub) {
-								const GaimStatusType *sub_type = gaim_savedstatus_substatus_get_type(sub);
-								if (!strcmp(gaim_status_type_get_id(sub_type),
-										gaim_status_type_get_id(acct_status_type)))
+								const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_type(sub);
+								if (!strcmp(purple_status_type_get_id(sub_type),
+										purple_status_type_get_id(acct_status_type)))
 									found = TRUE;
 							}
 						}
@@ -2215,60 +2215,60 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 
 			} else {
 				/* If we've used this type+message before, lookup the transient status */
-				saved_status = gaim_savedstatus_find_transient_by_type_and_message(primitive, message);
+				saved_status = purple_savedstatus_find_transient_by_type_and_message(primitive, message);
 			}
 
 			/* If this type+message is unique then create a new transient saved status */
 			if (saved_status == NULL)
 			{
-				saved_status = gaim_savedstatus_new(NULL, primitive);
-				gaim_savedstatus_set_message(saved_status, message);
+				saved_status = purple_savedstatus_new(NULL, primitive);
+				purple_savedstatus_set_message(saved_status, message);
 				if (status_box->token_status_account) {
-					GList *tmp, *active_accts = gaim_accounts_get_all_active();
+					GList *tmp, *active_accts = purple_accounts_get_all_active();
 					for (tmp = active_accts; tmp != NULL; tmp = tmp->next) {
-						gaim_savedstatus_set_substatus(saved_status,
-							(GaimAccount*) tmp->data, acct_status_type, message);
+						purple_savedstatus_set_substatus(saved_status,
+							(PurpleAccount*) tmp->data, acct_status_type, message);
 					}
 					g_list_free(active_accts);
 				}
 			}
 
 			/* Set the status for each account */
-			gaim_savedstatus_activate(saved_status);
+			purple_savedstatus_activate(saved_status);
 		}
 	} else {
 		/* Per-account */
 		gint active;
-		GaimStatusType *status_type;
-		GaimStatus *status;
+		PurpleStatusType *status_type;
+		PurpleStatus *status;
 		const char *id = NULL;
 
-		status = gaim_account_get_active_status(status_box->account);
+		status = purple_account_get_active_status(status_box->account);
 
 		active = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(status_box), "active"));
 
 		status_type = find_status_type_by_index(status_box->account, active);
-		id = gaim_status_type_get_id(status_type);
+		id = purple_status_type_get_id(status_type);
 
-		if (strncmp(id, gaim_status_get_id(status), strlen(id)) == 0)
+		if (strncmp(id, purple_status_get_id(status), strlen(id)) == 0)
 		{
 			/* Selected status and previous status is the same */
-			if (!message_changed(message, gaim_status_get_attr_string(status, "message")))
+			if (!message_changed(message, purple_status_get_attr_string(status, "message")))
 				changed = FALSE;
 		}
 
 		if (changed)
 		{
 			if (message)
-				gaim_account_set_status(status_box->account, id,
+				purple_account_set_status(status_box->account, id,
 										TRUE, "message", message, NULL);
 			else
-				gaim_account_set_status(status_box->account, id,
+				purple_account_set_status(status_box->account, id,
 										TRUE, NULL);
 
-			saved_status = gaim_savedstatus_get_current();
-			if (gaim_savedstatus_is_transient(saved_status))
-				gaim_savedstatus_set_substatus(saved_status, status_box->account,
+			saved_status = purple_savedstatus_get_current();
+			if (purple_savedstatus_is_transient(saved_status))
+				purple_savedstatus_set_substatus(saved_status, status_box->account,
 						status_type, message);
 		}
 	}
@@ -2362,19 +2362,19 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 	{
 		if (type == PIDGIN_STATUS_BOX_TYPE_POPULAR)
 		{
-			GaimSavedStatus *saved;
-			saved = gaim_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
+			PurpleSavedStatus *saved;
+			saved = purple_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
 			g_return_if_fail(saved != NULL);
-			gaim_savedstatus_activate(saved);
+			purple_savedstatus_activate(saved);
 			return;
 		}
 
 		if (type == PIDGIN_STATUS_BOX_TYPE_CUSTOM)
 		{
-			GaimSavedStatus *saved_status;
-			saved_status = gaim_savedstatus_get_current();
+			PurpleSavedStatus *saved_status;
+			saved_status = purple_savedstatus_get_current();
 			pidgin_status_editor_show(FALSE,
-				gaim_savedstatus_is_transient(saved_status)
+				purple_savedstatus_is_transient(saved_status)
 					? saved_status : NULL);
 			status_menu_refresh_iter(status_box);
 			return;
@@ -2396,17 +2396,17 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 	if (status_box->account)
 		accounts = g_list_prepend(accounts, status_box->account);
 	else
-		accounts = gaim_accounts_get_all_active();
+		accounts = purple_accounts_get_all_active();
 	status_box->imhtml_visible = FALSE;
 	for (node = accounts; node != NULL; node = node->next)
 	{
-		GaimAccount *account;
-		GaimStatusType *status_type;
+		PurpleAccount *account;
+		PurpleStatusType *status_type;
 
 		account = node->data;
-		status_type = gaim_account_get_status_type_with_primitive(account, GPOINTER_TO_INT(data));
+		status_type = purple_account_get_status_type_with_primitive(account, GPOINTER_TO_INT(data));
 		if ((status_type != NULL) &&
-			(gaim_status_type_get_attr(status_type, "message") != NULL))
+			(purple_status_type_get_attr(status_type, "message") != NULL))
 		{
 			status_box->imhtml_visible = TRUE;
 			break;
@@ -2434,22 +2434,22 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 }
 
 static gint
-get_statusbox_index(PidginStatusBox *box, GaimSavedStatus *saved_status)
+get_statusbox_index(PidginStatusBox *box, PurpleSavedStatus *saved_status)
 {
 	gint index;
 
-	switch (gaim_savedstatus_get_type(saved_status))
+	switch (purple_savedstatus_get_type(saved_status))
 	{
-		case GAIM_STATUS_AVAILABLE:
+		case PURPLE_STATUS_AVAILABLE:
 			index = 0;
 			break;
-		case GAIM_STATUS_AWAY:
+		case PURPLE_STATUS_AWAY:
 			index = 1;
 			break;
-		case GAIM_STATUS_INVISIBLE:
+		case PURPLE_STATUS_INVISIBLE:
 			index = 2;
 			break;
-		case GAIM_STATUS_OFFLINE:
+		case PURPLE_STATUS_OFFLINE:
 			index = 3;
 			break;
 		default:

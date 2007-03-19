@@ -2,9 +2,9 @@
  * @file gntconn.c GNT Connection API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -27,33 +27,33 @@
 #include "request.h"
 
 #include "gntconn.h"
-#include "gntgaim.h"
+#include "finch.h"
 
 static void
-finch_connection_report_disconnect(GaimConnection *gc, const char *text)
+finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 {
 	char *act, *primary, *secondary;
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
 
-	act = g_strdup_printf(_("%s (%s)"), gaim_account_get_username(account),
-			gaim_account_get_protocol_name(account));
+	act = g_strdup_printf(_("%s (%s)"), purple_account_get_username(account),
+			purple_account_get_protocol_name(account));
 
 	primary = g_strdup_printf(_("%s disconnected."), act);
 	secondary = g_strdup_printf(_("%s was disconnected due to the following error:\n%s"),
 			act, text);
 
-	gaim_request_action(account, _("Connection Error"), primary, secondary, 1,
+	purple_request_action(account, _("Connection Error"), primary, secondary, 1,
 						account, 2,
 						_("OK"), NULL,
 						_("Connect"),
-						GAIM_CALLBACK(gaim_account_connect));
+						PURPLE_CALLBACK(purple_account_connect));
 
 	g_free(act);
 	g_free(primary);
 	g_free(secondary);
 }
 
-static GaimConnectionUiOps ops = 
+static PurpleConnectionUiOps ops = 
 {
 	.connect_progress = NULL,
 	.connected = NULL,
@@ -62,7 +62,7 @@ static GaimConnectionUiOps ops =
 	.report_disconnect = finch_connection_report_disconnect
 };
 
-GaimConnectionUiOps *finch_connections_get_ui_ops()
+PurpleConnectionUiOps *finch_connections_get_ui_ops()
 {
 	return &ops;
 }

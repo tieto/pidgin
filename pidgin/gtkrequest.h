@@ -2,7 +2,7 @@
  * @file gtkrequest.h GTK+ Request API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -32,6 +32,6 @@
  *
  * @return The GTK+ UI request operations structure.
  */
-GaimRequestUiOps *pidgin_request_get_ui_ops(void);
+PurpleRequestUiOps *pidgin_request_get_ui_ops(void);
 
 #endif /* _PIDGINREQUEST_H_ */

@@ -1,9 +1,9 @@
 /**
  * @file group_search.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -39,7 +39,7 @@ enum {
 };
 
 /* send packet to search for qq_group */
-void qq_send_cmd_group_search_group(GaimConnection *gc, guint32 external_group_id)
+void qq_send_cmd_group_search_group(PurpleConnection *gc, guint32 external_group_id)
 {
 	guint8 *raw_data, *cursor, type;
 	gint bytes, data_len;
@@ -55,7 +55,7 @@ void qq_send_cmd_group_search_group(GaimConnection *gc, guint32 external_group_i
 	bytes += create_packet_dw(raw_data, &cursor, external_group_id);
 
 	if (bytes != data_len)
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail create packet for %s\n", qq_group_cmd_get_desc(QQ_GROUP_CMD_SEARCH_GROUP));
 	else
 		qq_send_group_cmd(gc, NULL, raw_data, data_len);
@@ -63,31 +63,31 @@ void qq_send_cmd_group_search_group(GaimConnection *gc, guint32 external_group_i
 
 static void _qq_setup_roomlist(qq_data *qd, qq_group *group)
 {
-	GaimRoomlistRoom *room;
+	PurpleRoomlistRoom *room;
 	gchar field[11];
 
-	room = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_ROOM, group->group_name_utf8, NULL);
+	room = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, group->group_name_utf8, NULL);
 	g_snprintf(field, sizeof(field), "%d", group->external_group_id);
-	gaim_roomlist_room_add_field(qd->roomlist, room, field);
+	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", group->creator_uid);
-	gaim_roomlist_room_add_field(qd->roomlist, room, field);
-	gaim_roomlist_room_add_field(qd->roomlist, room, group->group_desc_utf8);
+	purple_roomlist_room_add_field(qd->roomlist, room, field);
+	purple_roomlist_room_add_field(qd->roomlist, room, group->group_desc_utf8);
 	g_snprintf(field, sizeof(field), "%d", group->internal_group_id);
-	gaim_roomlist_room_add_field(qd->roomlist, room, field);
+	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", group->group_type);
-	gaim_roomlist_room_add_field(qd->roomlist, room, field);
+	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", group->auth_type);
-	gaim_roomlist_room_add_field(qd->roomlist, room, field);
+	purple_roomlist_room_add_field(qd->roomlist, room, field);
 	g_snprintf(field, sizeof(field), "%d", group->group_category);
-	gaim_roomlist_room_add_field(qd->roomlist, room, field);
-	gaim_roomlist_room_add_field(qd->roomlist, room, group->group_name_utf8);
-	gaim_roomlist_room_add(qd->roomlist, room);
+	purple_roomlist_room_add_field(qd->roomlist, room, field);
+	purple_roomlist_room_add_field(qd->roomlist, room, group->group_name_utf8);
+	purple_roomlist_room_add(qd->roomlist, room);
 
-	gaim_roomlist_set_in_progress(qd->roomlist, FALSE);
+	purple_roomlist_set_in_progress(qd->roomlist, FALSE);
 }
 
 /* process group cmd reply "search group" */
-void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
 {
 	guint8 search_type;
 	guint16 unknown;
@@ -124,7 +124,7 @@ void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, 
 	*cursor += pascal_len;
 	/* end of one qq_group */
         if(*cursor != (data + len)) {
-                         gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+                         purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 					 "group_cmd_search_group: Dangerous error! maybe protocol changed, notify developers!");
         }
 

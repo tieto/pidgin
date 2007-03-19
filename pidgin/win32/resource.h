@@ -1,1 +1,1 @@
-#define GAIM_ICON                       104
+#define PURPLE_ICON                       104

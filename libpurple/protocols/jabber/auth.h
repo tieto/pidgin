@@ -1,7 +1,7 @@
 /**
  * @file auth.h Authentication routines
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
  *
@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_JABBER_AUTH_H_
-#define _GAIM_JABBER_AUTH_H_
+#ifndef _PURPLE_JABBER_AUTH_H_
+#define _PURPLE_JABBER_AUTH_H_
 
 #include "jabber.h"
 #include "xmlnode.h"
@@ -32,4 +32,4 @@ void jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet);
 void jabber_auth_handle_success(JabberStream *js, xmlnode *packet);
 void jabber_auth_handle_failure(JabberStream *js, xmlnode *packet);
 
-#endif /* _GAIM_JABBER_AUTH_H_ */
+#endif /* _PURPLE_JABBER_AUTH_H_ */

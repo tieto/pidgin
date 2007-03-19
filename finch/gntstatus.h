@@ -2,9 +2,9 @@
  * @file gntstatus.h GNT Status API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -43,7 +43,7 @@ void finch_savedstatus_show_all(void);
  *
  * @param saved The saved status to edit. Set it to @c NULL to create a new status.
  */
-void finch_savedstatus_edit(GaimSavedStatus *saved);
+void finch_savedstatus_edit(PurpleSavedStatus *saved);
 
 /*@}*/
 

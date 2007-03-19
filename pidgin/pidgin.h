@@ -2,7 +2,7 @@
  * @file pidgin.h UI definitions and includes
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -68,7 +68,7 @@
 #if !GTK_CHECK_VERSION(2,6,0)
 #   include "gtkcellview.h"
 #   include "gtkcellviewmenuitem.h"
-#   include "gaimcombobox.h"
+#   include "purplecombobox.h"
 #   if !GTK_CHECK_VERSION(2,4,0)
 #       include "gtkcelllayout.h"
 #   endif /* Less than GTK+ 2.4 */

@@ -1,5 +1,5 @@
 /**
- * @file lastlog.c Lastlog plugin for gaim-text.
+ * @file lastlog.c Lastlog plugin for purple-text.
  *
  * Copyright (C) 2006 Sadrul Habib Chowdhury <sadrul@users.sourceforge.net>
  *
@@ -35,7 +35,7 @@
 #include <gntconv.h>
 #include <gntplugin.h>
 
-static GaimCmdId cmd;
+static PurpleCmdId cmd;
 
 static gboolean
 window_kpress_cb(GntWidget *wid, const char *key, GntTextView *view)
@@ -57,8 +57,8 @@ window_kpress_cb(GntWidget *wid, const char *key, GntTextView *view)
 	return FALSE;
 }
 
-static GaimCmdRet
-lastlog_cb(GaimConversation *conv, const char *cmd, char **args, char **error, gpointer null)
+static PurpleCmdRet
+lastlog_cb(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer null)
 {
 	FinchConv *ggconv = conv->ui_data;
 	char **strings = g_strsplit(GNT_TEXT_VIEW(ggconv->tv)->string->str, "\n", 0);
@@ -88,42 +88,42 @@ lastlog_cb(GaimConversation *conv, const char *cmd, char **args, char **error, g
 
 	g_signal_connect(G_OBJECT(win), "key_pressed", G_CALLBACK(window_kpress_cb), tv);
 	g_strfreev(strings);
-	return GAIM_CMD_STATUS_OK;
+	return PURPLE_CMD_STATUS_OK;
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	cmd = gaim_cmd_register("lastlog", "s", GAIM_CMD_P_DEFAULT,
-			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM, NULL,
+	cmd = purple_cmd_register("lastlog", "s", PURPLE_CMD_P_DEFAULT,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
 			lastlog_cb, _("lastlog: Searches for a substring in the backlog."), NULL);
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
-	gaim_cmd_unregister(cmd);
+	purple_cmd_unregister(cmd);
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,
-	GAIM_GNT_PLUGIN_TYPE,
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,
+	FINCH_PLUGIN_TYPE,
 	0,
 	NULL,
-	GAIM_PRIORITY_DEFAULT,
+	PURPLE_PRIORITY_DEFAULT,
 	"gntlastlog",
 	N_("GntLastlog"),
 	VERSION,
 	N_("Lastlog plugin."),
 	N_("Lastlog plugin."),
 	"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",
-	"http://gaim.sourceforge.net",
+	"http://purple.sourceforge.net",
 	plugin_load,
 	plugin_unload,
 	NULL,
@@ -134,9 +134,9 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
+PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
 

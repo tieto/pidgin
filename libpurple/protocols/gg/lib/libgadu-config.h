@@ -28,7 +28,7 @@
 #undef __GG_LIBGADU_HAVE_PTHREAD
 
 /* Defined if libgadu was compiled and linked with TLS support. */
-/* Always undefined in Gaim. */
+/* Always undefined in Purple. */
 #undef __GG_LIBGADU_HAVE_OPENSSL
 
 /* Include file containing uintXX_t declarations. */

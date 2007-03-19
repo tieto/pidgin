@@ -1,7 +1,7 @@
 /**
  * @file jabber.h
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Nathan Walp <faceprint@faceprint.com>
  *
@@ -19,8 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_JABBER_H_
-#define _GAIM_JABBER_H_
+#ifndef _PURPLE_JABBER_H_
+#define _PURPLE_JABBER_H_
 
 #include <libxml/parser.h>
 #include <glib.h>
@@ -37,7 +37,7 @@
 #include <sasl/sasl.h>
 #endif
 
-#define CAPS0115_NODE "http://gaim.sf.net/caps"
+#define CAPS0115_NODE "http://purple.sf.net/caps"
 
 typedef enum {
 	JABBER_CAP_NONE           = 0,
@@ -73,7 +73,7 @@ typedef struct _JabberStream
 {
 	int fd;
 
-	GaimSrvQueryData *srv_query_data;
+	PurpleSrvQueryData *srv_query_data;
 
 	xmlParserCtxt *context;
 	xmlnode *current;
@@ -100,7 +100,7 @@ typedef struct _JabberStream
 
 	GHashTable *chats;
 	GList *chat_servers;
-	GaimRoomlist *roomlist;
+	PurpleRoomlist *roomlist;
 	GList *user_directories;
 
 	GHashTable *iq_callbacks;
@@ -114,8 +114,8 @@ typedef struct _JabberStream
 	time_t idle;
 
 	JabberID *user;
-	GaimConnection *gc;
-	GaimSslConnection *gsc;
+	PurpleConnection *gc;
+	PurpleSslConnection *gsc;
 
 	gboolean registration;
 
@@ -124,7 +124,7 @@ typedef struct _JabberStream
 
 	GSList *pending_buddy_info_requests;
 
-	GaimCircBuffer *write_buffer;
+	PurpleCircBuffer *write_buffer;
 	guint writeh;
 
 	gboolean reinit;
@@ -163,4 +163,4 @@ char *jabber_get_next_id(JabberStream *js);
 
 char *jabber_parse_error(JabberStream *js, xmlnode *packet);
 
-#endif /* _GAIM_JABBER_H_ */
+#endif /* _PURPLE_JABBER_H_ */

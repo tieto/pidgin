@@ -36,7 +36,7 @@ int winpidgin_gz_untar(const char* filename, const char* destdir);
 void winpidgin_notify_uri(const char *uri);
 void winpidgin_shell_execute(const char *target, const char *verb, const char *clazz);
 void winpidgin_ensure_onscreen(GtkWidget *win);
-void winpidgin_conv_blink(GaimConversation *conv, GaimMessageFlags flags);
+void winpidgin_conv_blink(PurpleConversation *conv, PurpleMessageFlags flags);
 void winpidgin_window_flash(GtkWindow *window, gboolean flash);
 
 /* init / cleanup */

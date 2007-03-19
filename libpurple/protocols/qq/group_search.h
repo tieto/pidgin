@@ -1,9 +1,9 @@
 /**
  * @file group_search.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -28,7 +28,7 @@
 #include <glib.h>
 #include "connection.h"
 
-void qq_send_cmd_group_search_group(GaimConnection *gc, guint32 external_group_id);
-void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
+void qq_send_cmd_group_search_group(PurpleConnection *gc, guint32 external_group_id);
+void qq_process_group_cmd_search_group(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
 
 #endif

@@ -12,24 +12,24 @@
  * MD4 Tests
  *****************************************************************************/
 #define MD4_TEST(data, digest) { \
-	GaimCipher *cipher = NULL; \
-	GaimCipherContext *context = NULL; \
+	PurpleCipher *cipher = NULL; \
+	PurpleCipherContext *context = NULL; \
 	gchar cdigest[33]; \
 	gchar *sdigest = NULL; \
 	gboolean ret = FALSE; \
 	\
-	cipher = gaim_ciphers_find_cipher("md4"); \
-	context = gaim_cipher_context_new(cipher, NULL); \
-	gaim_cipher_context_append(context, (guchar *)(data), strlen((data))); \
+	cipher = purple_ciphers_find_cipher("md4"); \
+	context = purple_cipher_context_new(cipher, NULL); \
+	purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
 	\
-	ret = gaim_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
+	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
 	                                        NULL); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	gaim_cipher_context_destroy(context); \
+	purple_cipher_context_destroy(context); \
 }
 
 START_TEST(test_md4_empty_string) {
@@ -76,24 +76,24 @@ END_TEST
  * MD5 Tests
  *****************************************************************************/
 #define MD5_TEST(data, digest) { \
-	GaimCipher *cipher = NULL; \
-	GaimCipherContext *context = NULL; \
+	PurpleCipher *cipher = NULL; \
+	PurpleCipherContext *context = NULL; \
 	gchar cdigest[33]; \
 	gchar *sdigest = NULL; \
 	gboolean ret = FALSE; \
 	\
-	cipher = gaim_ciphers_find_cipher("md5"); \
-	context = gaim_cipher_context_new(cipher, NULL); \
-	gaim_cipher_context_append(context, (guchar *)(data), strlen((data))); \
+	cipher = purple_ciphers_find_cipher("md5"); \
+	context = purple_cipher_context_new(cipher, NULL); \
+	purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
 	\
-	ret = gaim_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
+	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
 	                                        NULL); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	gaim_cipher_context_destroy(context); \
+	purple_cipher_context_destroy(context); \
 }
 
 START_TEST(test_md5_empty_string) {
@@ -139,17 +139,17 @@ END_TEST
  * SHA-1 Tests
  *****************************************************************************/
 #define SHA1_TEST(data, digest) { \
-	GaimCipher *cipher = NULL; \
-	GaimCipherContext *context = NULL; \
+	PurpleCipher *cipher = NULL; \
+	PurpleCipherContext *context = NULL; \
 	gchar cdigest[41]; \
 	gchar *sdigest = NULL; \
 	gboolean ret = FALSE; \
 	\
-	cipher = gaim_ciphers_find_cipher("sha1"); \
-	context = gaim_cipher_context_new(cipher, NULL); \
+	cipher = purple_ciphers_find_cipher("sha1"); \
+	context = purple_cipher_context_new(cipher, NULL); \
 	\
 	if((data)) { \
-		gaim_cipher_context_append(context, (guchar *)(data), strlen((data))); \
+		purple_cipher_context_append(context, (guchar *)(data), strlen((data))); \
 	} else { \
 		gint j; \
 		guchar buff[1000]; \
@@ -157,17 +157,17 @@ END_TEST
 		memset(buff, 'a', 1000); \
 		\
 		for(j = 0; j < 1000; j++) \
-			gaim_cipher_context_append(context, buff, 1000); \
+			purple_cipher_context_append(context, buff, 1000); \
 	} \
 	\
-	ret = gaim_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
+	ret = purple_cipher_context_digest_to_str(context, sizeof(cdigest), cdigest, \
 	                                        NULL); \
 	\
 	fail_unless(ret == TRUE, NULL); \
 	\
 	fail_unless(strcmp((digest), cdigest) == 0, NULL); \
 	\
-	gaim_cipher_context_destroy(context); \
+	purple_cipher_context_destroy(context); \
 }
 
 START_TEST(test_sha1_a) {

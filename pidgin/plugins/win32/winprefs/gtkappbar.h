@@ -1,5 +1,5 @@
 /*
- * gaim - WinGaim Options Plugin
+ * purple - WinPurple Options Plugin
  *
  * File: gtkappbar.h
  * Date: August 2, 2003

@@ -1,9 +1,9 @@
 /**
  * @file msn.h The MSN protocol plugin
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -76,7 +76,7 @@
 #define MSN_FT_GUID "{5D3E02AB-6190-11d3-BBBB-00C04F795683}"
 
 #define MSN_CLIENTINFO \
-	"Client-Name: Gaim/" VERSION "\r\n" \
+	"Client-Name: Purple/" VERSION "\r\n" \
 	"Chat-Logging: Y\r\n"
 
 

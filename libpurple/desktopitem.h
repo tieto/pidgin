@@ -2,7 +2,7 @@
  * @file desktopitem.h Functions for managing .desktop files
  * @ingroup core
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -52,8 +52,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef _GAIM_DESKTOP_ITEM_H_
-#define _GAIM_DESKTOP_ITEM_H_
+#ifndef _PURPLE_DESKTOP_ITEM_H_
+#define _PURPLE_DESKTOP_ITEM_H_
 
 #include <glib.h>
 #include <glib-object.h>
@@ -61,67 +61,67 @@
 G_BEGIN_DECLS
 
 typedef enum {
-	GAIM_DESKTOP_ITEM_TYPE_NULL = 0 /* This means its NULL, that is, not
+	PURPLE_DESKTOP_ITEM_TYPE_NULL = 0 /* This means its NULL, that is, not
 					  * set */,
-	GAIM_DESKTOP_ITEM_TYPE_OTHER /* This means it's not one of the below
+	PURPLE_DESKTOP_ITEM_TYPE_OTHER /* This means it's not one of the below
 					 strings types, and you must get the
 					 Type attribute. */,
 
 	/* These are the standard compliant types: */
-	GAIM_DESKTOP_ITEM_TYPE_APPLICATION,
-	GAIM_DESKTOP_ITEM_TYPE_LINK,
-	GAIM_DESKTOP_ITEM_TYPE_FSDEVICE,
-	GAIM_DESKTOP_ITEM_TYPE_MIME_TYPE,
-	GAIM_DESKTOP_ITEM_TYPE_DIRECTORY,
-	GAIM_DESKTOP_ITEM_TYPE_SERVICE,
-	GAIM_DESKTOP_ITEM_TYPE_SERVICE_TYPE
-} GaimDesktopItemType;
+	PURPLE_DESKTOP_ITEM_TYPE_APPLICATION,
+	PURPLE_DESKTOP_ITEM_TYPE_LINK,
+	PURPLE_DESKTOP_ITEM_TYPE_FSDEVICE,
+	PURPLE_DESKTOP_ITEM_TYPE_MIME_TYPE,
+	PURPLE_DESKTOP_ITEM_TYPE_DIRECTORY,
+	PURPLE_DESKTOP_ITEM_TYPE_SERVICE,
+	PURPLE_DESKTOP_ITEM_TYPE_SERVICE_TYPE
+} PurpleDesktopItemType;
 
-typedef struct _GaimDesktopItem GaimDesktopItem;
+typedef struct _PurpleDesktopItem PurpleDesktopItem;
 
-#define GAIM_TYPE_DESKTOP_ITEM         (gaim_desktop_item_get_type ())
-GType gaim_desktop_item_get_type       (void);
+#define PURPLE_TYPE_DESKTOP_ITEM         (purple_desktop_item_get_type ())
+GType purple_desktop_item_get_type       (void);
 
 /* standard */
-#define GAIM_DESKTOP_ITEM_ENCODING	"Encoding" /* string */
-#define GAIM_DESKTOP_ITEM_VERSION	"Version"  /* numeric */
-#define GAIM_DESKTOP_ITEM_NAME		"Name" /* localestring */
-#define GAIM_DESKTOP_ITEM_GENERIC_NAME	"GenericName" /* localestring */
-#define GAIM_DESKTOP_ITEM_TYPE		"Type" /* string */
-#define GAIM_DESKTOP_ITEM_FILE_PATTERN "FilePattern" /* regexp(s) */
-#define GAIM_DESKTOP_ITEM_TRY_EXEC	"TryExec" /* string */
-#define GAIM_DESKTOP_ITEM_NO_DISPLAY	"NoDisplay" /* boolean */
-#define GAIM_DESKTOP_ITEM_COMMENT	"Comment" /* localestring */
-#define GAIM_DESKTOP_ITEM_EXEC		"Exec" /* string */
-#define GAIM_DESKTOP_ITEM_ACTIONS	"Actions" /* strings */
-#define GAIM_DESKTOP_ITEM_ICON		"Icon" /* string */
-#define GAIM_DESKTOP_ITEM_MINI_ICON	"MiniIcon" /* string */
-#define GAIM_DESKTOP_ITEM_HIDDEN	"Hidden" /* boolean */
-#define GAIM_DESKTOP_ITEM_PATH		"Path" /* string */
-#define GAIM_DESKTOP_ITEM_TERMINAL	"Terminal" /* boolean */
-#define GAIM_DESKTOP_ITEM_TERMINAL_OPTIONS "TerminalOptions" /* string */
-#define GAIM_DESKTOP_ITEM_SWALLOW_TITLE "SwallowTitle" /* string */
-#define GAIM_DESKTOP_ITEM_SWALLOW_EXEC	"SwallowExec" /* string */
-#define GAIM_DESKTOP_ITEM_MIME_TYPE	"MimeType" /* regexp(s) */
-#define GAIM_DESKTOP_ITEM_PATTERNS	"Patterns" /* regexp(s) */
-#define GAIM_DESKTOP_ITEM_DEFAULT_APP	"DefaultApp" /* string */
-#define GAIM_DESKTOP_ITEM_DEV		"Dev" /* string */
-#define GAIM_DESKTOP_ITEM_FS_TYPE	"FSType" /* string */
-#define GAIM_DESKTOP_ITEM_MOUNT_POINT	"MountPoint" /* string */
-#define GAIM_DESKTOP_ITEM_READ_ONLY	"ReadOnly" /* boolean */
-#define GAIM_DESKTOP_ITEM_UNMOUNT_ICON "UnmountIcon" /* string */
-#define GAIM_DESKTOP_ITEM_SORT_ORDER	"SortOrder" /* strings */
-#define GAIM_DESKTOP_ITEM_URL		"URL" /* string */
-#define GAIM_DESKTOP_ITEM_DOC_PATH	"X-GNOME-DocPath" /* string */
+#define PURPLE_DESKTOP_ITEM_ENCODING	"Encoding" /* string */
+#define PURPLE_DESKTOP_ITEM_VERSION	"Version"  /* numeric */
+#define PURPLE_DESKTOP_ITEM_NAME		"Name" /* localestring */
+#define PURPLE_DESKTOP_ITEM_GENERIC_NAME	"GenericName" /* localestring */
+#define PURPLE_DESKTOP_ITEM_TYPE		"Type" /* string */
+#define PURPLE_DESKTOP_ITEM_FILE_PATTERN "FilePattern" /* regexp(s) */
+#define PURPLE_DESKTOP_ITEM_TRY_EXEC	"TryExec" /* string */
+#define PURPLE_DESKTOP_ITEM_NO_DISPLAY	"NoDisplay" /* boolean */
+#define PURPLE_DESKTOP_ITEM_COMMENT	"Comment" /* localestring */
+#define PURPLE_DESKTOP_ITEM_EXEC		"Exec" /* string */
+#define PURPLE_DESKTOP_ITEM_ACTIONS	"Actions" /* strings */
+#define PURPLE_DESKTOP_ITEM_ICON		"Icon" /* string */
+#define PURPLE_DESKTOP_ITEM_MINI_ICON	"MiniIcon" /* string */
+#define PURPLE_DESKTOP_ITEM_HIDDEN	"Hidden" /* boolean */
+#define PURPLE_DESKTOP_ITEM_PATH		"Path" /* string */
+#define PURPLE_DESKTOP_ITEM_TERMINAL	"Terminal" /* boolean */
+#define PURPLE_DESKTOP_ITEM_TERMINAL_OPTIONS "TerminalOptions" /* string */
+#define PURPLE_DESKTOP_ITEM_SWALLOW_TITLE "SwallowTitle" /* string */
+#define PURPLE_DESKTOP_ITEM_SWALLOW_EXEC	"SwallowExec" /* string */
+#define PURPLE_DESKTOP_ITEM_MIME_TYPE	"MimeType" /* regexp(s) */
+#define PURPLE_DESKTOP_ITEM_PATTERNS	"Patterns" /* regexp(s) */
+#define PURPLE_DESKTOP_ITEM_DEFAULT_APP	"DefaultApp" /* string */
+#define PURPLE_DESKTOP_ITEM_DEV		"Dev" /* string */
+#define PURPLE_DESKTOP_ITEM_FS_TYPE	"FSType" /* string */
+#define PURPLE_DESKTOP_ITEM_MOUNT_POINT	"MountPoint" /* string */
+#define PURPLE_DESKTOP_ITEM_READ_ONLY	"ReadOnly" /* boolean */
+#define PURPLE_DESKTOP_ITEM_UNMOUNT_ICON "UnmountIcon" /* string */
+#define PURPLE_DESKTOP_ITEM_SORT_ORDER	"SortOrder" /* strings */
+#define PURPLE_DESKTOP_ITEM_URL		"URL" /* string */
+#define PURPLE_DESKTOP_ITEM_DOC_PATH	"X-GNOME-DocPath" /* string */
 
 /**
- * This function loads 'filename' and turns it into a GaimDesktopItem.
+ * This function loads 'filename' and turns it into a PurpleDesktopItem.
  *
- * @param filename The filename or directory path to load the GaimDesktopItem from
+ * @param filename The filename or directory path to load the PurpleDesktopItem from
  *
  * @return The newly loaded item, or NULL on error.
  */
-GaimDesktopItem *gaim_desktop_item_new_from_file (const char *filename);
+PurpleDesktopItem *purple_desktop_item_new_from_file (const char *filename);
 
 /**
  * Gets the type attribute (the 'Type' field) of the item.  This should
@@ -133,9 +133,9 @@ GaimDesktopItem *gaim_desktop_item_new_from_file (const char *filename);
  * @param item A desktop item
  *
  * @return The type of the specified 'item'. The returned memory
- * remains owned by the GaimDesktopItem and should not be freed.
+ * remains owned by the PurpleDesktopItem and should not be freed.
  */
-GaimDesktopItemType gaim_desktop_item_get_entry_type (const GaimDesktopItem *item);
+PurpleDesktopItemType purple_desktop_item_get_entry_type (const PurpleDesktopItem *item);
 
 /**
  * Gets the value of an attribute of the item, as a string.
@@ -145,18 +145,18 @@ GaimDesktopItemType gaim_desktop_item_get_entry_type (const GaimDesktopItem *ite
  *
  * @return The value of the specified item attribute.
  */
-const char *gaim_desktop_item_get_string (const GaimDesktopItem *item,
+const char *purple_desktop_item_get_string (const PurpleDesktopItem *item,
 					  const char *attr);
 
 /**
- * Creates a copy of a GaimDesktopItem.  The new copy has a refcount of 1.
+ * Creates a copy of a PurpleDesktopItem.  The new copy has a refcount of 1.
  * Note: Section stack is NOT copied.
  *
  * @param item The item to be copied
  *
  * @return The new copy 
  */
-GaimDesktopItem *gaim_desktop_item_copy (const GaimDesktopItem *item);
+PurpleDesktopItem *purple_desktop_item_copy (const PurpleDesktopItem *item);
 
 /**
  * Decreases the reference count of the specified item, and destroys
@@ -164,8 +164,8 @@ GaimDesktopItem *gaim_desktop_item_copy (const GaimDesktopItem *item);
  *
  * @param item A desktop item
  */
-void gaim_desktop_item_unref (GaimDesktopItem *item);
+void purple_desktop_item_unref (PurpleDesktopItem *item);
 
 G_END_DECLS
 
-#endif /* _GAIM_DESKTOP_ITEM_H_ */
+#endif /* _PURPLE_DESKTOP_ITEM_H_ */

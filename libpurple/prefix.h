@@ -3,9 +3,9 @@
  * upgrading these files.
  *
  * Added this comment.
- * Added "gaim_ ## " to the namespace
- * Changed the lib macro to use /lib/gaim instead of just /lib
- *  (why does gaim do that in the -DLIBDIR autoconf thing anyway?)
+ * Added "purple_ ## " to the namespace
+ * Changed the lib macro to use /lib/purple instead of just /lib
+ *  (why does purple do that in the -DLIBDIR autoconf thing anyway?)
  *
  */
 
@@ -44,7 +44,7 @@ extern "C" {
  * --> expands br_locate to foobar_br_locate
  */
 #undef BR_NAMESPACE
-#define BR_NAMESPACE(funcName) gaim_ ## funcName
+#define BR_NAMESPACE(funcName) purple_ ## funcName
 
 
 #ifdef ENABLE_BINRELOC

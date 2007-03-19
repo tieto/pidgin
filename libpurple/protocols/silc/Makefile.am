@@ -2,7 +2,7 @@ EXTRA_DIST = README TODO Makefile.mingw
 
 pkgdir = $(libdir)/libpurple
 
-SILCSOURCES = silc.c silcgaim.h buddy.c chat.c ft.c ops.c pk.c util.c wb.c wb.h
+SILCSOURCES = silc.c silcpurple.h buddy.c chat.c ft.c ops.c pk.c util.c wb.c wb.h
 
 AM_CFLAGS = $(st)
 

@@ -1,9 +1,9 @@
 /**
  * @file crypt.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -221,7 +221,7 @@ static gint qq_decrypt(const guint8 *const instr, gint instrlen,
 
 	/* at least 16 bytes and %8 == 0 */
 	if ((instrlen % 8) || (instrlen < 16)) { 
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 			"Ciphertext len is either too short or not a multiple of 8 bytes, read %d bytes\n", 
 			instrlen);
 		return 0;
@@ -232,7 +232,7 @@ static gint qq_decrypt(const guint8 *const instr, gint instrlen,
 	count = instrlen - pos_in_block - 10;	/* this is the plaintext length */
 	/* return if outstr buffer is not large enough or error plaintext length */
 	if (*outstrlen_ptr < count || count < 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Buffer len %d is less than real len %d", 
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Buffer len %d is less than real len %d", 
 			*outstrlen_ptr, count);
 		return 0;
 	}
@@ -255,7 +255,7 @@ static gint qq_decrypt(const guint8 *const instr, gint instrlen,
 			crypt_buff_pre_8 = instr;
 			if (!decrypt_block(&crypt_buff, instrlen, key, 
 						&context_start, decrypted, &pos_in_block)) {
-				gaim_debug(GAIM_DEBUG_ERROR, "QQ", "decrypt every 8 bytes error A");
+				purple_debug(PURPLE_DEBUG_ERROR, "QQ", "decrypt every 8 bytes error A");
 				return 0;
 			}
 		}
@@ -273,7 +273,7 @@ static gint qq_decrypt(const guint8 *const instr, gint instrlen,
 			crypt_buff_pre_8 = crypt_buff - 8;
 			if (!decrypt_block(&crypt_buff, instrlen, key, 
 						&context_start, decrypted, &pos_in_block)) {
-				gaim_debug(GAIM_DEBUG_ERROR, "QQ", "decrypt every 8 bytes error B");
+				purple_debug(PURPLE_DEBUG_ERROR, "QQ", "decrypt every 8 bytes error B");
 				return 0;
 			}
 		}
@@ -289,7 +289,7 @@ static gint qq_decrypt(const guint8 *const instr, gint instrlen,
 			crypt_buff_pre_8 = crypt_buff;
 			if (!decrypt_block(&crypt_buff, instrlen, key, 
 						&context_start, decrypted, &pos_in_block)) {
-				gaim_debug(GAIM_DEBUG_ERROR, "QQ", "decrypt every 8 bytes error C");
+				purple_debug(PURPLE_DEBUG_ERROR, "QQ", "decrypt every 8 bytes error C");
 				return 0;
 			}
 		}

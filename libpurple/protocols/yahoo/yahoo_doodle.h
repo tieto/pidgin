@@ -1,9 +1,9 @@
 /**
  * @file yahoo_doodle.h The Yahoo! protocol plugin Doodle IMVironment object
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -97,37 +97,37 @@ typedef struct _doodle_session
  * API
  *****************************************************************************/
 
-GaimCmdRet yahoo_doodle_gaim_cmd_start(GaimConversation *conv, const char *cmd, char **args,
+PurpleCmdRet yahoo_doodle_purple_cmd_start(PurpleConversation *conv, const char *cmd, char **args,
 									   char **error, void *data);
 
-void yahoo_doodle_process(GaimConnection *gc, const char *me, const char *from,
+void yahoo_doodle_process(PurpleConnection *gc, const char *me, const char *from,
 						  const char *command, const char *message);
-void yahoo_doodle_initiate(GaimConnection *gc, const char *to);
+void yahoo_doodle_initiate(PurpleConnection *gc, const char *to);
 
-void yahoo_doodle_command_got_request(GaimConnection *gc, const char *from);
-void yahoo_doodle_command_got_ready(GaimConnection *gc, const char *from);
-void yahoo_doodle_command_got_draw(GaimConnection *gc, const char *from, const char *message);
-void yahoo_doodle_command_got_clear(GaimConnection *gc, const char *from);
-void yahoo_doodle_command_got_extra(GaimConnection *gc, const char *from, const char *message);
-void yahoo_doodle_command_got_confirm(GaimConnection *gc, const char *from);
-void yahoo_doodle_command_got_shutdown(GaimConnection *gc, const char *from);
+void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *from);
+void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *from);
+void yahoo_doodle_command_got_draw(PurpleConnection *gc, const char *from, const char *message);
+void yahoo_doodle_command_got_clear(PurpleConnection *gc, const char *from);
+void yahoo_doodle_command_got_extra(PurpleConnection *gc, const char *from, const char *message);
+void yahoo_doodle_command_got_confirm(PurpleConnection *gc, const char *from);
+void yahoo_doodle_command_got_shutdown(PurpleConnection *gc, const char *from);
 
-void yahoo_doodle_command_send_request(GaimConnection *gc, const char *to);
-void yahoo_doodle_command_send_ready(GaimConnection *gc, const char *to);
-void yahoo_doodle_command_send_draw(GaimConnection *gc, const char *to, const char *message);
-void yahoo_doodle_command_send_clear(GaimConnection *gc, const char *to);
-void yahoo_doodle_command_send_extra(GaimConnection *gc, const char *to, const char *message);
-void yahoo_doodle_command_send_confirm(GaimConnection *gc, const char *to);
-void yahoo_doodle_command_send_shutdown(GaimConnection *gc, const char *to);
+void yahoo_doodle_command_send_request(PurpleConnection *gc, const char *to);
+void yahoo_doodle_command_send_ready(PurpleConnection *gc, const char *to);
+void yahoo_doodle_command_send_draw(PurpleConnection *gc, const char *to, const char *message);
+void yahoo_doodle_command_send_clear(PurpleConnection *gc, const char *to);
+void yahoo_doodle_command_send_extra(PurpleConnection *gc, const char *to, const char *message);
+void yahoo_doodle_command_send_confirm(PurpleConnection *gc, const char *to);
+void yahoo_doodle_command_send_shutdown(PurpleConnection *gc, const char *to);
 
-void yahoo_doodle_start(GaimWhiteboard *wb);
-void yahoo_doodle_end(GaimWhiteboard *wb);
-void yahoo_doodle_get_dimensions(const GaimWhiteboard *wb, int *width, int *height);
-void yahoo_doodle_send_draw_list(GaimWhiteboard *wb, GList *draw_list);
-void yahoo_doodle_clear(GaimWhiteboard *wb);
+void yahoo_doodle_start(PurpleWhiteboard *wb);
+void yahoo_doodle_end(PurpleWhiteboard *wb);
+void yahoo_doodle_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height);
+void yahoo_doodle_send_draw_list(PurpleWhiteboard *wb, GList *draw_list);
+void yahoo_doodle_clear(PurpleWhiteboard *wb);
 
-void yahoo_doodle_draw_stroke(GaimWhiteboard *wb, GList *draw_list);
-void yahoo_doodle_get_brush(const GaimWhiteboard *wb, int *size, int *color);
-void yahoo_doodle_set_brush(GaimWhiteboard *wb, int size, int color);
+void yahoo_doodle_draw_stroke(PurpleWhiteboard *wb, GList *draw_list);
+void yahoo_doodle_get_brush(const PurpleWhiteboard *wb, int *size, int *color);
+void yahoo_doodle_set_brush(PurpleWhiteboard *wb, int size, int color);
 
 #endif /* _YAHOO_DOODLE_H_ */

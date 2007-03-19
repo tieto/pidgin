@@ -1,7 +1,7 @@
 /*
- * gaim - Bonjour Protocol Plugin
+ * purple - Bonjour Protocol Plugin
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -54,50 +54,50 @@ static char *default_lastname;
 static char *default_hostname;
 
 static void
-bonjour_removeallfromlocal(GaimConnection *gc)
+bonjour_removeallfromlocal(PurpleConnection *gc)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
-	GaimBuddyList *blist;
-	GaimBlistNode *gnode, *cnode, *bnode;
-	GaimBuddy *buddy;
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurpleBuddyList *blist;
+	PurpleBlistNode *gnode, *cnode, *bnode;
+	PurpleBuddy *buddy;
 
-	blist = gaim_get_blist();
+	blist = purple_get_blist();
 	if (blist == NULL)
 		return;
 
 	/* Go through and remove all buddies that belong to this account */
 	for (gnode = blist->root; gnode; gnode = gnode->next)
 	{
-		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		for (cnode = gnode->child; cnode; cnode = cnode->next)
 		{
-			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
 			for (bnode = cnode->child; bnode; bnode = bnode->next)
 			{
-				if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
-				buddy = (GaimBuddy *)bnode;
+				buddy = (PurpleBuddy *)bnode;
 				if (buddy->account != account)
 					continue;
-				gaim_prpl_got_user_status(account, buddy->name, "offline", NULL);
-				gaim_blist_remove_buddy(buddy);
+				purple_prpl_got_user_status(account, buddy->name, "offline", NULL);
+				purple_blist_remove_buddy(buddy);
 			}
 		}
 	}
 }
 
 static void
-bonjour_login(GaimAccount *account)
+bonjour_login(PurpleAccount *account)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
-	GaimGroup *bonjour_group = NULL;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	PurpleGroup *bonjour_group = NULL;
 	BonjourData *bd = NULL;
-	GaimStatus *status;
-	GaimPresence *presence;
+	PurpleStatus *status;
+	PurplePresence *presence;
 
-	gc->flags |= GAIM_CONNECTION_HTML;
+	gc->flags |= PURPLE_CONNECTION_HTML;
 	gc->proto_data = g_new0(BonjourData, 1);
 	bd = gc->proto_data;
 
@@ -108,7 +108,7 @@ bonjour_login(GaimAccount *account)
 
 	if (bonjour_jabber_start(bd->jabber_data) == -1) {
 		/* Send a message about the connection error */
-		gaim_connection_error(gc, _("Unable to listen for incoming IM connections\n"));
+		purple_connection_error(gc, _("Unable to listen for incoming IM connections\n"));
 
 		/* Free the data */
 		g_free(bd->jabber_data);
@@ -118,47 +118,47 @@ bonjour_login(GaimAccount *account)
 
 	/* Connect to the mDNS daemon looking for buddies in the LAN */
 	bd->dns_sd_data = bonjour_dns_sd_new();
-	bd->dns_sd_data->name = (sw_string)gaim_account_get_username(account);
+	bd->dns_sd_data->name = (sw_string)purple_account_get_username(account);
 	bd->dns_sd_data->txtvers = g_strdup("1");
 	bd->dns_sd_data->version = g_strdup("1");
-	bd->dns_sd_data->first = g_strdup(gaim_account_get_string(account, "first", default_firstname));
-	bd->dns_sd_data->last = g_strdup(gaim_account_get_string(account, "last", default_lastname));
+	bd->dns_sd_data->first = g_strdup(purple_account_get_string(account, "first", default_firstname));
+	bd->dns_sd_data->last = g_strdup(purple_account_get_string(account, "last", default_lastname));
 	bd->dns_sd_data->port_p2pj = bd->jabber_data->port;
 	bd->dns_sd_data->phsh = g_strdup("");
-	bd->dns_sd_data->email = g_strdup(gaim_account_get_string(account, "email", ""));
+	bd->dns_sd_data->email = g_strdup(purple_account_get_string(account, "email", ""));
 	bd->dns_sd_data->vc = g_strdup("");
-	bd->dns_sd_data->jid = g_strdup(gaim_account_get_string(account, "jid", ""));
-	bd->dns_sd_data->AIM = g_strdup(gaim_account_get_string(account, "AIM", ""));
+	bd->dns_sd_data->jid = g_strdup(purple_account_get_string(account, "jid", ""));
+	bd->dns_sd_data->AIM = g_strdup(purple_account_get_string(account, "AIM", ""));
 
-	status = gaim_account_get_active_status(account);
-	presence = gaim_account_get_presence(account);
-	if (gaim_presence_is_available(presence))
+	status = purple_account_get_active_status(account);
+	presence = purple_account_get_presence(account);
+	if (purple_presence_is_available(presence))
 		bd->dns_sd_data->status = g_strdup("avail");
-	else if (gaim_presence_is_idle(presence))
+	else if (purple_presence_is_idle(presence))
 		bd->dns_sd_data->status = g_strdup("away");
 	else
 		bd->dns_sd_data->status = g_strdup("dnd");
-	bd->dns_sd_data->msg = g_strdup(gaim_status_get_attr_string(status, "message"));
+	bd->dns_sd_data->msg = g_strdup(purple_status_get_attr_string(status, "message"));
 
 	bd->dns_sd_data->account = account;
 	if (!bonjour_dns_sd_start(bd->dns_sd_data))
 	{
-		gaim_connection_error(gc, _("Unable to establish connection with the local mDNS server.  Is it running?"));
+		purple_connection_error(gc, _("Unable to establish connection with the local mDNS server.  Is it running?"));
 		return;
 	}
 
 	/* Create a group for bonjour buddies */
-	bonjour_group = gaim_group_new(BONJOUR_GROUP_NAME);
-	gaim_blist_add_group(bonjour_group, NULL);
+	bonjour_group = purple_group_new(BONJOUR_GROUP_NAME);
+	purple_blist_add_group(bonjour_group, NULL);
 
-	/* Show the buddy list by telling Gaim we have already connected */
-	gaim_connection_set_state(gc, GAIM_CONNECTED);
+	/* Show the buddy list by telling Purple we have already connected */
+	purple_connection_set_state(gc, PURPLE_CONNECTED);
 }
 
 static void
-bonjour_close(GaimConnection *connection)
+bonjour_close(PurpleConnection *connection)
 {
-	GaimGroup *bonjour_group;
+	PurpleGroup *bonjour_group;
 	BonjourData *bd = (BonjourData*)connection->proto_data;
 
 	/* Stop looking for buddies in the LAN */
@@ -179,20 +179,20 @@ bonjour_close(GaimConnection *connection)
 	bonjour_removeallfromlocal(connection);
 
 	/* Delete the bonjour group */
-	bonjour_group = gaim_find_group(BONJOUR_GROUP_NAME);
+	bonjour_group = purple_find_group(BONJOUR_GROUP_NAME);
 	if (bonjour_group != NULL)
-		gaim_blist_remove_group(bonjour_group);
+		purple_blist_remove_group(bonjour_group);
 
 }
 
 static const char *
-bonjour_list_icon(GaimAccount *account, GaimBuddy *buddy)
+bonjour_list_icon(PurpleAccount *account, PurpleBuddy *buddy)
 {
 	return BONJOUR_ICON_NAME;
 }
 
 static int
-bonjour_send_im(GaimConnection *connection, const char *to, const char *msg, GaimMessageFlags flags)
+bonjour_send_im(PurpleConnection *connection, const char *to, const char *msg, PurpleMessageFlags flags)
 {
 	if(!to || !msg)
 		return 0;
@@ -201,28 +201,28 @@ bonjour_send_im(GaimConnection *connection, const char *to, const char *msg, Gai
 }
 
 static void
-bonjour_set_status(GaimAccount *account, GaimStatus *status)
+bonjour_set_status(PurpleAccount *account, PurpleStatus *status)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	BonjourData *bd;
 	gboolean disconnected;
-	GaimStatusType *type;
+	PurpleStatusType *type;
 	int primitive;
-	GaimPresence *presence;
+	PurplePresence *presence;
 	const char *message, *bonjour_status;
 	gchar *stripped;
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 	bd = gc->proto_data;
-	disconnected = gaim_account_is_disconnected(account);
-	type = gaim_status_get_type(status);
-	primitive = gaim_status_type_get_primitive(type);
-	presence = gaim_account_get_presence(account);
+	disconnected = purple_account_is_disconnected(account);
+	type = purple_status_get_type(status);
+	primitive = purple_status_type_get_primitive(type);
+	presence = purple_account_get_presence(account);
 
-	message = gaim_status_get_attr_string(status, "message");
+	message = purple_status_get_attr_string(status, "message");
 	if (message == NULL)
 		message = "";
-	stripped = gaim_markup_strip_html(message);
+	stripped = purple_markup_strip_html(message);
 
 	/*
 	 * The three possible status for Bonjour are
@@ -231,9 +231,9 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 	 *   -away ("dnd")
 	 * Each of them can have an optional message.
 	 */
-	if (gaim_presence_is_available(presence))
+	if (purple_presence_is_available(presence))
 		bonjour_status = "avail";
-	else if (gaim_presence_is_idle(presence))
+	else if (purple_presence_is_idle(presence))
 		bonjour_status = "away";
 	else
 		bonjour_status = "dnd";
@@ -243,28 +243,28 @@ bonjour_set_status(GaimAccount *account, GaimStatus *status)
 }
 
 static GList *
-bonjour_status_types(GaimAccount *account)
+bonjour_status_types(PurpleAccount *account)
 {
 	GList *status_types = NULL;
-	GaimStatusType *type;
+	PurpleStatusType *type;
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 										   BONJOUR_STATUS_ID_AVAILABLE,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
-										   gaim_value_new(GAIM_TYPE_STRING), NULL);
+										   purple_value_new(PURPLE_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY,
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
 										   BONJOUR_STATUS_ID_AWAY,
 										   NULL, TRUE, TRUE, FALSE,
 										   "message", _("Message"),
-										   gaim_value_new(GAIM_TYPE_STRING), NULL);
+										   purple_value_new(PURPLE_TYPE_STRING), NULL);
 	status_types = g_list_append(status_types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE,
+	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
 									 BONJOUR_STATUS_ID_OFFLINE,
 									 NULL, TRUE, TRUE, FALSE);
 	status_types = g_list_append(status_types, type);
@@ -273,9 +273,9 @@ bonjour_status_types(GaimAccount *account)
 }
 
 static void
-bonjour_convo_closed(GaimConnection *connection, const char *who)
+bonjour_convo_closed(PurpleConnection *connection, const char *who)
 {
-	GaimBuddy *buddy = gaim_find_buddy(connection->account, who);
+	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
 
 	if (buddy == NULL)
 	{
@@ -290,44 +290,44 @@ bonjour_convo_closed(GaimConnection *connection, const char *who)
 }
 
 static char *
-bonjour_status_text(GaimBuddy *buddy)
+bonjour_status_text(PurpleBuddy *buddy)
 {
-	GaimPresence *presence;
+	PurplePresence *presence;
 
-	presence = gaim_buddy_get_presence(buddy);
+	presence = purple_buddy_get_presence(buddy);
 
-	if (gaim_presence_is_online(presence) && !gaim_presence_is_available(presence))
+	if (purple_presence_is_online(presence) && !purple_presence_is_available(presence))
 		return g_strdup(_("Away"));
 
 	return NULL;
 }
 
 static void
-bonjour_tooltip_text(GaimBuddy *buddy, GaimNotifyUserInfo *user_info, gboolean full)
+bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean full)
 {
-	GaimPresence *presence;
-	GaimStatus *status;
+	PurplePresence *presence;
+	PurpleStatus *status;
 	const char *status_description;
 	const char *message;
 
-	presence = gaim_buddy_get_presence(buddy);
-	status = gaim_presence_get_active_status(presence);
-	message = gaim_status_get_attr_string(status, "message");
+	presence = purple_buddy_get_presence(buddy);
+	status = purple_presence_get_active_status(presence);
+	message = purple_status_get_attr_string(status, "message");
 
-	if (gaim_presence_is_available(presence))
-		status_description = gaim_status_get_name(status);
-	else if (gaim_presence_is_idle(presence))
+	if (purple_presence_is_available(presence))
+		status_description = purple_status_get_name(status);
+	else if (purple_presence_is_idle(presence))
 		status_description = _("Idle");
 	else
-		status_description = gaim_status_get_name(status);
+		status_description = purple_status_get_name(status);
 
-	gaim_notify_user_info_add_pair(user_info, _("Status"), status_description);
+	purple_notify_user_info_add_pair(user_info, _("Status"), status_description);
 	if (message != NULL)
-		gaim_notify_user_info_add_pair(user_info, _("Message"), message);
+		purple_notify_user_info_add_pair(user_info, _("Message"), message);
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	g_free(default_firstname);
 	g_free(default_lastname);
@@ -336,14 +336,14 @@ plugin_unload(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static GaimPlugin *my_protocol = NULL;
+static PurplePlugin *my_protocol = NULL;
 
-static GaimPluginProtocolInfo prpl_info =
+static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_NO_PASSWORD,
 	NULL,                                                    /* user_splits */
 	NULL,                                                    /* protocol_options */
-	/* {"png", 0, 0, 96, 96, 0, GAIM_ICON_SCALE_DISPLAY}, */ /* icon_spec */
+	/* {"png", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_DISPLAY}, */ /* icon_spec */
 	NO_BUDDY_ICONS, /* not yet */                            /* icon_spec */
 	bonjour_list_icon,                                       /* list_icon */
 	NULL,													 /* list_emblem */
@@ -405,16 +405,16 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,                                                    /* roomlist_room_serialize */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	"prpl-bonjour",                                   /**< id             */
 	"Bonjour",                                        /**< name           */
@@ -424,7 +424,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Bonjour Protocol Plugin"),
 	NULL,                                             /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	plugin_unload,                                             /**< unload         */
@@ -469,7 +469,7 @@ initialize_default_account_values()
 	}
 
 #else
-	FARPROC myNetUserGetInfo = wgaim_find_and_loadproc("Netapi32.dll",
+	FARPROC myNetUserGetInfo = wpurple_find_and_loadproc("Netapi32.dll",
 		"NetUserGetInfo");
 
 	if (myNetUserGetInfo) {
@@ -478,9 +478,9 @@ initialize_default_account_values()
 		wchar_t *servername = NULL;
 		wchar_t username[UNLEN + 1] = {'\0'};
 		DWORD dwLenUsername = sizeof(username);
-		FARPROC myNetServerEnum = wgaim_find_and_loadproc(
+		FARPROC myNetServerEnum = wpurple_find_and_loadproc(
 			"Netapi32.dll", "NetServerEnum");
-		FARPROC myNetApiBufferFree = wgaim_find_and_loadproc(
+		FARPROC myNetApiBufferFree = wpurple_find_and_loadproc(
 			"Netapi32.dll", "NetApiBufferFree");
 
 		if (myNetServerEnum && myNetApiBufferFree) {
@@ -498,12 +498,12 @@ initialize_default_account_values()
 					&& dwEntriesRead > 0) {
 				servername = server_info->sv100_name;
 			} else {
-				gaim_debug_warning("bonjour", "Unable to look up domain controller. NET_API_STATUS = %d, Entries Read = %d, Total Entries = %d\n", nStatus, dwEntriesRead, dwTotalEntries);
+				purple_debug_warning("bonjour", "Unable to look up domain controller. NET_API_STATUS = %d, Entries Read = %d, Total Entries = %d\n", nStatus, dwEntriesRead, dwTotalEntries);
 			}
 		}
 
 		if (!GetUserNameW(&username, &dwLenUsername)) {
-			gaim_debug_warning("bonjour",
+			purple_debug_warning("bonjour",
 				"Unable to look up username\n");
 		}
 
@@ -546,41 +546,41 @@ initialize_default_account_values()
 	/* Try to figure out a good host name to use */
 	/* TODO: Avoid 'localhost,' if possible */
 	if (gethostname(hostname, 255) != 0) {
-		gaim_debug_warning("bonjour", "Error %d when getting host name.  Using \"localhost.\"\n", errno);
+		purple_debug_warning("bonjour", "Error %d when getting host name.  Using \"localhost.\"\n", errno);
 		strcpy(hostname, "localhost");
 	}
 	default_hostname = g_strdup(hostname);
 }
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	GaimAccountUserSplit *split;
-	GaimAccountOption *option;
+	PurpleAccountUserSplit *split;
+	PurpleAccountOption *option;
 
 	initialize_default_account_values();
 
 	/* Creating the user splits */
-	split = gaim_account_user_split_new(_("Hostname"), default_hostname, '@');
+	split = purple_account_user_split_new(_("Hostname"), default_hostname, '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	/* Creating the options for the protocol */
-	option = gaim_account_option_string_new(_("First name"), "first", default_firstname);
+	option = purple_account_option_string_new(_("First name"), "first", default_firstname);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Last name"), "last", default_lastname);
+	option = purple_account_option_string_new(_("Last name"), "last", default_lastname);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("E-mail"), "email", "");
+	option = purple_account_option_string_new(_("E-mail"), "email", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("AIM Account"), "AIM", "");
+	option = purple_account_option_string_new(_("AIM Account"), "AIM", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Jabber Account"), "jid", "");
+	option = purple_account_option_string_new(_("Jabber Account"), "jid", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	my_protocol = plugin;
 }
 
-GAIM_INIT_PLUGIN(bonjour, init_plugin, info);
+PURPLE_INIT_PLUGIN(bonjour, init_plugin, info);

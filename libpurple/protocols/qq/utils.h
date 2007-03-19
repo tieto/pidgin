@@ -1,9 +1,9 @@
 /**
  * @file utils.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -38,9 +38,9 @@ guint8 *_gen_session_md5(gint uid, guint8 *session_key);
 gchar *gen_ip_str(guint8 *ip);
 guint8 *str_ip_gen(gchar *str);
 
-guint32 gaim_name_to_uid(const gchar *name);
-gchar *uid_to_gaim_name(guint32 uid);
-gchar *chat_name_to_gaim_name(const gchar *const name);
+guint32 purple_name_to_uid(const gchar *name);
+gchar *uid_to_purple_name(guint32 uid);
+gchar *chat_name_to_purple_name(const gchar *const name);
 
 gchar *face_to_icon_str(gint face);
 

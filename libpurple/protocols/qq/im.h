@@ -1,9 +1,9 @@
 /**
  * @file im.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -58,8 +58,8 @@ guint8 *qq_get_send_im_tail(const gchar *font_color,
 			    const gchar *font_name,
 			    gboolean is_bold, gboolean is_italic, gboolean is_underline, gint len);
 
-void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type);
-void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *gc);
-void qq_process_send_im_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint type);
+void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc);
+void qq_process_send_im_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
 
 #endif

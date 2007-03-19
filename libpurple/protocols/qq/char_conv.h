@@ -1,9 +1,9 @@
 /**
  * @file char_conv.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -31,13 +31,13 @@
 
 gint convert_as_pascal_string(guint8 *data, gchar **ret, const gchar *from_charset);
 
-gchar *qq_smiley_to_gaim(gchar *text);
+gchar *qq_smiley_to_purple(gchar *text);
 
-gchar *gaim_smiley_to_qq(gchar *text);
+gchar *purple_smiley_to_qq(gchar *text);
 
 gchar *utf8_to_qq(const gchar *str, const gchar *to_charset);
 gchar *qq_to_utf8(const gchar *str, const gchar *from_charset);
-gchar *qq_encode_to_gaim(guint8 *font_attr_data, gint len, const gchar *msg);
+gchar *qq_encode_to_purple(guint8 *font_attr_data, gint len, const gchar *msg);
 
 gchar *qq_im_filter_html(const gchar *text);
 

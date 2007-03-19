@@ -1,7 +1,7 @@
 /**
  * @file sipmsg.h
  * 
- * gaim
+ * purple
  *
  * Copyright (C) 2005, Thomas Butter <butter@uni-mannheim.de>
  * 
@@ -20,8 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _GAIM_SIPMSG_H
-#define _GAIM_SIPMSG_H
+#ifndef _PURPLE_SIPMSG_H
+#define _PURPLE_SIPMSG_H
 
 #include <glib.h>
 
@@ -47,4 +47,4 @@ gchar *sipmsg_find_header(struct sipmsg *msg, const gchar *name);
 void sipmsg_remove_header(struct sipmsg *msg, const gchar *name);
 void sipmsg_print(const struct sipmsg *msg);
 char *sipmsg_to_string(const struct sipmsg *msg);
-#endif /* _GAIM_SIMPLE_H */
+#endif /* _PURPLE_SIMPLE_H */

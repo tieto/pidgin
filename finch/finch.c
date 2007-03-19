@@ -1,7 +1,7 @@
 /**
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -38,7 +38,7 @@
 #include "whiteboard.h"
 
 #include "gntdebug.h"
-#include "gntgaim.h"
+#include "finch.h"
 #include "gntprefs.h"
 #include "gntui.h"
 #include "gntidle.h"
@@ -52,10 +52,10 @@ static void
 debug_init()
 {
 	finch_debug_init();
-	gaim_debug_set_ui_ops(finch_debug_get_ui_ops());
+	purple_debug_set_ui_ops(finch_debug_get_ui_ops());
 }
 
-static GaimCoreUiOps core_ops =
+static PurpleCoreUiOps core_ops =
 {
 	finch_prefs_init,
 	debug_init,
@@ -63,52 +63,52 @@ static GaimCoreUiOps core_ops =
 	gnt_ui_uninit
 };
 
-static GaimCoreUiOps *
+static PurpleCoreUiOps *
 gnt_core_get_ui_ops()
 {
 	return &core_ops;
 }
 
-/* Anything IO-related is directly copied from gtkgaim's source tree */
+/* Anything IO-related is directly copied from gtkpurple's source tree */
 
-#define GAIM_GNT_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
-#define GAIM_GNT_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
+#define FINCH_READ_COND  (G_IO_IN | G_IO_HUP | G_IO_ERR)
+#define FINCH_WRITE_COND (G_IO_OUT | G_IO_HUP | G_IO_ERR | G_IO_NVAL)
 
-typedef struct _GaimGntIOClosure {
-	GaimInputFunction function;
+typedef struct _PurpleGntIOClosure {
+	PurpleInputFunction function;
 	guint result;
 	gpointer data;
 
-} GaimGntIOClosure;
+} PurpleGntIOClosure;
 
-static void gaim_gnt_io_destroy(gpointer data)
+static void purple_gnt_io_destroy(gpointer data)
 {
 	g_free(data);
 }
 
-static gboolean gaim_gnt_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
+static gboolean purple_gnt_io_invoke(GIOChannel *source, GIOCondition condition, gpointer data)
 {
-	GaimGntIOClosure *closure = data;
-	GaimInputCondition gaim_cond = 0;
+	PurpleGntIOClosure *closure = data;
+	PurpleInputCondition purple_cond = 0;
 
-	if (condition & GAIM_GNT_READ_COND)
-		gaim_cond |= GAIM_INPUT_READ;
-	if (condition & GAIM_GNT_WRITE_COND)
-		gaim_cond |= GAIM_INPUT_WRITE;
+	if (condition & FINCH_READ_COND)
+		purple_cond |= PURPLE_INPUT_READ;
+	if (condition & FINCH_WRITE_COND)
+		purple_cond |= PURPLE_INPUT_WRITE;
 
 #if 0
-	gaim_debug(GAIM_DEBUG_MISC, "gtk_eventloop",
+	purple_debug(PURPLE_DEBUG_MISC, "gtk_eventloop",
 			   "CLOSURE: callback for %d, fd is %d\n",
 			   closure->result, g_io_channel_unix_get_fd(source));
 #endif
 
 #ifdef _WIN32
-	if(! gaim_cond) {
+	if(! purple_cond) {
 #if DEBUG
-		gaim_debug_misc("gnt_eventloop",
+		purple_debug_misc("gnt_eventloop",
 			   "CLOSURE received GIOCondition of 0x%x, which does not"
 			   " match 0x%x (READ) or 0x%x (WRITE)\n",
-			   condition, GAIM_GNT_READ_COND, GAIM_GNT_WRITE_COND);
+			   condition, FINCH_READ_COND, FINCH_WRITE_COND);
 #endif /* DEBUG */
 
 		return TRUE;
@@ -116,35 +116,35 @@ static gboolean gaim_gnt_io_invoke(GIOChannel *source, GIOCondition condition, g
 #endif /* _WIN32 */
 
 	closure->function(closure->data, g_io_channel_unix_get_fd(source),
-			  gaim_cond);
+			  purple_cond);
 
 	return TRUE;
 }
 
-static guint gnt_input_add(gint fd, GaimInputCondition condition, GaimInputFunction function,
+static guint gnt_input_add(gint fd, PurpleInputCondition condition, PurpleInputFunction function,
 							   gpointer data)
 {
-	GaimGntIOClosure *closure = g_new0(GaimGntIOClosure, 1);
+	PurpleGntIOClosure *closure = g_new0(PurpleGntIOClosure, 1);
 	GIOChannel *channel;
 	GIOCondition cond = 0;
 
 	closure->function = function;
 	closure->data = data;
 
-	if (condition & GAIM_INPUT_READ)
-		cond |= GAIM_GNT_READ_COND;
-	if (condition & GAIM_INPUT_WRITE)
-		cond |= GAIM_GNT_WRITE_COND;
+	if (condition & PURPLE_INPUT_READ)
+		cond |= FINCH_READ_COND;
+	if (condition & PURPLE_INPUT_WRITE)
+		cond |= FINCH_WRITE_COND;
 
 	channel = g_io_channel_unix_new(fd);
 	closure->result = g_io_add_watch_full(channel, G_PRIORITY_DEFAULT, cond,
-					      gaim_gnt_io_invoke, closure, gaim_gnt_io_destroy);
+					      purple_gnt_io_invoke, closure, purple_gnt_io_destroy);
 
 	g_io_channel_unref(channel);
 	return closure->result;
 }
 
-static GaimEventLoopUiOps eventloop_ops =
+static PurpleEventLoopUiOps eventloop_ops =
 {
 	g_timeout_add,
 	g_source_remove,
@@ -153,13 +153,13 @@ static GaimEventLoopUiOps eventloop_ops =
 	NULL /* input_get_error */
 };
 
-static GaimEventLoopUiOps *
+static PurpleEventLoopUiOps *
 gnt_eventloop_get_ui_ops(void)
 {
 	return &eventloop_ops;
 }
 
-/* This is copied from gtkgaim */
+/* This is copied from gtkpurple */
 static char *
 gnt_find_binary_location(void *symbol, void *data)
 {
@@ -219,7 +219,7 @@ gnt_find_binary_location(void *symbol, void *data)
 }
 
 
-/* This is mostly copied from gtkgaim's source tree */
+/* This is mostly copied from gtkpurple's source tree */
 static void
 show_usage(const char *name, gboolean terse)
 {
@@ -237,12 +237,12 @@ show_usage(const char *name, gboolean terse)
 		       "  -v, --version       display the current version and exit\n"), VERSION, name);
 	}
 
-	gaim_print_utf8_to_console(stdout, text);
+	purple_print_utf8_to_console(stdout, text);
 	g_free(text);
 }
 
 static int
-init_libgaim(int argc, char **argv)
+init_libpurple(int argc, char **argv)
 {
 	char *path;
 	int opt;
@@ -263,7 +263,7 @@ init_libgaim(int argc, char **argv)
 		{0, 0, 0, 0}
 	};
 
-	gaim_br_set_locate_fallback_func(gnt_find_binary_location, argv[0]);
+	purple_br_set_locate_fallback_func(gnt_find_binary_location, argv[0]);
 
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -320,13 +320,13 @@ init_libgaim(int argc, char **argv)
 	}
 	/* show version message */
 	if (opt_version) {
-		printf("gaim-text %s\n", VERSION);
+		printf("purple-text %s\n", VERSION);
 		return 0;
 	}
 
 	/* set a user-specified config directory */
 	if (opt_config_dir_arg != NULL) {
-		gaim_util_set_user_dir(opt_config_dir_arg);
+		purple_util_set_user_dir(opt_config_dir_arg);
 		g_free(opt_config_dir_arg);
 	}
 
@@ -336,62 +336,62 @@ init_libgaim(int argc, char **argv)
 	 */
 
 	/* Because we don't want debug-messages to show up and corrup the display */
-	gaim_debug_set_enabled(debug_enabled);
+	purple_debug_set_enabled(debug_enabled);
 
-	gaim_core_set_ui_ops(gnt_core_get_ui_ops());
-	gaim_eventloop_set_ui_ops(gnt_eventloop_get_ui_ops());
-	gaim_idle_set_ui_ops(finch_idle_get_ui_ops());
+	purple_core_set_ui_ops(gnt_core_get_ui_ops());
+	purple_eventloop_set_ui_ops(gnt_eventloop_get_ui_ops());
+	purple_idle_set_ui_ops(finch_idle_get_ui_ops());
 
-	path = g_build_filename(gaim_user_dir(), "plugins", NULL);
-	gaim_plugins_add_search_path(path);
+	path = g_build_filename(purple_user_dir(), "plugins", NULL);
+	purple_plugins_add_search_path(path);
 	g_free(path);
 
-	gaim_plugins_add_search_path(LIBDIR);
+	purple_plugins_add_search_path(LIBDIR);
 
-	if (!gaim_core_init(GAIM_GNT_UI))
+	if (!purple_core_init(FINCH_UI))
 	{
 		fprintf(stderr,
-				"Initialization of the Gaim core failed. Dumping core.\n"
+				"Initialization of the Purple core failed. Dumping core.\n"
 				"Please report this!\n");
 		abort();
 	}
 
-	/* TODO: Move blist loading into gaim_blist_init() */
-	gaim_set_blist(gaim_blist_new());
-	gaim_blist_load();
+	/* TODO: Move blist loading into purple_blist_init() */
+	purple_set_blist(purple_blist_new());
+	purple_blist_load();
 
-	/* TODO: Move prefs loading into gaim_prefs_init() */
-	gaim_prefs_load();
-	gaim_prefs_update_old();
+	/* TODO: Move prefs loading into purple_prefs_init() */
+	purple_prefs_load();
+	purple_prefs_update_old();
 
 	/* load plugins we had when we quit */
-	gaim_plugins_load_saved("/gaim/gnt/plugins/loaded");
+	purple_plugins_load_saved("/purple/gnt/plugins/loaded");
 
-	/* TODO: Move pounces loading into gaim_pounces_init() */
-	gaim_pounces_load();
+	/* TODO: Move pounces loading into purple_pounces_init() */
+	purple_pounces_load();
 
 	if (opt_nologin)
 	{
 		/* Set all accounts to "offline" */
-		GaimSavedStatus *saved_status;
+		PurpleSavedStatus *saved_status;
 
 		/* If we've used this type+message before, lookup the transient status */
-		saved_status = gaim_savedstatus_find_transient_by_type_and_message(
-							GAIM_STATUS_OFFLINE, NULL);
+		saved_status = purple_savedstatus_find_transient_by_type_and_message(
+							PURPLE_STATUS_OFFLINE, NULL);
 
 		/* If this type+message is unique then create a new transient saved status */
 		if (saved_status == NULL)
-			saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_OFFLINE);
+			saved_status = purple_savedstatus_new(NULL, PURPLE_STATUS_OFFLINE);
 
 		/* Set the status for each account */
-		gaim_savedstatus_activate(saved_status);
+		purple_savedstatus_activate(saved_status);
 	}
 	else
 	{
 		/* Everything is good to go--sign on already */
-		if (!gaim_prefs_get_bool("/core/savedstatus/startup_current_status"))
-			gaim_savedstatus_activate(gaim_savedstatus_get_startup());
-		gaim_accounts_restore_current_statuses();
+		if (!purple_prefs_get_bool("/core/savedstatus/startup_current_status"))
+			purple_savedstatus_activate(purple_savedstatus_get_startup());
+		purple_accounts_restore_current_statuses();
 	}
 
 	return 1;
@@ -401,15 +401,15 @@ int main(int argc, char **argv)
 {
 	signal(SIGPIPE, SIG_IGN);
 
-	/* Initialize the libgaim stuff */
-	if (!init_libgaim(argc, argv))
+	/* Initialize the libpurple stuff */
+	if (!init_libpurple(argc, argv))
 		return 0;
 
-	gaim_blist_show();
+	purple_blist_show();
 	gnt_main();
 
 #ifdef STANDALONE
-	gaim_core_quit();
+	purple_core_quit();
 #endif
 
 	return 0;

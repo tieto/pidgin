@@ -2,7 +2,7 @@
  * @file gtkscrollbook  GTK+ Scrolling notebook Widget
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -29,7 +29,7 @@
 #include <gtk/gtk.h>
 
 #if !GTK_CHECK_VERSION(2,4,0)
-#include "gaimcombobox.h"
+#include "purplecombobox.h"
 #endif
 
 G_BEGIN_DECLS

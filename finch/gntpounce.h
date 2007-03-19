@@ -2,9 +2,9 @@
  * @file gntpounce.h GNT Buddy Pounce API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GNTPOUNCE_H_
-#define _GAIM_GNTPOUNCE_H_
+#ifndef _FINCHPOUNCE_H_
+#define _FINCHPOUNCE_H_
 
 #include "pounce.h"
 
@@ -34,8 +34,8 @@
  * @param name       The optional name to pounce on.
  * @param cur_pounce The current buddy pounce, if editing an existing one.
  */
-void finch_pounce_editor_show(GaimAccount *account, const char *name,
-								GaimPounce *cur_pounce);
+void finch_pounce_editor_show(PurpleAccount *account, const char *name,
+								PurplePounce *cur_pounce);
 
 /**
  * Shows the pounces manager window.
@@ -64,4 +64,4 @@ void finch_pounces_init(void);
  */
 void finch_pounces_uninit(void);
 
-#endif /* _GAIM_GTKPOUNCE_H_ */
+#endif /* _PURPLE_GTKPOUNCE_H_ */

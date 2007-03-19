@@ -1,9 +1,9 @@
 /**
  * @file servconn.c Server connection functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -25,7 +25,7 @@
 #include "servconn.h"
 #include "error.h"
 
-static void read_cb(gpointer data, gint source, GaimInputCondition cond);
+static void read_cb(gpointer data, gint source, PurpleInputCondition cond);
 
 /**************************************************************************
  * Main
@@ -50,7 +50,7 @@ msn_servconn_new(MsnSession *session, MsnServConnType type)
 
 	servconn->num = session->servconns_count++;
 
-	servconn->tx_buf = gaim_circ_buffer_new(MSN_BUF_LEN);
+	servconn->tx_buf = purple_circ_buffer_new(MSN_BUF_LEN);
 	servconn->tx_handler = -1;
 
 	return servconn;
@@ -78,9 +78,9 @@ msn_servconn_destroy(MsnServConn *servconn)
 
 	g_free(servconn->host);
 
-	gaim_circ_buffer_destroy(servconn->tx_buf);
+	purple_circ_buffer_destroy(servconn->tx_buf);
 	if (servconn->tx_handler > 0)
-		gaim_input_remove(servconn->tx_handler);
+		purple_input_remove(servconn->tx_handler);
 
 	msn_cmdproc_destroy(servconn->cmdproc);
 	g_free(servconn);
@@ -139,7 +139,7 @@ msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
 			reason = _("Unknown error"); break;
 	}
 
-	gaim_debug_error("msn", "Connection error from %s server (%s): %s\n",
+	purple_debug_error("msn", "Connection error from %s server (%s): %s\n",
 					 name, servconn->host, reason);
 	tmp = g_strdup_printf(_("Connection error from %s server:\n%s"),
 						  name, reason);
@@ -190,7 +190,7 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 
 		/* Someone wants to know we connected. */
 		servconn->connect_cb(servconn);
-		servconn->inpa = gaim_input_add(servconn->fd, GAIM_INPUT_READ,
+		servconn->inpa = purple_input_add(servconn->fd, PURPLE_INPUT_READ,
 			read_cb, data);
 	}
 	else
@@ -233,7 +233,7 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 		return TRUE;
 	}
 
-	servconn->connect_data = gaim_proxy_connect(NULL, session->account,
+	servconn->connect_data = purple_proxy_connect(NULL, session->account,
 			host, port, connect_cb, servconn);
 
 	if (servconn->connect_data != NULL)
@@ -270,13 +270,13 @@ msn_servconn_disconnect(MsnServConn *servconn)
 
 	if (servconn->connect_data != NULL)
 	{
-		gaim_proxy_connect_cancel(servconn->connect_data);
+		purple_proxy_connect_cancel(servconn->connect_data);
 		servconn->connect_data = NULL;
 	}
 
 	if (servconn->inpa > 0)
 	{
-		gaim_input_remove(servconn->inpa);
+		purple_input_remove(servconn->inpa);
 		servconn->inpa = 0;
 	}
 
@@ -293,15 +293,15 @@ msn_servconn_disconnect(MsnServConn *servconn)
 }
 
 static void
-servconn_write_cb(gpointer data, gint source, GaimInputCondition cond)
+servconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnServConn *servconn = data;
 	int ret, writelen;
 
-	writelen = gaim_circ_buffer_get_max_read(servconn->tx_buf);
+	writelen = purple_circ_buffer_get_max_read(servconn->tx_buf);
 
 	if (writelen == 0) {
-		gaim_input_remove(servconn->tx_handler);
+		purple_input_remove(servconn->tx_handler);
 		servconn->tx_handler = -1;
 		return;
 	}
@@ -315,7 +315,7 @@ servconn_write_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	gaim_circ_buffer_mark_read(servconn->tx_buf, ret);
+	purple_circ_buffer_mark_read(servconn->tx_buf, ret);
 }
 
 ssize_t
@@ -353,10 +353,10 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 			ret = 0;
 		if (ret < len) {
 			if (servconn->tx_handler == -1)
-				servconn->tx_handler = gaim_input_add(
-					servconn->fd, GAIM_INPUT_WRITE,
+				servconn->tx_handler = purple_input_add(
+					servconn->fd, PURPLE_INPUT_WRITE,
 					servconn_write_cb, servconn);
-			gaim_circ_buffer_append(servconn->tx_buf, buf + ret,
+			purple_circ_buffer_append(servconn->tx_buf, buf + ret,
 				len - ret);
 		}
 	}
@@ -374,7 +374,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 }
 
 static void
-read_cb(gpointer data, gint source, GaimInputCondition cond)
+read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnServConn *servconn;
 	MsnSession *session;
@@ -391,7 +391,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	else if (len <= 0)
 	{
-		gaim_debug_error("msn", "servconn read error, len: %d error: %s\n", len, strerror(errno));
+		purple_debug_error("msn", "servconn read error, len: %d error: %s\n", len, strerror(errno));
 		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;
@@ -484,7 +484,7 @@ create_listener(int port)
 
 	if (getaddrinfo(NULL, port_str, &hints, &res) != 0)
 	{
-		gaim_debug_error("msn", "Could not get address info: %s.\n",
+		purple_debug_error("msn", "Could not get address info: %s.\n",
 						 port_str);
 		return -1;
 	}
@@ -506,7 +506,7 @@ create_listener(int port)
 
 	if (c == NULL)
 	{
-		gaim_debug_error("msn", "Could not find socket: %s.\n", port_str);
+		purple_debug_error("msn", "Could not find socket: %s.\n", port_str);
 		return -1;
 	}
 

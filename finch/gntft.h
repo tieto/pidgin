@@ -2,9 +2,9 @@
  * @file gntft.h GNT File Transfer UI
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_GNTFT_H_
-#define _GAIM_GNTFT_H_
+#ifndef _FINCHFT_H_
+#define _FINCHFT_H_
 
 #include "ft.h"
 
@@ -68,7 +68,7 @@ void finch_xfer_dialog_hide();
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer.
  */
-void finch_xfer_dialog_add_xfer(GaimXfer *xfer);
+void finch_xfer_dialog_add_xfer(PurpleXfer *xfer);
 
 /**
  * Removes a file transfer from the dialog.
@@ -76,7 +76,7 @@ void finch_xfer_dialog_add_xfer(GaimXfer *xfer);
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer.
  */
-void finch_xfer_dialog_remove_xfer(GaimXfer *xfer);
+void finch_xfer_dialog_remove_xfer(PurpleXfer *xfer);
 
 /**
  * Indicate in a file transfer dialog that a transfer was canceled.
@@ -84,7 +84,7 @@ void finch_xfer_dialog_remove_xfer(GaimXfer *xfer);
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer that was canceled.
  */
-void finch_xfer_dialog_cancel_xfer(GaimXfer *xfer);
+void finch_xfer_dialog_cancel_xfer(PurpleXfer *xfer);
 
 /**
  * Updates the information for a transfer in the dialog.
@@ -92,7 +92,7 @@ void finch_xfer_dialog_cancel_xfer(GaimXfer *xfer);
  * @param dialog The file transfer dialog.
  * @param xfer   The file transfer.
  */
-void finch_xfer_dialog_update_xfer(GaimXfer *xfer);
+void finch_xfer_dialog_update_xfer(PurpleXfer *xfer);
 
 /*@}*/
 
@@ -116,8 +116,8 @@ void finch_xfers_uninit(void);
  *
  * @return The GNT file transfer UI operations structure.
  */
-GaimXferUiOps *finch_xfers_get_ui_ops(void);
+PurpleXferUiOps *finch_xfers_get_ui_ops(void);
 
 /*@}*/
 
-#endif /* _GAIM_GNTFT_H_ */
+#endif /* _FINCHFT_H_ */

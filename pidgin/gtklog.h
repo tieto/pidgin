@@ -2,7 +2,7 @@
  * @file gtklog.h GTK+ Log viewer
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -44,15 +44,15 @@ struct _PidginLogViewer {
 	GtkWidget        *imhtml;    /**< The imhtml to display said logs          */
 	GtkWidget        *entry;     /**< The search entry, in which search terms
 	                              *   are entered                              */
-	GaimLogReadFlags flags;      /**< The most recently used log flags         */
+	PurpleLogReadFlags flags;      /**< The most recently used log flags         */
 	char             *search;    /**< The string currently being searched for  */
 	GtkWidget        *label;     /**< The label at the top of the log viewer   */
 };
 
 
 
-void pidgin_log_show(GaimLogType type, const char *screenname, GaimAccount *account);
-void pidgin_log_show_contact(GaimContact *contact);
+void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account);
+void pidgin_log_show_contact(PurpleContact *contact);
 
 void pidgin_syslog_show(void);
 

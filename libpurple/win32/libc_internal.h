@@ -1,5 +1,5 @@
 /*
- * gaim
+ * purple
  *
  * File: libc_internal.h
  *
