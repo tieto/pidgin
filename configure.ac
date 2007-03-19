@@ -374,7 +374,7 @@ dnl #######################################################################
 GNT_LIBS=""
 GNT_CFLAGS=""
 AC_ARG_WITH(ncurses-headers, [AC_HELP_STRING([--with-ncurses-headers=DIR],
-		[compile gaim-text against the ncurses includes in DIR])],
+		[compile finch against the ncurses includes in DIR])],
 		[ac_ncurses_includes="$withval"], [ac_ncurses_includes=""])
 if test "x$enable_consoleui" = "xyes"; then
 	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_consoleui=no])
@@ -1899,7 +1899,7 @@ AC_OUTPUT([Makefile
 		   gaim.service
 		   doc/Makefile
 		   doc/pidgin.1
-		   doc/gaim-text.1
+		   doc/finch.1
 		   m4macros/Makefile
 		   pidgin/Makefile
 		   pidgin/pidgin.pc

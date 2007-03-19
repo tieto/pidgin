@@ -1,4 +1,4 @@
-man_MANS = pidgin.1 gaim-text.1
+man_MANS = pidgin.1 finch.1
 
 EXTRA_DIST = \
 	C-HOWTO.dox \
@@ -13,7 +13,7 @@ EXTRA_DIST = \
 	core-signals.dox \
 	dbus-server-signals.dox \
 	gaims_funniest_home_convos.txt \
-	gaim-text.1.in \
+	finch.1.in \
 	gtkaccount-signals.dox \
 	gtkblist-signals.dox \
 	gtkconv-signals.dox \
