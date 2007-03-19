@@ -439,15 +439,15 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	GtkSizeGroup *labelsg = NULL, *widgetsg = NULL;
 	GtkWidget *ret = NULL, *frame = NULL, *hbox = NULL, *vbox = NULL;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 
 	labelsg  = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	widgetsg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	frame = pidgin_make_frame(ret, _("General"));
 	/* interface font */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 	check = pidgin_prefs_checkbox(_("GTK+ Interface Font"),
@@ -467,7 +467,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	                 G_CALLBACK(gaimrc_set_font_special), NULL);
 
 	/* key theme name */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 	check = pidgin_prefs_checkbox(_("GTK+ Text Shortcut Theme"),
@@ -487,7 +487,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	                 G_CALLBACK(pidgin_toggle_sensitive), widget);
 
 	for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
-		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 		check = pidgin_prefs_checkbox(_(widget_bool_names[i]),
@@ -508,7 +508,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	frame = pidgin_make_frame(ret, _("Interface colors"));
 	/* imhtml stuff */
 	for (i = 0; i < G_N_ELEMENTS(color_prefs); i++) {
-		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 		check = pidgin_prefs_checkbox(_(color_names[i]),
@@ -532,7 +532,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	frame = pidgin_make_frame(ret, _("Widget Sizes"));
 	/* widget size stuff */
 	for (i = 0; i < G_N_ELEMENTS(widget_size_prefs); i++) {
-		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 		check = pidgin_prefs_checkbox(_(widget_size_names[i]),
@@ -553,7 +553,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 	frame = pidgin_make_frame(ret, _("Fonts"));
 	/* imhtml font stuff */
 	for (i = 0; i < G_N_ELEMENTS(font_prefs); i++) {
-		hbox = gtk_hbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
 
 		check = pidgin_prefs_checkbox(_(font_names[i]),
@@ -575,7 +575,7 @@ gaimrc_get_config_frame(GaimPlugin *plugin)
 
 	frame = pidgin_make_frame(ret, _("Tools"));
 
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_box_pack_start(GTK_BOX(frame), vbox, FALSE, FALSE, 0);
 
 	tmp = g_strdup_printf(_("Write settings to %s%sgtkrc-2.0"), gaim_user_dir(), G_DIR_SEPARATOR_S);

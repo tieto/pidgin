@@ -25,7 +25,7 @@
 #include "internal.h"
 #include "pidgin.h"
 #include "debug.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 
 #include "gtkdialogs.h"
 

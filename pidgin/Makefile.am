@@ -69,8 +69,8 @@ bin_PROGRAMS = pidgin
 
 pidgin_SOURCES = \
 	eggtrayicon.c \
-	gaimcombobox.c \
-	gaimstock.c \
+	pidgincombobox.c \
+	pidginstock.c \
 	gtkaccount.c \
 	gtkblist.c \
 	gtkcelllayout.c \
@@ -123,7 +123,7 @@ pidgin_headers = \
 	gtkcellviewmenuitem.h \
 	gtkcellview.h \
 	gtkcellviewmenuitem.h \
-	gaimcombobox.h \
+	pidgincombobox.h \
 	gtkconn.h \
 	gtkconv.h \
 	gtkconvwin.h \
@@ -154,7 +154,7 @@ pidgin_headers = \
 	gtksound.h \
 	gtksourceiter.h \
 	gtkstatusbox.h \
-	gaimstock.h \
+	pidginstock.h \
 	gtkthemes.h \
 	gtkutils.h \
 	gtkwhiteboard.h \

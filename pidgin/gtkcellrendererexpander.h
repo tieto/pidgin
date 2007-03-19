@@ -28,12 +28,12 @@ extern "C" {
 #endif /* __cplusplus */
 
 
-#define GAIM_TYPE_GTK_CELL_RENDERER_EXPANDER         (pidgin_cell_renderer_expander_get_type())
-#define PIDGIN_CELL_RENDERER_EXPANDER(obj)         (G_TYPE_CHECK_INSTANCE_CAST((obj), GAIM_TYPE_GTK_CELL_RENDERER_EXPANDER, PidginCellRendererExpander))
+#define PIDGIN_TYPE_GTK_CELL_RENDERER_EXPANDER         (pidgin_cell_renderer_expander_get_type())
+#define PIDGIN_CELL_RENDERER_EXPANDER(obj)         (G_TYPE_CHECK_INSTANCE_CAST((obj), PIDGIN_TYPE_GTK_CELL_RENDERER_EXPANDER, PidginCellRendererExpander))
 #define PIDGIN_CELL_RENDERER_EXPANDER_CLASS(klass)	(G_TYPE_CHECK_CLASS_CAST ((klass), GAIM_TYPE_GTK_CELL_RENDERER_EXPANDER, PidginCellRendererExpanderClass))
-#define GAIM_IS_GTK_CELL_RENDERER_EXPANDER(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), GAIM_TYPE_GTK_CELL_RENDERER_EXPANDER))
-#define GAIM_IS_GTK_CELL_RENDERER_EXPANDER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), GAIM_TYPE_GTK_CELL_RENDERER_EXPANDER))
-#define PIDGIN_CELL_RENDERER_EXPANDER_GET_CLASS(obj)         (G_TYPE_INSTANCE_GET_CLASS ((obj), GAIM_TYPE_GTK_CELL_RENDERER_EXPANDER, PidginCellRendererExpanderClass))
+#define PIDGIN_IS_GTK_CELL_RENDERER_EXPANDER(obj)		(G_TYPE_CHECK_INSTANCE_TYPE ((obj), PIDGIN_TYPE_GTK_CELL_RENDERER_EXPANDER))
+#define PIDGIN_IS_GTK_CELL_RENDERER_EXPANDER_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE ((klass), PIDGIN_TYPE_GTK_CELL_RENDERER_EXPANDER))
+#define PIDGIN_CELL_RENDERER_EXPANDER_GET_CLASS(obj)         (G_TYPE_INSTANCE_GET_CLASS ((obj), PIDGIN_TYPE_GTK_CELL_RENDERER_EXPANDER, PidginCellRendererExpanderClass))
 
 typedef struct _PidginCellRendererExpander PidginCellRendererExpander;
 typedef struct _PidginCellRendererExpanderClass PidginCellRendererExpanderClass;

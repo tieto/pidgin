@@ -50,7 +50,7 @@
 
 #include "pidgin.h"
 #include "gtksavedstatuses.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkstatusbox.h"
 #include "gtkutils.h"
 
@@ -2315,7 +2315,7 @@ static void update_size(PidginStatusBox *status_box)
 	height = (oneline.height + pad_top + pad_bottom) * lines;
 	height += (oneline.height + pad_inside) * (wrapped_lines - lines);
 
-	gtk_widget_set_size_request(status_box->vbox, -1, height + GAIM_HIG_BOX_SPACE);
+	gtk_widget_set_size_request(status_box->vbox, -1, height + PIDGIN_HIG_BOX_SPACE);
 }
 
 static void remove_typing_cb(PidginStatusBox *status_box)

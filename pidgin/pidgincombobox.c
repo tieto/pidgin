@@ -22,7 +22,7 @@
 */
 #include <gtk/gtkversion.h>
 #if !GTK_CHECK_VERSION(2,6,0)
-#include "gaimcombobox.h"
+#include "pidgincombobox.h"
 
 #if !GTK_CHECK_VERSION(2,4,0)
 #include <gtk/gtkarrow.h>

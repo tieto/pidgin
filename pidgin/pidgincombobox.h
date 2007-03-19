@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __GAIM_COMBO_BOX_H__
-#define __GAIM_COMBO_BOX_H__
+#ifndef __PIDGIN_COMBO_BOX_H__
+#define __PIDGIN_COMBO_BOX_H__
 
 #ifndef __GTK_COMBO_BOX_H__
 #define __GTK_COMBO_BOX_H__
@@ -111,4 +111,4 @@ G_END_DECLS
 
 gchar        *gtk_combo_box_get_active_text  (GtkComboBox     *combo_box);
 
-#endif /* __GAIM_COMBOX_BOX_H__ */
+#endif /* __PIDGIN_COMBOX_BOX_H__ */

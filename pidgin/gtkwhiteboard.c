@@ -173,13 +173,13 @@ static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 	/* Create horizontal box for the palette and all its entries */
 	hbox_palette = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox_palette_above_canvas_and_controls),
-			hbox_palette, FALSE, FALSE, GAIM_HIG_BORDER);
+			hbox_palette, FALSE, FALSE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(hbox_palette);
 
 	/* Create horizontal box to seperate the canvas from the controls */
 	hbox_canvas_and_controls = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox_palette_above_canvas_and_controls),
-			hbox_canvas_and_controls, FALSE, FALSE, GAIM_HIG_BORDER);
+			hbox_canvas_and_controls, FALSE, FALSE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(hbox_canvas_and_controls);
 
 	for(i = 0; i < PALETTE_NUM_COLORS; i++)
@@ -196,13 +196,13 @@ static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 	gtk_widget_show(hbox_canvas_and_controls);
 
 	gtk_container_add(GTK_CONTAINER(window), hbox_canvas_and_controls);
-	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	/* Create the drawing area */
 	drawing_area = gtk_drawing_area_new();
 	gtkwb->drawing_area = drawing_area;
 	gtk_widget_set_size_request(GTK_WIDGET(drawing_area), gtkwb->width, gtkwb->height);
-	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls), drawing_area, TRUE, TRUE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls), drawing_area, TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
 
 	gtk_widget_show(drawing_area);
 
@@ -234,19 +234,19 @@ static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 	/* Create vertical box to contain the controls */
 	vbox_controls = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls),
-					vbox_controls, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
+					vbox_controls, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(vbox_controls);
 
 	/* Add a clear button */
 	clear_button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
-	gtk_box_pack_start(GTK_BOX(vbox_controls), clear_button, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox_controls), clear_button, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(clear_button);
 	g_signal_connect(G_OBJECT(clear_button), "clicked",
 					 G_CALLBACK(pidgin_whiteboard_button_clear_press), gtkwb);
 
 	/* Add a save button */
 	save_button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_box_pack_start(GTK_BOX(vbox_controls), save_button, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox_controls), save_button, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(save_button);
 
 	g_signal_connect(G_OBJECT(save_button), "clicked",
@@ -254,7 +254,7 @@ static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 
 	/* Add a color selector */
 	color_button = gtk_button_new_from_stock(GTK_STOCK_SELECT_COLOR);
-	gtk_box_pack_start(GTK_BOX(vbox_controls), color_button, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox_controls), color_button, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(color_button);
 	g_signal_connect(G_OBJECT(color_button), "clicked",
 					 G_CALLBACK(color_select_dialog), gtkwb);

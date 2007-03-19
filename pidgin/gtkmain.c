@@ -63,7 +63,7 @@
 #include "gtksound.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkwhiteboard.h"
 
 #ifdef HAVE_SIGNAL_H

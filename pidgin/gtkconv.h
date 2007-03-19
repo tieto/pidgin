@@ -39,7 +39,7 @@ typedef enum
 	PIDGIN_UNSEEN_NO_LOG, /**< Unseen text with NO_LOG flag.       */
 	PIDGIN_UNSEEN_TEXT,   /**< Unseen text in the conversation.    */
 	PIDGIN_UNSEEN_NICK    /**< Unseen text and the nick was said.  */
-} GaimUnseenState;
+} PidginUnseenState;
 
 enum {
 	CHAT_USERS_ICON_COLUMN,
@@ -147,7 +147,7 @@ struct _PidginConversation
 
 	GtkWidget *toolbar;
 
-	GaimUnseenState unseen_state;
+	PidginUnseenState unseen_state;
 	guint unseen_count;
 
 	union
@@ -212,7 +212,7 @@ void pidgin_conv_update_buttons_by_protocol(GaimConversation *conv);
  */
 GList *
 pidgin_conversations_find_unseen_list(GaimConversationType type,
-										GaimUnseenState min_state,
+										PidginUnseenState min_state,
 										gboolean hidden_only,
 										guint max_count);
 
