@@ -14,7 +14,7 @@ pidgindialogs_im()
 
 void
 pidgindialogs_im_with_user(account, username)
-	Gaim::Account account
+	Purple::Account account
 	const char * username
 
 void
@@ -25,28 +25,28 @@ pidgindialogs_log()
 
 void
 pidgindialogs_alias_contact(contact)
-	Gaim::BuddyList::Contact contact
+	Purple::BuddyList::Contact contact
 
 void
 pidgindialogs_alias_buddy(buddy)
-	Gaim::BuddyList::Buddy buddy
+	Purple::BuddyList::Buddy buddy
 
 void
 pidgindialogs_alias_chat(chat)
-	Gaim::BuddyList::Chat chat
+	Purple::BuddyList::Chat chat
 
 void
 pidgindialogs_remove_buddy(buddy)
-	Gaim::BuddyList::Buddy buddy
+	Purple::BuddyList::Buddy buddy
 
 void
 pidgindialogs_remove_group(group)
-	Gaim::BuddyList::Group group
+	Purple::BuddyList::Group group
 
 void
 pidgindialogs_remove_chat(chat)
-	Gaim::BuddyList::Chat chat
+	Purple::BuddyList::Chat chat
 
 void
 pidgindialogs_remove_contact(contact)
-	Gaim::BuddyList::Contact contact
+	Purple::BuddyList::Contact contact

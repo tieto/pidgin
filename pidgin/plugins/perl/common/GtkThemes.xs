@@ -24,5 +24,5 @@ PREINIT:
 	GSList *l;
 PPCODE:
 	for (l = pidginthemes_get_proto_smileys(id); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Pidgin::IMHtml::Smiley")));
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Pidgin::IMHtml::Smiley")));
 	}

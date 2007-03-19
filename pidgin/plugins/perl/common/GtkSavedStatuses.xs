@@ -3,7 +3,7 @@
 MODULE = Pidgin::Status  PACKAGE = Pidgin::Status  PREFIX = pidgin_status_
 PROTOTYPES: ENABLE
 
-Gaim::Handle
+Purple::Handle
 pidgin_status_get_handle()
 
 MODULE = Pidgin::Status  PACKAGE = Pidgin::Status::Editor  PREFIX = pidgin_status_editor_
@@ -12,7 +12,7 @@ PROTOTYPES: ENABLE
 void
 pidgin_status_editor_show(edit, status)
 	gboolean edit
-	Gaim::SavedStatus status
+	Purple::SavedStatus status
 
 MODULE = Pidgin::Status  PACKAGE = Pidgin::Status::Window  PREFIX = pidgin_status_window_
 PROTOTYPES: ENABLE

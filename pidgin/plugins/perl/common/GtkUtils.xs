@@ -12,5 +12,5 @@ pidgin_load_accels()
 
 gchar_own *
 pidgin_convert_buddy_icon(plugin, path)
-	Gaim::Plugin plugin
+	Purple::Plugin plugin
 	const char * path

@@ -3,7 +3,7 @@
 MODULE = Pidgin::BuddyList  PACKAGE = Pidgin::BuddyList  PREFIX = pidgin_blist_
 PROTOTYPES: ENABLE
 
-Gaim::Handle
+Purple::Handle
 pidgin_blist_get_handle()
 
 Pidgin::BuddyList
@@ -11,14 +11,14 @@ pidgin_blist_get_default_gtk_blist()
 
 void
 pidgin_blist_refresh(list)
-	Gaim::BuddyList list
+	Purple::BuddyList list
 
 void
 pidgin_blist_update_refresh_timeout()
 
 gboolean
 pidgin_blist_node_is_contact_expanded(node)
-	Gaim::BuddyList::Node node
+	Purple::BuddyList::Node node
 
 void
 pidgin_blist_toggle_visibility()
@@ -35,7 +35,7 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = pidgin_blist_get_sort_methods(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Pidgin::BuddyList::SortMethod")));
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Pidgin::BuddyList::SortMethod")));
 	}
 
 void
@@ -72,5 +72,5 @@ pidgin_blist_joinchat_show()
 
 void
 pidgin_blist_update_account_error_state(account, message)
-	Gaim::Account account
+	Purple::Account account
 	const char * message

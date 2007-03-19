@@ -32,19 +32,19 @@ pidginxfer_dialog_hide(dialog)
 void
 pidginxfer_dialog_add_xfer(dialog, xfer)
 	Pidgin::Xfer::Dialog dialog
-	Gaim::Xfer xfer
+	Purple::Xfer xfer
 
 void
 pidginxfer_dialog_remove_xfer(dialog, xfer)
 	Pidgin::Xfer::Dialog dialog
-	Gaim::Xfer xfer
+	Purple::Xfer xfer
 
 void
 pidginxfer_dialog_cancel_xfer(dialog, xfer)
 	Pidgin::Xfer::Dialog dialog
-	Gaim::Xfer xfer
+	Purple::Xfer xfer
 
 void
 pidginxfer_dialog_update_xfer(dialog, xfer)
 	Pidgin::Xfer::Dialog dialog
-	Gaim::Xfer xfer
+	Purple::Xfer xfer

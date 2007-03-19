@@ -8,7 +8,7 @@ pidgin_status_box_new()
 
 Gtk::Widget
 pidgin_status_box_new_with_account(account)
-	Gaim::Account account
+	Purple::Account account
 
 void
 pidgin_status_box_add(status_box, type, pixbuf, text, sec_text, data)
