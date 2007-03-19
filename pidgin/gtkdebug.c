@@ -904,7 +904,7 @@ debug_enabled_cb(const char *name, GaimPrefType type,
 }
 
 static void
-gaim_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
+pidgin_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 					  const gchar *msg, gpointer user_data)
 {
 	GaimDebugLevel level;
@@ -950,7 +950,7 @@ gaim_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
 
 #ifdef _WIN32
 static void
-gaim_glib_dummy_print_handler(const gchar *string)
+pidgin_glib_dummy_print_handler(const gchar *string)
 {
 }
 #endif
@@ -991,7 +991,7 @@ pidgin_debug_init(void)
 #define REGISTER_G_LOG_HANDLER(name) \
 	g_log_set_handler((name), G_LOG_LEVEL_MASK | G_LOG_FLAG_FATAL \
 					  | G_LOG_FLAG_RECURSION, \
-					  gaim_glib_log_handler, NULL)
+					  pidgin_glib_log_handler, NULL)
 
 	/* Register the glib/gtk log handlers. */
 	REGISTER_G_LOG_HANDLER(NULL);
@@ -1005,7 +1005,7 @@ pidgin_debug_init(void)
 
 #ifdef _WIN32
 	if (!gaim_debug_is_enabled())
-		g_set_print_handler(gaim_glib_dummy_print_handler);
+		g_set_print_handler(pidgin_glib_dummy_print_handler);
 #endif
 }
 

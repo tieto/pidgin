@@ -44,7 +44,7 @@
 #include "gtkconv.h"
 #include "gtksound.h"
 
-struct gaim_sound_event {
+struct pidgin_sound_event {
 	char *label;
 	char *pref;
 	char *def;
@@ -59,7 +59,7 @@ static gboolean mute_login_sounds = FALSE;
 static gboolean gst_init_failed;
 #endif /* USE_GSTREAMER */
 
-static struct gaim_sound_event sounds[GAIM_NUM_SOUNDS] = {
+static struct pidgin_sound_event sounds[GAIM_NUM_SOUNDS] = {
 	{N_("Buddy logs in"), "login", "login.wav"},
 	{N_("Buddy logs out"), "logout", "logout.wav"},
 	{N_("Message received"), "im_recv", "receive.wav"},

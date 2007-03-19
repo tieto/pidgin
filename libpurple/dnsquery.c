@@ -758,7 +758,7 @@ resolve_host(gpointer data)
 		{
 			char message[1024];
 			g_snprintf(message, sizeof(message), _("Thread creation failure: %s"),
-					err ? err->message : _("Unknown reason"));
+					(err && err->message) ? err->message : _("Unknown reason"));
 			g_error_free(err);
 			gaim_dnsquery_failed(query_data, message);
 		}

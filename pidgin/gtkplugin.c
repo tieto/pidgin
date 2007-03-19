@@ -33,7 +33,7 @@
 
 #include <string.h>
 
-#define GAIM_RESPONSE_CONFIGURE 98121
+#define PIDGIN_RESPONSE_CONFIGURE 98121
 
 static void plugin_toggled_stage_two(GaimPlugin *plug, GtkTreeModel *model,
                                   GtkTreeIter *iter, gboolean unload);
@@ -455,7 +455,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 		}
 		plugin_dialog = NULL;
 		break;
-	case GAIM_RESPONSE_CONFIGURE:
+	case PIDGIN_RESPONSE_CONFIGURE:
 		if (! gtk_tree_selection_get_selected (sel, &model, &iter))
 			return;
 		val.g_type = 0;
@@ -508,7 +508,7 @@ show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *co
 		return;
 
 	/* Now show the pref-dialog for the plugin */
-	plugin_dialog_response_cb(dialog, GAIM_RESPONSE_CONFIGURE, sel);
+	plugin_dialog_response_cb(dialog, PIDGIN_RESPONSE_CONFIGURE, sel);
 }
 
 void pidgin_plugin_dialog_show()
@@ -530,7 +530,7 @@ void pidgin_plugin_dialog_show()
 						    GTK_DIALOG_NO_SEPARATOR,
 						    NULL);
 	pref_button = gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
-						_("Configure Pl_ugin"), GAIM_RESPONSE_CONFIGURE);
+						_("Configure Pl_ugin"), PIDGIN_RESPONSE_CONFIGURE);
 	gtk_dialog_add_button(GTK_DIALOG(plugin_dialog),
 						GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
 	gtk_widget_set_sensitive(pref_button, FALSE);

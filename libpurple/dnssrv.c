@@ -110,7 +110,7 @@ resolve(int in, int out)
 #ifdef HAVE_SIGNAL_H
 	gaim_restore_default_signal_handlers();
 #endif
-	
+
 	if (read(in, query, 256) <= 0)
 		_exit(0);
 
@@ -222,9 +222,9 @@ res_main_thread_cb(gpointer data)
 		GaimSrvResponse *srvres_tmp = NULL;
 		GSList *lst = query_data->results;
 
-		size = g_slist_length(query_data->results);
+		size = g_slist_length(lst);
 
-		if(query_data->cb)
+		if(query_data->cb && size > 0)
 			srvres_tmp = srvres = g_new0(GaimSrvResponse, size);
 		while (lst) {
 			if(query_data->cb)
@@ -234,9 +234,9 @@ res_main_thread_cb(gpointer data)
 		}
 
 		query_data->results = NULL;
-	}
 
-	gaim_debug_info("dnssrv", "found %d SRV entries\n", size);
+		gaim_debug_info("dnssrv", "found %d SRV entries\n", size);
+	}
 
 	if(query_data->cb)
 		query_data->cb(srvres, size, query_data->extradata);
@@ -367,28 +367,21 @@ gaim_srv_resolve(const char *protocol, const char *transport, const char *domain
 	query_data->query = query;
 	query_data->extradata = extradata;
 
-	if (!MyDnsQuery_UTF8 || !MyDnsRecordListFree) {
-		query_data->error_message = g_strdup_printf("System missing DNS API (Requires W2K+)\n");
-
-		/* Asynchronously call the callback since stuff may not expect
-		 * the callback to be called before this returns */
-		query_data->handle = g_idle_add(res_main_thread_cb, query_data);
-
-		return query_data;
+	if (!MyDnsQuery_UTF8 || !MyDnsRecordListFree)
+		query_data->error_message = g_strdup("System missing DNS API (Requires W2K+)\n");
+	else {
+		query_data->resolver = g_thread_create(res_thread, query_data, FALSE, &err);
+		if (query_data->resolver == NULL) {
+			query_data->error_message = g_strdup_printf("SRV thread create failure: %s\n", (err && err->message) ? err->message : "");
+			g_error_free(err);
+		}
 	}
 
-	query_data->resolver = g_thread_create(res_thread, query_data, FALSE, &err);
-	if (query_data->resolver == NULL)
-	{
-		query_data->error_message = g_strdup_printf("SRV thread create failure: %s\n", err ? err->message : "");
-		g_error_free(err);
-
-		/* Asynchronously call the callback since stuff may not expect
-		 * the callback to be called before this returns */
+	/* The query isn't going to happen, so finish the SRV lookup now.
+	 * Asynchronously call the callback since stuff may not expect
+	 * the callback to be called before this returns */
+	if (query_data->error_message != NULL)
 		query_data->handle = g_idle_add(res_main_thread_cb, query_data);
-
-		return query_data;
-	}
 
 	return query_data;
 #endif

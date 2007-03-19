@@ -585,7 +585,7 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 }
 
 /* Does same as normal sort, except "none" is sorted first */
-static gint gaim_sort_smileys (GtkTreeModel	*model,
+static gint pidgin_sort_smileys (GtkTreeModel	*model,
 						GtkTreeIter		*a,
 						GtkTreeIter		*b,
 						gpointer		userdata)
@@ -665,7 +665,7 @@ theme_page()
 
 	/* Custom sort so "none" theme is at top of list */
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(smiley_theme_store),
-									3, gaim_sort_smileys, NULL, NULL);
+									3, pidgin_sort_smileys, NULL, NULL);
 
 	gtk_tree_sortable_set_sort_column_id(GTK_TREE_SORTABLE(smiley_theme_store),
 										 3, GTK_SORT_ASCENDING);

@@ -67,15 +67,15 @@ typedef struct
 
 enum
 {
-	GAIM_MAIL_ICON,
-	GAIM_MAIL_TEXT,
-	GAIM_MAIL_DATA,
-	COLUMNS_GAIM_MAIL
+	PIDGIN_MAIL_ICON,
+	PIDGIN_MAIL_TEXT,
+	PIDGIN_MAIL_DATA,
+	COLUMNS_PIDGIN_MAIL
 };
 
-typedef struct _GaimMailDialog GaimMailDialog;
+typedef struct _PidginMailDialog PidginMailDialog;
 
-struct _GaimMailDialog
+struct _PidginMailDialog
 {
 	GtkWidget *dialog;
 	GtkWidget *treeview;
@@ -86,7 +86,7 @@ struct _GaimMailDialog
 	gboolean in_use;
 };
 
-static GaimMailDialog *mail_dialog = NULL;
+static PidginMailDialog *mail_dialog = NULL;
 
 static void *pidgin_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 									const char **subjects,
@@ -100,7 +100,7 @@ message_response_cb(GtkDialog *dialog, gint id, GtkWidget *widget)
 }
 
 static void
-email_response_cb(GtkDialog *dlg, gint id, GaimMailDialog *dialog)
+email_response_cb(GtkDialog *dlg, gint id, PidginMailDialog *dialog)
 {
 	GaimNotifyMailData *data = NULL;
 	GtkTreeIter iter;
@@ -114,7 +114,7 @@ email_response_cb(GtkDialog *dlg, gint id, GaimMailDialog *dialog)
 		if (gtk_tree_selection_get_selected(selection, NULL, &iter))
 		{
 			gtk_tree_model_get(GTK_TREE_MODEL(dialog->treemodel), &iter,
-								GAIM_MAIL_DATA, &data, -1);
+								PIDGIN_MAIL_DATA, &data, -1);
 			gaim_notify_uri(NULL, data->url);
 
 			gtk_tree_store_remove(dialog->treemodel, &iter);
@@ -131,7 +131,7 @@ email_response_cb(GtkDialog *dlg, gint id, GaimMailDialog *dialog)
 		while (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(mail_dialog->treemodel), &iter))
 		{
 			gtk_tree_model_get(GTK_TREE_MODEL(dialog->treemodel), &iter,
-								GAIM_MAIL_DATA, &data, -1);
+								PIDGIN_MAIL_DATA, &data, -1);
 
 			if (id == GTK_RESPONSE_ACCEPT)
 				gaim_notify_uri(NULL, data->url);
@@ -277,7 +277,7 @@ pidgin_notify_message(GaimNotifyMsgType type, const char *title,
 }
 
 static void
-selection_changed_cb(GtkTreeSelection *sel, GaimMailDialog *dialog)
+selection_changed_cb(GtkTreeSelection *sel, PidginMailDialog *dialog)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -288,7 +288,7 @@ selection_changed_cb(GtkTreeSelection *sel, GaimMailDialog *dialog)
 		active = FALSE;
 	else
 	{
-		gtk_tree_model_get(model, &iter, GAIM_MAIL_DATA, &data, -1);
+		gtk_tree_model_get(model, &iter, PIDGIN_MAIL_DATA, &data, -1);
 		if (data->url == NULL)
 			active = FALSE;
 	}
@@ -355,14 +355,14 @@ pidgin_get_mail_dialog()
 		gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 		gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_AUTOMATIC, GTK_POLICY_ALWAYS);
 
-		mail_dialog = g_new0(GaimMailDialog, 1);
+		mail_dialog = g_new0(PidginMailDialog, 1);
 		mail_dialog->dialog = dialog;
 		mail_dialog->open_button = button;
 
-		mail_dialog->treemodel = gtk_tree_store_new(COLUMNS_GAIM_MAIL,
+		mail_dialog->treemodel = gtk_tree_store_new(COLUMNS_PIDGIN_MAIL,
 						GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
 		mail_dialog->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(mail_dialog->treemodel));
-		gtk_tree_view_set_search_column(GTK_TREE_VIEW(mail_dialog->treeview), GAIM_MAIL_TEXT);
+		gtk_tree_view_set_search_column(GTK_TREE_VIEW(mail_dialog->treeview), PIDGIN_MAIL_TEXT);
 		gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(mail_dialog->treeview),
 			             pidgin_tree_view_search_equal_func, NULL, NULL);
 
@@ -379,10 +379,10 @@ pidgin_get_mail_dialog()
 		gtk_tree_view_column_set_resizable(column, TRUE);
 		rend = gtk_cell_renderer_pixbuf_new();
 		gtk_tree_view_column_pack_start(column, rend, FALSE);
-		gtk_tree_view_column_set_attributes(column, rend, "pixbuf", GAIM_MAIL_ICON, NULL);
+		gtk_tree_view_column_set_attributes(column, rend, "pixbuf", PIDGIN_MAIL_ICON, NULL);
 		rend = gtk_cell_renderer_text_new();
 		gtk_tree_view_column_pack_start(column, rend, TRUE);
-		gtk_tree_view_column_set_attributes(column, rend, "markup", GAIM_MAIL_TEXT, NULL);
+		gtk_tree_view_column_set_attributes(column, rend, "markup", PIDGIN_MAIL_TEXT, NULL);
 		gtk_tree_view_append_column(GTK_TREE_VIEW(mail_dialog->treeview), column);
 
 		label = gtk_label_new(NULL);
@@ -414,7 +414,7 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *noti
 		if (gtk_tree_model_get_iter_first(GTK_TREE_MODEL(treemodel), &iter)) {
 			do {
 				gtk_tree_model_get(GTK_TREE_MODEL(treemodel), &iter,
-						GAIM_MAIL_DATA, &data, -1);
+						PIDGIN_MAIL_DATA, &data, -1);
 				if (data->account == account && data->count > 0) {
 					new_n = FALSE;
 					g_free(data->url);
@@ -435,15 +435,15 @@ pidgin_notify_add_mail(GtkTreeStore *treemodel, GaimAccount *account, char *noti
 		data->url = g_strdup(url);
 
 	gtk_tree_store_set(treemodel, &iter,
-								GAIM_MAIL_ICON, icon,
-								GAIM_MAIL_TEXT, notification,
-								GAIM_MAIL_DATA, data,
+								PIDGIN_MAIL_ICON, icon,
+								PIDGIN_MAIL_TEXT, notification,
+								PIDGIN_MAIL_DATA, data,
 								-1);
 	data->iter = iter;              /* XXX: Do we use this for something? */
 	data->account = account;
 	data->count = count;
 	gtk_tree_model_get(GTK_TREE_MODEL(treemodel), &iter,
-						GAIM_MAIL_DATA, &data, -1);
+						PIDGIN_MAIL_DATA, &data, -1);
 	if (icon)
 		g_object_unref(icon);
 	return data;
