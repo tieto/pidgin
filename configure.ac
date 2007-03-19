@@ -1717,7 +1717,7 @@ AC_SUBST(LDADD)
 AC_SUBST(LIBS)
 
 if test "x$enable_plugins" = "xyes" ; then
-	AC_DEFINE(GAIM_PLUGINS, 1, [Define if plugins are enabled.])
+	AC_DEFINE(PURPLE_PLUGINS, 1, [Define if plugins are enabled.])
 	AM_CONDITIONAL(PLUGINS, true)
 else
 	AM_CONDITIONAL(PLUGINS, false)
