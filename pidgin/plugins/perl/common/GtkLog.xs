@@ -3,18 +3,18 @@
 MODULE = Pidgin::Log  PACKAGE = Pidgin::Log  PREFIX = pidgin_log_
 PROTOTYPES: ENABLE
 
-Gaim::Handle
+Purple::Handle
 pidgin_log_get_handle()
 
 void
 pidgin_log_show(type, screenname, account)
-	Gaim::LogType type
+	Purple::LogType type
 	const char * screenname
-	Gaim::Account account
+	Purple::Account account
 
 void
 pidgin_log_show_contact(contact)
-	Gaim::BuddyList::Contact contact
+	Purple::BuddyList::Contact contact
 
 MODULE = Pidgin::Log  PACKAGE = Pidgin::SysLog  PREFIX = pidgin_syslog_
 PROTOTYPES: ENABLE

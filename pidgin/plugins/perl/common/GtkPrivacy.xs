@@ -5,12 +5,12 @@ PROTOTYPES: ENABLE
 
 void
 pidgin_request_add_permit(account, name)
-	Gaim::Account account
+	Purple::Account account
 	const char * name
 
 void
 pidgin_request_add_block(account, name)
-	Gaim::Account account
+	Purple::Account account
 	const char * name
 
 MODULE = Pidgin::Privacy  PACKAGE = Pidgin::Privacy::Dialog  PREFIX = pidgin_privacy_dialog_

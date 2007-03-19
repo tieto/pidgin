@@ -14,4 +14,4 @@ pidgin_roomlist_dialog_show()
 
 void
 pidgin_roomlist_dialog_show_with_account(account)
-	Gaim::Account account
+	Purple::Account account

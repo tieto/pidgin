@@ -5,19 +5,19 @@ PROTOTYPES: ENABLE
 
 void
 pidgin_conv_update_buddy_icon(conv)
-	Gaim::Conversation conv
+	Purple::Conversation conv
 
 void
 pidgin_conv_switch_active_conversation(conv)
-	Gaim::Conversation conv
+	Purple::Conversation conv
 
 void
 pidgin_conv_update_buttons_by_protocol(conv)
-	Gaim::Conversation conv
+	Purple::Conversation conv
 
 void
 pidgin_conv_present_conversation(conv)
-	Gaim::Conversation conv
+	Purple::Conversation conv
 
 Pidgin::Conversation::Window
 pidgin_conv_get_window(conv)
@@ -25,7 +25,7 @@ pidgin_conv_get_window(conv)
 
 void
 pidgin_conv_new(class, conv)
-	Gaim::Conversation conv
+	Purple::Conversation conv
     C_ARGS:
 	conv
 
@@ -35,10 +35,10 @@ pidgin_conv_is_hidden(gtkconv)
 
 void
 pidgin_conv_get_gtkconv(conv)
-	Gaim::Conversation conv
+	Purple::Conversation conv
 PPCODE:
 	if (conv != NULL && PIDGIN_IS_PIDGIN_CONVERSATION(conv))
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(
+		XPUSHs(sv_2mortal(purple_perl_bless_object(
 				PIDGIN_CONVERSATION(conv),
 				"Pidgin::Conversation")));
 
@@ -47,10 +47,10 @@ PROTOTYPES: ENABLE
 
 void
 pidgin_conversations_find_unseen_list(type, min_state, hidden_only, max_count)
-	Gaim::ConversationType type
-	Gaim::UnseenState min_state
+	Purple::ConversationType type
+	Pidgin::UnseenState min_state
 	gboolean hidden_only
 	guint max_count
 
-Gaim::Handle
+Purple::Handle
 pidgin_conversations_get_handle()

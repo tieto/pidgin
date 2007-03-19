@@ -3,5 +3,5 @@
 MODULE = Pidgin::Connection  PACKAGE = Pidgin::Connection  PREFIX = pidgin_connection_
 PROTOTYPES: ENABLE
 
-Gaim::Handle
+Purple::Handle
 pidgin_connection_get_handle()

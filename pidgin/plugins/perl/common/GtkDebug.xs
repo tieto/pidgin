@@ -3,7 +3,7 @@
 MODULE = Pidgin::Debug  PACKAGE = Pidgin::Debug  PREFIX = pidgin_debug_
 PROTOTYPES: ENABLE
 
-Gaim::Handle
+Purple::Handle
 pidgin_debug_get_handle()
 
 MODULE = Pidgin::Debug  PACKAGE = Pidgin::Debug::Window  PREFIX = pidgin_debug_window_
