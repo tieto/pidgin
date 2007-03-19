@@ -1,4 +1,4 @@
-use Gaim;
+use Purple;
 
 %PLUGIN_INFO = ( 
 	perl_api_version => 2, 
@@ -28,7 +28,7 @@ sub plugin_load {
 	my $plugin = shift; 
 	
 	# Retrieve all the accounts
-	@accounts = Gaim::Accounts::get_all();
+	@accounts = Purple::Accounts::get_all();
 	
 	print "NUM OF ACCS: " . $accounts . "\n";
 	# Search each account's user info for our tag
@@ -68,7 +68,7 @@ sub hello {
 	my ($widget, $window) = @_;
 	print "Called from sub hello!\n ";
 	print "Test var: " . $GLOBAL_TEST_VAR . " \n";
-	@accounts = Gaim::Accounts::get_all();
+	@accounts = Purple::Accounts::get_all();
 	$acc = $accounts[0];
 	$user_info = $acc->get_user_info();
 	print "USER INFO from sub hello: " . $user_info . "\n";

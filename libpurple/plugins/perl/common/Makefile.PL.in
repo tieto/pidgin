@@ -3,12 +3,12 @@ use ExtUtils::MakeMaker;
 # See lib/ExtUtils/MakeMaker.pm for details of how to influence
 # the contents of the Makefile that is written.
 WriteMakefile(
-    'NAME'		=> 'Gaim',
-    'VERSION_FROM'	=> '@srcdir@/Gaim.pm', # finds $VERSION
+    'NAME'		=> 'Purple',
+    'VERSION_FROM'	=> '@srcdir@/Purple.pm', # finds $VERSION
     'PREREQ_PM'		=> {}, # e.g., Module::Name => 1.1
     ($] >= 5.005 ?    ## Add these new keywords supported since 5.005
-      (ABSTRACT_FROM => '@srcdir@/Gaim.pm', # retrieve abstract from module
-       AUTHOR     => 'Gaim <http://gaim.sourceforge.net/>') : ()),
+      (ABSTRACT_FROM => '@srcdir@/Purple.pm', # retrieve abstract from module
+       AUTHOR     => 'Purple <http://pidgin.im/>') : ()),
     'LIBS'		=> [''], # e.g., '-lm'
     'DEFINE'		=> '@DEBUG_CFLAGS@', # e.g., '-DHAVE_SOMETHING'
     'INC'		=> '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libpurple @GLIB_CFLAGS@', # e.g., '-I. -I/usr/include/other'
@@ -16,13 +16,13 @@ WriteMakefile(
 );
 
 if (eval {require ExtUtils::Constant; 1}) {
-	foreach (qw(GAIM_DEBUG_ALL GAIM_DEBUG_MISC GAIM_DEBUG_INFO
-	            GAIM_DEBUG_WARNING GAIM_DEBUG_ERROR GAIM_DEBUG_FATAL)) {
+	foreach (qw(PURPLE_DEBUG_ALL PURPLE_DEBUG_MISC PURPLE_DEBUG_INFO
+	            PURPLE_DEBUG_WARNING PURPLE_DEBUG_ERROR PURPLE_DEBUG_FATAL)) {
 		push @names, {name => $_, type => "IV", macro => 1};
 	}
 
 	ExtUtils::Constant::WriteConstants(
-		NAME    => 'Gaim::DebugLevel',
+		NAME    => 'Purple::DebugLevel',
 		NAMES   => \@names,
 		C_FILE  => 'const-c.inc',
 		XS_FILE => 'const-xs.inc'

@@ -1,14 +1,14 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for Gaim perl module.
+# Description: Makefile for Purple perl module.
 #
 
 GAIM_TOP := ../../../..
 include $(GAIM_TOP)/libpurple/win32/global.mak
 
-TARGET = Gaim
-AUTOSPLIT = lib/auto/Gaim/autosplit.ix
+TARGET = Purple
+AUTOSPLIT = lib/auto/Purple/autosplit.ix
 EXTUTILS ?= C:/perl/lib/ExtUtils
 PERL_PLUGIN_TOP := ..
 
@@ -44,7 +44,7 @@ XS_FILES =		Account.xs \
 				Core.xs \
 				Debug.xs \
 				FT.xs \
-				Gaim.xs \
+				Pidgin.xs \
 				ImgStore.xs \
 				Log.xs \
 				Network.xs \
@@ -91,7 +91,7 @@ include $(GAIM_COMMON_RULES)
 .PHONY: all install clean
 
 all: $(TARGET).dll $(AUTOSPLIT)
-	
+
 install: all
 	rm -rf $(GAIM_INSTALL_PERLMOD_DIR)
 	cp -R lib $(GAIM_INSTALL_PERLMOD_DIR)
@@ -101,8 +101,8 @@ $(C_FILES): $(GAIM_CONFIG_H)
 
 $(AUTOSPLIT):
 	mkdir -p ./lib/auto
-	cp Gaim.pm ./lib
-	$(PERL) -MAutoSplit -e 'autosplit("lib/Gaim.pm")'
+	cp Purple.pm ./lib
+	$(PERL) -MAutoSplit -e 'autosplit("lib/Purple.pm")'
 
 $(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(GAIM_LIBGAIM_PERL_DLL).a $(FALLBACKS) $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) -o $(TARGET).dll

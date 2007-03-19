@@ -1,27 +1,27 @@
 #include "module.h"
 
-MODULE = Gaim::Sound  PACKAGE = Gaim::Sound  PREFIX = gaim_sound_
+MODULE = Purple::Sound  PACKAGE = Purple::Sound  PREFIX = purple_sound_
 PROTOTYPES: ENABLE
 
-Gaim::Sound::UiOps
-gaim_sound_get_ui_ops()
+Purple::Sound::UiOps
+purple_sound_get_ui_ops()
 
 void
-gaim_sound_init()
+purple_sound_init()
 
 void
-gaim_sound_play_event(event, account)
-	Gaim::SoundEventID event
-	Gaim::Account account
+purple_sound_play_event(event, account)
+	Purple::SoundEventID event
+	Purple::Account account
 
 void
-gaim_sound_play_file(filename, account)
+purple_sound_play_file(filename, account)
 	const char *filename
-	Gaim::Account account
+	Purple::Account account
 
 void
-gaim_sound_set_ui_ops(ops)
-	Gaim::Sound::UiOps ops
+purple_sound_set_ui_ops(ops)
+	Purple::Sound::UiOps ops
 
 void
-gaim_sound_uninit()
+purple_sound_uninit()

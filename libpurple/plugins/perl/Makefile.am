@@ -55,8 +55,8 @@ common_sources = \
         common/Conversation.xs \
         common/Debug.xs \
         common/FT.xs \
-        common/Gaim.pm \
-        common/Gaim.xs \
+        common/Purple.pm \
+        common/Purple.xs \
         common/ImgStore.xs \
         common/Log.xs \
         common/Makefile.PL.in \

@@ -1,72 +1,72 @@
 #include "module.h"
 
-MODULE = Gaim::Serv  PACKAGE = Gaim::Serv  PREFIX = serv_
+MODULE = Purple::Serv  PACKAGE = Purple::Serv  PREFIX = serv_
 PROTOTYPES: ENABLE
 
 
 void 
 serv_add_deny(con, a)
-	Gaim::Connection con
+	Purple::Connection con
 	const char * a
 
 void 
 serv_add_permit(a, b)
-	Gaim::Connection a
+	Purple::Connection a
 	const char * b
 
 void 
 serv_alias_buddy(buddy)
-	Gaim::BuddyList::Buddy buddy 
+	Purple::BuddyList::Buddy buddy 
 
 void 
 serv_chat_invite(con, a, b, c)
-	Gaim::Connection con
+	Purple::Connection con
 	int a
 	const char * b
 	const char * c
 
 void 
 serv_chat_leave(a, b)
-	Gaim::Connection a
+	Purple::Connection a
 	int b
 
 int  
 serv_chat_send(con, a, b, flags)
-	Gaim::Connection con 
+	Purple::Connection con 
 	int a
 	const char * b
-	Gaim::MessageFlags flags
+	Purple::MessageFlags flags
 
 void 
 serv_chat_whisper(con, a, b, c)
-	Gaim::Connection con
+	Purple::Connection con
 	int a
 	const char * b
 	const char * c
 
 void 
 serv_get_info(con, a)
-	Gaim::Connection con 
+	Purple::Connection con 
 	const char * a
 
 void 
 serv_got_alias(gc, who, alias)
-	Gaim::Connection gc
+	Purple::Connection gc
 	const char *who
 	const char *alias
 
 void 
 serv_got_chat_in(g, id, who, chatflags, message, mtime)
-	Gaim::Connection g
+	Purple::Connection g
 	int id
 	const char *who
-	Gaim::MessageFlags chatflags
+	Purple::MessageFlags chatflags
 	const char *message
 	time_t mtime
 
 void 
 serv_got_chat_invite(gc, name, who, message, components)
-	Gaim::Connection gc
+	Purple::Connection gc
 	const char *name
 	const char *who
 	const char *message
@@ -93,38 +93,38 @@ CODE:
 
 void 
 serv_got_chat_left(g, id)
-	Gaim::Connection g
+	Purple::Connection g
 	int id
 
 void 
 serv_got_im(gc, who, msg, imflags, mtime)
-	Gaim::Connection gc
+	Purple::Connection gc
 	const char *who
 	const char *msg
-	Gaim::MessageFlags imflags
+	Purple::MessageFlags imflags
 	time_t mtime
 
-Gaim::Conversation
+Purple::Conversation
 serv_got_joined_chat(gc, id, name)
-	Gaim::Connection gc
+	Purple::Connection gc
 	int id
 	const char *name
 
 void 
 serv_got_typing(gc, name, timeout, state)
-	Gaim::Connection gc
+	Purple::Connection gc
 	const char *name
 	int timeout
-	Gaim::TypingState state
+	Purple::TypingState state
 
 void 
 serv_got_typing_stopped(gc, name)
-	Gaim::Connection gc
+	Purple::Connection gc
 	const char *name
 
 void 
 serv_join_chat(con, components)
-	Gaim::Connection con 
+	Purple::Connection con 
 	SV * components
 INIT:
 	HV * t_HV;
@@ -148,13 +148,13 @@ CODE:
 
 void 
 serv_move_buddy(buddy, group1, group2)
-	Gaim::BuddyList::Buddy buddy
-	Gaim::BuddyList::Group group1
-	Gaim::BuddyList::Group group2
+	Purple::BuddyList::Buddy buddy
+	Purple::BuddyList::Group group1
+	Purple::BuddyList::Group group2
 
 void 
 serv_reject_chat(con, components)
-	Gaim::Connection con 
+	Purple::Connection con 
 	SV * components
 INIT:
 	HV * t_HV;
@@ -178,39 +178,39 @@ CODE:
 
 void 
 serv_rem_deny(con, a)
-	Gaim::Connection con
+	Purple::Connection con
 	const char * 	a
 
 void 
 serv_rem_permit(con, a)
-	Gaim::Connection con
+	Purple::Connection con
 	const char *	a
 
 void 
 serv_send_file(gc, who, file)
-	Gaim::Connection gc
+	Purple::Connection gc
 	const char *who
 	const char *file
 
 int  
 serv_send_im(con, a, b, flags )
-	Gaim::Connection con
+	Purple::Connection con
 	const char * a
 	const char * b
-	Gaim::MessageFlags flags
+	Purple::MessageFlags flags
 
 int  
 serv_send_typing(con, a, state)
-	Gaim::Connection con
+	Purple::Connection con
 	const char * a
-	Gaim::TypingState state
+	Purple::TypingState state
 
 void 
 serv_set_info(con, a)
-	Gaim::Connection con 
+	Purple::Connection con 
 	const char * a
 
 void 
 serv_set_permit_deny(con)
-	Gaim::Connection con  
+	Purple::Connection con  
 

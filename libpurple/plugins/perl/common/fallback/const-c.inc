@@ -38,45 +38,45 @@ use ExtUtils::Constant qw (constant_types C_constant XS_constant);
 
 my $types = {map {($_, 1)} qw(IV)};
 my @names = (qw(),
-            {name=>"GAIM_DEBUG_ALL", type=>"IV", macro=>"1"},
-            {name=>"GAIM_DEBUG_ERROR", type=>"IV", macro=>"1"},
-            {name=>"GAIM_DEBUG_FATAL", type=>"IV", macro=>"1"},
-            {name=>"GAIM_DEBUG_INFO", type=>"IV", macro=>"1"},
-            {name=>"GAIM_DEBUG_MISC", type=>"IV", macro=>"1"},
-            {name=>"GAIM_DEBUG_WARNING", type=>"IV", macro=>"1"});
+            {name=>"PURPLE_DEBUG_ALL", type=>"IV", macro=>"1"},
+            {name=>"PURPLE_DEBUG_ERROR", type=>"IV", macro=>"1"},
+            {name=>"PURPLE_DEBUG_FATAL", type=>"IV", macro=>"1"},
+            {name=>"PURPLE_DEBUG_INFO", type=>"IV", macro=>"1"},
+            {name=>"PURPLE_DEBUG_MISC", type=>"IV", macro=>"1"},
+            {name=>"PURPLE_DEBUG_WARNING", type=>"IV", macro=>"1"});
 
 print constant_types(); # macro defs
-foreach (C_constant ("Gaim::DebugLevel", 'constant', 'IV', $types, undef, 3, @names) ) {
+foreach (C_constant ("Purple::DebugLevel", 'constant', 'IV', $types, undef, 3, @names) ) {
     print $_, "\n"; # C constant subs
 }
 print "#### XS Section:\n";
-print XS_constant ("Gaim::DebugLevel", $types);
+print XS_constant ("Purple::DebugLevel", $types);
 __END__
    */
 
   switch (len) {
   case 14:
-    if (memEQ(name, "GAIM_DEBUG_ALL", 14)) {
-      *iv_return = GAIM_DEBUG_ALL;
+    if (memEQ(name, "PURPLE_DEBUG_ALL", 14)) {
+      *iv_return = PURPLE_DEBUG_ALL;
       return PERL_constant_ISIV;
     }
     break;
   case 15:
     /* Names all of length 15.  */
-    /* GAIM_DEBUG_INFO GAIM_DEBUG_MISC */
+    /* PURPLE_DEBUG_INFO PURPLE_DEBUG_MISC */
     /* Offset 11 gives the best switch position.  */
     switch (name[11]) {
     case 'I':
-      if (memEQ(name, "GAIM_DEBUG_INFO", 15)) {
+      if (memEQ(name, "PURPLE_DEBUG_INFO", 15)) {
       /*                          ^          */
-        *iv_return = GAIM_DEBUG_INFO;
+        *iv_return = PURPLE_DEBUG_INFO;
         return PERL_constant_ISIV;
       }
       break;
     case 'M':
-      if (memEQ(name, "GAIM_DEBUG_MISC", 15)) {
+      if (memEQ(name, "PURPLE_DEBUG_MISC", 15)) {
       /*                          ^          */
-        *iv_return = GAIM_DEBUG_MISC;
+        *iv_return = PURPLE_DEBUG_MISC;
         return PERL_constant_ISIV;
       }
       break;
@@ -84,28 +84,28 @@ __END__
     break;
   case 16:
     /* Names all of length 16.  */
-    /* GAIM_DEBUG_ERROR GAIM_DEBUG_FATAL */
+    /* PURPLE_DEBUG_ERROR PURPLE_DEBUG_FATAL */
     /* Offset 11 gives the best switch position.  */
     switch (name[11]) {
     case 'E':
-      if (memEQ(name, "GAIM_DEBUG_ERROR", 16)) {
+      if (memEQ(name, "PURPLE_DEBUG_ERROR", 16)) {
       /*                          ^           */
-        *iv_return = GAIM_DEBUG_ERROR;
+        *iv_return = PURPLE_DEBUG_ERROR;
         return PERL_constant_ISIV;
       }
       break;
     case 'F':
-      if (memEQ(name, "GAIM_DEBUG_FATAL", 16)) {
+      if (memEQ(name, "PURPLE_DEBUG_FATAL", 16)) {
       /*                          ^           */
-        *iv_return = GAIM_DEBUG_FATAL;
+        *iv_return = PURPLE_DEBUG_FATAL;
         return PERL_constant_ISIV;
       }
       break;
     }
     break;
   case 18:
-    if (memEQ(name, "GAIM_DEBUG_WARNING", 18)) {
-      *iv_return = GAIM_DEBUG_WARNING;
+    if (memEQ(name, "PURPLE_DEBUG_WARNING", 18)) {
+      *iv_return = PURPLE_DEBUG_WARNING;
       return PERL_constant_ISIV;
     }
     break;

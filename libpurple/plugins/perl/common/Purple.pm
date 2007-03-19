@@ -1,4 +1,4 @@
-package Gaim;
+package Purple;
 
 use 5.008;
 use strict;
@@ -14,7 +14,7 @@ our @ISA = qw(Exporter);
 # names by default without a very good reason. Use EXPORT_OK instead.
 # Do not simply export all your public functions/methods/constants.
 
-# This allows declaration	use Gaim ':all';
+# This allows declaration	use Purple ':all';
 # If you do not need this, moving things directly into @EXPORT or @EXPORT_OK
 # will save memory.
 our %EXPORT_TAGS = ( 'all' => [ qw(
@@ -36,7 +36,7 @@ sub AUTOLOAD {
 	my $constname;
 	our $AUTOLOAD;
 	($constname = $AUTOLOAD) =~ s/.*:://;
-	croak "&Gaim::constant not defined" if $constname eq 'constant';
+	croak "&Purple::constant not defined" if $constname eq 'constant';
 	my ($error, $val) = constant($constname);
 	if ($error) { croak $error; }
 	{
@@ -49,7 +49,7 @@ sub AUTOLOAD {
 }
 
 require XSLoader;
-XSLoader::load('Gaim', $VERSION);
+XSLoader::load('Purple', $VERSION);
 
 # Preloaded methods go here.
 
@@ -58,53 +58,53 @@ __END__
 
 =head1 NAME
 
-Gaim - Perl extension the Gaim instant messenger.
+libpurple - Perl extension to the libpurple instant messenger library.
 
 =head1 SYNOPSIS
 
-  use Gaim;
+  use Purple;
 
 =head1 ABSTRACT
 
   This module provides the interface for using perl scripts as plugins
-  in Gaim.
+  in libpurple.
 
 =head1 DESCRIPTION
 
 This module provides the interface for using perl scripts as plugins
-in Gaim. With this, developers can write perl scripts that can be
-loaded in Gaim as plugins. The scripts can interact with IMs, chats,
-accounts, the buddy list, gaim signals, and more.
+in Purple. With this, developers can write perl scripts that can be
+loaded in Purple as plugins. The scripts can interact with IMs, chats,
+accounts, the buddy list, libpurple signals, and more.
 
-The API for the perl interface is very similar to that of the Gaim C
-API, which can be viewed at http://gaim.sourceforge.net/api/ or in
-the header files in the Gaim source tree.
+The API for the perl interface is very similar to that of the Purple C
+API, which can be viewed at http://developer.pidgin.im/doxygen/ or in
+the header files in the Purple source tree.
 
 =head1 FUNCTIONS
 
 =over
 
-=item @accounts = Gaim::accounts
+=item @accounts = Purple::accounts
 
 Returns a list of all accounts, online or offline.
 
-=item @chats = Gaim::chats
+=item @chats = Purple::chats
 
 Returns a list of all chats currently open.
 
-=item @connections = Gaim::connections
+=item @connections = Purple::connections
 
 Returns a list of all active connections.
 
-=item @conversations = Gaim::conversations
+=item @conversations = Purple::conversations
 
 Returns a list of all conversations, both IM and chat, currently open.
 
-=item @conv_windows = Gaim::conv_windows
+=item @conv_windows = Purple::conv_windows
 
 Returns a list of all conversation windows currently open.
 
-=item @ims = Gaim::ims
+=item @ims = Purple::ims
 
 Returns a list of all instant messages currently open.
 
@@ -112,9 +112,9 @@ Returns a list of all instant messages currently open.
 
 =head1 SEE ALSO
 
-Gaim C API documentation - http//gaim.sourceforge.net/api/
+Purple C API documentation - http://developer.pidgin.im/doxygen/
 
-Gaim website - http://gaim.sourceforge.net/
+Purple website - http://pidgin.im/
 
 =head1 AUTHOR
 

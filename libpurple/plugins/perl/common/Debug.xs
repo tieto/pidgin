@@ -1,54 +1,54 @@
 #include "module.h"
 
-MODULE = Gaim::Debug  PACKAGE = Gaim::Debug  PREFIX = gaim_debug_
+MODULE = Purple::Debug  PACKAGE = Purple::Debug  PREFIX = purple_debug_
 PROTOTYPES: ENABLE
 
 void
-gaim_debug(level, category, string)
-	Gaim::DebugLevel level
+purple_debug(level, category, string)
+	Purple::DebugLevel level
 	const char *category
 	const char *string
 CODE:
-	gaim_debug(level, category, "%s", string);
+	purple_debug(level, category, "%s", string);
 
 void
-gaim_debug_misc(category, string)
+purple_debug_misc(category, string)
 	const char *category
 	const char *string
 CODE:
-	gaim_debug_misc(category, "%s", string);
+	purple_debug_misc(category, "%s", string);
 
 void
-gaim_debug_info(category, string)
+purple_debug_info(category, string)
 	const char *category
 	const char *string
 CODE:
-	gaim_debug_info(category, "%s", string);
+	purple_debug_info(category, "%s", string);
 
 void
-gaim_debug_warning(category, string)
+purple_debug_warning(category, string)
 	const char *category
 	const char *string
 CODE:
-	gaim_debug_warning(category, "%s", string);
+	purple_debug_warning(category, "%s", string);
 
 void
-gaim_debug_error(category, string)
+purple_debug_error(category, string)
 	const char *category
 	const char *string
 CODE:
-	gaim_debug_error(category, "%s", string);
+	purple_debug_error(category, "%s", string);
 
 void
-gaim_debug_fatal(category, string)
+purple_debug_fatal(category, string)
 	const char *category
 	const char *string
 CODE:
-	gaim_debug_fatal(category, "%s", string);
+	purple_debug_fatal(category, "%s", string);
 
 void
-gaim_debug_set_enabled(enabled)
+purple_debug_set_enabled(enabled)
 	gboolean enabled
 
 gboolean
-gaim_debug_is_enabled()
+purple_debug_is_enabled()

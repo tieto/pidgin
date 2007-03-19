@@ -22,12 +22,12 @@ constant(sv)
            Second, if present, is found value */
         switch (type) {
         case PERL_constant_NOTFOUND:
-          sv = sv_2mortal(newSVpvf("%s is not a valid Gaim::DebugLevel macro", s));
+          sv = sv_2mortal(newSVpvf("%s is not a valid Purple::DebugLevel macro", s));
           PUSHs(sv);
           break;
         case PERL_constant_NOTDEF:
           sv = sv_2mortal(newSVpvf(
-	    "Your vendor has not defined Gaim::DebugLevel macro %s, used", s));
+	    "Your vendor has not defined Purple::DebugLevel macro %s, used", s));
           PUSHs(sv);
           break;
         case PERL_constant_ISIV:
@@ -82,7 +82,7 @@ constant(sv)
           break; */
         default:
           sv = sv_2mortal(newSVpvf(
-	    "Unexpected return type %d while processing Gaim::DebugLevel macro %s, used",
+	    "Unexpected return type %d while processing Purple::DebugLevel macro %s, used",
                type, s));
           PUSHs(sv);
         }

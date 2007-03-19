@@ -1,5 +1,5 @@
 $MODULE_NAME = "Plugin Action Test Plugin";
-use Gaim;
+use Purple;
 
 sub plugin_init {
 	return %PLUGIN_INFO;
@@ -42,7 +42,7 @@ sub plugin_action_names {
 	return @array;
 }
 
-# All the information Gaim gets about our nifty plugin
+# All the information Purple gets about our nifty plugin
 %PLUGIN_INFO = (
 	perl_api_version => 2,
 	name => "Perl: $MODULE_NAME",

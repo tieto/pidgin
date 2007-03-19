@@ -1,29 +1,29 @@
 #include "module.h"
 
-MODULE = Gaim::Prefs  PACKAGE = Gaim::Prefs  PREFIX = gaim_prefs_
+MODULE = Purple::Prefs  PACKAGE = Purple::Prefs  PREFIX = purple_prefs_
 PROTOTYPES: ENABLE
 
 void
-gaim_prefs_add_bool(name, value)
+purple_prefs_add_bool(name, value)
 	const char *name
 	gboolean value
 
 void
-gaim_prefs_add_int(name, value)
+purple_prefs_add_int(name, value)
 	const char *name
 	int value
 
 void
-gaim_prefs_add_none(name)
+purple_prefs_add_none(name)
 	const char *name
 
 void
-gaim_prefs_add_string(name, value)
+purple_prefs_add_string(name, value)
 	const char *name
 	const char *value
 
 void
-gaim_prefs_add_string_list(name, value)
+purple_prefs_add_string_list(name, value)
 	const char *name
 	SV *value
 PREINIT:
@@ -37,94 +37,94 @@ PPCODE:
 		STRLEN t_sl;
 		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(value), i, 0), t_sl));
 	}
-	gaim_prefs_add_string_list(name, t_GL);
+	purple_prefs_add_string_list(name, t_GL);
 
 void
-gaim_prefs_destroy()
+purple_prefs_destroy()
 
 void
-gaim_prefs_disconnect_by_handle(handle)
+purple_prefs_disconnect_by_handle(handle)
 	void * handle
 
 void
-gaim_prefs_disconnect_callback(callback_id)
+purple_prefs_disconnect_callback(callback_id)
 	guint callback_id
 
 gboolean
-gaim_prefs_exists(name)
+purple_prefs_exists(name)
 	const char *name
 
 gboolean
-gaim_prefs_get_bool(name)
+purple_prefs_get_bool(name)
 	const char *name
 
-Gaim::Handle
-gaim_prefs_get_handle()
+Purple::Handle
+purple_prefs_get_handle()
 
 int
-gaim_prefs_get_int(name)
+purple_prefs_get_int(name)
 	const char *name
 
 const char *
-gaim_prefs_get_string(name)
+purple_prefs_get_string(name)
 	const char *name
 
 void
-gaim_prefs_get_string_list(name)
+purple_prefs_get_string_list(name)
 	const char *name
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = gaim_prefs_get_string_list(name); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::PrefValue")));
+	for (l = purple_prefs_get_string_list(name); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::PrefValue")));
 	}
 
-Gaim::PrefType
-gaim_prefs_get_type(name)
+Purple::PrefType
+purple_prefs_get_type(name)
 	const char *name
 
 void
-gaim_prefs_init()
+purple_prefs_init()
 
 gboolean
-gaim_prefs_load()
+purple_prefs_load()
 
 void
-gaim_prefs_remove(name)
+purple_prefs_remove(name)
 	const char *name
 
 void
-gaim_prefs_rename(oldname, newname)
+purple_prefs_rename(oldname, newname)
 	const char *oldname
 	const char *newname
 
 void
-gaim_prefs_rename_boolean_toggle(oldname, newname)
+purple_prefs_rename_boolean_toggle(oldname, newname)
 	const char *oldname
 	const char *newname
 
 void
-gaim_prefs_set_bool(name, value)
+purple_prefs_set_bool(name, value)
 	const char *name
 	gboolean value
 
 void
-gaim_prefs_set_generic(name, value)
+purple_prefs_set_generic(name, value)
 	const char *name
 	gpointer value
 
 void
-gaim_prefs_set_int(name, value)
+purple_prefs_set_int(name, value)
 	const char *name
 	int value
 
 void
-gaim_prefs_set_string(name, value)
+purple_prefs_set_string(name, value)
 	const char *name
 	const char *value
 
 void
-gaim_prefs_set_string_list(name, value)
+purple_prefs_set_string_list(name, value)
 	const char *name
 	SV *value
 PREINIT:
@@ -138,14 +138,14 @@ PPCODE:
 		STRLEN t_sl;
 		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(value), i, 0), t_sl));
 	}
-	gaim_prefs_set_string_list(name, t_GL);
+	purple_prefs_set_string_list(name, t_GL);
 
 void
-gaim_prefs_trigger_callback(name)
+purple_prefs_trigger_callback(name)
 	const char *name
 
 void
-gaim_prefs_uninit()
+purple_prefs_uninit()
 
 void
-gaim_prefs_update_old()
+purple_prefs_update_old()
