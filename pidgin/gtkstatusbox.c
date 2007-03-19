@@ -42,6 +42,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "account.h"
+#include "core.h"
 #include "internal.h"
 #include "network.h"
 #include "savedstatuses.h"
@@ -295,6 +296,46 @@ icon_box_dnd_cb(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 	gtk_drag_finish(dc, FALSE, FALSE, t);
 }
 
+static void
+statusbox_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
+                const gchar *themedata, size_t len, const gchar *error_message, 
+		PidginStatusBox *status_box)
+{
+        FILE *f;
+        gchar *path;
+
+        if ((error_message != NULL) || (len == 0))
+                return;
+
+        f = purple_mkstemp(&path, TRUE);
+        fwrite(themedata, len, 1, f);
+        fclose(f);
+
+	icon_choose_cb(path, status_box);
+
+        g_unlink(path);
+        g_free(path);
+}
+
+
+static gboolean
+statusbox_uri_handler(const char *proto, const char *cmd, GHashTable *params, void *data)
+{
+	const char *src;
+printf("%s %s\n", proto, cmd);
+	if (g_ascii_strcasecmp(proto, "aim"))
+		return FALSE;
+
+	if (g_ascii_strcasecmp(cmd, "buddyicon"))
+		return FALSE;
+
+	src = g_hash_table_lookup(params, "account");
+	if (src == NULL)
+		return FALSE;
+
+	purple_util_fetch_url(src, TRUE, NULL, FALSE, statusbox_got_url, data);
+	return TRUE;
+}
 
 static gboolean
 icon_box_enter_cb(GtkWidget *widget, GdkEventCrossing *event, PidginStatusBox *box)
@@ -1735,6 +1776,9 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 								spellcheck_prefs_cb, status_box);
 	purple_prefs_connect_callback(status_box, "/purple/gtk/accounts/buddyicon",
 	                            update_buddyicon_cb, status_box);
+	purple_signal_connect(purple_get_core(), "uri-handler", status_box,
+					PURPLE_CALLBACK(statusbox_uri_handler), status_box);
+
 }
 
 static void
