@@ -18,7 +18,6 @@ endif
 
 SUBDIRS = \
 	$(MONO_DIR) \
-	$(PERL_DIR) \
 	ssl \
 	$(TCL_DIR)
 
