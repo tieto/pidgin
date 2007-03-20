@@ -41,6 +41,7 @@
 #define gaim_account_disconnect    purple_account_disconnect
 #define gaim_account_notify_added  purple_account_notify_added
 #define gaim_account_request_add   purple_account_request_add
+#define gaim_account_request_close   purple_account_request_close
 
 #define gaim_account_request_authorization     purple_account_request_authorization
 #define gaim_account_request_change_password   purple_account_request_change_password
@@ -452,6 +453,13 @@
 #define GaimCmdStatus    PurpleCmdStatus
 #define GaimCmdRet       PurpleCmdRet
 
+#define GAIM_CMD_STATUS_OK            PURPLE_CMD_STATUS_OK
+#define GAIM_CMD_STATUS_FAILED        PURPLE_CMD_STATUS_FAILED
+#define GAIM_CMD_STATUS_NOT_FOUND     PURPLE_CMD_STATUS_NOT_FOUND
+#define GAIM_CMD_STATUS_WRONG_ARGS    PURPLE_CMD_STATUS_WRONG_ARGS
+#define GAIM_CMD_STATUS_WRONG_PRPL    PURPLE_CMD_STATUS_WRONG_PRPL
+#define GAIM_CMD_STATUS_WRONG_TYPE    PURPLE_CMD_STATUS_WRONG_TYPE
+
 #define GAIM_CMD_FUNC  PURPLE_CMD_FUNC
 
 #define GaimCmdFunc  PurpleCmdFunc
@@ -810,10 +818,13 @@
 #define GaimDnsQueryData  PurpleDnsQueryData
 #define GaimDnsQueryConnectFunction  PurpleDnsQueryConnectFunction
 
-#define gaim_dnsquery_a        purple_dnsquery_a
-#define gaim_dnsquery_destroy  purple_dnsquery_destroy
-#define gaim_dnsquery_init     purple_dnsquery_init
-#define gaim_dnsquery_uninit   purple_dnsquery_uninit
+#define gaim_dnsquery_a        		purple_dnsquery_a
+#define gaim_dnsquery_destroy  		purple_dnsquery_destroy
+#define gaim_dnsquery_init     		purple_dnsquery_init
+#define gaim_dnsquery_uninit   		purple_dnsquery_uninit
+#define gaim_dnsquery_set_ui_ops	purple_dnsquery_set_ui_ops
+#define gaim_dnsquery_get_host 		purple_dnsquery_get_host
+#define gaim_dnsquery_get_port 		purple_dnsquery_get_port
 
 /* from dnssrv.h */
 
@@ -1080,7 +1091,7 @@
 
 #define GaimNotifySearchButtonType  PurpleNotifySearchButtonType
 
-#define GaimNotifySearchResults  PurpleNotifySearchResult
+#define GaimNotifySearchResults  PurpleNotifySearchResults
 
 #define GAIM_NOTIFY_USER_INFO_ENTRY_PAIR            PURPLE_NOTIFY_USER_INFO_ENTRY_PAIR
 #define GAIM_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK   PURPLE_NOTIFY_USER_INFO_ENTRY_SECTION_BREAK
@@ -2248,9 +2259,6 @@
 
 /* from whiteboard.h */
 
-#ifndef _GAIM_WHITEBOARD_H_
-#define _GAIM_WHITEBOARD_H_
-
 #define GaimWhiteboardPrplOps  PurpleWhiteboardPrplOps
 #define GaimWhiteboard         PurpleWhiteboard
 #define GaimWhiteboardUiOps    PurpleWhiteboardUiOps
@@ -2273,5 +2281,21 @@
 #define gaim_whiteboard_send_brush         purple_whiteboard_send_brush
 #define gaim_whiteboard_get_brush          purple_whiteboard_get_brush
 #define gaim_whiteboard_set_brush          purple_whiteboard_set_brush
+
+/* for static plugins */
+#define gaim_init_ssl_plugin			purple_init_ssl_plugin
+#define gaim_init_ssl_openssl_plugin	purple_init_ssl_openssl_plugin
+#define gaim_init_ssl_gnutls_plugin		purple_init_ssl_gnutls_plugin
+#define gaim_init_gg_plugin				purple_init_gg_plugin
+#define gaim_init_jabber_plugin			purple_init_jabber_plugin
+#define gaim_init_sametime_plugin		purple_init_sametime_plugin
+#define gaim_init_msn_plugin			purple_init_msn_plugin
+#define gaim_init_novell_plugin			purple_init_novell_plugin
+#define gaim_init_qq_plugin				purple_init_qq_plugin
+#define gaim_init_simple_plugin			purple_init_simple_plugin
+#define gaim_init_yahoo_plugin			purple_init_yahoo_plugin
+#define gaim_init_zephyr_plugin			purple_init_zephyr_plugin
+#define gaim_init_aim_plugin			purple_init_aim_plugin
+#define gaim_init_icq_plugin			purple_init_icq_plugin
 
 #endif /* _GAIM_COMPAT_H_ */
