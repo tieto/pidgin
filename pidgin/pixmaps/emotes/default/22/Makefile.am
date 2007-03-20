@@ -163,7 +163,7 @@ SMILEYS = 	act-up.png \
 		yawn.png \
 		yin-yang.png
 
-pidginsmileypixdir = $(datadir)/pixmaps/gaim/smileys/default
+pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/default
 pidginsmileypix_DATA = \
         $(SMILEYS) \
         theme
