@@ -8,7 +8,7 @@
 # drtvasudevan <agnihot3@gmail.com>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: gaimta\n"
+"Project-Id-Version: ta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-10-04 19:30+0000\n"
 "PO-Revision-Date: 2006-11-28 22:37+0530\n"
@@ -7670,7 +7670,7 @@ msgstr "என்னைப்பற்றி சுருக்கமாக"
 #: ../src/protocols/msn/msn.c:1555
 #, c-format
 msgid "%s<b>General</b><br>%s"
-msgstr "s<b> பொது</b><br> s"
+msgstr "%s<b> பொது</b><br> s %s"
 
 #: ../src/protocols/msn/msn.c:1564
 #: ../src/protocols/yahoo/yahoo_profile.c:1061
@@ -7759,11 +7759,6 @@ msgstr "ஆண்டுவிழா"
 msgid "Notes"
 msgstr "குறிப்புகள்"
 
-#: ../src/protocols/msn/msn.c:1599
-#, c-format
-msgid "<br><b>Personal</b><br>%s"
-msgstr "<br><b> தனிப்பட்ட</b><br> s"
-
 #: ../src/protocols/msn/msn.c:1606
 #: ../src/protocols/silc/ops.c:1044
 msgid "Job Title"
@@ -7823,12 +7818,12 @@ msgstr "துவக்கத் தேதி"
 #: ../src/protocols/msn/msn.c:1623
 #, c-format
 msgid "<br><b>Business</b><br>%s"
-msgstr "<br><b> தொழில்</b><br> s"
+msgstr "<br><b> தொழில்</b><br> s>%s"
 
 #: ../src/protocols/msn/msn.c:1634
 #, c-format
 msgid "<hr><b>Contact Info</b>%s%s"
-msgstr "<hr><b> தொடர்பு தகவல்</b> s s"
+msgstr "<hr><b> தொடர்பு தகவல்</b> s s%s%s"
 
 #: ../src/protocols/msn/msn.c:1693
 #: ../src/protocols/msn/msn.c:1699
@@ -9607,7 +9602,7 @@ msgstr "<b>குழுத் தலைப்பு</b> %s<br>"
 #: ../src/protocols/sametime/sametime.c:1268
 #, c-format
 msgid "<b>Notes Group ID:</b> %s<br>"
-msgstr "<b> குறிப்புகள் குழு அடையாளம்</b> s<br>"
+msgstr "<b> குறிப்புகள் குழு அடையாளம்</b> s<br></b>%s<br>"
 
 #: ../src/protocols/sametime/sametime.c:1270
 #, c-format
@@ -9809,7 +9804,7 @@ msgstr "<b>வெளிப் பயனாளர்</b><br>"
 #: ../src/protocols/sametime/sametime.c:4088
 #, c-format
 msgid "<b>User ID:</b> %s<br>"
-msgstr "<b> பயனர் அடையாளம்</b> s<br>"
+msgstr "<b> பயனர் அடையாளம்</b> s<br%s<br>"
 
 #: ../src/protocols/sametime/sametime.c:4094
 #, c-format
