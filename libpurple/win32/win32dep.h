@@ -1,5 +1,5 @@
 /*
- * gaim
+ * purple
  *
  * File: win32dep.h
  *
@@ -25,7 +25,7 @@
 #include <shlobj.h>
 #include <winsock2.h>
 #include <process.h>
-#include "wgaimerror.h"
+#include "wpurpleerror.h"
 #include "libc_interface.h"
 
 /* rpcndr.h defines small as char, causing problems, so we need to undefine it */
@@ -41,24 +41,24 @@
  ** win32dep.c
  **/
 /* Windows helper functions */
-FARPROC wgaim_find_and_loadproc(const char *dllname, const char *procedure);
-char *wgaim_read_reg_string(HKEY rootkey, const char *subkey, const char *valname); /* needs to be g_free'd */
-gboolean wgaim_write_reg_string(HKEY rootkey, const char *subkey, const char *valname, const char *value);
-char *wgaim_escape_dirsep(const char *filename); /* needs to be g_free'd */
-GIOChannel *wgaim_g_io_channel_win32_new_socket(int socket); /* Until we get the post-2.8 glib win32 giochannel implementation working, use the thread-based one */
+FARPROC wpurple_find_and_loadproc(const char *dllname, const char *procedure);
+char *wpurple_read_reg_string(HKEY rootkey, const char *subkey, const char *valname); /* needs to be g_free'd */
+gboolean wpurple_write_reg_string(HKEY rootkey, const char *subkey, const char *valname, const char *value);
+char *wpurple_escape_dirsep(const char *filename); /* needs to be g_free'd */
+GIOChannel *wpurple_g_io_channel_win32_new_socket(int socket); /* Until we get the post-2.8 glib win32 giochannel implementation working, use the thread-based one */
 /** Check for changes to the system proxy settings and update the HTTP_PROXY env. var. if there have been changes */
-gboolean wgaim_check_for_proxy_changes(void);
+gboolean wpurple_check_for_proxy_changes(void);
 
-/* Determine Gaim paths */
-char *wgaim_get_special_folder(int folder_type); /* needs to be g_free'd */
-const char *wgaim_install_dir(void);
-const char *wgaim_lib_dir(void);
-const char *wgaim_locale_dir(void);
-const char *wgaim_data_dir(void);
+/* Determine Purple paths */
+char *wpurple_get_special_folder(int folder_type); /* needs to be g_free'd */
+const char *wpurple_install_dir(void);
+const char *wpurple_lib_dir(void);
+const char *wpurple_locale_dir(void);
+const char *wpurple_data_dir(void);
 
 /* init / cleanup */
-void wgaim_init(void);
-void wgaim_cleanup(void);
+void wpurple_init(void);
+void wpurple_cleanup(void);
 
 
 /*
@@ -66,11 +66,11 @@ void wgaim_cleanup(void);
  */
 
 /*
- *  Gaim specific
+ *  Purple specific
  */
-#define DATADIR wgaim_install_dir()
-#define LIBDIR wgaim_lib_dir()
-#define LOCALEDIR wgaim_locale_dir()
+#define DATADIR wpurple_install_dir()
+#define LIBDIR wpurple_lib_dir()
+#define LOCALEDIR wpurple_locale_dir()
 
 #endif /* _WIN32DEP_H_ */
 

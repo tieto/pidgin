@@ -1,5 +1,5 @@
 /*
- * Contact Availability Prediction plugin for Gaim
+ * Contact Availability Prediction plugin for Purple
  *
  * Copyright (C) 2006 Geoffrey Foster.
  *
@@ -38,7 +38,7 @@ struct _CapStatistics {
 	time_t last_message;		/**< The time you last messaged them */
 	const char *last_message_status_id; /**< The status id of the buddy when you last messaged them */
 	const char *last_status_id;	/**< The last seen status id of the buddy */
-	GaimBuddy *buddy;			/**< The buddy that these statistics are associated with */
+	PurpleBuddy *buddy;			/**< The buddy that these statistics are associated with */
 	guint timeout_source_id;
 };
 

@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -63,7 +63,7 @@
 #include "gtksound.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkwhiteboard.h"
 
 #ifdef HAVE_SIGNAL_H
@@ -111,7 +111,7 @@ static int ignore_sig_list[] = {
 static int
 dologin_named(const char *name)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	char **names;
 	int i;
 	int ret = -1;
@@ -119,22 +119,22 @@ dologin_named(const char *name)
 	if (name != NULL) { /* list of names given */
 		names = g_strsplit(name, ",", 64);
 		for (i = 0; names[i] != NULL; i++) {
-			account = gaim_accounts_find(names[i], NULL);
+			account = purple_accounts_find(names[i], NULL);
 			if (account != NULL) { /* found a user */
 				ret = 0;
-				gaim_account_connect(account);
+				purple_account_connect(account);
 			}
 		}
 		g_strfreev(names);
 	} else { /* no name given, use the first account */
 		GList *accounts;
 
-		accounts = gaim_accounts_get_all();
+		accounts = purple_accounts_get_all();
 		if (accounts != NULL)
 		{
-			account = (GaimAccount *)accounts->data;
+			account = (PurpleAccount *)accounts->data;
 			ret = 0;
-			gaim_account_connect(account);
+			purple_account_connect(account);
 		}
 	}
 
@@ -145,7 +145,7 @@ dologin_named(const char *name)
 static void sighandler(int sig);
 
 /**
- * Reap all our dead children.  Sometimes Gaim forks off a separate
+ * Reap all our dead children.  Sometimes Purple forks off a separate
  * process to do some stuff.  When that process exits we are
  * informed about it so that we can call waitpid() and let it
  * stop being a zombie.
@@ -160,7 +160,7 @@ static void sighandler(int sig);
  * it continues with the initialization process.  This means that
  * we have a race condition where GStreamer is waitpid()ing for its
  * child to die and we're catching the SIGCHLD signal.  If GStreamer
- * is awarded the zombied process then everything is ok.  But if Gaim
+ * is awarded the zombied process then everything is ok.  But if Purple
  * reaps the zombie process then the GStreamer initialization sequence
  * fails.
  *
@@ -204,8 +204,8 @@ sighandler(int sig)
 {
 	switch (sig) {
 	case SIGHUP:
-		gaim_debug_warning("sighandler", "Caught signal %d\n", sig);
-		gaim_connections_disconnect_all();
+		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
+		purple_connections_disconnect_all();
 		break;
 	case SIGSEGV:
 		fprintf(stderr, "%s", segfault_message);
@@ -220,10 +220,10 @@ sighandler(int sig)
 		clean_pid();
 		break;
 	default:
-		gaim_debug_warning("sighandler", "Caught signal %d\n", sig);
-		gaim_connections_disconnect_all();
+		purple_debug_warning("sighandler", "Caught signal %d\n", sig);
+		purple_connections_disconnect_all();
 
-		gaim_plugins_unload_all();
+		purple_plugins_unload_all();
 
 		if (gtk_main_level())
 			gtk_main_quit();
@@ -256,7 +256,7 @@ ui_main()
 		g_object_unref(G_OBJECT(icon));
 		g_list_free(icons);
 	} else {
-		gaim_debug_error("ui_main",
+		purple_debug_error("ui_main",
 						 "Failed to load the default window icon!\n");
 	}
 #endif
@@ -267,7 +267,7 @@ ui_main()
 static void
 debug_init(void)
 {
-	gaim_debug_set_ui_ops(pidgin_debug_get_ui_ops());
+	purple_debug_set_ui_ops(pidgin_debug_get_ui_ops());
 	pidgin_debug_init();
 }
 
@@ -275,17 +275,17 @@ static void
 pidgin_ui_init(void)
 {
 	/* Set the UI operation structures. */
-	gaim_accounts_set_ui_ops(pidgin_accounts_get_ui_ops());
-	gaim_xfers_set_ui_ops(pidgin_xfers_get_ui_ops());
-	gaim_blist_set_ui_ops(pidgin_blist_get_ui_ops());
-	gaim_notify_set_ui_ops(pidgin_notify_get_ui_ops());
-	gaim_privacy_set_ui_ops(pidgin_privacy_get_ui_ops());
-	gaim_request_set_ui_ops(pidgin_request_get_ui_ops());
-	gaim_sound_set_ui_ops(pidgin_sound_get_ui_ops());
-	gaim_connections_set_ui_ops(pidgin_connections_get_ui_ops());
-	gaim_whiteboard_set_ui_ops(pidgin_whiteboard_get_ui_ops());
+	purple_accounts_set_ui_ops(pidgin_accounts_get_ui_ops());
+	purple_xfers_set_ui_ops(pidgin_xfers_get_ui_ops());
+	purple_blist_set_ui_ops(pidgin_blist_get_ui_ops());
+	purple_notify_set_ui_ops(pidgin_notify_get_ui_ops());
+	purple_privacy_set_ui_ops(pidgin_privacy_get_ui_ops());
+	purple_request_set_ui_ops(pidgin_request_get_ui_ops());
+	purple_sound_set_ui_ops(pidgin_sound_get_ui_ops());
+	purple_connections_set_ui_ops(pidgin_connections_get_ui_ops());
+	purple_whiteboard_set_ui_ops(pidgin_whiteboard_get_ui_ops());
 #ifdef USE_SCREENSAVER
-	gaim_idle_set_ui_ops(pidgin_idle_get_ui_ops());
+	purple_idle_set_ui_ops(pidgin_idle_get_ui_ops());
 #endif
 
 	pidgin_stock_init();
@@ -326,7 +326,7 @@ pidgin_quit(void)
 	gtk_main_quit();
 }
 
-static GaimCoreUiOps core_ops =
+static PurpleCoreUiOps core_ops =
 {
 	pidgin_prefs_init,
 	debug_init,
@@ -334,7 +334,7 @@ static GaimCoreUiOps core_ops =
 	pidgin_quit
 };
 
-static GaimCoreUiOps *
+static PurpleCoreUiOps *
 pidgin_core_get_ui_ops(void)
 {
 	return &core_ops;
@@ -359,7 +359,7 @@ show_usage(const char *name, gboolean terse)
 		       "  -v, --version       display the current version and exit\n"), VERSION, name);
 	}
 
-	gaim_print_utf8_to_console(stdout, text);
+	purple_print_utf8_to_console(stdout, text);
 	g_free(text);
 }
 
@@ -508,7 +508,7 @@ int main(int argc, char *argv[])
 	debug_enabled = FALSE;
 #endif
 
-#ifdef GAIM_FATAL_ASSERTS
+#ifdef PURPLE_FATAL_ASSERTS
 	/* Make g_return_... functions fatal. */
 	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
 #endif
@@ -546,7 +546,7 @@ int main(int argc, char *argv[])
 			"LSchiere (via AIM).  Contact information for Sean and Luke \n"
 			"on other protocols is at\n"
 			"%scontactinfo.php\n"),
-			GAIM_WEBSITE, GAIM_WEBSITE, GAIM_WEBSITE
+			PURPLE_WEBSITE, PURPLE_WEBSITE, PURPLE_WEBSITE
 		);
 
 		/* we have to convert the message (UTF-8 to console
@@ -667,7 +667,7 @@ int main(int argc, char *argv[])
 
 	/* set a user-specified config directory */
 	if (opt_config_dir_arg != NULL) {
-		gaim_util_set_user_dir(opt_config_dir_arg);
+		purple_util_set_user_dir(opt_config_dir_arg);
 	}
 
 	/*
@@ -675,10 +675,10 @@ int main(int argc, char *argv[])
 	 * Fire up this baby.
 	 */
 
-	gaim_debug_set_enabled(debug_enabled);
+	purple_debug_set_enabled(debug_enabled);
 
 
-	search_path = g_build_filename(gaim_user_dir(), "gtkrc-2.0", NULL);
+	search_path = g_build_filename(purple_user_dir(), "gtkrc-2.0", NULL);
 	gtk_rc_add_default_file(search_path);
 	g_free(search_path);
 
@@ -698,40 +698,40 @@ int main(int argc, char *argv[])
 	winpidgin_init(hint);
 #endif
 
-	gaim_core_set_ui_ops(pidgin_core_get_ui_ops());
-	gaim_eventloop_set_ui_ops(pidgin_eventloop_get_ui_ops());
+	purple_core_set_ui_ops(pidgin_core_get_ui_ops());
+	purple_eventloop_set_ui_ops(pidgin_eventloop_get_ui_ops());
 
 	/*
 	 * Set plugin search directories. Give priority to the plugins
 	 * in user's home directory.
 	 */
-	search_path = g_build_filename(gaim_user_dir(), "plugins", NULL);
-	gaim_plugins_add_search_path(search_path);
+	search_path = g_build_filename(purple_user_dir(), "plugins", NULL);
+	purple_plugins_add_search_path(search_path);
 	g_free(search_path);
-	gaim_plugins_add_search_path(LIBDIR);
+	purple_plugins_add_search_path(LIBDIR);
 
-	if (!gaim_core_init(PIDGIN_UI)) {
+	if (!purple_core_init(PIDGIN_UI)) {
 		fprintf(stderr,
 				"Initialization of the " PIDGIN_NAME " core failed. Dumping core.\n"
 				"Please report this!\n");
 		abort();
 	}
 
-	/* TODO: Move blist loading into gaim_blist_init() */
-	gaim_set_blist(gaim_blist_new());
-	gaim_blist_load();
+	/* TODO: Move blist loading into purple_blist_init() */
+	purple_set_blist(purple_blist_new());
+	purple_blist_load();
 
-	/* TODO: Move prefs loading into gaim_prefs_init() */
-	gaim_prefs_load();
-	gaim_prefs_update_old();
+	/* TODO: Move prefs loading into purple_prefs_init() */
+	purple_prefs_load();
+	purple_prefs_update_old();
 	pidgin_prefs_update_old();
 
 	/* load plugins we had when we quit */
-	gaim_plugins_load_saved("/gaim/gtk/plugins/loaded");
+	purple_plugins_load_saved("/purple/gtk/plugins/loaded");
 	pidgin_docklet_init();
 
-	/* TODO: Move pounces loading into gaim_pounces_init() */
-	gaim_pounces_load();
+	/* TODO: Move pounces loading into purple_pounces_init() */
+	purple_pounces_load();
 
 
 	/* HACK BY SEANEGAN:
@@ -739,13 +739,13 @@ int main(int argc, char *argv[])
 	 * Let's do that change right here... after everything's loaded, but
 	 * before anything has happened
 	 */
-	for (accounts = gaim_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
-		GaimAccount *account = accounts->data;
-		if (!strcmp(gaim_account_get_protocol_id(account), "prpl-oscar")) {
-			if (isdigit(*gaim_account_get_username(account)))
-				gaim_account_set_protocol_id(account, "prpl-icq");
+	for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
+		PurpleAccount *account = accounts->data;
+		if (!strcmp(purple_account_get_protocol_id(account), "prpl-oscar")) {
+			if (isdigit(*purple_account_get_username(account)))
+				purple_account_set_protocol_id(account, "prpl-icq");
 			else
-				gaim_account_set_protocol_id(account, "prpl-aim");
+				purple_account_set_protocol_id(account, "prpl-aim");
 		}
 	}
 
@@ -767,9 +767,9 @@ int main(int argc, char *argv[])
 	 * We want to show the blist early in the init process so the
 	 * user feels warm and fuzzy (not cold and prickley).
 	 */
-	gaim_blist_show();
+	purple_blist_show();
 
-	if (gaim_prefs_get_bool("/gaim/gtk/debug/enabled"))
+	if (purple_prefs_get_bool("/purple/gtk/debug/enabled"))
 		pidgin_debug_window_show();
 
 	if (opt_login) {
@@ -783,28 +783,28 @@ int main(int argc, char *argv[])
 	if (opt_nologin)
 	{
 		/* Set all accounts to "offline" */
-		GaimSavedStatus *saved_status;
+		PurpleSavedStatus *saved_status;
 
 		/* If we've used this type+message before, lookup the transient status */
-		saved_status = gaim_savedstatus_find_transient_by_type_and_message(
-							GAIM_STATUS_OFFLINE, NULL);
+		saved_status = purple_savedstatus_find_transient_by_type_and_message(
+							PURPLE_STATUS_OFFLINE, NULL);
 
 		/* If this type+message is unique then create a new transient saved status */
 		if (saved_status == NULL)
-			saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_OFFLINE);
+			saved_status = purple_savedstatus_new(NULL, PURPLE_STATUS_OFFLINE);
 
 		/* Set the status for each account */
-		gaim_savedstatus_activate(saved_status);
+		purple_savedstatus_activate(saved_status);
 	}
 	else
 	{
 		/* Everything is good to go--sign on already */
-		if (!gaim_prefs_get_bool("/core/savedstatus/startup_current_status"))
-			gaim_savedstatus_activate(gaim_savedstatus_get_startup());
-		gaim_accounts_restore_current_statuses();
+		if (!purple_prefs_get_bool("/core/savedstatus/startup_current_status"))
+			purple_savedstatus_activate(purple_savedstatus_get_startup());
+		purple_accounts_restore_current_statuses();
 	}
 
-	if ((accounts = gaim_accounts_get_all_active()) == NULL)
+	if ((accounts = purple_accounts_get_all_active()) == NULL)
 	{
 		pidgin_accounts_window_show();
 	}

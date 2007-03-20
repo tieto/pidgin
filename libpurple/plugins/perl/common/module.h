@@ -1,6 +1,6 @@
 
 
-typedef struct group *Gaim__Group;
+typedef struct group *Purple__Group;
 
 #define group perl_group
 
@@ -29,7 +29,7 @@ typedef struct group *Gaim__Group;
 #include "desktopitem.h"
 #include "eventloop.h"
 #include "ft.h"
-#ifdef GAIM_GTKPERL
+#ifdef PURPLE_GTKPERL
 #include "gtkaccount.h"
 #include "gtkblist.h"
 #include "gtkconn.h"
@@ -61,218 +61,218 @@ typedef struct group *Gaim__Group;
 #include "xmlnode.h"
 
 /* account.h */
-typedef GaimAccount *			Gaim__Account;
-typedef GaimAccountOption *		Gaim__Account__Option;
-typedef GaimAccountUiOps *		Gaim__Account__UiOps;
-typedef GaimAccountUserSplit *		Gaim__Account__UserSplit;
+typedef PurpleAccount *			Purple__Account;
+typedef PurpleAccountOption *		Purple__Account__Option;
+typedef PurpleAccountUiOps *		Purple__Account__UiOps;
+typedef PurpleAccountUserSplit *		Purple__Account__UserSplit;
 
 /* blist.h */
-typedef GaimBlistNode *			Gaim__BuddyList__Node;
-typedef GaimBlistNodeFlags		Gaim__BuddyList__NodeFlags;
-typedef GaimBlistUiOps *		Gaim__BuddyList__UiOps;
-typedef GaimBuddyList *			Gaim__BuddyList;
-typedef GaimBuddy *			Gaim__BuddyList__Buddy;
-typedef GaimChat *			Gaim__BuddyList__Chat;
-typedef GaimContact *			Gaim__BuddyList__Contact;
-typedef GaimGroup *			Gaim__BuddyList__Group;
+typedef PurpleBlistNode *			Purple__BuddyList__Node;
+typedef PurpleBlistNodeFlags		Purple__BuddyList__NodeFlags;
+typedef PurpleBlistUiOps *		Purple__BuddyList__UiOps;
+typedef PurpleBuddyList *			Purple__BuddyList;
+typedef PurpleBuddy *			Purple__BuddyList__Buddy;
+typedef PurpleChat *			Purple__BuddyList__Chat;
+typedef PurpleContact *			Purple__BuddyList__Contact;
+typedef PurpleGroup *			Purple__BuddyList__Group;
 
 /* buddyicon.h */
-typedef GaimBuddyIcon *			Gaim__Buddy__Icon;
+typedef PurpleBuddyIcon *			Purple__Buddy__Icon;
 
 /* cipher.h */
-typedef GaimCipher *			Gaim__Cipher;
-typedef GaimCipherCaps			Gaim__CipherCaps;
-typedef GaimCipherContext *		Gaim__Cipher__Context;
-typedef GaimCipherOps *			Gaim__Cipher__Ops;
+typedef PurpleCipher *			Purple__Cipher;
+typedef PurpleCipherCaps			Purple__CipherCaps;
+typedef PurpleCipherContext *		Purple__Cipher__Context;
+typedef PurpleCipherOps *			Purple__Cipher__Ops;
 
 /* cmds.h */
-typedef GaimCmdFlag			Gaim__Cmd__Flag;
-typedef GaimCmdId			Gaim__Cmd__Id;
-typedef GaimCmdPriority			Gaim__Cmd__Priority;
-typedef GaimCmdRet			Gaim__Cmd__Ret;
+typedef PurpleCmdFlag			Purple__Cmd__Flag;
+typedef PurpleCmdId			Purple__Cmd__Id;
+typedef PurpleCmdPriority			Purple__Cmd__Priority;
+typedef PurpleCmdRet			Purple__Cmd__Ret;
 
 /* connection.h */
-typedef GaimConnection *		Gaim__Connection;
-typedef GaimConnectionFlags		Gaim__ConnectionFlags;
-typedef GaimConnectionState		Gaim__ConnectionState;
-typedef GaimConnectionUiOps *		Gaim__Connection__UiOps;
+typedef PurpleConnection *		Purple__Connection;
+typedef PurpleConnectionFlags		Purple__ConnectionFlags;
+typedef PurpleConnectionState		Purple__ConnectionState;
+typedef PurpleConnectionUiOps *		Purple__Connection__UiOps;
 
 /* conversation.h */
-typedef GaimConversationType		Gaim__ConversationType;
-typedef GaimConvUpdateType		Gaim__ConvUpdateType;
-typedef GaimTypingState			Gaim__TypingState;
-typedef GaimMessageFlags		Gaim__MessageFlags;
-typedef GaimConvChatBuddyFlags		Gaim__ConvChatBuddyFlags;
-typedef GaimConversation *		Gaim__Conversation;
-typedef GaimConversationUiOps *		Gaim__Conversation__UiOps;
-typedef GaimConvIm *			Gaim__Conversation__IM;
-typedef GaimConvChat *			Gaim__Conversation__Chat;
-typedef GaimConvChatBuddy *		Gaim__Conversation__ChatBuddy;
+typedef PurpleConversationType		Purple__ConversationType;
+typedef PurpleConvUpdateType		Purple__ConvUpdateType;
+typedef PurpleTypingState			Purple__TypingState;
+typedef PurpleMessageFlags		Purple__MessageFlags;
+typedef PurpleConvChatBuddyFlags		Purple__ConvChatBuddyFlags;
+typedef PurpleConversation *		Purple__Conversation;
+typedef PurpleConversationUiOps *		Purple__Conversation__UiOps;
+typedef PurpleConvIm *			Purple__Conversation__IM;
+typedef PurpleConvChat *			Purple__Conversation__Chat;
+typedef PurpleConvChatBuddy *		Purple__Conversation__ChatBuddy;
 
 /* core.h */
 
-typedef GaimCore *			Gaim__Core;
-typedef GaimCoreUiOps *		Gaim__Core__UiOps;
+typedef PurpleCore *			Purple__Core;
+typedef PurpleCoreUiOps *		Purple__Core__UiOps;
 
 /* debug.h */
-typedef GaimDebugLevel			Gaim__DebugLevel;
+typedef PurpleDebugLevel			Purple__DebugLevel;
 
 /* desktopitem.h */
-typedef GaimDesktopItem *		Gaim__DesktopItem;
-typedef GaimDesktopItemType		Gaim__DesktopItemType;
+typedef PurpleDesktopItem *		Purple__DesktopItem;
+typedef PurpleDesktopItemType		Purple__DesktopItemType;
 
 /* eventloop.h */
-typedef GaimInputCondition *		Gaim__InputCondition;
-typedef GaimEventLoopUiOps *		Gaim__EventLoopUiOps;
+typedef PurpleInputCondition *		Purple__InputCondition;
+typedef PurpleEventLoopUiOps *		Purple__EventLoopUiOps;
 
 /* ft.h */
-typedef GaimXfer *			Gaim__Xfer;
-typedef GaimXferType			Gaim__XferType;
-typedef GaimXferStatusType		Gaim__XferStatusType;
-typedef GaimXferUiOps *			Gaim__XferUiOps;
+typedef PurpleXfer *			Purple__Xfer;
+typedef PurpleXferType			Purple__XferType;
+typedef PurpleXferStatusType		Purple__XferStatusType;
+typedef PurpleXferUiOps *			Purple__XferUiOps;
 
-#ifdef GAIM_GTKPERL
+#ifdef PURPLE_GTKPERL
 /* gtkblish.h */
-typedef GaimGtkBuddyList *		Gaim__GTK__BuddyList;
-typedef GaimStatusIconSize		Gaim__StatusIconSize;
+typedef PurpleGtkBuddyList *		Purple__GTK__BuddyList;
+typedef PurpleStatusIconSize		Purple__StatusIconSize;
 
 /* gtkutils.h */
-typedef GaimButtonOrientation		Gaim__ButtonOrientation;
-typedef GaimButtonStyle			Gaim__ButtonStyle;
+typedef PurpleButtonOrientation		Purple__ButtonOrientation;
+typedef PurpleButtonStyle			Purple__ButtonStyle;
 #ifndef _WIN32
-typedef GaimBrowserPlace		Gaim__BrowserPlace;
+typedef PurpleBrowserPlace		Purple__BrowserPlace;
 #endif /* _WIN32 */
 
 /* gtkconv.h */
-typedef GaimUnseenState			Gaim__UnseenState;
-typedef GaimGtkConversation *		Gaim__GTK__Conversation;
-typedef GdkPixbuf *			Gaim__GDK__Pixbuf;
-typedef GtkWidget *			Gaim__GTK__Widget;
+typedef PurpleUnseenState			Purple__UnseenState;
+typedef PurpleGtkConversation *		Purple__GTK__Conversation;
+typedef GdkPixbuf *			Purple__GDK__Pixbuf;
+typedef GtkWidget *			Purple__GTK__Widget;
 
 /* gtkutils.h */
-typedef GtkFileSelection *		Gaim__GTK__FileSelection;
-typedef GtkSelectionData *		Gaim__GTK__SelectionData;
-typedef GtkTextView *			Gaim__GTK__TextView;
+typedef GtkFileSelection *		Purple__GTK__FileSelection;
+typedef GtkSelectionData *		Purple__GTK__SelectionData;
+typedef GtkTextView *			Purple__GTK__TextView;
 
 /* gtkconn.h */
 #endif
 
 /* imgstore.h */
-typedef GaimStoredImage *		Gaim__StoredImage;
+typedef PurpleStoredImage *		Purple__StoredImage;
 
 /* log.h */
-typedef GaimLog *			Gaim__Log;
-typedef GaimLogCommonLoggerData *	Gaim__LogCommonLoggerData;
-typedef GaimLogLogger *			Gaim__Log__Logger;
-typedef GaimLogReadFlags *		Gaim__Log__ReadFlags;
-typedef GaimLogSet *			Gaim__LogSet;
-typedef GaimLogType			Gaim__LogType;
+typedef PurpleLog *			Purple__Log;
+typedef PurpleLogCommonLoggerData *	Purple__LogCommonLoggerData;
+typedef PurpleLogLogger *			Purple__Log__Logger;
+typedef PurpleLogReadFlags *		Purple__Log__ReadFlags;
+typedef PurpleLogSet *			Purple__LogSet;
+typedef PurpleLogType			Purple__LogType;
 
 /* network.h */
-typedef GaimNetworkListenData *		Gaim__NetworkListenData;
-typedef GaimNetworkListenCallback	Gaim__NetworkListenCallback;
+typedef PurpleNetworkListenData *		Purple__NetworkListenData;
+typedef PurpleNetworkListenCallback	Purple__NetworkListenCallback;
 
 /* notify.h */
-typedef GaimNotifyCloseCallback		Gaim__NotifyCloseCallback;
-typedef GaimNotifyMsgType		Gaim__NotifyMsgType;
-typedef GaimNotifySearchButtonType	Gaim__NotifySearchButtonType;
-typedef GaimNotifySearchResults *	Gaim__NotifySearchResults;
-typedef GaimNotifySearchColumn *	Gaim__NotifySearchColumn;
-typedef GaimNotifySearchButton *	Gaim__NotifySearchButton;
-typedef GaimNotifyType			Gaim__NotifyType;
-typedef GaimNotifyUiOps *		Gaim__NotifyUiOps;
-typedef GaimNotifyUserInfo *	Gaim__NotifyUserInfo;
-typedef GaimNotifyUserInfoEntry *	Gaim__NotifyUserInfoEntry;
+typedef PurpleNotifyCloseCallback		Purple__NotifyCloseCallback;
+typedef PurpleNotifyMsgType		Purple__NotifyMsgType;
+typedef PurpleNotifySearchButtonType	Purple__NotifySearchButtonType;
+typedef PurpleNotifySearchResults *	Purple__NotifySearchResults;
+typedef PurpleNotifySearchColumn *	Purple__NotifySearchColumn;
+typedef PurpleNotifySearchButton *	Purple__NotifySearchButton;
+typedef PurpleNotifyType			Purple__NotifyType;
+typedef PurpleNotifyUiOps *		Purple__NotifyUiOps;
+typedef PurpleNotifyUserInfo *	Purple__NotifyUserInfo;
+typedef PurpleNotifyUserInfoEntry *	Purple__NotifyUserInfoEntry;
 
 /* plugin.h */
-typedef GaimPlugin *			Gaim__Plugin;
-typedef GaimPluginAction *		Gaim__Plugin__Action;
-typedef GaimPluginInfo *		Gaim__PluginInfo;
-typedef GaimPluginLoaderInfo *		Gaim__PluginLoaderInfo;
-typedef GaimPluginType			Gaim__PluginType;
-typedef GaimPluginUiInfo *		Gaim__PluginUiInfo;
+typedef PurplePlugin *			Purple__Plugin;
+typedef PurplePluginAction *		Purple__Plugin__Action;
+typedef PurplePluginInfo *		Purple__PluginInfo;
+typedef PurplePluginLoaderInfo *		Purple__PluginLoaderInfo;
+typedef PurplePluginType			Purple__PluginType;
+typedef PurplePluginUiInfo *		Purple__PluginUiInfo;
 
 /* pluginpref.h */
-typedef GaimPluginPref *		Gaim__PluginPref;
-typedef GaimPluginPrefFrame *		Gaim__PluginPref__Frame;
-typedef GaimPluginPrefType		Gaim__PluginPrefType;
+typedef PurplePluginPref *		Purple__PluginPref;
+typedef PurplePluginPrefFrame *		Purple__PluginPref__Frame;
+typedef PurplePluginPrefType		Purple__PluginPrefType;
 
 /* pounce.h */
-typedef GaimPounce *			Gaim__Pounce;
-typedef GaimPounceEvent			Gaim__PounceEvent;
+typedef PurplePounce *			Purple__Pounce;
+typedef PurplePounceEvent			Purple__PounceEvent;
 
 /* prefs.h */
-typedef GaimPrefType			Gaim__PrefType;
+typedef PurplePrefType			Purple__PrefType;
 
 /* privacy.h */
-typedef GaimPrivacyType			Gaim__PrivacyType;
-typedef GaimPrivacyUiOps *		Gaim__Privacy__UiOps;
+typedef PurplePrivacyType			Purple__PrivacyType;
+typedef PurplePrivacyUiOps *		Purple__Privacy__UiOps;
 
 /* proxy.h */
-typedef GaimProxyInfo *			Gaim__ProxyInfo;
-typedef GaimProxyType			Gaim__ProxyType;
+typedef PurpleProxyInfo *			Purple__ProxyInfo;
+typedef PurpleProxyType			Purple__ProxyType;
 
 /* prpl.h */
-typedef GaimBuddyIconSpec *		Gaim__Buddy__Icon__Spec;
-typedef GaimIconScaleRules		Gaim__IconScaleRules;
-typedef GaimPluginProtocolInfo *	Gaim__PluginProtocolInfo;
-typedef GaimProtocolOptions		Gaim__ProtocolOptions;
+typedef PurpleBuddyIconSpec *		Purple__Buddy__Icon__Spec;
+typedef PurpleIconScaleRules		Purple__IconScaleRules;
+typedef PurplePluginProtocolInfo *	Purple__PluginProtocolInfo;
+typedef PurpleProtocolOptions		Purple__ProtocolOptions;
 
 /* request.h */
-typedef GaimRequestField *		Gaim__Request__Field;
-typedef GaimRequestFields *		Gaim__Request__Fields;
-typedef GaimRequestFieldGroup *		Gaim__Request__Field__Group;
-typedef GaimRequestFieldType		Gaim__RequestFieldType;
-typedef GaimRequestType			Gaim__RequestType;
-typedef GaimRequestUiOps *		Gaim__Request__UiOps;
+typedef PurpleRequestField *		Purple__Request__Field;
+typedef PurpleRequestFields *		Purple__Request__Fields;
+typedef PurpleRequestFieldGroup *		Purple__Request__Field__Group;
+typedef PurpleRequestFieldType		Purple__RequestFieldType;
+typedef PurpleRequestType			Purple__RequestType;
+typedef PurpleRequestUiOps *		Purple__Request__UiOps;
 
 /* roomlist.h */
-typedef GaimRoomlist *			Gaim__Roomlist;
-typedef GaimRoomlistField *		Gaim__Roomlist__Field;
-typedef GaimRoomlistFieldType		Gaim__RoomlistFieldType;
-typedef GaimRoomlistRoom *		Gaim__Roomlist__Room;
-typedef GaimRoomlistRoomType		Gaim__RoomlistRoomType;
-typedef GaimRoomlistUiOps *		Gaim__Roomlist__UiOps;
+typedef PurpleRoomlist *			Purple__Roomlist;
+typedef PurpleRoomlistField *		Purple__Roomlist__Field;
+typedef PurpleRoomlistFieldType		Purple__RoomlistFieldType;
+typedef PurpleRoomlistRoom *		Purple__Roomlist__Room;
+typedef PurpleRoomlistRoomType		Purple__RoomlistRoomType;
+typedef PurpleRoomlistUiOps *		Purple__Roomlist__UiOps;
 
 /* savedstatuses.h */
-typedef GaimSavedStatus *		Gaim__SavedStatus;
-typedef GaimSavedStatusSub *		Gaim__SavedStatusSub;
+typedef PurpleSavedStatus *		Purple__SavedStatus;
+typedef PurpleSavedStatusSub *		Purple__SavedStatusSub;
 
 /* sound.h */
-typedef GaimSoundEventID		Gaim__SoundEventID;
-typedef GaimSoundUiOps *		Gaim__Sound__UiOps;
+typedef PurpleSoundEventID		Purple__SoundEventID;
+typedef PurpleSoundUiOps *		Purple__Sound__UiOps;
 
 /* sslconn.h */
-typedef GaimInputCondition *		Gaim__Input__Condition;
-typedef GaimSslConnection *		Gaim__Ssl__Connection;
-typedef GaimSslErrorType		Gaim__SslErrorType;
-typedef GaimSslOps *			Gaim__Ssl__Ops;
+typedef PurpleInputCondition *		Purple__Input__Condition;
+typedef PurpleSslConnection *		Purple__Ssl__Connection;
+typedef PurpleSslErrorType		Purple__SslErrorType;
+typedef PurpleSslOps *			Purple__Ssl__Ops;
 
 /* status.h */
-typedef GaimPresence *			Gaim__Presence;
-typedef GaimPresenceContext		Gaim__PresenceContext;
-typedef GaimStatus *			Gaim__Status;
-typedef GaimStatusAttr *		Gaim__StatusAttr;
-typedef GaimStatusPrimitive		Gaim__StatusPrimitive;
-typedef GaimStatusType *		Gaim__StatusType;
+typedef PurplePresence *			Purple__Presence;
+typedef PurplePresenceContext		Purple__PresenceContext;
+typedef PurpleStatus *			Purple__Status;
+typedef PurpleStatusAttr *		Purple__StatusAttr;
+typedef PurpleStatusPrimitive		Purple__StatusPrimitive;
+typedef PurpleStatusType *		Purple__StatusType;
 
 /* stringref.h */
-typedef GaimStringref *			Gaim__Stringref;
+typedef PurpleStringref *			Purple__Stringref;
 
 /* util.h */
-typedef GaimInfoFieldFormatCallback	Gaim__Util__InfoFieldFormatCallback;
-typedef GaimUtilFetchUrlData	Gaim__Util__FetchUrlData;
-typedef GaimMenuAction *		Gaim__Menu__Action;
+typedef PurpleInfoFieldFormatCallback	Purple__Util__InfoFieldFormatCallback;
+typedef PurpleUtilFetchUrlData	Purple__Util__FetchUrlData;
+typedef PurpleMenuAction *		Purple__Menu__Action;
 
 /* value.h */
-typedef GaimValue *			Gaim__Value;
+typedef PurpleValue *			Purple__Value;
 
 /* xmlnode.h */
-typedef xmlnode *			Gaim__XMLNode;
+typedef xmlnode *			Purple__XMLNode;
 typedef XMLNodeType			XMLNode__Type;
 
 /* other */
-typedef void *				Gaim__Handle;
+typedef void *				Purple__Handle;
 
 typedef gchar gchar_own;
 

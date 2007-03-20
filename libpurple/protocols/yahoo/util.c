@@ -1,5 +1,5 @@
 /*
- * gaim
+ * purple
  *
  * Some code copyright 2003 Tim Ringenbach <omarvo@hotmail.com>
  * (marv on irc.freenode.net)
@@ -44,7 +44,7 @@
  *             it is not dereferenced.
  * @return The g_malloced string in the appropriate encoding.
  */
-char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8)
+char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	char *ret;
@@ -59,7 +59,7 @@ char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8)
 	if (yd->jp)
 		to_codeset = "SHIFT_JIS";
 	else
-		to_codeset = gaim_account_get_string(gaim_connection_get_account(gc), "local_charset",  "ISO-8859-1");
+		to_codeset = purple_account_get_string(purple_connection_get_account(gc), "local_charset",  "ISO-8859-1");
 
 	ret = g_convert_with_fallback(str, strlen(str), to_codeset, "UTF-8", "?", NULL, NULL, NULL);
 	if (ret)
@@ -76,7 +76,7 @@ char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8)
  * @param utf8 Did the server tell us it was supposed to be utf8?
  * @return The decoded, utf-8 string, which must be g_free()'d.
  */
-char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8)
+char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	char *ret;
@@ -90,7 +90,7 @@ char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8)
 	if (yd->jp)
 		from_codeset = "SHIFT_JIS";
 	else
-		from_codeset = gaim_account_get_string(gaim_connection_get_account(gc), "local_charset",  "ISO-8859-1");
+		from_codeset = purple_account_get_string(purple_connection_get_account(gc), "local_charset",  "ISO-8859-1");
 
 	ret = g_convert_with_fallback(str, strlen(str), "UTF-8", from_codeset, NULL, NULL, NULL, NULL);
 
@@ -147,7 +147,7 @@ void yahoo_init_colorht()
 	g_hash_table_insert(ht, "x4", "</U>");
 
 	/* these just tell us the text they surround is supposed
-	 * to be a link. gaim figures that out on its own so we
+	 * to be a link. purple figures that out on its own so we
 	 * just ignore it.
 	 */
 	g_hash_table_insert(ht, "l", ""); /* link start */
@@ -266,7 +266,7 @@ char *yahoo_codes_to_html(const char *x)
 					else if ((match = (char *) g_hash_table_lookup(ht, tmp->str)))
 						g_string_append(s, match);
 					else {
-						gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
+						purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
 							"Unknown ansi code 'ESC[%sm'.\n", tmp->str);
 						g_string_free(tmp, TRUE);
 						break;
@@ -335,7 +335,7 @@ char *yahoo_codes_to_html(const char *x)
 
 	ret = s->str;
 	g_string_free(s, FALSE);
-	gaim_debug(GAIM_DEBUG_MISC, "yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", ret);
+	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "yahoo_codes_to_html:  Returning string: '%s'.\n", ret);
 	return ret;
 }
 
@@ -717,7 +717,7 @@ char *yahoo_html_to_codes(const char *src)
 	g_string_free(dest, FALSE);
 
 	esc = g_strescape(ret, NULL);
-	gaim_debug(GAIM_DEBUG_MISC, "yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
+	purple_debug(PURPLE_DEBUG_MISC, "yahoo", "yahoo_html_to_codes:  Returning string: '%s'.\n", esc);
 	g_free(esc);
 
 	yahoo_htc_queue_cleanup(colors);

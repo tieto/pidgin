@@ -1,8 +1,8 @@
 $MODULE_NAME = "Buddy List Test";
 
-use Gaim;
+use Purple;
 
-# All the information Gaim gets about our nifty plugin
+# All the information Purple gets about our nifty plugin
 %PLUGIN_INFO = (
 	perl_api_version => 2,
 	name => "Perl: $MODULE_NAME",
@@ -39,49 +39,49 @@ sub plugin_load {
 
 	# This is how we get an account to use in the following tests.  You should replace the username
 	#  with an existing user
-	$account = Gaim::Accounts::find($USERNAME, $PROTOCOL_ID);
+	$account = Purple::Accounts::find($USERNAME, $PROTOCOL_ID);
 
-	# Testing a find function: Note Gaim::Find not Gaim::Buddy:find!
+	# Testing a find function: Note Purple::Find not Purple::Buddy:find!
 	#  Furthermore, this should work the same for chats and groups
-	Gaim::Debug::info($MODULE_NAME, "Testing: Gaim::Find::buddy()...");
-	$buddy = Gaim::Find::buddy($account, $TEST_NAME);
-	Gaim::Debug::info("", ($buddy ? "ok." : "fail.") . "\n");
+	Purple::Debug::info($MODULE_NAME, "Testing: Purple::Find::buddy()...");
+	$buddy = Purple::Find::buddy($account, $TEST_NAME);
+	Purple::Debug::info("", ($buddy ? "ok." : "fail.") . "\n");
 
 	# If you should need the handle for some reason, here is how you do it
-	Gaim::Debug::info($MODULE_NAME, "Testing: Gaim::BuddyList::get_handle()...");
-	$handle = Gaim::BuddyList::get_handle();
-	Gaim::Debug::info("", ($handle ? "ok." : "fail.") . "\n");
+	Purple::Debug::info($MODULE_NAME, "Testing: Purple::BuddyList::get_handle()...");
+	$handle = Purple::BuddyList::get_handle();
+	Purple::Debug::info("", ($handle ? "ok." : "fail.") . "\n");
 
-	# This gets the Gaim::BuddyList and references it by $blist
-	Gaim::Debug::info($MODULE_NAME, "Testing: Gaim::get_blist()...");
-	$blist = Gaim::get_blist();
-	Gaim::Debug::info("", ($blist ? "ok." : "fail.") . "\n");
+	# This gets the Purple::BuddyList and references it by $blist
+	Purple::Debug::info($MODULE_NAME, "Testing: Purple::get_blist()...");
+	$blist = Purple::get_blist();
+	Purple::Debug::info("", ($blist ? "ok." : "fail.") . "\n");
 
 	# This is how you would add a buddy named $TEST_NAME" with the alias $TEST_ALIAS
-	Gaim::Debug::info($MODULE_NAME, "Testing: Gaim::BuddyList::Buddy::new...");
-	$buddy = Gaim::BuddyList::Buddy::new($account, $TEST_NAME, $TEST_ALIAS);
-	Gaim::Debug::info("", ($buddy ? "ok." : "fail.") . "\n");
+	Purple::Debug::info($MODULE_NAME, "Testing: Purple::BuddyList::Buddy::new...");
+	$buddy = Purple::BuddyList::Buddy::new($account, $TEST_NAME, $TEST_ALIAS);
+	Purple::Debug::info("", ($buddy ? "ok." : "fail.") . "\n");
 
 	# Here we add the new buddy '$buddy' to the group $TEST_GROUP
 	#  so first we must find the group
-	Gaim::Debug::info($MODULE_NAME, "Testing: Gaim::Find::group...");
-	$group = Gaim::Find::group($TEST_GROUP);
-	Gaim::Debug::info("", ($group ? "ok." : "fail.") . "\n");
+	Purple::Debug::info($MODULE_NAME, "Testing: Purple::Find::group...");
+	$group = Purple::Find::group($TEST_GROUP);
+	Purple::Debug::info("", ($group ? "ok." : "fail.") . "\n");
 
 	# To add the buddy we need to have the buddy, contact, group and node for insertion.
 	#  For this example we can let contact be undef and set the insertion node as the group
-	Gaim::Debug::info($MODULE_NAME, "Testing: Gaim::BuddyList::add_buddy...\n");
-	Gaim::BuddyList::add_buddy($buddy, undef, $group, $group);
+	Purple::Debug::info($MODULE_NAME, "Testing: Purple::BuddyList::add_buddy...\n");
+	Purple::BuddyList::add_buddy($buddy, undef, $group, $group);
 
 	# The example that follows gives an indication of how an API call that returns a list is handled.
 	#  In this case the buddies of the account found earlier are retrieved and put in an array '@buddy_array'
 	#  Further down an accessor method is used, 'get_name()' -- see source for details on the full set of methods
-	Gaim::Debug::info($MODULE_NAME,  "Testing: Gaim::Find::buddies...\n");
-	@buddy_array = Gaim::Find::buddies($account, undef);
+	Purple::Debug::info($MODULE_NAME,  "Testing: Purple::Find::buddies...\n");
+	@buddy_array = Purple::Find::buddies($account, undef);
 	if (@buddy_array) {
-		Gaim::Debug::info($MODULE_NAME, "Buddies in list (" . @buddy_array . "): \n");
+		Purple::Debug::info($MODULE_NAME, "Buddies in list (" . @buddy_array . "): \n");
 		foreach $bud (@buddy_array) {
-			Gaim::Debug::info($MODULE_NAME, Gaim::BuddyList::Buddy::get_name($bud) . "\n");
+			Purple::Debug::info($MODULE_NAME, Purple::BuddyList::Buddy::get_name($bud) . "\n");
 		}
 	}
 }
@@ -92,13 +92,13 @@ sub plugin_unload {
 	print "#" x 80 . "\n\n";
 	#########  TEST CODE HERE  ##########
 
-	print "Testing: Gaim::Find::buddy()...";
-	$buddy = Gaim::Find::buddy($account, $TEST_NAME . TEST);
+	print "Testing: Purple::Find::buddy()...";
+	$buddy = Purple::Find::buddy($account, $TEST_NAME . TEST);
 	if ($buddy) {
 		print "ok.\n";
-		print "Testing: Gaim::BuddyList::remove_buddy()...";
-		Gaim::BuddyList::remove_buddy($buddy);
-		if (Gaim::Find::buddy($account, $TEST_NAME . TEST)) { print "fail.\n"; } else { print "ok.\n"; }
+		print "Testing: Purple::BuddyList::remove_buddy()...";
+		Purple::BuddyList::remove_buddy($buddy);
+		if (Purple::Find::buddy($account, $TEST_NAME . TEST)) { print "fail.\n"; } else { print "ok.\n"; }
 	} else { print "fail.\n"; }
 
 

@@ -1,9 +1,9 @@
 /**
  * @file httpmethod.c HTTP connection method
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -74,7 +74,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	g_return_val_if_fail(error    != NULL, FALSE);
 
 #if 0
-	gaim_debug_info("msn", "HTTP: parsing data {%s}\n", buf);
+	purple_debug_info("msn", "HTTP: parsing data {%s}\n", buf);
 #endif
 
 	/* Healthy defaults. */
@@ -125,7 +125,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	body_start = s;
 	body_len = size - (body_start - buf);
 
-	if ((s = gaim_strcasestr(header, "Content-Length: ")) != NULL)
+	if ((s = purple_strcasestr(header, "Content-Length: ")) != NULL)
 	{
 		int tmp_len;
 
@@ -149,7 +149,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 			g_free(header);
 
 #if 0
-			gaim_debug_warning("msn",
+			purple_debug_warning("msn",
 							   "body length (%d) != content length (%d)\n",
 							   body_len, tmp_len);
 #endif
@@ -162,12 +162,12 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 	memcpy(body, body_start, body_len);
 
 #ifdef MSN_DEBUG_HTTP
-	gaim_debug_misc("msn", "Incoming HTTP buffer (header): {%s\r\n}\n",
+	purple_debug_misc("msn", "Incoming HTTP buffer (header): {%s\r\n}\n",
 					header);
 #endif
 
 	/* Now we should be able to process the data. */
-	if ((s = gaim_strcasestr(header, "X-MSN-Messenger: ")) != NULL)
+	if ((s = purple_strcasestr(header, "X-MSN-Messenger: ")) != NULL)
 	{
 		char *full_session_id, *gw_ip, *session_action;
 		char *t, *session_id;
@@ -181,7 +181,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 		{
 			msn_session_set_error(httpconn->session,
 								  MSN_ERROR_HTTP_MALFORMED, NULL);
-			gaim_debug_error("msn", "Malformed X-MSN-Messenger field.\n{%s}",
+			purple_debug_error("msn", "Malformed X-MSN-Messenger field.\n{%s}",
 							 buf);
 
 			g_free(body);
@@ -264,7 +264,7 @@ msn_httpconn_parse_data(MsnHttpConn *httpconn, const char *buf,
 }
 
 static void
-read_cb(gpointer data, gint source, GaimInputCondition cond)
+read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnHttpConn *httpconn;
 	MsnServConn *servconn;
@@ -286,7 +286,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	else if (len <= 0)
 	{
-		gaim_debug_error("msn", "HTTP: Read error\n");
+		purple_debug_error("msn", "HTTP: Read error\n");
 		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;
@@ -314,7 +314,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	if (error)
 	{
-		gaim_debug_error("msn", "HTTP: Special error\n");
+		purple_debug_error("msn", "HTTP: Special error\n");
 		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_READ);
 
 		return;
@@ -328,7 +328,7 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	{
 		/* Nothing to do here */
 #if 0
-		gaim_debug_info("msn", "HTTP: nothing to do here\n");
+		purple_debug_info("msn", "HTTP: nothing to do here\n");
 #endif
 		g_free(result_msg);
 		return;
@@ -398,17 +398,17 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-httpconn_write_cb(gpointer data, gint source, GaimInputCondition cond)
+httpconn_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnHttpConn *httpconn;
 	int ret, writelen;
 
 	httpconn = data;
-	writelen = gaim_circ_buffer_get_max_read(httpconn->tx_buf);
+	writelen = purple_circ_buffer_get_max_read(httpconn->tx_buf);
 
 	if (writelen == 0)
 	{
-		gaim_input_remove(httpconn->tx_handler);
+		purple_input_remove(httpconn->tx_handler);
 		httpconn->tx_handler = 0;
 		return;
 	}
@@ -425,7 +425,7 @@ httpconn_write_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	gaim_circ_buffer_mark_read(httpconn->tx_buf, ret);
+	purple_circ_buffer_mark_read(httpconn->tx_buf, ret);
 
 	/* TODO: I don't think these 2 lines are needed.  Remove them? */
 	if (ret == writelen)
@@ -456,9 +456,9 @@ write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
 		if (res < 0)
 			res = 0;
 		if (httpconn->tx_handler == 0 && httpconn->fd)
-			httpconn->tx_handler = gaim_input_add(httpconn->fd,
-				GAIM_INPUT_WRITE, httpconn_write_cb, httpconn);
-		gaim_circ_buffer_append(httpconn->tx_buf, data + res,
+			httpconn->tx_handler = purple_input_add(httpconn->fd,
+				PURPLE_INPUT_WRITE, httpconn_write_cb, httpconn);
+		purple_circ_buffer_append(httpconn->tx_buf, data + res,
 			data_len - res);
 	}
 
@@ -468,26 +468,26 @@ write_raw(MsnHttpConn *httpconn, const char *data, size_t data_len)
 static char *
 msn_httpconn_proxy_auth(MsnHttpConn *httpconn)
 {
-	GaimAccount *account;
-	GaimProxyInfo *gpi;
+	PurpleAccount *account;
+	PurpleProxyInfo *gpi;
 	const char *username, *password;
 	char *auth = NULL;
 
 	account = httpconn->session->account;
 
-	gpi = gaim_proxy_get_setup(account);
+	gpi = purple_proxy_get_setup(account);
 
-	if (gpi == NULL || !(gaim_proxy_info_get_type(gpi) == GAIM_PROXY_HTTP ||
-						 gaim_proxy_info_get_type(gpi) == GAIM_PROXY_USE_ENVVAR))
+	if (gpi == NULL || !(purple_proxy_info_get_type(gpi) == PURPLE_PROXY_HTTP ||
+						 purple_proxy_info_get_type(gpi) == PURPLE_PROXY_USE_ENVVAR))
 		return NULL;
 
-	username = gaim_proxy_info_get_username(gpi);
-	password = gaim_proxy_info_get_password(gpi);
+	username = purple_proxy_info_get_username(gpi);
+	password = purple_proxy_info_get_password(gpi);
 
 	if (username != NULL) {
 		char *tmp;
 		auth = g_strdup_printf("%s:%s", username, password ? password : "");
-		tmp = gaim_base64_encode((const guchar *)auth, strlen(auth));
+		tmp = purple_base64_encode((const guchar *)auth, strlen(auth));
 		g_free(auth);
 		auth = g_strdup_printf("Proxy-Authorization: Basic %s\r\n", tmp);
 		g_free(tmp);
@@ -600,7 +600,7 @@ msn_httpconn_write(MsnHttpConn *httpconn, const char *body, size_t body_len)
 
 		if (host == NULL || httpconn->full_session_id == NULL)
 		{
-			gaim_debug_warning("msn", "Attempted HTTP write before session is established\n");
+			purple_debug_warning("msn", "Attempted HTTP write before session is established\n");
 			return -1;
 		}
 
@@ -653,14 +653,14 @@ msn_httpconn_new(MsnServConn *servconn)
 
 	httpconn = g_new0(MsnHttpConn, 1);
 
-	gaim_debug_info("msn", "new httpconn (%p)\n", httpconn);
+	purple_debug_info("msn", "new httpconn (%p)\n", httpconn);
 
 	/* TODO: Remove this */
 	httpconn->session = servconn->session;
 
 	httpconn->servconn = servconn;
 
-	httpconn->tx_buf = gaim_circ_buffer_new(MSN_BUF_LEN);
+	httpconn->tx_buf = purple_circ_buffer_new(MSN_BUF_LEN);
 	httpconn->tx_handler = 0;
 
 	return httpconn;
@@ -671,7 +671,7 @@ msn_httpconn_destroy(MsnHttpConn *httpconn)
 {
 	g_return_if_fail(httpconn != NULL);
 
-	gaim_debug_info("msn", "destroy httpconn (%p)\n", httpconn);
+	purple_debug_info("msn", "destroy httpconn (%p)\n", httpconn);
 
 	if (httpconn->connected)
 		msn_httpconn_disconnect(httpconn);
@@ -682,9 +682,9 @@ msn_httpconn_destroy(MsnHttpConn *httpconn)
 
 	g_free(httpconn->host);
 
-	gaim_circ_buffer_destroy(httpconn->tx_buf);
+	purple_circ_buffer_destroy(httpconn->tx_buf);
 	if (httpconn->tx_handler > 0)
-		gaim_input_remove(httpconn->tx_handler);
+		purple_input_remove(httpconn->tx_handler);
 
 	g_free(httpconn);
 }
@@ -700,16 +700,16 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 
 	if (source >= 0)
 	{
-		httpconn->inpa = gaim_input_add(httpconn->fd, GAIM_INPUT_READ,
+		httpconn->inpa = purple_input_add(httpconn->fd, PURPLE_INPUT_READ,
 			read_cb, data);
 
-		httpconn->timer = gaim_timeout_add(2000, msn_httpconn_poll, httpconn);
+		httpconn->timer = purple_timeout_add(2000, msn_httpconn_poll, httpconn);
 
 		msn_httpconn_process_queue(httpconn);
 	}
 	else
 	{
-		gaim_debug_error("msn", "HTTP: Connection error\n");
+		purple_debug_error("msn", "HTTP: Connection error\n");
 		msn_servconn_got_error(httpconn->servconn, MSN_SERVCONN_ERROR_CONNECT);
 	}
 }
@@ -724,7 +724,7 @@ msn_httpconn_connect(MsnHttpConn *httpconn, const char *host, int port)
 	if (httpconn->connected)
 		msn_httpconn_disconnect(httpconn);
 
-	httpconn->connect_data = gaim_proxy_connect(NULL, httpconn->session->account,
+	httpconn->connect_data = purple_proxy_connect(NULL, httpconn->session->account,
 		"gateway.messenger.hotmail.com", 80, connect_cb, httpconn);
 
 	if (httpconn->connect_data != NULL)
@@ -746,19 +746,19 @@ msn_httpconn_disconnect(MsnHttpConn *httpconn)
 
 	if (httpconn->connect_data != NULL)
 	{
-		gaim_proxy_connect_cancel(httpconn->connect_data);
+		purple_proxy_connect_cancel(httpconn->connect_data);
 		httpconn->connect_data = NULL;
 	}
 
 	if (httpconn->timer)
 	{
-		gaim_timeout_remove(httpconn->timer);
+		purple_timeout_remove(httpconn->timer);
 		httpconn->timer = 0;
 	}
 
 	if (httpconn->inpa > 0)
 	{
-		gaim_input_remove(httpconn->inpa);
+		purple_input_remove(httpconn->inpa);
 		httpconn->inpa = 0;
 	}
 

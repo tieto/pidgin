@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -81,17 +81,17 @@ aim_encode_password(const char *password, guint8 *encoded)
 static int
 aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
 {
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 
-	cipher = gaim_ciphers_find_cipher("md5");
+	cipher = purple_ciphers_find_cipher("md5");
 
-	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, (const guchar *)key, strlen(key));
-	gaim_cipher_context_append(context, (const guchar *)password, strlen(password));
-	gaim_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	gaim_cipher_context_digest(context, 16, digest, NULL);
-	gaim_cipher_context_destroy(context);
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, (const guchar *)key, strlen(key));
+	purple_cipher_context_append(context, (const guchar *)password, strlen(password));
+	purple_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
+	purple_cipher_context_digest(context, 16, digest, NULL);
+	purple_cipher_context_destroy(context);
 
 	return 0;
 }
@@ -99,23 +99,23 @@ aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
 static int
 aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
 {
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 	guchar passdigest[16];
 
-	cipher = gaim_ciphers_find_cipher("md5");
+	cipher = purple_ciphers_find_cipher("md5");
 
-	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, (const guchar *)password, strlen(password));
-	gaim_cipher_context_digest(context, 16, passdigest, NULL);
-	gaim_cipher_context_destroy(context);
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, (const guchar *)password, strlen(password));
+	purple_cipher_context_digest(context, 16, passdigest, NULL);
+	purple_cipher_context_destroy(context);
 
-	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, (const guchar *)key, strlen(key));
-	gaim_cipher_context_append(context, passdigest, 16);
-	gaim_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
-	gaim_cipher_context_digest(context, 16, digest, NULL);
-	gaim_cipher_context_destroy(context);
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, (const guchar *)key, strlen(key));
+	purple_cipher_context_append(context, passdigest, 16);
+	purple_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
+	purple_cipher_context_digest(context, 16, digest, NULL);
+	purple_cipher_context_destroy(context);
 
 	return 0;
 }

@@ -1,9 +1,9 @@
 /**
  * @file group_network.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -52,7 +52,7 @@ typedef struct _group_packet {
 
 const gchar *qq_group_cmd_get_desc(qq_group_cmd cmd);
 
-void qq_send_group_cmd(GaimConnection *gc, qq_group *group, guint8 *raw_data, gint data_len);
-void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *gc);
+void qq_send_group_cmd(PurpleConnection *gc, qq_group *group, guint8 *raw_data, gint data_len);
+void qq_process_group_cmd_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc);
 
 #endif

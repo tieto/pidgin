@@ -1,304 +1,304 @@
 #include "module.h"
 #include "../perl-handlers.h"
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim  PREFIX = gaim_
+MODULE = Purple::BuddyList  PACKAGE = Purple  PREFIX = purple_
 PROTOTYPES: ENABLE
 
-Gaim::BuddyList
-gaim_get_blist()
+Purple::BuddyList
+purple_get_blist()
 
 void
-gaim_set_blist(blist)
-	Gaim::BuddyList blist
+purple_set_blist(blist)
+	Purple::BuddyList blist
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::Find  PREFIX = gaim_find_
+MODULE = Purple::BuddyList  PACKAGE = Purple::Find  PREFIX = purple_find_
 PROTOTYPES: ENABLE
 
-Gaim::BuddyList::Buddy
-gaim_find_buddy(account, name)
-	Gaim::Account account
+Purple::BuddyList::Buddy
+purple_find_buddy(account, name)
+	Purple::Account account
 	const char * name
 
 void
-gaim_find_buddies(account, name)
-	Gaim::Account account
+purple_find_buddies(account, name)
+	Purple::Account account
 	const char * name
 PREINIT:
 	GSList *l;
 PPCODE:
-	for (l = gaim_find_buddies(account, name); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::BuddyList::Buddy")));
+	for (l = purple_find_buddies(account, name); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::BuddyList::Buddy")));
 	}
 
 gboolean
-gaim_group_on_account(group, account)
-	Gaim::BuddyList::Group  group
-	Gaim::Account account
+purple_group_on_account(group, account)
+	Purple::BuddyList::Group  group
+	Purple::Account account
 
-Gaim::BuddyList::Group
-gaim_find_group(name)
+Purple::BuddyList::Group
+purple_find_group(name)
 	const char *name
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList::Contact  PREFIX = gaim_contact_
+MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Contact  PREFIX = purple_contact_
 PROTOTYPES: ENABLE
 
-Gaim::BuddyList::Contact
-gaim_contact_new();
+Purple::BuddyList::Contact
+purple_contact_new();
 
-Gaim::BuddyList::Buddy
-gaim_contact_get_priority_buddy(contact)
-	Gaim::BuddyList::Contact contact
+Purple::BuddyList::Buddy
+purple_contact_get_priority_buddy(contact)
+	Purple::BuddyList::Contact contact
 
 void
-gaim_contact_set_alias(contact, alias)
-	Gaim::BuddyList::Contact contact
+purple_contact_set_alias(contact, alias)
+	Purple::BuddyList::Contact contact
 	const char * alias
 
 const char *
-gaim_contact_get_alias(contact)
-	Gaim::BuddyList::Contact contact
+purple_contact_get_alias(contact)
+	Purple::BuddyList::Contact contact
 
 gboolean
-gaim_contact_on_account(contact, account)
-	Gaim::BuddyList::Contact contact
-	Gaim::Account account
+purple_contact_on_account(contact, account)
+	Purple::BuddyList::Contact contact
+	Purple::Account account
 
 void
-gaim_contact_invalidate_priority_buddy(contact)
-	Gaim::BuddyList::Contact contact
+purple_contact_invalidate_priority_buddy(contact)
+	Purple::BuddyList::Contact contact
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList::Group  PREFIX = gaim_group_
+MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Group  PREFIX = purple_group_
 PROTOTYPES: ENABLE
 
-Gaim::BuddyList::Group
-gaim_group_new(name)
+Purple::BuddyList::Group
+purple_group_new(name)
 	const char *name
 
 void
-gaim_group_get_accounts(group)
-	Gaim::BuddyList::Group  group
+purple_group_get_accounts(group)
+	Purple::BuddyList::Group  group
 PREINIT:
 	GSList *l;
 PPCODE:
-	for (l = gaim_group_get_accounts(group); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Account")));
+	for (l = purple_group_get_accounts(group); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Account")));
 	}
 
 gboolean
-gaim_group_on_account(group, account)
-	Gaim::BuddyList::Group  group
-	Gaim::Account account
+purple_group_on_account(group, account)
+	Purple::BuddyList::Group  group
+	Purple::Account account
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList  PREFIX = gaim_blist_
+MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList  PREFIX = purple_blist_
 PROTOTYPES: ENABLE
 
 void
-gaim_blist_add_contact(contact, group, node)
-	Gaim::BuddyList::Contact contact
-	Gaim::BuddyList::Group  group
-	Gaim::BuddyList::Node node
+purple_blist_add_contact(contact, group, node)
+	Purple::BuddyList::Contact contact
+	Purple::BuddyList::Group  group
+	Purple::BuddyList::Node node
 
 void
-gaim_blist_merge_contact(source, node)
-	Gaim::BuddyList::Contact source
-	Gaim::BuddyList::Node node
+purple_blist_merge_contact(source, node)
+	Purple::BuddyList::Contact source
+	Purple::BuddyList::Node node
 
 void
-gaim_blist_add_group(group, node)
-	Gaim::BuddyList::Group  group
-	Gaim::BuddyList::Node node
+purple_blist_add_group(group, node)
+	Purple::BuddyList::Group  group
+	Purple::BuddyList::Node node
 
 void
-gaim_blist_add_buddy(buddy, contact, group, node)
-	Gaim::BuddyList::Buddy buddy
-	Gaim::BuddyList::Contact contact
-	Gaim::BuddyList::Group  group
-	Gaim::BuddyList::Node node
+purple_blist_add_buddy(buddy, contact, group, node)
+	Purple::BuddyList::Buddy buddy
+	Purple::BuddyList::Contact contact
+	Purple::BuddyList::Group  group
+	Purple::BuddyList::Node node
 
 void
-gaim_blist_remove_buddy(buddy)
-	Gaim::BuddyList::Buddy buddy
+purple_blist_remove_buddy(buddy)
+	Purple::BuddyList::Buddy buddy
 
 void
-gaim_blist_remove_contact(contact)
-	Gaim::BuddyList::Contact contact
+purple_blist_remove_contact(contact)
+	Purple::BuddyList::Contact contact
 
 void
-gaim_blist_remove_chat(chat)
-	Gaim::BuddyList::Chat chat
+purple_blist_remove_chat(chat)
+	Purple::BuddyList::Chat chat
 
 void
-gaim_blist_remove_group(group)
-	Gaim::BuddyList::Group  group
+purple_blist_remove_group(group)
+	Purple::BuddyList::Group  group
 
-Gaim::BuddyList::Chat
-gaim_blist_find_chat(account, name)
-	Gaim::Account account
+Purple::BuddyList::Chat
+purple_blist_find_chat(account, name)
+	Purple::Account account
 	const char *name
 
 void
-gaim_blist_add_chat(chat, group, node)
-	Gaim::BuddyList::Chat chat
-	Gaim::BuddyList::Group  group
-	Gaim::BuddyList::Node node
+purple_blist_add_chat(chat, group, node)
+	Purple::BuddyList::Chat chat
+	Purple::BuddyList::Group  group
+	Purple::BuddyList::Node node
 
-Gaim::BuddyList
-gaim_blist_new()
-
-void
-gaim_blist_show()
+Purple::BuddyList
+purple_blist_new()
 
 void
-gaim_blist_destroy();
+purple_blist_show()
 
 void
-gaim_blist_set_visible(show)
+purple_blist_destroy();
+
+void
+purple_blist_set_visible(show)
 	gboolean show
 
 void
-gaim_blist_update_buddy_status(buddy, old_status)
-	Gaim::BuddyList::Buddy buddy
-	Gaim::Status old_status
+purple_blist_update_buddy_status(buddy, old_status)
+	Purple::BuddyList::Buddy buddy
+	Purple::Status old_status
 
 void
-gaim_blist_update_buddy_icon(buddy)
-	Gaim::BuddyList::Buddy buddy
+purple_blist_update_buddy_icon(buddy)
+	Purple::BuddyList::Buddy buddy
 
 void
-gaim_blist_rename_buddy(buddy, name)
-	Gaim::BuddyList::Buddy buddy
+purple_blist_rename_buddy(buddy, name)
+	Purple::BuddyList::Buddy buddy
 	const char * name
 
 void
-gaim_blist_alias_buddy(buddy, alias)
-	Gaim::BuddyList::Buddy buddy
+purple_blist_alias_buddy(buddy, alias)
+	Purple::BuddyList::Buddy buddy
 	const char * alias
 
 void
-gaim_blist_server_alias_buddy(buddy, alias)
-	Gaim::BuddyList::Buddy buddy
+purple_blist_server_alias_buddy(buddy, alias)
+	Purple::BuddyList::Buddy buddy
 	const char * alias
 
 void
-gaim_blist_alias_chat(chat, alias)
-	Gaim::BuddyList::Chat chat
+purple_blist_alias_chat(chat, alias)
+	Purple::BuddyList::Chat chat
 	const char * alias
 
 void
-gaim_blist_rename_group(group, name)
-	Gaim::BuddyList::Group  group
+purple_blist_rename_group(group, name)
+	Purple::BuddyList::Group  group
 	const char * name
 
 void
-gaim_blist_add_account(account)
-	Gaim::Account account
+purple_blist_add_account(account)
+	Purple::Account account
 
 void
-gaim_blist_remove_account(account)
-	Gaim::Account account
+purple_blist_remove_account(account)
+	Purple::Account account
 
 int
-gaim_blist_get_group_size(group, offline)
-	Gaim::BuddyList::Group  group
+purple_blist_get_group_size(group, offline)
+	Purple::BuddyList::Group  group
 	gboolean offline
 
 int
-gaim_blist_get_group_online_count(group)
-	Gaim::BuddyList::Group  group
+purple_blist_get_group_online_count(group)
+	Purple::BuddyList::Group  group
 
 void
-gaim_blist_load()
+purple_blist_load()
 
 void
-gaim_blist_schedule_save()
+purple_blist_schedule_save()
 
 void
-gaim_blist_request_add_group()
+purple_blist_request_add_group()
 
 void
-gaim_blist_set_ui_ops(ops)
-	Gaim::BuddyList::UiOps ops
+purple_blist_set_ui_ops(ops)
+	Purple::BuddyList::UiOps ops
 
-Gaim::BuddyList::UiOps
-gaim_blist_get_ui_ops()
+Purple::BuddyList::UiOps
+purple_blist_get_ui_ops()
 
-Gaim::Handle
-gaim_blist_get_handle()
-
-void
-gaim_blist_init()
+Purple::Handle
+purple_blist_get_handle()
 
 void
-gaim_blist_uninit()
+purple_blist_init()
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList::Node  PREFIX = gaim_blist_node_
+void
+purple_blist_uninit()
+
+MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Node  PREFIX = purple_blist_node_
 PROTOTYPES: ENABLE
 
 void
-gaim_blist_node_get_extended_menu(node)
-	Gaim::BuddyList::Node node
+purple_blist_node_get_extended_menu(node)
+	Purple::BuddyList::Node node
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = gaim_blist_node_get_extended_menu(node); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Menu::Action")));
+	for (l = purple_blist_node_get_extended_menu(node); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Menu::Action")));
 	}
 
 void
-gaim_blist_node_set_bool(node, key, value)
-	Gaim::BuddyList::Node node
+purple_blist_node_set_bool(node, key, value)
+	Purple::BuddyList::Node node
 	const char * key
 	gboolean value
 
 gboolean
-gaim_blist_node_get_bool(node, key)
-	Gaim::BuddyList::Node node
+purple_blist_node_get_bool(node, key)
+	Purple::BuddyList::Node node
 	const char * key
 
 void
-gaim_blist_node_set_int(node, key, value)
-	Gaim::BuddyList::Node node
+purple_blist_node_set_int(node, key, value)
+	Purple::BuddyList::Node node
 	const char * key
 	int value
 
 int
-gaim_blist_node_get_int(node, key)
-	Gaim::BuddyList::Node node
+purple_blist_node_get_int(node, key)
+	Purple::BuddyList::Node node
 	const char * key
 
 const char *
-gaim_blist_node_get_string(node, key)
-	Gaim::BuddyList::Node node
+purple_blist_node_get_string(node, key)
+	Purple::BuddyList::Node node
 	const char * key
 
 void
-gaim_blist_node_remove_setting(node, key)
-	Gaim::BuddyList::Node node
+purple_blist_node_remove_setting(node, key)
+	Purple::BuddyList::Node node
 	const char * key
 
 void
-gaim_blist_node_set_flags(node, flags)
-	Gaim::BuddyList::Node node
-	Gaim::BuddyList::NodeFlags flags
+purple_blist_node_set_flags(node, flags)
+	Purple::BuddyList::Node node
+	Purple::BuddyList::NodeFlags flags
 
-Gaim::BuddyList::NodeFlags
-gaim_blist_node_get_flags(node)
-	Gaim::BuddyList::Node node
+Purple::BuddyList::NodeFlags
+purple_blist_node_get_flags(node)
+	Purple::BuddyList::Node node
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList::Chat  PREFIX = gaim_chat_
+MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Chat  PREFIX = purple_chat_
 PROTOTYPES: ENABLE
 
-Gaim::BuddyList::Group
-gaim_chat_get_group(chat)
-	Gaim::BuddyList::Chat chat
+Purple::BuddyList::Group
+purple_chat_get_group(chat)
+	Purple::BuddyList::Chat chat
 
 const char *
-gaim_chat_get_name(chat)
-	Gaim::BuddyList::Chat chat
+purple_chat_get_name(chat)
+	Purple::BuddyList::Chat chat
 
-Gaim::BuddyList::Chat
-gaim_chat_new(account, alias, components)
-	Gaim::Account account
+Purple::BuddyList::Chat
+purple_chat_new(account, alias, components)
+	Purple::Account account
 	const char * alias
 	SV * components
 INIT:
@@ -320,64 +320,64 @@ CODE:
 		g_hash_table_insert(t_GHash, t_key, t_value);
 	}
 
-	RETVAL = gaim_chat_new(account, alias, t_GHash);
+	RETVAL = purple_chat_new(account, alias, t_GHash);
 OUTPUT:
 	RETVAL
 
-MODULE = Gaim::BuddyList  PACKAGE = Gaim::BuddyList::Buddy  PREFIX = gaim_buddy_
+MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Buddy  PREFIX = purple_buddy_
 PROTOTYPES: ENABLE
 
-Gaim::BuddyList::Buddy
-gaim_buddy_new(account, screenname, alias)
-	Gaim::Account account
+Purple::BuddyList::Buddy
+purple_buddy_new(account, screenname, alias)
+	Purple::Account account
 	const char *screenname
 	const char *alias
 
 const char *
-gaim_buddy_get_server_alias(buddy)
-    Gaim::BuddyList::Buddy buddy
+purple_buddy_get_server_alias(buddy)
+    Purple::BuddyList::Buddy buddy
 
 void
-gaim_buddy_set_icon(buddy, icon)
-	Gaim::BuddyList::Buddy buddy
-	Gaim::Buddy::Icon icon
+purple_buddy_set_icon(buddy, icon)
+	Purple::BuddyList::Buddy buddy
+	Purple::Buddy::Icon icon
 
-Gaim::Account
-gaim_buddy_get_account(buddy)
-	Gaim::BuddyList::Buddy buddy
+Purple::Account
+purple_buddy_get_account(buddy)
+	Purple::BuddyList::Buddy buddy
 
-Gaim::BuddyList::Group
-gaim_buddy_get_group(buddy)
-	Gaim::BuddyList::Buddy buddy
-
-const char *
-gaim_buddy_get_name(buddy)
-	Gaim::BuddyList::Buddy buddy
-
-Gaim::Buddy::Icon
-gaim_buddy_get_icon(buddy)
-	Gaim::BuddyList::Buddy buddy
-
-Gaim::BuddyList::Contact
-gaim_buddy_get_contact(buddy)
-	Gaim::BuddyList::Buddy buddy
-
-Gaim::Presence
-gaim_buddy_get_presence(buddy)
-	Gaim::BuddyList::Buddy buddy
+Purple::BuddyList::Group
+purple_buddy_get_group(buddy)
+	Purple::BuddyList::Buddy buddy
 
 const char *
-gaim_buddy_get_alias_only(buddy)
-	Gaim::BuddyList::Buddy buddy
+purple_buddy_get_name(buddy)
+	Purple::BuddyList::Buddy buddy
+
+Purple::Buddy::Icon
+purple_buddy_get_icon(buddy)
+	Purple::BuddyList::Buddy buddy
+
+Purple::BuddyList::Contact
+purple_buddy_get_contact(buddy)
+	Purple::BuddyList::Buddy buddy
+
+Purple::Presence
+purple_buddy_get_presence(buddy)
+	Purple::BuddyList::Buddy buddy
 
 const char *
-gaim_buddy_get_contact_alias(buddy)
-	Gaim::BuddyList::Buddy buddy
+purple_buddy_get_alias_only(buddy)
+	Purple::BuddyList::Buddy buddy
 
 const char *
-gaim_buddy_get_local_alias(buddy)
-	Gaim::BuddyList::Buddy buddy
+purple_buddy_get_contact_alias(buddy)
+	Purple::BuddyList::Buddy buddy
 
 const char *
-gaim_buddy_get_alias(buddy)
-	Gaim::BuddyList::Buddy buddy
+purple_buddy_get_local_alias(buddy)
+	Purple::BuddyList::Buddy buddy
+
+const char *
+purple_buddy_get_alias(buddy)
+	Purple::BuddyList::Buddy buddy

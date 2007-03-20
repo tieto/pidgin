@@ -2,9 +2,9 @@
  * @file network.c Network Implementation
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -71,12 +71,12 @@ guint nm_callback_idx = 0;
 static int current_network_count;
 #endif
 
-struct _GaimNetworkListenData {
+struct _PurpleNetworkListenData {
 	int listenfd;
 	int socket_type;
 	gboolean retry;
 	gboolean adding;
-	GaimNetworkListenCallback cb;
+	PurpleNetworkListenCallback cb;
 	gpointer cb_data;
 	UPnPMappingAddRemove *mapping_data;
 #ifdef ENABLE_NAT_PMP
@@ -89,7 +89,7 @@ void nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data);
 #endif
 
 const unsigned char *
-gaim_network_ip_atoi(const char *ip)
+purple_network_ip_atoi(const char *ip)
 {
 	static unsigned char ret[4];
 	gchar *delimiter = ".";
@@ -111,23 +111,23 @@ gaim_network_ip_atoi(const char *ip)
 }
 
 void
-gaim_network_set_public_ip(const char *ip)
+purple_network_set_public_ip(const char *ip)
 {
 	g_return_if_fail(ip != NULL);
 
 	/* XXX - Ensure the IP address is valid */
 
-	gaim_prefs_set_string("/core/network/public_ip", ip);
+	purple_prefs_set_string("/core/network/public_ip", ip);
 }
 
 const char *
-gaim_network_get_public_ip(void)
+purple_network_get_public_ip(void)
 {
-	return gaim_prefs_get_string("/core/network/public_ip");
+	return purple_prefs_get_string("/core/network/public_ip");
 }
 
 const char *
-gaim_network_get_local_system_ip(int fd)
+purple_network_get_local_system_ip(int fd)
 {
 	char buffer[1024];
 	static char ip[16];
@@ -176,88 +176,88 @@ gaim_network_get_local_system_ip(int fd)
 }
 
 const char *
-gaim_network_get_my_ip(int fd)
+purple_network_get_my_ip(int fd)
 {
 	const char *ip = NULL;
-	GaimStunNatDiscovery *stun;
+	PurpleStunNatDiscovery *stun;
 
 	/* Check if the user specified an IP manually */
-	if (!gaim_prefs_get_bool("/core/network/auto_ip")) {
-		ip = gaim_network_get_public_ip();
+	if (!purple_prefs_get_bool("/core/network/auto_ip")) {
+		ip = purple_network_get_public_ip();
 		/* Make sure the IP address entered by the user is valid */
-		if ((ip != NULL) && (gaim_network_ip_atoi(ip) != NULL))
+		if ((ip != NULL) && (purple_network_ip_atoi(ip) != NULL))
 			return ip;
 	}
 
 	/* Check if STUN discovery was already done */
-	stun = gaim_stun_discover(NULL);
-	if ((stun != NULL) && (stun->status == GAIM_STUN_STATUS_DISCOVERED))
+	stun = purple_stun_discover(NULL);
+	if ((stun != NULL) && (stun->status == PURPLE_STUN_STATUS_DISCOVERED))
 		return stun->publicip;
 
 	/* Attempt to get the IP from a NAT device using UPnP */
-	ip = gaim_upnp_get_public_ip();
+	ip = purple_upnp_get_public_ip();
 	if (ip != NULL)
 	  return ip;
 
 #ifdef ENABLE_NAT_PMP
 	/* Attempt to ge tthe IP from a NAT device using NAT-PMP */
-	ip = gaim_pmp_get_public_ip();
+	ip = purple_pmp_get_public_ip();
 	if (ip != NULL)
 		return ip;
 #endif
 
 	/* Just fetch the IP of the local system */
-	return gaim_network_get_local_system_ip(fd);
+	return purple_network_get_local_system_ip(fd);
 }
 
 
 static void
-gaim_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
+purple_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
 {
-	GaimNetworkListenData *listen_data;
+	PurpleNetworkListenData *listen_data;
 
 	listen_data = data;
 	/* TODO: Once we're keeping track of upnp requests... */
 	/* listen_data->pnp_data = NULL; */
 
 	if (!success) {
-		gaim_debug_info("network", "Couldn't create UPnP mapping\n");
+		purple_debug_info("network", "Couldn't create UPnP mapping\n");
 		if (listen_data->retry) {
 			listen_data->retry = FALSE;
 			listen_data->adding = FALSE;
-			listen_data->mapping_data = gaim_upnp_remove_port_mapping(
-						gaim_network_get_port_from_fd(listen_data->listenfd),
+			listen_data->mapping_data = purple_upnp_remove_port_mapping(
+						purple_network_get_port_from_fd(listen_data->listenfd),
 						(listen_data->socket_type == SOCK_STREAM) ? "TCP" : "UDP",
-						gaim_network_set_upnp_port_mapping_cb, listen_data);
+						purple_network_set_upnp_port_mapping_cb, listen_data);
 			return;
 		}
 	} else if (!listen_data->adding) {
 		/* We've tried successfully to remove the port mapping.
 		 * Try to add it again */
 		listen_data->adding = TRUE;
-		listen_data->mapping_data = gaim_upnp_set_port_mapping(
-					gaim_network_get_port_from_fd(listen_data->listenfd),
+		listen_data->mapping_data = purple_upnp_set_port_mapping(
+					purple_network_get_port_from_fd(listen_data->listenfd),
 					(listen_data->socket_type == SOCK_STREAM) ? "TCP" : "UDP",
-					gaim_network_set_upnp_port_mapping_cb, listen_data);
+					purple_network_set_upnp_port_mapping_cb, listen_data);
 		return;
 	}
 
 	if (listen_data->cb)
 		listen_data->cb(listen_data->listenfd, listen_data->cb_data);
 
-	/* Clear the UPnP mapping data, since it's complete and gaim_netweork_listen_cancel() will try to cancel
+	/* Clear the UPnP mapping data, since it's complete and purple_netweork_listen_cancel() will try to cancel
 	 * it otherwise. */
 	listen_data->mapping_data = NULL;
-	gaim_network_listen_cancel(listen_data);
+	purple_network_listen_cancel(listen_data);
 }
 
 
-static GaimNetworkListenData *
-gaim_network_do_listen(unsigned short port, int socket_type, GaimNetworkListenCallback cb, gpointer cb_data)
+static PurpleNetworkListenData *
+purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
 {
 	int listenfd = -1;
 	const int on = 1;
-	GaimNetworkListenData *listen_data;
+	PurpleNetworkListenData *listen_data;
 	unsigned short actual_port;
 #ifdef HAVE_GETADDRINFO
 	int errnum;
@@ -275,11 +275,11 @@ gaim_network_do_listen(unsigned short port, int socket_type, GaimNetworkListenCa
 	errnum = getaddrinfo(NULL /* any IP */, serv, &hints, &res);
 	if (errnum != 0) {
 #ifndef _WIN32
-		gaim_debug_warning("network", "getaddrinfo: %s\n", gai_strerror(errnum));
+		purple_debug_warning("network", "getaddrinfo: %s\n", gai_strerror(errnum));
 		if (errnum == EAI_SYSTEM)
-			gaim_debug_warning("network", "getaddrinfo: system error: %s\n", strerror(errno));
+			purple_debug_warning("network", "getaddrinfo: system error: %s\n", strerror(errno));
 #else
-		gaim_debug_warning("network", "getaddrinfo: Error Code = %d\n", errnum);
+		purple_debug_warning("network", "getaddrinfo: Error Code = %d\n", errnum);
 #endif
 		return NULL;
 	}
@@ -294,7 +294,7 @@ gaim_network_do_listen(unsigned short port, int socket_type, GaimNetworkListenCa
 		if (listenfd < 0)
 			continue;
 		if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
-			gaim_debug_warning("network", "setsockopt: %s\n", strerror(errno));
+			purple_debug_warning("network", "setsockopt: %s\n", strerror(errno));
 		if (bind(listenfd, next->ai_addr, next->ai_addrlen) == 0)
 			break; /* success */
 		/* XXX - It is unclear to me (datallah) whether we need to be
@@ -310,36 +310,36 @@ gaim_network_do_listen(unsigned short port, int socket_type, GaimNetworkListenCa
 	struct sockaddr_in sockin;
 
 	if ((listenfd = socket(AF_INET, socket_type, 0)) < 0) {
-		gaim_debug_warning("network", "socket: %s\n", strerror(errno));
+		purple_debug_warning("network", "socket: %s\n", strerror(errno));
 		return NULL;
 	}
 
 	if (setsockopt(listenfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on)) != 0)
-		gaim_debug_warning("network", "setsockopt: %s\n", strerror(errno));
+		purple_debug_warning("network", "setsockopt: %s\n", strerror(errno));
 
 	memset(&sockin, 0, sizeof(struct sockaddr_in));
 	sockin.sin_family = PF_INET;
 	sockin.sin_port = htons(port);
 
 	if (bind(listenfd, (struct sockaddr *)&sockin, sizeof(struct sockaddr_in)) != 0) {
-		gaim_debug_warning("network", "bind: %s\n", strerror(errno));
+		purple_debug_warning("network", "bind: %s\n", strerror(errno));
 		close(listenfd);
 		return NULL;
 	}
 #endif
 
 	if (socket_type == SOCK_STREAM && listen(listenfd, 4) != 0) {
-		gaim_debug_warning("network", "listen: %s\n", strerror(errno));
+		purple_debug_warning("network", "listen: %s\n", strerror(errno));
 		close(listenfd);
 		return NULL;
 	}
 	fcntl(listenfd, F_SETFL, O_NONBLOCK);
 
-	actual_port = gaim_network_get_port_from_fd(listenfd);
+	actual_port = purple_network_get_port_from_fd(listenfd);
 
-	gaim_debug_info("network", "Listening on port: %hu\n", actual_port);
+	purple_debug_info("network", "Listening on port: %hu\n", actual_port);
 	
-	listen_data = g_new0(GaimNetworkListenData, 1);
+	listen_data = g_new0(PurpleNetworkListenData, 1);
 	listen_data->listenfd = listenfd;
 	listen_data->adding = TRUE;
 	listen_data->retry = TRUE;
@@ -348,44 +348,44 @@ gaim_network_do_listen(unsigned short port, int socket_type, GaimNetworkListenCa
 
 #ifdef ENABLE_NAT_PMP
 	/* Attempt a NAT-PMP Mapping, which will return immediately */
-	listen_data->has_pmp_mapping = (gaim_pmp_create_map(((socket_type == SOCK_STREAM) ? GAIM_PMP_TYPE_TCP : GAIM_PMP_TYPE_UDP),
-														actual_port, actual_port, GAIM_PMP_LIFETIME) != NULL);	
+	listen_data->has_pmp_mapping = (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
+														actual_port, actual_port, PURPLE_PMP_LIFETIME) != NULL);	
 #endif
 	
 	/* Attempt a UPnP Mapping */
-	listen_data->mapping_data = gaim_upnp_set_port_mapping(
+	listen_data->mapping_data = purple_upnp_set_port_mapping(
 					actual_port,
 					(socket_type == SOCK_STREAM) ? "TCP" : "UDP",
-					gaim_network_set_upnp_port_mapping_cb, listen_data);
+					purple_network_set_upnp_port_mapping_cb, listen_data);
 
 	return listen_data;
 }
 
-GaimNetworkListenData *
-gaim_network_listen(unsigned short port, int socket_type,
-		GaimNetworkListenCallback cb, gpointer cb_data)
+PurpleNetworkListenData *
+purple_network_listen(unsigned short port, int socket_type,
+		PurpleNetworkListenCallback cb, gpointer cb_data)
 {
 	g_return_val_if_fail(port != 0, NULL);
 
-	return gaim_network_do_listen(port, socket_type, cb, cb_data);
+	return purple_network_do_listen(port, socket_type, cb, cb_data);
 }
 
-GaimNetworkListenData *
-gaim_network_listen_range(unsigned short start, unsigned short end,
-		int socket_type, GaimNetworkListenCallback cb, gpointer cb_data)
+PurpleNetworkListenData *
+purple_network_listen_range(unsigned short start, unsigned short end,
+		int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
 {
-	GaimNetworkListenData *ret = NULL;
+	PurpleNetworkListenData *ret = NULL;
 
-	if (gaim_prefs_get_bool("/core/network/ports_range_use")) {
-		start = gaim_prefs_get_int("/core/network/ports_range_start");
-		end = gaim_prefs_get_int("/core/network/ports_range_end");
+	if (purple_prefs_get_bool("/core/network/ports_range_use")) {
+		start = purple_prefs_get_int("/core/network/ports_range_start");
+		end = purple_prefs_get_int("/core/network/ports_range_end");
 	} else {
 		if (end < start)
 			end = start;
 	}
 
 	for (; start <= end; start++) {
-		ret = gaim_network_do_listen(start, socket_type, cb, cb_data);
+		ret = purple_network_do_listen(start, socket_type, cb, cb_data);
 		if (ret != NULL)
 			break;
 	}
@@ -393,22 +393,22 @@ gaim_network_listen_range(unsigned short start, unsigned short end,
 	return ret;
 }
 
-void gaim_network_listen_cancel(GaimNetworkListenData *listen_data)
+void purple_network_listen_cancel(PurpleNetworkListenData *listen_data)
 {
 	if (listen_data->mapping_data != NULL)
-		gaim_upnp_cancel_port_mapping(listen_data->mapping_data);
+		purple_upnp_cancel_port_mapping(listen_data->mapping_data);
 
 #ifdef ENABLE_NAT_PMP
 	if (listen_data->has_pmp_mapping)
-		gaim_pmp_destroy_map(((listen_data->socket_type == SOCK_STREAM) ? GAIM_PMP_TYPE_TCP : GAIM_PMP_TYPE_UDP),
-							 gaim_network_get_port_from_fd(listen_data->listenfd));
+		purple_pmp_destroy_map(((listen_data->socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
+							 purple_network_get_port_from_fd(listen_data->listenfd));
 #endif
 
 	g_free(listen_data);
 }
 
 unsigned short
-gaim_network_get_port_from_fd(int fd)
+purple_network_get_port_from_fd(int fd)
 {
 	struct sockaddr_in addr;
 	socklen_t len;
@@ -417,7 +417,7 @@ gaim_network_get_port_from_fd(int fd)
 
 	len = sizeof(addr);
 	if (getsockname(fd, (struct sockaddr *) &addr, &len) == -1) {
-		gaim_debug_warning("network", "getsockname: %s\n", strerror(errno));
+		purple_debug_warning("network", "getsockname: %s\n", strerror(errno));
 		return 0;
 	}
 
@@ -429,7 +429,7 @@ gaim_network_get_port_from_fd(int fd)
 #define NS_NLA 15
 #endif
 static gint
-wgaim_get_connected_network_count(void)
+wpurple_get_connected_network_count(void)
 {
 	guint net_cnt = 0;
 
@@ -447,7 +447,7 @@ wgaim_get_connected_network_count(void)
 		gchar *msg;
 		errorid = WSAGetLastError();
 		msg = g_win32_error_message(errorid);
-		gaim_debug_warning("network", "Couldn't retrieve NLA SP lookup handle. "
+		purple_debug_warning("network", "Couldn't retrieve NLA SP lookup handle. "
 						"NLA service is probably not running. Message: %s (%d).\n",
 						msg, errorid);
 		g_free(msg);
@@ -459,7 +459,7 @@ wgaim_get_connected_network_count(void)
 		DWORD size = sizeof(buf);
 		while ((retval = WSALookupServiceNext(h, 0, &size, res)) == ERROR_SUCCESS) {
 			net_cnt++;
-			gaim_debug_info("network", "found network '%s'\n",
+			purple_debug_info("network", "found network '%s'\n",
 					res->lpszServiceInstanceName ? res->lpszServiceInstanceName : "(NULL)");
 			size = sizeof(buf);
 		}
@@ -467,7 +467,7 @@ wgaim_get_connected_network_count(void)
 		errorid = WSAGetLastError();
 		if (!(errorid == WSA_E_NO_MORE || errorid == WSAENOMORE)) {
 			gchar *msg = g_win32_error_message(errorid);
-			gaim_debug_error("network", "got unexpected NLA response %s (%d)\n", msg, errorid);
+			purple_debug_error("network", "got unexpected NLA response %s (%d)\n", msg, errorid);
 			g_free(msg);
 
 			net_cnt = -1;
@@ -480,17 +480,17 @@ wgaim_get_connected_network_count(void)
 
 }
 
-static gboolean wgaim_network_change_thread_cb(gpointer data)
+static gboolean wpurple_network_change_thread_cb(gpointer data)
 {
 	gint new_count;
-	GaimConnectionUiOps *ui_ops = gaim_connections_get_ui_ops();
+	PurpleConnectionUiOps *ui_ops = purple_connections_get_ui_ops();
 
-	new_count = wgaim_get_connected_network_count();
+	new_count = wpurple_get_connected_network_count();
 
 	if (new_count < 0)
 		return FALSE;
 
-	gaim_debug_info("network", "Received Network Change Notification. Current network count is %d, previous count was %d.\n", new_count, current_network_count);
+	purple_debug_info("network", "Received Network Change Notification. Current network count is %d, previous count was %d.\n", new_count, current_network_count);
 
 	if (new_count > 0 && ui_ops != NULL && ui_ops->network_connected != NULL) {
 		ui_ops->network_connected();
@@ -504,7 +504,7 @@ static gboolean wgaim_network_change_thread_cb(gpointer data)
 	return FALSE;
 }
 
-static gpointer wgaim_network_change_thread(gpointer data)
+static gpointer wpurple_network_change_thread(gpointer data)
 {
 	HANDLE h;
 	WSAQUERYSET qs;
@@ -515,7 +515,7 @@ static gpointer wgaim_network_change_thread(gpointer data)
 		DWORD cbInBuffer, LPVOID lpvOutBuffer, DWORD cbOutBuffer,
 		LPDWORD lpcbBytesReturned, LPWSACOMPLETION lpCompletion) = NULL;
  
-	if (!(MyWSANSPIoctl = (void*) wgaim_find_and_loadproc("ws2_32.dll", "WSANSPIoctl"))) {
+	if (!(MyWSANSPIoctl = (void*) wpurple_find_and_loadproc("ws2_32.dll", "WSANSPIoctl"))) {
 		g_thread_exit(NULL);
 		return NULL;
 	}
@@ -530,7 +530,7 @@ static gpointer wgaim_network_change_thread(gpointer data)
 		if (WSALookupServiceBegin(&qs, 0, &h) == SOCKET_ERROR) {
 			int errorid = WSAGetLastError();
 			gchar *msg = g_win32_error_message(errorid);
-			gaim_debug_warning("network", "Couldn't retrieve NLA SP lookup handle. "
+			purple_debug_warning("network", "Couldn't retrieve NLA SP lookup handle. "
 				"NLA service is probably not running. Message: %s (%d).\n",
 				msg, errorid);
 			g_free(msg);
@@ -549,14 +549,14 @@ static gpointer wgaim_network_change_thread(gpointer data)
 		if (MyWSANSPIoctl(h, SIO_NSP_NOTIFY_CHANGE, NULL, 0, NULL, 0, &retLen, NULL) == SOCKET_ERROR) {
 			int errorid = WSAGetLastError();
 			gchar *msg = g_win32_error_message(errorid);
-			gaim_debug_warning("network", "Unable to wait for changes. Message: %s (%d).\n",
+			purple_debug_warning("network", "Unable to wait for changes. Message: %s (%d).\n",
 				msg, errorid);
 			g_free(msg);
 		}
 
 		retval = WSALookupServiceEnd(h);
 
-		g_idle_add(wgaim_network_change_thread_cb, NULL);
+		g_idle_add(wpurple_network_change_thread_cb, NULL);
 
 	}
 
@@ -566,7 +566,7 @@ static gpointer wgaim_network_change_thread(gpointer data)
 #endif
 
 gboolean
-gaim_network_is_available(void)
+purple_network_is_available(void)
 {
 #ifdef HAVE_LIBNM
 	/* Try NetworkManager first, maybe we'll get lucky */
@@ -576,7 +576,7 @@ gaim_network_is_available(void)
 	{
 		if ((libnm_retval = libnm_glib_get_network_state(nm_context)) == LIBNM_NO_NETWORK_CONNECTION)
 		{
-			gaim_debug_warning("network", "NetworkManager not active or reports no connection (retval = %i)\n", libnm_retval);
+			purple_debug_warning("network", "NetworkManager not active or reports no connection (retval = %i)\n", libnm_retval);
 			return FALSE;
 		}
 		if (libnm_retval == LIBNM_ACTIVE_NETWORK_CONNECTION)	return TRUE;
@@ -592,13 +592,13 @@ void
 nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
 {
 	GList *l;
-	GaimAccount *account;
+	PurpleAccount *account;
 	static libnm_glib_state prev = LIBNM_NO_DBUS;
 	libnm_glib_state current;
-	GaimConnectionUiOps *ui_ops = gaim_connections_get_ui_ops();
+	PurpleConnectionUiOps *ui_ops = purple_connections_get_ui_ops();
 
 	current = libnm_glib_get_network_state(ctx);
-	gaim_debug_info("network","Entering nm_callback_func!\n");
+	purple_debug_info("network","Entering nm_callback_func!\n");
 
 	switch(current)
 	{
@@ -626,11 +626,11 @@ nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
 #endif
 
 void
-gaim_network_init(void)
+purple_network_init(void)
 {
 #ifdef _WIN32
 	GError *err = NULL;
-	gint cnt = wgaim_get_connected_network_count();
+	gint cnt = wpurple_get_connected_network_count();
 
 	if (cnt < 0) /* Assume there is a network */
 		current_network_count = 1;
@@ -638,19 +638,19 @@ gaim_network_init(void)
 	else
 	{
 		current_network_count = cnt;
-		if (!g_thread_create(wgaim_network_change_thread, NULL, FALSE, &err))
-			gaim_debug_error("network", "Couldn't create Network Monitor thread: %s\n", err ? err->message : "");
+		if (!g_thread_create(wpurple_network_change_thread, NULL, FALSE, &err))
+			purple_debug_error("network", "Couldn't create Network Monitor thread: %s\n", err ? err->message : "");
 	}
 #endif
 
-	gaim_prefs_add_none  ("/core/network");
-	gaim_prefs_add_bool  ("/core/network/auto_ip", TRUE);
-	gaim_prefs_add_string("/core/network/public_ip", "");
-	gaim_prefs_add_bool  ("/core/network/ports_range_use", FALSE);
-	gaim_prefs_add_int   ("/core/network/ports_range_start", 1024);
-	gaim_prefs_add_int   ("/core/network/ports_range_end", 2048);
+	purple_prefs_add_none  ("/core/network");
+	purple_prefs_add_bool  ("/core/network/auto_ip", TRUE);
+	purple_prefs_add_string("/core/network/public_ip", "");
+	purple_prefs_add_bool  ("/core/network/ports_range_use", FALSE);
+	purple_prefs_add_int   ("/core/network/ports_range_start", 1024);
+	purple_prefs_add_int   ("/core/network/ports_range_end", 2048);
 
-	gaim_upnp_discover(NULL, NULL);
+	purple_upnp_discover(NULL, NULL);
 
 #ifdef HAVE_LIBNM
 	nm_context = libnm_glib_init();
@@ -660,7 +660,7 @@ gaim_network_init(void)
 }
 
 void
-gaim_network_uninit(void)
+purple_network_uninit(void)
 {
 #ifdef HAVE_LIBNM
 	/* FIXME: If anyone can think of a more clever way to shut down libnm without

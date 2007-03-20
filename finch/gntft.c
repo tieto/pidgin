@@ -2,9 +2,9 @@
  * @file gntft.c GNT File Transfer UI
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -39,8 +39,8 @@
 #include "gntft.h"
 #include "prefs.h"
 
-#define GAIM_GNTXFER(xfer) \
-	(GaimGntXferUiData *)(xfer)->ui_data
+#define FINCHXFER(xfer) \
+	(PurpleGntXferUiData *)(xfer)->ui_data
 
 typedef struct
 {
@@ -54,9 +54,9 @@ typedef struct
 	GntWidget *remove_button;
 	GntWidget *stop_button;
 	GntWidget *close_button;
-} GaimGntXferDialog;
+} PurpleGntXferDialog;
 
-static GaimGntXferDialog *xfer_dialog = NULL;
+static PurpleGntXferDialog *xfer_dialog = NULL;
 
 typedef struct
 {
@@ -65,7 +65,7 @@ typedef struct
 
 	char *name;
 
-} GaimGntXferUiData;
+} PurpleGntXferUiData;
 
 enum
 {
@@ -96,12 +96,12 @@ update_title_progress()
 
 	/* Find all active transfers */
 	for (list = gnt_tree_get_rows(GNT_TREE(xfer_dialog->tree)); list; list = list->next) {
-		GaimXfer *xfer = (GaimXfer *)list->data;
+		PurpleXfer *xfer = (PurpleXfer *)list->data;
 
-		if (gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_STARTED) {
+		if (purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_STARTED) {
 			num_active_xfers++;
-			total_bytes_xferred += gaim_xfer_get_bytes_sent(xfer);
-			total_file_size += gaim_xfer_get_size(xfer);
+			total_bytes_xferred += purple_xfer_get_bytes_sent(xfer);
+			total_file_size += purple_xfer_get_size(xfer);
 		}
 	}
 
@@ -131,7 +131,7 @@ static void
 toggle_keep_open_cb(GntWidget *w)
 {
 	xfer_dialog->keep_open = !xfer_dialog->keep_open;
-	gaim_prefs_set_bool("/gaim/gnt/filetransfer/keep_open",
+	purple_prefs_set_bool("/purple/gnt/filetransfer/keep_open",
 						xfer_dialog->keep_open);
 }
 
@@ -139,17 +139,17 @@ static void
 toggle_clear_finished_cb(GntWidget *w)
 {
 	xfer_dialog->auto_clear = !xfer_dialog->auto_clear;
-	gaim_prefs_set_bool("/gaim/gnt/filetransfer/clear_finished",
+	purple_prefs_set_bool("/purple/gnt/filetransfer/clear_finished",
 						xfer_dialog->auto_clear);
 }
 
 static void
 remove_button_cb(GntButton *button)
 {
-	GaimXfer *selected_xfer = gnt_tree_get_selection_data(GNT_TREE(xfer_dialog->tree));
-	if (selected_xfer && (selected_xfer->status == GAIM_XFER_STATUS_CANCEL_LOCAL ||
-			selected_xfer->status == GAIM_XFER_STATUS_CANCEL_REMOTE ||
-			selected_xfer->status == GAIM_XFER_STATUS_DONE)) {
+	PurpleXfer *selected_xfer = gnt_tree_get_selection_data(GNT_TREE(xfer_dialog->tree));
+	if (selected_xfer && (selected_xfer->status == PURPLE_XFER_STATUS_CANCEL_LOCAL ||
+			selected_xfer->status == PURPLE_XFER_STATUS_CANCEL_REMOTE ||
+			selected_xfer->status == PURPLE_XFER_STATUS_DONE)) {
 		finch_xfer_dialog_remove_xfer(selected_xfer);
 	}
 }
@@ -157,16 +157,16 @@ remove_button_cb(GntButton *button)
 static void
 stop_button_cb(GntButton *button)
 {
-	GaimXfer *selected_xfer = gnt_tree_get_selection_data(GNT_TREE(xfer_dialog->tree));
-	if (selected_xfer && selected_xfer->status == GAIM_XFER_STATUS_STARTED)
-		gaim_xfer_cancel_local(selected_xfer);
+	PurpleXfer *selected_xfer = gnt_tree_get_selection_data(GNT_TREE(xfer_dialog->tree));
+	if (selected_xfer && selected_xfer->status == PURPLE_XFER_STATUS_STARTED)
+		purple_xfer_cancel_local(selected_xfer);
 }
 
 #if 0
 static void
 tree_selection_changed_cb(GntTree *tree, GntTreeRow *old, GntTreeRow *current, gpointer n)
 {
-	xfer_dialog->selected_xfer = (GaimXfer *)gnt_tree_get_selection_data(tree);
+	xfer_dialog->selected_xfer = (PurpleXfer *)gnt_tree_get_selection_data(tree);
 }
 #endif
 
@@ -186,12 +186,12 @@ finch_xfer_dialog_new(void)
 	GntWidget *tree;
 
 	if (!xfer_dialog)
-		xfer_dialog = g_new0(GaimGntXferDialog, 1);
+		xfer_dialog = g_new0(PurpleGntXferDialog, 1);
 
 	xfer_dialog->keep_open =
-		gaim_prefs_get_bool("/gaim/gnt/filetransfer/keep_open");
+		purple_prefs_get_bool("/purple/gnt/filetransfer/keep_open");
 	xfer_dialog->auto_clear =
-		gaim_prefs_get_bool("/gaim/gnt/filetransfer/clear_finished");
+		purple_prefs_get_bool("/purple/gnt/filetransfer/clear_finished");
 
 	/* Create the window. */
 	xfer_dialog->window = window = gnt_vbox_new(FALSE);
@@ -244,9 +244,9 @@ finch_xfer_dialog_new(void)
 
 	gnt_box_add_widget(GNT_BOX(window), bbox);
 
-	for (iter = gaim_xfers_get_all(); iter; iter = iter->next) {
-		GaimXfer *xfer = (GaimXfer *)iter->data;
-		GaimGntXferUiData *data = GAIM_GNTXFER(xfer);
+	for (iter = purple_xfers_get_all(); iter; iter = iter->next) {
+		PurpleXfer *xfer = (PurpleXfer *)iter->data;
+		PurpleGntXferUiData *data = FINCHXFER(xfer);
 		if (data->in_list) {
 			finch_xfer_dialog_add_xfer(xfer);
 			finch_xfer_dialog_update_xfer(xfer);
@@ -272,37 +272,37 @@ finch_xfer_dialog_show()
 }
 
 void
-finch_xfer_dialog_add_xfer(GaimXfer *xfer)
+finch_xfer_dialog_add_xfer(PurpleXfer *xfer)
 {
-	GaimGntXferUiData *data;
-	GaimXferType type;
+	PurpleGntXferUiData *data;
+	PurpleXferType type;
 	char *size_str, *remaining_str;
 	char *lfilename, *utf8;
 
 	g_return_if_fail(xfer_dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	gaim_xfer_ref(xfer);
+	purple_xfer_ref(xfer);
 
-	data = GAIM_GNTXFER(xfer);
+	data = FINCHXFER(xfer);
 	data->in_list = TRUE;
 
 	finch_xfer_dialog_show();
 
 	data->last_updated_time = 0;
 
-	type = gaim_xfer_get_type(xfer);
+	type = purple_xfer_get_type(xfer);
 
-	size_str      = gaim_str_size_to_units(gaim_xfer_get_size(xfer));
-	remaining_str = gaim_str_size_to_units(gaim_xfer_get_bytes_remaining(xfer));
+	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
+	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
 
-	lfilename = g_path_get_basename(gaim_xfer_get_local_filename(xfer));
+	lfilename = g_path_get_basename(purple_xfer_get_local_filename(xfer));
 	utf8 = g_filename_to_utf8(lfilename, -1, NULL, NULL, NULL);
 	g_free(lfilename);
 	lfilename = utf8;
 	gnt_tree_add_row_last(GNT_TREE(xfer_dialog->tree), xfer,
 		gnt_tree_create_row(GNT_TREE(xfer_dialog->tree),
-			"0.0", (type == GAIM_XFER_RECEIVE) ? gaim_xfer_get_filename(xfer) : lfilename,
+			"0.0", (type == PURPLE_XFER_RECEIVE) ? purple_xfer_get_filename(xfer) : lfilename,
 			size_str, "0.0", "",_("Waiting for transfer to begin")), NULL);
 	g_free(lfilename);
 
@@ -315,14 +315,14 @@ finch_xfer_dialog_add_xfer(GaimXfer *xfer)
 }
 
 void
-finch_xfer_dialog_remove_xfer(GaimXfer *xfer)
+finch_xfer_dialog_remove_xfer(PurpleXfer *xfer)
 {
-	GaimGntXferUiData *data;
+	PurpleGntXferUiData *data;
 
 	g_return_if_fail(xfer_dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	data = GAIM_GNTXFER(xfer);
+	data = FINCHXFER(xfer);
 
 	if (data == NULL)
 		return;
@@ -340,19 +340,19 @@ finch_xfer_dialog_remove_xfer(GaimXfer *xfer)
 		finch_xfer_dialog_destroy();
 	else 
 		update_title_progress();
-	gaim_xfer_unref(xfer);
+	purple_xfer_unref(xfer);
 }
 
 void
-finch_xfer_dialog_cancel_xfer(GaimXfer *xfer)
+finch_xfer_dialog_cancel_xfer(PurpleXfer *xfer)
 {
-	GaimGntXferUiData *data;
+	PurpleGntXferUiData *data;
 	const gchar *status;
 
 	g_return_if_fail(xfer_dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	data = GAIM_GNTXFER(xfer);
+	data = FINCHXFER(xfer);
 
 	if (data == NULL)
 		return;
@@ -360,16 +360,16 @@ finch_xfer_dialog_cancel_xfer(GaimXfer *xfer)
 	if (!data->in_list)
 		return;
 
-	if ((gaim_xfer_get_status(xfer) == GAIM_XFER_STATUS_CANCEL_LOCAL) && (xfer_dialog->auto_clear)) {
+	if ((purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL) && (xfer_dialog->auto_clear)) {
 		finch_xfer_dialog_remove_xfer(xfer);
 		return;
 	}
 
-	data = GAIM_GNTXFER(xfer);
+	data = FINCHXFER(xfer);
 
 	update_title_progress();
 
-	if (gaim_xfer_is_canceled(xfer))
+	if (purple_xfer_is_canceled(xfer))
 		status = _("Canceled");
 	else
 		status = _("Failed");
@@ -378,9 +378,9 @@ finch_xfer_dialog_cancel_xfer(GaimXfer *xfer)
 }
 
 void
-finch_xfer_dialog_update_xfer(GaimXfer *xfer)
+finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 {
-	GaimGntXferUiData *data;
+	PurpleGntXferUiData *data;
 	char *size_str, *remaining_str;
 	time_t current_time;
 	char prog_str[5];
@@ -394,8 +394,8 @@ finch_xfer_dialog_update_xfer(GaimXfer *xfer)
 	else
 		now = time(NULL);
 
-	kb_sent = gaim_xfer_get_bytes_sent(xfer) / 1024.0;
-	kb_rem  = gaim_xfer_get_bytes_remaining(xfer) / 1024.0;
+	kb_sent = purple_xfer_get_bytes_sent(xfer) / 1024.0;
+	kb_rem  = purple_xfer_get_bytes_remaining(xfer) / 1024.0;
 	elapsed = (xfer->start_time > 0 ? now - xfer->start_time : 0);
 	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 
@@ -404,7 +404,7 @@ finch_xfer_dialog_update_xfer(GaimXfer *xfer)
 	g_return_if_fail(xfer_dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
-	if ((data = GAIM_GNTXFER(xfer)) == NULL)
+	if ((data = FINCHXFER(xfer)) == NULL)
 		return;
 
 	if (data->in_list == FALSE)
@@ -412,23 +412,23 @@ finch_xfer_dialog_update_xfer(GaimXfer *xfer)
 
 	current_time = time(NULL);
 	if (((current_time - data->last_updated_time) == 0) &&
-		(!gaim_xfer_is_completed(xfer))) {
+		(!purple_xfer_is_completed(xfer))) {
 		/* Don't update the window more than once per second */
 		return;
 	}
 	data->last_updated_time = current_time;
 
-	size_str      = gaim_str_size_to_units(gaim_xfer_get_size(xfer));
-	remaining_str = gaim_str_size_to_units(gaim_xfer_get_bytes_remaining(xfer));
+	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
+	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
 
 	gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_PROGRESS,
-			g_ascii_dtostr(prog_str, sizeof(prog_str), gaim_xfer_get_progress(xfer) * 100.));
+			g_ascii_dtostr(prog_str, sizeof(prog_str), purple_xfer_get_progress(xfer) * 100.));
 	gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_SIZE, size_str);
 	gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_REMAINING, remaining_str);
 	gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_SPEED, kbsec);
 	g_free(size_str);
 	g_free(remaining_str);
-	if (gaim_xfer_is_completed(xfer)) {
+	if (purple_xfer_is_completed(xfer)) {
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_STATUS, _("Finished"));
 	} else {
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_STATUS, _("Transferring"));
@@ -436,7 +436,7 @@ finch_xfer_dialog_update_xfer(GaimXfer *xfer)
 
 	update_title_progress();
 
-	if (gaim_xfer_is_completed(xfer) && xfer_dialog->auto_clear)
+	if (purple_xfer_is_completed(xfer) && xfer_dialog->auto_clear)
 		finch_xfer_dialog_remove_xfer(xfer);
 }
 
@@ -444,21 +444,21 @@ finch_xfer_dialog_update_xfer(GaimXfer *xfer)
  * File Transfer UI Ops
  **************************************************************************/
 static void
-finch_xfer_new_xfer(GaimXfer *xfer)
+finch_xfer_new_xfer(PurpleXfer *xfer)
 {
-	GaimGntXferUiData *data;
+	PurpleGntXferUiData *data;
 
 	/* This is where we're setting xfer->ui_data for the first time. */
-	data = g_new0(GaimGntXferUiData, 1);
+	data = g_new0(PurpleGntXferUiData, 1);
 	xfer->ui_data = data;
 }
 
 static void
-finch_xfer_destroy(GaimXfer *xfer)
+finch_xfer_destroy(PurpleXfer *xfer)
 {
-	GaimGntXferUiData *data;
+	PurpleGntXferUiData *data;
 
-	data = GAIM_GNTXFER(xfer);
+	data = FINCHXFER(xfer);
 	if (data) {
 		g_free(data->name);
 		g_free(data);
@@ -467,7 +467,7 @@ finch_xfer_destroy(GaimXfer *xfer)
 }
 
 static void
-finch_xfer_add_xfer(GaimXfer *xfer)
+finch_xfer_add_xfer(PurpleXfer *xfer)
 {
 	if (!xfer_dialog)
 		finch_xfer_dialog_new();
@@ -477,27 +477,27 @@ finch_xfer_add_xfer(GaimXfer *xfer)
 }
 
 static void
-finch_xfer_update_progress(GaimXfer *xfer, double percent)
+finch_xfer_update_progress(PurpleXfer *xfer, double percent)
 {
 	if (xfer_dialog)
 		finch_xfer_dialog_update_xfer(xfer);
 }
 
 static void
-finch_xfer_cancel_local(GaimXfer *xfer)
+finch_xfer_cancel_local(PurpleXfer *xfer)
 {
 	if (xfer_dialog)
 		finch_xfer_dialog_cancel_xfer(xfer);
 }
 
 static void
-finch_xfer_cancel_remote(GaimXfer *xfer)
+finch_xfer_cancel_remote(PurpleXfer *xfer)
 {
 	if (xfer_dialog)
 		finch_xfer_dialog_cancel_xfer(xfer);
 }
 
-static GaimXferUiOps ops =
+static PurpleXferUiOps ops =
 {
 	finch_xfer_new_xfer,
 	finch_xfer_destroy,
@@ -513,9 +513,9 @@ static GaimXferUiOps ops =
 void
 finch_xfers_init(void)
 {
-	gaim_prefs_add_none("/gaim/gnt/filetransfer");
-	gaim_prefs_add_bool("/gaim/gnt/filetransfer/clear_finished", TRUE);
-	gaim_prefs_add_bool("/gaim/gnt/filetransfer/keep_open", FALSE);
+	purple_prefs_add_none("/purple/gnt/filetransfer");
+	purple_prefs_add_bool("/purple/gnt/filetransfer/clear_finished", TRUE);
+	purple_prefs_add_bool("/purple/gnt/filetransfer/keep_open", FALSE);
 }
 
 void
@@ -525,7 +525,7 @@ finch_xfers_uninit(void)
 		finch_xfer_dialog_destroy();
 }
 
-GaimXferUiOps *
+PurpleXferUiOps *
 finch_xfers_get_ui_ops(void)
 {
 	return &ops;

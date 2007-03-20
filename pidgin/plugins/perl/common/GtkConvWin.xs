@@ -47,13 +47,13 @@ Pidgin::Conversation
 pidgin_conv_window_get_active_gtkconv(win)
 	Pidgin::Conversation::Window win
 
-Gaim::Conversation
+Purple::Conversation
 pidgin_conv_window_get_active_conversation(win)
 	Pidgin::Conversation::Window win
 
 gboolean
 pidgin_conv_window_is_active_conversation(conv)
-	Gaim::Conversation conv
+	Purple::Conversation conv
 
 gboolean
 pidgin_conv_window_has_focus(win)
@@ -71,7 +71,7 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = pidgin_conv_window_get_gtkconvs(win); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Pidgin::Conversation")));
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Pidgin::Conversation")));
 	}
 
 guint
@@ -80,11 +80,11 @@ pidgin_conv_window_get_gtkconv_count(win)
 
 Pidgin::Conversation::Window
 pidgin_conv_window_first_with_type(type)
-	Gaim::ConversationType type
+	Purple::ConversationType type
 
 Pidgin::Conversation::Window
 pidgin_conv_window_last_with_type(type)
-	Gaim::ConversationType type
+	Purple::ConversationType type
 
 MODULE = Pidgin::Conversation::Window  PACKAGE = Pidgin::Conversation::Placement  PREFIX = pidgin_conv_placement_
 PROTOTYPES: ENABLE
@@ -95,14 +95,14 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = pidgin_conv_placement_get_options(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Pidgin::Conversation::Window")));
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Pidgin::Conversation::Window")));
 	}
 
 void
 pidgin_conv_placement_add_fnc(id, name, fnc)
 	const char * id
 	const char * name
-	Gaim::Conversation::PlacementFunc fnc
+	Pidgin::Conversation::PlacementFunc fnc
 
 void
 pidgin_conv_placement_remove_fnc(id)
@@ -112,15 +112,15 @@ const char *
 pidgin_conv_placement_get_name(id)
 	const char * id
 
-Gaim::Conversation::PlacementFunc
+Pidgin::Conversation::PlacementFunc
 pidgin_conv_placement_get_fnc(id)
 	const char * id
 
 void
 pidgin_conv_placement_set_current_func(func)
-	Gaim::Conversation::PlacementFunc func
+	Pidgin::Conversation::PlacementFunc func
 
-Gaim::Conversation::PlacementFunc
+Pidgin::Conversation::PlacementFunc
 pidgin_conv_placement_get_current_func()
 
 void
@@ -136,5 +136,5 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = pidgin_conv_windows_get_list(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Pidgin::Conversation::Window")));
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Pidgin::Conversation::Window")));
 	}

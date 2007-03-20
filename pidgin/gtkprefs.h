@@ -2,7 +2,7 @@
  * @file gtkprefs.h GTK+ Preferences
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -42,7 +42,7 @@ void pidgin_prefs_show(void);
  * Add a new checkbox for a boolean preference
  *
  * @param title The text to be displayed as the checkbox label
- * @param key   The key of the gaim bool pref that will be represented by the checkbox
+ * @param key   The key of the purple bool pref that will be represented by the checkbox
  * @param page  The page to which the new checkbox will be added
  */
 GtkWidget *pidgin_prefs_checkbox(const char *title, const char *key,
@@ -90,7 +90,7 @@ GtkWidget *pidgin_prefs_labeled_entry(GtkWidget *page, const gchar *title,
  *              paired as label/value
  */
 GtkWidget *pidgin_prefs_dropdown(GtkWidget *page, const gchar *title,
-		GaimPrefType type, const char *key, ...);
+		PurplePrefType type, const char *key, ...);
 
 /**
  * Add a new dropdown representing a preference of the specified type
@@ -103,7 +103,7 @@ GtkWidget *pidgin_prefs_dropdown(GtkWidget *page, const gchar *title,
  *                  be paired as label/value
  */
 GtkWidget *pidgin_prefs_dropdown_from_list(GtkWidget *page,
-		const gchar * title, GaimPrefType type, const char *key,
+		const gchar * title, PurplePrefType type, const char *key,
 		GList *menuitems);
 
 /**

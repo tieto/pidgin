@@ -2,9 +2,9 @@
  * @file savedstatuses.c Saved Status API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -56,10 +56,10 @@
  * are fully backward compatible.  The new status API just
  * adds the optional sub-statuses to the XML file.
  */
-struct _GaimSavedStatus
+struct _PurpleSavedStatus
 {
 	char *title;
-	GaimStatusPrimitive type;
+	PurpleStatusPrimitive type;
 	char *message;
 
 	/** The timestamp when this saved status was created. This must be unique. */
@@ -69,17 +69,17 @@ struct _GaimSavedStatus
 
 	unsigned int usage_count;
 
-	GList *substatuses;      /**< A list of GaimSavedStatusSub's. */
+	GList *substatuses;      /**< A list of PurpleSavedStatusSub's. */
 };
 
 /*
- * TODO: If a GaimStatusType is deleted, need to also delete any
- *       associated GaimSavedStatusSub's?
+ * TODO: If a PurpleStatusType is deleted, need to also delete any
+ *       associated PurpleSavedStatusSub's?
  */
-struct _GaimSavedStatusSub
+struct _PurpleSavedStatusSub
 {
-	GaimAccount *account;
-	const GaimStatusType *type;
+	PurpleAccount *account;
+	const PurpleStatusType *type;
 	char *message;
 };
 
@@ -94,7 +94,7 @@ static gboolean    statuses_loaded = FALSE;
  * is used as a unique identifier.
  *
  * So the key in this hash table is the creation_time and
- * the value is a pointer to the GaimSavedStatus.
+ * the value is a pointer to the PurpleSavedStatus.
  */
 static GHashTable *creation_times;
 
@@ -105,17 +105,17 @@ static void schedule_save(void);
  *********************************************************************/
 
 static void
-free_saved_status_sub(GaimSavedStatusSub *substatus)
+free_saved_status_sub(PurpleSavedStatusSub *substatus)
 {
 	g_return_if_fail(substatus != NULL);
 
 	g_free(substatus->message);
-	GAIM_DBUS_UNREGISTER_POINTER(substatus);
+	PURPLE_DBUS_UNREGISTER_POINTER(substatus);
 	g_free(substatus);
 }
 
 static void
-free_saved_status(GaimSavedStatus *status)
+free_saved_status(PurpleSavedStatus *status)
 {
 	g_return_if_fail(status != NULL);
 
@@ -124,12 +124,12 @@ free_saved_status(GaimSavedStatus *status)
 
 	while (status->substatuses != NULL)
 	{
-		GaimSavedStatusSub *substatus = status->substatuses->data;
+		PurpleSavedStatusSub *substatus = status->substatuses->data;
 		status->substatuses = g_list_remove(status->substatuses, substatus);
 		free_saved_status_sub(substatus);
 	}
 
-	GAIM_DBUS_UNREGISTER_POINTER(status);
+	PURPLE_DBUS_UNREGISTER_POINTER(status);
 	g_free(status);
 }
 
@@ -138,7 +138,7 @@ free_saved_status(GaimSavedStatus *status)
  * make sure it is unique.
  */
 static void
-set_creation_time(GaimSavedStatus *status, time_t creation_time)
+set_creation_time(PurpleSavedStatus *status, time_t creation_time)
 {
 	g_return_if_fail(status != NULL);
 
@@ -167,8 +167,8 @@ set_creation_time(GaimSavedStatus *status, time_t creation_time)
 static gint
 saved_statuses_sort_func(gconstpointer a, gconstpointer b)
 {
-	const GaimSavedStatus *saved_status_a = a;
-	const GaimSavedStatus *saved_status_b = b;
+	const PurpleSavedStatus *saved_status_a = a;
+	const PurpleSavedStatus *saved_status_b = b;
 	time_t time_a = saved_status_a->lastused +
 						(MIN(saved_status_a->usage_count, 10) * 86400);
 	time_t time_b = saved_status_b->lastused +
@@ -182,7 +182,7 @@ saved_statuses_sort_func(gconstpointer a, gconstpointer b)
 
 /**
  * Transient statuses are added and removed automatically by
- * Gaim.  If they're not used for a certain length of time then
+ * Purple.  If they're not used for a certain length of time then
  * they'll expire and be automatically removed.  This function
  * does the expiration.
  */
@@ -190,11 +190,11 @@ static void
 remove_old_transient_statuses()
 {
 	GList *l, *next;
-	GaimSavedStatus *saved_status, *current_status;
+	PurpleSavedStatus *saved_status, *current_status;
 	int count;
 	time_t creation_time;
 
-	current_status = gaim_savedstatus_get_current();
+	current_status = purple_savedstatus_get_current();
 
 	/*
 	 * Iterate through the list of saved statuses.  Delete all
@@ -206,14 +206,14 @@ remove_old_transient_statuses()
 	{
 		next = l->next;
 		saved_status = l->data;
-		if (gaim_savedstatus_is_transient(saved_status))
+		if (purple_savedstatus_is_transient(saved_status))
 		{
 			if (count == MAX_TRANSIENTS)
 			{
 				if (saved_status != current_status)
 				{
 					saved_statuses = g_list_remove(saved_statuses, saved_status);
-					creation_time = gaim_savedstatus_get_creation_time(saved_status);
+					creation_time = purple_savedstatus_get_creation_time(saved_status);
 					g_hash_table_remove(creation_times, &creation_time);
 					free_saved_status(saved_status);
 				}
@@ -232,18 +232,18 @@ remove_old_transient_statuses()
  *********************************************************************/
 
 static xmlnode *
-substatus_to_xmlnode(GaimSavedStatusSub *substatus)
+substatus_to_xmlnode(PurpleSavedStatusSub *substatus)
 {
 	xmlnode *node, *child;
 
 	node = xmlnode_new("substatus");
 
 	child = xmlnode_new_child(node, "account");
-	xmlnode_set_attrib(child, "protocol", gaim_account_get_protocol_id(substatus->account));
-	xmlnode_insert_data(child, gaim_account_get_username(substatus->account), -1);
+	xmlnode_set_attrib(child, "protocol", purple_account_get_protocol_id(substatus->account));
+	xmlnode_insert_data(child, purple_account_get_username(substatus->account), -1);
 
 	child = xmlnode_new_child(node, "state");
-	xmlnode_insert_data(child, gaim_status_type_get_id(substatus->type), -1);
+	xmlnode_insert_data(child, purple_status_type_get_id(substatus->type), -1);
 
 	if (substatus->message != NULL)
 	{
@@ -255,7 +255,7 @@ substatus_to_xmlnode(GaimSavedStatusSub *substatus)
 }
 
 static xmlnode *
-status_to_xmlnode(GaimSavedStatus *status)
+status_to_xmlnode(PurpleSavedStatus *status)
 {
 	xmlnode *node, *child;
 	char buf[21];
@@ -269,7 +269,7 @@ status_to_xmlnode(GaimSavedStatus *status)
 	else
 	{
 		/*
-		 * Gaim 1.5.0 and earlier require a name to be set, so we
+		 * Purple 1.5.0 and earlier require a name to be set, so we
 		 * do this little hack to maintain backward compatability
 		 * in the status.xml file.  Eventually this should be removed
 		 * and we should determine if a status is transient by
@@ -290,7 +290,7 @@ status_to_xmlnode(GaimSavedStatus *status)
 	xmlnode_set_attrib(node, "usage_count", buf);
 
 	child = xmlnode_new_child(node, "state");
-	xmlnode_insert_data(child, gaim_primitive_get_id_from_type(status->type), -1);
+	xmlnode_insert_data(child, purple_primitive_get_id_from_type(status->type), -1);
 
 	if (status->message != NULL)
 	{
@@ -333,14 +333,14 @@ sync_statuses(void)
 
 	if (!statuses_loaded)
 	{
-		gaim_debug_error("status", "Attempted to save statuses before they "
+		purple_debug_error("status", "Attempted to save statuses before they "
 						 "were read!\n");
 		return;
 	}
 
 	node = statuses_to_xmlnode();
 	data = xmlnode_to_formatted_str(node, NULL);
-	gaim_util_write_data_to_file("status.xml", data, -1);
+	purple_util_write_data_to_file("status.xml", data, -1);
 	g_free(data);
 	xmlnode_free(node);
 }
@@ -357,7 +357,7 @@ static void
 schedule_save(void)
 {
 	if (save_timer == 0)
-		save_timer = gaim_timeout_add(5000, save_cb, NULL);
+		save_timer = purple_timeout_add(5000, save_cb, NULL);
 }
 
 
@@ -365,14 +365,14 @@ schedule_save(void)
  * Reading from disk                                                 *
  *********************************************************************/
 
-static GaimSavedStatusSub *
+static PurpleSavedStatusSub *
 parse_substatus(xmlnode *substatus)
 {
-	GaimSavedStatusSub *ret;
+	PurpleSavedStatusSub *ret;
 	xmlnode *node;
 	char *data;
 
-	ret = g_new0(GaimSavedStatusSub, 1);
+	ret = g_new0(PurpleSavedStatusSub, 1);
 
 	/* Read the account */
 	node = xmlnode_get_child(substatus, "account");
@@ -382,9 +382,9 @@ parse_substatus(xmlnode *substatus)
 		const char *protocol;
 		acct_name = xmlnode_get_data(node);
 		protocol = xmlnode_get_attrib(node, "protocol");
-		protocol = _gaim_oscar_convert(acct_name, protocol); /* XXX: Remove */
+		protocol = _purple_oscar_convert(acct_name, protocol); /* XXX: Remove */
 		if ((acct_name != NULL) && (protocol != NULL))
-			ret->account = gaim_accounts_find(acct_name, protocol);
+			ret->account = purple_accounts_find(acct_name, protocol);
 		g_free(acct_name);
 	}
 
@@ -398,7 +398,7 @@ parse_substatus(xmlnode *substatus)
 	node = xmlnode_get_child(substatus, "state");
 	if ((node != NULL) && ((data = xmlnode_get_data(node)) != NULL))
 	{
-		ret->type = gaim_status_type_find_with_id(
+		ret->type = purple_status_type_find_with_id(
 							ret->account->status_types, data);
 		g_free(data);
 	}
@@ -410,7 +410,7 @@ parse_substatus(xmlnode *substatus)
 		ret->message = data;
 	}
 
-	GAIM_DBUS_REGISTER_POINTER(ret, GaimSavedStatusSub);
+	PURPLE_DBUS_REGISTER_POINTER(ret, PurpleSavedStatusSub);
 	return ret;
 }
 
@@ -438,16 +438,16 @@ parse_substatus(xmlnode *substatus)
  *
  * I know.  Moving, huh?
  */
-static GaimSavedStatus *
+static PurpleSavedStatus *
 parse_status(xmlnode *status)
 {
-	GaimSavedStatus *ret;
+	PurpleSavedStatus *ret;
 	xmlnode *node;
 	const char *attrib;
 	char *data;
 	int i;
 
-	ret = g_new0(GaimSavedStatus, 1);
+	ret = g_new0(PurpleSavedStatus, 1);
 
 	attrib = xmlnode_get_attrib(status, "transient");
 	if ((attrib == NULL) || (strcmp(attrib, "true")))
@@ -461,7 +461,7 @@ parse_status(xmlnode *status)
 	{
 		/* Ensure the title is unique */
 		i = 2;
-		while (gaim_savedstatus_find(ret->title) != NULL)
+		while (purple_savedstatus_find(ret->title) != NULL)
 		{
 			g_free(ret->title);
 			ret->title = g_strdup_printf("%s %d", attrib, i);
@@ -485,7 +485,7 @@ parse_status(xmlnode *status)
 	node = xmlnode_get_child(status, "state");
 	if ((node != NULL) && ((data = xmlnode_get_data(node)) != NULL))
 	{
-		ret->type = gaim_primitive_get_type_from_id(data);
+		ret->type = purple_primitive_get_type_from_id(data);
 		g_free(data);
 	}
 
@@ -500,18 +500,18 @@ parse_status(xmlnode *status)
 	for (node = xmlnode_get_child(status, "substatus"); node != NULL;
 			node = xmlnode_get_next_twin(node))
 	{
-		GaimSavedStatusSub *new;
+		PurpleSavedStatusSub *new;
 		new = parse_substatus(node);
 		if (new != NULL)
 			ret->substatuses = g_list_prepend(ret->substatuses, new);
 	}
 
-	GAIM_DBUS_REGISTER_POINTER(ret, GaimSavedStatus);
+	PURPLE_DBUS_REGISTER_POINTER(ret, PurpleSavedStatus);
 	return ret;
 }
 
 /**
- * Read the saved statuses from a file in the Gaim user dir.
+ * Read the saved statuses from a file in the Purple user dir.
  *
  * @return TRUE on success, FALSE on failure (if the file can not
  *         be opened, or if it contains invalid XML).
@@ -523,7 +523,7 @@ load_statuses(void)
 
 	statuses_loaded = TRUE;
 
-	statuses = gaim_util_read_xml_from_file("status.xml", _("saved statuses"));
+	statuses = purple_util_read_xml_from_file("status.xml", _("saved statuses"));
 
 	if (statuses == NULL)
 		return;
@@ -531,7 +531,7 @@ load_statuses(void)
 	for (status = xmlnode_get_child(statuses, "status"); status != NULL;
 			status = xmlnode_get_next_twin(status))
 	{
-		GaimSavedStatus *new;
+		PurpleSavedStatus *new;
 		new = parse_status(status);
 		saved_statuses = g_list_prepend(saved_statuses, new);
 	}
@@ -544,17 +544,17 @@ load_statuses(void)
 /**************************************************************************
 * Saved status API
 **************************************************************************/
-GaimSavedStatus *
-gaim_savedstatus_new(const char *title, GaimStatusPrimitive type)
+PurpleSavedStatus *
+purple_savedstatus_new(const char *title, PurpleStatusPrimitive type)
 {
-	GaimSavedStatus *status;
+	PurpleSavedStatus *status;
 
 	/* Make sure we don't already have a saved status with this title. */
 	if (title != NULL)
-		g_return_val_if_fail(gaim_savedstatus_find(title) == NULL, NULL);
+		g_return_val_if_fail(purple_savedstatus_find(title) == NULL, NULL);
 
-	status = g_new0(GaimSavedStatus, 1);
-	GAIM_DBUS_REGISTER_POINTER(status, GaimSavedStatus);
+	status = g_new0(PurpleSavedStatus, 1);
+	PURPLE_DBUS_REGISTER_POINTER(status, PurpleSavedStatus);
 	status->title = g_strdup(title);
 	status->type = type;
 	set_creation_time(status, time(NULL));
@@ -567,12 +567,12 @@ gaim_savedstatus_new(const char *title, GaimStatusPrimitive type)
 }
 
 void
-gaim_savedstatus_set_title(GaimSavedStatus *status, const char *title)
+purple_savedstatus_set_title(PurpleSavedStatus *status, const char *title)
 {
 	g_return_if_fail(status != NULL);
 
 	/* Make sure we don't already have a saved status with this title. */
-	g_return_if_fail(gaim_savedstatus_find(title) == NULL);
+	g_return_if_fail(purple_savedstatus_find(title) == NULL);
 
 	g_free(status->title);
 	status->title = g_strdup(title);
@@ -581,7 +581,7 @@ gaim_savedstatus_set_title(GaimSavedStatus *status, const char *title)
 }
 
 void
-gaim_savedstatus_set_type(GaimSavedStatus *status, GaimStatusPrimitive type)
+purple_savedstatus_set_type(PurpleSavedStatus *status, PurpleStatusPrimitive type)
 {
 	g_return_if_fail(status != NULL);
 
@@ -591,7 +591,7 @@ gaim_savedstatus_set_type(GaimSavedStatus *status, GaimStatusPrimitive type)
 }
 
 void
-gaim_savedstatus_set_message(GaimSavedStatus *status, const char *message)
+purple_savedstatus_set_message(PurpleSavedStatus *status, const char *message)
 {
 	g_return_if_fail(status != NULL);
 
@@ -605,24 +605,24 @@ gaim_savedstatus_set_message(GaimSavedStatus *status, const char *message)
 }
 
 void
-gaim_savedstatus_set_substatus(GaimSavedStatus *saved_status,
-							   const GaimAccount *account,
-							   const GaimStatusType *type,
+purple_savedstatus_set_substatus(PurpleSavedStatus *saved_status,
+							   const PurpleAccount *account,
+							   const PurpleStatusType *type,
 							   const char *message)
 {
-	GaimSavedStatusSub *substatus;
+	PurpleSavedStatusSub *substatus;
 
 	g_return_if_fail(saved_status != NULL);
 	g_return_if_fail(account      != NULL);
 	g_return_if_fail(type         != NULL);
 
 	/* Find an existing substatus or create a new one */
-	substatus = gaim_savedstatus_get_substatus(saved_status, account);
+	substatus = purple_savedstatus_get_substatus(saved_status, account);
 	if (substatus == NULL)
 	{
-		substatus = g_new0(GaimSavedStatusSub, 1);
-		GAIM_DBUS_REGISTER_POINTER(substatus, GaimSavedStatusSub);
-		substatus->account = (GaimAccount *)account;
+		substatus = g_new0(PurpleSavedStatusSub, 1);
+		PURPLE_DBUS_REGISTER_POINTER(substatus, PurpleSavedStatusSub);
+		substatus->account = (PurpleAccount *)account;
 		saved_status->substatuses = g_list_prepend(saved_status->substatuses, substatus);
 	}
 
@@ -634,11 +634,11 @@ gaim_savedstatus_set_substatus(GaimSavedStatus *saved_status,
 }
 
 void
-gaim_savedstatus_unset_substatus(GaimSavedStatus *saved_status,
-								 const GaimAccount *account)
+purple_savedstatus_unset_substatus(PurpleSavedStatus *saved_status,
+								 const PurpleAccount *account)
 {
 	GList *iter;
-	GaimSavedStatusSub *substatus;
+	PurpleSavedStatusSub *substatus;
 
 	g_return_if_fail(saved_status != NULL);
 	g_return_if_fail(account      != NULL);
@@ -662,34 +662,34 @@ gaim_savedstatus_unset_substatus(GaimSavedStatus *saved_status,
  * exist for this account.
  */
 static void
-gaim_savedstatus_unset_all_substatuses(const GaimAccount *account,
+purple_savedstatus_unset_all_substatuses(const PurpleAccount *account,
 		gpointer user_data)
 {
 	GList *iter;
-	GaimSavedStatus *status;
+	PurpleSavedStatus *status;
 
 	g_return_if_fail(account != NULL);
 
 	for (iter = saved_statuses; iter != NULL; iter = iter->next)
 	{
-		status = (GaimSavedStatus *)iter->data;
-		gaim_savedstatus_unset_substatus(status, account);
+		status = (PurpleSavedStatus *)iter->data;
+		purple_savedstatus_unset_substatus(status, account);
 	}
 }
 
 gboolean
-gaim_savedstatus_delete(const char *title)
+purple_savedstatus_delete(const char *title)
 {
-	GaimSavedStatus *status;
+	PurpleSavedStatus *status;
 	time_t creation_time, current, idleaway;
 
-	status = gaim_savedstatus_find(title);
+	status = purple_savedstatus_find(title);
 
 	if (status == NULL)
 		return FALSE;
 
 	saved_statuses = g_list_remove(saved_statuses, status);
-	creation_time = gaim_savedstatus_get_creation_time(status);
+	creation_time = purple_savedstatus_get_creation_time(status);
 	g_hash_table_remove(creation_times, &creation_time);
 	free_saved_status(status);
 
@@ -699,30 +699,30 @@ gaim_savedstatus_delete(const char *title)
 	 * If we just deleted our current status or our idleaway status,
 	 * then set the appropriate pref back to 0.
 	 */
-	current = gaim_prefs_get_int("/core/savedstatus/default");
+	current = purple_prefs_get_int("/core/savedstatus/default");
 	if (current == creation_time)
-		gaim_prefs_set_int("/core/savedstatus/default", 0);
+		purple_prefs_set_int("/core/savedstatus/default", 0);
 
-	idleaway = gaim_prefs_get_int("/core/savedstatus/idleaway");
+	idleaway = purple_prefs_get_int("/core/savedstatus/idleaway");
 	if (idleaway == creation_time)
-		gaim_prefs_set_int("/core/savedstatus/idleaway", 0);
+		purple_prefs_set_int("/core/savedstatus/idleaway", 0);
 
 	return TRUE;
 }
 
 const GList *
-gaim_savedstatuses_get_all(void)
+purple_savedstatuses_get_all(void)
 {
 	return saved_statuses;
 }
 
 GList *
-gaim_savedstatuses_get_popular(unsigned int how_many)
+purple_savedstatuses_get_popular(unsigned int how_many)
 {
 	GList *popular = NULL;
 	GList *cur;
 	int i;
-	GaimSavedStatus *next;
+	PurpleSavedStatus *next;
 
 	/* Copy 'how_many' elements to a new list */
 	i = 0;
@@ -730,8 +730,8 @@ gaim_savedstatuses_get_popular(unsigned int how_many)
 	while ((i < how_many) && (cur != NULL))
 	{
 		next = cur->data;
-		if ((!gaim_savedstatus_is_transient(next)
-			|| gaim_savedstatus_get_message(next) != NULL))
+		if ((!purple_savedstatus_is_transient(next)
+			|| purple_savedstatus_get_message(next) != NULL))
 		{
 			popular = g_list_prepend(popular, cur->data);
 			i++;
@@ -744,22 +744,22 @@ gaim_savedstatuses_get_popular(unsigned int how_many)
 	return popular;
 }
 
-GaimSavedStatus *
-gaim_savedstatus_get_current(void)
+PurpleSavedStatus *
+purple_savedstatus_get_current(void)
 {
-	if (gaim_savedstatus_is_idleaway())
-		return gaim_savedstatus_get_idleaway();
+	if (purple_savedstatus_is_idleaway())
+		return purple_savedstatus_get_idleaway();
 	else
-		return gaim_savedstatus_get_default();
+		return purple_savedstatus_get_default();
 }
 
-GaimSavedStatus *
-gaim_savedstatus_get_default()
+PurpleSavedStatus *
+purple_savedstatus_get_default()
 {
 	int creation_time;
-	GaimSavedStatus *saved_status = NULL;
+	PurpleSavedStatus *saved_status = NULL;
 
-	creation_time = gaim_prefs_get_int("/core/savedstatus/default");
+	creation_time = purple_prefs_get_int("/core/savedstatus/default");
 
 	if (creation_time != 0)
 		saved_status = g_hash_table_lookup(creation_times, &creation_time);
@@ -768,25 +768,25 @@ gaim_savedstatus_get_default()
 	{
 		/*
 		 * We don't have a current saved status!  This is either a new
-		 * Gaim user or someone upgrading from Gaim 1.5.0 or older, or
+		 * Purple user or someone upgrading from Purple 1.5.0 or older, or
 		 * possibly someone who deleted the status they were currently
 		 * using?  In any case, add a default status.
 		 */
-		saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_AVAILABLE);
-		gaim_prefs_set_int("/core/savedstatus/default",
-						   gaim_savedstatus_get_creation_time(saved_status));
+		saved_status = purple_savedstatus_new(NULL, PURPLE_STATUS_AVAILABLE);
+		purple_prefs_set_int("/core/savedstatus/default",
+						   purple_savedstatus_get_creation_time(saved_status));
 	}
 
 	return saved_status;
 }
 
-GaimSavedStatus *
-gaim_savedstatus_get_idleaway()
+PurpleSavedStatus *
+purple_savedstatus_get_idleaway()
 {
 	int creation_time;
-	GaimSavedStatus *saved_status = NULL;
+	PurpleSavedStatus *saved_status = NULL;
 
-	creation_time = gaim_prefs_get_int("/core/savedstatus/idleaway");
+	creation_time = purple_prefs_get_int("/core/savedstatus/idleaway");
 
 	if (creation_time != 0)
 		saved_status = g_hash_table_lookup(creation_times, &creation_time);
@@ -794,15 +794,15 @@ gaim_savedstatus_get_idleaway()
 	if (saved_status == NULL)
 	{
 		/* We don't have a specified "idle" status!  Weird. */
-		saved_status = gaim_savedstatus_find_transient_by_type_and_message(
-				GAIM_STATUS_AWAY, DEFAULT_AUTOAWAY_MESSAGE);
+		saved_status = purple_savedstatus_find_transient_by_type_and_message(
+				PURPLE_STATUS_AWAY, DEFAULT_AUTOAWAY_MESSAGE);
 
 		if (saved_status == NULL)
 		{
-			saved_status = gaim_savedstatus_new(NULL, GAIM_STATUS_AWAY);
-			gaim_savedstatus_set_message(saved_status, DEFAULT_AUTOAWAY_MESSAGE);
-			gaim_prefs_set_int("/core/savedstatus/idleaway",
-							   gaim_savedstatus_get_creation_time(saved_status));
+			saved_status = purple_savedstatus_new(NULL, PURPLE_STATUS_AWAY);
+			purple_savedstatus_set_message(saved_status, DEFAULT_AUTOAWAY_MESSAGE);
+			purple_prefs_set_int("/core/savedstatus/idleaway",
+							   purple_savedstatus_get_creation_time(saved_status));
 		}
 	}
 
@@ -810,62 +810,62 @@ gaim_savedstatus_get_idleaway()
 }
 
 gboolean
-gaim_savedstatus_is_idleaway()
+purple_savedstatus_is_idleaway()
 {
-	return gaim_prefs_get_bool("/core/savedstatus/isidleaway");
+	return purple_prefs_get_bool("/core/savedstatus/isidleaway");
 }
 
 void
-gaim_savedstatus_set_idleaway(gboolean idleaway)
+purple_savedstatus_set_idleaway(gboolean idleaway)
 {
 	GList *accounts, *node;
-	GaimSavedStatus *old, *saved_status;
+	PurpleSavedStatus *old, *saved_status;
 
-	if (gaim_savedstatus_is_idleaway() == idleaway)
+	if (purple_savedstatus_is_idleaway() == idleaway)
 		/* Don't need to do anything */
 		return;
 
 	/* Changing our status makes us un-idle */
 	if (!idleaway)
-		gaim_idle_touch();
+		purple_idle_touch();
 
-	old = gaim_savedstatus_get_current();
-	gaim_prefs_set_bool("/core/savedstatus/isidleaway", idleaway);
-	saved_status = idleaway ? gaim_savedstatus_get_idleaway()
-			: gaim_savedstatus_get_default();
+	old = purple_savedstatus_get_current();
+	purple_prefs_set_bool("/core/savedstatus/isidleaway", idleaway);
+	saved_status = idleaway ? purple_savedstatus_get_idleaway()
+			: purple_savedstatus_get_default();
 
-	if (idleaway && (gaim_savedstatus_get_type(old) != GAIM_STATUS_AVAILABLE))
+	if (idleaway && (purple_savedstatus_get_type(old) != PURPLE_STATUS_AVAILABLE))
 		/* Our global status is already "away," so don't change anything */
 		return;
 
-	accounts = gaim_accounts_get_all_active();
+	accounts = purple_accounts_get_all_active();
 	for (node = accounts; node != NULL; node = node->next)
 	{
-		GaimAccount *account;
-		GaimPresence *presence;
-		GaimStatus *status;
+		PurpleAccount *account;
+		PurplePresence *presence;
+		PurpleStatus *status;
 
 		account = node->data;
-		presence = gaim_account_get_presence(account);
-		status = gaim_presence_get_active_status(presence);
+		presence = purple_account_get_presence(account);
+		status = purple_presence_get_active_status(presence);
 
-		if (!idleaway || gaim_status_is_available(status))
-			gaim_savedstatus_activate_for_account(saved_status, account);
+		if (!idleaway || purple_status_is_available(status))
+			purple_savedstatus_activate_for_account(saved_status, account);
 	}
 
 	g_list_free(accounts);
 
-	gaim_signal_emit(gaim_savedstatuses_get_handle(), "savedstatus-changed",
+	purple_signal_emit(purple_savedstatuses_get_handle(), "savedstatus-changed",
 					 saved_status, old);
 }
 
-GaimSavedStatus *
-gaim_savedstatus_get_startup()
+PurpleSavedStatus *
+purple_savedstatus_get_startup()
 {
 	int creation_time;
-	GaimSavedStatus *saved_status = NULL;
+	PurpleSavedStatus *saved_status = NULL;
 
-	creation_time = gaim_prefs_get_int("/core/savedstatus/startup");
+	creation_time = purple_prefs_get_int("/core/savedstatus/startup");
 
 	if (creation_time != 0)
 		saved_status = g_hash_table_lookup(creation_times, &creation_time);
@@ -877,24 +877,24 @@ gaim_savedstatus_get_startup()
 		 * This may be the first login, or the user wants to
 		 * restore the "current" status.
 		 */
-		saved_status = gaim_savedstatus_get_current();
+		saved_status = purple_savedstatus_get_current();
 	}
 
 	return saved_status;
 }
 
 
-GaimSavedStatus *
-gaim_savedstatus_find(const char *title)
+PurpleSavedStatus *
+purple_savedstatus_find(const char *title)
 {
 	GList *iter;
-	GaimSavedStatus *status;
+	PurpleSavedStatus *status;
 
 	g_return_val_if_fail(title != NULL, NULL);
 
 	for (iter = saved_statuses; iter != NULL; iter = iter->next)
 	{
-		status = (GaimSavedStatus *)iter->data;
+		status = (PurpleSavedStatus *)iter->data;
 		if ((status->title != NULL) && !strcmp(status->title, title))
 			return status;
 	}
@@ -902,15 +902,15 @@ gaim_savedstatus_find(const char *title)
 	return NULL;
 }
 
-GaimSavedStatus *
-gaim_savedstatus_find_by_creation_time(time_t creation_time)
+PurpleSavedStatus *
+purple_savedstatus_find_by_creation_time(time_t creation_time)
 {
 	GList *iter;
-	GaimSavedStatus *status;
+	PurpleSavedStatus *status;
 
 	for (iter = saved_statuses; iter != NULL; iter = iter->next)
 	{
-		status = (GaimSavedStatus *)iter->data;
+		status = (PurpleSavedStatus *)iter->data;
 		if (status->creation_time == creation_time)
 			return status;
 	}
@@ -918,18 +918,18 @@ gaim_savedstatus_find_by_creation_time(time_t creation_time)
 	return NULL;
 }
 
-GaimSavedStatus *
-gaim_savedstatus_find_transient_by_type_and_message(GaimStatusPrimitive type,
+PurpleSavedStatus *
+purple_savedstatus_find_transient_by_type_and_message(PurpleStatusPrimitive type,
 													const char *message)
 {
 	GList *iter;
-	GaimSavedStatus *status;
+	PurpleSavedStatus *status;
 
 	for (iter = saved_statuses; iter != NULL; iter = iter->next)
 	{
-		status = (GaimSavedStatus *)iter->data;
-		if ((status->type == type) && gaim_savedstatus_is_transient(status) &&
-			!gaim_savedstatus_has_substatuses(status) &&
+		status = (PurpleSavedStatus *)iter->data;
+		if ((status->type == type) && purple_savedstatus_is_transient(status) &&
+			!purple_savedstatus_has_substatuses(status) &&
 			(((status->message == NULL) && (message == NULL)) ||
 			((status->message != NULL) && (message != NULL) && !strcmp(status->message, message))))
 		{
@@ -941,7 +941,7 @@ gaim_savedstatus_find_transient_by_type_and_message(GaimStatusPrimitive type,
 }
 
 gboolean
-gaim_savedstatus_is_transient(const GaimSavedStatus *saved_status)
+purple_savedstatus_is_transient(const PurpleSavedStatus *saved_status)
 {
 	g_return_val_if_fail(saved_status != NULL, TRUE);
 
@@ -949,7 +949,7 @@ gaim_savedstatus_is_transient(const GaimSavedStatus *saved_status)
 }
 
 const char *
-gaim_savedstatus_get_title(const GaimSavedStatus *saved_status)
+purple_savedstatus_get_title(const PurpleSavedStatus *saved_status)
 {
 	const char *message;
 
@@ -960,20 +960,20 @@ gaim_savedstatus_get_title(const GaimSavedStatus *saved_status)
 		return saved_status->title;
 
 	/* Otherwise, this is a transient status and we make up a title on the fly */
-	message = gaim_savedstatus_get_message(saved_status);
+	message = purple_savedstatus_get_message(saved_status);
 
 	if ((message == NULL) || (*message == '\0'))
 	{
-		GaimStatusPrimitive primitive;
-		primitive = gaim_savedstatus_get_type(saved_status);
-		return gaim_primitive_get_name_from_type(primitive);
+		PurpleStatusPrimitive primitive;
+		primitive = purple_savedstatus_get_type(saved_status);
+		return purple_primitive_get_name_from_type(primitive);
 	}
 	else
 	{
 		char *stripped;
 		static char buf[64];
-		stripped = gaim_markup_strip_html(message);
-		gaim_util_chrreplace(stripped, '\n', ' ');
+		stripped = purple_markup_strip_html(message);
+		purple_util_chrreplace(stripped, '\n', ' ');
 		strncpy(buf, stripped, sizeof(buf));
 		buf[sizeof(buf) - 1] = '\0';
 		if ((strlen(stripped) + 1) > sizeof(buf))
@@ -987,16 +987,16 @@ gaim_savedstatus_get_title(const GaimSavedStatus *saved_status)
 	}
 }
 
-GaimStatusPrimitive
-gaim_savedstatus_get_type(const GaimSavedStatus *saved_status)
+PurpleStatusPrimitive
+purple_savedstatus_get_type(const PurpleSavedStatus *saved_status)
 {
-	g_return_val_if_fail(saved_status != NULL, GAIM_STATUS_OFFLINE);
+	g_return_val_if_fail(saved_status != NULL, PURPLE_STATUS_OFFLINE);
 
 	return saved_status->type;
 }
 
 const char *
-gaim_savedstatus_get_message(const GaimSavedStatus *saved_status)
+purple_savedstatus_get_message(const PurpleSavedStatus *saved_status)
 {
 	g_return_val_if_fail(saved_status != NULL, NULL);
 
@@ -1004,7 +1004,7 @@ gaim_savedstatus_get_message(const GaimSavedStatus *saved_status)
 }
 
 time_t
-gaim_savedstatus_get_creation_time(const GaimSavedStatus *saved_status)
+purple_savedstatus_get_creation_time(const PurpleSavedStatus *saved_status)
 {
 	g_return_val_if_fail(saved_status != NULL, 0);
 
@@ -1012,19 +1012,19 @@ gaim_savedstatus_get_creation_time(const GaimSavedStatus *saved_status)
 }
 
 gboolean
-gaim_savedstatus_has_substatuses(const GaimSavedStatus *saved_status)
+purple_savedstatus_has_substatuses(const PurpleSavedStatus *saved_status)
 {
 	g_return_val_if_fail(saved_status != NULL, FALSE);
 
 	return (saved_status->substatuses != NULL);
 }
 
-GaimSavedStatusSub *
-gaim_savedstatus_get_substatus(const GaimSavedStatus *saved_status,
-							   const GaimAccount *account)
+PurpleSavedStatusSub *
+purple_savedstatus_get_substatus(const PurpleSavedStatus *saved_status,
+							   const PurpleAccount *account)
 {
 	GList *iter;
-	GaimSavedStatusSub *substatus;
+	PurpleSavedStatusSub *substatus;
 
 	g_return_val_if_fail(saved_status != NULL, NULL);
 	g_return_val_if_fail(account      != NULL, NULL);
@@ -1039,8 +1039,8 @@ gaim_savedstatus_get_substatus(const GaimSavedStatus *saved_status,
 	return NULL;
 }
 
-const GaimStatusType *
-gaim_savedstatus_substatus_get_type(const GaimSavedStatusSub *substatus)
+const PurpleStatusType *
+purple_savedstatus_substatus_get_type(const PurpleSavedStatusSub *substatus)
 {
 	g_return_val_if_fail(substatus != NULL, NULL);
 
@@ -1048,7 +1048,7 @@ gaim_savedstatus_substatus_get_type(const GaimSavedStatusSub *substatus)
 }
 
 const char *
-gaim_savedstatus_substatus_get_message(const GaimSavedStatusSub *substatus)
+purple_savedstatus_substatus_get_message(const PurpleSavedStatusSub *substatus)
 {
 	g_return_val_if_fail(substatus != NULL, NULL);
 
@@ -1056,10 +1056,10 @@ gaim_savedstatus_substatus_get_message(const GaimSavedStatusSub *substatus)
 }
 
 void
-gaim_savedstatus_activate(GaimSavedStatus *saved_status)
+purple_savedstatus_activate(PurpleSavedStatus *saved_status)
 {
 	GList *accounts, *node;
-	GaimSavedStatus *old = gaim_savedstatus_get_current();
+	PurpleSavedStatus *old = purple_savedstatus_get_current();
 
 	g_return_if_fail(saved_status != NULL);
 
@@ -1068,39 +1068,39 @@ gaim_savedstatus_activate(GaimSavedStatus *saved_status)
 	saved_status->usage_count++;
 	saved_statuses = g_list_remove(saved_statuses, saved_status);
 	saved_statuses = g_list_insert_sorted(saved_statuses, saved_status, saved_statuses_sort_func);
-	gaim_prefs_set_int("/core/savedstatus/default",
-					   gaim_savedstatus_get_creation_time(saved_status));
+	purple_prefs_set_int("/core/savedstatus/default",
+					   purple_savedstatus_get_creation_time(saved_status));
 
-	accounts = gaim_accounts_get_all_active();
+	accounts = purple_accounts_get_all_active();
 	for (node = accounts; node != NULL; node = node->next)
 	{
-		GaimAccount *account;
+		PurpleAccount *account;
 
 		account = node->data;
 
-		gaim_savedstatus_activate_for_account(saved_status, account);
+		purple_savedstatus_activate_for_account(saved_status, account);
 	}
 
 	g_list_free(accounts);
 
-	gaim_savedstatus_set_idleaway(FALSE);
+	purple_savedstatus_set_idleaway(FALSE);
 
-	gaim_signal_emit(gaim_savedstatuses_get_handle(), "savedstatus-changed",
+	purple_signal_emit(purple_savedstatuses_get_handle(), "savedstatus-changed",
 					 saved_status, old);
 }
 
 void
-gaim_savedstatus_activate_for_account(const GaimSavedStatus *saved_status,
-									  GaimAccount *account)
+purple_savedstatus_activate_for_account(const PurpleSavedStatus *saved_status,
+									  PurpleAccount *account)
 {
-	const GaimStatusType *status_type;
-	const GaimSavedStatusSub *substatus;
+	const PurpleStatusType *status_type;
+	const PurpleSavedStatusSub *substatus;
 	const char *message = NULL;
 
 	g_return_if_fail(saved_status != NULL);
 	g_return_if_fail(account != NULL);
 
-	substatus = gaim_savedstatus_get_substatus(saved_status, account);
+	substatus = purple_savedstatus_get_substatus(saved_status, account);
 	if (substatus != NULL)
 	{
 		status_type = substatus->type;
@@ -1108,27 +1108,27 @@ gaim_savedstatus_activate_for_account(const GaimSavedStatus *saved_status,
 	}
 	else
 	{
-		status_type = gaim_account_get_status_type_with_primitive(account, saved_status->type);
+		status_type = purple_account_get_status_type_with_primitive(account, saved_status->type);
 		if (status_type == NULL)
 			return;
 		message = saved_status->message;
 	}
 
 	if ((message != NULL) &&
-		(gaim_status_type_get_attr(status_type, "message")))
+		(purple_status_type_get_attr(status_type, "message")))
 	{
-		gaim_account_set_status(account, gaim_status_type_get_id(status_type),
+		purple_account_set_status(account, purple_status_type_get_id(status_type),
 								TRUE, "message", message, NULL);
 	}
 	else
 	{
-		gaim_account_set_status(account, gaim_status_type_get_id(status_type),
+		purple_account_set_status(account, purple_status_type_get_id(status_type),
 								TRUE, NULL);
 	}
 }
 
 void *
-gaim_savedstatuses_get_handle(void)
+purple_savedstatuses_get_handle(void)
 {
 	static int handle;
 
@@ -1136,61 +1136,61 @@ gaim_savedstatuses_get_handle(void)
 }
 
 void
-gaim_savedstatuses_init(void)
+purple_savedstatuses_init(void)
 {
-	void *handle = gaim_savedstatuses_get_handle();
+	void *handle = purple_savedstatuses_get_handle();
 
 	creation_times = g_hash_table_new(g_int_hash, g_int_equal);
 
 	/*
 	 * Using 0 as the creation_time is a special case.
-	 * If someone calls gaim_savedstatus_get_current() or
-	 * gaim_savedstatus_get_idleaway() and either of those functions
+	 * If someone calls purple_savedstatus_get_current() or
+	 * purple_savedstatus_get_idleaway() and either of those functions
 	 * sees a creation_time of 0, then it will create a default
 	 * saved status and return that to the user.
 	 */
-	gaim_prefs_add_none("/core/savedstatus");
-	gaim_prefs_add_int("/core/savedstatus/default", 0);
-	gaim_prefs_add_int("/core/savedstatus/startup", 0);
-	gaim_prefs_add_bool("/core/savedstatus/startup_current_status", TRUE);
-	gaim_prefs_add_int("/core/savedstatus/idleaway", 0);
-	gaim_prefs_add_bool("/core/savedstatus/isidleaway", FALSE);
+	purple_prefs_add_none("/core/savedstatus");
+	purple_prefs_add_int("/core/savedstatus/default", 0);
+	purple_prefs_add_int("/core/savedstatus/startup", 0);
+	purple_prefs_add_bool("/core/savedstatus/startup_current_status", TRUE);
+	purple_prefs_add_int("/core/savedstatus/idleaway", 0);
+	purple_prefs_add_bool("/core/savedstatus/isidleaway", FALSE);
 
 	load_statuses();
 
-	gaim_signal_register(handle, "savedstatus-changed",
-					 gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-					 gaim_value_new(GAIM_TYPE_SUBTYPE,
-									GAIM_SUBTYPE_SAVEDSTATUS),
-					 gaim_value_new(GAIM_TYPE_SUBTYPE,
-									GAIM_SUBTYPE_SAVEDSTATUS));
+	purple_signal_register(handle, "savedstatus-changed",
+					 purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+					 purple_value_new(PURPLE_TYPE_SUBTYPE,
+									PURPLE_SUBTYPE_SAVEDSTATUS),
+					 purple_value_new(PURPLE_TYPE_SUBTYPE,
+									PURPLE_SUBTYPE_SAVEDSTATUS));
 
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
+	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 			handle,
-			GAIM_CALLBACK(gaim_savedstatus_unset_all_substatuses),
+			PURPLE_CALLBACK(purple_savedstatus_unset_all_substatuses),
 			NULL);
 }
 
 void
-gaim_savedstatuses_uninit(void)
+purple_savedstatuses_uninit(void)
 {
 	remove_old_transient_statuses();
 
 	if (save_timer != 0)
 	{
-		gaim_timeout_remove(save_timer);
+		purple_timeout_remove(save_timer);
 		save_timer = 0;
 		sync_statuses();
 	}
 
 	while (saved_statuses != NULL) {
-		GaimSavedStatus *saved_status = saved_statuses->data;
+		PurpleSavedStatus *saved_status = saved_statuses->data;
 		saved_statuses = g_list_remove(saved_statuses, saved_status);
 		free_saved_status(saved_status);
 	}
 
 	g_hash_table_destroy(creation_times);
 
-	gaim_signals_unregister_by_instance(gaim_savedstatuses_get_handle());
+	purple_signals_unregister_by_instance(purple_savedstatuses_get_handle());
 }
 

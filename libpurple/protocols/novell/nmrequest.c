@@ -51,7 +51,7 @@ NMRequest *nm_create_request(const char *cmd, int trans_id, int gmt, nm_response
 	req->user_define = user_define;
 	req->ref_count = 1;
 
-	gaim_debug_info("novell", "Creating NMRequest instance, total=%d\n", ++count);
+	purple_debug_info("novell", "Creating NMRequest instance, total=%d\n", ++count);
 
 	return req;
 }
@@ -64,7 +64,7 @@ nm_release_request(NMRequest * req)
 			g_free(req->cmd);
 		g_free(req);
 
-		gaim_debug_info("novell",
+		purple_debug_info("novell",
 						"Releasing NMRequest instance, total=%d\n", --count);
 	}
 

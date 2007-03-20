@@ -1,90 +1,90 @@
 #include "module.h"
 
-MODULE = Gaim::Buddy::Icon PACKAGE = Gaim::Buddy::Icon   PREFIX = gaim_buddy_icon_
+MODULE = Purple::Buddy::Icon PACKAGE = Purple::Buddy::Icon   PREFIX = purple_buddy_icon_
 PROTOTYPES: ENABLE
 
 void
-gaim_buddy_icon_destroy(icon)
-	Gaim::Buddy::Icon icon
+purple_buddy_icon_destroy(icon)
+	Purple::Buddy::Icon icon
 
-Gaim::Buddy::Icon
-gaim_buddy_icon_ref(icon)
-	Gaim::Buddy::Icon icon
+Purple::Buddy::Icon
+purple_buddy_icon_ref(icon)
+	Purple::Buddy::Icon icon
 
-Gaim::Buddy::Icon
-gaim_buddy_icon_unref(icon)
-	Gaim::Buddy::Icon icon
-
-void
-gaim_buddy_icon_update(icon)
-	Gaim::Buddy::Icon icon
+Purple::Buddy::Icon
+purple_buddy_icon_unref(icon)
+	Purple::Buddy::Icon icon
 
 void
-gaim_buddy_icon_cache(icon, buddy)
-	Gaim::Buddy::Icon icon
-	Gaim::BuddyList::Buddy buddy
+purple_buddy_icon_update(icon)
+	Purple::Buddy::Icon icon
 
 void
-gaim_buddy_icon_set_account(icon, account)
-	Gaim::Buddy::Icon icon
-	Gaim::Account account
+purple_buddy_icon_cache(icon, buddy)
+	Purple::Buddy::Icon icon
+	Purple::BuddyList::Buddy buddy
 
 void
-gaim_buddy_icon_set_username(icon, username)
-	Gaim::Buddy::Icon icon
+purple_buddy_icon_set_account(icon, account)
+	Purple::Buddy::Icon icon
+	Purple::Account account
+
+void
+purple_buddy_icon_set_username(icon, username)
+	Purple::Buddy::Icon icon
 	const char * username
 
 void
-gaim_buddy_icon_set_data(icon, data, len)
-	Gaim::Buddy::Icon icon
+purple_buddy_icon_set_data(icon, data, len)
+	Purple::Buddy::Icon icon
 	void * data
 	size_t len
 
-Gaim::Account
-gaim_buddy_icon_get_account(icon)
-	Gaim::Buddy::Icon icon
+Purple::Account
+purple_buddy_icon_get_account(icon)
+	Purple::Buddy::Icon icon
 
 const char *
-gaim_buddy_icon_get_username(icon)
-	Gaim::Buddy::Icon icon
+purple_buddy_icon_get_username(icon)
+	Purple::Buddy::Icon icon
 
 const void *
-gaim_buddy_icon_get_data(icon, len)
-	Gaim::Buddy::Icon icon
+purple_buddy_icon_get_data(icon, len)
+	Purple::Buddy::Icon icon
 	size_t &len
 
 const char *
-gaim_buddy_icon_get_type(icon)
-	Gaim::Buddy::Icon icon
+purple_buddy_icon_get_type(icon)
+	Purple::Buddy::Icon icon
 
 void
-gaim_buddy_icon_get_scale_size(spec, width, height)
-	Gaim::Buddy::Icon::Spec spec
+purple_buddy_icon_get_scale_size(spec, width, height)
+	Purple::Buddy::Icon::Spec spec
 	int *width
 	int *height
 
-MODULE = Gaim::Buddy::Icon PACKAGE = Gaim::Buddy::Icons   PREFIX = gaim_buddy_icons_
+MODULE = Purple::Buddy::Icon PACKAGE = Purple::Buddy::Icons   PREFIX = purple_buddy_icons_
 PROTOTYPES: ENABLE
 
 void
-gaim_buddy_icons_set_caching(caching)
+purple_buddy_icons_set_caching(caching)
 	gboolean caching
 
 gboolean
-gaim_buddy_icons_is_caching()
+purple_buddy_icons_is_caching()
 
 void
-gaim_buddy_icons_set_cache_dir(cache_dir)
+purple_buddy_icons_set_cache_dir(cache_dir)
 	const char *cache_dir
 
 const char *
-gaim_buddy_icons_get_cache_dir();
+purple_buddy_icons_get_cache_dir();
 
-Gaim::Handle
-gaim_buddy_icons_get_handle();
-
-void
-gaim_buddy_icons_init();
+Purple::Handle
+purple_buddy_icons_get_handle();
 
 void
-gaim_buddy_icons_uninit()
+purple_buddy_icons_init();
+
+void
+purple_buddy_icons_uninit()

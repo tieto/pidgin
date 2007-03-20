@@ -1,7 +1,7 @@
 /**
  * @file ssl-gnutls.c GNUTLS SSL plugin.
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Christian Hammond <chipx86@gnupdate.org>
  *
@@ -35,9 +35,9 @@ typedef struct
 {
 	gnutls_session session;
 	guint handshake_handler;
-} GaimSslGnutlsData;
+} PurpleSslGnutlsData;
 
-#define GAIM_SSL_GNUTLS_DATA(gsc) ((GaimSslGnutlsData *)gsc->private_data)
+#define PURPLE_SSL_GNUTLS_DATA(gsc) ((PurpleSslGnutlsData *)gsc->private_data)
 
 static gnutls_certificate_client_credentials xcred;
 
@@ -67,32 +67,32 @@ ssl_gnutls_uninit(void)
 
 
 static void ssl_gnutls_handshake_cb(gpointer data, gint source,
-		GaimInputCondition cond)
+		PurpleInputCondition cond)
 {
-	GaimSslConnection *gsc = data;
-	GaimSslGnutlsData *gnutls_data = GAIM_SSL_GNUTLS_DATA(gsc);
+	PurpleSslConnection *gsc = data;
+	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
 	ssize_t ret;
 
-	gaim_debug_info("gnutls", "Handshaking\n");
+	purple_debug_info("gnutls", "Handshaking\n");
 	ret = gnutls_handshake(gnutls_data->session);
 
 	if(ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED)
 		return;
 
-	gaim_input_remove(gnutls_data->handshake_handler);
+	purple_input_remove(gnutls_data->handshake_handler);
 	gnutls_data->handshake_handler = 0;
 
 	if(ret != 0) {
-		gaim_debug_error("gnutls", "Handshake failed. Error %s\n",
+		purple_debug_error("gnutls", "Handshake failed. Error %s\n",
 			gnutls_strerror(ret));
 
 		if(gsc->error_cb != NULL)
-			gsc->error_cb(gsc, GAIM_SSL_HANDSHAKE_FAILED,
+			gsc->error_cb(gsc, PURPLE_SSL_HANDSHAKE_FAILED,
 				gsc->connect_cb_data);
 
-		gaim_ssl_close(gsc);
+		purple_ssl_close(gsc);
 	} else {
-		gaim_debug_info("gnutls", "Handshake complete\n");
+		purple_debug_info("gnutls", "Handshake complete\n");
 
 		gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
 	}
@@ -101,12 +101,12 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 
 
 static void
-ssl_gnutls_connect(GaimSslConnection *gsc)
+ssl_gnutls_connect(PurpleSslConnection *gsc)
 {
-	GaimSslGnutlsData *gnutls_data;
+	PurpleSslGnutlsData *gnutls_data;
 	static const int cert_type_priority[2] = { GNUTLS_CRT_X509, 0 };
 
-	gnutls_data = g_new0(GaimSslGnutlsData, 1);
+	gnutls_data = g_new0(PurpleSslGnutlsData, 1);
 	gsc->private_data = gnutls_data;
 
 	gnutls_init(&gnutls_data->session, GNUTLS_CLIENT);
@@ -120,22 +120,22 @@ ssl_gnutls_connect(GaimSslConnection *gsc)
 
 	gnutls_transport_set_ptr(gnutls_data->session, GINT_TO_POINTER(gsc->fd));
 
-	gnutls_data->handshake_handler = gaim_input_add(gsc->fd,
-		GAIM_INPUT_READ, ssl_gnutls_handshake_cb, gsc);
+	gnutls_data->handshake_handler = purple_input_add(gsc->fd,
+		PURPLE_INPUT_READ, ssl_gnutls_handshake_cb, gsc);
 
-	ssl_gnutls_handshake_cb(gsc, gsc->fd, GAIM_INPUT_READ);
+	ssl_gnutls_handshake_cb(gsc, gsc->fd, PURPLE_INPUT_READ);
 }
 
 static void
-ssl_gnutls_close(GaimSslConnection *gsc)
+ssl_gnutls_close(PurpleSslConnection *gsc)
 {
-	GaimSslGnutlsData *gnutls_data = GAIM_SSL_GNUTLS_DATA(gsc);
+	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
 
 	if(!gnutls_data)
 		return;
 
 	if(gnutls_data->handshake_handler)
-		gaim_input_remove(gnutls_data->handshake_handler);
+		purple_input_remove(gnutls_data->handshake_handler);
 
 	gnutls_bye(gnutls_data->session, GNUTLS_SHUT_RDWR);
 
@@ -146,9 +146,9 @@ ssl_gnutls_close(GaimSslConnection *gsc)
 }
 
 static size_t
-ssl_gnutls_read(GaimSslConnection *gsc, void *data, size_t len)
+ssl_gnutls_read(PurpleSslConnection *gsc, void *data, size_t len)
 {
-	GaimSslGnutlsData *gnutls_data = GAIM_SSL_GNUTLS_DATA(gsc);
+	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
 	ssize_t s;
 
 	s = gnutls_record_recv(gnutls_data->session, data, len);
@@ -157,7 +157,7 @@ ssl_gnutls_read(GaimSslConnection *gsc, void *data, size_t len)
 		s = -1;
 		errno = EAGAIN;
 	} else if(s < 0) {
-		gaim_debug_error("gnutls", "receive failed: %s\n",
+		purple_debug_error("gnutls", "receive failed: %s\n",
 				gnutls_strerror(s));
 		s = -1;
 		/*
@@ -173,9 +173,9 @@ ssl_gnutls_read(GaimSslConnection *gsc, void *data, size_t len)
 }
 
 static size_t
-ssl_gnutls_write(GaimSslConnection *gsc, const void *data, size_t len)
+ssl_gnutls_write(PurpleSslConnection *gsc, const void *data, size_t len)
 {
-	GaimSslGnutlsData *gnutls_data = GAIM_SSL_GNUTLS_DATA(gsc);
+	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
 	ssize_t s = 0;
 
 	/* XXX: when will gnutls_data be NULL? */
@@ -186,7 +186,7 @@ ssl_gnutls_write(GaimSslConnection *gsc, const void *data, size_t len)
 		s = -1;
 		errno = EAGAIN;
 	} else if(s < 0) {
-		gaim_debug_error("gnutls", "send failed: %s\n",
+		purple_debug_error("gnutls", "send failed: %s\n",
 				gnutls_strerror(s));
 		s = -1;
 		/*
@@ -201,7 +201,7 @@ ssl_gnutls_write(GaimSslConnection *gsc, const void *data, size_t len)
 	return s;
 }
 
-static GaimSslOps ssl_ops =
+static PurpleSslOps ssl_ops =
 {
 	ssl_gnutls_init,
 	ssl_gnutls_uninit,
@@ -214,11 +214,11 @@ static GaimSslOps ssl_ops =
 #endif /* HAVE_GNUTLS */
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 #ifdef HAVE_GNUTLS
-	if(!gaim_ssl_get_ops()) {
-		gaim_ssl_set_ops(&ssl_ops);
+	if(!purple_ssl_get_ops()) {
+		purple_ssl_set_ops(&ssl_ops);
 	}
 
 	/* Init GNUTLS now so others can use it even if sslconn never does */
@@ -231,27 +231,27 @@ plugin_load(GaimPlugin *plugin)
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 #ifdef HAVE_GNUTLS
-	if(gaim_ssl_get_ops() == &ssl_ops) {
-		gaim_ssl_set_ops(NULL);
+	if(purple_ssl_get_ops() == &ssl_ops) {
+		purple_ssl_set_ops(NULL);
 	}
 #endif
 
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
-	GAIM_PLUGIN_FLAG_INVISIBLE,                       /**< flags          */
+	PURPLE_PLUGIN_FLAG_INVISIBLE,                       /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	SSL_GNUTLS_PLUGIN_ID,                             /**< id             */
 	N_("GNUTLS"),                                     /**< name           */
@@ -261,7 +261,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Provides SSL support through GNUTLS."),
 	"Christian Hammond <chipx86@gnupdate.org>",
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -274,8 +274,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(ssl_gnutls, init_plugin, info)
+PURPLE_INIT_PLUGIN(ssl_gnutls, init_plugin, info)

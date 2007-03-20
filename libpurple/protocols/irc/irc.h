@@ -1,7 +1,7 @@
 /**
  * @file irc.h
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _GAIM_IRC_H
-#define _GAIM_IRC_H
+#ifndef _PURPLE_IRC_H
+#define _PURPLE_IRC_H
 
 #include <glib.h>
 
@@ -35,7 +35,7 @@
 #define IRC_DEFAULT_SSL_PORT 994
 
 #define IRC_DEFAULT_CHARSET "UTF-8"
-#define IRC_DEFAULT_ALIAS "gaim"
+#define IRC_DEFAULT_ALIAS "purple"
 
 #define IRC_DEFAULT_QUIT "Leaving."
 
@@ -48,7 +48,7 @@ enum { IRC_USEROPT_SERVER, IRC_USEROPT_PORT, IRC_USEROPT_CHARSET };
 enum irc_state { IRC_STATE_NEW, IRC_STATE_ESTABLISHED };
 
 struct irc_conn {
-	GaimAccount *account;
+	PurpleAccount *account;
 	GHashTable *msgs;
 	GHashTable *cmds;
 	char *server;
@@ -75,12 +75,12 @@ struct irc_conn {
 		int idle;
 		time_t signon;
 	} whois;
-	GaimRoomlist *roomlist;
-	GaimSslConnection *gsc;
+	PurpleRoomlist *roomlist;
+	PurpleSslConnection *gsc;
 
 	gboolean quitting;
 
-	GaimCircBuffer *outbuf;
+	PurpleCircBuffer *outbuf;
 	guint writeh;
 
 	time_t recv_time;
@@ -178,7 +178,7 @@ int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, con
 int irc_cmd_wallops(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_whois(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 
-GaimXfer *irc_dccsend_new_xfer(GaimConnection *gc, const char *who);
-void irc_dccsend_send_file(GaimConnection *gc, const char *who, const char *file);
+PurpleXfer *irc_dccsend_new_xfer(PurpleConnection *gc, const char *who);
+void irc_dccsend_send_file(PurpleConnection *gc, const char *who, const char *file);
 void irc_dccsend_recv(struct irc_conn *irc, const char *from, const char *msg);
-#endif /* _GAIM_IRC_H */
+#endif /* _PURPLE_IRC_H */

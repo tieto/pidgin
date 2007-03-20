@@ -2,9 +2,9 @@
  * @file gtkimhtmltoolbar.c GTK+ IMHtml Toolbar
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -29,7 +29,7 @@
 #include "imgstore.h"
 #include "notify.h"
 #include "request.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "util.h"
 
 #include "gtkdialogs.h"
@@ -121,7 +121,7 @@ static void apply_font(GtkWidget *widget, GtkFontSelection *fontsel)
 	   but for now only works with font face */
 	char *fontname;
 	char *space;
-	GtkIMHtmlToolbar *toolbar =  g_object_get_data(G_OBJECT(fontsel), "gaim_toolbar");
+	GtkIMHtmlToolbar *toolbar =  g_object_get_data(G_OBJECT(fontsel), "purple_toolbar");
 
 	fontname = gtk_font_selection_dialog_get_font_name(GTK_FONT_SELECTION_DIALOG(fontsel));
 
@@ -146,7 +146,7 @@ toggle_font(GtkWidget *font, GtkIMHtmlToolbar *toolbar)
 		if (!toolbar->font_dialog) {
 			toolbar->font_dialog = gtk_font_selection_dialog_new(_("Select Font"));
 
-			g_object_set_data(G_OBJECT(toolbar->font_dialog), "gaim_toolbar", toolbar);
+			g_object_set_data(G_OBJECT(toolbar->font_dialog), "purple_toolbar", toolbar);
 
 			if(fontname) {
 				char *fonttif = g_strdup_printf("%s 12", fontname);
@@ -198,7 +198,7 @@ static void cancel_toolbar_fgcolor(GtkWidget *widget,
 static void do_fgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 {
 	GdkColor text_color;
-	GtkIMHtmlToolbar *toolbar = g_object_get_data(G_OBJECT(colorsel), "gaim_toolbar");
+	GtkIMHtmlToolbar *toolbar = g_object_get_data(G_OBJECT(colorsel), "purple_toolbar");
 	char *open_tag;
 
 	open_tag = g_malloc(30);
@@ -231,7 +231,7 @@ toggle_fg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 				g_free(color);
 			}
 
-			g_object_set_data(G_OBJECT(colorsel), "gaim_toolbar", toolbar);
+			g_object_set_data(G_OBJECT(colorsel), "purple_toolbar", toolbar);
 
 			g_signal_connect(G_OBJECT(toolbar->fgcolor_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_fgcolor), toolbar);
@@ -274,7 +274,7 @@ cancel_toolbar_bgcolor(GtkWidget *widget, GtkIMHtmlToolbar *toolbar)
 static void do_bgcolor(GtkWidget *widget, GtkColorSelection *colorsel)
 {
 	GdkColor text_color;
-	GtkIMHtmlToolbar *toolbar = g_object_get_data(G_OBJECT(colorsel), "gaim_toolbar");
+	GtkIMHtmlToolbar *toolbar = g_object_get_data(G_OBJECT(colorsel), "purple_toolbar");
 	char *open_tag;
 
 	open_tag = g_malloc(30);
@@ -310,7 +310,7 @@ toggle_bg_color(GtkWidget *color, GtkIMHtmlToolbar *toolbar)
 				g_free(color);
 			}
 
-			g_object_set_data(G_OBJECT(colorsel), "gaim_toolbar", toolbar);
+			g_object_set_data(G_OBJECT(colorsel), "purple_toolbar", toolbar);
 
 			g_signal_connect(G_OBJECT(toolbar->bgcolor_dialog), "delete_event",
 							 G_CALLBACK(destroy_toolbar_bgcolor), toolbar);
@@ -335,7 +335,7 @@ clear_formatting_cb(GtkWidget *clear, GtkIMHtmlToolbar *toolbar)
 }
 
 static void
-cancel_link_cb(GtkIMHtmlToolbar *toolbar, GaimRequestFields *fields)
+cancel_link_cb(GtkIMHtmlToolbar *toolbar, PurpleRequestFields *fields)
 {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link), FALSE);
 
@@ -347,19 +347,19 @@ close_link_dialog(GtkIMHtmlToolbar *toolbar)
 {
 	if (toolbar->link_dialog != NULL)
 	{
-		gaim_request_close(GAIM_REQUEST_FIELDS, toolbar->link_dialog);
+		purple_request_close(PURPLE_REQUEST_FIELDS, toolbar->link_dialog);
 		toolbar->link_dialog = NULL;
 	}
 }
 
 static void
-do_insert_link_cb(GtkIMHtmlToolbar *toolbar, GaimRequestFields *fields)
+do_insert_link_cb(GtkIMHtmlToolbar *toolbar, PurpleRequestFields *fields)
 {
 	const char *url, *description;
 
-	url         = gaim_request_fields_get_string(fields, "url");
+	url         = purple_request_fields_get_string(fields, "url");
 	if (GTK_IMHTML(toolbar->imhtml)->format_functions & GTK_IMHTML_LINKDESC)
-		description = gaim_request_fields_get_string(fields, "description");
+		description = purple_request_fields_get_string(fields, "description");
 	else
 		description = NULL;
 
@@ -379,29 +379,29 @@ static void
 insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->link))) {
-		GaimRequestFields *fields;
-		GaimRequestFieldGroup *group;
-		GaimRequestField *field;
+		PurpleRequestFields *fields;
+		PurpleRequestFieldGroup *group;
+		PurpleRequestField *field;
 		GtkTextIter start, end;
 		char *msg;
 		char *desc = NULL;
 
-		fields = gaim_request_fields_new();
+		fields = purple_request_fields_new();
 
-		group = gaim_request_field_group_new(NULL);
-		gaim_request_fields_add_group(fields, group);
+		group = purple_request_field_group_new(NULL);
+		purple_request_fields_add_group(fields, group);
 
-		field = gaim_request_field_string_new("url", _("_URL"), NULL, FALSE);
-		gaim_request_field_set_required(field, TRUE);
-		gaim_request_field_group_add_field(group, field);
+		field = purple_request_field_string_new("url", _("_URL"), NULL, FALSE);
+		purple_request_field_set_required(field, TRUE);
+		purple_request_field_group_add_field(group, field);
 
 		if(GTK_IMHTML(toolbar->imhtml)->format_functions & GTK_IMHTML_LINKDESC) {
 			if (gtk_text_buffer_get_selection_bounds(GTK_IMHTML(toolbar->imhtml)->text_buffer, &start, &end)) {
 				desc = gtk_imhtml_get_text(GTK_IMHTML(toolbar->imhtml), &start, &end);
 			}
-			field = gaim_request_field_string_new("description", _("_Description"),
+			field = purple_request_field_string_new("description", _("_Description"),
 							      desc, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 			msg = g_strdup(_("Please enter the URL and description of the "
 							 "link that you want to insert. The description "
 							 "is optional."));
@@ -411,7 +411,7 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 		}
 
 		toolbar->link_dialog =
-			gaim_request_fields(toolbar, _("Insert Link"),
+			purple_request_fields(toolbar, _("Insert Link"),
 					    NULL,
 						msg,
 					    fields,
@@ -470,7 +470,7 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image), FALSE);
 
 	if (!g_file_get_contents(filename, &filedata, &size, &error)) {
-		gaim_notify_error(NULL, NULL, error->message, NULL);
+		purple_notify_error(NULL, NULL, error->message, NULL);
 
 		g_error_free(error);
 		g_free(filename);
@@ -480,12 +480,12 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 
 	name = strrchr(filename, G_DIR_SEPARATOR) + 1;
 
-	id = gaim_imgstore_add(filedata, size, name);
+	id = purple_imgstore_add(filedata, size, name);
 	g_free(filedata);
 
 	if (id == 0) {
 		buf = g_strdup_printf(_("Failed to store image: %s\n"), filename);
-		gaim_notify_error(NULL, NULL, buf, NULL);
+		purple_notify_error(NULL, NULL, buf, NULL);
 
 		g_free(buf);
 		g_free(filename);
@@ -499,7 +499,7 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 	gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)),
 									 &iter, ins);
 	gtk_imhtml_insert_image_at_iter(GTK_IMHTML(toolbar->imhtml), id, &iter);
-	gaim_imgstore_unref(id);
+	purple_imgstore_unref(id);
 }
 
 

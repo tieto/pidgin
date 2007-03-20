@@ -2,9 +2,9 @@
  * @file log.c Logging API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -35,61 +35,61 @@
 
 static GSList *loggers = NULL;
 
-static GaimLogLogger *html_logger;
-static GaimLogLogger *txt_logger;
-static GaimLogLogger *old_logger;
+static PurpleLogLogger *html_logger;
+static PurpleLogLogger *txt_logger;
+static PurpleLogLogger *old_logger;
 
-struct _gaim_logsize_user {
+struct _purple_logsize_user {
 	char *name;
-	GaimAccount *account;
+	PurpleAccount *account;
 };
 static GHashTable *logsize_users = NULL;
 
 static void log_get_log_sets_common(GHashTable *sets);
 
-static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
+static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 							  const char *from, time_t time, const char *message);
-static void html_logger_finalize(GaimLog *log);
-static GList *html_logger_list(GaimLogType type, const char *sn, GaimAccount *account);
-static GList *html_logger_list_syslog(GaimAccount *account);
-static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags);
-static int html_logger_total_size(GaimLogType type, const char *name, GaimAccount *account);
+static void html_logger_finalize(PurpleLog *log);
+static GList *html_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account);
+static GList *html_logger_list_syslog(PurpleAccount *account);
+static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
+static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
 
-static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *account);
-static int old_logger_total_size(GaimLogType type, const char *name, GaimAccount *account);
-static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags);
-static int old_logger_size (GaimLog *log);
-static void old_logger_get_log_sets(GaimLogSetCallback cb, GHashTable *sets);
-static void old_logger_finalize(GaimLog *log);
+static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account);
+static int old_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
+static char * old_logger_read (PurpleLog *log, PurpleLogReadFlags *flags);
+static int old_logger_size (PurpleLog *log);
+static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets);
+static void old_logger_finalize(PurpleLog *log);
 
-static gsize txt_logger_write(GaimLog *log,
-							 GaimMessageFlags type,
+static gsize txt_logger_write(PurpleLog *log,
+							 PurpleMessageFlags type,
 							 const char *from, time_t time, const char *message);
-static void txt_logger_finalize(GaimLog *log);
-static GList *txt_logger_list(GaimLogType type, const char *sn, GaimAccount *account);
-static GList *txt_logger_list_syslog(GaimAccount *account);
-static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags);
-static int txt_logger_total_size(GaimLogType type, const char *name, GaimAccount *account);
+static void txt_logger_finalize(PurpleLog *log);
+static GList *txt_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account);
+static GList *txt_logger_list_syslog(PurpleAccount *account);
+static char *txt_logger_read(PurpleLog *log, PurpleLogReadFlags *flags);
+static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account);
 
 /**************************************************************************
  * PUBLIC LOGGING FUNCTIONS ***********************************************
  **************************************************************************/
 
-GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
-                      GaimConversation *conv, time_t time, const struct tm *tm)
+PurpleLog *purple_log_new(PurpleLogType type, const char *name, PurpleAccount *account,
+                      PurpleConversation *conv, time_t time, const struct tm *tm)
 {
-	GaimLog *log;
+	PurpleLog *log;
 
-	/* IMPORTANT: Make sure to initialize all the members of GaimLog */
-	log = g_slice_new(GaimLog);
-	GAIM_DBUS_REGISTER_POINTER(log, GaimLog);
+	/* IMPORTANT: Make sure to initialize all the members of PurpleLog */
+	log = g_slice_new(PurpleLog);
+	PURPLE_DBUS_REGISTER_POINTER(log, PurpleLog);
 
 	log->type = type;
-	log->name = g_strdup(gaim_normalize(account, name));
+	log->name = g_strdup(purple_normalize(account, name));
 	log->account = account;
 	log->conv = conv;
 	log->time = time;
-	log->logger = gaim_log_logger_get();
+	log->logger = purple_log_logger_get();
 	log->logger_data = NULL;
 
 	if (tm == NULL)
@@ -120,7 +120,7 @@ GaimLog *gaim_log_new(GaimLogType type, const char *name, GaimAccount *account,
 	return log;
 }
 
-void gaim_log_free(GaimLog *log)
+void purple_log_free(PurpleLog *log)
 {
 	g_return_if_fail(log);
 	if (log->logger && log->logger->finalize)
@@ -136,14 +136,14 @@ void gaim_log_free(GaimLog *log)
 		g_slice_free(struct tm, log->tm);
 	}
 
-	GAIM_DBUS_UNREGISTER_POINTER(log);
-	g_slice_free(GaimLog, log);
+	PURPLE_DBUS_UNREGISTER_POINTER(log);
+	g_slice_free(PurpleLog, log);
 }
 
-void gaim_log_write(GaimLog *log, GaimMessageFlags type,
+void purple_log_write(PurpleLog *log, PurpleMessageFlags type,
 		    const char *from, time_t time, const char *message)
 {
-	struct _gaim_logsize_user *lu;
+	struct _purple_logsize_user *lu;
 	gsize written, total = 0;
 	gpointer ptrsize;
 
@@ -153,9 +153,9 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 
 	written = (log->logger->write)(log, type, from, time, message);
 
-	lu = g_new(struct _gaim_logsize_user, 1);
+	lu = g_new(struct _purple_logsize_user, 1);
 
-	lu->name = g_strdup(gaim_normalize(log->account, log->name));
+	lu->name = g_strdup(purple_normalize(log->account, log->name));
 	lu->account = log->account;
 
 	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
@@ -169,19 +169,19 @@ void gaim_log_write(GaimLog *log, GaimMessageFlags type,
 
 }
 
-char *gaim_log_read(GaimLog *log, GaimLogReadFlags *flags)
+char *purple_log_read(PurpleLog *log, PurpleLogReadFlags *flags)
 {
-	GaimLogReadFlags mflags;
+	PurpleLogReadFlags mflags;
 	g_return_val_if_fail(log && log->logger, NULL);
 	if (log->logger->read) {
 		char *ret = (log->logger->read)(log, flags ? flags : &mflags);
-		gaim_str_strip_char(ret, '\r');
+		purple_str_strip_char(ret, '\r');
 		return ret;
 	}
 	return g_strdup(_("<b><font color=\"red\">The logger has no read function</font></b>"));
 }
 
-int gaim_log_get_size(GaimLog *log)
+int purple_log_get_size(PurpleLog *log)
 {
 	g_return_val_if_fail(log && log->logger, 0);
 
@@ -190,32 +190,32 @@ int gaim_log_get_size(GaimLog *log)
 	return 0;
 }
 
-static guint _gaim_logsize_user_hash(struct _gaim_logsize_user *lu)
+static guint _purple_logsize_user_hash(struct _purple_logsize_user *lu)
 {
 	return g_str_hash(lu->name);
 }
 
-static guint _gaim_logsize_user_equal(struct _gaim_logsize_user *lu1,
-		struct _gaim_logsize_user *lu2)
+static guint _purple_logsize_user_equal(struct _purple_logsize_user *lu1,
+		struct _purple_logsize_user *lu2)
 {
 	return (lu1->account == lu2->account && (!strcmp(lu1->name, lu2->name)));
 }
 
-static void _gaim_logsize_user_free_key(struct _gaim_logsize_user *lu)
+static void _purple_logsize_user_free_key(struct _purple_logsize_user *lu)
 {
 	g_free(lu->name);
 	g_free(lu);
 }
 
-int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *account)
+int purple_log_get_total_size(PurpleLogType type, const char *name, PurpleAccount *account)
 {
 	gpointer ptrsize;
 	int size = 0;
 	GSList *n;
-	struct _gaim_logsize_user *lu;
+	struct _purple_logsize_user *lu;
 
-	lu = g_new(struct _gaim_logsize_user, 1);
-	lu->name = g_strdup(gaim_normalize(account, name));
+	lu = g_new(struct _purple_logsize_user, 1);
+	lu->name = g_strdup(purple_normalize(account, name));
 	lu->account = account;
 
 	if(g_hash_table_lookup_extended(logsize_users, lu, NULL, &ptrsize)) {
@@ -224,7 +224,7 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
 		g_free(lu);
 	} else {
 		for (n = loggers; n; n = n->next) {
-			GaimLogLogger *logger = n->data;
+			PurpleLogLogger *logger = n->data;
 
 			if(logger->total_size){
 				size += (logger->total_size)(type, name, account);
@@ -233,9 +233,9 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
 				int this_size = 0;
 
 				while (logs) {
-					GaimLog *log = (GaimLog*)(logs->data);
-					this_size += gaim_log_get_size(log);
-					gaim_log_free(log);
+					PurpleLog *log = (PurpleLog*)(logs->data);
+					this_size += purple_log_get_size(log);
+					purple_log_free(log);
 					logs = g_list_delete_link(logs, logs);
 				}
 
@@ -248,7 +248,7 @@ int gaim_log_get_total_size(GaimLogType type, const char *name, GaimAccount *acc
 	return size;
 }
 
-gboolean gaim_log_is_deletable(GaimLog *log)
+gboolean purple_log_is_deletable(PurpleLog *log)
 {
 	g_return_val_if_fail(log != NULL, FALSE);
 	g_return_val_if_fail(log->logger != NULL, FALSE);
@@ -262,7 +262,7 @@ gboolean gaim_log_is_deletable(GaimLog *log)
 	return TRUE;
 }
 
-gboolean gaim_log_delete(GaimLog *log)
+gboolean purple_log_delete(PurpleLog *log)
 {
 	g_return_val_if_fail(log != NULL, FALSE);
 	g_return_val_if_fail(log->logger != NULL, FALSE);
@@ -274,35 +274,35 @@ gboolean gaim_log_delete(GaimLog *log)
 }
 
 char *
-gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *account)
+purple_log_get_log_dir(PurpleLogType type, const char *name, PurpleAccount *account)
 {
-	GaimPlugin *prpl;
-	GaimPluginProtocolInfo *prpl_info;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
 	const char *prpl_name;
 	char *acct_name;
 	const char *target;
 	char *dir;
 
-	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 	if (!prpl)
 		return NULL;
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	prpl_name = prpl_info->list_icon(account, NULL);
 
-	acct_name = g_strdup(gaim_escape_filename(gaim_normalize(account,
-				gaim_account_get_username(account))));
+	acct_name = g_strdup(purple_escape_filename(purple_normalize(account,
+				purple_account_get_username(account))));
 
-	if (type == GAIM_LOG_CHAT) {
-		char *temp = g_strdup_printf("%s.chat", gaim_normalize(account, name));
-		target = gaim_escape_filename(temp);
+	if (type == PURPLE_LOG_CHAT) {
+		char *temp = g_strdup_printf("%s.chat", purple_normalize(account, name));
+		target = purple_escape_filename(temp);
 		g_free(temp);
-	} else if(type == GAIM_LOG_SYSTEM) {
+	} else if(type == PURPLE_LOG_SYSTEM) {
 		target = ".system";
 	} else {
-		target = gaim_escape_filename(gaim_normalize(account, name));
+		target = purple_escape_filename(purple_normalize(account, name));
 	}
 
-	dir = g_build_filename(gaim_user_dir(), "logs", prpl_name, acct_name, target, NULL);
+	dir = g_build_filename(purple_user_dir(), "logs", prpl_name, acct_name, target, NULL);
 
 	g_free(acct_name);
 
@@ -313,49 +313,49 @@ gaim_log_get_log_dir(GaimLogType type, const char *name, GaimAccount *account)
  * LOGGER FUNCTIONS *********************************************************
  ****************************************************************************/
 
-static GaimLogLogger *current_logger = NULL;
+static PurpleLogLogger *current_logger = NULL;
 
-static void logger_pref_cb(const char *name, GaimPrefType type,
+static void logger_pref_cb(const char *name, PurplePrefType type,
 						   gconstpointer value, gpointer data)
 {
-	GaimLogLogger *logger;
+	PurpleLogLogger *logger;
 	GSList *l = loggers;
 	while (l) {
 		logger = l->data;
 		if (!strcmp(logger->id, value)) {
-			gaim_log_logger_set(logger);
+			purple_log_logger_set(logger);
 			return;
 		}
 		l = l->next;
 	}
-	gaim_log_logger_set(txt_logger);
+	purple_log_logger_set(txt_logger);
 }
 
 
-GaimLogLogger *gaim_log_logger_new(const char *id, const char *name, int functions, ...)
+PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int functions, ...)
 {
 #if 0
-				void(*create)(GaimLog *),
-				gsize(*write)(GaimLog *, GaimMessageFlags, const char *, time_t, const char *),
-				void(*finalize)(GaimLog *),
-				GList*(*list)(GaimLogType type, const char*, GaimAccount*),
-				char*(*read)(GaimLog*, GaimLogReadFlags*),
-				int(*size)(GaimLog*),
-				int(*total_size)(GaimLogType type, const char *name, GaimAccount *account),
-				GList*(*list_syslog)(GaimAccount *account),
-				void(*get_log_sets)(GaimLogSetCallback cb, GHashTable *sets),
-				gboolean(*delete)(GaimLog *log),
-				gboolean(*is_deletable)(GaimLog *log))
+				void(*create)(PurpleLog *),
+				gsize(*write)(PurpleLog *, PurpleMessageFlags, const char *, time_t, const char *),
+				void(*finalize)(PurpleLog *),
+				GList*(*list)(PurpleLogType type, const char*, PurpleAccount*),
+				char*(*read)(PurpleLog*, PurpleLogReadFlags*),
+				int(*size)(PurpleLog*),
+				int(*total_size)(PurpleLogType type, const char *name, PurpleAccount *account),
+				GList*(*list_syslog)(PurpleAccount *account),
+				void(*get_log_sets)(PurpleLogSetCallback cb, GHashTable *sets),
+				gboolean(*delete)(PurpleLog *log),
+				gboolean(*is_deletable)(PurpleLog *log))
 {
 #endif
-	GaimLogLogger *logger;
+	PurpleLogLogger *logger;
 	va_list args;
 
 	g_return_val_if_fail(id != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 	g_return_val_if_fail(functions >= 1, NULL);
 
-	logger = g_new0(GaimLogLogger, 1);
+	logger = g_new0(PurpleLogLogger, 1);
 	logger->id = g_strdup(id);
 	logger->name = g_strdup(name);
 
@@ -385,21 +385,21 @@ GaimLogLogger *gaim_log_logger_new(const char *id, const char *name, int functio
 		logger->is_deletable = va_arg(args, void *);
 
 	if (functions >= 12)
-		gaim_debug_info("log", "Dropping new functions for logger: %s (%s)\n", name, id);
+		purple_debug_info("log", "Dropping new functions for logger: %s (%s)\n", name, id);
 
 	va_end(args);
 
 	return logger;
 }
 
-void gaim_log_logger_free(GaimLogLogger *logger)
+void purple_log_logger_free(PurpleLogLogger *logger)
 {
 	g_free(logger->name);
 	g_free(logger->id);
 	g_free(logger);
 }
 
-void gaim_log_logger_add (GaimLogLogger *logger)
+void purple_log_logger_add (PurpleLogLogger *logger)
 {
 	g_return_if_fail(logger);
 	if (g_slist_find(loggers, logger))
@@ -407,28 +407,28 @@ void gaim_log_logger_add (GaimLogLogger *logger)
 	loggers = g_slist_append(loggers, logger);
 }
 
-void gaim_log_logger_remove (GaimLogLogger *logger)
+void purple_log_logger_remove (PurpleLogLogger *logger)
 {
 	g_return_if_fail(logger);
 	loggers = g_slist_remove(loggers, logger);
 }
 
-void gaim_log_logger_set (GaimLogLogger *logger)
+void purple_log_logger_set (PurpleLogLogger *logger)
 {
 	g_return_if_fail(logger);
 	current_logger = logger;
 }
 
-GaimLogLogger *gaim_log_logger_get()
+PurpleLogLogger *purple_log_logger_get()
 {
 	return current_logger;
 }
 
-GList *gaim_log_logger_get_options(void)
+GList *purple_log_logger_get_options(void)
 {
 	GSList *n;
 	GList *list = NULL;
-	GaimLogLogger *data;
+	PurpleLogLogger *data;
 
 	for (n = loggers; n; n = n->next) {
 		data = n->data;
@@ -441,32 +441,32 @@ GList *gaim_log_logger_get_options(void)
 	return list;
 }
 
-gint gaim_log_compare(gconstpointer y, gconstpointer z)
+gint purple_log_compare(gconstpointer y, gconstpointer z)
 {
-	const GaimLog *a = y;
-	const GaimLog *b = z;
+	const PurpleLog *a = y;
+	const PurpleLog *b = z;
 
 	return b->time - a->time;
 }
 
-GList *gaim_log_get_logs(GaimLogType type, const char *name, GaimAccount *account)
+GList *purple_log_get_logs(PurpleLogType type, const char *name, PurpleAccount *account)
 {
 	GList *logs = NULL;
 	GSList *n;
 	for (n = loggers; n; n = n->next) {
-		GaimLogLogger *logger = n->data;
+		PurpleLogLogger *logger = n->data;
 		if (!logger->list)
 			continue;
 		logs = g_list_concat(logger->list(type, name, account), logs);
 	}
 
-	return g_list_sort(logs, gaim_log_compare);
+	return g_list_sort(logs, purple_log_compare);
 }
 
-gint gaim_log_set_compare(gconstpointer y, gconstpointer z)
+gint purple_log_set_compare(gconstpointer y, gconstpointer z)
 {
-	const GaimLogSet *a = y;
-	const GaimLogSet *b = z;
+	const PurpleLogSet *a = y;
+	const PurpleLogSet *b = z;
 	gint ret = 0;
 
 	/* This logic seems weird at first...
@@ -475,7 +475,7 @@ gint gaim_log_set_compare(gconstpointer y, gconstpointer z)
 	 * exist if one logger knows the account and another
 	 * doesn't. */
 	if (a->account != NULL && b->account != NULL) {
-		ret = strcmp(gaim_account_get_username(a->account), gaim_account_get_username(b->account));
+		ret = strcmp(purple_account_get_username(a->account), purple_account_get_username(b->account));
 		if (ret != 0)
 			return ret;
 	}
@@ -490,10 +490,10 @@ gint gaim_log_set_compare(gconstpointer y, gconstpointer z)
 static guint
 log_set_hash(gconstpointer key)
 {
-	const GaimLogSet *set = key;
+	const PurpleLogSet *set = key;
 
-	/* The account isn't hashed because we need GaimLogSets with NULL accounts
-	 * to be found when we search by a GaimLogSet that has a non-NULL account
+	/* The account isn't hashed because we need PurpleLogSets with NULL accounts
+	 * to be found when we search by a PurpleLogSet that has a non-NULL account
 	 * but the same type and name. */
 	return g_int_hash(&set->type) + g_str_hash(set->name);
 }
@@ -504,31 +504,31 @@ log_set_equal(gconstpointer a, gconstpointer b)
 	/* I realize that the choices made for GList and GHashTable
 	 * make sense for those data types, but I wish the comparison
 	 * functions were compatible. */
-	return !gaim_log_set_compare(a, b);
+	return !purple_log_set_compare(a, b);
 }
 
 static void
-log_add_log_set_to_hash(GHashTable *sets, GaimLogSet *set)
+log_add_log_set_to_hash(GHashTable *sets, PurpleLogSet *set)
 {
-	GaimLogSet *existing_set = g_hash_table_lookup(sets, set);
+	PurpleLogSet *existing_set = g_hash_table_lookup(sets, set);
 
 	if (existing_set == NULL)
 		g_hash_table_insert(sets, set, set);
 	else if (existing_set->account == NULL && set->account != NULL)
 		g_hash_table_replace(sets, set, set);
 	else
-		gaim_log_set_free(set);
+		purple_log_set_free(set);
 }
 
-GHashTable *gaim_log_get_log_sets(void)
+GHashTable *purple_log_get_log_sets(void)
 {
 	GSList *n;
 	GHashTable *sets = g_hash_table_new_full(log_set_hash, log_set_equal,
-											 (GDestroyNotify)gaim_log_set_free, NULL);
+											 (GDestroyNotify)purple_log_set_free, NULL);
 
 	/* Get the log sets from all the loggers. */
 	for (n = loggers; n; n = n->next) {
-		GaimLogLogger *logger = n->data;
+		PurpleLogLogger *logger = n->data;
 
 		if (!logger->get_log_sets)
 			continue;
@@ -538,11 +538,11 @@ GHashTable *gaim_log_get_log_sets(void)
 
 	log_get_log_sets_common(sets);
 
-	/* Return the GHashTable of unique GaimLogSets. */
+	/* Return the GHashTable of unique PurpleLogSets. */
 	return sets;
 }
 
-void gaim_log_set_free(GaimLogSet *set)
+void purple_log_set_free(PurpleLogSet *set)
 {
 	g_return_if_fail(set != NULL);
 
@@ -550,21 +550,21 @@ void gaim_log_set_free(GaimLogSet *set)
 	if (set->normalized_name != set->name)
 		g_free(set->normalized_name);
 
-	g_slice_free(GaimLogSet, set);
+	g_slice_free(PurpleLogSet, set);
 }
 
-GList *gaim_log_get_system_logs(GaimAccount *account)
+GList *purple_log_get_system_logs(PurpleAccount *account)
 {
 	GList *logs = NULL;
 	GSList *n;
 	for (n = loggers; n; n = n->next) {
-		GaimLogLogger *logger = n->data;
+		PurpleLogLogger *logger = n->data;
 		if (!logger->list_syslog)
 			continue;
 		logs = g_list_concat(logger->list_syslog(account), logs);
 	}
 
-	return g_list_sort(logs, gaim_log_compare);
+	return g_list_sort(logs, purple_log_compare);
 }
 
 /****************************************************************************
@@ -572,53 +572,53 @@ GList *gaim_log_get_system_logs(GaimAccount *account)
  ****************************************************************************/
 
 void *
-gaim_log_get_handle(void)
+purple_log_get_handle(void)
 {
 	static int handle;
 
 	return &handle;
 }
 
-void gaim_log_init(void)
+void purple_log_init(void)
 {
-	void *handle = gaim_log_get_handle();
+	void *handle = purple_log_get_handle();
 
-	gaim_prefs_add_none("/core/logging");
-	gaim_prefs_add_bool("/core/logging/log_ims", FALSE);
-	gaim_prefs_add_bool("/core/logging/log_chats", FALSE);
-	gaim_prefs_add_bool("/core/logging/log_system", FALSE);
+	purple_prefs_add_none("/core/logging");
+	purple_prefs_add_bool("/core/logging/log_ims", FALSE);
+	purple_prefs_add_bool("/core/logging/log_chats", FALSE);
+	purple_prefs_add_bool("/core/logging/log_system", FALSE);
 
-	gaim_prefs_add_string("/core/logging/format", "txt");
+	purple_prefs_add_string("/core/logging/format", "txt");
 
-	html_logger = gaim_log_logger_new("html", _("HTML"), 11,
+	html_logger = purple_log_logger_new("html", _("HTML"), 11,
 									  NULL,
 									  html_logger_write,
 									  html_logger_finalize,
 									  html_logger_list,
 									  html_logger_read,
-									  gaim_log_common_sizer,
+									  purple_log_common_sizer,
 									  html_logger_total_size,
 									  html_logger_list_syslog,
 									  NULL,
-									  gaim_log_common_deleter,
-									  gaim_log_common_is_deletable);
-	gaim_log_logger_add(html_logger);
+									  purple_log_common_deleter,
+									  purple_log_common_is_deletable);
+	purple_log_logger_add(html_logger);
 
-	txt_logger = gaim_log_logger_new("txt", _("Plain text"), 11,
+	txt_logger = purple_log_logger_new("txt", _("Plain text"), 11,
 									 NULL,
 									 txt_logger_write,
 									 txt_logger_finalize,
 									 txt_logger_list,
 									 txt_logger_read,
-									 gaim_log_common_sizer,
+									 purple_log_common_sizer,
 									 txt_logger_total_size,
 									 txt_logger_list_syslog,
 									 NULL,
-									 gaim_log_common_deleter,
-									 gaim_log_common_is_deletable);
-	gaim_log_logger_add(txt_logger);
+									 purple_log_common_deleter,
+									 purple_log_common_is_deletable);
+	purple_log_logger_add(txt_logger);
 
-	old_logger = gaim_log_logger_new("old", _("Old flat format"), 9,
+	old_logger = purple_log_logger_new("old", _("Old flat format"), 9,
 									 NULL,
 									 NULL,
 									 old_logger_finalize,
@@ -628,56 +628,56 @@ void gaim_log_init(void)
 									 old_logger_total_size,
 									 NULL,
 									 old_logger_get_log_sets);
-	gaim_log_logger_add(old_logger);
+	purple_log_logger_add(old_logger);
 
-	gaim_signal_register(handle, "log-timestamp",
+	purple_signal_register(handle, "log-timestamp",
 #if SIZEOF_TIME_T == 4
-	                     gaim_marshal_POINTER__POINTER_INT_BOOLEAN,
+	                     purple_marshal_POINTER__POINTER_INT_BOOLEAN,
 #elif SIZEOF_TIME_T == 8
-			     gaim_marshal_POINTER__POINTER_INT64_BOOLEAN,
+			     purple_marshal_POINTER__POINTER_INT64_BOOLEAN,
 #else
 #error Unknown size of time_t
 #endif
-	                     gaim_value_new(GAIM_TYPE_STRING), 2,
-	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
-	                                    GAIM_SUBTYPE_LOG),
+	                     purple_value_new(PURPLE_TYPE_STRING), 2,
+	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                    PURPLE_SUBTYPE_LOG),
 #if SIZEOF_TIME_T == 4
-	                     gaim_value_new(GAIM_TYPE_INT),
+	                     purple_value_new(PURPLE_TYPE_INT),
 #elif SIZEOF_TIME_T == 8
-	                     gaim_value_new(GAIM_TYPE_INT64),
+	                     purple_value_new(PURPLE_TYPE_INT64),
 #else
 # error Unknown size of time_t
 #endif
-	                     gaim_value_new(GAIM_TYPE_BOOLEAN));
+	                     purple_value_new(PURPLE_TYPE_BOOLEAN));
 
-	gaim_prefs_connect_callback(NULL, "/core/logging/format",
+	purple_prefs_connect_callback(NULL, "/core/logging/format",
 							    logger_pref_cb, NULL);
-	gaim_prefs_trigger_callback("/core/logging/format");
+	purple_prefs_trigger_callback("/core/logging/format");
 
-	logsize_users = g_hash_table_new_full((GHashFunc)_gaim_logsize_user_hash,
-			(GEqualFunc)_gaim_logsize_user_equal,
-			(GDestroyNotify)_gaim_logsize_user_free_key, NULL);
+	logsize_users = g_hash_table_new_full((GHashFunc)_purple_logsize_user_hash,
+			(GEqualFunc)_purple_logsize_user_equal,
+			(GDestroyNotify)_purple_logsize_user_free_key, NULL);
 }
 
 void
-gaim_log_uninit(void)
+purple_log_uninit(void)
 {
-	gaim_signals_unregister_by_instance(gaim_log_get_handle());
+	purple_signals_unregister_by_instance(purple_log_get_handle());
 }
 
 /****************************************************************************
  * LOGGERS ******************************************************************
  ****************************************************************************/
 
-static char *log_get_timestamp(GaimLog *log, time_t when)
+static char *log_get_timestamp(PurpleLog *log, time_t when)
 {
 	gboolean show_date;
 	char *date;
 	struct tm tm;
 
-	show_date = (log->type == GAIM_LOG_SYSTEM) || (time(NULL) > when + 20*60);
+	show_date = (log->type == PURPLE_LOG_SYSTEM) || (time(NULL) > when + 20*60);
 
-	date = gaim_signal_emit_return_1(gaim_log_get_handle(),
+	date = purple_signal_emit_return_1(purple_log_get_handle(),
 	                          "log-timestamp",
 	                          log, when, show_date);
 	if (date != NULL)
@@ -685,14 +685,14 @@ static char *log_get_timestamp(GaimLog *log, time_t when)
 
 	tm = *(localtime(&when));
 	if (show_date)
-		return g_strdup(gaim_date_format_long(&tm));
+		return g_strdup(purple_date_format_long(&tm));
 	else
-		return g_strdup(gaim_time_format(&tm));
+		return g_strdup(purple_time_format(&tm));
 }
 
-void gaim_log_common_writer(GaimLog *log, const char *ext)
+void purple_log_common_writer(PurpleLog *log, const char *ext)
 {
-	GaimLogCommonLoggerData *data = log->logger_data;
+	PurpleLogCommonLoggerData *data = log->logger_data;
 
 	if (data == NULL)
 	{
@@ -704,15 +704,15 @@ void gaim_log_common_writer(GaimLog *log, const char *ext)
 		char *filename;
 		char *path;
 
-		dir = gaim_log_get_log_dir(log->type, log->name, log->account);
+		dir = purple_log_get_log_dir(log->type, log->name, log->account);
 		if (dir == NULL)
 			return;
 
-		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		purple_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
 		tm = localtime(&log->time);
-		tz = gaim_escape_filename(gaim_utf8_strftime("%Z", tm));
-		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S%z", tm);
+		tz = purple_escape_filename(purple_utf8_strftime("%Z", tm));
+		date = purple_utf8_strftime("%Y-%m-%d.%H%M%S%z", tm);
 
 		filename = g_strdup_printf("%s%s%s", date, tz, ext ? ext : "");
 
@@ -720,17 +720,17 @@ void gaim_log_common_writer(GaimLog *log, const char *ext)
 		g_free(dir);
 		g_free(filename);
 
-		log->logger_data = data = g_slice_new0(GaimLogCommonLoggerData);
+		log->logger_data = data = g_slice_new0(PurpleLogCommonLoggerData);
 
 		data->file = g_fopen(path, "a");
 		if (data->file == NULL)
 		{
-			gaim_debug(GAIM_DEBUG_ERROR, "log",
+			purple_debug(PURPLE_DEBUG_ERROR, "log",
 					"Could not create log file %s\n", path);
 
 			if (log->conv != NULL)
-				gaim_conversation_write(log->conv, NULL, _("Logging of this conversation failed."),
-										GAIM_MESSAGE_ERROR, time(NULL));
+				purple_conversation_write(log->conv, NULL, _("Logging of this conversation failed."),
+										PURPLE_MESSAGE_ERROR, time(NULL));
 
 			g_free(path);
 			return;
@@ -739,7 +739,7 @@ void gaim_log_common_writer(GaimLog *log, const char *ext)
 	}
 }
 
-GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *account, const char *ext, GaimLogLogger *logger)
+GList *purple_log_common_lister(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext, PurpleLogLogger *logger)
 {
 	GDir *dir;
 	GList *list = NULL;
@@ -749,7 +749,7 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 	if(!account)
 		return NULL;
 
-	path = gaim_log_get_log_dir(type, name, account);
+	path = purple_log_get_log_dir(type, name, account);
 	if (path == NULL)
 		return NULL;
 
@@ -761,42 +761,42 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 
 	while ((filename = g_dir_read_name(dir)))
 	{
-		if (gaim_str_has_suffix(filename, ext) &&
+		if (purple_str_has_suffix(filename, ext) &&
 		    strlen(filename) >= (17 + strlen(ext)))
 		{
-			GaimLog *log;
-			GaimLogCommonLoggerData *data;
+			PurpleLog *log;
+			PurpleLogCommonLoggerData *data;
 			struct tm tm;
 #if defined (HAVE_TM_GMTOFF) && defined (HAVE_STRUCT_TM_TM_ZONE)
 			long tz_off;
 			const char *rest;
-			time_t stamp = gaim_str_to_time(gaim_unescape_filename(filename), FALSE, &tm, &tz_off, &rest);
+			time_t stamp = purple_str_to_time(purple_unescape_filename(filename), FALSE, &tm, &tz_off, &rest);
 			char *end;
 
-			/* As zero is a valid offset, GAIM_NO_TZ_OFF means no offset was
+			/* As zero is a valid offset, PURPLE_NO_TZ_OFF means no offset was
 			 * provided. See util.h. Yes, it's kinda ugly. */
-			if (tz_off != GAIM_NO_TZ_OFF)
+			if (tz_off != PURPLE_NO_TZ_OFF)
 				tm.tm_gmtoff = tz_off - tm.tm_gmtoff;
 
 			if (rest == NULL || (end = strchr(rest, '.')) == NULL || strchr(rest, ' ') != NULL)
 			{
-				log = gaim_log_new(type, name, account, NULL, stamp, NULL);
+				log = purple_log_new(type, name, account, NULL, stamp, NULL);
 			}
 			else
 			{
 				char *tmp = g_strndup(rest, end - rest);
 				tm.tm_zone = tmp;
-				log = gaim_log_new(type, name, account, NULL, stamp, &tm);
+				log = purple_log_new(type, name, account, NULL, stamp, &tm);
 				g_free(tmp);
 			}
 #else
-			time_t stamp = gaim_str_to_time(filename, FALSE, &tm, NULL, NULL);
+			time_t stamp = purple_str_to_time(filename, FALSE, &tm, NULL, NULL);
 
-			log = gaim_log_new(type, name, account, NULL, stamp, &tm);
+			log = purple_log_new(type, name, account, NULL, stamp, &tm);
 #endif
 
 			log->logger = logger;
-			log->logger_data = data = g_slice_new0(GaimLogCommonLoggerData);
+			log->logger_data = data = g_slice_new0(PurpleLogCommonLoggerData);
 
 			data->path = g_build_filename(path, filename, NULL);
 			list = g_list_prepend(list, log);
@@ -807,7 +807,7 @@ GList *gaim_log_common_lister(GaimLogType type, const char *name, GaimAccount *a
 	return list;
 }
 
-int gaim_log_common_total_sizer(GaimLogType type, const char *name, GaimAccount *account, const char *ext)
+int purple_log_common_total_sizer(PurpleLogType type, const char *name, PurpleAccount *account, const char *ext)
 {
 	GDir *dir;
 	int size = 0;
@@ -817,7 +817,7 @@ int gaim_log_common_total_sizer(GaimLogType type, const char *name, GaimAccount 
 	if(!account)
 		return 0;
 
-	path = gaim_log_get_log_dir(type, name, account);
+	path = purple_log_get_log_dir(type, name, account);
 	if (path == NULL)
 		return 0;
 
@@ -829,14 +829,14 @@ int gaim_log_common_total_sizer(GaimLogType type, const char *name, GaimAccount 
 
 	while ((filename = g_dir_read_name(dir)))
 	{
-		if (gaim_str_has_suffix(filename, ext) &&
+		if (purple_str_has_suffix(filename, ext) &&
 		    strlen(filename) >= (17 + strlen(ext)))
 		{
 			char *tmp = g_build_filename(path, filename, NULL);
 			struct stat st;
 			if (g_stat(tmp, &st))
 			{
-				gaim_debug_error("log", "Error stating log file: %s\n", tmp);
+				purple_debug_error("log", "Error stating log file: %s\n", tmp);
 				g_free(tmp);
 				continue;
 			}
@@ -849,10 +849,10 @@ int gaim_log_common_total_sizer(GaimLogType type, const char *name, GaimAccount 
 	return size;
 }
 
-int gaim_log_common_sizer(GaimLog *log)
+int purple_log_common_sizer(PurpleLog *log)
 {
 	struct stat st;
-	GaimLogCommonLoggerData *data = log->logger_data;
+	PurpleLogCommonLoggerData *data = log->logger_data;
 
 	g_return_val_if_fail(data != NULL, 0);
 
@@ -866,7 +866,7 @@ int gaim_log_common_sizer(GaimLog *log)
  * functions because they use the same directory structure. */
 static void log_get_log_sets_common(GHashTable *sets)
 {
-	gchar *log_path = g_build_filename(gaim_user_dir(), "logs", NULL);
+	gchar *log_path = g_build_filename(purple_user_dir(), "logs", NULL);
 	GDir *log_dir = g_dir_open(log_path, 0, NULL);
 	const gchar *protocol;
 
@@ -889,20 +889,20 @@ static void log_get_log_sets_common(GHashTable *sets)
 		}
 
 		/* Using g_strdup() to cover the one-in-a-million chance that a
-		 * prpl's list_icon function uses gaim_unescape_filename(). */
-		protocol_unescaped = g_strdup(gaim_unescape_filename(protocol));
+		 * prpl's list_icon function uses purple_unescape_filename(). */
+		protocol_unescaped = g_strdup(purple_unescape_filename(protocol));
 
 		/* Find all the accounts for protocol. */
-		for (account_iter = gaim_accounts_get_all() ; account_iter != NULL ; account_iter = account_iter->next) {
-			GaimPlugin *prpl;
-			GaimPluginProtocolInfo *prpl_info;
+		for (account_iter = purple_accounts_get_all() ; account_iter != NULL ; account_iter = account_iter->next) {
+			PurplePlugin *prpl;
+			PurplePluginProtocolInfo *prpl_info;
 
-			prpl = gaim_find_prpl(gaim_account_get_protocol_id((GaimAccount *)account_iter->data));
+			prpl = purple_find_prpl(purple_account_get_protocol_id((PurpleAccount *)account_iter->data));
 			if (!prpl)
 				continue;
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-			if (!strcmp(protocol_unescaped, prpl_info->list_icon((GaimAccount *)account_iter->data, NULL)))
+			if (!strcmp(protocol_unescaped, prpl_info->list_icon((PurpleAccount *)account_iter->data, NULL)))
 				accounts = g_list_prepend(accounts, account_iter->data);
 		}
 		g_free(protocol_unescaped);
@@ -911,7 +911,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 			gchar *username_path = g_build_filename(protocol_path, username, NULL);
 			GDir *username_dir;
 			const gchar *username_unescaped;
-			GaimAccount *account = NULL;
+			PurpleAccount *account = NULL;
 			gchar *name;
 
 			if ((username_dir = g_dir_open(username_path, 0, NULL)) == NULL) {
@@ -920,9 +920,9 @@ static void log_get_log_sets_common(GHashTable *sets)
 			}
 
 			/* Find the account for username in the list of accounts for protocol. */
-			username_unescaped = gaim_unescape_filename(username);
+			username_unescaped = purple_unescape_filename(username);
 			for (account_iter = g_list_first(accounts) ; account_iter != NULL ; account_iter = account_iter->next) {
-				if (!strcmp(((GaimAccount *)account_iter->data)->username, username_unescaped)) {
+				if (!strcmp(((PurpleAccount *)account_iter->data)->username, username_unescaped)) {
 					account = account_iter->data;
 					break;
 				}
@@ -931,42 +931,42 @@ static void log_get_log_sets_common(GHashTable *sets)
 			/* Don't worry about the cast, name will point to dynamically allocated memory shortly. */
 			while ((name = (gchar *)g_dir_read_name(username_dir)) != NULL) {
 				size_t len;
-				GaimLogSet *set;
+				PurpleLogSet *set;
 
-				/* IMPORTANT: Always initialize all members of GaimLogSet */
-				set = g_slice_new(GaimLogSet);
+				/* IMPORTANT: Always initialize all members of PurpleLogSet */
+				set = g_slice_new(PurpleLogSet);
 
 				/* Unescape the filename. */
-				name = g_strdup(gaim_unescape_filename(name));
+				name = g_strdup(purple_unescape_filename(name));
 
 				/* Get the (possibly new) length of name. */
 				len = strlen(name);
 
-				set->type = GAIM_LOG_IM;
+				set->type = PURPLE_LOG_IM;
 				set->name = name;
 				set->account = account;
 				/* set->buddy is always set below */
-				set->normalized_name = g_strdup(gaim_normalize(account, name));
+				set->normalized_name = g_strdup(purple_normalize(account, name));
 
 				/* Chat for .chat or .system at the end of the name to determine the type. */
 				if (len > 7) {
 					gchar *tmp = &name[len - 7];
 					if (!strcmp(tmp, ".system")) {
-						set->type = GAIM_LOG_SYSTEM;
+						set->type = PURPLE_LOG_SYSTEM;
 						*tmp = '\0';
 					}
 				}
 				if (len > 5) {
 					gchar *tmp = &name[len - 5];
 					if (!strcmp(tmp, ".chat")) {
-						set->type = GAIM_LOG_CHAT;
+						set->type = PURPLE_LOG_CHAT;
 						*tmp = '\0';
 					}
 				}
 
 				/* Determine if this (account, name) combination exists as a buddy. */
 				if (account != NULL)
-					set->buddy = (gaim_find_buddy(account, name) != NULL);
+					set->buddy = (purple_find_buddy(account, name) != NULL);
 				else
 					set->buddy = FALSE;
 
@@ -982,9 +982,9 @@ static void log_get_log_sets_common(GHashTable *sets)
 	g_dir_close(log_dir);
 }
 
-gboolean gaim_log_common_deleter(GaimLog *log)
+gboolean purple_log_common_deleter(PurpleLog *log)
 {
-	GaimLogCommonLoggerData *data;
+	PurpleLogCommonLoggerData *data;
 	int ret;
 
 	g_return_val_if_fail(log != NULL, FALSE);
@@ -1001,21 +1001,21 @@ gboolean gaim_log_common_deleter(GaimLog *log)
 		return TRUE;
 	else if (ret == -1)
 	{
-		gaim_debug_error("log", "Failed to delete: %s - %s\n", data->path, strerror(errno));
+		purple_debug_error("log", "Failed to delete: %s - %s\n", data->path, strerror(errno));
 	}
 	else
 	{
 		/* I'm not sure that g_unlink() will ever return
 		 * something other than 0 or -1. -- rlaager */
-		gaim_debug_error("log", "Failed to delete: %s\n", data->path);
+		purple_debug_error("log", "Failed to delete: %s\n", data->path);
 	}
 
 	return FALSE;
 }
 
-gboolean gaim_log_common_is_deletable(GaimLog *log)
+gboolean purple_log_common_is_deletable(PurpleLog *log)
 {
-	GaimLogCommonLoggerData *data;
+	PurpleLogCommonLoggerData *data;
 #ifndef _WIN32
 	gchar *dirname;
 #endif
@@ -1036,7 +1036,7 @@ gboolean gaim_log_common_is_deletable(GaimLog *log)
 		g_free(dirname);
 		return TRUE;
 	}
-	gaim_debug_info("log", "access(%s) failed: %s\n", dirname, strerror(errno));
+	purple_debug_info("log", "access(%s) failed: %s\n", dirname, strerror(errno));
 	g_free(dirname);
 #else
 	/* Unless and until someone writes equivalent win32 code,
@@ -1060,14 +1060,14 @@ static char *process_txt_log(char *txt, char *to_free)
 	/* g_markup_escape_text requires valid UTF-8 */
 	if (!g_utf8_validate(txt, -1, NULL))
 	{
-		tmp = gaim_utf8_salvage(txt);
+		tmp = purple_utf8_salvage(txt);
 		g_free(to_free);
 		to_free = txt = tmp;
 	}
 
 	tmp = g_markup_escape_text(txt, -1);
 	g_free(to_free);
-	txt = gaim_markup_linkify(tmp);
+	txt = purple_markup_linkify(tmp);
 	g_free(tmp);
 
 	return txt;
@@ -1078,15 +1078,15 @@ static char *process_txt_log(char *txt, char *to_free)
  ** XML LOGGER **
  ****************/
 
-static const char *str_from_msg_type (GaimMessageFlags type)
+static const char *str_from_msg_type (PurpleMessageFlags type)
 {
 
 		return "";
 
 }
 
-static void xml_logger_write(GaimLog *log,
-			     GaimMessageFlags type,
+static void xml_logger_write(PurpleLog *log,
+			     PurpleMessageFlags type,
 			     const char *from, time_t time, const char *message)
 {
 	char *xhtml = NULL;
@@ -1099,7 +1099,7 @@ static void xml_logger_write(GaimLog *log,
 		struct tm *tm;
 		const char *tz;
 		const char *date;
-		char *dir = gaim_log_get_log_dir(log->type, log->name, log->account);
+		char *dir = purple_log_get_log_dir(log->type, log->name, log->account);
 		char *name;
 		char *filename;
 
@@ -1107,12 +1107,12 @@ static void xml_logger_write(GaimLog *log,
 			return;
 
 		tm = localtime(&log->time);
-		tz = gaim_escape_filename(gaim_utf8_strftime("%Z", tm);
-		date = gaim_utf8_strftime("%Y-%m-%d.%H%M%S%z", tm);
+		tz = purple_escape_filename(purple_utf8_strftime("%Z", tm);
+		date = purple_utf8_strftime("%Y-%m-%d.%H%M%S%z", tm);
 
 		name = g_strdup_printf("%s%s%s", date, tz, ext ? ext : "");
 
-		gaim_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
+		purple_build_dir (dir, S_IRUSR | S_IWUSR | S_IXUSR);
 
 		filename = g_build_filename(dir, name, NULL);
 		g_free(dir);
@@ -1120,7 +1120,7 @@ static void xml_logger_write(GaimLog *log,
 
 		log->logger_data = g_fopen(filename, "a");
 		if (!log->logger_data) {
-			gaim_debug(GAIM_DEBUG_ERROR, "log", "Could not create log file %s\n", filename);
+			purple_debug(PURPLE_DEBUG_ERROR, "log", "Could not create log file %s\n", filename);
 			g_free(filename);
 			return;
 		}
@@ -1128,7 +1128,7 @@ static void xml_logger_write(GaimLog *log,
 		fprintf(log->logger_data, "<?xml version='1.0' encoding='UTF-8' ?>\n"
 			"<?xml-stylesheet href='file:///usr/src/web/htdocs/log-stylesheet.xsl' type='text/xml' ?>\n");
 
-		date = gaim_utf8_strftime("%Y-%m-%d %H:%M:%S", localtime(&log->time));
+		date = purple_utf8_strftime("%Y-%m-%d %H:%M:%S", localtime(&log->time));
 		fprintf(log->logger_data, "<conversation time='%s' screenname='%s' protocol='%s'>\n",
 			date, log->name, prpl);
 	}
@@ -1139,25 +1139,25 @@ static void xml_logger_write(GaimLog *log,
 
 	date = log_get_timestamp(log, time);
 
-	gaim_markup_html_to_xhtml(message, &xhtml, NULL);
+	purple_markup_html_to_xhtml(message, &xhtml, NULL);
 	if (from)
 		fprintf(log->logger_data, "<message %s %s from='%s' time='%s'>%s</message>\n",
 			str_from_msg_type(type),
-			type & GAIM_MESSAGE_SEND ? "direction='sent'" :
-			type & GAIM_MESSAGE_RECV ? "direction='received'" : "",
+			type & PURPLE_MESSAGE_SEND ? "direction='sent'" :
+			type & PURPLE_MESSAGE_RECV ? "direction='received'" : "",
 			from, date, xhtml);
 	else
 		fprintf(log->logger_data, "<message %s %s time='%s'>%s</message>\n",
 			str_from_msg_type(type),
-			type & GAIM_MESSAGE_SEND ? "direction='sent'" :
-			type & GAIM_MESSAGE_RECV ? "direction='received'" : "",
+			type & PURPLE_MESSAGE_SEND ? "direction='sent'" :
+			type & PURPLE_MESSAGE_RECV ? "direction='received'" : "",
 			date, xhtml):
 	fflush(log->logger_data);
 	g_free(date);
 	g_free(xhtml);
 }
 
- static void xml_logger_finalize(GaimLog *log)
+ static void xml_logger_finalize(PurpleLog *log)
 {
 	if (log->logger_data) {
 		fprintf(log->logger_data, "</conversation>\n");
@@ -1166,12 +1166,12 @@ static void xml_logger_write(GaimLog *log,
 	}
 }
 
-static GList *xml_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
+static GList *xml_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
 {
-	return gaim_log_common_lister(type, sn, account, ".xml", &xml_logger);
+	return purple_log_common_lister(type, sn, account, ".xml", &xml_logger);
 }
 
-static GaimLogLogger xml_logger =  {
+static PurpleLogLogger xml_logger =  {
 	N_("XML"), "xml",
 	NULL,
 	xml_logger_write,
@@ -1187,21 +1187,21 @@ static GaimLogLogger xml_logger =  {
  ** HTML LOGGER *************
  ****************************/
 
-static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
+static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 							  const char *from, time_t time, const char *message)
 {
 	char *msg_fixed;
 	char *date;
 	char *header;
-	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
-	GaimLogCommonLoggerData *data = log->logger_data;
+	PurplePlugin *plugin = purple_find_prpl(purple_account_get_protocol_id(log->account));
+	PurpleLogCommonLoggerData *data = log->logger_data;
 	gsize written = 0;
 
 	if(!data) {
 		const char *prpl =
-			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
+			PURPLE_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
 		const char *date;
-		gaim_log_common_writer(log, ".html");
+		purple_log_common_writer(log, ".html");
 
 		data = log->logger_data;
 
@@ -1209,17 +1209,17 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 		if(!data->file)
 			return 0;
 
-		date = gaim_date_format_full(localtime(&log->time));
+		date = purple_date_format_full(localtime(&log->time));
 
 		written += fprintf(data->file, "<html><head>");
 		written += fprintf(data->file, "<meta http-equiv=\"content-type\" content=\"text/html; charset=UTF-8\">");
 		written += fprintf(data->file, "<title>");
-		if (log->type == GAIM_LOG_SYSTEM)
+		if (log->type == PURPLE_LOG_SYSTEM)
 			header = g_strdup_printf("System log for account %s (%s) connected at %s",
-					gaim_account_get_username(log->account), prpl, date);
+					purple_account_get_username(log->account), prpl, date);
 		else
 			header = g_strdup_printf("Conversation with %s at %s on %s (%s)",
-					log->name, date, gaim_account_get_username(log->account), prpl);
+					log->name, date, purple_account_get_username(log->account), prpl);
 
 		written += fprintf(data->file, "%s", header);
 		written += fprintf(data->file, "</title></head><body>");
@@ -1231,42 +1231,42 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 	if(!data->file)
 		return 0;
 
-	gaim_markup_html_to_xhtml(message, &msg_fixed, NULL);
+	purple_markup_html_to_xhtml(message, &msg_fixed, NULL);
 	date = log_get_timestamp(log, time);
 
-	if(log->type == GAIM_LOG_SYSTEM){
+	if(log->type == PURPLE_LOG_SYSTEM){
 		written += fprintf(data->file, "---- %s @ %s ----<br/>\n", msg_fixed, date);
 	} else {
-		if (type & GAIM_MESSAGE_SYSTEM)
+		if (type & PURPLE_MESSAGE_SYSTEM)
 			written += fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s</b><br/>\n", date, msg_fixed);
-		else if (type & GAIM_MESSAGE_RAW)
+		else if (type & PURPLE_MESSAGE_RAW)
 			written += fprintf(data->file, "<font size=\"2\">(%s)</font> %s<br/>\n", date, msg_fixed);
-		else if (type & GAIM_MESSAGE_ERROR)
+		else if (type & PURPLE_MESSAGE_ERROR)
 			written += fprintf(data->file, "<font color=\"#FF0000\"><font size=\"2\">(%s)</font><b> %s</b></font><br/>\n", date, msg_fixed);
-		else if (type & GAIM_MESSAGE_WHISPER)
+		else if (type & PURPLE_MESSAGE_WHISPER)
 			written += fprintf(data->file, "<font color=\"#6C2585\"><font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
 					date, from, msg_fixed);
-		else if (type & GAIM_MESSAGE_AUTO_RESP) {
-			if (type & GAIM_MESSAGE_SEND)
+		else if (type & PURPLE_MESSAGE_AUTO_RESP) {
+			if (type & PURPLE_MESSAGE_SEND)
 				written += fprintf(data->file, _("<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
-			else if (type & GAIM_MESSAGE_RECV)
+			else if (type & PURPLE_MESSAGE_RECV)
 				written += fprintf(data->file, _("<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s &lt;AUTO-REPLY&gt;:</b></font> %s<br/>\n"), date, from, msg_fixed);
-		} else if (type & GAIM_MESSAGE_RECV) {
-			if(gaim_message_meify(msg_fixed, -1))
+		} else if (type & PURPLE_MESSAGE_RECV) {
+			if(purple_message_meify(msg_fixed, -1))
 				written += fprintf(data->file, "<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 			else
 				written += fprintf(data->file, "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
 						date, from, msg_fixed);
-		} else if (type & GAIM_MESSAGE_SEND) {
-			if(gaim_message_meify(msg_fixed, -1))
+		} else if (type & PURPLE_MESSAGE_SEND) {
+			if(purple_message_meify(msg_fixed, -1))
 				written += fprintf(data->file, "<font color=\"#062585\"><font size=\"2\">(%s)</font> <b>***%s</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 			else
 				written += fprintf(data->file, "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s:</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 		} else {
-			gaim_debug_error("log", "Unhandled message type.");
+			purple_debug_error("log", "Unhandled message type.");
 			written += fprintf(data->file, "<font size=\"2\">(%s)</font><b> %s:</b></font> %s<br/>\n",
 						date, from, msg_fixed);
 		}
@@ -1278,9 +1278,9 @@ static gsize html_logger_write(GaimLog *log, GaimMessageFlags type,
 	return written;
 }
 
-static void html_logger_finalize(GaimLog *log)
+static void html_logger_finalize(PurpleLog *log)
 {
-	GaimLogCommonLoggerData *data = log->logger_data;
+	PurpleLogCommonLoggerData *data = log->logger_data;
 	if (data) {
 		if(data->file) {
 			fprintf(data->file, "</body></html>\n");
@@ -1288,25 +1288,25 @@ static void html_logger_finalize(GaimLog *log)
 		}
 		g_free(data->path);
 
-		g_slice_free(GaimLogCommonLoggerData, data);
+		g_slice_free(PurpleLogCommonLoggerData, data);
 	}
 }
 
-static GList *html_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
+static GList *html_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
 {
-	return gaim_log_common_lister(type, sn, account, ".html", html_logger);
+	return purple_log_common_lister(type, sn, account, ".html", html_logger);
 }
 
-static GList *html_logger_list_syslog(GaimAccount *account)
+static GList *html_logger_list_syslog(PurpleAccount *account)
 {
-	return gaim_log_common_lister(GAIM_LOG_SYSTEM, ".system", account, ".html", html_logger);
+	return purple_log_common_lister(PURPLE_LOG_SYSTEM, ".system", account, ".html", html_logger);
 }
 
-static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
+static char *html_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	char *read;
-	GaimLogCommonLoggerData *data = log->logger_data;
-	*flags = GAIM_LOG_READ_NO_NEWLINE;
+	PurpleLogCommonLoggerData *data = log->logger_data;
+	*flags = PURPLE_LOG_READ_NO_NEWLINE;
 	if (!data || !data->path)
 		return g_strdup(_("<font color=\"red\"><b>Unable to find log path!</b></font>"));
 	if (g_file_get_contents(data->path, &read, NULL, NULL)) {
@@ -1323,9 +1323,9 @@ static char *html_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
 
-static int html_logger_total_size(GaimLogType type, const char *name, GaimAccount *account)
+static int html_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account)
 {
-	return gaim_log_common_total_sizer(type, name, account, ".html");
+	return purple_log_common_total_sizer(type, name, account, ".html");
 }
 
 
@@ -1333,13 +1333,13 @@ static int html_logger_total_size(GaimLogType type, const char *name, GaimAccoun
  ** PLAIN TEXT LOGGER *******
  ****************************/
 
-static gsize txt_logger_write(GaimLog *log,
-							 GaimMessageFlags type,
+static gsize txt_logger_write(PurpleLog *log,
+							 PurpleMessageFlags type,
 							 const char *from, time_t time, const char *message)
 {
 	char *date;
-	GaimPlugin *plugin = gaim_find_prpl(gaim_account_get_protocol_id(log->account));
-	GaimLogCommonLoggerData *data = log->logger_data;
+	PurplePlugin *plugin = purple_find_prpl(purple_account_get_protocol_id(log->account));
+	PurpleLogCommonLoggerData *data = log->logger_data;
 	char *stripped = NULL;
 
 	gsize written = 0;
@@ -1350,8 +1350,8 @@ static gsize txt_logger_write(GaimLog *log,
 		 * that you open a convo with someone, but don't say anything.
 		 */
 		const char *prpl =
-			GAIM_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
-		gaim_log_common_writer(log, ".txt");
+			PURPLE_PLUGIN_PROTOCOL_INFO(plugin)->list_icon(log->account, NULL);
+		purple_log_common_writer(log, ".txt");
 
 		data = log->logger_data;
 
@@ -1359,48 +1359,48 @@ static gsize txt_logger_write(GaimLog *log,
 		if(!data->file)
 			return 0;
 
-		if (log->type == GAIM_LOG_SYSTEM)
+		if (log->type == PURPLE_LOG_SYSTEM)
 			written += fprintf(data->file, "System log for account %s (%s) connected at %s\n",
-				gaim_account_get_username(log->account), prpl,
-				gaim_date_format_full(localtime(&log->time)));
+				purple_account_get_username(log->account), prpl,
+				purple_date_format_full(localtime(&log->time)));
 		else
 			written += fprintf(data->file, "Conversation with %s at %s on %s (%s)\n",
-				log->name, gaim_date_format_full(localtime(&log->time)),
-				gaim_account_get_username(log->account), prpl);
+				log->name, purple_date_format_full(localtime(&log->time)),
+				purple_account_get_username(log->account), prpl);
 	}
 
 	/* if we can't write to the file, give up before we hurt ourselves */
 	if(!data->file)
 		return 0;
 
-	stripped = gaim_markup_strip_html(message);
+	stripped = purple_markup_strip_html(message);
 	date = log_get_timestamp(log, time);
 
-	if(log->type == GAIM_LOG_SYSTEM){
+	if(log->type == PURPLE_LOG_SYSTEM){
 		written += fprintf(data->file, "---- %s @ %s ----\n", stripped, date);
 	} else {
-		if (type & GAIM_MESSAGE_SEND ||
-			type & GAIM_MESSAGE_RECV) {
-			if (type & GAIM_MESSAGE_AUTO_RESP) {
+		if (type & PURPLE_MESSAGE_SEND ||
+			type & PURPLE_MESSAGE_RECV) {
+			if (type & PURPLE_MESSAGE_AUTO_RESP) {
 				written += fprintf(data->file, _("(%s) %s <AUTO-REPLY>: %s\n"), date,
 						from, stripped);
 			} else {
-				if(gaim_message_meify(stripped, -1))
+				if(purple_message_meify(stripped, -1))
 					written += fprintf(data->file, "(%s) ***%s %s\n", date, from,
 							stripped);
 				else
 					written += fprintf(data->file, "(%s) %s: %s\n", date, from,
 							stripped);
 			}
-		} else if (type & GAIM_MESSAGE_SYSTEM ||
-			type & GAIM_MESSAGE_ERROR ||
-			type & GAIM_MESSAGE_RAW)
+		} else if (type & PURPLE_MESSAGE_SYSTEM ||
+			type & PURPLE_MESSAGE_ERROR ||
+			type & PURPLE_MESSAGE_RAW)
 			written += fprintf(data->file, "(%s) %s\n", date, stripped);
-		else if (type & GAIM_MESSAGE_NO_LOG) {
+		else if (type & PURPLE_MESSAGE_NO_LOG) {
 			/* This shouldn't happen */
 			g_free(stripped);
 			return written;
-		} else if (type & GAIM_MESSAGE_WHISPER)
+		} else if (type & PURPLE_MESSAGE_WHISPER)
 			written += fprintf(data->file, "(%s) *%s* %s", date, from, stripped);
 		else
 			written += fprintf(data->file, "(%s) %s%s %s\n", date, from ? from : "",
@@ -1413,32 +1413,32 @@ static gsize txt_logger_write(GaimLog *log,
 	return written;
 }
 
-static void txt_logger_finalize(GaimLog *log)
+static void txt_logger_finalize(PurpleLog *log)
 {
-	GaimLogCommonLoggerData *data = log->logger_data;
+	PurpleLogCommonLoggerData *data = log->logger_data;
 	if (data) {
 		if(data->file)
 			fclose(data->file);
 		g_free(data->path);
 
-		g_slice_free(GaimLogCommonLoggerData, data);
+		g_slice_free(PurpleLogCommonLoggerData, data);
 	}
 }
 
-static GList *txt_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
+static GList *txt_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
 {
-	return gaim_log_common_lister(type, sn, account, ".txt", txt_logger);
+	return purple_log_common_lister(type, sn, account, ".txt", txt_logger);
 }
 
-static GList *txt_logger_list_syslog(GaimAccount *account)
+static GList *txt_logger_list_syslog(PurpleAccount *account)
 {
-	return gaim_log_common_lister(GAIM_LOG_SYSTEM, ".system", account, ".txt", txt_logger);
+	return purple_log_common_lister(PURPLE_LOG_SYSTEM, ".system", account, ".txt", txt_logger);
 }
 
-static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
+static char *txt_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	char *read, *minus_header;
-	GaimLogCommonLoggerData *data = log->logger_data;
+	PurpleLogCommonLoggerData *data = log->logger_data;
 	*flags = 0;
 	if (!data || !data->path)
 		return g_strdup(_("<font color=\"red\"><b>Unable to find log path!</b></font>"));
@@ -1453,9 +1453,9 @@ static char *txt_logger_read(GaimLog *log, GaimLogReadFlags *flags)
 	return g_strdup_printf(_("<font color=\"red\"><b>Could not read file: %s</b></font>"), data->path);
 }
 
-static int txt_logger_total_size(GaimLogType type, const char *name, GaimAccount *account)
+static int txt_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account)
 {
-	return gaim_log_common_total_sizer(type, name, account, ".txt");
+	return purple_log_common_total_sizer(type, name, account, ".txt");
 }
 
 
@@ -1468,16 +1468,16 @@ static int txt_logger_total_size(GaimLogType type, const char *name, GaimAccount
  */
 
 struct old_logger_data {
-	GaimStringref *pathref;
+	PurpleStringref *pathref;
 	int offset;
 	int length;
 };
 
-static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
+static GList *old_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
 {
-	char *logfile = g_strdup_printf("%s.log", gaim_normalize(account, sn));
-	char *pathstr = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
-	GaimStringref *pathref = gaim_stringref_new(pathstr);
+	char *logfile = g_strdup_printf("%s.log", purple_normalize(account, sn));
+	char *pathstr = g_build_filename(purple_user_dir(), "logs", logfile, NULL);
+	PurpleStringref *pathref = purple_stringref_new(pathstr);
 	struct stat st;
 	time_t log_last_modified;
 	FILE *index;
@@ -1494,14 +1494,14 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 	int newlen;
 	time_t lasttime = 0;
 
-	GaimLog *log = NULL;
+	PurpleLog *log = NULL;
 	GList *list = NULL;
 
 	g_free(logfile);
 
-	if (g_stat(gaim_stringref_value(pathref), &st))
+	if (g_stat(purple_stringref_value(pathref), &st))
 	{
-		gaim_stringref_unref(pathref);
+		purple_stringref_unref(pathref);
 		g_free(pathstr);
 		return NULL;
 	}
@@ -1515,35 +1515,35 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 	{
 		if (st.st_mtime < log_last_modified)
 		{
-			gaim_debug_warning("log", "Index \"%s\" exists, but is older than the log.\n", pathstr);
+			purple_debug_warning("log", "Index \"%s\" exists, but is older than the log.\n", pathstr);
 		}
 		else
 		{
 			/* The index file exists and is at least as new as the log, so open it. */
 			if (!(index = g_fopen(pathstr, "rb")))
 			{
-				gaim_debug_error("log", "Failed to open index file \"%s\" for reading: %s\n",
+				purple_debug_error("log", "Failed to open index file \"%s\" for reading: %s\n",
 				                 pathstr, strerror(errno));
 
 				/* Fall through so that we'll parse the log file. */
 			}
 			else
 			{
-				gaim_debug_info("log", "Using index: %s\n", pathstr);
+				purple_debug_info("log", "Using index: %s\n", pathstr);
 				g_free(pathstr);
 				while (fgets(buf, BUF_LONG, index))
 				{
 					unsigned long idx_time;
 					if (sscanf(buf, "%d\t%d\t%lu", &lastoff, &newlen, &idx_time) == 3)
 					{
-						log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1, NULL);
+						log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, -1, NULL);
 						log->logger = old_logger;
 						log->time = (time_t)idx_time;
 
 						/* IMPORTANT: Always set all members of struct old_logger_data */
 						data = g_slice_new(struct old_logger_data);
 
-						data->pathref = gaim_stringref_ref(pathref);
+						data->pathref = purple_stringref_ref(pathref);
 						data->offset = lastoff;
 						data->length = newlen;
 
@@ -1558,17 +1558,17 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 		}
 	}
 
-	if (!(file = g_fopen(gaim_stringref_value(pathref), "rb"))) {
-		gaim_debug_error("log", "Failed to open log file \"%s\" for reading: %s\n",
-		                   gaim_stringref_value(pathref), strerror(errno));
-		gaim_stringref_unref(pathref);
+	if (!(file = g_fopen(purple_stringref_value(pathref), "rb"))) {
+		purple_debug_error("log", "Failed to open log file \"%s\" for reading: %s\n",
+		                   purple_stringref_value(pathref), strerror(errno));
+		purple_stringref_unref(pathref);
 		g_free(pathstr);
 		return NULL;
 	}
 
 	index_tmp = g_strdup_printf("%s.XXXXXX", pathstr);
 	if ((index_fd = g_mkstemp(index_tmp)) == -1) {
-		gaim_debug_error("log", "Failed to open index temp file: %s\n",
+		purple_debug_error("log", "Failed to open index temp file: %s\n",
 		                 strerror(errno));
 		g_free(pathstr);
 		g_free(index_tmp);
@@ -1576,7 +1576,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 	} else {
 		if ((index = fdopen(index_fd, "wb")) == NULL)
 		{
-			gaim_debug_error("log", "Failed to fdopen() index temp file: %s\n",
+			purple_debug_error("log", "Failed to fdopen() index temp file: %s\n",
 			                 strerror(errno));
 			close(index_fd);
 			if (index_tmp != NULL)
@@ -1619,14 +1619,14 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 					newlen--;
 
 				if (newlen != 0) {
-					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1, NULL);
+					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, -1, NULL);
 					log->logger = old_logger;
 					log->time = lasttime;
 
 					/* IMPORTANT: Always set all members of struct old_logger_data */
 					data = g_slice_new(struct old_logger_data);
 
-					data->pathref = gaim_stringref_ref(pathref);
+					data->pathref = purple_stringref_ref(pathref);
 					data->offset = lastoff;
 					data->length = newlen;
 
@@ -1678,14 +1678,14 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 
 	if (logfound) {
 		if ((newlen = ftell(file) - lastoff) != 0) {
-			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, -1, NULL);
+			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, -1, NULL);
 			log->logger = old_logger;
 			log->time = lasttime;
 
 			/* IMPORTANT: Always set all members of struct old_logger_data */
 			data = g_slice_new(struct old_logger_data);
 
-			data->pathref = gaim_stringref_ref(pathref);
+			data->pathref = purple_stringref_ref(pathref);
 			data->offset = lastoff;
 			data->length = newlen;
 
@@ -1698,7 +1698,7 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 		}
 	}
 
-	gaim_stringref_unref(pathref);
+	purple_stringref_unref(pathref);
 	fclose(file);
 	if (index != NULL)
 	{
@@ -1712,23 +1712,23 @@ static GList *old_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 
 		if (g_rename(index_tmp, pathstr))
 		{
-			gaim_debug_warning("log", "Failed to rename index temp file \"%s\" to \"%s\": %s\n",
+			purple_debug_warning("log", "Failed to rename index temp file \"%s\" to \"%s\": %s\n",
 			                   index_tmp, pathstr, strerror(errno));
 			g_unlink(index_tmp);
 			g_free(index_tmp);
 		}
 		else
-			gaim_debug_info("log", "Built index: %s\n", pathstr);
+			purple_debug_info("log", "Built index: %s\n", pathstr);
 
 		g_free(pathstr);
 	}
 	return list;
 }
 
-static int old_logger_total_size(GaimLogType type, const char *name, GaimAccount *account)
+static int old_logger_total_size(PurpleLogType type, const char *name, PurpleAccount *account)
 {
-	char *logfile = g_strdup_printf("%s.log", gaim_normalize(account, name));
-	char *pathstr = g_build_filename(gaim_user_dir(), "logs", logfile, NULL);
+	char *logfile = g_strdup_printf("%s.log", purple_normalize(account, name));
+	char *pathstr = g_build_filename(purple_user_dir(), "logs", logfile, NULL);
 	int size;
 	struct stat st;
 
@@ -1743,10 +1743,10 @@ static int old_logger_total_size(GaimLogType type, const char *name, GaimAccount
 	return size;
 }
 
-static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
+static char * old_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	struct old_logger_data *data = log->logger_data;
-	FILE *file = g_fopen(gaim_stringref_value(data->pathref), "rb");
+	FILE *file = g_fopen(purple_stringref_value(data->pathref), "rb");
 	char *read = g_malloc(data->length + 1);
 	fseek(file, data->offset, SEEK_SET);
 	fread(read, data->length, 1, file);
@@ -1755,25 +1755,25 @@ static char * old_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	*flags = 0;
 	if (strstr(read, "<BR>"))
 	{
-		*flags |= GAIM_LOG_READ_NO_NEWLINE;
+		*flags |= PURPLE_LOG_READ_NO_NEWLINE;
 		return read;
 	}
 
 	return process_txt_log(read, NULL);
 }
 
-static int old_logger_size (GaimLog *log)
+static int old_logger_size (PurpleLog *log)
 {
 	struct old_logger_data *data = log->logger_data;
 	return data ? data->length : 0;
 }
 
-static void old_logger_get_log_sets(GaimLogSetCallback cb, GHashTable *sets)
+static void old_logger_get_log_sets(PurpleLogSetCallback cb, GHashTable *sets)
 {
-	char *log_path = g_build_filename(gaim_user_dir(), "logs", NULL);
+	char *log_path = g_build_filename(purple_user_dir(), "logs", NULL);
 	GDir *log_dir = g_dir_open(log_path, 0, NULL);
 	gchar *name;
-	GaimBlistNode *gnode, *cnode, *bnode;
+	PurpleBlistNode *gnode, *cnode, *bnode;
 
 	g_free(log_path);
 	if (log_dir == NULL)
@@ -1783,11 +1783,11 @@ static void old_logger_get_log_sets(GaimLogSetCallback cb, GHashTable *sets)
 	while ((name = (gchar *)g_dir_read_name(log_dir)) != NULL) {
 		size_t len;
 		gchar *ext;
-		GaimLogSet *set;
+		PurpleLogSet *set;
 		gboolean found = FALSE;
 
 		/* Unescape the filename. */
-		name = g_strdup(gaim_unescape_filename(name));
+		name = g_strdup(purple_unescape_filename(name));
 
 		/* Get the (possibly new) length of name. */
 		len = strlen(name);
@@ -1804,16 +1804,16 @@ static void old_logger_get_log_sets(GaimLogSetCallback cb, GHashTable *sets)
 			continue;
 		}
 
-		/* IMPORTANT: Always set all members of GaimLogSet */
-		set = g_slice_new(GaimLogSet);
+		/* IMPORTANT: Always set all members of PurpleLogSet */
+		set = g_slice_new(PurpleLogSet);
 
 		/* Chat for .chat at the end of the name to determine the type. */
 		*ext = '\0';
-		set->type = GAIM_LOG_IM;
+		set->type = PURPLE_LOG_IM;
 		if (len > 9) {
 			char *tmp = &name[len - 9];
 			if (!strcmp(tmp, ".chat")) {
-				set->type = GAIM_LOG_CHAT;
+				set->type = PURPLE_LOG_CHAT;
 				*tmp = '\0';
 			}
 		}
@@ -1821,19 +1821,19 @@ static void old_logger_get_log_sets(GaimLogSetCallback cb, GHashTable *sets)
 		set->name = set->normalized_name = name;
 
 		/* Search the buddy list to find the account and to determine if this is a buddy. */
-		for (gnode = gaim_get_blist()->root; !found && gnode != NULL; gnode = gnode->next)
+		for (gnode = purple_get_blist()->root; !found && gnode != NULL; gnode = gnode->next)
 		{
-			if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 				continue;
 
 			for (cnode = gnode->child; !found && cnode != NULL; cnode = cnode->next)
 			{
-				if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 					continue;
 
 				for (bnode = cnode->child; !found && bnode != NULL; bnode = bnode->next)
 				{
-					GaimBuddy *buddy = (GaimBuddy *)bnode;
+					PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 
 					if (!strcmp(buddy->name, name)) {
 						set->account = buddy->account;
@@ -1855,9 +1855,9 @@ static void old_logger_get_log_sets(GaimLogSetCallback cb, GHashTable *sets)
 	g_dir_close(log_dir);
 }
 
-static void old_logger_finalize(GaimLog *log)
+static void old_logger_finalize(PurpleLog *log)
 {
 	struct old_logger_data *data = log->logger_data;
-	gaim_stringref_unref(data->pathref);
+	purple_stringref_unref(data->pathref);
 	g_slice_free(struct old_logger_data, data);
 }

@@ -16,7 +16,7 @@ finch_SOURCES = \
 	gntconv.c \
 	gntdebug.c \
 	gntft.c \
-	gntgaim.c \
+	finch.c \
 	gntidle.c \
 	gntnotify.c \
 	gntplugin.c \
@@ -33,7 +33,7 @@ finch_headers = \
 	gntconv.h \
 	gntdebug.h \
 	gntft.h \
-	gntgaim.h \
+	finch.h \
 	gntidle.h \
 	gntnotify.h \
 	gntplugin.h \

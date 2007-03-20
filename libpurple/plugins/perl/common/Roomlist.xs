@@ -1,56 +1,56 @@
 #include "module.h"
 
-MODULE = Gaim::Roomlist  PACKAGE = Gaim::Roomlist  PREFIX = gaim_roomlist_
+MODULE = Purple::Roomlist  PACKAGE = Purple::Roomlist  PREFIX = purple_roomlist_
 PROTOTYPES: ENABLE
 
 void 
-gaim_roomlist_cancel_get_list(list)
-	Gaim::Roomlist list
+purple_roomlist_cancel_get_list(list)
+	Purple::Roomlist list
 
 void 
-gaim_roomlist_expand_category(list, category)
-	Gaim::Roomlist list
-	Gaim::Roomlist::Room category
+purple_roomlist_expand_category(list, category)
+	Purple::Roomlist list
+	Purple::Roomlist::Room category
 
 gboolean 
-gaim_roomlist_get_in_progress(list)
-	Gaim::Roomlist list
+purple_roomlist_get_in_progress(list)
+	Purple::Roomlist list
 
-Gaim::Roomlist
-gaim_roomlist_get_list(gc)
-	Gaim::Connection gc
+Purple::Roomlist
+purple_roomlist_get_list(gc)
+	Purple::Connection gc
 
-Gaim::Roomlist::UiOps
-gaim_roomlist_get_ui_ops()
+Purple::Roomlist::UiOps
+purple_roomlist_get_ui_ops()
  
 
-Gaim::Roomlist
-gaim_roomlist_new(account)
-	Gaim::Account account
+Purple::Roomlist
+purple_roomlist_new(account)
+	Purple::Account account
 
 void 
-gaim_roomlist_ref(list)
-	Gaim::Roomlist list
+purple_roomlist_ref(list)
+	Purple::Roomlist list
 
 void 
-gaim_roomlist_room_add(list, room)
-	Gaim::Roomlist list
-	Gaim::Roomlist::Room room
+purple_roomlist_room_add(list, room)
+	Purple::Roomlist list
+	Purple::Roomlist::Room room
 
 void 
-gaim_roomlist_room_add_field(list, room, field)
-	Gaim::Roomlist list
-	Gaim::Roomlist::Room room
+purple_roomlist_room_add_field(list, room, field)
+	Purple::Roomlist list
+	Purple::Roomlist::Room room
 	gconstpointer field
 
 void 
-gaim_roomlist_room_join(list, room)
-	Gaim::Roomlist list
-	Gaim::Roomlist::Room room
+purple_roomlist_room_join(list, room)
+	Purple::Roomlist list
+	Purple::Roomlist::Room room
 
 void 
-gaim_roomlist_set_fields(list, fields)
-	Gaim::Roomlist list
+purple_roomlist_set_fields(list, fields)
+	Purple::Roomlist list
 	SV *fields
 PREINIT:
 	GList *t_GL;
@@ -63,22 +63,22 @@ PPCODE:
 		STRLEN t_sl;
 		t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(fields), i, 0), t_sl));
 	}
-	gaim_roomlist_set_fields(list, t_GL);
+	purple_roomlist_set_fields(list, t_GL);
 
 void 
-gaim_roomlist_set_in_progress(list, in_progress)
-	Gaim::Roomlist list
+purple_roomlist_set_in_progress(list, in_progress)
+	Purple::Roomlist list
 	gboolean in_progress
 
 void 
-gaim_roomlist_set_ui_ops(ops)
-	Gaim::Roomlist::UiOps ops
+purple_roomlist_set_ui_ops(ops)
+	Purple::Roomlist::UiOps ops
 
 void 
-gaim_roomlist_show_with_account(account)
-	Gaim::Account account
+purple_roomlist_show_with_account(account)
+	Purple::Account account
 
 void 
-gaim_roomlist_unref(list)
-	Gaim::Roomlist list
+purple_roomlist_unref(list)
+	Purple::Roomlist list
 

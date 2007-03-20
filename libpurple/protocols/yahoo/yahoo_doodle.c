@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -78,47 +78,47 @@ const int DefaultColorRGB24[] =
 /******************************************************************************
  * Functions
  *****************************************************************************/
-GaimCmdRet yahoo_doodle_gaim_cmd_start(GaimConversation *conv, const char *cmd, char **args, char **error, void *data)
+PurpleCmdRet yahoo_doodle_purple_cmd_start(PurpleConversation *conv, const char *cmd, char **args, char **error, void *data)
 {
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 	const gchar *name;
 
 	if(*args && args[0])
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
-	account = gaim_conversation_get_account(conv);
-	gc = gaim_account_get_connection(account);
-	name = gaim_conversation_get_name(conv);
+	account = purple_conversation_get_account(conv);
+	gc = purple_account_get_connection(account);
+	name = purple_conversation_get_name(conv);
 	yahoo_doodle_initiate(gc, name);
 
 	/* Write a local message to this conversation showing that a request for a
 	 * Doodle session has been made
 	 */
-	gaim_conv_im_write(GAIM_CONV_IM(conv), "", _("Sent Doodle request."),
-					   GAIM_MESSAGE_NICK | GAIM_MESSAGE_RECV, time(NULL));
+	purple_conv_im_write(PURPLE_CONV_IM(conv), "", _("Sent Doodle request."),
+					   PURPLE_MESSAGE_NICK | PURPLE_MESSAGE_RECV, time(NULL));
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-void yahoo_doodle_initiate(GaimConnection *gc, const char *name)
+void yahoo_doodle_initiate(PurpleConnection *gc, const char *name)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	char *to = (char*)name;
-	GaimWhiteboard *wb;
+	PurpleWhiteboard *wb;
 
 	g_return_if_fail(gc);
 	g_return_if_fail(name);
 
-	account = gaim_connection_get_account(gc);
-	wb = gaim_whiteboard_get_session(account, to);
+	account = purple_connection_get_account(gc);
+	wb = purple_whiteboard_get_session(account, to);
 
 	if(wb == NULL)
 	{
 		/* Insert this 'session' in the list.  At this point, it's only a
 		 * requested session.
 		 */
-		gaim_whiteboard_create(account, to, DOODLE_STATE_REQUESTING);
+		purple_whiteboard_create(account, to, DOODLE_STATE_REQUESTING);
 	}
 
 	/* NOTE Perhaps some careful handling of remote assumed established
@@ -130,7 +130,7 @@ void yahoo_doodle_initiate(GaimConnection *gc, const char *name)
 
 }
 
-void yahoo_doodle_process(GaimConnection *gc, const char *me, const char *from,
+void yahoo_doodle_process(PurpleConnection *gc, const char *me, const char *from,
 						  const char *command, const char *message)
 {
 	if(!command)
@@ -165,19 +165,19 @@ void yahoo_doodle_process(GaimConnection *gc, const char *me, const char *from,
 	}
 }
 
-void yahoo_doodle_command_got_request(GaimConnection *gc, const char *from)
+void yahoo_doodle_command_got_request(PurpleConnection *gc, const char *from)
 {
-	GaimAccount *account;
-	GaimWhiteboard *wb;
+	PurpleAccount *account;
+	PurpleWhiteboard *wb;
 
-	gaim_debug_info("yahoo", "doodle: Got Request (%s)\n", from);
+	purple_debug_info("yahoo", "doodle: Got Request (%s)\n", from);
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
 	/* Only handle this if local client requested Doodle session (else local
 	 * client would have sent one)
 	 */
-	wb = gaim_whiteboard_get_session(account, from);
+	wb = purple_whiteboard_get_session(account, from);
 
 	/* If a session with the remote user doesn't exist */
 	if(wb == NULL)
@@ -191,11 +191,11 @@ void yahoo_doodle_command_got_request(GaimConnection *gc, const char *from)
 		/* char dialog_message[64];
 		g_sprintf(dialog_message, "%s is requesting to start a Doodle session with you.", from);
 
-		gaim_notify_message(NULL, GAIM_NOTIFY_MSG_INFO, "Doodle",
+		purple_notify_message(NULL, PURPLE_NOTIFY_MSG_INFO, "Doodle",
 		dialog_message, NULL, NULL, NULL);
 		*/
 
-		gaim_whiteboard_create(account, from, DOODLE_STATE_REQUESTED);
+		purple_whiteboard_create(account, from, DOODLE_STATE_REQUESTED);
 
 		yahoo_doodle_command_send_request(gc, from);
 	}
@@ -205,26 +205,26 @@ void yahoo_doodle_command_got_request(GaimConnection *gc, const char *from)
 	 */
 }
 
-void yahoo_doodle_command_got_ready(GaimConnection *gc, const char *from)
+void yahoo_doodle_command_got_ready(PurpleConnection *gc, const char *from)
 {
-	GaimAccount *account;
-	GaimWhiteboard *wb;
+	PurpleAccount *account;
+	PurpleWhiteboard *wb;
 
-	gaim_debug_info("yahoo", "doodle: Got Ready (%s)\n", from);
+	purple_debug_info("yahoo", "doodle: Got Ready (%s)\n", from);
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
 	/* Only handle this if local client requested Doodle session (else local
 	 * client would have sent one)
 	 */
-	wb = gaim_whiteboard_get_session(account, from);
+	wb = purple_whiteboard_get_session(account, from);
 
 	if(wb == NULL)
 		return;
 
 	if(wb->state == DOODLE_STATE_REQUESTING)
 	{
-		gaim_whiteboard_start(wb);
+		purple_whiteboard_start(wb);
 
 		wb->state = DOODLE_STATE_ESTABLISHED;
 
@@ -234,7 +234,7 @@ void yahoo_doodle_command_got_ready(GaimConnection *gc, const char *from)
 	if(wb->state == DOODLE_STATE_ESTABLISHED)
 	{
 		/* TODO Ask whether to save picture too */
-		gaim_whiteboard_clear(wb);
+		purple_whiteboard_clear(wb);
 	}
 
 	/* NOTE Not sure about this... I am trying to handle if the remote user
@@ -243,30 +243,30 @@ void yahoo_doodle_command_got_ready(GaimConnection *gc, const char *from)
 	 */
 	if(wb->state == DOODLE_STATE_REQUESTED)
 	{
-		/* gaim_whiteboard_start(wb); */
+		/* purple_whiteboard_start(wb); */
 		yahoo_doodle_command_send_request(gc, from);
 	}
 }
 
-void yahoo_doodle_command_got_draw(GaimConnection *gc, const char *from, const char *message)
+void yahoo_doodle_command_got_draw(PurpleConnection *gc, const char *from, const char *message)
 {
-	GaimAccount *account;
-	GaimWhiteboard *wb;
+	PurpleAccount *account;
+	PurpleWhiteboard *wb;
 	char **tokens;
 	int i;
 	GList *d_list = NULL; /* a local list of drawing info */
 
 	g_return_if_fail(message != NULL);
 
-	gaim_debug_info("yahoo", "doodle: Got Draw (%s)\n", from);
-	gaim_debug_info("yahoo", "doodle: Draw message: %s\n", message);
+	purple_debug_info("yahoo", "doodle: Got Draw (%s)\n", from);
+	purple_debug_info("yahoo", "doodle: Draw message: %s\n", message);
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
 	/* Only handle this if local client requested Doodle session (else local
 	 * client would have sent one)
 	 */
-	wb = gaim_whiteboard_get_session(account, from);
+	wb = purple_whiteboard_get_session(account, from);
 
 	if(wb == NULL)
 		return;
@@ -304,19 +304,19 @@ void yahoo_doodle_command_got_draw(GaimConnection *gc, const char *from, const c
 	g_list_free(d_list);
 }
 
-void yahoo_doodle_command_got_clear(GaimConnection *gc, const char *from)
+void yahoo_doodle_command_got_clear(PurpleConnection *gc, const char *from)
 {
-	GaimAccount *account;
-	GaimWhiteboard *wb;
+	PurpleAccount *account;
+	PurpleWhiteboard *wb;
 
-	gaim_debug_info("yahoo", "doodle: Got Clear (%s)\n", from);
+	purple_debug_info("yahoo", "doodle: Got Clear (%s)\n", from);
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
 	/* Only handle this if local client requested Doodle session (else local
 	 * client would have sent one)
 	 */
-	wb = gaim_whiteboard_get_session(account, from);
+	wb = purple_whiteboard_get_session(account, from);
 
 	if(wb == NULL)
 		return;
@@ -325,14 +325,14 @@ void yahoo_doodle_command_got_clear(GaimConnection *gc, const char *from)
 	{
 		/* TODO Ask user whether to save the image before clearing it */
 
-		gaim_whiteboard_clear(wb);
+		purple_whiteboard_clear(wb);
 	}
 }
 
 void
-yahoo_doodle_command_got_extra(GaimConnection *gc, const char *from, const char *message)
+yahoo_doodle_command_got_extra(PurpleConnection *gc, const char *from, const char *message)
 {
-	gaim_debug_info("yahoo", "doodle: Got Extra (%s)\n", from);
+	purple_debug_info("yahoo", "doodle: Got Extra (%s)\n", from);
 
 	/* I do not like these 'extra' features, so I'll only handle them in one
 	 * way, which is returning them with the command/packet to turn them off
@@ -340,20 +340,20 @@ yahoo_doodle_command_got_extra(GaimConnection *gc, const char *from, const char 
 	yahoo_doodle_command_send_extra(gc, from, DOODLE_EXTRA_NONE);
 }
 
-void yahoo_doodle_command_got_confirm(GaimConnection *gc, const char *from)
+void yahoo_doodle_command_got_confirm(PurpleConnection *gc, const char *from)
 {
-	GaimAccount *account;
-	GaimWhiteboard *wb;
+	PurpleAccount *account;
+	PurpleWhiteboard *wb;
 
-	gaim_debug_info("yahoo", "doodle: Got Confirm (%s)\n", from);
+	purple_debug_info("yahoo", "doodle: Got Confirm (%s)\n", from);
 
 	/* Get the doodle session */
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
 	/* Only handle this if local client requested Doodle session (else local
 	 * client would have sent one)
 	 */
-	wb = gaim_whiteboard_get_session(account, from);
+	wb = purple_whiteboard_get_session(account, from);
 
 	if(wb == NULL)
 		return;
@@ -365,7 +365,7 @@ void yahoo_doodle_command_got_confirm(GaimConnection *gc, const char *from)
 	{
 		wb->state = DOODLE_STATE_ESTABLISHED;
 
-		gaim_whiteboard_start(wb);
+		purple_whiteboard_start(wb);
 
 		yahoo_doodle_command_send_confirm(gc, from);
 	}
@@ -375,25 +375,25 @@ void yahoo_doodle_command_got_confirm(GaimConnection *gc, const char *from)
 	{
 		wb->state = DOODLE_STATE_ESTABLISHED;
 
-		gaim_whiteboard_start(wb);
+		purple_whiteboard_start(wb);
 	}
 }
 
-void yahoo_doodle_command_got_shutdown(GaimConnection *gc, const char *from)
+void yahoo_doodle_command_got_shutdown(PurpleConnection *gc, const char *from)
 {
-	GaimAccount *account;
-	GaimWhiteboard *wb;
+	PurpleAccount *account;
+	PurpleWhiteboard *wb;
 
 	g_return_if_fail(from != NULL);
 
-	gaim_debug_info("yahoo", "doodle: Got Shutdown (%s)\n", from);
+	purple_debug_info("yahoo", "doodle: Got Shutdown (%s)\n", from);
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
 	/* Only handle this if local client requested Doodle session (else local
 	 * client would have sent one)
 	 */
-	wb = gaim_whiteboard_get_session(account, from);
+	wb = purple_whiteboard_get_session(account, from);
 
 	/* TODO Ask if user wants to save picture before the session is closed */
 
@@ -402,14 +402,14 @@ void yahoo_doodle_command_got_shutdown(GaimConnection *gc, const char *from)
 		return;
 	else
 	{
-		gaim_whiteboard_destroy(wb);
+		purple_whiteboard_destroy(wb);
 
 		/* yahoo_doodle_command_send_shutdown(gc, from); */
 	}
 }
 
 static void yahoo_doodle_command_send_generic(const char *type,
-											  GaimConnection *gc,
+											  PurpleConnection *gc,
 											  const char *to,
 											  const char *message,
 											  const char *thirteen,
@@ -419,14 +419,14 @@ static void yahoo_doodle_command_send_generic(const char *type,
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
 
-	gaim_debug_info("yahoo", "doodle: Sent %s (%s)\n", type, to);
+	purple_debug_info("yahoo", "doodle: Sent %s (%s)\n", type, to);
 
 	yd = gc->proto_data;
 
 	/* Make and send an acknowledge (ready) Doodle packet */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_P2PFILEXFER, YAHOO_STATUS_AVAILABLE, 0);
 	yahoo_packet_hash_str(pkt, 49,  "IMVIRONMENT");
-	yahoo_packet_hash_str(pkt, 1,    gaim_account_get_username(gc->account));
+	yahoo_packet_hash_str(pkt, 1,    purple_account_get_username(gc->account));
 	yahoo_packet_hash_str(pkt, 14,   message);
 	yahoo_packet_hash_str(pkt, 13,   thirteen);
 	yahoo_packet_hash_str(pkt, 5,    to);
@@ -437,46 +437,46 @@ static void yahoo_doodle_command_send_generic(const char *type,
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-void yahoo_doodle_command_send_request(GaimConnection *gc, const char *to)
+void yahoo_doodle_command_send_request(PurpleConnection *gc, const char *to)
 {
 	yahoo_doodle_command_send_generic("Request", gc, to, "1", "1", NULL, "1");
 }
 
-void yahoo_doodle_command_send_ready(GaimConnection *gc, const char *to)
+void yahoo_doodle_command_send_ready(PurpleConnection *gc, const char *to)
 {
 	yahoo_doodle_command_send_generic("Ready", gc, to, "", "0", NULL, "0");
 }
 
-void yahoo_doodle_command_send_draw(GaimConnection *gc, const char *to, const char *message)
+void yahoo_doodle_command_send_draw(PurpleConnection *gc, const char *to, const char *message)
 {
 	yahoo_doodle_command_send_generic("Draw", gc, to, message, "3", NULL, "1");
 }
 
-void yahoo_doodle_command_send_clear(GaimConnection *gc, const char *to)
+void yahoo_doodle_command_send_clear(PurpleConnection *gc, const char *to)
 {
 	yahoo_doodle_command_send_generic("Clear", gc, to, " ", "2", NULL, "1");
 }
 
-void yahoo_doodle_command_send_extra(GaimConnection *gc, const char *to, const char *message)
+void yahoo_doodle_command_send_extra(PurpleConnection *gc, const char *to, const char *message)
 {
 	yahoo_doodle_command_send_generic("Extra", gc, to, message, "4", NULL, "1");
 }
 
-void yahoo_doodle_command_send_confirm(GaimConnection *gc, const char *to)
+void yahoo_doodle_command_send_confirm(PurpleConnection *gc, const char *to)
 {
 	yahoo_doodle_command_send_generic("Confirm", gc, to, "1", "5", NULL, "1");
 }
 
-void yahoo_doodle_command_send_shutdown(GaimConnection *gc, const char *to)
+void yahoo_doodle_command_send_shutdown(PurpleConnection *gc, const char *to)
 {
 	yahoo_doodle_command_send_generic("Shutdown", gc, to, "", "0", ";0", "0");
 }
 
-void yahoo_doodle_start(GaimWhiteboard *wb)
+void yahoo_doodle_start(PurpleWhiteboard *wb)
 {
 	doodle_session *ds = g_new0(doodle_session, 1);
 
-	/* gaim_debug_debug("yahoo", "doodle: yahoo_doodle_start()\n"); */
+	/* purple_debug_debug("yahoo", "doodle: yahoo_doodle_start()\n"); */
 
 	/* Set default brush size and color */
 	ds->brush_size  = DOODLE_BRUSH_SMALL;
@@ -485,9 +485,9 @@ void yahoo_doodle_start(GaimWhiteboard *wb)
 	wb->proto_data = ds;
 }
 
-void yahoo_doodle_end(GaimWhiteboard *wb)
+void yahoo_doodle_end(PurpleWhiteboard *wb)
 {
-	GaimConnection *gc = gaim_account_get_connection(wb->account);
+	PurpleConnection *gc = purple_account_get_connection(wb->account);
 
 	/* g_debug_debug("yahoo", "doodle: yahoo_doodle_end()\n"); */
 
@@ -496,7 +496,7 @@ void yahoo_doodle_end(GaimWhiteboard *wb)
 	g_free(wb->proto_data);
 }
 
-void yahoo_doodle_get_dimensions(const GaimWhiteboard *wb, int *width, int *height)
+void yahoo_doodle_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height)
 {
 	/* standard Doodle canvases are of one size:  368x256 */
 	*width = DOODLE_CANVAS_WIDTH;
@@ -521,7 +521,7 @@ static char *yahoo_doodle_build_draw_string(doodle_session *ds, GList *draw_list
 	return g_string_free(message, FALSE);
 }
 
-void yahoo_doodle_send_draw_list(GaimWhiteboard *wb, GList *draw_list)
+void yahoo_doodle_send_draw_list(PurpleWhiteboard *wb, GList *draw_list)
 {
 	doodle_session *ds = wb->proto_data;
 	char *message;
@@ -533,14 +533,14 @@ void yahoo_doodle_send_draw_list(GaimWhiteboard *wb, GList *draw_list)
 	g_free(message);
 }
 
-void yahoo_doodle_clear(GaimWhiteboard *wb)
+void yahoo_doodle_clear(PurpleWhiteboard *wb)
 {
 	yahoo_doodle_command_send_clear(wb->account->gc, wb->who);
 }
 
 
 /* Traverse through the list and draw the points and lines */
-void yahoo_doodle_draw_stroke(GaimWhiteboard *wb, GList *draw_list)
+void yahoo_doodle_draw_stroke(PurpleWhiteboard *wb, GList *draw_list)
 {
 	int brush_color;
 	int brush_size;
@@ -566,7 +566,7 @@ void yahoo_doodle_draw_stroke(GaimWhiteboard *wb, GList *draw_list)
 	g_return_if_fail(draw_list != NULL);
 
 	/*
-	gaim_debug_debug("yahoo", "doodle: Drawing: color=%d, size=%d, (%d,%d)\n", brush_color, brush_size, x, y);
+	purple_debug_debug("yahoo", "doodle: Drawing: color=%d, size=%d, (%d,%d)\n", brush_color, brush_size, x, y);
 	*/
 
 	while(draw_list != NULL && draw_list->next != NULL)
@@ -574,7 +574,7 @@ void yahoo_doodle_draw_stroke(GaimWhiteboard *wb, GList *draw_list)
 		int dx = GPOINTER_TO_INT(draw_list->data);
 		int dy = GPOINTER_TO_INT(draw_list->next->data);
 
-		gaim_whiteboard_draw_line(wb,
+		purple_whiteboard_draw_line(wb,
 								  x, y,
 								  x + dx, y + dy,
 								  brush_color, brush_size);
@@ -586,20 +586,20 @@ void yahoo_doodle_draw_stroke(GaimWhiteboard *wb, GList *draw_list)
 	}
 }
 
-void yahoo_doodle_get_brush(const GaimWhiteboard *wb, int *size, int *color)
+void yahoo_doodle_get_brush(const PurpleWhiteboard *wb, int *size, int *color)
 {
 	doodle_session *ds = (doodle_session *)wb->proto_data;
 	*size = ds->brush_size;
 	*color = ds->brush_color;
 }
 
-void yahoo_doodle_set_brush(GaimWhiteboard *wb, int size, int color)
+void yahoo_doodle_set_brush(PurpleWhiteboard *wb, int size, int color)
 {
 	doodle_session *ds = (doodle_session *)wb->proto_data;
 	ds->brush_size = size;
 	ds->brush_color = color;
 
 	/* Notify the core about the changes */
-	gaim_whiteboard_set_brush(wb, size, color);
+	purple_whiteboard_set_brush(wb, size, color);
 }
 

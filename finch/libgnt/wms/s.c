@@ -164,7 +164,7 @@ toggle_buddylist(GntBindable *bindable, GList *null)
 	if (blist)
 		gnt_widget_destroy(blist);
 	else
-		gaim_blist_show();
+		purple_blist_show();
 	return TRUE;
 }
 

@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -35,7 +35,7 @@
 #include "yahoo_friend.h"
 
 typedef struct {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	char *name;
 } YahooGetInfoData;
 
@@ -89,7 +89,7 @@ typedef enum profile_state {
 
 typedef struct {
 	YahooGetInfoData *info_data;
-	GaimNotifyUserInfo *user_info;
+	PurpleNotifyUserInfo *user_info;
 	char *url_buffer;
 	char *photo_url_text;
 	char *profile_url_text;
@@ -649,10 +649,10 @@ static const profile_strings_node_t profile_strings[] = {
 static char *yahoo_info_date_reformat(const char *field, size_t len)
 {
 	char *tmp = g_strndup(field, len);
-	time_t t = gaim_str_to_time(tmp, FALSE, NULL, NULL, NULL);
+	time_t t = purple_str_to_time(tmp, FALSE, NULL, NULL, NULL);
 
 	g_free(tmp);
-	return g_strdup(gaim_date_format_short(localtime(&t)));
+	return g_strdup(purple_date_format_short(localtime(&t)));
 }
 
 static char *yahoo_remove_nonbreaking_spaces(char *str)
@@ -667,23 +667,23 @@ static char *yahoo_remove_nonbreaking_spaces(char *str)
 	return str;
 }
 
-static void yahoo_extract_user_info_text(GaimNotifyUserInfo *user_info, YahooGetInfoData *info_data) {
-	GaimBuddy *b;
+static void yahoo_extract_user_info_text(PurpleNotifyUserInfo *user_info, YahooGetInfoData *info_data) {
+	PurpleBuddy *b;
 	YahooFriend *f;
 
-	b = gaim_find_buddy(gaim_connection_get_account(info_data->gc),
+	b = purple_find_buddy(purple_connection_get_account(info_data->gc),
 			info_data->name);
 
 	if (b) {
 		if(b->alias && b->alias[0]) {
 			char *aliastext = g_markup_escape_text(b->alias, -1);
-			gaim_notify_user_info_add_pair(user_info, _("Alias"), aliastext); 
+			purple_notify_user_info_add_pair(user_info, _("Alias"), aliastext); 
 			g_free(aliastext);
 		}
 		#if 0
 		if (b->idle > 0) {
-			char *idletime = gaim_str_seconds_to_string(time(NULL) - b->idle);
-			gaim_notify_user_info_add_pair(user_info, _("Idle"), idletime);
+			char *idletime = purple_str_seconds_to_string(time(NULL) - b->idle);
+			purple_notify_user_info_add_pair(user_info, _("Idle"), idletime);
 			g_free(idletime);
 		}
 		#endif
@@ -694,7 +694,7 @@ static void yahoo_extract_user_info_text(GaimNotifyUserInfo *user_info, YahooGet
 		if ((f = yahoo_friend_find(info_data->gc, b->name))) {
 			const char *ip;
 			if ((ip = yahoo_friend_get_ip(f)))
-				gaim_notify_user_info_add_pair(user_info, _("IP Address"), ip);
+				purple_notify_user_info_add_pair(user_info, _("IP Address"), ip);
 		}
 	}
 }
@@ -732,16 +732,16 @@ static char *yahoo_get_photo_url(const char *url_text, const char *name) {
 }
 
 static void
-yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
+yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 		const gchar *url_text, size_t len, const gchar *error_message);
 
 #endif /* PHOTO_SUPPORT */
 
-static void yahoo_got_info(GaimUtilFetchUrlData *url_data, gpointer user_data,
+static void yahoo_got_info(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		const gchar *url_text, size_t len, const gchar *error_message)
 {
 	YahooGetInfoData *info_data = (YahooGetInfoData *)user_data;
-	GaimNotifyUserInfo *user_info;
+	PurpleNotifyUserInfo *user_info;
 	char *p;
 #if PHOTO_SUPPORT
 	YahooGetInfoStepTwoData *info2_data;
@@ -763,12 +763,12 @@ static void yahoo_got_info(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	const char *title;
 	profile_state_t profile_state = PROFILE_STATE_DEFAULT;
 
-	gaim_debug_info("yahoo", "In yahoo_got_info\n");
+	purple_debug_info("yahoo", "In yahoo_got_info\n");
 
 	yd = info_data->gc->proto_data;
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
-	user_info = gaim_notify_user_info_new();
+	user_info = purple_notify_user_info_new();
 
 	title = yd->jp ? _("Yahoo! Japan Profile") :
 					 _("Yahoo! Profile");
@@ -781,10 +781,10 @@ static void yahoo_got_info(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	 * to send back HTML, with a 200 status code.
 	 */
 	if (error_message != NULL || url_text == NULL || strcmp(url_text, "") == 0) {
-		gaim_notify_user_info_add_pair(user_info, _("Error retrieving profile"), NULL);
-		gaim_notify_userinfo(info_data->gc, info_data->name, 
+		purple_notify_user_info_add_pair(user_info, _("Error retrieving profile"), NULL);
+		purple_notify_userinfo(info_data->gc, info_data->name, 
 			user_info, NULL, NULL);
-		gaim_notify_user_info_destroy(user_info);
+		purple_notify_user_info_destroy(user_info);
 		g_free(profile_url_text);
 		g_free(info_data->name);
 		g_free(info_data);
@@ -816,14 +816,14 @@ static void yahoo_got_info(GaimUtilFetchUrlData *url_data, gpointer user_data,
 						 _("If you wish to view this profile, "
 						"you will need to visit this link in your web browser:"),
 						 profile_url_text, profile_url_text);
-		gaim_notify_user_info_add_pair(user_info, NULL, tmp);		
+		purple_notify_user_info_add_pair(user_info, NULL, tmp);		
 		g_free(tmp);
 
-		gaim_notify_userinfo(info_data->gc, info_data->name, 
+		purple_notify_userinfo(info_data->gc, info_data->name, 
 				user_info, NULL, NULL);
 
 		g_free(profile_url_text);
-		gaim_notify_user_info_destroy(user_info);
+		purple_notify_user_info_destroy(user_info);
 		g_free(info_data->name);
 		g_free(info_data);
 		return;
@@ -850,7 +850,7 @@ static void yahoo_got_info(GaimUtilFetchUrlData *url_data, gpointer user_data,
 			if (profile_strings[strid].lang == profile_langs[lang].lang) break;
 		}
 		strings = profile_strings + strid;
-		gaim_debug_info("yahoo", "detected profile lang = %s (%d)\n", profile_strings[strid].lang_string, lang);
+		purple_debug_info("yahoo", "detected profile lang = %s (%d)\n", profile_strings[strid].lang_string, lang);
 	}
 
 	/* Every user may choose his/her own profile language, and this language
@@ -878,7 +878,7 @@ static void yahoo_got_info(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	url_buffer = g_strdup(url_text);
 
 	/*
-	 * gaim_markup_strip_html() doesn't strip out character entities like &nbsp;
+	 * purple_markup_strip_html() doesn't strip out character entities like &nbsp;
 	 * and &#183;
 	*/
 	yahoo_remove_nonbreaking_spaces(url_buffer);
@@ -890,7 +890,7 @@ static void yahoo_got_info(GaimUtilFetchUrlData *url_data, gpointer user_data,
 #endif
 
 	/* nuke the nasty \r's */
-	gaim_str_strip_char(url_buffer, '\r');
+	purple_str_strip_char(url_buffer, '\r');
 
 #if PHOTO_SUPPORT
 	/* Marshall the existing state */
@@ -907,12 +907,12 @@ static void yahoo_got_info(GaimUtilFetchUrlData *url_data, gpointer user_data,
 
 	/* Try to put the photo in there too, if there's one */
 	if (photo_url_text) {
-		GaimUtilFetchUrlData *url_data;
+		PurpleUtilFetchUrlData *url_data;
 		/* User-uploaded photos use a different server that requires the Host
 		 * header, but Yahoo Japan will use the "chunked" content encoding if
-		 * we specify HTTP 1.1. So we have to specify 1.0 & fix gaim_util_fetch_url
+		 * we specify HTTP 1.1. So we have to specify 1.0 & fix purple_util_fetch_url
 		 */
-		url_data = gaim_util_fetch_url(photo_url_text, FALSE, NULL,
+		url_data = purple_util_fetch_url(photo_url_text, FALSE, NULL,
 				FALSE, yahoo_got_photo, info2_data);
 		if (url_data != NULL)
 			yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
@@ -928,7 +928,7 @@ static void yahoo_got_info(GaimUtilFetchUrlData *url_data, gpointer user_data,
 }
 
 static void
-yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
+yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 		const gchar *url_text, size_t len, const gchar *error_message)
 {
 	YahooGetInfoStepTwoData *info2_data = (YahooGetInfoStepTwoData *)data;
@@ -946,7 +946,7 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 	/* Unmarshall the saved state */
 	YahooGetInfoData *info_data = info2_data->info_data;
 	char *url_buffer = info2_data->url_buffer;
-	GaimNotifyUserInfo *user_info = info2_data->user_info;
+	PurpleNotifyUserInfo *user_info = info2_data->user_info;
 	char *photo_url_text = info2_data->photo_url_text;
 	char *profile_url_text = info2_data->profile_url_text;
 	const profile_strings_node_t *strings = info2_data->strings;
@@ -958,19 +958,19 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 
 	/* Jun 29 05 Bleeter: Y! changed their profile pages. Terminators now seem to be */
 	/* </dd> and not \n. The prpl's need to be audited before it can be moved */
-	/* in to gaim_markup_strip_html*/
+	/* in to purple_markup_strip_html*/
 	char *fudged_buffer;
 
 	yd = info_data->gc->proto_data;
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
 
-	fudged_buffer = gaim_strcasereplace(url_buffer, "</dd>", "</dd><br>");
+	fudged_buffer = purple_strcasereplace(url_buffer, "</dd>", "</dd><br>");
 	/* nuke the html, it's easier than trying to parse the horrid stuff */
-	stripped = gaim_markup_strip_html(fudged_buffer);
+	stripped = purple_markup_strip_html(fudged_buffer);
 	stripped_len = strlen(stripped);
 
-	gaim_debug_misc("yahoo", "stripped = %p\n", stripped);
-	gaim_debug_misc("yahoo", "url_buffer = %p\n", url_buffer);
+	purple_debug_misc("yahoo", "stripped = %p\n", stripped);
+	purple_debug_misc("yahoo", "url_buffer = %p\n", url_buffer);
 
 	/* convert to utf8 */
 	if (strings && strings->charset != XX) {
@@ -985,7 +985,7 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 		}
 		if (p) {
 			g_free(stripped);
-			stripped = gaim_utf8_ncr_decode(p);
+			stripped = purple_utf8_ncr_decode(p);
 			stripped_len = strlen(stripped);
 			g_free(p);
 		}
@@ -998,14 +998,14 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 				strings->charset, NULL, NULL, NULL);
 		yahoo_remove_nonbreaking_spaces(last_updated_utf8_string);
 
-		gaim_debug_misc("yahoo", "after utf8 conversion: stripped = (%s)\n", stripped);
+		purple_debug_misc("yahoo", "after utf8 conversion: stripped = (%s)\n", stripped);
 	}
 
 	if (profile_state == PROFILE_STATE_DEFAULT) {
 #if 0
 	/* extract their Yahoo! ID and put it in. Don't bother marking has_info as
 	 * true, since the Yahoo! ID will always be there */
-	if (!gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	if (!purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->yahoo_id_string, (yd->jp ? 2 : 10), "\n", 0,
 			NULL, _("Yahoo! ID"), 0, NULL, NULL))
 		;
@@ -1018,56 +1018,56 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 				|| strstr(url_text, "403 Forbidden")
 				|| strstr(url_text, "404 Not Found")) {
 
-			gaim_debug_info("yahoo", "Error getting %s: %s\n",
+			purple_debug_info("yahoo", "Error getting %s: %s\n",
 					photo_url_text, url_text);
 		} else {
-			gaim_debug_info("yahoo", "%s is %d bytes\n", photo_url_text, len);
-			id = gaim_imgstore_add(url_text, len, NULL);
+			purple_debug_info("yahoo", "%s is %d bytes\n", photo_url_text, len);
+			id = purple_imgstore_add(url_text, len, NULL);
 			
 			tmp = g_strdup_printf("<img id=\"%d\"><br>", id);
-			gaim_notify_user_info_add_pair(user_info, NULL, tmp);
+			purple_notify_user_info_add_pair(user_info, NULL, tmp);
 			g_free(tmp);
 		}
 	}
 #endif /* PHOTO_SUPPORT */
 
 	/* extract their Email address and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->my_email_string, (yd->jp ? 4 : 1), " ", 0,
 			strings->private_string, _("E-Mail"), 0, NULL, NULL);
 
 	/* extract the Nickname if it exists */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			"Nickname:", 1, "\n", '\n',
 			NULL, _("Nickname"), 0, NULL, NULL);
 
 	/* extract their RealName and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->realname_string, (yd->jp ? 3 : 1), "\n", '\n',
 			NULL, _("Real Name"), 0, NULL, NULL);
 
 	/* extract their Location and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->location_string, (yd->jp ? 4 : 2), "\n", '\n',
 			NULL, _("Location"), 0, NULL, NULL);
 
 	/* extract their Age and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->age_string, (yd->jp ? 2 : 3), "\n", '\n',
 			NULL, _("Age"), 0, NULL, NULL);
 
 	/* extract their MaritalStatus and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->maritalstatus_string, (yd->jp ? 2 : 3), "\n", '\n',
 			strings->no_answer_string, _("Marital Status"), 0, NULL, NULL);
 
 	/* extract their Gender and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->gender_string, (yd->jp ? 2 : 3), "\n", '\n',
 			strings->no_answer_string, _("Gender"), 0, NULL, NULL);
 
 	/* extract their Occupation and put it in */
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->occupation_string, 2, "\n", '\n',
 			NULL, _("Occupation"), 0, NULL, NULL);
 
@@ -1080,15 +1080,15 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 	 * the "Description" ("Self PR") heading instead of "Links".)
 	 */
 
-	if (!gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	if (!purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->hobbies_string, (yd->jp ? 3 : 1), strings->latest_news_string,
 			'\n', "\n", _("Hobbies"), 0, NULL, NULL))
 	{
-		if (!gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+		if (!purple_markup_extract_info_field(stripped, stripped_len, user_info,
 				strings->hobbies_string, 1, strings->favorite_quote_string,
 				'\n', "\n", _("Hobbies"), 0, NULL, NULL))
 		{
-			found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+			found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 					strings->hobbies_string, 1, strings->links_string,
 					'\n', "\n", _("Hobbies"), 0, NULL, NULL);
 		}
@@ -1098,18 +1098,18 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 	else
 		found = TRUE;
 
-	if (!gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	if (!purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->latest_news_string, 1, strings->favorite_quote_string,
 			'\n', "\n", _("Latest News"), 0, NULL, NULL))
 	{
-		found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+		found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 				strings->latest_news_string, (yd->jp ? 2 : 1), strings->links_string,
 				'\n', "\n", _("Latest News"), 0, NULL, NULL);
 	}
 	else
 		found = TRUE;
 
-	found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+	found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 			strings->favorite_quote_string, 1, strings->links_string,
 			'\n', "\n", _("Favorite Quote"), 0, NULL, NULL);
 
@@ -1123,7 +1123,7 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 			strstr(stripped, strings->no_home_page_specified_string);
 		if(!p)
 		{
-			found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+			found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 					strings->home_page_string, 1, "\n", 0, NULL,
 					_("Home Page"), 1, NULL, NULL);
 		}
@@ -1138,16 +1138,16 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 		strstr(stripped,strings->no_cool_link_specified_string);
 	if (!p)
 	{
-		if (gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+		if (purple_markup_extract_info_field(stripped, stripped_len, user_info,
 				strings->cool_link_1_string, 1, "\n", 0, NULL,
 				_("Cool Link 1"), 1, NULL, NULL))
 		{
 			found = TRUE;
-			if (gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+			if (purple_markup_extract_info_field(stripped, stripped_len, user_info,
 					strings->cool_link_2_string, 1, "\n", 0, NULL,
 					_("Cool Link 2"), 1, NULL, NULL))
 			{
-				gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+				purple_markup_extract_info_field(stripped, stripped_len, user_info,
 						strings->cool_link_3_string, 1, "\n", 0, NULL,
 						_("Cool Link 3"), 1, NULL, NULL);
 			}
@@ -1156,12 +1156,12 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 
 	if (last_updated_utf8_string != NULL) {
 		/* see if Member Since is there, and if so, extract it. */
-		found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+		found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 				"Member Since:", 1, last_updated_utf8_string,
 				'\n', NULL, _("Member Since"), 0, NULL, yahoo_info_date_reformat);
 
 		/* extract the Last Updated date and put it in */
-		found |= gaim_markup_extract_info_field(stripped, stripped_len, user_info,
+		found |= purple_markup_extract_info_field(stripped, stripped_len, user_info,
 				last_updated_utf8_string, (yd->jp ? 2 : 1), (yd->jp ? "\n" : " "), (yd->jp ? 0 : '\n'), NULL,
 				_("Last Update"), 0, NULL, (yd->jp ? NULL : yahoo_info_date_reformat));
 	}
@@ -1182,8 +1182,8 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 					  "or format that is not supported at this time."));
 
 		} else if (profile_state == PROFILE_STATE_NOT_FOUND) {
-			GaimBuddy *b = gaim_find_buddy
-					(gaim_connection_get_account(info_data->gc),
+			PurpleBuddy *b = purple_find_buddy
+					(purple_connection_get_account(info_data->gc),
 							info_data->name);
 			YahooFriend *f = NULL;
 			if (b) {
@@ -1207,21 +1207,21 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 					_("The user's profile is empty."));
 		}
 		
-		gaim_notify_user_info_add_pair(user_info, NULL, str->str);
+		purple_notify_user_info_add_pair(user_info, NULL, str->str);
 		g_string_free(str, TRUE);
 	}
 
 	/* put a link to the actual profile URL */
 	tmp = g_strdup_printf("<a href=\"%s\">%s</a>", profile_url_text, profile_url_text);
-	gaim_notify_user_info_add_pair(user_info, _("Profile URL"), tmp);
+	purple_notify_user_info_add_pair(user_info, _("Profile URL"), tmp);
 	g_free(tmp);
 
 	g_free(stripped);
 
 	/* show it to the user */
-	gaim_notify_userinfo(info_data->gc, info_data->name,
+	purple_notify_userinfo(info_data->gc, info_data->name,
 						  user_info, NULL, NULL);
-	gaim_notify_user_info_destroy(user_info);
+	purple_notify_user_info_destroy(user_info);
 
 	g_free(last_updated_utf8_string);
 	g_free(url_buffer);
@@ -1234,16 +1234,16 @@ yahoo_got_photo(GaimUtilFetchUrlData *url_data, gpointer data,
 	g_free(photo_url_text);
 	g_free(info2_data);
 	if (id != -1)
-		gaim_imgstore_unref(id);
+		purple_imgstore_unref(id);
 #endif
 }
 
-void yahoo_get_info(GaimConnection *gc, const char *name)
+void yahoo_get_info(PurpleConnection *gc, const char *name)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	YahooGetInfoData *data;
 	char *url;
-	GaimUtilFetchUrlData *url_data;
+	PurpleUtilFetchUrlData *url_data;
 
 	data       = g_new0(YahooGetInfoData, 1);
 	data->gc   = gc;
@@ -1252,7 +1252,7 @@ void yahoo_get_info(GaimConnection *gc, const char *name)
 	url = g_strdup_printf("%s%s",
 			(yd->jp ? YAHOOJP_PROFILE_URL : YAHOO_PROFILE_URL), name);
 
-	url_data = gaim_util_fetch_url(url, TRUE, NULL, FALSE, yahoo_got_info, data);
+	url_data = purple_util_fetch_url(url, TRUE, NULL, FALSE, yahoo_got_info, data);
 	if (url_data != NULL)
 		yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 	else {

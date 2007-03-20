@@ -1,156 +1,156 @@
 #include "module.h"
 
-MODULE = Gaim::Plugin  PACKAGE = Gaim::Plugin  PREFIX = gaim_plugin_
+MODULE = Purple::Plugin  PACKAGE = Purple::Plugin  PREFIX = purple_plugin_
 PROTOTYPES: ENABLE
 
-Gaim::Plugin
-gaim_plugin_new(native, path)
+Purple::Plugin
+purple_plugin_new(native, path)
 	gboolean native
 	const char *path
 
-Gaim::Plugin
-gaim_plugin_probe(filename)
+Purple::Plugin
+purple_plugin_probe(filename)
 	const char *filename
 
 gboolean
-gaim_plugin_register(plugin)
-	Gaim::Plugin plugin
+purple_plugin_register(plugin)
+	Purple::Plugin plugin
 
 gboolean
-gaim_plugin_load(plugin)
-	Gaim::Plugin plugin
+purple_plugin_load(plugin)
+	Purple::Plugin plugin
 
 gboolean
-gaim_plugin_unload(plugin)
-	Gaim::Plugin plugin
+purple_plugin_unload(plugin)
+	Purple::Plugin plugin
 
 gboolean
-gaim_plugin_reload(plugin)
-	Gaim::Plugin plugin
+purple_plugin_reload(plugin)
+	Purple::Plugin plugin
 
 void
-gaim_plugin_destroy(plugin)
-	Gaim::Plugin plugin
+purple_plugin_destroy(plugin)
+	Purple::Plugin plugin
 
 gboolean
-gaim_plugin_is_loaded(plugin)
-	Gaim::Plugin plugin
+purple_plugin_is_loaded(plugin)
+	Purple::Plugin plugin
 
 gboolean
-gaim_plugin_is_unloadable(plugin)
-	Gaim::Plugin plugin
+purple_plugin_is_unloadable(plugin)
+	Purple::Plugin plugin
 
 const gchar *
-gaim_plugin_get_id(plugin)
-	Gaim::Plugin plugin
+purple_plugin_get_id(plugin)
+	Purple::Plugin plugin
 
 const gchar *
-gaim_plugin_get_name(plugin)
-	Gaim::Plugin plugin
+purple_plugin_get_name(plugin)
+	Purple::Plugin plugin
 
 const gchar *
-gaim_plugin_get_version(plugin)
-	Gaim::Plugin plugin
+purple_plugin_get_version(plugin)
+	Purple::Plugin plugin
 
 const gchar *
-gaim_plugin_get_summary(plugin)
-	Gaim::Plugin plugin
+purple_plugin_get_summary(plugin)
+	Purple::Plugin plugin
 
 const gchar *
-gaim_plugin_get_description(plugin)
-	Gaim::Plugin plugin
+purple_plugin_get_description(plugin)
+	Purple::Plugin plugin
 
 const gchar *
-gaim_plugin_get_author(plugin)
-	Gaim::Plugin plugin
+purple_plugin_get_author(plugin)
+	Purple::Plugin plugin
 
 const gchar *
-gaim_plugin_get_homepage(plugin)
-	Gaim::Plugin plugin
+purple_plugin_get_homepage(plugin)
+	Purple::Plugin plugin
 
-MODULE = Gaim::Plugin  PACKAGE = Gaim::Plugin::IPC  PREFIX = gaim_plugin_ipc_
+MODULE = Purple::Plugin  PACKAGE = Purple::Plugin::IPC  PREFIX = purple_plugin_ipc_
 
 void
-gaim_plugin_ipc_unregister(plugin, command)
-	Gaim::Plugin plugin
+purple_plugin_ipc_unregister(plugin, command)
+	Purple::Plugin plugin
 	const char *command
 
 void
-gaim_plugin_ipc_unregister_all(plugin)
-	Gaim::Plugin plugin
+purple_plugin_ipc_unregister_all(plugin)
+	Purple::Plugin plugin
 
-MODULE = Gaim::Plugin  PACKAGE = Gaim::Plugins  PREFIX = gaim_plugins_
+MODULE = Purple::Plugin  PACKAGE = Purple::Plugins  PREFIX = purple_plugins_
 PROTOTYPES: ENABLE
 
 void
-gaim_plugins_add_search_path(path)
+purple_plugins_add_search_path(path)
 	const char *path
 
 void
-gaim_plugins_unload_all()
+purple_plugins_unload_all()
 
 void
-gaim_plugins_destroy_all()
+purple_plugins_destroy_all()
 
 void
-gaim_plugins_load_saved(key)
+purple_plugins_load_saved(key)
 	const char *key
 
 void
-gaim_plugins_probe(ext)
+purple_plugins_probe(ext)
 	const char *ext
 
 gboolean
-gaim_plugins_enabled()
+purple_plugins_enabled()
 
-Gaim::Plugin
-gaim_plugins_find_with_name(name)
+Purple::Plugin
+purple_plugins_find_with_name(name)
 	const char *name
 
-Gaim::Plugin
-gaim_plugins_find_with_filename(filename)
+Purple::Plugin
+purple_plugins_find_with_filename(filename)
 	const char *filename
 
-Gaim::Plugin
-gaim_plugins_find_with_basename(basename)
+Purple::Plugin
+purple_plugins_find_with_basename(basename)
 	const char *basename
 
-Gaim::Plugin
-gaim_plugins_find_with_id(id)
+Purple::Plugin
+purple_plugins_find_with_id(id)
 	const char *id
 
 void
-gaim_plugins_get_loaded()
+purple_plugins_get_loaded()
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = gaim_plugins_get_loaded(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Plugin")));
+	for (l = purple_plugins_get_loaded(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Plugin")));
 	}
 
 void
-gaim_plugins_get_protocols()
+purple_plugins_get_protocols()
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = gaim_plugins_get_protocols(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Plugin")));
+	for (l = purple_plugins_get_protocols(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Plugin")));
 	}
 
 void
-gaim_plugins_get_all()
+purple_plugins_get_all()
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = gaim_plugins_get_all(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Plugin")));
+	for (l = purple_plugins_get_all(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Plugin")));
 	}
 
-Gaim::Handle
-gaim_plugins_get_handle()
+Purple::Handle
+purple_plugins_get_handle()
 
 void
-gaim_plugins_init()
+purple_plugins_init()
 
 void
-gaim_plugins_uninit()
+purple_plugins_uninit()

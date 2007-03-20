@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -40,7 +40,7 @@ static int error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 
 	/* XXX the modules interface should have already retrieved this for us */
 	if (!(snac2 = aim_remsnac(od, snac->id))) {
-		gaim_debug_misc("oscar", "search error: couldn't get a snac for 0x%08lx\n", snac->id);
+		purple_debug_misc("oscar", "search error: couldn't get a snac for 0x%08lx\n", snac->id);
 		return 0;
 	}
 

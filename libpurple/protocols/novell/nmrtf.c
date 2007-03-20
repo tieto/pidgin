@@ -233,7 +233,7 @@ nm_rtf_strip_formatting(NMRtfContext *ctx, const char *input)
 	if (status == NMRTF_OK)
 		return g_strdup(ctx->output->str);
 
-	gaim_debug_info("novell", "RTF parser failed with error code %d", status);
+	purple_debug_info("novell", "RTF parser failed with error code %d", status);
 	return NULL;
 }
 
@@ -312,7 +312,7 @@ get_current_encoding(NMRtfContext *ctx)
 		case 254:
 			return "CP437";
 		default:
-			gaim_debug_info("novell", "Unhandled font charset %d\n", font->charset);
+			purple_debug_info("novell", "Unhandled font charset %d\n", font->charset);
 			return "CP1252";
 	}
 	return "CP1252";
@@ -331,7 +331,7 @@ rtf_add_font_entry(NMRtfContext *ctx, int number, const char *name, int charset)
     font->name = g_strdup(name);
 	font->charset = charset;
 
-	gaim_debug_info("novell", "Adding font to table: #%d\t%s\t%d\n",
+	purple_debug_info("novell", "Adding font to table: #%d\t%s\t%d\n",
 					font->number, font->name, font->charset);
 
 	ctx->font_table = g_slist_append(ctx->font_table, font);
@@ -629,7 +629,7 @@ rtf_print_unicode_char(NMRtfContext *ctx, gunichar ch)
 	/* convert the unicode character to utf8 and add directly to the output buffer */
 	num = g_unichar_to_utf8((gunichar) ch, buf);
 	buf[num] = 0;
-	gaim_debug_info("novell", "converted unichar 0x%X to utf8 char %s\n", ch, buf);
+	purple_debug_info("novell", "converted unichar 0x%X to utf8 char %s\n", ch, buf);
 
 	ctx->output = g_string_append(ctx->output, buf);
 	return NMRTF_OK;
@@ -656,7 +656,7 @@ rtf_flush_data(NMRtfContext *ctx)
 			ctx->ansi = g_string_truncate(ctx->ansi, 0);
 		} else {
 			status = NMRTF_CONVERT_ERROR;
-			gaim_debug_info("novell", "failed to convert data! error code = %d msg = %s\n",
+			purple_debug_info("novell", "failed to convert data! error code = %d msg = %s\n",
 							gerror->code, gerror->message);
 			g_free(gerror);
 		}
@@ -783,7 +783,7 @@ rtf_dispatch_special(NMRtfContext *ctx, NMRtfSpecialKwd type)
 			ctx->ris = NMRTF_STATE_HEX;
 			break;
 		case NMRTF_SPECIAL_UNICODE:
-			gaim_debug_info("novell", "parsing unichar\n");
+			purple_debug_info("novell", "parsing unichar\n");
 			status = rtf_dispatch_unicode_char(ctx, ctx->param);
  			/* Skip next char */
 			if (status == NMRTF_OK)

@@ -44,7 +44,7 @@
 /*
  * NOTES
  * 
- * This file was developed for the Gaim project.  It inserts the Tcl
+ * This file was developed for the Purple project.  It inserts the Tcl
  * event loop into the glib2 event loop for the purposes of providing
  * Tcl bindings in a glib2 (e.g. Gtk2) program.  To use it, simply
  * link it into your executable, include tcl_glib.h, and call the

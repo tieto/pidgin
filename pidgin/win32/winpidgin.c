@@ -5,7 +5,7 @@
  *  Description: Entry point for win32 pidgin, and various win32 dependant
  *  routines.
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -111,7 +111,7 @@ static void dll_prep() {
 	HMODULE hmod;
 	HKEY hkey;
 #ifdef PORTABLE
-	/* We assume that GTK+ is installed under \\path\to\Gaim\..\GTK
+	/* We assume that GTK+ is installed under \\path\to\Purple\..\GTK
 	 * First we find \\path\to
 	 */
 	if (GetModuleFileName(NULL, path, MAX_PATH) != 0) {
@@ -136,15 +136,15 @@ static void dll_prep() {
 
 	if (path) {
 		/* Set up the settings dir base to be \\path\to
-		 * The actual settings dir will be \\path\to\.gaim */
-		char settingsdir[strlen(path) + strlen("GAIMHOME=") + 1];
-		char aspelldir[strlen(path) + strlen("GAIM_ASPELL_DIR=\\Aspell\\bin") + 1];
+		 * The actual settings dir will be \\path\to\.purple */
+		char settingsdir[strlen(path) + strlen("PURPLEHOME=") + 1];
+		char aspelldir[strlen(path) + strlen("PURPLE_ASPELL_DIR=\\Aspell\\bin") + 1];
 
-		snprintf(settingsdir, sizeof(settingsdir), "GAIMHOME=%s", path);
+		snprintf(settingsdir, sizeof(settingsdir), "PURPLEHOME=%s", path);
 		printf("Setting settings dir: %s\n", settingsdir);
 		putenv(settingsdir);
 
-		snprintf(aspelldir, sizeof(aspelldir), "GAIM_ASPELL_DIR=%s\\Aspell\\bin", path);
+		snprintf(aspelldir, sizeof(aspelldir), "PURPLE_ASPELL_DIR=%s\\Aspell\\bin", path);
 		printf("%s", aspelldir);
 		putenv(aspelldir);
 
@@ -390,8 +390,8 @@ static char* winpidgin_lcid_to_posix(LCID lcid) {
 	return posix;
 }
 
-/* Determine and set Gaim locale as follows (in order of priority):
-   - Check GAIMLANG env var
+/* Determine and set Purple locale as follows (in order of priority):
+   - Check PURPLELANG env var
    - Check NSIS Installer Language reg value
    - Use default user locale
 */
@@ -403,12 +403,12 @@ static const char *winpidgin_get_locale() {
 	DWORD datalen = 10;
 #endif
 
-	/* Check if user set GAIMLANG env var */
-	if ((locale = getenv("GAIMLANG")))
+	/* Check if user set PURPLELANG env var */
+	if ((locale = getenv("PURPLELANG")))
 		return locale;
 
 #ifndef PORTABLE
-	if (read_reg_string(HKEY_CURRENT_USER, "SOFTWARE\\gaim",
+	if (read_reg_string(HKEY_CURRENT_USER, "SOFTWARE\\purple",
 			"Installer Language", (LPBYTE) &data, &datalen)) {
 		if ((locale = winpidgin_lcid_to_posix(atoi(data))))
 			return locale;
@@ -581,17 +581,17 @@ WinMain (struct HINSTANCE__ *hInstance, struct HINSTANCE__ *hPrevInstance,
 	}
 
 #ifndef PORTABLE
-	if (!getenv("GAIM_NO_DLL_CHECK"))
+	if (!getenv("PURPLE_NO_DLL_CHECK"))
 #endif
 		dll_prep();
 
 	winpidgin_set_locale();
 	/* If help or version flag used, do not check Mutex */
 	if (!strstr(lpszCmdLine, "-h") && !strstr(lpszCmdLine, "-v"))
-		if (!getenv("GAIM_MULTI_INST") && !winpidgin_set_running())
+		if (!getenv("PURPLE_MULTI_INST") && !winpidgin_set_running())
 			return 0;
 
-	/* Now we are ready for Gaim .. */
+	/* Now we are ready for Purple .. */
 	if ((hmod = LoadLibrary("pidgin.dll"))) {
 		pidgin_main = (LPFNPIDGINMAIN) GetProcAddress(hmod, "pidgin_main");
 	}

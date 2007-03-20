@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -211,7 +211,7 @@ flap_connection_send_snac(OscarData *od, FlapConnection *conn, guint16 family, g
 		g_queue_push_tail(conn->queued_snacs, queued_snac);
 
 		if (conn->queued_timeout == 0)
-			conn->queued_timeout = gaim_timeout_add(500, flap_connection_send_queued, conn);
+			conn->queued_timeout = purple_timeout_add(500, flap_connection_send_queued, conn);
 
 		return;
 	}
@@ -266,7 +266,7 @@ flap_connection_new(OscarData *od, int type)
 
 	conn = g_new0(FlapConnection, 1);
 	conn->od = od;
-	conn->buffer_outgoing = gaim_circ_buffer_new(0);
+	conn->buffer_outgoing = purple_circ_buffer_new(0);
 	conn->fd = -1;
 	conn->subtype = -1;
 	conn->type = type;
@@ -290,7 +290,7 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 {
 	if (conn->connect_data != NULL)
 	{
-		gaim_proxy_connect_cancel(conn->connect_data);
+		purple_proxy_connect_cancel(conn->connect_data);
 		conn->connect_data = NULL;
 	}
 
@@ -314,20 +314,20 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 
 	if (conn->watcher_incoming != 0)
 	{
-		gaim_input_remove(conn->watcher_incoming);
+		purple_input_remove(conn->watcher_incoming);
 		conn->watcher_incoming = 0;
 	}
 
 	if (conn->watcher_outgoing != 0)
 	{
-		gaim_input_remove(conn->watcher_outgoing);
+		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
 	}
 
 	g_free(conn->buffer_incoming.data.data);
 	conn->buffer_incoming.data.data = NULL;
 
-	gaim_circ_buffer_destroy(conn->buffer_outgoing);
+	purple_circ_buffer_destroy(conn->buffer_outgoing);
 	conn->buffer_outgoing = NULL;
 }
 
@@ -355,13 +355,13 @@ flap_connection_destroy_cb(gpointer data)
 {
 	FlapConnection *conn;
 	OscarData *od;
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	conn = data;
 	od = conn->od;
-	account = (GAIM_CONNECTION_IS_VALID(od->gc) ? gaim_connection_get_account(od->gc) : NULL);
+	account = (PURPLE_CONNECTION_IS_VALID(od->gc) ? purple_connection_get_account(od->gc) : NULL);
 
-	gaim_debug_info("oscar", "Destroying oscar connection of "
+	purple_debug_info("oscar", "Destroying oscar connection of "
 			"type 0x%04hx\n", conn->type);
 
 	od->oscar_connections = g_slist_remove(od->oscar_connections, conn);
@@ -373,7 +373,7 @@ flap_connection_destroy_cb(gpointer data)
 	if (account && !account->disconnecting &&
 		((od->oscar_connections == NULL) || (!flap_connection_getbytype(od, SNAC_FAMILY_LOCATE))))
 	{
-		/* No more FLAP connections!  Sign off this GaimConnection! */
+		/* No more FLAP connections!  Sign off this PurpleConnection! */
 		gchar *tmp;
 		if (conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED)
 			tmp = g_strdup(_("Server closed the connection."));
@@ -394,7 +394,7 @@ flap_connection_destroy_cb(gpointer data)
 
 		if (tmp != NULL)
 		{
-			gaim_connection_error(od->gc, tmp);
+			purple_connection_error(od->gc, tmp);
 			g_free(tmp);
 		}
 	}
@@ -426,7 +426,7 @@ flap_connection_destroy_cb(gpointer data)
 	}
 	g_queue_free(conn->queued_snacs);
 	if (conn->queued_timeout > 0)
-		gaim_timeout_remove(conn->queued_timeout);
+		purple_timeout_remove(conn->queued_timeout);
 
 	g_free(conn);
 
@@ -441,7 +441,7 @@ void
 flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason, const gchar *error_message)
 {
 	if (conn->destroy_timeout != 0)
-		gaim_timeout_remove(conn->destroy_timeout);
+		purple_timeout_remove(conn->destroy_timeout);
 	conn->disconnect_reason = reason;
 	g_free(conn->error_message);
 	conn->error_message = g_strdup(error_message);
@@ -449,7 +449,7 @@ flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason, cons
 }
 
 /**
- * Schedule Gaim to destroy the given FlapConnection as soon as we
+ * Schedule Purple to destroy the given FlapConnection as soon as we
  * return control back to the program's main loop.  We must do this
  * if we want to destroy the connection but we are still using it
  * for some reason.
@@ -461,7 +461,7 @@ flap_connection_destroy(FlapConnection *conn, OscarDisconnectReason reason, cons
  *        in which case it should contain the value of strerror(errno),
  *        and OSCAR_DISCONNECT_COULD_NOT_CONNECT, in which case it
  *        should contain the error_message passed back from the call
- *        to gaim_proxy_connect().
+ *        to purple_proxy_connect().
  */
 void
 flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason reason, const gchar *error_message)
@@ -470,12 +470,12 @@ flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReason rea
 		/* Already taken care of */
 		return;
 
-	gaim_debug_info("oscar", "Scheduling destruction of FLAP "
+	purple_debug_info("oscar", "Scheduling destruction of FLAP "
 			"connection of type 0x%04hx\n", conn->type);
 	conn->disconnect_reason = reason;
 	g_free(conn->error_message);
 	conn->error_message = g_strdup(error_message);
-	conn->destroy_timeout = gaim_timeout_add(0, flap_connection_destroy_cb, conn);
+	conn->destroy_timeout = purple_timeout_add(0, flap_connection_destroy_cb, conn);
 }
 
 /**
@@ -738,7 +738,7 @@ parse_flap(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 		if (flap_version != 0x00000001)
 		{
 				/* Error! */
-				gaim_debug_warning("oscar", "Expecting FLAP version "
+				purple_debug_warning("oscar", "Expecting FLAP version "
 					"0x00000001 but received FLAP version %08lx.  Closing connection.\n",
 					flap_version);
 				flap_connection_schedule_destroy(conn,
@@ -766,7 +766,7 @@ parse_flap(OscarData *od, FlapConnection *conn, FlapFrame *frame)
  * time this callback is triggered.
  */
 void
-flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
+flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	FlapConnection *conn;
 	ssize_t read;
@@ -884,17 +884,17 @@ flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-send_cb(gpointer data, gint source, GaimInputCondition cond)
+send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	FlapConnection *conn;
 	int writelen, ret;
 
 	conn = data;
-	writelen = gaim_circ_buffer_get_max_read(conn->buffer_outgoing);
+	writelen = purple_circ_buffer_get_max_read(conn->buffer_outgoing);
 
 	if (writelen == 0)
 	{
-		gaim_input_remove(conn->watcher_outgoing);
+		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
 		return;
 	}
@@ -907,7 +907,7 @@ send_cb(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		/* Error! */
-		gaim_input_remove(conn->watcher_outgoing);
+		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
 		close(conn->fd);
 		conn->fd = -1;
@@ -916,7 +916,7 @@ send_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	gaim_circ_buffer_mark_read(conn->buffer_outgoing, ret);
+	purple_circ_buffer_mark_read(conn->buffer_outgoing, ret);
 }
 
 static void
@@ -933,13 +933,13 @@ flap_connection_send_byte_stream(ByteStream *bs, FlapConnection *conn, size_t co
 		return;
 
 	/* Add everything to our outgoing buffer */
-	gaim_circ_buffer_append(conn->buffer_outgoing, bs->data, count);
+	purple_circ_buffer_append(conn->buffer_outgoing, bs->data, count);
 
 	/* If we haven't already started writing stuff, then start the cycle */
 	if ((conn->watcher_outgoing == 0) && (conn->fd != -1))
 	{
-		conn->watcher_outgoing = gaim_input_add(conn->fd,
-				GAIM_INPUT_WRITE, send_cb, conn);
+		conn->watcher_outgoing = purple_input_add(conn->fd,
+				PURPLE_INPUT_WRITE, send_cb, conn);
 		send_cb(conn, conn->fd, 0);
 	}
 }

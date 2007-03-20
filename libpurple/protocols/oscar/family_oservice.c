@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -627,7 +627,7 @@ migrate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame
 
 		group = byte_stream_get16(bs);
 
-		gaim_debug_misc("oscar", "bifurcated migration unsupported -- group 0x%04x\n", group);
+		purple_debug_misc("oscar", "bifurcated migration unsupported -- group 0x%04x\n", group);
 	}
 
 	tl = aim_tlvlist_read(bs);
@@ -792,7 +792,7 @@ hostversions(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *
  * your IP address info and what not.
  *
  * You can also set your "available" message.  This is currently
- * only supported by iChat, Gaim and other 3rd party clients.
+ * only supported by iChat, Purple and other 3rd party clients.
  *
  * These are the same TLVs seen in user info.  You can
  * also set 0x0008 and 0x000c.
@@ -922,7 +922,7 @@ memrequest(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 
 	modname = aim_tlv_getstr(list, 0x0001, 1);
 
-	gaim_debug_info("oscar", "Got memory request for data at 0x%08lx (%d bytes) of requested %s\n", offset, len, modname ? modname : "aim.exe");
+	purple_debug_info("oscar", "Got memory request for data at 0x%08lx (%d bytes) of requested %s\n", offset, len, modname ? modname : "aim.exe");
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, offset, len, modname);
@@ -955,22 +955,22 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 		byte_stream_putraw(&frame->data, buf, 0x10);
 
 	} else if (buf && (len > 0)) { /* use input buffer */
-		GaimCipher *cipher;
-		GaimCipherContext *context;
+		PurpleCipher *cipher;
+		PurpleCipherContext *context;
 		guchar digest[16];
 
-		cipher = gaim_ciphers_find_cipher("md5");
+		cipher = purple_ciphers_find_cipher("md5");
 
-		context = gaim_cipher_context_new(cipher, NULL);
-		gaim_cipher_context_append(context, buf, len);
-		gaim_cipher_context_digest(context, 16, digest, NULL);
-		gaim_cipher_context_destroy(context);
+		context = purple_cipher_context_new(cipher, NULL);
+		purple_cipher_context_append(context, buf, len);
+		purple_cipher_context_digest(context, 16, digest, NULL);
+		purple_cipher_context_destroy(context);
 
 		byte_stream_putraw(&frame->data, digest, 0x10);
 
 	} else if (len == 0) { /* no length, just hash NULL (buf is optional) */
-		GaimCipher *cipher;
-		GaimCipherContext *context;
+		PurpleCipher *cipher;
+		PurpleCipherContext *context;
 		guchar digest[16];
 		guint8 nil = '\0';
 
@@ -978,12 +978,12 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 		 * I'm not sure if we really need the empty append with the
 		 * new MD5 functions, so I'll leave it in, just in case.
 		 */
-		cipher = gaim_ciphers_find_cipher("md5");
+		cipher = purple_ciphers_find_cipher("md5");
 
-		context = gaim_cipher_context_new(cipher, NULL);
-		gaim_cipher_context_append(context, &nil, 0);
-		gaim_cipher_context_digest(context, 16, digest, NULL);
-		gaim_cipher_context_destroy(context);
+		context = purple_cipher_context_new(cipher, NULL);
+		purple_cipher_context_append(context, &nil, 0);
+		purple_cipher_context_digest(context, 16, digest, NULL);
+		purple_cipher_context_destroy(context);
 
 		byte_stream_putraw(&frame->data, digest, 0x10);
 
@@ -1011,7 +1011,7 @@ aim_sendmemblock(OscarData *od, FlapConnection *conn, guint32 offset, guint32 le
 #endif
 
 		} else
-			gaim_debug_warning("oscar", "sendmemblock: unknown hash request\n");
+			purple_debug_warning("oscar", "sendmemblock: unknown hash request\n");
 
 	}
 

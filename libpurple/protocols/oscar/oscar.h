@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -274,8 +274,8 @@ struct _ClientInfo
 	"us", "en", \
 }
 
-#define CLIENTINFO_GAIM { \
-	"Gaim/" VERSION, \
+#define CLIENTINFO_PURPLE { \
+	"Purple/" VERSION, \
 	0x0109, \
 	0x0005, 0x0001, \
 	0x0000, 0x0bdc, \
@@ -376,7 +376,7 @@ struct _FlapConnection
 	gchar *error_message;
 
 	/* A few variables that are only used when connecting */
-	GaimProxyConnectData *connect_data;
+	PurpleProxyConnectData *connect_data;
 	guint16 cookielen;
 	guint8 *cookie;
 	gpointer new_conn_data;
@@ -385,7 +385,7 @@ struct _FlapConnection
 	guint8 header[6];
 	ssize_t header_received;
 	FlapFrame buffer_incoming;
-	GaimCircBuffer *buffer_outgoing;
+	PurpleCircBuffer *buffer_outgoing;
 	guint watcher_incoming;
 	guint watcher_outgoing;
 
@@ -458,10 +458,10 @@ struct _OscarData
 	/* ---- Client Accessible ------------------------ */
 
 	/* Our screen name. */
-	/* TODO: Get rid of this and use gaim_account_get_username() everywhere? */
+	/* TODO: Get rid of this and use purple_account_get_username() everywhere? */
 	char sn[MAXSNLEN+1];
 
-	GaimConnection *gc;
+	PurpleConnection *gc;
 
 	/* ---- Internal Use Only ------------------------ */
 
@@ -590,7 +590,7 @@ void flap_connection_schedule_destroy(FlapConnection *conn, OscarDisconnectReaso
 FlapConnection *flap_connection_findbygroup(OscarData *od, guint16 group);
 FlapConnection *flap_connection_getbytype(OscarData *, int type);
 FlapConnection *flap_connection_getbytype_all(OscarData *, int type);
-void flap_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond);
+void flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond);
 void flap_connection_send(FlapConnection *conn, FlapFrame *frame);
 void flap_connection_send_version(OscarData *od, FlapConnection *conn);
 void flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy);
@@ -709,8 +709,8 @@ struct chat_connection
 	guint16 instance;
 	FlapConnection *conn;
 	int id;
-	GaimConnection *gc;
-	GaimConversation *conv;
+	PurpleConnection *gc;
+	PurpleConversation *conv;
 	int maxlen;
 	int maxvis;
 };
@@ -932,7 +932,7 @@ struct aim_incomingim_ch4_args
 void aim_icbm_makecookie(guchar* cookie);
 gchar *oscar_encoding_extract(const char *encoding);
 gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen);
-gchar *gaim_plugin_oscar_decode_im_part(GaimAccount *account, const char *sourcesn, guint16 charset, guint16 charsubset, const gchar *data, gsize datalen);
+gchar *purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcesn, guint16 charset, guint16 charsubset, const gchar *data, gsize datalen);
 
 
 /* 0x0002 - family_locate.c */

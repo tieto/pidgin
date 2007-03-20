@@ -1,9 +1,9 @@
 /**
  * @file group_info.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -29,11 +29,11 @@
 #include "connection.h"
 #include "group.h"
 
-void qq_send_cmd_group_get_group_info(GaimConnection *gc, qq_group *group);
-void qq_send_cmd_group_get_online_members(GaimConnection *gc, qq_group *group);
-void qq_send_cmd_group_get_members_info(GaimConnection *gc, qq_group *group);
-void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
-void qq_process_group_cmd_get_online_members(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
-void qq_process_group_cmd_get_members_info(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc);
+void qq_send_cmd_group_get_group_info(PurpleConnection *gc, qq_group *group);
+void qq_send_cmd_group_get_online_members(PurpleConnection *gc, qq_group *group);
+void qq_send_cmd_group_get_members_info(PurpleConnection *gc, qq_group *group);
+void qq_process_group_cmd_get_group_info(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
+void qq_process_group_cmd_get_online_members(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
+void qq_process_group_cmd_get_members_info(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc);
 
 #endif

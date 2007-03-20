@@ -4,11 +4,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "dbus-gaim.h"
-#include "gaim-client-bindings.h"
+#include "dbus-purple.h"
+#include "purple-client-bindings.h"
 
 static DBusGConnection *bus;
-static DBusGProxy *gaim_proxy;
+static DBusGProxy *purple_proxy;
 
 static GList *garray_int_to_glist(GArray *array)
 {
@@ -34,7 +34,7 @@ static GSList *garray_int_to_gslist(GArray *array)
 	return list;
 }
 
-#include "gaim-client-bindings.c"
+#include "purple-client-bindings.c"
 
 static void lose(const char *fmt, ...) G_GNUC_NORETURN G_GNUC_PRINTF (1, 2);
 static void lose_gerror(const char *prefix, GError *error) G_GNUC_NORETURN;
@@ -60,7 +60,7 @@ lose_gerror(const char *prefix, GError *error)
 	lose("%s: %s", prefix, error->message);
 }
 
-void gaim_init(void)
+void purple_init(void)
 {
 	GError *error = NULL;
 
@@ -70,12 +70,12 @@ void gaim_init(void)
 	if (!bus)
 		lose_gerror ("Couldn't connect to session bus", error);
 
-	gaim_proxy = dbus_g_proxy_new_for_name (bus,
-					DBUS_SERVICE_GAIM,
-					DBUS_PATH_GAIM,
-					DBUS_INTERFACE_GAIM);
+	purple_proxy = dbus_g_proxy_new_for_name (bus,
+					DBUS_SERVICE_PURPLE,
+					DBUS_PATH_PURPLE,
+					DBUS_INTERFACE_PURPLE);
 
-	if (!gaim_proxy)
-		lose_gerror ("Couldn't connect to the Gaim Service", error);
+	if (!purple_proxy)
+		lose_gerror ("Couldn't connect to the Purple Service", error);
 }
 

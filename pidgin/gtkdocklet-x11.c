@@ -1,5 +1,5 @@
 /*
- * System tray icon (aka docklet) plugin for Gaim
+ * System tray icon (aka docklet) plugin for Purple
  *
  * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
  * Copyright (C) 2003 Herman Bloggs <hermanator12002@yahoo.com>
@@ -25,7 +25,7 @@
 #include "internal.h"
 #include "pidgin.h"
 #include "debug.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 
 #include "gtkdialogs.h"
 
@@ -57,7 +57,7 @@ docklet_x11_create_cb()
 static void
 docklet_x11_embedded_cb(GtkWidget *widget, void *data)
 {
-	gaim_debug(GAIM_DEBUG_INFO, "docklet", "embedded\n");
+	purple_debug(PURPLE_DEBUG_INFO, "docklet", "embedded\n");
 	
 	g_source_remove(embed_timeout);
 	embed_timeout = 0;
@@ -67,7 +67,7 @@ docklet_x11_embedded_cb(GtkWidget *widget, void *data)
 static void
 docklet_x11_destroyed_cb(GtkWidget *widget, void *data)
 {
-	gaim_debug(GAIM_DEBUG_INFO, "docklet", "destroyed\n");
+	purple_debug(PURPLE_DEBUG_INFO, "docklet", "destroyed\n");
 
 	pidgin_docklet_remove();
 
@@ -217,7 +217,7 @@ docklet_x11_destroy()
 
 	image = NULL;
 
-	gaim_debug(GAIM_DEBUG_INFO, "docklet", "destroyed\n");
+	purple_debug(PURPLE_DEBUG_INFO, "docklet", "destroyed\n");
 }
 
 static gboolean
@@ -228,7 +228,7 @@ docklet_x11_embed_timeout_cb()
 	 * loaded so that it can embed automatically if/when a notification
 	 * area becomes available.
 	 */
-	gaim_debug_info("docklet", "failed to embed within timeout\n");
+	purple_debug_info("docklet", "failed to embed within timeout\n");
 	pidgin_docklet_remove();
 	
 	return FALSE;
@@ -243,7 +243,7 @@ docklet_x11_create()
 		/* if this is being called when a tray icon exists, it's because
 		   something messed up. try destroying it before we proceed,
 		   although docklet_refcount may be all hosed. hopefully won't happen. */
-		gaim_debug(GAIM_DEBUG_WARNING, "docklet", "trying to create icon but it already exists?\n");
+		purple_debug(PURPLE_DEBUG_WARNING, "docklet", "trying to create icon but it already exists?\n");
 		docklet_x11_destroy();
 	}
 
@@ -276,7 +276,7 @@ docklet_x11_create()
 	pidgin_docklet_embedded();
 	embed_timeout = g_timeout_add(EMBED_TIMEOUT, docklet_x11_embed_timeout_cb, NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "docklet", "created\n");
+	purple_debug(PURPLE_DEBUG_INFO, "docklet", "created\n");
 }
 
 static struct docklet_ui_ops ui_ops =

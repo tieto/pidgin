@@ -1,5 +1,5 @@
 /*
- * Evolution integration plugin for Gaim
+ * Evolution integration plugin for Purple
  *
  * Copyright (C) 2004 Henry Jen.
  *
@@ -65,7 +65,7 @@ gevo_addrbooks_model_populate(GtkTreeModel *model)
 
 	if (!e_book_get_addressbooks(&addressbooks, &err))
 	{
-		gaim_debug_error("evolution",
+		purple_debug_error("evolution",
 						 "Unable to fetch list of address books.\n");
 
 		gtk_list_store_append(list, &iter);
@@ -122,7 +122,7 @@ gevo_run_query_in_uri(const gchar *uri, EBookQuery *query)
 
 	if (!gevo_load_addressbook(uri, &book, NULL))
 	{
-		gaim_debug_error("evolution",
+		purple_debug_error("evolution",
 						 "Error retrieving addressbook\n");
 		return NULL;
 	}
@@ -130,7 +130,7 @@ gevo_run_query_in_uri(const gchar *uri, EBookQuery *query)
 	status = e_book_get_contacts(book, query, &cards, NULL);
 	if (!status)
 	{
-		gaim_debug_error("evolution", "Error %d in getting card list\n",
+		purple_debug_error("evolution", "Error %d in getting card list\n",
 						 status);
 		g_object_unref(book);
 		return NULL;
@@ -168,7 +168,7 @@ gevo_run_query_in_uri(const gchar *uri, EBookQuery *query)
  *              second reference) if they want to reuse @a query.
  */
 EContact * 
-gevo_search_buddy_in_contacts(GaimBuddy *buddy, EBookQuery *query)
+gevo_search_buddy_in_contacts(PurpleBuddy *buddy, EBookQuery *query)
 {
 	ESourceList *addressbooks;
 	GError *err;
@@ -188,7 +188,7 @@ gevo_search_buddy_in_contacts(GaimBuddy *buddy, EBookQuery *query)
 		queries[1] = e_book_query_field_test(protocol_field, E_BOOK_QUERY_IS, buddy->name);
 		if (queries[1] == NULL)
 		{
-			gaim_debug_error("evolution", "Error in creating protocol query\n");
+			purple_debug_error("evolution", "Error in creating protocol query\n");
 			e_book_query_unref(query);
 			return NULL;
 		}
@@ -200,14 +200,14 @@ gevo_search_buddy_in_contacts(GaimBuddy *buddy, EBookQuery *query)
 		full_query = e_book_query_field_test(protocol_field, E_BOOK_QUERY_IS, buddy->name);
 		if (full_query == NULL)
 		{
-			gaim_debug_error("evolution", "Error in creating protocol query\n");
+			purple_debug_error("evolution", "Error in creating protocol query\n");
 			return NULL;
 		}
 	}
 
 	if (!e_book_get_addressbooks(&addressbooks, &err))
 	{
-		gaim_debug_error("evolution",
+		purple_debug_error("evolution",
 						 "Unable to fetch list of address books.\n");
 		e_book_query_unref(full_query);
 		if (err != NULL)

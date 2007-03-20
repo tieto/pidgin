@@ -2,9 +2,9 @@
  * @file gntconv.h GNT Conversation API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -42,7 +42,7 @@ typedef struct _FinchConvIm FinchConvIm;
 struct _FinchConv
 {
 	GList *list;
-	GaimConversation *active_conv;
+	PurpleConversation *active_conv;
 
 	GntWidget *window;        /* the container */
 	GntWidget *entry;         /* entry */
@@ -68,9 +68,9 @@ struct _FinchConvIm
 /**
  * Get the ui-functions.
  *
- * @return The GaimConversationUiOps populated with the appropriate functions.
+ * @return The PurpleConversationUiOps populated with the appropriate functions.
  */
-GaimConversationUiOps *finch_conv_get_ui_ops(void);
+PurpleConversationUiOps *finch_conv_get_ui_ops(void);
 
 /**
  * Perform the necessary initializations.
@@ -87,7 +87,7 @@ void finch_conversation_uninit(void);
  *
  * @param conv The conversation to make active.
  */
-void finch_conversation_set_active(GaimConversation *conv);
+void finch_conversation_set_active(PurpleConversation *conv);
 
 /*@}*/
 

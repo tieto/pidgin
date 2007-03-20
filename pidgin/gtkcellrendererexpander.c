@@ -2,9 +2,9 @@
  * @file gtkcellrendererexpander.c GTK+ Cell Renderer Expander
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -185,7 +185,7 @@ static void pidgin_cell_renderer_expander_set_property (GObject      *object,
 
 GtkCellRenderer *pidgin_cell_renderer_expander_new(void)
 {
-	return g_object_new(GAIM_TYPE_GTK_CELL_RENDERER_EXPANDER, NULL);
+	return g_object_new(PIDGIN_TYPE_GTK_CELL_RENDERER_EXPANDER, NULL);
 }
 
 static void pidgin_cell_renderer_expander_get_size (GtkCellRenderer *cell,

@@ -52,7 +52,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_TW"
+ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl we don't use autobreak on cygwin!!
@@ -374,7 +374,7 @@ dnl #######################################################################
 GNT_LIBS=""
 GNT_CFLAGS=""
 AC_ARG_WITH(ncurses-headers, [AC_HELP_STRING([--with-ncurses-headers=DIR],
-		[compile gaim-text against the ncurses includes in DIR])],
+		[compile finch against the ncurses includes in DIR])],
 		[ac_ncurses_includes="$withval"], [ac_ncurses_includes=""])
 if test "x$enable_consoleui" = "xyes"; then
 	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_consoleui=no])
@@ -1717,7 +1717,7 @@ AC_SUBST(LDADD)
 AC_SUBST(LIBS)
 
 if test "x$enable_plugins" = "xyes" ; then
-	AC_DEFINE(GAIM_PLUGINS, 1, [Define if plugins are enabled.])
+	AC_DEFINE(PURPLE_PLUGINS, 1, [Define if plugins are enabled.])
 	AM_CONDITIONAL(PLUGINS, true)
 else
 	AM_CONDITIONAL(PLUGINS, false)
@@ -1899,7 +1899,7 @@ AC_OUTPUT([Makefile
 		   gaim.service
 		   doc/Makefile
 		   doc/pidgin.1
-		   doc/gaim-text.1
+		   doc/finch.1
 		   m4macros/Makefile
 		   pidgin/Makefile
 		   pidgin/pidgin.pc

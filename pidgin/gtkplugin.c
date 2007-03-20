@@ -2,9 +2,9 @@
  * @file gtkplugin.c GTK+ Plugins support
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -35,7 +35,7 @@
 
 #define PIDGIN_RESPONSE_CONFIGURE 98121
 
-static void plugin_toggled_stage_two(GaimPlugin *plug, GtkTreeModel *model,
+static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model,
                                   GtkTreeIter *iter, gboolean unload);
 
 static GtkWidget *expander = NULL;
@@ -45,7 +45,7 @@ static GtkWidget *pref_button = NULL;
 static GHashTable *plugin_pref_dialogs = NULL;
 
 GtkWidget *
-pidgin_plugin_get_config_frame(GaimPlugin *plugin)
+pidgin_plugin_get_config_frame(PurplePlugin *plugin)
 {
 	GtkWidget *config = NULL;
 
@@ -63,7 +63,7 @@ pidgin_plugin_get_config_frame(GaimPlugin *plugin)
 		if (plugin->info->prefs_info
 			&& plugin->info->prefs_info->get_plugin_pref_frame)
 		{
-			gaim_debug_warning("gtkplugin",
+			purple_debug_warning("gtkplugin",
 				"Plugin %s contains both, ui_info and "
 				"prefs_info preferences; prefs_info will be "
 				"ignored.", plugin->info->name);
@@ -73,14 +73,14 @@ pidgin_plugin_get_config_frame(GaimPlugin *plugin)
 	if (config == NULL && plugin->info->prefs_info
 		&& plugin->info->prefs_info->get_plugin_pref_frame)
 	{
-		GaimPluginPrefFrame *frame;
+		PurplePluginPrefFrame *frame;
 
 		frame = plugin->info->prefs_info->get_plugin_pref_frame(plugin);
 
 		config = pidgin_plugin_pref_create_frame(frame);
 
 		/* XXX According to bug #1407047 this broke saving pluging preferences, I'll look at fixing it correctly later.
-		gaim_plugin_pref_frame_destroy(frame);
+		purple_plugin_pref_frame_destroy(frame);
 		*/
 	}
 
@@ -90,7 +90,7 @@ pidgin_plugin_get_config_frame(GaimPlugin *plugin)
 void
 pidgin_plugins_save(void)
 {
-	gaim_plugins_save_loaded("/gaim/gtk/plugins/loaded");
+	purple_plugins_save_loaded("/purple/gtk/plugins/loaded");
 }
 
 static void
@@ -99,12 +99,12 @@ update_plugin_list(void *data)
 	GtkListStore *ls = GTK_LIST_STORE(data);
 	GtkTreeIter iter;
 	GList *probes;
-	GaimPlugin *plug;
+	PurplePlugin *plug;
 
 	gtk_list_store_clear(ls);
-	gaim_plugins_probe(G_MODULE_SUFFIX);
+	purple_plugins_probe(G_MODULE_SUFFIX);
 
-	for (probes = gaim_plugins_get_all();
+	for (probes = purple_plugins_get_all();
 		 probes != NULL;
 		 probes = probes->next)
 	{
@@ -114,14 +114,14 @@ update_plugin_list(void *data)
 		char *desc;
 		plug = probes->data;
 
-		if (plug->info->type == GAIM_PLUGIN_LOADER) {
+		if (plug->info->type == PURPLE_PLUGIN_LOADER) {
 			GList *cur;
-			for (cur = GAIM_PLUGIN_LOADER_INFO(plug)->exts; cur != NULL;
+			for (cur = PURPLE_PLUGIN_LOADER_INFO(plug)->exts; cur != NULL;
 					 cur = cur->next)
-				gaim_plugins_probe(cur->data);
+				purple_plugins_probe(cur->data);
 			continue;
-		} else if (plug->info->type != GAIM_PLUGIN_STANDARD ||
-			(plug->info->flags & GAIM_PLUGIN_FLAG_INVISIBLE)) {
+		} else if (plug->info->type != PURPLE_PLUGIN_STANDARD ||
+			(plug->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE)) {
 			continue;
 		}
 
@@ -139,23 +139,23 @@ update_plugin_list(void *data)
 		g_free(summary);
 
 		gtk_list_store_set(ls, &iter,
-				   0, gaim_plugin_is_loaded(plug),
+				   0, purple_plugin_is_loaded(plug),
 				   1, desc,
 				   2, plug,
-				   3, gaim_plugin_is_unloadable(plug),
+				   3, purple_plugin_is_unloadable(plug),
 				   -1);
 		g_free(desc);
 	}
 }
 
-static void plugin_loading_common(GaimPlugin *plugin, GtkTreeView *view, gboolean loaded)
+static void plugin_loading_common(PurplePlugin *plugin, GtkTreeView *view, gboolean loaded)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model = gtk_tree_view_get_model(view);
 
 	if (gtk_tree_model_get_iter_first(model, &iter)) {
 		do {
-			GaimPlugin *plug;
+			PurplePlugin *plug;
 			GtkTreeSelection *sel;
 
 			gtk_tree_model_get(model, &iter, 2, &plug, -1);
@@ -187,19 +187,19 @@ static void plugin_loading_common(GaimPlugin *plugin, GtkTreeView *view, gboolea
 	}
 }
 
-static void plugin_load_cb(GaimPlugin *plugin, gpointer data)
+static void plugin_load_cb(PurplePlugin *plugin, gpointer data)
 {
 	GtkTreeView *view = (GtkTreeView *)data;
 	plugin_loading_common(plugin, view, TRUE);
 }
 
-static void plugin_unload_cb(GaimPlugin *plugin, gpointer data)
+static void plugin_unload_cb(PurplePlugin *plugin, gpointer data)
 {
 	GtkTreeView *view = (GtkTreeView *)data;
 	plugin_loading_common(plugin, view, FALSE);
 }
 
-static void pref_dialog_response_cb(GtkWidget *d, int response, GaimPlugin *plug)
+static void pref_dialog_response_cb(GtkWidget *d, int response, PurplePlugin *plug)
 {
 	switch (response) {
 	case GTK_RESPONSE_CLOSE:
@@ -216,7 +216,7 @@ static void pref_dialog_response_cb(GtkWidget *d, int response, GaimPlugin *plug
 
 static void plugin_unload_confirm_cb(gpointer *data)
 {
-	GaimPlugin *plugin = (GaimPlugin *)data[0];
+	PurplePlugin *plugin = (PurplePlugin *)data[0];
 	GtkTreeModel *model = (GtkTreeModel *)data[1];
 	GtkTreeIter *iter = (GtkTreeIter *)data[2];
 
@@ -230,7 +230,7 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	GtkTreeModel *model = (GtkTreeModel *)data;
 	GtkTreeIter *iter = g_new(GtkTreeIter, 1);
 	GtkTreePath *path = gtk_tree_path_new_from_string(pth);
-	GaimPlugin *plug;
+	PurplePlugin *plug;
 	GtkWidget *dialog = NULL;
 
 	gtk_tree_model_get_iter(model, iter, path);
@@ -238,17 +238,17 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	gtk_tree_model_get(model, iter, 2, &plug, -1);
 
 	/* Apparently, GTK+ won't honor the sensitive flag on cell renderers for booleans. */
-	if (gaim_plugin_is_unloadable(plug))
+	if (purple_plugin_is_unloadable(plug))
 	{
 		g_free(iter);
 		return;
 	}
 
-	if (!gaim_plugin_is_loaded(plug))
+	if (!purple_plugin_is_loaded(plug))
 	{
 		pidgin_set_cursor(plugin_dialog, GDK_WATCH);
 
-		gaim_plugin_load(plug);
+		purple_plugin_load(plug);
 		plugin_toggled_stage_two(plug, model, iter, FALSE);
 
 		pidgin_clear_cursor(plugin_dialog);
@@ -268,7 +268,7 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 			for (l = plug->dependent_plugins ; l != NULL ; l = l->next)
 			{
 				const char *dep_name = (const char *)l->data;
-				GaimPlugin *dep_plugin = gaim_plugins_find_with_id(dep_name);
+				PurplePlugin *dep_plugin = purple_plugins_find_with_id(dep_name);
 				g_return_if_fail(dep_plugin != NULL);
 
 				g_string_append_printf(tmp, "\n\t%s\n", _(dep_plugin->info->name));
@@ -279,7 +279,7 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 			cb_data[1] = model;
 			cb_data[2] = iter;
 
-			gaim_request_action(plugin_dialog, NULL,
+			purple_request_action(plugin_dialog, NULL,
 			                    _("Multiple plugins will be unloaded."),
 			                    tmp->str, 0, cb_data, 2,
 			                    _("Unload Plugins"), G_CALLBACK(plugin_unload_confirm_cb),
@@ -291,7 +291,7 @@ static void plugin_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer dat
 	}
 }
 
-static void plugin_toggled_stage_two(GaimPlugin *plug, GtkTreeModel *model, GtkTreeIter *iter, gboolean unload)
+static void plugin_toggled_stage_two(PurplePlugin *plug, GtkTreeModel *model, GtkTreeIter *iter, gboolean unload)
 {
 	gchar *name = NULL;
 	gchar *description = NULL;
@@ -300,13 +300,13 @@ static void plugin_toggled_stage_two(GaimPlugin *plug, GtkTreeModel *model, GtkT
 	{
 		pidgin_set_cursor(plugin_dialog, GDK_WATCH);
 
-		gaim_plugin_unload(plug);
+		purple_plugin_unload(plug);
 
 		pidgin_clear_cursor(plugin_dialog);
 	}
 
 	gtk_widget_set_sensitive(pref_button,
-		gaim_plugin_is_loaded(plug)
+		purple_plugin_is_loaded(plug)
 		&& ((PIDGIN_IS_PIDGIN_PLUGIN(plug) && plug->info->ui_info
 			&& PIDGIN_PLUGIN_UI_INFO(plug)->get_config_frame)
 		 || (plug->info->prefs_info
@@ -338,7 +338,7 @@ static void plugin_toggled_stage_two(GaimPlugin *plug, GtkTreeModel *model, GtkT
 
 
 	gtk_list_store_set(GTK_LIST_STORE (model), iter,
-	                   0, gaim_plugin_is_loaded(plug),
+	                   0, purple_plugin_is_loaded(plug),
 	                   -1);
 	g_free(iter);
 
@@ -365,7 +365,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	gchar *buf, *pname, *pdesc, *pauth, *pweb;
 	GtkTreeIter  iter;
 	GValue val;
-	GaimPlugin *plug;
+	PurplePlugin *plug;
 
 	if (!gtk_tree_selection_get_selected (sel, &model, &iter))
 	{
@@ -415,7 +415,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 	}
 
 	gtk_widget_set_sensitive(pref_button,
-		gaim_plugin_is_loaded(plug)
+		purple_plugin_is_loaded(plug)
 		&& ((PIDGIN_IS_PIDGIN_PLUGIN(plug) && plug->info->ui_info
 			&& PIDGIN_PLUGIN_UI_INFO(plug)->get_config_frame)
 		 || (plug->info->prefs_info
@@ -437,7 +437,7 @@ static void prefs_plugin_sel (GtkTreeSelection *sel, GtkTreeModel *model)
 
 static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelection *sel)
 {
-	GaimPlugin *plug;
+	PurplePlugin *plug;
 	GtkWidget *dialog, *box;
 	GtkTreeModel *model;
 	GValue val;
@@ -446,8 +446,8 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 	switch (response) {
 	case GTK_RESPONSE_CLOSE:
 	case GTK_RESPONSE_DELETE_EVENT:
-		gaim_request_close_with_handle(plugin_dialog);
-		gaim_signals_disconnect_by_handle(plugin_dialog);
+		purple_request_close_with_handle(plugin_dialog);
+		purple_signals_disconnect_by_handle(plugin_dialog);
 		gtk_widget_destroy(d);
 		if (plugin_pref_dialogs != NULL) {
 			g_hash_table_destroy(plugin_pref_dialogs);
@@ -470,7 +470,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 		if (box == NULL)
 			break;
 
-		dialog = gtk_dialog_new_with_buttons(GAIM_ALERT_TITLE, GTK_WINDOW(d),
+		dialog = gtk_dialog_new_with_buttons(PIDGIN_ALERT_TITLE, GTK_WINDOW(d),
 						     GTK_DIALOG_NO_SEPARATOR | GTK_DIALOG_DESTROY_WITH_PARENT,
 						     GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
 						     NULL);
@@ -482,7 +482,7 @@ static void plugin_dialog_response_cb(GtkWidget *d, int response, GtkTreeSelecti
 		g_signal_connect(G_OBJECT(dialog), "response", G_CALLBACK(pref_dialog_response_cb), plug);
 		gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), box);
 		gtk_window_set_role(GTK_WINDOW(dialog), "plugin_config");
-		gtk_window_set_title(GTK_WINDOW(dialog), _(gaim_plugin_get_name(plug)));
+		gtk_window_set_title(GTK_WINDOW(dialog), _(purple_plugin_get_name(plug)));
 		gtk_widget_show_all(dialog);
 		g_value_unset(&val);
 		break;
@@ -494,7 +494,7 @@ show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *co
 {
 	GtkTreeSelection *sel;
 	GtkTreeIter iter;
-	GaimPlugin *plugin;
+	PurplePlugin *plugin;
 	GtkTreeModel *model;
 
 	sel = gtk_tree_view_get_selection(view);
@@ -504,7 +504,7 @@ show_plugin_prefs_cb(GtkTreeView *view, GtkTreePath *path, GtkTreeViewColumn *co
 
 	gtk_tree_model_get(model, &iter, 2, &plugin, -1);
 
-	if (!gaim_plugin_is_loaded(plugin))
+	if (!purple_plugin_is_loaded(plugin))
 		return;
 
 	/* Now show the pref-dialog for the plugin */
@@ -555,10 +555,10 @@ void pidgin_plugin_dialog_show()
 	g_signal_connect(G_OBJECT(event_view), "row-activated",
 				G_CALLBACK(show_plugin_prefs_cb), plugin_dialog);
 
-	gaim_signal_connect(gaim_plugins_get_handle(), "plugin-load", plugin_dialog,
-	                    GAIM_CALLBACK(plugin_load_cb), event_view);
-	gaim_signal_connect(gaim_plugins_get_handle(), "plugin-unload", plugin_dialog,
-	                    GAIM_CALLBACK(plugin_unload_cb), event_view);
+	purple_signal_connect(purple_plugins_get_handle(), "plugin-load", plugin_dialog,
+	                    PURPLE_CALLBACK(plugin_load_cb), event_view);
+	purple_signal_connect(purple_plugins_get_handle(), "plugin-unload", plugin_dialog,
+	                    PURPLE_CALLBACK(plugin_unload_cb), event_view);
 
 	rend = gtk_cell_renderer_toggle_new();
 	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (event_view));

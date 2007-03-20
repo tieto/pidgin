@@ -1,9 +1,9 @@
 /**
  * @file buddy_status.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -53,10 +53,10 @@ void qq_buddy_status_dump_unclear(qq_buddy_status *s);
 gboolean is_online(guint8 status);
 
 gint qq_buddy_status_read(guint8 *data, guint8 **cursor, gint len, qq_buddy_status *s);
-gint get_icon_offset(GaimConnection *gc);
+gint get_icon_offset(PurpleConnection *gc);
 
-void qq_send_packet_change_status(GaimConnection *gc);
+void qq_send_packet_change_status(PurpleConnection *gc);
 
-void qq_process_change_status_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
-void qq_process_friend_change_status(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_process_change_status_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_process_friend_change_status(guint8 *buf, gint buf_len, PurpleConnection *gc);
 #endif

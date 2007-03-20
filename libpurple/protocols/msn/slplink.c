@@ -1,9 +1,9 @@
 /**
  * @file slplink.c MSNSLP Link support
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -49,7 +49,7 @@ debug_msg_to_file(MsnMessage *msg, gboolean send)
 	tf = g_fopen(tmp, "wb");
 	if (tf == NULL)
 	{
-		gaim_debug_error("msn", "could not open debug file");
+		purple_debug_error("msn", "could not open debug file");
 		return;
 	}
 	pload = msn_message_gen_payload(msg, &pload_size);
@@ -73,7 +73,7 @@ msn_slplink_new(MsnSession *session, const char *username)
 	slplink = g_new0(MsnSlpLink, 1);
 
 #ifdef MSN_DEBUG_SLPLINK
-	gaim_debug_info("msn", "slplink_new: slplink(%p)\n", slplink);
+	purple_debug_info("msn", "slplink_new: slplink(%p)\n", slplink);
 #endif
 
 	slplink->session = session;
@@ -96,7 +96,7 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 	MsnSession *session;
 
 #ifdef MSN_DEBUG_SLPLINK
-	gaim_debug_info("msn", "slplink_destroy: slplink(%p)\n", slplink);
+	purple_debug_info("msn", "slplink_destroy: slplink(%p)\n", slplink);
 #endif
 
 	g_return_if_fail(slplink != NULL);
@@ -491,7 +491,7 @@ send_file_cb(MsnSlpSession *slpsession)
 #ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP FILE";
 #endif
-	msn_slpmsg_open_file(slpmsg, gaim_xfer_get_local_filename(slpcall->xfer));
+	msn_slpmsg_open_file(slpmsg, purple_xfer_get_local_filename(slpcall->xfer));
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
 }
@@ -514,7 +514,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 	if (msg->msnslp_header.total_size < msg->msnslp_header.length)
 	{
-		gaim_debug_error("msn", "This can't be good\n");
+		purple_debug_error("msn", "This can't be good\n");
 		g_return_if_reached();
 	}
 
@@ -545,14 +545,14 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			{
 				if (slpmsg->flags == 0x20 || slpmsg->flags == 0x1000030)
 				{
-					GaimXfer *xfer;
+					PurpleXfer *xfer;
 
 					xfer = slpmsg->slpcall->xfer;
 
 					if (xfer != NULL)
 					{
 						slpmsg->fp =
-							g_fopen(gaim_xfer_get_local_filename(slpmsg->slpcall->xfer),
+							g_fopen(purple_xfer_get_local_filename(slpmsg->slpcall->xfer),
 								  "wb");
 					}
 				}
@@ -563,7 +563,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 			slpmsg->buffer = g_try_malloc(slpmsg->size);
 			if (slpmsg->buffer == NULL)
 			{
-				gaim_debug_error("msn", "Failed to allocate buffer for slpmsg\n");
+				purple_debug_error("msn", "Failed to allocate buffer for slpmsg\n");
 				return;
 			}
 		}
@@ -576,7 +576,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	if (slpmsg == NULL)
 	{
 		/* Probably the transfer was canceled */
-		gaim_debug_error("msn", "Couldn't find slpmsg\n");
+		purple_debug_error("msn", "Couldn't find slpmsg\n");
 		return;
 	}
 
@@ -589,7 +589,7 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 	{
 		if ((offset + len) > slpmsg->size)
 		{
-			gaim_debug_error("msn", "Oversized slpmsg\n");
+			purple_debug_error("msn", "Oversized slpmsg\n");
 			g_return_if_reached();
 		}
 		else
@@ -692,7 +692,7 @@ gen_context(const char *file_name, const char *file_path)
 		size = st.st_size;
 
 	if(!file_name) {
-		u8 = gaim_utf8_try_convert(g_basename(file_path));
+		u8 = purple_utf8_try_convert(g_basename(file_path));
 		file_name = u8;
 	}
 
@@ -728,21 +728,21 @@ gen_context(const char *file_name, const char *file_path)
 	n += 4;
 
 	g_free(uni);
-	ret = gaim_base64_encode(base, len);
+	ret = purple_base64_encode(base, len);
 	g_free(base);
 	return ret;
 }
 
 void
-msn_slplink_request_ft(MsnSlpLink *slplink, GaimXfer *xfer)
+msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 {
 	MsnSlpCall *slpcall;
 	char *context;
 	const char *fn;
 	const char *fp;
 
-	fn = gaim_xfer_get_filename(xfer);
-	fp = gaim_xfer_get_local_filename(xfer);
+	fn = purple_xfer_get_filename(xfer);
+	fp = purple_xfer_get_local_filename(xfer);
 
 	g_return_if_fail(slplink != NULL);
 	g_return_if_fail(fp != NULL);
@@ -758,7 +758,7 @@ msn_slplink_request_ft(MsnSlpLink *slplink, GaimXfer *xfer)
 
 	slpcall->pending = TRUE;
 
-	gaim_xfer_set_cancel_send_fnc(xfer, msn_xfer_cancel);
+	purple_xfer_set_cancel_send_fnc(xfer, msn_xfer_cancel);
 
 	xfer->data = slpcall;
 
@@ -785,7 +785,7 @@ msn_slplink_request_object(MsnSlpLink *slplink,
 	g_return_if_fail(obj     != NULL);
 
 	msnobj_data = msn_object_to_string(obj);
-	msnobj_base64 = gaim_base64_encode((const guchar *)msnobj_data, strlen(msnobj_data));
+	msnobj_base64 = purple_base64_encode((const guchar *)msnobj_data, strlen(msnobj_data));
 	g_free(msnobj_data);
 
 	slpcall = msn_slp_call_new(slplink);

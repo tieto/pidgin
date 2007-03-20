@@ -33,7 +33,7 @@
 #define Debug(x, args...)						\
 	do {								\
 		printf(x, ## args);					\
-		gaim_debug(GAIM_DEBUG_INFO, "crazychat", x, ## args);	\
+		purple_debug(PURPLE_DEBUG_INFO, "crazychat", x, ## args);	\
 	} while (0)
 #else
 #define Debug(x, args...) do{}while(0)

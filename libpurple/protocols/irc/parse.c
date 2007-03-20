@@ -1,7 +1,7 @@
 /**
  * @file parse.c
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
  *
@@ -44,7 +44,7 @@ static char *irc_mirc_colors[16] = {
 		"orange", "yellow", "green", "teal", "cyan", "light blue",
 		"pink", "grey", "light grey" };
 
-extern GaimPlugin *_irc_plugin;
+extern PurplePlugin *_irc_plugin;
 
 /*typedef void (*IRCMsgCallback)(struct irc_conn *irc, char *from, char *name, char **args);*/
 static struct _irc_msg {
@@ -151,36 +151,36 @@ static struct _irc_user_cmd {
 	{ NULL, NULL, NULL, NULL }
 };
 
-static GaimCmdRet irc_parse_gaim_cmd(GaimConversation *conv, const gchar *cmd,
+static PurpleCmdRet irc_parse_purple_cmd(PurpleConversation *conv, const gchar *cmd,
                                         gchar **args, gchar **error, void *data)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	struct irc_conn *irc;
 	struct _irc_user_cmd *cmdent;
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 	if (!gc)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	irc = gc->proto_data;
 
 	if ((cmdent = g_hash_table_lookup(irc->cmds, cmd)) == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
-	(cmdent->cb)(irc, cmd, gaim_conversation_get_name(conv), (const char **)args);
+	(cmdent->cb)(irc, cmd, purple_conversation_get_name(conv), (const char **)args);
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 static void irc_register_command(struct _irc_user_cmd *c)
 {
-	GaimCmdFlag f;
+	PurpleCmdFlag f;
 	char args[10];
 	char *format;
 	size_t i;
 
-	f = GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY
-	    | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS;
+	f = PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY
+	    | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS;
 
 	format = c->format;
 
@@ -200,8 +200,8 @@ static void irc_register_command(struct _irc_user_cmd *c)
 
 	args[i] = '\0';
 
-	gaim_cmd_register(c->name, args, GAIM_CMD_P_PRPL, f, "prpl-irc",
-	                  irc_parse_gaim_cmd, _(c->help), NULL);
+	purple_cmd_register(c->name, args, PURPLE_CMD_P_PRPL, f, "prpl-irc",
+	                  irc_parse_purple_cmd, _(c->help), NULL);
 }
 
 void irc_register_commands(void)
@@ -219,7 +219,7 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 	gchar **encodings;
 	const gchar *enclist;
 
-	enclist = gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
+	enclist = purple_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
 	encodings = g_strsplit(enclist, ",", 2);
 
 	if (encodings[0] == NULL || !strcasecmp("UTF-8", encodings[0])) {
@@ -229,8 +229,8 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 
 	utf8 = g_convert(string, strlen(string), encodings[0], "UTF-8", NULL, NULL, &err);
 	if (err) {
-		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Send conversion error: %s\n", err->message);
-		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Sending as UTF-8 instead of %s\n", encodings[0]);
+		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Send conversion error: %s\n", err->message);
+		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Sending as UTF-8 instead of %s\n", encodings[0]);
 		utf8 = g_strdup(string);
 		g_error_free(err);
 	}
@@ -246,12 +246,12 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 	gchar **encodings;
 	int i;
 
-	enclist = gaim_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
+	enclist = purple_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
 	encodings = g_strsplit(enclist, ",", -1);
 
 	if (encodings[0] == NULL) {
 		g_strfreev(encodings);
-		return gaim_utf8_salvage(string);
+		return purple_utf8_salvage(string);
 	}
 
 	for (i = 0; encodings[i] != NULL; i++) {
@@ -273,7 +273,7 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 	}
 	g_strfreev(encodings);
 
-	return gaim_utf8_salvage(string);
+	return purple_utf8_salvage(string);
 }
 
 /* XXX tag closings are not necessarily correctly nested here!  If we
@@ -381,7 +381,7 @@ char *irc_mirc2html(const char *string)
 				decoded = g_string_append(decoded, "</FONT>");
 			break;
 		default:
-			gaim_debug(GAIM_DEBUG_ERROR, "irc", "Unexpected mIRC formatting character %d\n", *cur);
+			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Unexpected mIRC formatting character %d\n", *cur);
 		}
 	} while (*cur);
 
@@ -417,7 +417,7 @@ gboolean irc_ischannel(const char *string)
 
 char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, const char *msg, int notice)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	const char *cur = msg + 1;
 	char *buf, *ctcp;
 	time_t timestamp;
@@ -438,11 +438,11 @@ char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, con
 		if (notice) { /* reply */
 			/* TODO: Should this read in the timestamp as a double? */
 			sscanf(cur, "PING %lu", &timestamp);
-			gc = gaim_account_get_connection(irc->account);
+			gc = purple_account_get_connection(irc->account);
 			if (!gc)
 				return NULL;
 			buf = g_strdup_printf(_("Reply time from %s: %lu seconds"), from, time(NULL) - timestamp);
-			gaim_notify_info(gc, _("PONG"), _("CTCP PING reply"), buf);
+			purple_notify_info(gc, _("PONG"), _("CTCP PING reply"), buf);
 			g_free(buf);
 			return NULL;
 		} else {
@@ -451,7 +451,7 @@ char *irc_parse_ctcp(struct irc_conn *irc, const char *from, const char *to, con
 			g_free(buf);
 		}
 	} else if (!strncmp(cur, "VERSION", 7) && !notice) {
-		buf = irc_format(irc, "vt:", "NOTICE", from, "\001VERSION Gaim IRC\001");
+		buf = irc_format(irc, "vt:", "NOTICE", from, "\001VERSION Purple IRC\001");
 		irc_send(irc, buf);
 		g_free(buf);
 	} else if (!strncmp(cur, "DCC SEND ", 9)) {
@@ -471,7 +471,7 @@ void irc_msg_table_build(struct irc_conn *irc)
 	int i;
 
 	if (!irc || !irc->msgs) {
-		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Attempt to build a message table on a bogus structure\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Attempt to build a message table on a bogus structure\n");
 		return;
 	}
 
@@ -485,7 +485,7 @@ void irc_cmd_table_build(struct irc_conn *irc)
 	int i;
 
 	if (!irc || !irc->cmds) {
-		gaim_debug(GAIM_DEBUG_ERROR, "irc", "Attempt to build a command table on a bogus structure\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "irc", "Attempt to build a command table on a bogus structure\n");
 		return;
 	}
 
@@ -522,7 +522,7 @@ char *irc_format(struct irc_conn *irc, const char *format, ...)
 			g_free(tmp);
 			break;
 		default:
-			gaim_debug(GAIM_DEBUG_ERROR, "irc", "Invalid format character '%c'\n", *cur);
+			purple_debug(PURPLE_DEBUG_ERROR, "irc", "Invalid format character '%c'\n", *cur);
 			break;
 		}
 	}
@@ -544,7 +544,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	 * TODO: It should be passed as an array of bytes and a length
 	 * instead of a null terminated string.
 	 */
-	gaim_signal_emit(_irc_plugin, "irc-receiving-text", gaim_account_get_connection(irc->account), &input);
+	purple_signal_emit(_irc_plugin, "irc-receiving-text", purple_account_get_connection(irc->account), &input);
 	
 	if (!strncmp(input, "PING ", 5)) {
 		msg = irc_format(irc, "vv", "PONG", input + 5);
@@ -554,10 +554,10 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 	} else if (!strncmp(input, "ERROR ", 6)) {
 		if (g_utf8_validate(input, -1, NULL)) {
 			char *tmp = g_strdup_printf("%s\n%s", _("Disconnected."), input);
-			gaim_connection_error(gaim_account_get_connection(irc->account), tmp);
+			purple_connection_error(purple_account_get_connection(irc->account), tmp);
 			g_free(tmp);
 		} else
-			gaim_connection_error(gaim_account_get_connection(irc->account), _("Disconnected."));
+			purple_connection_error(purple_account_get_connection(irc->account), _("Disconnected."));
 		return;
 	}
 
@@ -611,7 +611,7 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 			cur = cur + strlen(cur);
 			break;
 		default:
-			gaim_debug(GAIM_DEBUG_ERROR, "irc", "invalid message format character '%c'\n", fmt[i]);
+			purple_debug(PURPLE_DEBUG_ERROR, "irc", "invalid message format character '%c'\n", fmt[i]);
 			break;
 		}
 	}
@@ -627,5 +627,5 @@ void irc_parse_msg(struct irc_conn *irc, char *input)
 
 static void irc_parse_error_cb(struct irc_conn *irc, char *input)
 {
-	gaim_debug(GAIM_DEBUG_WARNING, "irc", "Unrecognized string: %s\n", input);
+	purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unrecognized string: %s\n", input);
 }

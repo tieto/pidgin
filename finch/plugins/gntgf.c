@@ -148,10 +148,10 @@ notify(const char *fmt, ...)
 	int h, w, i;
 	va_list args;
 
-	if (gaim_prefs_get_bool(PREFS_BEEP))
+	if (purple_prefs_get_bool(PREFS_BEEP))
 		beep();
 #ifdef HAVE_X11
-	if (gaim_prefs_get_bool(PREFS_URGENT))
+	if (purple_prefs_get_bool(PREFS_URGENT))
 		urgent();
 #endif
 
@@ -172,7 +172,7 @@ notify(const char *fmt, ...)
 	for (i = 0; i < MAX_COLS && gpsy[i] + h >= getmaxy(stdscr) ; ++i)
 		;
 	if (i >= MAX_COLS) {
-		gaim_debug_warning("GntGf", "Dude, that's way too many popups\n");
+		purple_debug_warning("GntGf", "Dude, that's way too many popups\n");
 		gnt_widget_destroy(window);
 		return;
 	}
@@ -203,59 +203,59 @@ notify(const char *fmt, ...)
 }
 
 static void
-buddy_signed_on(GaimBuddy *buddy, gpointer null)
+buddy_signed_on(PurpleBuddy *buddy, gpointer null)
 {
-	if (gaim_prefs_get_bool(PREFS_EVENT_SIGNONF))
-		notify(_("%s just signed on"), gaim_buddy_get_alias(buddy));
+	if (purple_prefs_get_bool(PREFS_EVENT_SIGNONF))
+		notify(_("%s just signed on"), purple_buddy_get_alias(buddy));
 }
 
 static void
-buddy_signed_off(GaimBuddy *buddy, gpointer null)
+buddy_signed_off(PurpleBuddy *buddy, gpointer null)
 {
-	if (gaim_prefs_get_bool(PREFS_EVENT_SIGNONF))
-		notify(_("%s just signed off"), gaim_buddy_get_alias(buddy));
+	if (purple_prefs_get_bool(PREFS_EVENT_SIGNONF))
+		notify(_("%s just signed off"), purple_buddy_get_alias(buddy));
 }
 
 static void
-received_im_msg(GaimAccount *account, const char *sender, const char *msg,
-		GaimConversation *conv, GaimMessageFlags flags, gpointer null)
+received_im_msg(PurpleAccount *account, const char *sender, const char *msg,
+		PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
 {
-	if (gaim_prefs_get_bool(PREFS_EVENT_IM_MSG))
+	if (purple_prefs_get_bool(PREFS_EVENT_IM_MSG))
 		notify(_("%s sent you a message"), sender);
 }
 
 static void
-received_chat_msg(GaimAccount *account, const char *sender, const char *msg,
-		GaimConversation *conv, GaimMessageFlags flags, gpointer null)
+received_chat_msg(PurpleAccount *account, const char *sender, const char *msg,
+		PurpleConversation *conv, PurpleMessageFlags flags, gpointer null)
 {
 	const char *nick;
 
-	if (flags & GAIM_MESSAGE_WHISPER)
+	if (flags & PURPLE_MESSAGE_WHISPER)
 		return;
 	
-	nick = GAIM_CONV_CHAT(conv)->nick;
+	nick = PURPLE_CONV_CHAT(conv)->nick;
 
 	if (g_utf8_collate(sender, nick) == 0)
 		return;
 
-	if (gaim_prefs_get_bool(PREFS_EVENT_CHAT_NICK) &&
-			(gaim_utf8_has_word(msg, nick)))
-		notify(_("%s said your nick in %s"), sender, gaim_conversation_get_name(conv));
-	else if (gaim_prefs_get_bool(PREFS_EVENT_CHAT_MSG))
-		notify(_("%s sent a message in %s"), sender, gaim_conversation_get_name(conv));
+	if (purple_prefs_get_bool(PREFS_EVENT_CHAT_NICK) &&
+			(purple_utf8_has_word(msg, nick)))
+		notify(_("%s said your nick in %s"), sender, purple_conversation_get_name(conv));
+	else if (purple_prefs_get_bool(PREFS_EVENT_CHAT_MSG))
+		notify(_("%s sent a message in %s"), sender, purple_conversation_get_name(conv));
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-on", plugin,
-			GAIM_CALLBACK(buddy_signed_on), NULL);
-	gaim_signal_connect(gaim_blist_get_handle(), "buddy-signed-off", plugin,
-			GAIM_CALLBACK(buddy_signed_off), NULL);
-	gaim_signal_connect(gaim_conversations_get_handle(), "received-im-msg", plugin,
-			GAIM_CALLBACK(received_im_msg), NULL);
-	gaim_signal_connect(gaim_conversations_get_handle(), "received-chat-msg", plugin,
-			GAIM_CALLBACK(received_chat_msg), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-on", plugin,
+			PURPLE_CALLBACK(buddy_signed_on), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "buddy-signed-off", plugin,
+			PURPLE_CALLBACK(buddy_signed_off), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "received-im-msg", plugin,
+			PURPLE_CALLBACK(received_im_msg), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "received-chat-msg", plugin,
+			PURPLE_CALLBACK(received_chat_msg), NULL);
 
 	memset(&gpsy, 0, sizeof(gpsy));
 	memset(&gpsw, 0, sizeof(gpsw));
@@ -264,7 +264,7 @@ plugin_load(GaimPlugin *plugin)
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	while (toasters)
 	{
@@ -290,13 +290,13 @@ static struct
 static void
 pref_toggled(GntTree *tree, char *key, gpointer null)
 {
-	gaim_prefs_set_bool(key, gnt_tree_get_choice(tree, key));
+	purple_prefs_set_bool(key, gnt_tree_get_choice(tree, key));
 }
 
 static void
 toggle_option(GntCheckBox *check, gpointer str)
 {
-	gaim_prefs_set_bool(str, gnt_check_box_get_checked(check));
+	purple_prefs_set_bool(str, gnt_check_box_get_checked(check));
 }
 
 static GntWidget *
@@ -321,19 +321,19 @@ config_frame()
 		gnt_tree_add_choice(GNT_TREE(tree), prefs[i].pref,
 				gnt_tree_create_row(GNT_TREE(tree), prefs[i].display), NULL, NULL);
 		gnt_tree_set_choice(GNT_TREE(tree), prefs[i].pref,
-				gaim_prefs_get_bool(prefs[i].pref));
+				purple_prefs_get_bool(prefs[i].pref));
 	}
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, 40);
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(pref_toggled), NULL);
 
 	check = gnt_check_box_new(_("Beep too!"));
-	gnt_check_box_set_checked(GNT_CHECK_BOX(check), gaim_prefs_get_bool(PREFS_BEEP));
+	gnt_check_box_set_checked(GNT_CHECK_BOX(check), purple_prefs_get_bool(PREFS_BEEP));
 	g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(toggle_option), PREFS_BEEP);
 	gnt_box_add_widget(GNT_BOX(window), check);
 
 #ifdef HAVE_X11
 	check = gnt_check_box_new(_("Set URGENT for the terminal window."));
-	gnt_check_box_set_checked(GNT_CHECK_BOX(check), gaim_prefs_get_bool(PREFS_URGENT));
+	gnt_check_box_set_checked(GNT_CHECK_BOX(check), purple_prefs_get_bool(PREFS_URGENT));
 	g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(toggle_option), PREFS_URGENT);
 	gnt_box_add_widget(GNT_BOX(window), check);
 #endif
@@ -341,23 +341,23 @@ config_frame()
 	return window;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,
-	GAIM_GNT_PLUGIN_TYPE,
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,
+	FINCH_PLUGIN_TYPE,
 	0,
 	NULL,
-	GAIM_PRIORITY_DEFAULT,
+	PURPLE_PRIORITY_DEFAULT,
 	"gntgf",
 	N_("GntGf"),
 	VERSION,
 	N_("Toaster plugin"),
 	N_("Toaster plugin"),
 	"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",
-	"http://gaim.sourceforge.net",
+	"http://purple.sourceforge.net",
 	plugin_load,
 	plugin_unload,
 	NULL,
@@ -368,23 +368,23 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	gaim_prefs_add_none("/plugins");
-	gaim_prefs_add_none("/plugins/gnt");
+	purple_prefs_add_none("/plugins");
+	purple_prefs_add_none("/plugins/gnt");
 	
-	gaim_prefs_add_none("/plugins/gnt/gntgf");
-	gaim_prefs_add_none(PREFS_EVENT);
+	purple_prefs_add_none("/plugins/gnt/gntgf");
+	purple_prefs_add_none(PREFS_EVENT);
 
-	gaim_prefs_add_bool(PREFS_EVENT_SIGNONF, TRUE);
-	gaim_prefs_add_bool(PREFS_EVENT_IM_MSG, TRUE);
-	gaim_prefs_add_bool(PREFS_EVENT_CHAT_MSG, TRUE);
-	gaim_prefs_add_bool(PREFS_EVENT_CHAT_NICK, TRUE);
+	purple_prefs_add_bool(PREFS_EVENT_SIGNONF, TRUE);
+	purple_prefs_add_bool(PREFS_EVENT_IM_MSG, TRUE);
+	purple_prefs_add_bool(PREFS_EVENT_CHAT_MSG, TRUE);
+	purple_prefs_add_bool(PREFS_EVENT_CHAT_NICK, TRUE);
 
-	gaim_prefs_add_bool(PREFS_BEEP, TRUE);
+	purple_prefs_add_bool(PREFS_BEEP, TRUE);
 #ifdef HAVE_X11
-	gaim_prefs_add_bool(PREFS_URGENT, FALSE);
+	purple_prefs_add_bool(PREFS_URGENT, FALSE);
 #endif
 }
 
-GAIM_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
+PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)

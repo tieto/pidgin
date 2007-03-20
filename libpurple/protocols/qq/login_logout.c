@@ -1,9 +1,9 @@
 /**
  * @file login_logout.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -140,9 +140,9 @@ struct _qq_login_reply_redirect {
 
 extern gint			/* defined in send_core.c */
  _create_packet_head_seq(guint8 *buf,
-			 guint8 **cursor, GaimConnection *gc, guint16 cmd, gboolean is_auto_seq, guint16 *seq);
+			 guint8 **cursor, PurpleConnection *gc, guint16 cmd, gboolean is_auto_seq, guint16 *seq);
 extern gint			/* defined in send_core.c */
- _qq_send_packet(GaimConnection *gc, guint8 *buf, gint len, guint16 cmd);
+ _qq_send_packet(PurpleConnection *gc, guint8 *buf, gint len, guint16 cmd);
 
 /* It is fixed to 16 bytes 0x01 for QQ2003, 
  * Any value works (or a random 16 bytes string) */
@@ -152,7 +152,7 @@ static guint8 *_gen_login_key(void)
 }
 
 /* process login reply which says OK */
-static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
+static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 {
 	gint bytes;
 	guint8 *cursor;
@@ -169,7 +169,7 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 	lrop.session_key = g_memdup(cursor, QQ_KEY_LENGTH);
 	cursor += QQ_KEY_LENGTH;
 	bytes += QQ_KEY_LENGTH;
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Get session_key done\n");
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Get session_key done\n");
 	/* 017-020: login uid */
 	bytes += read_packet_dw(data, &cursor, len, &lrop.uid);
 	/* 021-024: server detected user public IP */
@@ -208,7 +208,7 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.unknown6, 8);
 
 	if (bytes != QQ_LOGIN_REPLY_OK_PACKET_LEN) {	/* fail parsing login info */
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 			   "Fail parsing login info, expect %d bytes, read %d bytes\n",
 			   QQ_LOGIN_REPLY_OK_PACKET_LEN, bytes);
 	}			/* but we still go on as login OK */
@@ -221,7 +221,7 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 	qd->last_login_time = lrop.last_login_time;
 	qd->last_login_ip = gen_ip_str(lrop.last_client_ip);
 
-	gaim_connection_set_state(gc, GAIM_CONNECTED);
+	purple_connection_set_state(gc, PURPLE_CONNECTED);
 	qd->logged_in = TRUE;	/* must be defined after sev_finish_login */
 
 	/* now initiate QQ Qun, do it first as it may take longer to finish */
@@ -244,7 +244,7 @@ static gint _qq_process_login_ok(GaimConnection *gc, guint8 *data, gint len)
 }
 
 /* process login reply packet which includes redirected new server address */
-static gint _qq_process_login_redirect(GaimConnection *gc, guint8 *data, gint len)
+static gint _qq_process_login_redirect(PurpleConnection *gc, guint8 *data, gint len)
 {
 	gint bytes, ret;
 	guint8 *cursor;
@@ -265,13 +265,13 @@ static gint _qq_process_login_redirect(GaimConnection *gc, guint8 *data, gint le
 	bytes += read_packet_w(data, &cursor, len, &lrrp.new_server_port);
 
 	if (bytes != QQ_LOGIN_REPLY_REDIRECT_PACKET_LEN) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail parsing login redirect packet, expect %d bytes, read %d bytes\n",
 			   QQ_LOGIN_REPLY_REDIRECT_PACKET_LEN, bytes);
 		ret = QQ_LOGIN_REPLY_MISC_ERROR;
 	} else {		/* start new connection */
 		new_server_str = gen_ip_str(lrrp.new_server_ip);
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 			   "Redirected to new server: %s:%d\n", new_server_str, lrrp.new_server_port);
 		qq_connect(gc->account, new_server_str, lrrp.new_server_port, qd->use_tcp, TRUE);
 		g_free(new_server_str);
@@ -282,13 +282,13 @@ static gint _qq_process_login_redirect(GaimConnection *gc, guint8 *data, gint le
 }
 
 /* process login reply which says wrong password */
-static gint _qq_process_login_wrong_pwd(GaimConnection *gc, guint8 *data, gint len)
+static gint _qq_process_login_wrong_pwd(PurpleConnection *gc, guint8 *data, gint len)
 {
 	gchar *server_reply, *server_reply_utf8;
 	server_reply = g_new0(gchar, len);
 	g_memmove(server_reply, data + 1, len - 1);
 	server_reply_utf8 = qq_to_utf8(server_reply, QQ_CHARSET_DEFAULT);
-	gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Wrong password, server msg in UTF8: %s\n", server_reply_utf8);
+	purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Wrong password, server msg in UTF8: %s\n", server_reply_utf8);
 	g_free(server_reply);
 	g_free(server_reply_utf8);
 
@@ -296,7 +296,7 @@ static gint _qq_process_login_wrong_pwd(GaimConnection *gc, guint8 *data, gint l
 }
 
 /* request before login */
-void qq_send_packet_request_login_token(GaimConnection *gc)
+void qq_send_packet_request_login_token(PurpleConnection *gc)
 {
 	qq_data *qd;
 	guint8 *buf, *cursor;
@@ -316,11 +316,11 @@ void qq_send_packet_request_login_token(GaimConnection *gc)
 	if (bytes == (cursor - buf))	/* packet creation OK */
 		_qq_send_packet(gc, buf, bytes, QQ_CMD_REQUEST_LOGIN_TOKEN);
 	else
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Fail create request login token packet\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Fail create request login token packet\n");
 }
 
 /* send login packet to QQ server */
-static void qq_send_packet_login(GaimConnection *gc, guint8 token_length, guint8 *token)
+static void qq_send_packet_login(PurpleConnection *gc, guint8 token_length, guint8 *token)
 {
 	qq_data *qd;
 	guint8 *buf, *cursor, *raw_data, *encrypted_data;
@@ -375,10 +375,10 @@ static void qq_send_packet_login(GaimConnection *gc, guint8 token_length, guint8
 	if (bytes == (cursor - buf))	/* packet creation OK */
 		_qq_send_packet(gc, buf, bytes, QQ_CMD_LOGIN);
 	else
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Fail create login packet\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Fail create login packet\n");
 }
 
-void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
         qq_data *qd;
 	gchar *hex_dump;
@@ -389,29 +389,29 @@ void qq_process_request_login_token_reply(guint8 *buf, gint buf_len, GaimConnect
 
 	if (buf[0] == QQ_REQUEST_LOGIN_TOKEN_REPLY_OK) {
 		if (buf[1] != buf_len-2) {
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", 
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", 
 					"Malformed login token reply packet. Packet specifies length of %d, actual length is %d\n", buf[1], buf_len-2);
-			gaim_debug(GAIM_DEBUG_INFO, "QQ",
+			purple_debug(PURPLE_DEBUG_INFO, "QQ",
 					"Attempting to proceed with the actual packet length.\n");
 		}
 		hex_dump = hex_dump_to_str(buf+2, buf_len-2);
-		gaim_debug(GAIM_DEBUG_INFO, "QQ",
+		purple_debug(PURPLE_DEBUG_INFO, "QQ",
                                    "<<< got a token with %d bytes -> [default] decrypt and dump\n%s", buf_len-2, hex_dump);
 		qq_send_packet_login(gc, buf_len-2, buf+2);
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Unknown request login token reply code : %d\n", buf[0]);
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Unknown request login token reply code : %d\n", buf[0]);
 		hex_dump = hex_dump_to_str(buf, buf_len);
-                gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+                purple_debug(PURPLE_DEBUG_WARNING, "QQ",
            		           ">>> %d bytes -> [default] decrypt and dump\n%s",
 	                           buf_len, hex_dump);
                		try_dump_as_gbk(buf, buf_len);
-		gaim_connection_error(gc, _("Request login token error!"));
+		purple_connection_error(gc, _("Request login token error!"));
 	}		
 	g_free(hex_dump);
 }
 
 /* send logout packets to QQ server */
-void qq_send_packet_logout(GaimConnection *gc)
+void qq_send_packet_logout(PurpleConnection *gc)
 {
 	gint i;
 	qq_data *qd;
@@ -424,7 +424,7 @@ void qq_send_packet_logout(GaimConnection *gc)
 }
 
 /* process the login reply packet */
-void qq_process_login_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_login_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	gint len, ret, bytes;
 	guint8 *data;
@@ -439,18 +439,18 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->pwkey, data, &len)) {
 		/* should be able to decrypt with pwkey */
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Decrypt login reply packet with pwkey, %d bytes\n", len);
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Decrypt login reply packet with pwkey, %d bytes\n", len);
 		if (data[0] == QQ_LOGIN_REPLY_OK) {
 			ret = _qq_process_login_ok(gc, data, len);
 		} else {
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Unknown login reply code : %d\n", data[0]);
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Unknown login reply code : %d\n", data[0]);
 			ret = QQ_LOGIN_REPLY_MISC_ERROR;
 		}
 	} else {		/* decrypt with pwkey error */
 		len = buf_len;	/* reset len, decrypt will fail if len is too short */
 		if (qq_crypt(DECRYPT, buf, buf_len, qd->inikey, data, &len)) {
 			/* decrypt ok with inipwd, it might be password error */
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", 
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", 
 					"Decrypt login reply packet with inikey, %d bytes\n", len);
 			bytes = 0;
 			switch (data[0]) {
@@ -461,9 +461,9 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 				ret = _qq_process_login_wrong_pwd(gc, data, len);
 				break;
 			default:
-				gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Unknown reply code: %d\n", data[0]);
+				purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Unknown reply code: %d\n", data[0]);
 				hex_dump = hex_dump_to_str(data, len);
-		                gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+		                purple_debug(PURPLE_DEBUG_WARNING, "QQ",
                 		           ">>> %d bytes -> [default] decrypt and dump\n%s",
 		                           buf_len, hex_dump);
 				g_free(hex_dump);
@@ -472,7 +472,7 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 				ret = QQ_LOGIN_REPLY_MISC_ERROR;
 			}
 		} else {	/* no idea how to decrypt */
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "No idea how to decrypt login reply\n");
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "No idea how to decrypt login reply\n");
 			ret = QQ_LOGIN_REPLY_MISC_ERROR;
 		}
 	}
@@ -480,13 +480,13 @@ void qq_process_login_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	switch (ret) {
 	case QQ_LOGIN_REPLY_PWD_ERROR:
 		gc->wants_to_die = TRUE;
-		gaim_connection_error(gc, _("Incorrect password."));
+		purple_connection_error(gc, _("Incorrect password."));
 		break;
 	case QQ_LOGIN_REPLY_MISC_ERROR:
-		gaim_connection_error(gc, _("Unable to login, check debug log"));
+		purple_connection_error(gc, _("Unable to login, check debug log"));
 		break;
 	case QQ_LOGIN_REPLY_OK:
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Login replys OK, everything is fine\n");
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Login replys OK, everything is fine\n");
 		break;
 	case QQ_LOGIN_REPLY_REDIRECT:
 		/* the redirect has been done in _qq_process_login_reply */

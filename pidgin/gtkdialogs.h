@@ -1,7 +1,7 @@
 /**
  * @defgroup gtkui GTK+ User Interface
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -33,18 +33,18 @@
 void pidgindialogs_destroy_all(void);
 void pidgindialogs_about(void);
 void pidgindialogs_im(void);
-void pidgindialogs_im_with_user(GaimAccount *, const char *);
+void pidgindialogs_im_with_user(PurpleAccount *, const char *);
 void pidgindialogs_info(void);
 void pidgindialogs_log(void);
-void pidgindialogs_alias_contact(GaimContact *);
-void pidgindialogs_alias_buddy(GaimBuddy *);
-void pidgindialogs_alias_chat(GaimChat *);
+void pidgindialogs_alias_contact(PurpleContact *);
+void pidgindialogs_alias_buddy(PurpleBuddy *);
+void pidgindialogs_alias_chat(PurpleChat *);
 
-void pidgindialogs_remove_buddy(GaimBuddy *);
-void pidgindialogs_remove_group(GaimGroup *);
-void pidgindialogs_remove_chat(GaimChat *);
-void pidgindialogs_remove_contact(GaimContact *);
-void pidgindialogs_merge_groups(GaimGroup *, const char *);
+void pidgindialogs_remove_buddy(PurpleBuddy *);
+void pidgindialogs_remove_group(PurpleGroup *);
+void pidgindialogs_remove_chat(PurpleChat *);
+void pidgindialogs_remove_contact(PurpleContact *);
+void pidgindialogs_merge_groups(PurpleGroup *, const char *);
 
 /* Everything after this should probably be moved elsewhere */
 

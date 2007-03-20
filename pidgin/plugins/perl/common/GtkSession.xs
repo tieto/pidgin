@@ -1,6 +1,6 @@
 #include "gtkmodule.h"
 
-MODULE = Gaim::GtkUI::Session  PACKAGE = Gaim::GtkUI::Session  PREFIX = gaim_gtk_session_
+MODULE = Purple::GtkUI::Session  PACKAGE = Purple::GtkUI::Session  PREFIX = gaim_gtk_session_
 PROTOTYPES: ENABLE
 
 void

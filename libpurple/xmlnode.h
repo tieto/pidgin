@@ -2,9 +2,9 @@
  * @file xmlnode.h XML DOM functions
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_XMLNODE_H_
-#define _GAIM_XMLNODE_H_
+#ifndef _PURPLE_XMLNODE_H_
+#define _PURPLE_XMLNODE_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -262,4 +262,4 @@ void xmlnode_free(xmlnode *node);
 }
 #endif
 
-#endif /* _GAIM_XMLNODE_H_ */
+#endif /* _PURPLE_XMLNODE_H_ */

@@ -1,5 +1,5 @@
 /*
- * gaim - Jabber Protocol Plugin
+ * purple - Jabber Protocol Plugin
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -44,13 +44,13 @@ typedef struct _JabberOOBXfer {
 
 } JabberOOBXfer;
 
-static void jabber_oob_xfer_init(GaimXfer *xfer)
+static void jabber_oob_xfer_init(PurpleXfer *xfer)
 {
 	JabberOOBXfer *jox = xfer->data;
-	gaim_xfer_start(xfer, -1, jox->address, jox->port);
+	purple_xfer_start(xfer, -1, jox->address, jox->port);
 }
 
-static void jabber_oob_xfer_free(GaimXfer *xfer)
+static void jabber_oob_xfer_free(PurpleXfer *xfer)
 {
 	JabberOOBXfer *jox = xfer->data;
 	jox->js->oob_file_transfers = g_list_remove(jox->js->oob_file_transfers,
@@ -62,13 +62,13 @@ static void jabber_oob_xfer_free(GaimXfer *xfer)
 	g_free(jox->iq_id);
 	g_free(jox->write_buffer);
 	if(jox->writeh)
-		gaim_input_remove(jox->writeh);
+		purple_input_remove(jox->writeh);
 	g_free(jox);
 
 	xfer->data = NULL;
 }
 
-static void jabber_oob_xfer_end(GaimXfer *xfer)
+static void jabber_oob_xfer_end(PurpleXfer *xfer)
 {
 	JabberOOBXfer *jox = xfer->data;
 	JabberIq *iq;
@@ -82,8 +82,8 @@ static void jabber_oob_xfer_end(GaimXfer *xfer)
 	jabber_oob_xfer_free(xfer);
 }
 
-static void jabber_oob_xfer_request_send(gpointer data, gint source, GaimInputCondition cond) {
-	GaimXfer *xfer = data;
+static void jabber_oob_xfer_request_send(gpointer data, gint source, PurpleInputCondition cond) {
+	PurpleXfer *xfer = data;
 	JabberOOBXfer *jox = xfer->data;
 	int len, total_len = strlen(jox->write_buffer);
 
@@ -93,20 +93,20 @@ static void jabber_oob_xfer_request_send(gpointer data, gint source, GaimInputCo
 	if(len < 0 && errno == EAGAIN)
 		return;
 	else if(len < 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "jabber", "Write error on oob xfer!\n");
-		gaim_input_remove(jox->writeh);
-		gaim_xfer_cancel_local(xfer);
+		purple_debug(PURPLE_DEBUG_ERROR, "jabber", "Write error on oob xfer!\n");
+		purple_input_remove(jox->writeh);
+		purple_xfer_cancel_local(xfer);
 	}
 	jox->written_len += len;
 
 	if(jox->written_len == total_len) {
-		gaim_input_remove(jox->writeh);
+		purple_input_remove(jox->writeh);
 		g_free(jox->write_buffer);
 		jox->write_buffer = NULL;
 	}
 }
 
-static void jabber_oob_xfer_start(GaimXfer *xfer)
+static void jabber_oob_xfer_start(PurpleXfer *xfer)
 {
 	JabberOOBXfer *jox = xfer->data;
 
@@ -117,13 +117,13 @@ static void jabber_oob_xfer_start(GaimXfer *xfer)
 		jox->written_len = 0;
 	}
 
-	jox->writeh = gaim_input_add(xfer->fd, GAIM_INPUT_WRITE,
+	jox->writeh = purple_input_add(xfer->fd, PURPLE_INPUT_WRITE,
 		jabber_oob_xfer_request_send, xfer);
 
-	jabber_oob_xfer_request_send(xfer, xfer->fd, GAIM_INPUT_WRITE);
+	jabber_oob_xfer_request_send(xfer, xfer->fd, PURPLE_INPUT_WRITE);
 }
 
-static gssize jabber_oob_xfer_read(guchar **buffer, GaimXfer *xfer) {
+static gssize jabber_oob_xfer_read(guchar **buffer, PurpleXfer *xfer) {
 	JabberOOBXfer *jox = xfer->data;
 	char test[2048];
 	char *tmp, *lenstr;
@@ -137,9 +137,9 @@ static gssize jabber_oob_xfer_read(guchar **buffer, GaimXfer *xfer) {
 			if(lenstr) {
 				int size;
 				sscanf(lenstr, "Content-Length: %d", &size);
-				gaim_xfer_set_size(xfer, size);
+				purple_xfer_set_size(xfer, size);
 			}
-			gaim_xfer_set_read_fnc(xfer, NULL);
+			purple_xfer_set_read_fnc(xfer, NULL);
 
 			tmp += 4;
 
@@ -148,14 +148,14 @@ static gssize jabber_oob_xfer_read(guchar **buffer, GaimXfer *xfer) {
 		}
 		return 0;
 	} else if (errno != EAGAIN) {
-		gaim_debug(GAIM_DEBUG_ERROR, "jabber", "Read error on oob xfer!\n");
-		gaim_xfer_cancel_local(xfer);
+		purple_debug(PURPLE_DEBUG_ERROR, "jabber", "Read error on oob xfer!\n");
+		purple_xfer_cancel_local(xfer);
 	}
 
 	return 0;
 }
 
-static void jabber_oob_xfer_recv_error(GaimXfer *xfer, const char *code) {
+static void jabber_oob_xfer_recv_error(PurpleXfer *xfer, const char *code) {
 	JabberOOBXfer *jox = xfer->data;
 	JabberIq *iq;
 	xmlnode *y, *z;
@@ -179,17 +179,17 @@ static void jabber_oob_xfer_recv_error(GaimXfer *xfer, const char *code) {
 	jabber_oob_xfer_free(xfer);
 }
 
-static void jabber_oob_xfer_recv_denied(GaimXfer *xfer) {
+static void jabber_oob_xfer_recv_denied(PurpleXfer *xfer) {
 	jabber_oob_xfer_recv_error(xfer, "406");
 }
 
-static void jabber_oob_xfer_recv_canceled(GaimXfer *xfer) {
+static void jabber_oob_xfer_recv_canceled(PurpleXfer *xfer) {
 	jabber_oob_xfer_recv_error(xfer, "404");
 }
 
 void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 	JabberOOBXfer *jox;
-	GaimXfer *xfer;
+	PurpleXfer *xfer;
 	char *filename;
 	char *url;
 	const char *type;
@@ -207,13 +207,13 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 	url = xmlnode_get_data(urlnode);
 
 	jox = g_new0(JabberOOBXfer, 1);
-	gaim_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL);
+	purple_url_parse(url, &jox->address, &jox->port, &jox->page, NULL, NULL);
 	g_free(url);
 	jox->js = js;
 	jox->headers = g_string_new("");
 	jox->iq_id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
-	xfer = gaim_xfer_new(js->gc->account, GAIM_XFER_RECEIVE,
+	xfer = purple_xfer_new(js->gc->account, PURPLE_XFER_RECEIVE,
 			xmlnode_get_attrib(packet, "from"));
 	if (xfer)
 	{
@@ -222,20 +222,20 @@ void jabber_oob_parse(JabberStream *js, xmlnode *packet) {
 		if(!(filename = g_strdup(g_strrstr(jox->page, "/"))))
 			filename = g_strdup(jox->page);
 
-		gaim_xfer_set_filename(xfer, filename);
+		purple_xfer_set_filename(xfer, filename);
 
 		g_free(filename);
 
-		gaim_xfer_set_init_fnc(xfer,   jabber_oob_xfer_init);
-		gaim_xfer_set_end_fnc(xfer,    jabber_oob_xfer_end);
-		gaim_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_recv_denied);
-		gaim_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_canceled);
-		gaim_xfer_set_read_fnc(xfer,   jabber_oob_xfer_read);
-		gaim_xfer_set_start_fnc(xfer,  jabber_oob_xfer_start);
+		purple_xfer_set_init_fnc(xfer,   jabber_oob_xfer_init);
+		purple_xfer_set_end_fnc(xfer,    jabber_oob_xfer_end);
+		purple_xfer_set_request_denied_fnc(xfer, jabber_oob_xfer_recv_denied);
+		purple_xfer_set_cancel_recv_fnc(xfer, jabber_oob_xfer_recv_canceled);
+		purple_xfer_set_read_fnc(xfer,   jabber_oob_xfer_read);
+		purple_xfer_set_start_fnc(xfer,  jabber_oob_xfer_start);
 
 		js->oob_file_transfers = g_list_append(js->oob_file_transfers, xfer);
 
-		gaim_xfer_request(xfer);
+		purple_xfer_request(xfer);
 	}
 }
 

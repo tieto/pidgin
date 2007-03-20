@@ -1,9 +1,9 @@
 /**
  * @file servconn.h Server connection functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -63,7 +63,7 @@ struct _MsnServConn
 	MsnSession *session;  /**< The MSN session of this connection. */
 	MsnCmdProc *cmdproc;  /**< The command processor of this connection. */
 
-	GaimProxyConnectData *connect_data;
+	PurpleProxyConnectData *connect_data;
 
 	gboolean connected;   /**< A flag that states if it's connected. */
 	gboolean processing;  /**< A flag that states if something is working
@@ -86,7 +86,7 @@ struct _MsnServConn
 						  It's only set when we've received a command that
 						  has a payload. */
 
-	GaimCircBuffer *tx_buf;
+	PurpleCircBuffer *tx_buf;
 	guint tx_handler;
 
 	void (*connect_cb)(MsnServConn *); /**< The callback to call when connecting. */

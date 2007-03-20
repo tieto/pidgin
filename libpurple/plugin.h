@@ -2,9 +2,9 @@
  * @file plugin.h Plugin API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,22 +22,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_PLUGIN_H_
-#define _GAIM_PLUGIN_H_
+#ifndef _PURPLE_PLUGIN_H_
+#define _PURPLE_PLUGIN_H_
 
 #include <glib/glist.h>
 #include <gmodule.h>
 #include "signals.h"
 #include "value.h"
 
-typedef struct _GaimPlugin           GaimPlugin;
-typedef struct _GaimPluginInfo       GaimPluginInfo;
-typedef struct _GaimPluginUiInfo     GaimPluginUiInfo;
-typedef struct _GaimPluginLoaderInfo GaimPluginLoaderInfo;
+typedef struct _PurplePlugin           PurplePlugin;
+typedef struct _PurplePluginInfo       PurplePluginInfo;
+typedef struct _PurplePluginUiInfo     PurplePluginUiInfo;
+typedef struct _PurplePluginLoaderInfo PurplePluginLoaderInfo;
 
-typedef struct _GaimPluginAction     GaimPluginAction;
+typedef struct _PurplePluginAction     PurplePluginAction;
 
-typedef int GaimPluginPriority; /**< Plugin priority. */
+typedef int PurplePluginPriority; /**< Plugin priority. */
 
 #include "pluginpref.h"
 
@@ -46,20 +46,20 @@ typedef int GaimPluginPriority; /**< Plugin priority. */
  */
 typedef enum
 {
-	GAIM_PLUGIN_UNKNOWN  = -1,  /**< Unknown type.    */
-	GAIM_PLUGIN_STANDARD = 0,   /**< Standard plugin. */
-	GAIM_PLUGIN_LOADER,         /**< Loader plugin.   */
-	GAIM_PLUGIN_PROTOCOL        /**< Protocol plugin. */
+	PURPLE_PLUGIN_UNKNOWN  = -1,  /**< Unknown type.    */
+	PURPLE_PLUGIN_STANDARD = 0,   /**< Standard plugin. */
+	PURPLE_PLUGIN_LOADER,         /**< Loader plugin.   */
+	PURPLE_PLUGIN_PROTOCOL        /**< Protocol plugin. */
 
-} GaimPluginType;
+} PurplePluginType;
 
-#define GAIM_PRIORITY_DEFAULT     0
-#define GAIM_PRIORITY_HIGHEST  9999
-#define GAIM_PRIORITY_LOWEST  -9999
+#define PURPLE_PRIORITY_DEFAULT     0
+#define PURPLE_PRIORITY_HIGHEST  9999
+#define PURPLE_PRIORITY_LOWEST  -9999
 
-#define GAIM_PLUGIN_FLAG_INVISIBLE 0x01
+#define PURPLE_PLUGIN_FLAG_INVISIBLE 0x01
 
-#define GAIM_PLUGIN_MAGIC 5 /* once we hit 6.0.0 I think we can remove this */
+#define PURPLE_PLUGIN_MAGIC 5 /* once we hit 6.0.0 I think we can remove this */
 
 /**
  * Detailed information about a plugin.
@@ -71,16 +71,16 @@ typedef enum
  * plugins because they didn't set ids and the dependency code was requiring
  * them. Then we need to actually make sure that plugins have all the right
  * parts before loading them. */
-struct _GaimPluginInfo
+struct _PurplePluginInfo
 {
 	unsigned int magic;
 	unsigned int major_version;
 	unsigned int minor_version;
-	GaimPluginType type;
+	PurplePluginType type;
 	char *ui_requirement;
 	unsigned long flags;
 	GList *dependencies;
-	GaimPluginPriority priority;
+	PurplePluginPriority priority;
 
 	char *id;
 	char *name;
@@ -94,39 +94,39 @@ struct _GaimPluginInfo
 	 * If a plugin defines a 'load' function, and it returns FALSE,
 	 * then the plugin will not be loaded.
 	 */
-	gboolean (*load)(GaimPlugin *plugin);
-	gboolean (*unload)(GaimPlugin *plugin);
-	void (*destroy)(GaimPlugin *plugin);
+	gboolean (*load)(PurplePlugin *plugin);
+	gboolean (*unload)(PurplePlugin *plugin);
+	void (*destroy)(PurplePlugin *plugin);
 
 	void *ui_info; /**< Used only by UI-specific plugins to build a preference screen with a custom UI */
 	void *extra_info;
-	GaimPluginUiInfo *prefs_info; /**< Used by any plugin to display preferences.  If #ui_info has been specified, this will be ignored. */
-	GList *(*actions)(GaimPlugin *plugin, gpointer context);
+	PurplePluginUiInfo *prefs_info; /**< Used by any plugin to display preferences.  If #ui_info has been specified, this will be ignored. */
+	GList *(*actions)(PurplePlugin *plugin, gpointer context);
 };
 
 /**
  * Extra information for loader plugins.
  */
-struct _GaimPluginLoaderInfo
+struct _PurplePluginLoaderInfo
 {
 	GList *exts;
 
-	gboolean (*probe)(GaimPlugin *plugin);
-	gboolean (*load)(GaimPlugin *plugin);
-	gboolean (*unload)(GaimPlugin *plugin);
-	void     (*destroy)(GaimPlugin *plugin);
+	gboolean (*probe)(PurplePlugin *plugin);
+	gboolean (*load)(PurplePlugin *plugin);
+	gboolean (*unload)(PurplePlugin *plugin);
+	void     (*destroy)(PurplePlugin *plugin);
 };
 
 /**
  * A plugin handle.
  */
-struct _GaimPlugin
+struct _PurplePlugin
 {
 	gboolean native_plugin;                /**< Native C plugin.          */
 	gboolean loaded;                       /**< The loaded state.         */
 	void *handle;                          /**< The module handle.        */
 	char *path;                            /**< The path to the plugin.   */
-	GaimPluginInfo *info;                  /**< The plugin information.   */
+	PurplePluginInfo *info;                  /**< The plugin information.   */
 	char *error;
 	void *ipc_data;                        /**< IPC data.                 */
 	void *extra;                           /**< Plugin-specific data.     */
@@ -134,66 +134,66 @@ struct _GaimPlugin
 	GList *dependent_plugins;              /**< Plugins depending on this */
 };
 
-#define GAIM_PLUGIN_LOADER_INFO(plugin) \
-	((GaimPluginLoaderInfo *)(plugin)->info->extra_info)
+#define PURPLE_PLUGIN_LOADER_INFO(plugin) \
+	((PurplePluginLoaderInfo *)(plugin)->info->extra_info)
 
-struct _GaimPluginUiInfo {
-	GaimPluginPrefFrame *(*get_plugin_pref_frame)(GaimPlugin *plugin);
+struct _PurplePluginUiInfo {
+	PurplePluginPrefFrame *(*get_plugin_pref_frame)(PurplePlugin *plugin);
 
 	int page_num;                                         /**< Reserved */
-	GaimPluginPrefFrame *frame;                           /**< Reserved */
+	PurplePluginPrefFrame *frame;                           /**< Reserved */
 };
 
-#define GAIM_PLUGIN_HAS_PREF_FRAME(plugin) \
+#define PURPLE_PLUGIN_HAS_PREF_FRAME(plugin) \
 	((plugin)->info != NULL && (plugin)->info->prefs_info != NULL)
 
-#define GAIM_PLUGIN_UI_INFO(plugin) \
-	((GaimPluginUiInfo*)(plugin)->info->prefs_info)
+#define PURPLE_PLUGIN_UI_INFO(plugin) \
+	((PurplePluginUiInfo*)(plugin)->info->prefs_info)
 
 
 /**
- * The structure used in the actions member of GaimPluginInfo
+ * The structure used in the actions member of PurplePluginInfo
  */
-struct _GaimPluginAction {
+struct _PurplePluginAction {
 	char *label;
-	void (*callback)(GaimPluginAction *);
+	void (*callback)(PurplePluginAction *);
 
 	/** set to the owning plugin */
-	GaimPlugin *plugin;
+	PurplePlugin *plugin;
 
-	/** NULL for plugin actions menu, set to the GaimConnection for
+	/** NULL for plugin actions menu, set to the PurpleConnection for
 	    account actions menu */
 	gpointer context;
 };
 
-#define GAIM_PLUGIN_HAS_ACTIONS(plugin) \
+#define PURPLE_PLUGIN_HAS_ACTIONS(plugin) \
 	((plugin)->info != NULL && (plugin)->info->actions != NULL)
 
-#define GAIM_PLUGIN_ACTIONS(plugin, context) \
-	(GAIM_PLUGIN_HAS_ACTIONS(plugin)? \
+#define PURPLE_PLUGIN_ACTIONS(plugin, context) \
+	(PURPLE_PLUGIN_HAS_ACTIONS(plugin)? \
 	(plugin)->info->actions(plugin, context): NULL)
 
 
 /**
  * Handles the initialization of modules.
  */
-#if !defined(GAIM_PLUGINS) || defined(GAIM_STATIC_PRPL)
-# define GAIM_INIT_PLUGIN(pluginname, initfunc, plugininfo) \
-	gboolean gaim_init_##pluginname##_plugin(void);\
-	gboolean gaim_init_##pluginname##_plugin(void) { \
-		GaimPlugin *plugin = gaim_plugin_new(TRUE, NULL); \
+#if !defined(PURPLE_PLUGINS) || defined(PURPLE_STATIC_PRPL)
+# define PURPLE_INIT_PLUGIN(pluginname, initfunc, plugininfo) \
+	gboolean purple_init_##pluginname##_plugin(void);\
+	gboolean purple_init_##pluginname##_plugin(void) { \
+		PurplePlugin *plugin = purple_plugin_new(TRUE, NULL); \
 		plugin->info = &(plugininfo); \
 		initfunc((plugin)); \
-		gaim_plugin_load((plugin)); \
-		return gaim_plugin_register(plugin); \
+		purple_plugin_load((plugin)); \
+		return purple_plugin_register(plugin); \
 	}
-#else /* GAIM_PLUGINS  && !GAIM_STATIC_PRPL */
-# define GAIM_INIT_PLUGIN(pluginname, initfunc, plugininfo) \
-	G_MODULE_EXPORT gboolean gaim_init_plugin(GaimPlugin *plugin); \
-	G_MODULE_EXPORT gboolean gaim_init_plugin(GaimPlugin *plugin) { \
+#else /* PURPLE_PLUGINS  && !PURPLE_STATIC_PRPL */
+# define PURPLE_INIT_PLUGIN(pluginname, initfunc, plugininfo) \
+	G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin); \
+	G_MODULE_EXPORT gboolean purple_init_plugin(PurplePlugin *plugin) { \
 		plugin->info = &(plugininfo); \
 		initfunc((plugin)); \
-		return gaim_plugin_register(plugin); \
+		return purple_plugin_register(plugin); \
 	}
 #endif
 
@@ -213,9 +213,9 @@ extern "C" {
  * @param native Whether or not the plugin is native.
  * @param path   The path to the plugin, or @c NULL if statically compiled.
  *
- * @return A new GaimPlugin structure.
+ * @return A new PurplePlugin structure.
  */
-GaimPlugin *gaim_plugin_new(gboolean native, const char *path);
+PurplePlugin *purple_plugin_new(gboolean native, const char *path);
 
 /**
  * Probes a plugin, retrieving the information on it and adding it to the
@@ -225,16 +225,16 @@ GaimPlugin *gaim_plugin_new(gboolean native, const char *path);
  *
  * @return The plugin handle.
  *
- * @see gaim_plugin_load()
- * @see gaim_plugin_destroy()
+ * @see purple_plugin_load()
+ * @see purple_plugin_destroy()
  */
-GaimPlugin *gaim_plugin_probe(const char *filename);
+PurplePlugin *purple_plugin_probe(const char *filename);
 
 /**
  * Registers a plugin and prepares it for loading.
  *
  * This shouldn't be called by anything but the internal module code.
- * Plugins should use the GAIM_INIT_PLUGIN() macro to register themselves
+ * Plugins should use the PURPLE_INIT_PLUGIN() macro to register themselves
  * with the core.
  *
  * @param plugin The plugin to register.
@@ -243,7 +243,7 @@ GaimPlugin *gaim_plugin_probe(const char *filename);
  *         @c FALSE is returned (this happens if the plugin does not contain
  *         the necessary information).
  */
-gboolean gaim_plugin_register(GaimPlugin *plugin);
+gboolean purple_plugin_register(PurplePlugin *plugin);
 
 /**
  * Attempts to load a previously probed plugin.
@@ -252,10 +252,10 @@ gboolean gaim_plugin_register(GaimPlugin *plugin);
  *
  * @return @c TRUE if successful, or @c FALSE otherwise.
  *
- * @see gaim_plugin_reload()
- * @see gaim_plugin_unload()
+ * @see purple_plugin_reload()
+ * @see purple_plugin_unload()
  */
-gboolean gaim_plugin_load(GaimPlugin *plugin);
+gboolean purple_plugin_load(PurplePlugin *plugin);
 
 /**
  * Unloads the specified plugin.
@@ -264,10 +264,10 @@ gboolean gaim_plugin_load(GaimPlugin *plugin);
  *
  * @return @c TRUE if successful, or @c FALSE otherwise.
  *
- * @see gaim_plugin_load()
- * @see gaim_plugin_reload()
+ * @see purple_plugin_load()
+ * @see purple_plugin_reload()
  */
-gboolean gaim_plugin_unload(GaimPlugin *plugin);
+gboolean purple_plugin_unload(PurplePlugin *plugin);
 
 /**
  * Reloads a plugin.
@@ -276,17 +276,17 @@ gboolean gaim_plugin_unload(GaimPlugin *plugin);
  *
  * @return @c TRUE if successful, or @c FALSE otherwise.
  *
- * @see gaim_plugin_load()
- * @see gaim_plugin_unload()
+ * @see purple_plugin_load()
+ * @see purple_plugin_unload()
  */
-gboolean gaim_plugin_reload(GaimPlugin *plugin);
+gboolean purple_plugin_reload(PurplePlugin *plugin);
 
 /**
  * Unloads a plugin and destroys the structure from memory.
  *
  * @param plugin The plugin handle.
  */
-void gaim_plugin_destroy(GaimPlugin *plugin);
+void purple_plugin_destroy(PurplePlugin *plugin);
 
 /**
  * Returns whether or not a plugin is currently loaded.
@@ -295,7 +295,7 @@ void gaim_plugin_destroy(GaimPlugin *plugin);
  *
  * @return @c TRUE if loaded, or @c FALSE otherwise.
  */
-gboolean gaim_plugin_is_loaded(const GaimPlugin *plugin);
+gboolean purple_plugin_is_loaded(const PurplePlugin *plugin);
 
 /**
  * Returns whether or not a plugin is unloadable.
@@ -309,7 +309,7 @@ gboolean gaim_plugin_is_loaded(const GaimPlugin *plugin);
  * @return @c TRUE if the plugin is known to be unloadable,\
  *         @c FALSE otherwise
  */
-gboolean gaim_plugin_is_unloadable(const GaimPlugin *plugin);
+gboolean purple_plugin_is_unloadable(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's id.
@@ -318,7 +318,7 @@ gboolean gaim_plugin_is_unloadable(const GaimPlugin *plugin);
  *
  * @return The plugin's id.
  */
-const gchar *gaim_plugin_get_id(const GaimPlugin *plugin);
+const gchar *purple_plugin_get_id(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's name.
@@ -327,7 +327,7 @@ const gchar *gaim_plugin_get_id(const GaimPlugin *plugin);
  * 
  * @return THe name of the plugin, or @c NULL.
  */
-const gchar *gaim_plugin_get_name(const GaimPlugin *plugin);
+const gchar *purple_plugin_get_name(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's version.
@@ -336,7 +336,7 @@ const gchar *gaim_plugin_get_name(const GaimPlugin *plugin);
  *
  * @return The plugin's version or @c NULL.
  */
-const gchar *gaim_plugin_get_version(const GaimPlugin *plugin);
+const gchar *purple_plugin_get_version(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's summary.
@@ -345,7 +345,7 @@ const gchar *gaim_plugin_get_version(const GaimPlugin *plugin);
  *
  * @return The plugin's summary.
  */
-const gchar *gaim_plugin_get_summary(const GaimPlugin *plugin);
+const gchar *purple_plugin_get_summary(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's description.
@@ -354,7 +354,7 @@ const gchar *gaim_plugin_get_summary(const GaimPlugin *plugin);
  *
  * @return The plugin's description.
  */
-const gchar *gaim_plugin_get_description(const GaimPlugin *plugin);
+const gchar *purple_plugin_get_description(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's author.
@@ -363,7 +363,7 @@ const gchar *gaim_plugin_get_description(const GaimPlugin *plugin);
  *
  * @return The plugin's author.
  */
-const gchar *gaim_plugin_get_author(const GaimPlugin *plugin);
+const gchar *purple_plugin_get_author(const PurplePlugin *plugin);
 
 /**
  * Returns a plugin's homepage.
@@ -372,7 +372,7 @@ const gchar *gaim_plugin_get_author(const GaimPlugin *plugin);
  *
  * @return The plugin's homepage.
  */
-const gchar *gaim_plugin_get_homepage(const GaimPlugin *plugin);
+const gchar *purple_plugin_get_homepage(const PurplePlugin *plugin);
 
 /*@}*/
 
@@ -395,10 +395,10 @@ const gchar *gaim_plugin_get_homepage(const GaimPlugin *plugin);
  * @return TRUE if the function was registered successfully, or
  *         FALSE otherwise.
  */
-gboolean gaim_plugin_ipc_register(GaimPlugin *plugin, const char *command,
-								  GaimCallback func,
-								  GaimSignalMarshalFunc marshal,
-								  GaimValue *ret_value, int num_params, ...);
+gboolean purple_plugin_ipc_register(PurplePlugin *plugin, const char *command,
+								  PurpleCallback func,
+								  PurpleSignalMarshalFunc marshal,
+								  PurpleValue *ret_value, int num_params, ...);
 
 /**
  * Unregisters an IPC command in a plugin.
@@ -406,14 +406,14 @@ gboolean gaim_plugin_ipc_register(GaimPlugin *plugin, const char *command,
  * @param plugin  The plugin to unregister the command from.
  * @param command The name of the command.
  */
-void gaim_plugin_ipc_unregister(GaimPlugin *plugin, const char *command);
+void purple_plugin_ipc_unregister(PurplePlugin *plugin, const char *command);
 
 /**
  * Unregisters all IPC commands in a plugin.
  *
  * @param plugin The plugin to unregister the commands from.
  */
-void gaim_plugin_ipc_unregister_all(GaimPlugin *plugin);
+void purple_plugin_ipc_unregister_all(PurplePlugin *plugin);
 
 /**
  * Returns a list of value types used for an IPC command.
@@ -426,9 +426,9 @@ void gaim_plugin_ipc_unregister_all(GaimPlugin *plugin);
  *
  * @return TRUE if the command was found, or FALSE otherwise.
  */
-gboolean gaim_plugin_ipc_get_params(GaimPlugin *plugin, const char *command,
-									GaimValue **ret_value, int *num_params,
-									GaimValue ***params);
+gboolean purple_plugin_ipc_get_params(PurplePlugin *plugin, const char *command,
+									PurpleValue **ret_value, int *num_params,
+									PurpleValue ***params);
 
 /**
  * Executes an IPC command.
@@ -441,7 +441,7 @@ gboolean gaim_plugin_ipc_get_params(GaimPlugin *plugin, const char *command,
  * @return The return value, which will be NULL if the command doesn't
  *         return a value.
  */
-void *gaim_plugin_ipc_call(GaimPlugin *plugin, const char *command,
+void *purple_plugin_ipc_call(PurplePlugin *plugin, const char *command,
 						   gboolean *ok, ...);
 
 /*@}*/
@@ -456,48 +456,48 @@ void *gaim_plugin_ipc_call(GaimPlugin *plugin, const char *command,
  *
  * @param path The new search path.
  */
-void gaim_plugins_add_search_path(const char *path);
+void purple_plugins_add_search_path(const char *path);
 
 /**
  * Unloads all loaded plugins.
  */
-void gaim_plugins_unload_all(void);
+void purple_plugins_unload_all(void);
 
 /**
  * Destroys all registered plugins.
  */
-void gaim_plugins_destroy_all(void);
+void purple_plugins_destroy_all(void);
 
 /**
  * Saves the list of loaded plugins to the specified preference key
  *
  * @param key The preference key to save the list of plugins to.
  */
-void gaim_plugins_save_loaded(const char *key);
+void purple_plugins_save_loaded(const char *key);
 
 /**
  * Attempts to load all the plugins in the specified preference key
- * that were loaded when gaim last quit.
+ * that were loaded when purple last quit.
  *
  * @param key The preference key containing the list of plugins.
  */
-void gaim_plugins_load_saved(const char *key);
+void purple_plugins_load_saved(const char *key);
 
 /**
  * Probes for plugins in the registered module paths.
  *
  * @param ext The extension type to probe for, or @c NULL for all.
  *
- * @see gaim_plugin_set_probe_path()
+ * @see purple_plugin_set_probe_path()
  */
-void gaim_plugins_probe(const char *ext);
+void purple_plugins_probe(const char *ext);
 
 /**
  * Returns whether or not plugin support is enabled.
  *
  * @return TRUE if plugin support is enabled, or FALSE otherwise.
  */
-gboolean gaim_plugins_enabled(void);
+gboolean purple_plugins_enabled(void);
 
 /**
  * Registers a function that will be called when probing is finished.
@@ -505,14 +505,14 @@ gboolean gaim_plugins_enabled(void);
  * @param func The callback function.
  * @param data Data to pass to the callback.
  */
-void gaim_plugins_register_probe_notify_cb(void (*func)(void *), void *data);
+void purple_plugins_register_probe_notify_cb(void (*func)(void *), void *data);
 
 /**
  * Unregisters a function that would be called when probing is finished.
  *
  * @param func The callback function.
  */
-void gaim_plugins_unregister_probe_notify_cb(void (*func)(void *));
+void purple_plugins_unregister_probe_notify_cb(void (*func)(void *));
 
 /**
  * Registers a function that will be called when a plugin is loaded.
@@ -520,7 +520,7 @@ void gaim_plugins_unregister_probe_notify_cb(void (*func)(void *));
  * @param func The callback function.
  * @param data Data to pass to the callback.
  */
-void gaim_plugins_register_load_notify_cb(void (*func)(GaimPlugin *, void *),
+void purple_plugins_register_load_notify_cb(void (*func)(PurplePlugin *, void *),
 										  void *data);
 
 /**
@@ -528,7 +528,7 @@ void gaim_plugins_register_load_notify_cb(void (*func)(GaimPlugin *, void *),
  *
  * @param func The callback function.
  */
-void gaim_plugins_unregister_load_notify_cb(void (*func)(GaimPlugin *, void *));
+void purple_plugins_unregister_load_notify_cb(void (*func)(PurplePlugin *, void *));
 
 /**
  * Registers a function that will be called when a plugin is unloaded.
@@ -536,7 +536,7 @@ void gaim_plugins_unregister_load_notify_cb(void (*func)(GaimPlugin *, void *));
  * @param func The callback function.
  * @param data Data to pass to the callback.
  */
-void gaim_plugins_register_unload_notify_cb(void (*func)(GaimPlugin *, void *),
+void purple_plugins_register_unload_notify_cb(void (*func)(PurplePlugin *, void *),
 											void *data);
 
 /**
@@ -544,7 +544,7 @@ void gaim_plugins_register_unload_notify_cb(void (*func)(GaimPlugin *, void *),
  *
  * @param func The callback function.
  */
-void gaim_plugins_unregister_unload_notify_cb(void (*func)(GaimPlugin *,
+void purple_plugins_unregister_unload_notify_cb(void (*func)(PurplePlugin *,
 														   void *));
 
 /**
@@ -554,7 +554,7 @@ void gaim_plugins_unregister_unload_notify_cb(void (*func)(GaimPlugin *,
  *
  * @return The plugin if found, or @c NULL if not found.
  */
-GaimPlugin *gaim_plugins_find_with_name(const char *name);
+PurplePlugin *purple_plugins_find_with_name(const char *name);
 
 /**
  * Finds a plugin with the specified filename (filename with a path).
@@ -563,7 +563,7 @@ GaimPlugin *gaim_plugins_find_with_name(const char *name);
  *
  * @return The plugin if found, or @c NULL if not found.
  */
-GaimPlugin *gaim_plugins_find_with_filename(const char *filename);
+PurplePlugin *purple_plugins_find_with_filename(const char *filename);
 
 /**
  * Finds a plugin with the specified basename (filename without a path).
@@ -572,7 +572,7 @@ GaimPlugin *gaim_plugins_find_with_filename(const char *filename);
  *
  * @return The plugin if found, or @c NULL if not found.
  */
-GaimPlugin *gaim_plugins_find_with_basename(const char *basename);
+PurplePlugin *purple_plugins_find_with_basename(const char *basename);
 
 /**
  * Finds a plugin with the specified plugin ID.
@@ -581,31 +581,31 @@ GaimPlugin *gaim_plugins_find_with_basename(const char *basename);
  *
  * @return The plugin if found, or @c NULL if not found.
  */
-GaimPlugin *gaim_plugins_find_with_id(const char *id);
+PurplePlugin *purple_plugins_find_with_id(const char *id);
 
 /**
  * Returns a list of all loaded plugins.
  *
  * @return A list of all loaded plugins.
  */
-GList *gaim_plugins_get_loaded(void);
+GList *purple_plugins_get_loaded(void);
 
 /**
  * Returns a list of all valid protocol plugins.  A protocol
  * plugin is considered invalid if it does not contain the call
- * to the GAIM_INIT_PLUGIN() macro, or if it was compiled
+ * to the PURPLE_INIT_PLUGIN() macro, or if it was compiled
  * against an incompatable API version.
  *
  * @return A list of all protocol plugins.
  */
-GList *gaim_plugins_get_protocols(void);
+GList *purple_plugins_get_protocols(void);
 
 /**
  * Returns a list of all plugins, whether loaded or not.
  *
  * @return A list of all plugins.
  */
-GList *gaim_plugins_get_all(void);
+GList *purple_plugins_get_all(void);
 
 /*@}*/
 
@@ -619,37 +619,37 @@ GList *gaim_plugins_get_all(void);
  *
  * @return The plugin sybsystem handle.
  */
-void *gaim_plugins_get_handle(void);
+void *purple_plugins_get_handle(void);
 
 /**
  * Initializes the plugin subsystem
  */
-void gaim_plugins_init(void);
+void purple_plugins_init(void);
 
 /**
  * Uninitializes the plugin subsystem
  */
-void gaim_plugins_uninit(void);
+void purple_plugins_uninit(void);
 
 /*@}*/
 
 /**
- * Allocates and returns a new GaimPluginAction.
+ * Allocates and returns a new PurplePluginAction.
  *
  * @param label    The description of the action to show to the user.
  * @param callback The callback to call when the user selects this action.
  */
-GaimPluginAction *gaim_plugin_action_new(const char* label, void (*callback)(GaimPluginAction *));
+PurplePluginAction *purple_plugin_action_new(const char* label, void (*callback)(PurplePluginAction *));
 
 /**
- * Frees a GaimPluginAction
+ * Frees a PurplePluginAction
  *
- * @param action The GaimPluginAction to free.
+ * @param action The PurplePluginAction to free.
  */
-void gaim_plugin_action_free(GaimPluginAction *action);
+void purple_plugin_action_free(PurplePluginAction *action);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _GAIM_PLUGIN_H_ */
+#endif /* _PURPLE_PLUGIN_H_ */

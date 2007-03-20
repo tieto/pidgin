@@ -1,9 +1,9 @@
 /**
  * @file msg.c Message functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -33,7 +33,7 @@ msn_message_new(MsnMsgType type)
 	msg->type = type;
 
 #ifdef MSN_DEBUG_MSG
-	gaim_debug_info("msn", "message new (%p)(%d)\n", msg, type);
+	purple_debug_info("msn", "message new (%p)(%d)\n", msg, type);
 #endif
 
 	msg->attr_table = g_hash_table_new_full(g_str_hash, g_str_equal,
@@ -57,7 +57,7 @@ msn_message_destroy(MsnMessage *msg)
 	}
 
 #ifdef MSN_DEBUG_MSG
-	gaim_debug_info("msn", "message destroy (%p)\n", msg);
+	purple_debug_info("msn", "message destroy (%p)\n", msg);
 #endif
 
 	if (msg->remote_user != NULL)
@@ -86,7 +86,7 @@ msn_message_ref(MsnMessage *msg)
 	msg->ref_count++;
 
 #ifdef MSN_DEBUG_MSG
-	gaim_debug_info("msn", "message ref (%p)[%d]\n", msg, msg->ref_count);
+	purple_debug_info("msn", "message ref (%p)[%d]\n", msg, msg->ref_count);
 #endif
 
 	return msg;
@@ -101,7 +101,7 @@ msn_message_unref(MsnMessage *msg)
 	msg->ref_count--;
 
 #ifdef MSN_DEBUG_MSG
-	gaim_debug_info("msn", "message unref (%p)[%d]\n", msg, msg->ref_count);
+	purple_debug_info("msn", "message unref (%p)[%d]\n", msg, msg->ref_count);
 #endif
 
 	if (msg->ref_count == 0)
@@ -128,7 +128,7 @@ msn_message_new_plain(const char *message)
 	msn_message_set_attr(msg, "X-MMS-IM-Format",
 						 "FN=MS%20Sans%20Serif; EF=; CO=0; PF=0");
 
-	message_cr = gaim_str_add_cr(message);
+	message_cr = purple_str_add_cr(message);
 	msn_message_set_bin_data(msg, message_cr, strlen(message_cr));
 	g_free(message_cr);
 
@@ -781,7 +781,7 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 		}
 	}
 
-	gaim_debug_info("msn", "Message %s:\n{%s}\n", info, str->str);
+	purple_debug_info("msn", "Message %s:\n{%s}\n", info, str->str);
 
 	g_string_free(str, TRUE);
 }

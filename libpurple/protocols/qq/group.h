@@ -1,9 +1,9 @@
 /**
  * @file group.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -31,7 +31,7 @@
 #include "roomlist.h"
 #include "qq.h"
 
-#define GAIM_GROUP_QQ_QUN         "QQ 群"
+#define PURPLE_GROUP_QQ_QUN         "QQ 群"
 
 typedef enum {
 	QQ_GROUP_MEMBER_STATUS_NOT_MEMBER = 0x00,	/* default 0x00 means not member */
@@ -41,7 +41,7 @@ typedef enum {
 } qq_group_member_status;
 
 typedef struct _qq_group {
-	/* all these will be saved when we exit Gaim */
+	/* all these will be saved when we exit Purple */
 	qq_group_member_status my_status;	/* my status for this group */
 	gchar *my_status_desc;			/* my status description */
 	guint32 internal_group_id;
@@ -57,13 +57,13 @@ typedef struct _qq_group {
 	GList *members;	
 } qq_group;
 
-GList *qq_chat_info(GaimConnection *gc);
-GHashTable *qq_chat_info_defaults(GaimConnection *gc, const gchar *chat_name);
+GList *qq_chat_info(PurpleConnection *gc);
+GHashTable *qq_chat_info_defaults(PurpleConnection *gc, const gchar *chat_name);
 
-void qq_group_init(GaimConnection *gc);
+void qq_group_init(PurpleConnection *gc);
 
-GaimRoomlist *qq_roomlist_get_list(GaimConnection *gc);
+PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc);
 
-void qq_roomlist_cancel(GaimRoomlist *list);
+void qq_roomlist_cancel(PurpleRoomlist *list);
 
 #endif

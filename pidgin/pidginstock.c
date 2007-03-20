@@ -1,10 +1,10 @@
 /**
- * @file gaimstock.c GTK+ Stock resources
+ * @file purplestock.c GTK+ Stock resources
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -26,7 +26,7 @@
 #include "internal.h"
 #include "pidgin.h"
 
-#include "gaimstock.h"
+#include "pidginstock.h"
 
 static struct StockIcon
 {
@@ -81,7 +81,7 @@ static struct StockIcon
 	{ PIDGIN_STOCK_OPEN_MAIL,       NULL,      GTK_STOCK_JUMP_TO          },
 	{ PIDGIN_STOCK_SIGN_ON,         NULL,      GTK_STOCK_EXECUTE          },
 	{ PIDGIN_STOCK_SIGN_OFF,        NULL,      GTK_STOCK_CLOSE            },
-	{ PIDGIN_STOCK_TYPED,           "gaim",    "typed.png"                },
+	{ PIDGIN_STOCK_TYPED,           "purple",    "typed.png"                },
 	{ PIDGIN_STOCK_UPLOAD,          NULL,      GTK_STOCK_GO_UP            },
 };
 
@@ -183,11 +183,11 @@ find_file(const char *dir, const char *base)
 	if (base == NULL)
 		return NULL;
 
-	if (!strcmp(dir, "gaim"))
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", base, NULL);
+	if (!strcmp(dir, "purple"))
+		filename = g_build_filename(DATADIR, "pixmaps", "purple", base, NULL);
 	else
 	{
-		filename = g_build_filename(DATADIR, "pixmaps", "gaim", dir,
+		filename = g_build_filename(DATADIR, "pixmaps", "purple", dir,
 									base, NULL);
 	}
 

@@ -1,8 +1,8 @@
 /**
- * @file gaim-desktop-item.c Functions for managing .desktop files
+ * @file purple-desktop-item.c Functions for managing .desktop files
  * @ingroup core
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -59,13 +59,13 @@
 #include "desktopitem.h"
 #include "internal.h"
 
-struct _GaimDesktopItem {
+struct _PurpleDesktopItem {
 	int refcount;
 
 	/* all languages used */
 	GList *languages;
 
-	GaimDesktopItemType type;
+	PurpleDesktopItemType type;
 	
 	/* `modified' means that the ditem has been
 	 * modified since the last save. */
@@ -99,49 +99,49 @@ typedef enum {
 /**************************************************************************
  * Private utility functions
  **************************************************************************/
-static GaimDesktopItemType
+static PurpleDesktopItemType
 type_from_string (const char *type)
 {
 	if (!type)
-		return GAIM_DESKTOP_ITEM_TYPE_NULL;
+		return PURPLE_DESKTOP_ITEM_TYPE_NULL;
 
 	switch (type [0]) {
 	case 'A':
 		if (!strcmp (type, "Application"))
-			return GAIM_DESKTOP_ITEM_TYPE_APPLICATION;
+			return PURPLE_DESKTOP_ITEM_TYPE_APPLICATION;
 		break;
 	case 'L':
 		if (!strcmp (type, "Link"))
-			return GAIM_DESKTOP_ITEM_TYPE_LINK;
+			return PURPLE_DESKTOP_ITEM_TYPE_LINK;
 		break;
 	case 'F':
 		if (!strcmp (type, "FSDevice"))
-			return GAIM_DESKTOP_ITEM_TYPE_FSDEVICE;
+			return PURPLE_DESKTOP_ITEM_TYPE_FSDEVICE;
 		break;
 	case 'M':
 		if (!strcmp (type, "MimeType"))
-			return GAIM_DESKTOP_ITEM_TYPE_MIME_TYPE;
+			return PURPLE_DESKTOP_ITEM_TYPE_MIME_TYPE;
 		break;
 	case 'D':
 		if (!strcmp (type, "Directory"))
-			return GAIM_DESKTOP_ITEM_TYPE_DIRECTORY;
+			return PURPLE_DESKTOP_ITEM_TYPE_DIRECTORY;
 		break;
 	case 'S':
 		if (!strcmp (type, "Service"))
-			return GAIM_DESKTOP_ITEM_TYPE_SERVICE;
+			return PURPLE_DESKTOP_ITEM_TYPE_SERVICE;
 
 		else if (!strcmp (type, "ServiceType"))
-			return GAIM_DESKTOP_ITEM_TYPE_SERVICE_TYPE;
+			return PURPLE_DESKTOP_ITEM_TYPE_SERVICE_TYPE;
 		break;
 	default:
 		break;
 	}
 
-	return GAIM_DESKTOP_ITEM_TYPE_OTHER;
+	return PURPLE_DESKTOP_ITEM_TYPE_OTHER;
 }
 
 static Section *
-find_section (GaimDesktopItem *item, const char *section)
+find_section (PurpleDesktopItem *item, const char *section)
 {
 	GList *li;
 	Section *sec;
@@ -170,7 +170,7 @@ find_section (GaimDesktopItem *item, const char *section)
 }
 
 static Section *
-section_from_key (GaimDesktopItem *item, const char *key)
+section_from_key (PurpleDesktopItem *item, const char *key)
 {
 	char *p;
 	char *name;
@@ -203,7 +203,7 @@ key_basename (const char *key)
 }
 
 static void
-set (GaimDesktopItem *item, const char *key, const char *value)
+set (PurpleDesktopItem *item, const char *key, const char *value)
 {
 	Section *sec = section_from_key (item, key);
 
@@ -253,7 +253,7 @@ set (GaimDesktopItem *item, const char *key, const char *value)
 
 
 static void
-_gaim_desktop_item_set_string (GaimDesktopItem *item,
+_purple_desktop_item_set_string (PurpleDesktopItem *item,
 			       const char *attr,
 			       const char *value)
 {
@@ -263,16 +263,16 @@ _gaim_desktop_item_set_string (GaimDesktopItem *item,
 
 	set (item, attr, value);
 
-	if (strcmp (attr, GAIM_DESKTOP_ITEM_TYPE) == 0)
+	if (strcmp (attr, PURPLE_DESKTOP_ITEM_TYPE) == 0)
 		item->type = type_from_string (value);
 }
 
-static GaimDesktopItem *
-_gaim_desktop_item_new (void)
+static PurpleDesktopItem *
+_purple_desktop_item_new (void)
 {
-	GaimDesktopItem *retval;
+	PurpleDesktopItem *retval;
 
-	retval = g_new0 (GaimDesktopItem, 1);
+	retval = g_new0 (PurpleDesktopItem, 1);
 
 	retval->refcount++;
 
@@ -281,29 +281,29 @@ _gaim_desktop_item_new (void)
 						   (GDestroyNotify) g_free);
 	
 	/* These are guaranteed to be set */
-	_gaim_desktop_item_set_string (retval,
-				       GAIM_DESKTOP_ITEM_NAME,
+	_purple_desktop_item_set_string (retval,
+				       PURPLE_DESKTOP_ITEM_NAME,
 				       _("No name"));
-	_gaim_desktop_item_set_string (retval,
-				       GAIM_DESKTOP_ITEM_ENCODING,
+	_purple_desktop_item_set_string (retval,
+				       PURPLE_DESKTOP_ITEM_ENCODING,
 				       "UTF-8");
-	_gaim_desktop_item_set_string (retval,
-				       GAIM_DESKTOP_ITEM_VERSION,
+	_purple_desktop_item_set_string (retval,
+				       PURPLE_DESKTOP_ITEM_VERSION,
 				       "1.0");
 
 	return retval;
 }
 
 static gpointer
-_gaim_desktop_item_copy (gpointer boxed)
+_purple_desktop_item_copy (gpointer boxed)
 {
-	return gaim_desktop_item_copy (boxed);
+	return purple_desktop_item_copy (boxed);
 }
 
 static void
-_gaim_desktop_item_free (gpointer boxed)
+_purple_desktop_item_free (gpointer boxed)
 {
-	gaim_desktop_item_unref (boxed);
+	purple_desktop_item_unref (boxed);
 }
 
 /* Note, does not include the trailing \n */
@@ -342,10 +342,10 @@ get_encoding (FILE *df)
 	gboolean all_valid_utf8 = TRUE;
 
 	while (my_fgets (buf, sizeof (buf), df) != NULL) {
-		if (strncmp (GAIM_DESKTOP_ITEM_ENCODING,
+		if (strncmp (PURPLE_DESKTOP_ITEM_ENCODING,
 			     buf,
-			     strlen (GAIM_DESKTOP_ITEM_ENCODING)) == 0) {
-			char *p = &buf[strlen (GAIM_DESKTOP_ITEM_ENCODING)];
+			     strlen (PURPLE_DESKTOP_ITEM_ENCODING)) == 0) {
+			char *p = &buf[strlen (PURPLE_DESKTOP_ITEM_ENCODING)];
 			if (*p == ' ')
 				p++;
 			if (*p != '=')
@@ -590,17 +590,17 @@ standard_is_boolean (const char * key)
 	if (bools == NULL) {
 		bools = g_hash_table_new (g_str_hash, g_str_equal);
 		g_hash_table_insert (bools,
-				     GAIM_DESKTOP_ITEM_NO_DISPLAY,
-				     GAIM_DESKTOP_ITEM_NO_DISPLAY);
+				     PURPLE_DESKTOP_ITEM_NO_DISPLAY,
+				     PURPLE_DESKTOP_ITEM_NO_DISPLAY);
 		g_hash_table_insert (bools,
-				     GAIM_DESKTOP_ITEM_HIDDEN,
-				     GAIM_DESKTOP_ITEM_HIDDEN);
+				     PURPLE_DESKTOP_ITEM_HIDDEN,
+				     PURPLE_DESKTOP_ITEM_HIDDEN);
 		g_hash_table_insert (bools,
-				     GAIM_DESKTOP_ITEM_TERMINAL,
-				     GAIM_DESKTOP_ITEM_TERMINAL);
+				     PURPLE_DESKTOP_ITEM_TERMINAL,
+				     PURPLE_DESKTOP_ITEM_TERMINAL);
 		g_hash_table_insert (bools,
-				     GAIM_DESKTOP_ITEM_READ_ONLY,
-				     GAIM_DESKTOP_ITEM_READ_ONLY);
+				     PURPLE_DESKTOP_ITEM_READ_ONLY,
+				     PURPLE_DESKTOP_ITEM_READ_ONLY);
 	}
 
 	return g_hash_table_lookup (bools, key) != NULL;
@@ -614,20 +614,20 @@ standard_is_strings (const char *key)
 	if (strings == NULL) {
 		strings = g_hash_table_new (g_str_hash, g_str_equal);
 		g_hash_table_insert (strings,
-				     GAIM_DESKTOP_ITEM_FILE_PATTERN,
-				     GAIM_DESKTOP_ITEM_FILE_PATTERN);
+				     PURPLE_DESKTOP_ITEM_FILE_PATTERN,
+				     PURPLE_DESKTOP_ITEM_FILE_PATTERN);
 		g_hash_table_insert (strings,
-				     GAIM_DESKTOP_ITEM_ACTIONS,
-				     GAIM_DESKTOP_ITEM_ACTIONS);
+				     PURPLE_DESKTOP_ITEM_ACTIONS,
+				     PURPLE_DESKTOP_ITEM_ACTIONS);
 		g_hash_table_insert (strings,
-				     GAIM_DESKTOP_ITEM_MIME_TYPE,
-				     GAIM_DESKTOP_ITEM_MIME_TYPE);
+				     PURPLE_DESKTOP_ITEM_MIME_TYPE,
+				     PURPLE_DESKTOP_ITEM_MIME_TYPE);
 		g_hash_table_insert (strings,
-				     GAIM_DESKTOP_ITEM_PATTERNS,
-				     GAIM_DESKTOP_ITEM_PATTERNS);
+				     PURPLE_DESKTOP_ITEM_PATTERNS,
+				     PURPLE_DESKTOP_ITEM_PATTERNS);
 		g_hash_table_insert (strings,
-				     GAIM_DESKTOP_ITEM_SORT_ORDER,
-				     GAIM_DESKTOP_ITEM_SORT_ORDER);
+				     PURPLE_DESKTOP_ITEM_SORT_ORDER,
+				     PURPLE_DESKTOP_ITEM_SORT_ORDER);
 	}
 
 	return g_hash_table_lookup (strings, key) != NULL;
@@ -660,7 +660,7 @@ cannonize (const char *key, const char *value)
 }
 
 static void
-insert_key (GaimDesktopItem *item,
+insert_key (PurpleDesktopItem *item,
 	    Section *cur_section,
 	    Encoding encoding,
 	    const char *key,
@@ -672,7 +672,7 @@ insert_key (GaimDesktopItem *item,
 	char *val;
 	/* we always store everything in UTF-8 */
 	if (cur_section == NULL &&
-	    strcmp (key, GAIM_DESKTOP_ITEM_ENCODING) == 0) {
+	    strcmp (key, PURPLE_DESKTOP_ITEM_ENCODING) == 0) {
 		k = g_strdup (key);
 		val = g_strdup ("UTF-8");
 	} else {
@@ -696,7 +696,7 @@ insert_key (GaimDesktopItem *item,
 		 * on sort order, so convert to semicolons */
 		if (old_kde &&
 		    cur_section == NULL &&
-		    strcmp (key, GAIM_DESKTOP_ITEM_SORT_ORDER) == 0 &&
+		    strcmp (key, PURPLE_DESKTOP_ITEM_SORT_ORDER) == 0 &&
 		    strchr (val, ';') == NULL) {
 			int i;
 			for (i = 0; val[i] != '\0'; i++) {
@@ -778,29 +778,29 @@ insert_key (GaimDesktopItem *item,
 }
 
 static const char *
-lookup (const GaimDesktopItem *item, const char *key)
+lookup (const PurpleDesktopItem *item, const char *key)
 {
 	return g_hash_table_lookup (item->main_hash, key);
 }
 
 static void
-setup_type (GaimDesktopItem *item, const char *uri)
+setup_type (PurpleDesktopItem *item, const char *uri)
 {
 	const char *type = g_hash_table_lookup (item->main_hash,
-						GAIM_DESKTOP_ITEM_TYPE);
+						PURPLE_DESKTOP_ITEM_TYPE);
 	if (type == NULL && uri != NULL) {
 		char *base = g_path_get_basename (uri);
 		if (base != NULL &&
 		    strcmp (base, ".directory") == 0) {
 			/* This gotta be a directory */
 			g_hash_table_replace (item->main_hash,
-					      g_strdup (GAIM_DESKTOP_ITEM_TYPE), 
+					      g_strdup (PURPLE_DESKTOP_ITEM_TYPE), 
 					      g_strdup ("Directory"));
 			item->keys = g_list_prepend
-				(item->keys, g_strdup (GAIM_DESKTOP_ITEM_TYPE));
-			item->type = GAIM_DESKTOP_ITEM_TYPE_DIRECTORY;
+				(item->keys, g_strdup (PURPLE_DESKTOP_ITEM_TYPE));
+			item->type = PURPLE_DESKTOP_ITEM_TYPE_DIRECTORY;
 		} else {
-			item->type = GAIM_DESKTOP_ITEM_TYPE_NULL;
+			item->type = PURPLE_DESKTOP_ITEM_TYPE_NULL;
 		}
 		g_free (base);
 	} else {
@@ -809,7 +809,7 @@ setup_type (GaimDesktopItem *item, const char *uri)
 }
 
 static const char *
-lookup_locale (const GaimDesktopItem *item, const char *key, const char *locale)
+lookup_locale (const PurpleDesktopItem *item, const char *key, const char *locale)
 {
 	if (locale == NULL ||
 	    strcmp (locale, "C") == 0) {
@@ -825,7 +825,7 @@ lookup_locale (const GaimDesktopItem *item, const char *key, const char *locale)
 
 /* fallback to find something suitable for C locale */
 static char *
-try_english_key (GaimDesktopItem *item, const char *key)
+try_english_key (PurpleDesktopItem *item, const char *key)
 {
 	char *str;
 	char *locales[] = { "en_US", "en_GB", "en_AU", "en", NULL };
@@ -849,26 +849,26 @@ try_english_key (GaimDesktopItem *item, const char *key)
 
 
 static void
-sanitize (GaimDesktopItem *item, const char *uri)
+sanitize (PurpleDesktopItem *item, const char *uri)
 {
 	const char *type;
 
-	type = lookup (item, GAIM_DESKTOP_ITEM_TYPE);
+	type = lookup (item, PURPLE_DESKTOP_ITEM_TYPE);
 
 	/* understand old gnome style url exec thingies */
 	if (type != NULL && strcmp (type, "URL") == 0) {
-		const char *exec = lookup (item, GAIM_DESKTOP_ITEM_EXEC);
-		set (item, GAIM_DESKTOP_ITEM_TYPE, "Link");
+		const char *exec = lookup (item, PURPLE_DESKTOP_ITEM_EXEC);
+		set (item, PURPLE_DESKTOP_ITEM_TYPE, "Link");
 		if (exec != NULL) {
 			/* Note, this must be in this order */
-			set (item, GAIM_DESKTOP_ITEM_URL, exec);
-			set (item, GAIM_DESKTOP_ITEM_EXEC, NULL);
+			set (item, PURPLE_DESKTOP_ITEM_URL, exec);
+			set (item, PURPLE_DESKTOP_ITEM_EXEC, NULL);
 		}
 	}
 
 	/* we make sure we have Name, Encoding and Version */
-	if (lookup (item, GAIM_DESKTOP_ITEM_NAME) == NULL) {
-		char *name = try_english_key (item, GAIM_DESKTOP_ITEM_NAME);
+	if (lookup (item, PURPLE_DESKTOP_ITEM_NAME) == NULL) {
+		char *name = try_english_key (item, PURPLE_DESKTOP_ITEM_NAME);
 		/* If no name, use the basename */
 		if (name == NULL && uri != NULL)
 			name = g_path_get_basename (uri);
@@ -876,26 +876,26 @@ sanitize (GaimDesktopItem *item, const char *uri)
 		if (name == NULL)
 			name = g_strdup (_("No name"));
 		g_hash_table_replace (item->main_hash,
-				      g_strdup (GAIM_DESKTOP_ITEM_NAME), 
+				      g_strdup (PURPLE_DESKTOP_ITEM_NAME), 
 				      name);
 		item->keys = g_list_prepend
-			(item->keys, g_strdup (GAIM_DESKTOP_ITEM_NAME));
+			(item->keys, g_strdup (PURPLE_DESKTOP_ITEM_NAME));
 	}
-	if (lookup (item, GAIM_DESKTOP_ITEM_ENCODING) == NULL) {
+	if (lookup (item, PURPLE_DESKTOP_ITEM_ENCODING) == NULL) {
 		/* We store everything in UTF-8 so write that down */
 		g_hash_table_replace (item->main_hash,
-				      g_strdup (GAIM_DESKTOP_ITEM_ENCODING), 
+				      g_strdup (PURPLE_DESKTOP_ITEM_ENCODING), 
 				      g_strdup ("UTF-8"));
 		item->keys = g_list_prepend
-			(item->keys, g_strdup (GAIM_DESKTOP_ITEM_ENCODING));
+			(item->keys, g_strdup (PURPLE_DESKTOP_ITEM_ENCODING));
 	}
-	if (lookup (item, GAIM_DESKTOP_ITEM_VERSION) == NULL) {
+	if (lookup (item, PURPLE_DESKTOP_ITEM_VERSION) == NULL) {
 		/* this is the version that we follow, so write it down */
 		g_hash_table_replace (item->main_hash,
-				      g_strdup (GAIM_DESKTOP_ITEM_VERSION), 
+				      g_strdup (PURPLE_DESKTOP_ITEM_VERSION), 
 				      g_strdup ("1.0"));
 		item->keys = g_list_prepend
-			(item->keys, g_strdup (GAIM_DESKTOP_ITEM_VERSION));
+			(item->keys, g_strdup (PURPLE_DESKTOP_ITEM_VERSION));
 	}
 }
 
@@ -909,7 +909,7 @@ enum {
 	KeyValue
 };
 
-static GaimDesktopItem *
+static PurpleDesktopItem *
 ditem_load (FILE *df,
 	    gboolean no_translations,
 	    const char *uri)
@@ -919,7 +919,7 @@ ditem_load (FILE *df,
 	char *next = CharBuffer;
 	int c;
 	Encoding encoding;
-	GaimDesktopItem *item;
+	PurpleDesktopItem *item;
 	Section *cur_section = NULL;
 	char *key = NULL;
 	gboolean old_kde = FALSE;
@@ -941,13 +941,13 @@ ditem_load (FILE *df,
 		return NULL;
 	}
 
-	item = _gaim_desktop_item_new ();
+	item = _purple_desktop_item_new ();
 	item->modified = FALSE;
 
 	/* Note: location and mtime are filled in by the new_from_file
 	 * function since it has those values */
 
-#define GAIM_DESKTOP_ITEM_OVERFLOW (next == &CharBuffer [sizeof(CharBuffer)-1])
+#define PURPLE_DESKTOP_ITEM_OVERFLOW (next == &CharBuffer [sizeof(CharBuffer)-1])
 
 	state = FirstBrace;
 	while ((c = getc (df)) != EOF) {
@@ -957,7 +957,7 @@ ditem_load (FILE *df,
 		switch (state) {
 
 		case OnSecHeader:
-			if (c == ']' || GAIM_DESKTOP_ITEM_OVERFLOW) {
+			if (c == ']' || PURPLE_DESKTOP_ITEM_OVERFLOW) {
 				*next = '\0';
 				next = CharBuffer;
 
@@ -1028,13 +1028,13 @@ ditem_load (FILE *df,
 			if ((c == ' ' && state != KeyDefOnKey) || c == '\t')
 				break;
 	    
-			if (c == '\n' || GAIM_DESKTOP_ITEM_OVERFLOW) { /* Abort Definition */
+			if (c == '\n' || PURPLE_DESKTOP_ITEM_OVERFLOW) { /* Abort Definition */
 				next = CharBuffer;
 				state = KeyDef;
 				break;
 			}
 	    
-			if (c == '=' || GAIM_DESKTOP_ITEM_OVERFLOW){
+			if (c == '=' || PURPLE_DESKTOP_ITEM_OVERFLOW){
 				*next = '\0';
 
 				g_free (key);
@@ -1048,7 +1048,7 @@ ditem_load (FILE *df,
 			break;
 
 		case KeyValue:
-			if (GAIM_DESKTOP_ITEM_OVERFLOW || c == '\n'){
+			if (PURPLE_DESKTOP_ITEM_OVERFLOW || c == '\n'){
 				*next = '\0';
 
 				insert_key (item, cur_section, encoding,
@@ -1079,7 +1079,7 @@ ditem_load (FILE *df,
 		key = NULL;
 	}
 
-#undef GAIM_DESKTOP_ITEM_OVERFLOW
+#undef PURPLE_DESKTOP_ITEM_OVERFLOW
 
 	/* keys were inserted in reverse */
 	if (cur_section != NULL &&
@@ -1144,10 +1144,10 @@ dup_section (Section *sec)
 /**************************************************************************
  * Public functions
  **************************************************************************/
-GaimDesktopItem *
-gaim_desktop_item_new_from_file (const char *filename)
+PurpleDesktopItem *
+purple_desktop_item_new_from_file (const char *filename)
 {
-	GaimDesktopItem *retval;
+	PurpleDesktopItem *retval;
 	FILE *dfile;
 
 	g_return_val_if_fail (filename != NULL, NULL);
@@ -1163,8 +1163,8 @@ gaim_desktop_item_new_from_file (const char *filename)
 	return retval;
 }
 
-GaimDesktopItemType
-gaim_desktop_item_get_entry_type (const GaimDesktopItem *item)
+PurpleDesktopItemType
+purple_desktop_item_get_entry_type (const PurpleDesktopItem *item)
 {
 	g_return_val_if_fail (item != NULL, 0);
 	g_return_val_if_fail (item->refcount > 0, 0);
@@ -1173,7 +1173,7 @@ gaim_desktop_item_get_entry_type (const GaimDesktopItem *item)
 }
 
 const char *
-gaim_desktop_item_get_string (const GaimDesktopItem *item,
+purple_desktop_item_get_string (const PurpleDesktopItem *item,
 			      const char *attr)
 {
 	g_return_val_if_fail (item != NULL, NULL);
@@ -1183,16 +1183,16 @@ gaim_desktop_item_get_string (const GaimDesktopItem *item,
 	return lookup (item, attr);
 }
 
-GaimDesktopItem *
-gaim_desktop_item_copy (const GaimDesktopItem *item)
+PurpleDesktopItem *
+purple_desktop_item_copy (const PurpleDesktopItem *item)
 {
 	GList *li;
-	GaimDesktopItem *retval;
+	PurpleDesktopItem *retval;
 
 	g_return_val_if_fail (item != NULL, NULL);
 	g_return_val_if_fail (item->refcount > 0, NULL);
 
-	retval = _gaim_desktop_item_new ();
+	retval = _purple_desktop_item_new ();
 
 	retval->type = item->type;
 	retval->modified = item->modified;
@@ -1226,7 +1226,7 @@ gaim_desktop_item_copy (const GaimDesktopItem *item)
 }
 
 void
-gaim_desktop_item_unref (GaimDesktopItem *item)
+purple_desktop_item_unref (PurpleDesktopItem *item)
 {
 	g_return_if_fail (item != NULL);
 	g_return_if_fail (item->refcount > 0);
@@ -1258,14 +1258,14 @@ gaim_desktop_item_unref (GaimDesktopItem *item)
 }
 
 GType
-gaim_desktop_item_get_type (void)
+purple_desktop_item_get_type (void)
 {
 	static GType type = 0;
 
 	if (type == 0) {
-		type = g_boxed_type_register_static ("GaimDesktopItem",
-						     _gaim_desktop_item_copy,
-						     _gaim_desktop_item_free);
+		type = g_boxed_type_register_static ("PurpleDesktopItem",
+						     _purple_desktop_item_copy,
+						     _purple_desktop_item_free);
 	}
 
 	return type;

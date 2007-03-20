@@ -1,5 +1,5 @@
 /*
- * gaim - Jabber Protocol Plugin
+ * purple - Jabber Protocol Plugin
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -54,14 +54,14 @@ static void chats_send_presence_foreach(gpointer key, gpointer val,
 	g_free(chat_full_jid);
 }
 
-void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
+void jabber_presence_fake_to_self(JabberStream *js, const PurpleStatus *gstatus) {
 	char *my_base_jid;
 
 	if(!js->user)
 		return;
 
 	my_base_jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
-	if(gaim_find_buddy(js->gc->account, my_base_jid)) {
+	if(purple_find_buddy(js->gc->account, my_base_jid)) {
 		JabberBuddy *jb;
 		JabberBuddyResource *jbr;
 		if((jb = jabber_buddy_find(js, my_base_jid, TRUE))) {
@@ -69,7 +69,7 @@ void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
 			char *msg;
 			int priority;
 
-			gaim_status_to_jabber(gstatus, &state, &msg, &priority);
+			purple_status_to_jabber(gstatus, &state, &msg, &priority);
 
 			if (state == JABBER_BUDDY_STATE_UNAVAILABLE || state == JABBER_BUDDY_STATE_UNKNOWN) {
 				jabber_buddy_remove_resource(jb, js->user->resource);
@@ -77,9 +77,9 @@ void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
 				jabber_buddy_track_resource(jb, js->user->resource, priority, state, msg);
 			}
 			if((jbr = jabber_buddy_find_resource(jb, NULL))) {
-				gaim_prpl_got_user_status(js->gc->account, my_base_jid, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
+				purple_prpl_got_user_status(js->gc->account, my_base_jid, jabber_buddy_state_get_status_id(jbr->state), "priority", jbr->priority, jbr->status ? "message" : NULL, jbr->status, NULL);
 			} else {
-				gaim_prpl_got_user_status(js->gc->account, my_base_jid, "offline", msg ? "message" : NULL, msg, NULL);
+				purple_prpl_got_user_status(js->gc->account, my_base_jid, "offline", msg ? "message" : NULL, msg, NULL);
 			}
 
 			g_free(msg);
@@ -89,9 +89,9 @@ void jabber_presence_fake_to_self(JabberStream *js, const GaimStatus *gstatus) {
 }
 
 
-void jabber_presence_send(GaimAccount *account, GaimStatus *status)
+void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 {
-	GaimConnection *gc = NULL;
+	PurpleConnection *gc = NULL;
 	JabberStream *js = NULL;
 	gboolean disconnected;
 	int primitive;
@@ -100,19 +100,19 @@ void jabber_presence_send(GaimAccount *account, GaimStatus *status)
 	JabberBuddyState state;
 	int priority;
 
-	if(!gaim_status_is_active(status))
+	if(!purple_status_is_active(status))
 		return;
 
-	disconnected = gaim_account_is_disconnected(account);
-	primitive = gaim_status_type_get_primitive(gaim_status_get_type(status));
+	disconnected = purple_account_is_disconnected(account);
+	primitive = purple_status_type_get_primitive(purple_status_get_type(status));
 
 	if(disconnected)
 		return;
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 	js = gc->proto_data;
 
-	gaim_status_to_jabber(status, &state, &stripped, &priority);
+	purple_status_to_jabber(status, &state, &stripped, &priority);
 
 
 	presence = jabber_presence_create(state, stripped, priority);
@@ -174,7 +174,7 @@ xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int pri
 }
 
 struct _jabber_add_permit {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	JabberStream *js;
 	char *who;
 };
@@ -199,7 +199,7 @@ static void deny_add_cb(struct _jabber_add_permit *jap)
 static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointer blah)
 {
 	JabberBuddy *jb = NULL;
-	GaimBuddy *b = NULL;
+	PurpleBuddy *b = NULL;
 	xmlnode *vcard, *photo, *binval;
 	char *text;
 	guchar *data;
@@ -219,20 +219,20 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 				(( (binval = xmlnode_get_child(photo, "BINVAL")) &&
 				(text = xmlnode_get_data(binval))) ||
 				(text = xmlnode_get_data(photo)))) {
-			data = gaim_base64_decode(text, &size);
+			data = purple_base64_decode(text, &size);
 
-			gaim_buddy_icons_set_for_user(js->gc->account, from, data, size);
-			if((b = gaim_find_buddy(js->gc->account, from))) {
+			purple_buddy_icons_set_for_user(js->gc->account, from, data, size);
+			if((b = purple_find_buddy(js->gc->account, from))) {
 				unsigned char hashval[20];
 				char hash[41], *p;
 				int i;
 
-				gaim_cipher_digest_region("sha1", data, size,
+				purple_cipher_digest_region("sha1", data, size,
 						sizeof(hashval), hashval, NULL);
 				p = hash;
 				for(i=0; i<20; i++, p+=2)
 					snprintf(p, 3, "%02x", hashval[i]);
-				gaim_blist_node_set_string((GaimBlistNode*)b, "avatar_hash", hash);
+				purple_blist_node_set_string((PurpleBlistNode*)b, "avatar_hash", hash);
 			}
 			g_free(data);
 			g_free(text);
@@ -253,9 +253,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	JabberChat *chat;
 	JabberBuddy *jb;
 	JabberBuddyResource *jbr = NULL, *found_jbr = NULL;
-	GaimConvChatBuddyFlags flags = GAIM_CBFLAGS_NONE;
+	PurpleConvChatBuddyFlags flags = PURPLE_CBFLAGS_NONE;
 	gboolean delayed = FALSE;
-	GaimBuddy *b = NULL;
+	PurpleBuddy *b = NULL;
 	char *buddy_name;
 	JabberBuddyState state = JABBER_BUDDY_STATE_UNKNOWN;
 	xmlnode *y;
@@ -281,7 +281,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	} else if(type && !strcmp(type, "subscribe")) {
 		struct _jabber_add_permit *jap = g_new0(struct _jabber_add_permit, 1);
 		gboolean onlist = FALSE;
-		GaimBuddy *buddy = gaim_find_buddy(gaim_connection_get_account(js->gc), from);
+		PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(js->gc), from);
 		JabberBuddy *jb = NULL;
 
 		if (buddy) {
@@ -294,7 +294,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		jap->who = g_strdup(from);
 		jap->js = js;
 
-		gaim_account_request_authorization(gaim_connection_get_account(js->gc), from, NULL, NULL, NULL, onlist,
+		purple_account_request_authorization(purple_connection_get_account(js->gc), from, NULL, NULL, NULL, onlist,
 					   	   G_CALLBACK(authorize_add_cb), G_CALLBACK(deny_add_cb), jap);
 		jabber_id_free(jid);
 		return;
@@ -348,9 +348,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					const char *code = xmlnode_get_attrib(z, "code");
 					if(code && !strcmp(code, "201")) {
 						if((chat = jabber_chat_find(js, jid->node, jid->domain))) {
-							chat->config_dialog_type = GAIM_REQUEST_ACTION;
+							chat->config_dialog_type = PURPLE_REQUEST_ACTION;
 							chat->config_dialog_handle =
-								gaim_request_action(js->gc,
+								purple_request_action(js->gc,
 										_("Create New Room"),
 										_("Create New Room"),
 										_("You are creating a new room.  Would"
@@ -368,12 +368,12 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					affiliation = xmlnode_get_attrib(z, "affiliation");
 					role = xmlnode_get_attrib(z, "role");
 					if(affiliation != NULL && !strcmp(affiliation, "owner"))
-						flags |= GAIM_CBFLAGS_FOUNDER;
+						flags |= PURPLE_CBFLAGS_FOUNDER;
 					if (role != NULL) {
 						if (!strcmp(role, "moderator"))
-							flags |= GAIM_CBFLAGS_OP;
+							flags |= PURPLE_CBFLAGS_OP;
 						else if (!strcmp(role, "participant"))
-							flags |= GAIM_CBFLAGS_VOICE;
+							flags |= PURPLE_CBFLAGS_VOICE;
 					}
 				}
 			} else if(xmlns && !strcmp(xmlns, "vcard-temp:x:update")) {
@@ -401,7 +401,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			} else {
 				title = g_strdup_printf(_("Error joining chat %s"), from);
 			}
-			gaim_notify_error(js->gc, title, title, msg);
+			purple_notify_error(js->gc, title, title, msg);
 			g_free(title);
 			g_free(msg);
 
@@ -456,7 +456,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 							g_free(chat->handle);
 							chat->handle = g_strdup(nick);
 						}
-						gaim_conv_chat_rename_user(GAIM_CONV_CHAT(chat->conv), jid->resource, nick);
+						purple_conv_chat_rename_user(PURPLE_CONV_CHAT(chat->conv), jid->resource, nick);
 						jabber_chat_remove_handle(chat, jid->resource);
 						break;
 					} else if(!strcmp(code, "307")) {
@@ -475,7 +475,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 					serv_got_chat_left(js->gc, chat->id);
 					jabber_chat_destroy(chat);
 				} else {
-					gaim_conv_chat_remove_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
+					purple_conv_chat_remove_user(PURPLE_CONV_CHAT(chat->conv), jid->resource,
 							status);
 					jabber_chat_remove_handle(chat, jid->resource);
 				}
@@ -485,7 +485,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				chat->id = i++;
 				chat->muc = muc;
 				chat->conv = serv_got_joined_chat(js->gc, chat->id, room_jid);
-				gaim_conv_chat_set_nick(GAIM_CONV_CHAT(chat->conv), chat->handle);
+				purple_conv_chat_set_nick(PURPLE_CONV_CHAT(chat->conv), chat->handle);
 
 				jabber_chat_disco_traffic(chat);
 			}
@@ -496,19 +496,19 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			jabber_chat_track_handle(chat, jid->resource, real_jid, affiliation, role);
 
 			if(!jabber_chat_find_buddy(chat->conv, jid->resource))
-				gaim_conv_chat_add_user(GAIM_CONV_CHAT(chat->conv), jid->resource,
+				purple_conv_chat_add_user(PURPLE_CONV_CHAT(chat->conv), jid->resource,
 						real_jid, flags, !delayed);
 			else
-				gaim_conv_chat_user_set_flags(GAIM_CONV_CHAT(chat->conv), jid->resource,
+				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(chat->conv), jid->resource,
 						flags);
 		}
 		g_free(room_jid);
 	} else {
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
 				jid->node ? "@" : "", jid->domain);
-		if((b = gaim_find_buddy(js->gc->account, buddy_name)) == NULL) {
-			gaim_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%x)",
-				buddy_name, gaim_account_get_username(js->gc->account), js->gc->account);
+		if((b = purple_find_buddy(js->gc->account, buddy_name)) == NULL) {
+			purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%x)",
+				buddy_name, purple_account_get_username(js->gc->account), js->gc->account);
 			jabber_id_free(jid);
 			if(avatar_hash)
 				g_free(avatar_hash);
@@ -518,7 +518,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if(avatar_hash) {
-			const char *avatar_hash2 = gaim_blist_node_get_string((GaimBlistNode*)b, "avatar_hash");
+			const char *avatar_hash2 = purple_blist_node_get_string((PurpleBlistNode*)b, "avatar_hash");
 			if(!avatar_hash2 || strcmp(avatar_hash, avatar_hash2)) {
 				JabberIq *iq;
 				xmlnode *vcard;
@@ -546,11 +546,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		if(state == JABBER_BUDDY_STATE_ERROR ||
 				(type && (!strcmp(type, "unavailable") ||
 						  !strcmp(type, "unsubscribed")))) {
-			GaimConversation *conv;
+			PurpleConversation *conv;
 
 			jabber_buddy_remove_resource(jb, jid->resource);
 			if((conv = jabber_find_unnormalized_conv(from, js->gc->account)))
-				gaim_conversation_set_name(conv, buddy_name);
+				purple_conversation_set_name(conv, buddy_name);
 
 		} else {
 			jbr = jabber_buddy_track_resource(jb, jid->resource, priority,
@@ -559,10 +559,10 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
 			if(!jbr || jbr == found_jbr) {
-				gaim_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status, NULL);
+				purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status, NULL);
 			}
 		} else {
-			gaim_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
+			purple_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}
 		g_free(buddy_name);
 	}
@@ -583,7 +583,7 @@ void jabber_presence_subscription_set(JabberStream *js, const char *who, const c
 	xmlnode_free(presence);
 }
 
-void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, char **msg, int *priority)
+void purple_status_to_jabber(const PurpleStatus *status, JabberBuddyState *state, char **msg, int *priority)
 {
 	const char *status_id = NULL;
 	const char *formatted_msg = NULL;
@@ -596,22 +596,22 @@ void gaim_status_to_jabber(const GaimStatus *status, JabberBuddyState *state, ch
 		if(state) *state = JABBER_BUDDY_STATE_UNAVAILABLE;
 	} else {
 		if(state) {
-			status_id = gaim_status_get_id(status);
+			status_id = purple_status_get_id(status);
 			*state = jabber_buddy_status_id_get_state(status_id);
 		}
 
 		if(msg) {
-			formatted_msg = gaim_status_get_attr_string(status, "message");
+			formatted_msg = purple_status_get_attr_string(status, "message");
 
 			/* if the message is blank, then there really isn't a message */
 			if(formatted_msg && !*formatted_msg)
 				formatted_msg = NULL;
 
 			if(formatted_msg)
-				gaim_markup_html_to_xhtml(formatted_msg, NULL, msg);
+				purple_markup_html_to_xhtml(formatted_msg, NULL, msg);
 		}
 
 		if(priority)
-			*priority = gaim_status_get_attr_int(status, "priority");
+			*priority = purple_status_get_attr_int(status, "priority");
 	}
 }

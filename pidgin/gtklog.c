@@ -2,9 +2,9 @@
  * @file gtklog.c GTK+ Log viewer
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -32,7 +32,7 @@
 #include "request.h"
 #include "util.h"
 
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkblist.h"
 #include "gtkimhtml.h"
 #include "gtklog.h"
@@ -43,10 +43,10 @@ static void populate_log_tree(PidginLogViewer *lv);
 static PidginLogViewer *syslog_viewer = NULL;
 
 struct log_viewer_hash_t {
-	GaimLogType type;
+	PurpleLogType type;
 	char *screenname;
-	GaimAccount *account;
-	GaimContact *contact;
+	PurpleAccount *account;
+	PurpleContact *contact;
 };
 
 static guint log_viewer_hash(gconstpointer data)
@@ -57,7 +57,7 @@ static guint log_viewer_hash(gconstpointer data)
 		return g_direct_hash(viewer->contact);
 
 	return g_str_hash(viewer->screenname) +
-		g_str_hash(gaim_account_get_username(viewer->account));
+		g_str_hash(purple_account_get_username(viewer->account));
 }
 
 static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
@@ -79,9 +79,9 @@ static gboolean log_viewer_equal(gconstpointer y, gconstpointer z)
 			return FALSE;
 	}
 
-	normal = g_strdup(gaim_normalize(a->account, a->screenname));
+	normal = g_strdup(purple_normalize(a->account, a->screenname));
 	ret = (a->account == b->account) &&
-		!strcmp(normal, gaim_normalize(b->account, b->screenname));
+		!strcmp(normal, purple_normalize(b->account, b->screenname));
 	g_free(normal);
 
 	return ret;
@@ -110,12 +110,12 @@ static void select_first_log(PidginLogViewer *lv)
 	gtk_tree_path_free(path);
 }
 
-static const char *log_get_date(GaimLog *log)
+static const char *log_get_date(PurpleLog *log)
 {
 	if (log->tm)
-		return gaim_date_format_full(log->tm);
+		return purple_date_format_full(log->tm);
 	else
-		return gaim_date_format_full(localtime(&log->time));
+		return purple_date_format_full(localtime(&log->time));
 }
 
 static void search_cb(GtkWidget *button, PidginLogViewer *lv)
@@ -150,10 +150,10 @@ static void search_cb(GtkWidget *button, PidginLogViewer *lv)
 	gtk_imhtml_clear(GTK_IMHTML(lv->imhtml));
 
 	for (logs = lv->logs; logs != NULL; logs = logs->next) {
-		char *read = gaim_log_read((GaimLog*)logs->data, NULL);
-		if (read && *read && gaim_strcasestr(read, search_term)) {
+		char *read = purple_log_read((PurpleLog*)logs->data, NULL);
+		if (read && *read && purple_strcasestr(read, search_term)) {
 			GtkTreeIter iter;
-			GaimLog *log = logs->data;
+			PurpleLog *log = logs->data;
 
 			gtk_tree_store_append (lv->treestore, &iter, NULL);
 			gtk_tree_store_set(lv->treestore, &iter,
@@ -172,7 +172,7 @@ static void destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
 
 #ifdef _WIN32
 	if (resp == GTK_RESPONSE_HELP) {
-		char *logdir = g_build_filename(gaim_user_dir(), "logs", NULL);
+		char *logdir = g_build_filename(purple_user_dir(), "logs", NULL);
 		winpidgin_shell_execute(logdir, "explore", NULL);
 		g_free(logdir);
 		return;
@@ -188,9 +188,9 @@ static void destroy_cb(GtkWidget *w, gint resp, struct log_viewer_hash_t *ht) {
 	} else
 		syslog_viewer = NULL;
 
-	gaim_request_close_with_handle(lv);
+	purple_request_close_with_handle(lv);
 
-	g_list_foreach(lv->logs, (GFunc)gaim_log_free, NULL);
+	g_list_foreach(lv->logs, (GFunc)purple_log_free, NULL);
 	g_list_free(lv->logs);
 
 	g_free(lv->search);
@@ -214,9 +214,9 @@ static void delete_log_cleanup_cb(gpointer *data)
 
 static void delete_log_cb(gpointer *data)
 {
-	if (!gaim_log_delete((GaimLog *)data[2]))
+	if (!purple_log_delete((PurpleLog *)data[2]))
 	{
-		gaim_notify_error(NULL, NULL, "Log Deletion Failed",
+		purple_notify_error(NULL, NULL, "Log Deletion Failed",
 		                  "Check permissions and try again.");
 	}
 	else
@@ -245,35 +245,35 @@ static void delete_log_cb(gpointer *data)
 static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 {
 	PidginLogViewer *lv = data[0];
-	GaimLog *log = data[1];
+	PurpleLog *log = data[1];
 	const char *time = log_get_date(log);
 	const char *name;
 	char *tmp;
 	gpointer *data2;
 
-	if (log->type == GAIM_LOG_IM)
+	if (log->type == PURPLE_LOG_IM)
 	{
-		GaimBuddy *buddy = gaim_find_buddy(log->account, log->name);
+		PurpleBuddy *buddy = purple_find_buddy(log->account, log->name);
 		if (buddy != NULL)
-			name = gaim_buddy_get_contact_alias(buddy);
+			name = purple_buddy_get_contact_alias(buddy);
 		else
 			name = log->name;
 
 		tmp = g_strdup_printf(_("Are you sure you want to permanently delete the log of the "
 		                        "conversation with %s which started at %s?"), name, time);
 	}
-	else if (log->type == GAIM_LOG_CHAT)
+	else if (log->type == PURPLE_LOG_CHAT)
 	{
-		GaimChat *chat = gaim_blist_find_chat(log->account, log->name);
+		PurpleChat *chat = purple_blist_find_chat(log->account, log->name);
 		if (chat != NULL)
-			name = gaim_chat_get_name(chat);
+			name = purple_chat_get_name(chat);
 		else
 			name = log->name;
 
 		tmp = g_strdup_printf(_("Are you sure you want to permanently delete the log of the "
 		                        "conversation in %s which started at %s?"), name, time);
 	}
-	else if (log->type == GAIM_LOG_SYSTEM)
+	else if (log->type == PURPLE_LOG_SYSTEM)
 	{
 		tmp = g_strdup_printf(_("Are you sure you want to permanently delete the system log "
 		                        "which started at %s?"), time);
@@ -290,7 +290,7 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	data2[0] = lv->treestore;
 	data2[1] = data[3]; /* iter */
 	data2[2] = log;
-	gaim_request_action(lv, NULL, "Delete Log?", tmp,
+	purple_request_action(lv, NULL, "Delete Log?", tmp,
 	                    0, data2, 2, _("Delete"), delete_log_cb, _("Cancel"), delete_log_cleanup_cb);
 	g_free(tmp);
 }
@@ -300,7 +300,7 @@ static void log_show_popup_menu(GtkWidget *treeview, GdkEventButton *event, gpoi
 	GtkWidget *menu = gtk_menu_new();
 	GtkWidget *menuitem = gtk_menu_item_new_with_label("Delete Log...");
 
-	if (!gaim_log_is_deletable((GaimLog *)data[1]))
+	if (!purple_log_is_deletable((PurpleLog *)data[1]))
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
 	g_signal_connect(menuitem, "activate", G_CALLBACK(log_delete_log_cb), data);
@@ -320,7 +320,7 @@ static gboolean log_button_press_cb(GtkWidget *treeview, GdkEventButton *event, 
 		GtkTreePath *path;
 		GtkTreeIter *iter;
 		GValue val;
-		GaimLog *log;
+		PurpleLog *log;
 		gpointer *data;
 
 		if (!gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(treeview), event->x, event->y, &path, NULL, NULL, NULL))
@@ -356,7 +356,7 @@ static gboolean log_popup_menu_cb(GtkWidget *treeview, PidginLogViewer *lv)
 	GtkTreeSelection *sel;
 	GtkTreeIter *iter;
 	GValue val;
-	GaimLog *log;
+	PurpleLog *log;
 	gpointer *data;
 
 	iter = g_new(GtkTreeIter, 1);
@@ -396,8 +396,8 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 	GtkTreeIter iter;
 	GValue val;
 	GtkTreeModel *model = GTK_TREE_MODEL(viewer->treestore);
-	GaimLog *log = NULL;
-	GaimLogReadFlags flags;
+	PurpleLog *log = NULL;
+	PurpleLogReadFlags flags;
 	char *read = NULL;
 
 	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
@@ -413,9 +413,9 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 
 	pidgin_set_cursor(viewer->window, GDK_WATCH);
 
-	if (log->type != GAIM_LOG_SYSTEM) {
+	if (log->type != PURPLE_LOG_SYSTEM) {
 		char *title;
-		if (log->type == GAIM_LOG_CHAT)
+		if (log->type == PURPLE_LOG_CHAT)
 			title = g_strdup_printf(_("<span size='larger' weight='bold'>Conversation in %s on %s</span>"),
 									log->name, log_get_date(log));
 		else
@@ -426,18 +426,18 @@ static void log_select_cb(GtkTreeSelection *sel, PidginLogViewer *viewer) {
 		g_free(title);
 	}
 
-	read = gaim_log_read(log, &flags);
+	read = purple_log_read(log, &flags);
 	viewer->flags = flags;
 
 	gtk_imhtml_clear(GTK_IMHTML(viewer->imhtml));
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(viewer->imhtml),
-	                            gaim_account_get_protocol_name(log->account));
+	                            purple_account_get_protocol_name(log->account));
 
-	gaim_signal_emit(pidgin_log_get_handle(), "log-displaying", viewer, log);
+	purple_signal_emit(pidgin_log_get_handle(), "log-displaying", viewer, log);
 
 	gtk_imhtml_append_text(GTK_IMHTML(viewer->imhtml), read,
 			       GTK_IMHTML_NO_COMMENTS | GTK_IMHTML_NO_TITLE | GTK_IMHTML_NO_SCROLL |
-			       ((flags & GAIM_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
+			       ((flags & PURPLE_LOG_READ_NO_NEWLINE) ? GTK_IMHTML_NO_NEWLINE : 0));
 	g_free(read);
 
 	if (viewer->search != NULL) {
@@ -464,9 +464,9 @@ static void populate_log_tree(PidginLogViewer *lv)
 	GList *logs = lv->logs;
 
 	while (logs != NULL) {
-		GaimLog *log = logs->data;
+		PurpleLog *log = logs->data;
 
-		month = gaim_utf8_strftime(_("%B %Y"),
+		month = purple_utf8_strftime(_("%B %Y"),
 		                           log->tm ? log->tm : localtime(&log->time));
 
 		if (strcmp(month, prev_top_month) != 0)
@@ -512,19 +512,19 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 		const char *log_preferences = NULL;
 
 		if (ht == NULL) {
-			if (!gaim_prefs_get_bool("/core/logging/log_system"))
+			if (!purple_prefs_get_bool("/core/logging/log_system"))
 				log_preferences = _("System events will only be logged if the \"Log all status changes to system log\" preference is enabled.");
 		} else {
-			if (ht->type == GAIM_LOG_IM) {
-				if (!gaim_prefs_get_bool("/core/logging/log_ims"))
+			if (ht->type == PURPLE_LOG_IM) {
+				if (!purple_prefs_get_bool("/core/logging/log_ims"))
 					log_preferences = _("Instant messages will only be logged if the \"Log all instant messages\" preference is enabled.");
-			} else if (ht->type == GAIM_LOG_CHAT) {
-				if (!gaim_prefs_get_bool("/core/logging/log_chats"))
+			} else if (ht->type == PURPLE_LOG_CHAT) {
+				if (!purple_prefs_get_bool("/core/logging/log_chats"))
 					log_preferences = _("Chats will only be logged if the \"Log all chats\" preference is enabled.");
 			}
 		}
 
-		gaim_notify_info(NULL, title, _("No logs were found"), log_preferences);
+		purple_notify_info(NULL, title, _("No logs were found"), log_preferences);
 		return NULL;
 	}
 
@@ -541,7 +541,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	/* Steal the "HELP" response and use it to trigger browsing to the logs folder */
 	gtk_dialog_add_button(GTK_DIALOG(lv->window), _("_Browse logs folder"), GTK_RESPONSE_HELP);
 #endif
-	gtk_container_set_border_width (GTK_CONTAINER(lv->window), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER(lv->window), PIDGIN_HIG_BOX_SPACE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(lv->window), FALSE);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(lv->window)->vbox), 0);
 	g_signal_connect(G_OBJECT(lv->window), "response",
@@ -550,8 +550,8 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 
 	/* Icon *************/
 	if (icon != NULL) {
-		title_box = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
-		gtk_container_set_border_width(GTK_CONTAINER(title_box), GAIM_HIG_BOX_SPACE);
+		title_box = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+		gtk_container_set_border_width(GTK_CONTAINER(title_box), PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), title_box, FALSE, FALSE, 0);
 
 		gtk_box_pack_start(GTK_BOX(title_box), icon, FALSE, FALSE, 0);
@@ -570,7 +570,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 
 	/* Pane *************/
 	pane = gtk_hpaned_new();
-	gtk_container_set_border_width(GTK_CONTAINER(pane), GAIM_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(pane), PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(GTK_DIALOG(lv->window)->vbox), pane, TRUE, TRUE, 0);
 
 	/* List *************/
@@ -602,7 +602,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 
 	/* Log size ************/
 	if(log_size) {
-		char *sz_txt = gaim_str_size_to_units(log_size);
+		char *sz_txt = purple_str_size_to_units(log_size);
 		text = g_strdup_printf("<span weight='bold'>%s</span> %s", _("Total log size:"), sz_txt);
 		size_label = gtk_label_new(NULL);
 		gtk_label_set_markup(GTK_LABEL(size_label), text);
@@ -614,7 +614,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	}
 
 	/* A fancy little box ************/
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_paned_add2(GTK_PANED(pane), vbox);
 
 	/* Viewer ************/
@@ -625,7 +625,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	gtk_widget_show(frame);
 
 	/* Search box **********/
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	lv->entry = gtk_entry_new();
 	gtk_box_pack_start(GTK_BOX(hbox), lv->entry, TRUE, TRUE, 0);
@@ -641,7 +641,7 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 	return lv;
 }
 
-void pidgin_log_show(GaimLogType type, const char *screenname, GaimAccount *account) {
+void pidgin_log_show(PurpleLogType type, const char *screenname, PurpleAccount *account) {
 	struct log_viewer_hash_t *ht;
 	PidginLogViewer *lv = NULL;
 	const char *name = screenname;
@@ -665,33 +665,33 @@ void pidgin_log_show(GaimLogType type, const char *screenname, GaimAccount *acco
 		return;
 	}
 
-	if (type == GAIM_LOG_CHAT) {
-		GaimChat *chat;
+	if (type == PURPLE_LOG_CHAT) {
+		PurpleChat *chat;
 
-		chat = gaim_blist_find_chat(account, screenname);
+		chat = purple_blist_find_chat(account, screenname);
 		if (chat != NULL)
-			name = gaim_chat_get_name(chat);
+			name = purple_chat_get_name(chat);
 
 		title = g_strdup_printf(_("Conversations in %s"), name);
 	} else {
-		GaimBuddy *buddy;
+		PurpleBuddy *buddy;
 
-		buddy = gaim_find_buddy(account, screenname);
+		buddy = purple_find_buddy(account, screenname);
 		if (buddy != NULL)
-			name = gaim_buddy_get_contact_alias(buddy);
+			name = purple_buddy_get_contact_alias(buddy);
 
 		title = g_strdup_printf(_("Conversations with %s"), name);
 	}
 
-	display_log_viewer(ht, gaim_log_get_logs(type, screenname, account),
+	display_log_viewer(ht, purple_log_get_logs(type, screenname, account),
 			title, gtk_image_new_from_pixbuf(pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM)), 
-			gaim_log_get_total_size(type, screenname, account));
+			purple_log_get_total_size(type, screenname, account));
 	g_free(title);
 }
 
-void pidgin_log_show_contact(GaimContact *contact) {
+void pidgin_log_show_contact(PurpleContact *contact) {
 	struct log_viewer_hash_t *ht = g_new0(struct log_viewer_hash_t, 1);
-	GaimBlistNode *child;
+	PurpleBlistNode *child;
 	PidginLogViewer *lv = NULL;
 	GList *logs = NULL;
 	GdkPixbuf *pixbuf;
@@ -702,7 +702,7 @@ void pidgin_log_show_contact(GaimContact *contact) {
 
 	g_return_if_fail(contact != NULL);
 
-	ht->type = GAIM_LOG_IM;
+	ht->type = PURPLE_LOG_IM;
 	ht->contact = contact;
 
 	if (log_viewers == NULL) {
@@ -714,14 +714,14 @@ void pidgin_log_show_contact(GaimContact *contact) {
 	}
 
 	for (child = contact->node.child ; child ; child = child->next) {
-		if (!GAIM_BLIST_NODE_IS_BUDDY(child))
+		if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
 			continue;
 
-		logs = g_list_concat(gaim_log_get_logs(GAIM_LOG_IM, ((GaimBuddy *)child)->name,
-						((GaimBuddy *)child)->account), logs);
-		total_log_size += gaim_log_get_total_size(GAIM_LOG_IM, ((GaimBuddy *)child)->name, ((GaimBuddy *)child)->account);
+		logs = g_list_concat(purple_log_get_logs(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name,
+						((PurpleBuddy *)child)->account), logs);
+		total_log_size += purple_log_get_total_size(PURPLE_LOG_IM, ((PurpleBuddy *)child)->name, ((PurpleBuddy *)child)->account);
 	}
-	logs = g_list_sort(logs, gaim_log_compare);
+	logs = g_list_sort(logs, purple_log_compare);
 
         pixbuf = gtk_widget_render_icon (image, PIDGIN_STOCK_STATUS_PERSON,
 	                                 gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL), "GtkWindow");
@@ -730,7 +730,7 @@ void pidgin_log_show_contact(GaimContact *contact) {
 	if (contact->alias != NULL)
 		name = contact->alias;
 	else if (contact->priority != NULL)
-		name = gaim_buddy_get_contact_alias(contact->priority);
+		name = purple_buddy_get_contact_alias(contact->priority);
 
 	title = g_strdup_printf(_("Conversations with %s"), name);
 	display_log_viewer(ht, logs, title, image, total_log_size);
@@ -747,15 +747,15 @@ void pidgin_syslog_show()
 		return;
 	}
 
-	for(accounts = gaim_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
+	for(accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 
-		GaimAccount *account = (GaimAccount *)accounts->data;
-		if(gaim_find_prpl(gaim_account_get_protocol_id(account)) == NULL)
+		PurpleAccount *account = (PurpleAccount *)accounts->data;
+		if(purple_find_prpl(purple_account_get_protocol_id(account)) == NULL)
 			continue;
 
-		logs = g_list_concat(gaim_log_get_system_logs(account), logs);
+		logs = g_list_concat(purple_log_get_system_logs(account), logs);
 	}
-	logs = g_list_sort(logs, gaim_log_compare);
+	logs = g_list_sort(logs, purple_log_compare);
 
 	syslog_viewer = display_log_viewer(NULL, logs, _("System Log"), NULL, 0);
 }
@@ -776,17 +776,17 @@ void pidgin_log_init(void)
 {
 	void *handle = pidgin_log_get_handle();
 
-	gaim_signal_register(handle, "log-displaying",
-	                     gaim_marshal_VOID__POINTER_POINTER,
+	purple_signal_register(handle, "log-displaying",
+	                     purple_marshal_VOID__POINTER_POINTER,
 	                     NULL, 2,
-	                     gaim_value_new(GAIM_TYPE_BOXED,
+	                     purple_value_new(PURPLE_TYPE_BOXED,
 	                                    "PidginLogViewer *"),
-	                     gaim_value_new(GAIM_TYPE_SUBTYPE,
-	                                    GAIM_SUBTYPE_LOG));
+	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                    PURPLE_SUBTYPE_LOG));
 }
 
 void
 pidgin_log_uninit(void)
 {
-	gaim_signals_unregister_by_instance(pidgin_log_get_handle());
+	purple_signals_unregister_by_instance(pidgin_log_get_handle());
 }

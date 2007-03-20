@@ -2,9 +2,9 @@
  * @file gtkdnd-hints.c GTK+ Drag-and-Drop arrow hints
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -122,7 +122,7 @@ dnd_hints_init(void)
 	for (i = 0; hint_windows[i].filename != NULL; i++) {
 		gchar *fname;
 
-		fname = g_build_filename(DATADIR, "pixmaps", "gaim",
+		fname = g_build_filename(DATADIR, "pixmaps", "purple",
 								 hint_windows[i].filename, NULL);
 
 		hint_windows[i].widget = dnd_hints_init_window(fname);

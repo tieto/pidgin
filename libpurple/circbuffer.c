@@ -2,7 +2,7 @@
  * @file circbuffer.h Buffer Utility Functions
  * @ingroup core
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -26,21 +26,21 @@
 
 #define DEFAULT_BUF_SIZE 256
 
-GaimCircBuffer *
-gaim_circ_buffer_new(gsize growsize) {
-	GaimCircBuffer *buf = g_new0(GaimCircBuffer, 1);
+PurpleCircBuffer *
+purple_circ_buffer_new(gsize growsize) {
+	PurpleCircBuffer *buf = g_new0(PurpleCircBuffer, 1);
 	buf->growsize = growsize ? growsize : DEFAULT_BUF_SIZE;
 	return buf;
 }
 
-void gaim_circ_buffer_destroy(GaimCircBuffer *buf) {
+void purple_circ_buffer_destroy(PurpleCircBuffer *buf) {
 	g_return_if_fail(buf != NULL);
 
 	g_free(buf->buffer);
 	g_free(buf);
 }
 
-static void grow_circ_buffer(GaimCircBuffer *buf, gsize len) {
+static void grow_circ_buffer(PurpleCircBuffer *buf, gsize len) {
 	int in_offset = 0, out_offset = 0;
 	int start_buflen;
 	
@@ -88,7 +88,7 @@ static void grow_circ_buffer(GaimCircBuffer *buf, gsize len) {
 	}
 }
 
-void gaim_circ_buffer_append(GaimCircBuffer *buf, gconstpointer src, gsize len) {
+void purple_circ_buffer_append(PurpleCircBuffer *buf, gconstpointer src, gsize len) {
 
 	int len_stored;
 
@@ -122,7 +122,7 @@ void gaim_circ_buffer_append(GaimCircBuffer *buf, gconstpointer src, gsize len) 
 	buf->bufused += len;
 }
 
-gsize gaim_circ_buffer_get_max_read(const GaimCircBuffer *buf) {
+gsize purple_circ_buffer_get_max_read(const PurpleCircBuffer *buf) {
 	gsize max_read;
 
 	g_return_val_if_fail(buf != NULL, 0);
@@ -137,9 +137,9 @@ gsize gaim_circ_buffer_get_max_read(const GaimCircBuffer *buf) {
 	return max_read;
 }
 
-gboolean gaim_circ_buffer_mark_read(GaimCircBuffer *buf, gsize len) {
+gboolean purple_circ_buffer_mark_read(PurpleCircBuffer *buf, gsize len) {
 	g_return_val_if_fail(buf != NULL, FALSE);
-	g_return_val_if_fail(gaim_circ_buffer_get_max_read(buf) >= len, FALSE);
+	g_return_val_if_fail(purple_circ_buffer_get_max_read(buf) >= len, FALSE);
 
 	buf->outptr += len;
 	buf->bufused -= len;

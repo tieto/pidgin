@@ -2,9 +2,9 @@
  * @file sslconn.h SSL API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,39 +22,39 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_SSLCONN_H_
-#define _GAIM_SSLCONN_H_
+#ifndef _PURPLE_SSLCONN_H_
+#define _PURPLE_SSLCONN_H_
 
 #include "proxy.h"
 
-#define GAIM_SSL_DEFAULT_PORT 443
+#define PURPLE_SSL_DEFAULT_PORT 443
 
 typedef enum
 {
-	GAIM_SSL_HANDSHAKE_FAILED = 1,
-	GAIM_SSL_CONNECT_FAILED = 2
-} GaimSslErrorType;
+	PURPLE_SSL_HANDSHAKE_FAILED = 1,
+	PURPLE_SSL_CONNECT_FAILED = 2
+} PurpleSslErrorType;
 
-typedef struct _GaimSslConnection GaimSslConnection;
+typedef struct _PurpleSslConnection PurpleSslConnection;
 
-typedef void (*GaimSslInputFunction)(gpointer, GaimSslConnection *,
-									 GaimInputCondition);
-typedef void (*GaimSslErrorFunction)(GaimSslConnection *, GaimSslErrorType,
+typedef void (*PurpleSslInputFunction)(gpointer, PurpleSslConnection *,
+									 PurpleInputCondition);
+typedef void (*PurpleSslErrorFunction)(PurpleSslConnection *, PurpleSslErrorType,
 									 gpointer);
 
-struct _GaimSslConnection
+struct _PurpleSslConnection
 {
 	char *host;
 	int port;
 	void *connect_cb_data;
-	GaimSslInputFunction connect_cb;
-	GaimSslErrorFunction error_cb;
+	PurpleSslInputFunction connect_cb;
+	PurpleSslErrorFunction error_cb;
 	void *recv_cb_data;
-	GaimSslInputFunction recv_cb;
+	PurpleSslInputFunction recv_cb;
 
 	int fd;
 	int inpa;
-	GaimProxyConnectData *connect_data;
+	PurpleProxyConnectData *connect_data;
 
 	void *private_data;
 };
@@ -68,12 +68,12 @@ typedef struct
 {
 	gboolean (*init)(void);
 	void (*uninit)(void);
-	void (*connectfunc)(GaimSslConnection *gsc);
-	void (*close)(GaimSslConnection *gsc);
-	size_t (*read)(GaimSslConnection *gsc, void *data, size_t len);
-	size_t (*write)(GaimSslConnection *gsc, const void *data, size_t len);
+	void (*connectfunc)(PurpleSslConnection *gsc);
+	void (*close)(PurpleSslConnection *gsc);
+	size_t (*read)(PurpleSslConnection *gsc, void *data, size_t len);
+	size_t (*write)(PurpleSslConnection *gsc, const void *data, size_t len);
 
-} GaimSslOps;
+} PurpleSslOps;
 
 #ifdef __cplusplus
 extern "C" {
@@ -89,7 +89,7 @@ extern "C" {
  *
  * @return TRUE if SSL is supported, or FALSE otherwise.
  */
-gboolean gaim_ssl_is_supported(void);
+gboolean purple_ssl_is_supported(void);
 
 /**
  * Makes a SSL connection to the specified host and port.  The caller
@@ -101,16 +101,16 @@ gboolean gaim_ssl_is_supported(void);
  * @param port       The destination port.
  * @param func       The SSL input handler function.
  * @param error_func The SSL error handler function.  This function
- *                   should NOT call gaim_ssl_close().  In the event
- *                   of an error the GaimSslConnection will be
+ *                   should NOT call purple_ssl_close().  In the event
+ *                   of an error the PurpleSslConnection will be
  *                   destroyed for you.
  * @param data       User-defined data.
  *
  * @return The SSL connection handle.
  */
-GaimSslConnection *gaim_ssl_connect(GaimAccount *account, const char *host,
-									int port, GaimSslInputFunction func,
-									GaimSslErrorFunction error_func,
+PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host,
+									int port, PurpleSslInputFunction func,
+									PurpleSslErrorFunction error_func,
 									void *data);
 
 /**
@@ -124,9 +124,9 @@ GaimSslConnection *gaim_ssl_connect(GaimAccount *account, const char *host,
  *
  * @return The SSL connection handle.
  */
-GaimSslConnection *gaim_ssl_connect_fd(GaimAccount *account, int fd,
-									   GaimSslInputFunction func,
-									   GaimSslErrorFunction error_func,
+PurpleSslConnection *purple_ssl_connect_fd(PurpleAccount *account, int fd,
+									   PurpleSslInputFunction func,
+									   PurpleSslErrorFunction error_func,
 									   void *data);
 
 /**
@@ -136,7 +136,7 @@ GaimSslConnection *gaim_ssl_connect_fd(GaimAccount *account, int fd,
  * @param func  The callback function.
  * @param data  User-defined data.
  */
-void gaim_ssl_input_add(GaimSslConnection *gsc, GaimSslInputFunction func,
+void purple_ssl_input_add(PurpleSslConnection *gsc, PurpleSslInputFunction func,
 						void *data);
 
 /**
@@ -144,7 +144,7 @@ void gaim_ssl_input_add(GaimSslConnection *gsc, GaimSslInputFunction func,
  *
  * @param gsc The SSL connection to close.
  */
-void gaim_ssl_close(GaimSslConnection *gsc);
+void purple_ssl_close(PurpleSslConnection *gsc);
 
 /**
  * Reads data from an SSL connection.
@@ -155,7 +155,7 @@ void gaim_ssl_close(GaimSslConnection *gsc);
  *
  * @return The number of bytes read.
  */
-size_t gaim_ssl_read(GaimSslConnection *gsc, void *buffer, size_t len);
+size_t purple_ssl_read(PurpleSslConnection *gsc, void *buffer, size_t len);
 
 /**
  * Writes data to an SSL connection.
@@ -166,7 +166,7 @@ size_t gaim_ssl_read(GaimSslConnection *gsc, void *buffer, size_t len);
  *
  * @return The number of bytes written.
  */
-size_t gaim_ssl_write(GaimSslConnection *gsc, const void *buffer, size_t len);
+size_t purple_ssl_write(PurpleSslConnection *gsc, const void *buffer, size_t len);
 
 /*@}*/
 
@@ -180,24 +180,24 @@ size_t gaim_ssl_write(GaimSslConnection *gsc, const void *buffer, size_t len);
  *
  * @param ops The SSL operations structure to assign.
  */
-void gaim_ssl_set_ops(GaimSslOps *ops);
+void purple_ssl_set_ops(PurpleSslOps *ops);
 
 /**
  * Returns the current SSL operations structure.
  *
  * @return The SSL operations structure.
  */
-GaimSslOps *gaim_ssl_get_ops(void);
+PurpleSslOps *purple_ssl_get_ops(void);
 
 /**
  * Initializes the SSL subsystem.
  */
-void gaim_ssl_init(void);
+void purple_ssl_init(void);
 
 /**
  * Uninitializes the SSL subsystem.
  */
-void gaim_ssl_uninit(void);
+void purple_ssl_uninit(void);
 
 /*@}*/
 
@@ -205,4 +205,4 @@ void gaim_ssl_uninit(void);
 }
 #endif
 
-#endif /* _GAIM_SSLCONN_H_ */
+#endif /* _PURPLE_SSLCONN_H_ */

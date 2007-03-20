@@ -4,8 +4,8 @@
 
 #include <stdio.h>
 
-#ifndef GAIM_PLUGINS
-# define GAIM_PLUGINS
+#ifndef PURPLE_PLUGINS
+# define PURPLE_PLUGINS
 #endif
 
 #include "internal.h"
@@ -20,14 +20,14 @@
 #include "version.h"
 #include "xmlnode.h"
 
-/* This must be the last Gaim header included. */
+/* This must be the last Purple header included. */
 #ifdef _WIN32
 #include "win32dep.h"
 #endif
 
 /* Where is the Windows partition mounted? */
-#ifndef GAIM_LOG_READER_WINDOWS_MOUNT_POINT
-#define GAIM_LOG_READER_WINDOWS_MOUNT_POINT "/mnt/windows"
+#ifndef PURPLE_LOG_READER_WINDOWS_MOUNT_POINT
+#define PURPLE_LOG_READER_WINDOWS_MOUNT_POINT "/mnt/windows"
 #endif
 
 enum name_guesses {
@@ -45,7 +45,7 @@ enum name_guesses {
  * Adium logs in the log viewer transparently.
  */
 
-static GaimLogLogger *adium_logger;
+static PurpleLogLogger *adium_logger;
 
 enum adium_log_type {
 	ADIUM_HTML,
@@ -57,12 +57,12 @@ struct adium_logger_data {
 	enum adium_log_type type;
 };
 
-static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
+static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
 {
 	GList *list = NULL;
 	const char *logdir;
-	GaimPlugin *plugin;
-	GaimPluginProtocolInfo *prpl_info;
+	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prpl_info;
 	char *prpl_name;
 	char *temp;
 	char *path;
@@ -71,17 +71,17 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 	g_return_val_if_fail(sn != NULL, list);
 	g_return_val_if_fail(account != NULL, list);
 
-	logdir = gaim_prefs_get_string("/plugins/core/log_reader/adium/log_directory");
+	logdir = purple_prefs_get_string("/plugins/core/log_reader/adium/log_directory");
 
 	/* By clearing the log directory path, this logger can be (effectively) disabled. */
 	if (!*logdir)
 		return list;
 
-	plugin = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	plugin = purple_find_prpl(purple_account_get_protocol_id(account));
 	if (!plugin)
 		return NULL;
 
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 	if (!prpl_info->list_icon)
 		return NULL;
 
@@ -96,9 +96,9 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 		const gchar *file;
 
 		while ((file = g_dir_read_name(dir))) {
-			if (!gaim_str_has_prefix(file, sn))
+			if (!purple_str_has_prefix(file, sn))
 				continue;
-			if (gaim_str_has_suffix(file, ".html") || gaim_str_has_suffix(file, ".AdiumHTMLLog")) {
+			if (purple_str_has_suffix(file, ".html") || purple_str_has_suffix(file, ".AdiumHTMLLog")) {
 				struct tm tm;
 				const char *date = file;
 
@@ -106,7 +106,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 				if (sscanf(date, "%u|%u|%u",
 						&tm.tm_year, &tm.tm_mon, &tm.tm_mday) != 3) {
 
-					gaim_debug(GAIM_DEBUG_ERROR, "Adium log parse",
+					purple_debug(PURPLE_DEBUG_ERROR, "Adium log parse",
 							"Filename timestamp parsing error\n");
 				} else {
 					char *filename = g_build_filename(path, file, NULL);
@@ -114,7 +114,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 					char *contents;
 					char *contents2;
 					struct adium_logger_data *data;
-					GaimLog *log;
+					PurpleLog *log;
 
 					if (!handle) {
 						g_free(filename);
@@ -141,7 +141,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 					if (sscanf(contents2, "%u.%u.%u",
 							&tm.tm_hour, &tm.tm_min, &tm.tm_sec) != 3) {
 
-						gaim_debug(GAIM_DEBUG_ERROR, "Adium log parse",
+						purple_debug(PURPLE_DEBUG_ERROR, "Adium log parse",
 								"Contents timestamp parsing error\n");
 						g_free(contents);
 						g_free(filename);
@@ -157,13 +157,13 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 					tm.tm_mon  -= 1;
 
 					/* XXX: Look into this later... Should we pass in a struct tm? */
-					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
+					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
 					log->logger = adium_logger;
 					log->logger_data = data;
 
 					list = g_list_append(list, log);
 				}
-			} else if (gaim_str_has_suffix(file, ".adiumLog")) {
+			} else if (purple_str_has_suffix(file, ".adiumLog")) {
 				struct tm tm;
 				const char *date = file;
 
@@ -171,7 +171,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 				if (sscanf(date, "%u|%u|%u",
 						&tm.tm_year, &tm.tm_mon, &tm.tm_mday) != 3) {
 
-					gaim_debug(GAIM_DEBUG_ERROR, "Adium log parse",
+					purple_debug(PURPLE_DEBUG_ERROR, "Adium log parse",
 							"Filename timestamp parsing error\n");
 				} else {
 					char *filename = g_build_filename(path, file, NULL);
@@ -179,7 +179,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 					char *contents;
 					char *contents2;
 					struct adium_logger_data *data;
-					GaimLog *log;
+					PurpleLog *log;
 
 					if (!handle) {
 						g_free(filename);
@@ -201,7 +201,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 					if (sscanf(contents2, "%u.%u.%u",
 							&tm.tm_hour, &tm.tm_min, &tm.tm_sec) != 3) {
 
-						gaim_debug(GAIM_DEBUG_ERROR, "Adium log parse",
+						purple_debug(PURPLE_DEBUG_ERROR, "Adium log parse",
 								"Contents timestamp parsing error\n");
 						g_free(contents);
 						g_free(filename);
@@ -218,7 +218,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 					data->type = ADIUM_TEXT;
 
 					/* XXX: Look into this later... Should we pass in a struct tm? */
-					log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
+					log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, mktime(&tm), NULL);
 					log->logger = adium_logger;
 					log->logger_data = data;
 
@@ -235,7 +235,7 @@ static GList *adium_logger_list(GaimLogType type, const char *sn, GaimAccount *a
 	return list;
 }
 
-static char *adium_logger_read (GaimLog *log, GaimLogReadFlags *flags)
+static char *adium_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	struct adium_logger_data *data;
 	GError *error = NULL;
@@ -248,10 +248,10 @@ static char *adium_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 	g_return_val_if_fail(data->path != NULL, g_strdup(""));
 
-	gaim_debug(GAIM_DEBUG_INFO, "Adium log read",
+	purple_debug(PURPLE_DEBUG_INFO, "Adium log read",
 				"Reading %s\n", data->path);
 	if (!g_file_get_contents(data->path, &read, &length, &error)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "Adium log read",
+		purple_debug(PURPLE_DEBUG_ERROR, "Adium log read",
 				"Error reading log\n");
 		if (error)
 			g_error_free(error);
@@ -268,7 +268,7 @@ static char *adium_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	/* This problem only seems to show up on Windows.
 	 * The BOM is displaying as a space at the beginning of the log.
 	 */
-	if (gaim_str_has_prefix(read, "\xef\xbb\xbf"))
+	if (purple_str_has_prefix(read, "\xef\xbb\xbf"))
 	{
 		/* FIXME: This feels so wrong... */
 		char *temp = g_strdup(&(read[3]));
@@ -285,7 +285,7 @@ static char *adium_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	return read;
 }
 
-static int adium_logger_size (GaimLog *log)
+static int adium_logger_size (PurpleLog *log)
 {
 	struct adium_logger_data *data;
 	char *text;
@@ -295,7 +295,7 @@ static int adium_logger_size (GaimLog *log)
 
 	data = log->logger_data;
 
-	if (gaim_prefs_get_bool("/plugins/core/log_reader/fast_sizes")) {
+	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes")) {
 		struct stat st;
 
 		if (!data->path || stat(data->path, &st))
@@ -311,7 +311,7 @@ static int adium_logger_size (GaimLog *log)
 	return size;
 }
 
-static void adium_logger_finalize(GaimLog *log)
+static void adium_logger_finalize(PurpleLog *log)
 {
 	struct adium_logger_data *data;
 
@@ -332,18 +332,18 @@ static void adium_logger_finalize(GaimLog *log)
  * Fire logs in the log viewer transparently.
  */
 
-static GaimLogLogger *fire_logger;
+static PurpleLogLogger *fire_logger;
 
 struct fire_logger_data {
 };
 
-static GList *fire_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
+static GList *fire_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
 {
 	/* TODO: Do something here. */
 	return NULL;
 }
 
-static char * fire_logger_read (GaimLog *log, GaimLogReadFlags *flags)
+static char * fire_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	struct fire_logger_data *data;
 
@@ -355,18 +355,18 @@ static char * fire_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	return g_strdup("");
 }
 
-static int fire_logger_size (GaimLog *log)
+static int fire_logger_size (PurpleLog *log)
 {
 	g_return_val_if_fail(log != NULL, 0);
 
-	if (gaim_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
+	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
 		return 0;
 
 	/* TODO: Do something here. */
 	return 0;
 }
 
-static void fire_logger_finalize(GaimLog *log)
+static void fire_logger_finalize(PurpleLog *log)
 {
 	g_return_if_fail(log != NULL);
 
@@ -384,18 +384,18 @@ static void fire_logger_finalize(GaimLog *log)
  * Messenger Plus! logs in the log viewer transparently.
  */
 
-static GaimLogLogger *messenger_plus_logger;
+static PurpleLogLogger *messenger_plus_logger;
 
 struct messenger_plus_logger_data {
 };
 
-static GList *messenger_plus_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
+static GList *messenger_plus_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
 {
 	/* TODO: Do something here. */
 	return NULL;
 }
 
-static char * messenger_plus_logger_read (GaimLog *log, GaimLogReadFlags *flags)
+static char * messenger_plus_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	struct messenger_plus_logger_data *data = log->logger_data;
 
@@ -407,18 +407,18 @@ static char * messenger_plus_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	return g_strdup("");
 }
 
-static int messenger_plus_logger_size (GaimLog *log)
+static int messenger_plus_logger_size (PurpleLog *log)
 {
 	g_return_val_if_fail(log != NULL, 0);
 
-	if (gaim_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
+	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
 		return 0;
 
 	/* TODO: Do something here. */
 	return 0;
 }
 
-static void messenger_plus_logger_finalize(GaimLog *log)
+static void messenger_plus_logger_finalize(PurpleLog *log)
 {
 	g_return_if_fail(log != NULL);
 
@@ -435,7 +435,7 @@ static void messenger_plus_logger_finalize(GaimLog *log)
  * MSN Messenger message histories in the log viewer transparently.
  */
 
-static GaimLogLogger *msn_logger;
+static PurpleLogLogger *msn_logger;
 
 struct msn_logger_data {
 	xmlnode *root;
@@ -480,12 +480,12 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 	datetime = xmlnode_get_attrib(message, "DateTime");
 	if (!(datetime && *datetime))
 	{
-		gaim_debug_error("MSN log timestamp parse",
+		purple_debug_error("MSN log timestamp parse",
 		                 "Attribute missing: %s\n", "DateTime");
 		return (time_t)0;
 	}
 
-	stamp = gaim_str_to_time(datetime, TRUE, &tm2, NULL, NULL);
+	stamp = purple_str_to_time(datetime, TRUE, &tm2, NULL, NULL);
 #ifdef HAVE_TM_GMTOFF
 	tm2.tm_gmtoff = 0;
 #endif
@@ -501,7 +501,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 	date = xmlnode_get_attrib(message, "Date");
 	if (!(date && *date))
 	{
-		gaim_debug_error("MSN log timestamp parse",
+		purple_debug_error("MSN log timestamp parse",
 		                 "Attribute missing: %s\n", "Date");
 		*tm_out = &tm2;
 		return stamp;
@@ -510,7 +510,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 	time = xmlnode_get_attrib(message, "Time");
 	if (!(time && *time))
 	{
-		gaim_debug_error("MSN log timestamp parse",
+		purple_debug_error("MSN log timestamp parse",
 		                 "Attribute missing: %s\n", "Time");
 		*tm_out = &tm2;
 		return stamp;
@@ -518,7 +518,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 
 	if (sscanf(date, "%u/%u/%u", &month, &day, &year) != 3)
 	{
-		gaim_debug_error("MSN log timestamp parse",
+		purple_debug_error("MSN log timestamp parse",
 		                 "%s parsing error\n", "Date");
 		*tm_out = &tm2;
 		return stamp;
@@ -535,7 +535,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 
 	if (sscanf(time, "%u:%u:%u %c", &hour, &min, &sec, &am_pm) != 4)
 	{
-		gaim_debug_error("MSN log timestamp parse",
+		purple_debug_error("MSN log timestamp parse",
 		                 "%s parsing error\n", "Time");
 		*tm_out = &tm2;
 		return stamp;
@@ -549,7 +549,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
         }
 
 	str = g_strdup_printf("%04i-%02i-%02iT%02i:%02i:%02i", year, month, day, hour, min, sec);
-	t = gaim_str_to_time(str, TRUE, &tm, NULL, NULL);
+	t = purple_str_to_time(str, TRUE, &tm, NULL, NULL);
 
 
 	if (stamp > t)
@@ -564,7 +564,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 			/* Swap day & month variables, to see if it's a non-US date. */
 			g_free(str);
 			str = g_strdup_printf("%04i-%02i-%02iT%02i:%02i:%02i", year, month, day, hour, min, sec);
-			t = gaim_str_to_time(str, TRUE, &tm, NULL, NULL);
+			t = purple_str_to_time(str, TRUE, &tm, NULL, NULL);
 
 			if (stamp > t)
 				diff = stamp - t;
@@ -597,7 +597,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 
 	/* If we got here, the time is legal with a reasonable offset.
 	 * Let's find out if it's in our TZ. */
-	if (gaim_str_to_time(str, FALSE, &tm, NULL, NULL) == stamp)
+	if (purple_str_to_time(str, FALSE, &tm, NULL, NULL) == stamp)
 	{
 		g_free(str);
 		*tm_out = &tm;
@@ -613,11 +613,11 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 	return stamp;
 }
 
-static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
+static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
 {
 	GList *list = NULL;
 	char *username;
-	GaimBuddy *buddy;
+	PurpleBuddy *buddy;
 	const char *logdir;
 	const char *savedfilename = NULL;
 	char *logfile;
@@ -636,15 +636,15 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 	if (strcmp(account->protocol_id, "prpl-msn"))
 		return list;
 
-	logdir = gaim_prefs_get_string("/plugins/core/log_reader/msn/log_directory");
+	logdir = purple_prefs_get_string("/plugins/core/log_reader/msn/log_directory");
 
 	/* By clearing the log directory path, this logger can be (effectively) disabled. */
 	if (!*logdir)
 		return list;
 
-	buddy = gaim_find_buddy(account, sn);
+	buddy = purple_find_buddy(account, sn);
 
-	if ((username = g_strdup(gaim_account_get_string(
+	if ((username = g_strdup(purple_account_get_string(
 			account, "log_reader_msn_log_folder", NULL)))) {
 		/* As a special case, we allow the null string to kill the parsing
 		 * straight away. This would allow the user to deal with the case
@@ -656,11 +656,11 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			return list;
 		}
 	} else {
-		username = g_strdup(gaim_normalize(account, account->username));
+		username = g_strdup(purple_normalize(account, account->username));
 	}
 
 	if (buddy)
-		savedfilename = gaim_blist_node_get_string(&buddy->node, "log_reader_msn_log_filename");
+		savedfilename = purple_blist_node_get_string(&buddy->node, "log_reader_msn_log_filename");
 
 	if (savedfilename) {
 		/* As a special case, we allow the null string to kill the parsing
@@ -675,7 +675,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 
 		logfile = g_strdup(savedfilename);
 	} else {
-		logfile = g_strdup_printf("%s.xml", gaim_normalize(account, sn));
+		logfile = g_strdup_printf("%s.xml", purple_normalize(account, sn));
 	}
 
 	path = g_build_filename(logdir, username, "History", logfile, NULL);
@@ -713,7 +713,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			while ((name = g_dir_read_name(dir))) {
 				const char *c = name;
 
-				if (!gaim_str_has_prefix(c, username))
+				if (!purple_str_has_prefix(c, username))
 					continue;
 
 				c += strlen(username);
@@ -730,7 +730,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 					char *history_path = g_build_filename(
 						path,  "History", NULL);
 					if (g_file_test(history_path, G_FILE_TEST_IS_DIR)) {
-						gaim_account_set_string(account,
+						purple_account_set_string(account,
 							"log_reader_msn_log_folder", name);
 						g_free(path);
 						path = history_path;
@@ -754,7 +754,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 
 		/* If we've reached this point, we've found a History folder. */
 
-		username = g_strdup(gaim_normalize(account, sn));
+		username = g_strdup(purple_normalize(account, sn));
 		at_sign = g_strrstr(username, "@");
 		if (at_sign)
 			*at_sign = '\0';
@@ -767,7 +767,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			while ((name = g_dir_read_name(dir))) {
 				const char *c = name;
 
-				if (!gaim_str_has_prefix(c, username))
+				if (!purple_str_has_prefix(c, username))
 					continue;
 
 				c += strlen(username);
@@ -803,11 +803,11 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 		logfile = NULL; /* No sense saving the obvious buddy@domain.com. */
 	}
 
-	gaim_debug(GAIM_DEBUG_INFO, "MSN log read",
+	purple_debug(PURPLE_DEBUG_INFO, "MSN log read",
 				"Reading %s\n", path);
 	if (!g_file_get_contents(path, &contents, &length, &error)) {
 		g_free(path);
-		gaim_debug(GAIM_DEBUG_ERROR, "MSN log read",
+		purple_debug(PURPLE_DEBUG_ERROR, "MSN log read",
 				"Error reading log\n");
 		if (error)
 			g_error_free(error);
@@ -822,7 +822,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 	 * detected for both buddies.
 	 */
 	if (buddy && logfile) {
-		gaim_blist_node_set_string(&buddy->node, "log_reader_msn_log_filename", logfile);
+		purple_blist_node_set_string(&buddy->node, "log_reader_msn_log_filename", logfile);
 		g_free(logfile);
 	}
 
@@ -837,7 +837,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 
 		session_id = xmlnode_get_attrib(message, "SessionID");
 		if (!session_id) {
-			gaim_debug(GAIM_DEBUG_ERROR, "MSN log parse",
+			purple_debug(PURPLE_DEBUG_ERROR, "MSN log parse",
 					"Error parsing message: %s\n", "SessionID missing");
 			continue;
 		}
@@ -849,7 +849,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 			 */
 			struct tm *tm;
 			time_t stamp;
-			GaimLog *log;
+			PurpleLog *log;
 
 			data = g_new0(struct msn_logger_data, 1);
 			data->root = root;
@@ -860,7 +860,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 
 			stamp = msn_logger_parse_timestamp(message, &tm);
 
-			log = gaim_log_new(GAIM_LOG_IM, sn, account, NULL, stamp, tm);
+			log = purple_log_new(PURPLE_LOG_IM, sn, account, NULL, stamp, tm);
 			log->logger = msn_logger;
 			log->logger_data = data;
 
@@ -875,7 +875,7 @@ static GList *msn_logger_list(GaimLogType type, const char *sn, GaimAccount *acc
 	return list;
 }
 
-static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
+static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	struct msn_logger_data *data;
 	GString *text = NULL;
@@ -898,7 +898,7 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 	if (!data->root || !data->message || !data->session_id) {
 		/* Something isn't allocated correctly. */
-		gaim_debug(GAIM_DEBUG_ERROR, "MSN log parse",
+		purple_debug(PURPLE_DEBUG_ERROR, "MSN log parse",
 				"Error parsing message: %s\n", "Internal variables inconsistent");
 		data->text = text;
 
@@ -926,7 +926,7 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 		/* If this triggers, something is wrong with the XML. */
 		if (!new_session_id) {
-			gaim_debug(GAIM_DEBUG_ERROR, "MSN log parse",
+			purple_debug(PURPLE_DEBUG_ERROR, "MSN log parse",
 					"Error parsing message: %s\n", "New SessionID missing");
 			break;
 		}
@@ -968,14 +968,14 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 		}
 
 		their_name = from_name;
-		if (from_name && gaim_prefs_get_bool("/plugins/core/log_reader/use_name_heuristics")) {
-			const char *friendly_name = gaim_connection_get_display_name(log->account->gc);
+		if (from_name && purple_prefs_get_bool("/plugins/core/log_reader/use_name_heuristics")) {
+			const char *friendly_name = purple_connection_get_display_name(log->account->gc);
 
 			if (friendly_name != NULL) {
 				int friendly_name_length = strlen(friendly_name);
 				const char *alias;
 				int alias_length;
-				GaimBuddy *buddy = gaim_find_buddy(log->account, log->name);
+				PurpleBuddy *buddy = purple_find_buddy(log->account, log->name);
 				gboolean from_name_matches;
 				gboolean to_name_matches;
 
@@ -998,15 +998,15 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 				 * friendly name or alias. For this test, "match" is defined as:
 				 * ^(friendly_name|alias)([^a-zA-Z0-9].*)?$
 				 */
-				from_name_matches = (gaim_str_has_prefix(from_name, friendly_name) &&
+				from_name_matches = (purple_str_has_prefix(from_name, friendly_name) &&
 				                      !isalnum(*(from_name + friendly_name_length))) ||
-				                     (gaim_str_has_prefix(from_name, alias) &&
+				                     (purple_str_has_prefix(from_name, alias) &&
 				                      !isalnum(*(from_name + alias_length)));
 
 				to_name_matches = to_name != NULL && (
-				                   (gaim_str_has_prefix(to_name, friendly_name) &&
+				                   (purple_str_has_prefix(to_name, friendly_name) &&
 				                    !isalnum(*(to_name + friendly_name_length))) ||
-				                   (gaim_str_has_prefix(to_name, alias) &&
+				                   (purple_str_has_prefix(to_name, alias) &&
 				                    !isalnum(*(to_name + alias_length))));
 
 				if (from_name_matches) {
@@ -1036,12 +1036,12 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 						 * matches their alias. For this test, "match" is
 						 * defined as: ^alias([^a-zA-Z0-9].*)?$
 						 */
-						from_name_matches = (gaim_str_has_prefix(
+						from_name_matches = (purple_str_has_prefix(
 								from_name, alias) &&
 								!isalnum(*(from_name +
 								alias_length)));
 
-						to_name_matches = to_name && (gaim_str_has_prefix(
+						to_name_matches = to_name && (purple_str_has_prefix(
 								to_name, alias) &&
 								!isalnum(*(to_name +
 								alias_length)));
@@ -1064,14 +1064,14 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 							 * this test, "match" is defined as:
 							 * ^friendly_name([^a-zA-Z0-9].*)?$
 							 */
-							from_name_matches = (gaim_str_has_prefix(
+							from_name_matches = (purple_str_has_prefix(
 									from_name,
 									buddy->server_alias) &&
 									!isalnum(*(from_name +
 									friendly_name_length)));
 
 							to_name_matches = to_name && (
-									(gaim_str_has_prefix(
+									(purple_str_has_prefix(
 									to_name, buddy->server_alias) &&
 									!isalnum(*(to_name +
 									friendly_name_length))));
@@ -1146,14 +1146,14 @@ static char * msn_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	return text->str;
 }
 
-static int msn_logger_size (GaimLog *log)
+static int msn_logger_size (PurpleLog *log)
 {
 	char *text;
 	size_t size;
 
 	g_return_val_if_fail(log != NULL, 0);
 
-	if (gaim_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
+	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
 		return 0;
 
 	text = msn_logger_read(log, NULL);
@@ -1163,7 +1163,7 @@ static int msn_logger_size (GaimLog *log)
 	return size;
 }
 
-static void msn_logger_finalize(GaimLog *log)
+static void msn_logger_finalize(PurpleLog *log)
 {
 	struct msn_logger_data *data;
 
@@ -1187,22 +1187,22 @@ static void msn_logger_finalize(GaimLog *log)
  * Trillian logs in the log viewer transparently.
  */
 
-static GaimLogLogger *trillian_logger;
-static void trillian_logger_finalize(GaimLog *log);
+static PurpleLogLogger *trillian_logger;
+static void trillian_logger_finalize(PurpleLog *log);
 
 struct trillian_logger_data {
-	char *path; /* FIXME: Change this to use GaimStringref like log.c:old_logger_list */
+	char *path; /* FIXME: Change this to use PurpleStringref like log.c:old_logger_list */
 	int offset;
 	int length;
 	char *their_nickname;
 };
 
-static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount *account)
+static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
 {
 	GList *list = NULL;
 	const char *logdir;
-	GaimPlugin *plugin;
-	GaimPluginProtocolInfo *prpl_info;
+	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prpl_info;
 	char *prpl_name;
 	const char *buddy_name;
 	char *filename;
@@ -1216,29 +1216,29 @@ static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount
 	g_return_val_if_fail(sn != NULL, list);
 	g_return_val_if_fail(account != NULL, list);
 
-	logdir = gaim_prefs_get_string("/plugins/core/log_reader/trillian/log_directory");
+	logdir = purple_prefs_get_string("/plugins/core/log_reader/trillian/log_directory");
 
 	/* By clearing the log directory path, this logger can be (effectively) disabled. */
 	if (!*logdir)
 		return list;
 
-	plugin = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	plugin = purple_find_prpl(purple_account_get_protocol_id(account));
 	if (!plugin)
 		return NULL;
 
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 	if (!prpl_info->list_icon)
 		return NULL;
 
 	prpl_name = g_ascii_strup(prpl_info->list_icon(account, NULL), -1);
 
-	buddy_name = gaim_normalize(account, sn);
+	buddy_name = purple_normalize(account, sn);
 
 	filename = g_strdup_printf("%s.log", buddy_name);
 	path = g_build_filename(
 		logdir, prpl_name, filename, NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "Trillian log list",
+	purple_debug(PURPLE_DEBUG_INFO, "Trillian log list",
 				"Reading %s\n", path);
 	/* FIXME: There's really no need to read the entire file at once.
 	 * See src/log.c:old_logger_list for a better approach.
@@ -1252,7 +1252,7 @@ static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount
 
 		path = g_build_filename(
 			logdir, prpl_name, "Query", filename, NULL);
-		gaim_debug(GAIM_DEBUG_INFO, "Trillian log list",
+		purple_debug(PURPLE_DEBUG_INFO, "Trillian log list",
 					"Reading %s\n", path);
 		if (!g_file_get_contents(path, &contents, &length, &error)) {
 			if (error)
@@ -1277,21 +1277,21 @@ static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount
 			}
 
 			*c = '\0';
-			if (gaim_str_has_prefix(line, "Session Close ")) {
+			if (purple_str_has_prefix(line, "Session Close ")) {
 				if (data && !data->length) {
 					if (!(data->length = last_line_offset - data->offset)) {
 						/* This log had no data, so we remove it. */
 						GList *last = g_list_last(list);
 
-						gaim_debug(GAIM_DEBUG_INFO, "Trillian log list",
+						purple_debug(PURPLE_DEBUG_INFO, "Trillian log list",
 							"Empty log. Offset %i\n", data->offset);
 
-						trillian_logger_finalize((GaimLog *)last->data);
+						trillian_logger_finalize((PurpleLog *)last->data);
 						list = g_list_delete_link(list, last);
 					}
 				}
 			} else if (line[0] && line[1] && line [3] &&
-					   gaim_str_has_prefix(&line[3], "sion Start ")) {
+					   purple_str_has_prefix(&line[3], "sion Start ")) {
 
 				char *their_nickname = line;
 				char *timestamp;
@@ -1341,11 +1341,11 @@ static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount
 							&tm.tm_min, &tm.tm_sec,
 							&tm.tm_year) != 5) {
 
-						gaim_debug(GAIM_DEBUG_ERROR,
+						purple_debug(PURPLE_DEBUG_ERROR,
 							"Trillian log timestamp parse",
 							"Session Start parsing error\n");
 					} else {
-						GaimLog *log;
+						PurpleLog *log;
 
 						tm.tm_year -= 1900;
 
@@ -1393,7 +1393,7 @@ static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount
 							g_strdup(their_nickname);
 
 						/* XXX: Look into this later... Should we pass in a struct tm? */
-						log = gaim_log_new(GAIM_LOG_IM,
+						log = purple_log_new(PURPLE_LOG_IM,
 							sn, account, NULL, mktime(&tm), NULL);
 						log->logger = trillian_logger;
 						log->logger_data = data;
@@ -1416,12 +1416,12 @@ static GList *trillian_logger_list(GaimLogType type, const char *sn, GaimAccount
 	return list;
 }
 
-static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
+static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	struct trillian_logger_data *data;
 	char *read;
 	FILE *file;
-	GaimBuddy *buddy;
+	PurpleBuddy *buddy;
 	char *escaped;
 	GString *formatted;
 	char *c;
@@ -1435,7 +1435,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	g_return_val_if_fail(data->length > 0, g_strdup(""));
 	g_return_val_if_fail(data->their_nickname != NULL, g_strdup(""));
 
-	gaim_debug(GAIM_DEBUG_INFO, "Trillian log read",
+	purple_debug(PURPLE_DEBUG_INFO, "Trillian log read",
 				"Reading %s\n", data->path);
 
 	read = g_malloc(data->length + 2);
@@ -1453,7 +1453,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	}
 
 	/* Load miscellaneous data. */
-	buddy = gaim_find_buddy(log->account, log->name);
+	buddy = purple_find_buddy(log->account, log->name);
 
 	escaped = g_markup_escape_text(read, -1);
 	g_free(read);
@@ -1536,7 +1536,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 				if (*timestamp == ']') {
 					*timestamp = '\0';
 					line++;
-					/* TODO: Parse the timestamp and convert it to Gaim's format. */
+					/* TODO: Parse the timestamp and convert it to Purple's format. */
 					g_string_append_printf(formatted,
 						"<font size=\"2\">(%s)</font> ", line);
 					line = timestamp;
@@ -1544,17 +1544,17 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 						line += 2;
 				}
 
-				if (gaim_str_has_prefix(line, "*** ")) {
+				if (purple_str_has_prefix(line, "*** ")) {
 					line += (sizeof("*** ") - 1);
 					g_string_append(formatted, "<b>");
 					footer = "</b>";
-					if (gaim_str_has_prefix(line, "NOTE: This user is offline.")) {
+					if (purple_str_has_prefix(line, "NOTE: This user is offline.")) {
 						line = _("User is offline.");
-					} else if (gaim_str_has_prefix(line,
+					} else if (purple_str_has_prefix(line,
 							"NOTE: Your status is currently set to ")) {
 
 						line += (sizeof("NOTE: ") - 1);
-					} else if (gaim_str_has_prefix(line, "Auto-response sent to ")) {
+					} else if (purple_str_has_prefix(line, "Auto-response sent to ")) {
 						g_string_append(formatted, _("Auto-response sent:"));
 						while (*line && *line != ':')
 							line++;
@@ -1576,7 +1576,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 						else
 							g_string_append(formatted, log->name);
 						line = " logged in.";
-					} else if (gaim_str_has_prefix(line,
+					} else if (purple_str_has_prefix(line,
 						"One or more messages may have been undeliverable.")) {
 
 						g_string_append(formatted,
@@ -1586,7 +1586,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 							  "undeliverable."));
 						line = "";
 						footer = "</span></b>";
-					} else if (gaim_str_has_prefix(line,
+					} else if (purple_str_has_prefix(line,
 							"You have been disconnected.")) {
 
 						g_string_append(formatted,
@@ -1595,7 +1595,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 							_("You were disconnected from the server."));
 						line = "";
 						footer = "</span></b>";
-					} else if (gaim_str_has_prefix(line,
+					} else if (purple_str_has_prefix(line,
 							"You are currently disconnected.")) {
 
 						g_string_append(formatted,
@@ -1604,13 +1604,13 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 						         "will not be received unless you are "
 						         "logged in.");
 						footer = "</span></b>";
-					} else if (gaim_str_has_prefix(line,
+					} else if (purple_str_has_prefix(line,
 							"Your previous message has not been sent.")) {
 
 						g_string_append(formatted,
 							"<span style=\"color: #ff0000;\">");
 
-						if (gaim_str_has_prefix(line,
+						if (purple_str_has_prefix(line,
 							"Your previous message has not been sent.  "
 							"Reason: Maximum length exceeded.")) {
 
@@ -1628,7 +1628,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 
 						footer = "</span></b>";
 					}
-				} else if (gaim_str_has_prefix(line, data->their_nickname)) {
+				} else if (purple_str_has_prefix(line, data->their_nickname)) {
 					if (buddy != NULL && buddy->alias) {
 						line += strlen(data->their_nickname) + 2;
 						g_string_append_printf(formatted,
@@ -1643,9 +1643,9 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 						const char *acct_name;
 						line2++;
 						line = line2;
-						acct_name = gaim_account_get_alias(log->account);
+						acct_name = purple_account_get_alias(log->account);
 						if (!acct_name)
-							acct_name = gaim_account_get_username(log->account);
+							acct_name = purple_account_get_username(log->account);
 
 						g_string_append_printf(formatted,
 							"<span style=\"color: #16569E;\">"
@@ -1677,7 +1677,7 @@ static char * trillian_logger_read (GaimLog *log, GaimLogReadFlags *flags)
 	return read;
 }
 
-static int trillian_logger_size (GaimLog *log)
+static int trillian_logger_size (PurpleLog *log)
 {
 	struct trillian_logger_data *data;
 	char *text;
@@ -1687,7 +1687,7 @@ static int trillian_logger_size (GaimLog *log)
 
 	data = log->logger_data;
 
-	if (gaim_prefs_get_bool("/plugins/core/log_reader/fast_sizes")) {
+	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes")) {
 		return data ? data->length : 0;
 	}
 
@@ -1698,7 +1698,7 @@ static int trillian_logger_size (GaimLog *log)
 	return size;
 }
 
-static void trillian_logger_finalize(GaimLog *log)
+static void trillian_logger_finalize(PurpleLog *log)
 {
 	struct trillian_logger_data *data;
 
@@ -1717,7 +1717,7 @@ static void trillian_logger_finalize(GaimLog *log)
  *****************************************************************************/
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 	char *path;
 #ifdef _WIN32
@@ -1727,27 +1727,27 @@ init_plugin(GaimPlugin *plugin)
 
 	g_return_if_fail(plugin != NULL);
 
-	gaim_prefs_add_none("/plugins/core/log_reader");
+	purple_prefs_add_none("/plugins/core/log_reader");
 
 
 	/* Add general preferences. */
 
-	gaim_prefs_add_bool("/plugins/core/log_reader/fast_sizes", FALSE);
-	gaim_prefs_add_bool("/plugins/core/log_reader/use_name_heuristics", TRUE);
+	purple_prefs_add_bool("/plugins/core/log_reader/fast_sizes", FALSE);
+	purple_prefs_add_bool("/plugins/core/log_reader/use_name_heuristics", TRUE);
 
 
 	/* Add Adium log directory preference. */
-	gaim_prefs_add_none("/plugins/core/log_reader/adium");
+	purple_prefs_add_none("/plugins/core/log_reader/adium");
 
 	/* Calculate default Adium log directory. */
 #ifdef _WIN32
 		path = "";
 #else
-		path = g_build_filename(gaim_home_dir(), "Library", "Application Support",
+		path = g_build_filename(purple_home_dir(), "Library", "Application Support",
 			"Adium 2.0", "Users", "Default", "Logs", NULL);
 #endif
 
-	gaim_prefs_add_string("/plugins/core/log_reader/adium/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/adium/log_directory", path);
 
 #ifndef _WIN32
 	g_free(path);
@@ -1755,17 +1755,17 @@ init_plugin(GaimPlugin *plugin)
 
 
 	/* Add Fire log directory preference. */
-	gaim_prefs_add_none("/plugins/core/log_reader/fire");
+	purple_prefs_add_none("/plugins/core/log_reader/fire");
 
 	/* Calculate default Fire log directory. */
 #ifdef _WIN32
 		path = "";
 #else
-		path = g_build_filename(gaim_home_dir(), "Library", "Application Support",
+		path = g_build_filename(purple_home_dir(), "Library", "Application Support",
 			"Fire", "Sessions", NULL);
 #endif
 
-	gaim_prefs_add_string("/plugins/core/log_reader/fire/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/fire/log_directory", path);
 
 #ifndef _WIN32
 	g_free(path);
@@ -1773,18 +1773,18 @@ init_plugin(GaimPlugin *plugin)
 
 
 	/* Add Messenger Plus! log directory preference. */
-	gaim_prefs_add_none("/plugins/core/log_reader/messenger_plus");
+	purple_prefs_add_none("/plugins/core/log_reader/messenger_plus");
 
 	/* Calculate default Messenger Plus! log directory. */
 #ifdef _WIN32
-	folder = wgaim_get_special_folder(CSIDL_PERSONAL);
+	folder = wpurple_get_special_folder(CSIDL_PERSONAL);
 	if (folder) {
 #endif
 	path = g_build_filename(
 #ifdef _WIN32
 		folder,
 #else
-		GAIM_LOG_READER_WINDOWS_MOUNT_POINT, "Documents and Settings",
+		PURPLE_LOG_READER_WINDOWS_MOUNT_POINT, "Documents and Settings",
 		g_get_user_name(), "My Documents",
 #endif
 		"My Chat Logs", NULL);
@@ -1794,23 +1794,23 @@ init_plugin(GaimPlugin *plugin)
 		path = g_strdup("");
 #endif
 
-	gaim_prefs_add_string("/plugins/core/log_reader/messenger_plus/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/messenger_plus/log_directory", path);
 	g_free(path);
 
 
 	/* Add MSN Messenger log directory preference. */
-	gaim_prefs_add_none("/plugins/core/log_reader/msn");
+	purple_prefs_add_none("/plugins/core/log_reader/msn");
 
 	/* Calculate default MSN message history directory. */
 #ifdef _WIN32
-	folder = wgaim_get_special_folder(CSIDL_PERSONAL);
+	folder = wpurple_get_special_folder(CSIDL_PERSONAL);
 	if (folder) {
 #endif
 	path = g_build_filename(
 #ifdef _WIN32
 		folder,
 #else
-		GAIM_LOG_READER_WINDOWS_MOUNT_POINT, "Documents and Settings",
+		PURPLE_LOG_READER_WINDOWS_MOUNT_POINT, "Documents and Settings",
 		g_get_user_name(), "My Documents",
 #endif
 		"My Received Files", NULL);
@@ -1820,12 +1820,12 @@ init_plugin(GaimPlugin *plugin)
 		path = g_strdup("");
 #endif
 
-	gaim_prefs_add_string("/plugins/core/log_reader/msn/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/msn/log_directory", path);
 	g_free(path);
 
 
 	/* Add Trillian log directory preference. */
-	gaim_prefs_add_none("/plugins/core/log_reader/trillian");
+	purple_prefs_add_none("/plugins/core/log_reader/trillian");
 
 #ifdef _WIN32
 	/* XXX: While a major hack, this is the most reliable way I could
@@ -1833,7 +1833,7 @@ init_plugin(GaimPlugin *plugin)
 	 */
 
 	path = NULL;
-	if ((folder = wgaim_read_reg_string(HKEY_CLASSES_ROOT, "Trillian.SkinZip\\shell\\Add\\command\\", NULL))) {
+	if ((folder = wpurple_read_reg_string(HKEY_CLASSES_ROOT, "Trillian.SkinZip\\shell\\Add\\command\\", NULL))) {
 		char *value = folder;
 		char *temp;
 
@@ -1851,7 +1851,7 @@ init_plugin(GaimPlugin *plugin)
 		*temp = '\0';
 
 		/* Set path. */
-		if (gaim_str_has_suffix(value, "trillian.exe")) {
+		if (purple_str_has_suffix(value, "trillian.exe")) {
 			value[strlen(value) - (sizeof("trillian.exe") - 1)] = '\0';
 			path = g_build_filename(value, "users", "default", "talk.ini", NULL);
 		}
@@ -1859,7 +1859,7 @@ init_plugin(GaimPlugin *plugin)
 	}
 
 	if (!path) {
-		char *folder = wgaim_get_special_folder(CSIDL_PROGRAM_FILES);
+		char *folder = wpurple_get_special_folder(CSIDL_PROGRAM_FILES);
 		if (folder) {
 			path = g_build_filename(folder, "Trillian",
 					"users", "default", "talk.ini", NULL);
@@ -1874,24 +1874,24 @@ init_plugin(GaimPlugin *plugin)
 #if 0 && GLIB_CHECK_VERSION(2,6,0) /* FIXME: Not tested yet. */
 		GKeyFile *key_file;
 
-		gaim_debug(GAIM_DEBUG_INFO, "Trillian talk.ini read",
+		purple_debug(PURPLE_DEBUG_INFO, "Trillian talk.ini read",
 				"Reading %s\n", path);
 		if (!g_key_file_load_from_file(key_file, path, G_KEY_FILE_NONE, GError &error)) {
-			gaim_debug(GAIM_DEBUG_ERROR, "Trillian talk.ini read",
+			purple_debug(PURPLE_DEBUG_ERROR, "Trillian talk.ini read",
 					"Error reading talk.ini\n");
 			if (error)
 				g_error_free(error);
 		} else {
 			char *logdir = g_key_file_get_string(key_file, "Logging", "Directory", &error);
 			if (error) {
-				gaim_debug(GAIM_DEBUG_ERROR, "Trillian talk.ini read",
+				purple_debug(PURPLE_DEBUG_ERROR, "Trillian talk.ini read",
 						"Error reading Directory value from Logging section\n");
 				g_error_free(error);
 			}
 
 			if (logdir) {
 				g_strchomp(logdir);
-				gaim_prefs_add_string(
+				purple_prefs_add_string(
 					"/plugins/core/log_reader/trillian/log_directory", logdir);
 				found = TRUE;
 			}
@@ -1902,10 +1902,10 @@ init_plugin(GaimPlugin *plugin)
 		gsize length;
 		gchar *contents = NULL;
 
-		gaim_debug(GAIM_DEBUG_INFO, "Trillian talk.ini read",
+		purple_debug(PURPLE_DEBUG_INFO, "Trillian talk.ini read",
 					"Reading %s\n", path);
 		if (!g_file_get_contents(path, &contents, &length, &error)) {
-			gaim_debug(GAIM_DEBUG_ERROR, "Trillian talk.ini read",
+			purple_debug(PURPLE_DEBUG_ERROR, "Trillian talk.ini read",
 					"Error reading talk.ini\n");
 			if (error)
 				g_error_free(error);
@@ -1916,10 +1916,10 @@ init_plugin(GaimPlugin *plugin)
 					*contents = '\0';
 
 					/* XXX: This assumes the first Directory key is under [Logging]. */
-					if (gaim_str_has_prefix(line, "Directory=")) {
+					if (purple_str_has_prefix(line, "Directory=")) {
 						line += (sizeof("Directory=") - 1);
 						g_strchomp(line);
-						gaim_prefs_add_string(
+						purple_prefs_add_string(
 							"/plugins/core/log_reader/trillian/log_directory",
 							line);
 						found = TRUE;
@@ -1941,14 +1941,14 @@ init_plugin(GaimPlugin *plugin)
 
 	/* Calculate default Trillian log directory. */
 #ifdef _WIN32
-	folder = wgaim_get_special_folder(CSIDL_PROGRAM_FILES);
+	folder = wpurple_get_special_folder(CSIDL_PROGRAM_FILES);
 	if (folder) {
 #endif
 	path = g_build_filename(
 #ifdef _WIN32
 		folder,
 #else
-		GAIM_LOG_READER_WINDOWS_MOUNT_POINT, "Program Files",
+		PURPLE_LOG_READER_WINDOWS_MOUNT_POINT, "Program Files",
 #endif
 		"Trillian", "users", "default", "logs", NULL);
 #ifdef _WIN32
@@ -1957,7 +1957,7 @@ init_plugin(GaimPlugin *plugin)
 		path = g_strdup("");
 #endif
 
-	gaim_prefs_add_string("/plugins/core/log_reader/trillian/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/trillian/log_directory", path);
 	g_free(path);
 
 #ifdef _WIN32
@@ -1966,162 +1966,162 @@ init_plugin(GaimPlugin *plugin)
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
 	/* The names of IM clients are marked for translation at the request of
 	   translators who wanted to transliterate them.  Many translators
 	   choose to leave them alone.  Choose what's best for your language. */
-	adium_logger = gaim_log_logger_new("adium", _("Adium"), 6,
+	adium_logger = purple_log_logger_new("adium", _("Adium"), 6,
 									   NULL,
 									   NULL,
 									   adium_logger_finalize,
 									   adium_logger_list,
 									   adium_logger_read,
 									   adium_logger_size);
-	gaim_log_logger_add(adium_logger);
+	purple_log_logger_add(adium_logger);
 
 #if 0
 	/* The names of IM clients are marked for translation at the request of
 	   translators who wanted to transliterate them.  Many translators
 	   choose to leave them alone.  Choose what's best for your language. */
-	fire_logger = gaim_log_logger_new("fire", _("Fire"), 6,
+	fire_logger = purple_log_logger_new("fire", _("Fire"), 6,
 									  NULL,
 									  NULL,
 									  fire_logger_finalize,
 									  fire_logger_list,
 									  fire_logger_read,
 									  fire_logger_size);
-	gaim_log_logger_add(fire_logger);
+	purple_log_logger_add(fire_logger);
 
 	/* The names of IM clients are marked for translation at the request of
 	   translators who wanted to transliterate them.  Many translators
 	   choose to leave them alone.  Choose what's best for your language. */
-	messenger_plus_logger = gaim_log_logger_new("messenger_plus", _("Messenger Plus!"), 6,
+	messenger_plus_logger = purple_log_logger_new("messenger_plus", _("Messenger Plus!"), 6,
 												NULL,
 												NULL,
 												messenger_plus_logger_finalize,
 												messenger_plus_logger_list,
 												messenger_plus_logger_read,
 												messenger_plus_logger_size);
-	gaim_log_logger_add(messenger_plus_logger);
+	purple_log_logger_add(messenger_plus_logger);
 #endif
 
 	/* The names of IM clients are marked for translation at the request of
 	   translators who wanted to transliterate them.  Many translators
 	   choose to leave them alone.  Choose what's best for your language. */
-	msn_logger = gaim_log_logger_new("msn", _("MSN Messenger"), 6,
+	msn_logger = purple_log_logger_new("msn", _("MSN Messenger"), 6,
 									 NULL,
 									 NULL,
 									 msn_logger_finalize,
 									 msn_logger_list,
 									 msn_logger_read,
 									 msn_logger_size);
-	gaim_log_logger_add(msn_logger);
+	purple_log_logger_add(msn_logger);
 
 	/* The names of IM clients are marked for translation at the request of
 	   translators who wanted to transliterate them.  Many translators
 	   choose to leave them alone.  Choose what's best for your language. */
-	trillian_logger = gaim_log_logger_new("trillian", _("Trillian"), 6,
+	trillian_logger = purple_log_logger_new("trillian", _("Trillian"), 6,
 										  NULL,
 										  NULL,
 										  trillian_logger_finalize,
 										  trillian_logger_list,
 										  trillian_logger_read,
 										  trillian_logger_size);
-	gaim_log_logger_add(trillian_logger);
+	purple_log_logger_add(trillian_logger);
 
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
-	gaim_log_logger_remove(adium_logger);
+	purple_log_logger_remove(adium_logger);
 #if 0
-	gaim_log_logger_remove(fire_logger);
-	gaim_log_logger_remove(messenger_plus_logger);
+	purple_log_logger_remove(fire_logger);
+	purple_log_logger_remove(messenger_plus_logger);
 #endif
-	gaim_log_logger_remove(msn_logger);
-	gaim_log_logger_remove(trillian_logger);
+	purple_log_logger_remove(msn_logger);
+	purple_log_logger_remove(trillian_logger);
 
 	return TRUE;
 }
 
-static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin)
+static PurplePluginPrefFrame *
+get_plugin_pref_frame(PurplePlugin *plugin)
 {
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *ppref;
+	PurplePluginPrefFrame *frame;
+	PurplePluginPref *ppref;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
-	frame = gaim_plugin_pref_frame_new();
+	frame = purple_plugin_pref_frame_new();
 
 
 	/* Add general preferences. */
 
-	ppref = gaim_plugin_pref_new_with_label(_("General Log Reading Configuration"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	ppref = purple_plugin_pref_new_with_label(_("General Log Reading Configuration"));
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/fast_sizes", _("Fast size calculations"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/use_name_heuristics", _("Use name heuristics"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_frame_add(frame, ppref);
 
 
 	/* Add Log Directory preferences. */
 
-	ppref = gaim_plugin_pref_new_with_label(_("Log Directory"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	ppref = purple_plugin_pref_new_with_label(_("Log Directory"));
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/adium/log_directory", _("Adium"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_frame_add(frame, ppref);
 
 #if 0
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/fire/log_directory", _("Fire"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/messenger_plus/log_directory", _("Messenger Plus!"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_frame_add(frame, ppref);
 #endif
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/msn/log_directory", _("MSN Messenger"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/trillian/log_directory", _("Trillian"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
 }
 
-static GaimPluginUiInfo prefs_info = {
+static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
 	0,   /* page_num (reserved) */
 	NULL /* frame (reserved) */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 	"core-log_reader",                                /**< id             */
 	N_("Log Reader"),                                 /**< name           */
 	VERSION,                                          /**< version        */
@@ -2138,7 +2138,7 @@ static GaimPluginInfo info =
 	   "may crash frequently.  Use it at your own risk!"),
 
 	"Richard Laager <rlaager@pidgin.im>",             /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
 	NULL,                                             /**< destroy        */
@@ -2148,4 +2148,4 @@ static GaimPluginInfo info =
 	NULL                                              /**< actions        */
 };
 
-GAIM_INIT_PLUGIN(log_reader, init_plugin, info)
+PURPLE_INIT_PLUGIN(log_reader, init_plugin, info)

@@ -22,7 +22,7 @@
  * Loader Stuff
  *****************************************************************************/
 /* probes the given plugin to determine if its a plugin */
-static gboolean probe_mono_plugin(GaimPlugin *plugin)
+static gboolean probe_mono_plugin(PurplePlugin *plugin)
 {
 	MonoAssembly *assm;
 	MonoMethod *m = NULL;
@@ -31,8 +31,8 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 	gboolean found_load = FALSE, found_unload = FALSE, found_destroy = FALSE, found_info = FALSE;
 	gpointer iter = NULL;
 
-	GaimPluginInfo *info;
-	GaimMonoPlugin *mplug;
+	PurplePluginInfo *info;
+	PurpleMonoPlugin *mplug;
 
 	char *file = plugin->path;
 
@@ -42,15 +42,15 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 		return FALSE;
 	} 
 
-	gaim_debug(GAIM_DEBUG_INFO, "mono", "Probing plugin\n");
+	purple_debug(PURPLE_DEBUG_INFO, "mono", "Probing plugin\n");
 
 	if (ml_is_api_dll(mono_assembly_get_image(assm))) {
-		gaim_debug(GAIM_DEBUG_INFO, "mono", "Found our GaimAPI.dll\n");
+		purple_debug(PURPLE_DEBUG_INFO, "mono", "Found our PurpleAPI.dll\n");
 		return FALSE;
 	}
 
-	info = g_new0(GaimPluginInfo, 1);
-	mplug = g_new0(GaimMonoPlugin, 1);
+	info = g_new0(PurplePluginInfo, 1);
+	mplug = g_new0(PurpleMonoPlugin, 1);
 	
 	mplug->signal_data = NULL;
 
@@ -58,13 +58,13 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 
 	mplug->klass = ml_find_plugin_class(mono_assembly_get_image(mplug->assm));
 	if (!mplug->klass) {
-		gaim_debug(GAIM_DEBUG_ERROR, "mono", "no plugin class in \'%s\'\n", file);
+		purple_debug(PURPLE_DEBUG_ERROR, "mono", "no plugin class in \'%s\'\n", file);
 		return FALSE;
 	}
 
 	mplug->obj = mono_object_new(ml_get_domain(), mplug->klass);
 	if (!mplug->obj) {
-		gaim_debug(GAIM_DEBUG_ERROR, "mono", "obj not valid\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "mono", "obj not valid\n");
 		return FALSE;
 	}
 
@@ -87,7 +87,7 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 	}
 
 	if (!(found_load && found_unload && found_destroy && found_info)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "mono", "did not find the required methods\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "mono", "did not find the required methods\n");
 		return FALSE;
 	}
 
@@ -103,10 +103,10 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 	info->author = ml_get_prop_string(plugin_info, "Author");
 	info->homepage = ml_get_prop_string(plugin_info, "Homepage");
 
-	info->magic = GAIM_PLUGIN_MAGIC;
-	info->major_version = GAIM_MAJOR_VERSION;
-	info->minor_version = GAIM_MINOR_VERSION;
-	info->type = GAIM_PLUGIN_STANDARD;
+	info->magic = PURPLE_PLUGIN_MAGIC;
+	info->major_version = PURPLE_MAJOR_VERSION;
+	info->minor_version = PURPLE_MINOR_VERSION;
+	info->type = PURPLE_PLUGIN_STANDARD;
 
 	/* this plugin depends on us; duh */
 	info->dependencies = g_list_append(info->dependencies, MONO_PLUGIN_ID);
@@ -117,17 +117,17 @@ static gboolean probe_mono_plugin(GaimPlugin *plugin)
 
 	ml_add_plugin(mplug);
 
-	return gaim_plugin_register(plugin);
+	return purple_plugin_register(plugin);
 }
 
 /* Loads a Mono Plugin by calling 'load' in the class */
-static gboolean load_mono_plugin(GaimPlugin *plugin)
+static gboolean load_mono_plugin(PurplePlugin *plugin)
 {
-	GaimMonoPlugin *mplug;
+	PurpleMonoPlugin *mplug;
 
-	gaim_debug(GAIM_DEBUG_INFO, "mono", "Loading plugin\n");
+	purple_debug(PURPLE_DEBUG_INFO, "mono", "Loading plugin\n");
 
-	mplug = (GaimMonoPlugin*)plugin->info->extra_info;
+	mplug = (PurpleMonoPlugin*)plugin->info->extra_info;
 
 	ml_invoke(mplug->load, mplug->obj, NULL);
 
@@ -135,15 +135,15 @@ static gboolean load_mono_plugin(GaimPlugin *plugin)
 }
 
 /* Unloads a Mono Plugin by calling 'unload' in the class */
-static gboolean unload_mono_plugin(GaimPlugin *plugin)
+static gboolean unload_mono_plugin(PurplePlugin *plugin)
 {
-	GaimMonoPlugin *mplug;
+	PurpleMonoPlugin *mplug;
 
-	gaim_debug(GAIM_DEBUG_INFO, "mono", "Unloading plugin\n");
+	purple_debug(PURPLE_DEBUG_INFO, "mono", "Unloading plugin\n");
 
-	mplug = (GaimMonoPlugin*)plugin->info->extra_info;
+	mplug = (PurpleMonoPlugin*)plugin->info->extra_info;
 
-	gaim_signals_disconnect_by_handle((gpointer)mplug->klass);
+	purple_signals_disconnect_by_handle((gpointer)mplug->klass);
 	g_list_foreach(mplug->signal_data, (GFunc)g_free, NULL);
 	g_list_free(mplug->signal_data);
 	mplug->signal_data = NULL;
@@ -153,13 +153,13 @@ static gboolean unload_mono_plugin(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static void destroy_mono_plugin(GaimPlugin *plugin)
+static void destroy_mono_plugin(PurplePlugin *plugin)
 {
-	GaimMonoPlugin *mplug;
+	PurpleMonoPlugin *mplug;
 
-	gaim_debug(GAIM_DEBUG_INFO, "mono", "Destroying plugin\n");
+	purple_debug(PURPLE_DEBUG_INFO, "mono", "Destroying plugin\n");
 
-	mplug = (GaimMonoPlugin*)plugin->info->extra_info;
+	mplug = (PurpleMonoPlugin*)plugin->info->extra_info;
 
 	ml_invoke(mplug->destroy, mplug->obj, NULL);
 
@@ -185,12 +185,12 @@ static void destroy_mono_plugin(GaimPlugin *plugin)
 /******************************************************************************
  * Plugin Stuff
  *****************************************************************************/
-static void plugin_destroy(GaimPlugin *plugin)
+static void plugin_destroy(PurplePlugin *plugin)
 {
 	ml_uninit();
 }
 
-static GaimPluginLoaderInfo loader_info =
+static PurplePluginLoaderInfo loader_info =
 {
 	NULL,
 	probe_mono_plugin,
@@ -199,23 +199,23 @@ static GaimPluginLoaderInfo loader_info =
 	destroy_mono_plugin
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_LOADER,
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_LOADER,
 	NULL,
 	0,
 	NULL,
-	GAIM_PRIORITY_DEFAULT,
+	PURPLE_PRIORITY_DEFAULT,
 	MONO_PLUGIN_ID,
 	N_("Mono Plugin Loader"),
 	VERSION,
 	N_("Loads .NET plugins with Mono."),
 	N_("Loads .NET plugins with Mono."),
 	"Eoin Coffey <ecoffey@simla.colostate.edu>",
-	GAIM_WEBSITE,
+	PURPLE_WEBSITE,
 	NULL,
 	NULL,
 	plugin_destroy,
@@ -225,11 +225,11 @@ static GaimPluginInfo info =
 	NULL
 };
 
-static void init_plugin(GaimPlugin *plugin)
+static void init_plugin(PurplePlugin *plugin)
 {
 	ml_init();
 	
 	loader_info.exts = g_list_append(loader_info.exts, "dll");
 }
 
-GAIM_INIT_PLUGIN(mono, init_plugin, info)
+PURPLE_INIT_PLUGIN(mono, init_plugin, info)

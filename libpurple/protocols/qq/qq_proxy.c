@@ -1,9 +1,9 @@
 /**
  * @file qq_proxy.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -50,7 +50,7 @@ static void _qq_show_socket(gchar *desc, gint fd) {
 	struct sockaddr_in sin;
 	socklen_t len = sizeof(sin);
 	getsockname(fd, (struct sockaddr *)&sin, &len);
-	gaim_debug(GAIM_DEBUG_INFO, desc, "%s:%d\n",
+	purple_debug(PURPLE_DEBUG_INFO, desc, "%s:%d\n",
             inet_ntoa(sin.sin_addr), g_ntohs(sin.sin_port));
 }
 */
@@ -65,26 +65,26 @@ void _qq_show_packet(const gchar *desc, const guint8 *buf, gint len)
 		strcat(buf1, buf2);
 	}
 	strcat(buf1, "\n");
-	gaim_debug(GAIM_DEBUG_INFO, desc, "%s", buf1);
+	purple_debug(PURPLE_DEBUG_INFO, desc, "%s", buf1);
 }
 
 /* QQ 2003iii uses double MD5 for the pwkey to get the session key */
 static guint8 *_gen_pwkey(const gchar *pwd)
 {
-        GaimCipher *cipher;
-        GaimCipherContext *context;
+        PurpleCipher *cipher;
+        PurpleCipherContext *context;
 
 	guchar pwkey_tmp[QQ_KEY_LENGTH];
 
-	cipher = gaim_ciphers_find_cipher("md5");
-	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, (guchar *) pwd, strlen(pwd));
-	gaim_cipher_context_digest(context, sizeof(pwkey_tmp), pwkey_tmp, NULL);
-	gaim_cipher_context_destroy(context);
-	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, pwkey_tmp, QQ_KEY_LENGTH);
-	gaim_cipher_context_digest(context, sizeof(pwkey_tmp), pwkey_tmp, NULL);
-	gaim_cipher_context_destroy(context);
+	cipher = purple_ciphers_find_cipher("md5");
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, (guchar *) pwd, strlen(pwd));
+	purple_cipher_context_digest(context, sizeof(pwkey_tmp), pwkey_tmp, NULL);
+	purple_cipher_context_destroy(context);
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, pwkey_tmp, QQ_KEY_LENGTH);
+	purple_cipher_context_digest(context, sizeof(pwkey_tmp), pwkey_tmp, NULL);
+	purple_cipher_context_destroy(context);
 
 	return g_memdup(pwkey_tmp, QQ_KEY_LENGTH);
 }
@@ -110,13 +110,13 @@ static gboolean _qq_fill_host(GSList *hosts, struct sockaddr_in *addr, gint *add
 }
 
 /* set up any finalizing start-up stuff */
-static void _qq_start_services(GaimConnection *gc)
+static void _qq_start_services(PurpleConnection *gc)
 {
 	/* start watching for IMs about to be sent */
 	/*
-	gaim_signal_connect(gaim_conversations_get_handle(),
+	purple_signal_connect(purple_conversations_get_handle(),
 			"sending-im-msg", gc,
-			GAIM_CALLBACK(qq_sending_im_msg_cb), NULL);
+			PURPLE_CALLBACK(qq_sending_im_msg_cb), NULL);
 			*/
 }
 
@@ -125,13 +125,13 @@ static void _qq_start_services(GaimConnection *gc)
 static void _qq_got_login(gpointer data, gint source, const gchar *error_message)
 {
 	qq_data *qd;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	gchar *buf;
 	const gchar *passwd;
 
-	gc = (GaimConnection *) data;
+	gc = (PurpleConnection *) data;
 
-	if (!GAIM_CONNECTION_IS_VALID(gc)) {
+	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
 		close(source);
 		return;
 	}
@@ -139,7 +139,7 @@ static void _qq_got_login(gpointer data, gint source, const gchar *error_message
 	g_return_if_fail(gc != NULL && gc->proto_data != NULL);
 
 	if (source < 0) {	/* socket returns -1 */
-		gaim_connection_error(gc, error_message);
+		purple_connection_error(gc, error_message);
 		return;
 	}
 
@@ -155,18 +155,18 @@ static void _qq_got_login(gpointer data, gint source, const gchar *error_message
 	qd->fd = source;
 	qd->logged_in = FALSE;
 	qd->channel = 1;
-	qd->uid = strtol(gaim_account_get_username(gaim_connection_get_account(gc)), NULL, 10);
+	qd->uid = strtol(purple_account_get_username(purple_connection_get_account(gc)), NULL, 10);
 
 	/* now generate md5 processed passwd */
-	passwd = gaim_account_get_password(gaim_connection_get_account(gc));
+	passwd = purple_account_get_password(purple_connection_get_account(gc));
 	qd->pwkey = _gen_pwkey(passwd);
 
-	qd->sendqueue_timeout = gaim_timeout_add(QQ_SENDQUEUE_TIMEOUT, qq_sendqueue_timeout_callback, gc);
-	gc->inpa = gaim_input_add(qd->fd, GAIM_INPUT_READ, qq_input_pending, gc);
+	qd->sendqueue_timeout = purple_timeout_add(QQ_SENDQUEUE_TIMEOUT, qq_sendqueue_timeout_callback, gc);
+	gc->inpa = purple_input_add(qd->fd, PURPLE_INPUT_READ, qq_input_pending, gc);
 
 	/* Update the login progress status display */
 	buf = g_strdup_printf("Login as %d", qd->uid);
-	gaim_connection_update_progress(gc, buf, 1, QQ_CONNECT_STEPS);
+	purple_connection_update_progress(gc, buf, 1, QQ_CONNECT_STEPS);
 	g_free(buf);
 
 	_qq_start_services(gc);
@@ -176,7 +176,7 @@ static void _qq_got_login(gpointer data, gint source, const gchar *error_message
 
 /* clean up qq_data structure and all its components
  * always used before a redirectly connection */
-static void _qq_common_clean(GaimConnection *gc)
+static void _qq_common_clean(PurpleConnection *gc)
 {
 	qq_data *qd;
 
@@ -189,12 +189,12 @@ static void _qq_common_clean(GaimConnection *gc)
 	close(qd->fd);
 
 	if (qd->sendqueue_timeout > 0) {
-		gaim_timeout_remove(qd->sendqueue_timeout);
+		purple_timeout_remove(qd->sendqueue_timeout);
 		qd->sendqueue_timeout = 0;
 	}
 
 	if (gc->inpa > 0) {
-		gaim_input_remove(gc->inpa);
+		purple_input_remove(gc->inpa);
 		gc->inpa = 0;
 	}
 
@@ -207,13 +207,13 @@ static void _qq_common_clean(GaimConnection *gc)
 	qq_buddies_list_free(gc->account, qd);
 }
 
-static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
+static void no_one_calls(gpointer data, gint source, PurpleInputCondition cond)
 {
         struct PHB *phb = data;
 	socklen_t len;
 	int error=0, ret;
 
-	gaim_debug_info("proxy", "Connected.\n");
+	purple_debug_info("proxy", "Connected.\n");
 
 	len = sizeof(error);
 
@@ -235,17 +235,17 @@ static void no_one_calls(gpointer data, gint source, GaimInputCondition cond)
 		if(ret!=0) 
 			error = errno;
 		close(source);
-		gaim_input_remove(phb->inpa);
+		purple_input_remove(phb->inpa);
 
-		gaim_debug_error("proxy", "getsockopt SO_ERROR check: %s\n", strerror(error));
+		purple_debug_error("proxy", "getsockopt SO_ERROR check: %s\n", strerror(error));
 
 		phb->func(phb->data, -1, _("Unable to connect"));
 		return;
 	}
 
-	gaim_input_remove(phb->inpa);
+	purple_input_remove(phb->inpa);
 
-	if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+	if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 
 		phb->func(phb->data, source, NULL);
 	}
@@ -259,11 +259,11 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 {
 	gint fd = -1;
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Using UDP without proxy\n");
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Using UDP without proxy\n");
 	fd = socket(PF_INET, SOCK_DGRAM, 0);
 
 	if (fd < 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ Redirect", 
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ Redirect", 
 			"Unable to create socket: %s\n", strerror(errno));
 		return -1;
 	}
@@ -292,15 +292,15 @@ static gint _qq_proxy_none(struct PHB *phb, struct sockaddr *addr, socklen_t add
 		 *    The connection is established asynchronously.
 		 */
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Connect in asynchronous mode.\n");
-			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, no_one_calls, phb);
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Connect in asynchronous mode.\n");
+			phb->inpa = purple_input_add(fd, PURPLE_INPUT_WRITE, no_one_calls, phb);
 		} else {
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Connection failed: %d\n", strerror(errno));
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Connection failed: %d\n", strerror(errno));
 			close(fd);
 			return -1;
 		}		/* if errno */
 	} else {		/* connect returns 0 */
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Connected.\n");
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Connected.\n");
 		fcntl(fd, F_SETFL, 0);
 		phb->func(phb->data, fd, NULL);
 	}
@@ -327,37 +327,37 @@ static void _qq_proxy_resolved(GSList *hosts, gpointer data, const char *error_m
 static void _qq_server_resolved(GSList *hosts, gpointer data, const char *error_message)
 {
 	struct PHB *phb = (struct PHB *) data;
-	GaimConnection *gc = (GaimConnection *) phb->data;
+	PurpleConnection *gc = (PurpleConnection *) phb->data;
 	qq_data *qd = (qq_data *) gc->proto_data;
 	struct sockaddr_in addr;
 	gint addr_size, ret = -1;
 
 	if(_qq_fill_host(hosts, &addr, &addr_size)) {
-		switch (gaim_proxy_info_get_type(phb->gpi)) {
-			case GAIM_PROXY_NONE:
+		switch (purple_proxy_info_get_type(phb->gpi)) {
+			case PURPLE_PROXY_NONE:
 				ret = _qq_proxy_none(phb, (struct sockaddr *) &addr, addr_size);
 				break;
-			case GAIM_PROXY_SOCKS5:
+			case PURPLE_PROXY_SOCKS5:
 				ret = 0;
-				if (gaim_proxy_info_get_host(phb->gpi) == NULL || 
-						gaim_proxy_info_get_port(phb->gpi) == 0) {
-					gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+				if (purple_proxy_info_get_host(phb->gpi) == NULL || 
+						purple_proxy_info_get_port(phb->gpi) == 0) {
+					purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 							"Use of socks5 proxy selected but host or port info doesn't exist.\n");
 					ret = -1;
 				} else {
 					/* as the destination is always QQ server during the session, 
 				 	* we can set dest_sin here, instead of _qq_s5_canread_again */
 					memcpy(&qd->dest_sin, &addr, addr_size);
-					if (gaim_dnsquery_a(gaim_proxy_info_get_host(phb->gpi),
-							gaim_proxy_info_get_port(phb->gpi),
+					if (purple_dnsquery_a(purple_proxy_info_get_host(phb->gpi),
+							purple_proxy_info_get_port(phb->gpi),
 							_qq_proxy_resolved, phb) == NULL)
 						ret = -1;
 				}
 				break;
 			default:
-				gaim_debug(GAIM_DEBUG_WARNING, "QQ", 
+				purple_debug(PURPLE_DEBUG_WARNING, "QQ", 
 						"Proxy type %i is unsupported, not using a proxy.\n",
-						gaim_proxy_info_get_type(phb->gpi));
+						purple_proxy_info_get_type(phb->gpi));
 				ret = _qq_proxy_none(phb, (struct sockaddr *) &addr, addr_size);
 		}
 	}
@@ -370,18 +370,18 @@ static void _qq_server_resolved(GSList *hosts, gpointer data, const char *error_
 }
 
 /* returns -1 if dns lookup fails, otherwise returns 0 */
-static gint _qq_udp_proxy_connect(GaimAccount *account,
+static gint _qq_udp_proxy_connect(PurpleAccount *account,
 			   const gchar *server, guint16 port, 
 			   void callback(gpointer, gint, const gchar *error_message), 
-			   GaimConnection *gc)
+			   PurpleConnection *gc)
 {
-	GaimProxyInfo *info;
+	PurpleProxyInfo *info;
 	struct PHB *phb;
 	qq_data *qd = (qq_data *) gc->proto_data;
 
 	g_return_val_if_fail(gc != NULL && qd != NULL, -1);
 
-	info = gaim_proxy_get_setup(account);
+	info = purple_proxy_get_setup(account);
 
 	phb = g_new0(struct PHB, 1);
 	phb->host = g_strdup(server);
@@ -390,12 +390,12 @@ static gint _qq_udp_proxy_connect(GaimAccount *account,
 	phb->gpi = info;
 	phb->func = callback;
 	phb->data = gc;
-	qd->proxy_type = gaim_proxy_info_get_type(phb->gpi);
+	qd->proxy_type = purple_proxy_info_get_type(phb->gpi);
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Choosing proxy type %d\n", 
-			gaim_proxy_info_get_type(phb->gpi));
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Choosing proxy type %d\n", 
+			purple_proxy_info_get_type(phb->gpi));
 
-	if (gaim_dnsquery_a(server, port, _qq_server_resolved, phb) == NULL) {
+	if (purple_dnsquery_a(server, port, _qq_server_resolved, phb) == NULL) {
 		phb->func(gc, -1, _("Unable to connect"));
 		g_free(phb->host);
 		g_free(phb);
@@ -406,37 +406,37 @@ static gint _qq_udp_proxy_connect(GaimAccount *account,
 }
 
 /* QQ connection via UDP/TCP. 
- * I use Gaim proxy function to provide TCP proxy support,
+ * I use Purple proxy function to provide TCP proxy support,
  * and qq_udp_proxy.c to add UDP proxy support (thanks henry) */
-static gint _proxy_connect_full (GaimAccount *account, const gchar *host, guint16 port, 
-		GaimProxyConnectFunction func, gpointer data, gboolean use_tcp)
+static gint _proxy_connect_full (PurpleAccount *account, const gchar *host, guint16 port, 
+		PurpleProxyConnectFunction func, gpointer data, gboolean use_tcp)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	qq_data *qd;
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 	qd = (qq_data *) gc->proto_data;
 	qd->server_ip = g_strdup(host);
 	qd->server_port = port;
 
 	if(use_tcp)
-		return (gaim_proxy_connect(NULL, account, host, port, func, data) == NULL);
+		return (purple_proxy_connect(NULL, account, host, port, func, data) == NULL);
 	else
 		return _qq_udp_proxy_connect(account, host, port, func, data);
 }
 
 /* establish a generic QQ connection 
  * TCP/UDP, and direct/redirected */
-gint qq_connect(GaimAccount *account, const gchar *host, guint16 port, 
+gint qq_connect(PurpleAccount *account, const gchar *host, guint16 port, 
 		gboolean use_tcp, gboolean is_redirect)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	qq_data *qd;
 
 	g_return_val_if_fail(host != NULL, -1);
 	g_return_val_if_fail(port > 0, -1);
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 	g_return_val_if_fail(gc != NULL && gc->proto_data != NULL, -1);
 
 	if (is_redirect)
@@ -449,7 +449,7 @@ gint qq_connect(GaimAccount *account, const gchar *host, guint16 port,
 }
 
 /* clean up the given QQ connection and free all resources */
-void qq_disconnect(GaimConnection *gc)
+void qq_disconnect(PurpleConnection *gc)
 {
 	qq_data *qd;
 
@@ -478,7 +478,7 @@ gint qq_proxy_write(qq_data *qd, guint8 *data, gint len)
 
 	/* TCP sock5 may be processed twice
 	 * so we need to check qd->use_tcp as well */
-	if ((!qd->use_tcp) && qd->proxy_type == GAIM_PROXY_SOCKS5) {	/* UDP sock5 */
+	if ((!qd->use_tcp) && qd->proxy_type == PURPLE_PROXY_SOCKS5) {	/* UDP sock5 */
 		buf = g_newa(guint8, len + 10);
 		buf[0] = 0x00;
 		buf[1] = 0x00;	/* reserved */
@@ -494,10 +494,10 @@ gint qq_proxy_write(qq_data *qd, guint8 *data, gint len)
 		ret = send(qd->fd, data, len, 0);
 	}
 	if (ret == -1) {
-		gaim_connection_error(qd->gc, _("Socket send error"));
+		purple_connection_error(qd->gc, _("Socket send error"));
 		return ret;
 	} else if (errno == ECONNREFUSED) {
-		gaim_connection_error(qd->gc, _("Connection refused"));
+		purple_connection_error(qd->gc, _("Connection refused"));
 		return ret;
 	}
 
@@ -518,7 +518,7 @@ gint qq_proxy_read(qq_data *qd, guint8 *data, gint len)
 	if (bytes < 0)
 		return -1;
 
-	if ((!qd->use_tcp) && qd->proxy_type == GAIM_PROXY_SOCKS5) {	/* UDP sock5 */
+	if ((!qd->use_tcp) && qd->proxy_type == PURPLE_PROXY_SOCKS5) {	/* UDP sock5 */
 		if (bytes < 10)
 			return -1;
 		bytes -= 10;

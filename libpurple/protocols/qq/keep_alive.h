@@ -1,9 +1,9 @@
 /**
  * @file keep_alive.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -30,11 +30,11 @@
 #include "connection.h"
 #include "qq.h"
 
-void qq_send_packet_keep_alive(GaimConnection *gc);
+void qq_send_packet_keep_alive(PurpleConnection *gc);
 
-void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
-void qq_refresh_all_buddy_status(GaimConnection *gc);
+void qq_process_keep_alive_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_refresh_all_buddy_status(PurpleConnection *gc);
 
-void qq_update_buddy_contact(GaimConnection *gc, qq_buddy *q_bud);
+void qq_update_buddy_contact(PurpleConnection *gc, qq_buddy *q_bud);
 
 #endif

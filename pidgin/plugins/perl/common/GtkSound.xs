@@ -5,11 +5,11 @@ PROTOTYPES: ENABLE
 
 const char *
 pidgin_sound_get_event_option(event)
-	Gaim::SoundEventID event
+	Purple::SoundEventID event
 
 const char *
 pidgin_sound_get_event_label(event)
-	Gaim::SoundEventID event
+	Purple::SoundEventID event
 
-Gaim::Handle
+Purple::Handle
 pidgin_sound_get_handle()

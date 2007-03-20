@@ -1,9 +1,9 @@
 /**
  * @file yahoo.h The Yahoo! protocol plugin
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -88,7 +88,7 @@ enum yahoo_status {
 };
 
 struct yahoo_buddy_icon_upload_data {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	GString *str;
 	char *filename;
 	int pos;
@@ -99,11 +99,11 @@ struct yahoo_buddy_icon_upload_data {
 struct _YchtConn;
 
 struct yahoo_data {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	int fd;
 	guchar *rxqueue;
 	int rxlen;
-	GaimCircBuffer *txbuf;
+	PurpleCircBuffer *txbuf;
 	guint txhandler;
 	GHashTable *friends;
 
@@ -138,12 +138,12 @@ struct yahoo_data {
 	/* ew. we have to check the icon before we connect,
 	 * but can't upload it til we're connected. */
 	struct yahoo_buddy_icon_upload_data *picture_upload_todo;
-	GaimProxyConnectData *buddy_icon_connect_data;
+	PurpleProxyConnectData *buddy_icon_connect_data;
 
 	struct _YchtConn *ycht;
 
 	/**
-	 * This linked list contains GaimUtilFetchUrlData structs
+	 * This linked list contains PurpleUtilFetchUrlData structs
 	 * for when we lookup people profile or photo information.
 	 */
 	GSList *url_datas;
@@ -187,7 +187,7 @@ char *yahoo_html_to_codes(const char *src);
  *             it is not dereferenced.
  * @return The g_malloced string in the appropriate encoding.
  */
-char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8);
+char *yahoo_string_encode(PurpleConnection *gc, const char *str, gboolean *utf8);
 
 /**
  * Decode some text received from the server.
@@ -197,13 +197,13 @@ char *yahoo_string_encode(GaimConnection *gc, const char *str, gboolean *utf8);
  * @param utf8 Did the server tell us it was supposed to be utf8?
  * @return The decoded, utf-8 string, which must be g_free()'d.
  */
-char *yahoo_string_decode(GaimConnection *gc, const char *str, gboolean utf8);
+char *yahoo_string_decode(PurpleConnection *gc, const char *str, gboolean utf8);
 
 /* previously-static functions, now needed for yahoo_profile.c */
-void yahoo_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full);
+void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full);
 
 /* yahoo_profile.c */
-void yahoo_get_info(GaimConnection *gc, const char *name);
+void yahoo_get_info(PurpleConnection *gc, const char *name);
 
 /**
  * Check to see whether the sender is permitted to send
@@ -212,6 +212,6 @@ void yahoo_get_info(GaimConnection *gc, const char *name);
  * @param who The sender of the packet to check
 */
 gboolean yahoo_privacy_check
-	(GaimConnection *gc, const char *who);
+	(PurpleConnection *gc, const char *who);
 
 #endif /* _YAHOO_H_ */

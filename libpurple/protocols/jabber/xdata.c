@@ -1,5 +1,5 @@
 /*
- * gaim - Jabber Protocol Plugin
+ * purple - Jabber Protocol Plugin
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -42,7 +42,7 @@ struct jabber_x_data_data {
 	JabberStream *js;
 };
 
-static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, GaimRequestFields *fields) {
+static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFields *fields) {
 	xmlnode *result = xmlnode_new("x");
 	jabber_x_data_cb cb = data->cb;
 	gpointer user_data = data->user_data;
@@ -52,18 +52,18 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, GaimRequestFiel
 	xmlnode_set_namespace(result, "jabber:x:data");
 	xmlnode_set_attrib(result, "type", "submit");
 
-	for(groups = gaim_request_fields_get_groups(fields); groups; groups = groups->next) {
-		for(flds = gaim_request_field_group_get_fields(groups->data); flds; flds = flds->next) {
+	for(groups = purple_request_fields_get_groups(fields); groups; groups = groups->next) {
+		for(flds = purple_request_field_group_get_fields(groups->data); flds; flds = flds->next) {
 			xmlnode *fieldnode, *valuenode;
-			GaimRequestField *field = flds->data;
-			const char *id = gaim_request_field_get_id(field);
+			PurpleRequestField *field = flds->data;
+			const char *id = purple_request_field_get_id(field);
 			jabber_x_data_field_type type = GPOINTER_TO_INT(g_hash_table_lookup(data->fields, id));
 
 			switch(type) {
 				case JABBER_X_DATA_TEXT_SINGLE:
 				case JABBER_X_DATA_JID_SINGLE:
 					{
-					const char *value = gaim_request_field_string_get_value(field);
+					const char *value = purple_request_field_string_get_value(field);
 					fieldnode = xmlnode_new_child(result, "field");
 					xmlnode_set_attrib(fieldnode, "var", id);
 					valuenode = xmlnode_new_child(fieldnode, "value");
@@ -74,7 +74,7 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, GaimRequestFiel
 				case JABBER_X_DATA_TEXT_MULTI:
 					{
 					char **pieces, **p;
-					const char *value = gaim_request_field_string_get_value(field);
+					const char *value = purple_request_field_string_get_value(field);
 					fieldnode = xmlnode_new_child(result, "field");
 					xmlnode_set_attrib(fieldnode, "var", id);
 
@@ -89,13 +89,13 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, GaimRequestFiel
 				case JABBER_X_DATA_LIST_SINGLE:
 				case JABBER_X_DATA_LIST_MULTI:
 					{
-					const GList *selected = gaim_request_field_list_get_selected(field);
+					const GList *selected = purple_request_field_list_get_selected(field);
 					char *value;
 					fieldnode = xmlnode_new_child(result, "field");
 					xmlnode_set_attrib(fieldnode, "var", id);
 
 					while(selected) {
-						value = gaim_request_field_list_get_data(field, selected->data);
+						value = purple_request_field_list_get_data(field, selected->data);
 						valuenode = xmlnode_new_child(fieldnode, "value");
 						if(value)
 							xmlnode_insert_data(valuenode, value, -1);
@@ -107,7 +107,7 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, GaimRequestFiel
 					fieldnode = xmlnode_new_child(result, "field");
 					xmlnode_set_attrib(fieldnode, "var", id);
 					valuenode = xmlnode_new_child(fieldnode, "value");
-					if(gaim_request_field_bool_get_value(field))
+					if(purple_request_field_bool_get_value(field))
 						xmlnode_insert_data(valuenode, "1", -1);
 					else
 						xmlnode_insert_data(valuenode, "0", -1);
@@ -128,7 +128,7 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, GaimRequestFiel
 	cb(js, result, user_data);
 }
 
-static void jabber_x_data_cancel_cb(struct jabber_x_data_data *data, GaimRequestFields *fields) {
+static void jabber_x_data_cancel_cb(struct jabber_x_data_data *data, PurpleRequestFields *fields) {
 	xmlnode *result = xmlnode_new("x");
 	jabber_x_data_cb cb = data->cb;
 	gpointer user_data = data->user_data;
@@ -150,9 +150,9 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 {
 	void *handle;
 	xmlnode *fn, *x;
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
 	char *title = NULL;
 	char *instructions = NULL;
@@ -164,9 +164,9 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 	data->cb = cb;
 	data->js = js;
 
-	fields = gaim_request_fields_new();
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
 
 	for(fn = xmlnode_get_child(packet, "field"); fn; fn = xmlnode_get_next_twin(fn)) {
 		xmlnode *valuenode;
@@ -193,10 +193,10 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
 
-			field = gaim_request_field_string_new(var, label,
+			field = purple_request_field_string_new(var, label,
 					value ? value : "", FALSE);
-			gaim_request_field_string_set_masked(field, TRUE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_string_set_masked(field, TRUE);
+			purple_request_field_group_add_field(group, field);
 
 			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
 
@@ -215,9 +215,9 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 				g_free(value);
 			}
 
-			field = gaim_request_field_string_new(var, label,
+			field = purple_request_field_string_new(var, label,
 					str->str, TRUE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 
 			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_MULTI));
 
@@ -226,10 +226,10 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 			xmlnode *optnode;
 			GList *selected = NULL;
 
-			field = gaim_request_field_list_new(var, label);
+			field = purple_request_field_list_new(var, label);
 
 			if(!strcmp(type, "list-multi")) {
-				gaim_request_field_list_set_multi_select(field, TRUE);
+				purple_request_field_list_set_multi_select(field, TRUE);
 				g_hash_table_replace(data->fields, g_strdup(var),
 						GINT_TO_POINTER(JABBER_X_DATA_LIST_MULTI));
 			} else {
@@ -257,11 +257,11 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 
 				data->values = g_slist_prepend(data->values, value);
 
-				gaim_request_field_list_add(field, lbl, value);
+				purple_request_field_list_add(field, lbl, value);
 				if(g_list_find_custom(selected, value, (GCompareFunc)strcmp))
-					gaim_request_field_list_add_selected(field, lbl);
+					purple_request_field_list_add_selected(field, lbl);
 			}
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 
 			while(selected) {
 				g_free(selected->data);
@@ -278,8 +278,8 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 						!g_ascii_strcasecmp(value, "true") || !g_ascii_strcasecmp(value, "1")))
 				def = TRUE;
 
-			field = gaim_request_field_bool_new(var, label, def);
-			gaim_request_field_group_add_field(group, field);
+			field = purple_request_field_bool_new(var, label, def);
+			purple_request_field_group_add_field(group, field);
 
 			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_BOOLEAN));
 
@@ -289,8 +289,8 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
 
-			field = gaim_request_field_label_new("", value);
-			gaim_request_field_group_add_field(group, field);
+			field = purple_request_field_label_new("", value);
+			purple_request_field_group_add_field(group, field);
 
 			if(value)
 				g_free(value);
@@ -298,10 +298,10 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
 
-			field = gaim_request_field_string_new(var, "", value ? value : "",
+			field = purple_request_field_string_new(var, "", value ? value : "",
 					FALSE);
-			gaim_request_field_set_visible(field, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_set_visible(field, FALSE);
+			purple_request_field_group_add_field(group, field);
 
 			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
 
@@ -311,12 +311,12 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
 
-			field = gaim_request_field_string_new(var, label,
+			field = purple_request_field_string_new(var, label,
 					value ? value : "", FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 
 			if(!strcmp(type, "jid-single")) {
-				gaim_request_field_set_type_hint(field, "screenname");
+				purple_request_field_set_type_hint(field, "screenname");
 				g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_JID_SINGLE));
 			} else {
 				g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
@@ -333,7 +333,7 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 	if((x = xmlnode_get_child(packet, "instructions")))
 		instructions = xmlnode_get_data(x);
 
-	handle = gaim_request_fields(js->gc, title, title, instructions, fields,
+	handle = purple_request_fields(js->gc, title, title, instructions, fields,
 			_("OK"), G_CALLBACK(jabber_x_data_ok_cb),
 			_("Cancel"), G_CALLBACK(jabber_x_data_cancel_cb), data);
 

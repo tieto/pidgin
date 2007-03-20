@@ -1,8 +1,8 @@
 $MODULE_NAME = "Conversation Test";
 
-use Gaim;
+use Purple;
 
-# All the information Gaim gets about our nifty plugin
+# All the information Purple gets about our nifty plugin
 %PLUGIN_INFO = ( 
 	perl_api_version => 2, 
 	name => "Perl: $MODULE_NAME", 
@@ -45,27 +45,27 @@ sub plugin_load {
 	print "#" x 80 . "\n\n";
 
 	print "PERL: Finding account.\n";
-	$account = Gaim::Accounts::find($USERNAME, $PROTOCOL_ID);
+	$account = Purple::Accounts::find($USERNAME, $PROTOCOL_ID);
 	
 	#########  TEST CODE HERE  ##########
 	# First we create two new conversations.
-	print "Testing Gaim::Conversation::new()...";
-	$conv1 = Gaim::Conversation->new(1, $account, "Test Conversation 1");
+	print "Testing Purple::Conversation::new()...";
+	$conv1 = Purple::Conversation->new(1, $account, "Test Conversation 1");
 	if ($conv1) { print "ok.\n"; } else { print "fail.\n"; }
 
-	print "Testing Gaim::Conversation::new()...";
-	$conv2 = Gaim::Conversation->new(1, $account, "Test Conversation 2");
+	print "Testing Purple::Conversation::new()...";
+	$conv2 = Purple::Conversation->new(1, $account, "Test Conversation 2");
 	if ($conv2) { print "ok.\n"; } else { print "fail.\n"; }
 	
 	# Second we create a window to display the conversations in.
-	#  Note that the package here is Gaim::Conversation::Window
-	print "Testing Gaim::Conversation::Window::new()...\n";
-	$win = Gaim::Conversation::Window::new();
+	#  Note that the package here is Purple::Conversation::Window
+	print "Testing Purple::Conversation::Window::new()...\n";
+	$win = Purple::Conversation::Window::new();
 
 	# The third thing to do is to add the two conversations to the windows.
 	# The subroutine add_conversation() returns the number of conversations
 	# present in the window.
-	print "Testing Gaim::Conversation::Window::add_conversation()...";
+	print "Testing Purple::Conversation::Window::add_conversation()...";
 	$conv_count = $conv1->add_conversation();
 	if ($conv_count) { 
 		print "ok..." . $conv_count . " conversations...\n";
@@ -73,7 +73,7 @@ sub plugin_load {
 		print "fail.\n";
 	}
 
-	print "Testing Gaim::Conversation::Window::add_conversation()...";
+	print "Testing Purple::Conversation::Window::add_conversation()...";
 	$conv_count = $win->add_conversation($conv2);
 	if ($conv_count) {
 		print "ok..." . $conv_count . " conversations...\n";
@@ -82,19 +82,19 @@ sub plugin_load {
 	}
 
 	# Now the window is displayed to the user.
-	print "Testing Gaim::Conversation::Window::show()...\n";
+	print "Testing Purple::Conversation::Window::show()...\n";
 	$win->show();
 
 	# Use get_im_data() to get a handle for the conversation	
-	print "Testing Gaim::Conversation::get_im_data()...\n";
+	print "Testing Purple::Conversation::get_im_data()...\n";
 	$im = $conv1->get_im_data();
 	if ($im) { print "ok.\n"; } else { print "fail.\n"; }
 
 	# Here we send messages to the conversation
-	print "Testing Gaim::Conversation::IM::send()...\n";
+	print "Testing Purple::Conversation::IM::send()...\n";
 	$im->send("Message Test.");
 
-	print "Testing Gaim::Conversation::IM::write()...\n";
+	print "Testing Purple::Conversation::IM::write()...\n";
 	$im->write("SENDER", "<b>Message</b> Test.", 0, 0);
 	
 	print "#" x 80 . "\n\n";
@@ -106,11 +106,11 @@ sub plugin_unload {
 	print "#" x 80 . "\n\n";
 	#########  TEST CODE HERE  ##########
 
-	print "Testing Gaim::Conversation::Window::get_conversation_count()...\n";
+	print "Testing Purple::Conversation::Window::get_conversation_count()...\n";
 	$conv_count = $win->get_conversation_count();
 	print "...and it returned $conv_count.\n";
 	if ($conv_count > 0) {
-	        print "Testing Gaim::Conversation::Window::destroy()...\n";
+	        print "Testing Purple::Conversation::Window::destroy()...\n";
 	        $win->destroy();
 	}
 	

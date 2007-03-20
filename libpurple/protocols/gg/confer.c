@@ -1,7 +1,7 @@
 /**
  * @file confer.c
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2005  Bartosz Oler <bartosz@bzimage.us>
  *
@@ -26,22 +26,22 @@
 #include "gg-utils.h"
 #include "confer.h"
 
-/* GaimConversation *ggp_confer_find_by_name(GaimConnection *gc, const gchar *name) {{{ */
-GaimConversation *ggp_confer_find_by_name(GaimConnection *gc, const gchar *name)
+/* PurpleConversation *ggp_confer_find_by_name(PurpleConnection *gc, const gchar *name) {{{ */
+PurpleConversation *ggp_confer_find_by_name(PurpleConnection *gc, const gchar *name)
 {
 	g_return_val_if_fail(gc   != NULL, NULL);
 	g_return_val_if_fail(name != NULL, NULL);
 
-	return gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, name,
-			gaim_connection_get_account(gc));
+	return purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name,
+			purple_connection_get_account(gc));
 }
 /* }}} */
 
-/* void ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name, const uin_t uin) {{{ */
-void ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name,
+/* void ggp_confer_participants_add_uin(PurpleConnection *gc, const gchar *chat_name, const uin_t uin) {{{ */
+void ggp_confer_participants_add_uin(PurpleConnection *gc, const gchar *chat_name,
 							 const uin_t uin)
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	GGPInfo *info = gc->proto_data;
 	GGPChat *chat;
 	GList *l;
@@ -59,8 +59,8 @@ void ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name,
 
 			str_uin = g_strdup_printf("%lu", (unsigned long int)uin);
 			conv = ggp_confer_find_by_name(gc, chat_name);
-			gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv), str_uin, NULL,
-						GAIM_CBFLAGS_NONE, TRUE);
+			purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv), str_uin, NULL,
+						PURPLE_CBFLAGS_NONE, TRUE);
 
 			g_free(str_uin);
 		}
@@ -69,8 +69,8 @@ void ggp_confer_participants_add_uin(GaimConnection *gc, const gchar *chat_name,
 }
 /* }}} */
 
-/* void ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name, const uin_t *recipients, int count) {{{ */
-void ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name,
+/* void ggp_confer_participants_add(PurpleConnection *gc, const gchar *chat_name, const uin_t *recipients, int count) {{{ */
+void ggp_confer_participants_add(PurpleConnection *gc, const gchar *chat_name,
 				 const uin_t *recipients, int count)
 {
 	GGPInfo *info = gc->proto_data;
@@ -85,7 +85,7 @@ void ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name,
 			continue;
 
 		for (i = 0; i < count; i++) {
-			GaimConversation *conv;
+			PurpleConversation *conv;
 
 			if (g_list_find(chat->participants,
 					GINT_TO_POINTER(recipients[i])) != NULL) {
@@ -97,9 +97,9 @@ void ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name,
 
 			str_uin = g_strdup_printf("%lu", (unsigned long int)recipients[i]);
 			conv = ggp_confer_find_by_name(gc, chat_name);
-			gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
+			purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv),
 						str_uin, NULL,
-						GAIM_CBFLAGS_NONE, TRUE);
+						PURPLE_CBFLAGS_NONE, TRUE);
 			g_free(str_uin);
 		}
 		break;
@@ -107,8 +107,8 @@ void ggp_confer_participants_add(GaimConnection *gc, const gchar *chat_name,
 }
 /* }}} */
 
-/* const char *ggp_confer_find_by_participants(GaimConnection *gc, const uin_t *recipients, int count) {{{ */
-const char *ggp_confer_find_by_participants(GaimConnection *gc,
+/* const char *ggp_confer_find_by_participants(PurpleConnection *gc, const uin_t *recipients, int count) {{{ */
+const char *ggp_confer_find_by_participants(PurpleConnection *gc,
 					    const uin_t *recipients, int count)
 {
 	GGPInfo *info = gc->proto_data;
@@ -146,8 +146,8 @@ const char *ggp_confer_find_by_participants(GaimConnection *gc,
 }
 /* }}} */
 
-/* const char *ggp_confer_add_new(GaimConnection *gc, const char *name) {{{ */
-const char *ggp_confer_add_new(GaimConnection *gc, const char *name)
+/* const char *ggp_confer_add_new(PurpleConnection *gc, const char *name) {{{ */
+const char *ggp_confer_add_new(PurpleConnection *gc, const char *name)
 {
 	GGPInfo *info = gc->proto_data;
 	GGPChat *chat;

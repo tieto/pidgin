@@ -2,9 +2,9 @@
  * @file gntnotify.c GNT Notify API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -31,7 +31,7 @@
 #include <util.h>
 
 #include "gntnotify.h"
-#include "gntgaim.h"
+#include "finch.h"
 
 static struct
 {
@@ -40,13 +40,13 @@ static struct
 } emaildialog;
 
 static void
-notify_msg_window_destroy_cb(GntWidget *window, GaimNotifyMsgType type)
+notify_msg_window_destroy_cb(GntWidget *window, PurpleNotifyMsgType type)
 {
-	gaim_notify_close(type, window);
+	purple_notify_close(type, window);
 }
 
 static void *
-finch_notify_message(GaimNotifyMsgType type, const char *title,
+finch_notify_message(PurpleNotifyMsgType type, const char *title,
 		const char *primary, const char *secondary)
 {
 	GntWidget *window, *button;
@@ -54,11 +54,11 @@ finch_notify_message(GaimNotifyMsgType type, const char *title,
 
 	switch (type)
 	{
-		case GAIM_NOTIFY_MSG_ERROR:
+		case PURPLE_NOTIFY_MSG_ERROR:
 			sf |= GNT_TEXT_FLAG_BOLD;
-		case GAIM_NOTIFY_MSG_WARNING:
+		case PURPLE_NOTIFY_MSG_WARNING:
 			pf |= GNT_TEXT_FLAG_UNDERLINE;
-		case GAIM_NOTIFY_MSG_INFO:
+		case PURPLE_NOTIFY_MSG_INFO:
 			pf |= GNT_TEXT_FLAG_BOLD;
 			break;
 	}
@@ -88,7 +88,7 @@ finch_notify_message(GaimNotifyMsgType type, const char *title,
 }
 
 /* handle is, in all/most occasions, a GntWidget * */
-static void finch_close_notify(GaimNotifyType type, void *handle)
+static void finch_close_notify(PurpleNotifyType type, void *handle)
 {
 	GntWidget *widget = handle;
 
@@ -98,8 +98,8 @@ static void finch_close_notify(GaimNotifyType type, void *handle)
 	while (widget->parent)
 		widget = widget->parent;
 	
-	if (type == GAIM_NOTIFY_SEARCHRESULTS)
-		gaim_notify_searchresults_free(g_object_get_data(handle, "notify-results"));
+	if (type == PURPLE_NOTIFY_SEARCHRESULTS)
+		purple_notify_searchresults_free(g_object_get_data(handle, "notify-results"));
 #if 1
 	/* This did not seem to be necessary */
 	g_signal_handlers_disconnect_by_func(G_OBJECT(widget),
@@ -113,13 +113,13 @@ static void *finch_notify_formatted(const char *title, const char *primary,
 {
 	/* XXX: For now, simply strip the html and use _notify_message. For future use,
 	 * there should be some way of parsing the makrups from GntTextView */
-	char *unformat = gaim_markup_strip_html(text);
+	char *unformat = purple_markup_strip_html(text);
 	char *t = g_strdup_printf("%s%s%s",
 			secondary ? secondary : "",
 			secondary ? "\n" : "",
 			unformat ? unformat : "");
 
-	void *ret = finch_notify_message(GAIM_NOTIFY_FORMATTED, title, primary, t);
+	void *ret = finch_notify_message(PURPLE_NOTIFY_FORMATTED, title, primary, t);
 
 	g_free(t);
 	g_free(unformat);
@@ -168,11 +168,11 @@ setup_email_dialog()
 }
 
 static void *
-finch_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
+finch_notify_emails(PurpleConnection *gc, size_t count, gboolean detailed,
 		const char **subjects, const char **froms, const char **tos,
 		const char **urls)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
 	GString *message = g_string_new(NULL);
 	void *ret;
 
@@ -182,8 +182,8 @@ finch_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 				ngettext("%s (%s) has %d new message.",
 					     "%s (%s) has %d new messages.",
 						 (int)count),
-				tos ? *tos : gaim_account_get_username(account),
-				gaim_account_get_protocol_name(account), (int)count);
+				tos ? *tos : purple_account_get_username(account),
+				purple_account_get_protocol_name(account), (int)count);
 	}
 	else
 	{
@@ -191,8 +191,8 @@ finch_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 
 		setup_email_dialog();
 
-		to = g_strdup_printf("%s (%s)", tos ? *tos : gaim_account_get_username(account),
-					gaim_account_get_protocol_name(account));
+		to = g_strdup_printf("%s (%s)", tos ? *tos : purple_account_get_username(account),
+					purple_account_get_protocol_name(account));
 		gnt_tree_add_row_after(GNT_TREE(emaildialog.tree), GINT_TO_POINTER(time(NULL)),
 				gnt_tree_create_row(GNT_TREE(emaildialog.tree), to,
 					froms ? *froms : "[Unknown sender]",
@@ -203,13 +203,13 @@ finch_notify_emails(GaimConnection *gc, size_t count, gboolean detailed,
 		return NULL;
 	}
 
-	ret = finch_notify_message(GAIM_NOTIFY_EMAIL, _("New Mail"), _("You have mail!"), message->str);
+	ret = finch_notify_message(PURPLE_NOTIFY_EMAIL, _("New Mail"), _("You have mail!"), message->str);
 	g_string_free(message, TRUE);
 	return ret;
 }
 
 static void *
-finch_notify_email(GaimConnection *gc, const char *subject, const char *from,
+finch_notify_email(PurpleConnection *gc, const char *subject, const char *from,
 		const char *to, const char *url)
 {
 	return finch_notify_emails(gc, 1, subject != NULL,
@@ -220,7 +220,7 @@ finch_notify_email(GaimConnection *gc, const char *subject, const char *from,
 }
 
 static void *
-finch_notify_userinfo(GaimConnection *gc, const char *who, GaimNotifyUserInfo *user_info)
+finch_notify_userinfo(PurpleConnection *gc, const char *who, PurpleNotifyUserInfo *user_info)
 {
 	/* Xeroxed from gtknotify.c */
 	char *primary;
@@ -228,7 +228,7 @@ finch_notify_userinfo(GaimConnection *gc, const char *who, GaimNotifyUserInfo *u
 	void *ui_handle;
 	
 	primary = g_strdup_printf(_("Info for %s"), who);
-	info = gaim_notify_user_info_get_text_with_newline(user_info, "<BR>");
+	info = purple_notify_user_info_get_text_with_newline(user_info, "<BR>");
 	ui_handle = finch_notify_formatted(_("Buddy Information"), primary, NULL, info);
 	g_free(info);
 	g_free(primary);
@@ -236,22 +236,22 @@ finch_notify_userinfo(GaimConnection *gc, const char *who, GaimNotifyUserInfo *u
 }
 
 static void
-notify_button_activated(GntWidget *widget, GaimNotifySearchButton *b)
+notify_button_activated(GntWidget *widget, PurpleNotifySearchButton *b)
 {
 	GList *list = NULL;
-	GaimAccount *account = g_object_get_data(G_OBJECT(widget), "notify-account");
+	PurpleAccount *account = g_object_get_data(G_OBJECT(widget), "notify-account");
 	gpointer data = g_object_get_data(G_OBJECT(widget), "notify-data");
 
 	list = gnt_tree_get_selection_text_list(GNT_TREE(widget));
 
-	b->callback(gaim_account_get_connection(account), list, data);
+	b->callback(purple_account_get_connection(account), list, data);
 	g_list_foreach(list, (GFunc)g_free, NULL);
 	g_list_free(list);
 }
 
 static void
-finch_notify_sr_new_rows(GaimConnection *gc,
-		GaimNotifySearchResults *results, void *data)
+finch_notify_sr_new_rows(PurpleConnection *gc,
+		PurpleNotifySearchResults *results, void *data)
 {
 	GntTree *tree = GNT_TREE(data);
 	GList *o;
@@ -267,9 +267,9 @@ finch_notify_sr_new_rows(GaimConnection *gc,
 }
 
 static void *
-finch_notify_searchresults(GaimConnection *gc, const char *title,
+finch_notify_searchresults(PurpleConnection *gc, const char *title,
 		const char *primary, const char *secondary,
-		GaimNotifySearchResults *results, gpointer data)
+		PurpleNotifySearchResults *results, gpointer data)
 {
 	GntWidget *window, *tree, *box, *button;
 	GList *iter;
@@ -294,30 +294,30 @@ finch_notify_searchresults(GaimConnection *gc, const char *title,
 
 	for (iter = results->buttons; iter; iter = iter->next)
 	{
-		GaimNotifySearchButton *b = iter->data;
+		PurpleNotifySearchButton *b = iter->data;
 		const char *text;
 
 		switch (b->type)
 		{
-			case GAIM_NOTIFY_BUTTON_LABELED:
+			case PURPLE_NOTIFY_BUTTON_LABELED:
 				text = b->label;
 				break;
-			case GAIM_NOTIFY_BUTTON_CONTINUE:
+			case PURPLE_NOTIFY_BUTTON_CONTINUE:
 				text = _("Continue");
 				break;
-			case GAIM_NOTIFY_BUTTON_ADD:
+			case PURPLE_NOTIFY_BUTTON_ADD:
 				text = _("Add");
 				break;
-			case GAIM_NOTIFY_BUTTON_INFO:
+			case PURPLE_NOTIFY_BUTTON_INFO:
 				text = _("Info");
 				break;
-			case GAIM_NOTIFY_BUTTON_IM:
+			case PURPLE_NOTIFY_BUTTON_IM:
 				text = _("IM");
 				break;
-			case GAIM_NOTIFY_BUTTON_JOIN:
+			case PURPLE_NOTIFY_BUTTON_JOIN:
 				text = _("Join");
 				break;
-			case GAIM_NOTIFY_BUTTON_INVITE:
+			case PURPLE_NOTIFY_BUTTON_INVITE:
 				text = _("Invite");
 				break;
 			default:
@@ -325,7 +325,7 @@ finch_notify_searchresults(GaimConnection *gc, const char *title,
 		}
 
 		button = gnt_button_new(text);
-		g_object_set_data(G_OBJECT(button), "notify-account", gaim_connection_get_account(gc));
+		g_object_set_data(G_OBJECT(button), "notify-account", purple_connection_get_account(gc));
 		g_object_set_data(G_OBJECT(button), "notify-data", data);
 		g_signal_connect_swapped(G_OBJECT(button), "activate",
 				G_CALLBACK(notify_button_activated), b);
@@ -343,7 +343,7 @@ finch_notify_searchresults(GaimConnection *gc, const char *title,
 	return tree;
 }
 
-static GaimNotifyUiOps ops = 
+static PurpleNotifyUiOps ops = 
 {
 	.notify_message = finch_notify_message,
 	.close_notify = finch_close_notify,       /* The rest of the notify-uiops return a GntWidget.
@@ -358,7 +358,7 @@ static GaimNotifyUiOps ops =
 	.notify_uri = NULL                     /* This is of low-priority to me */
 };
 
-GaimNotifyUiOps *finch_notify_get_ui_ops()
+PurpleNotifyUiOps *finch_notify_get_ui_ops()
 {
 	return &ops;
 }

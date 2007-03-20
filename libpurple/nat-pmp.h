@@ -2,9 +2,9 @@
 * @file nat-pmp.h NAT-PMP Implementation
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -87,8 +87,8 @@ typedef struct {
 	uint32_t	lifetime;
 } pmp_map_response_t;
 
-char *gaim_pmp_get_public_ip();
-pmp_map_response_t *gaim_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uint32_t lifetime);
-pmp_map_response_t *gaim_pmp_destroy_map(uint8_t type, uint16_t privateport);
+char *purple_pmp_get_public_ip();
+pmp_map_response_t *purple_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uint32_t lifetime);
+pmp_map_response_t *purple_pmp_destroy_map(uint8_t type, uint16_t privateport);
 	
 #endif

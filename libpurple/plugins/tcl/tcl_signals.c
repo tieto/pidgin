@@ -1,7 +1,7 @@
 /**
- * @file tcl_signals.c Gaim Tcl signal API
+ * @file tcl_signals.c Purple Tcl signal API
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2003 Ethan Blanton <eblanton@cs.purdue.edu>
  * 
@@ -22,7 +22,7 @@
 #include <tcl.h>
 #include <stdarg.h>
 
-#include "tcl_gaim.h"
+#include "tcl_purple.h"
 
 #include "internal.h"
 #include "connection.h"
@@ -72,7 +72,7 @@ gboolean tcl_signal_connect(struct tcl_signal_handler *handler)
 {
 	GString *proc;
 
-	gaim_signal_get_values(handler->instance,
+	purple_signal_get_values(handler->instance,
 			       Tcl_GetString(handler->signal),
 			       &handler->returntype, &handler->nargs,
 			       &handler->argtypes);
@@ -80,10 +80,10 @@ gboolean tcl_signal_connect(struct tcl_signal_handler *handler)
 	tcl_signal_disconnect(handler->interp, Tcl_GetString(handler->signal),
 			      handler->interp);
 
-	if (!gaim_signal_connect_vargs(handler->instance,
+	if (!purple_signal_connect_vargs(handler->instance,
 				       Tcl_GetString(handler->signal),
 				       (void *)handler->interp,
-				       GAIM_CALLBACK(tcl_signal_callback),
+				       PURPLE_CALLBACK(tcl_signal_callback),
 				       (void *)handler))
 		return FALSE;
 
@@ -117,8 +117,8 @@ void tcl_signal_disconnect(void *instance, const char *signal, Tcl_Interp *inter
 		handler = cur->data;
 		if (handler->interp == interp && handler->instance == instance 
 		    && !strcmp(signal, Tcl_GetString(handler->signal))) {
-			gaim_signal_disconnect(instance, signal, handler->interp,
-					       GAIM_CALLBACK(tcl_signal_callback));
+			purple_signal_disconnect(instance, signal, handler->interp,
+					       PURPLE_CALLBACK(tcl_signal_callback));
 			cmd = g_string_sized_new(64);
 			g_string_printf(cmd, "namespace delete %s",
 					Tcl_GetString(handler->namespace));
@@ -134,21 +134,21 @@ void tcl_signal_disconnect(void *instance, const char *signal, Tcl_Interp *inter
 		tcl_callbacks = g_list_remove_all(tcl_callbacks, NULL);
 }
 
-static GaimStringref *ref_type(GaimSubType type)
+static PurpleStringref *ref_type(PurpleSubType type)
 {
 	switch (type) {
-	case GAIM_SUBTYPE_ACCOUNT:
-		return GaimTclRefAccount;
-	case GAIM_SUBTYPE_CONNECTION:
-		return GaimTclRefConnection;
-	case GAIM_SUBTYPE_CONVERSATION:
-		return GaimTclRefConversation;
-	case GAIM_SUBTYPE_PLUGIN:
-		return GaimTclRefPlugin;
-	case GAIM_SUBTYPE_STATUS:
-		return GaimTclRefStatus;
-	case GAIM_SUBTYPE_XFER:
-		return GaimTclRefXfer;
+	case PURPLE_SUBTYPE_ACCOUNT:
+		return PurpleTclRefAccount;
+	case PURPLE_SUBTYPE_CONNECTION:
+		return PurpleTclRefConnection;
+	case PURPLE_SUBTYPE_CONVERSATION:
+		return PurpleTclRefConversation;
+	case PURPLE_SUBTYPE_PLUGIN:
+		return PurpleTclRefPlugin;
+	case PURPLE_SUBTYPE_STATUS:
+		return PurpleTclRefStatus;
+	case PURPLE_SUBTYPE_XFER:
+		return PurpleTclRefXfer;
 	default:
 		return NULL;
 	}
@@ -157,7 +157,7 @@ static GaimStringref *ref_type(GaimSubType type)
 static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handler)
 {
 	GString *name, *val;
-	GaimBlistNode *node;
+	PurpleBlistNode *node;
 	int error, i;
 	void *retval = NULL;
 	Tcl_Obj *cmd, *arg, *result;
@@ -177,25 +177,25 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 	Tcl_ListObjAppendElement(handler->interp, cmd, arg);
 
 	for (i = 0; i < handler->nargs; i++) {
-		if (gaim_value_is_outgoing(handler->argtypes[i]))
+		if (purple_value_is_outgoing(handler->argtypes[i]))
 			g_string_printf(name, "%s::arg%d",
 					Tcl_GetString(handler->namespace), i);
 
-		switch(gaim_value_get_type(handler->argtypes[i])) {
-		case GAIM_TYPE_UNKNOWN:	/* What?  I guess just pass the word ... */
+		switch(purple_value_get_type(handler->argtypes[i])) {
+		case PURPLE_TYPE_UNKNOWN:	/* What?  I guess just pass the word ... */
 			/* treat this as a pointer, but complain first */
-			gaim_debug(GAIM_DEBUG_ERROR, "tcl", "unknown GaimValue type %d\n",
-				   gaim_value_get_type(handler->argtypes[i]));
-		case GAIM_TYPE_POINTER:
-		case GAIM_TYPE_OBJECT:
-		case GAIM_TYPE_BOXED:
+			purple_debug(PURPLE_DEBUG_ERROR, "tcl", "unknown PurpleValue type %d\n",
+				   purple_value_get_type(handler->argtypes[i]));
+		case PURPLE_TYPE_POINTER:
+		case PURPLE_TYPE_OBJECT:
+		case PURPLE_TYPE_BOXED:
 			/* These are all "pointer" types to us */
-			if (gaim_value_is_outgoing(handler->argtypes[i]))
-				gaim_debug_error("tcl", "pointer types do not currently support outgoing arguments\n");
-			arg = gaim_tcl_ref_new(GaimTclRefPointer, va_arg(args, void *));
+			if (purple_value_is_outgoing(handler->argtypes[i]))
+				purple_debug_error("tcl", "pointer types do not currently support outgoing arguments\n");
+			arg = purple_tcl_ref_new(PurpleTclRefPointer, va_arg(args, void *));
 			break;
-		case GAIM_TYPE_BOOLEAN:
-			if (gaim_value_is_outgoing(handler->argtypes[i])) {
+		case PURPLE_TYPE_BOOLEAN:
+			if (purple_value_is_outgoing(handler->argtypes[i])) {
 				vals[i] = va_arg(args, gboolean *);
 				Tcl_LinkVar(handler->interp, name->str,
 					    (char *)&vals[i], TCL_LINK_BOOLEAN);
@@ -204,19 +204,19 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 				arg = Tcl_NewBooleanObj(va_arg(args, gboolean));
 			}
 			break;
-		case GAIM_TYPE_CHAR:
-		case GAIM_TYPE_UCHAR:
-		case GAIM_TYPE_SHORT:
-		case GAIM_TYPE_USHORT:
-		case GAIM_TYPE_INT:
-		case GAIM_TYPE_UINT:
-		case GAIM_TYPE_LONG:
-		case GAIM_TYPE_ULONG:
-		case GAIM_TYPE_ENUM:
+		case PURPLE_TYPE_CHAR:
+		case PURPLE_TYPE_UCHAR:
+		case PURPLE_TYPE_SHORT:
+		case PURPLE_TYPE_USHORT:
+		case PURPLE_TYPE_INT:
+		case PURPLE_TYPE_UINT:
+		case PURPLE_TYPE_LONG:
+		case PURPLE_TYPE_ULONG:
+		case PURPLE_TYPE_ENUM:
 			/* I should really cast these individually to
 			 * preserve as much information as possible ...
 			 * but heh */
-			if (gaim_value_is_outgoing(handler->argtypes[i])) {
+			if (purple_value_is_outgoing(handler->argtypes[i])) {
 				vals[i] = va_arg(args, int *);
 				Tcl_LinkVar(handler->interp, name->str,
 					    vals[i], TCL_LINK_INT);
@@ -225,11 +225,11 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 				arg = Tcl_NewIntObj(va_arg(args, int));
 			}
 			break;
-		case GAIM_TYPE_INT64:
-		case GAIM_TYPE_UINT64:
+		case PURPLE_TYPE_INT64:
+		case PURPLE_TYPE_UINT64:
 			/* Tcl < 8.4 doesn't have wide ints, so we have ugly
 			 * ifdefs in here */
-			if (gaim_value_is_outgoing(handler->argtypes[i])) {
+			if (purple_value_is_outgoing(handler->argtypes[i])) {
 				vals[i] = (void *)va_arg(args, gint64 *);
 				#if (TCL_MAJOR_VERSION >= 8 && TCL_MINOR_VERSION >= 4)
 				Tcl_LinkVar(handler->interp, name->str,
@@ -250,8 +250,8 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 				#endif /* Tcl >= 8.4 */
 			}
 			break;
-		case GAIM_TYPE_STRING:
-			if (gaim_value_is_outgoing(handler->argtypes[i])) {
+		case PURPLE_TYPE_STRING:
+			if (purple_value_is_outgoing(handler->argtypes[i])) {
 				strs[i] = va_arg(args, char **);
 				if (strs[i] == NULL || *strs[i] == NULL) {
 					vals[i] = ckalloc(1);
@@ -267,62 +267,62 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 				arg = Tcl_NewStringObj(va_arg(args, char *), -1);
 			}
 			break;
-		case GAIM_TYPE_SUBTYPE:
-			switch (gaim_value_get_subtype(handler->argtypes[i])) {
-			case GAIM_SUBTYPE_UNKNOWN:
-				gaim_debug(GAIM_DEBUG_ERROR, "tcl", "subtype unknown\n");
-			case GAIM_SUBTYPE_ACCOUNT:
-			case GAIM_SUBTYPE_CONNECTION:
-			case GAIM_SUBTYPE_CONVERSATION:
-			case GAIM_SUBTYPE_STATUS:
-			case GAIM_SUBTYPE_PLUGIN:
-			case GAIM_SUBTYPE_XFER:
-				if (gaim_value_is_outgoing(handler->argtypes[i]))
-					gaim_debug_error("tcl", "pointer subtypes do not currently support outgoing arguments\n");
-				arg = gaim_tcl_ref_new(ref_type(gaim_value_get_subtype(handler->argtypes[i])), va_arg(args, void *));
+		case PURPLE_TYPE_SUBTYPE:
+			switch (purple_value_get_subtype(handler->argtypes[i])) {
+			case PURPLE_SUBTYPE_UNKNOWN:
+				purple_debug(PURPLE_DEBUG_ERROR, "tcl", "subtype unknown\n");
+			case PURPLE_SUBTYPE_ACCOUNT:
+			case PURPLE_SUBTYPE_CONNECTION:
+			case PURPLE_SUBTYPE_CONVERSATION:
+			case PURPLE_SUBTYPE_STATUS:
+			case PURPLE_SUBTYPE_PLUGIN:
+			case PURPLE_SUBTYPE_XFER:
+				if (purple_value_is_outgoing(handler->argtypes[i]))
+					purple_debug_error("tcl", "pointer subtypes do not currently support outgoing arguments\n");
+				arg = purple_tcl_ref_new(ref_type(purple_value_get_subtype(handler->argtypes[i])), va_arg(args, void *));
 				break;
-			case GAIM_SUBTYPE_BLIST:
-			case GAIM_SUBTYPE_BLIST_BUDDY:
-			case GAIM_SUBTYPE_BLIST_GROUP:
-			case GAIM_SUBTYPE_BLIST_CHAT:
+			case PURPLE_SUBTYPE_BLIST:
+			case PURPLE_SUBTYPE_BLIST_BUDDY:
+			case PURPLE_SUBTYPE_BLIST_GROUP:
+			case PURPLE_SUBTYPE_BLIST_CHAT:
 				/* We're going to switch again for code-deduping */
-				if (gaim_value_is_outgoing(handler->argtypes[i]))
-					node = *va_arg(args, GaimBlistNode **);
+				if (purple_value_is_outgoing(handler->argtypes[i]))
+					node = *va_arg(args, PurpleBlistNode **);
 				else
-					node = va_arg(args, GaimBlistNode *);
+					node = va_arg(args, PurpleBlistNode *);
 				switch (node->type) {
-				case GAIM_BLIST_GROUP_NODE:
+				case PURPLE_BLIST_GROUP_NODE:
 					arg = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("group", -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
-								 Tcl_NewStringObj(((GaimGroup *)node)->name, -1));
+								 Tcl_NewStringObj(((PurpleGroup *)node)->name, -1));
 					break;
-				case GAIM_BLIST_CONTACT_NODE:
+				case PURPLE_BLIST_CONTACT_NODE:
 					/* g_string_printf(val, "contact {%s}", Contact Name? ); */
 					arg = Tcl_NewStringObj("contact", -1);
 					break;
-				case GAIM_BLIST_BUDDY_NODE:
+				case PURPLE_BLIST_BUDDY_NODE:
 					arg = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("buddy", -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
-								 Tcl_NewStringObj(((GaimBuddy *)node)->name, -1));
+								 Tcl_NewStringObj(((PurpleBuddy *)node)->name, -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
-								 gaim_tcl_ref_new(GaimTclRefAccount,
-										  ((GaimBuddy *)node)->account));
+								 purple_tcl_ref_new(PurpleTclRefAccount,
+										  ((PurpleBuddy *)node)->account));
 					break;
-				case GAIM_BLIST_CHAT_NODE:
+				case PURPLE_BLIST_CHAT_NODE:
 					arg = Tcl_NewListObj(0, NULL);
 					Tcl_ListObjAppendElement(handler->interp, arg,
 								 Tcl_NewStringObj("chat", -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
-								 Tcl_NewStringObj(((GaimChat *)node)->alias, -1));
+								 Tcl_NewStringObj(((PurpleChat *)node)->alias, -1));
 					Tcl_ListObjAppendElement(handler->interp, arg,
-								 gaim_tcl_ref_new(GaimTclRefAccount,
-										  ((GaimChat *)node)->account));
+								 purple_tcl_ref_new(PurpleTclRefAccount,
+										  ((PurpleChat *)node)->account));
 					break;
-				case GAIM_BLIST_OTHER_NODE:
+				case PURPLE_BLIST_OTHER_NODE:
 					arg = Tcl_NewStringObj("other", -1);
 					break;
 				}
@@ -334,17 +334,17 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 
 	/* Call the friggin' procedure already */
 	if ((error = Tcl_EvalObjEx(handler->interp, cmd, TCL_EVAL_GLOBAL)) != TCL_OK) {
-		gaim_debug(GAIM_DEBUG_ERROR, "tcl", "error evaluating callback: %s\n",
+		purple_debug(PURPLE_DEBUG_ERROR, "tcl", "error evaluating callback: %s\n",
 			   Tcl_GetString(Tcl_GetObjResult(handler->interp)));
 	} else {
 		result = Tcl_GetObjResult(handler->interp);
 		/* handle return values -- strings and words only */
 		if (handler->returntype) {
-			if (gaim_value_get_type(handler->returntype) == GAIM_TYPE_STRING) {
+			if (purple_value_get_type(handler->returntype) == PURPLE_TYPE_STRING) {
 				retval = (void *)g_strdup(Tcl_GetString(result));
 			} else {
 				if ((error = Tcl_GetIntFromObj(handler->interp, result, (int *)&retval)) != TCL_OK) {
-					gaim_debug(GAIM_DEBUG_ERROR, "tcl", "Error retrieving procedure result: %s\n",
+					purple_debug(PURPLE_DEBUG_ERROR, "tcl", "Error retrieving procedure result: %s\n",
 						   Tcl_GetString(Tcl_GetObjResult(handler->interp)));
 					retval = NULL;
 				}
@@ -356,15 +356,15 @@ static void *tcl_signal_callback(va_list args, struct tcl_signal_handler *handle
 	for (i = 0; i < handler->nargs; i++) {
 		g_string_printf(name, "%s::arg%d",
 				Tcl_GetString(handler->namespace), i);
-		if (gaim_value_is_outgoing(handler->argtypes[i])
-		    && gaim_value_get_type(handler->argtypes[i]) != GAIM_TYPE_SUBTYPE)
+		if (purple_value_is_outgoing(handler->argtypes[i])
+		    && purple_value_get_type(handler->argtypes[i]) != PURPLE_TYPE_SUBTYPE)
 			Tcl_UnlinkVar(handler->interp, name->str);
 
 		/* We basically only have to deal with strings on the
 		 * way out */
-		switch (gaim_value_get_type(handler->argtypes[i])) {
-		case GAIM_TYPE_STRING:
-			if (gaim_value_is_outgoing(handler->argtypes[i])) {
+		switch (purple_value_get_type(handler->argtypes[i])) {
+		case PURPLE_TYPE_STRING:
+			if (purple_value_is_outgoing(handler->argtypes[i])) {
 				if (vals[i] != NULL && *(char **)vals[i] != NULL) {
 					g_free(*strs[i]);
 					*strs[i] = g_strdup(vals[i]);
@@ -391,6 +391,6 @@ static Tcl_Obj *new_cb_namespace ()
 	static int cbnum;
 	char name[32];
 
-	g_snprintf (name, sizeof(name), "::gaim::_callback::cb_%d", cbnum++);
+	g_snprintf (name, sizeof(name), "::purple::_callback::cb_%d", cbnum++);
 	return Tcl_NewStringObj (name, -1);
 }

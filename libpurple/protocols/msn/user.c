@@ -1,9 +1,9 @@
 /**
  * @file user.c User functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -77,24 +77,24 @@ msn_user_destroy(MsnUser *user)
 void
 msn_user_update(MsnUser *user)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	account = user->userlist->session->account;
 
 	if (user->status != NULL) {
 		if (!strcmp(user->status, "offline") && user->mobile) {
-			gaim_prpl_got_user_status(account, user->passport, "available", NULL);
-			gaim_prpl_got_user_status(account, user->passport, "mobile", NULL);
+			purple_prpl_got_user_status(account, user->passport, "available", NULL);
+			purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
 		} else {
-			gaim_prpl_got_user_status(account, user->passport, user->status, NULL);
-			gaim_prpl_got_user_status_deactive(account, user->passport, "mobile");
+			purple_prpl_got_user_status(account, user->passport, user->status, NULL);
+			purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
 		}
 	}
 
 	if (user->idle)
-		gaim_prpl_got_user_idle(account, user->passport, TRUE, -1);
+		purple_prpl_got_user_idle(account, user->passport, TRUE, -1);
 	else
-		gaim_prpl_got_user_idle(account, user->passport, FALSE, 0);
+		purple_prpl_got_user_idle(account, user->passport, FALSE, 0);
 }
 
 void
@@ -165,7 +165,7 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 	}
 	else if ((fp = g_fopen(filename, "rb")) != NULL)
 	{
-		GaimCipherContext *ctx;
+		PurpleCipherContext *ctx;
 		char *buf;
 		gsize len;
 		char *base64;
@@ -192,12 +192,12 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 		/* Compute the SHA1D field. */
 		memset(digest, 0, sizeof(digest));
 
-		ctx = gaim_cipher_context_new_by_name("sha1", NULL);
-		gaim_cipher_context_append(ctx, (const guchar *)buf, st.st_size);
-		gaim_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
+		ctx = purple_cipher_context_new_by_name("sha1", NULL);
+		purple_cipher_context_append(ctx, (const guchar *)buf, st.st_size);
+		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
 		g_free(buf);
 
-		base64 = gaim_base64_encode(digest, sizeof(digest));
+		base64 = purple_base64_encode(digest, sizeof(digest));
 		msn_object_set_sha1d(msnobj, base64);
 		g_free(base64);
 
@@ -215,19 +215,19 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 
 		memset(digest, 0, sizeof(digest));
 
-		gaim_cipher_context_reset(ctx, NULL);
-		gaim_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
-		gaim_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
-		gaim_cipher_context_destroy(ctx);
+		purple_cipher_context_reset(ctx, NULL);
+		purple_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
+		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
+		purple_cipher_context_destroy(ctx);
 		g_free(buf);
 
-		base64 = gaim_base64_encode(digest, sizeof(digest));
+		base64 = purple_base64_encode(digest, sizeof(digest));
 		msn_object_set_sha1c(msnobj, base64);
 		g_free(base64);
 	}
 	else
 	{
-		gaim_debug_error("msn", "Unable to open buddy icon %s!\n", filename);
+		purple_debug_error("msn", "Unable to open buddy icon %s!\n", filename);
 		msn_user_set_object(user, NULL);
 	}
 }
@@ -236,9 +236,9 @@ void
 msn_user_add_group_id(MsnUser *user, int id)
 {
 	MsnUserList *userlist;
-	GaimAccount *account;
-	GaimBuddy *b;
-	GaimGroup *g;
+	PurpleAccount *account;
+	PurpleBuddy *b;
+	PurpleGroup *g;
 	const char *passport;
 	const char *group_name;
 
@@ -253,21 +253,21 @@ msn_user_add_group_id(MsnUser *user, int id)
 
 	group_name = msn_userlist_find_group_name(userlist, id);
 
-	g = gaim_find_group(group_name);
+	g = purple_find_group(group_name);
 
 	if ((id == 0) && (g == NULL))
 	{
-		g = gaim_group_new(group_name);
-		gaim_blist_add_group(g, NULL);
+		g = purple_group_new(group_name);
+		purple_blist_add_group(g, NULL);
 	}
 
-	b = gaim_find_buddy_in_group(account, passport, g);
+	b = purple_find_buddy_in_group(account, passport, g);
 
 	if (b == NULL)
 	{
-		b = gaim_buddy_new(account, passport, NULL);
+		b = purple_buddy_new(account, passport, NULL);
 
-		gaim_blist_add_buddy(b, NULL, g, NULL);
+		purple_blist_add_buddy(b, NULL, g, NULL);
 	}
 
 	b->proto_data = user;

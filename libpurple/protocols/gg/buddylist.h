@@ -1,7 +1,7 @@
 /**
  * @file buddylist.h
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2005  Bartosz Oler <bartosz@bzimage.us>
  *
@@ -21,24 +21,24 @@
  */
 
 
-#ifndef _GAIM_GG_BUDDYLIST_H
-#define _GAIM_GG_BUDDYLIST_H
+#ifndef _PURPLE_GG_BUDDYLIST_H
+#define _PURPLE_GG_BUDDYLIST_H
 
 #include "connection.h"
 #include "account.h"
 
 void
-ggp_buddylist_send(GaimConnection *gc);
+ggp_buddylist_send(PurpleConnection *gc);
 
 /**
  * Load buddylist from server into the rooster.
  *
- * @param gc GaimConnection
+ * @param gc PurpleConnection
  * @param buddylist Pointer to the buddylist that will be loaded.
  */
-/* void ggp_buddylist_load(GaimConnection *gc, char *buddylist) {{{ */
+/* void ggp_buddylist_load(PurpleConnection *gc, char *buddylist) {{{ */
 void
-ggp_buddylist_load(GaimConnection *gc, char *buddylist);
+ggp_buddylist_load(PurpleConnection *gc, char *buddylist);
 
 /**
  * Set offline status for all buddies.
@@ -46,7 +46,7 @@ ggp_buddylist_load(GaimConnection *gc, char *buddylist);
  * @param gc Connection handler
  */
 void
-ggp_buddylist_offline(GaimConnection *gc);
+ggp_buddylist_offline(PurpleConnection *gc);
 
 /**
  * Get all the buddies in the current account.
@@ -56,10 +56,10 @@ ggp_buddylist_offline(GaimConnection *gc);
  * @return List of buddies.
  */
 char *
-ggp_buddylist_dump(GaimAccount *account);
+ggp_buddylist_dump(PurpleAccount *account);
 
 
-#endif /* _GAIM_GG_BUDDYLIST_H */
+#endif /* _PURPLE_GG_BUDDYLIST_H */
 
 
 /* vim: set ts=8 sts=0 sw=8 noet: */

@@ -1,5 +1,5 @@
 /*
- * Music messaging plugin for Gaim
+ * Music messaging plugin for Purple
  *
  * Copyright (C) 2005 Christian Muise.
  *
@@ -37,7 +37,7 @@
 #include "dbus-maybe.h"
 #include "dbus-bindings.h"
 #include "dbus-server.h"
-#include "dbus-gaim.h"
+#include "dbus-purple.h"
 
 #define MUSICMESSAGING_PLUGIN_ID "gtk-hazure-musicmessaging"
 #define MUSICMESSAGING_PREFIX "##MM##"
@@ -45,7 +45,7 @@
 #define MUSICMESSAGING_CONFIRM_MSG _("Music messaging session confirmed.")
 
 typedef struct {
-	GaimConversation *conv; /* pointer to the conversation */
+	PurpleConversation *conv; /* pointer to the conversation */
 	GtkWidget *seperator; /* seperator in the conversation */
 	GtkWidget *button; /* button in the conversation */
 	GPid pid; /* the pid of the score editor */
@@ -61,10 +61,10 @@ static void run_editor(MMConversation *mmconv);
 static void kill_editor(MMConversation *mmconv);
 static void add_button (MMConversation *mmconv);
 static void remove_widget (GtkWidget *button);
-static void init_conversation (GaimConversation *conv);
-static void conv_destroyed(GaimConversation *conv);
-static gboolean intercept_sent(GaimAccount *account, const char *who, char **message, void* pData);
-static gboolean intercept_received(GaimAccount *account, char **sender, char **message, GaimConversation *conv, int *flags);
+static void init_conversation (PurpleConversation *conv);
+static void conv_destroyed(PurpleConversation *conv);
+static gboolean intercept_sent(PurpleAccount *account, const char *who, char **message, void* pData);
+static gboolean intercept_received(PurpleAccount *account, char **sender, char **message, PurpleConversation *conv, int *flags);
 static gboolean send_change_request (const int session, const char *id, const char *command, const char *parameters);
 static gboolean send_change_confirmed (const int session, const char *command, const char *parameters);
 static void session_end (MMConversation *mmconv);
@@ -74,7 +74,7 @@ static void session_end (MMConversation *mmconv);
 GList *conversations;
 
 /* Pointer to this plugin */
-GaimPlugin *plugin_pointer;
+PurplePlugin *plugin_pointer;
 
 /* Define types needed for DBus */
 DBusGConnection *connection;
@@ -111,9 +111,9 @@ void music_messaging_change_request(const int session, const char *command, cons
 			GString *to_send = g_string_new("");
 			g_string_append_printf(to_send, "##MM## request %s %s##MM##", command, parameters);
 			
-			gaim_conv_im_send(GAIM_CONV_IM(mmconv->conv), to_send->str);
+			purple_conv_im_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
 			
-			gaim_debug_misc("Sent request: %s\n", to_send->str);
+			purple_debug_misc("Sent request: %s\n", to_send->str);
 		}
 	}
 			
@@ -131,7 +131,7 @@ void music_messaging_change_confirmed(const int session, const char *command, co
 			GString *to_send = g_string_new("");
 			g_string_append_printf(to_send, "##MM## confirm %s %s##MM##", command, parameters);
 			
-			gaim_conv_im_send(GAIM_CONV_IM(mmconv->conv), to_send->str);
+			purple_conv_im_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
 		} else
 		{
 			/* Do nothing. If they aren't the originator, then they can't confirm. */
@@ -144,7 +144,7 @@ void music_messaging_change_failed(const int session, const char *id, const char
 {
 	MMConversation *mmconv = (MMConversation *)g_list_nth_data(conversations, session);
 	
-	gaim_notify_message(plugin_pointer, GAIM_NOTIFY_MSG_INFO, command,
+	purple_notify_message(plugin_pointer, PURPLE_NOTIFY_MSG_INFO, command,
                         parameters, NULL, NULL, NULL);
 	
 	if (mmconv->started)
@@ -154,7 +154,7 @@ void music_messaging_change_failed(const int session, const char *id, const char
 			GString *to_send = g_string_new("");
 			g_string_append_printf(to_send, "##MM## failed %s %s %s##MM##", id, command, parameters);
 			
-			gaim_conv_im_send(GAIM_CONV_IM(mmconv->conv), to_send->str);
+			purple_conv_im_send(PURPLE_CONV_IM(mmconv->conv), to_send->str);
 		} else
 		{
 			/* Do nothing. If they aren't the originator, then they can't confirm. */
@@ -166,7 +166,7 @@ void music_messaging_done_session(const int session)
 {
 	MMConversation *mmconv = (MMConversation *)g_list_nth_data(conversations, session);
 	
-	gaim_notify_message(plugin_pointer, GAIM_NOTIFY_MSG_INFO, "Session",
+	purple_notify_message(plugin_pointer, PURPLE_NOTIFY_MSG_INFO, "Session",
 						"Session Complete", NULL, NULL, NULL);
 	
 	session_end(mmconv);
@@ -175,7 +175,7 @@ void music_messaging_done_session(const int session)
 
 /* DBus commands that can be sent to the editor */
 G_BEGIN_DECLS
-DBusConnection *gaim_dbus_get_connection(void);
+DBusConnection *purple_dbus_get_connection(void);
 G_END_DECLS
 
 static gboolean send_change_request (const int session, const char *id, const char *command, const char *parameters)
@@ -183,7 +183,7 @@ static gboolean send_change_request (const int session, const char *id, const ch
 	DBusMessage *message;
 	
 	/* Create the signal we need */
-	message = dbus_message_new_signal (DBUS_PATH_GAIM, DBUS_INTERFACE_GAIM, "GscoreChangeRequest");
+	message = dbus_message_new_signal (DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "GscoreChangeRequest");
 	
 	/* Append the string "Ping!" to the signal */
 	dbus_message_append_args (message,
@@ -194,7 +194,7 @@ static gboolean send_change_request (const int session, const char *id, const ch
 							DBUS_TYPE_INVALID);
 	
 	/* Send the signal */
-	dbus_connection_send (gaim_dbus_get_connection(), message, NULL);
+	dbus_connection_send (purple_dbus_get_connection(), message, NULL);
 	
 	/* Free the signal now we have finished with it */
 	dbus_message_unref (message);
@@ -210,7 +210,7 @@ static gboolean send_change_confirmed (const int session, const char *command, c
 	DBusMessage *message;
 	
 	/* Create the signal we need */
-	message = dbus_message_new_signal (DBUS_PATH_GAIM, DBUS_INTERFACE_GAIM, "GscoreChangeConfirmed");
+	message = dbus_message_new_signal (DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "GscoreChangeConfirmed");
 	
 	/* Append the string "Ping!" to the signal */
 	dbus_message_append_args (message,
@@ -220,7 +220,7 @@ static gboolean send_change_confirmed (const int session, const char *command, c
 							DBUS_TYPE_INVALID);
 	
 	/* Send the signal */
-	dbus_connection_send (gaim_dbus_get_connection(), message, NULL);
+	dbus_connection_send (purple_dbus_get_connection(), message, NULL);
 	
 	/* Free the signal now we have finished with it */
 	dbus_message_unref (message);
@@ -233,7 +233,7 @@ static gboolean send_change_confirmed (const int session, const char *command, c
 
 
 static int
-mmconv_from_conv_loc(GaimConversation *conv)
+mmconv_from_conv_loc(PurpleConversation *conv)
 {
 	GList *l;
 	MMConversation *mmconv_current = NULL;
@@ -253,49 +253,49 @@ mmconv_from_conv_loc(GaimConversation *conv)
 }
 
 static MMConversation*
-mmconv_from_conv(GaimConversation *conv)
+mmconv_from_conv(PurpleConversation *conv)
 {
 	return (MMConversation *)g_list_nth_data(conversations, mmconv_from_conv_loc(conv));
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin) {
+plugin_load(PurplePlugin *plugin) {
 	void *conv_list_handle;
 
-	GAIM_DBUS_RETURN_FALSE_IF_DISABLED(plugin);
+	PURPLE_DBUS_RETURN_FALSE_IF_DISABLED(plugin);
 
     /* First, we have to register our four exported functions with the
-       main gaim dbus loop.  Without this statement, the gaim dbus
+       main purple dbus loop.  Without this statement, the purple dbus
        code wouldn't know about our functions. */
-    GAIM_DBUS_REGISTER_BINDINGS(plugin);
+    PURPLE_DBUS_REGISTER_BINDINGS(plugin);
 	
 	/* Keep the plugin for reference (needed for notify's) */
 	plugin_pointer = plugin;
 	
 	/* Add the button to all the current conversations */
-	gaim_conversation_foreach (init_conversation);
+	purple_conversation_foreach (init_conversation);
 	
 	/* Listen for any new conversations */
-	conv_list_handle = gaim_conversations_get_handle();
+	conv_list_handle = purple_conversations_get_handle();
 	
-	gaim_signal_connect(conv_list_handle, "conversation-created", 
-					plugin, GAIM_CALLBACK(init_conversation), NULL);
+	purple_signal_connect(conv_list_handle, "conversation-created", 
+					plugin, PURPLE_CALLBACK(init_conversation), NULL);
 	
 	/* Listen for conversations that are ending */
-	gaim_signal_connect(conv_list_handle, "deleting-conversation",
-					plugin, GAIM_CALLBACK(conv_destroyed), NULL);
+	purple_signal_connect(conv_list_handle, "deleting-conversation",
+					plugin, PURPLE_CALLBACK(conv_destroyed), NULL);
 					
 	/* Listen for sending/receiving messages to replace tags */
-	gaim_signal_connect(conv_list_handle, "sending-im-msg",
-					plugin, GAIM_CALLBACK(intercept_sent), NULL);
-	gaim_signal_connect(conv_list_handle, "receiving-im-msg",
-					plugin, GAIM_CALLBACK(intercept_received), NULL);
+	purple_signal_connect(conv_list_handle, "sending-im-msg",
+					plugin, PURPLE_CALLBACK(intercept_sent), NULL);
+	purple_signal_connect(conv_list_handle, "receiving-im-msg",
+					plugin, PURPLE_CALLBACK(intercept_received), NULL);
 	
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin) {
+plugin_unload(PurplePlugin *plugin) {
 	MMConversation *mmconv = NULL;
 	
 	while (conversations != NULL)
@@ -309,33 +309,33 @@ plugin_unload(GaimPlugin *plugin) {
 
 
 static gboolean
-intercept_sent(GaimAccount *account, const char *who, char **message, void* pData)
+intercept_sent(PurpleAccount *account, const char *who, char **message, void* pData)
 {
 	
 	if (0 == strncmp(*message, MUSICMESSAGING_PREFIX, strlen(MUSICMESSAGING_PREFIX)))
 	{
-		gaim_debug_misc("gaim-musicmessaging", "Sent MM Message: %s\n", *message);
+		purple_debug_misc("purple-musicmessaging", "Sent MM Message: %s\n", *message);
 		message = 0;
 	}
 	else if (0 == strncmp(*message, MUSICMESSAGING_START_MSG, strlen(MUSICMESSAGING_START_MSG)))
 	{
-		gaim_debug_misc("gaim-musicmessaging", "Sent MM request.\n");
+		purple_debug_misc("purple-musicmessaging", "Sent MM request.\n");
 		return FALSE;
 	}
 	else if (0 == strncmp(*message, MUSICMESSAGING_CONFIRM_MSG, strlen(MUSICMESSAGING_CONFIRM_MSG)))
 	{
-		gaim_debug_misc("gaim-musicmessaging", "Sent MM confirm.\n");
+		purple_debug_misc("purple-musicmessaging", "Sent MM confirm.\n");
 		return FALSE;
 	}
 	else if (0 == strncmp(*message, "test1", strlen("test1")))
 	{
-		gaim_debug_misc("gaim-musicmessaging", "\n\nTEST 1\n\n");
+		purple_debug_misc("purple-musicmessaging", "\n\nTEST 1\n\n");
 		send_change_request(0, "test-id", "test-command", "test-parameters");
 		return FALSE;
 	}
 	else if (0 == strncmp(*message, "test2", strlen("test2")))
 	{
-		gaim_debug_misc("gaim-musicmessaging", "\n\nTEST 2\n\n");
+		purple_debug_misc("purple-musicmessaging", "\n\nTEST 2\n\n");
 		send_change_confirmed(1, "test-command", "test-parameters");
 		return FALSE;
 	}
@@ -348,15 +348,15 @@ intercept_sent(GaimAccount *account, const char *who, char **message, void* pDat
 }
 
 static gboolean
-intercept_received(GaimAccount *account, char **sender, char **message, GaimConversation *conv, int *flags)
+intercept_received(PurpleAccount *account, char **sender, char **message, PurpleConversation *conv, int *flags)
 {
 	MMConversation *mmconv = mmconv_from_conv(conv);
 	
-	gaim_debug_misc("gaim-musicmessaging", "Intercepted: %s\n", *message);
+	purple_debug_misc("purple-musicmessaging", "Intercepted: %s\n", *message);
 	if (strstr(*message, MUSICMESSAGING_PREFIX))
 	{
 		char *parsed_message = strtok(strstr(*message, MUSICMESSAGING_PREFIX), "<");
-		gaim_debug_misc("gaim-musicmessaging", "Received an MM Message: %s\n", parsed_message);
+		purple_debug_misc("purple-musicmessaging", "Received an MM Message: %s\n", parsed_message);
 				
 		if (mmconv->started)
 		{
@@ -369,7 +369,7 @@ intercept_received(GaimAccount *account, char **sender, char **message, GaimConv
 					char *command;
 					char *parameters;
 					
-					gaim_debug_misc("gaim-musicmessaging", "Sending request to gscore.\n");
+					purple_debug_misc("purple-musicmessaging", "Sending request to gscore.\n");
 					
 					/* Get past the first two terms - '##MM##' and 'request' */
 					strtok(parsed_message, " "); /* '##MM##' */
@@ -389,7 +389,7 @@ intercept_received(GaimAccount *account, char **sender, char **message, GaimConv
 					char *command;
 					char *parameters;
 					
-					gaim_debug_misc("gaim-musicmessaging", "Sending confirmation to gscore.\n");
+					purple_debug_misc("purple-musicmessaging", "Sending confirmation to gscore.\n");
 					
 					/* Get past the first two terms - '##MM##' and 'confirm' */
 					strtok(parsed_message, " "); /* '##MM##' */
@@ -415,7 +415,7 @@ intercept_received(GaimAccount *account, char **sender, char **message, GaimConv
 				
 				if ((mmconv->conv)->name == id)
 				{
-					gaim_notify_message(plugin_pointer, GAIM_NOTIFY_MSG_ERROR, 
+					purple_notify_message(plugin_pointer, PURPLE_NOTIFY_MSG_ERROR, 
 							    _("Music Messaging"),
 							    _("There was a conflict in running the command:"), command, NULL, NULL);
 				}
@@ -426,7 +426,7 @@ intercept_received(GaimAccount *account, char **sender, char **message, GaimConv
 	}
 	else if (strstr(*message, MUSICMESSAGING_START_MSG))
 	{
-		gaim_debug_misc("gaim-musicmessaging", "Received MM request.\n");
+		purple_debug_misc("purple-musicmessaging", "Received MM request.\n");
 		if (!(mmconv->originator))
 		{
 			mmconv->requested = TRUE;
@@ -436,7 +436,7 @@ intercept_received(GaimAccount *account, char **sender, char **message, GaimConv
 	}
 	else if (strstr(*message, MUSICMESSAGING_CONFIRM_MSG))
 	{
-		gaim_debug_misc("gaim-musicmessagin", "Received MM confirm.\n");
+		purple_debug_misc("purple-musicmessagin", "Received MM confirm.\n");
 		
 		if (mmconv->originator)
 		{
@@ -454,16 +454,16 @@ intercept_received(GaimAccount *account, char **sender, char **message, GaimConv
 
 static void send_request(MMConversation *mmconv)
 {
-	GaimConnection *connection = gaim_conversation_get_gc(mmconv->conv);
-	const char *convName = gaim_conversation_get_name(mmconv->conv);
-	serv_send_im(connection, convName, MUSICMESSAGING_START_MSG, GAIM_MESSAGE_SEND);
+	PurpleConnection *connection = purple_conversation_get_gc(mmconv->conv);
+	const char *convName = purple_conversation_get_name(mmconv->conv);
+	serv_send_im(connection, convName, MUSICMESSAGING_START_MSG, PURPLE_MESSAGE_SEND);
 }
 
 static void send_request_confirmed(MMConversation *mmconv)
 {
-	GaimConnection *connection = gaim_conversation_get_gc(mmconv->conv);
-	const char *convName = gaim_conversation_get_name(mmconv->conv);
-	serv_send_im(connection, convName, MUSICMESSAGING_CONFIRM_MSG, GAIM_MESSAGE_SEND);
+	PurpleConnection *connection = purple_conversation_get_gc(mmconv->conv);
+	const char *convName = purple_conversation_get_name(mmconv->conv);
+	serv_send_im(connection, convName, MUSICMESSAGING_CONFIRM_MSG, PURPLE_MESSAGE_SEND);
 }
 	
 
@@ -505,7 +505,7 @@ static void music_button_toggled (GtkWidget *widget, gpointer data)
 static void set_editor_path (GtkWidget *button, GtkWidget *text_field)
 {
 	const char * path = gtk_entry_get_text((GtkEntry*)text_field);
-	gaim_prefs_set_string("/plugins/gtk/musicmessaging/editor_path", path);
+	purple_prefs_set_string("/plugins/gtk/musicmessaging/editor_path", path);
 	
 }
 
@@ -514,7 +514,7 @@ static void run_editor (MMConversation *mmconv)
 	GError *spawn_error = NULL;
 	GString *session_id;
 	gchar * args[4];
-	args[0] = (gchar *)gaim_prefs_get_string("/plugins/gtk/musicmessaging/editor_path");
+	args[0] = (gchar *)purple_prefs_get_string("/plugins/gtk/musicmessaging/editor_path");
 	
 	args[1] = "-session_id";
 	session_id = g_string_new("");
@@ -525,7 +525,7 @@ static void run_editor (MMConversation *mmconv)
 	
 	if (!(g_spawn_async (".", args, NULL, 4, NULL, NULL, &(mmconv->pid), &spawn_error)))
 	{
-		gaim_notify_error(plugin_pointer, _("Error Running Editor"),
+		purple_notify_error(plugin_pointer, _("Error Running Editor"),
 				  _("The following error has occurred:"), spawn_error->message);
 		mmconv->started = FALSE;
 	}
@@ -544,7 +544,7 @@ static void kill_editor (MMConversation *mmconv)
 	}
 }
 
-static void init_conversation (GaimConversation *conv)
+static void init_conversation (PurpleConversation *conv)
 {
 	MMConversation *mmconv;
 	mmconv = g_malloc(sizeof(MMConversation));
@@ -559,7 +559,7 @@ static void init_conversation (GaimConversation *conv)
 	conversations = g_list_append(conversations, mmconv);
 }
 
-static void conv_destroyed (GaimConversation *conv)
+static void conv_destroyed (PurpleConversation *conv)
 {
 	MMConversation *mmconv = mmconv_from_conv(conv);
 	
@@ -574,7 +574,7 @@ static void conv_destroyed (GaimConversation *conv)
 
 static void add_button (MMConversation *mmconv)
 {
-	GaimConversation *conv = mmconv->conv;
+	PurpleConversation *conv = mmconv->conv;
 	
 	GtkWidget *button, *image, *sep;
 	gchar *file_path;
@@ -584,7 +584,7 @@ static void add_button (MMConversation *mmconv)
 
 	g_signal_connect(G_OBJECT(button), "toggled", G_CALLBACK(music_button_toggled), mmconv);
 
-	file_path = g_build_filename(DATADIR, "pixmaps", "gaim", "buttons",
+	file_path = g_build_filename(DATADIR, "pixmaps", "purple", "buttons",
 										"music.png", NULL);
 	image = gtk_image_new_from_file(file_path);
 	g_free(file_path);
@@ -611,7 +611,7 @@ static void remove_widget (GtkWidget *button)
 }
 
 static GtkWidget *
-get_config_frame(GaimPlugin *plugin)
+get_config_frame(PurplePlugin *plugin)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -652,15 +652,15 @@ static PidginPluginUiInfo ui_info =
 	0 /* page_num (reserved) */
 };
 
-static GaimPluginInfo info = {
-    GAIM_PLUGIN_MAGIC,
-    GAIM_MAJOR_VERSION,
-    GAIM_MINOR_VERSION,
-    GAIM_PLUGIN_STANDARD,                                /**< type           */
+static PurplePluginInfo info = {
+    PURPLE_PLUGIN_MAGIC,
+    PURPLE_MAJOR_VERSION,
+    PURPLE_MINOR_VERSION,
+    PURPLE_PLUGIN_STANDARD,                                /**< type           */
     PIDGIN_PLUGIN_TYPE,                                /**< ui_requirement */
     0,                                                   /**< flags          */
     NULL,                                                /**< dependencies   */
-    GAIM_PRIORITY_DEFAULT,                               /**< priority       */
+    PURPLE_PRIORITY_DEFAULT,                               /**< priority       */
 
     MUSICMESSAGING_PLUGIN_ID,                            /**< id             */
     "Music Messaging",	                                 /**< name           */
@@ -670,7 +670,7 @@ static GaimPluginInfo info = {
     N_("The Music Messaging Plugin allows a number of users to simultaneously work on a piece of music by editting a common score in real-time."),
 	                                                 /**  description    */
     "Christian Muise <christian.muise@gmail.com>",       /**< author         */
-    GAIM_WEBSITE,                                        /**< homepage       */
+    PURPLE_WEBSITE,                                        /**< homepage       */
     plugin_load,                                         /**< load           */
     plugin_unload,                                       /**< unload         */
     NULL,                                                /**< destroy        */
@@ -681,9 +681,9 @@ static GaimPluginInfo info = {
 };
 
 static void
-init_plugin(GaimPlugin *plugin) {
-	gaim_prefs_add_none("/plugins/gtk/musicmessaging");
-	gaim_prefs_add_string("/plugins/gtk/musicmessaging/editor_path", "/usr/local/bin/gscore");
+init_plugin(PurplePlugin *plugin) {
+	purple_prefs_add_none("/plugins/gtk/musicmessaging");
+	purple_prefs_add_string("/plugins/gtk/musicmessaging/editor_path", "/usr/local/bin/gscore");
 }
 
-GAIM_INIT_PLUGIN(musicmessaging, init_plugin, info);
+PURPLE_INIT_PLUGIN(musicmessaging, init_plugin, info);

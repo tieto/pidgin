@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -39,7 +39,7 @@ static YahooFriend *yahoo_friend_new(void)
 	return ret;
 }
 
-YahooFriend *yahoo_friend_find(GaimConnection *gc, const char *name)
+YahooFriend *yahoo_friend_find(PurpleConnection *gc, const char *name)
 {
 	struct yahoo_data *yd;
 	const char *norm;
@@ -48,12 +48,12 @@ YahooFriend *yahoo_friend_find(GaimConnection *gc, const char *name)
 	g_return_val_if_fail(gc->proto_data != NULL, NULL);
 
 	yd = gc->proto_data;
-	norm = gaim_normalize(gaim_connection_get_account(gc), name);
+	norm = purple_normalize(purple_connection_get_account(gc), name);
 
 	return g_hash_table_lookup(yd->friends, norm);
 }
 
-YahooFriend *yahoo_friend_find_or_new(GaimConnection *gc, const char *name)
+YahooFriend *yahoo_friend_find_or_new(PurpleConnection *gc, const char *name)
 {
 	YahooFriend *f;
 	struct yahoo_data *yd;
@@ -63,7 +63,7 @@ YahooFriend *yahoo_friend_find_or_new(GaimConnection *gc, const char *name)
 	g_return_val_if_fail(gc->proto_data != NULL, NULL);
 
 	yd = gc->proto_data;
-	norm = gaim_normalize(gaim_connection_get_account(gc), name);
+	norm = purple_normalize(purple_connection_get_account(gc), name);
 
 	f = g_hash_table_lookup(yd->friends, norm);
 	if (!f) {
@@ -137,7 +137,7 @@ void yahoo_friend_free(gpointer p)
 	g_free(f);
 }
 
-void yahoo_process_presence(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
 	YahooFriend *f;
@@ -160,7 +160,7 @@ void yahoo_process_presence(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (value != 1 && value != 2) {
-		gaim_debug_error("yahoo", "Received unknown value for presence key: %d\n", value);
+		purple_debug_error("yahoo", "Received unknown value for presence key: %d\n", value);
 		return;
 	}
 
@@ -171,7 +171,7 @@ void yahoo_process_presence(GaimConnection *gc, struct yahoo_packet *pkt)
 		return;
 
 	if (pkt->service == YAHOO_SERVICE_PRESENCE_PERM) {
-		gaim_debug_info("yahoo", "Setting permanent presence for %s to %d.\n", who, (value == 1));
+		purple_debug_info("yahoo", "Setting permanent presence for %s to %d.\n", who, (value == 1));
 		/* If setting from perm offline to online when in invisible status,
 		 * this has already been taken care of (when the temp status changed) */
 		if (value == 2 && f->presence == YAHOO_PRESENCE_ONLINE) {
@@ -182,7 +182,7 @@ void yahoo_process_presence(GaimConnection *gc, struct yahoo_packet *pkt)
 				f->presence = YAHOO_PRESENCE_DEFAULT;
 		}
 	} else {
-		gaim_debug_info("yahoo", "Setting session presence for %s to %d.\n", who, (value == 1));
+		purple_debug_info("yahoo", "Setting session presence for %s to %d.\n", who, (value == 1));
 		if (value == 1)
 			f->presence = YAHOO_PRESENCE_ONLINE;
 		else
@@ -190,7 +190,7 @@ void yahoo_process_presence(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
-void yahoo_friend_update_presence(GaimConnection *gc, const char *name,
+void yahoo_friend_update_presence(PurpleConnection *gc, const char *name,
 		YahooPresenceVisibility presence)
 {
 	struct yahoo_data *yd = gc->proto_data;
@@ -206,7 +206,7 @@ void yahoo_friend_update_presence(GaimConnection *gc, const char *name,
 
 	/* No need to change the value if it is already correct */
 	if (f->presence == presence) {
-		gaim_debug_info("yahoo", "Not setting presence because there are no changes.\n");
+		purple_debug_info("yahoo", "Not setting presence because there are no changes.\n");
 		return;
 	}
 
@@ -215,7 +215,7 @@ void yahoo_friend_update_presence(GaimConnection *gc, const char *name,
 				YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 		yahoo_packet_hash(pkt, "ssss",
-				1, gaim_connection_get_display_name(gc),
+				1, purple_connection_get_display_name(gc),
 				31, "1", 13, "2", 7, name);
 	} else if (presence == YAHOO_PRESENCE_DEFAULT) {
 		if (f->presence == YAHOO_PRESENCE_PERM_OFFLINE) {
@@ -223,13 +223,13 @@ void yahoo_friend_update_presence(GaimConnection *gc, const char *name,
 					YAHOO_STATUS_AVAILABLE, yd->session_id);
 
 			yahoo_packet_hash(pkt, "ssss",
-					1, gaim_connection_get_display_name(gc),
+					1, purple_connection_get_display_name(gc),
 					31, "2", 13, "2", 7, name);
 		} else if (yd->current_status == YAHOO_STATUS_INVISIBLE) {
 			pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_SESSION,
 					YAHOO_STATUS_AVAILABLE, yd->session_id);
 			yahoo_packet_hash(pkt, "ssss",
-				1, gaim_connection_get_display_name(gc),
+				1, purple_connection_get_display_name(gc),
 				31, "2", 13, "1", 7, name);
 		}
 	} else if (presence == YAHOO_PRESENCE_ONLINE) {
@@ -237,7 +237,7 @@ void yahoo_friend_update_presence(GaimConnection *gc, const char *name,
 			pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_PERM,
 					YAHOO_STATUS_AVAILABLE, yd->session_id);
 			yahoo_packet_hash(pkt, "ssss",
-					1, gaim_connection_get_display_name(gc),
+					1, purple_connection_get_display_name(gc),
 					31, "2", 13, "2", 7, name);
 			yahoo_packet_send_and_free(pkt, yd);
 		}
@@ -245,7 +245,7 @@ void yahoo_friend_update_presence(GaimConnection *gc, const char *name,
 		pkt = yahoo_packet_new(YAHOO_SERVICE_PRESENCE_SESSION,
 				YAHOO_STATUS_AVAILABLE, yd->session_id);
 		yahoo_packet_hash(pkt, "ssss",
-				1, gaim_connection_get_display_name(gc),
+				1, purple_connection_get_display_name(gc),
 				31, "1", 13, "1", 7, name);
 	}
 

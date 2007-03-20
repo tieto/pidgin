@@ -1,4 +1,4 @@
-/* gaimcombobox.c
+/* purplecombobox.c
  * Copyright (C) 2002, 2003  Kristian Rietveld <kris@gtk.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -22,7 +22,7 @@
 */
 #include <gtk/gtkversion.h>
 #if !GTK_CHECK_VERSION(2,6,0)
-#include "gaimcombobox.h"
+#include "pidgincombobox.h"
 
 #if !GTK_CHECK_VERSION(2,4,0)
 #include <gtk/gtkarrow.h>

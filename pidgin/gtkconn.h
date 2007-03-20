@@ -1,7 +1,7 @@
 /**
  * @file gtkconn.h GTK+ Connection API
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -34,7 +34,7 @@
  *
  * @return UI operations struct
  */
-GaimConnectionUiOps *pidgin_connections_get_ui_ops(void);
+PurpleConnectionUiOps *pidgin_connections_get_ui_ops(void);
 
 /*@}*/
 

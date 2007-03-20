@@ -2,9 +2,9 @@
  * @file value.c Value wrapper API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -28,23 +28,23 @@
 
 #define OUTGOING_FLAG 0x01
 
-GaimValue *
-gaim_value_new(GaimType type, ...)
+PurpleValue *
+purple_value_new(PurpleType type, ...)
 {
-	GaimValue *value;
+	PurpleValue *value;
 	va_list args;
 
-	g_return_val_if_fail(type != GAIM_TYPE_UNKNOWN, NULL);
+	g_return_val_if_fail(type != PURPLE_TYPE_UNKNOWN, NULL);
 
-	value = g_new0(GaimValue, 1);
+	value = g_new0(PurpleValue, 1);
 
 	value->type = type;
 
 	va_start(args, type);
 
-	if (type == GAIM_TYPE_SUBTYPE)
+	if (type == PURPLE_TYPE_SUBTYPE)
 		value->u.subtype = va_arg(args, int);
-	else if (type == GAIM_TYPE_BOXED)
+	else if (type == PURPLE_TYPE_BOXED)
 		value->u.specific_type = g_strdup(va_arg(args, char *));
 
 	va_end(args);
@@ -52,23 +52,23 @@ gaim_value_new(GaimType type, ...)
 	return value;
 }
 
-GaimValue *
-gaim_value_new_outgoing(GaimType type, ...)
+PurpleValue *
+purple_value_new_outgoing(PurpleType type, ...)
 {
-	GaimValue *value;
+	PurpleValue *value;
 	va_list args;
 
-	g_return_val_if_fail(type != GAIM_TYPE_UNKNOWN, NULL);
+	g_return_val_if_fail(type != PURPLE_TYPE_UNKNOWN, NULL);
 
-	value = g_new0(GaimValue, 1);
+	value = g_new0(PurpleValue, 1);
 
 	value->type = type;
 
 	va_start(args, type);
 
-	if (type == GAIM_TYPE_SUBTYPE)
+	if (type == PURPLE_TYPE_SUBTYPE)
 		value->u.subtype = va_arg(args, int);
-	else if (type == GAIM_TYPE_BOXED)
+	else if (type == PURPLE_TYPE_BOXED)
 		value->u.specific_type = g_strdup(va_arg(args, char *));
 
 	va_end(args);
@@ -79,15 +79,15 @@ gaim_value_new_outgoing(GaimType type, ...)
 }
 
 void
-gaim_value_destroy(GaimValue *value)
+purple_value_destroy(PurpleValue *value)
 {
 	g_return_if_fail(value != NULL);
 
-	if (gaim_value_get_type(value) == GAIM_TYPE_BOXED)
+	if (purple_value_get_type(value) == PURPLE_TYPE_BOXED)
 	{
 		g_free(value->u.specific_type);
 	}
-	else if (gaim_value_get_type(value) == GAIM_TYPE_STRING)
+	else if (purple_value_get_type(value) == PURPLE_TYPE_STRING)
 	{
 		g_free(value->data.string_data);
 	}
@@ -95,95 +95,95 @@ gaim_value_destroy(GaimValue *value)
 	g_free(value);
 }
 
-GaimValue *
-gaim_value_dup(const GaimValue *value)
+PurpleValue *
+purple_value_dup(const PurpleValue *value)
 {
-	GaimValue *new_value;
-	GaimType type;
+	PurpleValue *new_value;
+	PurpleType type;
 
 	g_return_val_if_fail(value != NULL, NULL);
 
-	type = gaim_value_get_type(value);
+	type = purple_value_get_type(value);
 
-	if (type == GAIM_TYPE_SUBTYPE)
+	if (type == PURPLE_TYPE_SUBTYPE)
 	{
-		new_value = gaim_value_new(GAIM_TYPE_SUBTYPE,
-								   gaim_value_get_subtype(value));
+		new_value = purple_value_new(PURPLE_TYPE_SUBTYPE,
+								   purple_value_get_subtype(value));
 	}
-	else if (type == GAIM_TYPE_BOXED)
+	else if (type == PURPLE_TYPE_BOXED)
 	{
-		new_value = gaim_value_new(GAIM_TYPE_BOXED,
-								   gaim_value_get_specific_type(value));
+		new_value = purple_value_new(PURPLE_TYPE_BOXED,
+								   purple_value_get_specific_type(value));
 	}
 	else
-		new_value = gaim_value_new(type);
+		new_value = purple_value_new(type);
 
 	new_value->flags = value->flags;
 
 	switch (type)
 	{
-		case GAIM_TYPE_CHAR:
-			gaim_value_set_char(new_value, gaim_value_get_char(value));
+		case PURPLE_TYPE_CHAR:
+			purple_value_set_char(new_value, purple_value_get_char(value));
 			break;
 
-		case GAIM_TYPE_UCHAR:
-			gaim_value_set_uchar(new_value, gaim_value_get_uchar(value));
+		case PURPLE_TYPE_UCHAR:
+			purple_value_set_uchar(new_value, purple_value_get_uchar(value));
 			break;
 
-		case GAIM_TYPE_BOOLEAN:
-			gaim_value_set_boolean(new_value, gaim_value_get_boolean(value));
+		case PURPLE_TYPE_BOOLEAN:
+			purple_value_set_boolean(new_value, purple_value_get_boolean(value));
 			break;
 
-		case GAIM_TYPE_SHORT:
-			gaim_value_set_short(new_value, gaim_value_get_short(value));
+		case PURPLE_TYPE_SHORT:
+			purple_value_set_short(new_value, purple_value_get_short(value));
 			break;
 
-		case GAIM_TYPE_USHORT:
-			gaim_value_set_ushort(new_value, gaim_value_get_ushort(value));
+		case PURPLE_TYPE_USHORT:
+			purple_value_set_ushort(new_value, purple_value_get_ushort(value));
 			break;
 
-		case GAIM_TYPE_INT:
-			gaim_value_set_int(new_value, gaim_value_get_int(value));
+		case PURPLE_TYPE_INT:
+			purple_value_set_int(new_value, purple_value_get_int(value));
 			break;
 
-		case GAIM_TYPE_UINT:
-			gaim_value_set_uint(new_value, gaim_value_get_uint(value));
+		case PURPLE_TYPE_UINT:
+			purple_value_set_uint(new_value, purple_value_get_uint(value));
 			break;
 
-		case GAIM_TYPE_LONG:
-			gaim_value_set_long(new_value, gaim_value_get_long(value));
+		case PURPLE_TYPE_LONG:
+			purple_value_set_long(new_value, purple_value_get_long(value));
 			break;
 
-		case GAIM_TYPE_ULONG:
-			gaim_value_set_ulong(new_value, gaim_value_get_ulong(value));
+		case PURPLE_TYPE_ULONG:
+			purple_value_set_ulong(new_value, purple_value_get_ulong(value));
 			break;
 
-		case GAIM_TYPE_INT64:
-			gaim_value_set_int64(new_value, gaim_value_get_int64(value));
+		case PURPLE_TYPE_INT64:
+			purple_value_set_int64(new_value, purple_value_get_int64(value));
 			break;
 
-		case GAIM_TYPE_UINT64:
-			gaim_value_set_uint64(new_value, gaim_value_get_uint64(value));
+		case PURPLE_TYPE_UINT64:
+			purple_value_set_uint64(new_value, purple_value_get_uint64(value));
 			break;
 
-		case GAIM_TYPE_STRING:
-			gaim_value_set_string(new_value, gaim_value_get_string(value));
+		case PURPLE_TYPE_STRING:
+			purple_value_set_string(new_value, purple_value_get_string(value));
 			break;
 
-		case GAIM_TYPE_OBJECT:
-			gaim_value_set_object(new_value, gaim_value_get_object(value));
+		case PURPLE_TYPE_OBJECT:
+			purple_value_set_object(new_value, purple_value_get_object(value));
 			break;
 
-		case GAIM_TYPE_POINTER:
-			gaim_value_set_pointer(new_value, gaim_value_get_pointer(value));
+		case PURPLE_TYPE_POINTER:
+			purple_value_set_pointer(new_value, purple_value_get_pointer(value));
 			break;
 
-		case GAIM_TYPE_ENUM:
-			gaim_value_set_enum(new_value, gaim_value_get_enum(value));
+		case PURPLE_TYPE_ENUM:
+			purple_value_set_enum(new_value, purple_value_get_enum(value));
 			break;
 
-		case GAIM_TYPE_BOXED:
-			gaim_value_set_boxed(new_value, gaim_value_get_boxed(value));
+		case PURPLE_TYPE_BOXED:
+			purple_value_set_boxed(new_value, purple_value_get_boxed(value));
 			break;
 
 		default:
@@ -193,34 +193,34 @@ gaim_value_dup(const GaimValue *value)
 	return new_value;
 }
 
-GaimType
-gaim_value_get_type(const GaimValue *value)
+PurpleType
+purple_value_get_type(const PurpleValue *value)
 {
-	g_return_val_if_fail(value != NULL, GAIM_TYPE_UNKNOWN);
+	g_return_val_if_fail(value != NULL, PURPLE_TYPE_UNKNOWN);
 
 	return value->type;
 }
 
 unsigned int
-gaim_value_get_subtype(const GaimValue *value)
+purple_value_get_subtype(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, 0);
-	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_SUBTYPE, 0);
+	g_return_val_if_fail(purple_value_get_type(value) == PURPLE_TYPE_SUBTYPE, 0);
 
 	return value->u.subtype;
 }
 
 const char *
-gaim_value_get_specific_type(const GaimValue *value)
+purple_value_get_specific_type(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, NULL);
-	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_BOXED, NULL);
+	g_return_val_if_fail(purple_value_get_type(value) == PURPLE_TYPE_BOXED, NULL);
 
 	return value->u.specific_type;
 }
 
 gboolean
-gaim_value_is_outgoing(const GaimValue *value)
+purple_value_is_outgoing(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, FALSE);
 
@@ -228,7 +228,7 @@ gaim_value_is_outgoing(const GaimValue *value)
 }
 
 void
-gaim_value_set_char(GaimValue *value, char data)
+purple_value_set_char(PurpleValue *value, char data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -236,7 +236,7 @@ gaim_value_set_char(GaimValue *value, char data)
 }
 
 void
-gaim_value_set_uchar(GaimValue *value, unsigned char data)
+purple_value_set_uchar(PurpleValue *value, unsigned char data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -244,7 +244,7 @@ gaim_value_set_uchar(GaimValue *value, unsigned char data)
 }
 
 void
-gaim_value_set_boolean(GaimValue *value, gboolean data)
+purple_value_set_boolean(PurpleValue *value, gboolean data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -252,7 +252,7 @@ gaim_value_set_boolean(GaimValue *value, gboolean data)
 }
 
 void
-gaim_value_set_short(GaimValue *value, short data)
+purple_value_set_short(PurpleValue *value, short data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -260,7 +260,7 @@ gaim_value_set_short(GaimValue *value, short data)
 }
 
 void
-gaim_value_set_ushort(GaimValue *value, unsigned short data)
+purple_value_set_ushort(PurpleValue *value, unsigned short data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -268,7 +268,7 @@ gaim_value_set_ushort(GaimValue *value, unsigned short data)
 }
 
 void
-gaim_value_set_int(GaimValue *value, int data)
+purple_value_set_int(PurpleValue *value, int data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -276,7 +276,7 @@ gaim_value_set_int(GaimValue *value, int data)
 }
 
 void
-gaim_value_set_uint(GaimValue *value, unsigned int data)
+purple_value_set_uint(PurpleValue *value, unsigned int data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -284,7 +284,7 @@ gaim_value_set_uint(GaimValue *value, unsigned int data)
 }
 
 void
-gaim_value_set_long(GaimValue *value, long data)
+purple_value_set_long(PurpleValue *value, long data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -292,7 +292,7 @@ gaim_value_set_long(GaimValue *value, long data)
 }
 
 void
-gaim_value_set_ulong(GaimValue *value, unsigned long data)
+purple_value_set_ulong(PurpleValue *value, unsigned long data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -300,7 +300,7 @@ gaim_value_set_ulong(GaimValue *value, unsigned long data)
 }
 
 void
-gaim_value_set_int64(GaimValue *value, gint64 data)
+purple_value_set_int64(PurpleValue *value, gint64 data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -308,7 +308,7 @@ gaim_value_set_int64(GaimValue *value, gint64 data)
 }
 
 void
-gaim_value_set_uint64(GaimValue *value, guint64 data)
+purple_value_set_uint64(PurpleValue *value, guint64 data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -316,7 +316,7 @@ gaim_value_set_uint64(GaimValue *value, guint64 data)
 }
 
 void
-gaim_value_set_string(GaimValue *value, const char *data)
+purple_value_set_string(PurpleValue *value, const char *data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -325,7 +325,7 @@ gaim_value_set_string(GaimValue *value, const char *data)
 }
 
 void
-gaim_value_set_object(GaimValue *value, void *data)
+purple_value_set_object(PurpleValue *value, void *data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -333,7 +333,7 @@ gaim_value_set_object(GaimValue *value, void *data)
 }
 
 void
-gaim_value_set_pointer(GaimValue *value, void *data)
+purple_value_set_pointer(PurpleValue *value, void *data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -341,7 +341,7 @@ gaim_value_set_pointer(GaimValue *value, void *data)
 }
 
 void
-gaim_value_set_enum(GaimValue *value, int data)
+purple_value_set_enum(PurpleValue *value, int data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -349,7 +349,7 @@ gaim_value_set_enum(GaimValue *value, int data)
 }
 
 void
-gaim_value_set_boxed(GaimValue *value, void *data)
+purple_value_set_boxed(PurpleValue *value, void *data)
 {
 	g_return_if_fail(value != NULL);
 
@@ -357,7 +357,7 @@ gaim_value_set_boxed(GaimValue *value, void *data)
 }
 
 char
-gaim_value_get_char(const GaimValue *value)
+purple_value_get_char(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, 0);
 
@@ -365,7 +365,7 @@ gaim_value_get_char(const GaimValue *value)
 }
 
 unsigned char
-gaim_value_get_uchar(const GaimValue *value)
+purple_value_get_uchar(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, 0);
 
@@ -373,7 +373,7 @@ gaim_value_get_uchar(const GaimValue *value)
 }
 
 gboolean
-gaim_value_get_boolean(const GaimValue *value)
+purple_value_get_boolean(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, FALSE);
 
@@ -381,7 +381,7 @@ gaim_value_get_boolean(const GaimValue *value)
 }
 
 short
-gaim_value_get_short(const GaimValue *value)
+purple_value_get_short(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, 0);
 
@@ -389,7 +389,7 @@ gaim_value_get_short(const GaimValue *value)
 }
 
 unsigned short
-gaim_value_get_ushort(const GaimValue *value)
+purple_value_get_ushort(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, 0);
 
@@ -397,7 +397,7 @@ gaim_value_get_ushort(const GaimValue *value)
 }
 
 int
-gaim_value_get_int(const GaimValue *value)
+purple_value_get_int(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, 0);
 
@@ -405,7 +405,7 @@ gaim_value_get_int(const GaimValue *value)
 }
 
 unsigned int
-gaim_value_get_uint(const GaimValue *value)
+purple_value_get_uint(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, 0);
 
@@ -413,7 +413,7 @@ gaim_value_get_uint(const GaimValue *value)
 }
 
 long
-gaim_value_get_long(const GaimValue *value)
+purple_value_get_long(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, 0);
 
@@ -421,7 +421,7 @@ gaim_value_get_long(const GaimValue *value)
 }
 
 unsigned long
-gaim_value_get_ulong(const GaimValue *value)
+purple_value_get_ulong(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, 0);
 
@@ -429,7 +429,7 @@ gaim_value_get_ulong(const GaimValue *value)
 }
 
 gint64
-gaim_value_get_int64(const GaimValue *value)
+purple_value_get_int64(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, 0);
 
@@ -437,7 +437,7 @@ gaim_value_get_int64(const GaimValue *value)
 }
 
 guint64
-gaim_value_get_uint64(const GaimValue *value)
+purple_value_get_uint64(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, 0);
 
@@ -445,7 +445,7 @@ gaim_value_get_uint64(const GaimValue *value)
 }
 
 const char *
-gaim_value_get_string(const GaimValue *value)
+purple_value_get_string(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, NULL);
 
@@ -453,7 +453,7 @@ gaim_value_get_string(const GaimValue *value)
 }
 
 void *
-gaim_value_get_object(const GaimValue *value)
+purple_value_get_object(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, NULL);
 
@@ -461,7 +461,7 @@ gaim_value_get_object(const GaimValue *value)
 }
 
 void *
-gaim_value_get_pointer(const GaimValue *value)
+purple_value_get_pointer(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, NULL);
 
@@ -469,7 +469,7 @@ gaim_value_get_pointer(const GaimValue *value)
 }
 
 int
-gaim_value_get_enum(const GaimValue *value)
+purple_value_get_enum(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, -1);
 
@@ -477,7 +477,7 @@ gaim_value_get_enum(const GaimValue *value)
 }
 
 void *
-gaim_value_get_boxed(const GaimValue *value)
+purple_value_get_boxed(const PurpleValue *value)
 {
 	g_return_val_if_fail(value != NULL, NULL);
 

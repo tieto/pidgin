@@ -13,7 +13,7 @@
  *  using hooks doesn't put the willys up programs that keep an eye out for
  *  loggers.
  *
- *  Windows 9x doesn't have GetLastInputInfo - when Gaim runs on these machines
+ *  Windows 9x doesn't have GetLastInputInfo - when Purple runs on these machines
  *  the code silently falls back onto the old hooking scheme.
  */
 #define _WIN32_WINNT 0x0500

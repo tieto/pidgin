@@ -28,7 +28,7 @@
 static int
 add_func(int i1, int i2)
 {
-	gaim_debug_misc("ipc-test-server", "Got %d, %d, returning %d\n",
+	purple_debug_misc("ipc-test-server", "Got %d, %d, returning %d\n",
 					i1, i2, i1 + i2);
 	return i1 + i2;
 }
@@ -36,39 +36,39 @@ add_func(int i1, int i2)
 static int
 sub_func(int i1, int i2)
 {
-	gaim_debug_misc("ipc-test-server", "Got %d, %d, returning %d\n",
+	purple_debug_misc("ipc-test-server", "Got %d, %d, returning %d\n",
 					i1, i2, i1 - i2);
 	return i1 - i2;
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	gaim_plugin_ipc_register(plugin, "add", GAIM_CALLBACK(add_func),
-							 gaim_marshal_INT__INT_INT,
-							 gaim_value_new(GAIM_TYPE_INT), 2,
-							 gaim_value_new(GAIM_TYPE_INT),
-							 gaim_value_new(GAIM_TYPE_INT));
+	purple_plugin_ipc_register(plugin, "add", PURPLE_CALLBACK(add_func),
+							 purple_marshal_INT__INT_INT,
+							 purple_value_new(PURPLE_TYPE_INT), 2,
+							 purple_value_new(PURPLE_TYPE_INT),
+							 purple_value_new(PURPLE_TYPE_INT));
 
-	gaim_plugin_ipc_register(plugin, "sub", GAIM_CALLBACK(sub_func),
-							 gaim_marshal_INT__INT_INT,
-							 gaim_value_new(GAIM_TYPE_INT), 2,
-							 gaim_value_new(GAIM_TYPE_INT),
-							 gaim_value_new(GAIM_TYPE_INT));
+	purple_plugin_ipc_register(plugin, "sub", PURPLE_CALLBACK(sub_func),
+							 purple_marshal_INT__INT_INT,
+							 purple_value_new(PURPLE_TYPE_INT), 2,
+							 purple_value_new(PURPLE_TYPE_INT),
+							 purple_value_new(PURPLE_TYPE_INT));
 
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	IPC_TEST_SERVER_PLUGIN_ID,                        /**< id             */
 	N_("IPC Test Server"),                            /**< name           */
@@ -79,7 +79,7 @@ static GaimPluginInfo info =
 	N_("Test plugin IPC support, as a server. This registers the IPC "
 	   "commands."),
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	NULL,                                             /**< unload         */
@@ -92,8 +92,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(ipctestserver, init_plugin, info)
+PURPLE_INIT_PLUGIN(ipctestserver, init_plugin, info)

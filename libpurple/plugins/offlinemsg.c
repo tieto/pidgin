@@ -26,7 +26,7 @@
 #define PLUGIN_DESCRIPTION	N_("Save messages sent to an offline user as pounce.")
 #define PLUGIN_AUTHOR		"Sadrul H Chowdhury <sadrul@users.sourceforge.net>"
 
-/* Gaim headers */
+/* Purple headers */
 #include <version.h>
 
 #include <blist.h>
@@ -50,8 +50,8 @@ typedef enum
 
 struct _OfflineMsg
 {
-	GaimAccount *account;
-	GaimConversation *conv;
+	PurpleAccount *account;
+	PurpleConversation *conv;
 	char *who;
 	char *message;
 };
@@ -67,73 +67,73 @@ discard_data(OfflineMsg *offline)
 static void
 cancel_poune(OfflineMsg *offline)
 {
-	gaim_conversation_set_data(offline->conv, "plugin_pack:offlinemsg",
+	purple_conversation_set_data(offline->conv, "plugin_pack:offlinemsg",
 				GINT_TO_POINTER(OFFLINE_MSG_NO));
-	gaim_conv_im_send_with_flags(GAIM_CONV_IM(offline->conv), offline->message, 0);
+	purple_conv_im_send_with_flags(PURPLE_CONV_IM(offline->conv), offline->message, 0);
 	discard_data(offline);
 }
 
 static void
 record_pounce(OfflineMsg *offline)
 {
-	GaimPounce *pounce;
-	GaimPounceEvent event;
-	GaimPounceOption option;
-	GaimConversation *conv;
+	PurplePounce *pounce;
+	PurplePounceEvent event;
+	PurplePounceOption option;
+	PurpleConversation *conv;
 
-	event = GAIM_POUNCE_SIGNON;
-	option = GAIM_POUNCE_OPTION_NONE;
+	event = PURPLE_POUNCE_SIGNON;
+	option = PURPLE_POUNCE_OPTION_NONE;
 
-	pounce = gaim_pounce_new(gaim_core_get_ui(), offline->account, offline->who,
+	pounce = purple_pounce_new(purple_core_get_ui(), offline->account, offline->who,
 					event, option);
 
-	gaim_pounce_action_set_enabled(pounce, "send-message", TRUE);
-	gaim_pounce_action_set_attribute(pounce, "send-message", "message", offline->message);
+	purple_pounce_action_set_enabled(pounce, "send-message", TRUE);
+	purple_pounce_action_set_attribute(pounce, "send-message", "message", offline->message);
  
 	conv = offline->conv;
-	if (!gaim_conversation_get_data(conv, "plugin_pack:offlinemsg"))
-		gaim_conversation_write(conv, NULL, _("The rest of the messages will be saved "
+	if (!purple_conversation_get_data(conv, "plugin_pack:offlinemsg"))
+		purple_conversation_write(conv, NULL, _("The rest of the messages will be saved "
 							"as pounce. You can edit/delete the pounce from the `Buddy "
 							"Pounce' dialog."),
-							GAIM_MESSAGE_SYSTEM, time(NULL));
-	gaim_conversation_set_data(conv, "plugin_pack:offlinemsg",
+							PURPLE_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_set_data(conv, "plugin_pack:offlinemsg",
 				GINT_TO_POINTER(OFFLINE_MSG_YES));
 
-	gaim_conv_im_write(GAIM_CONV_IM(conv), offline->who, offline->message,
-				GAIM_MESSAGE_SEND, time(NULL));
+	purple_conv_im_write(PURPLE_CONV_IM(conv), offline->who, offline->message,
+				PURPLE_MESSAGE_SEND, time(NULL));
 
 	discard_data(offline);
 }
 
 static void
-sending_msg_cb(GaimAccount *account, const char *who, char **message, gpointer handle)
+sending_msg_cb(PurpleAccount *account, const char *who, char **message, gpointer handle)
 {
-	GaimBuddy *buddy;
+	PurpleBuddy *buddy;
 	OfflineMsg *offline;
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	OfflineMessageSetting setting;
 
-	buddy = gaim_find_buddy(account, who);
+	buddy = purple_find_buddy(account, who);
 	if (!buddy)
 		return;
 
-	if (gaim_presence_is_online(gaim_buddy_get_presence(buddy)))
+	if (purple_presence_is_online(purple_buddy_get_presence(buddy)))
 		return;
 
-	if (gaim_account_supports_offline_message(account, buddy))
+	if (purple_account_supports_offline_message(account, buddy))
 	{
-		gaim_debug_info("offlinemsg", "Account \"%s\" supports offline message.",
-					gaim_account_get_username(account));
+		purple_debug_info("offlinemsg", "Account \"%s\" supports offline message.",
+					purple_account_get_username(account));
 		return;
 	}
 
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 					who, account);
 
 	if (!conv)
 		return;
 
-	setting = GPOINTER_TO_INT(gaim_conversation_get_data(conv, "plugin_pack:offlinemsg"));
+	setting = GPOINTER_TO_INT(purple_conversation_get_data(conv, "plugin_pack:offlinemsg"));
 	if (setting == OFFLINE_MSG_NO)
 		return;
 
@@ -144,7 +144,7 @@ sending_msg_cb(GaimAccount *account, const char *who, char **message, gpointer h
 	offline->message = *message;
 	*message = NULL;
 
-	if (gaim_prefs_get_bool(PREF_ALWAYS) || setting == OFFLINE_MSG_YES)
+	if (purple_prefs_get_bool(PREF_ALWAYS) || setting == OFFLINE_MSG_YES)
 		record_pounce(offline);
 	else if (setting == OFFLINE_MSG_NONE)
 	{
@@ -153,7 +153,7 @@ sending_msg_cb(GaimAccount *account, const char *who, char **message, gpointer h
 						"rest of the messages in a pounce and automatically send them "
 						"when \"%s\" logs back in?"), who, who);
 	
-		gaim_request_action(handle, _("Offline Message"), ask,
+		purple_request_action(handle, _("Offline Message"), ask,
 					_("You can edit/delete the pounce from the `Buddy Pounces' dialog"),
 					1, offline, 2,
 					_("Yes"), record_pounce,
@@ -163,53 +163,53 @@ sending_msg_cb(GaimAccount *account, const char *who, char **message, gpointer h
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	gaim_signal_connect(gaim_conversations_get_handle(), "sending-im-msg",
-					plugin, GAIM_CALLBACK(sending_msg_cb), plugin);
+	purple_signal_connect(purple_conversations_get_handle(), "sending-im-msg",
+					plugin, PURPLE_CALLBACK(sending_msg_cb), plugin);
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	return TRUE;
 }
 
-static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin)
+static PurplePluginPrefFrame *
+get_plugin_pref_frame(PurplePlugin *plugin)
 {
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *pref;
+	PurplePluginPrefFrame *frame;
+	PurplePluginPref *pref;
 
-	frame = gaim_plugin_pref_frame_new();
+	frame = purple_plugin_pref_frame_new();
 
-	pref = gaim_plugin_pref_new_with_label(_("Save offline messages in pounce"));
-	gaim_plugin_pref_frame_add(frame, pref);
+	pref = purple_plugin_pref_new_with_label(_("Save offline messages in pounce"));
+	purple_plugin_pref_frame_add(frame, pref);
 
-	pref = gaim_plugin_pref_new_with_name_and_label(PREF_ALWAYS,
+	pref = purple_plugin_pref_new_with_name_and_label(PREF_ALWAYS,
 					_("Do not ask. Always save in pounce."));
-	gaim_plugin_pref_frame_add(frame, pref);
+	purple_plugin_pref_frame_add(frame, pref);
 
 	return frame;
 }
 
-static GaimPluginUiInfo prefs_info = {
+static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
 	0,
 	NULL
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,			/* Magic				*/
-	GAIM_MAJOR_VERSION,			/* Gaim Major Version	*/
-	GAIM_MINOR_VERSION,			/* Gaim Minor Version	*/
-	GAIM_PLUGIN_STANDARD,			/* plugin type			*/
+	PURPLE_PLUGIN_MAGIC,			/* Magic				*/
+	PURPLE_MAJOR_VERSION,			/* Purple Major Version	*/
+	PURPLE_MINOR_VERSION,			/* Purple Minor Version	*/
+	PURPLE_PLUGIN_STANDARD,			/* plugin type			*/
 	NULL,					/* ui requirement		*/
 	0,					/* flags				*/
 	NULL,					/* dependencies			*/
-	GAIM_PRIORITY_DEFAULT,			/* priority				*/
+	PURPLE_PRIORITY_DEFAULT,			/* priority				*/
 
 	PLUGIN_ID,				/* plugin id			*/
 	PLUGIN_NAME,				/* name					*/
@@ -217,7 +217,7 @@ static GaimPluginInfo info =
 	PLUGIN_SUMMARY,				/* summary				*/
 	PLUGIN_DESCRIPTION,			/* description			*/
 	PLUGIN_AUTHOR,				/* author				*/
-	GAIM_WEBSITE,				/* website				*/
+	PURPLE_WEBSITE,				/* website				*/
 
 	plugin_load,				/* load					*/
 	plugin_unload,				/* unload				*/
@@ -230,10 +230,10 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	gaim_prefs_add_none(PREF_PREFIX);
-	gaim_prefs_add_bool(PREF_ALWAYS, FALSE);
+	purple_prefs_add_none(PREF_PREFIX);
+	purple_prefs_add_bool(PREF_ALWAYS, FALSE);
 }
 
-GAIM_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)
+PURPLE_INIT_PLUGIN(PLUGIN_STATIC_NAME, init_plugin, info)

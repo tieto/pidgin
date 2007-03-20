@@ -1,6 +1,6 @@
 $MODULE_NAME = "Prefs Functions Test";
-use Gaim;
-# All the information Gaim gets about our nifty plugin
+use Purple;
+# All the information Purple gets about our nifty plugin
 %PLUGIN_INFO = ( 
 	perl_api_version => 2, 
 	name => "Perl: $MODULE_NAME",
@@ -31,24 +31,24 @@ use Gaim;
 	my $PROTOCOL_ID 	= "prpl-oscar";
 
 sub foo {
-	$frame = Gaim::PluginPref::Frame->new();
+	$frame = Purple::PluginPref::Frame->new();
 
-	$ppref = Gaim::PluginPref->new_with_label("boolean");
+	$ppref = Purple::PluginPref->new_with_label("boolean");
 	$frame->add($ppref);
 	
-	$ppref = Gaim::PluginPref->new_with_name_and_label(
+	$ppref = Purple::PluginPref->new_with_name_and_label(
 	    "/plugins/core/perl_test/bool", "Boolean Preference");
 	$frame->add($ppref);
 
 		
-	$ppref = Gaim::PluginPref->new_with_name_and_label(
+	$ppref = Purple::PluginPref->new_with_name_and_label(
 	    "/plugins/core/perl_test/choice", "Choice Preference");
 	$ppref->set_type(1);
 	$ppref->add_choice("ch0", $frame);
 	$ppref->add_choice("ch1", $frame);
 	$frame->add($ppref);
 	
-	$ppref = Gaim::PluginPref->new_with_name_and_label(
+	$ppref = Purple::PluginPref->new_with_name_and_label(
 	    "/plugins/core/perl_test/text", "Text Box Preference");
 	$ppref->set_max_length(16);
 	$frame->add($ppref);
@@ -71,10 +71,10 @@ sub plugin_load {
 
 	#########  TEST CODE HERE  ##########
 
-	Gaim::Prefs::add_none("/plugins/core/perl_test");
-	Gaim::Prefs::add_bool("/plugins/core/perl_test/bool", 1);	
-	Gaim::Prefs::add_string("/plugins/core/perl_test/choice", "ch1");	
-	Gaim::Prefs::add_string("/plugins/core/perl_test/text", "Foobar");	
+	Purple::Prefs::add_none("/plugins/core/perl_test");
+	Purple::Prefs::add_bool("/plugins/core/perl_test/bool", 1);	
+	Purple::Prefs::add_string("/plugins/core/perl_test/choice", "ch1");	
+	Purple::Prefs::add_string("/plugins/core/perl_test/text", "Foobar");	
 	
 
 	print "\n\n" . "#" x 80 . "\n\n";

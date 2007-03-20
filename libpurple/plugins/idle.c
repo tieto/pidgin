@@ -1,9 +1,9 @@
 /*
- * idle.c - I'dle Mak'er plugin for Gaim
+ * idle.c - I'dle Mak'er plugin for Purple
  *
- * This file is part of Gaim.
+ * This file is part of Purple.
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -39,7 +39,7 @@
 static GList *idled_accts = NULL;
 
 static gboolean
-unidle_filter(GaimAccount *acct)
+unidle_filter(PurpleAccount *acct)
 {
 	if (g_list_find(idled_accts, acct))
 		return TRUE;
@@ -48,50 +48,50 @@ unidle_filter(GaimAccount *acct)
 }
 
 static gboolean
-idleable_filter(GaimAccount *account)
+idleable_filter(PurpleAccount *account)
 {
-	GaimPlugin *prpl;
+	PurplePlugin *prpl;
 
-	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 	g_return_val_if_fail(prpl != NULL, FALSE);
 
-	return (GAIM_PLUGIN_PROTOCOL_INFO(prpl)->set_idle != NULL);
+	return (PURPLE_PLUGIN_PROTOCOL_INFO(prpl)->set_idle != NULL);
 }
 
 static void
-set_idle_time(GaimAccount *acct, int mins_idle)
+set_idle_time(PurpleAccount *acct, int mins_idle)
 {
 	time_t t;
-	GaimConnection *gc = gaim_account_get_connection(acct);
-	GaimPresence *presence = gaim_account_get_presence(acct);
+	PurpleConnection *gc = purple_account_get_connection(acct);
+	PurplePresence *presence = purple_account_get_presence(acct);
 
 	if (!gc)
 		return;
 
-	gaim_debug_info("idle",
+	purple_debug_info("idle",
 			"setting idle time for %s to %d\n",
-			gaim_account_get_username(acct), mins_idle);
+			purple_account_get_username(acct), mins_idle);
 
 	if (mins_idle)
 		t = time(NULL) - (60 * mins_idle); /* subtract seconds idle from current time */
 	else
 		t = 0; /* time idle is irrelevant */
 
-	gaim_presence_set_idle(presence, mins_idle ? TRUE : FALSE, t);
+	purple_presence_set_idle(presence, mins_idle ? TRUE : FALSE, t);
 }
 
 static void
-idle_action_ok(void *ignored, GaimRequestFields *fields)
+idle_action_ok(void *ignored, PurpleRequestFields *fields)
 {
-	int tm = gaim_request_fields_get_integer(fields, "mins");
-	GaimAccount *acct = gaim_request_fields_get_account(fields, "acct");
+	int tm = purple_request_fields_get_integer(fields, "mins");
+	PurpleAccount *acct = purple_request_fields_get_account(fields, "acct");
 
 	/* only add the account to the GList if it's not already been idled */
 	if (!unidle_filter(acct))
 	{
-		gaim_debug_misc("idle",
+		purple_debug_misc("idle",
 				"%s hasn't been idled yet; adding to list.\n",
-				gaim_account_get_username(acct));
+				purple_account_get_username(acct));
 		idled_accts = g_list_append(idled_accts, acct);
 	}
 
@@ -99,23 +99,23 @@ idle_action_ok(void *ignored, GaimRequestFields *fields)
 }
 
 static void
-idle_all_action_ok(void *ignored, GaimRequestFields *fields)
+idle_all_action_ok(void *ignored, PurpleRequestFields *fields)
 {
-	GaimAccount *acct = NULL;
+	PurpleAccount *acct = NULL;
 	GList *list, *iter;
-	int tm = gaim_request_fields_get_integer(fields, "mins");
+	int tm = purple_request_fields_get_integer(fields, "mins");
 	const char *prpl_id = NULL;
 
-	list = gaim_accounts_get_all_active();
+	list = purple_accounts_get_all_active();
 	for(iter = list; iter; iter = iter->next) {
-		acct = (GaimAccount *)(iter->data);
+		acct = (PurpleAccount *)(iter->data);
 
 		if(acct)
-			prpl_id = gaim_account_get_protocol_id(acct);
+			prpl_id = purple_account_get_protocol_id(acct);
 
 		if(acct && idleable_filter(acct)) {
-			gaim_debug_misc("idle", "Idling %s.\n",
-					gaim_account_get_username(acct));
+			purple_debug_misc("idle", "Idling %s.\n",
+					purple_account_get_username(acct));
 
 			set_idle_time(acct, tm);
 
@@ -128,9 +128,9 @@ idle_all_action_ok(void *ignored, GaimRequestFields *fields)
 }
 
 static void
-unidle_action_ok(void *ignored, GaimRequestFields *fields)
+unidle_action_ok(void *ignored, PurpleRequestFields *fields)
 {
-	GaimAccount *acct = gaim_request_fields_get_account(fields, "acct");
+	PurpleAccount *acct = purple_request_fields_get_account(fields, "acct");
 
 	set_idle_time(acct, 0); /* unidle the account */
 
@@ -140,28 +140,28 @@ unidle_action_ok(void *ignored, GaimRequestFields *fields)
 
 
 static void
-idle_action(GaimPluginAction *action)
+idle_action(PurplePluginAction *action)
 {
 	/* Use the super fancy request API */
 
-	GaimRequestFields *request;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFields *request;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
-	group = gaim_request_field_group_new(NULL);
+	group = purple_request_field_group_new(NULL);
 
-	field = gaim_request_field_account_new("acct", _("Account"), NULL);
-	gaim_request_field_account_set_filter(field, idleable_filter);
-	gaim_request_field_account_set_show_all(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
+	field = purple_request_field_account_new("acct", _("Account"), NULL);
+	purple_request_field_account_set_filter(field, idleable_filter);
+	purple_request_field_account_set_show_all(field, FALSE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_int_new("mins", _("Minutes"), 10);
-	gaim_request_field_group_add_field(group, field);
+	field = purple_request_field_int_new("mins", _("Minutes"), 10);
+	purple_request_field_group_add_field(group, field);
 
-	request = gaim_request_fields_new();
-	gaim_request_fields_add_group(request, group);
+	request = purple_request_fields_new();
+	purple_request_fields_add_group(request, group);
 
-	gaim_request_fields(action->plugin,
+	purple_request_fields(action->plugin,
 			N_("I'dle Mak'er"),
 			_("Set Account Idle Time"),
 			NULL,
@@ -172,29 +172,29 @@ idle_action(GaimPluginAction *action)
 }
 
 static void
-unidle_action(GaimPluginAction *action)
+unidle_action(PurplePluginAction *action)
 {
-	GaimRequestFields *request;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFields *request;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
 	if (idled_accts == NULL)
 	{
-		gaim_notify_info(NULL, NULL, _("None of your accounts are idle."), NULL);
+		purple_notify_info(NULL, NULL, _("None of your accounts are idle."), NULL);
 		return;
 	}
 
-	group = gaim_request_field_group_new(NULL);
+	group = purple_request_field_group_new(NULL);
 
-	field = gaim_request_field_account_new("acct", _("Account"), NULL);
-	gaim_request_field_account_set_filter(field, unidle_filter);
-	gaim_request_field_account_set_show_all(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
+	field = purple_request_field_account_new("acct", _("Account"), NULL);
+	purple_request_field_account_set_filter(field, unidle_filter);
+	purple_request_field_account_set_show_all(field, FALSE);
+	purple_request_field_group_add_field(group, field);
 
-	request = gaim_request_fields_new();
-	gaim_request_fields_add_group(request, group);
+	request = purple_request_fields_new();
+	purple_request_fields_add_group(request, group);
 
-	gaim_request_fields(action->plugin,
+	purple_request_fields(action->plugin,
 			N_("I'dle Mak'er"),
 			_("Unset Account Idle Time"),
 			NULL,
@@ -205,21 +205,21 @@ unidle_action(GaimPluginAction *action)
 }
 
 static void
-idle_all_action(GaimPluginAction *action)
+idle_all_action(PurplePluginAction *action)
 {
-	GaimRequestFields *request;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFields *request;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
-	group = gaim_request_field_group_new(NULL);
+	group = purple_request_field_group_new(NULL);
 
-	field = gaim_request_field_int_new("mins", _("Minutes"), 10);
-	gaim_request_field_group_add_field(group, field);
+	field = purple_request_field_int_new("mins", _("Minutes"), 10);
+	purple_request_field_group_add_field(group, field);
 
-	request = gaim_request_fields_new();
-	gaim_request_fields_add_group(request, group);
+	request = purple_request_fields_new();
+	purple_request_fields_add_group(request, group);
 
-	gaim_request_fields(action->plugin,
+	purple_request_fields(action->plugin,
 			N_("I'dle Mak'er"),
 			_("Set Idle Time for All Accounts"),
 			NULL,
@@ -230,7 +230,7 @@ idle_all_action(GaimPluginAction *action)
 }
 
 static void
-unidle_all_action(GaimPluginAction *action)
+unidle_all_action(PurplePluginAction *action)
 {
 	GList *l;
 
@@ -238,7 +238,7 @@ unidle_all_action(GaimPluginAction *action)
 	 * after the list is freed */
 	for (l = idled_accts; l; l = l->next)
 	{
-		GaimAccount *account = l->data;
+		PurpleAccount *account = l->data;
 		set_idle_time(account, 0);
 	}
 
@@ -247,24 +247,24 @@ unidle_all_action(GaimPluginAction *action)
 }
 
 static GList *
-actions(GaimPlugin *plugin, gpointer context)
+actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *l = NULL;
-	GaimPluginAction *act = NULL;
+	PurplePluginAction *act = NULL;
 
-	act = gaim_plugin_action_new(_("Set Account Idle Time"),
+	act = purple_plugin_action_new(_("Set Account Idle Time"),
 			idle_action);
 	l = g_list_append(l, act);
 
-	act = gaim_plugin_action_new(_("Unset Account Idle Time"),
+	act = purple_plugin_action_new(_("Unset Account Idle Time"),
 			unidle_action);
 	l = g_list_append(l, act);
 
-	act = gaim_plugin_action_new(_("Set Idle Time for All Accounts"),
+	act = purple_plugin_action_new(_("Set Idle Time for All Accounts"),
 			idle_all_action);
 	l = g_list_append(l, act);
 
-	act = gaim_plugin_action_new(
+	act = purple_plugin_action_new(
 			_("Unset Idle Time for All Idled Accounts"), unidle_all_action);
 	l = g_list_append(l, act);
 
@@ -272,42 +272,42 @@ actions(GaimPlugin *plugin, gpointer context)
 }
 
 static void
-signing_off_cb(GaimConnection *gc, void *data)
+signing_off_cb(PurpleConnection *gc, void *data)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 	idled_accts = g_list_remove(idled_accts, account);
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	gaim_signal_connect(gaim_connections_get_handle(), "signing-off",
+	purple_signal_connect(purple_connections_get_handle(), "signing-off",
 						plugin,
-						GAIM_CALLBACK(signing_off_cb), NULL);
+						PURPLE_CALLBACK(signing_off_cb), NULL);
 
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	unidle_all_action(NULL);
 
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,
 	NULL,
 	0,
 	NULL,
-	GAIM_PRIORITY_DEFAULT,
+	PURPLE_PRIORITY_DEFAULT,
 	IDLE_PLUGIN_ID,
 
 	/* This is a cultural reference.  Dy'er Mak'er is a song by Led Zeppelin.
@@ -317,7 +317,7 @@ static GaimPluginInfo info =
 	N_("Allows you to hand-configure how long you've been idle"),
 	N_("Allows you to hand-configure how long you've been idle"),
 	"Eric Warmenhoven <eric@warmenhoven.org>",
-	GAIM_WEBSITE,
+	PURPLE_WEBSITE,
 	plugin_load,
 	plugin_unload,
 	NULL,
@@ -328,10 +328,10 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
 
-GAIM_INIT_PLUGIN(idle, init_plugin, info)
+PURPLE_INIT_PLUGIN(idle, init_plugin, info)
 

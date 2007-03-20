@@ -2,9 +2,9 @@
  * @file dnsquery.h DNS query API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,27 +22,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_DNSQUERY_H_
-#define _GAIM_DNSQUERY_H_
+#ifndef _PURPLE_DNSQUERY_H_
+#define _PURPLE_DNSQUERY_H_
 
 #include <glib.h>
 #include "eventloop.h"
 #include "account.h"
 
-typedef struct _GaimDnsQueryData GaimDnsQueryData;
+typedef struct _PurpleDnsQueryData PurpleDnsQueryData;
 
 /**
  * The "hosts" parameter is a linked list containing pairs of
  * one size_t addrlen and one struct sockaddr *addr.  It should
  * be free'd by the callback function.
  */
-typedef void (*GaimDnsQueryConnectFunction)(GSList *hosts, gpointer data, const char *error_message);
+typedef void (*PurpleDnsQueryConnectFunction)(GSList *hosts, gpointer data, const char *error_message);
 
 /**
  * Callbacks used by the UI if it handles resolving DNS
  */
-typedef void  (*GaimDnsQueryResolvedCallback) (GaimDnsQueryData *query_data, GSList *hosts);
-typedef void  (*GaimDnsQueryFailedCallback) (GaimDnsQueryData *query_data, const gchar *error_message);
+typedef void  (*PurpleDnsQueryResolvedCallback) (PurpleDnsQueryData *query_data, GSList *hosts);
+typedef void  (*PurpleDnsQueryFailedCallback) (PurpleDnsQueryData *query_data, const gchar *error_message);
 
 /**
  * DNS Request UI operations
@@ -50,14 +50,14 @@ typedef void  (*GaimDnsQueryFailedCallback) (GaimDnsQueryData *query_data, const
 typedef struct
 {
 	/* If implemented, the UI is responsible for DNS queries */
-	gboolean (*resolve_host)(GaimDnsQueryData *query_data, GaimDnsQueryResolvedCallback resolved_cb, GaimDnsQueryFailedCallback failed_cb);
+	gboolean (*resolve_host)(PurpleDnsQueryData *query_data, PurpleDnsQueryResolvedCallback resolved_cb, PurpleDnsQueryFailedCallback failed_cb);
 
 	/* After destroy is called, query_data will be feed, so this must
 	 * cancel any further use of it the UI would do. Unneeded if 
 	 * resolve_host is not implemented.
 	 */
-	void (*destroy)(GaimDnsQueryData *query_data);
-} GaimDnsQueryUiOps;
+	void (*destroy)(PurpleDnsQueryData *query_data);
+} PurpleDnsQueryUiOps;
 
 #ifdef __cplusplus
 extern "C" {
@@ -80,7 +80,7 @@ extern "C" {
  *         a data structure that can be used to cancel the pending
  *         DNS query, if needed.
  */
-GaimDnsQueryData *gaim_dnsquery_a(const char *hostname, int port, GaimDnsQueryConnectFunction callback, gpointer data);
+PurpleDnsQueryData *purple_dnsquery_a(const char *hostname, int port, PurpleDnsQueryConnectFunction callback, gpointer data);
 
 /**
  * Cancel a DNS query and destroy the associated data structure.
@@ -88,7 +88,7 @@ GaimDnsQueryData *gaim_dnsquery_a(const char *hostname, int port, GaimDnsQueryCo
  * @param query_data The DNS query to cancel.  This data structure
  *        is freed by this function.
  */
-void gaim_dnsquery_destroy(GaimDnsQueryData *query_data);
+void purple_dnsquery_destroy(PurpleDnsQueryData *query_data);
 
 /**
  * Sets the UI operations structure to be used when doing a DNS
@@ -97,7 +97,7 @@ void gaim_dnsquery_destroy(GaimDnsQueryData *query_data);
  *
  * @param ops The UI operations structure.
  */
-void gaim_dnsquery_set_ui_ops(GaimDnsQueryUiOps *ops);
+void purple_dnsquery_set_ui_ops(PurpleDnsQueryUiOps *ops);
 
 /**
  * Returns the UI operations structure to be used when doing a DNS
@@ -105,33 +105,33 @@ void gaim_dnsquery_set_ui_ops(GaimDnsQueryUiOps *ops);
  *
  * @return The UI operations structure.
  */
-GaimDnsQueryUiOps *gaim_dnsquery_get_ui_ops(void);
+PurpleDnsQueryUiOps *purple_dnsquery_get_ui_ops(void);
 
 /**
- * Get the host associated with a GaimDnsQueryData
+ * Get the host associated with a PurpleDnsQueryData
  *
  * @param query_data The DNS query
  * @return The host.
  */
-char *gaim_dnsquery_get_host(GaimDnsQueryData *query_data);
+char *purple_dnsquery_get_host(PurpleDnsQueryData *query_data);
 
 /**
- * Get the port associated with a GaimDnsQueryData
+ * Get the port associated with a PurpleDnsQueryData
  *
  * @param query_data The DNS query
  * @return The port.
  */
-unsigned short gaim_dnsquery_get_port(GaimDnsQueryData *query_data);
+unsigned short purple_dnsquery_get_port(PurpleDnsQueryData *query_data);
 
 /**
  * Initializes the DNS query subsystem.
  */
-void gaim_dnsquery_init(void);
+void purple_dnsquery_init(void);
 
 /**
  * Uninitializes the DNS query subsystem.
  */
-void gaim_dnsquery_uninit(void);
+void purple_dnsquery_uninit(void);
 
 /*@}*/
 
@@ -139,4 +139,4 @@ void gaim_dnsquery_uninit(void);
 }
 #endif
 
-#endif /* _GAIM_DNSQUERY_H_ */
+#endif /* _PURPLE_DNSQUERY_H_ */

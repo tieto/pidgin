@@ -1,9 +1,9 @@
 /**
  * @file send_core.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -37,7 +37,7 @@
  * return the number of bytes in header if succeeds
  * return -1 if there is any error */
 gint _create_packet_head_seq(guint8 *buf, guint8 **cursor,
-			     GaimConnection *gc, guint16 cmd, gboolean is_auto_seq, guint16 *seq)
+			     PurpleConnection *gc, guint16 cmd, gboolean is_auto_seq, guint16 *seq)
 {
 	qq_data *qd;
 	gint bytes_expected, bytes_written;
@@ -64,7 +64,7 @@ gint _create_packet_head_seq(guint8 *buf, guint8 **cursor,
 	bytes_written += create_packet_w(buf, cursor, *seq);
 
 	if (bytes_written != bytes_expected) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail create qq header, expect %d bytes, written %d bytes\n", bytes_expected, bytes_written);
 		bytes_written = -1;
 	}
@@ -74,7 +74,7 @@ gint _create_packet_head_seq(guint8 *buf, guint8 **cursor,
 /* for those need ack and resend no ack feed back from server
  * return number of bytes written to the socket,
  * return -1 if there is any error */
-gint _qq_send_packet(GaimConnection *gc, guint8 *buf, gint len, guint16 cmd)
+gint _qq_send_packet(PurpleConnection *gc, guint8 *buf, gint len, guint16 cmd)
 {
 	qq_data *qd;
 	qq_sendpacket *p;
@@ -85,7 +85,7 @@ gint _qq_send_packet(GaimConnection *gc, guint8 *buf, gint len, guint16 cmd)
 
 	if (qd->use_tcp) {
 		if (len > MAX_PACKET_SIZE) {
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 				   "xxx [%05d] %s, %d bytes is too large, do not send\n",
 				   qq_get_cmd_desc(cmd), qd->send_seq, len);
 			return -1;
@@ -115,7 +115,7 @@ gint _qq_send_packet(GaimConnection *gc, guint8 *buf, gint len, guint16 cmd)
 /* send the packet generated with the given cmd and data
  * return the number of bytes sent to socket if succeeds
  * return -1 if there is any error */
-gint qq_send_cmd(GaimConnection *gc, guint16 cmd,
+gint qq_send_cmd(PurpleConnection *gc, guint16 cmd,
 		 gboolean is_auto_seq, guint16 seq, gboolean need_ack, guint8 *data, gint len)
 {
 	qq_data *qd;
@@ -148,11 +148,11 @@ gint qq_send_cmd(GaimConnection *gc, guint16 cmd,
 				bytes_sent = qq_proxy_write(qd, buf, cursor - buf);
 
 			if (QQ_DEBUG)
-				gaim_debug(GAIM_DEBUG_INFO, "QQ",
+				purple_debug(PURPLE_DEBUG_INFO, "QQ",
 					   "<== [%05d] %s, %d bytes\n", seq_ret, qq_get_cmd_desc(cmd), bytes_sent);
 			return bytes_sent;
 		} else {	/* bad packet */
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 				   "Fail creating packet, expect %d bytes, written %d bytes\n",
 				   bytes_expected, bytes_written);
 			return -1;

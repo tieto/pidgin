@@ -1,7 +1,7 @@
 /**
  * @file gg-utils.c
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2005  Bartosz Oler <bartosz@bzimage.us>
  *
@@ -74,7 +74,7 @@ char *charset_convert(const gchar *locstr, const char *encsrc, const char *encds
 	msg = g_convert_with_fallback(locstr, strlen(locstr), encdst, encsrc,
 				      "?", NULL, NULL, &err);
 	if (err != NULL) {
-		gaim_debug_error("gg", "Error converting from %s to %s: %s\n",
+		purple_debug_error("gg", "Error converting from %s to %s: %s\n",
 				 encsrc, encdst, err->message);
 		g_error_free(err);
 	}
@@ -87,25 +87,25 @@ char *charset_convert(const gchar *locstr, const char *encsrc, const char *encds
 }
 /* }}} */
 
-/* ggp_get_uin(GaimAccount *account) {{{ */
-uin_t ggp_get_uin(GaimAccount *account)
+/* ggp_get_uin(PurpleAccount *account) {{{ */
+uin_t ggp_get_uin(PurpleAccount *account)
 {
-	return ggp_str_to_uin(gaim_account_get_username(account));
+	return ggp_str_to_uin(purple_account_get_username(account));
 }
 /* }}} */
 
-/* char *ggp_buddy_get_name(GaimConnection *gc, const uin_t uin) {{{ */
-char *ggp_buddy_get_name(GaimConnection *gc, const uin_t uin)
+/* char *ggp_buddy_get_name(PurpleConnection *gc, const uin_t uin) {{{ */
+char *ggp_buddy_get_name(PurpleConnection *gc, const uin_t uin)
 {
-	GaimBuddy *buddy;
+	PurpleBuddy *buddy;
 	gchar *str_uin;
 
 	str_uin = g_strdup_printf("%lu", (unsigned long int)uin);
 
-	buddy = gaim_find_buddy(gaim_connection_get_account(gc), str_uin);
+	buddy = purple_find_buddy(purple_connection_get_account(gc), str_uin);
 	if (buddy != NULL) {
 		g_free(str_uin);
-		return g_strdup(gaim_buddy_get_alias(buddy));
+		return g_strdup(purple_buddy_get_alias(buddy));
 	} else {
 		return str_uin;
 	}

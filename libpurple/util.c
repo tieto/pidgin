@@ -2,7 +2,7 @@
  * @file util.h Utility Functions
  * @ingroup core
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -30,9 +30,9 @@
 #include "prefs.h"
 #include "util.h"
 
-struct _GaimUtilFetchUrlData
+struct _PurpleUtilFetchUrlData
 {
-	GaimUtilFetchUrlCallback callback;
+	PurpleUtilFetchUrlCallback callback;
 	void *user_data;
 
 	struct
@@ -53,7 +53,7 @@ struct _GaimUtilFetchUrlData
 	gsize request_written;
 	gboolean include_headers;
 
-	GaimProxyConnectData *connect_data;
+	PurpleProxyConnectData *connect_data;
 	int fd;
 	guint inpa;
 
@@ -67,11 +67,11 @@ struct _GaimUtilFetchUrlData
 static char custom_home_dir[MAXPATHLEN];
 static char home_dir[MAXPATHLEN];
 
-GaimMenuAction *
-gaim_menu_action_new(const char *label, GaimCallback callback, gpointer data,
+PurpleMenuAction *
+purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
                      GList *children)
 {
-	GaimMenuAction *act = g_new0(GaimMenuAction, 1);
+	PurpleMenuAction *act = g_new0(PurpleMenuAction, 1);
 	act->label = g_strdup(label);
 	act->callback = callback;
 	act->data = data;
@@ -80,7 +80,7 @@ gaim_menu_action_new(const char *label, GaimCallback callback, gpointer data,
 }
 
 void
-gaim_menu_action_free(GaimMenuAction *act)
+purple_menu_action_free(PurpleMenuAction *act)
 {
 	g_return_if_fail(act != NULL);
 
@@ -92,7 +92,7 @@ gaim_menu_action_free(GaimMenuAction *act)
  * Base16 Functions
  **************************************************************************/
 gchar *
-gaim_base16_encode(const guchar *data, gsize len)
+purple_base16_encode(const guchar *data, gsize len)
 {
 	int i;
 	gchar *ascii = NULL;
@@ -109,7 +109,7 @@ gaim_base16_encode(const guchar *data, gsize len)
 }
 
 guchar *
-gaim_base16_decode(const char *str, gsize *ret_len)
+purple_base16_decode(const char *str, gsize *ret_len)
 {
 	int len, i, accumulator = 0;
 	guchar *data;
@@ -166,7 +166,7 @@ static const char xdigits[] =
 	"0123456789abcdef";
 
 gchar *
-gaim_base64_encode(const guchar *data, gsize len)
+purple_base64_encode(const guchar *data, gsize len)
 {
 	char *out, *rv;
 
@@ -205,7 +205,7 @@ gaim_base64_encode(const guchar *data, gsize len)
 }
 
 guchar *
-gaim_base64_decode(const char *str, gsize *ret_len)
+purple_base64_decode(const char *str, gsize *ret_len)
 {
 	guchar *out = NULL;
 	char tmp = 0;
@@ -274,7 +274,7 @@ gaim_base64_decode(const char *str, gsize *ret_len)
  * Quoted Printable Functions (see RFC 2045).
  **************************************************************************/
 guchar *
-gaim_quotedp_decode(const char *str, gsize *ret_len)
+purple_quotedp_decode(const char *str, gsize *ret_len)
 {
 	char *n, *new;
 	const char *end, *p;
@@ -324,7 +324,7 @@ gaim_quotedp_decode(const char *str, gsize *ret_len)
  * MIME Functions
  **************************************************************************/
 char *
-gaim_mime_decode_field(const char *str)
+purple_mime_decode_field(const char *str)
 {
 	/*
 	 * This is wing's version, partially based on revo/shx's version
@@ -437,9 +437,9 @@ gaim_mime_decode_field(const char *str)
 				guchar *decoded = NULL;
 				gsize dec_len;
 				if (g_ascii_strcasecmp(encoding, "Q") == 0)
-					decoded = gaim_quotedp_decode(encoded_text, &dec_len);
+					decoded = purple_quotedp_decode(encoded_text, &dec_len);
 				else if (g_ascii_strcasecmp(encoding, "B") == 0)
-					decoded = gaim_base64_decode(encoded_text, &dec_len);
+					decoded = purple_base64_decode(encoded_text, &dec_len);
 				else
 					decoded = NULL;
 				if (decoded) {
@@ -544,13 +544,13 @@ static const char *get_tmoff(const struct tm *tm)
 
 /* Windows doesn't HAVE_STRFTIME_Z_FORMAT, but this seems clearer. -- rlaager */
 #if !defined(HAVE_STRFTIME_Z_FORMAT) || defined(_WIN32)
-static size_t gaim_internal_strftime(char *s, size_t max, const char *format, const struct tm *tm)
+static size_t purple_internal_strftime(char *s, size_t max, const char *format, const struct tm *tm)
 {
 	const char *start;
 	const char *c;
 	char *fmt = NULL;
 
-	/* Yes, this is checked in gaim_utf8_strftime(),
+	/* Yes, this is checked in purple_utf8_strftime(),
 	 * but better safe than sorry. -- rlaager */
 	g_return_val_if_fail(format != NULL, 0);
 
@@ -586,7 +586,7 @@ static size_t gaim_internal_strftime(char *s, size_t max, const char *format, co
 			                            fmt ? fmt : "",
 			                            c - start - 1,
 			                            start,
-			                            wgaim_get_timezone_abbreviation(tm));
+			                            wpurple_get_timezone_abbreviation(tm));
 			g_free(fmt);
 			fmt = tmp;
 			start = c + 1;
@@ -614,11 +614,11 @@ static size_t gaim_internal_strftime(char *s, size_t max, const char *format, co
 	return strftime(s, max, format, tm);
 }
 #else /* HAVE_STRFTIME_Z_FORMAT && !_WIN32 */
-#define gaim_internal_strftime strftime
+#define purple_internal_strftime strftime
 #endif
 
 const char *
-gaim_utf8_strftime(const char *format, const struct tm *tm)
+purple_utf8_strftime(const char *format, const struct tm *tm)
 {
 	static char buf[128];
 	char *locale;
@@ -637,7 +637,7 @@ gaim_utf8_strftime(const char *format, const struct tm *tm)
 	locale = g_locale_from_utf8(format, -1, NULL, NULL, &err);
 	if (err != NULL)
 	{
-		gaim_debug_error("util", "Format conversion failed in gaim_utf8_strftime(): %s", err->message);
+		purple_debug_error("util", "Format conversion failed in purple_utf8_strftime(): %s", err->message);
 		g_error_free(err);
 		locale = g_strdup(format);
 	}
@@ -646,7 +646,7 @@ gaim_utf8_strftime(const char *format, const struct tm *tm)
 	 * which case, the contents of the buffer are
 	 * undefined) or the empty string (in which
 	 * case, no harm is done here). */
-	if ((len = gaim_internal_strftime(buf, sizeof(buf), locale, tm)) == 0)
+	if ((len = purple_internal_strftime(buf, sizeof(buf), locale, tm)) == 0)
 	{
 		g_free(locale);
 		return "";
@@ -657,12 +657,12 @@ gaim_utf8_strftime(const char *format, const struct tm *tm)
 	utf8 = g_locale_to_utf8(buf, len, NULL, NULL, &err);
 	if (err != NULL)
 	{
-		gaim_debug_error("util", "Result conversion failed in gaim_utf8_strftime(): %s", err->message);
+		purple_debug_error("util", "Result conversion failed in purple_utf8_strftime(): %s", err->message);
 		g_error_free(err);
 	}
 	else
 	{
-		gaim_strlcpy(buf, utf8);
+		purple_strlcpy(buf, utf8);
 		g_free(utf8);
 	}
 
@@ -670,31 +670,31 @@ gaim_utf8_strftime(const char *format, const struct tm *tm)
 }
 
 const char *
-gaim_date_format_short(const struct tm *tm)
+purple_date_format_short(const struct tm *tm)
 {
-	return gaim_utf8_strftime("%x", tm);
+	return purple_utf8_strftime("%x", tm);
 }
 
 const char *
-gaim_date_format_long(const struct tm *tm)
+purple_date_format_long(const struct tm *tm)
 {
-	return gaim_utf8_strftime(_("%x %X"), tm);
+	return purple_utf8_strftime(_("%x %X"), tm);
 }
 
 const char *
-gaim_date_format_full(const struct tm *tm)
+purple_date_format_full(const struct tm *tm)
 {
-	return gaim_utf8_strftime("%c", tm);
+	return purple_utf8_strftime("%c", tm);
 }
 
 const char *
-gaim_time_format(const struct tm *tm)
+purple_time_format(const struct tm *tm)
 {
-	return gaim_utf8_strftime("%X", tm);
+	return purple_utf8_strftime("%X", tm);
 }
 
 time_t
-gaim_time_build(int year, int month, int day, int hour, int min, int sec)
+purple_time_build(int year, int month, int day, int hour, int min, int sec)
 {
 	struct tm tm;
 
@@ -709,14 +709,14 @@ gaim_time_build(int year, int month, int day, int hour, int min, int sec)
 }
 
 time_t
-gaim_str_to_time(const char *timestamp, gboolean utc,
+purple_str_to_time(const char *timestamp, gboolean utc,
                  struct tm *tm, long *tz_off, const char **rest)
 {
 	time_t retval = 0;
 	struct tm *t;
 	const char *c = timestamp;
 	int year = 0;
-	long tzoff = GAIM_NO_TZ_OFF;
+	long tzoff = PURPLE_NO_TZ_OFF;
 
 	time(&retval);
 	t = localtime(&retval);
@@ -805,20 +805,20 @@ gaim_str_to_time(const char *timestamp, gboolean utc,
 					*rest = c;
 			}
 
-			if (tzoff != GAIM_NO_TZ_OFF || utc)
+			if (tzoff != PURPLE_NO_TZ_OFF || utc)
 			{
 #if defined(_WIN32)
 				long sys_tzoff;
 #endif
 
 #if defined(_WIN32) || defined(HAVE_TM_GMTOFF) || defined (HAVE_TIMEZONE)
-				if (tzoff == GAIM_NO_TZ_OFF)
+				if (tzoff == PURPLE_NO_TZ_OFF)
 					tzoff = 0;
 #endif
 
 #ifdef _WIN32
 				if ((sys_tzoff = win32_get_tz_offset()) == -1)
-					tzoff = GAIM_NO_TZ_OFF;
+					tzoff = PURPLE_NO_TZ_OFF;
 				else
 					tzoff += sys_tzoff;
 #else
@@ -848,7 +848,7 @@ gaim_str_to_time(const char *timestamp, gboolean utc,
 	}
 
 	retval = mktime(t);
-	if (tzoff != GAIM_NO_TZ_OFF)
+	if (tzoff != PURPLE_NO_TZ_OFF)
 		retval += tzoff;
 
 	if (tz_off != NULL)
@@ -910,7 +910,7 @@ detect_entity(const char *text, int *length)
 }
 
 gboolean
-gaim_markup_find_tag(const char *needle, const char *haystack,
+purple_markup_find_tag(const char *needle, const char *haystack,
 					 const char **start, const char **end, GData **attributes)
 {
 	GData *attribs;
@@ -1062,13 +1062,13 @@ gaim_markup_find_tag(const char *needle, const char *haystack,
 }
 
 gboolean
-gaim_markup_extract_info_field(const char *str, int len, GaimNotifyUserInfo *user_info,
+purple_markup_extract_info_field(const char *str, int len, PurpleNotifyUserInfo *user_info,
 							   const char *start_token, int skip,
 							   const char *end_token, char check_value,
 							   const char *no_value_token,
 							   const char *display_name, gboolean is_link,
 							   const char *link_prefix,
-							   GaimInfoFieldFormatCallback format_cb)
+							   PurpleInfoFieldFormatCallback format_cb)
 {
 	const char *p, *q;
 
@@ -1148,7 +1148,7 @@ gaim_markup_extract_info_field(const char *str, int len, GaimNotifyUserInfo *use
 				g_string_append_len(dest, p, q - p);
 		}
 
-		gaim_notify_user_info_add_pair(user_info, display_name, dest->str);
+		purple_notify_user_info_add_pair(user_info, display_name, dest->str);
 		g_string_free(dest, TRUE);
 
 		return TRUE;
@@ -1157,7 +1157,7 @@ gaim_markup_extract_info_field(const char *str, int len, GaimNotifyUserInfo *use
 	return FALSE;
 }
 
-struct gaim_parse_tag {
+struct purple_parse_tag {
 	char *src_tag;
 	char *dest_tag;
 	gboolean ignore;
@@ -1193,7 +1193,7 @@ struct gaim_parse_tag {
 						} \
 						if(p && !r) { \
 							if(*(p-1) != '/') { \
-								struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1); \
+								struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1); \
 								pt->src_tag = x; \
 								pt->dest_tag = y; \
 								tags = g_list_prepend(tags, pt); \
@@ -1217,7 +1217,7 @@ struct gaim_parse_tag {
 							xhtml = g_string_append(xhtml, "<" y); \
 							c += strlen("<" x); \
 							if(*c != '/') { \
-								struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1); \
+								struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1); \
 								pt->src_tag = x; \
 								pt->dest_tag = y; \
 								tags = g_list_prepend(tags, pt); \
@@ -1230,7 +1230,7 @@ struct gaim_parse_tag {
 						}
 #define ALLOW_TAG(x) ALLOW_TAG_ALT(x, x)
 void
-gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
+purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						  char **plain_out)
 {
 	GString *xhtml = g_string_new("");
@@ -1243,7 +1243,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 			if(*(c+1) == '/') { /* closing tag */
 				tag = tags;
 				while(tag) {
-					struct gaim_parse_tag *pt = tag->data;
+					struct purple_parse_tag *pt = tag->data;
 					if(!g_ascii_strncasecmp((c+2), pt->src_tag, strlen(pt->src_tag)) && *(c+strlen(pt->src_tag)+2) == '>') {
 						c += strlen(pt->src_tag) + 3;
 						break;
@@ -1252,7 +1252,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				}
 				if(tag) {
 					while(tags) {
-						struct gaim_parse_tag *pt = tags->data;
+						struct purple_parse_tag *pt = tags->data;
 						g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
 						if(tags == tag)
 							break;
@@ -1318,7 +1318,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<b>", 3) || !g_ascii_strncasecmp(c, "<bold>", strlen("<bold>"))) {
-					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1);
 					pt->src_tag = *(c+2) == '>' ? "b" : "bold";
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
@@ -1327,7 +1327,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<u>", 3) || !g_ascii_strncasecmp(c, "<underline>", strlen("<underline>"))) {
-					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1);
 					pt->src_tag = *(c+2) == '>' ? "u" : "underline";
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
@@ -1336,7 +1336,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<s>", 3) || !g_ascii_strncasecmp(c, "<strike>", strlen("<strike>"))) {
-					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1);
 					pt->src_tag = *(c+2) == '>' ? "s" : "strike";
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
@@ -1345,7 +1345,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<sub>", 5)) {
-					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1);
 					pt->src_tag = "sub";
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
@@ -1354,7 +1354,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<sup>", 5)) {
-					struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+					struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1);
 					pt->src_tag = "sup";
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
@@ -1365,7 +1365,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
 					const char *p = c;
 					GString *style = g_string_new("");
-					struct gaim_parse_tag *pt;
+					struct purple_parse_tag *pt;
 					while(*p && *p != '>') {
 						if(!g_ascii_strncasecmp(p, "back=", strlen("back="))) {
 							const char *q = p + strlen("back=");
@@ -1448,7 +1448,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						c++;
 					else
 						c = p;
-					pt = g_new0(struct gaim_parse_tag, 1);
+					pt = g_new0(struct purple_parse_tag, 1);
 					pt->src_tag = "font";
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
@@ -1465,7 +1465,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					while(*p && *p != '>') {
 						if(!g_ascii_strncasecmp(p, "bgcolor=", strlen("bgcolor="))) {
 							const char *q = p + strlen("bgcolor=");
-							struct gaim_parse_tag *pt = g_new0(struct gaim_parse_tag, 1);
+							struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1);
 							GString *color = g_string_new("");
 							if(*q == '\'' || *q == '\"')
 								q++;
@@ -1525,7 +1525,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
 	}
 	tag = tags;
 	while(tag) {
-		struct gaim_parse_tag *pt = tag->data;
+		struct purple_parse_tag *pt = tag->data;
 		if(!pt->ignore)
 			g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
 		tag = tag->next;
@@ -1549,7 +1549,7 @@ gaim_markup_html_to_xhtml(const char *html, char **xhtml_out,
  */
 
 char *
-gaim_markup_strip_html(const char *str)
+purple_markup_strip_html(const char *str)
 {
 	int i, j, k, entlen;
 	gboolean visible = TRUE;
@@ -1645,7 +1645,7 @@ gaim_markup_strip_html(const char *str)
 						char *tmp;
 						g_free(href);
 						tmp = g_strndup(str2 + st, end - st);
-						href = gaim_unescape_html(tmp);
+						href = purple_unescape_html(tmp);
 						g_free(tmp);
 						href_st = j;
 					}
@@ -1764,7 +1764,7 @@ badentity(const char *c)
 }
 
 char *
-gaim_markup_linkify(const char *text)
+purple_markup_linkify(const char *text)
 {
 	const char *c, *t, *q = NULL;
 	char *tmpurlbuf, *url_buf;
@@ -1824,7 +1824,7 @@ gaim_markup_linkify(const char *text)
 					}
 
 					url_buf = g_strndup(c, t - c);
-					tmpurlbuf = gaim_unescape_html(url_buf);
+					tmpurlbuf = purple_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
 							tmpurlbuf, url_buf);
 					g_free(url_buf);
@@ -1855,7 +1855,7 @@ gaim_markup_linkify(const char *text)
 							t--;
 						}
 						url_buf = g_strndup(c, t - c);
-						tmpurlbuf = gaim_unescape_html(url_buf);
+						tmpurlbuf = purple_unescape_html(url_buf);
 						g_string_append_printf(ret,
 								"<A HREF=\"http://%s\">%s</A>", tmpurlbuf,
 								url_buf);
@@ -1877,7 +1877,7 @@ gaim_markup_linkify(const char *text)
 						t--;
 					}
 					url_buf = g_strndup(c, t - c);
-					tmpurlbuf = gaim_unescape_html(url_buf);
+					tmpurlbuf = purple_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
 							tmpurlbuf, url_buf);
 					g_free(url_buf);
@@ -1904,7 +1904,7 @@ gaim_markup_linkify(const char *text)
 							t--;
 						}
 						url_buf = g_strndup(c, t - c);
-						tmpurlbuf = gaim_unescape_html(url_buf);
+						tmpurlbuf = purple_unescape_html(url_buf);
 						g_string_append_printf(ret,
 								"<A HREF=\"ftp://%s\">%s</A>", tmpurlbuf,
 								url_buf);
@@ -1925,7 +1925,7 @@ gaim_markup_linkify(const char *text)
 					if (*(t - 1) == '.')
 						t--;
 					url_buf = g_strndup(c, t - c);
-					tmpurlbuf = gaim_unescape_html(url_buf);
+					tmpurlbuf = purple_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
 							  tmpurlbuf, url_buf);
 					g_free(url_buf);
@@ -1988,8 +1988,8 @@ gaim_markup_linkify(const char *text)
 							*d = '\0';
 					}
 
-					tmpurlbuf = gaim_unescape_html(url_buf);
-					if (gaim_email_is_valid(tmpurlbuf)) {
+					tmpurlbuf = purple_unescape_html(url_buf);
+					if (purple_email_is_valid(tmpurlbuf)) {
 						g_string_append_printf(ret, "<A HREF=\"mailto:%s\">%s</A>",
 								tmpurlbuf, url_buf);
 					} else {
@@ -2024,7 +2024,7 @@ gaim_markup_linkify(const char *text)
 }
 
 char *
-gaim_unescape_html(const char *html) {
+purple_unescape_html(const char *html) {
 	if (html != NULL) {
 		const char *c = html;
 		GString *ret = g_string_new("");
@@ -2050,7 +2050,7 @@ gaim_unescape_html(const char *html) {
 }
 
 char *
-gaim_markup_slice(const char *str, guint x, guint y)
+purple_markup_slice(const char *str, guint x, guint y)
 {
 	GString *ret;
 	GQueue *q;
@@ -2147,7 +2147,7 @@ gaim_markup_slice(const char *str, guint x, guint y)
 	while ((tag = g_queue_pop_head(q))) {
 		char *name;
 
-		name = gaim_markup_get_tag_name(tag);
+		name = purple_markup_get_tag_name(tag);
 		g_string_append_printf(ret, "</%s>", name);
 		g_free(name);
 		g_free(tag);
@@ -2158,7 +2158,7 @@ gaim_markup_slice(const char *str, guint x, guint y)
 }
 
 char *
-gaim_markup_get_tag_name(const char *tag)
+purple_markup_get_tag_name(const char *tag)
 {
 	int i;
 	g_return_val_if_fail(tag != NULL, NULL);
@@ -2175,28 +2175,28 @@ gaim_markup_get_tag_name(const char *tag)
  * Path/Filename Functions
  **************************************************************************/
 const char *
-gaim_home_dir(void)
+purple_home_dir(void)
 {
 #ifndef _WIN32
 	return g_get_home_dir();
 #else
-	return wgaim_data_dir();
+	return wpurple_data_dir();
 #endif
 }
 
-/* returns a string of the form ~/.gaim, where ~ is replaced by the user's home
- * dir. Note that there is no trailing slash after .gaim. */
+/* returns a string of the form ~/.purple, where ~ is replaced by the user's home
+ * dir. Note that there is no trailing slash after .purple. */
 const char *
-gaim_user_dir(void)
+purple_user_dir(void)
 {
 	if (custom_home_dir != NULL && strlen(custom_home_dir) > 0) {
 		strcpy ((char*) &home_dir, (char*) &custom_home_dir);
 	} else {
-		const gchar *hd = gaim_home_dir();
+		const gchar *hd = purple_home_dir();
 
 		if (hd) {
 			g_strlcpy((char*) &home_dir, hd, sizeof(home_dir));
-			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".gaim",
+			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".purple",
 					sizeof(home_dir));
 		}
 	}
@@ -2204,7 +2204,7 @@ gaim_user_dir(void)
 	return home_dir;
 }
 
-void gaim_util_set_user_dir(const char *dir)
+void purple_util_set_user_dir(const char *dir)
 {
 	if (dir != NULL && strlen(dir) > 0) {
 		g_strlcpy((char*) &custom_home_dir, dir,
@@ -2212,7 +2212,7 @@ void gaim_util_set_user_dir(const char *dir)
 	}
 }
 
-int gaim_build_dir (const char *path, int mode)
+int purple_build_dir (const char *path, int mode)
 {
 #if GLIB_CHECK_VERSION(2,8,0)
 	return g_mkdir_with_parents(path, mode);
@@ -2246,14 +2246,14 @@ int gaim_build_dir (const char *path, int mode)
 			continue;
 #endif
 		} else if(g_file_test(dir, G_FILE_TEST_EXISTS)) {
-			gaim_debug_warning("build_dir", "bad path: %s\n", path);
+			purple_debug_warning("build_dir", "bad path: %s\n", path);
 			g_strfreev(components);
 			g_free(dir);
 			return -1;
 		}
 
 		if (g_mkdir(dir, mode) < 0) {
-			gaim_debug_warning("build_dir", "mkdir: %s\n", strerror(errno));
+			purple_debug_warning("build_dir", "mkdir: %s\n", strerror(errno));
 			g_strfreev(components);
 			g_free(dir);
 			return -1;
@@ -2272,9 +2272,9 @@ int gaim_build_dir (const char *path, int mode)
  * people's settings if there is a problem writing the new values.
  */
 gboolean
-gaim_util_write_data_to_file(const char *filename, const char *data, size_t size)
+purple_util_write_data_to_file(const char *filename, const char *data, size_t size)
 {
-	const char *user_dir = gaim_user_dir();
+	const char *user_dir = purple_user_dir();
 	gchar *filename_temp, *filename_full;
 	FILE *file;
 	size_t real_size, byteswritten;
@@ -2282,7 +2282,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 
 	g_return_val_if_fail(user_dir != NULL, FALSE);
 
-	gaim_debug_info("util", "Writing file %s to directory %s\n",
+	purple_debug_info("util", "Writing file %s to directory %s\n",
 					filename, user_dir);
 
 	/* Ensure the user directory exists */
@@ -2290,7 +2290,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	{
 		if (g_mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
 		{
-			gaim_debug_error("util", "Error creating directory %s: %s\n",
+			purple_debug_error("util", "Error creating directory %s: %s\n",
 							 user_dir, strerror(errno));
 			return FALSE;
 		}
@@ -2304,7 +2304,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	{
 		if (g_unlink(filename_temp) == -1)
 		{
-			gaim_debug_error("util", "Error removing old file %s: %s\n",
+			purple_debug_error("util", "Error removing old file %s: %s\n",
 							 filename_temp, strerror(errno));
 		}
 	}
@@ -2313,7 +2313,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	file = g_fopen(filename_temp, "wb");
 	if (file == NULL)
 	{
-		gaim_debug_error("util", "Error opening file %s for writing: %s\n",
+		purple_debug_error("util", "Error opening file %s for writing: %s\n",
 						 filename_temp, strerror(errno));
 		g_free(filename_full);
 		g_free(filename_temp);
@@ -2327,7 +2327,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	/* Close file */
 	if (fclose(file) != 0)
 	{
-		gaim_debug_error("util", "Error closing file %s: %s\n",
+		purple_debug_error("util", "Error closing file %s: %s\n",
 						 filename_temp, strerror(errno));
 		g_free(filename_full);
 		g_free(filename_temp);
@@ -2337,7 +2337,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	/* Ensure the file is the correct size */
 	if (byteswritten != real_size)
 	{
-		gaim_debug_error("util", "Error writing to file %s: Wrote %" G_GSIZE_FORMAT " bytes "
+		purple_debug_error("util", "Error writing to file %s: Wrote %" G_GSIZE_FORMAT " bytes "
 						 "but should have written %" G_GSIZE_FORMAT "; is your disk full?\n",
 						 filename_temp, byteswritten, real_size);
 		g_free(filename_full);
@@ -2347,7 +2347,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	/* Use stat to be absolutely sure. */
 	if ((g_stat(filename_temp, &st) == -1) || (st.st_size != real_size))
 	{
-		gaim_debug_error("util", "Error writing data to file %s: "
+		purple_debug_error("util", "Error writing data to file %s: "
 						 "Incomplete file written; is your disk full?\n",
 						 filename_temp);
 		g_free(filename_full);
@@ -2359,7 +2359,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	/* Set file permissions */
 	if (chmod(filename_temp, S_IRUSR | S_IWUSR) == -1)
 	{
-		gaim_debug_error("util", "Error setting permissions of file %s: %s\n",
+		purple_debug_error("util", "Error setting permissions of file %s: %s\n",
 						 filename_temp, strerror(errno));
 	}
 #endif
@@ -2367,7 +2367,7 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 	/* Rename to the REAL name */
 	if (g_rename(filename_temp, filename_full) == -1)
 	{
-		gaim_debug_error("util", "Error renaming %s to %s: %s\n",
+		purple_debug_error("util", "Error renaming %s to %s: %s\n",
 						 filename_temp, filename_full, strerror(errno));
 	}
 
@@ -2378,9 +2378,9 @@ gaim_util_write_data_to_file(const char *filename, const char *data, size_t size
 }
 
 xmlnode *
-gaim_util_read_xml_from_file(const char *filename, const char *description)
+purple_util_read_xml_from_file(const char *filename, const char *description)
 {
-	const char *user_dir = gaim_user_dir();
+	const char *user_dir = purple_user_dir();
 	gchar *filename_full;
 	GError *error = NULL;
 	gchar *contents = NULL;
@@ -2389,14 +2389,14 @@ gaim_util_read_xml_from_file(const char *filename, const char *description)
 
 	g_return_val_if_fail(user_dir != NULL, NULL);
 
-	gaim_debug_info("util", "Reading file %s from directory %s\n",
+	purple_debug_info("util", "Reading file %s from directory %s\n",
 					filename, user_dir);
 
 	filename_full = g_build_filename(user_dir, filename, NULL);
 
 	if (!g_file_test(filename_full, G_FILE_TEST_EXISTS))
 	{
-		gaim_debug_info("util", "File %s does not exist (this is not "
+		purple_debug_info("util", "File %s does not exist (this is not "
 						"necessarily an error)\n", filename_full);
 		g_free(filename_full);
 		return NULL;
@@ -2404,7 +2404,7 @@ gaim_util_read_xml_from_file(const char *filename, const char *description)
 
 	if (!g_file_get_contents(filename_full, &contents, &length, &error))
 	{
-		gaim_debug_error("util", "Error reading file %s: %s\n",
+		purple_debug_error("util", "Error reading file %s: %s\n",
 						 filename_full, error->message);
 		g_error_free(error);
 	}
@@ -2419,9 +2419,9 @@ gaim_util_read_xml_from_file(const char *filename, const char *description)
 			gchar *filename_temp;
 
 			filename_temp = g_strdup_printf("%s~", filename);
-			gaim_debug_error("util", "Error parsing file %s.  Renaming old "
+			purple_debug_error("util", "Error parsing file %s.  Renaming old "
 							 "file to %s\n", filename_full, filename_temp);
-			gaim_util_write_data_to_file(filename_temp, contents, length);
+			purple_util_write_data_to_file(filename_temp, contents, length);
 			g_free(filename_temp);
 		}
 
@@ -2436,7 +2436,7 @@ gaim_util_read_xml_from_file(const char *filename, const char *description)
 		msg = g_strdup_printf(_("An error was encountered reading your "
 					"%s.  They have not been loaded, and the old file "
 					"has been renamed to %s~."), description, filename_full);
-		gaim_notify_error(NULL, NULL, title, msg);
+		purple_notify_error(NULL, NULL, title, msg);
 		g_free(title);
 		g_free(msg);
 	}
@@ -2456,10 +2456,10 @@ gaim_util_read_xml_from_file(const char *filename, const char *description)
  *
  * Returns NULL on failure and cleans up after itself if so.
  */
-static const char *gaim_mkstemp_templ = {"gaimXXXXXX"};
+static const char *purple_mkstemp_templ = {"purpleXXXXXX"};
 
 FILE *
-gaim_mkstemp(char **fpath, gboolean binary)
+purple_mkstemp(char **fpath, gboolean binary)
 {
 	const gchar *tmpdir;
 #ifndef _WIN32
@@ -2470,28 +2470,28 @@ gaim_mkstemp(char **fpath, gboolean binary)
 	g_return_val_if_fail(fpath != NULL, NULL);
 
 	if((tmpdir = (gchar*)g_get_tmp_dir()) != NULL) {
-		if((*fpath = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", tmpdir, gaim_mkstemp_templ)) != NULL) {
+		if((*fpath = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", tmpdir, purple_mkstemp_templ)) != NULL) {
 #ifdef _WIN32
 			char* result = _mktemp( *fpath );
 			if( result == NULL )
-				gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+				purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
 						   "Problem creating the template\n");
 			else
 			{
 				if( (fp = g_fopen( result, binary?"wb+":"w+")) == NULL ) {
-					gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+					purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
 							   "Couldn't fopen() %s\n", result);
 				}
 			}
 #else
 			if((fd = mkstemp(*fpath)) == -1) {
-				gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+				purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
 						   "Couldn't make \"%s\", error: %d\n",
 						   *fpath, errno);
 			} else {
 				if((fp = fdopen(fd, "r+")) == NULL) {
 					close(fd);
-					gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+					purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
 							   "Couldn't fdopen(), error: %d\n", errno);
 				}
 			}
@@ -2502,7 +2502,7 @@ gaim_mkstemp(char **fpath, gboolean binary)
 			}
 		}
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "gaim_mkstemp",
+		purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
 				   "g_get_tmp_dir() failed!\n");
 	}
 
@@ -2510,7 +2510,7 @@ gaim_mkstemp(char **fpath, gboolean binary)
 }
 
 gboolean
-gaim_program_is_valid(const char *program)
+purple_program_is_valid(const char *program)
 {
 	GError *error = NULL;
 	char **argv;
@@ -2521,7 +2521,7 @@ gaim_program_is_valid(const char *program)
 	g_return_val_if_fail(*program != '\0', FALSE);
 
 	if (!g_shell_parse_argv(program, NULL, &argv, &error)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "program_is_valid",
+		purple_debug(PURPLE_DEBUG_ERROR, "program_is_valid",
 				   "Could not parse program '%s': %s\n",
 				   program, error->message);
 		g_error_free(error);
@@ -2543,7 +2543,7 @@ gaim_program_is_valid(const char *program)
 
 
 gboolean
-gaim_running_gnome(void)
+purple_running_gnome(void)
 {
 #ifndef _WIN32
 	gchar *tmp = g_find_program_in_path("gnome-open");
@@ -2559,7 +2559,7 @@ gaim_running_gnome(void)
 }
 
 gboolean
-gaim_running_kde(void)
+purple_running_kde(void)
 {
 #ifndef _WIN32
 	gchar *tmp = g_find_program_in_path("kfmclient");
@@ -2573,10 +2573,10 @@ gaim_running_kde(void)
 	if (session != NULL && !strcmp(session, "true"))
 		return TRUE;
 
-	/* If you run Gaim from Konsole under !KDE, this will provide a
+	/* If you run Purple from Konsole under !KDE, this will provide a
 	 * a false positive.  Since we do the GNOME checks first, this is
 	 * only a problem if you're running something !(KDE || GNOME) and
-	 * you run Gaim from Konsole. This really shouldn't be a problem. */
+	 * you run Purple from Konsole. This really shouldn't be a problem. */
 	return ((g_getenv("KDEDIR") != NULL) || g_getenv("KDEDIRS") != NULL);
 #else
 	return FALSE;
@@ -2584,7 +2584,7 @@ gaim_running_kde(void)
 }
 
 gboolean
-gaim_running_osx(void)
+purple_running_osx(void)
 {
 #if defined(__APPLE__)	
 	return TRUE;
@@ -2594,7 +2594,7 @@ gaim_running_osx(void)
 }
 
 char *
-gaim_fd_get_ip(int fd)
+purple_fd_get_ip(int fd)
 {
 	struct sockaddr addr;
 	socklen_t namelen = sizeof(addr);
@@ -2612,17 +2612,17 @@ gaim_fd_get_ip(int fd)
  * String Functions
  **************************************************************************/
 const char *
-gaim_normalize(const GaimAccount *account, const char *str)
+purple_normalize(const PurpleAccount *account, const char *str)
 {
 	const char *ret = NULL;
 
 	if (account != NULL)
 	{
-		GaimPlugin *prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+		PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 
 		if (prpl != NULL)
 		{
-			GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+			PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 			if(prpl_info && prpl_info->normalize)
 				ret = prpl_info->normalize(account, str);
@@ -2650,7 +2650,7 @@ gaim_normalize(const GaimAccount *account, const char *str)
  * comments in util.h.
  */
 const char *
-gaim_normalize_nocase(const GaimAccount *account, const char *str)
+purple_normalize_nocase(const PurpleAccount *account, const char *str)
 {
 	static char buf[BUF_LEN];
 	char *tmp1, *tmp2;
@@ -2667,7 +2667,7 @@ gaim_normalize_nocase(const GaimAccount *account, const char *str)
 }
 
 gchar *
-gaim_strdup_withhtml(const gchar *src)
+purple_strdup_withhtml(const gchar *src)
 {
 	gulong destsize, i, j;
 	gchar *dest;
@@ -2701,7 +2701,7 @@ gaim_strdup_withhtml(const gchar *src)
 }
 
 gboolean
-gaim_str_has_prefix(const char *s, const char *p)
+purple_str_has_prefix(const char *s, const char *p)
 {
 #if GLIB_CHECK_VERSION(2,2,0)
 	return g_str_has_prefix(s, p);
@@ -2714,7 +2714,7 @@ gaim_str_has_prefix(const char *s, const char *p)
 }
 
 gboolean
-gaim_str_has_suffix(const char *s, const char *x)
+purple_str_has_suffix(const char *s, const char *x)
 {
 #if GLIB_CHECK_VERSION(2,2,0)
 	return g_str_has_suffix(s, x);
@@ -2730,7 +2730,7 @@ gaim_str_has_suffix(const char *s, const char *x)
 }
 
 char *
-gaim_str_add_cr(const char *text)
+purple_str_add_cr(const char *text)
 {
 	char *ret = NULL;
 	int count = 0, j;
@@ -2759,14 +2759,14 @@ gaim_str_add_cr(const char *text)
 		ret[j++] = text[i];
 	}
 
-	gaim_debug_misc("gaim_str_add_cr", "got: %s, leaving with %s\n",
+	purple_debug_misc("purple_str_add_cr", "got: %s, leaving with %s\n",
 					text, ret);
 
 	return ret;
 }
 
 void
-gaim_str_strip_char(char *text, char thechar)
+purple_str_strip_char(char *text, char thechar)
 {
 	int i, j;
 
@@ -2780,7 +2780,7 @@ gaim_str_strip_char(char *text, char thechar)
 }
 
 void
-gaim_util_chrreplace(char *string, char delimiter,
+purple_util_chrreplace(char *string, char delimiter,
 					 char replacement)
 {
 	int i = 0;
@@ -2796,7 +2796,7 @@ gaim_util_chrreplace(char *string, char delimiter,
 }
 
 gchar *
-gaim_strreplace(const char *string, const char *delimiter,
+purple_strreplace(const char *string, const char *delimiter,
 				const char *replacement)
 {
 	gchar **split;
@@ -2814,7 +2814,7 @@ gaim_strreplace(const char *string, const char *delimiter,
 }
 
 gchar *
-gaim_strcasereplace(const char *string, const char *delimiter,
+purple_strcasereplace(const char *string, const char *delimiter,
 					const char *replacement)
 {
 	gchar *ret;
@@ -2862,7 +2862,7 @@ gaim_strcasereplace(const char *string, const char *delimiter,
 }
 
 const char *
-gaim_strcasestr(const char *haystack, const char *needle)
+purple_strcasestr(const char *haystack, const char *needle)
 {
 	size_t hlen, nlen;
 	const char *tmp, *ret;
@@ -2889,7 +2889,7 @@ gaim_strcasestr(const char *haystack, const char *needle)
 }
 
 char *
-gaim_str_size_to_units(size_t size)
+purple_str_size_to_units(size_t size)
 {
 	static const char *size_str[4] = { "bytes", "KB", "MB", "GB" };
 	float size_mag;
@@ -2918,7 +2918,7 @@ gaim_str_size_to_units(size_t size)
 }
 
 char *
-gaim_str_seconds_to_string(guint secs)
+purple_str_seconds_to_string(guint secs)
 {
 	char *ret = NULL;
 	guint days, hrs, mins;
@@ -2973,7 +2973,7 @@ gaim_str_seconds_to_string(guint secs)
 
 
 char *
-gaim_str_binary_to_ascii(const unsigned char *binary, guint len)
+purple_str_binary_to_ascii(const unsigned char *binary, guint len)
 {
 	GString *ret;
 	guint i;
@@ -2997,16 +2997,16 @@ gaim_str_binary_to_ascii(const unsigned char *binary, guint len)
  * URI/URL Functions
  **************************************************************************/
 
-void gaim_got_protocol_handler_uri(const char *uri)
+void purple_got_protocol_handler_uri(const char *uri)
 {
 	char proto[11];
 	const char *tmp, *param_string;
 	char *cmd;
 	GHashTable *params = NULL;
 	int len;
-
+printf("got handler uri \n");
 	if (!(tmp = strchr(uri, ':')) || tmp == uri) {
-		gaim_debug_error("util", "Malformed protocol handler message - missing protocol.\n");
+		purple_debug_error("util", "Malformed protocol handler message - missing protocol.\n");
 		return;
 	}
 
@@ -3016,7 +3016,7 @@ void gaim_got_protocol_handler_uri(const char *uri)
 	proto[len] = '\0';
 
 	tmp++;
-	gaim_debug_info("util", "Processing message '%s' for protocol '%s'.\n", tmp, proto);
+	purple_debug_info("util", "Processing message '%s' for protocol '%s'.\n", tmp, proto);
 
 	if ((param_string = strchr(tmp, '?'))) {
 		const char *keyend = NULL, *pairstart;
@@ -3052,7 +3052,7 @@ void gaim_got_protocol_handler_uri(const char *uri)
 	} else
 		cmd = g_strdup(tmp);
 
-	gaim_signal_emit_return_1(gaim_get_core(), "uri-handler", proto, cmd, params);
+	purple_signal_emit_return_1(purple_get_core(), "uri-handler", proto, cmd, params);
 
 	g_free(cmd);
 	if (params)
@@ -3060,7 +3060,7 @@ void gaim_got_protocol_handler_uri(const char *uri)
 }
 
 gboolean
-gaim_url_parse(const char *url, char **ret_host, int *ret_port,
+purple_url_parse(const char *url, char **ret_host, int *ret_port,
 			   char **ret_path, char **ret_user, char **ret_passwd)
 {
 	char scan_info[255];
@@ -3143,7 +3143,7 @@ gaim_url_parse(const char *url, char **ret_host, int *ret_port,
  * The arguments to this function are similar to printf.
  */
 static void
-gaim_util_fetch_url_error(GaimUtilFetchUrlData *gfud, const char *format, ...)
+purple_util_fetch_url_error(PurpleUtilFetchUrlData *gfud, const char *format, ...)
 {
 	gchar *error_message;
 	va_list args;
@@ -3154,14 +3154,14 @@ gaim_util_fetch_url_error(GaimUtilFetchUrlData *gfud, const char *format, ...)
 
 	gfud->callback(gfud, gfud->user_data, NULL, 0, error_message);
 	g_free(error_message);
-	gaim_util_fetch_url_cancel(gfud);
+	purple_util_fetch_url_cancel(gfud);
 }
 
 static void url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message);
 
 static gboolean
 parse_redirect(const char *data, size_t data_len, gint sock,
-			   GaimUtilFetchUrlData *gfud)
+			   PurpleUtilFetchUrlData *gfud)
 {
 	gchar *s;
 
@@ -3201,7 +3201,7 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 			full = FALSE;
 		}
 
-		gaim_debug_info("util", "Redirecting to %s\n", new_url);
+		purple_debug_info("util", "Redirecting to %s\n", new_url);
 
 		/*
 		 * Try again, with this new location.  This code is somewhat
@@ -3214,7 +3214,7 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 		g_free(gfud->request);
 		gfud->request = NULL;
 
-		gaim_input_remove(gfud->inpa);
+		purple_input_remove(gfud->inpa);
 		gfud->inpa = 0;
 		close(gfud->fd);
 		gfud->fd = -1;
@@ -3223,16 +3223,16 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 		g_free(gfud->website.passwd);
 		g_free(gfud->website.address);
 		g_free(gfud->website.page);
-		gaim_url_parse(new_url, &gfud->website.address, &gfud->website.port,
+		purple_url_parse(new_url, &gfud->website.address, &gfud->website.port,
 					   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
-		gfud->connect_data = gaim_proxy_connect(NULL, NULL,
+		gfud->connect_data = purple_proxy_connect(NULL, NULL,
 				gfud->website.address, gfud->website.port,
 				url_fetch_connect_cb, gfud);
 
 		if (gfud->connect_data == NULL)
 		{
-			gaim_util_fetch_url_error(gfud, _("Unable to connect to %s"),
+			purple_util_fetch_url_error(gfud, _("Unable to connect to %s"),
 					gfud->website.address);
 		}
 
@@ -3278,7 +3278,7 @@ parse_content_len(const char *data, size_t data_len)
 	 */
 	if (p && g_strstr_len(p, data_len - (p - data), "\n")) {
 		sscanf(p, "%" G_GSIZE_FORMAT, &content_len);
-		gaim_debug_misc("util", "parsed %u\n", content_len);
+		purple_debug_misc("util", "parsed %u\n", content_len);
 	}
 
 	return content_len;
@@ -3286,9 +3286,9 @@ parse_content_len(const char *data, size_t data_len)
 
 
 static void
-url_fetch_recv_cb(gpointer url_data, gint source, GaimInputCondition cond)
+url_fetch_recv_cb(gpointer url_data, gint source, PurpleInputCondition cond)
 {
-	GaimUtilFetchUrlData *gfud = url_data;
+	PurpleUtilFetchUrlData *gfud = url_data;
 	int len;
 	char buf[4096];
 	char *data_cursor;
@@ -3320,7 +3320,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, GaimInputCondition cond)
 				guint header_len = (tmp + 4 - gfud->webdata);
 				size_t content_len;
 
-				gaim_debug_misc("util", "Response headers: '%.*s'\n",
+				purple_debug_misc("util", "Response headers: '%.*s'\n",
 					header_len, gfud->webdata);
 
 				/* See if we can find a redirect. */
@@ -3354,10 +3354,10 @@ url_fetch_recv_cb(gpointer url_data, gint source, GaimInputCondition cond)
 
 					new_data = g_try_malloc(content_len);
 					if(new_data == NULL) {
-						gaim_debug_error("util",
+						purple_debug_error("util",
 								"Failed to allocate %u bytes: %s\n",
 								content_len, strerror(errno));
-						gaim_util_fetch_url_error(gfud,
+						purple_util_fetch_url_error(gfud,
 								_("Unable to allocate enough memory to hold "
 								  "the contents from %s.  The web server may "
 								  "be trying something malicious."),
@@ -3393,7 +3393,7 @@ url_fetch_recv_cb(gpointer url_data, gint source, GaimInputCondition cond)
 		if(errno == EAGAIN) {
 			return;
 		} else {
-			gaim_util_fetch_url_error(gfud, _("Error reading from %s: %s"),
+			purple_util_fetch_url_error(gfud, _("Error reading from %s: %s"),
 					gfud->website.address, strerror(errno));
 			return;
 		}
@@ -3404,14 +3404,14 @@ url_fetch_recv_cb(gpointer url_data, gint source, GaimInputCondition cond)
 		gfud->webdata[gfud->len] = '\0';
 
 		gfud->callback(gfud, gfud->user_data, gfud->webdata, gfud->len, NULL);
-		gaim_util_fetch_url_cancel(gfud);
+		purple_util_fetch_url_cancel(gfud);
 	}
 }
 
 static void
-url_fetch_send_cb(gpointer data, gint source, GaimInputCondition cond)
+url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimUtilFetchUrlData *gfud;
+	PurpleUtilFetchUrlData *gfud;
 	int len, total_len;
 
 	gfud = data;
@@ -3424,7 +3424,7 @@ url_fetch_send_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (len < 0 && errno == EAGAIN)
 		return;
 	else if (len < 0) {
-		gaim_util_fetch_url_error(gfud, _("Error writing to %s: %s"),
+		purple_util_fetch_url_error(gfud, _("Error writing to %s: %s"),
 				gfud->website.address, strerror(errno));
 		return;
 	}
@@ -3434,22 +3434,22 @@ url_fetch_send_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 
 	/* We're done writing our request, now start reading the response */
-	gaim_input_remove(gfud->inpa);
-	gfud->inpa = gaim_input_add(gfud->fd, GAIM_INPUT_READ, url_fetch_recv_cb,
+	purple_input_remove(gfud->inpa);
+	gfud->inpa = purple_input_add(gfud->fd, PURPLE_INPUT_READ, url_fetch_recv_cb,
 		gfud);
 }
 
 static void
 url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
 {
-	GaimUtilFetchUrlData *gfud;
+	PurpleUtilFetchUrlData *gfud;
 
 	gfud = url_data;
 	gfud->connect_data = NULL;
 
 	if (source == -1)
 	{
-		gaim_util_fetch_url_error(gfud, _("Unable to connect to %s: %s"),
+		purple_util_fetch_url_error(gfud, _("Unable to connect to %s: %s"),
 				(gfud->website.address ? gfud->website.address : ""), error_message);
 		return;
 	}
@@ -3461,7 +3461,7 @@ url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
 		if (gfud->user_agent) {
 			/* Host header is not forbidden in HTTP/1.0 requests, and HTTP/1.1
 			 * clients must know how to handle the "chunked" transfer encoding.
-			 * Gaim doesn't know how to handle "chunked", so should always send
+			 * Purple doesn't know how to handle "chunked", so should always send
 			 * the Host header regardless, to get around some observed problems
 			 */
 			gfud->request = g_strdup_printf(
@@ -3488,29 +3488,29 @@ url_fetch_connect_cb(gpointer url_data, gint source, const gchar *error_message)
 		}
 	}
 
-	gaim_debug_misc("util", "Request: '%s'\n", gfud->request);
+	purple_debug_misc("util", "Request: '%s'\n", gfud->request);
 
-	gfud->inpa = gaim_input_add(source, GAIM_INPUT_WRITE,
+	gfud->inpa = purple_input_add(source, PURPLE_INPUT_WRITE,
 								url_fetch_send_cb, gfud);
-	url_fetch_send_cb(gfud, source, GAIM_INPUT_WRITE);
+	url_fetch_send_cb(gfud, source, PURPLE_INPUT_WRITE);
 }
 
-GaimUtilFetchUrlData *
-gaim_util_fetch_url_request(const char *url, gboolean full,
+PurpleUtilFetchUrlData *
+purple_util_fetch_url_request(const char *url, gboolean full,
 		const char *user_agent, gboolean http11,
 		const char *request, gboolean include_headers,
-		GaimUtilFetchUrlCallback callback, void *user_data)
+		PurpleUtilFetchUrlCallback callback, void *user_data)
 {
-	GaimUtilFetchUrlData *gfud;
+	PurpleUtilFetchUrlData *gfud;
 
 	g_return_val_if_fail(url      != NULL, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
-	gaim_debug_info("util",
+	purple_debug_info("util",
 			 "requested to fetch (%s), full=%d, user_agent=(%s), http11=%d\n",
 			 url, full, user_agent?user_agent:"(null)", http11);
 
-	gfud = g_new0(GaimUtilFetchUrlData, 1);
+	gfud = g_new0(PurpleUtilFetchUrlData, 1);
 
 	gfud->callback = callback;
 	gfud->user_data  = user_data;
@@ -3521,16 +3521,16 @@ gaim_util_fetch_url_request(const char *url, gboolean full,
 	gfud->request = g_strdup(request);
 	gfud->include_headers = include_headers;
 
-	gaim_url_parse(url, &gfud->website.address, &gfud->website.port,
+	purple_url_parse(url, &gfud->website.address, &gfud->website.port,
 				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
 
-	gfud->connect_data = gaim_proxy_connect(NULL, NULL,
+	gfud->connect_data = purple_proxy_connect(NULL, NULL,
 			gfud->website.address, gfud->website.port,
 			url_fetch_connect_cb, gfud);
 
 	if (gfud->connect_data == NULL)
 	{
-		gaim_util_fetch_url_error(gfud, _("Unable to connect to %s"),
+		purple_util_fetch_url_error(gfud, _("Unable to connect to %s"),
 				gfud->website.address);
 		return NULL;
 	}
@@ -3539,13 +3539,13 @@ gaim_util_fetch_url_request(const char *url, gboolean full,
 }
 
 void
-gaim_util_fetch_url_cancel(GaimUtilFetchUrlData *gfud)
+purple_util_fetch_url_cancel(PurpleUtilFetchUrlData *gfud)
 {
 	if (gfud->connect_data != NULL)
-		gaim_proxy_connect_cancel(gfud->connect_data);
+		purple_proxy_connect_cancel(gfud->connect_data);
 
 	if (gfud->inpa > 0)
-		gaim_input_remove(gfud->inpa);
+		purple_input_remove(gfud->inpa);
 
 	if (gfud->fd >= 0)
 		close(gfud->fd);
@@ -3563,7 +3563,7 @@ gaim_util_fetch_url_cancel(GaimUtilFetchUrlData *gfud)
 }
 
 const char *
-gaim_url_decode(const char *str)
+purple_url_decode(const char *str)
 {
 	static char buf[BUF_LEN];
 	guint i, j = 0;
@@ -3607,7 +3607,7 @@ gaim_url_decode(const char *str)
 }
 
 const char *
-gaim_url_encode(const char *str)
+purple_url_encode(const char *str)
 {
 	const char *iter;
 	static char buf[BUF_LEN];
@@ -3648,7 +3648,7 @@ gaim_url_encode(const char *str)
  *     but not completely checking to avoid conflicts with IP addresses
  */
 gboolean
-gaim_email_is_valid(const char *address)
+purple_email_is_valid(const char *address)
 {
 	const char *c, *domain;
 	static char *rfc822_specials = "()<>@,;:\\\"[]";
@@ -3694,7 +3694,7 @@ gaim_email_is_valid(const char *address)
 
 /* Stolen from gnome_uri_list_extract_uris */
 GList *
-gaim_uri_list_extract_uris(const gchar *uri_list)
+purple_uri_list_extract_uris(const gchar *uri_list)
 {
 	const gchar *p, *q;
 	gchar *retval;
@@ -3741,13 +3741,13 @@ gaim_uri_list_extract_uris(const gchar *uri_list)
 
 /* Stolen from gnome_uri_list_extract_filenames */
 GList *
-gaim_uri_list_extract_filenames(const gchar *uri_list)
+purple_uri_list_extract_filenames(const gchar *uri_list)
 {
 	GList *tmp_list, *node, *result;
 
 	g_return_val_if_fail (uri_list != NULL, NULL);
 
-	result = gaim_uri_list_extract_uris(uri_list);
+	result = purple_uri_list_extract_uris(uri_list);
 
 	tmp_list = result;
 	while (tmp_list) {
@@ -3773,7 +3773,7 @@ gaim_uri_list_extract_filenames(const gchar *uri_list)
  * UTF8 String Functions
  **************************************************************************/
 gchar *
-gaim_utf8_try_convert(const char *str)
+purple_utf8_try_convert(const char *str)
 {
 	gsize converted;
 	gchar *utf8;
@@ -3800,7 +3800,7 @@ gaim_utf8_try_convert(const char *str)
 #define utf8_first(x) ((x & 0x80) == 0 || (x & 0xe0) == 0xc0 \
 		       || (x & 0xf0) == 0xe0 || (x & 0xf8) == 0xf)
 gchar *
-gaim_utf8_salvage(const char *str)
+purple_utf8_salvage(const char *str)
 {
 	GString *workstr;
 	const char *end;
@@ -3826,7 +3826,7 @@ gaim_utf8_salvage(const char *str)
 
 
 char *
-gaim_utf8_ncr_encode(const char *str)
+purple_utf8_ncr_encode(const char *str)
 {
 	GString *out;
 
@@ -3851,7 +3851,7 @@ gaim_utf8_ncr_encode(const char *str)
 
 
 char *
-gaim_utf8_ncr_decode(const char *str)
+purple_utf8_ncr_decode(const char *str)
 {
 	GString *out;
 	char *buf, *b;
@@ -3895,7 +3895,7 @@ gaim_utf8_ncr_decode(const char *str)
 
 
 int
-gaim_utf8_strcasecmp(const char *a, const char *b)
+purple_utf8_strcasecmp(const char *a, const char *b)
 {
 	char *a_norm = NULL;
 	char *b_norm = NULL;
@@ -3910,7 +3910,7 @@ gaim_utf8_strcasecmp(const char *a, const char *b)
 
 	if(!g_utf8_validate(a, -1, NULL) || !g_utf8_validate(b, -1, NULL))
 	{
-		gaim_debug_error("gaim_utf8_strcasecmp",
+		purple_debug_error("purple_utf8_strcasecmp",
 						 "One or both parameters are invalid UTF8\n");
 		return ret;
 	}
@@ -3926,7 +3926,7 @@ gaim_utf8_strcasecmp(const char *a, const char *b)
 
 /* previously conversation::find_nick() */
 gboolean
-gaim_utf8_has_word(const char *haystack, const char *needle)
+purple_utf8_has_word(const char *haystack, const char *needle)
 {
 	char *hay, *pin, *p;
 	int n;
@@ -3950,7 +3950,7 @@ gaim_utf8_has_word(const char *haystack, const char *needle)
 }
 
 void
-gaim_print_utf8_to_console(FILE *filestream, char *message)
+purple_print_utf8_to_console(FILE *filestream, char *message)
 {
 	gchar *message_conv;
 	GError *error = NULL;
@@ -3970,7 +3970,7 @@ gaim_print_utf8_to_console(FILE *filestream, char *message)
 	}
 }
 
-gboolean gaim_message_meify(char *message, size_t len)
+gboolean purple_message_meify(char *message, size_t len)
 {
 	char *c;
 	gboolean inside_html = FALSE;
@@ -4000,7 +4000,7 @@ gboolean gaim_message_meify(char *message, size_t len)
 	return FALSE;
 }
 
-char *gaim_text_strip_mnemonic(const char *in)
+char *purple_text_strip_mnemonic(const char *in)
 {
 	char *out;
 	char *a;
@@ -4061,16 +4061,16 @@ char *gaim_text_strip_mnemonic(const char *in)
 	return out;
 }
 
-const char* gaim_unescape_filename(const char *escaped) {
-	return gaim_url_decode(escaped);
+const char* purple_unescape_filename(const char *escaped) {
+	return purple_url_decode(escaped);
 }
 
 
-/* this is almost identical to gaim_url_encode (hence gaim_url_decode
+/* this is almost identical to purple_url_encode (hence purple_url_decode
  * being used above), but we want to keep certain characters unescaped
  * for compat reasons */
 const char *
-gaim_escape_filename(const char *str)
+purple_escape_filename(const char *str)
 {
 	const char *iter;
 	static char buf[BUF_LEN];
@@ -4104,7 +4104,7 @@ gaim_escape_filename(const char *str)
 	return buf;
 }
 
-const char *_gaim_oscar_convert(const char *act, const char *protocol)
+const char *_purple_oscar_convert(const char *act, const char *protocol)
 {
 	if (protocol && act && strcmp(protocol, "prpl-oscar") == 0) {
 		if (isdigit(*act))
@@ -4115,7 +4115,7 @@ const char *_gaim_oscar_convert(const char *act, const char *protocol)
 	return protocol;
 }
 
-void gaim_restore_default_signal_handlers(void)
+void purple_restore_default_signal_handlers(void)
 {
 #ifndef _WIN32
 #ifdef HAVE_SIGNAL_H

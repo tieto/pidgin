@@ -1,6 +1,6 @@
-/* gaim
+/* purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -45,46 +45,46 @@
 #ifdef _WIN32
 const char *oscar_get_locale_charset(void);
 #endif
-const char *oscar_list_icon_icq(GaimAccount *a, GaimBuddy *b);
-const char *oscar_list_icon_aim(GaimAccount *a, GaimBuddy *b);
-const char* oscar_list_emblem(GaimBuddy *b);
-char *oscar_status_text(GaimBuddy *b);
-void oscar_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full);
-GList *oscar_status_types(GaimAccount *account);
-GList *oscar_blist_node_menu(GaimBlistNode *node);
-GList *oscar_chat_info(GaimConnection *gc);
-GHashTable *oscar_chat_info_defaults(GaimConnection *gc, const char *chat_name);
-void oscar_login(GaimAccount *account);
-void oscar_close(GaimConnection *gc);
-int oscar_send_im(GaimConnection *gc, const char *name, const char *message, GaimMessageFlags imflags);
-void oscar_set_info(GaimConnection *gc, const char *rawinfo);
-unsigned int oscar_send_typing(GaimConnection *gc, const char *name, GaimTypingState state);
-void oscar_get_info(GaimConnection *gc, const char *name);
-void oscar_set_status(GaimAccount *account, GaimStatus *status);
-void oscar_set_idle(GaimConnection *gc, int time);
-void oscar_change_passwd(GaimConnection *gc, const char *old, const char *new);
-void oscar_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group);
-void oscar_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group);
-void oscar_add_permit(GaimConnection *gc, const char *who);
-void oscar_add_deny(GaimConnection *gc, const char *who);
-void oscar_rem_permit(GaimConnection *gc, const char *who);
-void oscar_rem_deny(GaimConnection *gc, const char *who);
-void oscar_set_permit_deny(GaimConnection *gc);
-void oscar_join_chat(GaimConnection *gc, GHashTable *data);
+const char *oscar_list_icon_icq(PurpleAccount *a, PurpleBuddy *b);
+const char *oscar_list_icon_aim(PurpleAccount *a, PurpleBuddy *b);
+const char* oscar_list_emblem(PurpleBuddy *b);
+char *oscar_status_text(PurpleBuddy *b);
+void oscar_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full);
+GList *oscar_status_types(PurpleAccount *account);
+GList *oscar_blist_node_menu(PurpleBlistNode *node);
+GList *oscar_chat_info(PurpleConnection *gc);
+GHashTable *oscar_chat_info_defaults(PurpleConnection *gc, const char *chat_name);
+void oscar_login(PurpleAccount *account);
+void oscar_close(PurpleConnection *gc);
+int oscar_send_im(PurpleConnection *gc, const char *name, const char *message, PurpleMessageFlags imflags);
+void oscar_set_info(PurpleConnection *gc, const char *rawinfo);
+unsigned int oscar_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state);
+void oscar_get_info(PurpleConnection *gc, const char *name);
+void oscar_set_status(PurpleAccount *account, PurpleStatus *status);
+void oscar_set_idle(PurpleConnection *gc, int time);
+void oscar_change_passwd(PurpleConnection *gc, const char *old, const char *new);
+void oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+void oscar_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+void oscar_add_permit(PurpleConnection *gc, const char *who);
+void oscar_add_deny(PurpleConnection *gc, const char *who);
+void oscar_rem_permit(PurpleConnection *gc, const char *who);
+void oscar_rem_deny(PurpleConnection *gc, const char *who);
+void oscar_set_permit_deny(PurpleConnection *gc);
+void oscar_join_chat(PurpleConnection *gc, GHashTable *data);
 char *oscar_get_chat_name(GHashTable *data);
-void oscar_chat_invite(GaimConnection *gc, int id, const char *message, const char *name);
-void oscar_chat_leave(GaimConnection *gc, int id);
-int oscar_send_chat(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags);
-void oscar_keepalive(GaimConnection *gc);
-void oscar_alias_buddy(GaimConnection *gc, const char *name, const char *alias);
-void oscar_move_buddy(GaimConnection *gc, const char *name, const char *old_group, const char *new_group);
-void oscar_rename_group(GaimConnection *gc, const char *old_name, GaimGroup *group, GList *moved_buddies);
-void oscar_convo_closed(GaimConnection *gc, const char *who);
-const char *oscar_normalize(const GaimAccount *account, const char *str);
-void oscar_set_icon(GaimConnection *gc, const char *iconfile);
-gboolean oscar_can_receive_file(GaimConnection *gc, const char *who);
-void oscar_send_file(GaimConnection *gc, const char *who, const char *file);
-GaimXfer *oscar_new_xfer(GaimConnection *gc, const char *who);
-gboolean oscar_offline_message(const GaimBuddy *buddy);
-GList *oscar_actions(GaimPlugin *plugin, gpointer context);
-void oscar_init(GaimPluginProtocolInfo *prpl_info);
+void oscar_chat_invite(PurpleConnection *gc, int id, const char *message, const char *name);
+void oscar_chat_leave(PurpleConnection *gc, int id);
+int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags);
+void oscar_keepalive(PurpleConnection *gc);
+void oscar_alias_buddy(PurpleConnection *gc, const char *name, const char *alias);
+void oscar_move_buddy(PurpleConnection *gc, const char *name, const char *old_group, const char *new_group);
+void oscar_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup *group, GList *moved_buddies);
+void oscar_convo_closed(PurpleConnection *gc, const char *who);
+const char *oscar_normalize(const PurpleAccount *account, const char *str);
+void oscar_set_icon(PurpleConnection *gc, const char *iconfile);
+gboolean oscar_can_receive_file(PurpleConnection *gc, const char *who);
+void oscar_send_file(PurpleConnection *gc, const char *who, const char *file);
+PurpleXfer *oscar_new_xfer(PurpleConnection *gc, const char *who);
+gboolean oscar_offline_message(const PurpleBuddy *buddy);
+GList *oscar_actions(PurplePlugin *plugin, gpointer context);
+void oscar_init(PurplePluginProtocolInfo *prpl_info);

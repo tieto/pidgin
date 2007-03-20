@@ -1,9 +1,9 @@
 /**
  * @file slp.h MSNSLP support
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -40,7 +40,7 @@ void send_bye(MsnSlpCall *slpcall, const char *type);
 void msn_xfer_completed_cb(MsnSlpCall *slpcall,
 						   const guchar *body, gsize size);
 
-void msn_xfer_cancel(GaimXfer *xfer);
+void msn_xfer_cancel(PurpleXfer *xfer);
 void msn_xfer_end_cb(MsnSlpCall *slpcall, MsnSession *session);
 
 void msn_queue_buddy_icon_request(MsnUser *user);

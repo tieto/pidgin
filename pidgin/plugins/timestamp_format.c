@@ -11,47 +11,47 @@
 
 #include <time.h>
 
-static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin)
+static PurplePluginPrefFrame *
+get_plugin_pref_frame(PurplePlugin *plugin)
 {
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *ppref;
+	PurplePluginPrefFrame *frame;
+	PurplePluginPref *ppref;
 
-	frame = gaim_plugin_pref_frame_new();
+	frame = purple_plugin_pref_frame_new();
 
-	ppref = gaim_plugin_pref_new_with_label(_("Timestamp Format Options"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	ppref = purple_plugin_pref_new_with_label(_("Timestamp Format Options"));
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 			"/plugins/gtk/timestamp_format/force_24hr",
 			_("_Force (traditional " PIDGIN_NAME ") 24-hour time format"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_label(_("Show dates in..."));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	ppref = purple_plugin_pref_new_with_label(_("Show dates in..."));
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 			"/plugins/gtk/timestamp_format/use_dates/conversation",
 			_("Co_nversations:"));
-        gaim_plugin_pref_set_type(ppref, GAIM_PLUGIN_PREF_CHOICE);
-        gaim_plugin_pref_add_choice(ppref, _("For delayed messages"), "automatic");
-        gaim_plugin_pref_add_choice(ppref, _("For delayed messages and in chats"), "chats");
-        gaim_plugin_pref_add_choice(ppref, _("Always"), "always");
-	gaim_plugin_pref_frame_add(frame, ppref);
+        purple_plugin_pref_set_type(ppref, PURPLE_PLUGIN_PREF_CHOICE);
+        purple_plugin_pref_add_choice(ppref, _("For delayed messages"), "automatic");
+        purple_plugin_pref_add_choice(ppref, _("For delayed messages and in chats"), "chats");
+        purple_plugin_pref_add_choice(ppref, _("Always"), "always");
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 			"/plugins/gtk/timestamp_format/use_dates/log",
 			_("_Message Logs:"));
-        gaim_plugin_pref_set_type(ppref, GAIM_PLUGIN_PREF_CHOICE);
-        gaim_plugin_pref_add_choice(ppref, _("For delayed messages"), "automatic");
-        gaim_plugin_pref_add_choice(ppref, _("For delayed messages and in chats"), "chats");
-        gaim_plugin_pref_add_choice(ppref, _("Always"), "always");
-	gaim_plugin_pref_frame_add(frame, ppref);
+        purple_plugin_pref_set_type(ppref, PURPLE_PLUGIN_PREF_CHOICE);
+        purple_plugin_pref_add_choice(ppref, _("For delayed messages"), "automatic");
+        purple_plugin_pref_add_choice(ppref, _("For delayed messages and in chats"), "chats");
+        purple_plugin_pref_add_choice(ppref, _("Always"), "always");
+	purple_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
 }
 
-static char *timestamp_cb_common(GaimConversation *conv,
+static char *timestamp_cb_common(PurpleConversation *conv,
                                  time_t t,
                                  gboolean show_date,
                                  gboolean force,
@@ -61,30 +61,30 @@ static char *timestamp_cb_common(GaimConversation *conv,
 
 	if (show_date ||
 	    !strcmp(dates, "always") ||
-	    (conv != NULL && gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT && !strcmp(dates, "chats")))
+	    (conv != NULL && purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT && !strcmp(dates, "chats")))
 	{
 		struct tm *tm = localtime(&t);
 		if (force)
-			return g_strdup(gaim_utf8_strftime("%Y-%m-%d %H:%M:%S", tm));
+			return g_strdup(purple_utf8_strftime("%Y-%m-%d %H:%M:%S", tm));
 		else
-			return g_strdup(gaim_date_format_long(tm));
+			return g_strdup(purple_date_format_long(tm));
 	}
 
 	if (force)
 	{
 		struct tm *tm = localtime(&t);
-		return g_strdup(gaim_utf8_strftime("%H:%M:%S", tm));
+		return g_strdup(purple_utf8_strftime("%H:%M:%S", tm));
 	}
 
 	return NULL;
 }
 
-static char *conversation_timestamp_cb(GaimConversation *conv,
+static char *conversation_timestamp_cb(PurpleConversation *conv,
                                        time_t t, gboolean show_date, gpointer data)
 {
-	gboolean force = gaim_prefs_get_bool(
+	gboolean force = purple_prefs_get_bool(
 				"/plugins/gtk/timestamp_format/force_24hr");
-	const char *dates = gaim_prefs_get_string(
+	const char *dates = purple_prefs_get_string(
 				"/plugins/gtk/timestamp_format/use_dates/conversation");
 
 	g_return_val_if_fail(conv != NULL, NULL);
@@ -92,11 +92,11 @@ static char *conversation_timestamp_cb(GaimConversation *conv,
 	return timestamp_cb_common(conv, t, show_date, force, dates);
 }
 
-static char *log_timestamp_cb(GaimLog *log, time_t t, gboolean show_date, gpointer data)
+static char *log_timestamp_cb(PurpleLog *log, time_t t, gboolean show_date, gpointer data)
 {
-	gboolean force = gaim_prefs_get_bool(
+	gboolean force = purple_prefs_get_bool(
 				"/plugins/gtk/timestamp_format/force_24hr");
-	const char *dates = gaim_prefs_get_string(
+	const char *dates = purple_prefs_get_string(
 				"/plugins/gtk/timestamp_format/use_dates/log");
 
 	g_return_val_if_fail(log != NULL, NULL);
@@ -105,37 +105,37 @@ static char *log_timestamp_cb(GaimLog *log, time_t t, gboolean show_date, gpoint
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	gaim_signal_connect(pidgin_conversations_get_handle(), "conversation-timestamp",
-	                    plugin, GAIM_CALLBACK(conversation_timestamp_cb), NULL);
-	gaim_signal_connect(gaim_log_get_handle(), "log-timestamp",
-	                    plugin, GAIM_CALLBACK(log_timestamp_cb), NULL);
+	purple_signal_connect(pidgin_conversations_get_handle(), "conversation-timestamp",
+	                    plugin, PURPLE_CALLBACK(conversation_timestamp_cb), NULL);
+	purple_signal_connect(purple_log_get_handle(), "log-timestamp",
+	                    plugin, PURPLE_CALLBACK(log_timestamp_cb), NULL);
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	return TRUE;
 }
 
-static GaimPluginUiInfo prefs_info = {
+static PurplePluginUiInfo prefs_info = {
         get_plugin_pref_frame,
 	0,   /* page num (Reserved) */
 	NULL /* frame (Reserved) */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	PIDGIN_PLUGIN_TYPE,                               /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	NULL,                                             /**< id             */
 	N_("Message Timestamp Formats"),                  /**< name           */
@@ -147,7 +147,7 @@ static GaimPluginInfo info =
 	   "conversation and logging message timestamp "
 	   "formats."),
 	"Richard Laager <rlaager@pidgin.im>",             /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -160,16 +160,16 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	gaim_prefs_add_none("/plugins/gtk");
-	gaim_prefs_add_none("/plugins/gtk/timestamp_format");
+	purple_prefs_add_none("/plugins/gtk");
+	purple_prefs_add_none("/plugins/gtk/timestamp_format");
 
-	gaim_prefs_add_bool("/plugins/gtk/timestamp_format/force_24hr", TRUE);
+	purple_prefs_add_bool("/plugins/gtk/timestamp_format/force_24hr", TRUE);
 
-	gaim_prefs_add_none("/plugins/gtk/timestamp_format/use_dates");
-	gaim_prefs_add_string("/plugins/gtk/timestamp_format/use_dates/conversation", "automatic");
-	gaim_prefs_add_string("/plugins/gtk/timestamp_format/use_dates/log", "automatic");
+	purple_prefs_add_none("/plugins/gtk/timestamp_format/use_dates");
+	purple_prefs_add_string("/plugins/gtk/timestamp_format/use_dates/conversation", "automatic");
+	purple_prefs_add_string("/plugins/gtk/timestamp_format/use_dates/log", "automatic");
 }
 
-GAIM_INIT_PLUGIN(timestamp_format, init_plugin, info)
+PURPLE_INIT_PLUGIN(timestamp_format, init_plugin, info)

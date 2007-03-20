@@ -2,9 +2,9 @@
  * @file request.c Request API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -26,24 +26,24 @@
 #include "request.h"
 #include "debug.h"
 
-static GaimRequestUiOps *request_ui_ops = NULL;
+static PurpleRequestUiOps *request_ui_ops = NULL;
 static GList *handles = NULL;
 
 typedef struct
 {
-	GaimRequestType type;
+	PurpleRequestType type;
 	void *handle;
 	void *ui_handle;
 
-} GaimRequestInfo;
+} PurpleRequestInfo;
 
 
-GaimRequestFields *
-gaim_request_fields_new(void)
+PurpleRequestFields *
+purple_request_fields_new(void)
 {
-	GaimRequestFields *fields;
+	PurpleRequestFields *fields;
 
-	fields = g_new0(GaimRequestFields, 1);
+	fields = g_new0(PurpleRequestFields, 1);
 
 	fields->fields = g_hash_table_new_full(g_str_hash, g_str_equal,
 										   g_free, NULL);
@@ -52,11 +52,11 @@ gaim_request_fields_new(void)
 }
 
 void
-gaim_request_fields_destroy(GaimRequestFields *fields)
+purple_request_fields_destroy(PurpleRequestFields *fields)
 {
 	g_return_if_fail(fields != NULL);
 
-	g_list_foreach(fields->groups, (GFunc)gaim_request_field_group_destroy, NULL);
+	g_list_foreach(fields->groups, (GFunc)purple_request_field_group_destroy, NULL);
 	g_list_free(fields->groups);
 	g_list_free(fields->required_fields);
 	g_hash_table_destroy(fields->fields);
@@ -64,11 +64,11 @@ gaim_request_fields_destroy(GaimRequestFields *fields)
 }
 
 void
-gaim_request_fields_add_group(GaimRequestFields *fields,
-							  GaimRequestFieldGroup *group)
+purple_request_fields_add_group(PurpleRequestFields *fields,
+							  PurpleRequestFieldGroup *group)
 {
 	GList *l;
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_if_fail(fields != NULL);
 	g_return_if_fail(group  != NULL);
@@ -77,16 +77,16 @@ gaim_request_fields_add_group(GaimRequestFields *fields,
 
 	group->fields_list = fields;
 
-	for (l = gaim_request_field_group_get_fields(group);
+	for (l = purple_request_field_group_get_fields(group);
 		 l != NULL;
 		 l = l->next) {
 
 		field = l->data;
 
 		g_hash_table_insert(fields->fields,
-			g_strdup(gaim_request_field_get_id(field)), field);
+			g_strdup(purple_request_field_get_id(field)), field);
 
-		if (gaim_request_field_is_required(field)) {
+		if (purple_request_field_is_required(field)) {
 			fields->required_fields =
 				g_list_append(fields->required_fields, field);
 		}
@@ -95,7 +95,7 @@ gaim_request_fields_add_group(GaimRequestFields *fields,
 }
 
 GList *
-gaim_request_fields_get_groups(const GaimRequestFields *fields)
+purple_request_fields_get_groups(const PurpleRequestFields *fields)
 {
 	g_return_val_if_fail(fields != NULL, NULL);
 
@@ -103,7 +103,7 @@ gaim_request_fields_get_groups(const GaimRequestFields *fields)
 }
 
 gboolean
-gaim_request_fields_exists(const GaimRequestFields *fields, const char *id)
+purple_request_fields_exists(const PurpleRequestFields *fields, const char *id)
 {
 	g_return_val_if_fail(fields != NULL, FALSE);
 	g_return_val_if_fail(id     != NULL, FALSE);
@@ -112,7 +112,7 @@ gaim_request_fields_exists(const GaimRequestFields *fields, const char *id)
 }
 
 const GList *
-gaim_request_fields_get_required(const GaimRequestFields *fields)
+purple_request_fields_get_required(const PurpleRequestFields *fields)
 {
 	g_return_val_if_fail(fields != NULL, NULL);
 
@@ -120,22 +120,22 @@ gaim_request_fields_get_required(const GaimRequestFields *fields)
 }
 
 gboolean
-gaim_request_fields_is_field_required(const GaimRequestFields *fields,
+purple_request_fields_is_field_required(const PurpleRequestFields *fields,
 									  const char *id)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(fields != NULL, FALSE);
 	g_return_val_if_fail(id     != NULL, FALSE);
 
-	if ((field = gaim_request_fields_get_field(fields, id)) == NULL)
+	if ((field = purple_request_fields_get_field(fields, id)) == NULL)
 		return FALSE;
 
-	return gaim_request_field_is_required(field);
+	return purple_request_field_is_required(field);
 }
 
 gboolean
-gaim_request_fields_all_required_filled(const GaimRequestFields *fields)
+purple_request_fields_all_required_filled(const PurpleRequestFields *fields)
 {
 	GList *l;
 
@@ -143,12 +143,12 @@ gaim_request_fields_all_required_filled(const GaimRequestFields *fields)
 
 	for (l = fields->required_fields; l != NULL; l = l->next)
 	{
-		GaimRequestField *field = (GaimRequestField *)l->data;
+		PurpleRequestField *field = (PurpleRequestField *)l->data;
 
-		switch (gaim_request_field_get_type(field))
+		switch (purple_request_field_get_type(field))
 		{
-			case GAIM_REQUEST_FIELD_STRING:
-				if (gaim_request_field_string_get_value(field) == NULL)
+			case PURPLE_REQUEST_FIELD_STRING:
+				if (purple_request_field_string_get_value(field) == NULL)
 					return FALSE;
 
 				break;
@@ -161,10 +161,10 @@ gaim_request_fields_all_required_filled(const GaimRequestFields *fields)
 	return TRUE;
 }
 
-GaimRequestField *
-gaim_request_fields_get_field(const GaimRequestFields *fields, const char *id)
+PurpleRequestField *
+purple_request_fields_get_field(const PurpleRequestFields *fields, const char *id)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(fields != NULL, NULL);
 	g_return_val_if_fail(id     != NULL, NULL);
@@ -177,83 +177,83 @@ gaim_request_fields_get_field(const GaimRequestFields *fields, const char *id)
 }
 
 const char *
-gaim_request_fields_get_string(const GaimRequestFields *fields, const char *id)
+purple_request_fields_get_string(const PurpleRequestFields *fields, const char *id)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(fields != NULL, NULL);
 	g_return_val_if_fail(id     != NULL, NULL);
 
-	if ((field = gaim_request_fields_get_field(fields, id)) == NULL)
+	if ((field = purple_request_fields_get_field(fields, id)) == NULL)
 		return NULL;
 
-	return gaim_request_field_string_get_value(field);
+	return purple_request_field_string_get_value(field);
 }
 
 int
-gaim_request_fields_get_integer(const GaimRequestFields *fields,
+purple_request_fields_get_integer(const PurpleRequestFields *fields,
 								const char *id)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(fields != NULL, 0);
 	g_return_val_if_fail(id     != NULL, 0);
 
-	if ((field = gaim_request_fields_get_field(fields, id)) == NULL)
+	if ((field = purple_request_fields_get_field(fields, id)) == NULL)
 		return 0;
 
-	return gaim_request_field_int_get_value(field);
+	return purple_request_field_int_get_value(field);
 }
 
 gboolean
-gaim_request_fields_get_bool(const GaimRequestFields *fields, const char *id)
+purple_request_fields_get_bool(const PurpleRequestFields *fields, const char *id)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(fields != NULL, FALSE);
 	g_return_val_if_fail(id     != NULL, FALSE);
 
-	if ((field = gaim_request_fields_get_field(fields, id)) == NULL)
+	if ((field = purple_request_fields_get_field(fields, id)) == NULL)
 		return FALSE;
 
-	return gaim_request_field_bool_get_value(field);
+	return purple_request_field_bool_get_value(field);
 }
 
 int
-gaim_request_fields_get_choice(const GaimRequestFields *fields, const char *id)
+purple_request_fields_get_choice(const PurpleRequestFields *fields, const char *id)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(fields != NULL, -1);
 	g_return_val_if_fail(id     != NULL, -1);
 
-	if ((field = gaim_request_fields_get_field(fields, id)) == NULL)
+	if ((field = purple_request_fields_get_field(fields, id)) == NULL)
 		return -1;
 
-	return gaim_request_field_choice_get_value(field);
+	return purple_request_field_choice_get_value(field);
 }
 
-GaimAccount *
-gaim_request_fields_get_account(const GaimRequestFields *fields,
+PurpleAccount *
+purple_request_fields_get_account(const PurpleRequestFields *fields,
 								const char *id)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(fields != NULL, NULL);
 	g_return_val_if_fail(id     != NULL, NULL);
 
-	if ((field = gaim_request_fields_get_field(fields, id)) == NULL)
+	if ((field = purple_request_fields_get_field(fields, id)) == NULL)
 		return NULL;
 
-	return gaim_request_field_account_get_value(field);
+	return purple_request_field_account_get_value(field);
 }
 
-GaimRequestFieldGroup *
-gaim_request_field_group_new(const char *title)
+PurpleRequestFieldGroup *
+purple_request_field_group_new(const char *title)
 {
-	GaimRequestFieldGroup *group;
+	PurpleRequestFieldGroup *group;
 
-	group = g_new0(GaimRequestFieldGroup, 1);
+	group = g_new0(PurpleRequestFieldGroup, 1);
 
 	group->title = g_strdup(title);
 
@@ -261,21 +261,21 @@ gaim_request_field_group_new(const char *title)
 }
 
 void
-gaim_request_field_group_destroy(GaimRequestFieldGroup *group)
+purple_request_field_group_destroy(PurpleRequestFieldGroup *group)
 {
 	g_return_if_fail(group != NULL);
 
 	g_free(group->title);
 
-	g_list_foreach(group->fields, (GFunc)gaim_request_field_destroy, NULL);
+	g_list_foreach(group->fields, (GFunc)purple_request_field_destroy, NULL);
 	g_list_free(group->fields);
 
 	g_free(group);
 }
 
 void
-gaim_request_field_group_add_field(GaimRequestFieldGroup *group,
-								   GaimRequestField *field)
+purple_request_field_group_add_field(PurpleRequestFieldGroup *group,
+								   PurpleRequestField *field)
 {
 	g_return_if_fail(group != NULL);
 	g_return_if_fail(field != NULL);
@@ -285,9 +285,9 @@ gaim_request_field_group_add_field(GaimRequestFieldGroup *group,
 	if (group->fields_list != NULL)
 	{
 		g_hash_table_insert(group->fields_list->fields,
-							g_strdup(gaim_request_field_get_id(field)), field);
+							g_strdup(purple_request_field_get_id(field)), field);
 
-		if (gaim_request_field_is_required(field))
+		if (purple_request_field_is_required(field))
 		{
 			group->fields_list->required_fields =
 				g_list_append(group->fields_list->required_fields, field);
@@ -299,7 +299,7 @@ gaim_request_field_group_add_field(GaimRequestFieldGroup *group,
 }
 
 const char *
-gaim_request_field_group_get_title(const GaimRequestFieldGroup *group)
+purple_request_field_group_get_title(const PurpleRequestFieldGroup *group)
 {
 	g_return_val_if_fail(group != NULL, NULL);
 
@@ -307,35 +307,35 @@ gaim_request_field_group_get_title(const GaimRequestFieldGroup *group)
 }
 
 GList *
-gaim_request_field_group_get_fields(const GaimRequestFieldGroup *group)
+purple_request_field_group_get_fields(const PurpleRequestFieldGroup *group)
 {
 	g_return_val_if_fail(group != NULL, NULL);
 
 	return group->fields;
 }
 
-GaimRequestField *
-gaim_request_field_new(const char *id, const char *text,
-					   GaimRequestFieldType type)
+PurpleRequestField *
+purple_request_field_new(const char *id, const char *text,
+					   PurpleRequestFieldType type)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(id   != NULL, NULL);
-	g_return_val_if_fail(type != GAIM_REQUEST_FIELD_NONE, NULL);
+	g_return_val_if_fail(type != PURPLE_REQUEST_FIELD_NONE, NULL);
 
-	field = g_new0(GaimRequestField, 1);
+	field = g_new0(PurpleRequestField, 1);
 
 	field->id   = g_strdup(id);
 	field->type = type;
 
-	gaim_request_field_set_label(field, text);
-	gaim_request_field_set_visible(field, TRUE);
+	purple_request_field_set_label(field, text);
+	purple_request_field_set_visible(field, TRUE);
 
 	return field;
 }
 
 void
-gaim_request_field_destroy(GaimRequestField *field)
+purple_request_field_destroy(PurpleRequestField *field)
 {
 	g_return_if_fail(field != NULL);
 
@@ -343,12 +343,12 @@ gaim_request_field_destroy(GaimRequestField *field)
 	g_free(field->label);
 	g_free(field->type_hint);
 
-	if (field->type == GAIM_REQUEST_FIELD_STRING)
+	if (field->type == PURPLE_REQUEST_FIELD_STRING)
 	{
 		g_free(field->u.string.default_value);
 		g_free(field->u.string.value);
 	}
-	else if (field->type == GAIM_REQUEST_FIELD_CHOICE)
+	else if (field->type == PURPLE_REQUEST_FIELD_CHOICE)
 	{
 		if (field->u.choice.labels != NULL)
 		{
@@ -356,7 +356,7 @@ gaim_request_field_destroy(GaimRequestField *field)
 			g_list_free(field->u.choice.labels);
 		}
 	}
-	else if (field->type == GAIM_REQUEST_FIELD_LIST)
+	else if (field->type == PURPLE_REQUEST_FIELD_LIST)
 	{
 		if (field->u.list.items != NULL)
 		{
@@ -378,7 +378,7 @@ gaim_request_field_destroy(GaimRequestField *field)
 }
 
 void
-gaim_request_field_set_label(GaimRequestField *field, const char *label)
+purple_request_field_set_label(PurpleRequestField *field, const char *label)
 {
 	g_return_if_fail(field != NULL);
 
@@ -387,7 +387,7 @@ gaim_request_field_set_label(GaimRequestField *field, const char *label)
 }
 
 void
-gaim_request_field_set_visible(GaimRequestField *field, gboolean visible)
+purple_request_field_set_visible(PurpleRequestField *field, gboolean visible)
 {
 	g_return_if_fail(field != NULL);
 
@@ -395,7 +395,7 @@ gaim_request_field_set_visible(GaimRequestField *field, gboolean visible)
 }
 
 void
-gaim_request_field_set_type_hint(GaimRequestField *field,
+purple_request_field_set_type_hint(PurpleRequestField *field,
 								 const char *type_hint)
 {
 	g_return_if_fail(field != NULL);
@@ -405,7 +405,7 @@ gaim_request_field_set_type_hint(GaimRequestField *field,
 }
 
 void
-gaim_request_field_set_required(GaimRequestField *field, gboolean required)
+purple_request_field_set_required(PurpleRequestField *field, gboolean required)
 {
 	g_return_if_fail(field != NULL);
 
@@ -431,16 +431,16 @@ gaim_request_field_set_required(GaimRequestField *field, gboolean required)
 	}
 }
 
-GaimRequestFieldType
-gaim_request_field_get_type(const GaimRequestField *field)
+PurpleRequestFieldType
+purple_request_field_get_type(const PurpleRequestField *field)
 {
-	g_return_val_if_fail(field != NULL, GAIM_REQUEST_FIELD_NONE);
+	g_return_val_if_fail(field != NULL, PURPLE_REQUEST_FIELD_NONE);
 
 	return field->type;
 }
 
 const char *
-gaim_request_field_get_id(const GaimRequestField *field)
+purple_request_field_get_id(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
 
@@ -448,7 +448,7 @@ gaim_request_field_get_id(const GaimRequestField *field)
 }
 
 const char *
-gaim_request_field_get_label(const GaimRequestField *field)
+purple_request_field_get_label(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
 
@@ -456,7 +456,7 @@ gaim_request_field_get_label(const GaimRequestField *field)
 }
 
 gboolean
-gaim_request_field_is_visible(const GaimRequestField *field)
+purple_request_field_is_visible(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
 
@@ -464,7 +464,7 @@ gaim_request_field_is_visible(const GaimRequestField *field)
 }
 
 const char *
-gaim_request_field_get_type_hint(const GaimRequestField *field)
+purple_request_field_get_type_hint(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
 
@@ -472,309 +472,309 @@ gaim_request_field_get_type_hint(const GaimRequestField *field)
 }
 
 gboolean
-gaim_request_field_is_required(const GaimRequestField *field)
+purple_request_field_is_required(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
 
 	return field->required;
 }
 
-GaimRequestField *
-gaim_request_field_string_new(const char *id, const char *text,
+PurpleRequestField *
+purple_request_field_string_new(const char *id, const char *text,
 							  const char *default_value, gboolean multiline)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(id   != NULL, NULL);
 	g_return_val_if_fail(text != NULL, NULL);
 
-	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_STRING);
+	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_STRING);
 
 	field->u.string.multiline = multiline;
 	field->u.string.editable  = TRUE;
 
-	gaim_request_field_string_set_default_value(field, default_value);
-	gaim_request_field_string_set_value(field, default_value);
+	purple_request_field_string_set_default_value(field, default_value);
+	purple_request_field_string_set_value(field, default_value);
 
 	return field;
 }
 
 void
-gaim_request_field_string_set_default_value(GaimRequestField *field,
+purple_request_field_string_set_default_value(PurpleRequestField *field,
 											const char *default_value)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_STRING);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING);
 
 	g_free(field->u.string.default_value);
 	field->u.string.default_value = g_strdup(default_value);
 }
 
 void
-gaim_request_field_string_set_value(GaimRequestField *field, const char *value)
+purple_request_field_string_set_value(PurpleRequestField *field, const char *value)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_STRING);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING);
 
 	g_free(field->u.string.value);
 	field->u.string.value = g_strdup(value);
 }
 
 void
-gaim_request_field_string_set_masked(GaimRequestField *field, gboolean masked)
+purple_request_field_string_set_masked(PurpleRequestField *field, gboolean masked)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_STRING);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING);
 
 	field->u.string.masked = masked;
 }
 
 void
-gaim_request_field_string_set_editable(GaimRequestField *field,
+purple_request_field_string_set_editable(PurpleRequestField *field,
 									   gboolean editable)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_STRING);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING);
 
 	field->u.string.editable = editable;
 }
 
 const char *
-gaim_request_field_string_get_default_value(const GaimRequestField *field)
+purple_request_field_string_get_default_value(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_STRING, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING, NULL);
 
 	return field->u.string.default_value;
 }
 
 const char *
-gaim_request_field_string_get_value(const GaimRequestField *field)
+purple_request_field_string_get_value(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_STRING, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING, NULL);
 
 	return field->u.string.value;
 }
 
 gboolean
-gaim_request_field_string_is_multiline(const GaimRequestField *field)
+purple_request_field_string_is_multiline(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_STRING, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING, FALSE);
 
 	return field->u.string.multiline;
 }
 
 gboolean
-gaim_request_field_string_is_masked(const GaimRequestField *field)
+purple_request_field_string_is_masked(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_STRING, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING, FALSE);
 
 	return field->u.string.masked;
 }
 
 gboolean
-gaim_request_field_string_is_editable(const GaimRequestField *field)
+purple_request_field_string_is_editable(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_STRING, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_STRING, FALSE);
 
 	return field->u.string.editable;
 }
 
-GaimRequestField *
-gaim_request_field_int_new(const char *id, const char *text,
+PurpleRequestField *
+purple_request_field_int_new(const char *id, const char *text,
 						   int default_value)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(id   != NULL, NULL);
 	g_return_val_if_fail(text != NULL, NULL);
 
-	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_INTEGER);
+	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_INTEGER);
 
-	gaim_request_field_int_set_default_value(field, default_value);
-	gaim_request_field_int_set_value(field, default_value);
+	purple_request_field_int_set_default_value(field, default_value);
+	purple_request_field_int_set_value(field, default_value);
 
 	return field;
 }
 
 void
-gaim_request_field_int_set_default_value(GaimRequestField *field,
+purple_request_field_int_set_default_value(PurpleRequestField *field,
 										 int default_value)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_INTEGER);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_INTEGER);
 
 	field->u.integer.default_value = default_value;
 }
 
 void
-gaim_request_field_int_set_value(GaimRequestField *field, int value)
+purple_request_field_int_set_value(PurpleRequestField *field, int value)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_INTEGER);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_INTEGER);
 
 	field->u.integer.value = value;
 }
 
 int
-gaim_request_field_int_get_default_value(const GaimRequestField *field)
+purple_request_field_int_get_default_value(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, 0);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_INTEGER, 0);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_INTEGER, 0);
 
 	return field->u.integer.default_value;
 }
 
 int
-gaim_request_field_int_get_value(const GaimRequestField *field)
+purple_request_field_int_get_value(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, 0);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_INTEGER, 0);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_INTEGER, 0);
 
 	return field->u.integer.value;
 }
 
-GaimRequestField *
-gaim_request_field_bool_new(const char *id, const char *text,
+PurpleRequestField *
+purple_request_field_bool_new(const char *id, const char *text,
 							gboolean default_value)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(id   != NULL, NULL);
 	g_return_val_if_fail(text != NULL, NULL);
 
-	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_BOOLEAN);
+	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_BOOLEAN);
 
-	gaim_request_field_bool_set_default_value(field, default_value);
-	gaim_request_field_bool_set_value(field, default_value);
+	purple_request_field_bool_set_default_value(field, default_value);
+	purple_request_field_bool_set_value(field, default_value);
 
 	return field;
 }
 
 void
-gaim_request_field_bool_set_default_value(GaimRequestField *field,
+purple_request_field_bool_set_default_value(PurpleRequestField *field,
 										  gboolean default_value)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_BOOLEAN);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_BOOLEAN);
 
 	field->u.boolean.default_value = default_value;
 }
 
 void
-gaim_request_field_bool_set_value(GaimRequestField *field, gboolean value)
+purple_request_field_bool_set_value(PurpleRequestField *field, gboolean value)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_BOOLEAN);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_BOOLEAN);
 
 	field->u.boolean.value = value;
 }
 
 gboolean
-gaim_request_field_bool_get_default_value(const GaimRequestField *field)
+purple_request_field_bool_get_default_value(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_BOOLEAN, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_BOOLEAN, FALSE);
 
 	return field->u.boolean.default_value;
 }
 
 gboolean
-gaim_request_field_bool_get_value(const GaimRequestField *field)
+purple_request_field_bool_get_value(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_BOOLEAN, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_BOOLEAN, FALSE);
 
 	return field->u.boolean.value;
 }
 
-GaimRequestField *
-gaim_request_field_choice_new(const char *id, const char *text,
+PurpleRequestField *
+purple_request_field_choice_new(const char *id, const char *text,
 							  int default_value)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(id   != NULL, NULL);
 	g_return_val_if_fail(text != NULL, NULL);
 
-	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_CHOICE);
+	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_CHOICE);
 
-	gaim_request_field_choice_set_default_value(field, default_value);
-	gaim_request_field_choice_set_value(field, default_value);
+	purple_request_field_choice_set_default_value(field, default_value);
+	purple_request_field_choice_set_value(field, default_value);
 
 	return field;
 }
 
 void
-gaim_request_field_choice_add(GaimRequestField *field, const char *label)
+purple_request_field_choice_add(PurpleRequestField *field, const char *label)
 {
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(label != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_CHOICE);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE);
 
 	field->u.choice.labels = g_list_append(field->u.choice.labels,
 											g_strdup(label));
 }
 
 void
-gaim_request_field_choice_set_default_value(GaimRequestField *field,
+purple_request_field_choice_set_default_value(PurpleRequestField *field,
 											int default_value)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_CHOICE);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE);
 
 	field->u.choice.default_value = default_value;
 }
 
 void
-gaim_request_field_choice_set_value(GaimRequestField *field,
+purple_request_field_choice_set_value(PurpleRequestField *field,
 											int value)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_CHOICE);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE);
 
 	field->u.choice.value = value;
 }
 
 int
-gaim_request_field_choice_get_default_value(const GaimRequestField *field)
+purple_request_field_choice_get_default_value(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, -1);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_CHOICE, -1);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE, -1);
 
 	return field->u.choice.default_value;
 }
 
 int
-gaim_request_field_choice_get_value(const GaimRequestField *field)
+purple_request_field_choice_get_value(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, -1);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_CHOICE, -1);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE, -1);
 
 	return field->u.choice.value;
 }
 
 GList *
-gaim_request_field_choice_get_labels(const GaimRequestField *field)
+purple_request_field_choice_get_labels(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_CHOICE, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_CHOICE, NULL);
 
 	return field->u.choice.labels;
 }
 
-GaimRequestField *
-gaim_request_field_list_new(const char *id, const char *text)
+PurpleRequestField *
+purple_request_field_list_new(const char *id, const char *text)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(id   != NULL, NULL);
 
-	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_LIST);
+	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_LIST);
 
 	field->u.list.item_data = g_hash_table_new_full(g_str_hash, g_str_equal,
 													g_free, NULL);
@@ -786,43 +786,43 @@ gaim_request_field_list_new(const char *id, const char *text)
 }
 
 void
-gaim_request_field_list_set_multi_select(GaimRequestField *field,
+purple_request_field_list_set_multi_select(PurpleRequestField *field,
 										 gboolean multi_select)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
 
 	field->u.list.multiple_selection = multi_select;
 }
 
 gboolean
-gaim_request_field_list_get_multi_select(const GaimRequestField *field)
+purple_request_field_list_get_multi_select(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_LIST, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, FALSE);
 
 	return field->u.list.multiple_selection;
 }
 
 void *
-gaim_request_field_list_get_data(const GaimRequestField *field,
+purple_request_field_list_get_data(const PurpleRequestField *field,
 								 const char *text)
 {
 	g_return_val_if_fail(field != NULL, NULL);
 	g_return_val_if_fail(text  != NULL, NULL);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_LIST, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, NULL);
 
 	return g_hash_table_lookup(field->u.list.item_data, text);
 }
 
 void
-gaim_request_field_list_add(GaimRequestField *field, const char *item,
+purple_request_field_list_add(PurpleRequestField *field, const char *item,
 							void *data)
 {
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(item  != NULL);
 	g_return_if_fail(data  != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
 
 	field->u.list.items = g_list_append(field->u.list.items, g_strdup(item));
 
@@ -830,19 +830,19 @@ gaim_request_field_list_add(GaimRequestField *field, const char *item,
 }
 
 void
-gaim_request_field_list_add_selected(GaimRequestField *field, const char *item)
+purple_request_field_list_add_selected(PurpleRequestField *field, const char *item)
 {
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(item  != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
 
-	if (!gaim_request_field_list_get_multi_select(field) &&
+	if (!purple_request_field_list_get_multi_select(field) &&
 		field->u.list.selected != NULL)
 	{
-		gaim_debug_warning("request",
+		purple_debug_warning("request",
 						   "More than one item added to non-multi-select "
 						   "field %s\n",
-						   gaim_request_field_get_id(field));
+						   purple_request_field_get_id(field));
 		return;
 	}
 
@@ -853,10 +853,10 @@ gaim_request_field_list_add_selected(GaimRequestField *field, const char *item)
 }
 
 void
-gaim_request_field_list_clear_selected(GaimRequestField *field)
+purple_request_field_list_clear_selected(PurpleRequestField *field)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
 
 	if (field->u.list.selected != NULL)
 	{
@@ -872,23 +872,23 @@ gaim_request_field_list_clear_selected(GaimRequestField *field)
 }
 
 void
-gaim_request_field_list_set_selected(GaimRequestField *field, const GList *items)
+purple_request_field_list_set_selected(PurpleRequestField *field, const GList *items)
 {
 	const GList *l;
 
 	g_return_if_fail(field != NULL);
 	g_return_if_fail(items != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_LIST);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST);
 
-	gaim_request_field_list_clear_selected(field);
+	purple_request_field_list_clear_selected(field);
 
-	if (!gaim_request_field_list_get_multi_select(field) &&
+	if (!purple_request_field_list_get_multi_select(field) &&
 		g_list_length((GList*)items) > 1)
 	{
-		gaim_debug_warning("request",
+		purple_debug_warning("request",
 						   "More than one item added to non-multi-select "
 						   "field %s\n",
-						   gaim_request_field_get_id(field));
+						   purple_request_field_get_id(field));
 		return;
 	}
 
@@ -902,59 +902,59 @@ gaim_request_field_list_set_selected(GaimRequestField *field, const GList *items
 }
 
 gboolean
-gaim_request_field_list_is_selected(const GaimRequestField *field,
+purple_request_field_list_is_selected(const PurpleRequestField *field,
 									const char *item)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
 	g_return_val_if_fail(item  != NULL, FALSE);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_LIST, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, FALSE);
 
 	return g_hash_table_lookup_extended(field->u.list.selected_table,
 										item, NULL, NULL);
 }
 
 const GList *
-gaim_request_field_list_get_selected(const GaimRequestField *field)
+purple_request_field_list_get_selected(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_LIST, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, NULL);
 
 	return field->u.list.selected;
 }
 
 const GList *
-gaim_request_field_list_get_items(const GaimRequestField *field)
+purple_request_field_list_get_items(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_LIST, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_LIST, NULL);
 
 	return field->u.list.items;
 }
 
-GaimRequestField *
-gaim_request_field_label_new(const char *id, const char *text)
+PurpleRequestField *
+purple_request_field_label_new(const char *id, const char *text)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(id   != NULL, NULL);
 	g_return_val_if_fail(text != NULL, NULL);
 
-	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_LABEL);
+	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_LABEL);
 
 	return field;
 }
 
-GaimRequestField *
-gaim_request_field_image_new(const char *id, const char *text, const char *buf, gsize size)
+PurpleRequestField *
+purple_request_field_image_new(const char *id, const char *text, const char *buf, gsize size)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(id   != NULL, NULL);
 	g_return_val_if_fail(text != NULL, NULL);
 	g_return_val_if_fail(buf  != NULL, NULL);
 	g_return_val_if_fail(size > 0, NULL);
 
-	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_IMAGE);
+	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_IMAGE);
 
 	field->u.image.buffer  = g_memdup(buf, size);
 	field->u.image.size    = size;
@@ -965,100 +965,100 @@ gaim_request_field_image_new(const char *id, const char *text, const char *buf, 
 }
 
 void
-gaim_request_field_image_set_scale(GaimRequestField *field, unsigned int x, unsigned int y)
+purple_request_field_image_set_scale(PurpleRequestField *field, unsigned int x, unsigned int y)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_IMAGE);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_IMAGE);
 
 	field->u.image.scale_x = x;
 	field->u.image.scale_y = y;
 }
 
 const char *
-gaim_request_field_image_get_buffer(GaimRequestField *field)
+purple_request_field_image_get_buffer(PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_IMAGE, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_IMAGE, NULL);
 
 	return field->u.image.buffer;
 }
 
 gsize
-gaim_request_field_image_get_size(GaimRequestField *field)
+purple_request_field_image_get_size(PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, 0);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_IMAGE, 0);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_IMAGE, 0);
 
 	return field->u.image.size;
 }
 
 unsigned int
-gaim_request_field_image_get_scale_x(GaimRequestField *field)
+purple_request_field_image_get_scale_x(PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, 0);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_IMAGE, 0);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_IMAGE, 0);
 
 	return field->u.image.scale_x;
 }
 
 unsigned int
-gaim_request_field_image_get_scale_y(GaimRequestField *field)
+purple_request_field_image_get_scale_y(PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, 0);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_IMAGE, 0);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_IMAGE, 0);
 
 	return field->u.image.scale_y;
 }
 
-GaimRequestField *
-gaim_request_field_account_new(const char *id, const char *text,
-							   GaimAccount *account)
+PurpleRequestField *
+purple_request_field_account_new(const char *id, const char *text,
+							   PurpleAccount *account)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
 	g_return_val_if_fail(id   != NULL, NULL);
 	g_return_val_if_fail(text != NULL, NULL);
 
-	field = gaim_request_field_new(id, text, GAIM_REQUEST_FIELD_ACCOUNT);
+	field = purple_request_field_new(id, text, PURPLE_REQUEST_FIELD_ACCOUNT);
 
-	if (account == NULL && gaim_connections_get_all() != NULL)
+	if (account == NULL && purple_connections_get_all() != NULL)
 	{
-		account = gaim_connection_get_account(
-			(GaimConnection *)gaim_connections_get_all()->data);
+		account = purple_connection_get_account(
+			(PurpleConnection *)purple_connections_get_all()->data);
 	}
 
-	gaim_request_field_account_set_default_value(field, account);
-	gaim_request_field_account_set_value(field, account);
+	purple_request_field_account_set_default_value(field, account);
+	purple_request_field_account_set_value(field, account);
 
 	return field;
 }
 
 void
-gaim_request_field_account_set_default_value(GaimRequestField *field,
-											 GaimAccount *default_value)
+purple_request_field_account_set_default_value(PurpleRequestField *field,
+											 PurpleAccount *default_value)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_ACCOUNT);
 
 	field->u.account.default_account = default_value;
 }
 
 void
-gaim_request_field_account_set_value(GaimRequestField *field,
-									 GaimAccount *value)
+purple_request_field_account_set_value(PurpleRequestField *field,
+									 PurpleAccount *value)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_ACCOUNT);
 
 	field->u.account.account = value;
 }
 
 void
-gaim_request_field_account_set_show_all(GaimRequestField *field,
+purple_request_field_account_set_show_all(PurpleRequestField *field,
 										gboolean show_all)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_ACCOUNT);
 
 	if (field->u.account.show_all == show_all)
 		return;
@@ -1067,62 +1067,62 @@ gaim_request_field_account_set_show_all(GaimRequestField *field,
 
 	if (!show_all)
 	{
-		if (gaim_account_is_connected(field->u.account.default_account))
+		if (purple_account_is_connected(field->u.account.default_account))
 		{
-			gaim_request_field_account_set_default_value(field,
-				(GaimAccount *)gaim_connections_get_all()->data);
+			purple_request_field_account_set_default_value(field,
+				(PurpleAccount *)purple_connections_get_all()->data);
 		}
 
-		if (gaim_account_is_connected(field->u.account.account))
+		if (purple_account_is_connected(field->u.account.account))
 		{
-			gaim_request_field_account_set_value(field,
-				(GaimAccount *)gaim_connections_get_all()->data);
+			purple_request_field_account_set_value(field,
+				(PurpleAccount *)purple_connections_get_all()->data);
 		}
 	}
 }
 
 void
-gaim_request_field_account_set_filter(GaimRequestField *field,
-									  GaimFilterAccountFunc filter_func)
+purple_request_field_account_set_filter(PurpleRequestField *field,
+									  PurpleFilterAccountFunc filter_func)
 {
 	g_return_if_fail(field != NULL);
-	g_return_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT);
+	g_return_if_fail(field->type == PURPLE_REQUEST_FIELD_ACCOUNT);
 
 	field->u.account.filter_func = filter_func;
 }
 
-GaimAccount *
-gaim_request_field_account_get_default_value(const GaimRequestField *field)
+PurpleAccount *
+purple_request_field_account_get_default_value(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_ACCOUNT, NULL);
 
 	return field->u.account.default_account;
 }
 
-GaimAccount *
-gaim_request_field_account_get_value(const GaimRequestField *field)
+PurpleAccount *
+purple_request_field_account_get_value(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, NULL);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT, NULL);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_ACCOUNT, NULL);
 
 	return field->u.account.account;
 }
 
 gboolean
-gaim_request_field_account_get_show_all(const GaimRequestField *field)
+purple_request_field_account_get_show_all(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_ACCOUNT, FALSE);
 
 	return field->u.account.show_all;
 }
 
-GaimFilterAccountFunc
-gaim_request_field_account_get_filter(const GaimRequestField *field)
+PurpleFilterAccountFunc
+purple_request_field_account_get_filter(const PurpleRequestField *field)
 {
 	g_return_val_if_fail(field != NULL, FALSE);
-	g_return_val_if_fail(field->type == GAIM_REQUEST_FIELD_ACCOUNT, FALSE);
+	g_return_val_if_fail(field->type == PURPLE_REQUEST_FIELD_ACCOUNT, FALSE);
 
 	return field->u.account.filter_func;
 }
@@ -1130,25 +1130,25 @@ gaim_request_field_account_get_filter(const GaimRequestField *field)
 /* -- */
 
 void *
-gaim_request_input(void *handle, const char *title, const char *primary,
+purple_request_input(void *handle, const char *title, const char *primary,
 				   const char *secondary, const char *default_value,
 				   gboolean multiline, gboolean masked, gchar *hint,
 				   const char *ok_text, GCallback ok_cb,
 				   const char *cancel_text, GCallback cancel_cb,
 				   void *user_data)
 {
-	GaimRequestUiOps *ops;
+	PurpleRequestUiOps *ops;
 
 	g_return_val_if_fail(ok_text != NULL, NULL);
 	g_return_val_if_fail(ok_cb   != NULL, NULL);
 
-	ops = gaim_request_get_ui_ops();
+	ops = purple_request_get_ui_ops();
 
 	if (ops != NULL && ops->request_input != NULL) {
-		GaimRequestInfo *info;
+		PurpleRequestInfo *info;
 
-		info            = g_new0(GaimRequestInfo, 1);
-		info->type      = GAIM_REQUEST_INPUT;
+		info            = g_new0(PurpleRequestInfo, 1);
+		info->type      = PURPLE_REQUEST_INPUT;
 		info->handle    = handle;
 		info->ui_handle = ops->request_input(title, primary, secondary,
 											 default_value,
@@ -1166,7 +1166,7 @@ gaim_request_input(void *handle, const char *title, const char *primary,
 }
 
 void *
-gaim_request_choice(void *handle, const char *title, const char *primary,
+purple_request_choice(void *handle, const char *title, const char *primary,
 					const char *secondary, unsigned int default_value,
 					const char *ok_text, GCallback ok_cb,
 					const char *cancel_text, GCallback cancel_cb,
@@ -1179,7 +1179,7 @@ gaim_request_choice(void *handle, const char *title, const char *primary,
 	g_return_val_if_fail(ok_cb   != NULL,  NULL);
 
 	va_start(args, user_data);
-	ui_handle = gaim_request_choice_varg(handle, title, primary, secondary,
+	ui_handle = purple_request_choice_varg(handle, title, primary, secondary,
 					     default_value, ok_text, ok_cb,
 					     cancel_text, cancel_cb, user_data, args);
 	va_end(args);
@@ -1188,25 +1188,25 @@ gaim_request_choice(void *handle, const char *title, const char *primary,
 }
 
 void *
-gaim_request_choice_varg(void *handle, const char *title,
+purple_request_choice_varg(void *handle, const char *title,
 			 const char *primary, const char *secondary,
 			 unsigned int default_value,
 			 const char *ok_text, GCallback ok_cb,
 			 const char *cancel_text, GCallback cancel_cb,
 			 void *user_data, va_list choices)
 {
-	GaimRequestUiOps *ops;
+	PurpleRequestUiOps *ops;
 
 	g_return_val_if_fail(ok_text != NULL,  NULL);
 	g_return_val_if_fail(ok_cb   != NULL,  NULL);
 
-	ops = gaim_request_get_ui_ops();
+	ops = purple_request_get_ui_ops();
 
 	if (ops != NULL && ops->request_choice != NULL) {
-		GaimRequestInfo *info;
+		PurpleRequestInfo *info;
 
-		info            = g_new0(GaimRequestInfo, 1);
-		info->type      = GAIM_REQUEST_CHOICE;
+		info            = g_new0(PurpleRequestInfo, 1);
+		info->type      = PURPLE_REQUEST_CHOICE;
 		info->handle    = handle;
 		info->ui_handle = ops->request_choice(title, primary, secondary,
 						      default_value,
@@ -1223,7 +1223,7 @@ gaim_request_choice_varg(void *handle, const char *title,
 }
 
 void *
-gaim_request_action(void *handle, const char *title, const char *primary,
+purple_request_action(void *handle, const char *title, const char *primary,
 					const char *secondary, unsigned int default_action,
 					void *user_data, size_t action_count, ...)
 {
@@ -1233,7 +1233,7 @@ gaim_request_action(void *handle, const char *title, const char *primary,
 	g_return_val_if_fail(action_count > 0, NULL);
 
 	va_start(args, action_count);
-	ui_handle = gaim_request_action_varg(handle, title, primary, secondary,
+	ui_handle = purple_request_action_varg(handle, title, primary, secondary,
 										 default_action, user_data,
 										 action_count, args);
 	va_end(args);
@@ -1242,22 +1242,22 @@ gaim_request_action(void *handle, const char *title, const char *primary,
 }
 
 void *
-gaim_request_action_varg(void *handle, const char *title,
+purple_request_action_varg(void *handle, const char *title,
 						 const char *primary, const char *secondary,
 						 unsigned int default_action, void *user_data,
 						 size_t action_count, va_list actions)
 {
-	GaimRequestUiOps *ops;
+	PurpleRequestUiOps *ops;
 
 	g_return_val_if_fail(action_count > 0, NULL);
 
-	ops = gaim_request_get_ui_ops();
+	ops = purple_request_get_ui_ops();
 
 	if (ops != NULL && ops->request_action != NULL) {
-		GaimRequestInfo *info;
+		PurpleRequestInfo *info;
 
-		info            = g_new0(GaimRequestInfo, 1);
-		info->type      = GAIM_REQUEST_ACTION;
+		info            = g_new0(PurpleRequestInfo, 1);
+		info->type      = PURPLE_REQUEST_ACTION;
 		info->handle    = handle;
 		info->ui_handle = ops->request_action(title, primary, secondary,
 											  default_action, user_data,
@@ -1272,25 +1272,25 @@ gaim_request_action_varg(void *handle, const char *title,
 }
 
 void *
-gaim_request_fields(void *handle, const char *title, const char *primary,
-					const char *secondary, GaimRequestFields *fields,
+purple_request_fields(void *handle, const char *title, const char *primary,
+					const char *secondary, PurpleRequestFields *fields,
 					const char *ok_text, GCallback ok_cb,
 					const char *cancel_text, GCallback cancel_cb,
 					void *user_data)
 {
-	GaimRequestUiOps *ops;
+	PurpleRequestUiOps *ops;
 
 	g_return_val_if_fail(fields  != NULL, NULL);
 	g_return_val_if_fail(ok_text != NULL, NULL);
 	g_return_val_if_fail(ok_cb   != NULL, NULL);
 
-	ops = gaim_request_get_ui_ops();
+	ops = purple_request_get_ui_ops();
 
 	if (ops != NULL && ops->request_fields != NULL) {
-		GaimRequestInfo *info;
+		PurpleRequestInfo *info;
 
-		info            = g_new0(GaimRequestInfo, 1);
-		info->type      = GAIM_REQUEST_FIELDS;
+		info            = g_new0(PurpleRequestInfo, 1);
+		info->type      = PURPLE_REQUEST_FIELDS;
 		info->handle    = handle;
 		info->ui_handle = ops->request_fields(title, primary, secondary,
 											  fields, ok_text, ok_cb,
@@ -1306,19 +1306,19 @@ gaim_request_fields(void *handle, const char *title, const char *primary,
 }
 
 void *
-gaim_request_file(void *handle, const char *title, const char *filename,
+purple_request_file(void *handle, const char *title, const char *filename,
 				  gboolean savedialog,
 				  GCallback ok_cb, GCallback cancel_cb, void *user_data)
 {
-	GaimRequestUiOps *ops;
+	PurpleRequestUiOps *ops;
 
-	ops = gaim_request_get_ui_ops();
+	ops = purple_request_get_ui_ops();
 
 	if (ops != NULL && ops->request_file != NULL) {
-		GaimRequestInfo *info;
+		PurpleRequestInfo *info;
 
-		info            = g_new0(GaimRequestInfo, 1);
-		info->type      = GAIM_REQUEST_FILE;
+		info            = g_new0(PurpleRequestInfo, 1);
+		info->type      = PURPLE_REQUEST_FILE;
 		info->handle    = handle;
 		info->ui_handle = ops->request_file(title, filename, savedialog,
 											ok_cb, cancel_cb, user_data);
@@ -1330,18 +1330,18 @@ gaim_request_file(void *handle, const char *title, const char *filename,
 }
 
 void *
-gaim_request_folder(void *handle, const char *title, const char *dirname,
+purple_request_folder(void *handle, const char *title, const char *dirname,
 				  GCallback ok_cb, GCallback cancel_cb, void *user_data)
 {
-	GaimRequestUiOps *ops;
+	PurpleRequestUiOps *ops;
 
-	ops = gaim_request_get_ui_ops();
+	ops = purple_request_get_ui_ops();
 
 	if (ops != NULL && ops->request_file != NULL) {
-		GaimRequestInfo *info;
+		PurpleRequestInfo *info;
 
-		info            = g_new0(GaimRequestInfo, 1);
-		info->type      = GAIM_REQUEST_FOLDER;
+		info            = g_new0(PurpleRequestInfo, 1);
+		info->type      = PURPLE_REQUEST_FOLDER;
 		info->handle    = handle;
 		info->ui_handle = ops->request_folder(title, dirname,
 											ok_cb, cancel_cb, user_data);
@@ -1353,14 +1353,14 @@ gaim_request_folder(void *handle, const char *title, const char *dirname,
 }
 
 static void
-gaim_request_close_info(GaimRequestInfo *info)
+purple_request_close_info(PurpleRequestInfo *info)
 {
-	GaimRequestUiOps *ops;
+	PurpleRequestUiOps *ops;
 
-	ops = gaim_request_get_ui_ops();
+	ops = purple_request_get_ui_ops();
 
-	gaim_notify_close_with_handle(info->ui_handle);
-	gaim_request_close_with_handle(info->ui_handle);
+	purple_notify_close_with_handle(info->ui_handle);
+	purple_request_close_with_handle(info->ui_handle);
 
 	if (ops != NULL && ops->close_request != NULL)
 		ops->close_request(info->type, info->ui_handle);
@@ -1369,50 +1369,50 @@ gaim_request_close_info(GaimRequestInfo *info)
 }
 
 void
-gaim_request_close(GaimRequestType type, void *ui_handle)
+purple_request_close(PurpleRequestType type, void *ui_handle)
 {
 	GList *l;
 
 	g_return_if_fail(ui_handle != NULL);
 
 	for (l = handles; l != NULL; l = l->next) {
-		GaimRequestInfo *info = l->data;
+		PurpleRequestInfo *info = l->data;
 
 		if (info->ui_handle == ui_handle) {
 			handles = g_list_remove(handles, info);
-			gaim_request_close_info(info);
+			purple_request_close_info(info);
 			break;
 		}
 	}
 }
 
 void
-gaim_request_close_with_handle(void *handle)
+purple_request_close_with_handle(void *handle)
 {
 	GList *l, *l_next;
 
 	g_return_if_fail(handle != NULL);
 
 	for (l = handles; l != NULL; l = l_next) {
-		GaimRequestInfo *info = l->data;
+		PurpleRequestInfo *info = l->data;
 
 		l_next = l->next;
 
 		if (info->handle == handle) {
 			handles = g_list_remove(handles, info);
-			gaim_request_close_info(info);
+			purple_request_close_info(info);
 		}
 	}
 }
 
 void
-gaim_request_set_ui_ops(GaimRequestUiOps *ops)
+purple_request_set_ui_ops(PurpleRequestUiOps *ops)
 {
 	request_ui_ops = ops;
 }
 
-GaimRequestUiOps *
-gaim_request_get_ui_ops(void)
+PurpleRequestUiOps *
+purple_request_get_ui_ops(void)
 {
 	return request_ui_ops;
 }

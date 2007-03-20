@@ -49,11 +49,11 @@ typedef pidgin_blist_sort_function	Pidgin__BuddyList__SortFunction;
 
 /* gtkconv.h */
 typedef PidginConversation *		Pidgin__Conversation;
-typedef GaimUnseenState			Gaim__UnseenState;
+typedef PidginUnseenState		Pidgin__UnseenState;
 
 /* gtkconvwin.h */
 typedef PidginWindow *			Pidgin__Conversation__Window;
-typedef GaimConvPlacementFunc		Gaim__Conversation__PlacementFunc;
+typedef PidginConvPlacementFunc		Pidgin__Conversation__PlacementFunc;
 
 /* gtkft.h */
 typedef PidginXferDialog *		Pidgin__Xfer__Dialog;

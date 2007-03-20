@@ -1,7 +1,7 @@
 /**
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -43,7 +43,7 @@
 
 struct joinpart_key
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	char *user;
 };
 
@@ -72,25 +72,25 @@ static void joinpart_key_destroy(struct joinpart_key *key)
 	g_free(key);
 }
 
-static gboolean should_hide_notice(GaimConversation *conv, const char *name,
+static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
                                    GHashTable *users)
 {
-	GaimConvChat *chat;
+	PurpleConvChat *chat;
 	int threshold;
 	struct joinpart_key *key;
 	time_t *last_said;
 
 	g_return_val_if_fail(conv != NULL, FALSE);
-	g_return_val_if_fail(gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT, FALSE);
+	g_return_val_if_fail(purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT, FALSE);
 
 	/* If the room is small, don't bother. */
-	chat = GAIM_CONV_CHAT(conv);
-	threshold = gaim_prefs_get_int(THRESHOLD_PREF);
-	if (g_list_length(gaim_conv_chat_get_users(chat)) < threshold)
+	chat = PURPLE_CONV_CHAT(conv);
+	threshold = purple_prefs_get_int(THRESHOLD_PREF);
+	if (g_list_length(purple_conv_chat_get_users(chat)) < threshold)
 		return FALSE;
 
 	/* We always care about our buddies! */
-	if (gaim_find_buddy(gaim_conversation_get_account(conv), name))
+	if (purple_find_buddy(purple_conversation_get_account(conv), name))
 		return FALSE;
 
 	/* Only show the notice if the user has spoken recently. */
@@ -100,7 +100,7 @@ static gboolean should_hide_notice(GaimConversation *conv, const char *name,
 	last_said = g_hash_table_lookup(users, key);
 	if (last_said != NULL)
 	{
-		int delay = gaim_prefs_get_int(DELAY_PREF);
+		int delay = purple_prefs_get_int(DELAY_PREF);
 		if (delay > 0 && (*last_said + (delay * 60)) >= time(NULL))
 			return FALSE;
 	}
@@ -108,22 +108,22 @@ static gboolean should_hide_notice(GaimConversation *conv, const char *name,
 	return TRUE;
 }
 
-static gboolean chat_buddy_leaving_cb(GaimConversation *conv, const char *name,
+static gboolean chat_buddy_leaving_cb(PurpleConversation *conv, const char *name,
                                const char *reason, GHashTable *users)
 {
 	return should_hide_notice(conv, name, users);
 }
 
-static gboolean chat_buddy_joining_cb(GaimConversation *conv, const char *name,
-                                      GaimConvChatBuddyFlags flags,
+static gboolean chat_buddy_joining_cb(PurpleConversation *conv, const char *name,
+                                      PurpleConvChatBuddyFlags flags,
                                       GHashTable *users)
 {
 	return should_hide_notice(conv, name, users);
 }
 
-static void received_chat_msg_cb(GaimAccount *account, char *sender,
-                                 char *message, GaimConversation *conv,
-                                 GaimMessageFlags flags, GHashTable *users)
+static void received_chat_msg_cb(PurpleAccount *account, char *sender,
+                                 char *message, PurpleConversation *conv,
+                                 PurpleMessageFlags flags, GHashTable *users)
 {
 	struct joinpart_key key;
 	time_t *last_said;
@@ -156,13 +156,13 @@ static void received_chat_msg_cb(GaimAccount *account, char *sender,
 static gboolean check_expire_time(struct joinpart_key *key,
                                   time_t *last_said, time_t *limit)
 {
-	gaim_debug_info("joinpart", "Removing key for %s/%s\n", key->conv->name, key->user);
+	purple_debug_info("joinpart", "Removing key for %s/%s\n", key->conv->name, key->user);
 	return (*last_said < *limit);
 }
 
 static gboolean clean_users_hash(GHashTable *users)
 {
-	int delay = gaim_prefs_get_int(DELAY_PREF);
+	int delay = purple_prefs_get_int(DELAY_PREF);
 	time_t limit = time(NULL) - (60 * delay);
 
 	g_hash_table_foreach_remove(users, (GHRFunc)check_expire_time, &limit);
@@ -170,7 +170,7 @@ static gboolean clean_users_hash(GHashTable *users)
 	return TRUE;
 }
 
-static gboolean plugin_load(GaimPlugin *plugin)
+static gboolean plugin_load(PurplePlugin *plugin)
 {
 	void *conv_handle;
 	GHashTable *users;
@@ -182,16 +182,16 @@ static gboolean plugin_load(GaimPlugin *plugin)
 	                              (GDestroyNotify)joinpart_key_destroy,
 	                              g_free);
 
-	conv_handle = gaim_conversations_get_handle();
-	gaim_signal_connect(conv_handle, "chat-buddy-joining", plugin,
-	                    GAIM_CALLBACK(chat_buddy_joining_cb), users);
-	gaim_signal_connect(conv_handle, "chat-buddy-leaving", plugin,
-	                    GAIM_CALLBACK(chat_buddy_leaving_cb), users);
-	gaim_signal_connect(conv_handle, "received-chat-msg", plugin,
-	                    GAIM_CALLBACK(received_chat_msg_cb), users);
+	conv_handle = purple_conversations_get_handle();
+	purple_signal_connect(conv_handle, "chat-buddy-joining", plugin,
+	                    PURPLE_CALLBACK(chat_buddy_joining_cb), users);
+	purple_signal_connect(conv_handle, "chat-buddy-leaving", plugin,
+	                    PURPLE_CALLBACK(chat_buddy_leaving_cb), users);
+	purple_signal_connect(conv_handle, "received-chat-msg", plugin,
+	                    PURPLE_CALLBACK(received_chat_msg_cb), users);
 
 	/* Cleanup every 5 minutes */
-	id = gaim_timeout_add(1000 * 60 * 5, (GSourceFunc)clean_users_hash, users);
+	id = purple_timeout_add(1000 * 60 * 5, (GSourceFunc)clean_users_hash, users);
 
 	data = g_new(gpointer, 2);
 	data[0] = users;
@@ -201,12 +201,12 @@ static gboolean plugin_load(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static gboolean plugin_unload(GaimPlugin *plugin)
+static gboolean plugin_unload(PurplePlugin *plugin)
 {
 	gpointer *data = plugin->extra;
 
 	/* Destroy the hash table. The core plugin code will
-	 * disconnect the signals, and since Gaim is single-threaded,
+	 * disconnect the signals, and since Purple is single-threaded,
 	 * we don't have to worry one will be called after this. */
 	g_hash_table_destroy((GHashTable *)data[0]);
 
@@ -216,49 +216,49 @@ static gboolean plugin_unload(GaimPlugin *plugin)
 	return TRUE;
 }
 
-static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin)
+static PurplePluginPrefFrame *
+get_plugin_pref_frame(PurplePlugin *plugin)
 {
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *ppref;
+	PurplePluginPrefFrame *frame;
+	PurplePluginPref *ppref;
 
 	g_return_val_if_fail(plugin != NULL, FALSE);
 
-	frame = gaim_plugin_pref_frame_new();
+	frame = purple_plugin_pref_frame_new();
 
-	ppref = gaim_plugin_pref_new_with_label(_("Join/Part Hiding Configuration"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	ppref = purple_plugin_pref_new_with_label(_("Join/Part Hiding Configuration"));
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(THRESHOLD_PREF,
+	ppref = purple_plugin_pref_new_with_name_and_label(THRESHOLD_PREF,
 	                                                 _("Minimum Room Size"));
-	gaim_plugin_pref_set_bounds(ppref, 0, 1000);
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_set_bounds(ppref, 0, 1000);
+	purple_plugin_pref_frame_add(frame, ppref);
 
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(DELAY_PREF,
+	ppref = purple_plugin_pref_new_with_name_and_label(DELAY_PREF,
 	                                                 _("User Inactivity Timeout (in minutes)"));
-	gaim_plugin_pref_set_bounds(ppref, 0, 8 * 60); /* 8 Hours */
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_set_bounds(ppref, 0, 8 * 60); /* 8 Hours */
+	purple_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
 }
 
-static GaimPluginUiInfo prefs_info = {
+static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
 	0,   /* page_num (reserved) */
 	NULL /* frame (reserved) */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	JOINPART_PLUGIN_ID,                               /**< id             */
 	N_("Join/Part Hiding"),                           /**< name           */
@@ -270,7 +270,7 @@ static GaimPluginInfo info =
 	   "rooms, except for those users actively taking "
 	   "part in a conversation."),
 	"Richard Laager <rlaager@pidgin.im>",             /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -283,12 +283,12 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	gaim_prefs_add_none("/plugins/core/joinpart");
+	purple_prefs_add_none("/plugins/core/joinpart");
 
-	gaim_prefs_add_int(DELAY_PREF, DELAY_DEFAULT);
-	gaim_prefs_add_int(THRESHOLD_PREF, THRESHOLD_DEFAULT);
+	purple_prefs_add_int(DELAY_PREF, DELAY_DEFAULT);
+	purple_prefs_add_int(THRESHOLD_PREF, THRESHOLD_DEFAULT);
 }
 
-GAIM_INIT_PLUGIN(joinpart, init_plugin, info)
+PURPLE_INIT_PLUGIN(joinpart, init_plugin, info)

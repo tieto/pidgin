@@ -2,9 +2,9 @@
  * @file gntplugin.h GNT Plugins API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -31,7 +31,7 @@
 
 #include <string.h>
 
-#include "gntgaim.h"
+#include "finch.h"
 
 /**********************************************************************
  * @name GNT Plugins API
@@ -41,19 +41,19 @@
 typedef GntWidget* (*FinchPluginFrame) ();
 
 /* Guess where these came from */
-#define GAIM_GNT_PLUGIN_TYPE GAIM_GNT_UI
+#define FINCH_PLUGIN_TYPE FINCH_UI
 
 /**
  * Decide whether a plugin is a GNT-plugin.
  */
-#define GAIM_IS_GNT_PLUGIN(plugin) \
+#define PURPLE_IS_GNT_PLUGIN(plugin) \
 	((plugin)->info != NULL && (plugin)->info->ui_info != NULL && \
-	 !strcmp((plugin)->info->ui_requirement, GAIM_GNT_PLUGIN_TYPE))
+	 !strcmp((plugin)->info->ui_requirement, FINCH_PLUGIN_TYPE))
 
 /**
  * Get the ui-info from GNT-plugins.
  */
-#define GAIM_GNT_PLUGIN_UI_INFO(plugin) \
+#define FINCH_PLUGIN_UI_INFO(plugin) \
 	(FinchPluginFrame)((plugin)->info->ui_info)
 
 /**

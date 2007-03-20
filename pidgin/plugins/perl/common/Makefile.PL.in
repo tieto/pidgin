@@ -2,14 +2,14 @@ use 5.006;
 use ExtUtils::MakeMaker;
 
 WriteMakefile(
-    'NAME'          => 'Gaim::GtkUI',
+    'NAME'          => 'Purple::GtkUI',
     'VERSION_FROM'  => '@srcdir@/GtkUI.pm', # finds $VERSION
     ($] >= 5.005 ? ## Add these new keywords supported since 5.005
 	('ABSTRACT_FROM' => '@srcdir@/GtkUI.pm', # finds $ABSTRACT
-	'AUTHOR'        => 'Gaim <http://gaim.sourceforge.net/>') :  ()),
+	'AUTHOR'        => 'Pidgin <http://pidgin.im/>') :  ()),
     'DEFINE'        => '@DEBUG_CFLAGS@',
     'INC'           => '-I. -I@srcdir@ -I@top_srcdir@ -I@top_srcdir@/libpurple -I@top_srcdir@/pidgin @GTK_CFLAGS@',
-#    'PREREQ_PM'     => { 'Gaim' => '@VERSION@'},
+#    'PREREQ_PM'     => { 'Pidgin' => '@VERSION@'},
     # Do this because the MakeMaker Makefile is dumb, and on clean it moves
     # Makefile to the default setting for MAKEFILE_OLD which is Makefile.old
     # but this breaks running make clean more than once in a row.

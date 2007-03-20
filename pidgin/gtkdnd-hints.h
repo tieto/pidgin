@@ -20,8 +20,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
-#ifndef _GAIM_DND_HINTS_H_
-#define _GAIM_DND_HINTS_H_
+#ifndef _PIDGIN_DND_HINTS_H_
+#define _PIDGIN_DND_HINTS_H_
 
 #include <glib.h>
 #include <gtk/gtkwidget.h>
@@ -83,4 +83,4 @@ void dnd_hints_hide_all(void);
 void dnd_hints_show_relative(DndHintWindowId id, GtkWidget *widget,
 							 DndHintPosition horiz, DndHintPosition vert);
 
-#endif /* _GAIM_DND_HINTS_H_ */
+#endif /* _PIDGIN_DND_HINTS_H_ */

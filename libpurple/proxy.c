@@ -2,9 +2,9 @@
  * @file proxy.c Proxy API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -39,16 +39,16 @@
 #include "proxy.h"
 #include "util.h"
 
-struct _GaimProxyConnectData {
+struct _PurpleProxyConnectData {
 	void *handle;
-	GaimProxyConnectFunction connect_cb;
+	PurpleProxyConnectFunction connect_cb;
 	gpointer data;
 	gchar *host;
 	int port;
 	int fd;
 	guint inpa;
-	GaimProxyInfo *gpi;
-	GaimDnsQueryData *query_data;
+	PurpleProxyInfo *gpi;
+	PurpleDnsQueryData *query_data;
 
 	/**
 	 * This contains alternating length/char* values.  The char*
@@ -63,7 +63,7 @@ struct _GaimProxyConnectData {
 	guchar *write_buffer;
 	gsize write_buf_len;
 	gsize written_len;
-	GaimInputFunction read_cb;
+	PurpleInputFunction read_cb;
 	guchar *read_buffer;
 	gsize read_buf_len;
 	gsize read_len;
@@ -81,23 +81,23 @@ static const char *socks5errors[] = {
 	"Address type not supported\n"
 };
 
-static GaimProxyInfo *global_proxy_info = NULL;
+static PurpleProxyInfo *global_proxy_info = NULL;
 
 static GSList *handles = NULL;
 
-static void try_connect(GaimProxyConnectData *connect_data);
+static void try_connect(PurpleProxyConnectData *connect_data);
 
 /**************************************************************************
  * Proxy structure API
  **************************************************************************/
-GaimProxyInfo *
-gaim_proxy_info_new(void)
+PurpleProxyInfo *
+purple_proxy_info_new(void)
 {
-	return g_new0(GaimProxyInfo, 1);
+	return g_new0(PurpleProxyInfo, 1);
 }
 
 void
-gaim_proxy_info_destroy(GaimProxyInfo *info)
+purple_proxy_info_destroy(PurpleProxyInfo *info)
 {
 	g_return_if_fail(info != NULL);
 
@@ -109,7 +109,7 @@ gaim_proxy_info_destroy(GaimProxyInfo *info)
 }
 
 void
-gaim_proxy_info_set_type(GaimProxyInfo *info, GaimProxyType type)
+purple_proxy_info_set_type(PurpleProxyInfo *info, PurpleProxyType type)
 {
 	g_return_if_fail(info != NULL);
 
@@ -117,7 +117,7 @@ gaim_proxy_info_set_type(GaimProxyInfo *info, GaimProxyType type)
 }
 
 void
-gaim_proxy_info_set_host(GaimProxyInfo *info, const char *host)
+purple_proxy_info_set_host(PurpleProxyInfo *info, const char *host)
 {
 	g_return_if_fail(info != NULL);
 
@@ -126,7 +126,7 @@ gaim_proxy_info_set_host(GaimProxyInfo *info, const char *host)
 }
 
 void
-gaim_proxy_info_set_port(GaimProxyInfo *info, int port)
+purple_proxy_info_set_port(PurpleProxyInfo *info, int port)
 {
 	g_return_if_fail(info != NULL);
 
@@ -134,7 +134,7 @@ gaim_proxy_info_set_port(GaimProxyInfo *info, int port)
 }
 
 void
-gaim_proxy_info_set_username(GaimProxyInfo *info, const char *username)
+purple_proxy_info_set_username(PurpleProxyInfo *info, const char *username)
 {
 	g_return_if_fail(info != NULL);
 
@@ -143,7 +143,7 @@ gaim_proxy_info_set_username(GaimProxyInfo *info, const char *username)
 }
 
 void
-gaim_proxy_info_set_password(GaimProxyInfo *info, const char *password)
+purple_proxy_info_set_password(PurpleProxyInfo *info, const char *password)
 {
 	g_return_if_fail(info != NULL);
 
@@ -151,16 +151,16 @@ gaim_proxy_info_set_password(GaimProxyInfo *info, const char *password)
 	info->password = g_strdup(password);
 }
 
-GaimProxyType
-gaim_proxy_info_get_type(const GaimProxyInfo *info)
+PurpleProxyType
+purple_proxy_info_get_type(const PurpleProxyInfo *info)
 {
-	g_return_val_if_fail(info != NULL, GAIM_PROXY_NONE);
+	g_return_val_if_fail(info != NULL, PURPLE_PROXY_NONE);
 
 	return info->type;
 }
 
 const char *
-gaim_proxy_info_get_host(const GaimProxyInfo *info)
+purple_proxy_info_get_host(const PurpleProxyInfo *info)
 {
 	g_return_val_if_fail(info != NULL, NULL);
 
@@ -168,7 +168,7 @@ gaim_proxy_info_get_host(const GaimProxyInfo *info)
 }
 
 int
-gaim_proxy_info_get_port(const GaimProxyInfo *info)
+purple_proxy_info_get_port(const PurpleProxyInfo *info)
 {
 	g_return_val_if_fail(info != NULL, 0);
 
@@ -176,7 +176,7 @@ gaim_proxy_info_get_port(const GaimProxyInfo *info)
 }
 
 const char *
-gaim_proxy_info_get_username(const GaimProxyInfo *info)
+purple_proxy_info_get_username(const PurpleProxyInfo *info)
 {
 	g_return_val_if_fail(info != NULL, NULL);
 
@@ -184,7 +184,7 @@ gaim_proxy_info_get_username(const GaimProxyInfo *info)
 }
 
 const char *
-gaim_proxy_info_get_password(const GaimProxyInfo *info)
+purple_proxy_info_get_password(const PurpleProxyInfo *info)
 {
 	g_return_val_if_fail(info != NULL, NULL);
 
@@ -194,16 +194,16 @@ gaim_proxy_info_get_password(const GaimProxyInfo *info)
 /**************************************************************************
  * Global Proxy API
  **************************************************************************/
-GaimProxyInfo *
-gaim_global_proxy_get_info(void)
+PurpleProxyInfo *
+purple_global_proxy_get_info(void)
 {
 	return global_proxy_info;
 }
 
-static GaimProxyInfo *
-gaim_gnome_proxy_get_info(void)
+static PurpleProxyInfo *
+purple_gnome_proxy_get_info(void)
 {
-	static GaimProxyInfo info = {0, NULL, 0, NULL, NULL};
+	static PurpleProxyInfo info = {0, NULL, 0, NULL, NULL};
 	gchar *path;
 	if ((path = g_find_program_in_path("gconftool-2"))) {
 		gchar *tmp;
@@ -213,18 +213,18 @@ gaim_gnome_proxy_get_info(void)
 		/* See whether to use a proxy. */
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/use_http_proxy", &tmp,
 					       NULL, NULL, NULL))
-			return gaim_global_proxy_get_info();
+			return purple_global_proxy_get_info();
 		if (!strcmp(tmp, "false\n")) {
-			info.type = GAIM_PROXY_NONE;
+			info.type = PURPLE_PROXY_NONE;
 			g_free(tmp);
 			return &info;
 		} else if (strcmp(tmp, "true\n")) {
 			g_free(tmp);
-			return gaim_global_proxy_get_info();
+			return purple_global_proxy_get_info();
 		}
 
 		g_free(tmp);
-		info.type = GAIM_PROXY_HTTP;
+		info.type = PURPLE_PROXY_HTTP;
 
 		/* Free the old fields */
 		if (info.host) {
@@ -243,28 +243,28 @@ gaim_gnome_proxy_get_info(void)
 		/* Get the new ones */
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/host", &info.host,
 					       NULL, NULL, NULL))
-			return gaim_global_proxy_get_info();
+			return purple_global_proxy_get_info();
 		g_strchomp(info.host);
 
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_user", &info.username,
 					       NULL, NULL, NULL))
-			return gaim_global_proxy_get_info();
+			return purple_global_proxy_get_info();
 		g_strchomp(info.username);
 
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/authentication_password", &info.password,
 					       NULL, NULL, NULL))
-			return gaim_global_proxy_get_info();
+			return purple_global_proxy_get_info();
 		g_strchomp(info.password);
 
 		if (!g_spawn_command_line_sync("gconftool-2 -g /system/http_proxy/port", &tmp,
 					       NULL, NULL, NULL))
-			return gaim_global_proxy_get_info();
+			return purple_global_proxy_get_info();
 		info.port = atoi(tmp);
 		g_free(tmp);
 
 		return &info;
 	}
-	return gaim_global_proxy_get_info();
+	return purple_global_proxy_get_info();
 }
 /**************************************************************************
  * Proxy API
@@ -272,15 +272,15 @@ gaim_gnome_proxy_get_info(void)
 
 /**
  * Whoever calls this needs to have called
- * gaim_proxy_connect_data_disconnect() beforehand.
+ * purple_proxy_connect_data_disconnect() beforehand.
  */
 static void
-gaim_proxy_connect_data_destroy(GaimProxyConnectData *connect_data)
+purple_proxy_connect_data_destroy(PurpleProxyConnectData *connect_data)
 {
 	handles = g_slist_remove(handles, connect_data);
 
 	if (connect_data->query_data != NULL)
-		gaim_dnsquery_destroy(connect_data->query_data);
+		purple_dnsquery_destroy(connect_data->query_data);
 
 	while (connect_data->hosts != NULL)
 	{
@@ -309,15 +309,15 @@ gaim_proxy_connect_data_destroy(GaimProxyConnectData *connect_data)
  *
  * @param error_message An error message explaining why the connection
  *        failed.  This will be passed to the callback function
- *        specified in the call to gaim_proxy_connect().  If the
+ *        specified in the call to purple_proxy_connect().  If the
  *        connection was successful then pass in null.
  */
 static void
-gaim_proxy_connect_data_disconnect(GaimProxyConnectData *connect_data, const gchar *error_message)
+purple_proxy_connect_data_disconnect(PurpleProxyConnectData *connect_data, const gchar *error_message)
 {
 	if (connect_data->inpa > 0)
 	{
-		gaim_input_remove(connect_data->inpa);
+		purple_input_remove(connect_data->inpa);
 		connect_data->inpa = 0;
 	}
 
@@ -335,7 +335,7 @@ gaim_proxy_connect_data_disconnect(GaimProxyConnectData *connect_data, const gch
 
 	if (error_message != NULL)
 	{
-		gaim_debug_info("proxy", "Connection attempt failed: %s\n",
+		purple_debug_info("proxy", "Connection attempt failed: %s\n",
 				error_message);
 		if (connect_data->hosts != NULL)
 			try_connect(connect_data);
@@ -343,17 +343,17 @@ gaim_proxy_connect_data_disconnect(GaimProxyConnectData *connect_data, const gch
 		{
 			/* Everything failed!  Tell the originator of the request. */
 			connect_data->connect_cb(connect_data->data, -1, error_message);
-			gaim_proxy_connect_data_destroy(connect_data);
+			purple_proxy_connect_data_destroy(connect_data);
 		}
 	}
 }
 
 /**
- * This calls gaim_proxy_connect_data_disconnect(), but it lets you
+ * This calls purple_proxy_connect_data_disconnect(), but it lets you
  * specify the error_message using a printf()-like syntax.
  */
 static void
-gaim_proxy_connect_data_disconnect_formatted(GaimProxyConnectData *connect_data, const char *format, ...)
+purple_proxy_connect_data_disconnect_formatted(PurpleProxyConnectData *connect_data, const char *format, ...)
 {
 	va_list args;
 	gchar *tmp;
@@ -362,12 +362,12 @@ gaim_proxy_connect_data_disconnect_formatted(GaimProxyConnectData *connect_data,
 	tmp = g_strdup_vprintf(format, args);
 	va_end(args);
 
-	gaim_proxy_connect_data_disconnect(connect_data, tmp);
+	purple_proxy_connect_data_disconnect(connect_data, tmp);
 	g_free(tmp);
 }
 
 static void
-gaim_proxy_connect_data_connected(GaimProxyConnectData *connect_data)
+purple_proxy_connect_data_connected(PurpleProxyConnectData *connect_data)
 {
 	connect_data->connect_cb(connect_data->data, connect_data->fd, NULL);
 
@@ -378,22 +378,22 @@ gaim_proxy_connect_data_connected(GaimProxyConnectData *connect_data)
 	 */
 	connect_data->fd = -1;
 
-	gaim_proxy_connect_data_disconnect(connect_data, NULL);
-	gaim_proxy_connect_data_destroy(connect_data);
+	purple_proxy_connect_data_disconnect(connect_data, NULL);
+	purple_proxy_connect_data_destroy(connect_data);
 }
 
 static void
-socket_ready_cb(gpointer data, gint source, GaimInputCondition cond)
+socket_ready_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimProxyConnectData *connect_data = data;
+	PurpleProxyConnectData *connect_data = data;
 	int error = 0;
 	int ret;
 
-	gaim_debug_info("proxy", "Connected to %s:%d.\n",
+	purple_debug_info("proxy", "Connected to %s:%d.\n",
 					connect_data->host, connect_data->port);
 
 	/*
-	 * gaim_input_get_error after a non-blocking connect returns -1 if something is
+	 * purple_input_get_error after a non-blocking connect returns -1 if something is
 	 * really messed up (bad descriptor, usually). Otherwise, it returns 0 and
 	 * error holds what connect would have returned if it blocked until now.
 	 * Thus, error == 0 is success, error == EINPROGRESS means "try again",
@@ -403,46 +403,46 @@ socket_ready_cb(gpointer data, gint source, GaimInputCondition cond)
 	 * be overly optimistic sometimes. select is just a hint that you might be
 	 * able to do something.)
 	 */
-	ret = gaim_input_get_error(connect_data->fd, &error);
+	ret = purple_input_get_error(connect_data->fd, &error);
 
 	if (ret == 0 && error == EINPROGRESS) {
 		/* No worries - we'll be called again later */
 		/* TODO: Does this ever happen? */
-		gaim_debug_info("proxy", "(ret == 0 && error == EINPROGRESS)");
+		purple_debug_info("proxy", "(ret == 0 && error == EINPROGRESS)");
 		return;
 	}
 
 	if (ret != 0 || error != 0) {
 		if (ret != 0)
 			error = errno;
-		gaim_debug_info("proxy", "Error connecting to %s:%d (%s).\n",
+		purple_debug_info("proxy", "Error connecting to %s:%d (%s).\n",
 						connect_data->host, connect_data->port, strerror(error));
 
-		gaim_proxy_connect_data_disconnect(connect_data, strerror(error));
+		purple_proxy_connect_data_disconnect(connect_data, strerror(error));
 		return;
 	}
 
-	gaim_proxy_connect_data_connected(connect_data);
+	purple_proxy_connect_data_connected(connect_data);
 }
 
 static gboolean
 clean_connect(gpointer data)
 {
-	gaim_proxy_connect_data_connected(data);
+	purple_proxy_connect_data_connected(data);
 
 	return FALSE;
 }
 
 static void
-proxy_connect_none(GaimProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_none(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	gaim_debug_info("proxy", "Connecting to %s:%d with no proxy\n",
+	purple_debug_info("proxy", "Connecting to %s:%d with no proxy\n",
 			connect_data->host, connect_data->port);
 
 	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
 	{
-		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Unable to create socket:\n%s"), strerror(errno));
 		return;
 	}
@@ -456,13 +456,13 @@ proxy_connect_none(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
-			gaim_debug_info("proxy", "Connection in progress\n");
-			connect_data->inpa = gaim_input_add(connect_data->fd,
-					GAIM_INPUT_WRITE, socket_ready_cb, connect_data);
+			purple_debug_info("proxy", "Connection in progress\n");
+			connect_data->inpa = purple_input_add(connect_data->fd,
+					PURPLE_INPUT_WRITE, socket_ready_cb, connect_data);
 		}
 		else
 		{
-			gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
+			purple_proxy_connect_data_disconnect(connect_data, strerror(errno));
 		}
 	}
 	else
@@ -473,14 +473,14 @@ proxy_connect_none(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
 		int error = ETIMEDOUT;
 		int ret;
 
-		gaim_debug_info("proxy", "Connected immediately.\n");
+		purple_debug_info("proxy", "Connected immediately.\n");
 
-		ret = gaim_input_get_error(connect_data->fd, &error);
+		ret = purple_input_get_error(connect_data->fd, &error);
 		if ((ret != 0) || (error != 0))
 		{
 			if (ret != 0)
 				error = errno;
-			gaim_proxy_connect_data_disconnect(connect_data, strerror(error));
+			purple_proxy_connect_data_disconnect(connect_data, strerror(error));
 			return;
 		}
 
@@ -488,7 +488,7 @@ proxy_connect_none(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
 		 * We want to call the "connected" callback eventually, but we
 		 * don't want to call it before we return, just in case.
 		 */
-		gaim_timeout_add(10, clean_connect, connect_data);
+		purple_timeout_add(10, clean_connect, connect_data);
 	}
 }
 
@@ -499,9 +499,9 @@ proxy_connect_none(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
  * response and call a specified function.
  */
 static void
-proxy_do_write(gpointer data, gint source, GaimInputCondition cond)
+proxy_do_write(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimProxyConnectData *connect_data;
+	PurpleProxyConnectData *connect_data;
 	const guchar *request;
 	gsize request_len;
 	int ret;
@@ -518,7 +518,7 @@ proxy_do_write(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		/* Error! */
-		gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
+		purple_proxy_connect_data_disconnect(connect_data, strerror(errno));
 		return;
 	}
 	if (ret < request_len) {
@@ -529,9 +529,9 @@ proxy_do_write(gpointer data, gint source, GaimInputCondition cond)
 	/* We're done writing data!  Wait for a response. */
 	g_free(connect_data->write_buffer);
 	connect_data->write_buffer = NULL;
-	gaim_input_remove(connect_data->inpa);
-	connect_data->inpa = gaim_input_add(connect_data->fd,
-			GAIM_INPUT_READ, connect_data->read_cb, connect_data);
+	purple_input_remove(connect_data->inpa);
+	connect_data->inpa = purple_input_add(connect_data->fd,
+			PURPLE_INPUT_READ, connect_data->read_cb, connect_data);
 }
 
 #define HTTP_GOODSTRING "HTTP/1.0 200"
@@ -542,11 +542,11 @@ proxy_do_write(gpointer data, gint source, GaimInputCondition cond)
  * response to the CONNECT request.
  */
 static void
-http_canread(gpointer data, gint source, GaimInputCondition cond)
+http_canread(gpointer data, gint source, PurpleInputCondition cond)
 {
 	int len, headers_len, status = 0;
 	gboolean error;
-	GaimProxyConnectData *connect_data = data;
+	PurpleProxyConnectData *connect_data = data;
 	guchar *p;
 	gsize max_read;
 
@@ -564,7 +564,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	if (len == 0)
 	{
-		gaim_proxy_connect_data_disconnect(connect_data,
+		purple_proxy_connect_data_disconnect(connect_data,
 				_("Server closed the connection."));
 		return;
 	}
@@ -576,7 +576,7 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		/* Error! */
-		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Lost connection with server:\n%s"), strerror(errno));
 		return;
 	}
@@ -642,14 +642,14 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	if (error)
 	{
-		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Unable to parse response from HTTP proxy: %s\n"),
 				connect_data->read_buffer);
 		return;
 	}
 	else if (status != 200)
 	{
-		gaim_debug_error("proxy",
+		purple_debug_error("proxy",
 				"Proxy server replied with:\n%s\n",
 				connect_data->read_buffer);
 
@@ -663,14 +663,14 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				/* Check for Type-2 */
 				gchar *tmp = ntlm;
 				guint8 *nonce;
-				gchar *domain = (gchar*)gaim_proxy_info_get_username(connect_data->gpi);
+				gchar *domain = (gchar*)purple_proxy_info_get_username(connect_data->gpi);
 				gchar *username;
 				gchar *request;
 				gchar *response;
 				username = strchr(domain, '\\');
 				if (username == NULL)
 				{
-					gaim_proxy_connect_data_disconnect_formatted(connect_data,
+					purple_proxy_connect_data_disconnect_formatted(connect_data,
 							_("HTTP proxy connection error %d"), status);
 					return;
 				}
@@ -679,10 +679,10 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				ntlm += strlen("Proxy-Authenticate: NTLM ");
 				while(*tmp != '\r' && *tmp != '\0') tmp++;
 				*tmp = '\0';
-				nonce = gaim_ntlm_parse_type2(ntlm, NULL);
-				response = gaim_ntlm_gen_type3(username,
-					(gchar*) gaim_proxy_info_get_password(connect_data->gpi),
-					(gchar*) gaim_proxy_info_get_host(connect_data->gpi),
+				nonce = purple_ntlm_parse_type2(ntlm, NULL);
+				response = purple_ntlm_gen_type3(username,
+					(gchar*) purple_proxy_info_get_password(connect_data->gpi),
+					(gchar*) purple_proxy_info_get_host(connect_data->gpi),
 					domain, nonce, NULL);
 				username--;
 				*username = '\\';
@@ -703,20 +703,20 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 				connect_data->written_len = 0;
 				connect_data->read_cb = http_canread;
 
-				gaim_input_remove(connect_data->inpa);
-				connect_data->inpa = gaim_input_add(connect_data->fd,
-					GAIM_INPUT_WRITE, proxy_do_write, connect_data);
+				purple_input_remove(connect_data->inpa);
+				connect_data->inpa = purple_input_add(connect_data->fd,
+					PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
 				proxy_do_write(connect_data, connect_data->fd, cond);
 				return;
 			} else if((ntlm = g_strrstr((const char *)connect_data->read_buffer, "Proxy-Authenticate: NTLM"))) { /* Empty message */
 				gchar request[2048];
-				gchar *domain = (gchar*) gaim_proxy_info_get_username(connect_data->gpi);
+				gchar *domain = (gchar*) purple_proxy_info_get_username(connect_data->gpi);
 				gchar *username;
 				int request_len;
 				username = strchr(domain, '\\');
 				if (username == NULL)
 				{
-					gaim_proxy_connect_data_disconnect_formatted(connect_data,
+					purple_proxy_connect_data_disconnect_formatted(connect_data,
 							_("HTTP proxy connection error %d"), status);
 					return;
 				}
@@ -733,12 +733,12 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 					sizeof(request) - request_len,
 					"Proxy-Authorization: NTLM %s\r\n"
 					"Proxy-Connection: Keep-Alive\r\n\r\n",
-					gaim_ntlm_gen_type1(
-						(gchar*) gaim_proxy_info_get_host(connect_data->gpi),
+					purple_ntlm_gen_type1(
+						(gchar*) purple_proxy_info_get_host(connect_data->gpi),
 						domain));
 				*username = '\\';
 
-				gaim_input_remove(connect_data->inpa);
+				purple_input_remove(connect_data->inpa);
 				g_free(connect_data->read_buffer);
 				connect_data->read_buffer = NULL;
 
@@ -748,13 +748,13 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 
 				connect_data->read_cb = http_canread;
 
-				connect_data->inpa = gaim_input_add(connect_data->fd,
-					GAIM_INPUT_WRITE, proxy_do_write, connect_data);
+				connect_data->inpa = purple_input_add(connect_data->fd,
+					PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
 
 				proxy_do_write(connect_data, connect_data->fd, cond);
 				return;
 			} else {
-				gaim_proxy_connect_data_disconnect_formatted(connect_data,
+				purple_proxy_connect_data_disconnect_formatted(connect_data,
 						_("HTTP proxy connection error %d"), status);
 				return;
 			}
@@ -762,53 +762,53 @@ http_canread(gpointer data, gint source, GaimInputCondition cond)
 		if (status == 403)
 		{
 			/* Forbidden */
-			gaim_proxy_connect_data_disconnect_formatted(connect_data,
+			purple_proxy_connect_data_disconnect_formatted(connect_data,
 					_("Access denied: HTTP proxy server forbids port %d tunneling."),
 					connect_data->port);
 		} else {
-			gaim_proxy_connect_data_disconnect_formatted(connect_data,
+			purple_proxy_connect_data_disconnect_formatted(connect_data,
 					_("HTTP proxy connection error %d"), status);
 		}
 	} else {
-		gaim_input_remove(connect_data->inpa);
+		purple_input_remove(connect_data->inpa);
 		connect_data->inpa = 0;
 		g_free(connect_data->read_buffer);
 		connect_data->read_buffer = NULL;
-		gaim_debug_info("proxy", "HTTP proxy connection established\n");
-		gaim_proxy_connect_data_connected(connect_data);
+		purple_debug_info("proxy", "HTTP proxy connection established\n");
+		purple_proxy_connect_data_connected(connect_data);
 		return;
 	}
 }
 
 static void
-http_canwrite(gpointer data, gint source, GaimInputCondition cond)
+http_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 {
 	GString *request;
-	GaimProxyConnectData *connect_data;
+	PurpleProxyConnectData *connect_data;
 	int error = ETIMEDOUT;
 	int ret;
 
 	connect_data = data;
 
-	gaim_debug_info("proxy", "Connected to %s:%d.\n",
+	purple_debug_info("proxy", "Connected to %s:%d.\n",
 		connect_data->host, connect_data->port);
 
 	if (connect_data->inpa > 0)
 	{
-		gaim_input_remove(connect_data->inpa);
+		purple_input_remove(connect_data->inpa);
 		connect_data->inpa = 0;
 	}
 
-	ret = gaim_input_get_error(connect_data->fd, &error);
+	ret = purple_input_get_error(connect_data->fd, &error);
 	if ((ret != 0) || (error != 0))
 	{
 		if (ret != 0)
 			error = errno;
-		gaim_proxy_connect_data_disconnect(connect_data, strerror(error));
+		purple_proxy_connect_data_disconnect(connect_data, strerror(error));
 		return;
 	}
 
-	gaim_debug_info("proxy", "Using CONNECT tunneling for %s:%d\n",
+	purple_debug_info("proxy", "Using CONNECT tunneling for %s:%d\n",
 		connect_data->host, connect_data->port);
 
 	request = g_string_sized_new(4096);
@@ -817,23 +817,23 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 			connect_data->host, connect_data->port,
 			connect_data->host, connect_data->port);
 
-	if (gaim_proxy_info_get_username(connect_data->gpi) != NULL)
+	if (purple_proxy_info_get_username(connect_data->gpi) != NULL)
 	{
 		char *t1, *t2;
 
 		t1 = g_strdup_printf("%s:%s",
-			gaim_proxy_info_get_username(connect_data->gpi),
-			gaim_proxy_info_get_password(connect_data->gpi) ?
-				gaim_proxy_info_get_password(connect_data->gpi) : "");
-		t2 = gaim_base64_encode((const guchar *)t1, strlen(t1));
+			purple_proxy_info_get_username(connect_data->gpi),
+			purple_proxy_info_get_password(connect_data->gpi) ?
+				purple_proxy_info_get_password(connect_data->gpi) : "");
+		t2 = purple_base64_encode((const guchar *)t1, strlen(t1));
 		g_free(t1);
 
 		g_string_append_printf(request,
 			"Proxy-Authorization: Basic %s\r\n"
 			"Proxy-Authorization: NTLM %s\r\n"
 			"Proxy-Connection: Keep-Alive\r\n",
-			t2, gaim_ntlm_gen_type1(
-					gaim_proxy_info_get_host(connect_data->gpi), ""));
+			t2, purple_ntlm_gen_type1(
+					purple_proxy_info_get_host(connect_data->gpi), ""));
 		g_free(t2);
 	}
 
@@ -844,24 +844,24 @@ http_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	connect_data->written_len = 0;
 	connect_data->read_cb = http_canread;
 
-	connect_data->inpa = gaim_input_add(connect_data->fd,
-			GAIM_INPUT_WRITE, proxy_do_write, connect_data);
+	connect_data->inpa = purple_input_add(connect_data->fd,
+			PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
 	proxy_do_write(connect_data, connect_data->fd, cond);
 }
 
 static void
-proxy_connect_http(GaimProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_http(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	gaim_debug_info("proxy",
+	purple_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using HTTP\n",
 			   connect_data->host, connect_data->port,
-			   (gaim_proxy_info_get_host(connect_data->gpi) ? gaim_proxy_info_get_host(connect_data->gpi) : "(null)"),
-			   gaim_proxy_info_get_port(connect_data->gpi));
+			   (purple_proxy_info_get_host(connect_data->gpi) ? purple_proxy_info_get_host(connect_data->gpi) : "(null)"),
+			   purple_proxy_info_get_port(connect_data->gpi));
 
 	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
 	{
-		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Unable to create socket:\n%s"), strerror(errno));
 		return;
 	}
@@ -874,13 +874,13 @@ proxy_connect_http(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
 	if (connect(connect_data->fd, addr, addrlen) != 0)
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			gaim_debug_info("proxy", "Connection in progress\n");
+			purple_debug_info("proxy", "Connection in progress\n");
 
 			if (connect_data->port != 80)
 			{
 				/* we need to do CONNECT first */
-				connect_data->inpa = gaim_input_add(connect_data->fd,
-						GAIM_INPUT_WRITE, http_canwrite, connect_data);
+				connect_data->inpa = purple_input_add(connect_data->fd,
+						PURPLE_INPUT_WRITE, http_canwrite, connect_data);
 			}
 			else
 			{
@@ -892,27 +892,27 @@ proxy_connect_http(GaimProxyConnectData *connect_data, struct sockaddr *addr, so
 				 * to avoid using the CONNECT method because it's
 				 * not always allowed.
 				 */
-				gaim_debug_info("proxy", "HTTP proxy connection established\n");
-				gaim_proxy_connect_data_connected(connect_data);
+				purple_debug_info("proxy", "HTTP proxy connection established\n");
+				purple_proxy_connect_data_connected(connect_data);
 			}
 		}
 		else
 		{
-			gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
+			purple_proxy_connect_data_disconnect(connect_data, strerror(errno));
 		}
 	}
 	else
 	{
-		gaim_debug_info("proxy", "Connected immediately.\n");
+		purple_debug_info("proxy", "Connected immediately.\n");
 
-		http_canwrite(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
+		http_canwrite(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 	}
 }
 
 static void
-s4_canread(gpointer data, gint source, GaimInputCondition cond)
+s4_canread(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimProxyConnectData *connect_data = data;
+	PurpleProxyConnectData *connect_data = data;
 	guchar *buf;
 	int len, max_read;
 
@@ -934,37 +934,37 @@ s4_canread(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	else if (len + connect_data->read_len >= 4) {
 		if (connect_data->read_buffer[1] == 90) {
-			gaim_proxy_connect_data_connected(connect_data);
+			purple_proxy_connect_data_connected(connect_data);
 			return;
 		}
 	}
 
-	gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
+	purple_proxy_connect_data_disconnect(connect_data, strerror(errno));
 }
 
 static void
-s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
+s4_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 {
 	unsigned char packet[9];
 	struct hostent *hp;
-	GaimProxyConnectData *connect_data = data;
+	PurpleProxyConnectData *connect_data = data;
 	int error = ETIMEDOUT;
 	int ret;
 
-	gaim_debug_info("socks4 proxy", "Connected.\n");
+	purple_debug_info("socks4 proxy", "Connected.\n");
 
 	if (connect_data->inpa > 0)
 	{
-		gaim_input_remove(connect_data->inpa);
+		purple_input_remove(connect_data->inpa);
 		connect_data->inpa = 0;
 	}
 
-	ret = gaim_input_get_error(connect_data->fd, &error);
+	ret = purple_input_get_error(connect_data->fd, &error);
 	if ((ret != 0) || (error != 0))
 	{
 		if (ret != 0)
 			error = errno;
-		gaim_proxy_connect_data_disconnect(connect_data, strerror(error));
+		purple_proxy_connect_data_disconnect(connect_data, strerror(error));
 		return;
 	}
 
@@ -976,10 +976,10 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	 * with an option, or some detection mechanism - in the
 	 * meantime, stick with plain old SOCKS4.
 	 */
-	/* TODO: Use gaim_dnsquery_a() */
+	/* TODO: Use purple_dnsquery_a() */
 	hp = gethostbyname(connect_data->host);
 	if (hp == NULL) {
-		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Error resolving %s"), connect_data->host);
 		return;
 	}
@@ -999,24 +999,24 @@ s4_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	connect_data->written_len = 0;
 	connect_data->read_cb = s4_canread;
 
-	connect_data->inpa = gaim_input_add(connect_data->fd, GAIM_INPUT_WRITE, proxy_do_write, connect_data);
+	connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
 
 	proxy_do_write(connect_data, connect_data->fd, cond);
 }
 
 static void
-proxy_connect_socks4(GaimProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	gaim_debug_info("proxy",
+	purple_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using SOCKS4\n",
 			   connect_data->host, connect_data->port,
-			   gaim_proxy_info_get_host(connect_data->gpi),
-			   gaim_proxy_info_get_port(connect_data->gpi));
+			   purple_proxy_info_get_host(connect_data->gpi),
+			   purple_proxy_info_get_port(connect_data->gpi));
 
 	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
 	{
-		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Unable to create socket:\n%s"), strerror(errno));
 		return;
 	}
@@ -1030,28 +1030,28 @@ proxy_connect_socks4(GaimProxyConnectData *connect_data, struct sockaddr *addr, 
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
-			gaim_debug_info("proxy", "Connection in progress.\n");
-			connect_data->inpa = gaim_input_add(connect_data->fd,
-					GAIM_INPUT_WRITE, s4_canwrite, connect_data);
+			purple_debug_info("proxy", "Connection in progress.\n");
+			connect_data->inpa = purple_input_add(connect_data->fd,
+					PURPLE_INPUT_WRITE, s4_canwrite, connect_data);
 		}
 		else
 		{
-			gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
+			purple_proxy_connect_data_disconnect(connect_data, strerror(errno));
 		}
 	}
 	else
 	{
-		gaim_debug_info("proxy", "Connected immediately.\n");
+		purple_debug_info("proxy", "Connected immediately.\n");
 
-		s4_canwrite(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
+		s4_canwrite(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 	}
 }
 
 static void
-s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
+s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 {
 	guchar *dest, *buf;
-	GaimProxyConnectData *connect_data = data;
+	PurpleProxyConnectData *connect_data = data;
 	int len;
 
 	if (connect_data->read_buffer == NULL) {
@@ -1063,13 +1063,13 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 	dest = connect_data->read_buffer + connect_data->read_len;
 	buf = connect_data->read_buffer;
 
-	gaim_debug_info("socks5 proxy", "Able to read again.\n");
+	purple_debug_info("socks5 proxy", "Able to read again.\n");
 
 	len = read(connect_data->fd, dest, (connect_data->read_buf_len - connect_data->read_len));
 
 	if (len == 0)
 	{
-		gaim_proxy_connect_data_disconnect(connect_data,
+		purple_proxy_connect_data_disconnect(connect_data,
 				_("Server closed the connection."));
 		return;
 	}
@@ -1081,7 +1081,7 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		/* Error! */
-		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Lost connection with server:\n%s"), strerror(errno));
 		return;
 	}
@@ -1093,12 +1093,12 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 
 	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
 		if ((buf[0] == 0x05) && (buf[1] < 0x09)) {
-			gaim_debug_error("socks5 proxy", socks5errors[buf[1]]);
-			gaim_proxy_connect_data_disconnect(connect_data,
+			purple_debug_error("socks5 proxy", socks5errors[buf[1]]);
+			purple_proxy_connect_data_disconnect(connect_data,
 					socks5errors[buf[1]]);
 		} else {
-			gaim_debug_error("socks5 proxy", "Bad data.\n");
-			gaim_proxy_connect_data_disconnect(connect_data,
+			purple_debug_error("socks5 proxy", "Bad data.\n");
+			purple_proxy_connect_data_disconnect(connect_data,
 					_("Received invalid data on connection with server."));
 		}
 		return;
@@ -1134,13 +1134,13 @@ s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
 	/* Skip past BND.PORT */
 	buf += 2;
 
-	gaim_proxy_connect_data_connected(connect_data);
+	purple_proxy_connect_data_connected(connect_data);
 }
 
 static void
 s5_sendconnect(gpointer data, int source)
 {
-	GaimProxyConnectData *connect_data = data;
+	PurpleProxyConnectData *connect_data = data;
 	int hlen = strlen(connect_data->host);
 	connect_data->write_buf_len = 5 + hlen + 2;
 	connect_data->write_buffer = g_malloc(connect_data->write_buf_len);
@@ -1157,14 +1157,14 @@ s5_sendconnect(gpointer data, int source)
 
 	connect_data->read_cb = s5_canread_again;
 
-	connect_data->inpa = gaim_input_add(connect_data->fd, GAIM_INPUT_WRITE, proxy_do_write, connect_data);
-	proxy_do_write(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
+	connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
+	proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 }
 
 static void
-s5_readauth(gpointer data, gint source, GaimInputCondition cond)
+s5_readauth(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimProxyConnectData *connect_data = data;
+	PurpleProxyConnectData *connect_data = data;
 	int len;
 
 	if (connect_data->read_buffer == NULL) {
@@ -1173,14 +1173,14 @@ s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 		connect_data->read_len = 0;
 	}
 
-	gaim_debug_info("socks5 proxy", "Got auth response.\n");
+	purple_debug_info("socks5 proxy", "Got auth response.\n");
 
 	len = read(connect_data->fd, connect_data->read_buffer + connect_data->read_len,
 		connect_data->read_buf_len - connect_data->read_len);
 
 	if (len == 0)
 	{
-		gaim_proxy_connect_data_disconnect(connect_data,
+		purple_proxy_connect_data_disconnect(connect_data,
 				_("Server closed the connection."));
 		return;
 	}
@@ -1192,7 +1192,7 @@ s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		/* Error! */
-		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Lost connection with server:\n%s"), strerror(errno));
 		return;
 	}
@@ -1201,11 +1201,11 @@ s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 	if (connect_data->read_len < 2)
 		return;
 
-	gaim_input_remove(connect_data->inpa);
+	purple_input_remove(connect_data->inpa);
 	connect_data->inpa = 0;
 
 	if ((connect_data->read_buffer[0] != 0x01) || (connect_data->read_buffer[1] != 0x00)) {
-		gaim_proxy_connect_data_disconnect(connect_data,
+		purple_proxy_connect_data_disconnect(connect_data,
 				_("Received invalid data on connection with server."));
 		return;
 	}
@@ -1219,23 +1219,23 @@ s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 static void
 hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, unsigned char * response)
 {
-	GaimCipher *cipher;
-	GaimCipherContext *ctx;
+	PurpleCipher *cipher;
+	PurpleCipherContext *ctx;
 	int i;
 	unsigned char Kxoripad[65];
 	unsigned char Kxoropad[65];
 	int pwlen;
 
-	cipher = gaim_ciphers_find_cipher("md5");
-	ctx = gaim_cipher_context_new(cipher, NULL);
+	cipher = purple_ciphers_find_cipher("md5");
+	ctx = purple_cipher_context_new(cipher, NULL);
 
 	memset(Kxoripad,0,sizeof(Kxoripad));
 	memset(Kxoropad,0,sizeof(Kxoropad));
 
 	pwlen=strlen(passwd);
 	if (pwlen>64) {
-		gaim_cipher_context_append(ctx, (const guchar *)passwd, strlen(passwd));
-		gaim_cipher_context_digest(ctx, sizeof(Kxoripad), Kxoripad, NULL);
+		purple_cipher_context_append(ctx, (const guchar *)passwd, strlen(passwd));
+		purple_cipher_context_digest(ctx, sizeof(Kxoripad), Kxoripad, NULL);
 		pwlen=16;
 	} else {
 		memcpy(Kxoripad, passwd, pwlen);
@@ -1247,27 +1247,27 @@ hmacmd5_chap(const unsigned char * challenge, int challen, const char * passwd, 
 		Kxoropad[i]^=0x5c;
 	}
 
-	gaim_cipher_context_reset(ctx, NULL);
-	gaim_cipher_context_append(ctx, Kxoripad, 64);
-	gaim_cipher_context_append(ctx, challenge, challen);
-	gaim_cipher_context_digest(ctx, sizeof(Kxoripad), Kxoripad, NULL);
+	purple_cipher_context_reset(ctx, NULL);
+	purple_cipher_context_append(ctx, Kxoripad, 64);
+	purple_cipher_context_append(ctx, challenge, challen);
+	purple_cipher_context_digest(ctx, sizeof(Kxoripad), Kxoripad, NULL);
 
-	gaim_cipher_context_reset(ctx, NULL);
-	gaim_cipher_context_append(ctx, Kxoropad, 64);
-	gaim_cipher_context_append(ctx, Kxoripad, 16);
-	gaim_cipher_context_digest(ctx, 16, response, NULL);
+	purple_cipher_context_reset(ctx, NULL);
+	purple_cipher_context_append(ctx, Kxoropad, 64);
+	purple_cipher_context_append(ctx, Kxoripad, 16);
+	purple_cipher_context_digest(ctx, 16, response, NULL);
 
-	gaim_cipher_context_destroy(ctx);
+	purple_cipher_context_destroy(ctx);
 }
 
 static void
-s5_readchap(gpointer data, gint source, GaimInputCondition cond)
+s5_readchap(gpointer data, gint source, PurpleInputCondition cond)
 {
 	guchar *cmdbuf, *buf;
-	GaimProxyConnectData *connect_data = data;
+	PurpleProxyConnectData *connect_data = data;
 	int len, navas, currentav;
 
-	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Got CHAP response.\n");
+	purple_debug(PURPLE_DEBUG_INFO, "socks5 proxy", "Got CHAP response.\n");
 
 	if (connect_data->read_buffer == NULL) {
 		connect_data->read_buf_len = 20;
@@ -1280,7 +1280,7 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 
 	if (len == 0)
 	{
-		gaim_proxy_connect_data_disconnect(connect_data,
+		purple_proxy_connect_data_disconnect(connect_data,
 				_("Server closed the connection."));
 		return;
 	}
@@ -1292,7 +1292,7 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		/* Error! */
-		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Lost connection with server:\n%s"), strerror(errno));
 		return;
 	}
@@ -1304,7 +1304,7 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 	cmdbuf = connect_data->read_buffer;
 
 	if (*cmdbuf != 0x01) {
-		gaim_proxy_connect_data_disconnect(connect_data,
+		purple_proxy_connect_data_disconnect(connect_data,
 				_("Received invalid data on connection with server."));
 		return;
 	}
@@ -1323,7 +1323,7 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 			case 0x00:
 				/* Did auth work? */
 				if (buf[0] == 0x00) {
-					gaim_input_remove(connect_data->inpa);
+					purple_input_remove(connect_data->inpa);
 					connect_data->inpa = 0;
 					g_free(connect_data->read_buffer);
 					connect_data->read_buffer = NULL;
@@ -1332,10 +1332,10 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 					return;
 				} else {
 					/* Failure */
-					gaim_debug_warning("proxy",
+					purple_debug_warning("proxy",
 						"socks5 CHAP authentication "
 						"failed.  Disconnecting...");
-					gaim_proxy_connect_data_disconnect(connect_data,
+					purple_proxy_connect_data_disconnect(connect_data,
 							_("Authentication failed"));
 					return;
 				}
@@ -1348,35 +1348,35 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 				connect_data->written_len = 0;
 
 				hmacmd5_chap(buf, cmdbuf[1],
-					gaim_proxy_info_get_password(connect_data->gpi),
+					purple_proxy_info_get_password(connect_data->gpi),
 					connect_data->write_buffer + 4);
 				connect_data->write_buffer[0] = 0x01;
 				connect_data->write_buffer[1] = 0x01;
 				connect_data->write_buffer[2] = 0x04;
 				connect_data->write_buffer[3] = 0x10;
 
-				gaim_input_remove(connect_data->inpa);
+				purple_input_remove(connect_data->inpa);
 				g_free(connect_data->read_buffer);
 				connect_data->read_buffer = NULL;
 
 				connect_data->read_cb = s5_readchap;
 
-				connect_data->inpa = gaim_input_add(connect_data->fd,
-					GAIM_INPUT_WRITE, proxy_do_write, connect_data);
+				connect_data->inpa = purple_input_add(connect_data->fd,
+					PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
 
-				proxy_do_write(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
+				proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 				break;
 			case 0x11:
 				/* Server wants to select an algorithm */
 				if (buf[0] != 0x85) {
 					/* Only currently support HMAC-MD5 */
-					gaim_debug_warning("proxy",
+					purple_debug_warning("proxy",
 						"Server tried to select an "
 						"algorithm that we did not advertise "
 						"as supporting.  This is a violation "
 						"of the socks5 CHAP specification.  "
 						"Disconnecting...");
-					gaim_proxy_connect_data_disconnect(connect_data,
+					purple_proxy_connect_data_disconnect(connect_data,
 							_("Received invalid data on connection with server."));
 					return;
 				}
@@ -1390,9 +1390,9 @@ s5_readchap(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-s5_canread(gpointer data, gint source, GaimInputCondition cond)
+s5_canread(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimProxyConnectData *connect_data = data;
+	PurpleProxyConnectData *connect_data = data;
 	int len;
 
 	if (connect_data->read_buffer == NULL) {
@@ -1401,14 +1401,14 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 		connect_data->read_len = 0;
 	}
 
-	gaim_debug_info("socks5 proxy", "Able to read.\n");
+	purple_debug_info("socks5 proxy", "Able to read.\n");
 
 	len = read(connect_data->fd, connect_data->read_buffer + connect_data->read_len,
 		connect_data->read_buf_len - connect_data->read_len);
 
 	if (len == 0)
 	{
-		gaim_proxy_connect_data_disconnect(connect_data,
+		purple_proxy_connect_data_disconnect(connect_data,
 				_("Server closed the connection."));
 		return;
 	}
@@ -1420,7 +1420,7 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 			return;
 
 		/* Error! */
-		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Lost connection with server:\n%s"), strerror(errno));
 		return;
 	}
@@ -1429,11 +1429,11 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 	if (connect_data->read_len < 2)
 		return;
 
-	gaim_input_remove(connect_data->inpa);
+	purple_input_remove(connect_data->inpa);
 	connect_data->inpa = 0;
 
 	if ((connect_data->read_buffer[0] != 0x05) || (connect_data->read_buffer[1] == 0xff)) {
-		gaim_proxy_connect_data_disconnect(connect_data,
+		purple_proxy_connect_data_disconnect(connect_data,
 				_("Received invalid data on connection with server."));
 		return;
 	}
@@ -1442,8 +1442,8 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 		gsize i, j;
 		const char *u, *p;
 
-		u = gaim_proxy_info_get_username(connect_data->gpi);
-		p = gaim_proxy_info_get_password(connect_data->gpi);
+		u = purple_proxy_info_get_username(connect_data->gpi);
+		p = purple_proxy_info_get_password(connect_data->gpi);
 
 		i = (u == NULL) ? 0 : strlen(u);
 		j = (p == NULL) ? 0 : strlen(p);
@@ -1465,15 +1465,15 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 		connect_data->read_cb = s5_readauth;
 
-		connect_data->inpa = gaim_input_add(connect_data->fd, GAIM_INPUT_WRITE,
+		connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE,
 			proxy_do_write, connect_data);
 
-		proxy_do_write(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
+		proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 
 		return;
 	} else if (connect_data->read_buffer[1] == 0x03) {
 		gsize userlen;
-		userlen = strlen(gaim_proxy_info_get_username(connect_data->gpi));
+		userlen = strlen(purple_proxy_info_get_username(connect_data->gpi));
 
 		connect_data->write_buf_len = 7 + userlen;
 		connect_data->write_buffer = g_malloc(connect_data->write_buf_len);
@@ -1487,17 +1487,17 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 		connect_data->write_buffer[5] = 0x02;
 		connect_data->write_buffer[6] = userlen;
 		memcpy(connect_data->write_buffer + 7,
-			gaim_proxy_info_get_username(connect_data->gpi), userlen);
+			purple_proxy_info_get_username(connect_data->gpi), userlen);
 
 		g_free(connect_data->read_buffer);
 		connect_data->read_buffer = NULL;
 
 		connect_data->read_cb = s5_readchap;
 
-		connect_data->inpa = gaim_input_add(connect_data->fd, GAIM_INPUT_WRITE,
+		connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE,
 			proxy_do_write, connect_data);
 
-		proxy_do_write(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
+		proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 
 		return;
 	} else {
@@ -1509,35 +1509,35 @@ s5_canread(gpointer data, gint source, GaimInputCondition cond)
 }
 
 static void
-s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
+s5_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 {
 	unsigned char buf[5];
 	int i;
-	GaimProxyConnectData *connect_data = data;
+	PurpleProxyConnectData *connect_data = data;
 	int error = ETIMEDOUT;
 	int ret;
 
-	gaim_debug_info("socks5 proxy", "Connected.\n");
+	purple_debug_info("socks5 proxy", "Connected.\n");
 
 	if (connect_data->inpa > 0)
 	{
-		gaim_input_remove(connect_data->inpa);
+		purple_input_remove(connect_data->inpa);
 		connect_data->inpa = 0;
 	}
 
-	ret = gaim_input_get_error(connect_data->fd, &error);
+	ret = purple_input_get_error(connect_data->fd, &error);
 	if ((ret != 0) || (error != 0))
 	{
 		if (ret != 0)
 			error = errno;
-		gaim_proxy_connect_data_disconnect(connect_data, strerror(error));
+		purple_proxy_connect_data_disconnect(connect_data, strerror(error));
 		return;
 	}
 
 	i = 0;
 	buf[0] = 0x05;		/* SOCKS version 5 */
 
-	if (gaim_proxy_info_get_username(connect_data->gpi) != NULL) {
+	if (purple_proxy_info_get_username(connect_data->gpi) != NULL) {
 		buf[1] = 0x03;	/* three methods */
 		buf[2] = 0x00;	/* no authentication */
 		buf[3] = 0x03;	/* CHAP authentication */
@@ -1556,23 +1556,23 @@ s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 
 	connect_data->read_cb = s5_canread;
 
-	connect_data->inpa = gaim_input_add(connect_data->fd, GAIM_INPUT_WRITE, proxy_do_write, connect_data);
-	proxy_do_write(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
+	connect_data->inpa = purple_input_add(connect_data->fd, PURPLE_INPUT_WRITE, proxy_do_write, connect_data);
+	proxy_do_write(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 }
 
 static void
-proxy_connect_socks5(GaimProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
+proxy_connect_socks5(PurpleProxyConnectData *connect_data, struct sockaddr *addr, socklen_t addrlen)
 {
-	gaim_debug_info("proxy",
+	purple_debug_info("proxy",
 			   "Connecting to %s:%d via %s:%d using SOCKS5\n",
 			   connect_data->host, connect_data->port,
-			   gaim_proxy_info_get_host(connect_data->gpi),
-			   gaim_proxy_info_get_port(connect_data->gpi));
+			   purple_proxy_info_get_host(connect_data->gpi),
+			   purple_proxy_info_get_port(connect_data->gpi));
 
 	connect_data->fd = socket(addr->sa_family, SOCK_STREAM, 0);
 	if (connect_data->fd < 0)
 	{
-		gaim_proxy_connect_data_disconnect_formatted(connect_data,
+		purple_proxy_connect_data_disconnect_formatted(connect_data,
 				_("Unable to create socket:\n%s"), strerror(errno));
 		return;
 	}
@@ -1586,31 +1586,31 @@ proxy_connect_socks5(GaimProxyConnectData *connect_data, struct sockaddr *addr, 
 	{
 		if ((errno == EINPROGRESS) || (errno == EINTR))
 		{
-			gaim_debug_info("socks5 proxy", "Connection in progress\n");
-			connect_data->inpa = gaim_input_add(connect_data->fd,
-					GAIM_INPUT_WRITE, s5_canwrite, connect_data);
+			purple_debug_info("socks5 proxy", "Connection in progress\n");
+			connect_data->inpa = purple_input_add(connect_data->fd,
+					PURPLE_INPUT_WRITE, s5_canwrite, connect_data);
 		}
 		else
 		{
-			gaim_proxy_connect_data_disconnect(connect_data, strerror(errno));
+			purple_proxy_connect_data_disconnect(connect_data, strerror(errno));
 		}
 	}
 	else
 	{
-		gaim_debug_info("proxy", "Connected immediately.\n");
+		purple_debug_info("proxy", "Connected immediately.\n");
 
-		s5_canwrite(connect_data, connect_data->fd, GAIM_INPUT_WRITE);
+		s5_canwrite(connect_data, connect_data->fd, PURPLE_INPUT_WRITE);
 	}
 }
 
 /**
  * This function attempts to connect to the next IP address in the list
- * of IP addresses returned to us by gaim_dnsquery_a() and attemps
+ * of IP addresses returned to us by purple_dnsquery_a() and attemps
  * to connect to each one.  This is called after the hostname is
  * resolved, and each time a connection attempt fails (assuming there
  * is another IP address to try).
  */
-static void try_connect(GaimProxyConnectData *connect_data)
+static void try_connect(PurpleProxyConnectData *connect_data)
 {
 	size_t addrlen;
 	struct sockaddr *addr;
@@ -1623,26 +1623,26 @@ static void try_connect(GaimProxyConnectData *connect_data)
 
 	inet_ntop(addr->sa_family, &((struct sockaddr_in *)addr)->sin_addr,
 			ipaddr, sizeof(ipaddr));
-	gaim_debug_info("proxy", "Attempting connection to %s\n", ipaddr);
+	purple_debug_info("proxy", "Attempting connection to %s\n", ipaddr);
 
-	switch (gaim_proxy_info_get_type(connect_data->gpi)) {
-		case GAIM_PROXY_NONE:
+	switch (purple_proxy_info_get_type(connect_data->gpi)) {
+		case PURPLE_PROXY_NONE:
 			proxy_connect_none(connect_data, addr, addrlen);
 			break;
 
-		case GAIM_PROXY_HTTP:
+		case PURPLE_PROXY_HTTP:
 			proxy_connect_http(connect_data, addr, addrlen);
 			break;
 
-		case GAIM_PROXY_SOCKS4:
+		case PURPLE_PROXY_SOCKS4:
 			proxy_connect_socks4(connect_data, addr, addrlen);
 			break;
 
-		case GAIM_PROXY_SOCKS5:
+		case PURPLE_PROXY_SOCKS5:
 			proxy_connect_socks5(connect_data, addr, addrlen);
 			break;
 
-		case GAIM_PROXY_USE_ENVVAR:
+		case PURPLE_PROXY_USE_ENVVAR:
 			proxy_connect_http(connect_data, addr, addrlen);
 			break;
 
@@ -1657,20 +1657,20 @@ static void
 connection_host_resolved(GSList *hosts, gpointer data,
 						 const char *error_message)
 {
-	GaimProxyConnectData *connect_data;
+	PurpleProxyConnectData *connect_data;
 
 	connect_data = data;
 	connect_data->query_data = NULL;
 
 	if (error_message != NULL)
 	{
-		gaim_proxy_connect_data_disconnect(connect_data, error_message);
+		purple_proxy_connect_data_disconnect(connect_data, error_message);
 		return;
 	}
 
 	if (hosts == NULL)
 	{
-		gaim_proxy_connect_data_disconnect(connect_data, _("Could not resolve host name"));
+		purple_proxy_connect_data_disconnect(connect_data, _("Could not resolve host name"));
 		return;
 	}
 
@@ -1679,34 +1679,34 @@ connection_host_resolved(GSList *hosts, gpointer data,
 	try_connect(connect_data);
 }
 
-GaimProxyInfo *
-gaim_proxy_get_setup(GaimAccount *account)
+PurpleProxyInfo *
+purple_proxy_get_setup(PurpleAccount *account)
 {
-	GaimProxyInfo *gpi = NULL;
+	PurpleProxyInfo *gpi = NULL;
 	const gchar *tmp;
 
 	/* This is used as a fallback so we don't overwrite the selected proxy type */
-	static GaimProxyInfo *tmp_none_proxy_info = NULL;
+	static PurpleProxyInfo *tmp_none_proxy_info = NULL;
 	if (!tmp_none_proxy_info) {
-		tmp_none_proxy_info = gaim_proxy_info_new();
-		gaim_proxy_info_set_type(tmp_none_proxy_info, GAIM_PROXY_NONE);
+		tmp_none_proxy_info = purple_proxy_info_new();
+		purple_proxy_info_set_type(tmp_none_proxy_info, PURPLE_PROXY_NONE);
 	}
 
-	if (account && gaim_account_get_proxy_info(account) != NULL) {
-		gpi = gaim_account_get_proxy_info(account);
-		if (gaim_proxy_info_get_type(gpi) == GAIM_PROXY_USE_GLOBAL)
+	if (account && purple_account_get_proxy_info(account) != NULL) {
+		gpi = purple_account_get_proxy_info(account);
+		if (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_USE_GLOBAL)
 			gpi = NULL;
 	}
 	if (gpi == NULL) {
-		if (gaim_running_gnome())
-			gpi = gaim_gnome_proxy_get_info();
+		if (purple_running_gnome())
+			gpi = purple_gnome_proxy_get_info();
 		else
-			gpi = gaim_global_proxy_get_info();
+			gpi = purple_global_proxy_get_info();
 	}
 
-	if (gaim_proxy_info_get_type(gpi) == GAIM_PROXY_USE_ENVVAR) {
+	if (purple_proxy_info_get_type(gpi) == PURPLE_PROXY_USE_ENVVAR) {
 #ifdef _WIN32
-		wgaim_check_for_proxy_changes();
+		wpurple_check_for_proxy_changes();
 #endif
 		if ((tmp = g_getenv("HTTP_PROXY")) != NULL ||
 			(tmp = g_getenv("http_proxy")) != NULL ||
@@ -1717,14 +1717,14 @@ gaim_proxy_get_setup(GaimAccount *account)
 			/* http_proxy-format:
 			 * export http_proxy="http://user:passwd@your.proxy.server:port/"
 			 */
-			if(gaim_url_parse(tmp, &proxyhost, &proxyport, NULL, &proxyuser, &proxypasswd)) {
-				gaim_proxy_info_set_host(gpi, proxyhost);
+			if(purple_url_parse(tmp, &proxyhost, &proxyport, NULL, &proxyuser, &proxypasswd)) {
+				purple_proxy_info_set_host(gpi, proxyhost);
 				g_free(proxyhost);
 
-				gaim_proxy_info_set_username(gpi, proxyuser);
+				purple_proxy_info_set_username(gpi, proxyuser);
 				g_free(proxyuser);
 
-				gaim_proxy_info_set_password(gpi, proxypasswd);
+				purple_proxy_info_set_password(gpi, proxypasswd);
 				g_free(proxypasswd);
 
 				/* only for backward compatibility */
@@ -1734,23 +1734,23 @@ gaim_proxy_get_setup(GaimAccount *account)
 				     (tmp = g_getenv("HTTPPROXYPORT")) != NULL))
 					proxyport = atoi(tmp);
 
-				gaim_proxy_info_set_port(gpi, proxyport);
+				purple_proxy_info_set_port(gpi, proxyport);
 
 				/* XXX: Do we want to skip this step if user/password were part of url? */
 				if ((tmp = g_getenv("HTTP_PROXY_USER")) != NULL ||
 					(tmp = g_getenv("http_proxy_user")) != NULL ||
 					(tmp = g_getenv("HTTPPROXYUSER")) != NULL)
-					gaim_proxy_info_set_username(gpi, tmp);
+					purple_proxy_info_set_username(gpi, tmp);
 
 				if ((tmp = g_getenv("HTTP_PROXY_PASS")) != NULL ||
 					(tmp = g_getenv("http_proxy_pass")) != NULL ||
 					(tmp = g_getenv("HTTPPROXYPASS")) != NULL)
-					gaim_proxy_info_set_password(gpi, tmp);
+					purple_proxy_info_set_password(gpi, tmp);
 
 			}
 		} else {
 			/* no proxy environment variable found, don't use a proxy */
-			gaim_debug_info("proxy", "No environment settings found, not using a proxy\n");
+			purple_debug_info("proxy", "No environment settings found, not using a proxy\n");
 			gpi = tmp_none_proxy_info;
 		}
 
@@ -1759,60 +1759,60 @@ gaim_proxy_get_setup(GaimAccount *account)
 	return gpi;
 }
 
-GaimProxyConnectData *
-gaim_proxy_connect(void *handle, GaimAccount *account,
+PurpleProxyConnectData *
+purple_proxy_connect(void *handle, PurpleAccount *account,
 				   const char *host, int port,
-				   GaimProxyConnectFunction connect_cb, gpointer data)
+				   PurpleProxyConnectFunction connect_cb, gpointer data)
 {
 	const char *connecthost = host;
 	int connectport = port;
-	GaimProxyConnectData *connect_data;
+	PurpleProxyConnectData *connect_data;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >  0,    NULL);
 	g_return_val_if_fail(connect_cb != NULL, NULL);
 
-	connect_data = g_new0(GaimProxyConnectData, 1);
+	connect_data = g_new0(PurpleProxyConnectData, 1);
 	connect_data->fd = -1;
 	connect_data->handle = handle;
 	connect_data->connect_cb = connect_cb;
 	connect_data->data = data;
 	connect_data->host = g_strdup(host);
 	connect_data->port = port;
-	connect_data->gpi = gaim_proxy_get_setup(account);
+	connect_data->gpi = purple_proxy_get_setup(account);
 
-	if ((gaim_proxy_info_get_type(connect_data->gpi) != GAIM_PROXY_NONE) &&
-		(gaim_proxy_info_get_host(connect_data->gpi) == NULL ||
-		 gaim_proxy_info_get_port(connect_data->gpi) <= 0)) {
+	if ((purple_proxy_info_get_type(connect_data->gpi) != PURPLE_PROXY_NONE) &&
+		(purple_proxy_info_get_host(connect_data->gpi) == NULL ||
+		 purple_proxy_info_get_port(connect_data->gpi) <= 0)) {
 
-		gaim_notify_error(NULL, NULL, _("Invalid proxy settings"), _("Either the host name or port number specified for your given proxy type is invalid."));
-		gaim_proxy_connect_data_destroy(connect_data);
+		purple_notify_error(NULL, NULL, _("Invalid proxy settings"), _("Either the host name or port number specified for your given proxy type is invalid."));
+		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
 	}
 
-	switch (gaim_proxy_info_get_type(connect_data->gpi))
+	switch (purple_proxy_info_get_type(connect_data->gpi))
 	{
-		case GAIM_PROXY_NONE:
+		case PURPLE_PROXY_NONE:
 			break;
 
-		case GAIM_PROXY_HTTP:
-		case GAIM_PROXY_SOCKS4:
-		case GAIM_PROXY_SOCKS5:
-		case GAIM_PROXY_USE_ENVVAR:
-			connecthost = gaim_proxy_info_get_host(connect_data->gpi);
-			connectport = gaim_proxy_info_get_port(connect_data->gpi);
+		case PURPLE_PROXY_HTTP:
+		case PURPLE_PROXY_SOCKS4:
+		case PURPLE_PROXY_SOCKS5:
+		case PURPLE_PROXY_USE_ENVVAR:
+			connecthost = purple_proxy_info_get_host(connect_data->gpi);
+			connectport = purple_proxy_info_get_port(connect_data->gpi);
 			break;
 
 		default:
-			gaim_proxy_connect_data_destroy(connect_data);
+			purple_proxy_connect_data_destroy(connect_data);
 			return NULL;
 	}
 
-	connect_data->query_data = gaim_dnsquery_a(connecthost,
+	connect_data->query_data = purple_dnsquery_a(connecthost,
 			connectport, connection_host_resolved, connect_data);
 	if (connect_data->query_data == NULL)
 	{
-		gaim_proxy_connect_data_destroy(connect_data);
+		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
 	}
 
@@ -1822,21 +1822,21 @@ gaim_proxy_connect(void *handle, GaimAccount *account,
 }
 
 /*
- * Combine some of this code with gaim_proxy_connect()
+ * Combine some of this code with purple_proxy_connect()
  */
-GaimProxyConnectData *
-gaim_proxy_connect_socks5(void *handle, GaimProxyInfo *gpi,
+PurpleProxyConnectData *
+purple_proxy_connect_socks5(void *handle, PurpleProxyInfo *gpi,
 						  const char *host, int port,
-						  GaimProxyConnectFunction connect_cb,
+						  PurpleProxyConnectFunction connect_cb,
 						  gpointer data)
 {
-	GaimProxyConnectData *connect_data;
+	PurpleProxyConnectData *connect_data;
 
 	g_return_val_if_fail(host       != NULL, NULL);
 	g_return_val_if_fail(port       >= 0,    NULL);
 	g_return_val_if_fail(connect_cb != NULL, NULL);
 
-	connect_data = g_new0(GaimProxyConnectData, 1);
+	connect_data = g_new0(PurpleProxyConnectData, 1);
 	connect_data->fd = -1;
 	connect_data->handle = handle;
 	connect_data->connect_cb = connect_cb;
@@ -1846,12 +1846,12 @@ gaim_proxy_connect_socks5(void *handle, GaimProxyInfo *gpi,
 	connect_data->gpi = gpi;
 
 	connect_data->query_data =
-			gaim_dnsquery_a(gaim_proxy_info_get_host(gpi),
-					gaim_proxy_info_get_port(gpi),
+			purple_dnsquery_a(purple_proxy_info_get_host(gpi),
+					purple_proxy_info_get_port(gpi),
 					connection_host_resolved, connect_data);
 	if (connect_data->query_data == NULL)
 	{
-		gaim_proxy_connect_data_destroy(connect_data);
+		purple_proxy_connect_data_destroy(connect_data);
 		return NULL;
 	}
 
@@ -1861,63 +1861,63 @@ gaim_proxy_connect_socks5(void *handle, GaimProxyInfo *gpi,
 }
 
 void
-gaim_proxy_connect_cancel(GaimProxyConnectData *connect_data)
+purple_proxy_connect_cancel(PurpleProxyConnectData *connect_data)
 {
-	gaim_proxy_connect_data_disconnect(connect_data, NULL);
-	gaim_proxy_connect_data_destroy(connect_data);
+	purple_proxy_connect_data_disconnect(connect_data, NULL);
+	purple_proxy_connect_data_destroy(connect_data);
 }
 
 void
-gaim_proxy_connect_cancel_with_handle(void *handle)
+purple_proxy_connect_cancel_with_handle(void *handle)
 {
 	GSList *l, *l_next;
 
 	for (l = handles; l != NULL; l = l_next) {
-		GaimProxyConnectData *connect_data = l->data;
+		PurpleProxyConnectData *connect_data = l->data;
 
 		l_next = l->next;
 
 		if (connect_data->handle == handle)
-			gaim_proxy_connect_cancel(connect_data);
+			purple_proxy_connect_cancel(connect_data);
 	}
 }
 
 static void
-proxy_pref_cb(const char *name, GaimPrefType type,
+proxy_pref_cb(const char *name, PurplePrefType type,
 			  gconstpointer value, gpointer data)
 {
-	GaimProxyInfo *info = gaim_global_proxy_get_info();
+	PurpleProxyInfo *info = purple_global_proxy_get_info();
 
 	if (!strcmp(name, "/core/proxy/type")) {
 		int proxytype;
 		const char *type = value;
 
 		if (!strcmp(type, "none"))
-			proxytype = GAIM_PROXY_NONE;
+			proxytype = PURPLE_PROXY_NONE;
 		else if (!strcmp(type, "http"))
-			proxytype = GAIM_PROXY_HTTP;
+			proxytype = PURPLE_PROXY_HTTP;
 		else if (!strcmp(type, "socks4"))
-			proxytype = GAIM_PROXY_SOCKS4;
+			proxytype = PURPLE_PROXY_SOCKS4;
 		else if (!strcmp(type, "socks5"))
-			proxytype = GAIM_PROXY_SOCKS5;
+			proxytype = PURPLE_PROXY_SOCKS5;
 		else if (!strcmp(type, "envvar"))
-			proxytype = GAIM_PROXY_USE_ENVVAR;
+			proxytype = PURPLE_PROXY_USE_ENVVAR;
 		else
 			proxytype = -1;
 
-		gaim_proxy_info_set_type(info, proxytype);
+		purple_proxy_info_set_type(info, proxytype);
 	} else if (!strcmp(name, "/core/proxy/host"))
-		gaim_proxy_info_set_host(info, value);
+		purple_proxy_info_set_host(info, value);
 	else if (!strcmp(name, "/core/proxy/port"))
-		gaim_proxy_info_set_port(info, GPOINTER_TO_INT(value));
+		purple_proxy_info_set_port(info, GPOINTER_TO_INT(value));
 	else if (!strcmp(name, "/core/proxy/username"))
-		gaim_proxy_info_set_username(info, value);
+		purple_proxy_info_set_username(info, value);
 	else if (!strcmp(name, "/core/proxy/password"))
-		gaim_proxy_info_set_password(info, value);
+		purple_proxy_info_set_password(info, value);
 }
 
 void *
-gaim_proxy_get_handle()
+purple_proxy_get_handle()
 {
 	static int handle;
 
@@ -1925,41 +1925,41 @@ gaim_proxy_get_handle()
 }
 
 void
-gaim_proxy_init(void)
+purple_proxy_init(void)
 {
 	void *handle;
 
 	/* Initialize a default proxy info struct. */
-	global_proxy_info = gaim_proxy_info_new();
+	global_proxy_info = purple_proxy_info_new();
 
 	/* Proxy */
-	gaim_prefs_add_none("/core/proxy");
-	gaim_prefs_add_string("/core/proxy/type", "none");
-	gaim_prefs_add_string("/core/proxy/host", "");
-	gaim_prefs_add_int("/core/proxy/port", 0);
-	gaim_prefs_add_string("/core/proxy/username", "");
-	gaim_prefs_add_string("/core/proxy/password", "");
+	purple_prefs_add_none("/core/proxy");
+	purple_prefs_add_string("/core/proxy/type", "none");
+	purple_prefs_add_string("/core/proxy/host", "");
+	purple_prefs_add_int("/core/proxy/port", 0);
+	purple_prefs_add_string("/core/proxy/username", "");
+	purple_prefs_add_string("/core/proxy/password", "");
 
 	/* Setup callbacks for the preferences. */
-	handle = gaim_proxy_get_handle();
-	gaim_prefs_connect_callback(handle, "/core/proxy/type", proxy_pref_cb,
+	handle = purple_proxy_get_handle();
+	purple_prefs_connect_callback(handle, "/core/proxy/type", proxy_pref_cb,
 		NULL);
-	gaim_prefs_connect_callback(handle, "/core/proxy/host", proxy_pref_cb,
+	purple_prefs_connect_callback(handle, "/core/proxy/host", proxy_pref_cb,
 		NULL);
-	gaim_prefs_connect_callback(handle, "/core/proxy/port", proxy_pref_cb,
+	purple_prefs_connect_callback(handle, "/core/proxy/port", proxy_pref_cb,
 		NULL);
-	gaim_prefs_connect_callback(handle, "/core/proxy/username",
+	purple_prefs_connect_callback(handle, "/core/proxy/username",
 		proxy_pref_cb, NULL);
-	gaim_prefs_connect_callback(handle, "/core/proxy/password",
+	purple_prefs_connect_callback(handle, "/core/proxy/password",
 		proxy_pref_cb, NULL);
 }
 
 void
-gaim_proxy_uninit(void)
+purple_proxy_uninit(void)
 {
 	while (handles != NULL)
 	{
-		gaim_proxy_connect_data_disconnect(handles->data, NULL);
-		gaim_proxy_connect_data_destroy(handles->data);
+		purple_proxy_connect_data_disconnect(handles->data, NULL);
+		purple_proxy_connect_data_destroy(handles->data);
 	}
 }

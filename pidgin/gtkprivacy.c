@@ -2,9 +2,9 @@
  * @file gtkprivacy.c GTK+ Privacy UI
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -57,13 +57,13 @@ typedef struct
 
 	gboolean in_allow_list;
 
-	GaimAccount *account;
+	PurpleAccount *account;
 
 } PidginPrivacyDialog;
 
 typedef struct
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	char *name;
 	gboolean block;
 
@@ -76,11 +76,11 @@ static struct
 
 } menu_entries[] =
 {
-	{ N_("Allow all users to contact me"),         GAIM_PRIVACY_ALLOW_ALL },
-	{ N_("Allow only the users on my buddy list"), GAIM_PRIVACY_ALLOW_BUDDYLIST },
-	{ N_("Allow only the users below"),            GAIM_PRIVACY_ALLOW_USERS },
-	{ N_("Block all users"),                       GAIM_PRIVACY_DENY_ALL },
-	{ N_("Block only the users below"),            GAIM_PRIVACY_DENY_USERS }
+	{ N_("Allow all users to contact me"),         PURPLE_PRIVACY_ALLOW_ALL },
+	{ N_("Allow only the users on my buddy list"), PURPLE_PRIVACY_ALLOW_BUDDYLIST },
+	{ N_("Allow only the users below"),            PURPLE_PRIVACY_ALLOW_USERS },
+	{ N_("Block all users"),                       PURPLE_PRIVACY_DENY_ALL },
+	{ N_("Block only the users below"),            PURPLE_PRIVACY_DENY_USERS }
 };
 
 static size_t menu_entry_count = sizeof(menu_entries) / sizeof(*menu_entries);
@@ -124,8 +124,8 @@ find_permit_block_by_name(GSList *list, const char *name)
 	for (l = list; l != NULL; l = l->next) {
 		temp_name = (const char *)l->data;
 
-		/* Should this use gaim_normalize()? */
-		if (!gaim_utf8_strcasecmp(name, temp_name))
+		/* Should this use purple_normalize()? */
+		if (!purple_utf8_strcasecmp(name, temp_name))
 			return temp_name;
 	}
 
@@ -226,7 +226,7 @@ destroy_cb(GtkWidget *w, GdkEvent *event, PidginPrivacyDialog *dialog)
 }
 
 static void
-select_account_cb(GtkWidget *dropdown, GaimAccount *account,
+select_account_cb(GtkWidget *dropdown, PurpleAccount *account,
 				  PidginPrivacyDialog *dialog)
 {
 	int i;
@@ -254,25 +254,25 @@ type_changed_cb(GtkOptionMenu *optmenu, PidginPrivacyDialog *dialog)
 	int new_type = menu_entries[gtk_option_menu_get_history(optmenu)].num;
 
 	dialog->account->perm_deny = new_type;
-	serv_set_permit_deny(gaim_account_get_connection(dialog->account));
+	serv_set_permit_deny(purple_account_get_connection(dialog->account));
 
 	gtk_widget_hide(dialog->allow_widget);
 	gtk_widget_hide(dialog->block_widget);
 	gtk_widget_hide(dialog->button_box);
 
-	if (new_type == GAIM_PRIVACY_ALLOW_USERS) {
+	if (new_type == PURPLE_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = TRUE;
 	}
-	else if (new_type == GAIM_PRIVACY_DENY_USERS) {
+	else if (new_type == PURPLE_PRIVACY_DENY_USERS) {
 		gtk_widget_show(dialog->block_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = FALSE;
 	}
 
-	gaim_blist_schedule_save();
-	pidgin_blist_refresh(gaim_get_blist());
+	purple_blist_schedule_save();
+	pidgin_blist_refresh(purple_get_blist());
 }
 
 static void
@@ -314,11 +314,11 @@ remove_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 
 	if (dialog->in_allow_list) {
 		if (find_permit_block_by_name(dialog->account->permit, name))
-			gaim_privacy_permit_remove(dialog->account, name, FALSE);
+			purple_privacy_permit_remove(dialog->account, name, FALSE);
 	}
 	else {
 		if (find_permit_block_by_name(dialog->account->deny, name))
-			gaim_privacy_deny_remove(dialog->account, name, FALSE);
+			purple_privacy_deny_remove(dialog->account, name, FALSE);
 	}
 	g_free(name);
 }
@@ -336,9 +336,9 @@ clear_cb(GtkWidget *button, PidginPrivacyDialog *dialog)
 		user = l->data;
 		l = l->next;
 		if (dialog->in_allow_list)
-			gaim_privacy_permit_remove(dialog->account, user, FALSE);
+			purple_privacy_permit_remove(dialog->account, user, FALSE);
 		else
-			gaim_privacy_deny_remove(dialog->account, user, FALSE);
+			purple_privacy_deny_remove(dialog->account, user, FALSE);
 	}
 }
 
@@ -370,13 +370,13 @@ privacy_dialog_new(void)
 	gtk_window_set_resizable(GTK_WINDOW(dialog->win), FALSE);
 	gtk_window_set_role(GTK_WINDOW(dialog->win), "privacy");
 	gtk_window_set_title(GTK_WINDOW(dialog->win), _("Privacy"));
-	gtk_container_set_border_width(GTK_CONTAINER(dialog->win), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog->win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(dialog->win), "delete_event",
 					 G_CALLBACK(destroy_cb), dialog);
 
 	/* Main vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(dialog->win), vbox);
 	gtk_widget_show(vbox);
 
@@ -389,7 +389,7 @@ privacy_dialog_new(void)
 	gtk_widget_show(label);
 
 	/* Hbox for the accounts drop-down and label. */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -482,12 +482,12 @@ privacy_dialog_new(void)
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(close_cb), dialog);
 
-	if (dialog->account->perm_deny == GAIM_PRIVACY_ALLOW_USERS) {
+	if (dialog->account->perm_deny == PURPLE_PRIVACY_ALLOW_USERS) {
 		gtk_widget_show(dialog->allow_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = TRUE;
 	}
-	else if (dialog->account->perm_deny == GAIM_PRIVACY_DENY_USERS) {
+	else if (dialog->account->perm_deny == PURPLE_PRIVACY_DENY_USERS) {
 		gtk_widget_show(dialog->block_widget);
 		gtk_widget_show(dialog->button_box);
 		dialog->in_allow_list = FALSE;
@@ -499,7 +499,7 @@ privacy_dialog_new(void)
 void
 pidgin_privacy_dialog_show(void)
 {
-	g_return_if_fail(gaim_connections_get_all() != NULL);
+	g_return_if_fail(purple_connections_get_all() != NULL);
 
 	if (privacy_dialog == NULL)
 		privacy_dialog = privacy_dialog_new();
@@ -529,9 +529,9 @@ static void
 confirm_permit_block_cb(PidginPrivacyRequestData *data, int option)
 {
 	if (data->block)
-		gaim_privacy_deny(data->account, data->name, FALSE, FALSE);
+		purple_privacy_deny(data->account, data->name, FALSE, FALSE);
 	else
-		gaim_privacy_allow(data->account, data->name, FALSE, FALSE);
+		purple_privacy_allow(data->account, data->name, FALSE, FALSE);
 
 	destroy_request_data(data);
 }
@@ -545,7 +545,7 @@ add_permit_block_cb(PidginPrivacyRequestData *data, const char *name)
 }
 
 void
-pidgin_request_add_permit(GaimAccount *account, const char *name)
+pidgin_request_add_permit(PurpleAccount *account, const char *name)
 {
 	PidginPrivacyRequestData *data;
 
@@ -557,7 +557,7 @@ pidgin_request_add_permit(GaimAccount *account, const char *name)
 	data->block   = FALSE;
 
 	if (name == NULL) {
-		gaim_request_input(account, _("Permit User"),
+		purple_request_input(account, _("Permit User"),
 			_("Type a user you permit to contact you."),
 			_("Please enter the name of the user you wish to be "
 			  "able to contact you."),
@@ -573,7 +573,7 @@ pidgin_request_add_permit(GaimAccount *account, const char *name)
 							  "%s to contact you?"), name);
 
 
-		gaim_request_action(account, _("Permit User"), primary, secondary,
+		purple_request_action(account, _("Permit User"), primary, secondary,
 							0, data, 2,
 							_("_Permit"), G_CALLBACK(confirm_permit_block_cb),
 							_("Cancel"), G_CALLBACK(destroy_request_data));
@@ -584,7 +584,7 @@ pidgin_request_add_permit(GaimAccount *account, const char *name)
 }
 
 void
-pidgin_request_add_block(GaimAccount *account, const char *name)
+pidgin_request_add_block(PurpleAccount *account, const char *name)
 {
 	PidginPrivacyRequestData *data;
 
@@ -596,7 +596,7 @@ pidgin_request_add_block(GaimAccount *account, const char *name)
 	data->block   = TRUE;
 
 	if (name == NULL) {
-		gaim_request_input(account, _("Block User"),
+		purple_request_input(account, _("Block User"),
 			_("Type a user to block."),
 			_("Please enter the name of the user you wish to block."),
 			NULL, FALSE, FALSE, NULL,
@@ -609,7 +609,7 @@ pidgin_request_add_block(GaimAccount *account, const char *name)
 		char *secondary =
 			g_strdup_printf(_("Are you sure you want to block %s?"), name);
 
-		gaim_request_action(account, _("Block User"), primary, secondary,
+		purple_request_action(account, _("Block User"), primary, secondary,
 							0, data, 2,
 							_("_Block"), G_CALLBACK(confirm_permit_block_cb),
 							_("Cancel"), G_CALLBACK(destroy_request_data));
@@ -620,20 +620,20 @@ pidgin_request_add_block(GaimAccount *account, const char *name)
 }
 
 static void
-pidgin_permit_added_removed(GaimAccount *account, const char *name)
+pidgin_permit_added_removed(PurpleAccount *account, const char *name)
 {
 	if (privacy_dialog != NULL)
 		rebuild_allow_list(privacy_dialog);
 }
 
 static void
-pidgin_deny_added_removed(GaimAccount *account, const char *name)
+pidgin_deny_added_removed(PurpleAccount *account, const char *name)
 {
 	if (privacy_dialog != NULL)
 		rebuild_block_list(privacy_dialog);
 }
 
-static GaimPrivacyUiOps privacy_ops =
+static PurplePrivacyUiOps privacy_ops =
 {
 	pidgin_permit_added_removed,
 	pidgin_permit_added_removed,
@@ -641,7 +641,7 @@ static GaimPrivacyUiOps privacy_ops =
 	pidgin_deny_added_removed
 };
 
-GaimPrivacyUiOps *
+PurplePrivacyUiOps *
 pidgin_privacy_get_ui_ops(void)
 {
 	return &privacy_ops;

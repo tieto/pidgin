@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -32,9 +32,9 @@
 /******************************************************************************
  * Prototypes
  *****************************************************************************/
-static void pidgin_whiteboard_create(GaimWhiteboard *wb);
+static void pidgin_whiteboard_create(PurpleWhiteboard *wb);
 
-static void pidgin_whiteboard_destroy(GaimWhiteboard *wb);
+static void pidgin_whiteboard_destroy(PurpleWhiteboard *wb);
 static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, PidginWhiteboard *gtkwb);
 
 /*static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data); */
@@ -46,14 +46,14 @@ static gboolean pidgin_whiteboard_brush_down(GtkWidget *widget, GdkEventButton *
 static gboolean pidgin_whiteboard_brush_motion(GtkWidget *widget, GdkEventMotion *event, gpointer data);
 static gboolean pidgin_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *event, gpointer data);
 
-static void pidgin_whiteboard_draw_brush_point(GaimWhiteboard *wb,
+static void pidgin_whiteboard_draw_brush_point(PurpleWhiteboard *wb,
 												  int x, int y, int color, int size);
-static void pidgin_whiteboard_draw_brush_line(GaimWhiteboard *wb, int x0, int y0,
+static void pidgin_whiteboard_draw_brush_line(PurpleWhiteboard *wb, int x0, int y0,
 												int x1, int y1, int color, int size);
 
-static void pidgin_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int height);
-static void pidgin_whiteboard_set_brush(GaimWhiteboard *wb, int size, int color);
-static void pidgin_whiteboard_clear(GaimWhiteboard *wb);
+static void pidgin_whiteboard_set_dimensions(PurpleWhiteboard *wb, int width, int height);
+static void pidgin_whiteboard_set_brush(PurpleWhiteboard *wb, int size, int color);
+static void pidgin_whiteboard_clear(PurpleWhiteboard *wb);
 
 static void pidgin_whiteboard_button_clear_press(GtkWidget *widget, gpointer data);
 static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data);
@@ -77,7 +77,7 @@ static int LastY;
 static int MotionCount; /* Tracks how many brush motions made */
 static int BrushState = BRUSH_STATE_UP;
 
-static GaimWhiteboardUiOps ui_ops =
+static PurpleWhiteboardUiOps ui_ops =
 {
 	pidgin_whiteboard_create,
 	pidgin_whiteboard_destroy,
@@ -91,14 +91,14 @@ static GaimWhiteboardUiOps ui_ops =
 /******************************************************************************
  * API
  *****************************************************************************/
-GaimWhiteboardUiOps *pidgin_whiteboard_get_ui_ops(void)
+PurpleWhiteboardUiOps *pidgin_whiteboard_get_ui_ops(void)
 {
 	return &ui_ops;
 }
 
-static void pidgin_whiteboard_create(GaimWhiteboard *wb)
+static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 {
-	GaimBuddy *buddy;
+	PurpleBuddy *buddy;
 	GtkWidget *window;
 	GtkWidget *drawing_area;
 	GtkWidget *vbox_controls;
@@ -125,14 +125,14 @@ static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 	wb->ui_data = gtkwb;
 
 	/* Get dimensions (default?) for the whiteboard canvas */
-	if (!gaim_whiteboard_get_dimensions(wb, &gtkwb->width, &gtkwb->height))
+	if (!purple_whiteboard_get_dimensions(wb, &gtkwb->width, &gtkwb->height))
 	{
 		/* Give some initial board-size */
 		gtkwb->width = 300;
 		gtkwb->height = 250;
 	}
 
-	if (!gaim_whiteboard_get_brush(wb, &gtkwb->brush_size, &gtkwb->brush_color))
+	if (!purple_whiteboard_get_brush(wb, &gtkwb->brush_size, &gtkwb->brush_color))
 	{
 		/* Give some initial brush-info */
 		gtkwb->brush_size = 2;
@@ -146,10 +146,10 @@ static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 	/* Try and set window title as the name of the buddy, else just use their
 	 * username
 	 */
-	buddy = gaim_find_buddy(wb->account, wb->who);
+	buddy = purple_find_buddy(wb->account, wb->who);
 
 	if (buddy != NULL)
-		gtk_window_set_title((GtkWindow*)(window), gaim_buddy_get_contact_alias(buddy));
+		gtk_window_set_title((GtkWindow*)(window), purple_buddy_get_contact_alias(buddy));
 	else
 		gtk_window_set_title((GtkWindow*)(window), wb->who);
 
@@ -173,13 +173,13 @@ static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 	/* Create horizontal box for the palette and all its entries */
 	hbox_palette = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox_palette_above_canvas_and_controls),
-			hbox_palette, FALSE, FALSE, GAIM_HIG_BORDER);
+			hbox_palette, FALSE, FALSE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(hbox_palette);
 
 	/* Create horizontal box to seperate the canvas from the controls */
 	hbox_canvas_and_controls = gtk_hbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox_palette_above_canvas_and_controls),
-			hbox_canvas_and_controls, FALSE, FALSE, GAIM_HIG_BORDER);
+			hbox_canvas_and_controls, FALSE, FALSE, PIDGIN_HIG_BORDER);
 	gtk_widget_show(hbox_canvas_and_controls);
 
 	for(i = 0; i < PALETTE_NUM_COLORS; i++)
@@ -196,13 +196,13 @@ static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 	gtk_widget_show(hbox_canvas_and_controls);
 
 	gtk_container_add(GTK_CONTAINER(window), hbox_canvas_and_controls);
-	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	/* Create the drawing area */
 	drawing_area = gtk_drawing_area_new();
 	gtkwb->drawing_area = drawing_area;
 	gtk_widget_set_size_request(GTK_WIDGET(drawing_area), gtkwb->width, gtkwb->height);
-	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls), drawing_area, TRUE, TRUE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls), drawing_area, TRUE, TRUE, PIDGIN_HIG_BOX_SPACE);
 
 	gtk_widget_show(drawing_area);
 
@@ -234,19 +234,19 @@ static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 	/* Create vertical box to contain the controls */
 	vbox_controls = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox_canvas_and_controls),
-					vbox_controls, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
+					vbox_controls, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(vbox_controls);
 
 	/* Add a clear button */
 	clear_button = gtk_button_new_from_stock(GTK_STOCK_CLEAR);
-	gtk_box_pack_start(GTK_BOX(vbox_controls), clear_button, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox_controls), clear_button, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(clear_button);
 	g_signal_connect(G_OBJECT(clear_button), "clicked",
 					 G_CALLBACK(pidgin_whiteboard_button_clear_press), gtkwb);
 
 	/* Add a save button */
 	save_button = gtk_button_new_from_stock(GTK_STOCK_SAVE);
-	gtk_box_pack_start(GTK_BOX(vbox_controls), save_button, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox_controls), save_button, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(save_button);
 
 	g_signal_connect(G_OBJECT(save_button), "clicked",
@@ -254,7 +254,7 @@ static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 
 	/* Add a color selector */
 	color_button = gtk_button_new_from_stock(GTK_STOCK_SELECT_COLOR);
-	gtk_box_pack_start(GTK_BOX(vbox_controls), color_button, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(vbox_controls), color_button, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_widget_show(color_button);
 	g_signal_connect(G_OBJECT(color_button), "clicked",
 					 G_CALLBACK(color_select_dialog), gtkwb);
@@ -272,7 +272,7 @@ static void pidgin_whiteboard_create(GaimWhiteboard *wb)
 	*/
 }
 
-static void pidgin_whiteboard_destroy(GaimWhiteboard *wb)
+static void pidgin_whiteboard_destroy(PurpleWhiteboard *wb)
 {
 	PidginWhiteboard *gtkwb;
 
@@ -300,13 +300,13 @@ static void pidgin_whiteboard_destroy(GaimWhiteboard *wb)
 
 static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, PidginWhiteboard *gtkwb)
 {
-	GaimWhiteboard *wb;
+	PurpleWhiteboard *wb;
 
 	g_return_val_if_fail(gtkwb != NULL, FALSE);
 	wb = gtkwb->wb;
 	g_return_val_if_fail(wb != NULL, FALSE);
 
-	gaim_whiteboard_destroy(wb);
+	purple_whiteboard_destroy(wb);
 
 	return FALSE;
 }
@@ -318,15 +318,15 @@ static gboolean whiteboard_close_cb(GtkWidget *widget, GdkEvent *event, PidginWh
 #if 0
 static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data)
 {
-	GaimConversation *conv = data;
-	GaimAccount *account = gaim_conversation_get_account(conv);
-	GaimConnection *gc = gaim_account_get_connection(account);
-	char *to = (char*)(gaim_conversation_get_name(conv));
+	PurpleConversation *conv = data;
+	PurpleAccount *account = purple_conversation_get_account(conv);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	char *to = (char*)(purple_conversation_get_name(conv));
 
 	/* Only handle this if local client requested Doodle session (else local
 	 * client would have sent one)
 	 */
-	GaimWhiteboard *wb = gaim_whiteboard_get(account, to);
+	PurpleWhiteboard *wb = purple_whiteboard_get(account, to);
 
 	/* Write a local message to this conversation showing that a request for a
 	 * Doodle session has been made
@@ -334,8 +334,8 @@ static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data
 	/* XXXX because otherwise gettext will see this string, even though it's
 	 * in an #if 0 block. Remove the XXXX if you want to use this code.
 	 * But, it really shouldn't be a Yahoo-specific string. ;) */
-	gaim_conv_im_write(GAIM_CONV_IM(conv), "", XXXX_("Sent Doodle request."),
-					   GAIM_MESSAGE_NICK | GAIM_MESSAGE_RECV, time(NULL));
+	purple_conv_im_write(PURPLE_CONV_IM(conv), "", XXXX_("Sent Doodle request."),
+					   PURPLE_MESSAGE_NICK | PURPLE_MESSAGE_RECV, time(NULL));
 
 	yahoo_doodle_command_send_request(gc, to);
 	yahoo_doodle_command_send_ready(gc, to);
@@ -343,7 +343,7 @@ static void pidginwhiteboard_button_start_press(GtkButton *button, gpointer data
 	/* Insert this 'session' in the list.  At this point, it's only a requested
 	 * session.
 	 */
-	wb = gaim_whiteboard_create(account, to, DOODLE_STATE_REQUESTING);
+	wb = purple_whiteboard_create(account, to, DOODLE_STATE_REQUESTING);
 }
 #endif
 
@@ -393,7 +393,7 @@ static gboolean pidgin_whiteboard_brush_down(GtkWidget *widget, GdkEventButton *
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)data;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 
-	GaimWhiteboard *wb = gtkwb->wb;
+	PurpleWhiteboard *wb = gtkwb->wb;
 	GList *draw_list = wb->draw_list;
 
 	if(BrushState != BRUSH_STATE_UP)
@@ -411,7 +411,7 @@ static gboolean pidgin_whiteboard_brush_down(GtkWidget *widget, GdkEventButton *
 		/* Check if draw_list has contents; if so, clear it */
 		if(draw_list)
 		{
-			gaim_whiteboard_draw_list_destroy(draw_list);
+			purple_whiteboard_draw_list_destroy(draw_list);
 			draw_list = NULL;
 		}
 
@@ -446,7 +446,7 @@ static gboolean pidgin_whiteboard_brush_motion(GtkWidget *widget, GdkEventMotion
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)data;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 
-	GaimWhiteboard *wb = gtkwb->wb;
+	PurpleWhiteboard *wb = gtkwb->wb;
 	GList *draw_list = wb->draw_list;
 
 	if(event->is_hint)
@@ -462,7 +462,7 @@ static gboolean pidgin_whiteboard_brush_motion(GtkWidget *widget, GdkEventMotion
 	{
 		if((BrushState != BRUSH_STATE_DOWN) && (BrushState != BRUSH_STATE_MOTION))
 		{
-			gaim_debug_error("gtkwhiteboard", "***Bad brush state transition %d to MOTION\n", BrushState);
+			purple_debug_error("gtkwhiteboard", "***Bad brush state transition %d to MOTION\n", BrushState);
 
 			BrushState = BRUSH_STATE_MOTION;
 
@@ -484,12 +484,12 @@ static gboolean pidgin_whiteboard_brush_motion(GtkWidget *widget, GdkEventMotion
 			draw_list = g_list_append(draw_list, GINT_TO_POINTER(dy));
 
 			/* Send draw list to the draw_list handler */
-			gaim_whiteboard_send_draw_list(gtkwb->wb, draw_list);
+			purple_whiteboard_send_draw_list(gtkwb->wb, draw_list);
 
 			/* The brush stroke is finished, clear the list for another one */
 			if(draw_list)
 			{
-				gaim_whiteboard_draw_list_destroy(draw_list);
+				purple_whiteboard_draw_list_destroy(draw_list);
 				draw_list = NULL;
 			}
 
@@ -526,12 +526,12 @@ static gboolean pidgin_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *ev
 	PidginWhiteboard *gtkwb = (PidginWhiteboard*)data;
 	GdkPixmap *pixmap = gtkwb->pixmap;
 
-	GaimWhiteboard *wb = gtkwb->wb;
+	PurpleWhiteboard *wb = gtkwb->wb;
 	GList *draw_list = wb->draw_list;
 
 	if((BrushState != BRUSH_STATE_DOWN) && (BrushState != BRUSH_STATE_MOTION))
 	{
-		gaim_debug_error("gtkwhiteboard", "***Bad brush state transition %d to UP\n", BrushState);
+		purple_debug_error("gtkwhiteboard", "***Bad brush state transition %d to UP\n", BrushState);
 
 		BrushState = BRUSH_STATE_UP;
 
@@ -563,13 +563,13 @@ static gboolean pidgin_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *ev
 		*/
 
 		/* Send draw list to prpl draw_list handler */
-		gaim_whiteboard_send_draw_list(gtkwb->wb, draw_list);
+		purple_whiteboard_send_draw_list(gtkwb->wb, draw_list);
 
 		pidgin_whiteboard_set_canvas_as_icon(gtkwb);
 
 		/* The brush stroke is finished, clear the list for another one */
 		if(draw_list)
-			gaim_whiteboard_draw_list_destroy(draw_list);
+			purple_whiteboard_draw_list_destroy(draw_list);
 
 		wb->draw_list = NULL;
 	}
@@ -577,7 +577,7 @@ static gboolean pidgin_whiteboard_brush_up(GtkWidget *widget, GdkEventButton *ev
 	return TRUE;
 }
 
-static void pidgin_whiteboard_draw_brush_point(GaimWhiteboard *wb, int x, int y, int color, int size)
+static void pidgin_whiteboard_draw_brush_point(PurpleWhiteboard *wb, int x, int y, int color, int size)
 {
 	PidginWhiteboard *gtkwb = wb->ui_data;
 	GtkWidget *widget = gtkwb->drawing_area;
@@ -630,7 +630,7 @@ static void pidgin_whiteboard_draw_brush_point(GaimWhiteboard *wb, int x, int y,
 }
 
 /* Uses Bresenham's algorithm (as provided by Wikipedia) */
-static void pidgin_whiteboard_draw_brush_line(GaimWhiteboard *wb, int x0, int y0, int x1, int y1, int color, int size)
+static void pidgin_whiteboard_draw_brush_line(PurpleWhiteboard *wb, int x0, int y0, int x1, int y1, int color, int size)
 {
 	int temp;
 
@@ -696,7 +696,7 @@ static void pidgin_whiteboard_draw_brush_line(GaimWhiteboard *wb, int x0, int y0
 	}
 }
 
-static void pidgin_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int height)
+static void pidgin_whiteboard_set_dimensions(PurpleWhiteboard *wb, int width, int height)
 {
 	PidginWhiteboard *gtkwb = wb->ui_data;
 
@@ -704,7 +704,7 @@ static void pidgin_whiteboard_set_dimensions(GaimWhiteboard *wb, int width, int 
 	gtkwb->height = height;
 }
 
-static void pidgin_whiteboard_set_brush(GaimWhiteboard *wb, int size, int color)
+static void pidgin_whiteboard_set_brush(PurpleWhiteboard *wb, int size, int color)
 {
 	PidginWhiteboard *gtkwb = wb->ui_data;
 
@@ -712,7 +712,7 @@ static void pidgin_whiteboard_set_brush(GaimWhiteboard *wb, int size, int color)
 	gtkwb->brush_color = color;
 }
 
-static void pidgin_whiteboard_clear(GaimWhiteboard *wb)
+static void pidgin_whiteboard_clear(PurpleWhiteboard *wb)
 {
 	PidginWhiteboard *gtkwb = wb->ui_data;
 	GdkPixmap *pixmap = gtkwb->pixmap;
@@ -740,7 +740,7 @@ static void pidgin_whiteboard_button_clear_press(GtkWidget *widget, gpointer dat
 	pidgin_whiteboard_set_canvas_as_icon(gtkwb);
 
 	/* Do protocol specific clearing procedures */
-	gaim_whiteboard_send_clear(gtkwb->wb);
+	purple_whiteboard_send_clear(gtkwb->wb);
 }
 
 static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data)
@@ -797,16 +797,16 @@ static void pidgin_whiteboard_button_save_press(GtkWidget *widget, gpointer data
 											  gtkwb->width, gtkwb->height);
 
 		if(gdk_pixbuf_save(pixbuf, filename, "jpeg", NULL, "quality", "100", NULL))
-			gaim_debug_info("gtkwhiteboard", "File Saved...\n");
+			purple_debug_info("gtkwhiteboard", "File Saved...\n");
 		else
-			gaim_debug_info("gtkwhiteboard", "File not Saved... Error\n");
+			purple_debug_info("gtkwhiteboard", "File not Saved... Error\n");
 		g_free(filename);
 	}
 	else if(result == GTK_RESPONSE_CANCEL)
 	{
 		gtk_widget_destroy(dialog);
 
-		gaim_debug_info("gtkwhiteboard", "File not Saved... Canceled\n");
+		purple_debug_info("gtkwhiteboard", "File not Saved... Canceled\n");
 	}
 }
 
@@ -839,15 +839,15 @@ change_color_cb(GtkColorSelection *selection, PidginWhiteboard *gtkwb)
 	int old_size = 5;
 	int old_color = 0;
 	int new_color;
-	GaimWhiteboard *wb = gtkwb->wb;
+	PurpleWhiteboard *wb = gtkwb->wb;
 
 	gtk_color_selection_get_current_color(selection, &color);
 	new_color = (color.red & 0xFF00) << 8;
 	new_color |= (color.green & 0xFF00);
 	new_color |= (color.blue & 0xFF00) >> 8;
 
-	gaim_whiteboard_get_brush(wb, &old_size, &old_color);
-	gaim_whiteboard_send_brush(wb, old_size, new_color);
+	purple_whiteboard_get_brush(wb, &old_size, &old_color);
+	purple_whiteboard_send_brush(wb, old_size, new_color);
 }
 
 static void color_selection_dialog_destroy(GtkWidget *w, GtkWidget *destroy)

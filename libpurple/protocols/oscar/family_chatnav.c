@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -173,7 +173,7 @@ parseinfo_perms(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFram
 
 			classperms = aim_tlv_get16(innerlist, 0x0002, 1);
 
-			gaim_debug_misc("oscar", "faim: class permissions %x\n", classperms);
+			purple_debug_misc("oscar", "faim: class permissions %x\n", classperms);
 		}
 
 		/*
@@ -329,7 +329,7 @@ parseinfo_create(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 	tlvlist = aim_tlvlist_read(bs);
 
 	if (!(bigblock = aim_tlv_gettlv(tlvlist, 0x0004, 1))) {
-		gaim_debug_misc("oscar", "no bigblock in top tlv in create room response\n");
+		purple_debug_misc("oscar", "no bigblock in top tlv in create room response\n");
 		aim_tlvlist_free(&tlvlist);
 		return 0;
 	}
@@ -343,7 +343,7 @@ parseinfo_create(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 	detaillevel = byte_stream_get8(&bbbs);
 
 	if (detaillevel != 0x02) {
-		gaim_debug_misc("oscar", "unknown detaillevel in create room response (0x%02x)\n", detaillevel);
+		purple_debug_misc("oscar", "unknown detaillevel in create room response (0x%02x)\n", detaillevel);
 		aim_tlvlist_free(&tlvlist);
 		free(ck);
 		return 0;
@@ -412,12 +412,12 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	int ret = 0;
 
 	if (!(snac2 = aim_remsnac(od, snac->id))) {
-		gaim_debug_misc("oscar", "faim: chatnav_parse_info: received response to unknown request! (%08lx)\n", snac->id);
+		purple_debug_misc("oscar", "faim: chatnav_parse_info: received response to unknown request! (%08lx)\n", snac->id);
 		return 0;
 	}
 
 	if (snac2->family != 0x000d) {
-		gaim_debug_misc("oscar", "faim: chatnav_parse_info: received response that maps to corrupt request! (fam=%04x)\n", snac2->family);
+		purple_debug_misc("oscar", "faim: chatnav_parse_info: received response that maps to corrupt request! (fam=%04x)\n", snac2->family);
 		return 0;
 	}
 
@@ -427,19 +427,19 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	if (snac2->type == 0x0002) /* request chat rights */
 		ret = parseinfo_perms(od, conn, mod, frame, snac, bs, snac2);
 	else if (snac2->type == 0x0003) /* request exchange info */
-		gaim_debug_misc("oscar", "chatnav_parse_info: resposne to exchange info\n");
+		purple_debug_misc("oscar", "chatnav_parse_info: resposne to exchange info\n");
 	else if (snac2->type == 0x0004) /* request room info */
-		gaim_debug_misc("oscar", "chatnav_parse_info: response to room info\n");
+		purple_debug_misc("oscar", "chatnav_parse_info: response to room info\n");
 	else if (snac2->type == 0x0005) /* request more room info */
-		gaim_debug_misc("oscar", "chatnav_parse_info: response to more room info\n");
+		purple_debug_misc("oscar", "chatnav_parse_info: response to more room info\n");
 	else if (snac2->type == 0x0006) /* request occupant list */
-		gaim_debug_misc("oscar", "chatnav_parse_info: response to occupant info\n");
+		purple_debug_misc("oscar", "chatnav_parse_info: response to occupant info\n");
 	else if (snac2->type == 0x0007) /* search for a room */
-		gaim_debug_misc("oscar", "chatnav_parse_info: search results\n");
+		purple_debug_misc("oscar", "chatnav_parse_info: search results\n");
 	else if (snac2->type == 0x0008) /* create room */
 		ret = parseinfo_create(od, conn, mod, frame, snac, bs, snac2);
 	else
-		gaim_debug_misc("oscar", "chatnav_parse_info: unknown request subtype (%04x)\n", snac2->type);
+		purple_debug_misc("oscar", "chatnav_parse_info: unknown request subtype (%04x)\n", snac2->type);
 
 	if (snac2)
 		free(snac2->data);

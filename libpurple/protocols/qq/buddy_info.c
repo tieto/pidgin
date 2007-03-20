@@ -1,9 +1,9 @@
 /**
  * @file buddy_info.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -98,7 +98,7 @@ typedef struct _qq_info_query {
  * Even though not all of the information is modifiable, it still
  * all needs to be there when we send out the modify info packet */
 typedef struct _modify_info_data {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	contact_info *info;
 } modify_info_data;
 
@@ -153,13 +153,13 @@ static gchar *field_value(const gchar *field, const gchar **choice, gint choice_
 	}
 }
 
-static gboolean append_field_value(GaimNotifyUserInfo *user_info, const gchar *field,
+static gboolean append_field_value(PurpleNotifyUserInfo *user_info, const gchar *field,
 		const gchar *title, const gchar **choice, gint choice_size)
 {
 	gchar *value = field_value(field, choice, choice_size);
 
 	if (value != NULL) {
-		gaim_notify_user_info_add_pair(user_info, title, value);
+		purple_notify_user_info_add_pair(user_info, title, value);
 		g_free(value);
 		
 		return TRUE;
@@ -168,14 +168,14 @@ static gboolean append_field_value(GaimNotifyUserInfo *user_info, const gchar *f
 	return FALSE;
 }
 
-static GaimNotifyUserInfo *
+static PurpleNotifyUserInfo *
 info_to_notify_user_info(const contact_info *info)
 {
-	GaimNotifyUserInfo *user_info = gaim_notify_user_info_new();
+	PurpleNotifyUserInfo *user_info = purple_notify_user_info_new();
 	const gchar *intro;
 	gboolean has_extra_info = FALSE;
 
-	gaim_notify_user_info_add_pair(user_info, QQ_NUMBER, info->uid);
+	purple_notify_user_info_add_pair(user_info, QQ_NUMBER, info->uid);
 
 	append_field_value(user_info, info->nick, QQ_NICKNAME, NULL, 0);
 	append_field_value(user_info, info->name, QQ_NAME, NULL, 0);
@@ -185,7 +185,7 @@ info_to_notify_user_info(const contact_info *info)
 	append_field_value(user_info, info->province, QQ_PROVINCE, NULL, 0);
 	append_field_value(user_info, info->city, QQ_CITY, NULL, 0);
 
-	gaim_notify_user_info_add_section_header(user_info, QQ_ADDITIONAL_INFORMATION);
+	purple_notify_user_info_add_section_header(user_info, QQ_ADDITIONAL_INFORMATION);
 
 	has_extra_info |= append_field_value(user_info, info->horoscope, QQ_HOROSCOPE, horoscope_names, QQ_HOROSCOPE_SIZE);
 	has_extra_info |= append_field_value(user_info, info->occupation, QQ_OCCUPATION, NULL, 0);
@@ -200,11 +200,11 @@ info_to_notify_user_info(const contact_info *info)
 	has_extra_info |= append_field_value(user_info, info->homepage, QQ_HOMEPAGE, NULL, 0);
 
 	if (!has_extra_info)
-		gaim_notify_user_info_remove_last_item(user_info);
+		purple_notify_user_info_remove_last_item(user_info);
 
 	intro = field_value(info->intro, NULL, 0);
 	if (intro) {
-		gaim_notify_user_info_add_pair(user_info, QQ_INTRO, intro);
+		purple_notify_user_info_add_pair(user_info, QQ_INTRO, intro);
 	}
 
 	/* for debugging */
@@ -233,7 +233,7 @@ info_to_notify_user_info(const contact_info *info)
 }
 
 /* send a packet to get detailed information of uid */
-void qq_send_packet_get_info(GaimConnection *gc, guint32 uid, gboolean show_window)
+void qq_send_packet_get_info(PurpleConnection *gc, guint32 uid, gboolean show_window)
 {
 	qq_data *qd;
 	gchar uid_str[11];
@@ -254,7 +254,7 @@ void qq_send_packet_get_info(GaimConnection *gc, guint32 uid, gboolean show_wind
 
 /* set up the fields requesting personal information and send a get_info packet
  * for myself */
-void qq_prepare_modify_info(GaimConnection *gc)
+void qq_prepare_modify_info(PurpleConnection *gc)
 {
 	qq_data *qd;
 	GList *ql;
@@ -271,7 +271,7 @@ void qq_prepare_modify_info(GaimConnection *gc)
 }
 
 /* send packet to modify personal information */
-static void qq_send_packet_modify_info(GaimConnection *gc, gchar **segments)
+static void qq_send_packet_modify_info(PurpleConnection *gc, gchar **segments)
 {
 	gint i;
 	guint8 *raw_data, *cursor, bar;
@@ -309,13 +309,13 @@ static void modify_info_cancel_cb(modify_info_data *mid)
 static gchar *parse_field(GList **list, gboolean choice)
 {
 	gchar *value;
-	GaimRequestField *field;
+	PurpleRequestField *field;
 
-	field = (GaimRequestField *) (*list)->data;
+	field = (PurpleRequestField *) (*list)->data;
 	if (choice) {
-		value = g_strdup_printf("%d", gaim_request_field_choice_get_value(field));
+		value = g_strdup_printf("%d", purple_request_field_choice_get_value(field));
 	} else {
-		value = (gchar *) gaim_request_field_string_get_value(field);
+		value = (gchar *) purple_request_field_string_get_value(field);
 		if (value == NULL)
 			value = g_strdup("-");
 		else
@@ -327,9 +327,9 @@ static gchar *parse_field(GList **list, gboolean choice)
 }
 
 /* parse fields and send info packet */
-static void modify_info_ok_cb(modify_info_data *mid, GaimRequestFields *fields)
+static void modify_info_ok_cb(modify_info_data *mid, PurpleRequestFields *fields)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	qq_data *qd;
 	GList *list,  *groups;
 	contact_info *info;
@@ -340,8 +340,8 @@ static void modify_info_ok_cb(modify_info_data *mid, GaimRequestFields *fields)
 
 	info = mid->info;
 
-	groups = gaim_request_fields_get_groups(fields);
-	list = gaim_request_field_group_get_fields(groups->data);
+	groups = purple_request_fields_get_groups(fields);
+	list = purple_request_field_group_get_fields(groups->data);
 	info->uid = parse_field(&list, FALSE);
 	info->nick = parse_field(&list, FALSE);
 	info->name = parse_field(&list, FALSE);
@@ -351,7 +351,7 @@ static void modify_info_ok_cb(modify_info_data *mid, GaimRequestFields *fields)
 	info->province = parse_field(&list, FALSE);
 	info->city = parse_field(&list, FALSE);
 	groups = g_list_remove_link(groups, groups);
-	list = gaim_request_field_group_get_fields(groups->data);
+	list = purple_request_field_group_get_fields(groups->data);
 	info->horoscope = parse_field(&list, TRUE);
 	info->occupation = parse_field(&list, FALSE);
 	info->zodiac = parse_field(&list, TRUE);
@@ -364,7 +364,7 @@ static void modify_info_ok_cb(modify_info_data *mid, GaimRequestFields *fields)
 	info->tel = parse_field(&list, FALSE);
 	info->homepage = parse_field(&list, FALSE);
 	groups = g_list_remove_link(groups, groups);
-	list = gaim_request_field_group_get_fields(groups->data);
+	list = purple_request_field_group_get_fields(groups->data);
 	info->intro = parse_field(&list, FALSE);
 	groups = g_list_remove_link(groups, groups);
 
@@ -374,49 +374,49 @@ static void modify_info_ok_cb(modify_info_data *mid, GaimRequestFields *fields)
 	g_free(mid);
 }
 
-static GaimRequestFieldGroup *setup_field_group(GaimRequestFields *fields, const gchar *title)
+static PurpleRequestFieldGroup *setup_field_group(PurpleRequestFields *fields, const gchar *title)
 {
-	GaimRequestFieldGroup *group;
+	PurpleRequestFieldGroup *group;
 
-	group = gaim_request_field_group_new(title);
-	gaim_request_fields_add_group(fields, group);
+	group = purple_request_field_group_new(title);
+	purple_request_fields_add_group(fields, group);
 
 	return group;
 }
 
-static void add_string_field_to_group(GaimRequestFieldGroup *group,
+static void add_string_field_to_group(PurpleRequestFieldGroup *group,
 		const gchar *id, const gchar *title, const gchar *value)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 	gchar *utf8_value;
 
 	utf8_value = qq_to_utf8(value, QQ_CHARSET_DEFAULT);
-	field = gaim_request_field_string_new(id, title, utf8_value, FALSE);
-	gaim_request_field_group_add_field(group, field);
+	field = purple_request_field_string_new(id, title, utf8_value, FALSE);
+	purple_request_field_group_add_field(group, field);
 	g_free(utf8_value);
 }
 
-static void add_choice_field_to_group(GaimRequestFieldGroup *group,
+static void add_choice_field_to_group(PurpleRequestFieldGroup *group,
 		const gchar *id, const gchar *title, const gchar *value,
 		const gchar **choice, gint choice_size)
 {
-	GaimRequestField *field;
+	PurpleRequestField *field;
 	gint i, index;
 
 	index = choice_index(value, choice, choice_size);
-	field = gaim_request_field_choice_new(id, title, index);
+	field = purple_request_field_choice_new(id, title, index);
 	for (i = 0; i < choice_size; i++)
-		gaim_request_field_choice_add(field, choice[i]);
-	gaim_request_field_group_add_field(group, field);
+		purple_request_field_choice_add(field, choice[i]);
+	purple_request_field_group_add_field(group, field);
 }
 
 /* take the info returned by a get_info packet for myself and set up a request form */
-static void create_modify_info_dialogue(GaimConnection *gc, const contact_info *info)
+static void create_modify_info_dialogue(PurpleConnection *gc, const contact_info *info)
 {
 	qq_data *qd;
-	GaimRequestFieldGroup *group;
-	GaimRequestFields *fields;
-	GaimRequestField *field;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestFields *fields;
+	PurpleRequestField *field;
 	modify_info_data *mid;
 
 	/* so we only have one dialog open at a time */
@@ -424,12 +424,12 @@ static void create_modify_info_dialogue(GaimConnection *gc, const contact_info *
 	if (!qd->modifying_info) {
 		qd->modifying_info = TRUE;
 
-		fields = gaim_request_fields_new();
+		fields = purple_request_fields_new();
 
 		group = setup_field_group(fields, QQ_PRIMARY_INFORMATION);
-		field = gaim_request_field_string_new("uid", QQ_NUMBER, info->uid, FALSE);
-		gaim_request_field_group_add_field(group, field);
-		gaim_request_field_string_set_editable(field, FALSE);
+		field = purple_request_field_string_new("uid", QQ_NUMBER, info->uid, FALSE);
+		purple_request_field_group_add_field(group, field);
+		purple_request_field_string_set_editable(field, FALSE);
 		add_string_field_to_group(group, "nick", QQ_NICKNAME, info->nick);
 		add_string_field_to_group(group, "name", QQ_NAME, info->name);
 		add_string_field_to_group(group, "age", QQ_AGE, info->age);
@@ -451,8 +451,8 @@ static void create_modify_info_dialogue(GaimConnection *gc, const contact_info *
 		add_string_field_to_group(group, "homepage", QQ_HOMEPAGE, info->homepage);
 
 		group = setup_field_group(fields, QQ_INTRO);
-		field = gaim_request_field_string_new("intro", QQ_INTRO, info->intro, TRUE);
-		gaim_request_field_group_add_field(group, field);
+		field = purple_request_field_string_new("intro", QQ_INTRO, info->intro, TRUE);
+		purple_request_field_group_add_field(group, field);
 
 		/* prepare unmodifiable info */
 		mid = g_new0(modify_info_data, 1);
@@ -478,7 +478,7 @@ static void create_modify_info_dialogue(GaimConnection *gc, const contact_info *
 		mid->info->qq_show = g_strdup(info->qq_show);
 		mid->info->unknown6 = g_strdup(info->unknown6);
 
-		gaim_request_fields(gc, _("Modify my information"),
+		purple_request_fields(gc, _("Modify my information"),
 			_("Modify my information"), NULL, fields,
 			_("Update my information"), G_CALLBACK(modify_info_ok_cb),
 			_("Cancel"), G_CALLBACK(modify_info_cancel_cb),
@@ -487,7 +487,7 @@ static void create_modify_info_dialogue(GaimConnection *gc, const contact_info *
 }
 
 /* process the reply of modify_info packet */
-void qq_process_modify_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_modify_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint len;
@@ -502,25 +502,25 @@ void qq_process_modify_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
 		data[len] = '\0';
 		if (qd->uid == atoi((gchar *) data)) {	/* return should be my uid */
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Update info ACK OK\n");
-			gaim_notify_info(gc, NULL, _("Your information has been updated"), NULL);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Update info ACK OK\n");
+			purple_notify_info(gc, NULL, _("Your information has been updated"), NULL);
 		}
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt modify info reply\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt modify info reply\n");
 	}
 }
 
-static void _qq_send_packet_modify_face(GaimConnection *gc, gint face_num)
+static void _qq_send_packet_modify_face(PurpleConnection *gc, gint face_num)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
-	GaimPresence *presence = gaim_account_get_presence(account);
+	PurpleAccount *account = purple_connection_get_account(gc);
+	PurplePresence *presence = purple_account_get_presence(account);
 	qq_data *qd = (qq_data *) gc->proto_data;
 	gint offset;
 
-	if(gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_INVISIBLE)) {
+	if(purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_INVISIBLE)) {
 		offset = 2;
-	} else if(gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_AWAY)
-			|| gaim_presence_is_status_primitive_active(presence, GAIM_STATUS_EXTENDED_AWAY)) {
+	} else if(purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_AWAY)
+			|| purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_EXTENDED_AWAY)) {
 		offset = 1;
 	} else {
 		offset = 0;
@@ -531,7 +531,7 @@ static void _qq_send_packet_modify_face(GaimConnection *gc, gint face_num)
 	qq_send_packet_get_info(gc, qd->uid, FALSE);
 }
 
-void qq_set_buddy_icon_for_user(GaimAccount *account, const gchar *who, const gchar *iconfile)
+void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const gchar *iconfile)
 {
 	FILE *file;
 	struct stat st;
@@ -539,31 +539,31 @@ void qq_set_buddy_icon_for_user(GaimAccount *account, const gchar *who, const gc
 	g_return_if_fail(g_stat(iconfile, &st) == 0);
 	file = g_fopen(iconfile, "rb");
 	if (file) {
-		GaimBuddyIcon *icon;
+		PurpleBuddyIcon *icon;
 		size_t data_len;
 		gchar *data = g_new(gchar, st.st_size + 1);
 		data_len = fread(data, 1, st.st_size, file);
 		fclose(file);
-		gaim_buddy_icons_set_for_user(account, who, data, data_len);
-		icon = gaim_buddy_icons_find(account, who);
-		gaim_buddy_icon_set_path(icon, iconfile);
+		purple_buddy_icons_set_for_user(account, who, data, data_len);
+		icon = purple_buddy_icons_find(account, who);
+		purple_buddy_icon_set_path(icon, iconfile);
 	}
 }
 
 /* TODO: custom faces for QQ members and users with level >= 16 */
-void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
+void qq_set_my_buddy_icon(PurpleConnection *gc, const gchar *iconfile)
 {
 	gchar *icon;
 	gint icon_num;
 	gint icon_len;
-	GaimAccount *account = gaim_connection_get_account(gc);
-	const gchar *icon_path = gaim_account_get_buddy_icon_path(account);
+	PurpleAccount *account = purple_connection_get_account(gc);
+	const gchar *icon_path = purple_account_get_buddy_icon_path(account);
 	const gchar *buddy_icon_dir = qq_buddy_icon_dir();
 	gint prefix_len = strlen(QQ_ICON_PREFIX);
 	gint suffix_len = strlen(QQ_ICON_SUFFIX);
 	gint dir_len = strlen(buddy_icon_dir);
 	gchar *errmsg = g_strconcat(_("Setting custom faces is not currently supported. Please choose an image from "), buddy_icon_dir, ".", NULL);
-	gboolean icon_global = gaim_account_get_bool(gc->account, "use-global-buddyicon", TRUE);
+	gboolean icon_global = purple_account_get_bool(gc->account, "use-global-buddyicon", TRUE);
 
 	if (!icon_path)
 		icon_path = "";
@@ -577,9 +577,9 @@ void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
 			&& g_ascii_strncasecmp(icon_path + dir_len + 1 + prefix_len + icon_len, QQ_ICON_SUFFIX, suffix_len) == 0
 			&& icon_len <= 3)) {
 		if (icon_global)
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "%s\n", errmsg);
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "%s\n", errmsg);
 		else
-			gaim_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
+			purple_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
 		g_free(errmsg);
 		return;
 	}
@@ -590,9 +590,9 @@ void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
 	/* ensure face number in proper range */
 	if (icon_num > QQ_FACES) {
 		if (icon_global)
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "%s\n", errmsg);
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "%s\n", errmsg);
 		else
-			gaim_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
+			purple_notify_error(gc, _("Invalid QQ Face"), errmsg, NULL);
 		g_free(errmsg);
 		return;
 	}
@@ -604,12 +604,12 @@ void qq_set_my_buddy_icon(GaimConnection *gc, const gchar *iconfile)
 }
 
 
-static void _qq_update_buddy_icon(GaimAccount *account, const gchar *name, gint face)
+static void _qq_update_buddy_icon(PurpleAccount *account, const gchar *name, gint face)
 {
 	gchar *icon_path;
-	GaimBuddyIcon *icon = gaim_buddy_icons_find(account, name);
+	PurpleBuddyIcon *icon = purple_buddy_icons_find(account, name);
 	gchar *icon_num_str = face_to_icon_str(face);
-	const gchar *old_path = gaim_buddy_icon_get_path(icon);
+	const gchar *old_path = purple_buddy_icon_get_path(icon);
 	const gchar *buddy_icon_dir = qq_buddy_icon_dir();
 
 	icon_path = g_strconcat(buddy_icon_dir, G_DIR_SEPARATOR_S, QQ_ICON_PREFIX, 
@@ -622,25 +622,25 @@ static void _qq_update_buddy_icon(GaimAccount *account, const gchar *name, gint 
 }
 
 /* after getting info or modify myself, refresh the buddy list accordingly */
-void qq_refresh_buddy_and_myself(contact_info *info, GaimConnection *gc)
+void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc)
 {
-	GaimBuddy *b;
+	PurpleBuddy *b;
 	qq_data *qd;
 	qq_buddy *q_bud;
-	gchar *alias_utf8, *gaim_name;
-	GaimAccount *account = gaim_connection_get_account(gc);
+	gchar *alias_utf8, *purple_name;
+	PurpleAccount *account = purple_connection_get_account(gc);
 
 	qd = (qq_data *) gc->proto_data;
-	gaim_name = uid_to_gaim_name(strtol(info->uid, NULL, 10));
+	purple_name = uid_to_purple_name(strtol(info->uid, NULL, 10));
 
 	alias_utf8 = qq_to_utf8(info->nick, QQ_CHARSET_DEFAULT);
 	if (qd->uid == strtol(info->uid, NULL, 10)) {	/* it is me */
 		qd->my_icon = strtol(info->face, NULL, 10);
 		if (alias_utf8 != NULL)
-			gaim_account_set_alias(account, alias_utf8);
+			purple_account_set_alias(account, alias_utf8);
 	}
 	/* update buddy list (including myself, if myself is the buddy) */
-	b = gaim_find_buddy(gc->account, gaim_name);
+	b = purple_find_buddy(gc->account, purple_name);
 	q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 	if (q_bud != NULL) {	/* I have this buddy */
 		q_bud->age = strtol(info->age, NULL, 10);
@@ -649,14 +649,14 @@ void qq_refresh_buddy_and_myself(contact_info *info, GaimConnection *gc)
 		if (alias_utf8 != NULL)
 			q_bud->nickname = g_strdup(alias_utf8);
 		qq_update_buddy_contact(gc, q_bud);
-		_qq_update_buddy_icon(gc->account, gaim_name, q_bud->face);
+		_qq_update_buddy_icon(gc->account, purple_name, q_bud->face);
 	}
-	g_free(gaim_name);
+	g_free(purple_name);
 	g_free(alias_utf8);
 }
 
 /* process reply to get_info packet */
-void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_get_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	gint len;
 	guint8 *data;
@@ -665,7 +665,7 @@ void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	qq_data *qd;
 	contact_info *info;
 	GList *list, *query_list;
-	GaimNotifyUserInfo *user_info;
+	PurpleNotifyUserInfo *user_info;
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
@@ -697,8 +697,8 @@ void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 			if (query->uid == atoi(info->uid)) {
 				if (query->show_window) {
 					user_info = info_to_notify_user_info(info);
-					gaim_notify_userinfo(gc, info->uid, user_info, NULL, NULL);
-					gaim_notify_user_info_destroy(user_info);
+					purple_notify_userinfo(gc, info->uid, user_info, NULL, NULL);
+					purple_notify_user_info_destroy(user_info);
 				} else if (query->modify_info) {
 					create_modify_info_dialogue(gc, info);
 				}
@@ -711,7 +711,7 @@ void qq_process_get_info_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 
 		g_strfreev(segments);
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt get info reply\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt get info reply\n");
 	}
 }
 
@@ -729,10 +729,10 @@ void qq_info_query_free(qq_data *qd)
 		g_free(p);
 		i++;
 	}
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "%d info queries are freed!\n", i);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "%d info queries are freed!\n", i);
 }
 
-void qq_send_packet_get_level(GaimConnection *gc, guint32 uid)
+void qq_send_packet_get_level(PurpleConnection *gc, guint32 uid)
 {
 	guint8 buf[5];
 	guint32 tmp = g_htonl(uid);
@@ -742,7 +742,7 @@ void qq_send_packet_get_level(GaimConnection *gc, guint32 uid)
 }
 
 /*
-void qq_send_packet_get_buddies_levels(GaimConnection *gc)
+void qq_send_packet_get_buddies_levels(PurpleConnection *gc)
 {
 	guint8 *buf, *tmp, size;
 	qq_buddy *q_bud;
@@ -774,27 +774,27 @@ void qq_send_packet_get_buddies_levels(GaimConnection *gc)
 }
 */
 
-void qq_process_get_level_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	guint32 uid, onlineTime;
 	guint16 level, timeRemainder;
-	gchar *gaim_name;
-	GaimBuddy *b;
+	gchar *purple_name;
+	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	gint decr_len, i;
 	guint8 *decr_buf, *tmp;
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
 	qq_data *qd = (qq_data *) gc->proto_data;
 	
 	decr_len = buf_len;
 	decr_buf = g_new0(guint8, buf_len);
 	if (!qq_crypt(DECRYPT, buf, buf_len, qd->session_key, decr_buf, &decr_len)) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Couldn't decrypt get level packet\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Couldn't decrypt get level packet\n");
 	}
 
 	decr_len--; 
 	if (decr_len % 12 != 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 			"Get levels list of abnormal length. Truncating last %d bytes.\n", decr_len % 12);
 		decr_len -= (decr_len % 12);
 	}
@@ -802,7 +802,7 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 	tmp = decr_buf + 1;
 	/* this byte seems random */
 	/*
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Byte one of get_level packet: %d\n", buf[0]);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Byte one of get_level packet: %d\n", buf[0]);
 	*/
 	for (i = 0; i < decr_len; i += 12) {
 		uid = g_ntohl(*(guint32 *) tmp);
@@ -814,11 +814,11 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 		timeRemainder = g_ntohs(*(guint16 *) tmp);
 		tmp += 2;
 		/*
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Level packet entry:\nuid: %d\nonlineTime: %d\nlevel: %d\ntimeRemainder: %d\n", 
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Level packet entry:\nuid: %d\nonlineTime: %d\nlevel: %d\ntimeRemainder: %d\n", 
 				uid, onlineTime, level, timeRemainder);
 		*/
-		gaim_name = uid_to_gaim_name(uid);
-		b = gaim_find_buddy(account, gaim_name);
+		purple_name = uid_to_purple_name(uid);
+		b = purple_find_buddy(account, purple_name);
 		q_bud = (b == NULL) ? NULL : (qq_buddy *) b->proto_data;
 
 		if (q_bud != NULL || uid == qd->uid) {
@@ -831,10 +831,10 @@ void qq_process_get_level_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 				qd->my_level = level;
 			}
 		} else {
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", 
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", 
 				"Got an online buddy %d, but not in my buddy list\n", uid);
 		}
-		g_free(gaim_name);
+		g_free(purple_name);
 	}
 	g_free(decr_buf);
 }

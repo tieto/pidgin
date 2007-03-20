@@ -170,7 +170,7 @@ handle_receive_message(NMUser * user, NMEvent * event, gboolean autoreply)
 			msg = g_new0(char, size + 1);
 			rc = nm_read_all(conn, msg, size);
 
-			gaim_debug(GAIM_DEBUG_INFO, "novell", "Message is %s\n", msg);
+			purple_debug(PURPLE_DEBUG_INFO, "novell", "Message is %s\n", msg);
 
 			/* Auto replies are not in RTF format! */
 			if (!autoreply) {
@@ -180,7 +180,7 @@ handle_receive_message(NMUser * user, NMEvent * event, gboolean autoreply)
 				nortf = nm_rtf_strip_formatting(ctx, msg);
 				nm_rtf_deinit(ctx);
 
-				gaim_debug(GAIM_DEBUG_INFO, "novell",
+				purple_debug(PURPLE_DEBUG_INFO, "novell",
 						   "Message without RTF is %s\n", nortf);
 
 				/* Store the event data */
@@ -910,7 +910,7 @@ nm_process_event(NMUser * user, int type)
 				break;
 
 			default:
-				gaim_debug(GAIM_DEBUG_INFO, "novell",
+				purple_debug(PURPLE_DEBUG_INFO, "novell",
 						   "Unknown event %d received.\n", type);
 				rc = NMERR_PROTOCOL;
 				break;

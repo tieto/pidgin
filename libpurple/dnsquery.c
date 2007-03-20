@@ -2,9 +2,9 @@
  * @file dnsquery.c DNS query API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -35,19 +35,19 @@
  * DNS query API
  **************************************************************************/
 
-static GaimDnsQueryUiOps *dns_query_ui_ops = NULL;
+static PurpleDnsQueryUiOps *dns_query_ui_ops = NULL;
 
-typedef struct _GaimDnsQueryResolverProcess GaimDnsQueryResolverProcess;
+typedef struct _PurpleDnsQueryResolverProcess PurpleDnsQueryResolverProcess;
 
-struct _GaimDnsQueryData {
+struct _PurpleDnsQueryData {
 	char *hostname;
 	int port;
-	GaimDnsQueryConnectFunction callback;
+	PurpleDnsQueryConnectFunction callback;
 	gpointer data;
 	guint timeout;
 
 #if defined(__unix__) || defined(__APPLE__)
-	GaimDnsQueryResolverProcess *resolver;
+	PurpleDnsQueryResolverProcess *resolver;
 #elif defined _WIN32 /* end __unix__ || __APPLE__ */
 	GThread *resolver;
 	GSList *hosts;
@@ -62,7 +62,7 @@ struct _GaimDnsQueryData {
 /*
  * This structure keeps a reference to a child resolver process.
  */
-struct _GaimDnsQueryResolverProcess {
+struct _PurpleDnsQueryResolverProcess {
 	guint inpa;
 	int fd_in, fd_out;
 	pid_t dns_pid;
@@ -84,9 +84,9 @@ typedef struct {
 #endif
 
 static void
-gaim_dnsquery_resolved(GaimDnsQueryData *query_data, GSList *hosts)
+purple_dnsquery_resolved(PurpleDnsQueryData *query_data, GSList *hosts)
 {
-	gaim_debug_info("dnsquery", "IP resolved for %s\n", query_data->hostname);
+	purple_debug_info("dnsquery", "IP resolved for %s\n", query_data->hostname);
 	if (query_data->callback != NULL)
 		query_data->callback(hosts, query_data->data, NULL);
 	else
@@ -104,26 +104,26 @@ gaim_dnsquery_resolved(GaimDnsQueryData *query_data, GSList *hosts)
 		}
 	}
 
-	gaim_dnsquery_destroy(query_data);
+	purple_dnsquery_destroy(query_data);
 }
 
 static void
-gaim_dnsquery_failed(GaimDnsQueryData *query_data, const gchar *error_message)
+purple_dnsquery_failed(PurpleDnsQueryData *query_data, const gchar *error_message)
 {
-	gaim_debug_info("dnsquery", "%s\n", error_message);
+	purple_debug_info("dnsquery", "%s\n", error_message);
 	if (query_data->callback != NULL)
 		query_data->callback(NULL, query_data->data, error_message);
-	gaim_dnsquery_destroy(query_data);
+	purple_dnsquery_destroy(query_data);
 }
 
 static gboolean
-gaim_dnsquery_ui_resolve(GaimDnsQueryData *query_data)
+purple_dnsquery_ui_resolve(PurpleDnsQueryData *query_data)
 {
-	GaimDnsQueryUiOps *ops = gaim_dnsquery_get_ui_ops();
+	PurpleDnsQueryUiOps *ops = purple_dnsquery_get_ui_ops();
 
 	if (ops && ops->resolve_host)
 	{
-		if (ops->resolve_host(query_data, gaim_dnsquery_resolved, gaim_dnsquery_failed))
+		if (ops->resolve_host(query_data, purple_dnsquery_resolved, purple_dnsquery_failed))
 			return TRUE;
 	}
 
@@ -144,9 +144,9 @@ static void
 trap_gdb_bug()
 {
 	const char *message =
-		"Gaim's DNS child got a SIGTRAP signal.\n"
-		"This can be caused by trying to run gaim inside gdb.\n"
-		"There is a known gdb bug which prevents this.  Supposedly gaim\n"
+		"Purple's DNS child got a SIGTRAP signal.\n"
+		"This can be caused by trying to run purple inside gdb.\n"
+		"There is a known gdb bug which prevents this.  Supposedly purple\n"
 		"should have detected you were using gdb and used an ugly hack,\n"
 		"check cope_with_gdb_brokenness() in dnsquery.c.\n\n"
 		"For more info about this bug, see http://sources.redhat.com/ml/gdb/2001-07/msg00349.html\n";
@@ -159,7 +159,7 @@ trap_gdb_bug()
 #endif
 
 static void
-gaim_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
+purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 {
 	dns_params_t dns_params;
 	const size_t zero = 0;
@@ -173,7 +173,7 @@ gaim_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 #endif
 
 #ifdef HAVE_SIGNAL_H
-	gaim_restore_default_signal_handlers();
+	purple_restore_default_signal_handlers();
 	signal(SIGTRAP, trap_gdb_bug);
 #endif
 
@@ -305,7 +305,7 @@ cope_with_gdb_brokenness()
 	e[MIN(n,sizeof(e)-1)] = '\0';
 
 	if(strstr(e,"gdb")) {
-		gaim_debug_info("dns",
+		purple_debug_info("dns",
 				   "Debugger detected, performing useless query...\n");
 		gethostbyname("x.x.x.x.x");
 	}
@@ -313,7 +313,7 @@ cope_with_gdb_brokenness()
 }
 
 static void
-gaim_dnsquery_resolver_destroy(GaimDnsQueryResolverProcess *resolver)
+purple_dnsquery_resolver_destroy(PurpleDnsQueryResolverProcess *resolver)
 {
 	g_return_if_fail(resolver != NULL);
 
@@ -326,7 +326,7 @@ gaim_dnsquery_resolver_destroy(GaimDnsQueryResolverProcess *resolver)
 		kill(resolver->dns_pid, SIGKILL);
 
 	if (resolver->inpa != 0)
-		gaim_input_remove(resolver->inpa);
+		purple_input_remove(resolver->inpa);
 
 	close(resolver->fd_in);
 	close(resolver->fd_out);
@@ -336,20 +336,20 @@ gaim_dnsquery_resolver_destroy(GaimDnsQueryResolverProcess *resolver)
 	number_of_dns_children--;
 }
 
-static GaimDnsQueryResolverProcess *
-gaim_dnsquery_resolver_new(gboolean show_debug)
+static PurpleDnsQueryResolverProcess *
+purple_dnsquery_resolver_new(gboolean show_debug)
 {
-	GaimDnsQueryResolverProcess *resolver;
+	PurpleDnsQueryResolverProcess *resolver;
 	int child_out[2], child_in[2];
 
 	/* Create pipes for communicating with the child process */
 	if (pipe(child_out) || pipe(child_in)) {
-		gaim_debug_error("dns",
+		purple_debug_error("dns",
 				   "Could not create pipes: %s\n", strerror(errno));
 		return NULL;
 	}
 
-	resolver = g_new(GaimDnsQueryResolverProcess, 1);
+	resolver = g_new(PurpleDnsQueryResolverProcess, 1);
 	resolver->inpa = 0;
 
 	cope_with_gdb_brokenness();
@@ -363,7 +363,7 @@ gaim_dnsquery_resolver_new(gboolean show_debug)
 		close(child_out[0]);
 		close(child_in[1]);
 
-		gaim_dnsquery_resolver_run(child_out[1], child_in[0], show_debug);
+		purple_dnsquery_resolver_run(child_out[1], child_in[0], show_debug);
 		/* The thread calls _exit() rather than returning, so we never get here */
 	}
 
@@ -371,17 +371,17 @@ gaim_dnsquery_resolver_new(gboolean show_debug)
 	close(child_out[1]);
 	close(child_in[0]);
 	if (resolver->dns_pid == -1) {
-		gaim_debug_error("dns",
+		purple_debug_error("dns",
 				   "Could not create child process for DNS: %s\n",
 				   strerror(errno));
-		gaim_dnsquery_resolver_destroy(resolver);
+		purple_dnsquery_resolver_destroy(resolver);
 		return NULL;
 	}
 
 	resolver->fd_out = child_out[0];
 	resolver->fd_in = child_in[1];
 	number_of_dns_children++;
-	gaim_debug_info("dns",
+	purple_debug_info("dns",
 			   "Created new DNS child %d, there are now %d children.\n",
 			   resolver->dns_pid, number_of_dns_children);
 
@@ -395,8 +395,8 @@ gaim_dnsquery_resolver_new(gboolean show_debug)
  * 		for example, we won't be able to send the message.
  */
 static gboolean
-send_dns_request_to_child(GaimDnsQueryData *query_data,
-		GaimDnsQueryResolverProcess *resolver)
+send_dns_request_to_child(PurpleDnsQueryData *query_data,
+		PurpleDnsQueryResolverProcess *resolver)
 {
 	pid_t pid;
 	dns_params_t dns_params;
@@ -409,14 +409,14 @@ send_dns_request_to_child(GaimDnsQueryData *query_data,
 	 * instance, we can't use it. */
 	pid = waitpid(resolver->dns_pid, NULL, WNOHANG);
 	if (pid > 0) {
-		gaim_debug_warning("dns", "DNS child %d no longer exists\n",
+		purple_debug_warning("dns", "DNS child %d no longer exists\n",
 				resolver->dns_pid);
-		gaim_dnsquery_resolver_destroy(resolver);
+		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;
 	} else if (pid < 0) {
-		gaim_debug_warning("dns", "Wait for DNS child %d failed: %s\n",
+		purple_debug_warning("dns", "Wait for DNS child %d failed: %s\n",
 				resolver->dns_pid, strerror(errno));
-		gaim_dnsquery_resolver_destroy(resolver);
+		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;
 	}
 
@@ -428,9 +428,9 @@ send_dns_request_to_child(GaimDnsQueryData *query_data,
 	/* Send the data structure to the child */
 	rc = write(resolver->fd_in, &dns_params, sizeof(dns_params));
 	if (rc < 0) {
-		gaim_debug_error("dns", "Unable to write to DNS child %d: %d\n",
+		purple_debug_error("dns", "Unable to write to DNS child %d: %d\n",
 				resolver->dns_pid, strerror(errno));
-		gaim_dnsquery_resolver_destroy(resolver);
+		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;
 	}
 
@@ -440,14 +440,14 @@ send_dns_request_to_child(GaimDnsQueryData *query_data,
 	rc = read(resolver->fd_out, &ch, sizeof(ch));
 	if (rc != 1 || ch != 'Y')
 	{
-		gaim_debug_warning("dns",
+		purple_debug_warning("dns",
 				"DNS child %d not responding. Killing it!\n",
 				resolver->dns_pid);
-		gaim_dnsquery_resolver_destroy(resolver);
+		purple_dnsquery_resolver_destroy(resolver);
 		return FALSE;
 	}
 
-	gaim_debug_info("dns",
+	purple_debug_info("dns",
 			"Successfully sent DNS request to child %d\n",
 			resolver->dns_pid);
 
@@ -456,13 +456,13 @@ send_dns_request_to_child(GaimDnsQueryData *query_data,
 	return TRUE;
 }
 
-static void host_resolved(gpointer data, gint source, GaimInputCondition cond);
+static void host_resolved(gpointer data, gint source, PurpleInputCondition cond);
 
 static void
 handle_next_queued_request()
 {
-	GaimDnsQueryData *query_data;
-	GaimDnsQueryResolverProcess *resolver;
+	PurpleDnsQueryData *query_data;
+	PurpleDnsQueryResolverProcess *resolver;
 
 	if (queued_requests == NULL)
 		/* No more DNS queries, yay! */
@@ -471,7 +471,7 @@ handle_next_queued_request()
 	query_data = queued_requests->data;
 	queued_requests = g_slist_delete_link(queued_requests, queued_requests);
 
-	if (gaim_dnsquery_ui_resolve(query_data))
+	if (purple_dnsquery_ui_resolve(query_data))
 	{
 		/* The UI is handling the resolve; we're done */
 		handle_next_queued_request();
@@ -481,7 +481,7 @@ handle_next_queued_request()
 	/*
 	 * If we have any children, attempt to have them perform the DNS
 	 * query.  If we're able to send the query then resolver will be
-	 * set to the GaimDnsQueryResolverProcess.  Otherwise, resolver
+	 * set to the PurpleDnsQueryResolverProcess.  Otherwise, resolver
 	 * will be NULL and we'll need to create a new DNS request child.
 	 */
 	while (free_dns_children != NULL)
@@ -504,21 +504,21 @@ handle_next_queued_request()
 			return;
 		}
 
-		resolver = gaim_dnsquery_resolver_new(gaim_debug_is_enabled());
+		resolver = purple_dnsquery_resolver_new(purple_debug_is_enabled());
 		if (resolver == NULL)
 		{
-			gaim_dnsquery_failed(query_data, _("Unable to create new resolver process\n"));
+			purple_dnsquery_failed(query_data, _("Unable to create new resolver process\n"));
 			return;
 		}
 		if (!send_dns_request_to_child(query_data, resolver))
 		{
-			gaim_dnsquery_failed(query_data, _("Unable to send request to resolver process\n"));
+			purple_dnsquery_failed(query_data, _("Unable to send request to resolver process\n"));
 			return;
 		}
 	}
 
-	query_data->resolver->inpa = gaim_input_add(query_data->resolver->fd_out,
-			GAIM_INPUT_READ, host_resolved, query_data);
+	query_data->resolver->inpa = purple_input_add(query_data->resolver->fd_out,
+			PURPLE_INPUT_READ, host_resolved, query_data);
 }
 
 /*
@@ -526,9 +526,9 @@ handle_next_queued_request()
  */
 
 static void
-host_resolved(gpointer data, gint source, GaimInputCondition cond)
+host_resolved(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimDnsQueryData *query_data;
+	PurpleDnsQueryData *query_data;
 	int rc, err;
 	GSList *hosts = NULL;
 	struct sockaddr *addr = NULL;
@@ -537,8 +537,8 @@ host_resolved(gpointer data, gint source, GaimInputCondition cond)
 
 	query_data = data;
 
-	gaim_debug_info("dns", "Got response for '%s'\n", query_data->hostname);
-	gaim_input_remove(query_data->resolver->inpa);
+	purple_debug_info("dns", "Got response for '%s'\n", query_data->hostname);
+	purple_input_remove(query_data->resolver->inpa);
 	query_data->resolver->inpa = 0;
 
 	rc = read(query_data->resolver->fd_out, &err, sizeof(err));
@@ -551,7 +551,7 @@ host_resolved(gpointer data, gint source, GaimInputCondition cond)
 		g_snprintf(message, sizeof(message), _("Error resolving %s: %d"),
 				query_data->hostname, err);
 #endif
-		gaim_dnsquery_failed(query_data, message);
+		purple_dnsquery_failed(query_data, message);
 
 	} else if (rc > 0) {
 		/* Success! */
@@ -567,15 +567,15 @@ host_resolved(gpointer data, gint source, GaimInputCondition cond)
 			}
 		}
 		/*	wait4(resolver->dns_pid, NULL, WNOHANG, NULL); */
-		gaim_dnsquery_resolved(query_data, hosts);
+		purple_dnsquery_resolved(query_data, hosts);
 
 	} else if (rc == -1) {
 		g_snprintf(message, sizeof(message), _("Error reading from resolver process:\n%s"), strerror(errno));
-		gaim_dnsquery_failed(query_data, message);
+		purple_dnsquery_failed(query_data, message);
 
 	} else if (rc == 0) {
 		g_snprintf(message, sizeof(message), _("EOF while reading from resolver process"));
-		gaim_dnsquery_failed(query_data, message);
+		purple_dnsquery_failed(query_data, message);
 	}
 
 	handle_next_queued_request();
@@ -584,7 +584,7 @@ host_resolved(gpointer data, gint source, GaimInputCondition cond)
 static gboolean
 resolve_host(gpointer data)
 {
-	GaimDnsQueryData *query_data;
+	PurpleDnsQueryData *query_data;
 
 	query_data = data;
 	query_data->timeout = 0;
@@ -594,17 +594,17 @@ resolve_host(gpointer data)
 	return FALSE;
 }
 
-GaimDnsQueryData *
-gaim_dnsquery_a(const char *hostname, int port,
-				GaimDnsQueryConnectFunction callback, gpointer data)
+PurpleDnsQueryData *
+purple_dnsquery_a(const char *hostname, int port,
+				PurpleDnsQueryConnectFunction callback, gpointer data)
 {
-	GaimDnsQueryData *query_data;
+	PurpleDnsQueryData *query_data;
 
 	g_return_val_if_fail(hostname != NULL, NULL);
 	g_return_val_if_fail(port	  != 0, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
-	query_data = g_new(GaimDnsQueryData, 1);
+	query_data = g_new(PurpleDnsQueryData, 1);
 	query_data->hostname = g_strdup(hostname);
 	g_strstrip(query_data->hostname);
 	query_data->port = port;
@@ -614,15 +614,15 @@ gaim_dnsquery_a(const char *hostname, int port,
 
 	if (strlen(query_data->hostname) == 0)
 	{
-		gaim_dnsquery_destroy(query_data);
+		purple_dnsquery_destroy(query_data);
 		g_return_val_if_reached(NULL);
 	}
 
 	queued_requests = g_slist_append(queued_requests, query_data);
 
-	gaim_debug_info("dns", "DNS query for '%s' queued\n", query_data->hostname);
+	purple_debug_info("dns", "DNS query for '%s' queued\n", query_data->hostname);
 
-	query_data->timeout = gaim_timeout_add(0, resolve_host, query_data);
+	query_data->timeout = purple_timeout_add(0, resolve_host, query_data);
 
 	return query_data;
 }
@@ -636,20 +636,20 @@ gaim_dnsquery_a(const char *hostname, int port,
 static gboolean
 dns_main_thread_cb(gpointer data)
 {
-	GaimDnsQueryData *query_data;
+	PurpleDnsQueryData *query_data;
 
 	query_data = data;
 
 	if (query_data->error_message != NULL)
-		gaim_dnsquery_failed(query_data, query_data->error_message);
+		purple_dnsquery_failed(query_data, query_data->error_message);
 	else
 	{
 		GSList *hosts;
 
-		/* We don't want gaim_dns_query_resolved() to free(hosts) */
+		/* We don't want purple_dns_query_resolved() to free(hosts) */
 		hosts = query_data->hosts;
 		query_data->hosts = NULL;
-		gaim_dnsquery_resolved(query_data, hosts);
+		purple_dnsquery_resolved(query_data, hosts);
 	}
 
 	return FALSE;
@@ -658,7 +658,7 @@ dns_main_thread_cb(gpointer data)
 static gpointer
 dns_thread(gpointer data)
 {
-	GaimDnsQueryData *query_data;
+	PurpleDnsQueryData *query_data;
 #ifdef HAVE_GETADDRINFO
 	int rc;
 	struct addrinfo hints, *res, *tmp;
@@ -720,14 +720,14 @@ dns_thread(gpointer data)
 static gboolean
 resolve_host(gpointer data)
 {
-	GaimDnsQueryData *query_data;
+	PurpleDnsQueryData *query_data;
 	struct sockaddr_in sin;
 	GError *err = NULL;
 
 	query_data = data;
 	query_data->timeout = 0;
 
-	if (gaim_dnsquery_ui_resolve(query_data))
+	if (purple_dnsquery_ui_resolve(query_data))
 	{
 		/* The UI is handling the resolve; we're done */
 		return FALSE;
@@ -744,7 +744,7 @@ resolve_host(gpointer data)
 		sin.sin_port = htons(query_data->port);
 		hosts = g_slist_append(hosts, GINT_TO_POINTER(sizeof(sin)));
 		hosts = g_slist_append(hosts, g_memdup(&sin, sizeof(sin)));
-		gaim_dnsquery_resolved(query_data, hosts);
+		purple_dnsquery_resolved(query_data, hosts);
 	}
 	else
 	{
@@ -758,28 +758,28 @@ resolve_host(gpointer data)
 		{
 			char message[1024];
 			g_snprintf(message, sizeof(message), _("Thread creation failure: %s"),
-					err ? err->message : _("Unknown reason"));
+					(err && err->message) ? err->message : _("Unknown reason"));
 			g_error_free(err);
-			gaim_dnsquery_failed(query_data, message);
+			purple_dnsquery_failed(query_data, message);
 		}
 	}
 
 	return FALSE;
 }
 
-GaimDnsQueryData *
-gaim_dnsquery_a(const char *hostname, int port,
-				GaimDnsQueryConnectFunction callback, gpointer data)
+PurpleDnsQueryData *
+purple_dnsquery_a(const char *hostname, int port,
+				PurpleDnsQueryConnectFunction callback, gpointer data)
 {
-	GaimDnsQueryData *query_data;
+	PurpleDnsQueryData *query_data;
 
 	g_return_val_if_fail(hostname != NULL, NULL);
 	g_return_val_if_fail(port	  != 0, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
-	gaim_debug_info("dnsquery", "Performing DNS lookup for %s\n", hostname);
+	purple_debug_info("dnsquery", "Performing DNS lookup for %s\n", hostname);
 
-	query_data = g_new(GaimDnsQueryData, 1);
+	query_data = g_new(PurpleDnsQueryData, 1);
 	query_data->hostname = g_strdup(hostname);
 	g_strstrip(query_data->hostname);
 	query_data->port = port;
@@ -790,12 +790,12 @@ gaim_dnsquery_a(const char *hostname, int port,
 
 	if (strlen(query_data->hostname) == 0)
 	{
-		gaim_dnsquery_destroy(query_data);
+		purple_dnsquery_destroy(query_data);
 		g_return_val_if_reached(NULL);
 	}
 
 	/* Don't call the callback before returning */
-	query_data->timeout = gaim_timeout_add(0, resolve_host, query_data);
+	query_data->timeout = purple_timeout_add(0, resolve_host, query_data);
 
 	return query_data;
 }
@@ -810,14 +810,14 @@ gaim_dnsquery_a(const char *hostname, int port,
 static gboolean
 resolve_host(gpointer data)
 {
-	GaimDnsQueryData *query_data;
+	PurpleDnsQueryData *query_data;
 	struct sockaddr_in sin;
 	GSList *hosts = NULL;
 
 	query_data = data;
 	query_data->timeout = 0;
 
-	if (gaim_dnsquery_ui_resolve(query_data))
+	if (purple_dnsquery_ui_resolve(query_data))
 	{
 		/* The UI is handling the resolve; we're done */
 		return FALSE;
@@ -829,7 +829,7 @@ resolve_host(gpointer data)
 			char message[1024];
 			g_snprintf(message, sizeof(message), _("Error resolving %s: %d"),
 					query_data->hostname, h_errno);
-			gaim_dnsquery_failed(query_data, message);
+			purple_dnsquery_failed(query_data, message);
 			return FALSE;
 		}
 		memset(&sin, 0, sizeof(struct sockaddr_in));
@@ -842,22 +842,22 @@ resolve_host(gpointer data)
 	hosts = g_slist_append(hosts, GINT_TO_POINTER(sizeof(sin)));
 	hosts = g_slist_append(hosts, g_memdup(&sin, sizeof(sin)));
 
-	gaim_dnsquery_resolved(query_data, hosts);
+	purple_dnsquery_resolved(query_data, hosts);
 
 	return FALSE;
 }
 
-GaimDnsQueryData *
-gaim_dnsquery_a(const char *hostname, int port,
-				GaimDnsQueryConnectFunction callback, gpointer data)
+PurpleDnsQueryData *
+purple_dnsquery_a(const char *hostname, int port,
+				PurpleDnsQueryConnectFunction callback, gpointer data)
 {
-	GaimDnsQueryData *query_data;
+	PurpleDnsQueryData *query_data;
 
 	g_return_val_if_fail(hostname != NULL, NULL);
 	g_return_val_if_fail(port	  != 0, NULL);
 	g_return_val_if_fail(callback != NULL, NULL);
 
-	query_data = g_new(GaimDnsQueryData, 1);
+	query_data = g_new(PurpleDnsQueryData, 1);
 	query_data->hostname = g_strdup(hostname);
 	g_strstrip(query_data->hostname);
 	query_data->port = port;
@@ -866,12 +866,12 @@ gaim_dnsquery_a(const char *hostname, int port,
 
 	if (strlen(query_data->hostname) == 0)
 	{
-		gaim_dnsquery_destroy(query_data);
+		purple_dnsquery_destroy(query_data);
 		g_return_val_if_reached(NULL);
 	}
 
 	/* Don't call the callback before returning */
-	query_data->timeout = gaim_timeout_add(0, resolve_host, query_data);
+	query_data->timeout = purple_timeout_add(0, resolve_host, query_data);
 
 	return query_data;
 }
@@ -879,9 +879,9 @@ gaim_dnsquery_a(const char *hostname, int port,
 #endif /* not __unix__ or __APPLE__ or _WIN32 */
 
 void
-gaim_dnsquery_destroy(GaimDnsQueryData *query_data)
+purple_dnsquery_destroy(PurpleDnsQueryData *query_data)
 {
-	GaimDnsQueryUiOps *ops = gaim_dnsquery_get_ui_ops();
+	PurpleDnsQueryUiOps *ops = purple_dnsquery_get_ui_ops();
 
 	if (ops && ops->destroy)
 		ops->destroy(query_data);
@@ -896,7 +896,7 @@ gaim_dnsquery_destroy(GaimDnsQueryData *query_data)
 		 * linked list.  However, it's hard to tell children stuff,
 		 * they just don't listen.
 		 */
-		gaim_dnsquery_resolver_destroy(query_data->resolver);
+		purple_dnsquery_resolver_destroy(query_data->resolver);
 #elif defined _WIN32 /* end __unix__ || __APPLE__ */
 	if (query_data->resolver != NULL)
 	{
@@ -921,14 +921,14 @@ gaim_dnsquery_destroy(GaimDnsQueryData *query_data)
 #endif
 
 	if (query_data->timeout > 0)
-		gaim_timeout_remove(query_data->timeout);
+		purple_timeout_remove(query_data->timeout);
 
 	g_free(query_data->hostname);
 	g_free(query_data);
 }
 
 char *
-gaim_dnsquery_get_host(GaimDnsQueryData *query_data)
+purple_dnsquery_get_host(PurpleDnsQueryData *query_data)
 {
 	g_return_val_if_fail(query_data != NULL, NULL);
 
@@ -936,7 +936,7 @@ gaim_dnsquery_get_host(GaimDnsQueryData *query_data)
 }
 
 unsigned short
-gaim_dnsquery_get_port(GaimDnsQueryData *query_data)
+purple_dnsquery_get_port(PurpleDnsQueryData *query_data)
 {
 	g_return_val_if_fail(query_data != NULL, 0);
 
@@ -944,13 +944,13 @@ gaim_dnsquery_get_port(GaimDnsQueryData *query_data)
 }
 
 void
-gaim_dnsquery_set_ui_ops(GaimDnsQueryUiOps *ops)
+purple_dnsquery_set_ui_ops(PurpleDnsQueryUiOps *ops)
 {
 	dns_query_ui_ops = ops;
 }
 
-GaimDnsQueryUiOps *
-gaim_dnsquery_get_ui_ops(void)
+PurpleDnsQueryUiOps *
+purple_dnsquery_get_ui_ops(void)
 {
 	/* It is perfectly acceptable for dns_query_ui_ops to be NULL; this just
 	 * means that the default platform-specific implementation will be used.
@@ -959,17 +959,17 @@ gaim_dnsquery_get_ui_ops(void)
 }
 
 void
-gaim_dnsquery_init(void)
+purple_dnsquery_init(void)
 {
 }
 
 void
-gaim_dnsquery_uninit(void)
+purple_dnsquery_uninit(void)
 {
 #if defined(__unix__) || defined(__APPLE__)
 	while (free_dns_children != NULL)
 	{
-		gaim_dnsquery_resolver_destroy(free_dns_children->data);
+		purple_dnsquery_resolver_destroy(free_dns_children->data);
 		free_dns_children = g_slist_remove(free_dns_children, free_dns_children->data);
 	}
 #endif

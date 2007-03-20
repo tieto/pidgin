@@ -1,7 +1,7 @@
 ;;
 ;;  hungarian.nsh
 ;;
-;;  Default language strings for the Windows Gaim NSIS installer.
+;;  Default language strings for the Windows Pidgin NSIS installer.
 ;;  Windows Code page: 1250
 ;;
 ;;  Authors: Sutto Zoltan <suttozoltan@chello.hu>, 2003
@@ -11,44 +11,44 @@
 ; Startup Checks
 !define GTK_INSTALLER_NEEDED			"A GTK+ futtató környezet hiányzik vagy frissítése szükséges.$\rKérem telepítse a v${GTK_MIN_VERSION} vagy magasabb verziójú GTK+ futtató környezetet."
 !define INSTALLER_IS_RUNNING			"A telepítõ már fut."
-!define GAIM_IS_RUNNING				"Jelenleg fut a Gaim egy példánya. Lépjen ki a Gaimból és azután próbálja újra."
+!define PIDGIN_IS_RUNNING				"Jelenleg fut a Pidgin egy példánya. Lépjen ki a Pidginból és azután próbálja újra."
 
 ; License Page
-!define GAIM_LICENSE_BUTTON			"Tovább >"
-!define GAIM_LICENSE_BOTTOM_TEXT		"A $(^Name) a GNU General Public License (GPL) alatt kerül terjesztésre. Az itt olvasható licenc csak tájékoztatási célt szolgál. $_CLICK"
+!define PIDGIN_LICENSE_BUTTON			"Tovább >"
+!define PIDGIN_LICENSE_BOTTOM_TEXT		"A $(^Name) a GNU General Public License (GPL) alatt kerül terjesztésre. Az itt olvasható licenc csak tájékoztatási célt szolgál. $_CLICK"
 
 ; Components Page
-!define GAIM_SECTION_TITLE			"Gaim azonnali üzenõ kliens (szükséges)"
+!define PIDGIN_SECTION_TITLE			"Pidgin azonnali üzenõ kliens (szükséges)"
 !define GTK_SECTION_TITLE			"GTK+ futtató környezet (szükséges)"
 !define GTK_THEMES_SECTION_TITLE		"GTK+ témák"
 !define GTK_NOTHEME_SECTION_TITLE		"Nincs téma"
 !define GTK_WIMP_SECTION_TITLE			"Wimp téma"
 !define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve téma"
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue téma"
-!define GAIM_SHORTCUTS_SECTION_TITLE		"Parancsikonok"
-!define GAIM_DESKTOP_SHORTCUT_SECTION_TITLE	"Asztal"
-!define GAIM_STARTMENU_SHORTCUT_SECTION_TITLE	"Start Menü"
-!define GAIM_SECTION_DESCRIPTION		"Gaim fájlok és dll-ek"
-!define GTK_SECTION_DESCRIPTION			"A Gaim által használt többplatformos grafikus eszközkészlet"
+!define PIDGIN_SHORTCUTS_SECTION_TITLE		"Parancsikonok"
+!define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Asztal"
+!define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Start Menü"
+!define PIDGIN_SECTION_DESCRIPTION		"Pidgin fájlok és dll-ek"
+!define GTK_SECTION_DESCRIPTION			"A Pidgin által használt többplatformos grafikus eszközkészlet"
 !define GTK_THEMES_SECTION_DESCRIPTION		"A GTK+ témák megváltoztatják a GTK+ alkalmazások kinézetét."
 !define GTK_NO_THEME_DESC			"Ne telepítsen GTK+ témát"
 !define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows utánzat), a Windows környezettel harmonizáló GTK téma."
 !define GTK_BLUECURVE_THEME_DESC		"A Bluecurve téma."
 !define GTK_LIGHTHOUSEBLUE_THEME_DESC		"A Lighthouseblue téma."
-!define GAIM_SHORTCUTS_SECTION_DESCRIPTION	"Parancsikonok a Gaim indításához"
-!define GAIM_DESKTOP_SHORTCUT_DESC		"Parancsikon létrehozása a Gaimhoz az asztalon"
-!define GAIM_STARTMENU_SHORTCUT_DESC		"Start Menü bejegyzés létrehozása a Gaimhoz"
+!define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Parancsikonok a Pidgin indításához"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC		"Parancsikon létrehozása a Pidginhoz az asztalon"
+!define PIDGIN_STARTMENU_SHORTCUT_DESC		"Start Menü bejegyzés létrehozása a Pidginhoz"
 
 ; GTK+ Directory Page
-!define GTK_UPGRADE_PROMPT			"Egy régi verziójú GTK+ futtatókörnyezet van telepítve. Kívánja frissíteni?$\rMegjegyzés: a Gaim nem fog mûködni, ha nem frissíti."
+!define GTK_UPGRADE_PROMPT			"Egy régi verziójú GTK+ futtatókörnyezet van telepítve. Kívánja frissíteni?$\rMegjegyzés: a Pidgin nem fog mûködni, ha nem frissíti."
 !define GTK_WINDOWS_INCOMPATIBLE		"A Windows 95/98/Me nem kompatibillisek a GTK+ 2.8.0 vagy újabb változatokkal. A GTK+ ${GTK_INSTALL_VERSION} nem kerül telepítésre. $\rHa a GTK+ ${GTK_MIN_VERSION} vagy újabb még nincs telepítve, akkor a telepítés most megszakad."
 
 ; Installer Finish Page
-!define GAIM_FINISH_VISIT_WEB_SITE		"A Windows Gaim weboldalának felkeresése"
+!define PIDGIN_FINISH_VISIT_WEB_SITE		"A Windows Pidgin weboldalának felkeresése"
 
-; Gaim Section Prompts and Texts
-!define GAIM_UNINSTALL_DESC			"Gaim (csak eltávolítás)"
-!define GAIM_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"A Gaim jelenleg telepített változata nem távolítható el. Az új verzió a jelenleg telepített verzió eltávolítása nélkül kerül telepítésre. "
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"Pidgin (csak eltávolítás)"
+!define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"A Pidgin jelenleg telepített változata nem távolítható el. Az új verzió a jelenleg telepített verzió eltávolítása nélkül kerül telepítésre. "
 
 
 ; GTK+ Section Prompts
@@ -59,35 +59,35 @@
 !define GTK_NO_THEME_INSTALL_RIGHTS		"Nincs jogosultsága a GTK+ témák telepítéséhez."
 
 ; Uninstall Section Prompts
-!define un.GAIM_UNINSTALL_ERROR_1		"Az eltávolító nem találta a Gaim registry bejegyzéseket.$\rValószínüleg egy másik felhasználó telepítette az alkalmazást."
-!define un.GAIM_UNINSTALL_ERROR_2		"Nincs jogosultsága az alkalmazás eltávolításához."
+!define un.PIDGIN_UNINSTALL_ERROR_1		"Az eltávolító nem találta a Pidgin registry bejegyzéseket.$\rValószínüleg egy másik felhasználó telepítette az alkalmazást."
+!define un.PIDGIN_UNINSTALL_ERROR_2		"Nincs jogosultsága az alkalmazás eltávolításához."
 
 ; Spellcheck Section Prompts
-!define GAIM_SPELLCHECK_SECTION_TITLE		"Helyesírás-ellenõrzés támogatása"
-!define GAIM_SPELLCHECK_ERROR			"Hiba a helyesírás-ellenõrzés telepítése közben"
-!define GAIM_SPELLCHECK_DICT_ERROR		"Hiba a helyesírás-ellenõrzési szótár telepítése közben"
-!define GAIM_SPELLCHECK_SECTION_DESCRIPTION	"Helyesírás-ellenõrzés támogatása. (Internetkapcsolat szükséges a telepítéshez)"
+!define PIDGIN_SPELLCHECK_SECTION_TITLE		"Helyesírás-ellenõrzés támogatása"
+!define PIDGIN_SPELLCHECK_ERROR			"Hiba a helyesírás-ellenõrzés telepítése közben"
+!define PIDGIN_SPELLCHECK_DICT_ERROR		"Hiba a helyesírás-ellenõrzési szótár telepítése közben"
+!define PIDGIN_SPELLCHECK_SECTION_DESCRIPTION	"Helyesírás-ellenõrzés támogatása. (Internetkapcsolat szükséges a telepítéshez)"
 !define ASPELL_INSTALL_FAILED			"A telepítés sikertelen"
-!define GAIM_SPELLCHECK_BRETON			"Breton"
-!define GAIM_SPELLCHECK_CATALAN			"Katalán"
-!define GAIM_SPELLCHECK_CZECH			"Cseh"
-!define GAIM_SPELLCHECK_WELSH			"Walesi"
-!define GAIM_SPELLCHECK_DANISH			"Dán"
-!define GAIM_SPELLCHECK_GERMAN			"Német"
-!define GAIM_SPELLCHECK_GREEK			"Görög"
-!define GAIM_SPELLCHECK_ENGLISH			"Angol"
-!define GAIM_SPELLCHECK_ESPERANTO		"Eszperantó"
-!define GAIM_SPELLCHECK_SPANISH			"Spanyol"
-!define GAIM_SPELLCHECK_FAROESE			"Faröai"
-!define GAIM_SPELLCHECK_FRENCH			"Francia"
-!define GAIM_SPELLCHECK_ITALIAN			"Olasz"
-!define GAIM_SPELLCHECK_DUTCH			"Holland"
-!define GAIM_SPELLCHECK_NORWEGIAN		"Norvég"
-!define GAIM_SPELLCHECK_POLISH			"Lengyel"
-!define GAIM_SPELLCHECK_PORTUGUESE		"Portugál"
-!define GAIM_SPELLCHECK_ROMANIAN		"Román"
-!define GAIM_SPELLCHECK_RUSSIAN			"Orosz"
-!define GAIM_SPELLCHECK_SLOVAK			"Szlovák"
-!define GAIM_SPELLCHECK_SWEDISH			"Svéd"
-!define GAIM_SPELLCHECK_UKRAINIAN		"Ukrán"
+!define PIDGIN_SPELLCHECK_BRETON			"Breton"
+!define PIDGIN_SPELLCHECK_CATALAN			"Katalán"
+!define PIDGIN_SPELLCHECK_CZECH			"Cseh"
+!define PIDGIN_SPELLCHECK_WELSH			"Walesi"
+!define PIDGIN_SPELLCHECK_DANISH			"Dán"
+!define PIDGIN_SPELLCHECK_GERMAN			"Német"
+!define PIDGIN_SPELLCHECK_GREEK			"Görög"
+!define PIDGIN_SPELLCHECK_ENGLISH			"Angol"
+!define PIDGIN_SPELLCHECK_ESPERANTO		"Eszperantó"
+!define PIDGIN_SPELLCHECK_SPANISH			"Spanyol"
+!define PIDGIN_SPELLCHECK_FAROESE			"Faröai"
+!define PIDGIN_SPELLCHECK_FRENCH			"Francia"
+!define PIDGIN_SPELLCHECK_ITALIAN			"Olasz"
+!define PIDGIN_SPELLCHECK_DUTCH			"Holland"
+!define PIDGIN_SPELLCHECK_NORWEGIAN		"Norvég"
+!define PIDGIN_SPELLCHECK_POLISH			"Lengyel"
+!define PIDGIN_SPELLCHECK_PORTUGUESE		"Portugál"
+!define PIDGIN_SPELLCHECK_ROMANIAN		"Román"
+!define PIDGIN_SPELLCHECK_RUSSIAN			"Orosz"
+!define PIDGIN_SPELLCHECK_SLOVAK			"Szlovák"
+!define PIDGIN_SPELLCHECK_SWEDISH			"Svéd"
+!define PIDGIN_SPELLCHECK_UKRAINIAN		"Ukrán"
 

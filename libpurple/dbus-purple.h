@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -21,11 +21,11 @@
  *
  */
 
-#ifndef _DBUS_GAIM_H_
-#define _DBUS_GAIM_H_
+#ifndef _DBUS_PURPLE_H_
+#define _DBUS_PURPLE_H_
 
-#define DBUS_SERVICE_GAIM      "net.sf.gaim.GaimService"
-#define DBUS_PATH_GAIM         "/net/sf/gaim/GaimObject"
-#define DBUS_INTERFACE_GAIM    "net.sf.gaim.GaimInterface"
+#define DBUS_SERVICE_PURPLE      "net.sf.purple.PurpleService"
+#define DBUS_PATH_PURPLE         "/net/sf/purple/PurpleObject"
+#define DBUS_INTERFACE_PURPLE    "net.sf.purple.PurpleInterface"
 
-#endif /* _DBUS_GAIM_H_ */
+#endif /* _DBUS_PURPLE_H_ */

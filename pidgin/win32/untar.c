@@ -89,9 +89,9 @@
 #define g_unlink unlink
 #endif
 
-#define untar_error( error, args... )      gaim_debug(GAIM_DEBUG_ERROR, "untar", error, ## args )
-#define untar_warning( warning, args... )  gaim_debug(GAIM_DEBUG_WARNING, "untar", warning, ## args )
-#define untar_verbose( args... )           gaim_debug(GAIM_DEBUG_INFO, "untar", ## args )
+#define untar_error( error, args... )      purple_debug(PURPLE_DEBUG_ERROR, "untar", error, ## args )
+#define untar_warning( warning, args... )  purple_debug(PURPLE_DEBUG_WARNING, "untar", warning, ## args )
+#define untar_verbose( args... )           purple_debug(PURPLE_DEBUG_INFO, "untar", ## args )
  
 #define WSIZE	32768	/* size of decompression buffer */
 #define TSIZE	512	/* size of a "tape" block */

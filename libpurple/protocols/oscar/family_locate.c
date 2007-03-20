@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -350,7 +350,7 @@ aim_locate_dorequest(OscarData *od)
 }
 
 static gboolean
-gaim_reqinfo_timeout_cb(void *data)
+purple_reqinfo_timeout_cb(void *data)
 {
 	OscarData *od;
 
@@ -411,8 +411,8 @@ aim_locate_gotuserinfo(OscarData *od, FlapConnection *conn, const char *sn)
 		 * requesting away messages and info too quickly.
 		 */
 		if (od->getinfotimer == 0)
-			od->getinfotimer = gaim_timeout_add(500,
-					gaim_reqinfo_timeout_cb, od);
+			od->getinfotimer = purple_timeout_add(500,
+					purple_reqinfo_timeout_cb, od);
 	}
 
 	return was_explicit;
@@ -479,7 +479,7 @@ aim_locate_getcaps(OscarData *od, ByteStream *bs, int len)
 		}
 
 		if (!identified)
-			gaim_debug_misc("oscar", "unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
+			purple_debug_misc("oscar", "unknown capability: {%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x}\n",
 					cap[0], cap[1], cap[2], cap[3],
 					cap[4], cap[5],
 					cap[6], cap[7],
@@ -514,7 +514,7 @@ aim_locate_getcaps_short(OscarData *od, ByteStream *bs, int len)
 		}
 
 		if (!identified)
-			gaim_debug_misc("oscar", "unknown short capability: {%02x%02x}\n", cap[0], cap[1]);
+			purple_debug_misc("oscar", "unknown short capability: {%02x%02x}\n", cap[0], cap[1]);
 
 		free(cap);
 	}
@@ -552,17 +552,17 @@ dumptlv(OscarData *od, guint16 type, ByteStream *bs, guint8 len)
 	if (!od || !bs || !len)
 		return;
 
-	gaim_debug_misc("oscar", "userinfo:   type  =0x%04x\n", type);
-	gaim_debug_misc("oscar", "userinfo:   length=0x%04x\n", len);
-	gaim_debug_misc("oscar", "userinfo:   value:\n");
+	purple_debug_misc("oscar", "userinfo:   type  =0x%04x\n", type);
+	purple_debug_misc("oscar", "userinfo:   length=0x%04x\n", len);
+	purple_debug_misc("oscar", "userinfo:   value:\n");
 
 	for (i = 0; i < len; i++) {
 		if ((i % 8) == 0)
-			gaim_debug_misc("oscar", "\nuserinfo:        ");
-		gaim_debug_misc("oscar", "0x%2x ", byte_stream_get8(bs));
+			purple_debug_misc("oscar", "\nuserinfo:        ");
+		purple_debug_misc("oscar", "0x%2x ", byte_stream_get8(bs));
 	}
 
-	gaim_debug_misc("oscar", "\n");
+	purple_debug_misc("oscar", "\n");
 
 	return;
 }
@@ -870,8 +870,8 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 			 *
 			 */
 #ifdef LOG_UNKNOWN_TLV
-			gaim_debug_misc("oscar", "userinfo: **warning: unexpected TLV:\n");
-			gaim_debug_misc("oscar", "userinfo:   sn    =%s\n", outinfo->sn);
+			purple_debug_misc("oscar", "userinfo: **warning: unexpected TLV:\n");
+			purple_debug_misc("oscar", "userinfo:   sn    =%s\n", outinfo->sn);
 			dumptlv(od, type, bs, length);
 #endif
 		}
@@ -947,17 +947,17 @@ error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	int was_explicit;
 
 	if (!(snac2 = aim_remsnac(od, snac->id))) {
-		gaim_debug_misc("oscar", "faim: locate.c, error(): received response from unknown request!\n");
+		purple_debug_misc("oscar", "faim: locate.c, error(): received response from unknown request!\n");
 		return 0;
 	}
 
 	if ((snac2->family != 0x0002) && (snac2->type != 0x0015)) {
-		gaim_debug_misc("oscar", "faim: locate.c, error(): received response from invalid request! %d\n", snac2->family);
+		purple_debug_misc("oscar", "faim: locate.c, error(): received response from invalid request! %d\n", snac2->family);
 		return 0;
 	}
 
 	if (!(sn = snac2->data)) {
-		gaim_debug_misc("oscar", "faim: locate.c, error(): received response from request without a screen name!\n");
+		purple_debug_misc("oscar", "faim: locate.c, error(): received response from request without a screen name!\n");
 		return 0;
 	}
 

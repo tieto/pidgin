@@ -19,7 +19,7 @@
 
 #include "silcincludes.h"
 #include "silcclient.h"
-#include "silcgaim.h"
+#include "silcpurple.h"
 #include "wb.h"
 
 /*
@@ -50,43 +50,43 @@
 
 */
 
-#define SILCGAIM_WB_MIME "MIME-Version: 1.0\r\nContent-Type: application/x-wb\r\nContent-Transfer-Encoding: binary\r\n\r\n"
-#define SILCGAIM_WB_HEADER strlen(SILCGAIM_WB_MIME) + 11
+#define SILCPURPLE_WB_MIME "MIME-Version: 1.0\r\nContent-Type: application/x-wb\r\nContent-Transfer-Encoding: binary\r\n\r\n"
+#define SILCPURPLE_WB_HEADER strlen(SILCPURPLE_WB_MIME) + 11
 
-#define SILCGAIM_WB_WIDTH 500
-#define SILCGAIM_WB_HEIGHT 400
-#define SILCGAIM_WB_WIDTH_MAX 1024
-#define SILCGAIM_WB_HEIGHT_MAX 1024
+#define SILCPURPLE_WB_WIDTH 500
+#define SILCPURPLE_WB_HEIGHT 400
+#define SILCPURPLE_WB_WIDTH_MAX 1024
+#define SILCPURPLE_WB_HEIGHT_MAX 1024
 
 /* Commands */
 typedef enum {
-	SILCGAIM_WB_DRAW 	= 0x01,
-	SILCGAIM_WB_CLEAR	= 0x02,
-} SilcGaimWbCommand;
+	SILCPURPLE_WB_DRAW 	= 0x01,
+	SILCPURPLE_WB_CLEAR	= 0x02,
+} SilcPurpleWbCommand;
 
 /* Brush size */
 typedef enum {
-	SILCGAIM_WB_BRUSH_SMALL = 2,
-	SILCGAIM_WB_BRUSH_MEDIUM = 5,
-	SILCGAIM_WB_BRUSH_LARGE = 10,
-} SilcGaimWbBrushSize;
+	SILCPURPLE_WB_BRUSH_SMALL = 2,
+	SILCPURPLE_WB_BRUSH_MEDIUM = 5,
+	SILCPURPLE_WB_BRUSH_LARGE = 10,
+} SilcPurpleWbBrushSize;
 
-/* Brush color (XXX Gaim should provide default colors) */
+/* Brush color (XXX Purple should provide default colors) */
 typedef enum {
-	SILCGAIM_WB_COLOR_BLACK		= 0,
-	SILCGAIM_WB_COLOR_RED		= 13369344,
-	SILCGAIM_WB_COLOR_GREEN		= 52224,
-	SILCGAIM_WB_COLOR_BLUE		= 204,
-	SILCGAIM_WB_COLOR_YELLOW 	= 15658496,
-	SILCGAIM_WB_COLOR_ORANGE	= 16737792,
-	SILCGAIM_WB_COLOR_CYAN		= 52428,
-	SILCGAIM_WB_COLOR_VIOLET	= 5381277,
-	SILCGAIM_WB_COLOR_PURPLE	= 13369548,
-	SILCGAIM_WB_COLOR_TAN		= 12093547,
-	SILCGAIM_WB_COLOR_BROWN		= 5256485,
-	SILCGAIM_WB_COLOR_GREY		= 11184810,
-	SILCGAIM_WB_COLOR_WHITE		= 16777215,
-} SilcGaimWbColor;
+	SILCPURPLE_WB_COLOR_BLACK		= 0,
+	SILCPURPLE_WB_COLOR_RED		= 13369344,
+	SILCPURPLE_WB_COLOR_GREEN		= 52224,
+	SILCPURPLE_WB_COLOR_BLUE		= 204,
+	SILCPURPLE_WB_COLOR_YELLOW 	= 15658496,
+	SILCPURPLE_WB_COLOR_ORANGE	= 16737792,
+	SILCPURPLE_WB_COLOR_CYAN		= 52428,
+	SILCPURPLE_WB_COLOR_VIOLET	= 5381277,
+	SILCPURPLE_WB_COLOR_PURPLE	= 13369548,
+	SILCPURPLE_WB_COLOR_TAN		= 12093547,
+	SILCPURPLE_WB_COLOR_BROWN		= 5256485,
+	SILCPURPLE_WB_COLOR_GREY		= 11184810,
+	SILCPURPLE_WB_COLOR_WHITE		= 16777215,
+} SilcPurpleWbColor;
 
 typedef struct {
 	int type;		/* 0 = buddy, 1 = channel */
@@ -98,20 +98,20 @@ typedef struct {
 	int height;
 	int brush_size;
 	int brush_color;
-} *SilcGaimWb;
+} *SilcPurpleWb;
 
 /* Initialize whiteboard */
 
-GaimWhiteboard *silcgaim_wb_init(SilcGaim sg, SilcClientEntry client_entry)
+PurpleWhiteboard *silcpurple_wb_init(SilcPurple sg, SilcClientEntry client_entry)
 {
         SilcClientConnection conn;
-	GaimWhiteboard *wb;
-	SilcGaimWb wbs;
+	PurpleWhiteboard *wb;
+	SilcPurpleWb wbs;
 
 	conn = sg->conn;
-	wb = gaim_whiteboard_get_session(sg->account, client_entry->nickname);
+	wb = purple_whiteboard_get_session(sg->account, client_entry->nickname);
 	if (!wb)
-		wb = gaim_whiteboard_create(sg->account, client_entry->nickname, 0);
+		wb = purple_whiteboard_create(sg->account, client_entry->nickname, 0);
 	if (!wb)
 		return NULL;
 
@@ -121,28 +121,28 @@ GaimWhiteboard *silcgaim_wb_init(SilcGaim sg, SilcClientEntry client_entry)
 			return NULL;
 		wbs->type = 0;
 		wbs->u.client = client_entry;
-		wbs->width = SILCGAIM_WB_WIDTH;
-		wbs->height = SILCGAIM_WB_HEIGHT;
-		wbs->brush_size = SILCGAIM_WB_BRUSH_SMALL;
-		wbs->brush_color = SILCGAIM_WB_COLOR_BLACK;
+		wbs->width = SILCPURPLE_WB_WIDTH;
+		wbs->height = SILCPURPLE_WB_HEIGHT;
+		wbs->brush_size = SILCPURPLE_WB_BRUSH_SMALL;
+		wbs->brush_color = SILCPURPLE_WB_COLOR_BLACK;
 		wb->proto_data = wbs;
 
 		/* Start the whiteboard */
-		gaim_whiteboard_start(wb);
-		gaim_whiteboard_clear(wb);
+		purple_whiteboard_start(wb);
+		purple_whiteboard_clear(wb);
 	}
 
 	return wb;
 }
 
-GaimWhiteboard *silcgaim_wb_init_ch(SilcGaim sg, SilcChannelEntry channel)
+PurpleWhiteboard *silcpurple_wb_init_ch(SilcPurple sg, SilcChannelEntry channel)
 {
-	GaimWhiteboard *wb;
-	SilcGaimWb wbs;
+	PurpleWhiteboard *wb;
+	SilcPurpleWb wbs;
 
-	wb = gaim_whiteboard_get_session(sg->account, channel->channel_name);
+	wb = purple_whiteboard_get_session(sg->account, channel->channel_name);
 	if (!wb)
-		wb = gaim_whiteboard_create(sg->account, channel->channel_name, 0);
+		wb = purple_whiteboard_create(sg->account, channel->channel_name, 0);
 	if (!wb)
 		return NULL;
 
@@ -152,22 +152,22 @@ GaimWhiteboard *silcgaim_wb_init_ch(SilcGaim sg, SilcChannelEntry channel)
 			return NULL;
 		wbs->type = 1;
 		wbs->u.channel = channel;
-		wbs->width = SILCGAIM_WB_WIDTH;
-		wbs->height = SILCGAIM_WB_HEIGHT;
-		wbs->brush_size = SILCGAIM_WB_BRUSH_SMALL;
-		wbs->brush_color = SILCGAIM_WB_COLOR_BLACK;
+		wbs->width = SILCPURPLE_WB_WIDTH;
+		wbs->height = SILCPURPLE_WB_HEIGHT;
+		wbs->brush_size = SILCPURPLE_WB_BRUSH_SMALL;
+		wbs->brush_color = SILCPURPLE_WB_COLOR_BLACK;
 		wb->proto_data = wbs;
 
 		/* Start the whiteboard */
-		gaim_whiteboard_start(wb);
-		gaim_whiteboard_clear(wb);
+		purple_whiteboard_start(wb);
+		purple_whiteboard_clear(wb);
 	}
 
 	return wb;
 }
 
 static void
-silcgaim_wb_parse(SilcGaimWb wbs, GaimWhiteboard *wb,
+silcpurple_wb_parse(SilcPurpleWb wbs, PurpleWhiteboard *wb,
 		  unsigned char *message, SilcUInt32 message_len)
 {
 	SilcUInt8 command;
@@ -191,9 +191,9 @@ silcgaim_wb_parse(SilcGaimWb wbs, GaimWhiteboard *wb,
 
 	/* Update whiteboard if its dimensions changed */
 	if (width != wbs->width || height != wbs->height)
-		silcgaim_wb_set_dimensions(wb, height, width);
+		silcpurple_wb_set_dimensions(wb, height, width);
 
-	if (command == SILCGAIM_WB_DRAW) {
+	if (command == SILCPURPLE_WB_DRAW) {
 		/* Parse data and draw it */
 		ret = silc_buffer_unformat(&buf,
 					   SILC_STR_UI_INT(&dx),
@@ -213,39 +213,39 @@ silcgaim_wb_parse(SilcGaimWb wbs, GaimWhiteboard *wb,
 				return;
 			silc_buffer_pull(&buf, 8);
 
-			gaim_whiteboard_draw_line(wb, x, y, x + dx, y + dy,
+			purple_whiteboard_draw_line(wb, x, y, x + dx, y + dy,
 						  brush_color, brush_size);
 			x += dx;
 			y += dy;
 		}
 	}
 
-	if (command == SILCGAIM_WB_CLEAR)
-		gaim_whiteboard_clear(wb);
+	if (command == SILCPURPLE_WB_CLEAR)
+		purple_whiteboard_clear(wb);
 }
 
 typedef struct {
   unsigned char *message;
   SilcUInt32 message_len;
-  SilcGaim sg;
+  SilcPurple sg;
   SilcClientEntry sender;
   SilcChannelEntry channel;
-} *SilcGaimWbRequest;
+} *SilcPurpleWbRequest;
 
 static void
-silcgaim_wb_request_cb(SilcGaimWbRequest req, gint id)
+silcpurple_wb_request_cb(SilcPurpleWbRequest req, gint id)
 {
-	GaimWhiteboard *wb;
+	PurpleWhiteboard *wb;
 
         if (id != 1)
                 goto out;
 
 	if (!req->channel)
-		wb = silcgaim_wb_init(req->sg, req->sender);
+		wb = silcpurple_wb_init(req->sg, req->sender);
 	else
-		wb = silcgaim_wb_init_ch(req->sg, req->channel);
+		wb = silcpurple_wb_init_ch(req->sg, req->channel);
 
-	silcgaim_wb_parse(wb->proto_data, wb, req->message, req->message_len);
+	silcpurple_wb_parse(wb->proto_data, wb, req->message, req->message_len);
 
   out:
 	silc_free(req->message);
@@ -253,28 +253,28 @@ silcgaim_wb_request_cb(SilcGaimWbRequest req, gint id)
 }
 
 static void
-silcgaim_wb_request(SilcClient client, const unsigned char *message, 
+silcpurple_wb_request(SilcClient client, const unsigned char *message, 
 		    SilcUInt32 message_len, SilcClientEntry sender, 
 		    SilcChannelEntry channel)
 {
 	char tmp[128];
-	SilcGaimWbRequest req;
-	GaimConnection *gc;
-	SilcGaim sg;
+	SilcPurpleWbRequest req;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
 	gc = client->application;
         sg = gc->proto_data;
 
 	/* Open whiteboard automatically if requested */
-	if (gaim_account_get_bool(sg->account, "open-wb", FALSE)) {
-		GaimWhiteboard *wb;
+	if (purple_account_get_bool(sg->account, "open-wb", FALSE)) {
+		PurpleWhiteboard *wb;
 
 		if (!channel)
-			wb = silcgaim_wb_init(sg, sender);
+			wb = silcpurple_wb_init(sg, sender);
 		else
-			wb = silcgaim_wb_init_ch(sg, channel);
+			wb = silcpurple_wb_init_ch(sg, channel);
 
-		silcgaim_wb_parse(wb->proto_data, wb, (unsigned char *)message,
+		silcpurple_wb_parse(wb->proto_data, wb, (unsigned char *)message,
 				  message_len);
 		return;
 	}
@@ -299,85 +299,85 @@ silcgaim_wb_request(SilcClient client, const unsigned char *message,
 	req->channel = channel;
 	req->sg = sg;
 
-	gaim_request_action(gc, _("Whiteboard"), tmp, NULL, 1, req, 2,
-			    _("Yes"), G_CALLBACK(silcgaim_wb_request_cb),
-			    _("No"), G_CALLBACK(silcgaim_wb_request_cb));
+	purple_request_action(gc, _("Whiteboard"), tmp, NULL, 1, req, 2,
+			    _("Yes"), G_CALLBACK(silcpurple_wb_request_cb),
+			    _("No"), G_CALLBACK(silcpurple_wb_request_cb));
 }
 
 /* Process incoming whiteboard message */
 
-void silcgaim_wb_receive(SilcClient client, SilcClientConnection conn,
+void silcpurple_wb_receive(SilcClient client, SilcClientConnection conn,
 			 SilcClientEntry sender, SilcMessagePayload payload,
 			 SilcMessageFlags flags, const unsigned char *message,
 			 SilcUInt32 message_len)
 {
-	SilcGaim sg;
-        GaimConnection *gc;
-	GaimWhiteboard *wb;
-	SilcGaimWb wbs;
+	SilcPurple sg;
+        PurpleConnection *gc;
+	PurpleWhiteboard *wb;
+	SilcPurpleWb wbs;
 
 	gc = client->application;
         sg = gc->proto_data;
 
-	wb = gaim_whiteboard_get_session(sg->account, sender->nickname);
+	wb = purple_whiteboard_get_session(sg->account, sender->nickname);
 	if (!wb) {
 		/* Ask user if they want to open the whiteboard */
-		silcgaim_wb_request(client, message, message_len,
+		silcpurple_wb_request(client, message, message_len,
 				    sender, NULL);
 		return;
 	}
 
 	wbs = wb->proto_data;
-	silcgaim_wb_parse(wbs, wb, (unsigned char *)message, message_len);
+	silcpurple_wb_parse(wbs, wb, (unsigned char *)message, message_len);
 }
 
 /* Process incoming whiteboard message on channel */
 
-void silcgaim_wb_receive_ch(SilcClient client, SilcClientConnection conn,
+void silcpurple_wb_receive_ch(SilcClient client, SilcClientConnection conn,
 			    SilcClientEntry sender, SilcChannelEntry channel,
 			    SilcMessagePayload payload,
 			    SilcMessageFlags flags,
 			    const unsigned char *message,
 			    SilcUInt32 message_len)
 {
-	SilcGaim sg;
-        GaimConnection *gc;
-	GaimWhiteboard *wb;
-	SilcGaimWb wbs;
+	SilcPurple sg;
+        PurpleConnection *gc;
+	PurpleWhiteboard *wb;
+	SilcPurpleWb wbs;
 
 	gc = client->application;
         sg = gc->proto_data;
 
-	wb = gaim_whiteboard_get_session(sg->account, channel->channel_name);
+	wb = purple_whiteboard_get_session(sg->account, channel->channel_name);
 	if (!wb) {
 		/* Ask user if they want to open the whiteboard */
-		silcgaim_wb_request(client, message, message_len,
+		silcpurple_wb_request(client, message, message_len,
 				    sender, channel);
 		return;
 	}
 
 	wbs = wb->proto_data;
-	silcgaim_wb_parse(wbs, wb, (unsigned char *)message, message_len);
+	silcpurple_wb_parse(wbs, wb, (unsigned char *)message, message_len);
 }
 
 /* Send whiteboard message */
 
-void silcgaim_wb_send(GaimWhiteboard *wb, GList *draw_list)
+void silcpurple_wb_send(PurpleWhiteboard *wb, GList *draw_list)
 {
-	SilcGaimWb wbs = wb->proto_data;
+	SilcPurpleWb wbs = wb->proto_data;
 	SilcBuffer packet;
 	GList *list;
 	int len;
-        GaimConnection *gc;
-        SilcGaim sg;
+        PurpleConnection *gc;
+        SilcPurple sg;
 
 	g_return_if_fail(draw_list);
-	gc = gaim_account_get_connection(wb->account);
+	gc = purple_account_get_connection(wb->account);
 	g_return_if_fail(gc);
  	sg = gc->proto_data;
 	g_return_if_fail(sg);
 
-	len = SILCGAIM_WB_HEADER;
+	len = SILCPURPLE_WB_HEADER;
 	for (list = draw_list; list; list = list->next)
 		len += 4;
 
@@ -387,14 +387,14 @@ void silcgaim_wb_send(GaimWhiteboard *wb, GList *draw_list)
 
 	/* Assmeble packet */
 	silc_buffer_format(packet,
-			   SILC_STR_UI32_STRING(SILCGAIM_WB_MIME),
-			   SILC_STR_UI_CHAR(SILCGAIM_WB_DRAW),
+			   SILC_STR_UI32_STRING(SILCPURPLE_WB_MIME),
+			   SILC_STR_UI_CHAR(SILCPURPLE_WB_DRAW),
 			   SILC_STR_UI_SHORT(wbs->width),
 			   SILC_STR_UI_SHORT(wbs->height),
 			   SILC_STR_UI_INT(wbs->brush_color),
 			   SILC_STR_UI_SHORT(wbs->brush_size),
 			   SILC_STR_END);
-	silc_buffer_pull(packet, SILCGAIM_WB_HEADER);
+	silc_buffer_pull(packet, SILCPURPLE_WB_HEADER);
 	for (list = draw_list; list; list = list->next) {
 		silc_buffer_format(packet,
 				   SILC_STR_UI_INT(GPOINTER_TO_INT(list->data)),
@@ -420,77 +420,77 @@ void silcgaim_wb_send(GaimWhiteboard *wb, GList *draw_list)
 	silc_buffer_free(packet);
 }
 
-/* Gaim Whiteboard operations */
+/* Purple Whiteboard operations */
 
-void silcgaim_wb_start(GaimWhiteboard *wb)
+void silcpurple_wb_start(PurpleWhiteboard *wb)
 {
 	/* Nothing here.  Everything is in initialization */
 }
 
-void silcgaim_wb_end(GaimWhiteboard *wb)
+void silcpurple_wb_end(PurpleWhiteboard *wb)
 {
 	silc_free(wb->proto_data);
 	wb->proto_data = NULL;
 }
 
-void silcgaim_wb_get_dimensions(GaimWhiteboard *wb, int *width, int *height)
+void silcpurple_wb_get_dimensions(PurpleWhiteboard *wb, int *width, int *height)
 {
-	SilcGaimWb wbs = wb->proto_data;
+	SilcPurpleWb wbs = wb->proto_data;
 	*width = wbs->width;
 	*height = wbs->height;
 }
 
-void silcgaim_wb_set_dimensions(GaimWhiteboard *wb, int width, int height)
+void silcpurple_wb_set_dimensions(PurpleWhiteboard *wb, int width, int height)
 {
-	SilcGaimWb wbs = wb->proto_data;
-	wbs->width = width > SILCGAIM_WB_WIDTH_MAX ? SILCGAIM_WB_WIDTH_MAX :
+	SilcPurpleWb wbs = wb->proto_data;
+	wbs->width = width > SILCPURPLE_WB_WIDTH_MAX ? SILCPURPLE_WB_WIDTH_MAX :
 			width;
-	wbs->height = height > SILCGAIM_WB_HEIGHT_MAX ? SILCGAIM_WB_HEIGHT_MAX :
+	wbs->height = height > SILCPURPLE_WB_HEIGHT_MAX ? SILCPURPLE_WB_HEIGHT_MAX :
 			height;
 
 	/* Update whiteboard */
-	gaim_whiteboard_set_dimensions(wb, wbs->width, wbs->height);
+	purple_whiteboard_set_dimensions(wb, wbs->width, wbs->height);
 }
 
-void silcgaim_wb_get_brush(GaimWhiteboard *wb, int *size, int *color)
+void silcpurple_wb_get_brush(PurpleWhiteboard *wb, int *size, int *color)
 {
-	SilcGaimWb wbs = wb->proto_data;
+	SilcPurpleWb wbs = wb->proto_data;
 	*size = wbs->brush_size;
 	*color = wbs->brush_color;
 }
 
-void silcgaim_wb_set_brush(GaimWhiteboard *wb, int size, int color)
+void silcpurple_wb_set_brush(PurpleWhiteboard *wb, int size, int color)
 {
-	SilcGaimWb wbs = wb->proto_data;
+	SilcPurpleWb wbs = wb->proto_data;
 	wbs->brush_size = size;
 	wbs->brush_color = color;
 
 	/* Update whiteboard */
-	gaim_whiteboard_set_brush(wb, size, color);
+	purple_whiteboard_set_brush(wb, size, color);
 }
 
-void silcgaim_wb_clear(GaimWhiteboard *wb)
+void silcpurple_wb_clear(PurpleWhiteboard *wb)
 {
-	SilcGaimWb wbs = wb->proto_data;
+	SilcPurpleWb wbs = wb->proto_data;
 	SilcBuffer packet;
 	int len;
-        GaimConnection *gc;
-        SilcGaim sg;
+        PurpleConnection *gc;
+        SilcPurple sg;
 
-	gc = gaim_account_get_connection(wb->account);
+	gc = purple_account_get_connection(wb->account);
 	g_return_if_fail(gc);
  	sg = gc->proto_data;
 	g_return_if_fail(sg);
 
-	len = SILCGAIM_WB_HEADER;
+	len = SILCPURPLE_WB_HEADER;
 	packet = silc_buffer_alloc_size(len);
 	if (!packet)
 		return;
 
 	/* Assmeble packet */
 	silc_buffer_format(packet,
-			   SILC_STR_UI32_STRING(SILCGAIM_WB_MIME),
-			   SILC_STR_UI_CHAR(SILCGAIM_WB_CLEAR),
+			   SILC_STR_UI32_STRING(SILCPURPLE_WB_MIME),
+			   SILC_STR_UI_CHAR(SILCPURPLE_WB_CLEAR),
 			   SILC_STR_UI_SHORT(wbs->width),
 			   SILC_STR_UI_SHORT(wbs->height),
 			   SILC_STR_UI_INT(wbs->brush_color),

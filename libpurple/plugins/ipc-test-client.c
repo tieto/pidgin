@@ -26,62 +26,62 @@
 #define IPC_TEST_CLIENT_PLUGIN_ID "core-ipc-test-client"
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	GaimPlugin *server_plugin;
+	PurplePlugin *server_plugin;
 	gboolean ok;
 	int result;
 
-	server_plugin = gaim_plugins_find_with_id("core-ipc-test-server");
+	server_plugin = purple_plugins_find_with_id("core-ipc-test-server");
 
 	if (server_plugin == NULL)
 	{
-		gaim_debug_error("ipc-test-client",
+		purple_debug_error("ipc-test-client",
 						 "Unable to locate plugin core-ipc-test-server, "
 						 "needed for IPC.\n");
 
 		return TRUE;
 	}
 
-	result = (int)gaim_plugin_ipc_call(server_plugin, "add", &ok, 36, 6);
+	result = (int)purple_plugin_ipc_call(server_plugin, "add", &ok, 36, 6);
 
 	if (!ok)
 	{
-		gaim_debug_error("ipc-test-client",
+		purple_debug_error("ipc-test-client",
 						 "Unable to call IPC function 'add' in "
 						 "core-ipc-test-server plugin.");
 
 		return TRUE;
 	}
 
-	gaim_debug_info("ipc-test-client", "36 + 6 = %d\n", result);
+	purple_debug_info("ipc-test-client", "36 + 6 = %d\n", result);
 
-	result = (int)gaim_plugin_ipc_call(server_plugin, "sub", &ok, 50, 8);
+	result = (int)purple_plugin_ipc_call(server_plugin, "sub", &ok, 50, 8);
 
 	if (!ok)
 	{
-		gaim_debug_error("ipc-test-client",
+		purple_debug_error("ipc-test-client",
 						 "Unable to call IPC function 'sub' in "
 						 "core-ipc-test-server plugin.");
 
 		return TRUE;
 	}
 
-	gaim_debug_info("ipc-test-client", "50 - 8 = %d\n", result);
+	purple_debug_info("ipc-test-client", "50 - 8 = %d\n", result);
 
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	IPC_TEST_CLIENT_PLUGIN_ID,                        /**< id             */
 	N_("IPC Test Client"),                            /**< name           */
@@ -92,7 +92,7 @@ static GaimPluginInfo info =
 	N_("Test plugin IPC support, as a client. This locates the server "
 	   "plugin and calls the commands registered."),
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	NULL,                                             /**< unload         */
@@ -105,10 +105,10 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 	info.dependencies = g_list_append(info.dependencies,
 									  "core-ipc-test-server");
 }
 
-GAIM_INIT_PLUGIN(ipctestclient, init_plugin, info)
+PURPLE_INIT_PLUGIN(ipctestclient, init_plugin, info)

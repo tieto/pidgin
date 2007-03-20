@@ -28,8 +28,8 @@
 #include <version.h>
 
 static gboolean
-addnewline_msg_cb(GaimAccount *account, char *sender, char **message,
-					 GaimConversation *conv, int *flags, void *data)
+addnewline_msg_cb(PurpleAccount *account, char *sender, char **message,
+					 PurpleConversation *conv, int *flags, void *data)
 {
 	if (g_ascii_strncasecmp(*message, "/me ", strlen("/me "))) {
 		char *tmp = g_strdup_printf("\n%s", *message);
@@ -41,28 +41,28 @@ addnewline_msg_cb(GaimAccount *account, char *sender, char **message,
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	void *conversation = gaim_conversations_get_handle();
+	void *conversation = purple_conversations_get_handle();
 
-	gaim_signal_connect(conversation, "writing-im-msg",
-						plugin, GAIM_CALLBACK(addnewline_msg_cb), NULL);
-	gaim_signal_connect(conversation, "writing-chat-msg",
-						plugin, GAIM_CALLBACK(addnewline_msg_cb), NULL);
+	purple_signal_connect(conversation, "writing-im-msg",
+						plugin, PURPLE_CALLBACK(addnewline_msg_cb), NULL);
+	purple_signal_connect(conversation, "writing-chat-msg",
+						plugin, PURPLE_CALLBACK(addnewline_msg_cb), NULL);
 
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,								/**< magic			*/
-	GAIM_MAJOR_VERSION,								/**< major version	*/
-	GAIM_MINOR_VERSION,								/**< minor version	*/
-	GAIM_PLUGIN_STANDARD,							/**< type			*/
+	PURPLE_PLUGIN_MAGIC,								/**< magic			*/
+	PURPLE_MAJOR_VERSION,								/**< major version	*/
+	PURPLE_MINOR_VERSION,								/**< minor version	*/
+	PURPLE_PLUGIN_STANDARD,							/**< type			*/
 	NULL,											/**< ui_requirement	*/
 	0,												/**< flags			*/
 	NULL,											/**< dependencies	*/
-	GAIM_PRIORITY_DEFAULT,							/**< priority		*/
+	PURPLE_PRIORITY_DEFAULT,							/**< priority		*/
 
 	"core-plugin_pack-newline",						/**< id				*/
 	N_("New Line"),									/**< name			*/
@@ -72,7 +72,7 @@ static GaimPluginInfo info =
 	   "rest of the message appears below the "
 	   "screen name in the conversation window."),	/**  description	*/
 	"Stu Tomlinson <stu@nosnilmot.com>",			/**< author			*/
-	GAIM_WEBSITE,									/**< homepage		*/
+	PURPLE_WEBSITE,									/**< homepage		*/
 
 	plugin_load,									/**< load			*/
 	NULL,											/**< unload			*/
@@ -85,7 +85,7 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin) {
+init_plugin(PurplePlugin *plugin) {
 }
 
-GAIM_INIT_PLUGIN(lastseen, init_plugin, info)
+PURPLE_INIT_PLUGIN(lastseen, init_plugin, info)

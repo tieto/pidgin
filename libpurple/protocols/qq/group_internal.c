@@ -1,9 +1,9 @@
 /**
  * @file group_internal.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -56,23 +56,23 @@ static gchar *_qq_group_set_my_status_desc(qq_group *group)
 	return g_strdup(status_desc);
 }
 
-static void _qq_group_add_to_blist(GaimConnection *gc, qq_group *group)
+static void _qq_group_add_to_blist(PurpleConnection *gc, qq_group *group)
 {
 	GHashTable *components;
-	GaimGroup *g;
-	GaimChat *chat;
+	PurpleGroup *g;
+	PurpleChat *chat;
 	components = qq_group_to_hashtable(group);
-	chat = gaim_chat_new(gaim_connection_get_account(gc), group->group_name_utf8, components);
-	g = qq_get_gaim_group(GAIM_GROUP_QQ_QUN);
-	gaim_blist_add_chat(chat, g, NULL);
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "You have added group \"%s\" to blist locally\n", group->group_name_utf8);
+	chat = purple_chat_new(purple_connection_get_account(gc), group->group_name_utf8, components);
+	g = qq_get_purple_group(PURPLE_GROUP_QQ_QUN);
+	purple_blist_add_chat(chat, g, NULL);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "You have added group \"%s\" to blist locally\n", group->group_name_utf8);
 }
 
 /* Create a dummy qq_group, which includes only internal_id, external_id,
  * and potentially group_name_utf8, in case we need to call group_conv_show_window
  * right after creation. All other attributes are set to empty.
  * We need to send a get_group_info to the QQ server to update it right away */
-qq_group *qq_group_create_internal_record(GaimConnection *gc,
+qq_group *qq_group_create_internal_record(PurpleConnection *gc,
                 guint32 internal_id, guint32 external_id, gchar *group_name_utf8)
 {
         qq_group *group;
@@ -119,7 +119,7 @@ void qq_group_delete_internal_record(qq_data *qd, guint32 internal_group_id)
         }
 }
 
-/* convert a qq_group to hash-table, which could be component of GaimChat */
+/* convert a qq_group to hash-table, which could be component of PurpleChat */
 GHashTable *qq_group_to_hashtable(qq_group *group)
 {
 	GHashTable *components;
@@ -143,7 +143,7 @@ GHashTable *qq_group_to_hashtable(qq_group *group)
 }
 
 /* create a qq_group from hashtable */
-qq_group *qq_group_from_hashtable(GaimConnection *gc, GHashTable *data)
+qq_group *qq_group_from_hashtable(PurpleConnection *gc, GHashTable *data)
 {
 	qq_data *qd;
 	qq_group *group;
@@ -176,21 +176,21 @@ qq_group *qq_group_from_hashtable(GaimConnection *gc, GHashTable *data)
 }
 
 /* refresh group local subscription */
-void qq_group_refresh(GaimConnection *gc, qq_group *group)
+void qq_group_refresh(PurpleConnection *gc, qq_group *group)
 {
-	GaimChat *chat;
+	PurpleChat *chat;
 	gchar *external_group_id;
 	g_return_if_fail(group != NULL);
 
 	external_group_id = g_strdup_printf("%d", group->external_group_id);
-	chat = gaim_blist_find_chat(gaim_connection_get_account(gc), external_group_id);
+	chat = purple_blist_find_chat(purple_connection_get_account(gc), external_group_id);
 	g_free(external_group_id);
 	if (chat == NULL && group->my_status != QQ_GROUP_MEMBER_STATUS_NOT_MEMBER) {
 		_qq_group_add_to_blist(gc, group);
 	} else if (chat != NULL) {	/* we have a local record, update its info */
 		/* if there is group_name_utf8, we update the group name */
 		if (group->group_name_utf8 != NULL && strlen(group->group_name_utf8) > 0)
-			gaim_blist_alias_chat(chat, group->group_name_utf8);
+			purple_blist_alias_chat(chat, group->group_name_utf8);
 		g_hash_table_replace(chat->components,
 				     g_strdup(QQ_GROUP_KEY_MEMBER_STATUS), g_strdup_printf("%d", group->my_status));
 		group->my_status_desc = _qq_group_set_my_status_desc(group);

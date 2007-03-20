@@ -1,9 +1,9 @@
 /**
  * @file group_opt.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -79,7 +79,7 @@ static void _sort(guint32 *list)
 	_quick_sort((gint *) list, 0, i - 1);
 }
 
-static void _qq_group_member_opt(GaimConnection *gc, qq_group *group, gint operation, guint32 *members)
+static void _qq_group_member_opt(PurpleConnection *gc, qq_group *group, gint operation, guint32 *members)
 {
 	guint8 *data, *cursor;
 	gint i, count, data_len;
@@ -120,7 +120,7 @@ void qq_group_search_application_with_struct(group_member_opt *g)
 	g_return_if_fail(g != NULL && g->gc != NULL && g->member > 0);
 
 	qq_send_packet_get_info(g->gc, g->member, TRUE);	/* we wanna see window */
-	gaim_request_action
+	purple_request_action
 	    (g->gc, NULL, _("Do you wanna approve the request?"), "", 2, g,
 	     2, _("Reject"),
 	     G_CALLBACK(qq_group_reject_application_with_struct),
@@ -135,7 +135,7 @@ void qq_group_reject_application_with_struct(group_member_opt *g)
 	msg1 = g_strdup_printf(_("You rejected %d's request"), g->member);
 	msg2 = g_strdup(_("Input your reason:"));
 
-	gaim_request_input(g->gc, NULL, msg1, msg2,
+	purple_request_input(g->gc, NULL, msg1, msg2,
 			   _("Sorry, you are not my type..."), TRUE, FALSE,
 			   NULL, _("Send"),
 			   G_CALLBACK(_qq_group_reject_application_real),
@@ -156,7 +156,7 @@ void qq_group_approve_application_with_struct(group_member_opt *g)
 	g_free(g);
 }
 
-void qq_group_modify_members(GaimConnection *gc, qq_group *group, guint32 *new_members)
+void qq_group_modify_members(PurpleConnection *gc, qq_group *group, guint32 *new_members)
 {
 	guint32 *old_members, *del_members, *add_members;
 	qq_buddy *q_bud;
@@ -212,7 +212,7 @@ void qq_group_modify_members(GaimConnection *gc, qq_group *group, guint32 *new_m
 		_qq_group_member_opt(gc, group, QQ_GROUP_MEMBER_ADD, add_members);
 }
 
-void qq_group_process_modify_members_reply(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+void qq_group_process_modify_members_reply(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
 {
 	guint32 internal_group_id;
 	qq_group *group;
@@ -225,12 +225,12 @@ void qq_group_process_modify_members_reply(guint8 *data, guint8 **cursor, gint l
 	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Succeed in modify members for Qun %d\n", group->external_group_id);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Succeed in modify members for Qun %d\n", group->external_group_id);
 
-	gaim_notify_info(gc, _("QQ Qun Operation"), _("You have successfully modify Qun member"), NULL);
+	purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully modify Qun member"), NULL);
 }
 
-void qq_group_modify_info(GaimConnection *gc, qq_group *group)
+void qq_group_modify_info(PurpleConnection *gc, qq_group *group)
 {
 	gint data_len, data_written;
 	guint8 *data, *cursor;
@@ -274,14 +274,14 @@ void qq_group_modify_info(GaimConnection *gc, qq_group *group)
 	data_written += create_packet_data(data, &cursor, (guint8 *) group_desc, strlen(group_desc));
 
 	if (data_written != data_len)
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail to create group_modify_info packet, expect %d bytes, wrote %d bytes\n",
 			   data_len, data_written);
 	else
 		qq_send_group_cmd(gc, group, data, data_len);
 }
 
-void qq_group_process_modify_info_reply(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+void qq_group_process_modify_info_reply(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
 {
 	guint32 internal_group_id;
 	qq_group *group;
@@ -294,14 +294,14 @@ void qq_group_process_modify_info_reply(guint8 *data, guint8 **cursor, gint len,
 	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Succeed in modify info for Qun %d\n", group->external_group_id);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Succeed in modify info for Qun %d\n", group->external_group_id);
 	qq_group_refresh(gc, group);
 
-	gaim_notify_info(gc, _("QQ Qun Operation"), _("You have successfully modify Qun information"), NULL);
+	purple_notify_info(gc, _("QQ Qun Operation"), _("You have successfully modify Qun information"), NULL);
 }
 
 /* we create a very simple group first, and then let the user to modify */
-void qq_group_create_with_name(GaimConnection *gc, const gchar *name)
+void qq_group_create_with_name(PurpleConnection *gc, const gchar *name)
 {
 	gint data_len, data_written;
 	guint8 *data, *cursor;
@@ -334,7 +334,7 @@ void qq_group_create_with_name(GaimConnection *gc, const gchar *name)
 	data_written += create_packet_dw(data, &cursor, qd->uid);	/* I am member of coz */
 
 	if (data_written != data_len)
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail create create_group packet, expect %d bytes, written %d bytes\n",
 			   data_len, data_written);
 	else
@@ -354,7 +354,7 @@ static void qq_group_setup_with_gc_and_uid(gc_and_uid *g)
 	g_free(g);
 }
 
-void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
 {
 	guint32 internal_group_id, external_group_id;
 	qq_group *group;
@@ -377,13 +377,13 @@ void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len
 	qq_group_activate_group(gc, internal_group_id);
 	qq_send_cmd_group_get_group_info(gc, group);
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Succeed in create Qun, external ID %d\n", group->external_group_id);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Succeed in create Qun, external ID %d\n", group->external_group_id);
 
 	g = g_new0(gc_and_uid, 1);
 	g->gc = gc;
 	g->uid = internal_group_id;
 
-	gaim_request_action(gc, _("QQ Qun Operation"),
+	purple_request_action(gc, _("QQ Qun Operation"),
 			    _("You have successfully created a Qun"),
 			    _
 			    ("Would you like to set up the Qun details now?"),
@@ -393,7 +393,7 @@ void qq_group_process_create_group_reply(guint8 *data, guint8 **cursor, gint len
 }
 
 /* we have to activate group after creation, otherwise the group can not be searched */
-void qq_group_activate_group(GaimConnection *gc, guint32 internal_group_id)
+void qq_group_activate_group(PurpleConnection *gc, guint32 internal_group_id)
 {
 	gint data_len, data_written;
 	guint8 *data, *cursor;
@@ -411,14 +411,14 @@ void qq_group_activate_group(GaimConnection *gc, guint32 internal_group_id)
 	data_written += create_packet_dw(data, &cursor, internal_group_id);
 
 	if (data_written != data_len)
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail create activate_group packet, expect %d bytes, written %d bytes\n",
 			   data_len, data_written);
 	else
 		qq_send_group_cmd(gc, NULL, data, data_len);
 }
 
-void qq_group_process_activate_group_reply(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+void qq_group_process_activate_group_reply(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
 {
 	guint32 internal_group_id;
 	qq_group *group;
@@ -431,10 +431,10 @@ void qq_group_process_activate_group_reply(guint8 *data, guint8 **cursor, gint l
 	group = qq_group_find_by_id(gc, internal_group_id, QQ_INTERNAL_ID);
 	g_return_if_fail(group != NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Succeed in activate Qun %d\n", group->external_group_id);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Succeed in activate Qun %d\n", group->external_group_id);
 }
 
-void qq_group_manage_group(GaimConnection *gc, GHashTable *data)
+void qq_group_manage_group(PurpleConnection *gc, GHashTable *data)
 {
 	gchar *internal_group_id_ptr;
 	guint32 internal_group_id;

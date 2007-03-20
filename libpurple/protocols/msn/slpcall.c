@@ -1,9 +1,9 @@
 /**
  * @file slpcall.c SLP Call Functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -61,14 +61,14 @@ msn_slp_call_new(MsnSlpLink *slplink)
 	slpcall = g_new0(MsnSlpCall, 1);
 
 #ifdef MSN_DEBUG_SLPCALL
-	gaim_debug_info("msn", "slpcall_new: slpcall(%p)\n", slpcall);
+	purple_debug_info("msn", "slpcall_new: slpcall(%p)\n", slpcall);
 #endif
 
 	slpcall->slplink = slplink;
 
 	msn_slplink_add_slpcall(slplink, slpcall);
 
-	slpcall->timer = gaim_timeout_add(MSN_SLPCALL_TIMEOUT, msn_slp_call_timeout, slpcall);
+	slpcall->timer = purple_timeout_add(MSN_SLPCALL_TIMEOUT, msn_slp_call_timeout, slpcall);
 
 	return slpcall;
 }
@@ -80,13 +80,13 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 	MsnSession *session;
 
 #ifdef MSN_DEBUG_SLPCALL
-	gaim_debug_info("msn", "slpcall_destroy: slpcall(%p)\n", slpcall);
+	purple_debug_info("msn", "slpcall_destroy: slpcall(%p)\n", slpcall);
 #endif
 
 	g_return_if_fail(slpcall != NULL);
 
 	if (slpcall->timer)
-		gaim_timeout_remove(slpcall->timer);
+		purple_timeout_remove(slpcall->timer);
 
 	if (slpcall->id != NULL)
 		g_free(slpcall->id);
@@ -103,7 +103,7 @@ msn_slp_call_destroy(MsnSlpCall *slpcall)
 		e = e->next;
 
 #ifdef MSN_DEBUG_SLPCALL_VERBOSE
-		gaim_debug_info("msn", "slpcall_destroy: trying slpmsg(%p)\n",
+		purple_debug_info("msn", "slpcall_destroy: trying slpmsg(%p)\n",
 						slpmsg);
 #endif
 
@@ -206,7 +206,7 @@ msn_slp_call_timeout(gpointer data)
 	slpcall = data;
 
 #ifdef MSN_DEBUG_SLPCALL
-	gaim_debug_info("msn", "slpcall_timeout: slpcall(%p)\n", slpcall);
+	purple_debug_info("msn", "slpcall_timeout: slpcall(%p)\n", slpcall);
 #endif
 
 	if (!slpcall->pending && !slpcall->progress)
@@ -246,7 +246,7 @@ msn_slp_process_msg(MsnSlpLink *slplink, MsnSlpMessage *slpmsg)
 		if (slpcall != NULL)
 		{
 			if (slpcall->timer)
-				gaim_timeout_remove(slpcall->timer);
+				purple_timeout_remove(slpcall->timer);
 
 			slpcall->cb(slpcall, body, body_len);
 

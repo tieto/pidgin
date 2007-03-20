@@ -2,7 +2,7 @@
  * @file gtkpounce.h GTK+ Buddy Pounce API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -34,8 +34,8 @@
  * @param name       The optional name to pounce on.
  * @param cur_pounce The current buddy pounce, if editing an existing one.
  */
-void pidgin_pounce_editor_show(GaimAccount *account, const char *name,
-								GaimPounce *cur_pounce);
+void pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
+								PurplePounce *cur_pounce);
 
 /**
  * Shows the pounces manager window.

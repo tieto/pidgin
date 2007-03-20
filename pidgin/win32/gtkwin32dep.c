@@ -80,19 +80,19 @@ int winpidgin_gz_decompress(const char* in, const char* out) {
 
 	if((fin = gzopen(in, "rb"))) {
 		if(!(fout = g_fopen(out, "wb"))) {
-			gaim_debug_error("winpidgin_gz_decompress", "Error opening file: %s\n", out);
+			purple_debug_error("winpidgin_gz_decompress", "Error opening file: %s\n", out);
 			gzclose(fin);
 			return 0;
 		}
 	}
 	else {
-		gaim_debug_error("winpidgin_gz_decompress", "gzopen failed to open: %s\n", in);
+		purple_debug_error("winpidgin_gz_decompress", "gzopen failed to open: %s\n", in);
 		return 0;
 	}
 
 	while((ret = gzread(fin, buf, 1024))) {
 		if(fwrite(buf, 1, ret, fout) < ret) {
-			gaim_debug_error("wgaim_gz_decompress", "Error writing %d bytes to file\n", ret);
+			purple_debug_error("wpurple_gz_decompress", "Error writing %d bytes to file\n", ret);
 			gzclose(fin);
 			fclose(fout);
 			return 0;
@@ -102,7 +102,7 @@ int winpidgin_gz_decompress(const char* in, const char* out) {
 	gzclose(fin);
 
 	if(ret < 0) {
-		gaim_debug_error("winpidgin_gz_decompress", "gzread failed while reading: %s\n", in);
+		purple_debug_error("winpidgin_gz_decompress", "gzread failed while reading: %s\n", in);
 		return 0;
 	}
 
@@ -119,14 +119,14 @@ int winpidgin_gz_untar(const char* filename, const char* destdir) {
 		if(untar(tmpfile, destdir, UNTAR_FORCE | UNTAR_QUIET))
 			ret = 1;
 		else {
-			gaim_debug_error("winpidgin_gz_untar", "Failure untarring %s\n", tmpfile);
+			purple_debug_error("winpidgin_gz_untar", "Failure untarring %s\n", tmpfile);
 			ret = 0;
 		}
 		g_unlink(tmpfile);
 		return ret;
 	}
 	else {
-		gaim_debug_error("winpidgin_gz_untar", "Failed to gz decompress %s\n", filename);
+		purple_debug_error("winpidgin_gz_untar", "Failed to gz decompress %s\n", filename);
 		return 0;
 	}
 }
@@ -155,7 +155,7 @@ void winpidgin_shell_execute(const char *target, const char *verb, const char *c
 		}
 
 		if(!ShellExecuteExW(&wsinfo))
-			gaim_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
+			purple_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
 				target, (int) wsinfo.hInstApp);
 
 		g_free(w_uri);
@@ -178,7 +178,7 @@ void winpidgin_shell_execute(const char *target, const char *verb, const char *c
 		}
 
 		if(!ShellExecuteExA(&sinfo))
-			gaim_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
+			purple_debug_error("winpidgin", "Error opening URI: %s error: %d\n",
 				target, (int) sinfo.hInstApp);
 
 		g_free(locale_uri);
@@ -199,13 +199,13 @@ void winpidgin_notify_uri(const char *uri) {
 static LRESULT CALLBACK message_window_handler(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 
 	if (msg == PIDGIN_WM_FOCUS_REQUEST) {
-		gaim_debug_info("winpidgin", "Got external Buddy List focus request.");
-		gaim_blist_set_visible(TRUE);
+		purple_debug_info("winpidgin", "Got external Buddy List focus request.");
+		purple_blist_set_visible(TRUE);
 		return TRUE;
 	} else if (msg == PIDGIN_WM_PROTOCOL_HANDLE) {
 		char *proto_msg = (char *) lparam;
-		gaim_debug_info("winpidgin", "Got protocol handler request: %s\n", proto_msg ? proto_msg : "");
-		gaim_got_protocol_handler_uri(proto_msg);
+		purple_debug_info("winpidgin", "Got protocol handler request: %s\n", proto_msg ? proto_msg : "");
+		purple_got_protocol_handler_uri(proto_msg);
 		return TRUE;
 	}
 
@@ -237,7 +237,7 @@ static HWND winpidgin_message_window_init(void) {
 	/* Create the window */
 	if(!(win_hwnd = CreateWindow(wname, TEXT("WinpidginMsgWin"), 0, 0, 0, 0, 0,
 			NULL, NULL, winpidgin_hinstance(), 0))) {
-		gaim_debug_error("winpidgin",
+		purple_debug_error("winpidgin",
 			"Unable to create message window.\n");
 		return NULL;
 	}
@@ -284,22 +284,22 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 }
 
 void
-winpidgin_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
+winpidgin_conv_blink(PurpleConversation *conv, PurpleMessageFlags flags) {
 	PidginWindow *win;
 	GtkWindow *window;
 
 	/* Don't flash for our own messages or system messages */
-	if(flags & GAIM_MESSAGE_SEND || flags & GAIM_MESSAGE_SYSTEM)
+	if(flags & PURPLE_MESSAGE_SEND || flags & PURPLE_MESSAGE_SYSTEM)
 		return;
 
 	if(conv == NULL) {
-		gaim_debug_info("winpidgin", "No conversation found to blink.\n");
+		purple_debug_info("winpidgin", "No conversation found to blink.\n");
 		return;
 	}
 
 	win = pidgin_conv_get_window(PIDGIN_CONVERSATION(conv));
 	if(win == NULL) {
-		gaim_debug_info("winpidgin", "No conversation windows found to blink.\n");
+		purple_debug_info("winpidgin", "No conversation windows found to blink.\n");
 		return;
 	}
 	window = GTK_WINDOW(win->window);
@@ -311,42 +311,42 @@ winpidgin_conv_blink(GaimConversation *conv, GaimMessageFlags flags) {
 }
 
 static gboolean
-winpidgin_conv_im_blink(GaimAccount *account, const char *who, char **message,
-		GaimConversation *conv, GaimMessageFlags flags, void *data)
+winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
+		PurpleConversation *conv, PurpleMessageFlags flags, void *data)
 {
-	if (gaim_prefs_get_bool("/gaim/gtk/win32/blink_im"))
+	if (purple_prefs_get_bool("/purple/gtk/win32/blink_im"))
 		winpidgin_conv_blink(conv, flags);
 	return FALSE;
 }
 
 void winpidgin_init(HINSTANCE hint) {
 
-	gaim_debug_info("winpidgin", "winpidgin_init start\n");
+	purple_debug_info("winpidgin", "winpidgin_init start\n");
 
 	exe_hInstance = hint;
 
 	/* IdleTracker Initialization */
 	if(!winpidgin_set_idlehooks())
-		gaim_debug_error("winpidgin", "Failed to initialize idle tracker\n");
+		purple_debug_error("winpidgin", "Failed to initialize idle tracker\n");
 
 	winpidgin_spell_init();
-	gaim_debug_info("winpidgin", "GTK+ :%u.%u.%u\n",
+	purple_debug_info("winpidgin", "GTK+ :%u.%u.%u\n",
 		gtk_major_version, gtk_minor_version, gtk_micro_version);
 
 	messagewin_hwnd = winpidgin_message_window_init();
 
-	MyFlashWindowEx = (LPFNFLASHWINDOWEX) wgaim_find_and_loadproc("user32.dll", "FlashWindowEx");
+	MyFlashWindowEx = (LPFNFLASHWINDOWEX) wpurple_find_and_loadproc("user32.dll", "FlashWindowEx");
 
-	gaim_debug_info("winpidgin", "winpidgin_init end\n");
+	purple_debug_info("winpidgin", "winpidgin_init end\n");
 }
 
 void winpidgin_post_init(void) {
 
-	gaim_prefs_add_none("/gaim/gtk/win32");
-	gaim_prefs_add_bool("/gaim/gtk/win32/blink_im", TRUE);
+	purple_prefs_add_none("/purple/gtk/win32");
+	purple_prefs_add_bool("/purple/gtk/win32/blink_im", TRUE);
 
-	gaim_signal_connect(pidgin_conversations_get_handle(),
-		"displaying-im-msg", &gtkwin32_handle, GAIM_CALLBACK(winpidgin_conv_im_blink),
+	purple_signal_connect(pidgin_conversations_get_handle(),
+		"displaying-im-msg", &gtkwin32_handle, PURPLE_CALLBACK(winpidgin_conv_im_blink),
 		NULL);
 
 }
@@ -354,7 +354,7 @@ void winpidgin_post_init(void) {
 /* Windows Cleanup */
 
 void winpidgin_cleanup(void) {
-	gaim_debug_info("winpidgin", "winpidgin_cleanup\n");
+	purple_debug_info("winpidgin", "winpidgin_cleanup\n");
 
 	if(messagewin_hwnd)
 		DestroyWindow(messagewin_hwnd);
@@ -386,9 +386,9 @@ get_WorkingAreaRectForWindow(HWND hwnd, RECT *workingAreaRc) {
 
 	if(!initialized) {
 		the_MonitorFromWindow = (_MonitorFromWindow*)
-			wgaim_find_and_loadproc("user32", "MonitorFromWindow");
+			wpurple_find_and_loadproc("user32", "MonitorFromWindow");
 		the_GetMonitorInfo = (_GetMonitorInfo*)
-			wgaim_find_and_loadproc("user32", "GetMonitorInfoA");
+			wpurple_find_and_loadproc("user32", "GetMonitorInfoA");
 		initialized = TRUE;
 	}
 
@@ -415,13 +415,13 @@ void winpidgin_ensure_onscreen(GtkWidget *win) {
 	g_return_if_fail(hwnd != NULL);
 	GetWindowRect(hwnd, &windowRect);
 
-	gaim_debug_info("win32placement",
+	purple_debug_info("win32placement",
 			"Window RECT: L:%ld R:%ld T:%ld B:%ld\n",
 			windowRect.left, windowRect.right,
 			windowRect.top, windowRect.bottom);
 
 	if(!get_WorkingAreaRectForWindow(hwnd, &workingAreaRect)) {
-		gaim_debug_info("win32placement",
+		purple_debug_info("win32placement",
 				"Couldn't get multimonitor working area\n");
 		if(!SystemParametersInfo(SPI_GETWORKAREA, 0, &workingAreaRect, FALSE)) {
 			/* I don't think this will ever happen */
@@ -432,7 +432,7 @@ void winpidgin_ensure_onscreen(GtkWidget *win) {
 		}
 	}
 
-	gaim_debug_info("win32placement",
+	purple_debug_info("win32placement",
 			"Working Area RECT: L:%ld R:%ld T:%ld B:%ld\n",
 			workingAreaRect.left, workingAreaRect.right,
 			workingAreaRect.top, workingAreaRect.bottom);
@@ -441,7 +441,7 @@ void winpidgin_ensure_onscreen(GtkWidget *win) {
 	 *  move it to the top left corner of the working area */
 	if(!(IntersectRect(&intersectionRect, &windowRect, &workingAreaRect)
 				&& EqualRect(&intersectionRect, &windowRect))) {
-		gaim_debug_info("win32placement",
+		purple_debug_info("win32placement",
 				"conversation window out of working area, relocating\n");
 		MoveWindow(hwnd, workingAreaRect.left, workingAreaRect.top,
 				(windowRect.right - windowRect.left),

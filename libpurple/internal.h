@@ -2,9 +2,9 @@
  * @file internal.h Internal definitions and includes
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_INTERNAL_H_
-#define _GAIM_INTERNAL_H_
+#ifndef _PURPLE_INTERNAL_H_
+#define _PURPLE_INTERNAL_H_
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -92,7 +92,7 @@
 #include <langinfo.h>
 #endif
 
-#ifdef GAIM_PLUGINS
+#ifdef PURPLE_PLUGINS
 # include <gmodule.h>
 # ifndef _WIN32
 #  include <dlfcn.h>
@@ -178,10 +178,10 @@
 /* Safer ways to work with static buffers. When using non-static
  * buffers, either use g_strdup_* functions (preferred) or use
  * g_strlcpy/g_strlcpy directly. */
-#define gaim_strlcpy(dest, src) g_strlcpy(dest, src, sizeof(dest))
-#define gaim_strlcat(dest, src) g_strlcat(dest, src, sizeof(dest))
+#define purple_strlcpy(dest, src) g_strlcpy(dest, src, sizeof(dest))
+#define purple_strlcat(dest, src) g_strlcat(dest, src, sizeof(dest))
 
-#define GAIM_WEBSITE "http://gaim.sourceforge.net/"
+#define PURPLE_WEBSITE "http://purple.sourceforge.net/"
 
 #ifndef _WIN32
 /* Everything needs to include this, because
@@ -189,4 +189,4 @@
 #include "prefix.h"
 #endif /* _WIN32 */
 
-#endif /* _GAIM_INTERNAL_H_ */
+#endif /* _PURPLE_INTERNAL_H_ */

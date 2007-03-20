@@ -87,7 +87,7 @@ __attribute__ ((unused))
 #ifdef _WIN32
 /**
  *  Deal with the fact that you can't select() on a win32 file fd.
- *  This makes it practically impossible to tie into gaim's event loop.
+ *  This makes it practically impossible to tie into purple's event loop.
  *
  *  -This is thanks to Tor Lillqvist.
  *  XXX - Move this to where the rest of the the win32 compatiblity stuff goes when we push the changes back to libgadu.

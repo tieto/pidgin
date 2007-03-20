@@ -1,5 +1,5 @@
 /*
- * gaim - Jabber Protocol Plugin
+ * purple - Jabber Protocol Plugin
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -54,7 +54,7 @@
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 8 : 5)
 
-static GaimPlugin *my_protocol = NULL;
+static PurplePlugin *my_protocol = NULL;
 
 static void jabber_stream_init(JabberStream *js)
 {
@@ -79,7 +79,7 @@ jabber_session_initialized_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	if(type && !strcmp(type, "result")) {
 		jabber_stream_set_state(js, JABBER_STREAM_CONNECTED);
 	} else {
-		gaim_connection_error(js->gc, _("Error initializing session"));
+		purple_connection_error(js->gc, _("Error initializing session"));
 	}
 }
 
@@ -110,7 +110,7 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 			JabberBuddy *my_jb = NULL;
 			jabber_id_free(js->user);
 			if(!(js->user = jabber_id_new(full_jid))) {
-				gaim_connection_error(js->gc, _("Invalid response from server."));
+				purple_connection_error(js->gc, _("Invalid response from server."));
 			}
 			if((my_jb = jabber_buddy_find(js, full_jid, TRUE)))
 				my_jb->subscription |= JABBER_SUB_BOTH;
@@ -118,7 +118,7 @@ static void jabber_bind_result_cb(JabberStream *js, xmlnode *packet,
 		}
 	} else {
 		char *msg = jabber_parse_error(js, packet);
-		gaim_connection_error(js->gc, msg);
+		purple_connection_error(js->gc, msg);
 		g_free(msg);
 	}
 
@@ -161,7 +161,7 @@ static void jabber_stream_handle_error(JabberStream *js, xmlnode *packet)
 {
 	char *msg = jabber_parse_error(js, packet);
 
-	gaim_connection_error(js->gc, msg);
+	purple_connection_error(js->gc, msg);
 	g_free(msg);
 }
 
@@ -169,7 +169,7 @@ static void tls_init(JabberStream *js);
 
 void jabber_process_packet(JabberStream *js, xmlnode *packet)
 {
-	gaim_signal_emit(my_protocol, "jabber-receiving-xmlnode", js->gc, &packet);
+	purple_signal_emit(my_protocol, "jabber-receiving-xmlnode", js->gc, &packet);
 
 	/* if the signal leaves us with a null packet, we're done */
 	if(NULL == packet)
@@ -204,7 +204,7 @@ void jabber_process_packet(JabberStream *js, xmlnode *packet)
 		if(js->state == JABBER_STREAM_AUTHENTICATING && !js->gsc)
 			tls_init(js);
 	} else {
-		gaim_debug(GAIM_DEBUG_WARNING, "jabber", "Unknown packet: %s\n",
+		purple_debug(PURPLE_DEBUG_WARNING, "jabber", "Unknown packet: %s\n",
 				packet->name);
 	}
 }
@@ -214,21 +214,21 @@ static int jabber_do_send(JabberStream *js, const char *data, int len)
 	int ret;
 
 	if (js->gsc)
-		ret = gaim_ssl_write(js->gsc, data, len);
+		ret = purple_ssl_write(js->gsc, data, len);
 	else
 		ret = write(js->fd, data, len);
 
 	return ret;
 }
 
-static void jabber_send_cb(gpointer data, gint source, GaimInputCondition cond)
+static void jabber_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	JabberStream *js = data;
 	int ret, writelen;
-	writelen = gaim_circ_buffer_get_max_read(js->write_buffer);
+	writelen = purple_circ_buffer_get_max_read(js->write_buffer);
 
 	if (writelen == 0) {
-		gaim_input_remove(js->writeh);
+		purple_input_remove(js->writeh);
 		js->writeh = 0;
 		return;
 	}
@@ -238,11 +238,11 @@ static void jabber_send_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (ret < 0 && errno == EAGAIN)
 		return;
 	else if (ret <= 0) {
-		gaim_connection_error(js->gc, _("Write error"));
+		purple_connection_error(js->gc, _("Write error"));
 		return;
 	}
 
-	gaim_circ_buffer_mark_read(js->write_buffer, ret);
+	purple_circ_buffer_mark_read(js->write_buffer, ret);
 }
 
 void jabber_send_raw(JabberStream *js, const char *data, int len)
@@ -251,13 +251,13 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 
 	/* because printing a tab to debug every minute gets old */
 	if(strcmp(data, "\t"))
-		gaim_debug(GAIM_DEBUG_MISC, "jabber", "Sending%s: %s\n",
+		purple_debug(PURPLE_DEBUG_MISC, "jabber", "Sending%s: %s\n",
 				js->gsc ? " (ssl)" : "", data);
 
 	/* If we've got a security layer, we need to encode the data,
 	 * splitting it on the maximum buffer length negotiated */
 	
-	gaim_signal_emit(my_protocol, "jabber-sending-text", js->gc, &data);
+	purple_signal_emit(my_protocol, "jabber-sending-text", js->gc, &data);
 	if (data == NULL)
 		return;
 	
@@ -291,16 +291,16 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 			}
 
 			if (ret < 0 && errno != EAGAIN)
-				gaim_connection_error(js->gc, _("Write error"));
+				purple_connection_error(js->gc, _("Write error"));
 			else if (ret < olen) {
 				if (ret < 0)
 					ret = 0;
 				if (js->writeh == 0)
-					js->writeh = gaim_input_add(
+					js->writeh = purple_input_add(
 						js->gsc ? js->gsc->fd : js->fd,
-						GAIM_INPUT_WRITE,
+						PURPLE_INPUT_WRITE,
 						jabber_send_cb, js);
-				gaim_circ_buffer_append(js->write_buffer,
+				purple_circ_buffer_append(js->write_buffer,
 					out + ret, olen - ret);
 			}
 		}
@@ -319,21 +319,21 @@ void jabber_send_raw(JabberStream *js, const char *data, int len)
 	}
 
 	if (ret < 0 && errno != EAGAIN)
-		gaim_connection_error(js->gc, _("Write error"));
+		purple_connection_error(js->gc, _("Write error"));
 	else if (ret < len) {
 		if (ret < 0)
 			ret = 0;
 		if (js->writeh == 0)
-			js->writeh = gaim_input_add(
+			js->writeh = purple_input_add(
 				js->gsc ? js->gsc->fd : js->fd,
-				GAIM_INPUT_WRITE, jabber_send_cb, js);
-		gaim_circ_buffer_append(js->write_buffer,
+				PURPLE_INPUT_WRITE, jabber_send_cb, js);
+		purple_circ_buffer_append(js->write_buffer,
 			data + ret, len - ret);
 	}
 	return;
 }
 
-static int jabber_prpl_send_raw(GaimConnection *gc, const char *buf, int len)
+static int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len)
 {
 	JabberStream *js = (JabberStream*)gc->proto_data;
 	jabber_send_raw(js, buf, len);
@@ -345,7 +345,7 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	char *txt;
 	int len;
 
-	gaim_signal_emit(my_protocol, "jabber-sending-xmlnode", js->gc, &packet);
+	purple_signal_emit(my_protocol, "jabber-sending-xmlnode", js->gc, &packet);
 
 	/* if we get NULL back, we're done processing */
 	if(NULL == packet)
@@ -356,29 +356,29 @@ void jabber_send(JabberStream *js, xmlnode *packet)
 	g_free(txt);
 }
 
-static void jabber_keepalive(GaimConnection *gc)
+static void jabber_keepalive(PurpleConnection *gc)
 {
 	jabber_send_raw(gc->proto_data, "\t", -1);
 }
 
 static void
-jabber_recv_cb_ssl(gpointer data, GaimSslConnection *gsc,
-		GaimInputCondition cond)
+jabber_recv_cb_ssl(gpointer data, PurpleSslConnection *gsc,
+		PurpleInputCondition cond)
 {
-	GaimConnection *gc = data;
+	PurpleConnection *gc = data;
 	JabberStream *js = gc->proto_data;
 	int len;
 	static char buf[4096];
 
 	/* TODO: It should be possible to make this check unnecessary */
-	if(!GAIM_CONNECTION_IS_VALID(gc)) {
-		gaim_ssl_close(gsc);
+	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
+		purple_ssl_close(gsc);
 		return;
 	}
 
-	while((len = gaim_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
+	while((len = purple_ssl_read(gsc, buf, sizeof(buf) - 1)) > 0) {
 		buf[len] = '\0';
-		gaim_debug(GAIM_DEBUG_INFO, "jabber", "Recv (ssl)(%d): %s\n", len, buf);
+		purple_debug(PURPLE_DEBUG_INFO, "jabber", "Recv (ssl)(%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
 		if(js->reinit)
 			jabber_stream_init(js);
@@ -387,18 +387,18 @@ jabber_recv_cb_ssl(gpointer data, GaimSslConnection *gsc,
 	if(errno == EAGAIN)
 		return;
 	else
-		gaim_connection_error(gc, _("Read Error"));
+		purple_connection_error(gc, _("Read Error"));
 }
 
 static void
-jabber_recv_cb(gpointer data, gint source, GaimInputCondition condition)
+jabber_recv_cb(gpointer data, gint source, PurpleInputCondition condition)
 {
-	GaimConnection *gc = data;
+	PurpleConnection *gc = data;
 	JabberStream *js = gc->proto_data;
 	int len;
 	static char buf[4096];
 
-	if(!GAIM_CONNECTION_IS_VALID(gc))
+	if(!PURPLE_CONNECTION_IS_VALID(gc))
 		return;
 
 	if((len = read(js->fd, buf, sizeof(buf) - 1)) > 0) {
@@ -408,7 +408,7 @@ jabber_recv_cb(gpointer data, gint source, GaimInputCondition condition)
 			unsigned int olen;
 			sasl_decode(js->sasl, buf, len, &out, &olen);
 			if (olen>0) {
-				gaim_debug(GAIM_DEBUG_INFO, "jabber", "RecvSASL (%u): %s\n", olen, out);
+				purple_debug(PURPLE_DEBUG_INFO, "jabber", "RecvSASL (%u): %s\n", olen, out);
 				jabber_parser_process(js,out,olen);
 				if(js->reinit)
 					jabber_stream_init(js);
@@ -417,27 +417,27 @@ jabber_recv_cb(gpointer data, gint source, GaimInputCondition condition)
 		}
 #endif
 		buf[len] = '\0';
-		gaim_debug(GAIM_DEBUG_INFO, "jabber", "Recv (%d): %s\n", len, buf);
+		purple_debug(PURPLE_DEBUG_INFO, "jabber", "Recv (%d): %s\n", len, buf);
 		jabber_parser_process(js, buf, len);
 		if(js->reinit)
 			jabber_stream_init(js);
 	} else if(errno == EAGAIN) {
 		return;
 	} else {
-		gaim_connection_error(gc, _("Read Error"));
+		purple_connection_error(gc, _("Read Error"));
 	}
 }
 
 static void
-jabber_login_callback_ssl(gpointer data, GaimSslConnection *gsc,
-		GaimInputCondition cond)
+jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
+		PurpleInputCondition cond)
 {
-	GaimConnection *gc = data;
+	PurpleConnection *gc = data;
 	JabberStream *js;
 
 	/* TODO: It should be possible to make this check unnecessary */
-	if(!GAIM_CONNECTION_IS_VALID(gc)) {
-		gaim_ssl_close(gsc);
+	if(!PURPLE_CONNECTION_IS_VALID(gc)) {
+		purple_ssl_close(gsc);
 		return;
 	}	
 
@@ -446,18 +446,18 @@ jabber_login_callback_ssl(gpointer data, GaimSslConnection *gsc,
 	if(js->state == JABBER_STREAM_CONNECTING)
 		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING);
-	gaim_ssl_input_add(gsc, jabber_recv_cb_ssl, gc);
+	purple_ssl_input_add(gsc, jabber_recv_cb_ssl, gc);
 }
 
 
 static void
 jabber_login_callback(gpointer data, gint source, const gchar *error)
 {
-	GaimConnection *gc = data;
+	PurpleConnection *gc = data;
 	JabberStream *js = gc->proto_data;
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Couldn't connect to host"));
+		purple_connection_error(gc, _("Couldn't connect to host"));
 		return;
 	}
 
@@ -467,38 +467,38 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
 
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING);
-	gc->inpa = gaim_input_add(js->fd, GAIM_INPUT_READ, jabber_recv_cb, gc);
+	gc->inpa = purple_input_add(js->fd, PURPLE_INPUT_READ, jabber_recv_cb, gc);
 }
 
 static void
-jabber_ssl_connect_failure(GaimSslConnection *gsc, GaimSslErrorType error,
+jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 		gpointer data)
 {
-	GaimConnection *gc = data;
+	PurpleConnection *gc = data;
 	JabberStream *js;
 
 	/* If the connection is already disconnected, we don't need to do anything else */
-	if(!GAIM_CONNECTION_IS_VALID(gc))
+	if(!PURPLE_CONNECTION_IS_VALID(gc))
 		return;
 
 	js = gc->proto_data;
 	js->gsc = NULL;
 
 	switch(error) {
-		case GAIM_SSL_CONNECT_FAILED:
-			gaim_connection_error(gc, _("Connection Failed"));
+		case PURPLE_SSL_CONNECT_FAILED:
+			purple_connection_error(gc, _("Connection Failed"));
 			break;
-		case GAIM_SSL_HANDSHAKE_FAILED:
-			gaim_connection_error(gc, _("SSL Handshake Failed"));
+		case PURPLE_SSL_HANDSHAKE_FAILED:
+			purple_connection_error(gc, _("SSL Handshake Failed"));
 			break;
 	}
 }
 
 static void tls_init(JabberStream *js)
 {
-	gaim_input_remove(js->gc->inpa);
+	purple_input_remove(js->gc->inpa);
 	js->gc->inpa = 0;
-	js->gsc = gaim_ssl_connect_fd(js->gc->account, js->fd,
+	js->gsc = purple_ssl_connect_fd(js->gc->account, js->fd,
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->gc);
 }
 
@@ -508,12 +508,12 @@ static void jabber_login_connect(JabberStream *js, const char *server, int port)
 	js->serverFQDN = g_strdup(server);
 #endif
 
-	if (gaim_proxy_connect(js->gc, js->gc->account, server,
+	if (purple_proxy_connect(js->gc, js->gc->account, server,
 			port, jabber_login_callback, js->gc) == NULL)
-		gaim_connection_error(js->gc, _("Unable to create socket"));
+		purple_connection_error(js->gc, _("Unable to create socket"));
 }
 
-static void srv_resolved_cb(GaimSrvResponse *resp, int results, gpointer data)
+static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
 {
 	JabberStream *js;
 
@@ -525,22 +525,22 @@ static void srv_resolved_cb(GaimSrvResponse *resp, int results, gpointer data)
 		g_free(resp);
 	} else {
 		jabber_login_connect(js, js->user->domain,
-			gaim_account_get_int(js->gc->account, "port", 5222));
+			purple_account_get_int(js->gc->account, "port", 5222));
 	}
 }
 
 
 
 static void
-jabber_login(GaimAccount *account)
+jabber_login(PurpleAccount *account)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
-	const char *connect_server = gaim_account_get_string(account,
+	PurpleConnection *gc = purple_account_get_connection(account);
+	const char *connect_server = purple_account_get_string(account,
 			"connect_server", "");
 	JabberStream *js;
 	JabberBuddy *my_jb = NULL;
 
-	gc->flags |= GAIM_CONNECTION_HTML;
+	gc->flags |= PURPLE_CONNECTION_HTML;
 	js = gc->proto_data = g_new0(JabberStream, 1);
 	js->gc = gc;
 	js->fd = -1;
@@ -553,12 +553,12 @@ jabber_login(GaimAccount *account)
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_chat_free);
 	js->chat_servers = g_list_append(NULL, g_strdup("conference.jabber.org"));
-	js->user = jabber_id_new(gaim_account_get_username(account));
+	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
-	js->write_buffer = gaim_circ_buffer_new(512);
+	js->write_buffer = purple_circ_buffer_new(512);
 
 	if(!js->user) {
-		gaim_connection_error(gc, _("Invalid Jabber ID"));
+		purple_connection_error(gc, _("Invalid Jabber ID"));
 		return;
 	}
 
@@ -571,24 +571,24 @@ jabber_login(GaimAccount *account)
 		}
 		me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
 				js->user->resource);
-		gaim_account_set_username(account, me);
+		purple_account_set_username(account, me);
 		g_free(me);
 	}
 
-	if((my_jb = jabber_buddy_find(js, gaim_account_get_username(account), TRUE)))
+	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
 	/* if they've got old-ssl mode going, we probably want to ignore SRV lookups */
-	if(gaim_account_get_bool(js->gc->account, "old_ssl", FALSE)) {
-		if(gaim_ssl_is_supported()) {
-			js->gsc = gaim_ssl_connect(js->gc->account,
+	if(purple_account_get_bool(js->gc->account, "old_ssl", FALSE)) {
+		if(purple_ssl_is_supported()) {
+			js->gsc = purple_ssl_connect(js->gc->account,
 					connect_server[0] ? connect_server : js->user->domain,
-					gaim_account_get_int(account, "port", 5223), jabber_login_callback_ssl,
+					purple_account_get_int(account, "port", 5223), jabber_login_callback_ssl,
 					jabber_ssl_connect_failure, js->gc);
 		} else {
-			gaim_connection_error(js->gc, _("SSL support unavailable"));
+			purple_connection_error(js->gc, _("SSL support unavailable"));
 		}
 	}
 
@@ -596,9 +596,9 @@ jabber_login(GaimAccount *account)
 	 * invoke the magic of SRV lookups, to figure out host and port */
 	if(!js->gsc) {
 		if(connect_server[0]) {
-			jabber_login_connect(js, connect_server, gaim_account_get_int(account, "port", 5222));
+			jabber_login_connect(js, connect_server, purple_account_get_int(account, "port", 5222));
 		} else {
-			js->srv_query_data = gaim_srv_resolve("xmpp-client",
+			js->srv_query_data = purple_srv_resolve("xmpp-client",
 					"tcp", js->user->domain, srv_resolved_cb, js);
 		}
 	}
@@ -609,9 +609,9 @@ static gboolean
 conn_close_cb(gpointer data)
 {
 	JabberStream *js = data;
-	GaimAccount *account = gaim_connection_get_account(js->gc);
+	PurpleAccount *account = purple_connection_get_account(js->gc);
 
-	gaim_account_disconnect(account);
+	purple_account_disconnect(account);
 
 	return FALSE;
 }
@@ -619,7 +619,7 @@ conn_close_cb(gpointer data)
 static void
 jabber_connection_schedule_close(JabberStream *js)
 {
-	gaim_timeout_add(0, conn_close_cb, js);
+	purple_timeout_add(0, conn_close_cb, js);
 }
 
 static void
@@ -631,7 +631,7 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 	if(!strcmp(type, "result")) {
 		buf = g_strdup_printf(_("Registration of %s@%s successful"),
 				js->user->node, js->user->domain);
-		gaim_notify_info(NULL, _("Registration Successful"),
+		purple_notify_info(NULL, _("Registration Successful"),
 				_("Registration Successful"), buf);
 		g_free(buf);
 	} else {
@@ -640,7 +640,7 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		if(!msg)
 			msg = g_strdup(_("Unknown Error"));
 
-		gaim_notify_error(NULL, _("Registration Failed"),
+		purple_notify_error(NULL, _("Registration Failed"),
 				_("Registration Failed"), msg);
 		g_free(msg);
 	}
@@ -648,7 +648,7 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 }
 
 static void
-jabber_register_cb(JabberStream *js, GaimRequestFields *fields)
+jabber_register_cb(JabberStream *js, PurpleRequestFields *fields)
 {
 	GList *groups, *flds;
 	xmlnode *query, *y;
@@ -658,13 +658,13 @@ jabber_register_cb(JabberStream *js, GaimRequestFields *fields)
 	iq = jabber_iq_new_query(js, JABBER_IQ_SET, "jabber:iq:register");
 	query = xmlnode_get_child(iq->node, "query");
 
-	for(groups = gaim_request_fields_get_groups(fields); groups;
+	for(groups = purple_request_fields_get_groups(fields); groups;
 			groups = groups->next) {
-		for(flds = gaim_request_field_group_get_fields(groups->data);
+		for(flds = purple_request_field_group_get_fields(groups->data);
 				flds; flds = flds->next) {
-			GaimRequestField *field = flds->data;
-			const char *id = gaim_request_field_get_id(field);
-			const char *value = gaim_request_field_string_get_value(field);
+			PurpleRequestField *field = flds->data;
+			const char *id = purple_request_field_get_id(field);
+			const char *value = purple_request_field_string_get_value(field);
 
 			if(!strcmp(id, "username")) {
 				y = xmlnode_new_child(query, "username");
@@ -708,7 +708,7 @@ jabber_register_cb(JabberStream *js, GaimRequestFields *fields)
 
 	username = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
 			js->user->resource);
-	gaim_account_set_username(js->gc->account, username);
+	purple_account_set_username(js->gc->account, username);
 	g_free(username);
 
 	jabber_iq_set_callback(iq, jabber_registration_result_cb, NULL);
@@ -718,7 +718,7 @@ jabber_register_cb(JabberStream *js, GaimRequestFields *fields)
 }
 
 static void
-jabber_register_cancel_cb(JabberStream *js, GaimRequestFields *fields)
+jabber_register_cancel_cb(JabberStream *js, PurpleRequestFields *fields)
 {
 	jabber_connection_schedule_close(js);
 }
@@ -744,19 +744,19 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 		return;
 
 	if(js->registration) {
-		GaimRequestFields *fields;
-		GaimRequestFieldGroup *group;
-		GaimRequestField *field;
+		PurpleRequestFields *fields;
+		PurpleRequestFieldGroup *group;
+		PurpleRequestField *field;
 		xmlnode *query, *x, *y;
 		char *instructions;
 
 		/* get rid of the login thingy */
-		gaim_connection_set_state(js->gc, GAIM_CONNECTED);
+		purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 
 		query = xmlnode_get_child(packet, "query");
 
 		if(xmlnode_get_child(query, "registered")) {
-			gaim_notify_error(NULL, _("Already Registered"),
+			purple_notify_error(NULL, _("Already Registered"),
 					_("Already Registered"), NULL);
 			jabber_connection_schedule_close(js);
 			return;
@@ -773,7 +773,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			if((url = xmlnode_get_child(x, "url"))) {
 				char *href;
 				if((href = xmlnode_get_data(url))) {
-					gaim_notify_uri(NULL, href);
+					purple_notify_uri(NULL, href);
 					g_free(href);
 					js->gc->wants_to_die = TRUE;
 					jabber_connection_schedule_close(js);
@@ -784,78 +784,78 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 
 		/* as a last resort, use the old jabber:iq:register syntax */
 
-		fields = gaim_request_fields_new();
-		group = gaim_request_field_group_new(NULL);
-		gaim_request_fields_add_group(fields, group);
+		fields = purple_request_fields_new();
+		group = purple_request_field_group_new(NULL);
+		purple_request_fields_add_group(fields, group);
 
-		field = gaim_request_field_string_new("username", _("Username"),
+		field = purple_request_field_string_new("username", _("Username"),
 				js->user->node, FALSE);
-		gaim_request_field_group_add_field(group, field);
+		purple_request_field_group_add_field(group, field);
 
-		field = gaim_request_field_string_new("password", _("Password"),
-				gaim_connection_get_password(js->gc), FALSE);
-		gaim_request_field_string_set_masked(field, TRUE);
-		gaim_request_field_group_add_field(group, field);
+		field = purple_request_field_string_new("password", _("Password"),
+				purple_connection_get_password(js->gc), FALSE);
+		purple_request_field_string_set_masked(field, TRUE);
+		purple_request_field_group_add_field(group, field);
 
 		if(xmlnode_get_child(query, "name")) {
-			field = gaim_request_field_string_new("name", _("Name"),
-					gaim_account_get_alias(js->gc->account), FALSE);
-			gaim_request_field_group_add_field(group, field);
+			field = purple_request_field_string_new("name", _("Name"),
+					purple_account_get_alias(js->gc->account), FALSE);
+			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "email")) {
-			field = gaim_request_field_string_new("email", _("E-mail"),
+			field = purple_request_field_string_new("email", _("E-mail"),
 					NULL, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "nick")) {
-			field = gaim_request_field_string_new("nick", _("Nickname"),
+			field = purple_request_field_string_new("nick", _("Nickname"),
 					NULL, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "first")) {
-			field = gaim_request_field_string_new("first", _("First name"),
+			field = purple_request_field_string_new("first", _("First name"),
 					NULL, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "last")) {
-			field = gaim_request_field_string_new("last", _("Last name"),
+			field = purple_request_field_string_new("last", _("Last name"),
 					NULL, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "address")) {
-			field = gaim_request_field_string_new("address", _("Address"),
+			field = purple_request_field_string_new("address", _("Address"),
 					NULL, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "city")) {
-			field = gaim_request_field_string_new("city", _("City"),
+			field = purple_request_field_string_new("city", _("City"),
 					NULL, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "state")) {
-			field = gaim_request_field_string_new("state", _("State"),
+			field = purple_request_field_string_new("state", _("State"),
 					NULL, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "zip")) {
-			field = gaim_request_field_string_new("zip", _("Postal code"),
+			field = purple_request_field_string_new("zip", _("Postal code"),
 					NULL, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "phone")) {
-			field = gaim_request_field_string_new("phone", _("Phone"),
+			field = purple_request_field_string_new("phone", _("Phone"),
 					NULL, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "url")) {
-			field = gaim_request_field_string_new("url", _("URL"),
+			field = purple_request_field_string_new("url", _("URL"),
 					NULL, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 		}
 		if(xmlnode_get_child(query, "date")) {
-			field = gaim_request_field_string_new("date", _("Date"),
+			field = purple_request_field_string_new("date", _("Date"),
 					NULL, FALSE);
-			gaim_request_field_group_add_field(group, field);
+			purple_request_field_group_add_field(group, field);
 		}
 
 		if((y = xmlnode_get_child(query, "instructions")))
@@ -864,7 +864,7 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			instructions = g_strdup(_("Please fill out the information below "
 						"to register your new account."));
 
-		gaim_request_fields(js->gc, _("Register New Jabber Account"),
+		purple_request_fields(js->gc, _("Register New Jabber Account"),
 				_("Register New Jabber Account"), instructions, fields,
 				_("Register"), G_CALLBACK(jabber_register_cb),
 				_("Cancel"), G_CALLBACK(jabber_register_cancel_cb), js);
@@ -881,12 +881,12 @@ void jabber_register_start(JabberStream *js)
 	jabber_iq_send(iq);
 }
 
-static void jabber_register_account(GaimAccount *account)
+static void jabber_register_account(PurpleAccount *account)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
+	PurpleConnection *gc = purple_account_get_connection(account);
 	JabberStream *js;
 	JabberBuddy *my_jb = NULL;
-	const char *connect_server = gaim_account_get_string(account,
+	const char *connect_server = purple_account_get_string(account,
 			"connect_server", "");
 	const char *server;
 
@@ -897,15 +897,15 @@ static void jabber_register_account(GaimAccount *account)
 			g_free, g_free);
 	js->disco_callbacks = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
-	js->user = jabber_id_new(gaim_account_get_username(account));
+	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 
 	if(!js->user) {
-		gaim_connection_error(gc, _("Invalid Jabber ID"));
+		purple_connection_error(gc, _("Invalid Jabber ID"));
 		return;
 	}
 
-	js->write_buffer = gaim_circ_buffer_new(512);
+	js->write_buffer = purple_circ_buffer_new(512);
 
 	if(!js->user->resource) {
 		char *me;
@@ -916,34 +916,34 @@ static void jabber_register_account(GaimAccount *account)
 		}
 		me = g_strdup_printf("%s@%s/%s", js->user->node, js->user->domain,
 				js->user->resource);
-		gaim_account_set_username(account, me);
+		purple_account_set_username(account, me);
 		g_free(me);
 	}
 
-	if((my_jb = jabber_buddy_find(js, gaim_account_get_username(account), TRUE)))
+	if((my_jb = jabber_buddy_find(js, purple_account_get_username(account), TRUE)))
 		my_jb->subscription |= JABBER_SUB_BOTH;
 
 	server = connect_server[0] ? connect_server : js->user->domain;
 
 	jabber_stream_set_state(js, JABBER_STREAM_CONNECTING);
 
-	if(gaim_account_get_bool(account, "old_ssl", FALSE)) {
-		if(gaim_ssl_is_supported()) {
-			js->gsc = gaim_ssl_connect(account, server,
-					gaim_account_get_int(account, "port", 5222),
+	if(purple_account_get_bool(account, "old_ssl", FALSE)) {
+		if(purple_ssl_is_supported()) {
+			js->gsc = purple_ssl_connect(account, server,
+					purple_account_get_int(account, "port", 5222),
 					jabber_login_callback_ssl, jabber_ssl_connect_failure, gc);
 		} else {
-			gaim_connection_error(gc, _("SSL support unavailable"));
+			purple_connection_error(gc, _("SSL support unavailable"));
 		}
 	}
 
 	if(!js->gsc) {
 		if (connect_server[0]) {
 			jabber_login_connect(js, server,
-			                     gaim_account_get_int(account,
+			                     purple_account_get_int(account,
 			                                          "port", 5222));
 		} else {
-			js->srv_query_data = gaim_srv_resolve("xmpp-client",
+			js->srv_query_data = purple_srv_resolve("xmpp-client",
 			                                      "tcp",
 			                                      js->user->domain,
 			                                      srv_resolved_cb,
@@ -952,7 +952,7 @@ static void jabber_register_account(GaimAccount *account)
 	}
 }
 
-static void jabber_close(GaimConnection *gc)
+static void jabber_close(PurpleConnection *gc)
 {
 	JabberStream *js = gc->proto_data;
 
@@ -964,16 +964,16 @@ static void jabber_close(GaimConnection *gc)
 		jabber_send_raw(js, "</stream:stream>", -1);
 
 	if (js->srv_query_data)
-		gaim_srv_cancel(js->srv_query_data);
+		purple_srv_cancel(js->srv_query_data);
 
 	if(js->gsc) {
 #ifdef HAVE_OPENSSL
 		if (!gc->disconnect_timeout)
 #endif
-			gaim_ssl_close(js->gsc);
+			purple_ssl_close(js->gsc);
 	} else if (js->fd > 0) {
 		if(js->gc->inpa)
-			gaim_input_remove(js->gc->inpa);
+			purple_input_remove(js->gc->inpa);
 		close(js->fd);
 	}
 
@@ -1001,9 +1001,9 @@ static void jabber_close(GaimConnection *gc)
 		jabber_id_free(js->user);
 	if(js->avatar_hash)
 		g_free(js->avatar_hash);
-	gaim_circ_buffer_destroy(js->write_buffer);
+	purple_circ_buffer_destroy(js->write_buffer);
 	if(js->writeh)
-		gaim_input_remove(js->writeh);
+		purple_input_remove(js->writeh);
 #ifdef HAVE_CYRUS_SASL
 	if(js->sasl)
 		sasl_dispose(&js->sasl);
@@ -1029,16 +1029,16 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 		case JABBER_STREAM_OFFLINE:
 			break;
 		case JABBER_STREAM_CONNECTING:
-			gaim_connection_update_progress(js->gc, _("Connecting"), 1,
+			purple_connection_update_progress(js->gc, _("Connecting"), 1,
 					JABBER_CONNECT_STEPS);
 			break;
 		case JABBER_STREAM_INITIALIZING:
-			gaim_connection_update_progress(js->gc, _("Initializing Stream"),
+			purple_connection_update_progress(js->gc, _("Initializing Stream"),
 					js->gsc ? 5 : 2, JABBER_CONNECT_STEPS);
 			jabber_stream_init(js);
 			break;
 		case JABBER_STREAM_AUTHENTICATING:
-			gaim_connection_update_progress(js->gc, _("Authenticating"),
+			purple_connection_update_progress(js->gc, _("Authenticating"),
 					js->gsc ? 6 : 3, JABBER_CONNECT_STEPS);
 			if(js->protocol_version == JABBER_PROTO_0_9 && js->registration) {
 				jabber_register_start(js);
@@ -1047,7 +1047,7 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			}
 			break;
 		case JABBER_STREAM_REINITIALIZING:
-			gaim_connection_update_progress(js->gc, _("Re-initializing Stream"),
+			purple_connection_update_progress(js->gc, _("Re-initializing Stream"),
 					(js->gsc ? 7 : 4), JABBER_CONNECT_STEPS);
 			
 			/* The stream will be reinitialized later, in jabber_recv_cb_ssl() */
@@ -1055,7 +1055,7 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			
 			break;
 		case JABBER_STREAM_CONNECTED:
-			gaim_connection_set_state(js->gc, GAIM_CONNECTED);
+			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 			jabber_disco_items_server(js);
 			break;
 	}
@@ -1063,23 +1063,23 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 
 char *jabber_get_next_id(JabberStream *js)
 {
-	return g_strdup_printf("gaim%x", js->next_id++);
+	return g_strdup_printf("purple%x", js->next_id++);
 }
 
 
-static void jabber_idle_set(GaimConnection *gc, int idle)
+static void jabber_idle_set(PurpleConnection *gc, int idle)
 {
 	JabberStream *js = gc->proto_data;
 
 	js->idle = idle ? time(NULL) - idle : idle;
 }
 
-static const char *jabber_list_icon(GaimAccount *a, GaimBuddy *b)
+static const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b)
 {
 	return "jabber";
 }
 
-static const char* jabber_list_emblem(GaimBuddy *b)
+static const char* jabber_list_emblem(PurpleBuddy *b)
 {
 	JabberStream *js;
 	JabberBuddy *jb = NULL;
@@ -1091,7 +1091,7 @@ static const char* jabber_list_emblem(GaimBuddy *b)
 	if(js)
 		jb = jabber_buddy_find(js, b->name, FALSE);
 
-	if(!GAIM_BUDDY_IS_ONLINE(b)) {
+	if(!PURPLE_BUDDY_IS_ONLINE(b)) {
 		if(jb && (jb->subscription & JABBER_SUB_PENDING ||
 					!(jb->subscription & JABBER_SUB_TO)))
 			return "not-authorized";
@@ -1099,24 +1099,24 @@ static const char* jabber_list_emblem(GaimBuddy *b)
 	return NULL;
 }
 
-static char *jabber_status_text(GaimBuddy *b)
+static char *jabber_status_text(PurpleBuddy *b)
 {
 	JabberBuddy *jb = jabber_buddy_find(b->account->gc->proto_data, b->name,
 			FALSE);
 	char *ret = NULL;
 
-	if(jb && !GAIM_BUDDY_IS_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
+	if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("Not Authorized"));
-	} else if(jb && !GAIM_BUDDY_IS_ONLINE(b) && jb->error_msg) {
+	} else if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
 		ret = g_strdup(jb->error_msg);
 	} else {
 		char *stripped;
 
-		if(!(stripped = gaim_markup_strip_html(jabber_buddy_get_status_msg(jb)))) {
-			GaimStatus *status = gaim_presence_get_active_status(gaim_buddy_get_presence(b));
+		if(!(stripped = purple_markup_strip_html(jabber_buddy_get_status_msg(jb)))) {
+			PurpleStatus *status = purple_presence_get_active_status(purple_buddy_get_presence(b));
 
-			if(!gaim_status_is_available(status))
-				stripped = g_strdup(gaim_status_get_name(status));
+			if(!purple_status_is_available(status))
+				stripped = g_strdup(purple_status_get_name(status));
 		}
 
 		if(stripped) {
@@ -1128,7 +1128,7 @@ static char *jabber_status_text(GaimBuddy *b)
 	return ret;
 }
 
-static void jabber_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full)
+static void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	JabberBuddy *jb;
 
@@ -1162,7 +1162,7 @@ static void jabber_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gbo
 					sub = _("None");
 			}
 			
-			gaim_notify_user_info_add_pair(user_info, _("Subscription"), sub);
+			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
 		}
 
 		for(l=jb->resources; l; l = l->next) {
@@ -1175,8 +1175,8 @@ static void jabber_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gbo
 
 			if(jbr->status) {
 				char *tmp;
-				text = gaim_strreplace(jbr->status, "\n", "<br />\n");
-				tmp = gaim_markup_strip_html(text);
+				text = purple_strreplace(jbr->status, "\n", "<br />\n");
+				tmp = purple_markup_strip_html(text);
 				g_free(text);
 				text = g_markup_escape_text(tmp, -1);
 				g_free(tmp);
@@ -1186,7 +1186,7 @@ static void jabber_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gbo
 				res = g_strdup_printf(" (%s)", jbr->name);
 
 			state = jabber_buddy_state_get_name(jbr->state);
-			if (text != NULL && !gaim_utf8_strcasecmp(state, text)) {
+			if (text != NULL && !purple_utf8_strcasecmp(state, text)) {
 				g_free(text);
 				text = NULL;
 			}
@@ -1198,7 +1198,7 @@ static void jabber_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gbo
 							(text ? ": " : ""),
 							(text ? text : ""));
 
-			gaim_notify_user_info_add_pair(user_info, label, value);
+			purple_notify_user_info_add_pair(user_info, label, value);
 
 			g_free(label);
 			g_free(value);
@@ -1206,65 +1206,65 @@ static void jabber_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gbo
 			g_free(res);
 		}
 
-		if(!GAIM_BUDDY_IS_ONLINE(b) && jb->error_msg) {
-			gaim_notify_user_info_add_pair(user_info, _("Error"), jb->error_msg);
+		if(!PURPLE_BUDDY_IS_ONLINE(b) && jb->error_msg) {
+			purple_notify_user_info_add_pair(user_info, _("Error"), jb->error_msg);
 		}
 	}
 }
 
-static GList *jabber_status_types(GaimAccount *account)
+static GList *jabber_status_types(PurpleAccount *account)
 {
-	GaimStatusType *type;
+	PurpleStatusType *type;
 	GList *types = NULL;
-	GaimValue *priority_value;
+	PurpleValue *priority_value;
 
-	priority_value = gaim_value_new(GAIM_TYPE_INT);
-	gaim_value_set_int(priority_value, 1);
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
+	priority_value = purple_value_new(PURPLE_TYPE_INT);
+	purple_value_set_int(priority_value, 1);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_ONLINE),
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
-	priority_value = gaim_value_new(GAIM_TYPE_INT);
-	gaim_value_set_int(priority_value, 1);
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE,
+	priority_value = purple_value_new(PURPLE_TYPE_INT);
+	purple_value_set_int(priority_value, 1);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_CHAT),
 			_("Chatty"), TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
-	priority_value = gaim_value_new(GAIM_TYPE_INT);
-	gaim_value_set_int(priority_value, 0);
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY,
+	priority_value = purple_value_new(PURPLE_TYPE_INT);
+	purple_value_set_int(priority_value, 0);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_AWAY),
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
-	priority_value = gaim_value_new(GAIM_TYPE_INT);
-	gaim_value_set_int(priority_value, 0);
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_EXTENDED_AWAY,
+	priority_value = purple_value_new(PURPLE_TYPE_INT);
+	purple_value_set_int(priority_value, 0);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_EXTENDED_AWAY,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_XA),
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
-	priority_value = gaim_value_new(GAIM_TYPE_INT);
-	gaim_value_set_int(priority_value, 0);
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_UNAVAILABLE,
+	priority_value = purple_value_new(PURPLE_TYPE_INT);
+	purple_value_set_int(priority_value, 0);
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_DND),
 			_("Do Not Disturb"), TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1273,10 +1273,10 @@ static GList *jabber_status_types(GaimAccount *account)
 		m = g_list_append(m, _("Invisible"));
 	*/
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_OFFLINE,
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_OFFLINE,
 			jabber_buddy_state_get_status_id(JABBER_BUDDY_STATE_UNAVAILABLE),
 			NULL, FALSE, TRUE, FALSE,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1292,29 +1292,29 @@ jabber_password_change_result_cb(JabberStream *js, xmlnode *packet,
 	type = xmlnode_get_attrib(packet, "type");
 
 	if(type && !strcmp(type, "result")) {
-		gaim_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
+		purple_notify_info(js->gc, _("Password Changed"), _("Password Changed"),
 				_("Your password has been changed."));
 	} else {
 		char *msg = jabber_parse_error(js, packet);
 
-		gaim_notify_error(js->gc, _("Error changing password"),
+		purple_notify_error(js->gc, _("Error changing password"),
 				_("Error changing password"), msg);
 		g_free(msg);
 	}
 }
 
 static void jabber_password_change_cb(JabberStream *js,
-		GaimRequestFields *fields)
+		PurpleRequestFields *fields)
 {
 	const char *p1, *p2;
 	JabberIq *iq;
 	xmlnode *query, *y;
 
-	p1 = gaim_request_fields_get_string(fields, "password1");
-	p2 = gaim_request_fields_get_string(fields, "password2");
+	p1 = purple_request_fields_get_string(fields, "password1");
+	p2 = purple_request_fields_get_string(fields, "password2");
 
 	if(strcmp(p1, p2)) {
-		gaim_notify_error(js->gc, NULL, _("New passwords do not match."), NULL);
+		purple_notify_error(js->gc, NULL, _("New passwords do not match."), NULL);
 		return;
 	}
 
@@ -1333,73 +1333,73 @@ static void jabber_password_change_cb(JabberStream *js,
 
 	jabber_iq_send(iq);
 
-	gaim_account_set_password(js->gc->account, p1);
+	purple_account_set_password(js->gc->account, p1);
 }
 
-static void jabber_password_change(GaimPluginAction *action)
+static void jabber_password_change(PurplePluginAction *action)
 {
 
-	GaimConnection *gc = (GaimConnection *) action->context;
+	PurpleConnection *gc = (PurpleConnection *) action->context;
 	JabberStream *js = gc->proto_data;
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
-	fields = gaim_request_fields_new();
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
 
-	field = gaim_request_field_string_new("password1", _("Password"),
+	field = purple_request_field_string_new("password1", _("Password"),
 			"", FALSE);
-	gaim_request_field_string_set_masked(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("password2", _("Password (again)"),
+	field = purple_request_field_string_new("password2", _("Password (again)"),
 			"", FALSE);
-	gaim_request_field_string_set_masked(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	gaim_request_fields(js->gc, _("Change Jabber Password"),
+	purple_request_fields(js->gc, _("Change Jabber Password"),
 			_("Change Jabber Password"), _("Please enter your new password"),
 			fields, _("OK"), G_CALLBACK(jabber_password_change_cb),
 			_("Cancel"), NULL, js);
 }
 
-static GList *jabber_actions(GaimPlugin *plugin, gpointer context)
+static GList *jabber_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
-	GaimPluginAction *act;
+	PurplePluginAction *act;
 
-	act = gaim_plugin_action_new(_("Set User Info..."),
+	act = purple_plugin_action_new(_("Set User Info..."),
 	                             jabber_setup_set_info);
 	m = g_list_append(m, act);
 
 	/* if (js->protocol_options & CHANGE_PASSWORD) { */
-		act = gaim_plugin_action_new(_("Change Password..."),
+		act = purple_plugin_action_new(_("Change Password..."),
 		                             jabber_password_change);
 		m = g_list_append(m, act);
 	/* } */
 
-	act = gaim_plugin_action_new(_("Search for Users..."),
+	act = purple_plugin_action_new(_("Search for Users..."),
 	                             jabber_user_search_begin);
 	m = g_list_append(m, act);
 
 	return m;
 }
 
-static GaimChat *jabber_find_blist_chat(GaimAccount *account, const char *name)
+static PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name)
 {
-	GaimBlistNode *gnode, *cnode;
+	PurpleBlistNode *gnode, *cnode;
 	JabberID *jid;
 
 	if(!(jid = jabber_id_new(name)))
 		return NULL;
 
-	for(gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
+	for(gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
-			GaimChat *chat = (GaimChat*)cnode;
+			PurpleChat *chat = (PurpleChat*)cnode;
 			const char *room, *server;
-			if(!GAIM_BLIST_NODE_IS_CHAT(cnode))
+			if(!PURPLE_BLIST_NODE_IS_CHAT(cnode))
 				continue;
 
 			if(chat->account != account)
@@ -1421,7 +1421,7 @@ static GaimChat *jabber_find_blist_chat(GaimAccount *account, const char *name)
 	return NULL;
 }
 
-static void jabber_convo_closed(GaimConnection *gc, const char *who)
+static void jabber_convo_closed(PurpleConnection *gc, const char *who)
 {
 	JabberStream *js = gc->proto_data;
 	JabberID *jid;
@@ -1591,73 +1591,73 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 	}
 }
 
-static GaimCmdRet jabber_cmd_chat_config(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_config(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 	jabber_chat_request_room_configure(chat);
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet jabber_cmd_chat_register(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_register(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 	jabber_chat_register(chat);
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet jabber_cmd_chat_topic(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_topic(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 	jabber_chat_change_topic(chat, args ? args[0] : NULL);
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet jabber_cmd_chat_nick(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_nick(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 
 	if(!args || !args[0])
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	jabber_chat_change_nick(chat, args[0]);
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet jabber_cmd_chat_part(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_part(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 	jabber_chat_part(chat, args ? args[0] : NULL);
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet jabber_cmd_chat_ban(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_ban(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 
 	if(!args || !args[0])
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	if(!jabber_chat_ban_user(chat, args[0], args[1])) {
 		*error = g_strdup_printf(_("Unable to ban user %s"), args[0]);
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet jabber_cmd_chat_affiliate(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_affiliate(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 
 	if (!args || !args[0] || !args[1])
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	if (strcmp(args[1], "owner") != 0 && 
 	    strcmp(args[1], "admin") != 0 &&
@@ -1665,31 +1665,31 @@ static GaimCmdRet jabber_cmd_chat_affiliate(GaimConversation *conv,
 	    strcmp(args[1], "outcast") != 0 &&
 	    strcmp(args[1], "none") != 0) {
 		*error = g_strdup_printf(_("Unknown affiliation: \"%s\""), args[1]);
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
 	if (!jabber_chat_affiliate_user(chat, args[0], args[1])) {
 		*error = g_strdup_printf(_("Unable to affiliate user %s as \"%s\""), args[0], args[1]);
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet jabber_cmd_chat_role(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat;
 
 	if (!args || !args[0] || !args[1])
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	if (strcmp(args[1], "moderator") != 0 &&
 	    strcmp(args[1], "participant") != 0 &&
 	    strcmp(args[1], "visitor") != 0 &&
 	    strcmp(args[1], "none") != 0) {
 		*error = g_strdup_printf(_("Unknown role: \"%s\""), args[1]);
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
 	chat = jabber_chat_find_by_conv(conv);
@@ -1697,33 +1697,33 @@ static GaimCmdRet jabber_cmd_chat_role(GaimConversation *conv,
 	if (!jabber_chat_role_user(chat, args[0], args[1])) {
 		*error = g_strdup_printf(_("Unable to set role \"%s\" for user: %s"),
 		                         args[1], args[0]);
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet jabber_cmd_chat_invite(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_invite(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	if(!args || !args[0])
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
-	jabber_chat_invite(gaim_conversation_get_gc(conv),
-			gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv)), args[1] ? args[1] : "",
+	jabber_chat_invite(purple_conversation_get_gc(conv),
+			purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)), args[1] ? args[1] : "",
 			args[0]);
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet jabber_cmd_chat_join(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_join(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 	GHashTable *components;
 
 	if(!args || !args[0])
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 
@@ -1733,29 +1733,29 @@ static GaimCmdRet jabber_cmd_chat_join(GaimConversation *conv,
 	if(args[1])
 		g_hash_table_replace(components, "password", args[1]);
 
-	jabber_chat_join(gaim_conversation_get_gc(conv), components);
+	jabber_chat_join(purple_conversation_get_gc(conv), components);
 
 	g_hash_table_destroy(components);
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet jabber_cmd_chat_kick(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_kick(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
 
 	if(!args || !args[0])
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	if(!jabber_chat_kick_user(chat, args[0], args[1])) {
 		*error = g_strdup_printf(_("Unable to kick user %s"), args[0]);
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet jabber_cmd_chat_msg(GaimConversation *conv,
+static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	JabberChat *chat = jabber_chat_find_by_conv(conv);
@@ -1763,97 +1763,97 @@ static GaimCmdRet jabber_cmd_chat_msg(GaimConversation *conv,
 
 	who = g_strdup_printf("%s@%s/%s", chat->room, chat->server, args[0]);
 
-	jabber_message_send_im(gaim_conversation_get_gc(conv), who, args[1], 0);
+	jabber_message_send_im(purple_conversation_get_gc(conv), who, args[1], 0);
 
 	g_free(who);
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static gboolean jabber_offline_message(const GaimBuddy *buddy)
+static gboolean jabber_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
 }
 
 static void jabber_register_commands(void)
 {
-	gaim_cmd_register("config", "", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("config", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_config,
 	                  _("config:  Configure a chat room."), NULL);
-	gaim_cmd_register("configure", "", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("configure", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_config,
 	                  _("configure:  Configure a chat room."), NULL);
-	gaim_cmd_register("nick", "s", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("nick", "s", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_nick,
 	                  _("nick &lt;new nickname&gt;:  Change your nickname."),
 	                  NULL);
-	gaim_cmd_register("part", "s", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	purple_cmd_register("part", "s", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_part, _("part [room]:  Leave the room."),
 	                  NULL);
-	gaim_cmd_register("register", "", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("register", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_register,
 	                  _("register:  Register with a chat room."), NULL);
 	/* XXX: there needs to be a core /topic cmd, methinks */
-	gaim_cmd_register("topic", "s", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	purple_cmd_register("topic", "s", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_topic,
 	                  _("topic [new topic]:  View or change the topic."),
 	                  NULL);
-	gaim_cmd_register("ban", "ws", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	purple_cmd_register("ban", "ws", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_ban,
 	                  _("ban &lt;user&gt; [room]:  Ban a user from the room."),
 	                  NULL);
-	gaim_cmd_register("affiliate", "ws", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	purple_cmd_register("affiliate", "ws", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_affiliate,
 	                  _("affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's affiliation with the room."),
 	                  NULL);
-	gaim_cmd_register("role", "ws", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	purple_cmd_register("role", "ws", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_role,
 	                  _("role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's role in the room."),
 	                  NULL);
-	gaim_cmd_register("invite", "ws", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	purple_cmd_register("invite", "ws", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_invite,
 	                  _("invite &lt;user&gt; [message]:  Invite a user to the room."),
 	                  NULL);
-	gaim_cmd_register("join", "ws", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	purple_cmd_register("join", "ws", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_join,
 	                  _("join: &lt;room&gt; [server]:  Join a chat on this server."),
 	                  NULL);
-	gaim_cmd_register("kick", "ws", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-	                  GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+	purple_cmd_register("kick", "ws", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
 	                  jabber_cmd_chat_kick,
 	                  _("kick &lt;user&gt; [room]:  Kick a user from the room."),
 	                  NULL);
-	gaim_cmd_register("msg", "ws", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("msg", "ws", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 	                  "prpl-jabber", jabber_cmd_chat_msg,
 	                  _("msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."),
 	                  NULL);
 }
 
-static GaimPluginProtocolInfo prpl_info =
+static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK,
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
-	{"png,gif,jpeg", 32, 32, 96, 96, 8191, GAIM_ICON_SCALE_SEND | GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
+	{"png,gif,jpeg", 32, 32, 96, 96, 8191, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 	jabber_list_icon,				/* list_icon */
 	jabber_list_emblem,			/* list_emblems */
 	jabber_status_text,				/* status_text */
@@ -1914,48 +1914,48 @@ static GaimPluginProtocolInfo prpl_info =
 	jabber_roomlist_room_serialize, /* roomlist_room_serialize */
 };
 
-static gboolean load_plugin(GaimPlugin *plugin)
+static gboolean load_plugin(PurplePlugin *plugin)
 {
-	gaim_signal_register(plugin, "jabber-receiving-xmlnode",
-			gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-			gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_CONNECTION),
-			gaim_value_new_outgoing(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_XMLNODE));
+	purple_signal_register(plugin, "jabber-receiving-xmlnode",
+			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
+			purple_value_new_outgoing(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
 
-	gaim_signal_register(plugin, "jabber-sending-xmlnode",
-			gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-			gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_CONNECTION),
-			gaim_value_new_outgoing(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_XMLNODE));
+	purple_signal_register(plugin, "jabber-sending-xmlnode",
+			purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+			purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
+			purple_value_new_outgoing(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_XMLNODE));
 
-	gaim_signal_register(plugin, "jabber-sending-text",
-			     gaim_marshal_VOID__POINTER_POINTER, NULL, 2,
-			     gaim_value_new(GAIM_TYPE_SUBTYPE, GAIM_SUBTYPE_CONNECTION),
-			     gaim_value_new_outgoing(GAIM_TYPE_STRING));
+	purple_signal_register(plugin, "jabber-sending-text",
+			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     purple_value_new(PURPLE_TYPE_SUBTYPE, PURPLE_SUBTYPE_CONNECTION),
+			     purple_value_new_outgoing(PURPLE_TYPE_STRING));
 			   
 
 	return TRUE;
 }
 
-static gboolean unload_plugin(GaimPlugin *plugin)
+static gboolean unload_plugin(PurplePlugin *plugin)
 {
-	gaim_signal_unregister(plugin, "jabber-receiving-xmlnode");
+	purple_signal_unregister(plugin, "jabber-receiving-xmlnode");
 
-	gaim_signal_unregister(plugin, "jabber-sending-xmlnode");
+	purple_signal_unregister(plugin, "jabber-sending-xmlnode");
 	
-	gaim_signal_unregister(plugin, "jabber-sending-text");
+	purple_signal_unregister(plugin, "jabber-sending-text");
 	
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	"prpl-jabber",                                    /**< id             */
 	"Jabber",                                         /**< name           */
@@ -1965,7 +1965,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Jabber Protocol Plugin"),
 	NULL,                                             /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	load_plugin,                                      /**< load           */
 	unload_plugin,                                    /**< unload         */
@@ -1978,39 +1978,39 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	GaimAccountUserSplit *split;
-	GaimAccountOption *option;
+	PurpleAccountUserSplit *split;
+	PurpleAccountOption *option;
 
-	split = gaim_account_user_split_new(_("Server"), "jabber.org", '@');
+	split = purple_account_user_split_new(_("Server"), "jabber.org", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	split = gaim_account_user_split_new(_("Resource"), "Home", '/');
+	split = purple_account_user_split_new(_("Resource"), "Home", '/');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
-	option = gaim_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
+	option = purple_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
 
-	option = gaim_account_option_bool_new(
+	option = purple_account_option_bool_new(
 			_("Allow plaintext auth over unencrypted streams"),
 			"auth_plain_in_clear", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
 
-	option = gaim_account_option_int_new(_("Connect port"), "port", 5222);
+	option = purple_account_option_int_new(_("Connect port"), "port", 5222);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
 
-	option = gaim_account_option_string_new(_("Connect server"),
+	option = purple_account_option_string_new(_("Connect server"),
 			"connect_server", NULL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 			option);
 
 	my_protocol = plugin;
 
-	gaim_prefs_remove("/plugins/prpl/jabber");
+	purple_prefs_remove("/plugins/prpl/jabber");
 
 	/* XXX - If any other plugin wants SASL this won't be good ... */
 #ifdef HAVE_CYRUS_SASL
@@ -2021,4 +2021,4 @@ init_plugin(GaimPlugin *plugin)
 	jabber_iq_init();
 }
 
-GAIM_INIT_PLUGIN(jabber, init_plugin, info);
+PURPLE_INIT_PLUGIN(jabber, init_plugin, info);

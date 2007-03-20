@@ -1,8 +1,8 @@
 $MODULE_NAME = "Request Functions Test";
 
-use Gaim;
+use Purple;
 
-# All the information Gaim gets about our nifty plugin
+# All the information Purple gets about our nifty plugin
 %PLUGIN_INFO = (
 	perl_api_version => 2,
 	name => "Perl: $MODULE_NAME",
@@ -36,28 +36,28 @@ sub plugin_init {
 sub ok_cb_test {
 	$fields = shift;
 
-	Gaim::Debug::info($MODULE_NAME, "plugin_action_cb_test: BEGIN\n");
-	Gaim::Debug::info($MODULE_NAME, "ok_cb_test: BEGIN\n");
-	Gaim::Debug::info($MODULE_NAME, "ok_cb_test: Button Click\n");
-	Gaim::Debug::info($MODULE_NAME, "ok_cb_test: Field Type:  $fields \n");
-	$account = Gaim::Request::Fields::get_account($fields, "acct_test");
-	Gaim::Debug::info($MODULE_NAME, "ok_cb_test: Username of selected account: " . Gaim::Account::get_username($account) . "\n");
-	$int = Gaim::Request::Fields::get_integer($fields, "int_test");
-	Gaim::Debug::info($MODULE_NAME, "ok_cb_test: Integer Value: $int \n");
-	$choice = Gaim::Request::Fields::get_choice($fields, "ch_test");
-	Gaim::Debug::info($MODULE_NAME, "ok_cb_test: Choice Value: $choice \n");
-	Gaim::Debug::info($MODULE_NAME, "ok_cb_test: END\n");
+	Purple::Debug::info($MODULE_NAME, "plugin_action_cb_test: BEGIN\n");
+	Purple::Debug::info($MODULE_NAME, "ok_cb_test: BEGIN\n");
+	Purple::Debug::info($MODULE_NAME, "ok_cb_test: Button Click\n");
+	Purple::Debug::info($MODULE_NAME, "ok_cb_test: Field Type:  $fields \n");
+	$account = Purple::Request::Fields::get_account($fields, "acct_test");
+	Purple::Debug::info($MODULE_NAME, "ok_cb_test: Username of selected account: " . Purple::Account::get_username($account) . "\n");
+	$int = Purple::Request::Fields::get_integer($fields, "int_test");
+	Purple::Debug::info($MODULE_NAME, "ok_cb_test: Integer Value: $int \n");
+	$choice = Purple::Request::Fields::get_choice($fields, "ch_test");
+	Purple::Debug::info($MODULE_NAME, "ok_cb_test: Choice Value: $choice \n");
+	Purple::Debug::info($MODULE_NAME, "ok_cb_test: END\n");
 }
 
 sub cancel_cb_test {
-	Gaim::Debug::info($MODULE_NAME, "cancel_cb_test: Button Click\n");
+	Purple::Debug::info($MODULE_NAME, "cancel_cb_test: Button Click\n");
 }
 
 sub plugin_action_test {
 	$plugin = shift;
-	Gaim::Debug::info($MODULE_NAME, "plugin_action_cb_test: BEGIN\n");
+	Purple::Debug::info($MODULE_NAME, "plugin_action_cb_test: BEGIN\n");
 	plugin_request($plugin);
-	Gaim::Debug::info($MODULE_NAME, "plugin_action_cb_test: END\n");
+	Purple::Debug::info($MODULE_NAME, "plugin_action_cb_test: END\n");
 }
 
 sub plugin_load {
@@ -68,27 +68,27 @@ sub plugin_load {
 }
 
 sub plugin_request {
-	$group = Gaim::Request::Field::Group::new("Group Name");
-	$field = Gaim::Request::Field::account_new("acct_test", "Account Text", undef);
-	Gaim::Request::Field::account_set_show_all($field, 0);
-	Gaim::Request::Field::Group::add_field($group, $field);
+	$group = Purple::Request::Field::Group::new("Group Name");
+	$field = Purple::Request::Field::account_new("acct_test", "Account Text", undef);
+	Purple::Request::Field::account_set_show_all($field, 0);
+	Purple::Request::Field::Group::add_field($group, $field);
 
-	$field = Gaim::Request::Field::int_new("int_test", "Integer Text", 33);
-	Gaim::Request::Field::Group::add_field($group, $field);
+	$field = Purple::Request::Field::int_new("int_test", "Integer Text", 33);
+	Purple::Request::Field::Group::add_field($group, $field);
 
 	# Test field choice
-	$field = Gaim::Request::Field::choice_new("ch_test", "Choice Text", 1);
-	Gaim::Request::Field::choice_add($field, "Choice 0");
-	Gaim::Request::Field::choice_add($field, "Choice 1");
-	Gaim::Request::Field::choice_add($field, "Choice 2");
+	$field = Purple::Request::Field::choice_new("ch_test", "Choice Text", 1);
+	Purple::Request::Field::choice_add($field, "Choice 0");
+	Purple::Request::Field::choice_add($field, "Choice 1");
+	Purple::Request::Field::choice_add($field, "Choice 2");
 
-	Gaim::Request::Field::Group::add_field($group, $field);
+	Purple::Request::Field::Group::add_field($group, $field);
 
 
-	$request = Gaim::Request::Fields::new();
-	Gaim::Request::Fields::add_group($request, $group);
+	$request = Purple::Request::Fields::new();
+	Purple::Request::Fields::add_group($request, $group);
 
-	Gaim::Request::fields(
+	Purple::Request::fields(
 		$plugin,
 		"Request Title!",
 		"Primary Title",
@@ -100,10 +100,10 @@ sub plugin_request {
 
 sub plugin_unload {
 	my $plugin = shift;
-	Gaim::Debug::info($MODULE_NAME, "#" x 80 . "\n");
+	Purple::Debug::info($MODULE_NAME, "#" x 80 . "\n");
 	#########  TEST CODE HERE  ##########
 
 
-	Gaim::Debug::info($MODULE_NAME, "\n" . "#" x 80 . "\n");
+	Purple::Debug::info($MODULE_NAME, "\n" . "#" x 80 . "\n");
 }
 

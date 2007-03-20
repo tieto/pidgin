@@ -2,9 +2,9 @@
  * @file gtkprefs.c GTK+ Preferences
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -48,7 +48,7 @@
 #include "gtksound.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 
 #define PROXYHOST 0
 #define PROXYPORT 1
@@ -80,7 +80,7 @@ update_spin_value(GtkWidget *w, GtkWidget *spin)
 
 	value = gtk_spin_button_get_value_as_int(GTK_SPIN_BUTTON(spin));
 
-	gaim_prefs_set_int(key, value);
+	purple_prefs_set_int(key, value);
 }
 
 GtkWidget *
@@ -93,7 +93,7 @@ pidgin_prefs_labeled_spin_button(GtkWidget *box, const gchar *title,
 	GtkObject *adjust;
 	int val;
 
-	val = gaim_prefs_get_int(key);
+	val = purple_prefs_get_int(key);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(box), hbox, FALSE, FALSE, 5);
@@ -132,7 +132,7 @@ static void
 entry_set(GtkEntry *entry, gpointer data) {
 	const char *key = (const char*)data;
 
-	gaim_prefs_set_string(key, gtk_entry_get_text(entry));
+	purple_prefs_set_string(key, gtk_entry_get_text(entry));
 }
 
 GtkWidget *
@@ -142,7 +142,7 @@ pidgin_prefs_labeled_entry(GtkWidget *page, const gchar *title,
 	GtkWidget *hbox, *label, *entry;
 	const gchar *value;
 
-	value = gaim_prefs_get_string(key);
+	value = purple_prefs_get_string(key);
 
 	hbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(page), hbox, FALSE, FALSE, 0);
@@ -177,29 +177,29 @@ dropdown_set(GObject *w, const char *key)
 {
 	const char *str_value;
 	int int_value;
-	GaimPrefType type;
+	PurplePrefType type;
 
 	type = GPOINTER_TO_INT(g_object_get_data(w, "type"));
 
-	if (type == GAIM_PREF_INT) {
+	if (type == PURPLE_PREF_INT) {
 		int_value = GPOINTER_TO_INT(g_object_get_data(w, "value"));
 
-		gaim_prefs_set_int(key, int_value);
+		purple_prefs_set_int(key, int_value);
 	}
-	else if (type == GAIM_PREF_STRING) {
+	else if (type == PURPLE_PREF_STRING) {
 		str_value = (const char *)g_object_get_data(w, "value");
 
-		gaim_prefs_set_string(key, str_value);
+		purple_prefs_set_string(key, str_value);
 	}
-	else if (type == GAIM_PREF_BOOLEAN) {
-		gaim_prefs_set_bool(key,
+	else if (type == PURPLE_PREF_BOOLEAN) {
+		purple_prefs_set_bool(key,
 				GPOINTER_TO_INT(g_object_get_data(w, "value")));
 	}
 }
 
 GtkWidget *
 pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
-		GaimPrefType type, const char *key, GList *menuitems)
+		PurplePrefType type, const char *key, GList *menuitems)
 {
 	GtkWidget  *dropdown, *opt, *menu;
 	GtkWidget  *label = NULL;
@@ -227,9 +227,9 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 	}
 
 #if 0 /* GTK_CHECK_VERSION(2,4,0) */
-	if(type == GAIM_PREF_INT)
+	if(type == PURPLE_PREF_INT)
 		model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_INT);
-	else if(type == GAIM_PREF_STRING)
+	else if(type == PURPLE_PREF_STRING)
 		model = gtk_list_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	dropdown = gtk_combo_box_new_with_model(model);
 #else
@@ -242,10 +242,10 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 		pidgin_set_accessible_label (dropdown, label);
 	}
 
-	if (type == GAIM_PREF_INT)
-		stored_int = gaim_prefs_get_int(key);
-	else if (type == GAIM_PREF_STRING)
-		stored_str = gaim_prefs_get_string(key);
+	if (type == PURPLE_PREF_INT)
+		stored_int = purple_prefs_get_int(key);
+	else if (type == PURPLE_PREF_STRING)
+		stored_str = purple_prefs_get_string(key);
 
 	while (menuitems != NULL && (text = (char *) menuitems->data) != NULL) {
 		menuitems = g_list_next(menuitems);
@@ -255,17 +255,17 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 
 		g_object_set_data(G_OBJECT(opt), "type", GINT_TO_POINTER(type));
 
-		if (type == GAIM_PREF_INT) {
+		if (type == PURPLE_PREF_INT) {
 			int_value = GPOINTER_TO_INT(menuitems->data);
 			g_object_set_data(G_OBJECT(opt), "value",
 							  GINT_TO_POINTER(int_value));
 		}
-		else if (type == GAIM_PREF_STRING) {
+		else if (type == PURPLE_PREF_STRING) {
 			str_value = (const char *)menuitems->data;
 
 			g_object_set_data(G_OBJECT(opt), "value", (char *)str_value);
 		}
-		else if (type == GAIM_PREF_BOOLEAN) {
+		else if (type == PURPLE_PREF_BOOLEAN) {
 			g_object_set_data(G_OBJECT(opt), "value",
 					menuitems->data);
 		}
@@ -276,11 +276,11 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 		gtk_widget_show(opt);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), opt);
 
-		if ((type == GAIM_PREF_INT && stored_int == int_value) ||
-			(type == GAIM_PREF_STRING && stored_str != NULL &&
+		if ((type == PURPLE_PREF_INT && stored_int == int_value) ||
+			(type == PURPLE_PREF_STRING && stored_str != NULL &&
 			 !strcmp(stored_str, str_value)) ||
-			(type == GAIM_PREF_BOOLEAN &&
-			 (gaim_prefs_get_bool(key) == GPOINTER_TO_INT(menuitems->data)))) {
+			(type == PURPLE_PREF_BOOLEAN &&
+			 (purple_prefs_get_bool(key) == GPOINTER_TO_INT(menuitems->data)))) {
 
 			gtk_menu_set_active(GTK_MENU(menu), o);
 		}
@@ -298,7 +298,7 @@ pidgin_prefs_dropdown_from_list(GtkWidget *box, const gchar *title,
 }
 
 GtkWidget *
-pidgin_prefs_dropdown(GtkWidget *box, const gchar *title, GaimPrefType type,
+pidgin_prefs_dropdown(GtkWidget *box, const gchar *title, PurplePrefType type,
 			   const char *key, ...)
 {
 	va_list ap;
@@ -308,15 +308,15 @@ pidgin_prefs_dropdown(GtkWidget *box, const gchar *title, GaimPrefType type,
 	int int_value;
 	const char *str_value;
 
-	g_return_val_if_fail(type == GAIM_PREF_BOOLEAN || type == GAIM_PREF_INT ||
-			type == GAIM_PREF_STRING, NULL);
+	g_return_val_if_fail(type == PURPLE_PREF_BOOLEAN || type == PURPLE_PREF_INT ||
+			type == PURPLE_PREF_STRING, NULL);
 
 	va_start(ap, key);
 	while ((name = va_arg(ap, char *)) != NULL) {
 
 		menuitems = g_list_prepend(menuitems, name);
 
-		if (type == GAIM_PREF_INT || type == GAIM_PREF_BOOLEAN) {
+		if (type == PURPLE_PREF_INT || type == PURPLE_PREF_BOOLEAN) {
 			int_value = va_arg(ap, int);
 			menuitems = g_list_prepend(menuitems, GINT_TO_POINTER(int_value));
 		}
@@ -343,10 +343,10 @@ static void
 delete_prefs(GtkWidget *asdf, void *gdsa)
 {
 	/* Close any "select sound" request dialogs */
-	gaim_request_close_with_handle(prefs);
+	purple_request_close_with_handle(prefs);
 
 	/* Unregister callbacks. */
-	gaim_prefs_disconnect_by_handle(prefs);
+	purple_prefs_disconnect_by_handle(prefs);
 
 	prefs = NULL;
 	sound_entry = NULL;
@@ -375,7 +375,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	gtk_tree_model_get_value(model, &iter, 3, &val);
 	path = gtk_tree_model_get_path(model, &iter);
 	themename = g_value_get_string(&val);
-	gaim_prefs_set_string("/gaim/gtk/smileys/theme", themename);
+	purple_prefs_set_string("/purple/gtk/smileys/theme", themename);
 	g_value_unset (&val);
 
 	/* current_smiley_theme is set in callback for the above pref change */
@@ -479,7 +479,7 @@ static void theme_install_theme(char *path, char *extn) {
 	else if ((tail = strrchr(path, '.')) == NULL)
 		return;
 
-	destdir = g_strconcat(gaim_user_dir(), G_DIR_SEPARATOR_S "smileys", NULL);
+	destdir = g_strconcat(purple_user_dir(), G_DIR_SEPARATOR_S "smileys", NULL);
 
 	/* We'll check this just to make sure. This also lets us do something different on
 	 * other platforms, if need be */
@@ -506,7 +506,7 @@ static void theme_install_theme(char *path, char *extn) {
 	/* Fire! */
 	if (system(command))
 	{
-		gaim_notify_error(NULL, NULL, _("Smiley theme failed to unpack."), NULL);
+		purple_notify_error(NULL, NULL, _("Smiley theme failed to unpack."), NULL);
 	}
 
 	g_free(command);
@@ -519,7 +519,7 @@ static void theme_install_theme(char *path, char *extn) {
 }
 
 static void
-theme_got_url(GaimUtilFetchUrlData *url_data, gpointer user_data,
+theme_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		const gchar *themedata, size_t len, const gchar *error_message)
 {
 	FILE *f;
@@ -528,7 +528,7 @@ theme_got_url(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	if ((error_message != NULL) || (len == 0))
 		return;
 
-	f = gaim_mkstemp(&path, TRUE);
+	f = purple_mkstemp(&path, TRUE);
 	fwrite(themedata, len, 1, f);
 	fclose(f);
 
@@ -554,7 +554,7 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			/* It looks like we're dealing with a local file. Let's
 			 * just untar it in the right place */
 			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
-				gaim_debug(GAIM_DEBUG_ERROR, "theme dnd", "%s\n",
+				purple_debug(PURPLE_DEBUG_ERROR, "theme dnd", "%s\n",
 						   (converr ? converr->message :
 							"g_filename_from_uri error"));
 				return;
@@ -564,9 +564,9 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 		} else if (!g_ascii_strncasecmp(name, "http://", 7)) {
 			/* Oo, a web drag and drop. This is where things
 			 * will start to get interesting */
-			gaim_util_fetch_url(name, TRUE, NULL, FALSE, theme_got_url, ".tgz");
+			purple_util_fetch_url(name, TRUE, NULL, FALSE, theme_got_url, ".tgz");
 		} else if (!g_ascii_strncasecmp(name, "https://", 8)) {
-			/* gaim_util_fetch_url() doesn't support HTTPS, but we want users
+			/* purple_util_fetch_url() doesn't support HTTPS, but we want users
 			 * to be able to drag and drop links from the SF trackers, so
 			 * we'll try it as an HTTP URL. */
 			char *tmp = g_strdup(name + 1);
@@ -574,7 +574,7 @@ theme_dnd_recv(GtkWidget *widget, GdkDragContext *dc, guint x, guint y,
 			tmp[1] = 't';
 			tmp[2] = 't';
 			tmp[3] = 'p';
-			gaim_util_fetch_url(tmp, TRUE, NULL, FALSE, theme_got_url, ".tgz");
+			purple_util_fetch_url(tmp, TRUE, NULL, FALSE, theme_got_url, ".tgz");
 			g_free(tmp);
 		}
 
@@ -632,8 +632,8 @@ theme_page()
 	GtkWidget *label;
 	GtkTargetEntry te[3] = {{"text/plain", 0, 0},{"text/uri-list", 0, 1},{"STRING", 0, 2}};
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	label = gtk_label_new(_("Select a smiley theme that you would like to use from the list below. New themes can be installed by dragging and dropping them onto the theme list."));
 
@@ -710,21 +710,21 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 								  &bold, &italic, &uline);
 
 	if (buttons & GTK_IMHTML_BOLD)
-		gaim_prefs_set_bool("/gaim/gtk/conversations/send_bold", bold);
+		purple_prefs_set_bool("/purple/gtk/conversations/send_bold", bold);
 	if (buttons & GTK_IMHTML_ITALIC)
-		gaim_prefs_set_bool("/gaim/gtk/conversations/send_italic", italic);
+		purple_prefs_set_bool("/purple/gtk/conversations/send_italic", italic);
 	if (buttons & GTK_IMHTML_UNDERLINE)
-		gaim_prefs_set_bool("/gaim/gtk/conversations/send_underline", uline);
+		purple_prefs_set_bool("/purple/gtk/conversations/send_underline", uline);
 
 	if (buttons & GTK_IMHTML_GROW || buttons & GTK_IMHTML_SHRINK)
-		gaim_prefs_set_int("/gaim/gtk/conversations/font_size",
+		purple_prefs_set_int("/purple/gtk/conversations/font_size",
 						   gtk_imhtml_get_current_fontsize(GTK_IMHTML(imhtml)));
 	if (buttons & GTK_IMHTML_FACE) {
 		char *face = gtk_imhtml_get_current_fontface(GTK_IMHTML(imhtml));
 		if (!face)
 			face = g_strdup("");
 
-		gaim_prefs_set_string("/gaim/gtk/conversations/font_face", face);
+		purple_prefs_set_string("/purple/gtk/conversations/font_face", face);
 		g_free(face);
 	}
 
@@ -733,7 +733,7 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 		if (!color)
 			color = g_strdup("");
 
-		gaim_prefs_set_string("/gaim/gtk/conversations/fgcolor", color);
+		purple_prefs_set_string("/purple/gtk/conversations/fgcolor", color);
 		g_free(color);
 	}
 
@@ -767,7 +767,7 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 		if (!color)
 			color = g_strdup("");
 
-		gaim_prefs_set_string("/gaim/gtk/conversations/bgcolor", color);
+		purple_prefs_set_string("/purple/gtk/conversations/bgcolor", color);
 		g_free(color);
 	}
 }
@@ -775,19 +775,19 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 static void
 formatting_clear_cb(GtkIMHtml *imhtml, void *data)
 {
-	gaim_prefs_set_bool("/gaim/gtk/conversations/send_bold", FALSE);
-	gaim_prefs_set_bool("/gaim/gtk/conversations/send_italic", FALSE);
-	gaim_prefs_set_bool("/gaim/gtk/conversations/send_underline", FALSE);
+	purple_prefs_set_bool("/purple/gtk/conversations/send_bold", FALSE);
+	purple_prefs_set_bool("/purple/gtk/conversations/send_italic", FALSE);
+	purple_prefs_set_bool("/purple/gtk/conversations/send_underline", FALSE);
 
-	gaim_prefs_set_int("/gaim/gtk/conversations/font_size", 3);
+	purple_prefs_set_int("/purple/gtk/conversations/font_size", 3);
 
-	gaim_prefs_set_string("/gaim/gtk/conversations/font_face", "");
-	gaim_prefs_set_string("/gaim/gtk/conversations/fgcolor", "");
-	gaim_prefs_set_string("/gaim/gtk/conversations/bgcolor", "");
+	purple_prefs_set_string("/purple/gtk/conversations/font_face", "");
+	purple_prefs_set_string("/purple/gtk/conversations/fgcolor", "");
+	purple_prefs_set_string("/purple/gtk/conversations/bgcolor", "");
 }
 
 static void
-conversation_usetabs_cb(const char *name, GaimPrefType type,
+conversation_usetabs_cb(const char *name, PurplePrefType type,
 						gconstpointer value, gpointer data)
 {
 	gboolean usetabs = GPOINTER_TO_INT(value);
@@ -808,14 +808,14 @@ interface_page()
 	GtkSizeGroup *sg;
 	GList *names = NULL;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 	
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	vbox = pidgin_make_frame(ret, _("System Tray Icon"));
-	label = pidgin_prefs_dropdown(vbox, _("_Show system tray icon:"), GAIM_PREF_STRING,
-					"/gaim/gtk/docklet/show",
+	label = pidgin_prefs_dropdown(vbox, _("_Show system tray icon:"), PURPLE_PREF_STRING,
+					"/purple/gtk/docklet/show",
 					_("Always"), "always",
 					_("Never"), "never",
 					_("On unread messages"), "pending",
@@ -825,7 +825,7 @@ interface_page()
 	
 	vbox = pidgin_make_frame(ret, _("Conversation Window Hiding"));
 	label = pidgin_prefs_dropdown(vbox, _("_Hide new IM conversations:"),
-					GAIM_PREF_STRING, "/gaim/gtk/conversations/im/hide_new",
+					PURPLE_PREF_STRING, "/purple/gtk/conversations/im/hide_new",
 					_("Never"), "never",
 					_("When away"), "away",
 					_("Always"), "always",
@@ -838,7 +838,7 @@ interface_page()
 	vbox = pidgin_make_frame(ret, _("Tabs"));
 	
 	pidgin_prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
-							"/gaim/gtk/conversations/tabs", vbox);
+							"/purple/gtk/conversations/tabs", vbox);
 
 	/*
 	 * Connect a signal to the above preference.  When conversations are not
@@ -846,16 +846,16 @@ interface_page()
 	 */
 	vbox2 = gtk_vbox_new(FALSE, 9);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
-	gaim_prefs_connect_callback(prefs, "/gaim/gtk/conversations/tabs",
+	purple_prefs_connect_callback(prefs, "/purple/gtk/conversations/tabs",
 	                            conversation_usetabs_cb, vbox2);
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/tabs"))
+	if (!purple_prefs_get_bool("/purple/gtk/conversations/tabs"))
 	  gtk_widget_set_sensitive(vbox2, FALSE);
 
 	pidgin_prefs_checkbox(_("Show close b_utton on tabs"),
-				"/gaim/gtk/conversations/close_on_tabs", vbox2);
+				"/purple/gtk/conversations/close_on_tabs", vbox2);
 
-	label = pidgin_prefs_dropdown(vbox2, _("_Placement:"), GAIM_PREF_INT,
-					"/gaim/gtk/conversations/tab_side",
+	label = pidgin_prefs_dropdown(vbox2, _("_Placement:"), PURPLE_PREF_INT,
+					"/purple/gtk/conversations/tab_side",
 					_("Top"), GTK_POS_TOP,
 					_("Bottom"), GTK_POS_BOTTOM,
 					_("Left"), GTK_POS_LEFT,
@@ -870,7 +870,7 @@ interface_page()
 		
 	names = pidgin_conv_placement_get_options();
 	label = pidgin_prefs_dropdown_from_list(vbox2, _("N_ew conversations:"),
-				GAIM_PREF_STRING, "/gaim/gtk/conversations/placement", names);
+				PURPLE_PREF_STRING, "/purple/gtk/conversations/placement", names);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 			
 	gtk_size_group_add_widget(sg, label);
@@ -892,19 +892,19 @@ conv_page()
 	GtkWidget *imhtml;
 	GtkWidget *frame;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width(GTK_CONTAINER(ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
 
 	vbox = pidgin_make_frame(ret, _("Conversations"));
 
 	pidgin_prefs_checkbox(_("Show _formatting on incoming messages"),
-				"/gaim/gtk/conversations/show_incoming_formatting", vbox);
+				"/purple/gtk/conversations/show_incoming_formatting", vbox);
 
 	iconpref1 = pidgin_prefs_checkbox(_("Show buddy _icons"),
-			"/gaim/gtk/conversations/im/show_buddy_icons", vbox);
+			"/purple/gtk/conversations/im/show_buddy_icons", vbox);
 	iconpref2 = pidgin_prefs_checkbox(_("Enable buddy ic_on animation"),
-			"/gaim/gtk/conversations/im/animate_buddy_icons", vbox);
-	if (!gaim_prefs_get_bool("/gaim/gtk/conversations/im/show_buddy_icons"))
+			"/purple/gtk/conversations/im/animate_buddy_icons", vbox);
+	if (!purple_prefs_get_bool("/purple/gtk/conversations/im/show_buddy_icons"))
 		gtk_widget_set_sensitive(iconpref2, FALSE);
 	g_signal_connect(G_OBJECT(iconpref1), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), iconpref2);
@@ -913,13 +913,13 @@ conv_page()
 			"/core/conversations/im/send_typing", vbox);
 #ifdef USE_GTKSPELL
 	pidgin_prefs_checkbox(_("Highlight _misspelled words"),
-			"/gaim/gtk/conversations/spellcheck", vbox);
+			"/purple/gtk/conversations/spellcheck", vbox);
 #endif
 
-	pidgin_prefs_checkbox(_("Use smooth-scrolling"), "/gaim/gtk/conversations/use_smooth_scrolling", vbox);
+	pidgin_prefs_checkbox(_("Use smooth-scrolling"), "/purple/gtk/conversations/use_smooth_scrolling", vbox);
 
 #ifdef _WIN32
-	pidgin_prefs_checkbox(_("F_lash window when IMs are received"), "/gaim/gtk/win32/blink_im", vbox);
+	pidgin_prefs_checkbox(_("F_lash window when IMs are received"), "/purple/gtk/win32/blink_im", vbox);
 #endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
@@ -942,17 +942,17 @@ conv_page()
 
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_bold"))
+	if (purple_prefs_get_bool("/purple/gtk/conversations/send_bold"))
 		gtk_imhtml_toggle_bold(GTK_IMHTML(imhtml));
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_italic"))
+	if (purple_prefs_get_bool("/purple/gtk/conversations/send_italic"))
 		gtk_imhtml_toggle_italic(GTK_IMHTML(imhtml));
-	if (gaim_prefs_get_bool("/gaim/gtk/conversations/send_underline"))
+	if (purple_prefs_get_bool("/purple/gtk/conversations/send_underline"))
 		gtk_imhtml_toggle_underline(GTK_IMHTML(imhtml));
 
-	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), gaim_prefs_get_int("/gaim/gtk/conversations/font_size"));
-	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/fgcolor"));
-	gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/bgcolor"));
-	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), gaim_prefs_get_string("/gaim/gtk/conversations/font_face"));
+	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), purple_prefs_get_int("/purple/gtk/conversations/font_size"));
+	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), purple_prefs_get_string("/purple/gtk/conversations/fgcolor"));
+	gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), purple_prefs_get_string("/purple/gtk/conversations/bgcolor"));
+	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), purple_prefs_get_string("/purple/gtk/conversations/font_face"));
 
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle",
 					 G_CALLBACK(formatting_toggle_cb), toolbar);
@@ -972,11 +972,11 @@ static void network_ip_changed(GtkEntry *entry, gpointer data)
 	 *       red background in the box when the IP address is invalid
 	 *       and a green background when the IP address is valid.
 	 */
-	gaim_network_set_public_ip(gtk_entry_get_text(entry));
+	purple_network_set_public_ip(gtk_entry_get_text(entry));
 }
 
 static void
-proxy_changed_cb(const char *name, GaimPrefType type,
+proxy_changed_cb(const char *name, PurplePrefType type,
 				 gconstpointer value, gpointer data)
 {
 	GtkWidget *frame = data;
@@ -991,13 +991,13 @@ proxy_changed_cb(const char *name, GaimPrefType type,
 static void proxy_print_option(GtkEntry *entry, int entrynum)
 {
 	if (entrynum == PROXYHOST)
-		gaim_prefs_set_string("/core/proxy/host", gtk_entry_get_text(entry));
+		purple_prefs_set_string("/core/proxy/host", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPORT)
-		gaim_prefs_set_int("/core/proxy/port", atoi(gtk_entry_get_text(entry)));
+		purple_prefs_set_int("/core/proxy/port", atoi(gtk_entry_get_text(entry)));
 	else if (entrynum == PROXYUSER)
-		gaim_prefs_set_string("/core/proxy/username", gtk_entry_get_text(entry));
+		purple_prefs_set_string("/core/proxy/username", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPASS)
-		gaim_prefs_set_string("/core/proxy/password", gtk_entry_get_text(entry));
+		purple_prefs_set_string("/core/proxy/password", gtk_entry_get_text(entry));
 }
 
 static GtkWidget *
@@ -1007,17 +1007,17 @@ network_page()
 	GtkWidget *vbox, *hbox, *entry;
 	GtkWidget *table, *label, *auto_ip_checkbox, *ports_checkbox, *spin_button;
 	GtkSizeGroup *sg;
-	GaimProxyInfo *proxy_info = NULL;
+	PurpleProxyInfo *proxy_info = NULL;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	vbox = pidgin_make_frame (ret, _("IP Address"));
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	pidgin_prefs_labeled_entry(vbox,_("ST_UN server:"),
 			"/core/network/stun_server", sg);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
 	label = gtk_label_new(NULL);
@@ -1054,14 +1054,14 @@ network_page()
 	 * TODO: This could be better by showing the autodeteced
 	 * IP separately from the user-specified IP.
 	 */
-	if (gaim_network_get_my_ip(-1) != NULL)
+	if (purple_network_get_my_ip(-1) != NULL)
 		gtk_entry_set_text(GTK_ENTRY(entry),
-		                   gaim_network_get_my_ip(-1));
+		                   purple_network_get_my_ip(-1));
 
 	pidgin_set_accessible_label (entry, label);
 
 
-	if (gaim_prefs_get_bool("/core/network/auto_ip")) {
+	if (purple_prefs_get_bool("/core/network/auto_ip")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(table), FALSE);
 	}
 
@@ -1076,22 +1076,22 @@ network_page()
 
 	spin_button = pidgin_prefs_labeled_spin_button(vbox, _("_Start port:"),
 			"/core/network/ports_range_start", 0, 65535, sg);
-	if (!gaim_prefs_get_bool("/core/network/ports_range_use"))
+	if (!purple_prefs_get_bool("/core/network/ports_range_use"))
 		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
 
 	spin_button = pidgin_prefs_labeled_spin_button(vbox, _("_End port:"),
 			"/core/network/ports_range_end", 0, 65535, sg);
-	if (!gaim_prefs_get_bool("/core/network/ports_range_use"))
+	if (!purple_prefs_get_bool("/core/network/ports_range_use"))
 		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
 
-	if (!gaim_running_gnome()) {
+	if (!purple_running_gnome()) {
 		vbox = pidgin_make_frame(ret, _("Proxy Server"));
 		prefs_proxy_frame = gtk_vbox_new(FALSE, 0);
-		pidgin_prefs_dropdown(vbox, _("Proxy _type:"), GAIM_PREF_STRING,
+		pidgin_prefs_dropdown(vbox, _("Proxy _type:"), PURPLE_PREF_STRING,
 					"/core/proxy/type",
 					_("No proxy"), "none",
 					"SOCKS 4", "socks4",
@@ -1100,9 +1100,9 @@ network_page()
 					_("Use Environmental Settings"), "envvar",
 					NULL);
 		gtk_box_pack_start(GTK_BOX(vbox), prefs_proxy_frame, 0, 0, 0);
-		proxy_info = gaim_global_proxy_get_info();
+		proxy_info = purple_global_proxy_get_info();
 
-		gaim_prefs_connect_callback(prefs, "/core/proxy/type",
+		purple_prefs_connect_callback(prefs, "/core/proxy/type",
 					    proxy_changed_cb, prefs_proxy_frame);
 
 		table = gtk_table_new(4, 2, FALSE);
@@ -1122,9 +1122,9 @@ network_page()
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYHOST);
 
-		if (proxy_info != NULL && gaim_proxy_info_get_host(proxy_info))
+		if (proxy_info != NULL && purple_proxy_info_get_host(proxy_info))
 			gtk_entry_set_text(GTK_ENTRY(entry),
-					   gaim_proxy_info_get_host(proxy_info));
+					   purple_proxy_info_get_host(proxy_info));
 
 		hbox = gtk_hbox_new(TRUE, 5);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -1140,10 +1140,10 @@ network_page()
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYPORT);
 
-		if (proxy_info != NULL && gaim_proxy_info_get_port(proxy_info) != 0) {
+		if (proxy_info != NULL && purple_proxy_info_get_port(proxy_info) != 0) {
 			char buf[128];
 			g_snprintf(buf, sizeof(buf), "%d",
-				   gaim_proxy_info_get_port(proxy_info));
+				   purple_proxy_info_get_port(proxy_info));
 
 			gtk_entry_set_text(GTK_ENTRY(entry), buf);
 		}
@@ -1159,9 +1159,9 @@ network_page()
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYUSER);
 
-		if (proxy_info != NULL && gaim_proxy_info_get_username(proxy_info) != NULL)
+		if (proxy_info != NULL && purple_proxy_info_get_username(proxy_info) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry),
-						   gaim_proxy_info_get_username(proxy_info));
+						   purple_proxy_info_get_username(proxy_info));
 
 		hbox = gtk_hbox_new(TRUE, 5);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -1176,20 +1176,20 @@ network_page()
 		gtk_table_attach(GTK_TABLE(table), entry, 3, 4, 1, 2, GTK_FILL , 0, 0, 0);
 		gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 		if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
-			gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
+			gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
 		g_signal_connect(G_OBJECT(entry), "changed",
 				 G_CALLBACK(proxy_print_option), (void *)PROXYPASS);
 
-		if (proxy_info != NULL && gaim_proxy_info_get_password(proxy_info) != NULL)
+		if (proxy_info != NULL && purple_proxy_info_get_password(proxy_info) != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry),
-					   gaim_proxy_info_get_password(proxy_info));
+					   purple_proxy_info_get_password(proxy_info));
 		pidgin_set_accessible_label (entry, label);
 	}
 
 	gtk_widget_show_all(ret);
 	if (proxy_info == NULL ||
-	    gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_NONE ||
-	    gaim_proxy_info_get_type(proxy_info) == GAIM_PROXY_USE_ENVVAR)
+	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_NONE ||
+	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_ENVVAR)
 		gtk_widget_hide(table);
 	return ret;
 }
@@ -1198,7 +1198,7 @@ network_page()
 static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpointer data) {
 	const char *program = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	gaim_prefs_set_path("/gaim/gtk/browsers/command", program);
+	purple_prefs_set_path("/purple/gtk/browsers/command", program);
 
 	/* carry on normally */
 	return FALSE;
@@ -1228,13 +1228,13 @@ static GList *get_available_browsers()
 
 	GList *browsers = NULL;
 	int i = 0;
-	char *browser_setting = (char *)gaim_prefs_get_string("/gaim/gtk/browsers/browser");
+	char *browser_setting = (char *)purple_prefs_get_string("/purple/gtk/browsers/browser");
 
 	browsers = g_list_prepend(browsers, (gpointer)"custom");
 	browsers = g_list_prepend(browsers, (gpointer)_("Manual"));
 
 	for (i = 0; i < num_possible_browsers; i++) {
-		if (gaim_program_is_valid(possible_browsers[i].command)) {
+		if (purple_program_is_valid(possible_browsers[i].command)) {
 			browsers = g_list_prepend(browsers,
 									  possible_browsers[i].command);
 			browsers = g_list_prepend(browsers, (gpointer)_(possible_browsers[i].name));
@@ -1244,13 +1244,13 @@ static GList *get_available_browsers()
 	}
 
 	if(browser_setting)
-		gaim_prefs_set_string("/gaim/gtk/browsers/browser", "custom");
+		purple_prefs_set_string("/purple/gtk/browsers/browser", "custom");
 
 	return browsers;
 }
 
 static void
-browser_changed1_cb(const char *name, GaimPrefType type,
+browser_changed1_cb(const char *name, PurplePrefType type,
 					gconstpointer value, gpointer data)
 {
 	GtkWidget *hbox = data;
@@ -1260,7 +1260,7 @@ browser_changed1_cb(const char *name, GaimPrefType type,
 }
 
 static void
-browser_changed2_cb(const char *name, GaimPrefType type,
+browser_changed2_cb(const char *name, PurplePrefType type,
 					gconstpointer value, gpointer data)
 {
 	GtkWidget *hbox = data;
@@ -1280,24 +1280,24 @@ browser_page()
 	GtkSizeGroup *sg;
 	GList *browsers = NULL;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	vbox = pidgin_make_frame (ret, _("Browser Selection"));
 
 	browsers = get_available_browsers();
 	if (browsers != NULL) {
-		label = pidgin_prefs_dropdown_from_list(vbox,_("_Browser:"), GAIM_PREF_STRING,
-										 "/gaim/gtk/browsers/browser",
+		label = pidgin_prefs_dropdown_from_list(vbox,_("_Browser:"), PURPLE_PREF_STRING,
+										 "/purple/gtk/browsers/browser",
 										 browsers);
 		g_list_free(browsers);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 		gtk_size_group_add_widget(sg, label);
 
 		hbox = gtk_hbox_new(FALSE, 0);
-		label = pidgin_prefs_dropdown(hbox, _("_Open link in:"), GAIM_PREF_INT,
-			"/gaim/gtk/browsers/place",
+		label = pidgin_prefs_dropdown(hbox, _("_Open link in:"), PURPLE_PREF_INT,
+			"/purple/gtk/browsers/place",
 			_("Browser default"), PIDGIN_BROWSER_DEFAULT,
 			_("Existing window"), PIDGIN_BROWSER_CURRENT,
 			_("New window"), PIDGIN_BROWSER_NEW_WINDOW,
@@ -1307,9 +1307,9 @@ browser_page()
 		gtk_size_group_add_widget(sg, label);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-		if (!strcmp(gaim_prefs_get_string("/gaim/gtk/browsers/browser"), "custom"))
+		if (!strcmp(purple_prefs_get_string("/purple/gtk/browsers/browser"), "custom"))
 			gtk_widget_set_sensitive(hbox, FALSE);
-		gaim_prefs_connect_callback(prefs, "/gaim/gtk/browsers/browser",
+		purple_prefs_connect_callback(prefs, "/purple/gtk/browsers/browser",
 									browser_changed1_cb, hbox);
 	}
 
@@ -1323,15 +1323,15 @@ browser_page()
 	entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 
-	if (strcmp(gaim_prefs_get_string("/gaim/gtk/browsers/browser"), "custom"))
+	if (strcmp(purple_prefs_get_string("/purple/gtk/browsers/browser"), "custom"))
 		gtk_widget_set_sensitive(hbox, FALSE);
-	gaim_prefs_connect_callback(prefs, "/gaim/gtk/browsers/browser",
+	purple_prefs_connect_callback(prefs, "/purple/gtk/browsers/browser",
 								browser_changed2_cb, hbox);
 
 	gtk_box_pack_start (GTK_BOX (hbox), entry, FALSE, FALSE, 0);
 
 	gtk_entry_set_text(GTK_ENTRY(entry),
-					   gaim_prefs_get_path("/gaim/gtk/browsers/command"));
+					   purple_prefs_get_path("/purple/gtk/browsers/command"));
 	g_signal_connect(G_OBJECT(entry), "focus-out-event",
 					 G_CALLBACK(manual_browser_set), NULL);
 	pidgin_set_accessible_label (entry, label);
@@ -1348,14 +1348,14 @@ logging_page()
 	GtkWidget *vbox;
 	GList *names;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 
 	vbox = pidgin_make_frame (ret, _("Logging"));
-	names = gaim_log_logger_get_options();
+	names = purple_log_logger_get_options();
 
-	pidgin_prefs_dropdown_from_list(vbox, _("Log _format:"), GAIM_PREF_STRING,
+	pidgin_prefs_dropdown_from_list(vbox, _("Log _format:"), PURPLE_PREF_STRING,
 				 "/core/logging/format", names);
 
 	g_list_free(names);
@@ -1375,13 +1375,13 @@ logging_page()
 #ifndef _WIN32
 static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
 {
-	gaim_prefs_set_path("/gaim/gtk/sound/command",
+	purple_prefs_set_path("/purple/gtk/sound/command",
 			gtk_entry_get_text(GTK_ENTRY(entry)));
 	return TRUE;
 }
 
 static void
-sound_changed1_cb(const char *name, GaimPrefType type,
+sound_changed1_cb(const char *name, PurplePrefType type,
 				  gconstpointer value, gpointer data)
 {
 	GtkWidget *hbox = data;
@@ -1391,7 +1391,7 @@ sound_changed1_cb(const char *name, GaimPrefType type,
 }
 
 static void
-sound_changed2_cb(const char *name, GaimPrefType type,
+sound_changed2_cb(const char *name, PurplePrefType type,
 				  gconstpointer value, gpointer data)
 {
 	GtkWidget *vbox = data;
@@ -1402,7 +1402,7 @@ sound_changed2_cb(const char *name, GaimPrefType type,
 
 #ifdef USE_GSTREAMER
 static void
-sound_changed3_cb(const char *name, GaimPrefType type,
+sound_changed3_cb(const char *name, PurplePrefType type,
 				  gconstpointer value, gpointer data)
 {
 	GtkWidget *hbox = data;
@@ -1429,7 +1429,7 @@ event_toggled(GtkCellRendererToggle *cell, gchar *pth, gpointer data)
 						2, &pref,
 						-1);
 
-	gaim_prefs_set_bool(pref, !gtk_cell_renderer_toggle_get_active(cell));
+	purple_prefs_set_bool(pref, !gtk_cell_renderer_toggle_get_active(cell));
 	g_free(pref);
 
 	gtk_list_store_set(GTK_LIST_STORE (model), &iter,
@@ -1445,16 +1445,16 @@ test_sound(GtkWidget *button, gpointer i_am_NULL)
 	char *pref;
 	gboolean temp_value;
 
-	pref = g_strdup_printf("/gaim/gtk/sound/enabled/%s",
+	pref = g_strdup_printf("/purple/gtk/sound/enabled/%s",
 			pidgin_sound_get_event_option(sound_row_sel));
 
-	temp_value = gaim_prefs_get_bool(pref);
+	temp_value = purple_prefs_get_bool(pref);
 
-	if (!temp_value) gaim_prefs_set_bool(pref, TRUE);
+	if (!temp_value) purple_prefs_set_bool(pref, TRUE);
 
-	gaim_sound_play_event(sound_row_sel, NULL);
+	purple_sound_play_event(sound_row_sel, NULL);
 
-	if (!temp_value) gaim_prefs_set_bool(pref, FALSE);
+	if (!temp_value) purple_prefs_set_bool(pref, FALSE);
 
 	g_free(pref);
 }
@@ -1467,9 +1467,9 @@ reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
 {
 	gchar *pref;
 
-	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+	pref = g_strdup_printf("/purple/gtk/sound/file/%s",
 						   pidgin_sound_get_event_option(sound_row_sel));
-	gaim_prefs_set_path(pref, "");
+	purple_prefs_set_path(pref, "");
 	g_free(pref);
 
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), "(default)");
@@ -1484,9 +1484,9 @@ sound_chosen_cb(void *user_data, const char *filename)
 	sound = GPOINTER_TO_INT(user_data);
 
 	/* Set it -- and forget it */
-	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+	pref = g_strdup_printf("/purple/gtk/sound/file/%s",
 						   pidgin_sound_get_event_option(sound));
-	gaim_prefs_set_path(pref, filename);
+	purple_prefs_set_path(pref, filename);
 	g_free(pref);
 
 	/*
@@ -1502,15 +1502,15 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 	gchar *pref;
 	const char *filename;
 
-	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+	pref = g_strdup_printf("/purple/gtk/sound/file/%s",
 						   pidgin_sound_get_event_option(sound_row_sel));
-	filename = gaim_prefs_get_path(pref);
+	filename = purple_prefs_get_path(pref);
 	g_free(pref);
 
 	if (*filename == '\0')
 		filename = NULL;
 
-	gaim_request_file(prefs, _("Sound Selection"), filename, FALSE,
+	purple_request_file(prefs, _("Sound Selection"), filename, FALSE,
 					  G_CALLBACK(sound_chosen_cb), NULL, GINT_TO_POINTER(sound_row_sel));
 }
 
@@ -1537,7 +1537,7 @@ static gchar* prefs_sound_volume_format(GtkScale *scale, gdouble val)
 static void prefs_sound_volume_changed(GtkRange *range)
 {
 	int val = (int)gtk_range_get_value(GTK_RANGE(range));
-	gaim_prefs_set_int("/gaim/gtk/sound/volume", val);
+	purple_prefs_set_int("/purple/gtk/sound/volume", val);
 }
 #endif
 
@@ -1554,9 +1554,9 @@ static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	gtk_tree_model_get_value (model, &iter, 3, &val);
 	sound_row_sel = g_value_get_uint(&val);
 
-	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+	pref = g_strdup_printf("/purple/gtk/sound/file/%s",
 			pidgin_sound_get_event_option(sound_row_sel));
-	file = gaim_prefs_get_path(pref);
+	file = purple_prefs_get_path(pref);
 	g_free(pref);
 	if (sound_entry)
 		gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
@@ -1587,15 +1587,15 @@ sound_page()
 	const char *cmd;
 #endif
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 #ifndef _WIN32
 	vbox = pidgin_make_frame (ret, _("Sound Method"));
-	dd = pidgin_prefs_dropdown(vbox, _("_Method:"), GAIM_PREF_STRING,
-			"/gaim/gtk/sound/method",
+	dd = pidgin_prefs_dropdown(vbox, _("_Method:"), PURPLE_PREF_STRING,
+			"/purple/gtk/sound/method",
 			_("Console beep"), "beep",
 #ifdef USE_GSTREAMER
 			_("Automatic"), "automatic",
@@ -1607,7 +1607,7 @@ sound_page()
 	gtk_size_group_add_widget(sg, dd);
 	gtk_misc_set_alignment(GTK_MISC(dd), 0, 0.5);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("Sound c_ommand:\n(%s for filename)"));
@@ -1619,7 +1619,7 @@ sound_page()
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 
 	gtk_editable_set_editable(GTK_EDITABLE(entry), TRUE);
-	cmd = gaim_prefs_get_path("/gaim/gtk/sound/command");
+	cmd = purple_prefs_get_path("/purple/gtk/sound/command");
 	if(cmd)
 		gtk_entry_set_text(GTK_ENTRY(entry), cmd);
 
@@ -1627,10 +1627,10 @@ sound_page()
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(sound_cmd_yeah), NULL);
 
-	gaim_prefs_connect_callback(prefs, "/gaim/gtk/sound/method",
+	purple_prefs_connect_callback(prefs, "/purple/gtk/sound/method",
 								sound_changed1_cb, hbox);
 	gtk_widget_set_sensitive(hbox,
-			!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"),
+			!strcmp(purple_prefs_get_string("/purple/gtk/sound/method"),
 					"custom"));
 
 	pidgin_set_accessible_label (entry, label);
@@ -1638,16 +1638,16 @@ sound_page()
 
 	vbox = pidgin_make_frame (ret, _("Sound Options"));
 	pidgin_prefs_checkbox(_("Sounds when conversation has _focus"),
-				   "/gaim/gtk/sound/conv_focus", vbox);
+				   "/purple/gtk/sound/conv_focus", vbox);
 	pidgin_prefs_dropdown(vbox, _("Enable sounds:"),
-				 GAIM_PREF_INT, "/core/sound/while_status",
+				 PURPLE_PREF_INT, "/core/sound/while_status",
 				_("Only when available"), 1,
 				_("Only when not available"), 2,
 				_("Always"), 3,
 				NULL);
 
 #ifdef USE_GSTREAMER
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("Volume:"));
@@ -1656,7 +1656,7 @@ sound_page()
 
 	sw = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
 	gtk_range_set_increments(GTK_RANGE(sw), 5.0, 25.0);
-	gtk_range_set_value(GTK_RANGE(sw), gaim_prefs_get_int("/gaim/gtk/sound/volume"));
+	gtk_range_set_value(GTK_RANGE(sw), purple_prefs_get_int("/purple/gtk/sound/volume"));
 	g_signal_connect (G_OBJECT (sw), "format-value",
 			  G_CALLBACK (prefs_sound_volume_format),
 			  NULL);
@@ -1665,16 +1665,16 @@ sound_page()
 			  NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 0);
 
-	gaim_prefs_connect_callback(prefs, "/gaim/gtk/sound/method",
+	purple_prefs_connect_callback(prefs, "/purple/gtk/sound/method",
 								sound_changed3_cb, hbox);
-	sound_changed3_cb("/gaim/gtk/sound/method", GAIM_PREF_STRING,
-			  gaim_prefs_get_string("/gaim/gtk/sound/method"), hbox);
+	sound_changed3_cb("/purple/gtk/sound/method", PURPLE_PREF_STRING,
+			  purple_prefs_get_string("/purple/gtk/sound/method"), hbox);
 #endif
 
 #ifndef _WIN32
 	gtk_widget_set_sensitive(vbox,
-			strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"));
-	gaim_prefs_connect_callback(prefs, "/gaim/gtk/sound/method",
+			strcmp(purple_prefs_get_string("/purple/gtk/sound/method"), "none"));
+	purple_prefs_connect_callback(prefs, "/purple/gtk/sound/method",
 								sound_changed2_cb, vbox);
 #endif
 
@@ -1696,8 +1696,8 @@ sound_page()
 	gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 	event_store = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
 
-	for (j=0; j < GAIM_NUM_SOUNDS; j++) {
-		char *pref = g_strdup_printf("/gaim/gtk/sound/enabled/%s",
+	for (j=0; j < PURPLE_NUM_SOUNDS; j++) {
+		char *pref = g_strdup_printf("/purple/gtk/sound/enabled/%s",
 					     pidgin_sound_get_event_option(j));
 		const char *label = pidgin_sound_get_event_label(j);
 
@@ -1708,7 +1708,7 @@ sound_page()
 
 		gtk_list_store_append (event_store, &iter);
 		gtk_list_store_set(event_store, &iter,
-				   0, gaim_prefs_get_bool(pref),
+				   0, purple_prefs_get_bool(pref),
 				   1, _(label),
 				   2, pref,
 				   3, j,
@@ -1744,16 +1744,16 @@ sound_page()
 	g_object_unref(G_OBJECT(event_store));
 	gtk_container_add(GTK_CONTAINER(sw), event_view);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	sound_entry = gtk_entry_new();
-	pref = g_strdup_printf("/gaim/gtk/sound/file/%s",
+	pref = g_strdup_printf("/purple/gtk/sound/file/%s",
 			       pidgin_sound_get_event_option(0));
-	file = gaim_prefs_get_path(pref);
+	file = purple_prefs_get_path(pref);
 	g_free(pref);
 	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
 	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
-	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, GAIM_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	button = gtk_button_new_with_label(_("Test"));
 	g_signal_connect(G_OBJECT(button), "clicked", G_CALLBACK(test_sound), NULL);
@@ -1774,15 +1774,15 @@ sound_page()
 
 
 static void
-set_idle_away(GaimSavedStatus *status)
+set_idle_away(PurpleSavedStatus *status)
 {
-	gaim_prefs_set_int("/core/savedstatus/idleaway", gaim_savedstatus_get_creation_time(status));
+	purple_prefs_set_int("/core/savedstatus/idleaway", purple_savedstatus_get_creation_time(status));
 }
 
 static void
-set_startupstatus(GaimSavedStatus *status)
+set_startupstatus(PurpleSavedStatus *status)
 {
-	gaim_prefs_set_int("/core/savedstatus/startup", gaim_savedstatus_get_creation_time(status));
+	purple_prefs_set_int("/core/savedstatus/startup", purple_savedstatus_get_creation_time(status));
 }
 
 static GtkWidget *
@@ -1798,8 +1798,8 @@ away_page()
 	GtkWidget *menu;
 	GtkSizeGroup *sg;
 
-	ret = gtk_vbox_new(FALSE, GAIM_HIG_CAT_SPACE);
-	gtk_container_set_border_width (GTK_CONTAINER (ret), GAIM_HIG_BORDER);
+	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
+	gtk_container_set_border_width (GTK_CONTAINER (ret), PIDGIN_HIG_BORDER);
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -1807,9 +1807,9 @@ away_page()
 	vbox = pidgin_make_frame(ret, _("Idle"));
 
 	dd = pidgin_prefs_dropdown(vbox, _("_Report idle time:"),
-		GAIM_PREF_STRING, "/core/away/idle_reporting",
+		PURPLE_PREF_STRING, "/core/away/idle_reporting",
 		_("Never"), "none",
-		_("From last sent message"), "gaim",
+		_("From last sent message"), "purple",
 #if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
 		_("Based on keyboard or mouse use"), "system",
 #endif
@@ -1821,7 +1821,7 @@ away_page()
 	vbox = pidgin_make_frame(ret, _("Away"));
 
 	dd = pidgin_prefs_dropdown(vbox, _("_Auto-reply:"),
-		GAIM_PREF_STRING, "/core/away/auto_reply",
+		PURPLE_PREF_STRING, "/core/away/auto_reply",
 		_("Never"), "never",
 		_("When away"), "away",
 		_("When both away and idle"), "awayidle",
@@ -1852,13 +1852,13 @@ away_page()
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	/* TODO: Show something useful if we don't have any saved statuses. */
-	menu = pidgin_status_menu(gaim_savedstatus_get_idleaway(), G_CALLBACK(set_idle_away));
+	menu = pidgin_status_menu(purple_savedstatus_get_idleaway(), G_CALLBACK(set_idle_away));
 	gtk_box_pack_start(GTK_BOX(hbox), menu, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(pidgin_toggle_sensitive), menu);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), menu);
 
-	if (!gaim_prefs_get_bool("/core/away/away_when_idle")) {
+	if (!purple_prefs_get_bool("/core/away/away_when_idle")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
@@ -1881,13 +1881,13 @@ away_page()
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 
 	/* TODO: Show something useful if we don't have any saved statuses. */
-	menu = pidgin_status_menu(gaim_savedstatus_get_startup(), G_CALLBACK(set_startupstatus));
+	menu = pidgin_status_menu(purple_savedstatus_get_startup(), G_CALLBACK(set_startupstatus));
 	gtk_box_pack_start(GTK_BOX(hbox), menu, FALSE, FALSE, 0);
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(pidgin_toggle_sensitive), menu);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), menu);
 
-	if (gaim_prefs_get_bool("/core/savedstatus/startup_current_status")) {
+	if (purple_prefs_get_bool("/core/savedstatus/startup_current_status")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
 	}
@@ -1919,7 +1919,7 @@ static void prefs_notebook_init() {
 #ifndef _WIN32
 	/* We use the registered default browser in windows */
 	/* if the user is running gnome 2.x or Mac OS X, hide the browsers tab */
-	if ((gaim_running_gnome() == FALSE) && (gaim_running_osx() == FALSE)) {
+	if ((purple_running_gnome() == FALSE) && (purple_running_osx() == FALSE)) {
 		prefs_notebook_add_page(_("Browser"), browser_page(), notebook_page++);
 	}
 #endif
@@ -1950,11 +1950,11 @@ void pidgin_prefs_show(void)
 	gtk_window_set_role(GTK_WINDOW(prefs), "preferences");
 	gtk_window_set_title(GTK_WINDOW(prefs), _("Preferences"));
 	gtk_window_set_resizable (GTK_WINDOW(prefs), FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(prefs), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(prefs), PIDGIN_HIG_BORDER);
 	g_signal_connect(G_OBJECT(prefs), "destroy",
 					 G_CALLBACK(delete_prefs), NULL);
 
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(prefs), vbox);
 	gtk_widget_show(vbox);
 
@@ -1965,7 +1965,7 @@ void pidgin_prefs_show(void)
 
 	/* The buttons to press! */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, FALSE, 0);
 	gtk_widget_show (bbox);
@@ -1985,7 +1985,7 @@ void pidgin_prefs_show(void)
 static void
 set_bool_pref(GtkWidget *w, const char *key)
 {
-	gaim_prefs_set_bool(key,
+	purple_prefs_set_bool(key,
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)));
 }
 
@@ -1996,7 +1996,7 @@ pidgin_prefs_checkbox(const char *text, const char *key, GtkWidget *page)
 
 	button = gtk_check_button_new_with_mnemonic(text);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-								 gaim_prefs_get_bool(key));
+								 purple_prefs_get_bool(key));
 
 	gtk_box_pack_start(GTK_BOX(page), button, FALSE, FALSE, 0);
 
@@ -2009,7 +2009,7 @@ pidgin_prefs_checkbox(const char *text, const char *key, GtkWidget *page)
 }
 
 static void
-smiley_theme_pref_cb(const char *name, GaimPrefType type,
+smiley_theme_pref_cb(const char *name, PurplePrefType type,
 					 gconstpointer value, gpointer data)
 {
 	const char *themename = value;
@@ -2027,99 +2027,99 @@ smiley_theme_pref_cb(const char *name, GaimPrefType type,
 void
 pidgin_prefs_init(void)
 {
-	gaim_prefs_add_none("/gaim");
-	gaim_prefs_add_none("/gaim/gtk");
-	gaim_prefs_add_none("/plugins/gtk");
+	purple_prefs_add_none("/purple");
+	purple_prefs_add_none("/purple/gtk");
+	purple_prefs_add_none("/plugins/gtk");
 
 #ifndef _WIN32
 	/* Browsers */
-	gaim_prefs_add_none("/gaim/gtk/browsers");
-	gaim_prefs_add_int("/gaim/gtk/browsers/place", PIDGIN_BROWSER_DEFAULT);
-	gaim_prefs_add_path("/gaim/gtk/browsers/command", "");
-	gaim_prefs_add_string("/gaim/gtk/browsers/browser", "mozilla");
+	purple_prefs_add_none("/purple/gtk/browsers");
+	purple_prefs_add_int("/purple/gtk/browsers/place", PIDGIN_BROWSER_DEFAULT);
+	purple_prefs_add_path("/purple/gtk/browsers/command", "");
+	purple_prefs_add_string("/purple/gtk/browsers/browser", "mozilla");
 #endif
 
 	/* Plugins */
-	gaim_prefs_add_none("/gaim/gtk/plugins");
-	gaim_prefs_add_path_list("/gaim/gtk/plugins/loaded", NULL);
+	purple_prefs_add_none("/purple/gtk/plugins");
+	purple_prefs_add_path_list("/purple/gtk/plugins/loaded", NULL);
 
 	/* File locations */
-	gaim_prefs_add_none("/gaim/gtk/filelocations");
-	gaim_prefs_add_path("/gaim/gtk/filelocations/last_save_folder", "");
-	gaim_prefs_add_path("/gaim/gtk/filelocations/last_open_folder", "");
-	gaim_prefs_add_path("/gaim/gtk/filelocations/last_icon_folder", "");
+	purple_prefs_add_none("/purple/gtk/filelocations");
+	purple_prefs_add_path("/purple/gtk/filelocations/last_save_folder", "");
+	purple_prefs_add_path("/purple/gtk/filelocations/last_open_folder", "");
+	purple_prefs_add_path("/purple/gtk/filelocations/last_icon_folder", "");
 
 	/* Smiley Themes */
-	gaim_prefs_add_none("/gaim/gtk/smileys");
-	gaim_prefs_add_string("/gaim/gtk/smileys/theme", "Default");
+	purple_prefs_add_none("/purple/gtk/smileys");
+	purple_prefs_add_string("/purple/gtk/smileys/theme", "Default");
 
 	/* Smiley Callbacks */
-	gaim_prefs_connect_callback(prefs, "/gaim/gtk/smileys/theme",
+	purple_prefs_connect_callback(prefs, "/purple/gtk/smileys/theme",
 								smiley_theme_pref_cb, NULL);
 }
 
 void pidgin_prefs_update_old() {
 	/* Rename some old prefs */
-	gaim_prefs_rename("/gaim/gtk/logging/log_ims", "/core/logging/log_ims");
-	gaim_prefs_rename("/gaim/gtk/logging/log_chats", "/core/logging/log_chats");
-	gaim_prefs_rename("/core/conversations/placement",
-					  "/gaim/gtk/conversations/placement");
+	purple_prefs_rename("/purple/gtk/logging/log_ims", "/core/logging/log_ims");
+	purple_prefs_rename("/purple/gtk/logging/log_chats", "/core/logging/log_chats");
+	purple_prefs_rename("/core/conversations/placement",
+					  "/purple/gtk/conversations/placement");
 
-	gaim_prefs_rename("/gaim/gtk/debug/timestamps", "/core/debug/timestamps");
-	gaim_prefs_rename("/gaim/gtk/conversations/im/raise_on_events", "/plugins/gtk/X11/notify/method_raise");
+	purple_prefs_rename("/purple/gtk/debug/timestamps", "/core/debug/timestamps");
+	purple_prefs_rename("/purple/gtk/conversations/im/raise_on_events", "/plugins/gtk/X11/notify/method_raise");
 
-	gaim_prefs_rename_boolean_toggle("/gaim/gtk/conversations/ignore_colors",
-									 "/gaim/gtk/conversations/show_incoming_formatting");
+	purple_prefs_rename_boolean_toggle("/purple/gtk/conversations/ignore_colors",
+									 "/purple/gtk/conversations/show_incoming_formatting");
 
 	/* this string pref moved into the core, try to be friendly */
-	gaim_prefs_rename("/gaim/gtk/idle/reporting_method", "/core/away/idle_reporting");
+	purple_prefs_rename("/purple/gtk/idle/reporting_method", "/core/away/idle_reporting");
 
 	/* Remove some no-longer-used prefs */
-	gaim_prefs_remove("/gaim/gtk/blist/auto_expand_contacts");
-	gaim_prefs_remove("/gaim/gtk/blist/button_style");
-	gaim_prefs_remove("/gaim/gtk/blist/grey_idle_buddies");
-	gaim_prefs_remove("/gaim/gtk/blist/raise_on_events");
-	gaim_prefs_remove("/gaim/gtk/blist/show_group_count");
-	gaim_prefs_remove("/gaim/gtk/blist/show_warning_level");
-	gaim_prefs_remove("/gaim/gtk/conversations/button_type");
-	gaim_prefs_remove("/gaim/gtk/conversations/ctrl_enter_sends");
-	gaim_prefs_remove("/gaim/gtk/conversations/enter_sends");
-	gaim_prefs_remove("/gaim/gtk/conversations/escape_closes");
-	gaim_prefs_remove("/gaim/gtk/conversations/html_shortcuts");
-	gaim_prefs_remove("/gaim/gtk/conversations/icons_on_tabs");
-	gaim_prefs_remove("/gaim/gtk/conversations/send_formatting");
-	gaim_prefs_remove("/gaim/gtk/conversations/show_smileys");
-	gaim_prefs_remove("/gaim/gtk/conversations/show_urls_as_links");
-	gaim_prefs_remove("/gaim/gtk/conversations/smiley_shortcuts");
-	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_bgcolor");
-	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_fgcolor");
-	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_font");
-	gaim_prefs_remove("/gaim/gtk/conversations/use_custom_size");
-	gaim_prefs_remove("/gaim/gtk/conversations/chat/old_tab_complete");
-	gaim_prefs_remove("/gaim/gtk/conversations/chat/tab_completion");
-	gaim_prefs_remove("/gaim/gtk/conversations/im/hide_on_send");
-	gaim_prefs_remove("/gaim/gtk/conversations/chat/color_nicks");
-	gaim_prefs_remove("/gaim/gtk/conversations/chat/raise_on_events");
-	gaim_prefs_remove("/gaim/gtk/conversations/ignore_fonts");
-	gaim_prefs_remove("/gaim/gtk/conversations/ignore_font_sizes");
-	gaim_prefs_remove("/gaim/gtk/conversations/passthrough_unknown_commands");
-	gaim_prefs_remove("/gaim/gtk/idle");
-	gaim_prefs_remove("/gaim/gtk/logging/individual_logs");
-	gaim_prefs_remove("/gaim/gtk/sound/signon");
-	gaim_prefs_remove("/gaim/gtk/sound/silent_signon");
+	purple_prefs_remove("/purple/gtk/blist/auto_expand_contacts");
+	purple_prefs_remove("/purple/gtk/blist/button_style");
+	purple_prefs_remove("/purple/gtk/blist/grey_idle_buddies");
+	purple_prefs_remove("/purple/gtk/blist/raise_on_events");
+	purple_prefs_remove("/purple/gtk/blist/show_group_count");
+	purple_prefs_remove("/purple/gtk/blist/show_warning_level");
+	purple_prefs_remove("/purple/gtk/conversations/button_type");
+	purple_prefs_remove("/purple/gtk/conversations/ctrl_enter_sends");
+	purple_prefs_remove("/purple/gtk/conversations/enter_sends");
+	purple_prefs_remove("/purple/gtk/conversations/escape_closes");
+	purple_prefs_remove("/purple/gtk/conversations/html_shortcuts");
+	purple_prefs_remove("/purple/gtk/conversations/icons_on_tabs");
+	purple_prefs_remove("/purple/gtk/conversations/send_formatting");
+	purple_prefs_remove("/purple/gtk/conversations/show_smileys");
+	purple_prefs_remove("/purple/gtk/conversations/show_urls_as_links");
+	purple_prefs_remove("/purple/gtk/conversations/smiley_shortcuts");
+	purple_prefs_remove("/purple/gtk/conversations/use_custom_bgcolor");
+	purple_prefs_remove("/purple/gtk/conversations/use_custom_fgcolor");
+	purple_prefs_remove("/purple/gtk/conversations/use_custom_font");
+	purple_prefs_remove("/purple/gtk/conversations/use_custom_size");
+	purple_prefs_remove("/purple/gtk/conversations/chat/old_tab_complete");
+	purple_prefs_remove("/purple/gtk/conversations/chat/tab_completion");
+	purple_prefs_remove("/purple/gtk/conversations/im/hide_on_send");
+	purple_prefs_remove("/purple/gtk/conversations/chat/color_nicks");
+	purple_prefs_remove("/purple/gtk/conversations/chat/raise_on_events");
+	purple_prefs_remove("/purple/gtk/conversations/ignore_fonts");
+	purple_prefs_remove("/purple/gtk/conversations/ignore_font_sizes");
+	purple_prefs_remove("/purple/gtk/conversations/passthrough_unknown_commands");
+	purple_prefs_remove("/purple/gtk/idle");
+	purple_prefs_remove("/purple/gtk/logging/individual_logs");
+	purple_prefs_remove("/purple/gtk/sound/signon");
+	purple_prefs_remove("/purple/gtk/sound/silent_signon");
 
 	/* Convert old queuing prefs to hide_new 3-way pref. */
-	if (gaim_prefs_exists("/plugins/gtk/docklet/queue_messages") &&
-	    gaim_prefs_get_bool("/plugins/gtk/docklet/queue_messages"))
+	if (purple_prefs_exists("/plugins/gtk/docklet/queue_messages") &&
+	    purple_prefs_get_bool("/plugins/gtk/docklet/queue_messages"))
 	{
-		gaim_prefs_set_string("/gaim/gtk/conversations/im/hide_new", "always");
+		purple_prefs_set_string("/purple/gtk/conversations/im/hide_new", "always");
 	}
-	else if (gaim_prefs_exists("/gaim/gtk/away/queue_messages") &&
-	         gaim_prefs_get_bool("/gaim/gtk/away/queue_messages"))
+	else if (purple_prefs_exists("/purple/gtk/away/queue_messages") &&
+	         purple_prefs_get_bool("/purple/gtk/away/queue_messages"))
 	{
-		gaim_prefs_set_string("/gaim/gtk/conversations/im/hide_new", "away");
+		purple_prefs_set_string("/purple/gtk/conversations/im/hide_new", "away");
 	}
-	gaim_prefs_remove("/gaim/gtk/away/queue_messages");
-	gaim_prefs_remove("/gaim/gtk/away");
-	gaim_prefs_remove("/plugins/gtk/docklet/queue_messages");
+	purple_prefs_remove("/purple/gtk/away/queue_messages");
+	purple_prefs_remove("/purple/gtk/away");
+	purple_prefs_remove("/plugins/gtk/docklet/queue_messages");
 }

@@ -1,7 +1,7 @@
 /**
  * @file gg.c Gadu-Gadu protocol plugin
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2005  Bartosz Oler <bartosz@bzimage.us>
  *
@@ -45,7 +45,7 @@
 #include "buddylist.h"
 #include "gg-utils.h"
 
-static GaimPlugin *my_protocol = NULL;
+static PurplePlugin *my_protocol = NULL;
 
 /* ---------------------------------------------------------------------- */
 /* ----- EXTERNAL CALLBACKS --------------------------------------------- */
@@ -61,27 +61,27 @@ static GaimPlugin *my_protocol = NULL;
  *
  * @return Zero if proxy setup is valid, otherwise -1.
  */
-/* static int ggp_setup_proxy(GaimAccount *account) {{{ */
-static int ggp_setup_proxy(GaimAccount *account)
+/* static int ggp_setup_proxy(PurpleAccount *account) {{{ */
+static int ggp_setup_proxy(PurpleAccount *account)
 {
-	GaimProxyInfo *gpi;
+	PurpleProxyInfo *gpi;
 
-	gpi = gaim_proxy_get_setup(account);
+	gpi = purple_proxy_get_setup(account);
 
-	if ((gaim_proxy_info_get_type(gpi) != GAIM_PROXY_NONE) &&
-	    (gaim_proxy_info_get_host(gpi) == NULL ||
-	     gaim_proxy_info_get_port(gpi) <= 0)) {
+	if ((purple_proxy_info_get_type(gpi) != PURPLE_PROXY_NONE) &&
+	    (purple_proxy_info_get_host(gpi) == NULL ||
+	     purple_proxy_info_get_port(gpi) <= 0)) {
 
 		gg_proxy_enabled = 0;
-		gaim_notify_error(NULL, NULL, _("Invalid proxy settings"),
+		purple_notify_error(NULL, NULL, _("Invalid proxy settings"),
 				  _("Either the host name or port number specified for your given proxy type is invalid."));
 		return -1;
-	} else if (gaim_proxy_info_get_type(gpi) != GAIM_PROXY_NONE) {
+	} else if (purple_proxy_info_get_type(gpi) != PURPLE_PROXY_NONE) {
 		gg_proxy_enabled = 1;
-		gg_proxy_host = g_strdup(gaim_proxy_info_get_host(gpi));
-		gg_proxy_port = gaim_proxy_info_get_port(gpi);
-		gg_proxy_username = g_strdup(gaim_proxy_info_get_username(gpi));
-		gg_proxy_password = g_strdup(gaim_proxy_info_get_password(gpi));
+		gg_proxy_host = g_strdup(purple_proxy_info_get_host(gpi));
+		gg_proxy_port = purple_proxy_info_get_port(gpi);
+		gg_proxy_username = g_strdup(purple_proxy_info_get_username(gpi));
+		gg_proxy_password = g_strdup(purple_proxy_info_get_password(gpi));
 	} else {
 		gg_proxy_enabled = 0;
 	}
@@ -92,61 +92,61 @@ static int ggp_setup_proxy(GaimAccount *account)
 
 /*
  */
-/* static void ggp_async_token_handler(gpointer _gc, gint fd, GaimInputCondition cond) {{{ */
-static void ggp_async_token_handler(gpointer _gc, gint fd, GaimInputCondition cond)
+/* static void ggp_async_token_handler(gpointer _gc, gint fd, PurpleInputCondition cond) {{{ */
+static void ggp_async_token_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
-	GaimConnection *gc = _gc;
+	PurpleConnection *gc = _gc;
 	GGPInfo *info = gc->proto_data;
 	GGPToken *token = info->token;
 	GGPTokenCallback cb;
 
 	struct gg_token *t = NULL;
 
-	gaim_debug_info("gg", "token_handler: token->req: check = %d; state = %d;\n",
+	purple_debug_info("gg", "token_handler: token->req: check = %d; state = %d;\n",
 			token->req->check, token->req->state);
 
 	if (gg_token_watch_fd(token->req) == -1 || token->req->state == GG_STATE_ERROR) {
-		gaim_debug_error("gg", "token error (1): %d\n", token->req->error);
-		gaim_input_remove(token->inpa);
+		purple_debug_error("gg", "token error (1): %d\n", token->req->error);
+		purple_input_remove(token->inpa);
 		gg_token_free(token->req);
 		token->req = NULL;
 
-		gaim_notify_error(gaim_connection_get_account(gc),
+		purple_notify_error(purple_connection_get_account(gc),
 				  _("Token Error"),
 				  _("Unable to fetch the token.\n"), NULL);
 		return;
 	}
 
 	if (token->req->state != GG_STATE_DONE) {
-		gaim_input_remove(token->inpa);
-		token->inpa = gaim_input_add(token->req->fd,
+		purple_input_remove(token->inpa);
+		token->inpa = purple_input_add(token->req->fd,
 						   (token->req->check == 1)
-						   	? GAIM_INPUT_WRITE
-							: GAIM_INPUT_READ,
+						   	? PURPLE_INPUT_WRITE
+							: PURPLE_INPUT_READ,
 						   ggp_async_token_handler, gc);
 		return;
 	}
 
 	if (!(t = token->req->data) || !token->req->body) {
-		gaim_debug_error("gg", "token error (2): %d\n", token->req->error);
-		gaim_input_remove(token->inpa);
+		purple_debug_error("gg", "token error (2): %d\n", token->req->error);
+		purple_input_remove(token->inpa);
 		gg_token_free(token->req);
 		token->req = NULL;
 
-		gaim_notify_error(gaim_connection_get_account(gc),
+		purple_notify_error(purple_connection_get_account(gc),
 				  _("Token Error"),
 				  _("Unable to fetch the token.\n"), NULL);
 		return;
 	}
 
-	gaim_input_remove(token->inpa);
+	purple_input_remove(token->inpa);
 
 	token->id = g_strdup(t->tokenid);
 	token->size = token->req->body_size;
 	token->data = g_new0(char, token->size);
 	memcpy(token->data, token->req->body, token->size);
 
-	gaim_debug_info("gg", "TOKEN! tokenid = %s; size = %d\n",
+	purple_debug_info("gg", "TOKEN! tokenid = %s; size = %d\n",
 			token->id, token->size);
 
 	gg_token_free(token->req);
@@ -161,14 +161,14 @@ static void ggp_async_token_handler(gpointer _gc, gint fd, GaimInputCondition co
 
 /*
  */
-/* static void ggp_token_request(GaimConnection *gc, GGPTokenCallback cb) {{{ */
-static void ggp_token_request(GaimConnection *gc, GGPTokenCallback cb)
+/* static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb) {{{ */
+static void ggp_token_request(PurpleConnection *gc, GGPTokenCallback cb)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	struct gg_http *req;
 	GGPInfo *info;
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
 	if (ggp_setup_proxy(account) == -1)
 		return;
@@ -176,7 +176,7 @@ static void ggp_token_request(GaimConnection *gc, GGPTokenCallback cb)
 	info = gc->proto_data;
 
 	if ((req = gg_token(1)) == NULL) {
-		gaim_notify_error(account,
+		purple_notify_error(account,
 				  _("Token Error"),
 				  _("Unable to fetch the token.\n"), NULL);
 		return;
@@ -186,7 +186,7 @@ static void ggp_token_request(GaimConnection *gc, GGPTokenCallback cb)
 	info->token->cb = cb;
 
 	info->token->req = req;
-	info->token->inpa = gaim_input_add(req->fd, GAIM_INPUT_READ,
+	info->token->inpa = purple_input_add(req->fd, PURPLE_INPUT_READ,
 					   ggp_async_token_handler, gc);
 }
 /* }}} */
@@ -199,13 +199,13 @@ static void ggp_token_request(GaimConnection *gc, GGPTokenCallback cb)
  *
  * @param Current action handler.
  */
-/* static void ggp_action_buddylist_get(GaimPluginAction *action) {{{ */
-static void ggp_action_buddylist_get(GaimPluginAction *action)
+/* static void ggp_action_buddylist_get(PurplePluginAction *action) {{{ */
+static void ggp_action_buddylist_get(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *)action->context;
+	PurpleConnection *gc = (PurpleConnection *)action->context;
 	GGPInfo *info = gc->proto_data;
 
-	gaim_debug_info("gg", "Downloading...\n");
+	purple_debug_info("gg", "Downloading...\n");
 
 	gg_userlist_request(info->session, GG_USERLIST_GET, NULL);
 }
@@ -216,15 +216,15 @@ static void ggp_action_buddylist_get(GaimPluginAction *action)
  *
  * @param action Current action handler.
  */
-/* static void ggp_action_buddylist_put(GaimPluginAction *action) {{{ */
-static void ggp_action_buddylist_put(GaimPluginAction *action)
+/* static void ggp_action_buddylist_put(PurplePluginAction *action) {{{ */
+static void ggp_action_buddylist_put(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *)action->context;
+	PurpleConnection *gc = (PurpleConnection *)action->context;
 	GGPInfo *info = gc->proto_data;
 
-	char *buddylist = ggp_buddylist_dump(gaim_connection_get_account(gc));
+	char *buddylist = ggp_buddylist_dump(purple_connection_get_account(gc));
 
-	gaim_debug_info("gg", "Uploading...\n");
+	purple_debug_info("gg", "Uploading...\n");
 	
 	if (buddylist == NULL)
 		return;
@@ -239,13 +239,13 @@ static void ggp_action_buddylist_put(GaimPluginAction *action)
  *
  * @param action Current action handler.
  */
-/* static void ggp_action_buddylist_delete(GaimPluginAction *action) {{{ */
-static void ggp_action_buddylist_delete(GaimPluginAction *action)
+/* static void ggp_action_buddylist_delete(PurplePluginAction *action) {{{ */
+static void ggp_action_buddylist_delete(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *)action->context;
+	PurpleConnection *gc = (PurpleConnection *)action->context;
 	GGPInfo *info = gc->proto_data;
 
-	gaim_debug_info("gg", "Deleting...\n");
+	purple_debug_info("gg", "Deleting...\n");
 
 	gg_userlist_request(info->session, GG_USERLIST_PUT, NULL);
 }
@@ -253,20 +253,20 @@ static void ggp_action_buddylist_delete(GaimPluginAction *action)
 
 /*
  */
-/* static void ggp_callback_buddylist_save_ok(GaimConnection *gc, gchar *file) {{{ */
-static void ggp_callback_buddylist_save_ok(GaimConnection *gc, gchar *file)
+/* static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, gchar *file) {{{ */
+static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, gchar *file)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
 
 	FILE *fh;
 	char *buddylist = ggp_buddylist_dump(account);
 	gchar *msg;
 
-	gaim_debug_info("gg", "Saving...\n");
-	gaim_debug_info("gg", "file = %s\n", file);
+	purple_debug_info("gg", "Saving...\n");
+	purple_debug_info("gg", "file = %s\n", file);
 
 	if (buddylist == NULL) {
-		gaim_notify_info(account, _("Save Buddylist..."),
+		purple_notify_info(account, _("Save Buddylist..."),
 			 _("Your buddylist is empty, nothing was written to the file."),
 			 NULL);
 		return;
@@ -274,8 +274,8 @@ static void ggp_callback_buddylist_save_ok(GaimConnection *gc, gchar *file)
 
 	if ((fh = g_fopen(file, "wb")) == NULL) {
 		msg = g_strconcat(_("Couldn't open file"), ": ", file, "\n", NULL);
-		gaim_debug_error("gg", "Could not open file: %s\n", file);
-		gaim_notify_error(account, _("Couldn't open file"), msg, NULL);
+		purple_debug_error("gg", "Could not open file: %s\n", file);
+		purple_notify_error(account, _("Couldn't open file"), msg, NULL);
 		g_free(msg);
 		g_free(file);
 		return;
@@ -285,30 +285,30 @@ static void ggp_callback_buddylist_save_ok(GaimConnection *gc, gchar *file)
 	fclose(fh);
 	g_free(buddylist);
 
-	gaim_notify_info(account, _("Save Buddylist..."),
+	purple_notify_info(account, _("Save Buddylist..."),
 			 _("Buddylist saved successfully!"), NULL);
 }
 /* }}} */
 
 /*
  */
-/* static void ggp_callback_buddylist_load_ok(GaimConnection *gc, gchar *file) {{{ */
-static void ggp_callback_buddylist_load_ok(GaimConnection *gc, gchar *file)
+/* static void ggp_callback_buddylist_load_ok(PurpleConnection *gc, gchar *file) {{{ */
+static void ggp_callback_buddylist_load_ok(PurpleConnection *gc, gchar *file)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
 	GError *error = NULL;
 	char *buddylist = NULL;
 	gsize length;
 
-	gaim_debug_info("gg", "file_name = %s\n", file);
+	purple_debug_info("gg", "file_name = %s\n", file);
 
 	if (!g_file_get_contents(file, &buddylist, &length, &error)) {
-		gaim_notify_error(account,
+		purple_notify_error(account,
 				_("Couldn't load buddylist"),
 				_("Couldn't load buddylist"),
 				error->message);
 
-		gaim_debug_error("gg",
+		purple_debug_error("gg",
 			"Couldn't load buddylist. file = %s; error = %s\n",
 			file, error->message);
 
@@ -320,7 +320,7 @@ static void ggp_callback_buddylist_load_ok(GaimConnection *gc, gchar *file)
 	ggp_buddylist_load(gc, buddylist);
 	g_free(buddylist);
 
-	gaim_notify_info(account,
+	purple_notify_info(account,
 			 _("Load Buddylist..."),
 			 _("Buddylist loaded successfully!"), NULL);
 }
@@ -328,35 +328,35 @@ static void ggp_callback_buddylist_load_ok(GaimConnection *gc, gchar *file)
 
 /*
  */
-/* static void ggp_action_buddylist_save(GaimPluginAction *action) {{{ */
-static void ggp_action_buddylist_save(GaimPluginAction *action)
+/* static void ggp_action_buddylist_save(PurplePluginAction *action) {{{ */
+static void ggp_action_buddylist_save(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *)action->context;
+	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-	gaim_request_file(action, _("Save buddylist..."), NULL, TRUE,
+	purple_request_file(action, _("Save buddylist..."), NULL, TRUE,
 			G_CALLBACK(ggp_callback_buddylist_save_ok), NULL, gc);
 }
 /* }}} */
 
 /*
  */
-/* static void ggp_action_buddylist_load(GaimPluginAction *action) {{{ */
-static void ggp_action_buddylist_load(GaimPluginAction *action)
+/* static void ggp_action_buddylist_load(PurplePluginAction *action) {{{ */
+static void ggp_action_buddylist_load(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *)action->context;
+	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-	gaim_request_file(action, "Load buddylist from file...", NULL, FALSE,
+	purple_request_file(action, "Load buddylist from file...", NULL, FALSE,
 			G_CALLBACK(ggp_callback_buddylist_load_ok), NULL, gc);
 }
 /* }}} */
 
 /*
  */
-/* static void ggp_callback_register_account_ok(GaimConnection *gc, GaimRequestFields *fields) {{{ */
-static void ggp_callback_register_account_ok(GaimConnection *gc,
-					     GaimRequestFields *fields)
+/* static void ggp_callback_register_account_ok(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
+static void ggp_callback_register_account_ok(PurpleConnection *gc,
+					     PurpleRequestFields *fields)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	GGPInfo *info = gc->proto_data;
 	struct gg_http *h = NULL;
 	struct gg_pubdir *s;
@@ -364,47 +364,47 @@ static void ggp_callback_register_account_ok(GaimConnection *gc,
 	gchar *email, *p1, *p2, *t;
 	GGPToken *token = info->token;
 
-	email = charset_convert(gaim_request_fields_get_string(fields, "email"),
+	email = charset_convert(purple_request_fields_get_string(fields, "email"),
 			     "UTF-8", "CP1250");
-	p1  = charset_convert(gaim_request_fields_get_string(fields, "password1"),
+	p1  = charset_convert(purple_request_fields_get_string(fields, "password1"),
 			     "UTF-8", "CP1250");
-	p2  = charset_convert(gaim_request_fields_get_string(fields, "password2"),
+	p2  = charset_convert(purple_request_fields_get_string(fields, "password2"),
 			     "UTF-8", "CP1250");
-	t   = charset_convert(gaim_request_fields_get_string(fields, "token"),
+	t   = charset_convert(purple_request_fields_get_string(fields, "token"),
 			     "UTF-8", "CP1250");
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
 	if (email == NULL || p1 == NULL || p2 == NULL || t == NULL ||
 	    *email == '\0' || *p1 == '\0' || *p2 == '\0' || *t == '\0') {
-		gaim_connection_error(gc, _("Fill in the registration fields."));
+		purple_connection_error(gc, _("Fill in the registration fields."));
 		goto exit_err;
 	}
 
 	if (g_utf8_collate(p1, p2) != 0) {
-		gaim_connection_error(gc, _("Passwords do not match."));
+		purple_connection_error(gc, _("Passwords do not match."));
 		goto exit_err;
 	}
 
-	gaim_debug_info("gg", "register_account_ok: token_id = %d; t = %s\n",
+	purple_debug_info("gg", "register_account_ok: token_id = %d; t = %s\n",
 			token->id, t);
 	h = gg_register3(email, p1, token->id, t, 0);
 	if (h == NULL || !(s = h->data) || !s->success) {
-		gaim_connection_error(gc,
+		purple_connection_error(gc,
 			_("Unable to register new account. Error occurred.\n"));
 		goto exit_err;
 	}
 
 	uin = s->uin;
-	gaim_debug_info("gg", "registered uin: %d\n", uin);
+	purple_debug_info("gg", "registered uin: %d\n", uin);
 
 	g_free(t);
 	t = g_strdup_printf("%u", uin);
-	gaim_account_set_username(account, t);
+	purple_account_set_username(account, t);
 	/* Save the password if remembering passwords for the account */
-	gaim_account_set_password(account, p1);
+	purple_account_set_password(account, p1);
 
-	gaim_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
+	purple_notify_info(NULL, _("New Gadu-Gadu Account Registered"),
 			 _("Registration completed successfully!"), NULL);
 
 	/* TODO: the currently open Accounts Window will not be updated withthe
@@ -413,7 +413,7 @@ static void ggp_callback_register_account_ok(GaimConnection *gc,
 	 */
 
 	/* Need to disconnect or actually log in. For now, we disconnect. */
-	gaim_connection_destroy(gc);
+	purple_connection_destroy(gc);
 
 exit_err:
 	gg_register_free(h);
@@ -428,14 +428,14 @@ exit_err:
 
 /*
  */
-/* static void ggp_callback_register_account_cancel(GaimConnection *gc, GaimRequestFields *fields) {{{ */
-static void ggp_callback_register_account_cancel(GaimConnection *gc,
-						 GaimRequestFields *fields)
+/* static void ggp_callback_register_account_cancel(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
+static void ggp_callback_register_account_cancel(PurpleConnection *gc,
+						 PurpleRequestFields *fields)
 {
 	GGPInfo *info = gc->proto_data;
 	GGPToken *token = info->token;
 
-	gaim_connection_destroy(gc);
+	purple_connection_destroy(gc);
 
 	g_free(token->id);
 	g_free(token->data);
@@ -446,50 +446,50 @@ static void ggp_callback_register_account_cancel(GaimConnection *gc,
 
 /*
  */
-/* static void ggp_register_user_dialog(GaimConnection *gc) {{{ */
-static void ggp_register_user_dialog(GaimConnection *gc)
+/* static void ggp_register_user_dialog(PurpleConnection *gc) {{{ */
+static void ggp_register_user_dialog(PurpleConnection *gc)
 {
-	GaimAccount *account;
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleAccount *account;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
 	GGPInfo *info = gc->proto_data;
 	GGPToken *token = info->token;
 
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
-	fields = gaim_request_fields_new();
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
 
-	field = gaim_request_field_string_new("email",
+	field = purple_request_field_string_new("email",
 			_("E-mail"), "", FALSE);
-	gaim_request_field_string_set_masked(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, FALSE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("password1",
+	field = purple_request_field_string_new("password1",
 			_("Password"), "", FALSE);
-	gaim_request_field_string_set_masked(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("password2",
+	field = purple_request_field_string_new("password2",
 			_("Password (retype)"), "", FALSE);
-	gaim_request_field_string_set_masked(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("token",
+	field = purple_request_field_string_new("token",
 			_("Enter current token"), "", FALSE);
-	gaim_request_field_string_set_masked(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, FALSE);
+	purple_request_field_group_add_field(group, field);
 
 	/* original size: 60x24 */
-	field = gaim_request_field_image_new("token_img",
+	field = purple_request_field_image_new("token_img",
 			_("Current token"), token->data, token->size);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_group_add_field(group, field);
 
-	gaim_request_fields(account,
+	purple_request_fields(account,
 		_("Register New Gadu-Gadu Account"),
 		_("Register New Gadu-Gadu Account"),
 		_("Please, fill in the following fields"),
@@ -504,8 +504,8 @@ static void ggp_register_user_dialog(GaimConnection *gc)
 
 /*
  */
-/* static void ggp_callback_show_next(GaimConnection *gc, GList *row, gpointer user_data) {{{ */
-static void ggp_callback_show_next(GaimConnection *gc, GList *row, gpointer user_data)
+/* static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer user_data) {{{ */
+static void ggp_callback_show_next(PurpleConnection *gc, GList *row, gpointer user_data)
 {
 	GGPInfo *info = gc->proto_data;
 	GGPSearchForm *form = user_data;
@@ -523,35 +523,35 @@ static void ggp_callback_show_next(GaimConnection *gc, GList *row, gpointer user
 
 /*
  */
-/* static void ggp_callback_add_buddy(GaimConnection *gc, GList *row, gpointer user_data) {{{ */
-static void ggp_callback_add_buddy(GaimConnection *gc, GList *row, gpointer user_data)
+/* static void ggp_callback_add_buddy(PurpleConnection *gc, GList *row, gpointer user_data) {{{ */
+static void ggp_callback_add_buddy(PurpleConnection *gc, GList *row, gpointer user_data)
 {
-	gaim_blist_request_add_buddy(gaim_connection_get_account(gc),
+	purple_blist_request_add_buddy(purple_connection_get_account(gc),
 				     g_list_nth_data(row, 0), NULL, NULL);
 }
 /* }}} */
 
 /*
  */
-/* static void ggp_callback_im(GaimConnection *gc, GList *row, gpointer user_data) {{{ */
-static void ggp_callback_im(GaimConnection *gc, GList *row, gpointer user_data)
+/* static void ggp_callback_im(PurpleConnection *gc, GList *row, gpointer user_data) {{{ */
+static void ggp_callback_im(PurpleConnection *gc, GList *row, gpointer user_data)
 {
-	GaimAccount *account;
-	GaimConversation *conv;
+	PurpleAccount *account;
+	PurpleConversation *conv;
 	char *name;
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
 	name = g_list_nth_data(row, 0);
-	conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, name);
-	gaim_conversation_present(conv);
+	conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+	purple_conversation_present(conv);
 }
 /* }}} */
 
 /*
  */
-/* static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fields) {{{ */
-static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fields)
+/* static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
+static void ggp_callback_find_buddies(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	GGPInfo *info = gc->proto_data;
 	GGPSearchForm *form;
@@ -561,22 +561,22 @@ static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fie
 
 	form->user_data = info;
 	form->lastname  = charset_convert(
-				gaim_request_fields_get_string(fields, "lastname"),
+				purple_request_fields_get_string(fields, "lastname"),
 				"UTF-8", "CP1250");
 	form->firstname = charset_convert(
-				gaim_request_fields_get_string(fields, "firstname"),
+				purple_request_fields_get_string(fields, "firstname"),
 				"UTF-8", "CP1250");
 	form->nickname  = charset_convert(
-				gaim_request_fields_get_string(fields, "nickname"),
+				purple_request_fields_get_string(fields, "nickname"),
 				"UTF-8", "CP1250");
 	form->city      = charset_convert(
-				gaim_request_fields_get_string(fields, "city"),
+				purple_request_fields_get_string(fields, "city"),
 				"UTF-8", "CP1250");
 	form->birthyear = charset_convert(
-				gaim_request_fields_get_string(fields, "year"),
+				purple_request_fields_get_string(fields, "year"),
 				"UTF-8", "CP1250");
 
-	switch (gaim_request_fields_get_choice(fields, "gender")) {
+	switch (purple_request_fields_get_choice(fields, "gender")) {
 		case 1:
 			form->gender = g_strdup(GG_PUBDIR50_GENDER_MALE);
 			break;
@@ -588,7 +588,7 @@ static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fie
 			break;
 	}
 
-	form->active = gaim_request_fields_get_bool(fields, "active")
+	form->active = purple_request_fields_get_bool(fields, "active")
 				   ? g_strdup(GG_PUBDIR50_ACTIVE_TRUE) : NULL;
 
 	form->offset = g_strdup("0");
@@ -600,54 +600,54 @@ static void ggp_callback_find_buddies(GaimConnection *gc, GaimRequestFields *fie
 
 /*
  */
-/* static void ggp_find_buddies(GaimPluginAction *action) {{{ */
-static void ggp_find_buddies(GaimPluginAction *action)
+/* static void ggp_find_buddies(PurplePluginAction *action) {{{ */
+static void ggp_find_buddies(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *)action->context;
+	PurpleConnection *gc = (PurpleConnection *)action->context;
 
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
-	fields = gaim_request_fields_new();
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
 
-	field = gaim_request_field_string_new("lastname",
+	field = purple_request_field_string_new("lastname",
 			_("Last name"), NULL, FALSE);
-	gaim_request_field_string_set_masked(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, FALSE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("firstname",
+	field = purple_request_field_string_new("firstname",
 			_("First name"), NULL, FALSE);
-	gaim_request_field_string_set_masked(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, FALSE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("nickname",
+	field = purple_request_field_string_new("nickname",
 			_("Nickname"), NULL, FALSE);
-	gaim_request_field_string_set_masked(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, FALSE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("city",
+	field = purple_request_field_string_new("city",
 			_("City"), NULL, FALSE);
-	gaim_request_field_string_set_masked(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, FALSE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("year",
+	field = purple_request_field_string_new("year",
 			_("Year of birth"), NULL, FALSE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_choice_new("gender", _("Gender"), 0);
-	gaim_request_field_choice_add(field, _("Male or female"));
-	gaim_request_field_choice_add(field, _("Male"));
-	gaim_request_field_choice_add(field, _("Female"));
-	gaim_request_field_group_add_field(group, field);
+	field = purple_request_field_choice_new("gender", _("Gender"), 0);
+	purple_request_field_choice_add(field, _("Male or female"));
+	purple_request_field_choice_add(field, _("Male"));
+	purple_request_field_choice_add(field, _("Female"));
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_bool_new("active",
+	field = purple_request_field_bool_new("active",
 			_("Only online"), FALSE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_group_add_field(group, field);
 
-	gaim_request_fields(gc,
+	purple_request_fields(gc,
 		_("Find buddies"),
 		_("Find buddies"),
 		_("Please, enter your search criteria below"),
@@ -662,67 +662,67 @@ static void ggp_find_buddies(GaimPluginAction *action)
 
 /*
  */
-/* static void ggp_callback_change_passwd_ok(GaimConnection *gc, GaimRequestFields *fields) {{{ */
-static void ggp_callback_change_passwd_ok(GaimConnection *gc, GaimRequestFields *fields)
+/* static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
+static void ggp_callback_change_passwd_ok(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	GGPInfo *info = gc->proto_data;
 	struct gg_http *h;
 	gchar *cur, *p1, *p2, *t;
 
 	cur = charset_convert(
-			gaim_request_fields_get_string(fields, "password_cur"),
+			purple_request_fields_get_string(fields, "password_cur"),
 			"UTF-8", "CP1250");
 	p1  = charset_convert(
-			gaim_request_fields_get_string(fields, "password1"),
+			purple_request_fields_get_string(fields, "password1"),
 			"UTF-8", "CP1250");
 	p2  = charset_convert(
-			gaim_request_fields_get_string(fields, "password2"),
+			purple_request_fields_get_string(fields, "password2"),
 			"UTF-8", "CP1250");
 	t   = charset_convert(
-			gaim_request_fields_get_string(fields, "token"),
+			purple_request_fields_get_string(fields, "token"),
 			"UTF-8", "CP1250");
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
 	if (cur == NULL || p1 == NULL || p2 == NULL || t == NULL ||
 	    *cur == '\0' || *p1 == '\0' || *p2 == '\0' || *t == '\0') {
-		gaim_notify_error(account, NULL, _("Fill in the fields."), NULL);
+		purple_notify_error(account, NULL, _("Fill in the fields."), NULL);
 		goto exit_err;
 	}
 
 	if (g_utf8_collate(p1, p2) != 0) {
-		gaim_notify_error(account, NULL,
+		purple_notify_error(account, NULL,
 				  _("New passwords do not match."), NULL);
 		goto exit_err;
 	}
 
-	if (g_utf8_collate(cur, gaim_account_get_password(account)) != 0) {
-		gaim_notify_error(account, NULL,
+	if (g_utf8_collate(cur, purple_account_get_password(account)) != 0) {
+		purple_notify_error(account, NULL,
 			_("Your current password is different from the one that you specified."),
 			NULL);
 		goto exit_err;
 	}
 
-	gaim_debug_info("gg", "Changing password\n");
+	purple_debug_info("gg", "Changing password\n");
 
 	/* XXX: this e-mail should be a pref... */
 	h = gg_change_passwd4(ggp_get_uin(account),
-			      "user@example.net", gaim_account_get_password(account),
+			      "user@example.net", purple_account_get_password(account),
 			      p1, info->token->id, t, 0);
 
 	if (h == NULL) {
-		gaim_notify_error(account, NULL,
+		purple_notify_error(account, NULL,
 			_("Unable to change password. Error occurred.\n"),
 			NULL);
 		goto exit_err;
 	}
 
-	gaim_account_set_password(account, p1);
+	purple_account_set_password(account, p1);
 
 	gg_change_passwd_free(h);
 
-	gaim_notify_info(account, _("Change password for the Gadu-Gadu account"),
+	purple_notify_info(account, _("Change password for the Gadu-Gadu account"),
 			 _("Password was changed successfully!"), NULL);
 
 exit_err:
@@ -738,12 +738,12 @@ exit_err:
 
 /*
  */
-/* static void ggp_change_passwd_dialog(GaimConnection *gc) {{{ */
-static void ggp_change_passwd_dialog(GaimConnection *gc)
+/* static void ggp_change_passwd_dialog(PurpleConnection *gc) {{{ */
+static void ggp_change_passwd_dialog(PurpleConnection *gc)
 {
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
 	GGPInfo *info = gc->proto_data;
 	GGPToken *token = info->token;
@@ -751,40 +751,40 @@ static void ggp_change_passwd_dialog(GaimConnection *gc)
 	char *msg;
 
 
-	fields = gaim_request_fields_new();
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
 
-	field = gaim_request_field_string_new("password_cur",
+	field = purple_request_field_string_new("password_cur",
 			_("Current password"), "", FALSE);
-	gaim_request_field_string_set_masked(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("password1",
+	field = purple_request_field_string_new("password1",
 			_("Password"), "", FALSE);
-	gaim_request_field_string_set_masked(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("password2",
+	field = purple_request_field_string_new("password2",
 			_("Password (retype)"), "", FALSE);
-	gaim_request_field_string_set_masked(field, TRUE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_group_add_field(group, field);
 
-	field = gaim_request_field_string_new("token",
+	field = purple_request_field_string_new("token",
 			_("Enter current token"), "", FALSE);
-	gaim_request_field_string_set_masked(field, FALSE);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_string_set_masked(field, FALSE);
+	purple_request_field_group_add_field(group, field);
 
 	/* original size: 60x24 */
-	field = gaim_request_field_image_new("token_img",
+	field = purple_request_field_image_new("token_img",
 			_("Current token"), token->data, token->size);
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_group_add_field(group, field);
 
 	msg = g_strdup_printf("%s %d",
 		_("Please, enter your current password and your new password for UIN: "),
-		ggp_get_uin(gaim_connection_get_account(gc)));
+		ggp_get_uin(purple_connection_get_account(gc)));
 
-	gaim_request_fields(gc,
+	purple_request_fields(gc,
 		_("Change Gadu-Gadu Password"),
 		_("Change Gadu-Gadu Password"),
 		msg,
@@ -797,10 +797,10 @@ static void ggp_change_passwd_dialog(GaimConnection *gc)
 
 /*
  */
-/* static void ggp_change_passwd(GaimPluginAction *action) {{{ */
-static void ggp_change_passwd(GaimPluginAction *action)
+/* static void ggp_change_passwd(PurplePluginAction *action) {{{ */
+static void ggp_change_passwd(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *)action->context;
+	PurpleConnection *gc = (PurpleConnection *)action->context;
 
 	ggp_token_request(gc, ggp_change_passwd_dialog);
 }
@@ -810,15 +810,15 @@ static void ggp_change_passwd(GaimPluginAction *action)
 
 /*
  */
-/* static void ggp_callback_add_to_chat_ok(GaimConnection *gc, GaimRequestFields *fields) {{{ */
-static void ggp_callback_add_to_chat_ok(GaimConnection *gc, GaimRequestFields *fields)
+/* static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestFields *fields) {{{ */
+static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	GGPInfo *info = gc->proto_data;
-	GaimRequestField *field;
+	PurpleRequestField *field;
 	const GList *sel;
 
-	field = gaim_request_fields_get_field(fields, "name");
-	sel = gaim_request_field_list_get_selected(field);
+	field = purple_request_fields_get_field(fields, "name");
+	sel = purple_request_field_list_get_selected(field);
 
 	ggp_confer_participants_add_uin(gc, sel->data, info->tmp_buddy);
 	info->tmp_buddy = 0;
@@ -827,42 +827,42 @@ static void ggp_callback_add_to_chat_ok(GaimConnection *gc, GaimRequestFields *f
 
 /*
  */
-/* static void ggp_bmenu_add_to_chat(GaimBlistNode *node, gpointer ignored) {{{ */
-static void ggp_bmenu_add_to_chat(GaimBlistNode *node, gpointer ignored)
+/* static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored) {{{ */
+static void ggp_bmenu_add_to_chat(PurpleBlistNode *node, gpointer ignored)
 {
-	GaimBuddy *buddy;
-	GaimConnection *gc;
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
 	GGPInfo *info;
 
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 
 	GList *l;
 	gchar *msg;
 
-	buddy = (GaimBuddy *)node;
-	gc = gaim_account_get_connection(gaim_buddy_get_account(buddy));
+	buddy = (PurpleBuddy *)node;
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	info = gc->proto_data;
 
 	/* TODO: It tmp_buddy != 0 then stop! */
-	info->tmp_buddy = ggp_str_to_uin(gaim_buddy_get_name(buddy));
+	info->tmp_buddy = ggp_str_to_uin(purple_buddy_get_name(buddy));
 
-	fields = gaim_request_fields_new();
-	group = gaim_request_field_group_new(NULL);
-	gaim_request_fields_add_group(fields, group);
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
 
-	field = gaim_request_field_list_new("name", "Chat name");
+	field = purple_request_field_list_new("name", "Chat name");
 	for (l = info->chats; l != NULL; l = l->next) {
 		GGPChat *chat = l->data;
-		gaim_request_field_list_add(field, g_strdup(chat->name),
+		purple_request_field_list_add(field, g_strdup(chat->name),
 					    g_strdup(chat->name));
 	}
-	gaim_request_field_group_add_field(group, field);
+	purple_request_field_group_add_field(group, field);
 
 	msg = g_strdup_printf(_("Select a chat for buddy: %s"),
-			      gaim_buddy_get_alias(buddy));
-	gaim_request_fields(gc,
+			      purple_buddy_get_alias(buddy));
+	purple_request_fields(gc,
 			_("Add to chat..."),
 			_("Add to chat..."),
 			msg,
@@ -877,30 +877,30 @@ static void ggp_bmenu_add_to_chat(GaimBlistNode *node, gpointer ignored)
 
 /*
  */
-/* static void ggp_bmenu_block(GaimBlistNode *node, gpointer ignored) {{{ */
-static void ggp_bmenu_block(GaimBlistNode *node, gpointer ignored)
+/* static void ggp_bmenu_block(PurpleBlistNode *node, gpointer ignored) {{{ */
+static void ggp_bmenu_block(PurpleBlistNode *node, gpointer ignored)
 {
-	GaimConnection *gc;
-	GaimBuddy *buddy;
+	PurpleConnection *gc;
+	PurpleBuddy *buddy;
 	GGPInfo *info;
 	uin_t uin;
 
-	buddy = (GaimBuddy *)node;
-	gc = gaim_account_get_connection(gaim_buddy_get_account(buddy));
+	buddy = (PurpleBuddy *)node;
+	gc = purple_account_get_connection(purple_buddy_get_account(buddy));
 	info = gc->proto_data;
 
-	uin = ggp_str_to_uin(gaim_buddy_get_name(buddy));
+	uin = ggp_str_to_uin(purple_buddy_get_name(buddy));
 
-	if (gaim_blist_node_get_bool(node, "blocked")) {
-		gaim_blist_node_set_bool(node, "blocked", FALSE);
+	if (purple_blist_node_get_bool(node, "blocked")) {
+		purple_blist_node_set_bool(node, "blocked", FALSE);
 		gg_remove_notify_ex(info->session, uin, GG_USER_BLOCKED);
 		gg_add_notify_ex(info->session, uin, GG_USER_NORMAL);
-		gaim_debug_info("gg", "send: uin=%d; mode=NORMAL\n", uin);
+		purple_debug_info("gg", "send: uin=%d; mode=NORMAL\n", uin);
 	} else {
-		gaim_blist_node_set_bool(node, "blocked", TRUE);
+		purple_blist_node_set_bool(node, "blocked", TRUE);
 		gg_remove_notify_ex(info->session, uin, GG_USER_NORMAL);
 		gg_add_notify_ex(info->session, uin, GG_USER_BLOCKED);
-		gaim_debug_info("gg", "send: uin=%d; mode=BLOCKED\n", uin);
+		purple_debug_info("gg", "send: uin=%d; mode=BLOCKED\n", uin);
 	}
 }
 /* }}} */
@@ -910,18 +910,18 @@ static void ggp_bmenu_block(GaimBlistNode *node, gpointer ignored)
 /* ---------------------------------------------------------------------- */
 
 /* just a prototype */
-static void ggp_set_status(GaimAccount *account, GaimStatus *status);
+static void ggp_set_status(PurpleAccount *account, PurpleStatus *status);
 
 /**
  * Handle change of the status of the buddy.
  *
- * @param gc     GaimConnection
+ * @param gc     PurpleConnection
  * @param uin    UIN of the buddy.
  * @param status ID of the status.
  * @param descr  Description.
  */
-/* static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin, int status, const char *descr) {{{ */
-static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin,
+/* static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin, int status, const char *descr) {{{ */
+static void ggp_generic_status_handler(PurpleConnection *gc, uin_t uin,
 				       int status, const char *descr)
 {
 	gchar *from;
@@ -948,14 +948,14 @@ static void ggp_generic_status_handler(GaimConnection *gc, uin_t uin,
 			break;
 		default:
 			st = "available";
-			gaim_debug_info("gg",
+			purple_debug_info("gg",
 				"GG_EVENT_NOTIFY: Unknown status: %d\n", status);
 			break;
 	}
 
-	gaim_debug_info("gg", "st = %s\n", st);
+	purple_debug_info("gg", "st = %s\n", st);
 	msg = charset_convert(descr, "CP1250", "UTF-8");
-	gaim_prpl_got_user_status(gaim_connection_get_account(gc),
+	purple_prpl_got_user_status(purple_connection_get_account(gc),
 				  from, st, "message", msg, NULL);
 	g_free(from);
 	g_free(msg);
@@ -987,7 +987,7 @@ static const char *ggp_status_by_id(unsigned int id)
 {
 	const char *st;
 
-	gaim_debug_info("gg", "ggp_status_by_id: %d\n", id);
+	purple_debug_info("gg", "ggp_status_by_id: %d\n", id);
 	switch (id) {
 		case GG_STATUS_NOT_AVAIL:
 			st = _("Offline");
@@ -1009,77 +1009,77 @@ static const char *ggp_status_by_id(unsigned int id)
 
 /*
  */
-/* static void ggp_pubdir_handle_info(GaimConnection *gc, gg_pubdir50_t req, GGPSearchForm *form) {{{ */
-static void ggp_pubdir_handle_info(GaimConnection *gc, gg_pubdir50_t req,
+/* static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req, GGPSearchForm *form) {{{ */
+static void ggp_pubdir_handle_info(PurpleConnection *gc, gg_pubdir50_t req,
 				   GGPSearchForm *form)
 {
-	GaimNotifyUserInfo *user_info;
-	GaimBuddy *buddy;
+	PurpleNotifyUserInfo *user_info;
+	PurpleBuddy *buddy;
 	char *val, *who;
 
-	user_info = gaim_notify_user_info_new();
+	user_info = purple_notify_user_info_new();
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_STATUS);
 	/* XXX: Use of ggp_str_to_uin() is an ugly hack! */
-	gaim_notify_user_info_add_pair(user_info, _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
+	purple_notify_user_info_add_pair(user_info, _("Status"), ggp_status_by_id(ggp_str_to_uin(val)));
 	g_free(val);
 
 	who = ggp_search_get_result(req, 0, GG_PUBDIR50_UIN);
-	gaim_notify_user_info_add_pair(user_info, _("UIN"), who);
+	purple_notify_user_info_add_pair(user_info, _("UIN"), who);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_FIRSTNAME);
-	gaim_notify_user_info_add_pair(user_info, _("First Name"), val);
+	purple_notify_user_info_add_pair(user_info, _("First Name"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_NICKNAME);
-	gaim_notify_user_info_add_pair(user_info, _("Nickname"), val);
+	purple_notify_user_info_add_pair(user_info, _("Nickname"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_CITY);
-	gaim_notify_user_info_add_pair(user_info, _("City"), val);
+	purple_notify_user_info_add_pair(user_info, _("City"), val);
 	g_free(val);
 
 	val = ggp_search_get_result(req, 0, GG_PUBDIR50_BIRTHYEAR);
 	if (strncmp(val, "0", 1)) {
-		gaim_notify_user_info_add_pair(user_info, _("Birth Year"), val);
+		purple_notify_user_info_add_pair(user_info, _("Birth Year"), val);
 	}
 	g_free(val);
 
 	/*
 	 * Include a status message, if exists and buddy is in the blist.
 	 */
-	buddy = gaim_find_buddy(gaim_connection_get_account(gc), who);
+	buddy = purple_find_buddy(purple_connection_get_account(gc), who);
 	if (NULL != buddy) {
-		GaimStatus *status;
+		PurpleStatus *status;
 		const char *msg;
 		char *text;
 
-		status = gaim_presence_get_active_status(gaim_buddy_get_presence(buddy));
-		msg = gaim_status_get_attr_string(status, "message");
+		status = purple_presence_get_active_status(purple_buddy_get_presence(buddy));
+		msg = purple_status_get_attr_string(status, "message");
 
 		if (msg != NULL) {
 			text = g_markup_escape_text(msg, -1);
-			gaim_notify_user_info_add_pair(user_info, _("Message"), text);
+			purple_notify_user_info_add_pair(user_info, _("Message"), text);
 			g_free(text);
 		}
 	}
 
 	val = ggp_buddy_get_name(gc, ggp_str_to_uin(who));
-	gaim_notify_userinfo(gc, val, user_info, ggp_sr_close_cb, form);
+	purple_notify_userinfo(gc, val, user_info, ggp_sr_close_cb, form);
 	g_free(val);
 	g_free(who);
-	gaim_notify_user_info_destroy(user_info);
+	purple_notify_user_info_destroy(user_info);
 }
 /* }}} */
 
 /*
  */
-/* static void ggp_pubdir_handle_full(GaimConnection *gc, gg_pubdir50_t req, GGPSearchForm *form) {{{ */
-static void ggp_pubdir_handle_full(GaimConnection *gc, gg_pubdir50_t req,
+/* static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req, GGPSearchForm *form) {{{ */
+static void ggp_pubdir_handle_full(PurpleConnection *gc, gg_pubdir50_t req,
 				   GGPSearchForm *form)
 {
-	GaimNotifySearchResults *results;
-	GaimNotifySearchColumn *column;
+	PurpleNotifySearchResults *results;
+	PurpleNotifySearchColumn *column;
 	int res_count;
 	int start;
 	int i;
@@ -1089,37 +1089,37 @@ static void ggp_pubdir_handle_full(GaimConnection *gc, gg_pubdir50_t req,
 	res_count = gg_pubdir50_count(req);
 	res_count = (res_count > PUBDIR_RESULTS_MAX) ? PUBDIR_RESULTS_MAX : res_count;
 
-	results = gaim_notify_searchresults_new();
+	results = purple_notify_searchresults_new();
 
 	if (results == NULL) {
-		gaim_debug_error("gg", "ggp_pubdir_reply_handler: "
+		purple_debug_error("gg", "ggp_pubdir_reply_handler: "
 				 "Unable to display the search results.\n");
-		gaim_notify_error(gc, NULL,
+		purple_notify_error(gc, NULL,
 				  _("Unable to display the search results."),
 				  NULL);
 		ggp_sr_close_cb(form);
 		return;
 	}
 
-	column = gaim_notify_searchresults_column_new(_("UIN"));
-	gaim_notify_searchresults_column_add(results, column);
+	column = purple_notify_searchresults_column_new(_("UIN"));
+	purple_notify_searchresults_column_add(results, column);
 
-	column = gaim_notify_searchresults_column_new(_("First Name"));
-	gaim_notify_searchresults_column_add(results, column);
+	column = purple_notify_searchresults_column_new(_("First Name"));
+	purple_notify_searchresults_column_add(results, column);
 
-	column = gaim_notify_searchresults_column_new(_("Nickname"));
-	gaim_notify_searchresults_column_add(results, column);
+	column = purple_notify_searchresults_column_new(_("Nickname"));
+	purple_notify_searchresults_column_add(results, column);
 
-	column = gaim_notify_searchresults_column_new(_("City"));
-	gaim_notify_searchresults_column_add(results, column);
+	column = purple_notify_searchresults_column_new(_("City"));
+	purple_notify_searchresults_column_add(results, column);
 
-	column = gaim_notify_searchresults_column_new(_("Birth Year"));
-	gaim_notify_searchresults_column_add(results, column);
+	column = purple_notify_searchresults_column_new(_("Birth Year"));
+	purple_notify_searchresults_column_add(results, column);
 
-	gaim_debug_info("gg", "Going with %d entries\n", res_count);
+	purple_debug_info("gg", "Going with %d entries\n", res_count);
 
 	start = (int)ggp_str_to_uin(gg_pubdir50_get(req, 0, GG_PUBDIR50_START));
-	gaim_debug_info("gg", "start = %d\n", start);
+	purple_debug_info("gg", "start = %d\n", start);
 
 	for (i = 0; i < res_count; i++) {
 		GList *row = NULL;
@@ -1138,7 +1138,7 @@ static void ggp_pubdir_handle_full(GaimConnection *gc, gg_pubdir50_t req,
 		row = g_list_append(row,
 			(birth && strncmp(birth, "0", 1)) ? birth : g_strdup("-"));
 
-		gaim_notify_searchresults_row_add(results, row);
+		purple_notify_searchresults_row_add(results, row);
 
 		if (i == res_count - 1) {
 			g_free(form->last_uin);
@@ -1146,24 +1146,24 @@ static void ggp_pubdir_handle_full(GaimConnection *gc, gg_pubdir50_t req,
 		}
 	}
 
-	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_CONTINUE,
+	purple_notify_searchresults_button_add(results, PURPLE_NOTIFY_BUTTON_CONTINUE,
 					     ggp_callback_show_next);
-	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_ADD,
+	purple_notify_searchresults_button_add(results, PURPLE_NOTIFY_BUTTON_ADD,
 					     ggp_callback_add_buddy);
-	gaim_notify_searchresults_button_add(results, GAIM_NOTIFY_BUTTON_IM,
+	purple_notify_searchresults_button_add(results, PURPLE_NOTIFY_BUTTON_IM,
 					     ggp_callback_im);
 
 	if (form->window == NULL) {
-		void *h = gaim_notify_searchresults(gc,
+		void *h = purple_notify_searchresults(gc,
 				_("Gadu-Gadu Public Directory"),
 				_("Search results"), NULL, results,
-				(GaimNotifyCloseCallback)ggp_sr_close_cb,
+				(PurpleNotifyCloseCallback)ggp_sr_close_cb,
 				form);
 
 		if (h == NULL) {
-			gaim_debug_error("gg", "ggp_pubdir_reply_handler: "
+			purple_debug_error("gg", "ggp_pubdir_reply_handler: "
 					 "Unable to display the search results.\n");
-			gaim_notify_error(gc, NULL,
+			purple_notify_error(gc, NULL,
 					  _("Unable to display the search results."),
 					  NULL);
 			return;
@@ -1171,15 +1171,15 @@ static void ggp_pubdir_handle_full(GaimConnection *gc, gg_pubdir50_t req,
 
 		form->window = h;
 	} else {
-		gaim_notify_searchresults_new_rows(gc, results, form->window);
+		purple_notify_searchresults_new_rows(gc, results, form->window);
 	}
 }
 /* }}} */
 
 /*
  */
-/* static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req) {{{ */
-static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
+/* static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req) {{{ */
+static void ggp_pubdir_reply_handler(PurpleConnection *gc, gg_pubdir50_t req)
 {
 	GGPInfo *info = gc->proto_data;
 	GGPSearchForm *form;
@@ -1197,8 +1197,8 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 
 	res_count = gg_pubdir50_count(req);
 	if (res_count < 1) {
-		gaim_debug_info("gg", "GG_EVENT_PUBDIR50_SEARCH_REPLY: Nothing found\n");
-		gaim_notify_error(gc, NULL,
+		purple_debug_info("gg", "GG_EVENT_PUBDIR50_SEARCH_REPLY: Nothing found\n");
+		purple_notify_error(gc, NULL,
 			_("No matching users found"),
 			_("There are no users matching your search criteria."));
 		ggp_sr_close_cb(form);
@@ -1213,7 +1213,7 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 			ggp_pubdir_handle_full(gc, req, form);
 			break;
 		default:
-			gaim_debug_warning("gg", "Unknown search_type!\n");
+			purple_debug_warning("gg", "Unknown search_type!\n");
 			break;
 	}
 }
@@ -1222,14 +1222,14 @@ static void ggp_pubdir_reply_handler(GaimConnection *gc, gg_pubdir50_t req)
 /**
  * Dispatch a message received from a buddy.
  *
- * @param gc GaimConnection.
+ * @param gc PurpleConnection.
  * @param ev Gadu-Gadu event structure.
  */
-/* static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *ev) {{{ */
-static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *ev)
+/* static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event *ev) {{{ */
+static void ggp_recv_message_handler(PurpleConnection *gc, const struct gg_event *ev)
 {
 	GGPInfo *info = gc->proto_data;
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	gchar *from;
 	gchar *msg;
 	gchar *tmp;
@@ -1238,11 +1238,11 @@ static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *
 
 	tmp = charset_convert((const char *)ev->event.msg.message,
 			      "CP1250", "UTF-8");
-	gaim_str_strip_char(tmp, '\r');
+	purple_str_strip_char(tmp, '\r');
 	msg = g_markup_escape_text(tmp, -1);
 	g_free(tmp);
 
-	gaim_debug_info("gg", "msg form (%s): %s (class = %d; rcpt_count = %d)\n",
+	purple_debug_info("gg", "msg form (%s): %s (class = %d; rcpt_count = %d)\n",
 			from, msg, ev->event.msg.msgclass,
 			ev->event.msg.recipients_count);
 
@@ -1269,11 +1269,11 @@ static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *
 						    ev->event.msg.recipients_count);
 		}
 		conv = ggp_confer_find_by_name(gc, chat_name);
-		chat_id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
+		chat_id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
 
 		buddy_name = ggp_buddy_get_name(gc, ev->event.msg.sender);
 		serv_got_chat_in(gc, chat_id, buddy_name,
-				 GAIM_MESSAGE_RECV, msg, ev->event.msg.time);
+				 PURPLE_MESSAGE_RECV, msg, ev->event.msg.time);
 		g_free(buddy_name);
 	}
 	g_free(msg);
@@ -1283,18 +1283,18 @@ static void ggp_recv_message_handler(GaimConnection *gc, const struct gg_event *
 
 /*
  */
-/* static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond) {{{ */
-static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
+/* static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond) {{{ */
+static void ggp_callback_recv(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
-	GaimConnection *gc = _gc;
+	PurpleConnection *gc = _gc;
 	GGPInfo *info = gc->proto_data;
 	struct gg_event *ev;
 	int i;
 
 	if (!(ev = gg_watch_fd(info->session))) {
-		gaim_debug_error("gg",
+		purple_debug_error("gg",
 			"ggp_callback_recv: gg_watch_fd failed -- CRITICAL!\n");
-		gaim_connection_error(gc, _("Unable to read socket"));
+		purple_connection_error(gc, _("Unable to read socket"));
 		return;
 	}
 
@@ -1306,7 +1306,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 			ggp_recv_message_handler(gc, ev);
 			break;
 		case GG_EVENT_ACK:
-			gaim_debug_info("gg",
+			purple_debug_info("gg",
 				"message sent to: %ld, delivery status=%d, seq=%d\n",
 				ev->event.ack.recipient, ev->event.ack.status,
 				ev->event.ack.seq);
@@ -1317,7 +1317,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 				struct gg_notify_reply *n;
 				char *descr;
 
-				gaim_debug_info("gg", "notify_pre: (%d) status: %d\n",
+				purple_debug_info("gg", "notify_pre: (%d) status: %d\n",
 						ev->event.notify->uin,
 						ev->event.notify->status);
 
@@ -1328,7 +1328,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 					descr = (ev->type == GG_EVENT_NOTIFY) ? NULL
 							: ev->event.notify_descr.descr;
 
-					gaim_debug_info("gg",
+					purple_debug_info("gg",
 						"notify: (%d) status: %d; descr: %s\n",
 						n->uin, n->status, descr ? descr : "(null)");
 
@@ -1338,14 +1338,14 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 			}
 			break;
 		case GG_EVENT_NOTIFY60:
-			gaim_debug_info("gg",
+			purple_debug_info("gg",
 				"notify60_pre: (%d) status=%d; version=%d; descr=%s\n",
 				ev->event.notify60->uin, ev->event.notify60->status,
 				ev->event.notify60->version,
 				ev->event.notify60->descr ? ev->event.notify60->descr : "(null)");
 
 			for (i = 0; ev->event.notify60[i].uin; i++) {
-				gaim_debug_info("gg",
+				purple_debug_info("gg",
 					"notify60: (%d) status=%d; version=%d; descr=%s\n",
 					ev->event.notify60[i].uin,
 					ev->event.notify60[i].status,
@@ -1358,7 +1358,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 			}
 			break;
 		case GG_EVENT_STATUS:
-			gaim_debug_info("gg", "status: (%d) status=%d; descr=%s\n",
+			purple_debug_info("gg", "status: (%d) status=%d; descr=%s\n",
 					ev->event.status.uin, ev->event.status.status,
 					ev->event.status.descr ? ev->event.status.descr : "(null)");
 
@@ -1366,7 +1366,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 				ev->event.status.status, ev->event.status.descr);
 			break;
 		case GG_EVENT_STATUS60:
-			gaim_debug_info("gg",
+			purple_debug_info("gg",
 				"status60: (%d) status=%d; version=%d; descr=%s\n",
 				ev->event.status60.uin, ev->event.status60.status,
 				ev->event.status60.version,
@@ -1377,16 +1377,16 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 			break;
 		case GG_EVENT_USERLIST:
 	    		if (ev->event.userlist.type == GG_USERLIST_GET_REPLY) {
-				gaim_debug_info("gg", "GG_USERLIST_GET_REPLY\n");
-				gaim_notify_info(gc, NULL,
+				purple_debug_info("gg", "GG_USERLIST_GET_REPLY\n");
+				purple_notify_info(gc, NULL,
 					_("Buddy list downloaded"),
 					_("Your buddy list was downloaded from the server."));
 				if (ev->event.userlist.reply != NULL) {
 					ggp_buddylist_load(gc, ev->event.userlist.reply);
 				}
 			} else {
-				gaim_debug_info("gg", "GG_USERLIST_PUT_REPLY\n");
-				gaim_notify_info(gc, NULL,
+				purple_debug_info("gg", "GG_USERLIST_PUT_REPLY\n");
+				purple_notify_info(gc, NULL,
 					_("Buddy list uploaded"),
 					_("Your buddy list was stored on the server."));
 			}
@@ -1395,7 +1395,7 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 			ggp_pubdir_reply_handler(gc, ev->event.pubdir50);
 			break;
 		default:
-			gaim_debug_error("gg",
+			purple_debug_error("gg",
 				"unsupported event type=%d\n", ev->type);
 			break;
 	}
@@ -1406,97 +1406,97 @@ static void ggp_callback_recv(gpointer _gc, gint fd, GaimInputCondition cond)
 
 /*
  */
-/* static void ggp_async_login_handler(gpointer _gc, gint fd, GaimInputCondition cond) {{{ */
-static void ggp_async_login_handler(gpointer _gc, gint fd, GaimInputCondition cond)
+/* static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond) {{{ */
+static void ggp_async_login_handler(gpointer _gc, gint fd, PurpleInputCondition cond)
 {
-	GaimConnection *gc = _gc;
+	PurpleConnection *gc = _gc;
 	GGPInfo *info;
 	struct gg_event *ev;
 
-	g_return_if_fail(GAIM_CONNECTION_IS_VALID(gc));
+	g_return_if_fail(PURPLE_CONNECTION_IS_VALID(gc));
 
 	info = gc->proto_data;
 
-	gaim_debug_info("gg", "login_handler: session: check = %d; state = %d;\n",
+	purple_debug_info("gg", "login_handler: session: check = %d; state = %d;\n",
 			info->session->check, info->session->state);
 
 	switch (info->session->state) {
 		case GG_STATE_RESOLVING:
-			gaim_debug_info("gg", "GG_STATE_RESOLVING\n");
+			purple_debug_info("gg", "GG_STATE_RESOLVING\n");
 			break;
 		case GG_STATE_CONNECTING_HUB:
-			gaim_debug_info("gg", "GG_STATE_CONNECTING_HUB\n");
+			purple_debug_info("gg", "GG_STATE_CONNECTING_HUB\n");
 			break;
 		case GG_STATE_READING_DATA:
-			gaim_debug_info("gg", "GG_STATE_READING_DATA\n");
+			purple_debug_info("gg", "GG_STATE_READING_DATA\n");
 			break;
 		case GG_STATE_CONNECTING_GG:
-			gaim_debug_info("gg", "GG_STATE_CONNECTING_GG\n");
+			purple_debug_info("gg", "GG_STATE_CONNECTING_GG\n");
 			break;
 		case GG_STATE_READING_KEY:
-			gaim_debug_info("gg", "GG_STATE_READING_KEY\n");
+			purple_debug_info("gg", "GG_STATE_READING_KEY\n");
 			break;
 		case GG_STATE_READING_REPLY:
-			gaim_debug_info("gg", "GG_STATE_READING_REPLY\n");
+			purple_debug_info("gg", "GG_STATE_READING_REPLY\n");
 			break;
 		default:
-			gaim_debug_error("gg", "unknown state = %d\n",
+			purple_debug_error("gg", "unknown state = %d\n",
 					 info->session->state);
 		break;
 	}
 
 	if (!(ev = gg_watch_fd(info->session))) {
-		gaim_debug_error("gg", "login_handler: gg_watch_fd failed!\n");
-		gaim_connection_error(gc, _("Unable to read socket"));
+		purple_debug_error("gg", "login_handler: gg_watch_fd failed!\n");
+		purple_connection_error(gc, _("Unable to read socket"));
 		return;
 	}
-	gaim_debug_info("gg", "login_handler: session->fd = %d\n", info->session->fd);
-	gaim_debug_info("gg", "login_handler: session: check = %d; state = %d;\n",
+	purple_debug_info("gg", "login_handler: session->fd = %d\n", info->session->fd);
+	purple_debug_info("gg", "login_handler: session: check = %d; state = %d;\n",
 			info->session->check, info->session->state);
 
-	gaim_input_remove(gc->inpa);
+	purple_input_remove(gc->inpa);
 
 	/** XXX I think that this shouldn't be done if ev->type is GG_EVENT_CONN_FAILED or GG_EVENT_CONN_SUCCESS -datallah */
-	gc->inpa = gaim_input_add(info->session->fd,
-				  (info->session->check == 1) ? GAIM_INPUT_WRITE
-							      : GAIM_INPUT_READ,
+	gc->inpa = purple_input_add(info->session->fd,
+				  (info->session->check == 1) ? PURPLE_INPUT_WRITE
+							      : PURPLE_INPUT_READ,
 				  ggp_async_login_handler, gc);
 
 	switch (ev->type) {
 		case GG_EVENT_NONE:
 			/* Nothing happened. */
-			gaim_debug_info("gg", "GG_EVENT_NONE\n");
+			purple_debug_info("gg", "GG_EVENT_NONE\n");
 			break;
 		case GG_EVENT_CONN_SUCCESS:
 			{
-				GaimAccount *account;
-				GaimPresence *presence;
-				GaimStatus *status;
+				PurpleAccount *account;
+				PurplePresence *presence;
+				PurpleStatus *status;
 
-				gaim_debug_info("gg", "GG_EVENT_CONN_SUCCESS\n");
-				gaim_input_remove(gc->inpa);
-				gc->inpa = gaim_input_add(info->session->fd,
-							  GAIM_INPUT_READ,
+				purple_debug_info("gg", "GG_EVENT_CONN_SUCCESS\n");
+				purple_input_remove(gc->inpa);
+				gc->inpa = purple_input_add(info->session->fd,
+							  PURPLE_INPUT_READ,
 							  ggp_callback_recv, gc);
 
 				/* gg_change_status(info->session, GG_STATUS_AVAIL); */
 
-				account = gaim_connection_get_account(gc);
-				presence = gaim_account_get_presence(account);
-				status = gaim_presence_get_active_status(presence);
+				account = purple_connection_get_account(gc);
+				presence = purple_account_get_presence(account);
+				status = purple_presence_get_active_status(presence);
 
 				ggp_set_status(account, status);
-				gaim_connection_set_state(gc, GAIM_CONNECTED);
+				purple_connection_set_state(gc, PURPLE_CONNECTED);
 				ggp_buddylist_send(gc);
 			}
 			break;
 		case GG_EVENT_CONN_FAILED:
-			gaim_input_remove(gc->inpa);
+			purple_input_remove(gc->inpa);
 			gc->inpa = 0;
-			gaim_connection_error(gc, _("Connection failed."));
+			purple_connection_error(gc, _("Connection failed."));
 			break;
 		default:
-			gaim_debug_error("gg", "strange event: %d\n", ev->type);
+			purple_debug_error("gg", "strange event: %d\n", ev->type);
 			break;
 	}
 
@@ -1505,36 +1505,36 @@ static void ggp_async_login_handler(gpointer _gc, gint fd, GaimInputCondition co
 /* }}} */
 
 /* ---------------------------------------------------------------------- */
-/* ----- GaimPluginProtocolInfo ----------------------------------------- */
+/* ----- PurplePluginProtocolInfo ----------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-/* static const char *ggp_list_icon(GaimAccount *account, GaimBuddy *buddy) {{{ */
-static const char *ggp_list_icon(GaimAccount *account, GaimBuddy *buddy)
+/* static const char *ggp_list_icon(PurpleAccount *account, PurpleBuddy *buddy) {{{ */
+static const char *ggp_list_icon(PurpleAccount *account, PurpleBuddy *buddy)
 {
 	return "gadu-gadu";
 }
 /* }}} */
 
-/* static char *ggp_status_text(GaimBuddy *b) {{{ */
-static char *ggp_status_text(GaimBuddy *b)
+/* static char *ggp_status_text(PurpleBuddy *b) {{{ */
+static char *ggp_status_text(PurpleBuddy *b)
 {
-	GaimStatus *status;
+	PurpleStatus *status;
 	const char *msg;
 	char *text;
 	char *tmp;
 
-	status = gaim_presence_get_active_status(gaim_buddy_get_presence(b));
+	status = purple_presence_get_active_status(purple_buddy_get_presence(b));
 
-	msg = gaim_status_get_attr_string(status, "message");
+	msg = purple_status_get_attr_string(status, "message");
 
 	if (msg != NULL) {
-		tmp = gaim_markup_strip_html(msg);
+		tmp = purple_markup_strip_html(msg);
 		text = g_markup_escape_text(tmp, -1);
 		g_free(tmp);
 
 		return text;
 	} else {
-		tmp = gaim_utf8_salvage(gaim_status_get_name(status));
+		tmp = purple_utf8_salvage(purple_status_get_name(status));
 		text = g_markup_escape_text(tmp, -1);
 		g_free(tmp);
 
@@ -1543,45 +1543,45 @@ static char *ggp_status_text(GaimBuddy *b)
 }
 /* }}} */
 
-/* static void ggp_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full) {{{ */
-static void ggp_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full)
+/* static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full) {{{ */
+static void ggp_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
-	GaimStatus *status;
+	PurpleStatus *status;
 	char *text, *tmp;
 	const char *msg, *name;
 
 	g_return_if_fail(b != NULL);
 
-	status = gaim_presence_get_active_status(gaim_buddy_get_presence(b));
-	msg = gaim_status_get_attr_string(status, "message");
-	name = gaim_status_get_name(status);
+	status = purple_presence_get_active_status(purple_buddy_get_presence(b));
+	msg = purple_status_get_attr_string(status, "message");
+	name = purple_status_get_name(status);
 
 	if (msg != NULL) {
 		text = g_markup_escape_text(msg, -1);
-		if (GAIM_BUDDY_IS_ONLINE(b)) {
+		if (PURPLE_BUDDY_IS_ONLINE(b)) {
 			tmp = g_strdup_printf("%s: %s", name, text);
-			gaim_notify_user_info_add_pair(user_info, _("Status"), tmp);
+			purple_notify_user_info_add_pair(user_info, _("Status"), tmp);
 			g_free(tmp);
 		} else {
-			gaim_notify_user_info_add_pair(user_info, _("Message"), text);
+			purple_notify_user_info_add_pair(user_info, _("Message"), text);
 		}
 		g_free(text);
 	/* We don't want to duplicate 'Status: Offline'. */
-	} else if (GAIM_BUDDY_IS_ONLINE(b)) {
-		gaim_notify_user_info_add_pair(user_info, _("Status"), name);
+	} else if (PURPLE_BUDDY_IS_ONLINE(b)) {
+		purple_notify_user_info_add_pair(user_info, _("Status"), name);
 	}
 }
 /* }}} */
 
-/* static GList *ggp_status_types(GaimAccount *account) {{{ */
-static GList *ggp_status_types(GaimAccount *account)
+/* static GList *ggp_status_types(PurpleAccount *account) {{{ */
+static GList *ggp_status_types(PurpleAccount *account)
 {
-	GaimStatusType *type;
+	PurpleStatusType *type;
 	GList *types = NULL;
 
-	type = gaim_status_type_new_with_attrs(
-			GAIM_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+	type = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1589,29 +1589,29 @@ static GList *ggp_status_types(GaimAccount *account)
 	 * Without this selecting Invisible as own status doesn't
 	 * work. It's not used and not needed to show status of buddies.
 	 */
-	type = gaim_status_type_new_with_attrs(
-			GAIM_STATUS_INVISIBLE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+	type = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_INVISIBLE, NULL, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(
-			GAIM_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+	type = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
 	/*
 	 * This status is necessary to display guys who are blocking *us*.
 	 */
-	type = gaim_status_type_new_with_attrs(
-			GAIM_STATUS_INVISIBLE, "blocked", _("Blocked"), TRUE, FALSE, FALSE,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING), NULL);
+	type = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_INVISIBLE, "blocked", _("Blocked"), TRUE, FALSE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(
-			GAIM_STATUS_OFFLINE, NULL, NULL, TRUE, TRUE, FALSE,
-			"message", _("Message"), gaim_value_new(GAIM_TYPE_STRING),
+	type = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_OFFLINE, NULL, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1619,30 +1619,30 @@ static GList *ggp_status_types(GaimAccount *account)
 }
 /* }}} */
 
-/* static GList *ggp_blist_node_menu(GaimBlistNode *node) {{{ */
-static GList *ggp_blist_node_menu(GaimBlistNode *node)
+/* static GList *ggp_blist_node_menu(PurpleBlistNode *node) {{{ */
+static GList *ggp_blist_node_menu(PurpleBlistNode *node)
 {
-	GaimMenuAction *act;
+	PurpleMenuAction *act;
 	GList *m = NULL;
 
-	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
+	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
 		return NULL;
 
-	act = gaim_menu_action_new(_("Add to chat"),
-	                           GAIM_CALLBACK(ggp_bmenu_add_to_chat),
+	act = purple_menu_action_new(_("Add to chat"),
+	                           PURPLE_CALLBACK(ggp_bmenu_add_to_chat),
 	                           NULL, NULL);
 	m = g_list_append(m, act);
 
 	/* Using a blist node boolean here is also wrong.
 	 * Once the Block and Unblock actions are added to the core,
 	 * this will have to go. -- rlaager */
-	if (gaim_blist_node_get_bool(node, "blocked")) {
-		act = gaim_menu_action_new(_("Unblock"),
-		                           GAIM_CALLBACK(ggp_bmenu_block),
+	if (purple_blist_node_get_bool(node, "blocked")) {
+		act = purple_menu_action_new(_("Unblock"),
+		                           PURPLE_CALLBACK(ggp_bmenu_block),
 		                           NULL, NULL);
 	} else {
-		act = gaim_menu_action_new(_("Block"),
-		                           GAIM_CALLBACK(ggp_bmenu_block),
+		act = purple_menu_action_new(_("Block"),
+		                           PURPLE_CALLBACK(ggp_bmenu_block),
 		                           NULL, NULL);
 	}
 	m = g_list_append(m, act);
@@ -1651,8 +1651,8 @@ static GList *ggp_blist_node_menu(GaimBlistNode *node)
 }
 /* }}} */
 
-/* static GList *ggp_chat_info(GaimConnection *gc) {{{ */
-static GList *ggp_chat_info(GaimConnection *gc)
+/* static GList *ggp_chat_info(PurpleConnection *gc) {{{ */
+static GList *ggp_chat_info(PurpleConnection *gc)
 {
 	GList *m = NULL;
 	struct proto_chat_entry *pce;
@@ -1667,17 +1667,17 @@ static GList *ggp_chat_info(GaimConnection *gc)
 }
 /* }}} */
 
-/* static void ggp_login(GaimAccount *account) {{{ */
-static void ggp_login(GaimAccount *account)
+/* static void ggp_login(PurpleAccount *account) {{{ */
+static void ggp_login(PurpleAccount *account)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	struct gg_login_params *glp;
 	GGPInfo *info;
 
 	if (ggp_setup_proxy(account) == -1)
 		return;
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 	glp = g_new0(struct gg_login_params, 1);
 	info = g_new0(GGPInfo, 1);
 
@@ -1691,7 +1691,7 @@ static void ggp_login(GaimAccount *account)
 	gc->proto_data = info;
 
 	glp->uin = ggp_get_uin(account);
-	glp->password = (char *)gaim_account_get_password(account);
+	glp->password = (char *)purple_account_get_password(account);
 
 	glp->async = 1;
 	glp->status = GG_STATUS_AVAIL;
@@ -1699,30 +1699,30 @@ static void ggp_login(GaimAccount *account)
 
 	info->session = gg_login(glp);
 	if (info->session == NULL) {
-		gaim_connection_error(gc, _("Connection failed."));
+		purple_connection_error(gc, _("Connection failed."));
 		g_free(glp);
 		return;
 	}
-	gc->inpa = gaim_input_add(info->session->fd, GAIM_INPUT_READ,
+	gc->inpa = purple_input_add(info->session->fd, PURPLE_INPUT_READ,
 				  ggp_async_login_handler, gc);
 }
 /* }}} */
 
-/* static void ggp_close(GaimConnection *gc) {{{ */
-static void ggp_close(GaimConnection *gc)
+/* static void ggp_close(PurpleConnection *gc) {{{ */
+static void ggp_close(PurpleConnection *gc)
 {
 
 	if (gc == NULL) {
-		gaim_debug_info("gg", "gc == NULL\n");
+		purple_debug_info("gg", "gc == NULL\n");
 		return;
 	}
 
 	if (gc->proto_data) {
-		GaimAccount *account = gaim_connection_get_account(gc);
-		GaimStatus *status;
+		PurpleAccount *account = purple_connection_get_account(gc);
+		PurpleStatus *status;
 		GGPInfo *info = gc->proto_data;
 
-		status = gaim_account_get_active_status(account);
+		status = purple_account_get_active_status(account);
 
 		if (info->session != NULL) {
 			ggp_set_status(account, status);
@@ -1733,7 +1733,7 @@ static void ggp_close(GaimConnection *gc)
 		/* Immediately close any notifications on this handle since that process depends
 		 * upon the contents of info->searches, which we are about to destroy.
 		 */
-		gaim_notify_close_with_handle(gc);
+		purple_notify_close_with_handle(gc);
 
 		ggp_search_destroy(info->searches);
 		g_free(info);
@@ -1741,17 +1741,17 @@ static void ggp_close(GaimConnection *gc)
 	}
 
 	if (gc->inpa > 0)
-		gaim_input_remove(gc->inpa);
+		purple_input_remove(gc->inpa);
 
 	ggp_buddylist_offline(gc);
 
-	gaim_debug_info("gg", "Connection closed.\n");
+	purple_debug_info("gg", "Connection closed.\n");
 }
 /* }}} */
 
-/* static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg, GaimMessageFlags flags) {{{ */
-static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg,
-		       GaimMessageFlags flags)
+/* static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg, PurpleMessageFlags flags) {{{ */
+static int ggp_send_im(PurpleConnection *gc, const char *who, const char *msg,
+		       PurpleMessageFlags flags)
 {
 	GGPInfo *info = gc->proto_data;
 	char *tmp, *plain;
@@ -1761,8 +1761,8 @@ static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg,
 		return 0;
 	}
 
-	gaim_debug_info("gg", "ggp_send_im: msg = %s\n", msg);
-	plain = gaim_unescape_html(msg);
+	purple_debug_info("gg", "ggp_send_im: msg = %s\n", msg);
+	plain = purple_unescape_html(msg);
 	tmp = charset_convert(plain, "UTF-8", "CP1250");
 
 	if (NULL == tmp || strlen(tmp) == 0) {
@@ -1783,8 +1783,8 @@ static int ggp_send_im(GaimConnection *gc, const char *who, const char *msg,
 }
 /* }}} */
 
-/* static void ggp_get_info(GaimConnection *gc, const char *name) { {{{ */
-static void ggp_get_info(GaimConnection *gc, const char *name)
+/* static void ggp_get_info(PurpleConnection *gc, const char *name) { {{{ */
+static void ggp_get_info(PurpleConnection *gc, const char *name)
 {
 	GGPInfo *info = gc->proto_data;
 	GGPSearchForm *form;
@@ -1802,23 +1802,23 @@ static void ggp_get_info(GaimConnection *gc, const char *name)
 }
 /* }}} */
 
-/* static void ggp_set_status(GaimAccount *account, GaimStatus *status) {{{ */
-static void ggp_set_status(GaimAccount *account, GaimStatus *status)
+/* static void ggp_set_status(PurpleAccount *account, PurpleStatus *status) {{{ */
+static void ggp_set_status(PurpleAccount *account, PurpleStatus *status)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	GGPInfo *info;
 	const char *status_id, *msg;
 	int new_status, new_status_descr;
 
-	if (!gaim_status_is_active(status))
+	if (!purple_status_is_active(status))
 		return;
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 	info = gc->proto_data;
 
-	status_id = gaim_status_get_id(status);
+	status_id = purple_status_get_id(status);
 
-	gaim_debug_info("gg", "ggp_set_status: Requested status = %s\n",
+	purple_debug_info("gg", "ggp_set_status: Requested status = %s\n",
 			status_id);
 
 	if (strcmp(status_id, "available") == 0) {
@@ -1836,12 +1836,12 @@ static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 	} else {
 		new_status = GG_STATUS_AVAIL;
 		new_status_descr = GG_STATUS_AVAIL_DESCR;
-		gaim_debug_info("gg",
+		purple_debug_info("gg",
 			"ggp_set_status: uknown status requested (status_id=%s)\n",
 			status_id);
 	}
 
-	msg = gaim_status_get_attr_string(status, "message");
+	msg = purple_status_get_attr_string(status, "message");
 
 	if (msg == NULL) {
 		gg_change_status(info->session, new_status);
@@ -1849,7 +1849,7 @@ static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 		gchar *tmp, *new_msg;
 
 		tmp = charset_convert(msg, "UTF-8", "CP1250");
-		new_msg = gaim_markup_strip_html(tmp);
+		new_msg = purple_markup_strip_html(tmp);
 		g_free(tmp);
 
 		gg_change_status_descr(info->session, new_status_descr, new_msg);
@@ -1858,8 +1858,8 @@ static void ggp_set_status(GaimAccount *account, GaimStatus *status)
 }
 /* }}} */
 
-/* static void ggp_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {{{ */
-static void ggp_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
+/* static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {{{ */
+static void ggp_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	GGPInfo *info = gc->proto_data;
 
@@ -1867,9 +1867,9 @@ static void ggp_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group
 }
 /* }}} */
 
-/* static void ggp_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group) {{{ */
-static void ggp_remove_buddy(GaimConnection *gc, GaimBuddy *buddy,
-						 GaimGroup *group)
+/* static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {{{ */
+static void ggp_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
+						 PurpleGroup *group)
 {
 	GGPInfo *info = gc->proto_data;
 
@@ -1877,28 +1877,28 @@ static void ggp_remove_buddy(GaimConnection *gc, GaimBuddy *buddy,
 }
 /* }}} */
 
-/* static void ggp_join_chat(GaimConnection *gc, GHashTable *data) {{{ */
-static void ggp_join_chat(GaimConnection *gc, GHashTable *data)
+/* static void ggp_join_chat(PurpleConnection *gc, GHashTable *data) {{{ */
+static void ggp_join_chat(PurpleConnection *gc, GHashTable *data)
 {
 	GGPInfo *info = gc->proto_data;
 	GGPChat *chat;
 	char *chat_name;
 	GList *l;
-	GaimConversation *conv;
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleConversation *conv;
+	PurpleAccount *account = purple_connection_get_account(gc);
 
 	chat_name = g_hash_table_lookup(data, "name");
 
 	if (chat_name == NULL)
 		return;
 
-	gaim_debug_info("gg", "joined %s chat\n", chat_name);
+	purple_debug_info("gg", "joined %s chat\n", chat_name);
 
 	for (l = info->chats; l != NULL; l = l->next) {
 		 chat = l->data;
 
 		 if (chat != NULL && g_utf8_collate(chat->name, chat_name) == 0) {
-			 gaim_notify_error(gc, _("Chat error"),
+			 purple_notify_error(gc, _("Chat error"),
 				 _("This chat name is already in use"), NULL);
 			 return;
 		 }
@@ -1906,9 +1906,9 @@ static void ggp_join_chat(GaimConnection *gc, GHashTable *data)
 
 	ggp_confer_add_new(gc, chat_name);
 	conv = serv_got_joined_chat(gc, info->chats_count, chat_name);
-	gaim_conv_chat_add_user(GAIM_CONV_CHAT(conv),
-				gaim_account_get_username(account), NULL,
-				GAIM_CBFLAGS_NONE, TRUE);
+	purple_conv_chat_add_user(PURPLE_CONV_CHAT(conv),
+				purple_account_get_username(account), NULL,
+				PURPLE_CBFLAGS_NONE, TRUE);
 }
 /* }}} */
 
@@ -1918,10 +1918,10 @@ static char *ggp_get_chat_name(GHashTable *data) {
 }
 /* }}} */
 
-/* static int ggp_chat_send(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags) {{{ */
-static int ggp_chat_send(GaimConnection *gc, int id, const char *message, GaimMessageFlags flags)
+/* static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags) {{{ */
+static int ggp_chat_send(PurpleConnection *gc, int id, const char *message, PurpleMessageFlags flags)
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	GGPInfo *info = gc->proto_data;
 	GGPChat *chat = NULL;
 	GList *l;
@@ -1929,7 +1929,7 @@ static int ggp_chat_send(GaimConnection *gc, int id, const char *message, GaimMe
 	uin_t *uins;
 	int count = 0;
 
-	if ((conv = gaim_find_chat(gc, id)) == NULL)
+	if ((conv = purple_find_chat(gc, id)) == NULL)
 		return -EINVAL;
 
 	for (l = info->chats; l != NULL; l = l->next) {
@@ -1943,7 +1943,7 @@ static int ggp_chat_send(GaimConnection *gc, int id, const char *message, GaimMe
 	}
 
 	if (chat == NULL) {
-		gaim_debug_error("gg",
+		purple_debug_error("gg",
 			"ggp_chat_send: Hm... that's strange. No such chat?\n");
 		return -EINVAL;
 	}
@@ -1956,7 +1956,7 @@ static int ggp_chat_send(GaimConnection *gc, int id, const char *message, GaimMe
 		uins[count++] = uin;
 	}
 
-	plain = gaim_unescape_html(message);
+	plain = purple_unescape_html(message);
 	msg = charset_convert(plain, "UTF-8", "CP1250");
 	g_free(plain);
 	gg_send_message_confer(info->session, GG_CLASS_CHAT, count, uins,
@@ -1965,32 +1965,32 @@ static int ggp_chat_send(GaimConnection *gc, int id, const char *message, GaimMe
 	g_free(uins);
 
 	serv_got_chat_in(gc, id,
-			 gaim_account_get_username(gaim_connection_get_account(gc)),
+			 purple_account_get_username(purple_connection_get_account(gc)),
 			 0, message, time(NULL));
 
 	return 0;
 }
 /* }}} */
 
-/* static void ggp_keepalive(GaimConnection *gc) {{{ */
-static void ggp_keepalive(GaimConnection *gc)
+/* static void ggp_keepalive(PurpleConnection *gc) {{{ */
+static void ggp_keepalive(PurpleConnection *gc)
 {
 	GGPInfo *info = gc->proto_data;
 
-	/* gaim_debug_info("gg", "Keeping connection alive....\n"); */
+	/* purple_debug_info("gg", "Keeping connection alive....\n"); */
 
 	if (gg_ping(info->session) < 0) {
-		gaim_debug_info("gg", "Not connected to the server "
+		purple_debug_info("gg", "Not connected to the server "
 				"or gg_session is not correct\n");
-		gaim_connection_error(gc, _("Not connected to the server."));
+		purple_connection_error(gc, _("Not connected to the server."));
 	}
 }
 /* }}} */
 
-/* static void ggp_register_user(GaimAccount *account) {{{ */
-static void ggp_register_user(GaimAccount *account)
+/* static void ggp_register_user(PurpleAccount *account) {{{ */
+static void ggp_register_user(PurpleAccount *account)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
+	PurpleConnection *gc = purple_account_get_connection(account);
 	GGPInfo *info;
 
 	info = gc->proto_data = g_new0(GGPInfo, 1);
@@ -1999,41 +1999,41 @@ static void ggp_register_user(GaimAccount *account)
 }
 /* }}} */
 
-/* static GList *ggp_actions(GaimPlugin *plugin, gpointer context) {{{ */
-static GList *ggp_actions(GaimPlugin *plugin, gpointer context)
+/* static GList *ggp_actions(PurplePlugin *plugin, gpointer context) {{{ */
+static GList *ggp_actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *m = NULL;
-	GaimPluginAction *act;
+	PurplePluginAction *act;
 
-	act = gaim_plugin_action_new(_("Find buddies..."),
+	act = purple_plugin_action_new(_("Find buddies..."),
 				     ggp_find_buddies);
 	m = g_list_append(m, act);
 
 	m = g_list_append(m, NULL);
 
-	act = gaim_plugin_action_new(_("Change password..."),
+	act = purple_plugin_action_new(_("Change password..."),
 				     ggp_change_passwd);
 	m = g_list_append(m, act);
 
 	m = g_list_append(m, NULL);
 
-	act = gaim_plugin_action_new(_("Upload buddylist to Server"),
+	act = purple_plugin_action_new(_("Upload buddylist to Server"),
 				     ggp_action_buddylist_put);
 	m = g_list_append(m, act);
 
-	act = gaim_plugin_action_new(_("Download buddylist from Server"),
+	act = purple_plugin_action_new(_("Download buddylist from Server"),
 				     ggp_action_buddylist_get);
 	m = g_list_append(m, act);
 
-	act = gaim_plugin_action_new(_("Delete buddylist from Server"),
+	act = purple_plugin_action_new(_("Delete buddylist from Server"),
 				     ggp_action_buddylist_delete);
 	m = g_list_append(m, act);
 
-	act = gaim_plugin_action_new(_("Save buddylist to file..."),
+	act = purple_plugin_action_new(_("Save buddylist to file..."),
 				     ggp_action_buddylist_save);
 	m = g_list_append(m, act);
 
-	act = gaim_plugin_action_new(_("Load buddylist from file..."),
+	act = purple_plugin_action_new(_("Load buddylist from file..."),
 				     ggp_action_buddylist_load);
 	m = g_list_append(m, act);
 
@@ -2041,15 +2041,15 @@ static GList *ggp_actions(GaimPlugin *plugin, gpointer context)
 }
 /* }}} */
 
-/* static gboolean ggp_offline_message(const GaimBuddy *buddy) {{{ */
-static gboolean ggp_offline_message(const GaimBuddy *buddy)
+/* static gboolean ggp_offline_message(const PurpleBuddy *buddy) {{{ */
+static gboolean ggp_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
 }
 /* }}} */
 
 /* prpl_info setup {{{ */
-static GaimPluginProtocolInfo prpl_info =
+static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_REGISTER_NOSCREENNAME,
 	NULL,				/* user_splits */
@@ -2116,16 +2116,16 @@ static GaimPluginProtocolInfo prpl_info =
 };
 /* }}} */
 
-/* GaimPluginInfo setup {{{ */
-static GaimPluginInfo info = {
-	GAIM_PLUGIN_MAGIC,		/* magic */
-	GAIM_MAJOR_VERSION,		/* major_version */
-	GAIM_MINOR_VERSION,		/* minor_version */
-	GAIM_PLUGIN_PROTOCOL,		/* plugin type */
+/* PurplePluginInfo setup {{{ */
+static PurplePluginInfo info = {
+	PURPLE_PLUGIN_MAGIC,		/* magic */
+	PURPLE_MAJOR_VERSION,		/* major_version */
+	PURPLE_MINOR_VERSION,		/* minor_version */
+	PURPLE_PLUGIN_PROTOCOL,		/* plugin type */
 	NULL,				/* ui_requirement */
 	0,				/* flags */
 	NULL,				/* dependencies */
-	GAIM_PRIORITY_DEFAULT,		/* priority */
+	PURPLE_PRIORITY_DEFAULT,		/* priority */
 
 	"prpl-gg",			/* id */
 	"Gadu-Gadu",			/* name */
@@ -2134,7 +2134,7 @@ static GaimPluginInfo info = {
 	N_("Gadu-Gadu Protocol Plugin"),	/* summary */
 	N_("Polish popular IM"),		/* description */
 	"boler@sourceforge.net",	/* author */
-	GAIM_WEBSITE,			/* homepage */
+	PURPLE_WEBSITE,			/* homepage */
 
 	NULL,				/* load */
 	NULL,				/* unload */
@@ -2147,49 +2147,49 @@ static GaimPluginInfo info = {
 };
 /* }}} */
 
-/* static void gaim_gg_debug_handler(int level, const char * format, va_list args) {{{ */
-static void gaim_gg_debug_handler(int level, const char * format, va_list args) {
-	GaimDebugLevel gaim_level;
+/* static void purple_gg_debug_handler(int level, const char * format, va_list args) {{{ */
+static void purple_gg_debug_handler(int level, const char * format, va_list args) {
+	PurpleDebugLevel purple_level;
 	char *msg = g_strdup_vprintf(format, args);
 
 	/* This is pretty pointless since the GG_DEBUG levels don't correspond to
-	 * the gaim ones */
+	 * the purple ones */
 	switch (level) {
 		case GG_DEBUG_FUNCTION:
-			gaim_level = GAIM_DEBUG_INFO;
+			purple_level = PURPLE_DEBUG_INFO;
 			break;
 		case GG_DEBUG_MISC:
 		case GG_DEBUG_NET:
 		case GG_DEBUG_DUMP:
 		case GG_DEBUG_TRAFFIC:
 		default:
-			gaim_level = GAIM_DEBUG_MISC;
+			purple_level = PURPLE_DEBUG_MISC;
 			break;
 	}
 
-	gaim_debug(gaim_level, "gg", msg);
+	purple_debug(purple_level, "gg", msg);
 	g_free(msg);
 }
 /* }}} */
 
 /*
  */
-/* static void init_plugin(GaimPlugin *plugin) {{{ */
-static void init_plugin(GaimPlugin *plugin)
+/* static void init_plugin(PurplePlugin *plugin) {{{ */
+static void init_plugin(PurplePlugin *plugin)
 {
-	GaimAccountOption *option;
+	PurpleAccountOption *option;
 
-	option = gaim_account_option_string_new(_("Nickname"),
+	option = purple_account_option_string_new(_("Nickname"),
 			"nick", _("Gadu-Gadu User"));
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 						   option);
 
 	my_protocol = plugin;
 
-	gg_debug_handler = gaim_gg_debug_handler;
+	gg_debug_handler = purple_gg_debug_handler;
 }
 /* }}} */
 
-GAIM_INIT_PLUGIN(gg, init_plugin, info);
+PURPLE_INIT_PLUGIN(gg, init_plugin, info);
 
 /* vim: set ts=8 sts=0 sw=8 noet: */

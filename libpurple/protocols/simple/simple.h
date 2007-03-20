@@ -1,7 +1,7 @@
 /**
  * @file simple.h
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2005, Thomas Butter <butter@uni-mannheim.de>
  *
@@ -20,8 +20,8 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _GAIM_SIMPLE_H
-#define _GAIM_SIMPLE_H
+#ifndef _PURPLE_SIMPLE_H
+#define _PURPLE_SIMPLE_H
 
 #include <glib.h>
 #include <time.h>
@@ -69,13 +69,13 @@ struct sip_auth {
 };
 
 struct simple_account_data {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	gchar *servername;
 	gchar *username;
 	gchar *password;
-	GaimDnsQueryData *query_data;
-	GaimSrvQueryData *srv_query_data;
-	GaimNetworkListenData *listen_data;
+	PurpleDnsQueryData *query_data;
+	PurpleSrvQueryData *srv_query_data;
+	PurpleNetworkListenData *listen_data;
 	int fd;
 	int cseq;
 	time_t reregister;
@@ -91,8 +91,8 @@ struct simple_account_data {
 	guint registertimeout;
 	guint resendtimeout;
 	gboolean connecting;
-	GaimAccount *account;
-	GaimCircBuffer *txbuf;
+	PurpleAccount *account;
+	PurpleCircBuffer *txbuf;
 	guint tx_handler;
 	gchar *regcallid;
 	GSList *transactions;
@@ -127,4 +127,4 @@ struct transaction {
 	TransCallback callback;
 };
 
-#endif /* _GAIM_SIMPLE_H */
+#endif /* _PURPLE_SIMPLE_H */

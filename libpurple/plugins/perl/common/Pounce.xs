@@ -1,90 +1,90 @@
 #include "module.h"
 
-MODULE = Gaim::Pounce  PACKAGE = Gaim::Pounce  PREFIX = gaim_pounce_
+MODULE = Purple::Pounce  PACKAGE = Purple::Pounce  PREFIX = purple_pounce_
 PROTOTYPES: ENABLE
 
 void
-gaim_pounce_action_register(pounce, name)
-	Gaim::Pounce pounce
+purple_pounce_action_register(pounce, name)
+	Purple::Pounce pounce
 	const char *name
 
 void
-gaim_pounce_destroy(pounce)
-	Gaim::Pounce pounce
+purple_pounce_destroy(pounce)
+	Purple::Pounce pounce
 
 void
-gaim_pounce_destroy_all_by_account(account)
-	Gaim::Account account
+purple_pounce_destroy_all_by_account(account)
+	Purple::Account account
 
 void *
-gaim_pounce_get_data(pounce)
-	Gaim::Pounce pounce
+purple_pounce_get_data(pounce)
+	Purple::Pounce pounce
 
-Gaim::PounceEvent
-gaim_pounce_get_events(pounce)
-	Gaim::Pounce pounce
+Purple::PounceEvent
+purple_pounce_get_events(pounce)
+	Purple::Pounce pounce
 
 const char *
-gaim_pounce_get_pouncee(pounce)
-	Gaim::Pounce pounce
+purple_pounce_get_pouncee(pounce)
+	Purple::Pounce pounce
 
-Gaim::Account
-gaim_pounce_get_pouncer(pounce)
-	Gaim::Pounce pounce
+Purple::Account
+purple_pounce_get_pouncer(pounce)
+	Purple::Pounce pounce
 
 gboolean
-gaim_pounce_get_save(pounce)
-	Gaim::Pounce pounce
+purple_pounce_get_save(pounce)
+	Purple::Pounce pounce
 
 void
-gaim_pounce_set_data(pounce, data)
-	Gaim::Pounce pounce
+purple_pounce_set_data(pounce, data)
+	Purple::Pounce pounce
 	void * data
 
 void
-gaim_pounce_set_events(pounce, events)
-	Gaim::Pounce pounce
-	Gaim::PounceEvent events
+purple_pounce_set_events(pounce, events)
+	Purple::Pounce pounce
+	Purple::PounceEvent events
 
 void
-gaim_pounce_set_pouncee(pounce, pouncee)
-	Gaim::Pounce pounce
+purple_pounce_set_pouncee(pounce, pouncee)
+	Purple::Pounce pounce
 	const char *pouncee
 
 void
-gaim_pounce_set_pouncer(pounce, pouncer)
-	Gaim::Pounce pounce
-	Gaim::Account pouncer
+purple_pounce_set_pouncer(pounce, pouncer)
+	Purple::Pounce pounce
+	Purple::Account pouncer
 
 void
-gaim_pounce_set_save(pounce, save)
-	Gaim::Pounce pounce
+purple_pounce_set_save(pounce, save)
+	Purple::Pounce pounce
 	gboolean save
 
-MODULE = Gaim::Pounce  PACKAGE = Gaim::Pounces  PREFIX = gaim_pounces_
+MODULE = Purple::Pounce  PACKAGE = Purple::Pounces  PREFIX = purple_pounces_
 PROTOTYPES: ENABLE
 
 void
-gaim_pounces_get_all()
+purple_pounces_get_all()
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = gaim_pounces_get_all(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Pounce")));
+	for (l = purple_pounces_get_all(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Pounce")));
 	}
 
-Gaim::Handle
-gaim_pounces_get_handle()
+Purple::Handle
+purple_pounces_get_handle()
 
 void
-gaim_pounces_init()
+purple_pounces_init()
 
 gboolean
-gaim_pounces_load()
+purple_pounces_load()
 
 void
-gaim_pounces_uninit()
+purple_pounces_uninit()
 
 void
-gaim_pounces_unregister_handler(ui)
+purple_pounces_unregister_handler(ui)
 	const char *ui

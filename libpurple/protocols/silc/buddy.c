@@ -1,6 +1,6 @@
 /*
 
-  silcgaim_buddy.c
+  silcpurple_buddy.c
 
   Author: Pekka Riikonen <priikone@silcnet.org>
 
@@ -19,64 +19,64 @@
 
 #include "silcincludes.h"
 #include "silcclient.h"
-#include "silcgaim.h"
+#include "silcpurple.h"
 #include "wb.h"
 
 /***************************** Key Agreement *********************************/
 
 static void
-silcgaim_buddy_keyagr(GaimBlistNode *node, gpointer data);
+silcpurple_buddy_keyagr(PurpleBlistNode *node, gpointer data);
 
 static void
-silcgaim_buddy_keyagr_do(GaimConnection *gc, const char *name,
+silcpurple_buddy_keyagr_do(PurpleConnection *gc, const char *name,
 			 			 gboolean force_local);
 
 typedef struct {
 	char *nick;
-	GaimConnection *gc;
-} *SilcGaimResolve;
+	PurpleConnection *gc;
+} *SilcPurpleResolve;
 
 static void
-silcgaim_buddy_keyagr_resolved(SilcClient client,
+silcpurple_buddy_keyagr_resolved(SilcClient client,
 			       SilcClientConnection conn,
 			       SilcClientEntry *clients,
 			       SilcUInt32 clients_count,
 			       void *context)
 {
-	GaimConnection *gc = client->application;
-	SilcGaimResolve r = context;
+	PurpleConnection *gc = client->application;
+	SilcPurpleResolve r = context;
 	char tmp[256];
 
 	if (!clients) {
 		g_snprintf(tmp, sizeof(tmp),
 			   _("User %s is not present in the network"), r->nick);
-		gaim_notify_error(gc, _("Key Agreement"),
+		purple_notify_error(gc, _("Key Agreement"),
 				  _("Cannot perform the key agreement"), tmp);
 		silc_free(r->nick);
 		silc_free(r);
 		return;
 	}
 
-	silcgaim_buddy_keyagr_do(gc, r->nick, FALSE);
+	silcpurple_buddy_keyagr_do(gc, r->nick, FALSE);
 	silc_free(r->nick);
 	silc_free(r);
 }
 
 typedef struct {
 	gboolean responder;
-} *SilcGaimKeyAgr;
+} *SilcPurpleKeyAgr;
 
 static void
-silcgaim_buddy_keyagr_cb(SilcClient client,
+silcpurple_buddy_keyagr_cb(SilcClient client,
 			 SilcClientConnection conn,
 			 SilcClientEntry client_entry,
 			 SilcKeyAgreementStatus status,
 			 SilcSKEKeyMaterial *key,
 			 void *context)
 {
-	GaimConnection *gc = client->application;
-	SilcGaim sg = gc->proto_data;
-	SilcGaimKeyAgr a = context;
+	PurpleConnection *gc = client->application;
+	SilcPurple sg = gc->proto_data;
+	SilcPurpleKeyAgr a = context;
 
 	if (!sg->conn)
 		return;
@@ -84,7 +84,7 @@ silcgaim_buddy_keyagr_cb(SilcClient client,
 	switch (status) {
 	case SILC_KEY_AGREEMENT_OK:
 		{
-			GaimConversation *convo;
+			PurpleConversation *convo;
 			char tmp[128];
 
 			/* Set the private key for this client */
@@ -95,48 +95,48 @@ silcgaim_buddy_keyagr_cb(SilcClient client,
 
 			
 			/* Open IM window */
-			convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+			convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 									client_entry->nickname, sg->account);
 			if (convo) {
 				/* we don't have windows in the core anymore...but we may want to
 				 * provide some method for asking the UI to show the window
-				gaim_conv_window_show(gaim_conversation_get_window(convo));
+				purple_conv_window_show(purple_conversation_get_window(convo));
 				 */
 			} else {
-				convo = gaim_conversation_new(GAIM_CONV_TYPE_IM, sg->account,
+				convo = purple_conversation_new(PURPLE_CONV_TYPE_IM, sg->account,
 							      client_entry->nickname);
 			}
 			g_snprintf(tmp, sizeof(tmp), "%s [private key]", client_entry->nickname);
-			gaim_conversation_set_title(convo, tmp);
+			purple_conversation_set_title(convo, tmp);
 		}
 		break;
 
 	case SILC_KEY_AGREEMENT_ERROR:
-		gaim_notify_error(gc, _("Key Agreement"),
+		purple_notify_error(gc, _("Key Agreement"),
 				  _("Error occurred during key agreement"), NULL);
 		break;
 
 	case SILC_KEY_AGREEMENT_FAILURE:
-		gaim_notify_error(gc, _("Key Agreement"), _("Key Agreement failed"), NULL);
+		purple_notify_error(gc, _("Key Agreement"), _("Key Agreement failed"), NULL);
 		break;
 
 	case SILC_KEY_AGREEMENT_TIMEOUT:
-		gaim_notify_error(gc, _("Key Agreement"),
+		purple_notify_error(gc, _("Key Agreement"),
 				  _("Timeout during key agreement"), NULL);
 		break;
 
 	case SILC_KEY_AGREEMENT_ABORTED:
-		gaim_notify_error(gc, _("Key Agreement"),
+		purple_notify_error(gc, _("Key Agreement"),
 				  _("Key agreement was aborted"), NULL);
 		break;
 
 	case SILC_KEY_AGREEMENT_ALREADY_STARTED:
-		gaim_notify_error(gc, _("Key Agreement"),
+		purple_notify_error(gc, _("Key Agreement"),
 				  _("Key agreement is already started"), NULL);
 		break;
 
 	case SILC_KEY_AGREEMENT_SELF_DENIED:
-		gaim_notify_error(gc, _("Key Agreement"),
+		purple_notify_error(gc, _("Key Agreement"),
 				  _("Key agreement cannot be started with yourself"),
 				  NULL);
 		break;
@@ -149,16 +149,16 @@ silcgaim_buddy_keyagr_cb(SilcClient client,
 }
 
 static void
-silcgaim_buddy_keyagr_do(GaimConnection *gc, const char *name,
+silcpurple_buddy_keyagr_do(PurpleConnection *gc, const char *name,
 			 gboolean force_local)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClientEntry *clients;
 	SilcUInt32 clients_count;
 	char *local_ip = NULL, *remote_ip = NULL;
 	gboolean local = TRUE;
 	char *nickname;
-	SilcGaimKeyAgr a;
+	SilcPurpleKeyAgr a;
 
 	if (!sg->conn || !name)
 		return;
@@ -171,13 +171,13 @@ silcgaim_buddy_keyagr_do(GaimConnection *gc, const char *name,
 						&clients_count);
 	if (!clients) {
 		/* Resolve unknown user */
-		SilcGaimResolve r = silc_calloc(1, sizeof(*r));
+		SilcPurpleResolve r = silc_calloc(1, sizeof(*r));
 		if (!r)
 			return;
 		r->nick = g_strdup(name);
 		r->gc = gc;
 		silc_client_get_clients(sg->client, sg->conn, nickname, NULL,
-					silcgaim_buddy_keyagr_resolved, r);
+					silcpurple_buddy_keyagr_resolved, r);
 		silc_free(nickname);
 		return;
 	}
@@ -198,14 +198,14 @@ silcgaim_buddy_keyagr_do(GaimConnection *gc, const char *name,
 
 	if (silc_net_check_local_by_sock(sg->conn->sock->sock, NULL, &local_ip)) {
 		/* Check if the IP is private */
-		if (!force_local && silcgaim_ip_is_private(local_ip)) {
+		if (!force_local && silcpurple_ip_is_private(local_ip)) {
 			local = FALSE;
 
 			/* Local IP is private, resolve the remote server IP to see whether
 			   we are talking to Internet or just on LAN. */
 			if (silc_net_check_host_by_sock(sg->conn->sock->sock, NULL,
 							&remote_ip))
-				if (silcgaim_ip_is_private(remote_ip))
+				if (silcpurple_ip_is_private(remote_ip))
 					/* We assume we are in LAN.  Let's provide
 					   the connection point. */
 					local = TRUE;
@@ -226,7 +226,7 @@ silcgaim_buddy_keyagr_do(GaimConnection *gc, const char *name,
 	/* Send the key agreement request */
 	silc_client_send_key_agreement(sg->client, sg->conn, clients[0],
 				       local ? local_ip : NULL, NULL, 0, 60,
-				       silcgaim_buddy_keyagr_cb, a);
+				       silcpurple_buddy_keyagr_cb, a);
 
 	silc_free(local_ip);
 	silc_free(remote_ip);
@@ -239,12 +239,12 @@ typedef struct {
 	SilcClientID client_id;
 	char *hostname;
 	SilcUInt16 port;
-} *SilcGaimKeyAgrAsk;
+} *SilcPurpleKeyAgrAsk;
 
 static void
-silcgaim_buddy_keyagr_request_cb(SilcGaimKeyAgrAsk a, gint id)
+silcpurple_buddy_keyagr_request_cb(SilcPurpleKeyAgrAsk a, gint id)
 {
-	SilcGaimKeyAgr ai;
+	SilcPurpleKeyAgr ai;
 	SilcClientEntry client_entry;
 
 	if (id != 1)
@@ -254,7 +254,7 @@ silcgaim_buddy_keyagr_request_cb(SilcGaimKeyAgrAsk a, gint id)
 	client_entry = silc_client_get_client_by_id(a->client, a->conn,
 						    &a->client_id);
 	if (!client_entry) {
-		gaim_notify_error(a->client->application, _("Key Agreement"),
+		purple_notify_error(a->client->application, _("Key Agreement"),
 				  _("The remote user is not present in the network any more"),
 				  NULL);
 		goto out;
@@ -269,11 +269,11 @@ silcgaim_buddy_keyagr_request_cb(SilcGaimKeyAgrAsk a, gint id)
 		ai->responder = FALSE;
 		silc_client_perform_key_agreement(a->client, a->conn, client_entry,
 						  a->hostname, a->port,
-						  silcgaim_buddy_keyagr_cb, ai);
+						  silcpurple_buddy_keyagr_cb, ai);
 	} else {
 		/* Send request.  Force us as the point of connection since requestor
 		   did not provide the point of connection. */
-		silcgaim_buddy_keyagr_do(a->client->application,
+		silcpurple_buddy_keyagr_do(a->client->application,
 					 client_entry->nickname, TRUE);
 	}
 
@@ -282,13 +282,13 @@ silcgaim_buddy_keyagr_request_cb(SilcGaimKeyAgrAsk a, gint id)
 	silc_free(a);
 }
 
-void silcgaim_buddy_keyagr_request(SilcClient client,
+void silcpurple_buddy_keyagr_request(SilcClient client,
 				   SilcClientConnection conn,
 				   SilcClientEntry client_entry,
 				   const char *hostname, SilcUInt16 port)
 {
 	char tmp[128], tmp2[128];
-	SilcGaimKeyAgrAsk a;
+	SilcPurpleKeyAgrAsk a;
 
 	g_snprintf(tmp, sizeof(tmp),
 		   _("Key agreement request received from %s. Would you like to "
@@ -308,38 +308,38 @@ void silcgaim_buddy_keyagr_request(SilcClient client,
 		a->hostname = strdup(hostname);
 	a->port = port;
 
-	gaim_request_action(client->application, _("Key Agreement Request"), tmp,
+	purple_request_action(client->application, _("Key Agreement Request"), tmp,
 			    hostname ? tmp2 : NULL, 1, a, 2,
-			    _("Yes"), G_CALLBACK(silcgaim_buddy_keyagr_request_cb),
-			    _("No"), G_CALLBACK(silcgaim_buddy_keyagr_request_cb));
+			    _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
+			    _("No"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb));
 }
 
 static void
-silcgaim_buddy_keyagr(GaimBlistNode *node, gpointer data)
+silcpurple_buddy_keyagr(PurpleBlistNode *node, gpointer data)
 {
-	GaimBuddy *buddy;
+	PurpleBuddy *buddy;
 
-	buddy = (GaimBuddy *)node;
-	silcgaim_buddy_keyagr_do(buddy->account->gc, buddy->name, FALSE);
+	buddy = (PurpleBuddy *)node;
+	silcpurple_buddy_keyagr_do(buddy->account->gc, buddy->name, FALSE);
 }
 
 
 /**************************** Static IM Key **********************************/
 
 static void
-silcgaim_buddy_resetkey(GaimBlistNode *node, gpointer data)
+silcpurple_buddy_resetkey(PurpleBlistNode *node, gpointer data)
 {
-	GaimBuddy *b;
-	GaimConnection *gc;
-        SilcGaim sg;
+	PurpleBuddy *b;
+	PurpleConnection *gc;
+        SilcPurple sg;
 	char *nickname;
 	SilcClientEntry *clients;
 	SilcUInt32 clients_count;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
-	b = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(b->account);
+	b = (PurpleBuddy *) node;
+	gc = purple_account_get_connection(b->account);
 	sg = gc->proto_data;
 
 	if (!silc_parse_userfqdn(b->name, &nickname, NULL))
@@ -365,13 +365,13 @@ typedef struct {
 	SilcClient client;
 	SilcClientConnection conn;
 	SilcClientID client_id;
-} *SilcGaimPrivkey;
+} *SilcPurplePrivkey;
 
 static void
-silcgaim_buddy_privkey(GaimConnection *gc, const char *name);
+silcpurple_buddy_privkey(PurpleConnection *gc, const char *name);
 
 static void
-silcgaim_buddy_privkey_cb(SilcGaimPrivkey p, const char *passphrase)
+silcpurple_buddy_privkey_cb(SilcPurplePrivkey p, const char *passphrase)
 {
 	SilcClientEntry client_entry;
 
@@ -384,7 +384,7 @@ silcgaim_buddy_privkey_cb(SilcGaimPrivkey p, const char *passphrase)
 	client_entry = silc_client_get_client_by_id(p->client, p->conn,
 						    &p->client_id);
 	if (!client_entry) {
-		gaim_notify_error(p->client->application, _("IM With Password"),
+		purple_notify_error(p->client->application, _("IM With Password"),
 				  _("The remote user is not present in the network any more"),
 				  NULL);
 		silc_free(p);
@@ -407,7 +407,7 @@ silcgaim_buddy_privkey_cb(SilcGaimPrivkey p, const char *passphrase)
 }
 
 static void
-silcgaim_buddy_privkey_resolved(SilcClient client,
+silcpurple_buddy_privkey_resolved(SilcClient client,
 				SilcClientConnection conn,
 				SilcClientEntry *clients,
 				SilcUInt32 clients_count,
@@ -419,22 +419,22 @@ silcgaim_buddy_privkey_resolved(SilcClient client,
 		g_snprintf(tmp, sizeof(tmp),
 			   _("User %s is not present in the network"),
 			   (const char *)context);
-		gaim_notify_error(client->application, _("IM With Password"),
+		purple_notify_error(client->application, _("IM With Password"),
 				  _("Cannot set IM key"), tmp);
 		g_free(context);
 		return;
 	}
 
-	silcgaim_buddy_privkey(client->application, context);
+	silcpurple_buddy_privkey(client->application, context);
 	silc_free(context);
 }
 
 static void
-silcgaim_buddy_privkey(GaimConnection *gc, const char *name)
+silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 {
-        SilcGaim sg = gc->proto_data;
+        SilcPurple sg = gc->proto_data;
 	char *nickname;
-	SilcGaimPrivkey p;
+	SilcPurplePrivkey p;
 	SilcClientEntry *clients;
 	SilcUInt32 clients_count;
 
@@ -449,7 +449,7 @@ silcgaim_buddy_privkey(GaimConnection *gc, const char *name)
 						&clients_count);
 	if (!clients) {
 		silc_client_get_clients(sg->client, sg->conn, nickname, NULL,
-					silcgaim_buddy_privkey_resolved,
+					silcpurple_buddy_privkey_resolved,
 					g_strdup(name));
 		silc_free(nickname);
 		return;
@@ -461,10 +461,10 @@ silcgaim_buddy_privkey(GaimConnection *gc, const char *name)
 	p->client = sg->client;
 	p->conn = sg->conn;
 	p->client_id = *clients[0]->id;
-        gaim_request_input(gc, _("IM With Password"), NULL,
+        purple_request_input(gc, _("IM With Password"), NULL,
                            _("Set IM Password"), NULL, FALSE, TRUE, NULL,
-                           _("OK"), G_CALLBACK(silcgaim_buddy_privkey_cb),
-                           _("Cancel"), G_CALLBACK(silcgaim_buddy_privkey_cb),
+                           _("OK"), G_CALLBACK(silcpurple_buddy_privkey_cb),
+                           _("Cancel"), G_CALLBACK(silcpurple_buddy_privkey_cb),
 			   p);
 
 	silc_free(clients);
@@ -472,17 +472,17 @@ silcgaim_buddy_privkey(GaimConnection *gc, const char *name)
 }
 
 static void
-silcgaim_buddy_privkey_menu(GaimBlistNode *node, gpointer data)
+silcpurple_buddy_privkey_menu(PurpleBlistNode *node, gpointer data)
 {
-	GaimBuddy *buddy;
-	GaimConnection *gc;
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
-	buddy = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(buddy->account);
+	buddy = (PurpleBuddy *) node;
+	gc = purple_account_get_connection(buddy->account);
 
-	silcgaim_buddy_privkey(gc, buddy->name);
+	silcpurple_buddy_privkey(gc, buddy->name);
 }
 
 
@@ -492,13 +492,13 @@ typedef struct {
 	SilcClient client;
 	SilcClientConnection conn;
 	SilcClientID client_id;
-} *SilcGaimBuddyGetkey;
+} *SilcPurpleBuddyGetkey;
 
 static void
-silcgaim_buddy_getkey(GaimConnection *gc, const char *name);
+silcpurple_buddy_getkey(PurpleConnection *gc, const char *name);
 
 static void
-silcgaim_buddy_getkey_cb(SilcGaimBuddyGetkey g,
+silcpurple_buddy_getkey_cb(SilcPurpleBuddyGetkey g,
 			 SilcClientCommandReplyContext cmd)
 {
 	SilcClientEntry client_entry;
@@ -509,7 +509,7 @@ silcgaim_buddy_getkey_cb(SilcGaimBuddyGetkey g,
 	client_entry = silc_client_get_client_by_id(g->client, g->conn,
 						    &g->client_id);
 	if (!client_entry) {
-		gaim_notify_error(g->client->application, _("Get Public Key"),
+		purple_notify_error(g->client->application, _("Get Public Key"),
 				  _("The remote user is not present in the network any more"),
 				  NULL);
 		silc_free(g);
@@ -523,7 +523,7 @@ silcgaim_buddy_getkey_cb(SilcGaimBuddyGetkey g,
 
 	/* Now verify the public key */
 	pk = silc_pkcs_public_key_encode(client_entry->public_key, &pk_len);
-	silcgaim_verify_public_key(g->client, g->conn, client_entry->nickname,
+	silcpurple_verify_public_key(g->client, g->conn, client_entry->nickname,
 				   SILC_SOCKET_TYPE_CLIENT,
 				   pk, pk_len, SILC_SKE_PK_TYPE_SILC,
 				   NULL, NULL);
@@ -532,7 +532,7 @@ silcgaim_buddy_getkey_cb(SilcGaimBuddyGetkey g,
 }
 
 static void
-silcgaim_buddy_getkey_resolved(SilcClient client,
+silcpurple_buddy_getkey_resolved(SilcClient client,
 			       SilcClientConnection conn,
 			       SilcClientEntry *clients,
 			       SilcUInt32 clients_count,
@@ -544,25 +544,25 @@ silcgaim_buddy_getkey_resolved(SilcClient client,
 		g_snprintf(tmp, sizeof(tmp),
 			   _("User %s is not present in the network"),
 			   (const char *)context);
-		gaim_notify_error(client->application, _("Get Public Key"),
+		purple_notify_error(client->application, _("Get Public Key"),
 				  _("Cannot fetch the public key"), tmp);
 		g_free(context);
 		return;
 	}
 
-	silcgaim_buddy_getkey(client->application, context);
+	silcpurple_buddy_getkey(client->application, context);
 	silc_free(context);
 }
 
 static void
-silcgaim_buddy_getkey(GaimConnection *gc, const char *name)
+silcpurple_buddy_getkey(PurpleConnection *gc, const char *name)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientEntry *clients;
 	SilcUInt32 clients_count;
-	SilcGaimBuddyGetkey g;
+	SilcPurpleBuddyGetkey g;
 	char *nickname;
 
 	if (!name)
@@ -576,7 +576,7 @@ silcgaim_buddy_getkey(GaimConnection *gc, const char *name)
 						&clients_count);
 	if (!clients) {
 		silc_client_get_clients(client, conn, nickname, NULL,
-					silcgaim_buddy_getkey_resolved,
+					silcpurple_buddy_getkey_resolved,
 					g_strdup(name));
 		silc_free(nickname);
 		return;
@@ -593,50 +593,50 @@ silcgaim_buddy_getkey(GaimConnection *gc, const char *name)
 				 clients[0]->nickname, NULL);
 	silc_client_command_pending(conn, SILC_COMMAND_GETKEY,
 				    conn->cmd_ident,
-				    (SilcCommandCb)silcgaim_buddy_getkey_cb, g);
+				    (SilcCommandCb)silcpurple_buddy_getkey_cb, g);
 	silc_free(clients);
 	silc_free(nickname);
 }
 
 static void
-silcgaim_buddy_getkey_menu(GaimBlistNode *node, gpointer data)
+silcpurple_buddy_getkey_menu(PurpleBlistNode *node, gpointer data)
 {
-	GaimBuddy *buddy;
-	GaimConnection *gc;
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
-	buddy = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(buddy->account);
+	buddy = (PurpleBuddy *) node;
+	gc = purple_account_get_connection(buddy->account);
 
-	silcgaim_buddy_getkey(gc, buddy->name);
+	silcpurple_buddy_getkey(gc, buddy->name);
 }
 
 static void
-silcgaim_buddy_showkey(GaimBlistNode *node, gpointer data)
+silcpurple_buddy_showkey(PurpleBlistNode *node, gpointer data)
 {
-	GaimBuddy *b;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleBuddy *b;
+	PurpleConnection *gc;
+	SilcPurple sg;
 	SilcPublicKey public_key;
 	const char *pkfile;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
-	b = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(b->account);
+	b = (PurpleBuddy *) node;
+	gc = purple_account_get_connection(b->account);
 	sg = gc->proto_data;
 
-	pkfile = gaim_blist_node_get_string(node, "public-key");
+	pkfile = purple_blist_node_get_string(node, "public-key");
 	if (!silc_pkcs_load_public_key(pkfile, &public_key, SILC_PKCS_FILE_PEM) &&
 	    !silc_pkcs_load_public_key(pkfile, &public_key, SILC_PKCS_FILE_BIN)) {
-		gaim_notify_error(gc,
+		purple_notify_error(gc,
 				  _("Show Public Key"),
 				  _("Could not load public key"), NULL);
 		return;
 	}
 
-	silcgaim_show_public_key(sg, b->name, public_key, NULL, NULL);
+	silcpurple_show_public_key(sg, b->name, public_key, NULL, NULL);
 	silc_pkcs_public_key_free(public_key);
 }
 
@@ -649,7 +649,7 @@ silcgaim_buddy_showkey(GaimBlistNode *node, gpointer data)
    associate public keys to buddies and use those to search and watch
    in the network.
 
-   The problem is that Gaim does not return GaimBuddy contexts to the
+   The problem is that Purple does not return PurpleBuddy contexts to the
    callbacks but the buddy names.  Naturally, this is not going to work
    with SILC.  But, for now, we have to do what we can... */
 
@@ -657,30 +657,30 @@ typedef struct {
 	SilcClient client;
 	SilcClientConnection conn;
 	SilcClientID client_id;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 	unsigned char *offline_pk;
 	SilcUInt32 offline_pk_len;
 	unsigned int offline        : 1;
 	unsigned int pubkey_search  : 1;
 	unsigned int init           : 1;
-} *SilcGaimBuddyRes;
+} *SilcPurpleBuddyRes;
 
 static void
-silcgaim_add_buddy_ask_pk_cb(SilcGaimBuddyRes r, gint id);
+silcpurple_add_buddy_ask_pk_cb(SilcPurpleBuddyRes r, gint id);
 static void
-silcgaim_add_buddy_resolved(SilcClient client,
+silcpurple_add_buddy_resolved(SilcClient client,
 			    SilcClientConnection conn,
 			    SilcClientEntry *clients,
 			    SilcUInt32 clients_count,
 			    void *context);
 
-void silcgaim_get_info(GaimConnection *gc, const char *who)
+void silcpurple_get_info(PurpleConnection *gc, const char *who)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientEntry client_entry;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 	const char *filename, *nick = who;
 	char tmp[256];
 
@@ -693,11 +693,11 @@ void silcgaim_get_info(GaimConnection *gc, const char *who)
 	if (strlen(who) > 2 && who[0] == '*' && who[1] == '@')
 		nick = who + 2;
 
-	b = gaim_find_buddy(gc->account, nick);
+	b = purple_find_buddy(gc->account, nick);
 	if (b) {
 		/* See if we have this buddy's public key.  If we do use that
 		   to search the details. */
-		filename = gaim_blist_node_get_string((GaimBlistNode *)b, "public-key");
+		filename = purple_blist_node_get_string((PurpleBlistNode *)b, "public-key");
 		if (filename) {
 			/* Call WHOIS.  The user info is displayed in the WHOIS
 			   command reply. */
@@ -709,7 +709,7 @@ void silcgaim_get_info(GaimConnection *gc, const char *who)
 		if (!b->proto_data) {
 			g_snprintf(tmp, sizeof(tmp),
 				   _("User %s is not present in the network"), b->name);
-			gaim_notify_error(gc, _("User Information"),
+			purple_notify_error(gc, _("User Information"),
 					  _("Cannot get user information"), tmp);
 			return;
 		}
@@ -728,23 +728,23 @@ void silcgaim_get_info(GaimConnection *gc, const char *who)
 }
 
 static void
-silcgaim_add_buddy_pk_no(SilcGaimBuddyRes r)
+silcpurple_add_buddy_pk_no(SilcPurpleBuddyRes r)
 {
 	char tmp[512];
 	g_snprintf(tmp, sizeof(tmp), _("The %s buddy is not trusted"),
 		   r->b->name);
-	gaim_notify_error(r->client->application, _("Add Buddy"), tmp,
+	purple_notify_error(r->client->application, _("Add Buddy"), tmp,
 			  _("You cannot receive buddy notifications until you "
 			    "import his/her public key.  You can use the Get Public Key "
 			    "command to get the public key."));
-	gaim_prpl_got_user_status(gaim_buddy_get_account(r->b), gaim_buddy_get_name(r->b), SILCGAIM_STATUS_ID_OFFLINE, NULL);
+	purple_prpl_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
 }
 
 static void
-silcgaim_add_buddy_save(bool success, void *context)
+silcpurple_add_buddy_save(bool success, void *context)
 {
-	SilcGaimBuddyRes r = context;
-	GaimBuddy *b = r->b;
+	SilcPurpleBuddyRes r = context;
+	PurpleBuddy *b = r->b;
 	SilcClient client = r->client;
 	SilcClientEntry client_entry;
 	SilcAttributePayload attr;
@@ -762,7 +762,7 @@ silcgaim_add_buddy_save(bool success, void *context)
 
 	if (!success) {
 		/* The user did not trust the public key. */
-		silcgaim_add_buddy_pk_no(r);
+		silcpurple_add_buddy_pk_no(r);
 		silc_free(r);
 		return;
 	}
@@ -777,9 +777,9 @@ silcgaim_add_buddy_save(bool success, void *context)
 				fingerprint[i] = '_';
 		g_snprintf(filename, sizeof(filename) - 1,
 			   "%s" G_DIR_SEPARATOR_S "clientkeys" G_DIR_SEPARATOR_S "clientkey_%s.pub",
-			   silcgaim_silcdir(), fingerprint);
-		gaim_blist_node_set_string((GaimBlistNode *)b, "public-key", filename);
-		gaim_prpl_got_user_status(gaim_buddy_get_account(r->b), gaim_buddy_get_name(r->b), SILCGAIM_STATUS_ID_OFFLINE, NULL);
+			   silcpurple_silcdir(), fingerprint);
+		purple_blist_node_set_string((PurpleBlistNode *)b, "public-key", filename);
+		purple_prpl_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_OFFLINE, NULL);
 		silc_free(fingerprint);
 		silc_free(r->offline_pk);
 		silc_free(r);
@@ -929,7 +929,7 @@ silcgaim_add_buddy_save(bool success, void *context)
 		tmp = fingerprint + strlen(fingerprint) - 9;
 		g_snprintf(filename, sizeof(filename) - 1,
 			   "%s" G_DIR_SEPARATOR_S "friends" G_DIR_SEPARATOR_S "%s",
-			   silcgaim_silcdir(), tmp);
+			   silcpurple_silcdir(), tmp);
 
 		pw = getpwuid(getuid());
 		if (!pw)
@@ -987,7 +987,7 @@ silcgaim_add_buddy_save(bool success, void *context)
 					SilcUInt32 data_len;
 					data = silc_mime_get_data(m, &data_len);
 					if (data)
-						gaim_buddy_icons_set_for_user(gaim_buddy_get_account(r->b), gaim_buddy_get_name(r->b), (void *)data, data_len);
+						purple_buddy_icons_set_for_user(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), (void *)data, data_len);
 				}
 				silc_mime_free(m);
 			}
@@ -1000,11 +1000,11 @@ silcgaim_add_buddy_save(bool success, void *context)
 	memset(filename, 0, sizeof(filename));
 	g_snprintf(filename, sizeof(filename) - 1,
 		   "%s" G_DIR_SEPARATOR_S "clientkeys" G_DIR_SEPARATOR_S "clientkey_%s.pub",
-		   silcgaim_silcdir(), fingerprint);
-	gaim_blist_node_set_string((GaimBlistNode *)b, "public-key", filename);
+		   silcpurple_silcdir(), fingerprint);
+	purple_blist_node_set_string((PurpleBlistNode *)b, "public-key", filename);
 
 	/* Update online status */
-	gaim_prpl_got_user_status(gaim_buddy_get_account(r->b), gaim_buddy_get_name(r->b), SILCGAIM_STATUS_ID_AVAILABLE, NULL);
+	purple_prpl_got_user_status(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), SILCPURPLE_STATUS_ID_AVAILABLE, NULL);
 
 	/* Finally, start watching this user so we receive its status
 	   changes from the server */
@@ -1017,70 +1017,70 @@ silcgaim_add_buddy_save(bool success, void *context)
 }
 
 static void
-silcgaim_add_buddy_ask_import(void *user_data, const char *name)
+silcpurple_add_buddy_ask_import(void *user_data, const char *name)
 {
-	SilcGaimBuddyRes r = (SilcGaimBuddyRes)user_data;
+	SilcPurpleBuddyRes r = (SilcPurpleBuddyRes)user_data;
 	SilcPublicKey public_key;
 
 	/* Load the public key */
 	if (!silc_pkcs_load_public_key(name, &public_key, SILC_PKCS_FILE_PEM) &&
 	    !silc_pkcs_load_public_key(name, &public_key, SILC_PKCS_FILE_BIN)) {
-		silcgaim_add_buddy_ask_pk_cb(r, 0);
-		gaim_notify_error(r->client->application,
+		silcpurple_add_buddy_ask_pk_cb(r, 0);
+		purple_notify_error(r->client->application,
 				  _("Add Buddy"), _("Could not load public key"), NULL);
 		return;
 	}
 
 	/* Now verify the public key */
 	r->offline_pk = silc_pkcs_public_key_encode(public_key, &r->offline_pk_len);
-	silcgaim_verify_public_key(r->client, r->conn, r->b->name,
+	silcpurple_verify_public_key(r->client, r->conn, r->b->name,
 				   SILC_SOCKET_TYPE_CLIENT,
 				   r->offline_pk, r->offline_pk_len,
 				   SILC_SKE_PK_TYPE_SILC,
-				   silcgaim_add_buddy_save, r);
+				   silcpurple_add_buddy_save, r);
 }
 
 static void
-silcgaim_add_buddy_ask_pk_cancel(void *user_data, const char *name)
+silcpurple_add_buddy_ask_pk_cancel(void *user_data, const char *name)
 {
-	SilcGaimBuddyRes r = (SilcGaimBuddyRes)user_data;
+	SilcPurpleBuddyRes r = (SilcPurpleBuddyRes)user_data;
 
 	/* The user did not import public key.  The buddy is unusable. */
-	silcgaim_add_buddy_pk_no(r);
+	silcpurple_add_buddy_pk_no(r);
 	silc_free(r);
 }
 
 static void
-silcgaim_add_buddy_ask_pk_cb(SilcGaimBuddyRes r, gint id)
+silcpurple_add_buddy_ask_pk_cb(SilcPurpleBuddyRes r, gint id)
 {
 	if (id != 0) {
 		/* The user did not import public key.  The buddy is unusable. */
-		silcgaim_add_buddy_pk_no(r);
+		silcpurple_add_buddy_pk_no(r);
 		silc_free(r);
 		return;
 	}
 
 	/* Open file selector to select the public key. */
-	gaim_request_file(r->client->application, _("Open..."), NULL, FALSE,
-			  G_CALLBACK(silcgaim_add_buddy_ask_import),
-			  G_CALLBACK(silcgaim_add_buddy_ask_pk_cancel), r);
+	purple_request_file(r->client->application, _("Open..."), NULL, FALSE,
+			  G_CALLBACK(silcpurple_add_buddy_ask_import),
+			  G_CALLBACK(silcpurple_add_buddy_ask_pk_cancel), r);
 }
 
 static void
-silcgaim_add_buddy_ask_pk(SilcGaimBuddyRes r)
+silcpurple_add_buddy_ask_pk(SilcPurpleBuddyRes r)
 {
 	char tmp[512];
 	g_snprintf(tmp, sizeof(tmp), _("The %s buddy is not present in the network"),
 		   r->b->name);
-	gaim_request_action(r->client->application, _("Add Buddy"), tmp,
+	purple_request_action(r->client->application, _("Add Buddy"), tmp,
 			    _("To add the buddy you must import his/her public key. "
 			      "Press Import to import a public key."), 0, r, 2,
-			    _("Cancel"), G_CALLBACK(silcgaim_add_buddy_ask_pk_cb),
-			    _("_Import..."), G_CALLBACK(silcgaim_add_buddy_ask_pk_cb));
+			    _("Cancel"), G_CALLBACK(silcpurple_add_buddy_ask_pk_cb),
+			    _("_Import..."), G_CALLBACK(silcpurple_add_buddy_ask_pk_cb));
 }
 
 static void
-silcgaim_add_buddy_getkey_cb(SilcGaimBuddyRes r,
+silcpurple_add_buddy_getkey_cb(SilcPurpleBuddyRes r,
 			     SilcClientCommandReplyContext cmd)
 {
 	SilcClientEntry client_entry;
@@ -1095,65 +1095,65 @@ silcgaim_add_buddy_getkey_cb(SilcGaimBuddyRes r,
 		   to associate a public key with the buddy or the buddy
 		   cannot be added. */
 		r->offline = TRUE;
-		silcgaim_add_buddy_ask_pk(r);
+		silcpurple_add_buddy_ask_pk(r);
 		return;
 	}
 
 	/* Now verify the public key */
 	pk = silc_pkcs_public_key_encode(client_entry->public_key, &pk_len);
-	silcgaim_verify_public_key(r->client, r->conn, client_entry->nickname,
+	silcpurple_verify_public_key(r->client, r->conn, client_entry->nickname,
 				   SILC_SOCKET_TYPE_CLIENT,
 				   pk, pk_len, SILC_SKE_PK_TYPE_SILC,
-				   silcgaim_add_buddy_save, r);
+				   silcpurple_add_buddy_save, r);
 	silc_free(pk);
 }
 
 static void
-silcgaim_add_buddy_select_cb(SilcGaimBuddyRes r, GaimRequestFields *fields)
+silcpurple_add_buddy_select_cb(SilcPurpleBuddyRes r, PurpleRequestFields *fields)
 {
-	GaimRequestField *f;
+	PurpleRequestField *f;
 	const GList *list;
 	SilcClientEntry client_entry;
 
-	f = gaim_request_fields_get_field(fields, "list");
-	list = gaim_request_field_list_get_selected(f);
+	f = purple_request_fields_get_field(fields, "list");
+	list = purple_request_field_list_get_selected(f);
 	if (!list) {
 		/* The user did not select any user. */
-		silcgaim_add_buddy_pk_no(r);
+		silcpurple_add_buddy_pk_no(r);
 		silc_free(r);
 		return;
 	}
 
-	client_entry = gaim_request_field_list_get_data(f, list->data);
-	silcgaim_add_buddy_resolved(r->client, r->conn, &client_entry, 1, r);
+	client_entry = purple_request_field_list_get_data(f, list->data);
+	silcpurple_add_buddy_resolved(r->client, r->conn, &client_entry, 1, r);
 }
 
 static void
-silcgaim_add_buddy_select_cancel(SilcGaimBuddyRes r, GaimRequestFields *fields)
+silcpurple_add_buddy_select_cancel(SilcPurpleBuddyRes r, PurpleRequestFields *fields)
 {
 	/* The user did not select any user. */
-	silcgaim_add_buddy_pk_no(r);
+	silcpurple_add_buddy_pk_no(r);
 	silc_free(r);
 }
 
 static void
-silcgaim_add_buddy_select(SilcGaimBuddyRes r,
+silcpurple_add_buddy_select(SilcPurpleBuddyRes r,
 			  SilcClientEntry *clients,
 			  SilcUInt32 clients_count)
 {
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *g;
-	GaimRequestField *f;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *g;
+	PurpleRequestField *f;
 	char tmp[512], tmp2[128];
 	int i;
 	char *fingerprint;
 
-	fields = gaim_request_fields_new();
-	g = gaim_request_field_group_new(NULL);
-	f = gaim_request_field_list_new("list", NULL);
-	gaim_request_field_group_add_field(g, f);
-	gaim_request_field_list_set_multi_select(f, FALSE);
-	gaim_request_fields_add_group(fields, g);
+	fields = purple_request_fields_new();
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_list_new("list", NULL);
+	purple_request_field_group_add_field(g, f);
+	purple_request_field_list_set_multi_select(f, FALSE);
+	purple_request_fields_add_group(fields, g);
 
 	for (i = 0; i < clients_count; i++) {
 		fingerprint = NULL;
@@ -1167,11 +1167,11 @@ silcgaim_add_buddy_select(SilcGaimBuddyRes r,
 			   clients[i]->username, clients[i]->hostname ?
 			   clients[i]->hostname : "",
 			   fingerprint ? tmp2 : "");
-		gaim_request_field_list_add(f, tmp, clients[i]);
+		purple_request_field_list_add(f, tmp, clients[i]);
 		silc_free(fingerprint);
 	}
 
-	gaim_request_fields(r->client->application, _("Add Buddy"),
+	purple_request_fields(r->client->application, _("Add Buddy"),
 				_("Select correct user"),
 				r->pubkey_search
 					? _("More than one user was found with the same public key. Select "
@@ -1179,26 +1179,26 @@ silcgaim_add_buddy_select(SilcGaimBuddyRes r,
 					: _("More than one user was found with the same name. Select "
 						"the correct user from the list to add to the buddy list."),
 				fields,
-				_("OK"), G_CALLBACK(silcgaim_add_buddy_select_cb),
-				_("Cancel"), G_CALLBACK(silcgaim_add_buddy_select_cancel), r);
+				_("OK"), G_CALLBACK(silcpurple_add_buddy_select_cb),
+				_("Cancel"), G_CALLBACK(silcpurple_add_buddy_select_cancel), r);
 }
 
 static void
-silcgaim_add_buddy_resolved(SilcClient client,
+silcpurple_add_buddy_resolved(SilcClient client,
 			    SilcClientConnection conn,
 			    SilcClientEntry *clients,
 			    SilcUInt32 clients_count,
 			    void *context)
 {
-	SilcGaimBuddyRes r = context;
-	GaimBuddy *b = r->b;
+	SilcPurpleBuddyRes r = context;
+	PurpleBuddy *b = r->b;
 	SilcAttributePayload pub;
 	SilcAttributeObjPk userpk;
 	unsigned char *pk;
 	SilcUInt32 pk_len;
 	const char *filename;
 
-	filename = gaim_blist_node_get_string((GaimBlistNode *)b, "public-key");
+	filename = purple_blist_node_get_string((PurpleBlistNode *)b, "public-key");
 
 	/* If the buddy is offline/nonexistent, we will require user
 	   to associate a public key with the buddy or the buddy
@@ -1213,9 +1213,9 @@ silcgaim_add_buddy_resolved(SilcClient client,
 		/* If the user has already associated a public key, try loading it
 		 * before prompting the user to load it again */
 		if (filename != NULL)
-			silcgaim_add_buddy_ask_import(r, filename);
+			silcpurple_add_buddy_ask_import(r, filename);
 		else
-			silcgaim_add_buddy_ask_pk(r);
+			silcpurple_add_buddy_ask_pk(r);
 		return;
 	}
 
@@ -1227,7 +1227,7 @@ silcgaim_add_buddy_resolved(SilcClient client,
 			return;
 		}
 
-		silcgaim_add_buddy_select(r, clients, clients_count);
+		silcpurple_add_buddy_select(r, clients, clients_count);
 		return;
 	}
 
@@ -1247,7 +1247,7 @@ silcgaim_add_buddy_resolved(SilcClient client,
 			}
 		} else {
 			/* Verify from user which one is correct */
-			silcgaim_add_buddy_select(r, clients, clients_count);
+			silcpurple_add_buddy_select(r, clients, clients_count);
 			return;
 		}
 	}
@@ -1261,7 +1261,7 @@ silcgaim_add_buddy_resolved(SilcClient client,
 	/* Get the public key from attributes, if not present then
 	   resolve it with GETKEY unless we have it cached already. */
 	if (clients[0]->attrs && !clients[0]->public_key) {
-		pub = silcgaim_get_attr(clients[0]->attrs,
+		pub = silcpurple_get_attr(clients[0]->attrs,
 					SILC_ATTRIBUTE_USER_PUBLIC_KEY);
 		if (!pub || !silc_attribute_get_object(pub, (void *)&userpk,
 						       sizeof(userpk))) {
@@ -1270,7 +1270,7 @@ silcgaim_add_buddy_resolved(SilcClient client,
 						 "GETKEY", clients[0]->nickname, NULL);
 			silc_client_command_pending(conn, SILC_COMMAND_GETKEY,
 						    conn->cmd_ident,
-						    (SilcCommandCb)silcgaim_add_buddy_getkey_cb,
+						    (SilcCommandCb)silcpurple_add_buddy_getkey_cb,
 						    r);
 			return;
 		}
@@ -1288,7 +1288,7 @@ silcgaim_add_buddy_resolved(SilcClient client,
 						 "GETKEY", clients[0]->nickname, NULL);
 			silc_client_command_pending(conn, SILC_COMMAND_GETKEY,
 						    conn->cmd_ident,
-						    (SilcCommandCb)silcgaim_add_buddy_getkey_cb,
+						    (SilcCommandCb)silcpurple_add_buddy_getkey_cb,
 						    r);
 			return;
 		}
@@ -1298,27 +1298,27 @@ silcgaim_add_buddy_resolved(SilcClient client,
 					 "GETKEY", clients[0]->nickname, NULL);
 		silc_client_command_pending(conn, SILC_COMMAND_GETKEY,
 					    conn->cmd_ident,
-					    (SilcCommandCb)silcgaim_add_buddy_getkey_cb,
+					    (SilcCommandCb)silcpurple_add_buddy_getkey_cb,
 					    r);
 		return;
 	}
 
 	/* We have the public key, verify it. */
 	pk = silc_pkcs_public_key_encode(clients[0]->public_key, &pk_len);
-	silcgaim_verify_public_key(client, conn, clients[0]->nickname,
+	silcpurple_verify_public_key(client, conn, clients[0]->nickname,
 				   SILC_SOCKET_TYPE_CLIENT,
 				   pk, pk_len, SILC_SKE_PK_TYPE_SILC,
-				   silcgaim_add_buddy_save, r);
+				   silcpurple_add_buddy_save, r);
 	silc_free(pk);
 }
 
 static void
-silcgaim_add_buddy_i(GaimConnection *gc, GaimBuddy *b, gboolean init)
+silcpurple_add_buddy_i(PurpleConnection *gc, PurpleBuddy *b, gboolean init)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
-	SilcGaimBuddyRes r;
+	SilcPurpleBuddyRes r;
 	SilcBuffer attrs;
 	const char *filename, *name = b->name;
 
@@ -1332,7 +1332,7 @@ silcgaim_add_buddy_i(GaimConnection *gc, GaimBuddy *b, gboolean init)
 
 	/* See if we have this buddy's public key.  If we do use that
 	   to search the details. */
-	filename = gaim_blist_node_get_string((GaimBlistNode *)b, "public-key");
+	filename = purple_blist_node_get_string((PurpleBlistNode *)b, "public-key");
 	if (filename) {
 		SilcPublicKey public_key;
 		SilcAttributeObjPk userpk;
@@ -1374,66 +1374,66 @@ silcgaim_add_buddy_i(GaimConnection *gc, GaimBuddy *b, gboolean init)
 
 	/* Resolve */
 	silc_client_get_clients_whois(client, conn, name, NULL, attrs,
-				      silcgaim_add_buddy_resolved, r);
+				      silcpurple_add_buddy_resolved, r);
 	silc_buffer_free(attrs);
 }
 
-void silcgaim_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
+void silcpurple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
-	silcgaim_add_buddy_i(gc, buddy, FALSE);
+	silcpurple_add_buddy_i(gc, buddy, FALSE);
 }
 
-void silcgaim_send_buddylist(GaimConnection *gc)
+void silcpurple_send_buddylist(PurpleConnection *gc)
 {
-	GaimBuddyList *blist;
-	GaimBlistNode *gnode, *cnode, *bnode;
-	GaimBuddy *buddy;
-	GaimAccount *account;
+	PurpleBuddyList *blist;
+	PurpleBlistNode *gnode, *cnode, *bnode;
+	PurpleBuddy *buddy;
+	PurpleAccount *account;
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
-	if ((blist = gaim_get_blist()) != NULL)
+	if ((blist = purple_get_blist()) != NULL)
 	{
 		for (gnode = blist->root; gnode != NULL; gnode = gnode->next)
 		{
-			if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+			if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 				continue;
 			for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
 			{
-				if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+				if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 					continue;
 				for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
 				{
-					if (!GAIM_BLIST_NODE_IS_BUDDY(bnode))
+					if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 						continue;
-					buddy = (GaimBuddy *)bnode;
-					if (gaim_buddy_get_account(buddy) == account)
-						silcgaim_add_buddy_i(gc, buddy, TRUE);
+					buddy = (PurpleBuddy *)bnode;
+					if (purple_buddy_get_account(buddy) == account)
+						silcpurple_add_buddy_i(gc, buddy, TRUE);
 				}
 			}
 		}
 	}
 }
 
-void silcgaim_remove_buddy(GaimConnection *gc, GaimBuddy *buddy,
-			   GaimGroup *group)
+void silcpurple_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy,
+			   PurpleGroup *group)
 {
 	silc_free(buddy->proto_data);
 }
 
-void silcgaim_idle_set(GaimConnection *gc, int idle)
+void silcpurple_idle_set(PurpleConnection *gc, int idle)
 
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcAttributeObjService service;
 	const char *server;
 	int port;
 
-	server = gaim_account_get_string(sg->account, "server",
+	server = purple_account_get_string(sg->account, "server",
 					 "silc.silcnet.org");
-	port = gaim_account_get_int(sg->account, "port", 706),
+	port = purple_account_get_int(sg->account, "port", 706),
 
 	memset(&service, 0, sizeof(service));
 	silc_client_attribute_del(client, conn,
@@ -1445,9 +1445,9 @@ void silcgaim_idle_set(GaimConnection *gc, int idle)
 				  &service, sizeof(service));
 }
 
-char *silcgaim_status_text(GaimBuddy *b)
+char *silcpurple_status_text(PurpleBuddy *b)
 {
-	SilcGaim sg = b->account->gc->proto_data;
+	SilcPurple sg = b->account->gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientID *client_id = b->proto_data;
@@ -1478,7 +1478,7 @@ char *silcgaim_status_text(GaimBuddy *b)
 	if (client_entry->mode & SILC_UMODE_ROBOT)
 		return g_strdup(_("Robot"));
 
-	attr = silcgaim_get_attr(client_entry->attrs, SILC_ATTRIBUTE_STATUS_MOOD);
+	attr = silcpurple_get_attr(client_entry->attrs, SILC_ATTRIBUTE_STATUS_MOOD);
 	if (attr && silc_attribute_get_object(attr, &mood, sizeof(mood))) {
 		/* The mood is a bit mask, so we could show multiple moods,
 		   but let's show only one for now. */
@@ -1509,9 +1509,9 @@ char *silcgaim_status_text(GaimBuddy *b)
 	return NULL;
 }
 
-void silcgaim_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full)
+void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
-	SilcGaim sg = b->account->gc->proto_data;
+	SilcPurple sg = b->account->gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientID *client_id = b->proto_data;
@@ -1525,70 +1525,70 @@ void silcgaim_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean
 		return;
 
 	if (client_entry->nickname)
-		gaim_notify_user_info_add_pair(user_info, _("Nickname"),
+		purple_notify_user_info_add_pair(user_info, _("Nickname"),
 					       client_entry->nickname);
 	if (client_entry->username && client_entry->hostname) {
 		g_snprintf(tmp, sizeof(tmp), "%s@%s", client_entry->username, client_entry->hostname);
-		gaim_notify_user_info_add_pair(user_info, _("Username"), tmp);
+		purple_notify_user_info_add_pair(user_info, _("Username"), tmp);
 	}
 	if (client_entry->mode) {
 		memset(tmp, 0, sizeof(tmp));
-		silcgaim_get_umode_string(client_entry->mode,
+		silcpurple_get_umode_string(client_entry->mode,
 					  tmp, sizeof(tmp) - strlen(tmp));
-		gaim_notify_user_info_add_pair(user_info, _("User Modes"), tmp);
+		purple_notify_user_info_add_pair(user_info, _("User Modes"), tmp);
 	}
 
-	silcgaim_parse_attrs(client_entry->attrs, &moodstr, &statusstr, &contactstr, &langstr, &devicestr, &tzstr, &geostr);
+	silcpurple_parse_attrs(client_entry->attrs, &moodstr, &statusstr, &contactstr, &langstr, &devicestr, &tzstr, &geostr);
 
 	if (statusstr) {
-		gaim_notify_user_info_add_pair(user_info, _("Message"), statusstr);
+		purple_notify_user_info_add_pair(user_info, _("Message"), statusstr);
 		g_free(statusstr);
 	}
 
 	if (full) {
 		if (moodstr) {
-			gaim_notify_user_info_add_pair(user_info, _("Mood"), moodstr);
+			purple_notify_user_info_add_pair(user_info, _("Mood"), moodstr);
 			g_free(moodstr);
 		}
 
 		if (contactstr) {
-			gaim_notify_user_info_add_pair(user_info, _("Preferred Contact"), contactstr);
+			purple_notify_user_info_add_pair(user_info, _("Preferred Contact"), contactstr);
 			g_free(contactstr);
 		}
 
 		if (langstr) {
-			gaim_notify_user_info_add_pair(user_info, _("Preferred Language"), langstr);
+			purple_notify_user_info_add_pair(user_info, _("Preferred Language"), langstr);
 			g_free(langstr);
 		}
 
 		if (devicestr) {
-			gaim_notify_user_info_add_pair(user_info, _("Device"), devicestr);
+			purple_notify_user_info_add_pair(user_info, _("Device"), devicestr);
 			g_free(devicestr);
 		}
 
 		if (tzstr) {
-			gaim_notify_user_info_add_pair(user_info, _("Timezone"), tzstr);
+			purple_notify_user_info_add_pair(user_info, _("Timezone"), tzstr);
 			g_free(tzstr);
 		}
 
 		if (geostr) {
-			gaim_notify_user_info_add_pair(user_info, _("Geolocation"), geostr);
+			purple_notify_user_info_add_pair(user_info, _("Geolocation"), geostr);
 			g_free(geostr);
 		}
 	}
 }
 
 static void
-silcgaim_buddy_kill(GaimBlistNode *node, gpointer data)
+silcpurple_buddy_kill(PurpleBlistNode *node, gpointer data)
 {
-	GaimBuddy *b;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleBuddy *b;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
-	b = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(b->account);
+	b = (PurpleBuddy *) node;
+	gc = purple_account_get_connection(b->account);
 	sg = gc->proto_data;
 
 	/* Call KILL */
@@ -1597,68 +1597,68 @@ silcgaim_buddy_kill(GaimBlistNode *node, gpointer data)
 }
 
 typedef struct {
-	SilcGaim sg;
+	SilcPurple sg;
 	SilcClientEntry client_entry;
-} *SilcGaimBuddyWb;
+} *SilcPurpleBuddyWb;
 
 static void
-silcgaim_buddy_wb(GaimBlistNode *node, gpointer data)
+silcpurple_buddy_wb(PurpleBlistNode *node, gpointer data)
 {
-	SilcGaimBuddyWb wb = data;
-	silcgaim_wb_init(wb->sg, wb->client_entry);
+	SilcPurpleBuddyWb wb = data;
+	silcpurple_wb_init(wb->sg, wb->client_entry);
 	silc_free(wb);
 }
 
-GList *silcgaim_buddy_menu(GaimBuddy *buddy)
+GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 {
-	GaimConnection *gc = gaim_account_get_connection(buddy->account);
-	SilcGaim sg = gc->proto_data;
+	PurpleConnection *gc = purple_account_get_connection(buddy->account);
+	SilcPurple sg = gc->proto_data;
 	SilcClientConnection conn = sg->conn;
 	const char *pkfile = NULL;
 	SilcClientEntry client_entry = NULL;
-	GaimMenuAction *act;
+	PurpleMenuAction *act;
 	GList *m = NULL;
-	SilcGaimBuddyWb wb;
+	SilcPurpleBuddyWb wb;
 
-	pkfile = gaim_blist_node_get_string((GaimBlistNode *) buddy, "public-key");
+	pkfile = purple_blist_node_get_string((PurpleBlistNode *) buddy, "public-key");
 	client_entry = silc_client_get_client_by_id(sg->client,
 						    sg->conn,
 						    buddy->proto_data);
 
 	if (client_entry && client_entry->send_key) {
-		act = gaim_menu_action_new(_("Reset IM Key"),
-		                           GAIM_CALLBACK(silcgaim_buddy_resetkey),
+		act = purple_menu_action_new(_("Reset IM Key"),
+		                           PURPLE_CALLBACK(silcpurple_buddy_resetkey),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 
 	} else {
-		act = gaim_menu_action_new(_("IM with Key Exchange"),
-		                           GAIM_CALLBACK(silcgaim_buddy_keyagr),
+		act = purple_menu_action_new(_("IM with Key Exchange"),
+		                           PURPLE_CALLBACK(silcpurple_buddy_keyagr),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 
-		act = gaim_menu_action_new(_("IM with Password"),
-		                           GAIM_CALLBACK(silcgaim_buddy_privkey_menu),
+		act = purple_menu_action_new(_("IM with Password"),
+		                           PURPLE_CALLBACK(silcpurple_buddy_privkey_menu),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
 	if (pkfile) {
-		act = gaim_menu_action_new(_("Show Public Key"),
-		                           GAIM_CALLBACK(silcgaim_buddy_showkey),
+		act = purple_menu_action_new(_("Show Public Key"),
+		                           PURPLE_CALLBACK(silcpurple_buddy_showkey),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 
 	} else {
-		act = gaim_menu_action_new(_("Get Public Key..."),
-		                           GAIM_CALLBACK(silcgaim_buddy_getkey_menu),
+		act = purple_menu_action_new(_("Get Public Key..."),
+		                           PURPLE_CALLBACK(silcpurple_buddy_getkey_menu),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
 	if (conn && conn->local_entry->mode & SILC_UMODE_ROUTER_OPERATOR) {
-		act = gaim_menu_action_new(_("Kill User"),
-		                           GAIM_CALLBACK(silcgaim_buddy_kill),
+		act = purple_menu_action_new(_("Kill User"),
+		                           PURPLE_CALLBACK(silcpurple_buddy_kill),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
@@ -1667,8 +1667,8 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 		wb = silc_calloc(1, sizeof(*wb));
 		wb->sg = sg;
 		wb->client_entry = client_entry;
-		act = gaim_menu_action_new(_("Draw On Whiteboard"),
-		                           GAIM_CALLBACK(silcgaim_buddy_wb),
+		act = purple_menu_action_new(_("Draw On Whiteboard"),
+		                           PURPLE_CALLBACK(silcpurple_buddy_wb),
 		                           (void *)wb, NULL);
 		m = g_list_append(m, act);
 	}
@@ -1676,13 +1676,13 @@ GList *silcgaim_buddy_menu(GaimBuddy *buddy)
 }
 
 #ifdef SILC_ATTRIBUTE_USER_ICON
-void silcgaim_buddy_set_icon(GaimConnection *gc, const char *iconfile)
+void silcpurple_buddy_set_icon(PurpleConnection *gc, const char *iconfile)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcMime mime;
-	GaimBuddyIcon ic;
+	PurpleBuddyIcon ic;
 	char type[32];
 	unsigned char *icon;
 	const char *t;
@@ -1715,7 +1715,7 @@ void silcgaim_buddy_set_icon(GaimConnection *gc, const char *iconfile)
 		return;
 	}
 
-	t = gaim_buddy_icon_get_type((const GaimBuddyIcon *)&ic);
+	t = purple_buddy_icon_get_type((const PurpleBuddyIcon *)&ic);
 	if (!t) {
 		g_free(ic.data);
 		silc_mime_free(mime);

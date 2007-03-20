@@ -2,9 +2,9 @@
  * @file gtkrequest.c GTK+ Request API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -32,15 +32,15 @@
 #include "gtkimhtmltoolbar.h"
 #include "gtkrequest.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 
 #include <gdk/gdkkeysyms.h>
 
-static GtkWidget * create_account_field(GaimRequestField *field);
+static GtkWidget * create_account_field(PurpleRequestField *field);
 
 typedef struct
 {
-	GaimRequestType type;
+	PurpleRequestType type;
 
 	void *user_data;
 	GtkWidget *dialog;
@@ -63,7 +63,7 @@ typedef struct
 
 		struct
 		{
-			GaimRequestFields *fields;
+			PurpleRequestFields *fields;
 
 		} multifield;
 
@@ -115,14 +115,14 @@ input_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 		value = gtk_entry_get_text(GTK_ENTRY(data->u.input.entry));
 
 	if (id < data->cb_count && data->cbs[id] != NULL)
-		((GaimRequestInputCb)data->cbs[id])(data->user_data, value);
+		((PurpleRequestInputCb)data->cbs[id])(data->user_data, value);
 	else if (data->cbs[1] != NULL)
-		((GaimRequestInputCb)data->cbs[1])(data->user_data, value);
+		((PurpleRequestInputCb)data->cbs[1])(data->user_data, value);
 
 	if (data->u.input.multiline)
 		g_free(multiline_value);
 
-	gaim_request_close(GAIM_REQUEST_INPUT, data);
+	purple_request_close(PURPLE_REQUEST_INPUT, data);
 }
 
 static void
@@ -131,9 +131,9 @@ action_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 	generic_response_start(data);
 
 	if (id < data->cb_count && data->cbs[id] != NULL)
-		((GaimRequestActionCb)data->cbs[id])(data->user_data, id);
+		((PurpleRequestActionCb)data->cbs[id])(data->user_data, id);
 
-	gaim_request_close(GAIM_REQUEST_INPUT, data);
+	purple_request_close(PURPLE_REQUEST_INPUT, data);
 }
 
 
@@ -148,21 +148,21 @@ choice_response_cb(GtkDialog *dialog, gint id, PidginRequestData *data)
 	if (id < data->cb_count && data->cbs[id] != NULL)
 		while (group) {
 			if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(group->data))) {
-				((GaimRequestChoiceCb)data->cbs[id])(data->user_data, GPOINTER_TO_INT(g_object_get_data(G_OBJECT(group->data), "choice_id")));
+				((PurpleRequestChoiceCb)data->cbs[id])(data->user_data, GPOINTER_TO_INT(g_object_get_data(G_OBJECT(group->data), "choice_id")));
 				break;
 			}
 			group = group->next;
 		}
-	gaim_request_close(GAIM_REQUEST_INPUT, data);
+	purple_request_close(PURPLE_REQUEST_INPUT, data);
 }
 
 static gboolean
 field_string_focus_out_cb(GtkWidget *entry, GdkEventFocus *event,
-						  GaimRequestField *field)
+						  PurpleRequestField *field)
 {
 	const char *value;
 
-	if (gaim_request_field_string_is_multiline(field))
+	if (purple_request_field_string_is_multiline(field))
 	{
 		GtkTextBuffer *buffer;
 		GtkTextIter start_iter, end_iter;
@@ -177,7 +177,7 @@ field_string_focus_out_cb(GtkWidget *entry, GdkEventFocus *event,
 	else
 		value = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	gaim_request_field_string_set_value(field,
+	purple_request_field_string_set_value(field,
 			(*value == '\0' ? NULL : value));
 
 	return FALSE;
@@ -185,41 +185,41 @@ field_string_focus_out_cb(GtkWidget *entry, GdkEventFocus *event,
 
 static gboolean
 field_int_focus_out_cb(GtkEntry *entry, GdkEventFocus *event,
-					   GaimRequestField *field)
+					   PurpleRequestField *field)
 {
-	gaim_request_field_int_set_value(field,
+	purple_request_field_int_set_value(field,
 			atoi(gtk_entry_get_text(entry)));
 
 	return FALSE;
 }
 
 static void
-field_bool_cb(GtkToggleButton *button, GaimRequestField *field)
+field_bool_cb(GtkToggleButton *button, PurpleRequestField *field)
 {
-	gaim_request_field_bool_set_value(field,
+	purple_request_field_bool_set_value(field,
 			gtk_toggle_button_get_active(button));
 }
 
 static void
-field_choice_menu_cb(GtkOptionMenu *menu, GaimRequestField *field)
+field_choice_menu_cb(GtkOptionMenu *menu, PurpleRequestField *field)
 {
-	gaim_request_field_choice_set_value(field,
+	purple_request_field_choice_set_value(field,
 			gtk_option_menu_get_history(menu));
 }
 
 static void
-field_choice_option_cb(GtkRadioButton *button, GaimRequestField *field)
+field_choice_option_cb(GtkRadioButton *button, PurpleRequestField *field)
 {
 	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(button)))
-		gaim_request_field_choice_set_value(field,
+		purple_request_field_choice_set_value(field,
 				(g_slist_length(gtk_radio_button_get_group(button)) -
 				 g_slist_index(gtk_radio_button_get_group(button), button)) - 1);
 }
 
 static void
-field_account_cb(GObject *w, GaimAccount *account, GaimRequestField *field)
+field_account_cb(GObject *w, PurpleAccount *account, PurpleRequestField *field)
 {
-	gaim_request_field_account_set_value(field, account);
+	purple_request_field_account_set_value(field, account);
 }
 
 static void
@@ -231,10 +231,10 @@ multifield_ok_cb(GtkWidget *button, PidginRequestData *data)
 		gtk_widget_grab_focus(button);
 
 	if (data->cbs[0] != NULL)
-		((GaimRequestFieldsCb)data->cbs[0])(data->user_data,
+		((PurpleRequestFieldsCb)data->cbs[0])(data->user_data,
 											data->u.multifield.fields);
 
-	gaim_request_close(GAIM_REQUEST_FIELDS, data);
+	purple_request_close(PURPLE_REQUEST_FIELDS, data);
 }
 
 static void
@@ -243,10 +243,10 @@ multifield_cancel_cb(GtkWidget *button, PidginRequestData *data)
 	generic_response_start(data);
 
 	if (data->cbs[1] != NULL)
-		((GaimRequestFieldsCb)data->cbs[1])(data->user_data,
+		((PurpleRequestFieldsCb)data->cbs[1])(data->user_data,
 											data->u.multifield.fields);
 
-	gaim_request_close(GAIM_REQUEST_FIELDS, data);
+	purple_request_close(PURPLE_REQUEST_FIELDS, data);
 }
 
 static void
@@ -299,7 +299,7 @@ pidgin_request_input(const char *title, const char *primary,
 	char *primary_esc, *secondary_esc;
 
 	data            = g_new0(PidginRequestData, 1);
-	data->type      = GAIM_REQUEST_INPUT;
+	data->type      = PURPLE_REQUEST_INPUT;
 	data->user_data = user_data;
 
 	data->cb_count = 2;
@@ -309,7 +309,7 @@ pidgin_request_input(const char *title, const char *primary,
 	data->cbs[1] = cancel_cb;
 
 	/* Create the dialog. */
-	dialog = gtk_dialog_new_with_buttons(title ? title : GAIM_ALERT_TITLE,
+	dialog = gtk_dialog_new_with_buttons(title ? title : PIDGIN_ALERT_TITLE,
 					     NULL, 0,
 					     text_to_stock(cancel_text), 1,
 					     text_to_stock(ok_text),     0,
@@ -320,15 +320,15 @@ pidgin_request_input(const char *title, const char *primary,
 					 G_CALLBACK(input_response_cb), data);
 
 	/* Setup the dialog */
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BORDER/2);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER/2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
@@ -338,7 +338,7 @@ pidgin_request_input(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	/* Vertical box */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
@@ -405,7 +405,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 			gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
-			if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+			if (purple_prefs_get_bool("/purple/gtk/conversations/spellcheck"))
 				pidgin_setup_gtkspell(GTK_TEXT_VIEW(entry));
 
 			gtk_container_add(GTK_CONTAINER(sw), entry);
@@ -424,7 +424,7 @@ pidgin_request_input(const char *title, const char *primary,
 			{
 				gtk_entry_set_visibility(GTK_ENTRY(entry), FALSE);
 				if (gtk_entry_get_invisible_char(GTK_ENTRY(entry)) == '*')
-					gtk_entry_set_invisible_char(GTK_ENTRY(entry), GAIM_INVISIBLE_CHAR);
+					gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
 			}
 		}
 	}
@@ -457,7 +457,7 @@ pidgin_request_choice(const char *title, const char *primary,
 	char *primary_esc, *secondary_esc;
 
 	data            = g_new0(PidginRequestData, 1);
-	data->type      = GAIM_REQUEST_ACTION;
+	data->type      = PURPLE_REQUEST_ACTION;
 	data->user_data = user_data;
 
 	data->cb_count = 2;
@@ -482,14 +482,14 @@ pidgin_request_choice(const char *title, const char *primary,
 			 G_CALLBACK(choice_response_cb), data);
 
 	/* Setup the dialog */
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BORDER/2);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER/2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
@@ -499,7 +499,7 @@ pidgin_request_choice(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	/* Vertical box */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
@@ -522,7 +522,7 @@ pidgin_request_choice(const char *title, const char *primary,
 
 	g_free(label_text);
 
-	vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
 	while ((radio_text = va_arg(args, char*))) {
 		       int resp = va_arg(args, int);
@@ -558,7 +558,7 @@ pidgin_request_action(const char *title, const char *primary,
 	int i;
 
 	data            = g_new0(PidginRequestData, 1);
-	data->type      = GAIM_REQUEST_ACTION;
+	data->type      = PURPLE_REQUEST_ACTION;
 	data->user_data = user_data;
 
 	data->cb_count = action_count;
@@ -591,14 +591,14 @@ pidgin_request_action(const char *title, const char *primary,
 					 G_CALLBACK(action_response_cb), data);
 
 	/* Setup the dialog */
-	gtk_container_set_border_width(GTK_CONTAINER(dialog), GAIM_HIG_BORDER/2);
-	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
+	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER/2);
 	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
-	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), GAIM_HIG_BORDER);
+	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), hbox);
 
 	/* Dialog icon. */
@@ -608,7 +608,7 @@ pidgin_request_action(const char *title, const char *primary,
 	gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	/* Vertical box */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 
 	/* Descriptive label */
@@ -633,7 +633,7 @@ pidgin_request_action(const char *title, const char *primary,
 	g_free(label_text);
 
 
-	if (default_action == GAIM_DEFAULT_ACTION_NONE) {
+	if (default_action == PURPLE_DEFAULT_ACTION_NONE) {
 		GTK_WIDGET_SET_FLAGS(img, GTK_CAN_DEFAULT);
 		GTK_WIDGET_SET_FLAGS(img, GTK_CAN_FOCUS);
 		gtk_widget_grab_focus(img);
@@ -648,46 +648,46 @@ pidgin_request_action(const char *title, const char *primary,
 }
 
 static void
-req_entry_field_changed_cb(GtkWidget *entry, GaimRequestField *field)
+req_entry_field_changed_cb(GtkWidget *entry, PurpleRequestField *field)
 {
 	PidginRequestData *req_data;
 	const char *text = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	gaim_request_field_string_set_value(field, (*text == '\0' ? NULL : text));
+	purple_request_field_string_set_value(field, (*text == '\0' ? NULL : text));
 
 	req_data = (PidginRequestData *)field->group->fields_list->ui_data;
 
 	gtk_widget_set_sensitive(req_data->ok_button,
-		gaim_request_fields_all_required_filled(field->group->fields_list));
+		purple_request_fields_all_required_filled(field->group->fields_list));
 }
 
 static void
-setup_entry_field(GtkWidget *entry, GaimRequestField *field)
+setup_entry_field(GtkWidget *entry, PurpleRequestField *field)
 {
 	const char *type_hint;
 
 	gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
 
-	if (gaim_request_field_is_required(field))
+	if (purple_request_field_is_required(field))
 	{
 		g_signal_connect(G_OBJECT(entry), "changed",
 						 G_CALLBACK(req_entry_field_changed_cb), field);
 	}
 
-	if ((type_hint = gaim_request_field_get_type_hint(field)) != NULL)
+	if ((type_hint = purple_request_field_get_type_hint(field)) != NULL)
 	{
-		if (gaim_str_has_prefix(type_hint, "screenname"))
+		if (purple_str_has_prefix(type_hint, "screenname"))
 		{
 			GtkWidget *optmenu = NULL;
 			GList *fields = field->group->fields;
 			while (fields)
 			{
-				GaimRequestField *fld = fields->data;
+				PurpleRequestField *fld = fields->data;
 				fields = fields->next;
 
-				if (gaim_request_field_get_type(fld) == GAIM_REQUEST_FIELD_ACCOUNT)
+				if (purple_request_field_get_type(fld) == PURPLE_REQUEST_FIELD_ACCOUNT)
 				{
-					const char *type_hint = gaim_request_field_get_type_hint(fld);
+					const char *type_hint = purple_request_field_get_type_hint(fld);
 					if (type_hint != NULL && strcmp(type_hint, "account") == 0)
 					{
 						if (fld->ui_data == NULL)
@@ -703,14 +703,14 @@ setup_entry_field(GtkWidget *entry, GaimRequestField *field)
 }
 
 static GtkWidget *
-create_string_field(GaimRequestField *field)
+create_string_field(PurpleRequestField *field)
 {
 	const char *value;
 	GtkWidget *widget;
 
-	value = gaim_request_field_string_get_default_value(field);
+	value = purple_request_field_string_get_default_value(field);
 
-	if (gaim_request_field_string_is_multiline(field))
+	if (purple_request_field_string_is_multiline(field))
 	{
 		GtkWidget *textview;
 
@@ -726,7 +726,7 @@ create_string_field(GaimRequestField *field)
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textview),
 									GTK_WRAP_WORD_CHAR);
 
-		if (gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+		if (purple_prefs_get_bool("/purple/gtk/conversations/spellcheck"))
 			pidgin_setup_gtkspell(GTK_TEXT_VIEW(textview));
 
 		gtk_container_add(GTK_CONTAINER(widget), textview);
@@ -744,7 +744,7 @@ create_string_field(GaimRequestField *field)
 		}
 
 		gtk_text_view_set_editable(GTK_TEXT_VIEW(textview),
-			gaim_request_field_string_is_editable(field));
+			purple_request_field_string_is_editable(field));
 
 		g_signal_connect(G_OBJECT(textview), "focus-out-event",
 						 G_CALLBACK(field_string_focus_out_cb), field);
@@ -758,15 +758,15 @@ create_string_field(GaimRequestField *field)
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(widget), value);
 
-		if (gaim_request_field_string_is_masked(field))
+		if (purple_request_field_string_is_masked(field))
 		{
 			gtk_entry_set_visibility(GTK_ENTRY(widget), FALSE);
 			if (gtk_entry_get_invisible_char(GTK_ENTRY(widget)) == '*')
-				gtk_entry_set_invisible_char(GTK_ENTRY(widget),	GAIM_INVISIBLE_CHAR);
+				gtk_entry_set_invisible_char(GTK_ENTRY(widget),	PIDGIN_INVISIBLE_CHAR);
 		}
 
 		gtk_editable_set_editable(GTK_EDITABLE(widget),
-			gaim_request_field_string_is_editable(field));
+			purple_request_field_string_is_editable(field));
 
 		g_signal_connect(G_OBJECT(widget), "focus-out-event",
 						 G_CALLBACK(field_string_focus_out_cb), field);
@@ -776,7 +776,7 @@ create_string_field(GaimRequestField *field)
 }
 
 static GtkWidget *
-create_int_field(GaimRequestField *field)
+create_int_field(PurpleRequestField *field)
 {
 	int value;
 	GtkWidget *widget;
@@ -785,7 +785,7 @@ create_int_field(GaimRequestField *field)
 
 	setup_entry_field(widget, field);
 
-	value = gaim_request_field_int_get_default_value(field);
+	value = purple_request_field_int_get_default_value(field);
 
 	if (value != 0)
 	{
@@ -803,15 +803,15 @@ create_int_field(GaimRequestField *field)
 }
 
 static GtkWidget *
-create_bool_field(GaimRequestField *field)
+create_bool_field(PurpleRequestField *field)
 {
 	GtkWidget *widget;
 
 	widget = gtk_check_button_new_with_label(
-		gaim_request_field_get_label(field));
+		purple_request_field_get_label(field));
 
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(widget),
-		gaim_request_field_bool_get_default_value(field));
+		purple_request_field_bool_get_default_value(field));
 
 	g_signal_connect(G_OBJECT(widget), "toggled",
 					 G_CALLBACK(field_bool_cb), field);
@@ -820,13 +820,13 @@ create_bool_field(GaimRequestField *field)
 }
 
 static GtkWidget *
-create_choice_field(GaimRequestField *field)
+create_choice_field(PurpleRequestField *field)
 {
 	GtkWidget *widget;
 	GList *labels;
 	GList *l;
 
-	labels = gaim_request_field_choice_get_labels(field);
+	labels = purple_request_field_choice_get_labels(field);
 
 	if (g_list_length(labels) > 5)
 	{
@@ -850,7 +850,7 @@ create_choice_field(GaimRequestField *field)
 		gtk_widget_show(menu);
 		gtk_option_menu_set_menu(GTK_OPTION_MENU(widget), menu);
 		gtk_option_menu_set_history(GTK_OPTION_MENU(widget),
-						gaim_request_field_choice_get_default_value(field));
+						purple_request_field_choice_get_default_value(field));
 
 		g_signal_connect(G_OBJECT(widget), "changed",
 						 G_CALLBACK(field_choice_menu_cb), field);
@@ -863,7 +863,7 @@ create_choice_field(GaimRequestField *field)
 		gint i;
 
 		if (g_list_length(labels) == 2)
-			box = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+			box = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		else
 			box = gtk_vbox_new(FALSE, 0);
 
@@ -879,7 +879,7 @@ create_choice_field(GaimRequestField *field)
 			if (first_radio == NULL)
 				first_radio = radio;
 
-			if (i == gaim_request_field_choice_get_default_value(field))
+			if (i == purple_request_field_choice_get_default_value(field))
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(radio), TRUE);
 
 			gtk_box_pack_start(GTK_BOX(box), radio, TRUE, TRUE, 0);
@@ -894,7 +894,7 @@ create_choice_field(GaimRequestField *field)
 }
 
 static GtkWidget *
-create_image_field(GaimRequestField *field)
+create_image_field(PurpleRequestField *field)
 {
 	GtkWidget *widget;
 	GdkPixbuf *buf, *scale;
@@ -902,15 +902,15 @@ create_image_field(GaimRequestField *field)
 
 	loader = gdk_pixbuf_loader_new();
 	gdk_pixbuf_loader_write(loader,
-							(const guchar *)gaim_request_field_image_get_buffer(field),
-							gaim_request_field_image_get_size(field),
+							(const guchar *)purple_request_field_image_get_buffer(field),
+							purple_request_field_image_get_size(field),
 							NULL);
 	gdk_pixbuf_loader_close(loader, NULL);
 	buf = gdk_pixbuf_loader_get_pixbuf(loader);
 
 	scale = gdk_pixbuf_scale_simple(buf,
-			gaim_request_field_image_get_scale_x(field) * gdk_pixbuf_get_width(buf),
-			gaim_request_field_image_get_scale_y(field) * gdk_pixbuf_get_height(buf),
+			purple_request_field_image_get_scale_x(field) * gdk_pixbuf_get_width(buf),
+			purple_request_field_image_get_scale_y(field) * gdk_pixbuf_get_height(buf),
 			GDK_INTERP_BILINEAR);
 	widget = gtk_image_new_from_pixbuf(scale);
 	g_object_unref(G_OBJECT(buf));
@@ -920,15 +920,15 @@ create_image_field(GaimRequestField *field)
 }
 
 static GtkWidget *
-create_account_field(GaimRequestField *field)
+create_account_field(PurpleRequestField *field)
 {
 	GtkWidget *widget;
 
 	widget = pidgin_account_option_menu_new(
-		gaim_request_field_account_get_default_value(field),
-		gaim_request_field_account_get_show_all(field),
+		purple_request_field_account_get_default_value(field),
+		purple_request_field_account_get_show_all(field),
 		G_CALLBACK(field_account_cb),
-		gaim_request_field_account_get_filter(field),
+		purple_request_field_account_get_filter(field),
 		field);
 
 	return widget;
@@ -938,25 +938,25 @@ static void
 select_field_list_item(GtkTreeModel *model, GtkTreePath *path,
 					   GtkTreeIter *iter, gpointer data)
 {
-	GaimRequestField *field = (GaimRequestField *)data;
+	PurpleRequestField *field = (PurpleRequestField *)data;
 	char *text;
 
 	gtk_tree_model_get(model, iter, 1, &text, -1);
 
-	gaim_request_field_list_add_selected(field, text);
+	purple_request_field_list_add_selected(field, text);
 	g_free(text);
 }
 
 static void
-list_field_select_changed_cb(GtkTreeSelection *sel, GaimRequestField *field)
+list_field_select_changed_cb(GtkTreeSelection *sel, PurpleRequestField *field)
 {
-	gaim_request_field_list_clear_selected(field);
+	purple_request_field_list_clear_selected(field);
 
 	gtk_tree_selection_selected_foreach(sel, select_field_list_item, field);
 }
 
 static GtkWidget *
-create_list_field(GaimRequestField *field)
+create_list_field(PurpleRequestField *field)
 {
 	GtkWidget *sw;
 	GtkWidget *treeview;
@@ -986,7 +986,7 @@ create_list_field(GaimRequestField *field)
 
 	sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 
-	if (gaim_request_field_list_get_multi_select(field))
+	if (purple_request_field_list_get_multi_select(field))
 		gtk_tree_selection_set_mode(sel, GTK_SELECTION_MULTIPLE);
 
 	g_signal_connect(G_OBJECT(sel), "changed",
@@ -999,18 +999,18 @@ create_list_field(GaimRequestField *field)
 	gtk_tree_view_column_pack_start(column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute(column, renderer, "text", 1);
 
-	for (l = gaim_request_field_list_get_items(field); l != NULL; l = l->next)
+	for (l = purple_request_field_list_get_items(field); l != NULL; l = l->next)
 	{
 		const char *text = (const char *)l->data;
 
 		gtk_list_store_append(store, &iter);
 
 		gtk_list_store_set(store, &iter,
-						   0, gaim_request_field_list_get_data(field, text),
+						   0, purple_request_field_list_get_data(field, text),
 						   1, text,
 						   -1);
 
-		if (gaim_request_field_list_is_selected(field, text))
+		if (purple_request_field_list_is_selected(field, text))
 			gtk_tree_selection_select_iter(sel, &iter);
 	}
 
@@ -1022,7 +1022,7 @@ create_list_field(GaimRequestField *field)
 
 static void *
 pidgin_request_fields(const char *title, const char *primary,
-						const char *secondary, GaimRequestFields *fields,
+						const char *secondary, PurpleRequestFields *fields,
 						const char *ok_text, GCallback ok_cb,
 						const char *cancel_text, GCallback cancel_cb,
 						void *user_data)
@@ -1041,14 +1041,14 @@ pidgin_request_fields(const char *title, const char *primary,
 	GtkWidget *sw;
 	GtkSizeGroup *sg;
 	GList *gl, *fl;
-	GaimRequestFieldGroup *group;
-	GaimRequestField *field;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
 	char *label_text;
 	char *primary_esc, *secondary_esc;
 	int total_fields = 0;
 
 	data            = g_new0(PidginRequestData, 1);
-	data->type      = GAIM_REQUEST_FIELDS;
+	data->type      = PURPLE_REQUEST_FIELDS;
 	data->user_data = user_data;
 	data->u.multifield.fields = fields;
 
@@ -1066,13 +1066,13 @@ pidgin_request_fields(const char *title, const char *primary,
 		gtk_window_set_title(GTK_WINDOW(win), title);
 
 	gtk_window_set_role(GTK_WINDOW(win), "multifield");
-	gtk_container_set_border_width(GTK_CONTAINER(win), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(destroy_multifield_cb), data);
 
 	/* Setup the main horizontal box */
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BORDER);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(win), hbox);
 	gtk_widget_show(hbox);
 
@@ -1084,7 +1084,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	gtk_widget_show(img);
 
 	/* Setup the vbox */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
@@ -1105,9 +1105,9 @@ pidgin_request_fields(const char *title, const char *primary,
 		g_free(label_text);
 	}
 
-	for (gl = gaim_request_fields_get_groups(fields); gl != NULL;
+	for (gl = purple_request_fields_get_groups(fields); gl != NULL;
 			gl = gl->next)
-		total_fields += g_list_length(gaim_request_field_group_get_fields(gl->data));
+		total_fields += g_list_length(purple_request_field_group_get_fields(gl->data));
 
 	if(total_fields > 9) {
 		sw = gtk_scrolled_window_new(NULL, NULL);
@@ -1119,7 +1119,7 @@ pidgin_request_fields(const char *title, const char *primary,
 		gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 		gtk_widget_show(sw);
 
-		vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+		vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 		gtk_scrolled_window_add_with_viewport(GTK_SCROLLED_WINDOW(sw), vbox2);
 		gtk_widget_show(vbox2);
 	} else {
@@ -1138,7 +1138,7 @@ pidgin_request_fields(const char *title, const char *primary,
 		gtk_widget_show(label);
 	}
 
-	for (gl = gaim_request_fields_get_groups(fields);
+	for (gl = purple_request_fields_get_groups(fields);
 		 gl != NULL;
 		 gl = gl->next)
 	{
@@ -1150,12 +1150,12 @@ pidgin_request_fields(const char *title, const char *primary,
 		size_t row_num = 0;
 
 		group      = gl->data;
-		field_list = gaim_request_field_group_get_fields(group);
+		field_list = purple_request_field_group_get_fields(group);
 
-		if (gaim_request_field_group_get_title(group) != NULL)
+		if (purple_request_field_group_get_title(group) != NULL)
 		{
 			frame = pidgin_make_frame(vbox2,
-				gaim_request_field_group_get_title(group));
+				purple_request_field_group_get_title(group));
 		}
 		else
 			frame = vbox2;
@@ -1175,22 +1175,22 @@ pidgin_request_fields(const char *title, const char *primary,
 
 		for (fl = field_list; fl != NULL; fl = fl->next)
 		{
-			GaimRequestFieldType type;
+			PurpleRequestFieldType type;
 
-			field = (GaimRequestField *)fl->data;
+			field = (PurpleRequestField *)fl->data;
 
-			type = gaim_request_field_get_type(field);
+			type = purple_request_field_get_type(field);
 
-			if (type == GAIM_REQUEST_FIELD_LABEL)
+			if (type == PURPLE_REQUEST_FIELD_LABEL)
 			{
 				if (col_num > 0)
 					rows++;
 
 				rows++;
 			}
-			else if ((type == GAIM_REQUEST_FIELD_LIST) ||
-				 (type == GAIM_REQUEST_FIELD_STRING &&
-				  gaim_request_field_string_is_multiline(field)))
+			else if ((type == PURPLE_REQUEST_FIELD_LIST) ||
+				 (type == PURPLE_REQUEST_FIELD_STRING &&
+				  purple_request_field_string_is_multiline(field)))
 			{
 				if (col_num > 0)
 					rows++;
@@ -1205,8 +1205,8 @@ pidgin_request_fields(const char *title, const char *primary,
 		}
 
 		table = gtk_table_new(rows, 2 * cols, FALSE);
-		gtk_table_set_row_spacings(GTK_TABLE(table), GAIM_HIG_BOX_SPACE);
-		gtk_table_set_col_spacings(GTK_TABLE(table), GAIM_HIG_BOX_SPACE);
+		gtk_table_set_row_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
+		gtk_table_set_col_spacings(GTK_TABLE(table), PIDGIN_HIG_BOX_SPACE);
 
 		gtk_container_add(GTK_CONTAINER(frame), table);
 		gtk_widget_show(table);
@@ -1220,26 +1220,26 @@ pidgin_request_fields(const char *title, const char *primary,
 				 col_num++, fl = fl->next)
 			{
 				size_t col_offset = col_num * 2;
-				GaimRequestFieldType type;
+				PurpleRequestFieldType type;
 				GtkWidget *widget = NULL;
 
 				label = NULL;
 				field = fl->data;
 
-				if (!gaim_request_field_is_visible(field)) {
+				if (!purple_request_field_is_visible(field)) {
 					col_num--;
 					continue;
 				}
 
-				type = gaim_request_field_get_type(field);
+				type = purple_request_field_get_type(field);
 
-				if (type != GAIM_REQUEST_FIELD_BOOLEAN &&
-				    gaim_request_field_get_label(field))
+				if (type != PURPLE_REQUEST_FIELD_BOOLEAN &&
+				    purple_request_field_get_label(field))
 				{
 					char *text;
 
 					text = g_strdup_printf("%s:",
-						gaim_request_field_get_label(field));
+						purple_request_field_get_label(field));
 
 					label = gtk_label_new(NULL);
 					gtk_label_set_markup_with_mnemonic(GTK_LABEL(label), text);
@@ -1249,10 +1249,10 @@ pidgin_request_fields(const char *title, const char *primary,
 
 					gtk_size_group_add_widget(sg, label);
 
-					if (type == GAIM_REQUEST_FIELD_LABEL ||
-					    type == GAIM_REQUEST_FIELD_LIST ||
-						(type == GAIM_REQUEST_FIELD_STRING &&
-						 gaim_request_field_string_is_multiline(field)))
+					if (type == PURPLE_REQUEST_FIELD_LABEL ||
+					    type == PURPLE_REQUEST_FIELD_LIST ||
+						(type == PURPLE_REQUEST_FIELD_STRING &&
+						 purple_request_field_string_is_multiline(field)))
 					{
 						if(col_num > 0)
 							row_num++;
@@ -1276,19 +1276,19 @@ pidgin_request_fields(const char *title, const char *primary,
 
 				if (field->ui_data != NULL)
 					widget = GTK_WIDGET(field->ui_data);
-				else if (type == GAIM_REQUEST_FIELD_STRING)
+				else if (type == PURPLE_REQUEST_FIELD_STRING)
 					widget = create_string_field(field);
-				else if (type == GAIM_REQUEST_FIELD_INTEGER)
+				else if (type == PURPLE_REQUEST_FIELD_INTEGER)
 					widget = create_int_field(field);
-				else if (type == GAIM_REQUEST_FIELD_BOOLEAN)
+				else if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 					widget = create_bool_field(field);
-				else if (type == GAIM_REQUEST_FIELD_CHOICE)
+				else if (type == PURPLE_REQUEST_FIELD_CHOICE)
 					widget = create_choice_field(field);
-				else if (type == GAIM_REQUEST_FIELD_LIST)
+				else if (type == PURPLE_REQUEST_FIELD_LIST)
 					widget = create_list_field(field);
-				else if (type == GAIM_REQUEST_FIELD_IMAGE)
+				else if (type == PURPLE_REQUEST_FIELD_IMAGE)
 					widget = create_image_field(field);
-				else if (type == GAIM_REQUEST_FIELD_ACCOUNT)
+				else if (type == PURPLE_REQUEST_FIELD_ACCOUNT)
 					widget = create_account_field(field);
 				else
 					continue;
@@ -1296,8 +1296,8 @@ pidgin_request_fields(const char *title, const char *primary,
 				if (label)
 					gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
 
-				if (type == GAIM_REQUEST_FIELD_STRING &&
-					gaim_request_field_string_is_multiline(field))
+				if (type == PURPLE_REQUEST_FIELD_STRING &&
+					purple_request_field_string_is_multiline(field))
 				{
 					gtk_table_attach(GTK_TABLE(table), widget,
 									 0, 2 * cols,
@@ -1306,7 +1306,7 @@ pidgin_request_fields(const char *title, const char *primary,
 									 GTK_FILL | GTK_EXPAND,
 									 5, 0);
 				}
-				else if (type == GAIM_REQUEST_FIELD_LIST)
+				else if (type == PURPLE_REQUEST_FIELD_LIST)
 				{
 									gtk_table_attach(GTK_TABLE(table), widget,
 									0, 2 * cols,
@@ -1315,7 +1315,7 @@ pidgin_request_fields(const char *title, const char *primary,
 									GTK_FILL | GTK_EXPAND,
 									5, 0);
 				}
-				else if (type == GAIM_REQUEST_FIELD_BOOLEAN)
+				else if (type == PURPLE_REQUEST_FIELD_BOOLEAN)
 				{
 					gtk_table_attach(GTK_TABLE(table), widget,
 									 col_offset, col_offset + 1,
@@ -1345,7 +1345,7 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	/* Button box. */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_end(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
@@ -1373,7 +1373,7 @@ pidgin_request_fields(const char *title, const char *primary,
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(multifield_ok_cb), data);
 
-	if (!gaim_request_fields_all_required_filled(fields))
+	if (!purple_request_fields_all_required_filled(fields))
 		gtk_widget_set_sensitive(button, FALSE);
 
 	gtk_widget_show(win);
@@ -1389,8 +1389,8 @@ file_yes_no_cb(PidginRequestData *data, gint id)
 	 * things go BOOM */
 	if (id == 1) {
 		if (data->cbs[1] != NULL)
-			((GaimRequestFileCb)data->cbs[1])(data->user_data, data->u.file.name);
-		gaim_request_close(data->type, data);
+			((PurpleRequestFileCb)data->cbs[1])(data->user_data, data->u.file.name);
+		purple_request_close(data->type, data);
 	} else {
 		pidgin_clear_cursor(GTK_WIDGET(data->dialog));
 	}
@@ -1406,8 +1406,8 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, PidginRequestData *
 
 	if (response != GTK_RESPONSE_ACCEPT) {
 		if (data->cbs[0] != NULL)
-			((GaimRequestFileCb)data->cbs[0])(data->user_data, NULL);
-		gaim_request_close(data->type, data);
+			((PurpleRequestFileCb)data->cbs[0])(data->user_data, NULL);
+		purple_request_close(data->type, data);
 		return;
 	}
 
@@ -1415,9 +1415,9 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, PidginRequestData *
 	current_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(data->dialog));
 	if (current_folder != NULL) {
 		if (data->u.file.savedialog) {
-			gaim_prefs_set_path("/gaim/gtk/filelocations/last_save_folder", current_folder);
+			purple_prefs_set_path("/purple/gtk/filelocations/last_save_folder", current_folder);
 		} else {
-			gaim_prefs_set_path("/gaim/gtk/filelocations/last_open_folder", current_folder);
+			purple_prefs_set_path("/purple/gtk/filelocations/last_open_folder", current_folder);
 		}
 		g_free(current_folder);
 	}
@@ -1435,7 +1435,7 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 	name = gtk_file_selection_get_filename(GTK_FILE_SELECTION(data->dialog));
 
 	/* If name is a directory then change directories */
-	if (data->type == GAIM_REQUEST_FILE) {
+	if (data->type == PURPLE_REQUEST_FILE) {
 		if (pidgin_check_if_dir(name, GTK_FILE_SELECTION(data->dialog)))
 			return;
 	}
@@ -1443,7 +1443,7 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 	current_folder = g_path_get_dirname(name);
 
 	g_free(data->u.file.name);
-	if (data->type == GAIM_REQUEST_FILE)
+	if (data->type == PURPLE_REQUEST_FILE)
 		data->u.file.name = g_strdup(name);
 	else
 	{
@@ -1455,9 +1455,9 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 
 	if (current_folder != NULL) {
 		if (data->u.file.savedialog) {
-			gaim_prefs_set_path("/gaim/gtk/filelocations/last_save_folder", current_folder);
+			purple_prefs_set_path("/purple/gtk/filelocations/last_save_folder", current_folder);
 		} else {
-			gaim_prefs_set_path("/gaim/gtk/filelocations/last_open_folder", current_folder);
+			purple_prefs_set_path("/purple/gtk/filelocations/last_open_folder", current_folder);
 		}
 		g_free(current_folder);
 	}
@@ -1466,7 +1466,7 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 
 	if ((data->u.file.savedialog == TRUE) &&
 		(g_file_test(data->u.file.name, G_FILE_TEST_EXISTS))) {
-		gaim_request_action(data, NULL, _("That file already exists"),
+		purple_request_action(data, NULL, _("That file already exists"),
 							_("Would you like to overwrite it?"), 0, data, 2,
 							_("Overwrite"), G_CALLBACK(file_yes_no_cb),
 							_("Choose New Name"), G_CALLBACK(file_yes_no_cb));
@@ -1481,9 +1481,9 @@ file_cancel_cb(PidginRequestData *data)
 	generic_response_start(data);
 
 	if (data->cbs[0] != NULL)
-		((GaimRequestFileCb)data->cbs[0])(data->user_data, NULL);
+		((PurpleRequestFileCb)data->cbs[0])(data->user_data, NULL);
 
-	gaim_request_close(data->type, data);
+	purple_request_close(data->type, data);
 }
 #endif /* FILECHOOSER */
 
@@ -1501,7 +1501,7 @@ pidgin_request_file(const char *title, const char *filename,
 #endif
 
 	data = g_new0(PidginRequestData, 1);
-	data->type = GAIM_REQUEST_FILE;
+	data->type = PURPLE_REQUEST_FILE;
 	data->user_data = user_data;
 	data->cb_count = 2;
 	data->cbs = g_new0(GCallback, 2);
@@ -1524,9 +1524,9 @@ pidgin_request_file(const char *title, const char *filename,
 	gtk_dialog_set_default_response(GTK_DIALOG(filesel), GTK_RESPONSE_ACCEPT);
 
 	if (savedialog) {
-		current_folder = gaim_prefs_get_path("/gaim/gtk/filelocations/last_save_folder");
+		current_folder = purple_prefs_get_path("/purple/gtk/filelocations/last_save_folder");
 	} else {
-		current_folder = gaim_prefs_get_path("/gaim/gtk/filelocations/last_open_folder");
+		current_folder = purple_prefs_get_path("/purple/gtk/filelocations/last_open_folder");
 	}
 
 	if ((filename != NULL) && (*filename != '\0')) {
@@ -1541,7 +1541,7 @@ pidgin_request_file(const char *title, const char *filename,
 
 #ifdef _WIN32
 	if (!folder_set) {
-		char *my_documents = wgaim_get_special_folder(CSIDL_PERSONAL);
+		char *my_documents = wpurple_get_special_folder(CSIDL_PERSONAL);
 
 		if (my_documents != NULL) {
 			gtk_file_chooser_set_current_folder(
@@ -1559,9 +1559,9 @@ pidgin_request_file(const char *title, const char *filename,
 			title ? title : (savedialog ? _("Save File...")
 				: _("Open File...")));
 	if (savedialog) {
-		current_folder = gaim_prefs_get_path("/gaim/gtk/filelocations/last_save_folder");
+		current_folder = purple_prefs_get_path("/purple/gtk/filelocations/last_save_folder");
 	} else {
-		current_folder = gaim_prefs_get_path("/gaim/gtk/filelocations/last_open_folder");
+		current_folder = purple_prefs_get_path("/purple/gtk/filelocations/last_open_folder");
 	}
 	if (current_folder != NULL) {
 		gchar *path = g_strdup_printf("%s%s", current_folder, G_DIR_SEPARATOR_S);
@@ -1594,7 +1594,7 @@ pidgin_request_folder(const char *title, const char *dirname,
 	GtkWidget *dirsel;
 
 	data = g_new0(PidginRequestData, 1);
-	data->type = GAIM_REQUEST_FOLDER;
+	data->type = PURPLE_REQUEST_FOLDER;
 	data->user_data = user_data;
 	data->cb_count = 2;
 	data->cbs = g_new0(GCallback, 2);
@@ -1635,7 +1635,7 @@ pidgin_request_folder(const char *title, const char *dirname,
 }
 
 static void
-pidgin_close_request(GaimRequestType type, void *ui_handle)
+pidgin_close_request(PurpleRequestType type, void *ui_handle)
 {
 	PidginRequestData *data = (PidginRequestData *)ui_handle;
 
@@ -1643,15 +1643,15 @@ pidgin_close_request(GaimRequestType type, void *ui_handle)
 
 	gtk_widget_destroy(data->dialog);
 
-	if (type == GAIM_REQUEST_FIELDS)
-		gaim_request_fields_destroy(data->u.multifield.fields);
-	else if (type == GAIM_REQUEST_FILE)
+	if (type == PURPLE_REQUEST_FIELDS)
+		purple_request_fields_destroy(data->u.multifield.fields);
+	else if (type == PURPLE_REQUEST_FILE)
 		g_free(data->u.file.name);
 
 	g_free(data);
 }
 
-static GaimRequestUiOps ops =
+static PurpleRequestUiOps ops =
 {
 	pidgin_request_input,
 	pidgin_request_choice,
@@ -1662,7 +1662,7 @@ static GaimRequestUiOps ops =
 	pidgin_request_folder
 };
 
-GaimRequestUiOps *
+PurpleRequestUiOps *
 pidgin_request_get_ui_ops(void)
 {
 	return &ops;

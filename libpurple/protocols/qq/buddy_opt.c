@@ -1,9 +1,9 @@
 /**
  * @file buddy_opt.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -39,9 +39,9 @@
 #include "send_core.h"
 #include "utils.h"
 
-#define GAIM_GROUP_QQ_FORMAT          "QQ (%s)"
-#define GAIM_GROUP_QQ_UNKNOWN         "QQ Unknown"
-#define GAIM_GROUP_QQ_BLOCKED         "QQ Blocked"
+#define PURPLE_GROUP_QQ_FORMAT          "QQ (%s)"
+#define PURPLE_GROUP_QQ_UNKNOWN         "QQ Unknown"
+#define PURPLE_GROUP_QQ_BLOCKED         "QQ Blocked"
 
 #define QQ_REMOVE_BUDDY_REPLY_OK      0x00
 #define QQ_REMOVE_SELF_REPLY_OK       0x00
@@ -59,7 +59,7 @@ typedef struct _qq_add_buddy_request {
 } qq_add_buddy_request;
 
 /* send packet to remove a buddy from my buddy list */
-static void _qq_send_packet_remove_buddy(GaimConnection *gc, guint32 uid)
+static void _qq_send_packet_remove_buddy(PurpleConnection *gc, guint32 uid)
 {
 	gchar uid_str[11];
 
@@ -71,7 +71,7 @@ static void _qq_send_packet_remove_buddy(GaimConnection *gc, guint32 uid)
 }
 
 /* try to remove myself from someone's buddy list */
-static void _qq_send_packet_remove_self_from(GaimConnection *gc, guint32 uid)
+static void _qq_send_packet_remove_self_from(PurpleConnection *gc, guint32 uid)
 {
 	guint8 *raw_data, *cursor;
 
@@ -85,7 +85,7 @@ static void _qq_send_packet_remove_self_from(GaimConnection *gc, guint32 uid)
 }
 
 /* try to add a buddy without authentication */
-static void _qq_send_packet_add_buddy(GaimConnection *gc, guint32 uid)
+static void _qq_send_packet_add_buddy(PurpleConnection *gc, guint32 uid)
 {
 	qq_data *qd;
 	qq_add_buddy_request *req;
@@ -107,7 +107,7 @@ static void _qq_send_packet_add_buddy(GaimConnection *gc, guint32 uid)
 }
 
 /* this buddy needs authentication, text conversion is done at lowest level */
-static void _qq_send_packet_buddy_auth(GaimConnection *gc, guint32 uid, const gchar response, const gchar *text)
+static void _qq_send_packet_buddy_auth(PurpleConnection *gc, guint32 uid, const gchar response, const gchar *text)
 {
 	gchar *text_qq, uid_str[11];
 	guint8 bar, *cursor, *raw_data;
@@ -135,7 +135,7 @@ static void _qq_send_packet_buddy_auth(GaimConnection *gc, guint32 uid, const gc
 
 static void _qq_send_packet_add_buddy_auth_with_gc_and_uid(gc_and_uid *g, const gchar *text)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	guint32 uid;
 	g_return_if_fail(g != NULL);
 
@@ -151,7 +151,7 @@ static void _qq_send_packet_add_buddy_auth_with_gc_and_uid(gc_and_uid *g, const 
 static void _qq_reject_add_request_real(gc_and_uid *g, const gchar *reason)
 {
 	gint uid;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 
 	g_return_if_fail(g != NULL);
 
@@ -167,7 +167,7 @@ static void _qq_reject_add_request_real(gc_and_uid *g, const gchar *reason)
 void qq_approve_add_request_with_gc_and_uid(gc_and_uid *g)
 {
 	gint uid;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 
 	g_return_if_fail(g != NULL);
 
@@ -189,7 +189,7 @@ void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g)
 {
 	gint uid;
 	gchar *msg1, *msg2;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	gc_and_uid *g2;
 
 	g_return_if_fail(g != NULL);
@@ -207,7 +207,7 @@ void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g)
 	msg1 = g_strdup_printf(_("You rejected %d's request"), uid);
 	msg2 = g_strdup(_("Input your reason:"));
 
-	gaim_request_input(gc, _("Reject request"), msg1, msg2,
+	purple_request_input(gc, _("Reject request"), msg1, msg2,
 			   _("Sorry, you are not my type..."), TRUE, FALSE,
 			   NULL, _("Reject"), G_CALLBACK(_qq_reject_add_request_real), _("Cancel"), NULL, g2);
 }
@@ -215,7 +215,7 @@ void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g)
 void qq_add_buddy_with_gc_and_uid(gc_and_uid *g)
 {
 	gint uid;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 
 	g_return_if_fail(g != NULL);
 
@@ -230,9 +230,9 @@ void qq_add_buddy_with_gc_and_uid(gc_and_uid *g)
 void qq_block_buddy_with_gc_and_uid(gc_and_uid *g)
 {
 	guint32 uid;
-	GaimConnection *gc;
-	GaimBuddy buddy;
-	GaimGroup group;
+	PurpleConnection *gc;
+	PurpleBuddy buddy;
+	PurpleGroup group;
 
 	g_return_if_fail(g != NULL);
 
@@ -240,15 +240,15 @@ void qq_block_buddy_with_gc_and_uid(gc_and_uid *g)
 	uid = g->uid;
 	g_return_if_fail(uid > 0);
 
-	buddy.name = uid_to_gaim_name(uid);
-	group.name = GAIM_GROUP_QQ_BLOCKED;
+	buddy.name = uid_to_purple_name(uid);
+	group.name = PURPLE_GROUP_QQ_BLOCKED;
 
 	qq_remove_buddy(gc, &buddy, &group);
 	_qq_send_packet_remove_self_from(gc, uid);
 }
 
 /*  process reply to add_buddy_auth request */
-void qq_process_add_buddy_auth_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_add_buddy_auth_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint len;
@@ -265,22 +265,22 @@ void qq_process_add_buddy_auth_reply(guint8 *buf, gint buf_len, GaimConnection *
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_ADD_BUDDY_AUTH_REPLY_OK) {
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Add buddy with auth request fails\n");
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Add buddy with auth request fails\n");
 			if (NULL == (segments = split_data(data, len, "\x1f", 2)))
 				return;
 			msg_utf8 = qq_to_utf8(segments[1], QQ_CHARSET_DEFAULT);
-			gaim_notify_error(gc, NULL, _("Add buddy with auth request fails"), msg_utf8);
+			purple_notify_error(gc, NULL, _("Add buddy with auth request fails"), msg_utf8);
 			g_free(msg_utf8);
 		} else {
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Add buddy with auth request OK\n");
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Add buddy with auth request OK\n");
 		}
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt add buddy with auth reply\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt add buddy with auth reply\n");
 	}
 }
 
 /* process the server reply for my request to remove a buddy */
-void qq_process_remove_buddy_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_remove_buddy_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint len;
@@ -297,18 +297,18 @@ void qq_process_remove_buddy_reply(guint8 *buf, gint buf_len, GaimConnection *gc
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_REMOVE_BUDDY_REPLY_OK) {
 			/* there is no reason return from server */
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Remove buddy fails\n");
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Remove buddy fails\n");
 		} else {		/* if reply */
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Remove buddy OK\n");
-			gaim_notify_info(gc, NULL, _("You have successfully removed a buddy"), NULL);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Remove buddy OK\n");
+			purple_notify_info(gc, NULL, _("You have successfully removed a buddy"), NULL);
 		}
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt remove buddy reply\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt remove buddy reply\n");
 	}
 }
 
 /* process the server reply for my request to remove myself from a buddy */
-void qq_process_remove_self_reply(guint8 *buf, gint buf_len, GaimConnection *gc) 
+void qq_process_remove_self_reply(guint8 *buf, gint buf_len, PurpleConnection *gc) 
 {
 	qq_data *qd;
 	gint len;
@@ -325,24 +325,24 @@ void qq_process_remove_self_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_REMOVE_SELF_REPLY_OK)
 			/* there is no reason return from server */
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Remove self fails\n");
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Remove self fails\n");
 		else {		/* if reply */
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "Remove self from a buddy OK\n");
-			gaim_notify_info(gc, NULL, _("You have successfully removed yourself from a buddy"), NULL);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "Remove self from a buddy OK\n");
+			purple_notify_info(gc, NULL, _("You have successfully removed yourself from a buddy"), NULL);
 		}
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt remove self reply\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt remove self reply\n");
 	}
 }
 
-void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *gc)
+void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint len, for_uid;
 	gchar *msg, **segments, *uid, *reply;
 	guint8 *data;
 	GList *list;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 	gc_and_uid *g;
 	qq_add_buddy_request *req;
 
@@ -365,10 +365,10 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 	}
 
 	if (for_uid == 0) {	/* we have no record for this */
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "We have no record for add buddy reply [%d], discard\n", seq);
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "We have no record for add buddy reply [%d], discard\n", seq);
 		return;
 	} else {
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "Add buddy reply [%d] is for id [%d]\n", seq, for_uid);
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "Add buddy reply [%d] is for id [%d]\n", seq, for_uid);
 	}
 
 	data = g_newa(guint8, len);
@@ -379,21 +379,21 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 		uid = segments[0];
 		reply = segments[1];
 		if (strtol(uid, NULL, 10) != qd->uid) {	/* should not happen */
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Add buddy reply is to [%s], not me!", uid);
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Add buddy reply is to [%s], not me!", uid);
 			g_strfreev(segments);
 			return;
 		}
 
 		if (strtol(reply, NULL, 10) > 0) {	/* need auth */
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Add buddy attempt fails, need authentication\n");
-			b = gaim_find_buddy(gc->account, uid_to_gaim_name(for_uid));
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Add buddy attempt fails, need authentication\n");
+			b = purple_find_buddy(gc->account, uid_to_purple_name(for_uid));
 			if (b != NULL)
-				gaim_blist_remove_buddy(b);
+				purple_blist_remove_buddy(b);
 			g = g_new0(gc_and_uid, 1);
 			g->gc = gc;
 			g->uid = for_uid;
 			msg = g_strdup_printf(_("User %d needs authentication"), for_uid);
-			gaim_request_input(gc, NULL, msg,
+			purple_request_input(gc, NULL, msg,
 					   _("Input request here"),
 					   _("Would you be my friend?"),
 					   TRUE, FALSE, NULL, _("Send"),
@@ -404,38 +404,38 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConn
 		} else {	/* add OK */
 			qq_add_buddy_by_recv_packet(gc, for_uid, TRUE, TRUE);
 			msg = g_strdup_printf(_("You have added %d in buddy list"), for_uid);
-			gaim_notify_info(gc, NULL, msg, NULL);
+			purple_notify_info(gc, NULL, msg, NULL);
 			g_free(msg);
 		}
 		g_strfreev(segments);
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt add buddy reply\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt add buddy reply\n");
 	}
 }
 
-GaimGroup *qq_get_gaim_group(const gchar *group_name)
+PurpleGroup *qq_get_purple_group(const gchar *group_name)
 {
-	GaimGroup *g;
+	PurpleGroup *g;
 
 	g_return_val_if_fail(group_name != NULL, NULL);
 
-	g = gaim_find_group(group_name);
+	g = purple_find_group(group_name);
 	if (g == NULL) {
-		g = gaim_group_new(group_name);
-		gaim_blist_add_group(g, NULL);
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Add new group: %s\n", group_name);
+		g = purple_group_new(group_name);
+		purple_blist_add_group(g, NULL);
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Add new group: %s\n", group_name);
 	}
 
 	return g;
 }
 
 /* we add new buddy, if the received packet is from someone not in my list
- * return the GaimBuddy that is just created */
-GaimBuddy *qq_add_buddy_by_recv_packet(GaimConnection *gc, guint32 uid, gboolean is_known, gboolean create)
+ * return the PurpleBuddy that is just created */
+PurpleBuddy *qq_add_buddy_by_recv_packet(PurpleConnection *gc, guint32 uid, gboolean is_known, gboolean create)
 {
-	GaimAccount *a;
-	GaimBuddy *b;
-	GaimGroup *g;
+	PurpleAccount *a;
+	PurpleBuddy *b;
+	PurpleGroup *g;
 	qq_data *qd;
 	qq_buddy *q_bud;
 	gchar *name, *group_name;
@@ -445,18 +445,18 @@ GaimBuddy *qq_add_buddy_by_recv_packet(GaimConnection *gc, guint32 uid, gboolean
 	g_return_val_if_fail(a != NULL && uid != 0, NULL);
 
 	group_name = is_known ?
-	    g_strdup_printf(GAIM_GROUP_QQ_FORMAT, gaim_account_get_username(a)) : g_strdup(GAIM_GROUP_QQ_UNKNOWN);
+	    g_strdup_printf(PURPLE_GROUP_QQ_FORMAT, purple_account_get_username(a)) : g_strdup(PURPLE_GROUP_QQ_UNKNOWN);
 
-	g = qq_get_gaim_group(group_name);
+	g = qq_get_purple_group(group_name);
 
-	name = uid_to_gaim_name(uid);
-	b = gaim_find_buddy(gc->account, name);
+	name = uid_to_purple_name(uid);
+	b = purple_find_buddy(gc->account, name);
 	/* remove old, we can not simply return here
 	 * because there might be old local copy of this buddy */
 	if (b != NULL)
-		gaim_blist_remove_buddy(b);
+		purple_blist_remove_buddy(b);
 
-	b = gaim_buddy_new(a, name, NULL);
+	b = purple_buddy_new(a, name, NULL);
 
 	if (!create)
 		b->proto_data = NULL;
@@ -469,8 +469,8 @@ GaimBuddy *qq_add_buddy_by_recv_packet(GaimConnection *gc, guint32 uid, gboolean
 		qq_send_packet_get_buddies_online(gc, QQ_FRIENDS_ONLINE_POSITION_START);
 	}
 
-	gaim_blist_add_buddy(b, NULL, g, NULL);
-	gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Add new buddy: [%s]\n", name);
+	purple_blist_add_buddy(b, NULL, g, NULL);
+	purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Add new buddy: [%s]\n", name);
 
 	g_free(name);
 	g_free(group_name);
@@ -479,42 +479,42 @@ GaimBuddy *qq_add_buddy_by_recv_packet(GaimConnection *gc, guint32 uid, gboolean
 }
 
 /* add a buddy and send packet to QQ server
- * note that when gaim load local cached buddy list into its blist
+ * note that when purple load local cached buddy list into its blist
  * it also calls this funtion, so we have to 
  * define qd->logged_in=TRUE AFTER serv_finish_login(gc) */
-void qq_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
+void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	qq_data *qd;
 	guint32 uid;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 
 	qd = (qq_data *) gc->proto_data;
 	if (!qd->logged_in)
 		return;		/* IMPORTANT ! */
 
-	uid = gaim_name_to_uid(buddy->name);
+	uid = purple_name_to_uid(buddy->name);
 	if (uid > 0)
 		_qq_send_packet_add_buddy(gc, uid);
 	else {
-		b = gaim_find_buddy(gc->account, buddy->name);
+		b = purple_find_buddy(gc->account, buddy->name);
 		if (b != NULL)
-			gaim_blist_remove_buddy(b);
-		gaim_notify_error(gc, NULL,
+			purple_blist_remove_buddy(b);
+		purple_notify_error(gc, NULL,
 				  _("QQid Error"),
 				  _("Invalid QQid"));
 	}
 }
 
 /* remove a buddy and send packet to QQ server accordingly */
-void qq_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
+void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	qq_data *qd;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 	qq_buddy *q_bud;
 	guint32 uid;
 
 	qd = (qq_data *) gc->proto_data;
-	uid = gaim_name_to_uid(buddy->name);
+	uid = purple_name_to_uid(buddy->name);
 
 	if (!qd->logged_in)
 		return;
@@ -522,18 +522,18 @@ void qq_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
 	if (uid > 0)
 		_qq_send_packet_remove_buddy(gc, uid);
 
-	b = gaim_find_buddy(gc->account, buddy->name);
+	b = purple_find_buddy(gc->account, buddy->name);
 	if (b != NULL) {
 		q_bud = (qq_buddy *) b->proto_data;
 		if (q_bud != NULL)
 			qd->buddies = g_list_remove(qd->buddies, q_bud);
 		else
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "We have no qq_buddy record for %s\n", buddy->name);
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "We have no qq_buddy record for %s\n", buddy->name);
 		/* remove buddy on blist, this does not trigger qq_remove_buddy again
 		 * do this only if the request comes from block request,
-		 * otherwise gaim segmentation fault */
-		if (g_ascii_strcasecmp(group->name, GAIM_GROUP_QQ_BLOCKED) == 0)
-			gaim_blist_remove_buddy(b);
+		 * otherwise purple segmentation fault */
+		if (g_ascii_strcasecmp(group->name, PURPLE_GROUP_QQ_BLOCKED) == 0)
+			purple_blist_remove_buddy(b);
 	}
 }
 
@@ -550,31 +550,31 @@ void qq_add_buddy_request_free(qq_data *qd)
 		g_free(p);
 		i++;
 	}
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "%d add buddy requests are freed!\n", i);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "%d add buddy requests are freed!\n", i);
 }
 
 /* free up all qq_buddy */
-void qq_buddies_list_free(GaimAccount *account, qq_data *qd)
+void qq_buddies_list_free(PurpleAccount *account, qq_data *qd)
 {
 	gint i;
 	qq_buddy *p;
 	gchar *name;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 
 	i = 0;
 	while (qd->buddies) {
 		p = (qq_buddy *) (qd->buddies->data);
 		qd->buddies = g_list_remove(qd->buddies, p);
-		name = uid_to_gaim_name(p->uid);
-		b = gaim_find_buddy(account, name);   	
+		name = uid_to_purple_name(p->uid);
+		b = purple_find_buddy(account, name);   	
 		if(b != NULL) 
 			b->proto_data = NULL;
 		else
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "qq_buddy %s not found in gaim proto_data\n", name);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "qq_buddy %s not found in purple proto_data\n", name);
 		g_free(name);
 
 		g_free(p);
 		i++;
 	}
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "%d qq_buddy structures are freed!\n", i);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "%d qq_buddy structures are freed!\n", i);
 }

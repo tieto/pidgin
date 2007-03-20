@@ -1,7 +1,7 @@
 /*
- * Extra conversation placement options for Gaim
+ * Extra conversation placement options for Purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -34,8 +34,8 @@ conv_placement_by_number(PidginConversation *conv)
 	PidginWindow *win = NULL;
 	GList *wins = NULL;
 
-	if (gaim_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate"))
-		win = pidgin_conv_window_last_with_type(gaim_conversation_get_type(conv->active_conv));
+	if (purple_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate"))
+		win = pidgin_conv_window_last_with_type(purple_conversation_get_type(conv->active_conv));
 	else if ((wins = pidgin_conv_windows_get_list()) != NULL)
 		win = g_list_last(wins)->data;
 
@@ -45,7 +45,7 @@ conv_placement_by_number(PidginConversation *conv)
 		pidgin_conv_window_add_gtkconv(win, conv);
 		pidgin_conv_window_show(win);
 	} else {
-		int max_count = gaim_prefs_get_int("/plugins/gtk/extplacement/placement_number");
+		int max_count = purple_prefs_get_int("/plugins/gtk/extplacement/placement_number");
 		int count = pidgin_conv_window_get_gtkconv_count(win);
 
 		if (count < max_count)
@@ -56,8 +56,8 @@ conv_placement_by_number(PidginConversation *conv)
 			for (l = pidgin_conv_windows_get_list(); l != NULL; l = l->next) {
 				win = l->data;
 
-				if (gaim_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate") &&
-					gaim_conversation_get_type(pidgin_conv_window_get_active_conversation(win)) != gaim_conversation_get_type(conv->active_conv))
+				if (purple_prefs_get_bool("/plugins/gtk/extplacement/placement_number_separate") &&
+					purple_conversation_get_type(pidgin_conv_window_get_active_conversation(win)) != purple_conversation_get_type(conv->active_conv))
 					continue;
 
 				count = pidgin_conv_window_get_gtkconv_count(win);
@@ -75,62 +75,62 @@ conv_placement_by_number(PidginConversation *conv)
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 	pidgin_conv_placement_add_fnc("number", _("By conversation count"),
 							   &conv_placement_by_number);
-	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
+	purple_prefs_trigger_callback("/purple/gtk/conversations/placement");
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	pidgin_conv_placement_remove_fnc("number");
-	gaim_prefs_trigger_callback("/gaim/gtk/conversations/placement");
+	purple_prefs_trigger_callback("/purple/gtk/conversations/placement");
 	return TRUE;
 }
 
-static GaimPluginPrefFrame *
-get_plugin_pref_frame(GaimPlugin *plugin) {
-	GaimPluginPrefFrame *frame;
-	GaimPluginPref *ppref;
+static PurplePluginPrefFrame *
+get_plugin_pref_frame(PurplePlugin *plugin) {
+	PurplePluginPrefFrame *frame;
+	PurplePluginPref *ppref;
 
-	frame = gaim_plugin_pref_frame_new();
+	frame = purple_plugin_pref_frame_new();
 
-	ppref = gaim_plugin_pref_new_with_label(_("Conversation Placement"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	ppref = purple_plugin_pref_new_with_label(_("Conversation Placement"));
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 							"/plugins/gtk/extplacement/placement_number",
 							_("Number of conversations per window"));
-	gaim_plugin_pref_set_bounds(ppref, 1, 50);
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_set_bounds(ppref, 1, 50);
+	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = gaim_plugin_pref_new_with_name_and_label(
+	ppref = purple_plugin_pref_new_with_name_and_label(
 							"/plugins/gtk/extplacement/placement_number_separate",
 							_("Separate IM and Chat windows when placing by number"));
-	gaim_plugin_pref_frame_add(frame, ppref);
+	purple_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
 }
 
-static GaimPluginUiInfo prefs_info = {
+static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
 	0,   /* page_num (Reserved) */
 	NULL /* frame (Reserved) */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,							/**< type			*/
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,							/**< type			*/
 	PIDGIN_PLUGIN_TYPE,							/**< ui_requirement	*/
 	0,												/**< flags			*/
 	NULL,											/**< dependencies	*/
-	GAIM_PRIORITY_DEFAULT,							/**< priority		*/
+	PURPLE_PRIORITY_DEFAULT,							/**< priority		*/
 	"gtk-extplacement",								/**< id				*/
 	N_("ExtPlacement"),								/**< name			*/
 	VERSION,										/**< version		*/
@@ -139,7 +139,7 @@ static GaimPluginInfo info =
 	N_("Restrict the number of conversations per windows,"
 	   " optionally separating IMs and Chats"),
 	"Stu Tomlinson <stu@nosnilmot.com>",			/**< author			*/
-	GAIM_WEBSITE,									/**< homepage		*/
+	PURPLE_WEBSITE,									/**< homepage		*/
 	plugin_load,									/**< load			*/
 	plugin_unload,									/**< unload			*/
 	NULL,											/**< destroy		*/
@@ -150,11 +150,11 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	gaim_prefs_add_none("/plugins/gtk/extplacement");
-	gaim_prefs_add_int("/plugins/gtk/extplacement/placement_number", 4);
-	gaim_prefs_add_bool("/plugins/gtk/extplacement/placement_number_separate", FALSE);
+	purple_prefs_add_none("/plugins/gtk/extplacement");
+	purple_prefs_add_int("/plugins/gtk/extplacement/placement_number", 4);
+	purple_prefs_add_bool("/plugins/gtk/extplacement/placement_number_separate", FALSE);
 }
 
-GAIM_INIT_PLUGIN(extplacement, init_plugin, info)
+PURPLE_INIT_PLUGIN(extplacement, init_plugin, info)

@@ -1,9 +1,9 @@
 /**
  * @file msn-utils.h Utility functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -25,7 +25,7 @@
 #define _MSN_UTILS_H_
 
 /**
- * Parses the MSN message formatting into a format compatible with Gaim.
+ * Parses the MSN message formatting into a format compatible with Purple.
  *
  * @param mime     The mime header with the formatting.
  * @param pre_ret  The returned prefix string.
@@ -36,7 +36,7 @@
 void msn_parse_format(const char *mime, char **pre_ret, char **post_ret);
 
 /**
- * Parses the Gaim message formatting (html) into the MSN format.
+ * Parses the Purple message formatting (html) into the MSN format.
  *
  * @param html			The html message to format.
  * @param attributes	The returned attributes string.

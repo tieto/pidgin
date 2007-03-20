@@ -1,8 +1,8 @@
 $MODULE_NAME = "Account Functions Test";
 
-use Gaim;
+use Purple;
 
-# All the information Gaim gets about our nifty plugin
+# All the information Purple gets about our nifty plugin
 %PLUGIN_INFO = (
 	perl_api_version => 2,
 	name => "Perl: $MODULE_NAME",
@@ -40,40 +40,40 @@ sub plugin_init {
 sub plugin_load {
 	my $plugin = shift;
 	print "#" x 80 . "\n\n";
-	Gaim::Debug::info($MODULE_NAME, "plugin_load() - Testing $MODULE_NAME Started.");
+	Purple::Debug::info($MODULE_NAME, "plugin_load() - Testing $MODULE_NAME Started.");
 	print "\n\n";
 
 
 	#################################
 	#				#
-	#	Gaim::Account::Option	#
+	#	Purple::Account::Option	#
 	#				#
 	#################################
 
-	print "Testing: Gaim::Account::Option::new()...\n";
-	$acc_opt  = Gaim::Account::Option->new(1, "TEXT", "pref_name");
-	$acc_opt2 = Gaim::Account::Option->bool_new("TeXt", "MYprefName", 1);
+	print "Testing: Purple::Account::Option::new()...\n";
+	$acc_opt  = Purple::Account::Option->new(1, "TEXT", "pref_name");
+	$acc_opt2 = Purple::Account::Option->bool_new("TeXt", "MYprefName", 1);
 
 	#################################
 	#				#
-	#	Gaim::Account		#
+	#	Purple::Account		#
 	#				#
 	#################################
 
 
-	print "Testing: Gaim::Account::new()... ";
-	$account = Gaim::Account->new($TEST_NAME, $PROTOCOL_ID);
+	print "Testing: Purple::Account::new()... ";
+	$account = Purple::Account->new($TEST_NAME, $PROTOCOL_ID);
 	if ($account) { print "ok.\n"; } else { print "fail.\n"; }
 
-	print "Testing: Gaim::Accounts::add()...";
-	Gaim::Accounts::add($account);
+	print "Testing: Purple::Accounts::add()...";
+	Purple::Accounts::add($account);
 	print "pending find...\n";
 
-	print "Testing: Gaim::Accounts::find()...";
-	$account = Gaim::Accounts::find($TEST_NAME, $PROTOCOL_ID);
+	print "Testing: Purple::Accounts::find()...";
+	$account = Purple::Accounts::find($TEST_NAME, $PROTOCOL_ID);
 	if ($account) { print "ok.\n"; } else { print "fail.\n"; }
 
-	print "Testing: Gaim::Account::get_username()... ";
+	print "Testing: Purple::Account::get_username()... ";
 	$user_name = $account->get_username();
 	if ($user_name) {
 		print "Success: $user_name.\n";
@@ -81,28 +81,28 @@ sub plugin_load {
 		print "Failed!\n";
 	}
 
-	print "Testing: Gaim::Account::is_connected()... ";
+	print "Testing: Purple::Account::is_connected()... ";
 	if ($account->is_connected()) {
 		print " Connected.\n";
 	} else {
 		print " Disconnected.\n";
 	}
 
-	print "Testing: Gaim::Accounts::get_active_status()... ";
+	print "Testing: Purple::Accounts::get_active_status()... ";
 	if ($account->get_active_status()) {
 		print "Okay.\n";
 	} else {
 		print "Failed!\n";
 	}
 
-	$account = Gaim::Accounts::find($USERNAME, $PROTOCOL_ID);
-	print "Testing: Gaim::Accounts::connect()...pending...\n";
+	$account = Purple::Accounts::find($USERNAME, $PROTOCOL_ID);
+	print "Testing: Purple::Accounts::connect()...pending...\n";
 
 	$account->set_status("available", TRUE);
 	$account->connect();
 
 	print "\n\n";
-	Gaim::Debug::info($MODULE_NAME, "plugin_load() - Testing $MODULE_NAME Completed.\n");
+	Purple::Debug::info($MODULE_NAME, "plugin_load() - Testing $MODULE_NAME Completed.\n");
 	print "\n\n" . "#" x 80 . "\n\n";
 }
 
@@ -110,13 +110,13 @@ sub plugin_unload {
 	my $plugin = shift;
 
 	print "#" x 80 . "\n\n";
-	Gaim::Debug::info($MODULE_NAME, "plugin_unload() - Testing $MODULE_NAME Started.\n");
+	Purple::Debug::info($MODULE_NAME, "plugin_unload() - Testing $MODULE_NAME Started.\n");
 	print "\n\n";
 
 	#########  TEST CODE HERE  ##########
 
 	print "\n\n";
-	Gaim::Debug::info($MODULE_NAME, "plugin_unload() - Testing $MODULE_NAME Completed.\n");
+	Purple::Debug::info($MODULE_NAME, "plugin_unload() - Testing $MODULE_NAME Completed.\n");
 	print "\n\n" . "#" x 80 . "\n\n";
 }
 

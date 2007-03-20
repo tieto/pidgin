@@ -1,5 +1,5 @@
 /*
- * System tray icon (aka docklet) plugin for Gaim
+ * System tray icon (aka docklet) plugin for Purple
  *
  * Copyright (C) 2002-3 Robert McQueen <robot101@debian.org>
  * Copyright (C) 2003 Herman Bloggs <hermanator12002@yahoo.com>
@@ -39,7 +39,7 @@
 #include "gtksavedstatuses.h"
 #include "gtksound.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkdocklet.h"
 #include "gtkdialogs.h"
 
@@ -92,11 +92,11 @@ get_pending_list(guint max)
 	GList *l_im = NULL;
 	GList *l_chat = NULL;
 
-	l_im = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_IM,
+	l_im = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
 						       PIDGIN_UNSEEN_TEXT,
 						       FALSE, max);
 
-	l_chat = pidgin_conversations_find_unseen_list(GAIM_CONV_TYPE_CHAT,
+	l_chat = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_CHAT,
 		 					 PIDGIN_UNSEEN_NICK,
 							 FALSE, max);
 
@@ -113,15 +113,15 @@ docklet_update_status()
 {
 	GList *convs, *l;
 	int count;
-	GaimSavedStatus *saved_status;
-	GaimStatusPrimitive prim;
+	PurpleSavedStatus *saved_status;
+	PurpleStatusPrimitive prim;
 	DockletStatus newstatus = DOCKLET_STATUS_OFFLINE;
 	gboolean pending = FALSE, connecting = FALSE;
 
 	/* determine if any ims have unseen messages */
 	convs = get_pending_list(DOCKLET_TOOLTIP_LINE_LIMIT);
 
-	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"), "pending")) {
+	if (!strcmp(purple_prefs_get_string("/purple/gtk/docklet/show"), "pending")) {
 		if (convs && ui_ops->create && !visible) {
 			g_list_free(convs);
 			ui_ops->create();
@@ -145,7 +145,7 @@ docklet_update_status()
 			GString *tooltip_text = g_string_new("");
 			for (l = convs, count = 0 ; l != NULL ; l = l->next, count++) {
 				if (PIDGIN_IS_PIDGIN_CONVERSATION(l->data)) {
-					PidginConversation *gtkconv = PIDGIN_CONVERSATION((GaimConversation *)l->data);
+					PidginConversation *gtkconv = PIDGIN_CONVERSATION((PurpleConversation *)l->data);
 					if (count == DOCKLET_TOOLTIP_LINE_LIMIT - 1)
 						g_string_append(tooltip_text, _("Right-click for more unread messages...\n"));
 					else
@@ -171,35 +171,35 @@ docklet_update_status()
 		ui_ops->set_tooltip(NULL);
 	}
 
-	for(l = gaim_accounts_get_all(); l != NULL; l = l->next) {
+	for(l = purple_accounts_get_all(); l != NULL; l = l->next) {
 
-		GaimAccount *account = (GaimAccount*)l->data;
-		GaimStatus *account_status;
+		PurpleAccount *account = (PurpleAccount*)l->data;
+		PurpleStatus *account_status;
 
-		if (!gaim_account_get_enabled(account, PIDGIN_UI))
+		if (!purple_account_get_enabled(account, PIDGIN_UI))
 			continue;
 
-		if (gaim_account_is_disconnected(account))
+		if (purple_account_is_disconnected(account))
 			continue;
 
-		account_status = gaim_account_get_active_status(account);
-		if (gaim_account_is_connecting(account))
+		account_status = purple_account_get_active_status(account);
+		if (purple_account_is_connecting(account))
 			connecting = TRUE;
 	}
 
-	saved_status = gaim_savedstatus_get_current();
-	prim = gaim_savedstatus_get_type(saved_status);
+	saved_status = purple_savedstatus_get_current();
+	prim = purple_savedstatus_get_type(saved_status);
 	if (pending)
 		newstatus = DOCKLET_STATUS_PENDING;
 	else if (connecting)
 		newstatus = DOCKLET_STATUS_CONNECTING;
-	else if (prim == GAIM_STATUS_UNAVAILABLE)
+	else if (prim == PURPLE_STATUS_UNAVAILABLE)
 		newstatus = DOCKLET_STATUS_BUSY;
-	else if (prim == GAIM_STATUS_AWAY)
+	else if (prim == PURPLE_STATUS_AWAY)
 		newstatus = DOCKLET_STATUS_AWAY;
-	else if (prim == GAIM_STATUS_EXTENDED_AWAY)
+	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
 		newstatus = DOCKLET_STATUS_XA;
-	else if (prim == GAIM_STATUS_OFFLINE)
+	else if (prim == PURPLE_STATUS_OFFLINE)
 		newstatus = DOCKLET_STATUS_OFFLINE;
 	else
 		newstatus = DOCKLET_STATUS_AVAILABLE;
@@ -212,7 +212,7 @@ docklet_update_status()
 			ui_ops->update_icon(status);
 
 		/* and schedule the blinker function if messages are pending */
-		if (gaim_prefs_get_bool("/gaim/gtk/docklet/blink") &&
+		if (purple_prefs_get_bool("/purple/gtk/docklet/blink") &&
 		    status == DOCKLET_STATUS_PENDING
 		    && docklet_blinking_timer == 0) {
 			docklet_blinking_timer = g_timeout_add(500, docklet_blink_icon, NULL);
@@ -226,11 +226,11 @@ static gboolean
 online_account_supports_chat()
 {
 	GList *c = NULL;
-	c = gaim_connections_get_all();
+	c = purple_connections_get_all();
 
 	while(c != NULL) {
-		GaimConnection *gc = c->data;
-		GaimPluginProtocolInfo *prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		PurpleConnection *gc = c->data;
+		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 		if (prpl_info != NULL && prpl_info->chat_info != NULL)
 			return TRUE;
 		c = c->next;
@@ -244,7 +244,7 @@ online_account_supports_chat()
  **************************************************************************/
 #if 0
 static void
-gaim_quit_cb()
+pidgin_quit_cb()
 {
 	/* TODO: confirm quit while pending */
 }
@@ -257,34 +257,34 @@ docklet_update_status_cb(void *data)
 }
 
 static void
-docklet_conv_updated_cb(GaimConversation *conv, GaimConvUpdateType type)
+docklet_conv_updated_cb(PurpleConversation *conv, PurpleConvUpdateType type)
 {
-	if (type == GAIM_CONV_UPDATE_UNSEEN)
+	if (type == PURPLE_CONV_UPDATE_UNSEEN)
 		docklet_update_status();
 }
 
 static void
-docklet_signed_on_cb(GaimConnection *gc)
+docklet_signed_on_cb(PurpleConnection *gc)
 {
 	if (!enable_join_chat) {
-		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
+		if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
 			enable_join_chat = TRUE;
 	}
 	docklet_update_status();
 }
 
 static void
-docklet_signed_off_cb(GaimConnection *gc)
+docklet_signed_off_cb(PurpleConnection *gc)
 {
 	if (enable_join_chat) {
-		if (GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
+		if (PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl)->chat_info != NULL)
 			enable_join_chat = online_account_supports_chat();
 	}
 	docklet_update_status();
 }
 
 static void
-docklet_show_pref_changed_cb(const char *name, GaimPrefType type,
+docklet_show_pref_changed_cb(const char *name, PurplePrefType type,
 			     gconstpointer value, gpointer data)
 {
 	const char *val = value;
@@ -316,19 +316,19 @@ docklet_show_pref_changed_cb(const char *name, GaimPrefType type,
 static void
 docklet_toggle_mute(GtkWidget *toggle, void *data)
 {
-	gaim_prefs_set_bool("/gaim/gtk/sound/mute", GTK_CHECK_MENU_ITEM(toggle)->active);
+	purple_prefs_set_bool("/purple/gtk/sound/mute", GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
 static void
 docklet_toggle_blink(GtkWidget *toggle, void *data)
 {
-	gaim_prefs_set_bool("/gaim/gtk/docklet/blink", GTK_CHECK_MENU_ITEM(toggle)->active);
+	purple_prefs_set_bool("/purple/gtk/docklet/blink", GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
 static void
 docklet_toggle_blist(GtkWidget *toggle, void *data)
 {
-	gaim_blist_set_visible(GTK_CHECK_MENU_ITEM(toggle)->active);
+	purple_blist_set_visible(GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
 #ifdef _WIN32
@@ -349,18 +349,18 @@ docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 {
 	static guint hide_docklet_timer = 0;
 	if (event->type == GDK_LEAVE_NOTIFY && event->detail == GDK_NOTIFY_ANCESTOR) {
-		gaim_debug(GAIM_DEBUG_INFO, "docklet", "menu leave-notify-event\n");
+		purple_debug(PURPLE_DEBUG_INFO, "docklet", "menu leave-notify-event\n");
 		/* Add some slop so that the menu doesn't annoyingly disappear when mousing around */
 		if (hide_docklet_timer == 0) {
-			hide_docklet_timer = gaim_timeout_add(500,
+			hide_docklet_timer = purple_timeout_add(500,
 					hide_docklet_menu, menu);
 		}
 	} else if (event->type == GDK_ENTER_NOTIFY && event->detail == GDK_NOTIFY_ANCESTOR) {
-		gaim_debug(GAIM_DEBUG_INFO, "docklet", "menu enter-notify-event\n");
+		purple_debug(PURPLE_DEBUG_INFO, "docklet", "menu enter-notify-event\n");
 		if (hide_docklet_timer != 0) {
 			/* Cancel the hiding if we reenter */
 
-			gaim_timeout_remove(hide_docklet_timer);
+			purple_timeout_remove(hide_docklet_timer);
 			hide_docklet_timer = 0;
 		}
 	}
@@ -371,45 +371,45 @@ docklet_menu_leave_enter(GtkWidget *menu, GdkEventCrossing *event, void *data)
 static void
 show_custom_status_editor_cb(GtkMenuItem *menuitem, gpointer user_data)
 {
-	GaimSavedStatus *saved_status;
-	saved_status = gaim_savedstatus_get_current();
+	PurpleSavedStatus *saved_status;
+	saved_status = purple_savedstatus_get_current();
 	pidgin_status_editor_show(FALSE,
-		gaim_savedstatus_is_transient(saved_status) ? saved_status : NULL);
+		purple_savedstatus_is_transient(saved_status) ? saved_status : NULL);
 }
 
 static void
 activate_status_primitive_cb(GtkMenuItem *menuitem, gpointer user_data)
 {
-	GaimStatusPrimitive primitive;
-	GaimSavedStatus *saved_status;
+	PurpleStatusPrimitive primitive;
+	PurpleSavedStatus *saved_status;
 
 	primitive = GPOINTER_TO_INT(user_data);
 
 	/* Try to lookup an already existing transient saved status */
-	saved_status = gaim_savedstatus_find_transient_by_type_and_message(primitive, NULL);
+	saved_status = purple_savedstatus_find_transient_by_type_and_message(primitive, NULL);
 
 	/* Create a new transient saved status if we weren't able to find one */
 	if (saved_status == NULL)
-		saved_status = gaim_savedstatus_new(NULL, primitive);
+		saved_status = purple_savedstatus_new(NULL, primitive);
 
 	/* Set the status for each account */
-	gaim_savedstatus_activate(saved_status);
+	purple_savedstatus_activate(saved_status);
 }
 
 static void
 activate_saved_status_cb(GtkMenuItem *menuitem, gpointer user_data)
 {
 	time_t creation_time;
-	GaimSavedStatus *saved_status;
+	PurpleSavedStatus *saved_status;
 
 	creation_time = GPOINTER_TO_INT(user_data);
-	saved_status = gaim_savedstatus_find_by_creation_time(creation_time);
+	saved_status = purple_savedstatus_find_by_creation_time(creation_time);
 	if (saved_status != NULL)
-		gaim_savedstatus_activate(saved_status);
+		purple_savedstatus_activate(saved_status);
 }
 
 static GtkWidget *
-new_menu_item_with_gaim_icon(GtkWidget *menu, const char *str, GaimStatusPrimitive primitive, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
+new_menu_item_with_status_icon(GtkWidget *menu, const char *str, PurpleStatusPrimitive primitive, GtkSignalFunc sf, gpointer data, guint accel_key, guint accel_mods, char *mod)
 {
 	GtkWidget *menuitem;
 	GdkPixbuf *pixbuf;
@@ -443,40 +443,40 @@ docklet_status_submenu()
 	menuitem = gtk_menu_item_new_with_label(_("Change Status"));
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
 
-	new_menu_item_with_gaim_icon(submenu, _("Available"),
-		GAIM_STATUS_AVAILABLE, G_CALLBACK(activate_status_primitive_cb),
-		GINT_TO_POINTER(GAIM_STATUS_AVAILABLE), 0, 0, NULL);
+	new_menu_item_with_status_icon(submenu, _("Available"),
+		PURPLE_STATUS_AVAILABLE, G_CALLBACK(activate_status_primitive_cb),
+		GINT_TO_POINTER(PURPLE_STATUS_AVAILABLE), 0, 0, NULL);
 
-	new_menu_item_with_gaim_icon(submenu, _("Away"),
-		GAIM_STATUS_AWAY, G_CALLBACK(activate_status_primitive_cb),
-		GINT_TO_POINTER(GAIM_STATUS_AWAY), 0, 0, NULL);
+	new_menu_item_with_status_icon(submenu, _("Away"),
+		PURPLE_STATUS_AWAY, G_CALLBACK(activate_status_primitive_cb),
+		GINT_TO_POINTER(PURPLE_STATUS_AWAY), 0, 0, NULL);
 
-	new_menu_item_with_gaim_icon(submenu, _("Invisible"),
-		GAIM_STATUS_INVISIBLE, G_CALLBACK(activate_status_primitive_cb),
-		GINT_TO_POINTER(GAIM_STATUS_INVISIBLE), 0, 0, NULL);
+	new_menu_item_with_status_icon(submenu, _("Invisible"),
+		PURPLE_STATUS_INVISIBLE, G_CALLBACK(activate_status_primitive_cb),
+		GINT_TO_POINTER(PURPLE_STATUS_INVISIBLE), 0, 0, NULL);
 
-	new_menu_item_with_gaim_icon(submenu, _("Offline"),
-		GAIM_STATUS_OFFLINE, G_CALLBACK(activate_status_primitive_cb),
-		GINT_TO_POINTER(GAIM_STATUS_OFFLINE), 0, 0, NULL);
+	new_menu_item_with_status_icon(submenu, _("Offline"),
+		PURPLE_STATUS_OFFLINE, G_CALLBACK(activate_status_primitive_cb),
+		GINT_TO_POINTER(PURPLE_STATUS_OFFLINE), 0, 0, NULL);
 
-	popular_statuses = gaim_savedstatuses_get_popular(6);
+	popular_statuses = purple_savedstatuses_get_popular(6);
 	if (popular_statuses != NULL)
 		pidgin_separator(submenu);
 	for (cur = popular_statuses; cur != NULL; cur = cur->next)
 	{
-		GaimSavedStatus *saved_status = cur->data;
-		time_t creation_time = gaim_savedstatus_get_creation_time(saved_status);
-		new_menu_item_with_gaim_icon(submenu,
-			gaim_savedstatus_get_title(saved_status),
-			gaim_savedstatus_get_type(saved_status), G_CALLBACK(activate_saved_status_cb),
+		PurpleSavedStatus *saved_status = cur->data;
+		time_t creation_time = purple_savedstatus_get_creation_time(saved_status);
+		new_menu_item_with_status_icon(submenu,
+			purple_savedstatus_get_title(saved_status),
+			purple_savedstatus_get_type(saved_status), G_CALLBACK(activate_saved_status_cb),
 			GINT_TO_POINTER(creation_time), 0, 0, NULL);
 	}
 	g_list_free(popular_statuses);
 
 	pidgin_separator(submenu);
 
-	new_menu_item_with_gaim_icon(submenu, _("New..."), GAIM_STATUS_AVAILABLE, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
-	new_menu_item_with_gaim_icon(submenu, _("Saved..."), GAIM_STATUS_AVAILABLE, G_CALLBACK(pidgin_status_window_show), NULL, 0, 0, NULL);
+	new_menu_item_with_status_icon(submenu, _("New..."), PURPLE_STATUS_AVAILABLE, G_CALLBACK(show_custom_status_editor_cb), NULL, 0, 0, NULL);
+	new_menu_item_with_status_icon(submenu, _("Saved..."), PURPLE_STATUS_AVAILABLE, G_CALLBACK(pidgin_status_window_show), NULL, 0, 0, NULL);
 
 	return menuitem;
 }
@@ -493,7 +493,7 @@ docklet_menu() {
 	menu = gtk_menu_new();
 
 	menuitem = gtk_check_menu_item_new_with_label(_("Show Buddy List"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), gaim_prefs_get_bool("/gaim/gtk/blist/list_visible"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool("/purple/gtk/blist/list_visible"));
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blist), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
@@ -504,7 +504,7 @@ docklet_menu() {
 		GList *l = get_pending_list(0);
 		if (l == NULL) {
 			gtk_widget_set_sensitive(menuitem, FALSE);
-			gaim_debug_warning("docklet",
+			purple_debug_warning("docklet",
 				"status indicates messages pending, but no conversations with unseen messages were found.");
 		} else {
 			pidgin_conversations_fill_menu(submenu, l);
@@ -534,14 +534,14 @@ docklet_menu() {
 	pidgin_separator(menu);
 
 	menuitem = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), gaim_prefs_get_bool("/gaim/gtk/sound/mute"));
-	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/sound/method"), "none"))
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool("/purple/gtk/sound/mute"));
+	if (!strcmp(purple_prefs_get_string("/purple/gtk/sound/method"), "none"))
 		gtk_widget_set_sensitive(GTK_WIDGET(menuitem), FALSE);
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	menuitem = gtk_check_menu_item_new_with_label(_("Blink on new message"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), gaim_prefs_get_bool("/gaim/gtk/docklet/blink"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool("/purple/gtk/docklet/blink"));
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blink), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
@@ -551,7 +551,7 @@ docklet_menu() {
 	 * to the status in the buddy list gtkstatusbox
 	 */
 
-	pidgin_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(gaim_core_quit), NULL, 0, 0, NULL);
+	pidgin_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(purple_core_quit), NULL, 0, 0, NULL);
 
 #ifdef _WIN32
 	g_signal_connect(menu, "leave-notify-event", G_CALLBACK(docklet_menu_leave_enter), NULL);
@@ -574,7 +574,7 @@ pidgin_docklet_clicked(int button_type)
 			if (status == DOCKLET_STATUS_PENDING) {
 				GList *l = get_pending_list(1);
 				if (l != NULL) {
-					gaim_conversation_present((GaimConversation *)l->data);
+					purple_conversation_present((PurpleConversation *)l->data);
 					g_list_free(l);
 				}
 			} else {
@@ -591,7 +591,7 @@ void
 pidgin_docklet_embedded()
 {
 	if (!visibility_manager
-	    && strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"), "pending")) {
+	    && strcmp(purple_prefs_get_string("/purple/gtk/docklet/show"), "pending")) {
 		pidgin_blist_visibility_manager_add();
 		visibility_manager = TRUE;
 	}
@@ -634,38 +634,38 @@ pidgin_docklet_get_handle()
 void
 pidgin_docklet_init()
 {
-	void *conn_handle = gaim_connections_get_handle();
-	void *conv_handle = gaim_conversations_get_handle();
-	void *accounts_handle = gaim_accounts_get_handle();
+	void *conn_handle = purple_connections_get_handle();
+	void *conv_handle = purple_conversations_get_handle();
+	void *accounts_handle = purple_accounts_get_handle();
 	void *docklet_handle = pidgin_docklet_get_handle();
 
-	gaim_prefs_add_none("/gaim/gtk/docklet");
-	gaim_prefs_add_bool("/gaim/gtk/docklet/blink", FALSE);
-	gaim_prefs_add_string("/gaim/gtk/docklet/show", "always");
-	gaim_prefs_connect_callback(docklet_handle, "/gaim/gtk/docklet/show",
+	purple_prefs_add_none("/purple/gtk/docklet");
+	purple_prefs_add_bool("/purple/gtk/docklet/blink", FALSE);
+	purple_prefs_add_string("/purple/gtk/docklet/show", "always");
+	purple_prefs_connect_callback(docklet_handle, "/purple/gtk/docklet/show",
 				    docklet_show_pref_changed_cb, NULL);
 
 	docklet_ui_init();
-	if (!strcmp(gaim_prefs_get_string("/gaim/gtk/docklet/show"), "always") && ui_ops && ui_ops->create)
+	if (!strcmp(purple_prefs_get_string("/purple/gtk/docklet/show"), "always") && ui_ops && ui_ops->create)
 		ui_ops->create();
 
-	gaim_signal_connect(conn_handle, "signed-on",
-			    docklet_handle, GAIM_CALLBACK(docklet_signed_on_cb), NULL);
-	gaim_signal_connect(conn_handle, "signed-off",
-			    docklet_handle, GAIM_CALLBACK(docklet_signed_off_cb), NULL);
-	gaim_signal_connect(accounts_handle, "account-status-changed",
-			    docklet_handle, GAIM_CALLBACK(docklet_update_status_cb), NULL);
-	gaim_signal_connect(conv_handle, "received-im-msg",
-			    docklet_handle, GAIM_CALLBACK(docklet_update_status_cb), NULL);
-	gaim_signal_connect(conv_handle, "conversation-created",
-			    docklet_handle, GAIM_CALLBACK(docklet_update_status_cb), NULL);
-	gaim_signal_connect(conv_handle, "deleting-conversation",
-			    docklet_handle, GAIM_CALLBACK(docklet_update_status_cb), NULL);
-	gaim_signal_connect(conv_handle, "conversation-updated",
-			    docklet_handle, GAIM_CALLBACK(docklet_conv_updated_cb), NULL);
+	purple_signal_connect(conn_handle, "signed-on",
+			    docklet_handle, PURPLE_CALLBACK(docklet_signed_on_cb), NULL);
+	purple_signal_connect(conn_handle, "signed-off",
+			    docklet_handle, PURPLE_CALLBACK(docklet_signed_off_cb), NULL);
+	purple_signal_connect(accounts_handle, "account-status-changed",
+			    docklet_handle, PURPLE_CALLBACK(docklet_update_status_cb), NULL);
+	purple_signal_connect(conv_handle, "received-im-msg",
+			    docklet_handle, PURPLE_CALLBACK(docklet_update_status_cb), NULL);
+	purple_signal_connect(conv_handle, "conversation-created",
+			    docklet_handle, PURPLE_CALLBACK(docklet_update_status_cb), NULL);
+	purple_signal_connect(conv_handle, "deleting-conversation",
+			    docklet_handle, PURPLE_CALLBACK(docklet_update_status_cb), NULL);
+	purple_signal_connect(conv_handle, "conversation-updated",
+			    docklet_handle, PURPLE_CALLBACK(docklet_conv_updated_cb), NULL);
 #if 0
-	gaim_signal_connect(gaim_get_core(), "quitting",
-			    docklet_handle, GAIM_CALLBACK(gaim_quit_cb), NULL);
+	purple_signal_connect(purple_get_core(), "quitting",
+			    docklet_handle, PURPLE_CALLBACK(purple_quit_cb), NULL);
 #endif
 
 	enable_join_chat = online_account_supports_chat();

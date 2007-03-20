@@ -1,6 +1,6 @@
 /*
 
-  silcgaim_chat.c
+  silcpurple_chat.c
 
   Author: Pekka Riikonen <priikone@silcnet.org>
 
@@ -19,12 +19,12 @@
 
 #include "silcincludes.h"
 #include "silcclient.h"
-#include "silcgaim.h"
+#include "silcpurple.h"
 #include "wb.h"
 
 /***************************** Channel Routines ******************************/
 
-GList *silcgaim_chat_info(GaimConnection *gc)
+GList *silcpurple_chat_info(PurpleConnection *gc)
 {
 	GList *ci = NULL;
 	struct proto_chat_entry *pce;
@@ -44,7 +44,7 @@ GList *silcgaim_chat_info(GaimConnection *gc)
 	return ci;
 }
 
-GHashTable *silcgaim_chat_info_defaults(GaimConnection *gc, const char *chat_name)
+GHashTable *silcpurple_chat_info_defaults(PurpleConnection *gc, const char *chat_name)
 {
 	GHashTable *defaults;
 
@@ -57,17 +57,17 @@ GHashTable *silcgaim_chat_info_defaults(GaimConnection *gc, const char *chat_nam
 }
 
 static void
-silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components);
+silcpurple_chat_getinfo(PurpleConnection *gc, GHashTable *components);
 
 static void
-silcgaim_chat_getinfo_res(SilcClient client,
+silcpurple_chat_getinfo_res(SilcClient client,
 			  SilcClientConnection conn,
 			  SilcChannelEntry *channels,
 			  SilcUInt32 channels_count,
 			  void *context)
 {
 	GHashTable *components = context;
-	GaimConnection *gc = client->application;
+	PurpleConnection *gc = client->application;
 	const char *chname;
 	char tmp[256];
 
@@ -78,19 +78,19 @@ silcgaim_chat_getinfo_res(SilcClient client,
 	if (!channels) {
 		g_snprintf(tmp, sizeof(tmp),
 			   _("Channel %s does not exist in the network"), chname);
-		gaim_notify_error(gc, _("Channel Information"),
+		purple_notify_error(gc, _("Channel Information"),
 				  _("Cannot get channel information"), tmp);
 		return;
 	}
 
-	silcgaim_chat_getinfo(gc, components);
+	silcpurple_chat_getinfo(gc, components);
 }
 
 
 static void
-silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
+silcpurple_chat_getinfo(PurpleConnection *gc, GHashTable *components)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	const char *chname;
 	char *buf, tmp[256], *tmp2;
 	GString *s;
@@ -109,7 +109,7 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 	if (!channel) {
 		silc_client_get_channel_resolve(sg->client, sg->conn,
 						(char *)chname,
-						silcgaim_chat_getinfo_res,
+						silcpurple_chat_getinfo_res,
 						components);
 		return;
 	}
@@ -150,7 +150,7 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 
 	if (channel->mode) {
 		g_string_append_printf(s, _("<br><b>Channel Modes:</b> "));
-		silcgaim_get_chmode_string(channel->mode, tmp, sizeof(tmp));
+		silcpurple_get_chmode_string(channel->mode, tmp, sizeof(tmp));
 		g_string_append(s, tmp);
 	}
 
@@ -171,25 +171,25 @@ silcgaim_chat_getinfo(GaimConnection *gc, GHashTable *components)
 	}
 
 	buf = g_string_free(s, FALSE);
-	gaim_notify_formatted(gc, NULL, _("Channel Information"), NULL, buf, NULL, NULL);
+	purple_notify_formatted(gc, NULL, _("Channel Information"), NULL, buf, NULL, NULL);
 	g_free(buf);
 }
 
 
 static void
-silcgaim_chat_getinfo_menu(GaimBlistNode *node, gpointer data)
+silcpurple_chat_getinfo_menu(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat = (GaimChat *)node;
-	silcgaim_chat_getinfo(chat->account->gc, chat->components);
+	PurpleChat *chat = (PurpleChat *)node;
+	silcpurple_chat_getinfo(chat->account->gc, chat->components);
 }
 
 
 #if 0   /* XXX For now these are not implemented.  We need better
-	   listview dialog from Gaim for these. */
+	   listview dialog from Purple for these. */
 /************************** Channel Invite List ******************************/
 
 static void
-silcgaim_chat_invitelist(GaimBlistNode *node, gpointer data);
+silcpurple_chat_invitelist(PurpleBlistNode *node, gpointer data);
 {
 
 }
@@ -198,7 +198,7 @@ silcgaim_chat_invitelist(GaimBlistNode *node, gpointer data);
 /**************************** Channel Ban List *******************************/
 
 static void
-silcgaim_chat_banlist(GaimBlistNode *node, gpointer data);
+silcpurple_chat_banlist(PurpleBlistNode *node, gpointer data);
 {
 
 }
@@ -208,17 +208,17 @@ silcgaim_chat_banlist(GaimBlistNode *node, gpointer data);
 /************************* Channel Authentication ****************************/
 
 typedef struct {
-	SilcGaim sg;
+	SilcPurple sg;
 	SilcChannelEntry channel;
-	GaimChat *c;
+	PurpleChat *c;
 	SilcBuffer pubkeys;
-} *SilcGaimChauth;
+} *SilcPurpleChauth;
 
 static void
-silcgaim_chat_chpk_add(void *user_data, const char *name)
+silcpurple_chat_chpk_add(void *user_data, const char *name)
 {
-	SilcGaimChauth sgc = (SilcGaimChauth)user_data;
-	SilcGaim sg = sgc->sg;
+	SilcPurpleChauth sgc = (SilcPurpleChauth)user_data;
+	SilcPurple sg = sgc->sg;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcPublicKey public_key;
@@ -229,10 +229,10 @@ silcgaim_chat_chpk_add(void *user_data, const char *name)
 	/* Load the public key */
 	if (!silc_pkcs_load_public_key(name, &public_key, SILC_PKCS_FILE_PEM) &&
 	    !silc_pkcs_load_public_key(name, &public_key, SILC_PKCS_FILE_BIN)) {
-		silcgaim_chat_chauth_show(sgc->sg, sgc->channel, sgc->pubkeys);
+		silcpurple_chat_chauth_show(sgc->sg, sgc->channel, sgc->pubkeys);
 		silc_buffer_free(sgc->pubkeys);
 		silc_free(sgc);
-		gaim_notify_error(client->application,
+		purple_notify_error(client->application,
 				  _("Add Channel Public Key"),
 				  _("Could not load public key"), NULL);
 		return;
@@ -263,21 +263,21 @@ silcgaim_chat_chpk_add(void *user_data, const char *name)
 }
 
 static void
-silcgaim_chat_chpk_cancel(void *user_data, const char *name)
+silcpurple_chat_chpk_cancel(void *user_data, const char *name)
 {
-	SilcGaimChauth sgc = (SilcGaimChauth)user_data;
-	silcgaim_chat_chauth_show(sgc->sg, sgc->channel, sgc->pubkeys);
+	SilcPurpleChauth sgc = (SilcPurpleChauth)user_data;
+	silcpurple_chat_chauth_show(sgc->sg, sgc->channel, sgc->pubkeys);
 	silc_buffer_free(sgc->pubkeys);
 	silc_free(sgc);
 }
 
 static void
-silcgaim_chat_chpk_cb(SilcGaimChauth sgc, GaimRequestFields *fields)
+silcpurple_chat_chpk_cb(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 {
-	SilcGaim sg = sgc->sg;
+	SilcPurple sg = sgc->sg;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
-	GaimRequestField *f;
+	PurpleRequestField *f;
 	const GList *list;
 	SilcPublicKey public_key;
 	SilcBuffer chpks, pk, chidp;
@@ -285,21 +285,21 @@ silcgaim_chat_chpk_cb(SilcGaimChauth sgc, GaimRequestFields *fields)
 	unsigned char mode[4];
 	SilcUInt32 m;
 
-	f = gaim_request_fields_get_field(fields, "list");
-	if (!gaim_request_field_list_get_selected(f)) {
+	f = purple_request_fields_get_field(fields, "list");
+	if (!purple_request_field_list_get_selected(f)) {
 		/* Add new public key */
-		gaim_request_file(sg->gc, _("Open Public Key..."), NULL, FALSE,
-				  G_CALLBACK(silcgaim_chat_chpk_add),
-				  G_CALLBACK(silcgaim_chat_chpk_cancel), sgc);
+		purple_request_file(sg->gc, _("Open Public Key..."), NULL, FALSE,
+				  G_CALLBACK(silcpurple_chat_chpk_add),
+				  G_CALLBACK(silcpurple_chat_chpk_cancel), sgc);
 		return;
 	}
 
-	list = gaim_request_field_list_get_items(f);
+	list = purple_request_field_list_get_items(f);
 	chpks = silc_buffer_alloc_size(2);
 
 	for (ct = 0; list; list = list->next, ct++) {
-		public_key = gaim_request_field_list_get_data(f, list->data);
-		if (gaim_request_field_list_is_selected(f, list->data)) {
+		public_key = purple_request_field_list_get_data(f, list->data);
+		if (purple_request_field_list_is_selected(f, list->data)) {
 			/* Delete this public key */
 			pk = silc_pkcs_public_key_payload_encode(public_key);
 			chpks = silc_argument_payload_encode_one(chpks, pk->data,
@@ -334,16 +334,16 @@ silcgaim_chat_chpk_cb(SilcGaimChauth sgc, GaimRequestFields *fields)
 }
 
 static void
-silcgaim_chat_chauth_ok(SilcGaimChauth sgc, GaimRequestFields *fields)
+silcpurple_chat_chauth_ok(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 {
-	SilcGaim sg = sgc->sg;
-	GaimRequestField *f;
+	SilcPurple sg = sgc->sg;
+	PurpleRequestField *f;
 	const char *curpass, *val;
 	int set;
 
-	f = gaim_request_fields_get_field(fields, "passphrase");
-	val = gaim_request_field_string_get_value(f);
-	curpass = gaim_blist_node_get_string((GaimBlistNode *)sgc->c, "passphrase");
+	f = purple_request_fields_get_field(fields, "passphrase");
+	val = purple_request_field_string_get_value(f);
+	curpass = purple_blist_node_get_string((PurpleBlistNode *)sgc->c, "passphrase");
 
 	if (!val && curpass)
 		set = 0;
@@ -357,18 +357,18 @@ silcgaim_chat_chauth_ok(SilcGaimChauth sgc, GaimRequestFields *fields)
 	if (set == 1) {
 		silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
 					 sgc->channel->channel_name, "+a", val, NULL);
-		gaim_blist_node_set_string((GaimBlistNode *)sgc->c, "passphrase", val);
+		purple_blist_node_set_string((PurpleBlistNode *)sgc->c, "passphrase", val);
 	} else if (set == 0) {
 		silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
 					 sgc->channel->channel_name, "-a", NULL);
-		gaim_blist_node_remove_setting((GaimBlistNode *)sgc->c, "passphrase");
+		purple_blist_node_remove_setting((PurpleBlistNode *)sgc->c, "passphrase");
 	}
 
 	silc_buffer_free(sgc->pubkeys);
 	silc_free(sgc);
 }
 
-void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
+void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 			       SilcBuffer channel_pubkeys)
 {
 	SilcUInt16 argc;
@@ -379,10 +379,10 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 	SilcPublicKey pubkey;
 	SilcPublicKeyIdentifier ident;
 	char tmp2[1024], t[512];
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *g;
-	GaimRequestField *f;
-	SilcGaimChauth sgc;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *g;
+	PurpleRequestField *f;
+	SilcPurpleChauth sgc;
 	const char *curpass = NULL;
 
 	sgc = silc_calloc(1, sizeof(*sgc));
@@ -391,22 +391,22 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 	sgc->sg = sg;
 	sgc->channel = channel;
 
-	fields = gaim_request_fields_new();
+	fields = purple_request_fields_new();
 
 	if (sgc->c)
-	  curpass = gaim_blist_node_get_string((GaimBlistNode *)sgc->c, "passphrase");
+	  curpass = purple_blist_node_get_string((PurpleBlistNode *)sgc->c, "passphrase");
 
-	g = gaim_request_field_group_new(NULL);
-	f = gaim_request_field_string_new("passphrase", _("Channel Passphrase"),
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_string_new("passphrase", _("Channel Passphrase"),
 					  curpass, FALSE);
-	gaim_request_field_string_set_masked(f, TRUE);
-	gaim_request_field_group_add_field(g, f);
-	gaim_request_fields_add_group(fields, g);
+	purple_request_field_string_set_masked(f, TRUE);
+	purple_request_field_group_add_field(g, f);
+	purple_request_fields_add_group(fields, g);
 
-	g = gaim_request_field_group_new(NULL);
-	f = gaim_request_field_label_new("l1", _("Channel Public Keys List"));
-	gaim_request_field_group_add_field(g, f);
-	gaim_request_fields_add_group(fields, g);
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_label_new("l1", _("Channel Public Keys List"));
+	purple_request_field_group_add_field(g, f);
+	purple_request_fields_add_group(fields, g);
 
 	g_snprintf(t, sizeof(t),
 		   _("Channel authentication is used to secure the channel from "
@@ -416,20 +416,20 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 		     "then only users whose public keys are listed are able to join."));
 
 	if (!channel_pubkeys) {
-		f = gaim_request_field_list_new("list", NULL);
-		gaim_request_field_group_add_field(g, f);
-		gaim_request_fields(sg->gc, _("Channel Authentication"),
+		f = purple_request_field_list_new("list", NULL);
+		purple_request_field_group_add_field(g, f);
+		purple_request_fields(sg->gc, _("Channel Authentication"),
 				    _("Channel Authentication"), t, fields,
-				    _("Add / Remove"), G_CALLBACK(silcgaim_chat_chpk_cb),
-				    _("OK"), G_CALLBACK(silcgaim_chat_chauth_ok), sgc);
+				    _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
+				    _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok), sgc);
 		return;
 	}
 	sgc->pubkeys = silc_buffer_copy(channel_pubkeys);
 
-	g = gaim_request_field_group_new(NULL);
-	f = gaim_request_field_list_new("list", NULL);
-	gaim_request_field_group_add_field(g, f);
-	gaim_request_fields_add_group(fields, g);
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_list_new("list", NULL);
+	purple_request_field_group_add_field(g, f);
+	purple_request_fields_add_group(fields, g);
 
 	SILC_GET16_MSB(argc, channel_pubkeys->data);
 	chpks = silc_argument_payload_parse(channel_pubkeys->data + 2,
@@ -447,7 +447,7 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 		g_snprintf(tmp2, sizeof(tmp2), "%s\n  %s\n  %s",
 			   ident->realname ? ident->realname : ident->username ?
 			   ident->username : "", fingerprint, babbleprint);
-		gaim_request_field_list_add(f, tmp2, pubkey);
+		purple_request_field_list_add(f, tmp2, pubkey);
 
 		silc_free(fingerprint);
 		silc_free(babbleprint);
@@ -455,26 +455,26 @@ void silcgaim_chat_chauth_show(SilcGaim sg, SilcChannelEntry channel,
 		pk = silc_argument_get_next_arg(chpks, &type, &pk_len);
 	}
 
-	gaim_request_field_list_set_multi_select(f, FALSE);
-	gaim_request_fields(sg->gc, _("Channel Authentication"),
+	purple_request_field_list_set_multi_select(f, FALSE);
+	purple_request_fields(sg->gc, _("Channel Authentication"),
 			    _("Channel Authentication"), t, fields,
-			    _("Add / Remove"), G_CALLBACK(silcgaim_chat_chpk_cb),
-			    _("OK"), G_CALLBACK(silcgaim_chat_chauth_ok), sgc);
+			    _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
+			    _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok), sgc);
 
 	silc_argument_payload_free(chpks);
 }
 
 static void
-silcgaim_chat_chauth(GaimBlistNode *node, gpointer data)
+silcpurple_chat_chauth(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleChat *chat;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
+	chat = (PurpleChat *) node;
+	gc = purple_account_get_connection(chat->account);
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
@@ -493,32 +493,32 @@ silcgaim_chat_chauth(GaimBlistNode *node, gpointer data)
    a channel - and thus having multiple private keys on the channel. */
 
 typedef struct {
-	SilcGaim sg;
-	GaimChat *c;
+	SilcPurple sg;
+	PurpleChat *c;
 	const char *channel;
-} *SilcGaimCharPrv;
+} *SilcPurpleCharPrv;
 
 static void
-silcgaim_chat_prv_add(SilcGaimCharPrv p, GaimRequestFields *fields)
+silcpurple_chat_prv_add(SilcPurpleCharPrv p, PurpleRequestFields *fields)
 {
-	SilcGaim sg = p->sg;
+	SilcPurple sg = p->sg;
 	char tmp[512];
-	GaimRequestField *f;
+	PurpleRequestField *f;
 	const char *name, *passphrase, *alias;
 	GHashTable *comp;
-	GaimGroup *g;
-	GaimChat *cn;
+	PurpleGroup *g;
+	PurpleChat *cn;
 
-	f = gaim_request_fields_get_field(fields, "name");
-	name = gaim_request_field_string_get_value(f);
+	f = purple_request_fields_get_field(fields, "name");
+	name = purple_request_field_string_get_value(f);
 	if (!name) {
 		silc_free(p);
 		return;
 	}
-	f = gaim_request_fields_get_field(fields, "passphrase");
-	passphrase = gaim_request_field_string_get_value(f);
-	f = gaim_request_fields_get_field(fields, "alias");
-	alias = gaim_request_field_string_get_value(f);
+	f = purple_request_fields_get_field(fields, "passphrase");
+	passphrase = purple_request_field_string_get_value(f);
+	f = purple_request_fields_get_field(fields, "alias");
+	alias = purple_request_field_string_get_value(f);
 
 	/* Add private group to buddy list */
 	g_snprintf(tmp, sizeof(tmp), "%s [Private Group]", name);
@@ -526,42 +526,42 @@ silcgaim_chat_prv_add(SilcGaimCharPrv p, GaimRequestFields *fields)
 	g_hash_table_replace(comp, g_strdup("channel"), g_strdup(tmp));
 	g_hash_table_replace(comp, g_strdup("passphrase"), g_strdup(passphrase));
 
-	cn = gaim_chat_new(sg->account, alias, comp);
-	g = (GaimGroup *)p->c->node.parent;
-	gaim_blist_add_chat(cn, g, (GaimBlistNode *)p->c);
+	cn = purple_chat_new(sg->account, alias, comp);
+	g = (PurpleGroup *)p->c->node.parent;
+	purple_blist_add_chat(cn, g, (PurpleBlistNode *)p->c);
 
 	/* Associate to a real channel */
-	gaim_blist_node_set_string((GaimBlistNode *)cn, "parentch", p->channel);
+	purple_blist_node_set_string((PurpleBlistNode *)cn, "parentch", p->channel);
 
 	/* Join the group */
-	silcgaim_chat_join(sg->gc, comp);
+	silcpurple_chat_join(sg->gc, comp);
 
 	silc_free(p);
 }
 
 static void
-silcgaim_chat_prv_cancel(SilcGaimCharPrv p, GaimRequestFields *fields)
+silcpurple_chat_prv_cancel(SilcPurpleCharPrv p, PurpleRequestFields *fields)
 {
 	silc_free(p);
 }
 
 static void
-silcgaim_chat_prv(GaimBlistNode *node, gpointer data)
+silcpurple_chat_prv(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleChat *chat;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	SilcGaimCharPrv p;
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *g;
-	GaimRequestField *f;
+	SilcPurpleCharPrv p;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *g;
+	PurpleRequestField *f;
 	char tmp[512];
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
+	chat = (PurpleChat *) node;
+	gc = purple_account_get_connection(chat->account);
 	sg = gc->proto_data;
 
 	p = silc_calloc(1, sizeof(*p));
@@ -570,47 +570,47 @@ silcgaim_chat_prv(GaimBlistNode *node, gpointer data)
 	p->sg = sg;
 
 	p->channel = g_hash_table_lookup(chat->components, "channel");
-	p->c = gaim_blist_find_chat(sg->account, p->channel);
+	p->c = purple_blist_find_chat(sg->account, p->channel);
 
-	fields = gaim_request_fields_new();
+	fields = purple_request_fields_new();
 
-	g = gaim_request_field_group_new(NULL);
-	f = gaim_request_field_string_new("name", _("Group Name"),
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_string_new("name", _("Group Name"),
 					  NULL, FALSE);
-	gaim_request_field_group_add_field(g, f);
+	purple_request_field_group_add_field(g, f);
 
-	f = gaim_request_field_string_new("passphrase", _("Passphrase"),
+	f = purple_request_field_string_new("passphrase", _("Passphrase"),
 					  NULL, FALSE);
-	gaim_request_field_string_set_masked(f, TRUE);
-	gaim_request_field_group_add_field(g, f);
+	purple_request_field_string_set_masked(f, TRUE);
+	purple_request_field_group_add_field(g, f);
 
-	f = gaim_request_field_string_new("alias", _("Alias"),
+	f = purple_request_field_string_new("alias", _("Alias"),
 					  NULL, FALSE);
-	gaim_request_field_group_add_field(g, f);
-	gaim_request_fields_add_group(fields, g);
+	purple_request_field_group_add_field(g, f);
+	purple_request_fields_add_group(fields, g);
 
 	g_snprintf(tmp, sizeof(tmp),
 		   _("Please enter the %s channel private group name and passphrase."),
 		   p->channel);
-	gaim_request_fields(gc, _("Add Channel Private Group"), NULL, tmp, fields,
-			    _("Add"), G_CALLBACK(silcgaim_chat_prv_add),
-			    _("Cancel"), G_CALLBACK(silcgaim_chat_prv_cancel), p);
+	purple_request_fields(gc, _("Add Channel Private Group"), NULL, tmp, fields,
+			    _("Add"), G_CALLBACK(silcpurple_chat_prv_add),
+			    _("Cancel"), G_CALLBACK(silcpurple_chat_prv_cancel), p);
 }
 
 
 /****************************** Channel Modes ********************************/
 
 static void
-silcgaim_chat_permanent_reset(GaimBlistNode *node, gpointer data)
+silcpurple_chat_permanent_reset(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleChat *chat;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
+	chat = (PurpleChat *) node;
+	gc = purple_account_get_connection(chat->account);
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
@@ -619,17 +619,17 @@ silcgaim_chat_permanent_reset(GaimBlistNode *node, gpointer data)
 }
 
 static void
-silcgaim_chat_permanent(GaimBlistNode *node, gpointer data)
+silcpurple_chat_permanent(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleChat *chat;
+	PurpleConnection *gc;
+	SilcPurple sg;
 	const char *channel;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
+	chat = (PurpleChat *) node;
+	gc = purple_account_get_connection(chat->account);
 	sg = gc->proto_data;
 
 	if (!sg->conn)
@@ -646,12 +646,12 @@ silcgaim_chat_permanent(GaimBlistNode *node, gpointer data)
 }
 
 typedef struct {
-	SilcGaim sg;
+	SilcPurple sg;
 	const char *channel;
-} *SilcGaimChatInput;
+} *SilcPurpleChatInput;
 
 static void
-silcgaim_chat_ulimit_cb(SilcGaimChatInput s, const char *limit)
+silcpurple_chat_ulimit_cb(SilcPurpleChatInput s, const char *limit)
 {
 	SilcChannelEntry channel;
 	int ulimit = 0;
@@ -688,21 +688,21 @@ silcgaim_chat_ulimit_cb(SilcGaimChatInput s, const char *limit)
 }
 
 static void
-silcgaim_chat_ulimit(GaimBlistNode *node, gpointer data)
+silcpurple_chat_ulimit(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleChat *chat;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	SilcGaimChatInput s;
+	SilcPurpleChatInput s;
 	SilcChannelEntry channel;
 	const char *ch;
 	char tmp[32];
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
+	chat = (PurpleChat *) node;
+	gc = purple_account_get_connection(chat->account);
 	sg = gc->proto_data;
 
 	if (!sg->conn)
@@ -719,24 +719,24 @@ silcgaim_chat_ulimit(GaimBlistNode *node, gpointer data)
 	s->channel = ch;
 	s->sg = sg;
 	g_snprintf(tmp, sizeof(tmp), "%d", (int)channel->user_limit);
-	gaim_request_input(gc, _("User Limit"), NULL,
+	purple_request_input(gc, _("User Limit"), NULL,
 			   _("Set user limit on channel. Set to zero to reset user limit."),
 			   tmp, FALSE, FALSE, NULL,
-			   _("OK"), G_CALLBACK(silcgaim_chat_ulimit_cb),
-			   _("Cancel"), G_CALLBACK(silcgaim_chat_ulimit_cb), s);
+			   _("OK"), G_CALLBACK(silcpurple_chat_ulimit_cb),
+			   _("Cancel"), G_CALLBACK(silcpurple_chat_ulimit_cb), s);
 }
 
 static void
-silcgaim_chat_resettopic(GaimBlistNode *node, gpointer data)
+silcpurple_chat_resettopic(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleChat *chat;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
+	chat = (PurpleChat *) node;
+	gc = purple_account_get_connection(chat->account);
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
@@ -745,16 +745,16 @@ silcgaim_chat_resettopic(GaimBlistNode *node, gpointer data)
 }
 
 static void
-silcgaim_chat_settopic(GaimBlistNode *node, gpointer data)
+silcpurple_chat_settopic(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleChat *chat;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
+	chat = (PurpleChat *) node;
+	gc = purple_account_get_connection(chat->account);
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
@@ -763,16 +763,16 @@ silcgaim_chat_settopic(GaimBlistNode *node, gpointer data)
 }
 
 static void
-silcgaim_chat_resetprivate(GaimBlistNode *node, gpointer data)
+silcpurple_chat_resetprivate(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleChat *chat;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
+	chat = (PurpleChat *) node;
+	gc = purple_account_get_connection(chat->account);
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
@@ -781,16 +781,16 @@ silcgaim_chat_resetprivate(GaimBlistNode *node, gpointer data)
 }
 
 static void
-silcgaim_chat_setprivate(GaimBlistNode *node, gpointer data)
+silcpurple_chat_setprivate(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleChat *chat;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
+	chat = (PurpleChat *) node;
+	gc = purple_account_get_connection(chat->account);
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
@@ -799,16 +799,16 @@ silcgaim_chat_setprivate(GaimBlistNode *node, gpointer data)
 }
 
 static void
-silcgaim_chat_resetsecret(GaimBlistNode *node, gpointer data)
+silcpurple_chat_resetsecret(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleChat *chat;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
+	chat = (PurpleChat *) node;
+	gc = purple_account_get_connection(chat->account);
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
@@ -817,16 +817,16 @@ silcgaim_chat_resetsecret(GaimBlistNode *node, gpointer data)
 }
 
 static void
-silcgaim_chat_setsecret(GaimBlistNode *node, gpointer data)
+silcpurple_chat_setsecret(PurpleBlistNode *node, gpointer data)
 {
-	GaimChat *chat;
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleChat *chat;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_CHAT(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
 
-	chat = (GaimChat *) node;
-	gc = gaim_account_get_connection(chat->account);
+	chat = (PurpleChat *) node;
+	gc = purple_account_get_connection(chat->account);
 	sg = gc->proto_data;
 
 	silc_client_command_call(sg->client, sg->conn, NULL, "CMODE",
@@ -835,23 +835,23 @@ silcgaim_chat_setsecret(GaimBlistNode *node, gpointer data)
 }
 
 typedef struct {
-	SilcGaim sg;
+	SilcPurple sg;
 	SilcChannelEntry channel;
-} *SilcGaimChatWb;
+} *SilcPurpleChatWb;
 
 static void
-silcgaim_chat_wb(GaimBlistNode *node, gpointer data)
+silcpurple_chat_wb(PurpleBlistNode *node, gpointer data)
 {
-	SilcGaimChatWb wb = data;
-	silcgaim_wb_init_ch(wb->sg, wb->channel);
+	SilcPurpleChatWb wb = data;
+	silcpurple_wb_init_ch(wb->sg, wb->channel);
 	silc_free(wb);
 }
 
-GList *silcgaim_chat_menu(GaimChat *chat)
+GList *silcpurple_chat_menu(PurpleChat *chat)
 {
 	GHashTable *components = chat->components;
-	GaimConnection *gc = gaim_account_get_connection(chat->account);
-	SilcGaim sg = gc->proto_data;
+	PurpleConnection *gc = purple_account_get_connection(chat->account);
+	SilcPurple sg = gc->proto_data;
 	SilcClientConnection conn = sg->conn;
 	const char *chname = NULL;
 	SilcChannelEntry channel = NULL;
@@ -859,7 +859,7 @@ GList *silcgaim_chat_menu(GaimChat *chat)
 	SilcUInt32 mode = 0;
 
 	GList *m = NULL;
-	GaimMenuAction *act;
+	PurpleMenuAction *act;
 
 	if (components)
 		chname = g_hash_table_lookup(components, "channel");
@@ -875,102 +875,102 @@ GList *silcgaim_chat_menu(GaimChat *chat)
 	if (strstr(chname, "[Private Group]"))
 		return NULL;
 
-	act = gaim_menu_action_new(_("Get Info"),
-	                           GAIM_CALLBACK(silcgaim_chat_getinfo_menu),
+	act = purple_menu_action_new(_("Get Info"),
+	                           PURPLE_CALLBACK(silcpurple_chat_getinfo_menu),
 	                           NULL, NULL);
 	m = g_list_append(m, act);
 
 #if 0   /* XXX For now these are not implemented.  We need better
-	   listview dialog from Gaim for these. */
+	   listview dialog from Purple for these. */
 	if (mode & SILC_CHANNEL_UMODE_CHANOP) {
-		act = gaim_menu_action_new(_("Invite List"),
-		                           GAIM_CALLBACK(silcgaim_chat_invitelist),
+		act = purple_menu_action_new(_("Invite List"),
+		                           PURPLE_CALLBACK(silcpurple_chat_invitelist),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 
-		act = gaim_menu_action_new(_("Ban List"),
-		                           GAIM_CALLBACK(silcgaim_chat_banlist),
+		act = purple_menu_action_new(_("Ban List"),
+		                           PURPLE_CALLBACK(silcpurple_chat_banlist),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 #endif
 
 	if (chu) {
-		act = gaim_menu_action_new(_("Add Private Group"),
-		                           GAIM_CALLBACK(silcgaim_chat_prv),
+		act = purple_menu_action_new(_("Add Private Group"),
+		                           PURPLE_CALLBACK(silcpurple_chat_prv),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
 	if (mode & SILC_CHANNEL_UMODE_CHANFO) {
-		act = gaim_menu_action_new(_("Channel Authentication"),
-		                           GAIM_CALLBACK(silcgaim_chat_chauth),
+		act = purple_menu_action_new(_("Channel Authentication"),
+		                           PURPLE_CALLBACK(silcpurple_chat_chauth),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 
 		if (channel->mode & SILC_CHANNEL_MODE_FOUNDER_AUTH) {
-			act = gaim_menu_action_new(_("Reset Permanent"),
-			                           GAIM_CALLBACK(silcgaim_chat_permanent_reset),
+			act = purple_menu_action_new(_("Reset Permanent"),
+			                           PURPLE_CALLBACK(silcpurple_chat_permanent_reset),
 			                           NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
-			act = gaim_menu_action_new(_("Set Permanent"),
-			                           GAIM_CALLBACK(silcgaim_chat_permanent),
+			act = purple_menu_action_new(_("Set Permanent"),
+			                           PURPLE_CALLBACK(silcpurple_chat_permanent),
 			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 	}
 
 	if (mode & SILC_CHANNEL_UMODE_CHANOP) {
-		act = gaim_menu_action_new(_("Set User Limit"),
-		                           GAIM_CALLBACK(silcgaim_chat_ulimit),
+		act = purple_menu_action_new(_("Set User Limit"),
+		                           PURPLE_CALLBACK(silcpurple_chat_ulimit),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 
 		if (channel->mode & SILC_CHANNEL_MODE_TOPIC) {
-			act = gaim_menu_action_new(_("Reset Topic Restriction"),
-			                           GAIM_CALLBACK(silcgaim_chat_resettopic),
+			act = purple_menu_action_new(_("Reset Topic Restriction"),
+			                           PURPLE_CALLBACK(silcpurple_chat_resettopic),
 			                           NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
-			act = gaim_menu_action_new(_("Set Topic Restriction"),
-			                           GAIM_CALLBACK(silcgaim_chat_settopic),
+			act = purple_menu_action_new(_("Set Topic Restriction"),
+			                           PURPLE_CALLBACK(silcpurple_chat_settopic),
 			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 
 		if (channel->mode & SILC_CHANNEL_MODE_PRIVATE) {
-			act = gaim_menu_action_new(_("Reset Private Channel"),
-			                           GAIM_CALLBACK(silcgaim_chat_resetprivate),
+			act = purple_menu_action_new(_("Reset Private Channel"),
+			                           PURPLE_CALLBACK(silcpurple_chat_resetprivate),
 			                           NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
-			act = gaim_menu_action_new(_("Set Private Channel"),
-			                           GAIM_CALLBACK(silcgaim_chat_setprivate),
+			act = purple_menu_action_new(_("Set Private Channel"),
+			                           PURPLE_CALLBACK(silcpurple_chat_setprivate),
 			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 
 		if (channel->mode & SILC_CHANNEL_MODE_SECRET) {
-			act = gaim_menu_action_new(_("Reset Secret Channel"),
-			                           GAIM_CALLBACK(silcgaim_chat_resetsecret),
+			act = purple_menu_action_new(_("Reset Secret Channel"),
+			                           PURPLE_CALLBACK(silcpurple_chat_resetsecret),
 			                           NULL, NULL);
 			m = g_list_append(m, act);
 		} else {
-			act = gaim_menu_action_new(_("Set Secret Channel"),
-			                           GAIM_CALLBACK(silcgaim_chat_setsecret),
+			act = purple_menu_action_new(_("Set Secret Channel"),
+			                           PURPLE_CALLBACK(silcpurple_chat_setsecret),
 			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 	}
 
 	if (channel) {
-		SilcGaimChatWb wb;
+		SilcPurpleChatWb wb;
 		wb = silc_calloc(1, sizeof(*wb));
 		wb->sg = sg;
 		wb->channel = channel;
-		act = gaim_menu_action_new(_("Draw On Whiteboard"),
-		                           GAIM_CALLBACK(silcgaim_chat_wb),
+		act = purple_menu_action_new(_("Draw On Whiteboard"),
+		                           PURPLE_CALLBACK(silcpurple_chat_wb),
 		                           (void *)wb, NULL);
 		m = g_list_append(m, act);
 	}
@@ -981,16 +981,16 @@ GList *silcgaim_chat_menu(GaimChat *chat)
 
 /******************************* Joining Etc. ********************************/
 
-void silcgaim_chat_join_done(SilcClient client,
+void silcpurple_chat_join_done(SilcClient client,
 			     SilcClientConnection conn,
 			     SilcClientEntry *clients,
 			     SilcUInt32 clients_count,
 			     void *context)
 {
-	GaimConnection *gc = client->application;
-	SilcGaim sg = gc->proto_data;
+	PurpleConnection *gc = client->application;
+	SilcPurple sg = gc->proto_data;
 	SilcChannelEntry channel = context;
-	GaimConversation *convo;
+	PurpleConversation *convo;
 	SilcUInt32 retry = SILC_PTR_TO_32(channel->context);
 	SilcHashTableList htl;
 	SilcChannelUser chu;
@@ -1001,14 +1001,14 @@ void silcgaim_chat_join_done(SilcClient client,
 		/* Resolving users failed, try again. */
 		channel->context = SILC_32_TO_PTR(retry + 1);
 		silc_client_get_clients_by_channel(client, conn, channel,
-						   silcgaim_chat_join_done, channel);
+						   silcpurple_chat_join_done, channel);
 		return;
 	}
 
-	/* Add channel to Gaim */
+	/* Add channel to Purple */
 	channel->context = SILC_32_TO_PTR(++sg->channel_ids);
 	serv_got_joined_chat(gc, sg->channel_ids, channel->channel_name);
-	convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT,
+	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
 							channel->channel_name, sg->account);
 	if (!convo)
 		return;
@@ -1016,15 +1016,15 @@ void silcgaim_chat_join_done(SilcClient client,
 	/* Add all users to channel */
 	silc_hash_table_list(channel->user_list, &htl);
 	while (silc_hash_table_get(&htl, NULL, (void *)&chu)) {
-		GaimConvChatBuddyFlags f = GAIM_CBFLAGS_NONE;
+		PurpleConvChatBuddyFlags f = PURPLE_CBFLAGS_NONE;
 		if (!chu->client->nickname)
 			continue;
 		chu->context = SILC_32_TO_PTR(sg->channel_ids);
 
 		if (chu->mode & SILC_CHANNEL_UMODE_CHANFO)
-			f |= GAIM_CBFLAGS_FOUNDER;
+			f |= PURPLE_CBFLAGS_FOUNDER;
 		if (chu->mode & SILC_CHANNEL_UMODE_CHANOP)
-			f |= GAIM_CBFLAGS_OP;
+			f |= PURPLE_CBFLAGS_OP;
 		users = g_list_append(users, g_strdup(chu->client->nickname));
 		flags = g_list_append(flags, GINT_TO_POINTER(f));
 
@@ -1038,33 +1038,33 @@ void silcgaim_chat_join_done(SilcClient client,
 					   _("Channel founder on <I>%s</I> is <I>%s</I>"),
 					   channel->channel_name, chu->client->nickname);
 
-			gaim_conversation_write(convo, NULL, tmp,
-						GAIM_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write(convo, NULL, tmp,
+						PURPLE_MESSAGE_SYSTEM, time(NULL));
 
 		}
 	}
 	silc_hash_table_list_reset(&htl);
 
-	gaim_conv_chat_add_users(GAIM_CONV_CHAT(convo), users, NULL, flags, FALSE);
+	purple_conv_chat_add_users(PURPLE_CONV_CHAT(convo), users, NULL, flags, FALSE);
 	g_list_free(users);
 	g_list_free(flags);
 
 	/* Set topic */
 	if (channel->topic)
-		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(convo), NULL, channel->topic);
+		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(convo), NULL, channel->topic);
 
 	/* Set nick */
-	gaim_conv_chat_set_nick(GAIM_CONV_CHAT(convo), conn->local_entry->nickname);
+	purple_conv_chat_set_nick(PURPLE_CONV_CHAT(convo), conn->local_entry->nickname);
 }
 
-char *silcgaim_get_chat_name(GHashTable *data)
+char *silcpurple_get_chat_name(GHashTable *data)
 {
 	return g_strdup(g_hash_table_lookup(data, "channel"));
 }	
 
-void silcgaim_chat_join(GaimConnection *gc, GHashTable *data)
+void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	const char *channel, *passphrase, *parentch;
@@ -1080,11 +1080,11 @@ void silcgaim_chat_join(GaimConnection *gc, GHashTable *data)
 	if (strstr(channel, "[Private Group]")) {
 		SilcChannelEntry channel_entry;
 		SilcChannelPrivateKey key;
-		GaimChat *c;
-		SilcGaimPrvgrp grp;
+		PurpleChat *c;
+		SilcPurplePrvgrp grp;
 
-		c = gaim_blist_find_chat(sg->account, channel);
-		parentch = gaim_blist_node_get_string((GaimBlistNode *)c, "parentch");
+		c = purple_blist_find_chat(sg->account, channel);
+		parentch = purple_blist_node_get_string((PurpleBlistNode *)c, "parentch");
 		if (!parentch)
 			return;
 
@@ -1096,7 +1096,7 @@ void silcgaim_chat_join(GaimConnection *gc, GHashTable *data)
 			g_snprintf(tmp, sizeof(tmp),
 				   _("You have to join the %s channel before you are "
 				     "able to join the private group"), parentch);
-			gaim_notify_error(gc, _("Join Private Group"),
+			purple_notify_error(gc, _("Join Private Group"),
 					  _("Cannot join private group"), tmp);
 			return;
 		}
@@ -1113,7 +1113,7 @@ void silcgaim_chat_join(GaimConnection *gc, GHashTable *data)
 		grp = silc_calloc(1, sizeof(*grp));
 		if (!grp)
 			return;
-		grp->id = ++sg->channel_ids + SILCGAIM_PRVGRP;
+		grp->id = ++sg->channel_ids + SILCPURPLE_PRVGRP;
 		grp->chid = SILC_PTR_TO_32(channel_entry->context);
 		grp->parentch = parentch;
 		grp->channel = channel;
@@ -1144,10 +1144,10 @@ void silcgaim_chat_join(GaimConnection *gc, GHashTable *data)
 					 channel, "-auth", "-founder", NULL);
 }
 
-void silcgaim_chat_invite(GaimConnection *gc, int id, const char *msg,
+void silcpurple_chat_invite(PurpleConnection *gc, int id, const char *msg,
 			  const char *name)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcHashTableList htl;
@@ -1159,12 +1159,12 @@ void silcgaim_chat_invite(GaimConnection *gc, int id, const char *msg,
 
 	/* See if we are inviting on a private group.  Invite
 	   to the actual channel */
-	if (id > SILCGAIM_PRVGRP) {
+	if (id > SILCPURPLE_PRVGRP) {
 		GList *l;
-		SilcGaimPrvgrp prv;
+		SilcPurplePrvgrp prv;
 
 		for (l = sg->grps; l; l = l->next)
-			if (((SilcGaimPrvgrp)l->data)->id == id)
+			if (((SilcPurplePrvgrp)l->data)->id == id)
 				break;
 		if (!l)
 			return;
@@ -1190,26 +1190,26 @@ void silcgaim_chat_invite(GaimConnection *gc, int id, const char *msg,
 				 name, NULL);
 }
 
-void silcgaim_chat_leave(GaimConnection *gc, int id)
+void silcpurple_chat_leave(PurpleConnection *gc, int id)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcHashTableList htl;
 	SilcChannelUser chu;
 	gboolean found = FALSE;
 	GList *l;
-	SilcGaimPrvgrp prv;
+	SilcPurplePrvgrp prv;
 
 	if (!conn)
 		return;
 
 	/* See if we are leaving a private group */
-	if (id > SILCGAIM_PRVGRP) {
+	if (id > SILCPURPLE_PRVGRP) {
 		SilcChannelEntry channel;
 
 		for (l = sg->grps; l; l = l->next)
-			if (((SilcGaimPrvgrp)l->data)->id == id)
+			if (((SilcPurplePrvgrp)l->data)->id == id)
 				break;
 		if (!l)
 			return;
@@ -1246,7 +1246,7 @@ void silcgaim_chat_leave(GaimConnection *gc, int id)
 
 	/* Leave from private groups on this channel as well */
 	for (l = sg->grps; l; l = l->next)
-		if (((SilcGaimPrvgrp)l->data)->chid == id) {
+		if (((SilcPurplePrvgrp)l->data)->chid == id) {
 			prv = l->data;
 			silc_client_del_channel_private_key(client, conn,
 							    chu->channel,
@@ -1259,9 +1259,9 @@ void silcgaim_chat_leave(GaimConnection *gc, int id)
 		}
 }
 
-int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg, GaimMessageFlags msgflags)
+int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg, PurpleMessageFlags msgflags)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcHashTableList htl;
@@ -1272,14 +1272,14 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg, GaimMessageF
 	int ret;
 	char *msg2, *tmp;
 	gboolean found = FALSE;
-	gboolean sign = gaim_account_get_bool(sg->account, "sign-verify", FALSE);
+	gboolean sign = purple_account_get_bool(sg->account, "sign-verify", FALSE);
 
 	if (!msg || !conn)
 		return 0;
 
 	flags = SILC_MESSAGE_FLAG_UTF8;
 
-	tmp = msg2 = gaim_unescape_html(msg);
+	tmp = msg2 = purple_unescape_html(msg);
 
 	if (!g_ascii_strncasecmp(msg2, "/me ", 4))
 	{
@@ -1291,7 +1291,7 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg, GaimMessageF
 		flags |= SILC_MESSAGE_FLAG_ACTION;
 	} else if (strlen(msg) > 1 && msg[0] == '/') {
 		if (!silc_client_command_call(client, conn, msg + 1))
-			gaim_notify_error(gc, _("Call Command"), _("Cannot call command"),
+			purple_notify_error(gc, _("Call Command"), _("Cannot call command"),
 							  _("Unknown command"));
 		g_free(tmp);
 		return 0;
@@ -1303,12 +1303,12 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg, GaimMessageF
 
 	/* Get the channel private key if we are sending on
 	   private group */
-	if (id > SILCGAIM_PRVGRP) {
+	if (id > SILCPURPLE_PRVGRP) {
 		GList *l;
-		SilcGaimPrvgrp prv;
+		SilcPurplePrvgrp prv;
 
 		for (l = sg->grps; l; l = l->next)
-			if (((SilcGaimPrvgrp)l->data)->id == id)
+			if (((SilcPurplePrvgrp)l->data)->id == id)
 				break;
 		if (!l) {
 			g_free(tmp);
@@ -1346,7 +1346,7 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg, GaimMessageF
 					       flags, (unsigned char *)msg2,
 					       strlen(msg2), TRUE);
 	if (ret) {
-		serv_got_chat_in(gc, id, gaim_connection_get_display_name(gc), 0, msg,
+		serv_got_chat_in(gc, id, purple_connection_get_display_name(gc), 0, msg,
 				 time(NULL));
 	}
 	g_free(tmp);
@@ -1354,9 +1354,9 @@ int silcgaim_chat_send(GaimConnection *gc, int id, const char *msg, GaimMessageF
 	return ret;
 }
 
-void silcgaim_chat_set_topic(GaimConnection *gc, int id, const char *topic)
+void silcpurple_chat_set_topic(PurpleConnection *gc, int id, const char *topic)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcHashTableList htl;
@@ -1368,12 +1368,12 @@ void silcgaim_chat_set_topic(GaimConnection *gc, int id, const char *topic)
 
 	/* See if setting topic on private group.  Set it
 	   on the actual channel */
-	if (id > SILCGAIM_PRVGRP) {
+	if (id > SILCPURPLE_PRVGRP) {
 		GList *l;
-		SilcGaimPrvgrp prv;
+		SilcPurplePrvgrp prv;
 
 		for (l = sg->grps; l; l = l->next)
-			if (((SilcGaimPrvgrp)l->data)->id == id)
+			if (((SilcPurplePrvgrp)l->data)->id == id)
 				break;
 		if (!l)
 			return;
@@ -1398,53 +1398,53 @@ void silcgaim_chat_set_topic(GaimConnection *gc, int id, const char *topic)
 				 chu->channel->channel_name, topic, NULL);
 }
 
-GaimRoomlist *silcgaim_roomlist_get_list(GaimConnection *gc)
+PurpleRoomlist *silcpurple_roomlist_get_list(PurpleConnection *gc)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	GList *fields = NULL;
-	GaimRoomlistField *f;
+	PurpleRoomlistField *f;
 
 	if (!conn)
 		return NULL;
 
 	if (sg->roomlist)
-		gaim_roomlist_unref(sg->roomlist);
+		purple_roomlist_unref(sg->roomlist);
 
 	sg->roomlist_canceled = FALSE;
 
-	sg->roomlist = gaim_roomlist_new(gaim_connection_get_account(gc));
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "channel", TRUE);
+	sg->roomlist = purple_roomlist_new(purple_connection_get_account(gc));
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", "channel", TRUE);
 	fields = g_list_append(fields, f);
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_INT,
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_INT,
 				    _("Users"), "users", FALSE);
 	fields = g_list_append(fields, f);
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING,
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING,
 				    _("Topic"), "topic", FALSE);
 	fields = g_list_append(fields, f);
-	gaim_roomlist_set_fields(sg->roomlist, fields);
+	purple_roomlist_set_fields(sg->roomlist, fields);
 
 	/* Call LIST */
 	silc_client_command_call(client, conn, "LIST");
 
-	gaim_roomlist_set_in_progress(sg->roomlist, TRUE);
+	purple_roomlist_set_in_progress(sg->roomlist, TRUE);
 
 	return sg->roomlist;
 }
 
-void silcgaim_roomlist_cancel(GaimRoomlist *list)
+void silcpurple_roomlist_cancel(PurpleRoomlist *list)
 {
-	GaimConnection *gc = gaim_account_get_connection(list->account);
-	SilcGaim sg;
+	PurpleConnection *gc = purple_account_get_connection(list->account);
+	SilcPurple sg;
 
 	if (!gc)
 		return;
 	sg = gc->proto_data;
 
-	gaim_roomlist_set_in_progress(list, FALSE);
+	purple_roomlist_set_in_progress(list, FALSE);
 	if (sg->roomlist == list) {
-		gaim_roomlist_unref(sg->roomlist);
+		purple_roomlist_unref(sg->roomlist);
 		sg->roomlist = NULL;
 		sg->roomlist_canceled = TRUE;
 	}

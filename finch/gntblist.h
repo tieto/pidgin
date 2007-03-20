@@ -2,9 +2,9 @@
  * @file gntblist.h GNT BuddyList API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -35,9 +35,9 @@
 /**
  * Get the ui-functions.
  *
- * @return The GaimBlistUiOps structure populated with the appropriate functions.
+ * @return The PurpleBlistUiOps structure populated with the appropriate functions.
  */
-GaimBlistUiOps * finch_blist_get_ui_ops(void);
+PurpleBlistUiOps * finch_blist_get_ui_ops(void);
 
 /**
  * Perform necessary initializations.

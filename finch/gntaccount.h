@@ -2,9 +2,9 @@
  * @file gntaccount.h GNT Account API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -35,9 +35,9 @@
 /**
  * Get the ui-functions.
  *
- * @return The GaimAccountUiOps structure populated with the appropriate functions.
+ * @return The PurpleAccountUiOps structure populated with the appropriate functions.
  */
-GaimAccountUiOps *finch_accounts_get_ui_ops(void);
+PurpleAccountUiOps *finch_accounts_get_ui_ops(void);
 
 /**
  * Perform necessary initializations.

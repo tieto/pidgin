@@ -2,9 +2,9 @@
  * @file status.c Status API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -35,9 +35,9 @@
 /**
  * A type of status.
  */
-struct _GaimStatusType
+struct _PurpleStatusType
 {
-	GaimStatusPrimitive primitive;
+	PurpleStatusPrimitive primitive;
 
 	char *id;
 	char *name;
@@ -53,19 +53,19 @@ struct _GaimStatusType
 /**
  * A status attribute.
  */
-struct _GaimStatusAttr
+struct _PurpleStatusAttr
 {
 	char *id;
 	char *name;
-	GaimValue *value_type;
+	PurpleValue *value_type;
 };
 
 /**
  * A list of statuses.
  */
-struct _GaimPresence
+struct _PurplePresence
 {
-	GaimPresenceContext context;
+	PurplePresenceContext context;
 
 	gboolean idle;
 	time_t idle_time;
@@ -74,22 +74,22 @@ struct _GaimPresence
 	GList *statuses;
 	GHashTable *status_table;
 
-	GaimStatus *active_status;
+	PurpleStatus *active_status;
 
 	union
 	{
-		GaimAccount *account;
+		PurpleAccount *account;
 
 		struct
 		{
-			GaimConversation *conv;
+			PurpleConversation *conv;
 			char *user;
 
 		} chat;
 
 		struct
 		{
-			GaimAccount *account;
+			PurpleAccount *account;
 			char *name;
 			size_t ref_count;
 			GList *buddies;
@@ -102,10 +102,10 @@ struct _GaimPresence
 /**
  * An active status.
  */
-struct _GaimStatus
+struct _PurpleStatus
 {
-	GaimStatusType *type;
-	GaimPresence *presence;
+	PurpleStatusType *type;
+	PurplePresence *presence;
 
 	const char *title;
 
@@ -116,9 +116,9 @@ struct _GaimStatus
 
 typedef struct
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	char *name;
-} GaimStatusBuddyKey;
+} PurpleStatusBuddyKey;
 
 static int primitive_scores[] =
 {
@@ -140,32 +140,32 @@ static GHashTable *buddy_presences = NULL;
 #define SCORE_IDLE_TIME 9
 
 /**************************************************************************
- * GaimStatusPrimitive API
+ * PurpleStatusPrimitive API
  **************************************************************************/
-static struct GaimStatusPrimitiveMap
+static struct PurpleStatusPrimitiveMap
 {
-	GaimStatusPrimitive type;
+	PurpleStatusPrimitive type;
 	const char *id;
 	const char *name;
 
 } const status_primitive_map[] =
 {
-	{ GAIM_STATUS_UNSET,           "unset",           N_("Unset")           },
-	{ GAIM_STATUS_OFFLINE,         "offline",         N_("Offline")         },
-	{ GAIM_STATUS_AVAILABLE,       "available",       N_("Available")       },
-	{ GAIM_STATUS_UNAVAILABLE,     "unavailable",     N_("Unavailable")     },
-	{ GAIM_STATUS_INVISIBLE,       "invisible",       N_("Invisible")       },
-	{ GAIM_STATUS_AWAY,            "away",            N_("Away")            },
-	{ GAIM_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended Away")   },
-	{ GAIM_STATUS_MOBILE,          "mobile",          N_("Mobile")          }
+	{ PURPLE_STATUS_UNSET,           "unset",           N_("Unset")           },
+	{ PURPLE_STATUS_OFFLINE,         "offline",         N_("Offline")         },
+	{ PURPLE_STATUS_AVAILABLE,       "available",       N_("Available")       },
+	{ PURPLE_STATUS_UNAVAILABLE,     "unavailable",     N_("Unavailable")     },
+	{ PURPLE_STATUS_INVISIBLE,       "invisible",       N_("Invisible")       },
+	{ PURPLE_STATUS_AWAY,            "away",            N_("Away")            },
+	{ PURPLE_STATUS_EXTENDED_AWAY,   "extended_away",   N_("Extended Away")   },
+	{ PURPLE_STATUS_MOBILE,          "mobile",          N_("Mobile")          }
 };
 
 const char *
-gaim_primitive_get_id_from_type(GaimStatusPrimitive type)
+purple_primitive_get_id_from_type(PurpleStatusPrimitive type)
 {
     int i;
 
-    for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
+    for (i = 0; i < PURPLE_STATUS_NUM_PRIMITIVES; i++)
     {
 		if (type == status_primitive_map[i].type)
 			return status_primitive_map[i].id;
@@ -175,11 +175,11 @@ gaim_primitive_get_id_from_type(GaimStatusPrimitive type)
 }
 
 const char *
-gaim_primitive_get_name_from_type(GaimStatusPrimitive type)
+purple_primitive_get_name_from_type(PurpleStatusPrimitive type)
 {
     int i;
 
-    for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
+    for (i = 0; i < PURPLE_STATUS_NUM_PRIMITIVES; i++)
     {
 	if (type == status_primitive_map[i].type)
 		return _(status_primitive_map[i].name);
@@ -188,14 +188,14 @@ gaim_primitive_get_name_from_type(GaimStatusPrimitive type)
     return _(status_primitive_map[0].name);
 }
 
-GaimStatusPrimitive
-gaim_primitive_get_type_from_id(const char *id)
+PurpleStatusPrimitive
+purple_primitive_get_type_from_id(const char *id)
 {
     int i;
 
-    g_return_val_if_fail(id != NULL, GAIM_STATUS_UNSET);
+    g_return_val_if_fail(id != NULL, PURPLE_STATUS_UNSET);
 
-    for (i = 0; i < GAIM_STATUS_NUM_PRIMITIVES; i++)
+    for (i = 0; i < PURPLE_STATUS_NUM_PRIMITIVES; i++)
     {
         if (!strcmp(id, status_primitive_map[i].id))
             return status_primitive_map[i].type;
@@ -206,19 +206,19 @@ gaim_primitive_get_type_from_id(const char *id)
 
 
 /**************************************************************************
- * GaimStatusType API
+ * PurpleStatusType API
  **************************************************************************/
-GaimStatusType *
-gaim_status_type_new_full(GaimStatusPrimitive primitive, const char *id,
+PurpleStatusType *
+purple_status_type_new_full(PurpleStatusPrimitive primitive, const char *id,
 						  const char *name, gboolean saveable,
 						  gboolean user_settable, gboolean independent)
 {
-	GaimStatusType *status_type;
+	PurpleStatusType *status_type;
 
-	g_return_val_if_fail(primitive != GAIM_STATUS_UNSET, NULL);
+	g_return_val_if_fail(primitive != PURPLE_STATUS_UNSET, NULL);
 
-	status_type = g_new0(GaimStatusType, 1);
-	GAIM_DBUS_REGISTER_POINTER(status_type, GaimStatusType);
+	status_type = g_new0(PurpleStatusType, 1);
+	PURPLE_DBUS_REGISTER_POINTER(status_type, PurpleStatusType);
 
 	status_type->primitive     = primitive;
 	status_type->saveable      = saveable;
@@ -228,57 +228,57 @@ gaim_status_type_new_full(GaimStatusPrimitive primitive, const char *id,
 	if (id != NULL)
 		status_type->id = g_strdup(id);
 	else
-		status_type->id = g_strdup(gaim_primitive_get_id_from_type(primitive));
+		status_type->id = g_strdup(purple_primitive_get_id_from_type(primitive));
 
 	if (name != NULL)
 		status_type->name = g_strdup(name);
 	else
-		status_type->name = g_strdup(gaim_primitive_get_name_from_type(primitive));
+		status_type->name = g_strdup(purple_primitive_get_name_from_type(primitive));
 
 	return status_type;
 }
 
-GaimStatusType *
-gaim_status_type_new(GaimStatusPrimitive primitive, const char *id,
+PurpleStatusType *
+purple_status_type_new(PurpleStatusPrimitive primitive, const char *id,
 					 const char *name, gboolean user_settable)
 {
-	g_return_val_if_fail(primitive != GAIM_STATUS_UNSET, NULL);
+	g_return_val_if_fail(primitive != PURPLE_STATUS_UNSET, NULL);
 
-	return gaim_status_type_new_full(primitive, id, name, FALSE,
+	return purple_status_type_new_full(primitive, id, name, FALSE,
 			user_settable, FALSE);
 }
 
-GaimStatusType *
-gaim_status_type_new_with_attrs(GaimStatusPrimitive primitive,
+PurpleStatusType *
+purple_status_type_new_with_attrs(PurpleStatusPrimitive primitive,
 		const char *id, const char *name,
 		gboolean saveable, gboolean user_settable,
 		gboolean independent, const char *attr_id,
-		const char *attr_name, GaimValue *attr_value,
+		const char *attr_name, PurpleValue *attr_value,
 		...)
 {
-	GaimStatusType *status_type;
+	PurpleStatusType *status_type;
 	va_list args;
 
-	g_return_val_if_fail(primitive  != GAIM_STATUS_UNSET, NULL);
+	g_return_val_if_fail(primitive  != PURPLE_STATUS_UNSET, NULL);
 	g_return_val_if_fail(attr_id    != NULL,              NULL);
 	g_return_val_if_fail(attr_name  != NULL,              NULL);
 	g_return_val_if_fail(attr_value != NULL,              NULL);
 
-	status_type = gaim_status_type_new_full(primitive, id, name, saveable,
+	status_type = purple_status_type_new_full(primitive, id, name, saveable,
 			user_settable, independent);
 
 	/* Add the first attribute */
-	gaim_status_type_add_attr(status_type, attr_id, attr_name, attr_value);
+	purple_status_type_add_attr(status_type, attr_id, attr_name, attr_value);
 
 	va_start(args, attr_value);
-	gaim_status_type_add_attrs_vargs(status_type, args);
+	purple_status_type_add_attrs_vargs(status_type, args);
 	va_end(args);
 
 	return status_type;
 }
 
 void
-gaim_status_type_destroy(GaimStatusType *status_type)
+purple_status_type_destroy(PurpleStatusType *status_type)
 {
 	g_return_if_fail(status_type != NULL);
 
@@ -286,15 +286,15 @@ gaim_status_type_destroy(GaimStatusType *status_type)
 	g_free(status_type->name);
 	g_free(status_type->primary_attr_id);
 
-	g_list_foreach(status_type->attrs, (GFunc)gaim_status_attr_destroy, NULL);
+	g_list_foreach(status_type->attrs, (GFunc)purple_status_attr_destroy, NULL);
 	g_list_free(status_type->attrs);
 
-	GAIM_DBUS_UNREGISTER_POINTER(status_type);
+	PURPLE_DBUS_UNREGISTER_POINTER(status_type);
 	g_free(status_type);
 }
 
 void
-gaim_status_type_set_primary_attr(GaimStatusType *status_type, const char *id)
+purple_status_type_set_primary_attr(PurpleStatusType *status_type, const char *id)
 {
 	g_return_if_fail(status_type != NULL);
 
@@ -303,26 +303,26 @@ gaim_status_type_set_primary_attr(GaimStatusType *status_type, const char *id)
 }
 
 void
-gaim_status_type_add_attr(GaimStatusType *status_type, const char *id,
-		const char *name, GaimValue *value)
+purple_status_type_add_attr(PurpleStatusType *status_type, const char *id,
+		const char *name, PurpleValue *value)
 {
-	GaimStatusAttr *attr;
+	PurpleStatusAttr *attr;
 
 	g_return_if_fail(status_type != NULL);
 	g_return_if_fail(id          != NULL);
 	g_return_if_fail(name        != NULL);
 	g_return_if_fail(value       != NULL);
 
-	attr = gaim_status_attr_new(id, name, value);
+	attr = purple_status_attr_new(id, name, value);
 
 	status_type->attrs = g_list_append(status_type->attrs, attr);
 }
 
 void
-gaim_status_type_add_attrs_vargs(GaimStatusType *status_type, va_list args)
+purple_status_type_add_attrs_vargs(PurpleStatusType *status_type, va_list args)
 {
 	const char *id, *name;
-	GaimValue *value;
+	PurpleValue *value;
 
 	g_return_if_fail(status_type != NULL);
 
@@ -331,16 +331,16 @@ gaim_status_type_add_attrs_vargs(GaimStatusType *status_type, va_list args)
 		name = va_arg(args, const char *);
 		g_return_if_fail(name != NULL);
 
-		value = va_arg(args, GaimValue *);
+		value = va_arg(args, PurpleValue *);
 		g_return_if_fail(value != NULL);
 
-		gaim_status_type_add_attr(status_type, id, name, value);
+		purple_status_type_add_attr(status_type, id, name, value);
 	}
 }
 
 void
-gaim_status_type_add_attrs(GaimStatusType *status_type, const char *id,
-		const char *name, GaimValue *value, ...)
+purple_status_type_add_attrs(PurpleStatusType *status_type, const char *id,
+		const char *name, PurpleValue *value, ...)
 {
 	va_list args;
 
@@ -350,23 +350,23 @@ gaim_status_type_add_attrs(GaimStatusType *status_type, const char *id,
 	g_return_if_fail(value       != NULL);
 
 	/* Add the first attribute */
-	gaim_status_type_add_attr(status_type, id, name, value);
+	purple_status_type_add_attr(status_type, id, name, value);
 
 	va_start(args, value);
-	gaim_status_type_add_attrs_vargs(status_type, args);
+	purple_status_type_add_attrs_vargs(status_type, args);
 	va_end(args);
 }
 
-GaimStatusPrimitive
-gaim_status_type_get_primitive(const GaimStatusType *status_type)
+PurpleStatusPrimitive
+purple_status_type_get_primitive(const PurpleStatusType *status_type)
 {
-	g_return_val_if_fail(status_type != NULL, GAIM_STATUS_UNSET);
+	g_return_val_if_fail(status_type != NULL, PURPLE_STATUS_UNSET);
 
 	return status_type->primitive;
 }
 
 const char *
-gaim_status_type_get_id(const GaimStatusType *status_type)
+purple_status_type_get_id(const PurpleStatusType *status_type)
 {
 	g_return_val_if_fail(status_type != NULL, NULL);
 
@@ -374,7 +374,7 @@ gaim_status_type_get_id(const GaimStatusType *status_type)
 }
 
 const char *
-gaim_status_type_get_name(const GaimStatusType *status_type)
+purple_status_type_get_name(const PurpleStatusType *status_type)
 {
 	g_return_val_if_fail(status_type != NULL, NULL);
 
@@ -382,7 +382,7 @@ gaim_status_type_get_name(const GaimStatusType *status_type)
 }
 
 gboolean
-gaim_status_type_is_saveable(const GaimStatusType *status_type)
+purple_status_type_is_saveable(const PurpleStatusType *status_type)
 {
 	g_return_val_if_fail(status_type != NULL, FALSE);
 
@@ -390,7 +390,7 @@ gaim_status_type_is_saveable(const GaimStatusType *status_type)
 }
 
 gboolean
-gaim_status_type_is_user_settable(const GaimStatusType *status_type)
+purple_status_type_is_user_settable(const PurpleStatusType *status_type)
 {
 	g_return_val_if_fail(status_type != NULL, FALSE);
 
@@ -398,7 +398,7 @@ gaim_status_type_is_user_settable(const GaimStatusType *status_type)
 }
 
 gboolean
-gaim_status_type_is_independent(const GaimStatusType *status_type)
+purple_status_type_is_independent(const PurpleStatusType *status_type)
 {
 	g_return_val_if_fail(status_type != NULL, FALSE);
 
@@ -406,7 +406,7 @@ gaim_status_type_is_independent(const GaimStatusType *status_type)
 }
 
 gboolean
-gaim_status_type_is_exclusive(const GaimStatusType *status_type)
+purple_status_type_is_exclusive(const PurpleStatusType *status_type)
 {
 	g_return_val_if_fail(status_type != NULL, FALSE);
 
@@ -414,27 +414,27 @@ gaim_status_type_is_exclusive(const GaimStatusType *status_type)
 }
 
 gboolean
-gaim_status_type_is_available(const GaimStatusType *status_type)
+purple_status_type_is_available(const PurpleStatusType *status_type)
 {
-	GaimStatusPrimitive primitive;
+	PurpleStatusPrimitive primitive;
 
 	g_return_val_if_fail(status_type != NULL, FALSE);
 
-	primitive = gaim_status_type_get_primitive(status_type);
+	primitive = purple_status_type_get_primitive(status_type);
 
-	return (primitive == GAIM_STATUS_AVAILABLE);
+	return (primitive == PURPLE_STATUS_AVAILABLE);
 }
 
 const char *
-gaim_status_type_get_primary_attr(const GaimStatusType *status_type)
+purple_status_type_get_primary_attr(const PurpleStatusType *status_type)
 {
 	g_return_val_if_fail(status_type != NULL, NULL);
 
 	return status_type->primary_attr_id;
 }
 
-GaimStatusAttr *
-gaim_status_type_get_attr(const GaimStatusType *status_type, const char *id)
+PurpleStatusAttr *
+purple_status_type_get_attr(const PurpleStatusType *status_type, const char *id)
 {
 	GList *l;
 
@@ -443,9 +443,9 @@ gaim_status_type_get_attr(const GaimStatusType *status_type, const char *id)
 
 	for (l = status_type->attrs; l != NULL; l = l->next)
 	{
-		GaimStatusAttr *attr = (GaimStatusAttr *)l->data;
+		PurpleStatusAttr *attr = (PurpleStatusAttr *)l->data;
 
-		if (!strcmp(gaim_status_attr_get_id(attr), id))
+		if (!strcmp(purple_status_attr_get_id(attr), id))
 			return attr;
 	}
 
@@ -453,17 +453,17 @@ gaim_status_type_get_attr(const GaimStatusType *status_type, const char *id)
 }
 
 const GList *
-gaim_status_type_get_attrs(const GaimStatusType *status_type)
+purple_status_type_get_attrs(const PurpleStatusType *status_type)
 {
 	g_return_val_if_fail(status_type != NULL, NULL);
 
 	return status_type->attrs;
 }
 
-const GaimStatusType *
-gaim_status_type_find_with_id(GList *status_types, const char *id)
+const PurpleStatusType *
+purple_status_type_find_with_id(GList *status_types, const char *id)
 {
-	GaimStatusType *status_type;
+	PurpleStatusType *status_type;
 
 	g_return_val_if_fail(id != NULL, NULL);
 
@@ -482,19 +482,19 @@ gaim_status_type_find_with_id(GList *status_types, const char *id)
 
 
 /**************************************************************************
-* GaimStatusAttr API
+* PurpleStatusAttr API
 **************************************************************************/
-GaimStatusAttr *
-gaim_status_attr_new(const char *id, const char *name, GaimValue *value_type)
+PurpleStatusAttr *
+purple_status_attr_new(const char *id, const char *name, PurpleValue *value_type)
 {
-	GaimStatusAttr *attr;
+	PurpleStatusAttr *attr;
 
 	g_return_val_if_fail(id         != NULL, NULL);
 	g_return_val_if_fail(name       != NULL, NULL);
 	g_return_val_if_fail(value_type != NULL, NULL);
 
-	attr = g_new0(GaimStatusAttr, 1);
-	GAIM_DBUS_REGISTER_POINTER(attr, GaimStatusAttr);
+	attr = g_new0(PurpleStatusAttr, 1);
+	PURPLE_DBUS_REGISTER_POINTER(attr, PurpleStatusAttr);
 
 	attr->id         = g_strdup(id);
 	attr->name       = g_strdup(name);
@@ -504,21 +504,21 @@ gaim_status_attr_new(const char *id, const char *name, GaimValue *value_type)
 }
 
 void
-gaim_status_attr_destroy(GaimStatusAttr *attr)
+purple_status_attr_destroy(PurpleStatusAttr *attr)
 {
 	g_return_if_fail(attr != NULL);
 
 	g_free(attr->id);
 	g_free(attr->name);
 
-	gaim_value_destroy(attr->value_type);
+	purple_value_destroy(attr->value_type);
 
-	GAIM_DBUS_UNREGISTER_POINTER(attr);
+	PURPLE_DBUS_UNREGISTER_POINTER(attr);
 	g_free(attr);
 }
 
 const char *
-gaim_status_attr_get_id(const GaimStatusAttr *attr)
+purple_status_attr_get_id(const PurpleStatusAttr *attr)
 {
 	g_return_val_if_fail(attr != NULL, NULL);
 
@@ -526,15 +526,15 @@ gaim_status_attr_get_id(const GaimStatusAttr *attr)
 }
 
 const char *
-gaim_status_attr_get_name(const GaimStatusAttr *attr)
+purple_status_attr_get_name(const PurpleStatusAttr *attr)
 {
 	g_return_val_if_fail(attr != NULL, NULL);
 
 	return attr->name;
 }
 
-GaimValue *
-gaim_status_attr_get_value(const GaimStatusAttr *attr)
+PurpleValue *
+purple_status_attr_get_value(const PurpleStatusAttr *attr)
 {
 	g_return_val_if_fail(attr != NULL, NULL);
 
@@ -543,35 +543,35 @@ gaim_status_attr_get_value(const GaimStatusAttr *attr)
 
 
 /**************************************************************************
-* GaimStatus API
+* PurpleStatus API
 **************************************************************************/
-GaimStatus *
-gaim_status_new(GaimStatusType *status_type, GaimPresence *presence)
+PurpleStatus *
+purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 {
-	GaimStatus *status;
+	PurpleStatus *status;
 	const GList *l;
 
 	g_return_val_if_fail(status_type != NULL, NULL);
 	g_return_val_if_fail(presence    != NULL, NULL);
 
-	status = g_new0(GaimStatus, 1);
-	GAIM_DBUS_REGISTER_POINTER(status, GaimStatus);
+	status = g_new0(PurpleStatus, 1);
+	PURPLE_DBUS_REGISTER_POINTER(status, PurpleStatus);
 
 	status->type     = status_type;
 	status->presence = presence;
 
 	status->attr_values =
 		g_hash_table_new_full(g_str_hash, g_str_equal, g_free,
-		(GDestroyNotify)gaim_value_destroy);
+		(GDestroyNotify)purple_value_destroy);
 
-	for (l = gaim_status_type_get_attrs(status_type); l != NULL; l = l->next)
+	for (l = purple_status_type_get_attrs(status_type); l != NULL; l = l->next)
 	{
-		GaimStatusAttr *attr = (GaimStatusAttr *)l->data;
-		GaimValue *value = gaim_status_attr_get_value(attr);
-		GaimValue *new_value = gaim_value_dup(value);
+		PurpleStatusAttr *attr = (PurpleStatusAttr *)l->data;
+		PurpleValue *value = purple_status_attr_get_value(attr);
+		PurpleValue *new_value = purple_value_dup(value);
 
 		g_hash_table_insert(status->attr_values,
-							g_strdup(gaim_status_attr_get_id(attr)),
+							g_strdup(purple_status_attr_get_id(attr)),
 							new_value);
 	}
 
@@ -579,59 +579,59 @@ gaim_status_new(GaimStatusType *status_type, GaimPresence *presence)
 }
 
 /*
- * TODO: If the GaimStatus is in a GaimPresence, then
- *       remove it from the GaimPresence?
+ * TODO: If the PurpleStatus is in a PurplePresence, then
+ *       remove it from the PurplePresence?
  */
 void
-gaim_status_destroy(GaimStatus *status)
+purple_status_destroy(PurpleStatus *status)
 {
 	g_return_if_fail(status != NULL);
 
 	g_hash_table_destroy(status->attr_values);
 
-	GAIM_DBUS_UNREGISTER_POINTER(status);
+	PURPLE_DBUS_UNREGISTER_POINTER(status);
 	g_free(status);
 }
 
 static void
-notify_buddy_status_update(GaimBuddy *buddy, GaimPresence *presence,
-		GaimStatus *old_status, GaimStatus *new_status)
+notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
+		PurpleStatus *old_status, PurpleStatus *new_status)
 {
-	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
-	if (gaim_prefs_get_bool("/core/logging/log_system"))
+	if (purple_prefs_get_bool("/core/logging/log_system"))
 	{
 		time_t current_time = time(NULL);
-		const char *buddy_alias = gaim_buddy_get_alias(buddy);
+		const char *buddy_alias = purple_buddy_get_alias(buddy);
 		char *tmp;
-		GaimLog *log;
+		PurpleLog *log;
 
 		if (old_status != NULL)
 		{
 			tmp = g_strdup_printf(_("%s changed status from %s to %s"), buddy_alias,
-			                      gaim_status_get_name(old_status),
-			                      gaim_status_get_name(new_status));
+			                      purple_status_get_name(old_status),
+			                      purple_status_get_name(new_status));
 		}
 		else
 		{
 			/* old_status == NULL when an independent status is toggled. */
 
-			if (gaim_status_is_active(new_status))
+			if (purple_status_is_active(new_status))
 			{
 				tmp = g_strdup_printf(_("%s is now %s"), buddy_alias,
-				                      gaim_status_get_name(new_status));
+				                      purple_status_get_name(new_status));
 			}
 			else
 			{
 				tmp = g_strdup_printf(_("%s is no longer %s"), buddy_alias,
-				                      gaim_status_get_name(new_status));
+				                      purple_status_get_name(new_status));
 			}
 		}
 
-		log = gaim_account_get_log(buddy->account, FALSE);
+		log = purple_account_get_log(buddy->account, FALSE);
 		if (log != NULL)
 		{
-			gaim_log_write(log, GAIM_MESSAGE_SYSTEM, buddy_alias,
+			purple_log_write(log, PURPLE_MESSAGE_SYSTEM, buddy_alias,
 			               current_time, tmp);
 		}
 
@@ -639,56 +639,56 @@ notify_buddy_status_update(GaimBuddy *buddy, GaimPresence *presence,
 	}
 
 	if (ops != NULL && ops->update != NULL)
-		ops->update(gaim_get_blist(), (GaimBlistNode*)buddy);
+		ops->update(purple_get_blist(), (PurpleBlistNode*)buddy);
 }
 
 static void
-notify_status_update(GaimPresence *presence, GaimStatus *old_status,
-					 GaimStatus *new_status)
+notify_status_update(PurplePresence *presence, PurpleStatus *old_status,
+					 PurpleStatus *new_status)
 {
-	GaimPresenceContext context = gaim_presence_get_context(presence);
+	PurplePresenceContext context = purple_presence_get_context(presence);
 
-	if (context == GAIM_PRESENCE_CONTEXT_ACCOUNT)
+	if (context == PURPLE_PRESENCE_CONTEXT_ACCOUNT)
 	{
-		GaimAccount *account = gaim_presence_get_account(presence);
-		GaimAccountUiOps *ops = gaim_accounts_get_ui_ops();
+		PurpleAccount *account = purple_presence_get_account(presence);
+		PurpleAccountUiOps *ops = purple_accounts_get_ui_ops();
 
-		if (gaim_account_get_enabled(account, gaim_core_get_ui()))
-			gaim_prpl_change_account_status(account, old_status, new_status);
+		if (purple_account_get_enabled(account, purple_core_get_ui()))
+			purple_prpl_change_account_status(account, old_status, new_status);
 
 		if (ops != NULL && ops->status_changed != NULL)
 		{
 			ops->status_changed(account, new_status);
 		}
 	}
-	else if (context == GAIM_PRESENCE_CONTEXT_BUDDY)
+	else if (context == PURPLE_PRESENCE_CONTEXT_BUDDY)
 	{
 		const GList *l;
 
-		for (l = gaim_presence_get_buddies(presence); l != NULL; l = l->next)
+		for (l = purple_presence_get_buddies(presence); l != NULL; l = l->next)
 		{
-			notify_buddy_status_update((GaimBuddy *)l->data, presence,
+			notify_buddy_status_update((PurpleBuddy *)l->data, presence,
 					old_status, new_status);
 		}
 	}
 }
 
 static void
-status_has_changed(GaimStatus *status)
+status_has_changed(PurpleStatus *status)
 {
-	GaimPresence *presence;
-	GaimStatus *old_status;
+	PurplePresence *presence;
+	PurpleStatus *old_status;
 
-	presence   = gaim_status_get_presence(status);
+	presence   = purple_status_get_presence(status);
 
 	/*
 	 * If this status is exclusive, then we must be setting it to "active."
 	 * Since we are setting it to active, we want to set the currently
 	 * active status to "inactive."
 	 */
-	if (gaim_status_is_exclusive(status))
+	if (purple_status_is_exclusive(status))
 	{
-		old_status = gaim_presence_get_active_status(presence);
+		old_status = purple_presence_get_active_status(presence);
 		if (old_status != NULL && (old_status != status))
 			old_status->active = FALSE;
 		presence->active_status = status;
@@ -700,19 +700,19 @@ status_has_changed(GaimStatus *status)
 }
 
 void
-gaim_status_set_active(GaimStatus *status, gboolean active)
+purple_status_set_active(PurpleStatus *status, gboolean active)
 {
-	gaim_status_set_active_with_attrs_list(status, active, NULL);
+	purple_status_set_active_with_attrs_list(status, active, NULL);
 }
 
 /*
  * This used to parse the va_list directly, but now it creates a GList
- * and passes it to gaim_status_set_active_with_attrs_list().  That
+ * and passes it to purple_status_set_active_with_attrs_list().  That
  * function was created because accounts.c needs to pass a GList of
  * attributes to the status API.
  */
 void
-gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list args)
+purple_status_set_active_with_attrs(PurpleStatus *status, gboolean active, va_list args)
 {
 	GList *attrs = NULL;
 	const gchar *id;
@@ -724,26 +724,26 @@ gaim_status_set_active_with_attrs(GaimStatus *status, gboolean active, va_list a
 		data = va_arg(args, void *);
 		attrs = g_list_append(attrs, data);
 	}
-	gaim_status_set_active_with_attrs_list(status, active, attrs);
+	purple_status_set_active_with_attrs_list(status, active, attrs);
 	g_list_free(attrs);
 }
 
 void
-gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
+purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
 									   const GList *attrs)
 {
 	gboolean changed = FALSE;
 	const GList *l;
 	GList *specified_attr_ids = NULL;
-	GaimStatusType *status_type;
+	PurpleStatusType *status_type;
 
 	g_return_if_fail(status != NULL);
 
-	if (!active && gaim_status_is_exclusive(status))
+	if (!active && purple_status_is_exclusive(status))
 	{
-		gaim_debug_error("status",
+		purple_debug_error("status",
 				   "Cannot deactivate an exclusive status (%s).\n",
-				   gaim_status_get_id(status));
+				   purple_status_get_id(status));
 		return;
 	}
 
@@ -759,14 +759,14 @@ gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
 	while (l != NULL)
 	{
 		const gchar *id;
-		GaimValue *value;
+		PurpleValue *value;
 
 		id = l->data;
 		l = l->next;
-		value = gaim_status_get_attr_value(status, id);
+		value = purple_status_get_attr_value(status, id);
 		if (value == NULL)
 		{
-			gaim_debug_warning("status", "The attribute \"%s\" on the status \"%s\" is "
+			purple_debug_warning("status", "The attribute \"%s\" on the status \"%s\" is "
 							   "not supported.\n", id, status->type->name);
 			/* Skip over the data and move on to the next attribute */
 			l = l->next;
@@ -775,7 +775,7 @@ gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
 
 		specified_attr_ids = g_list_prepend(specified_attr_ids, (gpointer)id);
 
-		if (value->type == GAIM_TYPE_STRING)
+		if (value->type == PURPLE_TYPE_STRING)
 		{
 			const gchar *string_data = l->data;
 			l = l->next;
@@ -785,25 +785,25 @@ gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
 			{
 				continue;
 			}
-			gaim_status_set_attr_string(status, id, string_data);
+			purple_status_set_attr_string(status, id, string_data);
 			changed = TRUE;
 		}
-		else if (value->type == GAIM_TYPE_INT)
+		else if (value->type == PURPLE_TYPE_INT)
 		{
 			int int_data = GPOINTER_TO_INT(l->data);
 			l = l->next;
 			if (int_data == value->data.int_data)
 				continue;
-			gaim_status_set_attr_int(status, id, int_data);
+			purple_status_set_attr_int(status, id, int_data);
 			changed = TRUE;
 		}
-		else if (value->type == GAIM_TYPE_BOOLEAN)
+		else if (value->type == PURPLE_TYPE_BOOLEAN)
 		{
 			gboolean boolean_data = GPOINTER_TO_INT(l->data);
 			l = l->next;
 			if (boolean_data == value->data.boolean_data)
 				continue;
-			gaim_status_set_attr_boolean(status, id, boolean_data);
+			purple_status_set_attr_boolean(status, id, boolean_data);
 			changed = TRUE;
 		}
 		else
@@ -814,26 +814,26 @@ gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
 	}
 
 	/* Reset any unspecified attributes to their default value */
-	status_type = gaim_status_get_type(status);
-	l = gaim_status_type_get_attrs(status_type);
+	status_type = purple_status_get_type(status);
+	l = purple_status_type_get_attrs(status_type);
 	while (l != NULL)
 	{
-		GaimStatusAttr *attr;
+		PurpleStatusAttr *attr;
 
 		attr = l->data;
 		if (!g_list_find_custom(specified_attr_ids, attr->id, (GCompareFunc)strcmp))
 		{
-			GaimValue *default_value;
-			default_value = gaim_status_attr_get_value(attr);
-			if (default_value->type == GAIM_TYPE_STRING)
-				gaim_status_set_attr_string(status, attr->id,
-						gaim_value_get_string(default_value));
-			else if (default_value->type == GAIM_TYPE_INT)
-				gaim_status_set_attr_int(status, attr->id,
-						gaim_value_get_int(default_value));
-			else if (default_value->type == GAIM_TYPE_BOOLEAN)
-				gaim_status_set_attr_boolean(status, attr->id,
-						gaim_value_get_boolean(default_value));
+			PurpleValue *default_value;
+			default_value = purple_status_attr_get_value(attr);
+			if (default_value->type == PURPLE_TYPE_STRING)
+				purple_status_set_attr_string(status, attr->id,
+						purple_value_get_string(default_value));
+			else if (default_value->type == PURPLE_TYPE_INT)
+				purple_status_set_attr_int(status, attr->id,
+						purple_value_get_int(default_value));
+			else if (default_value->type == PURPLE_TYPE_BOOLEAN)
+				purple_status_set_attr_boolean(status, attr->id,
+						purple_value_get_boolean(default_value));
 			changed = TRUE;
 		}
 
@@ -847,75 +847,75 @@ gaim_status_set_active_with_attrs_list(GaimStatus *status, gboolean active,
 }
 
 void
-gaim_status_set_attr_boolean(GaimStatus *status, const char *id,
+purple_status_set_attr_boolean(PurpleStatus *status, const char *id,
 		gboolean value)
 {
-	GaimValue *attr_value;
+	PurpleValue *attr_value;
 
 	g_return_if_fail(status != NULL);
 	g_return_if_fail(id     != NULL);
 
 	/* Make sure this attribute exists and is the correct type. */
-	attr_value = gaim_status_get_attr_value(status, id);
+	attr_value = purple_status_get_attr_value(status, id);
 	g_return_if_fail(attr_value != NULL);
-	g_return_if_fail(gaim_value_get_type(attr_value) == GAIM_TYPE_BOOLEAN);
+	g_return_if_fail(purple_value_get_type(attr_value) == PURPLE_TYPE_BOOLEAN);
 
-	gaim_value_set_boolean(attr_value, value);
+	purple_value_set_boolean(attr_value, value);
 }
 
 void
-gaim_status_set_attr_int(GaimStatus *status, const char *id, int value)
+purple_status_set_attr_int(PurpleStatus *status, const char *id, int value)
 {
-	GaimValue *attr_value;
+	PurpleValue *attr_value;
 
 	g_return_if_fail(status != NULL);
 	g_return_if_fail(id     != NULL);
 
 	/* Make sure this attribute exists and is the correct type. */
-	attr_value = gaim_status_get_attr_value(status, id);
+	attr_value = purple_status_get_attr_value(status, id);
 	g_return_if_fail(attr_value != NULL);
-	g_return_if_fail(gaim_value_get_type(attr_value) == GAIM_TYPE_INT);
+	g_return_if_fail(purple_value_get_type(attr_value) == PURPLE_TYPE_INT);
 
-	gaim_value_set_int(attr_value, value);
+	purple_value_set_int(attr_value, value);
 }
 
 void
-gaim_status_set_attr_string(GaimStatus *status, const char *id,
+purple_status_set_attr_string(PurpleStatus *status, const char *id,
 		const char *value)
 {
-	GaimValue *attr_value;
+	PurpleValue *attr_value;
 
 	g_return_if_fail(status != NULL);
 	g_return_if_fail(id     != NULL);
 
 	/* Make sure this attribute exists and is the correct type. */
-	attr_value = gaim_status_get_attr_value(status, id);
+	attr_value = purple_status_get_attr_value(status, id);
 	/* This used to be g_return_if_fail, but it's failing a LOT, so
 	 * let's generate a log error for now. */
 	/* g_return_if_fail(attr_value != NULL); */
 	if (attr_value == NULL) {
-		gaim_debug_error("status",
+		purple_debug_error("status",
 				 "Attempted to set status attribute '%s' for "
 				 "status '%s', which is not legal.  Fix "
                                  "this!\n", id,
-				 gaim_status_type_get_name(gaim_status_get_type(status)));
+				 purple_status_type_get_name(purple_status_get_type(status)));
 		return;
 	}
-	g_return_if_fail(gaim_value_get_type(attr_value) == GAIM_TYPE_STRING);
+	g_return_if_fail(purple_value_get_type(attr_value) == PURPLE_TYPE_STRING);
 
-	gaim_value_set_string(attr_value, value);
+	purple_value_set_string(attr_value, value);
 }
 
-GaimStatusType *
-gaim_status_get_type(const GaimStatus *status)
+PurpleStatusType *
+purple_status_get_type(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, NULL);
 
 	return status->type;
 }
 
-GaimPresence *
-gaim_status_get_presence(const GaimStatus *status)
+PurplePresence *
+purple_status_get_presence(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, NULL);
 
@@ -923,47 +923,47 @@ gaim_status_get_presence(const GaimStatus *status)
 }
 
 const char *
-gaim_status_get_id(const GaimStatus *status)
+purple_status_get_id(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, NULL);
 
-	return gaim_status_type_get_id(gaim_status_get_type(status));
+	return purple_status_type_get_id(purple_status_get_type(status));
 }
 
 const char *
-gaim_status_get_name(const GaimStatus *status)
+purple_status_get_name(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, NULL);
 
-	return gaim_status_type_get_name(gaim_status_get_type(status));
+	return purple_status_type_get_name(purple_status_get_type(status));
 }
 
 gboolean
-gaim_status_is_independent(const GaimStatus *status)
+purple_status_is_independent(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, FALSE);
 
-	return gaim_status_type_is_independent(gaim_status_get_type(status));
+	return purple_status_type_is_independent(purple_status_get_type(status));
 }
 
 gboolean
-gaim_status_is_exclusive(const GaimStatus *status)
+purple_status_is_exclusive(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, FALSE);
 
-	return gaim_status_type_is_exclusive(gaim_status_get_type(status));
+	return purple_status_type_is_exclusive(purple_status_get_type(status));
 }
 
 gboolean
-gaim_status_is_available(const GaimStatus *status)
+purple_status_is_available(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, FALSE);
 
-	return gaim_status_type_is_available(gaim_status_get_type(status));
+	return purple_status_type_is_available(purple_status_get_type(status));
 }
 
 gboolean
-gaim_status_is_active(const GaimStatus *status)
+purple_status_is_active(const PurpleStatus *status)
 {
 	g_return_val_if_fail(status != NULL, FALSE);
 
@@ -971,79 +971,79 @@ gaim_status_is_active(const GaimStatus *status)
 }
 
 gboolean
-gaim_status_is_online(const GaimStatus *status)
+purple_status_is_online(const PurpleStatus *status)
 {
-	GaimStatusPrimitive primitive;
+	PurpleStatusPrimitive primitive;
 
 	g_return_val_if_fail( status != NULL, FALSE);
 
-	primitive = gaim_status_type_get_primitive(gaim_status_get_type(status));
+	primitive = purple_status_type_get_primitive(purple_status_get_type(status));
 
-	return (primitive != GAIM_STATUS_UNSET &&
-			primitive != GAIM_STATUS_OFFLINE);
+	return (primitive != PURPLE_STATUS_UNSET &&
+			primitive != PURPLE_STATUS_OFFLINE);
 }
 
-GaimValue *
-gaim_status_get_attr_value(const GaimStatus *status, const char *id)
+PurpleValue *
+purple_status_get_attr_value(const PurpleStatus *status, const char *id)
 {
 	g_return_val_if_fail(status != NULL, NULL);
 	g_return_val_if_fail(id     != NULL, NULL);
 
-	return (GaimValue *)g_hash_table_lookup(status->attr_values, id);
+	return (PurpleValue *)g_hash_table_lookup(status->attr_values, id);
 }
 
 gboolean
-gaim_status_get_attr_boolean(const GaimStatus *status, const char *id)
+purple_status_get_attr_boolean(const PurpleStatus *status, const char *id)
 {
-	const GaimValue *value;
+	const PurpleValue *value;
 
 	g_return_val_if_fail(status != NULL, FALSE);
 	g_return_val_if_fail(id     != NULL, FALSE);
 
-	if ((value = gaim_status_get_attr_value(status, id)) == NULL)
+	if ((value = purple_status_get_attr_value(status, id)) == NULL)
 		return FALSE;
 
-	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_BOOLEAN, FALSE);
+	g_return_val_if_fail(purple_value_get_type(value) == PURPLE_TYPE_BOOLEAN, FALSE);
 
-	return gaim_value_get_boolean(value);
+	return purple_value_get_boolean(value);
 }
 
 int
-gaim_status_get_attr_int(const GaimStatus *status, const char *id)
+purple_status_get_attr_int(const PurpleStatus *status, const char *id)
 {
-	const GaimValue *value;
+	const PurpleValue *value;
 
 	g_return_val_if_fail(status != NULL, 0);
 	g_return_val_if_fail(id     != NULL, 0);
 
-	if ((value = gaim_status_get_attr_value(status, id)) == NULL)
+	if ((value = purple_status_get_attr_value(status, id)) == NULL)
 		return 0;
 
-	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_INT, 0);
+	g_return_val_if_fail(purple_value_get_type(value) == PURPLE_TYPE_INT, 0);
 
-	return gaim_value_get_int(value);
+	return purple_value_get_int(value);
 }
 
 const char *
-gaim_status_get_attr_string(const GaimStatus *status, const char *id)
+purple_status_get_attr_string(const PurpleStatus *status, const char *id)
 {
-	const GaimValue *value;
+	const PurpleValue *value;
 
 	g_return_val_if_fail(status != NULL, NULL);
 	g_return_val_if_fail(id     != NULL, NULL);
 
-	if ((value = gaim_status_get_attr_value(status, id)) == NULL)
+	if ((value = purple_status_get_attr_value(status, id)) == NULL)
 		return NULL;
 
-	g_return_val_if_fail(gaim_value_get_type(value) == GAIM_TYPE_STRING, NULL);
+	g_return_val_if_fail(purple_value_get_type(value) == PURPLE_TYPE_STRING, NULL);
 
-	return gaim_value_get_string(value);
+	return purple_value_get_string(value);
 }
 
 gint
-gaim_status_compare(const GaimStatus *status1, const GaimStatus *status2)
+purple_status_compare(const PurpleStatus *status1, const PurpleStatus *status2)
 {
-	GaimStatusType *type1, *type2;
+	PurpleStatusType *type1, *type2;
 	int score1 = 0, score2 = 0;
 
 	if ((status1 == NULL && status2 == NULL) ||
@@ -1056,14 +1056,14 @@ gaim_status_compare(const GaimStatus *status1, const GaimStatus *status2)
 	else if (status2 == NULL)
 		return -1;
 
-	type1 = gaim_status_get_type(status1);
-	type2 = gaim_status_get_type(status2);
+	type1 = purple_status_get_type(status1);
+	type2 = purple_status_get_type(status2);
 
-	if (gaim_status_is_active(status1))
-		score1 = primitive_scores[gaim_status_type_get_primitive(type1)];
+	if (purple_status_is_active(status1))
+		score1 = primitive_scores[purple_status_type_get_primitive(type1)];
 
-	if (gaim_status_is_active(status2))
-		score2 = primitive_scores[gaim_status_type_get_primitive(type2)];
+	if (purple_status_is_active(status2))
+		score2 = primitive_scores[purple_status_type_get_primitive(type2)];
 
 	if (score1 > score2)
 		return -1;
@@ -1075,17 +1075,17 @@ gaim_status_compare(const GaimStatus *status1, const GaimStatus *status2)
 
 
 /**************************************************************************
-* GaimPresence API
+* PurplePresence API
 **************************************************************************/
-GaimPresence *
-gaim_presence_new(GaimPresenceContext context)
+PurplePresence *
+purple_presence_new(PurplePresenceContext context)
 {
-	GaimPresence *presence;
+	PurplePresence *presence;
 
-	g_return_val_if_fail(context != GAIM_PRESENCE_CONTEXT_UNSET, NULL);
+	g_return_val_if_fail(context != PURPLE_PRESENCE_CONTEXT_UNSET, NULL);
 
-	presence = g_new0(GaimPresence, 1);
-	GAIM_DBUS_REGISTER_POINTER(presence, GaimPresence);
+	presence = g_new0(PurplePresence, 1);
+	PURPLE_DBUS_REGISTER_POINTER(presence, PurplePresence);
 
 	presence->context = context;
 
@@ -1096,55 +1096,55 @@ gaim_presence_new(GaimPresenceContext context)
 	return presence;
 }
 
-GaimPresence *
-gaim_presence_new_for_account(GaimAccount *account)
+PurplePresence *
+purple_presence_new_for_account(PurpleAccount *account)
 {
-	GaimPresence *presence = NULL;
+	PurplePresence *presence = NULL;
 	g_return_val_if_fail(account != NULL, NULL);
 
-	presence = gaim_presence_new(GAIM_PRESENCE_CONTEXT_ACCOUNT);
+	presence = purple_presence_new(PURPLE_PRESENCE_CONTEXT_ACCOUNT);
 	presence->u.account = account;
-	presence->statuses = gaim_prpl_get_statuses(account, presence);
+	presence->statuses = purple_prpl_get_statuses(account, presence);
 
 	return presence;
 }
 
-GaimPresence *
-gaim_presence_new_for_conv(GaimConversation *conv)
+PurplePresence *
+purple_presence_new_for_conv(PurpleConversation *conv)
 {
-	GaimPresence *presence;
+	PurplePresence *presence;
 
 	g_return_val_if_fail(conv != NULL, NULL);
 
-	presence = gaim_presence_new(GAIM_PRESENCE_CONTEXT_CONV);
+	presence = purple_presence_new(PURPLE_PRESENCE_CONTEXT_CONV);
 	presence->u.chat.conv = conv;
-	/* presence->statuses = gaim_prpl_get_statuses(conv->account, presence); ? */
+	/* presence->statuses = purple_prpl_get_statuses(conv->account, presence); ? */
 
 	return presence;
 }
 
-GaimPresence *
-gaim_presence_new_for_buddy(GaimBuddy *buddy)
+PurplePresence *
+purple_presence_new_for_buddy(PurpleBuddy *buddy)
 {
-	GaimPresence *presence;
-	GaimStatusBuddyKey *key;
-	GaimAccount *account;
+	PurplePresence *presence;
+	PurpleStatusBuddyKey *key;
+	PurpleAccount *account;
 
 	g_return_val_if_fail(buddy != NULL, NULL);
 	account = buddy->account;
 
-	key = g_new0(GaimStatusBuddyKey, 1);
+	key = g_new0(PurpleStatusBuddyKey, 1);
 	key->account = buddy->account;
 	key->name    = g_strdup(buddy->name);
 
 	presence = g_hash_table_lookup(buddy_presences, key);
 	if (presence == NULL)
 	{
-		presence = gaim_presence_new(GAIM_PRESENCE_CONTEXT_BUDDY);
+		presence = purple_presence_new(PURPLE_PRESENCE_CONTEXT_BUDDY);
 
 		presence->u.buddy.name    = g_strdup(buddy->name);
 		presence->u.buddy.account = buddy->account;
-		presence->statuses = gaim_prpl_get_statuses(buddy->account, presence);
+		presence->statuses = purple_prpl_get_statuses(buddy->account, presence);
 
 		g_hash_table_insert(buddy_presences, key, presence);
 	}
@@ -1162,13 +1162,13 @@ gaim_presence_new_for_buddy(GaimBuddy *buddy)
 }
 
 void
-gaim_presence_destroy(GaimPresence *presence)
+purple_presence_destroy(PurplePresence *presence)
 {
 	g_return_if_fail(presence != NULL);
 
-	if (gaim_presence_get_context(presence) == GAIM_PRESENCE_CONTEXT_BUDDY)
+	if (purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_BUDDY)
 	{
-		GaimStatusBuddyKey key;
+		PurpleStatusBuddyKey key;
 
 		if(presence->u.buddy.ref_count != 0)
 			return;
@@ -1180,32 +1180,32 @@ gaim_presence_destroy(GaimPresence *presence)
 
 		g_free(presence->u.buddy.name);
 	}
-	else if (gaim_presence_get_context(presence) == GAIM_PRESENCE_CONTEXT_CONV)
+	else if (purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_CONV)
 	{
 		g_free(presence->u.chat.user);
 	}
 
-	g_list_foreach(presence->statuses, (GFunc)gaim_status_destroy, NULL);
+	g_list_foreach(presence->statuses, (GFunc)purple_status_destroy, NULL);
 	g_list_free(presence->statuses);
 
 	g_hash_table_destroy(presence->status_table);
 
-	GAIM_DBUS_UNREGISTER_POINTER(presence);
+	PURPLE_DBUS_UNREGISTER_POINTER(presence);
 	g_free(presence);
 }
 
 /*
- * TODO: Maybe we should cal gaim_presence_destroy() after we
+ * TODO: Maybe we should cal purple_presence_destroy() after we
  *       decrement the ref count?  I don't see why we should
  *       make other places do it manually when we can do it here.
  */
 void
-gaim_presence_remove_buddy(GaimPresence *presence, GaimBuddy *buddy)
+purple_presence_remove_buddy(PurplePresence *presence, PurpleBuddy *buddy)
 {
 	g_return_if_fail(presence != NULL);
 	g_return_if_fail(buddy    != NULL);
-	g_return_if_fail(gaim_presence_get_context(presence) ==
-			GAIM_PRESENCE_CONTEXT_BUDDY);
+	g_return_if_fail(purple_presence_get_context(presence) ==
+			PURPLE_PRESENCE_CONTEXT_BUDDY);
 
 	if (g_list_find(presence->u.buddy.buddies, buddy) != NULL)
 	{
@@ -1216,7 +1216,7 @@ gaim_presence_remove_buddy(GaimPresence *presence, GaimBuddy *buddy)
 }
 
 void
-gaim_presence_add_status(GaimPresence *presence, GaimStatus *status)
+purple_presence_add_status(PurplePresence *presence, PurpleStatus *status)
 {
 	g_return_if_fail(presence != NULL);
 	g_return_if_fail(status   != NULL);
@@ -1224,11 +1224,11 @@ gaim_presence_add_status(GaimPresence *presence, GaimStatus *status)
 	presence->statuses = g_list_append(presence->statuses, status);
 
 	g_hash_table_insert(presence->status_table,
-	g_strdup(gaim_status_get_id(status)), status);
+	g_strdup(purple_status_get_id(status)), status);
 }
 
 void
-gaim_presence_add_list(GaimPresence *presence, const GList *source_list)
+purple_presence_add_list(PurplePresence *presence, const GList *source_list)
 {
 	const GList *l;
 
@@ -1236,29 +1236,29 @@ gaim_presence_add_list(GaimPresence *presence, const GList *source_list)
 	g_return_if_fail(source_list != NULL);
 
 	for (l = source_list; l != NULL; l = l->next)
-		gaim_presence_add_status(presence, (GaimStatus *)l->data);
+		purple_presence_add_status(presence, (PurpleStatus *)l->data);
 }
 
 void
-gaim_presence_set_status_active(GaimPresence *presence, const char *status_id,
+purple_presence_set_status_active(PurplePresence *presence, const char *status_id,
 		gboolean active)
 {
-	GaimStatus *status;
+	PurpleStatus *status;
 
 	g_return_if_fail(presence  != NULL);
 	g_return_if_fail(status_id != NULL);
 
-	status = gaim_presence_get_status(presence, status_id);
+	status = purple_presence_get_status(presence, status_id);
 
 	g_return_if_fail(status != NULL);
 	/* TODO: Should we do the following? */
 	/* g_return_if_fail(active == status->active); */
 
-	if (gaim_status_is_exclusive(status))
+	if (purple_status_is_exclusive(status))
 	{
 		if (!active)
 		{
-			gaim_debug_warning("status",
+			purple_debug_warning("status",
 					"Attempted to set a non-independent status "
 					"(%s) inactive. Only independent statuses "
 					"can be specifically marked inactive.",
@@ -1267,72 +1267,72 @@ gaim_presence_set_status_active(GaimPresence *presence, const char *status_id,
 		}
 	}
 
-	gaim_status_set_active(status, active);
+	purple_status_set_active(status, active);
 }
 
 void
-gaim_presence_switch_status(GaimPresence *presence, const char *status_id)
+purple_presence_switch_status(PurplePresence *presence, const char *status_id)
 {
-	gaim_presence_set_status_active(presence, status_id, TRUE);
+	purple_presence_set_status_active(presence, status_id, TRUE);
 }
 
 static void
-update_buddy_idle(GaimBuddy *buddy, GaimPresence *presence,
+update_buddy_idle(PurpleBuddy *buddy, PurplePresence *presence,
 		time_t current_time, gboolean old_idle, gboolean idle)
 {
-	GaimBlistUiOps *ops = gaim_blist_get_ui_ops();
+	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 
 	if (!old_idle && idle)
 	{
-		if (gaim_prefs_get_bool("/core/logging/log_system"))
+		if (purple_prefs_get_bool("/core/logging/log_system"))
 		{
-			GaimLog *log = gaim_account_get_log(buddy->account, FALSE);
+			PurpleLog *log = purple_account_get_log(buddy->account, FALSE);
 
 			if (log != NULL)
 			{
 				char *tmp = g_strdup_printf(_("%s became idle"),
-				gaim_buddy_get_alias(buddy));
+				purple_buddy_get_alias(buddy));
 
-				gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
-				gaim_buddy_get_alias(buddy), current_time, tmp);
+				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
+				purple_buddy_get_alias(buddy), current_time, tmp);
 				g_free(tmp);
 			}
 		}
 	}
 	else if (old_idle && !idle)
 	{
-		if (gaim_prefs_get_bool("/core/logging/log_system"))
+		if (purple_prefs_get_bool("/core/logging/log_system"))
 		{
-			GaimLog *log = gaim_account_get_log(buddy->account, FALSE);
+			PurpleLog *log = purple_account_get_log(buddy->account, FALSE);
 
 			if (log != NULL)
 			{
 				char *tmp = g_strdup_printf(_("%s became unidle"),
-				gaim_buddy_get_alias(buddy));
+				purple_buddy_get_alias(buddy));
 
-				gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
-				gaim_buddy_get_alias(buddy), current_time, tmp);
+				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
+				purple_buddy_get_alias(buddy), current_time, tmp);
 				g_free(tmp);
 			}
 		}
 	}
 
 	if (old_idle != idle)
-		gaim_signal_emit(gaim_blist_get_handle(), "buddy-idle-changed", buddy,
+		purple_signal_emit(purple_blist_get_handle(), "buddy-idle-changed", buddy,
 		                 old_idle, idle);
 
-	gaim_contact_invalidate_priority_buddy(gaim_buddy_get_contact(buddy));
+	purple_contact_invalidate_priority_buddy(purple_buddy_get_contact(buddy));
 
 	/* Should this be done here? It'd perhaps make more sense to
 	 * connect to buddy-[un]idle signals and update from there
 	 */
 
 	if (ops != NULL && ops->update != NULL)
-		ops->update(gaim_get_blist(), (GaimBlistNode *)buddy);
+		ops->update(purple_get_blist(), (PurpleBlistNode *)buddy);
 }
 
 void
-gaim_presence_set_idle(GaimPresence *presence, gboolean idle, time_t idle_time)
+purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_time)
 {
 	gboolean old_idle;
 
@@ -1345,49 +1345,49 @@ gaim_presence_set_idle(GaimPresence *presence, gboolean idle, time_t idle_time)
 	presence->idle      = idle;
 	presence->idle_time = (idle ? idle_time : 0);
 
-	if (gaim_presence_get_context(presence) == GAIM_PRESENCE_CONTEXT_BUDDY)
+	if (purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_BUDDY)
 	{
 		const GList *l;
 		time_t current_time = time(NULL);
 
-		for (l = gaim_presence_get_buddies(presence); l != NULL; l = l->next)
+		for (l = purple_presence_get_buddies(presence); l != NULL; l = l->next)
 		{
-			update_buddy_idle((GaimBuddy *)l->data, presence, current_time,
+			update_buddy_idle((PurpleBuddy *)l->data, presence, current_time,
 			old_idle, idle);
 		}
 	}
-	else if(gaim_presence_get_context(presence) == GAIM_PRESENCE_CONTEXT_ACCOUNT)
+	else if(purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_ACCOUNT)
 	{
-		GaimAccount *account;
-		GaimConnection *gc;
-		GaimPluginProtocolInfo *prpl_info = NULL;
+		PurpleAccount *account;
+		PurpleConnection *gc;
+		PurplePluginProtocolInfo *prpl_info = NULL;
 
-		account = gaim_presence_get_account(presence);
+		account = purple_presence_get_account(presence);
 
-		if (gaim_prefs_get_bool("/core/logging/log_system"))
+		if (purple_prefs_get_bool("/core/logging/log_system"))
 		{
-			GaimLog *log = gaim_account_get_log(account, FALSE);
+			PurpleLog *log = purple_account_get_log(account, FALSE);
 
 			if (log != NULL)
 			{
 				char *msg;
 
 				if (idle)
-					msg = g_strdup_printf(_("+++ %s became idle"), gaim_account_get_username(account));
+					msg = g_strdup_printf(_("+++ %s became idle"), purple_account_get_username(account));
 				else
-					msg = g_strdup_printf(_("+++ %s became unidle"), gaim_account_get_username(account));
-				gaim_log_write(log, GAIM_MESSAGE_SYSTEM,
-							   gaim_account_get_username(account),
+					msg = g_strdup_printf(_("+++ %s became unidle"), purple_account_get_username(account));
+				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
+							   purple_account_get_username(account),
 							   idle_time, msg);
 				g_free(msg);
 			}
 		}
 
-		gc = gaim_account_get_connection(account);
+		gc = purple_account_get_connection(account);
 
-		if (gc != NULL && GAIM_CONNECTION_IS_CONNECTED(gc) &&
+		if (gc != NULL && PURPLE_CONNECTION_IS_CONNECTED(gc) &&
 				gc->prpl != NULL)
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 		if (prpl_info && prpl_info->set_idle)
 			prpl_info->set_idle(gc, (idle ? (time(NULL) - idle_time) : 0));
@@ -1395,7 +1395,7 @@ gaim_presence_set_idle(GaimPresence *presence, gboolean idle, time_t idle_time)
 }
 
 void
-gaim_presence_set_login_time(GaimPresence *presence, time_t login_time)
+purple_presence_set_login_time(PurplePresence *presence, time_t login_time)
 {
 	g_return_if_fail(presence != NULL);
 
@@ -1405,100 +1405,100 @@ gaim_presence_set_login_time(GaimPresence *presence, time_t login_time)
 	presence->login_time = login_time;
 }
 
-GaimPresenceContext
-gaim_presence_get_context(const GaimPresence *presence)
+PurplePresenceContext
+purple_presence_get_context(const PurplePresence *presence)
 {
-	g_return_val_if_fail(presence != NULL, GAIM_PRESENCE_CONTEXT_UNSET);
+	g_return_val_if_fail(presence != NULL, PURPLE_PRESENCE_CONTEXT_UNSET);
 
 	return presence->context;
 }
 
-GaimAccount *
-gaim_presence_get_account(const GaimPresence *presence)
+PurpleAccount *
+purple_presence_get_account(const PurplePresence *presence)
 {
-	GaimPresenceContext context;
+	PurplePresenceContext context;
 
 	g_return_val_if_fail(presence != NULL, NULL);
 
-	context = gaim_presence_get_context(presence);
+	context = purple_presence_get_context(presence);
 
-	g_return_val_if_fail(context == GAIM_PRESENCE_CONTEXT_ACCOUNT ||
-			context == GAIM_PRESENCE_CONTEXT_BUDDY, NULL);
+	g_return_val_if_fail(context == PURPLE_PRESENCE_CONTEXT_ACCOUNT ||
+			context == PURPLE_PRESENCE_CONTEXT_BUDDY, NULL);
 
 	return presence->u.account;
 }
 
-GaimConversation *
-gaim_presence_get_conversation(const GaimPresence *presence)
+PurpleConversation *
+purple_presence_get_conversation(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, NULL);
-	g_return_val_if_fail(gaim_presence_get_context(presence) ==
-			GAIM_PRESENCE_CONTEXT_CONV, NULL);
+	g_return_val_if_fail(purple_presence_get_context(presence) ==
+			PURPLE_PRESENCE_CONTEXT_CONV, NULL);
 
 	return presence->u.chat.conv;
 }
 
 const char *
-gaim_presence_get_chat_user(const GaimPresence *presence)
+purple_presence_get_chat_user(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, NULL);
-	g_return_val_if_fail(gaim_presence_get_context(presence) ==
-			GAIM_PRESENCE_CONTEXT_CONV, NULL);
+	g_return_val_if_fail(purple_presence_get_context(presence) ==
+			PURPLE_PRESENCE_CONTEXT_CONV, NULL);
 
 	return presence->u.chat.user;
 }
 
 const GList *
-gaim_presence_get_buddies(const GaimPresence *presence)
+purple_presence_get_buddies(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, NULL);
-	g_return_val_if_fail(gaim_presence_get_context(presence) ==
-			GAIM_PRESENCE_CONTEXT_BUDDY, NULL);
+	g_return_val_if_fail(purple_presence_get_context(presence) ==
+			PURPLE_PRESENCE_CONTEXT_BUDDY, NULL);
 
 	return presence->u.buddy.buddies;
 }
 
 const GList *
-gaim_presence_get_statuses(const GaimPresence *presence)
+purple_presence_get_statuses(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, NULL);
 
 	return presence->statuses;
 }
 
-GaimStatus *
-gaim_presence_get_status(const GaimPresence *presence, const char *status_id)
+PurpleStatus *
+purple_presence_get_status(const PurplePresence *presence, const char *status_id)
 {
-	GaimStatus *status;
+	PurpleStatus *status;
 	const GList *l = NULL;
 
 	g_return_val_if_fail(presence  != NULL, NULL);
 	g_return_val_if_fail(status_id != NULL, NULL);
 
 	/* What's the purpose of this hash table? */
-	status = (GaimStatus *)g_hash_table_lookup(presence->status_table,
+	status = (PurpleStatus *)g_hash_table_lookup(presence->status_table,
 						   status_id);
 
 	if (status == NULL) {
-		for (l = gaim_presence_get_statuses(presence);
+		for (l = purple_presence_get_statuses(presence);
 			 l != NULL && status == NULL; l = l->next)
 		{
-			GaimStatus *temp_status = l->data;
+			PurpleStatus *temp_status = l->data;
 
-			if (!strcmp(status_id, gaim_status_get_id(temp_status)))
+			if (!strcmp(status_id, purple_status_get_id(temp_status)))
 				status = temp_status;
 		}
 
 		if (status != NULL)
 			g_hash_table_insert(presence->status_table,
-								g_strdup(gaim_status_get_id(status)), status);
+								g_strdup(purple_status_get_id(status)), status);
 	}
 
 	return status;
 }
 
-GaimStatus *
-gaim_presence_get_active_status(const GaimPresence *presence)
+PurpleStatus *
+purple_presence_get_active_status(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, NULL);
 
@@ -1506,76 +1506,76 @@ gaim_presence_get_active_status(const GaimPresence *presence)
 }
 
 gboolean
-gaim_presence_is_available(const GaimPresence *presence)
+purple_presence_is_available(const PurplePresence *presence)
 {
-	GaimStatus *status;
+	PurpleStatus *status;
 
 	g_return_val_if_fail(presence != NULL, FALSE);
 
-	status = gaim_presence_get_active_status(presence);
+	status = purple_presence_get_active_status(presence);
 
-	return ((status != NULL && gaim_status_is_available(status)) &&
-			!gaim_presence_is_idle(presence));
+	return ((status != NULL && purple_status_is_available(status)) &&
+			!purple_presence_is_idle(presence));
 }
 
 gboolean
-gaim_presence_is_online(const GaimPresence *presence)
+purple_presence_is_online(const PurplePresence *presence)
 {
-	GaimStatus *status;
+	PurpleStatus *status;
 
 	g_return_val_if_fail(presence != NULL, FALSE);
 
-	if ((status = gaim_presence_get_active_status(presence)) == NULL)
+	if ((status = purple_presence_get_active_status(presence)) == NULL)
 		return FALSE;
 
-	return gaim_status_is_online(status);
+	return purple_status_is_online(status);
 }
 
 gboolean
-gaim_presence_is_status_active(const GaimPresence *presence,
+purple_presence_is_status_active(const PurplePresence *presence,
 		const char *status_id)
 {
-	GaimStatus *status;
+	PurpleStatus *status;
 
 	g_return_val_if_fail(presence  != NULL, FALSE);
 	g_return_val_if_fail(status_id != NULL, FALSE);
 
-	status = gaim_presence_get_status(presence, status_id);
+	status = purple_presence_get_status(presence, status_id);
 
-	return (status != NULL && gaim_status_is_active(status));
+	return (status != NULL && purple_status_is_active(status));
 }
 
 gboolean
-gaim_presence_is_status_primitive_active(const GaimPresence *presence,
-		GaimStatusPrimitive primitive)
+purple_presence_is_status_primitive_active(const PurplePresence *presence,
+		PurpleStatusPrimitive primitive)
 {
 	const GList *l;
 
 	g_return_val_if_fail(presence  != NULL,              FALSE);
-	g_return_val_if_fail(primitive != GAIM_STATUS_UNSET, FALSE);
+	g_return_val_if_fail(primitive != PURPLE_STATUS_UNSET, FALSE);
 
-	for (l = gaim_presence_get_statuses(presence);
+	for (l = purple_presence_get_statuses(presence);
 	     l != NULL; l = l->next)	{
-		GaimStatus *temp_status = l->data;
-		GaimStatusType *type = gaim_status_get_type(temp_status);
+		PurpleStatus *temp_status = l->data;
+		PurpleStatusType *type = purple_status_get_type(temp_status);
 
-		if (gaim_status_type_get_primitive(type) == primitive &&
-		    gaim_status_is_active(temp_status))
+		if (purple_status_type_get_primitive(type) == primitive &&
+		    purple_status_is_active(temp_status))
 			return TRUE;
 	}
 	return FALSE;
 }
 
 gboolean
-gaim_presence_is_idle(const GaimPresence *presence)
+purple_presence_is_idle(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, FALSE);
 
-	return gaim_presence_is_online(presence) && presence->idle;
+	return purple_presence_is_online(presence) && presence->idle;
 }
 
 time_t
-gaim_presence_get_idle_time(const GaimPresence *presence)
+purple_presence_get_idle_time(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, 0);
 
@@ -1583,16 +1583,16 @@ gaim_presence_get_idle_time(const GaimPresence *presence)
 }
 
 time_t
-gaim_presence_get_login_time(const GaimPresence *presence)
+purple_presence_get_login_time(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, 0);
 
-	return gaim_presence_is_online(presence) ? presence->login_time : 0;
+	return purple_presence_is_online(presence) ? presence->login_time : 0;
 }
 
 gint
-gaim_presence_compare(const GaimPresence *presence1,
-		const GaimPresence *presence2)
+purple_presence_compare(const PurplePresence *presence1,
+		const PurplePresence *presence2)
 {
 	gboolean idle1, idle2;
 	time_t idle_time_1, idle_time_2;
@@ -1607,29 +1607,29 @@ gaim_presence_compare(const GaimPresence *presence1,
 		return -1;
 
 	/* Compute the score of the first set of statuses. */
-	for (l = gaim_presence_get_statuses(presence1); l != NULL; l = l->next)
+	for (l = purple_presence_get_statuses(presence1); l != NULL; l = l->next)
 	{
-		GaimStatus *status = (GaimStatus *)l->data;
-		GaimStatusType *type = gaim_status_get_type(status);
+		PurpleStatus *status = (PurpleStatus *)l->data;
+		PurpleStatusType *type = purple_status_get_type(status);
 
-		if (gaim_status_is_active(status))
-			score1 += primitive_scores[gaim_status_type_get_primitive(type)];
+		if (purple_status_is_active(status))
+			score1 += primitive_scores[purple_status_type_get_primitive(type)];
 	}
-	score1 += gaim_account_get_int(gaim_presence_get_account(presence1), "score", 0);
+	score1 += purple_account_get_int(purple_presence_get_account(presence1), "score", 0);
 
 	/* Compute the score of the second set of statuses. */
-	for (l = gaim_presence_get_statuses(presence2); l != NULL; l = l->next)
+	for (l = purple_presence_get_statuses(presence2); l != NULL; l = l->next)
 	{
-		GaimStatus *status = (GaimStatus *)l->data;
-		GaimStatusType *type = gaim_status_get_type(status);
+		PurpleStatus *status = (PurpleStatus *)l->data;
+		PurpleStatusType *type = purple_status_get_type(status);
 
-		if (gaim_status_is_active(status))
-			score2 += primitive_scores[gaim_status_type_get_primitive(type)];
+		if (purple_status_is_active(status))
+			score2 += primitive_scores[purple_status_type_get_primitive(type)];
 	}
-	score2 += gaim_account_get_int(gaim_presence_get_account(presence2), "score", 0);
+	score2 += purple_account_get_int(purple_presence_get_account(presence2), "score", 0);
 
-	idle1 = gaim_presence_is_idle(presence1);
-	idle2 = gaim_presence_is_idle(presence2);
+	idle1 = purple_presence_is_idle(presence1);
+	idle2 = purple_presence_is_idle(presence2);
 
 	if (idle1)
 		score1 += primitive_scores[SCORE_IDLE];
@@ -1637,8 +1637,8 @@ gaim_presence_compare(const GaimPresence *presence1,
 	if (idle2)
 		score2 += primitive_scores[SCORE_IDLE];
 
-	idle_time_1 = time(NULL) - gaim_presence_get_idle_time(presence1);
-	idle_time_2 = time(NULL) - gaim_presence_get_idle_time(presence2);
+	idle_time_1 = time(NULL) - purple_presence_get_idle_time(presence1);
+	idle_time_2 = time(NULL) - purple_presence_get_idle_time(presence2);
 
 	if (idle_time_1 > idle_time_2)
 		score1 += primitive_scores[SCORE_IDLE_TIME];
@@ -1658,7 +1658,7 @@ gaim_presence_compare(const GaimPresence *presence1,
 * Status subsystem
 **************************************************************************/
 static void
-score_pref_changed_cb(const char *name, GaimPrefType type,
+score_pref_changed_cb(const char *name, PurplePrefType type,
 					  gconstpointer value, gpointer data)
 {
 	int index = GPOINTER_TO_INT(data);
@@ -1667,9 +1667,9 @@ score_pref_changed_cb(const char *name, GaimPrefType type,
 }
 
 static guint
-gaim_buddy_presences_hash(gconstpointer key)
+purple_buddy_presences_hash(gconstpointer key)
 {
-	const GaimStatusBuddyKey *me = key;
+	const PurpleStatusBuddyKey *me = key;
 	guint ret;
 	char *str;
 
@@ -1681,10 +1681,10 @@ gaim_buddy_presences_hash(gconstpointer key)
 }
 
 static gboolean
-gaim_buddy_presences_equal(gconstpointer a, gconstpointer b)
+purple_buddy_presences_equal(gconstpointer a, gconstpointer b)
 {
-	GaimStatusBuddyKey *key_a = (GaimStatusBuddyKey *)a;
-	GaimStatusBuddyKey *key_b = (GaimStatusBuddyKey *)b;
+	PurpleStatusBuddyKey *key_a = (PurpleStatusBuddyKey *)a;
+	PurpleStatusBuddyKey *key_b = (PurpleStatusBuddyKey *)b;
 
 	if(key_a->account == key_b->account &&
 			!strcmp(key_a->name, key_b->name))
@@ -1694,67 +1694,67 @@ gaim_buddy_presences_equal(gconstpointer a, gconstpointer b)
 }
 
 static void
-gaim_buddy_presences_key_free(gpointer a)
+purple_buddy_presences_key_free(gpointer a)
 {
-	GaimStatusBuddyKey *key = (GaimStatusBuddyKey *)a;
+	PurpleStatusBuddyKey *key = (PurpleStatusBuddyKey *)a;
 	g_free(key->name);
 	g_free(key);
 }
 
 void *
-gaim_status_get_handle(void) {
+purple_status_get_handle(void) {
 	static int handle;
 
 	return &handle;
 }
 
 void
-gaim_status_init(void)
+purple_status_init(void)
 {
-	void *handle = gaim_status_get_handle;
+	void *handle = purple_status_get_handle;
 
-	gaim_prefs_add_none("/core/status");
-	gaim_prefs_add_none("/core/status/scores");
+	purple_prefs_add_none("/core/status");
+	purple_prefs_add_none("/core/status/scores");
 
-	gaim_prefs_add_int("/core/status/scores/offline",
-			primitive_scores[GAIM_STATUS_OFFLINE]);
-	gaim_prefs_add_int("/core/status/scores/available",
-			primitive_scores[GAIM_STATUS_AVAILABLE]);
-	gaim_prefs_add_int("/core/status/scores/invisible",
-			primitive_scores[GAIM_STATUS_INVISIBLE]);
-	gaim_prefs_add_int("/core/status/scores/away",
-			primitive_scores[GAIM_STATUS_AWAY]);
-	gaim_prefs_add_int("/core/status/scores/extended_away",
-			primitive_scores[GAIM_STATUS_EXTENDED_AWAY]);
-	gaim_prefs_add_int("/core/status/scores/idle",
+	purple_prefs_add_int("/core/status/scores/offline",
+			primitive_scores[PURPLE_STATUS_OFFLINE]);
+	purple_prefs_add_int("/core/status/scores/available",
+			primitive_scores[PURPLE_STATUS_AVAILABLE]);
+	purple_prefs_add_int("/core/status/scores/invisible",
+			primitive_scores[PURPLE_STATUS_INVISIBLE]);
+	purple_prefs_add_int("/core/status/scores/away",
+			primitive_scores[PURPLE_STATUS_AWAY]);
+	purple_prefs_add_int("/core/status/scores/extended_away",
+			primitive_scores[PURPLE_STATUS_EXTENDED_AWAY]);
+	purple_prefs_add_int("/core/status/scores/idle",
 			primitive_scores[SCORE_IDLE]);
 
-	gaim_prefs_connect_callback(handle, "/core/status/scores/offline",
+	purple_prefs_connect_callback(handle, "/core/status/scores/offline",
 			score_pref_changed_cb,
-			GINT_TO_POINTER(GAIM_STATUS_OFFLINE));
-	gaim_prefs_connect_callback(handle, "/core/status/scores/available",
+			GINT_TO_POINTER(PURPLE_STATUS_OFFLINE));
+	purple_prefs_connect_callback(handle, "/core/status/scores/available",
 			score_pref_changed_cb,
-			GINT_TO_POINTER(GAIM_STATUS_AVAILABLE));
-	gaim_prefs_connect_callback(handle, "/core/status/scores/invisible",
+			GINT_TO_POINTER(PURPLE_STATUS_AVAILABLE));
+	purple_prefs_connect_callback(handle, "/core/status/scores/invisible",
 			score_pref_changed_cb,
-			GINT_TO_POINTER(GAIM_STATUS_INVISIBLE));
-	gaim_prefs_connect_callback(handle, "/core/status/scores/away",
+			GINT_TO_POINTER(PURPLE_STATUS_INVISIBLE));
+	purple_prefs_connect_callback(handle, "/core/status/scores/away",
 			score_pref_changed_cb,
-			GINT_TO_POINTER(GAIM_STATUS_AWAY));
-	gaim_prefs_connect_callback(handle, "/core/status/scores/extended_away",
+			GINT_TO_POINTER(PURPLE_STATUS_AWAY));
+	purple_prefs_connect_callback(handle, "/core/status/scores/extended_away",
 			score_pref_changed_cb,
-			GINT_TO_POINTER(GAIM_STATUS_EXTENDED_AWAY));
-	gaim_prefs_connect_callback(handle, "/core/status/scores/idle",
+			GINT_TO_POINTER(PURPLE_STATUS_EXTENDED_AWAY));
+	purple_prefs_connect_callback(handle, "/core/status/scores/idle",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(SCORE_IDLE));
 
-	buddy_presences = g_hash_table_new_full(gaim_buddy_presences_hash,
-											gaim_buddy_presences_equal,
-											gaim_buddy_presences_key_free, NULL);
+	buddy_presences = g_hash_table_new_full(purple_buddy_presences_hash,
+											purple_buddy_presences_equal,
+											purple_buddy_presences_key_free, NULL);
 }
 
 void
-gaim_status_uninit(void)
+purple_status_uninit(void)
 {
 	if (buddy_presences != NULL)
 	{

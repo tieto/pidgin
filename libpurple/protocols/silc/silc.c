@@ -1,6 +1,6 @@
 /*
 
-  silcgaim.c
+  silcpurple.c
 
   Author: Pekka Riikonen <priikone@silcnet.org>
 
@@ -19,48 +19,48 @@
 
 #include "silcincludes.h"
 #include "silcclient.h"
-#include "silcgaim.h"
+#include "silcpurple.h"
 #include "version.h"
 #include "wb.h"
 
 extern SilcClientOperations ops;
-static GaimPlugin *silc_plugin = NULL;
+static PurplePlugin *silc_plugin = NULL;
 
 static const char *
-silcgaim_list_icon(GaimAccount *a, GaimBuddy *b)
+silcpurple_list_icon(PurpleAccount *a, PurpleBuddy *b)
 {
 	return (const char *)"silc";
 }
 
 static GList *
-silcgaim_away_states(GaimAccount *account)
+silcpurple_away_states(PurpleAccount *account)
 {
-	GaimStatusType *type;
+	PurpleStatusType *type;
 	GList *types = NULL;
 
-	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, SILCGAIM_STATUS_ID_AVAILABLE, NULL, FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, SILCPURPLE_STATUS_ID_AVAILABLE, NULL, FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_AVAILABLE, SILCGAIM_STATUS_ID_HYPER, _("Hyper Active"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, SILCPURPLE_STATUS_ID_HYPER, _("Hyper Active"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, SILCGAIM_STATUS_ID_AWAY, NULL, FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_AWAY, NULL, FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_UNAVAILABLE, SILCGAIM_STATUS_ID_BUSY, _("Busy"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_UNAVAILABLE, SILCPURPLE_STATUS_ID_BUSY, _("Busy"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, SILCGAIM_STATUS_ID_INDISPOSED, _("Indisposed"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_INDISPOSED, _("Indisposed"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_AWAY, SILCGAIM_STATUS_ID_PAGE, _("Wake Me Up"), FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_AWAY, SILCPURPLE_STATUS_ID_PAGE, _("Wake Me Up"), FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
-	type = gaim_status_type_new_full(GAIM_STATUS_OFFLINE, SILCGAIM_STATUS_ID_OFFLINE, NULL, FALSE, TRUE, FALSE);
+	type = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, SILCPURPLE_STATUS_ID_OFFLINE, NULL, FALSE, TRUE, FALSE);
 	types = g_list_append(types, type);
 
 	return types;
 }
 
 static void
-silcgaim_set_status(GaimAccount *account, GaimStatus *status)
+silcpurple_set_status(PurpleAccount *account, PurpleStatus *status)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
-	SilcGaim sg = NULL;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	SilcPurple sg = NULL;
 	SilcUInt32 mode;
 	SilcBuffer idp;
 	unsigned char mb[4];
@@ -72,7 +72,7 @@ silcgaim_set_status(GaimAccount *account, GaimStatus *status)
 	if (status == NULL)
 		return;
 
-	state = gaim_status_get_id(status);
+	state = purple_status_get_id(status);
 
 	if (state == NULL)
 		return;
@@ -112,36 +112,36 @@ silcgaim_set_status(GaimAccount *account, GaimStatus *status)
 /*************************** Connection Routines *****************************/
 
 static void
-silcgaim_keepalive(GaimConnection *gc)
+silcpurple_keepalive(PurpleConnection *gc)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	silc_client_send_packet(sg->client, sg->conn, SILC_PACKET_HEARTBEAT,
 				NULL, 0);
 }
 
 static int
-silcgaim_scheduler(gpointer *context)
+silcpurple_scheduler(gpointer *context)
 {
-	SilcGaim sg = (SilcGaim)context;
+	SilcPurple sg = (SilcPurple)context;
 	silc_client_run_one(sg->client);
 	return 1;
 }
 
 static void
-silcgaim_nickname_parse(const char *nickname,
+silcpurple_nickname_parse(const char *nickname,
 			char **ret_nickname)
 {
 	silc_parse_userfqdn(nickname, ret_nickname, NULL);
 }
 
 static void
-silcgaim_login_connected(gpointer data, gint source, const gchar *error_message)
+silcpurple_login_connected(gpointer data, gint source, const gchar *error_message)
 {
-	GaimConnection *gc = data;
-	SilcGaim sg;
+	PurpleConnection *gc = data;
+	SilcPurple sg;
 	SilcClient client;
 	SilcClientConnection conn;
-	GaimAccount *account;
+	PurpleAccount *account;
 	SilcClientConnectionParams params;
 	const char *dfile;
 
@@ -150,7 +150,7 @@ silcgaim_login_connected(gpointer data, gint source, const gchar *error_message)
 	sg = gc->proto_data;
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Connection failed"));
+		purple_connection_error(gc, _("Connection failed"));
 		return;
 	}
 
@@ -159,7 +159,7 @@ silcgaim_login_connected(gpointer data, gint source, const gchar *error_message)
 
 	/* Get session detachment data, if available */
 	memset(&params, 0, sizeof(params));
-	dfile = silcgaim_session_file(gaim_account_get_username(sg->account));
+	dfile = silcpurple_session_file(purple_account_get_username(sg->account));
 	params.detach_data = (unsigned char *)silc_file_readfile(dfile, &params.detach_data_len);
 	if (params.detach_data)
 		params.detach_data[params.detach_data_len] = 0;
@@ -167,11 +167,11 @@ silcgaim_login_connected(gpointer data, gint source, const gchar *error_message)
 	/* Add connection to SILC client library */
 	conn = silc_client_add_connection(
 			  sg->client, &params,
-			  (char *)gaim_account_get_string(account, "server",
+			  (char *)purple_account_get_string(account, "server",
 							  "silc.silcnet.org"),
-			  gaim_account_get_int(account, "port", 706), sg);
+			  purple_account_get_int(account, "port", 706), sg);
 	if (!conn) {
-		gaim_connection_error(gc, _("Cannot initialize SILC Client connection"));
+		purple_connection_error(gc, _("Cannot initialize SILC Client connection"));
 		gc->proto_data = NULL;
 		return;
 	}
@@ -179,10 +179,10 @@ silcgaim_login_connected(gpointer data, gint source, const gchar *error_message)
 
 	/* Progress */
 	if (params.detach_data) {
-		gaim_connection_update_progress(gc, _("Resuming session"), 2, 5);
+		purple_connection_update_progress(gc, _("Resuming session"), 2, 5);
 		sg->resuming = TRUE;
 	} else {
-		gaim_connection_update_progress(gc, _("Performing key exchange"), 2, 5);
+		purple_connection_update_progress(gc, _("Performing key exchange"), 2, 5);
 	}
 
 	/* Perform SILC Key Exchange.  The "silc_connected" will be called
@@ -190,7 +190,7 @@ silcgaim_login_connected(gpointer data, gint source, const gchar *error_message)
 	silc_client_start_key_exchange(sg->client, sg->conn, source);
 
 	/* Set default attributes */
-	if (!gaim_account_get_bool(account, "reject-attrs", FALSE)) {
+	if (!purple_account_get_bool(account, "reject-attrs", FALSE)) {
 		SilcUInt32 mask;
 		const char *tmp;
 #ifdef SILC_ATTRIBUTE_USER_ICON
@@ -233,8 +233,8 @@ silcgaim_login_connected(gpointer data, gint source, const gchar *error_message)
 
 #ifdef SILC_ATTRIBUTE_USER_ICON
 		/* Set our buddy icon */
-		icon = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(account));
-		silcgaim_buddy_set_icon(gc, icon);
+		icon = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(account));
+		silcpurple_buddy_set_icon(gc, icon);
 		g_free(icon);
 #endif
 	}
@@ -243,12 +243,12 @@ silcgaim_login_connected(gpointer data, gint source, const gchar *error_message)
 }
 
 static void
-silcgaim_login(GaimAccount *account)
+silcpurple_login(PurpleAccount *account)
 {
-	SilcGaim sg;
+	SilcPurple sg;
 	SilcClient client;
 	SilcClientParams params;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	char pkd[256], prd[256];
 	const char *cipher, *hmac;
 	char *realname;
@@ -261,50 +261,50 @@ silcgaim_login(GaimAccount *account)
 
 	memset(&params, 0, sizeof(params));
 	strcat(params.nickname_format, "%n@%h%a");
-	params.nickname_parse = silcgaim_nickname_parse;
+	params.nickname_parse = silcpurple_nickname_parse;
 	params.ignore_requested_attributes =
-		gaim_account_get_bool(account, "reject-attrs", FALSE);
+		purple_account_get_bool(account, "reject-attrs", FALSE);
 
 	/* Allocate SILC client */
 	client = silc_client_alloc(&ops, &params, gc, NULL);
 	if (!client) {
-		gaim_connection_error(gc, _("Out of memory"));
+		purple_connection_error(gc, _("Out of memory"));
 		return;
 	}
 
 	/* Get username, real name and local hostname for SILC library */
-	if (gaim_account_get_username(account)) {
-		const char *u = gaim_account_get_username(account);
+	if (purple_account_get_username(account)) {
+		const char *u = purple_account_get_username(account);
 		char **up = g_strsplit(u, "@", 2);
 		client->username = strdup(up[0]);
 		g_strfreev(up);
 	} else {
 		client->username = silc_get_username();
-		gaim_account_set_username(account, client->username);
+		purple_account_set_username(account, client->username);
 	}
 	realname = silc_get_real_name();
-	if (gaim_account_get_user_info(account)) {
-		client->realname = strdup(gaim_account_get_user_info(account));
+	if (purple_account_get_user_info(account)) {
+		client->realname = strdup(purple_account_get_user_info(account));
 		free(realname);
 	} else if ((silc_get_real_name() != NULL) && (*realname != '\0')) {
 		client->realname = realname;
-		gaim_account_set_user_info(account, client->realname);
+		purple_account_set_user_info(account, client->realname);
 	} else {
 		free(realname);
 		client->realname = strdup(_("John Noname"));
 	}
 	client->hostname = silc_net_localhost();
 
-	gaim_connection_set_display_name(gc, client->username);
+	purple_connection_set_display_name(gc, client->username);
 
 	/* Register requested cipher and HMAC */
-	cipher = gaim_account_get_string(account, "cipher", SILC_DEFAULT_CIPHER);
+	cipher = purple_account_get_string(account, "cipher", SILC_DEFAULT_CIPHER);
 	for (i = 0; silc_default_ciphers[i].name; i++)
 		if (!strcmp(silc_default_ciphers[i].name, cipher)) {
 			silc_cipher_register(&(silc_default_ciphers[i]));
 			break;
 		}
-	hmac = gaim_account_get_string(account, "hmac", SILC_DEFAULT_HMAC);
+	hmac = purple_account_get_string(account, "hmac", SILC_DEFAULT_HMAC);
 	for (i = 0; silc_default_hmacs[i].name; i++)
 		if (!strcmp(silc_default_hmacs[i].name, hmac)) {
 			silc_hmac_register(&(silc_default_hmacs[i]));
@@ -314,29 +314,29 @@ silcgaim_login(GaimAccount *account)
 	/* Init SILC client */
 	if (!silc_client_init(client)) {
 		gc->wants_to_die = TRUE;
-		gaim_connection_error(gc, _("Cannot initialize SILC protocol"));
+		purple_connection_error(gc, _("Cannot initialize SILC protocol"));
 		return;
 	}
 
 	/* Check the ~/.silc dir and create it, and new key pair if necessary. */
-	if (!silcgaim_check_silc_dir(gc)) {
+	if (!silcpurple_check_silc_dir(gc)) {
 		gc->wants_to_die = TRUE;
-		gaim_connection_error(gc, _("Cannot find/access ~/.silc directory"));
+		purple_connection_error(gc, _("Cannot find/access ~/.silc directory"));
 		return;
 	}
 
 	/* Progress */
-	gaim_connection_update_progress(gc, _("Connecting to SILC Server"), 1, 5);
+	purple_connection_update_progress(gc, _("Connecting to SILC Server"), 1, 5);
 
 	/* Load SILC key pair */
-	g_snprintf(pkd, sizeof(pkd), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcgaim_silcdir());
-	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcgaim_silcdir());
-	if (!silc_load_key_pair((char *)gaim_account_get_string(account, "public-key", pkd),
-							(char *)gaim_account_get_string(account, "private-key", prd),
+	g_snprintf(pkd, sizeof(pkd), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcpurple_silcdir());
+	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcpurple_silcdir());
+	if (!silc_load_key_pair((char *)purple_account_get_string(account, "public-key", pkd),
+							(char *)purple_account_get_string(account, "private-key", prd),
 				(gc->password == NULL) ? "" : gc->password, &client->pkcs,
 				&client->public_key, &client->private_key)) {
 		g_snprintf(pkd, sizeof(pkd), _("Could not load SILC key pair: %s"), strerror(errno));
-		gaim_connection_error(gc, pkd);
+		purple_connection_error(gc, pkd);
 		return;
 	}
 
@@ -350,28 +350,28 @@ silcgaim_login(GaimAccount *account)
 	gc->proto_data = sg;
 
 	/* Connect to the SILC server */
-	if (gaim_proxy_connect(gc, account,
-			       gaim_account_get_string(account, "server",
+	if (purple_proxy_connect(gc, account,
+			       purple_account_get_string(account, "server",
 						       "silc.silcnet.org"),
-			       gaim_account_get_int(account, "port", 706),
-			       silcgaim_login_connected, gc) == NULL)
+			       purple_account_get_int(account, "port", 706),
+			       silcpurple_login_connected, gc) == NULL)
 	{
-		gaim_connection_error(gc, _("Unable to create connection"));
+		purple_connection_error(gc, _("Unable to create connection"));
 		return;
 	}
 
 	/* Schedule SILC using Glib's event loop */
 #ifndef _WIN32
-	sg->scheduler = g_timeout_add(5, (GSourceFunc)silcgaim_scheduler, sg);
+	sg->scheduler = g_timeout_add(5, (GSourceFunc)silcpurple_scheduler, sg);
 #else
-	sg->scheduler = g_timeout_add(300, (GSourceFunc)silcgaim_scheduler, sg);
+	sg->scheduler = g_timeout_add(300, (GSourceFunc)silcpurple_scheduler, sg);
 #endif
 }
 
 static int
-silcgaim_close_final(gpointer *context)
+silcpurple_close_final(gpointer *context)
 {
-	SilcGaim sg = (SilcGaim)context;
+	SilcPurple sg = (SilcPurple)context;
 	silc_client_stop(sg->client);
 	silc_client_free(sg->client);
 #ifdef HAVE_SILCMIME_H
@@ -383,39 +383,39 @@ silcgaim_close_final(gpointer *context)
 }
 
 static void
-silcgaim_close(GaimConnection *gc)
+silcpurple_close(PurpleConnection *gc)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 
 	g_return_if_fail(sg != NULL);
 
 	/* Send QUIT */
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", "Download Gaim: " GAIM_WEBSITE, NULL);
+				 "QUIT", "Download Purple: " PURPLE_WEBSITE, NULL);
 
 	if (sg->conn)
 		silc_client_close_connection(sg->client, sg->conn);
 
 	g_source_remove(sg->scheduler);
-	g_timeout_add(1, (GSourceFunc)silcgaim_close_final, sg);
+	g_timeout_add(1, (GSourceFunc)silcpurple_close_final, sg);
 }
 
 
 /****************************** Protocol Actions *****************************/
 
 static void
-silcgaim_attrs_cancel(GaimConnection *gc, GaimRequestFields *fields)
+silcpurple_attrs_cancel(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	/* Nothing */
 }
 
 static void
-silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
+silcpurple_attrs_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
-	GaimRequestField *f;
+	PurpleRequestField *f;
 	char *tmp;
 	SilcUInt32 tmp_len, mask;
 	SilcAttributeObjService service;
@@ -454,41 +454,41 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 
 	/* Set mood */
 	mask = 0;
-	f = gaim_request_fields_get_field(fields, "mood_normal");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_normal");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_NORMAL;
-	f = gaim_request_fields_get_field(fields, "mood_happy");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_happy");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_HAPPY;
-	f = gaim_request_fields_get_field(fields, "mood_sad");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_sad");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_SAD;
-	f = gaim_request_fields_get_field(fields, "mood_angry");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_angry");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_ANGRY;
-	f = gaim_request_fields_get_field(fields, "mood_jealous");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_jealous");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_JEALOUS;
-	f = gaim_request_fields_get_field(fields, "mood_ashamed");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_ashamed");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_ASHAMED;
-	f = gaim_request_fields_get_field(fields, "mood_invincible");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_invincible");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_INVINCIBLE;
-	f = gaim_request_fields_get_field(fields, "mood_inlove");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_inlove");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_INLOVE;
-	f = gaim_request_fields_get_field(fields, "mood_sleepy");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_sleepy");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_SLEEPY;
-	f = gaim_request_fields_get_field(fields, "mood_bored");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_bored");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_BORED;
-	f = gaim_request_fields_get_field(fields, "mood_excited");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_excited");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_EXCITED;
-	f = gaim_request_fields_get_field(fields, "mood_anxious");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "mood_anxious");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_MOOD_ANXIOUS;
 	silc_client_attribute_add(client, conn,
 				  SILC_ATTRIBUTE_STATUS_MOOD,
@@ -497,23 +497,23 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 
 	/* Set preferred contact */
 	mask = 0;
-	f = gaim_request_fields_get_field(fields, "contact_chat");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "contact_chat");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_CONTACT_CHAT;
-	f = gaim_request_fields_get_field(fields, "contact_email");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "contact_email");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_CONTACT_EMAIL;
-	f = gaim_request_fields_get_field(fields, "contact_call");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "contact_call");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_CONTACT_CALL;
-	f = gaim_request_fields_get_field(fields, "contact_sms");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "contact_sms");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_CONTACT_SMS;
-	f = gaim_request_fields_get_field(fields, "contact_mms");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "contact_mms");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_CONTACT_MMS;
-	f = gaim_request_fields_get_field(fields, "contact_video");
-	if (f && gaim_request_field_bool_get_value(f))
+	f = purple_request_fields_get_field(fields, "contact_video");
+	if (f && purple_request_field_bool_get_value(f))
 		mask |= SILC_ATTRIBUTE_CONTACT_VIDEO;
 	if (mask)
 		silc_client_attribute_add(client, conn,
@@ -523,9 +523,9 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 
 	/* Set status text */
 	val = NULL;
-	f = gaim_request_fields_get_field(fields, "status_text");
+	f = purple_request_fields_get_field(fields, "status_text");
 	if (f)
-		val = gaim_request_field_string_get_value(f);
+		val = purple_request_field_string_get_value(f);
 	if (val && *val)
 		silc_client_attribute_add(client, conn,
 					  SILC_ATTRIBUTE_STATUS_FREETEXT,
@@ -533,11 +533,11 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 
 	/* Set vcard */
 	val = NULL;
-	f = gaim_request_fields_get_field(fields, "vcard");
+	f = purple_request_fields_get_field(fields, "vcard");
 	if (f)
-		val = gaim_request_field_string_get_value(f);
+		val = purple_request_field_string_get_value(f);
 	if (val && *val) {
-		gaim_account_set_string(sg->account, "vcard", val);
+		purple_account_set_string(sg->account, "vcard", val);
 		tmp = silc_file_readfile(val, &tmp_len);
 		if (tmp) {
 			tmp[tmp_len] = 0;
@@ -550,13 +550,13 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 		silc_vcard_free(&vcard);
 		silc_free(tmp);
 	} else {
-		gaim_account_set_string(sg->account, "vcard", "");
+		purple_account_set_string(sg->account, "vcard", "");
 	}
 
 #ifdef HAVE_SYS_UTSNAME_H
 	/* Set device info */
-	f = gaim_request_fields_get_field(fields, "device");
-	if (f && gaim_request_field_bool_get_value(f)) {
+	f = purple_request_fields_get_field(fields, "device");
+	if (f && purple_request_field_bool_get_value(f)) {
 		struct utsname u;
 		if (!uname(&u)) {
 			dev.type = SILC_ATTRIBUTE_DEVICE_COMPUTER;
@@ -571,9 +571,9 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 
 	/* Set timezone */
 	val = NULL;
-	f = gaim_request_fields_get_field(fields, "timezone");
+	f = purple_request_fields_get_field(fields, "timezone");
 	if (f)
-		val = gaim_request_field_string_get_value(f);
+		val = purple_request_field_string_get_value(f);
 	if (val && *val)
 		silc_client_attribute_add(client, conn,
 					  SILC_ATTRIBUTE_TIMEZONE,
@@ -581,15 +581,15 @@ silcgaim_attrs_cb(GaimConnection *gc, GaimRequestFields *fields)
 }
 
 static void
-silcgaim_attrs(GaimPluginAction *action)
+silcpurple_attrs(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	SilcGaim sg = gc->proto_data;
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *g;
-	GaimRequestField *f;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *g;
+	PurpleRequestField *f;
 	SilcHashTable attrs;
 	SilcAttributePayload attr;
 	gboolean mnormal = TRUE, mhappy = FALSE, msad = FALSE,
@@ -652,103 +652,103 @@ silcgaim_attrs(GaimPluginAction *action)
 			device = FALSE;
 	}
 
-	fields = gaim_request_fields_new();
+	fields = purple_request_fields_new();
 
-	g = gaim_request_field_group_new(NULL);
-	f = gaim_request_field_label_new("l3", _("Your Current Mood"));
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_normal", _("Normal"), mnormal);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_happy", _("Happy"), mhappy);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_sad", _("Sad"), msad);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_angry", _("Angry"), mangry);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_jealous", _("Jealous"), mjealous);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_ashamed", _("Ashamed"), mashamed);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_invincible", _("Invincible"), minvincible);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_inlove", _("In love"), minlove);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_sleepy", _("Sleepy"), msleepy);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_bored", _("Bored"), mbored);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_excited", _("Excited"), mexcited);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("mood_anxious", _("Anxious"), manxious);
-	gaim_request_field_group_add_field(g, f);
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_label_new("l3", _("Your Current Mood"));
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_normal", _("Normal"), mnormal);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_happy", _("Happy"), mhappy);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_sad", _("Sad"), msad);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_angry", _("Angry"), mangry);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_jealous", _("Jealous"), mjealous);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_ashamed", _("Ashamed"), mashamed);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_invincible", _("Invincible"), minvincible);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_inlove", _("In love"), minlove);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_sleepy", _("Sleepy"), msleepy);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_bored", _("Bored"), mbored);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_excited", _("Excited"), mexcited);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("mood_anxious", _("Anxious"), manxious);
+	purple_request_field_group_add_field(g, f);
 
-	f = gaim_request_field_label_new("l4", _("\nYour Preferred Contact Methods"));
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("contact_chat", _("Chat"), cchat);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("contact_email", _("E-mail"), cemail);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("contact_call", _("Phone"), ccall);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("contact_sms", _("SMS"), csms);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("contact_mms", _("MMS"), cmms);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("contact_video", _("Video conferencing"), cvideo);
-	gaim_request_field_group_add_field(g, f);
-	gaim_request_fields_add_group(fields, g);
+	f = purple_request_field_label_new("l4", _("\nYour Preferred Contact Methods"));
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("contact_chat", _("Chat"), cchat);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("contact_email", _("E-mail"), cemail);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("contact_call", _("Phone"), ccall);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("contact_sms", _("SMS"), csms);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("contact_mms", _("MMS"), cmms);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("contact_video", _("Video conferencing"), cvideo);
+	purple_request_field_group_add_field(g, f);
+	purple_request_fields_add_group(fields, g);
 
-	g = gaim_request_field_group_new(NULL);
-	f = gaim_request_field_string_new("status_text", _("Your Current Status"),
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_string_new("status_text", _("Your Current Status"),
 					  status[0] ? status : NULL, TRUE);
-	gaim_request_field_group_add_field(g, f);
-	gaim_request_fields_add_group(fields, g);
+	purple_request_field_group_add_field(g, f);
+	purple_request_fields_add_group(fields, g);
 
-	g = gaim_request_field_group_new(NULL);
+	g = purple_request_field_group_new(NULL);
 #if 0
-	f = gaim_request_field_label_new("l2", _("Online Services"));
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_bool_new("services",
+	f = purple_request_field_label_new("l2", _("Online Services"));
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_bool_new("services",
 					_("Let others see what services you are using"),
 					TRUE);
-	gaim_request_field_group_add_field(g, f);
+	purple_request_field_group_add_field(g, f);
 #endif
 #ifdef HAVE_SYS_UTSNAME_H
-	f = gaim_request_field_bool_new("device",
+	f = purple_request_field_bool_new("device",
 					_("Let others see what computer you are using"),
 					device);
-	gaim_request_field_group_add_field(g, f);
+	purple_request_field_group_add_field(g, f);
 #endif
-	gaim_request_fields_add_group(fields, g);
+	purple_request_fields_add_group(fields, g);
 
-	g = gaim_request_field_group_new(NULL);
-	f = gaim_request_field_string_new("vcard", _("Your VCard File"),
-					  gaim_account_get_string(sg->account, "vcard", ""),
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_string_new("vcard", _("Your VCard File"),
+					  purple_account_get_string(sg->account, "vcard", ""),
 					  FALSE);
-	gaim_request_field_group_add_field(g, f);
+	purple_request_field_group_add_field(g, f);
 #ifdef _WIN32
-	f = gaim_request_field_string_new("timezone", _("Timezone"), _tzname[0], FALSE);
+	f = purple_request_field_string_new("timezone", _("Timezone"), _tzname[0], FALSE);
 #else
-	f = gaim_request_field_string_new("timezone", _("Timezone"), tzname[0], FALSE);
+	f = purple_request_field_string_new("timezone", _("Timezone"), tzname[0], FALSE);
 #endif
-	gaim_request_field_group_add_field(g, f);
-	gaim_request_fields_add_group(fields, g);
+	purple_request_field_group_add_field(g, f);
+	purple_request_fields_add_group(fields, g);
 
-	gaim_request_fields(gc, _("User Online Status Attributes"),
+	purple_request_fields(gc, _("User Online Status Attributes"),
 			    _("User Online Status Attributes"),
 			    _("You can let other users see your online status information "
 			      "and your personal information. Please fill the information "
 			      "you would like other users to see about yourself."),
 			    fields,
-			    _("OK"), G_CALLBACK(silcgaim_attrs_cb),
-			    _("Cancel"), G_CALLBACK(silcgaim_attrs_cancel), gc);
+			    _("OK"), G_CALLBACK(silcpurple_attrs_cb),
+			    _("Cancel"), G_CALLBACK(silcpurple_attrs_cancel), gc);
 }
 
 static void
-silcgaim_detach(GaimPluginAction *action)
+silcpurple_detach(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	SilcGaim sg;
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	SilcPurple sg;
 
 	if (!gc)
 		return;
@@ -762,10 +762,10 @@ silcgaim_detach(GaimPluginAction *action)
 }
 
 static void
-silcgaim_view_motd(GaimPluginAction *action)
+silcpurple_view_motd(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	SilcGaim sg;
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	SilcPurple sg;
 	char *tmp;
 
 	if (!gc)
@@ -775,34 +775,34 @@ silcgaim_view_motd(GaimPluginAction *action)
 		return;
 
 	if (!sg->motd) {
-		gaim_notify_error(
+		purple_notify_error(
 		     gc, _("Message of the Day"), _("No Message of the Day available"),
 		     _("There is no Message of the Day associated with this connection"));
 		return;
 	}
 
 	tmp = g_markup_escape_text(sg->motd, -1);
-	gaim_notify_formatted(gc, NULL, _("Message of the Day"), NULL,
+	purple_notify_formatted(gc, NULL, _("Message of the Day"), NULL,
 			      tmp, NULL, NULL);
 	g_free(tmp);
 }
 
 static void
-silcgaim_create_keypair_cancel(GaimConnection *gc, GaimRequestFields *fields)
+silcpurple_create_keypair_cancel(PurpleConnection *gc, PurpleRequestFields *fields)
 {
 	/* Nothing */
 }
 
 static void
-silcgaim_create_keypair_cb(GaimConnection *gc, GaimRequestFields *fields)
+silcpurple_create_keypair_cb(PurpleConnection *gc, PurpleRequestFields *fields)
 {
-	SilcGaim sg = gc->proto_data;
-	GaimRequestField *f;
+	SilcPurple sg = gc->proto_data;
+	PurpleRequestField *f;
 	const char *val, *pkfile = NULL, *prfile = NULL;
 	const char *pass1 = NULL, *pass2 = NULL, *un = NULL, *hn = NULL;
 	const char *rn = NULL, *e = NULL, *o = NULL, *c = NULL;
 	char *identifier;
-	int keylen = SILCGAIM_DEF_PKCS_LEN;
+	int keylen = SILCPURPLE_DEF_PKCS_LEN;
 	SilcPublicKey public_key;
 
 	sg = gc->proto_data;
@@ -810,208 +810,208 @@ silcgaim_create_keypair_cb(GaimConnection *gc, GaimRequestFields *fields)
 		return;
 
 	val = NULL;
-	f = gaim_request_fields_get_field(fields, "pass1");
+	f = purple_request_fields_get_field(fields, "pass1");
 	if (f)
-		val = gaim_request_field_string_get_value(f);
+		val = purple_request_field_string_get_value(f);
 	if (val && *val)
 		pass1 = val;
 	else
 		pass1 = "";
 	val = NULL;
-	f = gaim_request_fields_get_field(fields, "pass2");
+	f = purple_request_fields_get_field(fields, "pass2");
 	if (f)
-		val = gaim_request_field_string_get_value(f);
+		val = purple_request_field_string_get_value(f);
 	if (val && *val)
 		pass2 = val;
 	else
 		pass2 = "";
 
 	if (strcmp(pass1, pass2)) {
-		gaim_notify_error(
+		purple_notify_error(
 		     gc, _("Create New SILC Key Pair"), _("Passphrases do not match"), NULL);
 		return;
 	}
 
 	val = NULL;
-	f = gaim_request_fields_get_field(fields, "key");
+	f = purple_request_fields_get_field(fields, "key");
 	if (f)
-		val = gaim_request_field_string_get_value(f);
+		val = purple_request_field_string_get_value(f);
 	if (val && *val)
 		keylen = atoi(val);
-	f = gaim_request_fields_get_field(fields, "pkfile");
+	f = purple_request_fields_get_field(fields, "pkfile");
 	if (f)
-		pkfile = gaim_request_field_string_get_value(f);
-	f = gaim_request_fields_get_field(fields, "prfile");
+		pkfile = purple_request_field_string_get_value(f);
+	f = purple_request_fields_get_field(fields, "prfile");
 	if (f)
-		prfile = gaim_request_field_string_get_value(f);
+		prfile = purple_request_field_string_get_value(f);
 
-	f = gaim_request_fields_get_field(fields, "un");
+	f = purple_request_fields_get_field(fields, "un");
 	if (f)
-		un = gaim_request_field_string_get_value(f);
-	f = gaim_request_fields_get_field(fields, "hn");
+		un = purple_request_field_string_get_value(f);
+	f = purple_request_fields_get_field(fields, "hn");
 	if (f)
-		hn = gaim_request_field_string_get_value(f);
-	f = gaim_request_fields_get_field(fields, "rn");
+		hn = purple_request_field_string_get_value(f);
+	f = purple_request_fields_get_field(fields, "rn");
 	if (f)
-		rn = gaim_request_field_string_get_value(f);
-	f = gaim_request_fields_get_field(fields, "e");
+		rn = purple_request_field_string_get_value(f);
+	f = purple_request_fields_get_field(fields, "e");
 	if (f)
-		e = gaim_request_field_string_get_value(f);
-	f = gaim_request_fields_get_field(fields, "o");
+		e = purple_request_field_string_get_value(f);
+	f = purple_request_fields_get_field(fields, "o");
 	if (f)
-		o = gaim_request_field_string_get_value(f);
-	f = gaim_request_fields_get_field(fields, "c");
+		o = purple_request_field_string_get_value(f);
+	f = purple_request_fields_get_field(fields, "c");
 	if (f)
-		c = gaim_request_field_string_get_value(f);
+		c = purple_request_field_string_get_value(f);
 
 	identifier = silc_pkcs_encode_identifier((char *)un, (char *)hn,
 						 (char *)rn, (char *)e, (char *)o, (char *)c);
 
 	/* Create the key pair */
-	if (!silc_create_key_pair(SILCGAIM_DEF_PKCS, keylen, pkfile, prfile,
+	if (!silc_create_key_pair(SILCPURPLE_DEF_PKCS, keylen, pkfile, prfile,
 				  identifier, pass1, NULL, &public_key, NULL,
 				  FALSE)) {
-		gaim_notify_error(
+		purple_notify_error(
 		     gc, _("Create New SILC Key Pair"), _("Key Pair Generation failed"), NULL);
 		return;
 	}
 
-	silcgaim_show_public_key(sg, NULL, public_key, NULL, NULL);
+	silcpurple_show_public_key(sg, NULL, public_key, NULL, NULL);
 
 	silc_pkcs_public_key_free(public_key);
 	silc_free(identifier);
 }
 
 static void
-silcgaim_create_keypair(GaimPluginAction *action)
+silcpurple_create_keypair(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	SilcGaim sg = gc->proto_data;
-	GaimRequestFields *fields;
-	GaimRequestFieldGroup *g;
-	GaimRequestField *f;
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	SilcPurple sg = gc->proto_data;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *g;
+	PurpleRequestField *f;
 	const char *username, *realname;
 	char *hostname, **u;
 	char tmp[256], pkd[256], pkd2[256], prd[256], prd2[256];
 
-	username = gaim_account_get_username(sg->account);
+	username = purple_account_get_username(sg->account);
 	u = g_strsplit(username, "@", 2);
 	username = u[0];
-	realname = gaim_account_get_user_info(sg->account);
+	realname = purple_account_get_user_info(sg->account);
 	hostname = silc_net_localhost();
 	g_snprintf(tmp, sizeof(tmp), "%s@%s", username, hostname);
 
-	g_snprintf(pkd2, sizeof(pkd2), "%s" G_DIR_SEPARATOR_S"public_key.pub", silcgaim_silcdir());
-	g_snprintf(prd2, sizeof(prd2), "%s" G_DIR_SEPARATOR_S"private_key.prv", silcgaim_silcdir());
+	g_snprintf(pkd2, sizeof(pkd2), "%s" G_DIR_SEPARATOR_S"public_key.pub", silcpurple_silcdir());
+	g_snprintf(prd2, sizeof(prd2), "%s" G_DIR_SEPARATOR_S"private_key.prv", silcpurple_silcdir());
 	g_snprintf(pkd, sizeof(pkd) - 1, "%s",
-		   gaim_account_get_string(gc->account, "public-key", pkd2));
+		   purple_account_get_string(gc->account, "public-key", pkd2));
 	g_snprintf(prd, sizeof(prd) - 1, "%s",
-		   gaim_account_get_string(gc->account, "private-key", prd2));
+		   purple_account_get_string(gc->account, "private-key", prd2));
 
-	fields = gaim_request_fields_new();
+	fields = purple_request_fields_new();
 
-	g = gaim_request_field_group_new(NULL);
-	f = gaim_request_field_string_new("key", _("Key length"), "2048", FALSE);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_string_new("pkfile", _("Public key file"), pkd, FALSE);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_string_new("prfile", _("Private key file"), prd, FALSE);
-	gaim_request_field_group_add_field(g, f);
-	gaim_request_fields_add_group(fields, g);
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_string_new("key", _("Key length"), "2048", FALSE);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_string_new("pkfile", _("Public key file"), pkd, FALSE);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_string_new("prfile", _("Private key file"), prd, FALSE);
+	purple_request_field_group_add_field(g, f);
+	purple_request_fields_add_group(fields, g);
 
-	g = gaim_request_field_group_new(NULL);
-	f = gaim_request_field_string_new("un", _("Username"), username ? username : "", FALSE);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_string_new("hn", _("Hostname"), hostname ? hostname : "", FALSE);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_string_new("rn", _("Real name"), realname ? realname : "", FALSE);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_string_new("e", _("E-mail"), tmp, FALSE);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_string_new("o", _("Organization"), "", FALSE);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_string_new("c", _("Country"), "", FALSE);
-	gaim_request_field_group_add_field(g, f);
-	gaim_request_fields_add_group(fields, g);
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_string_new("un", _("Username"), username ? username : "", FALSE);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_string_new("hn", _("Hostname"), hostname ? hostname : "", FALSE);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_string_new("rn", _("Real name"), realname ? realname : "", FALSE);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_string_new("e", _("E-mail"), tmp, FALSE);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_string_new("o", _("Organization"), "", FALSE);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_string_new("c", _("Country"), "", FALSE);
+	purple_request_field_group_add_field(g, f);
+	purple_request_fields_add_group(fields, g);
 
-	g = gaim_request_field_group_new(NULL);
-	f = gaim_request_field_string_new("pass1", _("Passphrase"), "", FALSE);
-	gaim_request_field_string_set_masked(f, TRUE);
-	gaim_request_field_group_add_field(g, f);
-	f = gaim_request_field_string_new("pass2", _("Passphrase (retype)"), "", FALSE);
-	gaim_request_field_string_set_masked(f, TRUE);
-	gaim_request_field_group_add_field(g, f);
-	gaim_request_fields_add_group(fields, g);
+	g = purple_request_field_group_new(NULL);
+	f = purple_request_field_string_new("pass1", _("Passphrase"), "", FALSE);
+	purple_request_field_string_set_masked(f, TRUE);
+	purple_request_field_group_add_field(g, f);
+	f = purple_request_field_string_new("pass2", _("Passphrase (retype)"), "", FALSE);
+	purple_request_field_string_set_masked(f, TRUE);
+	purple_request_field_group_add_field(g, f);
+	purple_request_fields_add_group(fields, g);
 
-	gaim_request_fields(gc, _("Create New SILC Key Pair"),
+	purple_request_fields(gc, _("Create New SILC Key Pair"),
 			    _("Create New SILC Key Pair"), NULL, fields,
-			    _("Generate Key Pair"), G_CALLBACK(silcgaim_create_keypair_cb),
-			    _("Cancel"), G_CALLBACK(silcgaim_create_keypair_cancel), gc);
+			    _("Generate Key Pair"), G_CALLBACK(silcpurple_create_keypair_cb),
+			    _("Cancel"), G_CALLBACK(silcpurple_create_keypair_cancel), gc);
 
 	g_strfreev(u);
 	silc_free(hostname);
 }
 
 static void
-silcgaim_change_pass(GaimPluginAction *action)
+silcpurple_change_pass(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	gaim_account_request_change_password(gaim_connection_get_account(gc));
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	purple_account_request_change_password(purple_connection_get_account(gc));
 }
 
 static void
-silcgaim_change_passwd(GaimConnection *gc, const char *old, const char *new)
+silcpurple_change_passwd(PurpleConnection *gc, const char *old, const char *new)
 {
         char prd[256];
-	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.pub", silcgaim_silcdir());
-	silc_change_private_key_passphrase(gaim_account_get_string(gc->account,
+	g_snprintf(prd, sizeof(prd), "%s" G_DIR_SEPARATOR_S "private_key.pub", silcpurple_silcdir());
+	silc_change_private_key_passphrase(purple_account_get_string(gc->account,
 								   "private-key",
 								   prd), old, new);
 }
 
 static void
-silcgaim_show_set_info(GaimPluginAction *action)
+silcpurple_show_set_info(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	gaim_account_request_change_user_info(gaim_connection_get_account(gc));
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	purple_account_request_change_user_info(purple_connection_get_account(gc));
 }
 
 static void
-silcgaim_set_info(GaimConnection *gc, const char *text)
+silcpurple_set_info(PurpleConnection *gc, const char *text)
 {
 }
 
 static GList *
-silcgaim_actions(GaimPlugin *plugin, gpointer context)
+silcpurple_actions(PurplePlugin *plugin, gpointer context)
 {
-	GaimConnection *gc = context;
+	PurpleConnection *gc = context;
 	GList *list = NULL;
-	GaimPluginAction *act;
+	PurplePluginAction *act;
 
-	if (!gaim_account_get_bool(gc->account, "reject-attrs", FALSE)) {
-		act = gaim_plugin_action_new(_("Online Status"),
-				silcgaim_attrs);
+	if (!purple_account_get_bool(gc->account, "reject-attrs", FALSE)) {
+		act = purple_plugin_action_new(_("Online Status"),
+				silcpurple_attrs);
 		list = g_list_append(list, act);
 	}
 
-	act = gaim_plugin_action_new(_("Detach From Server"),
-			silcgaim_detach);
+	act = purple_plugin_action_new(_("Detach From Server"),
+			silcpurple_detach);
 	list = g_list_append(list, act);
 
-	act = gaim_plugin_action_new(_("View Message of the Day"),
-			silcgaim_view_motd);
+	act = purple_plugin_action_new(_("View Message of the Day"),
+			silcpurple_view_motd);
 	list = g_list_append(list, act);
 
-	act = gaim_plugin_action_new(_("Create SILC Key Pair..."),
-			silcgaim_create_keypair);
+	act = purple_plugin_action_new(_("Create SILC Key Pair..."),
+			silcpurple_create_keypair);
 	list = g_list_append(list, act);
 
-	act = gaim_plugin_action_new(_("Change Password..."),
-			silcgaim_change_pass);
+	act = purple_plugin_action_new(_("Change Password..."),
+			silcpurple_change_pass);
 	list = g_list_append(list, act);
 
-	act = gaim_plugin_action_new(_("Set User Info..."),
-			silcgaim_show_set_info);
+	act = purple_plugin_action_new(_("Set User Info..."),
+			silcpurple_show_set_info);
 	list = g_list_append(list, act);
 
 	return list;
@@ -1025,27 +1025,27 @@ typedef struct {
 	char *message;
 	SilcUInt32 message_len;
 	SilcMessageFlags flags;
-	GaimMessageFlags gflags;
-} *SilcGaimIM;
+	PurpleMessageFlags gflags;
+} *SilcPurpleIM;
 
 static void
-silcgaim_send_im_resolved(SilcClient client,
+silcpurple_send_im_resolved(SilcClient client,
 			  SilcClientConnection conn,
 			  SilcClientEntry *clients,
 			  SilcUInt32 clients_count,
 			  void *context)
 {
-	GaimConnection *gc = client->application;
-	SilcGaim sg = gc->proto_data;
-	SilcGaimIM im = context;
-	GaimConversation *convo;
+	PurpleConnection *gc = client->application;
+	SilcPurple sg = gc->proto_data;
+	SilcPurpleIM im = context;
+	PurpleConversation *convo;
 	char tmp[256], *nickname = NULL;
 	SilcClientEntry client_entry;
 #ifdef HAVE_SILCMIME_H
 	SilcDList list;
 #endif
 
-	convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, im->nick,
+	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->nick,
 							sg->account);
 	if (!convo)
 		return;
@@ -1071,8 +1071,8 @@ silcgaim_send_im_resolved(SilcClient client,
 
 #ifdef HAVE_SILCMIME_H
 	/* Check for images */
-	if (im->gflags & GAIM_MESSAGE_IMAGES) {
-		list = silcgaim_image_message(im->message, (SilcUInt32 *)&im->flags);
+	if (im->gflags & PURPLE_MESSAGE_IMAGES) {
+		list = silcpurple_image_message(im->message, (SilcUInt32 *)&im->flags);
 		if (list) {
 			/* Send one or more MIME message.  If more than one, they
 			   are MIME fragments due to over large message */
@@ -1085,7 +1085,7 @@ silcgaim_send_im_resolved(SilcClient client,
 								 buf->data, buf->len,
 								 TRUE);
 			silc_mime_partial_free(list);
-			gaim_conv_im_write(GAIM_CONV_IM(convo), conn->local_entry->nickname,
+			purple_conv_im_write(PURPLE_CONV_IM(convo), conn->local_entry->nickname,
 				   im->message, 0, time(NULL));
 			goto out;
 		}
@@ -1095,14 +1095,14 @@ silcgaim_send_im_resolved(SilcClient client,
 	/* Send the message */
 	silc_client_send_private_message(client, conn, client_entry, im->flags,
 					 (unsigned char *)im->message, im->message_len, TRUE);
-	gaim_conv_im_write(GAIM_CONV_IM(convo), conn->local_entry->nickname,
+	purple_conv_im_write(PURPLE_CONV_IM(convo), conn->local_entry->nickname,
 			   im->message, 0, time(NULL));
 	goto out;
 
  err:
 	g_snprintf(tmp, sizeof(tmp),
 		   _("User <I>%s</I> is not present in the network"), im->nick);
-	gaim_conversation_write(convo, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+	purple_conversation_write(convo, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 
  out:
 	g_free(im->nick);
@@ -1112,17 +1112,17 @@ silcgaim_send_im_resolved(SilcClient client,
 }
 
 static int
-silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
-		 GaimMessageFlags flags)
+silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
+		 PurpleMessageFlags flags)
 {
-	SilcGaim sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcClientEntry *clients;
 	SilcUInt32 clients_count, mflags;
 	char *nickname, *msg, *tmp;
 	int ret = 0;
-	gboolean sign = gaim_account_get_bool(sg->account, "sign-verify", FALSE);
+	gboolean sign = purple_account_get_bool(sg->account, "sign-verify", FALSE);
 #ifdef HAVE_SILCMIME_H
 	SilcDList list;
 #endif
@@ -1132,7 +1132,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 
 	mflags = SILC_MESSAGE_FLAG_UTF8;
 
-	tmp = msg = gaim_unescape_html(message);
+	tmp = msg = purple_unescape_html(message);
 
 	if (!g_ascii_strncasecmp(msg, "/me ", 4)) {
 		msg += 4;
@@ -1143,7 +1143,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 		mflags |= SILC_MESSAGE_FLAG_ACTION;
 	} else if (strlen(msg) > 1 && msg[0] == '/') {
 		if (!silc_client_command_call(client, conn, msg + 1))
-			gaim_notify_error(gc, _("Call Command"), _("Cannot call command"),
+			purple_notify_error(gc, _("Call Command"), _("Cannot call command"),
 					_("Unknown command"));
 		g_free(tmp);
 		return 0;
@@ -1163,7 +1163,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 						&clients_count);
 	if (!clients) {
 		/* Resolve unknown user */
-		SilcGaimIM im = silc_calloc(1, sizeof(*im));
+		SilcPurpleIM im = silc_calloc(1, sizeof(*im));
 		if (!im) {
 			g_free(tmp);
 			return 0;
@@ -1174,7 +1174,7 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 		im->flags = mflags;
 		im->gflags = flags;
 		silc_client_get_clients(client, conn, nickname, NULL,
-					silcgaim_send_im_resolved, im);
+					silcpurple_send_im_resolved, im);
 		silc_free(nickname);
 		g_free(tmp);
 		return 0;
@@ -1182,8 +1182,8 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 
 #ifdef HAVE_SILCMIME_H
 	/* Check for images */
-	if (flags & GAIM_MESSAGE_IMAGES) {
-		list = silcgaim_image_message(message, &mflags);
+	if (flags & PURPLE_MESSAGE_IMAGES) {
+		list = silcpurple_image_message(message, &mflags);
 		if (list) {
 			/* Send one or more MIME message.  If more than one, they
 			   are MIME fragments due to over large message */
@@ -1218,14 +1218,14 @@ silcgaim_send_im(GaimConnection *gc, const char *who, const char *message,
 }
 
 
-static GList *silcgaim_blist_node_menu(GaimBlistNode *node) {
+static GList *silcpurple_blist_node_menu(PurpleBlistNode *node) {
 	/* split this single menu building function back into the two
 	   original: one for buddies and one for chats */
 
-	if(GAIM_BLIST_NODE_IS_CHAT(node)) {
-		return silcgaim_chat_menu((GaimChat *) node);
-	} else if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
-		return silcgaim_buddy_menu((GaimBuddy *) node);
+	if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
+		return silcpurple_chat_menu((PurpleChat *) node);
+	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		return silcpurple_buddy_menu((PurpleBuddy *) node);
 	} else {
 		g_return_val_if_reached(NULL);
 	}
@@ -1233,81 +1233,81 @@ static GList *silcgaim_blist_node_menu(GaimBlistNode *node) {
 
 /********************************* Commands **********************************/
 
-static GaimCmdRet silcgaim_cmd_chat_part(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_chat_part(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	GaimConnection *gc;
-	GaimConversation *convo = conv;
+	PurpleConnection *gc;
+	PurpleConversation *convo = conv;
 	int id = 0;
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	if(args && args[0])
-		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_CHAT, args[0],
+		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[0],
 									gc->account);
 
 	if (convo != NULL)
-		id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(convo));
+		id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(convo));
 
 	if (id == 0)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
-	silcgaim_chat_leave(gc, id);
+	silcpurple_chat_leave(gc, id);
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 
 }
 
-static GaimCmdRet silcgaim_cmd_chat_topic(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_chat_topic(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	int id = 0;
 	char *buf, *tmp, *tmp2;
 	const char *topic;
 
-	gc = gaim_conversation_get_gc(conv);
-	id = gaim_conv_chat_get_id(GAIM_CONV_CHAT(conv));
+	gc = purple_conversation_get_gc(conv);
+	id = purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv));
 
 	if (gc == NULL || id == 0)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	if (!args || !args[0]) {
-		topic = gaim_conv_chat_get_topic (GAIM_CONV_CHAT(conv));
+		topic = purple_conv_chat_get_topic (PURPLE_CONV_CHAT(conv));
 		if (topic) {
 			tmp = g_markup_escape_text(topic, -1);
-			tmp2 = gaim_markup_linkify(tmp);
+			tmp2 = purple_markup_linkify(tmp);
 			buf = g_strdup_printf(_("current topic is: %s"), tmp2);
 			g_free(tmp);
 			g_free(tmp2);
 		} else
 			buf = g_strdup(_("No topic is set"));
-		gaim_conv_chat_write(GAIM_CONV_CHAT(conv), gc->account->username, buf,
-							 GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), gc->account->username, buf,
+							 PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(buf);
 
 	}
 
 	if (args && args[0] && (strlen(args[0]) > 255)) {
 		*error = g_strdup(_("Topic too long"));
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
-	silcgaim_chat_set_topic(gc, id, args ? args[0] : NULL);
+	silcpurple_chat_set_topic(gc, id, args ? args[0] : NULL);
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet silcgaim_cmd_chat_join(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_chat_join(PurpleConversation *conv,
         const char *cmd, char **args, char **error, void *data)
 {
 	GHashTable *comp;
 
 	if(!args || !args[0])
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	comp = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 
@@ -1315,179 +1315,179 @@ static GaimCmdRet silcgaim_cmd_chat_join(GaimConversation *conv,
 	if(args[1])
 		g_hash_table_replace(comp, "passphrase", args[1]);
 
-	silcgaim_chat_join(gaim_conversation_get_gc(conv), comp);
+	silcpurple_chat_join(purple_conversation_get_gc(conv), comp);
 
 	g_hash_table_destroy(comp);
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet silcgaim_cmd_chat_list(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_chat_list(PurpleConversation *conv,
         const char *cmd, char **args, char **error, void *data)
 {
-	GaimConnection *gc;
-	gc = gaim_conversation_get_gc(conv);
-	gaim_roomlist_show_with_account(gaim_connection_get_account(gc));
-	return GAIM_CMD_RET_OK;
+	PurpleConnection *gc;
+	gc = purple_conversation_get_gc(conv);
+	purple_roomlist_show_with_account(purple_connection_get_account(gc));
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet silcgaim_cmd_whois(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_whois(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
-	silcgaim_get_info(gc, args[0]);
+	silcpurple_get_info(gc, args[0]);
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet silcgaim_cmd_msg(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_msg(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	int ret;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
-	ret = silcgaim_send_im(gc, args[0], args[1], GAIM_MESSAGE_SEND);
+	ret = silcpurple_send_im(gc, args[0], args[1], PURPLE_MESSAGE_SEND);
 
 	if (ret)
-		return GAIM_CMD_RET_OK;
+		return PURPLE_CMD_RET_OK;
 	else
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 }
 
-static GaimCmdRet silcgaim_cmd_query(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_query(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
 	int ret = 1;
-	GaimConversation *convo;
-	GaimConnection *gc;
-	GaimAccount *account;
+	PurpleConversation *convo;
+	PurpleConnection *gc;
+	PurpleAccount *account;
 
 	if (!args || !args[0]) {
 		*error = g_strdup(_("You must specify a nick"));
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
-	convo = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, args[0]);
+	convo = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, args[0]);
 
 	if (args[1]) {
-		ret = silcgaim_send_im(gc, args[0], args[1], GAIM_MESSAGE_SEND);
-		gaim_conv_im_write(GAIM_CONV_IM(convo), gaim_connection_get_display_name(gc),
-				args[1], GAIM_MESSAGE_SEND, time(NULL));
+		ret = silcpurple_send_im(gc, args[0], args[1], PURPLE_MESSAGE_SEND);
+		purple_conv_im_write(PURPLE_CONV_IM(convo), purple_connection_get_display_name(gc),
+				args[1], PURPLE_MESSAGE_SEND, time(NULL));
 	}
 
 	if (ret)
-		return GAIM_CMD_RET_OK;
+		return PURPLE_CMD_RET_OK;
 	else
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 }
 
-static GaimCmdRet silcgaim_cmd_motd(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_motd(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleConnection *gc;
+	SilcPurple sg;
 	char *tmp;
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	sg = gc->proto_data;
 
 	if (sg == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	if (!sg->motd) {
 		*error = g_strdup(_("There is no Message of the Day associated with this connection"));
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
 	tmp = g_markup_escape_text(sg->motd, -1);
-	gaim_notify_formatted(gc, NULL, _("Message of the Day"), NULL,
+	purple_notify_formatted(gc, NULL, _("Message of the Day"), NULL,
 			tmp, NULL, NULL);
 	g_free(tmp);
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet silcgaim_cmd_detach(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_detach(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	sg = gc->proto_data;
 
 	if (sg == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	silc_client_command_call(sg->client, sg->conn, "DETACH");
 	sg->detaching = TRUE;
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet silcgaim_cmd_cmode(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_cmode(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleConnection *gc;
+	SilcPurple sg;
 	SilcChannelEntry channel;
 	char *silccmd, *silcargs, *msg, tmp[256];
 	const char *chname;
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL || !args || gc->proto_data == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	sg = gc->proto_data;
 
 	if (args[0])
 		chname = args[0];
 	else
-		chname = gaim_conversation_get_name(conv);
+		chname = purple_conversation_get_name(conv);
 
 	if (!args[1]) {
 		channel = silc_client_get_channel(sg->client, sg->conn,
 										  (char *)chname);
 		if (!channel) {
 			*error = g_strdup_printf(_("channel %s not found"), chname);
-			return GAIM_CMD_RET_FAILED;
+			return PURPLE_CMD_RET_FAILED;
 		}
 		if (channel->mode) {
-			silcgaim_get_chmode_string(channel->mode, tmp, sizeof(tmp));
+			silcpurple_get_chmode_string(channel->mode, tmp, sizeof(tmp));
 			msg = g_strdup_printf(_("channel modes for %s: %s"), chname, tmp);
 		} else {
 			msg = g_strdup_printf(_("no channel modes are set on %s"), chname);
 		}
-		gaim_conv_chat_write(GAIM_CONV_CHAT(conv), "",
-							 msg, GAIM_MESSAGE_SYSTEM|GAIM_MESSAGE_NO_LOG, time(NULL));
+		purple_conv_chat_write(PURPLE_CONV_CHAT(conv), "",
+							 msg, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NO_LOG, time(NULL));
 		g_free(msg);
-		return GAIM_CMD_RET_OK;
+		return PURPLE_CMD_RET_OK;
 	}
 
 	silcargs = g_strjoinv(" ", args);
@@ -1496,29 +1496,29 @@ static GaimCmdRet silcgaim_cmd_cmode(GaimConversation *conv,
 	if (!silc_client_command_call(sg->client, sg->conn, silccmd)) {
 		g_free(silccmd);
 		*error = g_strdup_printf(_("Failed to set cmodes for %s"), args[0]);
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 	g_free(silccmd);
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet silcgaim_cmd_generic(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_generic(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleConnection *gc;
+	SilcPurple sg;
 	char *silccmd, *silcargs;
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	sg = gc->proto_data;
 
 	if (sg == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	silcargs = g_strjoinv(" ", args);
 	silccmd = g_strconcat(cmd, " ", args ? silcargs : NULL, NULL);
@@ -1526,197 +1526,197 @@ static GaimCmdRet silcgaim_cmd_generic(GaimConversation *conv,
 	if (!silc_client_command_call(sg->client, sg->conn, silccmd)) {
 		g_free(silccmd);
 		*error = g_strdup_printf(_("Unknown command: %s, (may be a client bug)"), cmd);
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 	g_free(silccmd);
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet silcgaim_cmd_quit(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	sg = gc->proto_data;
 
 	if (sg == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", (args && args[0]) ? args[0] : "Download Gaim: " GAIM_WEBSITE, NULL);
+				 "QUIT", (args && args[0]) ? args[0] : "Download Purple: " PURPLE_WEBSITE, NULL);
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet silcgaim_cmd_call(GaimConversation *conv,
+static PurpleCmdRet silcpurple_cmd_call(PurpleConversation *conv,
 		const char *cmd, char **args, char **error, void *data)
 {
-	GaimConnection *gc;
-	SilcGaim sg;
+	PurpleConnection *gc;
+	SilcPurple sg;
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 
 	if (gc == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	sg = gc->proto_data;
 
 	if (sg == NULL)
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
 	if (!silc_client_command_call(sg->client, sg->conn, args[0])) {
 		*error = g_strdup_printf(_("Unknown command: %s"), args[0]);
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 	}
 
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
 
 /************************** Plugin Initialization ****************************/
 
 static void
-silcgaim_register_commands(void)
+silcpurple_register_commands(void)
 {
-	gaim_cmd_register("part", "w", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
-			GAIM_CMD_FLAG_PRPL_ONLY | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS,
-			"prpl-silc", silcgaim_cmd_chat_part, _("part [channel]:  Leave the chat"), NULL);
-	gaim_cmd_register("leave", "w", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
-			GAIM_CMD_FLAG_PRPL_ONLY | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS,
-			"prpl-silc", silcgaim_cmd_chat_part, _("leave [channel]:  Leave the chat"), NULL);
-	gaim_cmd_register("topic", "s", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc",
-			silcgaim_cmd_chat_topic, _("topic [&lt;new topic&gt;]:  View or change the topic"), NULL);
-	gaim_cmd_register("join", "ws", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
-			GAIM_CMD_FLAG_PRPL_ONLY | GAIM_CMD_FLAG_ALLOW_WRONG_ARGS,
-			"prpl-silc", silcgaim_cmd_chat_join,
+	purple_cmd_register("part", "w", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
+			PURPLE_CMD_FLAG_PRPL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
+			"prpl-silc", silcpurple_cmd_chat_part, _("part [channel]:  Leave the chat"), NULL);
+	purple_cmd_register("leave", "w", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
+			PURPLE_CMD_FLAG_PRPL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
+			"prpl-silc", silcpurple_cmd_chat_part, _("leave [channel]:  Leave the chat"), NULL);
+	purple_cmd_register("topic", "s", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc",
+			silcpurple_cmd_chat_topic, _("topic [&lt;new topic&gt;]:  View or change the topic"), NULL);
+	purple_cmd_register("join", "ws", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
+			PURPLE_CMD_FLAG_PRPL_ONLY | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS,
+			"prpl-silc", silcpurple_cmd_chat_join,
 			_("join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"), NULL);
-	gaim_cmd_register("list", "", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc",
-			silcgaim_cmd_chat_list, _("list:  List channels on this network"), NULL);
-	gaim_cmd_register("whois", "w", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
+	purple_cmd_register("list", "", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc",
+			silcpurple_cmd_chat_list, _("list:  List channels on this network"), NULL);
+	purple_cmd_register("whois", "w", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
 			"prpl-silc",
-			silcgaim_cmd_whois, _("whois &lt;nick&gt;:  View nick's information"), NULL);
-	gaim_cmd_register("msg", "ws", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_msg,
+			silcpurple_cmd_whois, _("whois &lt;nick&gt;:  View nick's information"), NULL);
+	purple_cmd_register("msg", "ws", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcpurple_cmd_msg,
 			_("msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"), NULL);
-	gaim_cmd_register("query", "ws", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_query,
+	purple_cmd_register("query", "ws", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_query,
 			_("query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"), NULL);
-	gaim_cmd_register("motd", "", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_motd,
+	purple_cmd_register("motd", "", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_motd,
 			_("motd:  View the server's Message Of The Day"), NULL);
-	gaim_cmd_register("detach", "", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_detach,
+	purple_cmd_register("detach", "", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcpurple_cmd_detach,
 			_("detach:  Detach this session"), NULL);
-	gaim_cmd_register("quit", "s", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_quit,
+	purple_cmd_register("quit", "s", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_quit,
 			_("quit [message]:  Disconnect from the server, with an optional message"), NULL);
-	gaim_cmd_register("call", "s", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_call,
+	purple_cmd_register("call", "s", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcpurple_cmd_call,
 			_("call &lt;command&gt;:  Call any silc client command"), NULL);
 	/* These below just get passed through for the silc client library to deal
 	 * with */
-	gaim_cmd_register("kill", "ws", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("kill", "ws", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("kill &lt;nick&gt; [-pubkey|&lt;reason&gt;]:  Kill nick"), NULL);
-	gaim_cmd_register("nick", "w", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("nick", "w", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcpurple_cmd_generic,
 			_("nick &lt;newnick&gt;:  Change your nickname"), NULL);
-	gaim_cmd_register("whowas", "ww", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("whowas", "ww", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("whowas &lt;nick&gt;:  View nick's information"), NULL);
-	gaim_cmd_register("cmode", "wws", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_cmode,
+	purple_cmd_register("cmode", "wws", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_cmode,
 			_("cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Change or display channel modes"), NULL);
-	gaim_cmd_register("cumode", "wws", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("cumode", "wws", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Change nick's modes on channel"), NULL);
-	gaim_cmd_register("umode", "w", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("umode", "w", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcpurple_cmd_generic,
 			_("umode &lt;usermodes&gt;:  Set your modes in the network"), NULL);
-	gaim_cmd_register("oper", "s", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("oper", "s", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcpurple_cmd_generic,
 			_("oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"), NULL);
-	gaim_cmd_register("invite", "ws", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("invite", "ws", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from channel invite list"), NULL);
-	gaim_cmd_register("kick", "wws", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("kick", "wws", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"), NULL);
-	gaim_cmd_register("info", "w", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("info", "w", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("info [server]:  View server administrative details"), NULL);
-	gaim_cmd_register("ban", "ww", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("ban", "ww", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_generic,
 			_("ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"), NULL);
-	gaim_cmd_register("getkey", "w", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("getkey", "w", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcpurple_cmd_generic,
 			_("getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"), NULL);
-	gaim_cmd_register("stats", "", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("stats", "", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcpurple_cmd_generic,
 			_("stats:  View server and network statistics"), NULL);
-	gaim_cmd_register("ping", "", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_generic,
+	purple_cmd_register("ping", "", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcpurple_cmd_generic,
 			_("ping:  Send PING to the connected server"), NULL);
-#if 0 /* Gaim doesn't handle these yet */
-	gaim_cmd_register("users", "w", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY,
-			"prpl-silc", silcgaim_cmd_users,
+#if 0 /* Purple doesn't handle these yet */
+	purple_cmd_register("users", "w", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+			"prpl-silc", silcpurple_cmd_users,
 			_("users &lt;channel&gt;:  List users in channel"));
-	gaim_cmd_register("names", "ww", GAIM_CMD_P_PRPL,
-			GAIM_CMD_FLAG_CHAT | GAIM_CMD_FLAG_PRPL_ONLY |
-			GAIM_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcgaim_cmd_names,
+	purple_cmd_register("names", "ww", PURPLE_CMD_P_PRPL,
+			PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+			PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-silc", silcpurple_cmd_names,
 			_("names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt;:  List specific users in channel(s)"));
 #endif
 }
 
-static GaimWhiteboardPrplOps silcgaim_wb_ops =
+static PurpleWhiteboardPrplOps silcpurple_wb_ops =
 {
-	silcgaim_wb_start,
-	silcgaim_wb_end,
-	silcgaim_wb_get_dimensions,
-	silcgaim_wb_set_dimensions,
-	silcgaim_wb_get_brush,
-	silcgaim_wb_set_brush,
-	silcgaim_wb_send,
-	silcgaim_wb_clear,
+	silcpurple_wb_start,
+	silcpurple_wb_end,
+	silcpurple_wb_get_dimensions,
+	silcpurple_wb_set_dimensions,
+	silcpurple_wb_get_brush,
+	silcpurple_wb_set_brush,
+	silcpurple_wb_send,
+	silcpurple_wb_clear,
 };
 
-static GaimPluginProtocolInfo prpl_info =
+static PurplePluginProtocolInfo prpl_info =
 {
 #ifdef HAVE_SILCMIME_H
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
@@ -1728,44 +1728,44 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,						/* user_splits */
 	NULL,						/* protocol_options */
 #ifdef SILC_ATTRIBUTE_USER_ICON
-	{"jpeg,gif,png,bmp", 0, 0, 96, 96, 0, GAIM_ICON_SCALE_DISPLAY}, /* icon_spec */
+	{"jpeg,gif,png,bmp", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 #else
 	NO_BUDDY_ICONS,
 #endif
-	silcgaim_list_icon,			/* list_icon */
+	silcpurple_list_icon,			/* list_icon */
 	NULL,				/* list_emblems */
-	silcgaim_status_text,		/* status_text */
-	silcgaim_tooltip_text,		/* tooltip_text */
-	silcgaim_away_states,		/* away_states */
-	silcgaim_blist_node_menu,	/* blist_node_menu */
-	silcgaim_chat_info,			/* chat_info */
-	silcgaim_chat_info_defaults,/* chat_info_defaults */
-	silcgaim_login,				/* login */
-	silcgaim_close,				/* close */
-	silcgaim_send_im,			/* send_im */
-	silcgaim_set_info,			/* set_info */
+	silcpurple_status_text,		/* status_text */
+	silcpurple_tooltip_text,		/* tooltip_text */
+	silcpurple_away_states,		/* away_states */
+	silcpurple_blist_node_menu,	/* blist_node_menu */
+	silcpurple_chat_info,			/* chat_info */
+	silcpurple_chat_info_defaults,/* chat_info_defaults */
+	silcpurple_login,				/* login */
+	silcpurple_close,				/* close */
+	silcpurple_send_im,			/* send_im */
+	silcpurple_set_info,			/* set_info */
 	NULL,						/* send_typing */
-	silcgaim_get_info,			/* get_info */
-	silcgaim_set_status,		/* set_status */
-	silcgaim_idle_set,			/* set_idle */
-	silcgaim_change_passwd,		/* change_passwd */
-	silcgaim_add_buddy,			/* add_buddy */
+	silcpurple_get_info,			/* get_info */
+	silcpurple_set_status,		/* set_status */
+	silcpurple_idle_set,			/* set_idle */
+	silcpurple_change_passwd,		/* change_passwd */
+	silcpurple_add_buddy,			/* add_buddy */
 	NULL,						/* add_buddies */
-	silcgaim_remove_buddy,		/* remove_buddy */
+	silcpurple_remove_buddy,		/* remove_buddy */
 	NULL,						/* remove_buddies */
 	NULL,						/* add_permit */
 	NULL,						/* add_deny */
 	NULL,						/* rem_permit */
 	NULL,						/* rem_deny */
 	NULL,						/* set_permit_deny */
-	silcgaim_chat_join,			/* join_chat */
+	silcpurple_chat_join,			/* join_chat */
 	NULL,						/* reject_chat */
-	silcgaim_get_chat_name,		/* get_chat_name */
-	silcgaim_chat_invite,		/* chat_invite */
-	silcgaim_chat_leave,		/* chat_leave */
+	silcpurple_get_chat_name,		/* get_chat_name */
+	silcpurple_chat_invite,		/* chat_invite */
+	silcpurple_chat_leave,		/* chat_leave */
 	NULL,						/* chat_whisper */
-	silcgaim_chat_send,			/* chat_send */
-	silcgaim_keepalive,			/* keepalive */
+	silcpurple_chat_send,			/* chat_send */
+	silcpurple_keepalive,			/* keepalive */
 	NULL,						/* register_user */
 	NULL,						/* get_cb_info */
 	NULL,						/* get_cb_away */
@@ -1776,36 +1776,36 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,						/* convo_closed */
 	NULL,						/* normalize */
 #ifdef SILC_ATTRIBUTE_USER_ICON
-	silcgaim_buddy_set_icon,			/* set_buddy_icon */
+	silcpurple_buddy_set_icon,			/* set_buddy_icon */
 #else
 	NULL,
 #endif
 	NULL,						/* remove_group */
 	NULL,						/* get_cb_real_name */
-	silcgaim_chat_set_topic,	/* set_chat_topic */
+	silcpurple_chat_set_topic,	/* set_chat_topic */
 	NULL,						/* find_blist_chat */
-	silcgaim_roomlist_get_list,	/* roomlist_get_list */
-	silcgaim_roomlist_cancel,	/* roomlist_cancel */
+	silcpurple_roomlist_get_list,	/* roomlist_get_list */
+	silcpurple_roomlist_cancel,	/* roomlist_cancel */
 	NULL,						/* roomlist_expand_category */
 	NULL,						/* can_receive_file */
-	silcgaim_ftp_send_file,		/* send_file */
-	silcgaim_ftp_new_xfer,		/* new_xfer */
+	silcpurple_ftp_send_file,		/* send_file */
+	silcpurple_ftp_new_xfer,		/* new_xfer */
 	NULL,						/* offline_message */
-	&silcgaim_wb_ops,			/* whiteboard_prpl_ops */
+	&silcpurple_wb_ops,			/* whiteboard_prpl_ops */
 	NULL,                       /* send_raw */
 	NULL,                       /* roomlist_room_serialize */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	"prpl-silc",                                      /**< id             */
 	"SILC",                                           /**< name           */
@@ -1824,91 +1824,91 @@ static GaimPluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
-	silcgaim_actions
+	silcpurple_actions
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	GaimAccountOption *option;
-	GaimAccountUserSplit *split;
+	PurpleAccountOption *option;
+	PurpleAccountUserSplit *split;
 	char tmp[256];
 	int i;
-	GaimKeyValuePair *kvp;
+	PurpleKeyValuePair *kvp;
 	GList *list = NULL;
 
 	silc_plugin = plugin;
 
-	split = gaim_account_user_split_new(_("Network"), "silcnet.org", '@');
+	split = purple_account_user_split_new(_("Network"), "silcnet.org", '@');
 	prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
 	/* Account options */
-	option = gaim_account_option_string_new(_("Connect server"),
+	option = purple_account_option_string_new(_("Connect server"),
 						"server",
 						"silc.silcnet.org");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = gaim_account_option_int_new(_("Port"), "port", 706);
+	option = purple_account_option_int_new(_("Port"), "port", 706);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcgaim_silcdir());
-	option = gaim_account_option_string_new(_("Public Key file"),
+	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "public_key.pub", silcpurple_silcdir());
+	option = purple_account_option_string_new(_("Public Key file"),
 						"public-key", tmp);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcgaim_silcdir());
-	option = gaim_account_option_string_new(_("Private Key file"),
+	g_snprintf(tmp, sizeof(tmp), "%s" G_DIR_SEPARATOR_S "private_key.prv", silcpurple_silcdir());
+	option = purple_account_option_string_new(_("Private Key file"),
 						"private-key", tmp);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	for (i = 0; silc_default_ciphers[i].name; i++) {
-		kvp = g_new0(GaimKeyValuePair, 1);
+		kvp = g_new0(PurpleKeyValuePair, 1);
 		kvp->key = g_strdup(silc_default_ciphers[i].name);
 		kvp->value = g_strdup(silc_default_ciphers[i].name);
 		list = g_list_append(list, kvp);
 	}
-	option = gaim_account_option_list_new(_("Cipher"), "cipher", list);
+	option = purple_account_option_list_new(_("Cipher"), "cipher", list);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	list = NULL;
 	for (i = 0; silc_default_hmacs[i].name; i++) {
-		kvp = g_new0(GaimKeyValuePair, 1);
+		kvp = g_new0(PurpleKeyValuePair, 1);
 		kvp->key = g_strdup(silc_default_hmacs[i].name);
 		kvp->value = g_strdup(silc_default_hmacs[i].name);
 		list = g_list_append(list, kvp);
 	}
-	option = gaim_account_option_list_new(_("HMAC"), "hmac", list);
+	option = purple_account_option_list_new(_("HMAC"), "hmac", list);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_bool_new(_("Public key authentication"),
+	option = purple_account_option_bool_new(_("Public key authentication"),
 					      "pubkey-auth", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = gaim_account_option_bool_new(_("Reject watching by other users"),
+	option = purple_account_option_bool_new(_("Reject watching by other users"),
 					      "reject-watch", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = gaim_account_option_bool_new(_("Block invites"),
+	option = purple_account_option_bool_new(_("Block invites"),
 					      "block-invites", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = gaim_account_option_bool_new(_("Block IMs without Key Exchange"),
+	option = purple_account_option_bool_new(_("Block IMs without Key Exchange"),
 					      "block-ims", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = gaim_account_option_bool_new(_("Reject online status attribute requests"),
+	option = purple_account_option_bool_new(_("Reject online status attribute requests"),
 					      "reject-attrs", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = gaim_account_option_bool_new(_("Block messages to whiteboard"),
+	option = purple_account_option_bool_new(_("Block messages to whiteboard"),
 					      "block-wb", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = gaim_account_option_bool_new(_("Automatically open whiteboard"),
+	option = purple_account_option_bool_new(_("Automatically open whiteboard"),
 					      "open-wb", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = gaim_account_option_bool_new(_("Digitally sign and verify all messages"),
+	option = purple_account_option_bool_new(_("Digitally sign and verify all messages"),
 					      "sign-verify", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	gaim_prefs_remove("/plugins/prpl/silc");
+	purple_prefs_remove("/plugins/prpl/silc");
 
-	silcgaim_register_commands();
+	silcpurple_register_commands();
 
 #ifdef _WIN32
 	silc_net_win32_init();
 #endif
 }
 
-GAIM_INIT_PLUGIN(silc, init_plugin, info);
+PURPLE_INIT_PLUGIN(silc, init_plugin, info);

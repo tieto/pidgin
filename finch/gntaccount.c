@@ -2,9 +2,9 @@
  * @file gntaccount.c GNT Account API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -40,7 +40,7 @@
 #include <request.h>
 
 #include "gntaccount.h"
-#include "gntgaim.h"
+#include "finch.h"
 
 #include <string.h>
 
@@ -54,7 +54,7 @@ static FinchAccountList accounts;
 
 typedef struct
 {
-	GaimAccount *account;          /* NULL for a new account */
+	PurpleAccount *account;          /* NULL for a new account */
 
 	GntWidget *window;
 
@@ -77,15 +77,15 @@ typedef struct
 static GList *accountdialogs;
 
 static void
-account_add(GaimAccount *account)
+account_add(PurpleAccount *account)
 {
 	gnt_tree_add_choice(GNT_TREE(accounts.tree), account,
 			gnt_tree_create_row(GNT_TREE(accounts.tree),
-				gaim_account_get_username(account),
-				gaim_account_get_protocol_name(account)),
+				purple_account_get_username(account),
+				purple_account_get_protocol_name(account)),
 			NULL, NULL);
 	gnt_tree_set_choice(GNT_TREE(accounts.tree), account,
-			gaim_account_get_enabled(account, GAIM_GNT_UI));
+			purple_account_get_enabled(account, FINCH_UI));
 }
 
 static void
@@ -100,23 +100,23 @@ edit_dialog_destroy(AccountEditDialog *dialog)
 static void
 save_account_cb(AccountEditDialog *dialog)
 {
-	GaimAccount *account;
-	GaimPlugin *plugin;
-	GaimPluginProtocolInfo *prplinfo;
+	PurpleAccount *account;
+	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prplinfo;
 	const char *value;
 	GString *username;
 
 	/* XXX: Do some error checking first. */
 
 	plugin = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(dialog->protocol));
-	prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+	prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 	/* Screenname && user-splits */
 	value = gnt_entry_get_text(GNT_ENTRY(dialog->screenname));
 
 	if (value == NULL || *value == '\0')
 	{
-		gaim_notify_error(NULL, _("Error"), _("Account was not added"),
+		purple_notify_error(NULL, _("Error"), _("Account was not added"),
 				_("Screenname of an account must be non-empty."));
 		return;
 	}
@@ -129,49 +129,49 @@ save_account_cb(AccountEditDialog *dialog)
 		for (iter = prplinfo->user_splits, entries = dialog->split_entries;
 				iter && entries; iter = iter->next, entries = entries->next)
 		{
-			GaimAccountUserSplit *split = iter->data;
+			PurpleAccountUserSplit *split = iter->data;
 			GntWidget *entry = entries->data;
 
 			value = gnt_entry_get_text(GNT_ENTRY(entry));
 			if (value == NULL || *value == '\0')
-				value = gaim_account_user_split_get_default_value(split);
+				value = purple_account_user_split_get_default_value(split);
 			g_string_append_printf(username, "%c%s",
-					gaim_account_user_split_get_separator(split),
+					purple_account_user_split_get_separator(split),
 					value);
 		}
 	}
 
 	if (dialog->account == NULL)
 	{
-		account = gaim_account_new(username->str, gaim_plugin_get_id(plugin));
-		gaim_accounts_add(account);
+		account = purple_account_new(username->str, purple_plugin_get_id(plugin));
+		purple_accounts_add(account);
 	}
 	else
 	{
 		account = dialog->account;
 
 		/* Protocol */
-		gaim_account_set_protocol_id(account, gaim_plugin_get_id(plugin));
-		gaim_account_set_username(account, username->str);
+		purple_account_set_protocol_id(account, purple_plugin_get_id(plugin));
+		purple_account_set_username(account, username->str);
 	}
 	g_string_free(username, TRUE);
 
 	/* Alias */
 	value = gnt_entry_get_text(GNT_ENTRY(dialog->alias));
 	if (value && *value)
-		gaim_account_set_alias(account, value);
+		purple_account_set_alias(account, value);
 
 	/* Remember password and password */
-	gaim_account_set_remember_password(account,
+	purple_account_set_remember_password(account,
 			gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->remember)));
 	value = gnt_entry_get_text(GNT_ENTRY(dialog->password));
-	if (value && *value && gaim_account_get_remember_password(account))
-		gaim_account_set_password(account, value);
+	if (value && *value && purple_account_get_remember_password(account))
+		purple_account_set_password(account, value);
 	else
-		gaim_account_set_password(account, NULL);
+		purple_account_set_password(account, NULL);
 
 	/* Mail notification */
-	gaim_account_set_check_mail(account,
+	purple_account_set_check_mail(account,
 			gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->newmail)));
 
 	/* Protocol options */
@@ -182,30 +182,30 @@ save_account_cb(AccountEditDialog *dialog)
 		for (iter = prplinfo->protocol_options, entries = dialog->prpl_entries;
 				iter && entries; iter = iter->next, entries = entries->next)
 		{
-			GaimAccountOption *option = iter->data;
+			PurpleAccountOption *option = iter->data;
 			GntWidget *entry = entries->data;
-			GaimPrefType type = gaim_account_option_get_type(option);
-			const char *setting = gaim_account_option_get_setting(option);
+			PurplePrefType type = purple_account_option_get_type(option);
+			const char *setting = purple_account_option_get_setting(option);
 
-			if (type == GAIM_PREF_STRING)
+			if (type == PURPLE_PREF_STRING)
 			{
 				const char *value = gnt_entry_get_text(GNT_ENTRY(entry));
-				gaim_account_set_string(account, setting, value);
+				purple_account_set_string(account, setting, value);
 			}
-			else if (type == GAIM_PREF_INT)
+			else if (type == PURPLE_PREF_INT)
 			{
 				const char *str = gnt_entry_get_text(GNT_ENTRY(entry));
 				int value = 0;
 				if (str)
 					value = atoi(str);
-				gaim_account_set_int(account, setting, value);
+				purple_account_set_int(account, setting, value);
 			}
-			else if (type == GAIM_PREF_BOOLEAN)
+			else if (type == PURPLE_PREF_BOOLEAN)
 			{
 				gboolean value = gnt_check_box_get_checked(GNT_CHECK_BOX(entry));
-				gaim_account_set_bool(account, setting, value);
+				purple_account_set_bool(account, setting, value);
 			}
-			else if (type == GAIM_PREF_STRING_LIST)
+			else if (type == PURPLE_PREF_STRING_LIST)
 			{
 				/* TODO: */
 			}
@@ -225,8 +225,8 @@ static void
 update_user_splits(AccountEditDialog *dialog)
 {
 	GntWidget *hbox;
-	GaimPlugin *plugin;
-	GaimPluginProtocolInfo *prplinfo;
+	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prplinfo;
 	GList *iter, *entries;
 	char *username = NULL;
 
@@ -247,20 +247,20 @@ update_user_splits(AccountEditDialog *dialog)
 	plugin = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(dialog->protocol));
 	if (!plugin)
 		return;
-	prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+	prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 	
-	username = dialog->account ? g_strdup(gaim_account_get_username(dialog->account)) : NULL;
+	username = dialog->account ? g_strdup(purple_account_get_username(dialog->account)) : NULL;
 
 	for (iter = prplinfo->user_splits; iter; iter = iter->next)
 	{
-		GaimAccountUserSplit *split = iter->data;
+		PurpleAccountUserSplit *split = iter->data;
 		GntWidget *entry;
 		char *buf;
 
 		hbox = gnt_hbox_new(TRUE);
 		gnt_box_add_widget(GNT_BOX(dialog->splits), hbox);
 
-		buf = g_strdup_printf("%s:", gaim_account_user_split_get_text(split));
+		buf = g_strdup_printf("%s:", purple_account_user_split_get_text(split));
 		gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(buf));
 
 		entry = gnt_entry_new(NULL);
@@ -274,13 +274,13 @@ update_user_splits(AccountEditDialog *dialog)
 			iter && entries; iter = iter->prev, entries = entries->prev)
 	{
 		GntWidget *entry = entries->data;
-		GaimAccountUserSplit *split = iter->data;
+		PurpleAccountUserSplit *split = iter->data;
 		const char *value = NULL;
 		char *s;
 
 		if (dialog->account)
 		{
-			s = strrchr(username, gaim_account_user_split_get_separator(split));
+			s = strrchr(username, purple_account_user_split_get_separator(split));
 			if (s != NULL)
 			{
 				*s = '\0';
@@ -289,7 +289,7 @@ update_user_splits(AccountEditDialog *dialog)
 			}
 		}
 		if (value == NULL)
-			value = gaim_account_user_split_get_default_value(split);
+			value = purple_account_user_split_get_default_value(split);
 
 		if (value != NULL)
 			gnt_entry_set_text(GNT_ENTRY(entry), value);
@@ -304,11 +304,11 @@ update_user_splits(AccountEditDialog *dialog)
 static void
 add_protocol_options(AccountEditDialog *dialog)
 {
-	GaimPlugin *plugin;
-	GaimPluginProtocolInfo *prplinfo;
+	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prplinfo;
 	GList *iter;
 	GntWidget *vbox, *box;
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	if (dialog->prpls)
 		gnt_box_remove_all(GNT_BOX(dialog->prpls));
@@ -332,40 +332,40 @@ add_protocol_options(AccountEditDialog *dialog)
 	if (!plugin)
 		return;
 
-	prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+	prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 	account = dialog->account;
 
 	for (iter = prplinfo->protocol_options; iter; iter = iter->next)
 	{
-		GaimAccountOption *option = iter->data;
-		GaimPrefType type = gaim_account_option_get_type(option);
+		PurpleAccountOption *option = iter->data;
+		PurplePrefType type = purple_account_option_get_type(option);
 
 		box = gnt_hbox_new(TRUE);
 		gnt_box_set_pad(GNT_BOX(box), 0);
 		gnt_box_add_widget(GNT_BOX(vbox), box);
 
-		if (type == GAIM_PREF_BOOLEAN)
+		if (type == PURPLE_PREF_BOOLEAN)
 		{
-			GntWidget *widget = gnt_check_box_new(gaim_account_option_get_text(option));
+			GntWidget *widget = gnt_check_box_new(purple_account_option_get_text(option));
 			gnt_box_add_widget(GNT_BOX(box), widget);
 			dialog->prpl_entries = g_list_append(dialog->prpl_entries, widget);
 
 			if (account)
 				gnt_check_box_set_checked(GNT_CHECK_BOX(widget),
-						gaim_account_get_bool(account,
-							gaim_account_option_get_setting(option),
-							gaim_account_option_get_default_bool(option)));
+						purple_account_get_bool(account,
+							purple_account_option_get_setting(option),
+							purple_account_option_get_default_bool(option)));
 			else
 				gnt_check_box_set_checked(GNT_CHECK_BOX(widget),
-						gaim_account_option_get_default_bool(option));
+						purple_account_option_get_default_bool(option));
 		}
 		else
 		{
 			gnt_box_add_widget(GNT_BOX(box),
-					gnt_label_new(gaim_account_option_get_text(option)));
+					gnt_label_new(purple_account_option_get_text(option)));
 
-			if (type == GAIM_PREF_STRING_LIST)
+			if (type == PURPLE_PREF_STRING_LIST)
 			{
 				/* TODO: Use a combobox */
 				/*       Don't forget to append the widget to prpl_entries */
@@ -376,24 +376,24 @@ add_protocol_options(AccountEditDialog *dialog)
 				gnt_box_add_widget(GNT_BOX(box), entry);
 				dialog->prpl_entries = g_list_append(dialog->prpl_entries, entry);
 
-				if (type == GAIM_PREF_STRING)
+				if (type == PURPLE_PREF_STRING)
 				{
-					const char *dv = gaim_account_option_get_default_string(option);
+					const char *dv = purple_account_option_get_default_string(option);
 
 					if (account)
 						gnt_entry_set_text(GNT_ENTRY(entry),
-								gaim_account_get_string(account,
-									gaim_account_option_get_setting(option), dv));
+								purple_account_get_string(account,
+									purple_account_option_get_setting(option), dv));
 					else
 						gnt_entry_set_text(GNT_ENTRY(entry), dv);
 				}
-				else if (type == GAIM_PREF_INT)
+				else if (type == PURPLE_PREF_INT)
 				{
 					char str[32];
-					int value = gaim_account_option_get_default_int(option);
+					int value = purple_account_option_get_default_int(option);
 					if (account)
-						value = gaim_account_get_int(account,
-								gaim_account_option_get_setting(option), value);
+						value = purple_account_get_int(account,
+								purple_account_option_get_setting(option), value);
 					snprintf(str, sizeof(str), "%d", value);
 					gnt_entry_set_flag(GNT_ENTRY(entry), GNT_ENTRY_FLAG_INT);
 					gnt_entry_set_text(GNT_ENTRY(entry), str);
@@ -410,20 +410,20 @@ add_protocol_options(AccountEditDialog *dialog)
 static void
 update_user_options(AccountEditDialog *dialog)
 {
-	GaimPlugin *plugin;
-	GaimPluginProtocolInfo *prplinfo;
+	PurplePlugin *plugin;
+	PurplePluginProtocolInfo *prplinfo;
 
 	plugin = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(dialog->protocol));
 	if (!plugin)
 		return;
 
-	prplinfo = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+	prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 	if (dialog->newmail == NULL)
 		dialog->newmail = gnt_check_box_new(_("New mail notifications"));
 	if (dialog->account)
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->newmail),
-				gaim_account_get_check_mail(dialog->account));
+				purple_account_get_check_mail(dialog->account));
 	if (!prplinfo || !(prplinfo->options & OPT_PROTO_MAIL_CHECK))
 		gnt_widget_set_visible(dialog->newmail, FALSE);
 	else
@@ -433,11 +433,11 @@ update_user_options(AccountEditDialog *dialog)
 		dialog->remember = gnt_check_box_new(_("Remember password"));
 	if (dialog->account)
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->remember),
-				gaim_account_get_remember_password(dialog->account));
+				purple_account_get_remember_password(dialog->account));
 }
 
 static void
-prpl_changed_cb(GntWidget *combo, GaimPlugin *old, GaimPlugin *new, AccountEditDialog *dialog)
+prpl_changed_cb(GntWidget *combo, PurplePlugin *old, PurplePlugin *new, AccountEditDialog *dialog)
 {
 	update_user_splits(dialog);
 	add_protocol_options(dialog);
@@ -447,7 +447,7 @@ prpl_changed_cb(GntWidget *combo, GaimPlugin *old, GaimPlugin *new, AccountEditD
 }
 
 static void
-edit_account(GaimAccount *account)
+edit_account(PurpleAccount *account)
 {
 	GntWidget *window, *hbox;
 	GntWidget *combo, *button, *entry;
@@ -482,16 +482,16 @@ edit_account(GaimAccount *account)
 	gnt_box_add_widget(GNT_BOX(window), hbox);
 
 	dialog->protocol = combo = gnt_combo_box_new();
-	list = gaim_plugins_get_protocols();
+	list = purple_plugins_get_protocols();
 	for (iter = list; iter; iter = iter->next)
 	{
 		gnt_combo_box_add_data(GNT_COMBO_BOX(combo), iter->data,
-				((GaimPlugin*)iter->data)->info->name);
+				((PurplePlugin*)iter->data)->info->name);
 	}
 
 	if (account)
 		gnt_combo_box_set_selected(GNT_COMBO_BOX(combo),
-				gaim_plugins_find_with_id(gaim_account_get_protocol_id(account)));
+				purple_plugins_find_with_id(purple_account_get_protocol_id(account)));
 	else
 		gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), list->data);
 
@@ -521,7 +521,7 @@ edit_account(GaimAccount *account)
 	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Password:")));
 	gnt_box_add_widget(GNT_BOX(hbox), entry);
 	if (account)
-		gnt_entry_set_text(GNT_ENTRY(entry), gaim_account_get_password(account));
+		gnt_entry_set_text(GNT_ENTRY(entry), purple_account_get_password(account));
 
 	hbox = gnt_hbox_new(TRUE);
 	gnt_box_set_pad(GNT_BOX(hbox), 0);
@@ -531,7 +531,7 @@ edit_account(GaimAccount *account)
 	gnt_box_add_widget(GNT_BOX(hbox), gnt_label_new(_("Alias:")));
 	gnt_box_add_widget(GNT_BOX(hbox), entry);
 	if (account)
-		gnt_entry_set_text(GNT_ENTRY(entry), gaim_account_get_alias(account));
+		gnt_entry_set_text(GNT_ENTRY(entry), purple_account_get_alias(account));
 
 	/* User options */
 	update_user_options(dialog);
@@ -575,14 +575,14 @@ add_account_cb(GntWidget *widget, gpointer null)
 static void
 modify_account_cb(GntWidget *widget, GntTree *tree)
 {
-	GaimAccount *account = gnt_tree_get_selection_data(tree);
+	PurpleAccount *account = gnt_tree_get_selection_data(tree);
 	if (!account)
 		return;
 	edit_account(account);
 }
 
 static void
-really_delete_account(GaimAccount *account)
+really_delete_account(PurpleAccount *account)
 {
 	GList *iter;
 	for (iter = accountdialogs; iter; iter = iter->next)
@@ -594,14 +594,14 @@ really_delete_account(GaimAccount *account)
 			break;
 		}
 	}
-	gaim_request_close_with_handle(account); /* Close any other opened delete window */
-	gaim_accounts_delete(account);
+	purple_request_close_with_handle(account); /* Close any other opened delete window */
+	purple_accounts_delete(account);
 }
 
 static void
 delete_account_cb(GntWidget *widget, GntTree *tree)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	char *prompt;
 
 	account  = gnt_tree_get_selection_data(tree);
@@ -609,9 +609,9 @@ delete_account_cb(GntWidget *widget, GntTree *tree)
 		return;
 
 	prompt = g_strdup_printf(_("Are you sure you want to delete %s?"),
-			gaim_account_get_username(account));
+			purple_account_get_username(account));
 
-	gaim_request_action(account, _("Delete Account"), prompt, NULL, 0, account, 2,
+	purple_request_action(account, _("Delete Account"), prompt, NULL, 0, account, 2,
 			_("Delete"), really_delete_account, _("Cancel"), NULL);
 	g_free(prompt);
 }
@@ -619,9 +619,9 @@ delete_account_cb(GntWidget *widget, GntTree *tree)
 static void
 account_toggled(GntWidget *widget, void *key, gpointer null)
 {
-	GaimAccount *account = key;
+	PurpleAccount *account = key;
 
-	gaim_account_set_enabled(account, GAIM_GNT_UI, gnt_tree_get_choice(GNT_TREE(widget), key));
+	purple_account_set_enabled(account, FINCH_UI, gnt_tree_get_choice(GNT_TREE(widget), key));
 }
 
 static void
@@ -654,9 +654,9 @@ void finch_accounts_show_all()
 	accounts.tree = gnt_tree_new_with_columns(2);
 	GNT_WIDGET_SET_FLAGS(accounts.tree, GNT_WIDGET_NO_BORDER);
 
-	for (iter = gaim_accounts_get_all(); iter; iter = iter->next)
+	for (iter = purple_accounts_get_all(); iter; iter = iter->next)
 	{
-		GaimAccount *account = iter->data;
+		PurpleAccount *account = iter->data;
 		account_add(account);
 	}
 
@@ -698,7 +698,7 @@ finch_accounts_get_handle()
 }
 
 static void
-account_added_callback(GaimAccount *account)
+account_added_callback(PurpleAccount *account)
 {
 	if (accounts.window == NULL)
 		return;
@@ -707,7 +707,7 @@ account_added_callback(GaimAccount *account)
 }
 
 static void
-account_removed_callback(GaimAccount *account)
+account_removed_callback(PurpleAccount *account)
 {
 	if (accounts.window == NULL)
 		return;
@@ -719,15 +719,15 @@ void finch_accounts_init()
 {
 	GList *iter;
 
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-added",
-			finch_accounts_get_handle(), GAIM_CALLBACK(account_added_callback),
+	purple_signal_connect(purple_accounts_get_handle(), "account-added",
+			finch_accounts_get_handle(), PURPLE_CALLBACK(account_added_callback),
 			NULL);
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
-			finch_accounts_get_handle(), GAIM_CALLBACK(account_removed_callback),
+	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
+			finch_accounts_get_handle(), PURPLE_CALLBACK(account_removed_callback),
 			NULL);
 	
-	for (iter = gaim_accounts_get_all(); iter; iter = iter->next) {
-		if (gaim_account_get_enabled(iter->data, GAIM_GNT_UI))
+	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
+		if (purple_account_get_enabled(iter->data, FINCH_UI))
 			break;
 	}
 	if (!iter)
@@ -743,13 +743,13 @@ void finch_accounts_uninit()
 /* The following uiops stuff are copied from gtkaccount.c */
 typedef struct
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	char *username;
 	char *alias;
 } AddUserData;
 
 static char *
-make_info(GaimAccount *account, GaimConnection *gc, const char *remote_user,
+make_info(PurpleAccount *account, PurpleConnection *gc, const char *remote_user,
           const char *id, const char *alias, const char *msg)
 {
 	if (msg != NULL && *msg == '\0')
@@ -762,26 +762,26 @@ make_info(GaimAccount *account, GaimConnection *gc, const char *remote_user,
 	                       (alias != NULL ? ")"   : ""),
 	                       (id != NULL
 	                        ? id
-	                        : (gaim_connection_get_display_name(gc) != NULL
-	                           ? gaim_connection_get_display_name(gc)
-	                           : gaim_account_get_username(account))),
+	                        : (purple_connection_get_display_name(gc) != NULL
+	                           ? purple_connection_get_display_name(gc)
+	                           : purple_account_get_username(account))),
 	                       (msg != NULL ? ": " : "."),
 	                       (msg != NULL ? msg  : ""));
 }
 
 static void
-notify_added(GaimAccount *account, const char *remote_user,
+notify_added(PurpleAccount *account, const char *remote_user,
 			const char *id, const char *alias,
 			const char *msg)
 {
 	char *buffer;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
 
-	gaim_notify_info(NULL, NULL, buffer, NULL);
+	purple_notify_info(NULL, NULL, buffer, NULL);
 
 	g_free(buffer);
 }
@@ -800,11 +800,11 @@ free_add_user_data(AddUserData *data)
 static void
 add_user_cb(AddUserData *data)
 {
-	GaimConnection *gc = gaim_account_get_connection(data->account);
+	PurpleConnection *gc = purple_account_get_connection(data->account);
 
-	if (g_list_find(gaim_connections_get_all(), gc))
+	if (g_list_find(purple_connections_get_all(), gc))
 	{
-		gaim_blist_request_add_buddy(data->account, data->username,
+		purple_blist_request_add_buddy(data->account, data->username,
 									 NULL, data->alias);
 	}
 
@@ -812,15 +812,15 @@ add_user_cb(AddUserData *data)
 }
 
 static void
-request_add(GaimAccount *account, const char *remote_user,
+request_add(PurpleAccount *account, const char *remote_user,
 		  const char *id, const char *alias,
 		  const char *msg)
 {
 	char *buffer;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	AddUserData *data;
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
 	data = g_new0(AddUserData, 1);
 	data->account  = account;
@@ -828,8 +828,8 @@ request_add(GaimAccount *account, const char *remote_user,
 	data->alias    = (alias != NULL ? g_strdup(alias) : NULL);
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
-	gaim_request_action(NULL, NULL, _("Add buddy to your list?"),
-	                    buffer, GAIM_DEFAULT_ACTION_NONE, data, 2,
+	purple_request_action(NULL, NULL, _("Add buddy to your list?"),
+	                    buffer, PURPLE_DEFAULT_ACTION_NONE, data, 2,
 	                    _("Add"),    G_CALLBACK(add_user_cb),
 	                    _("Cancel"), G_CALLBACK(free_add_user_data));
 	g_free(buffer);
@@ -837,19 +837,19 @@ request_add(GaimAccount *account, const char *remote_user,
 
 /* Copied from gtkaccount.c */
 typedef struct {
-	GaimAccountRequestAuthorizationCb auth_cb;
-	GaimAccountRequestAuthorizationCb deny_cb;
+	PurpleAccountRequestAuthorizationCb auth_cb;
+	PurpleAccountRequestAuthorizationCb deny_cb;
 	void *data;
 	char *username;
 	char *alias;
-	GaimAccount *account;
+	PurpleAccount *account;
 } auth_and_add;
 
 static void
 authorize_and_add_cb(auth_and_add *aa)
 {
 	aa->auth_cb(aa->data);
-	gaim_blist_request_add_buddy(aa->account, aa->username,
+	purple_blist_request_add_buddy(aa->account, aa->username,
 	 	                    NULL, aa->alias);
 
 	g_free(aa->username);
@@ -868,15 +868,15 @@ deny_no_add_cb(auth_and_add *aa)
 }
 
 static void *
-finch_request_authorize(GaimAccount *account, const char *remote_user,
+finch_request_authorize(PurpleAccount *account, const char *remote_user,
 					const char *id, const char *alias, const char *message, gboolean on_list,
 					GCallback auth_cb, GCallback deny_cb, void *user_data)
 {
 	char *buffer;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	void *uihandle;
 
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 	if (message != NULL && *message == '\0')
 		message = NULL;
 
@@ -887,26 +887,26 @@ finch_request_authorize(GaimAccount *account, const char *remote_user,
 		                (alias != NULL ? ")"   : ""),
 		                (id != NULL
 		                ? id
-		                : (gaim_connection_get_display_name(gc) != NULL
-		                ? gaim_connection_get_display_name(gc)
-		                : gaim_account_get_username(account))),
+		                : (purple_connection_get_display_name(gc) != NULL
+		                ? purple_connection_get_display_name(gc)
+		                : purple_account_get_username(account))),
 		                (message != NULL ? ": " : "."),
 		                (message != NULL ? message  : ""));
 	if (!on_list) {
 		auth_and_add *aa = g_new(auth_and_add, 1);
-		aa->auth_cb = (GaimAccountRequestAuthorizationCb)auth_cb;
-		aa->deny_cb = (GaimAccountRequestAuthorizationCb)deny_cb;
+		aa->auth_cb = (PurpleAccountRequestAuthorizationCb)auth_cb;
+		aa->deny_cb = (PurpleAccountRequestAuthorizationCb)deny_cb;
 		aa->data = user_data;
 		aa->username = g_strdup(remote_user);
 		aa->alias = g_strdup(alias);
 		aa->account = account;
-		uihandle = gaim_request_action(NULL, _("Authorize buddy?"), buffer, NULL,
-			GAIM_DEFAULT_ACTION_NONE, aa, 2,
+		uihandle = purple_request_action(NULL, _("Authorize buddy?"), buffer, NULL,
+			PURPLE_DEFAULT_ACTION_NONE, aa, 2,
 			_("Authorize"), authorize_and_add_cb,
 			_("Deny"), deny_no_add_cb);
 	} else {
-		uihandle = gaim_request_action(NULL, _("Authorize buddy?"), buffer, NULL,
-			GAIM_DEFAULT_ACTION_NONE, user_data, 2,
+		uihandle = purple_request_action(NULL, _("Authorize buddy?"), buffer, NULL,
+			PURPLE_DEFAULT_ACTION_NONE, user_data, 2,
 			_("Authorize"), auth_cb,
 			_("Deny"), deny_cb);
 	}
@@ -917,10 +917,10 @@ finch_request_authorize(GaimAccount *account, const char *remote_user,
 static void
 finch_request_close(void *uihandle)
 {
-	gaim_request_close(GAIM_REQUEST_ACTION, uihandle);
+	purple_request_close(PURPLE_REQUEST_ACTION, uihandle);
 }
 
-static GaimAccountUiOps ui_ops =
+static PurpleAccountUiOps ui_ops =
 {
 	.notify_added = notify_added,
 	.status_changed = NULL,
@@ -929,7 +929,7 @@ static GaimAccountUiOps ui_ops =
 	.close_account_request = finch_request_close
 };
 
-GaimAccountUiOps *finch_accounts_get_ui_ops()
+PurpleAccountUiOps *finch_accounts_get_ui_ops()
 {
 	return &ui_ops;
 }

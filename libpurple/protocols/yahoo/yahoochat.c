@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -47,10 +47,10 @@
 #define YAHOO_CHAT_ID (1)
 
 /* prototype(s) */
-static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *dn, gboolean logout);
+static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char *dn, gboolean logout);
 
 /* special function to log us on to the yahoo chat service */
-static void yahoo_chat_online(GaimConnection *gc)
+static void yahoo_chat_online(PurpleConnection *gc)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
@@ -61,32 +61,32 @@ static void yahoo_chat_online(GaimConnection *gc)
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATONLINE, YAHOO_STATUS_AVAILABLE,0);
-	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc),
-	                  109, gaim_connection_get_display_name(gc), 6, "abcde");
+	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
+	                  109, purple_connection_get_display_name(gc), 6, "abcde");
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-/* this is slow, and different from the gaim_* version in that it (hopefully) won't add a user twice */
-void yahoo_chat_add_users(GaimConvChat *chat, GList *newusers)
+/* this is slow, and different from the purple_* version in that it (hopefully) won't add a user twice */
+void yahoo_chat_add_users(PurpleConvChat *chat, GList *newusers)
 {
 	GList *i;
 
 	for (i = newusers; i; i = i->next) {
-		if (gaim_conv_chat_find_user(chat, i->data))
+		if (purple_conv_chat_find_user(chat, i->data))
 			continue;
-		gaim_conv_chat_add_user(chat, i->data, NULL, GAIM_CBFLAGS_NONE, TRUE);
+		purple_conv_chat_add_user(chat, i->data, NULL, PURPLE_CBFLAGS_NONE, TRUE);
 	}
 }
 
-void yahoo_chat_add_user(GaimConvChat *chat, const char *user, const char *reason)
+void yahoo_chat_add_user(PurpleConvChat *chat, const char *user, const char *reason)
 {
-	if (gaim_conv_chat_find_user(chat, user))
+	if (purple_conv_chat_find_user(chat, user))
 		return;
 
-	gaim_conv_chat_add_user(chat, user, reason, GAIM_CBFLAGS_NONE, TRUE);
+	purple_conv_chat_add_user(chat, user, reason, PURPLE_CBFLAGS_NONE, TRUE);
 }
 
-static GaimConversation *yahoo_find_conference(GaimConnection *gc, const char *name)
+static PurpleConversation *yahoo_find_conference(PurpleConnection *gc, const char *name)
 {
 	struct yahoo_data *yd;
 	GSList *l;
@@ -94,15 +94,15 @@ static GaimConversation *yahoo_find_conference(GaimConnection *gc, const char *n
 	yd = gc->proto_data;
 
 	for (l = yd->confs; l; l = l->next) {
-		GaimConversation *c = l->data;
-		if (!gaim_utf8_strcasecmp(gaim_conversation_get_name(c), name))
+		PurpleConversation *c = l->data;
+		if (!purple_utf8_strcasecmp(purple_conversation_get_name(c), name))
 			return c;
 	}
 	return NULL;
 }
 
 
-void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_conference_invite(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l;
 	char *room = NULL;
@@ -155,8 +155,8 @@ void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pk
 		g_hash_table_replace(components, g_strdup("members"), g_strdup(members->str));
 	}
 	if (!yahoo_privacy_check(gc, who) || 
-		(gaim_account_get_bool(gaim_connection_get_account(gc), "ignore_invites", FALSE))) {
-		gaim_debug_info("yahoo",
+		(purple_account_get_bool(purple_connection_get_account(gc), "ignore_invites", FALSE))) {
+		purple_debug_info("yahoo",
 		    "Invite to conference %s from %s has been dropped.\n", room, who);
 		g_string_free(members, TRUE);
 		return;
@@ -166,7 +166,7 @@ void yahoo_process_conference_invite(GaimConnection *gc, struct yahoo_packet *pk
 	g_string_free(members, TRUE);
 }
 
-void yahoo_process_conference_decline(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_conference_decline(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l;
 	char *room = NULL;
@@ -202,7 +202,7 @@ void yahoo_process_conference_decline(GaimConnection *gc, struct yahoo_packet *p
 
 			tmp = g_strdup_printf(_("%s declined your conference invitation to room \"%s\" because \"%s\"."),
 							who, room, msg?msg:"");
-			gaim_notify_info(gc, NULL, _("Invitation Rejected"), tmp);
+			purple_notify_info(gc, NULL, _("Invitation Rejected"), tmp);
 			g_free(tmp);
 		}
 
@@ -212,12 +212,12 @@ void yahoo_process_conference_decline(GaimConnection *gc, struct yahoo_packet *p
 	}
 }
 
-void yahoo_process_conference_logon(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_conference_logon(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l;
 	char *room = NULL;
 	char *who = NULL;
-	GaimConversation *c;
+	PurpleConversation *c;
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -235,17 +235,17 @@ void yahoo_process_conference_logon(GaimConnection *gc, struct yahoo_packet *pkt
 	if (who && room) {
 		c = yahoo_find_conference(gc, room);
 		if (c)
-			yahoo_chat_add_user(GAIM_CONV_CHAT(c), who, NULL);
+			yahoo_chat_add_user(PURPLE_CONV_CHAT(c), who, NULL);
 		g_free(room);
 	}
 }
 
-void yahoo_process_conference_logoff(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_conference_logoff(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l;
 	char *room = NULL;
 	char *who = NULL;
-	GaimConversation *c;
+	PurpleConversation *c;
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -263,12 +263,12 @@ void yahoo_process_conference_logoff(GaimConnection *gc, struct yahoo_packet *pk
 	if (who && room) {
 		c = yahoo_find_conference(gc, room);
 		if (c)
-			gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c), who, NULL);
+			purple_conv_chat_remove_user(PURPLE_CONV_CHAT(c), who, NULL);
 		g_free(room);
 	}
 }
 
-void yahoo_process_conference_message(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_conference_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l;
 	char *room = NULL;
@@ -276,7 +276,7 @@ void yahoo_process_conference_message(GaimConnection *gc, struct yahoo_packet *p
 	char *msg = NULL;
 	char *msg2;
 	int utf8 = 0;
-	GaimConversation *c;
+	PurpleConversation *c;
 
 	for (l = pkt->hash; l; l = l->next) {
 		struct yahoo_pair *pair = l->data;
@@ -303,7 +303,7 @@ void yahoo_process_conference_message(GaimConnection *gc, struct yahoo_packet *p
 			if (!c)
 				return;
 			msg = yahoo_codes_to_html(msg2);
-			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(c)), who, 0, msg, time(NULL));
+			serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(c)), who, 0, msg, time(NULL));
 			g_free(msg);
 			g_free(msg2);
 		}
@@ -313,7 +313,7 @@ void yahoo_process_conference_message(GaimConnection *gc, struct yahoo_packet *p
 
 
 /* this is a confirmation of yahoo_chat_online(); */
-void yahoo_process_chat_online(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_chat_online(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
 
@@ -322,7 +322,7 @@ void yahoo_process_chat_online(GaimConnection *gc, struct yahoo_packet *pkt)
 }
 
 /* this is basicly the opposite of chat_online */
-void yahoo_process_chat_logout(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_chat_logout(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
 	GSList *l;
@@ -332,7 +332,7 @@ void yahoo_process_chat_logout(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		if (pair->key == 1)
 			if (g_ascii_strcasecmp(pair->value,
-					gaim_connection_get_display_name(gc)))
+					purple_connection_get_display_name(gc)))
 				return;
 	}
 
@@ -343,11 +343,11 @@ void yahoo_process_chat_logout(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
-void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_chat_join(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
-	GaimConversation *c = NULL;
+	PurpleConversation *c = NULL;
 	GSList *l;
 	GList *members = NULL;
 	GList *roomies = NULL;
@@ -361,16 +361,16 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 		gchar const *failed_to_join = _("Failed to join chat");
 		switch (atoi(pair->value)) {
 			case 0xFFFFFFFA: /* -6 */
-				gaim_notify_error(gc, NULL, failed_to_join, _("Unknown room"));
+				purple_notify_error(gc, NULL, failed_to_join, _("Unknown room"));
 				break;
 			case 0xFFFFFFF1: /* -15 */
-				gaim_notify_error(gc, NULL, failed_to_join, _("Maybe the room is full"));
+				purple_notify_error(gc, NULL, failed_to_join, _("Maybe the room is full"));
 				break;
 			case 0xFFFFFFDD: /* -35 */
-				gaim_notify_error(gc, NULL, failed_to_join, _("Not available"));
+				purple_notify_error(gc, NULL, failed_to_join, _("Not available"));
 				break;
 			default:
-				gaim_notify_error(gc, NULL, failed_to_join,
+				purple_notify_error(gc, NULL, failed_to_join,
 						_("Unknown error. You may need to logout and wait five minutes before being able to rejoin a chatroom"));
 		}
 		return;
@@ -423,55 +423,55 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 		}
 	}
 
-	if (room && yd->chat_name && gaim_utf8_strcasecmp(room, yd->chat_name))
+	if (room && yd->chat_name && purple_utf8_strcasecmp(room, yd->chat_name))
 		yahoo_chat_leave(gc, room,
-				gaim_connection_get_display_name(gc), FALSE);
+				purple_connection_get_display_name(gc), FALSE);
 
-	c = gaim_find_chat(gc, YAHOO_CHAT_ID);
+	c = purple_find_chat(gc, YAHOO_CHAT_ID);
 
-	if (room && (!c || gaim_conv_chat_has_left(GAIM_CONV_CHAT(c))) && members &&
+	if (room && (!c || purple_conv_chat_has_left(PURPLE_CONV_CHAT(c))) && members &&
 	   ((g_list_length(members) > 1) ||
-	     !g_ascii_strcasecmp(members->data, gaim_connection_get_display_name(gc)))) {
+	     !g_ascii_strcasecmp(members->data, purple_connection_get_display_name(gc)))) {
 		int i;
 		GList *flags = NULL;
 		for (i = 0; i < g_list_length(members); i++)
-			flags = g_list_append(flags, GINT_TO_POINTER(GAIM_CBFLAGS_NONE));
-		if (c && gaim_conv_chat_has_left(GAIM_CONV_CHAT(c))) {
+			flags = g_list_append(flags, GINT_TO_POINTER(PURPLE_CBFLAGS_NONE));
+		if (c && purple_conv_chat_has_left(PURPLE_CONV_CHAT(c))) {
 			/* this might be a hack, but oh well, it should nicely */
 			char *tmpmsg;
 
-			gaim_conversation_set_name(c, room);
+			purple_conversation_set_name(c, room);
 
 			c = serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
 			if (topic)
-				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
+				purple_conv_chat_set_topic(PURPLE_CONV_CHAT(c), NULL, topic);
 			yd->in_chat = 1;
 			yd->chat_name = g_strdup(room);
-			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members, NULL, flags, FALSE);
+			purple_conv_chat_add_users(PURPLE_CONV_CHAT(c), members, NULL, flags, FALSE);
 
 			tmpmsg = g_strdup_printf(_("You are now chatting in %s."), room);
-			gaim_conv_chat_write(GAIM_CONV_CHAT(c), "", tmpmsg, GAIM_MESSAGE_SYSTEM, time(NULL));
+			purple_conv_chat_write(PURPLE_CONV_CHAT(c), "", tmpmsg, PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmpmsg);
 		} else {
 			c = serv_got_joined_chat(gc, YAHOO_CHAT_ID, room);
 			if (topic)
-				gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), NULL, topic);
+				purple_conv_chat_set_topic(PURPLE_CONV_CHAT(c), NULL, topic);
 			yd->in_chat = 1;
 			yd->chat_name = g_strdup(room);
-			gaim_conv_chat_add_users(GAIM_CONV_CHAT(c), members, NULL, flags, FALSE);
+			purple_conv_chat_add_users(PURPLE_CONV_CHAT(c), members, NULL, flags, FALSE);
 		}
 		g_list_free(flags);
 	} else if (c) {
-		yahoo_chat_add_users(GAIM_CONV_CHAT(c), members);
+		yahoo_chat_add_users(PURPLE_CONV_CHAT(c), members);
 	}
 
 	if (account->deny && c) {
-		GaimConversationUiOps *ops = gaim_conversation_get_ui_ops(c);
+		PurpleConversationUiOps *ops = purple_conversation_get_ui_ops(c);
 		for (l = account->deny; l != NULL; l = l->next) {
 			for (roomies = members; roomies; roomies = roomies->next) {
-				if (!gaim_utf8_strcasecmp((char *)l->data, roomies->data)) {
-					gaim_debug_info("yahoo", "Ignoring room member %s in room %s\n" , roomies->data, room ? room : "");
-					gaim_conv_chat_ignore(GAIM_CONV_CHAT(c),roomies->data);
+				if (!purple_utf8_strcasecmp((char *)l->data, roomies->data)) {
+					purple_debug_info("yahoo", "Ignoring room member %s in room %s\n" , roomies->data, room ? room : "");
+					purple_conv_chat_ignore(PURPLE_CONV_CHAT(c),roomies->data);
 					ops->chat_update_user(c, roomies->data);
 				}
 			}
@@ -483,7 +483,7 @@ void yahoo_process_chat_join(GaimConnection *gc, struct yahoo_packet *pkt)
 	g_free(topic);
 }
 
-void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_chat_exit(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *who = NULL;
 	char *room = NULL;
@@ -502,20 +502,20 @@ void yahoo_process_chat_exit(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (who && room) {
-		GaimConversation *c = gaim_find_chat(gc, YAHOO_CHAT_ID);
-		if (c && !gaim_utf8_strcasecmp(gaim_conversation_get_name(c), room))
-			gaim_conv_chat_remove_user(GAIM_CONV_CHAT(c), who, NULL);
+		PurpleConversation *c = purple_find_chat(gc, YAHOO_CHAT_ID);
+		if (c && !purple_utf8_strcasecmp(purple_conversation_get_name(c), room))
+			purple_conv_chat_remove_user(PURPLE_CONV_CHAT(c), who, NULL);
 
 	}
 	if (room)
 		g_free(room);
 }
 
-void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_chat_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *room = NULL, *who = NULL, *msg = NULL, *msg2;
 	int msgtype = 1, utf8 = 1; /* default to utf8 */
-	GaimConversation *c = NULL;
+	PurpleConversation *c = NULL;
 	GSList *l;
 
 	for (l = pkt->hash; l; l = l->next) {
@@ -541,7 +541,7 @@ void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		}
 	}
 
-	c = gaim_find_chat(gc, YAHOO_CHAT_ID);
+	c = purple_find_chat(gc, YAHOO_CHAT_ID);
 	if (!who || !c) {
 		if (room)
 			g_free(room);
@@ -550,7 +550,7 @@ void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (!msg) {
-		gaim_debug(GAIM_DEBUG_MISC, "yahoo", "Got a message packet with no message.\nThis probably means something important, but we're ignoring it.\n");
+		purple_debug(PURPLE_DEBUG_MISC, "yahoo", "Got a message packet with no message.\nThis probably means something important, but we're ignoring it.\n");
 		return;
 	}
 	msg2 = yahoo_string_decode(gc, msg, utf8);
@@ -569,7 +569,7 @@ void yahoo_process_chat_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	g_free(room);
 }
 
-void yahoo_process_chat_addinvite(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_chat_addinvite(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l;
 	char *room = NULL;
@@ -604,8 +604,8 @@ void yahoo_process_chat_addinvite(GaimConnection *gc, struct yahoo_packet *pkt)
 		components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 		g_hash_table_replace(components, g_strdup("room"), g_strdup(room));
 		if (!yahoo_privacy_check(gc, who) ||
-			(gaim_account_get_bool(gaim_connection_get_account(gc), "ignore_invites", FALSE))) {
-			gaim_debug_info("yahoo",
+			(purple_account_get_bool(purple_connection_get_account(gc), "ignore_invites", FALSE))) {
+			purple_debug_info("yahoo",
 			"Invite to room %s from %s has been dropped.\n", room, who);
 			if (room != NULL)
 				g_free(room);
@@ -621,10 +621,10 @@ void yahoo_process_chat_addinvite(GaimConnection *gc, struct yahoo_packet *pkt)
 		g_free(msg);
 }
 
-void yahoo_process_chat_goto(GaimConnection *gc, struct yahoo_packet *pkt)
+void yahoo_process_chat_goto(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	if (pkt->status == -1)
-		gaim_notify_error(gc, NULL, _("Failed to join buddy in chat"),
+		purple_notify_error(gc, NULL, _("Failed to join buddy in chat"),
 						_("Maybe they're not in a chat?"));
 }
 
@@ -638,13 +638,13 @@ void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, G
 	struct yahoo_packet *pkt;
 	GList *w;
 
-	gaim_debug_misc("yahoo", "leaving conference %s\n", room);
+	purple_debug_misc("yahoo", "leaving conference %s\n", room);
 	
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFLOGOFF, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash_str(pkt, 1, dn);
 	for (w = who; w; w = w->next) {
-		const char *name = gaim_conv_chat_cb_get_name(w->data);
+		const char *name = purple_conv_chat_cb_get_name(w->data);
 		yahoo_packet_hash_str(pkt, 3, name);
 	}
 
@@ -652,7 +652,7 @@ void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, G
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-static int yahoo_conf_send(GaimConnection *gc, const char *dn, const char *room,
+static int yahoo_conf_send(PurpleConnection *gc, const char *dn, const char *room,
 							GList *members, const char *what)
 {
 	struct yahoo_data *yd = gc->proto_data;
@@ -668,7 +668,7 @@ static int yahoo_conf_send(GaimConnection *gc, const char *dn, const char *room,
 
 	yahoo_packet_hash_str(pkt, 1, dn);
 	for (who = members; who; who = who->next) {
-		const char *name = gaim_conv_chat_cb_get_name(who->data);
+		const char *name = purple_conv_chat_cb_get_name(who->data);
 		yahoo_packet_hash_str(pkt, 53, name);
 	}
 	yahoo_packet_hash(pkt, "ss", 57, room, 14, msg2);
@@ -682,7 +682,7 @@ static int yahoo_conf_send(GaimConnection *gc, const char *dn, const char *room,
 	return 0;
 }
 
-static void yahoo_conf_join(struct yahoo_data *yd, GaimConversation *c, const char *dn, const char *room,
+static void yahoo_conf_join(struct yahoo_data *yd, PurpleConversation *c, const char *dn, const char *room,
 						const char *topic, const char *members)
 {
 	struct yahoo_packet *pkt;
@@ -700,7 +700,7 @@ static void yahoo_conf_join(struct yahoo_data *yd, GaimConversation *c, const ch
 			if (!strcmp(memarr[i], "") || !strcmp(memarr[i], dn))
 					continue;
 			yahoo_packet_hash_str(pkt, 3, memarr[i]);
-			gaim_conv_chat_add_user(GAIM_CONV_CHAT(c), memarr[i], NULL, GAIM_CBFLAGS_NONE, TRUE);
+			purple_conv_chat_add_user(PURPLE_CONV_CHAT(c), memarr[i], NULL, PURPLE_CBFLAGS_NONE, TRUE);
 		}
 	}
 	yahoo_packet_send_and_free(pkt, yd);
@@ -709,7 +709,7 @@ static void yahoo_conf_join(struct yahoo_data *yd, GaimConversation *c, const ch
 		g_strfreev(memarr);
 }
 
-static void yahoo_conf_invite(GaimConnection *gc, GaimConversation *c,
+static void yahoo_conf_invite(PurpleConnection *gc, PurpleConversation *c,
 		const char *dn, const char *buddy, const char *room, const char *msg)
 {
 	struct yahoo_data *yd = gc->proto_data;
@@ -720,13 +720,13 @@ static void yahoo_conf_invite(GaimConnection *gc, GaimConversation *c,
 	if (msg)
 		msg2 = yahoo_string_encode(gc, msg, NULL);
 
-	members = gaim_conv_chat_get_users(GAIM_CONV_CHAT(c));
+	members = purple_conv_chat_get_users(PURPLE_CONV_CHAT(c));
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CONFADDINVITE, YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash(pkt, "sssss", 1, dn, 51, buddy, 57, room, 58, msg?msg2:"", 13, "0");
 	for(; members; members = members->next) {
-		const char *name = gaim_conv_chat_cb_get_name(members->data);
+		const char *name = purple_conv_chat_cb_get_name(members->data);
 		if (!strcmp(name, dn))
 			continue;
 		yahoo_packet_hash(pkt, "ss", 52, name, 53, name);
@@ -740,11 +740,11 @@ static void yahoo_conf_invite(GaimConnection *gc, GaimConversation *c,
  * Functions dealing with chats
  */
 
-static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *dn, gboolean logout)
+static void yahoo_chat_leave(PurpleConnection *gc, const char *room, const char *dn, gboolean logout)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
-	GaimConversation *c;
+	PurpleConversation *c;
 
 	char *eroom;
 	gboolean utf8 = 1;
@@ -769,7 +769,7 @@ static void yahoo_chat_leave(GaimConnection *gc, const char *room, const char *d
 		yd->chat_name = NULL;
 	}
 
-	if ((c = gaim_find_chat(gc, YAHOO_CHAT_ID)))
+	if ((c = purple_find_chat(gc, YAHOO_CHAT_ID)))
 		serv_got_chat_left(gc, YAHOO_CHAT_ID);
 
 	if (!logout)
@@ -822,7 +822,7 @@ meify(char *message, size_t len)
 	return FALSE;
 }
 
-static int yahoo_chat_send(GaimConnection *gc, const char *dn, const char *room, const char *what, GaimMessageFlags flags)
+static int yahoo_chat_send(PurpleConnection *gc, const char *dn, const char *room, const char *what, PurpleMessageFlags flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
@@ -865,7 +865,7 @@ static int yahoo_chat_send(GaimConnection *gc, const char *dn, const char *room,
 	return 0;
 }
 
-static void yahoo_chat_join(GaimConnection *gc, const char *dn, const char *room, const char *topic)
+static void yahoo_chat_join(PurpleConnection *gc, const char *dn, const char *room, const char *topic)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
@@ -883,13 +883,13 @@ static void yahoo_chat_join(GaimConnection *gc, const char *dn, const char *room
 	room2 = yahoo_string_encode(gc, room, &utf8);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATJOIN, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssss", 1, gaim_connection_get_display_name(gc),
+	yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc),
 	                  62, "2", 104, room2, 129, "0");
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(room2);
 }
 
-static void yahoo_chat_invite(GaimConnection *gc, const char *dn, const char *buddy,
+static void yahoo_chat_invite(PurpleConnection *gc, const char *dn, const char *buddy,
 							const char *room, const char *msg)
 {
 	struct yahoo_data *yd = gc->proto_data;
@@ -915,7 +915,7 @@ static void yahoo_chat_invite(GaimConnection *gc, const char *dn, const char *bu
 	g_free(msg2);
 }
 
-void yahoo_chat_goto(GaimConnection *gc, const char *name)
+void yahoo_chat_goto(PurpleConnection *gc, const char *name)
 {
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
@@ -932,7 +932,7 @@ void yahoo_chat_goto(GaimConnection *gc, const char *name)
 		yahoo_chat_online(gc);
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATGOTO, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "sss", 109, name, 1, gaim_connection_get_display_name(gc), 62, "2");
+	yahoo_packet_hash(pkt, "sss", 109, name, 1, purple_connection_get_display_name(gc), 62, "2");
 	yahoo_packet_send_and_free(pkt, yd);
 }
 /*
@@ -940,32 +940,32 @@ void yahoo_chat_goto(GaimConnection *gc, const char *name)
  * which get called for both chats and conferences.
  */
 
-void yahoo_c_leave(GaimConnection *gc, int id)
+void yahoo_c_leave(PurpleConnection *gc, int id)
 {
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
-	GaimConversation *c;
+	PurpleConversation *c;
 
 	if (!yd)
 		return;
 
-	c = gaim_find_chat(gc, id);
+	c = purple_find_chat(gc, id);
 	if (!c)
 		return;
 
 	if (id != YAHOO_CHAT_ID) {
-		yahoo_conf_leave(yd, gaim_conversation_get_name(c),
-			gaim_connection_get_display_name(gc), gaim_conv_chat_get_users(GAIM_CONV_CHAT(c)));
+		yahoo_conf_leave(yd, purple_conversation_get_name(c),
+			purple_connection_get_display_name(gc), purple_conv_chat_get_users(PURPLE_CONV_CHAT(c)));
 			yd->confs = g_slist_remove(yd->confs, c);
 	} else {
-		yahoo_chat_leave(gc, gaim_conversation_get_name(c), gaim_connection_get_display_name(gc), TRUE);
+		yahoo_chat_leave(gc, purple_conversation_get_name(c), purple_connection_get_display_name(gc), TRUE);
 	}
 
 	serv_got_chat_left(gc, id);
 }
 
-int yahoo_c_send(GaimConnection *gc, int id, const char *what, GaimMessageFlags flags)
+int yahoo_c_send(PurpleConnection *gc, int id, const char *what, PurpleMessageFlags flags)
 {
-	GaimConversation *c;
+	PurpleConversation *c;
 	int ret;
 	struct yahoo_data *yd;
 
@@ -973,24 +973,24 @@ int yahoo_c_send(GaimConnection *gc, int id, const char *what, GaimMessageFlags 
 	if (!yd)
 		return -1;
 
-	c = gaim_find_chat(gc, id);
+	c = purple_find_chat(gc, id);
 	if (!c)
 		return -1;
 
 	if (id != YAHOO_CHAT_ID) {
-		ret = yahoo_conf_send(gc, gaim_connection_get_display_name(gc),
-				gaim_conversation_get_name(c), gaim_conv_chat_get_users(GAIM_CONV_CHAT(c)), what);
+		ret = yahoo_conf_send(gc, purple_connection_get_display_name(gc),
+				purple_conversation_get_name(c), purple_conv_chat_get_users(PURPLE_CONV_CHAT(c)), what);
 	} else {
-		ret = yahoo_chat_send(gc, gaim_connection_get_display_name(gc),
-						gaim_conversation_get_name(c), what, flags);
+		ret = yahoo_chat_send(gc, purple_connection_get_display_name(gc),
+						purple_conversation_get_name(c), what, flags);
 		if (!ret)
-			serv_got_chat_in(gc, gaim_conv_chat_get_id(GAIM_CONV_CHAT(c)),
-					gaim_connection_get_display_name(gc), 0, what, time(NULL));
+			serv_got_chat_in(gc, purple_conv_chat_get_id(PURPLE_CONV_CHAT(c)),
+					purple_connection_get_display_name(gc), 0, what, time(NULL));
 	}
 	return ret;
 }
 
-GList *yahoo_c_info(GaimConnection *gc)
+GList *yahoo_c_info(PurpleConnection *gc)
 {
 	GList *m = NULL;
 	struct proto_chat_entry *pce;
@@ -1004,7 +1004,7 @@ GList *yahoo_c_info(GaimConnection *gc)
 	return m;
 }
 
-GHashTable *yahoo_c_info_defaults(GaimConnection *gc, const char *chat_name)
+GHashTable *yahoo_c_info_defaults(PurpleConnection *gc, const char *chat_name)
 {
 	GHashTable *defaults;
 
@@ -1021,12 +1021,12 @@ char *yahoo_get_chat_name(GHashTable *data)
 	return g_strdup(g_hash_table_lookup(data, "room"));
 }
 
-void yahoo_c_join(GaimConnection *gc, GHashTable *data)
+void yahoo_c_join(PurpleConnection *gc, GHashTable *data)
 {
 	struct yahoo_data *yd;
 	char *room, *topic, *members, *type;
 	int id;
-	GaimConversation *c;
+	PurpleConversation *c;
 
 	yd = (struct yahoo_data *) gc->proto_data;
 	if (!yd)
@@ -1046,35 +1046,35 @@ void yahoo_c_join(GaimConnection *gc, GHashTable *data)
 		id = yd->conf_id++;
 		c = serv_got_joined_chat(gc, id, room);
 		yd->confs = g_slist_prepend(yd->confs, c);
-		gaim_conv_chat_set_topic(GAIM_CONV_CHAT(c), gaim_connection_get_display_name(gc), topic);
-		yahoo_conf_join(yd, c, gaim_connection_get_display_name(gc), room, topic, members);
+		purple_conv_chat_set_topic(PURPLE_CONV_CHAT(c), purple_connection_get_display_name(gc), topic);
+		yahoo_conf_join(yd, c, purple_connection_get_display_name(gc), room, topic, members);
 		return;
 	} else {
 		if (yd->in_chat)
 			yahoo_chat_leave(gc, room,
-					gaim_connection_get_display_name(gc),
+					purple_connection_get_display_name(gc),
 					FALSE);
 		if (!yd->chat_online)
 			yahoo_chat_online(gc);
-		yahoo_chat_join(gc, gaim_connection_get_display_name(gc), room, topic);
+		yahoo_chat_join(gc, purple_connection_get_display_name(gc), room, topic);
 		return;
 	}
 }
 
-void yahoo_c_invite(GaimConnection *gc, int id, const char *msg, const char *name)
+void yahoo_c_invite(PurpleConnection *gc, int id, const char *msg, const char *name)
 {
-	GaimConversation *c;
+	PurpleConversation *c;
 
-	c = gaim_find_chat(gc, id);
+	c = purple_find_chat(gc, id);
 	if (!c || !c->name)
 		return;
 
 	if (id != YAHOO_CHAT_ID) {
-		yahoo_conf_invite(gc, c, gaim_connection_get_display_name(gc), name,
-							gaim_conversation_get_name(c), msg);
+		yahoo_conf_invite(gc, c, purple_connection_get_display_name(gc), name,
+							purple_conversation_get_name(c), msg);
 	} else {
-		yahoo_chat_invite(gc, gaim_connection_get_display_name(gc), name,
-							gaim_conversation_get_name(c), msg);
+		yahoo_chat_invite(gc, purple_connection_get_display_name(gc), name,
+							purple_conversation_get_name(c), msg);
 	}
 }
 
@@ -1088,16 +1088,16 @@ struct yahoo_roomlist {
 	gboolean started;
 	char *path;
 	char *host;
-	GaimRoomlist *list;
-	GaimRoomlistRoom *cat;
-	GaimRoomlistRoom *ucat;
+	PurpleRoomlist *list;
+	PurpleRoomlistRoom *cat;
+	PurpleRoomlistRoom *ucat;
 	GMarkupParseContext *parse;
 };
 
 static void yahoo_roomlist_destroy(struct yahoo_roomlist *yrl)
 {
 	if (yrl->inpa)
-		gaim_input_remove(yrl->inpa);
+		purple_input_remove(yrl->inpa);
 	g_free(yrl->txbuf);
 	g_free(yrl->rxqueue);
 	g_free(yrl->path);
@@ -1113,7 +1113,7 @@ enum yahoo_room_type {
 };
 
 struct yahoo_chatxml_state {
-	GaimRoomlist *list;
+	PurpleRoomlist *list;
 	struct yahoo_roomlist *yrl;
 	GQueue *q;
 	struct {
@@ -1129,7 +1129,7 @@ struct yahoo_lobby {
 	int count, users, voices, webcams;
 };
 
-static struct yahoo_chatxml_state *yahoo_chatxml_state_new(GaimRoomlist *list, struct yahoo_roomlist *yrl)
+static struct yahoo_chatxml_state *yahoo_chatxml_state_new(PurpleRoomlist *list, struct yahoo_roomlist *yrl)
 {
 	struct yahoo_chatxml_state *s;
 
@@ -1156,9 +1156,9 @@ static void yahoo_chatlist_start_element(GMarkupParseContext *context,
                                   GError **error)
 {
 	struct yahoo_chatxml_state *s = user_data;
-	GaimRoomlist *list = s->list;
-	GaimRoomlistRoom *r;
-	GaimRoomlistRoom *parent;
+	PurpleRoomlist *list = s->list;
+	PurpleRoomlistRoom *r;
+	PurpleRoomlistRoom *parent;
 	int i;
 
 	if (!strcmp(ename, "category")) {
@@ -1174,10 +1174,10 @@ static void yahoo_chatlist_start_element(GMarkupParseContext *context,
 			return;
 
 		parent = g_queue_peek_head(s->q);
-		r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATEGORY, name, parent);
-		gaim_roomlist_room_add_field(list, r, (gpointer)name);
-		gaim_roomlist_room_add_field(list, r, (gpointer)id);
-		gaim_roomlist_room_add(list, r);
+		r = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_CATEGORY, name, parent);
+		purple_roomlist_room_add_field(list, r, (gpointer)name);
+		purple_roomlist_room_add_field(list, r, (gpointer)id);
+		purple_roomlist_room_add(list, r);
 		g_queue_push_head(s->q, r);
 	} else if (!strcmp(ename, "room")) {
 		s->room.users = s->room.voices = s->room.webcams = 0;
@@ -1230,34 +1230,34 @@ static void yahoo_chatlist_end_element(GMarkupParseContext *context, const gchar
 		g_queue_pop_head(s->q);
 	} else if (!strcmp(ename, "room")) {
 		struct yahoo_lobby *lob;
-		GaimRoomlistRoom *r, *l;
+		PurpleRoomlistRoom *r, *l;
 
 		if (s->room.type == yrt_yahoo)
-			r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATEGORY|GAIM_ROOMLIST_ROOMTYPE_ROOM,
+			r = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_CATEGORY|PURPLE_ROOMLIST_ROOMTYPE_ROOM,
 		                                   s->room.name, s->yrl->cat);
 		else
-			r = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATEGORY|GAIM_ROOMLIST_ROOMTYPE_ROOM,
+			r = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_CATEGORY|PURPLE_ROOMLIST_ROOMTYPE_ROOM,
 		                                   s->room.name, s->yrl->ucat);
 
-		gaim_roomlist_room_add_field(s->list, r, s->room.name);
-		gaim_roomlist_room_add_field(s->list, r, s->room.id);
-		gaim_roomlist_room_add_field(s->list, r, GINT_TO_POINTER(s->room.users));
-		gaim_roomlist_room_add_field(s->list, r, GINT_TO_POINTER(s->room.voices));
-		gaim_roomlist_room_add_field(s->list, r, GINT_TO_POINTER(s->room.webcams));
-		gaim_roomlist_room_add_field(s->list, r, s->room.topic);
-		gaim_roomlist_room_add(s->list, r);
+		purple_roomlist_room_add_field(s->list, r, s->room.name);
+		purple_roomlist_room_add_field(s->list, r, s->room.id);
+		purple_roomlist_room_add_field(s->list, r, GINT_TO_POINTER(s->room.users));
+		purple_roomlist_room_add_field(s->list, r, GINT_TO_POINTER(s->room.voices));
+		purple_roomlist_room_add_field(s->list, r, GINT_TO_POINTER(s->room.webcams));
+		purple_roomlist_room_add_field(s->list, r, s->room.topic);
+		purple_roomlist_room_add(s->list, r);
 
 		while ((lob = g_queue_pop_head(s->q))) {
 			char *name = g_strdup_printf("%s:%d", s->room.name, lob->count);
-			l = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_ROOM, name, r);
+			l = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_ROOM, name, r);
 
-			gaim_roomlist_room_add_field(s->list, l, name);
-			gaim_roomlist_room_add_field(s->list, l, s->room.id);
-			gaim_roomlist_room_add_field(s->list, l, GINT_TO_POINTER(lob->users));
-			gaim_roomlist_room_add_field(s->list, l, GINT_TO_POINTER(lob->voices));
-			gaim_roomlist_room_add_field(s->list, l, GINT_TO_POINTER(lob->webcams));
-			gaim_roomlist_room_add_field(s->list, l, s->room.topic);
-			gaim_roomlist_room_add(s->list, l);
+			purple_roomlist_room_add_field(s->list, l, name);
+			purple_roomlist_room_add_field(s->list, l, s->room.id);
+			purple_roomlist_room_add_field(s->list, l, GINT_TO_POINTER(lob->users));
+			purple_roomlist_room_add_field(s->list, l, GINT_TO_POINTER(lob->voices));
+			purple_roomlist_room_add_field(s->list, l, GINT_TO_POINTER(lob->webcams));
+			purple_roomlist_room_add_field(s->list, l, s->room.topic);
+			purple_roomlist_room_add(s->list, l);
 
 			g_free(name);
 			g_free(lob);
@@ -1273,22 +1273,22 @@ static GMarkupParser parser = {
 	NULL
 };
 
-static void yahoo_roomlist_cleanup(GaimRoomlist *list, struct yahoo_roomlist *yrl)
+static void yahoo_roomlist_cleanup(PurpleRoomlist *list, struct yahoo_roomlist *yrl)
 {
-	gaim_roomlist_set_in_progress(list, FALSE);
+	purple_roomlist_set_in_progress(list, FALSE);
 
 	if (yrl) {
 		list->proto_data = g_list_remove(list->proto_data, yrl);
 		yahoo_roomlist_destroy(yrl);
 	}
 
-	gaim_roomlist_unref(list);
+	purple_roomlist_unref(list);
 }
 
-static void yahoo_roomlist_pending(gpointer data, gint source, GaimInputCondition cond)
+static void yahoo_roomlist_pending(gpointer data, gint source, PurpleInputCondition cond)
 {
 	struct yahoo_roomlist *yrl = data;
-	GaimRoomlist *list = yrl->list;
+	PurpleRoomlist *list = yrl->list;
 	char buf[1024];
 	int len;
 	guchar *start;
@@ -1335,10 +1335,10 @@ static void yahoo_roomlist_pending(gpointer data, gint source, GaimInputConditio
 	yrl->rxlen = 0;
 }
 
-static void yahoo_roomlist_send_cb(gpointer data, gint source, GaimInputCondition cond)
+static void yahoo_roomlist_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	struct yahoo_roomlist *yrl;
-	GaimRoomlist *list;
+	PurpleRoomlist *list;
 	int written, remaining;
 
 	yrl = data;
@@ -1350,11 +1350,11 @@ static void yahoo_roomlist_send_cb(gpointer data, gint source, GaimInputConditio
 	if (written < 0 && errno == EAGAIN)
 		written = 0;
 	else if (written <= 0) {
-		gaim_input_remove(yrl->inpa);
+		purple_input_remove(yrl->inpa);
 		yrl->inpa = 0;
 		g_free(yrl->txbuf);
 		yrl->txbuf = NULL;
-		gaim_notify_error(gaim_account_get_connection(list->account), NULL, _("Unable to connect"), _("Fetching the room list failed."));
+		purple_notify_error(purple_account_get_connection(list->account), NULL, _("Unable to connect"), _("Fetching the room list failed."));
 		yahoo_roomlist_cleanup(list, yrl);
 		return;
 	}
@@ -1367,8 +1367,8 @@ static void yahoo_roomlist_send_cb(gpointer data, gint source, GaimInputConditio
 	g_free(yrl->txbuf);
 	yrl->txbuf = NULL;
 
-	gaim_input_remove(yrl->inpa);
-	yrl->inpa = gaim_input_add(yrl->fd, GAIM_INPUT_READ,
+	purple_input_remove(yrl->inpa);
+	yrl->inpa = purple_input_add(yrl->fd, PURPLE_INPUT_READ,
 							   yahoo_roomlist_pending, yrl);
 
 }
@@ -1376,11 +1376,11 @@ static void yahoo_roomlist_send_cb(gpointer data, gint source, GaimInputConditio
 static void yahoo_roomlist_got_connected(gpointer data, gint source, const gchar *error_message)
 {
 	struct yahoo_roomlist *yrl = data;
-	GaimRoomlist *list = yrl->list;
-	struct yahoo_data *yd = gaim_account_get_connection(list->account)->proto_data;
+	PurpleRoomlist *list = yrl->list;
+	struct yahoo_data *yd = purple_account_get_connection(list->account)->proto_data;
 
 	if (source < 0) {
-		gaim_notify_error(gaim_account_get_connection(list->account), NULL, _("Unable to connect"), _("Fetching the room list failed."));
+		purple_notify_error(purple_account_get_connection(list->account), NULL, _("Unable to connect"), _("Fetching the room list failed."));
 		yahoo_roomlist_cleanup(list, yrl);
 		return;
 	}
@@ -1395,115 +1395,115 @@ static void yahoo_roomlist_got_connected(gpointer data, gint source, const gchar
 		yd->cookie_t);
 
 
-	yrl->inpa = gaim_input_add(yrl->fd, GAIM_INPUT_WRITE,
+	yrl->inpa = purple_input_add(yrl->fd, PURPLE_INPUT_WRITE,
 							   yahoo_roomlist_send_cb, yrl);
-	yahoo_roomlist_send_cb(yrl, yrl->fd, GAIM_INPUT_WRITE);
+	yahoo_roomlist_send_cb(yrl, yrl->fd, PURPLE_INPUT_WRITE);
 }
 
-GaimRoomlist *yahoo_roomlist_get_list(GaimConnection *gc)
+PurpleRoomlist *yahoo_roomlist_get_list(PurpleConnection *gc)
 {
 	struct yahoo_roomlist *yrl;
-	GaimRoomlist *rl;
+	PurpleRoomlist *rl;
 	const char *rll;
 	char *url;
 	GList *fields = NULL;
-	GaimRoomlistField *f;
+	PurpleRoomlistField *f;
 
-	rll = gaim_account_get_string(gaim_connection_get_account(gc),
+	rll = purple_account_get_string(purple_connection_get_account(gc),
 								  "room_list_locale", YAHOO_ROOMLIST_LOCALE);
 
 	if (rll != NULL && *rll != '\0') {
 		url = g_strdup_printf("%s?chatcat=0&intl=%s",
-	        gaim_account_get_string(gaim_connection_get_account(gc),
+	        purple_account_get_string(purple_connection_get_account(gc),
 	        "room_list", YAHOO_ROOMLIST_URL), rll);
 	} else {
 		url = g_strdup_printf("%s?chatcat=0",
-	        gaim_account_get_string(gaim_connection_get_account(gc),
+	        purple_account_get_string(purple_connection_get_account(gc),
 	        "room_list", YAHOO_ROOMLIST_URL));
 	}
 
 	yrl = g_new0(struct yahoo_roomlist, 1);
-	rl = gaim_roomlist_new(gaim_connection_get_account(gc));
+	rl = purple_roomlist_new(purple_connection_get_account(gc));
 	yrl->list = rl;
 
-	gaim_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
+	purple_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
 	g_free(url);
 
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "room", TRUE);
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", "room", TRUE);
 	fields = g_list_append(fields, f);
 
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, "", "id", TRUE);
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, "", "id", TRUE);
 	fields = g_list_append(fields, f);
 
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_INT, _("Users"), "users", FALSE);
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_INT, _("Users"), "users", FALSE);
 	fields = g_list_append(fields, f);
 
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_INT, _("Voices"), "voices", FALSE);
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_INT, _("Voices"), "voices", FALSE);
 	fields = g_list_append(fields, f);
 
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_INT, _("Webcams"), "webcams", FALSE);
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_INT, _("Webcams"), "webcams", FALSE);
 	fields = g_list_append(fields, f);
 
-	f = gaim_roomlist_field_new(GAIM_ROOMLIST_FIELD_STRING, _("Topic"), "topic", FALSE);
+	f = purple_roomlist_field_new(PURPLE_ROOMLIST_FIELD_STRING, _("Topic"), "topic", FALSE);
 	fields = g_list_append(fields, f);
 
-	gaim_roomlist_set_fields(rl, fields);
+	purple_roomlist_set_fields(rl, fields);
 
-	if (gaim_proxy_connect(NULL, gaim_connection_get_account(gc), yrl->host, 80,
+	if (purple_proxy_connect(NULL, purple_connection_get_account(gc), yrl->host, 80,
 	                       yahoo_roomlist_got_connected, yrl) == NULL)
 	{
-		gaim_notify_error(gc, NULL, _("Connection problem"), _("Unable to fetch room list."));
+		purple_notify_error(gc, NULL, _("Connection problem"), _("Unable to fetch room list."));
 		yahoo_roomlist_cleanup(rl, yrl);
 		return NULL;
 	}
 
 	rl->proto_data = g_list_append(rl->proto_data, yrl);
 
-	gaim_roomlist_set_in_progress(rl, TRUE);
+	purple_roomlist_set_in_progress(rl, TRUE);
 	return rl;
 }
 
-void yahoo_roomlist_cancel(GaimRoomlist *list)
+void yahoo_roomlist_cancel(PurpleRoomlist *list)
 {
 	GList *l, *k;
 
 	k = l = list->proto_data;
 	list->proto_data = NULL;
 
-	gaim_roomlist_set_in_progress(list, FALSE);
+	purple_roomlist_set_in_progress(list, FALSE);
 
 	for (; l; l = l->next) {
 		yahoo_roomlist_destroy(l->data);
-		gaim_roomlist_unref(list);
+		purple_roomlist_unref(list);
 	}
 	g_list_free(k);
 }
 
-void yahoo_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *category)
+void yahoo_roomlist_expand_category(PurpleRoomlist *list, PurpleRoomlistRoom *category)
 {
 	struct yahoo_roomlist *yrl;
 	char *url;
 	char *id;
 	const char *rll;
 
-	if (category->type != GAIM_ROOMLIST_ROOMTYPE_CATEGORY)
+	if (category->type != PURPLE_ROOMLIST_ROOMTYPE_CATEGORY)
 		return;
 
 	if (!(id = g_list_nth_data(category->fields, 1))) {
-		gaim_roomlist_set_in_progress(list, FALSE);
+		purple_roomlist_set_in_progress(list, FALSE);
 		return;
 	}
 
-	rll = gaim_account_get_string(list->account, "room_list_locale",
+	rll = purple_account_get_string(list->account, "room_list_locale",
 								  YAHOO_ROOMLIST_LOCALE);
 
 	if (rll != NULL && *rll != '\0') {
 		url = g_strdup_printf("%s?chatroom_%s=0&intl=%s",
-	       gaim_account_get_string(list->account,"room_list",
+	       purple_account_get_string(list->account,"room_list",
 	       YAHOO_ROOMLIST_URL), id, rll);
 	} else {
 		url = g_strdup_printf("%s?chatroom_%s=0",
-	       gaim_account_get_string(list->account,"room_list",
+	       purple_account_get_string(list->account,"room_list",
 	       YAHOO_ROOMLIST_URL), id);
 	}
 
@@ -1512,22 +1512,22 @@ void yahoo_roomlist_expand_category(GaimRoomlist *list, GaimRoomlistRoom *catego
 	yrl->cat = category;
 	list->proto_data = g_list_append(list->proto_data, yrl);
 
-	gaim_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
+	purple_url_parse(url, &(yrl->host), NULL, &(yrl->path), NULL, NULL);
 	g_free(url);
 
-	yrl->ucat = gaim_roomlist_room_new(GAIM_ROOMLIST_ROOMTYPE_CATEGORY, _("User Rooms"), yrl->cat);
-	gaim_roomlist_room_add(list, yrl->ucat);
+	yrl->ucat = purple_roomlist_room_new(PURPLE_ROOMLIST_ROOMTYPE_CATEGORY, _("User Rooms"), yrl->cat);
+	purple_roomlist_room_add(list, yrl->ucat);
 
-	if (gaim_proxy_connect(NULL, list->account, yrl->host, 80,
+	if (purple_proxy_connect(NULL, list->account, yrl->host, 80,
 	                       yahoo_roomlist_got_connected, yrl) == NULL)
 	{
-		gaim_notify_error(gaim_account_get_connection(list->account),
+		purple_notify_error(purple_account_get_connection(list->account),
 		                  NULL, _("Connection problem"), _("Unable to fetch room list."));
-		gaim_roomlist_ref(list);
+		purple_roomlist_ref(list);
 		yahoo_roomlist_cleanup(list, yrl);
 		return;
 	}
 
-	gaim_roomlist_set_in_progress(list, TRUE);
-	gaim_roomlist_ref(list);
+	purple_roomlist_set_in_progress(list, TRUE);
+	purple_roomlist_ref(list);
 }

@@ -1,9 +1,9 @@
 /**
  * @file switchboard.c MSN switchboard functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -71,7 +71,7 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	GList *l;
 
 #ifdef MSN_DEBUG_SB
-	gaim_debug_info("msn", "switchboard_destroy: swboard(%p)\n", swboard);
+	purple_debug_info("msn", "switchboard_destroy: swboard(%p)\n", swboard);
 #endif
 
 	g_return_if_fail(swboard != NULL);
@@ -205,7 +205,7 @@ static void
 msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 {
 	MsnCmdProc *cmdproc;
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	g_return_if_fail(swboard != NULL);
 
@@ -217,39 +217,39 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	swboard->empty = FALSE;
 
 #ifdef MSN_DEBUG_CHAT
-	gaim_debug_info("msn", "user=[%s], total=%d\n", user,
+	purple_debug_info("msn", "user=[%s], total=%d\n", user,
 					swboard->current_users);
 #endif
 
 	if (!(swboard->flag & MSN_SB_FLAG_IM) && (swboard->conv != NULL))
 	{
 		/* This is a helper switchboard. */
-		gaim_debug_error("msn", "switchboard_add_user: conv != NULL\n");
+		purple_debug_error("msn", "switchboard_add_user: conv != NULL\n");
 		return;
 	}
 
 	if ((swboard->conv != NULL) &&
-		(gaim_conversation_get_type(swboard->conv) == GAIM_CONV_TYPE_CHAT))
+		(purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
 	{
-		gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv), user, NULL,
-								GAIM_CBFLAGS_NONE, TRUE);
+		purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv), user, NULL,
+								PURPLE_CBFLAGS_NONE, TRUE);
 	}
 	else if (swboard->current_users > 1 || swboard->total_users > 1)
 	{
 		if (swboard->conv == NULL ||
-			gaim_conversation_get_type(swboard->conv) != GAIM_CONV_TYPE_CHAT)
+			purple_conversation_get_type(swboard->conv) != PURPLE_CONV_TYPE_CHAT)
 		{
 			GList *l;
 
 #ifdef MSN_DEBUG_CHAT
-			gaim_debug_info("msn", "[chat] Switching to chat.\n");
+			purple_debug_info("msn", "[chat] Switching to chat.\n");
 #endif
 
 #if 0
 			/* this is bad - it causes msn_switchboard_close to be called on the
 			 * switchboard we're in the middle of using :( */
 			if (swboard->conv != NULL)
-				gaim_conversation_destroy(swboard->conv);
+				purple_conversation_destroy(swboard->conv);
 #endif
 
 			swboard->chat_id = cmdproc->session->conv_seq++;
@@ -265,20 +265,20 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 				tmp_user = l->data;
 
 #ifdef MSN_DEBUG_CHAT
-				gaim_debug_info("msn", "[chat] Adding [%s].\n", tmp_user);
+				purple_debug_info("msn", "[chat] Adding [%s].\n", tmp_user);
 #endif
 
-				gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
-										tmp_user, NULL, GAIM_CBFLAGS_NONE, TRUE);
+				purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
+										tmp_user, NULL, PURPLE_CBFLAGS_NONE, TRUE);
 			}
 
 #ifdef MSN_DEBUG_CHAT
-			gaim_debug_info("msn", "[chat] We add ourselves.\n");
+			purple_debug_info("msn", "[chat] We add ourselves.\n");
 #endif
 
-			gaim_conv_chat_add_user(GAIM_CONV_CHAT(swboard->conv),
-									gaim_account_get_username(account),
-									NULL, GAIM_CBFLAGS_NONE, TRUE);
+			purple_conv_chat_add_user(PURPLE_CONV_CHAT(swboard->conv),
+									purple_account_get_username(account),
+									NULL, PURPLE_CBFLAGS_NONE, TRUE);
 
 			g_free(swboard->im_user);
 			swboard->im_user = NULL;
@@ -286,44 +286,44 @@ msn_switchboard_add_user(MsnSwitchBoard *swboard, const char *user)
 	}
 	else if (swboard->conv == NULL)
 	{
-		swboard->conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+		swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 															user, account);
 	}
 	else
 	{
-		gaim_debug_warning("msn", "switchboard_add_user: This should not happen!\n");
+		purple_debug_warning("msn", "switchboard_add_user: This should not happen!\n");
 	}
 }
 
-static GaimConversation *
+static PurpleConversation *
 msn_switchboard_get_conv(MsnSwitchBoard *swboard)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	g_return_val_if_fail(swboard != NULL, NULL);
 
 	if (swboard->conv != NULL)
 		return swboard->conv;
 
-	gaim_debug_error("msn", "Switchboard with unassigned conversation\n");
+	purple_debug_error("msn", "Switchboard with unassigned conversation\n");
 
 	account = swboard->session->account;
 
-	return (swboard->conv = gaim_conversation_new(GAIM_CONV_TYPE_IM,
+	return (swboard->conv = purple_conversation_new(PURPLE_CONV_TYPE_IM,
 												  account, swboard->im_user));
 }
 
 static void
-msn_switchboard_report_user(MsnSwitchBoard *swboard, GaimMessageFlags flags, const char *msg)
+msn_switchboard_report_user(MsnSwitchBoard *swboard, PurpleMessageFlags flags, const char *msg)
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(msg != NULL);
 
 	if ((conv = msn_switchboard_get_conv(swboard)) != NULL)
 	{
-		gaim_conversation_write(conv, NULL, msg, flags, time(NULL));
+		purple_conversation_write(conv, NULL, msg, flags, time(NULL));
 	}
 }
 
@@ -332,7 +332,7 @@ swboard_error_helper(MsnSwitchBoard *swboard, int reason, const char *passport)
 {
 	g_return_if_fail(swboard != NULL);
 
-	gaim_debug_warning("msg", "Error: Unable to call the user %s for reason %i\n",
+	purple_debug_warning("msg", "Error: Unable to call the user %s for reason %i\n",
 					   passport ? passport : "(null)", reason);
 
 	/* TODO: if current_users > 0, this is probably a chat and an invite failed,
@@ -357,7 +357,7 @@ cal_error_helper(MsnTransaction *trans, int reason)
 
 	swboard = trans->data;
 
-	gaim_debug_warning("msn", "cal_error_helper: command %s failed for reason %i\n",trans->command,reason);
+	purple_debug_warning("msn", "cal_error_helper: command %s failed for reason %i\n",trans->command,reason);
 
 	swboard_error_helper(swboard, reason, passport);
 
@@ -445,9 +445,9 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 		g_free(pre);
 		g_free(post);
 
-		msn_switchboard_report_user(swboard, GAIM_MESSAGE_ERROR,
+		msn_switchboard_report_user(swboard, PURPLE_MESSAGE_ERROR,
 									str_reason);
-		msn_switchboard_report_user(swboard, GAIM_MESSAGE_RAW,
+		msn_switchboard_report_user(swboard, PURPLE_MESSAGE_RAW,
 									body_str);
 
 		g_free(body_str);
@@ -572,7 +572,7 @@ queue_msg(MsnSwitchBoard *swboard, MsnMessage *msg)
 	g_return_if_fail(swboard != NULL);
 	g_return_if_fail(msg     != NULL);
 
-	gaim_debug_info("msn", "Appending message to queue.\n");
+	purple_debug_info("msn", "Appending message to queue.\n");
 
 	g_queue_push_tail(swboard->msg_queue, msg);
 
@@ -586,11 +586,11 @@ process_queue(MsnSwitchBoard *swboard)
 
 	g_return_if_fail(swboard != NULL);
 
-	gaim_debug_info("msn", "Processing queue\n");
+	purple_debug_info("msn", "Processing queue\n");
 
 	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL)
 	{
-		gaim_debug_info("msn", "Sending message\n");
+		purple_debug_info("msn", "Sending message\n");
 		release_msg(swboard, msg);
 		msn_message_unref(msg);
 	}
@@ -647,7 +647,7 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	g_return_if_fail(swboard != NULL);
 
 	if (!(swboard->flag & MSN_SB_FLAG_IM) && (swboard->conv != NULL))
-		gaim_debug_error("msn_switchboard", "bye_cmd: helper bug\n");
+		purple_debug_error("msn_switchboard", "bye_cmd: helper bug\n");
 
 	if (swboard->conv == NULL)
 	{
@@ -655,10 +655,10 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_switchboard_destroy(swboard);
 	}
 	else if ((swboard->current_users > 1) ||
-			 (gaim_conversation_get_type(swboard->conv) == GAIM_CONV_TYPE_CHAT))
+			 (purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
 	{
 		/* This is a switchboard used for a chat */
-		gaim_conv_chat_remove_user(GAIM_CONV_CHAT(swboard->conv), user, NULL);
+		purple_conv_chat_remove_user(PURPLE_CONV_CHAT(swboard->conv), user, NULL);
 		swboard->current_users--;
 		if (swboard->current_users == 0)
 			msn_switchboard_destroy(swboard);
@@ -673,8 +673,8 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 iro_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 	MsnSwitchBoard *swboard;
 
 	account = cmdproc->session->account;
@@ -690,8 +690,8 @@ static void
 joi_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 	MsnSwitchBoard *swboard;
 	const char *passport;
 
@@ -771,7 +771,7 @@ ack_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 out_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	MsnSwitchBoard *swboard;
 
 	gc = cmdproc->session->account->gc;
@@ -812,7 +812,7 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	MsnSwitchBoard *swboard;
 	const char *body;
 	char *body_str;
@@ -841,7 +841,7 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 #if 0
 	if ((value = msn_message_get_attr(msg, "User-Agent")) != NULL)
 	{
-		gaim_debug_misc("msn", "User-Agent = '%s'\n", value);
+		purple_debug_misc("msn", "User-Agent = '%s'\n", value);
 	}
 #endif
 
@@ -867,19 +867,19 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if (swboard->current_users > 1 ||
 		((swboard->conv != NULL) &&
-		 gaim_conversation_get_type(swboard->conv) == GAIM_CONV_TYPE_CHAT))
+		 purple_conversation_get_type(swboard->conv) == PURPLE_CONV_TYPE_CHAT))
 	{
 		/* If current_users is always ok as it should then there is no need to
 		 * check if this is a chat. */
 		if (swboard->current_users <= 1)
-			gaim_debug_misc("msn", "plain_msg: current_users(%d)\n",
+			purple_debug_misc("msn", "plain_msg: current_users(%d)\n",
 							swboard->current_users);
 
 		serv_got_chat_in(gc, swboard->chat_id, passport, 0, body_final,
 						 time(NULL));
 		if (swboard->conv == NULL)
 		{
-			swboard->conv = gaim_find_chat(gc, swboard->chat_id);
+			swboard->conv = purple_find_chat(gc, swboard->chat_id);
 			swboard->flag |= MSN_SB_FLAG_IM;
 		}
 	}
@@ -888,8 +888,8 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		serv_got_im(gc, passport, body_final, 0, time(NULL));
 		if (swboard->conv == NULL)
 		{
-			swboard->conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
-									passport, gaim_connection_get_account(gc));
+			swboard->conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+									passport, purple_connection_get_account(gc));
 			swboard->flag |= MSN_SB_FLAG_IM;
 		}
 	}
@@ -900,7 +900,7 @@ plain_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 static void
 control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	MsnSwitchBoard *swboard;
 	char *passport;
 
@@ -912,7 +912,7 @@ control_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		msn_message_get_attr(msg, "TypingUser") != NULL)
 	{
 		serv_got_typing(gc, passport, MSN_TYPING_RECV_TIMEOUT,
-						GAIM_TYPING);
+						PURPLE_TYPING);
 	}
 }
 
@@ -940,22 +940,22 @@ nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSwitchBoard *swboard;
 	char *username, *str;
-	GaimAccount *account;
-	GaimBuddy *buddy;
+	PurpleAccount *account;
+	PurpleBuddy *buddy;
 	const char *user;
 
 	swboard = cmdproc->data;
 	account = cmdproc->session->account;
 	user = msg->remote_user;
 
-	if ((buddy = gaim_find_buddy(account, user)) != NULL)
-		username = g_markup_escape_text(gaim_buddy_get_alias(buddy), -1);
+	if ((buddy = purple_find_buddy(account, user)) != NULL)
+		username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
 	else
 		username = g_markup_escape_text(user, -1);
 
 	str = g_strdup_printf(_("%s just sent you a Nudge!"), username);
 	g_free(username);
-	msn_switchboard_report_user(swboard, GAIM_MESSAGE_SYSTEM, str);
+	msn_switchboard_report_user(swboard, PURPLE_MESSAGE_SYSTEM, str);
 	g_free(str);
 }
 
@@ -967,7 +967,7 @@ connect_cb(MsnServConn *servconn)
 {
 	MsnSwitchBoard *swboard;
 	MsnCmdProc *cmdproc;
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	cmdproc = servconn->cmdproc;
 	g_return_if_fail(cmdproc != NULL);
@@ -981,13 +981,13 @@ connect_cb(MsnServConn *servconn)
 		swboard->empty = FALSE;
 
 		msn_cmdproc_send(cmdproc, "ANS", "%s %s %s",
-						 gaim_account_get_username(account),
+						 purple_account_get_username(account),
 						 swboard->auth_key, swboard->session_id);
 	}
 	else
 	{
 		msn_cmdproc_send(cmdproc, "USR", "%s %s",
-						 gaim_account_get_username(account),
+						 purple_account_get_username(account),
 						 swboard->auth_key);
 	}
 }
@@ -1045,7 +1045,7 @@ got_cal(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 cal_timeout(MsnCmdProc *cmdproc, MsnTransaction *trans)
 {
-	gaim_debug_warning("msn", "cal_timeout: command %s timed out\n", trans->command);
+	purple_debug_warning("msn", "cal_timeout: command %s timed out\n", trans->command);
 
 	cal_error_helper(trans, MSN_SB_ERROR_UNKNOWN);
 }
@@ -1057,7 +1057,7 @@ cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	if (error == 215)
 	{
-		gaim_debug_info("msn", "Invited user already in switchboard\n");
+		purple_debug_info("msn", "Invited user already in switchboard\n");
 		return;
 	}
 	else if (error == 217)
@@ -1065,7 +1065,7 @@ cal_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 		reason = MSN_SB_ERROR_USER_OFFLINE;
 	}
 
-	gaim_debug_warning("msn", "cal_error: command %s gave error %i\n", trans->command, error);
+	purple_debug_warning("msn", "cal_error: command %s gave error %i\n", trans->command, error);
 
 	cal_error_helper(trans, reason);
 }
@@ -1133,7 +1133,7 @@ xfr_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	swboard = trans->data;
 
-	gaim_debug_info("msn", "xfr_error %i for %s: trans %x, command %s, reason %i\n",
+	purple_debug_info("msn", "xfr_error %i for %s: trans %x, command %s, reason %i\n",
 					error, (swboard->im_user ? swboard->im_user : "(null)"), trans,
 					(trans->command ? trans->command : "(null)"), reason);
 

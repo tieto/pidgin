@@ -2,9 +2,9 @@
  * @file stun.h STUN API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_STUN_H_
-#define _GAIM_STUN_H_
+#ifndef _PURPLE_STUN_H_
+#define _PURPLE_STUN_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,36 +34,36 @@ extern "C" {
 /**************************************************************************/
 /*@{*/
 
-typedef struct _GaimStunNatDiscovery GaimStunNatDiscovery;
+typedef struct _PurpleStunNatDiscovery PurpleStunNatDiscovery;
 
 typedef enum {
-	GAIM_STUN_STATUS_UNDISCOVERED = -1,
-	GAIM_STUN_STATUS_UNKNOWN, /* no STUN server reachable */
-	GAIM_STUN_STATUS_DISCOVERING,
-	GAIM_STUN_STATUS_DISCOVERED
-} GaimStunStatus;
+	PURPLE_STUN_STATUS_UNDISCOVERED = -1,
+	PURPLE_STUN_STATUS_UNKNOWN, /* no STUN server reachable */
+	PURPLE_STUN_STATUS_DISCOVERING,
+	PURPLE_STUN_STATUS_DISCOVERED
+} PurpleStunStatus;
 
 typedef enum {
-	GAIM_STUN_NAT_TYPE_PUBLIC_IP,
-	GAIM_STUN_NAT_TYPE_UNKNOWN_NAT,
-	GAIM_STUN_NAT_TYPE_FULL_CONE,
-	GAIM_STUN_NAT_TYPE_RESTRICTED_CONE,
-	GAIM_STUN_NAT_TYPE_PORT_RESTRICTED_CONE,
-	GAIM_STUN_NAT_TYPE_SYMMETRIC
-} GaimStunNatType;
+	PURPLE_STUN_NAT_TYPE_PUBLIC_IP,
+	PURPLE_STUN_NAT_TYPE_UNKNOWN_NAT,
+	PURPLE_STUN_NAT_TYPE_FULL_CONE,
+	PURPLE_STUN_NAT_TYPE_RESTRICTED_CONE,
+	PURPLE_STUN_NAT_TYPE_PORT_RESTRICTED_CONE,
+	PURPLE_STUN_NAT_TYPE_SYMMETRIC
+} PurpleStunNatType;
 
-struct _GaimStunNatDiscovery {
-	GaimStunStatus status;
-	GaimStunNatType type;
+struct _PurpleStunNatDiscovery {
+	PurpleStunStatus status;
+	PurpleStunNatType type;
 	char publicip[16];
 	char *servername;
 	time_t lookup_time;
 };
 
-typedef void (*StunCallback) (GaimStunNatDiscovery *);
+typedef void (*StunCallback) (PurpleStunNatDiscovery *);
 
 /**
- * Starts a NAT discovery. It returns a GaimStunNatDiscovery if the discovery
+ * Starts a NAT discovery. It returns a PurpleStunNatDiscovery if the discovery
  * is already done. Otherwise the callback is called when the discovery is over
  * and NULL is returned.
  *
@@ -71,12 +71,12 @@ typedef void (*StunCallback) (GaimStunNatDiscovery *);
  *           discovery would block.  If the discovery is done, this is NOT
  *           called.
  *
- * @return a GaimStunNatDiscovery which includes the public IP and the type
+ * @return a PurpleStunNatDiscovery which includes the public IP and the type
  *         of NAT or NULL is discovery would block
  */
-GaimStunNatDiscovery *gaim_stun_discover(StunCallback cb);
+PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb);
 
-void gaim_stun_init(void);
+void purple_stun_init(void);
 
 /*@}*/
 
@@ -84,4 +84,4 @@ void gaim_stun_init(void);
 }
 #endif
 
-#endif /* _GAIM_STUN_H_ */
+#endif /* _PURPLE_STUN_H_ */

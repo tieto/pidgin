@@ -1,6 +1,6 @@
 $MODULE_NAME = "GTK Frame Test";
 
-use Gaim;
+use Purple;
 
 %PLUGIN_INFO = ( 
 	perl_api_version => 2, 
@@ -57,7 +57,7 @@ sub plugin_load {
 	print "$MODULE_NAME: Loading...\n";
 	
 	
-	Gaim::debug_info("plugin_load()", "Testing $MODULE_NAME Completed.");
+	Purple::debug_info("plugin_load()", "Testing $MODULE_NAME Completed.");
 	print "#" x 80 . "\n\n";
 } 
 

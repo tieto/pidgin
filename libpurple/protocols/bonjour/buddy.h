@@ -56,7 +56,7 @@ gboolean bonjour_buddy_check(BonjourBuddy *buddy);
 /**
  * If the buddy doesn't previoulsy exists, it is created. Else, its data is changed (???)
  */
-void bonjour_buddy_add_to_gaim(GaimAccount *account, BonjourBuddy *buddy);
+void bonjour_buddy_add_to_purple(PurpleAccount *account, BonjourBuddy *buddy);
 
 /**
  * Deletes a buddy from memory.

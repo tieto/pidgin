@@ -1,7 +1,7 @@
 /**
  * @file gtkwhiteboard.h The PidginWhiteboard frontend object
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -45,7 +45,7 @@
  */
 typedef struct _PidginWhiteboard
 {
-	GaimWhiteboard *wb;      /**< backend data for this whiteboard */
+	PurpleWhiteboard *wb;      /**< backend data for this whiteboard */
 
 	GtkWidget *window;       /**< Window for the Doodle session */
 	GtkWidget *drawing_area; /**< Drawing area */
@@ -72,7 +72,7 @@ extern "C" {
  *
  * @return The GtkWhiteboard UI Operations.
  */
-GaimWhiteboardUiOps *pidgin_whiteboard_get_ui_ops( void );
+PurpleWhiteboardUiOps *pidgin_whiteboard_get_ui_ops( void );
 
 /*@}*/
 

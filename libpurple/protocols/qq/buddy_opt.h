@@ -1,9 +1,9 @@
 /**
  * @file buddy_opt.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -34,7 +34,7 @@ typedef struct _gc_and_uid gc_and_uid;
 
 struct _gc_and_uid {
 	guint32 uid;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 };
 
 void qq_approve_add_request_with_gc_and_uid(gc_and_uid *g);
@@ -45,18 +45,18 @@ void qq_block_buddy_with_gc_and_uid(gc_and_uid *g);
 
 void qq_do_nothing_with_gc_and_uid(gc_and_uid *g, const gchar *msg);
 
-void qq_process_remove_buddy_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
-void qq_process_remove_self_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
-void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *gc);
-void qq_process_add_buddy_auth_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
-GaimBuddy *qq_add_buddy_by_recv_packet(GaimConnection *gc, guint32 uid, gboolean is_known, gboolean create);
-void qq_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group);
+void qq_process_remove_buddy_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_process_remove_self_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc);
+void qq_process_add_buddy_auth_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+PurpleBuddy *qq_add_buddy_by_recv_packet(PurpleConnection *gc, guint32 uid, gboolean is_known, gboolean create);
+void qq_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 
-GaimGroup *qq_get_gaim_group(const gchar *group_name);
+PurpleGroup *qq_get_purple_group(const gchar *group_name);
 
-void qq_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group);
+void qq_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void qq_add_buddy_request_free(qq_data *qd);
 
-void qq_buddies_list_free(GaimAccount *account, qq_data *qd);
+void qq_buddies_list_free(PurpleAccount *account, qq_data *qd);
 
 #endif

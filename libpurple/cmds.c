@@ -29,20 +29,20 @@
 static GList *cmds = NULL;
 static guint next_id = 1;
 
-typedef struct _GaimCmd {
-	GaimCmdId id;
+typedef struct _PurpleCmd {
+	PurpleCmdId id;
 	gchar *cmd;
 	gchar *args;
-	GaimCmdPriority priority;
-	GaimCmdFlag flags;
+	PurpleCmdPriority priority;
+	PurpleCmdFlag flags;
 	gchar *prpl_id;
-	GaimCmdFunc func;
+	PurpleCmdFunc func;
 	gchar *help;
 	void *data;
-} GaimCmd;
+} PurpleCmd;
 
 
-static gint cmds_compare_func(const GaimCmd *a, const GaimCmd *b)
+static gint cmds_compare_func(const PurpleCmd *a, const PurpleCmd *b)
 {
 	if (a->priority > b->priority)
 		return -1;
@@ -51,13 +51,13 @@ static gint cmds_compare_func(const GaimCmd *a, const GaimCmd *b)
 	else return 0;
 }
 
-GaimCmdId gaim_cmd_register(const gchar *cmd, const gchar *args,
-                            GaimCmdPriority p, GaimCmdFlag f,
-                            const gchar *prpl_id, GaimCmdFunc func,
+PurpleCmdId purple_cmd_register(const gchar *cmd, const gchar *args,
+                            PurpleCmdPriority p, PurpleCmdFlag f,
+                            const gchar *prpl_id, PurpleCmdFunc func,
                             const gchar *helpstr, void *data)
 {
-	GaimCmdId id;
-	GaimCmd *c;
+	PurpleCmdId id;
+	PurpleCmd *c;
 
 	g_return_val_if_fail(cmd != NULL && *cmd != '\0', 0);
 	g_return_val_if_fail(args != NULL, 0);
@@ -65,7 +65,7 @@ GaimCmdId gaim_cmd_register(const gchar *cmd, const gchar *args,
 
 	id = next_id++;
 
-	c = g_new0(GaimCmd, 1);
+	c = g_new0(PurpleCmd, 1);
 	c->id = id;
 	c->cmd = g_strdup(cmd);
 	c->args = g_strdup(args);
@@ -81,7 +81,7 @@ GaimCmdId gaim_cmd_register(const gchar *cmd, const gchar *args,
 	return id;
 }
 
-static void gaim_cmd_free(GaimCmd *c)
+static void purple_cmd_free(PurpleCmd *c)
 {
 	g_free(c->cmd);
 	g_free(c->args);
@@ -90,9 +90,9 @@ static void gaim_cmd_free(GaimCmd *c)
 	g_free(c);
 }
 
-void gaim_cmd_unregister(GaimCmdId id)
+void purple_cmd_unregister(PurpleCmdId id)
 {
-	GaimCmd *c;
+	PurpleCmd *c;
 	GList *l;
 
 	for (l = cmds; l; l = l->next) {
@@ -100,7 +100,7 @@ void gaim_cmd_unregister(GaimCmdId id)
 
 		if (c->id == id) {
 			cmds = g_list_remove(cmds, c);
-			gaim_cmd_free(c);
+			purple_cmd_free(c);
 			return;
 		}
 	}
@@ -110,7 +110,7 @@ void gaim_cmd_unregister(GaimCmdId id)
  * This sets args to a NULL-terminated array of strings.  It should
  * be freed using g_strfreev().
  */
-static gboolean gaim_cmd_parse_args(GaimCmd *cmd, const gchar *s, const gchar *m, gchar ***args)
+static gboolean purple_cmd_parse_args(PurpleCmd *cmd, const gchar *s, const gchar *m, gchar ***args)
 {
 	int i;
 	const char *end, *cur;
@@ -121,7 +121,7 @@ static gboolean gaim_cmd_parse_args(GaimCmd *cmd, const gchar *s, const gchar *m
 
 	for (i = 0; cmd->args[i]; i++) {
 		if (!*cur)
-			return (cmd->flags & GAIM_CMD_FLAG_ALLOW_WRONG_ARGS);
+			return (cmd->flags & PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS);
 
 		switch (cmd->args[i]) {
 		case 'w':
@@ -137,10 +137,10 @@ static gboolean gaim_cmd_parse_args(GaimCmd *cmd, const gchar *s, const gchar *m
 		case 'W':
 		        if (!(end = strchr(cur, ' '))) {
 			  end = cur + strlen(cur);
-			  (*args)[i] = gaim_markup_slice(m, g_utf8_pointer_to_offset(s, cur), g_utf8_pointer_to_offset(s, end));
+			  (*args)[i] = purple_markup_slice(m, g_utf8_pointer_to_offset(s, cur), g_utf8_pointer_to_offset(s, end));
 			  cur = end;
 			} else {
-			  (*args)[i] = gaim_markup_slice(m, g_utf8_pointer_to_offset(s, cur), g_utf8_pointer_to_offset(s, end));
+			  (*args)[i] = purple_markup_slice(m, g_utf8_pointer_to_offset(s, cur), g_utf8_pointer_to_offset(s, end));
 			  cur = end +1;
 			}
 			break;
@@ -149,19 +149,19 @@ static gboolean gaim_cmd_parse_args(GaimCmd *cmd, const gchar *s, const gchar *m
 			cur = cur + strlen(cur);
 			break;
 		case 'S':
-			(*args)[i] = gaim_markup_slice(m, g_utf8_pointer_to_offset(s, cur), g_utf8_strlen(cur, -1) + 1);
+			(*args)[i] = purple_markup_slice(m, g_utf8_pointer_to_offset(s, cur), g_utf8_strlen(cur, -1) + 1);
 			cur = cur + strlen(cur);
 			break;
 		}
 	}
 
 	if (*cur)
-		return (cmd->flags & GAIM_CMD_FLAG_ALLOW_WRONG_ARGS);
+		return (cmd->flags & PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS);
 
 	return TRUE;
 }
 
-static void gaim_cmd_strip_current_char(gunichar c, char *s, guint len)
+static void purple_cmd_strip_current_char(gunichar c, char *s, guint len)
 {
 	int bytes;
 
@@ -169,7 +169,7 @@ static void gaim_cmd_strip_current_char(gunichar c, char *s, guint len)
 	memmove(s, s + bytes, len + 1 - bytes);
 }
 
-static void gaim_cmd_strip_cmd_from_markup(char *markup)
+static void purple_cmd_strip_cmd_from_markup(char *markup)
 {
 	guint len = strlen(markup);
 	char *s = markup;
@@ -182,20 +182,20 @@ static void gaim_cmd_strip_cmd_from_markup(char *markup)
 			if (!s)
 				return;
 		} else if (g_unichar_isspace(c)) {
-			gaim_cmd_strip_current_char(c, s, len - (s - markup));
+			purple_cmd_strip_current_char(c, s, len - (s - markup));
 			return;
 		} else {
-			gaim_cmd_strip_current_char(c, s, len - (s - markup));
+			purple_cmd_strip_current_char(c, s, len - (s - markup));
 			continue;
 		}
 		s = g_utf8_next_char(s);
 	}
 }
 
-GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
+PurpleCmdStatus purple_cmd_do_command(PurpleConversation *conv, const gchar *cmdline,
                                   const gchar *markup, gchar **error)
 {
-	GaimCmd *c;
+	PurpleCmd *c;
 	GList *l;
 	gchar *err = NULL;
 	gboolean is_im;
@@ -203,17 +203,17 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
 	const gchar *prpl_id;
 	gchar **args = NULL;
 	gchar *cmd, *rest, *mrest;
-	GaimCmdRet ret = GAIM_CMD_RET_CONTINUE;
+	PurpleCmdRet ret = PURPLE_CMD_RET_CONTINUE;
 
 	*error = NULL;
-	prpl_id = gaim_account_get_protocol_id(gaim_conversation_get_account(conv));
+	prpl_id = purple_account_get_protocol_id(purple_conversation_get_account(conv));
 
-	if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM)
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		is_im = TRUE;
-	else if (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT)
+	else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
 		is_im = FALSE;
 	else
-		return GAIM_CMD_STATUS_FAILED;
+		return PURPLE_CMD_STATUS_FAILED;
 
 	rest = strchr(cmdline, ' ');
 	if (rest) {
@@ -225,7 +225,7 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
 	}
 
 	mrest = g_strdup(markup);
-	gaim_cmd_strip_cmd_from_markup(mrest);
+	purple_cmd_strip_cmd_from_markup(mrest);
 
 	for (l = cmds; l; l = l->next) {
 		c = l->data;
@@ -236,22 +236,22 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
 		found = TRUE;
 
 		if (is_im)
-			if (!(c->flags & GAIM_CMD_FLAG_IM))
+			if (!(c->flags & PURPLE_CMD_FLAG_IM))
 				continue;
 		if (!is_im)
-			if (!(c->flags & GAIM_CMD_FLAG_CHAT))
+			if (!(c->flags & PURPLE_CMD_FLAG_CHAT))
 				continue;
 
 		right_type = TRUE;
 
-		if ((c->flags & GAIM_CMD_FLAG_PRPL_ONLY) && c->prpl_id &&
+		if ((c->flags & PURPLE_CMD_FLAG_PRPL_ONLY) && c->prpl_id &&
 		    (strcmp(c->prpl_id, prpl_id) != 0))
 			continue;
 
 		right_prpl = TRUE;
 
 		/* this checks the allow bad args flag for us */
-		if (!gaim_cmd_parse_args(c, rest, mrest, &args)) {
+		if (!purple_cmd_parse_args(c, rest, mrest, &args)) {
 			g_strfreev(args);
 			args = NULL;
 			continue;
@@ -259,7 +259,7 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
 
 		tried_cmd = TRUE;
 		ret = c->func(conv, cmd, args, &err, c->data);
-		if (ret == GAIM_CMD_RET_CONTINUE) {
+		if (ret == PURPLE_CMD_RET_CONTINUE) {
 			g_free(err);
 			err = NULL;
 			g_strfreev(args);
@@ -276,46 +276,46 @@ GaimCmdStatus gaim_cmd_do_command(GaimConversation *conv, const gchar *cmdline,
 	g_free(mrest);
 
 	if (!found)
-		return GAIM_CMD_STATUS_NOT_FOUND;
+		return PURPLE_CMD_STATUS_NOT_FOUND;
 
 	if (!right_type)
-		return GAIM_CMD_STATUS_WRONG_TYPE;
+		return PURPLE_CMD_STATUS_WRONG_TYPE;
 	if (!right_prpl)
-		return GAIM_CMD_STATUS_WRONG_PRPL;
+		return PURPLE_CMD_STATUS_WRONG_PRPL;
 	if (!tried_cmd)
-		return GAIM_CMD_STATUS_WRONG_ARGS;
+		return PURPLE_CMD_STATUS_WRONG_ARGS;
 
-	if (ret == GAIM_CMD_RET_OK) {
-		return GAIM_CMD_STATUS_OK;
+	if (ret == PURPLE_CMD_RET_OK) {
+		return PURPLE_CMD_STATUS_OK;
 	} else {
 		*error = err;
-		if (ret == GAIM_CMD_RET_CONTINUE)
-			return GAIM_CMD_STATUS_NOT_FOUND;
+		if (ret == PURPLE_CMD_RET_CONTINUE)
+			return PURPLE_CMD_STATUS_NOT_FOUND;
 		else
-			return GAIM_CMD_STATUS_FAILED;
+			return PURPLE_CMD_STATUS_FAILED;
 	}
 
 }
 
 
-GList *gaim_cmd_list(GaimConversation *conv)
+GList *purple_cmd_list(PurpleConversation *conv)
 {
 	GList *ret = NULL;
-	GaimCmd *c;
+	PurpleCmd *c;
 	GList *l;
 
 	for (l = cmds; l; l = l->next) {
 		c = l->data;
 
-		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM))
-			if (!(c->flags & GAIM_CMD_FLAG_IM))
+		if (conv && (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM))
+			if (!(c->flags & PURPLE_CMD_FLAG_IM))
 				continue;
-		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT))
-			if (!(c->flags & GAIM_CMD_FLAG_CHAT))
+		if (conv && (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT))
+			if (!(c->flags & PURPLE_CMD_FLAG_CHAT))
 				continue;
 
-		if (conv && (c->flags & GAIM_CMD_FLAG_PRPL_ONLY) && c->prpl_id &&
-		    (strcmp(c->prpl_id, gaim_account_get_protocol_id(gaim_conversation_get_account(conv))) != 0))
+		if (conv && (c->flags & PURPLE_CMD_FLAG_PRPL_ONLY) && c->prpl_id &&
+		    (strcmp(c->prpl_id, purple_account_get_protocol_id(purple_conversation_get_account(conv))) != 0))
 			continue;
 
 		ret = g_list_append(ret, c->cmd);
@@ -327,10 +327,10 @@ GList *gaim_cmd_list(GaimConversation *conv)
 }
 
 
-GList *gaim_cmd_help(GaimConversation *conv, const gchar *cmd)
+GList *purple_cmd_help(PurpleConversation *conv, const gchar *cmd)
 {
 	GList *ret = NULL;
-	GaimCmd *c;
+	PurpleCmd *c;
 	GList *l;
 
 	for (l = cmds; l; l = l->next) {
@@ -339,15 +339,15 @@ GList *gaim_cmd_help(GaimConversation *conv, const gchar *cmd)
 		if (cmd && (strcmp(cmd, c->cmd) != 0))
 			continue;
 
-		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_IM))
-			if (!(c->flags & GAIM_CMD_FLAG_IM))
+		if (conv && (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM))
+			if (!(c->flags & PURPLE_CMD_FLAG_IM))
 				continue;
-		if (conv && (gaim_conversation_get_type(conv) == GAIM_CONV_TYPE_CHAT))
-			if (!(c->flags & GAIM_CMD_FLAG_CHAT))
+		if (conv && (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT))
+			if (!(c->flags & PURPLE_CMD_FLAG_CHAT))
 				continue;
 
-		if (conv && (c->flags & GAIM_CMD_FLAG_PRPL_ONLY) && c->prpl_id &&
-		    (strcmp(c->prpl_id, gaim_account_get_protocol_id(gaim_conversation_get_account(conv))) != 0))
+		if (conv && (c->flags & PURPLE_CMD_FLAG_PRPL_ONLY) && c->prpl_id &&
+		    (strcmp(c->prpl_id, purple_account_get_protocol_id(purple_conversation_get_account(conv))) != 0))
 			continue;
 
 		ret = g_list_append(ret, c->help);

@@ -2,7 +2,7 @@
  * @file gntidle.h GNT Idle API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -37,7 +37,7 @@
  *
  * @return The UI operations structure.
  */
-GaimIdleUiOps *finch_idle_get_ui_ops(void);
+PurpleIdleUiOps *finch_idle_get_ui_ops(void);
 
 /*@}*/
 

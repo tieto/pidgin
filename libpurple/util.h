@@ -2,9 +2,9 @@
  * @file util.h Utility Functions
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,11 +22,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
- * @todo Rename the functions so that they live somewhere in the gaim
+ * @todo Rename the functions so that they live somewhere in the purple
  *       namespace.
  */
-#ifndef _GAIM_UTIL_H_
-#define _GAIM_UTIL_H_
+#ifndef _PURPLE_UTIL_H_
+#define _PURPLE_UTIL_H_
 
 #include <stdio.h>
 
@@ -37,51 +37,51 @@
 extern "C" {
 #endif
 
-typedef struct _GaimUtilFetchUrlData GaimUtilFetchUrlData;
+typedef struct _PurpleUtilFetchUrlData PurpleUtilFetchUrlData;
 
-typedef struct _GaimMenuAction
+typedef struct _PurpleMenuAction
 {
 	char *label;
-	GaimCallback callback;
+	PurpleCallback callback;
 	gpointer data;
 	GList *children;
-} GaimMenuAction;
+} PurpleMenuAction;
 
-typedef char *(*GaimInfoFieldFormatCallback)(const char *field, size_t len);
+typedef char *(*PurpleInfoFieldFormatCallback)(const char *field, size_t len);
 
 /**
  * A key-value pair.
  *
- * This is used by, among other things, gaim_gtk_combo* functions to pass in a
+ * This is used by, among other things, purple_gtk_combo* functions to pass in a
  * list of key-value pairs so it can display a user-friendly value.
  */
-typedef struct _GaimKeyValuePair
+typedef struct _PurpleKeyValuePair
 {
 	gchar *key;
 	void *value;
 
-} GaimKeyValuePair;
+} PurpleKeyValuePair;
 
 /**
- * Creates a new GaimMenuAction.
+ * Creates a new PurpleMenuAction.
  *
  * @param label    The text label to display for this action.
  * @param callback The function to be called when the action is used on
  *                 the selected item.
  * @param data     Additional data to be passed to the callback.
- * @param children A GList of GaimMenuActions to be added as a submenu
+ * @param children A GList of PurpleMenuActions to be added as a submenu
  *                 of the action.
- * @return The GaimMenuAction.
+ * @return The PurpleMenuAction.
  */
-GaimMenuAction *gaim_menu_action_new(const char *label, GaimCallback callback,
+PurpleMenuAction *purple_menu_action_new(const char *label, PurpleCallback callback,
                                      gpointer data, GList *children);
 
 /**
- * Frees a GaimMenuAction
+ * Frees a PurpleMenuAction
  *
- * @param act The GaimMenuAction to free.
+ * @param act The PurpleMenuAction to free.
  */
-void gaim_menu_action_free(GaimMenuAction *act);
+void purple_menu_action_free(PurpleMenuAction *act);
 
 /**************************************************************************/
 /** @name Base16 Functions                                                */
@@ -97,9 +97,9 @@ void gaim_menu_action_free(GaimMenuAction *act);
  * @return The base-16 string in the ASCII encoding.  Must be
  *         g_free'd when no longer needed.
  *
- * @see gaim_base16_decode()
+ * @see purple_base16_decode()
  */
-gchar *gaim_base16_encode(const guchar *data, gsize len);
+gchar *purple_base16_encode(const guchar *data, gsize len);
 
 /**
  * Converts an ASCII string of base-16 encoded data to
@@ -114,9 +114,9 @@ gchar *gaim_base16_encode(const guchar *data, gsize len);
  *
  * @return The raw data.  Must be g_free'd when no longer needed.
  *
- * @see gaim_base16_encode()
+ * @see purple_base16_encode()
  */
-guchar *gaim_base16_decode(const char *str, gsize *ret_len);
+guchar *purple_base16_decode(const char *str, gsize *ret_len);
 
 /*@}*/
 
@@ -134,9 +134,9 @@ guchar *gaim_base16_decode(const char *str, gsize *ret_len);
  * @return The base-64 string in the ASCII encoding.  Must be
  *         g_free'd when no longer needed.
  *
- * @see gaim_base64_decode()
+ * @see purple_base64_decode()
  */
-gchar *gaim_base64_encode(const guchar *data, gsize len);
+gchar *purple_base64_encode(const guchar *data, gsize len);
 
 /**
  * Converts an ASCII string of base-64 encoded data to
@@ -151,9 +151,9 @@ gchar *gaim_base64_encode(const guchar *data, gsize len);
  *
  * @return The raw data.  Must be g_free'd when no longer needed.
  *
- * @see gaim_base64_encode()
+ * @see purple_base64_encode()
  */
-guchar *gaim_base64_decode(const char *str, gsize *ret_len);
+guchar *purple_base64_decode(const char *str, gsize *ret_len);
 
 /*@}*/
 
@@ -174,7 +174,7 @@ guchar *gaim_base64_decode(const char *str, gsize *ret_len);
  *
  * @return The readable string.  Must be g_free'd when no longer needed.
  */
-guchar *gaim_quotedp_decode(const char *str, gsize *ret_len);
+guchar *purple_quotedp_decode(const char *str, gsize *ret_len);
 
 /*@}*/
 
@@ -202,7 +202,7 @@ guchar *gaim_quotedp_decode(const char *str, gsize *ret_len);
  *         converted to UTF-8.  Must be g_free'd when no longer
  *         needed.
  */
-char *gaim_mime_decode_field(const char *str);
+char *purple_mime_decode_field(const char *str);
 
 /*@}*/
 
@@ -238,7 +238,7 @@ char *gaim_mime_decode_field(const char *str);
  * @note @a format is required to be in UTF-8.  This differs from strftime(),
  *       where the format is provided in the locale charset.
  */
-const char *gaim_utf8_strftime(const char *format, const struct tm *tm);
+const char *purple_utf8_strftime(const char *format, const struct tm *tm);
 
 /**
  * Formats a time into the user's preferred short date format.
@@ -250,7 +250,7 @@ const char *gaim_utf8_strftime(const char *format, const struct tm *tm);
  *
  * @return The date, formatted as per the user's settings.
  */
-const char *gaim_date_format_short(const struct tm *tm);
+const char *purple_date_format_short(const struct tm *tm);
 
 /**
  * Formats a time into the user's preferred short date plus time format.
@@ -262,7 +262,7 @@ const char *gaim_date_format_short(const struct tm *tm);
  *
  * @return The timestamp, formatted as per the user's settings.
  */
-const char *gaim_date_format_long(const struct tm *tm);
+const char *purple_date_format_long(const struct tm *tm);
 
 /**
  * Formats a time into the user's preferred full date and time format.
@@ -274,7 +274,7 @@ const char *gaim_date_format_long(const struct tm *tm);
  *
  * @return The date and time, formatted as per the user's settings.
  */
-const char *gaim_date_format_full(const struct tm *tm);
+const char *purple_date_format_full(const struct tm *tm);
 
 /**
  * Formats a time into the user's preferred time format.
@@ -286,7 +286,7 @@ const char *gaim_date_format_full(const struct tm *tm);
  *
  * @return The time, formatted as per the user's settings.
  */
-const char *gaim_time_format(const struct tm *tm);
+const char *purple_time_format(const struct tm *tm);
 
 /**
  * Builds a time_t from the supplied information.
@@ -300,12 +300,12 @@ const char *gaim_time_format(const struct tm *tm);
  *
  * @return A time_t.
  */
-time_t gaim_time_build(int year, int month, int day, int hour,
+time_t purple_time_build(int year, int month, int day, int hour,
 					   int min, int sec);
 
-/** Used by gaim_str_to_time to indicate no timezone offset was
+/** Used by purple_str_to_time to indicate no timezone offset was
   * specified in the timestamp string. */
-#define GAIM_NO_TZ_OFF -500000
+#define PURPLE_NO_TZ_OFF -500000
 
 /**
  * Parses a timestamp in jabber, ISO8601, or MM/DD/YYYY format and returns
@@ -318,7 +318,7 @@ time_t gaim_time_build(int year, int month, int day, int hour,
  * @param tz_off    If not @c NULL, the caller can get a copy of the
  *                  timezone offset (from UTC) used to calculate the time_t
  *                  return value. Note: Zero is a valid offset. As such,
- *                  the value of the macro @c GAIM_NO_TZ_OFF indicates no
+ *                  the value of the macro @c PURPLE_NO_TZ_OFF indicates no
  *                  offset was specified (which means that the local
  *                  timezone was used in the calculation).
  * @param rest      If not @c NULL, the caller can get a pointer to the
@@ -327,7 +327,7 @@ time_t gaim_time_build(int year, int month, int day, int hour,
  *
  * @return A time_t.
  */
-time_t gaim_str_to_time(const char *timestamp, gboolean utc,
+time_t purple_str_to_time(const char *timestamp, gboolean utc,
                         struct tm *tm, long *tz_off, const char **rest);
 
 /*@}*/
@@ -353,7 +353,7 @@ time_t gaim_str_to_time(const char *timestamp, gboolean utc,
  *                    be freed with g_datalist_clear().
  * @return TRUE if the tag was found
  */
-gboolean gaim_markup_find_tag(const char *needle, const char *haystack,
+gboolean purple_markup_find_tag(const char *needle, const char *haystack,
 							  const char **start, const char **end,
 							  GData **attributes);
 
@@ -365,7 +365,7 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack,
  *
  * @param str            The string to parse.
  * @param len            The size of str.
- * @param user_info      The destination GaimNotifyUserInfo to which the new
+ * @param user_info      The destination PurpleNotifyUserInfo to which the new
  *                       field info should be added.
  * @param start_token    The beginning token.
  * @param skip           The number of characters to skip after the
@@ -380,13 +380,13 @@ gboolean gaim_markup_find_tag(const char *needle, const char *haystack,
  *
  * @return TRUE if successful, or FALSE otherwise.
  */
-gboolean gaim_markup_extract_info_field(const char *str, int len, GaimNotifyUserInfo *user_info,
+gboolean purple_markup_extract_info_field(const char *str, int len, PurpleNotifyUserInfo *user_info,
                                         const char *start_token, int skip,
                                         const char *end_token, char check_value,
                                         const char *no_value_token,
                                         const char *display_name, gboolean is_link,
                                         const char *link_prefix,
-					GaimInfoFieldFormatCallback format_cb);
+					PurpleInfoFieldFormatCallback format_cb);
 
 /**
  * Converts HTML markup to XHTML.
@@ -395,7 +395,7 @@ gboolean gaim_markup_extract_info_field(const char *str, int len, GaimNotifyUser
  * @param dest_xhtml The destination XHTML output.
  * @param dest_plain The destination plain-text output.
  */
-void gaim_markup_html_to_xhtml(const char *html, char **dest_xhtml,
+void purple_markup_html_to_xhtml(const char *html, char **dest_xhtml,
 							   char **dest_plain);
 
 /**
@@ -405,7 +405,7 @@ void gaim_markup_html_to_xhtml(const char *html, char **dest_xhtml,
  *
  * @return The new string without HTML. This must be freed.
  */
-char *gaim_markup_strip_html(const char *str);
+char *purple_markup_strip_html(const char *str);
 
 /**
  * Adds the necessary HTML code to turn URIs into HTML links in a string.
@@ -414,7 +414,7 @@ char *gaim_markup_strip_html(const char *str);
  *
  * @return The linkified text.
  */
-char *gaim_markup_linkify(const char *str);
+char *purple_markup_linkify(const char *str);
 
 /**
  * Unescapes HTML entities to their literal characters.
@@ -426,7 +426,7 @@ char *gaim_markup_linkify(const char *str);
  *
  * @return the text with HTML entities literalized
  */
-char *gaim_unescape_html(const char *html);
+char *purple_unescape_html(const char *html);
 
 /**
  * Returns a newly allocated substring of the HTML UTF-8 string "str".
@@ -438,7 +438,7 @@ char *gaim_unescape_html(const char *html);
  * Note that x and y are in character offsets, not byte offsets, and
  * are offsets into an unformatted version of str. Because of this,
  * this function may be sensitive to changes in GtkIMHtml and may break
- * when used with other UI's. libgaim users are encouraged to report and
+ * when used with other UI's. libpurple users are encouraged to report and
  * work out any problems encountered.
  *
  * @param str The input NUL terminated, HTML, UTF-8 (or ASCII) string.
@@ -449,7 +449,7 @@ char *gaim_unescape_html(const char *html);
  *
  * @return The HTML slice of string, with all formatting retained.
  */
-char *gaim_markup_slice(const char *str, guint x, guint y);
+char *purple_markup_slice(const char *str, guint x, guint y);
 
 /**
  * Returns a newly allocated string containing the name of the tag
@@ -460,7 +460,7 @@ char *gaim_markup_slice(const char *str, guint x, guint y);
  * @param tag The string starting a HTML tag.
  * @return A string containing the name of the tag.
  */
-char *gaim_markup_get_tag_name(const char *tag);
+char *purple_markup_get_tag_name(const char *tag);
 
 /*@}*/
 
@@ -475,25 +475,25 @@ char *gaim_markup_get_tag_name(const char *tag);
  *
  * @return The user's home directory.
  *
- * @see gaim_user_dir()
+ * @see purple_user_dir()
  */
-const gchar *gaim_home_dir(void);
+const gchar *purple_home_dir(void);
 
 /**
- * Returns the gaim settings directory in the user's home directory.
- * This is usually ~/.gaim
+ * Returns the purple settings directory in the user's home directory.
+ * This is usually ~/.purple
  *
- * @return The gaim settings directory.
+ * @return The purple settings directory.
  *
- * @see gaim_home_dir()
+ * @see purple_home_dir()
  */
-const char *gaim_user_dir(void);
+const char *purple_user_dir(void);
 
 /**
- * Define a custom gaim settings directory, overriding the default (user's home directory/.gaim)
+ * Define a custom purple settings directory, overriding the default (user's home directory/.purple)
  * @param dir The custom settings directory
  */
-void gaim_util_set_user_dir(const char *dir);
+void purple_util_set_user_dir(const char *dir);
 
 /**
  * Builds a complete path from the root, making any directories along
@@ -505,32 +505,32 @@ void gaim_util_set_user_dir(const char *dir);
  *
  * @return 0 for success, nonzero on any error.
  */
-int gaim_build_dir(const char *path, int mode);
+int purple_build_dir(const char *path, int mode);
 
 /**
- * Write a string of data to a file of the given name in the Gaim
- * user directory ($HOME/.gaim by default).  The data is typically
- * a serialized version of one of Gaim's config files, such as
+ * Write a string of data to a file of the given name in the Purple
+ * user directory ($HOME/.purple by default).  The data is typically
+ * a serialized version of one of Purple's config files, such as
  * prefs.xml, accounts.xml, etc.  And the string is typically
  * obtained using xmlnode_to_formatted_str.  However, this function
  * should work fine for saving binary files as well.
  *
- * @param filename The basename of the file to write in the gaim_user_dir.
+ * @param filename The basename of the file to write in the purple_user_dir.
  * @param data     A null-terminated string of data to write.
  * @param size     The size of the data to save.  If data is
  *                 null-terminated you can pass in -1.
  *
  * @return TRUE if the file was written successfully.  FALSE otherwise.
  */
-gboolean gaim_util_write_data_to_file(const char *filename, const char *data,
+gboolean purple_util_write_data_to_file(const char *filename, const char *data,
 									  size_t size);
 
 /**
  * Read the contents of a given file and parse the results into an
  * xmlnode tree structure.  This is intended to be used to read
- * Gaim's configuration xml files (prefs.xml, pounces.xml, etc.)
+ * Purple's configuration xml files (prefs.xml, pounces.xml, etc.)
  *
- * @param filename    The basename of the file to open in the gaim_user_dir.
+ * @param filename    The basename of the file to open in the purple_user_dir.
  * @param description A very short description of the contents of this
  *                    file.  This is used in error messages shown to the
  *                    user when the file can not be opened.  For example,
@@ -539,7 +539,7 @@ gboolean gaim_util_write_data_to_file(const char *filename, const char *data,
  * @return An xmlnode tree of the contents of the given file.  Or NULL, if
  *         the file does not exist or there was an error reading the file.
  */
-xmlnode *gaim_util_read_xml_from_file(const char *filename,
+xmlnode *purple_util_read_xml_from_file(const char *filename,
 									  const char *description);
 
 /**
@@ -558,7 +558,7 @@ xmlnode *gaim_util_read_xml_from_file(const char *filename,
  *
  * @return A file pointer to the temporary file, or @c NULL on failure.
  */
-FILE *gaim_mkstemp(char **path, gboolean binary);
+FILE *purple_mkstemp(char **path, gboolean binary);
 
 /**
  * Checks if the given program name is valid and executable.
@@ -567,28 +567,28 @@ FILE *gaim_mkstemp(char **path, gboolean binary);
  *
  * @return TRUE if the program is runable.
  */
-gboolean gaim_program_is_valid(const char *program);
+gboolean purple_program_is_valid(const char *program);
 
 /**
  * Check if running GNOME.
  *
  * @return TRUE if running GNOME, FALSE otherwise.
  */
-gboolean gaim_running_gnome(void);
+gboolean purple_running_gnome(void);
 
 /**
  * Check if running KDE.
  *
  * @return TRUE if running KDE, FALSE otherwise.
  */
-gboolean gaim_running_kde(void);
+gboolean purple_running_kde(void);
 
 /**
  * Check if running OS X.
  *
  * @return TRUE if running OS X, FALSE otherwise.
  */
-gboolean gaim_running_osx(void);
+gboolean purple_running_osx(void);
 
 /**
  * Returns the IP address from a socket file descriptor.
@@ -597,7 +597,7 @@ gboolean gaim_running_osx(void);
  *
  * @return The IP address, or @c NULL on error.
  */
-char *gaim_fd_get_ip(int fd);
+char *purple_fd_get_ip(int fd);
 
 /*@}*/
 
@@ -624,7 +624,7 @@ char *gaim_fd_get_ip(int fd);
  *
  * @return A pointer to the normalized version stored in a static buffer.
  */
-const char *gaim_normalize(const GaimAccount *account, const char *str);
+const char *purple_normalize(const PurpleAccount *account, const char *str);
 
 /**
  * Normalizes a string, so that it is suitable for comparison.
@@ -638,7 +638,7 @@ const char *gaim_normalize(const GaimAccount *account, const char *str);
  *
  * @return A pointer to the normalized version stored in a static buffer.
  */
-const char *gaim_normalize_nocase(const GaimAccount *account, const char *str);
+const char *purple_normalize_nocase(const PurpleAccount *account, const char *str);
 
 /**
  * Compares two strings to see if the first contains the second as
@@ -649,7 +649,7 @@ const char *gaim_normalize_nocase(const GaimAccount *account, const char *str);
  *
  * @return   TRUE if p is a prefix of s, otherwise FALSE.
  */
-gboolean gaim_str_has_prefix(const char *s, const char *p);
+gboolean purple_str_has_prefix(const char *s, const char *p);
 
 /**
  * Compares two strings to see if the second is a proper suffix
@@ -660,7 +660,7 @@ gboolean gaim_str_has_prefix(const char *s, const char *p);
  *
  * @return   TRUE if x is a a suffix of s, otherwise FALSE.
  */
-gboolean gaim_str_has_suffix(const char *s, const char *x);
+gboolean purple_str_has_suffix(const char *s, const char *x);
 
 /**
  * Duplicates a string and replaces all newline characters from the
@@ -670,7 +670,7 @@ gboolean gaim_str_has_suffix(const char *s, const char *x);
  *
  * @return The new string.  Must be g_free'd by the caller.
  */
-gchar *gaim_strdup_withhtml(const gchar *src);
+gchar *purple_strdup_withhtml(const gchar *src);
 
 /**
  * Ensures that all linefeeds have a matching carriage return.
@@ -679,7 +679,7 @@ gchar *gaim_strdup_withhtml(const gchar *src);
  *
  * @return The string with carriage returns.
  */
-char *gaim_str_add_cr(const char *str);
+char *purple_str_add_cr(const char *str);
 
 /**
  * Strips all instances of the given character from the
@@ -687,12 +687,12 @@ char *gaim_str_add_cr(const char *str);
  * is useful for stripping new line characters, for example.
  *
  * Example usage:
- * gaim_str_strip_char(my_dumb_string, '\n');
+ * purple_str_strip_char(my_dumb_string, '\n');
  *
  * @param str     The string to strip characters from.
  * @param thechar The character to strip from the given string.
  */
-void gaim_str_strip_char(char *str, char thechar);
+void purple_str_strip_char(char *str, char thechar);
 
 /**
  * Given a string, this replaces all instances of one character
@@ -704,7 +704,7 @@ void gaim_str_strip_char(char *str, char thechar);
  * @param replacement The character you want inserted in place
  *        of the delimiting character.
  */
-void gaim_util_chrreplace(char *string, char delimiter,
+void purple_util_chrreplace(char *string, char delimiter,
 						  char replacement);
 
 /**
@@ -719,7 +719,7 @@ void gaim_util_chrreplace(char *string, char delimiter,
  * @return A new string, after performing the substitution.
  *         free this with g_free().
  */
-gchar *gaim_strreplace(const char *string, const char *delimiter,
+gchar *purple_strreplace(const char *string, const char *delimiter,
 					   const char *replacement);
 
 
@@ -733,7 +733,7 @@ gchar *gaim_strreplace(const char *string, const char *delimiter,
  * @return A new string, with utf-8 replaced with numerical character
  *         references, free this with g_free()
 */
-char *gaim_utf8_ncr_encode(const char *in);
+char *purple_utf8_ncr_encode(const char *in);
 
 
 /**
@@ -746,7 +746,7 @@ char *gaim_utf8_ncr_encode(const char *in);
  * @return A new string, with numerical character references
  *         replaced with actual utf-8, free this with g_free().
  */
-char *gaim_utf8_ncr_decode(const char *in);
+char *purple_utf8_ncr_decode(const char *in);
 
 
 /**
@@ -761,7 +761,7 @@ char *gaim_utf8_ncr_decode(const char *in);
  * @return A new string, after performing the substitution.
  *         free this with g_free().
  */
-gchar *gaim_strcasereplace(const char *string, const char *delimiter,
+gchar *purple_strcasereplace(const char *string, const char *delimiter,
 						   const char *replacement);
 
 /**
@@ -773,7 +773,7 @@ gchar *gaim_strcasereplace(const char *string, const char *delimiter,
  *
  * @return the location of the substring if found, or NULL if not
  */
-const char *gaim_strcasestr(const char *haystack, const char *needle);
+const char *purple_strcasestr(const char *haystack, const char *needle);
 
 /**
  * Returns a string representing a filesize in the appropriate
@@ -783,7 +783,7 @@ const char *gaim_strcasestr(const char *haystack, const char *needle);
  *
  * @return The string in units form. This must be freed.
  */
-char *gaim_str_size_to_units(size_t size);
+char *purple_str_size_to_units(size_t size);
 
 /**
  * Converts seconds into a human-readable form.
@@ -793,7 +793,7 @@ char *gaim_str_size_to_units(size_t size);
  * @return A human-readable form, containing days, hours, minutes, and
  *         seconds.
  */
-char *gaim_str_seconds_to_string(guint sec);
+char *purple_str_seconds_to_string(guint sec);
 
 /**
  * Converts a binary string into a NUL terminated ascii string,
@@ -808,7 +808,7 @@ char *gaim_str_seconds_to_string(guint sec);
  *
  * @return A newly allocated ASCIIZ string.
  */
-char *gaim_str_binary_to_ascii(const unsigned char *binary, guint len);
+char *purple_str_binary_to_ascii(const unsigned char *binary, guint len);
 /*@}*/
 
 
@@ -817,7 +817,7 @@ char *gaim_str_binary_to_ascii(const unsigned char *binary, guint len);
 /**************************************************************************/
 /*@{*/
 
-void gaim_got_protocol_handler_uri(const char *uri);
+void purple_got_protocol_handler_uri(const char *uri);
 
 /**
  * Parses a URL, returning its host, port, file path, username and password.
@@ -831,17 +831,17 @@ void gaim_got_protocol_handler_uri(const char *uri);
  * @param ret_user The returned username.
  * @param ret_passwd The returned password.
  */
-gboolean gaim_url_parse(const char *url, char **ret_host, int *ret_port,
+gboolean purple_url_parse(const char *url, char **ret_host, int *ret_port,
 						char **ret_path, char **ret_user, char **ret_passwd);
 
 /**
  * This is the signature used for functions that act as the callback
- * to gaim_util_fetch_url() or gaim_util_fetch_url_request().
+ * to purple_util_fetch_url() or purple_util_fetch_url_request().
  *
  * @param url_data      The same value that was returned when you called
- *                      gaim_fetch_url() or gaim_fetch_url_request().
+ *                      purple_fetch_url() or purple_fetch_url_request().
  * @param user_data     The user data that your code passed into either
- *                      gaim_util_fetch_url() or gaim_util_fetch_url_request().
+ *                      purple_util_fetch_url() or purple_util_fetch_url_request().
  * @param url_text      This will be NULL on error.  Otherwise this
  *                      will contain the contents of the URL.
  * @param len           0 on error, otherwise this is the length of buf.
@@ -849,7 +849,7 @@ gboolean gaim_url_parse(const char *url, char **ret_host, int *ret_port,
  *                      a descriptive error message, and buf will be
  *                      NULL and len will be 0.
  */
-typedef void (*GaimUtilFetchUrlCallback)(GaimUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *error_message);
+typedef void (*PurpleUtilFetchUrlCallback)(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *error_message);
 
 /**
  * Fetches the data from a URL, and passes it to a callback function.
@@ -862,8 +862,8 @@ typedef void (*GaimUtilFetchUrlCallback)(GaimUtilFetchUrlData *url_data, gpointe
  * @param cb         The callback function.
  * @param data       The user data to pass to the callback function.
  */
-#define gaim_util_fetch_url(url, full, user_agent, http11, cb, data) \
-	gaim_util_fetch_url_request(url, full, user_agent, http11, NULL, \
+#define purple_util_fetch_url(url, full, user_agent, http11, cb, data) \
+	purple_util_fetch_url_request(url, full, user_agent, http11, NULL, \
 		FALSE, cb, data);
 
 /**
@@ -881,18 +881,18 @@ typedef void (*GaimUtilFetchUrlCallback)(GaimUtilFetchUrlData *url_data, gpointe
  * @param callback   The callback function.
  * @param data       The user data to pass to the callback function.
  */
-GaimUtilFetchUrlData *gaim_util_fetch_url_request(const gchar *url,
+PurpleUtilFetchUrlData *purple_util_fetch_url_request(const gchar *url,
 		gboolean full, const gchar *user_agent, gboolean http11,
 		const gchar *request, gboolean include_headers,
-		GaimUtilFetchUrlCallback callback, gpointer data);
+		PurpleUtilFetchUrlCallback callback, gpointer data);
 
 /**
  * Cancel a pending URL request started with either
- * gaim_util_fetch_url_request() or gaim_util_fetch_url().
+ * purple_util_fetch_url_request() or purple_util_fetch_url().
  *
  * @param url_data The data returned when you initiated the URL fetch.
  */
-void gaim_util_fetch_url_cancel(GaimUtilFetchUrlData *url_data);
+void purple_util_fetch_url_cancel(PurpleUtilFetchUrlData *url_data);
 
 /**
  * Decodes a URL into a plain string.
@@ -903,7 +903,7 @@ void gaim_util_fetch_url_cancel(GaimUtilFetchUrlData *url_data);
  *
  * @return The resulting string.
  */
-const char *gaim_url_decode(const char *str);
+const char *purple_url_decode(const char *str);
 
 /**
  * Encodes a URL into an escaped string.
@@ -914,7 +914,7 @@ const char *gaim_url_decode(const char *str);
  *
  * @return The resulting string.
  */
-const char *gaim_url_encode(const char *str);
+const char *purple_url_encode(const char *str);
 
 /**
  * Checks if the given email address is syntactically valid.
@@ -923,7 +923,7 @@ const char *gaim_url_encode(const char *str);
  *
  * @return True if the email address is syntactically correct.
  */
-gboolean gaim_email_is_valid(const char *address);
+gboolean purple_email_is_valid(const char *address);
 
 /**
  * This function extracts a list of URIs from the a "text/uri-list"
@@ -934,7 +934,7 @@ gboolean gaim_email_is_valid(const char *address);
  * @return A GList containing strings allocated with g_malloc
  *         that have been splitted from uri-list.
  */
-GList *gaim_uri_list_extract_uris(const gchar *uri_list);
+GList *purple_uri_list_extract_uris(const gchar *uri_list);
 
 /**
  * This function extracts a list of filenames from a
@@ -945,10 +945,10 @@ GList *gaim_uri_list_extract_uris(const gchar *uri_list);
  *
  * @return A GList containing strings allocated with g_malloc that
  *         contain the filenames in the uri-list. Note that unlike
- *         gaim_uri_list_extract_uris() function, this will discard
+ *         purple_uri_list_extract_uris() function, this will discard
  *         any non-file uri from the result value.
  */
-GList *gaim_uri_list_extract_filenames(const gchar *uri_list);
+GList *purple_uri_list_extract_filenames(const gchar *uri_list);
 
 /*@}*/
 
@@ -966,7 +966,7 @@ GList *gaim_uri_list_extract_filenames(const gchar *uri_list);
  *
  * @return The UTF-8 string, or @c NULL if it could not be converted.
  */
-gchar *gaim_utf8_try_convert(const char *str);
+gchar *purple_utf8_try_convert(const char *str);
 
 /**
  * Salvages the valid UTF-8 characters from a string, replacing any
@@ -977,7 +977,7 @@ gchar *gaim_utf8_try_convert(const char *str);
  *
  * @return A valid UTF-8 string.
  */
-gchar *gaim_utf8_salvage(const char *str);
+gchar *purple_utf8_salvage(const char *str);
 
 /**
  * Compares two UTF-8 strings case-insensitively.
@@ -989,7 +989,7 @@ gchar *gaim_utf8_salvage(const char *str);
  *          0 if @a is equal to @a b.
  *          1 if @a is greater than @a b.
  */
-int gaim_utf8_strcasecmp(const char *a, const char *b);
+int purple_utf8_strcasecmp(const char *a, const char *b);
 
 /**
  * Case insensitive search for a word in a string. The needle string
@@ -1001,7 +1001,7 @@ int gaim_utf8_strcasecmp(const char *a, const char *b);
  *
  * @return TRUE if haystack has the word, otherwise FALSE
  */
-gboolean gaim_utf8_has_word(const char *haystack, const char *needle);
+gboolean purple_utf8_has_word(const char *haystack, const char *needle);
 
 /**
  * Prints a UTF-8 message to the given file stream. The function
@@ -1011,7 +1011,7 @@ gboolean gaim_utf8_has_word(const char *haystack, const char *needle);
  * @param filestream The file stream (e.g. STDOUT or STDERR)
  * @param message    The message to print.
  */
-void gaim_print_utf8_to_console(FILE *filestream, char *message);
+void purple_print_utf8_to_console(FILE *filestream, char *message);
 
 /**
  * Checks for messages starting with "/me "
@@ -1021,7 +1021,7 @@ void gaim_print_utf8_to_console(FILE *filestream, char *message);
  *
  * @return TRUE if it starts with /me, and it has been removed, otherwise FALSE
  */
-gboolean gaim_message_meify(char *message, size_t len);
+gboolean purple_message_meify(char *message, size_t len);
 
 /**
  * Removes the underscore characters from a string used identify the mnemonic
@@ -1031,7 +1031,7 @@ gboolean gaim_message_meify(char *message, size_t len);
  *
  * @return The stripped string
  */
-char *gaim_text_strip_mnemonic(const char *in);
+char *purple_text_strip_mnemonic(const char *in);
 
 /*@}*/
 
@@ -1044,10 +1044,10 @@ char *gaim_text_strip_mnemonic(const char *in);
  *
  * @return x + 8
  */
-#define gaim_add_eight(x) ((x)+8)
+#define purple_add_eight(x) ((x)+8)
 
 /**
- * Does the reverse of gaim_escape_filename
+ * Does the reverse of purple_escape_filename
  *
  * This will change hex codes and such to their ascii equivalents.
  *
@@ -1055,7 +1055,7 @@ char *gaim_text_strip_mnemonic(const char *in);
  *
  * @return The resulting string.
  */
-const char *gaim_unescape_filename(const char *str);
+const char *purple_unescape_filename(const char *str);
 
 /**
  * Escapes filesystem-unfriendly characters from a filename
@@ -1064,22 +1064,22 @@ const char *gaim_unescape_filename(const char *str);
  *
  * @return The resulting string.
  */
-const char *gaim_escape_filename(const char *str);
+const char *purple_escape_filename(const char *str);
 
 /**
  * This is added temporarily to assist the split of oscar into aim and icq.
  * This should not be used by plugins.
  */
-const char *_gaim_oscar_convert(const char *act, const char *protocol);
+const char *_purple_oscar_convert(const char *act, const char *protocol);
 
 /**
  * Restore default signal handlers for signals which might reasonably have
  * handlers. This should be called by a fork()'d child process, since child processes
  * inherit the handlers of the parent.
  */
-void gaim_restore_default_signal_handlers(void);
+void purple_restore_default_signal_handlers(void);
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* _GAIM_UTIL_H_ */
+#endif /* _PURPLE_UTIL_H_ */

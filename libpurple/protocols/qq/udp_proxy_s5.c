@@ -1,9 +1,9 @@
 /**
  * @file udp_proxy_s5.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -26,7 +26,7 @@
 
 #include "udp_proxy_s5.h"
 
-static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition cond)
+static void _qq_s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 {
 	unsigned char buf[512];
 	struct PHB *phb = data;
@@ -34,15 +34,15 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 	int len, error;
 	socklen_t errlen;
 
-	gaim_input_remove(phb->inpa);
-	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Able to read again.\n");
+	purple_input_remove(phb->inpa);
+	purple_debug(PURPLE_DEBUG_INFO, "socks5 proxy", "Able to read again.\n");
 
 	len = read(source, buf, 10);
 	if (len < 10) {
-		gaim_debug(GAIM_DEBUG_WARNING, "socks5 proxy", "or not...\n");
+		purple_debug(PURPLE_DEBUG_WARNING, "socks5 proxy", "or not...\n");
 		close(source);
 
-		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+		if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 
 			phb->func(phb->data, source, NULL);
 		}
@@ -53,12 +53,12 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 	}
 	if ((buf[0] != 0x05) || (buf[1] != 0x00)) {
 		if ((buf[0] == 0x05) && (buf[1] < 0x09))
-			gaim_debug(GAIM_DEBUG_ERROR, "socks5 proxy", "socks5 error: %x\n", buf[1]);
+			purple_debug(PURPLE_DEBUG_ERROR, "socks5 proxy", "socks5 error: %x\n", buf[1]);
 		else
-			gaim_debug(GAIM_DEBUG_ERROR, "socks5 proxy", "Bad data.\n");
+			purple_debug(PURPLE_DEBUG_ERROR, "socks5 proxy", "Bad data.\n");
 		close(source);
 
-		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+		if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 
 			phb->func(phb->data, -1, _("Unable to connect"));
 		}
@@ -73,7 +73,7 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 	memcpy(&sin.sin_port, buf + 8, 2);
 
 	if (connect(phb->udpsock, (struct sockaddr *) &sin, sizeof(struct sockaddr_in)) < 0) {
-		gaim_debug(GAIM_DEBUG_INFO, "s5_canread_again", "connect failed: %s\n", strerror(errno));
+		purple_debug(PURPLE_DEBUG_INFO, "s5_canread_again", "connect failed: %s\n", strerror(errno));
 		close(phb->udpsock);
 		close(source);
 		g_free(phb->host);
@@ -82,16 +82,16 @@ static void _qq_s5_canread_again(gpointer data, gint source, GaimInputCondition 
 	}
 
 	error = ETIMEDOUT;
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "Connect didn't block\n");
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "Connect didn't block\n");
 	errlen = sizeof(error);
 	if (getsockopt(phb->udpsock, SOL_SOCKET, SO_ERROR, &error, &errlen) < 0) {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "getsockopt failed.\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "getsockopt failed.\n");
 		close(phb->udpsock);
 		return;
 	}
 	fcntl(phb->udpsock, F_SETFL, 0);
 
-	if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+	if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 		phb->func(phb->data, phb->udpsock, NULL);
 	}
 
@@ -107,7 +107,7 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 	int port; 
 	socklen_t ctllen;
 
-	gaim_debug(GAIM_DEBUG_INFO, "s5_sendconnect", "remote host is %s:%d\n", phb->host, phb->port);
+	purple_debug(PURPLE_DEBUG_INFO, "s5_sendconnect", "remote host is %s:%d\n", phb->host, phb->port);
 
 	buf[0] = 0x05;
 	buf[1] = 0x03;		/* udp relay */
@@ -117,7 +117,7 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 
 	ctllen = sizeof(ctlsin);
 	if (getsockname(source, (struct sockaddr *) &ctlsin, &ctllen) < 0) {
-		gaim_debug(GAIM_DEBUG_INFO, "QQ", "getsockname: %s\n", strerror(errno));
+		purple_debug(PURPLE_DEBUG_INFO, "QQ", "getsockname: %s\n", strerror(errno));
 		close(source);
 		g_free(phb->host);
 		g_free(phb);
@@ -125,7 +125,7 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 	}
 
 	phb->udpsock = socket(PF_INET, SOCK_DGRAM, 0);
-	gaim_debug(GAIM_DEBUG_INFO, "s5_sendconnect", "UDP socket=%d\n", phb->udpsock);
+	purple_debug(PURPLE_DEBUG_INFO, "s5_sendconnect", "UDP socket=%d\n", phb->udpsock);
 	if (phb->udpsock < 0) {
 		close(source);
 		g_free(phb->host);
@@ -157,9 +157,9 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 
 	if (write(source, buf, 10) < 10) {
 		close(source);
-		gaim_debug(GAIM_DEBUG_INFO, "s5_sendconnect", "packet too small\n");
+		purple_debug(PURPLE_DEBUG_INFO, "s5_sendconnect", "packet too small\n");
 
-		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+		if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 			phb->func(phb->data, -1, _("Unable to connect"));
 		}
 
@@ -168,21 +168,21 @@ static void _qq_s5_sendconnect(gpointer data, gint source)
 		return;
 	}
 
-	phb->inpa = gaim_input_add(source, GAIM_INPUT_READ, _qq_s5_canread_again, phb);
+	phb->inpa = purple_input_add(source, PURPLE_INPUT_READ, _qq_s5_canread_again, phb);
 }
 
-static void _qq_s5_readauth(gpointer data, gint source, GaimInputCondition cond)
+static void _qq_s5_readauth(gpointer data, gint source, PurpleInputCondition cond)
 {
 	unsigned char buf[512];
 	struct PHB *phb = data;
 
-	gaim_input_remove(phb->inpa);
-	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Got auth response.\n");
+	purple_input_remove(phb->inpa);
+	purple_debug(PURPLE_DEBUG_INFO, "socks5 proxy", "Got auth response.\n");
 
 	if (read(source, buf, 2) < 2) {
 		close(source);
 
-		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+		if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 
 			phb->func(phb->data, -1, _("Unable to connect"));
 		}
@@ -195,7 +195,7 @@ static void _qq_s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 	if ((buf[0] != 0x01) || (buf[1] != 0x00)) {
 		close(source);
 
-		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+		if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 
 			phb->func(phb->data, -1, _("Unable to connect"));
 		}
@@ -208,7 +208,7 @@ static void _qq_s5_readauth(gpointer data, gint source, GaimInputCondition cond)
 	_qq_s5_sendconnect(phb, source);
 }
 
-static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
+static void _qq_s5_canread(gpointer data, gint source, PurpleInputCondition cond)
 {
 	unsigned char buf[512];
 	struct PHB *phb;
@@ -216,15 +216,15 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 
 	phb = data;
 
-	gaim_input_remove(phb->inpa);
-	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Able to read.\n");
+	purple_input_remove(phb->inpa);
+	purple_debug(PURPLE_DEBUG_INFO, "socks5 proxy", "Able to read.\n");
 
 	ret = read(source, buf, 2);
 	if (ret < 2) {
-		gaim_debug(GAIM_DEBUG_INFO, "s5_canread", "packet smaller than 2 octet\n");
+		purple_debug(PURPLE_DEBUG_INFO, "s5_canread", "packet smaller than 2 octet\n");
 		close(source);
 
-		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+		if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 
 			phb->func(phb->data, -1, _("Unable to connect"));
 		}
@@ -235,10 +235,10 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	if ((buf[0] != 0x05) || (buf[1] == 0xff)) {
-		gaim_debug(GAIM_DEBUG_INFO, "s5_canread", "unsupport\n");
+		purple_debug(PURPLE_DEBUG_INFO, "s5_canread", "unsupport\n");
 		close(source);
 
-		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+		if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 
 			phb->func(phb->data, -1, _("Unable to connect"));
 		}
@@ -251,19 +251,19 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 	if (buf[1] == 0x02) {
 		unsigned int i, j;
 
-		i = strlen(gaim_proxy_info_get_username(phb->gpi));
-		j = strlen(gaim_proxy_info_get_password(phb->gpi));
+		i = strlen(purple_proxy_info_get_username(phb->gpi));
+		j = strlen(purple_proxy_info_get_password(phb->gpi));
 
 		buf[0] = 0x01;	/* version 1 */
 		buf[1] = i;
-		memcpy(buf + 2, gaim_proxy_info_get_username(phb->gpi), i);
+		memcpy(buf + 2, purple_proxy_info_get_username(phb->gpi), i);
 		buf[2 + i] = j;
-		memcpy(buf + 2 + i + 1, gaim_proxy_info_get_password(phb->gpi), j);
+		memcpy(buf + 2 + i + 1, purple_proxy_info_get_password(phb->gpi), j);
 
 		if (write(source, buf, 3 + i + j) < 3 + i + j) {
 			close(source);
 
-			if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+			if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 
 				phb->func(phb->data, -1, _("Unable to connect"));
 			}
@@ -273,14 +273,14 @@ static void _qq_s5_canread(gpointer data, gint source, GaimInputCondition cond)
 			return;
 		}
 
-		phb->inpa = gaim_input_add(source, GAIM_INPUT_READ, _qq_s5_readauth, phb);
+		phb->inpa = purple_input_add(source, PURPLE_INPUT_READ, _qq_s5_readauth, phb);
 	} else {
-		gaim_debug(GAIM_DEBUG_INFO, "s5_canread", "calling s5_sendconnect\n");
+		purple_debug(PURPLE_DEBUG_INFO, "s5_canread", "calling s5_sendconnect\n");
 		_qq_s5_sendconnect(phb, source);
 	}
 }
 
-static void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
+static void _qq_s5_canwrite(gpointer data, gint source, PurpleInputCondition cond)
 {
 	unsigned char buf[512];
 	int i;
@@ -288,16 +288,16 @@ static void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	unsigned int len;
 	int error = ETIMEDOUT;
 
-	gaim_debug(GAIM_DEBUG_INFO, "socks5 proxy", "Connected.\n");
+	purple_debug(PURPLE_DEBUG_INFO, "socks5 proxy", "Connected.\n");
 
 	if (phb->inpa > 0)
-		gaim_input_remove(phb->inpa);
+		purple_input_remove(phb->inpa);
 
 	len = sizeof(error);
 	if (getsockopt(source, SOL_SOCKET, SO_ERROR, &error, &len) < 0) {
-		gaim_debug(GAIM_DEBUG_INFO, "getsockopt", "%s\n", strerror(errno));
+		purple_debug(PURPLE_DEBUG_INFO, "getsockopt", "%s\n", strerror(errno));
 		close(source);
-		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+		if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 
 			phb->func(phb->data, -1, _("Unable to connect"));
 		}
@@ -311,7 +311,7 @@ static void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	i = 0;
 	buf[0] = 0x05;		/* SOCKS version 5 */
 
-	if (gaim_proxy_info_get_username(phb->gpi) != NULL) {
+	if (purple_proxy_info_get_username(phb->gpi) != NULL) {
 		buf[1] = 0x02;	/* two methods */
 		buf[2] = 0x00;	/* no authentication */
 		buf[3] = 0x02;	/* username/password authentication */
@@ -323,11 +323,11 @@ static void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	if (write(source, buf, i) < i) {
-		gaim_debug(GAIM_DEBUG_INFO, "write", "%s\n", strerror(errno));
-		gaim_debug(GAIM_DEBUG_ERROR, "socks5 proxy", "Unable to write\n");
+		purple_debug(PURPLE_DEBUG_INFO, "write", "%s\n", strerror(errno));
+		purple_debug(PURPLE_DEBUG_ERROR, "socks5 proxy", "Unable to write\n");
 		close(source);
 
-		if (phb->account == NULL || gaim_account_get_connection(phb->account) != NULL) {
+		if (phb->account == NULL || purple_account_get_connection(phb->account) != NULL) {
 
 			phb->func(phb->data, -1, _("Unable to connect"));
 		}
@@ -337,34 +337,34 @@ static void _qq_s5_canwrite(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	phb->inpa = gaim_input_add(source, GAIM_INPUT_READ, _qq_s5_canread, phb);
+	phb->inpa = purple_input_add(source, PURPLE_INPUT_READ, _qq_s5_canread, phb);
 }
 
 gint qq_proxy_socks5(struct PHB *phb, struct sockaddr *addr, socklen_t addrlen)
 {
 	gint fd;
-	gaim_debug(GAIM_DEBUG_INFO, "QQ",
+	purple_debug(PURPLE_DEBUG_INFO, "QQ",
 		   "Connecting to %s:%d via %s:%d using SOCKS5\n",
-		   phb->host, phb->port, gaim_proxy_info_get_host(phb->gpi), gaim_proxy_info_get_port(phb->gpi));
+		   phb->host, phb->port, purple_proxy_info_get_host(phb->gpi), purple_proxy_info_get_port(phb->gpi));
 
 	if ((fd = socket(addr->sa_family, SOCK_STREAM, 0)) < 0)
 		return -1;
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ", "proxy_sock5 return fd=%d\n", fd);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ", "proxy_sock5 return fd=%d\n", fd);
 
 	fcntl(fd, F_SETFL, O_NONBLOCK);
 	if (connect(fd, addr, addrlen) < 0) {
 		if ((errno == EINPROGRESS) || (errno == EINTR)) {
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Connect in asynchronous mode.\n");
-			phb->inpa = gaim_input_add(fd, GAIM_INPUT_WRITE, _qq_s5_canwrite, phb);
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Connect in asynchronous mode.\n");
+			phb->inpa = purple_input_add(fd, PURPLE_INPUT_WRITE, _qq_s5_canwrite, phb);
 		} else {
 			close(fd);
 			return -1;
 		}
 	} else {
-		gaim_debug(GAIM_DEBUG_MISC, "QQ", "Connect in blocking mode.\n");
+		purple_debug(PURPLE_DEBUG_MISC, "QQ", "Connect in blocking mode.\n");
 		fcntl(fd, F_SETFL, 0);
-		_qq_s5_canwrite(phb, fd, GAIM_INPUT_WRITE);
+		_qq_s5_canwrite(phb, fd, PURPLE_INPUT_WRITE);
 	}
 
 	return fd;

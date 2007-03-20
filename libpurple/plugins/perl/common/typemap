@@ -8,7 +8,7 @@ guint8					T_IV
 guint8 *				T_PTR
 time_t					T_IV
 gboolean				T_BOOL
-gpointer				T_GaimObj
+gpointer				T_PurpleObj
 gconstpointer				T_PTR
 const gchar *				T_PV
 const char *				T_PV
@@ -38,134 +38,134 @@ const xmlnode *				T_PTR
 gssize					T_IV
 const void *				T_PTR
 
-Gaim::Account				T_GaimObj
-Gaim::Account::Option			T_GaimObj
-Gaim::Account::UiOps			T_GaimObj
-Gaim::Account::UserSplit		T_GaimObj
+Purple::Account				T_PurpleObj
+Purple::Account::Option			T_PurpleObj
+Purple::Account::UiOps			T_PurpleObj
+Purple::Account::UserSplit		T_PurpleObj
 
-Gaim::Buddy::Icon			T_GaimObj
-Gaim::Buddy::Icon::Spec			T_GaimObj
-Gaim::BuddyList				T_GaimObj
-Gaim::BuddyList::Buddy			T_GaimObj
-Gaim::BuddyList::Chat			T_GaimObj
-Gaim::BuddyList::Contact		T_GaimObj
-Gaim::BuddyList::Group			T_GaimObj
-Gaim::BuddyList::Node			T_GaimObj
-Gaim::BuddyList::NodeFlags		T_IV
-Gaim::BuddyList::UiOps			T_GaimObj
+Purple::Buddy::Icon			T_PurpleObj
+Purple::Buddy::Icon::Spec			T_PurpleObj
+Purple::BuddyList				T_PurpleObj
+Purple::BuddyList::Buddy			T_PurpleObj
+Purple::BuddyList::Chat			T_PurpleObj
+Purple::BuddyList::Contact		T_PurpleObj
+Purple::BuddyList::Group			T_PurpleObj
+Purple::BuddyList::Node			T_PurpleObj
+Purple::BuddyList::NodeFlags		T_IV
+Purple::BuddyList::UiOps			T_PurpleObj
 
-Gaim::Cipher				T_GaimObj
-Gaim::CipherCaps			T_IV
-Gaim::Cipher::Ops			T_GaimObj
-Gaim::Cipher::Context			T_GaimObj
-Gaim::Cmd::Flag				T_IV
-Gaim::Cmd::Id				T_IV
-Gaim::Cmd::Priority			T_IV
-Gaim::Cmd::Ret				T_IV
-Gaim::Connection			T_GaimObj
-Gaim::Connection::UiOps			T_GaimObj
-Gaim::Conversation			T_GaimObj
-Gaim::Conversation::Chat		T_GaimObj
-Gaim::Conversation::ChatBuddy		T_GaimObj
-Gaim::Conversation::IM			T_GaimObj
-Gaim::Conversation::UiOps		T_GaimObj
-Gaim::Core				T_GaimObj
-Gaim::Core::UiOps			T_GaimObj
+Purple::Cipher				T_PurpleObj
+Purple::CipherCaps			T_IV
+Purple::Cipher::Ops			T_PurpleObj
+Purple::Cipher::Context			T_PurpleObj
+Purple::Cmd::Flag				T_IV
+Purple::Cmd::Id				T_IV
+Purple::Cmd::Priority			T_IV
+Purple::Cmd::Ret				T_IV
+Purple::Connection			T_PurpleObj
+Purple::Connection::UiOps			T_PurpleObj
+Purple::Conversation			T_PurpleObj
+Purple::Conversation::Chat		T_PurpleObj
+Purple::Conversation::ChatBuddy		T_PurpleObj
+Purple::Conversation::IM			T_PurpleObj
+Purple::Conversation::UiOps		T_PurpleObj
+Purple::Core				T_PurpleObj
+Purple::Core::UiOps			T_PurpleObj
 
-Gaim::Desktop::Item			T_GaimObj
-Gaim::DesktopItemType			T_IV
+Purple::Desktop::Item			T_PurpleObj
+Purple::DesktopItemType			T_IV
 
-Gaim::Handle				T_GaimObj
+Purple::Handle				T_PurpleObj
 
-Gaim::IconScaleRules			T_IV
+Purple::IconScaleRules			T_IV
 
-Gaim::Log				T_GaimObj
-Gaim::LogType				T_IV
-Gaim::Log::CommonLoggerData		T_GaimObj
-Gaim::Log::Logger			T_GaimObj
-Gaim::Log::ReadFlags			T_GaimObj
-Gaim::Log::Set				T_GaimObj
+Purple::Log				T_PurpleObj
+Purple::LogType				T_IV
+Purple::Log::CommonLoggerData		T_PurpleObj
+Purple::Log::Logger			T_PurpleObj
+Purple::Log::ReadFlags			T_PurpleObj
+Purple::Log::Set				T_PurpleObj
 
-Gaim::Menu::Action			T_GaimObj
+Purple::Menu::Action			T_PurpleObj
 
-Gaim::NetworkListenData			T_GaimObj
-Gaim::NetworkListenCallback		T_PTR
+Purple::NetworkListenData			T_PurpleObj
+Purple::NetworkListenCallback		T_PTR
 
-Gaim::NotifyCloseCallback		T_PTR
-Gaim::NotifyMsgType			T_IV
-Gaim::NotifySearchButtonType		T_IV
-Gaim::NotifySearchResults		T_GaimObj
-Gaim::NotifySearchColumn		T_GaimObj
-Gaim::NotifySearchButton		T_GaimObj
-Gaim::NotifyType			T_IV
-Gaim::NotifyUiOps			T_GaimObj
-Gaim::NotifyUserInfo			T_GaimObj
-Gaim::NotifyUserInfoEntry		T_GaimObj
+Purple::NotifyCloseCallback		T_PTR
+Purple::NotifyMsgType			T_IV
+Purple::NotifySearchButtonType		T_IV
+Purple::NotifySearchResults		T_PurpleObj
+Purple::NotifySearchColumn		T_PurpleObj
+Purple::NotifySearchButton		T_PurpleObj
+Purple::NotifyType			T_IV
+Purple::NotifyUiOps			T_PurpleObj
+Purple::NotifyUserInfo			T_PurpleObj
+Purple::NotifyUserInfoEntry		T_PurpleObj
 
-Gaim::Plugin				T_GaimObj
-Gaim::PluginType			T_IV
-Gaim::PluginUiInfo			T_GaimObj
-Gaim::Plugin::Action			T_GaimObj
-Gaim::Plugin::Info			T_GaimObj
-Gaim::Plugin::Loader::Info		T_GaimObj
-Gaim::Plugin::Protocol::Info		T_GaimObj
-Gaim::PrefType				T_IV
-Gaim::PluginPref			T_GaimObj
-Gaim::PluginPrefType			T_IV
-Gaim::PluginPref::Frame			T_GaimObj
-Gaim::Pounce				T_GaimObj
-Gaim::PounceEvent			T_IV
-Gaim::Presence				T_GaimObj
-Gaim::PrivacyType			T_IV
-Gaim::Privacy::UiOps			T_GaimObj
-Gaim::ProtocolOptions			T_IV
-Gaim::ProxyInfo				T_GaimObj
-Gaim::ProxyType				T_IV
+Purple::Plugin				T_PurpleObj
+Purple::PluginType			T_IV
+Purple::PluginUiInfo			T_PurpleObj
+Purple::Plugin::Action			T_PurpleObj
+Purple::Plugin::Info			T_PurpleObj
+Purple::Plugin::Loader::Info		T_PurpleObj
+Purple::Plugin::Protocol::Info		T_PurpleObj
+Purple::PrefType				T_IV
+Purple::PluginPref			T_PurpleObj
+Purple::PluginPrefType			T_IV
+Purple::PluginPref::Frame			T_PurpleObj
+Purple::Pounce				T_PurpleObj
+Purple::PounceEvent			T_IV
+Purple::Presence				T_PurpleObj
+Purple::PrivacyType			T_IV
+Purple::Privacy::UiOps			T_PurpleObj
+Purple::ProtocolOptions			T_IV
+Purple::ProxyInfo				T_PurpleObj
+Purple::ProxyType				T_IV
 
-Gaim::RequestFieldType			T_IV
-Gaim::RequestType			T_IV
-Gaim::Request::Field			T_GaimObj
-Gaim::Request::Fields			T_GaimObj
-Gaim::Request::Field::Group		T_GaimObj
-Gaim::Request::UiOps			T_GaimObj
+Purple::RequestFieldType			T_IV
+Purple::RequestType			T_IV
+Purple::Request::Field			T_PurpleObj
+Purple::Request::Fields			T_PurpleObj
+Purple::Request::Field::Group		T_PurpleObj
+Purple::Request::UiOps			T_PurpleObj
 
-Gaim::Roomlist				T_GaimObj
-Gaim::Roomlist::Room			T_GaimObj
-Gaim::Roomlist::Field			T_GaimObj
-Gaim::Roomlist::UiOps			T_GaimObj
-Gaim::RoomlistFieldType			T_IV
-Gaim::RoomlistRoomType			T_IV
+Purple::Roomlist				T_PurpleObj
+Purple::Roomlist::Room			T_PurpleObj
+Purple::Roomlist::Field			T_PurpleObj
+Purple::Roomlist::UiOps			T_PurpleObj
+Purple::RoomlistFieldType			T_IV
+Purple::RoomlistRoomType			T_IV
 
-Gaim::SavedStatus			T_GaimObj
-Gaim::SavedStatusSub			T_GaimObj
-Gaim::SoundEventID			T_IV
-Gaim::Sound::UiOps			T_GaimObj
+Purple::SavedStatus			T_PurpleObj
+Purple::SavedStatusSub			T_PurpleObj
+Purple::SoundEventID			T_IV
+Purple::Sound::UiOps			T_PurpleObj
 
-Gaim::Input::Condition			T_GaimObj
-Gaim::SslErrorType			T_IV
-Gaim::Ssl::Connection			T_GaimObj
-Gaim::Ssl::Ops				T_GaimObj
+Purple::Input::Condition			T_PurpleObj
+Purple::SslErrorType			T_IV
+Purple::Ssl::Connection			T_PurpleObj
+Purple::Ssl::Ops				T_PurpleObj
 
-Gaim::Presence				T_GaimObj
-Gaim::PresenceContext			T_IV
-Gaim::Status				T_GaimObj
-Gaim::StatusAttr			T_GaimObj
-Gaim::StatusPrimitive			T_IV
-Gaim::StatusType			T_GaimObj
-const Gaim::StatusType			T_GaimObj
+Purple::Presence				T_PurpleObj
+Purple::PresenceContext			T_IV
+Purple::Status				T_PurpleObj
+Purple::StatusAttr			T_PurpleObj
+Purple::StatusPrimitive			T_IV
+Purple::StatusType			T_PurpleObj
+const Purple::StatusType			T_PurpleObj
 
-Gaim::StoredImage			T_GaimObj
-Gaim::Stringref				T_GaimObj
-Gaim::Util::FetchUrlData	T_PTR
-Gaim::Util::InfoFieldFormatCallback	T_PTR
-Gaim::Value				T_GaimObj
+Purple::StoredImage			T_PurpleObj
+Purple::Stringref				T_PurpleObj
+Purple::Util::FetchUrlData	T_PTR
+Purple::Util::InfoFieldFormatCallback	T_PTR
+Purple::Value				T_PurpleObj
 
-Gaim::Xfer				T_GaimObj
-Gaim::XferType				T_IV
-Gaim::XferStatusType			T_IV
-Gaim::XferUiOps				T_IV
+Purple::Xfer				T_PurpleObj
+Purple::XferType				T_IV
+Purple::XferStatusType			T_IV
+Purple::XferUiOps				T_IV
 
-Gaim::XMLNode				T_GaimObj
+Purple::XMLNode				T_PurpleObj
 XMLNode::Type				T_IV
 
 /* enums */
@@ -175,29 +175,29 @@ XMLNode::Type				T_IV
 /* blist.h */
 
 /* debug.h */
-Gaim::DebugLevel			T_IV
+Purple::DebugLevel			T_IV
 
 /* conversation.h */
-Gaim::ConvChatBuddyFlags		T_IV
-Gaim::ConvUpdateType			T_IV
-Gaim::ConversationType			T_IV
-Gaim::MessageFlags			T_IV
-Gaim::TypingState			T_IV
-Gaim::UnseenState			T_IV
+Purple::ConvChatBuddyFlags		T_IV
+Purple::ConvUpdateType			T_IV
+Purple::ConversationType			T_IV
+Purple::MessageFlags			T_IV
+Purple::TypingState			T_IV
+Purple::UnseenState			T_IV
 
 /* connection.h */
-Gaim::ConnectionFlags			T_IV
-Gaim::ConnectionState			T_IV
+Purple::ConnectionFlags			T_IV
+Purple::ConnectionState			T_IV
 
 INPUT
 
-T_GaimObj
-	$var = gaim_perl_ref_object($arg)
+T_PurpleObj
+	$var = purple_perl_ref_object($arg)
 
 OUTPUT
 
-T_GaimObj
-	$arg = gaim_perl_bless_object($var, \"$type\");
+T_PurpleObj
+	$arg = purple_perl_bless_object($var, \"$type\");
 
 T_GCHAR_OWN
 	/* used when we can directly own the returned string. */

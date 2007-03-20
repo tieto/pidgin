@@ -1,5 +1,5 @@
 /*
- * gaim - Jabber Protocol Plugin
+ * purple - Jabber Protocol Plugin
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -182,9 +182,9 @@ char *jabber_get_bare_jid(const char *in)
 	return out;
 }
 
-const char *jabber_normalize(const GaimAccount *account, const char *in)
+const char *jabber_normalize(const PurpleAccount *account, const char *in)
 {
-	GaimConnection *gc = account ? account->gc : NULL;
+	PurpleConnection *gc = account ? account->gc : NULL;
 	JabberStream *js = gc ? gc->proto_data : NULL;
 	static char buf[3072]; /* maximum legal length of a jabber jid */
 	JabberID *jid;
@@ -214,19 +214,19 @@ const char *jabber_normalize(const GaimAccount *account, const char *in)
 	return buf;
 }
 
-GaimConversation *
-jabber_find_unnormalized_conv(const char *name, GaimAccount *account)
+PurpleConversation *
+jabber_find_unnormalized_conv(const char *name, PurpleAccount *account)
 {
-	GaimConversation *c = NULL;
+	PurpleConversation *c = NULL;
 	GList *cnv;
 
 	g_return_val_if_fail(name != NULL, NULL);
 
-	for(cnv = gaim_get_conversations(); cnv; cnv = cnv->next) {
-		c = (GaimConversation*)cnv->data;
-		if(gaim_conversation_get_type(c) == GAIM_CONV_TYPE_IM &&
-				!gaim_utf8_strcasecmp(name, gaim_conversation_get_name(c)) &&
-				account == gaim_conversation_get_account(c))
+	for(cnv = purple_get_conversations(); cnv; cnv = cnv->next) {
+		c = (PurpleConversation*)cnv->data;
+		if(purple_conversation_get_type(c) == PURPLE_CONV_TYPE_IM &&
+				!purple_utf8_strcasecmp(name, purple_conversation_get_name(c)) &&
+				account == purple_conversation_get_account(c))
 			return c;
 	}
 

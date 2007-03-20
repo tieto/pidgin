@@ -2,9 +2,9 @@
  * @file gtkroomlist.c GTK+ Room List UI
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -26,7 +26,7 @@
 #include "internal.h"
 #include "pidgin.h"
 #include "gtkutils.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "debug.h"
 #include "account.h"
 #include "connection.h"
@@ -46,8 +46,8 @@ typedef struct _PidginRoomlistDialog {
 	GtkWidget *join_button;
 	GtkWidget *close_button;
 
-	GaimAccount *account;
-	GaimRoomlist *roomlist;
+	PurpleAccount *account;
+	PurpleRoomlist *roomlist;
 
 	gboolean pg_needs_pulse;
 	gboolean pg_to_active;
@@ -76,27 +76,27 @@ static gint delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 
 	dialog = (PidginRoomlistDialog *) d;
 
-	if (dialog->roomlist && gaim_roomlist_get_in_progress(dialog->roomlist))
-		gaim_roomlist_cancel_get_list(dialog->roomlist);
+	if (dialog->roomlist && purple_roomlist_get_in_progress(dialog->roomlist))
+		purple_roomlist_cancel_get_list(dialog->roomlist);
 
 	if (dialog->roomlist) {
 		if (dialog->pg_to_active) {
-			gaim_timeout_remove(dialog->pg_update_to);
+			purple_timeout_remove(dialog->pg_update_to);
 			dialog->pg_to_active = FALSE;
 			/* yes, that's right, unref it twice. */
-			gaim_roomlist_unref(dialog->roomlist);
+			purple_roomlist_unref(dialog->roomlist);
 		}
 	}
 
 	/* free stuff here */
 	if (dialog->roomlist)
-		gaim_roomlist_unref(dialog->roomlist);
+		purple_roomlist_unref(dialog->roomlist);
 	g_free(dialog);
 
 	return FALSE;
 }
 
-static void dialog_select_account_cb(GObject *w, GaimAccount *account,
+static void dialog_select_account_cb(GObject *w, PurpleAccount *account,
                                      PidginRoomlistDialog *dialog)
 {
 	dialog->account = account;
@@ -104,23 +104,23 @@ static void dialog_select_account_cb(GObject *w, GaimAccount *account,
 
 static void list_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	PidginRoomlist *rl;
 
-	gc = gaim_account_get_connection(dialog->account);
+	gc = purple_account_get_connection(dialog->account);
 	if (!gc)
 		return;
 
 	if (dialog->roomlist != NULL) {
 		rl = dialog->roomlist->ui_data;
 		gtk_widget_destroy(rl->tree);
-		gaim_roomlist_unref(dialog->roomlist);
+		purple_roomlist_unref(dialog->roomlist);
 	}
 
-	dialog->roomlist = gaim_roomlist_get_list(gc);
+	dialog->roomlist = purple_roomlist_get_list(gc);
 	if (!dialog->roomlist)
 		return;
-	gaim_roomlist_ref(dialog->roomlist);
+	purple_roomlist_ref(dialog->roomlist);
 	rl = dialog->roomlist->ui_data;
 	rl->dialog = dialog;
 
@@ -129,9 +129,9 @@ static void list_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 
 	gtk_container_add(GTK_CONTAINER(dialog->sw), rl->tree);
 
-	/* some protocols (not bundled with libgaim) finish getting their
+	/* some protocols (not bundled with libpurple) finish getting their
 	 * room list immediately */
-	if(gaim_roomlist_get_in_progress(dialog->roomlist)) {
+	if(purple_roomlist_get_in_progress(dialog->roomlist)) {
 		gtk_widget_set_sensitive(dialog->stop_button, TRUE);
 		gtk_widget_set_sensitive(dialog->list_button, FALSE);
 	} else {
@@ -144,7 +144,7 @@ static void list_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 
 static void stop_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 {
-	gaim_roomlist_cancel_get_list(dialog->roomlist);
+	purple_roomlist_cancel_get_list(dialog->roomlist);
 
 	if (dialog->account_widget)
 		gtk_widget_set_sensitive(dialog->account_widget, TRUE);
@@ -164,15 +164,15 @@ static void close_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 }
 
 struct _menu_cb_info {
-	GaimRoomlist *list;
-	GaimRoomlistRoom *room;
+	PurpleRoomlist *list;
+	PurpleRoomlistRoom *room;
 };
 
 static void
 selection_changed_cb(GtkTreeSelection *selection, PidginRoomlist *grl) {
 	GtkTreeIter iter;
 	GValue val;
-	GaimRoomlistRoom *room;
+	PurpleRoomlistRoom *room;
 	static struct _menu_cb_info *info;
 	PidginRoomlistDialog *dialog;
 
@@ -182,7 +182,7 @@ selection_changed_cb(GtkTreeSelection *selection, PidginRoomlist *grl) {
 		val.g_type = 0;
 		gtk_tree_model_get_value(GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
 		room = g_value_get_pointer(&val);
-		if (!room || !(room->type & GAIM_ROOMLIST_ROOMTYPE_ROOM)) {
+		if (!room || !(room->type & PURPLE_ROOMLIST_ROOMTYPE_ROOM)) {
 			gtk_widget_set_sensitive(dialog->join_button, FALSE);
 			gtk_widget_set_sensitive(dialog->add_button, FALSE);
 			return;
@@ -207,25 +207,25 @@ selection_changed_cb(GtkTreeSelection *selection, PidginRoomlist *grl) {
 static void do_add_room_cb(GtkWidget *w, struct _menu_cb_info *info)
 {
 	char *name;
-	GaimConnection *gc = gaim_account_get_connection(info->list->account);
-	GaimPluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *gc = purple_account_get_connection(info->list->account);
+	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	if(gc != NULL)
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	if(prpl_info != NULL && prpl_info->roomlist_room_serialize)
 		name = prpl_info->roomlist_room_serialize(info->room);
 	else
 		name = g_strdup(info->room->name);
 
-	gaim_blist_request_add_chat(info->list->account, NULL, NULL, name);
+	purple_blist_request_add_chat(info->list->account, NULL, NULL, name);
 
 	g_free(name);
 }
 
 static void add_room_to_blist_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 {
-	GaimRoomlist *rl = dialog->roomlist;
+	PurpleRoomlist *rl = dialog->roomlist;
 	PidginRoomlist *grl = rl->ui_data;
 	struct _menu_cb_info *info;
 
@@ -237,12 +237,12 @@ static void add_room_to_blist_cb(GtkButton *button, PidginRoomlistDialog *dialog
 
 static void do_join_cb(GtkWidget *w, struct _menu_cb_info *info)
 {
-	gaim_roomlist_room_join(info->list, info->room);
+	purple_roomlist_room_join(info->list, info->room);
 }
 
 static void join_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 {
-	GaimRoomlist *rl = dialog->roomlist;
+	PurpleRoomlist *rl = dialog->roomlist;
 	PidginRoomlist *grl = rl->ui_data;
 	struct _menu_cb_info *info;
 
@@ -253,11 +253,11 @@ static void join_button_cb(GtkButton *button, PidginRoomlistDialog *dialog)
 }
 
 static void row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColumn *arg2,
-                      GaimRoomlist *list)
+                      PurpleRoomlist *list)
 {
 	PidginRoomlist *grl = list->ui_data;
 	GtkTreeIter iter;
-	GaimRoomlistRoom *room;
+	PurpleRoomlistRoom *room;
 	GValue val;
 	struct _menu_cb_info info;
 
@@ -265,7 +265,7 @@ static void row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColu
 	val.g_type = 0;
 	gtk_tree_model_get_value(GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
 	room = g_value_get_pointer(&val);
-	if (!room || !(room->type & GAIM_ROOMLIST_ROOMTYPE_ROOM))
+	if (!room || !(room->type & PURPLE_ROOMLIST_ROOMTYPE_ROOM))
 		return;
 
 	info.list = list;
@@ -274,12 +274,12 @@ static void row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTreeViewColu
 	do_join_cb(GTK_WIDGET(tv), &info);
 }
 
-static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, GaimRoomlist *list)
+static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, PurpleRoomlist *list)
 {
 	GtkTreePath *path;
 	PidginRoomlist *grl = list->ui_data;
 	GValue val;
-	GaimRoomlistRoom *room;
+	PurpleRoomlistRoom *room;
 	GtkTreeIter iter;
 	GtkWidget *menu;
 	static struct _menu_cb_info info; /* XXX? */
@@ -296,7 +296,7 @@ static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, GaimRoomlist
 	gtk_tree_model_get_value (GTK_TREE_MODEL(grl->model), &iter, ROOM_COLUMN, &val);
 	room = g_value_get_pointer(&val);
 
-	if (!room || !(room->type & GAIM_ROOMLIST_ROOMTYPE_ROOM))
+	if (!room || !(room->type & PURPLE_ROOMLIST_ROOMTYPE_ROOM))
 		return FALSE;
 
 	info.list = list;
@@ -316,8 +316,8 @@ static gboolean room_click_cb(GtkWidget *tv, GdkEventButton *event, GaimRoomlist
 
 static void row_expanded_cb(GtkTreeView *treeview, GtkTreeIter *arg1, GtkTreePath *arg2, gpointer user_data)
 {
-	GaimRoomlist *list = user_data;
-	GaimRoomlistRoom *category;
+	PurpleRoomlist *list = user_data;
+	PurpleRoomlistRoom *category;
 	GValue val;
 
 	val.g_type = 0;
@@ -325,17 +325,17 @@ static void row_expanded_cb(GtkTreeView *treeview, GtkTreeIter *arg1, GtkTreePat
 	category = g_value_get_pointer(&val);
 
 	if (!category->expanded_once) {
-		gaim_roomlist_expand_category(list, category);
+		purple_roomlist_expand_category(list, category);
 		category->expanded_once = TRUE;
 	}
 }
 
-static gboolean account_filter_func(GaimAccount *account)
+static gboolean account_filter_func(PurpleAccount *account)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
-	GaimPluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 	return (prpl_info->roomlist_get_list != NULL);
 }
@@ -344,12 +344,12 @@ gboolean
 pidgin_roomlist_is_showable()
 {
 	GList *c;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 
-	for (c = gaim_connections_get_all(); c != NULL; c = c->next) {
+	for (c = purple_connections_get_all(); c != NULL; c = c->next) {
 		gc = c->data;
 
-		if (account_filter_func(gaim_connection_get_account(gc)))
+		if (account_filter_func(purple_connection_get_account(gc)))
 			return TRUE;
 	}
 
@@ -357,7 +357,7 @@ pidgin_roomlist_is_showable()
 }
 
 static PidginRoomlistDialog *
-pidgin_roomlist_dialog_new_with_account(GaimAccount *account)
+pidgin_roomlist_dialog_new_with_account(PurpleAccount *account)
 {
 	PidginRoomlistDialog *dialog;
 	GtkWidget *window;
@@ -375,22 +375,22 @@ pidgin_roomlist_dialog_new_with_account(GaimAccount *account)
 	gtk_window_set_role(GTK_WINDOW(window), "room list");
 	gtk_window_set_title(GTK_WINDOW(window), _("Room List"));
 
-	gtk_container_set_border_width(GTK_CONTAINER(window), GAIM_HIG_BORDER);
+	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
 
 	/* Create the parent vbox for everything. */
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(window), vbox);
 	gtk_widget_show(vbox);
 
-	vbox2 = gtk_vbox_new(FALSE, GAIM_HIG_BORDER);
+	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 	gtk_container_add(GTK_CONTAINER(vbox), vbox2);
 	gtk_widget_show(vbox2);
 
 	/* accounts dropdown list */
-	account_hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	account_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox2), account_hbox, FALSE, FALSE, 0);
 	gtk_widget_show(account_hbox);
 
@@ -429,7 +429,7 @@ pidgin_roomlist_dialog_new_with_account(GaimAccount *account)
 
 	/* button box */
 	bbox = gtk_hbutton_box_new();
-	gtk_box_set_spacing(GTK_BOX(bbox), GAIM_HIG_BOX_SPACE);
+	gtk_box_set_spacing(GTK_BOX(bbox), PIDGIN_HIG_BOX_SPACE);
 	gtk_button_box_set_layout(GTK_BUTTON_BOX(bbox), GTK_BUTTONBOX_END);
 	gtk_box_pack_start(GTK_BOX(vbox), bbox, FALSE, TRUE, 0);
 	gtk_widget_show(bbox);
@@ -481,7 +481,7 @@ pidgin_roomlist_dialog_new_with_account(GaimAccount *account)
 	return dialog;
 }
 
-void pidgin_roomlist_dialog_show_with_account(GaimAccount *account)
+void pidgin_roomlist_dialog_show_with_account(PurpleAccount *account)
 {
 	PidginRoomlistDialog *dialog;
 
@@ -497,7 +497,7 @@ void pidgin_roomlist_dialog_show(void)
 	pidgin_roomlist_dialog_new_with_account(NULL);
 }
 
-static void pidgin_roomlist_new(GaimRoomlist *list)
+static void pidgin_roomlist_new(PurpleRoomlist *list)
 {
 	PidginRoomlist *rl;
 
@@ -564,7 +564,7 @@ _search_func(GtkTreeModel *model, gint column, const gchar *key, GtkTreeIter *it
 	return result;
 }
 
-static void pidgin_roomlist_set_fields(GaimRoomlist *list, GList *fields)
+static void pidgin_roomlist_set_fields(PurpleRoomlist *list, GList *fields)
 {
 	PidginRoomlist *grl = list->ui_data;
 	gint columns = NUM_OF_COLUMNS;
@@ -586,16 +586,16 @@ static void pidgin_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 	types[ROOM_COLUMN] = G_TYPE_POINTER;
 
 	for (j = NUM_OF_COLUMNS, l = fields; l; l = l->next, j++) {
-		GaimRoomlistField *f = l->data;
+		PurpleRoomlistField *f = l->data;
 
 		switch (f->type) {
-		case GAIM_ROOMLIST_FIELD_BOOL:
+		case PURPLE_ROOMLIST_FIELD_BOOL:
 			types[j] = G_TYPE_BOOLEAN;
 			break;
-		case GAIM_ROOMLIST_FIELD_INT:
+		case PURPLE_ROOMLIST_FIELD_INT:
 			types[j] = G_TYPE_INT;
 			break;
-		case GAIM_ROOMLIST_FIELD_STRING:
+		case PURPLE_ROOMLIST_FIELD_STRING:
 			types[j] = G_TYPE_STRING;
 			break;
 		}
@@ -628,7 +628,7 @@ static void pidgin_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 	gtk_tree_view_append_column(GTK_TREE_VIEW(tree), column);
 
 	for (j = NUM_OF_COLUMNS, l = fields; l; l = l->next, j++) {
-		GaimRoomlistField *f = l->data;
+		PurpleRoomlistField *f = l->data;
 
 		if (f->hidden)
 			continue;
@@ -641,7 +641,7 @@ static void pidgin_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 		gtk_tree_view_column_set_resizable(GTK_TREE_VIEW_COLUMN(column), TRUE);
 		gtk_tree_view_column_set_sort_column_id(GTK_TREE_VIEW_COLUMN(column), j);
 		gtk_tree_view_column_set_reorderable(GTK_TREE_VIEW_COLUMN(column), TRUE);
-		if (f->type == GAIM_ROOMLIST_FIELD_INT) {
+		if (f->type == PURPLE_ROOMLIST_FIELD_INT) {
 			gtk_tree_view_column_set_cell_data_func(column, renderer, int_cell_data_func,
 			                                        GINT_TO_POINTER(j), NULL);
 			gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(model), j, int_sort_func,
@@ -662,13 +662,13 @@ static void pidgin_roomlist_set_fields(GaimRoomlist *list, GList *fields)
 
 static gboolean pidgin_progress_bar_pulse(gpointer data)
 {
-	GaimRoomlist *list = data;
+	PurpleRoomlist *list = data;
 	PidginRoomlist *rl = list->ui_data;
 
 	if (!rl || !rl->dialog || !rl->dialog->pg_needs_pulse) {
 		if (rl && rl->dialog)
 			rl->dialog->pg_to_active = FALSE;
-		gaim_roomlist_unref(list);
+		purple_roomlist_unref(list);
 		return FALSE;
 	}
 
@@ -677,7 +677,7 @@ static gboolean pidgin_progress_bar_pulse(gpointer data)
 	return TRUE;
 }
 
-static void pidgin_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *room)
+static void pidgin_roomlist_add_room(PurpleRoomlist *list, PurpleRoomlistRoom *room)
 {
 	PidginRoomlist *rl = list->ui_data;
 	GtkTreeRowReference *rr, *parentrr = NULL;
@@ -688,13 +688,13 @@ static void pidgin_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *room)
 	gboolean append = TRUE;
 
 	rl->total_rooms++;
-	if (room->type == GAIM_ROOMLIST_ROOMTYPE_ROOM)
+	if (room->type == PURPLE_ROOMLIST_ROOMTYPE_ROOM)
 		rl->num_rooms++;
 
 	if (rl->dialog) {
 		if (!rl->dialog->pg_to_active) {
 			rl->dialog->pg_to_active = TRUE;
-			gaim_roomlist_ref(list);
+			purple_roomlist_ref(list);
 			rl->dialog->pg_update_to = g_timeout_add(100, pidgin_progress_bar_pulse, list);
 			gtk_progress_bar_pulse(GTK_PROGRESS_BAR(rl->dialog->progress));
 		} else {
@@ -705,7 +705,7 @@ static void pidgin_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *room)
 		parentrr = g_hash_table_lookup(rl->cats, room->parent);
 		path = gtk_tree_row_reference_get_path(parentrr);
 		if (path) {
-			GaimRoomlistRoom *tmproom = NULL;
+			PurpleRoomlistRoom *tmproom = NULL;
 
 			gtk_tree_model_get_iter(GTK_TREE_MODEL(rl->model), &parent, path);
 			gtk_tree_path_free(path);
@@ -723,12 +723,12 @@ static void pidgin_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *room)
 	else
 		iter = child;
 
-	if (room->type & GAIM_ROOMLIST_ROOMTYPE_CATEGORY)
+	if (room->type & PURPLE_ROOMLIST_ROOMTYPE_CATEGORY)
 		gtk_tree_store_append(rl->model, &child, &iter);
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(rl->model), &iter);
 
-	if (room->type & GAIM_ROOMLIST_ROOMTYPE_CATEGORY) {
+	if (room->type & PURPLE_ROOMLIST_ROOMTYPE_CATEGORY) {
 		rr = gtk_tree_row_reference_new(GTK_TREE_MODEL(rl->model), path);
 		g_hash_table_insert(rl->cats, room, rr);
 	}
@@ -739,14 +739,14 @@ static void pidgin_roomlist_add_room(GaimRoomlist *list, GaimRoomlistRoom *room)
 	gtk_tree_store_set(rl->model, &iter, ROOM_COLUMN, room, -1);
 
 	for (j = NUM_OF_COLUMNS, l = room->fields, k = list->fields; l && k; j++, l = l->next, k = k->next) {
-		GaimRoomlistField *f = k->data;
+		PurpleRoomlistField *f = k->data;
 		if (f->hidden)
 			continue;
 		gtk_tree_store_set(rl->model, &iter, j, l->data, -1);
 	}
 }
 
-static void pidgin_roomlist_in_progress(GaimRoomlist *list, gboolean flag)
+static void pidgin_roomlist_in_progress(PurpleRoomlist *list, gboolean flag)
 {
 	PidginRoomlist *rl = list->ui_data;
 
@@ -768,7 +768,7 @@ static void pidgin_roomlist_in_progress(GaimRoomlist *list, gboolean flag)
 	}
 }
 
-static void pidgin_roomlist_destroy(GaimRoomlist *list)
+static void pidgin_roomlist_destroy(PurpleRoomlist *list)
 {
 	PidginRoomlist *rl;
 
@@ -783,7 +783,7 @@ static void pidgin_roomlist_destroy(GaimRoomlist *list)
 	list->ui_data = NULL;
 }
 
-static GaimRoomlistUiOps ops = {
+static PurpleRoomlistUiOps ops = {
 	pidgin_roomlist_dialog_show_with_account,
 	pidgin_roomlist_new,
 	pidgin_roomlist_set_fields,
@@ -795,5 +795,5 @@ static GaimRoomlistUiOps ops = {
 
 void pidgin_roomlist_init(void)
 {
-	gaim_roomlist_set_ui_ops(&ops);
+	purple_roomlist_set_ui_ops(&ops);
 }

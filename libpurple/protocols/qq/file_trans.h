@@ -1,9 +1,9 @@
 /**
  * @file file_trans.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -59,8 +59,8 @@ enum {
 #define QQ_FILE_AGENT_PACKET_TAG 0x04
 /* #define QQ_PACKET_TAIL          0x03 */   /* all QQ text packets end with it */
 
-void qq_send_file_ctl_packet(GaimConnection *gc, guint16 packet_type, guint32 to_uid, guint8 hellobyte);
-void qq_process_recv_file(GaimConnection *gc, guint8 *data, gint len);
-/* void qq_send_file_data_packet(GaimConnection *gc, guint16 packet_type, guint8 sub_type, guint32 fragment_index, guint16 seq, guint8 *data, gint len); */
-void qq_xfer_close_file(GaimXfer *xfer);
+void qq_send_file_ctl_packet(PurpleConnection *gc, guint16 packet_type, guint32 to_uid, guint8 hellobyte);
+void qq_process_recv_file(PurpleConnection *gc, guint8 *data, gint len);
+/* void qq_send_file_data_packet(PurpleConnection *gc, guint16 packet_type, guint8 sub_type, guint32 fragment_index, guint16 seq, guint8 *data, gint len); */
+void qq_xfer_close_file(PurpleXfer *xfer);
 #endif

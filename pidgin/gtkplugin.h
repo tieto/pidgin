@@ -2,7 +2,7 @@
  * @file gtkplugin.h GTK+ Plugin API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -35,7 +35,7 @@ typedef struct _PidginPluginUiInfo PidginPluginUiInfo;
  */
 struct _PidginPluginUiInfo
 {
-	GtkWidget *(*get_config_frame)(GaimPlugin *plugin);
+	GtkWidget *(*get_config_frame)(PurplePlugin *plugin);
 
 	int page_num;                                         /**< Reserved */
 };
@@ -58,7 +58,7 @@ struct _PidginPluginUiInfo
  * @return The frame, if the plugin is a GTK+ plugin and provides a
  *         configuration frame.
  */
-GtkWidget *pidgin_plugin_get_config_frame(GaimPlugin *plugin);
+GtkWidget *pidgin_plugin_get_config_frame(PurplePlugin *plugin);
 
 /**
  * Saves all loaded plugins.

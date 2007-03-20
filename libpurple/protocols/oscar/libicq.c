@@ -1,6 +1,6 @@
-/* gaim
+/* purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -27,13 +27,13 @@
 
 #include "oscarcommon.h"
 
-static GaimPluginProtocolInfo prpl_info =
+static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_IM_IMAGE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	{"gif,jpeg,bmp,ico", 48, 48, 50, 50, 7168,
-		GAIM_ICON_SCALE_SEND | GAIM_ICON_SCALE_DISPLAY},	/* icon_spec */
+		PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY},	/* icon_spec */
 	oscar_list_icon_icq,		/* list_icon */
 	oscar_list_emblem,		/* list_emblems */
 	oscar_status_text,		/* status_text */
@@ -94,16 +94,16 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL,					/* roomlist_room_serialize */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	"prpl-icq",                                     /**< id             */
 	"ICQ",                                        /**< name           */
@@ -113,7 +113,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("ICQ Protocol Plugin"),
 	NULL,                                             /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	NULL,                                             /**< load           */
 	NULL,                                             /**< unload         */
@@ -126,14 +126,14 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	GaimAccountOption *option;
+	PurpleAccountOption *option;
 
-	oscar_init(GAIM_PLUGIN_PROTOCOL_INFO(plugin));
+	oscar_init(PURPLE_PLUGIN_PROTOCOL_INFO(plugin));
 
-	option = gaim_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
+	option = purple_account_option_string_new(_("Encoding"), "encoding", OSCAR_DEFAULT_CUSTOM_ENCODING);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 }
 
-GAIM_INIT_PLUGIN(icq, init_plugin, info);
+PURPLE_INIT_PLUGIN(icq, init_plugin, info);

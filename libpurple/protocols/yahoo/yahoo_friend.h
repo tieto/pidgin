@@ -1,9 +1,9 @@
 /**
  * @file yahoo_friend.h The Yahoo! protocol plugin YahooFriend object
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -50,8 +50,8 @@ typedef struct _YahooFriend {
 	int protocol; /* 1=LCS, 2=MSN*/
 } YahooFriend;
 
-YahooFriend *yahoo_friend_find(GaimConnection *gc, const char *name);
-YahooFriend *yahoo_friend_find_or_new(GaimConnection *gc, const char *name);
+YahooFriend *yahoo_friend_find(PurpleConnection *gc, const char *name);
+YahooFriend *yahoo_friend_find_or_new(PurpleConnection *gc, const char *name);
 
 void yahoo_friend_set_ip(YahooFriend *f, const char *ip);
 const char *yahoo_friend_get_ip(YahooFriend *f);
@@ -67,8 +67,8 @@ gboolean yahoo_friend_get_buddy_icon_need_request(YahooFriend *f);
 
 void yahoo_friend_free(gpointer p);
 
-void yahoo_process_presence(GaimConnection *gc, struct yahoo_packet *pkt);
-void yahoo_friend_update_presence(GaimConnection *gc, const char *name,
+void yahoo_process_presence(PurpleConnection *gc, struct yahoo_packet *pkt);
+void yahoo_friend_update_presence(PurpleConnection *gc, const char *name,
 		YahooPresenceVisibility presence);
 
 #endif /* _YAHOO_FRIEND_H_ */

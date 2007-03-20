@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -84,21 +84,21 @@ struct MD5Context {
 }
 
 static void
-md5_init(GaimCipherContext *context, gpointer extra) {
+md5_init(PurpleCipherContext *context, gpointer extra) {
 	struct MD5Context *md5_context;
 
 	md5_context = g_new0(struct MD5Context, 1);
 
-	gaim_cipher_context_set_data(context, md5_context);
+	purple_cipher_context_set_data(context, md5_context);
 
-	gaim_cipher_context_reset(context, extra);
+	purple_cipher_context_reset(context, extra);
 }
 
 static void
-md5_reset(GaimCipherContext *context, gpointer extra) {
+md5_reset(PurpleCipherContext *context, gpointer extra) {
 	struct MD5Context *md5_context;
 
-	md5_context = gaim_cipher_context_get_data(context);
+	md5_context = purple_cipher_context_get_data(context);
 
 	md5_context->total[0] = 0;
 	md5_context->total[1] = 0;
@@ -112,12 +112,12 @@ md5_reset(GaimCipherContext *context, gpointer extra) {
 }
 
 static void
-md5_uninit(GaimCipherContext *context) {
+md5_uninit(PurpleCipherContext *context) {
 	struct MD5Context *md5_context;
 
-	gaim_cipher_context_reset(context, NULL);
+	purple_cipher_context_reset(context, NULL);
 
-	md5_context = gaim_cipher_context_get_data(context);
+	md5_context = purple_cipher_context_get_data(context);
 	memset(md5_context, 0, sizeof(md5_context));
 
 	g_free(md5_context);
@@ -245,13 +245,13 @@ md5_process(struct MD5Context *md5_context, const guchar data[64]) {
 }
 
 static void
-md5_append(GaimCipherContext *context, const guchar *data, size_t len) {
+md5_append(PurpleCipherContext *context, const guchar *data, size_t len) {
 	struct MD5Context *md5_context = NULL;
 	guint32 left = 0, fill = 0;
 
 	g_return_if_fail(context != NULL);
 
-	md5_context = gaim_cipher_context_get_data(context);
+	md5_context = purple_cipher_context_get_data(context);
 	g_return_if_fail(md5_context != NULL);
 
 	left = md5_context->total[0] & 0x3F;
@@ -283,7 +283,7 @@ md5_append(GaimCipherContext *context, const guchar *data, size_t len) {
 }
 
 static gboolean
-md5_digest(GaimCipherContext *context, size_t in_len, guchar digest[16],
+md5_digest(PurpleCipherContext *context, size_t in_len, guchar digest[16],
 		   size_t *out_len)
 {
 	struct MD5Context *md5_context = NULL;
@@ -299,7 +299,7 @@ md5_digest(GaimCipherContext *context, size_t in_len, guchar digest[16],
 
 	g_return_val_if_fail(in_len >= 16, FALSE);
 
-	md5_context = gaim_cipher_context_get_data(context);
+	md5_context = purple_cipher_context_get_data(context);
 
 	high = (md5_context->total[0] >> 29)
 		 | (md5_context->total[1] << 3);
@@ -325,7 +325,7 @@ md5_digest(GaimCipherContext *context, size_t in_len, guchar digest[16],
 	return TRUE;
 }
 
-static GaimCipherOps MD5Ops = {
+static PurpleCipherOps MD5Ops = {
 	NULL,			/* Set option */
 	NULL,			/* Get option */
 	md5_init,		/* init */
@@ -472,11 +472,11 @@ static inline void md4_transform_helper(struct MD4_Context *ctx)
 }
 
 static void
-md4_init(GaimCipherContext *context, gpointer extra) {
+md4_init(PurpleCipherContext *context, gpointer extra) {
 	struct MD4_Context *mctx;
 	mctx = g_new0(struct MD4_Context, 1);
-	gaim_cipher_context_set_data(context, mctx);
-	gaim_cipher_context_reset(context, extra);
+	purple_cipher_context_set_data(context, mctx);
+	purple_cipher_context_reset(context, extra);
 
 	mctx->hash[0] = 0x67452301;
 	mctx->hash[1] = 0xefcdab89;
@@ -486,10 +486,10 @@ md4_init(GaimCipherContext *context, gpointer extra) {
 }
 
 static void
-md4_reset(GaimCipherContext *context, gpointer extra) {
+md4_reset(PurpleCipherContext *context, gpointer extra) {
 	struct MD4_Context *mctx;
 
-	mctx = gaim_cipher_context_get_data(context);
+	mctx = purple_cipher_context_get_data(context);
 
 	mctx->hash[0] = 0x67452301;
 	mctx->hash[1] = 0xefcdab89;
@@ -499,9 +499,9 @@ md4_reset(GaimCipherContext *context, gpointer extra) {
 }
 
 static void
-md4_append(GaimCipherContext *context, const guchar *data, size_t len) 
+md4_append(PurpleCipherContext *context, const guchar *data, size_t len) 
 {
-	struct MD4_Context *mctx = gaim_cipher_context_get_data(context);
+	struct MD4_Context *mctx = purple_cipher_context_get_data(context);
 	const guint32 avail = sizeof(mctx->block) - (mctx->byte_count & 0x3f);
 
 	mctx->byte_count += len;
@@ -530,10 +530,10 @@ md4_append(GaimCipherContext *context, const guchar *data, size_t len)
 }
 
 static gboolean
-md4_digest(GaimCipherContext *context, size_t in_len, guchar *out,
+md4_digest(PurpleCipherContext *context, size_t in_len, guchar *out,
 		                   size_t *out_len)
 {
-	struct MD4_Context *mctx = gaim_cipher_context_get_data(context);
+	struct MD4_Context *mctx = purple_cipher_context_get_data(context);
 	const unsigned int offset = mctx->byte_count & 0x3f;
 	char *p = (char *)mctx->block + offset;
 	int padding = 56 - (offset + 1);
@@ -562,19 +562,19 @@ md4_digest(GaimCipherContext *context, size_t in_len, guchar *out,
 }
 
 static void
-md4_uninit(GaimCipherContext *context) {
+md4_uninit(PurpleCipherContext *context) {
 	struct MD4_Context *md4_context;
 
-	gaim_cipher_context_reset(context, NULL);
+	purple_cipher_context_reset(context, NULL);
 
-	md4_context = gaim_cipher_context_get_data(context);
+	md4_context = purple_cipher_context_get_data(context);
 	memset(md4_context, 0, sizeof(md4_context));
 
 	g_free(md4_context);
 	md4_context = NULL;
 }
 
-static GaimCipherOps MD4Ops = {
+static PurpleCipherOps MD4Ops = {
 	NULL,                   /* Set option */
 	NULL,                   /* Get option */
 	md4_init,               /* init */
@@ -898,9 +898,9 @@ des_key_schedule (const guint8 * rawkey, guint32 * subkey)
  *  Does not check for weak keys.
  **/
 static void
-des_set_key (GaimCipherContext *context, const guchar * key)
+des_set_key (PurpleCipherContext *context, const guchar * key)
 {
-	struct _des_ctx *ctx = gaim_cipher_context_get_data(context);
+	struct _des_ctx *ctx = purple_cipher_context_get_data(context);
 	int i;
 
 	des_key_schedule (key, ctx->encrypt_subkeys);
@@ -945,14 +945,14 @@ des_ecb_crypt (struct _des_ctx *ctx, const guint8 * from, guint8 * to, int mode)
 }
 
 static gint
-des_encrypt(GaimCipherContext *context, const guchar data[],
+des_encrypt(PurpleCipherContext *context, const guchar data[],
 	    size_t len, guchar output[], size_t *outlen) {
 	int offset = 0;
 	int i = 0;
 	int tmp;
 	guint8 buf[8] = {0,0,0,0,0,0,0,0};
 	while(offset+8<=len) {
-		des_ecb_crypt(gaim_cipher_context_get_data(context),
+		des_ecb_crypt(purple_cipher_context_get_data(context),
 				data+offset,
 				output+offset,
 				0);
@@ -966,7 +966,7 @@ des_encrypt(GaimCipherContext *context, const guchar data[],
 			buf[i++] = data[tmp];
 			tmp++;
 		}
-		des_ecb_crypt(gaim_cipher_context_get_data(context),
+		des_ecb_crypt(purple_cipher_context_get_data(context),
 				buf,
 				output+offset,
 				0);
@@ -975,24 +975,24 @@ des_encrypt(GaimCipherContext *context, const guchar data[],
 }
 
 static void
-des_init(GaimCipherContext *context, gpointer extra) {
+des_init(PurpleCipherContext *context, gpointer extra) {
 	struct _des_ctx *mctx;
 	mctx = g_new0(struct _des_ctx, 1);
-	gaim_cipher_context_set_data(context, mctx);
+	purple_cipher_context_set_data(context, mctx);
 }
 
 static void
-des_uninit(GaimCipherContext *context) {
+des_uninit(PurpleCipherContext *context) {
 	struct _des_ctx *des_context;
 
-	des_context = gaim_cipher_context_get_data(context);
+	des_context = purple_cipher_context_get_data(context);
 	memset(des_context, 0, sizeof(des_context));
 
 	g_free(des_context);
 	des_context = NULL;
 }
 
-static GaimCipherOps DESOps = {
+static PurpleCipherOps DESOps = {
 	NULL,                   /* Set option */
 	NULL,                   /* Get option */
 	des_init,               /* init */
@@ -1087,10 +1087,10 @@ sha1_hash_block(struct SHA1Context *sha1_ctx) {
 }
 
 static void
-sha1_set_opt(GaimCipherContext *context, const gchar *name, void *value) {
+sha1_set_opt(PurpleCipherContext *context, const gchar *name, void *value) {
 	struct SHA1Context *ctx;
 
-	ctx = gaim_cipher_context_get_data(context);
+	ctx = purple_cipher_context_get_data(context);
 
 	if(!strcmp(name, "sizeHi")) {
 		ctx->sizeHi = GPOINTER_TO_INT(value);
@@ -1102,10 +1102,10 @@ sha1_set_opt(GaimCipherContext *context, const gchar *name, void *value) {
 }
 
 static void *
-sha1_get_opt(GaimCipherContext *context, const gchar *name) {
+sha1_get_opt(PurpleCipherContext *context, const gchar *name) {
 	struct SHA1Context *ctx;
 
-	ctx = gaim_cipher_context_get_data(context);
+	ctx = purple_cipher_context_get_data(context);
 
 	if(!strcmp(name, "sizeHi")) {
 		return GINT_TO_POINTER(ctx->sizeHi);
@@ -1119,22 +1119,22 @@ sha1_get_opt(GaimCipherContext *context, const gchar *name) {
 }
 
 static void
-sha1_init(GaimCipherContext *context, void *extra) {
+sha1_init(PurpleCipherContext *context, void *extra) {
 	struct SHA1Context *sha1_ctx;
 
 	sha1_ctx = g_new0(struct SHA1Context, 1);
 
-	gaim_cipher_context_set_data(context, sha1_ctx);
+	purple_cipher_context_set_data(context, sha1_ctx);
 
-	gaim_cipher_context_reset(context, extra);
+	purple_cipher_context_reset(context, extra);
 }
 
 static void
-sha1_reset(GaimCipherContext *context, void *extra) {
+sha1_reset(PurpleCipherContext *context, void *extra) {
 	struct SHA1Context *sha1_ctx;
 	gint i;
 
-	sha1_ctx = gaim_cipher_context_get_data(context);
+	sha1_ctx = purple_cipher_context_get_data(context);
 
 	g_return_if_fail(sha1_ctx);
 
@@ -1153,12 +1153,12 @@ sha1_reset(GaimCipherContext *context, void *extra) {
 }
 
 static void
-sha1_uninit(GaimCipherContext *context) {
+sha1_uninit(PurpleCipherContext *context) {
 	struct SHA1Context *sha1_ctx;
 
-	gaim_cipher_context_reset(context, NULL);
+	purple_cipher_context_reset(context, NULL);
 
-	sha1_ctx = gaim_cipher_context_get_data(context);
+	sha1_ctx = purple_cipher_context_get_data(context);
 
 	memset(sha1_ctx, 0, sizeof(struct SHA1Context));
 
@@ -1168,11 +1168,11 @@ sha1_uninit(GaimCipherContext *context) {
 
 
 static void
-sha1_append(GaimCipherContext *context, const guchar *data, size_t len) {
+sha1_append(PurpleCipherContext *context, const guchar *data, size_t len) {
 	struct SHA1Context *sha1_ctx;
 	gint i;
 
-	sha1_ctx = gaim_cipher_context_get_data(context);
+	sha1_ctx = purple_cipher_context_get_data(context);
 
 	g_return_if_fail(sha1_ctx);
 
@@ -1191,7 +1191,7 @@ sha1_append(GaimCipherContext *context, const guchar *data, size_t len) {
 }
 
 static gboolean
-sha1_digest(GaimCipherContext *context, size_t in_len, guchar digest[20],
+sha1_digest(PurpleCipherContext *context, size_t in_len, guchar digest[20],
 			size_t *out_len)
 {
 	struct SHA1Context *sha1_ctx;
@@ -1201,7 +1201,7 @@ sha1_digest(GaimCipherContext *context, size_t in_len, guchar digest[20],
 
 	g_return_val_if_fail(in_len >= 20, FALSE);
 
-	sha1_ctx = gaim_cipher_context_get_data(context);
+	sha1_ctx = purple_cipher_context_get_data(context);
 
 	g_return_val_if_fail(sha1_ctx, FALSE);
 
@@ -1215,17 +1215,17 @@ sha1_digest(GaimCipherContext *context, size_t in_len, guchar digest[20],
 	padlen[7] = (guchar)((sha1_ctx->sizeLo >> 0) & 255);
 
 	/* pad with a 1, then zeroes, then length */
-	gaim_cipher_context_append(context, &pad0x80, 1);
+	purple_cipher_context_append(context, &pad0x80, 1);
 	while(sha1_ctx->lenW != 56)
-		gaim_cipher_context_append(context, &pad0x00, 1);
-	gaim_cipher_context_append(context, padlen, 8);
+		purple_cipher_context_append(context, &pad0x00, 1);
+	purple_cipher_context_append(context, padlen, 8);
 
 	for(i = 0; i < 20; i++) {
 		digest[i] = (guchar)(sha1_ctx->H[i / 4] >> 24);
 		sha1_ctx->H[i / 4] <<= 8;
 	}
 
-	gaim_cipher_context_reset(context, NULL);
+	purple_cipher_context_reset(context, NULL);
 
 	if(out_len)
 		*out_len = 20;
@@ -1233,7 +1233,7 @@ sha1_digest(GaimCipherContext *context, size_t in_len, guchar digest[20],
 	return TRUE;
 }
 
-static GaimCipherOps SHA1Ops = {
+static PurpleCipherOps SHA1Ops = {
 	sha1_set_opt,	/* Set Option		*/
 	sha1_get_opt,	/* Get Option		*/
 	sha1_init,		/* init				*/
@@ -1253,14 +1253,14 @@ static GaimCipherOps SHA1Ops = {
 /*******************************************************************************
  * Structs
  ******************************************************************************/
-struct _GaimCipher {
+struct _PurpleCipher {
 	gchar *name;
-	GaimCipherOps *ops;
+	PurpleCipherOps *ops;
 	guint ref;
 };
 
-struct _GaimCipherContext {
-	GaimCipher *cipher;
+struct _PurpleCipherContext {
+	PurpleCipher *cipher;
 	gpointer data;
 };
 
@@ -1270,18 +1270,18 @@ struct _GaimCipherContext {
 static GList *ciphers = NULL;
 
 /******************************************************************************
- * GaimCipher API
+ * PurpleCipher API
  *****************************************************************************/
 const gchar *
-gaim_cipher_get_name(GaimCipher *cipher) {
+purple_cipher_get_name(PurpleCipher *cipher) {
 	g_return_val_if_fail(cipher, NULL);
 
 	return cipher->name;
 }
 
 guint
-gaim_cipher_get_capabilities(GaimCipher *cipher) {
-	GaimCipherOps *ops = NULL;
+purple_cipher_get_capabilities(PurpleCipher *cipher) {
+	PurpleCipherOps *ops = NULL;
 	guint caps = 0;
 
 	g_return_val_if_fail(cipher, 0);
@@ -1290,80 +1290,80 @@ gaim_cipher_get_capabilities(GaimCipher *cipher) {
 	g_return_val_if_fail(ops, 0);
 
 	if(ops->set_option)
-		caps |= GAIM_CIPHER_CAPS_SET_OPT;
+		caps |= PURPLE_CIPHER_CAPS_SET_OPT;
 	if(ops->get_option)
-		caps |= GAIM_CIPHER_CAPS_GET_OPT;
+		caps |= PURPLE_CIPHER_CAPS_GET_OPT;
 	if(ops->init)
-		caps |= GAIM_CIPHER_CAPS_INIT;
+		caps |= PURPLE_CIPHER_CAPS_INIT;
 	if(ops->reset)
-		caps |= GAIM_CIPHER_CAPS_RESET;
+		caps |= PURPLE_CIPHER_CAPS_RESET;
 	if(ops->uninit)
-		caps |= GAIM_CIPHER_CAPS_UNINIT;
+		caps |= PURPLE_CIPHER_CAPS_UNINIT;
 	if(ops->set_iv)
-		caps |= GAIM_CIPHER_CAPS_SET_IV;
+		caps |= PURPLE_CIPHER_CAPS_SET_IV;
 	if(ops->append)
-		caps |= GAIM_CIPHER_CAPS_APPEND;
+		caps |= PURPLE_CIPHER_CAPS_APPEND;
 	if(ops->digest)
-		caps |= GAIM_CIPHER_CAPS_DIGEST;
+		caps |= PURPLE_CIPHER_CAPS_DIGEST;
 	if(ops->encrypt)
-		caps |= GAIM_CIPHER_CAPS_ENCRYPT;
+		caps |= PURPLE_CIPHER_CAPS_ENCRYPT;
 	if(ops->decrypt)
-		caps |= GAIM_CIPHER_CAPS_DECRYPT;
+		caps |= PURPLE_CIPHER_CAPS_DECRYPT;
 	if(ops->set_salt)
-		caps |= GAIM_CIPHER_CAPS_SET_SALT;
+		caps |= PURPLE_CIPHER_CAPS_SET_SALT;
 	if(ops->get_salt_size)
-		caps |= GAIM_CIPHER_CAPS_GET_SALT_SIZE;
+		caps |= PURPLE_CIPHER_CAPS_GET_SALT_SIZE;
 	if(ops->set_key)
-		caps |= GAIM_CIPHER_CAPS_SET_KEY;
+		caps |= PURPLE_CIPHER_CAPS_SET_KEY;
 	if(ops->get_key_size)
-		caps |= GAIM_CIPHER_CAPS_GET_KEY_SIZE;
+		caps |= PURPLE_CIPHER_CAPS_GET_KEY_SIZE;
 
 	return caps;
 }
 
 gboolean
-gaim_cipher_digest_region(const gchar *name, const guchar *data,
+purple_cipher_digest_region(const gchar *name, const guchar *data,
 						  size_t data_len, size_t in_len,
 						  guchar digest[], size_t *out_len)
 {
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 	gboolean ret = FALSE;
 
 	g_return_val_if_fail(name, FALSE);
 	g_return_val_if_fail(data, FALSE);
 
-	cipher = gaim_ciphers_find_cipher(name);
+	cipher = purple_ciphers_find_cipher(name);
 
 	g_return_val_if_fail(cipher, FALSE);
 
 	if(!cipher->ops->append || !cipher->ops->digest) {
-		gaim_debug_info("cipher", "gaim_cipher_region failed: "
+		purple_debug_info("cipher", "purple_cipher_region failed: "
 						"the %s cipher does not support appending and or "
 						"digesting.", cipher->name);
 		return FALSE;
 	}
 
-	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, data, data_len);
-	ret = gaim_cipher_context_digest(context, in_len, digest, out_len);
-	gaim_cipher_context_destroy(context);
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, data, data_len);
+	ret = purple_cipher_context_digest(context, in_len, digest, out_len);
+	purple_cipher_context_destroy(context);
 
 	return ret;
 }
 
 /******************************************************************************
- * GaimCiphers API
+ * PurpleCiphers API
  *****************************************************************************/
-GaimCipher *
-gaim_ciphers_find_cipher(const gchar *name) {
-	GaimCipher *cipher;
+PurpleCipher *
+purple_ciphers_find_cipher(const gchar *name) {
+	PurpleCipher *cipher;
 	GList *l;
 
 	g_return_val_if_fail(name, NULL);
 
 	for(l = ciphers; l; l = l->next) {
-		cipher = GAIM_CIPHER(l->data);
+		cipher = PURPLE_CIPHER(l->data);
 
 		if(!g_ascii_strcasecmp(cipher->name, name))
 			return cipher;
@@ -1372,106 +1372,106 @@ gaim_ciphers_find_cipher(const gchar *name) {
 	return NULL;
 }
 
-GaimCipher *
-gaim_ciphers_register_cipher(const gchar *name, GaimCipherOps *ops) {
-	GaimCipher *cipher = NULL;
+PurpleCipher *
+purple_ciphers_register_cipher(const gchar *name, PurpleCipherOps *ops) {
+	PurpleCipher *cipher = NULL;
 
 	g_return_val_if_fail(name, NULL);
 	g_return_val_if_fail(ops, NULL);
-	g_return_val_if_fail(!gaim_ciphers_find_cipher(name), NULL);
+	g_return_val_if_fail(!purple_ciphers_find_cipher(name), NULL);
 
-	cipher = g_new0(GaimCipher, 1);
-	GAIM_DBUS_REGISTER_POINTER(cipher, GaimCipher);
+	cipher = g_new0(PurpleCipher, 1);
+	PURPLE_DBUS_REGISTER_POINTER(cipher, PurpleCipher);
 
 	cipher->name = g_strdup(name);
 	cipher->ops = ops;
 
 	ciphers = g_list_append(ciphers, cipher);
 
-	gaim_signal_emit(gaim_ciphers_get_handle(), "cipher-added", cipher);
+	purple_signal_emit(purple_ciphers_get_handle(), "cipher-added", cipher);
 
 	return cipher;
 }
 
 gboolean
-gaim_ciphers_unregister_cipher(GaimCipher *cipher) {
+purple_ciphers_unregister_cipher(PurpleCipher *cipher) {
 	g_return_val_if_fail(cipher, FALSE);
 	g_return_val_if_fail(cipher->ref == 0, FALSE);
 
-	gaim_signal_emit(gaim_ciphers_get_handle(), "cipher-removed", cipher);
+	purple_signal_emit(purple_ciphers_get_handle(), "cipher-removed", cipher);
 
 	ciphers = g_list_remove(ciphers, cipher);
 
 	g_free(cipher->name);
 
-	GAIM_DBUS_UNREGISTER_POINTER(cipher);
+	PURPLE_DBUS_UNREGISTER_POINTER(cipher);
 	g_free(cipher);
 
 	return TRUE;
 }
 
 GList *
-gaim_ciphers_get_ciphers() {
+purple_ciphers_get_ciphers() {
 	return ciphers;
 }
 
 /******************************************************************************
- * GaimCipher Subsystem API
+ * PurpleCipher Subsystem API
  *****************************************************************************/
 gpointer
-gaim_ciphers_get_handle() {
+purple_ciphers_get_handle() {
 	static gint handle;
 
 	return &handle;
 }
 
 void
-gaim_ciphers_init() {
+purple_ciphers_init() {
 	gpointer handle;
 
-	handle = gaim_ciphers_get_handle();
+	handle = purple_ciphers_get_handle();
 
-	gaim_signal_register(handle, "cipher-added",
-						 gaim_marshal_VOID__POINTER, NULL, 1,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_CIPHER));
-	gaim_signal_register(handle, "cipher-removed",
-						 gaim_marshal_VOID__POINTER, NULL, 1,
-						 gaim_value_new(GAIM_TYPE_SUBTYPE,
-										GAIM_SUBTYPE_CIPHER));
+	purple_signal_register(handle, "cipher-added",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CIPHER));
+	purple_signal_register(handle, "cipher-removed",
+						 purple_marshal_VOID__POINTER, NULL, 1,
+						 purple_value_new(PURPLE_TYPE_SUBTYPE,
+										PURPLE_SUBTYPE_CIPHER));
 
-	gaim_ciphers_register_cipher("md5", &MD5Ops);
-	gaim_ciphers_register_cipher("sha1", &SHA1Ops);
-	gaim_ciphers_register_cipher("md4", &MD4Ops);
-	gaim_ciphers_register_cipher("des", &DESOps);
+	purple_ciphers_register_cipher("md5", &MD5Ops);
+	purple_ciphers_register_cipher("sha1", &SHA1Ops);
+	purple_ciphers_register_cipher("md4", &MD4Ops);
+	purple_ciphers_register_cipher("des", &DESOps);
 }
 
 void
-gaim_ciphers_uninit() {
-	GaimCipher *cipher;
+purple_ciphers_uninit() {
+	PurpleCipher *cipher;
 	GList *l, *ll;
 
 	for(l = ciphers; l; l = ll) {
 		ll = l->next;
 
-		cipher = GAIM_CIPHER(l->data);
-		gaim_ciphers_unregister_cipher(cipher);
+		cipher = PURPLE_CIPHER(l->data);
+		purple_ciphers_unregister_cipher(cipher);
 
 		ciphers = g_list_remove(ciphers, cipher);
 	}
 
 	g_list_free(ciphers);
 
-	gaim_signals_unregister_by_instance(gaim_ciphers_get_handle());
+	purple_signals_unregister_by_instance(purple_ciphers_get_handle());
 }
 /******************************************************************************
- * GaimCipherContext API
+ * PurpleCipherContext API
  *****************************************************************************/
 void
-gaim_cipher_context_set_option(GaimCipherContext *context, const gchar *name,
+purple_cipher_context_set_option(PurpleCipherContext *context, const gchar *name,
 							   gpointer value)
 {
-	GaimCipher *cipher = NULL;
+	PurpleCipher *cipher = NULL;
 
 	g_return_if_fail(context);
 	g_return_if_fail(name);
@@ -1482,13 +1482,13 @@ gaim_cipher_context_set_option(GaimCipherContext *context, const gchar *name,
 	if(cipher->ops && cipher->ops->set_option)
 		cipher->ops->set_option(context, name, value);
 	else
-		gaim_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_info("cipher", "the %s cipher does not support the "
 						"set_option operation\n", cipher->name);
 }
 
 gpointer
-gaim_cipher_context_get_option(GaimCipherContext *context, const gchar *name) {
-	GaimCipher *cipher = NULL;
+purple_cipher_context_get_option(PurpleCipherContext *context, const gchar *name) {
+	PurpleCipher *cipher = NULL;
 
 	g_return_val_if_fail(context, NULL);
 	g_return_val_if_fail(name, NULL);
@@ -1499,22 +1499,22 @@ gaim_cipher_context_get_option(GaimCipherContext *context, const gchar *name) {
 	if(cipher->ops && cipher->ops->get_option)
 		return cipher->ops->get_option(context, name);
 	else {
-		gaim_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_info("cipher", "the %s cipher does not support the "
 						"get_option operation\n", cipher->name);
 
 		return NULL;
 	}
 }
 
-GaimCipherContext *
-gaim_cipher_context_new(GaimCipher *cipher, void *extra) {
-	GaimCipherContext *context = NULL;
+PurpleCipherContext *
+purple_cipher_context_new(PurpleCipher *cipher, void *extra) {
+	PurpleCipherContext *context = NULL;
 
 	g_return_val_if_fail(cipher, NULL);
 
 	cipher->ref++;
 
-	context = g_new0(GaimCipherContext, 1);
+	context = g_new0(PurpleCipherContext, 1);
 	context->cipher = cipher;
 
 	if(cipher->ops->init)
@@ -1523,22 +1523,22 @@ gaim_cipher_context_new(GaimCipher *cipher, void *extra) {
 	return context;
 }
 
-GaimCipherContext *
-gaim_cipher_context_new_by_name(const gchar *name, void *extra) {
-	GaimCipher *cipher;
+PurpleCipherContext *
+purple_cipher_context_new_by_name(const gchar *name, void *extra) {
+	PurpleCipher *cipher;
 
 	g_return_val_if_fail(name, NULL);
 
-	cipher = gaim_ciphers_find_cipher(name);
+	cipher = purple_ciphers_find_cipher(name);
 
 	g_return_val_if_fail(cipher, NULL);
 
-	return gaim_cipher_context_new(cipher, extra);
+	return purple_cipher_context_new(cipher, extra);
 }
 
 void
-gaim_cipher_context_reset(GaimCipherContext *context, void *extra) {
-	GaimCipher *cipher = NULL;
+purple_cipher_context_reset(PurpleCipherContext *context, void *extra) {
+	PurpleCipher *cipher = NULL;
 
 	g_return_if_fail(context);
 
@@ -1550,8 +1550,8 @@ gaim_cipher_context_reset(GaimCipherContext *context, void *extra) {
 }
 
 void
-gaim_cipher_context_destroy(GaimCipherContext *context) {
-	GaimCipher *cipher = NULL;
+purple_cipher_context_destroy(PurpleCipherContext *context) {
+	PurpleCipher *cipher = NULL;
 
 	g_return_if_fail(context);
 
@@ -1569,9 +1569,9 @@ gaim_cipher_context_destroy(GaimCipherContext *context) {
 }
 
 void
-gaim_cipher_context_set_iv(GaimCipherContext *context, guchar *iv, size_t len)
+purple_cipher_context_set_iv(PurpleCipherContext *context, guchar *iv, size_t len)
 {
-	GaimCipher *cipher = NULL;
+	PurpleCipher *cipher = NULL;
 
 	g_return_if_fail(context);
 	g_return_if_fail(iv);
@@ -1582,15 +1582,15 @@ gaim_cipher_context_set_iv(GaimCipherContext *context, guchar *iv, size_t len)
 	if(cipher->ops && cipher->ops->set_iv)
 		cipher->ops->set_iv(context, iv, len);
 	else
-		gaim_debug_info("cipher", "the %s cipher does not support the set"
+		purple_debug_info("cipher", "the %s cipher does not support the set"
 						"initialization vector operation\n", cipher->name);
 }
 
 void
-gaim_cipher_context_append(GaimCipherContext *context, const guchar *data,
+purple_cipher_context_append(PurpleCipherContext *context, const guchar *data,
 								size_t len)
 {
-	GaimCipher *cipher = NULL;
+	PurpleCipher *cipher = NULL;
 
 	g_return_if_fail(context);
 
@@ -1600,15 +1600,15 @@ gaim_cipher_context_append(GaimCipherContext *context, const guchar *data,
 	if(cipher->ops && cipher->ops->append)
 		cipher->ops->append(context, data, len);
 	else
-		gaim_debug_info("cipher", "the %s cipher does not support the append "
+		purple_debug_info("cipher", "the %s cipher does not support the append "
 						"operation\n", cipher->name);
 }
 
 gboolean
-gaim_cipher_context_digest(GaimCipherContext *context, size_t in_len,
+purple_cipher_context_digest(PurpleCipherContext *context, size_t in_len,
 						   guchar digest[], size_t *out_len)
 {
-	GaimCipher *cipher = NULL;
+	PurpleCipher *cipher = NULL;
 
 	g_return_val_if_fail(context, FALSE);
 
@@ -1618,14 +1618,14 @@ gaim_cipher_context_digest(GaimCipherContext *context, size_t in_len,
 	if(cipher->ops && cipher->ops->digest)
 		return cipher->ops->digest(context, in_len, digest, out_len);
 	else {
-		gaim_debug_info("cipher", "the %s cipher does not support the digest "
+		purple_debug_info("cipher", "the %s cipher does not support the digest "
 						"operation\n", cipher->name);
 		return FALSE;
 	}
 }
 
 gboolean
-gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t in_len,
+purple_cipher_context_digest_to_str(PurpleCipherContext *context, size_t in_len,
 								   gchar digest_s[], size_t *out_len)
 {
 	/* 8k is a bit excessive, will tweak later. */
@@ -1636,7 +1636,7 @@ gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t in_len,
 	g_return_val_if_fail(context, FALSE);
 	g_return_val_if_fail(digest_s, FALSE);
 
-	if(!gaim_cipher_context_digest(context, sizeof(digest), digest, &dlen))
+	if(!purple_cipher_context_digest(context, sizeof(digest), digest, &dlen))
 		return FALSE;
 
 	/* in_len must be greater than dlen * 2 so we have room for the NUL. */
@@ -1655,10 +1655,10 @@ gaim_cipher_context_digest_to_str(GaimCipherContext *context, size_t in_len,
 }
 
 gint
-gaim_cipher_context_encrypt(GaimCipherContext *context, const guchar data[],
+purple_cipher_context_encrypt(PurpleCipherContext *context, const guchar data[],
 							size_t len, guchar output[], size_t *outlen)
 {
-	GaimCipher *cipher = NULL;
+	PurpleCipher *cipher = NULL;
 
 	g_return_val_if_fail(context, -1);
 
@@ -1668,7 +1668,7 @@ gaim_cipher_context_encrypt(GaimCipherContext *context, const guchar data[],
 	if(cipher->ops && cipher->ops->encrypt)
 		return cipher->ops->encrypt(context, data, len, output, outlen);
 	else {
-		gaim_debug_info("cipher", "the %s cipher does not support the encrypt"
+		purple_debug_info("cipher", "the %s cipher does not support the encrypt"
 						"operation\n", cipher->name);
 
 		if(outlen)
@@ -1679,10 +1679,10 @@ gaim_cipher_context_encrypt(GaimCipherContext *context, const guchar data[],
 }
 
 gint
-gaim_cipher_context_decrypt(GaimCipherContext *context, const guchar data[],
+purple_cipher_context_decrypt(PurpleCipherContext *context, const guchar data[],
 							size_t len, guchar output[], size_t *outlen)
 {
-	GaimCipher *cipher = NULL;
+	PurpleCipher *cipher = NULL;
 
 	g_return_val_if_fail(context, -1);
 
@@ -1692,7 +1692,7 @@ gaim_cipher_context_decrypt(GaimCipherContext *context, const guchar data[],
 	if(cipher->ops && cipher->ops->decrypt)
 		return cipher->ops->decrypt(context, data, len, output, outlen);
 	else {
-		gaim_debug_info("cipher", "the %s cipher does not support the decrypt"
+		purple_debug_info("cipher", "the %s cipher does not support the decrypt"
 						"operation\n", cipher->name);
 
 		if(outlen)
@@ -1703,8 +1703,8 @@ gaim_cipher_context_decrypt(GaimCipherContext *context, const guchar data[],
 }
 
 void
-gaim_cipher_context_set_salt(GaimCipherContext *context, guchar *salt) {
-	GaimCipher *cipher = NULL;
+purple_cipher_context_set_salt(PurpleCipherContext *context, guchar *salt) {
+	PurpleCipher *cipher = NULL;
 
 	g_return_if_fail(context);
 
@@ -1714,13 +1714,13 @@ gaim_cipher_context_set_salt(GaimCipherContext *context, guchar *salt) {
 	if(cipher->ops && cipher->ops->set_salt)
 		cipher->ops->set_salt(context, salt);
 	else
-		gaim_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_info("cipher", "the %s cipher does not support the "
 						"set_salt operation\n", cipher->name);
 }
 
 size_t
-gaim_cipher_context_get_salt_size(GaimCipherContext *context) {
-	GaimCipher *cipher = NULL;
+purple_cipher_context_get_salt_size(PurpleCipherContext *context) {
+	PurpleCipher *cipher = NULL;
 
 	g_return_val_if_fail(context, -1);
 
@@ -1730,7 +1730,7 @@ gaim_cipher_context_get_salt_size(GaimCipherContext *context) {
 	if(cipher->ops && cipher->ops->get_salt_size)
 		return cipher->ops->get_salt_size(context);
 	else {
-		gaim_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_info("cipher", "the %s cipher does not support the "
 						"get_salt_size operation\n", cipher->name);
 
 		return -1;
@@ -1738,8 +1738,8 @@ gaim_cipher_context_get_salt_size(GaimCipherContext *context) {
 }
 
 void
-gaim_cipher_context_set_key(GaimCipherContext *context, const guchar *key) {
-	GaimCipher *cipher = NULL;
+purple_cipher_context_set_key(PurpleCipherContext *context, const guchar *key) {
+	PurpleCipher *cipher = NULL;
 
 	g_return_if_fail(context);
 
@@ -1749,13 +1749,13 @@ gaim_cipher_context_set_key(GaimCipherContext *context, const guchar *key) {
 	if(cipher->ops && cipher->ops->set_key)
 		cipher->ops->set_key(context, key);
 	else
-		gaim_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_info("cipher", "the %s cipher does not support the "
 						"set_key operation\n", cipher->name);
 }
 
 size_t
-gaim_cipher_context_get_key_size(GaimCipherContext *context) {
-	GaimCipher *cipher = NULL;
+purple_cipher_context_get_key_size(PurpleCipherContext *context) {
+	PurpleCipher *cipher = NULL;
 
 	g_return_val_if_fail(context, -1);
 
@@ -1765,7 +1765,7 @@ gaim_cipher_context_get_key_size(GaimCipherContext *context) {
 	if(cipher->ops && cipher->ops->get_key_size)
 		return cipher->ops->get_key_size(context);
 	else {
-		gaim_debug_info("cipher", "the %s cipher does not support the "
+		purple_debug_info("cipher", "the %s cipher does not support the "
 						"get_key_size operation\n", cipher->name);
 
 		return -1;
@@ -1773,20 +1773,20 @@ gaim_cipher_context_get_key_size(GaimCipherContext *context) {
 }
 
 void
-gaim_cipher_context_set_data(GaimCipherContext *context, gpointer data) {
+purple_cipher_context_set_data(PurpleCipherContext *context, gpointer data) {
 	g_return_if_fail(context);
 
 	context->data = data;
 }
 
 gpointer
-gaim_cipher_context_get_data(GaimCipherContext *context) {
+purple_cipher_context_get_data(PurpleCipherContext *context) {
 	g_return_val_if_fail(context, NULL);
 
 	return context->data;
 }
 
-gchar *gaim_cipher_http_digest_calculate_session_key(
+gchar *purple_cipher_http_digest_calculate_session_key(
 		const gchar *algorithm,
 		const gchar *username,
 		const gchar *realm,
@@ -1794,8 +1794,8 @@ gchar *gaim_cipher_http_digest_calculate_session_key(
 		const gchar *nonce,
 		const gchar *client_nonce)
 {
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 	gchar hash[33]; /* We only support MD5. */
 
 	g_return_val_if_fail(username != NULL, NULL);
@@ -1809,16 +1809,16 @@ gchar *gaim_cipher_http_digest_calculate_session_key(
 						 strcasecmp(algorithm, "MD5") ||
 						 strcasecmp(algorithm, "MD5-sess"), NULL);
 
-	cipher = gaim_ciphers_find_cipher("md5");
+	cipher = purple_ciphers_find_cipher("md5");
 	g_return_val_if_fail(cipher != NULL, NULL);
 
-	context = gaim_cipher_context_new(cipher, NULL);
+	context = purple_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, (guchar *)username, strlen(username));
-	gaim_cipher_context_append(context, (guchar *)":", 1);
-	gaim_cipher_context_append(context, (guchar *)realm, strlen(realm));
-	gaim_cipher_context_append(context, (guchar *)":", 1);
-	gaim_cipher_context_append(context, (guchar *)password, strlen(password));
+	purple_cipher_context_append(context, (guchar *)username, strlen(username));
+	purple_cipher_context_append(context, (guchar *)":", 1);
+	purple_cipher_context_append(context, (guchar *)realm, strlen(realm));
+	purple_cipher_context_append(context, (guchar *)":", 1);
+	purple_cipher_context_append(context, (guchar *)password, strlen(password));
 
 	if (algorithm != NULL && !strcasecmp(algorithm, "MD5-sess"))
 	{
@@ -1826,29 +1826,29 @@ gchar *gaim_cipher_http_digest_calculate_session_key(
 
 		if (client_nonce == NULL)
 		{
-			gaim_cipher_context_destroy(context);
-			gaim_debug_error("cipher", "Required client_nonce missing for MD5-sess digest calculation.");
+			purple_cipher_context_destroy(context);
+			purple_debug_error("cipher", "Required client_nonce missing for MD5-sess digest calculation.");
 			return NULL;
 		}
 
-		gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
-		gaim_cipher_context_destroy(context);
+		purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+		purple_cipher_context_destroy(context);
 
-		context = gaim_cipher_context_new(cipher, NULL);
-		gaim_cipher_context_append(context, digest, sizeof(digest));
-		gaim_cipher_context_append(context, (guchar *)":", 1);
-		gaim_cipher_context_append(context, (guchar *)nonce, strlen(nonce));
-		gaim_cipher_context_append(context, (guchar *)":", 1);
-		gaim_cipher_context_append(context, (guchar *)client_nonce, strlen(client_nonce));
+		context = purple_cipher_context_new(cipher, NULL);
+		purple_cipher_context_append(context, digest, sizeof(digest));
+		purple_cipher_context_append(context, (guchar *)":", 1);
+		purple_cipher_context_append(context, (guchar *)nonce, strlen(nonce));
+		purple_cipher_context_append(context, (guchar *)":", 1);
+		purple_cipher_context_append(context, (guchar *)client_nonce, strlen(client_nonce));
 	}
 
-	gaim_cipher_context_digest_to_str(context, sizeof(hash), hash, NULL);
-	gaim_cipher_context_destroy(context);
+	purple_cipher_context_digest_to_str(context, sizeof(hash), hash, NULL);
+	purple_cipher_context_destroy(context);
 
 	return g_strdup(hash);
 }
 
-gchar *gaim_cipher_http_digest_calculate_response(
+gchar *purple_cipher_http_digest_calculate_response(
 		const gchar *algorithm,
 		const gchar *method,
 		const gchar *digest_uri,
@@ -1859,8 +1859,8 @@ gchar *gaim_cipher_http_digest_calculate_response(
 		const gchar *client_nonce,
 		const gchar *session_key)
 {
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 	static gchar hash2[33]; /* We only support MD5. */
 
 	g_return_val_if_fail(method      != NULL, NULL);
@@ -1880,74 +1880,74 @@ gchar *gaim_cipher_http_digest_calculate_response(
 						 strcasecmp(qop, "auth") ||
 						 strcasecmp(qop, "auth-int"), NULL);
 
-	cipher = gaim_ciphers_find_cipher("md5");
+	cipher = purple_ciphers_find_cipher("md5");
 	g_return_val_if_fail(cipher != NULL, NULL);
 
-	context = gaim_cipher_context_new(cipher, NULL);
+	context = purple_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, (guchar *)method, strlen(method));
-	gaim_cipher_context_append(context, (guchar *)":", 1);
-	gaim_cipher_context_append(context, (guchar *)digest_uri, strlen(digest_uri));
+	purple_cipher_context_append(context, (guchar *)method, strlen(method));
+	purple_cipher_context_append(context, (guchar *)":", 1);
+	purple_cipher_context_append(context, (guchar *)digest_uri, strlen(digest_uri));
 
 	if (qop != NULL && !strcasecmp(qop, "auth-int"))
 	{
-		GaimCipherContext *context2;
+		PurpleCipherContext *context2;
 		gchar entity_hash[33];
 
 		if (entity == NULL)
 		{
-			gaim_cipher_context_destroy(context);
-			gaim_debug_error("cipher", "Required entity missing for auth-int digest calculation.");
+			purple_cipher_context_destroy(context);
+			purple_debug_error("cipher", "Required entity missing for auth-int digest calculation.");
 			return NULL;
 		}
 
-		context2 = gaim_cipher_context_new(cipher, NULL);
-		gaim_cipher_context_append(context2, (guchar *)entity, strlen(entity));
-		gaim_cipher_context_digest_to_str(context2, sizeof(entity_hash), entity_hash, NULL);
-		gaim_cipher_context_destroy(context2);
+		context2 = purple_cipher_context_new(cipher, NULL);
+		purple_cipher_context_append(context2, (guchar *)entity, strlen(entity));
+		purple_cipher_context_digest_to_str(context2, sizeof(entity_hash), entity_hash, NULL);
+		purple_cipher_context_destroy(context2);
 
-		gaim_cipher_context_append(context, (guchar *)":", 1);
-		gaim_cipher_context_append(context, (guchar *)entity_hash, strlen(entity_hash));
+		purple_cipher_context_append(context, (guchar *)":", 1);
+		purple_cipher_context_append(context, (guchar *)entity_hash, strlen(entity_hash));
 	}
 
-	gaim_cipher_context_digest_to_str(context, sizeof(hash2), hash2, NULL);
-	gaim_cipher_context_destroy(context);
+	purple_cipher_context_digest_to_str(context, sizeof(hash2), hash2, NULL);
+	purple_cipher_context_destroy(context);
 
-	context = gaim_cipher_context_new(cipher, NULL);
-	gaim_cipher_context_append(context, (guchar *)session_key, strlen(session_key));
-	gaim_cipher_context_append(context, (guchar *)":", 1);
-	gaim_cipher_context_append(context, (guchar *)nonce, strlen(nonce));
-	gaim_cipher_context_append(context, (guchar *)":", 1);
+	context = purple_cipher_context_new(cipher, NULL);
+	purple_cipher_context_append(context, (guchar *)session_key, strlen(session_key));
+	purple_cipher_context_append(context, (guchar *)":", 1);
+	purple_cipher_context_append(context, (guchar *)nonce, strlen(nonce));
+	purple_cipher_context_append(context, (guchar *)":", 1);
 
 	if (qop != NULL && *qop != '\0')
 	{
 		if (nonce_count == NULL)
 		{
-			gaim_cipher_context_destroy(context);
-			gaim_debug_error("cipher", "Required nonce_count missing for digest calculation.");
+			purple_cipher_context_destroy(context);
+			purple_debug_error("cipher", "Required nonce_count missing for digest calculation.");
 			return NULL;
 		}
 
 		if (client_nonce == NULL)
 		{
-			gaim_cipher_context_destroy(context);
-			gaim_debug_error("cipher", "Required client_nonce missing for digest calculation.");
+			purple_cipher_context_destroy(context);
+			purple_debug_error("cipher", "Required client_nonce missing for digest calculation.");
 			return NULL;
 		}
 
-		gaim_cipher_context_append(context, (guchar *)nonce_count, strlen(nonce_count));
-		gaim_cipher_context_append(context, (guchar *)":", 1);
-		gaim_cipher_context_append(context, (guchar *)client_nonce, strlen(client_nonce));
-		gaim_cipher_context_append(context, (guchar *)":", 1);
+		purple_cipher_context_append(context, (guchar *)nonce_count, strlen(nonce_count));
+		purple_cipher_context_append(context, (guchar *)":", 1);
+		purple_cipher_context_append(context, (guchar *)client_nonce, strlen(client_nonce));
+		purple_cipher_context_append(context, (guchar *)":", 1);
 
-		gaim_cipher_context_append(context, (guchar *)qop, strlen(qop));
+		purple_cipher_context_append(context, (guchar *)qop, strlen(qop));
 
-		gaim_cipher_context_append(context, (guchar *)":", 1);
+		purple_cipher_context_append(context, (guchar *)":", 1);
 	}
 
-	gaim_cipher_context_append(context, (guchar *)hash2, strlen(hash2));
-	gaim_cipher_context_digest_to_str(context, sizeof(hash2), hash2, NULL);
-	gaim_cipher_context_destroy(context);
+	purple_cipher_context_append(context, (guchar *)hash2, strlen(hash2));
+	purple_cipher_context_digest_to_str(context, sizeof(hash2), hash2, NULL);
+	purple_cipher_context_destroy(context);
 
 	return g_strdup(hash2);
 }

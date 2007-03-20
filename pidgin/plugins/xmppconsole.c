@@ -1,5 +1,5 @@
 /*
- * Gaim - XMPP debugging tool
+ * Purple - XMPP debugging tool
  *
  * Copyright (C) 2002-2003, Sean Egan
  *
@@ -27,11 +27,11 @@
 
 #include "gtkimhtml.h"
 #if !GTK_CHECK_VERSION(2,4,0)
-#include "gaimcombobox.h"
+#include "purplecombobox.h"
 #endif
 
 typedef struct {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	GtkWidget *window;
 	GtkWidget *hbox;
 	GtkWidget *dropdown;
@@ -139,7 +139,7 @@ xmlnode_to_pretty_str(xmlnode *node, int *len, int depth)
 }
 
 static void
-xmlnode_received_cb(GaimConnection *gc, xmlnode **packet, gpointer null)
+xmlnode_received_cb(PurpleConnection *gc, xmlnode **packet, gpointer null)
 {
 	char *str, *formatted;
 
@@ -153,7 +153,7 @@ xmlnode_received_cb(GaimConnection *gc, xmlnode **packet, gpointer null)
 }
 
 static void
-xmlnode_sent_cb(GaimConnection *gc, char **packet, gpointer null)
+xmlnode_sent_cb(PurpleConnection *gc, char **packet, gpointer null)
 {
 	char *str;
 	char *formatted;
@@ -177,14 +177,14 @@ xmlnode_sent_cb(GaimConnection *gc, char **packet, gpointer null)
 static void message_send_cb(GtkWidget *widget, gpointer p)
 {
 	GtkTextIter start, end;
-	GaimPluginProtocolInfo *prpl_info = NULL;
-	GaimConnection *gc = console->gc;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *gc = console->gc;
 	GtkTextBuffer *buffer;
 	char *text;
 
 	gc = console->gc;
 	
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 	
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
 	gtk_text_buffer_get_start_iter(buffer, &start);
@@ -620,12 +620,12 @@ static void message_clicked_cb(GtkWidget *w, gpointer nul)
 }
 
 static void
-signed_on_cb(GaimConnection *gc)
+signed_on_cb(PurpleConnection *gc)
 {
 	if (!console)
 		return;
 	
-	gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown), gaim_account_get_username(gc->account));
+	gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown), purple_account_get_username(gc->account));
 	console->accounts = g_list_append(console->accounts, gc);
 	console->count++;
 	
@@ -634,7 +634,7 @@ signed_on_cb(GaimConnection *gc)
 }
 
 static void
-signed_off_cb(GaimConnection *gc)
+signed_off_cb(PurpleConnection *gc)
 {
 	int i = 0;
 	GList *l;
@@ -644,7 +644,7 @@ signed_off_cb(GaimConnection *gc)
 
 	l = console->accounts;
 	while (l) {
-		GaimConnection *g = l->data;
+		PurpleConnection *g = l->data;
 		if (gc == g)
 			break;
 		i++;
@@ -656,7 +656,7 @@ signed_off_cb(GaimConnection *gc)
 
 	gtk_combo_box_remove_text(GTK_COMBO_BOX(console->dropdown), i);
 	console->accounts = g_list_remove(console->accounts, gc);
-	printf("%s\n", gaim_account_get_username(gc->account));
+	printf("%s\n", purple_account_get_username(gc->account));
 	console->count--;
 
 	if (gc == console->gc) {
@@ -667,29 +667,29 @@ signed_off_cb(GaimConnection *gc)
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	GaimPlugin *jabber;
+	PurplePlugin *jabber;
 
-	jabber = gaim_find_prpl("prpl-jabber");
+	jabber = purple_find_prpl("prpl-jabber");
 	if (!jabber)
 		return FALSE;
 
 	xmpp_console_handle = plugin;
-	gaim_signal_connect(jabber, "jabber-receiving-xmlnode", xmpp_console_handle,
-			    GAIM_CALLBACK(xmlnode_received_cb), NULL);
-	gaim_signal_connect(jabber, "jabber-sending-text", xmpp_console_handle,
-			    GAIM_CALLBACK(xmlnode_sent_cb), NULL);
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-			    plugin, GAIM_CALLBACK(signed_on_cb), NULL);
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
-			    plugin, GAIM_CALLBACK(signed_off_cb), NULL);
+	purple_signal_connect(jabber, "jabber-receiving-xmlnode", xmpp_console_handle,
+			    PURPLE_CALLBACK(xmlnode_received_cb), NULL);
+	purple_signal_connect(jabber, "jabber-sending-text", xmpp_console_handle,
+			    PURPLE_CALLBACK(xmlnode_sent_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+			    plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+			    plugin, PURPLE_CALLBACK(signed_off_cb), NULL);
 	
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
 	if (console)
 		gtk_widget_destroy(console->window);
@@ -707,12 +707,12 @@ console_destroy(GtkObject *window, gpointer nul)
 static void
 dropdown_changed_cb(GtkComboBox *widget, gpointer nul)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	if (!console)
 		return;
 	
-	account = gaim_accounts_find(gtk_combo_box_get_active_text(GTK_COMBO_BOX(console->dropdown)), 
+	account = purple_accounts_find(gtk_combo_box_get_active_text(GTK_COMBO_BOX(console->dropdown)), 
 				    "prpl-jabber");
 	if (!account || !account->gc)
 		return;
@@ -754,13 +754,13 @@ create_console()
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 	gtk_box_pack_start(GTK_BOX(console->hbox), label, FALSE, FALSE, 0);
 	console->dropdown = gtk_combo_box_new_text();
-	for (connections = gaim_connections_get_all(); connections; connections = connections->next) {
-		GaimConnection *gc = connections->data;
-		if (!strcmp(gaim_account_get_protocol_id(gaim_connection_get_account(gc)), "prpl-jabber")) {
+	for (connections = purple_connections_get_all(); connections; connections = connections->next) {
+		PurpleConnection *gc = connections->data;
+		if (!strcmp(purple_account_get_protocol_id(purple_connection_get_account(gc)), "prpl-jabber")) {
 			console->count++;
 			console->accounts = g_list_append(console->accounts, gc);
 			gtk_combo_box_append_text(GTK_COMBO_BOX(console->dropdown),
-						  gaim_account_get_username(gaim_connection_get_account(gc)));
+						  purple_account_get_username(purple_connection_get_account(gc)));
 			if (!console->gc)
 				console->gc = gc;
 		}
@@ -833,28 +833,28 @@ create_console()
 }
 
 static GList *
-actions(GaimPlugin *plugin, gpointer context)
+actions(PurplePlugin *plugin, gpointer context)
 {
 	GList *l = NULL;
-	GaimPluginAction *act = NULL;
+	PurplePluginAction *act = NULL;
 
-	act = gaim_plugin_action_new(_("XMPP Console"), create_console);
+	act = purple_plugin_action_new(_("XMPP Console"), create_console);
 	l = g_list_append(l, act);
 	
 	return l;
 }
 
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	"gtk-xmpp",                                       /**< id             */
 	N_("XMPP Console"),                                  /**< name           */
@@ -864,7 +864,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("This plugin is useful for debbuging XMPP servers or clients."),
 	"Sean Egan <seanegan@gmail.com>",                 /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -877,8 +877,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(interval, init_plugin, info)
+PURPLE_INIT_PLUGIN(interval, init_plugin, info)

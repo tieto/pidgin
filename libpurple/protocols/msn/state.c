@@ -1,9 +1,9 @@
 /**
  * @file state.c State functions and definitions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -41,7 +41,7 @@ static const char *away_text[] =
 void
 msn_change_status(MsnSession *session)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	MsnCmdProc *cmdproc;
 	MsnUser *user;
 	MsnObject *msnobj;
@@ -75,7 +75,7 @@ msn_change_status(MsnSession *session)
 		msnobj_str = msn_object_to_string(msnobj);
 
 		msn_cmdproc_send(cmdproc, "CHG", "%s %d %s", state_text,
-						 MSN_CLIENT_ID, gaim_url_encode(msnobj_str));
+						 MSN_CLIENT_ID, purple_url_encode(msnobj_str));
 
 		g_free(msnobj_str);
 	}
@@ -99,16 +99,16 @@ msn_state_get_text(MsnAwayType state)
 }
 
 MsnAwayType
-msn_state_from_account(GaimAccount *account)
+msn_state_from_account(PurpleAccount *account)
 {
 	MsnAwayType msnstatus;
-	GaimPresence *presence;
-	GaimStatus *status;
+	PurplePresence *presence;
+	PurpleStatus *status;
 	const char *status_id;
 
-	presence = gaim_account_get_presence(account);
-	status = gaim_presence_get_active_status(presence);
-	status_id = gaim_status_get_id(status);
+	presence = purple_account_get_presence(account);
+	status = purple_presence_get_active_status(presence);
+	status_id = purple_status_get_id(status);
 
 	if (!strcmp(status_id, "away"))
 		msnstatus = MSN_AWAY;
@@ -125,7 +125,7 @@ msn_state_from_account(GaimAccount *account)
 	else
 		msnstatus = MSN_ONLINE;
 
-	if ((msnstatus == MSN_ONLINE) && gaim_presence_is_idle(presence))
+	if ((msnstatus == MSN_ONLINE) && purple_presence_is_idle(presence))
 		msnstatus = MSN_IDLE;
 
 	return msnstatus;

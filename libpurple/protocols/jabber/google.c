@@ -1,6 +1,6 @@
 
 /**
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -112,7 +112,7 @@ jabber_gmail_parse(JabberStream *js, xmlnode *packet, gpointer nul)
 	}
 
 	if (i>0) 
-		gaim_notify_emails(js->gc, count, count == returned_count, subjects, froms, tos, 
+		purple_notify_emails(js->gc, count, count == returned_count, subjects, froms, tos, 
 				   	   urls, NULL, NULL);
 
 	g_free(to_name);
@@ -136,7 +136,7 @@ jabber_gmail_poke(JabberStream *js, xmlnode *packet)
 	JabberIq *iq;
 	
 	/* bail if the user isn't interested */
-	if (!gaim_account_get_check_mail(js->gc->account))
+	if (!purple_account_get_check_mail(js->gc->account))
 		return;
 
 	type = xmlnode_get_attrib(packet, "type");
@@ -146,7 +146,7 @@ jabber_gmail_poke(JabberStream *js, xmlnode *packet)
 	if (strcmp(type, "set") || !xmlnode_get_child(packet, "new-mail"))
 		return;
 
-	gaim_debug(GAIM_DEBUG_MISC, "jabber",
+	purple_debug(PURPLE_DEBUG_MISC, "jabber",
 		   "Got new mail notification. Sending request for more info\n");
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "google:mail:notify");
@@ -165,7 +165,7 @@ jabber_gmail_poke(JabberStream *js, xmlnode *packet)
 void jabber_gmail_init(JabberStream *js) {
 	JabberIq *iq;
 
-	if (!gaim_account_get_check_mail(js->gc->account)) 
+	if (!purple_account_get_check_mail(js->gc->account)) 
 		return;
 
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "google:mail:notify");
@@ -189,7 +189,7 @@ void jabber_google_roster_init(JabberStream *js)
 
 void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *item)
 {
-	GaimAccount *account = gaim_connection_get_account(js->gc);
+	PurpleAccount *account = purple_connection_get_account(js->gc);
 	GSList *list = account->deny;
 	const char *jid = xmlnode_get_attrib(item, "jid");
 	char *jid_norm = g_strdup(jabber_normalize(account, jid));
@@ -209,7 +209,7 @@ void jabber_google_roster_outgoing(JabberStream *js, xmlnode *query, xmlnode *it
 
 gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 {
-	GaimAccount *account = gaim_connection_get_account(js->gc);
+	PurpleAccount *account = purple_connection_get_account(js->gc);
 	GSList *list = account->deny;
 	const char *jid = xmlnode_get_attrib(item, "jid");
 	gboolean on_block_list = FALSE;
@@ -227,22 +227,22 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 	}
 	
 	if (grt && (*grt == 'H' || *grt == 'h')) {
-		GaimBuddy *buddy = gaim_find_buddy(account, jid_norm);
-		gaim_blist_remove_buddy(buddy);
+		PurpleBuddy *buddy = purple_find_buddy(account, jid_norm);
+		purple_blist_remove_buddy(buddy);
 		return FALSE;
 	}
 	
 	if (!on_block_list && (grt && (*grt == 'B' || *grt == 'b'))) {
-		gaim_debug_info("jabber", "Blocking %s\n", jid_norm);
-		gaim_privacy_deny_add(account, jid_norm, TRUE);
+		purple_debug_info("jabber", "Blocking %s\n", jid_norm);
+		purple_privacy_deny_add(account, jid_norm, TRUE);
 	} else if (on_block_list && (!grt || (*grt != 'B' && *grt != 'b' ))){
-		gaim_debug_info("jabber", "Unblocking %s\n", jid_norm);
-		gaim_privacy_deny_remove(account, jid_norm, TRUE);
+		purple_debug_info("jabber", "Unblocking %s\n", jid_norm);
+		purple_privacy_deny_remove(account, jid_norm, TRUE);
 	}
 	return TRUE;
 }
 
-void jabber_google_roster_add_deny(GaimConnection *gc, const char *who) 
+void jabber_google_roster_add_deny(PurpleConnection *gc, const char *who) 
 {
 	JabberStream *js;
 	GSList *buddies;
@@ -250,7 +250,7 @@ void jabber_google_roster_add_deny(GaimConnection *gc, const char *who)
 	xmlnode *query;
 	xmlnode *item;
 	xmlnode *group;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 	JabberBuddy *jb;
 
 	js = (JabberStream*)(gc->proto_data);
@@ -260,7 +260,7 @@ void jabber_google_roster_add_deny(GaimConnection *gc, const char *who)
 
 	jb = jabber_buddy_find(js, who, TRUE);
 
-	buddies = gaim_find_buddies(js->gc->account, who);
+	buddies = purple_find_buddies(js->gc->account, who);
 	if(!buddies)
 		return;
 	
@@ -272,10 +272,10 @@ void jabber_google_roster_add_deny(GaimConnection *gc, const char *who)
 	item = xmlnode_new_child(query, "item");
 
 	while(buddies) {
-		GaimGroup *g;
+		PurpleGroup *g;
 
 		b = buddies->data;
-		g = gaim_buddy_get_group(b);
+		g = purple_buddy_get_group(b);
 
 		group = xmlnode_new_child(item, "group");
 		xmlnode_insert_data(group, g->name, -1);
@@ -304,16 +304,16 @@ void jabber_google_roster_add_deny(GaimConnection *gc, const char *who)
 			jbr = l->data;
 			if (jbr && jbr->name)
 			{
-				gaim_debug(GAIM_DEBUG_MISC, "jabber", "Removing resource %s\n", jbr->name);
+				purple_debug(PURPLE_DEBUG_MISC, "jabber", "Removing resource %s\n", jbr->name);
 				jabber_buddy_remove_resource(jb, jbr->name);
 			}
 			l = l->next;
 		}
 	}
-	gaim_prpl_got_user_status(gaim_connection_get_account(gc), who, "offline", NULL);
+	purple_prpl_got_user_status(purple_connection_get_account(gc), who, "offline", NULL);
 }
 
-void jabber_google_roster_rem_deny(GaimConnection *gc, const char *who)
+void jabber_google_roster_rem_deny(PurpleConnection *gc, const char *who)
 {
 	JabberStream *js;
 	GSList *buddies;
@@ -321,7 +321,7 @@ void jabber_google_roster_rem_deny(GaimConnection *gc, const char *who)
 	xmlnode *query;
 	xmlnode *item;
 	xmlnode *group;
-	GaimBuddy *b;
+	PurpleBuddy *b;
 
 	g_return_if_fail(gc != NULL);
 	g_return_if_fail(who != NULL);
@@ -331,7 +331,7 @@ void jabber_google_roster_rem_deny(GaimConnection *gc, const char *who)
 	if (!js || !js->server_caps & JABBER_CAP_GOOGLE_ROSTER)
 		return;
 	
-	buddies = gaim_find_buddies(js->gc->account, who);
+	buddies = purple_find_buddies(js->gc->account, who);
 	if(!buddies)
 		return;
 	
@@ -343,10 +343,10 @@ void jabber_google_roster_rem_deny(GaimConnection *gc, const char *who)
 	item = xmlnode_new_child(query, "item");
 
 	while(buddies) {
-		GaimGroup *g;
+		PurpleGroup *g;
 
 		b = buddies->data;
-		g = gaim_buddy_get_group(b);
+		g = purple_buddy_get_group(b);
 
 		group = xmlnode_new_child(item, "group");
 		xmlnode_insert_data(group, g->name, -1);

@@ -2,9 +2,9 @@
  * @file accountopt.h Account Options API
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -22,8 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _GAIM_ACCOUNTOPT_H_
-#define _GAIM_ACCOUNTOPT_H_
+#ifndef _PURPLE_ACCOUNTOPT_H_
+#define _PURPLE_ACCOUNTOPT_H_
 
 #include "prefs.h"
 
@@ -35,7 +35,7 @@
  */
 typedef struct
 {
-	GaimPrefType type;      /**< The type of value.                     */
+	PurplePrefType type;      /**< The type of value.                     */
 
 	char *text;             /**< The text that will appear to the user. */
 	char *pref_name;        /**< The name of the associated preference. */
@@ -51,7 +51,7 @@ typedef struct
 
 	gboolean masked;
 
-} GaimAccountOption;
+} PurpleAccountOption;
 
 /**
  * A username split.
@@ -65,7 +65,7 @@ typedef struct
 	char *default_value;    /**< The default value.                     */
 	char  field_sep;        /**< The field separator.                   */
 
-} GaimAccountUserSplit;
+} PurpleAccountUserSplit;
 
 #ifdef __cplusplus
 extern "C" {
@@ -85,7 +85,7 @@ extern "C" {
  *
  * @return The account option.
  */
-GaimAccountOption *gaim_account_option_new(GaimPrefType type, const char *text,
+PurpleAccountOption *purple_account_option_new(PurplePrefType type, const char *text,
 										   const char *pref_name);
 
 /**
@@ -97,7 +97,7 @@ GaimAccountOption *gaim_account_option_new(GaimPrefType type, const char *text,
  *
  * @return The account option.
  */
-GaimAccountOption *gaim_account_option_bool_new(const char *text,
+PurpleAccountOption *purple_account_option_bool_new(const char *text,
 												const char *pref_name,
 												gboolean default_value);
 
@@ -110,7 +110,7 @@ GaimAccountOption *gaim_account_option_bool_new(const char *text,
  *
  * @return The account option.
  */
-GaimAccountOption *gaim_account_option_int_new(const char *text,
+PurpleAccountOption *purple_account_option_int_new(const char *text,
 											   const char *pref_name,
 											   int default_value);
 
@@ -123,7 +123,7 @@ GaimAccountOption *gaim_account_option_int_new(const char *text,
  *
  * @return The account option.
  */
-GaimAccountOption *gaim_account_option_string_new(const char *text,
+PurpleAccountOption *purple_account_option_string_new(const char *text,
 												  const char *pref_name,
 												  const char *default_value);
 
@@ -133,7 +133,7 @@ GaimAccountOption *gaim_account_option_string_new(const char *text,
  * The list passed will be owned by the account option, and the
  * strings inside will be freed automatically.
  *
- * The list is a list of GaimKeyValuePair items. The key is the ID stored and
+ * The list is a list of PurpleKeyValuePair items. The key is the ID stored and
  * used internally, and the value is the label displayed.
  *
  * @param text      The text of the option.
@@ -142,7 +142,7 @@ GaimAccountOption *gaim_account_option_string_new(const char *text,
  *
  * @return The account option.
  */
-GaimAccountOption *gaim_account_option_list_new(const char *text,
+PurpleAccountOption *purple_account_option_list_new(const char *text,
 												const char *pref_name,
 												GList *list);
 
@@ -151,7 +151,7 @@ GaimAccountOption *gaim_account_option_list_new(const char *text,
  *
  * @param option The option to destroy.
  */
-void gaim_account_option_destroy(GaimAccountOption *option);
+void purple_account_option_destroy(PurpleAccountOption *option);
 
 /**
  * Sets the default boolean value for an account option.
@@ -159,7 +159,7 @@ void gaim_account_option_destroy(GaimAccountOption *option);
  * @param option The account option.
  * @param value  The default boolean value.
  */
-void gaim_account_option_set_default_bool(GaimAccountOption *option,
+void purple_account_option_set_default_bool(PurpleAccountOption *option,
 										  gboolean value);
 
 /**
@@ -168,7 +168,7 @@ void gaim_account_option_set_default_bool(GaimAccountOption *option,
  * @param option The account option.
  * @param value  The default integer value.
  */
-void gaim_account_option_set_default_int(GaimAccountOption *option,
+void purple_account_option_set_default_int(PurpleAccountOption *option,
 										 int value);
 
 /**
@@ -177,7 +177,7 @@ void gaim_account_option_set_default_int(GaimAccountOption *option,
  * @param option The account option.
  * @param value  The default string value.
  */
-void gaim_account_option_set_default_string(GaimAccountOption *option,
+void purple_account_option_set_default_string(PurpleAccountOption *option,
 											const char *value);
 
 /**
@@ -187,7 +187,7 @@ void gaim_account_option_set_default_string(GaimAccountOption *option,
  * @param masked  The masking.
  */
 void
-gaim_account_option_set_masked(GaimAccountOption *option, gboolean masked);
+purple_account_option_set_masked(PurpleAccountOption *option, gboolean masked);
 
 /**
  * Sets the list values for an account option.
@@ -201,7 +201,7 @@ gaim_account_option_set_masked(GaimAccountOption *option, gboolean masked);
  * @param option The account option.
  * @param values The default list value.
  */
-void gaim_account_option_set_list(GaimAccountOption *option, GList *values);
+void purple_account_option_set_list(PurpleAccountOption *option, GList *values);
 
 /**
  * Adds an item to a list account option.
@@ -210,7 +210,7 @@ void gaim_account_option_set_list(GaimAccountOption *option, GList *values);
  * @param key    The key.
  * @param value  The value.
  */
-void gaim_account_option_add_list_item(GaimAccountOption *option,
+void purple_account_option_add_list_item(PurpleAccountOption *option,
 									   const char *key, const char *value);
 
 /**
@@ -220,7 +220,7 @@ void gaim_account_option_add_list_item(GaimAccountOption *option,
  *
  * @return The account option's type.
  */
-GaimPrefType gaim_account_option_get_type(const GaimAccountOption *option);
+PurplePrefType purple_account_option_get_type(const PurpleAccountOption *option);
 
 /**
  * Returns the text for an account option.
@@ -229,7 +229,7 @@ GaimPrefType gaim_account_option_get_type(const GaimAccountOption *option);
  *
  * @return The account option's text.
  */
-const char *gaim_account_option_get_text(const GaimAccountOption *option);
+const char *purple_account_option_get_text(const PurpleAccountOption *option);
 
 /**
  * Returns the account setting for an account option.
@@ -238,7 +238,7 @@ const char *gaim_account_option_get_text(const GaimAccountOption *option);
  *
  * @return The account setting.
  */
-const char *gaim_account_option_get_setting(const GaimAccountOption *option);
+const char *purple_account_option_get_setting(const PurpleAccountOption *option);
 
 /**
  * Returns the default boolean value for an account option.
@@ -247,7 +247,7 @@ const char *gaim_account_option_get_setting(const GaimAccountOption *option);
  *
  * @return The default boolean value.
  */
-gboolean gaim_account_option_get_default_bool(const GaimAccountOption *option);
+gboolean purple_account_option_get_default_bool(const PurpleAccountOption *option);
 
 /**
  * Returns the default integer value for an account option.
@@ -256,7 +256,7 @@ gboolean gaim_account_option_get_default_bool(const GaimAccountOption *option);
  *
  * @return The default integer value.
  */
-int gaim_account_option_get_default_int(const GaimAccountOption *option);
+int purple_account_option_get_default_int(const PurpleAccountOption *option);
 
 /**
  * Returns the default string value for an account option.
@@ -265,8 +265,8 @@ int gaim_account_option_get_default_int(const GaimAccountOption *option);
  *
  * @return The default string value.
  */
-const char *gaim_account_option_get_default_string(
-	const GaimAccountOption *option);
+const char *purple_account_option_get_default_string(
+	const PurpleAccountOption *option);
 
 /**
  * Returns the default string value for a list account option.
@@ -275,8 +275,8 @@ const char *gaim_account_option_get_default_string(
  *
  * @return The default list string value.
  */
-const char *gaim_account_option_get_default_list_value(
-	const GaimAccountOption *option);
+const char *purple_account_option_get_default_list_value(
+	const PurpleAccountOption *option);
 
 /**
  * Returns the masking for an account option.
@@ -286,7 +286,7 @@ const char *gaim_account_option_get_default_list_value(
  * @return The masking.
  */
 gboolean
-gaim_account_option_get_masked(const GaimAccountOption *option);
+purple_account_option_get_masked(const PurpleAccountOption *option);
 
 /**
  * Returns the list values for an account option.
@@ -295,7 +295,7 @@ gaim_account_option_get_masked(const GaimAccountOption *option);
  *
  * @return The list values.
  */
-const GList *gaim_account_option_get_list(const GaimAccountOption *option);
+const GList *purple_account_option_get_list(const PurpleAccountOption *option);
 
 /*@}*/
 
@@ -314,7 +314,7 @@ const GList *gaim_account_option_get_list(const GaimAccountOption *option);
  *
  * @return The new user split.
  */
-GaimAccountUserSplit *gaim_account_user_split_new(const char *text,
+PurpleAccountUserSplit *purple_account_user_split_new(const char *text,
 												  const char *default_value,
 												  char sep);
 
@@ -323,7 +323,7 @@ GaimAccountUserSplit *gaim_account_user_split_new(const char *text,
  *
  * @param split The split to destroy.
  */
-void gaim_account_user_split_destroy(GaimAccountUserSplit *split);
+void purple_account_user_split_destroy(PurpleAccountUserSplit *split);
 
 /**
  * Returns the text for an account username split.
@@ -332,7 +332,7 @@ void gaim_account_user_split_destroy(GaimAccountUserSplit *split);
  *
  * @return The account username split's text.
  */
-const char *gaim_account_user_split_get_text(const GaimAccountUserSplit *split);
+const char *purple_account_user_split_get_text(const PurpleAccountUserSplit *split);
 
 /**
  * Returns the default string value for an account split.
@@ -341,8 +341,8 @@ const char *gaim_account_user_split_get_text(const GaimAccountUserSplit *split);
  *
  * @return The default string.
  */
-const char *gaim_account_user_split_get_default_value(
-		const GaimAccountUserSplit *split);
+const char *purple_account_user_split_get_default_value(
+		const PurpleAccountUserSplit *split);
 
 /**
  * Returns the field separator for an account split.
@@ -351,7 +351,7 @@ const char *gaim_account_user_split_get_default_value(
  *
  * @return The field separator.
  */
-char gaim_account_user_split_get_separator(const GaimAccountUserSplit *split);
+char purple_account_user_split_get_separator(const PurpleAccountUserSplit *split);
 
 /*@}*/
 
@@ -359,4 +359,4 @@ char gaim_account_user_split_get_separator(const GaimAccountUserSplit *split);
 }
 #endif
 
-#endif /* _GAIM_ACCOUNTOPT_H_ */
+#endif /* _PURPLE_ACCOUNTOPT_H_ */

@@ -1,33 +1,33 @@
-#ifndef _GAIM_PERL_HANDLERS_H_
-#define _GAIM_PERL_HANDLERS_H_
+#ifndef _PURPLE_PERL_HANDLERS_H_
+#define _PURPLE_PERL_HANDLERS_H_
 
 #include "cmds.h"
 #include "plugin.h"
 #include "prefs.h"
 #include "pluginpref.h"
-#ifdef GAIM_GTKPERL
+#ifdef PURPLE_GTKPERL
 #include "gtkplugin.h"
 #include "gtkutils.h"
 #endif
 
 typedef struct
 {
-	GaimCmdId id;
+	PurpleCmdId id;
 	SV *callback;
 	SV *data;
 	char *prpl_id;
 	char *cmd;
-	GaimPlugin *plugin;
-} GaimPerlCmdHandler;
+	PurplePlugin *plugin;
+} PurplePerlCmdHandler;
 
 typedef struct
 {
 	SV *callback;
 	SV *data;
-	GaimPlugin *plugin;
+	PurplePlugin *plugin;
 	int iotag;
 
-} GaimPerlTimeoutHandler;
+} PurplePerlTimeoutHandler;
 
 typedef struct
 {
@@ -35,37 +35,37 @@ typedef struct
 	SV *callback;
 	SV *data;
 	void *instance;
-	GaimPlugin *plugin;
+	PurplePlugin *plugin;
 
-} GaimPerlSignalHandler;
+} PurplePerlSignalHandler;
 
-void gaim_perl_plugin_action_cb(GaimPluginAction * gpa);
-GList *gaim_perl_plugin_actions(GaimPlugin *plugin, gpointer context); 
+void purple_perl_plugin_action_cb(PurplePluginAction * gpa);
+GList *purple_perl_plugin_actions(PurplePlugin *plugin, gpointer context); 
 
-GaimPluginPrefFrame *gaim_perl_get_plugin_frame(GaimPlugin *plugin);
+PurplePluginPrefFrame *purple_perl_get_plugin_frame(PurplePlugin *plugin);
 
-#ifdef GAIM_GTKPERL
-GtkWidget *gaim_perl_gtk_get_plugin_frame(GaimPlugin *plugin);
+#ifdef PURPLE_GTKPERL
+GtkWidget *purple_perl_gtk_get_plugin_frame(PurplePlugin *plugin);
 #endif
 
-void gaim_perl_timeout_add(GaimPlugin *plugin, int seconds, SV *callback,
+void purple_perl_timeout_add(PurplePlugin *plugin, int seconds, SV *callback,
                            SV *data);
-void gaim_perl_timeout_clear_for_plugin(GaimPlugin *plugin);
-void gaim_perl_timeout_clear(void);
+void purple_perl_timeout_clear_for_plugin(PurplePlugin *plugin);
+void purple_perl_timeout_clear(void);
 
-void gaim_perl_signal_connect(GaimPlugin *plugin, void *instance,
+void purple_perl_signal_connect(PurplePlugin *plugin, void *instance,
                               const char *signal, SV *callback,
                               SV *data, int priority);
-void gaim_perl_signal_disconnect(GaimPlugin *plugin, void *instance,
+void purple_perl_signal_disconnect(PurplePlugin *plugin, void *instance,
                                  const char *signal);
-void gaim_perl_signal_clear_for_plugin(GaimPlugin *plugin);
-void gaim_perl_signal_clear(void);
+void purple_perl_signal_clear_for_plugin(PurplePlugin *plugin);
+void purple_perl_signal_clear(void);
 
-GaimCmdId gaim_perl_cmd_register(GaimPlugin *plugin, const gchar *cmd,
-                                 const gchar *args, GaimCmdPriority priority,
-                                 GaimCmdFlag flag, const gchar *prpl_id,
+PurpleCmdId purple_perl_cmd_register(PurplePlugin *plugin, const gchar *cmd,
+                                 const gchar *args, PurpleCmdPriority priority,
+                                 PurpleCmdFlag flag, const gchar *prpl_id,
                                  SV *callback, const gchar *helpstr, SV *data);
-void gaim_perl_cmd_unregister(GaimCmdId id);
-void gaim_perl_cmd_clear_for_plugin(GaimPlugin *plugin);
+void purple_perl_cmd_unregister(PurpleCmdId id);
+void purple_perl_cmd_clear_for_plugin(PurplePlugin *plugin);
 
-#endif /* _GAIM_PERL_HANDLERS_H_ */
+#endif /* _PURPLE_PERL_HANDLERS_H_ */

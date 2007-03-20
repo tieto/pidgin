@@ -2,7 +2,7 @@
  * @file gtkconv.h GTK+ Conversation API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -39,7 +39,7 @@ typedef enum
 	PIDGIN_UNSEEN_NO_LOG, /**< Unseen text with NO_LOG flag.       */
 	PIDGIN_UNSEEN_TEXT,   /**< Unseen text in the conversation.    */
 	PIDGIN_UNSEEN_NICK    /**< Unseen text and the nick was said.  */
-} GaimUnseenState;
+} PidginUnseenState;
 
 enum {
 	CHAT_USERS_ICON_COLUMN,
@@ -56,7 +56,7 @@ enum {
 	((PidginConversation *)(conv)->ui_data)
 
 #define PIDGIN_IS_PIDGIN_CONVERSATION(conv) \
-	(gaim_conversation_get_ui_ops(conv) == \
+	(purple_conversation_get_ui_ops(conv) == \
 	 pidgin_conversations_get_conv_ui_ops())
 
 #include "pidgin.h"
@@ -111,7 +111,7 @@ struct _PidginChatPane
  */
 struct _PidginConversation
 {
-	GaimConversation *active_conv;
+	PurpleConversation *active_conv;
 	GList *convs;
 	GList *send_history;
 
@@ -147,7 +147,7 @@ struct _PidginConversation
 
 	GtkWidget *toolbar;
 
-	GaimUnseenState unseen_state;
+	PidginUnseenState unseen_state;
 	guint unseen_count;
 
 	union
@@ -172,28 +172,28 @@ struct _PidginConversation
  *
  * @return The GTK+ conversation operations structure.
  */
-GaimConversationUiOps *pidgin_conversations_get_conv_ui_ops(void);
+PurpleConversationUiOps *pidgin_conversations_get_conv_ui_ops(void);
 
 /**
  * Updates the buddy icon on a conversation.
  *
  * @param conv The conversation.
  */
-void pidgin_conv_update_buddy_icon(GaimConversation *conv);
+void pidgin_conv_update_buddy_icon(PurpleConversation *conv);
 
 /**
  * Sets the active conversation within a GTK-conversation.
  *
  * @param conv The conversation
  */
-void pidgin_conv_switch_active_conversation(GaimConversation *conv);
+void pidgin_conv_switch_active_conversation(PurpleConversation *conv);
 
 /**
  * Updates conversation buttons by protocol.
  *
  * @param conv The conversation.
  */
-void pidgin_conv_update_buttons_by_protocol(GaimConversation *conv);
+void pidgin_conv_update_buttons_by_protocol(PurpleConversation *conv);
 
 /**
  * Returns a list of conversations of the given type which have an unseen
@@ -208,11 +208,11 @@ void pidgin_conv_update_buttons_by_protocol(GaimConversation *conv);
  * @param hidden_only  If TRUE, only consider hidden conversations.
  * @param max_count    Maximum number of conversations to return, or 0 for
  *                     no maximum.
- * @return             List of GaimConversation matching criteria, or NULL.
+ * @return             List of PurpleConversation matching criteria, or NULL.
  */
 GList *
-pidgin_conversations_find_unseen_list(GaimConversationType type,
-										GaimUnseenState min_state,
+pidgin_conversations_find_unseen_list(PurpleConversationType type,
+										PidginUnseenState min_state,
 										gboolean hidden_only,
 										guint max_count);
 
@@ -221,22 +221,22 @@ pidgin_conversations_find_unseen_list(GaimConversationType type,
  * menu item will present that conversation to the user.
  *
  * @param menu   Menu widget to add items to.
- * @param convs  List of GaimConversation to add to menu.
+ * @param convs  List of PurpleConversation to add to menu.
  * @return       Number of conversations added to menu.
  */
 guint
 pidgin_conversations_fill_menu(GtkWidget *menu, GList *convs);
 
 /**
- * Presents a gaim conversation to the user.
+ * Presents a purple conversation to the user.
  *
  * @param conv The conversation.
  */
-void pidgin_conv_present_conversation(GaimConversation *conv);
+void pidgin_conv_present_conversation(PurpleConversation *conv);
 
 PidginWindow *pidgin_conv_get_window(PidginConversation *gtkconv);
-GdkPixbuf *pidgin_conv_get_tab_icon(GaimConversation *conv, gboolean small_icon);
-void pidgin_conv_new(GaimConversation *conv);
+GdkPixbuf *pidgin_conv_get_tab_icon(PurpleConversation *conv, gboolean small_icon);
+void pidgin_conv_new(PurpleConversation *conv);
 int pidgin_conv_get_tab_at_xy(PidginWindow *win, int x, int y, gboolean *to_right);
 gboolean pidgin_conv_is_hidden(PidginConversation *gtkconv);
 /*@}*/

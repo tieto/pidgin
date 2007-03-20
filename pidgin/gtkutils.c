@@ -2,9 +2,9 @@
  * @file gtkutils.c GTK+ utility functions
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -57,7 +57,7 @@
 #include "gtkdialogs.h"
 #include "gtkimhtml.h"
 #include "gtkimhtmltoolbar.h"
-#include "gaimstock.h"
+#include "pidginstock.h"
 #include "gtkthemes.h"
 #include "gtkutils.h"
 
@@ -66,7 +66,7 @@ static guint accels_save_timer = 0;
 static gboolean
 url_clicked_idle_cb(gpointer data)
 {
-	gaim_notify_uri(NULL, data);
+	purple_notify_uri(NULL, data);
 	g_free(data);
 	return FALSE;
 }
@@ -78,12 +78,12 @@ url_clicked_cb(GtkWidget *w, const char *uri)
 }
 
 static GtkIMHtmlFuncs gtkimhtml_cbs = {
-	(GtkIMHtmlGetImageFunc)gaim_imgstore_get,
-	(GtkIMHtmlGetImageDataFunc)gaim_imgstore_get_data,
-	(GtkIMHtmlGetImageSizeFunc)gaim_imgstore_get_size,
-	(GtkIMHtmlGetImageFilenameFunc)gaim_imgstore_get_filename,
-	gaim_imgstore_ref,
-	gaim_imgstore_unref,
+	(GtkIMHtmlGetImageFunc)purple_imgstore_get,
+	(GtkIMHtmlGetImageDataFunc)purple_imgstore_get_data,
+	(GtkIMHtmlGetImageSizeFunc)purple_imgstore_get_size,
+	(GtkIMHtmlGetImageFilenameFunc)purple_imgstore_get_filename,
+	purple_imgstore_ref,
+	purple_imgstore_unref,
 };
 
 void
@@ -100,7 +100,7 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
 
 	/* Use the GNOME "document" font, if applicable */
-	if (gaim_running_gnome()) {
+	if (purple_running_gnome()) {
 		char *path, *font;
 		PangoFontDescription *desc = NULL;
 				
@@ -161,7 +161,7 @@ pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **tool
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
 #ifdef USE_GTKSPELL
-	if (editable && gaim_prefs_get_bool("/gaim/gtk/conversations/spellcheck"))
+	if (editable && purple_prefs_get_bool("/purple/gtk/conversations/spellcheck"))
 		pidgin_setup_gtkspell(GTK_TEXT_VIEW(imhtml));
 #endif
 	gtk_widget_show(imhtml);
@@ -400,7 +400,7 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	GtkWidget *vbox, *label, *hbox;
 	char *labeltitle;
 
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(parent), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
@@ -415,7 +415,7 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	gtk_widget_show(label);
 	pidgin_set_accessible_label (vbox, label);
 
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 	gtk_widget_show(hbox);
 
@@ -423,7 +423,7 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	gtk_widget_show(label);
 
-	vbox = gtk_vbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
 	gtk_widget_show(vbox);
 
@@ -453,8 +453,8 @@ GtkWidget *
 pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 								  gpointer user_data)
 {
-	GaimPluginProtocolInfo *prpl_info;
-	GaimPlugin *plugin;
+	PurplePluginProtocolInfo *prpl_info;
+	PurplePlugin *plugin;
 	GtkWidget *hbox;
 	GtkWidget *label;
 	GtkWidget *optmenu;
@@ -479,12 +479,12 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	for (p = gaim_plugins_get_protocols(), i = 0;
+	for (p = purple_plugins_get_protocols(), i = 0;
 		 p != NULL;
 		 p = p->next, i++) {
 
-		plugin = (GaimPlugin *)p->data;
-		prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+		plugin = (PurplePlugin *)p->data;
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 		/* Create the item. */
 		item = gtk_menu_item_new();
@@ -546,7 +546,7 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 	return optmenu;
 }
 
-GaimAccount *
+PurpleAccount *
 pidgin_account_option_menu_get_selected(GtkWidget *optmenu)
 {
 	GtkWidget *menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
@@ -559,7 +559,7 @@ account_menu_cb(GtkWidget *optmenu, GCallback cb)
 {
 	GtkWidget *menu;
 	GtkWidget *item;
-	GaimAccount *account;
+	PurpleAccount *account;
 	gpointer user_data;
 
 	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
@@ -569,15 +569,15 @@ account_menu_cb(GtkWidget *optmenu, GCallback cb)
 	user_data = g_object_get_data(G_OBJECT(optmenu), "user_data");
 
 	if (cb != NULL)
-		((void (*)(GtkWidget *, GaimAccount *, gpointer))cb)(item, account,
+		((void (*)(GtkWidget *, PurpleAccount *, gpointer))cb)(item, account,
 															 user_data);
 }
 
 static void
-create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
-					GaimFilterAccountFunc filter_func, gboolean show_all)
+create_account_menu(GtkWidget *optmenu, PurpleAccount *default_account,
+					PurpleFilterAccountFunc filter_func, gboolean show_all)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	GtkWidget *menu;
 	GtkWidget *item;
 	GtkWidget *image;
@@ -593,9 +593,9 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 	int i, selected_index = -1;
 
 	if (show_all)
-		list = gaim_accounts_get_all();
+		list = purple_accounts_get_all();
 	else
-		list = gaim_connections_get_all();
+		list = purple_connections_get_all();
 
 	menu = gtk_menu_new();
 	gtk_widget_show(menu);
@@ -603,15 +603,15 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (p = list, i = 0; p != NULL; p = p->next, i++) {
-		GaimPluginProtocolInfo *prpl_info = NULL;
-		GaimPlugin *plugin;
+		PurplePluginProtocolInfo *prpl_info = NULL;
+		PurplePlugin *plugin;
 
 		if (show_all)
-			account = (GaimAccount *)p->data;
+			account = (PurpleAccount *)p->data;
 		else {
-			GaimConnection *gc = (GaimConnection *)p->data;
+			PurpleConnection *gc = (PurpleConnection *)p->data;
 
-			account = gaim_connection_get_account(gc);
+			account = purple_connection_get_account(gc);
 		}
 
 		if (filter_func && !filter_func(account)) {
@@ -619,10 +619,10 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 			continue;
 		}
 
-		plugin = gaim_find_prpl(gaim_account_get_protocol_id(account));
+		plugin = purple_find_prpl(purple_account_get_protocol_id(account));
 
 		if (plugin != NULL)
-			prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 		/* Create the item. */
 		item = gtk_menu_item_new();
@@ -643,8 +643,8 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 			g_free(filename);
 
 			if (pixbuf != NULL) {
-				if (gaim_account_is_disconnected(account) && show_all &&
-						gaim_connections_get_all())
+				if (purple_account_is_disconnected(account) && show_all &&
+						purple_connections_get_all())
 					gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
 				image = gtk_image_new_from_pixbuf(pixbuf);
@@ -662,15 +662,15 @@ create_account_menu(GtkWidget *optmenu, GaimAccount *default_account,
 		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
 		gtk_widget_show(image);
 
-		if (gaim_account_get_alias(account)) {
+		if (purple_account_get_alias(account)) {
 			g_snprintf(buf, sizeof(buf), "%s (%s) (%s)",
-					   gaim_account_get_username(account),
-					   gaim_account_get_alias(account),
-					   gaim_account_get_protocol_name(account));
+					   purple_account_get_username(account),
+					   purple_account_get_alias(account),
+					   purple_account_get_protocol_name(account));
 		} else {
 			g_snprintf(buf, sizeof(buf), "%s (%s)",
-					   gaim_account_get_username(account),
-					   gaim_account_get_protocol_name(account));
+					   purple_account_get_username(account),
+					   purple_account_get_protocol_name(account));
 		}
 
 		/* Create the label. */
@@ -705,8 +705,8 @@ regenerate_account_menu(GtkWidget *optmenu)
 	GtkWidget *menu;
 	GtkWidget *item;
 	gboolean show_all;
-	GaimAccount *account;
-	GaimFilterAccountFunc filter_func;
+	PurpleAccount *account;
+	PurpleFilterAccountFunc filter_func;
 
 	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
 	item = gtk_menu_get_active(GTK_MENU(menu));
@@ -724,13 +724,13 @@ regenerate_account_menu(GtkWidget *optmenu)
 }
 
 static void
-account_menu_sign_on_off_cb(GaimConnection *gc, GtkWidget *optmenu)
+account_menu_sign_on_off_cb(PurpleConnection *gc, GtkWidget *optmenu)
 {
 	regenerate_account_menu(optmenu);
 }
 
 static void
-account_menu_added_removed_cb(GaimAccount *account, GtkWidget *optmenu)
+account_menu_added_removed_cb(PurpleAccount *account, GtkWidget *optmenu)
 {
 	regenerate_account_menu(optmenu);
 }
@@ -739,19 +739,19 @@ static gboolean
 account_menu_destroyed_cb(GtkWidget *optmenu, GdkEvent *event,
 						  void *user_data)
 {
-	gaim_signals_disconnect_by_handle(optmenu);
+	purple_signals_disconnect_by_handle(optmenu);
 
 	return FALSE;
 }
 
 void
-pidgin_account_option_menu_set_selected(GtkWidget *optmenu, GaimAccount *account)
+pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *account)
 {
 	GtkWidget *menu;
 	GtkWidget *item;
 	gboolean show_all;
-	GaimAccount *curaccount;
-	GaimFilterAccountFunc filter_func;
+	PurpleAccount *curaccount;
+	PurpleFilterAccountFunc filter_func;
 
 	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
 	item = gtk_menu_get_active(GTK_MENU(menu));
@@ -772,9 +772,9 @@ pidgin_account_option_menu_set_selected(GtkWidget *optmenu, GaimAccount *account
 }
 
 GtkWidget *
-pidgin_account_option_menu_new(GaimAccount *default_account,
+pidgin_account_option_menu_new(PurpleAccount *default_account,
 								 gboolean show_all, GCallback cb,
-								 GaimFilterAccountFunc filter_func,
+								 PurpleFilterAccountFunc filter_func,
 								 gpointer user_data)
 {
 	GtkWidget *optmenu;
@@ -786,18 +786,18 @@ pidgin_account_option_menu_new(GaimAccount *default_account,
 	g_signal_connect(G_OBJECT(optmenu), "destroy",
 					 G_CALLBACK(account_menu_destroyed_cb), NULL);
 
-	/* Register the gaim sign on/off event callbacks. */
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-						optmenu, GAIM_CALLBACK(account_menu_sign_on_off_cb),
+	/* Register the purple sign on/off event callbacks. */
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+						optmenu, PURPLE_CALLBACK(account_menu_sign_on_off_cb),
 						optmenu);
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
-						optmenu, GAIM_CALLBACK(account_menu_sign_on_off_cb),
+	purple_signal_connect(purple_connections_get_handle(), "signed-off",
+						optmenu, PURPLE_CALLBACK(account_menu_sign_on_off_cb),
 						optmenu);
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-added",
-						optmenu, GAIM_CALLBACK(account_menu_added_removed_cb),
+	purple_signal_connect(purple_accounts_get_handle(), "account-added",
+						optmenu, PURPLE_CALLBACK(account_menu_added_removed_cb),
 						optmenu);
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed",
-						optmenu, GAIM_CALLBACK(account_menu_added_removed_cb),
+	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
+						optmenu, PURPLE_CALLBACK(account_menu_added_removed_cb),
 						optmenu);
 
 	/* Set some data. */
@@ -848,7 +848,7 @@ pidgin_setup_gtkspell(GtkTextView *textview)
 
 	if (gtkspell_new_attach(textview, locale, &error) == NULL && error)
 	{
-		gaim_debug_warning("gtkspell", "Failed to setup GtkSpell: %s\n",
+		purple_debug_warning("gtkspell", "Failed to setup GtkSpell: %s\n",
 						   error->message);
 		g_error_free(error);
 	}
@@ -860,7 +860,7 @@ pidgin_save_accels_cb(GtkAccelGroup *accel_group, guint arg1,
                          GdkModifierType arg2, GClosure *arg3,
                          gpointer data)
 {
-	gaim_debug(GAIM_DEBUG_MISC, "accels",
+	purple_debug(PURPLE_DEBUG_MISC, "accels",
 	           "accel changed, scheduling save.\n");
 
 	if (!accels_save_timer)
@@ -873,9 +873,9 @@ pidgin_save_accels(gpointer data)
 {
 	char *filename = NULL;
 
-	filename = g_build_filename(gaim_user_dir(), G_DIR_SEPARATOR_S,
+	filename = g_build_filename(purple_user_dir(), G_DIR_SEPARATOR_S,
 	                            "accels", NULL);
-	gaim_debug(GAIM_DEBUG_MISC, "accels", "saving accels to %s\n", filename);
+	purple_debug(PURPLE_DEBUG_MISC, "accels", "saving accels to %s\n", filename);
 	gtk_accel_map_save(filename);
 	g_free(filename);
 
@@ -888,7 +888,7 @@ pidgin_load_accels()
 {
 	char *filename = NULL;
 
-	filename = g_build_filename(gaim_user_dir(), G_DIR_SEPARATOR_S,
+	filename = g_build_filename(purple_user_dir(), G_DIR_SEPARATOR_S,
 	                            "accels", NULL);
 	gtk_accel_map_load(filename);
 	g_free(filename);
@@ -896,7 +896,7 @@ pidgin_load_accels()
 
 gboolean
 pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
-							GaimAccount **ret_account, char **ret_protocol,
+							PurpleAccount **ret_account, char **ret_protocol,
 							char **ret_username, char **ret_alias)
 {
 	char *protocol = NULL;
@@ -970,27 +970,27 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 		if (ret_account != NULL)
 		{
 			GList *list;
-			GaimAccount *account = NULL;
+			PurpleAccount *account = NULL;
 			GList *l;
 			const char *protoname;
 
 			if (all_accounts)
-				list = gaim_accounts_get_all();
+				list = purple_accounts_get_all();
 			else
-				list = gaim_connections_get_all();
+				list = purple_connections_get_all();
 
 			for (l = list; l != NULL; l = l->next)
 			{
-				GaimConnection *gc;
-				GaimPluginProtocolInfo *prpl_info = NULL;
-				GaimPlugin *plugin;
+				PurpleConnection *gc;
+				PurplePluginProtocolInfo *prpl_info = NULL;
+				PurplePlugin *plugin;
 
 				if (all_accounts)
 				{
-					account = (GaimAccount *)l->data;
+					account = (PurpleAccount *)l->data;
 
-					plugin = gaim_plugins_find_with_id(
-						gaim_account_get_protocol_id(account));
+					plugin = purple_plugins_find_with_id(
+						purple_account_get_protocol_id(account));
 
 					if (plugin == NULL)
 					{
@@ -999,14 +999,14 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 						continue;
 					}
 
-					prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+					prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 				}
 				else
 				{
-					gc = (GaimConnection *)l->data;
-					account = gaim_connection_get_account(gc);
+					gc = (PurpleConnection *)l->data;
+					account = purple_connection_get_account(gc);
 
-					prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+					prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 				}
 
 				protoname = prpl_info->list_icon(account, NULL);
@@ -1023,16 +1023,16 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 			{
 				for (l = list; l != NULL; l = l->next)
 				{
-					GaimConnection *gc;
-					GaimPluginProtocolInfo *prpl_info = NULL;
-					GaimPlugin *plugin;
+					PurpleConnection *gc;
+					PurplePluginProtocolInfo *prpl_info = NULL;
+					PurplePlugin *plugin;
 
 					if (all_accounts)
 					{
-						account = (GaimAccount *)l->data;
+						account = (PurpleAccount *)l->data;
 
-						plugin = gaim_plugins_find_with_id(
-							gaim_account_get_protocol_id(account));
+						plugin = purple_plugins_find_with_id(
+							purple_account_get_protocol_id(account));
 
 						if (plugin == NULL)
 						{
@@ -1041,14 +1041,14 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 							continue;
 						}
 
-						prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 					}
 					else
 					{
-						gc = (GaimConnection *)l->data;
-						account = gaim_connection_get_account(gc);
+						gc = (PurpleConnection *)l->data;
+						account = purple_connection_get_account(gc);
 
-						prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+						prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 					}
 
 					protoname = prpl_info->list_icon(account, NULL);
@@ -1298,7 +1298,7 @@ enum {
 
 typedef struct {
 	char *filename;
-	GaimAccount *account;
+	PurpleAccount *account;
 	char *who;
 } _DndData;
 
@@ -1308,7 +1308,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 	size_t size;
 	struct stat st;
 	GError *err = NULL;
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 	GtkTextIter iter;
 	int id;
@@ -1319,7 +1319,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 
 			str = g_strdup_printf(_("The following error has occurred loading %s: %s"),
 						data->filename, strerror(errno));
-			gaim_notify_error(NULL, NULL,
+			purple_notify_error(NULL, NULL,
 					  _("Failed to load image"),
 					  str);
 			g_free(str);
@@ -1330,10 +1330,10 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 		pidgin_set_custom_buddy_icon(data->account, data->who, data->filename);
 		break;
 	case DND_FILE_TRANSFER:
-		serv_send_file(gaim_account_get_connection(data->account), data->who, data->filename);
+		serv_send_file(purple_account_get_connection(data->account), data->who, data->filename);
 		break;
 	case DND_IM_IMAGE:
-		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, data->account, data->who);
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, data->account, data->who);
 		gtkconv = PIDGIN_CONVERSATION(conv);
 
 		if (!g_file_get_contents(data->filename, &filedata, &size,
@@ -1341,7 +1341,7 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			char *str;
 
 			str = g_strdup_printf(_("The following error has occurred loading %s: %s"), data->filename, err->message);
-			gaim_notify_error(NULL, NULL,
+			purple_notify_error(NULL, NULL,
 					  _("Failed to load image"),
 					  str);
 
@@ -1350,13 +1350,13 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 
 			return;
 		}
-		id = gaim_imgstore_add(filedata, size, data->filename);
+		id = purple_imgstore_add(filedata, size, data->filename);
 		g_free(filedata);
 
 		gtk_text_buffer_get_iter_at_mark(GTK_IMHTML(gtkconv->entry)->text_buffer, &iter,
 						 gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer));
 		gtk_imhtml_insert_image_at_iter(GTK_IMHTML(gtkconv->entry), id, &iter);
-		gaim_imgstore_unref(id);
+		purple_imgstore_unref(id);
 
 		break;
 	}
@@ -1385,16 +1385,16 @@ static void dnd_set_icon_cancel_cb(_DndData *data)
 }
 
 void
-pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *who)
+pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char *who)
 {
 	GList *tmp;
 	GdkPixbuf *pb;
-	GList *files = gaim_uri_list_extract_filenames((const gchar *)sd->data);
-	GaimConnection *gc = gaim_account_get_connection(account);
-	GaimPluginProtocolInfo *prpl_info = NULL;
+	GList *files = purple_uri_list_extract_filenames((const gchar *)sd->data);
+	PurpleConnection *gc = purple_account_get_connection(account);
+	PurplePluginProtocolInfo *prpl_info = NULL;
 	gboolean file_send_ok = FALSE;
 #ifndef _WIN32
-	GaimDesktopItem *item;
+	PurpleDesktopItem *item;
 #endif
 
 	g_return_if_fail(account != NULL);
@@ -1418,7 +1418,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *w
 			char *str;
 
 			str = g_strdup_printf(_("Cannot send folder %s."), basename);
-			gaim_notify_error(NULL, NULL,
+			purple_notify_error(NULL, NULL,
 					  str,_(PIDGIN_NAME " cannot transfer a folder. You will need to send the files within individually"));
 
 			g_free(str);
@@ -1437,7 +1437,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *w
 			data->account = account;
 
 			if (gc)
-				prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(gc->prpl);
+				prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 			if (prpl_info && prpl_info->options & OPT_PROTO_IM_IMAGE)
 				im = TRUE;
@@ -1446,7 +1446,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *w
 				ft = prpl_info->can_receive_file(gc, who);
 
 			if (im && ft)
-				gaim_request_choice(NULL, NULL,
+				purple_request_choice(NULL, NULL,
 						    _("You have dragged an image"),
 						    _("You can send this image as a file transfer, "
 						      "embed it into this message, or use it as the buddy icon for this user."),
@@ -1456,11 +1456,11 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *w
 						    _("Send image file"), DND_FILE_TRANSFER,
 						    _("Insert in message"), DND_IM_IMAGE, NULL);
 			else if (!(im || ft))
-				gaim_request_yes_no(NULL, NULL, _("You have dragged an image"),
+				purple_request_yes_no(NULL, NULL, _("You have dragged an image"),
 						       _("Would you like to set it as the buddy icon for this user?"),
 						    0, data, (GCallback)dnd_set_icon_ok_cb, (GCallback)dnd_set_icon_cancel_cb);
 			else
-				gaim_request_choice(NULL, NULL,
+				purple_request_choice(NULL, NULL,
 						    _("You have dragged an image"),
 						    ft ? _("You can send this image as a file transfer or "
 							   "embed it into this message, or use it as the buddy icon for this user.") :
@@ -1474,8 +1474,8 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *w
 
 #ifndef _WIN32
 		/* Are we trying to send a .desktop file? */
-		else if (gaim_str_has_suffix(basename, ".desktop") && (item = gaim_desktop_item_new_from_file(filename))) {
-			GaimDesktopItemType dtype;
+		else if (purple_str_has_suffix(basename, ".desktop") && (item = purple_desktop_item_new_from_file(filename))) {
+			PurpleDesktopItemType dtype;
 			char key[64];
 			const char *itemname = NULL;
 
@@ -1485,7 +1485,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *w
 			langs = g_get_language_names();
 			for (i = 0; langs[i]; i++) {
 				g_snprintf(key, sizeof(key), "Name[%s]", langs[i]);
-				itemname = gaim_desktop_item_get_string(item, key);
+				itemname = purple_desktop_item_get_string(item, key);
 				break;
 			}
 #else
@@ -1495,22 +1495,22 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *w
 			if (dot)
 				*dot = '\0';
 			g_snprintf(key, sizeof(key), "Name[%s]", lang);
-			itemname = gaim_desktop_item_get_string(item, key);
+			itemname = purple_desktop_item_get_string(item, key);
 #endif
 			if (!itemname)
-				itemname = gaim_desktop_item_get_string(item, "Name");
+				itemname = purple_desktop_item_get_string(item, "Name");
 
-			dtype = gaim_desktop_item_get_entry_type(item);
+			dtype = purple_desktop_item_get_entry_type(item);
 			switch (dtype) {
-				GaimConversation *conv;
+				PurpleConversation *conv;
 				PidginConversation *gtkconv;
 
-			case GAIM_DESKTOP_ITEM_TYPE_LINK:
-				conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, who);
+			case PURPLE_DESKTOP_ITEM_TYPE_LINK:
+				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, who);
 				gtkconv =  PIDGIN_CONVERSATION(conv);
 				gtk_imhtml_insert_link(GTK_IMHTML(gtkconv->entry),
 						       gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer),
-						       gaim_desktop_item_get_string(item, "URL"), itemname);
+						       purple_desktop_item_get_string(item, "URL"), itemname);
 				break;
 			default:
 				/* I don't know if we really want to do anything here.  Most of the desktop item types are crap like
@@ -1518,12 +1518,12 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *w
 				 * send.  The only logical one is "Application," but do we really want to send a binary and nothing else?
 				 * Probably not.  I'll just give an error and return. */
 				/* The original patch sent the icon used by the launcher.  That's probably wrong */
-				gaim_notify_error(NULL, NULL, _("Cannot send launcher"), _("You dragged a desktop launcher. "
+				purple_notify_error(NULL, NULL, _("Cannot send launcher"), _("You dragged a desktop launcher. "
 											   "Most likely you wanted to send whatever this launcher points to instead of this launcher"
 											   " itself."));
 				break;
 			}
-			gaim_desktop_item_unref(item);
+			purple_desktop_item_unref(item);
 			return;
 		}
 #endif /* _WIN32 */
@@ -1535,7 +1535,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, GaimAccount *account, const char *w
 	g_list_free(files);
 }
 
-void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, GaimIconScaleRules rules, int *width, int *height)
+void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, PurpleBuddyIconSpec *spec, PurpleIconScaleRules rules, int *width, int *height)
 {
 	*width = gdk_pixbuf_get_width(buf);
 	*height = gdk_pixbuf_get_height(buf);
@@ -1543,7 +1543,7 @@ void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, G
 	if ((spec == NULL) || !(spec->scale_rules & rules))
 		return;
 
-	gaim_buddy_icon_get_scale_size(spec, width, height);
+	purple_buddy_icon_get_scale_size(spec, width, height);
 
 	/* and now for some arbitrary sanity checks */
 	if(*width > 100)
@@ -1552,21 +1552,21 @@ void pidgin_buddy_icon_get_scale_size(GdkPixbuf *buf, GaimBuddyIconSpec *spec, G
 		*height = 100;
 }
 
-GdkPixbuf * pidgin_create_status_icon(GaimStatusPrimitive prim, GtkWidget *w, const char *size)
+GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, const char *size)
 {
 	GtkIconSize icon_size = gtk_icon_size_from_name(size);
 	GdkPixbuf *pixbuf = NULL;
 
-	if (prim == GAIM_STATUS_UNAVAILABLE)
+	if (prim == PURPLE_STATUS_UNAVAILABLE)
         	pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_BUSY,
                                                  icon_size, "GtkWidget");
-        else if (prim == GAIM_STATUS_AWAY)
+        else if (prim == PURPLE_STATUS_AWAY)
                 pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_AWAY,
                                                  icon_size, "GtkWidget");
-        else if (prim == GAIM_STATUS_EXTENDED_AWAY)
+        else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
                 pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
                                                  icon_size, "GtkWidget");
-        else if (prim == GAIM_STATUS_OFFLINE)
+        else if (prim == PURPLE_STATUS_OFFLINE)
                 pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,
                                                  icon_size, "GtkWidget");
         else
@@ -1578,10 +1578,10 @@ GdkPixbuf * pidgin_create_status_icon(GaimStatusPrimitive prim, GtkWidget *w, co
 
 
 GdkPixbuf *
-pidgin_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size)
+pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size)
 {
-	GaimPlugin *prpl;
-	GaimPluginProtocolInfo *prpl_info;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info;
 	const char *protoname = NULL;
 	char buf[256]; /* TODO: We should use a define for max file length */
 	char *filename = NULL;
@@ -1589,11 +1589,11 @@ pidgin_create_prpl_icon(GaimAccount *account, PidginPrplIconSize size)
 
 	g_return_val_if_fail(account != NULL, NULL);
 
-	prpl = gaim_find_prpl(gaim_account_get_protocol_id(account));
+	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 	if (prpl == NULL)
 		return NULL;
 
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(prpl);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info->list_icon == NULL)
 		return NULL;
 
@@ -1623,15 +1623,15 @@ menu_action_cb(GtkMenuItem *item, gpointer object)
 	gpointer data;
 	void (*callback)(gpointer, gpointer);
 
-	callback = g_object_get_data(G_OBJECT(item), "gaimcallback");
-	data = g_object_get_data(G_OBJECT(item), "gaimcallbackdata");
+	callback = g_object_get_data(G_OBJECT(item), "purplecallback");
+	data = g_object_get_data(G_OBJECT(item), "purplecallbackdata");
 
 	if (callback)
 		callback(object, data);
 }
 
 void
-pidgin_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
+pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
                             gpointer object)
 {
 	if (act == NULL) {
@@ -1644,10 +1644,10 @@ pidgin_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
 
 			if (act->callback != NULL) {
 				g_object_set_data(G_OBJECT(menuitem),
-				                  "gaimcallback",
+				                  "purplecallback",
 				                  act->callback);
 				g_object_set_data(G_OBJECT(menuitem),
-				                  "gaimcallbackdata",
+				                  "purplecallbackdata",
 				                  act->data);
 				g_signal_connect(G_OBJECT(menuitem), "activate",
 				                 G_CALLBACK(menu_action_cb),
@@ -1677,14 +1677,14 @@ pidgin_append_menu_action(GtkWidget *menu, GaimMenuAction *act,
 			}
 
 			for (l = act->children; l; l = l->next) {
-				GaimMenuAction *act = (GaimMenuAction *)l->data;
+				PurpleMenuAction *act = (PurpleMenuAction *)l->data;
 
 				pidgin_append_menu_action(submenu, act, object);
 			}
 			g_list_free(act->children);
 			act->children = NULL;
 		}
-		gaim_menu_action_free(act);
+		purple_menu_action_free(act);
 	}
 }
 
@@ -1798,7 +1798,7 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 	val1.g_type = 0;
 	gtk_tree_model_get_value(model, iter, 2, &val1);
 	tmp = g_value_get_string(&val1);
-	if (tmp != NULL && gaim_str_has_prefix(tmp, key))
+	if (tmp != NULL && purple_str_has_prefix(tmp, key))
 	{
 		g_value_unset(&val1);
 		return TRUE;
@@ -1808,7 +1808,7 @@ static gboolean screenname_completion_match_func(GtkEntryCompletion *completion,
 	val2.g_type = 0;
 	gtk_tree_model_get_value(model, iter, 3, &val2);
 	tmp = g_value_get_string(&val2);
-	if (tmp != NULL && gaim_str_has_prefix(tmp, key))
+	if (tmp != NULL && purple_str_has_prefix(tmp, key))
 	{
 		g_value_unset(&val2);
 		return TRUE;
@@ -1823,7 +1823,7 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 {
 	GValue val;
 	GtkWidget *optmenu = user_data[1];
-	GaimAccount *account;
+	PurpleAccount *account;
 
 	val.g_type = 0;
 	gtk_tree_model_get_value(model, iter, 1, &val);
@@ -1858,7 +1858,7 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 
 static void
 add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, const char *contact_alias,
-								  const GaimAccount *account, const char *screenname)
+								  const PurpleAccount *account, const char *screenname)
 {
 	GtkTreeIter iter;
 	gboolean completion_added = FALSE;
@@ -1933,15 +1933,15 @@ add_screenname_autocomplete_entry(GtkListStore *store, const char *buddy_alias, 
 }
 #endif /* NEW_STYLE_COMPLETION */
 
-static void get_log_set_name(GaimLogSet *set, gpointer value, gpointer **set_hash_data)
+static void get_log_set_name(PurpleLogSet *set, gpointer value, gpointer **set_hash_data)
 {
 	/* 1. Don't show buddies because we will have gotten them already.
 	 * 2. Only show those with non-NULL accounts that are currently connected.
 	 * 3. The boxes that use this autocomplete code handle only IMs. */
 	if (!set->buddy &&
 	    (GPOINTER_TO_INT(set_hash_data[1]) ||
-	     (set->account != NULL && gaim_account_is_connected(set->account))) &&
-		set->type == GAIM_LOG_IM) {
+	     (set->account != NULL && purple_account_is_connected(set->account))) &&
+		set->type == PURPLE_LOG_IM) {
 #ifdef NEW_STYLE_COMPLETION
 			add_screenname_autocomplete_entry((GtkListStore *)set_hash_data[0],
 											  NULL, NULL, set->account, set->name);
@@ -1958,33 +1958,33 @@ static void get_log_set_name(GaimLogSet *set, gpointer value, gpointer **set_has
 static void
 add_completion_list(GtkListStore *store)
 {
-	GaimBlistNode *gnode, *cnode, *bnode;
+	PurpleBlistNode *gnode, *cnode, *bnode;
 	gboolean all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(store), "screenname-all"));
 	GHashTable *sets;
 	gpointer set_hash_data[] = {store, GINT_TO_POINTER(all)};
 
 	gtk_list_store_clear(store);
 
-	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next)
+	for (gnode = purple_get_blist()->root; gnode != NULL; gnode = gnode->next)
 	{
-		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 
 		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
 		{
-			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
 
 			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
 			{
-				GaimBuddy *buddy = (GaimBuddy *)bnode;
+				PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 
-				if (!all && !gaim_account_is_connected(buddy->account))
+				if (!all && !purple_account_is_connected(buddy->account))
 					continue;
 
 				add_screenname_autocomplete_entry(store,
-												  ((GaimContact *)cnode)->alias,
-												  gaim_buddy_get_contact_alias(buddy),
+												  ((PurpleContact *)cnode)->alias,
+												  purple_buddy_get_contact_alias(buddy),
 												  buddy->account,
 												  buddy->name
 												 );
@@ -1992,7 +1992,7 @@ add_completion_list(GtkListStore *store)
 		}
 	}
 
-	sets = gaim_log_get_log_sets();
+	sets = purple_log_get_log_sets();
 	g_hash_table_foreach(sets, (GHFunc)get_log_set_name, &set_hash_data);
 	g_hash_table_destroy(sets);
 }
@@ -2000,7 +2000,7 @@ add_completion_list(GtkListStore *store)
 static void
 add_completion_list(PidginCompletionData *data)
 {
-	GaimBlistNode *gnode, *cnode, *bnode;
+	PurpleBlistNode *gnode, *cnode, *bnode;
 	GCompletion *completion;
 	GList *item = g_list_append(NULL, NULL);
 	GHashTable *sets;
@@ -2011,21 +2011,21 @@ add_completion_list(PidginCompletionData *data)
 	g_list_foreach(completion->items, (GFunc)g_free, NULL);
 	g_completion_clear_items(completion);
 
-	for (gnode = gaim_get_blist()->root; gnode != NULL; gnode = gnode->next)
+	for (gnode = purple_get_blist()->root; gnode != NULL; gnode = gnode->next)
 	{
-		if (!GAIM_BLIST_NODE_IS_GROUP(gnode))
+		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 
 		for (cnode = gnode->child; cnode != NULL; cnode = cnode->next)
 		{
-			if (!GAIM_BLIST_NODE_IS_CONTACT(cnode))
+			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
 
 			for (bnode = cnode->child; bnode != NULL; bnode = bnode->next)
 			{
-				GaimBuddy *buddy = (GaimBuddy *)bnode;
+				PurpleBuddy *buddy = (PurpleBuddy *)bnode;
 
-				if (!data->all && !gaim_account_is_connected(buddy->account))
+				if (!data->all && !purple_account_is_connected(buddy->account))
 					continue;
 
 				item->data = g_strdup(buddy->name);
@@ -2035,7 +2035,7 @@ add_completion_list(PidginCompletionData *data)
 	}
 	g_list_free(item);
 
-	sets = gaim_log_get_log_sets();
+	sets = purple_log_get_log_sets();
 	item = NULL;
 	set_hash_data[0] = &item;
 	set_hash_data[1] = GINT_TO_POINTER(data->all);
@@ -2049,7 +2049,7 @@ add_completion_list(PidginCompletionData *data)
 static void
 screenname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer data)
 {
-	gaim_signals_disconnect_by_handle(widget);
+	purple_signals_disconnect_by_handle(widget);
 }
 
 static void
@@ -2119,16 +2119,16 @@ pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gb
 
 	if (!all)
 	{
-		gaim_signal_connect(gaim_connections_get_handle(), "signed-on", entry,
-							GAIM_CALLBACK(repopulate_autocomplete), cb_data);
-		gaim_signal_connect(gaim_connections_get_handle(), "signed-off", entry,
-							GAIM_CALLBACK(repopulate_autocomplete), cb_data);
+		purple_signal_connect(purple_connections_get_handle(), "signed-on", entry,
+							PURPLE_CALLBACK(repopulate_autocomplete), cb_data);
+		purple_signal_connect(purple_connections_get_handle(), "signed-off", entry,
+							PURPLE_CALLBACK(repopulate_autocomplete), cb_data);
 	}
 
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-added", entry,
-						GAIM_CALLBACK(repopulate_autocomplete), cb_data);
-	gaim_signal_connect(gaim_accounts_get_handle(), "account-removed", entry,
-						GAIM_CALLBACK(repopulate_autocomplete), cb_data);
+	purple_signal_connect(purple_accounts_get_handle(), "account-added", entry,
+						PURPLE_CALLBACK(repopulate_autocomplete), cb_data);
+	purple_signal_connect(purple_accounts_get_handle(), "account-removed", entry,
+						PURPLE_CALLBACK(repopulate_autocomplete), cb_data);
 
 	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(screenname_autocomplete_destroyed_cb), NULL);
 }
@@ -2206,7 +2206,7 @@ icon_filesel_choose_cb(GtkWidget *widget, gint response, struct _icon_chooser *d
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog->icon_filesel));
 	current_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog->icon_filesel));
 	if (current_folder != NULL) {
-		gaim_prefs_set_path("/gaim/gtk/filelocations/last_icon_folder", current_folder);
+		purple_prefs_set_path("/purple/gtk/filelocations/last_icon_folder", current_folder);
 		g_free(current_folder);
 	}
 
@@ -2229,7 +2229,7 @@ icon_filesel_choose_cb(GtkWidget *w, struct _icon_chooser *dialog)
 
 	current_folder = g_path_get_dirname(filename);
 	if (current_folder != NULL) {
-		gaim_prefs_set_path("/gaim/gtk/filelocations/last_icon_folder", current_folder);
+		purple_prefs_set_path("/purple/gtk/filelocations/last_icon_folder", current_folder);
 		g_free(current_folder);
 	}
 
@@ -2284,7 +2284,7 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 	width = gdk_pixbuf_get_width(pixbuf);
 	height = gdk_pixbuf_get_height(pixbuf);
 	basename = g_path_get_basename(filename);
-	size = gaim_str_size_to_units(st.st_size);
+	size = purple_str_size_to_units(st.st_size);
 	markup = g_strdup_printf(_("<b>File:</b> %s\n"
 							   "<b>File size:</b> %s\n"
 							   "<b>Image size:</b> %dx%d"),
@@ -2326,7 +2326,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 		return NULL;
 	}
 
-	current_folder = gaim_prefs_get_path("/gaim/gtk/filelocations/last_icon_folder");
+	current_folder = purple_prefs_get_path("/purple/gtk/filelocations/last_icon_folder");
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 
 	dialog->icon_filesel = gtk_file_chooser_dialog_new(_("Buddy Icon"),
@@ -2359,7 +2359,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 										current_folder);
 
 	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
-	hbox = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(
 		GTK_BOX(GTK_FILE_SELECTION(dialog->icon_filesel)->main_vbox),
 		hbox, FALSE, FALSE, 0);
@@ -2404,9 +2404,9 @@ str_array_match(char **a, char **b)
 #endif
 
 char *
-pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
+pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 {
-	GaimPluginProtocolInfo *prpl_info;
+	PurplePluginProtocolInfo *prpl_info;
 #if GTK_CHECK_VERSION(2,2,0)
 	char **prpl_formats;
 	int width, height;
@@ -2424,16 +2424,16 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	char *random;
 	char *filename;
 
-	prpl_info = GAIM_PLUGIN_PROTOCOL_INFO(plugin);
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 	g_return_val_if_fail(prpl_info->icon_spec.format != NULL, NULL);
 
-	dirname = gaim_buddy_icons_get_cache_dir();
+	dirname = purple_buddy_icons_get_cache_dir();
 	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
-		gaim_debug_info("buddyicon", "Creating icon cache directory.\n");
+		purple_debug_info("buddyicon", "Creating icon cache directory.\n");
 
 		if (g_mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
-			gaim_debug_error("buddyicon",
+			purple_debug_error("buddyicon",
 							 "Unable to create directory %s: %s\n",
 							 dirname, strerror(errno));
 			return NULL;
@@ -2465,7 +2465,7 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	pixbuf_formats = gdk_pixbuf_format_get_extensions(format);
 	prpl_formats = g_strsplit(prpl_info->icon_spec.format,",",0);
 	if (str_array_match(pixbuf_formats, prpl_formats) &&                  /* This is an acceptable format AND */
-		 (!(prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) ||   /* The prpl doesn't scale before it sends OR */
+		 (!(prpl_info->icon_spec.scale_rules & PURPLE_ICON_SCALE_SEND) ||   /* The prpl doesn't scale before it sends OR */
 		  (prpl_info->icon_spec.min_width <= width &&
 		   prpl_info->icon_spec.max_width >= width &&
 		   prpl_info->icon_spec.min_height <= height &&
@@ -2526,7 +2526,7 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 
 		pixbuf = gdk_pixbuf_new_from_file(path, &error);
 		if (error) {
-			gaim_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
+			purple_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
 			g_error_free(error);
 			g_free(random);
 			g_free(filename);
@@ -2534,7 +2534,7 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			return NULL;
 		}
 
-		if ((prpl_info->icon_spec.scale_rules & GAIM_ICON_SCALE_SEND) &&
+		if ((prpl_info->icon_spec.scale_rules & PURPLE_ICON_SCALE_SEND) &&
 			(width < prpl_info->icon_spec.min_width ||
 			 width > prpl_info->icon_spec.max_width ||
 			 height < prpl_info->icon_spec.min_height ||
@@ -2543,7 +2543,7 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 			int new_width = width;
 			int new_height = height;
 
-			gaim_buddy_icon_get_scale_size(&prpl_info->icon_spec, &new_width, &new_height);
+			purple_buddy_icon_get_scale_size(&prpl_info->icon_spec, &new_width, &new_height);
 
 			scale = gdk_pixbuf_scale_simple(pixbuf, new_width, new_height,
 					GDK_INTERP_HYPER);
@@ -2552,7 +2552,7 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		}
 
 		for (i = 0; prpl_formats[i]; i++) {
-			gaim_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
+			purple_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
 			/* The "compression" param wasn't supported until gdk-pixbuf 2.8.
 			 * Using it in previous versions causes the save to fail (and an assert message).  */
 			if ((gdk_pixbuf_major_version > 2 || (gdk_pixbuf_major_version == 2
@@ -2571,7 +2571,7 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 
 			/* The NULL checking is necessary due to this bug:
 			 * http://bugzilla.gnome.org/show_bug.cgi?id=405539 */
-			gaim_debug_warning("buddyicon", "Could not convert to %s: %s\n", prpl_formats[i],
+			purple_debug_warning("buddyicon", "Could not convert to %s: %s\n", prpl_formats[i],
 				(error && error->message) ? error->message : "Unknown error");
 			g_error_free(error);
 			error = NULL;
@@ -2579,7 +2579,7 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		g_strfreev(prpl_formats);
 		g_object_unref(G_OBJECT(pixbuf));
 		if (!success) {
-			gaim_debug_error("buddyicon", "Could not convert icon to usable format.\n");
+			purple_debug_error("buddyicon", "Could not convert icon to usable format.\n");
 			g_free(random);
 			g_free(filename);
 			return NULL;
@@ -2587,7 +2587,7 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 	}
 
 	if (g_stat(filename, &st) != 0) {
-		gaim_debug_error("buddyicon",
+		purple_debug_error("buddyicon",
 				"Could not stat '%s', which we just wrote to disk: %s\n",
 				filename, strerror(errno));
 		g_free(random);
@@ -2607,9 +2607,9 @@ pidgin_convert_buddy_icon(GaimPlugin *plugin, const char *path)
 		gchar *tmp;
 		tmp = g_strdup_printf(_("The file '%s' is too large for %s.  Please try a smaller image.\n"),
 				path, plugin->info->name);
-		gaim_notify_error(NULL, _("Icon Error"),
+		purple_notify_error(NULL, _("Icon Error"),
 				_("Could not set icon"), tmp);
-		gaim_debug_info("buddyicon",
+		purple_debug_info("buddyicon",
 				"'%s' was converted to an image which is %" G_GSIZE_FORMAT
 				" bytes, but the maximum icon size for %s is %" G_GSIZE_FORMAT
 				" bytes\n", path, st.st_size, plugin->info->name,
@@ -2772,21 +2772,21 @@ gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
 }
 #endif /* ! Gtk 2.6.0 */
 
-void pidgin_set_custom_buddy_icon(GaimAccount *account, const char *who, const char *filename)
+void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename)
 {
-	GaimConversation *conv;
-	GaimBuddy *buddy;
-	GaimBlistNode *node;
+	PurpleConversation *conv;
+	PurpleBuddy *buddy;
+	PurpleBlistNode *node;
 	char *path = NULL;
 
-	buddy = gaim_find_buddy(account, who);
+	buddy = purple_find_buddy(account, who);
 	if (!buddy) {
-		gaim_debug_info("custom-icon", "You can only set custom icon for someone in your buddylist.\n");
+		purple_debug_info("custom-icon", "You can only set custom icon for someone in your buddylist.\n");
 		return;
 	}
 
-	node = (GaimBlistNode*)gaim_buddy_get_contact(buddy);
-	path = (char*)gaim_blist_node_get_string(node, "custom_buddy_icon");
+	node = (PurpleBlistNode*)purple_buddy_get_contact(buddy);
+	path = (char*)purple_blist_node_get_string(node, "custom_buddy_icon");
 	if (path) {
 		struct stat st;
 		if (g_stat(path, &st) == 0)
@@ -2797,23 +2797,23 @@ void pidgin_set_custom_buddy_icon(GaimAccount *account, const char *who, const c
 	if (filename) {
 		char *newfile;
 
-		newfile = pidgin_convert_buddy_icon(gaim_find_prpl(gaim_account_get_protocol_id(account)),
+		newfile = pidgin_convert_buddy_icon(purple_find_prpl(purple_account_get_protocol_id(account)),
 						filename);
-		path = gaim_buddy_icons_get_full_path(newfile);
+		path = purple_buddy_icons_get_full_path(newfile);
 		g_free(newfile);
 	}
 
-	gaim_blist_node_set_string(node, "custom_buddy_icon", path);
+	purple_blist_node_set_string(node, "custom_buddy_icon", path);
 	g_free(path);
 
 	/* Update the conversation */
-	conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, who, account);
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, account);
 	if (conv)
-		gaim_conversation_update(conv, GAIM_CONV_UPDATE_ICON);
+		purple_conversation_update(conv, PURPLE_CONV_UPDATE_ICON);
 
 	/* Update the buddylist */
 	if (buddy)
-		gaim_blist_update_buddy_icon(buddy);
+		purple_blist_update_buddy_icon(buddy);
 }
 
 char *pidgin_make_pretty_arrows(const char *str)
@@ -2872,7 +2872,7 @@ pidgin_utils_get_handle()
 	return &handle;
 }
 
-static void connection_signed_off_cb(GaimConnection *gc)
+static void connection_signed_off_cb(PurpleConnection *gc)
 {
 	GSList *list;
 	for (list = minidialogs; list; list = list->next) {
@@ -2887,7 +2887,7 @@ static void alert_killed_cb(GtkWidget *widget)
 	minidialogs = g_slist_remove(minidialogs, widget);
 }
 
-void *pidgin_make_mini_dialog(GaimConnection *gc, const char *icon_name,
+void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
 				const char *primary, const char *secondary,
 				void *user_data,  ...)
 {
@@ -2909,7 +2909,7 @@ void *pidgin_make_mini_dialog(GaimConnection *gc, const char *icon_name,
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
 	vbox = gtk_vbox_new(FALSE,0);
-        gtk_container_set_border_width(GTK_CONTAINER(vbox), GAIM_HIG_BOX_SPACE);
+        gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BOX_SPACE);
 
 	g_object_set_data(G_OBJECT(vbox), "gc" ,gc);
 	minidialogs = g_slist_prepend(minidialogs, vbox);
@@ -2917,9 +2917,9 @@ void *pidgin_make_mini_dialog(GaimConnection *gc, const char *icon_name,
 
 	if (first_call) {
 		first_call = FALSE;
-		gaim_signal_connect(gaim_connections_get_handle(), "signed-off",
+		purple_signal_connect(purple_connections_get_handle(), "signed-off",
 				    pidgin_utils_get_handle(),
-				    GAIM_CALLBACK(connection_signed_off_cb), NULL);
+				    PURPLE_CALLBACK(connection_signed_off_cb), NULL);
 	}
 
       	hbox = gtk_hbox_new(FALSE, 0);
@@ -2937,13 +2937,13 @@ void *pidgin_make_mini_dialog(GaimConnection *gc, const char *icon_name,
 		   primary_esc, secondary ? "\n" : "", secondary?secondary_esc:"");
 	g_free(primary_esc);
 	label = gtk_label_new(NULL);
-	gtk_widget_set_size_request(label, gaim_prefs_get_int("/gaim/gtk/blist/width")-25,-1);
+	gtk_widget_set_size_request(label, purple_prefs_get_int("/purple/gtk/blist/width")-25,-1);
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
         gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
         gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
         gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
-	hbox2 = gtk_hbox_new(FALSE, GAIM_HIG_BOX_SPACE);
+	hbox2 = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
 
 	va_start(args, user_data);
@@ -3002,7 +3002,7 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 
 	if (strcasecmp(key, "Global Thermonuclear War") == 0)
 	{
-		gaim_notify_info(NULL, "WOPR",
+		purple_notify_info(NULL, "WOPR",
 				"Wouldn't you prefer a nice game of chess?", NULL);
 		return FALSE;
 	}
@@ -3015,13 +3015,13 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 	enteredstring = g_utf8_casefold(tmp, -1);
 	g_free(tmp);
 
-	nomarkup = gaim_markup_strip_html(withmarkup);
+	nomarkup = purple_markup_strip_html(withmarkup);
 	tmp = g_utf8_normalize(nomarkup, -1, G_NORMALIZE_DEFAULT);
 	g_free(nomarkup);
 	normalized = g_utf8_casefold(tmp, -1);
 	g_free(tmp);
 
-	if (gaim_str_has_prefix(normalized, enteredstring))
+	if (purple_str_has_prefix(normalized, enteredstring))
 	{
 		g_free(withmarkup);
 		g_free(enteredstring);
@@ -3041,7 +3041,7 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 	for (i = 0; i < (len - 1) ; i++)
 	{
 		if (log_attrs[i].is_word_start &&
-		    gaim_str_has_prefix(word, enteredstring))
+		    purple_str_has_prefix(word, enteredstring))
 		{
 			result = FALSE;
 			break;
@@ -3060,7 +3060,7 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 		if (!g_unichar_isalnum(c))
 		{
 			word = g_utf8_find_next_char(word, NULL);
-			if (gaim_str_has_prefix(word, enteredstring))
+			if (purple_str_has_prefix(word, enteredstring))
 			{
 				result = FALSE;
 				break;

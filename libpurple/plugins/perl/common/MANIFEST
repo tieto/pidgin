@@ -8,8 +8,8 @@ Connection.xs
 Conversation.xs
 Debug.xs
 FT.xs
-Gaim.pm
-Gaim.xs
+Pidgin.pm
+Pidgin.xs
 ImgStore.xs
 Log.xs
 Makefile.PL

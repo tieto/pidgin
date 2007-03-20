@@ -25,7 +25,7 @@ gboolean ml_init()
 	
 	g_return_val_if_fail(_runtime_active == FALSE, TRUE);
 	
-	d = mono_jit_init("gaim");
+	d = mono_jit_init("purple");
 	
 	if (!d) {
 		ml_set_domain(NULL);
@@ -58,7 +58,7 @@ MonoObject* ml_delegate_invoke(MonoObject *method, void **params)
 	
 	ret = mono_runtime_delegate_invoke(method, params, &exception);
 	if (exception) {
-		gaim_debug(GAIM_DEBUG_ERROR, "mono", "caught exception: %s\n", mono_class_get_name(mono_object_get_class(exception)));
+		purple_debug(PURPLE_DEBUG_ERROR, "mono", "caught exception: %s\n", mono_class_get_name(mono_object_get_class(exception)));
 	}
 	
 	return ret;
@@ -70,7 +70,7 @@ MonoObject* ml_invoke(MonoMethod *method, void *obj, void **params)
 	
 	ret = mono_runtime_invoke(method, obj, params, &exception);
 	if (exception) {
-		gaim_debug(GAIM_DEBUG_ERROR, "mono", "caught exception: %s\n", mono_class_get_name(mono_object_get_class(exception)));
+		purple_debug(PURPLE_DEBUG_ERROR, "mono", "caught exception: %s\n", mono_class_get_name(mono_object_get_class(exception)));
 	}
 	
 	return ret;
@@ -86,7 +86,7 @@ MonoClass* ml_find_plugin_class(MonoImage *image)
 		klass = mono_class_get (image, MONO_TOKEN_TYPE_DEF | i);
 		pklass = mono_class_get_parent(klass);
 		if (pklass) 
-			if (strcmp("GaimPlugin", mono_class_get_name(pklass)) == 0)
+			if (strcmp("PurplePlugin", mono_class_get_name(pklass)) == 0)
 				return klass;
 	}
 	
@@ -135,7 +135,7 @@ gboolean ml_is_api_dll(MonoImage *image)
 	for (i = 1; i <= total; ++i) {
 		klass = mono_class_get (image, MONO_TOKEN_TYPE_DEF | i);
 		if (strcmp(mono_class_get_name(klass), "Debug") == 0)
-			if (strcmp(mono_class_get_namespace(klass), "Gaim") == 0) {
+			if (strcmp(mono_class_get_namespace(klass), "Purple") == 0) {
 				ml_set_api_image(image);
 				return TRUE;
 			}
@@ -144,21 +144,21 @@ gboolean ml_is_api_dll(MonoImage *image)
 	return FALSE;
 }
 
-MonoObject* ml_object_from_gaim_type(GaimType type, gpointer data)
+MonoObject* ml_object_from_purple_type(PurpleType type, gpointer data)
 {
 	return NULL;
 }
 
-MonoObject* ml_object_from_gaim_subtype(GaimSubType type, gpointer data)
+MonoObject* ml_object_from_purple_subtype(PurpleSubType type, gpointer data)
 {
 	MonoObject *obj = NULL;
 	
 	switch (type) {
-		case GAIM_SUBTYPE_BLIST_BUDDY:
-			obj = gaim_blist_build_buddy_object(data);
+		case PURPLE_SUBTYPE_BLIST_BUDDY:
+			obj = purple_blist_build_buddy_object(data);
 		break;
-		case GAIM_SUBTYPE_STATUS:
-			obj = gaim_status_build_status_object(data);
+		case PURPLE_SUBTYPE_STATUS:
+			obj = purple_status_build_status_object(data);
 		break;
 		default:
 		break;
@@ -172,15 +172,15 @@ MonoObject* ml_create_api_object(char *class_name)
 	MonoObject *obj = NULL;
 	MonoClass *klass = NULL;
 		
-	klass = mono_class_from_name(ml_get_api_image(), "Gaim", class_name);
+	klass = mono_class_from_name(ml_get_api_image(), "Purple", class_name);
 	if (!klass) {
-		gaim_debug(GAIM_DEBUG_FATAL, "mono", "couldn't find the '%s' class\n", class_name);
+		purple_debug(PURPLE_DEBUG_FATAL, "mono", "couldn't find the '%s' class\n", class_name);
 		return NULL;
 	}
 	
 	obj = mono_object_new(ml_get_domain(), klass);
 	if (!obj) {
-		gaim_debug(GAIM_DEBUG_FATAL, "mono", "couldn't create the object from class '%s'\n", class_name);
+		purple_debug(PURPLE_DEBUG_FATAL, "mono", "couldn't create the object from class '%s'\n", class_name);
 		return NULL;
 	}
 	
@@ -215,14 +215,14 @@ MonoImage* ml_get_api_image()
 
 void ml_init_internal_calls(void)
 {
-	mono_add_internal_call("Gaim.Debug::_debug", gaim_debug_glue);
-	mono_add_internal_call("Gaim.Signal::_connect", gaim_signal_connect_glue);
-	mono_add_internal_call("Gaim.BuddyList::_get_handle", gaim_blist_get_handle_glue);
+	mono_add_internal_call("Purple.Debug::_debug", purple_debug_glue);
+	mono_add_internal_call("Purple.Signal::_connect", purple_signal_connect_glue);
+	mono_add_internal_call("Purple.BuddyList::_get_handle", purple_blist_get_handle_glue);
 }
 
 static GHashTable *plugins_hash = NULL;
 
-void ml_add_plugin(GaimMonoPlugin *plugin)
+void ml_add_plugin(PurpleMonoPlugin *plugin)
 {
 	if (!plugins_hash)
 		plugins_hash = g_hash_table_new(NULL, NULL);
@@ -230,12 +230,12 @@ void ml_add_plugin(GaimMonoPlugin *plugin)
 	g_hash_table_insert(plugins_hash, plugin->klass, plugin);
 }
 
-gboolean ml_remove_plugin(GaimMonoPlugin *plugin)
+gboolean ml_remove_plugin(PurpleMonoPlugin *plugin)
 {
 	return g_hash_table_remove(plugins_hash, plugin->klass);
 }
 
-gpointer ml_find_plugin(GaimMonoPlugin *plugin)
+gpointer ml_find_plugin(PurpleMonoPlugin *plugin)
 {
 	return g_hash_table_lookup(plugins_hash, plugin->klass);
 }

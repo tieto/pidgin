@@ -60,7 +60,7 @@ nm_create_conference(const char *guid)
 	}
 	conf->ref_count = 1;
 
-	gaim_debug(GAIM_DEBUG_INFO, "novell",
+	purple_debug(PURPLE_DEBUG_INFO, "novell",
 			   "Creating a conference %p, total=%d\n",
 			   conf, conf_count++);
 
@@ -74,12 +74,12 @@ nm_release_conference(NMConference * conference)
 
 	g_return_if_fail(conference != NULL);
 
-	gaim_debug(GAIM_DEBUG_INFO, "novell",
+	purple_debug(PURPLE_DEBUG_INFO, "novell",
 			   "In release conference %p, refs=%d\n",
 			   conference, conference->ref_count);
 	if (--conference->ref_count == 0) {
 
-		gaim_debug(GAIM_DEBUG_INFO, "novell",
+		purple_debug(PURPLE_DEBUG_INFO, "novell",
 				   "Releasing conference %p, total=%d\n",
 				   conference, --conf_count);
 

@@ -1,9 +1,9 @@
 /**
  * @file buddy_list.h
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -33,11 +33,11 @@
 #define QQ_FRIENDS_ONLINE_POSITION_START 	0x00
 #define QQ_FRIENDS_ONLINE_POSITION_END 		0xff
 
-void qq_send_packet_get_buddies_online(GaimConnection *gc, guint8 position);
-void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
-void qq_send_packet_get_buddies_list(GaimConnection *gc, guint16 position);
-void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
-void qq_send_packet_get_all_list_with_group(GaimConnection *gc, guint32 position);
-void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, GaimConnection *gc);
+void qq_send_packet_get_buddies_online(PurpleConnection *gc, guint8 position);
+void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_send_packet_get_buddies_list(PurpleConnection *gc, guint16 position);
+void qq_process_get_buddies_list_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
+void qq_send_packet_get_all_list_with_group(PurpleConnection *gc, guint32 position);
+void qq_process_get_all_list_with_group_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
 
 #endif

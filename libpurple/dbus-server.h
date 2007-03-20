@@ -1,10 +1,10 @@
 /**
- * @file dbus-server.h Gaim DBUS Server
+ * @file dbus-server.h Purple DBUS Server
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -24,8 +24,8 @@
  *
  */
 
-#ifndef _GAIM_DBUS_SERVER_H_
-#define _GAIM_DBUS_SERVER_H_
+#ifndef _PURPLE_DBUS_SERVER_H_
+#define _PURPLE_DBUS_SERVER_H_
 
 #include "value.h"
 
@@ -33,65 +33,65 @@
 G_BEGIN_DECLS
 
 /**
-   Types of pointers are identified by the ADDRESS of a GaimDbusType
-   object.  This way, plugins can easily access types defined in gaim
+   Types of pointers are identified by the ADDRESS of a PurpleDbusType
+   object.  This way, plugins can easily access types defined in purple
    proper as well as introduce their own types that will not conflict
    with those introduced by other plugins.
 
-   The structure GaimDbusType has only one element (GaimDBusType::parent), a
+   The structure PurpleDbusType has only one element (PurpleDBusType::parent), a
    contains a pointer to the parent type, or @c NULL if the type has no
    parent.  Parent means the same as the base class in object oriented
    programming.
 */
 
-typedef struct _GaimDBusType GaimDBusType;
+typedef struct _PurpleDBusType PurpleDBusType;
 
-struct _GaimDBusType {
-    GaimDBusType *parent;
+struct _PurpleDBusType {
+    PurpleDBusType *parent;
 };
 
-/* By convention, the GaimDBusType variable representing each structure
-   GaimSomeStructure has the name GAIM_DBUS_TYPE_GaimSomeStructure.
+/* By convention, the PurpleDBusType variable representing each structure
+   PurpleSomeStructure has the name PURPLE_DBUS_TYPE_PurpleSomeStructure.
    The following macros facilitate defining such variables
 
-   #GAIM_DBUS_DECLARE_TYPE declares an extern variable representing a
+   #PURPLE_DBUS_DECLARE_TYPE declares an extern variable representing a
    given type, for use in header files.
 
-   #GAIM_DBUS_DEFINE_TYPE defines a variable representing a given
+   #PURPLE_DBUS_DEFINE_TYPE defines a variable representing a given
    type, use in .c files.  It defines a new type without a parent; for
-   types with a parent use #GAIM_DBUS_DEFINE_INHERITING_TYPE.
+   types with a parent use #PURPLE_DBUS_DEFINE_INHERITING_TYPE.
   */
 
-#define GAIM_DBUS_TYPE(type) (&GAIM_DBUS_TYPE_##type)
+#define PURPLE_DBUS_TYPE(type) (&PURPLE_DBUS_TYPE_##type)
 
 
-#define GAIM_DBUS_DECLARE_TYPE(type) \
-    extern GaimDBusType GAIM_DBUS_TYPE_##type;
+#define PURPLE_DBUS_DECLARE_TYPE(type) \
+    extern PurpleDBusType PURPLE_DBUS_TYPE_##type;
 
-#define GAIM_DBUS_DEFINE_TYPE(type) \
-    GaimDBusType GAIM_DBUS_TYPE_##type = { NULL };
+#define PURPLE_DBUS_DEFINE_TYPE(type) \
+    PurpleDBusType PURPLE_DBUS_TYPE_##type = { NULL };
 
-#define GAIM_DBUS_DEFINE_INHERITING_TYPE(type, parent) \
-    GaimDBusType GAIM_DBUS_TYPE_##type = { GAIM_DBUS_TYPE(parent) };
+#define PURPLE_DBUS_DEFINE_INHERITING_TYPE(type, parent) \
+    PurpleDBusType PURPLE_DBUS_TYPE_##type = { PURPLE_DBUS_TYPE(parent) };
 
-#define GAIM_DBUS_RETURN_FALSE_IF_DISABLED(plugin) \
-	if (gaim_dbus_get_init_error() != NULL) \
+#define PURPLE_DBUS_RETURN_FALSE_IF_DISABLED(plugin) \
+	if (purple_dbus_get_init_error() != NULL) \
 	{ \
 		gchar *title; \
 		title = g_strdup_printf("Unable to Load %s Plugin", plugin->info->name); \
-		gaim_notify_error(NULL, title, \
-				_("Gaim's D-BUS server is not running for the reason listed below"), \
-				_(gaim_dbus_get_init_error())); \
+		purple_notify_error(NULL, title, \
+				_("Purple's D-BUS server is not running for the reason listed below"), \
+				_(purple_dbus_get_init_error())); \
 		g_free(title); \
 		return FALSE; \
 	}
 
 /**
-   Initializes gaim dbus pointer registration engine.
+   Initializes purple dbus pointer registration engine.
 
    Remote dbus applications need a way of addressing objects exposed
-   by gaim to the outside world.  In gaim itself, these objects (such
-   as GaimBuddy and company) are identified by pointers.  The gaim
+   by purple to the outside world.  In purple itself, these objects (such
+   as PurpleBuddy and company) are identified by pointers.  The purple
    dbus pointer registration engine converts pointers to handles and
    back.
 
@@ -100,12 +100,12 @@ struct _GaimDBusType {
    allocates an integer id which can be resolved to the pointer and
    back.
 
-   Handles are not persistent.  They are reissued every time gaim is
-   started.  This is not good; external applications that use gaim
-   should work even whether gaim was restarted in the middle of the
+   Handles are not persistent.  They are reissued every time purple is
+   started.  This is not good; external applications that use purple
+   should work even whether purple was restarted in the middle of the
    interaction.
 
-   Pointer registration is only a temporary solution.  When GaimBuddy
+   Pointer registration is only a temporary solution.  When PurpleBuddy
    and similar structures have been converted into gobjects, this
    registration will be done automatically by objects themselves.
 
@@ -113,7 +113,7 @@ struct _GaimDBusType {
    common that there must be a library (maybe even glib) that
    implements it.  I feel a bit like reinventing the wheel here.
 */
-void gaim_dbus_init_ids(void);
+void purple_dbus_init_ids(void);
 
 /**
     Registers a typed pointer.
@@ -121,15 +121,15 @@ void gaim_dbus_init_ids(void);
     @param node   The pointer to register.
     @param type   Type of that pointer.
  */
-void gaim_dbus_register_pointer(gpointer node, GaimDBusType *type);
+void purple_dbus_register_pointer(gpointer node, PurpleDBusType *type);
 
 /**
     Unregisters a pointer previously registered with
-    gaim_dbus_register_pointer.
+    purple_dbus_register_pointer.
 
     @param node   The pointer to register.
  */
-void gaim_dbus_unregister_pointer(gpointer node);
+void purple_dbus_unregister_pointer(gpointer node);
 
 
 
@@ -138,46 +138,46 @@ void gaim_dbus_unregister_pointer(gpointer node);
 
     @param name        The name of the signal ("bla-bla-blaa")
     @param num_values  The number of parameters.
-    @param values      Array of pointers to #GaimValue objects representing
+    @param values      Array of pointers to #PurpleValue objects representing
                        the types of the parameters.
     @param vargs       A va_list containing the actual parameters.
   */
-void gaim_dbus_signal_emit_gaim(const char *name, int num_values,
-				GaimValue **values, va_list vargs);
+void purple_dbus_signal_emit_purple(const char *name, int num_values,
+				PurpleValue **values, va_list vargs);
 
 /**
- * Returns whether Gaim's D-BUS subsystem is up and running.  If it's
- * NOT running then gaim_dbus_dispatch_init() failed for some reason,
- * and a message should have been gaim_debug_error()'ed.
+ * Returns whether Purple's D-BUS subsystem is up and running.  If it's
+ * NOT running then purple_dbus_dispatch_init() failed for some reason,
+ * and a message should have been purple_debug_error()'ed.
  *
- * Gaim plugins that use D-BUS should use the
- * GAIM_DBUS_RETURN_FALSE_IF_DISABLED macro to short-circuit
- * initialization if Gaim's D-BUS subsystem is not running.
+ * Purple plugins that use D-BUS should use the
+ * PURPLE_DBUS_RETURN_FALSE_IF_DISABLED macro to short-circuit
+ * initialization if Purple's D-BUS subsystem is not running.
  *
  * @return If the D-BUS subsystem started with no problems then this
  *         will return NULL and everything will be hunky dory.  If
  *         there was an error initializing the D-BUS subsystem then
  *         this will return an error message explaining why.
  */
-const char *gaim_dbus_get_init_error(void);
+const char *purple_dbus_get_init_error(void);
 
 /**
  * Returns the dbus subsystem handle.
  *
  * @return The dbus subsystem handle.
  */
-void *gaim_dbus_get_handle(void);
+void *purple_dbus_get_handle(void);
 
 /**
- * Starts Gaim's D-BUS server.  It is responsible for handling DBUS
+ * Starts Purple's D-BUS server.  It is responsible for handling DBUS
  * requests from other applications.
  */
-void gaim_dbus_init(void);
+void purple_dbus_init(void);
 
 /**
- * Uninitializes Gaim's D-BUS server.
+ * Uninitializes Purple's D-BUS server.
  */
-void gaim_dbus_uninit(void);
+void purple_dbus_uninit(void);
 
 /**
 
@@ -192,8 +192,8 @@ void gaim_dbus_uninit(void);
 #define DBUS_EXPORT
 
 /*
-   Here we include the list of #GAIM_DBUS_DECLARE_TYPE statements for
-   all structs defined in gaim.  This file has been generated by the
+   Here we include the list of #PURPLE_DBUS_DECLARE_TYPE statements for
+   all structs defined in purple.  This file has been generated by the
    #dbus-analize-types.py script.
 */
 
@@ -201,4 +201,4 @@ void gaim_dbus_uninit(void);
 
 G_END_DECLS
 
-#endif	/* _GAIM_DBUS_SERVER_H_ */
+#endif	/* _PURPLE_DBUS_SERVER_H_ */

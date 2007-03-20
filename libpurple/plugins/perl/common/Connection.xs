@@ -1,89 +1,89 @@
 #include "module.h"
 
-MODULE = Gaim::Connection  PACKAGE = Gaim::Connection  PREFIX = gaim_connection_
+MODULE = Purple::Connection  PACKAGE = Purple::Connection  PREFIX = purple_connection_
 PROTOTYPES: ENABLE
 
-Gaim::Account
-gaim_connection_get_account(gc)
-	Gaim::Connection gc
+Purple::Account
+purple_connection_get_account(gc)
+	Purple::Connection gc
 
 const char *
-gaim_connection_get_password(gc)
-	Gaim::Connection gc
+purple_connection_get_password(gc)
+	Purple::Connection gc
 
 const char *
-gaim_connection_get_display_name(gc)
-	Gaim::Connection gc
+purple_connection_get_display_name(gc)
+	Purple::Connection gc
 
 void
-gaim_connection_notice(gc, text)
-	Gaim::Connection gc
+purple_connection_notice(gc, text)
+	Purple::Connection gc
 	const char *text
 
 void
-gaim_connection_error(gc, reason)
-	Gaim::Connection gc
+purple_connection_error(gc, reason)
+	Purple::Connection gc
 	const char *reason
 
 void
-gaim_connection_destroy(gc)
-	Gaim::Connection gc
+purple_connection_destroy(gc)
+	Purple::Connection gc
 
 void
-gaim_connection_set_state(gc, state)
-	Gaim::Connection gc
-	Gaim::ConnectionState state
+purple_connection_set_state(gc, state)
+	Purple::Connection gc
+	Purple::ConnectionState state
 
 void
-gaim_connection_set_account(gc, account)
-	Gaim::Connection gc
-	Gaim::Account account
+purple_connection_set_account(gc, account)
+	Purple::Connection gc
+	Purple::Account account
 
 void
-gaim_connection_set_display_name(gc, name)
-	Gaim::Connection gc
+purple_connection_set_display_name(gc, name)
+	Purple::Connection gc
 	const char *name
 
-Gaim::ConnectionState
-gaim_connection_get_state(gc)
-	Gaim::Connection gc
+Purple::ConnectionState
+purple_connection_get_state(gc)
+	Purple::Connection gc
 
-MODULE = Gaim::Connection  PACKAGE = Gaim::Connections  PREFIX = gaim_connections_
+MODULE = Purple::Connection  PACKAGE = Purple::Connections  PREFIX = purple_connections_
 PROTOTYPES: ENABLE
 
 void
-gaim_connections_disconnect_all()
+purple_connections_disconnect_all()
 
 void
-gaim_connections_get_all()
+purple_connections_get_all()
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = gaim_connections_get_all(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Connection")));
+	for (l = purple_connections_get_all(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Connection")));
 	}
 
 void
-gaim_connections_get_connecting()
+purple_connections_get_connecting()
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = gaim_connections_get_connecting(); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(gaim_perl_bless_object(l->data, "Gaim::Connection")));
+	for (l = purple_connections_get_connecting(); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Connection")));
 	}
 
 void
-gaim_connections_set_ui_ops(ops)
-	Gaim::Connection::UiOps ops
+purple_connections_set_ui_ops(ops)
+	Purple::Connection::UiOps ops
 
-Gaim::Connection::UiOps
-gaim_connections_get_ui_ops()
-
-void
-gaim_connections_init()
+Purple::Connection::UiOps
+purple_connections_get_ui_ops()
 
 void
-gaim_connections_uninit()
+purple_connections_init()
 
-Gaim::Handle
-gaim_connections_get_handle()
+void
+purple_connections_uninit()
+
+Purple::Handle
+purple_connections_get_handle()

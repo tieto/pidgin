@@ -113,7 +113,7 @@ install: install_shallow all
 	$(MAKE) -C $(GAIM_LIB_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
 
 ./win32/libpurplerc.rc: ./win32/libpurplerc.rc.in $(GAIM_TOP)/VERSION
-	sed -e 's/@GAIM_VERSION@/$(GAIM_VERSION)/g' \
+	sed -e 's/@PURPLE_VERSION@/$(GAIM_VERSION)/g' \
 	    $@.in > $@
 
 $(OBJECTS): $(GAIM_CONFIG_H)

@@ -7,31 +7,31 @@
 #define SIMPLE_PLUGIN_ID "core-ewarmenhoven-simple"
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	gaim_debug(GAIM_DEBUG_INFO, "simple", "simple plugin loaded.\n");
+	purple_debug(PURPLE_DEBUG_INFO, "simple", "simple plugin loaded.\n");
 
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
-	gaim_debug(GAIM_DEBUG_INFO, "simple", "simple plugin unloaded.\n");
+	purple_debug(PURPLE_DEBUG_INFO, "simple", "simple plugin unloaded.\n");
 
 	return TRUE;
 }
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	SIMPLE_PLUGIN_ID,                                 /**< id             */
 	N_("Simple Plugin"),                              /**< name           */
@@ -41,7 +41,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Tests to see that most things are working."),
 	"Eric Warmenhoven <eric@warmenhoven.org>",        /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -54,8 +54,8 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 }
 
-GAIM_INIT_PLUGIN(simple, init_plugin, info)
+PURPLE_INIT_PLUGIN(simple, init_plugin, info)

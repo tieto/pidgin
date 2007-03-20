@@ -2,9 +2,9 @@
  * @file gtksound.c GTK+ Sound
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -59,7 +59,7 @@ static gboolean mute_login_sounds = FALSE;
 static gboolean gst_init_failed;
 #endif /* USE_GSTREAMER */
 
-static struct pidgin_sound_event sounds[GAIM_NUM_SOUNDS] = {
+static struct pidgin_sound_event sounds[PURPLE_NUM_SOUNDS] = {
 	{N_("Buddy logs in"), "login", "login.wav"},
 	{N_("Buddy logs out"), "logout", "logout.wav"},
 	{N_("Message received"), "im_recv", "receive.wav"},
@@ -83,19 +83,19 @@ unmute_login_sounds_cb(gpointer data)
 }
 
 static gboolean
-chat_nick_matches_name(GaimConversation *conv, const char *aname)
+chat_nick_matches_name(PurpleConversation *conv, const char *aname)
 {
-	GaimConvChat *chat = NULL;
+	PurpleConvChat *chat = NULL;
 	char *nick = NULL;
 	char *name = NULL;
 	gboolean ret = FALSE;
-	chat = gaim_conversation_get_chat_data(conv);
+	chat = purple_conversation_get_chat_data(conv);
 
 	if (chat==NULL)
 		return ret;
 
-	nick = g_strdup(gaim_normalize(conv->account, chat->nick));
-	name = g_strdup(gaim_normalize(conv->account, aname));
+	nick = g_strdup(purple_normalize(conv->account, chat->nick));
+	name = g_strdup(purple_normalize(conv->account, aname));
 
 	if (g_utf8_collate(nick, name) == 0)
 		ret = TRUE;
@@ -111,7 +111,7 @@ chat_nick_matches_name(GaimConversation *conv, const char *aname)
  * of conversation and checking for focus if conv_focus pref is set
  */
 static void
-play_conv_event(GaimConversation *conv, GaimSoundEventID event)
+play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 {
 	/* If we should not play the sound for some reason, then exit early */
 	if (conv != NULL)
@@ -123,98 +123,98 @@ play_conv_event(GaimConversation *conv, GaimSoundEventID event)
 		gtkconv = PIDGIN_CONVERSATION(conv);
 		win = gtkconv->win;
 
-		has_focus = gaim_conversation_has_focus(conv);
+		has_focus = purple_conversation_has_focus(conv);
 
 		if (!gtkconv->make_sound ||
-			(has_focus && !gaim_prefs_get_bool("/gaim/gtk/sound/conv_focus")))
+			(has_focus && !purple_prefs_get_bool("/purple/gtk/sound/conv_focus")))
 		{
 			return;
 		}
 	}
 
-	gaim_sound_play_event(event, conv ? gaim_conversation_get_account(conv) : NULL);
+	purple_sound_play_event(event, conv ? purple_conversation_get_account(conv) : NULL);
 }
 
 static void
-buddy_state_cb(GaimBuddy *buddy, GaimSoundEventID event)
+buddy_state_cb(PurpleBuddy *buddy, PurpleSoundEventID event)
 {
-	gaim_sound_play_event(event, gaim_buddy_get_account(buddy));
+	purple_sound_play_event(event, purple_buddy_get_account(buddy));
 }
 
 static void
-im_msg_received_cb(GaimAccount *account, char *sender,
-				   char *message, GaimConversation *conv,
-				   GaimMessageFlags flags, GaimSoundEventID event)
+im_msg_received_cb(PurpleAccount *account, char *sender,
+				   char *message, PurpleConversation *conv,
+				   PurpleMessageFlags flags, PurpleSoundEventID event)
 {
-	if (flags & GAIM_MESSAGE_DELAYED)
+	if (flags & PURPLE_MESSAGE_DELAYED)
 		return;
 
 	if (conv==NULL)
-		gaim_sound_play_event(GAIM_SOUND_FIRST_RECEIVE, account);
+		purple_sound_play_event(PURPLE_SOUND_FIRST_RECEIVE, account);
 	else
 		play_conv_event(conv, event);
 }
 
 static void
-im_msg_sent_cb(GaimAccount *account, const char *receiver,
-			   const char *message, GaimSoundEventID event)
+im_msg_sent_cb(PurpleAccount *account, const char *receiver,
+			   const char *message, PurpleSoundEventID event)
 {
-	GaimConversation *conv = gaim_find_conversation_with_account(
-		GAIM_CONV_TYPE_ANY, receiver, account);
+	PurpleConversation *conv = purple_find_conversation_with_account(
+		PURPLE_CONV_TYPE_ANY, receiver, account);
 	play_conv_event(conv, event);
 }
 
 static void
-chat_buddy_join_cb(GaimConversation *conv, const char *name,
-				   GaimConvChatBuddyFlags flags, gboolean new_arrival,
-				   GaimSoundEventID event)
+chat_buddy_join_cb(PurpleConversation *conv, const char *name,
+				   PurpleConvChatBuddyFlags flags, gboolean new_arrival,
+				   PurpleSoundEventID event)
 {
 	if (new_arrival && !chat_nick_matches_name(conv, name))
 		play_conv_event(conv, event);
 }
 
 static void
-chat_buddy_left_cb(GaimConversation *conv, const char *name,
-				   const char *reason, GaimSoundEventID event)
+chat_buddy_left_cb(PurpleConversation *conv, const char *name,
+				   const char *reason, PurpleSoundEventID event)
 {
 	if (!chat_nick_matches_name(conv, name))
 		play_conv_event(conv, event);
 }
 
 static void
-chat_msg_sent_cb(GaimAccount *account, const char *message,
-				 int id, GaimSoundEventID event)
+chat_msg_sent_cb(PurpleAccount *account, const char *message,
+				 int id, PurpleSoundEventID event)
 {
-	GaimConnection *conn = gaim_account_get_connection(account);
-	GaimConversation *conv = NULL;
+	PurpleConnection *conn = purple_account_get_connection(account);
+	PurpleConversation *conv = NULL;
 
 	if (conn!=NULL)
-		conv = gaim_find_chat(conn,id);
+		conv = purple_find_chat(conn,id);
 
 	play_conv_event(conv, event);
 }
 
 static void
-chat_msg_received_cb(GaimAccount *account, char *sender,
-					 char *message, GaimConversation *conv,
-					 GaimMessageFlags flags, GaimSoundEventID event)
+chat_msg_received_cb(PurpleAccount *account, char *sender,
+					 char *message, PurpleConversation *conv,
+					 PurpleMessageFlags flags, PurpleSoundEventID event)
 {
-	GaimConvChat *chat;
+	PurpleConvChat *chat;
 
-	if (flags & GAIM_MESSAGE_DELAYED)
+	if (flags & PURPLE_MESSAGE_DELAYED)
 		return;
 
-	chat = gaim_conversation_get_chat_data(conv);
+	chat = purple_conversation_get_chat_data(conv);
 	g_return_if_fail(chat != NULL);
 
-	if (gaim_conv_chat_is_user_ignored(chat, sender))
+	if (purple_conv_chat_is_user_ignored(chat, sender))
 		return;
 
 	if (chat_nick_matches_name(conv, sender))
 		return;
 
-	if (flags & GAIM_MESSAGE_NICK || gaim_utf8_has_word(message, chat->nick))
-		play_conv_event(conv, GAIM_SOUND_CHAT_NICK);
+	if (flags & PURPLE_MESSAGE_NICK || purple_utf8_has_word(message, chat->nick))
+		play_conv_event(conv, PURPLE_SOUND_CHAT_NICK);
 	else
 		play_conv_event(conv, event);
 }
@@ -225,27 +225,27 @@ chat_msg_received_cb(GaimAccount *account, char *sender,
  * your buddies logging in.
  */
 static void
-account_signon_cb(GaimConnection *gc, gpointer data)
+account_signon_cb(PurpleConnection *gc, gpointer data)
 {
 	if (mute_login_sounds_timeout != 0)
 		g_source_remove(mute_login_sounds_timeout);
 	mute_login_sounds = TRUE;
-	mute_login_sounds_timeout = gaim_timeout_add(10000, unmute_login_sounds_cb, NULL);
+	mute_login_sounds_timeout = purple_timeout_add(10000, unmute_login_sounds_cb, NULL);
 }
 
 const char *
-pidgin_sound_get_event_option(GaimSoundEventID event)
+pidgin_sound_get_event_option(PurpleSoundEventID event)
 {
-	if(event >= GAIM_NUM_SOUNDS)
+	if(event >= PURPLE_NUM_SOUNDS)
 		return 0;
 
 	return sounds[event].pref;
 }
 
 const char *
-pidgin_sound_get_event_label(GaimSoundEventID event)
+pidgin_sound_get_event_label(PurpleSoundEventID event)
 {
-	if(event >= GAIM_NUM_SOUNDS)
+	if(event >= PURPLE_NUM_SOUNDS)
 		return NULL;
 
 	return sounds[event].label;
@@ -263,51 +263,51 @@ static void
 pidgin_sound_init(void)
 {
 	void *gtk_sound_handle = pidgin_sound_get_handle();
-	void *blist_handle = gaim_blist_get_handle();
-	void *conv_handle = gaim_conversations_get_handle();
+	void *blist_handle = purple_blist_get_handle();
+	void *conv_handle = purple_conversations_get_handle();
 #ifdef USE_GSTREAMER
 	GError *error = NULL;
 #endif
 
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-						gtk_sound_handle, GAIM_CALLBACK(account_signon_cb),
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+						gtk_sound_handle, PURPLE_CALLBACK(account_signon_cb),
 						NULL);
 
-	gaim_prefs_add_none("/gaim/gtk/sound");
-	gaim_prefs_add_none("/gaim/gtk/sound/enabled");
-	gaim_prefs_add_none("/gaim/gtk/sound/file");
-	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/login", TRUE);
-	gaim_prefs_add_path("/gaim/gtk/sound/file/login", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/logout", TRUE);
-	gaim_prefs_add_path("/gaim/gtk/sound/file/logout", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/im_recv", TRUE);
-	gaim_prefs_add_path("/gaim/gtk/sound/file/im_recv", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/first_im_recv", FALSE);
-	gaim_prefs_add_path("/gaim/gtk/sound/file/first_im_recv", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/send_im", TRUE);
-	gaim_prefs_add_path("/gaim/gtk/sound/file/send_im", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/join_chat", FALSE);
-	gaim_prefs_add_path("/gaim/gtk/sound/file/join_chat", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/left_chat", FALSE);
-	gaim_prefs_add_path("/gaim/gtk/sound/file/left_chat", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/send_chat_msg", FALSE);
-	gaim_prefs_add_path("/gaim/gtk/sound/file/send_chat_msg", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/chat_msg_recv", FALSE);
-	gaim_prefs_add_path("/gaim/gtk/sound/file/chat_msg_recv", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/nick_said", FALSE);
-	gaim_prefs_add_path("/gaim/gtk/sound/file/nick_said", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/enabled/pounce_default", TRUE);
-	gaim_prefs_add_path("/gaim/gtk/sound/file/pounce_default", "");
-	gaim_prefs_add_bool("/gaim/gtk/sound/conv_focus", TRUE);
-	gaim_prefs_add_bool("/gaim/gtk/sound/mute", FALSE);
-	gaim_prefs_add_path("/gaim/gtk/sound/command", "");
-	gaim_prefs_add_string("/gaim/gtk/sound/method", "automatic");
-	gaim_prefs_add_int("/gaim/gtk/sound/volume", 50);
+	purple_prefs_add_none("/purple/gtk/sound");
+	purple_prefs_add_none("/purple/gtk/sound/enabled");
+	purple_prefs_add_none("/purple/gtk/sound/file");
+	purple_prefs_add_bool("/purple/gtk/sound/enabled/login", TRUE);
+	purple_prefs_add_path("/purple/gtk/sound/file/login", "");
+	purple_prefs_add_bool("/purple/gtk/sound/enabled/logout", TRUE);
+	purple_prefs_add_path("/purple/gtk/sound/file/logout", "");
+	purple_prefs_add_bool("/purple/gtk/sound/enabled/im_recv", TRUE);
+	purple_prefs_add_path("/purple/gtk/sound/file/im_recv", "");
+	purple_prefs_add_bool("/purple/gtk/sound/enabled/first_im_recv", FALSE);
+	purple_prefs_add_path("/purple/gtk/sound/file/first_im_recv", "");
+	purple_prefs_add_bool("/purple/gtk/sound/enabled/send_im", TRUE);
+	purple_prefs_add_path("/purple/gtk/sound/file/send_im", "");
+	purple_prefs_add_bool("/purple/gtk/sound/enabled/join_chat", FALSE);
+	purple_prefs_add_path("/purple/gtk/sound/file/join_chat", "");
+	purple_prefs_add_bool("/purple/gtk/sound/enabled/left_chat", FALSE);
+	purple_prefs_add_path("/purple/gtk/sound/file/left_chat", "");
+	purple_prefs_add_bool("/purple/gtk/sound/enabled/send_chat_msg", FALSE);
+	purple_prefs_add_path("/purple/gtk/sound/file/send_chat_msg", "");
+	purple_prefs_add_bool("/purple/gtk/sound/enabled/chat_msg_recv", FALSE);
+	purple_prefs_add_path("/purple/gtk/sound/file/chat_msg_recv", "");
+	purple_prefs_add_bool("/purple/gtk/sound/enabled/nick_said", FALSE);
+	purple_prefs_add_path("/purple/gtk/sound/file/nick_said", "");
+	purple_prefs_add_bool("/purple/gtk/sound/enabled/pounce_default", TRUE);
+	purple_prefs_add_path("/purple/gtk/sound/file/pounce_default", "");
+	purple_prefs_add_bool("/purple/gtk/sound/conv_focus", TRUE);
+	purple_prefs_add_bool("/purple/gtk/sound/mute", FALSE);
+	purple_prefs_add_path("/purple/gtk/sound/command", "");
+	purple_prefs_add_string("/purple/gtk/sound/method", "automatic");
+	purple_prefs_add_int("/purple/gtk/sound/volume", 50);
 
 #ifdef USE_GSTREAMER
-	gaim_debug_info("sound", "Initializing sound output drivers.\n");
+	purple_debug_info("sound", "Initializing sound output drivers.\n");
 	if ((gst_init_failed = !gst_init_check(NULL, NULL, &error))) {
-		gaim_notify_error(NULL, _("GStreamer Failure"),
+		purple_notify_error(NULL, _("GStreamer Failure"),
 					_("GStreamer failed to initialize."),
 					error ? error->message : "");
 		if (error) {
@@ -317,30 +317,30 @@ pidgin_sound_init(void)
 	}
 #endif /* USE_GSTREAMER */
 
-	gaim_signal_connect(blist_handle, "buddy-signed-on",
-						gtk_sound_handle, GAIM_CALLBACK(buddy_state_cb),
-						GINT_TO_POINTER(GAIM_SOUND_BUDDY_ARRIVE));
-	gaim_signal_connect(blist_handle, "buddy-signed-off",
-						gtk_sound_handle, GAIM_CALLBACK(buddy_state_cb),
-						GINT_TO_POINTER(GAIM_SOUND_BUDDY_LEAVE));
-	gaim_signal_connect(conv_handle, "received-im-msg",
-						gtk_sound_handle, GAIM_CALLBACK(im_msg_received_cb),
-						GINT_TO_POINTER(GAIM_SOUND_RECEIVE));
-	gaim_signal_connect(conv_handle, "sent-im-msg",
-						gtk_sound_handle, GAIM_CALLBACK(im_msg_sent_cb),
-						GINT_TO_POINTER(GAIM_SOUND_SEND));
-	gaim_signal_connect(conv_handle, "chat-buddy-joined",
-						gtk_sound_handle, GAIM_CALLBACK(chat_buddy_join_cb),
-						GINT_TO_POINTER(GAIM_SOUND_CHAT_JOIN));
-	gaim_signal_connect(conv_handle, "chat-buddy-left",
-						gtk_sound_handle, GAIM_CALLBACK(chat_buddy_left_cb),
-						GINT_TO_POINTER(GAIM_SOUND_CHAT_LEAVE));
-	gaim_signal_connect(conv_handle, "sent-chat-msg",
-						gtk_sound_handle, GAIM_CALLBACK(chat_msg_sent_cb),
-						GINT_TO_POINTER(GAIM_SOUND_CHAT_YOU_SAY));
-	gaim_signal_connect(conv_handle, "received-chat-msg",
-						gtk_sound_handle, GAIM_CALLBACK(chat_msg_received_cb),
-						GINT_TO_POINTER(GAIM_SOUND_CHAT_SAY));
+	purple_signal_connect(blist_handle, "buddy-signed-on",
+						gtk_sound_handle, PURPLE_CALLBACK(buddy_state_cb),
+						GINT_TO_POINTER(PURPLE_SOUND_BUDDY_ARRIVE));
+	purple_signal_connect(blist_handle, "buddy-signed-off",
+						gtk_sound_handle, PURPLE_CALLBACK(buddy_state_cb),
+						GINT_TO_POINTER(PURPLE_SOUND_BUDDY_LEAVE));
+	purple_signal_connect(conv_handle, "received-im-msg",
+						gtk_sound_handle, PURPLE_CALLBACK(im_msg_received_cb),
+						GINT_TO_POINTER(PURPLE_SOUND_RECEIVE));
+	purple_signal_connect(conv_handle, "sent-im-msg",
+						gtk_sound_handle, PURPLE_CALLBACK(im_msg_sent_cb),
+						GINT_TO_POINTER(PURPLE_SOUND_SEND));
+	purple_signal_connect(conv_handle, "chat-buddy-joined",
+						gtk_sound_handle, PURPLE_CALLBACK(chat_buddy_join_cb),
+						GINT_TO_POINTER(PURPLE_SOUND_CHAT_JOIN));
+	purple_signal_connect(conv_handle, "chat-buddy-left",
+						gtk_sound_handle, PURPLE_CALLBACK(chat_buddy_left_cb),
+						GINT_TO_POINTER(PURPLE_SOUND_CHAT_LEAVE));
+	purple_signal_connect(conv_handle, "sent-chat-msg",
+						gtk_sound_handle, PURPLE_CALLBACK(chat_msg_sent_cb),
+						GINT_TO_POINTER(PURPLE_SOUND_CHAT_YOU_SAY));
+	purple_signal_connect(conv_handle, "received-chat-msg",
+						gtk_sound_handle, PURPLE_CALLBACK(chat_msg_received_cb),
+						GINT_TO_POINTER(PURPLE_SOUND_CHAT_SAY));
 }
 
 static void
@@ -351,7 +351,7 @@ pidgin_sound_uninit(void)
 		gst_deinit();
 #endif
 
-	gaim_signals_disconnect_by_handle(pidgin_sound_get_handle());
+	purple_signals_disconnect_by_handle(pidgin_sound_get_handle());
 }
 
 #ifdef USE_GSTREAMER
@@ -370,12 +370,12 @@ bus_call (GstBus     *bus,
 		break;
 	case GST_MESSAGE_ERROR:
 		gst_message_parse_error(msg, &err, NULL);
-		gaim_debug_error("gstreamer", err->message);
+		purple_debug_error("gstreamer", err->message);
 		g_error_free(err);
 		break;
 	case GST_MESSAGE_WARNING:
 		gst_message_parse_warning(msg, &err, NULL);
-		gaim_debug_warning("gstreamer", err->message);
+		purple_debug_warning("gstreamer", err->message);
 		g_error_free(err);
 		break;
 	default:
@@ -397,10 +397,10 @@ pidgin_sound_play_file(const char *filename)
 	GstBus *bus = NULL;
 #endif
 
-	if (gaim_prefs_get_bool("/gaim/gtk/sound/mute"))
+	if (purple_prefs_get_bool("/purple/gtk/sound/mute"))
 		return;
 
-	method = gaim_prefs_get_string("/gaim/gtk/sound/method");
+	method = purple_prefs_get_string("/purple/gtk/sound/method");
 
 	if (!strcmp(method, "none")) {
 		return;
@@ -410,7 +410,7 @@ pidgin_sound_play_file(const char *filename)
 	}
 
 	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
-		gaim_debug_error("gtksound", "sound file (%s) does not exist.\n", filename);
+		purple_debug_error("gtksound", "sound file (%s) does not exist.\n", filename);
 		return;
 	}
 
@@ -420,22 +420,22 @@ pidgin_sound_play_file(const char *filename)
 		char *command;
 		GError *error = NULL;
 
-		sound_cmd = gaim_prefs_get_path("/gaim/gtk/sound/command");
+		sound_cmd = purple_prefs_get_path("/purple/gtk/sound/command");
 
 		if (!sound_cmd || *sound_cmd == '\0') {
-			gaim_debug_error("gtksound",
+			purple_debug_error("gtksound",
 					 "'Command' sound method has been chosen, "
 					 "but no command has been set.");
 			return;
 		}
 
 		if(strstr(sound_cmd, "%s"))
-			command = gaim_strreplace(sound_cmd, "%s", filename);
+			command = purple_strreplace(sound_cmd, "%s", filename);
 		else
 			command = g_strdup_printf("%s %s", sound_cmd, filename);
 
 		if(!g_spawn_command_line_async(command, &error)) {
-			gaim_debug_error("gtksound", "sound command could not be launched: %s\n", error->message);
+			purple_debug_error("gtksound", "sound command could not be launched: %s\n", error->message);
 			g_error_free(error);
 		}
 
@@ -445,25 +445,25 @@ pidgin_sound_play_file(const char *filename)
 #ifdef USE_GSTREAMER
 	if (gst_init_failed)  /* Perhaps do gdk_beep instead? */
 		return;
-	volume = (float)(CLAMP(gaim_prefs_get_int("/gaim/gtk/sound/volume"),0,100)) / 50;
+	volume = (float)(CLAMP(purple_prefs_get_int("/purple/gtk/sound/volume"),0,100)) / 50;
 	if (!strcmp(method, "automatic")) {
-		if (gaim_running_gnome()) {
+		if (purple_running_gnome()) {
 			sink = gst_element_factory_make("gconfaudiosink", "sink");
 		}
 		if (!sink)
 			sink = gst_element_factory_make("autoaudiosink", "sink");
 		if (!sink) {
-			gaim_debug_error("sound", "Unable to create GStreamer audiosink.\n");
+			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 			return;
 		}
 	} else if (!strcmp(method, "esd")) {
 		sink = gst_element_factory_make("esdsink", "sink");
 		if (!sink) {
-			gaim_debug_error("sound", "Unable to create GStreamer audiosink.\n");
+			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 			return;
 		}
 	} else {
-		gaim_debug_error("sound", "Unknown sound method '%s'\n", method);
+		purple_debug_error("sound", "Unknown sound method '%s'\n", method);
 		return;
 	}
 
@@ -488,51 +488,51 @@ pidgin_sound_play_file(const char *filename)
 	return;
 #endif /* USE_GSTREAMER */
 #else /* _WIN32 */
-	gaim_debug_info("sound", "Playing %s\n", filename);
+	purple_debug_info("sound", "Playing %s\n", filename);
 
 	if (G_WIN32_HAVE_WIDECHAR_API ()) {
 		wchar_t *wc_filename = g_utf8_to_utf16(filename,
 				-1, NULL, NULL, NULL);
 		if (!PlaySoundW(wc_filename, NULL, SND_ASYNC | SND_FILENAME))
-			gaim_debug(GAIM_DEBUG_ERROR, "sound", "Error playing sound.\n");
+			purple_debug(PURPLE_DEBUG_ERROR, "sound", "Error playing sound.\n");
 		g_free(wc_filename);
 	} else {
 		char *l_filename = g_locale_from_utf8(filename,
 				-1, NULL, NULL, NULL);
 		if (!PlaySoundA(l_filename, NULL, SND_ASYNC | SND_FILENAME))
-			gaim_debug(GAIM_DEBUG_ERROR, "sound", "Error playing sound.\n");
+			purple_debug(PURPLE_DEBUG_ERROR, "sound", "Error playing sound.\n");
 		g_free(l_filename);
 	}
 #endif /* _WIN32 */
 }
 
 static void
-pidgin_sound_play_event(GaimSoundEventID event)
+pidgin_sound_play_event(PurpleSoundEventID event)
 {
 	char *enable_pref;
 	char *file_pref;
 
-	if ((event == GAIM_SOUND_BUDDY_ARRIVE) && mute_login_sounds)
+	if ((event == PURPLE_SOUND_BUDDY_ARRIVE) && mute_login_sounds)
 		return;
 
-	if (event >= GAIM_NUM_SOUNDS) {
-		gaim_debug_error("sound", "got request for unknown sound: %d\n", event);
+	if (event >= PURPLE_NUM_SOUNDS) {
+		purple_debug_error("sound", "got request for unknown sound: %d\n", event);
 		return;
 	}
 
-	enable_pref = g_strdup_printf("/gaim/gtk/sound/enabled/%s",
+	enable_pref = g_strdup_printf("/purple/gtk/sound/enabled/%s",
 			sounds[event].pref);
-	file_pref = g_strdup_printf("/gaim/gtk/sound/file/%s", sounds[event].pref);
+	file_pref = g_strdup_printf("/purple/gtk/sound/file/%s", sounds[event].pref);
 
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
-	if (gaim_prefs_get_bool(enable_pref)) {
-		char *filename = g_strdup(gaim_prefs_get_path(file_pref));
+	if (purple_prefs_get_bool(enable_pref)) {
+		char *filename = g_strdup(purple_prefs_get_path(file_pref));
 		if(!filename || !strlen(filename)) {
 			g_free(filename);
-			filename = g_build_filename(DATADIR, "sounds", "gaim", sounds[event].def, NULL);
+			filename = g_build_filename(DATADIR, "sounds", "purple", sounds[event].def, NULL);
 		}
 
-		gaim_sound_play_file(filename, NULL);
+		purple_sound_play_file(filename, NULL);
 		g_free(filename);
 	}
 
@@ -540,7 +540,7 @@ pidgin_sound_play_event(GaimSoundEventID event)
 	g_free(file_pref);
 }
 
-static GaimSoundUiOps sound_ui_ops =
+static PurpleSoundUiOps sound_ui_ops =
 {
 	pidgin_sound_init,
 	pidgin_sound_uninit,
@@ -548,7 +548,7 @@ static GaimSoundUiOps sound_ui_ops =
 	pidgin_sound_play_event
 };
 
-GaimSoundUiOps *
+PurpleSoundUiOps *
 pidgin_sound_get_ui_ops(void)
 {
 	return &sound_ui_ops;

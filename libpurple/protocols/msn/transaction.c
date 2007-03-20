@@ -1,9 +1,9 @@
 /**
  * @file transaction.c MSN transaction functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -79,7 +79,7 @@ msn_transaction_destroy(MsnTransaction *trans)
 		g_hash_table_destroy(trans->callbacks);
 
 	if (trans->timer)
-		gaim_timeout_remove(trans->timer);
+		purple_timeout_remove(trans->timer);
 
 	g_free(trans);
 }
@@ -102,7 +102,7 @@ msn_transaction_to_string(MsnTransaction *trans)
 void
 msn_transaction_queue_cmd(MsnTransaction *trans, MsnCommand *cmd)
 {
-	gaim_debug_info("msn", "queueing command.\n");
+	purple_debug_info("msn", "queueing command.\n");
 	trans->pendent_cmd = cmd;
 	msn_command_ref(cmd);
 }
@@ -115,7 +115,7 @@ msn_transaction_unqueue_cmd(MsnTransaction *trans, MsnCmdProc *cmdproc)
 	if (!cmdproc->servconn->connected)
 		return;
 
-	gaim_debug_info("msn", "unqueueing command.\n");
+	purple_debug_info("msn", "unqueueing command.\n");
 	cmd = trans->pendent_cmd;
 
 	g_return_if_fail(cmd != NULL);
@@ -193,7 +193,7 @@ transaction_timeout(gpointer data)
 	g_return_val_if_fail(trans != NULL, FALSE);
 
 #if 0
-	gaim_debug_info("msn", "timed out: %s %d %s\n", trans->command, trans->trId, trans->params);
+	purple_debug_info("msn", "timed out: %s %d %s\n", trans->command, trans->trId, trans->params);
 #endif
 
 	if (trans->timeout_cb != NULL)
@@ -207,11 +207,11 @@ msn_transaction_set_timeout_cb(MsnTransaction *trans, MsnTimeoutCb cb)
 {
 	if (trans->timer)
 	{
-		gaim_debug_error("msn", "This shouldn't be happening\n");
-		gaim_timeout_remove(trans->timer);
+		purple_debug_error("msn", "This shouldn't be happening\n");
+		purple_timeout_remove(trans->timer);
 	}
 	trans->timeout_cb = cb;
-	trans->timer = gaim_timeout_add(60000, transaction_timeout, trans);
+	trans->timer = purple_timeout_add(60000, transaction_timeout, trans);
 }
 
 void

@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -33,12 +33,12 @@ finch_get_idle_time()
 	return gnt_wm_get_idle_time();
 }
 
-static GaimIdleUiOps ui_ops =
+static PurpleIdleUiOps ui_ops =
 {
 	finch_get_idle_time
 };
 
-GaimIdleUiOps *
+PurpleIdleUiOps *
 finch_idle_get_ui_ops()
 {
 	return &ui_ops;

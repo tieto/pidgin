@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -33,7 +33,7 @@
 #include "oscar.h"
 #include "peer.h"
 
-/* From Gaim */
+/* From Purple */
 #include "conversation.h"
 #include "ft.h"
 #include "network.h"
@@ -107,19 +107,19 @@ PeerConnection *
 peer_connection_new(OscarData *od, OscarCapability type, const char *sn)
 {
 	PeerConnection *conn;
-	GaimAccount *account;
+	PurpleAccount *account;
 
-	account = gaim_connection_get_account(od->gc);
+	account = purple_connection_get_account(od->gc);
 
 	conn = g_new0(PeerConnection, 1);
 	conn->od = od;
 	conn->type = type;
 	conn->sn = g_strdup(sn);
-	conn->buffer_outgoing = gaim_circ_buffer_new(0);
+	conn->buffer_outgoing = purple_circ_buffer_new(0);
 	conn->listenerfd = -1;
 	conn->fd = -1;
 	conn->lastactivity = time(NULL);
-	conn->use_proxy |= gaim_account_get_bool(account, "always_use_rv_proxy", FALSE);
+	conn->use_proxy |= purple_account_get_bool(account, "always_use_rv_proxy", FALSE);
 
 	if (type == OSCAR_CAPABILITY_DIRECTIM)
 		memcpy(conn->magic, "ODC2", 4);
@@ -141,36 +141,36 @@ peer_connection_close(PeerConnection *conn)
 
 	if (conn->verified_connect_data != NULL)
 	{
-		gaim_proxy_connect_cancel(conn->verified_connect_data);
+		purple_proxy_connect_cancel(conn->verified_connect_data);
 		conn->verified_connect_data = NULL;
 	}
 
 	if (conn->client_connect_data != NULL)
 	{
-		gaim_proxy_connect_cancel(conn->client_connect_data);
+		purple_proxy_connect_cancel(conn->client_connect_data);
 		conn->client_connect_data = NULL;
 	}
 
 	if (conn->listen_data != NULL)
 	{
-		gaim_network_listen_cancel(conn->listen_data);
+		purple_network_listen_cancel(conn->listen_data);
 		conn->listen_data = NULL;
 	}
 
 	if (conn->connect_timeout_timer != 0)
 	{
-		gaim_timeout_remove(conn->connect_timeout_timer);
+		purple_timeout_remove(conn->connect_timeout_timer);
 		conn->connect_timeout_timer = 0;
 	}
 
 	if (conn->watcher_incoming != 0)
 	{
-		gaim_input_remove(conn->watcher_incoming);
+		purple_input_remove(conn->watcher_incoming);
 		conn->watcher_incoming = 0;
 	}
 	if (conn->watcher_outgoing != 0)
 	{
-		gaim_input_remove(conn->watcher_outgoing);
+		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
 	}
 	if (conn->listenerfd != -1)
@@ -189,8 +189,8 @@ peer_connection_close(PeerConnection *conn)
 	conn->buffer_incoming.len = 0;
 	conn->buffer_incoming.offset = 0;
 
-	gaim_circ_buffer_destroy(conn->buffer_outgoing);
-	conn->buffer_outgoing = gaim_circ_buffer_new(0);
+	purple_circ_buffer_destroy(conn->buffer_outgoing);
+	conn->buffer_outgoing = purple_circ_buffer_new(0);
 
 	conn->flags &= ~PEER_CONNECTION_FLAG_IS_INCOMING;
 }
@@ -202,7 +202,7 @@ peer_connection_destroy_cb(gpointer data)
 
 	conn = data;
 
-	gaim_request_close_with_handle(conn);
+	purple_request_close_with_handle(conn);
 
 	peer_connection_close(conn);
 
@@ -211,20 +211,20 @@ peer_connection_destroy_cb(gpointer data)
 
 	if (conn->xfer != NULL)
 	{
-		GaimXferStatusType status;
+		PurpleXferStatusType status;
 		conn->xfer->data = NULL;
-		status = gaim_xfer_get_status(conn->xfer);
-		if ((status != GAIM_XFER_STATUS_DONE) &&
-			(status != GAIM_XFER_STATUS_CANCEL_LOCAL) &&
-			(status != GAIM_XFER_STATUS_CANCEL_REMOTE))
+		status = purple_xfer_get_status(conn->xfer);
+		if ((status != PURPLE_XFER_STATUS_DONE) &&
+			(status != PURPLE_XFER_STATUS_CANCEL_LOCAL) &&
+			(status != PURPLE_XFER_STATUS_CANCEL_REMOTE))
 		{
 			if ((conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_CLOSED) ||
 				(conn->disconnect_reason == OSCAR_DISCONNECT_REMOTE_REFUSED))
-				gaim_xfer_cancel_remote(conn->xfer);
+				purple_xfer_cancel_remote(conn->xfer);
 			else
-				gaim_xfer_cancel_local(conn->xfer);
+				purple_xfer_cancel_local(conn->xfer);
 		}
-		gaim_xfer_unref(conn->xfer);
+		purple_xfer_unref(conn->xfer);
 		conn->xfer = NULL;
 	}
 
@@ -234,7 +234,7 @@ peer_connection_destroy_cb(gpointer data)
 	g_free(conn->clientip);
 	g_free(conn->verifiedip);
 	g_free(conn->xferdata.name);
-	gaim_circ_buffer_destroy(conn->buffer_outgoing);
+	purple_circ_buffer_destroy(conn->buffer_outgoing);
 
 	conn->od->peer_connections = g_slist_remove(conn->od->peer_connections, conn);
 
@@ -247,7 +247,7 @@ void
 peer_connection_destroy(PeerConnection *conn, OscarDisconnectReason reason, const gchar *error_message)
 {
 	if (conn->destroy_timeout != 0)
-		gaim_timeout_remove(conn->destroy_timeout);
+		purple_timeout_remove(conn->destroy_timeout);
 	conn->disconnect_reason = reason;
 	g_free(conn->error_message);
 	conn->error_message = g_strdup(error_message);
@@ -261,11 +261,11 @@ peer_connection_schedule_destroy(PeerConnection *conn, OscarDisconnectReason rea
 		/* Already taken care of */
 		return;
 
-	gaim_debug_info("oscar", "Scheduling destruction of peer connection\n");
+	purple_debug_info("oscar", "Scheduling destruction of peer connection\n");
 	conn->disconnect_reason = reason;
 	g_free(conn->error_message);
 	conn->error_message = g_strdup(error_message);
-	conn->destroy_timeout = gaim_timeout_add(0, peer_connection_destroy_cb, conn);
+	conn->destroy_timeout = purple_timeout_add(0, peer_connection_destroy_cb, conn);
 }
 
 /*******************************************************************/
@@ -288,7 +288,7 @@ peer_connection_schedule_destroy(PeerConnection *conn, OscarDisconnectReason rea
  * continue reading the next frame.
  */
 void
-peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
+peer_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PeerConnection *conn;
 	ssize_t read;
@@ -331,7 +331,7 @@ peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 		/* All ODC/OFT frames must start with a magic string */
 		if (memcmp(conn->magic, conn->header, 4))
 		{
-			gaim_debug_warning("oscar", "Expecting magic string to "
+			purple_debug_warning("oscar", "Expecting magic string to "
 				"be %c%c%c%c but received magic string %c%c%c%c.  "
 				"Closing connection.\n",
 				conn->magic[0], conn->magic[1], conn->magic[2],
@@ -403,18 +403,18 @@ peer_connection_recv_cb(gpointer data, gint source, GaimInputCondition cond)
 /*******************************************************************/
 
 static void
-send_cb(gpointer data, gint source, GaimInputCondition cond)
+send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PeerConnection *conn;
 	gsize writelen;
 	ssize_t wrotelen;
 
 	conn = data;
-	writelen = gaim_circ_buffer_get_max_read(conn->buffer_outgoing);
+	writelen = purple_circ_buffer_get_max_read(conn->buffer_outgoing);
 
 	if (writelen == 0)
 	{
-		gaim_input_remove(conn->watcher_outgoing);
+		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
 		return;
 	}
@@ -428,7 +428,7 @@ send_cb(gpointer data, gint source, GaimInputCondition cond)
 
 		if (conn->ready)
 		{
-			gaim_input_remove(conn->watcher_outgoing);
+			purple_input_remove(conn->watcher_outgoing);
 			conn->watcher_outgoing = 0;
 			close(conn->fd);
 			conn->fd = -1;
@@ -446,7 +446,7 @@ send_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	}
 
-	gaim_circ_buffer_mark_read(conn->buffer_outgoing, wrotelen);
+	purple_circ_buffer_mark_read(conn->buffer_outgoing, wrotelen);
 	conn->lastactivity = time(NULL);
 }
 
@@ -459,13 +459,13 @@ void
 peer_connection_send(PeerConnection *conn, ByteStream *bs)
 {
 	/* Add everything to our outgoing buffer */
-	gaim_circ_buffer_append(conn->buffer_outgoing, bs->data, bs->len);
+	purple_circ_buffer_append(conn->buffer_outgoing, bs->data, bs->len);
 
 	/* If we haven't already started writing stuff, then start the cycle */
 	if ((conn->watcher_outgoing == 0) && (conn->fd != -1))
 	{
-		conn->watcher_outgoing = gaim_input_add(conn->fd,
-				GAIM_INPUT_WRITE, send_cb, conn);
+		conn->watcher_outgoing = purple_input_add(conn->fd,
+				PURPLE_INPUT_WRITE, send_cb, conn);
 		send_cb(conn, conn->fd, 0);
 	}
 }
@@ -481,8 +481,8 @@ peer_connection_send(PeerConnection *conn, ByteStream *bs)
 void
 peer_connection_finalize_connection(PeerConnection *conn)
 {
-	conn->watcher_incoming = gaim_input_add(conn->fd,
-			GAIM_INPUT_READ, peer_connection_recv_cb, conn);
+	conn->watcher_incoming = purple_input_add(conn->fd,
+			PURPLE_INPUT_READ, peer_connection_recv_cb, conn);
 
 	if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 	{
@@ -496,7 +496,7 @@ peer_connection_finalize_connection(PeerConnection *conn)
 	}
 	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
 	{
-		if (gaim_xfer_get_type(conn->xfer) == GAIM_XFER_SEND)
+		if (purple_xfer_get_type(conn->xfer) == PURPLE_XFER_SEND)
 		{
 			peer_oft_send_prompt(conn);
 		}
@@ -537,18 +537,18 @@ peer_connection_common_established_cb(gpointer data, gint source, const gchar *e
 		return;
 	}
 
-	gaim_timeout_remove(conn->connect_timeout_timer);
+	purple_timeout_remove(conn->connect_timeout_timer);
 	conn->connect_timeout_timer = 0;
 
 	if (conn->client_connect_data != NULL)
 	{
-		gaim_proxy_connect_cancel(conn->client_connect_data);
+		purple_proxy_connect_cancel(conn->client_connect_data);
 		conn->client_connect_data = NULL;
 	}
 
 	if (conn->verified_connect_data != NULL)
 	{
-		gaim_proxy_connect_cancel(conn->verified_connect_data);
+		purple_proxy_connect_cancel(conn->verified_connect_data);
 		conn->verified_connect_data = NULL;
 	}
 
@@ -581,11 +581,11 @@ peer_connection_client_established_cb(gpointer data, gint source, const gchar *e
  * in the channel 2 ICBM.
  */
 void
-peer_connection_listen_cb(gpointer data, gint source, GaimInputCondition cond)
+peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	PeerConnection *conn;
 	OscarData *od;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	struct sockaddr addr;
 	socklen_t addrlen = sizeof(addr);
 
@@ -593,7 +593,7 @@ peer_connection_listen_cb(gpointer data, gint source, GaimInputCondition cond)
 	od = conn->od;
 	gc = od->gc;
 
-	gaim_debug_info("oscar", "Accepting connection on listener socket.\n");
+	purple_debug_info("oscar", "Accepting connection on listener socket.\n");
 
 	conn->fd = accept(conn->listenerfd, &addr, &addrlen);
 	if (conn->fd == -1)
@@ -615,7 +615,7 @@ peer_connection_listen_cb(gpointer data, gint source, GaimInputCondition cond)
 	}
 
 	fcntl(conn->fd, F_SETFL, O_NONBLOCK);
-	gaim_input_remove(conn->watcher_incoming);
+	purple_input_remove(conn->watcher_incoming);
 
 	peer_connection_finalize_connection(conn);
 }
@@ -629,9 +629,9 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 {
 	PeerConnection *conn;
 	OscarData *od;
-	GaimConnection *gc;
-	GaimAccount *account;
-	GaimConversation *conv;
+	PurpleConnection *gc;
+	PurpleAccount *account;
+	PurpleConversation *conv;
 	char *tmp;
 	FlapConnection *bos_conn;
 	const char *listener_ip;
@@ -649,7 +649,7 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 
 	od = conn->od;
 	gc = od->gc;
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 	conn->listenerfd = listenerfd;
 
 	/* Send the "please connect to me!" ICBM */
@@ -661,26 +661,26 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 		return;
 	}
 
-	listener_ip = gaim_network_get_my_ip(bos_conn->fd);
-	listener_port = gaim_network_get_port_from_fd(conn->listenerfd);
+	listener_ip = purple_network_get_my_ip(bos_conn->fd);
+	listener_port = purple_network_get_port_from_fd(conn->listenerfd);
 	if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 	{
 		aim_im_sendch2_odc_requestdirect(od,
-				conn->cookie, conn->sn, gaim_network_ip_atoi(listener_ip),
+				conn->cookie, conn->sn, purple_network_ip_atoi(listener_ip),
 				listener_port, ++conn->lastrequestnumber);
 
 		/* Print a message to a local conversation window */
-		conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, conn->sn);
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
 		tmp = g_strdup_printf(_("Asking %s to connect to us at %s:%hu for "
 				"Direct IM."), conn->sn, listener_ip, listener_port);
-		gaim_conversation_write(conv, NULL, tmp, GAIM_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(tmp);
 	}
 	else if (conn->type == OSCAR_CAPABILITY_SENDFILE)
 	{
 		aim_im_sendch2_sendfile_requestdirect(od,
 				conn->cookie, conn->sn,
-				gaim_network_ip_atoi(listener_ip),
+				purple_network_ip_atoi(listener_ip),
 				listener_port, ++conn->lastrequestnumber,
 				(const gchar *)conn->xferdata.name,
 				conn->xferdata.size, conn->xferdata.totfiles);
@@ -696,7 +696,7 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
  * more, and users are impatient.
  *
  * Worst case scenario: the user is connected to the Internet using
- * a modem with severe lag.  The peer connections fail and Gaim falls
+ * a modem with severe lag.  The peer connections fail and Purple falls
  * back to using a proxied connection.  The lower bandwidth
  * limitations imposed by the proxied connection won't matter because
  * the user is using a modem.
@@ -717,7 +717,7 @@ peer_connection_tooktoolong(gpointer data)
 
 	conn = data;
 
-	gaim_debug_info("oscar", "Peer connection timed out after 5 seconds.  "
+	purple_debug_info("oscar", "Peer connection timed out after 5 seconds.  "
 			"Trying next method...\n");
 
 	peer_connection_trynext(conn);
@@ -733,9 +733,9 @@ peer_connection_tooktoolong(gpointer data)
 void
 peer_connection_trynext(PeerConnection *conn)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 
-	account = gaim_connection_get_account(conn->od->gc);
+	account = purple_connection_get_account(conn->od->gc);
 
 	/*
 	 * Close any remnants of a previous failed connection attempt.
@@ -755,23 +755,23 @@ peer_connection_trynext(PeerConnection *conn)
 		if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 		{
 			gchar *tmp;
-			GaimConversation *conv;
+			PurpleConversation *conv;
 			tmp = g_strdup_printf(_("Attempting to connect to %s:%hu."),
 					conn->verifiedip, conn->port);
-			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, conn->sn);
-			gaim_conversation_write(conv, NULL, tmp,
-					GAIM_MESSAGE_SYSTEM, time(NULL));
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
+			purple_conversation_write(conv, NULL, tmp,
+					PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
 		}
 
-		conn->verified_connect_data = gaim_proxy_connect(NULL, account,
+		conn->verified_connect_data = purple_proxy_connect(NULL, account,
 				conn->verifiedip, conn->port,
 				peer_connection_verified_established_cb, conn);
 
 		if ((conn->verifiedip == NULL) ||
 			strcmp(conn->verifiedip, conn->clientip))
 		{
-			conn->client_connect_data = gaim_proxy_connect(NULL, account,
+			conn->client_connect_data = purple_proxy_connect(NULL, account,
 					conn->clientip, conn->port,
 					peer_connection_client_established_cb, conn);
 		}
@@ -780,7 +780,7 @@ peer_connection_trynext(PeerConnection *conn)
 			(conn->client_connect_data != NULL))
 		{
 			/* Connecting... */
-			conn->connect_timeout_timer = gaim_timeout_add(5000,
+			conn->connect_timeout_timer = purple_timeout_add(5000,
 					peer_connection_tooktoolong, conn);
 			return;
 		}
@@ -801,7 +801,7 @@ peer_connection_trynext(PeerConnection *conn)
 		 */
 		conn->flags |= PEER_CONNECTION_FLAG_IS_INCOMING;
 
-		conn->listen_data = gaim_network_listen_range(5190, 5290, SOCK_STREAM,
+		conn->listen_data = purple_network_listen_range(5190, 5290, SOCK_STREAM,
 				peer_connection_establish_listener_cb, conn);
 		if (conn->listen_data != NULL)
 		{
@@ -829,15 +829,15 @@ peer_connection_trynext(PeerConnection *conn)
 		if (conn->type == OSCAR_CAPABILITY_DIRECTIM)
 		{
 			gchar *tmp;
-			GaimConversation *conv;
+			PurpleConversation *conv;
 			tmp = g_strdup_printf(_("Attempting to connect via proxy server."));
-			conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, account, conn->sn);
-			gaim_conversation_write(conv, NULL, tmp,
-					GAIM_MESSAGE_SYSTEM, time(NULL));
+			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, conn->sn);
+			purple_conversation_write(conv, NULL, tmp,
+					PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(tmp);
 		}
 
-		conn->verified_connect_data = gaim_proxy_connect(NULL, account,
+		conn->verified_connect_data = purple_proxy_connect(NULL, account,
 				(conn->proxyip != NULL) ? conn->proxyip : PEER_PROXY_SERVER,
 				PEER_PROXY_PORT,
 				peer_proxy_connection_established_cb, conn);
@@ -867,16 +867,16 @@ peer_connection_propose(OscarData *od, OscarCapability type, const char *sn)
 		{
 			if (conn->ready)
 			{
-				GaimAccount *account;
-				GaimConversation *conv;
+				PurpleAccount *account;
+				PurpleConversation *conv;
 
-				gaim_debug_info("oscar", "Already have a direct IM "
+				purple_debug_info("oscar", "Already have a direct IM "
 						"session with %s.\n", sn);
-				account = gaim_connection_get_account(od->gc);
-				conv = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM,
+				account = purple_connection_get_account(od->gc);
+				conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 						sn, account);
 				if (conv != NULL)
-					gaim_conversation_present(conv);
+					purple_conversation_present(conv);
 				return;
 			}
 
@@ -933,13 +933,13 @@ peer_connection_got_proposition_no_cb(gpointer data, gint id)
 void
 peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *message, IcbmArgsCh2 *args)
 {
-	GaimConnection *gc;
-	GaimAccount *account;
+	PurpleConnection *gc;
+	PurpleAccount *account;
 	PeerConnection *conn;
 	gchar *buf;
 
 	gc = od->gc;
-	account = gaim_connection_get_account(gc);
+	account = purple_connection_get_account(gc);
 
 	/*
 	 * If we have a connection with this same cookie then they are
@@ -950,7 +950,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 	conn = peer_connection_find_by_cookie(od, sn, args->cookie);
 	if ((conn != NULL) && (conn->type == args->type))
 	{
-		gaim_debug_info("oscar", "Remote user wants to try a "
+		purple_debug_info("oscar", "Remote user wants to try a "
 				"different connection method\n");
 		g_free(conn->proxyip);
 		g_free(conn->clientip);
@@ -975,7 +975,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 		if (conn != NULL)
 		{
 			/* Close the old direct IM and start a new one */
-			gaim_debug_info("oscar", "Received new direct IM request "
+			purple_debug_info("oscar", "Received new direct IM request "
 				"from %s.  Destroying old connection.\n", sn);
 			peer_connection_destroy(conn, OSCAR_DISCONNECT_REMOTE_CLOSED, NULL);
 		}
@@ -988,7 +988,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 			(args->info.sendfile.totsize == 0) ||
 			(args->info.sendfile.totfiles == 0))
 		{
-			gaim_debug_warning("oscar",
+			purple_debug_warning("oscar",
 					"%s tried to send you a file with incomplete "
 					"information.\n", sn);
 			return;
@@ -1008,15 +1008,15 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 	if (args->type == OSCAR_CAPABILITY_DIRECTIM)
 	{
 		buf = g_strdup_printf(_("%s has just asked to directly connect to %s"),
-				sn, gaim_account_get_username(account));
+				sn, purple_account_get_username(account));
 
-		gaim_request_action(conn, NULL, buf,
+		purple_request_action(conn, NULL, buf,
 						_("This requires a direct connection between "
 						  "the two computers and is necessary for IM "
 						  "Images.  Because your IP address will be "
 						  "revealed, this may be considered a privacy "
 						  "risk."),
-						GAIM_DEFAULT_ACTION_NONE, conn, 2,
+						PURPLE_DEFAULT_ACTION_NONE, conn, 2,
 						_("_Connect"), G_CALLBACK(peer_connection_got_proposition_yes_cb),
 						_("Cancel"), G_CALLBACK(peer_connection_got_proposition_no_cb));
 	}
@@ -1024,18 +1024,18 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 	{
 		gchar *filename;
 
-		conn->xfer = gaim_xfer_new(account, GAIM_XFER_RECEIVE, sn);
+		conn->xfer = purple_xfer_new(account, PURPLE_XFER_RECEIVE, sn);
 		if (conn->xfer)
 		{
 			conn->xfer->data = conn;
-			gaim_xfer_ref(conn->xfer);
-			gaim_xfer_set_size(conn->xfer, args->info.sendfile.totsize);
+			purple_xfer_ref(conn->xfer);
+			purple_xfer_set_size(conn->xfer, args->info.sendfile.totsize);
 
 			/* Set the file name */
 			if (g_utf8_validate(args->info.sendfile.filename, -1, NULL))
 				filename = g_strdup(args->info.sendfile.filename);
 			else
-				filename = gaim_utf8_salvage(args->info.sendfile.filename);
+				filename = purple_utf8_salvage(args->info.sendfile.filename);
 
 			if (args->info.sendfile.subtype == AIM_OFT_SUBTYPE_SEND_DIR)
 			{
@@ -1049,7 +1049,7 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 				if ((tmp != NULL) && (tmp[1] == '*'))
 					tmp[0] = '\0';
 			}
-			gaim_xfer_set_filename(conn->xfer, filename);
+			purple_xfer_set_filename(conn->xfer, filename);
 			g_free(filename);
 
 			/*
@@ -1061,18 +1061,18 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 				(g_ascii_strncasecmp(message, "<ICQ_COOL_FT>", 13) != 0) &&
 				(g_ascii_strcasecmp(message, "<HTML>") != 0))
 			{
-				gaim_xfer_set_message(conn->xfer, message);
+				purple_xfer_set_message(conn->xfer, message);
 			}
 
 			/* Setup our I/O op functions */
-			gaim_xfer_set_init_fnc(conn->xfer, peer_oft_recvcb_init);
-			gaim_xfer_set_end_fnc(conn->xfer, peer_oft_recvcb_end);
-			gaim_xfer_set_request_denied_fnc(conn->xfer, peer_oft_cb_generic_cancel);
-			gaim_xfer_set_cancel_recv_fnc(conn->xfer, peer_oft_cb_generic_cancel);
-			gaim_xfer_set_ack_fnc(conn->xfer, peer_oft_recvcb_ack_recv);
+			purple_xfer_set_init_fnc(conn->xfer, peer_oft_recvcb_init);
+			purple_xfer_set_end_fnc(conn->xfer, peer_oft_recvcb_end);
+			purple_xfer_set_request_denied_fnc(conn->xfer, peer_oft_cb_generic_cancel);
+			purple_xfer_set_cancel_recv_fnc(conn->xfer, peer_oft_cb_generic_cancel);
+			purple_xfer_set_ack_fnc(conn->xfer, peer_oft_recvcb_ack_recv);
 
 			/* Now perform the request */
-			gaim_xfer_request(conn->xfer);
+			purple_xfer_request(conn->xfer);
 		}
 	}
 }

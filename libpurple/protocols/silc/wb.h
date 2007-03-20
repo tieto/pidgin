@@ -1,6 +1,6 @@
 /*
 
-  silcgaim.h
+  silcpurple.h
 
   Author: Pekka Riikonen <priikone@silcnet.org>
 
@@ -17,33 +17,33 @@
 
 */
 
-#ifndef SILCGAIM_WB_H
-#define SILCGAIM_WB_H
+#ifndef SILCPURPLE_WB_H
+#define SILCPURPLE_WB_H
 
-#include "silcgaim.h"
+#include "silcpurple.h"
 #include "whiteboard.h"
 
-GaimWhiteboard *
-silcgaim_wb_init(SilcGaim sg, SilcClientEntry client_entry);
-GaimWhiteboard *
-silcgaim_wb_init_ch(SilcGaim sg, SilcChannelEntry channel);
-void silcgaim_wb_receive(SilcClient client, SilcClientConnection conn,
+PurpleWhiteboard *
+silcpurple_wb_init(SilcPurple sg, SilcClientEntry client_entry);
+PurpleWhiteboard *
+silcpurple_wb_init_ch(SilcPurple sg, SilcChannelEntry channel);
+void silcpurple_wb_receive(SilcClient client, SilcClientConnection conn,
 			 SilcClientEntry sender, SilcMessagePayload payload,
 			 SilcMessageFlags flags, const unsigned char *message,
 			 SilcUInt32 message_len);
-void silcgaim_wb_receive_ch(SilcClient client, SilcClientConnection conn,
+void silcpurple_wb_receive_ch(SilcClient client, SilcClientConnection conn,
 			    SilcClientEntry sender, SilcChannelEntry channel,
 			    SilcMessagePayload payload,
 			    SilcMessageFlags flags,
 			    const unsigned char *message,
 			    SilcUInt32 message_len);
-void silcgaim_wb_start(GaimWhiteboard *wb);
-void silcgaim_wb_end(GaimWhiteboard *wb);
-void silcgaim_wb_get_dimensions(GaimWhiteboard *wb, int *width, int *height);
-void silcgaim_wb_set_dimensions(GaimWhiteboard *wb, int width, int height);
-void silcgaim_wb_get_brush(GaimWhiteboard *wb, int *size, int *color);
-void silcgaim_wb_set_brush(GaimWhiteboard *wb, int size, int color);
-void silcgaim_wb_send(GaimWhiteboard *wb, GList *draw_list);
-void silcgaim_wb_clear(GaimWhiteboard *wb);
+void silcpurple_wb_start(PurpleWhiteboard *wb);
+void silcpurple_wb_end(PurpleWhiteboard *wb);
+void silcpurple_wb_get_dimensions(PurpleWhiteboard *wb, int *width, int *height);
+void silcpurple_wb_set_dimensions(PurpleWhiteboard *wb, int width, int height);
+void silcpurple_wb_get_brush(PurpleWhiteboard *wb, int *size, int *color);
+void silcpurple_wb_set_brush(PurpleWhiteboard *wb, int size, int color);
+void silcpurple_wb_send(PurpleWhiteboard *wb, GList *draw_list);
+void silcpurple_wb_clear(PurpleWhiteboard *wb);
 
-#endif /* SILCGAIM_WB_H */
+#endif /* SILCPURPLE_WB_H */

@@ -1,5 +1,5 @@
 /*
- * Evolution integration plugin for Gaim
+ * Evolution integration plugin for Purple
  *
  * Copyright (C) 2003 Christian Hammond.
  *
@@ -58,8 +58,8 @@ enum
 	NUM_COLUMNS
 };
 
-static GaimBlistUiOps *backup_blist_ui_ops = NULL;
-static GaimBlistUiOps *blist_ui_ops = NULL;
+static PurpleBlistUiOps *backup_blist_ui_ops = NULL;
+static PurpleBlistUiOps *blist_ui_ops = NULL;
 static EBook *book = NULL;
 static gulong timer = 0;
 static gulong book_view_tag = 0;
@@ -75,23 +75,23 @@ update_ims_from_contact(EContact *contact, const char *name,
 	if (ims == NULL)
 		return;
 
-	for (l = gaim_connections_get_all(); l != NULL; l = l->next)
+	for (l = purple_connections_get_all(); l != NULL; l = l->next)
 	{
-		GaimConnection *gc = (GaimConnection *)l->data;
-		GaimAccount *account = gaim_connection_get_account(gc);
+		PurpleConnection *gc = (PurpleConnection *)l->data;
+		PurpleAccount *account = purple_connection_get_account(gc);
 		char *me;
 
-		if (strcmp(gaim_account_get_protocol_id(account), prpl_id))
+		if (strcmp(purple_account_get_protocol_id(account), prpl_id))
 			continue;
 
-		if (!gaim_account_get_bool(account, "gevo-autoadd", FALSE))
+		if (!purple_account_get_bool(account, "gevo-autoadd", FALSE))
 			continue;
 
-		me = g_strdup(gaim_normalize(account, gaim_account_get_username(account)));
+		me = g_strdup(purple_normalize(account, purple_account_get_username(account)));
 		for (l2 = ims; l2 != NULL; l2 = l2->next)
 		{
-			if (gaim_find_buddy(account, l2->data) != NULL ||
-				!strcmp(me, gaim_normalize(account, l2->data)))
+			if (purple_find_buddy(account, l2->data) != NULL ||
+				!strcmp(me, purple_normalize(account, l2->data)))
 				continue;
 
 			gevo_add_buddy(account, _("Buddies"), l2->data, name);
@@ -123,7 +123,7 @@ contacts_changed_cb(EBookView *book_view, const GList *contacts)
 {
 	const GList *l;
 
-	if (gaim_connections_get_all() == NULL)
+	if (purple_connections_get_all() == NULL)
 		return;
 
 	for (l = contacts; l != NULL; l = l->next)
@@ -135,7 +135,7 @@ contacts_changed_cb(EBookView *book_view, const GList *contacts)
 }
 
 static void
-request_add_buddy(GaimAccount *account, const char *username,
+request_add_buddy(PurpleAccount *account, const char *username,
 				  const char *group, const char *alias)
 {
 	if (book == NULL)
@@ -157,7 +157,7 @@ got_book_view_cb(EBook *book, EBookStatus status, EBookView *view,
 
 	if (status != E_BOOK_ERROR_OK)
 	{
-		gaim_debug_error("evolution", "Unable to retrieve book view! :(\n");
+		purple_debug_error("evolution", "Unable to retrieve book view! :(\n");
 
 		return;
 	}
@@ -176,7 +176,7 @@ got_book_view_cb(EBook *book, EBookStatus status, EBookView *view,
 }
 
 static void
-signed_on_cb(GaimConnection *gc)
+signed_on_cb(PurpleConnection *gc)
 {
 	EBookQuery *query;
 	gboolean status;
@@ -208,16 +208,16 @@ signed_on_cb(GaimConnection *gc)
 }
 
 static void
-menu_item_activate_cb(GaimBlistNode *node, gpointer user_data)
+menu_item_activate_cb(PurpleBlistNode *node, gpointer user_data)
 {
-	GaimBuddy *buddy = (GaimBuddy *)node;
+	PurpleBuddy *buddy = (PurpleBuddy *)node;
 	gevo_associate_buddy_dialog_new(buddy);
 }
 
 static void
-menu_item_send_mail_activate_cb(GaimBlistNode *node, gpointer user_data)
+menu_item_send_mail_activate_cb(PurpleBlistNode *node, gpointer user_data)
 {
-	GaimBuddy *buddy = (GaimBuddy *)node;
+	PurpleBuddy *buddy = (PurpleBuddy *)node;
 	char *mail = NULL;
 
 	mail = gevo_get_email_for_buddy(buddy);
@@ -236,31 +236,31 @@ menu_item_send_mail_activate_cb(GaimBlistNode *node, gpointer user_data)
 		}
 		else
 		{
-			gaim_notify_error(NULL, NULL, _("Unable to send e-mail"),
+			purple_notify_error(NULL, NULL, _("Unable to send e-mail"),
 							  _("The evolution executable was not found in the PATH."));
 		}
 	}
 	else
 	{
-		gaim_notify_error(NULL, NULL, _("Unable to send e-mail"),
+		purple_notify_error(NULL, NULL, _("Unable to send e-mail"),
 						  _("An e-mail address was not found for this buddy."));
 	}
 }
 
 static void
-blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
+blist_node_extended_menu_cb(PurpleBlistNode *node, GList **menu)
 {
-	GaimMenuAction *act;
-	GaimBuddy *buddy;
-	GaimAccount *account;
+	PurpleMenuAction *act;
+	PurpleBuddy *buddy;
+	PurpleAccount *account;
 	EContact *contact;
 	char *mail;
 
-	if (!GAIM_BLIST_NODE_IS_BUDDY(node))
+	if (!PURPLE_BLIST_NODE_IS_BUDDY(node))
 		return;
 
-	buddy = (GaimBuddy *)node;
-	account = gaim_buddy_get_account(buddy);
+	buddy = (PurpleBuddy *)node;
+	account = purple_buddy_get_account(buddy);
 
 	if (!gevo_prpl_is_supported(account, buddy))
 		return;
@@ -269,8 +269,8 @@ blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 
 	if (contact == NULL)
 	{
-		act = gaim_menu_action_new(_("Add to Address Book"),
-		                           GAIM_CALLBACK(menu_item_activate_cb),
+		act = purple_menu_action_new(_("Add to Address Book"),
+		                           PURPLE_CALLBACK(menu_item_activate_cb),
 		                           NULL, NULL);
 		*menu = g_list_append(*menu, act);
 	}
@@ -281,8 +281,8 @@ blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 
 	if (mail != NULL)
 	{
-		act = gaim_menu_action_new(_("Send E-Mail"),
-			GAIM_CALLBACK(menu_item_send_mail_activate_cb), NULL, NULL);
+		act = purple_menu_action_new(_("Send E-Mail"),
+			PURPLE_CALLBACK(menu_item_send_mail_activate_cb), NULL, NULL);
 		*menu = g_list_append(*menu, act);
 		g_free(mail);
 	}
@@ -292,7 +292,7 @@ blist_node_extended_menu_cb(GaimBlistNode *node, GList **menu)
 static gboolean
 load_timeout(gpointer data)
 {
-	GaimPlugin *plugin = (GaimPlugin *)data;
+	PurplePlugin *plugin = (PurplePlugin *)data;
 	EBookQuery *query;
 
 	timer = 0;
@@ -309,26 +309,26 @@ load_timeout(gpointer data)
 
 	e_book_query_unref(query);
 
-	gaim_signal_connect(gaim_blist_get_handle(), "blist-node-extended-menu",
-						plugin, GAIM_CALLBACK(blist_node_extended_menu_cb), NULL);
+	purple_signal_connect(purple_blist_get_handle(), "blist-node-extended-menu",
+						plugin, PURPLE_CALLBACK(blist_node_extended_menu_cb), NULL);
 
 	return FALSE;
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
 	bonobo_activate();
 
-	backup_blist_ui_ops = gaim_blist_get_ui_ops();
+	backup_blist_ui_ops = purple_blist_get_ui_ops();
 
-	blist_ui_ops = g_memdup(backup_blist_ui_ops, sizeof(GaimBlistUiOps));
+	blist_ui_ops = g_memdup(backup_blist_ui_ops, sizeof(PurpleBlistUiOps));
 	blist_ui_ops->request_add_buddy = request_add_buddy;
 
-	gaim_blist_set_ui_ops(blist_ui_ops);
+	purple_blist_set_ui_ops(blist_ui_ops);
 
-	gaim_signal_connect(gaim_connections_get_handle(), "signed-on",
-						plugin, GAIM_CALLBACK(signed_on_cb), NULL);
+	purple_signal_connect(purple_connections_get_handle(), "signed-on",
+						plugin, PURPLE_CALLBACK(signed_on_cb), NULL);
 
 	timer = g_timeout_add(1, load_timeout, plugin);
 
@@ -336,9 +336,9 @@ plugin_load(GaimPlugin *plugin)
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
-	gaim_blist_set_ui_ops(backup_blist_ui_ops);
+	purple_blist_set_ui_ops(backup_blist_ui_ops);
 
 	g_free(blist_ui_ops);
 
@@ -362,7 +362,7 @@ plugin_unload(GaimPlugin *plugin)
 }
 
 static void
-plugin_destroy(GaimPlugin *plugin)
+plugin_destroy(PurplePlugin *plugin)
 {
 	bonobo_debug_shutdown();
 }
@@ -371,7 +371,7 @@ static void
 autoadd_toggled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 				   gpointer data)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	GtkTreeModel *model = (GtkTreeModel *)data;
 	GtkTreeIter iter;
 	gboolean autoadd;
@@ -382,7 +382,7 @@ autoadd_toggled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 					   COLUMN_AUTOADD, &autoadd,
 					   -1);
 
-	gaim_account_set_bool(account, "gevo-autoadd", !autoadd);
+	purple_account_set_bool(account, "gevo-autoadd", !autoadd);
 
 	gtk_list_store_set(GTK_LIST_STORE(model), &iter,
 					   COLUMN_AUTOADD, !autoadd,
@@ -390,7 +390,7 @@ autoadd_toggled_cb(GtkCellRendererToggle *renderer, gchar *path_str,
 }
 
 static GtkWidget *
-get_config_frame(GaimPlugin *plugin)
+get_config_frame(PurplePlugin *plugin)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -468,26 +468,26 @@ get_config_frame(GaimPlugin *plugin)
 
 
 	/* Populate */
-	for (l = gaim_accounts_get_all(); l != NULL; l = l->next)
+	for (l = purple_accounts_get_all(); l != NULL; l = l->next)
 	{
-		GaimAccount *account = (GaimAccount *)l->data;
+		PurpleAccount *account = (PurpleAccount *)l->data;
 		GtkTreeIter iter;
 
-		gaim_debug_info("evolution", "Adding account\n");
+		purple_debug_info("evolution", "Adding account\n");
 
 		gtk_list_store_append(model, &iter);
 
 		pixbuf = pidgin_create_prpl_icon(account, 0.5);
-		if ((pixbuf != NULL) && (!gaim_account_is_connected(account)))
+		if ((pixbuf != NULL) && (!purple_account_is_connected(account)))
 			gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
 		gtk_list_store_set(model, &iter,
 						   COLUMN_AUTOADD,
-						   gaim_account_get_bool(account, "gevo-autoadd",
+						   purple_account_get_bool(account, "gevo-autoadd",
 												 FALSE),
 						   COLUMN_ICON, pixbuf,
 						   COLUMN_SCREENNAME,
-						   gaim_account_get_username(account),
+						   purple_account_get_username(account),
 						   COLUMN_DATA, account,
 						   -1);
 
@@ -506,16 +506,16 @@ static PidginPluginUiInfo ui_info =
 	0			/**< page_num */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	GEVOLUTION_PLUGIN_ID,                             /**< id             */
 	N_("Evolution Integration"),                      /**< name           */
@@ -525,7 +525,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Provides integration with Evolution."),
 	"Christian Hammond <chipx86@chipx86.com>",        /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -538,7 +538,7 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
 	/* TODO: Change to core-remote when possible. */
 	/* info.dependencies = g_list_append(info.dependencies, "gtk-remote"); */
@@ -549,8 +549,8 @@ init_plugin(GaimPlugin *plugin)
 	 * For some reason, when we init bonobo from inside a plugin, it will
 	 * segfault when destroyed. The backtraces are within gmodule somewhere.
 	 * There's not much I can do, and I'm not sure where the bug lies.
-	 * However, plugins are only destroyed when Gaim is shutting down. After
-	 * destroying the plugins, gaim ends, and anything else is of course
+	 * However, plugins are only destroyed when Purple is shutting down. After
+	 * destroying the plugins, purple ends, and anything else is of course
 	 * freed. That includes this, if we make the module resident, which
 	 * prevents us from being able to actually unload it.
 	 *
@@ -562,8 +562,8 @@ init_plugin(GaimPlugin *plugin)
 	if (!bonobo_init_full(NULL, NULL, bonobo_activation_orb_get(),
 						  CORBA_OBJECT_NIL, CORBA_OBJECT_NIL))
 	{
-		gaim_debug_error("evolution", "Unable to initialize bonobo.\n");
+		purple_debug_error("evolution", "Unable to initialize bonobo.\n");
 	}
 }
 
-GAIM_INIT_PLUGIN(gevolution, init_plugin, info)
+PURPLE_INIT_PLUGIN(gevolution, init_plugin, info)

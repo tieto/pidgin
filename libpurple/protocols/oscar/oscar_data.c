@@ -1,5 +1,5 @@
 /*
- * Gaim's oscar protocol plugin
+ * Purple's oscar protocol plugin
  * This file is the legal property of its developers.
  * Please see the AUTHORS file distributed alongside this file.
  *
@@ -96,11 +96,11 @@ oscar_data_destroy(OscarData *od)
 	g_free(od->newp);
 	g_free(od->oldp);
 	if (od->icontimer > 0)
-		gaim_timeout_remove(od->icontimer);
+		purple_timeout_remove(od->icontimer);
 	if (od->getblisttimer > 0)
-		gaim_timeout_remove(od->getblisttimer);
+		purple_timeout_remove(od->getblisttimer);
 	if (od->getinfotimer > 0)
-		gaim_timeout_remove(od->getinfotimer);
+		purple_timeout_remove(od->getinfotimer);
 	while (od->oscar_connections != NULL)
 		flap_connection_destroy(od->oscar_connections->data,
 				OSCAR_DISCONNECT_DONE, NULL);
@@ -122,7 +122,7 @@ oscar_data_addhandler(OscarData *od, guint16 family, guint16 subtype, aim_rxcall
 {
 	SnacHandler *snac_handler;
 
-	gaim_debug_misc("oscar", "Adding handler for %04x/%04x\n", family, subtype);
+	purple_debug_misc("oscar", "Adding handler for %04x/%04x\n", family, subtype);
 
 	snac_handler = g_new0(SnacHandler, 1);
 

@@ -1,5 +1,5 @@
 /*
- * gaim - Jabber Protocol Plugin
+ * purple - Jabber Protocol Plugin
  *
  * Copyright (C) 2003, Nathan Walp <faceprint@faceprint.com>
  *
@@ -217,8 +217,8 @@ void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
 static void
 jabber_disco_finish_server_info_result_cb(JabberStream *js)
 {
-	GaimPresence *gpresence;
-	GaimStatus *status;
+	PurplePresence *gpresence;
+	PurpleStatus *status;
 
 	if (!(js->server_caps & JABBER_CAP_GOOGLE_ROSTER)) {
 		/* If the server supports JABBER_CAP_GOOGLE_ROSTER; we will have already requested it */
@@ -226,8 +226,8 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 	}
 	
 	/* Send initial presence; this will trigger receipt of presence for contacts on the roster */
-	gpresence = gaim_account_get_presence(js->gc->account);
-	status = gaim_presence_get_active_status(gpresence);
+	gpresence = purple_account_get_presence(js->gc->account);
+	status = purple_presence_get_active_status(gpresence);
 	jabber_presence_send(js->gc->account, status);	
 }
 
@@ -274,7 +274,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		g_free(js->server_name);
 		js->server_name = g_strdup(name);
 		if (!strcmp(name, "Google Talk")) {
-		  gaim_debug_info("jabber", "Google Talk!");
+		  purple_debug_info("jabber", "Google Talk!");
 		  js->googletalk = TRUE;
 		}
 	}

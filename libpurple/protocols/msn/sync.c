@@ -1,9 +1,9 @@
 /**
  * @file sync.c MSN list synchronization functions
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -30,7 +30,7 @@ static MsnTable *cbs_table;
 static void
 blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	GaimConnection *gc = cmdproc->session->account->gc;
+	PurpleConnection *gc = cmdproc->session->account->gc;
 	const char *list_name;
 
 	list_name = cmd->params[0];
@@ -43,7 +43,7 @@ blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		 *
 		 * In other words, deny some.
 		 */
-		gc->account->perm_deny = GAIM_PRIVACY_DENY_USERS;
+		gc->account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
 	}
 	else
 	{
@@ -52,7 +52,7 @@ blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		 *
 		 * In other words, permit some.
 		 */
-		gc->account->perm_deny = GAIM_PRIVACY_ALLOW_USERS;
+		gc->account->perm_deny = PURPLE_PRIVACY_ALLOW_USERS;
 	}
 }
 
@@ -68,11 +68,11 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	if (cmd->param_count == 2)
 	{
 		if (!strcmp(type, "PHH"))
-			msn_user_set_home_phone(session->user, gaim_url_decode(value));
+			msn_user_set_home_phone(session->user, purple_url_decode(value));
 		else if (!strcmp(type, "PHW"))
-			msn_user_set_work_phone(session->user, gaim_url_decode(value));
+			msn_user_set_work_phone(session->user, purple_url_decode(value));
 		else if (!strcmp(type, "PHM"))
-			msn_user_set_mobile_phone(session->user, gaim_url_decode(value));
+			msn_user_set_mobile_phone(session->user, purple_url_decode(value));
 	}
 	else
 	{
@@ -93,7 +93,7 @@ lsg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	int group_id;
 
 	group_id = atoi(cmd->params[0]);
-	name = gaim_url_decode(cmd->params[1]);
+	name = purple_url_decode(cmd->params[1]);
 
 	msn_group_new(session->userlist, group_id, name);
 
@@ -102,10 +102,10 @@ lsg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		/* Group of ungroupped buddies */
 		return;
 
-	if ((gaim_find_group(name)) == NULL)
+	if ((purple_find_group(name)) == NULL)
 	{
-		GaimGroup *g = gaim_group_new(name);
-		gaim_blist_add_group(g, NULL);
+		PurpleGroup *g = purple_group_new(name);
+		purple_blist_add_group(g, NULL);
 	}
 }
 
@@ -119,7 +119,7 @@ lst_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	MsnUser *user;
 
 	passport = cmd->params[0];
-	friend   = gaim_url_decode(cmd->params[1]);
+	friend   = purple_url_decode(cmd->params[1]);
 	list_op  = atoi(cmd->params[2]);
 
 	user = msn_user_new(session->userlist, passport, friend);
@@ -195,11 +195,11 @@ bpr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 				user->mobile = TRUE;
 		}
 		else if (!strcmp(type, "PHH"))
-			msn_user_set_home_phone(user, gaim_url_decode(value));
+			msn_user_set_home_phone(user, purple_url_decode(value));
 		else if (!strcmp(type, "PHW"))
-			msn_user_set_work_phone(user, gaim_url_decode(value));
+			msn_user_set_work_phone(user, purple_url_decode(value));
 		else if (!strcmp(type, "PHM"))
-			msn_user_set_mobile_phone(user, gaim_url_decode(value));
+			msn_user_set_mobile_phone(user, purple_url_decode(value));
 	}
 }
 

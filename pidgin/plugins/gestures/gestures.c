@@ -1,5 +1,5 @@
 /*
- * Mouse gestures plugin for Gaim
+ * Mouse gestures plugin for Purple
  *
  * Copyright (C) 2003 Christian Hammond.
  *
@@ -37,10 +37,10 @@
 static void
 stroke_close(GtkWidget *widget, void *data)
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 
-	conv = (GaimConversation *)data;
+	conv = (PurpleConversation *)data;
 
 	/* Double-check */
 	if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
@@ -49,7 +49,7 @@ stroke_close(GtkWidget *widget, void *data)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	gstroke_cleanup(gtkconv->imhtml);
-	gaim_conversation_destroy(conv);
+	purple_conversation_destroy(conv);
 }
 
 static void
@@ -80,11 +80,11 @@ switch_page(PidginWindow *win, GtkDirectionType dir)
 static void
 stroke_prev_tab(GtkWidget *widget, void *data)
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 	PidginWindow *win;
 
-	conv  = (GaimConversation *)data;
+	conv  = (PurpleConversation *)data;
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	win   = gtkconv->win;
 
@@ -94,10 +94,10 @@ stroke_prev_tab(GtkWidget *widget, void *data)
 static void
 stroke_next_tab(GtkWidget *widget, void *data)
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	PidginWindow *win;
 
-	conv  = (GaimConversation *)data;
+	conv  = (PurpleConversation *)data;
 	win   = PIDGIN_CONVERSATION(conv)->win;
 
 	switch_page(win, GTK_DIR_RIGHT);
@@ -107,9 +107,9 @@ static void
 stroke_new_win(GtkWidget *widget, void *data)
 {
 	PidginWindow *new_win, *old_win;
-	GaimConversation *conv;
+	PurpleConversation *conv;
 
-	conv    = (GaimConversation *)data;
+	conv    = (PurpleConversation *)data;
 	old_win = PIDGIN_CONVERSATION(conv)->win;
 
 	if (pidgin_conv_window_get_gtkconv_count(old_win) <= 1)
@@ -124,7 +124,7 @@ stroke_new_win(GtkWidget *widget, void *data)
 }
 
 static void
-attach_signals(GaimConversation *conv)
+attach_signals(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv;
 
@@ -142,7 +142,7 @@ attach_signals(GaimConversation *conv)
 }
 
 static void
-new_conv_cb(GaimConversation *conv)
+new_conv_cb(PurpleConversation *conv)
 {
 	if (PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 		attach_signals(conv);
@@ -161,25 +161,25 @@ mouse_button_menu_cb(GtkMenuItem *item, gpointer data)
 static void
 toggle_draw_cb(GtkToggleButton *toggle, gpointer data)
 {
-	gaim_prefs_set_bool("/plugins/gtk/X11/gestures/visual",
+	purple_prefs_set_bool("/plugins/gtk/X11/gestures/visual",
 		gtk_toggle_button_get_active(toggle));
 }
 
 static void
-visual_pref_cb(const char *name, GaimPrefType type, gconstpointer value,
+visual_pref_cb(const char *name, PurplePrefType type, gconstpointer value,
 			   gpointer data)
 {
 	gstroke_set_draw_strokes((gboolean) GPOINTER_TO_INT(value) );
 }
 
 static gboolean
-plugin_load(GaimPlugin *plugin)
+plugin_load(PurplePlugin *plugin)
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	GList *l;
 
-	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (GaimConversation *)l->data;
+	for (l = purple_get_conversations(); l != NULL; l = l->next) {
+		conv = (PurpleConversation *)l->data;
 
 		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 			continue;
@@ -187,22 +187,22 @@ plugin_load(GaimPlugin *plugin)
 		attach_signals(conv);
 	}
 
-	gaim_signal_connect(gaim_conversations_get_handle(),
+	purple_signal_connect(purple_conversations_get_handle(),
 						"conversation-created",
-						plugin, GAIM_CALLBACK(new_conv_cb), NULL);
+						plugin, PURPLE_CALLBACK(new_conv_cb), NULL);
 
 	return TRUE;
 }
 
 static gboolean
-plugin_unload(GaimPlugin *plugin)
+plugin_unload(PurplePlugin *plugin)
 {
-	GaimConversation *conv;
+	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 	GList *l;
 
-	for (l = gaim_get_conversations(); l != NULL; l = l->next) {
-		conv = (GaimConversation *)l->data;
+	for (l = purple_get_conversations(); l != NULL; l = l->next) {
+		conv = (PurpleConversation *)l->data;
 
 		if (!PIDGIN_IS_PIDGIN_CONVERSATION(conv))
 			continue;
@@ -217,7 +217,7 @@ plugin_unload(GaimPlugin *plugin)
 }
 
 static GtkWidget *
-get_config_frame(GaimPlugin *plugin)
+get_config_frame(PurplePlugin *plugin)
 {
 	GtkWidget *ret;
 	GtkWidget *vbox;
@@ -259,7 +259,7 @@ get_config_frame(GaimPlugin *plugin)
 	toggle = gtk_check_button_new_with_mnemonic(_("_Visual gesture display"));
 	gtk_box_pack_start(GTK_BOX(vbox), toggle, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toggle),
-			gaim_prefs_get_bool("/plugins/gtk/X11/gestures/visual"));
+			purple_prefs_get_bool("/plugins/gtk/X11/gestures/visual"));
 	g_signal_connect(G_OBJECT(toggle), "toggled",
 					 G_CALLBACK(toggle_draw_cb), NULL);
 
@@ -274,16 +274,16 @@ static PidginPluginUiInfo ui_info =
 	0 /* page_num (Reserved) */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,                             /**< type           */
 	PIDGIN_PLUGIN_TYPE,                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	GESTURES_PLUGIN_ID,                               /**< id             */
 	N_("Mouse Gestures"),                             /**< name           */
@@ -299,7 +299,7 @@ static GaimPluginInfo info =
 	   "Drag up and then to the right to switch to the next "
 	   "conversation."),
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -312,15 +312,15 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	gaim_prefs_add_none("/plugins/gtk");
-	gaim_prefs_add_none("/plugins/gtk/X11");
-	gaim_prefs_add_none("/plugins/gtk/X11/gestures");
-	gaim_prefs_add_bool("/plugins/gtk/X11/gestures/visual", FALSE);
+	purple_prefs_add_none("/plugins/gtk");
+	purple_prefs_add_none("/plugins/gtk/X11");
+	purple_prefs_add_none("/plugins/gtk/X11/gestures");
+	purple_prefs_add_bool("/plugins/gtk/X11/gestures/visual", FALSE);
 
-	gaim_prefs_connect_callback(plugin, "/plugins/gtk/X11/gestures/visual",
+	purple_prefs_connect_callback(plugin, "/plugins/gtk/X11/gestures/visual",
 								visual_pref_cb, NULL);
 }
 
-GAIM_INIT_PLUGIN(gestures, init_plugin, info)
+PURPLE_INIT_PLUGIN(gestures, init_plugin, info)

@@ -2,9 +2,9 @@
  * @file gntnotify.h GNT Notify API
  * @ingroup gntui
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -35,9 +35,9 @@
 /**
  * Get the ui-functions.
  *
- * @return The GaimNotifyUiOps structure populated with the appropriate functions.
+ * @return The PurpleNotifyUiOps structure populated with the appropriate functions.
  */
-GaimNotifyUiOps *finch_notify_get_ui_ops(void);
+PurpleNotifyUiOps *finch_notify_get_ui_ops(void);
 
 /**
  * Perform necessary initializations.

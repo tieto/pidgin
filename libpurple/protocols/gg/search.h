@@ -1,7 +1,7 @@
 /**
  * @file search.h
  *
- * gaim
+ * purple
  *
  * Copyright (C) 2005  Bartosz Oler <bartosz@bzimage.us>
  *
@@ -21,8 +21,8 @@
  */
 
 
-#ifndef _GAIM_GG_SEARCH_H
-#define _GAIM_GG_SEARCH_H
+#ifndef _PURPLE_GG_SEARCH_H
+#define _PURPLE_GG_SEARCH_H
 
 #include "connection.h"
 
@@ -127,13 +127,13 @@ ggp_search_destroy(GGPSearches *searches);
 /**
  * Initiate a search in the public directory.
  *
- * @param gc   GaimConnection.
+ * @param gc   PurpleConnection.
  * @param form Filled in GGPSearchForm.
  *
  * @return Sequence number of a search or 0 if an error occured.
  */
 guint32
-ggp_search_start(GaimConnection *gc, GGPSearchForm *form);
+ggp_search_start(PurpleConnection *gc, GGPSearchForm *form);
 
 /*
  * Return converted to the UTF-8 value of the specified field.
@@ -148,6 +148,6 @@ char *
 ggp_search_get_result(gg_pubdir50_t res, int num, const char *field);
 
 
-#endif /* _GAIM_GG_SEARCH_H */
+#endif /* _PURPLE_GG_SEARCH_H */
 
 /* vim: set ts=8 sts=0 sw=8 noet: */

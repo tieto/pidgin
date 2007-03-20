@@ -1,9 +1,9 @@
 /*
- * gaim
+ * purple
  *
  * File: win32dep.c
  * Date: June, 2002
- * Description: Windows dependant code for Gaim
+ * Description: Windows dependant code for Purple
  *
  * Copyright (C) 2002-2003, Herman Bloggs <hermanator12002@yahoo.com>
  *
@@ -56,7 +56,7 @@ typedef HRESULT (CALLBACK* LPFNSHGETFOLDERPATHW)(HWND, int, HANDLE, DWORD, LPWST
 static char *app_data_dir = NULL, *install_dir = NULL,
 	*lib_dir = NULL, *locale_dir = NULL;
 
-static HINSTANCE libgaimdll_hInstance = 0;
+static HINSTANCE libpurpledll_hInstance = 0;
 
 static HANDLE proxy_change_event = NULL;
 static HKEY proxy_regkey = NULL;
@@ -69,7 +69,7 @@ static HKEY proxy_regkey = NULL;
    and on being read back have their '\' chars used as an escape char.
    Returns an allocated string which needs to be freed.
 */
-char *wgaim_escape_dirsep(const char *filename) {
+char *wpurple_escape_dirsep(const char *filename) {
 	int sepcount = 0;
 	const char *tmp = filename;
 	char *ret;
@@ -96,15 +96,15 @@ char *wgaim_escape_dirsep(const char *filename) {
 
 /* Determine whether the specified dll contains the specified procedure.
    If so, load it (if not already loaded). */
-FARPROC wgaim_find_and_loadproc(const char *dllname, const char *procedure) {
+FARPROC wpurple_find_and_loadproc(const char *dllname, const char *procedure) {
 	HMODULE hmod;
 	BOOL did_load = FALSE;
 	FARPROC proc = 0;
 
 	if(!(hmod = GetModuleHandle(dllname))) {
-		gaim_debug_warning("wgaim", "%s not already loaded; loading it...\n", dllname);
+		purple_debug_warning("wpurple", "%s not already loaded; loading it...\n", dllname);
 		if(!(hmod = LoadLibrary(dllname))) {
-			gaim_debug_error("wgaim", "Could not load: %s\n", dllname);
+			purple_debug_error("wpurple", "Could not load: %s\n", dllname);
 			return NULL;
 		}
 		else
@@ -112,12 +112,12 @@ FARPROC wgaim_find_and_loadproc(const char *dllname, const char *procedure) {
 	}
 
 	if((proc = GetProcAddress(hmod, procedure))) {
-		gaim_debug_info("wgaim", "This version of %s contains %s\n",
+		purple_debug_info("wpurple", "This version of %s contains %s\n",
 			dllname, procedure);
 		return proc;
 	}
 	else {
-		gaim_debug_warning("wgaim", "Function %s not found in dll %s\n",
+		purple_debug_warning("wpurple", "Function %s not found in dll %s\n",
 			procedure, dllname);
 		if(did_load) {
 			/* unload dll */
@@ -127,17 +127,17 @@ FARPROC wgaim_find_and_loadproc(const char *dllname, const char *procedure) {
 	}
 }
 
-/* Determine Gaim Paths during Runtime */
+/* Determine Purple Paths during Runtime */
 
 /* Get paths to special Windows folders. */
-char *wgaim_get_special_folder(int folder_type) {
+char *wpurple_get_special_folder(int folder_type) {
 	static LPFNSHGETFOLDERPATHA MySHGetFolderPathA = NULL;
 	static LPFNSHGETFOLDERPATHW MySHGetFolderPathW = NULL;
 	char *retval = NULL;
 
 	if (!MySHGetFolderPathW) {
 		MySHGetFolderPathW = (LPFNSHGETFOLDERPATHW)
-			wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathW");
+			wpurple_find_and_loadproc("shfolder.dll", "SHGetFolderPathW");
 	}
 
 	if (MySHGetFolderPathW) {
@@ -152,7 +152,7 @@ char *wgaim_get_special_folder(int folder_type) {
 	if (!retval) {
 		if (!MySHGetFolderPathA) {
 			MySHGetFolderPathA = (LPFNSHGETFOLDERPATHA)
-				wgaim_find_and_loadproc("shfolder.dll", "SHGetFolderPathA");
+				wpurple_find_and_loadproc("shfolder.dll", "SHGetFolderPathA");
 		}
 		if (MySHGetFolderPathA) {
 			char locale_dir[MAX_PATH + 1];
@@ -167,7 +167,7 @@ char *wgaim_get_special_folder(int folder_type) {
 	return retval;
 }
 
-const char *wgaim_install_dir(void) {
+const char *wpurple_install_dir(void) {
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
@@ -190,7 +190,7 @@ const char *wgaim_install_dir(void) {
 
 		if (tmp == NULL) {
 			tmp = g_win32_error_message(GetLastError());
-			gaim_debug_error("wgaim",
+			purple_debug_error("wpurple",
 				"GetModuleFileName error: %s\n", tmp);
 			g_free(tmp);
 			return NULL;
@@ -204,11 +204,11 @@ const char *wgaim_install_dir(void) {
 	return install_dir;
 }
 
-const char *wgaim_lib_dir(void) {
+const char *wpurple_lib_dir(void) {
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
-		const char *inst_dir = wgaim_install_dir();
+		const char *inst_dir = wpurple_install_dir();
 		if (inst_dir != NULL) {
 			lib_dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "plugins", inst_dir);
 			initialized = TRUE;
@@ -220,11 +220,11 @@ const char *wgaim_lib_dir(void) {
 	return lib_dir;
 }
 
-const char *wgaim_locale_dir(void) {
+const char *wpurple_locale_dir(void) {
 	static gboolean initialized = FALSE;
 
 	if (!initialized) {
-		const char *inst_dir = wgaim_install_dir();
+		const char *inst_dir = wpurple_install_dir();
 		if (inst_dir != NULL) {
 			locale_dir = g_strdup_printf("%s" G_DIR_SEPARATOR_S "locale", inst_dir);
 			initialized = TRUE;
@@ -236,19 +236,19 @@ const char *wgaim_locale_dir(void) {
 	return locale_dir;
 }
 
-const char *wgaim_data_dir(void) {
+const char *wpurple_data_dir(void) {
 
 	if (!app_data_dir) {
-		/* Set app data dir, used by gaim_home_dir */
-		const char *newenv = g_getenv("GAIMHOME");
+		/* Set app data dir, used by purple_home_dir */
+		const char *newenv = g_getenv("PURPLEHOME");
 		if (newenv)
 			app_data_dir = g_strdup(newenv);
 		else {
-			app_data_dir = wgaim_get_special_folder(CSIDL_APPDATA);
+			app_data_dir = wpurple_get_special_folder(CSIDL_APPDATA);
 			if (!app_data_dir)
 				app_data_dir = g_strdup("C:");
 		}
-		gaim_debug_info("wgaim", "Gaim settings dir: %s\n",
+		purple_debug_info("wpurple", "Purple settings dir: %s\n",
 			app_data_dir);
 	}
 
@@ -257,7 +257,7 @@ const char *wgaim_data_dir(void) {
 
 /* Miscellaneous */
 
-gboolean wgaim_write_reg_string(HKEY rootkey, const char *subkey, const char *valname,
+gboolean wpurple_write_reg_string(HKEY rootkey, const char *subkey, const char *valname,
 		const char *value) {
 	HKEY reg_key;
 	gboolean success = FALSE;
@@ -342,7 +342,7 @@ static HKEY _reg_open_key(HKEY rootkey, const char *subkey, REGSAM access) {
 
 	if (rv != ERROR_SUCCESS) {
 		char *errmsg = g_win32_error_message(rv);
-		gaim_debug_info("wgaim", "Could not open reg key '%s' subkey '%s'.\nMessage: (%ld) %s\n",
+		purple_debug_info("wpurple", "Could not open reg key '%s' subkey '%s'.\nMessage: (%ld) %s\n",
 					((rootkey == HKEY_LOCAL_MACHINE) ? "HKLM" :
 					 (rootkey == HKEY_CURRENT_USER) ? "HKCU" :
 					  (rootkey == HKEY_CLASSES_ROOT) ? "HKCR" : "???"),
@@ -372,7 +372,7 @@ static gboolean _reg_read(HKEY reg_key, const char *valname, LPDWORD type, LPBYT
 
 	if (rv != ERROR_SUCCESS) {
 		char *errmsg = g_win32_error_message(rv);
-		gaim_debug_info("wgaim", "Could not read from reg key value '%s'.\nMessage: (%ld) %s\n",
+		purple_debug_info("wpurple", "Could not read from reg key value '%s'.\nMessage: (%ld) %s\n",
 					valname, rv, errmsg);
 		g_free(errmsg);
 	}
@@ -380,7 +380,7 @@ static gboolean _reg_read(HKEY reg_key, const char *valname, LPDWORD type, LPBYT
 	return (rv == ERROR_SUCCESS);
 }
 
-gboolean wgaim_read_reg_dword(HKEY rootkey, const char *subkey, const char *valname, LPDWORD result) {
+gboolean wpurple_read_reg_dword(HKEY rootkey, const char *subkey, const char *valname, LPDWORD result) {
 
 	DWORD type;
 	DWORD nbytes;
@@ -396,7 +396,7 @@ gboolean wgaim_read_reg_dword(HKEY rootkey, const char *subkey, const char *valn
 	return success;
 }
 
-char *wgaim_read_reg_string(HKEY rootkey, const char *subkey, const char *valname) {
+char *wpurple_read_reg_string(HKEY rootkey, const char *subkey, const char *valname) {
 
 	DWORD type;
 	DWORD nbytes;
@@ -432,16 +432,16 @@ char *wgaim_read_reg_string(HKEY rootkey, const char *subkey, const char *valnam
 	return result;
 }
 
-static void wgaim_refresh_proxy(void) {
+static void wpurple_refresh_proxy(void) {
 	gboolean set_proxy = FALSE;
 	DWORD enabled = 0;
 
-	wgaim_read_reg_dword(HKEY_CURRENT_USER, WIN32_PROXY_REGKEY,
+	wpurple_read_reg_dword(HKEY_CURRENT_USER, WIN32_PROXY_REGKEY,
 				"ProxyEnable", &enabled);
 
 	if (enabled & 1) {
 		char *c = NULL;
-		char *tmp = wgaim_read_reg_string(HKEY_CURRENT_USER, WIN32_PROXY_REGKEY,
+		char *tmp = wpurple_read_reg_string(HKEY_CURRENT_USER, WIN32_PROXY_REGKEY,
 				"ProxyServer");
 
 		/* There are proxy settings for several protocols */
@@ -459,7 +459,7 @@ static void wgaim_refresh_proxy(void) {
 		}
 
 		if (c) {
-			gaim_debug_info("wgaim", "Setting HTTP Proxy: 'http://%s'\n", c);
+			purple_debug_info("wpurple", "Setting HTTP Proxy: 'http://%s'\n", c);
 			g_setenv("HTTP_PROXY", c, TRUE);
 			set_proxy = TRUE;
 		}
@@ -468,7 +468,7 @@ static void wgaim_refresh_proxy(void) {
 
 	/* If there previously was a proxy set and there isn't one now, clear it */
 	if (getenv("HTTP_PROXY") && !set_proxy) {
-		gaim_debug_info("wgaim", "Clearing HTTP Proxy\n");
+		purple_debug_info("wpurple", "Clearing HTTP Proxy\n");
 		g_unsetenv("HTTP_PROXY");
 	}
 }
@@ -486,7 +486,7 @@ static void watch_for_proxy_changes(void) {
 
 	if (!(proxy_change_event = CreateEvent(NULL, TRUE, FALSE, NULL))) {
 		char *errmsg = g_win32_error_message(GetLastError());
-		gaim_debug_error("wgaim", "Unable to watch for proxy changes: %s\n", errmsg);
+		purple_debug_error("wpurple", "Unable to watch for proxy changes: %s\n", errmsg);
 		g_free(errmsg);
 		return;
 	}
@@ -494,7 +494,7 @@ static void watch_for_proxy_changes(void) {
 	rv = RegNotifyChangeKeyValue(proxy_regkey, TRUE, filter, proxy_change_event, TRUE);
 	if (rv != ERROR_SUCCESS) {
 		char *errmsg = g_win32_error_message(rv);
-		gaim_debug_error("wgaim", "Unable to watch for proxy changes: %s\n", errmsg);
+		purple_debug_error("wpurple", "Unable to watch for proxy changes: %s\n", errmsg);
 		g_free(errmsg);
 		CloseHandle(proxy_change_event);
 		proxy_change_event = NULL;
@@ -502,31 +502,31 @@ static void watch_for_proxy_changes(void) {
 
 }
 
-gboolean wgaim_check_for_proxy_changes(void) {
+gboolean wpurple_check_for_proxy_changes(void) {
 	gboolean changed = FALSE;
 
 	if (proxy_change_event && WaitForSingleObject(proxy_change_event, 0) == WAIT_OBJECT_0) {
 		CloseHandle(proxy_change_event);
 		proxy_change_event = NULL;
 		changed = TRUE;
-		wgaim_refresh_proxy();
+		wpurple_refresh_proxy();
 		watch_for_proxy_changes();
 	}
 
 	return changed;
 }
 
-void wgaim_init(void) {
+void wpurple_init(void) {
 	WORD wVersionRequested;
 	WSADATA wsaData;
 	const char *perlenv;
 	char *newenv;
 
-	gaim_debug_info("wgaim", "wgaim_init start\n");
-	gaim_debug_info("wgaim", "libgaim version: " VERSION "\n");
+	purple_debug_info("wpurple", "wpurple_init start\n");
+	purple_debug_info("wpurple", "libpurple version: " VERSION "\n");
 
 
-	gaim_debug_info("wgaim", "Glib:%u.%u.%u\n",
+	purple_debug_info("wpurple", "Glib:%u.%u.%u\n",
 		glib_major_version, glib_minor_version, glib_micro_version);
 
 	/* Winsock init */
@@ -538,19 +538,19 @@ void wgaim_init(void) {
 	   2.2 in addition to 2.2, it will still return 2.2 in
 	   wVersion since that is the version we requested. */
 	if(LOBYTE(wsaData.wVersion) != 2 || HIBYTE(wsaData.wVersion) != 2) {
-		gaim_debug_error("wgaim", "Could not find a usable WinSock DLL.  Oh well.\n");
+		purple_debug_error("wpurple", "Could not find a usable WinSock DLL.  Oh well.\n");
 		WSACleanup();
 	}
 
 	/* Set Environmental Variables */
-	/* Tell perl where to find Gaim's perl modules */
+	/* Tell perl where to find Purple's perl modules */
 	perlenv = g_getenv("PERL5LIB");
 	newenv = g_strdup_printf("%s%s%s" G_DIR_SEPARATOR_S "perlmod;",
 		perlenv ? perlenv : "",
 		perlenv ? ";" : "",
-		wgaim_install_dir());
+		wpurple_install_dir());
 	if (!g_setenv("PERL5LIB", newenv, TRUE))
-		gaim_debug_warning("wgaim", "putenv failed for PERL5LIB\n");
+		purple_debug_warning("wpurple", "putenv failed for PERL5LIB\n");
 	g_free(newenv);
 
 	if (!g_thread_supported())
@@ -559,19 +559,19 @@ void wgaim_init(void) {
 	/* If the proxy server environment variables are already set,
 	 * we shouldn't override them */
 	if (!getenv("HTTP_PROXY") && !getenv("http_proxy") && !getenv("HTTPPROXY")) {
-		wgaim_refresh_proxy();
+		wpurple_refresh_proxy();
 		watch_for_proxy_changes();
 	} else {
-		gaim_debug_info("wgaim", "HTTP_PROXY env. var already set.  Ignoring win32 Internet Settings.\n");
+		purple_debug_info("wpurple", "HTTP_PROXY env. var already set.  Ignoring win32 Internet Settings.\n");
 	}
 
-	gaim_debug_info("wgaim", "wgaim_init end\n");
+	purple_debug_info("wpurple", "wpurple_init end\n");
 }
 
 /* Windows Cleanup */
 
-void wgaim_cleanup(void) {
-	gaim_debug_info("wgaim", "wgaim_cleanup\n");
+void wpurple_cleanup(void) {
+	purple_debug_info("wpurple", "wpurple_cleanup\n");
 
 	/* winsock cleanup */
 	WSACleanup();
@@ -584,13 +584,13 @@ void wgaim_cleanup(void) {
 		proxy_regkey = NULL;
 	}
 
-	libgaimdll_hInstance = NULL;
+	libpurpledll_hInstance = NULL;
 }
 
 /* DLL initializer */
 /* suppress gcc "no previous prototype" warning */
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved);
 BOOL WINAPI DllMain(HINSTANCE hinstDLL, DWORD fdwReason, LPVOID lpvReserved) {
-	libgaimdll_hInstance = hinstDLL;
+	libpurpledll_hInstance = hinstDLL;
 	return TRUE;
 }

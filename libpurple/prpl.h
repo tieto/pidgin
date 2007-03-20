@@ -2,9 +2,9 @@
  * @file prpl.h Protocol Plugin functions
  * @ingroup core
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -24,29 +24,29 @@
  */
 
 /* this file should be all that prpls need to include. therefore, by including
- * this file, they should get glib, proxy, gaim_connection, prpl, etc. */
+ * this file, they should get glib, proxy, purple_connection, prpl, etc. */
 
-#ifndef _GAIM_PRPL_H_
-#define _GAIM_PRPL_H_
+#ifndef _PURPLE_PRPL_H_
+#define _PURPLE_PRPL_H_
 
-typedef struct _GaimPluginProtocolInfo GaimPluginProtocolInfo;
+typedef struct _PurplePluginProtocolInfo PurplePluginProtocolInfo;
 
 /**************************************************************************/
 /** @name Basic Protocol Information                                      */
 /**************************************************************************/
 
 typedef enum {
-	GAIM_ICON_SCALE_DISPLAY = 0x01,		/**< We scale the icon when we display it */
-	GAIM_ICON_SCALE_SEND = 0x02			/**< We scale the icon before we send it to the server */
-} GaimIconScaleRules;
+	PURPLE_ICON_SCALE_DISPLAY = 0x01,		/**< We scale the icon when we display it */
+	PURPLE_ICON_SCALE_SEND = 0x02			/**< We scale the icon before we send it to the server */
+} PurpleIconScaleRules;
 
 
 /**
- * A description of a Buddy Icon specification.  This tells Gaim what kind of image file
+ * A description of a Buddy Icon specification.  This tells Purple what kind of image file
  * it should give this prpl, and what kind of image file it should expect back.
  * Dimensions less than 1 should be ignored and the image not scaled.
  */
-typedef struct _GaimBuddyIconSpec GaimBuddyIconSpec;
+typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 
 /**
  * This \#define exists just to make it easier to fill out the buddy icon
@@ -66,7 +66,7 @@ typedef struct _GaimBuddyIconSpec GaimBuddyIconSpec;
 #include "status.h"
 #include "whiteboard.h"
 
-struct _GaimBuddyIconSpec {
+struct _PurpleBuddyIconSpec {
 	char *format;                       /**< This is a comma-delimited list of image formats or NULL if icons are not supported.
 					     * Neither the core nor the prpl will actually check to see if the data it's given matches this; it's
 					     * entirely up to the UI to do what it wants */
@@ -75,7 +75,7 @@ struct _GaimBuddyIconSpec {
 	int max_width;                          /**< The maximum width of this icon  */
 	int max_height;                         /**< The maximum height of this icon */
 	size_t max_filesize;                     /**< The maximum number of bytes    */
-	GaimIconScaleRules scale_rules;		/**< How to stretch this icon */
+	PurpleIconScaleRules scale_rules;		/**< How to stretch this icon */
 };
 
 struct proto_chat_entry {
@@ -155,65 +155,65 @@ typedef enum
 	 */
 	OPT_PROTO_REGISTER_NOSCREENNAME = 0x00000200,
 
-} GaimProtocolOptions;
+} PurpleProtocolOptions;
 
 /**
  * A protocol plugin information structure.
  *
  * Every protocol plugin initializes this structure. It is the gateway
- * between gaim and the protocol plugin.  Many of this callbacks can be
+ * between purple and the protocol plugin.  Many of this callbacks can be
  * NULL.  If a callback must be implemented, it has a comment indicating so.
  */
-struct _GaimPluginProtocolInfo
+struct _PurplePluginProtocolInfo
 {
-	GaimProtocolOptions options;  /**< Protocol options.          */
+	PurpleProtocolOptions options;  /**< Protocol options.          */
 
-	GList *user_splits;      /* A GList of GaimAccountUserSplit */
-	GList *protocol_options; /* A GList of GaimAccountOption    */
+	GList *user_splits;      /* A GList of PurpleAccountUserSplit */
+	GList *protocol_options; /* A GList of PurpleAccountOption    */
 
-	GaimBuddyIconSpec icon_spec; /* The icon spec. */
+	PurpleBuddyIconSpec icon_spec; /* The icon spec. */
 
 	/**
 	 * Returns the base icon name for the given buddy and account.
 	 * If buddy is NULL, it will return the name to use for the account's
 	 * icon.  This must be implemented.
 	 */
-	const char *(*list_icon)(GaimAccount *account, GaimBuddy *buddy);
+	const char *(*list_icon)(PurpleAccount *account, PurpleBuddy *buddy);
 
 	/**
 	 * Fills the four char**'s with string identifiers for "emblems"
 	 * that the UI will interpret and display as relevant
 	 */
-	const char *(*list_emblem)(GaimBuddy *buddy);
+	const char *(*list_emblem)(PurpleBuddy *buddy);
 
 	/**
 	 * Gets a short string representing this buddy's status.  This will
 	 * be shown on the buddy list.
 	 */
-	char *(*status_text)(GaimBuddy *buddy);
+	char *(*status_text)(PurpleBuddy *buddy);
 
 	/**
 	 * Allows the prpl to add text to a buddy's tooltip.
 	 */
-	void (*tooltip_text)(GaimBuddy *buddy, GaimNotifyUserInfo *user_info, gboolean full);
+	void (*tooltip_text)(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean full);
 
 	/**
 	 * This must be implemented, and must add at least the offline
 	 * and online states.
 	 */
-	GList *(*status_types)(GaimAccount *account);
+	GList *(*status_types)(PurpleAccount *account);
 
-	GList *(*blist_node_menu)(GaimBlistNode *node);
-	GList *(*chat_info)(GaimConnection *);
-	GHashTable *(*chat_info_defaults)(GaimConnection *, const char *chat_name);
+	GList *(*blist_node_menu)(PurpleBlistNode *node);
+	GList *(*chat_info)(PurpleConnection *);
+	GHashTable *(*chat_info_defaults)(PurpleConnection *, const char *chat_name);
 
 	/* All the server-related functions */
 
 	/** This must be implemented. */
-	void (*login)(GaimAccount *);
+	void (*login)(PurpleAccount *);
 
 	/** This must be implemented. */
-	void (*close)(GaimConnection *);
+	void (*close)(PurpleConnection *);
 
 	/**
 	 * This PRPL function should return a positive value on success.
@@ -224,98 +224,98 @@ struct _GaimPluginProtocolInfo
 	 * errno values, or just big something.  If the message should
 	 * not be echoed to the conversation window, return 0.
 	 */
-	int  (*send_im)(GaimConnection *, const char *who,
+	int  (*send_im)(PurpleConnection *, const char *who,
 					const char *message,
-					GaimMessageFlags flags);
+					PurpleMessageFlags flags);
 
-	void (*set_info)(GaimConnection *, const char *info);
-	unsigned int (*send_typing)(GaimConnection *, const char *name, GaimTypingState state);
-	void (*get_info)(GaimConnection *, const char *who);
-	void (*set_status)(GaimAccount *account, GaimStatus *status);
+	void (*set_info)(PurpleConnection *, const char *info);
+	unsigned int (*send_typing)(PurpleConnection *, const char *name, PurpleTypingState state);
+	void (*get_info)(PurpleConnection *, const char *who);
+	void (*set_status)(PurpleAccount *account, PurpleStatus *status);
 
-	void (*set_idle)(GaimConnection *, int idletime);
-	void (*change_passwd)(GaimConnection *, const char *old_pass,
+	void (*set_idle)(PurpleConnection *, int idletime);
+	void (*change_passwd)(PurpleConnection *, const char *old_pass,
 						  const char *new_pass);
-	void (*add_buddy)(GaimConnection *, GaimBuddy *buddy, GaimGroup *group);
-	void (*add_buddies)(GaimConnection *, GList *buddies, GList *groups);
-	void (*remove_buddy)(GaimConnection *, GaimBuddy *buddy, GaimGroup *group);
-	void (*remove_buddies)(GaimConnection *, GList *buddies, GList *groups);
-	void (*add_permit)(GaimConnection *, const char *name);
-	void (*add_deny)(GaimConnection *, const char *name);
-	void (*rem_permit)(GaimConnection *, const char *name);
-	void (*rem_deny)(GaimConnection *, const char *name);
-	void (*set_permit_deny)(GaimConnection *);
-	void (*join_chat)(GaimConnection *, GHashTable *components);
-	void (*reject_chat)(GaimConnection *, GHashTable *components);
+	void (*add_buddy)(PurpleConnection *, PurpleBuddy *buddy, PurpleGroup *group);
+	void (*add_buddies)(PurpleConnection *, GList *buddies, GList *groups);
+	void (*remove_buddy)(PurpleConnection *, PurpleBuddy *buddy, PurpleGroup *group);
+	void (*remove_buddies)(PurpleConnection *, GList *buddies, GList *groups);
+	void (*add_permit)(PurpleConnection *, const char *name);
+	void (*add_deny)(PurpleConnection *, const char *name);
+	void (*rem_permit)(PurpleConnection *, const char *name);
+	void (*rem_deny)(PurpleConnection *, const char *name);
+	void (*set_permit_deny)(PurpleConnection *);
+	void (*join_chat)(PurpleConnection *, GHashTable *components);
+	void (*reject_chat)(PurpleConnection *, GHashTable *components);
 	char *(*get_chat_name)(GHashTable *components);
-	void (*chat_invite)(GaimConnection *, int id,
+	void (*chat_invite)(PurpleConnection *, int id,
 						const char *message, const char *who);
-	void (*chat_leave)(GaimConnection *, int id);
-	void (*chat_whisper)(GaimConnection *, int id,
+	void (*chat_leave)(PurpleConnection *, int id);
+	void (*chat_whisper)(PurpleConnection *, int id,
 						 const char *who, const char *message);
-	int  (*chat_send)(GaimConnection *, int id, const char *message, GaimMessageFlags flags);
-	void (*keepalive)(GaimConnection *);
+	int  (*chat_send)(PurpleConnection *, int id, const char *message, PurpleMessageFlags flags);
+	void (*keepalive)(PurpleConnection *);
 
 	/* new user registration */
-	void (*register_user)(GaimAccount *);
+	void (*register_user)(PurpleAccount *);
 
 	/* get "chat buddy" info and away message */
-	void (*get_cb_info)(GaimConnection *, int, const char *who);
-	void (*get_cb_away)(GaimConnection *, int, const char *who);
+	void (*get_cb_info)(PurpleConnection *, int, const char *who);
+	void (*get_cb_away)(PurpleConnection *, int, const char *who);
 
 	/* save/store buddy's alias on server list/roster */
-	void (*alias_buddy)(GaimConnection *, const char *who,
+	void (*alias_buddy)(PurpleConnection *, const char *who,
 						const char *alias);
 
 	/* change a buddy's group on a server list/roster */
-	void (*group_buddy)(GaimConnection *, const char *who,
+	void (*group_buddy)(PurpleConnection *, const char *who,
 						const char *old_group, const char *new_group);
 
 	/* rename a group on a server list/roster */
-	void (*rename_group)(GaimConnection *, const char *old_name,
-						 GaimGroup *group, GList *moved_buddies);
+	void (*rename_group)(PurpleConnection *, const char *old_name,
+						 PurpleGroup *group, GList *moved_buddies);
 
-	void (*buddy_free)(GaimBuddy *);
+	void (*buddy_free)(PurpleBuddy *);
 
-	void (*convo_closed)(GaimConnection *, const char *who);
+	void (*convo_closed)(PurpleConnection *, const char *who);
 
-	const char *(*normalize)(const GaimAccount *, const char *);
+	const char *(*normalize)(const PurpleAccount *, const char *);
 
-	void (*set_buddy_icon)(GaimConnection *, const char *cached_path);
+	void (*set_buddy_icon)(PurpleConnection *, const char *cached_path);
 
-	void (*remove_group)(GaimConnection *gc, GaimGroup *group);
+	void (*remove_group)(PurpleConnection *gc, PurpleGroup *group);
 
-	char *(*get_cb_real_name)(GaimConnection *gc, int id, const char *who);
+	char *(*get_cb_real_name)(PurpleConnection *gc, int id, const char *who);
 
-	void (*set_chat_topic)(GaimConnection *gc, int id, const char *topic);
+	void (*set_chat_topic)(PurpleConnection *gc, int id, const char *topic);
 
-	GaimChat *(*find_blist_chat)(GaimAccount *account, const char *name);
+	PurpleChat *(*find_blist_chat)(PurpleAccount *account, const char *name);
 
 	/* room listing prpl callbacks */
-	GaimRoomlist *(*roomlist_get_list)(GaimConnection *gc);
-	void (*roomlist_cancel)(GaimRoomlist *list);
-	void (*roomlist_expand_category)(GaimRoomlist *list, GaimRoomlistRoom *category);
+	PurpleRoomlist *(*roomlist_get_list)(PurpleConnection *gc);
+	void (*roomlist_cancel)(PurpleRoomlist *list);
+	void (*roomlist_expand_category)(PurpleRoomlist *list, PurpleRoomlistRoom *category);
 
 	/* file transfer callbacks */
-	gboolean (*can_receive_file)(GaimConnection *, const char *who);
-	void (*send_file)(GaimConnection *, const char *who, const char *filename);
-	GaimXfer *(*new_xfer)(GaimConnection *, const char *who);
-	gboolean (*offline_message)(const GaimBuddy *buddy);
+	gboolean (*can_receive_file)(PurpleConnection *, const char *who);
+	void (*send_file)(PurpleConnection *, const char *who, const char *filename);
+	PurpleXfer *(*new_xfer)(PurpleConnection *, const char *who);
+	gboolean (*offline_message)(const PurpleBuddy *buddy);
 
-	GaimWhiteboardPrplOps *whiteboard_prpl_ops;
+	PurpleWhiteboardPrplOps *whiteboard_prpl_ops;
 
 	/* For use in plugins that may understand the underlying protocol */
-	int (*send_raw)(GaimConnection *gc, const char *buf, int len);
+	int (*send_raw)(PurpleConnection *gc, const char *buf, int len);
 
 	/* room list serialize */
-	char *(*roomlist_room_serialize)(GaimRoomlistRoom *room);
+	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
 };
 
-#define GAIM_IS_PROTOCOL_PLUGIN(plugin) \
-	((plugin)->info->type == GAIM_PLUGIN_PROTOCOL)
+#define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \
+	((plugin)->info->type == PURPLE_PLUGIN_PROTOCOL)
 
-#define GAIM_PLUGIN_PROTOCOL_INFO(plugin) \
-	((GaimPluginProtocolInfo *)(plugin)->info->extra_info)
+#define PURPLE_PLUGIN_PROTOCOL_INFO(plugin) \
+	((PurplePluginProtocolInfo *)(plugin)->info->extra_info)
 
 #ifdef __cplusplus
 extern "C" {
@@ -327,7 +327,7 @@ extern "C" {
 /*@{*/
 
 /**
- * Notifies Gaim that an account's idle state and time have changed.
+ * Notifies Purple that an account's idle state and time have changed.
  *
  * This is meant to be called from protocol plugins.
  *
@@ -335,21 +335,21 @@ extern "C" {
  * @param idle      The user's idle state.
  * @param idle_time The user's idle time.
  */
-void gaim_prpl_got_account_idle(GaimAccount *account, gboolean idle,
+void purple_prpl_got_account_idle(PurpleAccount *account, gboolean idle,
 								time_t idle_time);
 
 /**
- * Notifies Gaim of an account's log-in time.
+ * Notifies Purple of an account's log-in time.
  *
  * This is meant to be called from protocol plugins.
  *
  * @param account    The account the user is on.
  * @param login_time The user's log-in time.
  */
-void gaim_prpl_got_account_login_time(GaimAccount *account, time_t login_time);
+void purple_prpl_got_account_login_time(PurpleAccount *account, time_t login_time);
 
 /**
- * Notifies Gaim that an account's status has changed.
+ * Notifies Purple that an account's status has changed.
  *
  * This is meant to be called from protocol plugins.
  *
@@ -358,10 +358,10 @@ void gaim_prpl_got_account_login_time(GaimAccount *account, time_t login_time);
  * @param ...       A NULL-terminated list of attribute IDs and values,
  *                  beginning with the value for @a attr_id.
  */
-void gaim_prpl_got_account_status(GaimAccount *account,
+void purple_prpl_got_account_status(PurpleAccount *account,
 								  const char *status_id, ...);
 /**
- * Notifies Gaim that a user's idle state and time have changed.
+ * Notifies Purple that a user's idle state and time have changed.
  *
  * This is meant to be called from protocol plugins.
  *
@@ -372,11 +372,11 @@ void gaim_prpl_got_account_status(GaimAccount *account,
  *                  which the user became idle, in seconds since
  *                  the epoch.
  */
-void gaim_prpl_got_user_idle(GaimAccount *account, const char *name,
+void purple_prpl_got_user_idle(PurpleAccount *account, const char *name,
 							 gboolean idle, time_t idle_time);
 
 /**
- * Notifies Gaim of a user's log-in time.
+ * Notifies Purple of a user's log-in time.
  *
  * This is meant to be called from protocol plugins.
  *
@@ -384,11 +384,11 @@ void gaim_prpl_got_user_idle(GaimAccount *account, const char *name,
  * @param name       The screen name of the user.
  * @param login_time The user's log-in time.
  */
-void gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
+void purple_prpl_got_user_login_time(PurpleAccount *account, const char *name,
 								   time_t login_time);
 
 /**
- * Notifies Gaim that a user's status has been activated.
+ * Notifies Purple that a user's status has been activated.
  *
  * This is meant to be called from protocol plugins.
  *
@@ -398,7 +398,7 @@ void gaim_prpl_got_user_login_time(GaimAccount *account, const char *name,
  * @param ...       A NULL-terminated list of attribute IDs and values,
  *                  beginning with the value for @a attr_id.
  */
-void gaim_prpl_got_user_status(GaimAccount *account, const char *name,
+void purple_prpl_got_user_status(PurpleAccount *account, const char *name,
 							   const char *status_id, ...);
 
 /**
@@ -410,7 +410,7 @@ void gaim_prpl_got_user_status(GaimAccount *account, const char *name,
  * @param name      The screen name of the user.
  * @param status_id The status ID.
  */
-void gaim_prpl_got_user_status_deactive(GaimAccount *account, const char *name,
+void purple_prpl_got_user_status_deactive(PurpleAccount *account, const char *name,
 					const char *status_id);
  
 /**
@@ -421,9 +421,9 @@ void gaim_prpl_got_user_status_deactive(GaimAccount *account, const char *name,
  * @param new_status The status that was activated, or deactivated
  *                   (in the case of independent statuses).
  */
-void gaim_prpl_change_account_status(GaimAccount *account,
-									 GaimStatus *old_status,
-									 GaimStatus *new_status);
+void purple_prpl_change_account_status(PurpleAccount *account,
+									 PurpleStatus *old_status,
+									 PurpleStatus *new_status);
 
 /**
  * Retrieves the list of stock status types from a prpl.
@@ -433,7 +433,7 @@ void gaim_prpl_change_account_status(GaimAccount *account,
  *
  * @return List of statuses
  */
-GList *gaim_prpl_get_statuses(GaimAccount *account, GaimPresence *presence);
+GList *purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence);
 
 /*@}*/
 
@@ -447,7 +447,7 @@ GList *gaim_prpl_get_statuses(GaimAccount *account, GaimPresence *presence);
  *
  * @param id The protocol plugin;
  */
-GaimPlugin *gaim_find_prpl(const char *id);
+PurplePlugin *purple_find_prpl(const char *id);
 
 /*@}*/
 

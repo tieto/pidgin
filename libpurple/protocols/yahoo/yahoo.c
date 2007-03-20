@@ -1,7 +1,7 @@
 /*
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -54,68 +54,68 @@
 
 /* #define TRY_WEBMESSENGER_LOGIN 0 */
 
-static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *, GaimGroup *);
+static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *, PurpleGroup *);
 #ifdef TRY_WEBMESSENGER_LOGIN
-static void yahoo_login_page_cb(GaimUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message);
+static void yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, size_t len, const gchar *error_message);
 #endif
-static void yahoo_set_status(GaimAccount *account, GaimStatus *status);
+static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status);
 
 static void
-yahoo_add_permit(GaimConnection *gc, const char *who)
+yahoo_add_permit(PurpleConnection *gc, const char *who)
 {
-	gaim_debug_info("yahoo",
+	purple_debug_info("yahoo",
 			"Permitting ID %s local contact rights for account %s\n", who, gc->account);
-	gaim_privacy_permit_add(gc->account,who,TRUE);
+	purple_privacy_permit_add(gc->account,who,TRUE);
 }
 
 static void
-yahoo_rem_permit(GaimConnection *gc, const char *who)
+yahoo_rem_permit(PurpleConnection *gc, const char *who)
 {
-	gaim_debug_info("yahoo",
+	purple_debug_info("yahoo",
 			"Denying ID %s local contact rights for account %s\n", who, gc->account);
-	gaim_privacy_permit_remove(gc->account,who,TRUE);
+	purple_privacy_permit_remove(gc->account,who,TRUE);
 }
 
-gboolean yahoo_privacy_check(GaimConnection *gc, const char *who)
+gboolean yahoo_privacy_check(PurpleConnection *gc, const char *who)
 {
 	/* returns TRUE if allowed through, FALSE otherwise */
 	gboolean permitted;
 
-	permitted = gaim_privacy_check(gc->account, who);
+	permitted = purple_privacy_check(gc->account, who);
 
 	/* print some debug info */
 	if (!permitted) {
 		char *deb = NULL;
 		switch (gc->account->perm_deny)
 		{
-			case GAIM_PRIVACY_DENY_ALL:
-				deb = "GAIM_PRIVACY_DENY_ALL";
+			case PURPLE_PRIVACY_DENY_ALL:
+				deb = "PURPLE_PRIVACY_DENY_ALL";
 			break;
-			case GAIM_PRIVACY_DENY_USERS:
-				deb = "GAIM_PRIVACY_DENY_USERS";
+			case PURPLE_PRIVACY_DENY_USERS:
+				deb = "PURPLE_PRIVACY_DENY_USERS";
 			break;
-			case GAIM_PRIVACY_ALLOW_BUDDYLIST:
-				deb = "GAIM_PRIVACY_ALLOW_BUDDYLIST";
+			case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
+				deb = "PURPLE_PRIVACY_ALLOW_BUDDYLIST";
 			break;
 		}
 		if(deb)
-			gaim_debug_info("yahoo",
+			purple_debug_info("yahoo",
 				"%s blocked data received from %s (%s)\n",
 				gc->account->username,who, deb);
-	} else if (gc->account->perm_deny == GAIM_PRIVACY_ALLOW_USERS) {
-		gaim_debug_info("yahoo",
-			"%s allowed data received from %s (GAIM_PRIVACY_ALLOW_USERS)\n",
+	} else if (gc->account->perm_deny == PURPLE_PRIVACY_ALLOW_USERS) {
+		purple_debug_info("yahoo",
+			"%s allowed data received from %s (PURPLE_PRIVACY_ALLOW_USERS)\n",
 			gc->account->username,who);
 	}
 
 	return permitted;
 }
 
-static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFriend *f)
+static void yahoo_update_status(PurpleConnection *gc, const char *name, YahooFriend *f)
 {
 	char *status = NULL;
 
-	if (!gc || !name || !f || !gaim_find_buddy(gaim_connection_get_account(gc), name))
+	if (!gc || !name || !f || !purple_find_buddy(purple_connection_get_account(gc), name))
 		return;
 
 	if (f->status == YAHOO_STATUS_OFFLINE)
@@ -165,32 +165,32 @@ static void yahoo_update_status(GaimConnection *gc, const char *name, YahooFrien
 			status = YAHOO_STATUS_TYPE_AWAY;
 		break;
 	default:
-		gaim_debug_warning("yahoo", "Warning, unknown status %d\n", f->status);
+		purple_debug_warning("yahoo", "Warning, unknown status %d\n", f->status);
 		break;
 	}
 
 	if (status) {
 		if (f->status == YAHOO_STATUS_CUSTOM)
-			gaim_prpl_got_user_status(gaim_connection_get_account(gc), name, status, "message",
+			purple_prpl_got_user_status(purple_connection_get_account(gc), name, status, "message",
 			                          yahoo_friend_get_status_message(f), NULL);
 		else
-			gaim_prpl_got_user_status(gaim_connection_get_account(gc), name, status, NULL);
+			purple_prpl_got_user_status(purple_connection_get_account(gc), name, status, NULL);
 	}
 
 	if (f->idle != 0)
-		gaim_prpl_got_user_idle(gaim_connection_get_account(gc), name, TRUE, f->idle);
+		purple_prpl_got_user_idle(purple_connection_get_account(gc), name, TRUE, f->idle);
 	else
-		gaim_prpl_got_user_idle(gaim_connection_get_account(gc), name, FALSE, 0);
+		purple_prpl_got_user_idle(purple_connection_get_account(gc), name, FALSE, 0);
 
 	if (f->sms)
-		gaim_prpl_got_user_status(gaim_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE, NULL);
+		purple_prpl_got_user_status(purple_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE, NULL);
 	else
-		gaim_prpl_got_user_status_deactive(gaim_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE);
+		purple_prpl_got_user_status_deactive(purple_connection_get_account(gc), name, YAHOO_STATUS_TYPE_MOBILE);
 }
 
-static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
 	YahooFriend *f = NULL;
@@ -198,7 +198,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 
 	if (pkt->service == YAHOO_SERVICE_LOGOFF && pkt->status == -1) {
 		gc->wants_to_die = TRUE;
-		gaim_connection_error(gc, _("You have signed on from another location."));
+		purple_connection_error(gc, _("You have signed on from another location."));
 		return;
 	}
 
@@ -210,14 +210,14 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 1: /* we don't get the full buddy list here. */
 			if (!yd->logged_in) {
-				gaim_connection_set_display_name(gc, pair->value);
-				gaim_connection_set_state(gc, GAIM_CONNECTED);
+				purple_connection_set_display_name(gc, pair->value);
+				purple_connection_set_state(gc, PURPLE_CONNECTED);
 				yd->logged_in = TRUE;
 				if (yd->picture_upload_todo) {
 					yahoo_buddy_icon_upload(gc, yd->picture_upload_todo);
 					yd->picture_upload_todo = NULL;
 				}
-				yahoo_set_status(account, gaim_account_get_active_status(account));
+				yahoo_set_status(account, purple_account_get_active_status(account));
 
 				/* this requests the list. i have a feeling that this is very evil
 				 *
@@ -311,8 +311,8 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				if (f)
 					f->status = YAHOO_STATUS_OFFLINE;
 				if (name) {
-					gaim_prpl_got_user_status(account, name, "offline", NULL);
-			                gaim_prpl_got_user_status_deactive(account, name, YAHOO_STATUS_TYPE_MOBILE);
+					purple_prpl_got_user_status(account, name, "offline", NULL);
+			                purple_prpl_got_user_status_deactive(account, name, YAHOO_STATUS_TYPE_MOBILE);
 				}
 				break;
 			}
@@ -330,10 +330,10 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 			gsize len;
 
 			if (pair->value) {
-				decoded = gaim_base64_decode(pair->value, &len);
+				decoded = purple_base64_decode(pair->value, &len);
 				if (len) {
-					tmp = gaim_str_binary_to_ascii(decoded, len);
-					gaim_debug_info("yahoo", "Got key 197, value = %s\n", tmp);
+					tmp = purple_str_binary_to_ascii(decoded, len);
+					purple_debug_info("yahoo", "Got key 197, value = %s\n", tmp);
 					g_free(tmp);
 				}
 				g_free(decoded);
@@ -343,19 +343,19 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 		case 192: /* Pictures, aka Buddy Icons, checksum */
 		{
 			int cksum = strtol(pair->value, NULL, 10);
-			GaimBuddy *b;
+			PurpleBuddy *b;
 
 			if (!name)
 				break;
 
-			b = gaim_find_buddy(gc->account, name);
+			b = purple_find_buddy(gc->account, name);
 
 			if (!cksum || (cksum == -1)) {
 				if (f)
 					yahoo_friend_set_buddy_icon_need_request(f, TRUE);
-				gaim_buddy_icons_set_for_user(gc->account, name, NULL, 0);
+				purple_buddy_icons_set_for_user(gc->account, name, NULL, 0);
 				if (b)
-					gaim_blist_node_remove_setting((GaimBlistNode *)b, YAHOO_ICON_CHECKSUM_KEY);
+					purple_blist_node_remove_setting((PurpleBlistNode *)b, YAHOO_ICON_CHECKSUM_KEY);
 				break;
 			}
 
@@ -363,7 +363,7 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 				break;
 
 			yahoo_friend_set_buddy_icon_need_request(f, FALSE);
-			if (b && cksum != gaim_blist_node_get_int((GaimBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY))
+			if (b && cksum != purple_blist_node_get_int((PurpleBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY))
 				yahoo_send_picture_request(gc, name);
 
 			break;
@@ -371,12 +371,12 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 		case 16: /* Custom error message */
 			{
 				char *tmp = yahoo_string_decode(gc, pair->value, TRUE);
-				gaim_notify_error(gc, NULL, tmp, NULL);
+				purple_notify_error(gc, NULL, tmp, NULL);
 				g_free(tmp);
 			}
 			break;
 		default:
-			gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
+			purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
 					   "Unknown status key %d\n", pair->key);
 			break;
 		}
@@ -388,26 +388,26 @@ static void yahoo_process_status(GaimConnection *gc, struct yahoo_packet *pkt)
 		yahoo_update_status(gc, name, f);
 }
 
-static void yahoo_do_group_check(GaimAccount *account, GHashTable *ht, const char *name, const char *group)
+static void yahoo_do_group_check(PurpleAccount *account, GHashTable *ht, const char *name, const char *group)
 {
-	GaimBuddy *b;
-	GaimGroup *g;
+	PurpleBuddy *b;
+	PurpleGroup *g;
 	GSList *list, *i;
 	gboolean onlist = 0;
 	char *oname = NULL;
 	char **oname_p = &oname;
 	GSList **list_p = &list;
 
-	if (!g_hash_table_lookup_extended(ht, gaim_normalize(account, name), (gpointer *) oname_p, (gpointer *) list_p))
-		list = gaim_find_buddies(account, name);
+	if (!g_hash_table_lookup_extended(ht, purple_normalize(account, name), (gpointer *) oname_p, (gpointer *) list_p))
+		list = purple_find_buddies(account, name);
 	else
 		g_hash_table_steal(ht, name);
 
 	for (i = list; i; i = i->next) {
 		b = i->data;
-		g = gaim_buddy_get_group(b);
-		if (!gaim_utf8_strcasecmp(group, g->name)) {
-			gaim_debug(GAIM_DEBUG_MISC, "yahoo",
+		g = purple_buddy_get_group(b);
+		if (!purple_utf8_strcasecmp(group, g->name)) {
+			purple_debug(PURPLE_DEBUG_MISC, "yahoo",
 				"Oh good, %s is in the right group (%s).\n", name, group);
 			list = g_slist_delete_link(list, i);
 			onlist = 1;
@@ -416,19 +416,19 @@ static void yahoo_do_group_check(GaimAccount *account, GHashTable *ht, const cha
 	}
 
 	if (!onlist) {
-		gaim_debug(GAIM_DEBUG_MISC, "yahoo",
+		purple_debug(PURPLE_DEBUG_MISC, "yahoo",
 			"Uhoh, %s isn't on the list (or not in this group), adding him to group %s.\n", name, group);
-		if (!(g = gaim_find_group(group))) {
-			g = gaim_group_new(group);
-			gaim_blist_add_group(g, NULL);
+		if (!(g = purple_find_group(group))) {
+			g = purple_group_new(group);
+			purple_blist_add_group(g, NULL);
 		}
-		b = gaim_buddy_new(account, name, NULL);
-		gaim_blist_add_buddy(b, NULL, g, NULL);
+		b = purple_buddy_new(account, name, NULL);
+		purple_blist_add_buddy(b, NULL, g, NULL);
 	}
 
 	if (list) {
 		if (!oname)
-			oname = g_strdup(gaim_normalize(account, name));
+			oname = g_strdup(purple_normalize(account, name));
 		g_hash_table_insert(ht, oname, list);
 	} else if (oname)
 		g_free(oname);
@@ -438,14 +438,14 @@ static void yahoo_do_group_cleanup(gpointer key, gpointer value, gpointer user_d
 {
 	char *name = key;
 	GSList *list = value, *i;
-	GaimBuddy *b;
-	GaimGroup *g;
+	PurpleBuddy *b;
+	PurpleGroup *g;
 
 	for (i = list; i; i = i->next) {
 		b = i->data;
-		g = gaim_buddy_get_group(b);
-		gaim_debug(GAIM_DEBUG_MISC, "yahoo", "Deleting Buddy %s from group %s.\n", name, g->name);
-		gaim_blist_remove_buddy(b);
+		g = purple_buddy_get_group(b);
+		purple_debug(PURPLE_DEBUG_MISC, "yahoo", "Deleting Buddy %s from group %s.\n", name, g->name);
+		purple_blist_remove_buddy(b);
 	}
 }
 
@@ -482,18 +482,18 @@ static void yahoo_process_cookie(struct yahoo_data *yd, char *c)
 	}
 }
 
-static void yahoo_process_list_15(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_list_15(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
 
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
 	GHashTable *ht;
 	char *grp = NULL;
 	char *norm_bud = NULL;
 	YahooFriend *f = NULL; /* It's your friends. They're going to want you to share your StarBursts. */
 	                       /* But what if you had no friends? */
-	GaimBuddy *b;
-	GaimGroup *g;
+	PurpleBuddy *b;
+	PurpleGroup *g;
 
 
 	ht = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_slist_free);
@@ -526,30 +526,30 @@ static void yahoo_process_list_15(GaimConnection *gc, struct yahoo_packet *pkt)
 			break;
 		case 7: /* buddy's s/n */
 			g_free(norm_bud);
-			norm_bud = g_strdup(gaim_normalize(account, pair->value));
+			norm_bud = g_strdup(purple_normalize(account, pair->value));
 
 			if (grp) {
 				/* This buddy is in a group */
 				f = yahoo_friend_find_or_new(gc, norm_bud);
-				if (!(b = gaim_find_buddy(account, norm_bud))) {
-					if (!(g = gaim_find_group(grp))) {
-						g = gaim_group_new(grp);
-						gaim_blist_add_group(g, NULL);
+				if (!(b = purple_find_buddy(account, norm_bud))) {
+					if (!(g = purple_find_group(grp))) {
+						g = purple_group_new(grp);
+						purple_blist_add_group(g, NULL);
 					}
-					b = gaim_buddy_new(account, norm_bud, NULL);
-					gaim_blist_add_buddy(b, NULL, g, NULL);
+					b = purple_buddy_new(account, norm_bud, NULL);
+					purple_blist_add_buddy(b, NULL, g, NULL);
 				}
 				yahoo_do_group_check(account, ht, norm_bud, grp);
 
 			} else {
 				/* This buddy is on the ignore list (and therefore in no group) */
-				gaim_privacy_deny_add(account, norm_bud, 1);				
+				purple_privacy_deny_add(account, norm_bud, 1);				
 			}
 			break;
 		case 241: /* another protocol user */
 			if (f) {
 				f->protocol = strtol(pair->value, NULL, 10);
-				gaim_debug_info("yahoo", "Setting protocol to %d\n", f->protocol);
+				purple_debug_info("yahoo", "Setting protocol to %d\n", f->protocol);
 			}
 			break;
 		/* case 242: */ /* this seems related to 241 */
@@ -563,15 +563,15 @@ static void yahoo_process_list_15(GaimConnection *gc, struct yahoo_packet *pkt)
 	g_free(norm_bud);
 }
 
-static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_list(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
 	gboolean export = FALSE;
 	gboolean got_serv_list = FALSE;
-	GaimBuddy *b;
-	GaimGroup *g;
+	PurpleBuddy *b;
+	PurpleGroup *g;
 	YahooFriend *f = NULL;
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
 	GHashTable *ht;
 
@@ -631,16 +631,16 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 			grp = yahoo_string_decode(gc, split[0], FALSE);
 			buddies = g_strsplit(split[1], ",", -1);
 			for (bud = buddies; bud && *bud; bud++) {
-				norm_bud = g_strdup(gaim_normalize(account, *bud));
+				norm_bud = g_strdup(purple_normalize(account, *bud));
 				f = yahoo_friend_find_or_new(gc, norm_bud);
 
-				if (!(b = gaim_find_buddy(account, norm_bud))) {
-					if (!(g = gaim_find_group(grp))) {
-						g = gaim_group_new(grp);
-						gaim_blist_add_group(g, NULL);
+				if (!(b = purple_find_buddy(account, norm_bud))) {
+					if (!(g = purple_find_group(grp))) {
+						g = purple_group_new(grp);
+						purple_blist_add_group(g, NULL);
 					}
-					b = gaim_buddy_new(account, norm_bud, NULL);
-					gaim_blist_add_buddy(b, NULL, g, NULL);
+					b = purple_buddy_new(account, norm_bud, NULL);
+					purple_blist_add_buddy(b, NULL, g, NULL);
 					export = TRUE;
 				}
 
@@ -664,7 +664,7 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 		for (bud = buddies; bud && *bud; bud++) {
 			/* The server is already ignoring the user */
 			got_serv_list = TRUE;
-			gaim_privacy_deny_add(gc->account, *bud, 1);
+			purple_privacy_deny_add(gc->account, *bud, 1);
 		}
 		g_strfreev(buddies);
 
@@ -673,12 +673,12 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 
 	if (got_serv_list &&
-		((gc->account->perm_deny != GAIM_PRIVACY_ALLOW_BUDDYLIST) &&
-		(gc->account->perm_deny != GAIM_PRIVACY_DENY_ALL) &&
-		(gc->account->perm_deny != GAIM_PRIVACY_ALLOW_USERS)))
+		((gc->account->perm_deny != PURPLE_PRIVACY_ALLOW_BUDDYLIST) &&
+		(gc->account->perm_deny != PURPLE_PRIVACY_DENY_ALL) &&
+		(gc->account->perm_deny != PURPLE_PRIVACY_ALLOW_USERS)))
 	{
-		gc->account->perm_deny = GAIM_PRIVACY_DENY_USERS;
-		gaim_debug_info("yahoo", "%s privacy defaulting to GAIM_PRIVACY_DENY_USERS.\n",
+		gc->account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
+		purple_debug_info("yahoo", "%s privacy defaulting to PURPLE_PRIVACY_DENY_USERS.\n",
 		      gc->account->username);
 	}
 
@@ -687,7 +687,7 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 		for (bud = buddies; bud && *bud; bud++) {
 			f = yahoo_friend_find(gc, *bud);
 			if (f) {
-				gaim_debug_info("yahoo", "%s setting presence for %s to PERM_OFFLINE\n",
+				purple_debug_info("yahoo", "%s setting presence for %s to PERM_OFFLINE\n",
 								 gc->account->username, *bud);
 				f->presence = YAHOO_PRESENCE_PERM_OFFLINE;
 			}
@@ -699,7 +699,7 @@ static void yahoo_process_list(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
-static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_notify(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *msg = NULL;
 	char *from = NULL;
@@ -727,14 +727,14 @@ static void yahoo_process_notify(GaimConnection *gc, struct yahoo_packet *pkt)
 	if (!g_ascii_strncasecmp(msg, "TYPING", strlen("TYPING"))
 		&& (yahoo_privacy_check(gc, from)))  {
 		if (*stat == '1')
-			serv_got_typing(gc, from, 0, GAIM_TYPING);
+			serv_got_typing(gc, from, 0, PURPLE_TYPING);
 		else
 			serv_got_typing_stopped(gc, from);
 	} else if (!g_ascii_strncasecmp(msg, "GAME", strlen("GAME"))) {
-		GaimBuddy *bud = gaim_find_buddy(gc->account, from);
+		PurpleBuddy *bud = purple_find_buddy(gc->account, from);
 
 		if (!bud) {
-			gaim_debug(GAIM_DEBUG_WARNING, "yahoo",
+			purple_debug(PURPLE_DEBUG_WARNING, "yahoo",
 					   "%s is playing a game, and doesn't want "
 					   "you to know.\n", from);
 		}
@@ -762,7 +762,7 @@ struct _yahoo_im {
 	char *msg;
 };
 
-static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	GSList *l = pkt->hash;
@@ -801,7 +801,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 			l = l->next;
 		}
 	} else if (pkt->status == 2) {
-		gaim_notify_error(gc, NULL,
+		purple_notify_error(gc, NULL,
 		                  _("Your Yahoo! message did not get sent."), NULL);
 	}
 
@@ -813,19 +813,19 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 
 		if (strcmp(imv, "doodle;11") == 0)
 		{
-			GaimWhiteboard *wb;
+			PurpleWhiteboard *wb;
 
 			if (!yahoo_privacy_check(gc, im->from)) {
-				gaim_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
+				purple_debug_info("yahoo", "Doodle request from %s dropped.\n", im->from);
 				return;
 			}
 
-			wb = gaim_whiteboard_get_session(gc->account, im->from);
+			wb = purple_whiteboard_get_session(gc->account, im->from);
 
 			/* If a Doodle session doesn't exist between this user */
 			if(wb == NULL)
 			{
-				wb = gaim_whiteboard_create(gc->account, im->from, DOODLE_STATE_REQUESTED);
+				wb = purple_whiteboard_create(gc->account, im->from, DOODLE_STATE_REQUESTED);
 
 				yahoo_doodle_command_send_request(gc, im->from);
 				yahoo_doodle_command_send_ready(gc, im->from);
@@ -844,7 +844,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		}
 
 		if (!yahoo_privacy_check(gc, im->from)) {
-			gaim_debug_info("yahoo", "Message from %s dropped.\n", im->from);
+			purple_debug_info("yahoo", "Message from %s dropped.\n", im->from);
 			return;
 		}
 
@@ -853,15 +853,15 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 		 * that at least at one point some clients were sending
 		 * "\r\n" as line delimiters, so we want to avoid double
 		 * lines. */
-		m2 = gaim_strreplace(m, "\r\n", "\n");
+		m2 = purple_strreplace(m, "\r\n", "\n");
 		g_free(m);
 		m = m2;
-		gaim_util_chrreplace(m, '\r', '\n');
+		purple_util_chrreplace(m, '\r', '\n');
 
 		if (!strcmp(m, "<ding>")) {
-			GaimConversation *c = gaim_conversation_new(GAIM_CONV_TYPE_IM,
-			                                            gaim_connection_get_account(gc), im->from);
-			gaim_conv_im_write(GAIM_CONV_IM(c), "", _("Buzz!!"), GAIM_MESSAGE_NICK|GAIM_MESSAGE_RECV,
+			PurpleConversation *c = purple_conversation_new(PURPLE_CONV_TYPE_IM,
+			                                            purple_connection_get_account(gc), im->from);
+			purple_conv_im_write(PURPLE_CONV_IM(c), "", _("Buzz!!"), PURPLE_MESSAGE_NICK|PURPLE_MESSAGE_RECV,
 			                   im->time);
 			g_free(m);
 			g_free(im);
@@ -885,7 +885,7 @@ static void yahoo_process_message(GaimConnection *gc, struct yahoo_packet *pkt)
 	g_slist_free(list);
 }
 
-static void yahoo_process_sysmessage(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_sysmessage(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
 	char *prim, *me = NULL, *msg = NULL, *escmsg = NULL;
@@ -908,14 +908,14 @@ static void yahoo_process_sysmessage(GaimConnection *gc, struct yahoo_packet *pk
 	escmsg = g_markup_escape_text(msg, -1);
 
 	prim = g_strdup_printf(_("Yahoo! system message for %s:"),
-	                       me?me:gaim_connection_get_display_name(gc));
-	gaim_notify_info(NULL, NULL, prim, escmsg);
+	                       me?me:purple_connection_get_display_name(gc));
+	purple_notify_info(NULL, NULL, prim, escmsg);
 	g_free(prim);
 	g_free(escmsg);
 }
 
 struct yahoo_add_request {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	char *id;
 	char *who;
 	char *msg;
@@ -942,9 +942,9 @@ yahoo_buddy_add_deny_cb(struct yahoo_add_request *add_req, const char *msg) {
 			YAHOO_STATUS_AVAILABLE, 0);
 
 	yahoo_packet_hash(pkt, "sss",
-			1, gaim_normalize(add_req->gc->account,
-				gaim_account_get_username(
-					gaim_connection_get_account(
+			1, purple_normalize(add_req->gc->account,
+				purple_account_get_username(
+					purple_connection_get_account(
 						add_req->gc))),
 			7, add_req->who,
 			14, encoded_msg ? encoded_msg : "");
@@ -967,13 +967,13 @@ yahoo_buddy_add_deny_noreason_cb(struct yahoo_add_request *add_req, const char*m
 
 static void
 yahoo_buddy_add_deny_reason_cb(struct yahoo_add_request *add_req) {
-	gaim_request_input(add_req->gc, NULL, _("Authorization denied message:"),
+	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
 			NULL, _("No reason given."), TRUE, FALSE, NULL, 
 			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
 			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb), add_req);
 }
 
-static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
+static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt) {
 	struct yahoo_add_request *add_req;
 	char *msg = NULL;
 	GSList *l = pkt->hash;
@@ -1007,8 +1007,8 @@ static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 		/* DONE! this is almost exactly the same as what MSN does,
 		 * this should probably be moved to the core.
 		 */
-		 gaim_account_request_authorization(gaim_connection_get_account(gc), add_req->who, add_req->id,
-                                                    NULL, add_req->msg, gaim_find_buddy(gaim_connection_get_account(gc),add_req->who) != NULL,
+		 purple_account_request_authorization(purple_connection_get_account(gc), add_req->who, add_req->id,
+                                                    NULL, add_req->msg, purple_find_buddy(purple_connection_get_account(gc),add_req->who) != NULL,
 						    G_CALLBACK(yahoo_buddy_add_authorize_cb), 
 						    G_CALLBACK(yahoo_buddy_add_deny_reason_cb),
                                                     add_req);
@@ -1020,7 +1020,7 @@ static void yahoo_buddy_added_us(GaimConnection *gc, struct yahoo_packet *pkt) {
 	}
 }
 
-static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_buddy_denied_our_add(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *who = NULL;
 	char *msg = NULL;
@@ -1052,15 +1052,15 @@ static void yahoo_buddy_denied_our_add(GaimConnection *gc, struct yahoo_packet *
 			g_string_printf(buf, _("%s has (retroactively) denied your request to add them to your list for the following reason: %s."), who, msg2);
 			g_free(msg2);
 		}
-		gaim_notify_info(gc, NULL, _("Add buddy rejected"), buf->str);
+		purple_notify_info(gc, NULL, _("Add buddy rejected"), buf->str);
 		g_string_free(buf, TRUE);
 		g_hash_table_remove(yd->friends, who);
-		gaim_prpl_got_user_status(gaim_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
+		purple_prpl_got_user_status(purple_connection_get_account(gc), who, "offline", NULL); /* FIXME: make this set not on list status instead */
 		/* TODO: Shouldn't we remove the buddy from our local list? */
 	}
 }
 
-static void yahoo_process_contact(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_contact(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	switch (pkt->status) {
 	case 1:
@@ -1130,9 +1130,9 @@ static char *yahoo_decode(const char *text)
 	return converted;
 }
 
-static void yahoo_process_mail(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_mail(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
 	char *who = NULL;
 	char *email = NULL;
@@ -1141,7 +1141,7 @@ static void yahoo_process_mail(GaimConnection *gc, struct yahoo_packet *pkt)
 	int count = 0;
 	GSList *l = pkt->hash;
 
-	if (!gaim_account_get_check_mail(account))
+	if (!purple_account_get_check_mail(account))
 		return;
 
 	while (l) {
@@ -1162,17 +1162,17 @@ static void yahoo_process_mail(GaimConnection *gc, struct yahoo_packet *pkt)
 		char *dec_subj = yahoo_decode(subj);
 		char *from = g_strdup_printf("%s (%s)", dec_who, email);
 
-		gaim_notify_email(gc, dec_subj, from, gaim_account_get_username(account),
+		purple_notify_email(gc, dec_subj, from, purple_account_get_username(account),
 						  yahoo_mail_url, NULL, NULL);
 
 		g_free(dec_who);
 		g_free(dec_subj);
 		g_free(from);
 	} else if (count > 0) {
-		const char *to = gaim_account_get_username(account);
+		const char *to = purple_account_get_username(account);
 		const char *url = yahoo_mail_url;
 
-		gaim_notify_emails(gc, count, FALSE, NULL, NULL, &to, &url,
+		purple_notify_emails(gc, count, FALSE, NULL, NULL, &to, &url,
 						   NULL, NULL);
 	}
 }
@@ -1207,12 +1207,12 @@ static void to_y64(char *out, const unsigned char *in, gsize inlen)
 	*out = '\0';
 }
 
-static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
+static void yahoo_process_auth_old(PurpleConnection *gc, const char *seed)
 {
 	struct yahoo_packet *pack;
-	GaimAccount *account = gaim_connection_get_account(gc);
-	const char *name = gaim_normalize(account, gaim_account_get_username(account));
-	const char *pass = gaim_connection_get_password(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
+	const char *name = purple_normalize(account, purple_account_get_username(account));
+	const char *pass = purple_connection_get_password(gc);
 	struct yahoo_data *yd = gc->proto_data;
 
 	/* So, Yahoo has stopped supporting its older clients in India, and undoubtedly
@@ -1226,8 +1226,8 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	 * Sorry, Yahoo.
 	 */
 
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 	guchar digest[16];
 
 	char *crypt_result;
@@ -1246,19 +1246,19 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 	sv = seed[15];
 	sv = sv % 8;
 
-	cipher = gaim_ciphers_find_cipher("md5");
-	context = gaim_cipher_context_new(cipher, NULL);
+	cipher = purple_ciphers_find_cipher("md5");
+	context = purple_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, (const guchar *)pass, strlen(pass));
-	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_append(context, (const guchar *)pass, strlen(pass));
+	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
 
 	to_y64(password_hash, digest, 16);
 
 	crypt_result = yahoo_crypt(pass, "$1$_2S43d5f$");
 
-	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, (const guchar *)crypt_result, strlen(crypt_result));
-	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_reset(context, NULL);
+	purple_cipher_context_append(context, (const guchar *)crypt_result, strlen(crypt_result));
+	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	to_y64(crypt_hash, digest, 16);
 
 	switch (sv) {
@@ -1302,15 +1302,15 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 			break;
 	}
 
-	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, (const guchar *)hash_string_p, strlen(hash_string_p));
-	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_reset(context, NULL);
+	purple_cipher_context_append(context, (const guchar *)hash_string_p, strlen(hash_string_p));
+	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	to_y64(result6, digest, 16);
 
-	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, (const guchar *)hash_string_c, strlen(hash_string_c));
-	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
-	gaim_cipher_context_destroy(context);
+	purple_cipher_context_reset(context, NULL);
+	purple_cipher_context_append(context, (const guchar *)hash_string_c, strlen(hash_string_c));
+	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_destroy(context);
 	to_y64(result96, digest, 16);
 
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	YAHOO_STATUS_AVAILABLE, 0);
@@ -1324,22 +1324,22 @@ static void yahoo_process_auth_old(GaimConnection *gc, const char *seed)
 /* I'm dishing out some uber-mad props to Cerulean Studios for cracking this
  * and sending the fix!  Thanks guys. */
 
-static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
+static void yahoo_process_auth_new(PurpleConnection *gc, const char *seed)
 {
 	struct yahoo_packet *pack = NULL;
-	GaimAccount *account = gaim_connection_get_account(gc);
-	const char *name = gaim_normalize(account, gaim_account_get_username(account));
-	const char *pass = gaim_connection_get_password(gc);
+	PurpleAccount *account = purple_connection_get_account(gc);
+	const char *name = purple_normalize(account, purple_account_get_username(account));
+	const char *pass = purple_connection_get_password(gc);
 	char *enc_pass;
 	struct yahoo_data *yd = gc->proto_data;
 
-	GaimCipher			*md5_cipher;
-	GaimCipherContext	*md5_ctx;
+	PurpleCipher			*md5_cipher;
+	PurpleCipherContext	*md5_ctx;
 	guchar				md5_digest[16];
 
-	GaimCipher			*sha1_cipher;
-	GaimCipherContext	*sha1_ctx1;
-	GaimCipherContext	*sha1_ctx2;
+	PurpleCipher			*sha1_cipher;
+	PurpleCipherContext	*sha1_ctx1;
+	PurpleCipherContext	*sha1_ctx2;
 
 	char				*alphabet1			= "FBZDWAGHrJTLMNOPpRSKUVEXYChImkwQ";
 	char				*alphabet2			= "F0E1D2C3B4A59687abcdefghijklmnop";
@@ -1389,12 +1389,12 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	memset(&magic_key_char, 0, 4);
 	memset(&comparison_src, 0, 20);
 
-	md5_cipher = gaim_ciphers_find_cipher("md5");
-	md5_ctx = gaim_cipher_context_new(md5_cipher, NULL);
+	md5_cipher = purple_ciphers_find_cipher("md5");
+	md5_ctx = purple_cipher_context_new(md5_cipher, NULL);
 
-	sha1_cipher = gaim_ciphers_find_cipher("sha1");
-	sha1_ctx1 = gaim_cipher_context_new(sha1_cipher, NULL);
-	sha1_ctx2 = gaim_cipher_context_new(sha1_cipher, NULL);
+	sha1_cipher = purple_ciphers_find_cipher("sha1");
+	sha1_ctx1 = purple_cipher_context_new(sha1_cipher, NULL);
+	sha1_ctx2 = purple_cipher_context_new(sha1_cipher, NULL);
 
 	/*
 	 * Magic: Phase 1.  Generate what seems to be a 30 byte value (could change if base64
@@ -1530,10 +1530,10 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 			test[1] = x >> 8;
 			test[2] = y;
 
-			gaim_cipher_context_reset(md5_ctx, NULL);
-			gaim_cipher_context_append(md5_ctx, magic_key_char, 4);
-			gaim_cipher_context_append(md5_ctx, test, 3);
-			gaim_cipher_context_digest(md5_ctx, sizeof(md5_digest),
+			purple_cipher_context_reset(md5_ctx, NULL);
+			purple_cipher_context_append(md5_ctx, magic_key_char, 4);
+			purple_cipher_context_append(md5_ctx, test, 3);
+			purple_cipher_context_digest(md5_ctx, sizeof(md5_digest),
 									   md5_digest, NULL);
 
 			if (!memcmp(md5_digest, comparison_src+4, 16)) {
@@ -1565,9 +1565,9 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	enc_pass = yahoo_string_encode(gc, pass, NULL);
 
 	/* Get password and crypt hashes as per usual. */
-	gaim_cipher_context_reset(md5_ctx, NULL);
-	gaim_cipher_context_append(md5_ctx, (const guchar *)enc_pass, strlen(enc_pass));
-	gaim_cipher_context_digest(md5_ctx, sizeof(md5_digest),
+	purple_cipher_context_reset(md5_ctx, NULL);
+	purple_cipher_context_append(md5_ctx, (const guchar *)enc_pass, strlen(enc_pass));
+	purple_cipher_context_digest(md5_ctx, sizeof(md5_digest),
 							   md5_digest, NULL);
 	to_y64(password_hash, md5_digest, 16);
 
@@ -1576,9 +1576,9 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	g_free(enc_pass);
 	enc_pass = NULL;
 
-	gaim_cipher_context_reset(md5_ctx, NULL);
-	gaim_cipher_context_append(md5_ctx, (const guchar *)crypt_result, strlen(crypt_result));
-	gaim_cipher_context_digest(md5_ctx, sizeof(md5_digest),
+	purple_cipher_context_reset(md5_ctx, NULL);
+	purple_cipher_context_append(md5_ctx, (const guchar *)crypt_result, strlen(crypt_result));
+	purple_cipher_context_digest(md5_ctx, sizeof(md5_digest),
 							   md5_digest, NULL);
 	to_y64(crypt_hash, md5_digest, 16);
 
@@ -1602,20 +1602,20 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	 * which we previously extrapolated from our challenge.
 	 */
 
-	gaim_cipher_context_append(sha1_ctx1, pass_hash_xor1, 64);
+	purple_cipher_context_append(sha1_ctx1, pass_hash_xor1, 64);
 	if (y >= 3)
-		gaim_cipher_context_set_option(sha1_ctx1, "sizeLo", GINT_TO_POINTER(0x1ff));
-	gaim_cipher_context_append(sha1_ctx1, magic_key_char, 4);
-	gaim_cipher_context_digest(sha1_ctx1, sizeof(digest1), digest1, NULL);
+		purple_cipher_context_set_option(sha1_ctx1, "sizeLo", GINT_TO_POINTER(0x1ff));
+	purple_cipher_context_append(sha1_ctx1, magic_key_char, 4);
+	purple_cipher_context_digest(sha1_ctx1, sizeof(digest1), digest1, NULL);
 
 	/*
 	 * The second context gets the password hash XORed with 0x5c plus the SHA-1 digest
 	 * of the first context.
 	 */
 
-	gaim_cipher_context_append(sha1_ctx2, pass_hash_xor2, 64);
-	gaim_cipher_context_append(sha1_ctx2, digest1, 20);
-	gaim_cipher_context_digest(sha1_ctx2, sizeof(digest2), digest2, NULL);
+	purple_cipher_context_append(sha1_ctx2, pass_hash_xor2, 64);
+	purple_cipher_context_append(sha1_ctx2, digest1, 20);
+	purple_cipher_context_digest(sha1_ctx2, sizeof(digest2), digest2, NULL);
 
 	/*
 	 * Now that we have digest2, use it to fetch characters from an alphabet to construct
@@ -1685,30 +1685,30 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 	if (cnt < 64)
 		memset(&(crypt_hash_xor2[cnt]), 0x5c, 64-cnt);
 
-	gaim_cipher_context_reset(sha1_ctx1, NULL);
-	gaim_cipher_context_reset(sha1_ctx2, NULL);
+	purple_cipher_context_reset(sha1_ctx1, NULL);
+	purple_cipher_context_reset(sha1_ctx2, NULL);
 
 	/*
 	 * The first context gets the password hash XORed with 0x36 plus a magic value
 	 * which we previously extrapolated from our challenge.
 	 */
 
-	gaim_cipher_context_append(sha1_ctx1, crypt_hash_xor1, 64);
+	purple_cipher_context_append(sha1_ctx1, crypt_hash_xor1, 64);
 	if (y >= 3) {
-		gaim_cipher_context_set_option(sha1_ctx1, "sizeLo",
+		purple_cipher_context_set_option(sha1_ctx1, "sizeLo",
 									   GINT_TO_POINTER(0x1ff));
 	}
-	gaim_cipher_context_append(sha1_ctx1, magic_key_char, 4);
-	gaim_cipher_context_digest(sha1_ctx1, sizeof(digest1), digest1, NULL);
+	purple_cipher_context_append(sha1_ctx1, magic_key_char, 4);
+	purple_cipher_context_digest(sha1_ctx1, sizeof(digest1), digest1, NULL);
 
 	/*
 	 * The second context gets the password hash XORed with 0x5c plus the SHA-1 digest
 	 * of the first context.
 	 */
 
-	gaim_cipher_context_append(sha1_ctx2, crypt_hash_xor2, 64);
-	gaim_cipher_context_append(sha1_ctx2, digest1, 20);
-	gaim_cipher_context_digest(sha1_ctx2, sizeof(digest2), digest2, NULL);
+	purple_cipher_context_append(sha1_ctx2, crypt_hash_xor2, 64);
+	purple_cipher_context_append(sha1_ctx2, digest1, 20);
+	purple_cipher_context_digest(sha1_ctx2, sizeof(digest2), digest2, NULL);
 
 	/*
 	 * Now that we have digest2, use it to fetch characters from an alphabet to construct
@@ -1757,7 +1757,7 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 		sprintf(byte, "%c", delimit_lookup[lookup]);
 		strcat(resp_96, byte);
 	}
-	gaim_debug_info("yahoo", "yahoo status: %d\n", yd->current_status);
+	purple_debug_info("yahoo", "yahoo status: %d\n", yd->current_status);
 	pack = yahoo_packet_new(YAHOO_SERVICE_AUTHRESP,	yd->current_status, 0);
 	yahoo_packet_hash(pack, "sssss", 0, name, 6, resp_6, 96, resp_96, 1,
 	                  name, 135, "6,0,0,1710");
@@ -1766,15 +1766,15 @@ static void yahoo_process_auth_new(GaimConnection *gc, const char *seed)
 
 	yahoo_packet_send_and_free(pack, yd);
 
-	gaim_cipher_context_destroy(md5_ctx);
-	gaim_cipher_context_destroy(sha1_ctx1);
-	gaim_cipher_context_destroy(sha1_ctx2);
+	purple_cipher_context_destroy(md5_ctx);
+	purple_cipher_context_destroy(sha1_ctx1);
+	purple_cipher_context_destroy(sha1_ctx2);
 
 	g_free(password_hash);
 	g_free(crypt_hash);
 }
 
-static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_auth(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *seed = NULL;
 	char *sn   = NULL;
@@ -1805,8 +1805,8 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 		default:
 			buf = g_strdup_printf(_("The Yahoo server has requested the use of an unrecognized "
 						"authentication method.  You will probably not be able "
-						"to successfully sign on to Yahoo.  Check %s for updates."), GAIM_WEBSITE);
-			gaim_notify_error(gc, "", _("Failed Yahoo! Authentication"),
+						"to successfully sign on to Yahoo.  Check %s for updates."), PURPLE_WEBSITE);
+			purple_notify_error(gc, "", _("Failed Yahoo! Authentication"),
 					  buf);
 			g_free(buf);
 			yahoo_process_auth_new(gc, seed); /* Can't hurt to try it anyway. */
@@ -1814,34 +1814,34 @@ static void yahoo_process_auth(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
-static void ignore_buddy(GaimBuddy *buddy) {
-	GaimGroup *group;
-	GaimAccount *account;
+static void ignore_buddy(PurpleBuddy *buddy) {
+	PurpleGroup *group;
+	PurpleAccount *account;
 	gchar *name;
 
 	if (!buddy)
 		return;
 
-	group = gaim_buddy_get_group(buddy);
+	group = purple_buddy_get_group(buddy);
 	name = g_strdup(buddy->name);
 	account = buddy->account;
 
-	gaim_debug(GAIM_DEBUG_INFO, "blist",
+	purple_debug(PURPLE_DEBUG_INFO, "blist",
 		"Removing '%s' from buddy list.\n", buddy->name);
-	gaim_account_remove_buddy(account, buddy, group);
-	gaim_blist_remove_buddy(buddy);
+	purple_account_remove_buddy(account, buddy, group);
+	purple_blist_remove_buddy(buddy);
 
 	serv_add_deny(account->gc, name);
 
 	g_free(name);
 }
 
-static void keep_buddy(GaimBuddy *b) {
-	gaim_privacy_deny_remove(b->account, b->name, 1);
+static void keep_buddy(PurpleBuddy *b) {
+	purple_privacy_deny_remove(b->account, b->name, 1);
 }
 
-static void yahoo_process_ignore(GaimConnection *gc, struct yahoo_packet *pkt) {
-	GaimBuddy *b;
+static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt) {
+	PurpleBuddy *b;
 	GSList *l;
 	gchar *who = NULL;
 	gchar *sn = NULL;
@@ -1871,11 +1871,11 @@ static void yahoo_process_ignore(GaimConnection *gc, struct yahoo_packet *pkt) {
 
 	switch (status) {
 	case 12:
-		b = gaim_find_buddy(gc->account, who);
+		b = purple_find_buddy(gc->account, who);
 		g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
 					"user is on your buddy list.  Clicking \"Yes\" "
 					"will remove and ignore the buddy."), who);
-		gaim_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0, b,
+		purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0, b,
 						G_CALLBACK(ignore_buddy),
 						G_CALLBACK(keep_buddy));
 		break;
@@ -1887,7 +1887,7 @@ static void yahoo_process_ignore(GaimConnection *gc, struct yahoo_packet *pkt) {
 	}
 }
 
-static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_authresp(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 #ifdef TRY_WEBMESSENGER_LOGIN
 	struct yahoo_data *yd = gc->proto_data;
@@ -1916,14 +1916,14 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 	case 13:
 #ifdef TRY_WEBMESSENGER_LOGIN
 		if (!yd->wm) {
-			GaimUtilFetchUrlData *url_data;
+			PurpleUtilFetchUrlData *url_data;
 			yd->wm = TRUE;
 			if (yd->fd >= 0)
 				close(yd->fd);
 			if (gc->inpa)
-				gaim_input_remove(gc->inpa);
-			url_data = gaim_util_fetch_url(WEBMESSENGER_URL, TRUE,
-					"Gaim/" VERSION, FALSE, yahoo_login_page_cb, gc);
+				purple_input_remove(gc->inpa);
+			url_data = purple_util_fetch_url(WEBMESSENGER_URL, TRUE,
+					"Purple/" VERSION, FALSE, yahoo_login_page_cb, gc);
 			if (url_data != NULL)
 				yd->url_datas = g_slist_prepend(yd->url_datas, url_data);
 			return;
@@ -1944,12 +1944,12 @@ static void yahoo_process_authresp(GaimConnection *gc, struct yahoo_packet *pkt)
 		fullmsg = g_strdup(msg);
 
 	gc->wants_to_die = TRUE;
-	gaim_connection_error(gc, fullmsg);
+	purple_connection_error(gc, fullmsg);
 	g_free(msg);
 	g_free(fullmsg);
 }
 
-static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_addbuddy(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	int err = 0;
 	char *who = NULL;
@@ -1990,14 +1990,14 @@ static void yahoo_process_addbuddy(GaimConnection *gc, struct yahoo_packet *pkt)
 
 	decoded_group = yahoo_string_decode(gc, group, FALSE);
 	buf = g_strdup_printf(_("Could not add buddy %s to group %s to the server list on account %s."),
-				who, decoded_group, gaim_connection_get_display_name(gc));
-	if (!gaim_conv_present_error(who, gaim_connection_get_account(gc), buf))
-		gaim_notify_error(gc, NULL, _("Could not add buddy to server list"), buf);
+				who, decoded_group, purple_connection_get_display_name(gc));
+	if (!purple_conv_present_error(who, purple_connection_get_account(gc), buf))
+		purple_notify_error(gc, NULL, _("Could not add buddy to server list"), buf);
 	g_free(buf);
 	g_free(decoded_group);
 }
 
-static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_p2p(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
 	char *who = NULL;
@@ -2043,10 +2043,10 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 		char *tmp2;
 		YahooFriend *f;
 
-		decoded = gaim_base64_decode(base64, &len);
+		decoded = purple_base64_decode(base64, &len);
 		if (len) {
-			char *tmp = gaim_str_binary_to_ascii(decoded, len);
-			gaim_debug_info("yahoo", "Got P2P service packet (from server): who = %s, ip = %s\n", who, tmp);
+			char *tmp = purple_str_binary_to_ascii(decoded, len);
+			purple_debug_info("yahoo", "Got P2P service packet (from server): who = %s, ip = %s\n", who, tmp);
 			g_free(tmp);
 		}
 
@@ -2063,7 +2063,7 @@ static void yahoo_process_p2p(GaimConnection *gc, struct yahoo_packet *pkt)
 	}
 }
 
-static void yahoo_process_audible(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_process_audible(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	char *who = NULL, *msg = NULL, *id = NULL;
 	GSList *l = pkt->hash;
@@ -2100,11 +2100,11 @@ static void yahoo_process_audible(GaimConnection *gc, struct yahoo_packet *pkt)
 	if (!who || !msg)
 		return;
 	if (!g_utf8_validate(msg, -1, NULL)) {
-		gaim_debug_misc("yahoo", "Warning, nonutf8 audible, ignoring!\n");
+		purple_debug_misc("yahoo", "Warning, nonutf8 audible, ignoring!\n");
 		return;
 	}
 	if (!yahoo_privacy_check(gc, who)) {
-		gaim_debug_misc("yahoo", "Audible message from %s for %s dropped!\n",
+		purple_debug_misc("yahoo", "Audible message from %s for %s dropped!\n",
 		      gc->account->username, who);
 		return;
 	}
@@ -2120,7 +2120,7 @@ static void yahoo_process_audible(GaimConnection *gc, struct yahoo_packet *pkt)
 		serv_got_im(gc, who, msg, 0, time(NULL));
 }
 
-static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
+static void yahoo_packet_process(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	switch (pkt->service) {
 	case YAHOO_SERVICE_LOGON:
@@ -2241,15 +2241,15 @@ static void yahoo_packet_process(GaimConnection *gc, struct yahoo_packet *pkt)
 		yahoo_process_audible(gc, pkt);
 		break;
 	default:
-		gaim_debug(GAIM_DEBUG_ERROR, "yahoo",
+		purple_debug(PURPLE_DEBUG_ERROR, "yahoo",
 				   "Unhandled service 0x%02x\n", pkt->service);
 		break;
 	}
 }
 
-static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
+static void yahoo_pending(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimConnection *gc = data;
+	PurpleConnection *gc = data;
 	struct yahoo_data *yd = gc->proto_data;
 	char buf[1024];
 	int len;
@@ -2265,11 +2265,11 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 
 		tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
 				strerror(errno));
-		gaim_connection_error(gc, tmp);
+		purple_connection_error(gc, tmp);
 		g_free(tmp);
 		return;
 	} else if (len == 0) {
-		gaim_connection_error(gc, _("Server closed the connection."));
+		purple_connection_error(gc, _("Server closed the connection."));
 		return;
 	}
 
@@ -2290,7 +2290,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 			 * are you trying to pull? */
 			guchar *start;
 
-			gaim_debug_warning("yahoo", "Error in YMSG stream, got something not a YMSG packet!");
+			purple_debug_warning("yahoo", "Error in YMSG stream, got something not a YMSG packet!");
 
 			start = memchr(yd->rxqueue + 1, 'Y', yd->rxlen - 1);
 			if (start) {
@@ -2310,7 +2310,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 		pos += 2;
 
 		pktlen = yahoo_get16(yd->rxqueue + pos); pos += 2;
-		gaim_debug(GAIM_DEBUG_MISC, "yahoo",
+		purple_debug(PURPLE_DEBUG_MISC, "yahoo",
 				   "%d bytes to read, rxlen is %d\n", pktlen, yd->rxlen);
 
 		if (yd->rxlen < (YAHOO_PACKET_HDRLEN + pktlen))
@@ -2322,7 +2322,7 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 
 		pkt->service = yahoo_get16(yd->rxqueue + pos); pos += 2;
 		pkt->status = yahoo_get32(yd->rxqueue + pos); pos += 4;
-		gaim_debug(GAIM_DEBUG_MISC, "yahoo",
+		purple_debug(PURPLE_DEBUG_MISC, "yahoo",
 				   "Yahoo Service: 0x%02x Status: %d\n",
 				   pkt->service, pkt->status);
 		pkt->id = yahoo_get32(yd->rxqueue + pos); pos += 4;
@@ -2347,17 +2347,17 @@ static void yahoo_pending(gpointer data, gint source, GaimInputCondition cond)
 
 static void yahoo_got_connected(gpointer data, gint source, const gchar *error_message)
 {
-	GaimConnection *gc = data;
+	PurpleConnection *gc = data;
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
 
-	if (!GAIM_CONNECTION_IS_VALID(gc)) {
+	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
 		close(source);
 		return;
 	}
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect."));
+		purple_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 
@@ -2366,26 +2366,26 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_AUTH, yd->current_status, 0);
 
-	yahoo_packet_hash_str(pkt, 1, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))));
+	yahoo_packet_hash_str(pkt, 1, purple_normalize(gc->account, purple_account_get_username(purple_connection_get_account(gc))));
 	yahoo_packet_send_and_free(pkt, yd);
 
-	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
+	gc->inpa = purple_input_add(yd->fd, PURPLE_INPUT_READ, yahoo_pending, gc);
 }
 
 #ifdef TRY_WEBMESSENGER_LOGIN
 static void yahoo_got_web_connected(gpointer data, gint source, const gchar *error_message)
 {
-	GaimConnection *gc = data;
+	PurpleConnection *gc = data;
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
 
-	if (!GAIM_CONNECTION_IS_VALID(gc)) {
+	if (!PURPLE_CONNECTION_IS_VALID(gc)) {
 		close(source);
 		return;
 	}
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect."));
+		purple_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 
@@ -2395,19 +2395,19 @@ static void yahoo_got_web_connected(gpointer data, gint source, const gchar *err
 	pkt = yahoo_packet_new(YAHOO_SERVICE_WEBLOGIN, YAHOO_STATUS_WEBLOGIN, 0);
 
 	yahoo_packet_hash(pkt, "sss", 0,
-	                  gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))),
-	                  1, gaim_normalize(gc->account, gaim_account_get_username(gaim_connection_get_account(gc))),
+	                  purple_normalize(gc->account, purple_account_get_username(purple_connection_get_account(gc))),
+	                  1, purple_normalize(gc->account, purple_account_get_username(purple_connection_get_account(gc))),
 	                  6, yd->auth);
 	yahoo_packet_send_and_free(pkt, yd);
 
 	g_free(yd->auth);
-	gc->inpa = gaim_input_add(yd->fd, GAIM_INPUT_READ, yahoo_pending, gc);
+	gc->inpa = purple_input_add(yd->fd, PURPLE_INPUT_READ, yahoo_pending, gc);
 }
 
-static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition cond)
+static void yahoo_web_pending(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimConnection *gc = data;
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleConnection *gc = data;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
 	char bufread[2048], *i = bufread, *buf = bufread;
 	int len;
@@ -2424,11 +2424,11 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 
 		tmp = g_strdup_printf(_("Lost connection with server:\n%s"),
 				strerror(errno));
-		gaim_connection_error(gc, tmp);
+		purple_connection_error(gc, tmp);
 		g_free(tmp);
 		return;
 	} else if (len == 0) {
-		gaim_connection_error(gc, _("Server closed the connection."));
+		purple_connection_error(gc, _("Server closed the connection."));
 		return;
 	}
 
@@ -2443,7 +2443,7 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 
 	if ((strncmp(buf, "HTTP/1.0 302", strlen("HTTP/1.0 302")) &&
 			  strncmp(buf, "HTTP/1.1 302", strlen("HTTP/1.1 302")))) {
-		gaim_connection_error(gc, _("Received unexpected HTTP response from server."));
+		purple_connection_error(gc, _("Received unexpected HTTP response from server."));
 		return;
 	}
 
@@ -2458,23 +2458,23 @@ static void yahoo_web_pending(gpointer data, gint source, GaimInputCondition con
 	}
 
 	yd->auth = g_string_free(s, FALSE);
-	gaim_input_remove(gc->inpa);
+	purple_input_remove(gc->inpa);
 	close(source);
 	g_free(yd->rxqueue);
 	yd->rxqueue = NULL;
 	yd->rxlen = 0;
 	/* Now we have our cookies to login with.  I'll go get the milk. */
-	if (gaim_proxy_connect(gc, account, "wcs2.msg.dcn.yahoo.com",
-			       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
+	if (purple_proxy_connect(gc, account, "wcs2.msg.dcn.yahoo.com",
+			       purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
 			       yahoo_got_web_connected, gc) == NULL) {
-		gaim_connection_error(gc, _("Connection problem"));
+		purple_connection_error(gc, _("Connection problem"));
 		return;
 	}
 }
 
-static void yahoo_got_cookies_send_cb(gpointer data, gint source, GaimInputCondition cond)
+static void yahoo_got_cookies_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	struct yahoo_data *yd;
 	int written, remaining;
 
@@ -2490,9 +2490,9 @@ static void yahoo_got_cookies_send_cb(gpointer data, gint source, GaimInputCondi
 		g_free(yd->auth);
 		yd->auth = NULL;
 		if (gc->inpa)
-			gaim_input_remove(gc->inpa);
+			purple_input_remove(gc->inpa);
 		gc->inpa = 0;
-		gaim_connection_error(gc, _("Unable to connect."));
+		purple_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 
@@ -2504,24 +2504,24 @@ static void yahoo_got_cookies_send_cb(gpointer data, gint source, GaimInputCondi
 	g_free(yd->auth);
 	yd->auth = NULL;
 	yd->auth_written = 0;
-	gaim_input_remove(gc->inpa);
-	gc->inpa = gaim_input_add(source, GAIM_INPUT_READ, yahoo_web_pending, gc);
+	purple_input_remove(gc->inpa);
+	gc->inpa = purple_input_add(source, PURPLE_INPUT_READ, yahoo_web_pending, gc);
 }
 
 static void yahoo_got_cookies(gpointer data, gint source, const gchar *error_message)
 {
-	GaimConnection *gc = data;
+	PurpleConnection *gc = data;
 
 	if (source < 0) {
-		gaim_connection_error(gc, _("Unable to connect."));
+		purple_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 
 	if (gc->inpa == 0)
 	{
-		gc->inpa = gaim_input_add(source, GAIM_INPUT_WRITE,
+		gc->inpa = purple_input_add(source, PURPLE_INPUT_WRITE,
 			yahoo_got_cookies_send_cb, gc);
-		yahoo_got_cookies_send_cb(gc, source, GAIM_INPUT_WRITE);
+		yahoo_got_cookies_send_cb(gc, source, PURPLE_INPUT_WRITE);
 	}
 }
 
@@ -2537,7 +2537,7 @@ static void yahoo_login_page_hash_iter(const char *key, const char *val, GString
 	else if (!strcmp(key, ".challenge"))
 		g_string_append(url, val);
 	else
-		g_string_append(url, gaim_url_encode(val));
+		g_string_append(url, purple_url_encode(val));
 }
 
 static GHashTable *yahoo_login_page_hash(const char *buf, size_t len)
@@ -2576,20 +2576,20 @@ static GHashTable *yahoo_login_page_hash(const char *buf, size_t len)
 }
 
 static void
-yahoo_login_page_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
+yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		const gchar *url_text, size_t len, const gchar *error_message)
 {
-	GaimConnection *gc = (GaimConnection *)user_data;
-	GaimAccount *account = gaim_connection_get_account(gc);
+	PurpleConnection *gc = (PurpleConnection *)user_data;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	struct yahoo_data *yd = gc->proto_data;
-	const char *sn = gaim_account_get_username(account);
-	const char *pass = gaim_connection_get_password(gc);
+	const char *sn = purple_account_get_username(account);
+	const char *pass = purple_connection_get_password(gc);
 	GHashTable *hash = yahoo_login_page_hash(url_text, len);
 	GString *url = g_string_new("GET http://login.yahoo.com/config/login?login=");
 	char md5[33], *hashp = md5, *chal;
 	int i;
-	GaimCipher *cipher;
-	GaimCipherContext *context;
+	PurpleCipher *cipher;
+	PurpleCipherContext *context;
 	guchar digest[16];
 
 	yd->url_datas = g_slist_remove(yd->url_datas, url_data);
@@ -2597,27 +2597,27 @@ yahoo_login_page_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	if (error_message != NULL)
 	{
 		/* TODO: Include error_message in the message below */
-		gaim_connection_error(gc, _("Unable to connect."));
+		purple_connection_error(gc, _("Unable to connect."));
 		return;
 	}
 
 	url = g_string_append(url, sn);
 	url = g_string_append(url, "&passwd=");
 
-	cipher = gaim_ciphers_find_cipher("md5");
-	context = gaim_cipher_context_new(cipher, NULL);
+	cipher = purple_ciphers_find_cipher("md5");
+	context = purple_cipher_context_new(cipher, NULL);
 
-	gaim_cipher_context_append(context, (const guchar *)pass, strlen(pass));
-	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_append(context, (const guchar *)pass, strlen(pass));
+	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	for (i = 0; i < 16; ++i) {
 		g_snprintf(hashp, 3, "%02x", digest[i]);
 		hashp += 2;
 	}
 
 	chal = g_strconcat(md5, g_hash_table_lookup(hash, ".challenge"), NULL);
-	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, (const guchar *)chal, strlen(chal));
-	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_reset(context, NULL);
+	purple_cipher_context_append(context, (const guchar *)chal, strlen(chal));
+	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	hashp = md5;
 	for (i = 0; i < 16; ++i) {
 		g_snprintf(hashp, 3, "%02x", digest[i]);
@@ -2627,9 +2627,9 @@ yahoo_login_page_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 	 * I dunno why this is here and commented out.. but in case it's needed
 	 * I updated it..
 
-	gaim_cipher_context_reset(context, NULL);
-	gaim_cipher_context_append(context, md5, strlen(md5));
-	gaim_cipher_context_digest(context, sizeof(digest), digest, NULL);
+	purple_cipher_context_reset(context, NULL);
+	purple_cipher_context_append(context, md5, strlen(md5));
+	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	hashp = md5;
 	for (i = 0; i < 16; ++i) {
 		g_snprintf(hashp, 3, "%02x", digest[i]);
@@ -2645,44 +2645,44 @@ yahoo_login_page_cb(GaimUtilFetchUrlData *url_data, gpointer user_data,
 			      "Host: login.yahoo.com\r\n\r\n");
 	g_hash_table_destroy(hash);
 	yd->auth = g_string_free(url, FALSE);
-	if (gaim_proxy_connect(gc, account, "login.yahoo.com", 80, yahoo_got_cookies, gc) == NULL) {
-		gaim_connection_error(gc, _("Connection problem"));
+	if (purple_proxy_connect(gc, account, "login.yahoo.com", 80, yahoo_got_cookies, gc) == NULL) {
+		purple_connection_error(gc, _("Connection problem"));
 		return;
 	}
 
-	gaim_cipher_context_destroy(context);
+	purple_cipher_context_destroy(context);
 }
 #endif
 
-static void yahoo_server_check(GaimAccount *account)
+static void yahoo_server_check(PurpleAccount *account)
 {
 	const char *server;
 
-	server = gaim_account_get_string(account, "server", YAHOO_PAGER_HOST);
+	server = purple_account_get_string(account, "server", YAHOO_PAGER_HOST);
 
 	if (strcmp(server, "scs.yahoo.com") == 0)
-		gaim_account_set_string(account, "server", YAHOO_PAGER_HOST);
+		purple_account_set_string(account, "server", YAHOO_PAGER_HOST);
 }
 
-static void yahoo_picture_check(GaimAccount *account)
+static void yahoo_picture_check(PurpleAccount *account)
 {
-	GaimConnection *gc = gaim_account_get_connection(account);
+	PurpleConnection *gc = purple_account_get_connection(account);
 	char *buddyicon;
 
-	buddyicon = gaim_buddy_icons_get_full_path(gaim_account_get_buddy_icon(account));
+	buddyicon = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(account));
 	yahoo_set_buddy_icon(gc, buddyicon);
 	g_free(buddyicon);
 }
 
-static int get_yahoo_status_from_gaim_status(GaimStatus *status)
+static int get_yahoo_status_from_purple_status(PurpleStatus *status)
 {
-	GaimPresence *presence;
+	PurplePresence *presence;
 	const char *status_id;
 	const char *msg;
 
-	presence = gaim_status_get_presence(status);
-	status_id = gaim_status_get_id(status);
-	msg = gaim_status_get_attr_string(status, "message");
+	presence = purple_status_get_presence(status);
+	status_id = purple_status_get_id(status);
+	msg = purple_status_get_attr_string(status, "message");
 
 	if (!strcmp(status_id, YAHOO_STATUS_TYPE_AVAILABLE)) {
 		if ((msg != NULL) && (*msg != '\0'))
@@ -2711,79 +2711,79 @@ static int get_yahoo_status_from_gaim_status(GaimStatus *status)
 		return YAHOO_STATUS_INVISIBLE;
 	} else if (!strcmp(status_id, YAHOO_STATUS_TYPE_AWAY)) {
 		return YAHOO_STATUS_CUSTOM;
-	} else if (gaim_presence_is_idle(presence)) {
+	} else if (purple_presence_is_idle(presence)) {
 		return YAHOO_STATUS_IDLE;
 	} else {
-		gaim_debug_error("yahoo", "Unexpected GaimStatus!\n");
+		purple_debug_error("yahoo", "Unexpected PurpleStatus!\n");
 		return YAHOO_STATUS_AVAILABLE;
 	}
 }
 
-static void yahoo_login(GaimAccount *account) {
-	GaimConnection *gc = gaim_account_get_connection(account);
+static void yahoo_login(PurpleAccount *account) {
+	PurpleConnection *gc = purple_account_get_connection(account);
 	struct yahoo_data *yd = gc->proto_data = g_new0(struct yahoo_data, 1);
-	GaimStatus *status = gaim_account_get_active_status(account);
-	gc->flags |= GAIM_CONNECTION_HTML | GAIM_CONNECTION_NO_BGCOLOR | GAIM_CONNECTION_NO_URLDESC;
+	PurpleStatus *status = purple_account_get_active_status(account);
+	gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_BGCOLOR | PURPLE_CONNECTION_NO_URLDESC;
 
-	gaim_connection_update_progress(gc, _("Connecting"), 1, 2);
+	purple_connection_update_progress(gc, _("Connecting"), 1, 2);
 
-	gaim_connection_set_display_name(gc, gaim_account_get_username(account));
+	purple_connection_set_display_name(gc, purple_account_get_username(account));
 
 	yd->fd = -1;
 	yd->txhandler = -1;
 	/* TODO: Is there a good grow size for the buffer? */
-	yd->txbuf = gaim_circ_buffer_new(0);
+	yd->txbuf = purple_circ_buffer_new(0);
 	yd->friends = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, yahoo_friend_free);
 	yd->imvironments = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	yd->confs = NULL;
 	yd->conf_id = 2;
 
-	yd->current_status = get_yahoo_status_from_gaim_status(status);
+	yd->current_status = get_yahoo_status_from_purple_status(status);
 
 	yahoo_server_check(account);
 	yahoo_picture_check(account);
 
-	if (gaim_account_get_bool(account, "yahoojp", FALSE)) {
+	if (purple_account_get_bool(account, "yahoojp", FALSE)) {
 		yd->jp = TRUE;
-		if (gaim_proxy_connect(gc, account,
-		                       gaim_account_get_string(account, "serverjp",  YAHOOJP_PAGER_HOST),
-		                       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
+		if (purple_proxy_connect(gc, account,
+		                       purple_account_get_string(account, "serverjp",  YAHOOJP_PAGER_HOST),
+		                       purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
 		                       yahoo_got_connected, gc) == NULL)
 		{
-			gaim_connection_error(gc, _("Connection problem"));
+			purple_connection_error(gc, _("Connection problem"));
 			return;
 		}
 	} else {
 		yd->jp = FALSE;
-		if (gaim_proxy_connect(gc, account,
-		                       gaim_account_get_string(account, "server",  YAHOO_PAGER_HOST),
-		                       gaim_account_get_int(account, "port", YAHOO_PAGER_PORT),
+		if (purple_proxy_connect(gc, account,
+		                       purple_account_get_string(account, "server",  YAHOO_PAGER_HOST),
+		                       purple_account_get_int(account, "port", YAHOO_PAGER_PORT),
 		                       yahoo_got_connected, gc) == NULL)
 		{
-			gaim_connection_error(gc, _("Connection problem"));
+			purple_connection_error(gc, _("Connection problem"));
 			return;
 		}
 	}
 }
 
-static void yahoo_close(GaimConnection *gc) {
+static void yahoo_close(PurpleConnection *gc) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	GSList *l;
 
 	if (gc->inpa)
-		gaim_input_remove(gc->inpa);
+		purple_input_remove(gc->inpa);
 
 	while (yd->url_datas) {
-		gaim_util_fetch_url_cancel(yd->url_datas->data);
+		purple_util_fetch_url_cancel(yd->url_datas->data);
 		yd->url_datas = g_slist_delete_link(yd->url_datas, yd->url_datas);
 	}
 
 	for (l = yd->confs; l; l = l->next) {
-		GaimConversation *conv = l->data;
+		PurpleConversation *conv = l->data;
 
-		yahoo_conf_leave(yd, gaim_conversation_get_name(conv),
-		                 gaim_connection_get_display_name(gc),
-				 gaim_conv_chat_get_users(GAIM_CONV_CHAT(conv)));
+		yahoo_conf_leave(yd, purple_conversation_get_name(conv),
+		                 purple_connection_get_display_name(gc),
+				 purple_conv_chat_get_users(PURPLE_CONV_CHAT(conv)));
 	}
 	g_slist_free(yd->confs);
 
@@ -2799,9 +2799,9 @@ static void yahoo_close(GaimConnection *gc) {
 	g_free(yd->cookie_t);
 
 	if (yd->txhandler)
-		gaim_input_remove(yd->txhandler);
+		purple_input_remove(yd->txhandler);
 
-	gaim_circ_buffer_destroy(yd->txbuf);
+	purple_circ_buffer_destroy(yd->txbuf);
 
 	if (yd->fd >= 0)
 		close(yd->fd);
@@ -2811,7 +2811,7 @@ static void yahoo_close(GaimConnection *gc) {
 	g_free(yd->picture_url);
 
 	if (yd->buddy_icon_connect_data)
-		gaim_proxy_connect_cancel(yd->buddy_icon_connect_data);
+		purple_proxy_connect_cancel(yd->buddy_icon_connect_data);
 	if (yd->picture_upload_todo)
 		yahoo_buddy_icon_upload_data_free(yd->picture_upload_todo);
 	if (yd->ycht)
@@ -2821,20 +2821,20 @@ static void yahoo_close(GaimConnection *gc) {
 	gc->proto_data = NULL;
 }
 
-static const char *yahoo_list_icon(GaimAccount *a, GaimBuddy *b)
+static const char *yahoo_list_icon(PurpleAccount *a, PurpleBuddy *b)
 {
 	return "yahoo";
 }
 
-static const char *yahoo_list_emblem(GaimBuddy *b)
+static const char *yahoo_list_emblem(PurpleBuddy *b)
 {
-	GaimAccount *account;
-	GaimConnection *gc;
+	PurpleAccount *account;
+	PurpleConnection *gc;
 	struct yahoo_data *yd;
 	YahooFriend *f;
-	GaimPresence *presence;
+	PurplePresence *presence;
 
-	if (!b || !(account = b->account) || !(gc = gaim_account_get_connection(account)) ||
+	if (!b || !(account = b->account) || !(gc = purple_account_get_connection(account)) ||
 					     !(yd = gc->proto_data))
 		return NULL;
 
@@ -2843,9 +2843,9 @@ static const char *yahoo_list_emblem(GaimBuddy *b)
 		return "not-authorized";
 	}
 
-	presence = gaim_buddy_get_presence(b);
+	presence = purple_buddy_get_presence(b);
 
-	if (gaim_presence_is_online(presence)) {
+	if (purple_presence_is_online(presence)) {
 		if (yahoo_friend_get_game(f))
 			return "game";
 		if (f->protocol == 2)
@@ -2886,25 +2886,25 @@ static const char *yahoo_get_status_string(enum yahoo_status a)
 	}
 }
 
-static void yahoo_initiate_conference(GaimBlistNode *node, gpointer data) {
+static void yahoo_initiate_conference(PurpleBlistNode *node, gpointer data) {
 
-	GaimBuddy *buddy;
-	GaimConnection *gc;
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
 
 	GHashTable *components;
 	struct yahoo_data *yd;
 	int id;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
-	buddy = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(buddy->account);
+	buddy = (PurpleBuddy *) node;
+	gc = purple_account_get_connection(buddy->account);
 	yd = gc->proto_data;
 	id = yd->conf_id;
 
 	components = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	g_hash_table_replace(components, g_strdup("room"),
-		g_strdup_printf("%s-%d", gaim_connection_get_display_name(gc), id));
+		g_strdup_printf("%s-%d", purple_connection_get_display_name(gc), id));
 	g_hash_table_replace(components, g_strdup("topic"), g_strdup("Join my conference..."));
 	g_hash_table_replace(components, g_strdup("type"), g_strdup("Conference"));
 	yahoo_c_join(gc, components);
@@ -2913,21 +2913,21 @@ static void yahoo_initiate_conference(GaimBlistNode *node, gpointer data) {
 	yahoo_c_invite(gc, id, "Join my conference...", buddy->name);
 }
 
-static void yahoo_presence_settings(GaimBlistNode *node, gpointer data) {
-	GaimBuddy *buddy;
-	GaimConnection *gc;
+static void yahoo_presence_settings(PurpleBlistNode *node, gpointer data) {
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
 	int presence_val = GPOINTER_TO_INT(data);
 
-	buddy = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(buddy->account);
+	buddy = (PurpleBuddy *) node;
+	gc = purple_account_get_connection(buddy->account);
 
 	yahoo_friend_update_presence(gc, buddy->name, presence_val);
 }
 
-static void yahoo_game(GaimBlistNode *node, gpointer data) {
+static void yahoo_game(PurpleBlistNode *node, gpointer data) {
 
-	GaimBuddy *buddy;
-	GaimConnection *gc;
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
 
 	struct yahoo_data *yd;
 	const char *game;
@@ -2936,10 +2936,10 @@ static void yahoo_game(GaimBlistNode *node, gpointer data) {
 	char url[256];
 	YahooFriend *f;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
-	buddy = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(buddy->account);
+	buddy = (PurpleBuddy *) node;
+	gc = purple_account_get_connection(buddy->account);
 	yd = (struct yahoo_data *) gc->proto_data;
 
 	f = yahoo_friend_find(gc, buddy->name);
@@ -2955,11 +2955,11 @@ static void yahoo_game(GaimBlistNode *node, gpointer data) {
 		t++;
 	*t = 0;
 	g_snprintf(url, sizeof url, "http://games.yahoo.com/games/%s", game2);
-	gaim_notify_uri(gc, url);
+	purple_notify_uri(gc, url);
 	g_free(game2);
 }
 
-static char *yahoo_status_text(GaimBuddy *b)
+static char *yahoo_status_text(PurpleBuddy *b)
 {
 	YahooFriend *f = NULL;
 	const char *msg;
@@ -2980,7 +2980,7 @@ static char *yahoo_status_text(GaimBuddy *b)
 		if (!(msg = yahoo_friend_get_status_message(f)))
 			return NULL;
 		msg2 = g_markup_escape_text(msg, strlen(msg));
-		gaim_util_chrreplace(msg2, '\n', ' ');
+		purple_util_chrreplace(msg2, '\n', ' ');
 		return msg2;
 
 	default:
@@ -2988,7 +2988,7 @@ static char *yahoo_status_text(GaimBuddy *b)
 	}
 }
 
-void yahoo_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean full)
+void yahoo_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full)
 {
 	YahooFriend *f;
 	char *escaped;
@@ -3022,64 +3022,64 @@ void yahoo_tooltip_text(GaimBuddy *b, GaimNotifyUserInfo *user_info, gboolean fu
 			case YAHOO_PRESENCE_DEFAULT:
 				break;
 			default:
-				gaim_debug_error("yahoo", "Unknown presence in yahoo_tooltip_text\n");
+				purple_debug_error("yahoo", "Unknown presence in yahoo_tooltip_text\n");
 				break;
 		}
 	}
 
 	if (status != NULL) {
 		escaped = g_markup_escape_text(status, strlen(status));
-		gaim_notify_user_info_add_pair(user_info, _("Status"), escaped);
+		purple_notify_user_info_add_pair(user_info, _("Status"), escaped);
 		g_free(status);
 		g_free(escaped);
 	}
 
 	if (presence != NULL)
-		gaim_notify_user_info_add_pair(user_info, _("Presence"), presence);
+		purple_notify_user_info_add_pair(user_info, _("Presence"), presence);
 }
 
-static void yahoo_addbuddyfrommenu_cb(GaimBlistNode *node, gpointer data)
+static void yahoo_addbuddyfrommenu_cb(PurpleBlistNode *node, gpointer data)
 {
-	GaimBuddy *buddy;
-	GaimConnection *gc;
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
-	buddy = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(buddy->account);
+	buddy = (PurpleBuddy *) node;
+	gc = purple_account_get_connection(buddy->account);
 
 	yahoo_add_buddy(gc, buddy, NULL);
 }
 
 
-static void yahoo_chat_goto_menu(GaimBlistNode *node, gpointer data)
+static void yahoo_chat_goto_menu(PurpleBlistNode *node, gpointer data)
 {
-	GaimBuddy *buddy;
-	GaimConnection *gc;
+	PurpleBuddy *buddy;
+	PurpleConnection *gc;
 
-	g_return_if_fail(GAIM_BLIST_NODE_IS_BUDDY(node));
+	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
 
-	buddy = (GaimBuddy *) node;
-	gc = gaim_account_get_connection(buddy->account);
+	buddy = (PurpleBuddy *) node;
+	gc = purple_account_get_connection(buddy->account);
 
 	yahoo_chat_goto(gc, buddy->name);
 }
 
-static GList *build_presence_submenu(YahooFriend *f, GaimConnection *gc) {
+static GList *build_presence_submenu(YahooFriend *f, PurpleConnection *gc) {
 	GList *m = NULL;
-	GaimMenuAction *act;
+	PurpleMenuAction *act;
 	struct yahoo_data *yd = (struct yahoo_data *) gc->proto_data;
 
 	if (yd->current_status == YAHOO_STATUS_INVISIBLE) {
 		if (f->presence != YAHOO_PRESENCE_ONLINE) {
-			act = gaim_menu_action_new(_("Appear Online"),
-			                           GAIM_CALLBACK(yahoo_presence_settings),
+			act = purple_menu_action_new(_("Appear Online"),
+			                           PURPLE_CALLBACK(yahoo_presence_settings),
 			                           GINT_TO_POINTER(YAHOO_PRESENCE_ONLINE),
 			                           NULL);
 			m = g_list_append(m, act);
 		} else if (f->presence != YAHOO_PRESENCE_DEFAULT) {
-			act = gaim_menu_action_new(_("Appear Offline"),
-			                           GAIM_CALLBACK(yahoo_presence_settings),
+			act = purple_menu_action_new(_("Appear Offline"),
+			                           PURPLE_CALLBACK(yahoo_presence_settings),
 			                           GINT_TO_POINTER(YAHOO_PRESENCE_DEFAULT),
 			                           NULL);
 			m = g_list_append(m, act);
@@ -3087,14 +3087,14 @@ static GList *build_presence_submenu(YahooFriend *f, GaimConnection *gc) {
 	}
 
 	if (f->presence == YAHOO_PRESENCE_PERM_OFFLINE) {
-		act = gaim_menu_action_new(_("Don't Appear Permanently Offline"),
-		                           GAIM_CALLBACK(yahoo_presence_settings),
+		act = purple_menu_action_new(_("Don't Appear Permanently Offline"),
+		                           PURPLE_CALLBACK(yahoo_presence_settings),
 		                           GINT_TO_POINTER(YAHOO_PRESENCE_DEFAULT),
 		                           NULL);
 		m = g_list_append(m, act);
 	} else {
-		act = gaim_menu_action_new(_("Appear Permanently Offline"),
-		                           GAIM_CALLBACK(yahoo_presence_settings),
+		act = purple_menu_action_new(_("Appear Permanently Offline"),
+		                           PURPLE_CALLBACK(yahoo_presence_settings),
 		                           GINT_TO_POINTER(YAHOO_PRESENCE_PERM_OFFLINE),
 		                           NULL);
 		m = g_list_append(m, act);
@@ -3103,20 +3103,20 @@ static GList *build_presence_submenu(YahooFriend *f, GaimConnection *gc) {
 	return m;
 }
 
-static void yahoo_doodle_blist_node(GaimBlistNode *node, gpointer data)
+static void yahoo_doodle_blist_node(PurpleBlistNode *node, gpointer data)
 {
-	GaimBuddy *b = (GaimBuddy *)node;
-	GaimConnection *gc = b->account->gc;
+	PurpleBuddy *b = (PurpleBuddy *)node;
+	PurpleConnection *gc = b->account->gc;
 
 	yahoo_doodle_initiate(gc, b->name);
 }
 
-static GList *yahoo_buddy_menu(GaimBuddy *buddy)
+static GList *yahoo_buddy_menu(PurpleBuddy *buddy)
 {
 	GList *m = NULL;
-	GaimMenuAction *act;
+	PurpleMenuAction *act;
 
-	GaimConnection *gc = gaim_account_get_connection(buddy->account);
+	PurpleConnection *gc = purple_account_get_connection(buddy->account);
 	struct yahoo_data *yd = gc->proto_data;
 	static char buf2[1024];
 	YahooFriend *f;
@@ -3124,8 +3124,8 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 	f = yahoo_friend_find(gc, buddy->name);
 
 	if (!f && !yd->wm) {
-		act = gaim_menu_action_new(_("Add Buddy"),
-		                           GAIM_CALLBACK(yahoo_addbuddyfrommenu_cb),
+		act = purple_menu_action_new(_("Add Buddy"),
+		                           PURPLE_CALLBACK(yahoo_addbuddyfrommenu_cb),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 
@@ -3135,14 +3135,14 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 
 	if (f && f->status != YAHOO_STATUS_OFFLINE) {
 		if (!yd->wm) {
-			act = gaim_menu_action_new(_("Join in Chat"),
-			                           GAIM_CALLBACK(yahoo_chat_goto_menu),
+			act = purple_menu_action_new(_("Join in Chat"),
+			                           PURPLE_CALLBACK(yahoo_chat_goto_menu),
 			                           NULL, NULL);
 			m = g_list_append(m, act);
 		}
 
-		act = gaim_menu_action_new(_("Initiate Conference"),
-		                           GAIM_CALLBACK(yahoo_initiate_conference),
+		act = purple_menu_action_new(_("Initiate Conference"),
+		                           PURPLE_CALLBACK(yahoo_initiate_conference),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 
@@ -3160,8 +3160,8 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 				*t = ' ';
 				g_snprintf(buf2, sizeof buf2, "%s", room);
 
-				act = gaim_menu_action_new(buf2,
-				                           GAIM_CALLBACK(yahoo_game),
+				act = purple_menu_action_new(buf2,
+				                           PURPLE_CALLBACK(yahoo_game),
 				                           NULL, NULL);
 				m = g_list_append(m, act);
 			}
@@ -3169,14 +3169,14 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 	}
 
 	if (f) {
-		act = gaim_menu_action_new(_("Presence Settings"), NULL, NULL,
+		act = purple_menu_action_new(_("Presence Settings"), NULL, NULL,
 		                           build_presence_submenu(f, gc));
 		m = g_list_append(m, act);
 	}
 
 	if (f) {
-		act = gaim_menu_action_new(_("Start Doodling"),
-		                           GAIM_CALLBACK(yahoo_doodle_blist_node),
+		act = purple_menu_action_new(_("Start Doodling"),
+		                           PURPLE_CALLBACK(yahoo_doodle_blist_node),
 		                           NULL, NULL);
 		m = g_list_append(m, act);
 	}
@@ -3184,16 +3184,16 @@ static GList *yahoo_buddy_menu(GaimBuddy *buddy)
 	return m;
 }
 
-static GList *yahoo_blist_node_menu(GaimBlistNode *node)
+static GList *yahoo_blist_node_menu(PurpleBlistNode *node)
 {
-	if(GAIM_BLIST_NODE_IS_BUDDY(node)) {
-		return yahoo_buddy_menu((GaimBuddy *) node);
+	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		return yahoo_buddy_menu((PurpleBuddy *) node);
 	} else {
 		return NULL;
 	}
 }
 
-static void yahoo_act_id(GaimConnection *gc, const char *entry)
+static void yahoo_act_id(PurpleConnection *gc, const char *entry)
 {
 	struct yahoo_data *yd = gc->proto_data;
 
@@ -3201,56 +3201,56 @@ static void yahoo_act_id(GaimConnection *gc, const char *entry)
 	yahoo_packet_hash_str(pkt, 3, entry);
 	yahoo_packet_send_and_free(pkt, yd);
 
-	gaim_connection_set_display_name(gc, entry);
+	purple_connection_set_display_name(gc, entry);
 }
 
-static void yahoo_show_act_id(GaimPluginAction *action)
+static void yahoo_show_act_id(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	gaim_request_input(gc, NULL, _("Active which ID?"), NULL,
-					   gaim_connection_get_display_name(gc), FALSE, FALSE, NULL,
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	purple_request_input(gc, NULL, _("Active which ID?"), NULL,
+					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
 					   _("Cancel"), NULL, gc);
 }
 
-static void yahoo_show_chat_goto(GaimPluginAction *action)
+static void yahoo_show_chat_goto(PurplePluginAction *action)
 {
-	GaimConnection *gc = (GaimConnection *) action->context;
-	gaim_request_input(gc, NULL, _("Join who in chat?"), NULL,
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+	purple_request_input(gc, NULL, _("Join who in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
 					   _("Cancel"), NULL, gc);
 }
 
-static GList *yahoo_actions(GaimPlugin *plugin, gpointer context) {
+static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
 	GList *m = NULL;
-	GaimPluginAction *act;
+	PurplePluginAction *act;
 
-	act = gaim_plugin_action_new(_("Activate ID..."),
+	act = purple_plugin_action_new(_("Activate ID..."),
 			yahoo_show_act_id);
 	m = g_list_append(m, act);
 
-	act = gaim_plugin_action_new(_("Join User in Chat..."),
+	act = purple_plugin_action_new(_("Join User in Chat..."),
 			yahoo_show_chat_goto);
 	m = g_list_append(m, act);
 
 	return m;
 }
 
-static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, GaimMessageFlags flags)
+static int yahoo_send_im(PurpleConnection *gc, const char *who, const char *what, PurpleMessageFlags flags)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_MESSAGE, YAHOO_STATUS_OFFLINE, 0);
 	char *msg = yahoo_html_to_codes(what);
 	char *msg2;
 	gboolean utf8 = TRUE;
-	GaimWhiteboard *wb;
+	PurpleWhiteboard *wb;
 	int ret = 1;
 	YahooFriend *f = NULL;
 
 	msg2 = yahoo_string_encode(gc, msg, &utf8);
 
-	yahoo_packet_hash(pkt, "ss", 1, gaim_connection_get_display_name(gc), 5, who);
+	yahoo_packet_hash(pkt, "ss", 1, purple_connection_get_display_name(gc), 5, who);
 	if ((f = yahoo_friend_find(gc, who)) && f->protocol)
 		yahoo_packet_hash_int(pkt, 241, f->protocol);
 
@@ -3270,7 +3270,7 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	 *
 	 * If they have no set an IMVironment, then use the default.
 	 */
-	wb = gaim_whiteboard_get_session(gc->account, who);
+	wb = purple_whiteboard_get_session(gc->account, who);
 	if (wb)
 		yahoo_packet_hash_str(pkt, 63, "doodle;11");
 	else
@@ -3304,12 +3304,12 @@ static int yahoo_send_im(GaimConnection *gc, const char *who, const char *what, 
 	return ret;
 }
 
-static unsigned int yahoo_send_typing(GaimConnection *gc, const char *who, GaimTypingState state)
+static unsigned int yahoo_send_typing(PurpleConnection *gc, const char *who, PurpleTypingState state)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_NOTIFY, YAHOO_STATUS_TYPING, 0);
-	yahoo_packet_hash(pkt, "ssssss", 49, "TYPING", 1, gaim_connection_get_display_name(gc),
-	                  14, " ", 13, state == GAIM_TYPING ? "1" : "0",
+	yahoo_packet_hash(pkt, "ssssss", 49, "TYPING", 1, purple_connection_get_display_name(gc),
+	                  14, " ", 13, state == PURPLE_TYPING ? "1" : "0",
 	                  5, who, 1002, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
@@ -3324,10 +3324,10 @@ static void yahoo_session_presence_remove(gpointer key, gpointer value, gpointer
 		f->presence = YAHOO_PRESENCE_DEFAULT;
 }
 
-static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
+static void yahoo_set_status(PurpleAccount *account, PurpleStatus *status)
 {
-	GaimConnection *gc;
-	GaimPresence *presence;
+	PurpleConnection *gc;
+	PurplePresence *presence;
 	struct yahoo_data *yd;
 	struct yahoo_packet *pkt;
 	int old_status;
@@ -3335,29 +3335,29 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 	char *tmp = NULL;
 	char *conv_msg = NULL;
 
-	if (!gaim_status_is_active(status))
+	if (!purple_status_is_active(status))
 		return;
 
-	gc = gaim_account_get_connection(account);
-	presence = gaim_status_get_presence(status);
+	gc = purple_account_get_connection(account);
+	presence = purple_status_get_presence(status);
 	yd = (struct yahoo_data *)gc->proto_data;
 	old_status = yd->current_status;
 
-	yd->current_status = get_yahoo_status_from_gaim_status(status);
+	yd->current_status = get_yahoo_status_from_purple_status(status);
 
 	if (yd->current_status == YAHOO_STATUS_CUSTOM)
 	{
-		msg = gaim_status_get_attr_string(status, "message");
+		msg = purple_status_get_attr_string(status, "message");
 
-		if (gaim_status_is_available(status)) {
+		if (purple_status_is_available(status)) {
 			tmp = yahoo_string_encode(gc, msg, NULL);
-			conv_msg = gaim_markup_strip_html(tmp);
+			conv_msg = purple_markup_strip_html(tmp);
 			g_free(tmp);
 		} else {
 			if ((msg == NULL) || (*msg == '\0'))
 				msg = _("Away");
 			tmp = yahoo_string_encode(gc, msg, NULL);
-			conv_msg = gaim_markup_strip_html(tmp);
+			conv_msg = purple_markup_strip_html(tmp);
 			g_free(tmp);
 		}
 	}
@@ -3381,9 +3381,9 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 
 	g_free(conv_msg);
 
-	if (gaim_presence_is_idle(presence))
+	if (purple_presence_is_idle(presence))
 		yahoo_packet_hash_str(pkt, 47, "2");
-	else if (!gaim_status_is_available(status))
+	else if (!purple_status_is_available(status))
 		yahoo_packet_hash_str(pkt, 47, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
@@ -3399,18 +3399,18 @@ static void yahoo_set_status(GaimAccount *account, GaimStatus *status)
 	}
 }
 
-static void yahoo_set_idle(GaimConnection *gc, int idle)
+static void yahoo_set_idle(PurpleConnection *gc, int idle)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = NULL;
 	char *msg = NULL, *msg2 = NULL;
-	GaimStatus *status = NULL;
+	PurpleStatus *status = NULL;
 
 	if (idle && yd->current_status != YAHOO_STATUS_CUSTOM)
 		yd->current_status = YAHOO_STATUS_IDLE;
 	else if (!idle && yd->current_status == YAHOO_STATUS_IDLE) {
-		status = gaim_presence_get_active_status(gaim_account_get_presence(gaim_connection_get_account(gc)));
-		yd->current_status = get_yahoo_status_from_gaim_status(status);
+		status = purple_presence_get_active_status(purple_account_get_presence(purple_connection_get_account(gc)));
+		yd->current_status = get_yahoo_status_from_purple_status(status);
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_Y6_STATUS_UPDATE, YAHOO_STATUS_AVAILABLE, 0);
@@ -3419,14 +3419,14 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 	if (yd->current_status == YAHOO_STATUS_CUSTOM) {
 		const char *tmp;
 		if (status == NULL)
-			status = gaim_presence_get_active_status(gaim_account_get_presence(gaim_connection_get_account(gc)));
-		tmp = gaim_status_get_attr_string(status, "message");
+			status = purple_presence_get_active_status(purple_account_get_presence(purple_connection_get_account(gc)));
+		tmp = purple_status_get_attr_string(status, "message");
 		if (tmp != NULL) {
 			msg = yahoo_string_encode(gc, tmp, NULL);
-			msg2 = gaim_markup_strip_html(msg);
+			msg2 = purple_markup_strip_html(msg);
 			yahoo_packet_hash_str(pkt, 19, msg2);
 		} else {
-			/* get_yahoo_status_from_gaim_status() returns YAHOO_STATUS_CUSTOM for
+			/* get_yahoo_status_from_purple_status() returns YAHOO_STATUS_CUSTOM for
 			 * the generic away state (YAHOO_STATUS_TYPE_AWAY) with no message */
 			yahoo_packet_hash_str(pkt, 19, _("Away"));
 		}
@@ -3436,7 +3436,7 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 
 	if (idle)
 		yahoo_packet_hash_str(pkt, 47, "2");
-	else if (!gaim_presence_is_available(gaim_account_get_presence(gaim_connection_get_account(gc))))
+	else if (!purple_presence_is_available(purple_account_get_presence(purple_connection_get_account(gc))))
 		yahoo_packet_hash_str(pkt, 47, "1");
 
 	yahoo_packet_send_and_free(pkt, yd);
@@ -3445,64 +3445,64 @@ static void yahoo_set_idle(GaimConnection *gc, int idle)
 	g_free(msg2);
 }
 
-static GList *yahoo_status_types(GaimAccount *account)
+static GList *yahoo_status_types(PurpleAccount *account)
 {
-	GaimStatusType *type;
+	PurpleStatusType *type;
 	GList *types = NULL;
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AVAILABLE, YAHOO_STATUS_TYPE_AVAILABLE,
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AVAILABLE, YAHOO_STATUS_TYPE_AVAILABLE,
 	                                       NULL, TRUE, TRUE, FALSE,
 	                                       "message", _("Message"),
-	                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
+	                                       purple_value_new(PURPLE_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_with_attrs(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_AWAY,
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_AWAY, YAHOO_STATUS_TYPE_AWAY,
 	                                       NULL, TRUE, TRUE, FALSE,
 	                                       "message", _("Message"),
-	                                       gaim_value_new(GAIM_TYPE_STRING), NULL);
+	                                       purple_value_new(PURPLE_TYPE_STRING), NULL);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_BRB, _("Be Right Back"), TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_AWAY, YAHOO_STATUS_TYPE_BRB, _("Be Right Back"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_UNAVAILABLE, YAHOO_STATUS_TYPE_BUSY, _("Busy"), TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_UNAVAILABLE, YAHOO_STATUS_TYPE_BUSY, _("Busy"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATHOME, _("Not at Home"), TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATHOME, _("Not at Home"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATDESK, _("Not at Desk"), TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTATDESK, _("Not at Desk"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTINOFFICE, _("Not in Office"), TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_AWAY, YAHOO_STATUS_TYPE_NOTINOFFICE, _("Not in Office"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_UNAVAILABLE, YAHOO_STATUS_TYPE_ONPHONE, _("On the Phone"), TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_UNAVAILABLE, YAHOO_STATUS_TYPE_ONPHONE, _("On the Phone"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_EXTENDED_AWAY, YAHOO_STATUS_TYPE_ONVACATION, _("On Vacation"), TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_EXTENDED_AWAY, YAHOO_STATUS_TYPE_ONVACATION, _("On Vacation"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_OUTTOLUNCH, _("Out to Lunch"), TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_AWAY, YAHOO_STATUS_TYPE_OUTTOLUNCH, _("Out to Lunch"), TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_AWAY, YAHOO_STATUS_TYPE_STEPPEDOUT, _("Stepped Out"), TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_AWAY, YAHOO_STATUS_TYPE_STEPPEDOUT, _("Stepped Out"), TRUE);
 	types = g_list_append(types, type);
 
 
-	type = gaim_status_type_new(GAIM_STATUS_INVISIBLE, YAHOO_STATUS_TYPE_INVISIBLE, NULL, TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_INVISIBLE, YAHOO_STATUS_TYPE_INVISIBLE, NULL, TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new(GAIM_STATUS_OFFLINE, YAHOO_STATUS_TYPE_OFFLINE, NULL, TRUE);
+	type = purple_status_type_new(PURPLE_STATUS_OFFLINE, YAHOO_STATUS_TYPE_OFFLINE, NULL, TRUE);
 	types = g_list_append(types, type);
 
-	type = gaim_status_type_new_full(GAIM_STATUS_MOBILE, YAHOO_STATUS_TYPE_MOBILE, NULL, FALSE, FALSE, TRUE);
+	type = purple_status_type_new_full(PURPLE_STATUS_MOBILE, YAHOO_STATUS_TYPE_MOBILE, NULL, FALSE, FALSE, TRUE);
 	types = g_list_append(types, type);
 
 	return types;
 }
 
-static void yahoo_keepalive(GaimConnection *gc)
+static void yahoo_keepalive(PurpleConnection *gc)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt = yahoo_packet_new(YAHOO_SERVICE_PING, YAHOO_STATUS_AVAILABLE, 0);
@@ -3517,29 +3517,29 @@ static void yahoo_keepalive(GaimConnection *gc)
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_CHATPING, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash_str(pkt, 109, gaim_connection_get_display_name(gc));
+	yahoo_packet_hash_str(pkt, 109, purple_connection_get_display_name(gc));
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-/* XXX - What's the deal with GaimGroup *foo? */
-static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *foo)
+/* XXX - What's the deal with PurpleGroup *foo? */
+static void yahoo_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *foo)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
-	GaimGroup *g;
+	PurpleGroup *g;
 	char *group = NULL;
 	char *group2 = NULL;
 
 	if (!yd->logged_in)
 		return;
 
-	if (!yahoo_privacy_check(gc, gaim_buddy_get_name(buddy)))
+	if (!yahoo_privacy_check(gc, purple_buddy_get_name(buddy)))
 		return;
 
 	if (foo)
 		group = foo->name;
 	if (!group) {
-		g = gaim_buddy_get_group(buddy);
+		g = purple_buddy_get_group(buddy);
 		if (g)
 			group = g->name;
 		else
@@ -3548,28 +3548,28 @@ static void yahoo_add_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *foo
 
 	group2 = yahoo_string_encode(gc, group, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssss", 1, gaim_connection_get_display_name(gc),
+	yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc),
 	                  7, buddy->name, 65, group2, 14, "");
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(group2);
 }
 
-static void yahoo_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *group)
+static void yahoo_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
         struct yahoo_packet *pkt;
 	GSList *buddies, *l;
-	GaimGroup *g;
+	PurpleGroup *g;
 	gboolean remove = TRUE;
 	char *cg;
 
 	if (!(yahoo_friend_find(gc, buddy->name)))
 		return;
 
-	buddies = gaim_find_buddies(gaim_connection_get_account(gc), buddy->name);
+	buddies = purple_find_buddies(purple_connection_get_account(gc), buddy->name);
 	for (l = buddies; l; l = l->next) {
-		g = gaim_buddy_get_group(l->data);
-		if (gaim_utf8_strcasecmp(group->name, g->name)) {
+		g = purple_buddy_get_group(l->data);
+		if (purple_utf8_strcasecmp(group->name, g->name)) {
 			remove = FALSE;
 			break;
 		}
@@ -3582,13 +3582,13 @@ static void yahoo_remove_buddy(GaimConnection *gc, GaimBuddy *buddy, GaimGroup *
 
 	cg = yahoo_string_encode(gc, group->name, NULL);
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc),
+	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
 	                  7, buddy->name, 65, cg);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(cg);
 }
 
-static void yahoo_add_deny(GaimConnection *gc, const char *who) {
+static void yahoo_add_deny(PurpleConnection *gc, const char *who) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
 
@@ -3603,12 +3603,12 @@ static void yahoo_add_deny(GaimConnection *gc, const char *who) {
 		return;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc),
+	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
 	                  7, who, 13, "1");
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-static void yahoo_rem_deny(GaimConnection *gc, const char *who) {
+static void yahoo_rem_deny(PurpleConnection *gc, const char *who) {
 	struct yahoo_data *yd = (struct yahoo_data *)gc->proto_data;
 	struct yahoo_packet *pkt;
 
@@ -3619,49 +3619,49 @@ static void yahoo_rem_deny(GaimConnection *gc, const char *who) {
 		return;
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_IGNORECONTACT, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc), 7, who, 13, "2");
+	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 13, "2");
 	yahoo_packet_send_and_free(pkt, yd);
 }
 
-static void yahoo_set_permit_deny(GaimConnection *gc) {
-	GaimAccount *acct;
+static void yahoo_set_permit_deny(PurpleConnection *gc) {
+	PurpleAccount *acct;
 	GSList *deny;
 
 	acct = gc->account;
 
 	switch (acct->perm_deny) {
 		/* privacy 1 */
-		case GAIM_PRIVACY_ALLOW_ALL:
+		case PURPLE_PRIVACY_ALLOW_ALL:
 			for (deny = acct->deny;deny;deny = deny->next)
 				yahoo_rem_deny(gc, deny->data);
 			break;
 		/* privacy 3 */
-		case GAIM_PRIVACY_ALLOW_USERS:
+		case PURPLE_PRIVACY_ALLOW_USERS:
 			for (deny = acct->deny;deny;deny = deny->next)
 				yahoo_rem_deny(gc, deny->data);
 			break;
 		/* privacy 5 */
-		case GAIM_PRIVACY_ALLOW_BUDDYLIST:
+		case PURPLE_PRIVACY_ALLOW_BUDDYLIST:
 		/* privacy 4 */
-		case GAIM_PRIVACY_DENY_USERS:
+		case PURPLE_PRIVACY_DENY_USERS:
 			for (deny = acct->deny;deny;deny = deny->next)
 				yahoo_add_deny(gc, deny->data);
 			break;
 		/* privacy 2 */
-		case GAIM_PRIVACY_DENY_ALL:
+		case PURPLE_PRIVACY_DENY_ALL:
 		default:
 			break;
 	}
 }
 
-static gboolean yahoo_unload_plugin(GaimPlugin *plugin)
+static gboolean yahoo_unload_plugin(PurplePlugin *plugin)
 {
 	yahoo_dest_colorht();
 
 	return TRUE;
 }
 
-static void yahoo_change_buddys_group(GaimConnection *gc, const char *who,
+static void yahoo_change_buddys_group(PurpleConnection *gc, const char *who,
 				   const char *old_group, const char *new_group)
 {
 	struct yahoo_data *yd = gc->proto_data;
@@ -3688,20 +3688,20 @@ static void yahoo_change_buddys_group(GaimConnection *gc, const char *who,
 
 	/* Step 1:  Add buddy to new group. */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_ADDBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "ssss", 1, gaim_connection_get_display_name(gc),
+	yahoo_packet_hash(pkt, "ssss", 1, purple_connection_get_display_name(gc),
 	                  7, who, 65, gpn, 14, "");
 	yahoo_packet_send_and_free(pkt, yd);
 
 	/* Step 2:  Remove buddy from old group */
 	pkt = yahoo_packet_new(YAHOO_SERVICE_REMBUDDY, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc), 7, who, 65, gpo);
+	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc), 7, who, 65, gpo);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(gpn);
 	g_free(gpo);
 }
 
-static void yahoo_rename_group(GaimConnection *gc, const char *old_name,
-							   GaimGroup *group, GList *moved_buddies)
+static void yahoo_rename_group(PurpleConnection *gc, const char *old_name,
+							   PurpleGroup *group, GList *moved_buddies)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
@@ -3716,7 +3716,7 @@ static void yahoo_rename_group(GaimConnection *gc, const char *old_name,
 	}
 
 	pkt = yahoo_packet_new(YAHOO_SERVICE_GROUPRENAME, YAHOO_STATUS_AVAILABLE, 0);
-	yahoo_packet_hash(pkt, "sss", 1, gaim_connection_get_display_name(gc),
+	yahoo_packet_hash(pkt, "sss", 1, purple_connection_get_display_name(gc),
 	                  65, gpo, 67, gpn);
 	yahoo_packet_send_and_free(pkt, yd);
 	g_free(gpn);
@@ -3725,40 +3725,40 @@ static void yahoo_rename_group(GaimConnection *gc, const char *old_name,
 
 /********************************* Commands **********************************/
 
-static GaimCmdRet
-yahoogaim_cmd_buzz(GaimConversation *c, const gchar *cmd, gchar **args, gchar **error, void *data) {
+static PurpleCmdRet
+yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gchar **error, void *data) {
 
-	GaimAccount *account = gaim_conversation_get_account(c);
-	const char *username = gaim_account_get_username(account);
+	PurpleAccount *account = purple_conversation_get_account(c);
+	const char *username = purple_account_get_username(account);
 
 	if (*args && args[0])
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
-	gaim_debug(GAIM_DEBUG_INFO, "yahoo",
+	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
 	           "Sending <ding> on account %s to buddy %s.\n", username, c->name);
-	gaim_conv_im_send(GAIM_CONV_IM(c), "<ding>");
-	gaim_conv_im_write(GAIM_CONV_IM(c), "", _("Buzz!!"), GAIM_MESSAGE_NICK|GAIM_MESSAGE_SEND, time(NULL));
-	return GAIM_CMD_RET_OK;
+	purple_conv_im_send(PURPLE_CONV_IM(c), "<ding>");
+	purple_conv_im_write(PURPLE_CONV_IM(c), "", _("Buzz!!"), PURPLE_MESSAGE_NICK|PURPLE_MESSAGE_SEND, time(NULL));
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimPlugin *my_protocol = NULL;
+static PurplePlugin *my_protocol = NULL;
 
-static GaimCmdRet
-yahoogaim_cmd_chat_join(GaimConversation *conv, const char *cmd,
+static PurpleCmdRet
+yahoopurple_cmd_chat_join(PurpleConversation *conv, const char *cmd,
                         char **args, char **error, void *data)
 {
 	GHashTable *comp;
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	struct yahoo_data *yd;
 	int id;
 
 	if (!args || !args[0])
-		return GAIM_CMD_RET_FAILED;
+		return PURPLE_CMD_RET_FAILED;
 
-	gc = gaim_conversation_get_gc(conv);
+	gc = purple_conversation_get_gc(conv);
 	yd = gc->proto_data;
 	id = yd->conf_id;
-	gaim_debug(GAIM_DEBUG_INFO, "yahoo",
+	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
 	           "Trying to join %s \n", args[0]);
 
 	comp = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
@@ -3769,63 +3769,63 @@ yahoogaim_cmd_chat_join(GaimConversation *conv, const char *cmd,
 	yahoo_c_join(gc, comp);
 
 	g_hash_table_destroy(comp);
-	return GAIM_CMD_RET_OK;
+	return PURPLE_CMD_RET_OK;
 }
 
-static GaimCmdRet
-yahoogaim_cmd_chat_list(GaimConversation *conv, const char *cmd,
+static PurpleCmdRet
+yahoopurple_cmd_chat_list(PurpleConversation *conv, const char *cmd,
                         char **args, char **error, void *data)
 {
-	GaimAccount *account = gaim_conversation_get_account(conv);
+	PurpleAccount *account = purple_conversation_get_account(conv);
 	if (*args && args[0])
-		return GAIM_CMD_RET_FAILED;
-	gaim_roomlist_show_with_account(account);
-	return GAIM_CMD_RET_OK;
+		return PURPLE_CMD_RET_FAILED;
+	purple_roomlist_show_with_account(account);
+	return PURPLE_CMD_RET_OK;
 }
 
-static gboolean yahoo_offline_message(const GaimBuddy *buddy)
+static gboolean yahoo_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
 }
 
 /************************** Plugin Initialization ****************************/
 static void
-yahoogaim_register_commands(void)
+yahoopurple_register_commands(void)
 {
-	gaim_cmd_register("join", "s", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
-	                  GAIM_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-yahoo", yahoogaim_cmd_chat_join,
+	purple_cmd_register("join", "s", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
+	                  PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoopurple_cmd_chat_join,
 	                  _("join &lt;room&gt;:  Join a chat room on the Yahoo network"), NULL);
-	gaim_cmd_register("list", "", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_CHAT |
-	                  GAIM_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-yahoo", yahoogaim_cmd_chat_list,
+	purple_cmd_register("list", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_CHAT |
+	                  PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoopurple_cmd_chat_list,
 	                  _("list: List rooms on the Yahoo network"), NULL);
-	gaim_cmd_register("buzz", "", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-yahoo", yahoogaim_cmd_buzz,
+	purple_cmd_register("buzz", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoopurple_cmd_buzz,
 	                  _("buzz: Buzz a user to get their attention"), NULL);
-	gaim_cmd_register("doodle", "", GAIM_CMD_P_PRPL,
-	                  GAIM_CMD_FLAG_IM | GAIM_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-yahoo", yahoo_doodle_gaim_cmd_start,
+	purple_cmd_register("doodle", "", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-yahoo", yahoo_doodle_purple_cmd_start,
 	                 _("doodle: Request user to start a Doodle session"), NULL);
 }
 
-static GaimAccount *find_acct(const char *prpl, const char *acct_id)
+static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
 {
-	GaimAccount *acct = NULL;
+	PurpleAccount *acct = NULL;
 
 	/* If we have a specific acct, use it */
 	if (acct_id) {
-		acct = gaim_accounts_find(acct_id, prpl);
-		if (acct && !gaim_account_is_connected(acct))
+		acct = purple_accounts_find(acct_id, prpl);
+		if (acct && !purple_account_is_connected(acct))
 			acct = NULL;
 	} else { /* Otherwise find an active account for the protocol */
-		GList *l = gaim_accounts_get_all();
+		GList *l = purple_accounts_get_all();
 		while (l) {
-			if (!strcmp(prpl, gaim_account_get_protocol_id(l->data))
-					&& gaim_account_is_connected(l->data)) {
+			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
+					&& purple_account_is_connected(l->data)) {
 				acct = l->data;
 				break;
 			}
@@ -3850,12 +3850,12 @@ static void yahoo_find_uri_novalue_param(gpointer key, gpointer value, gpointer 
 static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable *params)
 {
 	char *acct_id = g_hash_table_lookup(params, "account");
-	GaimAccount *acct;
+	PurpleAccount *acct;
 
 	if (g_ascii_strcasecmp(proto, "ymsgr"))
 		return FALSE;
 
-	acct = find_acct(gaim_plugin_get_id(my_protocol), acct_id);
+	acct = find_acct(purple_plugin_get_id(my_protocol), acct_id);
 
 	if (!acct)
 		return FALSE;
@@ -3867,21 +3867,21 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 		if (sname) {
 			char *message = g_hash_table_lookup(params, "m");
 
-			GaimConversation *conv = gaim_find_conversation_with_account(
-				GAIM_CONV_TYPE_IM, sname, acct);
+			PurpleConversation *conv = purple_find_conversation_with_account(
+				PURPLE_CONV_TYPE_IM, sname, acct);
 			if (conv == NULL)
-				conv = gaim_conversation_new(GAIM_CONV_TYPE_IM, acct, sname);
-			gaim_conversation_present(conv);
+				conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, acct, sname);
+			purple_conversation_present(conv);
 
 			if (message) {
 				/* Spaces are encoded as '+' */
 				g_strdelimit(message, "+", ' ');
-				gaim_conv_im_send(GAIM_CONV_IM(conv), message);
+				purple_conv_im_send(PURPLE_CONV_IM(conv), message);
 			}
 		}
 		/*else
 			**If pidgindialogs_im() was in the core, we could use it here.
-			 * It is all gaim_request_* based, but I'm not sure it really belongs in the core
+			 * It is all purple_request_* based, but I'm not sure it really belongs in the core
 			pidgindialogs_im();*/
 
 		return TRUE;
@@ -3894,10 +3894,10 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 			/* This is somewhat hacky, but the params aren't useful after this command */
 			g_hash_table_insert(params, g_strdup("room"), g_strdup(rname));
 			g_hash_table_insert(params, g_strdup("type"), g_strdup("Chat"));
-			serv_join_chat(gaim_account_get_connection(acct), params);
+			serv_join_chat(purple_account_get_connection(acct), params);
 		}
 		/*else
-			** Same as above (except that this would have to be re-written using gaim_request_*)
+			** Same as above (except that this would have to be re-written using purple_request_*)
 			pidgin_blist_joinchat_show(); */
 
 		return TRUE;
@@ -3906,14 +3906,14 @@ static gboolean yahoo_uri_handler(const char *proto, const char *cmd, GHashTable
 	else if (!g_ascii_strcasecmp(cmd, "AddFriend")) {
 		char *name = NULL;
 		g_hash_table_foreach(params, yahoo_find_uri_novalue_param, &name);
-		gaim_blist_request_add_buddy(acct, name, NULL, NULL);
+		purple_blist_request_add_buddy(acct, name, NULL, NULL);
 		return TRUE;
 	}
 
 	return FALSE;
 }
 
-static GaimWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
+static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 {
 	yahoo_doodle_start,
 	yahoo_doodle_end,
@@ -3925,12 +3925,12 @@ static GaimWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 	yahoo_doodle_clear
 };
 
-static GaimPluginProtocolInfo prpl_info =
+static PurplePluginProtocolInfo prpl_info =
 {
 	OPT_PROTO_MAIL_CHECK | OPT_PROTO_CHAT_TOPIC,
 	NULL, /* user_splits */
 	NULL, /* protocol_options */
-	{"png,gif,jpeg", 96, 96, 96, 96, 0, GAIM_ICON_SCALE_SEND},
+	{"png,gif,jpeg", 96, 96, 96, 96, 0, PURPLE_ICON_SCALE_SEND},
 	yahoo_list_icon,
 	yahoo_list_emblem,
 	yahoo_status_text,
@@ -3973,10 +3973,10 @@ static GaimPluginProtocolInfo prpl_info =
 	yahoo_rename_group,
 	NULL, /* buddy_free */
 	NULL, /* convo_closed */
-	gaim_normalize_nocase, /* normalize */
+	purple_normalize_nocase, /* normalize */
 	yahoo_set_buddy_icon,
-	NULL, /* void (*remove_group)(GaimConnection *gc, const char *group);*/
-	NULL, /* char *(*get_cb_real_name)(GaimConnection *gc, int id, const char *who); */
+	NULL, /* void (*remove_group)(PurpleConnection *gc, const char *group);*/
+	NULL, /* char *(*get_cb_real_name)(PurpleConnection *gc, int id, const char *who); */
 	NULL, /* set_chat_topic */
 	NULL, /* find_blist_chat */
 	yahoo_roomlist_get_list,
@@ -3991,16 +3991,16 @@ static GaimPluginProtocolInfo prpl_info =
 	NULL, /* roomlist_room_serialize */
 };
 
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 	"prpl-yahoo",                                     /**< id             */
 	"Yahoo",	                                      /**< name           */
 	VERSION,                                          /**< version        */
@@ -4009,7 +4009,7 @@ static GaimPluginInfo info =
 	                                                  /**  description    */
 	N_("Yahoo Protocol Plugin"),
 	NULL,                                             /**< author         */
-	GAIM_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                     /**< homepage       */
 	NULL,                                             /**< load           */
 	yahoo_unload_plugin,                              /**< unload         */
 	NULL,                                             /**< destroy        */
@@ -4020,58 +4020,58 @@ static GaimPluginInfo info =
 };
 
 static void
-init_plugin(GaimPlugin *plugin)
+init_plugin(PurplePlugin *plugin)
 {
-	GaimAccountOption *option;
+	PurpleAccountOption *option;
 
-	option = gaim_account_option_bool_new(_("Yahoo Japan"), "yahoojp", FALSE);
+	option = purple_account_option_bool_new(_("Yahoo Japan"), "yahoojp", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Pager server"), "server", YAHOO_PAGER_HOST);
+	option = purple_account_option_string_new(_("Pager server"), "server", YAHOO_PAGER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Japan Pager server"), "serverjp", YAHOOJP_PAGER_HOST);
+	option = purple_account_option_string_new(_("Japan Pager server"), "serverjp", YAHOOJP_PAGER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
+	option = purple_account_option_int_new(_("Pager port"), "port", YAHOO_PAGER_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("File transfer server"), "xfer_host", YAHOO_XFER_HOST);
+	option = purple_account_option_string_new(_("File transfer server"), "xfer_host", YAHOO_XFER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Japan file transfer server"), "xferjp_host", YAHOOJP_XFER_HOST);
+	option = purple_account_option_string_new(_("Japan file transfer server"), "xferjp_host", YAHOOJP_XFER_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_int_new(_("File transfer port"), "xfer_port", YAHOO_XFER_PORT);
+	option = purple_account_option_int_new(_("File transfer port"), "xfer_port", YAHOO_XFER_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOO_ROOMLIST_LOCALE);
+	option = purple_account_option_string_new(_("Chat room locale"), "room_list_locale", YAHOO_ROOMLIST_LOCALE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
+	option = purple_account_option_bool_new(_("Ignore conference and chatroom invitations"), "ignore_invites", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Encoding"), "local_charset", "ISO-8859-1");
+	option = purple_account_option_string_new(_("Encoding"), "local_charset", "ISO-8859-1");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 
 #if 0
-	option = gaim_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
+	option = purple_account_option_string_new(_("Chat room list URL"), "room_list", YAHOO_ROOMLIST_URL);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_string_new(_("Yahoo Chat server"), "ycht-server", YAHOO_YCHT_HOST);
+	option = purple_account_option_string_new(_("Yahoo Chat server"), "ycht-server", YAHOO_YCHT_HOST);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = gaim_account_option_int_new(_("Yahoo Chat port"), "ycht-port", YAHOO_YCHT_PORT);
+	option = purple_account_option_int_new(_("Yahoo Chat port"), "ycht-port", YAHOO_YCHT_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 #endif
 
 	my_protocol = plugin;
-	yahoogaim_register_commands();
+	yahoopurple_register_commands();
 	yahoo_init_colorht();
 
-	gaim_signal_connect(gaim_get_core(), "uri-handler", plugin,
-		GAIM_CALLBACK(yahoo_uri_handler), NULL);
+	purple_signal_connect(purple_get_core(), "uri-handler", plugin,
+		PURPLE_CALLBACK(yahoo_uri_handler), NULL);
 }
 
-GAIM_INIT_PLUGIN(yahoo, init_plugin, info);
+PURPLE_INIT_PLUGIN(yahoo, init_plugin, info);

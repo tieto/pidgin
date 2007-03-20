@@ -1,9 +1,9 @@
 /**
  * @file im.c
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -157,11 +157,11 @@ guint8 *qq_get_send_im_tail(const gchar *font_color,
 
 	if (font_color) {
 		s1 = g_strndup(font_color + 1, 6);
-		/* Henry: maybe this is a bug of gaim, the string should have
+		/* Henry: maybe this is a bug of purple, the string should have
 		 * the length of odd number @_@
 		 */
 		s2 = g_strdup_printf("%sH", s1);
-		rgb = gaim_base16_decode(s2, NULL);
+		rgb = purple_base16_decode(s2, NULL);
 		g_free(s1);
 		g_free(s2);
 		memcpy(send_im_tail + 2, rgb, 3);
@@ -211,7 +211,7 @@ static const gchar *qq_get_recv_im_type_str(gint type)
 
 /* when we receive a message,
  * we send an ACK which is the first 16 bytes of incoming packet */
-static void _qq_send_packet_recv_im_ack(GaimConnection *gc, guint16 seq, guint8 *data)
+static void _qq_send_packet_recv_im_ack(PurpleConnection *gc, guint16 seq, guint8 *data)
 {
 	qq_send_cmd(gc, QQ_CMD_RECV_IM, FALSE, seq, FALSE, data, 16);
 }
@@ -236,7 +236,7 @@ static gint _qq_normal_im_common_read(guint8 *data, guint8 **cursor, gint len, q
 	bytes += read_packet_w(data, cursor, len, &(common->normal_im_type));
 
 	if (bytes != 28) {	/* read common place fail */
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Expect 28 bytes, read %d bytes\n", bytes);
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Expect 28 bytes, read %d bytes\n", bytes);
 		return -1;
 	}
 
@@ -245,11 +245,11 @@ static gint _qq_normal_im_common_read(guint8 *data, guint8 **cursor, gint len, q
 
 /* process received normal text IM */
 static void _qq_process_recv_normal_im_text
-    (guint8 *data, guint8 **cursor, gint len, qq_recv_normal_im_common *common, GaimConnection *gc)
+    (guint8 *data, guint8 **cursor, gint len, qq_recv_normal_im_common *common, PurpleConnection *gc)
 {
-	guint16 gaim_msg_type;
+	guint16 purple_msg_type;
 	gchar *name;
-	gchar *msg_with_gaim_smiley;
+	gchar *msg_with_purple_smiley;
 	gchar *msg_utf8_encoded;
 	qq_data *qd;
 	qq_recv_normal_im_text *im_text;
@@ -259,7 +259,7 @@ static void _qq_process_recv_normal_im_text
 
 	/* now it is QQ_NORMAL_IM_TEXT */
 	if (*cursor >= (data + len - 1)) {
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received normal IM text is empty\n");
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received normal IM text is empty\n");
 		return;
 	} else
 		im_text = g_newa(qq_recv_normal_im_text, 1);
@@ -298,25 +298,25 @@ static void _qq_process_recv_normal_im_text
 	}			/* if im_text->msg_type */
 	_qq_show_packet("QQ_MESG recv", data, *cursor - data);
 
-	name = uid_to_gaim_name(common->sender_uid);
-	if (gaim_find_buddy(gc->account, name) == NULL)
+	name = uid_to_purple_name(common->sender_uid);
+	if (purple_find_buddy(gc->account, name) == NULL)
 		qq_add_buddy_by_recv_packet(gc, common->sender_uid, FALSE, TRUE);
 
-	gaim_msg_type = (im_text->msg_type == QQ_IM_AUTO_REPLY) ? GAIM_MESSAGE_AUTO_RESP : 0;
+	purple_msg_type = (im_text->msg_type == QQ_IM_AUTO_REPLY) ? PURPLE_MESSAGE_AUTO_RESP : 0;
 
-	msg_with_gaim_smiley = qq_smiley_to_gaim(im_text->msg);
+	msg_with_purple_smiley = qq_smiley_to_purple(im_text->msg);
 	msg_utf8_encoded = im_text->is_there_font_attr ?
-	    qq_encode_to_gaim(im_text->font_attr,
+	    qq_encode_to_purple(im_text->font_attr,
 			      im_text->font_attr_len,
-			      msg_with_gaim_smiley) : qq_to_utf8(msg_with_gaim_smiley, QQ_CHARSET_DEFAULT);
+			      msg_with_purple_smiley) : qq_to_utf8(msg_with_purple_smiley, QQ_CHARSET_DEFAULT);
 
-	/* send encoded to gaim, note that we use im_text->send_time,
+	/* send encoded to purple, note that we use im_text->send_time,
 	 * not the time we receive the message
 	 * as it may have been delayed when I am not online. */
-	serv_got_im(gc, name, msg_utf8_encoded, gaim_msg_type, (time_t) im_text->send_time);
+	serv_got_im(gc, name, msg_utf8_encoded, purple_msg_type, (time_t) im_text->send_time);
 
 	g_free(msg_utf8_encoded);
-	g_free(msg_with_gaim_smiley);
+	g_free(msg_with_purple_smiley);
 	g_free(name);
 	g_free(im_text->msg);
 	if (im_text->is_there_font_attr)
@@ -324,7 +324,7 @@ static void _qq_process_recv_normal_im_text
 }
 
 /* it is a normal IM, maybe text or video request */
-static void _qq_process_recv_normal_im(guint8 *data, guint8 **cursor, gint len, GaimConnection *gc)
+static void _qq_process_recv_normal_im(guint8 *data, guint8 **cursor, gint len, PurpleConnection *gc)
 {
 	gint bytes;
 	qq_recv_normal_im_common *common;
@@ -334,7 +334,7 @@ static void _qq_process_recv_normal_im(guint8 *data, guint8 **cursor, gint len, 
 	g_return_if_fail (data != NULL && len != 0);
 
 	if (*cursor >= (data + len - 1)) {
-		gaim_debug (GAIM_DEBUG_WARNING, "QQ",
+		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
 			    "Received normal IM is empty\n");
 		return;
 	}
@@ -343,14 +343,14 @@ static void _qq_process_recv_normal_im(guint8 *data, guint8 **cursor, gint len, 
 
 	bytes = _qq_normal_im_common_read (data, cursor, len, common);
 	if (bytes < 0) {
-		gaim_debug (GAIM_DEBUG_ERROR, "QQ",
+		purple_debug (PURPLE_DEBUG_ERROR, "QQ",
 			    "Fail read the common part of normal IM\n");
 		return;
 	}
 
 	switch (common->normal_im_type) {
 	case QQ_NORMAL_IM_TEXT:
-		gaim_debug (GAIM_DEBUG_INFO,
+		purple_debug (PURPLE_DEBUG_INFO,
 			    "QQ",
 			    "Normal IM, text type:\n [%d] => [%d], src: %s\n",
 			    common->sender_uid, common->receiver_uid,
@@ -384,11 +384,11 @@ static void _qq_process_recv_normal_im(guint8 *data, guint8 **cursor, gint len, 
 		im_unprocessed->unknown = *cursor;
 		im_unprocessed->length = data + len - *cursor;
 		/* a simple process here, maybe more later */
-		gaim_debug (GAIM_DEBUG_WARNING, "QQ",
+		purple_debug (PURPLE_DEBUG_WARNING, "QQ",
 			    "Normal IM, unprocessed type [0x%04x]\n",
 			    common->normal_im_type);
 	       	hex_dump = hex_dump_to_str(im_unprocessed->unknown, im_unprocessed->length);
-		gaim_debug (GAIM_DEBUG_WARNING, "QQ", "Dump unknown part.\n%s", hex_dump);
+		purple_debug (PURPLE_DEBUG_WARNING, "QQ", "Dump unknown part.\n%s", hex_dump);
 		g_free(hex_dump);
 		g_free (common->session_md5);
 		return;
@@ -398,7 +398,7 @@ static void _qq_process_recv_normal_im(guint8 *data, guint8 **cursor, gint len, 
 }
 
 /* process im from system administrator */
-static void _qq_process_recv_sys_im(guint8 *data, guint8 **cursor, gint data_len, GaimConnection *gc)
+static void _qq_process_recv_sys_im(guint8 *data, guint8 **cursor, gint data_len, PurpleConnection *gc)
 {
 	gint len;
 	guint8 reply;
@@ -407,7 +407,7 @@ static void _qq_process_recv_sys_im(guint8 *data, guint8 **cursor, gint data_len
 	g_return_if_fail(data != NULL && data_len != 0);
 
 	if (*cursor >= (data + data_len - 1)) {
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Received sys IM is empty\n");
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Received sys IM is empty\n");
 		return;
 	}
 
@@ -418,13 +418,13 @@ static void _qq_process_recv_sys_im(guint8 *data, guint8 **cursor, gint data_len
 
 	reply = strtol(segments[0], NULL, 10);
 	if (reply == QQ_RECV_SYS_IM_KICK_OUT)
-		gaim_debug(GAIM_DEBUG_WARNING, "QQ", "We are kicked out by QQ server\n");
+		purple_debug(PURPLE_DEBUG_WARNING, "QQ", "We are kicked out by QQ server\n");
 	msg_utf8 = qq_to_utf8(segments[1], QQ_CHARSET_DEFAULT);
-	gaim_notify_warning(gc, NULL, _("System Message"), msg_utf8);
+	purple_notify_warning(gc, NULL, _("System Message"), msg_utf8);
 }
 
 /* send an IM to to_uid */
-void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type)
+void qq_send_packet_im(PurpleConnection *gc, guint32 to_uid, gchar *msg, gint type)
 {
 	qq_data *qd;
 	guint8 *cursor, *raw_data, *send_im_tail;
@@ -442,7 +442,7 @@ void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type
 	normal_im_type = QQ_NORMAL_IM_TEXT;
 
 	last = msg;
-	while (gaim_markup_find_tag("font", last, &start, &end, &attribs)) {
+	while (purple_markup_find_tag("font", last, &start, &end, &attribs)) {
 		tmp = g_datalist_get_data(&attribs, "size");
 		if (tmp) {
 			if (font_size)
@@ -466,23 +466,23 @@ void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type
 		last = end + 1;
 	}
 
-	if (gaim_markup_find_tag("b", msg, &start, &end, &attribs)) {
+	if (purple_markup_find_tag("b", msg, &start, &end, &attribs)) {
 		is_bold = TRUE;
 		g_datalist_clear(&attribs);
 	}
 
-	if (gaim_markup_find_tag("i", msg, &start, &end, &attribs)) {
+	if (purple_markup_find_tag("i", msg, &start, &end, &attribs)) {
 		is_italic = TRUE;
 		g_datalist_clear(&attribs);
 	}
 
-	if (gaim_markup_find_tag("u", msg, &start, &end, &attribs)) {
+	if (purple_markup_find_tag("u", msg, &start, &end, &attribs)) {
 		is_underline = TRUE;
 		g_datalist_clear(&attribs);
 	}
 
-	gaim_debug(GAIM_DEBUG_INFO, "QQ_MESG", "send mesg: %s\n", msg);
-	msg_filtered = gaim_markup_strip_html(msg);
+	purple_debug(PURPLE_DEBUG_INFO, "QQ_MESG", "send mesg: %s\n", msg);
+	msg_filtered = purple_markup_strip_html(msg);
 	msg_len = strlen(msg_filtered);
 	now = time(NULL);
 
@@ -535,7 +535,7 @@ void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type
 	if (bytes == raw_len)	/* create packet OK */
 		qq_send_cmd(gc, QQ_CMD_SEND_IM, TRUE, 0, TRUE, raw_data, cursor - raw_data);
 	else
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 			   "Fail creating send_im packet, expect %d bytes, build %d bytes\n", raw_len, bytes);
 
 	if (font_color)
@@ -547,7 +547,7 @@ void qq_send_packet_im(GaimConnection *gc, guint32 to_uid, gchar *msg, gint type
 }
 
 /* parse the reply to send_im */
-void qq_process_send_im_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
+void qq_process_send_im_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint len;
@@ -563,19 +563,19 @@ void qq_process_send_im_reply(guint8 *buf, gint buf_len, GaimConnection *gc)
 		cursor = data;
 		read_packet_b(data, &cursor, len, &reply);
 		if (reply != QQ_SEND_IM_REPLY_OK) {
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ", "Send IM fail\n");
-			gaim_notify_error(gc, _("Server ACK"), _("Send IM fail\n"), NULL);
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Send IM fail\n");
+			purple_notify_error(gc, _("Server ACK"), _("Send IM fail\n"), NULL);
 		}
 		else
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "IM ACK OK\n");
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "IM ACK OK\n");
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt send im reply\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt send im reply\n");
 	}
 }
 
 /* I receive a message, mainly it is text msg,
  * but we need to proess other types (group etc) */
-void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *gc)
+void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc)
 {
 	qq_data *qd;
 	gint len, bytes;
@@ -590,7 +590,7 @@ void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *
 
 	if (qq_crypt(DECRYPT, buf, buf_len, qd->session_key, data, &len)) {
 		if (len < 16) {	/* we need to ack with the first 16 bytes */
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "IM is too short\n");
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "IM is too short\n");
 			return;
 		} else
 			_qq_send_packet_recv_im_ack(gc, seq, data);
@@ -607,79 +607,79 @@ void qq_process_recv_im(guint8 *buf, gint buf_len, guint16 seq, GaimConnection *
 		bytes += read_packet_w(data, &cursor, len, &(im_header->im_type));
 
 		if (bytes != 20) {	/* length of im_header */
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ",
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ",
 				   "Fail read recv IM header, expect 20 bytes, read %d bytes\n", bytes);
 			return;
 		}
 
 		if (im_header->receiver_uid != qd->uid) {	/* should not happen */
-			gaim_debug(GAIM_DEBUG_ERROR, "QQ", "IM to [%d], NOT me\n", im_header->receiver_uid);
+			purple_debug(PURPLE_DEBUG_ERROR, "QQ", "IM to [%d], NOT me\n", im_header->receiver_uid);
 			return;
 		}
 
 		switch (im_header->im_type) {
 		case QQ_RECV_IM_TO_BUDDY:
-			gaim_debug(GAIM_DEBUG_INFO, "QQ",
+			purple_debug(PURPLE_DEBUG_INFO, "QQ",
 				   "IM from buddy [%d], I am in his/her buddy list\n", im_header->sender_uid);
 			_qq_process_recv_normal_im(data, &cursor, len, gc);
 			break;
 		case QQ_RECV_IM_TO_UNKNOWN:
-			gaim_debug(GAIM_DEBUG_INFO, "QQ",
+			purple_debug(PURPLE_DEBUG_INFO, "QQ",
 				   "IM from buddy [%d], I am a stranger to him/her\n", im_header->sender_uid);
 			_qq_process_recv_normal_im(data, &cursor, len, gc);
 			break;
 		case QQ_RECV_IM_UNKNOWN_QUN_IM:
 		case QQ_RECV_IM_TEMP_QUN_IM:
 		case QQ_RECV_IM_QUN_IM:
-			gaim_debug(GAIM_DEBUG_INFO, "QQ", "IM from group, internal_id [%d]\n", im_header->sender_uid);
+			purple_debug(PURPLE_DEBUG_INFO, "QQ", "IM from group, internal_id [%d]\n", im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id */
 			qq_process_recv_group_im(data, &cursor, len, im_header->sender_uid, gc, im_header->im_type);
 			break;
 		case QQ_RECV_IM_ADD_TO_QUN:
-			gaim_debug(GAIM_DEBUG_INFO, "QQ",
+			purple_debug(PURPLE_DEBUG_INFO, "QQ",
 				   "IM from group, added by group internal_id [%d]\n", im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id
 			 * we need this to create a dummy group and add to blist */
 			qq_process_recv_group_im_been_added(data, &cursor, len, im_header->sender_uid, gc);
 			break;
 		case QQ_RECV_IM_DEL_FROM_QUN:
-			gaim_debug(GAIM_DEBUG_INFO, "QQ",
+			purple_debug(PURPLE_DEBUG_INFO, "QQ",
 				   "IM from group, removed by group internal_ID [%d]\n", im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id */
 			qq_process_recv_group_im_been_removed(data, &cursor, len, im_header->sender_uid, gc);
 			break;
 		case QQ_RECV_IM_APPLY_ADD_TO_QUN:
-			gaim_debug(GAIM_DEBUG_INFO, "QQ",
+			purple_debug(PURPLE_DEBUG_INFO, "QQ",
 				   "IM from group, apply to join group internal_ID [%d]\n", im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id */
 			qq_process_recv_group_im_apply_join(data, &cursor, len, im_header->sender_uid, gc);
 			break;
 		case QQ_RECV_IM_APPROVE_APPLY_ADD_TO_QUN:
-			gaim_debug(GAIM_DEBUG_INFO, "QQ",
+			purple_debug(PURPLE_DEBUG_INFO, "QQ",
 				   "IM for group system info, approved by group internal_id [%d]\n",
 				   im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id */
 			qq_process_recv_group_im_been_approved(data, &cursor, len, im_header->sender_uid, gc);
 			break;
 		case QQ_RECV_IM_REJCT_APPLY_ADD_TO_QUN:
-			gaim_debug(GAIM_DEBUG_INFO, "QQ",
+			purple_debug(PURPLE_DEBUG_INFO, "QQ",
 				   "IM for group system info, rejected by group internal_id [%d]\n",
 				   im_header->sender_uid);
 			/* sender_uid is in fact internal_group_id */
 			qq_process_recv_group_im_been_rejected(data, &cursor, len, im_header->sender_uid, gc);
 			break;
 		case QQ_RECV_IM_SYS_NOTIFICATION:
-			gaim_debug(GAIM_DEBUG_INFO, "QQ",
+			purple_debug(PURPLE_DEBUG_INFO, "QQ",
 				   "IM from [%d], should be a system administrator\n", im_header->sender_uid);
 			_qq_process_recv_sys_im(data, &cursor, len, gc);
 			break;
 		default:
-			gaim_debug(GAIM_DEBUG_WARNING, "QQ",
+			purple_debug(PURPLE_DEBUG_WARNING, "QQ",
 				   "IM from [%d], [0x%02x] %s is not processed\n",
 				   im_header->sender_uid,
 				   im_header->im_type, qq_get_recv_im_type_str(im_header->im_type));
 		}
 	} else {
-		gaim_debug(GAIM_DEBUG_ERROR, "QQ", "Error decrypt rev im\n");
+		purple_debug(PURPLE_DEBUG_ERROR, "QQ", "Error decrypt rev im\n");
 	}
 }

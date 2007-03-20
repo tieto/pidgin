@@ -2,7 +2,7 @@
  * @file gtkdebug.h GTK+ Debug API
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -59,6 +59,6 @@ void pidgin_debug_window_hide(void);
  *
  * @return The GTK+ UI debug operations structure.
  */
-GaimDebugUiOps *pidgin_debug_get_ui_ops(void);
+PurpleDebugUiOps *pidgin_debug_get_ui_ops(void);
 
 #endif /* _PIDGINDEBUG_H_ */

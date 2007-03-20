@@ -2,7 +2,7 @@
  * @file gtkprivacy.h GTK+ Privacy UI
  * @ingroup gtkui
  *
- * gaim
+ * purple
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -51,7 +51,7 @@ void pidgin_privacy_dialog_hide(void);
  * @param account The account.
  * @param name    The name of the user to add.
  */
-void pidgin_request_add_permit(GaimAccount *account, const char *name);
+void pidgin_request_add_permit(PurpleAccount *account, const char *name);
 
 /**
  * Requests confirmation to add a user to the block list for an account,
@@ -62,13 +62,13 @@ void pidgin_request_add_permit(GaimAccount *account, const char *name);
  * @param account The account.
  * @param name    The name of the user to add.
  */
-void pidgin_request_add_block(GaimAccount *account, const char *name);
+void pidgin_request_add_block(PurpleAccount *account, const char *name);
 
 /**
  * Returns the UI operations structure for the GTK+ privacy subsystem.
  *
  * @return The GTK+ UI privacy operations structure.
  */
-GaimPrivacyUiOps *pidgin_privacy_get_ui_ops(void);
+PurplePrivacyUiOps *pidgin_privacy_get_ui_ops(void);
 
 #endif /* _PIDGINPRIVACY_H_ */

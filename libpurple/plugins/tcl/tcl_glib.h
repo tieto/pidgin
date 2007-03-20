@@ -18,12 +18,12 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef _GAIM_TCL_GLIB_H_
-#define _GAIM_TCL_GLIB_H_
+#ifndef _PURPLE_TCL_GLIB_H_
+#define _PURPLE_TCL_GLIB_H_
 
 #include <tcl.h>
 #include <glib.h>
 
 void tcl_glib_init(void);
 
-#endif /* _GAIM_TCL_GLIB_H_ */
+#endif /* _PURPLE_TCL_GLIB_H_ */

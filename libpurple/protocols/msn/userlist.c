@@ -1,9 +1,9 @@
 /**
  * @file userlist.c MSN user list support
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -28,7 +28,7 @@ const char *lists[] = { "FL", "AL", "BL", "RL" };
 
 typedef struct
 {
-	GaimConnection *gc;
+	PurpleConnection *gc;
 	char *who;
 	char *friendly;
 
@@ -64,7 +64,7 @@ msn_cancel_add_cb(MsnPermitAdd *pa)
 }
 
 static void
-got_new_entry(GaimConnection *gc, const char *passport, const char *friendly)
+got_new_entry(PurpleConnection *gc, const char *passport, const char *friendly)
 {
 	MsnPermitAdd *pa;
 
@@ -73,8 +73,8 @@ got_new_entry(GaimConnection *gc, const char *passport, const char *friendly)
 	pa->friendly = g_strdup(friendly);
 	pa->gc = gc;
 	
-	gaim_account_request_authorization(gaim_connection_get_account(gc), passport, NULL, friendly, NULL,
-					   gaim_find_buddy(gaim_connection_get_account(gc), passport) != NULL,
+	purple_account_request_authorization(purple_connection_get_account(gc), passport, NULL, friendly, NULL,
+					   purple_find_buddy(purple_connection_get_account(gc), passport) != NULL,
 					   G_CALLBACK(msn_accept_add_cb), G_CALLBACK(msn_cancel_add_cb), pa);
 }
 
@@ -129,7 +129,7 @@ get_store_name(MsnUser *user)
 	store_name = msn_user_get_store_name(user);
 
 	if (store_name != NULL)
-		store_name = gaim_url_encode(store_name);
+		store_name = purple_url_encode(store_name);
 	else
 		store_name = msn_user_get_passport(user);
 
@@ -164,7 +164,7 @@ msn_request_add_group(MsnUserList *userlist, const char *who,
 		data->old_group_name = g_strdup(old_group_name);
 
 	trans = msn_transaction_new(cmdproc, "ADG", "%s %d",
-								gaim_url_encode(new_group_name),
+								purple_url_encode(new_group_name),
 								0);
 
 	msn_transaction_set_data(trans, data);
@@ -195,7 +195,7 @@ void
 msn_got_add_user(MsnSession *session, MsnUser *user,
 				 MsnListId list_id, int group_id)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	const char *passport;
 	const char *friendly;
 
@@ -206,9 +206,9 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 
 	if (list_id == MSN_LIST_FL)
 	{
-		GaimConnection *gc;
+		PurpleConnection *gc;
 
-		gc = gaim_account_get_connection(account);
+		gc = purple_account_get_connection(account);
 
 		serv_got_alias(gc, passport, friendly);
 
@@ -223,34 +223,34 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 	}
 	else if (list_id == MSN_LIST_AL)
 	{
-		gaim_privacy_permit_add(account, passport, TRUE);
+		purple_privacy_permit_add(account, passport, TRUE);
 	}
 	else if (list_id == MSN_LIST_BL)
 	{
-		gaim_privacy_deny_add(account, passport, TRUE);
+		purple_privacy_deny_add(account, passport, TRUE);
 	}
 	else if (list_id == MSN_LIST_RL)
 	{
-		GaimConnection *gc;
-		GaimConversation *convo;
+		PurpleConnection *gc;
+		PurpleConversation *convo;
 
-		gc = gaim_account_get_connection(account);
+		gc = purple_account_get_connection(account);
 
-		gaim_debug_info("msn",
+		purple_debug_info("msn",
 						"%s has added you to his or her buddy list.\n",
 						passport);
 
- 		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, passport, account);
+ 		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, passport, account);
  		if (convo) {
- 			GaimBuddy *buddy;
+ 			PurpleBuddy *buddy;
  			char *msg;
  
- 			buddy = gaim_find_buddy(account, passport);
+ 			buddy = purple_find_buddy(account, passport);
  			msg = g_strdup_printf(
  				_("%s has added you to his or her buddy list."),
- 				buddy ? gaim_buddy_get_contact_alias(buddy) : passport);
- 			gaim_conv_im_write(GAIM_CONV_IM(convo), passport, msg,
- 				GAIM_MESSAGE_SYSTEM, time(NULL));
+ 				buddy ? purple_buddy_get_contact_alias(buddy) : passport);
+ 			purple_conv_im_write(PURPLE_CONV_IM(convo), passport, msg,
+ 				PURPLE_MESSAGE_SYSTEM, time(NULL));
  			g_free(msg);
  		}
  
@@ -266,14 +266,14 @@ msn_got_add_user(MsnSession *session, MsnUser *user,
 	}
 
 	user->list_op |= (1 << list_id);
-	/* gaim_user_add_list_id (user, list_id); */
+	/* purple_user_add_list_id (user, list_id); */
 }
 
 void
 msn_got_rem_user(MsnSession *session, MsnUser *user,
 				 MsnListId list_id, int group_id)
 {
-	GaimAccount *account;
+	PurpleAccount *account;
 	const char *passport;
 
 	account = session->account;
@@ -295,41 +295,41 @@ msn_got_rem_user(MsnSession *session, MsnUser *user,
 	}
 	else if (list_id == MSN_LIST_AL)
 	{
-		gaim_privacy_permit_remove(account, passport, TRUE);
+		purple_privacy_permit_remove(account, passport, TRUE);
 	}
 	else if (list_id == MSN_LIST_BL)
 	{
-		gaim_privacy_deny_remove(account, passport, TRUE);
+		purple_privacy_deny_remove(account, passport, TRUE);
 	}
 	else if (list_id == MSN_LIST_RL)
 	{
-		GaimConversation *convo;
+		PurpleConversation *convo;
 
-		gaim_debug_info("msn",
+		purple_debug_info("msn",
 						"%s has removed you from his or her buddy list.\n",
 						passport);
 
-		convo = gaim_find_conversation_with_account(GAIM_CONV_TYPE_IM, passport, account);
+		convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, passport, account);
 		if (convo) {
-			GaimBuddy *buddy;
+			PurpleBuddy *buddy;
 			char *msg;
 
-			buddy = gaim_find_buddy(account, passport);
+			buddy = purple_find_buddy(account, passport);
 			msg = g_strdup_printf(
 				_("%s has removed you from his or her buddy list."),
-				buddy ? gaim_buddy_get_contact_alias(buddy) : passport);
-			gaim_conv_im_write(GAIM_CONV_IM(convo), passport, msg,
-				GAIM_MESSAGE_SYSTEM, time(NULL));
+				buddy ? purple_buddy_get_contact_alias(buddy) : passport);
+			purple_conv_im_write(PURPLE_CONV_IM(convo), passport, msg,
+				PURPLE_MESSAGE_SYSTEM, time(NULL));
 			g_free(msg);
 		}
 	}
 
 	user->list_op &= ~(1 << list_id);
-	/* gaim_user_remove_list_id (user, list_id); */
+	/* purple_user_remove_list_id (user, list_id); */
 
 	if (user->list_op == 0)
 	{
-		gaim_debug_info("msn", "Buddy '%s' shall be deleted?.\n",
+		purple_debug_info("msn", "Buddy '%s' shall be deleted?.\n",
 						passport);
 
 	}
@@ -339,13 +339,13 @@ void
 msn_got_lst_user(MsnSession *session, MsnUser *user,
 				 int list_op, GSList *group_ids)
 {
-	GaimConnection *gc;
-	GaimAccount *account;
+	PurpleConnection *gc;
+	PurpleAccount *account;
 	const char *passport;
 	const char *store;
 
 	account = session->account;
-	gc = gaim_account_get_connection(account);
+	gc = purple_account_get_connection(account);
 
 	passport = msn_user_get_passport(user);
 	store = msn_user_get_store_name(user);
@@ -368,15 +368,15 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	if (list_op & MSN_LIST_AL_OP)
 	{
 		/* These are users who are allowed to see our status. */
-		gaim_privacy_deny_remove(account, passport, TRUE);
-		gaim_privacy_permit_add(account, passport, TRUE);
+		purple_privacy_deny_remove(account, passport, TRUE);
+		purple_privacy_permit_add(account, passport, TRUE);
 	}
 
 	if (list_op & MSN_LIST_BL_OP)
 	{
 		/* These are users who are not allowed to see our status. */
-		gaim_privacy_permit_remove(account, passport, TRUE);
-		gaim_privacy_deny_add(account, passport, TRUE);
+		purple_privacy_permit_remove(account, passport, TRUE);
+		purple_privacy_deny_add(account, passport, TRUE);
 	}
 
 	if (list_op & MSN_LIST_RL_OP)
@@ -442,7 +442,7 @@ msn_userlist_destroy(MsnUserList *userlist)
 	g_queue_free(userlist->buddy_icon_requests);
 
 	if (userlist->buddy_icon_request_timer)
-		gaim_timeout_remove(userlist->buddy_icon_request_timer);
+		purple_timeout_remove(userlist->buddy_icon_request_timer);
 
 	g_free(userlist);
 }
@@ -599,7 +599,7 @@ msn_userlist_rem_buddy(MsnUserList *userlist,
 		if (group_id < 0)
 		{
 			/* Whoa, there is no such group. */
-			gaim_debug_error("msn", "Group doesn't exist: %s\n", group_name);
+			purple_debug_error("msn", "Group doesn't exist: %s\n", group_name);
 			return;
 		}
 	}
@@ -608,7 +608,7 @@ msn_userlist_rem_buddy(MsnUserList *userlist,
 	if (!(user_is_there(user, list_id, group_id)))
 	{
 		list = lists[list_id];
-		gaim_debug_error("msn", "User '%s' is not there: %s\n",
+		purple_debug_error("msn", "User '%s' is not there: %s\n",
 						 who, list);
 		return;
 	}
@@ -631,7 +631,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 
 	group_id = -1;
 
-	if (!gaim_email_is_valid(who))
+	if (!purple_email_is_valid(who))
 	{
 		/* only notify the user about problems adding to the friends list
 		 * maybe we should do something else for other lists, but it probably
@@ -639,7 +639,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 		if (list_id == MSN_LIST_FL)
 		{
 			char *str = g_strdup_printf(_("Unable to add \"%s\"."), who);
-			gaim_notify_error(NULL, NULL, str,
+			purple_notify_error(NULL, NULL, str,
 							  _("The screen name specified is invalid."));
 			g_free(str);
 		}
@@ -665,7 +665,7 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 	if (user_is_there(user, list_id, group_id))
 	{
 		list = lists[list_id];
-		gaim_debug_error("msn", "User '%s' is already there: %s\n", who, list);
+		purple_debug_error("msn", "User '%s' is already there: %s\n", who, list);
 		return;
 	}
 

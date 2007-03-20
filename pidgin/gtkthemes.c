@@ -1,7 +1,7 @@
 /*
- * Themes for Gaim
+ * Themes for Purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -179,7 +179,7 @@ void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 		GSList *already_freed = NULL;
 		struct smiley_list *wer = theme->list, *wer2;
 
-		gaim_debug_error("gtkthemes", "Invalid file format, not loading smiley theme from '%s'\n", file);
+		purple_debug_error("gtkthemes", "Invalid file format, not loading smiley theme from '%s'\n", file);
 
 		while (wer) {
 			while (wer->smileys) {
@@ -245,8 +245,8 @@ void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 		}
 		current_smiley_theme = theme;
 
-		for (cnv = gaim_get_conversations(); cnv != NULL; cnv = cnv->next) {
-			GaimConversation *conv = cnv->data;
+		for (cnv = purple_get_conversations(); cnv != NULL; cnv = cnv->next) {
+			PurpleConversation *conv = cnv->data;
 
 			if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
 				pidginthemes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
@@ -264,8 +264,8 @@ void pidginthemes_smiley_theme_probe()
 	int l;
 
 	char* probedirs[3];
-	probedirs[0] = g_build_filename(DATADIR, "pixmaps", "gaim", "smileys", NULL);
-	probedirs[1] = g_build_filename(gaim_user_dir(), "smileys", NULL);
+	probedirs[0] = g_build_filename(DATADIR, "pixmaps", "purple", "smileys", NULL);
+	probedirs[1] = g_build_filename(purple_user_dir(), "smileys", NULL);
 	probedirs[2] = 0;
 	for (l=0; probedirs[l]; l++) {
 		dir = g_dir_open(probedirs[l], 0, NULL);
@@ -289,7 +289,7 @@ void pidginthemes_smiley_theme_probe()
 }
 
 GSList *pidginthemes_get_proto_smileys(const char *id) {
-	GaimPlugin *proto;
+	PurplePlugin *proto;
 	struct smiley_list *list, *def;
 
 	if ((current_smiley_theme == NULL) || (current_smiley_theme->list == NULL))
@@ -300,7 +300,7 @@ GSList *pidginthemes_get_proto_smileys(const char *id) {
 	if (id == NULL)
 		return def->smileys;
 
-	proto = gaim_find_prpl(id);
+	proto = purple_find_prpl(id);
 
 	while (list) {
 		if (!strcmp(list->sml, "default"))
@@ -318,7 +318,7 @@ void pidginthemes_init()
 {
 	GSList *l;
 	const char *current_theme =
-		gaim_prefs_get_string("/gaim/gtk/smileys/theme");
+		purple_prefs_get_string("/purple/gtk/smileys/theme");
 
 	pidginthemes_smiley_theme_probe();
 
