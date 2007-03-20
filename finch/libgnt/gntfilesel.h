@@ -59,6 +59,10 @@ gboolean gnt_file_sel_set_current_location(GntFileSel *sel, const char *path);
 
 const char *gnt_file_sel_get_current_location(GntFileSel *sel);
 
+void gnt_file_sel_set_dirs_only(GntFileSel *sel, gboolean dirs);
+
+gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel);
+
 G_END_DECLS
 
 #endif /* GNT_FILE_SEL_H */

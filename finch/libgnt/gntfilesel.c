@@ -66,7 +66,7 @@ update_location(GntFileSel *sel)
 {
 	char *old;
 	const char *tmp;
-	tmp = (const char*)gnt_tree_get_selection_data(GNT_TREE(sel->files));
+	tmp = (const char*)gnt_tree_get_selection_data(sel->dirsonly ? GNT_TREE(sel->dirs) : GNT_TREE(sel->files));
 	old = g_strdup_printf("%s%s%s", sel->current, sel->current[1] ? G_DIR_SEPARATOR_S : "", tmp ? tmp : "");
 	gnt_entry_set_text(GNT_ENTRY(sel->location), old);
 	g_free(old);
@@ -78,8 +78,12 @@ location_changed(GntFileSel *sel, GError **err)
 	GDir *dir;
 	const char *str;
 
+	if (!sel->dirs)
+		return TRUE;
+
 	gnt_tree_remove_all(GNT_TREE(sel->dirs));
-	gnt_tree_remove_all(GNT_TREE(sel->files));
+	if (sel->files)
+		gnt_tree_remove_all(GNT_TREE(sel->files));
 	gnt_entry_set_text(GNT_ENTRY(sel->location), NULL);
 	if (sel->current == NULL) {
 		if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(sel), GNT_WIDGET_MAPPED))
@@ -108,7 +112,7 @@ location_changed(GntFileSel *sel, GError **err)
 			if (S_ISDIR(st.st_mode))
 				gnt_tree_add_row_after(GNT_TREE(sel->dirs), g_strdup(str),
 						gnt_tree_create_row(GNT_TREE(sel->dirs), str), NULL, NULL);
-			else {
+			else if (!sel->dirsonly) {
 				char size[128];
 				snprintf(size, sizeof(size), "%ld", (long)st.st_size);
 
@@ -178,7 +182,7 @@ location_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 			stat(gl.gl_pathv[0], &st);
 			gnt_file_sel_set_current_location(sel, loc);  /* XXX: check the return value */
 			g_free(loc);
-			if (!S_ISDIR(st.st_mode)) {
+			if (!S_ISDIR(st.st_mode) && !sel->dirsonly) {
 				gnt_tree_remove_all(GNT_TREE(sel->files));
 				for (count = 0; count < gl.gl_pathc; count++) {
 					char *tmp = process_path(gl.gl_pathv[count]);
@@ -195,7 +199,7 @@ location_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 				}
 				gnt_widget_draw(sel->files);
 			}
-		} else {
+		} else if (sel->files) {
 			gnt_tree_remove_all(GNT_TREE(sel->files));
 			gnt_widget_draw(sel->files);
 		}
@@ -216,8 +220,37 @@ file_sel_changed(GntWidget *widget, gpointer old, gpointer current, GntFileSel *
 static void
 gnt_file_sel_map(GntWidget *widget)
 {
+	GntFileSel *sel = GNT_FILE_SEL(widget);
+	GntWidget *hbox, *vbox;
+
+	vbox = gnt_vbox_new(FALSE);
+	gnt_box_set_pad(GNT_BOX(vbox), 0);
+	gnt_box_set_alignment(GNT_BOX(vbox), GNT_ALIGN_LEFT);
+
+	/* The dir. and files list */
+	hbox = gnt_hbox_new(FALSE);
+	gnt_box_set_pad(GNT_BOX(hbox), 0);
+
+	gnt_box_add_widget(GNT_BOX(hbox), sel->dirs);
+
+	if (!sel->dirsonly) {
+		gnt_box_add_widget(GNT_BOX(hbox), sel->files);
+	} else {
+		g_signal_connect(G_OBJECT(sel->dirs), "selection_changed", G_CALLBACK(file_sel_changed), sel);
+	}
+
+	gnt_box_add_widget(GNT_BOX(vbox), hbox);
+	gnt_box_add_widget(GNT_BOX(vbox), sel->location);
+
+	/* The buttons */
+	hbox = gnt_hbox_new(FALSE);
+	gnt_box_add_widget(GNT_BOX(hbox), sel->cancel);
+	gnt_box_add_widget(GNT_BOX(hbox), sel->select);
+	gnt_box_add_widget(GNT_BOX(vbox), hbox);
+
+	gnt_box_add_widget(GNT_BOX(sel), vbox);
 	orig_map(widget);
-	update_location(GNT_FILE_SEL(widget));
+	update_location(sel);
 }
 
 static void
@@ -283,15 +316,6 @@ GntWidget *gnt_file_sel_new()
 {
 	GntWidget *widget = g_object_new(GNT_TYPE_FILE_SEL, NULL);
 	GntFileSel *sel = GNT_FILE_SEL(widget);
-	GntWidget *hbox, *vbox;
-
-	vbox = gnt_vbox_new(FALSE);
-	gnt_box_set_pad(GNT_BOX(vbox), 0);
-	gnt_box_set_alignment(GNT_BOX(vbox), GNT_ALIGN_LEFT);
-
-	/* The dir. and files list */
-	hbox = gnt_hbox_new(FALSE);
-	gnt_box_set_pad(GNT_BOX(hbox), 0);
 
 	sel->dirs = gnt_tree_new();
 	gnt_tree_set_compare_func(GNT_TREE(sel->dirs), (GCompareFunc)g_utf8_collate);
@@ -301,34 +325,21 @@ GntWidget *gnt_file_sel_new()
 	gnt_tree_set_col_width(GNT_TREE(sel->dirs), 0, 20);
 	g_signal_connect(G_OBJECT(sel->dirs), "key_pressed", G_CALLBACK(dir_key_pressed), sel);
 
-	sel->files = gnt_tree_new_with_columns(2);  /* Name, Size, Modified  */
+	sel->files = gnt_tree_new_with_columns(2);  /* Name, Size */
 	gnt_tree_set_compare_func(GNT_TREE(sel->files), (GCompareFunc)g_utf8_collate);
-	/*gnt_tree_set_column_titles(GNT_TREE(sel->files), "Filename", "Size", "Modified");*/
 	gnt_tree_set_column_titles(GNT_TREE(sel->files), "Filename", "Size");
 	gnt_tree_set_show_title(GNT_TREE(sel->files), TRUE);
 	gnt_tree_set_col_width(GNT_TREE(sel->files), 0, 25);
 	gnt_tree_set_col_width(GNT_TREE(sel->files), 1, 10);
-	/*gnt_tree_set_col_width(GNT_TREE(sel->files), 2, 10);*/
 	g_signal_connect(G_OBJECT(sel->files), "selection_changed", G_CALLBACK(file_sel_changed), sel);
-
-	gnt_box_add_widget(GNT_BOX(hbox), sel->dirs);
-	gnt_box_add_widget(GNT_BOX(hbox), sel->files);
-	gnt_box_add_widget(GNT_BOX(vbox), hbox);
 
 	/* The location entry */
 	sel->location = gnt_entry_new(NULL);
-	gnt_box_add_widget(GNT_BOX(vbox), sel->location);
 	g_signal_connect(G_OBJECT(sel->location), "key_pressed", G_CALLBACK(location_key_pressed), sel);
 
-	/* The buttons */
-	hbox = gnt_hbox_new(FALSE);
 	sel->cancel = gnt_button_new("Cancel");
 	sel->select = gnt_button_new("Select");
-	gnt_box_add_widget(GNT_BOX(hbox), sel->cancel);
-	gnt_box_add_widget(GNT_BOX(hbox), sel->select);
-	gnt_box_add_widget(GNT_BOX(vbox), hbox);
 
-	gnt_box_add_widget(GNT_BOX(sel), vbox);
 	return widget;
 }
 
@@ -352,5 +363,15 @@ gboolean gnt_file_sel_set_current_location(GntFileSel *sel, const char *path)
 
 	update_location(sel);
 	return ret;
+}
+
+void gnt_file_sel_set_dirs_only(GntFileSel *sel, gboolean dirs)
+{
+	sel->dirsonly = dirs;
+}
+
+gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel)
+{
+	return sel->dirsonly;
 }
 
