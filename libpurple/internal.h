@@ -181,7 +181,7 @@
 #define purple_strlcpy(dest, src) g_strlcpy(dest, src, sizeof(dest))
 #define purple_strlcat(dest, src) g_strlcat(dest, src, sizeof(dest))
 
-#define PURPLE_WEBSITE "http://pidgin.im/"
+#define PURPLE_WEBSITE "http://purple.sourceforge.net/"
 
 #ifndef _WIN32
 /* Everything needs to include this, because

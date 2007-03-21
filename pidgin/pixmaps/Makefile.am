@@ -50,14 +50,14 @@ EXTRA_DIST = \
 		gaim.ico			
 
 
-pidginbuttonpixdir = $(datadir)/pixmaps/pidgin/buttons
-pidginbuttonpix_DATA = about_menu.png accounts.png change-bgcolor-small.png change-fgcolor-small.png edit.png info.png insert-image-small.png insert-link-small.png insert-smiley-small.png pause.png text_bigger.png text_normal.png text_smaller.png send-im.png
+gaimbuttonpixdir = $(datadir)/pixmaps/gaim/buttons
+gaimbuttonpix_DATA = about_menu.png accounts.png change-bgcolor-small.png change-fgcolor-small.png edit.png info.png insert-image-small.png insert-link-small.png insert-smiley-small.png pause.png text_bigger.png text_normal.png text_smaller.png send-im.png
 
-pidginiconpixdir = $(datadir)/pixmaps/pidgin/icons
-pidginiconpix_DATA = window-icon.png
+gaimiconpixdir = $(datadir)/pixmaps/pidgin/icons
+gaimiconpix_DATA = window-icon.png
 
-pidgindistpixdir = $(datadir)/pixmaps/pidgin
-pidgindistpix_DATA = logo.png tb_drag_arrow_down.xpm tb_drag_arrow_left.xpm tb_drag_arrow_right.xpm tb_drag_arrow_up.xpm typed.png typing.png status-online.png status-offline.png status-away.png status-invisible.png status-typing0.png status-typing1.png status-typing2.png status-typing3.png status-connect0.png status-connect1.png status-connect2.png status-connect3.png phone.png insert-image.png
+gaimdistpixdir = $(datadir)/pixmaps/gaim
+gaimdistpix_DATA = logo.png tb_drag_arrow_down.xpm tb_drag_arrow_left.xpm tb_drag_arrow_right.xpm tb_drag_arrow_up.xpm typed.png typing.png status-online.png status-offline.png status-away.png status-invisible.png status-typing0.png status-typing1.png status-typing2.png status-typing3.png status-connect0.png status-connect1.png status-connect2.png status-connect3.png phone.png insert-image.png
 
 
 distpixmapdir = $(datadir)/pixmaps
