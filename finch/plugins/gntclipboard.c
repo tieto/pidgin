@@ -150,7 +150,7 @@ static PurplePluginInfo info =
 	N_("When the gnt clipboard contents change, "
 		"the contents are made available to X, if possible."),
 	"Richard Nelson <wabz@whatsbeef.net>",
-	"http://purple.sourceforge.net",
+	PURPLE_WEBSITE,
 	plugin_load,
 	plugin_unload,
 	NULL,

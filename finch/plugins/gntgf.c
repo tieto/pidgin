@@ -357,7 +357,7 @@ static PurplePluginInfo info =
 	N_("Toaster plugin"),
 	N_("Toaster plugin"),
 	"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",
-	"http://purple.sourceforge.net",
+	PURPLE_WEBSITE,
 	plugin_load,
 	plugin_unload,
 	NULL,
