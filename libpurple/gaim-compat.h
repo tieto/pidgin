@@ -1167,6 +1167,12 @@
 
 /* from plugin.h */
 
+#ifdef GAIM_PLUGINS
+#ifndef PURPLE_PLUGINS
+#define PURPLE_PLUGINS
+#endif
+#endif
+
 #define GaimPlugin            PurplePlugin
 #define GaimPluginInfo        PurplePluginInfo
 #define GaimPluginUiInfo      PurplePluginUiInfo
@@ -1196,7 +1202,7 @@
 #define GAIM_PLUGIN_HAS_ACTIONS  PURPLE_PLUGIN_HAS_ACTIONS
 #define GAIM_PLUGIN_ACTIONS      PURPLE_PLUGIN_ACTIONS
 
-#define GAIM_INIT_PLUGIN  PURPLE_INIT_PLUGIN
+#define GAIM_INIT_PLUGIN(pluginname, initfunc, plugininfo)  PURPLE_INIT_PLUGIN(pluginname, initfunc, plugininfo)
 
 #define gaim_plugin_new              purple_plugin_new
 #define gaim_plugin_probe            purple_plugin_probe
