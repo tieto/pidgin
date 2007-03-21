@@ -5,7 +5,7 @@
  * Richard Laager ("rlaager") in April 2005--you may want to contact
  * them if you have questions.
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *

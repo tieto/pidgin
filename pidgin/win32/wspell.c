@@ -1,5 +1,5 @@
 /*
- * purple
+ * pidgin
  *
  * File: wspell.c
  * Date: March, 2003

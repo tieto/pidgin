@@ -2,7 +2,7 @@
  * @file gtkthemes.h GTK+ Smiley Theme API
  * @ingroup gtkui
  *
- * purple
+ * pidgin
  *
  * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
