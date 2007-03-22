@@ -52,14 +52,23 @@
 #include <net/if.h>
 
 #ifdef NET_RT_DUMP2
+
+#define PMP_DEBUG
+
 /*
  *	Thanks to R. Matthew Emerson for the fixes on this
  */
 
+#define PMP_MAP_OPCODE_UDP	1
+#define PMP_MAP_OPCODE_TCP	2
+
+#define PMP_VERSION			0
+#define PMP_PORT			5351
+#define PMP_TIMEOUT			250000	//	250000 useconds
+
 /* alignment constraint for routing socket */
-#define ROUNDUP(a)							\
-((a) > 0 ? (1 + (((a) - 1) | (sizeof(long) - 1))) : sizeof(long))
-#define ADVANCE(x, n) (x += ROUNDUP((n)->sa_len))
+#define ROUNDUP(a)			((a) > 0 ? (1 + (((a) - 1) | (sizeof(long) - 1))) : sizeof(long))
+#define ADVANCE(x, n)		(x += ROUNDUP((n)->sa_len))
 
 static void
 get_rtaddrs(int bitmask, struct sockaddr *sa, struct sockaddr *addrs[])
@@ -98,6 +107,9 @@ is_default_route(struct sockaddr *sa, struct sockaddr *mask)
 		return 0;
 }
 
+/*!
+ * The return sockaddr_in must be g_free()'d when no longer needed
+ */
 static struct sockaddr_in *
 default_gw()
 {
@@ -106,31 +118,34 @@ default_gw()
     char *buf, *next, *lim;
     struct rt_msghdr2 *rtm;
     struct sockaddr *sa;
-    struct sockaddr *rti_info[RTAX_MAX];
-	struct sockaddr_in *sin;
-	
+	struct sockaddr_in *sin = NULL;
+	gboolean found = FALSE;
+
     mib[0] = CTL_NET;
-    mib[1] = PF_ROUTE;
-    mib[2] = 0;
-    mib[3] = 0;
+    mib[1] = PF_ROUTE; /* entire routing table or a subset of it */
+    mib[2] = 0; /* protocol number - always 0 */
+    mib[3] = 0; /* address family - 0 for all addres families */
     mib[4] = NET_RT_DUMP2;
     mib[5] = 0;
 	
+	/* Determine the buffer side needed to get the full routing table */
     if (sysctl(mib, 6, NULL, &needed, NULL, 0) < 0) 
 	{
-		err(1, "sysctl: net.route.0.0.dump estimate");
+		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump estimate");
+		return NULL;
     }
 	
-    buf = malloc(needed);
-	
-    if (buf == 0) 
+    if (!(buf = malloc(needed)))
 	{
-		err(2, "malloc");
+		purple_debug_warning("nat-pmp", "malloc");
+		return NULL;
     }
 	
+	/* Read the routing table into buf */
     if (sysctl(mib, 6, buf, &needed, NULL, 0) < 0) 
 	{
-		err(1, "sysctl: net.route.0.0.dump");
+		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump");
+		return NULL;
     }
 	
     lim = buf + needed;
@@ -142,36 +157,51 @@ default_gw()
 		
 		if (sa->sa_family == AF_INET) 
 		{
-            sin = (struct sockaddr_in *)sa;
-			struct sockaddr addr, mask;
-			
-			get_rtaddrs(rtm->rtm_addrs, sa, rti_info);
-			bzero(&addr, sizeof(addr));
-			
-			if (rtm->rtm_addrs & RTA_DST)
-				bcopy(rti_info[RTAX_DST], &addr, rti_info[RTAX_DST]->sa_len);
-			
-			bzero(&mask, sizeof(mask));
-			
-			if (rtm->rtm_addrs & RTA_NETMASK)
-				bcopy(rti_info[RTAX_NETMASK], &mask, rti_info[RTAX_NETMASK]->sa_len);
-			
-			if (is_default_route(&addr, &mask)) 
+			sin = (struct sockaddr_in*) sa;
+
+			if ((rtm->rtm_flags & RTF_GATEWAY) && sin->sin_addr.s_addr == INADDR_ANY)
 			{
-				sin = (struct sockaddr_in *)rti_info[RTAX_GATEWAY];
-				break;
+				/* We found the default route. Now get the destination address and netmask. */
+	            struct sockaddr *rti_info[RTAX_MAX];
+				struct sockaddr addr, mask;
+
+				get_rtaddrs(rtm->rtm_addrs, sa, rti_info);
+				bzero(&addr, sizeof(addr));
+				
+				if (rtm->rtm_addrs & RTA_DST)
+					bcopy(rti_info[RTAX_DST], &addr, rti_info[RTAX_DST]->sa_len);
+				
+				bzero(&mask, sizeof(mask));
+				
+				if (rtm->rtm_addrs & RTA_NETMASK)
+					bcopy(rti_info[RTAX_NETMASK], &mask, rti_info[RTAX_NETMASK]->sa_len);
+				
+				if (rtm->rtm_addrs & RTA_GATEWAY &&
+					is_default_route(&addr, &mask)) 
+				{					
+					if (rti_info[RTAX_GATEWAY]) {
+						struct sockaddr_in *rti_sin = (struct sockaddr_in *)rti_info[RTAX_GATEWAY];
+						sin = g_new0(struct sockaddr_in, 1);
+						sin->sin_family = rti_sin->sin_family;
+						sin->sin_port = rti_sin->sin_port;
+						sin->sin_addr.s_addr = rti_sin->sin_addr.s_addr;
+						memcpy(sin, rti_info[RTAX_GATEWAY], sizeof(struct sockaddr_in));
+
+						purple_debug_info("nat-pmp", "found a default gateway");
+						found = TRUE;
+						break;
+					}
+				}
 			}
 		}
-		
-		rtm = (struct rt_msghdr2 *)next;
     }
-	
-    free(buf);
-	
-	return sin;
+
+	return (found ? sin : NULL);
 }
 
-//!	double_timeout(struct timeval *) will handle doubling a timeout for backoffs required by NAT-PMP
+/*!
+ * double_timeout(struct timeval *) will handle doubling a timeout for backoffs required by NAT-PMP
+ */
 static void
 double_timeout(struct timeval *to)
 {
@@ -278,9 +308,11 @@ iterate:
 		++req_attempts;
 		double_timeout(&req_timeout);
 	}
-	
-	if (publicsockaddr == NULL)
+
+	if (publicsockaddr == NULL) {
+		g_free(gateway);
 		return NULL;
+	}
 	
 #ifdef PMP_DEBUG
 	purple_debug_info("nat-pmp", "Response received from NAT-PMP device:\n");
@@ -294,7 +326,9 @@ iterate:
 #endif	
 
 	publicsockaddr->sin_addr.s_addr = resp.address;
-	
+
+	g_free(gateway);
+
 	return inet_ntoa(publicsockaddr->sin_addr);
 }
 
@@ -302,7 +336,7 @@ iterate:
  *	will return NULL on error, or a pointer to the pmp_map_response_t type
  */
 pmp_map_response_t *
-purple_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
+purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
 {
 	struct sockaddr_in *gateway = default_gw();
 	
@@ -331,7 +365,7 @@ purple_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, u
 	bzero(&req, sizeof(pmp_map_request_t));
 	bzero(resp, sizeof(pmp_map_response_t));
 	req.version = 0;
-	req.opcode	= type;	
+	req.opcode	= ((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP);	
 	req.privateport = htons(privateport); //	What a difference byte ordering makes...d'oh!
 	req.publicport = htons(publicport);
 	req.lifetime = htonl(lifetime);
@@ -393,6 +427,8 @@ iterate:
 	purple_debug_info("nat-pmp", "lifetime: %d\n", ntohl(resp->lifetime));
 #endif	
 
+	g_free(gateway);
+
 	return resp;
 }
 
@@ -401,11 +437,13 @@ iterate:
  *	will return NULL on error, or a pointer to the pmp_map_response_t type
  */
 pmp_map_response_t *
-purple_pmp_destroy_map(uint8_t type, uint16_t privateport)
+purple_pmp_destroy_map(PurplePmpType type, uint16_t privateport)
 {
-	pmp_map_response_t *response = NULL;
+	pmp_map_response_t *response;
 	
-	if ((response = purple_pmp_create_map(type, privateport, 0, 0)) == NULL)
+	response = purple_pmp_create_map(((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP),
+							privateport, 0, 0);
+	if (!response)
 	{
 		purple_debug_info("nat-pmp", "Failed to properly destroy mapping for %d!\n", privateport);
 		return NULL;
@@ -423,13 +461,13 @@ purple_pmp_get_public_ip()
 }
 
 pmp_map_response_t *
-purple_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
+purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
 {
 	return NULL;
 }
 
 pmp_map_response_t *
-purple_pmp_destroy_map(uint8_t type, uint16_t privateport)
+purple_pmp_destroy_map(PurplePmpType type, uint16_t privateport)
 {
 	return NULL;
 }

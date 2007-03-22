@@ -41,19 +41,18 @@
 #include <net/if.h>
 #include <net/route.h>
 
-#define PMP_VERSION		0
-#define PMP_PORT		5351
-#define PMP_TIMEOUT		250000	//	250000 useconds
-#define PMP_LIFETIME	3600	//	3600 seconds
-
-#define PMP_MAP_UDP		1
-#define PMP_MAP_TCP		2
+#define PURPLE_PMP_LIFETIME		3600	//	3600 seconds
 
 /*
  *	uint8_t:	version, opcodes
  *	uint16_t:	resultcode
  *	unint32_t:	epoch (seconds since mappings reset)
  */
+
+typedef enum {
+	PURPLE_PMP_TYPE_UDP,
+	PURPLE_PMP_TYPE_TCP
+} PurplePmpType;
 
 typedef struct {
 	uint8_t	version;
@@ -88,7 +87,7 @@ typedef struct {
 } pmp_map_response_t;
 
 char *purple_pmp_get_public_ip();
-pmp_map_response_t *purple_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uint32_t lifetime);
-pmp_map_response_t *purple_pmp_destroy_map(uint8_t type, uint16_t privateport);
+pmp_map_response_t *purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicport, uint32_t lifetime);
+pmp_map_response_t *purple_pmp_destroy_map(PurplePmpType type, uint16_t privateport);
 	
 #endif
