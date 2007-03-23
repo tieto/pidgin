@@ -162,7 +162,7 @@ static struct translator current_translators[] = {
 	{N_("Italian"),             "it", "Claudio Satriano", "satriano@na.infn.it"},
 	{N_("Japanese"),            "ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
 	{N_("Georgian"),            "ka", "Ubuntu Georgian Translators", "alexander.didebulidze@stusta.mhn.de"},
-	{N_("Kannada"),             "kn", "Kannada Translation team" "translation@sampada.info"},
+	{N_("Kannada"),             "kn", "Kannada Translation team", "translation@sampada.info"},
 	{N_("Korean"),              "ko", "Kyung-uk Son", "vvs740@chol.com"},
 	{N_("Kurdish"),             "ku", "Erdal Ronahi", "erdal.ronahi@gmail.com"},
 	{N_("Kurdish"),             "ku", "Amed Ç. Jiyan", "amedcj@hotmail.com"},
