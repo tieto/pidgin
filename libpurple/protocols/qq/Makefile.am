@@ -94,7 +94,6 @@ endif
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-DVERSION=\"$(VERSION)\" \
-	-DQQ_BUDDY_ICON_DIR=\"$(datadir)/pixmaps/gaim/buddy_icons/qq\" \
+	-DQQ_BUDDY_ICON_DIR=\"$(datadir)/pixmaps/purple/buddy_icons/qq\" \
 	$(DEBUG_CFLAGS) \
-	$(GLIB_CFLAGS) \
-	$(GAIM_CFLAGS)
+	$(GLIB_CFLAGS)
