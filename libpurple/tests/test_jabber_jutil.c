@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "tests.h"
 #include "../protocols/jabber/jutil.h"
 
@@ -29,12 +31,14 @@ END_TEST
 
 START_TEST(test_nodeprep_validate)
 {
+	char *longnode;
+
 	fail_unless(jabber_nodeprep_validate(NULL));
 	fail_unless(jabber_nodeprep_validate("foo"));
 	fail_unless(jabber_nodeprep_validate("%d"));
 	fail_unless(jabber_nodeprep_validate("y\\z"));
 
-	char *longnode = g_strnfill(1023, 'a');
+	longnode = g_strnfill(1023, 'a');
 	fail_unless(jabber_nodeprep_validate(longnode));
 	g_free(longnode);
 }

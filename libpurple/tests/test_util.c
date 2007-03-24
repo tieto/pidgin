@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include "tests.h"
 #include "../util.h"
 
