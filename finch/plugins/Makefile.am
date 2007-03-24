@@ -9,7 +9,7 @@ plugin_LTLIBRARIES = \
 	gnthistory.la \
 	gntlastlog.la
 
-plugindir = $(libdir)/gaim
+plugindir = $(libdir)/finch
 
 gntgf_la_SOURCES      = gntgf.c
 gnthistory_la_SOURCES = gnthistory.c

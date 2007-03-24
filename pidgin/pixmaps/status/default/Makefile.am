@@ -42,6 +42,6 @@ EXTRA_DIST = \
 	yahoo.png \
 	zephyr.png
 
-gaimstatuspixdir = $(datadir)/pixmaps/gaim/status/default
+pidginstatuspixdir = $(datadir)/pixmaps/pidgin/status/default
 
-gaimstatuspix_DATA = $(EXTRA_DIST)
+pidginstatuspix_DATA = $(EXTRA_DIST)

@@ -1,4 +1,4 @@
-plugindir = $(libdir)/gaim
+plugindir = $(libdir)/pidgin
 
 gevolution_la_LDFLAGS = -module -avoid-version
 

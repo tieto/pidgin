@@ -14,6 +14,7 @@ check_libpurple_SOURCES=\
 check_libpurple_CFLAGS=\
         @CHECK_CFLAGS@ \
 		$(GLIB_CFLAGS) \
+		$(DEBUG_CFLAGS) \
 		-I.. \
 		-DBUILDDIR=\"$(top_builddir)\"
 

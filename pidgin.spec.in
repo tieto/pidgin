@@ -9,19 +9,19 @@
 #define beta 7
 
 %if 0%{?beta}
-%define gaimver %(echo "@VERSION@"|sed -e 's/dev//; s/beta.*//')
+%define pidginver %(echo "@VERSION@"|sed -e 's/dev//; s/beta.*//')
 %else
-%define gaimver @VERSION@
+%define pidginver @VERSION@
 %endif
 
 Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       @PACKAGE@
-Version:    %gaimver
+Version:    %pidginver
 Release:    0%{?beta:.beta%{beta}}
-Epoch:      1
+Epoch:      0
 License:    GPL
 Group:      Applications/Internet
-URL:        http://gaim.sourceforge.net/
+URL:        http://pidgin.im/
 Packager:   %{packager}
 Source:     %{name}-@VERSION@.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
@@ -68,99 +68,99 @@ BuildRequires: mozilla-nss-devel
 
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
-# Gadu-Gadu support was split out temporarily
+# Gadu-Gadu support was split out temporarily (only as gaim)
 Provides: gaim-gadugadu = %{epoch}:%{version}-%{release}
 
 %package devel
-Summary:    Development headers, documentation, and libraries for Gaim.
+Summary:    Development headers, documentation, and libraries for Pidgin
 Group:      Applications/Internet
-Requires:   pkgconfig, gaim = %{epoch}:%{version}
+Requires:   pkgconfig, pidgin = %{epoch}:%{version}
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %package bonjour
-Summary:    Bonjour plugin for Gaim
+Summary:    Bonjour plugin for Pidgin
 Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
+Requires:   pidgin = %{epoch}:%{version}
 %endif
 
 %if 0%{?_with_meanwhile:1}
 %package meanwhile
-Summary:    Lotus Sametime plugin for Gaim using the Meanwhile library
+Summary:    Lotus Sametime plugin for Pidgin using the Meanwhile library
 Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
+Requires:   pidgin = %{epoch}:%{version}
 %endif
 
 %if 0%{?_with_mono:1}
 %package mono
-Summary:    Mono .NET plugin support for Gaim
+Summary:    Mono .NET plugin support for Pidgin
 Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
+Requires:   pidgin = %{epoch}:%{version}
 %endif
 
 %if 0%{?_with_silc:1}
 %package silc
-Summary:    SILC (Secure Internet Live Conferencing) plugin for Gaim
+Summary:    SILC (Secure Internet Live Conferencing) plugin for Pidgin
 Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
+Requires:   pidgin = %{epoch}:%{version}
 %endif
 
 %if 0%{?_with_tcl:1}
 %package tcl
-Summary:    Tcl scripting support for Gaim
+Summary:    Tcl scripting support for Pidgin
 Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
+Requires:   pidgin = %{epoch}:%{version}
 %endif
 
 %if 0%{!?_without_text:1}
-%package text
-Summary:    A text-based user interface for Gaim
+%package -n finch
+Summary:    A text-based user interface for Pidgin
 Group:      Applications/Internet
-Requires:   gaim = %{epoch}:%{version}
+Requires:   pidgin = %{epoch}:%{version}
 %endif
 
 %description
-Gaim allows you to talk to anyone using a variety of messaging
+Pidgin allows you to talk to anyone using a variety of messaging
 protocols including AIM, MSN, Yahoo!, Jabber, Bonjour, Gadu-Gadu,
 ICQ, IRC, Novell Groupwise, QQ, Lotus Sametime, SILC, Simple and
 Zephyr.  These protocols are implemented using a modular, easy to
 use design.  To use a protocol, just add an account using the
 account editor.
 
-Gaim supports many common features of other clients, as well as many
+Pidgin supports many common features of other clients, as well as many
 unique features, such as perl scripting, TCL scripting and C plugins.
 
-Gaim is not affiliated with or endorsed by America Online, Inc.,
+Pidgin is not affiliated with or endorsed by America Online, Inc.,
 Microsoft Corporation, Yahoo! Inc., or ICQ Inc.
 
 %description devel
-The gaim-devel package contains the header files, developer
-documentation, and libraries required for development of Gaim scripts
+The pidgin-devel package contains the header files, developer
+documentation, and libraries required for development of Pidgin scripts
 and plugins.
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %description bonjour
-Bonjour plugin for Gaim.
+Bonjour plugin for Pidgin.
 %endif
 
 %if 0%{?_with_meanwhile:1}
 %description meanwhile
-Lotus Sametime plugin for Gaim using the Meanwhile library.
+Lotus Sametime plugin for Pidgin using the Meanwhile library.
 %endif
 
 %if 0%{?_with_mono:1}
 %description mono
-Mono plugin loader for Gaim.  This package will allow you to write or
-use Gaim plugins written in the .NET programming language.
+Mono plugin loader for Pidgin.  This package will allow you to write or
+use Pidgin plugins written in the .NET programming language.
 %endif
 
 %if 0%{?_with_silc:1}
 %description silc
-SILC (Secure Internet Live Conferencing) plugin for Gaim.
+SILC (Secure Internet Live Conferencing) plugin for Pidgin.
 %endif
 
 %if 0%{!?without_text:1}
-%description text
-A text-based user interface for Gaim.  This can be run from a
+%description -n finch
+A text-based user interface for Pidgin.  This can be run from a
 standard text console or from a terminal within X Windows.  It
 uses ncurses and our homegrown gnt library for drawing windows
 and text.
@@ -168,8 +168,8 @@ and text.
 
 %if 0%{?_with_tcl:1}
 %description tcl
-Tcl plugin loader for Gaim.  This package will allow you to write or
-use Gaim plugins written in the Tcl programming language.
+Tcl plugin loader for Pidgin.  This package will allow you to write or
+use Pidgin plugins written in the Tcl programming language.
 %endif
 
 %prep
@@ -211,53 +211,51 @@ make DESTDIR=$RPM_BUILD_ROOT install
 %endif
 
 # Delete files that we don't want to put in any of the RPMs
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/finch/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/pidgin/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
+# do we want to ship the nullclient ?
+rm -f $RPM_BUILD_ROOT%{_bindir}/nullclient
 
 %if 0%{!?_with_howl:1} && 0%{!?_with_avahi:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libbonjour.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libbonjour.so
 %endif
 
 %if 0%{!?_with_meanwhile:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsametime.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libsametime.so
 %endif
 
 %if 0%{!?_with_mono:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/mono.so
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/*.dll
+rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/mono.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/*.dll
 %endif
 
 %if 0%{!?_with_silc:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/libsilcgaim.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libsilcpurple.so
 %endif
 
 %if 0%{!?_with_tcl:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/tcl.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/tcl.so
 %endif
 
 %if 0%{?_without_text:1}
-rm -f $RPM_BUILD_ROOT%{_mandir}/man1/gaim-text.*
-rm -f $RPM_BUILD_ROOT%{_bindir}/gaim-text
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/gntgf.so
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/gnthistory.so
-rm -f $RPM_BUILD_ROOT%{_libdir}/gaim/s.so
+rm -f $RPM_BUILD_ROOT%{_mandir}/man1/finch.*
+rm -rf $RPM_BUILD_ROOT%{_bindir}/finch
 rm -f $RPM_BUILD_ROOT%{_libdir}/libgnt.so.*
 %endif
 
 %find_lang %{name}
 
-find $RPM_BUILD_ROOT%{_libdir}/gaim -xtype f -print | \
+find $RPM_BUILD_ROOT%{_libdir}/pidgin $RPM_BUILD_ROOT%{_libdir}/libpurple -xtype f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" | \
-        grep -v /gntgf.so | \
-        grep -v /gnthistory.so | \
         grep -v /libbonjour.so | \
-        grep -v /libsilcgaim.so | \
+        grep -v /libsilcpurple.so | \
         grep -v /libsametime.so | \
         grep -v /mono.so | \
-        grep -v /s.so | \
         grep -v /tcl.so | \
         grep -v ".dll$" | \
         grep -v ".tcl$" > %{name}-%{version}-coreplugins
@@ -307,31 +305,32 @@ fi
 %doc README.SVN
 %doc doc/FAQ
 %doc doc/the_penguin.txt
-%doc %{_mandir}/man1/gaim.*
+%doc %{_mandir}/man1/pidgin.*
 %doc %{_mandir}/man3*/*
 
-%dir %{_libdir}/gaim
-%attr(755, root, root) %{perl_vendorarch}/Gaim*
-%attr(755, root, root) %{perl_vendorarch}/auto/Gaim
+%dir %{_libdir}/pidgin
+%dir %{_libdir}/libpurple
+%attr(755, root, root) %{perl_vendorarch}/Purple*
+%attr(755, root, root) %{perl_vendorarch}/auto/Purple
 
-%{_bindir}/gaim
+%{_bindir}/pidgin
 %{_datadir}/pixmaps/*
-%dir %{_datadir}/sounds/gaim
-%{_datadir}/sounds/gaim/*
+%dir %{_datadir}/sounds/pidgin
+%{_datadir}/sounds/pidgin/*
 %{_datadir}/applications/*
-%{_libdir}/libgaim.so.*
+%{_libdir}/libpurple.so.*
 %{_sysconfdir}/gconf/schemas/gaim.schemas
 
 %if 0%{?_with_dbus:1}
-%{_bindir}/gaim-client-example
-%{_bindir}/gaim-remote
-%{_bindir}/gaim-send
-%{_bindir}/gaim-send-async
-%{_bindir}/gaim-url-handler
-%{_libdir}/libgaim-client.so.*
+%{_bindir}/purple-client-example
+%{_bindir}/purple-remote
+%{_bindir}/purple-send
+%{_bindir}/purple-send-async
+%{_bindir}/purple-url-handler
+%{_libdir}/libpurple-client.so.*
 %{_datadir}/dbus-1/services/gaim.service
 %doc README.dbus
-%doc libgaim/gaim-notifications-example
+%doc libpurple/purple-notifications-example
 %endif
 
 %files devel
@@ -342,70 +341,74 @@ fi
 %doc PLUGIN_HOWTO
 %doc PROGRAMMING_NOTES
 
-%dir %{_includedir}/gaim
-%{_includedir}/gaim/*.h
-%dir %{_includedir}/gaim/gnt
-%{_includedir}/gaim/gnt/*.h
+%dir %{_includedir}/finch
 %dir %{_includedir}/gnt
+%dir %{_includedir}/libpurple
+%dir %{_includedir}/pidgin
+%{_includedir}/finch/*.h
 %{_includedir}/gnt/*.h
-%{_libdir}/libgaim.so
+%{_includedir}/libpurple/*.h
+%{_includedir}/pidgin/*.h
+%{_libdir}/libpurple.so
 %{_libdir}/libgnt.so
-%{_libdir}/pkgconfig/gaim.pc
+%{_libdir}/pkgconfig/purple.pc
+%{_libdir}/pkgconfig/pidgin.pc
 %{_libdir}/pkgconfig/gnt.pc
 %{_datadir}/aclocal/gaim.m4
 %if 0%{?_with_dbus:1}
-%{_libdir}/libgaim-client.so
+%{_libdir}/libpurple-client.so
 %endif
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %files bonjour
 %defattr(-, root, root)
 
-%{_libdir}/gaim/libbonjour.*
+%{_libdir}/libpurple/libbonjour.*
 %endif
 
 %if 0%{?_with_meanwhile:1}
 %files meanwhile
 %defattr(-, root, root)
 
-%{_libdir}/gaim/libsametime.*
+%{_libdir}/libpurple/libsametime.*
 %endif
 
 %if 0%{?_with_mono:1}
 %files mono
 %defattr(-, root, root)
 
-%{_libdir}/gaim/mono.so
-%{_libdir}/gaim/*.dll
+%{_libdir}/libpurple/mono.so
+%{_libdir}/libpurple/*.dll
 %endif
 
 %if 0%{?_with_silc:1}
 %files silc
 %defattr(-, root, root)
 
-%{_libdir}/gaim/libsilcgaim.*
+%{_libdir}/libpurple/libsilcpurple.*
 %endif
 
 %if 0%{?_with_tcl:1}
 %files tcl
 %defattr(-, root, root)
 
-%{_libdir}/gaim/tcl.so
+%{_libdir}/libpurple/tcl.so
 %endif
 
 %if 0%{!?_without_text:1}
-%files text
+%files -n finch
 %defattr(-, root, root)
 
-%doc %{_mandir}/man1/gaim-text.*
-%{_bindir}/gaim-text
-%{_libdir}/gaim/gntgf.so
-%{_libdir}/gaim/gnthistory.so
-%{_libdir}/gaim/s.so
+%doc %{_mandir}/man1/finch.*
+%{_bindir}/finch
+%{_libdir}/finch/*.so
 %{_libdir}/libgnt.so.*
 %endif
 
 %changelog
+* Sat Mar 24 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Update to reflect renaming to pidgin/libpurple
+
 * Sun Oct  1 2006 Stu Tomlinson <stu@nosnilmot.com>
 - We can build with internal gadu gadu again, so bring it back into the
   main package

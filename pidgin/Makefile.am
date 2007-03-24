@@ -4,6 +4,7 @@ EXTRA_DIST = \
 		getopt1.c \
 		Makefile.mingw \
 		pidgin.pc.in \
+		pidgin-uninstalled.pc.in \
 		win32/IdleTracker/Makefile.mingw \
 		win32/IdleTracker/idletrack.c \
 		win32/IdleTracker/idletrack.h \
