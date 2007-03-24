@@ -26,9 +26,8 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 {
 	MonoAssembly *assm;
 	MonoMethod *m = NULL;
-	MonoMethod *info_method = NULL;
 	MonoObject *plugin_info;
-	gboolean found_load = FALSE, found_unload = FALSE, found_destroy = FALSE, found_info = FALSE;
+	gboolean found_load = FALSE, found_unload = FALSE, found_destroy = FALSE;
 	gpointer iter = NULL;
 
 	PurplePluginInfo *info;
@@ -71,6 +70,7 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 	mono_runtime_object_init(mplug->obj);
 
 	while ((m = mono_class_get_methods(mplug->klass, &iter))) {
+		purple_debug_info("mono", "plugin method: %s\n", mono_method_get_name(m));
 		if (strcmp(mono_method_get_name(m), "Load") == 0) {
 			mplug->load = m;
 			found_load = TRUE;
@@ -80,22 +80,20 @@ static gboolean probe_mono_plugin(PurplePlugin *plugin)
 		} else if (strcmp(mono_method_get_name(m), "Destroy") == 0) {
 			mplug->destroy = m;
 			found_destroy = TRUE;
-		} else if (strcmp(mono_method_get_name(m), "Info") == 0) {
-			info_method = m;
-			found_info = TRUE;
 		}
 	}
 
-	if (!(found_load && found_unload && found_destroy && found_info)) {
+	if (!(found_load && found_unload && found_destroy)) {
 		purple_debug(PURPLE_DEBUG_ERROR, "mono", "did not find the required methods\n");
 		return FALSE;
 	}
-
-	plugin_info = ml_invoke(info_method, mplug->obj, NULL);
+	
+	plugin_info = ml_get_info_prop(mplug->obj);
 
 	/* now that the methods are filled out we can populate
 	   the info struct with all the needed info */
 
+	info->id = ml_get_prop_string(plugin_info, "Id");
 	info->name = ml_get_prop_string(plugin_info, "Name");
 	info->version = ml_get_prop_string(plugin_info, "Version");
 	info->summary = ml_get_prop_string(plugin_info, "Summary");

@@ -1,5 +1,6 @@
-namespace Gaim {
+namespace Purple {
 	public class PluginInfo {
+		private string id;
 		private string name;
 		private string version;
 		private string summary;
@@ -7,15 +8,20 @@ namespace Gaim {
 		private string author;
 		private string homepage;
 		
-		public PluginInfo(string name, string version, string summary,
+		public PluginInfo(string id, string name, string version, string summary,
 						  string description, string author, string homepage)
 		{
+			this.id = id;
 			this.name = name;
 			this.version = version;
 			this.summary = summary;
 			this.description = description;
 			this.author = author;
 			this.homepage = homepage;	
+		}
+
+		public string Id {
+			get { return id; }
 		}
 
 		public string Name {
