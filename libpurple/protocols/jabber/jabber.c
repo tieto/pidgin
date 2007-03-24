@@ -25,6 +25,7 @@
 #include "blist.h"
 #include "cmds.h"
 #include "connection.h"
+#include "conversation.h"
 #include "debug.h"
 #include "dnssrv.h"
 #include "message.h"
@@ -36,6 +37,7 @@
 #include "server.h"
 #include "util.h"
 #include "version.h"
+#include "xmlnode.h"
 
 #include "auth.h"
 #include "buddy.h"
