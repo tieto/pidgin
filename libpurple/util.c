@@ -2184,8 +2184,8 @@ purple_home_dir(void)
 #endif
 }
 
-/* returns a string of the form ~/.purple, where ~ is replaced by the user's home
- * dir. Note that there is no trailing slash after .purple. */
+/* returns a string of the form ~/.gaim, where ~ is replaced by the user's home
+ * dir. Note that there is no trailing slash after .gaim. */
 const char *
 purple_user_dir(void)
 {
@@ -2196,7 +2196,7 @@ purple_user_dir(void)
 
 		if (hd) {
 			g_strlcpy((char*) &home_dir, hd, sizeof(home_dir));
-			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".purple",
+			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".gaim",
 					sizeof(home_dir));
 		}
 	}
