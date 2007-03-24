@@ -51,7 +51,7 @@ libgg_la_LDFLAGS = -module -avoid-version
 
 if STATIC_GG
 
-st = -DGAIM_STATIC_PRPL $(GADU_CFLAGS)
+st = -DPURPLE_STATIC_PRPL $(GADU_CFLAGS)
 noinst_LIBRARIES = libgg.a
 pkg_LTLIBRARIES =
 

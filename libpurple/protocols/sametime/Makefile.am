@@ -12,7 +12,7 @@ SAMETIMESOURCES = sametime.c
 
 if STATIC_SAMETIME
 
-st = -DGAIM_STATIC_PRPL
+st = -DPURPLE_STATIC_PRPL
 noinst_LIBRARIES   = libsametime.a
 libsametime_a_SOURCES = $(SAMETIMESOURCES)
 libsametime_a_CFLAGS  = $(AM_CFLAGS)

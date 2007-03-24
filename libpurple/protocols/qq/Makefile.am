@@ -77,7 +77,7 @@ libqq_la_LDFLAGS = -module -avoid-version
 
 if STATIC_QQ
 
-st = -DGAIM_STATIC_PRPL
+st = -DPURPLE_STATIC_PRPL
 noinst_LIBRARIES = libqq.a
 libqq_a_SOURCES  = $(QQSOURCES)
 libqq_a_CFLAGS   = $(AM_CFLAGS)

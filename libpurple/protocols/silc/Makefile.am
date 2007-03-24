@@ -10,7 +10,7 @@ libsilcpurple_la_LDFLAGS = -module -avoid-version
 
 if STATIC_SILC
 
-st = -DGAIM_STATIC_PRPL $(SILC_CFLAGS)
+st = -DPURPLE_STATIC_PRPL $(SILC_CFLAGS)
 noinst_LIBRARIES = libsilcpurple.a
 pkg_LTLIBRARIES =
 

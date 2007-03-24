@@ -69,7 +69,7 @@ libmsn_la_LDFLAGS = -module -avoid-version
 
 if STATIC_MSN
 
-st = -DGAIM_STATIC_PRPL
+st = -DPURPLE_STATIC_PRPL
 noinst_LIBRARIES = libmsn.a
 libmsn_a_SOURCES = $(MSNSOURCES)
 libmsn_a_CFLAGS  = $(AM_CFLAGS)
