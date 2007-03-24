@@ -375,7 +375,7 @@ purple_plugin_probe(const char *filename)
  	 * enter an infinite loop in certain situations by passing
  	 * purple_find_plugin_by_id a NULL value. -- ecoffey
  	 */
-	if (!plugin->info->id || !strcmp(plugin->info->id, ""))
+	if (plugin->info->id == NULL || *plugin->info->id == '\0')
 	{
 		plugin->error = g_strdup_printf(_("This plugin has not defined an ID."));
 		purple_debug_error("plugins", "%s is not loadable: info->id is not defined.\n", plugin->path);
