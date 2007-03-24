@@ -250,6 +250,7 @@ purple_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
 	purple_network_listen_cancel(listen_data);
 }
 
+#ifdef ENABLE_NAT_PMP
 static gboolean
 purple_network_finish_pmp_map_cb(gpointer data)
 {
@@ -264,6 +265,7 @@ purple_network_finish_pmp_map_cb(gpointer data)
 
 	return FALSE;
 }
+#endif
 
 static PurpleNetworkListenData *
 purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
