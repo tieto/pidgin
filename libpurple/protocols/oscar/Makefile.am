@@ -51,7 +51,7 @@ libaim_la_LDFLAGS = -module -avoid-version
 libicq_la_LDFLAGS = -module -avoid-version
 if STATIC_OSCAR
 
-st = -DGAIM_STATIC_PRPL
+st = -DPURPLE_STATIC_PRPL
 noinst_LIBRARIES   = liboscar.a libaim.a libicq.a
 liboscar_a_SOURCES = $(OSCARSOURCES)
 liboscar_a_CFLAGS  = $(AM_CFLAGS)

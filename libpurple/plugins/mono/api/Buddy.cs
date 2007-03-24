@@ -1,4 +1,4 @@
-namespace Gaim {
+namespace Purple {
 	public class Buddy : BlistNode {
 		private string name;
 		private string alias;

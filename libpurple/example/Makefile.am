@@ -1,7 +1,7 @@
 bin_PROGRAMS = nullclient
 
-nullclient_SOURCES = nullclient.c
-nullclient_DEPENDENCIES = 
+nullclient_SOURCES = defines.h nullclient.c
+nullclient_DEPENDENCIES =
 nullclient_LDFLAGS = -export-dynamic
 nullclient_LDADD = \
 	$(DBUS_LIBS) \

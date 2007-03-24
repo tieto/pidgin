@@ -1,12 +1,13 @@
 EXTRA_DIST = \
 		dbus-analyze-functions.py \
 		dbus-analyze-types.py \
-		gaim-notifications-example \
-		gaim-remote \
-		gaim-send \
-		gaim-send-async \
-		gaim-url-handler \
+		purple-notifications-example \
+		purple-remote \
+		purple-send \
+		purple-send-async \
+		purple-url-handler \
 		purple.pc.in \
+		purple-uninstalled.pc.in \
 		Makefile.mingw \
 		win32/global.mak \
 		win32/libc_interface.c \
@@ -15,7 +16,7 @@ EXTRA_DIST = \
 		win32/libpurplerc.rc.in \
 		win32/rules.mak \
 		win32/targets.mak \
-		win32/wgaimerror.h \
+		win32/wpurpleerror.h \
 		win32/win32dep.c \
 		win32/giowin32.c \
 		win32/win32dep.h
@@ -29,7 +30,7 @@ pkgconfig_DATA = purple.pc
 
 SUBDIRS = $(GCONF_DIR) plugins protocols tests . example
 
-gaim_coresources = \
+purple_coresources = \
 	account.c \
 	accountopt.c \
 	blist.c \
@@ -77,7 +78,7 @@ gaim_coresources = \
 	xmlnode.c \
 	whiteboard.c
 
-gaim_coreheaders = \
+purple_coreheaders = \
 	account.h \
 	accountopt.h \
 	blist.h \
@@ -137,9 +138,9 @@ CLEANFILES = \
 	dbus-types.h \
 	purple-client-bindings.c \
 	purple-client-bindings.h \
-	gaim.service
+	purple.service
 
-# gaim dbus server
+# purple dbus server
 
 dbus_sources  = dbus-server.c dbus-useful.c
 dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h
@@ -148,64 +149,64 @@ dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
                 connection.h conversation.h core.h log.h prefs.h roomlist.h \
                 savedstatuses.h status.h server.h xmlnode.h
 
-gaim_build_coreheaders = $(addprefix $(srcdir)/, $(gaim_coreheaders))
+purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders))
 dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
 
-dbus-types.c: dbus-analyze-types.py $(gaim_coreheaders)
-	cat $(gaim_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DEFINE_TYPE\(%s\) > $@
+dbus-types.c: dbus-analyze-types.py $(purple_coreheaders)
+	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DEFINE_TYPE\(%s\) > $@
 
 dbus-types.h: dbus-analyze-types.py $(dbus_coreheaders)
-	cat $(gaim_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DECLARE_TYPE\(%s\) > $@
+	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DECLARE_TYPE\(%s\) > $@
 
 dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py > $@
 
 dbus-server.$(OBJEXT): dbus-bindings.c dbus-types.c dbus-types.h
 dbus-server.lo: dbus-bindings.c dbus-types.c dbus-types.h
-$(libgaim_la_OBJECTS): dbus-types.h
+$(libpurple_la_OBJECTS): dbus-types.h
 
-# libgaim-client
+# libpurple-client
 
-libgaim_client_lib = libgaim-client.la
+libpurple_client_lib = libpurple-client.la
 
-libgaim_client_la_SOURCES = gaim-client.c gaim-client.h
+libpurple_client_la_SOURCES = purple-client.c purple-client.h
 
-libgaim_client_la_LIBADD = $(DBUS_LIBS)
+libpurple_client_la_LIBADD = $(DBUS_LIBS)
 
 purple-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
 	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client > $@
 
-purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(gaim_coreheaders) $(dbus_exported)
-	cat $(gaim_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim > $@
+purple-client-bindings.h: dbus-analyze-types.py dbus-analyze-functions.py $(purple_coreheaders) $(dbus_exported)
+	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --keyword=enum --verbatim > $@
 	cat $(dbus_build_exported) | $(PYTHON) $(srcdir)/dbus-analyze-functions.py --client --headers >> $@
 
-$(libgaim_client_la_OBJECTS): purple-client-bindings.h purple-client-bindings.c
+$(libpurple_client_la_OBJECTS): purple-client-bindings.h purple-client-bindings.c
 
-# gaim-client-example
+# purple-client-example
 
-gaim_client_example_SOURCES = gaim-client-example.c
+purple_client_example_SOURCES = purple-client-example.c
 
-gaim_client_example_DEPENDENCIES = libgaim-client.la
+purple_client_example_DEPENDENCIES = libpurple-client.la
 
-gaim_client_example_LDADD = \
-	libgaim-client.la \
+purple_client_example_LDADD = \
+	libpurple-client.la \
 	$(GLIB_LIBS) \
 	$(DBUS_LIBS)
 
-bin_PROGRAMS = gaim-client-example
+bin_PROGRAMS = purple-client-example
 
-gaim-client-example.$(OBJEXT): purple-client-bindings.h
+purple-client-example.$(OBJEXT): purple-client-bindings.h
 
 # scripts
 
-bin_SCRIPTS = gaim-remote gaim-send gaim-send-async gaim-url-handler
+bin_SCRIPTS = purple-remote purple-send purple-send-async purple-url-handler
 
 endif
 
-lib_LTLIBRARIES = libpurple.la $(libgaim_client_lib)
+lib_LTLIBRARIES = libpurple.la $(libpurple_client_lib)
 
 libpurple_la_SOURCES = \
-	$(gaim_coresources) \
+	$(purple_coresources) \
 	$(dbus_sources)
 
 noinst_HEADERS= \
@@ -214,7 +215,7 @@ noinst_HEADERS= \
 
 libpurpleincludedir=$(includedir)/libpurple
 libpurpleinclude_HEADERS = \
-	$(gaim_coreheaders) \
+	$(purple_coreheaders) \
 	$(dbus_headers)
 
 libpurple_la_DEPENDENCIES = $(STATIC_LINK_LIBS)

@@ -5,6 +5,8 @@
 
 #undef HAVE_DBUS
 
+#include "tests.h"
+
 #include "../cipher.h"
 #include "../signal.h"
 
@@ -15,7 +17,6 @@
 	PurpleCipher *cipher = NULL; \
 	PurpleCipherContext *context = NULL; \
 	gchar cdigest[33]; \
-	gchar *sdigest = NULL; \
 	gboolean ret = FALSE; \
 	\
 	cipher = purple_ciphers_find_cipher("md4"); \
@@ -79,7 +80,6 @@ END_TEST
 	PurpleCipher *cipher = NULL; \
 	PurpleCipherContext *context = NULL; \
 	gchar cdigest[33]; \
-	gchar *sdigest = NULL; \
 	gboolean ret = FALSE; \
 	\
 	cipher = purple_ciphers_find_cipher("md5"); \
@@ -142,7 +142,6 @@ END_TEST
 	PurpleCipher *cipher = NULL; \
 	PurpleCipherContext *context = NULL; \
 	gchar cdigest[41]; \
-	gchar *sdigest = NULL; \
 	gboolean ret = FALSE; \
 	\
 	cipher = purple_ciphers_find_cipher("sha1"); \
@@ -198,7 +197,7 @@ Suite *
 cipher_suite(void) {
 	Suite *s = suite_create("Cipher Suite");
 	TCase *tc = NULL;
-	
+
 	/* md4 tests */
 	tc = tcase_create("MD4");
 	tcase_add_test(tc, test_md4_empty_string);

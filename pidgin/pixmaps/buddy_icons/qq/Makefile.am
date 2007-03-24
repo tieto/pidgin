@@ -100,6 +100,6 @@ EXTRA_DIST = \
 	qq_99.png \
 	qq_100.png
 
-qqbuddyiconspixdir = $(datadir)/pixmaps/gaim/buddy_icons/qq
+qqbuddyiconspixdir = $(datadir)/pixmaps/purple/buddy_icons/qq
 
 qqbuddyiconspix_DATA = $(EXTRA_DIST)

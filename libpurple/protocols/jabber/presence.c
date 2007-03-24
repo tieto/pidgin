@@ -20,20 +20,22 @@
  */
 #include "internal.h"
 
+#include "account.h"
 #include "cipher.h"
+#include "conversation.h"
 #include "debug.h"
 #include "notify.h"
 #include "request.h"
 #include "server.h"
 #include "status.h"
 #include "util.h"
+#include "xmlnode.h"
 
 #include "buddy.h"
 #include "chat.h"
 #include "presence.h"
 #include "iq.h"
 #include "jutil.h"
-#include "xmlnode.h"
 
 
 static void chats_send_presence_foreach(gpointer key, gpointer val,

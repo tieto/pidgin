@@ -10,7 +10,7 @@ EXTRA_DIST = \
 		edit.png			\
 		pidgin.png			\
 		gaim.svg			\
-		info.png 			\
+		info.png			\
 		insert-image.png		\
 		insert-image-small.png		\
 		insert-link-small.png		\
@@ -23,7 +23,7 @@ EXTRA_DIST = \
 		pause.png			\
 		phone.png		        \
 		send-im.png			\
-		status-online.png  		\
+		status-online.png		\
 		status-offline.png		\
 		status-away.png			\
 		status-invisible.png		\
@@ -46,8 +46,9 @@ EXTRA_DIST = \
 		text_smaller.png		\
 		typed.png			\
 		typing.png			\
+		window-icon.png			\
 		Makefile.mingw			\
-		gaim.ico			
+		gaim.ico
 
 
 pidginbuttonpixdir = $(datadir)/pixmaps/pidgin/buttons

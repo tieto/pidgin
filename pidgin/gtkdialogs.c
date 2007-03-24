@@ -332,7 +332,7 @@ void pidgindialogs_about()
 	/* Generate a logo with a version number */
 	logo = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_widget_realize(logo);
-	filename = g_build_filename(DATADIR, "pixmaps", "purple", "logo.png", NULL);
+	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "logo.png", NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 	pidgin_logo_versionize(&pixbuf, logo);

@@ -26,7 +26,7 @@ endif # PLUGINS
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/gaim/\" \
+	-DLIBDIR=\"$(libdir)/libpurple\" \
 	-I$(top_srcdir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \

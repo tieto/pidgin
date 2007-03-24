@@ -100,6 +100,7 @@ endif # PLUGINS
 
 EXTRA_DIST = \
 	Makefile.mingw \
+	ciphertest.c \
 	dbus-buddyicons-example.py \
 	filectl.c \
 	fortuneprofile.pl \
