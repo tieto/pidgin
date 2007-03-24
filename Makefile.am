@@ -33,7 +33,7 @@ dist-hook: pidgin.spec
 	cp pidgin.spec $(distdir)
 	rm $(distdir)/config.h
 
-distcheck-hook: libpurple/plugins/perl/common/Gaim.pm gtk/plugins/perl/common/GtkUI.pm
+distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/GtkUI.pm
 #	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
 
 appsdir = $(datadir)/applications
@@ -64,7 +64,7 @@ endif
 # breaks "make distcheck" unless we ignore perl things
 
 distuninstallcheck_listfiles = \
-	find . -type f -print | grep -v perl | grep -v Gaim.3pm
+	find . -type f -print | grep -v perl | grep -v Purple.3pm
 
 DISTCLEANFILES= pidgin.desktop libpurple/gconf/gaim.schemas intltool-extract \
 			intltool-merge intltool-update
