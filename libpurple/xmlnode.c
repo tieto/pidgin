@@ -27,6 +27,7 @@
  * write my own stuff.  Also, re-writing this lets me be as lightweight
  * as I want to be.  Thank you libxode for giving me a good starting point */
 
+#include "debug.h"
 #include "internal.h"
 
 #include <libxml/parser.h>
@@ -453,6 +454,8 @@ xmlnode_parser_element_start_libxml(void *user_data,
 	struct _xmlnode_parser_data *xpd = user_data;
 	xmlnode *node;
 	int i;
+
+purple_debug_error("MARK", "\nelement_name=%s, prefix=%s, xmlns=%s\n", element_name, prefix, xmlns);
 
 	if(!element_name || xpd->error) {
 		return;
