@@ -9,7 +9,7 @@ EXTRA_DIST = \
 		connect.png			\
 		edit.png			\
 		pidgin.png			\
-		gaim.svg			\
+		pidgin.svg			\
 		info.png			\
 		insert-image.png		\
 		insert-image-small.png		\
@@ -48,7 +48,7 @@ EXTRA_DIST = \
 		typing.png			\
 		window-icon.png			\
 		Makefile.mingw			\
-		gaim.ico
+		pidgin.ico
 
 
 pidginbuttonpixdir = $(datadir)/pixmaps/pidgin/buttons
@@ -62,5 +62,5 @@ pidgindistpix_DATA = logo.png tb_drag_arrow_down.xpm tb_drag_arrow_left.xpm tb_d
 
 
 distpixmapdir = $(datadir)/pixmaps
-distpixmap_DATA = pidgin.png gaim.svg
+distpixmap_DATA = pidgin.png pidgin.svg
 
