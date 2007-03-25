@@ -53,7 +53,7 @@ G_BEGIN_DECLS
 
 GType gnt_file_sel_get_gtype(void);
 
-GntWidget *gnt_file_sel_new();
+GntWidget *gnt_file_sel_new(void);
 
 gboolean gnt_file_sel_set_current_location(GntFileSel *sel, const char *path);
 

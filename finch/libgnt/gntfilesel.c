@@ -312,7 +312,7 @@ gnt_file_sel_get_gtype(void)
 	return type;
 }
 
-GntWidget *gnt_file_sel_new()
+GntWidget *gnt_file_sel_new(void)
 {
 	GntWidget *widget = g_object_new(GNT_TYPE_FILE_SEL, NULL);
 	GntFileSel *sel = GNT_FILE_SEL(widget);
