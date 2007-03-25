@@ -32,11 +32,12 @@
 #include "debug.h"
 
 #include <arpa/inet.h>
-#include <net/route.h>
 #include <netinet/in.h>
+#include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/sysctl.h>
-#include <sys/types.h>
+
+#include <net/route.h>
 
 #include <netdb.h>
 #include <stdio.h>
@@ -50,7 +51,41 @@
 
 #ifdef NET_RT_DUMP2
 
-#define PMP_DEBUG 1
+#define PMP_DEBUG	1
+
+typedef struct {
+	uint8_t	version;
+	uint8_t opcode;
+} PurplePmpIpRequest;
+
+typedef struct {
+	uint8_t		version;
+	uint8_t		opcode; // 128 + n
+	uint16_t	resultcode;
+	uint32_t	epoch;
+	uint32_t	address;
+} PurplePmpIpResponse;
+
+typedef struct {
+	uint8_t		version;
+	uint8_t		opcode;
+	char		reserved[2];
+	uint16_t	privateport;
+	uint16_t	publicport;
+	uint32_t	lifetime;
+} PurplePmpMapRequest;
+
+struct _PurplePmpMapResponse {
+	uint8_t		version;
+	uint8_t		opcode;
+	uint16_t	resultcode;
+	uint32_t	epoch;
+	uint16_t	privateport;
+	uint16_t	publicport;
+	uint32_t	lifetime;
+};
+
+typedef struct _PurplePmpMapResponse PurplePmpMapResponse;
 
 /*
  *	Thanks to R. Matthew Emerson for the fixes on this
@@ -61,7 +96,7 @@
 
 #define PMP_VERSION			0
 #define PMP_PORT			5351
-#define PMP_TIMEOUT			250000	//	250000 useconds
+#define PMP_TIMEOUT			250000	/* 250000 useconds */
 
 /* alignment constraint for routing socket */
 #define ROUNDUP(a)			((a) > 0 ? (1 + (((a) - 1) | (sizeof(long) - 1))) : sizeof(long))
@@ -197,26 +232,6 @@ default_gw()
 }
 
 /*!
- * double_timeout(struct timeval *) will handle doubling a timeout for backoffs required by NAT-PMP
- */
-static void
-double_timeout(struct timeval *to)
-{
-	int second = 1000000; // number of useconds
-	
-	to->tv_sec = (to->tv_sec * 2);
-	to->tv_usec = (to->tv_usec * 2);
-	
-	// Overflow useconds if necessary
-	if (to->tv_usec >= second)
-	{
-		int overflow = (to->tv_usec / second);
-		to->tv_usec  = (to->tv_usec - (overflow * second));
-		to->tv_sec = (to->tv_sec + overflow);
-	}
-}
-
-/*!
  *	purple_pmp_get_public_ip() will return the publicly facing IP address of the 
  *	default NAT gateway. The function will return NULL if:
  *		- The gateway doesn't support NAT-PMP
@@ -227,18 +242,17 @@ purple_pmp_get_public_ip()
 {
 	struct sockaddr_in *gateway = default_gw();
 	
-	if (gateway == NULL)
+	if (!gateway)
 	{
 		purple_debug_info("nat-pmp", "Cannot request public IP from a NULL gateway!\n");
 		return NULL;
 	}
+
+	/* Default port for NAT-PMP is 5351 */
 	if (gateway->sin_port != PMP_PORT)
-	{
-		gateway->sin_port = htons(PMP_PORT); //	Default port for NAT-PMP is 5351
-	}
+		gateway->sin_port = htons(PMP_PORT);
 
 	int sendfd;
-	int req_attempts = 1;	
 	struct timeval req_timeout;
 	PurplePmpIpRequest req;
 	PurplePmpIpResponse resp;
@@ -249,70 +263,66 @@ purple_pmp_get_public_ip()
 
 	sendfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	
-	//	Clean out both req and resp structures
+	/* Clean out both req and resp structures */
 	bzero(&req, sizeof(PurplePmpIpRequest));
 	bzero(&resp, sizeof(PurplePmpIpResponse));
 	req.version = 0;
 	req.opcode	= 0;
 	
-	//	Attempt to contact NAT-PMP device 9 times as per: draft-cheshire-nat-pmp-02.txt  
-	while (req_attempts < 10)
-	{	
+	/* The NAT-PMP spec says we should attempt to contact the gateway 9 times, doubling the time we wait each time.
+	 * Even starting with a timeout of 0.1 seconds, that means that we have a total waiting of 204.6 seconds.
+	 * With the recommended timeout of 0.25 seconds, we're talking 511.5 seconds (8.5 minutes).
+	 * 
+	 * This seems really silly... if this were nonblocking, a couple retries might be in order, but it's not at present.
+	 * XXX Make this nonblocking.
+	 */
 #ifdef PMP_DEBUG
-		purple_debug_info("nat-pmp", "Attempting to retrieve the public ip address for the NAT device at: %s\n", inet_ntoa(gateway->sin_addr));
-		purple_debug_info("nat-pmp", "\tTimeout: %ds %dus, Request #: %d\n", req_timeout.tv_sec, req_timeout.tv_usec, req_attempts);
+	purple_debug_info("nat-pmp", "Attempting to retrieve the public ip address for the NAT device at: %s\n", inet_ntoa(gateway->sin_addr));
+	purple_debug_info("nat-pmp", "\tTimeout: %ds %dus\n", req_timeout.tv_sec, req_timeout.tv_usec);
 #endif
-		struct sockaddr_in addr;
-		socklen_t len = sizeof(struct sockaddr_in);
+	struct sockaddr_in addr;
+	socklen_t len = sizeof(struct sockaddr_in);
 
-		/* TODO: Non-blocking! */
-		if (sendto(sendfd, &req, sizeof(req), 0, (struct sockaddr *)(gateway), sizeof(struct sockaddr)) < 0)
-		{
-			purple_debug_info("nat-pmp", "There was an error sending the NAT-PMP public IP request! (%s)\n", strerror(errno));
-			return NULL;
-		}
-		
-		if (setsockopt(sendfd, SOL_SOCKET, SO_RCVTIMEO, &req_timeout, sizeof(req_timeout)) < 0)
-		{
-			purple_debug_info("nat-pmp", "There was an error setting the socket's options! (%s)\n", strerror(errno));
-			return NULL;
-		}		
-		
-		/* TODO: Non-blocking! */
-		if (recvfrom(sendfd, &resp, sizeof(PurplePmpIpResponse), 0, (struct sockaddr *)(&addr), &len) < 0)
-		{			
-			if ( (errno != EAGAIN) || (req_attempts == 9) )
-			{
-				purple_debug_info("nat-pmp", "There was an error receiving the response from the NAT-PMP device! (%s)\n", strerror(errno));
-				return NULL;
-			}
-			else
-			{
-				goto iterate;
-			}
-		}
-		
-		if (addr.sin_addr.s_addr != gateway->sin_addr.s_addr)
-		{
-			purple_debug_info("nat-pmp", "Response was not received from our gateway! Instead from: %s\n", inet_ntoa(addr.sin_addr));
-			goto iterate;
-		}
-		else
-		{
-			publicsockaddr = &addr;
-			break;
-		}
-
-iterate:
-		++req_attempts;
-		double_timeout(&req_timeout);
-	}
-
-	if (publicsockaddr == NULL) {
+	/* TODO: Non-blocking! */
+	if (sendto(sendfd, &req, sizeof(req), 0, (struct sockaddr *)(gateway), sizeof(struct sockaddr)) < 0)
+	{
+		purple_debug_info("nat-pmp", "There was an error sending the NAT-PMP public IP request! (%s)\n", strerror(errno));
 		g_free(gateway);
 		return NULL;
 	}
-	
+
+	if (setsockopt(sendfd, SOL_SOCKET, SO_RCVTIMEO, &req_timeout, sizeof(req_timeout)) < 0)
+	{
+		purple_debug_info("nat-pmp", "There was an error setting the socket's options! (%s)\n", strerror(errno));
+		g_free(gateway);
+		return NULL;
+	}		
+
+	/* TODO: Non-blocking! */
+	if (recvfrom(sendfd, &resp, sizeof(PurplePmpIpResponse), 0, (struct sockaddr *)(&addr), &len) < 0)
+	{			
+		if (errno != EAGAIN)
+		{
+			purple_debug_info("nat-pmp", "There was an error receiving the response from the NAT-PMP device! (%s)\n", strerror(errno));
+			g_free(gateway);
+			return NULL;
+		}
+	}
+
+	if (addr.sin_addr.s_addr == gateway->sin_addr.s_addr)
+		publicsockaddr = &addr;
+	else
+	{
+		purple_debug_info("nat-pmp", "Response was not received from our gateway! Instead from: %s\n", inet_ntoa(addr.sin_addr));
+		g_free(gateway);
+		return NULL;
+	}
+
+	if (!publicsockaddr) {
+		g_free(gateway);
+		return NULL;
+	}
+
 #ifdef PMP_DEBUG
 	purple_debug_info("nat-pmp", "Response received from NAT-PMP device:\n");
 	purple_debug_info("nat-pmp", "version: %d\n", resp.version);
@@ -331,128 +341,122 @@ iterate:
 	return inet_ntoa(publicsockaddr->sin_addr);
 }
 
-/*!
- *	will return NULL on error, or a pointer to the PurplePmpMapResponse type
- */
-PurplePmpMapResponse *
-purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
+gboolean
+purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned short publicport, int lifetime)
 {
-	struct sockaddr_in *gateway = default_gw();
-	
-	if (gateway == NULL)
-	{
-		purple_debug_info("nat-pmp", "Cannot create mapping on a NULL gateway!\n");
-		return NULL;
-	}
-	if (gateway->sin_port != PMP_PORT)
-	{
-		gateway->sin_port = htons(PMP_PORT); //	Default port for NAT-PMP is 5351
-	}
-		
+	struct sockaddr_in *gateway;
+	gboolean success = TRUE;
 	int sendfd;
-	int req_attempts = 1;	
 	struct timeval req_timeout;
 	PurplePmpMapRequest req;
-	PurplePmpMapResponse *resp = (PurplePmpMapResponse *)(malloc(sizeof(PurplePmpMapResponse)));
+	PurplePmpMapResponse *resp;
+	
+	gateway = default_gw();
+	
+	if (!gateway)
+	{
+		purple_debug_info("nat-pmp", "Cannot create mapping on a NULL gateway!\n");
+		return FALSE;
+	}
+
+	/* Default port for NAT-PMP is 5351 */
+	if (gateway->sin_port != PMP_PORT)
+		gateway->sin_port = htons(PMP_PORT);
+	
+	resp = g_new0(PurplePmpMapResponse, 1);
 	
 	req_timeout.tv_sec = 0;
 	req_timeout.tv_usec = PMP_TIMEOUT;
 	
 	sendfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	
-	//	Clean out both req and resp structures
+	/* Set up the req */
 	bzero(&req, sizeof(PurplePmpMapRequest));
-	bzero(resp, sizeof(PurplePmpMapResponse));
 	req.version = 0;
 	req.opcode	= ((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP);	
 	req.privateport = htons(privateport); //	What a difference byte ordering makes...d'oh!
 	req.publicport = htons(publicport);
 	req.lifetime = htonl(lifetime);
 	
-	//	Attempt to contact NAT-PMP device 9 times as per: draft-cheshire-nat-pmp-02.txt  
-	while (req_attempts < 10)
-	{	
+	/* The NAT-PMP spec says we should attempt to contact the gateway 9 times, doubling the time we wait each time.
+	 * Even starting with a timeout of 0.1 seconds, that means that we have a total waiting of 204.6 seconds.
+	 * With the recommended timeout of 0.25 seconds, we're talking 511.5 seconds (8.5 minutes).
+	 * 
+	 * This seems really silly... if this were nonblocking, a couple retries might be in order, but it's not at present.
+	 * XXX Make this nonblocking.
+	 * XXX This code looks like the pmp_get_public_ip() code. Can it be consolidated?
+	 */
 #ifdef PMP_DEBUG
-		purple_debug_info("nat-pmp", "Attempting to create a NAT-PMP mapping the private port %d, and the public port %d\n", privateport, publicport);
-		purple_debug_info("nat-pmp", "\tTimeout: %ds %dus, Request #: %d\n", req_timeout.tv_sec, req_timeout.tv_usec, req_attempts);
+	purple_debug_info("nat-pmp", "Attempting to create a NAT-PMP mapping the private port %d, and the public port %d\n", privateport, publicport);
+	purple_debug_info("nat-pmp", "\tTimeout: %ds %dus\n", req_timeout.tv_sec, req_timeout.tv_usec);
 #endif
 
-		/* TODO: Non-blocking! */
-		if (sendto(sendfd, &req, sizeof(req), 0, (struct sockaddr *)(gateway), sizeof(struct sockaddr)) < 0)
-		{
-			purple_debug_info("nat-pmp", "There was an error sending the NAT-PMP mapping request! (%s)\n", strerror(errno));
-			return NULL;
-		}
-		
-		if (setsockopt(sendfd, SOL_SOCKET, SO_RCVTIMEO, &req_timeout, sizeof(req_timeout)) < 0)
-		{
-			purple_debug_info("nat-pmp", "There was an error setting the socket's options! (%s)\n", strerror(errno));
-			return NULL;
-		}		
-		
-		/* TODO: Non-blocking! */
-		if (recvfrom(sendfd, resp, sizeof(PurplePmpMapResponse), 0, NULL, NULL) < 0)
-		{			
-			if ( (errno != EAGAIN) || (req_attempts == 9) )
-			{
-				purple_debug_info("nat-pmp", "There was an error receiving the response from the NAT-PMP device! (%s)\n", strerror(errno));
-				return NULL;
-			}
-			else
-			{
-				goto iterate;
-			}
-		}
-		
-		if (resp->opcode != (req.opcode + 128))
-		{
-			purple_debug_info("nat-pmp", "The opcode for the response from the NAT device does not match the request opcode!\n");
-			goto iterate;
-		}
-		
-		break;
-		
-iterate:
-		++req_attempts;
-		double_timeout(&req_timeout);
-	}
-	
-#ifdef PMP_DEBUG
-	purple_debug_info("nat-pmp", "Response received from NAT-PMP device:\n");
-	purple_debug_info("nat-pmp", "version: %d\n", resp->version);
-	purple_debug_info("nat-pmp", "opcode: %d\n", resp->opcode);
-	purple_debug_info("nat-pmp", "resultcode: %d\n", ntohs(resp->resultcode));
-	purple_debug_info("nat-pmp", "epoch: %d\n", ntohl(resp->epoch));
-	purple_debug_info("nat-pmp", "privateport: %d\n", ntohs(resp->privateport));
-	purple_debug_info("nat-pmp", "publicport: %d\n", ntohs(resp->publicport));
-	purple_debug_info("nat-pmp", "lifetime: %d\n", ntohl(resp->lifetime));
-#endif	
+	/* TODO: Non-blocking! */
+	success = (sendto(sendfd, &req, sizeof(req), 0, (struct sockaddr *)(gateway), sizeof(struct sockaddr)) >= 0);
+	if (!success)
+		purple_debug_info("nat-pmp", "There was an error sending the NAT-PMP mapping request! (%s)\n", strerror(errno));
 
+	if (success)
+	{
+		success = (setsockopt(sendfd, SOL_SOCKET, SO_RCVTIMEO, &req_timeout, sizeof(req_timeout)) >= 0);
+		if (!success)
+			purple_debug_info("nat-pmp", "There was an error setting the socket's options! (%s)\n", strerror(errno));
+	}
+
+	if (success)
+	{
+		/* The original code treats EAGAIN as a reason to iterate.. but I've removed iteration. This may be a problem */
+		/* TODO: Non-blocking! */
+		success = ((recvfrom(sendfd, resp, sizeof(PurplePmpMapResponse), 0, NULL, NULL) >= 0) ||
+				   (errno == EAGAIN));
+		if (!success)
+			purple_debug_info("nat-pmp", "There was an error receiving the response from the NAT-PMP device! (%s)\n", strerror(errno));
+	}
+
+	if (success)
+	{
+		success = (resp->opcode == (req.opcode + 128));
+		if (!success)
+			purple_debug_info("nat-pmp", "The opcode for the response from the NAT device does not match the request opcode!\n");
+	}
+
+#ifdef PMP_DEBUG
+	if (success)
+	{
+		purple_debug_info("nat-pmp", "Response received from NAT-PMP device:\n");
+		purple_debug_info("nat-pmp", "version: %d\n", resp->version);
+		purple_debug_info("nat-pmp", "opcode: %d\n", resp->opcode);
+		purple_debug_info("nat-pmp", "resultcode: %d\n", ntohs(resp->resultcode));
+		purple_debug_info("nat-pmp", "epoch: %d\n", ntohl(resp->epoch));
+		purple_debug_info("nat-pmp", "privateport: %d\n", ntohs(resp->privateport));
+		purple_debug_info("nat-pmp", "publicport: %d\n", ntohs(resp->publicport));
+		purple_debug_info("nat-pmp", "lifetime: %d\n", ntohl(resp->lifetime));
+	}
+#endif
+
+	g_free(resp);
 	g_free(gateway);
 
-	return resp;
+	/* XXX The private port may actually differ from the one we requested, according to the spec.
+	 * We don't handle that situation at present.
+	 *
+	 * TODO: Look at the result and verify it matches what we wanted; either return a failure if it doesn't,
+	 * or change network.c to know what to do if the desired private port shifts as a result of the nat-pmp operation.
+	 */
+	return success;
 }
 
-/*!
- *	pmp_destroy_map(uint8_t,uint16_t) 
- *	will return NULL on error, or a pointer to the PurplePmpMapResponse type
- */
-PurplePmpMapResponse *
-purple_pmp_destroy_map(PurplePmpType type, uint16_t privateport)
+gboolean
+purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 {
-	PurplePmpMapResponse *response;
+	gboolean success;
 	
-	response = purple_pmp_create_map(((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP),
+	success = purple_pmp_create_map(((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP),
 							privateport, 0, 0);
-	if (!response)
-	{
-		purple_debug_info("nat-pmp", "Failed to properly destroy mapping for %d!\n", privateport);
-		return NULL;
-	}
-	else
-	{
-		return response;
-	}
+	if (!success)
+		purple_debug_warning("nat-pmp", "Failed to properly destroy mapping for %d!\n", privateport);
+
+	return success;
 }
 #else /* #ifdef NET_RT_DUMP2 */
 char *
@@ -461,14 +465,14 @@ purple_pmp_get_public_ip()
 	return NULL;
 }
 
-PurplePmpMapResponse *
-purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
+gboolean
+purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned short publicport, int lifetime)
 {
 	return NULL;
 }
 
-PurplePmpMapResponse *
-purple_pmp_destroy_map(PurplePmpType type, uint16_t privateport)
+gboolean
+purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 {
 	return NULL;
 }
