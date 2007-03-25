@@ -468,12 +468,12 @@ purple_pmp_get_public_ip()
 gboolean
 purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned short publicport, int lifetime)
 {
-	return NULL;
+	return FALSE;
 }
 
 gboolean
 purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 {
-	return NULL;
+	return FALSE;
 }
 #endif /* #ifndef NET_RT_DUMP2 */
