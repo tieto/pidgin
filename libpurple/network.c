@@ -47,7 +47,7 @@
 #include "stun.h"
 #include "upnp.h"
 
-/* #define ENABLE_NAT_PMP */
+/* #define ENABLE_NAT_PMP 1 */
 
 #ifdef ENABLE_NAT_PMP
 #include "nat-pmp.h"
@@ -199,7 +199,7 @@ purple_network_get_my_ip(int fd)
 	  return ip;
 
 #ifdef ENABLE_NAT_PMP
-	/* Attempt to ge tthe IP from a NAT device using NAT-PMP */
+	/* Attempt to get the IP from a NAT device using NAT-PMP */
 	ip = purple_pmp_get_public_ip();
 	if (ip != NULL)
 		return ip;
@@ -255,9 +255,9 @@ static gboolean
 purple_network_finish_pmp_map_cb(gpointer data)
 {
 	PurpleNetworkListenData *listen_data;
-	
+
 	listen_data = data;
-	
+
 	if (listen_data->cb)
 		listen_data->cb(listen_data->listenfd, listen_data->cb_data);
 
@@ -353,7 +353,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	actual_port = purple_network_get_port_from_fd(listenfd);
 
 	purple_debug_info("network", "Listening on port: %hu\n", actual_port);
-	
+
 	listen_data = g_new0(PurpleNetworkListenData, 1);
 	listen_data->listenfd = listenfd;
 	listen_data->adding = TRUE;
