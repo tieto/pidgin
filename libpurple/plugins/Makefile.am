@@ -104,7 +104,6 @@ EXTRA_DIST = \
 	dbus-buddyicons-example.py \
 	filectl.c \
 	fortuneprofile.pl \
-	gaim.pl \
 	ipc-test-client.c \
 	ipc-test-server.c \
 	pluginpref_example.c \
