@@ -38,7 +38,7 @@ libpurple/dbus-server.c
 libpurple/desktopitem.c
 libpurple/dnsquery.c
 libpurple/ft.c
-libpurple/gconf/gaim.schemas.in
+libpurple/gconf/purple.schemas.in
 libpurple/log.c
 libpurple/plugin.c
 libpurple/plugins/autoaccept.c

@@ -4,7 +4,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/aim/enabled</key>
       <applyto>/desktop/gnome/url-handlers/aim/enabled</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>true</default>
       <locale name="C">
@@ -15,9 +15,9 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/aim/command</key>
       <applyto>/desktop/gnome/url-handlers/aim/command</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>string</type>
-      <default>pidgin-url-handler "%s"</default>
+      <default>purple-url-handler "%s"</default>
       <locale name="C">
         <short>The handler for "aim" URLs</short>
         <long>The command used to handle "aim" URLs, if enabled.</long>
@@ -26,7 +26,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/aim/needs_terminal</key>
       <applyto>/desktop/gnome/url-handlers/aim/needs_terminal</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>false</default>
       <locale name="C">
@@ -38,7 +38,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/gg/enabled</key>
       <applyto>/desktop/gnome/url-handlers/gg/enabled</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>true</default>
       <locale name="C">
@@ -49,9 +49,9 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/gg/command</key>
       <applyto>/desktop/gnome/url-handlers/gg/command</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>string</type>
-      <default>pidgin-url-handler "%s"</default>
+      <default>purple-url-handler "%s"</default>
       <locale name="C">
         <short>The handler for "gg" URLs</short>
         <long>The command used to handle "gg" URLs, if enabled.</long>
@@ -60,7 +60,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/gg/needs_terminal</key>
       <applyto>/desktop/gnome/url-handlers/gg/needs_terminal</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>false</default>
       <locale name="C">
@@ -72,7 +72,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/icq/enabled</key>
       <applyto>/desktop/gnome/url-handlers/icq/enabled</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>true</default>
       <locale name="C">
@@ -83,9 +83,9 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/icq/command</key>
       <applyto>/desktop/gnome/url-handlers/icq/command</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>string</type>
-      <default>pidgin-url-handler "%s"</default>
+      <default>purple-url-handler "%s"</default>
       <locale name="C">
         <short>The handler for "icq" URLs</short>
         <long>The command used to handle "icq" URLs, if enabled.</long>
@@ -94,7 +94,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/icq/needs_terminal</key>
       <applyto>/desktop/gnome/url-handlers/icq/needs_terminal</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>false</default>
       <locale name="C">
@@ -106,7 +106,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/irc/enabled</key>
       <applyto>/desktop/gnome/url-handlers/irc/enabled</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>true</default>
       <locale name="C">
@@ -117,9 +117,9 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/irc/command</key>
       <applyto>/desktop/gnome/url-handlers/irc/command</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>string</type>
-      <default>pidgin-url-handler "%s"</default>
+      <default>purple-url-handler "%s"</default>
       <locale name="C">
         <short>The handler for "irc" URLs</short>
         <long>The command used to handle "irc" URLs, if enabled.</long>
@@ -128,7 +128,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/irc/needs_terminal</key>
       <applyto>/desktop/gnome/url-handlers/irc/needs_terminal</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>false</default>
       <locale name="C">
@@ -140,7 +140,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/msnim/enabled</key>
       <applyto>/desktop/gnome/url-handlers/msnim/enabled</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>true</default>
       <locale name="C">
@@ -151,9 +151,9 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/msnim/command</key>
       <applyto>/desktop/gnome/url-handlers/msnim/command</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>string</type>
-      <default>pidgin-url-handler "%s"</default>
+      <default>purple-url-handler "%s"</default>
       <locale name="C">
         <short>The handler for "msnim" URLs</short>
         <long>The command used to handle "msnim" URLs, if enabled.</long>
@@ -162,7 +162,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/msnim/needs_terminal</key>
       <applyto>/desktop/gnome/url-handlers/msnim/needs_terminal</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>false</default>
       <locale name="C">
@@ -174,7 +174,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/sip/enabled</key>
       <applyto>/desktop/gnome/url-handlers/sip/enabled</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>true</default>
       <locale name="C">
@@ -185,9 +185,9 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/sip/command</key>
       <applyto>/desktop/gnome/url-handlers/sip/command</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>string</type>
-      <default>pidgin-url-handler "%s"</default>
+      <default>purple-url-handler "%s"</default>
       <locale name="C">
         <short>The handler for "sip" URLs</short>
         <long>The command used to handle "sip" URLs, if enabled.</long>
@@ -196,7 +196,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/sip/needs_terminal</key>
       <applyto>/desktop/gnome/url-handlers/sip/needs_terminal</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>false</default>
       <locale name="C">
@@ -208,7 +208,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/xmpp/enabled</key>
       <applyto>/desktop/gnome/url-handlers/xmpp/enabled</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>true</default>
       <locale name="C">
@@ -219,9 +219,9 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/xmpp/command</key>
       <applyto>/desktop/gnome/url-handlers/xmpp/command</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>string</type>
-      <default>pidgin-url-handler "%s"</default>
+      <default>purple-url-handler "%s"</default>
       <locale name="C">
         <short>The handler for "xmpp" URLs</short>
         <long>The command used to handle "xmpp" URLs, if enabled.</long>
@@ -230,7 +230,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/xmpp/needs_terminal</key>
       <applyto>/desktop/gnome/url-handlers/xmpp/needs_terminal</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>false</default>
       <locale name="C">
@@ -242,7 +242,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/ymsgr/enabled</key>
       <applyto>/desktop/gnome/url-handlers/ymsgr/enabled</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>true</default>
       <locale name="C">
@@ -253,9 +253,9 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/ymsgr/command</key>
       <applyto>/desktop/gnome/url-handlers/ymsgr/command</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>string</type>
-      <default>pidgin-url-handler "%s"</default>
+      <default>purple-url-handler "%s"</default>
       <locale name="C">
         <short>The handler for "ymsgr" URLs</short>
         <long>The command used to handle "ymsgr" URLs, if enabled.</long>
@@ -264,7 +264,7 @@
     <schema>
       <key>/schemas/desktop/gnome/url-handlers/ymsgr/needs_terminal</key>
       <applyto>/desktop/gnome/url-handlers/ymsgr/needs_terminal</applyto>
-      <owner>gaim</owner>
+      <owner>purple</owner>
       <type>bool</type>
       <default>false</default>
       <locale name="C">

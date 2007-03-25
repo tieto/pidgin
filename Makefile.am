@@ -66,7 +66,7 @@ endif
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Purple.3pm
 
-DISTCLEANFILES= pidgin.desktop libpurple/gconf/gaim.schemas intltool-extract \
+DISTCLEANFILES= pidgin.desktop libpurple/gconf/purple.schemas intltool-extract \
 			intltool-merge intltool-update
 
 ACLOCAL_AMFLAGS = -I m4
