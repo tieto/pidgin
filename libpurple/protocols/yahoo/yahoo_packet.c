@@ -161,6 +161,7 @@ void yahoo_packet_read(struct yahoo_packet *pkt, const guchar *data, int len)
 		}
 
 		if (accept) {
+			/* TODO: strstr() should not be used here because data isn't NULL terminated */
 			delimiter = (const guchar *)strstr((char *)&data[pos], "\xc0\x80");
 			if (delimiter == NULL)
 			{
