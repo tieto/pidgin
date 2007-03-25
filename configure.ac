@@ -883,7 +883,7 @@ if test "x$GCC" = "xyes"; then
 fi
 AC_SUBST(CFLAGS)
 
-AC_PATH_PROG(gaimpath, gaim)
+AC_PATH_PROG(pidginpath, pidgin)
 
 dnl #######################################################################
 dnl # Check for D-Bus libraries
@@ -2031,8 +2031,8 @@ echo Print debugging messages...... : $enable_debug
 echo Assertions are fatal.......... : $enable_fatal_asserts
 echo
 eval eval echo Pidgin will be installed in $bindir.
-if test "x$gaimpath" != "x" ; then
-	echo Warning: You have an old copy of gaim at $gaimpath.
+if test "x$pidginpath" != "x" ; then
+	echo Warning: You have an old copy of Pidgin at $pidginpath.
 fi
 echo
 echo configure complete, now type \'make\'
