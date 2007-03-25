@@ -162,7 +162,6 @@ static void jabber_stream_features_parse(JabberStream *js, xmlnode *packet)
 static void jabber_stream_handle_error(JabberStream *js, xmlnode *packet)
 {
 	char *msg = jabber_parse_error(js, packet);
-purple_debug_error("MARK", "in jabber_stream_handle_error\n");
 
 	purple_connection_error(js->gc, msg);
 	g_free(msg);
@@ -1454,7 +1453,6 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 	const char *code = NULL, *text = NULL;
 	const char *xmlns = xmlnode_get_namespace(packet);
 	char *cdata = NULL;
-purple_debug_error("MARK", "in jabber_parse_error, packet->name=%s, xmlns=%s, type=%d, data=%s\n", packet->name, packet->xmlns, packet->type, packet->data);
 
 	if((error = xmlnode_get_child(packet, "error"))) {
 		cdata = xmlnode_get_data(error);
@@ -1530,14 +1528,14 @@ purple_debug_error("MARK", "in jabber_parse_error, packet->name=%s, xmlns=%s, ty
 			js->gc->wants_to_die = TRUE;
 			text = _("Authentication Failure");
 		}
-	} else if(!strcmp(packet->name, "stream:error")) {
-purple_debug_error("MARK", "stream:error\n");
+	} else if(!strcmp(packet->name, "stream:error") ||
+			 (!strcmp(packet->name, "error") &&
+				!strcmp(xmlnode_get_namespace(packet), "http://etherx.jabber.org/streams"))) {
 		if(xmlnode_get_child(packet, "bad-format")) {
 			text = _("Bad Format");
 		} else if(xmlnode_get_child(packet, "bad-namespace-prefix")) {
 			text = _("Bad Namespace Prefix");
 		} else if(xmlnode_get_child(packet, "conflict")) {
-purple_debug_error("MARK", "conflict\n");
 			js->gc->wants_to_die = TRUE;
 			text = _("Resource Conflict");
 		} else if(xmlnode_get_child(packet, "connection-timeout")) {
@@ -1587,7 +1585,6 @@ purple_debug_error("MARK", "conflict\n");
 		}
 	}
 
-purple_debug_error("MARK", "text=\n", text);
 	if(text || cdata) {
 		char *ret = g_strdup_printf("%s%s%s", code ? code : "",
 				code ? ": " : "", text ? text : cdata);

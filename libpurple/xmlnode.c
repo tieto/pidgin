@@ -455,8 +455,6 @@ xmlnode_parser_element_start_libxml(void *user_data,
 	xmlnode *node;
 	int i;
 
-purple_debug_error("MARK", "\nelement_name=%s, prefix=%s, xmlns=%s\n", element_name, prefix, xmlns);
-
 	if(!element_name || xpd->error) {
 		return;
 	} else {
