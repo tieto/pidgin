@@ -10,16 +10,16 @@ EXTRA_DIST = \
 		README.SVN \
 		README.dbus \
 		README.mingw \
+		config.h.mingw \
 		gaim.pc.in \
 		gaim-uninstalled.pc.in \
-		gaim.apspec.in \
 		gaim.service.in \
-		pidgin.spec.in \
-		pidgin.desktop.in \
 		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in \
-		config.h.mingw \
+		pidgin.apspec.in \
+		pidgin.spec.in \
+		pidgin.desktop.in \
 		po/Makefile.mingw
 
 noinst_HEADERS = config.h

@@ -1895,12 +1895,12 @@ fi
 
 AC_OUTPUT([Makefile
 		   Doxyfile
-		   gaim.apspec
 		   gaim.service
 		   doc/Makefile
 		   doc/pidgin.1
 		   doc/finch.1
 		   m4macros/Makefile
+		   pidgin.apspec
 		   pidgin/Makefile
 		   pidgin/pidgin.pc
 		   pidgin/pidgin-uninstalled.pc
