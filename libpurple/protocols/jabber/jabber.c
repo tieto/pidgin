@@ -171,11 +171,15 @@ static void tls_init(JabberStream *js);
 
 void jabber_process_packet(JabberStream *js, xmlnode *packet)
 {
+	const char *xmlns;
+
 	purple_signal_emit(my_protocol, "jabber-receiving-xmlnode", js->gc, &packet);
 
 	/* if the signal leaves us with a null packet, we're done */
 	if(NULL == packet)
 		return;
+
+	xmlns = xmlnode_get_namespace(packet);
 
 	if(!strcmp(packet->name, "iq")) {
 		jabber_iq_parse(js, packet);
@@ -185,13 +189,13 @@ void jabber_process_packet(JabberStream *js, xmlnode *packet)
 		jabber_message_parse(js, packet);
 	} else if(!strcmp(packet->name, "stream:features")) {
 		jabber_stream_features_parse(js, packet);
-	} else if (!strcmp(packet->name, "features") && 
-		   !strcmp(xmlnode_get_namespace(packet), "http://etherx.jabber.org/streams")) {
+	} else if (!strcmp(packet->name, "features") &&
+		   !strcmp(xmlns, "http://etherx.jabber.org/streams")) {
 		jabber_stream_features_parse(js, packet);
-	} else if(!strcmp(packet->name, "stream:error")) {
-		jabber_stream_handle_error(js, packet);
-	} else if (!strcmp(packet->name, "error") &&
-		   !strcmp(xmlnode_get_namespace(packet), "http://etherx.jabber.org/streams")) {
+	} else if(!strcmp(packet->name, "stream:error") ||
+			 (!strcmp(packet->name, "error") &&
+				!strcmp(xmlns, "http://etherx.jabber.org/streams")))
+	{
 		jabber_stream_handle_error(js, packet);
 	} else if(!strcmp(packet->name, "challenge")) {
 		if(js->state == JABBER_STREAM_AUTHENTICATING)
@@ -1530,7 +1534,7 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 		}
 	} else if(!strcmp(packet->name, "stream:error") ||
 			 (!strcmp(packet->name, "error") &&
-				!strcmp(xmlnode_get_namespace(packet), "http://etherx.jabber.org/streams"))) {
+				!strcmp(xmlns, "http://etherx.jabber.org/streams"))) {
 		if(xmlnode_get_child(packet, "bad-format")) {
 			text = _("Bad Format");
 		} else if(xmlnode_get_child(packet, "bad-namespace-prefix")) {
