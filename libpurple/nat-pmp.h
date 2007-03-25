@@ -32,8 +32,9 @@
 #define _PURPLE_NAT_PMP_H
 
 #include <stdint.h>
+#include <glib.h>
 
-#define PURPLE_PMP_LIFETIME 3600 /* seconds */
+#define PURPLE_PMP_LIFETIME	3600	/* 3600 seconds */
 
 /*
  *	uint8_t:	version, opcodes
@@ -46,41 +47,10 @@ typedef enum {
 	PURPLE_PMP_TYPE_TCP
 } PurplePmpType;
 
-typedef struct {
-	uint8_t	version;
-	uint8_t opcode;
-} PurplePmpIpRequest;
-
-typedef struct {
-	uint8_t		version;
-	uint8_t		opcode; // 128 + n
-	uint16_t	resultcode;
-	uint32_t	epoch;
-	uint32_t	address;
-} PurplePmpIpResponse;
-
-typedef struct {
-	uint8_t		version;
-	uint8_t		opcode;
-	char		reserved[2];
-	uint16_t	privateport;
-	uint16_t	publicport;
-	uint32_t	lifetime;
-} PurplePmpMapRequest;
-
-typedef struct {
-	uint8_t		version;
-	uint8_t		opcode;
-	uint16_t	resultcode;
-	uint32_t	epoch;
-	uint16_t	privateport;
-	uint16_t	publicport;
-	uint32_t	lifetime;
-} PurplePmpMapResponse;
-
 /**
  *
  */
+
 /*
  * TODO: This should probably cache the result of this lookup requests
  *       so that subsequent calls to this function do not require a
@@ -89,13 +59,25 @@ typedef struct {
 char *purple_pmp_get_public_ip();
 
 /**
+ * Remove the NAT-PMP mapping for a specified type on a specified port
  *
+ * @param type The PurplePmpType
+ * @param privateport The private port on which we are listening locally
+ * @param publicport The public port on which we are expecting a response
+ * @param lifetime The lifetime of the mapping. It is recommended that this be PURPLE_PMP_LIFETIME.
+ *
+ * @returns TRUE if succesful; FALSE if unsuccessful
  */
-PurplePmpMapResponse *purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicport, uint32_t lifetime);
+gboolean purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned short publicport, int lifetime);
 
 /**
+ * Remove the NAT-PMP mapping for a specified type on a specified port
  *
+ * @param type The PurplePmpType
+ * @param privateport The private port on which the mapping was previously made
+ *
+ * @returns TRUE if succesful; FALSE if unsuccessful
  */
-PurplePmpMapResponse *purple_pmp_destroy_map(PurplePmpType type, uint16_t privateport);
-
-#endif /* _PURPLE_NAT_PMP_H_ */
+gboolean purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport);
+	
+#endif
