@@ -106,8 +106,8 @@ static void
 get_rtaddrs(int bitmask, struct sockaddr *sa, struct sockaddr *addrs[])
 {
 	int i;
-	
-	for (i = 0; i < RTAX_MAX; i++) 
+
+	for (i = 0; i < RTAX_MAX; i++)
 	{
 		if (bitmask & (1 << i)) 
 		{
@@ -125,10 +125,10 @@ static int
 is_default_route(struct sockaddr *sa, struct sockaddr *mask)
 {
     struct sockaddr_in *sin;
-	
+
     if (sa->sa_family != AF_INET)
 		return 0;
-	
+
     sin = (struct sockaddr_in *)sa;
     if ((sin->sin_addr.s_addr == INADDR_ANY) &&
 		mask &&
@@ -159,29 +159,29 @@ default_gw()
     mib[3] = 0; /* address family - 0 for all addres families */
     mib[4] = NET_RT_DUMP2;
     mib[5] = 0;
-	
+
 	/* Determine the buffer side needed to get the full routing table */
     if (sysctl(mib, 6, NULL, &needed, NULL, 0) < 0) 
 	{
 		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump estimate");
 		return NULL;
     }
-	
+
     if (!(buf = malloc(needed)))
 	{
 		purple_debug_warning("nat-pmp", "malloc");
 		return NULL;
     }
-	
+
 	/* Read the routing table into buf */
     if (sysctl(mib, 6, buf, &needed, NULL, 0) < 0) 
 	{
 		purple_debug_warning("nat-pmp", "sysctl: net.route.0.0.dump");
 		return NULL;
     }
-	
+
     lim = buf + needed;
-	
+
     for (next = buf; next < lim; next += rtm->rtm_msglen) 
 	{
 		rtm = (struct rt_msghdr2 *)next;
@@ -199,15 +199,15 @@ default_gw()
 
 				get_rtaddrs(rtm->rtm_addrs, sa, rti_info);
 				bzero(&addr, sizeof(addr));
-				
+
 				if (rtm->rtm_addrs & RTA_DST)
 					bcopy(rti_info[RTAX_DST], &addr, rti_info[RTAX_DST]->sa_len);
-				
+
 				bzero(&mask, sizeof(mask));
-				
+
 				if (rtm->rtm_addrs & RTA_NETMASK)
 					bcopy(rti_info[RTAX_NETMASK], &mask, rti_info[RTAX_NETMASK]->sa_len);
-				
+
 				if (rtm->rtm_addrs & RTA_GATEWAY &&
 					is_default_route(&addr, &mask)) 
 				{					
@@ -241,7 +241,7 @@ char *
 purple_pmp_get_public_ip()
 {
 	struct sockaddr_in *gateway = default_gw();
-	
+
 	if (!gateway)
 	{
 		purple_debug_info("nat-pmp", "Cannot request public IP from a NULL gateway!\n");
@@ -262,13 +262,13 @@ purple_pmp_get_public_ip()
 	req_timeout.tv_usec = PMP_TIMEOUT;
 
 	sendfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	
+
 	/* Clean out both req and resp structures */
 	bzero(&req, sizeof(PurplePmpIpRequest));
 	bzero(&resp, sizeof(PurplePmpIpResponse));
 	req.version = 0;
 	req.opcode	= 0;
-	
+
 	/* The NAT-PMP spec says we should attempt to contact the gateway 9 times, doubling the time we wait each time.
 	 * Even starting with a timeout of 0.1 seconds, that means that we have a total waiting of 204.6 seconds.
 	 * With the recommended timeout of 0.25 seconds, we're talking 511.5 seconds (8.5 minutes).
@@ -350,9 +350,9 @@ purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned s
 	struct timeval req_timeout;
 	PurplePmpMapRequest req;
 	PurplePmpMapResponse *resp;
-	
+
 	gateway = default_gw();
-	
+
 	if (!gateway)
 	{
 		purple_debug_info("nat-pmp", "Cannot create mapping on a NULL gateway!\n");
@@ -362,14 +362,14 @@ purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned s
 	/* Default port for NAT-PMP is 5351 */
 	if (gateway->sin_port != PMP_PORT)
 		gateway->sin_port = htons(PMP_PORT);
-	
+
 	resp = g_new0(PurplePmpMapResponse, 1);
-	
+
 	req_timeout.tv_sec = 0;
 	req_timeout.tv_usec = PMP_TIMEOUT;
-	
+
 	sendfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
-	
+
 	/* Set up the req */
 	bzero(&req, sizeof(PurplePmpMapRequest));
 	req.version = 0;
@@ -377,7 +377,7 @@ purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned s
 	req.privateport = htons(privateport); //	What a difference byte ordering makes...d'oh!
 	req.publicport = htons(publicport);
 	req.lifetime = htonl(lifetime);
-	
+
 	/* The NAT-PMP spec says we should attempt to contact the gateway 9 times, doubling the time we wait each time.
 	 * Even starting with a timeout of 0.1 seconds, that means that we have a total waiting of 204.6 seconds.
 	 * With the recommended timeout of 0.25 seconds, we're talking 511.5 seconds (8.5 minutes).
@@ -450,7 +450,7 @@ gboolean
 purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 {
 	gboolean success;
-	
+
 	success = purple_pmp_create_map(((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP),
 							privateport, 0, 0);
 	if (!success)
