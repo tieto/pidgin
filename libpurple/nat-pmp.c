@@ -31,14 +31,12 @@
 #include "nat-pmp.h"
 #include "debug.h"
 
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/sysctl.h>
-
+#include <arpa/inet.h>
 #include <net/route.h>
 #include <netinet/in.h>
-
-#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/sysctl.h>
+#include <sys/types.h>
 
 #include <netdb.h>
 #include <stdio.h>
@@ -47,13 +45,12 @@
 #include <err.h>
 
 #include <errno.h>
-#include <assert.h>
 #include <sys/types.h>
 #include <net/if.h>
 
 #ifdef NET_RT_DUMP2
 
-#define PMP_DEBUG
+#define PMP_DEBUG 1
 
 /*
  *	Thanks to R. Matthew Emerson for the fixes on this
@@ -243,8 +240,8 @@ purple_pmp_get_public_ip()
 	int sendfd;
 	int req_attempts = 1;	
 	struct timeval req_timeout;
-	pmp_ip_request_t req;
-	pmp_ip_response_t resp;
+	PurplePmpIpRequest req;
+	PurplePmpIpResponse resp;
 	struct sockaddr_in *publicsockaddr = NULL;
 
 	req_timeout.tv_sec = 0;
@@ -253,8 +250,8 @@ purple_pmp_get_public_ip()
 	sendfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	
 	//	Clean out both req and resp structures
-	bzero(&req, sizeof(pmp_ip_request_t));
-	bzero(&resp, sizeof(pmp_ip_response_t));
+	bzero(&req, sizeof(PurplePmpIpRequest));
+	bzero(&resp, sizeof(PurplePmpIpResponse));
 	req.version = 0;
 	req.opcode	= 0;
 	
@@ -268,6 +265,7 @@ purple_pmp_get_public_ip()
 		struct sockaddr_in addr;
 		socklen_t len = sizeof(struct sockaddr_in);
 
+		/* TODO: Non-blocking! */
 		if (sendto(sendfd, &req, sizeof(req), 0, (struct sockaddr *)(gateway), sizeof(struct sockaddr)) < 0)
 		{
 			purple_debug_info("nat-pmp", "There was an error sending the NAT-PMP public IP request! (%s)\n", strerror(errno));
@@ -280,7 +278,8 @@ purple_pmp_get_public_ip()
 			return NULL;
 		}		
 		
-		if (recvfrom(sendfd, &resp, sizeof(pmp_ip_response_t), 0, (struct sockaddr *)(&addr), &len) < 0)
+		/* TODO: Non-blocking! */
+		if (recvfrom(sendfd, &resp, sizeof(PurplePmpIpResponse), 0, (struct sockaddr *)(&addr), &len) < 0)
 		{			
 			if ( (errno != EAGAIN) || (req_attempts == 9) )
 			{
@@ -333,9 +332,9 @@ iterate:
 }
 
 /*!
- *	will return NULL on error, or a pointer to the pmp_map_response_t type
+ *	will return NULL on error, or a pointer to the PurplePmpMapResponse type
  */
-pmp_map_response_t *
+PurplePmpMapResponse *
 purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
 {
 	struct sockaddr_in *gateway = default_gw();
@@ -353,8 +352,8 @@ purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicp
 	int sendfd;
 	int req_attempts = 1;	
 	struct timeval req_timeout;
-	pmp_map_request_t req;
-	pmp_map_response_t *resp = (pmp_map_response_t *)(malloc(sizeof(pmp_map_response_t)));
+	PurplePmpMapRequest req;
+	PurplePmpMapResponse *resp = (PurplePmpMapResponse *)(malloc(sizeof(PurplePmpMapResponse)));
 	
 	req_timeout.tv_sec = 0;
 	req_timeout.tv_usec = PMP_TIMEOUT;
@@ -362,8 +361,8 @@ purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicp
 	sendfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	
 	//	Clean out both req and resp structures
-	bzero(&req, sizeof(pmp_map_request_t));
-	bzero(resp, sizeof(pmp_map_response_t));
+	bzero(&req, sizeof(PurplePmpMapRequest));
+	bzero(resp, sizeof(PurplePmpMapResponse));
 	req.version = 0;
 	req.opcode	= ((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP);	
 	req.privateport = htons(privateport); //	What a difference byte ordering makes...d'oh!
@@ -378,6 +377,7 @@ purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicp
 		purple_debug_info("nat-pmp", "\tTimeout: %ds %dus, Request #: %d\n", req_timeout.tv_sec, req_timeout.tv_usec, req_attempts);
 #endif
 
+		/* TODO: Non-blocking! */
 		if (sendto(sendfd, &req, sizeof(req), 0, (struct sockaddr *)(gateway), sizeof(struct sockaddr)) < 0)
 		{
 			purple_debug_info("nat-pmp", "There was an error sending the NAT-PMP mapping request! (%s)\n", strerror(errno));
@@ -390,7 +390,8 @@ purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicp
 			return NULL;
 		}		
 		
-		if (recvfrom(sendfd, resp, sizeof(pmp_map_response_t), 0, NULL, NULL) < 0)
+		/* TODO: Non-blocking! */
+		if (recvfrom(sendfd, resp, sizeof(PurplePmpMapResponse), 0, NULL, NULL) < 0)
 		{			
 			if ( (errno != EAGAIN) || (req_attempts == 9) )
 			{
@@ -434,12 +435,12 @@ iterate:
 
 /*!
  *	pmp_destroy_map(uint8_t,uint16_t) 
- *	will return NULL on error, or a pointer to the pmp_map_response_t type
+ *	will return NULL on error, or a pointer to the PurplePmpMapResponse type
  */
-pmp_map_response_t *
+PurplePmpMapResponse *
 purple_pmp_destroy_map(PurplePmpType type, uint16_t privateport)
 {
-	pmp_map_response_t *response;
+	PurplePmpMapResponse *response;
 	
 	response = purple_pmp_create_map(((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP),
 							privateport, 0, 0);
@@ -460,13 +461,13 @@ purple_pmp_get_public_ip()
 	return NULL;
 }
 
-pmp_map_response_t *
+PurplePmpMapResponse *
 purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicport, uint32_t lifetime)
 {
 	return NULL;
 }
 
-pmp_map_response_t *
+PurplePmpMapResponse *
 purple_pmp_destroy_map(PurplePmpType type, uint16_t privateport)
 {
 	return NULL;

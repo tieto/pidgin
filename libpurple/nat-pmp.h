@@ -1,5 +1,5 @@
 /**
-* @file nat-pmp.h NAT-PMP Implementation
+ * @file nat-pmp.h NAT-PMP Implementation
  * @ingroup core
  *
  * purple
@@ -28,20 +28,12 @@
  * OF SUCH DAMAGE.
  */
 
-#ifndef _PMPMAPPER_H
-#define _PMPMAPPER_H
+#ifndef _PURPLE_NAT_PMP_H
+#define _PURPLE_NAT_PMP_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <assert.h>
-#include <sys/socket.h>
-#include <sys/sysctl.h>
-#include <sys/types.h>
-#include <net/if.h>
-#include <net/route.h>
+#include <stdint.h>
 
-#define PURPLE_PMP_LIFETIME		3600	//	3600 seconds
+#define PURPLE_PMP_LIFETIME 3600 /* seconds */
 
 /*
  *	uint8_t:	version, opcodes
@@ -57,7 +49,7 @@ typedef enum {
 typedef struct {
 	uint8_t	version;
 	uint8_t opcode;
-} pmp_ip_request_t;
+} PurplePmpIpRequest;
 
 typedef struct {
 	uint8_t		version;
@@ -65,7 +57,7 @@ typedef struct {
 	uint16_t	resultcode;
 	uint32_t	epoch;
 	uint32_t	address;
-} pmp_ip_response_t;
+} PurplePmpIpResponse;
 
 typedef struct {
 	uint8_t		version;
@@ -74,7 +66,7 @@ typedef struct {
 	uint16_t	privateport;
 	uint16_t	publicport;
 	uint32_t	lifetime;
-} pmp_map_request_t;
+} PurplePmpMapRequest;
 
 typedef struct {
 	uint8_t		version;
@@ -84,10 +76,26 @@ typedef struct {
 	uint16_t	privateport;
 	uint16_t	publicport;
 	uint32_t	lifetime;
-} pmp_map_response_t;
+} PurplePmpMapResponse;
 
+/**
+ *
+ */
+/*
+ * TODO: This should probably cache the result of this lookup requests
+ *       so that subsequent calls to this function do not require a
+ *       round-trip exchange with the local router.
+ */
 char *purple_pmp_get_public_ip();
-pmp_map_response_t *purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicport, uint32_t lifetime);
-pmp_map_response_t *purple_pmp_destroy_map(PurplePmpType type, uint16_t privateport);
-	
-#endif
+
+/**
+ *
+ */
+PurplePmpMapResponse *purple_pmp_create_map(PurplePmpType type, uint16_t privateport, uint16_t publicport, uint32_t lifetime);
+
+/**
+ *
+ */
+PurplePmpMapResponse *purple_pmp_destroy_map(PurplePmpType type, uint16_t privateport);
+
+#endif /* _PURPLE_NAT_PMP_H_ */
