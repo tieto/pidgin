@@ -17,18 +17,18 @@
 #define GNT_LINE_SET_FLAGS(obj, flags)		(GNT_LINE_FLAGS(obj) |= flags)
 #define GNT_LINE_UNSET_FLAGS(obj, flags)	(GNT_LINE_FLAGS(obj) &= ~(flags))
 
-typedef struct _GnLine			GntLine;
-typedef struct _GnLinePriv		GntLinePriv;
-typedef struct _GnLineClass		GntLineClass;
+typedef struct _GntLine			GntLine;
+typedef struct _GntLinePriv		GntLinePriv;
+typedef struct _GntLineClass		GntLineClass;
 
-struct _GnLine
+struct _GntLine
 {
 	GntWidget parent;
 
 	gboolean vertical;
 };
 
-struct _GnLineClass
+struct _GntLineClass
 {
 	GntWidgetClass parent;
 

@@ -5,7 +5,7 @@ static GntMenuItemClass *parent_class = NULL;
 static void
 gnt_menuitem_check_class_init(GntMenuItemCheckClass *klass)
 {
-	parent_class = GNT_MENUITEM_CLASS(klass);
+	parent_class = GNT_MENU_ITEM_CLASS(klass);
 
 	GNTDEBUG;
 }
@@ -39,7 +39,7 @@ gnt_menuitem_check_get_gtype(void)
 			NULL					/* value_table		*/
 		};
 
-		type = g_type_register_static(GNT_TYPE_MENUITEM,
+		type = g_type_register_static(GNT_TYPE_MENU_ITEM,
 									  "GntMenuItemCheck",
 									  &info, 0);
 	}
@@ -49,8 +49,8 @@ gnt_menuitem_check_get_gtype(void)
 
 GntMenuItem *gnt_menuitem_check_new(const char *text)
 {
-	GntMenuItem *item = g_object_new(GNT_TYPE_MENUITEM_CHECK, NULL);
-	GntMenuItem *menuitem = GNT_MENUITEM(item);
+	GntMenuItem *item = g_object_new(GNT_TYPE_MENU_ITEM_CHECK, NULL);
+	GntMenuItem *menuitem = GNT_MENU_ITEM(item);
 
 	menuitem->text = g_strdup(text);
 	return item;

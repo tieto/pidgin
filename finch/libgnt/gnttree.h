@@ -18,14 +18,14 @@
 #define GNT_TREE_SET_FLAGS(obj, flags)		(GNT_TREE_FLAGS(obj) |= flags)
 #define GNT_TREE_UNSET_FLAGS(obj, flags)	(GNT_TREE_FLAGS(obj) &= ~(flags))
 
-typedef struct _GnTree			GntTree;
-typedef struct _GnTreePriv		GntTreePriv;
-typedef struct _GnTreeClass		GntTreeClass;
+typedef struct _GntTree			GntTree;
+typedef struct _GntTreePriv		GntTreePriv;
+typedef struct _GntTreeClass		GntTreeClass;
 
-typedef struct _GnTreeRow		GntTreeRow;
-typedef struct _GnTreeCol		GntTreeCol;
+typedef struct _GntTreeRow		GntTreeRow;
+typedef struct _GntTreeCol		GntTreeCol;
 
-struct _GnTree
+struct _GntTree
 {
 	GntWidget parent;
 
@@ -58,7 +58,7 @@ struct _GnTree
 	GCompareFunc compare;
 };
 
-struct _GnTreeClass
+struct _GntTreeClass
 {
 	GntWidgetClass parent;
 

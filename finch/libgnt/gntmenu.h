@@ -16,9 +16,9 @@
 #define GNT_MENU_SET_FLAGS(obj, flags)		(GNT_MENU_FLAGS(obj) |= flags)
 #define GNT_MENU_UNSET_FLAGS(obj, flags)	(GNT_MENU_FLAGS(obj) &= ~(flags))
 
-typedef struct _GnMenu			GntMenu;
-typedef struct _GnMenuPriv		GntMenuPriv;
-typedef struct _GnMenuClass		GntMenuClass;
+typedef struct _GntMenu			GntMenu;
+typedef struct _GntMenuPriv		GntMenuPriv;
+typedef struct _GntMenuClass		GntMenuClass;
 
 #include "gntmenuitem.h"
 
@@ -33,7 +33,7 @@ typedef enum
 	GNT_MENU_POPUP,         /* A popup menu */
 } GntMenuType;
 
-struct _GnMenu
+struct _GntMenu
 {
 	GntTree parent;
 	GntMenuType type;
@@ -47,7 +47,7 @@ struct _GnMenu
 	GntMenu *parentmenu;
 };
 
-struct _GnMenuClass
+struct _GntMenuClass
 {
 	GntTreeClass parent;
 

@@ -4,24 +4,24 @@
 #include <glib.h>
 #include <glib-object.h>
 
-#define GNT_TYPE_MENUITEM				(gnt_menuitem_get_gtype())
-#define GNT_MENUITEM(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_MENUITEM, GntMenuItem))
-#define GNT_MENUITEM_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_MENUITEM, GntMenuItemClass))
-#define GNT_IS_MENUITEM(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_MENUITEM))
-#define GNT_IS_MENUITEM_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_MENUITEM))
-#define GNT_MENUITEM_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_MENUITEM, GntMenuItemClass))
+#define GNT_TYPE_MENU_ITEM				(gnt_menuitem_get_gtype())
+#define GNT_MENU_ITEM(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_MENU_ITEM, GntMenuItem))
+#define GNT_MENU_ITEM_CLASS(klass)		(G_TYPE_CHECK_CLASS_CAST((klass), GNT_TYPE_MENU_ITEM, GntMenuItemClass))
+#define GNT_IS_MENU_ITEM(obj)			(G_TYPE_CHECK_INSTANCE_TYPE((obj), GNT_TYPE_MENU_ITEM))
+#define GNT_IS_MENU_ITEM_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_MENU_ITEM))
+#define GNT_MENU_ITEM_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_MENU_ITEM, GntMenuItemClass))
 
-#define GNT_MENUITEM_FLAGS(obj)				(GNT_MENUITEM(obj)->priv.flags)
-#define GNT_MENUITEM_SET_FLAGS(obj, flags)		(GNT_MENUITEM_FLAGS(obj) |= flags)
-#define GNT_MENUITEM_UNSET_FLAGS(obj, flags)	(GNT_MENUITEM_FLAGS(obj) &= ~(flags))
+#define GNT_MENU_ITEM_FLAGS(obj)				(GNT_MENU_ITEM(obj)->priv.flags)
+#define GNT_MENU_ITEM_SET_FLAGS(obj, flags)		(GNT_MENU_ITEM_FLAGS(obj) |= flags)
+#define GNT_MENU_ITEM_UNSET_FLAGS(obj, flags)	(GNT_MENU_ITEM_FLAGS(obj) &= ~(flags))
 
-typedef struct _GnMenuItem			GntMenuItem;
-typedef struct _GnMenuItemPriv		GntMenuItemPriv;
-typedef struct _GnMenuItemClass		GntMenuItemClass;
+typedef struct _GntMenuItem			GntMenuItem;
+typedef struct _GntMenuItemPriv		GntMenuItemPriv;
+typedef struct _GntMenuItemClass		GntMenuItemClass;
 
 #include "gntmenu.h"
 
-struct _GnMenuItemPriv
+struct _GntMenuItemPriv
 {
 	/* These will be used to determine the position of the submenu */
 	int x;
@@ -30,7 +30,7 @@ struct _GnMenuItemPriv
 
 typedef void (*GntMenuItemCallback)(GntMenuItem *item, gpointer data);
 
-struct _GnMenuItem
+struct _GntMenuItem
 {
 	GObject parent;
 	GntMenuItemPriv priv;
@@ -46,7 +46,7 @@ struct _GnMenuItem
 	GntMenu *submenu;
 };
 
-struct _GnMenuItemClass
+struct _GntMenuItemClass
 {
 	GObjectClass parent;
 

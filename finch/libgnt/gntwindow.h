@@ -18,17 +18,17 @@
 #define GNT_WINDOW_SET_FLAGS(obj, flags)		(GNT_WINDOW_FLAGS(obj) |= flags)
 #define GNT_WINDOW_UNSET_FLAGS(obj, flags)	(GNT_WINDOW_FLAGS(obj) &= ~(flags))
 
-typedef struct _GnWindow			GntWindow;
-typedef struct _GnWindowPriv		GntWindowPriv;
-typedef struct _GnWindowClass		GntWindowClass;
+typedef struct _GntWindow			GntWindow;
+typedef struct _GntWindowPriv		GntWindowPriv;
+typedef struct _GntWindowClass		GntWindowClass;
 
-struct _GnWindow
+struct _GntWindow
 {
 	GntBox parent;
 	GntMenu *menu;
 };
 
-struct _GnWindowClass
+struct _GntWindowClass
 {
 	GntBoxClass parent;
 

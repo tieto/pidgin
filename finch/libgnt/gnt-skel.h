@@ -17,16 +17,16 @@
 #define GNT_SKEL_SET_FLAGS(obj, flags)		(GNT_SKEL_FLAGS(obj) |= flags)
 #define GNT_SKEL_UNSET_FLAGS(obj, flags)	(GNT_SKEL_FLAGS(obj) &= ~(flags))
 
-typedef struct _GnSkel			GntSkel;
-typedef struct _GnSkelPriv		GntSkelPriv;
-typedef struct _GnSkelClass		GntSkelClass;
+typedef struct _GntSkel			GntSkel;
+typedef struct _GntSkelPriv		GntSkelPriv;
+typedef struct _GntSkelClass		GntSkelClass;
 
-struct _GnSkel
+struct _GntSkel
 {
 	GntWidget parent;
 };
 
-struct _GnSkelClass
+struct _GntSkelClass
 {
 	GntWidgetClass parent;
 

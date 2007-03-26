@@ -19,9 +19,9 @@
 
 #define	ENTRY_CHAR		'_'			/* The character to use to fill in the blank places */
 
-typedef struct _GnEntry			GntEntry;
-typedef struct _GnEntryPriv		GntEntryPriv;
-typedef struct _GnEntryClass	GntEntryClass;
+typedef struct _GntEntry			GntEntry;
+typedef struct _GntEntryPriv		GntEntryPriv;
+typedef struct _GntEntryClass	GntEntryClass;
 
 typedef enum
 {
@@ -34,7 +34,7 @@ typedef enum
 
 #define GNT_ENTRY_FLAG_ALL    (GNT_ENTRY_FLAG_ALPHA | GNT_ENTRY_FLAG_INT)
 
-struct _GnEntry
+struct _GntEntry
 {
 	GntWidget parent;
 
@@ -60,7 +60,7 @@ struct _GnEntry
 	GntWidget *ddown;   /* The dropdown with the suggested list */
 };
 
-struct _GnEntryClass
+struct _GntEntryClass
 {
 	GntWidgetClass parent;
 

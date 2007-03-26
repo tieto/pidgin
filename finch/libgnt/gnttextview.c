@@ -44,6 +44,7 @@ gnt_text_view_draw(GntWidget *widget)
 	GList *lines;
 	int rows, scrcol;
 
+	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(widget->window);
 
 	for (i = 0, lines = view->list; i < widget->priv.height && lines; i++, lines = lines->next)
@@ -434,7 +435,7 @@ gnt_text_view_get_gtype(void)
 
 GntWidget *gnt_text_view_new()
 {
-	GntWidget *widget = g_object_new(GNT_TYPE_TEXTVIEW, NULL);
+	GntWidget *widget = g_object_new(GNT_TYPE_TEXT_VIEW, NULL);
 	GntTextView *view = GNT_TEXT_VIEW(widget);
 	GntTextLine *line = g_new0(GntTextLine, 1);
 

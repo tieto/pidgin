@@ -15,15 +15,15 @@
 
 #define	GNTDEBUG	g_printerr("%s\n", __FUNCTION__)
 
-typedef struct _GnBindable			GntBindable;
-typedef struct _GnBindableClass		GntBindableClass;
+typedef struct _GntBindable			GntBindable;
+typedef struct _GntBindableClass		GntBindableClass;
 
-struct _GnBindable
+struct _GntBindable
 {
 	GObject inherit;
 };
 
-struct _GnBindableClass
+struct _GntBindableClass
 {
 	GObjectClass parent;
 
@@ -52,10 +52,10 @@ const char * gnt_bindable_remap_keys(GntBindable *bindable, const char *text);
 typedef gboolean (*GntBindableActionCallback) (GntBindable *bindable, GList *params);
 typedef gboolean (*GntBindableActionCallbackNoParam)(GntBindable *bindable);
 
-typedef struct _GnBindableAction GntBindableAction;
-typedef struct _GnBindableActionParam GntBindableActionParam;
+typedef struct _GntBindableAction GntBindableAction;
+typedef struct _GntBindableActionParam GntBindableActionParam;
 
-struct _GnBindableAction
+struct _GntBindableAction
 {
 	char *name;        /* The name of the action */
 	union {
@@ -64,7 +64,7 @@ struct _GnBindableAction
 	} u;
 };
 
-struct _GnBindableActionParam
+struct _GntBindableActionParam
 {
 	GntBindableAction *action;
 	GList *list;

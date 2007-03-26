@@ -9,6 +9,7 @@ int main()
 	GntWidget *w = gnt_file_sel_new();
 	gnt_file_sel_set_current_location(GNT_FILE_SEL(w), "/home/");
 	gnt_file_sel_set_dirs_only(GNT_FILE_SEL(w), TRUE);
+	gnt_file_sel_set_multi_select(GNT_FILE_SEL(w), TRUE);
 	gnt_widget_show(w);
 
 	gnt_main();

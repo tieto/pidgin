@@ -14,16 +14,16 @@
 
 #define	GNTDEBUG	g_printerr("%s\n", __FUNCTION__)
 
-typedef struct _GnClipboard			GntClipboard;
-typedef struct _GnClipboardClass		GntClipboardClass;
+typedef struct _GntClipboard			GntClipboard;
+typedef struct _GntClipboardClass		GntClipboardClass;
 
-struct _GnClipboard
+struct _GntClipboard
 {
 	GObject inherit;
 	gchar *string;
 };
 
-struct _GnClipboardClass
+struct _GntClipboardClass
 {
 	GObjectClass parent;
 
@@ -37,9 +37,9 @@ G_BEGIN_DECLS
 
 GType gnt_clipboard_get_gtype(void);
 
-gchar *gnt_clipboard_get_string(GntClipboard *);
+gchar *gnt_clipboard_get_string(GntClipboard *clip);
 
-void gnt_clipboard_set_string(GntClipboard *, gchar *);
+void gnt_clipboard_set_string(GntClipboard *clip, gchar *string);
 
 G_END_DECLS
 

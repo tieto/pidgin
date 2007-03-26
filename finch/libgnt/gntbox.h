@@ -11,8 +11,8 @@
 #define GNT_IS_BOX_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_BOX))
 #define GNT_BOX_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_BOX, GntBoxClass))
 
-typedef struct _GnBox			GntBox;
-typedef struct _GnBoxClass		GntBoxClass;
+typedef struct _GntBox			GntBox;
+typedef struct _GntBoxClass		GntBoxClass;
 
 typedef enum
 {
@@ -27,7 +27,7 @@ typedef enum
 	GNT_ALIGN_BOTTOM
 } GntAlignment;
 
-struct _GnBox
+struct _GntBox
 {
 	GntWidget parent;
 
@@ -49,7 +49,7 @@ struct _GnBox
     void (*gnt_reserved4)(void);
 };
 
-struct _GnBoxClass
+struct _GntBoxClass
 {
 	GntWidgetClass parent;
 
