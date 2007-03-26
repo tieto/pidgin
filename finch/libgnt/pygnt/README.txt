@@ -1,4 +1,4 @@
 Run these in sequence:
 
 ./gendef.sh
-make gnt.so
+make -f Makefile.make gnt.so
