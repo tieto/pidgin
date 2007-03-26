@@ -369,6 +369,20 @@ purple_plugin_probe(const char *filename)
 		return plugin;
 	}
 
+	/*
+	 * Check to make sure a plugin has defined an id.
+	 * Not having this check caused purple_plugin_unload to
+	 * enter an infinite loop in certain situations by passing
+	 * purple_find_plugin_by_id a NULL value. -- ecoffey
+	 */
+	if (!plugin->info->id || !strcmp(plugin->info->id, ""))
+	{
+		plugin->error = g_strdup_printf(_("This plugin has not defined an ID."));
+		purple_debug_error("plugins", "%s is not loadable: info->id is not defined.\n", plugin->path);
+		plugin->unloadable = TRUE;
+		return plugin;
+	}
+
 	/* Really old plugins. */
 	if (plugin->info->magic != PURPLE_PLUGIN_MAGIC)
 	{
@@ -658,12 +672,10 @@ purple_plugin_unload(PurplePlugin *plugin)
 		{
 			if (!purple_plugin_unload(dep_plugin))
 			{
-				char *translated_name = g_strdup(_(dep_plugin->info->name));
 				char *tmp;
 
 				tmp = g_strdup_printf(_("The dependent plugin %s failed to unload."),
-				                      translated_name);
-				g_free(translated_name);
+				                      _(dep_plugin->info->name));
 
 				purple_notify_error(NULL, NULL,
 				                  _("There were errors unloading the plugin."), tmp);

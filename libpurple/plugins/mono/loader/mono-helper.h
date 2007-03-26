@@ -40,6 +40,8 @@ gchar* ml_get_prop_string(MonoObject *obj, char *field);
 
 void ml_set_prop_string(MonoObject *obj, char *field, char *data);
 
+MonoObject* ml_get_info_prop(MonoObject *obj);
+
 gboolean ml_is_api_dll(MonoImage *image);
 
 MonoDomain* ml_get_domain(void);

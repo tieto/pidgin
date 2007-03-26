@@ -12,7 +12,7 @@ EXTRA_DIST = \
 	conversation-signals.dox \
 	core-signals.dox \
 	dbus-server-signals.dox \
-	gaims_funniest_home_convos.txt \
+	funniest_home_convos.txt \
 	finch.1.in \
 	gtkaccount-signals.dox \
 	gtkblist-signals.dox \

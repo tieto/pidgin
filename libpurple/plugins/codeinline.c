@@ -75,7 +75,7 @@ static PurplePluginInfo info =
      "Changes the formatting of any outgoing text such that "
      "anything underlined will be received green and monospace.",
      "Sean Egan <seanegan@gmail.com>",
-     "http://purple.sourceforge.net",
+     PURPLE_WEBSITE,
      plugin_load,
      NULL,
      NULL,

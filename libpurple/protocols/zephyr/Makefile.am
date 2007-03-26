@@ -77,7 +77,7 @@ libzephyr_la_LDFLAGS = -module -avoid-version
 
 if STATIC_ZEPHYR
 
-st = -DGAIM_STATIC_PRPL -Dlint
+st = -DPURPLE_STATIC_PRPL -Dlint
 noinst_LIBRARIES = libzephyr.a
 libzephyr_a_SOURCES = $(ZEPHYRSOURCES)
 libzephyr_a_CFLAGS  = $(AM_CFLAGS)

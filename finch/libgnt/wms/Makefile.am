@@ -3,7 +3,7 @@ s_la_LDFLAGS             = -module -avoid-version
 plugin_LTLIBRARIES = \
 	s.la
 
-plugindir = $(libdir)/gaim
+plugindir = $(libdir)/finch
 
 s_la_SOURCES = s.c
 s_la_LIBADD =  \

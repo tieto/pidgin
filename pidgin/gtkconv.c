@@ -2,9 +2,9 @@
  * @file gtkconv.c GTK+ Conversation API
  * @ingroup gtkui
  *
- * purple
+ * pidgin
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -3488,7 +3488,7 @@ get_chat_buddy_status_icon(PurpleConvChat *chat, const char *name, PurpleConvCha
 	g_object_unref(pixbuf);
 
 	if (flags && purple_conv_chat_is_user_ignored(chat, name)) {
-		filename = g_build_filename(DATADIR, "pixmaps", "purple", "status", "default", "ignored.png", NULL);
+		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "default", "ignored.png", NULL);
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 		g_free(filename);
 		scale2 = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
@@ -7043,9 +7043,9 @@ pidgin_conversations_uninit(void)
  * @file gtkconvwin.c GTK+ Conversation Window API
  * @ingroup gtkui
  *
- * purple
+ * pidgin
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *

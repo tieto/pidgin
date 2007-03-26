@@ -1,5 +1,5 @@
 /*
- * purple
+ * pidgin
  *
  * File: wspell.h
  *

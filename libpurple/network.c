@@ -47,6 +47,8 @@
 #include "stun.h"
 #include "upnp.h"
 
+/* #define ENABLE_NAT_PMP 1 */
+
 #ifdef ENABLE_NAT_PMP
 #include "nat-pmp.h"
 #endif
@@ -79,9 +81,6 @@ struct _PurpleNetworkListenData {
 	PurpleNetworkListenCallback cb;
 	gpointer cb_data;
 	UPnPMappingAddRemove *mapping_data;
-#ifdef ENABLE_NAT_PMP
-	gboolean has_pmp_mapping;
-#endif
 };
 
 #ifdef HAVE_LIBNM
@@ -200,7 +199,7 @@ purple_network_get_my_ip(int fd)
 	  return ip;
 
 #ifdef ENABLE_NAT_PMP
-	/* Attempt to ge tthe IP from a NAT device using NAT-PMP */
+	/* Attempt to get the IP from a NAT device using NAT-PMP */
 	ip = purple_pmp_get_public_ip();
 	if (ip != NULL)
 		return ip;
@@ -251,6 +250,22 @@ purple_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
 	purple_network_listen_cancel(listen_data);
 }
 
+#ifdef ENABLE_NAT_PMP
+static gboolean
+purple_network_finish_pmp_map_cb(gpointer data)
+{
+	PurpleNetworkListenData *listen_data;
+
+	listen_data = data;
+
+	if (listen_data->cb)
+		listen_data->cb(listen_data->listenfd, listen_data->cb_data);
+
+	purple_network_listen_cancel(listen_data);
+
+	return FALSE;
+}
+#endif
 
 static PurpleNetworkListenData *
 purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
@@ -338,7 +353,7 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	actual_port = purple_network_get_port_from_fd(listenfd);
 
 	purple_debug_info("network", "Listening on port: %hu\n", actual_port);
-	
+
 	listen_data = g_new0(PurpleNetworkListenData, 1);
 	listen_data->listenfd = listenfd;
 	listen_data->adding = TRUE;
@@ -348,15 +363,22 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 
 #ifdef ENABLE_NAT_PMP
 	/* Attempt a NAT-PMP Mapping, which will return immediately */
-	listen_data->has_pmp_mapping = (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
-														actual_port, actual_port, PURPLE_PMP_LIFETIME) != NULL);	
+	if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
+							  actual_port, actual_port, PURPLE_PMP_LIFETIME) != NULL)
+	{
+		purple_debug_info("network", "Created NAT-PMP mapping on port %i",actual_port);
+		/* We want to return listen_data now, and on the next run loop trigger the cb and destroy listen_data */
+		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
+	}
+	else
 #endif
-	
-	/* Attempt a UPnP Mapping */
-	listen_data->mapping_data = purple_upnp_set_port_mapping(
-					actual_port,
-					(socket_type == SOCK_STREAM) ? "TCP" : "UDP",
-					purple_network_set_upnp_port_mapping_cb, listen_data);
+	{
+		/* Attempt a UPnP Mapping */
+		listen_data->mapping_data = purple_upnp_set_port_mapping(
+						 actual_port,
+						 (socket_type == SOCK_STREAM) ? "TCP" : "UDP",
+						 purple_network_set_upnp_port_mapping_cb, listen_data);
+	}
 
 	return listen_data;
 }
@@ -397,12 +419,6 @@ void purple_network_listen_cancel(PurpleNetworkListenData *listen_data)
 {
 	if (listen_data->mapping_data != NULL)
 		purple_upnp_cancel_port_mapping(listen_data->mapping_data);
-
-#ifdef ENABLE_NAT_PMP
-	if (listen_data->has_pmp_mapping)
-		purple_pmp_destroy_map(((listen_data->socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
-							 purple_network_get_port_from_fd(listen_data->listenfd));
-#endif
 
 	g_free(listen_data);
 }

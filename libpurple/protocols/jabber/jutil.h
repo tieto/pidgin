@@ -22,11 +22,6 @@
 #ifndef _PURPLE_JABBER_JUTIL_H_
 #define _PURPLE_JABBER_JUTIL_H_
 
-#include "account.h"
-#include "conversation.h"
-#include "xmlnode.h"
-
-
 typedef struct _JabberID {
 	char *node;
 	char *domain;

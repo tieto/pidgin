@@ -131,13 +131,13 @@ static PurplePluginInfo info =
 	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_STANDARD,                             /**< type           */
+	PURPLE_PLUGIN_STANDARD,                           /**< type           */
 	PIDGIN_PLUGIN_TYPE,                               /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
 
-	NULL,                                             /**< id             */
+	"core-timestamp_format",                          /**< id             */
 	N_("Message Timestamp Formats"),                  /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
@@ -147,7 +147,7 @@ static PurplePluginInfo info =
 	   "conversation and logging message timestamp "
 	   "formats."),
 	"Richard Laager <rlaager@pidgin.im>",             /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                   /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

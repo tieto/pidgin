@@ -1,8 +1,8 @@
-using Gaim;
+using Purple;
 
 public class MPlugin : Plugin
 {
-	private static PluginInfo info = new PluginInfo("C# Plugin", "0.1", "Test C# Plugin", "Longer Description", "Eoin Coffey", "urled");
+	private static PluginInfo info = new PluginInfo("mono-mplugin", "C# Plugin", "0.1", "Test C# Plugin", "Longer Description", "Eoin Coffey", "urled");
 
 	public MPlugin()
 		: base(info)

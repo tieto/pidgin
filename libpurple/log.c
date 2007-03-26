@@ -638,7 +638,7 @@ void purple_log_init(void)
 #else
 #error Unknown size of time_t
 #endif
-	                     purple_value_new(PURPLE_TYPE_STRING), 2,
+	                     purple_value_new(PURPLE_TYPE_STRING), 3,
 	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
 	                                    PURPLE_SUBTYPE_LOG),
 #if SIZEOF_TIME_T == 4

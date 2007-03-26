@@ -2,9 +2,9 @@
  * @file gtkblist.c GTK+ BuddyList API
  * @ingroup gtkui
  *
- * purple
+ * pidgin
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -2279,6 +2279,7 @@ static struct tooltip_data * create_tip_for_node(PurpleBlistNode *node, gboolean
 	else
 		tmp = g_markup_escape_text(purple_chat_get_name((PurpleChat*)node), -1);
 	node_name = g_strdup_printf("<span size='x-large' weight='bold'>%s</span>", tmp);
+	g_free(tmp);
 
 	pango_layout_set_markup(td->layout, tooltip_text, -1);
 	pango_layout_set_wrap(td->layout, PANGO_WRAP_WORD);

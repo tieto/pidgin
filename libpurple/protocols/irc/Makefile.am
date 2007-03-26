@@ -10,7 +10,7 @@ libirc_la_LDFLAGS = -module -avoid-version
 
 if STATIC_IRC
 
-st = -DGAIM_STATIC_PRPL
+st = -DPURPLE_STATIC_PRPL
 noinst_LIBRARIES = libirc.a
 pkg_LTLIBRARIES =
 

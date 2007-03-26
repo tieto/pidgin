@@ -1,4 +1,4 @@
-namespace Gaim {
+namespace Purple {
 	using System;
 	using System.Runtime.CompilerServices;
 

@@ -1,4 +1,4 @@
-namespace Gaim {
+namespace Purple {
 	public class Group : BlistNode {
 	}
 }

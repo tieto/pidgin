@@ -60,7 +60,7 @@
 #define OSCAR_STATUS_ID_CUSTOM      "custom"
 #define OSCAR_STATUS_ID_MOBILE	    "mobile"
 
-#define AIMHASHDATA "http://purple.sourceforge.net/aim_data.php3"
+#define AIMHASHDATA "http://pidgin.im/aim_data.php3"
 
 #define OSCAR_CONNECT_STEPS 6
 
@@ -1593,7 +1593,7 @@ int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	pos->modname = g_strdup(modname);
 
 	/* TODO: Keep track of this return value. */
-	if (purple_proxy_connect(NULL, pos->gc->account, "purple.sourceforge.net", 80,
+	if (purple_proxy_connect(NULL, pos->gc->account, "pidgin.im", 80,
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];

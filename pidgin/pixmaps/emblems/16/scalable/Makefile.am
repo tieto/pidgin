@@ -1,9 +1,8 @@
-EXTRA_DIST = 	aol-client.svg \
+EXTRA_DIST =	aol-client.svg \
 		blocked.svg \
 		bot.svg \
 		external.svg \
 		female.svg \
-		founder.svg \
 		free-for-chat.svg \
 		game.svg \
 		male.svg \

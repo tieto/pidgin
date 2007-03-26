@@ -1,6 +1,6 @@
-import Gaim
+import Purple
 
-class BooPlugin(GaimPlugin):
+class BooPlugin(PurplePlugin):
 
 	def handle(*args as (object)):
 		b as Buddy
@@ -18,5 +18,5 @@ class BooPlugin(GaimPlugin):
 		Debug.debug(Debug.INFO, "booplugin", "destroying...\n")
 		
 	override def Info():
-		return GaimPluginInfo("Boo Plugin", "0.1", "Test Boo Plugin", "Longer Description", "Eoin Coffey", "urled")
+		return PurplePluginInfo("mono-boo", "Boo Plugin", "0.1", "Test Boo Plugin", "Longer Description", "Eoin Coffey", "urled")
 		

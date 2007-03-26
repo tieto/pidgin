@@ -30,60 +30,52 @@
 #include <glib.h>
 
 /* sys/socket.h */
-int wpurple_socket(int namespace, int style, int protocol);
 #define socket( namespace, style, protocol ) \
 wpurple_socket( namespace, style, protocol )
 
-int wpurple_connect(int socket, struct sockaddr *addr, u_long length);
 #define connect( socket, addr, length ) \
 wpurple_connect( socket, addr, length )
 
-int wpurple_getsockopt(int socket, int level, int optname, void *optval, socklen_t *optlenptr);
 #define getsockopt( args... ) \
 wpurple_getsockopt( args )
 
-int wpurple_setsockopt(int socket, int level, int optname, const void *optval, socklen_t optlen);
 #define setsockopt( args... ) \
 wpurple_setsockopt( args )
 
-int wpurple_getsockname (int socket, struct sockaddr *addr, socklen_t *lenptr);
 #define getsockname( socket, addr, lenptr ) \
 wpurple_getsockname( socket, addr, lenptr )
 
-int wpurple_bind(int socket, struct sockaddr *addr, socklen_t length);
 #define bind( socket, addr, length ) \
 wpurple_bind( socket, addr, length )
 
-int wpurple_listen(int socket, unsigned int n);
 #define listen( socket, n ) \
 wpurple_listen( socket, n )
 
-int wpurple_sendto(int socket, const void *buf, size_t len, int flags, const struct sockaddr *to, socklen_t tolen);
 #define sendto(socket, buf, len, flags, to, tolen) \
 wpurple_sendto(socket, buf, len, flags, to, tolen)
 
+#define recv(fd, buf, len, flags) \
+wpurple_recv(fd, buf, len, flags)
+
+#define send(socket, buf, buflen, flags) \
+wpurple_send(socket, buf, buflen, flags)
+
 /* sys/ioctl.h */
-int wpurple_ioctl(int fd, int command, void* opt);
 #define ioctl( fd, command, val ) \
 wpurple_ioctl( fd, command, val )
 
 /* fcntl.h */
-int wpurple_fcntl(int socket, int command, int val);
 #define fcntl( fd, command, val ) \
 wpurple_fcntl( fd, command, val )
 
 /* arpa/inet.h */
-int wpurple_inet_aton(const char *name, struct in_addr *addr);
 #define inet_aton( name, addr ) \
 wpurple_inet_aton( name, addr )
 
-const char *
-wpurple_inet_ntop (int af, const void *src, char *dst, socklen_t cnt);
 #define inet_ntop( af, src, dst, cnt ) \
 wpurple_inet_ntop( af, src, dst, cnt )
 
 /* netdb.h */
-struct hostent* wpurple_gethostbyname(const char *name);
 #define gethostbyname( name ) \
 wpurple_gethostbyname( name )
 
@@ -92,7 +84,6 @@ wpurple_gethostbyname( name )
 (unsigned int)ntohl( netlong )
 
 /* string.h */
-char* wpurple_strerror( int errornum );
 #define hstrerror( herror ) \
 wpurple_strerror( errno )
 #define strerror( errornum ) \
@@ -101,28 +92,16 @@ wpurple_strerror( errornum )
 #define bzero( dest, size ) memset( dest, 0, size )
 
 /* unistd.h */
-int wpurple_read(int fd, void *buf, unsigned int size);
 #define read( fd, buf, buflen ) \
 wpurple_read( fd, buf, buflen )
 
-int wpurple_write(int fd, const void *buf, unsigned int size);
 #define write( socket, buf, buflen ) \
 wpurple_write( socket, buf, buflen )
 
-int wpurple_recv(int fd, void *buf, size_t len, int flags);
-#define recv(fd, buf, len, flags) \
-wpurple_recv(fd, buf, len, flags)
-
-int wpurple_send(int fd, const void *buf, unsigned int size, int flags);
-#define send(socket, buf, buflen, flags) \
-wpurple_send(socket, buf, buflen, flags)
-
-int wpurple_close(int fd);
 #define close( fd ) \
 wpurple_close( fd )
 
 #if !GLIB_CHECK_VERSION(2,8,0)
-int wpurple_g_access(const gchar *filename, int mode);
 #define g_access( filename, mode) \
 wpurple_g_access( filename, mode )
 #endif
@@ -131,12 +110,10 @@ wpurple_g_access( filename, mode )
 #define sleep(x) Sleep((x)*1000)
 #endif
 
-int wpurple_gethostname(char *name, size_t size);
 #define gethostname( name, size ) \
 wpurple_gethostname( name, size )
 
 /* sys/time.h */
-int wpurple_gettimeofday(struct timeval *p, struct timezone *z);
 #define gettimeofday( timeval, timezone ) \
 wpurple_gettimeofday( timeval, timezone )
 
@@ -144,7 +121,6 @@ wpurple_gettimeofday( timeval, timezone )
 #define snprintf _snprintf
 #define vsnprintf _vsnprintf
 
-int wpurple_rename(const char *oldname, const char *newname);
 #define rename( oldname, newname ) \
 wpurple_rename( oldname, newname )
 
@@ -157,13 +133,10 @@ wpurple_rename( oldname, newname )
 wpurple_rename(oldname, newname)
 #endif
 
-
 /* sys/stat.h */
-
 #define fchmod(a,b)
 
 /* time.h */
-struct tm *wpurple_localtime_r(const time_t *time, struct tm *resultp);
 #define localtime_r( time, resultp ) \
 wpurple_localtime_r( time, resultp )
 

@@ -123,7 +123,7 @@ static PurplePluginInfo info =
 	N_("Lastlog plugin."),
 	N_("Lastlog plugin."),
 	"Sadrul H Chowdhury <sadrul@users.sourceforge.net>",
-	"http://purple.sourceforge.net",
+	PURPLE_WEBSITE,
 	plugin_load,
 	plugin_unload,
 	NULL,

@@ -1,3 +1,4 @@
+gntclipboard_la_LDFLAGS = -module -avoid-version
 gntgf_la_LDFLAGS      = -module -avoid-version
 gnthistory_la_LDFLAGS = -module -avoid-version
 gntlastlog_la_LDFLAGS    = -module -avoid-version
@@ -5,18 +6,21 @@ gntlastlog_la_LDFLAGS    = -module -avoid-version
 if PLUGINS
 
 plugin_LTLIBRARIES = \
+	gntclipboard.la \
 	gntgf.la \
 	gnthistory.la \
 	gntlastlog.la
 
-plugindir = $(libdir)/gaim
+plugindir = $(libdir)/finch
 
+gntclipboard_la_SOURCES = gntclipboard.c
 gntgf_la_SOURCES      = gntgf.c
 gnthistory_la_SOURCES = gnthistory.c
 gntlastlog_la_SOURCES = lastlog.c
 
 gntgf_la_CFLAGS = $(X11_CFLAGS)
 
+gntclipboard_la_LIBADD = $(GLIB_LIBS)
 gntgf_la_LIBADD       = $(GLIB_LIBS) $(X11_LIBS) $(top_builddir)/finch/libgnt/libgnt.la
 gnthistory_la_LIBADD  = $(GLIB_LIBS)
 gntlastlog_la_LIBADD  = $(GLIB_LIBS)

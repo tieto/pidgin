@@ -20,17 +20,19 @@
  */
 #include "internal.h"
 
+#include "account.h"
+#include "debug.h"
+#include "cipher.h"
+#include "conversation.h"
+#include "request.h"
+#include "sslconn.h"
+#include "util.h"
+#include "xmlnode.h"
+
 #include "jutil.h"
 #include "auth.h"
-#include "xmlnode.h"
 #include "jabber.h"
 #include "iq.h"
-
-#include "debug.h"
-#include "util.h"
-#include "cipher.h"
-#include "sslconn.h"
-#include "request.h"
 
 static void auth_old_result_cb(JabberStream *js, xmlnode *packet,
 		gpointer data);

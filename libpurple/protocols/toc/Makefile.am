@@ -12,7 +12,7 @@ libtoc_la_LDFLAGS = -module -avoid-version
 
 if STATIC_TOC
 
-st = -DGAIM_STATIC_PRPL
+st = -DPURPLE_STATIC_PRPL
 noinst_LIBRARIES = libtoc.a
 libtoc_a_SOURCES = $(TOCSOURCES)
 libtoc_a_CFLAGS  = $(AM_CFLAGS)

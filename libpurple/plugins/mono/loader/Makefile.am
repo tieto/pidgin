@@ -1,4 +1,4 @@
-plugindir = $(libdir)/gaim
+plugindir = $(libdir)/purple
 
 plugin_LTLIBRARIES = mono.la
 
@@ -19,7 +19,7 @@ mono_la_LIBADD = $(MONO_LIBS)
 AM_CPPFLAGS = \
 	-DVERSION=\"$(VERSION)\" \
 	-I$(top_srcdir) \
-	-I$(top_srcdir)/libgaim \
+	-I$(top_srcdir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
 	$(MONO_CFLAGS)

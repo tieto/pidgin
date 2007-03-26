@@ -27,6 +27,7 @@
  * write my own stuff.  Also, re-writing this lets me be as lightweight
  * as I want to be.  Thank you libxode for giving me a good starting point */
 
+#include "debug.h"
 #include "internal.h"
 
 #include <libxml/parser.h>

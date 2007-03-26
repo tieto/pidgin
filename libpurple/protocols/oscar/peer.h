@@ -278,15 +278,4 @@ void peer_oft_cb_generic_cancel(PurpleXfer *xfer);
  */
 void peer_proxy_connection_established_cb(gpointer data, gint source, const gchar *error_message);
 
-#if 0
-int peer_oft_sendheader(OscarData *od, guint16 type, PeerConnection *peer_connection);
-guint32 peer_oft_checksum_chunk(const guint8 *buffer, int bufferlen, guint32 prevcheck);
-guint32 peer_oft_checksum_file(char *filename);
-int peer_oft_sendheader(OscarData *od, guint16 type, PeerConnection *peer_connection);
-PeerConnection *peer_oft_createinfo(OscarData *od, const guchar *cookie, const char *sn,
-	const char *ip, guint16 port, guint32 size, guint32 modtime, char *filename, int send_or_recv,
-	int method, int stage);
-int peer_oft_destroyinfo(PeerConnection *peer_connection);
-#endif
-
 #endif /* _PEER_H_ */

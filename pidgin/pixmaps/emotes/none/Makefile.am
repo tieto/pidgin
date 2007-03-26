@@ -1,5 +1,5 @@
-gaimsmileypixdir = $(datadir)/pixmaps/gaim/smileys/none
-gaimsmileypix_DATA = theme 
+pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/none
+pidginsmileypix_DATA = theme
 
-EXTRA_DIST = $(gaimsmileypix_DATA) \
+EXTRA_DIST = $(pidginsmileypix_DATA) \
 	Makefile.mingw

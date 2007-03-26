@@ -28,6 +28,10 @@ gnt_file_sel_destroy(GntWidget *widget)
 {
 	GntFileSel *sel = GNT_FILE_SEL(widget);
 	g_free(sel->current);
+	if (sel->tags) {
+		g_list_foreach(sel->tags, (GFunc)g_free, NULL);
+		g_list_free(sel->tags);
+	}
 }
 
 static char *
@@ -73,6 +77,15 @@ update_location(GntFileSel *sel)
 }
 
 static gboolean
+is_tagged(GntFileSel *sel, const char *f)
+{
+	char *ret = g_strdup_printf("%s%s%s", sel->current, sel->current[1] ? G_DIR_SEPARATOR_S : "", f);
+	gboolean find = g_list_find_custom(sel->tags, ret, (GCompareFunc)g_utf8_collate) != NULL;
+	g_free(ret);
+	return find;
+}
+
+static gboolean
 location_changed(GntFileSel *sel, GError **err)
 {
 	GDir *dir;
@@ -109,15 +122,19 @@ location_changed(GntFileSel *sel, GError **err)
 		if (stat(fp, &st)) {
 			g_printerr("Error stating location %s\n", fp);
 		} else {
-			if (S_ISDIR(st.st_mode))
+			if (S_ISDIR(st.st_mode)) {
 				gnt_tree_add_row_after(GNT_TREE(sel->dirs), g_strdup(str),
 						gnt_tree_create_row(GNT_TREE(sel->dirs), str), NULL, NULL);
-			else if (!sel->dirsonly) {
+				if (sel->multiselect && sel->dirsonly && is_tagged(sel, str))
+					gnt_tree_set_row_flags(GNT_TREE(sel->dirs), (gpointer)str, GNT_TEXT_FLAG_BOLD);
+			} else if (!sel->dirsonly) {
 				char size[128];
 				snprintf(size, sizeof(size), "%ld", (long)st.st_size);
 
 				gnt_tree_add_row_after(GNT_TREE(sel->files), g_strdup(str),
 						gnt_tree_create_row(GNT_TREE(sel->files), str, size, ""), NULL, NULL);
+				if (sel->multiselect && is_tagged(sel, str))
+					gnt_tree_set_row_flags(GNT_TREE(sel->files), (gpointer)str, GNT_TEXT_FLAG_BOLD);
 			}
 		}
 		g_free(fp);
@@ -131,7 +148,6 @@ static gboolean
 dir_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 {
 	if (strcmp(key, "\r") == 0) {
-		/* XXX: if we are moving up the tree, make sure the current node is selected after the redraw */
 		char *str = g_strdup(gnt_tree_get_selection_data(tree));
 		char *path = g_build_filename(sel->current, str, NULL);
 		char *dir = g_path_get_basename(sel->current);
@@ -225,7 +241,7 @@ gnt_file_sel_map(GntWidget *widget)
 
 	vbox = gnt_vbox_new(FALSE);
 	gnt_box_set_pad(GNT_BOX(vbox), 0);
-	gnt_box_set_alignment(GNT_BOX(vbox), GNT_ALIGN_LEFT);
+	gnt_box_set_alignment(GNT_BOX(vbox), GNT_ALIGN_MID);
 
 	/* The dir. and files list */
 	hbox = gnt_hbox_new(FALSE);
@@ -253,9 +269,64 @@ gnt_file_sel_map(GntWidget *widget)
 	update_location(sel);
 }
 
+static gboolean
+toggle_tag_selection(GntBindable *bind, GList *null)
+{
+	GntFileSel *sel = GNT_FILE_SEL(bind);
+	char *str;
+	GList *find;
+	char *file;
+	GntWidget *tree;
+
+	if (!sel->multiselect)
+		return FALSE;
+	tree = sel->dirsonly ? sel->dirs : sel->files;
+	if (!gnt_widget_has_focus(tree))
+		return FALSE;
+
+	file = gnt_tree_get_selection_data(sel->dirsonly ? GNT_TREE(sel->dirs) : GNT_TREE(sel->files));
+
+	str = gnt_file_sel_get_selected_file(sel);
+	if ((find = g_list_find_custom(sel->tags, str, (GCompareFunc)g_utf8_collate)) != NULL) {
+		g_free(find->data);
+		sel->tags = g_list_delete_link(sel->tags, find);
+		gnt_tree_set_row_flags(GNT_TREE(tree), file, GNT_TEXT_FLAG_NORMAL);
+		g_free(str);
+	} else {
+		sel->tags = g_list_prepend(sel->tags, str);
+		gnt_tree_set_row_flags(GNT_TREE(tree), file, GNT_TEXT_FLAG_BOLD);
+	}
+
+	return TRUE;
+}
+
+static gboolean
+clear_tags(GntBindable *bind, GList *null)
+{
+	GntFileSel *sel = GNT_FILE_SEL(bind);
+	GntWidget *tree;
+	GList *iter;
+
+	if (!sel->multiselect)
+		return FALSE;
+	tree = sel->dirsonly ? sel->dirs : sel->files;
+	if (!gnt_widget_has_focus(tree))
+		return FALSE;
+
+	g_list_foreach(sel->tags, (GFunc)g_free, NULL);
+	g_list_free(sel->tags);
+	sel->tags = NULL;
+
+	for (iter = GNT_TREE(tree)->list; iter; iter = iter->next)
+		gnt_tree_set_row_flags(GNT_TREE(tree), iter->data, GNT_TEXT_FLAG_NORMAL);
+
+	return TRUE;
+}
+
 static void
 gnt_file_sel_class_init(GntFileSelClass *klass)
 {
+	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
 	GntWidgetClass *kl = GNT_WIDGET_CLASS(klass);
 	parent_class = GNT_WINDOW_CLASS(klass);
 	kl->destroy = gnt_file_sel_destroy;
@@ -270,6 +341,9 @@ gnt_file_sel_class_init(GntFileSelClass *klass)
 					 NULL, NULL,
 					 gnt_closure_marshal_VOID__STRING_STRING,
 					 G_TYPE_NONE, 0);
+
+	gnt_bindable_class_register_action(bindable, "toggle-tag", toggle_tag_selection, "t", NULL);
+	gnt_bindable_class_register_action(bindable, "clear-tags", clear_tags, "c", NULL);
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 
 	GNTDEBUG;
@@ -312,7 +386,7 @@ gnt_file_sel_get_gtype(void)
 	return type;
 }
 
-GntWidget *gnt_file_sel_new()
+GntWidget *gnt_file_sel_new(void)
 {
 	GntWidget *widget = g_object_new(GNT_TYPE_FILE_SEL, NULL);
 	GntFileSel *sel = GNT_FILE_SEL(widget);
@@ -374,4 +448,48 @@ gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel)
 {
 	return sel->dirsonly;
 }
+
+char *gnt_file_sel_get_selected_file(GntFileSel *sel)
+{
+	char *ret;
+	const char *tmp;
+	tmp = (const char*)gnt_tree_get_selection_data(sel->dirsonly ? GNT_TREE(sel->dirs) : GNT_TREE(sel->files));
+	ret = g_strdup_printf("%s%s%s", sel->current, sel->current[1] ? G_DIR_SEPARATOR_S : "", tmp ? tmp : "");
+	return ret;
+}
+
+void gnt_file_sel_set_must_exist(GntFileSel *sel, gboolean must)
+{
+	/*XXX: What do I do with this? */
+	sel->must_exist = must;
+}
+
+gboolean gnt_file_sel_get_must_exist(GntFileSel *sel)
+{
+	return sel->must_exist;
+}
+
+void gnt_file_sel_set_multi_select(GntFileSel *sel, gboolean set)
+{
+	sel->multiselect = set;
+}
+
+GList *gnt_file_sel_get_selected_multi_files(GntFileSel *sel)
+{
+	GList *list = NULL, *iter;
+	char *str = gnt_file_sel_get_selected_file(sel);
+
+	for (iter = sel->tags; iter; iter = iter->next) {
+		list = g_list_prepend(list, g_strdup(iter->data));
+		if (g_utf8_collate(str, iter->data)) {
+			g_free(str);
+			str = NULL;
+		}
+	}
+	if (str)
+		list = g_list_prepend(list, str);
+	list = g_list_reverse(list);
+	return list;
+}
+
 
