@@ -96,7 +96,7 @@ do_check(void)
 {
 	int last_check = purple_prefs_get_int("/plugins/gtk/relnot/last_check");
 	if(!last_check || time(NULL) - last_check > MIN_CHECK_INTERVAL) {
-		char *url = g_strdup_printf("http://purple.sourceforge.net/version.php?version=%s&build=%s", purple_core_get_version(),
+		char *url = g_strdup_printf("http://pidgin.im/version.php?version=%s&build=%s", purple_core_get_version(),
 #ifdef _WIN32
 				"purple-win32"
 #else

@@ -87,9 +87,9 @@ static gboolean    prefs_loaded = FALSE;
 static struct
 purple_pref *find_pref(const char *name)
 {
-	if (!name || name[0] != '/')
-		return NULL;
-	else if (name[1] == '\0')
+	g_return_val_if_fail(name != NULL && name[0] == '/', NULL);
+
+	if (name[1] == '\0')
 		return &prefs;
 	else
 		return g_hash_table_lookup(prefs_hash, name);

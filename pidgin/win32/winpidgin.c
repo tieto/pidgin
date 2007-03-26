@@ -5,7 +5,7 @@
  *  Description: Entry point for win32 pidgin, and various win32 dependant
  *  routines.
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *

@@ -1,7 +1,7 @@
 /*
- * Themes for Purple
+ * Themes for Pidgin
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -264,7 +264,7 @@ void pidginthemes_smiley_theme_probe()
 	int l;
 
 	char* probedirs[3];
-	probedirs[0] = g_build_filename(DATADIR, "pixmaps", "purple", "smileys", NULL);
+	probedirs[0] = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes", NULL);
 	probedirs[1] = g_build_filename(purple_user_dir(), "smileys", NULL);
 	probedirs[2] = 0;
 	for (l=0; probedirs[l]; l++) {

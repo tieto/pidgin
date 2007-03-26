@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Gaim
+namespace Purple
 {
 	public class Signal
 	{

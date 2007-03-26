@@ -77,7 +77,7 @@ libqq_la_LDFLAGS = -module -avoid-version
 
 if STATIC_QQ
 
-st = -DGAIM_STATIC_PRPL
+st = -DPURPLE_STATIC_PRPL
 noinst_LIBRARIES = libqq.a
 libqq_a_SOURCES  = $(QQSOURCES)
 libqq_a_CFLAGS   = $(AM_CFLAGS)
@@ -94,7 +94,6 @@ endif
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
 	-DVERSION=\"$(VERSION)\" \
-	-DQQ_BUDDY_ICON_DIR=\"$(datadir)/pixmaps/gaim/buddy_icons/qq\" \
+	-DQQ_BUDDY_ICON_DIR=\"$(datadir)/pixmaps/purple/buddy_icons/qq\" \
 	$(DEBUG_CFLAGS) \
-	$(GLIB_CFLAGS) \
-	$(GAIM_CFLAGS)
+	$(GLIB_CFLAGS)

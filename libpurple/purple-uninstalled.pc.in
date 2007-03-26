@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+datadir=@datadir@
+sysconfdir=@sysconfdir@
+
+Name: libpurple
+Description: libpurple is a GLib-based instant messenger library.
+Version: @VERSION@
+Requires: glib-2.0
+Cflags: -I${pc_top_builddir}/${pcfiledir}
+Libs: ${pc_top_builddir}/${pcfiledir}/libpurple.la

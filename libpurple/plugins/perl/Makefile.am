@@ -4,10 +4,10 @@ hackdir = $(plugindir)/private
 perl_dirs = common
 
 plugin_LTLIBRARIES = perl.la
-hack_LTLIBRARIES = libgaimperl.la
+hack_LTLIBRARIES = libpurpleperl.la
 
 perl_la_LDFLAGS = -module -avoid-version
-perl_la_LIBADD = $(GLIB_LIBS) $(PERL_LIBS) libgaimperl.la
+perl_la_LIBADD = $(GLIB_LIBS) $(PERL_LIBS) libpurpleperl.la
 perl_la_SOURCES = \
 	perl.c \
 	perl-common.c \
@@ -18,11 +18,11 @@ perl_la_SOURCES = \
 perl_la_DEPENDENCIES = \
 	.libs/libperl_orig.a \
 	.libs/DynaLoader.a \
-	libgaimperl.la
+	libpurpleperl.la
 
-libgaimperl_la_LDFLAGS = -module -avoid-version
-libgaimperl_la_LIBADD = $(GLIB_LIBS)
-libgaimperl_la_SOURCES = libgaimperl.c
+libpurpleperl_la_LDFLAGS = -module -avoid-version
+libpurpleperl_la_LIBADD = $(GLIB_LIBS)
+libpurpleperl_la_SOURCES = libpurpleperl.c
 
 .libs/libperl_orig.a:
 	@mkdir -p .libs
@@ -55,8 +55,6 @@ common_sources = \
         common/Conversation.xs \
         common/Debug.xs \
         common/FT.xs \
-        common/Purple.pm \
-        common/Purple.xs \
         common/ImgStore.xs \
         common/Log.xs \
         common/Makefile.PL.in \
@@ -69,6 +67,7 @@ common_sources = \
         common/Privacy.xs \
         common/Proxy.xs \
         common/Prpl.xs \
+        common/Purple.pm \
         common/Request.xs \
         common/Roomlist.xs \
         common/SSLConn.xs \
@@ -90,7 +89,7 @@ EXTRA_DIST = \
 	Makefile.mingw \
 	common/Makefile.mingw \
 	$(common_sources) \
-	libgaimperl.c
+	libpurpleperl.c
 
 common/Makefile: common/Makefile.PL
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \

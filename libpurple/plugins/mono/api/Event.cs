@@ -1,6 +1,6 @@
 using System;
 
-namespace Gaim
+namespace Purple
 {
 	public class Event
 	{

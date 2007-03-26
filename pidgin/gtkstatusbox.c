@@ -2,9 +2,9 @@
  * @file gtkstatusbox.c GTK+ Status Selection Widget
  * @ingroup gtkui
  *
- * purple
+ * pidgin
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -298,23 +298,22 @@ icon_box_dnd_cb(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 
 static void
 statusbox_got_url(PurpleUtilFetchUrlData *url_data, gpointer user_data,
-                const gchar *themedata, size_t len, const gchar *error_message, 
-		PidginStatusBox *status_box)
+                const gchar *themedata, size_t len, const gchar *error_message)
 {
-        FILE *f;
-        gchar *path;
+	FILE *f;
+	gchar *path;
 
-        if ((error_message != NULL) || (len == 0))
-                return;
+	if ((error_message != NULL) || (len == 0))
+		return;
 
-        f = purple_mkstemp(&path, TRUE);
-        fwrite(themedata, len, 1, f);
-        fclose(f);
+	f = purple_mkstemp(&path, TRUE);
+	fwrite(themedata, len, 1, f);
+	fclose(f);
 
-	icon_choose_cb(path, status_box);
+	icon_choose_cb(path, user_data);
 
-        g_unlink(path);
-        g_free(path);
+	g_unlink(path);
+	g_free(path);
 }
 
 
@@ -322,7 +321,7 @@ static gboolean
 statusbox_uri_handler(const char *proto, const char *cmd, GHashTable *params, void *data)
 {
 	const char *src;
-printf("%s %s\n", proto, cmd);
+
 	if (g_ascii_strcasecmp(proto, "aim"))
 		return FALSE;
 

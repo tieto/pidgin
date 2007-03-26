@@ -2,9 +2,9 @@
  * @file gtksound.c GTK+ Sound
  * @ingroup gtkui
  *
- * purple
+ * pidgin
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -529,7 +529,7 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 		char *filename = g_strdup(purple_prefs_get_path(file_pref));
 		if(!filename || !strlen(filename)) {
 			g_free(filename);
-			filename = g_build_filename(DATADIR, "sounds", "purple", sounds[event].def, NULL);
+			filename = g_build_filename(DATADIR, "sounds", "pidgin", sounds[event].def, NULL);
 		}
 
 		purple_sound_play_file(filename, NULL);

@@ -19,7 +19,7 @@ libbonjour_la_LDFLAGS = -module -avoid-version
 
 if STATIC_BONJOUR
 
-st = -DGAIM_STATIC_PRPL
+st = -DPURPLE_STATIC_PRPL
 noinst_LIBRARIES     = libbonjour.a
 libbonjour_a_SOURCES = $(BONJOURSOURCES)
 libbonjour_a_CFLAGS  = $(AM_CFLAGS)

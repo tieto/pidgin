@@ -1,4 +1,4 @@
-soundsdir =	$(datadir)/sounds/gaim
+soundsdir =	$(datadir)/sounds/pidgin
 sounds_DATA =	\
 		alert.wav \
 		login.wav \

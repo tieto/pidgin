@@ -32,7 +32,7 @@ libnovell_la_LDFLAGS = -module -avoid-version
 
 if STATIC_NOVELL
 
-st = -DGAIM_STATIC_PRPL
+st = -DPURPLE_STATIC_PRPL
 noinst_LIBRARIES = libnovell.a
 pkg_LTLIBRARIES =
 

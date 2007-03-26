@@ -19,8 +19,11 @@
  *
  */
 #include "internal.h"
+#include "account.h"
+#include "conversation.h"
 #include "server.h"
 #include "util.h"
+#include "xmlnode.h"
 
 #include "chat.h"
 #include "presence.h"

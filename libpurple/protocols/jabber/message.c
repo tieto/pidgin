@@ -33,7 +33,7 @@
 
 void jabber_message_free(JabberMessage *jm)
 {
-        g_free(jm->from);
+	g_free(jm->from);
 	g_free(jm->to);
 	g_free(jm->id);
 	g_free(jm->subject);

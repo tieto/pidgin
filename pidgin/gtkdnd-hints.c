@@ -2,9 +2,9 @@
  * @file gtkdnd-hints.c GTK+ Drag-and-Drop arrow hints
  * @ingroup gtkui
  *
- * purple
+ * pidgin
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -122,7 +122,7 @@ dnd_hints_init(void)
 	for (i = 0; hint_windows[i].filename != NULL; i++) {
 		gchar *fname;
 
-		fname = g_build_filename(DATADIR, "pixmaps", "purple",
+		fname = g_build_filename(DATADIR, "pixmaps", "pidgin",
 								 hint_windows[i].filename, NULL);
 
 		hint_windows[i].widget = dnd_hints_init_window(fname);

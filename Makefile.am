@@ -10,32 +10,30 @@ EXTRA_DIST = \
 		README.SVN \
 		README.dbus \
 		README.mingw \
+		config.h.mingw \
 		gaim.pc.in \
-		gaim.spec.in \
-		gaim.apspec.in \
-		pidgin.desktop.in \
+		gaim-uninstalled.pc.in \
 		gaim.service.in \
 		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in \
-		config.h.mingw \
+		pidgin.apspec.in \
+		pidgin.spec.in \
+		pidgin.desktop.in \
 		po/Makefile.mingw
 
 noinst_HEADERS = config.h
-
-pkgconfigdir = $(libdir)/pkgconfig
-pkgconfig_DATA = gaim.pc
 
 if ENABLE_DBUS
 dbus_servicedir=$(DBUS_SERVICES_DIR)
 dbus_service_DATA=gaim.service
 endif
 
-dist-hook: gaim.spec
-	cp gaim.spec $(distdir)
+dist-hook: pidgin.spec
+	cp pidgin.spec $(distdir)
 	rm $(distdir)/config.h
 
-distcheck-hook: libpurple/plugins/perl/common/Gaim.pm gtk/plugins/perl/common/GtkUI.pm
+distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/GtkUI.pm
 #	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
 
 appsdir = $(datadir)/applications
@@ -66,9 +64,9 @@ endif
 # breaks "make distcheck" unless we ignore perl things
 
 distuninstallcheck_listfiles = \
-	find . -type f -print | grep -v perl | grep -v Gaim.3pm
+	find . -type f -print | grep -v perl | grep -v Purple.3pm
 
-DISTCLEANFILES= pidgin.desktop libpurple/gconf/gaim.schemas intltool-extract \
+DISTCLEANFILES= pidgin.desktop libpurple/gconf/purple.schemas intltool-extract \
 			intltool-merge intltool-update
 
 ACLOCAL_AMFLAGS = -I m4

@@ -1,5 +1,5 @@
 /**
-* @file nat-pmp.h NAT-PMP Implementation
+ * @file nat-pmp.h NAT-PMP Implementation
  * @ingroup core
  *
  * purple
@@ -28,26 +28,13 @@
  * OF SUCH DAMAGE.
  */
 
-#ifndef _PMPMAPPER_H
-#define _PMPMAPPER_H
+#ifndef _PURPLE_NAT_PMP_H
+#define _PURPLE_NAT_PMP_H
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <errno.h>
-#include <assert.h>
-#include <sys/socket.h>
-#include <sys/sysctl.h>
-#include <sys/types.h>
-#include <net/if.h>
-#include <net/route.h>
+#include <stdint.h>
+#include <glib.h>
 
-#define PMP_VERSION		0
-#define PMP_PORT		5351
-#define PMP_TIMEOUT		250000	//	250000 useconds
-#define PMP_LIFETIME	3600	//	3600 seconds
-
-#define PMP_MAP_UDP		1
-#define PMP_MAP_TCP		2
+#define PURPLE_PMP_LIFETIME	3600	/* 3600 seconds */
 
 /*
  *	uint8_t:	version, opcodes
@@ -55,40 +42,42 @@
  *	unint32_t:	epoch (seconds since mappings reset)
  */
 
-typedef struct {
-	uint8_t	version;
-	uint8_t opcode;
-} pmp_ip_request_t;
+typedef enum {
+	PURPLE_PMP_TYPE_UDP,
+	PURPLE_PMP_TYPE_TCP
+} PurplePmpType;
 
-typedef struct {
-	uint8_t		version;
-	uint8_t		opcode; // 128 + n
-	uint16_t	resultcode;
-	uint32_t	epoch;
-	uint32_t	address;
-} pmp_ip_response_t;
+/**
+ *
+ */
 
-typedef struct {
-	uint8_t		version;
-	uint8_t		opcode;
-	char		reserved[2];
-	uint16_t	privateport;
-	uint16_t	publicport;
-	uint32_t	lifetime;
-} pmp_map_request_t;
-
-typedef struct {
-	uint8_t		version;
-	uint8_t		opcode;
-	uint16_t	resultcode;
-	uint32_t	epoch;
-	uint16_t	privateport;
-	uint16_t	publicport;
-	uint32_t	lifetime;
-} pmp_map_response_t;
-
+/*
+ * TODO: This should probably cache the result of this lookup requests
+ *       so that subsequent calls to this function do not require a
+ *       round-trip exchange with the local router.
+ */
 char *purple_pmp_get_public_ip();
-pmp_map_response_t *purple_pmp_create_map(uint8_t type, uint16_t privateport, uint16_t publicport, uint32_t lifetime);
-pmp_map_response_t *purple_pmp_destroy_map(uint8_t type, uint16_t privateport);
+
+/**
+ * Remove the NAT-PMP mapping for a specified type on a specified port
+ *
+ * @param type The PurplePmpType
+ * @param privateport The private port on which we are listening locally
+ * @param publicport The public port on which we are expecting a response
+ * @param lifetime The lifetime of the mapping. It is recommended that this be PURPLE_PMP_LIFETIME.
+ *
+ * @returns TRUE if succesful; FALSE if unsuccessful
+ */
+gboolean purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned short publicport, int lifetime);
+
+/**
+ * Remove the NAT-PMP mapping for a specified type on a specified port
+ *
+ * @param type The PurplePmpType
+ * @param privateport The private port on which the mapping was previously made
+ *
+ * @returns TRUE if succesful; FALSE if unsuccessful
+ */
+gboolean purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport);
 	
 #endif

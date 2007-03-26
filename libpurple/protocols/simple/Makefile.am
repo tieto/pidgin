@@ -15,7 +15,7 @@ libsimple_la_LDFLAGS = -module -avoid-version
 
 if STATIC_MSN
 
-st = -DGAIM_STATIC_PRPL
+st = -DPURPLE_STATIC_PRPL
 noinst_LIBRARIES = libsimple.a
 libsimple_a_SOURCES = $(SIMPLESOURCES)
 libsimple_a_CFLAGS  = $(AM_CFLAGS)

@@ -43,7 +43,7 @@ finch_headers = \
 	gntstatus.h \
 	gntui.h
 
-finchincludedir=$(includedir)/gaim/gnt
+finchincludedir=$(includedir)/finch
 finchinclude_HEADERS = \
 	$(finch_headers)
 
@@ -63,7 +63,7 @@ AM_CPPFLAGS = \
 	-DSTANDALONE \
 	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/gaim/\" \
+	-DLIBDIR=\"$(libdir)/finch/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	-I$(top_srcdir)/libpurple/ \

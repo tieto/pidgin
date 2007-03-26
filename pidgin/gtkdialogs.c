@@ -2,9 +2,9 @@
  * @file gtkdialogs.c GTK+ Dialogs
  * @ingroup gtkui
  *
- * purple
+ * pidgin
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -162,7 +162,7 @@ static struct translator current_translators[] = {
 	{N_("Italian"),             "it", "Claudio Satriano", "satriano@na.infn.it"},
 	{N_("Japanese"),            "ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
 	{N_("Georgian"),            "ka", "Ubuntu Georgian Translators", "alexander.didebulidze@stusta.mhn.de"},
-	{N_("Kannada"),             "kn", "Kannada Translation team" "translation@sampada.info"},
+	{N_("Kannada"),             "kn", "Kannada Translation team", "translation@sampada.info"},
 	{N_("Korean"),              "ko", "Kyung-uk Son", "vvs740@chol.com"},
 	{N_("Kurdish"),             "ku", "Erdal Ronahi", "erdal.ronahi@gmail.com"},
 	{N_("Kurdish"),             "ku", "Amed Ç. Jiyan", "amedcj@hotmail.com"},
@@ -332,7 +332,7 @@ void pidgindialogs_about()
 	/* Generate a logo with a version number */
 	logo = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_widget_realize(logo);
-	filename = g_build_filename(DATADIR, "pixmaps", "purple", "logo.png", NULL);
+	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "logo.png", NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 	pidgin_logo_versionize(&pixbuf, logo);

@@ -1,4 +1,5 @@
-monodir=$(libdir)/gaim
+monodir=$(libdir)/purple
+
 mono_sources = \
 	BlistNode.cs \
 	BuddyList.cs \
@@ -6,14 +7,14 @@ mono_sources = \
 	Contact.cs \
 	Debug.cs \
 	Event.cs \
-	GaimPlugin.cs \
+	PurplePlugin.cs \
 	Group.cs \
 	Signal.cs \
 	Status.cs
 
 EXTRA_DIST = $(mono_sources)
 
-mono_SCRIPTS = GaimAPI.dll
+mono_SCRIPTS = PurpleAPI.dll
 
 mono_build_sources = $(addprefix $(srcdir)/, $(mono_sources))
 

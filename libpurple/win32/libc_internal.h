@@ -22,13 +22,40 @@
  */
 #ifndef _LIBC_INTERNAL_
 #define _LIBC_INTERNAL_
+#include <glib.h>
+
+
+/* sys/socket.h */
+int wpurple_socket(int namespace, int style, int protocol);
+int wpurple_connect(int socket, struct sockaddr *addr, u_long length);
+int wpurple_getsockopt(int socket, int level, int optname, void *optval, socklen_t *optlenptr);
+int wpurple_setsockopt(int socket, int level, int optname, const void *optval, socklen_t optlen);
+int wpurple_getsockname (int socket, struct sockaddr *addr, socklen_t *lenptr);
+int wpurple_bind(int socket, struct sockaddr *addr, socklen_t length);
+int wpurple_listen(int socket, unsigned int n);
+int wpurple_sendto(int socket, const void *buf, size_t len, int flags, const struct sockaddr *to, socklen_t tolen);
+int wpurple_recv(int fd, void *buf, size_t len, int flags);
+int wpurple_send(int fd, const void *buf, unsigned int size, int flags);
+
+/* arpa/inet.h */
+int wpurple_inet_aton(const char *name, struct in_addr *addr);
+const char *
+wpurple_inet_ntop (int af, const void *src, char *dst, socklen_t cnt);
+
+/* netdb.h */
+struct hostent* wpurple_gethostbyname(const char *name);
+
+/* string.h */
+char* wpurple_strerror( int errornum );
 
 /* fcntl.h */
+int wpurple_fcntl(int socket, int command, int val);
 #define F_SETFL 1
 #define O_NONBLOCK 1
 
-/* ioctl.h */
+/* sys/ioctl.h */
 #define SIOCGIFCONF 0x8912 /* get iface list */
+int wpurple_ioctl(int fd, int command, void* opt);
 
 /* net/if.h */
 struct ifreq
@@ -89,6 +116,24 @@ struct timezone {
 	int tz_minuteswest;
 	int tz_dsttime;
 };
+int wpurple_gettimeofday(struct timeval *p, struct timezone *z);
 
+/* time.h */
+struct tm *wpurple_localtime_r(const time_t *time, struct tm *resultp);
+
+
+/* unistd.h */
+int wpurple_read(int fd, void *buf, unsigned int size);
+int wpurple_write(int fd, const void *buf, unsigned int size);
+int wpurple_close(int fd);
+int wpurple_gethostname(char *name, size_t size);
+
+
+#if !GLIB_CHECK_VERSION(2,8,0)
+int wpurple_g_access(const gchar *filename, int mode);
+#endif
+
+/* stdio.h */
+int wpurple_rename(const char *oldname, const char *newname);
 
 #endif /* _LIBC_INTERNAL_ */

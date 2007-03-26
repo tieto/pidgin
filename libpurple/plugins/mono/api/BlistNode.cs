@@ -1,4 +1,4 @@
-namespace Gaim {
+namespace Purple {
 	public abstract class BlistNode {
 	}
 }

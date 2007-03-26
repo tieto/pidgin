@@ -110,10 +110,12 @@ clipboard_changed(GntWM *wm, gchar *string)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
+#ifdef HAVE_X11
 	if (!XOpenDisplay(NULL)) {
 		purple_debug_warning("gntclipboard", "Couldn't find X display\n");
 		return FALSE;
 	}
+#endif
 	if (!getenv("WINDOWID")) {
 		purple_debug_warning("gntclipboard", "Couldn't find window\n");
 		return FALSE;
@@ -150,7 +152,7 @@ static PurplePluginInfo info =
 	N_("When the gnt clipboard contents change, "
 		"the contents are made available to X, if possible."),
 	"Richard Nelson <wabz@whatsbeef.net>",
-	"http://purple.sourceforge.net",
+	PURPLE_WEBSITE,
 	plugin_load,
 	plugin_unload,
 	NULL,

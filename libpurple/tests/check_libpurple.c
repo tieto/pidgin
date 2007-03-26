@@ -3,6 +3,7 @@
 
 #include "../core.h"
 #include "../eventloop.h"
+#include "../util.h"
 
 #include "tests.h"
 
@@ -22,6 +23,7 @@ static PurpleEventLoopUiOps eventloop_ui_ops = {
 	(guint (*)(guint))g_source_remove,
 	purple_check_input_add,
 	(guint (*)(guint))g_source_remove,
+	NULL
 };
 
 static void
