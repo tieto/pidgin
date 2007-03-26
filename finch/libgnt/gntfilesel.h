@@ -63,6 +63,12 @@ void gnt_file_sel_set_dirs_only(GntFileSel *sel, gboolean dirs);
 
 gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel);
 
+void gnt_file_sel_set_must_exist(GntFileSel *sel, gboolean must);
+
+gboolean gnt_file_sel_get_must_exist(GntFileSel *sel);
+
+char *gnt_file_sel_get_selected_file(GntFileSel *sel);  /* The returned value should be free'd */
+
 G_END_DECLS
 
 #endif /* GNT_FILE_SEL_H */

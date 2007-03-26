@@ -375,3 +375,23 @@ gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel)
 	return sel->dirsonly;
 }
 
+char *gnt_file_sel_get_selected_file(GntFileSel *sel)
+{
+	char *ret;
+	const char *tmp;
+	tmp = (const char*)gnt_tree_get_selection_data(sel->dirsonly ? GNT_TREE(sel->dirs) : GNT_TREE(sel->files));
+	ret = g_strdup_printf("%s%s%s", sel->current, sel->current[1] ? G_DIR_SEPARATOR_S : "", tmp ? tmp : "");
+	return ret;
+}
+
+void gnt_file_sel_set_must_exist(GntFileSel *sel, gboolean must)
+{
+	/*XXX: What do I do with this? */
+	sel->must_exist = must;
+}
+
+gboolean gnt_file_sel_get_must_exist(GntFileSel *sel)
+{
+	return sel->must_exist;
+}
+
