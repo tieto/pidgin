@@ -492,3 +492,27 @@ GList *gnt_file_sel_get_selected_multi_files(GntFileSel *sel)
 	return list;
 }
 
+void gnt_file_sel_set_multi_select(GntFileSel *sel, gboolean set)
+{
+	sel->multiselect = set;
+}
+
+GList *gnt_file_sel_get_selected_multi_files(GntFileSel *sel)
+{
+	GList *list = NULL, *iter;
+	char *str = gnt_file_sel_get_selected_file(sel);
+
+	for (iter = sel->tags; iter; iter = iter->next) {
+		list = g_list_prepend(list, g_strdup(iter->data));
+		if (g_utf8_collate(str, iter->data)) {
+			g_free(str);
+			str = NULL;
+		}
+	}
+	if (str)
+		list = g_list_prepend(list, str);
+	list = g_list_reverse(list);
+	return list;
+}
+
+

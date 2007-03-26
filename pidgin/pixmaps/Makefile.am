@@ -63,3 +63,7 @@ pidgindistpix_DATA = logo.png tb_drag_arrow_down.xpm tb_drag_arrow_left.xpm tb_d
 
 distpixmapdir = $(datadir)/pixmaps
 distpixmap_DATA = pidgin.png pidgin.svg
+
+
+
+

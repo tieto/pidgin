@@ -76,3 +76,4 @@ void gnt_file_sel_set_multi_select(GntFileSel *sel, gboolean set);
 G_END_DECLS
 
 #endif /* GNT_FILE_SEL_H */
+
