@@ -138,7 +138,7 @@ gboolean purple_input_remove(guint handle);
  * implement the input_get_error UI op.
  *
  * @param fd        The input file descriptor.
- * @param errno		A pointer to an int which on return will have the error, or 0 if no error.
+ * @param error		A pointer to an int which on return will have the error, or 0 if no error.
  *
  * @return 0 if there is no error; -1 if there is an error, in which case errno will be set.
  */

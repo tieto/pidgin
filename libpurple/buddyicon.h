@@ -182,8 +182,8 @@ const guchar *purple_buddy_icon_get_data(const PurpleBuddyIcon *icon, size_t *le
  * Returns the buddy icon's path.
  *
  * @param icon The buddy icon.
- * 
- * @preturn The buddy icon's non-cached path.
+ *
+ * @return The buddy icon's non-cached path.
  */
 const gchar *purple_buddy_icon_get_path(PurpleBuddyIcon *icon);
 

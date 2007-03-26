@@ -581,7 +581,7 @@ PurpleNotifyUserInfoEntryType purple_notify_user_info_entry_get_type(PurpleNotif
  * Set the type of a PurpleNotifyUserInfoEntry
  *
  * @param user_info_entry     The PurpleNotifyUserInfoEntry
- * @param					  The PurpleNotifyUserInfoEntryType
+ * @param type				  The PurpleNotifyUserInfoEntryType
  */
 void purple_notify_user_info_entry_set_type(PurpleNotifyUserInfoEntry *user_info_entry,
 										  PurpleNotifyUserInfoEntryType type);

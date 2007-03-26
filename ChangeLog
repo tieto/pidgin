@@ -1,9 +1,4 @@
-2007-01-24  gettextize  <bug-gnu-gettext@gnu.org>
-
-	* Makefile.am (ACLOCAL_AMFLAGS): New variable.
-	(EXTRA_DIST): Add config.rpath, m4/ChangeLog.
-
-Gaim: The Pimpin' Penguin IM Client that's good for the soul!
+Pidgin and Finch: The Pimpin' Penguin IM Clients that're good for the soul
 
 version 2.0.0:
 	Build Changes:

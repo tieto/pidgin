@@ -431,9 +431,9 @@ WARN_LOGFILE           =
 # directories like "/usr/src/myproject". Separate the files or directories 
 # with spaces.
 
-INPUT                  = libgaim \
-						 gtk \
-						 console \
+INPUT                  = libpurple \
+						 finch \
+						 pidgin \
                          doc
 
 # If the value of the INPUT tag contains directories, you can use the 
@@ -586,9 +586,9 @@ COLS_IN_ALPHA_INDEX    = 3
 # The IGNORE_PREFIX tag can be used to specify one or more prefixes that 
 # should be ignored while generating the index headers.
 
-IGNORE_PREFIX          = Gaim \
-                         _Gaim \
-                         gaim
+IGNORE_PREFIX          = Purple \
+                         _Purple \
+                         purple
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output

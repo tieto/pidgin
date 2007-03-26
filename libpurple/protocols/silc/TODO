@@ -2,7 +2,7 @@ Features TODO (maybe)
 =====================
 
 Sending images
-	- Sending images to channel too, if Gaim allows it.
+	- Sending images to channel too, if libpurple allows it.
 
 Preferences
 	- Add joined channels to buddy list automatically (during

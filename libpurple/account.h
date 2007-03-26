@@ -211,14 +211,14 @@ void *purple_account_request_authorization(PurpleAccount *account, const char *r
 /**
  * Close account requests registered for the given PurpleAccount
  *
- * @param handle	   The account for which requests should be closed
+ * @param account	   The account for which requests should be closed
  */
 void purple_account_request_close_with_account(PurpleAccount *account);
 
 /**
  * Close the account request for the given ui handle
  *
- * @param handle	   The ui specific handle for which requests should be closed
+ * @param ui_handle	   The ui specific handle for which requests should be closed
  */
 void purple_account_request_close(void *ui_handle);
 
@@ -281,7 +281,7 @@ void purple_account_set_buddy_icon(PurpleAccount *account, const char *icon);
  * Sets the account's buddy icon path.
  *
  * @param account The account.
- * @param info	  The buddy icon non-cached path.
+ * @param path	  The buddy icon non-cached path.
  */
 void purple_account_set_buddy_icon_path(PurpleAccount *account, const char *path);
 
