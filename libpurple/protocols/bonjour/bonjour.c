@@ -58,7 +58,7 @@ bonjour_removeallfromlocal(PurpleConnection *gc)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleBuddyList *blist;
-	PurpleBlistNode *gnode, *cnode, *bnode;
+	PurpleBlistNode *gnode, *cnode, *cnodenext, *bnode, *bnodenext;
 	PurpleBuddy *buddy;
 
 	blist = purple_get_blist();
@@ -70,12 +70,14 @@ bonjour_removeallfromlocal(PurpleConnection *gc)
 	{
 		if (!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
-		for (cnode = gnode->child; cnode; cnode = cnode->next)
+		for (cnode = gnode->child; cnode; cnode = cnodenext)
 		{
+			cnodenext = cnode->next;
 			if (!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
-			for (bnode = cnode->child; bnode; bnode = bnode->next)
+			for (bnode = cnode->child; bnode; bnode = bnodenext)
 			{
+				bnodenext = bnode->next;
 				if (!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				buddy = (PurpleBuddy *)bnode;

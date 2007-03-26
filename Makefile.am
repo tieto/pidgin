@@ -10,16 +10,16 @@ EXTRA_DIST = \
 		README.SVN \
 		README.dbus \
 		README.mingw \
+		config.h.mingw \
 		gaim.pc.in \
 		gaim-uninstalled.pc.in \
-		gaim.apspec.in \
 		gaim.service.in \
-		pidgin.spec.in \
-		pidgin.desktop.in \
 		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in \
-		config.h.mingw \
+		pidgin.apspec.in \
+		pidgin.spec.in \
+		pidgin.desktop.in \
 		po/Makefile.mingw
 
 noinst_HEADERS = config.h
@@ -66,7 +66,7 @@ endif
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Purple.3pm
 
-DISTCLEANFILES= pidgin.desktop libpurple/gconf/gaim.schemas intltool-extract \
+DISTCLEANFILES= pidgin.desktop libpurple/gconf/purple.schemas intltool-extract \
 			intltool-merge intltool-update
 
 ACLOCAL_AMFLAGS = -I m4

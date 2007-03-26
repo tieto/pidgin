@@ -100,10 +100,10 @@ endif # PLUGINS
 
 EXTRA_DIST = \
 	Makefile.mingw \
+	ciphertest.c \
 	dbus-buddyicons-example.py \
 	filectl.c \
 	fortuneprofile.pl \
-	gaim.pl \
 	ipc-test-client.c \
 	ipc-test-server.c \
 	pluginpref_example.c \

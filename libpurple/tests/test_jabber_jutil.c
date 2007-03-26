@@ -1,6 +1,9 @@
 #include <string.h>
 
 #include "tests.h"
+#include "../account.h"
+#include "../conversation.h"
+#include "../xmlnode.h"
 #include "../protocols/jabber/jutil.h"
 
 START_TEST(test_get_resource)

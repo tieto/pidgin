@@ -1,11 +1,11 @@
 # -*-shell-script-*-
 
 [Meta]
-RootName: @gaim.sourceforge.net/gaim:$SOFTWAREVERSION
-DisplayName: Gaim Internet Messenger
-ShortName: gaim
-Maintainer: The Gaim Developers
-URL: http://gaim.sourceforge.net/
+RootName: @pidgin.im/pidgin:$SOFTWAREVERSION
+DisplayName: Pidgin Internet Messenger
+ShortName: Pidgin
+Maintainer: The Pidgin Developers
+URL: http://pidgin.im/
 Packager: Tim Ringenbach <marv_sf@users.sourceforge.net>
 Summary: A GTK+ based multiprotocol instant messaging client
 SoftwareVersion: @VERSION@
@@ -13,16 +13,16 @@ InterfaceVersion: 2.0
 PackageVersion: 1
 
 [Description]
-Gaim allows you to talk to anyone using a variety of messaging protocols,
+Pidgin allows you to talk to anyone using a variety of messaging protocols,
 including AIM (Oscar and TOC), ICQ, IRC, Yahoo!, MSN Messenger, Jabber,
 Gadu-Gadu, and Zephyr. These protocols are implemented using a
 modular, easy to use design. To use a protocol, just add an account using the
 account editor.
 
-Gaim supports many common features of other clients, as well as many unique
+Pidgin supports many common features of other clients, as well as many unique
 features, such as perl scripting, TCL scripting and C plugins.
 
-Gaim is NOT affiliated with or endorsed by America Online, Inc., Microsoft
+Pidgin is NOT affiliated with or endorsed by America Online, Inc., Microsoft
 Corporation, Yahoo! Inc., or ICQ Inc.
 
 [BuildPrepare]
@@ -50,19 +50,19 @@ require @gnutls.org/gnutls 11.0 || { require @mozilla.org/nspr 4 && require @moz
 [Install]
 # Put your installation script here
 installExe ./bin/*
-installLib ./lib/libgaim-remote.so.0.0.0
+installLib ./lib/libpurple-remote.so.0.0.0
 # do the plugins
-copyFiles ./lib/gaim "$PREFIX/lib"
-installMan 1 ./man/man1/gaim.1
-installDesktop "Networking/Instant Messaging" ./share/applications/gaim.desktop
+copyFiles ./lib/pidgin "$PREFIX/lib"
+installMan 1 ./man/man1/pidgin.1
+installDesktop "Networking/Instant Messaging" ./share/applications/pidgin.desktop
 installLocale ./share/locale
 copyFiles ./share/pixmaps "$PREFIX/share"
 copyFiles ./share/sounds "$PREFIX/share"
-installIcon ./share/pixmaps/gaim.png
+installIcon ./share/pixmaps/pidgin.png
 # install and fix the .pc file
 # move this to the -devel package when I make one
-# copyFile ./lib/pkgconfig/gaim.pc "$PREFIX/lib/pkgconfig/gaim.pc"
-# safeSed "$PREFIX/lib/pkgconfig/gaim.pc" "s|prefix=/usr/local|prefix=$PREFIX|"
+# copyFile ./lib/pkgconfig/pidgin.pc "$PREFIX/lib/pkgconfig/pidgin.pc"
+# safeSed "$PREFIX/lib/pkgconfig/pidgin.pc" "s|prefix=/usr/local|prefix=$PREFIX|"
 
 [Uninstall]
 # Usually just the following line is enough to uninstall everything
