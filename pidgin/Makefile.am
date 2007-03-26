@@ -63,7 +63,7 @@ if ENABLE_GTK
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = pidgin.pc
 
-SUBDIRS = plugins 
+SUBDIRS = pixmaps plugins sounds
 
 bin_PROGRAMS = pidgin
 
