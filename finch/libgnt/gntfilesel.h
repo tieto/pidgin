@@ -17,11 +17,11 @@
 #define GNT_FILE_SEL_SET_FLAGS(obj, flags)		(GNT_FILE_SEL_FLAGS(obj) |= flags)
 #define GNT_FILE_SEL_UNSET_FLAGS(obj, flags)	(GNT_FILE_SEL_FLAGS(obj) &= ~(flags))
 
-typedef struct _GnFileSel			GntFileSel;
-typedef struct _GnFileSelPriv		GntFileSelPriv;
-typedef struct _GnFileSelClass		GntFileSelClass;
+typedef struct _GntFileSel			GntFileSel;
+typedef struct _GntFileSelPriv		GntFileSelPriv;
+typedef struct _GntFileSelClass		GntFileSelClass;
 
-struct _GnFileSel
+struct _GntFileSel
 {
 	GntWindow parent;
 
@@ -36,9 +36,11 @@ struct _GnFileSel
 	/* XXX: someone should make these useful */
 	gboolean must_exist; /* Make sure the selected file (the name entered in 'location') exists */
 	gboolean dirsonly;   /* Show only directories */
+    gboolean multiselect;
+    GList *tags;         /* List of tagged files when multiselect is set */
 };
 
-struct _GnFileSelClass
+struct _GntFileSelClass
 {
 	GntWindowClass parent;
 
@@ -57,8 +59,6 @@ GntWidget *gnt_file_sel_new(void);
 
 gboolean gnt_file_sel_set_current_location(GntFileSel *sel, const char *path);
 
-const char *gnt_file_sel_get_current_location(GntFileSel *sel);
-
 void gnt_file_sel_set_dirs_only(GntFileSel *sel, gboolean dirs);
 
 gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel);
@@ -68,6 +68,10 @@ void gnt_file_sel_set_must_exist(GntFileSel *sel, gboolean must);
 gboolean gnt_file_sel_get_must_exist(GntFileSel *sel);
 
 char *gnt_file_sel_get_selected_file(GntFileSel *sel);  /* The returned value should be free'd */
+
+GList *gnt_file_sel_get_selected_multi_files(GntFileSel *sel);
+
+void gnt_file_sel_set_multi_select(GntFileSel *sel, gboolean set);
 
 G_END_DECLS
 
