@@ -9,7 +9,7 @@ AIM, ICQ, Jabber, MSN and Yahoo!, among others.
 Pidgin is an graphical IM client written in C which uses the GTK+
 toolkit.
 
-Finish is a text-based IM client written in C which uses the ncurses
+Finch is a text-based IM client written in C which uses the ncurses
 toolkit.
 
 These programs are not endorsed by, nor affiliated with, AOL nor any
@@ -26,8 +26,8 @@ to see what build options are available.
 
 In order to compile Pidgin you need to have GTK+ 2.0 installed (as
 well as the development files!). The configure script will fail if you
-don't.  If you don't have GTK+ 2.0 installed, you shoudl install it
-using your distributions package management tools.
+don't.  If you don't have GTK+ 2.0 installed, you should install it
+using your distribution's package management tools.
 
 For sound support, you also need gstreamer 0.10 or higher. For
 spellchecking support, you need libgtkspell (http://gtkspell.sf.net/).
