@@ -521,7 +521,7 @@ gnt_widget_set_size(GntWidget *widget, int width, int height)
 
 		widget->priv.width = width;
 		widget->priv.height = height;
-		if (width >= getmaxx(widget->window) || height >= getmaxy(widget->window)) {
+		if (width + shadow >= getmaxx(widget->window) || height + shadow >= getmaxy(widget->window)) {
 			delwin(widget->window);
 			widget->window = newpad(height + 20, width + 20);
 		}
