@@ -3382,7 +3382,7 @@ msgid ""
 "You are about to remove the group %s and all its members from your buddy "
 "list.  Do you want to continue?"
 msgstr ""
-"Tu koma %s û hemû endaman ji lîsteya xwe ya hevalan derdixe.\n"
+"Tu koma %s û hemû endaman ji lîsteya xwe ya hevalan derdixe.\n"
 "Tu dixwazî bidomînî?"
 
 #: ../src/gtkdialogs.c:951
