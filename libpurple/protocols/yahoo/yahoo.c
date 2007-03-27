@@ -859,10 +859,25 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 		purple_util_chrreplace(m, '\r', '\n');
 
 		if (!strcmp(m, "<ding>")) {
-			PurpleConversation *c = purple_conversation_new(PURPLE_CONV_TYPE_IM,
-			                                            purple_connection_get_account(gc), im->from);
-			purple_conv_im_write(PURPLE_CONV_IM(c), "", _("Buzz!!"), PURPLE_MESSAGE_NICK|PURPLE_MESSAGE_RECV,
-			                   im->time);
+			PurpleBuddy *buddy;
+			PurpleAccount *account;
+			PurpleConversation *c;
+			char *username, *str;
+			
+			account = purple_connection_get_account(gc);
+			c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, im->from);
+			
+			if ((buddy = purple_find_buddy(account, im->from)) != NULL)
+				username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
+			else
+				username = g_markup_escape_text(im->from, -1);
+			
+			str = g_strdup_printf(_("%s just sent you a Buzz!"), username);
+			
+			purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, im->time);
+
+			g_free(username);
+			g_free(str);
 			g_free(m);
 			g_free(im);
 			continue;
@@ -3737,7 +3752,7 @@ yahoopurple_cmd_buzz(PurpleConversation *c, const gchar *cmd, gchar **args, gcha
 	purple_debug(PURPLE_DEBUG_INFO, "yahoo",
 	           "Sending <ding> on account %s to buddy %s.\n", username, c->name);
 	purple_conv_im_send(PURPLE_CONV_IM(c), "<ding>");
-	purple_conv_im_write(PURPLE_CONV_IM(c), "", _("Buzz!!"), PURPLE_MESSAGE_NICK|PURPLE_MESSAGE_SEND, time(NULL));
+	purple_conversation_write(c, NULL, _("You have just sent a Buzz!"), PURPLE_MESSAGE_SYSTEM, time(NULL));
 	return PURPLE_CMD_RET_OK;
 }
 

@@ -115,7 +115,8 @@ typedef enum
 	PURPLE_MESSAGE_DELAYED     = 0x0400, /**< Delayed message.         */
 	PURPLE_MESSAGE_RAW         = 0x0800, /**< "Raw" message - don't
 	                                        apply formatting         */
-	PURPLE_MESSAGE_IMAGES      = 0x1000  /**< Message contains images  */
+	PURPLE_MESSAGE_IMAGES      = 0x1000, /**< Message contains images  */
+	PURPLE_MESSAGE_NOTIFY      = 0x2000  /**< Message is a notification */
 
 } PurpleMessageFlags;
 
