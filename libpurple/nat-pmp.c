@@ -49,7 +49,7 @@
 #include <sys/types.h>
 #include <net/if.h>
 
-#ifdef NET_RT_DUMP2
+#ifdef NET_RT_DUMP
 
 #define PMP_DEBUG	1
 
@@ -148,7 +148,7 @@ default_gw()
 	int mib[6];
     size_t needed;
     char *buf, *next, *lim;
-    struct rt_msghdr2 *rtm;
+    struct rt_msghdr *rtm;
     struct sockaddr *sa;
 	struct sockaddr_in *sin = NULL;
 	gboolean found = FALSE;
@@ -157,7 +157,7 @@ default_gw()
     mib[1] = PF_ROUTE; /* entire routing table or a subset of it */
     mib[2] = 0; /* protocol number - always 0 */
     mib[3] = 0; /* address family - 0 for all addres families */
-    mib[4] = NET_RT_DUMP2;
+    mib[4] = NET_RT_DUMP;
     mib[5] = 0;
 
 	/* Determine the buffer side needed to get the full routing table */
@@ -184,7 +184,7 @@ default_gw()
 
     for (next = buf; next < lim; next += rtm->rtm_msglen) 
 	{
-		rtm = (struct rt_msghdr2 *)next;
+		rtm = (struct rt_msghdr *)next;
 		sa = (struct sockaddr *)(rtm + 1);
 		
 		if (sa->sa_family == AF_INET) 
@@ -458,7 +458,7 @@ purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 
 	return success;
 }
-#else /* #ifdef NET_RT_DUMP2 */
+#else /* #ifdef NET_RT_DUMP */
 char *
 purple_pmp_get_public_ip()
 {
@@ -476,4 +476,4 @@ purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 {
 	return FALSE;
 }
-#endif /* #ifndef NET_RT_DUMP2 */
+#endif /* #ifndef NET_RT_DUMP */
