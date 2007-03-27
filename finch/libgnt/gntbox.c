@@ -352,11 +352,6 @@ gnt_box_confirm_size(GntWidget *widget, int width, int height)
 	GntBox *box = GNT_BOX(widget);
 	int wchange, hchange;
 
-	if (widget->priv.width != width && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_X))
-		return FALSE;
-	if (widget->priv.height != height && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_Y))
-		return FALSE;
-
 	if (!box->list)
 		return TRUE;
 
@@ -387,13 +382,21 @@ gnt_box_confirm_size(GntWidget *widget, int width, int height)
 				gnt_widget_get_size(GNT_WIDGET(i->data), &tw, &th);
 				if (box->vertical)
 				{
-					if (!gnt_widget_confirm_size(i->data, tw - wchange, th))
-						return FALSE;
+					if (!gnt_widget_confirm_size(i->data, tw - wchange, th)) {
+						/* If we are decreasing the size and the widget is going
+						 * to be too large to fit into the box, then do not allow
+						 * resizing. */
+						if (wchange > 0 && tw >= widget->priv.width)
+							return FALSE;
+					}
 				}
 				else
 				{
-					if (!gnt_widget_confirm_size(i->data, tw, th - hchange))
+					if (!gnt_widget_confirm_size(i->data, tw, th - hchange)) {
+						if (hchange > 0 && th >= widget->priv.height)
+							return FALSE;
 						return FALSE;
+					}
 				}
 			}
 #if 0
@@ -562,17 +565,6 @@ void gnt_box_add_widget(GntBox *b, GntWidget *widget)
 {
 	b->list = g_list_append(b->list, widget);
 	widget->parent = GNT_WIDGET(b);
-
-	if (b->vertical)
-	{
-		if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_X))
-			GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(b), GNT_WIDGET_GROW_X);
-	}
-	else
-	{
-		if (!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_Y))
-			GNT_WIDGET_UNSET_FLAGS(GNT_WIDGET(b), GNT_WIDGET_GROW_Y);
-	}
 }
 
 void gnt_box_set_title(GntBox *b, const char *title)

@@ -75,11 +75,13 @@ gnt_widget_focus_change(GntWidget *widget)
 static gboolean
 gnt_widget_dummy_confirm_size(GntWidget *widget, int width, int height)
 {
+	gboolean shadow;
 	if (width < widget->priv.minw || height < widget->priv.minh)
 		return FALSE;
-	if (widget->priv.width != width && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_X))
+	shadow = gnt_widget_has_shadow(widget);
+	if (widget->priv.width + shadow != width && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_X))
 		return FALSE;
-	if (widget->priv.height != height && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_Y))
+	if (widget->priv.height + shadow != height && !GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_GROW_Y))
 		return FALSE;
 	return TRUE;
 }
