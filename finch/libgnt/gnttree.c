@@ -20,7 +20,7 @@ enum
 
 /* XXX: Make this one into a GObject?
  * 		 ... Probably not */
-struct _GnTreeRow
+struct _GntTreeRow
 {
 	void *key;
 	void *data;		/* XXX: unused */
@@ -40,7 +40,7 @@ struct _GnTreeRow
 	GntTree *tree;
 };
 
-struct _GnTreeCol
+struct _GntTreeCol
 {
 	char *text;
 	int span;       /* How many columns does it span? */

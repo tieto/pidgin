@@ -17,11 +17,11 @@
 #define GNT_COMBO_BOX_SET_FLAGS(obj, flags)		(GNT_COMBO_BOX_FLAGS(obj) |= flags)
 #define GNT_COMBO_BOX_UNSET_FLAGS(obj, flags)	(GNT_COMBO_BOX_FLAGS(obj) &= ~(flags))
 
-typedef struct _GnComboBox			GntComboBox;
-typedef struct _GnComboBoxPriv		GntComboBoxPriv;
-typedef struct _GnComboBoxClass		GntComboBoxClass;
+typedef struct _GntComboBox			GntComboBox;
+typedef struct _GntComboBoxPriv		GntComboBoxPriv;
+typedef struct _GntComboBoxClass		GntComboBoxClass;
 
-struct _GnComboBox
+struct _GntComboBox
 {
 	GntWidget parent;
 
@@ -30,7 +30,7 @@ struct _GnComboBox
 	void *selected;        /* Currently selected key */
 };
 
-struct _GnComboBoxClass
+struct _GntComboBoxClass
 {
 	GntWidgetClass parent;
 

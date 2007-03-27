@@ -270,7 +270,7 @@ rm -rf %{buildroot}
 if [ "$1" -gt 1 -a -n "`which gconftool-2 2>/dev/null`" ]; then
     export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
     gconftool-2 --makefile-uninstall-rule \
-        %{_sysconfdir}/gconf/schemas/gaim.schemas >/dev/null || :
+        %{_sysconfdir}/gconf/schemas/purple.schemas >/dev/null || :
     killall -HUP gconfd-2 || :
 fi
 
@@ -278,7 +278,7 @@ fi
 if [ -n "`which gconftool-2 2>/dev/null`" ]; then
     export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
     gconftool-2 --makefile-install-rule \
-        %{_sysconfdir}/gconf/schemas/gaim.schemas > /dev/null || :
+        %{_sysconfdir}/gconf/schemas/purple.schemas > /dev/null || :
     killall -HUP gconfd-2 || :
 fi
 /sbin/ldconfig
@@ -287,7 +287,7 @@ fi
 if [ "$1" -eq 0 -a -n "`which gconftool-2 2>/dev/null`" ]; then
     export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
     gconftool-2 --makefile-uninstall-rule \
-      %{_sysconfdir}/gconf/schemas/gaim.schemas > /dev/null || :
+      %{_sysconfdir}/gconf/schemas/purple.schemas > /dev/null || :
     killall -HUP gconfd-2 || :
 fi
 
@@ -319,7 +319,7 @@ fi
 %{_datadir}/sounds/pidgin/*
 %{_datadir}/applications/*
 %{_libdir}/libpurple.so.*
-%{_sysconfdir}/gconf/schemas/gaim.schemas
+%{_sysconfdir}/gconf/schemas/purple.schemas
 
 %if 0%{?_with_dbus:1}
 %{_bindir}/purple-client-example

@@ -460,7 +460,7 @@ initialize_default_account_values()
 	else if (((fullname = getlogin()) != NULL) && (fullname[0] != '\0'))
 		;
 	else
-		fullname = _("John Noname"); 
+		fullname = _("Purple Person");
 	/* Make sure fullname is valid UTF-8.  If not, try to convert it. */
 	if (!g_utf8_validate(fullname, -1, NULL))
 	{
@@ -548,7 +548,8 @@ initialize_default_account_values()
 	/* Try to figure out a good host name to use */
 	/* TODO: Avoid 'localhost,' if possible */
 	if (gethostname(hostname, 255) != 0) {
-		purple_debug_warning("bonjour", "Error %d when getting host name.  Using \"localhost.\"\n", errno);
+		purple_debug_warning("bonjour", "Error when getting host name: %s.  Using \"localhost.\"\n",
+				strerror(errno));
 		strcpy(hostname, "localhost");
 	}
 	default_hostname = g_strdup(hostname);

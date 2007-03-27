@@ -22,29 +22,29 @@ int main()
 	GntWidget *menu = gnt_menu_new(GNT_MENU_TOPLEVEL);
 	GObject *item = gnt_menuitem_new("File");
 
-	gnt_menu_add_item(GNT_MENU(menu), GNT_MENUITEM(item));
+	gnt_menu_add_item(GNT_MENU(menu), GNT_MENU_ITEM(item));
 
 	item = gnt_menuitem_new("Edit");
-	gnt_menu_add_item(GNT_MENU(menu), GNT_MENUITEM(item));
+	gnt_menu_add_item(GNT_MENU(menu), GNT_MENU_ITEM(item));
 
 	item = gnt_menuitem_new("Help");
-	gnt_menu_add_item(GNT_MENU(menu), GNT_MENUITEM(item));
+	gnt_menu_add_item(GNT_MENU(menu), GNT_MENU_ITEM(item));
 
 	GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
-	gnt_menuitem_set_submenu(GNT_MENUITEM(item), GNT_MENU(sub));
+	gnt_menuitem_set_submenu(GNT_MENU_ITEM(item), GNT_MENU(sub));
 
 	item = gnt_menuitem_new("Online Help");
-	gnt_menu_add_item(GNT_MENU(sub), GNT_MENUITEM(item));
+	gnt_menu_add_item(GNT_MENU(sub), GNT_MENU_ITEM(item));
 
 	item = gnt_menuitem_new("About");
-	gnt_menu_add_item(GNT_MENU(sub), GNT_MENUITEM(item));
+	gnt_menu_add_item(GNT_MENU(sub), GNT_MENU_ITEM(item));
 
 	sub = gnt_menu_new(GNT_MENU_POPUP);
-	gnt_menuitem_set_submenu(GNT_MENUITEM(item), GNT_MENU(sub));
+	gnt_menuitem_set_submenu(GNT_MENU_ITEM(item), GNT_MENU(sub));
 
 	item = gnt_menuitem_new("Online Help");
-	gnt_menu_add_item(GNT_MENU(sub), GNT_MENUITEM(item));
-	gnt_menuitem_set_callback(GNT_MENUITEM(item), dothis, NULL);
+	gnt_menu_add_item(GNT_MENU(sub), GNT_MENU_ITEM(item));
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), dothis, NULL);
 
 	gnt_screen_menu_show(menu);
 

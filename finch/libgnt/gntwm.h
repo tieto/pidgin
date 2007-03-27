@@ -27,9 +27,9 @@ typedef struct
 	PANEL *panel;
 } GntNode;
 
-typedef struct _GntWM GntWM;
+typedef struct _GnttWM GntWM;
 
-typedef struct _GnPosition
+typedef struct _GntPosition
 {
 	int x;
 	int y;
@@ -38,13 +38,13 @@ typedef struct _GnPosition
 /**
  * An application can register actions which will show up in a 'start-menu' like popup
  */
-typedef struct _GnAction
+typedef struct _GntAction
 {
 	const char *label;
 	void (*callback)();
 } GntAction;
 
-struct _GntWM
+struct _GnttWM
 {
 	GntBindable inherit;
 
@@ -89,9 +89,9 @@ struct _GntWM
 	void *res4;
 };
 
-typedef struct _GnWMClass GntWMClass;
+typedef struct _GntWMClass GntWMClass;
 
-struct _GnWMClass
+struct _GntWMClass
 {
 	GntBindableClass parent;
 

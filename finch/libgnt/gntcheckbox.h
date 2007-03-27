@@ -17,17 +17,17 @@
 #define GNT_CHECK_BOX_SET_FLAGS(obj, flags)		(GNT_CHECK_BOX_FLAGS(obj) |= flags)
 #define GNT_CHECK_BOX_UNSET_FLAGS(obj, flags)	(GNT_CHECK_BOX_FLAGS(obj) &= ~(flags))
 
-typedef struct _GnCheckBox			GntCheckBox;
-typedef struct _GnCheckBoxPriv		GntCheckBoxPriv;
-typedef struct _GnCheckBoxClass		GntCheckBoxClass;
+typedef struct _GntCheckBox			GntCheckBox;
+typedef struct _GntCheckBoxPriv		GntCheckBoxPriv;
+typedef struct _GntCheckBoxClass		GntCheckBoxClass;
 
-struct _GnCheckBox
+struct _GntCheckBox
 {
 	GntButton parent;
 	gboolean checked;
 };
 
-struct _GnCheckBoxClass
+struct _GntCheckBoxClass
 {
 	GntButtonClass parent;
 

@@ -279,7 +279,7 @@ icon_box_dnd_cb(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
 			GError *converr = NULL;
 			gchar *tmp, *rtmp;
-		
+
 			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
 				purple_debug(PURPLE_DEBUG_ERROR, "buddyicon", "%s\n",
 					   (converr ? converr->message :
@@ -559,7 +559,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	PurpleAccount *acct = (status_box->token_status_account) ? status_box->token_status_account : status_box->account;
 
 	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
-	
+
 	style = gtk_widget_get_style(GTK_WIDGET(status_box));
 	snprintf(aa_color, sizeof(aa_color), "#%02x%02x%02x",
 		 style->text_aa[GTK_STATE_NORMAL].red >> 8,
@@ -584,7 +584,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 		if (!gtk_tree_model_get_iter (GTK_TREE_MODEL(status_box->dropdown_store), &iter, path))
 			return;
 		gtk_tree_path_free(path);
-		
+
 		gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 						   TYPE_COLUMN, &type,
 						   DATA_COLUMN, &data,
@@ -688,7 +688,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 			}
 		}
 #endif
-		
+
 	}
 
 	if (status_box->account != NULL) {
@@ -824,7 +824,7 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 						break;
 					}
 					g_free(name);
-				
+
 				} else if ((type == PIDGIN_STATUS_BOX_TYPE_POPULAR) &&
 						(GPOINTER_TO_INT(data) == purple_savedstatus_get_creation_time(saved_status)))
 				{
@@ -1186,7 +1186,7 @@ static void
 cache_pixbufs(PidginStatusBox *status_box)
 {
 	GtkIconSize icon_size;
-	
+
 	g_object_set(G_OBJECT(status_box->icon_rend), "xpad", 3, NULL);
 	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
@@ -1311,14 +1311,14 @@ pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, in
 #endif
   GtkRequisition popup_req;
   GtkPolicyType hpolicy, vpolicy;
-  
+
   gdk_window_get_origin (GTK_WIDGET(status_box)->window, x, y);
 
   *x += GTK_WIDGET(status_box)->allocation.x;
   *y += GTK_WIDGET(status_box)->allocation.y;
- 
+
   *width = GTK_WIDGET(status_box)->allocation.width;
-  
+
   hpolicy = vpolicy = GTK_POLICY_NEVER;
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
 				  hpolicy, vpolicy);
@@ -1336,7 +1336,7 @@ pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, in
 
 #if GTK_CHECK_VERSION(2,2,0)
   screen = gtk_widget_get_screen (GTK_WIDGET (status_box));
-  monitor_num = gdk_screen_get_monitor_at_window (screen, 
+  monitor_num = gdk_screen_get_monitor_at_window (screen,
 						  GTK_WIDGET (status_box)->window);
   gdk_screen_get_monitor_geometry (screen, monitor_num, &monitor);
 
@@ -1344,7 +1344,7 @@ pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, in
     *x = monitor.x;
   else if (*x + *width > monitor.x + monitor.width)
     *x = monitor.x + monitor.width - *width;
-  
+
   if (*y + GTK_WIDGET(status_box)->allocation.height + *height <= monitor.y + monitor.height)
 	  *y += GTK_WIDGET(status_box)->allocation.height;
   else if (*y - *height >= monitor.y)
@@ -1354,7 +1354,7 @@ pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, in
 	    *y += GTK_WIDGET(status_box)->allocation.height;
 	    *height = monitor.y + monitor.height - *y;
     }
-  else 
+  else
     {
 	    *height = *y - monitor.y;
 	    *y = monitor.y;
@@ -1363,7 +1363,7 @@ pidgin_status_box_list_position (PidginStatusBox *status_box, int *x, int *y, in
   if (popup_req.height > *height)
     {
       vpolicy = GTK_POLICY_ALWAYS;
-      
+
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (status_box->scrolled_window),
 				      hpolicy, vpolicy);
     }
@@ -1406,8 +1406,8 @@ pidgin_status_box_popup(PidginStatusBox *box)
 {
 	int width, height, x, y;
 	pidgin_status_box_list_position (box, &x, &y, &width, &height);
-  
-	gtk_widget_set_size_request (box->popup_window, width, height);  
+
+	gtk_widget_set_size_request (box->popup_window, width, height);
 	gtk_window_move (GTK_WINDOW (box->popup_window), x, y);
 	gtk_widget_show(box->popup_window);
 	gtk_widget_grab_focus (box->tree_view);
@@ -1442,7 +1442,7 @@ static void
 toggled_cb(GtkWidget *widget, PidginStatusBox *box)
 {
 	if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (widget)))  {
-		if (!box->popup_in_progress) 
+		if (!box->popup_in_progress)
 			pidgin_status_box_popup (box);
 	}  else {
 		pidgin_status_box_popdown(box);
@@ -1531,38 +1531,38 @@ treeview_activate_current_selection(PidginStatusBox *status_box, GtkTreePath *pa
 {
 	if (status_box->active_row)
 		gtk_tree_row_reference_free(status_box->active_row);
-	
+
 	status_box->active_row = gtk_tree_row_reference_new(GTK_TREE_MODEL(status_box->dropdown_store), path);
-	
+
 	pidgin_status_box_popdown (status_box);
 	pidgin_status_box_changed(status_box);
 }
 
-static gboolean 
-treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *status_box) 
+static gboolean
+treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *status_box)
 {
 	GtkTreePath *path = NULL;
 	int ret;
 	GtkWidget *ewidget = gtk_get_event_widget ((GdkEvent *)event);
-	
+
 	if (ewidget != status_box->tree_view) {
-		if (ewidget == status_box->toggle_button && 
+		if (ewidget == status_box->toggle_button &&
 		    status_box->popup_in_progress &&
 		    gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (status_box->toggle_button))) {
 			pidgin_status_box_popdown (status_box);
 			return TRUE;
 		}
-		
+
 		/* released outside treeview */
-		if (ewidget != status_box->toggle_button) 
+		if (ewidget != status_box->toggle_button)
 			{
 				pidgin_status_box_popdown (status_box);
 				return TRUE;
 			}
-		
+
 		return FALSE;
 	}
-	
+
 	ret = gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (status_box->tree_view),
 					     event->x, event->y,
 					     &path,
@@ -1570,7 +1570,7 @@ treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, PidginStatu
 
 	if (!ret)
 		return TRUE; /* clicked outside window? */
-	
+
 	treeview_activate_current_selection(status_box, path);
 	gtk_tree_path_free (path);
 
@@ -1620,7 +1620,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->cell_view = gtk_cell_view_new();
 	status_box->vsep = gtk_vseparator_new();
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
-	
+
 	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 ;
@@ -1696,7 +1696,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(status_box->tree_view), TEXT_COLUMN);
 	gtk_tree_view_set_search_equal_func(GTK_TREE_VIEW(status_box->tree_view),
 				pidgin_tree_view_search_equal_func, NULL, NULL);
-	  
+
 #if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(text_rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
@@ -1907,7 +1907,7 @@ pidgin_status_box_expose_event(GtkWidget *widget,
 		gtk_paint_box(widget->style, widget->window, GTK_STATE_NORMAL, GTK_SHADOW_OUT, NULL,
 				status_box->icon_box, "button", status_box->icon_box->allocation.x-1, status_box->icon_box->allocation.y-1,
 				34, 34);
-	}		
+	}
 	return FALSE;
 }
 
@@ -2064,7 +2064,7 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 		/* Show a placeholder icon */
 		gchar *filename;
 		filename = g_build_filename(DATADIR, "pixmaps",
-				"purple", "insert-image.png", NULL);
+				"pidgin", "insert-image.png", NULL);
 		status_box->buddy_icon = gdk_pixbuf_new_from_file(filename, NULL);
 		g_free(filename);
 	}
@@ -2138,7 +2138,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 	char *message;
 	PurpleSavedStatus *saved_status = NULL;
 	gboolean changed = TRUE;
-	
+
 	path = gtk_tree_row_reference_get_path(status_box->active_row);
 	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL(status_box->dropdown_store), &iter, path))
 		return;
@@ -2188,7 +2188,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 			const char *id = NULL;
 			GtkTreePath *path = gtk_tree_row_reference_get_path(status_box->active_row);
 			active = gtk_tree_path_get_indices(path)[0];
-			
+
 			gtk_tree_path_free(path);
 
 			status = purple_account_get_active_status(status_box->token_status_account);
@@ -2386,13 +2386,13 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 	GList *accounts = NULL, *node;
 	int active;
 
-	
+
 	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL(status_box->dropdown_store), &iter, path))
 		return;
 	active = gtk_tree_path_get_indices(path)[0];
 	gtk_tree_path_free(path);
 	g_object_set_data(G_OBJECT(status_box), "active", GINT_TO_POINTER(active));
-	
+
 	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
 			   TYPE_COLUMN, &type,
 			   DATA_COLUMN, &data,

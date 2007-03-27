@@ -19,11 +19,11 @@
 #define GNT_WIDGET_UNSET_FLAGS(obj, flags)	(GNT_WIDGET_FLAGS(obj) &= ~(flags))
 #define GNT_WIDGET_IS_FLAG_SET(obj, flags)	(GNT_WIDGET_FLAGS(obj) & (flags))
 
-typedef struct _GnWidget			GntWidget;
-typedef struct _GnWidgetPriv		GntWidgetPriv;
-typedef struct _GnWidgetClass		GntWidgetClass;
+typedef struct _GntWidget			GntWidget;
+typedef struct _GntWidgetPriv		GntWidgetPriv;
+typedef struct _GntWidgetClass		GntWidgetClass;
 
-typedef enum _GnWidgetFlags
+typedef enum _GntWidgetFlags
 {
 	GNT_WIDGET_DESTROYING     = 1 << 0,
 	GNT_WIDGET_CAN_TAKE_FOCUS = 1 << 1,
@@ -42,7 +42,7 @@ typedef enum _GnWidgetFlags
 } GntWidgetFlags;
 
 /* XXX: This will probably move elsewhere */
-typedef enum _GnMouseEvent
+typedef enum _GntMouseEvent
 {
 	GNT_LEFT_MOUSE_DOWN = 1,
 	GNT_RIGHT_MOUSE_DOWN,
@@ -53,12 +53,12 @@ typedef enum _GnMouseEvent
 } GntMouseEvent;
 
 /* XXX: I'll have to ask grim what he's using this for in guifications. */
-typedef enum _GnParamFlags
+typedef enum _GntParamFlags
 {
 	GNT_PARAM_SERIALIZABLE	= 1 << G_PARAM_USER_SHIFT
 } GntParamFlags;
 
-struct _GnWidgetPriv
+struct _GntWidgetPriv
 {
 	int x, y;
 	int width, height;
@@ -68,7 +68,7 @@ struct _GnWidgetPriv
 	int minw, minh;    /* Minimum size for the widget */
 };
 
-struct _GnWidget
+struct _GntWidget
 {
 	GntBindable inherit;
 
@@ -83,7 +83,7 @@ struct _GnWidget
     void (*gnt_reserved4)(void);
 };
 
-struct _GnWidgetClass
+struct _GntWidgetClass
 {
 	GntBindableClass parent;
 

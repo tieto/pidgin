@@ -1,28 +1,33 @@
-gaim
+Purple, Pidgin and Finch
 ========================
-Rob Flynn <gaim@robflynn.com> IM: RobFlynn (current maintainer)
-Syd Logan - Super Hacker and Resident Designated Driver
-Jim Duchek <jimduchek@ou.edu> IM: Zilding (former maintainer)
-Eric Warmenhoven <eric@warmenhoven.org> (retired)
-Mark Spencer <markster@marko.net>
+See AUTHORS and COPYRIGHT for the list of contributors.
 
-Gaim is an IM client that supports many protocols, including AIM, ICQ,
-MSN, IRC, and Jabber. Gaim is NOT endorsed by, nor affiliated with,
-AOL nor any other company in ANY way.
+libpurple is a library intended to be used by programmers seeking
+to write an IM client that connects to many IM networks.  It supports
+AIM, ICQ, Jabber, MSN and Yahoo!, among others.
 
+Pidgin is an graphical IM client written in C which uses the GTK+
+toolkit.
+
+Finch is a text-based IM client written in C which uses the ncurses
+toolkit.
+
+These programs are not endorsed by, nor affiliated with, AOL nor any
+other company in any way.
 
 BUILD
 =====
 
 Read the 'INSTALL' file for more detailed directions.
 
-Gaim uses the standard ./configure ; make. You need to use gmake, BSD
-make probably won't work. Remember, run ./configure --help to see what
-build options are available.
+These programs use the standard ./configure ; make. You need to use
+gmake, BSD make probably won't work. Remember, run ./configure --help
+to see what build options are available.
 
-In order to compile Gaim, you need to have GTK+ 2.0 installed (as
+In order to compile Pidgin you need to have GTK+ 2.0 installed (as
 well as the development files!). The configure script will fail if you
-don't. You can get it from http://www.gtk.org/.
+don't.  If you don't have GTK+ 2.0 installed, you should install it
+using your distribution's package management tools.
 
 For sound support, you also need gstreamer 0.10 or higher. For
 spellchecking support, you need libgtkspell (http://gtkspell.sf.net/).
@@ -34,9 +39,9 @@ RUN
 
 You should run 'make install' as root to make sure plugins and other files
 get installed into locations they want to be in. Once you've done that,
-you only need to run 'gaim'.
+you only need to run 'pidgin' or 'finch'.
 
-Protocol plugins (prpls) are now automatically loaded. Simply go to the
+Protocol plugins (PRPLs) are now automatically loaded. Simply go to the
 account editor, add a new account, and all supported protocols will be
 there. Be sure to use OSCAR (AIM/ICQ) and not the old TOC or ICQ plugins.
 
@@ -46,12 +51,12 @@ Read below for protocol-specific information.
 PLUGINS
 =======
 
-If you do not wish to enable the plugin support within Gaim, run the
+If you do not wish to enable the plugin support within Purple, run the
 ./configure script with the --disable-plugins option and recompile your
 source code.  This will prevent the ability to load plugins.
 
-'make install' puts the plugins in $PREFIX/lib/gaim (PREFIX being what
-you specified when you ./configure'd - it defaults to /usr/local). Gaim
+'make install' puts the plugins in $PREFIX/lib/purple (PREFIX being what
+you specified when you ./configure'd - it defaults to /usr/local). Purple
 looks for the plugins in that directory by default, but they do not have
 to be there to use them. Also, plugins have a .so extension by default,
 though they do not have to.
@@ -69,11 +74,7 @@ If you manually set a command for your browser or sound player options,
 make sure to put double-quotes around the "%s", otherwise bad things may
 happen.
 
-If you come across a bug, please report it to http://gaim.sf.net/bug.php.
-
-See README.SVN for information on the bleeding edge SVN version of Gaim.
-You probably shouldn't use it, as it may eat your children, as well as
-your settings.
+If you come across a bug, please report it to http://pidgin.im/.
 
 
 PROTOCOL INFORMATION
@@ -101,11 +102,11 @@ Oscar (Mark)
 
 Oscar is the default protocol. It is recommended that you use Oscar for
 both AIM and ICQ, as TOC isn't very featureful and the old ICQ protocol no
-longer works. 
+longer works.
 
 For AIM, Oscar can get people's away messages. It can request and accept
-Direct Connections, and has limited support for file transfer. IM Image 
-does not currently work. It can send and receive buddy icons if you have 
+Direct Connections, and has limited support for file transfer. IM Image
+does not currently work. It can send and receive buddy icons if you have
 GdkPixbuf.
 
 For ICQ, it supports nearly everything that the old ICQ plugin supported,
@@ -120,7 +121,7 @@ Yahoo (Sean)
 Yahoo is currently using the new YMSG protocol that newer official Yahoo
 clients are using. This protocol is much better than the old one, and
 tends to be somewhat more reliable. However, the Yahoo service is still
-flaky at best. 
+flaky at best.
 
 
 IRC (Ethan)
@@ -134,42 +135,23 @@ account. There are other / commands that work in IM and Chat windows for
 IRC, /help will give you a list of them.
 
 
-MSN (Christian)
+MSN
 ===
 
 With MSN you can join a conversation with several people, but you can't
 invite people from the IM window yet.
 
 
-ICQ (Mark)
-===
-
-The ICQ plugin is deprecated and will probably be removed soon. The
-protocol only marginally works. You should use Oscar for ICQ. You'll
-need a different client to register an ICQ account if you don't have
-one yet.
-
-
 Jabber (Nathan)
 ======
 
 Transports aren't currently supported at all, though if you have a
-transport already subscribed Gaim will use it (you can't add or remove
+transport already subscribed Purple will use it (you can't add or remove
 transports though). In order to use a server other than jabber.org, set
 your username to include the server, e.g. warmenhoven@mycompany.com. This
 is the actual format of the Jabber ID anyway; Jabber is email with online
 notification. You can register a new Jabber account by checking the
 appropriate box in the account editor for your Jabber account.
-
-
-Napster (Mark)
-=======
-
-Heh.  Ok, so I (Rob) am on crack!  Gaim can sign on/off of Napster,
-add/remove people to your hotlist (buddylist) as well as chat privately
-and in chat rooms.  You can search for files and browse a list of other
-user's files.  You can currently download files as long as the person
-you're retrieving files from is not firewalled.
 
 
 Zephyr (Sean)
@@ -178,7 +160,7 @@ Zephyr (Sean)
 Let me start off by saying how much I really despise Zephyr. They do a
 lot of things that make me realize why this never caught on. For those
 of you who are unfortunate enough to feel compelling need to use this,
-gaim now has a Zephyr plugin. It can currently sign on/off, handles
+Purple now has a Zephyr plugin. It can currently sign on/off, handles
 presence/buddy lists (it even imports your .anyone file!), and can
 send/receive personal messages. A lot of stuff is missing, this is just
 a real rough first stab at it.

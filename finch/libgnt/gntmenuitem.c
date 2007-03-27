@@ -6,7 +6,7 @@ static GObjectClass *parent_class = NULL;
 static void
 gnt_menuitem_destroy(GObject *obj)
 {
-	GntMenuItem *item = GNT_MENUITEM(obj);
+	GntMenuItem *item = GNT_MENU_ITEM(obj);
 	g_free(item->text);
 	item->text = NULL;
 	if (item->submenu)
@@ -61,8 +61,8 @@ gnt_menuitem_get_gtype(void)
 
 GntMenuItem *gnt_menuitem_new(const char *text)
 {
-	GObject *item = g_object_new(GNT_TYPE_MENUITEM, NULL);
-	GntMenuItem *menuitem = GNT_MENUITEM(item);
+	GObject *item = g_object_new(GNT_TYPE_MENU_ITEM, NULL);
+	GntMenuItem *menuitem = GNT_MENU_ITEM(item);
 
 	menuitem->text = g_strdup(text);
 

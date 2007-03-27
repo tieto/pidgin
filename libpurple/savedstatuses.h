@@ -213,9 +213,9 @@ gboolean purple_savedstatus_is_idleaway(void);
 /**
  * Set whether accounts in Purple are idle-away or not.
  *
- * @param TRUE if accounts should be switched to use the
- *        idle-away saved status.  FALSE if they should
- *        be switched to use the default status.
+ * @param idleaway TRUE if accounts should be switched to use the
+ *                 idle-away saved status.  FALSE if they should
+ *                 be switched to use the default status.
  */
 void purple_savedstatus_set_idleaway(gboolean idleaway);
 

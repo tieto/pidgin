@@ -13,16 +13,16 @@
 #define GNT_IS_BUTTON_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_BUTTON))
 #define GNT_BUTTON_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_BUTTON, GntButtonClass))
 
-typedef struct _GnButton			GntButton;
-typedef struct _GnButtonPriv		GntButtonPriv;
-typedef struct _GnButtonClass		GntButtonClass;
+typedef struct _GntButton			GntButton;
+typedef struct _GntButtonPriv		GntButtonPriv;
+typedef struct _GntButtonClass		GntButtonClass;
 
-struct _GnButtonPriv
+struct _GntButtonPriv
 {
 	char *text;
 };
 
-struct _GnButton
+struct _GntButton
 {
 	GntWidget parent;
 
@@ -34,7 +34,7 @@ struct _GnButton
     void (*gnt_reserved4)(void);
 };
 
-struct _GnButtonClass
+struct _GntButtonClass
 {
 	GntWidgetClass parent;
 

@@ -28,6 +28,7 @@
 #include <gntcheckbox.h>
 #include <gntcombobox.h>
 #include <gntentry.h>
+#include <gntfilesel.h>
 #include <gntlabel.h>
 #include <gntline.h>
 #include <gnttree.h>
@@ -39,7 +40,7 @@
 typedef struct
 {
 	void *user_data;
-	GntWidget *entry, *dialog;
+	GntWidget *dialog;
 	GCallback *cbs;
 } PurpleGntFileRequest;
 
@@ -549,8 +550,10 @@ static void
 file_ok_cb(GntWidget *wid, gpointer fq)
 {
 	PurpleGntFileRequest *data = fq;
+	char *file = gnt_file_sel_get_selected_file(GNT_FILE_SEL(data->dialog));
 	if (data->cbs[0] != NULL)
-		((PurpleRequestFileCb)data->cbs[0])(data->user_data, gnt_entry_get_text(GNT_ENTRY(data->entry)));
+		((PurpleRequestFileCb)data->cbs[0])(data->user_data, file);
+	g_free(file);
 
 	purple_request_close(PURPLE_REQUEST_FILE, data->dialog);
 }
@@ -568,8 +571,8 @@ finch_request_file(const char *title, const char *filename,
 				GCallback ok_cb, GCallback cancel_cb,
 				void *user_data)
 {
-	GntWidget *window = gnt_vbox_new(FALSE);
-	GntWidget *entry, *hbox, *button;
+	GntWidget *window = gnt_file_sel_new();
+	GntFileSel *sel = GNT_FILE_SEL(window);
 	PurpleGntFileRequest *data = g_new0(PurpleGntFileRequest, 1);
 
 	data->user_data = user_data;
@@ -577,31 +580,14 @@ finch_request_file(const char *title, const char *filename,
 	data->cbs[0] = ok_cb;
 	data->cbs[1] = cancel_cb;
 	data->dialog = window;
-	data->entry = entry = gnt_entry_new(g_strconcat(purple_home_dir(), G_DIR_SEPARATOR_S, filename, NULL));
-	gnt_widget_set_size(entry, 30, 1);
-	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
 	gnt_box_set_title(GNT_BOX(window), title ? title : (savedialog ? _("Save File...") : _("Open File...")));
-#if 0
-	/* After the string freeze */
-	gnt_box_add_widget(GNT_BOX(window), gnt_label_new(_("Please enter a full path for a file")));
-#endif
-	gnt_box_add_widget(GNT_BOX(window), entry);
-
-	hbox = gnt_hbox_new(TRUE);
-	gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
-
-	button = gnt_button_new(_("Cancel"));
-	g_signal_connect(G_OBJECT(button), "activate",
-		G_CALLBACK(file_cancel_cb), data);
-	gnt_box_add_widget(GNT_BOX(hbox), button);
-
-	button = gnt_button_new(_("OK"));
-	g_signal_connect(G_OBJECT(button), "activate",
-		G_CALLBACK(file_ok_cb), data);
-	gnt_box_add_widget(GNT_BOX(hbox), button);
-
-	gnt_box_add_widget(GNT_BOX(window), hbox);
-
+	gnt_file_sel_set_current_location(sel, purple_home_dir());  /* XXX: */
+	if (savedialog)
+		gnt_file_sel_set_suggested_filename(sel, filename);
+	g_signal_connect(G_OBJECT(sel->cancel), "activate",
+			G_CALLBACK(file_cancel_cb), data);
+	g_signal_connect(G_OBJECT(sel->select), "activate",
+			G_CALLBACK(file_ok_cb), data);
 	g_signal_connect_swapped(G_OBJECT(window), "destroy",
 			G_CALLBACK(file_request_destroy), data);
 

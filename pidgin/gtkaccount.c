@@ -231,7 +231,7 @@ set_dialog_icon(AccountPrefsDialog *dialog, gchar *new_cached_icon_path, gchar *
 		/* Show a placeholder icon */
 		gchar *filename;
 		filename = g_build_filename(DATADIR, "pixmaps",
-				"purple", "insert-image.png", NULL);
+				"pidgin", "insert-image.png", NULL);
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 		g_free(filename);
 	}
@@ -629,7 +629,7 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		set_dialog_icon(dialog,
 				g_strdup(purple_account_get_ui_string(dialog->account,
 						PIDGIN_UI, "non-global-buddyicon-cached-path", NULL)),
-				g_strdup(purple_account_get_ui_string(dialog->account, 
+				g_strdup(purple_account_get_ui_string(dialog->account,
 						PIDGIN_UI, "non-global-buddyicon-path", NULL)));
 	} else {
 		set_dialog_icon(dialog, NULL, NULL);
@@ -2142,12 +2142,12 @@ create_accounts_list(AccountsWindow *dialog)
 	/* Translators: Please maintain the use of -> or <- to represent the menu heirarchy */
 	pretty = pidgin_make_pretty_arrows(_(
 						 "<span size='larger' weight='bold'>Welcome to " PIDGIN_NAME "!</span>\n\n"
-						 
+
 						 "You have no IM accounts configured. To start connecting with " PIDGIN_NAME " "
 						 "press the <b>Add</b> button below and configure your first "
 						 "account. If you want " PIDGIN_NAME " to connect to multiple IM accounts, "
 						 "press <b>Add</b> again to configure them all.\n\n"
-						 
+
 						 "You can come back to this window to add, edit, or remove "
 						 "accounts from <b>Accounts->Add/Edit</b> in the Buddy "
 						 "List window"));
@@ -2439,7 +2439,7 @@ pidgin_accounts_request_add(PurpleAccount *account, const char *remote_user,
 
 	buffer = make_info(account, gc, remote_user, id, alias, msg);
 	alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
-					  _("Add buddy to your list?"), buffer, data, 
+					  _("Add buddy to your list?"), buffer, data,
 					  _("Add"), G_CALLBACK(add_user_cb),
 					  _("Cancel"), G_CALLBACK(free_add_user_data), NULL);
 	pidgin_blist_add_alert(alert);
@@ -2515,27 +2515,27 @@ pidgin_accounts_request_authorization(PurpleAccount *account, const char *remote
 		aa->account = account;
 		alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 						  _("Authorize buddy?"), buffer, aa,
-						  _("Authorize"), authorize_and_add_cb, 
-						  _("Deny"), deny_no_add_cb, 
+						  _("Authorize"), authorize_and_add_cb,
+						  _("Deny"), deny_no_add_cb,
 						  NULL);
 	} else {
 		alert = pidgin_make_mini_dialog(gc, PIDGIN_STOCK_DIALOG_QUESTION,
 						  _("Authorize buddy?"), buffer, user_data,
-						  _("Authorize"), auth_cb, 
-						  _("Deny"), deny_cb, 
+						  _("Authorize"), auth_cb,
+						  _("Deny"), deny_cb,
 						  NULL);
 	}
 	pidgin_blist_add_alert(alert);
 
 	g_free(buffer);
-	
+
 	return NULL;
 }
 
 static void
 pidgin_accounts_request_close(void *ui_handle)
 {
-	
+
 }
 
 static PurpleAccountUiOps ui_ops =

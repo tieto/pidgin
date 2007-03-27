@@ -642,8 +642,8 @@ gnt_append_menu_action(GntMenu *menu, PurpleMenuAction *action, gpointer parent)
 
 	item = gnt_menuitem_new(action->label);
 	if (action->callback)
-		gnt_menuitem_set_callback(GNT_MENUITEM(item), context_menu_callback, action);
-	gnt_menu_add_item(menu, GNT_MENUITEM(item));
+		gnt_menuitem_set_callback(GNT_MENU_ITEM(item), context_menu_callback, action);
+	gnt_menu_add_item(menu, GNT_MENU_ITEM(item));
 
 	if (action->children) {
 		GntWidget *sub = gnt_menu_new(GNT_MENU_POPUP);
@@ -745,7 +745,7 @@ autojoin_toggled(GntMenuItem *item, gpointer data)
 {
 	PurpleMenuAction *action = data;
 	purple_blist_node_set_bool(action->data, "gnt-autojoin",
-				gnt_menuitem_check_get_checked(GNT_MENUITEM_CHECK(item)));
+				gnt_menuitem_check_get_checked(GNT_MENU_ITEM_CHECK(item)));
 }
 
 static void
@@ -753,7 +753,7 @@ create_chat_menu(GntMenu *menu, PurpleChat *chat)
 {
 	PurpleMenuAction *action = purple_menu_action_new(_("Auto-join"), NULL, chat, NULL);
 	GntMenuItem *check = gnt_menuitem_check_new(action->label);
-	gnt_menuitem_check_set_checked(GNT_MENUITEM_CHECK(check),
+	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(check),
 				purple_blist_node_get_bool((PurpleBlistNode*)chat, "gnt-autojoin"));
 	gnt_menu_add_item(menu, check);
 	gnt_menuitem_set_callback(check, autojoin_toggled, action);
@@ -2072,25 +2072,25 @@ create_menu()
 
 	item = gnt_menuitem_new(_("Send IM..."));
 	gnt_menu_add_item(GNT_MENU(sub), item);
-	gnt_menuitem_set_callback(GNT_MENUITEM(item), send_im_select, NULL);
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), send_im_select, NULL);
 
 	item = gnt_menuitem_check_new(_("Toggle offline buddies"));
-	gnt_menuitem_check_set_checked(GNT_MENUITEM_CHECK(item),
+	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
 				purple_prefs_get_bool(PREF_ROOT "/showoffline"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
-	gnt_menuitem_set_callback(GNT_MENUITEM(item), show_offline_cb, NULL);
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), show_offline_cb, NULL);
 
 	item = gnt_menuitem_new(_("Sort by status"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
-	gnt_menuitem_set_callback(GNT_MENUITEM(item), sort_blist_change_cb, "status");
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "status");
 
 	item = gnt_menuitem_new(_("Sort alphabetically"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
-	gnt_menuitem_set_callback(GNT_MENUITEM(item), sort_blist_change_cb, "text");
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "text");
 
 	item = gnt_menuitem_new(_("Sort by log size"));
 	gnt_menu_add_item(GNT_MENU(sub), item);
-	gnt_menuitem_set_callback(GNT_MENUITEM(item), sort_blist_change_cb, "log");
+	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), sort_blist_change_cb, "log");
 
 	reconstruct_accounts_menu();
 	gnt_menu_add_item(GNT_MENU(menu), ggblist->accounts);

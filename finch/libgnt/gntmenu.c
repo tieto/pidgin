@@ -28,7 +28,7 @@ gnt_menu_draw(GntWidget *widget)
 		werase(widget->window);
 
 		for (i = 0, iter = menu->list; iter; iter = iter->next, i++) {
-			GntMenuItem *item = GNT_MENUITEM(iter->data);
+			GntMenuItem *item = GNT_MENU_ITEM(iter->data);
 			type = ' ' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT);
 			if (i == menu->selected)
 				type |= A_REVERSE;
@@ -61,10 +61,10 @@ gnt_menu_size_request(GntWidget *widget)
 static void
 menu_tree_add(GntMenu *menu, GntMenuItem *item, GntMenuItem *parent)
 {
-	if (GNT_IS_MENUITEM_CHECK(item)) {
+	if (GNT_IS_MENU_ITEM_CHECK(item)) {
 		gnt_tree_add_choice(GNT_TREE(menu), item,
 			gnt_tree_create_row(GNT_TREE(menu), item->text, " "), parent, NULL);
-		gnt_tree_set_choice(GNT_TREE(menu), item, gnt_menuitem_check_get_checked(GNT_MENUITEM_CHECK(item)));
+		gnt_tree_set_choice(GNT_TREE(menu), item, gnt_menuitem_check_get_checked(GNT_MENU_ITEM_CHECK(item)));
 	} else
 		gnt_tree_add_row_last(GNT_TREE(menu), item,
 			gnt_tree_create_row(GNT_TREE(menu), item->text, item->submenu ? ">" : " "), parent);
@@ -73,7 +73,7 @@ menu_tree_add(GntMenu *menu, GntMenuItem *item, GntMenuItem *parent)
 		GntMenu *sub = GNT_MENU(item->submenu);
 		GList *iter;
 		for (iter = sub->list; iter; iter = iter->next) {
-			GntMenuItem *it = GNT_MENUITEM(iter->data);
+			GntMenuItem *it = GNT_MENU_ITEM(iter->data);
 			menu_tree_add(menu, it, item);
 		}
 	}
@@ -91,7 +91,7 @@ gnt_menu_map(GntWidget *widget)
 		GList *iter;
 		gnt_tree_remove_all(GNT_TREE(widget));
 		for (iter = menu->list; iter; iter = iter->next) {
-			GntMenuItem *item = GNT_MENUITEM(iter->data);
+			GntMenuItem *item = GNT_MENU_ITEM(iter->data);
 			menu_tree_add(menu, item, NULL);
 		}
 		org_map(widget);
@@ -185,10 +185,10 @@ gnt_menu_destroy(GntWidget *widget)
 static void
 gnt_menu_toggled(GntTree *tree, gpointer key)
 {
-	GntMenuItem *item = GNT_MENUITEM(key);
+	GntMenuItem *item = GNT_MENU_ITEM(key);
 	GntMenu *menu = GNT_MENU(tree);
-	gboolean check = gnt_menuitem_check_get_checked(GNT_MENUITEM_CHECK(item));
-	gnt_menuitem_check_set_checked(GNT_MENUITEM_CHECK(item), !check);
+	gboolean check = gnt_menuitem_check_get_checked(GNT_MENU_ITEM_CHECK(item));
+	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item), !check);
 	if (item->callback)
 		item->callback(item, item->callbackdata);
 	while (menu) {
@@ -210,7 +210,7 @@ gnt_menu_activate(GntWidget *widget)
 	}
 
 	if (item) {
-		if (GNT_IS_MENUITEM_CHECK(item))
+		if (GNT_IS_MENU_ITEM_CHECK(item))
 			gnt_menu_toggled(GNT_TREE(widget), item);
 		else
 			menuitem_activate(menu, item);

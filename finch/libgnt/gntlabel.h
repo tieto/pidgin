@@ -12,10 +12,10 @@
 #define GNT_IS_LABEL_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_LABEL))
 #define GNT_LABEL_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_LABEL, GntLabelClass))
 
-typedef struct _GnLabel			GntLabel;
-typedef struct _GnLabelClass	GntLabelClass;
+typedef struct _GntLabel			GntLabel;
+typedef struct _GntLabelClass	GntLabelClass;
 
-struct _GnLabel
+struct _GntLabel
 {
 	GntWidget parent;
 
@@ -28,7 +28,7 @@ struct _GnLabel
     void (*gnt_reserved4)(void);
 };
 
-struct _GnLabelClass
+struct _GntLabelClass
 {
 	GntWidgetClass parent;
 
