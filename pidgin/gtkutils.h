@@ -393,7 +393,7 @@ GdkPixbuf *pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize si
  * @param primitive  The status primitive
  * @param w          The widget to render this
  * @param size       The icon size to render at
- * @retrun A GdkPixbuf, created from stock
+ * @return A GdkPixbuf, created from stock
  */
 GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive primitive, GtkWidget *w, const char *size);
 

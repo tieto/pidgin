@@ -582,6 +582,8 @@ finch_request_file(const char *title, const char *filename,
 	data->dialog = window;
 	gnt_box_set_title(GNT_BOX(window), title ? title : (savedialog ? _("Save File...") : _("Open File...")));
 	gnt_file_sel_set_current_location(sel, purple_home_dir());  /* XXX: */
+	if (savedialog)
+		gnt_file_sel_set_suggested_filename(sel, filename);
 	g_signal_connect(G_OBJECT(sel->cancel), "activate",
 			G_CALLBACK(file_cancel_cb), data);
 	g_signal_connect(G_OBJECT(sel->select), "activate",

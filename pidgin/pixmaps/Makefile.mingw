@@ -18,24 +18,24 @@ install:
 	    $(MAKE) -C $$subdir -f $(GAIM_WIN32_MAKEFILE) install || exit 1 ;\
 	  done; \
 	fi;
-	if test '$(gaimbuttonpix_DATA)'; then \
-	  mkdir -p $(gaimbuttonpixdir); \
-	  cp $(gaimbuttonpix_DATA) $(gaimbuttonpixdir); \
+	if test '$(pidginbuttonpix_DATA)'; then \
+	  mkdir -p $(pidginbuttonpixdir); \
+	  cp $(pidginbuttonpix_DATA) $(pidginbuttonpixdir); \
 	fi;
-	if test '$(gaimdialogpix_DATA)'; then \
-	  mkdir -p $(gaimdialogpixdir); \
-	  cp $(gaimdialogpix_DATA) $(gaimdialogpixdir); \
+	if test '$(pidgindialogpix_DATA)'; then \
+	  mkdir -p $(pidgindialogpixdir); \
+	  cp $(pidgindialogpix_DATA) $(pidgindialogpixdir); \
 	fi;
-	if test '$(gaimiconpix_DATA)'; then \
-	  mkdir -p $(gaimiconpixdir); \
-	  cp $(gaimiconpix_DATA) $(gaimiconpixdir); \
+	if test '$(pidginiconpix_DATA)'; then \
+	  mkdir -p $(pidginiconpixdir); \
+	  cp $(pidginiconpix_DATA) $(pidginiconpixdir); \
 	fi;
-	if test '$(gaimdistpix_DATA)'; then \
-	  mkdir -p $(gaimdistpixdir); \
-	  cp $(gaimdistpix_DATA) $(gaimdistpixdir); \
+	if test '$(pidgindistpix_DATA)'; then \
+	  mkdir -p $(pidgindistpixdir); \
+	  cp $(pidgindistpix_DATA) $(pidgindistpixdir); \
 	fi;
-	if test '$(distpixmap_DATA)'; then \
-	  mkdir -p $(distpixmapdir); \
-	  cp $(distpixmap_DATA) $(distpixmapdir); \
-	fi;
+#	if test '$(distpixmap_DATA)'; then \
+#	  mkdir -p $(distpixmapdir); \
+#	  cp $(distpixmap_DATA) $(distpixmapdir); \
+#	fi;
 

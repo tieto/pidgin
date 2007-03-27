@@ -26,10 +26,10 @@
 #define ENABLE_NLS 1
 
 /* Define to make assertions fatal (useful for debugging). */
-/* #undef GAIM_FATAL_ASSERTS */
+/* #undef PURPLE_FATAL_ASSERTS */
 
 /* Define if plugins are enabled. */
-#define GAIM_PLUGINS 1
+#define PURPLE_PLUGINS 1
 
 /* Define to 1 if you have `alloca', as a function or macro. */
 #define HAVE_ALLOCA 1
@@ -523,7 +523,7 @@
 #define PACKAGE "pidgin"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "gaim-devel@lists.sourceforge.net"
+#define PACKAGE_BUGREPORT "devel@pidgin.im"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "pidgin"

@@ -38,7 +38,7 @@ extern "C" {
  *
  * TODO: Could probably move this into the conversation API.
  *
- * @param typing One of PURPLE_TYPING, PURPLE_TYPED, or PURPLE_NOT_TYPING.
+ * @param state One of PURPLE_TYPING, PURPLE_TYPED, or PURPLE_NOT_TYPING.
  * @return A quiet-period, specified in seconds, where Purple will not
  *         send any additional typing notification messages.  Most
  *         protocols should return 0, which means that no additional
@@ -94,13 +94,13 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
  * @param data The hash function should be g_str_hash() and the equal
  *             function should be g_str_equal().
  */
-void serv_join_chat(PurpleConnection *, GHashTable *);
+void serv_join_chat(PurpleConnection *, GHashTable *data);
 
 /**
  * @param data The hash function should be g_str_hash() and the equal
  *             function should be g_str_equal().
  */
-void serv_reject_chat(PurpleConnection *, GHashTable *);
+void serv_reject_chat(PurpleConnection *, GHashTable *data);
 
 /**
  * @param data The hash function should be g_str_hash() and the equal

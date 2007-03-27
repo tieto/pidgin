@@ -28,6 +28,7 @@ gnt_file_sel_destroy(GntWidget *widget)
 {
 	GntFileSel *sel = GNT_FILE_SEL(widget);
 	g_free(sel->current);
+	g_free(sel->suggest);
 	if (sel->tags) {
 		g_list_foreach(sel->tags, (GFunc)g_free, NULL);
 		g_list_free(sel->tags);
@@ -70,7 +71,8 @@ update_location(GntFileSel *sel)
 {
 	char *old;
 	const char *tmp;
-	tmp = (const char*)gnt_tree_get_selection_data(sel->dirsonly ? GNT_TREE(sel->dirs) : GNT_TREE(sel->files));
+	tmp = sel->suggest ? sel->suggest :
+		(const char*)gnt_tree_get_selection_data(sel->dirsonly ? GNT_TREE(sel->dirs) : GNT_TREE(sel->files));
 	old = g_strdup_printf("%s%s%s", sel->current, sel->current[1] ? G_DIR_SEPARATOR_S : "", tmp ? tmp : "");
 	gnt_entry_set_text(GNT_ENTRY(sel->location), old);
 	g_free(old);
@@ -230,6 +232,8 @@ success:
 static void
 file_sel_changed(GntWidget *widget, gpointer old, gpointer current, GntFileSel *sel)
 {
+	g_free(sel->suggest);
+	sel->suggest = NULL;
 	update_location(sel);
 }
 
@@ -449,12 +453,19 @@ gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel)
 	return sel->dirsonly;
 }
 
+void gnt_file_sel_set_suggested_filename(GntFileSel *sel, const char *suggest)
+{
+	sel->suggest = g_strdup(suggest);
+}
+
 char *gnt_file_sel_get_selected_file(GntFileSel *sel)
 {
 	char *ret;
-	const char *tmp;
-	tmp = (const char*)gnt_tree_get_selection_data(sel->dirsonly ? GNT_TREE(sel->dirs) : GNT_TREE(sel->files));
-	ret = g_strdup_printf("%s%s%s", sel->current, sel->current[1] ? G_DIR_SEPARATOR_S : "", tmp ? tmp : "");
+	if (sel->dirsonly) {
+		ret = g_strdup(g_path_get_dirname(gnt_entry_get_text(GNT_ENTRY(sel->location))));
+	} else {
+		ret = g_strdup(gnt_entry_get_text(GNT_ENTRY(sel->location)));
+	}
 	return ret;
 }
 
