@@ -52,8 +52,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gaim\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-19 00:00-0500\n"
-"PO-Revision-Date: 2007-01-19 23:51+0100\n"
+"POT-Creation-Date: 2007-03-26 00:00-0400\n"
+"PO-Revision-Date: 2007-03-26 13:03+0200\n"
 "Last-Translator: Javier Fernández-Sanguino <jfs@debian.org>\n"
 "Language-Team:  Spanish team <es@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -77,10 +77,10 @@ msgstr "Cliente de mensajería instantánea multiprotocolo"
 #: ../console/gntblist.c:390 ../console/gntblist.c:403
 #: ../console/gntplugin.c:154 ../console/gntplugin.c:199
 #: ../console/gntstatus.c:291 ../console/gntstatus.c:299
-#: ../libgaim/protocols/jabber/buddy.c:1399
+#: ../libgaim/protocols/jabber/buddy.c:1404
 #: ../libgaim/protocols/jabber/chat.c:679
 #: ../libgaim/protocols/jabber/chat.c:690
-#: ../libgaim/protocols/jabber/jabber.c:1210
+#: ../libgaim/protocols/jabber/jabber.c:1215
 #: ../libgaim/protocols/qq/group_join.c:324
 #: ../libgaim/protocols/silc/ops.c:1451
 msgid "Error"
@@ -149,11 +149,11 @@ msgstr "Apodo:"
 #: ../libgaim/protocols/gg/gg.c:498 ../libgaim/protocols/gg/gg.c:656
 #: ../libgaim/protocols/gg/gg.c:792 ../libgaim/protocols/gg/gg.c:871
 #: ../libgaim/protocols/jabber/buddy.c:588
-#: ../libgaim/protocols/jabber/buddy.c:1761
-#: ../libgaim/protocols/jabber/buddy.c:1795
+#: ../libgaim/protocols/jabber/buddy.c:1766
+#: ../libgaim/protocols/jabber/buddy.c:1800
 #: ../libgaim/protocols/jabber/chat.c:788
-#: ../libgaim/protocols/jabber/jabber.c:861
-#: ../libgaim/protocols/jabber/jabber.c:1365
+#: ../libgaim/protocols/jabber/jabber.c:864
+#: ../libgaim/protocols/jabber/jabber.c:1370
 #: ../libgaim/protocols/jabber/xdata.c:338 ../libgaim/protocols/msn/msn.c:249
 #: ../libgaim/protocols/msn/msn.c:264 ../libgaim/protocols/msn/msn.c:279
 #: ../libgaim/protocols/msn/msn.c:294 ../libgaim/protocols/msn/msn.c:311
@@ -309,7 +309,7 @@ msgstr "Chats"
 #: ../console/gntblist.c:369 ../gtk/gtkplugin.c:579 ../gtk/gtkroomlist.c:621
 #: ../gtk/plugins/gevolution/add_buddy_dialog.c:132
 #: ../gtk/plugins/gevolution/assoc-buddy.c:123
-#: ../libgaim/protocols/jabber/jabber.c:792
+#: ../libgaim/protocols/jabber/jabber.c:795
 #: ../libgaim/protocols/msn/msn.c:1535 ../libgaim/protocols/msn/msn.c:1600
 #: ../libgaim/protocols/msn/msn.c:1627 ../libgaim/protocols/qq/buddy_info.c:44
 msgid "Name"
@@ -443,10 +443,10 @@ msgstr "Cambiar marca"
 #: ../libgaim/protocols/gg/gg.c:627 ../libgaim/protocols/gg/gg.c:1035
 #: ../libgaim/protocols/gg/gg.c:1110 ../libgaim/protocols/gg/gg.c:2207
 #: ../libgaim/protocols/jabber/buddy.c:274
-#: ../libgaim/protocols/jabber/buddy.c:814
-#: ../libgaim/protocols/jabber/buddy.c:1562
-#: ../libgaim/protocols/jabber/buddy.c:1744
-#: ../libgaim/protocols/jabber/jabber.c:802
+#: ../libgaim/protocols/jabber/buddy.c:819
+#: ../libgaim/protocols/jabber/buddy.c:1567
+#: ../libgaim/protocols/jabber/buddy.c:1749
+#: ../libgaim/protocols/jabber/jabber.c:805
 #: ../libgaim/protocols/msn/msn.c:1370 ../libgaim/protocols/msn/msn.c:1538
 #: ../libgaim/protocols/qq/buddy_info.c:43
 #: ../libgaim/protocols/silc/buddy.c:1528 ../libgaim/protocols/silc/ops.c:1036
@@ -458,8 +458,8 @@ msgstr "Apodo"
 #. Idle stuff
 #: ../console/gntblist.c:1181 ../gtk/gtkblist.c:2754 ../gtk/gtkblist.c:3307
 #: ../gtk/gtkprefs.c:1807 ../libgaim/protocols/bonjour/bonjour.c:333
-#: ../libgaim/protocols/jabber/buddy.c:645
-#: ../libgaim/protocols/jabber/buddy.c:683 ../libgaim/protocols/msn/msn.c:548
+#: ../libgaim/protocols/jabber/buddy.c:646
+#: ../libgaim/protocols/jabber/buddy.c:686 ../libgaim/protocols/msn/msn.c:548
 #: ../libgaim/protocols/msn/state.c:32
 #: ../libgaim/protocols/novell/novell.c:2860
 #: ../libgaim/protocols/oscar/oscar.c:2873
@@ -531,7 +531,7 @@ msgstr ""
 #: ../gtk/gtkdialogs.c:684 ../gtk/gtkdialogs.c:821 ../gtk/gtkdialogs.c:912
 #: ../gtk/gtkrequest.c:269 ../libgaim/account.c:960 ../libgaim/account.c:1148
 #: ../libgaim/protocols/gg/gg.c:497 ../libgaim/protocols/gg/gg.c:655
-#: ../libgaim/protocols/gg/gg.c:791 ../libgaim/protocols/jabber/jabber.c:1364
+#: ../libgaim/protocols/gg/gg.c:791 ../libgaim/protocols/jabber/jabber.c:1369
 #: ../libgaim/protocols/jabber/xdata.c:337 ../libgaim/protocols/msn/msn.c:248
 #: ../libgaim/protocols/msn/msn.c:263 ../libgaim/protocols/msn/msn.c:278
 #: ../libgaim/protocols/msn/msn.c:293 ../libgaim/protocols/oscar/oscar.c:6042
@@ -638,7 +638,9 @@ msgstr "%s [%s]"
 msgid ""
 "\n"
 "%s is typing..."
-msgstr "\n%s está escribiendo..."
+msgstr ""
+"\n"
+"%s está escribiendo..."
 
 #: ../console/gntconv.c:399
 msgid "<AUTO-REPLY> "
@@ -774,7 +776,7 @@ msgstr "Correos"
 msgid "You have mail!"
 msgstr "¡Tiene correo!"
 
-#: ../console/gntnotify.c:155 ../libgaim/protocols/jabber/jabber.c:1155
+#: ../console/gntnotify.c:155 ../libgaim/protocols/jabber/jabber.c:1160
 msgid "From"
 msgstr "De"
 
@@ -941,7 +943,7 @@ msgstr "Estados guardados"
 
 #: ../console/gntstatus.c:174 ../console/gntstatus.c:526
 #: ../gtk/gtksavedstatuses.c:463 ../libgaim/protocols/jabber/buddy.c:286
-#: ../libgaim/protocols/jabber/buddy.c:931
+#: ../libgaim/protocols/jabber/buddy.c:936
 #: ../libgaim/protocols/novell/novell.c:1484
 msgid "Title"
 msgstr "Título"
@@ -959,12 +961,12 @@ msgstr "Tipo"
 #: ../libgaim/protocols/gg/gg.c:1609 ../libgaim/protocols/gg/gg.c:1619
 #: ../libgaim/protocols/gg/gg.c:1625 ../libgaim/protocols/gg/gg.c:1634
 #: ../libgaim/protocols/gg/gg.c:1639 ../libgaim/protocols/irc/irc.c:244
-#: ../libgaim/protocols/jabber/jabber.c:1227
-#: ../libgaim/protocols/jabber/jabber.c:1237
-#: ../libgaim/protocols/jabber/jabber.c:1247
-#: ../libgaim/protocols/jabber/jabber.c:1257
-#: ../libgaim/protocols/jabber/jabber.c:1267
-#: ../libgaim/protocols/jabber/jabber.c:1279
+#: ../libgaim/protocols/jabber/jabber.c:1232
+#: ../libgaim/protocols/jabber/jabber.c:1242
+#: ../libgaim/protocols/jabber/jabber.c:1252
+#: ../libgaim/protocols/jabber/jabber.c:1262
+#: ../libgaim/protocols/jabber/jabber.c:1272
+#: ../libgaim/protocols/jabber/jabber.c:1284
 #: ../libgaim/protocols/novell/novell.c:2873
 #: ../libgaim/protocols/novell/novell.c:2976
 #: ../libgaim/protocols/novell/novell.c:2982
@@ -1037,8 +1039,8 @@ msgstr "Editar estado"
 #: ../libgaim/protocols/gg/gg.c:1024 ../libgaim/protocols/gg/gg.c:1588
 #: ../libgaim/protocols/gg/gg.c:1596 ../libgaim/protocols/jabber/buddy.c:637
 #: ../libgaim/protocols/jabber/buddy.c:641
-#: ../libgaim/protocols/jabber/buddy.c:674
-#: ../libgaim/protocols/jabber/jabber.c:1195
+#: ../libgaim/protocols/jabber/buddy.c:676
+#: ../libgaim/protocols/jabber/jabber.c:1200
 #: ../libgaim/protocols/msn/msn.c:547
 #: ../libgaim/protocols/novell/novell.c:2870
 #: ../libgaim/protocols/oscar/oscar.c:800
@@ -1331,7 +1333,7 @@ msgid "_Advanced"
 msgstr "_Avanzadas"
 
 #. Register button
-#: ../gtk/gtkaccount.c:1478 ../libgaim/protocols/jabber/jabber.c:860
+#: ../gtk/gtkaccount.c:1478 ../libgaim/protocols/jabber/jabber.c:863
 msgid "Register"
 msgstr "Registrar"
 
@@ -1358,7 +1360,9 @@ msgstr ""
 "<span size='larger' weight='bold'>¡Bienvenido a Gaim!</span>\n"
 "\n"
 "No tiene configurada ninguna cuenta de MI. Para conectarse con Gaim debe \n"
-"pulsar el botón <b>Añadir</b> que tiene más abajo y configurar su primera cuenta. Si quiere que Gaim se conecte a múltiples cuentas de MI deberá pulsar <b>Añadir</b> otra vez para configurarlas todas."
+"pulsar el botón <b>Añadir</b> que tiene más abajo y configurar su primera "
+"cuenta. Si quiere que Gaim se conecte a múltiples cuentas de MI deberá "
+"pulsar <b>Añadir</b> otra vez para configurarlas todas."
 
 #: ../gtk/gtkaccount.c:2483
 #, c-format
@@ -1609,7 +1613,7 @@ msgstr "Visto por última vez"
 
 #: ../gtk/gtkblist.c:2798 ../gtk/gtkblist.c:3286 ../gtk/gtkdocklet.c:471
 #: ../gtk/gtkstatusbox.c:990 ../libgaim/protocols/gg/gg.c:993
-#: ../libgaim/protocols/jabber/buddy.c:1401
+#: ../libgaim/protocols/jabber/buddy.c:1406
 #: ../libgaim/protocols/novell/novell.c:2863
 #: ../libgaim/protocols/oscar/oscar.c:807
 #: ../libgaim/protocols/oscar/oscar.c:5551 ../libgaim/protocols/qq/qq.c:170
@@ -1620,7 +1624,7 @@ msgstr "Desconectado"
 
 #: ../gtk/gtkblist.c:2809 ../gtk/gtkprefs.c:680
 #: ../libgaim/protocols/jabber/buddy.c:289
-#: ../libgaim/protocols/jabber/buddy.c:937
+#: ../libgaim/protocols/jabber/buddy.c:942
 #: ../libgaim/protocols/jabber/chat.c:777
 msgid "Description"
 msgstr "Descripción"
@@ -1751,7 +1755,10 @@ msgid ""
 msgstr ""
 "<span size='larger' weight='bold'>¡Bienvenido a Gaim!</span>\n"
 "\n"
-"No tiene ninguna cuenta activa. Puede activar sus cuentas de MI en la ventana de <b>Cuentas</b> en <b>Cuentas->Añadir/Editar</b>. Podrá conectarse, fijar su estado y hablar con sus amigos una vez active sus cuentas."
+"No tiene ninguna cuenta activa. Puede activar sus cuentas de MI en la "
+"ventana de <b>Cuentas</b> en <b>Cuentas->Añadir/Editar</b>. Podrá "
+"conectarse, fijar su estado y hablar con sus amigos una vez active sus "
+"cuentas."
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
@@ -1862,7 +1869,8 @@ msgid ""
 msgstr ""
 "%s\n"
 "\n"
-"Gaim no intentará reconectarse a esta cuenta hasta que corrija el error y reactive la cuenta."
+"Gaim no intentará reconectarse a esta cuenta hasta que corrija el error y "
+"reactive la cuenta."
 
 #: ../gtk/gtkconv.c:766 ../gtk/gtkconv.c:792
 msgid "That buddy is not on the same protocol as this chat."
@@ -2595,7 +2603,16 @@ msgid ""
 "file distributed with Gaim.  Gaim is copyrighted by its contributors.  See "
 "the 'COPYRIGHT' file for the complete list of contributors.  We provide no "
 "warranty for this program.<BR><BR>"
-msgstr "Gaim es un cliente de mensajería modular capaz de utilizar AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu y QQ todos al mismo tiempo. Está escrito utilizando GTK+.<BR><BR>Puede modificar y redistribuir este programa bajo los términos de la GPL (versión 2 o posterior). Se incluye una copia de la licencia GPL en el archivo «COPYING» que se distribuye con Gaim. Las personas que han contribuido a Gaim tienen los derechos de copia. Lea el archivo «COPYRIGHT» si desea consultar la lista completa de personas que han contribuido. Este programa se distribuye sin ninguna garantía.<BR><BR>"
+msgstr ""
+"Gaim es un cliente de mensajería modular capaz de utilizar AIM, MSN, Yahoo!, "
+"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"Bonjour, Zephyr, Gadu-Gadu y QQ todos al mismo tiempo. Está escrito "
+"utilizando GTK+.<BR><BR>Puede modificar y redistribuir este programa bajo "
+"los términos de la GPL (versión 2 o posterior). Se incluye una copia de la "
+"licencia GPL en el archivo «COPYING» que se distribuye con Gaim. Las "
+"personas que han contribuido a Gaim tienen los derechos de copia. Lea el "
+"archivo «COPYRIGHT» si desea consultar la lista completa de personas que han "
+"contribuido. Este programa se distribuye sin ninguna garantía.<BR><BR>"
 
 #: ../gtk/gtkdialogs.c:350
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
@@ -2775,7 +2792,7 @@ msgid "Change Status"
 msgstr "Cambiar estado:"
 
 #: ../gtk/gtkdocklet.c:459 ../gtk/gtkstatusbox.c:987
-#: ../libgaim/protocols/gg/gg.c:996 ../libgaim/protocols/jabber/buddy.c:1403
+#: ../libgaim/protocols/gg/gg.c:996 ../libgaim/protocols/jabber/buddy.c:1408
 #: ../libgaim/protocols/msn/state.c:29 ../libgaim/protocols/msn/state.c:30
 #: ../libgaim/protocols/msn/state.c:37 ../libgaim/protocols/msn/state.c:38
 #: ../libgaim/protocols/novell/novell.c:2851
@@ -2789,7 +2806,7 @@ msgstr "Disponible"
 #: ../gtk/gtkdocklet.c:463 ../gtk/gtkprefs.c:1821 ../gtk/gtkstatusbox.c:988
 #: ../libgaim/protocols/gg/gg.c:999 ../libgaim/protocols/irc/irc.c:524
 #: ../libgaim/protocols/irc/msgs.c:226
-#: ../libgaim/protocols/jabber/buddy.c:1407
+#: ../libgaim/protocols/jabber/buddy.c:1412
 #: ../libgaim/protocols/novell/novell.c:2854
 #: ../libgaim/protocols/oscar/oscar.c:712
 #: ../libgaim/protocols/oscar/oscar.c:4498
@@ -2840,8 +2857,8 @@ msgstr "No iniciado"
 
 #: ../gtk/gtkft.c:159 ../libgaim/account.c:1714
 #: ../libgaim/protocols/gg/gg.c:1002 ../libgaim/protocols/jabber/buddy.c:641
-#: ../libgaim/protocols/jabber/buddy.c:1397
-#: ../libgaim/protocols/jabber/buddy.c:1414
+#: ../libgaim/protocols/jabber/buddy.c:1402
+#: ../libgaim/protocols/jabber/buddy.c:1419
 #: ../libgaim/protocols/novell/novell.c:2866 ../libgaim/protocols/qq/qq.c:230
 msgid "Unknown"
 msgstr "Desconocido"
@@ -4285,7 +4302,7 @@ msgstr "No se pudo inicializar gstreamer."
 
 #. connect to the server
 #: ../gtk/gtkstatusbox.c:569 ../libgaim/protocols/irc/irc.c:329
-#: ../libgaim/protocols/jabber/jabber.c:1021
+#: ../libgaim/protocols/jabber/jabber.c:1026
 #: ../libgaim/protocols/msn/session.c:344
 #: ../libgaim/protocols/novell/novell.c:2183
 #: ../libgaim/protocols/oscar/oscar.c:1267 ../libgaim/protocols/qq/qq.c:136
@@ -4401,25 +4418,27 @@ msgstr ""
 msgid "Buddy Icon"
 msgstr "Icono de amigo"
 
-#: ../gtk/gtkutils.c:2653
+#: ../gtk/gtkutils.c:2657
 #, c-format
 msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
-msgstr "El fichero «%s» es demasiado grande para %s. Intente utilizar una imagen más pequeña.\n"
+msgstr ""
+"El fichero «%s» es demasiado grande para %s. Intente utilizar una imagen más "
+"pequeña.\n"
 
-#: ../gtk/gtkutils.c:2655
+#: ../gtk/gtkutils.c:2659
 msgid "Icon Error"
 msgstr "Error en icono"
 
-#: ../gtk/gtkutils.c:2656
+#: ../gtk/gtkutils.c:2660
 msgid "Could not set icon"
 msgstr "No se pudo fijar el icono"
 
-#: ../gtk/gtkutils.c:2757
+#: ../gtk/gtkutils.c:2761
 #, c-format
 msgid "Failed to open file '%s': %s"
 msgstr "No se pudo abrir el archivo «%s»: %s"
 
-#: ../gtk/gtkutils.c:2806
+#: ../gtk/gtkutils.c:2810
 #, c-format
 msgid ""
 "Failed to load image '%s': reason not known, probably a corrupt image file"
@@ -4853,7 +4872,7 @@ msgstr ""
 #. "Search"
 #: ../gtk/plugins/gevolution/add_buddy_dialog.c:473
 #: ../gtk/plugins/gevolution/assoc-buddy.c:358
-#: ../libgaim/protocols/jabber/buddy.c:1760
+#: ../libgaim/protocols/jabber/buddy.c:1765
 #: ../libgaim/protocols/qq/group.c:123 ../libgaim/protocols/qq/group_im.c:139
 #: ../libgaim/protocols/qq/sys_msg.c:162 ../libgaim/protocols/qq/sys_msg.c:232
 #: ../libgaim/protocols/qq/sys_msg.c:250
@@ -4894,7 +4913,7 @@ msgstr "_Asociar amigo"
 
 #: ../gtk/plugins/gevolution/eds-utils.c:73
 #: ../gtk/plugins/gevolution/eds-utils.c:86
-#: ../libgaim/protocols/jabber/jabber.c:1162
+#: ../libgaim/protocols/jabber/jabber.c:1167
 msgid "None"
 msgstr "Ninguno"
 
@@ -5044,7 +5063,8 @@ msgstr "Subrayado"
 
 #: ../gtk/plugins/markerline.c:25 ../gtk/plugins/markerline.c:26
 msgid "Draw a line to indicate new messages in a conversation."
-msgstr "Dibuja una línea para indicar que hay nuevos mensajes en una conversación."
+msgstr ""
+"Dibuja una línea para indicar que hay nuevos mensajes en una conversación."
 
 #: ../gtk/plugins/markerline.c:246
 msgid "Draw Markerline in "
@@ -5450,6 +5470,53 @@ msgstr ""
 "Este complemento permite al usuario configurar los formatos de marca de "
 "tiempo para los mensajes en conversaciones y guardados en el registro."
 
+#: ../gtk/plugins/xmppconsole.c:665
+msgid "<font color='#777777'>Logged out.</font>"
+msgstr "<font color='#777777'>Desconectado.</font>"
+
+#. *< type
+#. *< ui_requirement
+#. *< flags
+#. *< dependencies
+#. *< priority
+#. *< id
+#: ../gtk/plugins/xmppconsole.c:745 ../gtk/plugins/xmppconsole.c:841
+#: ../gtk/plugins/xmppconsole.c:860
+msgid "XMPP Console"
+msgstr "Consola XMPP"
+
+#: ../gtk/plugins/xmppconsole.c:753
+msgid "Account: "
+msgstr "Cuenta: "
+
+#: ../gtk/plugins/xmppconsole.c:780
+msgid "<font color='#777777'>Not connected to XMPP</font>"
+msgstr "<font color='#777777'>No conectado a XMPP</font>"
+
+#: ../gtk/plugins/xmppconsole.c:790
+msgid "Insert an <iq/> stanza."
+msgstr "Introducir una entrada <iq/>."
+
+#: ../gtk/plugins/xmppconsole.c:799
+msgid "Insert a <presence/> stanza."
+msgstr "Introducir una entrada <presence/>."
+
+#: ../gtk/plugins/xmppconsole.c:808
+msgid "Insert a <message/> stanza."
+msgstr "Insertar una entrada <messag/>."
+
+#. *< name
+#. *< version
+#. *  summary
+#: ../gtk/plugins/xmppconsole.c:863
+msgid "Send and receive raw XMPP stanzas."
+msgstr "Enviar y recibir entradas XMPP en crudo."
+
+#. *  description
+#: ../gtk/plugins/xmppconsole.c:865
+msgid "This plugin is useful for debbuging XMPP servers or clients."
+msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
+
 #: ../gtk/plugins/win32/transparency/win2ktrans.c:183
 #: ../gtk/plugins/win32/transparency/win2ktrans.c:569
 #: ../gtk/plugins/win32/transparency/win2ktrans.c:616
@@ -5595,7 +5662,7 @@ msgid "Missing protocol plugin for %s"
 msgstr "Falta el complemento de protocolo para %s"
 
 #: ../libgaim/account.c:1085 ../libgaim/protocols/gg/gg.c:696
-#: ../libgaim/protocols/jabber/jabber.c:1317
+#: ../libgaim/protocols/jabber/jabber.c:1322
 msgid "New passwords do not match."
 msgstr "Las nuevas contraseñas no coinciden."
 
@@ -5992,55 +6059,73 @@ msgstr "El manejador para URLs «ymsgr»"
 msgid ""
 "True if the command specified in the \"command\" key should handle \"aim\" "
 "URLs."
-msgstr "Cierto si la orden especificada en la tecla «command» debería gestionar URLs «aim»."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«aim»."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:19
 msgid ""
 "True if the command specified in the \"command\" key should handle \"gg\" "
 "URLs."
-msgstr "Cierto si la orden especificada en la tecla «command» debería gestionar URLs «gg»."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«gg»."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:20
 msgid ""
 "True if the command specified in the \"command\" key should handle \"icq\" "
 "URLs."
-msgstr "Cierto si la orden especificada en la tecla «command» debería gestionar URLs «icq»."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«icq»."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:21
 msgid ""
 "True if the command specified in the \"command\" key should handle \"irc\" "
 "URLs."
-msgstr "Cierto si la orden especificada en la tecla «command» debería gestionar URLs «irc»."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«irc»."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:22
 msgid ""
 "True if the command specified in the \"command\" key should handle \"msnim\" "
 "URLs."
-msgstr "Cierto si la orden especificada en la tecla «command» debería gestionar URLs «msnim»."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«msnim»."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:23
 msgid ""
 "True if the command specified in the \"command\" key should handle \"sip\" "
 "URLs."
-msgstr "Cierto si la orden especificada en la tecla «command» debería gestionar URLs «sip»."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«sip»."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:24
 msgid ""
 "True if the command specified in the \"command\" key should handle \"xmpp\" "
 "URLs."
-msgstr "Cierto si la orden especificada en la tecla «command» debería gestionar URLs «xmpp»."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«xmpp»."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:25
 msgid ""
 "True if the command specified in the \"command\" key should handle \"ymsgr\" "
 "URLs."
-msgstr "Cierto si la orden especificada en la tecla «command» debería gestionar URLs «ymsgr»."
+msgstr ""
+"Cierto si la orden especificada en la tecla «command» debería gestionar URLs "
+"«ymsgr»."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:26
 msgid ""
 "True if the command used to handle this type of URL should be run in a "
 "terminal."
-msgstr "Cierto si la orden especifica para gestionar este tipo de URLs debería ejecutarse en un terminal."
+msgstr ""
+"Cierto si la orden especifica para gestionar este tipo de URLs debería "
+"ejecutarse en un terminal."
 
 #: ../libgaim/gconf/gaim.schemas.in.h:27
 msgid "Whether the specified command should handle \"aim\" URLs"
@@ -6132,7 +6217,7 @@ msgstr "<font color=\"red\"><b>No se pudo leer el archivo: %s</b></font>"
 msgid "(%s) %s <AUTO-REPLY>: %s\n"
 msgstr "(%s) %s <RESPUESTA AUTOMÁTICA>: %s\n"
 
-#: ../libgaim/plugin.c:282 ../libgaim/protocols/jabber/buddy.c:1685
+#: ../libgaim/plugin.c:282 ../libgaim/protocols/jabber/buddy.c:1690
 #: ../libgaim/protocols/msn/servconn.c:139
 #: ../libgaim/protocols/msn/session.c:321
 #: ../libgaim/protocols/oscar/oscar.c:2719
@@ -6144,23 +6229,27 @@ msgstr "Error desconocido"
 msgid "You are using %s, but this plugin requires %s."
 msgstr "Está utilizando %s, pero este complemento requiere %s."
 
-#: ../libgaim/plugin.c:434
+#: ../libgaim/plugin.c:380
+msgid "This plugin has not defined an ID."
+msgstr "No se ha definido un identificador para este complemento."
+
+#: ../libgaim/plugin.c:448
 #, c-format
 msgid "Plugin magic mismatch %d (need %d)"
 msgstr ""
 "No hubo coincidencia en el número mágico del complemento %d (necesitaba %d)"
 
-#: ../libgaim/plugin.c:451
+#: ../libgaim/plugin.c:465
 #, c-format
 msgid "ABI version mismatch %d.%d.x (need %d.%d.x)"
 msgstr ""
 "No hubo coincidencia en el número de versión ABI %d.%d.x (necesitaba %d.%d.x)"
 
-#: ../libgaim/plugin.c:468
+#: ../libgaim/plugin.c:482
 msgid "Plugin does not implement all required functions"
 msgstr "El complemento no implementa todas las funciones necesarias"
 
-#: ../libgaim/plugin.c:533
+#: ../libgaim/plugin.c:547
 #, c-format
 msgid ""
 "The required plugin %s was not found. Please install this plugin and try "
@@ -6169,25 +6258,25 @@ msgstr ""
 "No se encontró el complemento necesario %s. Por favor, instale este "
 "complemento e inténtelo de nuevo."
 
-#: ../libgaim/plugin.c:538
+#: ../libgaim/plugin.c:552
 msgid "Gaim encountered errors loading the plugin."
 msgstr "Gaim encontró un error mientras cargaba este complemento."
 
-#: ../libgaim/plugin.c:560
+#: ../libgaim/plugin.c:574
 #, c-format
 msgid "The required plugin %s was unable to load."
 msgstr "No se pudo cargar el complemento necesario %s."
 
-#: ../libgaim/plugin.c:564
+#: ../libgaim/plugin.c:578
 msgid "Gaim was unable to load your plugin."
 msgstr "Gaim no pudo cargar su complemento."
 
-#: ../libgaim/plugin.c:664
+#: ../libgaim/plugin.c:678
 #, c-format
 msgid "The dependent plugin %s failed to unload."
 msgstr "No se pudo cargar el complemento dependiente %s."
 
-#: ../libgaim/plugin.c:669
+#: ../libgaim/plugin.c:683
 msgid "Gaim encountered errors unloading the plugin."
 msgstr "Gaim encontró errores mientras descargaba el complemento."
 
@@ -6197,12 +6286,16 @@ msgstr "Autoaceptar"
 
 #: ../libgaim/plugins/autoaccept.c:25 ../libgaim/plugins/autoaccept.c:26
 msgid "Auto-accept file transfer requests from selected users."
-msgstr "Autoaceptar las solicitud de transferencia de archivo de los usuarios seleccionados."
+msgstr ""
+"Autoaceptar las solicitud de transferencia de archivo de los usuarios "
+"seleccionados."
 
 #: ../libgaim/plugins/autoaccept.c:80
 #, c-format
 msgid "Autoaccepted file transfer of \"%s\" from \"%s\" completed."
-msgstr "Se completó la solicitud autoaceptada de transferencia de archivo de «%s» enviado por «%s»."
+msgstr ""
+"Se completó la solicitud autoaceptada de transferencia de archivo de «%s» "
+"enviado por «%s»."
 
 #: ../libgaim/plugins/autoaccept.c:82
 msgid "Autoaccept complete"
@@ -6262,14 +6355,17 @@ msgstr ""
 
 #: ../libgaim/plugins/autoaccept.c:216
 msgid "Automatically reject from users not in buddy list"
-msgstr "Rechazar automáticamente las transferencias de usuarios que no están en mi lista de amigos"
+msgstr ""
+"Rechazar automáticamente las transferencias de usuarios que no están en mi "
+"lista de amigos"
 
 #: ../libgaim/plugins/autoaccept.c:220
 msgid ""
 "Notify with a popup when an autoaccepted file transfer is complete\n"
 "(only when there's no conversation with the sender)"
 msgstr ""
-"Notificar con una ventana cuando se haya completado una transferencia de ficheros autoaceptada\n"
+"Notificar con una ventana cuando se haya completado una transferencia de "
+"ficheros autoaceptada\n"
 "(sólo cuando no hay ya una conversación con el que la envía)"
 
 #: ../libgaim/plugins/autoreply.c:23
@@ -6287,7 +6383,15 @@ msgid ""
 "specific autoreply message for a particular buddy, right click on the buddy "
 "in the buddy-list window. To set autoreply messages for some account, go to "
 "the `Advanced' tab of the Account-edit dialog."
-msgstr "Este complemento permite configurar un mensaje de respuesta automática para cualquier protocolo. Puede configurar el mensaje de respuesta automática global en el diálogo de las opciones del complemento. Si quiere establecer mensajes de respuesta particulares para un amigo sólo tiene que pulsar con el botón derecho sobre el amigo en la ventana con la lista de amigos. Vaya a la pestaña «Avanzadas» en el diálogo de edición de cuentas si quiere configurar un mensaje de respuesta automática para sólo alguna de sus cuentas."
+msgstr ""
+"Este complemento permite configurar un mensaje de respuesta automática para "
+"cualquier protocolo. Puede configurar el mensaje de respuesta automática "
+"global en el diálogo de las opciones del complemento. Si quiere establecer "
+"mensajes de respuesta particulares para un amigo sólo tiene que pulsar con "
+"el botón derecho sobre el amigo en la ventana con la lista de amigos. Vaya a "
+"la pestaña «Avanzadas» en el diálogo de edición de cuentas si quiere "
+"configurar un mensaje de respuesta automática para sólo alguna de sus "
+"cuentas."
 
 #. XXX: There should be a way to reset to the default/account-default autoreply
 #: ../libgaim/plugins/autoreply.c:218
@@ -6303,7 +6407,9 @@ msgstr "Fijar el mensaje de respuesta automática"
 msgid ""
 "The following message will be sent to the buddy when the buddy sends you a "
 "message and autoreply is enabled."
-msgstr "Se mostrara el mensaje indicado a continuación a un amigo cuando el amigo le envíe un mensaje y esté activada la respuesta automática."
+msgstr ""
+"Se mostrara el mensaje indicado a continuación a un amigo cuando el amigo le "
+"envíe un mensaje y esté activada la respuesta automática."
 
 #: ../libgaim/plugins/autoreply.c:238
 msgid "Set _Autoreply Message"
@@ -6365,7 +6471,9 @@ msgstr "Cuenta má_xima"
 msgid ""
 "I am currently not available. Please leave your message, and I will get back "
 "to you as soon as possible."
-msgstr "Ahora mismo no estoy disponible. Por favor, deja un mensaje y me pondré en contacto contigo lo antes posible."
+msgstr ""
+"Ahora mismo no estoy disponible. Por favor, deja un mensaje y me pondré en "
+"contacto contigo lo antes posible."
 
 #: ../libgaim/plugins/buddynote.c:46 ../libgaim/protocols/msn/msn.c:1611
 #: ../libgaim/protocols/msn/msn.c:1641
@@ -6399,7 +6507,8 @@ msgstr "Guardar las notas de amigos concretos."
 #. *  summary
 #: ../libgaim/plugins/buddynote.c:90
 msgid "Adds the option to store notes for buddies on your buddy list."
-msgstr "Añade la opción de guardar notas sobre los amigos en su lista de amigos."
+msgstr ""
+"Añade la opción de guardar notas sobre los amigos en su lista de amigos."
 
 #. *< type
 #. *< ui_requirement
@@ -6681,12 +6790,12 @@ msgstr ""
 "AVISO: Este complemento aún es código en «alpha» y puede bloquearse con "
 "frecuencia. ¡Uselo bajo su propia responsabilidad!"
 
-#: ../libgaim/plugins/mono/loader/mono.c:213
+#: ../libgaim/plugins/mono/loader/mono.c:211
 msgid "Mono Plugin Loader"
 msgstr "Cargador de complementos Mono"
 
-#: ../libgaim/plugins/mono/loader/mono.c:215
-#: ../libgaim/plugins/mono/loader/mono.c:216
+#: ../libgaim/plugins/mono/loader/mono.c:213
+#: ../libgaim/plugins/mono/loader/mono.c:214
 msgid "Loads .NET plugins with Mono."
 msgstr "Cargar complementos .NET con Mono."
 
@@ -6715,7 +6824,9 @@ msgstr "No se pudo enviar el mensaje."
 msgid ""
 "Prepends a newline to messages so that the rest of the message appears below "
 "the screen name in the conversation window."
-msgstr "Añade una línea en blanco a los mensajes para que el resto del mensaje se muestre por debajo del nombre de usuario en la ventana de conversación."
+msgstr ""
+"Añade una línea en blanco a los mensajes para que el resto del mensaje se "
+"muestre por debajo del nombre de usuario en la ventana de conversación."
 
 #: ../libgaim/plugins/offlinemsg.c:23
 msgid "Offline Message Emulation"
@@ -6729,14 +6840,18 @@ msgstr "Guardar los mensajes enviados como un aviso."
 msgid ""
 "The rest of the messages will be saved as pounce. You can edit/delete the "
 "pounce from the `Buddy Pounce' dialog."
-msgstr "El resto de los mensajes se guardarán como un aviso. Puede editar y eliminar los avisos en el diálogo «Aviso de amigo»."
+msgstr ""
+"El resto de los mensajes se guardarán como un aviso. Puede editar y eliminar "
+"los avisos en el diálogo «Aviso de amigo»."
 
 #: ../libgaim/plugins/offlinemsg.c:152
 #, c-format
 msgid ""
 "\"%s\" is currently offline. Do you want to save the rest of the messages in "
 "a pounce and automatically send them when \"%s\" logs back in?"
-msgstr "«%s» está actualmente desconectado. ¿Desea guardar el resto del mensaje como un aviso y enviarlo de forma automática cuando «%s» se vuelva a conectar?"
+msgstr ""
+"«%s» está actualmente desconectado. ¿Desea guardar el resto del mensaje como "
+"un aviso y enviarlo de forma automática cuando «%s» se vuelva a conectar?"
 
 #: ../libgaim/plugins/offlinemsg.c:156
 msgid "Offline Message"
@@ -6962,19 +7077,21 @@ msgstr ""
 "Notifica en una ventana de conversación cuando un amigo se ausenta o vuelve "
 "o está inactivo."
 
-#: ../libgaim/plugins/tcl/tcl.c:413
+#: ../libgaim/plugins/tcl/tcl.c:415
 msgid "Tcl Plugin Loader"
 msgstr "Cargador de complementos Tcl"
 
-#: ../libgaim/plugins/tcl/tcl.c:415 ../libgaim/plugins/tcl/tcl.c:416
+#: ../libgaim/plugins/tcl/tcl.c:417 ../libgaim/plugins/tcl/tcl.c:418
 msgid "Provides support for loading Tcl plugins"
 msgstr "Provee soporte para cargar complementos Tcl"
 
-#: ../libgaim/plugins/tcl/tcl.c:481
+#: ../libgaim/plugins/tcl/tcl.c:483
 msgid ""
 "Unable to detect ActiveTCL installation. If you wish to use TCL plugins, "
 "install ActiveTCL from http://www.activestate.com\n"
-msgstr "No se pudo detectar la instalación de ActiveTCL. Debe instalar ActiveTCL de http://www.activestate.com si desea utilizar los complementos TCL\n"
+msgstr ""
+"No se pudo detectar la instalación de ActiveTCL. Debe instalar ActiveTCL de "
+"http://www.activestate.com si desea utilizar los complementos TCL\n"
 
 #. Send a message about the connection error
 #: ../libgaim/protocols/bonjour/bonjour.c:111
@@ -7018,17 +7135,17 @@ msgstr "Servidor"
 
 #. Creating the options for the protocol
 #: ../libgaim/protocols/bonjour/bonjour.c:582 ../libgaim/protocols/gg/gg.c:622
-#: ../libgaim/protocols/jabber/jabber.c:807
+#: ../libgaim/protocols/jabber/jabber.c:810
 msgid "First name"
 msgstr "Nombre:"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:585 ../libgaim/protocols/gg/gg.c:617
-#: ../libgaim/protocols/jabber/jabber.c:812
+#: ../libgaim/protocols/jabber/jabber.c:815
 msgid "Last name"
 msgstr "Apellidos:"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:588 ../libgaim/protocols/gg/gg.c:468
-#: ../libgaim/protocols/jabber/jabber.c:797
+#: ../libgaim/protocols/jabber/jabber.c:800
 #: ../libgaim/protocols/silc/silc.c:695 ../libgaim/protocols/silc/silc.c:935
 msgid "E-mail"
 msgstr "Correo electrónico"
@@ -7146,8 +7263,8 @@ msgid "Registration completed successfully!"
 msgstr "¡Se completó el registro con éxito!"
 
 #: ../libgaim/protocols/gg/gg.c:473 ../libgaim/protocols/gg/gg.c:764
-#: ../libgaim/protocols/jabber/jabber.c:786
-#: ../libgaim/protocols/jabber/jabber.c:1352
+#: ../libgaim/protocols/jabber/jabber.c:789
+#: ../libgaim/protocols/jabber/jabber.c:1357
 msgid "Password"
 msgstr "Contraseña"
 
@@ -7172,7 +7289,7 @@ msgid "Please, fill in the following fields"
 msgstr "Por favor, rellene los siguientes campos"
 
 #: ../libgaim/protocols/gg/gg.c:632 ../libgaim/protocols/gg/gg.c:1039
-#: ../libgaim/protocols/gg/gg.c:1113 ../libgaim/protocols/jabber/jabber.c:822
+#: ../libgaim/protocols/gg/gg.c:1113 ../libgaim/protocols/jabber/jabber.c:825
 #: ../libgaim/protocols/oscar/oscar.c:3764
 #: ../libgaim/protocols/oscar/oscar.c:3777
 #: ../libgaim/protocols/qq/buddy_info.c:49
@@ -7266,8 +7383,8 @@ msgid "UIN"
 msgstr "UIN"
 
 #: ../libgaim/protocols/gg/gg.c:1031 ../libgaim/protocols/gg/gg.c:1107
-#: ../libgaim/protocols/jabber/buddy.c:1558
-#: ../libgaim/protocols/jabber/buddy.c:1734
+#: ../libgaim/protocols/jabber/buddy.c:1563
+#: ../libgaim/protocols/jabber/buddy.c:1739
 #: ../libgaim/protocols/oscar/oscar.c:3704
 #: ../libgaim/protocols/silc/ops.c:1024
 msgid "First Name"
@@ -7473,8 +7590,8 @@ msgstr "Contra_seña:"
 msgid "IRC nicks may not contain whitespace"
 msgstr "Los apodos de IRC no pueden tener espacios en blanco"
 
-#: ../libgaim/protocols/irc/irc.c:337 ../libgaim/protocols/jabber/jabber.c:582
-#: ../libgaim/protocols/jabber/jabber.c:927
+#: ../libgaim/protocols/irc/irc.c:337 ../libgaim/protocols/jabber/jabber.c:585
+#: ../libgaim/protocols/jabber/jabber.c:930
 msgid "SSL support unavailable"
 msgstr "Soporte SSL no disponible"
 
@@ -7531,7 +7648,7 @@ msgstr "Complemento de protocolo IRC menos malo"
 
 #. host to connect to
 #: ../libgaim/protocols/irc/irc.c:923 ../libgaim/protocols/irc/msgs.c:239
-#: ../libgaim/protocols/jabber/jabber.c:1984
+#: ../libgaim/protocols/jabber/jabber.c:1989
 #: ../libgaim/protocols/msn/msn.c:2056 ../libgaim/protocols/oscar/libaim.c:133
 #: ../libgaim/protocols/oscar/libicq.c:133 ../libgaim/protocols/qq/qq.c:758
 #: ../libgaim/protocols/sametime/sametime.c:5727
@@ -7555,7 +7672,7 @@ msgid "Encodings"
 msgstr "Codificaciones"
 
 #: ../libgaim/protocols/irc/irc.c:932 ../libgaim/protocols/irc/msgs.c:232
-#: ../libgaim/protocols/jabber/jabber.c:782
+#: ../libgaim/protocols/jabber/jabber.c:785
 #: ../libgaim/protocols/silc/buddy.c:1532 ../libgaim/protocols/silc/ops.c:1191
 #: ../libgaim/protocols/silc/ops.c:1194 ../libgaim/protocols/silc/ops.c:1340
 #: ../libgaim/protocols/silc/ops.c:1343 ../libgaim/protocols/silc/silc.c:929
@@ -7878,7 +7995,7 @@ msgstr ""
 "names [canal]:  Obtener la lista de los usuarios que están en el canal."
 
 #: ../libgaim/protocols/irc/parse.c:131
-#: ../libgaim/protocols/jabber/jabber.c:1788
+#: ../libgaim/protocols/jabber/jabber.c:1793
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
 msgstr "nick &lt;nuevo apodo&gt;:  Cambia su apodo."
 
@@ -8012,12 +8129,12 @@ msgstr ""
 msgid "Server requires plaintext authentication over an unencrypted stream"
 msgstr "El servidor solicita autenticación en claro sobre un canal no cifrado"
 
-#: ../libgaim/protocols/jabber/auth.c:232
+#: ../libgaim/protocols/jabber/auth.c:226
 msgid "Server couldn't authenticate you without a password"
 msgstr "El servidor no pudo autenticarle sin una contraseña"
 
-#: ../libgaim/protocols/jabber/auth.c:235
-#: ../libgaim/protocols/jabber/auth.c:236
+#: ../libgaim/protocols/jabber/auth.c:229
+#: ../libgaim/protocols/jabber/auth.c:230
 #: ../libgaim/protocols/jabber/auth.c:404
 #: ../libgaim/protocols/jabber/auth.c:405
 #: ../libgaim/protocols/jabber/auth.c:486
@@ -8025,7 +8142,7 @@ msgstr "El servidor no pudo autenticarle sin una contraseña"
 msgid "Plaintext Authentication"
 msgstr "Autenticación en claro"
 
-#: ../libgaim/protocols/jabber/auth.c:237
+#: ../libgaim/protocols/jabber/auth.c:231
 #: ../libgaim/protocols/jabber/auth.c:406
 #: ../libgaim/protocols/jabber/auth.c:488
 msgid ""
@@ -8035,7 +8152,7 @@ msgstr ""
 "El servidor solicita autenticación en claro sobre un canal no cifrado. "
 "¿Permitir ésto y continuar con el proceso de autenticación?"
 
-#: ../libgaim/protocols/jabber/auth.c:243
+#: ../libgaim/protocols/jabber/auth.c:237
 #: ../libgaim/protocols/jabber/auth.c:414
 #: ../libgaim/protocols/jabber/auth.c:496
 msgid "Server does not use any supported authentication method"
@@ -8061,91 +8178,91 @@ msgid "SASL error"
 msgstr "Error de SASL"
 
 #: ../libgaim/protocols/jabber/buddy.c:271
-#: ../libgaim/protocols/jabber/buddy.c:783
+#: ../libgaim/protocols/jabber/buddy.c:788
 #: ../libgaim/protocols/sametime/sametime.c:4148
 #: ../libgaim/protocols/silc/ops.c:1020
 msgid "Full Name"
 msgstr "Nombre completo"
 
 #: ../libgaim/protocols/jabber/buddy.c:272
-#: ../libgaim/protocols/jabber/buddy.c:796
+#: ../libgaim/protocols/jabber/buddy.c:801
 #: ../libgaim/protocols/silc/ops.c:1032
 msgid "Family Name"
 msgstr "Apellidos"
 
 #: ../libgaim/protocols/jabber/buddy.c:273
-#: ../libgaim/protocols/jabber/buddy.c:800
+#: ../libgaim/protocols/jabber/buddy.c:805
 msgid "Given Name"
 msgstr "Nombre propio"
 
 #: ../libgaim/protocols/jabber/buddy.c:275
-#: ../libgaim/protocols/jabber/jabber.c:842
+#: ../libgaim/protocols/jabber/jabber.c:845
 msgid "URL"
 msgstr "URL"
 
 #: ../libgaim/protocols/jabber/buddy.c:276
-#: ../libgaim/protocols/jabber/buddy.c:852
+#: ../libgaim/protocols/jabber/buddy.c:857
 msgid "Street Address"
 msgstr "Calle"
 
 #: ../libgaim/protocols/jabber/buddy.c:277
-#: ../libgaim/protocols/jabber/buddy.c:848
+#: ../libgaim/protocols/jabber/buddy.c:853
 msgid "Extended Address"
 msgstr "Dirección extendida"
 
 #: ../libgaim/protocols/jabber/buddy.c:278
-#: ../libgaim/protocols/jabber/buddy.c:856
+#: ../libgaim/protocols/jabber/buddy.c:861
 msgid "Locality"
 msgstr "Localidad"
 
 #: ../libgaim/protocols/jabber/buddy.c:279
-#: ../libgaim/protocols/jabber/buddy.c:860
+#: ../libgaim/protocols/jabber/buddy.c:865
 msgid "Region"
 msgstr "Región"
 
 #: ../libgaim/protocols/jabber/buddy.c:280
-#: ../libgaim/protocols/jabber/buddy.c:864
+#: ../libgaim/protocols/jabber/buddy.c:869
 msgid "Postal Code"
 msgstr "Código postal"
 
 #: ../libgaim/protocols/jabber/buddy.c:281
-#: ../libgaim/protocols/jabber/buddy.c:869
+#: ../libgaim/protocols/jabber/buddy.c:874
 #: ../libgaim/protocols/silc/silc.c:939
 msgid "Country"
 msgstr "País"
 
 #: ../libgaim/protocols/jabber/buddy.c:282
-#: ../libgaim/protocols/jabber/buddy.c:880
-#: ../libgaim/protocols/jabber/buddy.c:887
+#: ../libgaim/protocols/jabber/buddy.c:885
+#: ../libgaim/protocols/jabber/buddy.c:892
 msgid "Telephone"
 msgstr "Teléfono"
 
 #: ../libgaim/protocols/jabber/buddy.c:283
-#: ../libgaim/protocols/jabber/buddy.c:898
-#: ../libgaim/protocols/jabber/buddy.c:906
-#: ../libgaim/protocols/jabber/buddy.c:1564
+#: ../libgaim/protocols/jabber/buddy.c:903
+#: ../libgaim/protocols/jabber/buddy.c:911
+#: ../libgaim/protocols/jabber/buddy.c:1569
 #: ../libgaim/protocols/silc/ops.c:1075 ../libgaim/protocols/silc/util.c:553
 #: ../libgaim/protocols/yahoo/yahoo_profile.c:1037
 msgid "E-Mail"
 msgstr "Correo electrónico"
 
 #: ../libgaim/protocols/jabber/buddy.c:284
-#: ../libgaim/protocols/jabber/buddy.c:921
+#: ../libgaim/protocols/jabber/buddy.c:926
 msgid "Organization Name"
 msgstr "Nombre de la organización"
 
 #: ../libgaim/protocols/jabber/buddy.c:285
-#: ../libgaim/protocols/jabber/buddy.c:925
+#: ../libgaim/protocols/jabber/buddy.c:930
 msgid "Organization Unit"
 msgstr "Grupo de trabajo"
 
 #: ../libgaim/protocols/jabber/buddy.c:287
-#: ../libgaim/protocols/jabber/buddy.c:934
+#: ../libgaim/protocols/jabber/buddy.c:939
 msgid "Role"
 msgstr "Rol"
 
 #: ../libgaim/protocols/jabber/buddy.c:288
-#: ../libgaim/protocols/jabber/buddy.c:817 ../libgaim/protocols/msn/msn.c:1609
+#: ../libgaim/protocols/jabber/buddy.c:822 ../libgaim/protocols/msn/msn.c:1609
 #: ../libgaim/protocols/oscar/oscar.c:3743
 msgid "Birthday"
 msgstr "Cumpleaños"
@@ -8163,37 +8280,37 @@ msgstr ""
 "Todos los campos siguientes son opcionales. Introduzca sólo la información "
 "con la que se sienta cómodo."
 
-#: ../libgaim/protocols/jabber/buddy.c:652
-#: ../libgaim/protocols/jabber/buddy.c:691
+#: ../libgaim/protocols/jabber/buddy.c:654
+#: ../libgaim/protocols/jabber/buddy.c:695
 msgid "Client"
 msgstr "Cliente"
 
-#: ../libgaim/protocols/jabber/buddy.c:656
-#: ../libgaim/protocols/jabber/buddy.c:695
+#: ../libgaim/protocols/jabber/buddy.c:658
+#: ../libgaim/protocols/jabber/buddy.c:699
 msgid "Operating System"
 msgstr "Sistema operativo"
 
-#: ../libgaim/protocols/jabber/buddy.c:666
-#: ../libgaim/protocols/jabber/jabber.c:1987
+#: ../libgaim/protocols/jabber/buddy.c:668
+#: ../libgaim/protocols/jabber/jabber.c:1992
 msgid "Resource"
 msgstr "Recurso"
 
-#: ../libgaim/protocols/jabber/buddy.c:668
-#: ../libgaim/protocols/jabber/jabber.c:1226
-#: ../libgaim/protocols/jabber/jabber.c:1236
-#: ../libgaim/protocols/jabber/jabber.c:1246
-#: ../libgaim/protocols/jabber/jabber.c:1256
-#: ../libgaim/protocols/jabber/jabber.c:1266
+#: ../libgaim/protocols/jabber/buddy.c:670
+#: ../libgaim/protocols/jabber/jabber.c:1231
+#: ../libgaim/protocols/jabber/jabber.c:1241
+#: ../libgaim/protocols/jabber/jabber.c:1251
+#: ../libgaim/protocols/jabber/jabber.c:1261
+#: ../libgaim/protocols/jabber/jabber.c:1271
 msgid "Priority"
 msgstr "Prioridad"
 
-#: ../libgaim/protocols/jabber/buddy.c:804
+#: ../libgaim/protocols/jabber/buddy.c:809
 #: ../libgaim/protocols/silc/ops.c:1028
 msgid "Middle Name"
 msgstr "Nombre medio"
 
-#: ../libgaim/protocols/jabber/buddy.c:837
-#: ../libgaim/protocols/jabber/jabber.c:817
+#: ../libgaim/protocols/jabber/buddy.c:842
+#: ../libgaim/protocols/jabber/jabber.c:820
 #: ../libgaim/protocols/oscar/oscar.c:3763
 #: ../libgaim/protocols/oscar/oscar.c:3776
 #: ../libgaim/protocols/qq/buddy_info.c:56
@@ -8201,75 +8318,75 @@ msgstr "Nombre medio"
 msgid "Address"
 msgstr "Dirección"
 
-#: ../libgaim/protocols/jabber/buddy.c:844
+#: ../libgaim/protocols/jabber/buddy.c:849
 msgid "P.O. Box"
 msgstr "Código postal"
 
-#: ../libgaim/protocols/jabber/buddy.c:958
+#: ../libgaim/protocols/jabber/buddy.c:963
 msgid "Photo"
 msgstr "Foto"
 
-#: ../libgaim/protocols/jabber/buddy.c:958
+#: ../libgaim/protocols/jabber/buddy.c:963
 msgid "Logo"
 msgstr "Logotipo"
 
-#: ../libgaim/protocols/jabber/buddy.c:1344
+#: ../libgaim/protocols/jabber/buddy.c:1349
 msgid "Un-hide From"
 msgstr "No ocultarse de"
 
-#: ../libgaim/protocols/jabber/buddy.c:1348
+#: ../libgaim/protocols/jabber/buddy.c:1353
 msgid "Temporarily Hide From"
 msgstr "Ocultarse temporalmente de"
 
 #. && NOT ME
-#: ../libgaim/protocols/jabber/buddy.c:1356
+#: ../libgaim/protocols/jabber/buddy.c:1361
 msgid "Cancel Presence Notification"
 msgstr "Cancelar notificación de presencia"
 
-#: ../libgaim/protocols/jabber/buddy.c:1363
+#: ../libgaim/protocols/jabber/buddy.c:1368
 msgid "(Re-)Request authorization"
 msgstr "Volver a pedir autorización"
 
 #. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
 #. removed?
-#: ../libgaim/protocols/jabber/buddy.c:1372
+#: ../libgaim/protocols/jabber/buddy.c:1377
 msgid "Unsubscribe"
 msgstr "De-suscribir"
 
-#: ../libgaim/protocols/jabber/buddy.c:1405
-#: ../libgaim/protocols/jabber/jabber.c:1235
+#: ../libgaim/protocols/jabber/buddy.c:1410
+#: ../libgaim/protocols/jabber/jabber.c:1240
 msgid "Chatty"
 msgstr "Hablador"
 
-#: ../libgaim/protocols/jabber/buddy.c:1409 ../libgaim/status.c:159
+#: ../libgaim/protocols/jabber/buddy.c:1414 ../libgaim/status.c:159
 msgid "Extended Away"
 msgstr "Ausencia extendida"
 
-#: ../libgaim/protocols/jabber/buddy.c:1411
-#: ../libgaim/protocols/jabber/jabber.c:1265
+#: ../libgaim/protocols/jabber/buddy.c:1416
+#: ../libgaim/protocols/jabber/jabber.c:1270
 #: ../libgaim/protocols/oscar/oscar.c:706
 #: ../libgaim/protocols/oscar/oscar.c:5760
 #: ../libgaim/protocols/sametime/sametime.c:3319
 msgid "Do Not Disturb"
 msgstr "No molestar"
 
-#: ../libgaim/protocols/jabber/buddy.c:1556
+#: ../libgaim/protocols/jabber/buddy.c:1561
 msgid "JID"
 msgstr "JID"
 
-#: ../libgaim/protocols/jabber/buddy.c:1560
-#: ../libgaim/protocols/jabber/buddy.c:1739
+#: ../libgaim/protocols/jabber/buddy.c:1565
+#: ../libgaim/protocols/jabber/buddy.c:1744
 #: ../libgaim/protocols/oscar/oscar.c:3705
 msgid "Last Name"
 msgstr "Apellidos"
 
-#: ../libgaim/protocols/jabber/buddy.c:1592
+#: ../libgaim/protocols/jabber/buddy.c:1597
 msgid "The following are the results of your search"
 msgstr "Éstos son los resultados de su búsqueda"
 
 #. current comment from Jabber User Directory users.jabber.org
-#: ../libgaim/protocols/jabber/buddy.c:1667
+#: ../libgaim/protocols/jabber/buddy.c:1672
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
 "Each field supports wild card searches (%)"
@@ -8277,52 +8394,52 @@ msgstr ""
 "Encuentra un contacto al introducir los criterios de búsqueda en los campos "
 "proporcionados. Nota: puede hacer búsquedas con comodines (%) en cada campo."
 
-#: ../libgaim/protocols/jabber/buddy.c:1687
+#: ../libgaim/protocols/jabber/buddy.c:1692
 msgid "Directory Query Failed"
 msgstr "Falló la consulta al directorio"
 
-#: ../libgaim/protocols/jabber/buddy.c:1688
+#: ../libgaim/protocols/jabber/buddy.c:1693
 msgid "Could not query the directory server."
 msgstr "No se pudo consultar con el servidor de directorio."
 
 #. Try to translate the message (see static message
 #. list in jabber_user_dir_comments[])
-#: ../libgaim/protocols/jabber/buddy.c:1722
+#: ../libgaim/protocols/jabber/buddy.c:1727
 #, c-format
 msgid "Server Instructions: %s"
 msgstr "Instrucciones del servidor: %s"
 
-#: ../libgaim/protocols/jabber/buddy.c:1729
+#: ../libgaim/protocols/jabber/buddy.c:1734
 msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 "Rellene uno o más de los campos mostrados a continuación para buscar a un "
 "usuario Jabber que los tengan."
 
-#: ../libgaim/protocols/jabber/buddy.c:1749
+#: ../libgaim/protocols/jabber/buddy.c:1754
 #: ../libgaim/protocols/novell/novell.c:1488
 #: ../libgaim/protocols/oscar/oscar.c:3708
 #: ../libgaim/protocols/oscar/oscar.c:3717
 msgid "E-Mail Address"
 msgstr "Dirección de correo electrónico"
 
-#: ../libgaim/protocols/jabber/buddy.c:1758
-#: ../libgaim/protocols/jabber/buddy.c:1759
+#: ../libgaim/protocols/jabber/buddy.c:1763
+#: ../libgaim/protocols/jabber/buddy.c:1764
 msgid "Search for Jabber users"
 msgstr "Buscar usuarios Jabber"
 
-#: ../libgaim/protocols/jabber/buddy.c:1773
+#: ../libgaim/protocols/jabber/buddy.c:1778
 msgid "Invalid Directory"
 msgstr "Directorio inválido"
 
-#: ../libgaim/protocols/jabber/buddy.c:1790
+#: ../libgaim/protocols/jabber/buddy.c:1795
 msgid "Enter a User Directory"
 msgstr "Introduzca un directorio de usuario"
 
-#: ../libgaim/protocols/jabber/buddy.c:1791
+#: ../libgaim/protocols/jabber/buddy.c:1796
 msgid "Select a user directory to search"
 msgstr "Selecciona un directorio de usuario donde buscar"
 
-#: ../libgaim/protocols/jabber/buddy.c:1794
+#: ../libgaim/protocols/jabber/buddy.c:1799
 msgid "Search Directory"
 msgstr "Buscar en el directorio"
 
@@ -8431,410 +8548,410 @@ msgstr "Error de escritura"
 msgid "Read Error"
 msgstr "Error de lectura"
 
-#: ../libgaim/protocols/jabber/jabber.c:504
+#: ../libgaim/protocols/jabber/jabber.c:507
 msgid "Unable to create socket"
 msgstr "No se pudo crear el socket"
 
-#: ../libgaim/protocols/jabber/jabber.c:552
-#: ../libgaim/protocols/jabber/jabber.c:895
+#: ../libgaim/protocols/jabber/jabber.c:555
+#: ../libgaim/protocols/jabber/jabber.c:898
 msgid "Invalid Jabber ID"
 msgstr "ID de Jabber no válido"
 
-#: ../libgaim/protocols/jabber/jabber.c:623
+#: ../libgaim/protocols/jabber/jabber.c:626
 #, c-format
 msgid "Registration of %s@%s successful"
 msgstr "Registro de %s@%s efectuado con éxito"
 
-#: ../libgaim/protocols/jabber/jabber.c:625
-#: ../libgaim/protocols/jabber/jabber.c:626
+#: ../libgaim/protocols/jabber/jabber.c:628
+#: ../libgaim/protocols/jabber/jabber.c:629
 msgid "Registration Successful"
 msgstr "Éxito en el registro"
 
-#: ../libgaim/protocols/jabber/jabber.c:632
-#: ../libgaim/protocols/jabber/jabber.c:1501
+#: ../libgaim/protocols/jabber/jabber.c:635
+#: ../libgaim/protocols/jabber/jabber.c:1506
 msgid "Unknown Error"
 msgstr "Error desconocido"
 
-#: ../libgaim/protocols/jabber/jabber.c:634
-#: ../libgaim/protocols/jabber/jabber.c:635
+#: ../libgaim/protocols/jabber/jabber.c:637
+#: ../libgaim/protocols/jabber/jabber.c:638
 msgid "Registration Failed"
 msgstr "Falló el registro"
 
-#: ../libgaim/protocols/jabber/jabber.c:750
-#: ../libgaim/protocols/jabber/jabber.c:751
+#: ../libgaim/protocols/jabber/jabber.c:753
+#: ../libgaim/protocols/jabber/jabber.c:754
 msgid "Already Registered"
 msgstr "Ya está registrado"
 
-#: ../libgaim/protocols/jabber/jabber.c:827
+#: ../libgaim/protocols/jabber/jabber.c:830
 #: ../libgaim/protocols/oscar/oscar.c:3765
 #: ../libgaim/protocols/oscar/oscar.c:3778
 msgid "State"
 msgstr "Estado"
 
-#: ../libgaim/protocols/jabber/jabber.c:832
+#: ../libgaim/protocols/jabber/jabber.c:835
 msgid "Postal code"
 msgstr "Código postal"
 
-#: ../libgaim/protocols/jabber/jabber.c:837
+#: ../libgaim/protocols/jabber/jabber.c:840
 #: ../libgaim/protocols/silc/ops.c:1069 ../libgaim/protocols/silc/silc.c:697
 #: ../libgaim/protocols/silc/util.c:555
 msgid "Phone"
 msgstr "Teléfono"
 
-#: ../libgaim/protocols/jabber/jabber.c:847
+#: ../libgaim/protocols/jabber/jabber.c:850
 msgid "Date"
 msgstr "Fecha"
 
-#: ../libgaim/protocols/jabber/jabber.c:855
+#: ../libgaim/protocols/jabber/jabber.c:858
 msgid "Please fill out the information below to register your new account."
 msgstr ""
 "Por favor, rellene la información abajo indicada para registrar su nueva "
 "cuenta."
 
-#: ../libgaim/protocols/jabber/jabber.c:858
-#: ../libgaim/protocols/jabber/jabber.c:859
+#: ../libgaim/protocols/jabber/jabber.c:861
+#: ../libgaim/protocols/jabber/jabber.c:862
 msgid "Register New Jabber Account"
 msgstr "Registrando cuenta nueva de Jabber"
 
-#: ../libgaim/protocols/jabber/jabber.c:1025
+#: ../libgaim/protocols/jabber/jabber.c:1030
 msgid "Initializing Stream"
 msgstr "Inicializando flujo"
 
-#: ../libgaim/protocols/jabber/jabber.c:1030
+#: ../libgaim/protocols/jabber/jabber.c:1035
 #: ../libgaim/protocols/msn/session.c:350
 msgid "Authenticating"
 msgstr "Autenticando"
 
-#: ../libgaim/protocols/jabber/jabber.c:1039
+#: ../libgaim/protocols/jabber/jabber.c:1044
 msgid "Re-initializing Stream"
 msgstr "Reinicializando flujo"
 
-#: ../libgaim/protocols/jabber/jabber.c:1109
-#: ../libgaim/protocols/jabber/jabber.c:1479
-#: ../libgaim/protocols/jabber/jabber.c:1520
-#: ../libgaim/protocols/jabber/jabber.c:1554
+#: ../libgaim/protocols/jabber/jabber.c:1114
+#: ../libgaim/protocols/jabber/jabber.c:1484
+#: ../libgaim/protocols/jabber/jabber.c:1525
+#: ../libgaim/protocols/jabber/jabber.c:1559
 #: ../libgaim/protocols/oscar/oscar.c:805
 #: ../libgaim/protocols/oscar/oscar.c:5549
 msgid "Not Authorized"
 msgstr "No autorizado"
 
-#: ../libgaim/protocols/jabber/jabber.c:1151
+#: ../libgaim/protocols/jabber/jabber.c:1156
 msgid "Both"
 msgstr "Ambos"
 
-#: ../libgaim/protocols/jabber/jabber.c:1153
+#: ../libgaim/protocols/jabber/jabber.c:1158
 msgid "From (To pending)"
 msgstr "Desde (Destino pendiente)"
 
-#: ../libgaim/protocols/jabber/jabber.c:1158
+#: ../libgaim/protocols/jabber/jabber.c:1163
 msgid "To"
 msgstr "A"
 
-#: ../libgaim/protocols/jabber/jabber.c:1160
+#: ../libgaim/protocols/jabber/jabber.c:1165
 msgid "None (To pending)"
 msgstr "Nadie (Destino pendiente)"
 
-#: ../libgaim/protocols/jabber/jabber.c:1165
+#: ../libgaim/protocols/jabber/jabber.c:1170
 msgid "Subscription"
 msgstr "Subscripción"
 
-#: ../libgaim/protocols/jabber/jabber.c:1295
+#: ../libgaim/protocols/jabber/jabber.c:1300
 msgid "Password Changed"
 msgstr "Contraseña modificada"
 
-#: ../libgaim/protocols/jabber/jabber.c:1296
+#: ../libgaim/protocols/jabber/jabber.c:1301
 msgid "Your password has been changed."
 msgstr "Su contraseña ha sido modificada."
 
-#: ../libgaim/protocols/jabber/jabber.c:1300
-#: ../libgaim/protocols/jabber/jabber.c:1301
+#: ../libgaim/protocols/jabber/jabber.c:1305
+#: ../libgaim/protocols/jabber/jabber.c:1306
 msgid "Error changing password"
 msgstr "Error al cambiar la contraseña"
 
-#: ../libgaim/protocols/jabber/jabber.c:1357
+#: ../libgaim/protocols/jabber/jabber.c:1362
 msgid "Password (again)"
 msgstr "Contraseña (de nuevo)"
 
-#: ../libgaim/protocols/jabber/jabber.c:1362
-#: ../libgaim/protocols/jabber/jabber.c:1363
+#: ../libgaim/protocols/jabber/jabber.c:1367
+#: ../libgaim/protocols/jabber/jabber.c:1368
 msgid "Change Jabber Password"
 msgstr "Cambiar contraseña de Jabber"
 
-#: ../libgaim/protocols/jabber/jabber.c:1363
+#: ../libgaim/protocols/jabber/jabber.c:1368
 msgid "Please enter your new password"
 msgstr "Por favor, indique su nueva contraseña"
 
-#: ../libgaim/protocols/jabber/jabber.c:1373
+#: ../libgaim/protocols/jabber/jabber.c:1378
 #: ../libgaim/protocols/oscar/oscar.c:6355
 #: ../libgaim/protocols/silc/silc.c:1019
 msgid "Set User Info..."
 msgstr "Establecer su información de usuario..."
 
 #. if (js->protocol_options & CHANGE_PASSWORD) {
-#: ../libgaim/protocols/jabber/jabber.c:1378
+#: ../libgaim/protocols/jabber/jabber.c:1383
 #: ../libgaim/protocols/oscar/oscar.c:6366
 #: ../libgaim/protocols/silc/silc.c:1015
 msgid "Change Password..."
 msgstr "Cambiar su contraseña..."
 
 #. }
-#: ../libgaim/protocols/jabber/jabber.c:1383
+#: ../libgaim/protocols/jabber/jabber.c:1388
 msgid "Search for Users..."
 msgstr "Buscar usuarios..."
 
-#: ../libgaim/protocols/jabber/jabber.c:1459
+#: ../libgaim/protocols/jabber/jabber.c:1464
 msgid "Bad Request"
 msgstr "Solicitud errónea"
 
-#: ../libgaim/protocols/jabber/jabber.c:1461
+#: ../libgaim/protocols/jabber/jabber.c:1466
 msgid "Conflict"
 msgstr "Conflicto"
 
-#: ../libgaim/protocols/jabber/jabber.c:1463
+#: ../libgaim/protocols/jabber/jabber.c:1468
 msgid "Feature Not Implemented"
 msgstr "Funcionalidad no implementada"
 
-#: ../libgaim/protocols/jabber/jabber.c:1465
+#: ../libgaim/protocols/jabber/jabber.c:1470
 msgid "Forbidden"
 msgstr "Prohibido"
 
-#: ../libgaim/protocols/jabber/jabber.c:1467
+#: ../libgaim/protocols/jabber/jabber.c:1472
 msgid "Gone"
 msgstr "Se fue"
 
-#: ../libgaim/protocols/jabber/jabber.c:1469
-#: ../libgaim/protocols/jabber/jabber.c:1544
+#: ../libgaim/protocols/jabber/jabber.c:1474
+#: ../libgaim/protocols/jabber/jabber.c:1549
 msgid "Internal Server Error"
 msgstr "Error interno del servidor"
 
-#: ../libgaim/protocols/jabber/jabber.c:1471
+#: ../libgaim/protocols/jabber/jabber.c:1476
 msgid "Item Not Found"
 msgstr "Elemento no encontrado"
 
-#: ../libgaim/protocols/jabber/jabber.c:1473
+#: ../libgaim/protocols/jabber/jabber.c:1478
 msgid "Malformed Jabber ID"
 msgstr "ID de Jabber no válido"
 
-#: ../libgaim/protocols/jabber/jabber.c:1475
+#: ../libgaim/protocols/jabber/jabber.c:1480
 msgid "Not Acceptable"
 msgstr "No aceptable"
 
-#: ../libgaim/protocols/jabber/jabber.c:1477
+#: ../libgaim/protocols/jabber/jabber.c:1482
 msgid "Not Allowed"
 msgstr "No permitido"
 
-#: ../libgaim/protocols/jabber/jabber.c:1481
+#: ../libgaim/protocols/jabber/jabber.c:1486
 msgid "Payment Required"
 msgstr "Pago necesario"
 
-#: ../libgaim/protocols/jabber/jabber.c:1483
+#: ../libgaim/protocols/jabber/jabber.c:1488
 msgid "Recipient Unavailable"
 msgstr "Destinatario no disponible"
 
-#: ../libgaim/protocols/jabber/jabber.c:1487
+#: ../libgaim/protocols/jabber/jabber.c:1492
 msgid "Registration Required"
 msgstr "Registro necesario"
 
-#: ../libgaim/protocols/jabber/jabber.c:1489
+#: ../libgaim/protocols/jabber/jabber.c:1494
 msgid "Remote Server Not Found"
 msgstr "No se encontró el servidor remoto"
 
-#: ../libgaim/protocols/jabber/jabber.c:1491
+#: ../libgaim/protocols/jabber/jabber.c:1496
 msgid "Remote Server Timeout"
 msgstr "Expiró el tiempo del servidor remoto"
 
-#: ../libgaim/protocols/jabber/jabber.c:1493
+#: ../libgaim/protocols/jabber/jabber.c:1498
 msgid "Server Overloaded"
 msgstr "Servidor sobrecargado"
 
-#: ../libgaim/protocols/jabber/jabber.c:1495
+#: ../libgaim/protocols/jabber/jabber.c:1500
 msgid "Service Unavailable"
 msgstr "Servicio no disponible"
 
-#: ../libgaim/protocols/jabber/jabber.c:1497
+#: ../libgaim/protocols/jabber/jabber.c:1502
 msgid "Subscription Required"
 msgstr "Subscripción necesaria"
 
-#: ../libgaim/protocols/jabber/jabber.c:1499
+#: ../libgaim/protocols/jabber/jabber.c:1504
 msgid "Unexpected Request"
 msgstr "Solicitud no esperada"
 
-#: ../libgaim/protocols/jabber/jabber.c:1506
+#: ../libgaim/protocols/jabber/jabber.c:1511
 msgid "Authorization Aborted"
 msgstr "Autorización interrumpida"
 
-#: ../libgaim/protocols/jabber/jabber.c:1508
+#: ../libgaim/protocols/jabber/jabber.c:1513
 msgid "Incorrect encoding in authorization"
 msgstr "Codificación incorrecta en la autorización"
 
-#: ../libgaim/protocols/jabber/jabber.c:1511
+#: ../libgaim/protocols/jabber/jabber.c:1516
 msgid "Invalid authzid"
 msgstr "Authzid inválido"
 
-#: ../libgaim/protocols/jabber/jabber.c:1514
+#: ../libgaim/protocols/jabber/jabber.c:1519
 msgid "Invalid Authorization Mechanism"
 msgstr "Mecanismo de autorización inválido"
 
-#: ../libgaim/protocols/jabber/jabber.c:1517
+#: ../libgaim/protocols/jabber/jabber.c:1522
 msgid "Authorization mechanism too weak"
 msgstr "Mecanismo de autorización demasiado débil"
 
-#: ../libgaim/protocols/jabber/jabber.c:1522
+#: ../libgaim/protocols/jabber/jabber.c:1527
 msgid "Temporary Authentication Failure"
 msgstr "Falló temporal de la autenticación"
 
-#: ../libgaim/protocols/jabber/jabber.c:1525
+#: ../libgaim/protocols/jabber/jabber.c:1530
 msgid "Authentication Failure"
 msgstr "Falló de autenticación"
 
-#: ../libgaim/protocols/jabber/jabber.c:1529
+#: ../libgaim/protocols/jabber/jabber.c:1534
 msgid "Bad Format"
 msgstr "Formato erróneo"
 
-#: ../libgaim/protocols/jabber/jabber.c:1531
+#: ../libgaim/protocols/jabber/jabber.c:1536
 msgid "Bad Namespace Prefix"
 msgstr "Prefijo del espacio de nombres erróneo"
 
-#: ../libgaim/protocols/jabber/jabber.c:1534
+#: ../libgaim/protocols/jabber/jabber.c:1539
 msgid "Resource Conflict"
 msgstr "Conflicto de recursos"
 
-#: ../libgaim/protocols/jabber/jabber.c:1536
+#: ../libgaim/protocols/jabber/jabber.c:1541
 #: ../libgaim/protocols/silc/ops.c:1729
 msgid "Connection Timeout"
 msgstr "Expiró la conexión"
 
-#: ../libgaim/protocols/jabber/jabber.c:1538
+#: ../libgaim/protocols/jabber/jabber.c:1543
 msgid "Host Gone"
 msgstr "Servidor desaparecido"
 
-#: ../libgaim/protocols/jabber/jabber.c:1540
+#: ../libgaim/protocols/jabber/jabber.c:1545
 msgid "Host Unknown"
 msgstr "Servidor desconocido"
 
-#: ../libgaim/protocols/jabber/jabber.c:1542
+#: ../libgaim/protocols/jabber/jabber.c:1547
 msgid "Improper Addressing"
 msgstr "Direccionamiento incorrecto"
 
-#: ../libgaim/protocols/jabber/jabber.c:1546
+#: ../libgaim/protocols/jabber/jabber.c:1551
 msgid "Invalid ID"
 msgstr "ID no válido"
 
-#: ../libgaim/protocols/jabber/jabber.c:1548
+#: ../libgaim/protocols/jabber/jabber.c:1553
 msgid "Invalid Namespace"
 msgstr "Espacio de nombres no válido"
 
-#: ../libgaim/protocols/jabber/jabber.c:1550
+#: ../libgaim/protocols/jabber/jabber.c:1555
 msgid "Invalid XML"
 msgstr "XML inválido"
 
-#: ../libgaim/protocols/jabber/jabber.c:1552
+#: ../libgaim/protocols/jabber/jabber.c:1557
 msgid "Non-matching Hosts"
 msgstr "No existen servidores coincidentes"
 
-#: ../libgaim/protocols/jabber/jabber.c:1556
+#: ../libgaim/protocols/jabber/jabber.c:1561
 msgid "Policy Violation"
 msgstr "Violación de la política"
 
-#: ../libgaim/protocols/jabber/jabber.c:1558
+#: ../libgaim/protocols/jabber/jabber.c:1563
 msgid "Remote Connection Failed"
 msgstr "Falló la conexión remota"
 
-#: ../libgaim/protocols/jabber/jabber.c:1560
+#: ../libgaim/protocols/jabber/jabber.c:1565
 msgid "Resource Constraint"
 msgstr "Restricción de recursos"
 
-#: ../libgaim/protocols/jabber/jabber.c:1562
+#: ../libgaim/protocols/jabber/jabber.c:1567
 msgid "Restricted XML"
 msgstr "XML restringido"
 
-#: ../libgaim/protocols/jabber/jabber.c:1564
+#: ../libgaim/protocols/jabber/jabber.c:1569
 msgid "See Other Host"
 msgstr "Ver otros servidores"
 
-#: ../libgaim/protocols/jabber/jabber.c:1566
+#: ../libgaim/protocols/jabber/jabber.c:1571
 msgid "System Shutdown"
 msgstr "Parada del sistema"
 
-#: ../libgaim/protocols/jabber/jabber.c:1568
+#: ../libgaim/protocols/jabber/jabber.c:1573
 msgid "Undefined Condition"
 msgstr "Condición no definida"
 
-#: ../libgaim/protocols/jabber/jabber.c:1570
+#: ../libgaim/protocols/jabber/jabber.c:1575
 msgid "Unsupported Encoding"
 msgstr "Codificación no soportada"
 
-#: ../libgaim/protocols/jabber/jabber.c:1572
+#: ../libgaim/protocols/jabber/jabber.c:1577
 msgid "Unsupported Stanza Type"
 msgstr "Tipo de «stanza» no soportado"
 
-#: ../libgaim/protocols/jabber/jabber.c:1574
+#: ../libgaim/protocols/jabber/jabber.c:1579
 msgid "Unsupported Version"
 msgstr "Versión no soportada"
 
-#: ../libgaim/protocols/jabber/jabber.c:1576
+#: ../libgaim/protocols/jabber/jabber.c:1581
 msgid "XML Not Well Formed"
 msgstr "XML malformado"
 
-#: ../libgaim/protocols/jabber/jabber.c:1578
+#: ../libgaim/protocols/jabber/jabber.c:1583
 msgid "Stream Error"
 msgstr "Error de flujo"
 
-#: ../libgaim/protocols/jabber/jabber.c:1645
+#: ../libgaim/protocols/jabber/jabber.c:1650
 #, c-format
 msgid "Unable to ban user %s"
 msgstr "No puede echar al usuario %s"
 
-#: ../libgaim/protocols/jabber/jabber.c:1665
+#: ../libgaim/protocols/jabber/jabber.c:1670
 #, c-format
 msgid "Unknown affiliation: \"%s\""
 msgstr "Afiliación desconocida: \"%s\""
 
-#: ../libgaim/protocols/jabber/jabber.c:1670
+#: ../libgaim/protocols/jabber/jabber.c:1675
 #, c-format
 msgid "Unable to affiliate user %s as \"%s\""
 msgstr "No se pudo afiliar al usuario %s como \"%s\""
 
-#: ../libgaim/protocols/jabber/jabber.c:1689
+#: ../libgaim/protocols/jabber/jabber.c:1694
 #, c-format
 msgid "Unknown role: \"%s\""
 msgstr "Rol desconocido: \"%s\""
 
-#: ../libgaim/protocols/jabber/jabber.c:1696
+#: ../libgaim/protocols/jabber/jabber.c:1701
 #, c-format
 msgid "Unable to set role \"%s\" for user: %s"
 msgstr "No se pudo establecer el rol \"%s\" para el usuario: %s"
 
-#: ../libgaim/protocols/jabber/jabber.c:1749
+#: ../libgaim/protocols/jabber/jabber.c:1754
 #, c-format
 msgid "Unable to kick user %s"
 msgstr "No puede expulsar al usuario %s"
 
-#: ../libgaim/protocols/jabber/jabber.c:1780
+#: ../libgaim/protocols/jabber/jabber.c:1785
 msgid "config:  Configure a chat room."
 msgstr "config:  Configurar una sala de chat."
 
-#: ../libgaim/protocols/jabber/jabber.c:1784
+#: ../libgaim/protocols/jabber/jabber.c:1789
 msgid "configure:  Configure a chat room."
 msgstr "configure:  Configurar una sala de chat"
 
-#: ../libgaim/protocols/jabber/jabber.c:1793
+#: ../libgaim/protocols/jabber/jabber.c:1798
 msgid "part [room]:  Leave the room."
 msgstr "part [habitación]:  Abandonar la habitación."
 
-#: ../libgaim/protocols/jabber/jabber.c:1798
+#: ../libgaim/protocols/jabber/jabber.c:1803
 msgid "register:  Register with a chat room."
 msgstr "register:  Registrarse en una sala de chat."
 
-#: ../libgaim/protocols/jabber/jabber.c:1804
+#: ../libgaim/protocols/jabber/jabber.c:1809
 msgid "topic [new topic]:  View or change the topic."
 msgstr "topic [nuevo tema]:  Mostrar o cambiar el tema."
 
-#: ../libgaim/protocols/jabber/jabber.c:1810
+#: ../libgaim/protocols/jabber/jabber.c:1815
 msgid "ban &lt;user&gt; [room]:  Ban a user from the room."
 msgstr "ban &lt;usuario&gt; [sala]:  Echar a un usuario de la sala."
 
-#: ../libgaim/protocols/jabber/jabber.c:1816
+#: ../libgaim/protocols/jabber/jabber.c:1821
 msgid ""
 "affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's "
 "affiliation with the room."
@@ -8842,7 +8959,7 @@ msgstr ""
 "affiliate &lt;usuario&gt; &lt;owner|admin|member|outcast|none&gt;: definir "
 "la afiliación de un usuario a la sala."
 
-#: ../libgaim/protocols/jabber/jabber.c:1822
+#: ../libgaim/protocols/jabber/jabber.c:1827
 msgid ""
 "role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's "
 "role in the room."
@@ -8850,20 +8967,20 @@ msgstr ""
 "rol &lt;usuario&gt; &lt;moderator|participant|visitor|none&gt;: Definir el "
 "rol de un usuario en la sala."
 
-#: ../libgaim/protocols/jabber/jabber.c:1828
+#: ../libgaim/protocols/jabber/jabber.c:1833
 msgid "invite &lt;user&gt; [message]:  Invite a user to the room."
 msgstr "invite &lt;usuario&gt; [mensaje]:  Invitar a un usuario a la sala."
 
-#: ../libgaim/protocols/jabber/jabber.c:1834
+#: ../libgaim/protocols/jabber/jabber.c:1839
 msgid "join: &lt;room&gt; [server]:  Join a chat on this server."
 msgstr ""
 "join: &lt;sala&gt; [servidor]:  Unirse a una sala en el servidor indicado."
 
-#: ../libgaim/protocols/jabber/jabber.c:1840
+#: ../libgaim/protocols/jabber/jabber.c:1845
 msgid "kick &lt;user&gt; [room]:  Kick a user from the room."
 msgstr "kick &lt;usuario&gt; [sala]:  Echar a un usuario de la sala."
 
-#: ../libgaim/protocols/jabber/jabber.c:1845
+#: ../libgaim/protocols/jabber/jabber.c:1850
 msgid ""
 "msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."
 msgstr ""
@@ -8879,26 +8996,26 @@ msgstr ""
 #. *< version
 #. *  summary
 #. *  description
-#: ../libgaim/protocols/jabber/jabber.c:1962
-#: ../libgaim/protocols/jabber/jabber.c:1964
+#: ../libgaim/protocols/jabber/jabber.c:1967
+#: ../libgaim/protocols/jabber/jabber.c:1969
 msgid "Jabber Protocol Plugin"
 msgstr "Complemento de protocolo Jabber"
 
-#: ../libgaim/protocols/jabber/jabber.c:1990
+#: ../libgaim/protocols/jabber/jabber.c:1995
 msgid "Force old (port 5223) SSL"
 msgstr "Forzar SSL antiguo (puerto 5323)"
 
-#: ../libgaim/protocols/jabber/jabber.c:1995
+#: ../libgaim/protocols/jabber/jabber.c:2000
 msgid "Allow plaintext auth over unencrypted streams"
 msgstr "Permitir autenticación en claro sobre canales no cifrados"
 
-#: ../libgaim/protocols/jabber/jabber.c:2000
+#: ../libgaim/protocols/jabber/jabber.c:2005
 #: ../libgaim/protocols/simple/simple.c:1842
 msgid "Connect port"
 msgstr "Puerto de conexión"
 
 #. Account options
-#: ../libgaim/protocols/jabber/jabber.c:2004
+#: ../libgaim/protocols/jabber/jabber.c:2009
 #: ../libgaim/protocols/silc/silc.c:1852
 msgid "Connect server"
 msgstr "Conectar con el servidor"
@@ -9957,7 +10074,9 @@ msgstr "No se reconoció el servidor del usuario que introdujo"
 msgid ""
 "Your account has been disabled because too many incorrect passwords were "
 "entered"
-msgstr "Su cuenta ha sido deshabilitada porque se han introducido demasiadas contraseña inválidas"
+msgstr ""
+"Su cuenta ha sido deshabilitada porque se han introducido demasiadas "
+"contraseña inválidas"
 
 #: ../libgaim/protocols/novell/nmuser.c:1946
 msgid "You cannot add the same person twice to a conversation"
@@ -10450,14 +10569,21 @@ msgid ""
 "is probably using a different encoding than expected.  If you know what "
 "encoding he is using, you can specify it in the advanced account options for "
 "your AIM/ICQ account.)"
-msgstr "(Se produjo un error al recibir este mensaje. Es posible que el amigo con el que esta hablando utilice una codificación distinta de la que se esperaba. Puede indicar su codificación en las opciones de cuenta avanzadas para AIM/ICQ si sabe que codificación está utilizando.)"
+msgstr ""
+"(Se produjo un error al recibir este mensaje. Es posible que el amigo con el "
+"que esta hablando utilice una codificación distinta de la que se esperaba. "
+"Puede indicar su codificación en las opciones de cuenta avanzadas para AIM/"
+"ICQ si sabe que codificación está utilizando.)"
 
 #: ../libgaim/protocols/oscar/oscar.c:436
 #, c-format
 msgid ""
 "(There was an error receiving this message.  Either you and %s have "
 "different encodings selected, or %s has a buggy client.)"
-msgstr "(Se produjo un error al recibir este mensaje. O bien vd. y %s han seleccionado distintas codificaciones o bien %s tiene una aplicación cliente defectuosa.)"
+msgstr ""
+"(Se produjo un error al recibir este mensaje. O bien vd. y %s han "
+"seleccionado distintas codificaciones o bien %s tiene una aplicación cliente "
+"defectuosa.)"
 
 #: ../libgaim/protocols/oscar/oscar.c:621
 msgid "Voice"
@@ -11651,7 +11777,9 @@ msgstr "Se ha modificado su información."
 msgid ""
 "You are attempting to set a custom face. Gaim currently only allows the "
 "standard faces. Please choose an image from "
-msgstr "Está vd. intentando fijar una cara a medida. Gaim sólo permite la configuración de las caras estándar. Por favor, escoja una imagen de "
+msgstr ""
+"Está vd. intentando fijar una cara a medida. Gaim sólo permite la "
+"configuración de las caras estándar. Por favor, escoja una imagen de "
 
 #: ../libgaim/protocols/qq/buddy_info.c:582
 #: ../libgaim/protocols/qq/buddy_info.c:595
@@ -14014,7 +14142,8 @@ msgstr "No se pudo resolver el nombre de sistema"
 
 #: ../libgaim/protocols/simple/simple.c:1647
 msgid "SIP screen names may not contain whitespaces or @ symbols"
-msgstr "Los nombres de usuario SIP no pueden tener espacios en blanco ni el símbolo @"
+msgstr ""
+"Los nombres de usuario SIP no pueden tener espacios en blanco ni el símbolo @"
 
 #. *< type
 #. *< ui_requirement
@@ -14690,7 +14819,8 @@ msgstr ""
 msgid ""
 "If you wish to view this profile, you will need to visit this link in your "
 "web browser:"
-msgstr "Si desea ver este perfil, deberá visitar este enlace con su navegador web:"
+msgstr ""
+"Si desea ver este perfil, deberá visitar este enlace con su navegador web:"
 
 #: ../libgaim/protocols/yahoo/yahoo_profile.c:1010
 msgid "Yahoo! ID"
@@ -15146,12 +15276,12 @@ msgid_plural "%d minutes"
 msgstr[0] "%d minuto"
 msgstr[1] "%d minutos"
 
-#: ../libgaim/util.c:3166 ../libgaim/util.c:3464
+#: ../libgaim/util.c:3171 ../libgaim/util.c:3469
 #, c-format
 msgid "Unable to connect to %s"
 msgstr "No se pudo conectar a %s"
 
-#: ../libgaim/util.c:3292
+#: ../libgaim/util.c:3297
 #, c-format
 msgid ""
 "Unable to allocate enough memory to hold the contents from %s.  The web "
@@ -15160,17 +15290,17 @@ msgstr ""
 "No se pudo obtener suficiente memoria para mantener los contenidos de %s. Es "
 "posible que el servidor web esté intentando algo con malas intenciones."
 
-#: ../libgaim/util.c:3327
+#: ../libgaim/util.c:3332
 #, c-format
 msgid "Error reading from %s: %s"
 msgstr "Error al leer de %s: %s"
 
-#: ../libgaim/util.c:3358
+#: ../libgaim/util.c:3363
 #, c-format
 msgid "Error writing to %s: %s"
 msgstr "Error al escribir a %s: %s"
 
-#: ../libgaim/util.c:3383
+#: ../libgaim/util.c:3388
 #, c-format
 msgid "Unable to connect to %s: %s"
 msgstr "No se pudo conectar a %s: %s"
@@ -15414,9 +15544,6 @@ msgstr "No se pudo conectar a %s: %s"
 
 #~ msgid "Change My Face"
 #~ msgstr "Cambiar mi cara"
-
-#~ msgid "This function has not be implemented yet"
-#~ msgstr "Aún no se ha implementado esta función"
 
 #~ msgid "Please wait for new version"
 #~ msgstr "Por favor, espere a una nueva versión"
