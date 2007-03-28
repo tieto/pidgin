@@ -288,16 +288,16 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 		if (buddy) {
 			jb = jabber_buddy_find(js, from, TRUE);
-			if ((jb->subscription & JABBER_SUB_TO) == 0)
+			if ((jb->subscription & JABBER_SUB_TO))
 				onlist = TRUE;
 		}
-		
+
 		jap->gc = js->gc;
 		jap->who = g_strdup(from);
 		jap->js = js;
 
 		purple_account_request_authorization(purple_connection_get_account(js->gc), from, NULL, NULL, NULL, onlist,
-					   	   G_CALLBACK(authorize_add_cb), G_CALLBACK(deny_add_cb), jap);
+				G_CALLBACK(authorize_add_cb), G_CALLBACK(deny_add_cb), jap);
 		jabber_id_free(jid);
 		return;
 	} else if(type && !strcmp(type, "subscribed")) {
