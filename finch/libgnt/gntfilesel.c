@@ -301,6 +301,8 @@ toggle_tag_selection(GntBindable *bind, GList *null)
 		gnt_tree_set_row_flags(GNT_TREE(tree), file, GNT_TEXT_FLAG_BOLD);
 	}
 
+	gnt_bindable_perform_action_named(GNT_BINDABLE(tree), "move-down", NULL);
+
 	return TRUE;
 }
 
