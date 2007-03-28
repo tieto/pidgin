@@ -12,13 +12,14 @@
 #  Petter Johan Olsen   updated for 0.73
 #  Kyrre Ness Sjobak, updates for 1.x
 #  Kyrre Ness Sjobak, updates for 1.3
+#  Hallvard Glad, updates for 2.0BETA6
 msgid ""
 msgstr ""
 "Project-Id-Version: nb\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2005-10-27 16:12-0400\n"
 "PO-Revision-Date: 2005-06-08 15:51+0200\n"
-"Last-Translator: Kyrre Ness Sjobak <kyrre@solution-forge.net>\n"
+"Last-Translator: Hallvard Glad <hallvard.glad@gmail.com>\n"
 "Language-Team: Norsk bokmål <no@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
@@ -320,11 +321,11 @@ msgstr ""
 
 #: plugins/gaimrc.c:40
 msgid "Cursor Color"
-msgstr ""
+msgstr "Peker Farge"
 
 #: plugins/gaimrc.c:41
 msgid "Secondary Cursor Color"
-msgstr ""
+msgstr "Andre Peker Farge"
 
 #: plugins/gaimrc.c:42
 #, fuzzy
@@ -344,17 +345,17 @@ msgstr "Samtaler"
 #: plugins/gaimrc.c:73
 #, fuzzy
 msgid "Conversation History"
-msgstr "Samtaler"
+msgstr "Samtaler Historie"
 
 #: plugins/gaimrc.c:74
 #, fuzzy
 msgid "Log Viewer"
-msgstr "Påloggingstjener"
+msgstr "Log Viser"
 
 #: plugins/gaimrc.c:75
 #, fuzzy
 msgid "Request Dialog"
-msgstr "Tvetydig forespørsel"
+msgstr "Anmodnings Dialog"
 
 #: plugins/gaimrc.c:76
 #, fuzzy
@@ -388,16 +389,16 @@ msgstr "Valg for grensesnitt"
 
 #: plugins/gaimrc.c:362
 msgid "GTK+ Text Shortcut Theme"
-msgstr ""
+msgstr "GTK+ Tekst Tema Snarvei"
 
 #: plugins/gaimrc.c:460
 #, fuzzy
 msgid "Gaim GTK+ Theme Control"
-msgstr "Styre Gaim fra kontrollfil"
+msgstr "Gaim GTK+ Tema Kontroll"
 
 #: plugins/gaimrc.c:462 plugins/gaimrc.c:463
 msgid "Provides access to commonly used gtkrc settings."
-msgstr ""
+msgstr "Gir tilgang til vanlig brukte gtkrc innstillinger"
 
 #. Configuration frame
 #: plugins/gestures/gestures.c:243
@@ -486,12 +487,12 @@ msgstr "Gruppe:"
 #: plugins/gevolution/add_buddy_dialog.c:578
 #: plugins/gevolution/assoc-buddy.c:464
 msgid "New Person"
-msgstr "Ny person"
+msgstr "Ny Person"
 
 #. "Select Buddy" button
 #: plugins/gevolution/add_buddy_dialog.c:595
 msgid "Select Buddy"
-msgstr "Velg kompis"
+msgstr "Velg Kompis"
 
 #. Add the label.
 #: plugins/gevolution/assoc-buddy.c:340
@@ -522,15 +523,15 @@ msgstr "Kontakter"
 #: plugins/gevolution/gevolution.c:262 plugins/gevolution/gevolution.c:268
 #, fuzzy
 msgid "Unable to send e-mail"
-msgstr "Kunne ikke sende beskjed."
+msgstr "Kunne ikke sende e-post"
 
 #: plugins/gevolution/gevolution.c:263
 msgid "The evolution executable was not found in the PATH."
-msgstr ""
+msgstr "Den kjørbare filen til Evolution ble ikke funnet i banen"
 
 #: plugins/gevolution/gevolution.c:269
 msgid "The specified buddy was not found in the Evolution Contacts."
-msgstr ""
+msgstr "Kompisen ble ikke funnet i adresseboka til Evolution"
 
 #: plugins/gevolution/gevolution.c:286
 msgid "Add to Address Book"
@@ -539,12 +540,12 @@ msgstr "Legg til i adresseboka"
 #: plugins/gevolution/gevolution.c:290
 #, fuzzy
 msgid "Send E-Mail"
-msgstr "E-post"
+msgstr "Send E-post"
 
 #. Configuration frame
 #: plugins/gevolution/gevolution.c:414
 msgid "Evolution Integration Configuration"
-msgstr "Instillinger for Evolution-integrasjon"
+msgstr "Innstillinger for Evolution-integrasjon"
 
 #. Label
 #: plugins/gevolution/gevolution.c:417
@@ -619,7 +620,7 @@ msgstr "E-post:"
 
 #: plugins/history.c:146
 msgid "History Plugin Requires Logging"
-msgstr ""
+msgstr "Historie Tillegg Krever Logging"
 
 #: plugins/history.c:147
 msgid ""
@@ -628,7 +629,10 @@ msgid ""
 "Enabling logs for instant messages and/or chats will activate history for "
 "the same conversation type(s)."
 msgstr ""
-
+"Logging kan slås på gjennom Verktøy -> Innstillinger -> Logging.\n"
+"\n"
+"Å slå på logging for lynmeldinger og/eller prat vil aktivere historie for "
+"den samme samtaletypen."
 #: plugins/history.c:186
 msgid "History"
 msgstr "Historikk"
@@ -646,6 +650,12 @@ msgid ""
 "Tools -> Preferences -> Logging. Enabling logs for instant messages and/or "
 "chats will activate history for the same conversation type(s)."
 msgstr ""
+"Når en ny samtale er åpnet vil dette tillegget sette inn siste "
+"samtale i den pågående samtalen.\n"
+"\n"
+"Historie tillegget krever at logging er slått på. Logging kan bli satt på gjennom "
+"Verktøy -> Innstillinger -> Logging. Å slå på logger for lynmeldinger og/eller prat "
+"vil aktivere historie for den samme samtaletypen."
 
 #. *< type
 #. *< ui_requirement
@@ -698,7 +708,7 @@ msgstr "Bruk"
 
 #: plugins/idle.c:190
 msgid "Unset Idle Time For All Idled Accounts"
-msgstr ""
+msgstr "Frigi Borte-tid For Alle Idle Kontoer"
 
 #: plugins/idle.c:217 plugins/idle.c:218
 #, fuzzy
@@ -987,11 +997,11 @@ msgstr "Test for å se at mesteparten fungerer."
 
 #: plugins/spellchk.c:1788
 msgid "Duplicate Correction"
-msgstr ""
+msgstr "Dupliserings Korrigering"
 
 #: plugins/spellchk.c:1789
 msgid "The specified word already exists in the correction list."
-msgstr ""
+msgstr "Ordet finnes allerede i korrigerings listen"
 
 #: plugins/spellchk.c:1948
 msgid "Text Replacements"
@@ -1007,7 +1017,7 @@ msgstr "Erstatt det til"
 
 #: plugins/spellchk.c:1996
 msgid "Whole words only"
-msgstr ""
+msgstr "Kun hele ord"
 
 #: plugins/spellchk.c:2022
 msgid "Add a new text replacement"
@@ -1023,7 +1033,7 @@ msgstr "Erstatt det til: "
 
 #: plugins/spellchk.c:2060
 msgid "Only replace _whole words"
-msgstr ""
+msgstr "Erstatt kun hele ord"
 
 #: plugins/spellchk.c:2097
 msgid "Text replacement"
@@ -1228,7 +1238,7 @@ msgstr "Gjennomsiktige vinduer for direktemeldinger"
 #: plugins/win32/transparency/win2ktrans.c:606
 #, fuzzy
 msgid "Always on top"
-msgstr "Kontaktalias"
+msgstr "Alltid øverst"
 
 #. Buddy List trans options
 #: plugins/win32/transparency/win2ktrans.c:590
@@ -1242,7 +1252,7 @@ msgstr "Gjennomsiktighet for kontaktlistevindu"
 #: plugins/win32/transparency/win2ktrans.c:604
 #, fuzzy
 msgid "Remove Buddy List window transparency on focus"
-msgstr "Gjennomsiktighet for kontaktlistevindu"
+msgstr "Fjern gjennomsiktighet for kontaktlistevindu i fokus"
 
 #. *< type
 #. *< ui_requirement
@@ -1330,7 +1340,7 @@ msgstr "_Blink vinduet når nye beskjeder mottas"
 
 #: plugins/win32/winprefs/winprefs.c:443
 msgid "WinGaim Options"
-msgstr "Innstilinger for WinGaim"
+msgstr "WinGaim Innstilinger"
 
 #: plugins/win32/winprefs/winprefs.c:445
 msgid "Options specific to Windows Gaim."
@@ -1341,7 +1351,8 @@ msgid ""
 "Provides options specific to Windows Gaim, such as buddy list docking and "
 "conversation flashing."
 msgstr ""
-
+"Gir spesifikke innstillinger for Windows Gaim, slik som kontaktliste docking og "
+"samtale blinking."
 #: src/account.c:773
 #, fuzzy
 msgid "accounts"
@@ -1350,7 +1361,7 @@ msgstr "Kontoer"
 #: src/account.c:915
 #, fuzzy
 msgid "Password is required to sign on."
-msgstr "Passordet har løpt ut"
+msgstr "Passord kreves for å logge på."
 
 #: src/account.c:940
 #, c-format
@@ -1360,13 +1371,13 @@ msgstr "Oppgi passord for %s (%s)"
 #: src/account.c:947
 #, fuzzy
 msgid "Enter Password"
-msgstr "Bytt passord"
+msgstr "Oppgi  passord"
 
 #
 #: src/account.c:952
 #, fuzzy
 msgid "Save password"
-msgstr "Nytt passord"
+msgstr "Lagre passord"
 
 #. *
 #. * A wrapper for gaim_request_action() that uses OK and Cancel buttons.
@@ -2369,6 +2380,8 @@ msgid ""
 "%s was disconnected due to an error. %s The account has been disabled. "
 "Correct the error and re-enable the account to connect."
 msgstr ""
+"%s ble avkoblet pga. en feil. %s Kontoen har blitt avstengt. "
+"Korriger feilen og slå på kontoen for å tilkoble."
 
 # Lot "me" stå, var usikker på om denne brukes "teknisk"
 # (denne meldingen kommer opp når du skriver "debug version"
@@ -2391,7 +2404,8 @@ msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
 msgstr ""
-
+"Bruk \"/help &lt;command&gt;\" for hjelp på en spesifikk kommando.\n"
+"De følgende kommandoer er tilgjengelige i denne sammenhengen:\n"
 #: src/gtkconv.c:446
 msgid "No such command."
 msgstr "Ingen slik kommando"
@@ -2480,7 +2494,7 @@ msgstr ""
 msgid ""
 "Logging stopped. Future messages in this conversation will not be logged."
 msgstr ""
-
+"Logging stoppet. Framtidige beskjeder i denne samtalen vil ikke bli logget."
 #: src/gtkconv.c:1489
 msgid "IM"
 msgstr "Direktemelding"
@@ -2512,7 +2526,7 @@ msgstr "Fjern"
 
 #: src/gtkconv.c:2236
 msgid "Unable to save icon file to disk."
-msgstr "Kan ikke lagre ikonfil."
+msgstr "Kan ikke lagre ikonfil til disk."
 
 #: src/gtkconv.c:2259
 msgid "Save Icon"
@@ -2744,16 +2758,18 @@ msgid ""
 "say &lt;message&gt;:  Send a message normally as if you weren't using a "
 "command."
 msgstr ""
+"say &lt;message&gt;: Send en beskjed normalt som om du ikke brukte en kommando."
 
 #: src/gtkconv.c:5585
 msgid "me &lt;action&gt;:  Send an IRC style action to a buddy or chat."
-msgstr ""
+msgstr "me &lt;action&gt;: Send en IRC stil handling til en kompis eller samtale."
 
 #: src/gtkconv.c:5588
 msgid ""
 "debug &lt;option&gt;:  Send various debug information to the current "
 "conversation."
 msgstr ""
+"debug &lt;option&gt;: Send diverse debug informasjon til den pågående samtalen."
 
 #: src/gtkconv.c:5591
 #, fuzzy
@@ -2809,7 +2825,7 @@ msgstr "Sett _inn"
 
 #: src/gtkdebug.c:589
 msgid "Highlight matches"
-msgstr ""
+msgstr "Fremhev Treff"
 
 #: src/gtkdebug.c:636
 msgid "Debug Window"
@@ -3020,7 +3036,7 @@ msgstr "Svensk"
 
 #: src/gtkdialogs.c:133
 msgid "Telugu"
-msgstr ""
+msgstr "Dravidisk"
 
 #: src/gtkdialogs.c:134
 msgid "Vietnamese"
@@ -3391,14 +3407,18 @@ msgid ""
 "<span size='larger' weight='bold'>Unrecognized file type</span>\n"
 "\n"
 "Defaulting to PNG."
-msgstr ""
+msgstr "<span size='larger' weight='bold'>Ukjent filtype</span>\n"
+"\n"
+"Går tilbake til PNG."
 
 #: src/gtkimhtml.c:3237
 msgid ""
 "Unrecognized file type\n"
 "\n"
 "Defaulting to PNG."
-msgstr ""
+msgstr "Ukjent filtype\n"
+"\n"
+"Går tilbake til PNG."
 
 #: src/gtkimhtml.c:3250
 #, fuzzy, c-format
@@ -3551,22 +3571,23 @@ msgstr "Samtaler med %s"
 msgid ""
 "System events will only be logged if the \"Log all status changes to system "
 "log\" preference is enabled."
-msgstr ""
+msgstr "System hendelser vil bare bli logget om \"Log alle status forandringer til systemlogg\" 
+har blitt slått på."
 
 #: src/gtklog.c:313
 msgid ""
 "Instant messages will only be logged if the \"Log all instant messages\" "
 "preference is enabled."
-msgstr ""
+msgstr "Direktemeldinger vil bare bli logget om \"Logg alle direktemeldinger\" "har blitt slått på."
 
 #: src/gtklog.c:316
 msgid ""
 "Chats will only be logged if the \"Log all chats preference\" is enabled."
-msgstr ""
+msgstr "Samtaler vil bare bli logget om \"Logg alle samtaler\" har blitt slått på."
 
 #: src/gtklog.c:320
 msgid "No logs were found"
-msgstr ""
+msgstr "Ingen logger ble funnet"
 
 #: src/gtklog.c:396
 #, fuzzy
@@ -3989,19 +4010,19 @@ msgstr "_Bruker:"
 
 #: src/gtkprefs.c:1119
 msgid "Epiphany"
-msgstr ""
+msgstr "Epiphany"
 
 #: src/gtkprefs.c:1120
 msgid "Firebird"
-msgstr ""
+msgstr "Firebird"
 
 #: src/gtkprefs.c:1121
 msgid "Firefox"
-msgstr ""
+msgstr "Firefox"
 
 #: src/gtkprefs.c:1122
 msgid "Galeon"
-msgstr ""
+msgstr "Galeon"
 
 #: src/gtkprefs.c:1123
 #, fuzzy
@@ -4010,19 +4031,19 @@ msgstr "Gnome-standard"
 
 #: src/gtkprefs.c:1124
 msgid "Konqueror"
-msgstr ""
+msgstr "Konqueror"
 
 #: src/gtkprefs.c:1125
 msgid "Mozilla"
-msgstr ""
+msgstr "Mozilla"
 
 #: src/gtkprefs.c:1126
 msgid "Netscape"
-msgstr ""
+msgstr "Netscape"
 
 #: src/gtkprefs.c:1127
 msgid "Opera"
-msgstr ""
+msgstr "Opera"
 
 #: src/gtkprefs.c:1136
 msgid "Manual"
@@ -4080,7 +4101,7 @@ msgstr "Logg alle samtaler"
 
 #: src/gtkprefs.c:1268
 msgid "Log all _status changes to system log"
-msgstr ""
+msgstr "Logg alle status endinger til systemlogg"
 
 #: src/gtkprefs.c:1400
 msgid "Sound Selection"
@@ -4376,7 +4397,7 @@ msgstr "Tittel"
 
 #: src/gtksavedstatuses.c:377
 msgid "Type"
-msgstr ""
+msgstr "Type"
 
 #: src/gtksavedstatuses.c:388 src/protocols/bonjour/bonjour.c:234
 #: src/protocols/bonjour/bonjour.c:241 src/protocols/gg/gg.c:1083
@@ -4409,7 +4430,7 @@ msgstr "Bruk"
 
 #: src/gtksavedstatuses.c:584
 msgid "Title already in use.  You must choose a unique title."
-msgstr ""
+msgstr "Tittel allerede i bruk. Du må velge en unik tittel."
 
 #: src/gtksavedstatuses.c:675
 #, fuzzy
@@ -4439,7 +4460,7 @@ msgstr "Status:"
 #. Custom status message expander
 #: src/gtksavedstatuses.c:852
 msgid "Use a _different status for some accounts"
-msgstr ""
+msgstr "Bruk en annen status for noen kontoer"
 
 #: src/gtksound.c:61
 msgid "Buddy logs in"
@@ -4602,7 +4623,7 @@ msgstr "Kan ikke sende fil"
 msgid ""
 "Gaim cannot transfer a folder. You will need to send the files within "
 "individually"
-msgstr ""
+msgstr "Gaim kan ikke overføre en mappe. Du må sende filene inni hver for seg"
 
 #: src/gtkutils.c:1525 src/gtkutils.c:1534 src/gtkutils.c:1539
 #, fuzzy
@@ -4613,7 +4634,8 @@ msgstr "Du har tastet inn et ugyldig brukernavn"
 msgid ""
 "You can send this image as a file transfer, embed it into this message, or "
 "use it as the buddy icon for this user."
-msgstr ""
+msgstr "Du kan sende dette bildet som filoverføring, sett det inn i denne bekjeden eller bruk det "
+"som kompis ikon for denne brukeren."
 
 #: src/gtkutils.c:1530 src/gtkutils.c:1545
 #, fuzzy
@@ -4639,13 +4661,14 @@ msgstr "Ønsker du å bli med i samtalen?"
 msgid ""
 "You can send this image as a file transfer or embed it into this message, or "
 "use it as the buddy icon for this user."
-msgstr ""
+msgstr "Du kan sende dette bildet som filoverføring, sett det inn i denne bekjeden eller bruk det "
+"som kompis ikon for denne brukeren."
 
 #: src/gtkutils.c:1542
 msgid ""
 "You can insert this image into this message, or use it as the buddy icon for "
 "this user"
-msgstr ""
+msgstr "Du kan sette inn dette bildet i beskjed eller bruke det som kompis ikon for denne brukeren"
 
 #. I don't know if we really want to do anything here.  Most of the desktop item types are crap like
 #. * "MIME Type" (I have no clue how that would be a desktop item) and "Comment"... nothing we can really
@@ -4669,7 +4692,7 @@ msgstr "<b><font color=\"red\">Loggeren har ingen lesefunksjon</font></b>"
 
 #: src/log.c:577
 msgid "Logging of this conversation failed."
-msgstr ""
+msgstr "Logging av denne samtalen feilet."
 
 #: src/log.c:839
 msgid "XML"
@@ -4806,7 +4829,7 @@ msgstr "Sende kontaktliste"
 
 #: src/protocols/gg/gg.c:137
 msgid "Your buddylist is empty, nothing was written to the file."
-msgstr ""
+msgstr "Kompislisten din er tom, ingenting ble skrevet til filen."
 
 #: src/protocols/gg/gg.c:143 src/protocols/gg/gg.c:145
 #: src/protocols/gg/gg.c:176
@@ -4841,7 +4864,7 @@ msgstr "Sende kontaktliste"
 
 #: src/protocols/gg/gg.c:254
 msgid "Fill in the registration fields."
-msgstr ""
+msgstr "Fyll inn registrerings feltene."
 
 #: src/protocols/gg/gg.c:259
 #, fuzzy
@@ -4855,7 +4878,7 @@ msgstr "Kunne ikke lage ny tilkobling."
 
 #: src/protocols/gg/gg.c:279
 msgid "New Gadu-Gadu Account Registered"
-msgstr ""
+msgstr "Ny Gadu-Gadu konto registrert"
 
 #: src/protocols/gg/gg.c:280
 #, fuzzy
@@ -4878,7 +4901,7 @@ msgstr "By"
 
 #: src/protocols/gg/gg.c:417
 msgid "Year of birth"
-msgstr ""
+msgstr "Fødselsdato"
 
 #: src/protocols/gg/gg.c:426
 #, fuzzy
@@ -4898,11 +4921,11 @@ msgstr "Skriv inn ditt nye passord"
 
 #: src/protocols/gg/gg.c:465
 msgid "Fill in the fields."
-msgstr ""
+msgstr "Fyll inn feltene."
 
 #: src/protocols/gg/gg.c:476
 msgid "Your current password is different from the one that you specified."
-msgstr ""
+msgstr "Ditt nåværende passord er forskjellig fra det du skrev."
 
 #: src/protocols/gg/gg.c:491
 #, fuzzy
@@ -5075,7 +5098,7 @@ msgstr "Registrere ny jabber-konto"
 
 #: src/protocols/gg/gg.c:1497
 msgid "Please, fill in the following fields"
-msgstr ""
+msgstr "Vennligst fyll ut de følgende felt."
 
 #: src/protocols/gg/gg.c:1515
 #, fuzzy
@@ -5099,7 +5122,7 @@ msgstr "Slett kontaktliste fra tjener"
 
 #: src/protocols/gg/gg.c:1529
 msgid "Save buddylist to file"
-msgstr ""
+msgstr "Lagre kompisliste til fil"
 
 #: src/protocols/gg/gg.c:1532
 #, fuzzy
@@ -5481,7 +5504,7 @@ msgstr "Wallops fra %s"
 
 #: src/protocols/irc/parse.c:114
 msgid "action &lt;action to perform&gt;:  Perform an action."
-msgstr ""
+msgstr "action &lt;action to perform&gt;:  Utfør noe."
 
 #: src/protocols/irc/parse.c:115
 #, fuzzy
@@ -5496,140 +5519,143 @@ msgstr ""
 msgid ""
 "deop &lt;nick1&gt; [nick2] ...:  Remove channel operator status from "
 "someone. You must be a channel operator to do this."
-msgstr ""
+msgstr "deop &lt;nick1&gt; [nick2] ...:  Fjern kanal OP status fra noen. Du må være kanal OP for å gjøre dette."
 
 #: src/protocols/irc/parse.c:117
 msgid ""
 "devoice &lt;nick1&gt; [nick2] ...:  Remove channel voice status from "
 "someone, preventing them from speaking if the channel is moderated (+m). You "
 "must be a channel operator to do this."
-msgstr ""
+msgstr "devoice &lt;nick1&gt; [nick2] ...:  Fjern kanal voice status fra noen, hindre de fra å snakke om kanalen er "
+"moderert (+m). Du må være kanal OP for å gjøre dette."
 
 #: src/protocols/irc/parse.c:118
 msgid ""
 "invite &lt;nick&gt; [room]:  Invite someone to join you in the specified "
 "channel, or the current channel."
-msgstr ""
+msgstr "invite &lt;nick&gt; [room]:  Inviter noen til å joine deg i spsifisert kanel eller den nåværende kanalen."
 
 #: src/protocols/irc/parse.c:119
 msgid ""
 "j &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more "
 "channels, optionally providing a channel key for each if needed."
-msgstr ""
+msgstr "j &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Fyll inn en eller flere kanaler, alternativt gi en nøkkel "
+"for hver om nødvendig."
 
 #: src/protocols/irc/parse.c:120
 msgid ""
 "join &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Enter one or more "
 "channels, optionally providing a channel key for each if needed."
-msgstr ""
+msgstr "join &lt;room1&gt;[,room2][,...] [key1[,key2][,...]]:  Fyll inn en eller flere kanaler, alternativt gi en nøkkel "
+"for hver om nødvendig."
 
 #: src/protocols/irc/parse.c:121
 msgid ""
 "kick &lt;nick&gt; [message]:  Remove someone from a channel. You must be a "
 "channel operator to do this."
-msgstr ""
+msgstr "kick &lt;nick&gt; [message]:  Fjern noen fra en kanal. Du må være kanal OP for å gjøre dette."
 
 #: src/protocols/irc/parse.c:122
 msgid ""
 "list:  Display a list of chat rooms on the network. <i>Warning, some servers "
 "may disconnect you upon doing this.</i>"
-msgstr ""
+msgstr "list:  Vis en liste over samtalerom på et nettverk.<i>Advarsel, noen servere kan disconnecte om du gjør dette.<i>"
 
 #: src/protocols/irc/parse.c:123
 msgid "me &lt;action to perform&gt;:  Perform an action."
-msgstr ""
+msgstr "me &lt;action to perform&gt;:  Utfør noe."
 
 #: src/protocols/irc/parse.c:124
 msgid ""
 "mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;nick|channel&gt;:  Set or unset a channel "
 "or user mode."
-msgstr ""
+msgstr "mode &lt;+|-&gt;&lt;A-Za-z&gt; &lt;nick|channel&gt;:  Sett er fjern en kanal eller bruker modus."
 
 #: src/protocols/irc/parse.c:125
 msgid ""
 "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as "
 "opposed to a channel)."
-msgstr ""
+msgstr "msg &lt;nick&gt; &lt;message&gt;:  Send en privat beskjed til en bruker."
 
 #: src/protocols/irc/parse.c:126
 msgid "names [channel]:  List the users currently in a channel."
-msgstr ""
+msgstr "names [channel]:  Vis brukere i denne kanalen."
 
 #: src/protocols/irc/parse.c:127 src/protocols/jabber/jabber.c:1555
 msgid "nick &lt;new nickname&gt;:  Change your nickname."
-msgstr ""
+msgstr "nick &lt;new nickname&gt;:  Skift nick."
 
 #: src/protocols/irc/parse.c:128
 msgid ""
 "op &lt;nick1&gt; [nick2] ...:  Grant channel operator status to someone. You "
 "must be a channel operator to do this."
-msgstr ""
+msgstr "op &lt;nick1&gt; [nick2] ...:  Tillat OP status til noen. Du må være kanal OP for å gjøre dette."
 
 #: src/protocols/irc/parse.c:129
 msgid ""
 "operwall &lt;message&gt;:  If you don't know what this is, you probably "
 "can't use it."
-msgstr ""
+msgstr "operwall &lt;message&gt;:  Om du ikke vet hva dette er, kan du sannsynligvis ikke bruke dette."
 
 #: src/protocols/irc/parse.c:130
 msgid ""
 "part [room] [message]:  Leave the current channel, or a specified channel, "
 "with an optional message."
-msgstr ""
+msgstr "part [room] [message]:  Forlat nåværende kanal eller en spesifisert kanal med en beskjed."
 
 #: src/protocols/irc/parse.c:131
 msgid ""
 "ping [nick]:  Asks how much lag a user (or the server if no user specified) "
 "has."
-msgstr ""
+msgstr "ping [nick]:  Send ping til en bruker."
 
 #: src/protocols/irc/parse.c:132
 msgid ""
 "query &lt;nick&gt; &lt;message&gt;:  Send a private message to a user (as "
 "opposed to a channel)."
-msgstr ""
+msgstr "query &lt;nick&gt; &lt;message&gt;:  Send en privat beskjed til en bruker (vises ikke i kanal)."
 
 #: src/protocols/irc/parse.c:133
 msgid "quit [message]:  Disconnect from the server, with an optional message."
-msgstr ""
+msgstr "quit [message]:  Disconnect fra server, med evt. beskjed."
 
 #: src/protocols/irc/parse.c:134
 msgid "quote [...]:  Send a raw command to the server."
-msgstr ""
+msgstr "quote [...]:  Send en rå kommando til serveren."
 
 #: src/protocols/irc/parse.c:135
 msgid ""
 "remove &lt;nick&gt; [message]:  Remove someone from a room. You must be a "
 "channel operator to do this."
-msgstr ""
+msgstr "remove &lt;nick&gt; [message]:  Fjern noen fra et rom. Du må være kanal OP for å gjøre dette."
 
 #: src/protocols/irc/parse.c:136
 msgid "time: Displays the current local time at the IRC server."
-msgstr ""
+msgstr "time: Vis nåværende lokaltid på IRC serveren."
 
 #: src/protocols/irc/parse.c:137
 msgid "topic [new topic]:  View or change the channel topic."
-msgstr ""
+msgstr "topic [new topic]:  Vis eller forandre topic på kanalen."
 
 #: src/protocols/irc/parse.c:138
 msgid "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Set or unset a user mode."
-msgstr ""
+msgstr "umode &lt;+|-&gt;&lt;A-Za-z&gt;:  Sett eller fjern en bruker modus."
 
 #: src/protocols/irc/parse.c:139
 msgid ""
 "voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You "
 "must be a channel operator to do this."
-msgstr ""
+msgstr "voice &lt;nick1&gt; [nick2] ...:  Gi voice til noen. Du må være kanal OP for å gjøre dette."
 
 #: src/protocols/irc/parse.c:140
 msgid ""
 "wallops &lt;message&gt;:  If you don't know what this is, you probably can't "
 "use it."
-msgstr ""
+msgstr "wallops &lt;message&gt;:  Om du ikke vet hva dette er, kan du sannsynligvis ikke bruke det."
 
 #: src/protocols/irc/parse.c:141
 msgid "whois [server] &lt;nick&gt;:  Get information on a user."
-msgstr ""
+msgstr "whois [server] &lt;nick&gt;:  Hent informasjon om en bruker."
 
 #: src/protocols/irc/parse.c:422
 #, c-format
@@ -5852,11 +5878,11 @@ msgstr "Ikke forstyrr"
 
 #: src/protocols/jabber/buddy.c:1235
 msgid "The following are the results of your search"
-msgstr ""
+msgstr "Følgende resultat fra ditt søk"
 
 #: src/protocols/jabber/buddy.c:1327
 msgid "Fill in one or more fields to search for any matching Jabber users."
-msgstr ""
+msgstr "Fyll inn ett eller flere felt for å søke etter matchende Jabber brukere."
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
 #: src/protocols/oscar/oscar.c:5962 src/protocols/silc/ops.c:810
@@ -6439,7 +6465,7 @@ msgstr "Bruk TLS hvis tilgjengelig"
 
 #: src/protocols/jabber/jabber.c:1719
 msgid "Require TLS"
-msgstr ""
+msgstr "Krev TLS"
 
 #: src/protocols/jabber/jabber.c:1722
 #, fuzzy
@@ -6789,7 +6815,7 @@ msgstr "Passport-konto er ikke blitt verifisert enda"
 
 #: src/protocols/msn/error.c:220
 msgid "Bad ticket"
-msgstr ""
+msgstr "Bad ticket"
 
 #: src/protocols/msn/error.c:224
 #, c-format
@@ -6803,7 +6829,7 @@ msgstr "MSN Feil: %s\n"
 
 #: src/protocols/msn/msn.c:113
 msgid "You have just sent a Nudge!"
-msgstr ""
+msgstr "Du har sent en Nudge!"
 
 #: src/protocols/msn/msn.c:138
 msgid "Your new MSN friendly name is too long."
@@ -6850,7 +6876,7 @@ msgstr "Forby"
 
 #: src/protocols/msn/msn.c:328
 msgid "This Hotmail account may not be active."
-msgstr ""
+msgstr "Det kan hende denne Hotmail kontoen ikke er aktiv."
 
 #: src/protocols/msn/msn.c:354
 msgid "Send a mobile message."
@@ -6922,7 +6948,7 @@ msgstr "Tillate/forby tekstmeldinger"
 
 #: src/protocols/msn/msn.c:647
 msgid "Open Hotmail Inbox"
-msgstr ""
+msgstr "Åpne Hotmail Inbox"
 
 #: src/protocols/msn/msn.c:671
 msgid "Send to Mobile"
@@ -7067,7 +7093,7 @@ msgstr "Bruk HTTP-metode"
 
 #: src/protocols/msn/msn.c:1980
 msgid "nudge: nudge a contact to get their attention"
-msgstr ""
+msgstr "nudge: nudge en kontakt for å få deres oppmerksomhet"
 
 #: src/protocols/msn/nexus.c:103 src/protocols/msn/servconn.c:127
 #: src/protocols/yahoo/yahoochat.c:1326
@@ -7210,7 +7236,7 @@ msgstr ""
 
 #: src/protocols/msn/session.c:363 src/protocols/msn/session.c:365
 msgid "Handshaking"
-msgstr ""
+msgstr "Håndtrykk"
 
 #: src/protocols/msn/session.c:364
 msgid "Transferring"
@@ -7281,7 +7307,7 @@ msgstr "Brukeren %s ønsker å legge til %s i kontaktlisten sin."
 #: src/protocols/msn/userlist.c:339
 #, c-format
 msgid "%s has removed you from his or her contact list."
-msgstr ""
+msgstr "%s har fjernet deg fra sin kontaktliste."
 
 #: src/protocols/msn/userlist.c:659
 #, fuzzy, c-format
@@ -7914,11 +7940,11 @@ msgstr "Videosamtale"
 
 #: src/protocols/oscar/oscar.c:675
 msgid "iChat AV"
-msgstr ""
+msgstr "iChat AV"
 
 #: src/protocols/oscar/oscar.c:678
 msgid "Live Video"
-msgstr ""
+msgstr "Live Video"
 
 #: src/protocols/oscar/oscar.c:681
 msgid "Camera"
@@ -8058,7 +8084,8 @@ msgid ""
 "Transfer of file %s timed out.\n"
 " Try enabling proxy servers for file transfers in Tools->Preferences->AIM/"
 "ICQ."
-msgstr ""
+msgstr "Overføring av filen %s timet ut.\n"
+" Forsøk å slå på proxy servere for filoverføringer i Verktøy->Innstillinger->AIM/ICQ."
 
 #: src/protocols/oscar/oscar.c:2206 src/protocols/yahoo/yahoo_filexfer.c:174
 #: src/protocols/yahoo/yahoo_filexfer.c:183
@@ -8939,7 +8966,7 @@ msgstr "Lar deg manuelt sette hvor lenge du har vært borte."
 
 #: src/protocols/oscar/oscar.c:8362
 msgid "Use AIM/ICQ proxy server (Slower/More Secure/Usually Works)"
-msgstr ""
+msgstr "Bruk AIM/ICQ proxy server (Saktere/Mer sikkert/Fungerer vanligvis)"
 
 #. *< type
 #. *< ui_requirement
@@ -9020,7 +9047,8 @@ msgstr "Aktiv"
 msgid ""
 "Could not add the buddy %s because every simple user has to start with "
 "'sip:'."
-msgstr ""
+msgstr "Kunne ikke tilføye kompis %s fordi hver enkel bruker må starte med "
+"'sip:'."
 
 #: src/protocols/simple/simple.c:1209
 #, fuzzy
@@ -9054,11 +9082,11 @@ msgstr "SILC-protokolltillegg"
 #. *  description
 #: src/protocols/simple/simple.c:1410
 msgid "Thomas Butter <butter@uni-mannheim.de>"
-msgstr ""
+msgstr "Thomas Butter <butter@uni-mannheim.de>"
 
 #: src/protocols/simple/simple.c:1431
 msgid "Publish Status (note: everyone may watch you)"
-msgstr ""
+msgstr "Publiser status (NB: alle kan se deg)"
 
 #: src/protocols/simple/simple.c:1434
 #, fuzzy
@@ -10122,123 +10150,123 @@ msgstr "Ukjent kommando: %s, er kansje en lus i Gaim."
 
 #: src/protocols/silc/silc.c:1329
 msgid "part [channel]:  Leave the chat"
-msgstr ""
+msgstr "part [channel]:  Forlat samtalen"
 
 #: src/protocols/silc/silc.c:1333
 msgid "leave [channel]:  Leave the chat"
-msgstr ""
+msgstr "leave [channel]:  Forlat samtalen"
 
 #: src/protocols/silc/silc.c:1337
 msgid "topic [&lt;new topic&gt;]:  View or change the topic"
-msgstr ""
+msgstr "topic [&lt;new topic&gt;]:  Vis eller forandre topic"
 
 #: src/protocols/silc/silc.c:1342
 msgid "join &lt;channel&gt; [&lt;password&gt;]:  Join a chat on this network"
-msgstr ""
+msgstr "join &lt;channel&gt; [&lt;password&gt;]:  Join en samtale på dette nettverket"
 
 #: src/protocols/silc/silc.c:1346
 msgid "list:  List channels on this network"
-msgstr ""
+msgstr "list:  Vis kanaler på dette nettverket"
 
 #: src/protocols/silc/silc.c:1350
 msgid "whois &lt;nick&gt;:  View nick's information"
-msgstr ""
+msgstr "whois &lt;nick&gt;:  Vis nick'ets info"
 
 #: src/protocols/silc/silc.c:1354 src/protocols/zephyr/zephyr.c:2597
 msgid "msg &lt;nick&gt; &lt;message&gt;:  Send a private message to a user"
-msgstr ""
+msgstr "msg &lt;nick&gt; &lt;message&gt;:  Send en privat beskjed til en bruker"
 
 #: src/protocols/silc/silc.c:1358
 msgid "query &lt;nick&gt; [&lt;message&gt;]:  Send a private message to a user"
-msgstr ""
+msgstr "query &lt;nick&gt; [&lt;message&gt;]:  Send en privat beskjed til en bruker"
 
 #: src/protocols/silc/silc.c:1362
 msgid "motd:  View the server's Message Of The Day"
-msgstr ""
+msgstr "motd:  Vis serverens Message Of The Day"
 
 #: src/protocols/silc/silc.c:1366
 msgid "detach:  Detach this session"
-msgstr ""
+msgstr "detach:  Fraløs denne sesjonen"
 
 #: src/protocols/silc/silc.c:1370
 msgid "quit [message]:  Disconnect from the server, with an optional message"
-msgstr ""
+msgstr "quit [message]:  Disconnect fra serveren, med en evt. beskjed"
 
 #: src/protocols/silc/silc.c:1374
 msgid "call &lt;command&gt;:  Call any silc client command"
-msgstr ""
+msgstr "call &lt;command&gt;:  Kall hvilken som helst silc klient kommando"
 
 #: src/protocols/silc/silc.c:1380
 msgid "kill &lt;nick&gt; [-pubkey|&lt;reason&gt;]:  Kill nick"
-msgstr ""
+msgstr "kill &lt;nick&gt; [-pubkey|&lt;reason&gt;]:  Drep nick"
 
 #: src/protocols/silc/silc.c:1384
 msgid "nick &lt;newnick&gt;:  Change your nickname"
-msgstr ""
+msgstr "nick &lt;newnick&gt;:  Forandre nick'et ditt"
 
 #: src/protocols/silc/silc.c:1388
 msgid "whowas &lt;nick&gt;:  View nick's information"
-msgstr ""
+msgstr "whowas &lt;nick&gt;:  Vis nick info"
 
 #: src/protocols/silc/silc.c:1392
 msgid ""
 "cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Change or display "
 "channel modes"
-msgstr ""
+msgstr "cmode &lt;channel&gt; [+|-&lt;modes&gt;] [arguments]:  Forandre eller vis kanal modus"
 
 #: src/protocols/silc/silc.c:1396
 msgid ""
 "cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Change nick's modes "
 "on channel"
-msgstr ""
+msgstr "cumode &lt;channel&gt; +|-&lt;modes&gt; &lt;nick&gt;:  Forandre nick modus på kanal"
 
 #: src/protocols/silc/silc.c:1400
 msgid "umode &lt;usermodes&gt;:  Set your modes in the network"
-msgstr ""
+msgstr "umode &lt;usermodes&gt;:  Sett modusene dine i nettverket"
 
 #: src/protocols/silc/silc.c:1404
 msgid "oper &lt;nick&gt; [-pubkey]:  Get server operator privileges"
-msgstr ""
+msgstr "oper &lt;nick&gt; [-pubkey]:  Få server OP rettigheter"
 
 #: src/protocols/silc/silc.c:1408
 msgid ""
 "invite &lt;channel&gt; [-|+]&lt;nick&gt;:  invite nick or add/remove from "
 "channel invite list"
-msgstr ""
+msgstr "invite &lt;channel&gt; [-|+]&lt;nick&gt;:  inviter nick eller legg til/fjern fra kanalens invitasjonsliste"
 
 #: src/protocols/silc/silc.c:1412
 msgid "kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick client from channel"
-msgstr ""
+msgstr "kick &lt;channel&gt; &lt;nick&gt; [comment]:  Kick klient fra kanal"
 
 #: src/protocols/silc/silc.c:1416
 msgid "info [server]:  View server administrative details"
-msgstr ""
+msgstr "info [server]:  Vis serverens administrative detaljer"
 
 #: src/protocols/silc/silc.c:1420
 msgid "ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Ban client from channel"
-msgstr ""
+msgstr "ban [&lt;channel&gt; +|-&lt;nick&gt;]:  Bannlys klient fra kanal"
 
 #: src/protocols/silc/silc.c:1424
 msgid "getkey &lt;nick|server&gt;:  Retrieve client's or server's public key"
-msgstr ""
+msgstr "getkey &lt;nick|server&gt;:  Få klientens eller serverens offentlige nøkkel"
 
 #: src/protocols/silc/silc.c:1428
 msgid "stats:  View server and network statistics"
-msgstr ""
+msgstr "stats:  Vis server og nettverk statistikk"
 
 #: src/protocols/silc/silc.c:1432
 msgid "ping:  Send PING to the connected server"
-msgstr ""
+msgstr "ping:  Send PING til tilkoblet server"
 
 #: src/protocols/silc/silc.c:1437
 msgid "users &lt;channel&gt;:  List users in channel"
-msgstr ""
+msgstr "users &lt;channel&gt;:  Vis brukere i kanal"
 
 #: src/protocols/silc/silc.c:1441
 msgid ""
 "names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt;:  List "
 "specific users in channel(s)"
-msgstr ""
+msgstr "names [-count|-ops|-halfops|-voices|-normal] &lt;channel(s)&gt;:  Vis spesifiserte brukere i kanalen/kanlaene"
 
 #: src/protocols/silc/silc.c:1453
 msgid "Instant Messages"
@@ -10280,7 +10308,7 @@ msgstr "SILC-protokolltillegg"
 #. *  description
 #: src/protocols/silc/silc.c:1566
 msgid "Secure Internet Live Conferencing (SILC) Protocol"
-msgstr ""
+msgstr "Secure Internet Live Conferencing (SILC) Protokoll"
 
 #: src/protocols/silc/silc.c:1600
 #, fuzzy
@@ -10386,7 +10414,7 @@ msgstr "Informasjon om offentlig nøkkel"
 
 #: src/protocols/silc/util.c:515
 msgid "Paging"
-msgstr ""
+msgstr "Paging"
 
 #: src/protocols/silc/util.c:539
 msgid "Computer"
@@ -10636,7 +10664,7 @@ msgstr "Din Yahoo!-beskjed ble ikke sendt."
 
 #: src/protocols/yahoo/yahoo.c:752 src/protocols/yahoo/yahoo.c:3499
 msgid "Buzz!!"
-msgstr ""
+msgstr "Buzz!!"
 
 #: src/protocols/yahoo/yahoo.c:797
 #, c-format
@@ -10816,11 +10844,11 @@ msgstr "Start konferanse"
 
 #: src/protocols/yahoo/yahoo.c:2926
 msgid "Stealth Settings"
-msgstr ""
+msgstr "Skjulte Innstillinger"
 
 #: src/protocols/yahoo/yahoo.c:2932
 msgid "Start Doodling"
-msgstr ""
+msgstr "Start kruseduller"
 
 #: src/protocols/yahoo/yahoo.c:2963
 msgid "Active which ID?"
@@ -10846,11 +10874,11 @@ msgstr ""
 
 #: src/protocols/yahoo/yahoo.c:3545
 msgid "buzz: Buzz a contact to get their attention"
-msgstr ""
+msgstr "buzz: Buzz en kontakt for å få deres oppmerksomhet"
 
 #: src/protocols/yahoo/yahoo.c:3550
 msgid "doodle: Request user to start a Doodle session"
-msgstr ""
+msgstr "doodle: Forespør en bruker om å starte en Doodle session"
 
 #. *< type
 #. *< ui_requirement
@@ -11118,27 +11146,27 @@ msgstr "Forsøk på å abonnere på %s, %s, %s lyktes ikke"
 
 #: src/protocols/zephyr/zephyr.c:2602
 msgid "zlocate &lt;nick&gt;: Locate user"
-msgstr ""
+msgstr "zlocate &lt;nick&gt;: Finn bruker"
 
 #: src/protocols/zephyr/zephyr.c:2607
 msgid "zl &lt;nick&gt;: Locate user"
-msgstr ""
+msgstr "zl &lt;nick&gt;: Finn bruker"
 
 #: src/protocols/zephyr/zephyr.c:2612
 msgid "instance &lt;instance&gt;: Set the instance to be used on this class"
-msgstr ""
+msgstr "instance &lt;instance&gt;: Sett hendelse som skal brukes for denne klassen"
 
 #: src/protocols/zephyr/zephyr.c:2617
 msgid "inst &lt;instance&gt;: Set the instance to be used on this class"
-msgstr ""
+msgstr "inst &lt;instance&gt;: Sett hendelse som skal brukes for denne klassen"
 
 #: src/protocols/zephyr/zephyr.c:2622
 msgid "topic &lt;instance&gt;: Set the instance to be used on this class"
-msgstr ""
+msgstr "topic &lt;instance&gt;: Sett hendelse som skal brukes for denne klassen"
 
 #: src/protocols/zephyr/zephyr.c:2628
 msgid "sub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join a new chat"
-msgstr ""
+msgstr "ub &lt;class&gt; &lt;instance&gt; &lt;recipient&gt;: Join en ny samtale"
 
 #: src/protocols/zephyr/zephyr.c:2633
 msgid ""
