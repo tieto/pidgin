@@ -16,6 +16,7 @@ static guint signals[SIGS] = { 0 };
 
 static GntWidgetClass *parent_class = NULL;
 
+static gboolean gnt_entry_key_pressed(GntWidget *widget, const char *text);
 static void gnt_entry_set_text_internal(GntEntry *entry, const char *text);
 
 static void
@@ -321,7 +322,15 @@ clipboard_paste(GntBindable *bind, GList *n)
 static gboolean
 suggest_show(GntBindable *bind, GList *null)
 {
-	return show_suggest_dropdown(GNT_ENTRY(bind));
+	GntEntry *entry = GNT_ENTRY(bind);
+	if (entry->ddown) {
+		if (g_list_length(GNT_TREE(entry->ddown)->list) == 1)
+			gnt_entry_key_pressed(GNT_WIDGET(entry), "\r");
+		else
+			gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-down");
+		return TRUE;
+	}
+	return show_suggest_dropdown(entry);
 }
 
 static gboolean
