@@ -246,6 +246,7 @@ read_window_positions(GntWM *wm)
 	}
 
 	g_free(filename);
+	g_key_file_free(gfile);
 #endif
 }
 

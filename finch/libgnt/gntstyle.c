@@ -218,9 +218,8 @@ read_general_style(GKeyFile *kfile)
 	{
 		for (i = 0; styles[i].style; i++)
 		{
-			error = NULL;
 			str_styles[styles[i].en] =
-					g_key_file_get_string(kfile, "general", styles[i].style, &error);
+					g_key_file_get_string(kfile, "general", styles[i].style, NULL);
 		}
 	}
 	g_strfreev(keys);

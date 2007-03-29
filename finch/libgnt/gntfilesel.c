@@ -464,7 +464,7 @@ char *gnt_file_sel_get_selected_file(GntFileSel *sel)
 {
 	char *ret;
 	if (sel->dirsonly) {
-		ret = g_strdup(g_path_get_dirname(gnt_entry_get_text(GNT_ENTRY(sel->location))));
+		ret = g_path_get_dirname(gnt_entry_get_text(GNT_ENTRY(sel->location)));
 	} else {
 		ret = g_strdup(gnt_entry_get_text(GNT_ENTRY(sel->location)));
 	}

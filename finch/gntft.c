@@ -392,8 +392,6 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	elapsed = (xfer->start_time > 0 ? now - xfer->start_time : 0);
 	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 
-	kbsec = g_strdup_printf(_("%.2f KB/s"), kbps);
-
 	g_return_if_fail(xfer_dialog != NULL);
 	g_return_if_fail(xfer != NULL);
 
@@ -413,6 +411,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 
 	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
 	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
+	kbsec = g_strdup_printf(_("%.2f KB/s"), kbps);
 
 	gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_PROGRESS,
 			g_ascii_dtostr(prog_str, sizeof(prog_str), purple_xfer_get_progress(xfer) * 100.));
@@ -421,6 +420,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 	gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_SPEED, kbsec);
 	g_free(size_str);
 	g_free(remaining_str);
+	g_free(kbsec);
 	if (purple_xfer_is_completed(xfer)) {
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_STATUS, _("Finished"));
 		gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_REMAINING, _("Finished"));
