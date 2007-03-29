@@ -1473,6 +1473,8 @@ void gnt_tree_adjust_columns(GntTree *tree)
 		for (i = 0, iter = row->columns; iter; iter = iter->next, i++) {
 			GntTreeCol *col = iter->data;
 			int w = gnt_util_onscreen_width(col->text, NULL);
+			if (i == 0 && row->choice)
+				w += 4;
 			if (widths[i] < w)
 				widths[i] = w;
 		}
