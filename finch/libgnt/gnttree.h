@@ -48,6 +48,7 @@ struct _GntTree
 	{
 		int width;
 		char *title;
+		gboolean invisible;
 	} *columns;             /* Would a GList be better? */
 	gboolean show_title;
 	gboolean show_separator; /* Whether to show column separators */
@@ -139,6 +140,10 @@ void gnt_tree_sort_row(GntTree *tree, void *row);
 void gnt_tree_adjust_columns(GntTree *tree);
 
 void gnt_tree_set_hash_fns(GntTree *tree, gpointer hash, gpointer eq, gpointer kd);
+
+/* This can be useful when, for example, we want to store some data
+ * which we don't want/need to display. */
+void gnt_tree_set_column_visible(GntTree *tree, int col, gboolean vis);
 
 G_END_DECLS
 

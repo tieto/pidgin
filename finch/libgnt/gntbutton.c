@@ -87,8 +87,6 @@ gnt_button_init(GTypeInstance *instance, gpointer class)
 	GntButton *button = GNT_BUTTON(instance);
 	button->priv = g_new0(GntButtonPriv, 1);
 
-	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_GROW_X);
-
 	widget->priv.minw = 4;
 	widget->priv.minh = 3;
 	GNTDEBUG;
