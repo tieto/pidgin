@@ -223,6 +223,10 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 	GList *iter;
 	int i;
 	gboolean notfirst = FALSE;
+	int lastvisible = tree->ncol;
+
+	while (lastvisible && tree->columns[lastvisible].invisible)
+		lastvisible--;
 
 	for (i = 0, iter = row->columns; i < tree->ncol && iter; i++, iter = iter->next)
 	{
@@ -231,9 +235,15 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 		int len = gnt_util_onscreen_width(col->text, NULL);
 		int fl = 0;
 		gboolean cut = FALSE;
+		int width;
 
 		if (tree->columns[i].invisible)
 			continue;
+
+		if (i == lastvisible)
+			width = GNT_WIDGET(tree)->priv.width - gnt_util_onscreen_width(string->str, NULL);
+		else
+			width = tree->columns[i].width;
 
 		if (i == 0)
 		{
@@ -269,8 +279,8 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 
 		notfirst = TRUE;
 
-		if (len > tree->columns[i].width) {
-			len = tree->columns[i].width - 1;
+		if (len > width) {
+			len = width - 1;
 			cut = TRUE;
 		}
 		text = gnt_util_onscreen_width_to_pointer(col->text, len - fl, NULL);
@@ -284,7 +294,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 		}
 
 		if (len < tree->columns[i].width && iter->next)
-			g_string_append_printf(string, "%*s", tree->columns[i].width - len, "");
+			g_string_append_printf(string, "%*s", width - len, "");
 	}
 	return g_string_free(string, FALSE);
 }
