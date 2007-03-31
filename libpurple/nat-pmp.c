@@ -33,23 +33,25 @@
 #include "signals.h"
 #include "network.h"
 
+#include <sys/types.h>
+#ifndef _WIN32
 #include <arpa/inet.h>
 #include <netinet/in.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <sys/sysctl.h>
 
+#include <net/if.h>
 #include <net/route.h>
 
 #include <netdb.h>
+#include <err.h>
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <err.h>
 
 #include <errno.h>
-#include <sys/types.h>
-#include <net/if.h>
 
 #ifdef NET_RT_DUMP
 

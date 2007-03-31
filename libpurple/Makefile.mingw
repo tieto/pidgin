@@ -48,6 +48,7 @@ C_SRC =	\
 			imgstore.c \
 			log.c \
 			mime.c \
+			nat-pmp.c \
 			network.c \
 			notify.c \
 			ntlm.c \

@@ -72,5 +72,6 @@ gboolean purple_pmp_create_map(PurplePmpType type, unsigned short privateport, u
  * @returns TRUE if succesful; FALSE if unsuccessful
  */
 gboolean purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport);
-	
+
 #endif
+
