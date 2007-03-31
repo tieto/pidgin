@@ -416,6 +416,7 @@ version 2.0.0:
 	* "gtkblist-hiding"
 	* "gtkblist-unhiding"
 	* "log-displaying"
+	* "network-configuration-changed"
 	* "savedstatus-changed"
 	* "sendto-extended-menu"
 	* "uri-handler"

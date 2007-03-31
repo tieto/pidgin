@@ -42,16 +42,11 @@
 
 #include "debug.h"
 #include "account.h"
+#include "nat-pmp.h"
 #include "network.h"
 #include "prefs.h"
 #include "stun.h"
 #include "upnp.h"
-
-/* #define ENABLE_NAT_PMP 1 */
-
-#ifdef ENABLE_NAT_PMP
-#include "nat-pmp.h"
-#endif
 
 /*
  * Calling sizeof(struct ifreq) isn't always correct on
@@ -198,12 +193,10 @@ purple_network_get_my_ip(int fd)
 	if (ip != NULL)
 	  return ip;
 
-#ifdef ENABLE_NAT_PMP
 	/* Attempt to get the IP from a NAT device using NAT-PMP */
 	ip = purple_pmp_get_public_ip();
 	if (ip != NULL)
 		return ip;
-#endif
 
 	/* Just fetch the IP of the local system */
 	return purple_network_get_local_system_ip(fd);
@@ -250,7 +243,6 @@ purple_network_set_upnp_port_mapping_cb(gboolean success, gpointer data)
 	purple_network_listen_cancel(listen_data);
 }
 
-#ifdef ENABLE_NAT_PMP
 static gboolean
 purple_network_finish_pmp_map_cb(gpointer data)
 {
@@ -265,7 +257,6 @@ purple_network_finish_pmp_map_cb(gpointer data)
 
 	return FALSE;
 }
-#endif
 
 static PurpleNetworkListenData *
 purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkListenCallback cb, gpointer cb_data)
@@ -361,7 +352,6 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 	listen_data->cb = cb;
 	listen_data->cb_data = cb_data;
 
-#ifdef ENABLE_NAT_PMP
 	/* Attempt a NAT-PMP Mapping, which will return immediately */
 	if (purple_pmp_create_map(((socket_type == SOCK_STREAM) ? PURPLE_PMP_TYPE_TCP : PURPLE_PMP_TYPE_UDP),
 							  actual_port, actual_port, PURPLE_PMP_LIFETIME))
@@ -371,7 +361,6 @@ purple_network_do_listen(unsigned short port, int socket_type, PurpleNetworkList
 		purple_timeout_add(0, purple_network_finish_pmp_map_cb, listen_data);
 	}
 	else
-#endif
 	{
 		/* Attempt a UPnP Mapping */
 		listen_data->mapping_data = purple_upnp_set_port_mapping(
@@ -508,6 +497,8 @@ static gboolean wpurple_network_change_thread_cb(gpointer data)
 
 	purple_debug_info("network", "Received Network Change Notification. Current network count is %d, previous count was %d.\n", new_count, current_network_count);
 
+	purple_signal_emit(purple_network_get_handle(), "network-configuration-changed", NULL);
+
 	if (new_count > 0 && ui_ops != NULL && ui_ops->network_connected != NULL) {
 		ui_ops->network_connected();
 	} else if (new_count == 0 && current_network_count > 0 &&
@@ -616,6 +607,8 @@ nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
 	current = libnm_glib_get_network_state(ctx);
 	purple_debug_info("network","Entering nm_callback_func!\n");
 
+	purple_signal_emit(purple_network_get_handle(), "network-configuration-changed", NULL);
+
 	switch(current)
 	{
 	case LIBNM_ACTIVE_NETWORK_CONNECTION:
@@ -640,6 +633,14 @@ nm_callback_func(libnm_glib_ctx* ctx, gpointer user_data)
 	}
 }
 #endif
+
+void *
+purple_network_get_handle(void)
+{
+	static int handle;
+	
+	return &handle;
+}
 
 void
 purple_network_init(void)
@@ -673,6 +674,12 @@ purple_network_init(void)
 	if(nm_context)
 		nm_callback_idx = libnm_glib_register_callback(nm_context, nm_callback_func, NULL, g_main_context_default());
 #endif
+
+	purple_signal_register(purple_network_get_handle(), "network-configuration-changed",
+						   purple_marshal_VOID, NULL, 0);
+	
+	purple_pmp_init();
+	purple_upnp_init();
 }
 
 void

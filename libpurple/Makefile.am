@@ -49,6 +49,7 @@ purple_coresources = \
 	imgstore.c \
 	log.c \
 	mime.c \
+	nat-pmp.c \
 	network.c \
 	ntlm.c \
 	notify.c \
@@ -99,6 +100,7 @@ purple_coreheaders = \
 	imgstore.h \
 	log.h \
 	mime.h \
+	nat-pmp.h \
 	network.h \
 	notify.h \
 	ntlm.h \

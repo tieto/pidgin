@@ -197,6 +197,13 @@ unsigned short purple_network_get_port_from_fd(int fd);
 gboolean purple_network_is_available(void);
 
 /**
+ * Get the handle for the network system
+ *
+ * @return the handle to the network system
+ */
+void *purple_network_get_handle(void);
+
+/**
  * Initializes the network subsystem.
  */
 void purple_network_init(void);

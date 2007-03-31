@@ -36,27 +36,20 @@
 
 #define PURPLE_PMP_LIFETIME	3600	/* 3600 seconds */
 
-/*
- *	uint8_t:	version, opcodes
- *	uint16_t:	resultcode
- *	unint32_t:	epoch (seconds since mappings reset)
- */
-
 typedef enum {
 	PURPLE_PMP_TYPE_UDP,
 	PURPLE_PMP_TYPE_TCP
 } PurplePmpType;
 
 /**
+ * Initialize nat-pmp
+ */
+void purple_pmp_init(void);
+
+/**
  *
  */
-
-/*
- * TODO: This should probably cache the result of this lookup requests
- *       so that subsequent calls to this function do not require a
- *       round-trip exchange with the local router.
- */
-char *purple_pmp_get_public_ip();
+char *purple_pmp_get_public_ip(void);
 
 /**
  * Remove the NAT-PMP mapping for a specified type on a specified port

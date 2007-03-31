@@ -30,6 +30,8 @@
 
 #include "nat-pmp.h"
 #include "debug.h"
+#include "signals.h"
+#include "network.h"
 
 #include <arpa/inet.h>
 #include <netinet/in.h>
@@ -86,6 +88,20 @@ struct _PurplePmpMapResponse {
 };
 
 typedef struct _PurplePmpMapResponse PurplePmpMapResponse;
+
+typedef enum {
+	PURPLE_PMP_STATUS_UNDISCOVERED = -1,
+	PURPLE_PMP_STATUS_UNABLE_TO_DISCOVER,
+	PURPLE_PMP_STATUS_DISCOVERING,
+	PURPLE_PMP_STATUS_DISCOVERED
+} PurpleUPnPStatus;
+
+typedef struct {
+	PurpleUPnPStatus status;
+	gchar *publicip;
+} PurplePmpInfo;
+
+static PurplePmpInfo pmp_info = {PURPLE_PMP_STATUS_UNDISCOVERED, NULL};
 
 /*
  *	Thanks to R. Matthew Emerson for the fixes on this
@@ -240,23 +256,38 @@ default_gw()
 char *
 purple_pmp_get_public_ip()
 {
-	struct sockaddr_in *gateway = default_gw();
+	struct sockaddr_in addr, *gateway, *publicsockaddr = NULL;
+	struct timeval req_timeout;
+	socklen_t len;
+
+	PurplePmpIpRequest req;
+	PurplePmpIpResponse resp;
+	int sendfd;
+	
+	if (pmp_info.status == PURPLE_PMP_STATUS_UNABLE_TO_DISCOVER)
+		return NULL;
+	
+	if ((pmp_info.status == PURPLE_PMP_STATUS_DISCOVERED) && (pmp_info.publicip != NULL))
+	{
+#ifdef PMP_DEBUG
+		purple_debug_info("nat-pmp", "Returning cached publicip %s",pmp_info.publicip);
+#endif
+		return pmp_info.publicip;
+	}
+
+	gateway = default_gw();
 
 	if (!gateway)
 	{
 		purple_debug_info("nat-pmp", "Cannot request public IP from a NULL gateway!\n");
+		/* If we get a NULL gateway, don't try again next time */
+		pmp_info.status = PURPLE_PMP_STATUS_UNABLE_TO_DISCOVER;
 		return NULL;
 	}
 
 	/* Default port for NAT-PMP is 5351 */
 	if (gateway->sin_port != PMP_PORT)
 		gateway->sin_port = htons(PMP_PORT);
-
-	int sendfd;
-	struct timeval req_timeout;
-	PurplePmpIpRequest req;
-	PurplePmpIpResponse resp;
-	struct sockaddr_in *publicsockaddr = NULL;
 
 	req_timeout.tv_sec = 0;
 	req_timeout.tv_usec = PMP_TIMEOUT;
@@ -274,20 +305,19 @@ purple_pmp_get_public_ip()
 	 * With the recommended timeout of 0.25 seconds, we're talking 511.5 seconds (8.5 minutes).
 	 * 
 	 * This seems really silly... if this were nonblocking, a couple retries might be in order, but it's not at present.
-	 * XXX Make this nonblocking.
 	 */
 #ifdef PMP_DEBUG
 	purple_debug_info("nat-pmp", "Attempting to retrieve the public ip address for the NAT device at: %s\n", inet_ntoa(gateway->sin_addr));
 	purple_debug_info("nat-pmp", "\tTimeout: %ds %dus\n", req_timeout.tv_sec, req_timeout.tv_usec);
 #endif
-	struct sockaddr_in addr;
-	socklen_t len = sizeof(struct sockaddr_in);
 
 	/* TODO: Non-blocking! */
+	
 	if (sendto(sendfd, &req, sizeof(req), 0, (struct sockaddr *)(gateway), sizeof(struct sockaddr)) < 0)
 	{
 		purple_debug_info("nat-pmp", "There was an error sending the NAT-PMP public IP request! (%s)\n", strerror(errno));
 		g_free(gateway);
+		pmp_info.status = PURPLE_PMP_STATUS_UNABLE_TO_DISCOVER;
 		return NULL;
 	}
 
@@ -295,16 +325,19 @@ purple_pmp_get_public_ip()
 	{
 		purple_debug_info("nat-pmp", "There was an error setting the socket's options! (%s)\n", strerror(errno));
 		g_free(gateway);
+		pmp_info.status = PURPLE_PMP_STATUS_UNABLE_TO_DISCOVER;
 		return NULL;
 	}		
 
 	/* TODO: Non-blocking! */
+	len = sizeof(struct sockaddr_in);
 	if (recvfrom(sendfd, &resp, sizeof(PurplePmpIpResponse), 0, (struct sockaddr *)(&addr), &len) < 0)
 	{			
 		if (errno != EAGAIN)
 		{
 			purple_debug_info("nat-pmp", "There was an error receiving the response from the NAT-PMP device! (%s)\n", strerror(errno));
 			g_free(gateway);
+			pmp_info.status = PURPLE_PMP_STATUS_UNABLE_TO_DISCOVER;
 			return NULL;
 		}
 	}
@@ -315,11 +348,15 @@ purple_pmp_get_public_ip()
 	{
 		purple_debug_info("nat-pmp", "Response was not received from our gateway! Instead from: %s\n", inet_ntoa(addr.sin_addr));
 		g_free(gateway);
+
+		pmp_info.status = PURPLE_PMP_STATUS_UNABLE_TO_DISCOVER;
 		return NULL;
 	}
 
 	if (!publicsockaddr) {
 		g_free(gateway);
+		
+		pmp_info.status = PURPLE_PMP_STATUS_UNABLE_TO_DISCOVER;
 		return NULL;
 	}
 
@@ -337,6 +374,10 @@ purple_pmp_get_public_ip()
 	publicsockaddr->sin_addr.s_addr = resp.address;
 
 	g_free(gateway);
+
+	g_free(pmp_info.publicip);
+	pmp_info.publicip = g_strdup(inet_ntoa(publicsockaddr->sin_addr));
+	pmp_info.status = PURPLE_PMP_STATUS_DISCOVERED;
 
 	return inet_ntoa(publicsockaddr->sin_addr);
 }
@@ -458,6 +499,30 @@ purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 
 	return success;
 }
+
+static void
+purple_pmp_network_config_changed_cb(void *data)
+{
+	pmp_info.status = PURPLE_PMP_STATUS_UNDISCOVERED;
+	g_free(pmp_info.publicip);
+	pmp_info.publicip = NULL;
+}
+
+static void*
+purple_pmp_get_handle(void)
+{
+	static int handle;
+
+	return &handle;	
+}
+
+void
+purple_pmp_init()
+{
+	purple_signal_connect(purple_network_get_handle(), "network-configuration-changed",
+		  purple_pmp_get_handle(), PURPLE_CALLBACK(purple_pmp_network_config_changed_cb),
+		  GINT_TO_POINTER(0));	
+}
 #else /* #ifdef NET_RT_DUMP */
 char *
 purple_pmp_get_public_ip()
@@ -475,5 +540,11 @@ gboolean
 purple_pmp_destroy_map(PurplePmpType type, unsigned short privateport)
 {
 	return FALSE;
+}
+
+void
+purple_pmp_init()
+{
+
 }
 #endif /* #ifndef NET_RT_DUMP */
