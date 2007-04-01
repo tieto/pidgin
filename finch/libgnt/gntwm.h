@@ -3,6 +3,7 @@
 #include "gntmenu.h"
 
 #include <panel.h>
+#include <time.h>
 
 #define GNT_TYPE_WM				(gnt_wm_get_gtype())
 #define GNT_WM(obj)				(G_TYPE_CHECK_INSTANCE_CAST((obj), GNT_TYPE_WM, GntWM))
