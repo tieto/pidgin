@@ -1359,7 +1359,7 @@ void gnt_wm_resize_window(GntWM *wm, GntWidget *widget, int width, int height)
 	maxy = getmaxy(stdscr) - 1 - shadow;
 	height = MIN(height, maxy);
 	width = MIN(width, maxx);
-	wresize(node->window, height + shadow, width + shadow);
+	wresize(node->window, height, width);
 	replace_panel(node->panel, node->window);
 
 	g_signal_emit(wm, signals[SIG_RESIZED], 0, node);
