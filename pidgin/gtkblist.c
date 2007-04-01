@@ -6264,13 +6264,14 @@ plugin_act(GtkObject *obj, PurplePluginAction *pam)
 }
 
 static void
-build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin)
+build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin,
+		gpointer context)
 {
 	GtkWidget *menuitem;
 	PurplePluginAction *action = NULL;
 	GList *actions, *l;
 
-	actions = PURPLE_PLUGIN_ACTIONS(plugin, NULL);
+	actions = PURPLE_PLUGIN_ACTIONS(plugin, context);
 
 	for (l = actions; l != NULL; l = l->next)
 	{
@@ -6278,7 +6279,7 @@ build_plugin_actions(GtkWidget *menu, PurplePlugin *plugin)
 		{
 			action = (PurplePluginAction *) l->data;
 			action->plugin = plugin;
-			action->context = NULL;
+			action->context = context;
 
 			menuitem = gtk_menu_item_new_with_label(action->label);
 			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
@@ -6349,6 +6350,7 @@ pidgin_blist_update_accounts_menu(void)
 		PurpleConnection *gc = NULL;
 		PurpleAccount *account = NULL;
 		GdkPixbuf *pixbuf = NULL;
+		PurplePlugin *plugin = NULL;
 
 		account = accounts->data;
 		accel_group = gtk_menu_get_accel_group(GTK_MENU(accountmenu));
@@ -6390,35 +6392,9 @@ pidgin_blist_update_accounts_menu(void)
 			pidgin_separator(submenu);
 
 			gc = purple_account_get_connection(account);
-			if (gc && PURPLE_CONNECTION_IS_CONNECTED(gc)) {
-				PurplePlugin *plugin = NULL;
-
-				plugin = gc->prpl;
-				if (PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
-					GList *l, *ll = NULL;
-					PurplePluginAction *action = NULL;
-
-					for (l = ll = PURPLE_PLUGIN_ACTIONS(plugin, gc); l; l = l->next) {
-						if (l->data) {
-							action = (PurplePluginAction *)l->data;
-							action->plugin = plugin;
-							action->context = gc;
-
-							menuitem = gtk_menu_item_new_with_label(action->label);
-							gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-							g_signal_connect(G_OBJECT(menuitem), "activate",
-									G_CALLBACK(plugin_act), action);
-							g_object_set_data_full(G_OBJECT(menuitem), "plugin_action", action, (GDestroyNotify)purple_plugin_action_free);
-							gtk_widget_show(menuitem);
-						} else
-							pidgin_separator(submenu);
-					}
-				} else {
-					menuitem = gtk_menu_item_new_with_label(_("No actions available"));
-					gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
-					gtk_widget_set_sensitive(menuitem, FALSE);
-					gtk_widget_show(menuitem);
-				}
+			plugin = gc && PURPLE_CONNECTION_IS_CONNECTED(gc) ? gc->prpl : NULL;
+			if (plugin && PURPLE_PLUGIN_HAS_ACTIONS(plugin)) {
+				build_plugin_actions(submenu, plugin, gc);
 			} else {
 				menuitem = gtk_menu_item_new_with_label(_("No actions available"));
 				gtk_menu_shell_append(GTK_MENU_SHELL(submenu), menuitem);
@@ -6534,7 +6510,7 @@ pidgin_blist_update_plugin_actions(void)
 		gtk_menu_set_accel_path(GTK_MENU(submenu), path);
 		g_free(path);
 
-		build_plugin_actions(submenu, plugin);
+		build_plugin_actions(submenu, plugin, NULL);
 	}
 }
 
