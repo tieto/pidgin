@@ -444,8 +444,6 @@ void silcpurple_get_chmode_string(SilcUInt32 mode, char *buf,
 		strcat(buf, "[private] ");
 	if (mode & SILC_CHANNEL_MODE_SECRET)
 		strcat(buf, "[secret] ");
-	if (mode & SILC_CHANNEL_MODE_SECRET)
-		strcat(buf, "[secret] ");
 	if (mode & SILC_CHANNEL_MODE_PRIVKEY)
 		strcat(buf, "[private key] ");
 	if (mode & SILC_CHANNEL_MODE_INVITE)

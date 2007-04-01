@@ -87,6 +87,12 @@ static GSList *handles = NULL;
 
 static void try_connect(PurpleProxyConnectData *connect_data);
 
+/*
+ * TODO: Eventually (GObjectification) this bad boy will be removed, because it is
+ *       a gross fix for a crashy problem.
+ */
+#define PURPLE_PROXY_CONNECT_DATA_IS_VALID(connect_data) g_slist_find(handles, connect_data)
+
 /**************************************************************************
  * Proxy structure API
  **************************************************************************/
@@ -389,6 +395,12 @@ socket_ready_cb(gpointer data, gint source, PurpleInputCondition cond)
 	int error = 0;
 	int ret;
 
+	/* If the socket-connected message had already been triggered when connect_data
+ 	 * was destroyed via purple_proxy_connect_cancel(), we may get here with a freed connect_data.
+ 	 */
+	if (!PURPLE_PROXY_CONNECT_DATA_IS_VALID(connect_data))
+		return;
+	
 	purple_debug_info("proxy", "Connected to %s:%d.\n",
 					connect_data->host, connect_data->port);
 

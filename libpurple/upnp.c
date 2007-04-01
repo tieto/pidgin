@@ -24,14 +24,15 @@
  */
 #include "internal.h"
 
-#include "debug.h"
-#include "util.h"
-#include "proxy.h"
-#include "xmlnode.h"
-#include "network.h"
-#include "eventloop.h"
 #include "upnp.h"
 
+#include "debug.h"
+#include "eventloop.h"
+#include "network.h"
+#include "proxy.h"
+#include "signals.h"
+#include "util.h"
+#include "xmlnode.h"
 
 /***************************************************************
 ** General Defines                                             *
@@ -1025,4 +1026,33 @@ purple_upnp_remove_port_mapping(unsigned short portmap, const char* protocol,
 
 	do_port_mapping_cb(TRUE, ar);
 	return ar;
+}
+
+static void
+purple_upnp_network_config_changed_cb(void *data)
+{
+	/* Reset the control_info to default values */
+	control_info.status = PURPLE_UPNP_STATUS_UNDISCOVERED;
+	g_free(control_info.control_url);
+	control_info.control_url = NULL;
+	control_info.service_type[0] = '\0';
+	control_info.publicip[0] = '\0';
+	control_info.internalip[0] = '\0';
+	control_info.lookup_time = 0;
+}
+
+static void*
+purple_upnp_get_handle(void)
+{
+	static int handle;
+	
+	return &handle;	
+}
+
+void
+purple_upnp_init()
+{
+	purple_signal_connect(purple_network_get_handle(), "network-configuration-changed",
+						  purple_upnp_get_handle(), PURPLE_CALLBACK(purple_upnp_network_config_changed_cb),
+						  GINT_TO_POINTER(0));		
 }

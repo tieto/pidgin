@@ -41,6 +41,13 @@ extern "C" {
 
 typedef void (*PurpleUPnPCallback) (gboolean success, gpointer data);
 
+
+/**
+ * Initialize UPnP
+ */
+void purple_upnp_init(void);
+
+
 /**
  * Sends a discovery request to search for a UPnP enabled IGD that
  * contains the WANIPConnection service that will allow us to recieve the
