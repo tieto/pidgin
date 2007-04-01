@@ -398,8 +398,8 @@ select_thread (void *parameter)
     g_print ("select_thread %#x: got error, setting data_avail\n",
 	     channel->thread_id);
   SetEvent (channel->data_avail_event);
-  g_io_channel_unref ((GIOChannel *)channel);
   UNLOCK (channel->mutex);
+  g_io_channel_unref ((GIOChannel *)channel);
 
   /* No need to call _endthreadex(), the actual thread starter routine
    * in MSVCRT (see crt/src/threadex.c:_threadstartex) calls
