@@ -3667,6 +3667,8 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 	PurpleConnection *gc;
 	PurpleAccount *account;
 	PurpleBuddy *buddy;
+	PurplePresence *presence;
+	PurpleStatus *status;
 	struct buddyinfo *bi;
 	gchar who[16];
 	PurpleNotifyUserInfo *user_info;
@@ -3760,7 +3762,26 @@ static int purple_icqinfo(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 		g_free(buf);
 		g_free(utf8);
 	}
-	
+
+	if (buddy != NULL) {
+		const gchar *message;
+		gchar *utf8, *tmp;
+
+		presence = purple_buddy_get_presence(buddy);
+		status = purple_presence_get_active_status(presence);
+		message = purple_status_get_attr_string(status, "message");
+
+		utf8 = message && message[0] ? oscar_utf8_try_convert(account, message) : NULL;
+		tmp = g_strdup_printf("%s%s%s",
+				purple_status_get_name(status),
+				utf8 && *utf8 ? ": " : "",
+				utf8 && *utf8 ? utf8 : "");
+		g_free(utf8);
+
+		oscar_user_info_convert_and_add(account,
+				user_info, _("Status"), tmp);
+	}
+
 	oscar_user_info_convert_and_add(account, user_info, _("Additional Information"), info->info);
 	purple_notify_user_info_add_section_break(user_info);
 
