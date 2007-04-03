@@ -53,7 +53,8 @@ purple_debug_vargs(PurpleDebugLevel level, const char *category,
 
 	ops = purple_debug_get_ui_ops();
 
-	if (!debug_enabled && ((ops == NULL) || (ops->print == NULL)))
+	if (!debug_enabled && ((ops == NULL) || (ops->print == NULL) ||
+			(ops->is_enabled && !ops->is_enabled(level, category))))
 		return;
 
 	arg_s = g_strdup_vprintf(format, args);

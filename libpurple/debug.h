@@ -49,6 +49,8 @@ typedef struct
 {
 	void (*print)(PurpleDebugLevel level, const char *category,
 				  const char *arg_s);
+	gboolean (*is_enabled)(PurpleDebugLevel level,
+			const char *category);
 } PurpleDebugUiOps;
 
 #ifdef __cplusplus

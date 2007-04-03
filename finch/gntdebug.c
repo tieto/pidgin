@@ -106,9 +106,16 @@ finch_debug_print(PurpleDebugLevel level, const char *category,
 	}
 }
 
+static gboolean
+finch_debug_is_enabled(PurpleDebugLevel level, const char *category)
+{
+	return debug.window && !debug.paused;
+}
+
 static PurpleDebugUiOps uiops =
 {
 	finch_debug_print,
+	finch_debug_is_enabled
 };
 
 PurpleDebugUiOps *finch_debug_get_ui_ops()

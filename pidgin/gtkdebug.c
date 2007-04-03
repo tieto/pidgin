@@ -1104,9 +1104,17 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 	g_free(s);
 }
 
+static gboolean
+pidgin_debug_is_enabled(PurpleDebugLevel level, const char *category)
+{
+	return (purple_prefs_get_bool("/purple/gtk/debug/enabled") &&
+			debug_win != NULL);
+}
+
 static PurpleDebugUiOps ops =
 {
 	pidgin_debug_print,
+	pidgin_debug_is_enabled
 };
 
 PurpleDebugUiOps *
