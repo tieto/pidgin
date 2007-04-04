@@ -34,3 +34,8 @@ gboolean gnt_boolean_handled_accumulator(GSignalInvocationHint *ihint,
 				  const GValue          *handler_return,
 				  gpointer               dummy);
 
+/**
+ * Returns a GntTree populated with "key" -> "binding" for the widget.
+ */
+GntWidget *gnt_widget_bindings_view(GntWidget *widget);
+
