@@ -3489,16 +3489,16 @@ get_chat_buddy_status_icon(PurpleConvChat *chat, const char *name, PurpleConvCha
 	if (!pixbuf)
 		return NULL;
 
-	scale = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
+	scale = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
 	g_object_unref(pixbuf);
 
 	if (flags && purple_conv_chat_is_user_ignored(chat, name)) {
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "default", "ignored.png", NULL);
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 		g_free(filename);
-		scale2 = gdk_pixbuf_scale_simple(pixbuf, 15, 15, GDK_INTERP_BILINEAR);
+		scale2 = gdk_pixbuf_scale_simple(pixbuf, 16, 16, GDK_INTERP_BILINEAR);
 		g_object_unref(pixbuf);
-		gdk_pixbuf_composite(scale2, scale, 0, 0, 15, 15, 0, 0, 1, 1, GDK_INTERP_BILINEAR, 192);
+		gdk_pixbuf_composite(scale2, scale, 0, 0, 16, 16, 0, 0, 1, 1, GDK_INTERP_BILINEAR, 192);
 		g_object_unref(scale2);
 	}
 
