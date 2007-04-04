@@ -1427,7 +1427,8 @@ void gnt_wm_move_window(GntWM *wm, GntWidget *widget, int x, int y)
 	move_panel(node->panel, y, x);
 
 	g_signal_emit(wm, signals[SIG_MOVED], 0, node);
-	if (gnt_style_get_bool(GNT_STYLE_REMPOS, TRUE) && GNT_IS_BOX(widget)) {
+	if (gnt_style_get_bool(GNT_STYLE_REMPOS, TRUE) && GNT_IS_BOX(widget) &&
+		!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_TRANSIENT)) {
 		const char *title = GNT_BOX(widget)->title;
 		if (title) {
 			GntPosition *p = g_new0(GntPosition, 1);
