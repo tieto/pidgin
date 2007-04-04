@@ -11,7 +11,9 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#if 0
 #include <glob.h>
+#endif
 
 enum
 {
@@ -87,11 +89,75 @@ is_tagged(GntFileSel *sel, const char *f)
 	return find;
 }
 
+GntFile* gnt_file_new_dir(const char *name)
+{
+	GntFile *file = g_new0(GntFile, 1);
+	file->basename = g_strdup(name);
+	file->type = GNT_FILE_DIR;
+	return file;
+}
+
+GntFile* gnt_file_new(const char *name, unsigned long size)
+{
+	GntFile *file = g_new0(GntFile, 1);
+	file->basename = g_strdup(name);
+	file->type = GNT_FILE_REGULAR;
+	file->size = size;
+	return file;
+}
+
+static gboolean
+local_read_fn(const char *path, GList **files, GError **error)
+{
+	GDir *dir;
+	GntFile *file;
+	const char *str;
+	
+	dir = g_dir_open(path, 0, error);
+	if (dir == NULL || (error && *error)) {
+		return FALSE;
+	}
+
+	*files = NULL;
+	if (*path != '\0' && strcmp(path, G_DIR_SEPARATOR_S)) {
+		file = gnt_file_new_dir("..");
+		*files = g_list_prepend(*files, file);
+	}
+
+	while ((str = g_dir_read_name(dir)) != NULL) {
+		char *fp = g_build_filename(path, str, NULL);
+		struct stat st;
+
+		if (stat(fp, &st)) {
+			g_printerr("Error stating location %s\n", fp);
+		} else {
+			if (S_ISDIR(st.st_mode)) {
+				file = gnt_file_new_dir(str);
+			} else {
+				file = gnt_file_new(str, (long)st.st_size);
+			}
+			*files = g_list_prepend(*files, file);
+		}
+		g_free(fp);
+	}
+
+	*files = g_list_reverse(*files);
+	return TRUE;
+}
+
+static void
+gnt_file_free(GntFile *file)
+{
+	g_free(file->fullpath);
+	g_free(file->basename);
+	g_free(file);
+}
+
 static gboolean
 location_changed(GntFileSel *sel, GError **err)
 {
-	GDir *dir;
-	const char *str;
+	GList *files, *iter;
+	gboolean success;
 
 	if (!sel->dirs)
 		return TRUE;
@@ -105,42 +171,43 @@ location_changed(GntFileSel *sel, GError **err)
 			gnt_widget_draw(GNT_WIDGET(sel));
 		return TRUE;
 	}
+
+	/* XXX:\
+	 * XXX: This is blocking.
+	 * XXX:/
+	 */
+	files = NULL;
+	if (sel->read_fn)
+		success = sel->read_fn(sel->current, &files, err);
+	else
+		success = local_read_fn(sel->current, &files, err);
 	
-	dir = g_dir_open(sel->current, 0, err);
-	if (dir == NULL || *err) {
+	if (!success || *err) {
 		g_printerr("GntFileSel: error opening location %s (%s)\n",
 			sel->current, *err ? (*err)->message : "reason unknown");
 		return FALSE;
 	}
 
-	if (*sel->current != '\0' && strcmp(sel->current, G_DIR_SEPARATOR_S))
-		gnt_tree_add_row_after(GNT_TREE(sel->dirs), g_strdup(".."),
-				gnt_tree_create_row(GNT_TREE(sel->dirs), ".."), NULL, NULL);
+	for (iter = files; iter; iter = iter->next) {
+		GntFile *file = iter->data;
+		char *str = file->basename;
+		if (file->type == GNT_FILE_DIR) {
+			gnt_tree_add_row_after(GNT_TREE(sel->dirs), g_strdup(str),
+					gnt_tree_create_row(GNT_TREE(sel->dirs), str), NULL, NULL);
+			if (sel->multiselect && sel->dirsonly && is_tagged(sel, str))
+				gnt_tree_set_row_flags(GNT_TREE(sel->dirs), (gpointer)str, GNT_TEXT_FLAG_BOLD);
+		} else if (!sel->dirsonly) {
+			char size[128];
+			snprintf(size, sizeof(size), "%ld", file->size);
 
-	while ((str = g_dir_read_name(dir)) != NULL) {
-		char *fp = g_build_filename(sel->current, str, NULL);
-		struct stat st;
-
-		if (stat(fp, &st)) {
-			g_printerr("Error stating location %s\n", fp);
-		} else {
-			if (S_ISDIR(st.st_mode)) {
-				gnt_tree_add_row_after(GNT_TREE(sel->dirs), g_strdup(str),
-						gnt_tree_create_row(GNT_TREE(sel->dirs), str), NULL, NULL);
-				if (sel->multiselect && sel->dirsonly && is_tagged(sel, str))
-					gnt_tree_set_row_flags(GNT_TREE(sel->dirs), (gpointer)str, GNT_TEXT_FLAG_BOLD);
-			} else if (!sel->dirsonly) {
-				char size[128];
-				snprintf(size, sizeof(size), "%ld", (long)st.st_size);
-
-				gnt_tree_add_row_after(GNT_TREE(sel->files), g_strdup(str),
-						gnt_tree_create_row(GNT_TREE(sel->files), str, size, ""), NULL, NULL);
-				if (sel->multiselect && is_tagged(sel, str))
-					gnt_tree_set_row_flags(GNT_TREE(sel->files), (gpointer)str, GNT_TEXT_FLAG_BOLD);
-			}
+			gnt_tree_add_row_after(GNT_TREE(sel->files), g_strdup(str),
+					gnt_tree_create_row(GNT_TREE(sel->files), str, size, ""), NULL, NULL);
+			if (sel->multiselect && is_tagged(sel, str))
+				gnt_tree_set_row_flags(GNT_TREE(sel->files), (gpointer)str, GNT_TEXT_FLAG_BOLD);
 		}
-		g_free(fp);
 	}
+	g_list_foreach(files, (GFunc)gnt_file_free, NULL);
+	g_list_free(files);
 	if (GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(sel), GNT_WIDGET_MAPPED))
 		gnt_widget_draw(GNT_WIDGET(sel));
 	return TRUE;
@@ -151,8 +218,13 @@ dir_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 {
 	if (strcmp(key, "\r") == 0) {
 		char *str = g_strdup(gnt_tree_get_selection_data(tree));
-		char *path = g_build_filename(sel->current, str, NULL);
-		char *dir = g_path_get_basename(sel->current);
+		char *path, *dir;
+
+		if (!str)
+			return TRUE;
+		
+		path = g_build_filename(sel->current, str, NULL);
+		dir = g_path_get_basename(sel->current);
 		if (!gnt_file_sel_set_current_location(sel, path)) {
 			gnt_tree_set_selected(tree, str);
 		} else if (strcmp(str, "..") == 0) {
@@ -169,64 +241,67 @@ dir_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 static gboolean
 location_key_pressed(GntTree *tree, const char *key, GntFileSel *sel)
 {
-	if (strcmp(key, "\r") == 0) {
-		int count;
-		glob_t gl;
-		char *path;
-		char *str;
-		struct stat st;
-		int glob_ret;
+	char *path;
+	char *str;
+#if 0
+	int count;
+	glob_t gl;
+	struct stat st;
+	int glob_ret;
+#endif
+	if (strcmp(key, "\r"))
+		return FALSE;
 
-		str = (char*)gnt_entry_get_text(GNT_ENTRY(sel->location));
-		if (*str == G_DIR_SEPARATOR)
-			path = g_strdup(str);
-		else
-			path = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", sel->current, str);
-		str = process_path(path);
+	str = (char*)gnt_entry_get_text(GNT_ENTRY(sel->location));
+	if (*str == G_DIR_SEPARATOR)
+		path = g_strdup(str);
+	else
+		path = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", sel->current, str);
+	str = process_path(path);
+	g_free(path);
+	path = g_path_get_dirname(str);
+	g_free(str);
+
+	if (!gnt_file_sel_set_current_location(sel, path)) {
 		g_free(path);
-		path = str;
+		return FALSE;
+	}
+#if 0
+	/* XXX: there needs to be a way to allow other methods for globbing,
+	 * like the read_fn stuff. */
+	glob_ret = glob(path, GLOB_MARK, NULL, &gl);
+	if (!glob_ret) {  /* XXX: do something with the return value */
+		char *loc = g_path_get_dirname(gl.gl_pathv[0]);
 
-		if (!stat(path, &st)) {
-			if (S_ISDIR(st.st_mode)) {
-				gnt_file_sel_set_current_location(sel, path);
-				goto success;
-			}
-		}
-
-		glob_ret = glob(path, GLOB_MARK, NULL, &gl);
-		if (!glob_ret) {  /* XXX: do something with the return value */
-			char *loc = g_path_get_dirname(gl.gl_pathv[0]);
-
-			stat(gl.gl_pathv[0], &st);
-			gnt_file_sel_set_current_location(sel, loc);  /* XXX: check the return value */
-			g_free(loc);
-			if (!S_ISDIR(st.st_mode) && !sel->dirsonly) {
-				gnt_tree_remove_all(GNT_TREE(sel->files));
-				for (count = 0; count < gl.gl_pathc; count++) {
-					char *tmp = process_path(gl.gl_pathv[count]);
-					loc = g_path_get_dirname(tmp);
-					if (g_utf8_collate(sel->current, loc) == 0) {
-						char *base = g_path_get_basename(tmp);
-						char size[128];
-						snprintf(size, sizeof(size), "%ld", (long)st.st_size);
-						gnt_tree_add_row_after(GNT_TREE(sel->files), base,
-								gnt_tree_create_row(GNT_TREE(sel->files), base, size, ""), NULL, NULL);
-					}
-					g_free(loc);
-					g_free(tmp);
-				}
-				gnt_widget_draw(sel->files);
-			}
-		} else if (sel->files) {
+		stat(gl.gl_pathv[0], &st);
+		gnt_file_sel_set_current_location(sel, loc);  /* XXX: check the return value */
+		g_free(loc);
+		if (!S_ISDIR(st.st_mode) && !sel->dirsonly) {
 			gnt_tree_remove_all(GNT_TREE(sel->files));
+			for (count = 0; count < gl.gl_pathc; count++) {
+				char *tmp = process_path(gl.gl_pathv[count]);
+				loc = g_path_get_dirname(tmp);
+				if (g_utf8_collate(sel->current, loc) == 0) {
+					char *base = g_path_get_basename(tmp);
+					char size[128];
+					snprintf(size, sizeof(size), "%ld", (long)st.st_size);
+					gnt_tree_add_row_after(GNT_TREE(sel->files), base,
+							gnt_tree_create_row(GNT_TREE(sel->files), base, size, ""), NULL, NULL);
+				}
+				g_free(loc);
+				g_free(tmp);
+			}
 			gnt_widget_draw(sel->files);
 		}
-		globfree(&gl);
-success:
-		g_free(path);
-		return TRUE;
+	} else if (sel->files) {
+		gnt_tree_remove_all(GNT_TREE(sel->files));
+		gnt_widget_draw(sel->files);
 	}
-	return FALSE;
+	globfree(&gl);
+success:
+#endif
+	g_free(path);
+	return TRUE;
 }
 
 static void
@@ -329,6 +404,24 @@ clear_tags(GntBindable *bind, GList *null)
 	return TRUE;
 }
 
+static gboolean
+up_directory(GntBindable *bind, GList *null)
+{
+	char *path, *dir;
+	GntFileSel *sel = GNT_FILE_SEL(bind);
+	if (!gnt_widget_has_focus(sel->dirs) &&
+			!gnt_widget_has_focus(sel->files))
+		return FALSE;
+
+	path = g_build_filename(sel->current, "..", NULL);
+	dir = g_path_get_basename(sel->current);
+	if (gnt_file_sel_set_current_location(sel, path))
+		gnt_tree_set_selected(GNT_TREE(sel->dirs), dir);
+	g_free(dir);
+	g_free(path);
+	return TRUE;
+}
+
 static void
 gnt_file_sel_class_init(GntFileSelClass *klass)
 {
@@ -350,6 +443,7 @@ gnt_file_sel_class_init(GntFileSelClass *klass)
 
 	gnt_bindable_class_register_action(bindable, "toggle-tag", toggle_tag_selection, "t", NULL);
 	gnt_bindable_class_register_action(bindable, "clear-tags", clear_tags, "c", NULL);
+	gnt_bindable_class_register_action(bindable, "up-directory", up_directory, GNT_KEY_BACKSPACE, NULL);
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 
 	GNTDEBUG;
@@ -504,4 +598,10 @@ GList *gnt_file_sel_get_selected_multi_files(GntFileSel *sel)
 	list = g_list_reverse(list);
 	return list;
 }
+
+void gnt_file_sel_set_read_fn(GntFileSel *sel, gboolean (*read_fn)(const char *path, GList **files, GError **error))
+{
+	sel->read_fn = read_fn;
+}
+
 

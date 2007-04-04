@@ -20,6 +20,7 @@
 typedef struct _GntFileSel			GntFileSel;
 typedef struct _GntFileSelPriv		GntFileSelPriv;
 typedef struct _GntFileSelClass		GntFileSelClass;
+typedef struct _GntFile             GntFile;
 
 struct _GntFileSel
 {
@@ -39,6 +40,8 @@ struct _GntFileSel
 	gboolean dirsonly;   /* Show only directories */
     gboolean multiselect;
     GList *tags;         /* List of tagged files when multiselect is set */
+
+	gboolean (*read_fn)(const char *path, GList **files, GError **error);
 };
 
 struct _GntFileSelClass
@@ -50,6 +53,20 @@ struct _GntFileSelClass
 	void (*gnt_reserved2)(void);
 	void (*gnt_reserved3)(void);
 	void (*gnt_reserved4)(void);
+};
+
+typedef enum _GntFileType
+{
+	GNT_FILE_REGULAR,
+	GNT_FILE_DIR
+} GntFileType;
+
+struct _GntFile
+{
+	char *fullpath;
+	char *basename;
+	GntFileType type;
+	unsigned long size;
 };
 
 G_BEGIN_DECLS
@@ -75,6 +92,12 @@ GList *gnt_file_sel_get_selected_multi_files(GntFileSel *sel);
 void gnt_file_sel_set_multi_select(GntFileSel *sel, gboolean set);
 
 void gnt_file_sel_set_suggested_filename(GntFileSel *sel, const char *suggest);
+
+void gnt_file_sel_set_read_fn(GntFileSel *sel, gboolean (*read_fn)(const char *path, GList **files, GError **error));
+
+GntFile* gnt_file_new(const char *name, unsigned long size);
+
+GntFile* gnt_file_new_dir(const char *name);
 
 G_END_DECLS
 
