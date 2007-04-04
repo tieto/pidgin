@@ -239,6 +239,14 @@ ui_main()
 	GList *icons = NULL;
 	GdkPixbuf *icon = NULL;
 	char *icon_path;
+	int i;
+	const char *icon_sizes[] = {
+		"16",
+		"24",
+		"32",
+		"48"
+	};
+
 #endif
 
 	pidginthemes_init();
@@ -247,17 +255,24 @@ ui_main()
 
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
-	icon_path = g_build_filename(DATADIR, "pixmaps", "pidgin", "icons", "window-icon.png", NULL);
-	icon = gdk_pixbuf_new_from_file(icon_path, NULL);
-	g_free(icon_path);
-	if (icon) {
-		icons = g_list_append(icons,icon);
-		gtk_window_set_default_icon_list(icons);
-		g_object_unref(G_OBJECT(icon));
-		g_list_free(icons);
+	for(i=0; i<G_N_ELEMENTS(icon_sizes); i++) {
+		icon_path = g_build_filename(DATADIR, "pixmaps", "pidgin", "icons", icon_sizes[i], "pidgin.png", NULL);
+		icon = gdk_pixbuf_new_from_file(icon_path, NULL);
+		g_free(icon_path);
+		if (icon) {
+			icons = g_list_append(icons,icon);
+		} else {
+			purple_debug_error("ui_main",
+					"Failed to load the default window icon (%spx version)!\n", icon_sizes[i]);
+		}
+	}
+	if(NULL == icons) {
+		purple_debug_error("ui_main", "Unable to load any size of default window icon!\n");
 	} else {
-		purple_debug_error("ui_main",
-						 "Failed to load the default window icon!\n");
+		gtk_window_set_default_icon_list(icons);
+
+		g_list_foreach(icons, (GFunc)g_object_unref, NULL);
+		g_list_free(icons);
 	}
 #endif
 

@@ -1922,6 +1922,15 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/emotes/default/22/Makefile
 		   pidgin/pixmaps/emotes/default/22/scalable/Makefile
 		   pidgin/pixmaps/emotes/none/Makefile
+		   pidgin/pixmaps/icons/Makefile
+		   pidgin/pixmaps/icons/16/Makefile
+		   pidgin/pixmaps/icons/16/scalable/Makefile
+		   pidgin/pixmaps/icons/24/Makefile
+		   pidgin/pixmaps/icons/24/scalable/Makefile
+		   pidgin/pixmaps/icons/32/Makefile
+		   pidgin/pixmaps/icons/32/scalable/Makefile
+		   pidgin/pixmaps/icons/48/Makefile
+		   pidgin/pixmaps/icons/48/scalable/Makefile
 		   pidgin/pixmaps/protocols/Makefile
 		   pidgin/pixmaps/protocols/16/Makefile
 		   pidgin/pixmaps/protocols/16/scalable/Makefile
