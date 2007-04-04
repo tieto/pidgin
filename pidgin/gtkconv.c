@@ -3105,8 +3105,13 @@ got_typing_keypress(PidginConversation *gtkconv, gboolean first)
 static gboolean
 typing_animation(gpointer data) {
 	PidginConversation *gtkconv = data;
-	const char *stock_id = NULL;
 	PidginWindow *gtkwin = gtkconv->win;
+	const char *stock_id = NULL;
+
+	if(gtkconv != pidgin_conv_window_get_active_gtkconv(gtkwin)) {
+		return FALSE;
+	}
+
 	switch (rand() % 5) {
 	case 0:
 		stock_id = PIDGIN_STOCK_ANIMATION_TYPING0;
