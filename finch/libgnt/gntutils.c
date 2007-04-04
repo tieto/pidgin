@@ -1,4 +1,5 @@
 #include "gntutils.h"
+#include "gnttree.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -143,5 +144,49 @@ gboolean gnt_boolean_handled_accumulator(GSignalInvocationHint *ihint,
 	continue_emission = !signal_handled;
 
 	return continue_emission;
+}
+
+typedef struct {
+	GHashTable *hash;
+	GntTree *tree;
+} BindingView;
+
+static void
+add_binding(gpointer key, gpointer value, gpointer data)
+{
+	BindingView *bv = data;
+	GntBindableActionParam *act = value;
+	const char *name = g_hash_table_lookup(bv->hash, act->action);
+	if (name && *name) {
+		const char *k = gnt_key_lookup(key);
+		if (!k)
+			k = key;
+		gnt_tree_add_row_after(bv->tree, (gpointer)k,
+				gnt_tree_create_row(bv->tree, k, name), NULL, NULL);
+	}
+}
+
+static void
+add_action(gpointer key, gpointer value, gpointer data)
+{
+	BindingView *bv = data;
+	g_hash_table_insert(bv->hash, value, key);
+}
+
+GntWidget *gnt_widget_bindings_view(GntWidget *widget)
+{
+	GntBindable *bind = GNT_BINDABLE(widget);
+	GntWidget *tree = gnt_tree_new_with_columns(2);
+	GntBindableClass *klass = GNT_BINDABLE_CLASS(GNT_BINDABLE_GET_CLASS(bind));
+	GHashTable *hash = g_hash_table_new(g_direct_hash, g_direct_equal);
+	BindingView bv = {hash, GNT_TREE(tree)};
+
+	gnt_tree_set_compare_func(bv.tree, (GCompareFunc)g_utf8_collate);
+	g_hash_table_foreach(klass->actions, add_action, &bv);
+	g_hash_table_foreach(klass->bindings, add_binding, &bv);
+	gnt_tree_adjust_columns(bv.tree);
+	g_hash_table_destroy(hash);
+
+	return tree;
 }
 
