@@ -1,0 +1,65 @@
+.TH PURPLE-REMOTE 1
+.SH NAME
+purple-remote \- Send remote commands to Pidgin/Finch
+.SH SYNOPSIS
+.TP 5
+\fBpurple-remote \fIcommand1\fR \fIcommand2\fR \fI...\fR
+.RI 
+.br
+.SH OPTIONS
+Each command is of one of the three types:
+.PP
+[protocol:]commandname?param1=value1&param2=value2&...
+.br
+FunctionName?param1=value1&param2=value2&...
+.br
+FunctionName(value1,value2,...)
+.PP
+The second and third form are provided for completeness but their use
+is not recommended; use purple-send or purple-send-async instead.  The
+second form uses introspection to find out the parameter names and
+their types, therefore it is rather slow.
+
+.SH EXAMPLES
+jabber:goim?screenname=testone@localhost&message=hi
+.br
+jabber:gochat?room=TestRoom&server=conference.localhost
+.br
+jabber:getinfo?screenname=testone@localhost
+.br
+jabber:addbuddy?screenname=my friend
+.br
+.PP
+setstatus?status=away&message=don't disturb
+.br
+quit
+.PP
+PurpleAccountsFindConnected?name=&protocol=prpl-jabber
+.br
+PurpleAccountFindConnected(,prpl-jabber)
+
+.SH DESCRIPTION
+.PP
+Send remote commands to Purple. This program uses DBus to communicate with
+Pidgin/Finch.
+
+.SH LICENSE
+.PP
+Copyright (c) 1998-2006 see: AUTHORS
+
+.PP
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License version 2, as
+published by the Free Software Foundation
+.SH AUTHORS
+.PP
+Sean Egan <seanegan@gmail.com> - Lead Developer
+.PP
+This manual page was written by Anibal Avelar <avelar@gmail.com>.
+Permission is granted to copy, distribute and/or modify this document 
+under the terms of the GNU General Public License, Version 2 any 
+later version published by the Free Software Foundation. 
+ 
+.PP 
+On Debian systems, the complete text of the GNU General Public 
+License can be found in /usr/share/common-licenses/GPL. 

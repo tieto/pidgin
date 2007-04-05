@@ -1,0 +1,33 @@
+diff -u -r1.58 gtkutils.c
+--- pidgin-2.0.0+beta6/pidgin/gtkutils.c	4 Jan 2004 06:59:09 -0000	1.58
++++ pidgin-2.0.0+beta6/pidgin/gtkutils.c	5 Jan 2004 01:38:19 -0000
+@@ -1104,6 +1104,17 @@
+ 	g_return_if_fail(textview != NULL);
+ 	g_return_if_fail(GTK_IS_TEXT_VIEW(textview));
+ 
++#ifdef _WIN32
++	/* don't try and override the dictionary on windows */
++	locale = NULL;
++#else
++	locale = setlocale(LC_MESSAGES, NULL);
++
++	/* don't try and override the dictionary on default locales */
++	if (!strcmp(locale, "C"))
++		locale = NULL;
++#endif /* _WIN32 */
++
+ 	if (gtkspell_new_attach(textview, locale, &error) == NULL && error)
+ 	{
+ 		gaim_debug_warning("gtkspell", "Failed to setup GtkSpell: %s\n",
+--- pidgin-2.0.0+beta6/pidgin/gtkutils.h	29 Dec 2003 09:03:43 -0000	1.24
++++ pidgin-2.0.0+beta6/pidgin/gtkutils.h	5 Jan 2004 01:38:19 -0000
+@@ -283,7 +283,8 @@
+ void gaim_gtk_find_images(const char *message, GSList **list);
+ 
+ /**
+- * Sets up GtkSpell for the given GtkTextView, reporting errors
++ * Sets up GtkSpell for the given GtkTextView, selecting the appropriate
++ * dictionary for the locale on *nix systems, and reporting errors
+  * if encountered.
+  *
+  * This does nothing if Gaim is not compiled with GtkSpell support.

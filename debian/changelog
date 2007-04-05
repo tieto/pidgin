@@ -1,0 +1,2109 @@
+pidgin (2.0.0+dfsg.1-1) unstable; urgency=low
+
+  * New upstream release
+    - The .orig.tar.gz source has been modified to remove the
+      libpurple/protocols/irc/PROTOCOL file, which is non-DFSG-free.
+      Pidgin 2.0.1 should have this file removed upstream.
+  * Change name of package to pidgin (Closes: #418215)
+  * 20_purple-remote_friendly.patch:
+    - Make error messages friendlier when python-dbus is not installed
+      or if someone calls purple-remote/purple-url-handler with --help or -h
+      (Closes: #413204)
+  * Update Debian menu icon
+  * Update watch file
+  * Update prefs.xml for new path to browsers
+  * Loosen the dependency on pidgin-data slightly (Closes: #403582)
+  * Add purple-remote manpage from Anibal Avelar (Closes: #412278)
+
+ -- Ari Pollak <ari@debian.org>  Sat,  5 Apr 2007 18:13:41 -0400
+
+gaim (1:2.0.0+beta6-2) experimental; urgency=low
+
+  * 18_sametime-strip-html.patch:
+    - Patch from David Everly to properly strip HTML entities in Sametime
+      group chat (Closes: #410311)
+  * Make gaim-dev an Arch: all package
+  * Install gaim API docs into gaim-dev
+  * Remove some extraneous Recommends/Suggests
+  * Add rationale for the recommended/suggests packages in the gaim
+    description
+  * Conflict with gaim-librvp (<= 0.9.5-2) to prevent a crash when it's
+    installed (Closes: #408861)
+  * Conflict with gaim-encryption (<= 3.0~beta7-1) to prevent a crash
+
+ -- Ari Pollak <ari@debian.org>  Mon, 29 Jan 2007 12:11:13 -0500
+
+gaim (1:2.0.0+beta6-1) experimental; urgency=low
+
+  * New upstream release
+  * Add a Recommends: python-dbus (Closes: #404623)
+  * Attempt to enable Cyrus SASL for Jabber again, since support should
+    have been improved upstream
+  * 17_statusbox_crash.patch:
+    - Fix a common crash after upgrading from beta5 when setting status
+      to Available
+
+ -- Ari Pollak <ari@debian.org>  Sat, 27 Jan 2007 16:53:01 -0500
+
+gaim (1:2.0.0+beta5-11) unstable; urgency=low
+
+  * 20_sametime-strip-html.patch:
+    - Patch from David Everly to properly strip HTML entities in Sametime
+      group chat (Closes: #410311)
+
+ -- Ari Pollak <ari@debian.org>  Fri,  9 Mar 2007 20:06:05 -0500
+
+gaim (1:2.0.0+beta5-10) unstable; urgency=low
+
+  * 18-jabber-roster-crash.patch:
+    - Fix possible crash when aliasing a user on Jabber
+  * 19_docklet_translation.patch:
+    - Backport some translations of "Blink on new message" from beta6
+      (Closes: #409259)
+  * Add a Recommends: python-dbus (Closes: #404623)
+
+ -- Ari Pollak <ari@debian.org>  Sat,  3 Feb 2007 20:12:32 -0500
+
+gaim (1:2.0.0+beta5-9) unstable; urgency=low
+
+  * 15_file_save_name.patch:
+    - Fill the default filename correctly when receiving a file
+  * 16_yahoo_icon_crash.patch:
+    - Try to fix a double-free when unable to receive a Yahoo user's
+      buddy icon (Closes: #402345)
+  * 17_upnp_crash.patch:
+    - Fix a crash when receiving an invalid UPnP response
+
+ -- Ari Pollak <ari@debian.org>  Sun, 17 Dec 2006 20:06:44 -0500
+
+gaim (1:2.0.0+beta5-8) unstable; urgency=low
+
+  * Remove dependency on libsasl2-modules
+  * Turn off building with gnutls (Really Closes: #401567)
+  * 13_yahoo_webauth_disable.patch:
+    - When Yahoo auth fails, don't fall back to using the web interface
+      since it's broken and only causes more bugs
+  * 14_xulrunner_nss.patch:
+    - Build against xulrunner-nss instead of mozilla-nss
+
+ -- Ari Pollak <ari@debian.org>  Mon, 11 Dec 2006 13:12:42 -0500
+
+gaim (1:2.0.0+beta5-7) unstable; urgency=medium
+
+  * Add gaim-data dependency on ${misc:Depends} (Closes: #401845)
+  * Use NSS instead of gnutls (Hopefully Closes: #401567)
+  * Remove build-dep on libaudiofile-dev
+  * 12_gstreamer-cleanup.patch:
+    - Add patch to try cleaning up gstreamer support and hopefully fix a crash
+      related to it. If this doesn't fix the crash, I blame gstreamer.
+      (Closes: #397788, #399771)
+
+ -- Ari Pollak <ari@debian.org>  Thu,  7 Dec 2006 15:16:48 -0500
+
+gaim (1:2.0.0+beta5-6) unstable; urgency=low
+
+  * Brown paper bag release.
+  * Only install gconf schemas in gaim-data (Closes: #401642, #401628)
+
+ -- Ari Pollak <ari@debian.org>  Mon,  4 Dec 2006 21:13:29 -0500
+
+gaim (1:2.0.0+beta5-5) unstable; urgency=low
+
+  * Er, really install /usr/bin/gaim-remote and gconf schemas
+  * Really don't build with cyrus-SASL (Really Closes: #400002, 401295)
+
+ -- Ari Pollak <ari@debian.org>  Mon,  4 Dec 2006 10:35:31 -0500
+
+gaim (1:2.0.0+beta5-4) unstable; urgency=medium
+
+  * Install /usr/bin/gaim-remote script
+  * Install gconf schemas
+  * Add Recommends: python
+  * Don't build with Cyrus-SASL, support is too unstable
+    (Closes: #400002, 401295)
+  * 08_jabber-info-crash.patch:
+    - Add patch from upstream to fix Jabber crash when getting info
+      on someone with no resource name (Closes: #398399)
+  * 10_text-arrow-keys.patch:
+    - Add patch from upstream to fix arrow keys not working in gaim-text
+      (Closes: #400496)
+  * 11_reread-resolvconf.patch:
+    - Add patch to re-read resolv.conf when connecting to a server
+      (Closes: #394989)
+
+ -- Ari Pollak <ari@debian.org>  Mon,  4 Dec 2006 00:09:32 -0500
+
+gaim (1:2.0.0+beta5-3) unstable; urgency=low
+
+  * Add libsasl2-modules to Depends; otherwise, connecting to some
+    Jabber servers won't work.
+  * Oops, forgot to apply part of the Buddy List memleak patch
+    (Really closes: #398133)
+  * 07_msn-custom-smiley-crash.patch:
+    - Apply patch from upstream to prevent a crash when reading a malformed
+      custom emoticon.
+
+ -- Ari Pollak <ari@debian.org>  Tue, 21 Nov 2006 14:27:19 -0500
+
+gaim (1:2.0.0+beta5-2) unstable; urgency=low
+
+  * Build with LDFLAGS=-Wl,--as-needed
+  * Build Jabber protocol with Cyrus SASL support
+  * 04_blist-memleak.patch:
+    - Add upstream fixes for some potential slow memory leaks due to a bug in
+      GTK+ (Closes: #398133)
+  * 05_url-handler-xmpp.patch:
+    - Add upstream fix for crash on odd xmpp: URLs (Closes: #398969)
+  * 06_jabber-registration-srv.patch:
+    - Add patch from George-Cristian Bîrzan to query SRV record when
+      registering on Jabber servers (Closes: #399230)
+
+ -- Ari Pollak <ari@debian.org>  Sun, 19 Nov 2006 22:43:40 -0500
+
+gaim (1:2.0.0+beta5-1) unstable; urgency=medium
+
+  * New upstream release
+    - Disables unused/obsolete GStreamer sinks (arts, and NAS)
+      and falls back to a proper GStreamer sink more gracefully
+      (Closes: #397160, #397321)
+    - Fix an uninitialized pointer causing GStreamer crashes (Closes: #397788)
+    - Normalizes improper UTF-8 before sending to DBus (Closes: #397593)
+    - Fixes DNS lookup failure after changing networks (Closes: #394989)
+  * Add Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good,
+    gstreamer0.10-alsa | gstreamer0.10-esd
+  * Don't ship Release Notification plugin (Closes: #396998)
+  * 03_gconf-gstreamer.patch:
+    - Try getting gstreamer settings from gconf even if we're not running
+      gnome
+
+ -- Ari Pollak <ari@debian.org>  Sun,  5 Nov 2006 17:36:26 -0500
+
+gaim (1:2.0.0+beta4-4) unstable; urgency=medium
+
+  * 06_irc-signal-crash.patch:
+    - Add patch to work around crash on receiving non-ASCII characters
+      in IRC by not emitting the new "irc-receiving-text" signal; the text
+      from the server needs to be normalized into proper UTF-8 before sending
+      it to dbus.
+      (Closes: #394555, #395520)
+  * 07_delete-account-crash.patch:
+    - Add patch to fix crashies when deleting an Enabled account and then 
+      either exiting or setting the status to Available.
+
+ -- Ari Pollak <ari@debian.org>  Sat,  4 Nov 2006 11:01:15 -0500
+
+gaim (1:2.0.0+beta4-3) unstable; urgency=low
+
+  * 05_gaimgtklogviewer.patch:
+    - Revert upstream privatization of GaimGtkLogViewer, which is needed
+      for attaching to the "log-displaying" signal.
+
+ -- Ari Pollak <ari@debian.org>  Sun, 22 Oct 2006 18:34:50 -0400
+
+gaim (1:2.0.0+beta4-2) unstable; urgency=low
+
+  * Build against libgadu properly (Closes: #394303)
+  * Make libgadu a Suggests instead of a Depends
+  * 04_ansi-comments.patch:
+    - Fix C++-style comments in gtkgaim.h to allow compilation of plugins with
+      -ansi
+
+ -- Ari Pollak <ari@debian.org>  Sun, 22 Oct 2006 12:34:05 -0400
+
+gaim (1:2.0.0+beta4-1) unstable; urgency=low
+
+  * New upstream release
+    - This includes a new gaim-text binary; it + libgaim will probably be
+      split out into a separate package soon, but for now I just wanted to get
+      beta4 out there.
+    - Large log files should now behave better in the log viewer
+      (Closes: #341607)
+    - The text replacement plugin should work properly when text is surrounded
+      by punctuation (Closes: #277147)
+    - Buddy pounce should now have an event for receiving a message
+      (Closes: #277727)
+    - Should fix aliases with strange encodings (Closes: #391798)
+  * Add debian/patches/02_gnthistory-in-gtk.patch:
+      - Don't load GntHistory plugin in gtk gaim
+  * Remove bashisms from postinst scripts
+  * Move libmeanwhile1 from Depends to Suggests
+
+ -- Ari Pollak <ari@debian.org>  Wed, 18 Oct 2006 17:30:20 -0400
+
+gaim (1:2.0.0+beta3.1-5) unstable; urgency=low
+
+  * Update version on evolution-data-server Suggests
+  * Update version on Conflicts/Replaces: gaim-meanwhile
+
+ -- Ari Pollak <ari@debian.org>  Sun,  8 Oct 2006 18:29:17 -0400
+
+gaim (1:2.0.0+beta3.1-4) unstable; urgency=medium
+
+  * debian/patches/06_varargs-fix2.patch
+    - Add second varargs patch to fix another FTBFS on alpha
+
+ -- Ari Pollak <ari@debian.org>  Thu, 28 Sep 2006 16:31:34 -0400
+
+gaim (1:2.0.0+beta3.1-3) unstable; urgency=medium
+
+  * debian/patches/05_varargs-fix.patch:
+    - Add fix for alpha FTBFS
+  * Add Conflicts and Replaces: gaim-dev (<< 1:2.0.0+beta3.1-2) on
+    gaim-data, since we moved a file from gaim-dev to gaim-data.
+
+ -- Ari Pollak <ari@debian.org>  Thu, 28 Sep 2006 11:26:02 -0400
+
+gaim (1:2.0.0+beta3.1-2) unstable; urgency=low
+
+  * First upload of 2.0 branch to unstable
+  * Move the example .py files to /usr/share/doc/gimp-data/examples/
+    (Closes: #386632)
+  * Re-add link from /usr/share/doc/gaim-dbg to gaim-data
+  * Move ChangeLog.API from gaim-dev to gaim-data since it could be useful
+    for gaim scripts, not just C plugins
+  * debian/patches/02_oscar-sendfile.patch:
+    - Add upstream fix for a bug where the Send File option wasn't
+      enabled in an AIM/ICQ conversaion for someone that isn't in your
+      buddy list
+  * debian/patches/03_novell-fix-1.patch,
+    debian/patches/04_novell-fix-2.patch:
+    - Add patches from upstream post-beta3.1 to fix some connection problems
+      with Novell protocol
+
+ -- Ari Pollak <ari@debian.org>  Mon, 25 Sep 2006 22:12:53 -0400
+
+gaim (1:2.0.0+beta3.1-1) experimental; urgency=low
+
+  * New upstream release
+  * Suggest dbus-1-utils instead of dbus
+  * Change build-depends on libgnutls11-dev to libgnutls-dev (Closes: #335764)
+  * Move gaim.desktop and the dbus entry to the gaim package instead of
+    gaim-data, and make gaim-data Recommends: gaim (Closes: #313222)
+  * Move /usr/share/aclocal/gaim.m4 to gaim-dev
+  * Remove link to /usr/share/doc/gaim-data from gaim-dbg since
+    gaim-data may not be installed
+
+ -- Ari Pollak <ari@debian.org>  Sun, 20 Aug 2006 22:31:24 -0400
+
+gaim (1:2.0.0+beta3-4) experimental; urgency=low
+
+  * Somehow I forgot to add libavahi-compat-howl-dev to the build-depends,
+    so do that.
+
+ -- Ari Pollak <ari@debian.org>  Thu,  6 Apr 2006 18:34:29 -0400
+
+gaim (1:2.0.0+beta3-3) experimental; urgency=low
+
+  * Add build-depends on libgadu-dev >= 1.6+20060215-1 since the gaim
+    plugin now builds from the system library (Closes: #360280)
+  * Add build-depends on libxml-parser-perl to fix FTBFS (Closes: #360955)
+
+ -- Ari Pollak <ari@debian.org>  Wed,  5 Apr 2006 17:31:52 -0400
+
+gaim (1:2.0.0+beta3-1) experimental; urgency=low
+
+  * New upstream release
+    - There is no more Away window, so "Away box should be toplevel"
+      no longer applies (Closes: #226280)
+    - Auto-away should be fixed with multiple accounts (Closes: #302686)
+    - Contact lists should no longer be lost if you run out of disk space
+      (Closes: #303922)
+    - Only display the font names in the preferences font selector
+      dialog, without the font size (Closes: #270529)
+    - Active/Away status is now integrated into the Buddy List and
+      has multiple account status (Closes: #240300, #290590, #223839)
+    - Play sounds even when queueing new messages to the system tray
+      (Closes: #242516, #272332)
+    - Don't segfault when running "gaim -l" when no preferences file exists
+      (Closes: #326852)
+    - Queued messages should now be saved to the logs as soon as they are
+      received (Closes: #255117)
+    - You should now be able to set your browser manually even if you're
+      using GNOME (Closes: #281381)
+    - Reconnecting should no longer pop up a new dialog (Closes: #347451)
+    - Log viewer now aggregates logs from the same "person" (Closes: #213438)
+    - There is now an included Gtk RC plugin that allows you to change
+      font sizes via a GUI (Closes: #275640)
+    - Auto-reconnect is now in the core and should no longer cause
+      crashes (Closes: #355645)
+  * Move back to straight cdbs build system, not tarball-in-tarball.
+  * Build-Depend on cdbs >= 0.4.37 since it automatically handles -dbg package
+  * Make /usr/share/doc/gaim-dbg a link to gaim-data
+  * Add libmeanwhile-dev, libavahi-compat-howl-dev, libdbus-glib-1-dev, dbus,
+    and python2.4 (to generate dbus schemas) to Build-Depends
+  * Conflict & Replace old gaim-meanwhile package, since we now provide
+    the meanwhile/sametime plugin.
+  * Re-enable perl plugin support, since it's been mostly fixed upstream
+    (Closes: #288851)
+  * debian/patches/{irc-ssl, logging-compatibility, privacy-crash}.patch:
+    - Removed, obsoleted by new upstream version
+
+ -- Ari Pollak <ari@debian.org>  Mon, 27 Mar 2006 14:25:21 -0500
+
+gaim (1:1.5.0+1.5.1cvs20051015-6) unstable; urgency=low
+
+  * debian/patches/07_msncrashfix.patch:
+    - Backport patch from upstream trunk to handle base16/64 encoding more
+      gracefully, which should hopefully fix an MSN crasher (Closes: #383731)
+
+ -- Ari Pollak <ari@debian.org>  Thu, 24 Aug 2006 22:05:20 -0400
+
+gaim (1:1.5.0+1.5.1cvs20051015-5) unstable; urgency=low
+
+  * Change build-depends on libgnutls11-dev to libgnutls-dev (Closes: #335764)
+
+ -- Ari Pollak <ari@debian.org>  Sun, 25 Jun 2006 11:18:54 -0400
+
+gaim (1:1.5.0+1.5.1cvs20051015-4) unstable; urgency=low
+
+  * Number patches so that they're in a reliable order
+  * Bump Standards-Version to 3.7.2; no changes necessary
+  * debian/patches/05_es.po-update.patch:
+    - Add updated Spanish translation from Javier FernÃ¡ndez-Sanguino PeÃ±a
+  * debian/patches/06_disable-icq-webaware.patch:
+    - Steal patch from Ubuntu/upstream to disable the webaware feature to
+      drastically reduce AIM & ICQ spam (Closes: #360063, #369234)
+
+ -- Ari Pollak <ari@debian.org>  Sun, 28 May 2006 12:16:34 -0400
+
+gaim (1:1.5.0+1.5.1cvs20051015-3) unstable; urgency=low
+
+  * debian/patches/privacy-crash.patch:
+    - Add patch from upstream CVS to fix crash when removing a user from
+      the block list (Closes: #357285)
+
+ -- Ari Pollak <ari@debian.org>  Fri, 17 Mar 2006 13:26:33 -0500
+
+gaim (1:1.5.0+1.5.1cvs20051015-2) unstable; urgency=low
+
+  * debian/patches/logging-compatibility.patch:
+    - Add patch from upstream to make the log browser forwards-compatible with
+      the new log filenames in gaim 2.0
+  * debian/patches/irc-ssl.patch:
+    - Add patch to enable IRC over SSL (Closes: #343553)
+  * debian/README.Debian.dev:
+    - Correct typo in suggested plugin package name (Closes: #351760)
+  * debian/control:
+    - Upgrade debhelper to 5.0
+    - Add gaim-dbg package
+  * debian/compat:
+    - Upgrade debhelper compat version to 5
+  * debian/rules:
+    - Add gaim-dbg package
+
+ -- Ari Pollak <ari@debian.org>  Thu,  9 Feb 2006 14:56:25 -0500
+
+gaim (1:1.5.0+1.5.1cvs20051015-1) unstable; urgency=low
+
+  * New upstream CVS snapshot of the oldstatus branch
+    - Should fix a yahoo login crash (Closes: #323499)
+    - Adds a fix for a recent OSCAR rate-limiting problem
+    - Adds support for OSCAR file transfers behind NAT through proxy servers
+      (Closes: #267180)
+
+ -- Ari Pollak <ari@debian.org>  Sat, 15 Oct 2005 16:20:06 -0400
+
+gaim (1:1.5.0-1) unstable; urgency=low
+
+  * New upstream release
+    - IRC quit message is now configurable (Closes: #261317)
+  * Remove patches introduced in 1.4.0 revisions as they are now
+    in upstream.
+
+ -- Ari Pollak <ari@debian.org>  Fri, 12 Aug 2005 08:04:38 -0400
+
+gaim (1:1.4.0-5) unstable; urgency=high
+
+  * This release fixes three remotely-exploitable security issues.
+    These will be fixed in 1.5.0, but I'm adding the patches now so
+    I don't have to rush to package 1.5.0 when it comes out.
+
+  * debian/patches/away-message-CAN-2005-2103.patch:
+    - Added
+    - Fixes CAN-2005-2103: Away message buffer overflow (arbitrary
+      code execution)
+  *  debian/patches/libgg-CAN-2005-2370.patch:
+    - Added
+    - Fixes CAN-2005-2370: Memory alignment bug in libgadu
+  *  debian/patches/oscar-CAN-2005-2102.patch:
+    - Added
+    - Fixes CAN-2005-2102: OSCAR UTF-8 filename remote crash
+
+  * debian/control:
+    - Remove version from libgtkspell-dev build-depends, since the aspell
+      C++ transition was reverted.
+
+ -- Ari Pollak <ari@debian.org>  Wed, 10 Aug 2005 11:49:26 -0400
+
+gaim (1:1.4.0-4) unstable; urgency=low
+
+  * Apparently the second OSCAR patch from upstream wasn't getting applied
+    properly. Apply it properly, hopefully this should fix the remaining
+    OSCAR sign-on problem. (Closes: #321071, #321726)
+
+ -- Ari Pollak <ari@debian.org>  Sun,  7 Aug 2005 15:03:22 -0400
+
+gaim (1:1.4.0-3) unstable; urgency=low
+
+  * Build-depend on libxss-dev so X idle time support will actually get built
+  * Remove build-depends on autotools-dev since it is no longer necessary
+  * Change Suggests: evolution-data-server1.2 to evolution-data-server
+
+ -- Ari Pollak <ari@debian.org>  Thu, 21 Jul 2005 06:59:18 -0400
+
+gaim (1:1.4.0-2) unstable; urgency=low
+
+  * Apply patch from upstream CVS to fix a crash when connecting to certain
+    AIM/ICQ accounts
+  * Bump build-depends to gtkspell >= 2.0.10-3, which now depends on
+    libaspell15c2 for the C++ ABI transition
+
+ -- Ari Pollak <ari@debian.org>  Sat,  9 Jul 2005 20:02:34 -0400
+
+gaim (1:1.4.0-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Ari Pollak <ari@debian.org>  Fri,  8 Jul 2005 09:10:21 -0400
+
+gaim (1:1.3.1-2) unstable; urgency=low
+
+  * Argh, this shouldn't be a native package. Correctly include .orig.tar.gz
+    and .diff.gz in upload. (Closes: #314321)
+
+ -- Ari Pollak <ari@debian.org>  Wed, 15 Jun 2005 17:22:02 -0400
+
+gaim (1:1.3.1-1) unstable; urgency=medium
+
+  * New upstream version. Fixes two remote DoS/crash security bugs,
+    CAN-2005-1934 and CAN-2005-1269.
+
+ -- Ari Pollak <ari@debian.org>  Fri, 10 Jun 2005 12:19:14 -0400
+
+gaim (1:1.3.0-2) unstable; urgency=low
+
+  * debian/control:
+    - Update build-dependencies and Suggests to evolution-data-server1.2
+      (Closes: #311663)
+
+ -- Ari Pollak <ari@debian.org>  Thu,  2 Jun 2005 15:11:36 -0400
+
+gaim (1:1.3.0-1) unstable; urgency=high
+
+  * New upstream version. Fixes two remote DoS/overflow security bugs,
+    CAN-2005-1262 and CAN-2005-1261.
+
+ -- Ari Pollak <ari@debian.org>  Wed, 11 May 2005 09:44:03 -0400
+
+gaim (1:1.2.1-1) unstable; urgency=medium
+
+  * New upstream version. Fixes IRC escaping remote DOS problems, hence medium
+     priority.
+
+  * debian/patches/icq-auth2.patch:
+     - removed, upstream backed the changes out themselves in this release
+
+ -- Robert McQueen <robot101@debian.org>  Mon,  4 Apr 2005 04:36:38 +0100
+
+gaim (1:1.2.0-3) unstable; urgency=high
+
+  * debian/patches/icq-auth.patch:
+     - removed, it doesn't actually fix the problem :(
+
+  * debian/patches/icq-auth2.patch:
+     - new patch to revert to the (arguably less secure, but fully functional)
+        ICQ authentication code from 1.1.4, arguably an RC bug so upload with
+        urgency=high if sarge is about to freeze (really closes: #301072)
+
+ -- Robert McQueen <robot101@debian.org>  Fri,  1 Apr 2005 15:17:19 +0100
+
+gaim (1:1.2.0-2) unstable; urgency=low
+
+  * debian/patches/icq-auth.patch:
+    - Apply patch from upstream CVS which should fix ICQ authentication
+      problems with passwords greater than 8 characters. (Closes: #301072)
+
+ -- Ari Pollak <ari@debian.org>  Thu, 24 Mar 2005 11:11:49 -0500
+
+gaim (1:1.2.0-1) unstable; urgency=medium
+
+  * New upstream version.
+
+  * Put better symlink-creating logic in postinst (Closes: #298467)
+     - this is an RC bug, so upload with urgency=medium
+
+ -- Ari Pollak <ari@debian.org>  Mon, 21 Mar 2005 15:57:35 -0500
+
+gaim (1:1.1.4-2) unstable; urgency=low
+
+  * New revision to fix incorrect build on x86 (and my bad attempt at
+    a binary NMU)
+
+ -- Ari Pollak <ari@debian.org>  Tue,  1 Mar 2005 03:51:14 -0500
+
+gaim (1:1.1.4-1) unstable; urgency=low
+
+  * New upstream version.
+     - fixes embarrasingly similar HTML crash exploit (CAN-2005-0208)
+     - fixes g_stat crashes by enabling large file support in Gaim, to match
+        glib's compile-time settings
+     - fixes MSN crashes introduced in 1.1.3
+
+  * Added CVE numbers for exploits fixed in 1.1.3 (CAN-2005-0472 and
+     CAN-2005-0473) to changelog.
+
+  * debian/patches/00g_stat_brokenness.patch:
+     - removed
+
+  * debian/control:
+     - added dependencies on pkg-config and libglib2.0-dev to gaim-dev, but
+        not on libgtk2.0-dev (it's perfectly possible to build Gaim plugins
+        that either have no UI code, or interact with the user via Gaim's
+        interface for doing so)                (actually closes: #292728)
+
+  * debian/dh_gaim:
+     - apply patch to make resulting gaim dependencies less strict
+                                                        (closes: #296512)
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 25 Feb 2005 12:28:57 +0000
+
+gaim (1:1.1.3-3) unstable; urgency=low
+
+  * Well, I feel dumb. I didn't actually make any changes in -2.
+     Really do it this time.
+
+ -- Ari Pollak <ari@debian.org>  Mon, 21 Feb 2005 22:22:15 -0500
+
+gaim (1:1.1.3-2) unstable; urgency=medium
+
+  * Move g_stat() calls back to stat() as a workaround for brokenness
+     due to large file support in glib but not Gaim     (closes: #295904)
+
+ -- Ari Pollak <ari@debian.org>  Mon, 21 Feb 2005 21:31:51 -0500
+
+gaim (1:1.1.3-1) unstable; urgency=high
+
+  * New upstream version.
+     - security: fixes DoS bug and HTML parsing problems, so urgency=high
+       (CAN-2005-0472 and CAN-2005-0473 respectively)
+     - adds update for pt_BR translation                (closes: #292549)
+     - adds HTTP proxy support for MSN                  (closes: #215810)
+
+ -- Ari Pollak <ari@debian.org>  Thu, 17 Feb 2005 22:41:07 -0500
+
+gaim (1:1.1.2-3) unstable; urgency=low
+
+  * debian/control:
+     - make gaim-dev depend on pkg-config and libglib2.0-dev
+                                                        (closes: #292728)
+
+ -- Ari Pollak <ari@debian.org>  Wed,  2 Feb 2005 19:56:36 -0500
+
+gaim (1:1.1.2-2) unstable; urgency=low
+
+  * debian/gaim.postinst:
+     - add script to rmdir /usr/share/doc/gaim if it isn't a symlink, and
+        replace it with the gaim -> gaim-data symlink, on the basis that
+        dpkg doesn't replace directories with symlinks or vice versa
+                                                        (closes: #291827)
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 23 Jan 2005 14:45:08 +0000
+
+gaim (1:1.1.2-1) unstable; urgency=low
+
+  * Upload the formerly experimental packages with gaim/gaim-data/gaim-dev to
+     unstable, given that 1.1.1 is in sarge
+
+  * New upstream version.
+     - fixes failure to hide Jabber and Yahoo messages in the System
+        Tray Icon, when enabled                         (closes: #259790)
+
+  * debian/control:
+     - the conflicts/replaces of gaim-data on gaim that Ari added went
+        missing between 1.1.1-3 and 1.1.1-4... I added the replaces but
+        conflicting with old gaim packages prevents upgrades (see policy
+        7.3) due to never unpacking conflicting packages side-by-side
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 21 Jan 2005 18:26:10 +0000
+
+gaim (1:1.1.1-4) experimental; urgency=low
+
+  * debian/control:
+     - put gaim-dev into section devel
+
+ -- Ari Pollak <ari@debian.org>  Tue, 11 Jan 2005 10:54:27 -0500
+
+gaim (1:1.1.1-3) experimental; urgency=low
+
+  * debian/control:
+     - gaim-data conflicts/replaces earlier versions of gaim (closes: #289873)
+
+ -- Ari Pollak <ari@debian.org>  Tue, 11 Jan 2005 10:32:56 -0500
+
+gaim (1:1.1.1-2) experimental; urgency=low
+
+  * New upstream version in this experimental branch. Contains the same
+     changes made between 1.1.0-1 and 1.1.1-1 in unstable, included below for
+     reference. Further thanks due here to Ari for doing all the legwork with
+     this split into gaim{,-data,-dev}, making packages smaller and allowing
+     plugin packages to be built, and to Tollef Fog Heen for his dh_gaim
+     script.
+
+  * debian/TODO.Debian:
+     - rename to gaim-dev.TODO so dh_installdocs automatically includes it in
+        the right place
+
+  * debian/control:
+     - replace suggests of evolution with evolution-data-server
+     - make gaim-dev depend on gaim-data because of /usr/share/doc symlink
+     - tweak descriptions
+
+  * debian/rules:
+     - explicitly disabled silc support until #273871 progresses
+     - install changelogs and documentation in the gaim-data package only, and
+        make gaim and gaim-dev symlink to it (allowed by policy as they both
+        depend on gaim-data)
+     - instruct dh_installman to install dh_gaim's manpage
+     - run dh_installdocs manually for gaim-dev to install only the files we
+        need on top of those in gaim-data
+     - don't bother removing /usr/lib/gaim/*.la files - they are not installed
+        any more
+
+  * debian/gaim.install:
+     - install only /usr/lib/gaim/*.so files
+     - don't try and install the perl5 directory any longer
+
+  * debian/gaim.preinst:
+     - moved aside to gaim.preinst.old because we no longer need to remove
+        /usr/share/doc/gaim if it is a symlink - it is once more a symlink
+
+  * debian/gaim-dev.install:
+     - don't install /usr/lib/gaim/*.la files
+
+  * debian/gaim-dev.manpages:
+     - removed in favour of variable in debian/rules
+
+ -- Robert McQueen <robot101@debian.org>  Tue,  4 Jan 2005 18:59:50 +0000
+
+gaim (1:1.1.1-1) unstable; urgency=low
+
+  * New upstream version. Massive thanks to Ari for all his help with the
+     previous releases.
+
+  * debian/patches/libtoolize.patch, debian/relibtoolize:
+     - removed, should no longer be necessary now Debian's architectures are
+        supported by upstream libtool
+
+  * debian/rules:
+     - disable perl support for now, its bitrotted enough to be nearly
+        useless, and is slated for removal in 2.0 unless anyone fixes it
+
+  * debian/control:
+     - remove build dependency on automake1.8 because we no longer touch any
+        of the generated files
+     - remove perl build dependencies and substvars entries
+
+ -- Robert McQueen <robot101@debian.org>  Mon,  3 Jan 2005 23:30:47 +0000
+
+gaim (1:1.1.0-3) experimental; urgency=low
+
+  * Whoops, don't include 1.0.3 tarball in the .orig.tar.gz.
+  * Upload to experimental for now
+
+  * debian/control:
+    - Update gaim package description to be more current about GNOME
+      (closes: #265269)
+
+ -- Ari Pollak <ari@debian.org>  Thu,  9 Dec 2004 22:44:08 -0500
+
+gaim (1:1.1.0-2) experimental; urgency=low
+
+  * debian/control:
+    - added libxml2-dev, libebook-dev, and libedata-book-dev to build-deps for
+       gevolution plugin
+       (closes: #274030)
+    - added evolution to Suggests field for people who want to use gevolution
+    - added new gaim-dev and gaim-data packages, which split out the
+       development headers & libraries and architecture-independent data.
+       (closes: #233350, #162653, #234853, #267682, #274023)
+
+  * debian/gaim-dev.install:
+    - added development files
+  
+  * debian/gaim-dev.manpages:
+    - added debian/dh_gaim.1, generated in debian/rules
+
+  * debian/gaim-data.install:
+    - added architecture-independent files
+
+  * debian/gaim.install:
+    - move existing prefs.xml and gaim-menu.xpm into gaim-data.install
+    - added the rest of the files that weren't included in -dev or -data
+
+  * debian/README.Debian.dev:
+    - added README for Debian developers to explain how gaim plugins
+      should be packaged.
+
+  * debian/rules:
+    - added dependency excludes for /usr/lib/gaim/gevolution.so, since
+       we added Suggests for that manually.
+    - clean up binary-post-install override to not remove the development
+       files, since we put them in gaim-dev now.
+    - added build/gaim-dev override to generate man page for
+      dh_gaim, and added cleanbuilddir/gaim-dev override to clean it up.
+
+  * debian/dh_gaim
+    - added, thanks to Tollef Fog Heen for writing this.
+
+ -- Ari Pollak <ari@debian.org>  Thu,  9 Dec 2004 12:30:00 -0500
+
+gaim (1:1.1.0-1) unstable; urgency=low
+
+  * New upstream version.                               (closes: #284193)
+    - Fixes MSN switchboard errors                      (closes: #284406)
+
+ -- Ari Pollak <ari@debian.org>  Mon,  6 Dec 2004 10:27:25 -0500
+
+gaim (1:1.0.3-1) unstable; urgency=low
+
+  * New upstream version.
+    - fixes Jabber authentication issues       (closes: #266632, #218994)
+    - fixes crash when dragging a buddy onto a convo window
+                                                        (closes: #277208)
+
+ -- Ari Pollak <ari@debian.org>  Fri, 12 Nov 2004 11:05:39 -0500
+
+gaim (1:1.0.2-1) unstable; urgency=high
+
+  * New upstream version, fixes a security hole in MSN.
+  
+  * debian/control:
+    - Add bzip2 to build-deps since the included tarball is now in bz2 format
+
+ -- Ari Pollak <ari@debian.org>  Wed, 20 Oct 2004 10:45:55 -0400
+
+gaim (1:1.0.1-2) unstable; urgency=low
+
+  * Oops, this shouldn't be a native Debian package. Properly split out
+    the original tarball and the debian directory.      (closes: #276298)
+
+ -- Ari Pollak <ari@debian.org>  Wed, 13 Oct 2004 10:10:09 -0400
+
+gaim (1:1.0.1-1) unstable; urgency=low
+
+  * New upstream version.
+
+  * debian/rules:
+    - move to a tarball-within-a-tarball build system.
+
+  * debian/control:
+    - add build-dep for automake1.8
+
+  * debian/gaim.docs:
+    - removed, replaced by cdbs variable in debian/rules
+
+ -- Ari Pollak <ari@debian.org>  Tue, 12 Oct 2004 12:26:39 -0400
+
+gaim (1:1.0.0-1) unstable; urgency=medium
+
+  * New upstream version (in Robot101's absence)
+    - urgency medium because it fixes some regressions in 0.82.1
+    - should fix encoding problems             (closes: #269646, #270490)
+
+  * debian/patches/libtoolize.patch:
+     - updated
+
+ -- Ari Pollak <ari@debian.org>  Sat, 18 Sep 2004 01:20:32 -0400
+
+gaim (1:0.82.1-1) unstable; urgency=high
+
+  * New upstream version. Fixes known security issues CAN-2004-0754 and
+     CAN-2004-0785, and includes several important bug fixes.
+                                                        (closes: #268783)
+
+  * debian/patches/allow-blist-shrink.patch:
+     - removed, I'm trusting upstream on this one :)
+
+  * debian/patches/libtoolize.patch:
+     - updated
+
+  * debian/patches/msn-fixes-CAN-2004-0500.patch:
+     - removed, included upstream
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 29 Aug 2004 22:19:07 +0100
+
+gaim (1:0.81-3) unstable; urgency=high
+
+  * debian/patches/cvs-msn-slp-overflow.patch:
+     - removed, because upstream only fixed half the problem...
+
+  * debian/patches/msn-fixes-CAN-2004-0500.patch:
+     - patch from SUSE to fix CAN-2004-0500
+
+  * debian/patches/cvs-gtkblist-size-request.patch:
+     - removed, because despite upstream's insistence...
+
+  * debian/patches/allow-blist-shrink.patch:
+     - this is the required change to stop the buddy list from appearing wider
+        than its saved width
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 13 Aug 2004 10:54:10 +0100
+
+gaim (1:0.81-2) unstable; urgency=medium
+
+  * debian/control:
+     - raise libgnutls11 build-dep to >= 1.0.16-5 to ensure correct libtasn
+        version is installed                            (closes: #264455)
+
+  * debian/patches/cvs-gtkblist-size-request.patch:
+     - fix from CVS to stop the buddy list making itself over 200 pixels
+        wide all the time
+
+  * debian/patches/cvs-msn-slp-overflow.patch:
+     - fix potential overflow in MSN's slp code
+
+ -- Robert McQueen <robot101@debian.org>  Thu, 12 Aug 2004 01:00:28 +0100
+
+gaim (1:0.81-1) unstable; urgency=low
+
+  * New upstream version.                               (closes: #264180)
+
+  * debian/control:
+     - switch to gnutls11 instead of deprecated 10      (closes: #263637)
+
+  * debian/relibtoolize:
+     - include the script I'm using to generate the following patches - it
+        needs adjustment to be robust to aclocal.m4 changes
+
+  * debian/patches/cvs-irc-ison-lessflood.patch:
+     - removed
+
+  * debian/patches/libtoolize.patch:
+     - updated
+
+ -- Robert McQueen <robot101@debian.org>  Sun,  8 Aug 2004 15:04:06 +0100
+
+gaim (1:0.80-3) unstable; urgency=low
+
+  * debian/patches/libtoolize.patch:
+     - not only was the patch turned out by my script complete garbage even on
+        my system, it had the added bonus property that it only worked if you
+        were building gaim in /home/robot101/debian/0.80/gaim-0.80 - this patch
+        should apply with -p1 because the cdbs patch thing doesn't try -p5 for
+        some reason... :P                      (actually closes: #260070)
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 18 Jul 2004 21:25:27 +0100
+
+gaim (1:0.80-2) unstable; urgency=low
+
+  * debian/patches/libtoolize.patch:
+     - replace spectacularly broken patch with one that actually applies - I
+        can't actually work out how this ever appeared to work on my system
+        in the first place                              (closes: #260070)
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 18 Jul 2004 20:15:45 +0100
+
+gaim (1:0.80-1) unstable; urgency=low
+
+  * New upstream version.                               (closes: #259891)
+
+  * debian/patches/cvs-buddyicon.patch:
+     - removed
+
+  * debian/patches/cvs-irc-ison-lessflood.patch:
+     - patch from CVS to avoid flooding yourself off with large numbers of
+        ISON requests on IRC                            (closes: #259010)
+
+  * debian/patches/libtoolize.patch:
+     - updated
+
+  * debian/control:
+     - lintian fix - make build-depends into a single line
+
+  * debian/gaim.menu:
+     - lintian fix - added quotes around X11 in needs field
+
+  * debian/rules:
+     - until I make a gaim-dev package (shortly - I didn't want to hold up the
+        new upstream version by sending Gaim to queue/NEW) don't ship gaim.pc
+        because it's confusing if stuff configures but doesn't build
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 17 Jul 2004 18:15:54 +0100
+
+gaim (1:0.79-2) unstable; urgency=low
+
+  * debian/control:
+     - update libgnutls7-dev build-depend to libgnutls10-dev to help kill
+        off libgnutls7                                  (closes: #256428)
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 27 Jun 2004 12:29:06 +0100
+
+gaim (1:0.79-1) unstable; urgency=low
+
+  * New upstream version. Doubtlessly closes many bugs, including the
+     repeatedly reported fact that this new version (and the one before) exist.
+     Sorry, I was busy. I'll look through the bugs soon, but currently I think
+     people would just appreciate the package. :)
+
+  * debian/patches/cvs-buddyicon.patch:
+     - patch from CVS to fix buddy icon snafu
+
+  * debian/patches/libtoolize.patch:
+     - updated
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 26 Jun 2004 19:05:01 +0100
+
+gaim (1:0.77-1) unstable; urgency=low
+
+  * New upstream version.                               (closes: #245446)
+     - finally repairs MSN error reporting              (closes: #195475)
+     - optionally mute sounds when the conversation is focussed (thanks
+        to Stu Tomlinson for implementing this)         (closes: #140289)
+
+  * debian/patches/browser-default.patch:
+     - removed
+
+  * debian/patches/libtoolize.patch:
+     - updated
+
+  * debian/prefs.xml:
+     - ship new default prefs.xml to use sensible-browser and have the docklet
+        loaded initially
+
+  * debian/gaim.install:
+     - install prefs.xml into /etc/gaim
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 24 Apr 2004 16:18:33 +0100
+
+gaim (1:0.76-1) unstable; urgency=low
+
+  * New upstream version.                      (closes: #241968, #242431)
+     - this version builds the zephyr plugin against an external libzephyr,
+        allowing kerberos support and closing a long standing wishlist bug,
+        making zephyr actually useful                   (closes: #152034)
+     - adds a "Network" preferences pane to choose incoming port ranges
+                                                        (closes: #133850)
+     - adds the choice of "Gnome Default" to the browser choices, I also made
+        Debian's /usr/bin/sensible-browser the default (see below)
+                                                        (closes: #210744)
+     - fixes saving of modified account prefs  (closes: #229511, #231249)
+     - Yahoo! works again                      (closes: #231440, #236744)
+     - shouldn't clobber existing prefs/blist files if disk is full
+                                                        (closes: #234790)
+     - Perl plugin loading fixed                        (closes: #229457)
+
+  * debian/patches/browser-default.patch:
+     - set the default browser to Debian's sensible-browser (only affects new
+        users)
+
+  * debian/patches/buffer-overflows.patch:
+     - removed on the basis that all the problems are fixed in this release,
+        although I plan to audit the patch to confirm this
+
+  * debian/patches/libtoolize.patch:
+     - regenerated for this version
+
+  * debian/control:
+     - added libzephyr-dev to build-depends
+
+  * debian/rules:
+     - build against external libzephyr
+     - make dh_shlibdeps consider libzephyr.so for suggests only
+
+ -- Robert McQueen <robot101@debian.org>  Wed,  7 Apr 2004 03:34:57 +0100
+
+gaim (1:0.75-3) unstable; urgency=high
+
+  * Minor tweak to the security patch to fix an infinite loop. High urgency
+     because I meant to fix this before 0.75-2 reached testing, but didn't.
+     I'm going on holiday for a week, so if 0.76 comes out, be patient.
+
+ -- Robert McQueen <robot101@debian.org>  Wed, 24 Mar 2004 02:56:48 +0000
+
+gaim (1:0.75-2) unstable; urgency=medium
+
+  * Security update to fix 12 possible buffer overflow attacks. Details are
+     at http://security.e-matters.de/advisories/012004.html.
+
+  * debian/patches/buffer-overflows.patch:
+     - patch from RedHat's RHSA-2004:032-04 advisory to fix CAN-2004-0006/7/8,
+        thanks to RedHat for this patch, Jacques A. Vidrine for the initial
+        patch, and Stefan Esser for finding the original problems
+                                                        (closes: #229843)
+
+ -- Robert McQueen <robot101@debian.org>  Tue, 27 Jan 2004 16:06:39 +0000
+
+gaim (1:0.75-1) unstable; urgency=low
+
+  * New upstream version:
+     - restores Ctrl+PgUp/PgDn tab switching   (closes: #226674, #226795)
+
+  * debian/patches/libtoolize.patch:
+     - regenerated because for some reason, make dist doesn't work for
+        upstream on sid at the moment
+
+  * debian/control:
+     - add build depend on xutils because configure uses imake to find
+        the X include directory - this makes Gaim link to the X ScreenSaver
+        and session management libs reliably (thanks to Ryan Murray)
+                                                        (closes: #226227)
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 10 Jan 2004 12:02:40 +0000
+
+gaim (1:0.74+0.75cvs20040104-1) unstable; urgency=low
+
+  * CVS snapshot. 0.74 had problems with leaking and some other stuff that
+     annoyed me, so I put off packaging it as long as possible. Turns out
+     CVS was just made usable now in preparation for a release, so I'm just
+     packaging it instead:
+      - typo fix in README was fixed in CVS             (closes: #220999)
+      - this can be taken to provide 0.74               (closes: #223931)
+
+  * debian/patches/00-libtoolize.patch:
+     - deleted, not necessary because I ran "make dist" on a Debian box
+  * debian/patches/gtkspell-locale2.patch:
+     - deleted, in favour of...
+  * debian/patches/gtkspell-locale3.patch:
+     - now very small because I had "cleanups" merged to CVS ;)
+
+  * debian/control:
+     - change tcl8.3-dev and tk8.3-dev build deps to 8.4, upstream works with
+        8.4 now
+     - add tcl8.3-dev and tk8.3-dev build conflicts
+  * debian/copyright:
+     - update to point at new COPYRIGHT file
+  * debian/gaim.README.Debian:
+     - deleted, had nothing to say really
+  * debian/gaim.docs:
+     - add new upstream COPYRIGHT file
+
+ -- Robert McQueen <robot101@debian.org>  Mon,  5 Jan 2004 03:30:17 +0000
+
+gaim (1:0.72-1) unstable; urgency=low
+
+  * New upstream version. Sorry I missed 0.71, been busy. Some nice bug
+     fixes and tweaks in these two versions:
+      - now possible to override your username on IRC   (closes: #196265)
+      - rewritten Jabber plugin with XMPP support, bugs in old code
+         evaporate                             (closes: #199345, #217326)
+      - various bugfixes to SSL code                    (closes: #214798)
+      - fixes ICQ signon crashes      (closes: #217851, #217856, #218496)
+
+  * debian/patches/00-libtoolize.patch:
+     - updated for new version (I should make a script for this...)
+  * debian/patches/cvs-yahoo-{endian,tweak}.patch:
+     - deleted, included in this release
+  * debian/patches/gtkspell-locale.patch:
+     - deleted, was broken ("C" is not a language and has no dictionary)
+  * debian/patches/gtkspell-locale2.patch:
+     - reworked version which should set the dictionary consistently and
+        only when the locale has actually been set
+                                              (closes: #213937, #215811)
+
+  * debian/control:
+     - added build depend for libstartup-notification0-dev
+     - added ${shlibs:Suggests} to the suggests field
+     - removed conflicts/replaces for the short-lived (never officially
+        released) libgaim-remote packages
+  * debian/rules:
+     - gentle fudge to stop dh_makeshlibs from acting on the plugins, some
+        of which cause it to false-positives (see #205142)
+     - gentle shlibdeps fudge to downgrade tcl and tk to suggests
+                                                        (closes: #213409)
+
+ -- Robert McQueen <robot101@debian.org>  Sat,  1 Nov 2003 19:01:25 +0000
+
+gaim (1:0.70-2) unstable; urgency=low
+
+  * debian/patches/cvs-yahoo-endian.patch:
+     - memcpy(&some_char[], &some_int, sizeof(int)) is not portable, mmkay?
+        here's my patch [from CVS] (thanks Matthew Wilcox)
+
+ -- Robert McQueen <robot101@debian.org>  Mon, 29 Sep 2003 13:31:37 +0100
+
+gaim (1:0.70-1) unstable; urgency=low
+
+  * New upstream version. Skipped 0.69 because it was shunned upstream due
+     to not actually fixing the Yahoo! problem, and installed Perl all wrong.
+     Since 0.68 we've added Contact support, Tcl plugins, SSL for Jabber
+     and the new MSN plugin, and fixed the Yahoo! connection problems. Also,
+     I'm experimenting with a new changelog format.
+      - pays attention to the challenge type that Yahoo! sends us, and
+         presents an error on unknown types             (closes: #212941)
+      - supports the new Yahoo! challenge type (one of them, anyway)
+                                                        (closes: #212749)
+      - supports the new MSN protocol                   (closes: #207745)
+
+  * debian/patches/00-libtoolize.patch:
+     - reran libtoolize with the Debian version of libtool, so that Perl
+        support works on arm, m68k and friends (thanks Keybuk)
+  * debian/patches/cvs-yahoo-tweak.patch:
+     - tweak to Yahoo! authentication code [from CVS]
+  * debian/patches/gtkspell-locale.patch:
+     - sets the GtkSpell dictionary according to the current locale. Not
+        merged upstream because blah blah Windows aspell blah blah, but I
+        don't really care. Sigh.                        (closes: #202009)
+
+  * debian/control:
+     - standards version 3.6.1
+     - dropped build conflicts in light of --disable-nss working properly
+        now (I submitted a patch just before 0.69)
+     - added versioned build-depend on libperl-dev >= 5.8.1, because DESTDIR
+        just decided to start working in MakeMaker, and I don't see how to
+        consistently support builds both with and without that functionality
+        without grossly hacking the build system
+     - change Tcl build-depend to tcl8.3-dev, which is all it supports at
+        the moment, and add tk8.3-dev for Tk support
+     - added ${perl:Depends} to depends
+  * debian/gaim.docs:
+     - removed plugins/SIGNALS because it's gone upstream - all the API docs
+        are moving into Doxygen, and I'll consider shipping them whenever
+        upstream starts shipping header files
+  * debian/rules:
+     - add --disable-nss to ensure consistent SSL library choice
+
+ -- Robert McQueen <robot101@debian.org>  Mon, 29 Sep 2003 13:28:07 +0100
+
+gaim (1:0.68+0.69cvs20030917-1) experimental; urgency=low
+
+  * CVS snapshot. Contains SSL support for Jabber and the new MSN plugin,
+     contact support, a Tcl plugin loader, and the two patches that were
+     in 0.68-1.
+  * Added build depends for GNUTLS and Tcl, and conflicts for NAS and NSS
+     (because we don't build with this functionality).
+
+ -- Robert McQueen <robot101@debian.org>  Thu, 18 Sep 2003 00:03:42 +0100
+
+gaim (1:0.68-1) unstable; urgency=low
+
+  * New upstream version.                               (closes: #209021)
+     - new event system and perl API
+     - ignores MSN's upgrade spam (new MSN plugin will be in 0.69)
+     - fixes Jabber registration                        (closes: #208070)
+     - now includes code to retrieve, parse and display Yahoo and MSN
+        profiles                                        (closes: #201498)
+  * Start using the simple patch system from cdbs:
+     - cvs-libgaim-remote-glib.diff: link libgaim-remote with glib
+        [from CVS]                                      (closes: #210652)
+     - cvs-yahoo-version.diff: update Yahoo protocol version to avoid
+        warnings and/or allow signing in [from CVS]
+
+ -- Robert McQueen <robot101@debian.org>  Wed, 17 Sep 2003 02:20:20 +0100
+
+gaim (1:0.67-3) unstable; urgency=low
+
+  * Apply my patch from CVS to stop the ticker crashing when it's reloaded
+     (enterprising hack to make GType reuse the existing type instead of
+     trying to register it again).                      (closes: #203727)
+  * Apply fix from CVS to stop crashes if you don't have yourself on your
+     buddy list (the developers all do this because it's the best way
+     to track your own status at the moment).           (closes: #206574)
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 23 Aug 2003 04:54:11 +0100
+
+gaim (1:0.67-2) unstable; urgency=low
+
+  * Apparently libgaim-remote is too small to warrant a package of its own
+     until anything else wants to use it.
+  * Tweak description again to make less of an issue of license and widget
+     set.                                               (closes: #205518)
+
+ -- Robert McQueen <robot101@debian.org>  Tue, 19 Aug 2003 19:41:48 +0100
+
+gaim (1:0.67-1) unstable; urgency=medium
+
+  * New upstream version with much core/UI splitting work and a cool new
+     key/value XML-based prefs engine, rewritten IRC plugin, status icons
+     in conversation tabs, a tab colour for unseen status messages, and
+     various dialog rewrites.         (closes: #202666, #202742, #203471)
+
+  * Merged all the patches from 0.64-3 and should fix a few other bugs:
+      - store proxy settings correctly         (closes: #195035, #195304)
+      - wait for the remote buddy list to download (on AIM/ICQ) before
+         maniupulating buddies                 (closes: #195655, #196445)
+      - display remote aliases correctly                (closes: #196664)
+      - new prefs system works now                      (closes: #200810)
+      - apparently this one is fixed in 0.66 too        (closes: #205093)
+
+   * Between 0.64 and 0.67, various fairly crucial MSN bugfixes were made,
+      preventing all manner of infinite loops, unclosable chat windows,
+      cloned buddies, and the like.   (closes: #199421, #199515, #200655)
+                             (closes: #203306, #203309, #203866, #204960)
+
+  * Skipped 0.65 because it was a little broken, hence the hasty release of
+     0.66.
+  * Skipped 0.66 because I decided to switch to cdbs while I was reworking
+     the packaging for the new libgaim-remote library, and it turned out
+     the build system was subtly broken and needed fixing. These fixes
+     are in this version. So it builds. Hurrah.
+  * By skipping two versions, I shielded you all from the harsh disappearance
+     of the Message Notification plugin in 0.65 and 0.66. Which was my plan
+     all along, of course.
+
+  * Medium urgency because this is a pretty solid release with lots of bug
+     fixes, and 0.64-3 sucked.
+  * Split out library and -dev packages for the new libgaim-remote0 library.
+  * Switched to CDBS. Shrunk debian/rules somewhat. :D
+  * Made the description less AIM-centric.
+  * Updated standards version to 3.6.0.
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 15 Aug 2003 06:06:37 +0100
+
+gaim (1:0.64-3) unstable; urgency=medium
+
+  * Medium urgency because MSN and Yahoo are fairly broke in the previous
+     release, which should *not* be immortalised in testing.
+  * Added patch from CVS to fix various MSN crashes and corruption of
+     your friendly name.                                (closes: #195603)
+  * Added patch from CVS to fix crash for buddy lists sorted by status.
+                                               (closes: #196338, #196515)
+  * Backported fix from CVS to fix Yahoo's new penchant for lower-case
+     user names.
+  * Backported fix so AOL mail is not checked if you disable the option.
+                                                        (closes: #196733)
+  * Corrected spelling error in Oscar (also in CVS).    (closes: #196840)
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 29 Jun 2003 02:34:32 +0100
+
+gaim (1:0.64-2) unstable; urgency=low
+
+  * Updated to standards version 3.5.10.
+  * Replaced the Debian menu icon with a nice-looking one now that the menu
+     policy doesn't mandate a crappy pallete.
+  * So I spent a day cleaning the BTS for the Gaim package. Closed about 20
+     bugs, reassigned 3 and fixed 7. This is the second batch of fixes.
+  * Adjust wording so iconaway plugin no longer claims to minimise the away
+     window, which is a dialog and shouldn't (or sometimes can't) be
+     minimised. It wasn't doing it anyway.              (closes: #188821)
+  * Linkify text appended by the history plugin if the option is enabled
+     to do this for conversations.                      (closes: #189511)
+  * Validate UTF8 for incoming server-stored aliases because clients like
+     Trillian send us random encodings but call them UTF-8. Avoids nasty
+     crashing.                                          (closes: #189662)
+  * Added a "Close" button to the file transfer dialog. (closes: #192366)
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 31 May 2003 16:56:18 +0100
+
+gaim (1:0.64-1) unstable; urgency=low
+
+  * New upstream version.
+   - Fixes some MSN problems, spiffs the debug window some more, and more
+     core/ui splitting work from Chip the living legend.
+   - New user request API fixes age-old dangling callback problems with
+     prompt dialogs such as the IRC nick change dialog. (closes: #189946)
+  * Made the signon meter window not dialog hinted, so you can ignore it and
+     carry on using Gaim while your eleventy billion accounts sign in. Found
+     and fixed a leak in the process.                   (closes: #187996)
+  * Fixed a minor typo which caused "</FONT>" to be appended even when the
+     font dialog was cancelled.                         (closes: #188048)
+  * Fixed "Copy link location" menu entry the right way. The correct clipboard
+     to copy to is... both of them.                     (closes: #191301)
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 31 May 2003 05:28:51 +0100
+
+gaim (1:0.63-1) unstable; urgency=low
+
+  * New upstream version. The 'I am happy ChipX86' version. He hacked loads on
+     this release, giving us a new MSN plugin, a new plugin API, and brought
+     us far closer to a core/UI split than we've ever done before. Three
+     cheers for Chip! Also thanks to faceprint, you can put chats in your
+     buddy list once more. And there was much rejoycing.
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 18 May 2003 04:40:19 +0100
+
+gaim (1:0.62-1) unstable; urgency=low
+
+  * New upstream version.
+     - fixes AIM/ICQ proxy connection problems          (closes: #188530)
+     - includes updated Japanese translation, thanks Junichi Uekawa
+                                                        (closes: #188819)
+     - buddy list keyboard accelerators fixed           (closes: #189843)
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 27 Apr 2003 19:59:42 +0100
+
+gaim (1:0.61-1) unstable; urgency=low
+
+  * New upstream version. Fixes buddy list drag and drop issues. Some
+   new icons and spacing to improve the look of the buddy list. New
+   more flexible buddy pounce code.
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 11 Apr 2003 03:12:18 +0100
+
+gaim (1:0.60.0-1) unstable; urgency=low
+
+  * New upstream version. Actually 0.60, but 0.60.0 is higher than the
+     versions on my CVS debs. Skipped 0.59.9, oh well.  (closes: #184493)
+     - it has been in development for almost a year, and a third of all the
+       code has been rewritten in porting to Gtk2!
+     - features new buddy list with optional large buddy list icons
+                                                        (closes: #130436)
+     - group folding is persistent across signons and signoffs
+                                                        (closes: #133238)
+     - i18n fixed and rewritten in all protocols
+                                               (closes: #155058, #185531)
+     - adds X11R6 session management support            (closes: #151272)
+     - new sound system with libao has arts plugin      (closes: #170960)
+     - adds "Display remote nick if no alias is set" option which can display
+        and update MSN friendly names automatically     (closes: #176466)
+     - other cool stuff like XML-based buddy list, global groups, asynchronous
+        DNS lookups, draggable conversational tabs, tray icon plugin to
+        replace the GNOME applet, ICQ server-stored buddy lists, cute new
+        PNG icons, external sounds...
+  * Added long title to Debian menu entry.              (closes: #175379)
+  * Disabled NAS support. Feel free to add it to libao.
+  * Dropped licq2gaim.pl, it doesn't work with XML buddy list format.
+  * Tweaked debian/rules with new build options and such.
+  * Updated build-deps with Gtk2 etc, updated standards version, suggest
+     gnome-panel, kicker or docker for the tray icon plugin, and detail the
+     new arrangement in the description.
+  * Updated README.Debian with triumphant post-release banter.
+  * Wrote a manpage for gaim-remote. Fancy that.
+
+ -- Robert McQueen <robot101@debian.org>  Sat,  5 Apr 2003 12:30:11 +0100
+
+gaim (1:0.59.8-1) unstable; urgency=low
+
+  * The 'roll on 0.60' release.
+  * New upstream version. I'd apologise for the delay, but I put the
+     interesting fixes in 0.59.7-1 so there was no hurry anyway.
+  * No longer build the GNOME applet variant. It only works with GNOME
+     1.4 which isn't shipped in Debian sid any more. Furthermore, the
+     applet won't exist in the Gtk2 version of Gaim, it's already been
+     replaced with my Tray Icon plugin.                 (closes: #180640)
+  * Add a note in the description, and a longer one in README.Debian,
+     explaining why gaim-gnome is gone. It's not coming back either.
+     If I get any bugs about this I'm gonna be hella annoyed. Use the
+     CVS debs from here:
+      deb     http://people.debian.org/~robot101/gaim unstable cvs
+      deb-src http://people.debian.org/~robot101/gaim unstable cvs
+     And no, I will not upload them to sid. It's still buggy as hell.
+  * Kill off gaim-common and gaim-gnome packages. Conflict and replace
+     because all files belong to the gaim package now, and provide in
+     the vain hope that apt/dpkg will choose gaim over old gaim-gnome
+     packages and that I won't have to make a stub package.
+  * Major crapectomy in debian/rules now that we're only building the
+     one time. Thank god.
+  * Add gaim.preinst to remove old /usr/share/doc/gaim symlink because
+     dpkg wisely avoids transitions between symlinks and directories
+     and vice versa.
+  * Updated build-depends to exclude GNOME and libpanel-applet, include
+     esd, have libaudio-dev instead of nas-dev, and no longer require
+     perl 5.8 (sid is 5.6 on all arches now).
+  * Update standard version to 3.6.8.
+
+ -- Robert McQueen <robot101@debian.org>  Tue, 18 Feb 2003 00:04:05 +0000
+
+gaim (1:0.59.7-1) unstable; urgency=medium
+
+  * New upstream version. Various bug fixes including a remote crash bug
+     with malicious AIM rendezvous packets.
+  * Includes patch from CVS to fix Yahoo login problems - sends protocol
+     version 0x0900 instead of 0x0600.
+  * Yahoo i18n patch was included in this release.      (closes: #170542)
+  * Fixed a small error causing the "Insert Smiley" button to crash when
+     offline.                                           (closes: #175442)
+  * Replaced invasive automatic config.{guess,sub} updating from
+     debian/rules and replaced with much saner symlinking method.
+  * Murdered pallet of gaim-menu.xpm (for the Debian menu entry) 
+     according to the idotic menu policy, to shut lintian up.
+  * This release is from the upstream 'gtk1-stable' branch. If you like
+     Gtk2, or use GNOME 2 or KDE 3.1, please consider trying my Gaim CVS
+     snapshot debs. The Gtk2 port is being worked on in CVS, and as a
+     result this version is a little buggier and has some regressions,
+     including no working IM image support and no protocol specific
+     smileys, but it does have infinitely better i18n, looks a lot
+     prettier, has support for session management (ie start at login in
+     GNOME 2), and also features my Tray Icon plugin, which replaces the
+     applet, and is visible in system-tray-applet in GNOME 2, or the
+     normal Kicker system tray in KDE 3.1. Please mail me directly with
+     any bugs you find in these, rather than filing them in the BTS. The
+     apt lines are:
+      deb     http://people.debian.org/~robot101/gaim unstable cvs
+      deb-src http://people.debian.org/~robot101/gaim unstable cvs
+                                      (closes: #148248, #165291, #171714)
+
+ -- Robert McQueen <robot101@debian.org>  Mon,  6 Jan 2003 06:11:33 +0000
+
+gaim (1:0.59.6-1) unstable; urgency=low
+
+  * New upstream version. Fixes gigantic timestamp font in Jabber group 
+     chats.                                             (closes: #167153)
+  * Include patch from CVS to fix Yahoo! i18n issues (hopefully) and 
+     crashes due to protocol changes.          (closes: #160347, #166505)
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 24 Nov 2002 06:01:09 +0000
+
+gaim (1:0.59.5-2) unstable; urgency=low
+
+  * Added patch from upstream CVS to fix bugs when an invalid gtk style
+     is loaded. Sigh. Roll on 0.60 with Gtk2 goodness.  (closes: #152274)
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 26 Oct 2002 22:41:20 +0100
+
+gaim (1:0.59.5-1) unstable; urgency=low
+
+  * New upstream version, sorry about the delay. Considering 0.59.3-1
+     contained most of the fixes that went into 0.59.4, I didn't bother
+     packaging it. The only changes to 0.59.5 are to fix a crash in the
+     Yahoo plugin due to a slight change in the protocol.
+  * Updated config.sub from 20020621 to 20020905 and config.guess from 
+     20020529 to 20020903.
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 25 Oct 2002 02:42:12 +0100
+
+gaim (1:0.59.3-1) unstable; urgency=low
+
+  * New upstream version.
+  * Updated to standards version 3.5.7.
+  * Tighten perl build-dep to require 5.8 (thanks Ryan Murray).
+  * Applied fixes from upstream CVS:
+     - remove Ctrl+K binding for colour
+     - fix yahoo memleak
+     - make the edit tab in the blist scrollable horizontally
+     - apply patch from A Lee to do charset transitions character by
+        character to avoid iconv's truncation           (closes: #162396)
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 29 Sep 2002 18:03:49 +0100
+
+gaim (1:0.59.2-1) unstable; urgency=low
+
+  * New upstream version.
+  * Revert all patches here, everything's included.
+  * Except for a blooper upstream which removes spaces from MSN and Yahoo
+     screen names, and adds random NULs instead. Doh! Pulled fix from
+     CVS.
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 13 Sep 2002 02:22:05 +0100
+
+gaim (1:0.59.1-4) unstable; urgency=low
+
+  * Update build-deps to libgnome-dev (>= 1.4.2-3) and
+     libpanel-applet-dev (>= 1.4.1-2) to ensure imlib1/png2 is used.
+  * Minor modification from Matt Wilson at RedHat to fix UTF8 font
+     selection in GtkImHtml (widget used in conversation/chat windows).
+
+ -- Robert McQueen <robot101@debian.org>  Tue,  3 Sep 2002 18:33:24 +0100
+
+gaim (1:0.59.1-3) unstable; urgency=high
+
+  * The 'getting sick of this now' release. Third time lucky and all...
+  * Ryan Murray (of gdk-pixbuf-dev fame) suggests dropping the new build
+     dependencies and gently hacking the Makefile to substitute them out
+     of linking the applet, because they're not actually necessary. This
+     will also fix libpng2/3 compatibility issues that were making the
+     applet fall back to the ugly xpm icon (until Christian Marillat
+     stops being an idiot and links GNOME 1.4 against libpng2 again).
+  * Thanks to Lukas Geyer (of JimButton fame) for pointing me at the
+     right make features I needed to accomplish this without too much
+     hacking.
+  * Include a patch from Chris Blizzard (of RedHat fame) to fix an
+     oversight in my fix for the browser security vunlerability. Access
+     to unallocated memory in the non-manual browser handlers could have
+     caused crashes in some situations. Cheers Chris. Sorry everyone.
+  * Also edit the default manual browser command to not contain quotes
+     any more. Debian should get a /usr/bin/sensible-browser or
+     something.
+
+ -- Robert McQueen <robot101@debian.org>  Wed, 28 Aug 2002 02:42:42 +0100
+
+gaim (1:0.59.1-2) unstable; urgency=high
+
+  * Well, that's the reason. gdk-imlib-dev dropped the dependencies for
+     lib{jpeg,png,tiff,gif}-dev because apparently they're not necessary.
+     libgnome-dev probably needs to add these.
+  * Added build-deps on libpng3-dev and libtiff3g-dev, so that Gaim can
+     finally build on the buildds without me NMUing libgnome-dev in a fit
+     of anger.
+  * Set urgency back to high to hammer the point home. If this doesn't
+     build I'm going to be mighty annoyed.
+  * Changed gaim-gnome depend to gnome-panel (<< 1.5). It doesn't work
+     with GNOME 2. I'm writing a docklet for that.
+
+ -- Robert McQueen <robot101@debian.org>  Mon, 26 Aug 2002 19:02:14 +0100
+
+gaim (1:0.59.1-1) unstable; urgency=low
+
+  * New upstream version from the gtk1-stable branch. Merges my browser.c
+     patch, works with perl 5.8 and gettext 0.11.x, and has a pretty
+     icon.
+  * Upstream merged patch for fixed i18n with libiconv.
+                                               (closes: #154473, #155058)
+  * Updated gaim-menu.xpm in light of new gaim.png icon, and fixed
+     gaim-common.files for the new icon name.
+  * Fixes idiotic handling of http_proxy environment variable.
+                                                        (closes: #144244)
+  * Updated ja.po because upstream is ignoring me about this.
+                                                        (closes: #154485)
+  * Added libjpeg-dev build-dep. GNOME 1.4 is messed up in a half-baked
+     libpng2 -> 3 transition, and this dep must've fallen out somewhere
+     else along with someone's brain. Should let the security fix build
+     and propogate to sarge.
+
+ -- Robert McQueen <robot101@debian.org>  Mon, 26 Aug 2002 04:59:50 +0100
+
+gaim (1:0.59-2) unstable; urgency=high
+
+  * Wrote patch to fix hideously insecure execution of unescaped
+     arbitrary strings through the shell for the Manual browser URL click
+     handler. Replaces any spaces in the URL with +, and runs the user's
+     browser command directly without the shell. Users will soon learn
+     not to quote the %s in their browser command.      (closes: #157909)
+  * Added libungif4-dev to build-deps. Looks like someone's brain fell
+     out. Ho hum.
+  * Updated config.sub from 20020307 to 20020621, and config.guess from
+     20020320 to 20020529.
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 24 Aug 2002 02:14:49 +0100
+
+gaim (1:0.59-1) unstable; urgency=low
+
+  * New upstream version. Finally. Contains various new and updated
+     translations, and fixes for various bugs, crashes & memleaks.
+  * Should work around a Gtk+ bug that causes spinning when some text
+     widget is smaller than the text height.            (closes: #117498)
+  * Fixes strange tabbing order in 'Add Buddy' dialog.  (closes: #134502)
+  * Hopefully a final end to stupid MSN errors.         (closes: #147141)
+  * Should display UTF8 MSN names in their full glory.  (closes: #150354)
+  * Updated config.sub from 20010420 to 20020307, and config.guess from
+     20010420 to 20020320.
+
+ -- root <root@hadesian.demon.co.uk>  Fri, 26 Jul 2002 23:19:27 +0100
+
+gaim (1:0.58-2) unstable; urgency=low
+
+  * Applied patch from Chris Blizzard (of Redhat fame =) to fix munged
+     GNOME applet icon at startup. Cheers!              (closes: #147071)
+  * Enabled NAS audio in non-GNOME package.             (closes: #147291)
+  * Returned globbing to debian/gaim-common.files now we don't need to
+     make an exception for iconaway.so.
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 24 May 2002 23:24:16 +0100
+
+gaim (1:0.58-1) unstable; urgency=high
+
+  * The 'DOH!' release.
+  * New upstream version, lots of nice stuff. See the changelog. =)
+  * To avoid upsetting upgrades, gaim-common now replaces suitably old
+     gaim-gnome packages because iconaway.so moved.     (closes: #144945)
+  * Another attempt by upstream to fix those annoying 'Already there'
+     MSN errors.                                        (closes: #145722)
+  * Fixes GNOME applet transparency problems.           (closes: #145915)
+  * In the previous version, the MSN plugin got secure logins to Hotmail
+     that used MD5 auth cookies in a file which was opened in the
+     browser, and would log you straight into your inbox. Ironically,
+     this improved security used blatantly insecure tempfiles, which
+     were also created with the 644 mode, leaving the way open for
+     symlink attacks, and anyone on your system reading your mail. This
+     is fixed in this release.                          (closes: #146750)
+  * Not to mention the overflow in the Jabber plugin that got fixed.
+  * Automatic update of config.sub from 20010907 to 20020307, and
+     config.guess from 20010904 to 20020320.
+
+ -- Robert McQueen <robot101@debian.org>  Tue, 14 May 2002 17:44:43 +0100
+
+gaim (1:0.57-2) unstable; urgency=high
+
+  * The 'Ahh... phew' release. One or two patches from CVS.
+  * Fixes segfault DOS in TOC protocol code.            (closes: #144318)
+  * Returns iconaway.so to gaim-common, the gnome/non-gnome dependent 
+     code has been moved to the binary itself.
+  * High priority to reach woody with these fixes, and the fix in 0.57 
+     for Yahoo's new authorisation method.
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 28 Apr 2002 16:54:18 +0100
+
+gaim (1:0.57-1) unstable; urgency=low
+
+  * The 'You did WHAT with configure.ac?!?' release.
+  * New upstream version. Adds an evil autoconf hack upstream, support
+     for Yahoo's new authorisation method, new keyboard shortcuts,
+     hashed secure logins for Hotmail from your MSN account, and various 
+     translations and Jabber improvements.
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 26 Apr 2002 17:09:18 +0100
+
+gaim (1:0.56-1) unstable; urgency=low
+
+  * The 'Hola from Tenerife!' release.
+  * New upstream version. Signal patch merged. Various bugfixes, and the
+     much-awaited send history finally appears.
+  * Automatic update of config.sub from 20010420 to 20020307, and 
+     config.guess from 20010420 to 20020320.
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 13 Apr 2002 18:40:05 +0100
+
+gaim (1:0.55-2) unstable; urgency=low
+
+  * Wrote patch to unblock useful signals like SIGCHLD because gdm
+     helpfully blocks them. Helps avoid zombies from filling your
+     process space when you start the applet from the GNOME panel.
+                            [debian/patches/unblock-handled-signals.diff]
+  * Applied patch from CVS to fix MSN problems such as being constantly
+     prompted to allow buddies who you actually wanted to block.
+                                  [debian/patches/various-msn-fixes.diff]
+  * Automatic update of config.sub from 20020222 to 20020307, and
+     config.guess from 20020219 to 20020320.
+
+ -- Robert McQueen <robot101@debian.org>  Wed,  3 Apr 2002 20:53:38 +0100
+
+gaim (1:0.55-1) unstable; urgency=low
+
+  * The 'and relax...' release.
+  * New upstream version (all patches have been merged).
+  * Updated Spanish translation.                        (closes: #138471)
+  * Fixes HTTP incompliance in proxy code.              (closes: #140036)
+  * Fixes crashing when enabling/disabling animated buddy icons.
+                                                        (closes: #140192)
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 30 Mar 2002 16:49:43 +0000
+
+gaim (1:0.54-6) unstable; urgency=low
+
+  * Updated gaimrc.c to recognise the option for the new Command sound 
+     method so it doesn't override it at loadup.        (closes: #139253)
+
+ -- Robert McQueen <robot101@debian.org>  Thu, 21 Mar 2002 13:01:42 +0000
+
+gaim (1:0.54-5) unstable; urgency=low
+
+  * Added MSN embarrased icon.                          (closes: #139109)
+  * Updated MSN pixmaps from CVS to avoid evil crashing on some archs.
+
+ -- Robert McQueen <robot101@debian.org>  Wed, 20 Mar 2002 11:14:58 +0000
+
+gaim (1:0.54-4) unstable; urgency=low
+
+  * Fixed a compiler warning with the sound patch.
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 17 Mar 2002 17:56:05 +0000
+
+gaim (1:0.54-3) unstable; urgency=low
+
+  * Fixed a few things with my sound patch, like the mysterious swapping
+     of the recieve and first recieve sound options versus events. Doh!
+                                                        (closes: #138759)
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 17 Mar 2002 17:26:50 +0000
+
+gaim (1:0.54-2) unstable; urgency=low
+
+  * Removed ICQ plugin. It really doesn't work very well at all any
+     more.                                              (closes: #137058)
+  * Updated README.Debian to take account of this.
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 16 Mar 2002 19:46:42 +0000
+
+gaim (1:0.54-1) unstable; urgency=medium
+
+  * New upstream version. Goodies like IM Image sending for Oscar,
+     protocol specific smileys, off-line message and improved
+     typing notification support for Yahoo, DCC chat and mIRC formatting
+     support for IRC, and lots of general bugfixes, especially
+     pertaining to never being asked to accept/decline MSN buddies who
+     add you when you're off-line.                      (closes: #138472)
+  * Medium urgency upload because 0.53 was buggy but I had to let 0.53-2
+     go in to testing because of the nul vulnerability.
+  * The six (!) patches in 0.53-2 from CVS are all included in this
+     version.
+  * 'Oscar' protocol renamed to 'Oscar / ICQ' upstream. (closes: #137061)
+  * Applied patch from me, already accepted upstream, with various
+     cleanups to fix unusual sound behaviour:
+      - attempting to play an internal sound with a command now
+         generates an error instead of silently failing
+      - attempting to play a file with the native method now warns
+         before probably failing
+      - the 'Test' button in the sound preferences now temporarily
+         enables the sound under test, so it always tries to play it
+      - using a command to play sounds is now a seperate option that
+         must be explicitly enabled, avoiding problems with testing for
+         other options happening before testing if a command had been
+         specified                                      (closes: #137010)
+  * Now building the non-GNOME version against ESD to make sound support
+     more useful. Native sound support can only be expected to work for
+     internal sounds.                                   (closes: #137013)
+  * Remove the .h files from gaim-common. It turns out to be very hard
+     indeed to make Gaim plugins build outside the Gaim source tree. I
+     will probably make a gaim-plugins package with a few worthy plugins
+     like the russian charset conversion, xosd signon/signoff
+     notification, etc - I'm open to suggestions. Plugins must be
+     runtime configurable (unlike irc-extras), actually useful (unlike
+     the one to arbitrarily change your idle time), and build against
+     the latest Gaim.
+  * Include the licq2gaim.pl buddy list import script in the examples 
+     dir in gaim-common.
+
+ -- Robert McQueen <robot101@debian.org>  Sat, 16 Mar 2002 18:47:07 +0000
+
+gaim (1:0.53-2) unstable; urgency=low
+
+  * The 'No, I don't use CVS' release.
+  * Applied patches from CVS so that:
+     - closing a conversation window when a buddy is typing doesn't
+       cause a crash       [debian/patches/close-typing-buddy-crash.diff]
+     - server-side buddy lists are disabled for ICQ over Oscar to avoid
+       mysterious bugs with authentication-required buddies not 
+       appearing on-line             [debian/patches/no-ssi-for-icq.diff]
+     - Gaim doesn't fork and uses gdk_beep() for console beeps
+              [debian/patches/non-forked-gdk-beep.diff] (closes: #136165)
+     - Gaim doesn't gradually make the X server use all your RAM
+                                            [debian/patches/memleak.diff]
+     - typing notification doesn't crash Gaim if you don't use tabs
+                                        [debian/paches/no-tab-crash.diff]
+     - sending a nul or &#00; doesn't crash Gaim
+                                          [debian/patches/nul-crash.diff]
+
+ -- Robert McQueen <robot101@debian.org>  Mon,  4 Mar 2002 19:23:38 +0000
+
+gaim (1:0.53-1) unstable; urgency=low
+
+  * New upstream version. Adds typing notification, new ICQ icons, IM
+     Images, screen-name formatting support and server-side buddy list
+     storage/retrieval for Oscar, and various other nice features and
+     cleanups.                                          (closes: #136512)
+  * Includes documentation and MSN segfault fixes that were patched into
+     the previous release.
+  * Automatic update of config.{sub,guess} from 20010420 to 20020222.
+
+ -- Robert McQueen <robot101@debian.org>  Sun,  3 Mar 2002 19:06:52 +0000
+
+gaim (1:0.52-1) unstable; urgency=medium
+
+  * New upstream version. Fixes a variety of nasty problems.
+  * Fixes crashing on connection with some MSN buddy lists.
+  * Uses correct Yahoo! messenger server.               (closes: #133343)
+  * Fixes DOSable erroneous handling of HTML comments.  (closes: #133603)
+  * Applied patch from CVS to fix MSN segfaults.        (closes: #115538)
+  * Moved iconaway.so plugin into gaim-gnome package because it's
+     useless without the applet.                        (closes: #133500)
+  * Fixed little typo in manpage (already fixed in CVS).
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 17 Feb 2002 22:32:10 +0000
+
+gaim (1:0.51-2) unstable; urgency=low
+
+  * Fixed description of gaim-gnome to make it obvious that it is a
+     panel applet.
+  * Made gaim-gnome depend on gnome-panel. It's unreasonable to request 
+     that libpanel-applet0 does so, but gaim-gnome is useless without
+     it.                                                (closes: #131233)
+
+ -- Robert McQueen <robot101@debian.org>  Mon, 28 Jan 2002 20:25:04 +0000
+
+gaim (1:0.51-1) unstable; urgency=low
+
+  * The 'Hi anyone on gaim's PTS' release.
+  * New upstream version, mostly bug fixes.             (closes: #130737)
+  * Upstream developer Eric Warmenhoven departs... thanks for all of
+     your help and effort - you'll be greatly missed by all.
+  * According to him, crashes were caused by a Gtk+ bug which has now
+     been worked around.                                (closes: #115538)
+  * He removed the help message a few weeks ago because I said it didn't
+     wrap properly... not sure how helpful that was though.
+                                                        (closes: #125310)
+  * He also grappled with the GNOME panel to implement transparent
+     backgrounds as best he could. The Gaim applet icon will have the
+     same background image as the panel, but it will not line up with
+     the panel's because the panel doesn't provide enough imformation to
+     achieve that.                                      (closes: #128449)
+  * Made gaim-common include a handful of .h files so that you can build
+     plugins without the Gaim source - this opens the way for packaging
+     plugins that don't come with Gaim. The reason is that I do not wish
+     to include unofficial plugins in Gaim and accept responsibility for
+     ensuring they work with the latest versions, or be forced to remove
+     them from the package at a later date, sorry.      (closes: #129737)
+  * I can no longer reproduce this bug with this new version, but I am
+     also unable to determine if/when exactly it was fixed from the CVS
+     logs. If you can still make it happen, please reopen it and I'll
+     chase it up.                                       (closes: #117498)
+  * Fixed a few minor errors in the manpage.   (closes: #130435, #130443)
+  * Re-worked description to highlight mutli-protocol support.
+                                                        (closes: #130437)
+  * Automatic update of config.{sub,guess} from 20010907 to 20020102.
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 27 Jan 2002 05:45:05 +0000
+
+gaim (1:0.50-1) unstable; urgency=low
+
+  * The 'Hi everyone who reads d-d-c!' release.
+  * New upstream version, includes GnomeICU import and Galeon patches
+     from 0.49-2.                                       (closes: #125897)
+  * Added a suitably scaled Debian menu icon for gaim.  (closes: #122302)
+  * Re-ordered build to do the non-GNOME version first and install that
+     'manually', so all the files from the GNOME applet get installed
+     with the 'make install' target. This means gaim-gnome now contains
+     the applet panel images.                           (closes: #122315)
+  * Fixed re-declaration of time() in jabber/xtream.c.  (closes: #124390)
+
+ -- Robert McQueen <robot101@debian.org>  Thu, 20 Dec 2001 18:30:16 +0000
+
+gaim (1:0.49-2) unstable; urgency=medium
+
+  * The 'grr... dpkg' release. Fixes possibly troublesome package
+     relationship problems.
+  * Made gaim-gnome conflict and replace old gaim packages.
+  * Made gaim-common have a versioned depend on gaim or gaim-gnome,
+     because a dpkg bug seemed to let you install an old gaim-common
+     with a new gaim or gaim-gnome, even though they have a versioned
+     depend on gaim-common.
+  * Added patch from CVS to support GnomeICU buddy list importing.
+  * Added option to use Galeon as the browser.
+
+ -- Robert McQueen <robot101@debian.org>  Sat,  1 Dec 2001 22:41:04 +0000
+
+gaim (1:0.49-1) unstable; urgency=low
+
+  * New upstream version.
+  * Removed evil hack from debian/rules to rename plugins from
+     libfoo.so.0.0.0 to libfoo.so (fixed upstream).
+  * Updated description to include Gadu-gadu protocol.
+  * Removal of buddies from within the IM window is now confirmed.
+                                                        (closes: #116442)
+  * Memory leak in buddy list fixed.                    (closes: #119639)
+  * Pgup/pgdown in IM windows now scrolls only one text box, not both.
+                                                        (closes: #120027)
+  * Included a minor patch to remove ^M characters from Oscar messages.
+                                                        (closes: #120595)
+  * Now suggests ispell.                                (closes: #121656)
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 30 Nov 2001 01:43:01 +0000
+
+gaim (1:0.48-1) unstable; urgency=low
+
+  * New upstream version.                               (closes: #119748)
+  * Better support for ICQ2000 features via OSCAR protocol, like
+     server/offline messages.
+  * Doesn't temporarily grow small GNONE panels when the applet starts
+     up.
+  * GNU config automated update: config.sub (20011005 to 20011108),
+     config.guess (20011005 to 20011108)
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 16 Nov 2001 19:46:48 +0000
+
+gaim (1:0.47-1) unstable; urgency=low
+
+  * New upstream version.
+  * Sound-playing children now time out after 30 seconds.
+                                                        (closes: #116982)
+
+ -- Robert McQueen <robot101@debian.org>  Fri,  2 Nov 2001 00:53:18 +0000
+
+gaim (1:0.46-1) unstable; urgency=low
+
+  * New upstream version.                               (closes: #114950)
+  * Added documentation: plugins/PERL-HOWTO, plugins/SIGNALS,
+     doc/CREDITS, doc/FAQ.
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 19 Oct 2001 00:37:19 +0100
+
+gaim (1:0.45-1) unstable; urgency=low
+
+  * New upstream version, includes fix to avoid infinite IM window
+     growth.                                            (closes: #114950)
+  * Upgraded to DH_COMPAT=3 to make /etc/CORBA/servers/gaim_applet.gnorba
+     a conffile. Adjusted build deps to match.
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 14 Oct 2001 19:45:20 +0100
+
+gaim (1:0.44-2) unstable; urgency=medium
+
+  * Applied patch from CVS to avoid IM windows sizing to 0 by default
+     and growing limitlessly.
+
+ -- Robert McQueen <robot101@debian.org>  Tue, 25 Sep 2001 01:28:14 +0100
+
+gaim (1:0.44-1) unstable; urgency=low
+
+  * New upstream version.
+  * Enabled perl support, upstream assures me it works now.
+                                                        (closes: #112732)
+
+ -- Robert McQueen <robot101@debian.org>  Sun, 23 Sep 2001 18:37:20 +0100
+
+gaim (1:0.43-1) unstable; urgency=medium
+
+  * New upstream version including various bugfixes.
+  * Colour selection dialogs now remember the previous colours.
+                                                        (closes: #101562)
+  * Autorecon plugin now has an exponential backoff to allow users to
+     correct non-transient errors.                      (closes: #102042)
+  * Changed 'buddy' prompt to 'contact' to make the Add Buddy dialog
+     less AIM-specific.                                 (closes: #105460)
+  * Users can now edit their alias with the MSN plugin. (closes: #110966)
+  * Added postinst scripts for gaim and gaim-gnome to rmdir their dirs
+     from /usr/share/doc if they exist, and replace them with symlinks
+     to gaim-common.                                    (closes: #111127)
+  * Seeing as we have to build twice, try and build as little as
+     possible the first time round (just the gaim_applet binary and its
+     dependencies) to make it more efficient.
+  * Updated config.{sub,guess} from latest autotools-dev.
+
+ -- Robert McQueen <robot101@debian.org>  Tue, 11 Sep 2001 22:42:51 +0100
+
+gaim (1:0.11.0pre15-1) unstable; urgency=low
+
+  * New maintainer.                                     (closes: #100549)
+  * New upstream version.                        (closes: #54105, #96166)
+  * Repackaged with sane version number, pristine .orig.tar.gz, and
+     seperate .diff.gz.                                 (closes: #106488)
+  * MSN and OSCAR protocols are functional at time of release.
+                                                (closes: #92045, #105841)
+  * Plugins, locales and docs are now in a shared gaim-common package.
+  * Therefore, gaim and gaim-gnome are concurrently installable.
+                                                 (closes: #69794, #87873)
+  * These new shared plugins are not linked against GNOME.
+                                                         (closes: #83427)
+  * The GNOME applet now has a CORBA file and correct Applet menu entry,
+     so it correctly integrates with the panel and saves settings.
+                                        (closes: #80587, #92950, #101560)
+  * Added code to debian/rules to update config.{guess,sub} from
+     autotools-dev when necessary.                      (closes: #104934)
+
+ -- Robert McQueen <robot101@debian.org>  Fri, 31 Aug 2001 03:38:54 +0100
+
+gaim (1:0.11.0pre11) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <edmonds@debian.org>  Mon, 14 May 2001 17:40:05 -0400
+
+gaim (1:0.11.0pre9-1) unstable; urgency=low
+
+  * New upstream release. Closes: #91854
+
+ -- Robert S. Edmonds <edmonds@debian.org>  Tue, 27 Mar 2001 07:32:16 -0500
+
+gaim (1:0.11.0pre8-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <edmonds@debian.org>  Sun, 25 Mar 2001 15:26:59 -0500
+
+gaim (1:0.11.0pre7-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <edmonds@debian.org>  Sun, 18 Mar 2001 18:40:46 -0500
+
+gaim (1:0.11.0pre4-2) unstable; urgency=low
+
+  * Fixed gaim package, now contains a plain GTK-linked binary.
+
+ -- Robert S. Edmonds <edmonds@debian.org>  Tue, 20 Feb 2001 18:12:45 -0500
+
+gaim (1:0.11.0pre4-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <edmonds@debian.org>  Sat, 23 Dec 2000 16:38:09 -0500
+
+gaim (1:0.11.0pre2-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <stu@brainfood.com>  Wed, 13 Dec 2000 07:28:04 -0500
+
+gaim (1:0.10.3-2) unstable; urgency=low
+
+  * Patched to fix remote HTML exploit when using OSCAR protocol. Closes: #77539
+  * New upstream release.
+
+ -- Robert S. Edmonds <stu@novare.net>  Tue, 28 Nov 2000 19:48:33 -0500
+
+gaim (1:0.10.1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <stu@novare.net>  Sun, 17 Sep 2000 17:43:20 -0400
+
+gaim (1:0.10.0-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <stu@novare.net>  Mon, 11 Sep 2000 17:56:10 -0400
+
+gaim (1:0.9.20-1) unstable; urgency=low
+
+  * Thanks to Decklin Foster <decklin@red-bean.com>
+  * New upstream release.
+  * removed au2h generated files from .diff.gz
+  * Build with and without Gnome support
+
+ -- Robert S. Edmonds <stu@novare.net>  Wed, 26 Jul 2000 00:19:20 -0400
+
+gaim (1:0.9.18-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <stu@novare.net>  Sat,  3 Jun 2000 11:14:21 -0400
+
+gaim (1:0.9.15-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <stu@novare.net>  Sun, 21 May 2000 21:00:40 -0400
+
+gaim (1:0.9.13-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <stu@novare.net>  Wed, 29 Mar 2000 21:16:47 -0500
+
+gaim (1:0.9.10-2) unstable; urgency=low
+
+  * Closes: #56340
+
+ -- Robert S. Edmonds <stu@novare.net>  Wed, 23 Feb 2000 19:01:54 -0500
+
+gaim (1:0.9.10-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <stu@novare.net>  Tue, 23 Nov 1999 22:42:47 -0500
+
+gaim (1:0.9.7-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <stu@novare.net>  Sun, 15 Aug 1999 20:01:54 -0400
+
+gaim (0.9.5-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Robert S. Edmonds <stu@novare.net>  Sat, 31 Jul 1999 23:12:54 -0400
+
+gaim (0.8.0-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Robert S. Edmonds <stu@novare.net>  Mon, 17 May 1999 20:00:10 -0400
+
+gaim (19990311-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Robert S. Edmonds <stu@novare.net>  Thu, 11 Mar 1999 16:58:29 -0500
+
+gaim (19990227-1) unstable; urgency=low
+
+  * New upstream version.
+
+ -- Robert S. Edmonds <stu@novare.net>  Sat, 27 Feb 1999 21:54:49 -0500
+
+gaim (19981231-1) unstable; urgency=low
+
+  * New upstream version. 
+
+ -- Robert S. Edmonds <stu@novare.net>  Thu, 31 Dec 1998 14:06:14 -0500
+
+gaim (19981126-1) unstable; urgency=low
+
+  * New upsteam version.
+
+ -- Robert S. Edmonds <stu@novare.net>  Sat, 28 Nov 1998 17:46:25 -0500
+
+gaim (19981117-1) unstable; urgency=low
+
+  * Initial release.
+
+ -- Robert S. Edmonds <edmonds@freewwweb.com>  Wed, 18 Nov 1998 16:59:35 -0500

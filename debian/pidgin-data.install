@@ -1,0 +1,8 @@
+debian/tmp/etc/gconf
+debian/tmp/usr/share/icons
+debian/tmp/usr/share/locale
+debian/tmp/usr/share/man
+debian/tmp/usr/share/pixmaps
+debian/tmp/usr/share/sounds
+debian/pidgin-menu.xpm	usr/share/pixmaps
+debian/prefs.xml	etc/purple

@@ -1,0 +1,83 @@
+Source: pidgin
+Section: net
+Priority: optional
+Maintainer: Robert McQueen <robot101@debian.org>
+Uploaders: Ari Pollak <ari@debian.org>
+Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0),
+ libgtk2.0-dev, libxss-dev, libmeanwhile-dev, libgadu-dev (>= 1:1.6+20060215-1),
+ libnss3-dev, tcl8.4-dev, tk8.4-dev, libgstreamer0.10-dev,
+ libgtkspell-dev, libltdl3-dev, libperl-dev,
+ libstartup-notification0-dev, libzephyr-dev, libxml2-dev,
+ libebook1.2-dev, libedata-book1.2-dev, libcamel1.2-dev,
+ libdbus-glib-1-dev, dbus, python (>= 2.4), libavahi-compat-howl-dev,
+ libxml-parser-perl, libncursesw5-dev, libsasl2-dev, doxygen
+Standards-Version: 3.6.1
+XS-Vcs-Svn: svn://svn.debian.org/svn/pkg-gnome/packages/unstable/pidgin
+XS-Vcs-Browser: http://svn.debian.org/wsvn/pkg-gnome/packages/unstable/pidgin
+
+Package: pidgin
+Architecture: any
+Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z) (${shlibs:Depends}, libsasl2-modules
+Replaces: gaim (<< 1:2.0.0+beta6-3)
+Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good, python-dbus
+Suggests: gnome-panel (>= 2.1) | kicker (>= 3.1) | docker, evolution-data-server (>= 1.6.0), ${shlibs:Suggests}
+Conflicts: gaim-encryption (<= 3.0~beta7-1), gaim-librvp (<= 0.9.5-2), nautilus-sendto (<= 0.8-2)
+Description: multi-protocol instant messaging client
+ Pidgin is a graphical, modular Instant Messaging client capable of using
+ AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, Gadu-Gadu, Bonjour,
+ Groupwise, Sametime, and SIMPLE all at once.
+ .
+ Some extra packages are recommended to use the core functionality present
+ in most pidgin installations:
+ * gstreamer0.10-plugins-base, gstreamer0.10-plugins-good
+   - Sound support.
+ * python-dbus
+   - For the command-line helper utilities such as purple-remote and 
+     purple-url-handler.
+ .
+ More extra packages are suggested to use increased functionality:
+ * gnome-panel | kicker | docker:
+   - To use the system tray icon functionality (minimizing to an icon, having
+     the icon blink when there are new messages, etc.)
+ * evolution-data-server:
+   - For interfacing with an Evolution address book
+ * libgadu3:
+   - Support for Gadu-Gadu accounts
+ * libmeanwhile1:
+   - Support for Lotus Sametime accounts
+ * libzephyr3:
+   - Support for Zephyr accounts
+ * tcl8.4, tk8.4:
+   - Support for Tcl/Tk plugins
+
+Package: pidgin-data
+Architecture: all
+Depends: ${misc:Depends}
+Replaces: gaim-data (<< 1:2.0.0+beta6-3)
+Recommends: pidgin
+Enhances: pidgin
+Description: multi-protocol instant messaging client - data files
+ This package contains architecture-independent supporting data files
+ required for use with pidgin, such as documentation, icons, translations &
+ emoticons.
+
+Package: pidgin-dev
+Section: devel
+Architecture: all
+Depends: pidgin (= ${source:Version}), pidgin-data (= ${source:Version}), pkg-config, libglib2.0-dev
+Description: multi-protocol instant messaging client - development files
+ This package contains the headers and other development files not included in
+ the main pidgin package. Install this if you wish to compile your own plugins,
+ or would like to compile programs that use the purple-remote library.
+ .
+ If you are creating a pidgin plugin package, please be sure to read
+ /usr/share/doc/pidgin-dev/README.Debian.dev after installing pidgin-dev.
+
+Package: pidgin-dbg
+Priority: extra
+Architecture: any
+Depends: pidgin (= ${source:Version}), pidgin-data (= ${source:Version}), ${shlibs:Depends}
+Description: Debugging symbols for Pidgin 
+ This package includes the debugging symbols useful for debugging Pidgin
+ and its plugins, contained in the pidgin package. The debugging symbols are
+ used for execution tracing and core dump analysis.

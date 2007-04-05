@@ -1,0 +1,34 @@
+--- pidgin-2.0.0+beta5.orig/libpurple/connection.c	2006-11-28 00:12:14.000000000 -0500
++++ pidgin-2.0.0+beta5/libpurple/connection.c	2006-11-28 00:24:00.000000000 -0500
+@@ -37,6 +37,10 @@
+ #include "signals.h"
+ #include "util.h"
+ 
++#include <netinet/in.h>
++#include <arpa/nameser.h>
++#include <resolv.h>
++
+ static GList *connections = NULL;
+ static GList *connections_connecting = NULL;
+ static PurpleConnectionUiOps *connection_ui_ops = NULL;
+@@ -139,6 +139,9 @@
+ 
+ 	purple_signal_emit(purple_connections_get_handle(), "signing-on", gc);
+ 
++	/* Re-read resolv.conf and friends in case DNS servers have changed */
++	res_init();
++
+ 	if (regist)
+ 	{
+ 		purple_debug_info("connection", "Registering.  gc = %p\n", gc);
+--- pidgin-2.0.0+beta5.orig/libpurple/network.c	2006-11-28 00:12:14.000000000 -0500
++++ pidgin-2.0.0+beta5/libpurple/network.c	2006-11-28 00:24:15.000000000 -0500
+@@ -558,8 +558,6 @@
+ 	switch(current)
+ 	{
+ 	case LIBNM_ACTIVE_NETWORK_CONNECTION:
+-		/* Call res_init in case DNS servers have changed */
+-		res_init();
+ 		if (ui_ops != NULL && ui_ops->network_connected != NULL)
+ 			ui_ops->network_connected();
+ 		prev = current;

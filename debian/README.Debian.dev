@@ -1,0 +1,24 @@
+README for pidgin-dev - How to package Pidgin plugins
+-------------------------------------------------
+
+First, let me explain the current Pidgin versioning scheme (as of 1.0.0):
+Every time the plugin API in pidgin is made backwards-incompatible with
+previous versions, the major version number (the first number before the .)
+is incremented. So if currently in the pidgin 2.x series, the next
+time the API will change such that plugins may need to be changed is 
+at 3.0.0.
+
+pidgin plugin packages should be named pidgin-<plugin name>, so for
+Guifications, the package name should be pidgin-guifications. Plugin packages
+should build-depend on pidgin-dev (>= minimum pidgin version required to
+support plugin).  Normally the minimum version of pidgin-dev will just
+be 1:2.0.0 for the 2.x series, or higher if the plugin uses a new function
+introduced in a later version.
+
+Plugin packages should also use dh_pidgin to set the correct dependencies
+for the resulting package. dh_pidgin is included in the pidgin-dev package,
+and can be used by making sure the Depends: field in the plugin package's 
+debian/control file contains "${misc:Depends}", as well as calling dh_pidgin
+from debian/rules, normally in the install rule.
+
+-- Ari Pollak <ari@debian.org>  25 Sep 2006

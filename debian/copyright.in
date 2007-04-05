@@ -1,0 +1,97 @@
+pidgin was initially packaged for Debian by Ari Pollak <ari@debian.org>
+on Sun, Apr 8 2007.
+
+It was downloaded from:
+ http://www.pidgin.im
+
+Purple/Pidgin/Finch is the legal property of its developers.
+Please refer to the COPYRIGHT file distributed with this source distribution.
+The contents of the COPYRIGHT file is included here:
+@PIDGIN_COPYRIGHT@
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of
+the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+On Debian systems, the complete text of the GNU General Public
+License can be found in /usr/share/common-licenses/GPL file.
+
+--------------------
+
+The code for the GG protocol plugin (libpurple/protocols/gg/lib) has the
+following copyright notice:
+
+  (C) Copyright 2001-2003 Wojtek Kaniewski <wojtekka@irc.pl>
+                          Robert J. Woźny <speedy@ziew.org>
+                          Arkadiusz Miśkiewicz <arekm@pld-linux.org>
+                          Tomasz Chiliński <chilek@chilan.com>
+
+  This program is free software; you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License Version
+  2.1 as published by the Free Software Foundation.
+
+On Debian systems, the complete text of the GNU Lesser General Public
+License Version 2.1 can be found in /usr/share/common-licenses/LGPL-2.1 file.
+
+--------------------
+
+The code for the OSCAR protocol (libpurple/protocols/oscar) has the following
+copyright notice:
+
+This file is the legal property of its developers.
+Please see the AUTHORS file distributed alongside this file.
+The contents of the AUTHORS file is included here:
+@OSCAR_AUTHORS@
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2 of the License, or (at your option) any later version.
+
+--------------------
+
+The code for libzephyr (libpurple/protocols/zephyr), which is not built for the 
+Debian package, has the following copyright notices:
+
+Copyright 1987,1988 by the Massachusetts Institute of Technology
+
+All rights reserved.
+
+Permission to use, copy, modify, and distribute this software and its
+documentation for any purpose and without fee is hereby granted,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation, and that the name of the Massachusetts
+Institute of Technology (M.I.T.) not be used in advertising or publicity
+pertaining to distribution of the software without specific, written
+prior permission.
+
+M.I.T. DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE, INCLUDING
+ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO EVENT SHALL
+M.I.T. BE LIABLE FOR ANY SPECIAL, INDIRECT OR CONSEQUENTIAL DAMAGES OR
+ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS,
+WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION,
+ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS
+SOFTWARE.
+
+
+Copyright 1987, 1989 by the Student Information Processing Board
+    of the Massachusetts Institute of Technology
+
+Permission to use, copy, modify, and distribute this software
+and its documentation for any purpose and without fee is
+hereby granted, provided that the above copyright notice
+appear in all copies and that both that copyright notice and
+this permission notice appear in supporting documentation,
+and that the names of M.I.T. and the M.I.T. S.I.P.B. not be
+used in advertising or publicity pertaining to distribution
+of the software without specific, written prior permission.
+M.I.T. and the M.I.T. S.I.P.B. make no representations about
+the suitability of this software for any purpose.  It is
+provided "as is" without express or implied warranty.

@@ -1,0 +1,9 @@
+Document: pidgin-dev
+Title: Gaim API Manual
+Abstract: This manual describes the Gaim programming interface
+ for use by Gaim plugins and scripts.
+Section: devel
+
+Format: HTML
+Index: /usr/share/doc/pidgin-dev/html/index.html
+Files: /usr/share/doc/pidgin-dev/html/*.html

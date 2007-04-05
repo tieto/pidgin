@@ -1,0 +1,14 @@
+diff -Nur pidgin-2.0.0+beta5/pidgin/gtksound.c pidgin-2.0.0+beta5.new/pidgin/gtksound.c
+--- pidgin-2.0.0+beta5/pidgin/gtksound.c	2006-11-10 02:23:00.000000000 -0500
++++ pidgin-2.0.0+beta5.new/pidgin/gtksound.c	2006-11-11 15:44:05.000000000 -0500
+@@ -448,9 +448,7 @@
+ 		return;
+ 	volume = (float)(CLAMP(purple_prefs_get_int("/purple/gtk/sound/volume"),0,100)) / 50;
+ 	if (!strcmp(method, "automatic")) {
+-		if (purple_running_gnome()) {
+-			sink = gst_element_factory_make("gconfaudiosink", "sink");
+-		}
++		sink = gst_element_factory_make("gconfaudiosink", "sink");
+ 		if (!sink)
+ 			sink = gst_element_factory_make("autoaudiosink", "sink");
+ 	} else if (!strcmp(method, "esd")) {

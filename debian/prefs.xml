@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<pref name='/'>
+	<pref name='pidgin'>
+			<pref name='browsers'>
+				<pref name='command' type='string' value='sensible-browser' />
+				<pref name='browser' type='string' value='custom' />
+			</pref>
+		</pref>
+	</pref>
+</pref>

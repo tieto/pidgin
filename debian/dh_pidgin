@@ -1,0 +1,66 @@
+#! /usr/bin/perl -w
+
+=head1 NAME
+
+dh_pidgin- depend on the appropriate version of pidgin
+
+=cut
+
+use strict;
+use Debian::Debhelper::Dh_Lib;
+
+=head1 SYNOPSIS
+
+B<dh_pidgin> [S<I<debhelper options>>]
+
+=head1 DESCRIPTION
+
+dh_pidgin is a debhelper program that is responsible for generating 
+the ${misc:Depends} substutions that depend on the correct versions of pidgin,
+and adding them to substvars files.
+
+To use this program, make sure it is executed in debian/rules at some point
+during the build process (normally during the install), and make sure that
+your Depends: field in debian/control contains ${misc:Depends}.
+
+=cut
+
+init();
+
+my ($pidgin_epoch, $pidgin_version, $next_version, $pidgin_major, $pidgin_minor,
+    $pidgin_rest);
+$pidgin_version = `dpkg -s pidgin`;
+$pidgin_version =~ /^Version:\s*([\S]+)/m;
+$pidgin_version = $1;
+
+if (! defined $pidgin_version) {
+     error("pidgin is not installed.  (Probably forgot to Build-Depend on pidgin)");
+}
+if ($pidgin_version =~ m/(\d+:)?(\d+)\.(\d+)\.(.*)/) {
+     $pidgin_epoch = $1;
+     $pidgin_major = $2;
+     $pidgin_minor = $3;
+     $pidgin_rest = $4;
+} else {
+     error("Unable to parse pidgin version out of '$pidgin_version'");
+}
+
+$next_version = $pidgin_epoch . ($pidgin_major + 1) . ".0";
+$pidgin_version = $pidgin_epoch . $pidgin_major . "." .$pidgin_minor;
+
+foreach my $package (@{$dh{DOPACKAGES}}) {
+	my $tmp=tmpdir($package);
+        addsubstvar($package, "misc:Depends", "pidgin", ">= $pidgin_version");
+        addsubstvar($package, "misc:Depends", "pidgin", "<< $next_version");
+}
+
+=head1 SEE ALSO
+
+L<debhelper(7)>
+
+=head1 AUTHOR
+
+Written by Tollef Fog Heen <tfheen@debian.org>, based on various other
+dh_* commands written by Joey Hess <joeyh@debian.org>.
+
+=cut
