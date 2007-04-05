@@ -107,7 +107,7 @@ static HWND systray_create_hiddenwin() {
 	wcex.lpfnWndProc	= systray_mainmsg_handler;
 	wcex.cbClsExtra		= 0;
 	wcex.cbWndExtra		= 0;
-	wcex.hInstance		= winpidgin_hinstance();
+	wcex.hInstance		= winpidgin_exe_hinstance();
 	wcex.hIcon		= NULL;
 	wcex.hCursor		= NULL,
 	wcex.hbrBackground	= NULL;
@@ -118,7 +118,7 @@ static HWND systray_create_hiddenwin() {
 	RegisterClassEx(&wcex);
 
 	/* Create the window */
-	return (CreateWindow(wname, "", 0, 0, 0, 0, 0, GetDesktopWindow(), NULL, winpidgin_hinstance(), 0));
+	return (CreateWindow(wname, "", 0, 0, 0, 0, 0, GetDesktopWindow(), NULL, winpidgin_exe_hinstance(), 0));
 }
 
 static void systray_init_icon(HWND hWnd) {
@@ -533,6 +533,7 @@ static void winpidgin_tray_maximize(PidginBuddyList *gtkblist) {
 
 
 static void winpidgin_tray_create() {
+	OSVERSIONINFO osinfo;
 	/* dummy window to process systray messages */
 	systray_hwnd = systray_create_hiddenwin();
 
@@ -543,6 +544,32 @@ static void winpidgin_tray_create() {
 	g_object_ref(image);
 	gtk_object_sink(GTK_OBJECT(image));
 #endif
+
+	osinfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+	GetVersionEx(&osinfo);
+
+	/* Load icons, and init systray notify icon
+	 * NOTE: Windows < XP only supports displaying 4-bit images in the Systray,
+	 *  2K and ME will use the highest color depth that the desktop will support,
+	 *  but will scale it back to 4-bits for display.
+	 * That is why we use custom 4-bit icons for pre XP Windowses */
+	if (osinfo.dwMajorVersion < 5 || (osinfo.dwMajorVersion == 5 && osinfo.dwMinorVersion == 0))
+	{
+		cached_icons[DOCKLET_STATUS_OFFLINE] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+			MAKEINTRESOURCE(PIDGIN_TRAY_OFFLINE_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
+		cached_icons[DOCKLET_STATUS_AVAILABLE] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+			MAKEINTRESOURCE(PIDGIN_TRAY_AVAILABLE_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
+		cached_icons[DOCKLET_STATUS_AWAY] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+			MAKEINTRESOURCE(PIDGIN_TRAY_AWAY_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
+		cached_icons[DOCKLET_STATUS_XA] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+			MAKEINTRESOURCE(PIDGIN_TRAY_XA_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
+		cached_icons[DOCKLET_STATUS_BUSY] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+			MAKEINTRESOURCE(PIDGIN_TRAY_BUSY_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
+		cached_icons[DOCKLET_STATUS_CONNECTING] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+			MAKEINTRESOURCE(PIDGIN_TRAY_CONNECTING_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
+		cached_icons[DOCKLET_STATUS_PENDING] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+			MAKEINTRESOURCE(PIDGIN_TRAY_PENDING_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
+	}
 
 	/* Create icon in systray */
 	systray_init_icon(systray_hwnd);

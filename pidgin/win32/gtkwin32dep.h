@@ -26,7 +26,8 @@
 #include <gtk/gtk.h>
 #include "conversation.h"
 
-HINSTANCE winpidgin_hinstance(void);
+HINSTANCE winpidgin_dll_hinstance(void);
+HINSTANCE winpidgin_exe_hinstance(void);
 
 /* Utility */
 int winpidgin_gz_decompress(const char* in, const char* out);

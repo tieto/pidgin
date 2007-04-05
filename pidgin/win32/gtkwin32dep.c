@@ -68,8 +68,12 @@ static LPFNFLASHWINDOWEX MyFlashWindowEx = NULL;
  *  PUBLIC CODE
  */
 
-HINSTANCE winpidgin_hinstance(void) {
+HINSTANCE winpidgin_exe_hinstance(void) {
 	return exe_hInstance;
+}
+
+HINSTANCE winpidgin_dll_hinstance(void) {
+	return dll_hInstance;
 }
 
 int winpidgin_gz_decompress(const char* in, const char* out) {
@@ -224,7 +228,7 @@ static HWND winpidgin_message_window_init(void) {
 	wcx.lpfnWndProc = message_window_handler;
 	wcx.cbClsExtra = 0;
 	wcx.cbWndExtra = 0;
-	wcx.hInstance = winpidgin_hinstance();
+	wcx.hInstance = winpidgin_exe_hinstance();
 	wcx.hIcon = NULL;
 	wcx.hCursor = NULL;
 	wcx.hbrBackground = NULL;
@@ -236,7 +240,7 @@ static HWND winpidgin_message_window_init(void) {
 
 	/* Create the window */
 	if(!(win_hwnd = CreateWindow(wname, TEXT("WinpidginMsgWin"), 0, 0, 0, 0, 0,
-			NULL, NULL, winpidgin_hinstance(), 0))) {
+			NULL, NULL, winpidgin_exe_hinstance(), 0))) {
 		purple_debug_error("winpidgin",
 			"Unable to create message window.\n");
 		return NULL;
