@@ -45,7 +45,6 @@ EXTRA_DIST = \
 		text_smaller.png		\
 		typed.png			\
 		typing.png			\
-		window-icon.png			\
 		Makefile.mingw			\
 		pidgin.ico
 
