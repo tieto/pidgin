@@ -10,9 +10,9 @@ msgstr ""
 "Project-Id-Version: eo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-01-25 00:00-0500\n"
-"PO-Revision-Date: 2007-01-28 23:07+0100\n"
+"PO-Revision-Date: 2007-03-31 14:24+0100\n"
 "Last-Translator: Stéphane Fillod <f8cfe@free.fr>\n"
-"Language-Team: Esperanto <eo@li.org>\n"
+"Language-Team: Esperanto <kde-i18n-eo@kde.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -390,7 +390,7 @@ msgstr "Loko etikedita"
 
 #: ../console/gntblist.c:1128
 msgid "Toggle Tag"
-msgstr ""
+msgstr "Inversiga Etikedo"
 
 #. General
 #: ../console/gntblist.c:1161 ../gtk/gtkblist.c:2734
@@ -607,13 +607,15 @@ msgstr "Subtenitaj sencimigopcioj estas:  versio"
 
 #: ../console/gntconv.c:660 ../gtk/gtkconv.c:422
 msgid "No such command (in this context)."
-msgstr "Nenia komand (en tiu kunteksto)."
+msgstr "Nenia komando (en tiu kunteksto)."
 
 #: ../console/gntconv.c:663 ../gtk/gtkconv.c:425
 msgid ""
 "Use \"/help &lt;command&gt;\" for help on a specific command.\n"
 "The following commands are available in this context:\n"
 msgstr ""
+"Uzu \"/help &lt;komandon&gt;\" por helpo pri speciala komando.\n"
+"La komandoj aktuale disponeblaj estas:\n"
 
 #: ../console/gntconv.c:702 ../gtk/gtkconv.c:6824
 msgid ""
@@ -5514,12 +5516,12 @@ msgstr "_Sendu Mesaĝon"
 #: ../libgaim/conversation.c:1566
 #, c-format
 msgid "%s entered the room."
-msgstr "%s enigis la ĉambron."
+msgstr "%s eniris la ĉambron."
 
 #: ../libgaim/conversation.c:1569
 #, c-format
 msgid "%s [<I>%s</I>] entered the room."
-msgstr "%s [<I>%s</I>] enigis la ĉambron."
+msgstr "%s [<I>%s</I>] eniris la ĉambron."
 
 #: ../libgaim/conversation.c:1674
 #, c-format
@@ -8009,7 +8011,7 @@ msgstr "Familia Nomo"
 
 #: ../libgaim/protocols/jabber/buddy.c:1592
 msgid "The following are the results of your search"
-msgstr "La janaj estas la rezultoj de via serĉo"
+msgstr "La jenaj estas la rezultoj de via serĉo"
 
 #. current comment from Jabber User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1667
@@ -8073,7 +8075,7 @@ msgstr "_Ĉambro:"
 
 #: ../libgaim/protocols/jabber/chat.c:47
 msgid "_Server:"
-msgstr "_Servila:"
+msgstr "_Servilo:"
 
 #: ../libgaim/protocols/jabber/chat.c:53
 msgid "_Handle:"
