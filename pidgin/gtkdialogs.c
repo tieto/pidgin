@@ -311,7 +311,7 @@ void pidgindialogs_about()
 	GString *str;
 	int i;
 	AtkObject *obj;
-	char* filename;
+	char* filename, *tmp;
 	GdkPixbuf *pixbuf;
 
 	if (about != NULL) {
@@ -320,7 +320,9 @@ void pidgindialogs_about()
 	}
 
 	PIDGIN_DIALOG(about);
-	gtk_window_set_title(GTK_WINDOW(about), _("About " PIDGIN_NAME));
+	tmp = g_strdup_printf(_("About %s"), PIDGIN_NAME);
+	gtk_window_set_title(GTK_WINDOW(about), tmp);
+	g_free(tmp);
 	gtk_window_set_role(GTK_WINDOW(about), "about");
 	gtk_window_set_resizable(GTK_WINDOW(about), TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(about), 340, 450);
@@ -353,18 +355,18 @@ void pidgindialogs_about()
 
 	str = g_string_sized_new(4096);
 
-	g_string_append(str,
-		_(PIDGIN_NAME " is a modular messaging client capable of using "
+	g_string_append_printf(str,
+		_("%s is a modular messaging client capable of using "
 		  "AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, "
 		  "Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, "
 		  "Gadu-Gadu, and QQ all at once.  "
 		  "It is written using GTK+.<BR><BR>"
 		  "You may modify and redistribute the program under "
 		  "the terms of the GPL (version 2 or later).  A copy of the GPL is "
-		  "contained in the 'COPYING' file distributed with " PIDGIN_NAME ".  "
-		  PIDGIN_NAME " is copyrighted by its contributors.  See the 'COPYRIGHT' "
+		  "contained in the 'COPYING' file distributed with %s.  "
+		  "%s is copyrighted by its contributors.  See the 'COPYRIGHT' "
 		  "file for the complete list of contributors.  We provide no "
-		  "warranty for this program.<BR><BR>"));
+		  "warranty for this program.<BR><BR>"), PIDGIN_NAME, PIDGIN_NAME, PIDGIN_NAME);
 
 	g_string_append(str, "<FONT SIZE=\"4\">URL:</FONT> <A HREF=\""
 					PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");

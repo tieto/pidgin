@@ -4107,7 +4107,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	GtkWidget *sep;
 	GtkWidget *label;
 	GList *accounts;
-	char *pretty;
+	char *pretty, *tmp;
 	GtkAccelGroup *accel_group;
 	GtkTreeSelection *selection;
 	GtkTargetEntry dte[] = {{"PURPLE_BLIST_NODE", GTK_TARGET_SAME_APP, DRAG_ROW},
@@ -4180,12 +4180,14 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 #endif
 
 	/* Translators: Please maintain the use of -> and <- to refer to menu heirarchy */
-	pretty = pidgin_make_pretty_arrows(_("<span weight='bold' size='larger'>Welcome to " PIDGIN_NAME "!</span>\n\n"
+	tmp = g_strdup_printf(_("<span weight='bold' size='larger'>Welcome to %s!</span>\n\n"
 
 					       "You have no accounts enabled. Enable your IM accounts from the "
 					       "<b>Accounts</b> window at <b>Accounts->Add/Edit</b>. Once you "
 					       "enable accounts, you'll be able to sign on, set your status, "
-					       "and talk to your friends."));
+					       "and talk to your friends."), PIDGIN_NAME);
+	pretty = pidgin_make_pretty_arrows(tmp);
+	g_free(tmp);
 	label = gtk_label_new(NULL);
 	gtk_widget_set_size_request(label, purple_prefs_get_int("/purple/gtk/blist/width") - 12, -1);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);

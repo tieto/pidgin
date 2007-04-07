@@ -361,9 +361,9 @@ show_usage(const char *name, gboolean terse)
 	char *text;
 
 	if (terse) {
-		text = g_strdup_printf(_(PIDGIN_NAME " %s. Try `%s -h' for more information.\n"), VERSION, name);
+		text = g_strdup_printf(_("%s %s. Try `%s -h' for more information.\n"), PIDGIN_NAME, VERSION, name);
 	} else {
-		text = g_strdup_printf(_(PIDGIN_NAME " %s\n"
+		text = g_strdup_printf(_("%s %s\n"
 		       "Usage: %s [OPTION]...\n\n"
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
@@ -371,7 +371,7 @@ show_usage(const char *name, gboolean terse)
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use, separated by commas)\n"
-		       "  -v, --version       display the current version and exit\n"), VERSION, name);
+		       "  -v, --version       display the current version and exit\n"), PIDGIN_NAME, VERSION, name);
 	}
 
 	purple_print_utf8_to_console(stdout, text);
@@ -547,7 +547,7 @@ int main(int argc, char *argv[])
 #ifndef DEBUG
 		/* We translate this here in case the crash breaks gettext. */
 		segfault_message_tmp = g_strdup_printf(_(
-			PIDGIN_NAME " has segfaulted and attempted to dump a core file.\n"
+			"%s has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
 			"If you can reproduce the crash, please notify the Pidgin\n"
@@ -561,7 +561,7 @@ int main(int argc, char *argv[])
 			"LSchiere (via AIM).  Contact information for Sean and Luke \n"
 			"on other protocols is at\n"
 			"%scontactinfo.php\n"),
-			PURPLE_WEBSITE, PURPLE_WEBSITE, PURPLE_WEBSITE
+			PIDGIN_NAME, PURPLE_WEBSITE, PURPLE_WEBSITE, PURPLE_WEBSITE
 		);
 
 		/* we have to convert the message (UTF-8 to console

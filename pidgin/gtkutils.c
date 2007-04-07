@@ -1415,13 +1415,16 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 		/* XXX - make ft api suupport sending a directory */
 		/* Are we dealing with a directory? */
 		if (g_file_test(filename, G_FILE_TEST_IS_DIR)) {
-			char *str;
+			char *str, *str2;
 
 			str = g_strdup_printf(_("Cannot send folder %s."), basename);
+			str2 = g_strdup_printf(_("%s cannot transfer a folder. You will need to send the files within individually"), PIDGIN_NAME);
+
 			purple_notify_error(NULL, NULL,
-					  str,_(PIDGIN_NAME " cannot transfer a folder. You will need to send the files within individually"));
+					  str, str2);
 
 			g_free(str);
+			g_free(str2);
 
 			continue;
 		}

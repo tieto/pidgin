@@ -177,8 +177,8 @@ pidgin_connection_report_disconnect(PurpleConnection *gc, const char *text)
 
 		p = g_strdup_printf(_("%s disconnected"), n);
 		s = g_strdup_printf(_("%s\n\n"
-				PIDGIN_NAME " will not attempt to reconnect the account until you "
-				"correct the error and re-enable the account."), text);
+				"%s will not attempt to reconnect the account until you "
+				"correct the error and re-enable the account."), text, PIDGIN_NAME);
 		purple_notify_error(NULL, NULL, p, s);
 		g_free(p);
 		g_free(s);
