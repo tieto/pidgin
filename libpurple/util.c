@@ -794,7 +794,7 @@ purple_str_to_time(const char *timestamp, gboolean utc,
 			}
 			else if (utc)
 			{
-				t->tm_isdst = 0;
+				t->tm_isdst = -1;
 			}
 
 			if (rest != NULL && *c != '\0')
