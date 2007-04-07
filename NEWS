@@ -1,5 +1,23 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.0.0:
+	Nathan:  So, the secret is out now.  We renamed to Pidgin.  I'd just
+	like to apologize to everyone we've had to keep in the dark for the
+	last however-many months.  I know it looked like development slowed
+	to a crawl, but in reality we've been working pretty hard to get 
+	2.0.0 out the door, without getting into any legal trouble.  I
+	realize that if we were some big corporation, we'd be getting flamed
+	about this secrecy for months.  Please try to remember that we're
+	just a bunch of geeks who were scared of legal stuff (well, at least
+	I was.  Scared, that is).  The bottom line is that we're out in the
+	open again, and fully plan to stay that way.  We're also opening up
+	the mail archives from the secretive past few months.  You can scan
+	though them if you want, or I can summarize.  "Are the lawyers done
+	yet?  No.  Now?  No.  How about now?  No."  All lawyer jokes aside,
+	I'm grateful to our legal team for crossing all the 't's and dotting
+	all the lowercase 'j's to get us the deal we got.  Anyways, thanks
+	for your patience, and on to 2.0.1!
+
 2.0.0beta6 (1/17/2006):
 	Sean: Barring any seriously major new issues, we expect this to be
 	the final beta release before 2.0.0. This has a bunch of cool UI

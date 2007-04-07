@@ -37,7 +37,7 @@
 #include <sasl/sasl.h>
 #endif
 
-#define CAPS0115_NODE "http://purple.sf.net/caps"
+#define CAPS0115_NODE "http://pidgin.im/caps"
 
 typedef enum {
 	JABBER_CAP_NONE           = 0,
