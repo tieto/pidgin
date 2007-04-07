@@ -1,3 +1,4 @@
+[encoding: UTF-8]
 finch/finch.c
 finch/gntaccount.c
 finch/gntblist.c
