@@ -1008,7 +1008,7 @@ void pidgin_append_blist_node_privacy_menu(GtkWidget *menu, PurpleBlistNode *nod
 	permitted = purple_privacy_check(account, purple_buddy_get_name(buddy));
 
 	pidgin_new_item_from_stock(menu, permitted ? _("_Block") : _("Un_block"),
-						PIDGIN_STOCK_BLOCK, G_CALLBACK(toggle_privacy),
+						permitted ? PIDGIN_STOCK_TOOLBAR_BLOCK : PIDGIN_STOCK_TOOLBAR_UNBLOCK, G_CALLBACK(toggle_privacy),
 						node, 0 ,0, NULL);
 }
 

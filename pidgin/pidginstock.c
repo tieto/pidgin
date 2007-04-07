@@ -43,8 +43,6 @@ static struct StockIcon
 #else
 	{ PIDGIN_STOCK_ALIAS,           "buttons", "edit.png"                 },
 #endif
-	{ PIDGIN_STOCK_BLOCK,           NULL,      GTK_STOCK_STOP             },
-	{ PIDGIN_STOCK_UNBLOCK,         NULL,      GTK_STOCK_STOP /* XXX: */  },
 	{ PIDGIN_STOCK_CHAT,            NULL,      GTK_STOCK_JUMP_TO          },
 	{ PIDGIN_STOCK_CLEAR,           NULL,      GTK_STOCK_CLEAR            },
 	{ PIDGIN_STOCK_CLOSE_TABS,      NULL,      GTK_STOCK_CLOSE            },
@@ -155,6 +153,7 @@ static struct SizedStockIcon {
 
 	{ PIDGIN_STOCK_TOOLBAR_ACCOUNTS, "toolbar", "accounts.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_BGCOLOR, "toolbar", "change-bgcolor.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_BLOCK, "emblems", "blocked.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_FGCOLOR, "toolbar", "change-fgcolor.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_SMILEY, "toolbar", "emote-select.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER, "toolbar", "font-size-down.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
@@ -162,10 +161,11 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, "toolbar", "insert-image.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_INSERT_LINK, "toolbar", "insert-link.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, "toolbar", "message-new.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_PENDING, "status", "message-pending.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_PLUGINS, "toolbar", "plugins.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_TYPING, "toolbar", "typing.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
-	{ PIDGIN_STOCK_TOOLBAR_PENDING, "status", "message-pending.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
-	
+	{ PIDGIN_STOCK_TOOLBAR_UNBLOCK, "toolbar", "unblock.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
+
 	{ PIDGIN_STOCK_TRAY_AVAILABLE, "tray", "tray-online.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TRAY_AWAY, "tray", "tray-away.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TRAY_BUSY, "tray", "tray-busy.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE },

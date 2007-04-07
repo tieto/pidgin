@@ -11,6 +11,7 @@ EXTRA_DIST = 	accounts.png \
 		message-new.png \
 		plugins.png \
 		typing.png \
+		unblock.png \
 		user-info.png \
 		window-icon.png
 

@@ -35,8 +35,6 @@
 #define PIDGIN_STOCK_ACTION          "pidgin-action"
 #define PIDGIN_STOCK_ALIAS           "pidgin-alias"
 #define PIDGIN_STOCK_AWAY            "pidgin-away"
-#define PIDGIN_STOCK_BLOCK           "pidgin-block"
-#define PIDGIN_STOCK_UNBLOCK         "pidgin-unblock"
 #define PIDGIN_STOCK_CHAT            "pidgin-chat"
 #define PIDGIN_STOCK_CLEAR           "pidgin-clear"
 #define PIDGIN_STOCK_CLOSE_TABS      "pidgin-close-tab"
@@ -112,6 +110,7 @@
 /* Toolbar (and menu) icons */
 #define PIDGIN_STOCK_TOOLBAR_ACCOUNTS     "pidgin-accounts"
 #define PIDGIN_STOCK_TOOLBAR_BGCOLOR      "pidgin-bgcolor"
+#define PIDGIN_STOCK_TOOLBAR_BLOCK        "pidgin-block"
 #define PIDGIN_STOCK_TOOLBAR_FGCOLOR      "pidgin-fgcolor"
 #define PIDGIN_STOCK_TOOLBAR_SMILEY       "pidgin-smiley"
 #define PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER "pidgin-text-smaller"
@@ -119,10 +118,11 @@
 #define PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE "pidgin-insert-image"
 #define PIDGIN_STOCK_TOOLBAR_INSERT_LINK  "pidgin-insert-link"
 #define PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW  "pidgin-message-new"
+#define PIDGIN_STOCK_TOOLBAR_PENDING      "pidgin-pending"
 #define PIDGIN_STOCK_TOOLBAR_PLUGINS      "pidgin-plugins"
 #define PIDGIN_STOCK_TOOLBAR_TYPING       "pidgin-typing"
 #define PIDGIN_STOCK_TOOLBAR_USER_INFO    "pidgin-info"
-#define PIDGIN_STOCK_TOOLBAR_PENDING      "pidgin-pending"
+#define PIDGIN_STOCK_TOOLBAR_UNBLOCK      "pidgin-unblock"
 
 /* Tray icons */
 #define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-available"
