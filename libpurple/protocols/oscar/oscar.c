@@ -4761,7 +4761,8 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	PurpleBuddy *b;
 	struct aim_ssi_item *curitem;
 	guint32 tmp;
-	const char *icon_path, *cached_icon_path;
+	const char *icon_path;
+	char *cached_icon_path;
 	va_list ap;
 	guint16 fmtver, numitems;
 	guint32 timestamp;
@@ -4997,6 +4998,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	icon_path = purple_account_get_buddy_icon(account);
 	cached_icon_path = purple_buddy_icons_get_full_path(icon_path);
 	oscar_set_icon(gc, cached_icon_path);
+	g_free(cached_icon_path);
 
 	return 1;
 }
