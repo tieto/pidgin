@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-04-08 00:03-0300\n"
-"PO-Revision-Date: 2007-04-08 00:34-0300\n"
+"POT-Creation-Date: 2007-04-08 11:17-0300\n"
+"PO-Revision-Date: 2007-04-08 11:17-0300\n"
 "Last-Translator: Maurício de Lemos Rodrigues Collares Neto <mauricioc@gmail."
 "com>\n"
 "Language-Team: Maurício de Lemos Rodrigues Collares Neto <mauricioc@gmail."
@@ -435,7 +435,7 @@ msgstr "Remover"
 #. Buddy List
 #: ../finch/gntblist.c:1113 ../finch/gntblist.c:2118 ../finch/gntprefs.c:278
 #: ../finch/gntui.c:77 ../pidgin/gtkblist.c:4133
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:327
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:330
 msgid "Buddy List"
 msgstr "Lista de amigos"
 
@@ -1141,7 +1141,7 @@ msgstr "A partir da última mensagem enviada"
 
 #: ../finch/gntprefs.c:71 ../libpurple/plugins/autoreply.c:360
 #: ../pidgin/gtkprefs.c:820 ../pidgin/gtkprefs.c:829 ../pidgin/gtkprefs.c:1811
-#: ../pidgin/gtkprefs.c:1825 ../pidgin/plugins/win32/winprefs/winprefs.c:334
+#: ../pidgin/gtkprefs.c:1825 ../pidgin/plugins/win32/winprefs/winprefs.c:337
 msgid "Never"
 msgstr "Nunca"
 
@@ -1179,7 +1179,7 @@ msgstr "Gravar mudanças de status no log do sistema"
 
 #. Conversations
 #: ../finch/gntprefs.c:279 ../pidgin/gtkprefs.c:898 ../pidgin/gtkprefs.c:1915
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:341
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:344
 msgid "Conversations"
 msgstr "Conversas"
 
@@ -1330,7 +1330,9 @@ msgstr "Plugin da área de transferência"
 msgid ""
 "When the gnt clipboard contents change, the contents are made available to "
 "X, if possible."
-msgstr "Quando o conteúdo da área de transferência mudar, estes serão disponbilizados ao X, caso possível."
+msgstr ""
+"Quando o conteúdo da área de transferência mudar, estes serão "
+"disponbilizados ao X, caso possível."
 
 #: ../finch/plugins/gntgf.c:209
 #, c-format
@@ -2493,7 +2495,9 @@ msgstr "Esconde mensagens supérfluas de entrada/saída."
 msgid ""
 "This plugin hides join/part messages in large rooms, except for those users "
 "actively taking part in a conversation."
-msgstr "Este plugin esconde mensagens de entrada/saída em grandes salas, exceto para aqueles usuários que estão participando ativamente de uma conversa."
+msgstr ""
+"Este plugin esconde mensagens de entrada/saída em grandes salas, exceto para "
+"aqueles usuários que estão participando ativamente de uma conversa."
 
 #. This is used in the place of a timezone abbreviation if the
 #. * offset is way off.  The user should never really see it, but
@@ -5468,7 +5472,9 @@ msgstr "Iniciar _bate-papo"
 
 #: ../libpurple/protocols/msn/msn.c:694
 msgid "SSL support is needed for MSN. Please install a supported SSL library."
-msgstr "O suporte ao SSL é necessário para o MSN. Por favor instale uma biblioteca SSL suportada."
+msgstr ""
+"O suporte ao SSL é necessário para o MSN. Por favor instale uma biblioteca "
+"SSL suportada."
 
 #: ../libpurple/protocols/msn/msn.c:719
 msgid "Failed to connect to server."
@@ -5699,7 +5705,9 @@ msgstr ""
 msgid ""
 "Could not find any information in the user's profile. The user most likely "
 "does not exist."
-msgstr "Não foi possível encontrar nenhuma informação no perfil do usuário. Provavelmente o usuário não existe."
+msgstr ""
+"Não foi possível encontrar nenhuma informação no perfil do usuário. "
+"Provavelmente o usuário não existe."
 
 #: ../libpurple/protocols/msn/msn.c:1798
 #: ../libpurple/protocols/yahoo/yahoo_profile.c:1216
@@ -7228,8 +7236,12 @@ msgid ""
 msgid_plural ""
 "The maximum profile length of %d bytes has been exceeded.  It has been "
 "truncated it for you."
-msgstr[0] "O tamanho máximo de %d byte do seu perfil foi excedido. Ele foi truncado para você."
-msgstr[1] "O tamanho máximo de %d bytes do seu perfil foi excedido. Ele foi truncado para você."
+msgstr[0] ""
+"O tamanho máximo de %d byte do seu perfil foi excedido. Ele foi truncado "
+"para você."
+msgstr[1] ""
+"O tamanho máximo de %d bytes do seu perfil foi excedido. Ele foi truncado "
+"para você."
 
 #: ../libpurple/protocols/oscar/oscar.c:4482
 msgid "Profile too long."
@@ -7243,8 +7255,12 @@ msgid ""
 msgid_plural ""
 "The maximum away message length of %d bytes has been exceeded.  It has been "
 "truncated for you."
-msgstr[0] "O tamanho máximo de %d byte da mensagem de ausência foi excedido. Ele foi truncado para você."
-msgstr[1] "O tamanho máximo de %d bytes da mensagem de ausência foi excedido. Ele foi truncado para você."
+msgstr[0] ""
+"O tamanho máximo de %d byte da mensagem de ausência foi excedido. Ele foi "
+"truncado para você."
+msgstr[1] ""
+"O tamanho máximo de %d bytes da mensagem de ausência foi excedido. Ele foi "
+"truncado para você."
 
 #: ../libpurple/protocols/oscar/oscar.c:4532
 msgid "Away message too long."
@@ -7275,7 +7291,10 @@ msgstr "Impossível recuperar lista de amigos"
 msgid ""
 "The AIM servers were temporarily unable to send your buddy list.  Your buddy "
 "list is not lost, and will probably become available in a few hours."
-msgstr "Os servidores AIM não estão conseguindo enviar sua lista de amigos no momento. Sua lista de amigos não foi perdida, e provavelmente estará disponível em algumas horas."
+msgstr ""
+"Os servidores AIM não estão conseguindo enviar sua lista de amigos no "
+"momento. Sua lista de amigos não foi perdida, e provavelmente estará "
+"disponível em algumas horas."
 
 #: ../libpurple/protocols/oscar/oscar.c:4912
 #: ../libpurple/protocols/oscar/oscar.c:4913
@@ -7743,7 +7762,9 @@ msgstr "Suas informações foram atualizadas"
 #: ../libpurple/protocols/qq/buddy_info.c:565
 msgid ""
 "Setting custom faces is not currently supported. Please choose an image from "
-msgstr "Você está tentando definir um rosto personalizado. Favor escolher uma imagem do "
+msgstr ""
+"Você está tentando definir um rosto personalizado. Favor escolher uma imagem "
+"do "
 
 #: ../libpurple/protocols/qq/buddy_info.c:582
 #: ../libpurple/protocols/qq/buddy_info.c:595
@@ -10497,7 +10518,10 @@ msgid ""
 "The Yahoo server has requested the use of an unrecognized authentication "
 "method.  You will probably not be able to successfully sign on to Yahoo.  "
 "Check %s for updates."
-msgstr "O servidor do Yahoo requisitou o uso de um método de autenticação desconhecido. Provavelmente, você não conseguirá conectar com sucesso ao Yahoo. Verifique %s por atualizações."
+msgstr ""
+"O servidor do Yahoo requisitou o uso de um método de autenticação "
+"desconhecido. Provavelmente, você não conseguirá conectar com sucesso ao "
+"Yahoo. Verifique %s por atualizações."
 
 #: ../libpurple/protocols/yahoo/yahoo.c:1824
 msgid "Failed Yahoo! Authentication"
@@ -11470,9 +11494,14 @@ msgid ""
 msgstr ""
 "<span size='larger' weight='bold'>Bem vindo ao %s!</span>\n"
 "\n"
-"Você não tem contas de mensagens instantâneas configuradas. Para começar a usar o %s, clique no botão <b>Adicionar</b> abaixo e configure sua primeira conta. Se você deseja que o %s conecte em mais de uma conta de mensagens instantâneas, clique no botão <b>Adicionar</b> novamente para configurar quantas contas quiser.\n"
+"Você não tem contas de mensagens instantâneas configuradas. Para começar a "
+"usar o %s, clique no botão <b>Adicionar</b> abaixo e configure sua primeira "
+"conta. Se você deseja que o %s conecte em mais de uma conta de mensagens "
+"instantâneas, clique no botão <b>Adicionar</b> novamente para configurar "
+"quantas contas quiser.\n"
 "\n"
-"Você pode voltar a esta janela para adicionar, alterar ou remover contas a partir do menu <b>Contas->Adicionar/Editar</b> na janela da Lista de Amigos"
+"Você pode voltar a esta janela para adicionar, alterar ou remover contas a "
+"partir do menu <b>Contas->Adicionar/Editar</b> na janela da Lista de Amigos"
 
 #: ../pidgin/gtkblist.c:704
 msgid "Join a Chat"
@@ -11845,7 +11874,10 @@ msgid ""
 msgstr ""
 "<span weight='bold' size='larger'>Bem vindo ao %s!</span>\n"
 "\n"
-"Você não tem contas ativadas. Ative suas contas de mensagem instantânea a partir da janela <b>Contas</b>, localizada em <b>Contas->Adicionar/Editar</b>. Depois de ativá-las, você poderá conectar, definir seu status e falar com seus amigos."
+"Você não tem contas ativadas. Ative suas contas de mensagem instantânea a "
+"partir da janela <b>Contas</b>, localizada em <b>Contas->Adicionar/Editar</"
+"b>. Depois de ativá-las, você poderá conectar, definir seu status e falar "
+"com seus amigos."
 
 #. set the Show Offline Buddies option. must be done
 #. * after the treeview or faceprint gets mad. -Robot101
@@ -11949,7 +11981,8 @@ msgid ""
 msgstr ""
 "%s\n"
 "\n"
-"O %s não tentará reconectar esta conta até que você corrija o erro e reative a mesma."
+"O %s não tentará reconectar esta conta até que você corrija o erro e reative "
+"a mesma."
 
 #: ../pidgin/gtkconv.c:782 ../pidgin/gtkconv.c:808
 msgid "That buddy is not on the same protocol as this chat."
@@ -12711,7 +12744,15 @@ msgid ""
 "distributed with %s.  %s is copyrighted by its contributors.  See the "
 "'COPYRIGHT' file for the complete list of contributors.  We provide no "
 "warranty for this program.<BR><BR>"
-msgstr "O %s é um cliente de mensagens modular capaz de usar o AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu e QQ de uma vez só. Ele é escrito usando o GTK+.<BR><BR>Você pode modificar e redistribuir o programa sob os termos da GPL (versão 2 ou superior). Uma cópia da GPL está contida no arquivo 'COPYING' distribuído com o %s. Os direitos de cópia do %s pertencem aos seus contribuidoes. Veja o arquivo 'COPYRIGHT' para uma lista completa destes contribuidores. Não oferecemos nenhuma garantia para este programa.<BR><BR>"
+msgstr ""
+"O %s é um cliente de mensagens modular capaz de usar o AIM, MSN, Yahoo!, "
+"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"Bonjour, Zephyr, Gadu-Gadu e QQ de uma vez só. Ele é escrito usando o GTK+."
+"<BR><BR>Você pode modificar e redistribuir o programa sob os termos da GPL "
+"(versão 2 ou superior). Uma cópia da GPL está contida no arquivo 'COPYING' "
+"distribuído com o %s. Os direitos de cópia do %s pertencem aos seus "
+"contribuidoes. Veja o arquivo 'COPYRIGHT' para uma lista completa destes "
+"contribuidores. Não oferecemos nenhuma garantia para este programa.<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:374
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgwin on irc.freenode.net<BR><BR>"
@@ -13201,21 +13242,27 @@ msgstr "Inserir emoticon"
 msgid ""
 "Are you sure you want to permanently delete the log of the conversation with "
 "%s which started at %s?"
-msgstr "Você tem certeza de que deseja remover permanentemente o registro da conversa com %s, que começou às %s?"
+msgstr ""
+"Você tem certeza de que deseja remover permanentemente o registro da "
+"conversa com %s, que começou às %s?"
 
 #: ../pidgin/gtklog.c:273
 #, c-format
 msgid ""
 "Are you sure you want to permanently delete the log of the conversation in %"
 "s which started at %s?"
-msgstr "Você tem certeza de que deseja remover permanentemente o registro da conversa em %s, que começou às %s?"
+msgstr ""
+"Você tem certeza de que deseja remover permanentemente o registro da "
+"conversa em %s, que começou às %s?"
 
 #: ../pidgin/gtklog.c:278
 #, c-format
 msgid ""
 "Are you sure you want to permanently delete the system log which started at %"
 "s?"
-msgstr "Você tem certeza de que deseja remover permanentemente o registro do sistema que começou às %s?"
+msgstr ""
+"Você tem certeza de que deseja remover permanentemente o registro do sistema "
+"que começou às %s?"
 
 #: ../pidgin/gtklog.c:419
 #, c-format
@@ -13564,9 +13611,9 @@ msgid "_Show system tray icon:"
 msgstr "Mo_strar ícone da bandeja"
 
 #: ../pidgin/gtkprefs.c:819 ../pidgin/gtkprefs.c:831 ../pidgin/gtkprefs.c:1646
-#: ../pidgin/plugins/timestamp_format.c:39
-#: ../pidgin/plugins/timestamp_format.c:48
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:335
+#: ../pidgin/plugins/timestamp_format.c:42
+#: ../pidgin/plugins/timestamp_format.c:51
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:338
 msgid "Always"
 msgstr "Sempre"
 
@@ -14217,7 +14264,9 @@ msgstr "Não foi possível enviar a pasta %s."
 msgid ""
 "%s cannot transfer a folder. You will need to send the files within "
 "individually"
-msgstr "O %s não pode transferir uma pasta. Você terá que enviar os arquivos que estão dentro dela individualmente"
+msgstr ""
+"O %s não pode transferir uma pasta. Você terá que enviar os arquivos que "
+"estão dentro dela individualmente"
 
 #: ../pidgin/gtkutils.c:1453 ../pidgin/gtkutils.c:1462
 #: ../pidgin/gtkutils.c:1467
@@ -14572,8 +14621,8 @@ msgstr ""
 #. *< priority
 #. *< id
 #: ../pidgin/plugins/gaiminc.c:91
-msgid " Demonstration Plugin"
-msgstr "Plugin de demonstração"
+msgid "Pidgin Demonstration Plugin"
+msgstr "Plugin de demonstração do Pidgin"
 
 #. *< name
 #. *< version
@@ -15093,8 +15142,8 @@ msgid "Re-read gtkrc files"
 msgstr "Re-carregar arquivos gtkrc"
 
 #: ../pidgin/plugins/pidginrc.c:616
-msgid " GTK+ Theme Control"
-msgstr "Controle do tema do GTK+"
+msgid "Pidgin GTK+ Theme Control"
+msgstr "Controle do tema do GTK+ do Pidgin"
 
 #: ../pidgin/plugins/pidginrc.c:618 ../pidgin/plugins/pidginrc.c:619
 msgid "Provides access to commonly used gtkrc settings."
@@ -15118,8 +15167,9 @@ msgstr ""
 "janela de depuração."
 
 #: ../pidgin/plugins/relnot.c:71
-msgid "You are using "
-msgstr "Você está usando o "
+#, c-format
+msgid "You are using %s version %s.  The current version is %s.<hr>"
+msgstr "Você está usando o %s, versão %s. A versão atual é a %s.<hr>"
 
 #: ../pidgin/plugins/relnot.c:77
 #, c-format
@@ -15282,33 +15332,34 @@ msgid "Display iChat-style timestamps every N minutes."
 msgstr ""
 "Adiciona marcações de tempo como as do iChat às conversas a cada N minutos."
 
-#: ../pidgin/plugins/timestamp_format.c:22
+#: ../pidgin/plugins/timestamp_format.c:23
 msgid "Timestamp Format Options"
 msgstr "Opções de formatação da marcação de tempo"
 
-#: ../pidgin/plugins/timestamp_format.c:27
-msgid "_Force (traditional "
-msgstr "_Forçar (antigo padrão do "
+#: ../pidgin/plugins/timestamp_format.c:26
+#, c-format
+msgid "_Force (traditional %s) 24-hour time format"
+msgstr "_Forçar (antigo padrão do %s) formato de data 24-horas"
 
-#: ../pidgin/plugins/timestamp_format.c:30
+#: ../pidgin/plugins/timestamp_format.c:33
 msgid "Show dates in..."
 msgstr "Mostrar datas em..."
 
-#: ../pidgin/plugins/timestamp_format.c:35
+#: ../pidgin/plugins/timestamp_format.c:38
 msgid "Co_nversations:"
 msgstr "Conversas:"
 
-#: ../pidgin/plugins/timestamp_format.c:37
-#: ../pidgin/plugins/timestamp_format.c:46
+#: ../pidgin/plugins/timestamp_format.c:40
+#: ../pidgin/plugins/timestamp_format.c:49
 msgid "For delayed messages"
 msgstr "Para mensagens atrasadas"
 
-#: ../pidgin/plugins/timestamp_format.c:38
-#: ../pidgin/plugins/timestamp_format.c:47
+#: ../pidgin/plugins/timestamp_format.c:41
+#: ../pidgin/plugins/timestamp_format.c:50
 msgid "For delayed messages and in chats"
 msgstr "Para mensagens atrasadas e em bate-papos"
 
-#: ../pidgin/plugins/timestamp_format.c:44
+#: ../pidgin/plugins/timestamp_format.c:47
 msgid "_Message Logs:"
 msgstr "_Logs de mensagens:"
 
@@ -15318,19 +15369,19 @@ msgstr "_Logs de mensagens:"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: ../pidgin/plugins/timestamp_format.c:141
+#: ../pidgin/plugins/timestamp_format.c:144
 msgid "Message Timestamp Formats"
 msgstr "Formatos de marcação de tempo das mensagens"
 
 #. *< name
 #. *< version
 #. *  summary
-#: ../pidgin/plugins/timestamp_format.c:144
+#: ../pidgin/plugins/timestamp_format.c:147
 msgid "Customizes the message timestamp formats."
 msgstr "Personaliza os formatos de marcação de tempo das mensagens."
 
 #. *  description
-#: ../pidgin/plugins/timestamp_format.c:146
+#: ../pidgin/plugins/timestamp_format.c:149
 msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
@@ -15409,48 +15460,52 @@ msgstr ""
 "\n"
 "* Nota: Este plugin requer Win2000 ou superior."
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:306
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:307
 msgid "GTK+ Runtime Version"
 msgstr "Versão do ambiente de tempo de execução do GTK+"
 
 #. Autostart
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:314
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:315
 msgid "Startup"
 msgstr "Iniciar"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:315
-msgid "_Start "
-msgstr "_Executar "
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:316
+#, c-format
+msgid "_Start %s on Windows startup"
+msgstr "_Executar %s na inicialização do Windows"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:328
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:331
 msgid "_Dockable Buddy List"
 msgstr "Lista de _amigos ancorável"
 
 #. Blist On Top
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:332
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:335
 msgid "_Keep Buddy List window on top:"
 msgstr "_Manter a janela da lista de amigos no topo:"
 
 #. XXX: Did this ever work?
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:337
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:340
 msgid "Only when docked"
 msgstr "Apenas quando ancorado"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:342
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:345
 msgid "_Flash window when chat messages are received"
 msgstr "_Piscar a janela quando mensagens de bate-papo forem recebidas"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:366
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:369
 msgid "Pidgwin Options"
 msgstr "Opções do Pidgwin"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:368
-msgid "Options specific to Windows "
-msgstr "Opções específicas para Windows."
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:371
+msgid "Options specific to Pidgin for Windows."
+msgstr "Opções específicas do Pidgin para Windows."
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:369
-msgid "Provides options specific to Windows "
-msgstr "Fornece opções específicas para Windows."
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:372
+msgid ""
+"Provides options specific to Pidgin for Windows , such as buddy list docking."
+msgstr ""
+"Fornece opções específicas do Pidgin para Windows, como ancoramento da lista "
+"de amigos."
 
 #: ../pidgin/plugins/xmppconsole.c:665
 msgid "<font color='#777777'>Logged out.</font>"
