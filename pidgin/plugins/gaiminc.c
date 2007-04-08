@@ -88,7 +88,7 @@ static PurplePluginInfo info =
 	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
 	PURPLEINC_PLUGIN_ID,                                /**< id             */
-	N_(PIDGIN_NAME " Demonstration Plugin"),                  /**< name           */
+	N_("Pidgin Demonstration Plugin"),                  /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
 	N_("An example plugin that does stuff - see the description."),

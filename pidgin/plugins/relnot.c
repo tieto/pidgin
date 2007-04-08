@@ -68,9 +68,9 @@ version_fetch_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	while(*changelog == '\n') changelog++;
 
 	message = g_string_new("");
-	g_string_append_printf(message, _("You are using " PIDGIN_NAME " version %s.  The "
+	g_string_append_printf(message, _("You are using %s version %s.  The "
 			"current version is %s.<hr>"),
-			purple_core_get_version(), cur_ver);
+			PIDGIN_NAME, purple_core_get_version(), cur_ver);
 
 	if(*changelog) {
 		formatted = purple_strdup_withhtml(changelog);

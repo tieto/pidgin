@@ -292,6 +292,7 @@ static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 	GtkWidget *button;
 	char *gtk_version = NULL;
 	char *run_key_val;
+	char *tmp;
 
 	ret = gtk_vbox_new(FALSE, 18);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), 12);
@@ -312,7 +313,9 @@ static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 
 	/* Autostart */
 	vbox = pidgin_make_frame(ret, _("Startup"));
-	button = gtk_check_button_new_with_mnemonic(_("_Start " PIDGIN_NAME " on Windows startup"));
+	tmp = g_strdup_printf(_("_Start %s on Windows startup"), PIDGIN_NAME);
+	button = gtk_check_button_new_with_mnemonic(tmp);
+	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
 
 	if ((run_key_val = wpurple_read_reg_string(HKEY_CURRENT_USER, RUNKEY, "Purple"))
@@ -365,8 +368,8 @@ static PurplePluginInfo info =
 	WINPREFS_PLUGIN_ID,
 	N_("Pidgwin Options"),
 	VERSION,
-	N_("Options specific to Windows " PIDGIN_NAME "."),
-	N_("Provides options specific to Windows " PIDGIN_NAME ", such as buddy list docking."),
+	N_("Options specific to Pidgin for Windows."),
+	N_("Provides options specific to Pidgin for Windows , such as buddy list docking."),
 	"Herman Bloggs <hermanator12002@yahoo.com>",
 	PURPLE_WEBSITE,
 	plugin_load,

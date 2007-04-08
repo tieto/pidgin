@@ -613,7 +613,7 @@ static PurplePluginInfo purplerc_info =
 	NULL,
 	PURPLE_PRIORITY_DEFAULT,
 	"purplerc",
-	N_(PIDGIN_NAME " GTK+ Theme Control"),
+	N_("Pidgin GTK+ Theme Control"),
 	VERSION,
 	N_("Provides access to commonly used gtkrc settings."),
 	N_("Provides access to commonly used gtkrc settings."),
