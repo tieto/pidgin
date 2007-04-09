@@ -354,7 +354,7 @@ fi
 %{_libdir}/pkgconfig/purple.pc
 %{_libdir}/pkgconfig/pidgin.pc
 %{_libdir}/pkgconfig/gnt.pc
-%{_datadir}/aclocal/pidgin.m4
+%{_datadir}/aclocal/purple.m4
 %if 0%{?_with_dbus:1}
 %{_libdir}/libpurple-client.so
 %endif

@@ -68,5 +68,3 @@ distuninstallcheck_listfiles = \
 
 DISTCLEANFILES= pidgin.desktop libpurple/gconf/purple.schemas intltool-extract \
 			intltool-merge intltool-update
-
-ACLOCAL_AMFLAGS = -I m4
