@@ -1,14 +1,14 @@
-# Gaim Finnish translation
+# Pidgin Finnish translation
 # Copyright (C) 2002 Tero Kuusela <teroajk@subdimension.com>
 # Copyright (C) 2003-2005 Arto Alakulju <arto@alakulju.net>
 # Copyright (C) 2005-2007 Timo Jyrinki <timo.jyrinki@iki.fi>
 #
-# This file is distributed under the same license as the Gaim package.
+# This file is distributed under the same license as the Pidgin package.
 #
 # NOTE gftt is http://www.gnome.fi/
 msgid ""
 msgstr ""
-"Project-Id-Version: Gaim\n"
+"Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-04-09 21:58+0300\n"
 "PO-Revision-Date: 2007-04-09 21:58+0300\n"
