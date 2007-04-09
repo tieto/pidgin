@@ -21,8 +21,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pidgin\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-04-07 18:48-0400\n"
-"PO-Revision-Date: 2007-04-08 12:47+0200\n"
+"POT-Creation-Date: 2007-04-08 11:06-0400\n"
+"PO-Revision-Date: 2007-04-08 18:09+0200\n"
 "Last-Translator: Éric Boumaour <zongo_fr@users.sourceforge.net>\n"
 "Language-Team: fr <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -447,7 +447,7 @@ msgstr "Supprimer"
 #. Buddy List
 #: ../finch/gntblist.c:1113 ../finch/gntblist.c:2118 ../finch/gntprefs.c:278
 #: ../finch/gntui.c:77 ../pidgin/gtkblist.c:4133
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:327
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:330
 msgid "Buddy List"
 msgstr "Liste de contacts"
 
@@ -1156,7 +1156,7 @@ msgstr "Depuis le dernier message envoyé"
 
 #: ../finch/gntprefs.c:71 ../libpurple/plugins/autoreply.c:360
 #: ../pidgin/gtkprefs.c:820 ../pidgin/gtkprefs.c:829 ../pidgin/gtkprefs.c:1811
-#: ../pidgin/gtkprefs.c:1825 ../pidgin/plugins/win32/winprefs/winprefs.c:334
+#: ../pidgin/gtkprefs.c:1825 ../pidgin/plugins/win32/winprefs/winprefs.c:337
 msgid "Never"
 msgstr "Jamais"
 
@@ -1194,7 +1194,7 @@ msgstr "Archiver les changements d'état"
 
 #. Conversations
 #: ../finch/gntprefs.c:279 ../pidgin/gtkprefs.c:898 ../pidgin/gtkprefs.c:1915
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:341
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:344
 msgid "Conversations"
 msgstr "Conversations"
 
@@ -11532,14 +11532,14 @@ msgid ""
 msgstr ""
 "<span weight='bold' size='larger'>Bienvenue dans %s !</span>\n"
 "\n"
-"Vous n'avez aucun compte configuré. Pour vous connecter avec %s, cliquez "
-"le bouton <b>Ajouter</b> ci-dessous et configurez votre premier compte. Si "
-"vous désirez vous connecter à plusieurs comptes avec %s, cliquez sur "
-"<b>Ajouter</b> autant de fois que nécessaires.\n"
+"Vous n'avez aucun compte configuré. Pour vous connecter avec %s, cliquez le "
+"bouton <b>Ajouter</b> ci-dessous et configurez votre premier compte. Si vous "
+"désirez vous connecter à plusieurs comptes avec %s, cliquez sur <b>Ajouter</"
+"b> autant de fois que nécessaires.\n"
 "\n"
 "Pour retrouver cette fenêtre afin d'ajouter, modifier ou supprimer des "
-"comptes, choisissez <b>Comptes->Modifier</b> dans le menu de la "
-"liste de contacts"
+"comptes, choisissez <b>Comptes->Modifier</b> dans le menu de la liste de "
+"contacts"
 
 #: ../pidgin/gtkblist.c:704
 msgid "Join a Chat"
@@ -12018,8 +12018,8 @@ msgid ""
 msgstr ""
 "%s\n"
 "\n"
-"%s n'essaiera pas de se reconnecter avec ce compte tant que cette erreur "
-"ne sera pas corrigée et que vous ne réactiviez pas le compte."
+"%s n'essaiera pas de se reconnecter avec ce compte tant que cette erreur ne "
+"sera pas corrigée et que vous ne réactiviez pas le compte."
 
 #: ../pidgin/gtkconv.c:782 ../pidgin/gtkconv.c:808
 msgid "That buddy is not on the same protocol as this chat."
@@ -12784,15 +12784,15 @@ msgid ""
 "'COPYRIGHT' file for the complete list of contributors.  We provide no "
 "warranty for this program.<BR><BR>"
 msgstr ""
-"%s est un client de messagerie modulaire compatible avec AIM, MSN, "
-"Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus "
-"Sametime, Bonjour, Zephyr, Gadu-Gadu et QQ. Il est écrit avec Gtk+."
-"<BR><BR>Vous pouvez modifier et redistribuer ce programme sous les "
-"conditions énoncées par la licence GNU GPL (version 2 ou ultérieure). Une "
-"copie de la licence GPL est dans le fichier « COPYING » fourni avec %s. "
-"Consultez le fichier « COPYRIGHT » pour avoir la liste complète des "
-"collaborateurs de %s ayant droits. Aucune garantie n'est fournie pour "
-"l'utilisation de ce programme.<BR><BR>"
+"%s est un client de messagerie modulaire compatible avec AIM, MSN, Yahoo!, "
+"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"Bonjour, Zephyr, Gadu-Gadu et QQ. Il est écrit avec Gtk+.<BR><BR>Vous pouvez "
+"modifier et redistribuer ce programme sous les conditions énoncées par la "
+"licence GNU GPL (version 2 ou ultérieure). Une copie de la licence GPL est "
+"dans le fichier « COPYING » fourni avec %s. Consultez le fichier "
+"« COPYRIGHT » pour avoir la liste complète des collaborateurs de %s ayant "
+"droits. Aucune garantie n'est fournie pour l'utilisation de ce programme."
+"<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:374
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgwin on irc.freenode.net<BR><BR>"
@@ -13653,9 +13653,9 @@ msgid "_Show system tray icon:"
 msgstr "_Afficher l'icône de notification :"
 
 #: ../pidgin/gtkprefs.c:819 ../pidgin/gtkprefs.c:831 ../pidgin/gtkprefs.c:1646
-#: ../pidgin/plugins/timestamp_format.c:39
-#: ../pidgin/plugins/timestamp_format.c:48
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:335
+#: ../pidgin/plugins/timestamp_format.c:42
+#: ../pidgin/plugins/timestamp_format.c:51
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:338
 msgid "Always"
 msgstr "Toujours"
 
@@ -14664,9 +14664,8 @@ msgstr ""
 #. *< priority
 #. *< id
 #: ../pidgin/plugins/gaiminc.c:91
-#, fuzzy
-msgid " Demonstration Plugin"
-msgstr "Plugin de démonstration"
+msgid "Pidgin Demonstration Plugin"
+msgstr "Plugin Pidgin de démonstration"
 
 #. *< name
 #. *< version
@@ -15189,9 +15188,8 @@ msgid "Re-read gtkrc files"
 msgstr "Relire les fichiers gtkrc"
 
 #: ../pidgin/plugins/pidginrc.c:616
-#, fuzzy
-msgid " GTK+ Theme Control"
-msgstr "Contrôle du thème GTK+ Pidgin"
+msgid "Pidgin GTK+ Theme Control"
+msgstr "Contrôle Pidgin du thème GTK+"
 
 #: ../pidgin/plugins/pidginrc.c:618 ../pidgin/plugins/pidginrc.c:619
 msgid "Provides access to commonly used gtkrc settings."
@@ -15215,8 +15213,9 @@ msgstr ""
 "Observez le résultat dans la fenêtre de debug."
 
 #: ../pidgin/plugins/relnot.c:71
-msgid "You are using "
-msgstr ""
+#, c-format
+msgid "You are using %s version %s.  The current version is %s.<hr>"
+msgstr "Vous utilisez %s version %s. La dernière version est %s.<hr>"
 
 #: ../pidgin/plugins/relnot.c:77
 #, c-format
@@ -15233,8 +15232,8 @@ msgid ""
 "You can get version %s from:<br><a href=\"http://pidgin.im/\">http://pidgin."
 "im</a>."
 msgstr ""
-"Vous pouvez télécharger la version %s sur :<br><a href=\"http://pidgin.im/\""
-">http://pidgin.im</a>."
+"Vous pouvez télécharger la version %s sur :<br><a href=\"http://pidgin.im/"
+"\">http://pidgin.im</a>."
 
 #: ../pidgin/plugins/relnot.c:86 ../pidgin/plugins/relnot.c:87
 msgid "New Version Available"
@@ -15377,34 +15376,34 @@ msgstr "Affiche un horodatage à la iChat."
 msgid "Display iChat-style timestamps every N minutes."
 msgstr "Ajoute l'heure dans la conversation à intervalle régulier."
 
-#: ../pidgin/plugins/timestamp_format.c:22
+#: ../pidgin/plugins/timestamp_format.c:23
 msgid "Timestamp Format Options"
 msgstr "Options d'affichage de l'horodatage"
 
-#: ../pidgin/plugins/timestamp_format.c:27
-#, fuzzy
-msgid "_Force (traditional "
-msgstr "_Forcer au format 24 heures (traditionnel à Pidgin)"
+#: ../pidgin/plugins/timestamp_format.c:26
+#, c-format
+msgid "_Force (traditional %s) 24-hour time format"
+msgstr "_Forcer au format 24 heures (traditionnel à %s)"
 
-#: ../pidgin/plugins/timestamp_format.c:30
+#: ../pidgin/plugins/timestamp_format.c:33
 msgid "Show dates in..."
 msgstr "Afficher les dates dans..."
 
-#: ../pidgin/plugins/timestamp_format.c:35
+#: ../pidgin/plugins/timestamp_format.c:38
 msgid "Co_nversations:"
 msgstr "Les con_versations :"
 
-#: ../pidgin/plugins/timestamp_format.c:37
-#: ../pidgin/plugins/timestamp_format.c:46
+#: ../pidgin/plugins/timestamp_format.c:40
+#: ../pidgin/plugins/timestamp_format.c:49
 msgid "For delayed messages"
 msgstr "Pour les messages retardés"
 
-#: ../pidgin/plugins/timestamp_format.c:38
-#: ../pidgin/plugins/timestamp_format.c:47
+#: ../pidgin/plugins/timestamp_format.c:41
+#: ../pidgin/plugins/timestamp_format.c:50
 msgid "For delayed messages and in chats"
 msgstr "Pour les messages retardés et dans les salons de discussions"
 
-#: ../pidgin/plugins/timestamp_format.c:44
+#: ../pidgin/plugins/timestamp_format.c:47
 msgid "_Message Logs:"
 msgstr "Les _archives :"
 
@@ -15414,19 +15413,19 @@ msgstr "Les _archives :"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: ../pidgin/plugins/timestamp_format.c:141
+#: ../pidgin/plugins/timestamp_format.c:144
 msgid "Message Timestamp Formats"
 msgstr "Affichage de l'horodatage des messages."
 
 #. *< name
 #. *< version
 #. *  summary
-#: ../pidgin/plugins/timestamp_format.c:144
+#: ../pidgin/plugins/timestamp_format.c:147
 msgid "Customizes the message timestamp formats."
 msgstr "Personnalise l'affichage de l'horodatage des messages."
 
 #. *  description
-#: ../pidgin/plugins/timestamp_format.c:146
+#: ../pidgin/plugins/timestamp_format.c:149
 msgid ""
 "This plugin allows the user to customize conversation and logging message "
 "timestamp formats."
@@ -15505,51 +15504,52 @@ msgstr ""
 "\n"
 "Note : Ce plugin nécessite Windows 2000 ou plus récent."
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:306
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:307
 msgid "GTK+ Runtime Version"
 msgstr "Version des bibliothèques GTK+"
 
 #. Autostart
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:314
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:315
 msgid "Startup"
 msgstr "Démarrage"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:315
-#, fuzzy
-msgid "_Start "
-msgstr "_Premier port : "
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:316
+#, c-format
+msgid "_Start %s on Windows startup"
+msgstr "_Démarrer %s au lancement de Windows"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:328
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:331
 msgid "_Dockable Buddy List"
 msgstr "Liste de contacts _accrochable"
 
 #. Blist On Top
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:332
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:335
 msgid "_Keep Buddy List window on top:"
 msgstr "Liste de contacts toujours _visible :"
 
 #. XXX: Did this ever work?
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:337
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:340
 msgid "Only when docked"
 msgstr "Seulement quand la fenêtre est accrochée"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:342
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:345
 msgid "_Flash window when chat messages are received"
 msgstr "_Faire clignoter la fenêtre dans les discussions actives"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:366
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:369
 msgid "Pidgwin Options"
 msgstr "Options de Pidgwin"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:368
-#, fuzzy
-msgid "Options specific to Windows "
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:371
+msgid "Options specific to Pidgin for Windows."
 msgstr "Options spécifiques à Pidgin Windows"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:369
-#, fuzzy
-msgid "Provides options specific to Windows "
-msgstr "Options spécifiques à Pidgin Windows"
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:372
+msgid ""
+"Provides options specific to Pidgin for Windows , such as buddy list docking."
+msgstr ""
+"Fournit des options spécifiques à Pidgin Windows, tels que l'accrochage de "
+"la liste de contacts."
 
 #: ../pidgin/plugins/xmppconsole.c:665
 msgid "<font color='#777777'>Logged out.</font>"
@@ -15599,28 +15599,6 @@ msgid "This plugin is useful for debbuging XMPP servers or clients."
 msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid ""
-#~ "%s\n"
-#~ "\n"
-#~ msgstr ""
-#~ "%s\n"
-#~ "\n"
-
-#~ msgid "You are using Pidgin version %s.  The current version is %s.<hr>"
-#~ msgstr "Vous utilisez Pidgin version %s. La dernière version est %s.<hr>"
-
-#~ msgid "_Start Pidgin on Windows startup"
-#~ msgstr "_Démarrer Pidgin au lancement de Windows"
-
-#~ msgid "WinPidgin Options"
-#~ msgstr "Préférences de WinPidgin"
-
-#~ msgid ""
-#~ "Provides options specific to Windows Pidgin, such as buddy list docking."
-#~ msgstr ""
-#~ "Fournit des options spécifiques à Pidgin Windows, tels que l'accrochage de "
-#~ "la liste de contacts."
-
-#~ msgid ""
 #~ "%d buddy from group %s was not removed because it belongs to an account "
 #~ "which is disabled or offline.  This buddy and the group were not "
 #~ "removed.\n"
@@ -15639,15 +15617,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "Group not removed"
 #~ msgstr "Groupe non supprimé"
-
-#~ msgid "Old Pidgin"
-#~ msgstr "Ancien Pidgin"
-
-#~ msgid "Pidgin encountered errors loading the plugin."
-#~ msgstr "Erreur au chargement du plugin."
-
-#~ msgid "Pidgin User"
-#~ msgstr "Utilisateur de Pidgin"
 
 #~ msgid ""
 #~ "Always use AIM/ICQ proxy server for file transfers\n"
@@ -15678,8 +15647,8 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid ""
 #~ "When this happens, TOC ignores any messages sent to it, and may kick you "
-#~ "off if you send a message. Pidgin will prevent anything from going through. "
-#~ "This is only temporary, please be patient."
+#~ "off if you send a message. Pidgin will prevent anything from going "
+#~ "through. This is only temporary, please be patient."
 #~ msgstr ""
 #~ "Quand cela se produit, TOC ignore tous les messages envoyés et peux vous "
 #~ "déconnecter si vous en envoyez un. Pidgin empêchera ceci. Ce n'est que "
@@ -15691,8 +15660,8 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 #~ msgid ""
 #~ "The normal authentication method has failed. This means either your "
 #~ "password is incorrect, or Yahoo!'s authentication scheme has changed. "
-#~ "Pidgin will now attempt to log in using Web Messenger authentication, which "
-#~ "will result in reduced functionality and features."
+#~ "Pidgin will now attempt to log in using Web Messenger authentication, "
+#~ "which will result in reduced functionality and features."
 #~ msgstr ""
 #~ "La méthode d'authentification normale a échoué. Cela signifie que votre "
 #~ "mot de passe est incorrect ou que Yahoo! utilise un nouveau système "
@@ -15719,8 +15688,8 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "Uses Pidgin to obtain buddy ips to connect for a Crazychat session"
 #~ msgstr ""
-#~ "Utilise Pidgin pour récupérer les adresses IP des contacts avec lesquels se "
-#~ "connecter pour une session de Crazychat."
+#~ "Utilise Pidgin pour récupérer les adresses IP des contacts avec lesquels "
+#~ "se connecter pour une session de Crazychat."
 
 #~ msgid "Network Configuration"
 #~ msgstr "Configuration du réseau"
@@ -15791,9 +15760,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "Authorization Request"
 #~ msgstr "Demande d'autorisation"
-
-#~ msgid "<B>UIN:</B> %s<BR><B>Status:</B> %s<HR>%s"
-#~ msgstr "<B>UIN :</B> %s<BR><B>État :</B> %s<HR>%s"
 
 #~ msgid ""
 #~ "The user %s wants to add %s to their buddy list for the following "
@@ -15973,9 +15939,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 #~ msgid "Email Address"
 #~ msgstr "Adresse électronique"
 
-#~ msgid "EMail"
-#~ msgstr "Courriel"
-
 #~ msgid "Public Key File"
 #~ msgstr "Fichier de clé publique"
 
@@ -16053,9 +16016,6 @@ msgstr "Ce plugin est utile pour débugger les clients ou serveurs XMPP."
 
 #~ msgid "me is using Pidgin v%s."
 #~ msgstr "me utilise Pidgin v%s."
-
-#~ msgid "e-Mail"
-#~ msgstr "Courriel"
 
 #~ msgid "Use AIM/ICQ proxy server (slower, but usually works)"
 #~ msgstr ""

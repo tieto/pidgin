@@ -76,7 +76,7 @@ install: all $(GAIM_INSTALL_PLUGINS_DIR)
 plugins: \
 		convcolors.dll \
 		extplacement.dll \
-		gaimrc.dll \
+		pidginrc.dll \
 		history.dll \
 		iconaway.dll \
 		markerline.dll \

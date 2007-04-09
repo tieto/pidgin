@@ -544,6 +544,7 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, const char *iconfile)
 		int expire = purple_account_get_int(account, YAHOO_PICEXPIRE_SETTING, 0);
 		const char *oldurl = purple_account_get_string(account, YAHOO_PICURL_SETTING, NULL);
 
+		g_free(icondata);
 		yd->picture_checksum = g_string_hash(s);
 
 		if ((yd->picture_checksum == oldcksum) &&
