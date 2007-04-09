@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Pidgin 2.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-09-08 00:02-0400\n"
-"PO-Revision-Date: 2007-04-08 14:21+0100\n"
+"PO-Revision-Date: 2007-04-09 10:53+0100\n"
 "Last-Translator: Martin Srebotnjak <miles@filmsi.net>\n"
 "Language-Team: Martin Srebotnjak, LUGOS <users@sl.openoffice.org>\n"
 "MIME-Version: 1.0\n"
@@ -545,7 +545,7 @@ msgstr "Odstrani"
 #: ../finch/gntprefs.c:278
 #: ../finch/gntui.c:77
 #: ../pidgin/gtkblist.c:4133
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:327
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:330
 msgid "Buddy List"
 msgstr "Seznam prijateljev"
 
@@ -1358,7 +1358,7 @@ msgstr "Od nazadnje poslanega sporočila"
 #: ../pidgin/gtkprefs.c:829
 #: ../pidgin/gtkprefs.c:1811
 #: ../pidgin/gtkprefs.c:1825
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:334
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:337
 msgid "Never"
 msgstr "nikoli"
 
@@ -1398,7 +1398,7 @@ msgstr "Beleži spremembe stanja"
 #: ../finch/gntprefs.c:279
 #: ../pidgin/gtkprefs.c:898
 #: ../pidgin/gtkprefs.c:1915
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:341
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:344
 msgid "Conversations"
 msgstr "Pogovori"
 
@@ -13355,9 +13355,9 @@ msgstr "_Pokaži sistemsko ikono na pladnju:"
 #: ../pidgin/gtkprefs.c:819
 #: ../pidgin/gtkprefs.c:831
 #: ../pidgin/gtkprefs.c:1646
-#: ../pidgin/plugins/timestamp_format.c:39
-#: ../pidgin/plugins/timestamp_format.c:48
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:335
+#: ../pidgin/plugins/timestamp_format.c:42
+#: ../pidgin/plugins/timestamp_format.c:51
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:338
 msgid "Always"
 msgstr "vedno"
 
@@ -14340,8 +14340,8 @@ msgstr "Omeji število pomenkov po oknih z možnostjo ločitve oken za klepet in
 #. *< priority
 #. *< id
 #: ../pidgin/plugins/gaiminc.c:91
-msgid " Demonstration Plugin"
-msgstr " - predstavitveni vstavek"
+msgid "Pidgin Demonstration Plugin"
+msgstr "Predstavitveni vstavek Pidgina"
 
 #. *< name
 #. *< version
@@ -14844,8 +14844,8 @@ msgid "Re-read gtkrc files"
 msgstr "Ponovno preberi datoteke gtkrc"
 
 #: ../pidgin/plugins/pidginrc.c:616
-msgid " GTK+ Theme Control"
-msgstr " - Nadzor teme Gaim GTK+"
+msgid "Pidgin GTK+ Theme Control"
+msgstr "Nadzor teme Gaim GTK+ v Pidginu"
 
 #: ../pidgin/plugins/pidginrc.c:618
 #: ../pidgin/plugins/pidginrc.c:619
@@ -14865,8 +14865,9 @@ msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). 
 msgstr "Omogoča pošiljanje golih ukazov za protokole, ki temeljijo na besedilu (Jabber, MSN, IRC, TOC). Pritisnite 'Enter' za pošiljanje in opazujte kodno okno."
 
 #: ../pidgin/plugins/relnot.c:71
-msgid "You are using "
-msgstr "Uporabljate "
+#, c-format
+msgid "You are using %s version %s.  The current version is %s.<hr>"
+msgstr "Uporabljate %s različice %s.  Najnovejša dosegljiva različica je %s.<hr>"
 
 #: ../pidgin/plugins/relnot.c:77
 #, c-format
@@ -15021,33 +15022,34 @@ msgstr "Pokaži časovne žige v slogu iChata"
 msgid "Display iChat-style timestamps every N minutes."
 msgstr "Pokaži čase nastanka vsakih N minut v slogu iChata."
 
-#: ../pidgin/plugins/timestamp_format.c:22
+#: ../pidgin/plugins/timestamp_format.c:23
 msgid "Timestamp Format Options"
 msgstr "Možnosti zapisa časovnega žiga"
 
-#: ../pidgin/plugins/timestamp_format.c:27
-msgid "_Force (traditional "
-msgstr "_Vsili (tradicionalni "
+#: ../pidgin/plugins/timestamp_format.c:26
+#, c-format
+msgid "_Force (traditional %s) 24-hour time format"
+msgstr "_Vsili (tradicionalni %s) 24-urni časovni zapis"
 
-#: ../pidgin/plugins/timestamp_format.c:30
+#: ../pidgin/plugins/timestamp_format.c:33
 msgid "Show dates in..."
 msgstr "Pokaži datume v ..."
 
-#: ../pidgin/plugins/timestamp_format.c:35
+#: ../pidgin/plugins/timestamp_format.c:38
 msgid "Co_nversations:"
 msgstr "Po_govori:"
 
-#: ../pidgin/plugins/timestamp_format.c:37
-#: ../pidgin/plugins/timestamp_format.c:46
+#: ../pidgin/plugins/timestamp_format.c:40
+#: ../pidgin/plugins/timestamp_format.c:49
 msgid "For delayed messages"
 msgstr "Za zakasnjena sporočila"
 
-#: ../pidgin/plugins/timestamp_format.c:38
-#: ../pidgin/plugins/timestamp_format.c:47
+#: ../pidgin/plugins/timestamp_format.c:41
+#: ../pidgin/plugins/timestamp_format.c:50
 msgid "For delayed messages and in chats"
 msgstr "Za zakasnjena sporočila in v pogovorih"
 
-#: ../pidgin/plugins/timestamp_format.c:44
+#: ../pidgin/plugins/timestamp_format.c:47
 msgid "_Message Logs:"
 msgstr "Dnevniki _sporočil:"
 
@@ -15057,19 +15059,19 @@ msgstr "Dnevniki _sporočil:"
 #. *< dependencies
 #. *< priority
 #. *< id
-#: ../pidgin/plugins/timestamp_format.c:141
+#: ../pidgin/plugins/timestamp_format.c:144
 msgid "Message Timestamp Formats"
 msgstr "Zapisi časovnega žiga sporočil"
 
 #. *< name
 #. *< version
 #. *  summary
-#: ../pidgin/plugins/timestamp_format.c:144
+#: ../pidgin/plugins/timestamp_format.c:147
 msgid "Customizes the message timestamp formats."
 msgstr "Prilagodi oblike časovnega žiga sporočil po meri."
 
 #. *  description
-#: ../pidgin/plugins/timestamp_format.c:146
+#: ../pidgin/plugins/timestamp_format.c:149
 msgid "This plugin allows the user to customize conversation and logging message timestamp formats."
 msgstr "Ta vtičnik omogoča uporabniku prilagajati zapis časovnega žiga pogovorov in dnevniških sporočil."
 
@@ -15142,48 +15144,49 @@ msgstr ""
 "\n"
 "* Pozor: Ta vstavek zahteva Win2000 ali novejše."
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:306
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:307
 msgid "GTK+ Runtime Version"
 msgstr "Nastavitve GTK+"
 
 #. Autostart
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:314
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:315
 msgid "Startup"
 msgstr "Zagon"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:315
-msgid "_Start "
-msgstr "_Začni"
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:316
+#, c-format
+msgid "_Start %s on Windows startup"
+msgstr "_Zaženi %s ob zagonu sistema"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:328
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:331
 msgid "_Dockable Buddy List"
 msgstr "Le_pljiv seznam prijateljev"
 
 #. Blist On Top
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:332
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:335
 msgid "_Keep Buddy List window on top:"
 msgstr "_Ohrani seznam prijateljev nad vrhu:"
 
 #. XXX: Did this ever work?
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:337
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:340
 msgid "Only when docked"
 msgstr "samo, ko je lepljiv"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:342
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:345
 msgid "_Flash window when chat messages are received"
 msgstr "Utrip_aj z oknom, ko prispejo nova sporočila"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:366
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:369
 msgid "Pidgwin Options"
 msgstr "Možnosti za Pidgwin"
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:368
-msgid "Options specific to Windows "
-msgstr "Nastavitve, specifične za v okolju Windows delujoči "
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:371
+msgid "Options specific to Pidgin for Windows."
+msgstr "Nastavitve, specifične za %s v okolju Windows."
 
-#: ../pidgin/plugins/win32/winprefs/winprefs.c:369
-msgid "Provides options specific to Windows "
-msgstr "Ponuja nastavitve, specifične za v okolju Windows delujoči "
+#: ../pidgin/plugins/win32/winprefs/winprefs.c:372
+msgid "Provides options specific to Pidgin for Windows , such as buddy list docking."
+msgstr "Ponuja nastavitve, specifične za %s v okolju Windows, kot je sidranje seznama prijateljev."
 
 #: ../pidgin/plugins/xmppconsole.c:665
 msgid "<font color='#777777'>Logged out.</font>"
