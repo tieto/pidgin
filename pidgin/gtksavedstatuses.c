@@ -1647,6 +1647,8 @@ static gboolean pidgin_status_menu_add_primitive(GtkListStore *model, GtkWidget 
 			   SS_MENU_TEXT_COLUMN, purple_primitive_get_name_from_type(primitive),
 			   SS_MENU_DATA_COLUMN, GINT_TO_POINTER(primitive),
 			   -1);
+	if (pixbuf != NULL)
+		g_object_unref(pixbuf);
 
 	if (purple_savedstatus_is_transient(current_status)
 			&& !purple_savedstatus_has_substatuses(current_status)
