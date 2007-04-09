@@ -483,9 +483,12 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 	start = end = view->string->str + len;
 
 	while (*start) {
+		GntTextLine *oldl;
 		GntTextSegment *seg = NULL;
 
 		if (*end == '\n' || *end == '\r') {
+			if (!strncmp(end, "\r\n", 2))
+				end++;
 			end++;
 			start = end;
 			gnt_text_view_next_line(view);
@@ -501,8 +504,8 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 			view->list = g_list_prepend(view->list, line);
 		}
 
-		if ((end = strchr(start, '\n')) != NULL ||
-			(end = strchr(start, '\r')) != NULL) {
+		if ((end = strchr(start, '\r')) != NULL ||
+			(end = strchr(start, '\n')) != NULL) {
 			len = gnt_util_onscreen_width(start, end - 1);
 			if (len >= widget->priv.width - line->length - 1) {
 				end = NULL;
@@ -527,15 +530,25 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 			seg->flags = fl;
 			line->segments = g_list_append(line->segments, seg);
 		}
-		seg->end = end - view->string->str;
-		line->length += len;
 
-		start = end;
+		oldl = line;
 		if (*end && *end != '\n' && *end != '\r') {
+			const char *tmp = end;
+			while (end && *end != '\n' && *end != '\r' && !g_ascii_isspace(*end)) {
+				end = g_utf8_find_prev_char(seg->start + view->string->str, end);
+			}
+			if (!end || !g_ascii_isspace(*end))
+				end = tmp;
+			else
+				end++; /* Remove the space */
+
 			line = g_new0(GntTextLine, 1);
 			line->soft = TRUE;
 			view->list = g_list_prepend(view->list, line);
 		}
+		seg->end = end - view->string->str;
+		oldl->length += len;
+		start = end;
 	}
 
 	view->list = list;
