@@ -1704,8 +1704,14 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 						GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU, "PidginStatusMenu");
 			if (emblem != NULL)
 			{
+				/* copy the pixbuf so we're not modifying the stock image data when we overlay the disk */
+				GdkPixbuf *pixbuf2 = gdk_pixbuf_copy(pixbuf);
 				int width = gdk_pixbuf_get_width(pixbuf) / 2;
 				int height = gdk_pixbuf_get_height(pixbuf) / 2;
+
+				g_object_unref(G_OBJECT(pixbuf));
+				pixbuf = pixbuf2;
+
 				gdk_pixbuf_composite(emblem, pixbuf, 0, height,
 						     width, height, 0, height,
 						     0.5, 0.5, GDK_INTERP_BILINEAR, 255);
@@ -1719,6 +1725,7 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 				SS_MENU_TEXT_COLUMN, purple_savedstatus_get_title(status),
 				SS_MENU_DATA_COLUMN, GINT_TO_POINTER(purple_savedstatus_get_creation_time(status)),
 				-1);
+			g_object_unref(G_OBJECT(pixbuf));
 
 			if (status == current_status)
 				index = i;
