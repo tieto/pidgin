@@ -230,7 +230,9 @@ int gnt_keys_find_combination(const char *path)
 
 	root.flags &= ~IS_END;
 	while (*path && n->next[*path] && !(n->flags & IS_END)) {
-		if (g_utf8_find_next_char(path, NULL) - path > 1)
+		if (!g_ascii_isspace(*path) &&
+				!g_ascii_iscntrl(*path) &&
+				!g_ascii_isgraph(*path))
 			return 0;
 		n = n->next[*path++];
 		depth++;
