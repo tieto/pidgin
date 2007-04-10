@@ -4,8 +4,8 @@
 # Description: Makefile for win32 (mingw) version of libsilc protocol plugin
 #
 
-GAIM_TOP := ../../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libsilc
 NEEDED_DLLS =		$(SILC_TOOLKIT)/lib/silc.dll \
@@ -15,10 +15,10 @@ TYPE = PLUGIN
 # Static or Plugin...
 ifeq ($(TYPE),STATIC)
   DEFINES += -DSTATIC
-  DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
+  DLL_INSTALL_DIR =	$(PURPLE_INSTALL_DIR)
 else
 ifeq ($(TYPE),PLUGIN)
-  DLL_INSTALL_DIR =	$(GAIM_INSTALL_PLUGINS_DIR)
+  DLL_INSTALL_DIR =	$(PURPLE_INSTALL_PLUGINS_DIR)
 endif
 endif
 
@@ -29,13 +29,13 @@ INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GAIM_LIB_TOP) \
-			-I$(GAIM_LIB_TOP)/win32 \
-			-I$(GAIM_TOP) \
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
+			-I$(PIDGIN_TREE_TOP) \
 			-I$(SILC_TOOLKIT)/include
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_LIB_TOP) \
+			-L$(PURPLE_TOP) \
 			-L$(SILC_TOOLKIT)/lib
 
 ##
@@ -63,7 +63,7 @@ LIBS = \
 			-lsilc \
 			-lsilcclient
 
-include $(GAIM_COMMON_RULES)
+include $(PIDGIN_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
@@ -72,13 +72,13 @@ include $(GAIM_COMMON_RULES)
 
 all: $(TARGET).dll
 
-install: all $(DLL_INSTALL_DIR) $(GAIM_INSTALL_DIR)
+install: all $(DLL_INSTALL_DIR) $(PURPLE_INSTALL_DIR)
 	cp $(TARGET).dll $(DLL_INSTALL_DIR)
-	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
+	cp $(NEEDED_DLLS) $(PURPLE_INSTALL_DIR)
 
-$(OBJECTS): $(GAIM_CONFIG_H)
+$(OBJECTS): $(PURPLE_CONFIG_H)
 
-$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
+$(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--image-base,0x64000000 -o $(TARGET).dll
 
 ##
@@ -88,4 +88,4 @@ clean:
 	rm -f $(OBJECTS)
 	rm -f $(TARGET).dll
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)

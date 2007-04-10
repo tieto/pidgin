@@ -15499,9 +15499,6 @@ msgstr ""
 #~ msgid "Provides options specific to Windows "
 #~ msgstr "Tarjoaa asetukset jotka liittyvät erityisesti Windows-versioon "
 
-#~ msgid "Pidgin Internet Messenger"
-#~ msgstr "Pidgin-pikaviestin"
-
 #~ msgid "/Conversation/Insert Lin_k..."
 #~ msgstr "/Keskustelu/Lisää lin_kki..."
 

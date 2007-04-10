@@ -1,11 +1,11 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for win32 (mingw) version of Gaim Plugins 
+# Description: Makefile for win32 (mingw) version of LibPurple Plugins 
 #
 
-GAIM_TOP := ../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 PERL_PLUGIN := ./perl
 TCL_PLUGIN := ./tcl
@@ -21,12 +21,12 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GAIM_TOP) \
-			-I$(GAIM_LIB_TOP) \
-			-I$(GAIM_LIB_TOP)/win32
+			-I$(PIDGIN_TREE_TOP) \
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_LIB_TOP)
+			-L$(PURPLE_TOP)
 
 ##
 ## LIBRARIES
@@ -44,16 +44,16 @@ LIBS =	\
 ##
 .PHONY: all clean plugins install
 
-all: $(GAIM_LIBGAIM_DLL).a plugins
-	$(MAKE) -C $(PERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) -C $(TCL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) -C $(SSL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
+all: $(PURPLE_DLL).a plugins
+	$(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE)
 
-install: all $(GAIM_INSTALL_PLUGINS_DIR)
-	$(MAKE) -C $(PERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) -C $(TCL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) -C $(SSL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
-	cp *.dll $(GAIM_INSTALL_PLUGINS_DIR)
+install: all $(PURPLE_INSTALL_PLUGINS_DIR)
+	$(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) install
+	cp *.dll $(PURPLE_INSTALL_PLUGINS_DIR)
 
 .c.dll:
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
@@ -75,8 +75,8 @@ plugins: \
 ##
 clean:
 	rm -f *.o *.dll
-	$(MAKE) -C $(PERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) -C $(TCL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) -C $(SSL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C $(PERL_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C $(TCL_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C $(SSL_PLUGIN) -f $(MINGW_MAKEFILE) clean
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)

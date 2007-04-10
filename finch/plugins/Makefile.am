@@ -18,9 +18,10 @@ gntgf_la_SOURCES      = gntgf.c
 gnthistory_la_SOURCES = gnthistory.c
 gntlastlog_la_SOURCES = lastlog.c
 
+gntclipboard_la_CFLAGS = $(X11_CFLAGS)
 gntgf_la_CFLAGS = $(X11_CFLAGS)
 
-gntclipboard_la_LIBADD = $(GLIB_LIBS)
+gntclipboard_la_LIBADD = $(GLIB_LIBS) $(X11_LIBS)
 gntgf_la_LIBADD       = $(GLIB_LIBS) $(X11_LIBS) $(top_builddir)/finch/libgnt/libgnt.la
 gnthistory_la_LIBADD  = $(GLIB_LIBS)
 gntlastlog_la_LIBADD  = $(GLIB_LIBS)
