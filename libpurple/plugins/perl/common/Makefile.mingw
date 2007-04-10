@@ -4,8 +4,8 @@
 # Description: Makefile for Purple perl module.
 #
 
-GAIM_TOP := ../../../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = Purple
 AUTOSPLIT = lib/auto/Purple/autosplit.ix
@@ -18,8 +18,8 @@ CFLAGS += -Wno-comment -Wno-unused
 ## INCLUDE PATHS
 ##
 INCLUDE_PATHS =		-I. \
-			-I$(GAIM_TOP) \
-			-I$(GAIM_LIB_TOP) \
+			-I$(PIDGIN_TREE_TOP) \
+			-I$(PURPLE_TOP) \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
@@ -27,7 +27,7 @@ INCLUDE_PATHS =		-I. \
 
 LIB_PATHS = 		-L$(PERL_LIB_TOP) \
 			-L$(PERL_PLUGIN_TOP) \
-			-L$(GAIM_LIB_TOP) \
+			-L$(PURPLE_TOP) \
 			-L$(GTK_TOP)/lib
 
 ##
@@ -80,7 +80,7 @@ LIBS =			-lperl58 \
 			-lpurple \
 			-lglib-2.0
 
-include $(GAIM_COMMON_RULES)
+include $(PIDGIN_COMMON_RULES)
 
 %.inc:
 	cp fallback/$@ ./
@@ -93,18 +93,18 @@ include $(GAIM_COMMON_RULES)
 all: $(TARGET).dll $(AUTOSPLIT)
 
 install: all
-	rm -rf $(GAIM_INSTALL_PERLMOD_DIR)
-	cp -R lib $(GAIM_INSTALL_PERLMOD_DIR)
-	cp $(TARGET).dll $(GAIM_INSTALL_PERLMOD_DIR)
+	rm -rf $(PURPLE_INSTALL_PERLMOD_DIR)
+	cp -R lib $(PURPLE_INSTALL_PERLMOD_DIR)
+	cp $(TARGET).dll $(PURPLE_INSTALL_PERLMOD_DIR)
 
-$(C_FILES): $(GAIM_CONFIG_H)
+$(C_FILES): $(PURPLE_CONFIG_H)
 
 $(AUTOSPLIT):
 	mkdir -p ./lib/auto
 	cp Purple.pm ./lib
 	$(PERL) -MAutoSplit -e 'autosplit("lib/Purple.pm")'
 
-$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(GAIM_LIBGAIM_PERL_DLL).a $(FALLBACKS) $(OBJECTS)
+$(TARGET).dll: $(PURPLE_DLL).a $(PURPLE_PERL_DLL).a $(FALLBACKS) $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) -o $(TARGET).dll
 
 ##
@@ -114,4 +114,4 @@ clean:
 	rm -rf $(TARGET).dll $(FALLBACKS) lib
 	rm -f *.o $(C_FILES)
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)

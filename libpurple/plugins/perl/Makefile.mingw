@@ -4,8 +4,8 @@
 # Description: Makefile for perl plugin loader plugin.
 #
 
-GAIM_TOP := ../../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = perl
 
@@ -16,16 +16,16 @@ CFLAGS += -Wno-comment
 ## INCLUDE PATHS
 ##
 INCLUDE_PATHS +=	-I. \
-			-I$(GAIM_TOP) \
-			-I$(GAIM_LIB_TOP) \
-			-I$(GAIM_LIB_TOP)/win32 \
+			-I$(PIDGIN_TREE_TOP) \
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(PERL_LIB_TOP)/CORE
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_LIB_TOP) \
+			-L$(PURPLE_TOP) \
 			-L$(PERL_LIB_TOP)
 
 ##
@@ -49,7 +49,7 @@ LIBS =	\
 			-lpurple \
 			-lperl58
 
-include $(GAIM_COMMON_RULES)
+include $(PIDGIN_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
@@ -57,18 +57,18 @@ include $(GAIM_COMMON_RULES)
 .PHONY: all install clean
 
 all: $(TARGET).dll
-	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE)
+	$(MAKE) -C ./common -f $(MINGW_MAKEFILE)
 
-install: all $(GAIM_INSTALL_PLUGINS_DIR)
-	cp $(TARGET).dll $(GAIM_INSTALL_PLUGINS_DIR)
-	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE) install
+install: all $(PURPLE_INSTALL_PLUGINS_DIR)
+	cp $(TARGET).dll $(PURPLE_INSTALL_PLUGINS_DIR)
+	$(MAKE) -C ./common -f $(MINGW_MAKEFILE) install
 
-$(OBJECTS): $(GAIM_CONFIG_H)
+$(OBJECTS): $(PURPLE_CONFIG_H)
 
 ##
 ## BUILD DLL
 ##
-$(TARGET).dll $(TARGET).dll.a: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
+$(TARGET).dll $(TARGET).dll.a: $(PURPLE_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS)  -Wl,--export-all-symbols -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
 ##
@@ -77,6 +77,6 @@ $(TARGET).dll $(TARGET).dll.a: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
 clean:
 	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll $(TARGET).dll.a
-	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C ./common -f $(MINGW_MAKEFILE) clean
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)

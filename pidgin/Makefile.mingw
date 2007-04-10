@@ -1,11 +1,11 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for win32 (mingw) version of Gaim
+# Description: Makefile for win32 (mingw) version of Pidgin
 #
 
-GAIM_TOP := ..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 NEEDED_DLLS = $(GTKSPELL_TOP)/gtkspell/libgtkspell.dll
 
@@ -13,7 +13,7 @@ NEEDED_DLLS = $(GTKSPELL_TOP)/gtkspell/libgtkspell.dll
 ## VARIABLE DEFINITIONS
 ##
 EXE_TARGET := pidgin
-GTKGAIM_TARGET := pidgin
+PIDGIN_TARGET := pidgin
 EXE_NAME := $(EXE_TARGET).exe
 
 WINAPP := -mwindows
@@ -23,19 +23,19 @@ LDFLAGS := $(WINAPP)
 ##
 ## INCLUDE PATHS
 ##
-LIBGAIM_INCLUDE_PATHS =	\
-			-I$(GAIM_LIB_TOP) \
-			-I$(GAIM_LIB_TOP)/win32 \
-			-I$(GAIM_TOP) \
+PURPLE_INCLUDE_PATHS =	\
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
+			-I$(PIDGIN_TREE_TOP) \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include
 
 INCLUDE_PATHS =	\
-			$(LIBGAIM_INCLUDE_PATHS) \
-			-I$(GAIM_GTK_IDLETRACK_TOP) \
-			-I$(GAIM_GTK_TOP) \
-			-I$(GAIM_GTK_TOP)/win32 \
+			$(PURPLE_INCLUDE_PATHS) \
+			-I$(PIDGIN_IDLETRACK_TOP) \
+			-I$(PIDGIN_TOP) \
+			-I$(PIDGIN_TOP)/win32 \
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/pango-1.0 \
 			-I$(GTK_TOP)/include/atk-1.0 \
@@ -44,15 +44,15 @@ INCLUDE_PATHS =	\
 			-I$(ASPELL_TOP)/include
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_LIB_TOP) \
-			-L$(GAIM_GTK_TOP) \
-			-L$(GAIM_GTK_IDLETRACK_TOP) \
+			-L$(PURPLE_TOP) \
+			-L$(PIDGIN_TOP) \
+			-L$(PIDGIN_IDLETRACK_TOP) \
 			-L$(ASPELL_TOP)/lib
 
 ##
 ##  SOURCES, OBJECTS
 ##
-GTKGAIM_C_SRC =	\
+PIDGIN_C_SRC =	\
 			gtkaccount.c \
 			gtkblist.c \
 			gtkconn.c \
@@ -95,8 +95,8 @@ GTKGAIM_C_SRC =	\
 			win32/untar.c \
 			win32/wspell.c
 
-GTKGAIM_RC_SRC = win32/pidgin_dll_rc.rc
-GTKGAIM_OBJECTS = $(GTKGAIM_C_SRC:%.c=%.o) $(GTKGAIM_RC_SRC:%.rc=%.o)
+PIDGIN_RC_SRC = win32/pidgin_dll_rc.rc
+PIDGIN_OBJECTS = $(PIDGIN_C_SRC:%.c=%.o) $(PIDGIN_RC_SRC:%.rc=%.o)
 
 EXE_RC_SRC = win32/pidgin_exe_rc.rc
 EXE_C_SRC = win32/winpidgin.c
@@ -105,7 +105,7 @@ EXE_OBJECTS = $(EXE_C_SRC:%.c=%.o) $(EXE_RC_SRC:%.rc=%.o)
 ##
 ## LIBRARIES
 ##
-LIBGAIM_LIBS =	\
+LIBPURPLES =	\
 		-lpurple \
 		-lglib-2.0 \
 		-lgthread-2.0 \
@@ -116,8 +116,8 @@ LIBGAIM_LIBS =	\
 		-lwinmm \
 		-lz
 
-GTKGAIM_LIBS =	\
-		$(LIBGAIM_LIBS) \
+GTKPURPLES =	\
+		$(LIBPURPLES) \
 		-lidletrack \
 		-lgtk-win32-2.0 \
 		-latk-1.0 \
@@ -126,60 +126,60 @@ GTKGAIM_LIBS =	\
 		-lgdk_pixbuf-2.0 \
 		-lgdi32
 
-include $(GAIM_COMMON_RULES)
+include $(PIDGIN_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
 ##
 .PHONY: all install install_shallow clean clean_exe
 
-all: $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll
-	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE)
+all: $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
+	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE)
 
-win32/pidgin_exe_rc.rc: win32/pidgin_exe_rc.rc.in $(GAIM_TOP)/VERSION
-	sed -e 's/@PIDGIN_VERSION@/$(GAIM_VERSION)/g' \
+win32/pidgin_exe_rc.rc: win32/pidgin_exe_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
+	sed -e 's/@PIDGIN_VERSION@/$(PIDGIN_VERSION)/g' \
 	    -e 's/@ORIGINAL_FILENAME@/$(EXE_NAME)/' \
 	    $@.in > $@
 
-install_shallow: $(GAIM_INSTALL_DIR) $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll
-	cp $(EXE_TARGET).exe $(GTKGAIM_TARGET).dll $(GAIM_INSTALL_DIR)
-	cp $(NEEDED_DLLS) $(GAIM_INSTALL_DIR)
+install_shallow: $(PIDGIN_INSTALL_DIR) $(EXE_TARGET).exe $(PIDGIN_TARGET).dll
+	cp $(EXE_TARGET).exe $(PIDGIN_TARGET).dll $(PIDGIN_INSTALL_DIR)
+	cp $(NEEDED_DLLS) $(PIDGIN_INSTALL_DIR)
 
 install: install_shallow all
-	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) -C $(GAIM_GTK_PIXMAPS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) -C $(GAIM_GTK_SOUNDS_TOP) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) -C $(GAIM_GTK_IDLETRACK_TOP) -f $(GAIM_WIN32_MAKEFILE) install
+	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(PIDGIN_PIXMAPS_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(PIDGIN_SOUNDS_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(PIDGIN_IDLETRACK_TOP) -f $(MINGW_MAKEFILE) install
 
-win32/pidgin_dll_rc.rc: win32/pidgin_dll_rc.rc.in $(GAIM_TOP)/VERSION
-	sed -e 's/@PIDGIN_VERSION@/$(GAIM_VERSION)/g' \
+win32/pidgin_dll_rc.rc: win32/pidgin_dll_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
+	sed -e 's/@PIDGIN_VERSION@/$(PIDGIN_VERSION)/g' \
 	    $@.in > $@
 
-$(EXE_OBJECTS) $(GTKGAIM_OBJECTS): $(GAIM_CONFIG_H)
+$(EXE_OBJECTS) $(PIDGIN_OBJECTS): $(PIDGIN_CONFIG_H)
 
-$(GTKGAIM_TARGET).dll $(GTKGAIM_TARGET).dll.a: $(GAIM_LIBGAIM_DLL).a $(GAIM_IDLETRACK_DLL).a $(GTKGAIM_OBJECTS)
-	$(CC) -shared $(GTKGAIM_OBJECTS) $(LIB_PATHS) $(GTKGAIM_LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(GTKGAIM_TARGET).dll.a -o $(GTKGAIM_TARGET).dll
+$(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a: $(PURPLE_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(PIDGIN_OBJECTS)
+	$(CC) -shared $(PIDGIN_OBJECTS) $(LIB_PATHS) $(GTKPURPLES) $(DLL_LD_FLAGS) -Wl,--out-implib,$(PIDGIN_TARGET).dll.a -o $(PIDGIN_TARGET).dll
 
-$(EXE_TARGET).exe: $(GAIM_CONFIG_H) $(GAIM_GTKGAIM_DLL).a $(GAIM_IDLETRACK_DLL).a $(EXE_OBJECTS)
+$(EXE_TARGET).exe: $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(EXE_OBJECTS)
 	$(CC) $(LDFLAGS) $(EXE_OBJECTS) -o $(EXE_TARGET).exe
 
 $(EXE_TARGET)-portable.exe: DEFINES += -DPORTABLE
 $(EXE_TARGET)-portable.exe: EXE_NAME := $(EXE_TARGET)-portable.exe
-$(EXE_TARGET)-portable.exe: clean_exe $(GAIM_CONFIG_H) $(GAIM_GTKGAIM_DLL).a $(GAIM_IDLETRACK_DLL).a $(EXE_OBJECTS)
+$(EXE_TARGET)-portable.exe: clean_exe $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(EXE_OBJECTS)
 	$(CC) $(LDFLAGS) $(EXE_OBJECTS) -o $(EXE_TARGET)-portable.exe
-	$(MAKE) -f $(GAIM_WIN32_MAKEFILE) clean_exe
+	$(MAKE) -f $(MINGW_MAKEFILE) clean_exe
 
 ##
 ## CLEAN RULES
 ##
 clean:
-	$(MAKE) -C $(GAIM_GTK_IDLETRACK_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) -C $(GAIM_GTK_PLUGINS_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
-	rm -f $(GTKGAIM_OBJECTS) $(GTKGAIM_RC_SRC) $(EXE_OBJECTS) $(EXE_RC_SRC)
-	rm -f $(GTKGAIM_TARGET).dll $(GTKGAIM_TARGET).dll.a
+	$(MAKE) -C $(PIDGIN_IDLETRACK_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C $(PIDGIN_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean
+	rm -f $(PIDGIN_OBJECTS) $(PIDGIN_RC_SRC) $(EXE_OBJECTS) $(EXE_RC_SRC)
+	rm -f $(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a
 	rm -f $(EXE_TARGET).exe $(EXE_TARGET)-portable.exe
 
 clean_exe:
 	rm -f $(EXE_OBJECTS) $(EXE_RC_SRC)
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)

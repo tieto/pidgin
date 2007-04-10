@@ -4,8 +4,8 @@
 # Description: Makefile for perl plugin loader plugin.
 #
 
-GAIM_TOP := ../../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 ##
 ## TARGET DEFINITIONS
@@ -13,13 +13,13 @@ include $(GAIM_TOP)/libpurple/win32/global.mak
 .PHONY: all install clean
 
 all:
-	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE)
+	$(MAKE) -C ./common -f $(MINGW_MAKEFILE)
 
-install: all $(GAIM_INSTALL_PLUGINS_DIR)
-	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE) install
+install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
+	$(MAKE) -C ./common -f $(MINGW_MAKEFILE) install
 
 ##
 ## CLEAN RULES
 ##
 clean:
-	$(MAKE) -C ./common -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C ./common -f $(MINGW_MAKEFILE) clean

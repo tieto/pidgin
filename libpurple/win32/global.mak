@@ -2,14 +2,14 @@
 # global.mak
 #
 # This file should be included by all Makefile.mingw files for project
-# wide definitions (after correctly defining GAIM_TOP).
+# wide definitions (after correctly defining PIDGIN_TREE_TOP).
 #
 
-#include optional $(GAIM_TOP)/local.mak to allow overriding of any definitions
--include $(GAIM_TOP)/local.mak
+#include optional $(PIDGIN_TREE_TOP)/local.mak to allow overriding of any definitions
+-include $(PIDGIN_TREE_TOP)/local.mak
 
 # Locations of our various dependencies
-WIN32_DEV_TOP ?= $(GAIM_TOP)/../win32-dev
+WIN32_DEV_TOP ?= $(PIDGIN_TREE_TOP)/../win32-dev
 ASPELL_TOP ?= $(WIN32_DEV_TOP)/aspell-dev-0-50-3-3
 GTKSPELL_TOP ?= $(WIN32_DEV_TOP)/gtkspell-2.0.6
 GTK_TOP ?= $(WIN32_DEV_TOP)/gtk_2_0
@@ -24,48 +24,53 @@ SILC_TOOLKIT ?= $(WIN32_DEV_TOP)/silc-toolkit-1.0.2
 TCL_LIB_TOP ?= $(WIN32_DEV_TOP)/tcl-8.4.5
 
 # Where we installing this stuff to?
-GAIM_INSTALL_DIR := $(GAIM_TOP)/win32-install-dir
-GAIM_INSTALL_PERLMOD_DIR := $(GAIM_INSTALL_DIR)/perlmod
-GAIM_INSTALL_PLUGINS_DIR := $(GAIM_INSTALL_DIR)/plugins
-GAIM_INSTALL_PO_DIR := $(GAIM_INSTALL_DIR)/locale
+PIDGIN_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
+PURPLE_INSTALL_DIR := $(PIDGIN_TREE_TOP)/win32-install-dir
+PIDGIN_INSTALL_PERLMOD_DIR := $(PIDGIN_INSTALL_DIR)/perlmod
+PIDGIN_INSTALL_PLUGINS_DIR := $(PIDGIN_INSTALL_DIR)/plugins
+PURPLE_INSTALL_PERLMOD_DIR := $(PURPLE_INSTALL_DIR)/perlmod
+PURPLE_INSTALL_PLUGINS_DIR := $(PURPLE_INSTALL_DIR)/plugins
+PURPLE_INSTALL_PO_DIR := $(PURPLE_INSTALL_DIR)/locale
 
 # Important (enough) locations in our source code
-GAIM_LIB_TOP := $(GAIM_TOP)/libpurple
-GAIM_LIB_PLUGINS_TOP := $(GAIM_LIB_TOP)/plugins
-GAIM_LIB_PERL_TOP := $(GAIM_LIB_PLUGINS_TOP)/perl
-GAIM_GTK_TOP := $(GAIM_TOP)/pidgin
-GAIM_GTK_IDLETRACK_TOP := $(GAIM_GTK_TOP)/win32/IdleTracker
-GAIM_GTK_PIXMAPS_TOP := $(GAIM_GTK_TOP)/pixmaps
-GAIM_GTK_PLUGINS_TOP := $(GAIM_GTK_TOP)/plugins
-GAIM_GTK_SOUNDS_TOP := $(GAIM_GTK_TOP)/sounds
-GAIM_PO_TOP := $(GAIM_TOP)/po
-GAIM_PROTOS_TOP := $(GAIM_LIB_TOP)/protocols
+PURPLE_TOP := $(PIDGIN_TREE_TOP)/libpurple
+PURPLE_PLUGINS_TOP := $(PURPLE_TOP)/plugins
+PURPLE_PERL_TOP := $(PURPLE_PLUGINS_TOP)/perl
+PIDGIN_TOP := $(PIDGIN_TREE_TOP)/pidgin
+PIDGIN_IDLETRACK_TOP := $(PIDGIN_TOP)/win32/IdleTracker
+PIDGIN_PIXMAPS_TOP := $(PIDGIN_TOP)/pixmaps
+PIDGIN_PLUGINS_TOP := $(PIDGIN_TOP)/plugins
+PIDGIN_SOUNDS_TOP := $(PIDGIN_TOP)/sounds
+PURPLE_PO_TOP := $(PIDGIN_TREE_TOP)/po
+PURPLE_PROTOS_TOP := $(PURPLE_TOP)/protocols
 
 # Locations of important (in-tree) build targets
-GAIM_CONFIG_H := $(GAIM_TOP)/config.h
-GAIM_IDLETRACK_DLL := $(GAIM_GTK_IDLETRACK_TOP)/idletrack.dll
-GAIM_LIBGAIM_DLL := $(GAIM_LIB_TOP)/libpurple.dll
-GAIM_LIBGAIM_PERL_DLL := $(GAIM_LIB_PERL_TOP)/perl.dll
-GAIM_GTKGAIM_DLL := $(GAIM_GTK_TOP)/pidgin.dll
-GAIM_EXE := $(GAIM_GTK_TOP)/pidgin.exe
-GAIM_PORTABLE_EXE := $(GAIM_GTK_TOP)/pidgin-portable.exe
+PIDGIN_CONFIG_H := $(PIDGIN_TREE_TOP)/config.h
+PURPLE_CONFIG_H := $(PIDGIN_TREE_TOP)/config.h
+PIDGIN_IDLETRACK_DLL := $(PIDGIN_IDLETRACK_TOP)/idletrack.dll
+PURPLE_DLL := $(PURPLE_TOP)/libpurple.dll
+PURPLE_PERL_DLL := $(PURPLE_PERL_TOP)/perl.dll
+PIDGIN_DLL := $(PIDGIN_TOP)/pidgin.dll
+PIDGIN_EXE := $(PIDGIN_TOP)/pidgin.exe
+PIDGIN_PORTABLE_EXE := $(PIDGIN_TOP)/pidgin-portable.exe
 
 GCCWARNINGS := -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
 
 # parse the version number from the configure.ac file if it is newer
-#AC_INIT([gaim], [2.0.0dev], [gaim-devel@lists.sourceforge.net])
-GAIM_VERSION := $(shell \
-  if [ ! $(GAIM_TOP)/VERSION -nt $(GAIM_TOP)/configure.ac ]; then \
+#AC_INIT([pidgin], [2.0.0dev], [devel@pidgin.im])
+PIDGIN_VERSION := $(shell \
+  if [ ! $(PIDGIN_TREE_TOP)/VERSION -nt $(PIDGIN_TREE_TOP)/configure.ac ]; then \
     awk 'BEGIN {FS="\\] *, *\\["} /^AC_INIT\(.+\)/ {printf("%s",$$2); exit}' \
-      $(GAIM_TOP)/configure.ac > $(GAIM_TOP)/VERSION; \
+      $(PIDGIN_TREE_TOP)/configure.ac > $(PIDGIN_TREE_TOP)/VERSION; \
   fi; \
-  cat $(GAIM_TOP)/VERSION \
+  cat $(PIDGIN_TREE_TOP)/VERSION \
 )
+PURPLE_VERSION := $(PIDGIN_VERSION)
 
-DEFINES += 	-DVERSION=\"$(GAIM_VERSION)\" \
+DEFINES += 	-DVERSION=\"$(PIDGIN_VERSION)\" \
 		-DHAVE_CONFIG_H
 
-# Use -g flag when building debug version of Gaim (including plugins).
+# Use -g flag when building debug version of Pidgin (including plugins).
 # Use -fnative-struct instead of -mms-bitfields when using mingw 1.1
 # (gcc 2.95)
 CFLAGS += -O2 -Wall $(GCCWARNINGS) -pipe -mno-cygwin -mms-bitfields -g
@@ -87,6 +92,6 @@ PERL ?= /cygdrive/c/perl/bin/perl
 WINDRES ?= windres
 STRIP ?= strip
 
-GAIM_COMMON_RULES := $(GAIM_LIB_TOP)/win32/rules.mak
-GAIM_COMMON_TARGETS := $(GAIM_LIB_TOP)/win32/targets.mak
-GAIM_WIN32_MAKEFILE := Makefile.mingw
+PIDGIN_COMMON_RULES := $(PURPLE_TOP)/win32/rules.mak
+PIDGIN_COMMON_TARGETS := $(PURPLE_TOP)/win32/targets.mak
+MINGW_MAKEFILE := Makefile.mingw

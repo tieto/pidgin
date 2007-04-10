@@ -4,8 +4,8 @@
 # Description: Makefile for idletrack
 #
 
-GAIM_TOP := ../../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = idletrack
 
@@ -17,7 +17,7 @@ C_SRC =	idletrack.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
-include $(GAIM_COMMON_RULES)
+include $(PIDGIN_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
@@ -27,8 +27,8 @@ include $(GAIM_COMMON_RULES)
 
 all: $(TARGET).dll
 
-install: $(GAIM_INSTALL_DIR)
-	cp $(TARGET).dll $(GAIM_INSTALL_DIR)
+install: $(PIDGIN_INSTALL_DIR)
+	cp $(TARGET).dll $(PIDGIN_INSTALL_DIR)
 
 ##
 ## BUILD DLL
@@ -44,4 +44,4 @@ $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 clean:
 	rm -f $(OBJECTS) $(TARGET).dll $(TARGET).dll.a
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)

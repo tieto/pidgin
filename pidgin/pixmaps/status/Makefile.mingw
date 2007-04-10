@@ -1,7 +1,7 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for win32 (mingw) version of Gaim pixmaps
+# Description: Makefile for win32 (mingw) version of Pidgin pixmaps
 #
 
 include ./Makefile.am

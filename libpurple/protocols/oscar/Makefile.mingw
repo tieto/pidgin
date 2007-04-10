@@ -4,8 +4,8 @@
 # Description: Makefile for win32 (mingw) version of liboscar
 #
 
-GAIM_TOP := ../../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = liboscar
 AIM_TARGET = libaim
@@ -15,10 +15,10 @@ TYPE = PLUGIN
 # Static or Plugin...
 ifeq ($(TYPE),STATIC)
   DEFINES += -DSTATIC
-  DLL_INSTALL_DIR =		$(GAIM_INSTALL_DIR)
+  DLL_INSTALL_DIR =		$(PURPLE_INSTALL_DIR)
 else
   ifeq ($(TYPE),PLUGIN)
-    DLL_INSTALL_DIR =	$(GAIM_INSTALL_PLUGINS_DIR)
+    DLL_INSTALL_DIR =	$(PURPLE_INSTALL_PLUGINS_DIR)
   endif
 endif
 
@@ -29,12 +29,12 @@ INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GAIM_LIB_TOP) \
-			-I$(GAIM_LIB_TOP)/win32 \
-			-I$(GAIM_TOP)
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
+			-I$(PIDGIN_TREE_TOP)
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_LIB_TOP) \
+			-L$(PURPLE_TOP) \
 			-L.
 
 ##
@@ -93,7 +93,7 @@ LIBS =	\
 			-lws2_32 \
 			-lpurple
 
-include $(GAIM_COMMON_RULES)
+include $(PIDGIN_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
@@ -104,11 +104,11 @@ all: $(TARGET).dll $(AIM_TARGET).dll $(ICQ_TARGET).dll
 
 install: all $(DLL_INSTALL_DIR)
 	cp $(AIM_TARGET).dll $(ICQ_TARGET).dll $(DLL_INSTALL_DIR)
-	cp $(TARGET).dll $(GAIM_INSTALL_DIR)
+	cp $(TARGET).dll $(PURPLE_INSTALL_DIR)
 
-$(OBJECTS): $(GAIM_CONFIG_H)
+$(OBJECTS): $(PURPLE_CONFIG_H)
 
-$(TARGET).dll.a $(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
+$(TARGET).dll.a $(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
 $(AIM_TARGET).dll: $(TARGET).dll.a $(AIM_OBJECTS)
@@ -125,4 +125,4 @@ clean:
 	rm -f $(AIM_OBJECTS) $(AIM_TARGET).dll
 	rm -f $(ICQ_OBJECTS) $(ICQ_TARGET).dll
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)
