@@ -1,11 +1,11 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for win32 (mingw) version of Gaim Plugins 
+# Description: Makefile for win32 (mingw) version of Pidgin Plugins 
 #
 
-GAIM_TOP := ../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 GTKPERL_PLUGIN := ./perl
 TICKER_PLUGIN := ./ticker
@@ -26,15 +26,15 @@ INCLUDE_PATHS +=	\
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(GAIM_TOP) \
-			-I$(GAIM_LIB_TOP) \
-			-I$(GAIM_LIB_TOP)/win32 \
-			-I$(GAIM_GTK_TOP) \
-			-I$(GAIM_GTK_TOP)/win32
+			-I$(PIDGIN_TREE_TOP) \
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
+			-I$(PIDGIN_TOP) \
+			-I$(PIDGIN_TOP)/win32
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_LIB_TOP) \
-			-L$(GAIM_GTK_TOP)
+			-L$(PURPLE_TOP) \
+			-L$(PIDGIN_TOP)
 
 ##
 ## LIBRARIES
@@ -57,17 +57,17 @@ LIBS =			-lgtk-win32-2.0 \
 .PHONY: all clean plugins install
 
 all: plugins
-#	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) -C $(TICKER_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(GAIM_WIN32_MAKEFILE)
+#	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE)
 
-install: all $(GAIM_INSTALL_PLUGINS_DIR)
-#	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) -C $(TICKER_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) install
-	cp *.dll $(GAIM_INSTALL_PLUGINS_DIR)
+install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
+#	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE) install
+	cp *.dll $(PIDGIN_INSTALL_PLUGINS_DIR)
 
 .c.dll:
 	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@.o -c $<
@@ -76,7 +76,7 @@ install: all $(GAIM_INSTALL_PLUGINS_DIR)
 plugins: \
 		convcolors.dll \
 		extplacement.dll \
-		gaimrc.dll \
+		pidginrc.dll \
 		history.dll \
 		iconaway.dll \
 		markerline.dll \
@@ -91,9 +91,9 @@ plugins: \
 ##
 clean:
 	rm -f *.o *.dll
-	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) -C $(TICKER_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(GAIM_WIN32_MAKEFILE) clean
+	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE) clean
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)

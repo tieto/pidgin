@@ -155,7 +155,7 @@
 /* Define to 1 if you have the `getuid' function. */
 /* #define HAVE_GETUID 1 */
 
-/* Gaim always has GLib, but Linphone can be built without it */
+/* Pidgin always has GLib, but Linphone can be built without it */
 /* #undef HAVE_GLIB */
 
 /* Define if you have GNUTLS */
@@ -638,7 +638,7 @@
 #define HAVE_LIBXML 1
 
 /*
- * Following are added for Win32 version of Gaim
+ * Following are added for Win32 version of Pidgin
  */
 #define HAVE_VSNPRINTF 1
 

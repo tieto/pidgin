@@ -4,8 +4,8 @@
 # Description: Makefile for win32trans plugin.
 #
 
-GAIM_TOP := ../../../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = win2ktrans
 DEFINES += -D_WIN32_WINNT=0x0500
@@ -21,15 +21,15 @@ INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include/atk-1.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
-			-I$(GAIM_LIB_TOP) \
-			-I$(GAIM_LIB_TOP)/win32 \
-			-I$(GAIM_GTK_TOP) \
-			-I$(GAIM_GTK_TOP)/win32 \
-			-I$(GAIM_TOP)
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
+			-I$(PIDGIN_TOP) \
+			-I$(PIDGIN_TOP)/win32 \
+			-I$(PIDGIN_TREE_TOP)
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_LIB_TOP) \
-			-L$(GAIM_GTK_TOP)
+			-L$(PURPLE_TOP) \
+			-L$(PIDGIN_TOP)
 
 ##
 ##  SOURCES, OBJECTS
@@ -50,7 +50,7 @@ LIBS =			-lgtk-win32-2.0 \
 			-lpidgin \
 			-lpurple
 
-include $(GAIM_COMMON_RULES)
+include $(PIDGIN_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
@@ -59,10 +59,10 @@ include $(GAIM_COMMON_RULES)
 
 all: $(TARGET).dll
 
-install: all $(GAIM_INSTALL_PLUGINS_DIR)
-	cp $(TARGET).dll $(GAIM_INSTALL_PLUGINS_DIR)
+install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
+	cp $(TARGET).dll $(PIDGIN_INSTALL_PLUGINS_DIR)
 
-$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(GAIM_GTKGAIM_DLL).a $(OBJECTS)
+$(TARGET).dll: $(PURPLE_DLL).a $(PIDGIN_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
@@ -72,4 +72,4 @@ clean:
 	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)

@@ -4,8 +4,8 @@
 # Description: Makefile for win32 (mingw) version of libzephyr
 #
 
-GAIM_TOP := ../../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libzephyr
 KRB4_TOP := $(WIN32_DEV_TOP)/kfw-2.6.3-final.fixed
@@ -20,10 +20,10 @@ endif
 # Static or Plugin...
 ifeq ($(TYPE),STATIC)
   DEFINES += -DSTATIC
-  DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
+  DLL_INSTALL_DIR =	$(PURPLE_INSTALL_DIR)
 else
 ifeq ($(TYPE),PLUGIN)
-  DLL_INSTALL_DIR =	$(GAIM_INSTALL_PLUGINS_DIR)
+  DLL_INSTALL_DIR =	$(PURPLE_INSTALL_PLUGINS_DIR)
 endif
 endif
 
@@ -34,16 +34,16 @@ INCLUDE_PATHS +=	-I$(ZEPHYR_ROOT) \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(GAIM_LIB_TOP) \
-			-I$(GAIM_LIB_TOP)/win32 \
-			-I$(GAIM_TOP)
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
+			-I$(PIDGIN_TREE_TOP)
 
 ifeq ($(USE_KRB4), true)
    INCLUDE_PATHS += -I$(KRB4_TOP)/inc/krb4
 endif
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
-			-L$(GAIM_LIB_TOP)
+			-L$(PURPLE_TOP)
 
 ifeq ($(USE_KRB4), true)
   LIB_PATHS+=-L$(KRB4_TOP)/lib/i386
@@ -122,7 +122,7 @@ ifeq ($(USE_KRB4),true)
   LIBS+= -lkrbv4w32
 endif
 
-include $(GAIM_COMMON_RULES)
+include $(PIDGIN_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
@@ -134,9 +134,9 @@ all: $(TARGET).dll
 install: all $(DLL_INSTALL_DIR)
 	cp $(TARGET).dll $(DLL_INSTALL_DIR)
 
-$(OBJECTS): $(GAIM_CONFIG_H)
+$(OBJECTS): $(PURPLE_CONFIG_H)
 
-$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
+$(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--enable-stdcall-fixup -o $(TARGET).dll
 
 ##
@@ -146,4 +146,4 @@ clean:
 	rm -f $(OBJECTS)
 	rm -f $(TARGET).dll
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)
