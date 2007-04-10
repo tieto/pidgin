@@ -7,7 +7,7 @@
 PIDGIN_TREE_TOP := ../../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-TARGET = GtkUI
+TARGET = Pidgin
 EXTUTILS ?= C:/perl/lib/ExtUtils
 
 CFLAGS += -Wno-comment -Wno-unused
@@ -86,10 +86,10 @@ include $(PIDGIN_COMMON_RULES)
 
 all: $(TARGET).dll
 
-$(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin.pm:
+$(PURPLE_INSTALL_PERLMOD_DIR)/Purple.pm:
 	$(MAKE) -C $(PURPLE_PERL_TOP)/common -f $(MINGW_MAKEFILE) install
 
-install: all $(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin.pm
+install: all $(PURPLE_INSTALL_PERLMOD_DIR)/Purple.pm
 	rm -f $(PIDGIN_INSTALL_PERLMOD_DIR)/$(TARGET).dll $(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin/$(TARGET).pm
 	mkdir -p $(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin
 	cp $(TARGET).pm $(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin/
