@@ -74,48 +74,62 @@ Provides: gaim-gadugadu = %{epoch}:%{version}-%{release}
 %package devel
 Summary:    Development headers, documentation, and libraries for Pidgin
 Group:      Applications/Internet
-Requires:   pkgconfig, pidgin = %{epoch}:%{version}
+Requires:   pkgconfig, pidgin = %{epoch}:%{version}, libpurple-devel = %{epoch}:%{version}
+
+%package -n libpurple
+Summary:    libpurple library for IM clients like Pidgin and Finch
+Group:      Applications/Internet
+
+%package -n libpurple-devel
+Summary:    Development headers, documentation, and libraries for libpurple
+Group:      Applications/Internet
+Requires:	libpurple = %{epoch}:%{version}
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
-%package bonjour
+%package -n libpurple-bonjour
 Summary:    Bonjour plugin for Pidgin
 Group:      Applications/Internet
-Requires:   pidgin = %{epoch}:%{version}
+Requires:   libpurple = %{epoch}:%{version}
 %endif
 
 %if 0%{?_with_meanwhile:1}
-%package meanwhile
+%package -n libpurple-meanwhile
 Summary:    Lotus Sametime plugin for Pidgin using the Meanwhile library
 Group:      Applications/Internet
-Requires:   pidgin = %{epoch}:%{version}
+Requires:   libpurple = %{epoch}:%{version}
 %endif
 
 %if 0%{?_with_mono:1}
-%package mono
+%package -n libpurple-mono
 Summary:    Mono .NET plugin support for Pidgin
 Group:      Applications/Internet
-Requires:   pidgin = %{epoch}:%{version}
+Requires:   libpurple = %{epoch}:%{version}
 %endif
 
 %if 0%{?_with_silc:1}
-%package silc
+%package -n libpurple-silc
 Summary:    SILC (Secure Internet Live Conferencing) plugin for Pidgin
 Group:      Applications/Internet
-Requires:   pidgin = %{epoch}:%{version}
+Requires:   libpurple = %{epoch}:%{version}
 %endif
 
 %if 0%{?_with_tcl:1}
-%package tcl
+%package -n libpurple-tcl
 Summary:    Tcl scripting support for Pidgin
 Group:      Applications/Internet
-Requires:   pidgin = %{epoch}:%{version}
+Requires:   libpurple = %{epoch}:%{version}
 %endif
 
 %if 0%{!?_without_text:1}
 %package -n finch
 Summary:    A text-based user interface for Pidgin
 Group:      Applications/Internet
-Requires:   pidgin = %{epoch}:%{version}
+Requires:   libpurple = %{epoch}:%{version}
+
+%package -n finch-devel
+Summary:	Headers etc. for finch stuffs
+Group:      Applications/Internet
+Requires:   finch = %{epoch}:%{version}, libpurple-devel = %{epoch}:%{version}
 %endif
 
 %description
@@ -137,24 +151,30 @@ The pidgin-devel package contains the header files, developer
 documentation, and libraries required for development of Pidgin scripts
 and plugins.
 
+%description -n libpurple
+someone write a good description of libpurple please
+
+%description -n libpurple-devel
+someone write a good description of libpurple-devel please
+
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
-%description bonjour
+%description -n libpurple-bonjour
 Bonjour plugin for Pidgin.
 %endif
 
 %if 0%{?_with_meanwhile:1}
-%description meanwhile
+%description -n libpurple-meanwhile
 Lotus Sametime plugin for Pidgin using the Meanwhile library.
 %endif
 
 %if 0%{?_with_mono:1}
-%description mono
+%description -n libpurple-mono
 Mono plugin loader for Pidgin.  This package will allow you to write or
 use Pidgin plugins written in the .NET programming language.
 %endif
 
 %if 0%{?_with_silc:1}
-%description silc
+%description -n libpurple-silc
 SILC (Secure Internet Live Conferencing) plugin for Pidgin.
 %endif
 
@@ -164,10 +184,13 @@ A text-based user interface for Pidgin.  This can be run from a
 standard text console or from a terminal within X Windows.  It
 uses ncurses and our homegrown gnt library for drawing windows
 and text.
+
+%description -n finch-devel
+Finch devel blah blah
 %endif
 
 %if 0%{?_with_tcl:1}
-%description tcl
+%description -n libpurple-tcl
 Tcl plugin loader for Pidgin.  This package will allow you to write or
 use Pidgin plugins written in the Tcl programming language.
 %endif
@@ -214,12 +237,14 @@ make DESTDIR=$RPM_BUILD_ROOT install
 rm -f $RPM_BUILD_ROOT%{_libdir}/finch/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/pidgin/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/private/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 # do we want to ship the nullclient ?
 rm -f $RPM_BUILD_ROOT%{_bindir}/nullclient
+rm -f $RPM_BUILD_ROOT%{_datadir}/pixmaps/gaim.svg
 
 %if 0%{!?_with_howl:1} && 0%{!?_with_avahi:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libbonjour.so
@@ -250,7 +275,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libgnt.so.*
 
 %find_lang %{name}
 
-find $RPM_BUILD_ROOT%{_libdir}/pidgin $RPM_BUILD_ROOT%{_libdir}/libpurple -xtype f -print | \
+find $RPM_BUILD_ROOT%{_libdir}/libpurple -xtype f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" | \
         grep -v /libbonjour.so | \
         grep -v /libsilcpurple.so | \
@@ -258,10 +283,18 @@ find $RPM_BUILD_ROOT%{_libdir}/pidgin $RPM_BUILD_ROOT%{_libdir}/libpurple -xtype
         grep -v /mono.so | \
         grep -v /tcl.so | \
         grep -v ".dll$" | \
-        grep -v ".tcl$" > %{name}-%{version}-coreplugins
+        grep -v ".tcl$" > %{name}-%{version}-purpleplugins
+
+find $RPM_BUILD_ROOT%{_libdir}/pidgin -xtype f -print | \
+        sed "s@^$RPM_BUILD_ROOT@@g" > %{name}-%{version}-pidginplugins
+
+find $RPM_BUILD_ROOT%{_libdir}/finch -xtype f -print | \
+        sed "s@^$RPM_BUILD_ROOT@@g" > %{name}-%{version}-finchplugins
 
 # files -f file can only take one filename :(
-cat %{name}.lang >> %{name}-%{version}-coreplugins
+cat %{name}.lang >> %{name}-%{version}-purpleplugins
+cat %{name}.lang >> %{name}-%{version}-pidginplugins
+cat %{name}.lang >> %{name}-%{version}-finchplugins
 
 %clean
 rm -rf %{buildroot}
@@ -293,7 +326,7 @@ fi
 
 %postun -p /sbin/ldconfig
 
-%files -f %{name}-%{version}-coreplugins
+%files -f %{name}-%{version}-pidginplugins
 %defattr(-, root, root)
 
 %doc AUTHORS
@@ -309,17 +342,30 @@ fi
 %doc %{_mandir}/man3*/*
 
 %dir %{_libdir}/pidgin
-%dir %{_libdir}/libpurple
-%attr(755, root, root) %{perl_vendorarch}/Purple*
-%attr(755, root, root) %{perl_vendorarch}/auto/Purple
+%dir %{perl_vendorarch}/Purple
+%attr(755, root, root) %{perl_vendorarch}/Purple/*
+%attr(755, root, root) %{perl_vendorarch}/auto/Purple/GtkUI*
 
 %{_bindir}/pidgin
-%{_datadir}/pixmaps/*
+%{_datadir}/pixmaps/pidgin
+%{_datadir}/pixmaps/pidgin.png
 %dir %{_datadir}/sounds/pidgin
 %{_datadir}/sounds/pidgin/*
 %{_datadir}/applications/*
 %{_libdir}/libpurple.so.*
 %{_sysconfdir}/gconf/schemas/purple.schemas
+
+
+%files -f %{name}-%{version}-purpleplugins -n libpurple
+%defattr(-, root, root)
+
+%dir %{_libdir}/libpurple
+%attr(755, root, root) %{perl_vendorarch}/Purple.pm
+%dir %{perl_vendorarch}/auto/Purple
+%attr(755, root, root) %{perl_vendorarch}/auto/Purple/Purple.so
+%attr(755, root, root) %{perl_vendorarch}/auto/Purple/autosplit.ix
+
+%{_datadir}/pixmaps/purple
 
 %if 0%{?_with_dbus:1}
 %{_bindir}/purple-client-example
@@ -335,46 +381,44 @@ fi
 
 %files devel
 %defattr(-, root, root)
+%dir %{_includedir}/pidgin
+%{_includedir}/pidgin/*.h
+%{_libdir}/pkgconfig/pidgin.pc
+
+%files -n libpurple-devel
+%defattr(-, root, root)
 
 %doc ChangeLog.API
 %doc HACKING
 %doc PLUGIN_HOWTO
 %doc PROGRAMMING_NOTES
 
-%dir %{_includedir}/finch
-%dir %{_includedir}/gnt
 %dir %{_includedir}/libpurple
-%dir %{_includedir}/pidgin
-%{_includedir}/finch/*.h
-%{_includedir}/gnt/*.h
 %{_includedir}/libpurple/*.h
-%{_includedir}/pidgin/*.h
 %{_libdir}/libpurple.so
-%{_libdir}/libgnt.so
 %{_libdir}/pkgconfig/purple.pc
-%{_libdir}/pkgconfig/pidgin.pc
-%{_libdir}/pkgconfig/gnt.pc
 %{_datadir}/aclocal/purple.m4
 %if 0%{?_with_dbus:1}
 %{_libdir}/libpurple-client.so
 %endif
 
+
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
-%files bonjour
+%files -n libpurple-bonjour
 %defattr(-, root, root)
 
 %{_libdir}/libpurple/libbonjour.*
 %endif
 
 %if 0%{?_with_meanwhile:1}
-%files meanwhile
+%files -n libpurple-meanwhile
 %defattr(-, root, root)
 
 %{_libdir}/libpurple/libsametime.*
 %endif
 
 %if 0%{?_with_mono:1}
-%files mono
+%files libpurple-mono
 %defattr(-, root, root)
 
 %{_libdir}/libpurple/mono.so
@@ -382,30 +426,43 @@ fi
 %endif
 
 %if 0%{?_with_silc:1}
-%files silc
+%files -n libpurple-silc
 %defattr(-, root, root)
 
 %{_libdir}/libpurple/libsilcpurple.*
 %endif
 
 %if 0%{?_with_tcl:1}
-%files tcl
+%files -n libpurple-tcl
 %defattr(-, root, root)
 
 %{_libdir}/libpurple/tcl.so
 %endif
 
 %if 0%{!?_without_text:1}
-%files -n finch
+%files -f %{name}-%{version}-finchplugins -n finch
 %defattr(-, root, root)
 
 %doc %{_mandir}/man1/finch.*
 %{_bindir}/finch
-%{_libdir}/finch/*.so
 %{_libdir}/libgnt.so.*
+
+%files -n finch-devel
+%defattr(-, root, root)
+%dir %{_includedir}/finch
+%{_includedir}/finch/*.h
+# libgnt
+%dir %{_includedir}/gnt
+%{_includedir}/gnt/*.h
+%{_libdir}/pkgconfig/gnt.pc
+%{_libdir}/libgnt.so
+
 %endif
 
 %changelog
+* Wed Apr 11 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Separate out libpurple, libpurple-devel and finch-devel
+
 * Sat Mar 24 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Update to reflect renaming to pidgin/libpurple
 
