@@ -405,7 +405,7 @@ pidgin_request_input(const char *title, const char *primary,
 
 			gtk_box_pack_start(GTK_BOX(vbox), sw, TRUE, TRUE, 0);
 
-			if (purple_prefs_get_bool("/purple/gtk/conversations/spellcheck"))
+			if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
 				pidgin_setup_gtkspell(GTK_TEXT_VIEW(entry));
 
 			gtk_container_add(GTK_CONTAINER(sw), entry);
@@ -726,7 +726,7 @@ create_string_field(PurpleRequestField *field)
 		gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(textview),
 									GTK_WRAP_WORD_CHAR);
 
-		if (purple_prefs_get_bool("/purple/gtk/conversations/spellcheck"))
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
 			pidgin_setup_gtkspell(GTK_TEXT_VIEW(textview));
 
 		gtk_container_add(GTK_CONTAINER(widget), textview);
@@ -1415,9 +1415,9 @@ file_ok_check_if_exists_cb(GtkWidget *widget, gint response, PidginRequestData *
 	current_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(data->dialog));
 	if (current_folder != NULL) {
 		if (data->u.file.savedialog) {
-			purple_prefs_set_path("/purple/gtk/filelocations/last_save_folder", current_folder);
+			purple_prefs_set_path(PIDGIN_PREFS_ROOT "/filelocations/last_save_folder", current_folder);
 		} else {
-			purple_prefs_set_path("/purple/gtk/filelocations/last_open_folder", current_folder);
+			purple_prefs_set_path(PIDGIN_PREFS_ROOT "/filelocations/last_open_folder", current_folder);
 		}
 		g_free(current_folder);
 	}
@@ -1455,9 +1455,9 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 
 	if (current_folder != NULL) {
 		if (data->u.file.savedialog) {
-			purple_prefs_set_path("/purple/gtk/filelocations/last_save_folder", current_folder);
+			purple_prefs_set_path(PIDGIN_PREFS_ROOT "/filelocations/last_save_folder", current_folder);
 		} else {
-			purple_prefs_set_path("/purple/gtk/filelocations/last_open_folder", current_folder);
+			purple_prefs_set_path(PIDGIN_PREFS_ROOT "/filelocations/last_open_folder", current_folder);
 		}
 		g_free(current_folder);
 	}
@@ -1524,9 +1524,9 @@ pidgin_request_file(const char *title, const char *filename,
 	gtk_dialog_set_default_response(GTK_DIALOG(filesel), GTK_RESPONSE_ACCEPT);
 
 	if (savedialog) {
-		current_folder = purple_prefs_get_path("/purple/gtk/filelocations/last_save_folder");
+		current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_save_folder");
 	} else {
-		current_folder = purple_prefs_get_path("/purple/gtk/filelocations/last_open_folder");
+		current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_open_folder");
 	}
 
 	if ((filename != NULL) && (*filename != '\0')) {
@@ -1559,9 +1559,9 @@ pidgin_request_file(const char *title, const char *filename,
 			title ? title : (savedialog ? _("Save File...")
 				: _("Open File...")));
 	if (savedialog) {
-		current_folder = purple_prefs_get_path("/purple/gtk/filelocations/last_save_folder");
+		current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_save_folder");
 	} else {
-		current_folder = purple_prefs_get_path("/purple/gtk/filelocations/last_open_folder");
+		current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_open_folder");
 	}
 	if (current_folder != NULL) {
 		gchar *path = g_strdup_printf("%s%s", current_folder, G_DIR_SEPARATOR_S);

@@ -2932,7 +2932,7 @@ purple_str_seconds_to_string(guint secs)
 
 	if (secs < 60)
 	{
-		return g_strdup_printf(ngettext("%d second", "%d seconds", secs), secs);
+		return g_strdup_printf(dngettext(PACKAGE, "%d second", "%d seconds", secs), secs);
 	}
 
 	days = secs / (60 * 60 * 24);
@@ -2944,7 +2944,7 @@ purple_str_seconds_to_string(guint secs)
 
 	if (days > 0)
 	{
-		ret = g_strdup_printf(ngettext("%d day", "%d days", days), days);
+		ret = g_strdup_printf(dngettext(PACKAGE, "%d day", "%d days", days), days);
 	}
 
 	if (hrs > 0)
@@ -2952,13 +2952,13 @@ purple_str_seconds_to_string(guint secs)
 		if (ret != NULL)
 		{
 			char *tmp = g_strdup_printf(
-					ngettext("%s, %d hour", "%s, %d hours", hrs),
+					dngettext(PACKAGE, "%s, %d hour", "%s, %d hours", hrs),
 							ret, hrs);
 			g_free(ret);
 			ret = tmp;
 		}
 		else
-			ret = g_strdup_printf(ngettext("%d hour", "%d hours", hrs), hrs);
+			ret = g_strdup_printf(dngettext(PACKAGE, "%d hour", "%d hours", hrs), hrs);
 	}
 
 	if (mins > 0)
@@ -2966,13 +2966,13 @@ purple_str_seconds_to_string(guint secs)
 		if (ret != NULL)
 		{
 			char *tmp = g_strdup_printf(
-					ngettext("%s, %d minute", "%s, %d minutes", mins),
+					dngettext(PACKAGE, "%s, %d minute", "%s, %d minutes", mins),
 							ret, mins);
 			g_free(ret);
 			ret = tmp;
 		}
 		else
-			ret = g_strdup_printf(ngettext("%d minute", "%d minutes", mins), mins);
+			ret = g_strdup_printf(dngettext(PACKAGE, "%d minute", "%d minutes", mins), mins);
 	}
 
 	return ret;

@@ -615,7 +615,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 					 G_CALLBACK(formatted_input_cb), NULL);
 
 	/* Add the text to the gtkimhtml */
-	if (!purple_prefs_get_bool("/purple/gtk/conversations/show_incoming_formatting"))
+	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting"))
 		options |= GTK_IMHTML_NO_COLOURS | GTK_IMHTML_NO_FONTS | GTK_IMHTML_NO_SIZES;
 
 	options |= GTK_IMHTML_NO_COMMENTS;
@@ -953,8 +953,8 @@ pidgin_notify_uri(const char *uri)
 	const char *web_browser;
 	int place;
 
-	web_browser = purple_prefs_get_string("/purple/gtk/browsers/browser");
-	place = purple_prefs_get_int("/purple/gtk/browsers/place");
+	web_browser = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser");
+	place = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/browsers/place");
 
 	/* if they are running gnome, use the gnome web browser */
 	if (purple_running_gnome() == TRUE)
@@ -1057,7 +1057,7 @@ pidgin_notify_uri(const char *uri)
 	{
 		const char *web_command;
 
-		web_command = purple_prefs_get_path("/purple/gtk/browsers/command");
+		web_command = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command");
 
 		if (web_command == NULL || *web_command == '\0')
 		{

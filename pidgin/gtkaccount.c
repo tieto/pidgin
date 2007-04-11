@@ -1159,9 +1159,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			purple_account_set_buddy_icon_path(account, dialog->icon_path);
 			purple_account_set_buddy_icon(account, dialog->cached_icon_path);
 		}
-		else if (purple_prefs_get_path("/purple/gtk/accounts/buddyicon") && icon_change)
+		else if (purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon") && icon_change)
 		{
-			const char *filename = purple_prefs_get_path("/purple/gtk/accounts/buddyicon");
+			const char *filename = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
 			char *icon = pidgin_convert_buddy_icon(dialog->plugin, filename);
 			purple_account_set_buddy_icon_path(account, filename);
 			purple_account_set_buddy_icon(account, icon);
@@ -1783,12 +1783,12 @@ static gboolean
 configure_cb(GtkWidget *w, GdkEventConfigure *event, AccountsWindow *dialog)
 {
 	if (GTK_WIDGET_VISIBLE(w)) {
-		int old_width = purple_prefs_get_int("/purple/gtk/accounts/dialog/width");
+		int old_width = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/width");
 		int col_width;
 		int difference;
 
-		purple_prefs_set_int("/purple/gtk/accounts/dialog/width",  event->width);
-		purple_prefs_set_int("/purple/gtk/accounts/dialog/height", event->height);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/accounts/dialog/width",  event->width);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/accounts/dialog/height", event->height);
 
 		col_width = gtk_tree_view_column_get_width(dialog->screenname_col);
 
@@ -1989,7 +1989,7 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 			buddyicon = g_object_ref(G_OBJECT(global_buddyicon));
 		/* This is for when set_account() is called for a single account */
 		else
-			path = purple_prefs_get_path("/purple/gtk/accounts/buddyicon");
+			path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
 	} else
 		path = purple_account_get_ui_string(account, PIDGIN_UI, "non-global-buddyicon-path", NULL);
 
@@ -2041,7 +2041,7 @@ populate_accounts_list(AccountsWindow *dialog)
 
 	gtk_list_store_clear(dialog->model);
 
-	if ((path = purple_prefs_get_path("/purple/gtk/accounts/buddyicon")) != NULL) {
+	if ((path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon")) != NULL) {
 		GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(path, NULL);
 		if (pixbuf != NULL) {
 			global_buddyicon = gdk_pixbuf_scale_simple(pixbuf, 22, 22, GDK_INTERP_HYPER);
@@ -2263,8 +2263,8 @@ pidgin_accounts_window_show(void)
 
 	accounts_window = dialog = g_new0(AccountsWindow, 1);
 
-	width  = purple_prefs_get_int("/purple/gtk/accounts/dialog/width");
-	height = purple_prefs_get_int("/purple/gtk/accounts/dialog/height");
+	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/width");
+	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/height");
 
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
@@ -2334,7 +2334,7 @@ pidgin_accounts_window_show(void)
 	                    accounts_window,
 	                    PURPLE_CALLBACK(account_modified_cb), accounts_window);
 	purple_prefs_connect_callback(accounts_window,
-	                    "/purple/gtk/accounts/buddyicon",
+	                    PIDGIN_PREFS_ROOT "/accounts/buddyicon",
 	                    global_buddyicon_changed, accounts_window);
 
 	gtk_widget_show(win);
@@ -2566,10 +2566,10 @@ void
 pidgin_account_init(void)
 {
 	char *default_avatar = NULL;
-	purple_prefs_add_none("/purple/gtk/accounts");
-	purple_prefs_add_none("/purple/gtk/accounts/dialog");
-	purple_prefs_add_int("/purple/gtk/accounts/dialog/width",  520);
-	purple_prefs_add_int("/purple/gtk/accounts/dialog/height", 321);
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/accounts");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/accounts/dialog");
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/accounts/dialog/width",  520);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/accounts/dialog/height", 321);
 	default_avatar = g_build_filename(g_get_home_dir(), ".face.icon", NULL);
 	if (!g_file_test(default_avatar, G_FILE_TEST_EXISTS)) {
 		g_free(default_avatar);
@@ -2580,7 +2580,7 @@ pidgin_account_init(void)
 		}
 	}
 
-	purple_prefs_add_path("/purple/gtk/accounts/buddyicon", default_avatar);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon", default_avatar);
 	g_free(default_avatar);
 
 	purple_signal_register(pidgin_account_get_handle(), "account-modified",

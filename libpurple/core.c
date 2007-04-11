@@ -70,6 +70,9 @@ purple_core_init(const char *ui)
 	g_return_val_if_fail(ui != NULL, FALSE);
 	g_return_val_if_fail(purple_get_core() == NULL, FALSE);
 
+#ifdef ENABLE_NLS
+	bindtextdomain(PACKAGE, LOCALEDIR);
+#endif
 #ifdef _WIN32
 	wpurple_init();
 #endif

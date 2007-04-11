@@ -1785,11 +1785,13 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	else
 	{
 		PurpleBuddy *b = purple_find_buddy(account, info->sn);
-		PurpleStatus *status;
-		const char *active_status_id;
+		PurpleStatus *status = NULL;
+		const char *active_status_id = NULL;
 
-		status = purple_presence_get_active_status(purple_buddy_get_presence(b));
-		active_status_id = purple_status_get_id(status);
+		if (b != NULL) {
+			status = purple_presence_get_active_status(purple_buddy_get_presence(b));
+			active_status_id = purple_status_get_id(status);
+		}
 
 		if (!active_status_id || strcmp(active_status_id, status_id))
 			purple_prpl_got_user_status(account, info->sn, status_id, NULL);
@@ -2556,7 +2558,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 	switch(reason) {
 		case 0: /* Invalid (0) */
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s because it was invalid.",
 				   "You missed %hu messages from %s because they were invalid.",
 				   nummissed),
@@ -2565,7 +2567,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 		case 1: /* Message too large */
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s because it was too large.",
 				   "You missed %hu messages from %s because they were too large.",
 				   nummissed),
@@ -2574,7 +2576,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 		case 2: /* Rate exceeded */
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s because the rate limit has been exceeded.",
 				   "You missed %hu messages from %s because the rate limit has been exceeded.",
 				   nummissed),
@@ -2583,7 +2585,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 		case 3: /* Evil Sender */
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s because he/she was too evil.",
 				   "You missed %hu messages from %s because he/she was too evil.",
 				   nummissed),
@@ -2592,7 +2594,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 		case 4: /* Evil Receiver */
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s because you are too evil.",
 				   "You missed %hu messages from %s because you are too evil.",
 				   nummissed),
@@ -2601,7 +2603,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 		default:
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s for an unknown reason.",
 				   "You missed %hu messages from %s for an unknown reason.",
 				   nummissed),
@@ -3916,7 +3918,7 @@ static int purple_parse_searchreply(OscarData *od, FlapConnection *conn, FlapFra
 	}
 
 	secondary = g_strdup_printf(
-					ngettext("The following screen name is associated with %s",
+					dngettext(PACKAGE, "The following screen name is associated with %s",
 						 "The following screen names are associated with %s",
 						 num),
 					email);
@@ -4474,7 +4476,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		if (infolen > od->rights.maxsiglen)
 		{
 			gchar *errstr;
-			errstr = g_strdup_printf(ngettext("The maximum profile length of %d byte "
+			errstr = g_strdup_printf(dngettext(PACKAGE, "The maximum profile length of %d byte "
 									 "has been exceeded.  It has been truncated it for you.",
 									 "The maximum profile length of %d bytes "
 									 "has been exceeded.  It has been truncated it for you.",
@@ -4524,7 +4526,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		{
 			gchar *errstr;
 
-			errstr = g_strdup_printf(ngettext("The maximum away message length of %d byte "
+			errstr = g_strdup_printf(dngettext(PACKAGE, "The maximum away message length of %d byte "
 									 "has been exceeded.  It has been truncated for you.",
 									 "The maximum away message length of %d bytes "
 									 "has been exceeded.  It has been truncated for you.",

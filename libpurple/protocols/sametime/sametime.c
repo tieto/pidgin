@@ -4347,9 +4347,9 @@ static void add_buddy_resolved(struct mwServiceResolve *srvc,
   PurpleConnection *gc;
   struct mwPurplePluginData *pd;
 
-  if (data) {
-    buddy = data->buddy;
-  }
+  g_return_if_fail(data != NULL);
+
+  buddy = data->buddy;
 
   gc = purple_account_get_connection(buddy->account);
   pd = gc->proto_data;

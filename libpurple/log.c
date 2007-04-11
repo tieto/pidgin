@@ -253,7 +253,7 @@ gboolean purple_log_is_deletable(PurpleLog *log)
 	g_return_val_if_fail(log != NULL, FALSE);
 	g_return_val_if_fail(log->logger != NULL, FALSE);
 
-	if (log->logger->delete == NULL)
+	if (log->logger->remove == NULL)
 		return FALSE;
 
 	if (log->logger->is_deletable != NULL)
@@ -267,8 +267,8 @@ gboolean purple_log_delete(PurpleLog *log)
 	g_return_val_if_fail(log != NULL, FALSE);
 	g_return_val_if_fail(log->logger != NULL, FALSE);
 
-	if (log->logger->delete != NULL)
-		return log->logger->delete(log);
+	if (log->logger->remove != NULL)
+		return log->logger->remove(log);
 
 	return FALSE;
 }
@@ -344,7 +344,7 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 				int(*total_size)(PurpleLogType type, const char *name, PurpleAccount *account),
 				GList*(*list_syslog)(PurpleAccount *account),
 				void(*get_log_sets)(PurpleLogSetCallback cb, GHashTable *sets),
-				gboolean(*delete)(PurpleLog *log),
+				gboolean(*remove)(PurpleLog *log),
 				gboolean(*is_deletable)(PurpleLog *log))
 {
 #endif
@@ -380,7 +380,7 @@ PurpleLogLogger *purple_log_logger_new(const char *id, const char *name, int fun
 	if (functions >= 9)
 		logger->get_log_sets = va_arg(args, void *);
 	if (functions >= 10)
-		logger->delete = va_arg(args, void *);
+		logger->remove = va_arg(args, void *);
 	if (functions >= 11)
 		logger->is_deletable = va_arg(args, void *);
 

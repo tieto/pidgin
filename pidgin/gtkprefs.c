@@ -375,7 +375,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	gtk_tree_model_get_value(model, &iter, 3, &val);
 	path = gtk_tree_model_get_path(model, &iter);
 	themename = g_value_get_string(&val);
-	purple_prefs_set_string("/purple/gtk/smileys/theme", themename);
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", themename);
 	g_value_unset (&val);
 
 	/* current_smiley_theme is set in callback for the above pref change */
@@ -710,21 +710,21 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 								  &bold, &italic, &uline);
 
 	if (buttons & GTK_IMHTML_BOLD)
-		purple_prefs_set_bool("/purple/gtk/conversations/send_bold", bold);
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold", bold);
 	if (buttons & GTK_IMHTML_ITALIC)
-		purple_prefs_set_bool("/purple/gtk/conversations/send_italic", italic);
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic", italic);
 	if (buttons & GTK_IMHTML_UNDERLINE)
-		purple_prefs_set_bool("/purple/gtk/conversations/send_underline", uline);
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline", uline);
 
 	if (buttons & GTK_IMHTML_GROW || buttons & GTK_IMHTML_SHRINK)
-		purple_prefs_set_int("/purple/gtk/conversations/font_size",
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/font_size",
 						   gtk_imhtml_get_current_fontsize(GTK_IMHTML(imhtml)));
 	if (buttons & GTK_IMHTML_FACE) {
 		char *face = gtk_imhtml_get_current_fontface(GTK_IMHTML(imhtml));
 		if (!face)
 			face = g_strdup("");
 
-		purple_prefs_set_string("/purple/gtk/conversations/font_face", face);
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/font_face", face);
 		g_free(face);
 	}
 
@@ -733,7 +733,7 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 		if (!color)
 			color = g_strdup("");
 
-		purple_prefs_set_string("/purple/gtk/conversations/fgcolor", color);
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor", color);
 		g_free(color);
 	}
 
@@ -767,7 +767,7 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 		if (!color)
 			color = g_strdup("");
 
-		purple_prefs_set_string("/purple/gtk/conversations/bgcolor", color);
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor", color);
 		g_free(color);
 	}
 }
@@ -775,15 +775,15 @@ formatting_toggle_cb(GtkIMHtml *imhtml, GtkIMHtmlButtons buttons, void *toolbar)
 static void
 formatting_clear_cb(GtkIMHtml *imhtml, void *data)
 {
-	purple_prefs_set_bool("/purple/gtk/conversations/send_bold", FALSE);
-	purple_prefs_set_bool("/purple/gtk/conversations/send_italic", FALSE);
-	purple_prefs_set_bool("/purple/gtk/conversations/send_underline", FALSE);
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold", FALSE);
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic", FALSE);
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline", FALSE);
 
-	purple_prefs_set_int("/purple/gtk/conversations/font_size", 3);
+	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/conversations/font_size", 3);
 
-	purple_prefs_set_string("/purple/gtk/conversations/font_face", "");
-	purple_prefs_set_string("/purple/gtk/conversations/fgcolor", "");
-	purple_prefs_set_string("/purple/gtk/conversations/bgcolor", "");
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/font_face", "");
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor", "");
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor", "");
 }
 
 static void
@@ -815,7 +815,7 @@ interface_page()
 
 	vbox = pidgin_make_frame(ret, _("System Tray Icon"));
 	label = pidgin_prefs_dropdown(vbox, _("_Show system tray icon:"), PURPLE_PREF_STRING,
-					"/purple/gtk/docklet/show",
+					PIDGIN_PREFS_ROOT "/docklet/show",
 					_("Always"), "always",
 					_("Never"), "never",
 					_("On unread messages"), "pending",
@@ -825,7 +825,7 @@ interface_page()
 	
 	vbox = pidgin_make_frame(ret, _("Conversation Window Hiding"));
 	label = pidgin_prefs_dropdown(vbox, _("_Hide new IM conversations:"),
-					PURPLE_PREF_STRING, "/purple/gtk/conversations/im/hide_new",
+					PURPLE_PREF_STRING, PIDGIN_PREFS_ROOT "/conversations/im/hide_new",
 					_("Never"), "never",
 					_("When away"), "away",
 					_("Always"), "always",
@@ -838,7 +838,7 @@ interface_page()
 	vbox = pidgin_make_frame(ret, _("Tabs"));
 	
 	pidgin_prefs_checkbox(_("Show IMs and chats in _tabbed windows"),
-							"/purple/gtk/conversations/tabs", vbox);
+							PIDGIN_PREFS_ROOT "/conversations/tabs", vbox);
 
 	/*
 	 * Connect a signal to the above preference.  When conversations are not
@@ -846,16 +846,16 @@ interface_page()
 	 */
 	vbox2 = gtk_vbox_new(FALSE, 9);
 	gtk_box_pack_start(GTK_BOX(vbox), vbox2, FALSE, FALSE, 0);
-	purple_prefs_connect_callback(prefs, "/purple/gtk/conversations/tabs",
+	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/conversations/tabs",
 	                            conversation_usetabs_cb, vbox2);
-	if (!purple_prefs_get_bool("/purple/gtk/conversations/tabs"))
+	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/tabs"))
 	  gtk_widget_set_sensitive(vbox2, FALSE);
 
 	pidgin_prefs_checkbox(_("Show close b_utton on tabs"),
-				"/purple/gtk/conversations/close_on_tabs", vbox2);
+				PIDGIN_PREFS_ROOT "/conversations/close_on_tabs", vbox2);
 
 	label = pidgin_prefs_dropdown(vbox2, _("_Placement:"), PURPLE_PREF_INT,
-					"/purple/gtk/conversations/tab_side",
+					PIDGIN_PREFS_ROOT "/conversations/tab_side",
 					_("Top"), GTK_POS_TOP,
 					_("Bottom"), GTK_POS_BOTTOM,
 					_("Left"), GTK_POS_LEFT,
@@ -870,7 +870,7 @@ interface_page()
 		
 	names = pidgin_conv_placement_get_options();
 	label = pidgin_prefs_dropdown_from_list(vbox2, _("N_ew conversations:"),
-				PURPLE_PREF_STRING, "/purple/gtk/conversations/placement", names);
+				PURPLE_PREF_STRING, PIDGIN_PREFS_ROOT "/conversations/placement", names);
 	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 			
 	gtk_size_group_add_widget(sg, label);
@@ -898,13 +898,13 @@ conv_page()
 	vbox = pidgin_make_frame(ret, _("Conversations"));
 
 	pidgin_prefs_checkbox(_("Show _formatting on incoming messages"),
-				"/purple/gtk/conversations/show_incoming_formatting", vbox);
+				PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting", vbox);
 
 	iconpref1 = pidgin_prefs_checkbox(_("Show buddy _icons"),
-			"/purple/gtk/conversations/im/show_buddy_icons", vbox);
+			PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons", vbox);
 	iconpref2 = pidgin_prefs_checkbox(_("Enable buddy ic_on animation"),
-			"/purple/gtk/conversations/im/animate_buddy_icons", vbox);
-	if (!purple_prefs_get_bool("/purple/gtk/conversations/im/show_buddy_icons"))
+			PIDGIN_PREFS_ROOT "/conversations/im/animate_buddy_icons", vbox);
+	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/show_buddy_icons"))
 		gtk_widget_set_sensitive(iconpref2, FALSE);
 	g_signal_connect(G_OBJECT(iconpref1), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), iconpref2);
@@ -913,13 +913,13 @@ conv_page()
 			"/core/conversations/im/send_typing", vbox);
 #ifdef USE_GTKSPELL
 	pidgin_prefs_checkbox(_("Highlight _misspelled words"),
-			"/purple/gtk/conversations/spellcheck", vbox);
+			PIDGIN_PREFS_ROOT "/conversations/spellcheck", vbox);
 #endif
 
-	pidgin_prefs_checkbox(_("Use smooth-scrolling"), "/purple/gtk/conversations/use_smooth_scrolling", vbox);
+	pidgin_prefs_checkbox(_("Use smooth-scrolling"), PIDGIN_PREFS_ROOT "/conversations/use_smooth_scrolling", vbox);
 
 #ifdef _WIN32
-	pidgin_prefs_checkbox(_("F_lash window when IMs are received"), "/purple/gtk/win32/blink_im", vbox);
+	pidgin_prefs_checkbox(_("F_lash window when IMs are received"), PIDGIN_PREFS_ROOT "/win32/blink_im", vbox);
 #endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
@@ -942,17 +942,17 @@ conv_page()
 
 	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
 
-	if (purple_prefs_get_bool("/purple/gtk/conversations/send_bold"))
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold"))
 		gtk_imhtml_toggle_bold(GTK_IMHTML(imhtml));
-	if (purple_prefs_get_bool("/purple/gtk/conversations/send_italic"))
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic"))
 		gtk_imhtml_toggle_italic(GTK_IMHTML(imhtml));
-	if (purple_prefs_get_bool("/purple/gtk/conversations/send_underline"))
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline"))
 		gtk_imhtml_toggle_underline(GTK_IMHTML(imhtml));
 
-	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), purple_prefs_get_int("/purple/gtk/conversations/font_size"));
-	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), purple_prefs_get_string("/purple/gtk/conversations/fgcolor"));
-	gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), purple_prefs_get_string("/purple/gtk/conversations/bgcolor"));
-	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), purple_prefs_get_string("/purple/gtk/conversations/font_face"));
+	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size"));
+	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"));
+	gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"));
+	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/font_face"));
 
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle",
 					 G_CALLBACK(formatting_toggle_cb), toolbar);
@@ -1198,7 +1198,7 @@ network_page()
 static gboolean manual_browser_set(GtkWidget *entry, GdkEventFocus *event, gpointer data) {
 	const char *program = gtk_entry_get_text(GTK_ENTRY(entry));
 
-	purple_prefs_set_path("/purple/gtk/browsers/command", program);
+	purple_prefs_set_path(PIDGIN_PREFS_ROOT "/browsers/command", program);
 
 	/* carry on normally */
 	return FALSE;
@@ -1228,7 +1228,7 @@ static GList *get_available_browsers()
 
 	GList *browsers = NULL;
 	int i = 0;
-	char *browser_setting = (char *)purple_prefs_get_string("/purple/gtk/browsers/browser");
+	char *browser_setting = (char *)purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser");
 
 	browsers = g_list_prepend(browsers, (gpointer)"custom");
 	browsers = g_list_prepend(browsers, (gpointer)_("Manual"));
@@ -1244,7 +1244,7 @@ static GList *get_available_browsers()
 	}
 
 	if(browser_setting)
-		purple_prefs_set_string("/purple/gtk/browsers/browser", "custom");
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/browsers/browser", "custom");
 
 	return browsers;
 }
@@ -1289,7 +1289,7 @@ browser_page()
 	browsers = get_available_browsers();
 	if (browsers != NULL) {
 		label = pidgin_prefs_dropdown_from_list(vbox,_("_Browser:"), PURPLE_PREF_STRING,
-										 "/purple/gtk/browsers/browser",
+										 PIDGIN_PREFS_ROOT "/browsers/browser",
 										 browsers);
 		g_list_free(browsers);
 		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
@@ -1297,7 +1297,7 @@ browser_page()
 
 		hbox = gtk_hbox_new(FALSE, 0);
 		label = pidgin_prefs_dropdown(hbox, _("_Open link in:"), PURPLE_PREF_INT,
-			"/purple/gtk/browsers/place",
+			PIDGIN_PREFS_ROOT "/browsers/place",
 			_("Browser default"), PIDGIN_BROWSER_DEFAULT,
 			_("Existing window"), PIDGIN_BROWSER_CURRENT,
 			_("New window"), PIDGIN_BROWSER_NEW_WINDOW,
@@ -1307,9 +1307,9 @@ browser_page()
 		gtk_size_group_add_widget(sg, label);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 
-		if (!strcmp(purple_prefs_get_string("/purple/gtk/browsers/browser"), "custom"))
+		if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
 			gtk_widget_set_sensitive(hbox, FALSE);
-		purple_prefs_connect_callback(prefs, "/purple/gtk/browsers/browser",
+		purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
 									browser_changed1_cb, hbox);
 	}
 
@@ -1323,15 +1323,15 @@ browser_page()
 	entry = gtk_entry_new();
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 
-	if (strcmp(purple_prefs_get_string("/purple/gtk/browsers/browser"), "custom"))
+	if (strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/browsers/browser"), "custom"))
 		gtk_widget_set_sensitive(hbox, FALSE);
-	purple_prefs_connect_callback(prefs, "/purple/gtk/browsers/browser",
+	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/browsers/browser",
 								browser_changed2_cb, hbox);
 
 	gtk_box_pack_start (GTK_BOX (hbox), entry, FALSE, FALSE, 0);
 
 	gtk_entry_set_text(GTK_ENTRY(entry),
-					   purple_prefs_get_path("/purple/gtk/browsers/command"));
+					   purple_prefs_get_path(PIDGIN_PREFS_ROOT "/browsers/command"));
 	g_signal_connect(G_OBJECT(entry), "focus-out-event",
 					 G_CALLBACK(manual_browser_set), NULL);
 	pidgin_set_accessible_label (entry, label);
@@ -1375,7 +1375,7 @@ logging_page()
 #ifndef _WIN32
 static gint sound_cmd_yeah(GtkEntry *entry, gpointer d)
 {
-	purple_prefs_set_path("/purple/gtk/sound/command",
+	purple_prefs_set_path(PIDGIN_PREFS_ROOT "/sound/command",
 			gtk_entry_get_text(GTK_ENTRY(entry)));
 	return TRUE;
 }
@@ -1445,7 +1445,7 @@ test_sound(GtkWidget *button, gpointer i_am_NULL)
 	char *pref;
 	gboolean temp_value;
 
-	pref = g_strdup_printf("/purple/gtk/sound/enabled/%s",
+	pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/enabled/%s",
 			pidgin_sound_get_event_option(sound_row_sel));
 
 	temp_value = purple_prefs_get_bool(pref);
@@ -1467,7 +1467,7 @@ reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
 {
 	gchar *pref;
 
-	pref = g_strdup_printf("/purple/gtk/sound/file/%s",
+	pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s",
 						   pidgin_sound_get_event_option(sound_row_sel));
 	purple_prefs_set_path(pref, "");
 	g_free(pref);
@@ -1484,7 +1484,7 @@ sound_chosen_cb(void *user_data, const char *filename)
 	sound = GPOINTER_TO_INT(user_data);
 
 	/* Set it -- and forget it */
-	pref = g_strdup_printf("/purple/gtk/sound/file/%s",
+	pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s",
 						   pidgin_sound_get_event_option(sound));
 	purple_prefs_set_path(pref, filename);
 	g_free(pref);
@@ -1502,7 +1502,7 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 	gchar *pref;
 	const char *filename;
 
-	pref = g_strdup_printf("/purple/gtk/sound/file/%s",
+	pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s",
 						   pidgin_sound_get_event_option(sound_row_sel));
 	filename = purple_prefs_get_path(pref);
 	g_free(pref);
@@ -1537,7 +1537,7 @@ static gchar* prefs_sound_volume_format(GtkScale *scale, gdouble val)
 static void prefs_sound_volume_changed(GtkRange *range)
 {
 	int val = (int)gtk_range_get_value(GTK_RANGE(range));
-	purple_prefs_set_int("/purple/gtk/sound/volume", val);
+	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/sound/volume", val);
 }
 #endif
 
@@ -1554,7 +1554,7 @@ static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	gtk_tree_model_get_value (model, &iter, 3, &val);
 	sound_row_sel = g_value_get_uint(&val);
 
-	pref = g_strdup_printf("/purple/gtk/sound/file/%s",
+	pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s",
 			pidgin_sound_get_event_option(sound_row_sel));
 	file = purple_prefs_get_path(pref);
 	g_free(pref);
@@ -1595,7 +1595,7 @@ sound_page()
 #ifndef _WIN32
 	vbox = pidgin_make_frame (ret, _("Sound Method"));
 	dd = pidgin_prefs_dropdown(vbox, _("_Method:"), PURPLE_PREF_STRING,
-			"/purple/gtk/sound/method",
+			PIDGIN_PREFS_ROOT "/sound/method",
 			_("Console beep"), "beep",
 #ifdef USE_GSTREAMER
 			_("Automatic"), "automatic",
@@ -1619,7 +1619,7 @@ sound_page()
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), entry);
 
 	gtk_editable_set_editable(GTK_EDITABLE(entry), TRUE);
-	cmd = purple_prefs_get_path("/purple/gtk/sound/command");
+	cmd = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/sound/command");
 	if(cmd)
 		gtk_entry_set_text(GTK_ENTRY(entry), cmd);
 
@@ -1627,10 +1627,10 @@ sound_page()
 	g_signal_connect(G_OBJECT(entry), "changed",
 					 G_CALLBACK(sound_cmd_yeah), NULL);
 
-	purple_prefs_connect_callback(prefs, "/purple/gtk/sound/method",
+	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
 								sound_changed1_cb, hbox);
 	gtk_widget_set_sensitive(hbox,
-			!strcmp(purple_prefs_get_string("/purple/gtk/sound/method"),
+			!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"),
 					"custom"));
 
 	pidgin_set_accessible_label (entry, label);
@@ -1638,7 +1638,7 @@ sound_page()
 
 	vbox = pidgin_make_frame (ret, _("Sound Options"));
 	pidgin_prefs_checkbox(_("Sounds when conversation has _focus"),
-				   "/purple/gtk/sound/conv_focus", vbox);
+				   PIDGIN_PREFS_ROOT "/sound/conv_focus", vbox);
 	pidgin_prefs_dropdown(vbox, _("Enable sounds:"),
 				 PURPLE_PREF_INT, "/core/sound/while_status",
 				_("Only when available"), 1,
@@ -1656,7 +1656,7 @@ sound_page()
 
 	sw = gtk_hscale_new_with_range(0.0, 100.0, 5.0);
 	gtk_range_set_increments(GTK_RANGE(sw), 5.0, 25.0);
-	gtk_range_set_value(GTK_RANGE(sw), purple_prefs_get_int("/purple/gtk/sound/volume"));
+	gtk_range_set_value(GTK_RANGE(sw), purple_prefs_get_int(PIDGIN_PREFS_ROOT "/sound/volume"));
 	g_signal_connect (G_OBJECT (sw), "format-value",
 			  G_CALLBACK (prefs_sound_volume_format),
 			  NULL);
@@ -1665,16 +1665,16 @@ sound_page()
 			  NULL);
 	gtk_box_pack_start(GTK_BOX(hbox), sw, TRUE, TRUE, 0);
 
-	purple_prefs_connect_callback(prefs, "/purple/gtk/sound/method",
+	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
 								sound_changed3_cb, hbox);
-	sound_changed3_cb("/purple/gtk/sound/method", PURPLE_PREF_STRING,
-			  purple_prefs_get_string("/purple/gtk/sound/method"), hbox);
+	sound_changed3_cb(PIDGIN_PREFS_ROOT "/sound/method", PURPLE_PREF_STRING,
+			  purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), hbox);
 #endif
 
 #ifndef _WIN32
 	gtk_widget_set_sensitive(vbox,
-			strcmp(purple_prefs_get_string("/purple/gtk/sound/method"), "none"));
-	purple_prefs_connect_callback(prefs, "/purple/gtk/sound/method",
+			strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"));
+	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/sound/method",
 								sound_changed2_cb, vbox);
 #endif
 
@@ -1697,7 +1697,7 @@ sound_page()
 	event_store = gtk_list_store_new (4, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
 
 	for (j=0; j < PURPLE_NUM_SOUNDS; j++) {
-		char *pref = g_strdup_printf("/purple/gtk/sound/enabled/%s",
+		char *pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/enabled/%s",
 					     pidgin_sound_get_event_option(j));
 		const char *label = pidgin_sound_get_event_label(j);
 
@@ -1747,7 +1747,7 @@ sound_page()
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 	sound_entry = gtk_entry_new();
-	pref = g_strdup_printf("/purple/gtk/sound/file/%s",
+	pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s",
 			       pidgin_sound_get_event_option(0));
 	file = purple_prefs_get_path(pref);
 	g_free(pref);
@@ -2027,99 +2027,100 @@ smiley_theme_pref_cb(const char *name, PurplePrefType type,
 void
 pidgin_prefs_init(void)
 {
-	purple_prefs_add_none("/purple");
-	purple_prefs_add_none("/purple/gtk");
+	/* only change this when we have a sane prefs migration path */
+	purple_prefs_add_none("/gaim");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "");
 	purple_prefs_add_none("/plugins/gtk");
 
 #ifndef _WIN32
 	/* Browsers */
-	purple_prefs_add_none("/purple/gtk/browsers");
-	purple_prefs_add_int("/purple/gtk/browsers/place", PIDGIN_BROWSER_DEFAULT);
-	purple_prefs_add_path("/purple/gtk/browsers/command", "");
-	purple_prefs_add_string("/purple/gtk/browsers/browser", "mozilla");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/browsers");
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/browsers/place", PIDGIN_BROWSER_DEFAULT);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/browsers/command", "");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/browsers/browser", "mozilla");
 #endif
 
 	/* Plugins */
-	purple_prefs_add_none("/purple/gtk/plugins");
-	purple_prefs_add_path_list("/purple/gtk/plugins/loaded", NULL);
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/plugins");
+	purple_prefs_add_path_list(PIDGIN_PREFS_ROOT "/plugins/loaded", NULL);
 
 	/* File locations */
-	purple_prefs_add_none("/purple/gtk/filelocations");
-	purple_prefs_add_path("/purple/gtk/filelocations/last_save_folder", "");
-	purple_prefs_add_path("/purple/gtk/filelocations/last_open_folder", "");
-	purple_prefs_add_path("/purple/gtk/filelocations/last_icon_folder", "");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/filelocations");
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/filelocations/last_save_folder", "");
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/filelocations/last_open_folder", "");
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/filelocations/last_icon_folder", "");
 
 	/* Smiley Themes */
-	purple_prefs_add_none("/purple/gtk/smileys");
-	purple_prefs_add_string("/purple/gtk/smileys/theme", "Default");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/smileys");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/smileys/theme", "Default");
 
 	/* Smiley Callbacks */
-	purple_prefs_connect_callback(prefs, "/purple/gtk/smileys/theme",
+	purple_prefs_connect_callback(prefs, PIDGIN_PREFS_ROOT "/smileys/theme",
 								smiley_theme_pref_cb, NULL);
 }
 
 void pidgin_prefs_update_old() {
 	/* Rename some old prefs */
-	purple_prefs_rename("/purple/gtk/logging/log_ims", "/core/logging/log_ims");
-	purple_prefs_rename("/purple/gtk/logging/log_chats", "/core/logging/log_chats");
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_ims", "/core/logging/log_ims");
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_chats", "/core/logging/log_chats");
 	purple_prefs_rename("/core/conversations/placement",
-					  "/purple/gtk/conversations/placement");
+					  PIDGIN_PREFS_ROOT "/conversations/placement");
 
-	purple_prefs_rename("/purple/gtk/debug/timestamps", "/core/debug/timestamps");
-	purple_prefs_rename("/purple/gtk/conversations/im/raise_on_events", "/plugins/gtk/X11/notify/method_raise");
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/debug/timestamps", "/core/debug/timestamps");
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/conversations/im/raise_on_events", "/plugins/gtk/X11/notify/method_raise");
 
-	purple_prefs_rename_boolean_toggle("/purple/gtk/conversations/ignore_colors",
-									 "/purple/gtk/conversations/show_incoming_formatting");
+	purple_prefs_rename_boolean_toggle(PIDGIN_PREFS_ROOT "/conversations/ignore_colors",
+									 PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting");
 
 	/* this string pref moved into the core, try to be friendly */
-	purple_prefs_rename("/purple/gtk/idle/reporting_method", "/core/away/idle_reporting");
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/idle/reporting_method", "/core/away/idle_reporting");
 
 	/* Remove some no-longer-used prefs */
-	purple_prefs_remove("/purple/gtk/blist/auto_expand_contacts");
-	purple_prefs_remove("/purple/gtk/blist/button_style");
-	purple_prefs_remove("/purple/gtk/blist/grey_idle_buddies");
-	purple_prefs_remove("/purple/gtk/blist/raise_on_events");
-	purple_prefs_remove("/purple/gtk/blist/show_group_count");
-	purple_prefs_remove("/purple/gtk/blist/show_warning_level");
-	purple_prefs_remove("/purple/gtk/conversations/button_type");
-	purple_prefs_remove("/purple/gtk/conversations/ctrl_enter_sends");
-	purple_prefs_remove("/purple/gtk/conversations/enter_sends");
-	purple_prefs_remove("/purple/gtk/conversations/escape_closes");
-	purple_prefs_remove("/purple/gtk/conversations/html_shortcuts");
-	purple_prefs_remove("/purple/gtk/conversations/icons_on_tabs");
-	purple_prefs_remove("/purple/gtk/conversations/send_formatting");
-	purple_prefs_remove("/purple/gtk/conversations/show_smileys");
-	purple_prefs_remove("/purple/gtk/conversations/show_urls_as_links");
-	purple_prefs_remove("/purple/gtk/conversations/smiley_shortcuts");
-	purple_prefs_remove("/purple/gtk/conversations/use_custom_bgcolor");
-	purple_prefs_remove("/purple/gtk/conversations/use_custom_fgcolor");
-	purple_prefs_remove("/purple/gtk/conversations/use_custom_font");
-	purple_prefs_remove("/purple/gtk/conversations/use_custom_size");
-	purple_prefs_remove("/purple/gtk/conversations/chat/old_tab_complete");
-	purple_prefs_remove("/purple/gtk/conversations/chat/tab_completion");
-	purple_prefs_remove("/purple/gtk/conversations/im/hide_on_send");
-	purple_prefs_remove("/purple/gtk/conversations/chat/color_nicks");
-	purple_prefs_remove("/purple/gtk/conversations/chat/raise_on_events");
-	purple_prefs_remove("/purple/gtk/conversations/ignore_fonts");
-	purple_prefs_remove("/purple/gtk/conversations/ignore_font_sizes");
-	purple_prefs_remove("/purple/gtk/conversations/passthrough_unknown_commands");
-	purple_prefs_remove("/purple/gtk/idle");
-	purple_prefs_remove("/purple/gtk/logging/individual_logs");
-	purple_prefs_remove("/purple/gtk/sound/signon");
-	purple_prefs_remove("/purple/gtk/sound/silent_signon");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/auto_expand_contacts");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/button_style");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/grey_idle_buddies");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/raise_on_events");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/show_group_count");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/show_warning_level");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/button_type");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/ctrl_enter_sends");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/enter_sends");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/escape_closes");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/html_shortcuts");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/icons_on_tabs");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/send_formatting");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/show_smileys");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/show_urls_as_links");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/smiley_shortcuts");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/use_custom_bgcolor");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/use_custom_fgcolor");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/use_custom_font");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/use_custom_size");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/chat/old_tab_complete");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/chat/tab_completion");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/im/hide_on_send");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/chat/color_nicks");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/chat/raise_on_events");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/ignore_fonts");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/ignore_font_sizes");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/passthrough_unknown_commands");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/idle");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/logging/individual_logs");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/sound/signon");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/sound/silent_signon");
 
 	/* Convert old queuing prefs to hide_new 3-way pref. */
 	if (purple_prefs_exists("/plugins/gtk/docklet/queue_messages") &&
 	    purple_prefs_get_bool("/plugins/gtk/docklet/queue_messages"))
 	{
-		purple_prefs_set_string("/purple/gtk/conversations/im/hide_new", "always");
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new", "always");
 	}
-	else if (purple_prefs_exists("/purple/gtk/away/queue_messages") &&
-	         purple_prefs_get_bool("/purple/gtk/away/queue_messages"))
+	else if (purple_prefs_exists(PIDGIN_PREFS_ROOT "/away/queue_messages") &&
+	         purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/away/queue_messages"))
 	{
-		purple_prefs_set_string("/purple/gtk/conversations/im/hide_new", "away");
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/im/hide_new", "away");
 	}
-	purple_prefs_remove("/purple/gtk/away/queue_messages");
-	purple_prefs_remove("/purple/gtk/away");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/away/queue_messages");
+	purple_prefs_remove(PIDGIN_PREFS_ROOT "/away");
 	purple_prefs_remove("/plugins/gtk/docklet/queue_messages");
 }

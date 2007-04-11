@@ -318,7 +318,7 @@ static gboolean
 winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
 		PurpleConversation *conv, PurpleMessageFlags flags, void *data)
 {
-	if (purple_prefs_get_bool("/purple/gtk/win32/blink_im"))
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/win32/blink_im"))
 		winpidgin_conv_blink(conv, flags);
 	return FALSE;
 }
@@ -346,8 +346,8 @@ void winpidgin_init(HINSTANCE hint) {
 
 void winpidgin_post_init(void) {
 
-	purple_prefs_add_none("/purple/gtk/win32");
-	purple_prefs_add_bool("/purple/gtk/win32/blink_im", TRUE);
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/win32");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/win32/blink_im", TRUE);
 
 	purple_signal_connect(pidgin_conversations_get_handle(),
 		"displaying-im-msg", &gtkwin32_handle, PURPLE_CALLBACK(winpidgin_conv_im_blink),

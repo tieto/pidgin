@@ -90,7 +90,7 @@ pidgin_plugin_get_config_frame(PurplePlugin *plugin)
 void
 pidgin_plugins_save(void)
 {
-	purple_plugins_save_loaded("/purple/gtk/plugins/loaded");
+	purple_plugins_save_loaded(PIDGIN_PREFS_ROOT "/plugins/loaded");
 }
 
 static void
