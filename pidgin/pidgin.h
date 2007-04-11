@@ -68,7 +68,7 @@
 #if !GTK_CHECK_VERSION(2,6,0)
 #   include "gtkcellview.h"
 #   include "gtkcellviewmenuitem.h"
-#   include "purplecombobox.h"
+#   include "pidgincombobox.h"
 #   if !GTK_CHECK_VERSION(2,4,0)
 #       include "gtkcelllayout.h"
 #   endif /* Less than GTK+ 2.4 */
