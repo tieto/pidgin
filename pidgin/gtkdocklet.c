@@ -121,7 +121,7 @@ docklet_update_status()
 	/* determine if any ims have unseen messages */
 	convs = get_pending_list(DOCKLET_TOOLTIP_LINE_LIMIT);
 
-	if (!strcmp(purple_prefs_get_string("/purple/gtk/docklet/show"), "pending")) {
+	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "pending")) {
 		if (convs && ui_ops->create && !visible) {
 			g_list_free(convs);
 			ui_ops->create();
@@ -212,7 +212,7 @@ docklet_update_status()
 			ui_ops->update_icon(status);
 
 		/* and schedule the blinker function if messages are pending */
-		if (purple_prefs_get_bool("/purple/gtk/docklet/blink") &&
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink") &&
 		    status == DOCKLET_STATUS_PENDING
 		    && docklet_blinking_timer == 0) {
 			docklet_blinking_timer = g_timeout_add(500, docklet_blink_icon, NULL);
@@ -316,13 +316,13 @@ docklet_show_pref_changed_cb(const char *name, PurplePrefType type,
 static void
 docklet_toggle_mute(GtkWidget *toggle, void *data)
 {
-	purple_prefs_set_bool("/purple/gtk/sound/mute", GTK_CHECK_MENU_ITEM(toggle)->active);
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/sound/mute", GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
 static void
 docklet_toggle_blink(GtkWidget *toggle, void *data)
 {
-	purple_prefs_set_bool("/purple/gtk/docklet/blink", GTK_CHECK_MENU_ITEM(toggle)->active);
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/docklet/blink", GTK_CHECK_MENU_ITEM(toggle)->active);
 }
 
 static void
@@ -493,7 +493,7 @@ docklet_menu() {
 	menu = gtk_menu_new();
 
 	menuitem = gtk_check_menu_item_new_with_label(_("Show Buddy List"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool("/purple/gtk/blist/list_visible"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/list_visible"));
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blist), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
@@ -534,14 +534,14 @@ docklet_menu() {
 	pidgin_separator(menu);
 
 	menuitem = gtk_check_menu_item_new_with_label(_("Mute Sounds"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool("/purple/gtk/sound/mute"));
-	if (!strcmp(purple_prefs_get_string("/purple/gtk/sound/method"), "none"))
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/sound/mute"));
+	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method"), "none"))
 		gtk_widget_set_sensitive(GTK_WIDGET(menuitem), FALSE);
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_mute), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
 	menuitem = gtk_check_menu_item_new_with_label(_("Blink on new message"));
-	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool("/purple/gtk/docklet/blink"));
+	gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(menuitem), purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink"));
 	g_signal_connect(G_OBJECT(menuitem), "toggled", G_CALLBACK(docklet_toggle_blink), NULL);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
 
@@ -591,7 +591,7 @@ void
 pidgin_docklet_embedded()
 {
 	if (!visibility_manager
-	    && strcmp(purple_prefs_get_string("/purple/gtk/docklet/show"), "pending")) {
+	    && strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "pending")) {
 		pidgin_blist_visibility_manager_add();
 		visibility_manager = TRUE;
 	}
@@ -639,14 +639,14 @@ pidgin_docklet_init()
 	void *accounts_handle = purple_accounts_get_handle();
 	void *docklet_handle = pidgin_docklet_get_handle();
 
-	purple_prefs_add_none("/purple/gtk/docklet");
-	purple_prefs_add_bool("/purple/gtk/docklet/blink", FALSE);
-	purple_prefs_add_string("/purple/gtk/docklet/show", "always");
-	purple_prefs_connect_callback(docklet_handle, "/purple/gtk/docklet/show",
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/docklet");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/blink", FALSE);
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/docklet/show", "always");
+	purple_prefs_connect_callback(docklet_handle, PIDGIN_PREFS_ROOT "/docklet/show",
 				    docklet_show_pref_changed_cb, NULL);
 
 	docklet_ui_init();
-	if (!strcmp(purple_prefs_get_string("/purple/gtk/docklet/show"), "always") && ui_ops && ui_ops->create)
+	if (!strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/docklet/show"), "always") && ui_ops && ui_ops->create)
 		ui_ops->create();
 
 	purple_signal_connect(conn_handle, "signed-on",

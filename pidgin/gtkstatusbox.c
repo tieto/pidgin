@@ -249,7 +249,7 @@ icon_box_press_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *box
 		menu_item = pidgin_new_item_from_stock(box->icon_box_menu, _("Remove"), GTK_STOCK_REMOVE,
 						     G_CALLBACK(remove_buddy_icon_cb),
 						     box, 0, 0, NULL);
-		if (purple_prefs_get_path("/purple/gtk/accounts/buddyicon") == NULL)
+		if (purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon") == NULL)
 			gtk_widget_set_sensitive(menu_item, FALSE);
 
 		gtk_menu_popup(GTK_MENU(box->icon_box_menu), NULL, NULL, NULL, NULL,
@@ -379,7 +379,7 @@ setup_icon_box(PidginStatusBox *status_box)
 	}
 	else
 	{
-		pidgin_status_box_set_buddy_icon(status_box, purple_prefs_get_path("/purple/gtk/accounts/buddyicon"));
+		pidgin_status_box_set_buddy_icon(status_box, purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon"));
 	}
 
 	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
@@ -1496,7 +1496,7 @@ remove_buddy_icon_cb(GtkWidget *w, PidginStatusBox *box)
 {
 	if (box->account == NULL)
 		/* The pref-connect callback does the actual work */
-		purple_prefs_set_path("/purple/gtk/accounts/buddyicon", NULL);
+		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon", NULL);
 	else
 		buddy_icon_set_cb(NULL, box);
 
@@ -1511,7 +1511,7 @@ icon_choose_cb(const char *filename, gpointer data)
 	if (filename) {
 		if (box->account == NULL)
 			/* The pref-connect callback does the actual work */
-			purple_prefs_set_path("/purple/gtk/accounts/buddyicon", filename);
+			purple_prefs_set_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon", filename);
 		else
 			buddy_icon_set_cb(filename, box);
 	}
@@ -1732,7 +1732,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	g_signal_connect_swapped(G_OBJECT(status_box->imhtml), "message_send", G_CALLBACK(remove_typing_cb), status_box);
 	gtk_imhtml_set_editable(GTK_IMHTML(status_box->imhtml), TRUE);
 #ifdef USE_GTKSPELL
-	if (purple_prefs_get_bool("/purple/gtk/conversations/spellcheck"))
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
 		pidgin_setup_gtkspell(GTK_TEXT_VIEW(status_box->imhtml));
 #endif
 	gtk_widget_set_parent(status_box->vbox, GTK_WIDGET(status_box));
@@ -1771,9 +1771,9 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 						PURPLE_CALLBACK(account_status_changed_cb),
 						status_box);
 
-	purple_prefs_connect_callback(status_box, "/purple/gtk/conversations/spellcheck",
+	purple_prefs_connect_callback(status_box, PIDGIN_PREFS_ROOT "/conversations/spellcheck",
 								spellcheck_prefs_cb, status_box);
-	purple_prefs_connect_callback(status_box, "/purple/gtk/accounts/buddyicon",
+	purple_prefs_connect_callback(status_box, PIDGIN_PREFS_ROOT "/accounts/buddyicon",
 	                            update_buddyicon_cb, status_box);
 	purple_signal_connect(purple_get_core(), "uri-handler", status_box,
 					PURPLE_CALLBACK(statusbox_uri_handler), status_box);

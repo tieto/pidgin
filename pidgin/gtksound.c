@@ -126,7 +126,7 @@ play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 		has_focus = purple_conversation_has_focus(conv);
 
 		if (!gtkconv->make_sound ||
-			(has_focus && !purple_prefs_get_bool("/purple/gtk/sound/conv_focus")))
+			(has_focus && !purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/sound/conv_focus")))
 		{
 			return;
 		}
@@ -273,36 +273,36 @@ pidgin_sound_init(void)
 						gtk_sound_handle, PURPLE_CALLBACK(account_signon_cb),
 						NULL);
 
-	purple_prefs_add_none("/purple/gtk/sound");
-	purple_prefs_add_none("/purple/gtk/sound/enabled");
-	purple_prefs_add_none("/purple/gtk/sound/file");
-	purple_prefs_add_bool("/purple/gtk/sound/enabled/login", TRUE);
-	purple_prefs_add_path("/purple/gtk/sound/file/login", "");
-	purple_prefs_add_bool("/purple/gtk/sound/enabled/logout", TRUE);
-	purple_prefs_add_path("/purple/gtk/sound/file/logout", "");
-	purple_prefs_add_bool("/purple/gtk/sound/enabled/im_recv", TRUE);
-	purple_prefs_add_path("/purple/gtk/sound/file/im_recv", "");
-	purple_prefs_add_bool("/purple/gtk/sound/enabled/first_im_recv", FALSE);
-	purple_prefs_add_path("/purple/gtk/sound/file/first_im_recv", "");
-	purple_prefs_add_bool("/purple/gtk/sound/enabled/send_im", TRUE);
-	purple_prefs_add_path("/purple/gtk/sound/file/send_im", "");
-	purple_prefs_add_bool("/purple/gtk/sound/enabled/join_chat", FALSE);
-	purple_prefs_add_path("/purple/gtk/sound/file/join_chat", "");
-	purple_prefs_add_bool("/purple/gtk/sound/enabled/left_chat", FALSE);
-	purple_prefs_add_path("/purple/gtk/sound/file/left_chat", "");
-	purple_prefs_add_bool("/purple/gtk/sound/enabled/send_chat_msg", FALSE);
-	purple_prefs_add_path("/purple/gtk/sound/file/send_chat_msg", "");
-	purple_prefs_add_bool("/purple/gtk/sound/enabled/chat_msg_recv", FALSE);
-	purple_prefs_add_path("/purple/gtk/sound/file/chat_msg_recv", "");
-	purple_prefs_add_bool("/purple/gtk/sound/enabled/nick_said", FALSE);
-	purple_prefs_add_path("/purple/gtk/sound/file/nick_said", "");
-	purple_prefs_add_bool("/purple/gtk/sound/enabled/pounce_default", TRUE);
-	purple_prefs_add_path("/purple/gtk/sound/file/pounce_default", "");
-	purple_prefs_add_bool("/purple/gtk/sound/conv_focus", TRUE);
-	purple_prefs_add_bool("/purple/gtk/sound/mute", FALSE);
-	purple_prefs_add_path("/purple/gtk/sound/command", "");
-	purple_prefs_add_string("/purple/gtk/sound/method", "automatic");
-	purple_prefs_add_int("/purple/gtk/sound/volume", 50);
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/sound");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/sound/enabled");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/sound/file");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/login", TRUE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/login", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/logout", TRUE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/logout", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/im_recv", TRUE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/im_recv", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/first_im_recv", FALSE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/first_im_recv", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/send_im", TRUE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/send_im", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/join_chat", FALSE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/join_chat", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/left_chat", FALSE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/left_chat", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/send_chat_msg", FALSE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/send_chat_msg", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/chat_msg_recv", FALSE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/chat_msg_recv", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/nick_said", FALSE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/nick_said", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/pounce_default", TRUE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/pounce_default", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/conv_focus", TRUE);
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/mute", FALSE);
+	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/command", "");
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/sound/method", "automatic");
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/sound/volume", 50);
 
 #ifdef USE_GSTREAMER
 	purple_debug_info("sound", "Initializing sound output drivers.\n");
@@ -397,10 +397,10 @@ pidgin_sound_play_file(const char *filename)
 	GstBus *bus = NULL;
 #endif
 
-	if (purple_prefs_get_bool("/purple/gtk/sound/mute"))
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/sound/mute"))
 		return;
 
-	method = purple_prefs_get_string("/purple/gtk/sound/method");
+	method = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method");
 
 	if (!strcmp(method, "none")) {
 		return;
@@ -420,7 +420,7 @@ pidgin_sound_play_file(const char *filename)
 		char *command;
 		GError *error = NULL;
 
-		sound_cmd = purple_prefs_get_path("/purple/gtk/sound/command");
+		sound_cmd = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/sound/command");
 
 		if (!sound_cmd || *sound_cmd == '\0') {
 			purple_debug_error("gtksound",
@@ -445,7 +445,7 @@ pidgin_sound_play_file(const char *filename)
 #ifdef USE_GSTREAMER
 	if (gst_init_failed)  /* Perhaps do gdk_beep instead? */
 		return;
-	volume = (float)(CLAMP(purple_prefs_get_int("/purple/gtk/sound/volume"),0,100)) / 50;
+	volume = (float)(CLAMP(purple_prefs_get_int(PIDGIN_PREFS_ROOT "/sound/volume"),0,100)) / 50;
 	if (!strcmp(method, "automatic")) {
 		if (purple_running_gnome()) {
 			sink = gst_element_factory_make("gconfaudiosink", "sink");
@@ -520,9 +520,9 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 		return;
 	}
 
-	enable_pref = g_strdup_printf("/purple/gtk/sound/enabled/%s",
+	enable_pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/enabled/%s",
 			sounds[event].pref);
-	file_pref = g_strdup_printf("/purple/gtk/sound/file/%s", sounds[event].pref);
+	file_pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s", sounds[event].pref);
 
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
 	if (purple_prefs_get_bool(enable_pref)) {

@@ -742,7 +742,7 @@ int main(int argc, char *argv[])
 	pidgin_prefs_update_old();
 
 	/* load plugins we had when we quit */
-	purple_plugins_load_saved("/purple/gtk/plugins/loaded");
+	purple_plugins_load_saved(PIDGIN_PREFS_ROOT "/plugins/loaded");
 	pidgin_docklet_init();
 
 	/* TODO: Move pounces loading into purple_pounces_init() */
@@ -784,7 +784,7 @@ int main(int argc, char *argv[])
 	 */
 	purple_blist_show();
 
-	if (purple_prefs_get_bool("/purple/gtk/debug/enabled"))
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"))
 		pidgin_debug_window_show();
 
 	if (opt_login) {

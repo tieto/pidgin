@@ -332,15 +332,15 @@ save_pounce_cb(GtkWidget *w, PidginPounceDialog *dialog)
 									 "reason", reason);
 
 	/* Set the defaults for next time. */
-	purple_prefs_set_bool("/purple/gtk/pounces/default_actions/open-window",
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/open-window",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->open_win)));
-	purple_prefs_set_bool("/purple/gtk/pounces/default_actions/popup-notify",
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/popup-notify",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->popup)));
-	purple_prefs_set_bool("/purple/gtk/pounces/default_actions/send-message",
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/send-message",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->send_msg)));
-	purple_prefs_set_bool("/purple/gtk/pounces/default_actions/execute-command",
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/execute-command",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->exec_cmd)));
-	purple_prefs_set_bool("/purple/gtk/pounces/default_actions/play-sound",
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/play-sound",
 		gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->play_sound)));
 
 	purple_pounce_set_save(dialog->pounce,
@@ -964,15 +964,15 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 		}
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->open_win),
-			purple_prefs_get_bool("/purple/gtk/pounces/default_actions/open-window"));
+			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/open-window"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->popup),
-			purple_prefs_get_bool("/purple/gtk/pounces/default_actions/popup-notify"));
+			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/popup-notify"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->send_msg),
-			purple_prefs_get_bool("/purple/gtk/pounces/default_actions/send-message"));
+			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/send-message"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->exec_cmd),
-			purple_prefs_get_bool("/purple/gtk/pounces/default_actions/execute-command"));
+			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/execute-command"));
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->play_sound),
-			purple_prefs_get_bool("/purple/gtk/pounces/default_actions/play-sound"));
+			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/play-sound"));
 	}
 
 	gtk_widget_show_all(vbox2);
@@ -983,8 +983,8 @@ static gboolean
 pounces_manager_configure_cb(GtkWidget *widget, GdkEventConfigure *event, PouncesManager *dialog)
 {
 	if (GTK_WIDGET_VISIBLE(widget)) {
-		purple_prefs_set_int("/purple/gtk/pounces/dialog/width",  event->width);
-		purple_prefs_set_int("/purple/gtk/pounces/dialog/height", event->height);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/pounces/dialog/width",  event->width);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/pounces/dialog/height", event->height);
 	}
 
 	return FALSE;
@@ -1316,8 +1316,8 @@ pidgin_pounces_manager_show(void)
 
 	pounces_manager = dialog = g_new0(PouncesManager, 1);
 
-	width  = purple_prefs_get_int("/purple/gtk/pounces/dialog/width");
-	height = purple_prefs_get_int("/purple/gtk/pounces/dialog/height");
+	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/pounces/dialog/width");
+	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/pounces/dialog/height");
 
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
@@ -1641,21 +1641,21 @@ pidgin_pounces_init(void)
 	purple_pounces_register_handler(PIDGIN_UI, pounce_cb, new_pounce,
 								  free_pounce);
 
-	purple_prefs_add_none("/purple/gtk/pounces");
-	purple_prefs_add_none("/purple/gtk/pounces/default_actions");
-	purple_prefs_add_bool("/purple/gtk/pounces/default_actions/open-window",
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/pounces");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/pounces/default_actions");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/open-window",
 						FALSE);
-	purple_prefs_add_bool("/purple/gtk/pounces/default_actions/popup-notify",
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/popup-notify",
 						TRUE);
-	purple_prefs_add_bool("/purple/gtk/pounces/default_actions/send-message",
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/send-message",
 						FALSE);
-	purple_prefs_add_bool("/purple/gtk/pounces/default_actions/execute-command",
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/execute-command",
 						FALSE);
-	purple_prefs_add_bool("/purple/gtk/pounces/default_actions/play-sound",
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/pounces/default_actions/play-sound",
 						FALSE);
-	purple_prefs_add_none("/purple/gtk/pounces/dialog");
-	purple_prefs_add_int("/purple/gtk/pounces/dialog/width",  520);
-	purple_prefs_add_int("/purple/gtk/pounces/dialog/height", 321);
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/pounces/dialog");
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/pounces/dialog/width",  520);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/pounces/dialog/height", 321);
 
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",
 						pidgin_pounces_get_handle(),

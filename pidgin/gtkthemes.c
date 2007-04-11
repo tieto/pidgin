@@ -318,7 +318,7 @@ void pidginthemes_init()
 {
 	GSList *l;
 	const char *current_theme =
-		purple_prefs_get_string("/purple/gtk/smileys/theme");
+		purple_prefs_get_string(PIDGIN_PREFS_ROOT "/smileys/theme");
 
 	pidginthemes_smiley_theme_probe();
 

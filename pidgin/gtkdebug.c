@@ -96,7 +96,7 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 		g_source_remove(debug_win->timer);
 
 		text = gtk_entry_get_text(GTK_ENTRY(debug_win->expression));
-		purple_prefs_set_string("/purple/gtk/debug/regex", text);
+		purple_prefs_set_string(PIDGIN_PREFS_ROOT "/debug/regex", text);
 	}
 
 	regfree(&debug_win->regex);
@@ -108,7 +108,7 @@ debug_window_destroy(GtkWidget *w, GdkEvent *event, void *unused)
 	g_free(debug_win);
 	debug_win = NULL;
 
-	purple_prefs_set_bool("/purple/gtk/debug/enabled", FALSE);
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/debug/enabled", FALSE);
 
 	return FALSE;
 }
@@ -117,8 +117,8 @@ static gboolean
 configure_cb(GtkWidget *w, GdkEventConfigure *event, DebugWindow *win)
 {
 	if (GTK_WIDGET_VISIBLE(w)) {
-		purple_prefs_set_int("/purple/gtk/debug/width",  event->width);
-		purple_prefs_set_int("/purple/gtk/debug/height", event->height);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/debug/width",  event->width);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/debug/height", event->height);
 	}
 
 	return FALSE;
@@ -384,7 +384,7 @@ regex_filter_all_cb(GtkTreeModel *m, GtkTreePath *p, GtkTreeIter *iter,
 
 	gtk_tree_model_get(m, iter, 0, &text, 1, &level, -1);
 
-	if (level >= purple_prefs_get_int("/purple/gtk/debug/filterlevel"))
+	if (level >= purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"))
 		regex_match(win, text);
 
 	g_free(text);
@@ -412,7 +412,7 @@ regex_show_all_cb(GtkTreeModel *m, GtkTreePath *p, GtkTreeIter *iter,
 	PurpleDebugLevel level;
 
 	gtk_tree_model_get(m, iter, 0, &text, 1, &level, -1);
-	if (level >= purple_prefs_get_int("/purple/gtk/debug/filterlevel"))
+	if (level >= purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"))
 		gtk_imhtml_append_text(GTK_IMHTML(win->text), text, 0);
 	g_free(text);
 
@@ -533,7 +533,7 @@ regex_row_changed_cb(GtkTreeModel *model, GtkTreePath *path,
 
 	gtk_tree_model_get(model, iter, 0, &text, 1, &level, -1);
 
-	if (level >= purple_prefs_get_int("/purple/gtk/debug/filterlevel")) {
+	if (level >= purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel")) {
 		if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(win->filter))) {
 			regex_match(win, text);
 		} else {
@@ -549,7 +549,7 @@ regex_timer_cb(DebugWindow *win) {
 	const gchar *text;
 
 	text = gtk_entry_get_text(GTK_ENTRY(win->expression));
-	purple_prefs_set_string("/purple/gtk/debug/regex", text);
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/debug/regex", text);
 
 	win->timer = 0;
 
@@ -593,10 +593,10 @@ regex_popup_cb(GtkEntry *entry, GtkWidget *menu, DebugWindow *win) {
 	pidgin_separator(menu);
 	pidgin_new_check_item(menu, _("Invert"),
 						G_CALLBACK(regex_menu_cb),
-						"/purple/gtk/debug/invert", win->invert);
+						PIDGIN_PREFS_ROOT "/debug/invert", win->invert);
 	pidgin_new_check_item(menu, _("Highlight matches"),
 						G_CALLBACK(regex_menu_cb),
-						"/purple/gtk/debug/highlight", win->highlight);
+						PIDGIN_PREFS_ROOT "/debug/highlight", win->highlight);
 }
 
 static void
@@ -605,7 +605,7 @@ regex_filter_toggled_cb(GtkToggleButton *button, DebugWindow *win) {
 
 	active = gtk_toggle_button_get_active(button);
 
-	purple_prefs_set_bool("/purple/gtk/debug/filter", active);
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/debug/filter", active);
 
 	if(!GTK_IS_IMHTML(win->text))
 		return;
@@ -633,7 +633,7 @@ filter_level_pref_changed(const char *name, PurplePrefType type, gconstpointer v
 static void
 filter_level_changed_cb(GtkWidget *combo, gpointer null)
 {
-	purple_prefs_set_int("/purple/gtk/debug/filterlevel",
+	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/debug/filterlevel",
 				gtk_combo_box_get_active(GTK_COMBO_BOX(combo)));
 }
 
@@ -647,7 +647,7 @@ static void
 toolbar_icon_pref_changed(GtkWidget *item, GtkWidget *toolbar)
 {
 	int style = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(item), "user_data"));
-	purple_prefs_set_int("/purple/gtk/debug/style", style);
+	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/debug/style", style);
 }
 
 static gboolean
@@ -671,7 +671,7 @@ toolbar_context(GtkWidget *toolbar, GdkEventButton *event, gpointer null)
 		item = gtk_check_menu_item_new_with_mnemonic(text[i]);
 		g_object_set_data(G_OBJECT(item), "user_data", GINT_TO_POINTER(value[i]));
 		g_signal_connect(G_OBJECT(item), "activate", G_CALLBACK(toolbar_icon_pref_changed), toolbar);
-		if (value[i] == purple_prefs_get_int("/purple/gtk/debug/style"))
+		if (value[i] == purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/style"))
 			gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(item), TRUE);
 		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
 	}
@@ -696,8 +696,8 @@ debug_window_new(void)
 
 	win = g_new0(DebugWindow, 1);
 
-	width  = purple_prefs_get_int("/purple/gtk/debug/width");
-	height = purple_prefs_get_int("/purple/gtk/debug/height");
+	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/width");
+	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/height");
 
 	PIDGIN_DIALOG(win->window);
 	purple_debug_info("gtkdebug", "Setting dimensions to %d, %d\n",
@@ -732,7 +732,7 @@ debug_window_new(void)
 	vbox = gtk_vbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(win->window), vbox);
 
-	if (purple_prefs_get_bool("/purple/gtk/debug/toolbar")) {
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/toolbar")) {
 		/* Setup our top button bar thingie. */
 		toolbar = gtk_toolbar_new();
 		gtk_toolbar_set_tooltips(GTK_TOOLBAR(toolbar), TRUE);
@@ -742,8 +742,8 @@ debug_window_new(void)
 		g_signal_connect(G_OBJECT(toolbar), "button-press-event", G_CALLBACK(toolbar_context), win);
 
 		gtk_toolbar_set_style(GTK_TOOLBAR(toolbar),
-		                      purple_prefs_get_int("/purple/gtk/debug/style"));
-		purple_prefs_connect_callback(handle, "/purple/gtk/debug/style",
+		                      purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/style"));
+		purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/debug/style",
 	                                toolbar_style_pref_changed_cb, toolbar);
 		gtk_toolbar_set_icon_size(GTK_TOOLBAR(toolbar),
 		                          GTK_ICON_SIZE_SMALL_TOOLBAR);
@@ -810,8 +810,8 @@ debug_window_new(void)
 		 */
 		gtk_widget_set_sensitive(win->filter, FALSE);
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(win->filter),
-									 purple_prefs_get_bool("/purple/gtk/debug/filter"));
-		purple_prefs_connect_callback(handle, "/purple/gtk/debug/filter",
+									 purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/filter"));
+		purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/debug/filter",
 									regex_pref_filter_cb, win);
 
 		/* regex entry */
@@ -826,21 +826,21 @@ debug_window_new(void)
 		g_signal_connect(G_OBJECT(win->expression), "changed",
 						 G_CALLBACK(regex_changed_cb), win);
 		gtk_entry_set_text(GTK_ENTRY(win->expression),
-						   purple_prefs_get_string("/purple/gtk/debug/regex"));
+						   purple_prefs_get_string(PIDGIN_PREFS_ROOT "/debug/regex"));
 		g_signal_connect(G_OBJECT(win->expression), "populate-popup",
 						 G_CALLBACK(regex_popup_cb), win);
 		g_signal_connect(G_OBJECT(win->expression), "key-release-event",
 						 G_CALLBACK(regex_key_release_cb), win);
-		purple_prefs_connect_callback(handle, "/purple/gtk/debug/regex",
+		purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/debug/regex",
 									regex_pref_expression_cb, win);
 
 		/* connect the rest of our pref callbacks */
-		win->invert = purple_prefs_get_bool("/purple/gtk/debug/invert");
-		purple_prefs_connect_callback(handle, "/purple/gtk/debug/invert",
+		win->invert = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/invert");
+		purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/debug/invert",
 									regex_pref_invert_cb, win);
 
-		win->highlight = purple_prefs_get_bool("/purple/gtk/debug/highlight");
-		purple_prefs_connect_callback(handle, "/purple/gtk/debug/highlight",
+		win->highlight = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/highlight");
+		purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/debug/highlight",
 									regex_pref_highlight_cb, win);
 
 #endif /* HAVE_REGEX_H */
@@ -864,9 +864,9 @@ debug_window_new(void)
 		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Error "));
 		gtk_combo_box_append_text(GTK_COMBO_BOX(win->filterlevel), _("Fatal Error"));
 		gtk_combo_box_set_active(GTK_COMBO_BOX(win->filterlevel),
-					purple_prefs_get_int("/purple/gtk/debug/filterlevel"));
+					purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"));
 #ifdef HAVE_REGEX_H
-		purple_prefs_connect_callback(handle, "/purple/gtk/debug/filterlevel",
+		purple_prefs_connect_callback(handle, PIDGIN_PREFS_ROOT "/debug/filterlevel",
 						filter_level_pref_changed, win);
 #endif
 		g_signal_connect(G_OBJECT(win->filterlevel), "changed",
@@ -966,26 +966,26 @@ pidgin_debug_init(void)
 	 *       configure event, which overrides the width and height! :P
 	 */
 
-	purple_prefs_add_none("/purple/gtk/debug");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/debug");
 
 	/* Controls printing to the debug window */
-	purple_prefs_add_bool("/purple/gtk/debug/enabled", FALSE);
-	purple_prefs_add_int("/purple/gtk/debug/filterlevel", PURPLE_DEBUG_ALL);
-	purple_prefs_add_int("/purple/gtk/debug/style", GTK_TOOLBAR_BOTH_HORIZ);
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/debug/enabled", FALSE);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/debug/filterlevel", PURPLE_DEBUG_ALL);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/debug/style", GTK_TOOLBAR_BOTH_HORIZ);
 
-	purple_prefs_add_bool("/purple/gtk/debug/toolbar", TRUE);
-	purple_prefs_add_int("/purple/gtk/debug/width",  450);
-	purple_prefs_add_int("/purple/gtk/debug/height", 250);
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/debug/toolbar", TRUE);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/debug/width",  450);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/debug/height", 250);
 
 #ifdef HAVE_REGEX_H
-	purple_prefs_add_string("/purple/gtk/debug/regex", "");
-	purple_prefs_add_bool("/purple/gtk/debug/filter", FALSE);
-	purple_prefs_add_bool("/purple/gtk/debug/invert", FALSE);
-	purple_prefs_add_bool("/purple/gtk/debug/case_insensitive", FALSE);
-	purple_prefs_add_bool("/purple/gtk/debug/highlight", FALSE);
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/debug/regex", "");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/debug/filter", FALSE);
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/debug/invert", FALSE);
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/debug/case_insensitive", FALSE);
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/debug/highlight", FALSE);
 #endif /* HAVE_REGEX_H */
 
-	purple_prefs_connect_callback(NULL, "/purple/gtk/debug/enabled",
+	purple_prefs_connect_callback(NULL, PIDGIN_PREFS_ROOT "/debug/enabled",
 								debug_enabled_cb, NULL);
 
 #define REGISTER_G_LOG_HANDLER(name) \
@@ -1023,7 +1023,7 @@ pidgin_debug_window_show(void)
 
 	gtk_widget_show(debug_win->window);
 
-	purple_prefs_set_bool("/purple/gtk/debug/enabled", TRUE);
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/debug/enabled", TRUE);
 }
 
 void
@@ -1047,7 +1047,7 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 	gchar *esc_s, *cat_s, *tmp, *s;
 
 	if (debug_win == NULL ||
-		!purple_prefs_get_bool("/purple/gtk/debug/enabled"))
+		!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"))
 	{
 		return;
 	}
@@ -1097,7 +1097,7 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 	gtk_list_store_append(debug_win->store, &iter);
 	gtk_list_store_set(debug_win->store, &iter, 0, s, 1, level, -1);
 #else /* HAVE_REGEX_H */
-	if(!debug_win->paused && level >= purple_prefs_get_int("/purple/gtk/debug/filterlevel"))
+	if(!debug_win->paused && level >= purple_prefs_get_int(PIDGIN_PREFS_ROOT "/debug/filterlevel"))
 		gtk_imhtml_append_text(GTK_IMHTML(debug_win->text), s, 0);
 #endif /* !HAVE_REGEX_H */
 
@@ -1108,7 +1108,7 @@ static gboolean
 pidgin_debug_is_enabled(PurpleDebugLevel level, const char *category)
 {
 	return (debug_win != NULL &&
-			purple_prefs_get_bool("/purple/gtk/debug/enabled"));
+			purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"));
 }
 
 static PurpleDebugUiOps ops =

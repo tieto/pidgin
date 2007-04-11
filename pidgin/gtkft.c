@@ -418,7 +418,7 @@ static void
 toggle_keep_open_cb(GtkWidget *w, PidginXferDialog *dialog)
 {
 	dialog->keep_open = !dialog->keep_open;
-	purple_prefs_set_bool("/purple/gtk/filetransfer/keep_open",
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/filetransfer/keep_open",
 						dialog->keep_open);
 }
 
@@ -426,7 +426,7 @@ static void
 toggle_clear_finished_cb(GtkWidget *w, PidginXferDialog *dialog)
 {
 	dialog->auto_clear = !dialog->auto_clear;
-	purple_prefs_set_bool("/purple/gtk/filetransfer/clear_finished",
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/filetransfer/clear_finished",
 						dialog->auto_clear);
 }
 
@@ -753,9 +753,9 @@ pidginxfer_dialog_new(void)
 
 	dialog = g_new0(PidginXferDialog, 1);
 	dialog->keep_open =
-		purple_prefs_get_bool("/purple/gtk/filetransfer/keep_open");
+		purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/filetransfer/keep_open");
 	dialog->auto_clear =
-		purple_prefs_get_bool("/purple/gtk/filetransfer/clear_finished");
+		purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/filetransfer/clear_finished");
 
 	/* Create the window. */
 	dialog->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -1231,9 +1231,9 @@ static PurpleXferUiOps ops =
 void
 pidgin_xfers_init(void)
 {
-	purple_prefs_add_none("/purple/gtk/filetransfer");
-	purple_prefs_add_bool("/purple/gtk/filetransfer/clear_finished", TRUE);
-	purple_prefs_add_bool("/purple/gtk/filetransfer/keep_open", FALSE);
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/filetransfer");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/filetransfer/clear_finished", TRUE);
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/filetransfer/keep_open", FALSE);
 }
 
 void

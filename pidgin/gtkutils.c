@@ -161,7 +161,7 @@ pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **tool
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml), GTK_IMHTML_ALL ^ GTK_IMHTML_IMAGE);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);
 #ifdef USE_GTKSPELL
-	if (editable && purple_prefs_get_bool("/purple/gtk/conversations/spellcheck"))
+	if (editable && purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/spellcheck"))
 		pidgin_setup_gtkspell(GTK_TEXT_VIEW(imhtml));
 #endif
 	gtk_widget_show(imhtml);
@@ -2209,7 +2209,7 @@ icon_filesel_choose_cb(GtkWidget *widget, gint response, struct _icon_chooser *d
 	filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog->icon_filesel));
 	current_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog->icon_filesel));
 	if (current_folder != NULL) {
-		purple_prefs_set_path("/purple/gtk/filelocations/last_icon_folder", current_folder);
+		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/filelocations/last_icon_folder", current_folder);
 		g_free(current_folder);
 	}
 
@@ -2232,7 +2232,7 @@ icon_filesel_choose_cb(GtkWidget *w, struct _icon_chooser *dialog)
 
 	current_folder = g_path_get_dirname(filename);
 	if (current_folder != NULL) {
-		purple_prefs_set_path("/purple/gtk/filelocations/last_icon_folder", current_folder);
+		purple_prefs_set_path(PIDGIN_PREFS_ROOT "/filelocations/last_icon_folder", current_folder);
 		g_free(current_folder);
 	}
 
@@ -2329,7 +2329,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 		return NULL;
 	}
 
-	current_folder = purple_prefs_get_path("/purple/gtk/filelocations/last_icon_folder");
+	current_folder = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/filelocations/last_icon_folder");
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 
 	dialog->icon_filesel = gtk_file_chooser_dialog_new(_("Buddy Icon"),
@@ -2940,7 +2940,7 @@ void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
 		   primary_esc, secondary ? "\n" : "", secondary?secondary_esc:"");
 	g_free(primary_esc);
 	label = gtk_label_new(NULL);
-	gtk_widget_set_size_request(label, purple_prefs_get_int("/purple/gtk/blist/width")-25,-1);
+	gtk_widget_set_size_request(label, purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25,-1);
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
         gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
         gtk_misc_set_alignment(GTK_MISC(label), 0, 0);

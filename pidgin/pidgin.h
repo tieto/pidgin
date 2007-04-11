@@ -42,6 +42,9 @@
 /* leave this as gtk-gaim until we have a decent way to migrate UI-prefs */
 #define PIDGIN_UI "gtk-gaim"
 
+/* change this only when we have a sane upgrade path for old prefs */
+#define PIDGIN_PREFS_ROOT "/gaim/gtk"
+
 #ifndef _WIN32
 # define PIDGIN_ALERT_TITLE ""
 #else

@@ -521,8 +521,8 @@ configure_cb(GtkWidget *widget, GdkEventConfigure *event, StatusWindow *dialog)
 {
 	if (GTK_WIDGET_VISIBLE(widget))
 	{
-		purple_prefs_set_int("/purple/gtk/status/dialog/width",  event->width);
-		purple_prefs_set_int("/purple/gtk/status/dialog/height", event->height);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/status/dialog/width",  event->width);
+		purple_prefs_set_int(PIDGIN_PREFS_ROOT "/status/dialog/height", event->height);
 	}
 
 	return FALSE;
@@ -547,8 +547,8 @@ pidgin_status_window_show(void)
 
 	status_window = dialog = g_new0(StatusWindow, 1);
 
-	width  = purple_prefs_get_int("/purple/gtk/status/dialog/width");
-	height = purple_prefs_get_int("/purple/gtk/status/dialog/height");
+	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/status/dialog/width");
+	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/status/dialog/height");
 
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
@@ -1768,10 +1768,10 @@ pidgin_status_get_handle(void)
 void
 pidgin_status_init(void)
 {
-	purple_prefs_add_none("/purple/gtk/status");
-	purple_prefs_add_none("/purple/gtk/status/dialog");
-	purple_prefs_add_int("/purple/gtk/status/dialog/width",  550);
-	purple_prefs_add_int("/purple/gtk/status/dialog/height", 250);
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/status");
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/status/dialog");
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/status/dialog/width",  550);
+	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/status/dialog/height", 250);
 }
 
 void
