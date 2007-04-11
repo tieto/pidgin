@@ -1785,11 +1785,13 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	else
 	{
 		PurpleBuddy *b = purple_find_buddy(account, info->sn);
-		PurpleStatus *status;
-		const char *active_status_id;
+		PurpleStatus *status = NULL;
+		const char *active_status_id = NULL;
 
-		status = purple_presence_get_active_status(purple_buddy_get_presence(b));
-		active_status_id = purple_status_get_id(status);
+		if (b != NULL) {
+			status = purple_presence_get_active_status(purple_buddy_get_presence(b));
+			active_status_id = purple_status_get_id(status);
+		}
 
 		if (!active_status_id || strcmp(active_status_id, status_id))
 			purple_prpl_got_user_status(account, info->sn, status_id, NULL);
