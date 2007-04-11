@@ -2205,7 +2205,7 @@ static void accept_file_dialog(struct ft_request *ft) {
 			index++;
 		}
 		g_snprintf(buf, sizeof(buf), 
-				ngettext(
+				dngettext(PACKAGE, 
 				"%s requests %s to accept %d file: %s (%.2f %s)%s%s",
 				"%s requests %s to accept %d files: %s (%.2f %s)%s%s",
 				ft->files),
