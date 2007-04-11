@@ -168,7 +168,7 @@ docklet_update_status()
 		g_list_free(convs);
 
 	} else if (ui_ops->set_tooltip) {
-		ui_ops->set_tooltip(NULL);
+		ui_ops->set_tooltip(PIDGIN_NAME);
 	}
 
 	for(l = purple_accounts_get_all(); l != NULL; l = l->next) {
