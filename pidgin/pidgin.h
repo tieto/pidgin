@@ -39,7 +39,8 @@
 /**
  * Our UI's identifier.
  */
-#define PIDGIN_UI "pidgin"
+/* leave this as gtk-gaim until we have a decent way to migrate UI-prefs */
+#define PIDGIN_UI "gtk-gaim"
 
 #ifndef _WIN32
 # define PIDGIN_ALERT_TITLE ""
