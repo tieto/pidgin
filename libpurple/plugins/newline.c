@@ -55,22 +55,22 @@ plugin_load(PurplePlugin *plugin)
 
 static PurplePluginInfo info =
 {
-	PURPLE_PLUGIN_MAGIC,								/**< magic			*/
-	PURPLE_MAJOR_VERSION,								/**< major version	*/
-	PURPLE_MINOR_VERSION,								/**< minor version	*/
+	PURPLE_PLUGIN_MAGIC,							/**< magic			*/
+	PURPLE_MAJOR_VERSION,							/**< major version	*/
+	PURPLE_MINOR_VERSION,							/**< minor version	*/
 	PURPLE_PLUGIN_STANDARD,							/**< type			*/
 	NULL,											/**< ui_requirement	*/
 	0,												/**< flags			*/
 	NULL,											/**< dependencies	*/
-	PURPLE_PRIORITY_DEFAULT,							/**< priority		*/
+	PURPLE_PRIORITY_DEFAULT,						/**< priority		*/
 
 	"core-plugin_pack-newline",						/**< id				*/
 	N_("New Line"),									/**< name			*/
 	VERSION,										/**< version		*/
-	N_("Prepends a newline to displayed message."),	/**  summary		*/
+	N_("Prepends a newline to displayed message."),	/**< summary		*/
 	N_("Prepends a newline to messages so that the "
 	   "rest of the message appears below the "
-	   "screen name in the conversation window."),	/**  description	*/
+	   "screen name in the conversation window."),	/**< description	*/
 	"Stu Tomlinson <stu@nosnilmot.com>",			/**< author			*/
 	PURPLE_WEBSITE,									/**< homepage		*/
 
