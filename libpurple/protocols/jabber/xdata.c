@@ -200,8 +200,7 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 
 			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
 
-			if(value)
-				g_free(value);
+			g_free(value);
 		} else if(!strcmp(type, "text-multi") || !strcmp(type, "jid-multi")) {
 			GString *str = g_string_new("");
 
@@ -283,8 +282,7 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 
 			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_BOOLEAN));
 
-			if(value)
-				g_free(value);
+			g_free(value);
 		} else if(!strcmp(type, "fixed") && value) {
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
@@ -292,8 +290,7 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 			field = purple_request_field_label_new("", value);
 			purple_request_field_group_add_field(group, field);
 
-			if(value)
-				g_free(value);
+			g_free(value);
 		} else if(!strcmp(type, "hidden")) {
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
@@ -305,8 +302,7 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 
 			g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
 
-			if(value)
-				g_free(value);
+			g_free(value);
 		} else { /* text-single, jid-single, and the default */
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
@@ -322,8 +318,7 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 				g_hash_table_replace(data->fields, g_strdup(var), GINT_TO_POINTER(JABBER_X_DATA_TEXT_SINGLE));
 			}
 
-			if(value)
-				g_free(value);
+			g_free(value);
 		}
 	}
 
@@ -337,10 +332,8 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 			_("OK"), G_CALLBACK(jabber_x_data_ok_cb),
 			_("Cancel"), G_CALLBACK(jabber_x_data_cancel_cb), data);
 
-	if(title)
-		g_free(title);
-	if(instructions)
-		g_free(instructions);
+	g_free(title);
+	g_free(instructions);
 
 	return handle;
 }
