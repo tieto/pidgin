@@ -252,6 +252,10 @@ nexus_login_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 		msn_session_set_error(session, MSN_ERROR_AUTH, error);
 	}
+	else if (strstr(nexus->read_buf, "HTTP/1.1 503 Service Unavailable"))
+	{
+		msn_session_set_error(session, MSN_ERROR_SERV_UNAVAILABLE, NULL);
+	}
 	else if (strstr(nexus->read_buf, "HTTP/1.1 200 OK"))
 	{
 		char *base, *c;
