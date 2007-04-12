@@ -348,6 +348,7 @@ fi
 
 %{_bindir}/pidgin
 %{_datadir}/pixmaps/pidgin
+%{_datadir}/pixmaps/pidgin.svg
 %dir %{_datadir}/sounds/pidgin
 %{_datadir}/sounds/pidgin/*
 %{_datadir}/applications/*
