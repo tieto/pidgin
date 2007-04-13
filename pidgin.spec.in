@@ -352,13 +352,13 @@ fi
 %dir %{_datadir}/sounds/pidgin
 %{_datadir}/sounds/pidgin/*
 %{_datadir}/applications/*
-%{_libdir}/libpurple.so.*
 %{_sysconfdir}/gconf/schemas/purple.schemas
 
 
 %files -f %{name}-%{version}-purpleplugins -n libpurple
 %defattr(-, root, root)
 
+%{_libdir}/libpurple.so.*
 %dir %{_libdir}/libpurple
 %attr(755, root, root) %{perl_vendorarch}/Purple.pm
 %dir %{perl_vendorarch}/auto/Purple
