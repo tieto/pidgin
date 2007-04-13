@@ -44,7 +44,7 @@ XS_FILES =		Account.xs \
 				Core.xs \
 				Debug.xs \
 				FT.xs \
-				Pidgin.xs \
+				Purple.xs \
 				ImgStore.xs \
 				Log.xs \
 				Network.xs \
