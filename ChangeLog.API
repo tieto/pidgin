@@ -360,6 +360,8 @@ version 2.0.0:
 	* gaim_gtk_blist_set_headline
 	* gaim_gtk_set_urgent
 	* GtkGaimScrollBook and its functions.
+	* purple_markup_unescape_entity()
+	* purple_markup_get_css_property()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

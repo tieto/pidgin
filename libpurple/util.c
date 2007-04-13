@@ -861,10 +861,8 @@ purple_str_to_time(const char *timestamp, gboolean utc,
  * Markup Functions
  **************************************************************************/
 
-/* Returns a NULL-terminated string after unescaping an entity
- * (eg. &amp;, &lt; &#38 etc.) starting at s. Returns NULL on failure.*/
 const char *
-purple_markup_detect_entity(const char *text, int *length)
+purple_markup_unescape_entity(const char *text, int *length)
 {
 	const char *pln;
 	int len, pound;
@@ -909,9 +907,9 @@ purple_markup_detect_entity(const char *text, int *length)
 	return pln;
 }
 
-gchar*
-purple_markup_get_css_property(const gchar	*style,
-				const gchar	*opt)
+char *
+purple_markup_get_css_property(const gchar *style,
+				const gchar *opt)
 {
 	const gchar *css_str = style;
 	const gchar *css_value_start;
@@ -919,48 +917,50 @@ purple_markup_get_css_property(const gchar	*style,
 	gchar *tmp;
 	gchar *ret;
 
-	if(!css_str)
+	if (!css_str)
 		return NULL;
 
 	/* find the CSS property */
-	while(1){
-		/* skip widespace characters */
-		while(*css_str && g_ascii_isspace(*css_str))
+	while (1)
+	{
+		/* skip whitespace characters */
+		while (*css_str && g_ascii_isspace(*css_str))
 			css_str++;
-		if(!g_ascii_isalpha(*css_str))
+		if (!g_ascii_isalpha(*css_str))
 			return NULL;
-		if(g_ascii_strncasecmp(css_str, opt, strlen(opt)))
+		if (g_ascii_strncasecmp(css_str, opt, strlen(opt)))
 		{
 			/* go to next css property positioned after the next ';' */
-			while(*css_str && *css_str != '"' && *css_str != ';')
+			while (*css_str && *css_str != '"' && *css_str != ';')
 				css_str++;
 			if(*css_str != ';')
 				return NULL;
 			css_str++;
 		}
-		else break;
+		else
+			break;
 	}
 
 	/* find the CSS value position in the string */
 	css_str += strlen(opt);
-	while(*css_str && g_ascii_isspace(*css_str))
+	while (*css_str && g_ascii_isspace(*css_str))
 		css_str++;
-	if(*css_str != ':')
+	if (*css_str != ':')
 		return NULL;
 	css_str++;
-	while(*css_str && g_ascii_isspace(*css_str))
+	while (*css_str && g_ascii_isspace(*css_str))
 		css_str++;
-	if(*css_str == '\0' || *css_str == '"' || *css_str == ';')
+	if (*css_str == '\0' || *css_str == '"' || *css_str == ';')
 		return NULL;
 
 	/* mark the CSS value */
 	css_value_start = css_str;
-	while(*css_str && *css_str != '"' && *css_str != ';')
+	while (*css_str && *css_str != '"' && *css_str != ';')
 		css_str++;
 	css_value_end = css_str - 1;
 
 	/* Removes trailing whitespace */
-	while(css_value_end > css_value_start && g_ascii_isspace(*css_value_end))
+	while (css_value_end > css_value_start && g_ascii_isspace(*css_value_end))
 		css_value_end--;
 
 	tmp = g_strndup(css_value_start, css_value_end - css_value_start + 1);
@@ -1570,7 +1570,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 			const char *pln;
 			int len;
 
-			if ((pln = purple_markup_detect_entity(c, &len)) == NULL) {
+			if ((pln = purple_markup_unescape_entity(c, &len)) == NULL) {
 				len = 1;
 				g_snprintf(buf, sizeof(buf), "%c", *c);
 				pln = buf;
@@ -1775,7 +1775,7 @@ purple_markup_strip_html(const char *str)
 			visible = TRUE;
 		}
 
-		if (str2[i] == '&' && (ent = purple_markup_detect_entity(str2 + i, &entlen)) != NULL)
+		if (str2[i] == '&' && (ent = purple_markup_unescape_entity(str2 + i, &entlen)) != NULL)
 		{
 			while (*ent)
 				str2[j++] = *ent++;
@@ -2093,7 +2093,7 @@ purple_unescape_html(const char *html) {
 			int len;
 			const char *ent;
 
-			if ((ent = purple_markup_detect_entity(c, &len)) != NULL) {
+			if ((ent = purple_markup_unescape_entity(c, &len)) != NULL) {
 				ret = g_string_append(ret, ent);
 				c += len;
 			} else if (!strncmp(c, "<br>", 4)) {

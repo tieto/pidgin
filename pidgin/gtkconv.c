@@ -4895,16 +4895,16 @@ static void pidgin_conv_calculate_newday(PidginConversation *gtkconv, time_t mti
 	gtkconv->newday = mktime(tm);
 }
 
-/* Detect string direction and encapsulate the string in a RLE/LRE/PDF unicode characters 
-   str - pointer to string (string is realocated and new pointer is returned) */
+/* Detect string direction and encapsulate the string in RLE/LRE/PDF unicode characters 
+   str - pointer to string (string is re-allocated and the pointer updated) */
 static void
 str_embed_direction_chars(char **str)
 {
 	char pre_str[4];
 	char post_str[10];
-	char* ret = g_malloc(strlen(*str)+13);
+	char *ret = g_malloc(strlen(*str)+13);
 
-	if (PANGO_DIRECTION_RTL == pango_find_base_dir(*str, strlen(*str)))
+	if (PANGO_DIRECTION_RTL == pango_find_base_dir(*str, -1))
 	{
 		g_sprintf(pre_str, "%c%c%c", 
 				0xE2, 0x80, 0xAB);	/* RLE */
@@ -4927,7 +4927,6 @@ str_embed_direction_chars(char **str)
 
 	g_free(*str);
 	*str = ret;
-	return;
 }
 
 /* Returns true if the given HTML contains RTL text */
@@ -4938,22 +4937,22 @@ html_is_rtl(const char *html)
 	const gchar *start, *end;
 	gboolean res = FALSE;
 
-	if(purple_markup_find_tag("span", html, &start, &end, &attributes)) 
+	if (purple_markup_find_tag("span", html, &start, &end, &attributes)) 
 	{
 		/* tmp is a member of attributes and is free with g_datalist_clear call */
 		const char *tmp = g_datalist_get_data(&attributes, "dir");
-		if(tmp && !g_ascii_strcasecmp(tmp, "RTL"))
+		if (tmp && !g_ascii_strcasecmp(tmp, "RTL"))
 			res = TRUE;
-		if(!res)
+		if (!res)
 		{
-			char *tmp2 = NULL;
 			tmp = g_datalist_get_data(&attributes, "style");
-			if(tmp)
-				tmp2 = purple_markup_get_css_property(tmp, "direction");
-			if(tmp2 && !g_ascii_strcasecmp(tmp2, "RTL"))
-				res = TRUE;
-			if(tmp2)
+			if (tmp)
+			{
+				char *tmp2 = purple_markup_get_css_property(tmp, "direction");
+				if (tmp2 && !g_ascii_strcasecmp(tmp2, "RTL"))
+					res = TRUE;
 				g_free(tmp2);
+			}
 
 		}
 		g_datalist_clear(&attributes);
@@ -5112,8 +5111,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 
 	/* Bi-Directional support - set timestamp direction using unicode characters */
 	is_rtl_message = html_is_rtl(message);
-	/* Enforce direction only if message is RTL - donesn't effect LTR users */
-	if(is_rtl_message)
+	/* Enforce direction only if message is RTL - doesn't effect LTR users */
+	if (is_rtl_message)
 		str_embed_direction_chars(&mdate);
 
 	if (mtime >= gtkconv->newday)
@@ -5168,7 +5167,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		GHashTable *smiley_data = NULL;
 
 		/* Enforce direction on alias */
-		if(is_rtl_message)
+		if (is_rtl_message)
 			str_embed_direction_chars(&alias_escaped);
 
 		if (flags & PURPLE_MESSAGE_SEND)

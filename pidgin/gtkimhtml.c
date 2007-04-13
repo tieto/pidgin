@@ -1744,7 +1744,7 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 		if (!t->values)
 			break;
 
-		if(*x == '&' && (amp = purple_markup_detect_entity(x, &alen))) {
+		if(*x == '&' && (amp = purple_markup_unescape_entity(x, &alen))) {
 			gboolean matched = TRUE;
 			/* Make sure all chars of the unescaped value match */
 			while (*(amp + 1)) {
@@ -2063,7 +2063,7 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 	ret = g_string_new("");
 	e = val;
 	while(*e) {
-		if((c = purple_markup_detect_entity(e, &len))) {
+		if((c = purple_markup_unescape_entity(e, &len))) {
 			ret = g_string_append(ret, c);
 			e += len;
 		} else {
@@ -2665,7 +2665,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						/* NEW_BIT (NEW_TEXT_BIT); */
 
 						/* Bi-Directional text support */
-						if(direction && (!strncasecmp(direction, "RTL", 3))) {
+						if (direction && (!strncasecmp(direction, "RTL", 3))) {
 							rtl_direction = TRUE;
 							/* insert RLE character to set direction */
 							ws[wpos++]  = 0xE2;
@@ -2675,15 +2675,13 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 							gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 							ws[0] = '\0'; wpos = 0;
 						}
-						if(direction)
-							g_free(direction);
+						g_free(direction);
 
-						if(alignment && (!strncasecmp(alignment, "RIGHT", 5))) {
+						if (alignment && (!strncasecmp(alignment, "RIGHT", 5))) {
 							align_right = TRUE;
 							align_line = gtk_text_iter_get_line(iter);
 						}
-						if(alignment)
-							g_free(alignment);
+						g_free(alignment);
 
 						font = g_new0 (GtkIMHtmlFontDetail, 1);
 						if (fonts)
@@ -2893,7 +2891,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			pos += smilelen;
 			wpos = 0;
 			ws[0] = 0;
-		} else if (*c == '&' && (amp = purple_markup_detect_entity(c, &tlen))) {
+		} else if (*c == '&' && (amp = purple_markup_unescape_entity(c, &tlen))) {
 			while(*amp) {
 				ws [wpos++] = *amp++;
 			}
@@ -2951,7 +2949,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		ws[wpos++]  = 0x80;
 		ws[wpos++]  = 0x8F;
     
-		if(!rtl_direction)
+		if (!rtl_direction)
 		{
 			/* insert LRM character to set direction */
 			/* (alignment=right and direction=LTR) */
@@ -4575,9 +4573,9 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 
 	/* Bi-directional text support */
 	/* Get to the first non-neutral character */
-	while((PANGO_DIRECTION_NEUTRAL == pango_unichar_direction(gtk_text_iter_get_char(&non_neutral_iter)))
+	while ((PANGO_DIRECTION_NEUTRAL == pango_unichar_direction(gtk_text_iter_get_char(&non_neutral_iter)))
 		&& gtk_text_iter_forward_char(&non_neutral_iter));
-	if(PANGO_DIRECTION_RTL == pango_unichar_direction(gtk_text_iter_get_char(&non_neutral_iter))) {
+	if (PANGO_DIRECTION_RTL == pango_unichar_direction(gtk_text_iter_get_char(&non_neutral_iter))) {
 		is_rtl_message = TRUE;
 		g_string_append(str, "<SPAN style=\"direction:rtl;text-align:right;\">");
 	}
@@ -4668,7 +4666,7 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tag)));
 
 	/* Bi-directional text support - close tags */
-	if(is_rtl_message)
+	if (is_rtl_message)
 		g_string_append(str, "</SPAN>");
 
 	g_queue_free(q);

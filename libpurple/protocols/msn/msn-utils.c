@@ -114,7 +114,8 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 
 	if (cur && (*(cur = cur + 3) != ';'))
 	{
-		if(*cur == '1') {
+		if (*cur == '1')
+		{
 			/* RTL text was received */
 			pre = g_string_append(pre, "<SPAN style=\"direction:rtl;text-align:right;\">");
 			post = g_string_prepend(post, "</SPAN>");
@@ -285,22 +286,20 @@ msn_import_html(const char *html, char **attributes, char **message)
 					else if (!g_ascii_strncasecmp(c, "style=\"", 7))
 					{
 						/* Parse inline CSS attributes */
-						char* attributes;
+						char *attributes;
 						int attr_len = 0;
 						c += 7;
 						while (*(c + attr_len) != '\0' && *(c + attr_len) != '"')
 							attr_len++;
-						if(*(c + attr_len) == '"')
+						if (*(c + attr_len) == '"')
 						{
 							char *attr_dir;
 							attributes = g_strndup(c, attr_len);
 							attr_dir = purple_markup_get_css_property(attributes, "direction");
-							if(attr_dir && (!strncasecmp(attr_dir, "RTL", 3)))
+							if (attr_dir && (!strncasecmp(attr_dir, "RTL", 3)))
 								direction = '1';
-							if(attr_dir)
-								g_free(attr_dir);
-							if(attributes)
-								g_free(attributes);
+							g_free(attr_dir);
+							g_free(attributes);
 						}
 
 					}

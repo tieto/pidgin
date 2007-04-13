@@ -464,32 +464,39 @@ char *purple_markup_get_tag_name(const char *tag);
 
 /**
  * Returns a constant string of the character representation of the HTML
- * entity pointed by *text. For example *text="&amp;" will return "&" and so on.
- * The *text variable is expected to point to a '&' - the first character 
- * of the entity. On unrecognized entity the function will return NULL.
- * Note that this function, unlike purple_unescape_html() does not seek 
- * the string for the entity, does not replace the entity and does not
+ * entity pointed to by @a text. For example, purple_markup_unescape_entity("&amp;")
+ * will return "&". The @a text variable is expected to point to an '&',
+ * the first character of the entity. If given an unrecognized entity, the function
+ * returns @c NULL.
+ *
+ * Note that this function, unlike purple_unescape_html(), does not search 
+ * the string for the entity, does not replace the entity, and does not
  * return a newly allocated string.
  *
- * @param text A string containing HTML entity.
- * @param length The string length of the deteced entity is stored in this variable.
+ * @param text   A string containing an HTML entity.
+ * @param length If not @c NULL, the string length of the entity is stored in this location.
+ *
  * @return A constant string containing the character representation of the given entity.
  */
-const char * purple_markup_detect_entity(const char *text, int *length);
+const char * purple_markup_unescape_entity(const char *text, int *length);
 
 /**
  * Returns a newly allocated string containing the value of the CSS property specified
- * in opt. The *style argument is expected to point to a HTML inline CSS style.
- * ( ie <span style="[inline css]"> ) The function will seek for the CSS propery and
- * return it's value. Example: for style="direction:rtl;color:#dc4d1b;" opt="color"
- * the function's return value would be #dc4d1b. On error or if the requested property
- * was not found, the function returns NULL.
+ * in opt. The @a style argument is expected to point to a HTML inline CSS.
+ * (i.e. <span style="[inline css]"> ) The function will seek for the CSS property and
+ * return its value.
+ *
+ * For example, purple_markup_get_css_property("direction:rtl;color:#dc4d1b;", "color")
+ * would return "#dc4d1b".
+ *
+ * On error or if the requested property was not found, the function returns @c NULL.
  *
  * @param style A string containing the inline CSS text.
- * @param opt The requested CSS property.
- * @return the value of the requested CSS property.
+ * @param opt   The requested CSS property.
+ *
+ * @return The value of the requested CSS property.
  */
-gchar* purple_markup_get_css_property(const gchar *style, const gchar *opt);
+char * purple_markup_get_css_property(const gchar *style, const gchar *opt);
 
 
 /*@}*/
