@@ -25,10 +25,10 @@ depcomp
 doc/finch.1
 doc/pidgin.1
 doc/html
-gaim.apspec
+pidgin.apspec
 pidgin.desktop
-gaim.service
-gaim.spec
+pidgin.spec
+pidgin-.*.tar.gz
 pidgin/pidgin
 pidgin/plugins/musicmessaging/music-messaging-bindings.c
 pidgin/plugins/perl/common/Makefile.PL
@@ -38,10 +38,8 @@ install-sh
 libpurple/dbus-bindings.c
 libpurple/dbus-types.c
 libpurple/dbus-types.h
-libpurple/gaim-client-bindings.c
-libpurple/gaim-client-bindings.h
-libpurple/gaim-client-example
-libpurple/gconf/gaim.schemas
+libpurple/example/nullclient
+libpurple/gconf/purple.schemas
 libpurple/plugins/dbus-example-bindings.c
 libpurple/plugins/perl/common/Makefile.PL
 libpurple/plugins/perl/common/const-c.inc
