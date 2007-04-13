@@ -320,7 +320,7 @@ init_libpurple(int argc, char **argv)
 	}
 	/* show version message */
 	if (opt_version) {
-		printf("purple-text %s\n", VERSION);
+		printf("Finch %s\n", VERSION);
 		return 0;
 	}
 
