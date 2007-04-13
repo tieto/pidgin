@@ -4298,11 +4298,11 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		 */
 		if (aim_sn_is_sms(name)) {
 			/* Messaging an SMS (mobile) user */
-			tmp2 = purple_unescape_html(tmp1);
+			tmp2 = purple_markup_strip_html(tmp1);
 		} else if (aim_sn_is_icq(purple_account_get_username(account))) {
 			if (aim_sn_is_icq(name))
 				/* From ICQ to ICQ */
-				tmp2 = purple_unescape_html(tmp1);
+				tmp2 = purple_markup_strip_html(tmp1);
 			else
 				/* From ICQ to AIM */
 				tmp2 = g_strdup(tmp1);

@@ -4895,6 +4895,73 @@ static void pidgin_conv_calculate_newday(PidginConversation *gtkconv, time_t mti
 	gtkconv->newday = mktime(tm);
 }
 
+/* Detect string direction and encapsulate the string in a RLE/LRE/PDF unicode characters 
+   str - pointer to string (string is realocated and new pointer is returned) */
+static void
+str_embed_direction_chars(char **str)
+{
+	char pre_str[4];
+	char post_str[10];
+	char* ret = g_malloc(strlen(*str)+13);
+
+	if (PANGO_DIRECTION_RTL == pango_find_base_dir(*str, strlen(*str)))
+	{
+		g_sprintf(pre_str, "%c%c%c", 
+				0xE2, 0x80, 0xAB);	/* RLE */
+		g_sprintf(post_str, "%c%c%c%c%c%c%c%c%c", 
+				0xE2, 0x80, 0xAC,	/* PDF */
+				0xE2, 0x80, 0x8E,	/* LRM */
+				0xE2, 0x80, 0xAC);	/* PDF */
+	}
+	else
+	{
+		g_sprintf(pre_str, "%c%c%c", 
+				0xE2, 0x80, 0xAA);	/* LRE */
+		g_sprintf(post_str, "%c%c%c%c%c%c%c%c%c", 
+				0xE2, 0x80, 0xAC,	/* PDF */
+				0xE2, 0x80, 0x8F,	/* RLM */
+				0xE2, 0x80, 0xAC);	/* PDF */
+	}
+
+	g_sprintf(ret, "%s%s%s", pre_str, *str, post_str);
+
+	g_free(*str);
+	*str = ret;
+	return;
+}
+
+/* Returns true if the given HTML contains RTL text */
+static gboolean 
+html_is_rtl(const char *html)
+{
+	GData *attributes;
+	const gchar *start, *end;
+	gboolean res = FALSE;
+
+	if(purple_markup_find_tag("span", html, &start, &end, &attributes)) 
+	{
+		/* tmp is a member of attributes and is free with g_datalist_clear call */
+		const char *tmp = g_datalist_get_data(&attributes, "dir");
+		if(tmp && !g_ascii_strcasecmp(tmp, "RTL"))
+			res = TRUE;
+		if(!res)
+		{
+			char *tmp2 = NULL;
+			tmp = g_datalist_get_data(&attributes, "style");
+			if(tmp)
+				tmp2 = purple_markup_get_css_property(tmp, "direction");
+			if(tmp2 && !g_ascii_strcasecmp(tmp2, "RTL"))
+				res = TRUE;
+			if(tmp2)
+				g_free(tmp2);
+
+		}
+		g_datalist_clear(&attributes);
+	}
+	return res;
+}
+
+
 static void
 pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *alias,
 						const char *message, PurpleMessageFlags flags,
@@ -4922,6 +4989,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	gboolean plugin_return;
 	char *bracket;
 	int tag_count = 0;
+	gboolean is_rtl_message = FALSE;
 
 	g_return_if_fail(conv != NULL);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -5034,11 +5102,19 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	if (mdate == NULL)
 	{
 		struct tm *tm = localtime(&mtime);
+		const char *tmp;
 		if (show_date)
-			mdate = g_strdup(purple_date_format_long(tm));
+			tmp = purple_date_format_long(tm);
 		else
-			mdate = g_strdup(purple_time_format(tm));
+			tmp = purple_time_format(tm);
+		mdate = g_strdup_printf("(%s)", tmp);
 	}
+
+	/* Bi-Directional support - set timestamp direction using unicode characters */
+	is_rtl_message = html_is_rtl(message);
+	/* Enforce direction only if message is RTL - donesn't effect LTR users */
+	if(is_rtl_message)
+		str_embed_direction_chars(&mdate);
 
 	if (mtime >= gtkconv->newday)
 		pidgin_conv_calculate_newday(gtkconv, mtime);
@@ -5063,14 +5139,14 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), message, gtk_font_options_all);
 	} else if (flags & PURPLE_MESSAGE_SYSTEM) {
 		g_snprintf(buf2, sizeof(buf2),
-			   "<FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT>",
+			   "<FONT %s><FONT SIZE=\"2\"><!--%s --></FONT><B>%s</B></FONT>",
 			   sml_attrib ? sml_attrib : "", mdate, displaying);
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
 
 	} else if (flags & PURPLE_MESSAGE_ERROR) {
 		g_snprintf(buf2, sizeof(buf2),
-			   "<FONT COLOR=\"#ff0000\"><FONT %s><FONT SIZE=\"2\"><!--(%s) --></FONT><B>%s</B></FONT></FONT>",
+			   "<FONT COLOR=\"#ff0000\"><FONT %s><FONT SIZE=\"2\"><!--%s --></FONT><B>%s</B></FONT></FONT>",
 			   sml_attrib ? sml_attrib : "", mdate, displaying);
 
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml), buf2, gtk_font_options_all);
@@ -5090,6 +5166,10 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		int tag_end_offset = 0;
 		GtkSmileyTree *tree = NULL;
 		GHashTable *smiley_data = NULL;
+
+		/* Enforce direction on alias */
+		if(is_rtl_message)
+			str_embed_direction_chars(&alias_escaped);
 
 		if (flags & PURPLE_MESSAGE_SEND)
 		{
@@ -5178,12 +5258,12 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			    flags & PURPLE_MESSAGE_NICK ||
 			    purple_find_buddy(account, name) != NULL) {
 				g_snprintf(buf2, BUF_LONG,
-					   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
+					   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--%s --></FONT>"
 					   "<B>%s</B></FONT> ",
 					   color, sml_attrib ? sml_attrib : "", mdate, str);
 			} else {
 				g_snprintf(buf2, BUF_LONG,
-					   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
+					   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--%s --></FONT>"
 					   "%s</FONT> ",
 					   color, sml_attrib ? sml_attrib : "", mdate, str);
 
@@ -5191,7 +5271,7 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		} else {
 			/* Bold everyone's name to make the name stand out from the message. */
 			g_snprintf(buf2, BUF_LONG,
-				   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--(%s) --></FONT>"
+				   "<FONT COLOR=\"%s\" %s><FONT SIZE=\"2\"><!--%s --></FONT>"
 				   "<B>%s</B></FONT> ",
 				   color, sml_attrib ? sml_attrib : "", mdate, str);
 		}

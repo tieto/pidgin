@@ -110,6 +110,17 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
 		}
 	}
 
+	cur = strstr(mime, "RL=");
+
+	if (cur && (*(cur = cur + 3) != ';'))
+	{
+		if(*cur == '1') {
+			/* RTL text was received */
+			pre = g_string_append(pre, "<SPAN style=\"direction:rtl;text-align:right;\">");
+			post = g_string_prepend(post, "</SPAN>");
+		}
+	}
+
 	cur = g_strdup(purple_url_decode(pre->str));
 	g_string_free(pre, TRUE);
 
@@ -161,7 +172,7 @@ encode_spaces(const char *str)
  * and converts it to msn formatting. It doesn't deal with the tag closing,
  * but gtkimhtml widgets give valid html.
  * It currently deals properly with <b>, <u>, <i>, <font face=...>,
- * <font color=...>.
+ * <font color=...>, <span dir=...>, <span style="direction: ...">.
  * It ignores <font back=...> and <font size=...>
  */
 void
@@ -173,6 +184,7 @@ msn_import_html(const char *html, char **attributes, char **message)
 	char *fontface = NULL;
 	char fonteffect[4];
 	char fontcolor[7];
+	char direction = '0';
 
 	gboolean has_bold = FALSE;
 	gboolean has_italic = FALSE;
@@ -255,6 +267,50 @@ msn_import_html(const char *html, char **attributes, char **message)
 
 				if (*c != '\0')
 					c += 4;
+			}
+			else if (!g_ascii_strncasecmp(c + 1, "span", 4))
+			{
+				/* Bi-directional text support using CSS properties in span tags */
+				c += 5;
+
+				while (*c != '\0' && *c != '>')
+				{
+					while (*c == ' ')
+						c++;
+					if (!g_ascii_strncasecmp(c, "dir=\"rtl\"", 9))
+					{
+						c += 9;
+						direction = '1';
+					}
+					else if (!g_ascii_strncasecmp(c, "style=\"", 7))
+					{
+						/* Parse inline CSS attributes */
+						char* attributes;
+						int attr_len = 0;
+						c += 7;
+						while (*(c + attr_len) != '\0' && *(c + attr_len) != '"')
+							attr_len++;
+						if(*(c + attr_len) == '"')
+						{
+							char *attr_dir;
+							attributes = g_strndup(c, attr_len);
+							attr_dir = purple_markup_get_css_property(attributes, "direction");
+							if(attr_dir && (!strncasecmp(attr_dir, "RTL", 3)))
+								direction = '1';
+							if(attr_dir)
+								g_free(attr_dir);
+							if(attributes)
+								g_free(attributes);
+						}
+
+					}
+					else
+					{
+						c++;
+					}
+				}
+				if (*c == '>')
+					c++;
 			}
 			else if (!g_ascii_strncasecmp(c + 1, "font", 4))
 			{
@@ -354,9 +410,9 @@ msn_import_html(const char *html, char **attributes, char **message)
 	if (fontface == NULL)
 		fontface = g_strdup("MS Sans Serif");
 
-	*attributes = g_strdup_printf("FN=%s; EF=%s; CO=%s; PF=0",
+	*attributes = g_strdup_printf("FN=%s; EF=%s; CO=%s; PF=0; RL=%c",
 								  encode_spaces(fontface),
-								  fonteffect, fontcolor);
+								  fonteffect, fontcolor, direction);
 	*message = g_strdup(msg);
 
 	g_free(fontface);
