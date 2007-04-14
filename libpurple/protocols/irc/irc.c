@@ -478,7 +478,7 @@ static int irc_im_send(PurpleConnection *gc, const char *who, const char *what, 
 	else
 		args[0] = who;
 
-	plain = purple_unescape_html(what);
+	purple_markup_html_to_xhtml(what, NULL, &plain);
 	args[1] = plain;
 
 	irc_cmd_privmsg(irc, "msg", NULL, args);
@@ -690,7 +690,7 @@ static int irc_chat_send(PurpleConnection *gc, int id, const char *what, PurpleM
 		return irc_parse_cmd(irc, convo->name, what + 1);
 	}
 #endif
-	tmp = purple_unescape_html(what);
+	purple_markup_html_to_xhtml(what, NULL, &tmp);
 	args[0] = convo->name;
 	args[1] = tmp;
 
