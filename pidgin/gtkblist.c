@@ -5941,7 +5941,7 @@ void pidgin_blist_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/blist/show_empty_groups", FALSE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/blist/show_idle_time", TRUE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/blist/show_offline_buddies", FALSE);
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/blist/list_visible", TRUE);
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/blist/list_visible", FALSE);
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/blist/list_maximized", FALSE);
 	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/blist/sort_type", "alphabetical");
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/blist/x", 0);
