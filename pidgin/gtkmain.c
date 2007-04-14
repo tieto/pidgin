@@ -414,65 +414,6 @@ startup_notification_complete(void)
 }
 #endif /* HAVE_STARTUP_NOTIFICATION */
 
-#ifndef _WIN32
-static char *pidgin_find_binary_location(void *symbol, void *data)
-{
-	static char *fullname = NULL;
-	static gboolean first = TRUE;
-
-	char *argv0 = data;
-	struct stat st;
-	char *basebuf, *linkbuf, *fullbuf;
-
-	if (!first)
-		/* We've already been through this. */
-		return strdup(fullname);
-
-	first = FALSE;
-
-	if (!argv0)
-		return NULL;
-
-
-	basebuf = g_find_program_in_path(argv0);
-
-	/* But we still need to deal with symbolic links */
-	g_lstat(basebuf, &st);
-	while ((st.st_mode & S_IFLNK) == S_IFLNK) {
-		int written;
-		linkbuf = g_malloc(1024);
-		written = readlink(basebuf, linkbuf, 1024 - 1);
-		if (written == -1)
-		{
-			/* This really shouldn't happen, but do we
-			 * need something better here? */
-			g_free(linkbuf);
-			continue;
-		}
-		linkbuf[written] = '\0';
-		if (linkbuf[0] == G_DIR_SEPARATOR) {
-			/* an absolute path */
-			fullbuf = g_strdup(linkbuf);
-		} else {
-			char *dirbuf = g_path_get_dirname(basebuf);
-			/* a relative path */
-			fullbuf = g_strdup_printf("%s%s%s",
-						  dirbuf, G_DIR_SEPARATOR_S,
-						  linkbuf);
-			g_free(dirbuf);
-		}
-		/* There's no memory leak here.  Really! */
-		g_free(linkbuf);
-		g_free(basebuf);
-		basebuf = fullbuf;
-		g_lstat(basebuf, &st);
-	}
-
-	fullname = basebuf;
-	return strdup(fullname);
-}
-#endif /* #ifndef _WIN32 */
-
 /* FUCKING GET ME A TOWEL! */
 #ifdef _WIN32
 /* suppress gcc "no previous prototype" warning */
@@ -528,9 +469,6 @@ int main(int argc, char *argv[])
 	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
 #endif
 
-#ifndef _WIN32
-	br_set_locate_fallback_func(pidgin_find_binary_location, argv[0]);
-#endif
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");

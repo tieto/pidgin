@@ -184,10 +184,4 @@
 
 #define PURPLE_WEBSITE "http://pidgin.im/"
 
-#ifndef _WIN32
-/* Everything needs to include this, because
- * everything gets the autoconf macros */
-#include "prefix.h"
-#endif /* _WIN32 */
-
 #endif /* _PURPLE_INTERNAL_H_ */

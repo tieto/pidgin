@@ -28,7 +28,6 @@
 #include "ft.h"
 #include "log.h"
 #include "notify.h"
-#include "prefix.h"
 #include "prefs.h"
 #include "prpl.h"
 #include "pounce.h"

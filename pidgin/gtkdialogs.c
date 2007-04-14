@@ -494,12 +494,6 @@ void pidgindialogs_about()
 #else
 	g_string_append(str, "  <b>Print debugging messages:</b> No<br/>");
 #endif
-
-#ifdef ENABLE_BINRELOC
-	g_string_append(str, "  <b>Binary relocation:</b> Enabled<br/>");
-#else
-	g_string_append(str, "  <b>Binary relocation:</b> Disabled<br/>");
-#endif
 #endif
 
 #ifdef PURPLE_PLUGINS

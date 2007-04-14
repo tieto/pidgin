@@ -222,6 +222,7 @@ version 2.0.0:
 	* GaimGtkRoomlistDialog: Nothing used it outside of the file it was in.
 	* gaim_gtk_roomlist_dialog_new: use gaim_gtk_roomlist_show
 	* gaim_gtk_roomlist_dialog_new_with_account: use gaim_gtk_roomlist_show_with_account
+	* binreloc functions
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
