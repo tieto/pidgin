@@ -446,6 +446,8 @@ add_group(PurpleGroup *group, FinchBlist *ggblist)
 		return;
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), group,
 			gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)), NULL, NULL);
+	gnt_tree_set_expanded(GNT_TREE(ggblist->tree), node,
+		!purple_blist_node_get_bool(node, "collapsed"));
 }
 
 static const char *
@@ -2105,6 +2107,12 @@ void finch_blist_show()
 }
 
 static void
+group_collapsed(GntWidget *widget, PurpleBlistNode *node, gboolean collapsed, gpointer null)
+{
+	purple_blist_node_set_bool(node, "collapsed", collapsed);
+}
+
+static void
 blist_show(PurpleBuddyList *list)
 {
 	if (ggblist == NULL)
@@ -2171,6 +2179,7 @@ blist_show(PurpleBuddyList *list)
 	g_signal_connect(G_OBJECT(ggblist->tree), "selection_changed", G_CALLBACK(selection_changed), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "key_pressed", G_CALLBACK(key_pressed), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "context-menu", G_CALLBACK(context_menu), ggblist);
+	g_signal_connect(G_OBJECT(ggblist->tree), "collapse-toggled", G_CALLBACK(group_collapsed), NULL);
 	g_signal_connect_after(G_OBJECT(ggblist->tree), "clicked", G_CALLBACK(blist_clicked), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "activate", G_CALLBACK(selection_activate), ggblist);
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "gained-focus", G_CALLBACK(draw_tooltip),

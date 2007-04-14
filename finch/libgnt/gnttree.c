@@ -13,6 +13,7 @@ enum
 	SIG_SELECTION_CHANGED,
 	SIG_SCROLLED,
 	SIG_TOGGLED,
+	SIG_COLLAPSED,
 	SIGS,
 };
 
@@ -702,6 +703,7 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 		{
 			row->collapsed = !row->collapsed;
 			redraw_tree(tree);
+			g_signal_emit(tree, signals[SIG_COLLAPSED], 0, row->key, row->collapsed);
 		}
 		else if (row && row->choice)
 		{
@@ -855,6 +857,14 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
+	signals[SIG_COLLAPSED] = 
+		g_signal_new("collapse-toggled",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 0,
+					 NULL, NULL,
+					 gnt_closure_marshal_VOID__POINTER_BOOLEAN,
+					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 
 	gnt_bindable_class_register_action(bindable, "move-up", action_up,
 				GNT_KEY_UP, NULL);
