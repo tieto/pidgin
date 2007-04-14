@@ -2416,6 +2416,8 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 		{
 			PurpleSavedStatus *saved_status;
 			saved_status = purple_savedstatus_get_current();
+			if (purple_savedstatus_get_type(saved_status) == PURPLE_STATUS_AVAILABLE)
+				saved_status = purple_savedstatus_new(NULL, PURPLE_STATUS_AWAY);
 			pidgin_status_editor_show(FALSE,
 				purple_savedstatus_is_transient(saved_status)
 					? saved_status : NULL);
