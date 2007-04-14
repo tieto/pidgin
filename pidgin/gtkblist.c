@@ -2592,7 +2592,7 @@ static gboolean pidgin_blist_tooltip_timeout(GtkWidget *tv)
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 		w = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
 			MAX(td->width, td->name_width) + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER;
-		h = TOOLTIP_BORDER + MAX(td->height + td->name_height, MAX(STATUS_SIZE, td->avatar_height));
+		h = TOOLTIP_BORDER + MAX(td->height + td->name_height, MAX(STATUS_SIZE, td->avatar_height))
 			+ TOOLTIP_BORDER;
 	} else if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleBlistNode *child;
