@@ -622,6 +622,18 @@ char *yahoo_html_to_codes(const char *src)
 								break;
 							}
 						}
+					} else if (!g_ascii_strncasecmp(&src[i+1], "SPAN", j - i - 1)) { /* drop span tags */
+						while (1) {
+							if (++j >= len) {
+								g_string_append(dest, &src[i]);
+								i = len;
+								break;
+							}
+							if (src[j] == '>') {
+								i = j;
+								break;
+							}
+						}
 					} else if (g_ascii_strncasecmp(&src[i+1], "FONT", j - i - 1)) { /* not interested! */
 						while (1) {
 							if (++j >= len) {
@@ -668,6 +680,8 @@ char *yahoo_html_to_codes(const char *src)
 							g_string_append_c(dest, '\n');
 						} else if (!g_ascii_strncasecmp(&src[i+1], "/BODY", sublen)) {
 							/* mmm, </body> tags. *BURP* */
+						} else if (!g_ascii_strncasecmp(&src[i+1], "/SPAN", sublen)) {
+							/* </span> tags. dangerously close to </spam> */
 						} else if (!g_ascii_strncasecmp(&src[i+1], "/FONT", sublen) && g_queue_peek_tail(tags)) {
 							char *etag, *cl;
 
