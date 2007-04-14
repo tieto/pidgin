@@ -683,7 +683,7 @@ static PurplePluginInfo info = {
 static void
 init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_none("/plugins/gtk/musicmessaging");
-	purple_prefs_add_string("/plugins/gtk/musicmessaging/editor_path", "/usr/local/bin/gscore");
+	purple_prefs_add_string("/plugins/gtk/musicmessaging/editor_path", "/usr/bin/gscore");
 }
 
 PURPLE_INIT_PLUGIN(musicmessaging, init_plugin, info);

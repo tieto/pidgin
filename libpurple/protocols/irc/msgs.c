@@ -40,8 +40,6 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name,
                                    const char *from, const char *to,
                                    const char *rawmsg, gboolean notice);
 
-static char *mode_chars = NULL;
-
 static char *irc_mask_nick(const char *mask)
 {
 	char *end, *buf;
@@ -90,7 +88,7 @@ void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, 
 		char *val;
 		if (!strncmp(features[i], "PREFIX=", 7)) {
 			if ((val = strchr(features[i] + 7, ')')) != NULL)
-				mode_chars = g_strdup(val + 1);
+				irc->mode_chars = g_strdup(val + 1);
 		}
 	}
 }
@@ -477,8 +475,8 @@ void irc_msg_names(struct irc_conn *irc, const char *name, const char *from, cha
 				} else if(*cur == '+') {
 					f = PURPLE_CBFLAGS_VOICE;
 					cur++;
-				} else if(mode_chars
-					  && strchr(mode_chars, *cur)) {
+				} else if(irc->mode_chars
+					  && strchr(irc->mode_chars, *cur)) {
 					cur++;
 				}
 				tmp = g_strndup(cur, end - cur);
