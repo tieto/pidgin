@@ -2245,8 +2245,6 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 				roundify(ret);
 		} else {
 			ret = gdk_pixbuf_scale_simple(buf,scale_width,scale_height, GDK_INTERP_BILINEAR);
-			if (pidgin_gdk_pixbuf_is_opaque(ret))
-				roundify(ret);
 		}
 		g_object_unref(G_OBJECT(buf));
 	}
