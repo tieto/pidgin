@@ -194,6 +194,8 @@ version 2.0.0:
 	* Removed the Napster and TOC protocols plugins
 
 	Other Noteworthy Changes:
+	* The project has new names - libpurple for the core, Pidgin for the Gtk+
+	  UI and Finch for the ncurses based console UI (AOL LLC)
 	* UPnP and NAT traversal support (Adam J. Warrington, Google Summer of
 	  Code)
 	* The modify account dialog now contains two tabs, which should display
