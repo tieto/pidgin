@@ -221,6 +221,7 @@ version 2.0.0:
 	  time instead of X11 idle time (Michael Culbertson)
 	* Autocomplete in the buddy pounce dialog (Sadrul Habib Chowdhury)
 	* Non-blocking socket I/O is used in most protocol plugins
+	* All-new icons all over the place (Hylke Bons)
 
 	Preference Changes:
 	* Preferences have been substantially reorganized and cleaned up
