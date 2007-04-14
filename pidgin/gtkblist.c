@@ -2050,6 +2050,51 @@ static void pidgin_blist_drag_data_rcv_cb(GtkWidget *widget, GdkDragContext *dc,
 	}
 }
 
+static void
+roundify(GdkPixbuf *pixbuf) {
+	int width, height, rowstride;
+	guchar *pixels;
+
+	if (!gdk_pixbuf_get_has_alpha(pixbuf))
+		return;
+
+	width = gdk_pixbuf_get_width(pixbuf);
+	height = gdk_pixbuf_get_height(pixbuf);
+	rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+	pixels = gdk_pixbuf_get_pixels(pixbuf);
+
+	if (width < 6 || height < 6)
+		return;
+	
+	/* Top left */
+	pixels[3] = 0;
+	pixels[7] = 0x80;
+	pixels[11] = 0xC0;
+	pixels[rowstride + 3] = 0x80;
+	pixels[rowstride * 2 + 3] = 0xC0;
+	
+	/* Top right */
+	pixels[width * 4 - 1] = 0;
+	pixels[width * 4 - 5] = 0x80;
+	pixels[width * 4 - 9] = 0xC0;
+	pixels[rowstride + (width * 4) - 1] = 0x80;
+	pixels[(2 * rowstride) + (width * 4) - 1] = 0xC0;
+	
+	/* Bottom left */
+	pixels[(height - 1) * rowstride + 3] = 0;
+	pixels[(height - 1) * rowstride + 7] = 0x80;
+	pixels[(height - 1) * rowstride + 11] = 0xC0;
+	pixels[(height - 2) * rowstride + 3] = 0x80;
+	pixels[(height - 3) * rowstride + 3] = 0xC0;
+	
+	/* Bottom right */
+	pixels[height * rowstride - 1] = 0;
+	pixels[(height - 1) * rowstride - 1] = 0x80;
+	pixels[(height - 2) * rowstride - 1] = 0xC0;
+	pixels[height * rowstride - 5] = 0x80;
+	pixels[height * rowstride - 9] = 0xC0;
+}
+
 /* Altered from do_colorshift in gnome-panel */
 static void
 do_alphashift (GdkPixbuf *dest, GdkPixbuf *src, int shift)
@@ -2196,8 +2241,12 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 			ret = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 			gdk_pixbuf_fill(ret, 0x00000000);
 			gdk_pixbuf_scale(buf, ret, (32-scale_width)/2, (32-scale_height)/2, scale_width, scale_height, (32-scale_width)/2, (32-scale_height)/2, (double)scale_width/(double)orig_width, (double)scale_height/(double)orig_height, GDK_INTERP_BILINEAR);
+			if (pidgin_gdk_pixbuf_is_opaque(ret))
+				roundify(ret);
 		} else {
 			ret = gdk_pixbuf_scale_simple(buf,scale_width,scale_height, GDK_INTERP_BILINEAR);
+			if (pidgin_gdk_pixbuf_is_opaque(ret))
+				roundify(ret);
 		}
 		g_object_unref(G_OBJECT(buf));
 	}
