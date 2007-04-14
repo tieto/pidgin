@@ -2109,7 +2109,8 @@ void finch_blist_show()
 static void
 group_collapsed(GntWidget *widget, PurpleBlistNode *node, gboolean collapsed, gpointer null)
 {
-	purple_blist_node_set_bool(node, "collapsed", collapsed);
+	if (PURPLE_BLIST_NODE_IS_GROUP(node))
+		purple_blist_node_set_bool(node, "collapsed", collapsed);
 }
 
 static void
