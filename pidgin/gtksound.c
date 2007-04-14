@@ -468,7 +468,11 @@ pidgin_sound_play_file(const char *filename)
 	}
 
 	play = gst_element_factory_make("playbin", "play");
-
+	
+	if (play == NULL) {
+		return;
+	}
+	
 	uri = g_strdup_printf("file://%s", filename);
 
 	g_object_set(G_OBJECT(play), "uri", uri,
