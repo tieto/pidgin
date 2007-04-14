@@ -2592,7 +2592,7 @@ static gboolean pidgin_blist_tooltip_timeout(GtkWidget *tv)
 		gtkblist->tooltipdata = g_list_append(gtkblist->tooltipdata, td);
 		w = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE +
 			MAX(td->width, td->name_width) + SMALL_SPACE + td->avatar_width + TOOLTIP_BORDER;
-		h = TOOLTIP_BORDER + MAX(td->height + td->name_height, MAX(STATUS_SIZE, td->avatar_height))
+		h = TOOLTIP_BORDER + MAX(td->height + td->name_height, MAX(STATUS_SIZE, td->avatar_height));
 			+ TOOLTIP_BORDER;
 	} else if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		PurpleBlistNode *child;
@@ -2612,10 +2612,11 @@ static gboolean pidgin_blist_tooltip_timeout(GtkWidget *tv)
 				}
 				max_text_width = MAX(max_text_width, MAX(td->width, td->name_width));
 				max_avatar_width = MAX(max_avatar_width, td->avatar_width);
-				h += MAX(TOOLTIP_BORDER + MAX(STATUS_SIZE,td->avatar_height) + TOOLTIP_BORDER,
-						TOOLTIP_BORDER + td->height + td->name_height + TOOLTIP_BORDER);
+				h += MAX(TOOLTIP_BORDER + MAX(STATUS_SIZE,td->avatar_height),
+						TOOLTIP_BORDER + td->height + td->name_height);
 			}
 		}
+		h += TOOLTIP_BORDER;
 		w = TOOLTIP_BORDER + STATUS_SIZE + SMALL_SPACE + max_text_width + SMALL_SPACE + max_avatar_width + TOOLTIP_BORDER;
 	} else {
 		gtk_widget_destroy(gtkblist->tipwindow);
