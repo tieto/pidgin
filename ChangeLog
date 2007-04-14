@@ -77,6 +77,7 @@ version 2.0.0:
 	   button on the toolbar.)
 	* Performance while joining large chat rooms has been significantly
 	  improved (Aaron Sheldon, Google Summer of Code)
+	* Bi-Directional text support improvements for GtkIMHtml (Shlomi Loubaton)
 
 	Sounds:
 	* Beautiful new default sounds (Brad Turcotte)
@@ -138,6 +139,7 @@ version 2.0.0:
 	* Added support for sending (with the /nudge command) and receiving
 	  "nudges" (Julien Cegarra, Martin Bayard)
 	* Added an account action to open your Hotmail inbox from MSN
+	* Bi-directional text is correctly handled now (Shlomi Loubaton)
 
 	Yahoo Features:
 	* Stealth Settings have been implemented
