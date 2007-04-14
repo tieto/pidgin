@@ -1,6 +1,16 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.0.0:
+	Please note all functions, defines, and data structures have been
+	re-namespaced to match the new names of Pidgin, Finch, and libpurple.
+	All gaim_gtk_* functions are now pidgin_*, former libgaim functions are
+	now purple_*.  Please consult our doxygen documentation for a complete
+	reference.
+
+	The gaim-compat.h header exists to provide an API compatibility layer
+	for libpurple functions.  As an API compatibility layer, it must be
+	included at compile time to be of use.
+
 	Changed:
 	* All the status stuff.  Yay!
 	* gaim_prefs_connect_callback(), added handle parameter
