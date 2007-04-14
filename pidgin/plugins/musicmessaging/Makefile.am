@@ -1,14 +1,14 @@
 EXTRA_DIST = \
 	music.png
 
-musicmessagingdir = $(libdir)/gaim
+musicmessagingdir = $(libdir)/pidgin
 
 musicmessaging_la_LDFLAGS = -module -avoid-version
 
 if PLUGINS
 if ENABLE_DBUS
 
-musicmessagingpixdir = $(datadir)/pixmaps/gaim/buttons
+musicmessagingpixdir = $(datadir)/pixmaps/pidgin/buttons
 musicmessagingpix_DATA = music.png
 
 musicmessaging_LTLIBRARIES = musicmessaging.la
