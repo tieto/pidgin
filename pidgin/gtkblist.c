@@ -4416,7 +4416,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 					    NULL);
 
 	rend = gtk_cell_renderer_pixbuf_new();
-	g_object_set(rend, "xalign", 1.0, "yalign", 0.5, "ypad", 0, NULL);
+	g_object_set(rend, "xalign", 1.0, "yalign", 0.5, "ypad", 0, "xpad", 3, NULL);
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend, "pixbuf", EMBLEM_COLUMN,
 #if GTK_CHECK_VERSION(2,6,0)
