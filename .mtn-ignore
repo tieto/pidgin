@@ -29,6 +29,7 @@ pidgin.apspec
 pidgin.desktop
 pidgin.spec
 pidgin-.*.tar.gz
+pidgin-.*.tar.bz2
 pidgin/pidgin
 pidgin/plugins/musicmessaging/music-messaging-bindings.c
 pidgin/plugins/perl/common/Makefile.PL
