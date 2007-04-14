@@ -462,6 +462,8 @@ static void irc_close(PurpleConnection *gc)
 
 	purple_circ_buffer_destroy(irc->outbuf);
 
+	g_free(irc->mode_chars);
+
 	g_free(irc);
 }
 
