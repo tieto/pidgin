@@ -287,7 +287,7 @@ msn_got_rem_user(MsnSession *session, MsnUser *user,
 	if (list_id == MSN_LIST_FL)
 	{
 		/* TODO: When is the user totally removed? */
-		if (group_id >= 0)
+		if (group_id != NULL)
 		{
 			msn_user_remove_group_id(user, group_id);
 			return;

@@ -395,6 +395,7 @@ msn_parse_addressbook(MsnContact * contact)
 			friendly = xmlnode_get_data(xmlnode_get_child(contactInfo, "displayName"));
 			purple_connection_set_display_name(session->account->gc, purple_url_decode(friendly));
 			g_free(friendly);
+			continue; /* Not adding own account as buddy to buddylist */
 		}
 
 		passportName = xmlnode_get_child(contactInfo,"passportName");
@@ -876,4 +877,3 @@ msn_contact_connect_init(MsnSoapConn *soapconn)
 					msn_contact_login_connect_cb,
 					msn_contact_login_error_cb);
 }
-

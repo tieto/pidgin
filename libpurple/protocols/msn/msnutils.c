@@ -168,7 +168,7 @@ msn_encode_mime(const char *str)
 {
 	char *base64;
 	
-	base64 = gaim_base64_encode((guchar *)str, strlen(str));
+	base64 = purple_base64_encode((guchar *)str, strlen(str));
 	return g_strdup_printf("=?utf-8?B?%s?=", base64);
 }
 
@@ -481,7 +481,7 @@ msn_convert_iso8601(const char *timestr,struct tm tm_time)
 	struct tm ctime;
 	time_t ts;
 
-	gaim_debug_info("MaYuan","convert string is{%s}\n",timestr);
+	purple_debug_info("MaYuan","convert string is{%s}\n",timestr);
 	tzset();
 	/*copy string first*/
 	memset(temp, 0, sizeof(temp));
@@ -528,8 +528,8 @@ swapInt(unsigned int dw)
 void 
 msn_handle_chl(char *input, char *output)
 {
-		GaimCipher *cipher;
-		GaimCipherContext *context;
+		PurpleCipher *cipher;
+		PurpleCipherContext *context;
 		char *productKey = MSNP13_WLM_PRODUCT_KEY,
 			 *productID  = MSNP13_WLM_PRODUCT_ID,
 			 *hexChars   = "0123456789abcdef",
@@ -544,16 +544,16 @@ msn_handle_chl(char *input, char *output)
 		/* Determine our endianess */
 		bigEndian = isBigEndian();
 
-		/* Create the MD5 hash by using Gaim MD5 algorithm*/
-		cipher = gaim_ciphers_find_cipher("md5");
-		context = gaim_cipher_context_new(cipher, NULL);
+		/* Create the MD5 hash by using Purple MD5 algorithm*/
+		cipher = purple_ciphers_find_cipher("md5");
+		context = purple_cipher_context_new(cipher, NULL);
 
-		gaim_cipher_context_append(context, (const guchar *)input,
+		purple_cipher_context_append(context, (const guchar *)input,
 						strlen(input));
-		gaim_cipher_context_append(context, (const guchar *)productKey,
+		purple_cipher_context_append(context, (const guchar *)productKey,
 						strlen(productKey));
-		gaim_cipher_context_digest(context, sizeof(md5Hash), md5Hash, NULL);
-		gaim_cipher_context_destroy(context);
+		purple_cipher_context_digest(context, sizeof(md5Hash), md5Hash, NULL);
+		purple_cipher_context_destroy(context);
 
 		/* Split it into four integers */
 		md5Parts = (unsigned int *)md5Hash;
@@ -614,7 +614,7 @@ msn_handle_chl(char *input, char *output)
 
 		output[32]='\0';
 
-//		gaim_debug_info("MaYuan","chl output{%s}\n",output);
+//		purple_debug_info("MaYuan","chl output{%s}\n",output);
 }
 
 #if (!defined(_XOPEN_SOURCE))||defined(_WIN32)
