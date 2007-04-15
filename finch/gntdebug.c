@@ -46,26 +46,6 @@ static struct
 	gboolean timestamps;
 } debug;
 
-static gboolean
-debug_window_kpress_cb(GntWidget *wid, const char *key, GntTextView *view)
-{
-	if (key[0] == 27)
-	{
-		if (strcmp(key, GNT_KEY_DOWN) == 0)
-			gnt_text_view_scroll(view, 1);
-		else if (strcmp(key, GNT_KEY_UP) == 0)
-			gnt_text_view_scroll(view, -1);
-		else if (strcmp(key, GNT_KEY_PGDOWN) == 0)
-			gnt_text_view_scroll(view, wid->priv.height - 2);
-		else if (strcmp(key, GNT_KEY_PGUP) == 0)
-			gnt_text_view_scroll(view, -(wid->priv.height - 2));
-		else
-			return FALSE;
-		return TRUE;
-	}
-	return FALSE;
-}
-
 static void
 finch_debug_print(PurpleDebugLevel level, const char *category,
 		const char *args)
@@ -265,7 +245,7 @@ void finch_debug_window_show()
 		gnt_widget_set_name(debug.window, "debug-window");
 
 		g_signal_connect(G_OBJECT(debug.window), "destroy", G_CALLBACK(reset_debug_win), NULL);
-		g_signal_connect(G_OBJECT(debug.window), "key_pressed", G_CALLBACK(debug_window_kpress_cb), debug.tview);
+		gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(debug.tview), debug.window);
 	}
 
 	gnt_widget_show(debug.window);

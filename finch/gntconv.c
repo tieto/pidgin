@@ -159,23 +159,6 @@ entry_key_pressed(GntWidget *w, const char *key, FinchConv *ggconv)
 		gnt_entry_clear(GNT_ENTRY(ggconv->entry));
 		return TRUE;
 	}
-	else if (key[0] == 27)
-	{
-		if (strcmp(key, GNT_KEY_DOWN) == 0)
-			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), 1);
-		else if (strcmp(key, GNT_KEY_UP) == 0)
-			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), -1);
-		else if (strcmp(key, GNT_KEY_PGDOWN) == 0)
-			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), ggconv->tv->priv.height - 2);
-		else if (strcmp(key, GNT_KEY_PGUP) == 0)
-			gnt_text_view_scroll(GNT_TEXT_VIEW(ggconv->tv), -(ggconv->tv->priv.height - 2));
-		else
-			return FALSE;
-		return TRUE;
-	}
-	else
-	{
-	}
 
 	return FALSE;
 }
@@ -332,6 +315,7 @@ finch_create_conversation(PurpleConversation *conv)
 	gnt_entry_set_word_suggest(GNT_ENTRY(ggc->entry), TRUE);
 	gnt_entry_set_always_suggest(GNT_ENTRY(ggc->entry), FALSE);
 
+	gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(ggc->tv), ggc->entry);
 	g_signal_connect_after(G_OBJECT(ggc->entry), "key_pressed", G_CALLBACK(entry_key_pressed), ggc);
 	g_signal_connect(G_OBJECT(ggc->window), "destroy", G_CALLBACK(closing_window), ggc);
 
