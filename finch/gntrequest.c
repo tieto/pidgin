@@ -35,7 +35,7 @@
 
 #include "finch.h"
 #include "gntrequest.h"
-#include "util.c"
+#include "util.h"
 
 typedef struct
 {
