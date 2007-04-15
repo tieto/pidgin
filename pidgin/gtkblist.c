@@ -4179,6 +4179,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(gtkblist->window), "buddy_list");
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
+	gdk_window_set_decorations(gtkblist->window->window, 
+ 					GDK_DECOR_ALL | GDK_DECOR_MAXIMIZE);
 	g_signal_connect(G_OBJECT(gtkblist->window), "focus-in-event",
 			 G_CALLBACK(blist_focus_cb), gtkblist);
 	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
@@ -4313,6 +4315,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 						 G_TYPE_POINTER,  /* Node */
 						 GDK_TYPE_COLOR,  /* bgcolor */
 						 G_TYPE_BOOLEAN,  /* Group expander */
+						 G_TYPE_BOOLEAN,  /* Group expander visible */
 						 G_TYPE_BOOLEAN,  /* Contact expander */
 						 G_TYPE_BOOLEAN,  /* Contact expander visible */
 						 GDK_TYPE_PIXBUF, /* Emblem */
@@ -4361,6 +4364,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	rend = pidgin_cell_renderer_expander_new();
 	gtk_tree_view_column_pack_start(column, rend, FALSE);
 	gtk_tree_view_column_set_attributes(column, rend,
+					    "visible", GROUP_EXPANDER_VISIBLE_COLUMN,
 					    "expander-visible", GROUP_EXPANDER_COLUMN,
 #if GTK_CHECK_VERSION(2,6,0)
 					    "sensitive", GROUP_EXPANDER_COLUMN,
@@ -4388,7 +4392,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 					    "cell-background-gdk", BGCOLOR_COLUMN,
 #endif
 					    NULL);
-	g_object_set(rend, "xalign", 0.0, "xpad", 3, "ypad", 0, NULL);
+	g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
 
 	gtkblist->text_rend = rend = gtk_cell_renderer_text_new();
 	gtk_tree_view_column_pack_start (column, rend, TRUE);
@@ -4814,6 +4818,7 @@ static void pidgin_blist_update_group(PurpleBuddyList *list, PurpleBlistNode *no
 				   NODE_COLUMN, gnode,
 				   BGCOLOR_COLUMN, &bgcolor,
 				   GROUP_EXPANDER_COLUMN, TRUE,
+				   GROUP_EXPANDER_VISIBLE_COLUMN, TRUE,
 				   CONTACT_EXPANDER_VISIBLE_COLUMN, FALSE,
 				   BUDDY_ICON_VISIBLE_COLUMN, FALSE,
 				   IDLE_VISIBLE_COLUMN, FALSE,
@@ -4920,6 +4925,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 			   BGCOLOR_COLUMN, NULL,
 			   CONTACT_EXPANDER_COLUMN, NULL,
 			   CONTACT_EXPANDER_VISIBLE_COLUMN, expanded,
+			   GROUP_EXPANDER_VISIBLE_COLUMN, FALSE,
 			-1);
 
 	g_free(mark);
@@ -4982,6 +4988,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 					   BUDDY_ICON_COLUMN, NULL,
 					   CONTACT_EXPANDER_COLUMN, TRUE,
 					   CONTACT_EXPANDER_VISIBLE_COLUMN, TRUE,
+				  	   GROUP_EXPANDER_VISIBLE_COLUMN, FALSE,
 					-1);
 			g_free(mark);
 			if(status)
@@ -5064,6 +5071,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 			        EMBLEM_COLUMN, emblem,
 				EMBLEM_VISIBLE_COLUMN, emblem != NULL,
 				NAME_COLUMN, mark,
+				GROUP_EXPANDER_VISIBLE_COLUMN, FALSE,
 				-1);
 
 		g_free(mark);
