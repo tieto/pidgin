@@ -70,11 +70,13 @@ BuildRequires: mozilla-nss-devel
 Requires: perl
 # Gadu-Gadu support was split out temporarily (only as gaim)
 Provides: gaim-gadugadu = %{epoch}:%{version}-%{release}
+Obsoletes: gaim
 
 %package devel
 Summary:    Development headers, documentation, and libraries for Pidgin
 Group:      Applications/Internet
 Requires:   pkgconfig, pidgin = %{epoch}:%{version}, libpurple-devel = %{epoch}:%{version}
+Obsoletes:  gaim-devel
 
 %package -n libpurple
 Summary:    libpurple library for IM clients like Pidgin and Finch
@@ -178,9 +180,9 @@ use Pidgin plugins written in the .NET programming language.
 SILC (Secure Internet Live Conferencing) plugin for Pidgin.
 %endif
 
-%if 0%{!?without_text:1}
+%if 0%{!?_without_text:1}
 %description -n finch
-A text-based user interface for Pidgin.  This can be run from a
+A text-based user interface for using libpurple.  This can be run from a
 standard text console or from a terminal within X Windows.  It
 uses ncurses and our homegrown gnt library for drawing windows
 and text.
