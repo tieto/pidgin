@@ -1,6 +1,16 @@
-Gaim: The Pimpin' Penguin IM Client that's good for the soul!
+Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.0.0:
+	Please note all functions, defines, and data structures have been
+	re-namespaced to match the new names of Pidgin, Finch, and libpurple.
+	All gaim_gtk_* functions are now pidgin_*, former libgaim functions are
+	now purple_*.  Please consult our doxygen documentation for a complete
+	reference.
+
+	The gaim-compat.h header exists to provide an API compatibility layer
+	for libpurple functions.  As an API compatibility layer, it must be
+	included at compile time to be of use.
+
 	Changed:
 	* All the status stuff.  Yay!
 	* gaim_prefs_connect_callback(), added handle parameter
@@ -222,6 +232,7 @@ version 2.0.0:
 	* GaimGtkRoomlistDialog: Nothing used it outside of the file it was in.
 	* gaim_gtk_roomlist_dialog_new: use gaim_gtk_roomlist_show
 	* gaim_gtk_roomlist_dialog_new_with_account: use gaim_gtk_roomlist_show_with_account
+	* binreloc functions
 
 	Added:
 	* gaim_prefs_disconnect_by_handle()
@@ -256,6 +267,7 @@ version 2.0.0:
 	* gaim_account_supports_offline_message()
 	* gaim_conversation_close_logs(), to force a conversation's log(s) to
 	  be closed.  New logs will be opened as necessary.
+	* gaim_got_protocol_handler_uri()
 	* gaim_plugin_get_id()
 	* gaim_plugin_get_name()
 	* gaim_plugin_get_version()
@@ -359,6 +371,8 @@ version 2.0.0:
 	* gaim_gtk_blist_set_headline
 	* gaim_gtk_set_urgent
 	* GtkGaimScrollBook and its functions.
+	* purple_markup_unescape_entity()
+	* purple_markup_get_css_property()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.
@@ -415,8 +429,10 @@ version 2.0.0:
 	* "gtkblist-hiding"
 	* "gtkblist-unhiding"
 	* "log-displaying"
+	* "network-configuration-changed"
 	* "savedstatus-changed"
 	* "sendto-extended-menu"
+	* "uri-handler"
 
 	Signals - Removed:
 	* "account-away": replaced by account-status-changed

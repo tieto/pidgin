@@ -1,0 +1,430 @@
+.\" Copyright (c) 2006, Sadrul Habib Chowdhury <sadrul@users.sf.net>
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License, or (at your option) any later version.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
+.\" USA.
+.TH finch 1
+.SH NAME
+Finch \- A Pimpin' Penguin console frontend to libpurple. Instant
+Messaging client.
+.SH SYNOPSIS
+.TP 5
+\fBfinch \fI[options]\fR
+
+.SH DESCRIPTION
+.PP
+\fBfinch\fR is a console-based modular messaging client capable of using
+AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime,
+Zephyr, Gadu-Gadu, and QQ all at once. It has many common features found in
+other clients, as well as many unique features.  Finch is not endorsed by or
+affiliated with America Online, ICQ, Microsoft, or Yahoo.
+
+.SH OPTIONS
+The following options are provided by \fBfinch\fR using the standard GNU
+command line syntax:
+.TP
+.B \-d, \-\-debug
+Print debugging messages to stderr and start with the \fBDebug\fR window. The
+messages shown in the \fBDebug\fR window are the same as the ones printed in
+stderr.
+.TP
+.B \-c, \-\-config=\fIDIR\fB
+Use \fIDIR\fR as the directory for config files instead of \fI~/.gaim\fR.
+.TP
+.B \-h, \-\-help
+Print this help and exit.
+.TP
+.B \-n, \-\-nologin
+Don't automatically login when \fBfinch\fR starts.  Sets all accounts to
+Offline.
+.TP
+.B \-v, \-\-version
+Display the version information window.
+
+.SH GNT Shortcuts
+You can use the following shortcuts:
+.TP
+.B Alt \+ a
+Bring up a list of available actions. You can use this list to access the
+accounts window, plugins window, preference window etc.
+.TP
+.B Alt \+ n
+Go to the next window.
+.TP
+.B Alt \+ p
+Go to the previous window.
+.TP
+.B Alt \+ w
+Show the list of windows. You can select and jump to any window from the list.
+.TP
+.B Alt \+ c
+Close the current window.
+.TP
+.B Alt \+ q
+Quit.
+.TP
+.B Alt \+ m
+Start moving a window. Press the cursor keys to move the window. When you are
+done, press \fBEnter\fR or \fBEscape\fR.
+.TP
+.B Alt \+ r
+Start resizing a window. Press the cursor keys to resize the window. When you
+are done, press \fBEnter\fR or \fBEscape\fR.
+.TP
+.B Alt \+ d
+Dump the contents of the screen in HTML format in a file named "dump.html" in
+working directory.
+.TP
+.B Alt \+ .
+Move the position of the current window in the window list one place to the
+right.
+.TP
+.B Alt \+ ,
+Move the position of the current window in the window list one place to the
+left.
+.TP
+.B Alt \+ l
+Refresh the windows. This is useful after resizing the terminal window.
+.TP
+.B Alt \+ 1 2 ... 0
+Jump to the 1st, 2nd ... 10th window.
+.TP
+.B Ctrl \+ o
+Bring up the menu (if there is one) for a window. Note that currently only the
+buddylist has a menu.
+
+.SH FILES
+\fI~/.gntrc\fR: configuration file for gnt applications.
+.br
+.TP
+A sample file looks like:
+.br
+[general]
+.br
+shadow = 0
+.br
+# There is experimental mouse support
+.br
+mouse = 1
+.br
+# To use some custom window-manager
+.br
+wm = /usr/local/lib/gaim/s.so
+.br
+# Remember window-positions based on the titles (on by default)
+.br
+remember_position = 1
+.br
+
+.br
+[colors]
+.br
+# The RGB values range in [0, 1000]
+.br
+black = 0; 0; 0
+.br
+red = 1000; 0; 0
+.br
+green = 0; 1000; 0
+.br
+blue = 250; 250; 700
+.br
+white = 1000; 1000; 1000
+.br
+gray = 700; 700; 700
+.br
+darkgray = 256; 256; 256
+.br
+
+.br
+[colorpairs]
+.br
+normal = white; black
+.br
+highlight = white; blue
+.br
+highlightd = black; gray
+.br
+shadow = black; darkgray
+.br
+title = white; blue
+.br
+titled = white; gray
+.br
+text = white; blue
+.br
+disabled = gray; black
+.br
+urgent = green; black
+.br
+
+.br
+# Remap some keys for GntEntry
+.br
+[GntEntry::remap]
+.br
+# Remap the up-arrow to the left-arrow
+.br
+^[[A = ^[[D
+.br
+# Remap the down-arrow to the right-arrow
+.br
+^[[B = ^[[C
+.br
+# Remap 'a' to 'bcd'
+.br
+a = bcd
+.br
+# Completely ignore the key 'q'
+.br
+q = 
+.br
+# But the following will NOT work
+.br
+#abc = bcd
+.br
+
+# Hitting 'space' will activate a button
+.br
+[GntButton::remap]
+.br
+\\  = \\r
+.br
+
+.SH Widget Actions
+You can specifiy key-bindings for specific widgets. The following entries in
+\fI~/.gntrc\fR correspond to the default keybindings for the actions:
+
+.br
+[GntEntry::binding]
+.br
+c-a = cursor-home
+.br
+home = cursor-home
+.br
+c-e = cursor-end
+.br
+end = cursor-end
+.br
+backspace = delete-prev
+.br
+del = delete-next
+.br
+c-d = delete-next
+.br
+c-u = delete-start
+.br
+c-k = delete-end
+.br
+c-b = cursor-prev
+.br
+left = cursor-prev
+.br
+c-f = cursor-next
+.br
+right = cursor-next
+.br
+tab = suggest-show
+.br
+down = suggest-next
+.br
+up = suggest-prev
+.br
+c-w = delete-prev-word
+.br
+a-b = cursor-prev-word
+.br
+a-f = cursor-next-word
+.br
+a-d = delete-next-word
+.br
+c-v = clipboard-paste
+
+.br
+[GntTree::binding]
+.br
+up = move-up
+.br
+down = move-down
+.br
+c-n = move-down
+.br
+c-p = move-up
+.br
+pageup = page-up
+.br
+pagedown = page-down
+.br
+# Following is the default binding for the context-menu
+.br
+menu = context-menu
+.br
+# The following will let you open the context-menu in the buddylist with c-b
+.br
+# c-b = context-menu
+
+.br
+[GntWidget::binding]
+.br
+f11 = context-menu
+
+[GntWindow::binding]
+.br
+c-o = show-menu
+.br
+f10 = show-menu
+
+The \fBc-\fR corresponds to the \fBControl\fR key. You can also use \fBctrl-\fR
+or \fBctr-\fR or \fBctl-\fR to indicate a combination. For alt-keys, you can use
+one of \fBa-\fR, \fBalt-\fR, \fBm-\fR or \fBmeta-\fR. You can also use
+\fBhome\fR, \fBend\fR, \fBleft\fR, \fBright\fR etc. keys.
+
+.SH Mouse Support
+There is experimental mouse support. You can focus windows, activate buttons,
+select rows in a list, scroll using the wheel-scroll etc. Selecting text in a
+text-view copies it to the gnt clipboard. Mouse support is disabled by default,
+so you need to enable it in \fI~/.gntrc\fR (see the sample above).
+
+.SH Window Management
+The default window management is very limited. But it is possible to write
+custom window managers to suit your needs. There is a sample window-manager
+included (named \fIs.so\fR) which adds a little 'close-button' for the windows,
+removes the borders from the buddylist and pops up new windows in the middle of
+the screen, instead of at the upper-left corder. It is provided as a sample
+simple manager, but it should be possible to write more complex managers, and
+it's very possible that the window-manager API will need to be enhanced. Look at
+the sample \fI~/.gntrc\fR file above to see how to select a window-manager.
+
+It is also possible to rebind the window-manager actions in \fI~/.gntrc\fR, eg:
+
+.br
+[GntWM::binding]
+.br
+a-n = window-next
+.br
+a-p = window-prev
+.br
+a-c = window-close
+.br
+a-w = window-list
+.br
+a-d = dump-screen
+.br
+a-, = shift-left
+.br
+a-. = shift-right
+.br
+a-a = action-list
+.br
+a-m = start-move
+.br
+a-r = start-resize
+.br
+a-q = wm-quit
+.br
+a-l = refresh-screen
+.br
+# The following action is still incomplete, and doesn't have a default binding
+.br
+# switch-window-n
+.br
+
+# For the sample custom window manager
+.br
+[GntS::binding]
+.br
+a-b = toggle-buddylist
+.br
+a-C = toggle-clipboard
+
+.SH Conversation Commands
+There are a few helpful commands in addition to the regular commands. You can
+use these from any conversation to access other windows.
+
+.TP
+.B accounts
+for the accounts window.
+
+.TP
+.B buddylist
+for the buddylist.
+
+.TP
+.B debugwin
+for the debug window.
+
+.TP
+.B plugins
+for the plugins window.
+
+.TP
+.B prefs
+for the preferences window.
+
+.TP
+.B status
+for the status window.
+
+.SH BUGS
+Known bugs are listed at
+.br
+\fIhttp://sourceforge.net/tracker/?group_id=235&atid=100235\fR
+
+Before sending a bug report, please verify that you have the latest
+version of \fBfinch\fR and \fBlibpurple\fR.  Many bugs (major and minor) are
+fixed at each release, and if yours is out of date, the problem may already have
+been solved.
+
+
+.SH PATCHES
+If you fix a bug in \fBfinch\fR (or otherwise enhance it), please submit a
+patch (using \fImtn diff > my.diff\fR against the latest version from the
+Monotone repository) at
+.br
+\fIhttp://developer.pidgin.im/newticket\fR
+
+You are also encouraged to drop by at \fB#pidgin\fR on \fIirc.freenode.net\fR to
+discuss development.
+
+.SH SEE ALSO
+\fIhttp://pidgin.im/\fR
+
+.SH LICENSE
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+\fBWITHOUT ANY WARRANTY\fR; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+.SH AUTHORS
+Sadrul Habib Chowdhury <\fIsadrul@users.sourceforge.net\fR>
+.br
+
+This manpage was written by Sadrul Habib Chowdhury
+<\fIsadrul@users.sourceforge.net\fR> and Dennis Ristuccia
+<\fIdennis@dennisr.net\fR>.
+

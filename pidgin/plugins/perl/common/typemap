@@ -1,0 +1,19 @@
+TYPEMAP
+
+Pidgin::Account::Dialog::Type      T_IV
+Pidgin::BuddyList                  T_PurpleObj
+Pidgin::BuddyList::SortFunction    T_PurpleObj
+Pidgin::Conversation               T_PurpleObj
+Pidgin::Conversation::PlacementFunc       T_PurpleObj
+Pidgin::Conversation::Window       T_PurpleObj
+Pidgin::Xfer::Dialog               T_PurpleObj
+Pidgin::IMHtml                     T_PurpleObj
+Pidgin::IMHtml::Buttons            T_IV
+Pidgin::IMHtml::Funcs              T_PurpleObj
+Pidgin::IMHtml::Scalable           T_PurpleObj
+Pidgin::IMHtml::Smiley             T_PurpleObj
+Pidgin::IMHtml::Options            T_IV
+Pidgin::IMHtmlToolbar              T_PurpleObj
+Pidgin::MenuTray                   T_PurpleObj
+Pidgin::StatusBox                  T_PurpleObj
+Pidgin::UnseenState                T_IV

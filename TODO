@@ -26,7 +26,7 @@
 }}}
 * buddy list {{{
 	* we have not committed any gobjectification, so this is not a blocker for 2.0.0 until we do.
-		* if we do, it is only a blocker to the extent that gaim needs to run.  That is, we do not
+		* if we do, it is only a blocker to the extent that pidgin & finch need to run.  That is, we do not
 		  *necessarily* have to gobjectifiy everything as long as we preserve functionality.
 		* That being said, my understanding of the signals mess says that it is probly more work to
 		  try to do this in stages than to start it or not start it.
@@ -39,12 +39,6 @@
 		* we could look at replacing the UI ops with signals/call backs
 	* bugs
 		* wrong buddy given priority
-}}}
-* build targets {{{
-  * this is not a blocker
-  * we need build targets for libgaim, we need to test them, and make sure they work.
-  * we ought to use our own build targets to build the executable itself.
-  * due to the limitations of cvs, this cannot accompany moving files to other directories at this time.
 }}}
 * status {{{
 	* Error messages aren't particularly usable currently.  we need to be able to see the full text of
@@ -74,9 +68,9 @@
 	* on upgrade from 1.x, the timestamp preference often gets lost.
 }}}
 * system log {{{
-	* The system log minimally should tell me what _I_ do in gaim.  It should (minimally) tell me about
+	* The system log minimally should tell me what _I_ do in Pidgin.  It should (minimally) tell me about
 	  my accounts and actions.  It should thus list
-	  * gaim start and quit
+	  * Pidgin start and quit
 	  * Account connection
 	  * account disconnection, and reason if caused by error.
 	  * account state changes, IFF we are logging that for buddies.

@@ -1,11 +1,13 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([gaim], [2.0.0beta6], [gaim-devel@lists.sourceforge.net])
+AC_INIT([pidgin], [2.0.0beta7devel], [devel@pidgin.im])
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 #AM_INIT_AUTOMAKE([foreign dist-bzip2])
 
 AC_PREREQ([2.50])
+
+AC_DEFINE(PIDGIN_NAME, "Pidgin", [The user-visible application name])
 
 AC_PATH_PROG(sedpath, sed)
 
@@ -21,8 +23,9 @@ AC_PROG_INSTALL
 AC_PROG_INTLTOOL
 PKG_PROG_PKG_CONFIG
 
-GETTEXT_PACKAGE=gaim
+GETTEXT_PACKAGE=pidgin
 AC_SUBST(GETTEXT_PACKAGE)
+
 
 # before gettexting, in case iconv matters
 case "$host_os" in
@@ -49,7 +52,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu it ja ka ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_TW"
+ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl we don't use autobreak on cygwin!!
@@ -371,7 +374,7 @@ dnl #######################################################################
 GNT_LIBS=""
 GNT_CFLAGS=""
 AC_ARG_WITH(ncurses-headers, [AC_HELP_STRING([--with-ncurses-headers=DIR],
-		[compile gaim-text against the ncurses includes in DIR])],
+		[compile finch against the ncurses includes in DIR])],
 		[ac_ncurses_includes="$withval"], [ac_ncurses_includes=""])
 if test "x$enable_consoleui" = "xyes"; then
 	AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_consoleui=no])
@@ -413,9 +416,6 @@ if test "x$enable_consoleui" = "xyes"; then
 			GNT_LIBS=""
 			GNT_CFLAGS=""
 			enable_consoleui=no
-			AC_MSG_RESULT([no])
-		else
-			AC_MSG_RESULT([yes])
 		fi
 	else
 		# ncursesw was not found. Look for plain old ncurses
@@ -700,14 +700,14 @@ STATIC_LINK_LIBS=
 extern_init=
 load_proto=
 for i in $STATIC_PRPLS ; do
-	dnl Ugly special case for "libsilcgaim.a":
+	dnl Ugly special case for "libsilcpurple.a":
 	if test "x$i" = "xsilc"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib${i}gaim.a"
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib${i}purple.a"
 	else
 		STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib$i.a"
 	fi
-	extern_init="$extern_init extern gboolean gaim_init_${i}_plugin();"
-	load_proto="$load_proto gaim_init_${i}_plugin();"
+	extern_init="$extern_init extern gboolean purple_init_${i}_plugin();"
+	load_proto="$load_proto purple_init_${i}_plugin();"
 	case $i in
 		bonjour)	static_bonjour=yes ;;
 		gg)			static_gg=yes ;;
@@ -716,7 +716,9 @@ for i in $STATIC_PRPLS ; do
 		msn)		static_msn=yes ;;
 		novell)		static_novell=yes ;;
 		oscar)		static_oscar=yes ;;
-		qq)		static_qq=yes ;;
+		aim)		static_oscar=yes ;;
+		icq)		static_oscar=yes ;;
+		qq)			static_qq=yes ;;
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
 		simple)		static_simple=yes ;;
@@ -767,7 +769,9 @@ for i in $DYNAMIC_PRPLS ; do
 		msn)		dynamic_msn=yes ;;
 		novell)		dynamic_novell=yes ;;
 		oscar)		dynamic_oscar=yes ;;
-		qq)		dynamic_qq=yes ;;
+		aim)		dynamic_oscar=yes ;;
+		icq)		dynamic_oscar=yes ;;
+		qq)			dynamic_qq=yes ;;
 		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
 		simple)		dynamic_simple=yes ;;
@@ -818,7 +822,7 @@ if test "x$GCC" = "xyes"; then
 	dnl
 	dnl Consider adding -Wfloat-equal.
 	dnl	This leads to warnings with Perl.
-	dnl 		Perhaps we could write ugly configure magic and pass -Wno-float-equal down to that subdirectory.
+	dnl		Perhaps we could write ugly configure magic and pass -Wno-float-equal down to that subdirectory.
 	dnl		On the other hand, it's probably actually broken, so maybe the Perl folks should fix that?
 	dnl
 	dnl Consider removing -Wno-sign-compare (from the -Wextra set) and fixing all those cases.
@@ -879,13 +883,14 @@ if test "x$GCC" = "xyes"; then
 fi
 AC_SUBST(CFLAGS)
 
-AC_PATH_PROG(gaimpath, gaim)
+AC_PATH_PROG(pidginpath, pidgin)
 
 dnl #######################################################################
-dnl # Check for DBUS libraries
+dnl # Check for D-Bus libraries
 dnl #######################################################################
 
-AC_ARG_ENABLE(dbus, [AC_HELP_STRING([--enable-dbus], [enable DBUS support])], , enable_dbus=yes)
+AC_ARG_ENABLE(dbus, [AC_HELP_STRING([--enable-dbus], [enable D-Bus support])], , enable_dbus=yes)
+AC_ARG_ENABLE(nm, [AC_HELP_STRING([--enable-nm], [enable NetworkManager support (buggy) (requires D-Bus)])], enable_libnm=yes, enable_libnm=no)
 
 if test "x$enable_dbus" = "xyes" ; then
 	AC_CHECK_PROG(enable_dbus, dbus-binding-tool, yes, no)
@@ -901,18 +906,24 @@ if test "x$enable_dbus" = "xyes" ; then
 		enable_dbus=no
 	])
 
-dnl     Check for libnm_glib; if we don't have it, oh well
-	LIBNM_CFLAGS=""
-	LIBNM_LIBS=""
-	PKG_CHECK_MODULES(LIBNM, libnm_glib,
-	[
-    		AC_DEFINE(HAVE_LIBNM, 1, [Check to see if we have NetworkManager])
-	],
-	[
-                AC_MSG_RESULT(no)
-	])
-	AC_SUBST(LIBNM_CFLAGS)
-	AC_SUBST(LIBNM_LIBS)
+dnl Check for libnm_glib; if we don't have it, oh well
+	if test "x$enable_libnm" = "xyes" ; then
+		LIBNM_CFLAGS=""
+		LIBNM_LIBS=""
+		PKG_CHECK_MODULES(LIBNM, libnm_glib,
+		[
+			AC_DEFINE(HAVE_LIBNM, 1, [Define if you have NetworkManager])
+			enable_libnm=yes
+		],
+		[
+			AC_MSG_RESULT(no)
+			enable_libnm=no
+		])
+		AC_SUBST(LIBNM_CFLAGS)
+		AC_SUBST(LIBNM_LIBS)
+	fi
+else
+	enable_libnm=no
 fi
 
 dnl #######################################################################
@@ -921,10 +932,10 @@ dnl #######################################################################
 
 dnl Python scripts are used to auto-generate about 3000 lines of C
 dnl and XML code that wraps (part of) the existing Gaim API so that
-dnl it is now accessible through DBUS.
+dnl it is now accessible through D-Bus.
 
 dnl Python is only required if --enable-dbus is used, and only for
-dnl the build process to generate the code, not for running gaim.
+dnl the build process to generate the code, not for running pidgin.
 dnl This autogenerated code is system-independent, so in principle we
 dnl can generate all of it before shipping.  But I thought adding
 dnl auto-generated stuff to the repository is inelegant.
@@ -1004,14 +1015,14 @@ if test x"$enable_dbus" = "xyes" ; then
 		fi
 	fi
 	AC_MSG_RESULT([$DBUS_SERVICES_DIR])
-	AC_DEFINE(HAVE_DBUS, 1, [Define if we are re using DBUS.])
+	AC_DEFINE(HAVE_DBUS, 1, [Define if we are using D-Bus.])
 fi
 AC_SUBST(DBUS_SERVICES_DIR)
 
 if test "x$enable_dbus" = "xyes" ; then
-	echo "Building with DBUS support"
+	echo "Building with D-Bus support"
 else
-	echo "Building without DBUS support"
+	echo "Building without D-Bus support"
 fi
 
 AM_CONDITIONAL(ENABLE_DBUS, test "x$enable_dbus" = "xyes")
@@ -1021,17 +1032,15 @@ dnl # Check for Mono support
 dnl #######################################################################
 AC_ARG_ENABLE(mono, [AC_HELP_STRING([--enable-mono], [compile with Mono runtime support (experimental)])], , enable_mono=no)
 if test x"$enable_mono" = x"yes" ; then
-	AC_MSG_CHECKING(for Mono compile flags)
-	MONO_CFLAGS=`pkg-config --cflags mono 2> /dev/null`
-	if test $? != 0 ; then
-		AC_MSG_RESULT([not found, building without mono.])
-		MONO_CFLAGS=
-		MONO_LIBS=
+	PKG_CHECK_MODULES(MONO, mono, [
+		AC_SUBST(MONO_CFLAGS)
+		AC_SUBST(MONO_LIBS)
+		enable_mono=yes
+	], [
+		AC_MSG_RESULT(no)
 		enable_mono=no
-	else
-		MONO_LIBS=`pkg-config --libs mono 2> /dev/null`
-		AC_MSG_RESULT(ok)
-
+	])
+	if test x"$enable_mono" = x"yes"; then
 		oldLIBS="$LIBS"
 		LIBS="$LIBS $MONO_LIBS"
 		AC_MSG_CHECKING(for libmono)
@@ -1136,7 +1145,7 @@ if test "$enable_perl" = yes ; then
 
 		AC_ARG_WITH(perl-lib,
 		[AC_HELP_STRING([--with-perl-lib=[site|vendor|DIR]],
-			[specify where to install the Perl libraries for gaim. Default is site.])],
+			[specify where to install the Perl libraries for pidgin. Default is site.])],
 		[
 			if test "x$withval" = xsite; then
 				PERL_MM_PARAMS=""
@@ -1240,7 +1249,9 @@ if test "x$enable_gnutls" != "xno"; then
 		        "x$gnutls_includes" != "x"; then
 			have_gnutls_includes="yes"
 
-			GNUTLS_CFLAGS="-I$with_gnutls_includes"
+			if test "x$with_gnutls_includes" != "xNONE/include"; then
+				GNUTLS_CFLAGS="-I$with_gnutls_includes"
+			fi
 		else
 			GNUTLS_CFLAGS=""
 		fi
@@ -1706,7 +1717,7 @@ AC_SUBST(LDADD)
 AC_SUBST(LIBS)
 
 if test "x$enable_plugins" = "xyes" ; then
-	AC_DEFINE(GAIM_PLUGINS, 1, [Define if plugins are enabled.])
+	AC_DEFINE(PURPLE_PLUGINS, 1, [Define if plugins are enabled.])
 	AM_CONDITIONAL(PLUGINS, true)
 else
 	AM_CONDITIONAL(PLUGINS, false)
@@ -1796,8 +1807,6 @@ if test "$zephyr" != "no" ; then
 	LDFLAGS="$orig_LDFLAGS"
 fi
 
-AM_BINRELOC
-
 AC_MSG_CHECKING(for me pot o' gold)
 AC_MSG_RESULT(no)
 AC_CHECK_FUNCS(gethostid lrand48)
@@ -1822,8 +1831,12 @@ fi
 dnl #######################################################################
 dnl # Check for check
 dnl #######################################################################
-PKG_CHECK_MODULES(CHECK, check >= 0.9.4, have_check=yes, have_check=no)
-AM_CONDITIONAL(HAVE_CHECK, test "x$have_check" = "xyes")
+PKG_CHECK_MODULES(CHECK,[check >= 0.9.4],:,[
+					ifdef([AM_PATH_CHECK],
+					[AM_PATH_CHECK],
+					[AC_MSG_RESULT([no, testing is disabled])])
+				  ])
+AM_CONDITIONAL(HAVE_CHECK, [test "x$CHECK_LIBS" != "x"])
 AC_SUBST(CHECK_CFLAGS)
 AC_SUBST(CHECK_LIBS)
 
@@ -1875,69 +1888,117 @@ fi
 AC_ARG_ENABLE(fatal-asserts, [AC_HELP_STRING([--enable-fatal-asserts],
 	[make assertions fatal (useful for debugging)])], , enable_fatal_asserts=no)
 if test "x$enable_fatal_asserts" = "xyes" ; then
-	AC_DEFINE(GAIM_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
+	AC_DEFINE(PURPLE_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
 fi
 
 AC_OUTPUT([Makefile
 		   Doxyfile
-		   gaim.apspec
 		   gaim.service
 		   doc/Makefile
-		   doc/gaim.1
-		   doc/gaim-text.1
+		   doc/pidgin.1
+		   doc/finch.1
 		   m4macros/Makefile
-		   gtk/Makefile
-		   gtk/pixmaps/Makefile
-		   gtk/pixmaps/buddy_icons/Makefile
-		   gtk/pixmaps/buddy_icons/qq/Makefile
-		   gtk/pixmaps/smileys/Makefile
-		   gtk/pixmaps/smileys/default/Makefile
-		   gtk/pixmaps/smileys/none/Makefile
-		   gtk/pixmaps/status/Makefile
-		   gtk/pixmaps/status/default/Makefile
-		   gtk/plugins/Makefile
-		   gtk/plugins/cap/Makefile
-		   gtk/plugins/gestures/Makefile
-		   gtk/plugins/gevolution/Makefile
-		   gtk/plugins/musicmessaging/Makefile
-		   gtk/plugins/perl/Makefile
-		   gtk/plugins/perl/common/Makefile.PL
-		   gtk/plugins/ticker/Makefile
-		   gtk/sounds/Makefile
-		   libgaim/gconf/Makefile
-		   libgaim/plugins/Makefile
-		   libgaim/plugins/mono/Makefile
-		   libgaim/plugins/mono/api/Makefile
-		   libgaim/plugins/mono/loader/Makefile
-		   libgaim/plugins/perl/Makefile
-		   libgaim/plugins/perl/common/Makefile.PL
-		   libgaim/plugins/ssl/Makefile
-		   libgaim/plugins/tcl/Makefile
-		   libgaim/Makefile
-		   libgaim/protocols/Makefile
-		   libgaim/protocols/bonjour/Makefile
-		   libgaim/protocols/gg/Makefile
-		   libgaim/protocols/irc/Makefile
-		   libgaim/protocols/jabber/Makefile
-		   libgaim/protocols/msn/Makefile
-		   libgaim/protocols/novell/Makefile
-		   libgaim/protocols/oscar/Makefile
-		   libgaim/protocols/qq/Makefile
-		   libgaim/protocols/sametime/Makefile
-		   libgaim/protocols/silc/Makefile
-		   libgaim/protocols/simple/Makefile
-		   libgaim/protocols/toc/Makefile
-		   libgaim/protocols/yahoo/Makefile
-		   libgaim/protocols/zephyr/Makefile
-		   libgaim/tests/Makefile
-		   console/Makefile
-		   console/libgnt/Makefile
-		   console/libgnt/gnt.pc
-		   console/libgnt/wms/Makefile
-		   console/plugins/Makefile
+		   pidgin.apspec
+		   pidgin/Makefile
+		   pidgin/pidgin.pc
+		   pidgin/pidgin-uninstalled.pc
+		   pidgin/pixmaps/Makefile
+		   pidgin/pixmaps/animations/Makefile
+		   pidgin/pixmaps/animations/16/Makefile
+		   pidgin/pixmaps/buddy_icons/Makefile
+		   pidgin/pixmaps/buddy_icons/qq/Makefile
+		   pidgin/pixmaps/dialogs/Makefile
+		   pidgin/pixmaps/dialogs/16/Makefile
+		   pidgin/pixmaps/dialogs/16/scalable/Makefile
+		   pidgin/pixmaps/dialogs/64/Makefile
+		   pidgin/pixmaps/dialogs/64/scalable/Makefile
+		   pidgin/pixmaps/emblems/Makefile
+		   pidgin/pixmaps/emblems/16/Makefile
+		   pidgin/pixmaps/emblems/16/scalable/Makefile
+		   pidgin/pixmaps/emotes/Makefile
+		   pidgin/pixmaps/emotes/default/Makefile
+		   pidgin/pixmaps/emotes/default/22/Makefile
+		   pidgin/pixmaps/emotes/default/22/scalable/Makefile
+		   pidgin/pixmaps/emotes/none/Makefile
+		   pidgin/pixmaps/icons/Makefile
+		   pidgin/pixmaps/icons/16/Makefile
+		   pidgin/pixmaps/icons/16/scalable/Makefile
+		   pidgin/pixmaps/icons/24/Makefile
+		   pidgin/pixmaps/icons/24/scalable/Makefile
+		   pidgin/pixmaps/icons/32/Makefile
+		   pidgin/pixmaps/icons/32/scalable/Makefile
+		   pidgin/pixmaps/icons/48/Makefile
+		   pidgin/pixmaps/icons/48/scalable/Makefile
+		   pidgin/pixmaps/protocols/Makefile
+		   pidgin/pixmaps/protocols/16/Makefile
+		   pidgin/pixmaps/protocols/16/scalable/Makefile
+		   pidgin/pixmaps/protocols/22/Makefile
+		   pidgin/pixmaps/protocols/22/scalable/Makefile
+		   pidgin/pixmaps/protocols/48/Makefile
+		   pidgin/pixmaps/protocols/48/scalable/Makefile
+		   pidgin/pixmaps/status/Makefile
+		   pidgin/pixmaps/status/16/Makefile
+		   pidgin/pixmaps/status/16/rtl/Makefile
+		   pidgin/pixmaps/status/16/scalable/Makefile
+		   pidgin/pixmaps/status/22/Makefile
+		   pidgin/pixmaps/status/22/rtl/Makefile
+		   pidgin/pixmaps/status/22/scalable/Makefile
+		   pidgin/pixmaps/status/32/Makefile
+		   pidgin/pixmaps/status/32/rtl/Makefile
+		   pidgin/pixmaps/status/32/scalable/Makefile
+		   pidgin/pixmaps/status/48/Makefile
+		   pidgin/pixmaps/status/48/rtl/Makefile
+		   pidgin/pixmaps/toolbar/Makefile
+		   pidgin/pixmaps/toolbar/16/Makefile
+		   pidgin/pixmaps/toolbar/16/scalable/Makefile
+		   pidgin/pixmaps/tray/Makefile
+		   pidgin/pixmaps/tray/16/Makefile
+		   pidgin/pixmaps/tray/22/Makefile
+		   pidgin/plugins/Makefile
+		   pidgin/plugins/cap/Makefile
+		   pidgin/plugins/gestures/Makefile
+		   pidgin/plugins/gevolution/Makefile
+		   pidgin/plugins/musicmessaging/Makefile
+		   pidgin/plugins/perl/Makefile
+		   pidgin/plugins/perl/common/Makefile.PL
+		   pidgin/plugins/ticker/Makefile
+		   pidgin/sounds/Makefile
+		   libpurple/example/Makefile
+		   libpurple/gconf/Makefile
+		   libpurple/purple.pc
+		   libpurple/purple-uninstalled.pc
+		   libpurple/plugins/Makefile
+		   libpurple/plugins/mono/Makefile
+		   libpurple/plugins/mono/api/Makefile
+		   libpurple/plugins/mono/loader/Makefile
+		   libpurple/plugins/perl/Makefile
+		   libpurple/plugins/perl/common/Makefile.PL
+		   libpurple/plugins/ssl/Makefile
+		   libpurple/plugins/tcl/Makefile
+		   libpurple/Makefile
+		   libpurple/protocols/Makefile
+		   libpurple/protocols/bonjour/Makefile
+		   libpurple/protocols/gg/Makefile
+		   libpurple/protocols/irc/Makefile
+		   libpurple/protocols/jabber/Makefile
+		   libpurple/protocols/msn/Makefile
+		   libpurple/protocols/novell/Makefile
+		   libpurple/protocols/oscar/Makefile
+		   libpurple/protocols/qq/Makefile
+		   libpurple/protocols/sametime/Makefile
+		   libpurple/protocols/silc/Makefile
+		   libpurple/protocols/simple/Makefile
+		   libpurple/protocols/toc/Makefile
+		   libpurple/protocols/yahoo/Makefile
+		   libpurple/protocols/zephyr/Makefile
+		   libpurple/tests/Makefile
+		   finch/Makefile
+		   finch/libgnt/Makefile
+		   finch/libgnt/gnt.pc
+		   finch/libgnt/wms/Makefile
+		   finch/plugins/Makefile
 		   po/Makefile.in
-		   gaim.pc
-		   gaim.spec
+		   pidgin.spec
 		  ])
 
 echo
@@ -1951,10 +2012,11 @@ echo Protocols to build dynamically : $DYNAMIC_PRPLS
 echo Protocols to link statically.. : $STATIC_PRPLS
 echo
 echo Build with GStreamer support.. : $enable_gst
-echo Build with DBUS support....... : $enable_dbus
+echo Build with D-Bus support...... : $enable_dbus
 if test "x$enable_dbus" = "xyes" ; then
-	eval eval echo DBUS services directory....... : $DBUS_SERVICES_DIR
+	eval eval echo D-Bus services directory...... : $DBUS_SERVICES_DIR
 fi
+echo Build with NetworkManager..... : $enable_libnm
 echo SSL Library/Libraries......... : $msg_ssl
 echo Build with Cyrus SASL support. : $enable_cyrus_sasl
 echo Use kerberos 4 with zephyr.... : $kerberos
@@ -1975,9 +2037,9 @@ echo
 echo Print debugging messages...... : $enable_debug
 echo Assertions are fatal.......... : $enable_fatal_asserts
 echo
-eval eval echo Gaim will be installed in $bindir.
-if test "x$gaimpath" != "x" ; then
-	echo Warning: You have an old copy of gaim at $gaimpath.
+eval eval echo Pidgin will be installed in $bindir.
+if test "x$pidginpath" != "x" ; then
+	echo Warning: You have an old copy of Pidgin at $pidginpath.
 fi
 echo
 echo configure complete, now type \'make\'

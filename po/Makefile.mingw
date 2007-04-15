@@ -3,10 +3,10 @@
 # Description: Makefile to generate mo files
 #
 
-GAIM_TOP := ..
-include $(GAIM_TOP)/libgaim/win32/global.mak
+PIDGIN_TREE_TOP := ..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-PACKAGE = gaim
+PACKAGE = pidgin
 
 .SUFFIXES:
 .SUFFIXES: .po .gmo
@@ -33,19 +33,19 @@ CATALOGS = $(patsubst %.po,%.gmo,$(wildcard *.po))
 all: $(CATALOGS)
 
 install: all
-	mkdir -p $(GAIM_INSTALL_PO_DIR)
+	mkdir -p $(PURPLE_INSTALL_PO_DIR)
 	@catalogs='$(CATALOGS)'; \
 	for cat in $$catalogs; do \
 	  cat=`basename $$cat`; \
 	  lang=`echo $$cat | sed 's/\.gmo$$//'`; \
-	  dir=$(GAIM_INSTALL_PO_DIR)/$$lang/LC_MESSAGES; \
+	  dir=$(PURPLE_INSTALL_PO_DIR)/$$lang/LC_MESSAGES; \
 	  mkdir -p $$dir; \
 	  if test -r $$cat; then \
 	    cp $$cat $$dir/$(PACKAGE).mo; \
 	    echo "installing $$cat as $$dir/$(PACKAGE).mo"; \
 	  else \
-	    cp $(GAIM_PO_TOP)/$$cat $$dir/$(PACKAGE).mo; \
-	    echo "installing $(GAIM_PO_TOP)/$$cat as" \
+	    cp $(PURPLE_PO_TOP)/$$cat $$dir/$(PACKAGE).mo; \
+	    echo "installing $(PURPLE_PO_TOP)/$$cat as" \
 		 "$$dir/$(PACKAGE).mo"; \
 	  fi; \
 	done

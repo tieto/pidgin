@@ -1,0 +1,103 @@
+#!/usr/bin/env python
+
+# This script requires Python 2.4 and pygnt bindings
+#
+# Note that all function names are resolved dynamically, no
+# purple-specific library is needed.
+
+import dbus
+import dbus.glib
+import dbus.decorators
+import gobject
+import os
+import gnt
+
+from time import strftime
+
+convwins = {}
+
+def buddysignedon():
+    pass
+
+def conv_closed(conv):
+    key = get_dict_key(conv)
+    stuff = convwins[key]
+    stuff[0].destroy()
+    convwins[key] = None
+
+def wrote_msg(account, who, msg, conv, flags):
+    stuff = show_conversation(conv)
+    tv = stuff[1]
+    tv.append_text_with_flags("\n", 0)
+    tv.append_text_with_flags(strftime("(%X) "), 8)
+    tv.append_text_with_flags(who + ": ", 1)
+    tv.append_text_with_flags(msg, 0)
+    tv.scroll(0)
+
+gnt.gnt_init()
+
+bus = dbus.SessionBus()
+obj = bus.get_object("net.sf.purple.PurpleService", "/net/sf/purple/PurpleObject")
+purple = dbus.Interface(obj, "net.sf.purple.PurpleInterface")
+
+bus.add_signal_receiver(buddysignedon,
+                        dbus_interface = "net.sf.purple.PurpleInterface",
+                        signal_name = "BuddySignedOn")
+
+bus.add_signal_receiver(wrote_msg,
+                        dbus_interface = "net.sf.purple.PurpleInterface",
+                        signal_name = "WroteImMsg")
+
+bus.add_signal_receiver(wrote_msg,
+                        dbus_interface = "net.sf.purple.PurpleInterface",
+                        signal_name = "WroteChatMsg")
+
+bus.add_signal_receiver(conv_closed,
+                        dbus_interface = "net.sf.purple.PurpleInterface",
+                        signal_name = "DeletingConversation")
+
+def get_dict_key(conv):
+    val = purple.PurpleConversationGetName(conv)
+    return val
+
+def send_im_cb(entry, key, conv):
+    if key[0] == '\r':
+        # XXX: do something about the / commands
+        type = purple.PurpleConversationGetType(conv)
+        if type == 1:
+            imdata = purple.PurpleConversationGetImData(conv)
+            purple.PurpleConvImSend(imdata, entry.get_text())
+        else:
+            chatdata = purple.PurpleConversationGetChatData(conv)
+            purple.PurpleConvChatSend(chatdata, entry.get_text())
+        entry.clear()
+
+def show_conversation(conv):
+    key = get_dict_key(conv)
+    if key in convwins:
+        return convwins[key]
+    win = gnt.Window()
+    vbox = gnt.Box(0, 1)
+    win.add_widget(vbox)
+    win.set_title(purple.PurpleConversationGetName(conv))
+    win.set_pad(0)
+    vbox.set_pad(0)
+    tv = gnt.TextView()
+    entry = gnt.Entry("")
+    vbox.add_widget(tv)
+    entry.set_size(40, 1)
+    vbox.add_widget(entry)
+    entry.connect("key_pressed", send_im_cb, conv)
+    tv.clear()
+    win.show()
+    convwins[key] = [win, tv, entry]
+    return convwins[key]
+
+convs = purple.PurpleGetConversations()
+for conv in convs:
+    show_conversation(conv)
+
+gnt.gnt_main()
+
+gnt.gnt_quit()
+

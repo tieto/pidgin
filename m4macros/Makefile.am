@@ -1,4 +1,4 @@
-installed_m4=gaim.m4
+installed_m4=purple.m4
 
 EXTRA_DIST=$(installed_m4)
 

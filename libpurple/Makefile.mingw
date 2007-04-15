@@ -1,0 +1,134 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for win32 (mingw) version of LibPurple
+#
+
+PIDGIN_TREE_TOP := ..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
+
+TARGET = libpurple
+NEEDED_DLLS = $(LIBXML2_TOP)/bin/libxml2.dll
+
+##
+## INCLUDE PATHS
+##
+INCLUDE_PATHS =	\
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
+			-I$(PIDGIN_TREE_TOP) \
+			-I$(GTK_TOP)/include \
+			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(LIBXML2_TOP)/include
+
+LIB_PATHS =		-L$(GTK_TOP)/lib \
+			-L$(LIBXML2_TOP)/lib
+
+##
+##  SOURCES, OBJECTS
+##
+C_SRC =	\
+			account.c \
+			accountopt.c \
+			blist.c \
+			buddyicon.c \
+			cipher.c \
+			cmds.c \
+			connection.c \
+			conversation.c \
+			core.c \
+			debug.c \
+			dnsquery.c \
+			dnssrv.c \
+			eventloop.c \
+			ft.c \
+			circbuffer.c \
+			idle.c \
+			imgstore.c \
+			log.c \
+			mime.c \
+			nat-pmp.c \
+			network.c \
+			notify.c \
+			ntlm.c \
+			plugin.c \
+			pluginpref.c \
+			pounce.c \
+			prefs.c \
+			privacy.c \
+			proxy.c \
+			prpl.c \
+			request.c \
+			roomlist.c \
+			savedstatuses.c \
+			server.c \
+			signals.c \
+			sound.c \
+			sslconn.c \
+			status.c \
+			stringref.c \
+			stun.c \
+			upnp.c \
+			util.c \
+			value.c \
+			xmlnode.c \
+			whiteboard.c \
+			win32/giowin32.c \
+			win32/libc_interface.c \
+			win32/win32dep.c
+
+RC_SRC = win32/libpurplerc.rc
+
+OBJECTS = $(C_SRC:%.c=%.o) $(RC_SRC:%.rc=%.o)
+
+##
+## LIBRARIES
+##
+LIBS =	\
+		-lglib-2.0 \
+		-lgthread-2.0 \
+		-lgobject-2.0 \
+		-lgmodule-2.0 \
+		-lintl \
+		-lws2_32 \
+		-lxml2
+
+include $(PIDGIN_COMMON_RULES)
+
+##
+## TARGET DEFINITIONS
+##
+.PHONY: all install install_shallow clean
+
+all: $(TARGET).dll
+	$(MAKE) -C $(PURPLE_PROTOS_TOP) -f $(MINGW_MAKEFILE)
+	$(MAKE) -C $(PURPLE_PLUGINS_TOP) -f $(MINGW_MAKEFILE)
+
+install_shallow: $(PURPLE_INSTALL_DIR) $(TARGET).dll
+	cp $(TARGET).dll $(PURPLE_INSTALL_DIR)
+	cp $(NEEDED_DLLS) $(PURPLE_INSTALL_DIR)
+
+install: install_shallow all
+	$(MAKE) -C $(PURPLE_PROTOS_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(PURPLE_PLUGINS_TOP) -f $(MINGW_MAKEFILE) install
+
+./win32/libpurplerc.rc: ./win32/libpurplerc.rc.in $(PIDGIN_TREE_TOP)/VERSION
+	sed -e 's/@PURPLE_VERSION@/$(PURPLE_VERSION)/g' \
+	    $@.in > $@
+
+$(OBJECTS): $(PURPLE_CONFIG_H)
+
+$(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
+
+##
+## CLEAN RULES
+##
+clean:
+	rm -f $(OBJECTS) $(RC_SRC)
+	rm -f $(TARGET).dll $(TARGET).dll.a
+	$(MAKE) -C $(PURPLE_PROTOS_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C $(PURPLE_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean
+
+include $(PIDGIN_COMMON_TARGETS)

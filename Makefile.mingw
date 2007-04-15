@@ -2,15 +2,15 @@
 #
 # Author: hermanator12002@yahoo.com
 # Date 9/11/02
-# Description: Top Makefile for win32 (mingw) port of Gaim
+# Description: Top Makefile for win32 (mingw) port of Pidgin and LibPurple
 #
 
-GAIM_TOP := .
-include $(GAIM_TOP)/libgaim/win32/global.mak
+PIDGIN_TREE_TOP := .
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 # Generate a X.X.X.X version for the installer file versioning header
 # The last digit will be 99 for a final release, 0 for dev or unknown, or the beta number
-GAIM_PRODUCT_VERSION = $(shell \
+PIDGIN_PRODUCT_VERSION = $(shell \
 awk 'BEGIN {FS="."} { \
     if (int($$3) == $$3) { \
         $$4 = "99"; \
@@ -38,7 +38,7 @@ GTK_INSTALL_VERSION = $(shell \
 
 # Any *.dll or *.exe files included in win32-install-dir that we don't compile
 # should be included in this list so they don't get stripped
-NON_GAIM_DLLS = \
+EXTERNAL_DLLS = \
 	freebl3.dll \
 	libgtkspell.dll \
 	libmeanwhile-1.dll \
@@ -54,44 +54,47 @@ NON_GAIM_DLLS = \
 	ssl3.dll
 
 #build an expression for `find` to use to ignore the above files
-NON_GAIM_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(NON_GAIM_DLLS))
+EXTERNAL_DLLS_FIND_EXP = $(patsubst %,-o -name %,$(EXTERNAL_DLLS))
 
 .PHONY: all install installer installer_nogtk installer_debug installers clean uninstall create_release_install_dir
 
-all: $(GAIM_CONFIG_H)
-	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE)
-	$(MAKE) -C $(GAIM_PO_TOP) -f $(GAIM_WIN32_MAKEFILE)
+all: $(PIDGIN_CONFIG_H)
+	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE)
+	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE)
+	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE)
 
-install: all $(GAIM_INSTALL_DIR)
-	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) install
-	$(MAKE) -C $(GAIM_PO_TOP) -f $(GAIM_WIN32_MAKEFILE) install
+install: all $(PIDGIN_INSTALL_DIR)
+	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) install
 
 create_release_install_dir: install
-	rm -rf $(GAIM_INSTALL_DIR).release
-	cp -R $(GAIM_INSTALL_DIR) $(GAIM_INSTALL_DIR).release
-	find $(GAIM_INSTALL_DIR).release \( -name '*.dll' -o -name '*.exe' \) \
-	 -not \( -false $(NON_GAIM_DLLS_FIND_EXP) \) -exec strip --strip-unneeded {} ';'
+	rm -rf $(PIDGIN_INSTALL_DIR).release
+	cp -R $(PIDGIN_INSTALL_DIR) $(PIDGIN_INSTALL_DIR).release
+	find $(PIDGIN_INSTALL_DIR).release \( -name '*.dll' -o -name '*.exe' \) \
+	 -not \( -false $(EXTERNAL_DLLS_FIND_EXP) \) -exec $(STRIP) --strip-unneeded {} ';'
 
 installer: create_release_install_dir
-	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DGAIM_PRODUCT_VERSION="$(GAIM_PRODUCT_VERSION)" /DWITH_GTK /DGAIM_INSTALL_DIR="$(GAIM_INSTALL_DIR).release" /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" gaim-installer.nsi
+	$(MAKENSIS) /V3 /DPIDGIN_VERSION="$(PIDGIN_VERSION)" /DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" /DWITH_GTK /DPIDGIN_INSTALL_DIR="$(PIDGIN_INSTALL_DIR).release" /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
+	mv pidgin/win32/nsis/pidgin*.exe ./
 
 installer_nogtk: create_release_install_dir
-	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DGAIM_PRODUCT_VERSION="$(GAIM_PRODUCT_VERSION)" /DGAIM_INSTALL_DIR="$(GAIM_INSTALL_DIR).release" /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" gaim-installer.nsi
+	$(MAKENSIS) /V3 /DPIDGIN_VERSION="$(PIDGIN_VERSION)" /DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" /DPIDGIN_INSTALL_DIR="$(PIDGIN_INSTALL_DIR).release" /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
+	mv pidgin/win32/nsis/pidgin*.exe ./
 
 installer_debug: install
-	$(MAKENSIS) /V3 /DGAIM_VERSION="$(GAIM_VERSION)" /DGAIM_PRODUCT_VERSION="$(GAIM_PRODUCT_VERSION)" /DGAIM_INSTALL_DIR="$(GAIM_INSTALL_DIR)" /DDEBUG /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" gaim-installer.nsi
+	$(MAKENSIS) /V3 /DPIDGIN_VERSION="$(PIDGIN_VERSION)" /DPIDGIN_PRODUCT_VERSION="$(PIDGIN_PRODUCT_VERSION)" /DPIDGIN_INSTALL_DIR="$(PIDGIN_INSTALL_DIR)" /DDEBUG /DGTK_INSTALL_VERSION="$(GTK_INSTALL_VERSION)" pidgin/win32/nsis/pidgin-installer.nsi
+	mv pidgin/win32/nsis/pidgin*.exe ./
 
 installers: installer installer_nogtk installer_debug
 
 clean:
-	$(MAKE) -C $(GAIM_PO_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) -C $(GAIM_GTK_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
-	$(MAKE) -C $(GAIM_LIB_TOP) -f $(GAIM_WIN32_MAKEFILE) clean
-	rm -f $(GAIM_CONFIG_H) gaim*.exe
+	$(MAKE) -C $(PURPLE_PO_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C $(PIDGIN_TOP) -f $(MINGW_MAKEFILE) clean
+	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) clean
+	rm -f $(PIDGIN_CONFIG_H) VERSION pidgin*.exe
 
 uninstall:
-	rm -rf $(GAIM_INSTALL_PERLMOD_DIR) $(GAIM_INSTALL_PLUGINS_DIR) $(GAIM_INSTALL_PO_DIR) $(GAIM_INSTALL_DIR) $(GAIM_INSTALL_DIR).release
+	rm -rf $(PURPLE_INSTALL_PERLMOD_DIR) $(PIDGIN_INSTALL_PLUGINS_DIR) $(PURPLE_INSTALL_PO_DIR) $(PIDGIN_INSTALL_DIR) $(PIDGIN_INSTALL_DIR).release
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)
