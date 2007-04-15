@@ -34,38 +34,16 @@ typedef struct
 
 } MsnAddRemData;
 
-/* Remove the buddy referenced by the MsnAddRemData before the serverside list is changed.
- * If the buddy will be added, he'll be added back; if he will be removed, he won't be. */
-static void
-msn_complete_sync_issue(MsnAddRemData *data)
-{
-	PurpleBuddy *buddy;
-	PurpleGroup *group = NULL;
-
-	if (data->group != NULL)
-		group = purple_find_group(data->group);
-	
-	if (group != NULL)
-		buddy = purple_find_buddy_in_group(purple_connection_get_account(data->gc), data->who, group);
-	else
-		buddy = purple_find_buddy(purple_connection_get_account(data->gc), data->who);
-	
-	if (buddy != NULL)
-		purple_blist_remove_buddy(buddy);
-}
-
 static void
 msn_add_cb(MsnAddRemData *data)
 {
-	MsnSession *session;
-	MsnUserList *userlist;
+	if (g_list_find(purple_connections_get_all(), data->gc) != NULL)
+	{
+		MsnSession *session = data->gc->proto_data;
+		MsnUserList *userlist = session->userlist;
 
-	msn_complete_sync_issue(data);
-
-	session = data->gc->proto_data;
-	userlist = session->userlist;
-
-	msn_userlist_add_buddy(userlist, data->who, MSN_LIST_FL, data->group);
+		msn_userlist_add_buddy(userlist, data->who, MSN_LIST_FL, data->group);
+	}
 
 	g_free(data->group);
 	g_free(data->who);
@@ -75,15 +53,13 @@ msn_add_cb(MsnAddRemData *data)
 static void
 msn_rem_cb(MsnAddRemData *data)
 {
-	MsnSession *session;
-	MsnUserList *userlist;
+	if (g_list_find(purple_connections_get_all(), data->gc) != NULL)
+	{
+		MsnSession *session = data->gc->proto_data;
+		MsnUserList *userlist = session->userlist;
 
-	msn_complete_sync_issue(data);
-
-	session = data->gc->proto_data;
-	userlist = session->userlist;
-
-	msn_userlist_rem_buddy(userlist, data->who, MSN_LIST_FL, data->group);
+		msn_userlist_rem_buddy(userlist, data->who, MSN_LIST_FL, data->group);
+	}
 
 	g_free(data->group);
 	g_free(data->who);
@@ -98,6 +74,8 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 	PurpleAccount *account;
 	MsnAddRemData *data;
 	char *msg, *reason;
+	PurpleBuddy *buddy;
+	PurpleGroup *group = NULL;
 
 	account = session->account;
 	gc = purple_account_get_connection(account);
@@ -131,6 +109,17 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 						data, 2,
 						_("Yes"), G_CALLBACK(msn_add_cb),
 						_("No"), G_CALLBACK(msn_rem_cb));
+
+	if (group_name != NULL)
+		group = purple_find_group(group_name);
+
+	if (group != NULL)
+		buddy = purple_find_buddy_in_group(account, passport, group);
+	else
+		buddy = purple_find_buddy(account, passport);
+
+	if (buddy != NULL)
+		purple_blist_remove_buddy(buddy);
 
 	g_free(reason);
 	g_free(msg);

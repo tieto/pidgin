@@ -45,7 +45,12 @@ struct _MsnUser
 	char *store_name;       /**< The name stored in the server. */
 	char *friendly_name;    /**< The friendly name.             */
 
+	char * uid;				/*< User Id							*/
+
 	const char *status;     /**< The state of the user.         */
+	char *statusline;       /**< The state of the user.         */	
+	char *currentmedia;     /**< The current media of the user. */
+
 	gboolean idle;          /**< The idle state of the user.    */
 
 	struct
@@ -65,6 +70,7 @@ struct _MsnUser
 
 	GHashTable *clientcaps; /**< The client's capabilities.     */
 
+	int type;
 	int list_op;
 };
 
@@ -101,6 +107,22 @@ void msn_user_destroy(MsnUser *user);
  * @param user The user to update.
  */
 void msn_user_update(MsnUser *user);
+
+ /**
+  *  Sets the new statusline of user.
+  * 
+  *  @param user The user.
+  *  @param state The statusline string.
+  */
+void msn_user_set_statusline(MsnUser *user, const char *statusline);
+
+ /**
+  *  Sets the current media of user.
+  * 
+  *  @param user The user.
+  *  @param state The statusline string.
+  */
+void msn_user_set_currentmedia(MsnUser *user, const char *currentmedia);
 
 /**
  * Sets the new state of user.
@@ -156,7 +178,7 @@ void msn_user_set_group_ids(MsnUser *user, GList *ids);
  * @param user The user.
  * @param id   The group ID.
  */
-void msn_user_add_group_id(MsnUser *user, int id);
+void msn_user_add_group_id(MsnUser *user, const char * id);
 
 /**
  * Removes the group ID from a user.
@@ -164,7 +186,7 @@ void msn_user_add_group_id(MsnUser *user, int id);
  * @param user The user.
  * @param id   The group ID.
  */
-void msn_user_remove_group_id(MsnUser *user, int id);
+void msn_user_remove_group_id(MsnUser *user, const char * id);
 
 /**
  * Sets the home phone number for a user.
@@ -181,6 +203,9 @@ void msn_user_set_home_phone(MsnUser *user, const char *number);
  * @param number The work phone number.
  */
 void msn_user_set_work_phone(MsnUser *user, const char *number);
+
+void msn_user_set_uid(MsnUser *user, const char *uid);
+void msn_user_set_type(MsnUser *user,int type);
 
 /**
  * Sets the mobile phone number for a user.
@@ -279,6 +304,21 @@ MsnObject *msn_user_get_object(const MsnUser *user);
  */
 GHashTable *msn_user_get_client_caps(const MsnUser *user);
 
+/**
+ * check to see if user is online
+ */
+gboolean
+msn_user_is_online(PurpleAccount *account, const char *name);
+
+/**
+ * check to see if user is Yahoo User
+ */
+gboolean
+msn_user_is_yahoo(PurpleAccount *account ,const char *name);
+
+void msn_user_set_op(MsnUser *user,int list_op);
+
 /*@}*/
+
 
 #endif /* _MSN_USER_H_ */
