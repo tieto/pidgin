@@ -89,19 +89,31 @@ msn_user_update(MsnUser *user)
 
 	account = user->userlist->session->account;
 
-	if (user->statusline != NULL) {
+	if (user->statusline != NULL && user->currentmedia != NULL) {
+		purple_prpl_got_user_status(account, user->passport, user->status,
+		                          "message", user->statusline,
+		                          "currentmedia", user->currentmedia, NULL);
+	} else if (user->currentmedia != NULL) {
+		purple_prpl_got_user_status(account, user->passport, "currentmedia",
+		                          user->currentmedia, NULL);
+	} else if (user->statusline != NULL) {
 		//char *status = g_strdup_printf("%s - %s", user->status, user->statusline);
-		purple_prpl_got_user_status(account, user->passport, user->status, "message", user->statusline, NULL);
-	}
-	else if (user->status != NULL) {
-		purple_prpl_got_user_status(account, user->passport, user->status, NULL);
+		purple_prpl_got_user_status(account, user->passport, user->status,
+		                          "message", user->statusline, NULL);
+	} else if (user->status != NULL) {
+		if (!strcmp(user->status, "offline") && user->mobile) {
+			purple_prpl_got_user_status(account, user->passport, "available", NULL);
+			purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
+		} else {
+			purple_prpl_got_user_status(account, user->passport, user->status, NULL);
+			purple_prpl_got_user_status_deactive(account, user->passport, "mobile");
+		}
 	}
 
-	if (user->idle){
+	if (user->idle)
 		purple_prpl_got_user_idle(account, user->passport, TRUE, -1);
-	}else{
+	else
 		purple_prpl_got_user_idle(account, user->passport, FALSE, 0);
-	}
 }
 
 void
@@ -155,6 +167,15 @@ msn_user_set_statusline(MsnUser *user, const char *statusline)
 
 	g_free(user->statusline);
 	user->statusline = g_strdup(statusline);
+}
+
+void
+msn_user_set_currentmedia(MsnUser *user, const char *currentmedia)
+{
+	g_return_if_fail(user != NULL);
+
+	g_free(user->currentmedia);
+	user->currentmedia = g_strdup(currentmedia);
 }
 
 void

@@ -48,7 +48,8 @@ struct _MsnUser
 	char * uid;				/*< User Id							*/
 
 	const char *status;     /**< The state of the user.         */
-	char *statusline;	    /**< The state of the user.	*/	
+	char *statusline;       /**< The state of the user.         */	
+	char *currentmedia;     /**< The current media of the user. */
 
 	gboolean idle;          /**< The idle state of the user.    */
 
@@ -114,6 +115,14 @@ void msn_user_update(MsnUser *user);
   *  @param state The statusline string.
   */
 void msn_user_set_statusline(MsnUser *user, const char *statusline);
+
+ /**
+  *  Sets the current media of user.
+  * 
+  *  @param user The user.
+  *  @param state The statusline string.
+  */
+void msn_user_set_currentmedia(MsnUser *user, const char *currentmedia);
 
 /**
  * Sets the new state of user.

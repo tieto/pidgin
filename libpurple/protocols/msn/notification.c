@@ -311,17 +311,17 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	g_snprintf(proto_str, sizeof(proto_str), "MSNP%d", session->protocol_ver);
 
-	for (i = 1; i < cmd->param_count; i++)
+	for (i = 1; i < cmd->param_count -1; i++)
 	{
-		if (!strcmp(cmd->params[i], proto_str))
+		purple_debug_info("MaYuan","%s,proto_str:%s\n",cmd->params[i],proto_str);
+		if (strcmp(cmd->params[i], proto_str) >= 0)
 		{
 			protocol_supported = TRUE;
 			break;
 		}
 	}
 
-	if (!protocol_supported)
-	{
+	if (!protocol_supported){
 		msn_session_set_error(session, MSN_ERROR_UNSUPPORTED_PROTOCOL,
 							  NULL);
 		return;
@@ -906,7 +906,7 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (session->protocol_ver >= 9 && cmd->param_count == 8)
 	{
-		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[5]));
+		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[6]));
 		msn_user_set_object(user, msnobj);
 	}
 
@@ -963,8 +963,7 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	{
 		if (cmd->param_count == 7)
 		{
-			msnobj =
-				msn_object_new_from_string(purple_url_decode(cmd->params[4]));
+			msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[5]));
 			msn_user_set_object(user, msnobj);
 		}
 		else
@@ -1443,7 +1442,7 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	PurpleConnection *gc;
 	MsnUser *user;
 	const char *passport;
-	char *psm_str;
+	char *psm_str, *currentmedia_str;
 
 	/*get the payload content*/
 //	purple_debug_info("MaYuan","UBX {%s} payload{%s}\n",cmd->params[0], cmd->payload);
@@ -1456,10 +1455,15 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	user = msn_userlist_find_user(session->userlist, passport);
 	
 	psm_str = msn_get_psm(cmd->payload,len);
+	currentmedia_str = msn_parse_currentmedia(
+	                                 msn_get_currentmedia(cmd->payload, len));
+
 	msn_user_set_statusline(user, psm_str);
+	msn_user_set_currentmedia(user, currentmedia_str);
 	msn_user_update(user);
 
 	g_free(psm_str);
+	g_free(currentmedia_str);
 }
 
 static void
@@ -1496,16 +1500,14 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		/* This isn't an official message. */
 		return;
 
-	if ((value = msn_message_get_attr(msg, "kv")) != NULL)
-	{
+	if ((value = msn_message_get_attr(msg, "kv")) != NULL){
 		if (session->passport_info.kv != NULL)
 			g_free(session->passport_info.kv);
 
 		session->passport_info.kv = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "sid")) != NULL)
-	{
+	if ((value = msn_message_get_attr(msg, "sid")) != NULL){
 		if (session->passport_info.sid != NULL)
 			g_free(session->passport_info.sid);
 
@@ -1530,9 +1532,9 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	}
 
 	if ((value = msn_message_get_attr(msg, "ClientPort")) != NULL)
-{	
-	session->passport_info.client_port = ntohs(atoi(value));
-}
+	{
+		session->passport_info.client_port = ntohs(atoi(value));
+	}
 
 	if ((value = msn_message_get_attr(msg, "LoginTime")) != NULL)
 		session->passport_info.sl = atol(value);
@@ -1743,7 +1745,7 @@ system_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		{
 			case 1:
 				minutes = atoi(g_hash_table_lookup(table, "Arg1"));
-				g_snprintf(buf, sizeof(buf), ngettext(
+				g_snprintf(buf, sizeof(buf), dngettext(PACKAGE, 
 							"The MSN server will shut down for maintenance "
 							"in %d minute. You will automatically be "
 							"signed out at that time.  Please finish any "

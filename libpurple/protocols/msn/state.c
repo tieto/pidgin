@@ -81,6 +81,102 @@ msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
 	return result;
 }
 
+/* parse CurrentMedia string */
+char *
+msn_parse_currentmedia(const char *cmedia)
+{
+	char **cmedia_array;
+	char *buffer=NULL, *inptr, *outptr, *tmpptr;
+	int length, strings, tmp;
+
+	purple_debug_info("msn", "Parsing currentmedia string: \"%s\"\n", cmedia);
+	if( (cmedia == NULL) || (!strcmp(cmedia, ""))) {
+		purple_debug_info("msn", "No currentmedia string\n");
+		return NULL;
+	}
+
+	cmedia_array=g_strsplit(cmedia, "\\0", 0);
+
+	strings=1;	/* Skip first empty string */
+	length=5;	/* Space for '\0' (1 byte) and prefix (4 bytes) */
+	while(strcmp(cmedia_array[strings], "")) {
+		length+= strlen(cmedia_array[strings]);
+		strings++;
+	}
+
+	if((strings>3) && (!strcmp(cmedia_array[2], "1"))) { /* Check if enabled */
+
+		buffer=g_malloc(length);
+
+		inptr=cmedia_array[3];
+		outptr=buffer;
+
+		if(!strcmp(cmedia_array[1], "Music")) {
+			strcpy(outptr, "np. ");
+			outptr+=4;
+		}/* else if(!strcmp(cmedia_array[1], "Games")) {
+		} else if(!strcmp(cmedia_array[1], "Office")) {
+		}*/
+
+		while(*inptr!='\0') {
+			if((*inptr == '{') && (strlen(inptr) > 2) && (*(inptr+2) == '}') ) {
+				errno = 0;
+				tmp = strtol(inptr+1,&tmpptr,10);
+				if( (errno!=0) || (tmpptr == (inptr+1)) ||
+				                  ((tmp+5)>(strings)) ) {
+					*outptr = *inptr;	/* Conversion not successful */
+					outptr++;
+				} else {
+					/* Replace {?} tag with appropriate text */
+					strcpy(outptr, cmedia_array[tmp+4]);
+					outptr+=strlen(cmedia_array[tmp+4]);
+					inptr+=2;
+				}
+			} else {
+				*outptr = *inptr;
+				outptr++;
+			}
+			inptr++;
+		}
+		*outptr='\0';
+		purple_debug_info("msn", "Parsed currentmedia string, result: \"%s\"\n",
+		                buffer);
+	} else {
+		purple_debug_info("msn", "Current media marked disabled, not parsing\n");
+	}
+
+	g_strfreev(cmedia_array);
+	return buffer;
+}
+
+/* get the CurrentMedia info from the XML string */
+char *
+msn_get_currentmedia(char *xml_str, gsize len)
+{
+	xmlnode *payloadNode, *currentmediaNode;
+	char *currentmedia_str, *currentmedia;
+	
+	purple_debug_info("msn","msn get CurrentMedia\n");
+	payloadNode = xmlnode_from_str(xml_str, len);
+	if (!payloadNode){
+		purple_debug_error("msn","PSM XML parse Error!\n");
+		return NULL;
+	}
+	currentmediaNode = xmlnode_get_child(payloadNode, "CurrentMedia");
+	if (currentmediaNode == NULL){
+		purple_debug_info("msn","No CurrentMedia Node");
+		g_free(payloadNode);
+		return NULL;
+	}
+	currentmedia_str = xmlnode_get_data(currentmediaNode);
+	currentmedia = g_strdup(currentmedia_str);
+
+	g_free(currentmediaNode);
+	g_free(payloadNode);
+
+	return currentmedia;
+}
+
 /*get the PSM info from the XML string*/
 char *
 msn_get_psm(char *xml_str, gsize len)

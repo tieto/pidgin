@@ -273,10 +273,8 @@ msn_session_set_bnode(MsnSession *session)
 	/* The core used to use msn_add_buddy to add all buddies before
 	 * being logged in. This no longer happens, so we manually iterate
 	 * over the whole buddy list to identify sync issues. */
-
-	for (gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
-		PurpleGroup *group = (PurpleGroup *)gnode;
-		const char *group_name = group->name;
+	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next)
+	{
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {

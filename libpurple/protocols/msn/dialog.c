@@ -117,6 +117,7 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 		buddy = purple_find_buddy_in_group(account, passport, group);
 	else
 		buddy = purple_find_buddy(account, passport);
+	}
 
 	if (buddy != NULL)
 		purple_blist_remove_buddy(buddy);
