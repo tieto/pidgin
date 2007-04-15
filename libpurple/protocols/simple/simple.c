@@ -1235,9 +1235,9 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 			while(tmp && tmp < acceptheader + strlen(acceptheader)) {
 				gchar *tmp2 = strchr(tmp, ',');
 				if(tmp2) *tmp2 = '\0';
-				if(!strcmp("application/pidf+xml", tmp))
+				if(!strcasecmp("application/pidf+xml", tmp))
 					foundpidf = TRUE;
-				if(!strcmp("application/xpidf+xml", tmp))
+				if(!strcasecmp("application/xpidf+xml", tmp))
 					foundxpidf = TRUE;
 				if(tmp2) {
 					*tmp2 = ',';

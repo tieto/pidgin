@@ -180,7 +180,7 @@ void sipmsg_remove_header(struct sipmsg *msg, const gchar *name) {
 	GSList *tmp = msg->headers;
 	while(tmp) {
 		elem = tmp->data;
-		if(strcmp(elem->name, name)==0) {
+		if(strcasecmp(elem->name, name)==0) {
 			msg->headers = g_slist_remove(msg->headers, elem);
 			g_free(elem->name);
 			g_free(elem->value);
@@ -198,7 +198,7 @@ gchar *sipmsg_find_header(struct sipmsg *msg, const gchar *name) {
 	tmp = msg->headers;
 	while(tmp) {
 		elem = tmp->data;
-		if(strcmp(elem->name,name)==0) {
+		if(strcasecmp(elem->name, name)==0) {
 			return elem->value;
 		}
 		tmp = g_slist_next(tmp);
