@@ -506,11 +506,11 @@ window_list_key_pressed(GntWidget *widget, const char *text, GntWM *wm)
 		GntWidget *sel = gnt_tree_get_selection_data(GNT_TREE(widget));
 		switch (text[0]) {
 			case '-':
-			case '<':
+			case ',':
 				shift_window(wm, sel, -1);
 				break;
-			case '+':
-			case '>':
+			case '=':
+			case '.':
 				shift_window(wm, sel, 1);
 				break;
 			default:
