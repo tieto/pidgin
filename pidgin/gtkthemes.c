@@ -224,7 +224,7 @@ void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 	}
 
 	if (new_theme) {
-		smiley_themes = g_slist_append(smiley_themes, theme);
+		smiley_themes = g_slist_prepend(smiley_themes, theme);
 	}
 
 	if (load) {
