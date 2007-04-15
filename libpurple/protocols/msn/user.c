@@ -25,6 +25,7 @@
 #include "user.h"
 #include "slp.h"
 
+/*new a user object*/
 MsnUser *
 msn_user_new(MsnUserList *userlist, const char *passport,
 			 const char *store_name)
@@ -50,6 +51,7 @@ msn_user_new(MsnUserList *userlist, const char *passport,
 	return user;
 }
 
+/*destroy a user object*/
 void
 msn_user_destroy(MsnUser *user)
 {
@@ -58,8 +60,13 @@ msn_user_destroy(MsnUser *user)
 	if (user->clientcaps != NULL)
 		g_hash_table_destroy(user->clientcaps);
 
-	if (user->group_ids != NULL)
+	if (user->group_ids != NULL){
+		GList *l;
+		for (l = user->group_ids; l != NULL; l = l->next){
+			g_free(l->data);
+		}
 		g_list_free(user->group_ids);
+	}
 
 	if (user->msnobj != NULL)
 		msn_object_destroy(user->msnobj);
@@ -67,6 +74,7 @@ msn_user_destroy(MsnUser *user)
 	g_free(user->passport);
 	g_free(user->friendly_name);
 	g_free(user->store_name);
+	g_free(user->uid);
 	g_free(user->phone.home);
 	g_free(user->phone.work);
 	g_free(user->phone.mobile);
@@ -81,7 +89,18 @@ msn_user_update(MsnUser *user)
 
 	account = user->userlist->session->account;
 
-	if (user->status != NULL) {
+	if (user->statusline != NULL && user->currentmedia != NULL) {
+		purple_prpl_got_user_status(account, user->passport, user->status,
+		                          "message", user->statusline,
+		                          "currentmedia", user->currentmedia, NULL);
+	} else if (user->currentmedia != NULL) {
+		purple_prpl_got_user_status(account, user->passport, "currentmedia",
+		                          user->currentmedia, NULL);
+	} else if (user->statusline != NULL) {
+		//char *status = g_strdup_printf("%s - %s", user->status, user->statusline);
+		purple_prpl_got_user_status(account, user->passport, user->status,
+		                          "message", user->statusline, NULL);
+	} else if (user->status != NULL) {
 		if (!strcmp(user->status, "offline") && user->mobile) {
 			purple_prpl_got_user_status(account, user->passport, "available", NULL);
 			purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
@@ -142,12 +161,56 @@ msn_user_set_friendly_name(MsnUser *user, const char *name)
 }
 
 void
+msn_user_set_statusline(MsnUser *user, const char *statusline)
+{
+	g_return_if_fail(user != NULL);
+
+	g_free(user->statusline);
+	user->statusline = g_strdup(statusline);
+}
+
+void
+msn_user_set_currentmedia(MsnUser *user, const char *currentmedia)
+{
+	g_return_if_fail(user != NULL);
+
+	g_free(user->currentmedia);
+	user->currentmedia = g_strdup(currentmedia);
+}
+
+void
 msn_user_set_store_name(MsnUser *user, const char *name)
 {
 	g_return_if_fail(user != NULL);
 
-	g_free(user->store_name);
-	user->store_name = g_strdup(name);
+	if (name != NULL){
+		g_free(user->store_name);
+		user->store_name = g_strdup(name);
+	}
+}
+
+void
+msn_user_set_uid(MsnUser *user, const char *uid)
+{
+	g_return_if_fail(user != NULL);
+
+	g_free(user->uid);
+	user->uid = g_strdup(uid);
+}
+
+void
+msn_user_set_type(MsnUser *user,int type)
+{
+	g_return_if_fail(user != NULL);
+
+	user->type = type;
+}
+
+void
+msn_user_set_op(MsnUser *user,int list_op)
+{
+	g_return_if_fail(list_op != 0);
+	user->list_op |= list_op;
 }
 
 void
@@ -159,20 +222,16 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 
 	g_return_if_fail(user != NULL);
 
-	if (filename == NULL || g_stat(filename, &st) == -1)
-	{
+	if (filename == NULL || g_stat(filename, &st) == -1){
 		msn_user_set_object(user, NULL);
-	}
-	else if ((fp = g_fopen(filename, "rb")) != NULL)
-	{
+	}else if ((fp = g_fopen(filename, "rb")) != NULL){
 		PurpleCipherContext *ctx;
 		char *buf;
 		gsize len;
 		char *base64;
 		unsigned char digest[20];
 
-		if (msnobj == NULL)
-		{
+		if (msnobj == NULL)	{
 			msnobj = msn_object_new();
 			msn_object_set_local(msnobj);
 			msn_object_set_type(msnobj, MSN_OBJECT_USERTILE);
@@ -224,62 +283,83 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 		base64 = purple_base64_encode(digest, sizeof(digest));
 		msn_object_set_sha1c(msnobj, base64);
 		g_free(base64);
-	}
-	else
-	{
+	}else{
 		purple_debug_error("msn", "Unable to open buddy icon %s!\n", filename);
 		msn_user_set_object(user, NULL);
 	}
 }
 
+/*add group id to User object*/
 void
-msn_user_add_group_id(MsnUser *user, int id)
+msn_user_add_group_id(MsnUser *user, const char* id)
 {
 	MsnUserList *userlist;
 	PurpleAccount *account;
 	PurpleBuddy *b;
 	PurpleGroup *g;
 	const char *passport;
+	char *group_id;
 	const char *group_name;
 
 	g_return_if_fail(user != NULL);
-	g_return_if_fail(id >= 0);
+	g_return_if_fail(id != NULL);
 
-	user->group_ids = g_list_append(user->group_ids, GINT_TO_POINTER(id));
+	group_id = g_strdup(id);
+	user->group_ids = g_list_append(user->group_ids, group_id);
 
 	userlist = user->userlist;
 	account = userlist->session->account;
 	passport = msn_user_get_passport(user);
 
-	group_name = msn_userlist_find_group_name(userlist, id);
+	group_name = msn_userlist_find_group_name(userlist, group_id);
+
+	purple_debug_info("User","group id:%s,name:%s,user:%s\n",group_id,group_name,passport);
 
 	g = purple_find_group(group_name);
 
-	if ((id == 0) && (g == NULL))
-	{
+	if ((id == NULL) && (g == NULL)){
 		g = purple_group_new(group_name);
 		purple_blist_add_group(g, NULL);
 	}
 
 	b = purple_find_buddy_in_group(account, passport, g);
-
-	if (b == NULL)
-	{
+	if (b == NULL){
 		b = purple_buddy_new(account, passport, NULL);
-
 		purple_blist_add_buddy(b, NULL, g, NULL);
 	}
-
 	b->proto_data = user;
+	/*Update the blist Node info*/
+//	purple_blist_node_set_string(&(b->node), "", "");
+}
+
+/*check if the msn user is online*/
+gboolean
+msn_user_is_online(PurpleAccount *account, const char *name)
+{
+	PurpleBuddy *buddy;
+
+	buddy =purple_find_buddy(account,name);
+	return PURPLE_BUDDY_IS_ONLINE(buddy);
+}
+
+/*check to see if user is yahoo user?
+ * TODO: we need to identify it via contact  parse
+ */
+gboolean
+msn_user_is_yahoo(PurpleAccount *account ,const char *name)
+{
+	return (strstr(name,"yahoo") != NULL);
 }
 
 void
-msn_user_remove_group_id(MsnUser *user, int id)
+msn_user_remove_group_id(MsnUser *user, const char * id)
 {
 	g_return_if_fail(user != NULL);
-	g_return_if_fail(id >= 0);
+	g_return_if_fail(id != NULL);
 
-	user->group_ids = g_list_remove(user->group_ids, GINT_TO_POINTER(id));
+	user->group_ids = g_list_remove(user->group_ids, id);
+	/* khc need to use g_list_find_custom here to find the right link */
+	//g_free(id);
 }
 
 void

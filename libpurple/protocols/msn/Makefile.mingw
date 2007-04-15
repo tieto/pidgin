@@ -39,6 +39,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##
 C_SRC =			cmdproc.c \
 			command.c \
+			contact.c\
 			dialog.c \
 			directconn.c \
 			error.c \
@@ -50,6 +51,7 @@ C_SRC =			cmdproc.c \
 			nexus.c \
 			notification.c \
 			object.c \
+			oim.c\
 			page.c \
 			servconn.c \
 			session.c \
@@ -58,6 +60,7 @@ C_SRC =			cmdproc.c \
 			slplink.c \
 			slpmsg.c \
 			slpsession.c \
+			soap.c\
 			state.c \
 			switchboard.c \
 			sync.c \
@@ -65,7 +68,7 @@ C_SRC =			cmdproc.c \
 			transaction.c \
 			user.c \
 			userlist.c \
-			msn-utils.c
+			msnutils.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 

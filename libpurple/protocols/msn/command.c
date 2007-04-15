@@ -24,6 +24,10 @@
 #include "msn.h"
 #include "command.h"
 
+/*local Function prototype*/
+int msn_get_payload_position(char *str);
+int msn_set_payload_len(MsnCommand *cmd);
+
 static gboolean
 is_num(char *str)
 {
@@ -34,6 +38,72 @@ is_num(char *str)
 	}
 
 	return TRUE;
+}
+
+/*
+ * check the command is the command with payload content
+ *  if it is	return TRUE
+ *  else 		return FALSE
+ */
+static gboolean
+msn_check_payload_cmd(char *str)
+{
+	if( (!strcmp(str,"ADL")) ||
+		(!strcmp(str,"GCF")) ||
+		(!strcmp(str,"SG")) ||
+		(!strcmp(str,"MSG")) ||
+		(!strcmp(str,"RML")) ||
+		(!strcmp(str,"UBX")) ||
+		(!strcmp(str,"UBN")) ||
+		(!strcmp(str,"UUM")) ||
+		(!strcmp(str,"UBM")) ||
+		(!strcmp(str,"FQY")) ||
+		(!strcmp(str,"UUN")) ||
+		(!strcmp(str,"UUX"))){
+			return TRUE;
+		}
+
+	return FALSE;
+}
+
+/*get the payload positon*/
+int msn_get_payload_position(char *str)
+{
+	/*because MSG has "MSG hotmail hotmail [payload length]"*/
+	if(!(strcmp(str,"MSG"))|| (!strcmp(str,"UBX")) ){
+		return 2;
+	}
+	/*Yahoo User Message UBM 
+	 * Format UBM email@yahoo.com 32 1 [payload length]*/
+	if(!(strcmp(str,"UBM"))|| (!strcmp(str,"UUM")) ){
+		return 3;
+	}
+
+	return 1;
+}
+
+/*
+ * set command Payload length
+ */
+int
+msn_set_payload_len(MsnCommand *cmd)
+{
+	char * param;
+
+	if(msn_check_payload_cmd(cmd->command)){
+		param = cmd->params[msn_get_payload_position(cmd->command)];
+#if 0
+		if(!(strcmp(cmd->command,"MSG"))){
+			param = cmd->params[2];
+		}else{
+			param = cmd->params[1];
+		}
+#endif
+		cmd->payload_len = is_num(param) ? atoi(param) : 0;
+	}else{
+		cmd->payload_len = 0;
+	}
+	return 0;
 }
 
 MsnCommand *
@@ -68,9 +138,13 @@ msn_command_from_string(const char *string)
 		param = cmd->params[0];
 
 		cmd->trId = is_num(param) ? atoi(param) : 0;
-	}
-	else
+	}else{
 		cmd->trId = 0;
+	}
+
+	/*add payload Length checking*/
+	msn_set_payload_len(cmd);
+	purple_debug_info("MaYuan","get payload len:%d\n",cmd->payload_len);
 
 	msn_command_ref(cmd);
 

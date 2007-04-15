@@ -77,20 +77,14 @@ msn_table_add_cmd(MsnTable *table,
 
 	cbs = NULL;
 
-	if (command == NULL)
-	{
+	if (command == NULL){
 		cbs = table->async;
-	}
-	else if (strcmp(command, "fallback") == 0)
-	{
+	}else if (strcmp(command, "fallback") == 0)	{
 		cbs = table->fallback;
-	}
-	else
-	{
+	}else{
 		cbs = g_hash_table_lookup(table->cmds, command);
 
-		if (cbs == NULL)
-		{
+		if (cbs == NULL){
 			cbs = g_hash_table_new_full(g_str_hash, g_str_equal, NULL, NULL);
 			g_hash_table_insert(table->cmds, command, cbs);
 		}

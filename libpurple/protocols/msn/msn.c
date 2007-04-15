@@ -37,7 +37,7 @@
 #include "cmds.h"
 #include "core.h"
 #include "prpl.h"
-#include "msn-utils.h"
+#include "msnutils.h"
 #include "version.h"
 
 #include "switchboard.h"
@@ -114,13 +114,16 @@ msn_cmd_nudge(PurpleConversation *conv, const gchar *cmd, gchar **args, gchar **
 	return PURPLE_CMD_RET_OK;
 }
 
-static void
+void
 msn_act_id(PurpleConnection *gc, const char *entry)
 {
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
 	PurpleAccount *account;
 	const char *alias;
+
+	char *soapbody;
+	MsnSoapReq *soap_request;
 
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
@@ -138,9 +141,27 @@ msn_act_id(PurpleConnection *gc, const char *entry)
 		return;
 	}
 
-	msn_cmdproc_send(cmdproc, "REA", "%s %s",
-					 purple_account_get_username(account),
-					 alias);
+	if (*alias == '\0') {
+		alias = purple_url_encode(purple_account_get_username(account));
+	}
+
+	msn_cmdproc_send(cmdproc, "PRP", "MFN %s", alias);
+
+	soapbody = g_strdup_printf(MSN_CONTACT_UPDATE_TEMPLATE, alias);
+	/*build SOAP and POST it*/
+	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
+										MSN_ADDRESS_BOOK_POST_URL,
+										MSN_CONTACT_UPDATE_SOAP_ACTION,
+										soapbody,
+										NULL,
+										NULL);
+
+	session->contact->soapconn->read_cb = NULL;
+	msn_soap_post(session->contact->soapconn,
+				  soap_request,
+				  msn_contact_connect_init);
+
+	g_free(soapbody);
 }
 
 static void
@@ -429,14 +450,12 @@ msn_new_xfer(PurpleConnection *gc, const char *who)
 	session = gc->proto_data;
 
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
-	if (xfer)
-	{
-		slplink = msn_session_get_slplink(session, who);
 
-		xfer->data = slplink;
+	slplink = msn_session_get_slplink(session, who);
 
-		purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
-	}
+	xfer->data = slplink;
+
+	purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
 
 	return xfer;
 }
@@ -480,18 +499,56 @@ msn_list_icon(PurpleAccount *a, PurpleBuddy *b)
 	return "msn";
 }
 
+/*
+ * Set the User status text
+ * Add the PSM String Using "Name - PSM String" format
+ */
 static char *
 msn_status_text(PurpleBuddy *buddy)
 {
 	PurplePresence *presence;
 	PurpleStatus *status;
+	const char *msg, *name, *cmedia;
+	char *psm_str, *tmp2, *text;
 
 	presence = purple_buddy_get_presence(buddy);
 	status = purple_presence_get_active_status(presence);
 
-	if (!purple_presence_is_available(presence) && !purple_presence_is_idle(presence))
-	{
-		return g_strdup(purple_status_get_name(status));
+	msg = purple_status_get_attr_string(status, "message");
+	cmedia=purple_status_get_attr_string(status, "currentmedia");
+
+	if (!purple_presence_is_available(presence) && !purple_presence_is_idle(presence)){
+		name = purple_status_get_name(status);
+	}else{
+		name = NULL;
+	}
+
+	if (cmedia != NULL) {
+		if(name) {
+			tmp2 = g_strdup_printf("%s - %s", name, cmedia);
+			text = g_markup_escape_text(tmp2, -1);
+		} else {
+			text = g_markup_escape_text(cmedia, -1);
+		}
+		return text;
+	} else if (msg != NULL) {
+		tmp2 = purple_markup_strip_html(msg);
+		if (name){
+			psm_str = g_strdup_printf("%s - %s", name, tmp2);
+			g_free(tmp2);
+		}else{
+			psm_str = tmp2;
+		}
+		text = g_markup_escape_text(psm_str, -1);
+		g_free(psm_str);
+		return text;
+	} else {
+		if (!purple_presence_is_available(presence) && !purple_presence_is_idle(presence)){
+			psm_str = g_strdup(purple_status_get_name(status));
+			text = g_markup_escape_text(psm_str, -1);
+			g_free(psm_str);
+			return text;
+		}
 	}
 
 	return NULL;
@@ -509,8 +566,24 @@ msn_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean f
 	
 	if (purple_presence_is_online(presence))
 	{
+		const char *psm, *currentmedia;
+		char *tmp;
+
+		psm = purple_status_get_attr_string(status, "message");
+		currentmedia = purple_status_get_attr_string(status, "currentmedia");
+
 		purple_notify_user_info_add_pair(user_info, _("Status"),
 									   (purple_presence_is_idle(presence) ? _("Idle") : purple_status_get_name(status)));
+		if (psm) {
+			tmp = g_markup_escape_text(psm, -1);
+			purple_notify_user_info_add_pair(user_info, _("PSM"), tmp);
+			g_free(tmp);
+		}
+		if (currentmedia) {
+			tmp = g_markup_escape_text(currentmedia, -1);
+			purple_notify_user_info_add_pair(user_info, _("Current media"), tmp);
+			g_free(tmp);
+		}
 	}
 	
 	if (full && user)
@@ -535,29 +608,48 @@ msn_status_types(PurpleAccount *account)
 {
 	PurpleStatusType *status;
 	GList *types = NULL;
-
+#if 0
 	status = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE,
 			NULL, NULL, FALSE, TRUE, FALSE);
+#endif
+	status = purple_status_type_new_with_attrs(
+				PURPLE_STATUS_AVAILABLE, NULL, NULL, TRUE, TRUE, FALSE,
+				"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+				"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+				NULL);
 	types = g_list_append(types, status);
 
-	status = purple_status_type_new_full(PURPLE_STATUS_AWAY,
-			NULL, NULL, FALSE, TRUE, FALSE);
+	status = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_AWAY, NULL, NULL, TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, status);
 
-	status = purple_status_type_new_full(PURPLE_STATUS_AWAY,
-			"brb", _("Be Right Back"), FALSE, TRUE, FALSE);
+	status = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_AWAY, "brb", _("Be Right Back"), TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, status);
 
-	status = purple_status_type_new_full(PURPLE_STATUS_UNAVAILABLE,
-			"busy", _("Busy"), FALSE, TRUE, FALSE);
+	status = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_AWAY, "busy", _("Busy"), TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, status);
-
-	status = purple_status_type_new_full(PURPLE_STATUS_UNAVAILABLE,
-			"phone", _("On the Phone"), FALSE, TRUE, FALSE);
+	status = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_AWAY, "phone", _("On the Phone"), TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, status);
-
-	status = purple_status_type_new_full(PURPLE_STATUS_AWAY,
-			"lunch", _("Out to Lunch"), FALSE, TRUE, FALSE);
+	status = purple_status_type_new_with_attrs(
+			PURPLE_STATUS_AWAY, "lunch", _("Out to Lunch"), TRUE, TRUE, FALSE,
+			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
+			NULL);
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE,
@@ -696,7 +788,8 @@ msn_login(PurpleAccount *account)
 		return;
 	}
 
-	http_method = purple_account_get_bool(account, "http_method", FALSE);
+	if (purple_account_get_bool(account, "http_method", FALSE))
+		http_method = TRUE;
 
 	host = purple_account_get_string(account, "server", MSN_SERVER);
 	port = purple_account_get_int(account, "port", MSN_PORT);
@@ -743,6 +836,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	char *msgformat;
 	char *msgtext;
 
+	purple_debug_info("MaYuan","send IM {%s} to %s\n",message,who);
 	account = purple_connection_get_account(gc);
 
 	if (buddy) {
@@ -756,58 +850,86 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	}
 
 	msn_import_html(message, &msgformat, &msgtext);
+	if(msn_user_is_online(account, who)||
+		msn_user_is_yahoo(account, who)){
+		/*User online,then send Online Instant Message*/
 
-	if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
-	{
+		if (strlen(msgtext) + strlen(msgformat) + strlen(VERSION) > 1564)
+		{
+			g_free(msgformat);
+			g_free(msgtext);
+
+			return -E2BIG;
+		}
+
+		msg = msn_message_new_plain(msgtext);
+		msg->remote_user = g_strdup(who);
+		msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+
 		g_free(msgformat);
 		g_free(msgtext);
 
-		return -E2BIG;
-	}
+		purple_debug_info("MaYuan","prepare to send online Message\n");
+		if (g_ascii_strcasecmp(who, purple_account_get_username(account)))
+		{
+			MsnSession *session;
+			MsnSwitchBoard *swboard;
 
-	msg = msn_message_new_plain(msgtext);
-	msn_message_set_attr(msg, "X-MMS-IM-Format", msgformat);
+			session = gc->proto_data;
+			if(msn_user_is_yahoo(account,who)){
+				/*we send the online and offline Message to Yahoo User via UBM*/
+				purple_debug_info("MaYuan","send to Yahoo User\n");
+				uum_send_msg(session,msg);
+			}else{
+				purple_debug_info("MaYuan","send via switchboard\n");
+				swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
+				msn_switchboard_send_msg(swboard, msg, TRUE);
+			}
+		}
+		else
+		{
+			char *body_str, *body_enc, *pre, *post;
+			const char *format;
+			/*
+			 * In MSN, you can't send messages to yourself, so
+			 * we'll fake like we received it ;)
+			 */
+			body_str = msn_message_to_string(msg);
+			body_enc = g_markup_escape_text(body_str, -1);
+			g_free(body_str);
 
-	g_free(msgformat);
-	g_free(msgtext);
+			format = msn_message_get_attr(msg, "X-MMS-IM-Format");
+			msn_parse_format(format, &pre, &post);
+			body_str = g_strdup_printf("%s%s%s", pre ? pre :  "",
+									   body_enc ? body_enc : "", post ? post : "");
+			g_free(body_enc);
+			g_free(pre);
+			g_free(post);
 
-	if (g_ascii_strcasecmp(who, purple_account_get_username(account)))
-	{
+			serv_got_typing_stopped(gc, who);
+			serv_got_im(gc, who, body_str, flags, time(NULL));
+			g_free(body_str);
+		}
+
+		msn_message_destroy(msg);
+	}else	{
+		/*send Offline Instant Message,only to MSN Passport User*/
 		MsnSession *session;
-		MsnSwitchBoard *swboard;
-
+		MsnOim *oim;
+		char *friendname;
+		
+		purple_debug_info("MaYuan","prepare to send offline Message\n");		
 		session = gc->proto_data;
-		swboard = msn_session_get_swboard(session, who, MSN_SB_FLAG_IM);
+		/* XXX/khc: hack */
+		if (!session->oim)
+			session->oim = msn_oim_new(session);
 
-		msn_switchboard_send_msg(swboard, msg, TRUE);
+		oim = session->oim;
+		friendname = msn_encode_mime(account->username);
+		msn_oim_prep_send_msg_info(oim, purple_account_get_username(account),
+								   friendname, who,	message);
+		msn_oim_send_msg(oim);
 	}
-	else
-	{
-		char *body_str, *body_enc, *pre, *post;
-		const char *format;
-		/*
-		 * In MSN, you can't send messages to yourself, so
-		 * we'll fake like we received it ;)
-		 */
-		body_str = msn_message_to_string(msg);
-		body_enc = g_markup_escape_text(body_str, -1);
-		g_free(body_str);
-
-		format = msn_message_get_attr(msg, "X-MMS-IM-Format");
-		msn_parse_format(format, &pre, &post);
-		body_str = g_strdup_printf("%s%s%s", pre ? pre :  "",
-								   body_enc ? body_enc : "", post ? post : "");
-		g_free(body_enc);
-		g_free(pre);
-		g_free(post);
-
-		serv_got_typing_stopped(gc, who);
-		serv_got_im(gc, who, body_str, flags, time(NULL));
-		g_free(body_str);
-	}
-
-	msn_message_destroy(msg);
-
 	return 1;
 }
 
@@ -867,8 +989,7 @@ msn_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	gc = purple_account_get_connection(account);
 
-	if (gc != NULL)
-	{
+	if (gc != NULL){
 		session = gc->proto_data;
 		msn_change_status(session);
 	}
@@ -945,6 +1066,7 @@ msn_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 	userlist = session->userlist;
 	who = msn_normalize(gc->account, buddy->name);
 
+	purple_debug_info("MaYuan","add user:{%s} to group:{%s}\n",who,group->name);
 	if (!session->logged_in)
 	{
 #if 0
@@ -1092,12 +1214,9 @@ msn_set_permit_deny(PurpleConnection *gc)
 	cmdproc = session->notification->cmdproc;
 
 	if (account->perm_deny == PURPLE_PRIVACY_ALLOW_ALL ||
-		account->perm_deny == PURPLE_PRIVACY_DENY_USERS)
-	{
+		account->perm_deny == PURPLE_PRIVACY_DENY_USERS){
 		msn_cmdproc_send(cmdproc, "BLP", "%s", "AL");
-	}
-	else
-	{
+	}else{
 		msn_cmdproc_send(cmdproc, "BLP", "%s", "BL");
 	}
 }
@@ -1237,22 +1356,22 @@ msn_rename_group(PurpleConnection *gc, const char *old_name,
 {
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
-	int old_gid;
+	const char *old_gid;
 	const char *enc_new_group_name;
 
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 	enc_new_group_name = purple_url_encode(group->name);
 
+	purple_debug_info("MaYuan","rename group:old{%s},new{%s}",old_name,enc_new_group_name);
 	old_gid = msn_userlist_find_group_id(session->userlist, old_name);
 
-	if (old_gid >= 0)
-	{
+	if (old_gid != NULL){
+		/*find a Group*/
 		msn_cmdproc_send(cmdproc, "REG", "%d %s 0", old_gid,
 						 enc_new_group_name);
-	}
-	else
-	{
+	}else{
+		/*not found*/
 		msn_cmdproc_send(cmdproc, "ADG", "%s 0", enc_new_group_name);
 	}
 }
@@ -1308,14 +1427,19 @@ msn_remove_group(PurpleConnection *gc, PurpleGroup *group)
 {
 	MsnSession *session;
 	MsnCmdProc *cmdproc;
-	int group_id;
+	const char *group_id;
 
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
 
-	if ((group_id = msn_userlist_find_group_id(session->userlist, group->name)) >= 0)
-	{
-		msn_cmdproc_send(cmdproc, "RMG", "%d", group_id);
+	/*we can't delete the default group*/
+	if(!strcmp(group->name,MSN_INDIVIDUALS_GROUP_NAME)||
+		!strcmp(group->name,MSN_NON_IM_GROUP_NAME)){
+		return ;
+	}
+	group_id = msn_userlist_find_group_id(session->userlist, group->name);
+	if (group_id != NULL){
+		msn_del_group(session,group_id);
 	}
 }
 
@@ -1330,19 +1454,16 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 	b = purple_find_buddy(purple_connection_get_account(info_data->gc),
 						info_data->name);
 
-	if (b)
-	{
+	if (b){
 		char *tmp;
 
-		if (b->alias && b->alias[0])
-		{
+		if (b->alias && b->alias[0]){
 			char *aliastext = g_markup_escape_text(b->alias, -1);
 			purple_notify_user_info_add_pair(user_info, _("Alias"), aliastext);
 			g_free(aliastext);
 		}
 
-		if (b->server_alias)
-		{
+		if (b->server_alias){
 			char *nicktext = g_markup_escape_text(b->server_alias, -1);
 			tmp = g_strdup_printf("<font sml=\"msn\">%s</font><br>", nicktext);
 			purple_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
@@ -1366,12 +1487,10 @@ msn_get_photo_url(const char *url_text)
 {
 	char *p, *q;
 
-	if ((p = strstr(url_text, " contactparams:photopreauthurl=\"")) != NULL)
-	{
-		p += strlen(" contactparams:photopreauthurl=\"");
+	if ((p = strstr(url_text, PHOTO_URL)) != NULL){
+		p += strlen(PHOTO_URL);
 	}
-
-	if (p && (strncmp(p, "http://", 8) == 0) && ((q = strchr(p, '"')) != NULL))
+	if (p && (strncmp(p, "http://",strlen("http://")) == 0) && ((q = strchr(p, '"')) != NULL))
 			return g_strndup(p, q - p);
 
 	return NULL;
@@ -1420,7 +1539,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	MsnGetInfoStepTwoData *info2_data = NULL;
 #endif
 
-	purple_debug_info("msn", "In msn_got_info\n");
+	purple_debug_info("msn", "In msn_got_info,url_text:{%s}\n",url_text);
 
 	/* Make sure the connection is still valid */
 	if (g_list_find(purple_connections_get_all(), info_data->gc) == NULL)
@@ -1801,6 +1920,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 #if PHOTO_SUPPORT
 	/* Find the URL to the photo; must be before the marshalling [Bug 994207] */
 	photo_url_text = msn_get_photo_url(url_text);
+	purple_debug_info("Ma Yuan","photo url:{%s}\n",photo_url_text);
 
 	/* Marshall the existing state */
 	info2_data = g_malloc0(sizeof(MsnGetInfoStepTwoData));
@@ -2025,7 +2145,7 @@ static PurplePluginProtocolInfo prpl_info =
 	msn_add_deny,			/* add_deny */
 	msn_rem_permit,			/* rem_permit */
 	msn_rem_deny,			/* rem_deny */
-	msn_set_permit_deny,		/* set_permit_deny */
+	msn_set_permit_deny,	/* set_permit_deny */
 	NULL,					/* join_chat */
 	NULL,					/* reject chat invite */
 	NULL,					/* get_chat_name */
@@ -2075,10 +2195,10 @@ static PurplePluginInfo info =
 	"MSN",                                            /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("MSN Protocol Plugin"),
+	N_("Windows Live Messenger Protocol Plugin"),
 	                                                  /**  description    */
-	N_("MSN Protocol Plugin"),
-	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
+	N_("Windows Live Messenger Protocol Plugin"),
+	"MaYuan <mayuan2006@gmail.com>",				/**< author         */
 	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	msn_load,                                         /**< load           */
@@ -2097,11 +2217,11 @@ init_plugin(PurplePlugin *plugin)
 	PurpleAccountOption *option;
 
 	option = purple_account_option_string_new(_("Server"), "server",
-											MSN_SERVER);
+											WLM_SERVER);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
-	option = purple_account_option_int_new(_("Port"), "port", 1863);
+	option = purple_account_option_int_new(_("Port"), "port", WLM_PORT);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options,
 											   option);
 
