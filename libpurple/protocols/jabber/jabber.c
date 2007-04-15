@@ -1858,7 +1858,12 @@ static void jabber_register_commands(void)
 
 static PurplePluginProtocolInfo prpl_info =
 {
+#ifdef HAVE_CYRUS_SASL
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_PASSWORD_OPTIONAL,
+#else
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK,
+#endif
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
 	{"png,gif,jpeg", 32, 32, 96, 96, 8191, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */

@@ -932,8 +932,9 @@ request_password_ok_cb(PurpleAccount *account, PurpleRequestFields *fields)
 	purple_connection_new(account, FALSE, entry);
 }
 
-static void
-request_password(PurpleAccount *account)
+void
+purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
+				GCallback cancel_cb, void *user_data)
 {
 	gchar *primary;
 	const gchar *username;
@@ -965,9 +966,9 @@ request_password(PurpleAccount *account)
                         primary,
                         NULL,
                         fields,
-                        _("OK"), G_CALLBACK(request_password_ok_cb),
-                        _("Cancel"), NULL,
-                        account);
+                        _("OK"), ok_cb,
+                        _("Cancel"), cancel_cb,
+                        user_data);
 	g_free(primary);
 }
 
@@ -1003,7 +1004,7 @@ purple_account_connect(PurpleAccount *account)
 	if ((password == NULL) &&
 		!(prpl_info->options & OPT_PROTO_NO_PASSWORD) &&
 		!(prpl_info->options & OPT_PROTO_PASSWORD_OPTIONAL))
-		request_password(account);
+		purple_account_request_password(account, G_CALLBACK(request_password_ok_cb), NULL, account);
 	else
 		purple_connection_new(account, FALSE, password);
 }
