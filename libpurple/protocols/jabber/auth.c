@@ -33,6 +33,7 @@
 #include "auth.h"
 #include "jabber.h"
 #include "iq.h"
+#include "notify.h"
 
 static void auth_old_result_cb(JabberStream *js, xmlnode *packet,
 		gpointer data);
@@ -117,6 +118,7 @@ static void disallow_plaintext_auth(PurpleAccount *account)
 #ifdef HAVE_CYRUS_SASL
 
 static void jabber_auth_start_cyrus(JabberStream *);
+static void jabber_sasl_build_callbacks(JabberStream *);
 
 /* Callbacks for Cyrus SASL */
 
@@ -179,6 +181,58 @@ static void allow_cyrus_plaintext_auth(PurpleAccount *account)
 	jabber_auth_start_cyrus(account->gc->proto_data);
 }
 
+static gboolean auth_pass_generic(JabberStream *js, PurpleRequestFields *fields)
+{
+	const char *entry;
+	gboolean remember;
+
+	entry = purple_request_fields_get_string(fields, "password");
+	remember = purple_request_fields_get_bool(fields, "remember");
+
+	if (!entry || !*entry)
+	{
+		purple_notify_error(js->gc->account, NULL, _("Password is required to sign on."), NULL);
+		return FALSE;
+	}
+
+	if (remember)
+		purple_account_set_remember_password(js->gc->account, TRUE);
+
+	purple_account_set_password(js->gc->account, entry);
+
+	return TRUE;
+}
+	
+static void auth_pass_cb(JabberStream *js, PurpleRequestFields *fields)
+{
+
+	if (!auth_pass_generic(js, fields))
+		return;
+
+	/* Rebuild our callbacks as we now have a password to offer */
+	jabber_sasl_build_callbacks(js);
+
+	/* Restart our connection */
+	jabber_auth_start_cyrus(js);
+}
+
+static void
+auth_old_pass_cb(JabberStream *js, PurpleRequestFields *fields)
+{
+	if (!auth_pass_generic(js, fields))
+		return;
+	
+	/* Restart our connection */
+	jabber_auth_start_old(js);
+}
+
+
+static void
+auth_no_pass_cb(JabberStream *js, PurpleRequestFields *fields)
+{
+	purple_connection_error(js->gc, _("Password is required to sign on."));
+}
+
 static void jabber_auth_start_cyrus(JabberStream *js)
 {
 	const char *clientout = NULL, *mech = NULL;
@@ -222,12 +276,20 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 			case SASL_CONTINUE:
 				break;
 			case SASL_NOMECH:
-				/* No mechanisms do what we want. See if we can add
-				 * plaintext ones to the list. */
+				/* No mechanisms have offered to help */
+
+				/* Firstly, if we don't have a password try
+				 * to get one
+				 */
 
 				if (!purple_account_get_password(js->gc->account)) {
-					purple_connection_error(js->gc, _("Server couldn't authenticate you without a password"));
+					purple_account_request_password(js->gc->account, G_CALLBACK(auth_pass_cb), G_CALLBACK(auth_no_pass_cb), js);
 					return;
+
+				/* If we've got a password, but aren't sending
+				 * it in plaintext, see if we can turn on
+				 * plaintext auth
+				 */
 				} else if (!plaintext) {
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
@@ -236,6 +298,10 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 							allow_cyrus_plaintext_auth,
 							disallow_plaintext_auth);
 					return;
+				/* Everything else has failed, so fail the
+				 * connection. Should probably have a better
+				 * error here.
+				 */
 				} else {
 					purple_connection_error(js->gc, _("Server does not use any supported authentication method"));
 					return;
@@ -305,14 +371,52 @@ jabber_sasl_cb_log(void *context, int level, const char *message)
 	return SASL_OK;
 }
 
+void
+jabber_sasl_build_callbacks(JabberStream *js)
+{
+	int id;
+
+	/* Set up our callbacks structure */
+	if (js->sasl_cb == NULL)
+		js->sasl_cb = g_new0(sasl_callback_t,6);
+
+	id = 0;
+	js->sasl_cb[id].id = SASL_CB_GETREALM;
+	js->sasl_cb[id].proc = jabber_sasl_cb_realm;
+	js->sasl_cb[id].context = (void *)js;
+	id++;
+
+	js->sasl_cb[id].id = SASL_CB_AUTHNAME;
+	js->sasl_cb[id].proc = jabber_sasl_cb_simple;
+	js->sasl_cb[id].context = (void *)js;
+	id++;
+
+	js->sasl_cb[id].id = SASL_CB_USER;
+	js->sasl_cb[id].proc = jabber_sasl_cb_simple;
+	js->sasl_cb[id].context = (void *)js;
+	id++;
+
+	if (purple_account_get_password(js->gc->account) != NULL ) {
+		js->sasl_cb[id].id = SASL_CB_PASS;
+		js->sasl_cb[id].proc = jabber_sasl_cb_secret;
+		js->sasl_cb[id].context = (void *)js;
+		id++;
+	}
+
+	js->sasl_cb[id].id = SASL_CB_LOG;
+	js->sasl_cb[id].proc = jabber_sasl_cb_log;
+	js->sasl_cb[id].context = (void*)js;
+	id++;
+
+	js->sasl_cb[id].id = SASL_CB_LIST_END;
+}
+
 #endif
 
 void
 jabber_auth_start(JabberStream *js, xmlnode *packet)
 {
-#ifdef HAVE_CYRUS_SASL
-	int id;
-#else
+#ifndef HAVE_CYRUS_SASL
 	gboolean digest_md5 = FALSE, plain=FALSE;
 #endif
 
@@ -354,38 +458,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 #ifdef HAVE_CYRUS_SASL
 	js->auth_type = JABBER_AUTH_CYRUS;
 
-	/* Set up our callbacks structure */
-	js->sasl_cb = g_new0(sasl_callback_t,6);
-
-	id = 0;
-	js->sasl_cb[id].id = SASL_CB_GETREALM;
-	js->sasl_cb[id].proc = jabber_sasl_cb_realm;
-	js->sasl_cb[id].context = (void *)js;
-	id++;
-
-	js->sasl_cb[id].id = SASL_CB_AUTHNAME;
-	js->sasl_cb[id].proc = jabber_sasl_cb_simple;
-	js->sasl_cb[id].context = (void *)js;
-	id++;
-
-	js->sasl_cb[id].id = SASL_CB_USER;
-	js->sasl_cb[id].proc = jabber_sasl_cb_simple;
-	js->sasl_cb[id].context = (void *)js;
-	id++;
-
-	if (purple_account_get_password(js->gc->account)) {
-		js->sasl_cb[id].id = SASL_CB_PASS;
-		js->sasl_cb[id].proc = jabber_sasl_cb_secret;
-		js->sasl_cb[id].context = (void *)js;
-		id++;
-	}
-
-	js->sasl_cb[id].id = SASL_CB_LOG;
-	js->sasl_cb[id].proc = jabber_sasl_cb_log;
-	js->sasl_cb[id].context = (void*)js;
-	id++;
-
-	js->sasl_cb[id].id = SASL_CB_LIST_END;
+	jabber_sasl_build_callbacks(js);
 
 	jabber_auth_start_cyrus(js);
 #else
@@ -507,6 +580,17 @@ void jabber_auth_start_old(JabberStream *js)
 	JabberIq *iq;
 	xmlnode *query, *username;
 
+#ifdef HAVE_CYRUS_SASL
+	/* If we have Cyrus SASL, then passwords will have been set
+	 * to OPTIONAL for this protocol. So, we need to do our own
+	 * password prompting here
+	 */
+	
+	if (!purple_account_get_password(js->gc->account)) {
+		purple_account_request_password(js->gc->account, G_CALLBACK(auth_old_pass_cb), G_CALLBACK(auth_no_pass_cb), js);
+		return;
+	}
+#endif
 	iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:auth");
 
 	query = xmlnode_get_child(iq->node, "query");

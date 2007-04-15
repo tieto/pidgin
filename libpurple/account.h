@@ -29,6 +29,7 @@
 
 #include <glib-object.h>
 #include <glib.h>
+#include <glib-object.h>
 
 typedef struct _PurpleAccountUiOps PurpleAccountUiOps;
 typedef struct _PurpleAccount      PurpleAccount;
@@ -221,6 +222,18 @@ void purple_account_request_close_with_account(PurpleAccount *account);
  * @param ui_handle	   The ui specific handle for which requests should be closed
  */
 void purple_account_request_close(void *ui_handle);
+
+/**
+ * Requests a password from the user for the account. Does not set the
+ * account password on success; do that in ok_cb if desired.
+ *
+ * @param account     The account to request the password for.
+ * @param ok_cb       The callback for the OK button.
+ * @param cancel_cb   The callback for the cancel button.
+ * @param user_data   User data to be passed into callbacks.
+ */
+void purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
+				     GCallback cancel_cb, void *user_data);
 
 /**
  * Requests information from the user to change the account's password.
