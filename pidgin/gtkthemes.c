@@ -141,6 +141,7 @@ void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 		} else if (load && list) {
 			gboolean hidden = FALSE;
 			char *sfile = NULL;
+			gboolean have_used_sfile = FALSE;
 
 			if (*i == '!' && *(i + 1) == ' ') {
 				hidden = TRUE;
@@ -164,11 +165,14 @@ void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 					smiley->smile = g_strdup(l);
 					smiley->hidden = hidden;
 					list->smileys = g_slist_append(list->smileys, smiley);
+					have_used_sfile = TRUE;
 				}
 				while (isspace(*i))
 					i++;
 
 			}
+			if (!have_used_sfile)
+				g_free(sfile);
 		}
 	}
 
