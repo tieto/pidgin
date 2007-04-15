@@ -22,9 +22,18 @@ class CheckedAttribute:
         self.attr = attr
 
     def __call__(self, *args):
+        # Redirect stderr to suppress the printing of an " Introspect error"
+        # message if nothing is listening on the bus.  We print a friendly
+        # error message ourselves.
+        real_stderr = sys.stderr
+        sys.stderr = None
         result = self.cobj.obj.__getattr__(self.attr)(*args)
-        if result == 0:
-            raise "Error: " + self.attr + " " + str(args) + " returned " + str(result)
+        sys.stderr = real_stderr
+
+# This can be useful for debugging.
+#        if (result == 0):
+#            print "Error: " + self.attr + " " + str(args) + " returned " + str(result)
+
         return result
 
 cpurple = CheckedObject(purple)
@@ -42,16 +51,20 @@ def convert(value):
         return value
 
 def findaccount(protocolname, accountname=""):
-    try:
-        # prefer connected accounts
-        account = cpurple.PurpleAccountsFindConnected(accountname, protocolname)
-        return account
-    except:
-        # try to get any account and connect it
-        account = cpurple.PurpleAccountsFindAny(accountname, protocolname)
-        purple.PurpleAccountSetStatusVargs(account, "online", 1)
-        purple.PurpleAccountConnect(account)
-        return account
+    # prefer connected accounts
+    account = cpurple.PurpleAccountsFindConnected(accountname, protocolname)
+    if (account != 0):
+	return account
+
+    # try to get any account and connect it
+    account = cpurple.PurpleAccountsFindAny(accountname, protocolname)
+    if (account == 0):
+        print "No matching account found."
+	sys.exit(1)
+
+    purple.PurpleAccountSetStatusVargs(account, "online", 1)
+    purple.PurpleAccountConnect(account)
+    return account
 
 def goim(account, screenname, message=None):
     # XXX: 1 == PURPLE_CONV_TYPE_IM
@@ -285,24 +298,28 @@ def main(argv=sys.argv):
     uri = argv[1]
     type = uri.split(":")[0]
 
-    if type == "aim":
-        aim(uri)
-    elif type == "gg":
-        gg(uri)
-    elif type == "icq":
-        icq(uri)
-    elif type == "irc":
-        irc(uri)
-    elif type == "msnim":
-        msnim(uri)
-    elif type == "sip":
-        sip(uri)
-    elif type == "xmpp":
-        xmpp(uri)
-    elif type == "ymsgr":
-        ymsgr(uri)
-    else:
-        print "Unkown protocol: %s" % type
+    try:
+        if type == "aim":
+            aim(uri)
+        elif type == "gg":
+            gg(uri)
+        elif type == "icq":
+            icq(uri)
+        elif type == "irc":
+            irc(uri)
+        elif type == "msnim":
+            msnim(uri)
+        elif type == "sip":
+            sip(uri)
+        elif type == "xmpp":
+            xmpp(uri)
+        elif type == "ymsgr":
+            ymsgr(uri)
+        else:
+            print "Unkown protocol: %s" % type
+    except dbus.dbus_bindings.DBusException:
+        print "ERROR: Is there a libpurple-powered client (e.g. Pidgin or Finch) running?"
+
 
 if __name__ == "__main__":
     main()
