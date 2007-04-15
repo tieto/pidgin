@@ -47,6 +47,7 @@ struct _FinchConv
 	GntWidget *window;        /* the container */
 	GntWidget *entry;         /* entry */
 	GntWidget *tv;            /* text-view */
+	GntWidget *menu;          /* future use */
 
 	union
 	{
