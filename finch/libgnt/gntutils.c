@@ -1,8 +1,24 @@
-#include "gntutils.h"
+#include "gntbutton.h"
+#include "gntcheckbox.h"
+#include "gntcombobox.h"
+#include "gntentry.h"
+#include "gntlabel.h"
+#include "gntline.h"
+#include "gnttextview.h"
 #include "gnttree.h"
+#include "gntutils.h"
+#include "gntwindow.h"
 
+#include "config.h"
+
+#include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifndef NO_LIBXML
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+#endif
 
 #include "config.h"
 
@@ -184,9 +200,156 @@ GntWidget *gnt_widget_bindings_view(GntWidget *widget)
 	gnt_tree_set_compare_func(bv.tree, (GCompareFunc)g_utf8_collate);
 	g_hash_table_foreach(klass->actions, add_action, &bv);
 	g_hash_table_foreach(klass->bindings, add_binding, &bv);
-	gnt_tree_adjust_columns(bv.tree);
+	if (GNT_TREE(tree)->list == NULL) {
+		gnt_widget_destroy(tree);
+		tree = NULL;
+	} else
+		gnt_tree_adjust_columns(bv.tree);
 	g_hash_table_destroy(hash);
 
 	return tree;
+}
+
+#ifndef NO_LIBXML
+static GntWidget *
+gnt_widget_from_xmlnode(xmlNode *node, GntWidget **data[])
+{
+	GntWidget *widget = NULL;
+	char *name;
+	char *id, *prop, *content;
+	int val;
+
+	if (node == NULL || node->name == NULL || node->type != XML_ELEMENT_NODE)
+		return NULL;
+
+	name = (char*)node->name;
+	content = (char*)xmlNodeGetContent(node);
+	if (strcmp(name + 1, "window") == 0 || strcmp(name + 1, "box") == 0) {
+		xmlNode *ch;
+		char *title;
+		gboolean vert = (*name == 'v');
+
+		if (name[1] == 'w')
+			widget = gnt_window_box_new(FALSE, vert);
+		else
+			widget = gnt_box_new(FALSE, vert);
+
+		title = (char*)xmlGetProp(node, (xmlChar*)"title");
+		if (title) {
+			gnt_box_set_title(GNT_BOX(widget), title);
+			xmlFree(title);
+		}
+
+		prop = (char*)xmlGetProp(node, (xmlChar*)"fill");
+		if (prop) {
+			if (sscanf(prop, "%d", &val) == 1)
+				gnt_box_set_fill(GNT_BOX(widget), !!val);
+			xmlFree(prop);
+		}
+
+		prop = (char*)xmlGetProp(node, (xmlChar*)"align");
+		if (prop) {
+			if (sscanf(prop, "%d", &val) == 1)
+				gnt_box_set_alignment(GNT_BOX(widget), val);
+			xmlFree(prop);
+		}
+
+		prop = (char*)xmlGetProp(node, (xmlChar*)"pad");
+		if (prop) {
+			if (sscanf(prop, "%d", &val) == 1)
+				gnt_box_set_pad(GNT_BOX(widget), val);
+			xmlFree(prop);
+		}
+
+		for (ch = node->children; ch; ch=ch->next)
+			gnt_box_add_widget(GNT_BOX(widget), gnt_widget_from_xmlnode(ch, data));
+	} else if (strcmp(name, "button") == 0) {
+		widget = gnt_button_new(content);
+	} else if (strcmp(name, "label") == 0) {
+		widget = gnt_label_new(content);
+	} else if (strcmp(name, "entry") == 0) {
+		widget = gnt_entry_new(content);
+	} else if (strcmp(name, "combobox") == 0) {
+		widget = gnt_combo_box_new();
+	} else if (strcmp(name, "checkbox") == 0) {
+		widget = gnt_check_box_new(content);
+	} else if (strcmp(name, "tree") == 0) {
+		widget = gnt_tree_new();
+	} else if (strcmp(name, "textview") == 0) {
+		widget = gnt_text_view_new();
+	} else if (strcmp(name + 1, "line") == 0) {
+		widget = gnt_line_new(*name == 'v');
+	}
+
+	xmlFree(content);
+
+	if (widget == NULL) {
+		g_printerr("Invalid widget name %s\n", name);
+		return NULL;
+	}
+
+	id = (char*)xmlGetProp(node, (xmlChar*)"id");
+	if (id) {
+		int i;
+		sscanf(id, "%d", &i);
+		*data[i] = widget;
+		xmlFree(id);
+	}
+
+	prop = (char*)xmlGetProp(node, (xmlChar*)"border");
+	if (prop) {
+		int val;
+		if (sscanf(prop, "%d", &val) == 1) {
+			if (val)
+				GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_NO_BORDER);
+			else
+				GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER);
+		}
+		xmlFree(prop);
+	}
+
+	prop = (char*)xmlGetProp(node, (xmlChar*)"shadow");
+	if (prop) {
+		int val;
+		if (sscanf(prop, "%d", &val) == 1) {
+			if (val)
+				GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_NO_BORDER);
+			else
+				GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_NO_BORDER);
+		}
+		xmlFree(prop);
+	}
+
+	return widget;
+}
+#endif
+
+void gnt_util_parse_widgets(const char *string, int num, ...)
+{
+#ifndef NO_LIBXML
+	xmlParserCtxtPtr ctxt;
+	xmlDocPtr doc;
+	xmlNodePtr node;
+	va_list list;
+	GntWidget ***data;
+	int id;
+
+	ctxt = xmlNewParserCtxt();
+	doc = xmlCtxtReadDoc(ctxt, (xmlChar*)string, NULL, NULL, XML_PARSE_NOBLANKS);
+
+	data = g_new0(GntWidget **, num);
+
+	va_start(list, num);
+	for (id = 0; id < num; id++)
+		data[id] = va_arg(list, gpointer);
+
+	node = xmlDocGetRootElement(doc);
+	gnt_widget_from_xmlnode(node, data);
+
+	xmlFreeDoc(doc);
+	xmlCleanupParser();
+	va_end(list);
+	g_free(data);
+#endif
 }
 

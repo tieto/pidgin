@@ -81,6 +81,8 @@ int gnt_text_view_get_lines_above(GntTextView *view);
 /* If text is NULL, then the tag is removed. */
 int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *text, gboolean all);
 
+void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget);
+
 G_END_DECLS
 
 #endif /* GNT_TEXT_VIEW_H */

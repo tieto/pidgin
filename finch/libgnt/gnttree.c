@@ -1525,7 +1525,7 @@ void gnt_tree_set_show_separator(GntTree *tree, gboolean set)
 void gnt_tree_adjust_columns(GntTree *tree)
 {
 	GntTreeRow *row = tree->root;
-	int *widths, i, twidth, height;
+	int *widths, i, twidth;
 
 	widths = g_new0(int, tree->ncol);
 	while (row) {
@@ -1552,8 +1552,7 @@ void gnt_tree_adjust_columns(GntTree *tree)
 	}
 	g_free(widths);
 
-	gnt_widget_get_size(GNT_WIDGET(tree), NULL, &height);
-	gnt_widget_set_size(GNT_WIDGET(tree), twidth, height);
+	gnt_widget_set_size(GNT_WIDGET(tree), twidth, -1);
 }
 
 void gnt_tree_set_hash_fns(GntTree *tree, gpointer hash, gpointer eq, gpointer kd)
