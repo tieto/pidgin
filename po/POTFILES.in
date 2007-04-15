@@ -43,7 +43,6 @@ libpurple/gconf/purple.schemas.in
 libpurple/log.c
 libpurple/plugin.c
 libpurple/plugins/autoaccept.c
-libpurple/plugins/autoreply.c
 libpurple/plugins/buddynote.c
 libpurple/plugins/ciphertest.c
 libpurple/plugins/dbus-example.c

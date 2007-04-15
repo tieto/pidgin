@@ -86,9 +86,9 @@ endif # PLUGINS
 EXTRA_DIST = \
 	Makefile.mingw \
 	contact_priority.c \
-	gaiminc.c \
 	gtk-signals-test.c \
 	mailchk.c \
+	pidgininc.c \
 	raw.c \
 	win32/transparency/Makefile.mingw \
 	win32/transparency/win2ktrans.c \
