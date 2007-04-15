@@ -181,7 +181,6 @@ pidgin/plugins/cap/cap.c
 pidgin/plugins/contact_priority.c
 pidgin/plugins/convcolors.c
 pidgin/plugins/extplacement.c
-pidgin/plugins/gaiminc.c
 pidgin/plugins/gestures/gestures.c
 pidgin/plugins/gevolution/add_buddy_dialog.c
 pidgin/plugins/gevolution/assoc-buddy.c
@@ -196,6 +195,7 @@ pidgin/plugins/mailchk.c
 pidgin/plugins/markerline.c
 pidgin/plugins/musicmessaging/musicmessaging.c
 pidgin/plugins/notify.c
+pidgin/plugins/pidgininc.c
 pidgin/plugins/pidginrc.c
 pidgin/plugins/raw.c
 pidgin/plugins/relnot.c
