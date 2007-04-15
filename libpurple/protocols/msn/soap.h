@@ -3,9 +3,9 @@
  * 	header file for SOAP connection related process
  *	Author
  * 		MaYuan<mayuan2006@gmail.com>
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -55,8 +55,8 @@ struct _MsnSoapReq{
 
 	char *body;
 
-	GaimInputFunction read_cb;
-	GaimInputFunction written_cb;
+	PurpleInputFunction read_cb;
+	PurpleInputFunction written_cb;
 };
 
 struct _MsnSoapConn{
@@ -73,11 +73,11 @@ struct _MsnSoapConn{
 	/*normal connection*/
 	guint	fd;
 	/*SSL connection*/
-	GaimSslConnection *gsc;
+	PurpleSslConnection *gsc;
 	/*ssl connection callback*/
-	GaimSslInputFunction	connect_cb;
+	PurpleSslInputFunction	connect_cb;
 	/*ssl error callback*/
-	GaimSslErrorFunction	error_cb;
+	PurpleSslErrorFunction	error_cb;
 
 	/*read handler*/
 	guint input_handler;
@@ -91,13 +91,13 @@ struct _MsnSoapConn{
 	/*write buffer*/
 	char *write_buf;
 	gsize written_len;
-	GaimInputFunction written_cb;
+	PurpleInputFunction written_cb;
 
 	/*read buffer*/
 	char *read_buf;
 	gsize read_len;
 	gsize need_to_read;
-	GaimInputFunction read_cb;
+	PurpleInputFunction read_cb;
 
 	/*HTTP reply body part*/
 	char *body;
@@ -108,8 +108,8 @@ struct _MsnSoapConn{
 /*Soap Request Function */
 MsnSoapReq *msn_soap_request_new(const char *host, const char *post_url,
 								 const char *soap_action, const char *body,
-								 GaimInputFunction read_cb,
-								 GaimInputFunction written_cb);
+								 PurpleInputFunction read_cb,
+								 PurpleInputFunction written_cb);
 
 void msn_soap_request_free(MsnSoapReq *request);
 void msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request);
@@ -122,18 +122,18 @@ MsnSoapConn *msn_soap_new(MsnSession *session,gpointer data,int sslconn);
 void msn_soap_destroy(MsnSoapConn *soapconn);
 
 /*init a soap conneciton */
-void msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,GaimSslInputFunction connect_cb,GaimSslErrorFunction error_cb);
+void msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,PurpleSslInputFunction connect_cb,PurpleSslErrorFunction error_cb);
 void msn_soap_connect(MsnSoapConn *soapconn);
 void msn_soap_close(MsnSoapConn *soapconn);
 
 /*write to soap*/
-void msn_soap_write(MsnSoapConn * soapconn, char *write_buf, GaimInputFunction written_cb);
+void msn_soap_write(MsnSoapConn * soapconn, char *write_buf, PurpleInputFunction written_cb);
 void msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,MsnSoapConnectInitFunction msn_soap_init_func);
 
 void  msn_soap_free_read_buf(MsnSoapConn *soapconn);
 void msn_soap_free_write_buf(MsnSoapConn *soapconn);
-void msn_soap_connect_cb(gpointer data, GaimSslConnection *gsc, GaimInputCondition cond);
-void msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond);
+void msn_soap_connect_cb(gpointer data, PurpleSslConnection *gsc, PurpleInputCondition cond);
+void msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond);
 
 /*clean the unhandled request*/
 void msn_soap_clean_unhandled_request(MsnSoapConn *soapconn);

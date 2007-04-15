@@ -88,15 +88,15 @@ msn_get_psm(char *xml_str, gsize len)
 	xmlnode *payloadNode, *psmNode;
 	char *psm_str, *psm;
 	
-	gaim_debug_info("Ma Yuan","msn get PSM\n");
+	purple_debug_info("Ma Yuan","msn get PSM\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
 	if (!payloadNode){
-		gaim_debug_error("MaYuan","PSM XML parse Error!\n");
+		purple_debug_error("MaYuan","PSM XML parse Error!\n");
 		return NULL;
 	}
 	psmNode = xmlnode_get_child(payloadNode, "PSM");
 	if (psmNode == NULL){
-		gaim_debug_info("Ma Yuan","No PSM status Node");
+		purple_debug_info("Ma Yuan","No PSM status Node");
 		g_free(payloadNode);
 		return NULL;
 	}
@@ -115,9 +115,9 @@ msn_get_psm(char *xml_str, gsize len)
 void
 msn_set_psm(MsnSession *session)
 {
-	GaimAccount *account = session->account;
-	GaimPresence *presence;
-	GaimStatus *status;
+	PurpleAccount *account = session->account;
+	PurplePresence *presence;
+	PurpleStatus *status;
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
 	char *payload;
@@ -131,14 +131,14 @@ msn_set_psm(MsnSession *session)
 	if(session->psm){
 		g_free(session->psm);
 	}
-	/*Get the PSM string from Gaim's Status Line*/
-	presence = gaim_account_get_presence(account);
-	status = gaim_presence_get_active_status(presence);
-	statusline = gaim_status_get_attr_string(status, "message");
+	/*Get the PSM string from Purple's Status Line*/
+	presence = purple_account_get_presence(account);
+	status = purple_presence_get_active_status(presence);
+	statusline = purple_status_get_attr_string(status, "message");
 	session ->psm = msn_build_psm(statusline, NULL, NULL);
 	payload = session->psm;
 
-	gaim_debug_info("MaYuan","UUX{%s}\n",payload);
+	purple_debug_info("MaYuan","UUX{%s}\n",payload);
 	trans = msn_transaction_new(cmdproc, "UUX","%d",strlen(payload));
 	msn_transaction_set_payload(trans, payload, strlen(payload));
 	msn_cmdproc_send_trans(cmdproc, trans);

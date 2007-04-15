@@ -146,7 +146,7 @@ msn_command_from_string(const char *string)
 
 	/*add payload Length checking*/
 	msn_set_payload_len(cmd);
-	gaim_debug_info("MaYuan","get payload len:%d\n",cmd->payload_len);
+	purple_debug_info("MaYuan","get payload len:%d\n",cmd->payload_len);
 
 	msn_command_ref(cmd);
 

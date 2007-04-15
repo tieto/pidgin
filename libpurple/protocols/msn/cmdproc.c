@@ -133,7 +133,7 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 	}
 
 	msn_servconn_write(servconn, data, len);
-//	gaim_debug_info("<<","%s\n",data);
+//	purple_debug_info("<<","%s\n",data);
 
 	g_free(data);
 }

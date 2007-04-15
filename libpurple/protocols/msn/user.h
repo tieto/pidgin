@@ -299,13 +299,13 @@ GHashTable *msn_user_get_client_caps(const MsnUser *user);
  * check to see if user is online
  */
 gboolean
-msn_user_is_online(GaimAccount *account, const char *name);
+msn_user_is_online(PurpleAccount *account, const char *name);
 
 /**
  * check to see if user is Yahoo User
  */
 gboolean
-msn_user_is_yahoo(GaimAccount *account ,const char *name);
+msn_user_is_yahoo(PurpleAccount *account ,const char *name);
 
 void msn_user_set_op(MsnUser *user,int list_op);
 

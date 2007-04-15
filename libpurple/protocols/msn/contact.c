@@ -3,9 +3,9 @@
  * 	get MSN contacts via SOAP request
  *	created by MaYuan<mayuan2006@gmail.com>
  *
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -56,7 +56,7 @@ msn_contact_destroy(MsnContact *contact)
 
 /*contact SOAP server login error*/
 static void
-msn_contact_login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
+msn_contact_login_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data)
 {
 	MsnSoapConn *soapconn = data;
 	MsnSession *session;
@@ -69,8 +69,8 @@ msn_contact_login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void 
 
 /*msn contact SOAP server connect process*/
 static void
-msn_contact_login_connect_cb(gpointer data, GaimSslConnection *gsc,
-				 GaimInputCondition cond)
+msn_contact_login_connect_cb(gpointer data, PurpleSslConnection *gsc,
+				 PurpleInputCondition cond)
 {
 	MsnSoapConn *soapconn = data;
 	MsnSession * session;
@@ -131,16 +131,16 @@ msn_parse_contact_list(MsnContact * contact)
 	char *LastChangeStr;
 
 	session = contact->session;
-	gaim_debug_misc("MSNCL","parse contact list:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
+	purple_debug_misc("MSNCL","parse contact list:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
 	node = 	xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
 
 	if(node == NULL){
-		gaim_debug_misc("MSNCL","parse contact from str err!\n");
+		purple_debug_misc("MSNCL","parse contact from str err!\n");
 		return;
 	}
-	gaim_debug_misc("MSNCL","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
+	purple_debug_misc("MSNCL","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
 	body = xmlnode_get_child(node,"Body");
-	gaim_debug_misc("MSNCL","body{%p},name:%s\n",body,body->name);
+	purple_debug_misc("MSNCL","body{%p},name:%s\n",body,body->name);
 	response = xmlnode_get_child(body,"FindMembershipResponse");
 
 	if (response == NULL) {
@@ -153,27 +153,27 @@ msn_parse_contact_list(MsnContact * contact)
 		return;
 	}
 
-	gaim_debug_misc("MSNCL","response{%p},name:%s\n",response,response->name);
+	purple_debug_misc("MSNCL","response{%p},name:%s\n",response,response->name);
 	result =xmlnode_get_child(response,"FindMembershipResult");
 	if(result == NULL){
-		gaim_debug_misc("MSNCL","receive No Update!\n");
+		purple_debug_misc("MSNCL","receive No Update!\n");
 		return;
 	}
-	gaim_debug_misc("MSNCL","result{%p},name:%s\n",result,result->name);
+	purple_debug_misc("MSNCL","result{%p},name:%s\n",result,result->name);
 	services =xmlnode_get_child(result,"Services");
-	gaim_debug_misc("MSNCL","services{%p},name:%s\n",services,services->name);
+	purple_debug_misc("MSNCL","services{%p},name:%s\n",services,services->name);
 	service =xmlnode_get_child(services,"Service");
-	gaim_debug_misc("MSNCL","service{%p},name:%s\n",service,service->name);
+	purple_debug_misc("MSNCL","service{%p},name:%s\n",service,service->name);
 	
 	/*Last Change Node*/
 	LastChangeNode = xmlnode_get_child(service,"LastChange");
 	LastChangeStr = xmlnode_get_data(LastChangeNode);
-	gaim_debug_misc("MSNCL","LastChangeNode0 %s\n",LastChangeStr);	
-	gaim_blist_node_set_string(msn_session_get_bnode(contact->session),"CLLastChange",LastChangeStr);
-	gaim_debug_misc("MSNCL","LastChangeNode %s\n",LastChangeStr);
+	purple_debug_misc("MSNCL","LastChangeNode0 %s\n",LastChangeStr);	
+	purple_blist_node_set_string(msn_session_get_bnode(contact->session),"CLLastChange",LastChangeStr);
+	purple_debug_misc("MSNCL","LastChangeNode %s\n",LastChangeStr);
 	
 	memberships =xmlnode_get_child(service,"Memberships");
-	gaim_debug_misc("MSNCL","memberships{%p},name:%s\n",memberships,memberships->name);
+	purple_debug_misc("MSNCL","memberships{%p},name:%s\n",memberships,memberships->name);
 	for(membershipnode = xmlnode_get_child(memberships, "Membership"); membershipnode;
 					membershipnode = xmlnode_get_next_twin(membershipnode)){
 		xmlnode *roleNode;
@@ -181,7 +181,7 @@ msn_parse_contact_list(MsnContact * contact)
 		roleNode = xmlnode_get_child(membershipnode,"MemberRole");
 		role=xmlnode_get_data(roleNode);
 		list_op = msn_get_memberrole(role);
-		gaim_debug_misc("MSNCL","MemberRole role:%s,list_op:%d\n",role,list_op);
+		purple_debug_misc("MSNCL","MemberRole role:%s,list_op:%d\n",role,list_op);
 		g_free(role);
 		members = xmlnode_get_child(membershipnode,"Members");
 		for(member = xmlnode_get_child(members, "Member"); member;
@@ -190,13 +190,13 @@ msn_parse_contact_list(MsnContact * contact)
 			xmlnode * typeNode;
 			char * type;
 
-			gaim_debug_misc("MSNCL","type:%s\n",xmlnode_get_attrib(member,"type"));
+			purple_debug_misc("MSNCL","type:%s\n",xmlnode_get_attrib(member,"type"));
 			if(!g_strcasecmp(xmlnode_get_attrib(member,"type"),"PassportMember")){
 				passportNode = xmlnode_get_child(member,"PassportName");
 				passport = xmlnode_get_data(passportNode);
 				typeNode = xmlnode_get_child(member,"Type");
 				type = xmlnode_get_data(typeNode);
-				gaim_debug_misc("MSNCL","Passport name:%s,type:%s\n",passport,type);
+				purple_debug_misc("MSNCL","Passport name:%s,type:%s\n",passport,type);
 				g_free(type);
 
 				user = msn_userlist_find_add_user(session->userlist,passport,NULL);
@@ -210,7 +210,7 @@ msn_parse_contact_list(MsnContact * contact)
 
 				emailNode = xmlnode_get_child(member,"Email");
 				passport = xmlnode_get_data(emailNode);
-				gaim_debug_info("MSNCL","Email Member :name:%s,list_op:%d\n",passport,list_op);
+				purple_debug_info("MSNCL","Email Member :name:%s,list_op:%d\n",passport,list_op);
 				user = msn_userlist_find_add_user(session->userlist,passport,NULL);
 				msn_got_lst_user(session,user,list_op,NULL);
 				g_free(passport);
@@ -222,7 +222,7 @@ msn_parse_contact_list(MsnContact * contact)
 }
 
 static void
-msn_get_contact_list_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_get_contact_list_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn *soapconn = data;	
 	MsnContact *contact;
@@ -236,23 +236,23 @@ msn_get_contact_list_cb(gpointer data, gint source, GaimInputCondition cond)
 	g_return_if_fail(session != NULL);
 
 #ifdef  MSN_CONTACT_SOAP_DEBUG
-	gaim_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
+	purple_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
 #endif
 	msn_parse_contact_list(contact);
 	/*free the read buffer*/
 	msn_soap_free_read_buf(soapconn);
 
-	abLastChange = gaim_blist_node_get_string(msn_session_get_bnode(contact->session),"ablastChange");
-	dynamicItemLastChange = gaim_blist_node_get_string(msn_session_get_bnode(contact->session),"dynamicItemLastChange");
+	abLastChange = purple_blist_node_get_string(msn_session_get_bnode(contact->session),"ablastChange");
+	dynamicItemLastChange = purple_blist_node_get_string(msn_session_get_bnode(contact->session),"dynamicItemLastChange");
 	msn_get_address_book(contact, abLastChange, dynamicItemLastChange);
 }
 
 static void
-msn_get_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_get_contact_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
-	gaim_debug_info("MaYuan","finish contact written\n");
+	purple_debug_info("MaYuan","finish contact written\n");
 	soapconn->read_cb = msn_get_contact_list_cb;
 //	msn_soap_read_cb(data,source,cond);
 }
@@ -265,9 +265,9 @@ msn_get_contact_list(MsnContact * contact, const char *update_time)
 	char *body = NULL;
 	char * update_str;
 	
-	gaim_debug_info("MaYuan","Getting Contact List...\n");
+	purple_debug_info("MaYuan","Getting Contact List...\n");
 	if(update_time != NULL){
-		gaim_debug_info("MSNCL","last update time:{%s}\n",update_time);
+		purple_debug_info("MSNCL","last update time:{%s}\n",update_time);
 		update_str = g_strdup_printf(MSN_GET_CONTACT_UPDATE_XML,update_time);
 	}else{
 		update_str = g_strdup("");
@@ -294,29 +294,29 @@ msn_parse_addressbook(MsnContact * contact)
 	char *group_name,*group_id;
 
 	session = contact->session;
-	gaim_debug_misc("xml","parse addressbook:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
+	purple_debug_misc("xml","parse addressbook:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
 	node = 	xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
 
 	if(node == NULL){
-		gaim_debug_misc("xml","parse from str err!\n");
+		purple_debug_misc("xml","parse from str err!\n");
 		return FALSE;
 	}
-	gaim_debug_misc("xml","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
+	purple_debug_misc("xml","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
 	body = xmlnode_get_child(node,"Body");
-	gaim_debug_misc("xml","body{%p},name:%s\n",body,body->name);
+	purple_debug_misc("xml","body{%p},name:%s\n",body,body->name);
 	response = xmlnode_get_child(body,"ABFindAllResponse");
 
 	if (response == NULL) {
 		return FALSE;
 	}
 
-	gaim_debug_misc("xml","response{%p},name:%s\n",response,response->name);
+	purple_debug_misc("xml","response{%p},name:%s\n",response,response->name);
 	result =xmlnode_get_child(response,"ABFindAllResult");
 	if(result == NULL){
-		gaim_debug_misc("MSNAB","receive no address book update\n");
+		purple_debug_misc("MSNAB","receive no address book update\n");
 		return TRUE;
 	}
-	gaim_debug_misc("xml","result{%p},name:%s\n",result,result->name);
+	purple_debug_misc("xml","result{%p},name:%s\n",result,result->name);
 
 	/*Process Group List*/
 	groups =xmlnode_get_child(result,"groups");
@@ -335,11 +335,11 @@ msn_parse_addressbook(MsnContact * contact)
 			continue;
 		}
 
-		gaim_debug_misc("MsnAB","group_id:%s name:%s\n",group_id,group_name);
-		if ((gaim_find_group(group_name)) == NULL){
-			GaimGroup *g = gaim_group_new(group_name);
-			gaim_blist_node_set_string(&(g->node),"groupId",group_id);
-			gaim_blist_add_group(g, NULL);
+		purple_debug_misc("MsnAB","group_id:%s name:%s\n",group_id,group_name);
+		if ((purple_find_group(group_name)) == NULL){
+			PurpleGroup *g = purple_group_new(group_name);
+			purple_blist_node_set_string(&(g->node),"groupId",group_id);
+			purple_blist_add_group(g, NULL);
 		}
 		g_free(group_id);
 		g_free(group_name);
@@ -349,10 +349,10 @@ msn_parse_addressbook(MsnContact * contact)
 	group_name = g_strdup(MSN_INDIVIDUALS_GROUP_NAME);
 	msn_group_new(session->userlist,group_id , group_name);
 	if (group_id != NULL){
-		gaim_debug_misc("MsnAB","group_id:%s name:%s,value:%d\n",group_id,group_name,*group_name=='\0');
-		if ((gaim_find_group(group_name)) == NULL){
-			GaimGroup *g = gaim_group_new(group_name);
-			gaim_blist_add_group(g, NULL);
+		purple_debug_misc("MsnAB","group_id:%s name:%s,value:%d\n",group_id,group_name,*group_name=='\0');
+		if ((purple_find_group(group_name)) == NULL){
+			PurpleGroup *g = purple_group_new(group_name);
+			purple_blist_add_group(g, NULL);
 		}
 	}
 	g_free(group_name);
@@ -363,17 +363,17 @@ msn_parse_addressbook(MsnContact * contact)
 	group_name = g_strdup(MSN_NON_IM_GROUP_NAME);
 	msn_group_new(session->userlist,group_id , group_name);
 	if (group_id != NULL){
-		gaim_debug_misc("MsnAB","group_id:%s name:%s,value:%d\n",group_id,group_name,*group_name=='\0');
-		if ((gaim_find_group(group_name)) == NULL){
-			GaimGroup *g = gaim_group_new(group_name);
-			gaim_blist_add_group(g, NULL);
+		purple_debug_misc("MsnAB","group_id:%s name:%s,value:%d\n",group_id,group_name,*group_name=='\0');
+		if ((purple_find_group(group_name)) == NULL){
+			PurpleGroup *g = purple_group_new(group_name);
+			purple_blist_add_group(g, NULL);
 		}
 	}
 	g_free(group_name);
 	g_free(group_id);
 
 	/*Process contact List*/
-	gaim_debug_info("MSNAB","process contact list...\n");
+	purple_debug_info("MSNAB","process contact list...\n");
 	contacts =xmlnode_get_child(result,"contacts");
 	for(contactNode = xmlnode_get_child(contacts, "Contact"); contactNode;
 				contactNode = xmlnode_get_next_twin(contactNode)){
@@ -393,7 +393,7 @@ msn_parse_addressbook(MsnContact * contact)
 		if (!strcmp(type, "Me")){
 			char *friendly;
 			friendly = xmlnode_get_data(xmlnode_get_child(contactInfo, "displayName"));
-			gaim_connection_set_display_name(session->account->gc, gaim_url_decode(friendly));
+			purple_connection_set_display_name(session->account->gc, purple_url_decode(friendly));
 			g_free(friendly);
 		}
 
@@ -421,13 +421,13 @@ msn_parse_addressbook(MsnContact * contact)
 					/*Messenger enabled, Get the Passport*/
 					emailNode = xmlnode_get_child(contactEmailNode,"email");
 					passport = xmlnode_get_data(emailNode);
-					gaim_debug_info("MsnAB","Yahoo User %s\n",passport);
+					purple_debug_info("MsnAB","Yahoo User %s\n",passport);
 					break;
 				}else{
-					/*TODO maybe we can just ignore it in Gaim?*/
+					/*TODO maybe we can just ignore it in Purple?*/
 					emailNode = xmlnode_get_child(contactEmailNode,"email");
 					passport = xmlnode_get_data(emailNode);
-					gaim_debug_info("MSNAB","Other type user\n");
+					purple_debug_info("MSNAB","Other type user\n");
 				}
 				g_free(msnEnabled);
 			}
@@ -446,7 +446,7 @@ msn_parse_addressbook(MsnContact * contact)
 			Name =xmlnode_get_data(displayName);	
 		}
 
-		gaim_debug_misc("MsnAB","passport:{%s} uid:{%s} display:{%s}\n",
+		purple_debug_misc("MsnAB","passport:{%s} uid:{%s} display:{%s}\n",
 						passport,uid,Name);
 
 		user = msn_userlist_find_add_user(session->userlist, passport,Name);
@@ -458,14 +458,14 @@ msn_parse_addressbook(MsnContact * contact)
 		g_free(uid);
 		g_free(type);
 
-		gaim_debug_misc("MsnAB","parse guid...\n");
+		purple_debug_misc("MsnAB","parse guid...\n");
 		groupIds = xmlnode_get_child(contactInfo,"groupIds");
 		if(groupIds){
 			for(guid = xmlnode_get_child(groupIds, "guid");guid;
 							guid = xmlnode_get_next_twin(guid)){
 				group_id = xmlnode_get_data(guid);
 				msn_user_add_group_id(user,group_id);
-				gaim_debug_misc("MsnAB","guid:%s\n",group_id);
+				purple_debug_misc("MsnAB","guid:%s\n",group_id);
 				g_free(group_id);
 			}
 		}else{
@@ -483,13 +483,13 @@ msn_parse_addressbook(MsnContact * contact)
 
 		LastChangeNode = xmlnode_get_child(abNode,"lastChange");
 		lastchange = xmlnode_get_data(LastChangeNode);
-		gaim_debug_info("MsnAB"," lastchanged Time:{%s}\n",lastchange);
-		gaim_blist_node_set_string(msn_session_get_bnode(contact->session),"ablastChange",lastchange);
+		purple_debug_info("MsnAB"," lastchanged Time:{%s}\n",lastchange);
+		purple_blist_node_set_string(msn_session_get_bnode(contact->session),"ablastChange",lastchange);
 		
 		DynamicItemLastChangedNode = xmlnode_get_child(abNode,"DynamicItemLastChanged");
 		dynamicChange = xmlnode_get_data(DynamicItemLastChangedNode);
-		gaim_debug_info("MsnAB"," DynamicItemLastChanged :{%s}\n",dynamicChange);
-		gaim_blist_node_set_string(msn_session_get_bnode(contact->session),"DynamicItemLastChanged",lastchange);
+		purple_debug_info("MsnAB"," DynamicItemLastChanged :{%s}\n",dynamicChange);
+		purple_blist_node_set_string(msn_session_get_bnode(contact->session),"DynamicItemLastChanged",lastchange);
 	}
 
 	xmlnode_free(node);
@@ -498,7 +498,7 @@ msn_parse_addressbook(MsnContact * contact)
 }
 
 static void
-msn_get_address_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_get_address_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 	MsnContact *contact;
@@ -509,7 +509,7 @@ msn_get_address_cb(gpointer data, gint source, GaimInputCondition cond)
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
 
-//	gaim_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
+//	purple_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
 	if (msn_parse_addressbook(contact)) {
 		msn_notification_dump_contact(session);
 		msn_set_psm(session);
@@ -524,11 +524,11 @@ msn_get_address_cb(gpointer data, gint source, GaimInputCondition cond)
 
 /**/
 static void
-msn_address_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_address_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
-	gaim_debug_info("MaYuan","finish contact written\n");
+	purple_debug_info("MaYuan","finish contact written\n");
 	soapconn->read_cb = msn_get_address_cb;
 }
 
@@ -540,7 +540,7 @@ msn_get_address_book(MsnContact *contact, const char *LastChanged, const char *d
 	char *body = NULL;
 	char *ab_update_str,*update_str;
 
-	gaim_debug_info("MaYuan","msn_get_address_book()...\n");
+	purple_debug_info("MaYuan","msn_get_address_book()...\n");
 	/*build SOAP and POST it*/
 	if(LastChanged != NULL){
 		ab_update_str = g_strdup_printf(MSN_GET_ADDRESS_UPDATE_XML,LastChanged);
@@ -567,17 +567,17 @@ msn_get_address_book(MsnContact *contact, const char *LastChanged, const char *d
 }
 
 static void
-msn_add_contact_read_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_add_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	gaim_debug_info("MaYuan","add contact read done\n");
+	purple_debug_info("MaYuan","add contact read done\n");
 }
 
 static void
-msn_add_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_add_contact_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
-	gaim_debug_info("MaYuan","finish add contact  written\n");
+	purple_debug_info("MaYuan","finish add contact  written\n");
 	soapconn->read_cb = msn_add_contact_read_cb;
 //	msn_soap_read_cb(data,source,cond);
 }
@@ -591,7 +591,7 @@ msn_add_contact(MsnContact *contact,const char *passport,const char *groupId)
 	char *contact_xml = NULL;
 	char *soap_action;
 
-	gaim_debug_info("MaYuan","msn add a contact...\n");
+	purple_debug_info("MaYuan","msn add a contact...\n");
 	contact_xml = g_strdup_printf(MSN_CONTACT_XML,passport);
 	if(groupId == NULL){
 		body = g_strdup_printf(MSN_ADD_CONTACT_TEMPLATE,contact_xml);
@@ -616,17 +616,17 @@ msn_add_contact(MsnContact *contact,const char *passport,const char *groupId)
 }
 
 static void
-msn_delete_contact_read_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_delete_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	gaim_debug_info("MaYuan","delete contact read done\n");
+	purple_debug_info("MaYuan","delete contact read done\n");
 }
 
 static void
-msn_delete_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_delete_contact_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
-	gaim_debug_info("MaYuan","delete contact written\n");
+	purple_debug_info("MaYuan","delete contact written\n");
 	soapconn->read_cb = msn_delete_contact_read_cb;
 //	msn_soap_read_cb(data,source,cond);
 }
@@ -640,7 +640,7 @@ msn_delete_contact(MsnContact *contact,const char *contactId)
 	MsnSoapReq *soap_request;
 
 	g_return_if_fail(contactId != NULL);
-	gaim_debug_info("MaYuan","msn delete a contact,contactId:{%s}...\n",contactId);
+	purple_debug_info("MaYuan","msn delete a contact,contactId:{%s}...\n",contactId);
 	contact_xml = g_strdup_printf(MSN_CONTACTS_DEL_XML,contactId);
 	body = g_strdup_printf(MSN_DEL_CONTACT_TEMPLATE,contact_xml);
 	g_free(contact_xml);
@@ -656,17 +656,17 @@ msn_delete_contact(MsnContact *contact,const char *contactId)
 }
 
 static void
-msn_update_contact_read_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_update_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	gaim_debug_info("MaYuan","update contact read done\n");
+	purple_debug_info("MaYuan","update contact read done\n");
 }
 
 static void
-msn_update_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_update_contact_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
-	gaim_debug_info("MaYuan","update contact written\n");
+	purple_debug_info("MaYuan","update contact written\n");
 	soapconn->read_cb = msn_update_contact_read_cb;
 //	msn_soap_read_cb(data,source,cond);
 }
@@ -679,7 +679,7 @@ msn_update_contact(MsnContact *contact,const char* nickname)
 	MsnSoapReq *soap_request;
 	char *body = NULL;
 
-	gaim_debug_info("MaYuan","msn unblock a contact...\n");
+	purple_debug_info("MaYuan","msn unblock a contact...\n");
 
 	body = g_strdup_printf(MSN_CONTACT_UPDATE_TEMPLATE,nickname);
 	/*build SOAP and POST it*/
@@ -695,17 +695,17 @@ msn_update_contact(MsnContact *contact,const char* nickname)
 #endif
 
 static void
-msn_block_read_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_block_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	gaim_debug_info("MaYuan","block read done\n");
+	purple_debug_info("MaYuan","block read done\n");
 }
 
 static void
-msn_block_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_block_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
-	gaim_debug_info("MaYuan","finish unblock written\n");
+	purple_debug_info("MaYuan","finish unblock written\n");
 	soapconn->read_cb = msn_block_read_cb;
 }
 
@@ -716,7 +716,7 @@ msn_block_contact(MsnContact *contact,const char* membership_id)
 	MsnSoapReq *soap_request;
 	char *body = NULL;
 
-	gaim_debug_info("MaYuan","msn block a contact...\n");
+	purple_debug_info("MaYuan","msn block a contact...\n");
 	body = g_strdup_printf(MSN_CONTACT_DELECT_FROM_ALLOW_TEMPLATE,membership_id);
 	/*build SOAP and POST it*/
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
@@ -730,17 +730,17 @@ msn_block_contact(MsnContact *contact,const char* membership_id)
 }
 
 static void
-msn_unblock_read_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_unblock_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	gaim_debug_info("MaYuan","unblock read done\n");
+	purple_debug_info("MaYuan","unblock read done\n");
 }
 
 static void
-msn_unblock_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_unblock_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
-	gaim_debug_info("MaYuan","finish unblock written\n");
+	purple_debug_info("MaYuan","finish unblock written\n");
 	soapconn->read_cb = msn_unblock_read_cb;
 }
 
@@ -751,7 +751,7 @@ msn_unblock_contact(MsnContact *contact,const char* passport)
 	MsnSoapReq *soap_request;
 	char *body = NULL;
 
-	gaim_debug_info("MaYuan","msn unblock a contact...\n");
+	purple_debug_info("MaYuan","msn unblock a contact...\n");
 
 	body = g_strdup_printf(MSN_UNBLOCK_CONTACT_TEMPLATE,passport);
 	/*build SOAP and POST it*/
@@ -766,17 +766,17 @@ msn_unblock_contact(MsnContact *contact,const char* passport)
 }
 
 static void
-msn_gleams_read_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_gleams_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	gaim_debug_info("MaYuan","Gleams read done\n");
+	purple_debug_info("MaYuan","Gleams read done\n");
 }
 
 static void
-msn_gleams_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_gleams_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
-	gaim_debug_info("MaYuan","finish Group written\n");
+	purple_debug_info("MaYuan","finish Group written\n");
 	soapconn->read_cb = msn_gleams_read_cb;
 //	msn_soap_read_cb(data,source,cond);
 }
@@ -788,7 +788,7 @@ msn_get_gleams(MsnContact *contact)
 {
 	MsnSoapReq *soap_request;
 
-	gaim_debug_info("MaYuan","msn get gleams info...\n");
+	purple_debug_info("MaYuan","msn get gleams info...\n");
 	/*build SOAP and POST it*/
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
 					MSN_ADDRESS_BOOK_POST_URL,MSN_GET_GLEAMS_SOAP_ACTION,
@@ -803,17 +803,17 @@ msn_get_gleams(MsnContact *contact)
  * Group Operation
  ***************************************************************/
 static void
-msn_group_read_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_group_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	gaim_debug_info("MaYuan","Group read \n");
+	purple_debug_info("MaYuan","Group read \n");
 }
 
 static void
-msn_group_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_group_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
-	gaim_debug_info("MaYuan","finish Group written\n");
+	purple_debug_info("MaYuan","finish Group written\n");
 	soapconn->read_cb = msn_group_read_cb;
 //	msn_soap_read_cb(data,source,cond);
 }
@@ -827,7 +827,7 @@ void msn_add_group(MsnSession *session,const char* group_name)
 
 	g_return_if_fail(session != NULL);
 	contact = session->contact;
-	gaim_debug_info("MaYuan","msn add group...\n");
+	purple_debug_info("MaYuan","msn add group...\n");
 
 	body = g_strdup_printf(MSN_GROUP_ADD_TEMPLATE,group_name);
 	/*build SOAP and POST it*/
@@ -852,7 +852,7 @@ void msn_del_group(MsnSession *session,const char *guid)
 	 */
 	g_return_if_fail(guid != NULL);
 	contact = session->contact;
-	gaim_debug_info("MaYuan","msn del group...\n");
+	purple_debug_info("MaYuan","msn del group...\n");
 
 	body = g_strdup_printf(MSN_GROUP_DEL_TEMPLATE,guid);
 	/*build SOAP and POST it*/
@@ -870,7 +870,7 @@ void
 msn_contact_connect_init(MsnSoapConn *soapconn)
 {
 	/*  Authenticate via Windows Live ID. */
-	gaim_debug_info("MaYuan","msn_contact_connect...\n");
+	purple_debug_info("MaYuan","msn_contact_connect...\n");
 
 	msn_soap_init(soapconn,MSN_CONTACT_SERVER,1,
 					msn_contact_login_connect_cb,

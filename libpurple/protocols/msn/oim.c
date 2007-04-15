@@ -3,9 +3,9 @@
  * 	get and send MSN offline Instant Message via SOAP request
  *	Author
  * 		MaYuan<mayuan2006@gmail.com>
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -68,7 +68,7 @@ msn_oim_destroy(MsnOim *oim)
 {
 	MsnOimSendReq *request;
 	
-	gaim_debug_info("OIM","destroy the OIM \n");
+	purple_debug_info("OIM","destroy the OIM \n");
 	msn_soap_destroy(oim->retrieveconn);
 	msn_soap_destroy(oim->sendconn);
 	g_free(oim->run_id);
@@ -120,9 +120,9 @@ msn_oim_msg_to_str(MsnOim *oim, const char *body)
 {
 	char *oim_body,*oim_base64;
 	
-	gaim_debug_info("MaYuan","encode OIM Message...\n");	
-	oim_base64 = gaim_base64_encode((const guchar *)body, strlen(body));
-	gaim_debug_info("MaYuan","encoded base64 body:{%s}\n",oim_base64);	
+	purple_debug_info("MaYuan","encode OIM Message...\n");	
+	oim_base64 = purple_base64_encode((const guchar *)body, strlen(body));
+	purple_debug_info("MaYuan","encoded base64 body:{%s}\n",oim_base64);	
 	oim_body = g_strdup_printf(MSN_OIM_MSG_TEMPLATE,
 				oim->run_id,oim->send_seq,oim_base64);
 
@@ -131,7 +131,7 @@ msn_oim_msg_to_str(MsnOim *oim, const char *body)
 
 /*oim SOAP server login error*/
 static void
-msn_oim_send_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
+msn_oim_send_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data)
 {
 	MsnSoapConn *soapconn = data;
 	MsnSession *session;
@@ -144,8 +144,8 @@ msn_oim_send_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data
 
 /*msn oim SOAP server connect process*/
 static void
-msn_oim_send_connect_cb(gpointer data, GaimSslConnection *gsc,
-				 GaimInputCondition cond)
+msn_oim_send_connect_cb(gpointer data, PurpleSslConnection *gsc,
+				 PurpleInputCondition cond)
 {
 	MsnSoapConn *soapconn = data;
 	MsnSession * session;
@@ -178,7 +178,7 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 		/*Send OK! return*/
 		MsnOimSendReq *request;
 		
-		gaim_debug_info("MaYuan","send OIM OK!");
+		purple_debug_info("MaYuan","send OIM OK!");
 		xmlnode_free(responseNode);
 		request = g_queue_pop_head(oim->send_queue);
 		msn_oim_free_send_req(request);
@@ -189,11 +189,11 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 	/*get the challenge,and repost it*/
 	faultCodeNode = xmlnode_get_child(faultNode,"faultcode");
 	if(faultCodeNode == NULL){
-		gaim_debug_info("MaYuan","faultcode Node is NULL\n");
+		purple_debug_info("MaYuan","faultcode Node is NULL\n");
 		goto oim_send_process_fail;
 	}
 	faultCodeStr = xmlnode_get_data(faultCodeNode);
-	gaim_debug_info("MaYuan","fault code:{%s}\n",faultCodeStr);
+	purple_debug_info("MaYuan","fault code:{%s}\n",faultCodeStr);
 
 	if(strcmp(faultCodeStr,"q0:AuthenticationFailed")){
 		/*other Fault Reason?*/
@@ -202,7 +202,7 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 
 	faultstringNode = xmlnode_get_child(faultNode,"faultstring");
 	faultstring = xmlnode_get_data(faultstringNode);
-	gaim_debug_info("MaYuan","fault string :{%s}\n",faultstring);
+	purple_debug_info("MaYuan","fault string :{%s}\n",faultstring);
 
 	/* lock key fault reason,
 	 * compute the challenge and resend it
@@ -215,10 +215,10 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 
 	g_free(oim->challenge);
 	oim->challenge = xmlnode_get_data(challengeNode);
-	gaim_debug_info("MaYuan","lockkey:{%s}\n",oim->challenge);
+	purple_debug_info("MaYuan","lockkey:{%s}\n",oim->challenge);
 
 	/*repost the send*/
-	gaim_debug_info("MaYuan","prepare to repost the send...\n");
+	purple_debug_info("MaYuan","prepare to repost the send...\n");
 	msn_oim_send_msg(oim);
 
 oim_send_process_fail:
@@ -227,8 +227,8 @@ oim_send_process_fail:
 }
 
 static void
-msn_oim_send_read_cb(gpointer data, GaimSslConnection *gsc,
-				 GaimInputCondition cond)
+msn_oim_send_read_cb(gpointer data, PurpleSslConnection *gsc,
+				 PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;
 	MsnSession 	*session = soapconn->session;
@@ -238,12 +238,12 @@ msn_oim_send_read_cb(gpointer data, GaimSslConnection *gsc,
 	oim = soapconn->session->oim;
 	g_return_if_fail(oim != NULL);
 
-	gaim_debug_info("MaYuan","read buffer:{%s}\n",soapconn->body);
+	purple_debug_info("MaYuan","read buffer:{%s}\n",soapconn->body);
 	msn_oim_send_process(oim,soapconn->body,soapconn->body_len);
 }
 
 static void
-msn_oim_send_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_oim_send_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
@@ -278,7 +278,7 @@ msn_oim_send_msg(MsnOim *oim)
 	oim_request = g_queue_pop_head(oim->send_queue);
 	g_return_if_fail(oim_request != NULL);
 
-	gaim_debug_info("MaYuan","send single OIM Message\n");
+	purple_debug_info("MaYuan","send single OIM Message\n");
 	mspauth = g_strdup_printf("t=%s&amp;p=%s",
 		oim->session->passport_info.t,
 		oim->session->passport_info.p
@@ -291,10 +291,10 @@ msn_oim_send_msg(MsnOim *oim)
 	if(oim->challenge != NULL){
 		msn_handle_chl(oim->challenge, buf);
 	}else{
-		gaim_debug_info("MaYuan","no lock key challenge,wait for SOAP Fault and Resend\n");
+		purple_debug_info("MaYuan","no lock key challenge,wait for SOAP Fault and Resend\n");
 		buf[0]='\0';
 	}
-	gaim_debug_info("MaYuan","get the lock key challenge {%s}\n",buf);	
+	purple_debug_info("MaYuan","get the lock key challenge {%s}\n",buf);	
 
 	msg_body = msn_oim_msg_to_str(oim, oim_request->oim_msg);
 	soap_body = g_strdup_printf(MSN_OIM_SEND_TEMPLATE,
@@ -327,12 +327,12 @@ msn_oim_send_msg(MsnOim *oim)
  * OIM delete SOAP request
  * **************************************/
 static void
-msn_oim_delete_read_cb(gpointer data, GaimSslConnection *gsc,
-				 GaimInputCondition cond)
+msn_oim_delete_read_cb(gpointer data, PurpleSslConnection *gsc,
+				 PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
-	gaim_debug_info("MaYuan","OIM delete read buffer:{%s}\n",soapconn->body);
+	purple_debug_info("MaYuan","OIM delete read buffer:{%s}\n",soapconn->body);
 
 	msn_soap_free_read_buf(soapconn);
 	/*get next single Offline Message*/
@@ -340,7 +340,7 @@ msn_oim_delete_read_cb(gpointer data, GaimSslConnection *gsc,
 }
 
 static void
-msn_oim_delete_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_oim_delete_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
@@ -357,7 +357,7 @@ msn_oim_post_delete_msg(MsnOim *oim,const char *msgid)
 	g_return_if_fail(oim != NULL);
 	g_return_if_fail(msgid != NULL);
 
-	gaim_debug_info("MaYuan","Delete single OIM Message {%s}\n",msgid);
+	purple_debug_info("MaYuan","Delete single OIM Message {%s}\n",msgid);
 	t = oim->session->passport_info.t;
 	p = oim->session->passport_info.p;
 
@@ -379,7 +379,7 @@ msn_oim_post_delete_msg(MsnOim *oim,const char *msgid)
  * **************************************/
 /*oim SOAP server login error*/
 static void
-msn_oim_get_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
+msn_oim_get_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data)
 {
 	MsnSoapConn *soapconn = data;
 	MsnSession *session;
@@ -393,8 +393,8 @@ msn_oim_get_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 
 /*msn oim SOAP server connect process*/
 static void
-msn_oim_get_connect_cb(gpointer data, GaimSslConnection *gsc,
-				 GaimInputCondition cond)
+msn_oim_get_connect_cb(gpointer data, PurpleSslConnection *gsc,
+				 PurpleInputCondition cond)
 {
 	MsnSoapConn *soapconn = data;
 	MsnSession * session;
@@ -406,7 +406,7 @@ msn_oim_get_connect_cb(gpointer data, GaimSslConnection *gsc,
 	session = oim->session;
 	g_return_if_fail(session != NULL);
 
-	gaim_debug_info("MaYuan","oim get SOAP Server connected!\n");
+	purple_debug_info("MaYuan","oim get SOAP Server connected!\n");
 }
 
 /*Post the Offline Instant Message to User Conversation*/
@@ -426,8 +426,8 @@ msn_oim_report_to_user(MsnOim *oim, char *msg_str)
 
 	msn_message_parse_payload(message, msg_str, strlen(msg_str),
 							  MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
-	gaim_debug_info("MaYuan","oim body:{%s}\n",message->body);
-	decode_msg = gaim_base64_decode(message->body,&body_len);
+	purple_debug_info("MaYuan","oim body:{%s}\n",message->body);
+	decode_msg = purple_base64_decode(message->body,&body_len);
 	date =	(char *)g_hash_table_lookup(message->attr_table, "Date");
 	from =	(char *)g_hash_table_lookup(message->attr_table, "From");
 	if(strstr(from," ")){
@@ -436,12 +436,12 @@ msn_oim_report_to_user(MsnOim *oim, char *msg_str)
 	if(has_nick){
 		tokens = g_strsplit(from , " " , 2);
 		passport_str = g_strdup(tokens[1]);
-		gaim_debug_info("MaYuan","oim Date:{%s},nickname:{%s},tokens[1]:{%s} passport{%s}\n",
+		purple_debug_info("MaYuan","oim Date:{%s},nickname:{%s},tokens[1]:{%s} passport{%s}\n",
 							date,tokens[0],tokens[1],passport_str);
 		g_strfreev(tokens);
 	}else{
 		passport_str = g_strdup(from);
-		gaim_debug_info("MaYuan","oim Date:{%s},passport{%s}\n",
+		purple_debug_info("MaYuan","oim Date:{%s},passport{%s}\n",
 					date,passport_str);
 	}
 	start = strstr(passport_str,"<");
@@ -449,9 +449,9 @@ msn_oim_report_to_user(MsnOim *oim, char *msg_str)
 	end = strstr(passport_str,">");
 	passport = g_strndup(start,end - start);
 	g_free(passport_str);
-	gaim_debug_info("MaYuan","oim Date:{%s},passport{%s}\n",date,passport);
+	purple_debug_info("MaYuan","oim Date:{%s},passport{%s}\n",date,passport);
 
-	msn_session_report_user(oim->session,passport,decode_msg,GAIM_MESSAGE_SYSTEM);
+	msn_session_report_user(oim->session,passport,decode_msg,PURPLE_MESSAGE_SYSTEM);
 
 	/*Now get the oim message ID from the oim_list.
 	 * and append to read list to prepare for deleting the Offline Message when sign out
@@ -482,20 +482,20 @@ msn_oim_get_process(MsnOim *oim, char *oim_msg)
 	msg_data = xmlnode_get_data(msgNode);
 	msg_str = g_strdup(msg_data);
 	g_free(msg_data);
-	gaim_debug_info("OIM","msg:{%s}\n",msg_str);
+	purple_debug_info("OIM","msg:{%s}\n",msg_str);
 	msn_oim_report_to_user(oim,msg_str);
 
 	g_free(msg_str);
 }
 
 static void
-msn_oim_get_read_cb(gpointer data, GaimSslConnection *gsc,
-				 GaimInputCondition cond)
+msn_oim_get_read_cb(gpointer data, PurpleSslConnection *gsc,
+				 PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 	MsnOim * oim = soapconn->session->oim;
 
-	gaim_debug_info("MaYuan","OIM get read buffer:{%s}\n",soapconn->body);
+	purple_debug_info("MaYuan","OIM get read buffer:{%s}\n",soapconn->body);
 
 	/*we need to process the read message!*/
 	msn_oim_get_process(oim,soapconn->body);
@@ -506,7 +506,7 @@ msn_oim_get_read_cb(gpointer data, GaimSslConnection *gsc,
 }
 
 static void
-msn_oim_get_written_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_oim_get_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
 
@@ -539,7 +539,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		rtNode = xmlnode_get_child(mNode,"RT");
 		if(rtNode != NULL)
 			rTime = xmlnode_get_data(rtNode);
-/*		gaim_debug_info("MaYuan","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime);*/
+/*		purple_debug_info("MaYuan","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime);*/
 
 		oim->oim_list = g_list_append(oim->oim_list,msgid);
 		msn_oim_post_single_get_msg(oim,msgid);
@@ -557,7 +557,7 @@ msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 	MsnSoapReq *soap_request;
 	const char *soap_body,*t,*p;
 
-	gaim_debug_info("MaYuan","Get single OIM Message\n");
+	purple_debug_info("MaYuan","Get single OIM Message\n");
 	t = oim->session->passport_info.t;
 	p = oim->session->passport_info.p;
 
@@ -578,7 +578,7 @@ msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 static void
 msn_oim_retrieve_connect_init(MsnSoapConn *soapconn)
 {
-	gaim_debug_info("MaYuan","msn_oim_connect...\n");
+	purple_debug_info("MaYuan","msn_oim_connect...\n");
 	msn_soap_init(soapconn,MSN_OIM_RETRIEVE_HOST,1,
 					msn_oim_get_connect_cb,
 					msn_oim_get_error_cb);
@@ -588,7 +588,7 @@ msn_oim_retrieve_connect_init(MsnSoapConn *soapconn)
 static void
 msn_oim_send_connect_init(MsnSoapConn *sendconn)
 {
-	gaim_debug_info("MaYuan","msn oim send connect init...\n");
+	purple_debug_info("MaYuan","msn oim send connect init...\n");
 	msn_soap_init(sendconn,MSN_OIM_SEND_HOST,1,
 					msn_oim_send_connect_cb,
 					msn_oim_send_error_cb);

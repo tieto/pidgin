@@ -113,7 +113,7 @@ struct _MsnSession
 	char *psm;
 	
 	/*first blist contact node*/
-	GaimBlistNode *bnode;
+	PurpleBlistNode *bnode;
 	
 	struct
 	{
@@ -240,14 +240,14 @@ void msn_session_finish_login(MsnSession *session);
 /*get conversation via session,
  * If has one, return that,else create a new one;
  */
-GaimConversation *msn_session_get_conv(MsnSession *session,const char *passport);
+PurpleConversation *msn_session_get_conv(MsnSession *session,const char *passport);
 
 /*post message to User*/
 void msn_session_report_user(MsnSession *session,const char *passport,
-							char *msg,GaimMessageFlags flags);
+							char *msg,PurpleMessageFlags flags);
 
 void msn_session_set_bnode(MsnSession *session);
 
-GaimBlistNode *msn_session_get_bnode(MsnSession *session);
+PurpleBlistNode *msn_session_get_bnode(MsnSession *session);
 
 #endif /* _MSN_SESSION_H_ */

@@ -3,9 +3,9 @@
  * 	SOAP connection related process
  *	Author
  * 		MaYuan<mayuan2006@gmail.com>
- * gaim
+ * purple
  *
- * Gaim is the legal property of its developers, whose names are too numerous
+ * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -62,13 +62,13 @@ msn_soap_new(MsnSession *session,gpointer data,int sslconn)
 
 /*ssl soap connect callback*/
 void
-msn_soap_connect_cb(gpointer data, GaimSslConnection *gsc,
-				 GaimInputCondition cond)
+msn_soap_connect_cb(gpointer data, PurpleSslConnection *gsc,
+				 PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn;
 	MsnSession *session;
 
-	gaim_debug_info("MaYuan","Soap connection connected!\n");
+	purple_debug_info("MaYuan","Soap connection connected!\n");
 	soapconn = data;
 	g_return_if_fail(soapconn != NULL);
 
@@ -89,12 +89,12 @@ msn_soap_connect_cb(gpointer data, GaimSslConnection *gsc,
 
 /*ssl soap error callback*/
 static void
-msn_soap_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
+msn_soap_error_cb(PurpleSslConnection *gsc, PurpleSslErrorType error, void *data)
 {	
 	MsnSoapConn * soapconn = data;
 
 	g_return_if_fail(data != NULL);
-	gaim_debug_info("MaYuan","Soap connection error!\n");
+	purple_debug_info("MaYuan","Soap connection error!\n");
 	msn_soap_set_process_step(soapconn, MSN_SOAP_UNCONNECTED);
 
 	/*error callback*/
@@ -106,10 +106,10 @@ msn_soap_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 /*init the soap connection*/
 void
 msn_soap_init(MsnSoapConn *soapconn,char * host,int ssl,
-				GaimSslInputFunction	connect_cb,
-				GaimSslErrorFunction	error_cb)
+				PurpleSslInputFunction	connect_cb,
+				PurpleSslErrorFunction	error_cb)
 {
-	gaim_debug_info("MaYuan","msn_soap_init...\n");
+	purple_debug_info("MaYuan","msn_soap_init...\n");
 	soapconn->login_host = g_strdup(host);
 	soapconn->ssl_conn = ssl;
 	soapconn->connect_cb = connect_cb;
@@ -121,8 +121,8 @@ void
 msn_soap_connect(MsnSoapConn *soapconn)
 {
 	if(soapconn->ssl_conn){
-		gaim_ssl_connect(soapconn->session->account, soapconn->login_host,
-				GAIM_SSL_DEFAULT_PORT, msn_soap_connect_cb, msn_soap_error_cb,
+		purple_ssl_connect(soapconn->session->account, soapconn->login_host,
+				PURPLE_SSL_DEFAULT_PORT, msn_soap_connect_cb, msn_soap_error_cb,
 				soapconn);
 	}else{
 	}
@@ -135,7 +135,7 @@ msn_soap_close(MsnSoapConn *soapconn)
 {
 	if(soapconn->ssl_conn){
 		if(soapconn->gsc != NULL){
-			gaim_ssl_close(soapconn->gsc);
+			purple_ssl_close(soapconn->gsc);
 			soapconn->gsc = NULL;
 		}
 	}else{
@@ -168,11 +168,11 @@ msn_soap_destroy(MsnSoapConn *soapconn)
 
 	/*remove the write handler*/
 	if (soapconn->output_handler > 0){
-		gaim_input_remove(soapconn->output_handler);
+		purple_input_remove(soapconn->output_handler);
 	}
 	/*remove the read handler*/
 	if (soapconn->input_handler > 0){
-		gaim_input_remove(soapconn->input_handler);
+		purple_input_remove(soapconn->input_handler);
 	}
 	msn_soap_free_read_buf(soapconn);
 	msn_soap_free_write_buf(soapconn);
@@ -209,7 +209,7 @@ msn_soap_read(MsnSoapConn *soapconn)
 //	requested_len = (soapconn->need_to_read > 0) ? soapconn->need_to_read : MSN_SOAP_READ_BUFF_SIZE;
 	requested_len = MSN_SOAP_READ_BUFF_SIZE;
 	if(soapconn->ssl_conn){
-		len = gaim_ssl_read(soapconn->gsc, temp_buf,requested_len);
+		len = purple_ssl_read(soapconn->gsc, temp_buf,requested_len);
 	}else{
 		len = read(soapconn->fd, temp_buf,requested_len);
 	}
@@ -221,15 +221,15 @@ msn_soap_read(MsnSoapConn *soapconn)
 		soapconn->read_buf[soapconn->read_len] = '\0';
 	}
 #ifdef MSN_SOAP_DEBUG
-	gaim_debug_info("MaYuan","++soap ssl read:{%d}\n",len);
-	gaim_debug_info("MaYuan","nexus ssl read:{%s}\n",soapconn->read_buf);
+	purple_debug_info("MaYuan","++soap ssl read:{%d}\n",len);
+	purple_debug_info("MaYuan","nexus ssl read:{%s}\n",soapconn->read_buf);
 #endif
 	return len;
 }
 
 /*read the whole SOAP server response*/
 void 
-msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn *soapconn = data;
 	MsnSession *session;
@@ -237,13 +237,13 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 	char * body_start,*body_len;
 	char *length_start,*length_end;
 
-//	gaim_debug_misc("MaYuan", "soap read cb\n");
+//	purple_debug_misc("MaYuan", "soap read cb\n");
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
 
 	if (soapconn->input_handler == -1){
-		soapconn->input_handler = gaim_input_add(soapconn->gsc->fd,
-			GAIM_INPUT_READ, msn_soap_read_cb, soapconn);
+		soapconn->input_handler = purple_input_add(soapconn->gsc->fd,
+			PURPLE_INPUT_READ, msn_soap_read_cb, soapconn);
 	}
 
 	/*read the request header*/
@@ -251,8 +251,8 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (len < 0 && errno == EAGAIN){
 		return;
 	}else if (len < 0) {
-		gaim_debug_error("msn", "read Error!len:%d\n",len);
-		gaim_input_remove(soapconn->input_handler);
+		purple_debug_error("msn", "read Error!len:%d\n",len);
+		purple_input_remove(soapconn->input_handler);
 		soapconn->input_handler = -1;
 		g_free(soapconn->read_buf);
 		soapconn->read_buf = NULL;
@@ -270,7 +270,7 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 		/* Redirect. */
 		char *location, *c;
 
-		gaim_debug_error("MaYuan", "soap redirect\n");
+		purple_debug_error("MaYuan", "soap redirect\n");
 		location = strstr(soapconn->read_buf, "Location: ");
 		if (location == NULL)
 		{
@@ -298,15 +298,15 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 		g_free(soapconn->login_host);
 		soapconn->login_host = g_strdup(location);
 
-		gaim_ssl_connect(session->account, soapconn->login_host,
-			GAIM_SSL_DEFAULT_PORT, msn_soap_connect_cb,
+		purple_ssl_connect(session->account, soapconn->login_host,
+			PURPLE_SSL_DEFAULT_PORT, msn_soap_connect_cb,
 			msn_soap_error_cb, soapconn);
 	}
 	else if (strstr(soapconn->read_buf, "HTTP/1.1 401 Unauthorized") != NULL)
 	{
 		const char *error;
 
-		gaim_debug_error("MaYuan", "soap 401\n");
+		purple_debug_error("MaYuan", "soap 401\n");
 		if ((error = strstr(soapconn->read_buf, "WWW-Authenticate")) != NULL)
 		{
 			if ((error = strstr(error, "cbtxt=")) != NULL)
@@ -320,7 +320,7 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 					c = error + strlen(error);
 
 				temp = g_strndup(error, c - error);
-				error = gaim_url_decode(temp);
+				error = purple_url_decode(temp);
 				g_free(temp);
 			}
 		}
@@ -337,7 +337,7 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 			}
 			body_start += 4;
 
-			//	gaim_debug_misc("msn", "Soap Read: {%s}\n", soapconn->read_buf);
+			//	purple_debug_misc("msn", "Soap Read: {%s}\n", soapconn->read_buf);
 
 			/* we read the content-length*/
 			length_start = strstr(soapconn->read_buf, "Content-Length: ");
@@ -349,7 +349,7 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 			soapconn->body		= body_start;
 			soapconn->body_len	= atoi(body_len);
 #ifdef MSN_SOAP_DEBUG
-			gaim_debug_misc("MaYuan","SOAP Read length :%d,body len:%d\n",soapconn->read_len,soapconn->body_len);
+			purple_debug_misc("MaYuan","SOAP Read length :%d,body len:%d\n",soapconn->read_len,soapconn->body_len);
 #endif
 			soapconn->need_to_read = (body_start - soapconn->read_buf +soapconn->body_len) - soapconn->read_len;
 			if(soapconn->need_to_read >0){
@@ -358,7 +358,7 @@ msn_soap_read_cb(gpointer data, gint source, GaimInputCondition cond)
 			g_free(body_len);
 
 			/*remove the read handler*/
-			gaim_input_remove(soapconn->input_handler);
+			purple_input_remove(soapconn->input_handler);
 			soapconn->input_handler = -1;
 			/*
 			 * close the soap connection,if more soap request came,
@@ -402,15 +402,15 @@ msn_soap_free_write_buf(MsnSoapConn *soapconn)
 
 /*Soap write process func*/
 static void
-msn_soap_write_cb(gpointer data, gint source, GaimInputCondition cond)
+msn_soap_write_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn *soapconn = data;
 	int len, total_len;
 
 	g_return_if_fail(soapconn != NULL);
 	if(soapconn->write_buf == NULL){
-		gaim_debug_error("MaYuan","soap buffer is NULL\n");
-		gaim_input_remove(soapconn->output_handler);
+		purple_debug_error("MaYuan","soap buffer is NULL\n");
+		purple_input_remove(soapconn->output_handler);
 		soapconn->output_handler = -1;
 		return;
 	}
@@ -419,7 +419,7 @@ msn_soap_write_cb(gpointer data, gint source, GaimInputCondition cond)
 	/* 
 	 * write the content to SSL server,
 	 */
-	len = gaim_ssl_write(soapconn->gsc,
+	len = purple_ssl_write(soapconn->gsc,
 		soapconn->write_buf + soapconn->written_len,
 		total_len - soapconn->written_len);
 
@@ -427,7 +427,7 @@ msn_soap_write_cb(gpointer data, gint source, GaimInputCondition cond)
 		return;
 	else if (len <= 0){
 		/*SSL write error!*/
-		gaim_input_remove(soapconn->output_handler);
+		purple_input_remove(soapconn->output_handler);
 		soapconn->output_handler = -1;
 		/* TODO: notify of the error */
 		return;
@@ -437,7 +437,7 @@ msn_soap_write_cb(gpointer data, gint source, GaimInputCondition cond)
 	if (soapconn->written_len < total_len)
 		return;
 
-	gaim_input_remove(soapconn->output_handler);
+	purple_input_remove(soapconn->output_handler);
 	soapconn->output_handler = -1;
 
 	/*clear the write buff*/
@@ -455,7 +455,7 @@ msn_soap_write_cb(gpointer data, gint source, GaimInputCondition cond)
 
 /*write the buffer to SOAP connection*/
 void
-msn_soap_write(MsnSoapConn * soapconn, char *write_buf, GaimInputFunction written_cb)
+msn_soap_write(MsnSoapConn * soapconn, char *write_buf, PurpleInputFunction written_cb)
 {
 	soapconn->write_buf = write_buf;
 	soapconn->written_len = 0;
@@ -463,16 +463,16 @@ msn_soap_write(MsnSoapConn * soapconn, char *write_buf, GaimInputFunction writte
 
 	/*clear the read buffer first*/
 	/*start the write*/
-	soapconn->output_handler = gaim_input_add(soapconn->gsc->fd, GAIM_INPUT_WRITE,
+	soapconn->output_handler = purple_input_add(soapconn->gsc->fd, PURPLE_INPUT_WRITE,
 													msn_soap_write_cb, soapconn);
-	msn_soap_write_cb(soapconn, soapconn->gsc->fd, GAIM_INPUT_WRITE);
+	msn_soap_write_cb(soapconn, soapconn->gsc->fd, PURPLE_INPUT_WRITE);
 }
 
 /* New a soap request*/
 MsnSoapReq *
 msn_soap_request_new(const char *host,const char *post_url,const char *soap_action,
 				const char *body,
-				GaimInputFunction read_cb,GaimInputFunction written_cb)
+				PurpleInputFunction read_cb,PurpleInputFunction written_cb)
 {
 	MsnSoapReq *request;
 
@@ -533,12 +533,12 @@ msn_soap_post(MsnSoapConn *soapconn,MsnSoapReq *request,
 	if(!msn_soap_connected(soapconn)&&(soapconn->step == MSN_SOAP_UNCONNECTED)
 					&&(!g_queue_is_empty(soapconn->soap_queue))){
 		/*not connected?and we have something to process connect it first*/
-		gaim_debug_info("Ma Yuan","soap is not connected!\n");
+		purple_debug_info("Ma Yuan","soap is not connected!\n");
 		msn_soap_init_func(soapconn);
 		msn_soap_connect(soapconn);
 		return;
 	}
-	gaim_debug_info("Ma Yuan","soap  connected!\n");
+	purple_debug_info("Ma Yuan","soap  connected!\n");
 
 	/*if connected, what we only needed to do is to queue the request, 
 	 * when SOAP request in the queue processed done, will do this command.
@@ -559,7 +559,7 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 	char * soap_head = NULL;
 	char * request_str = NULL;
 
-	gaim_debug_info("MaYuan","msn_soap_post_request()...\n");
+	purple_debug_info("MaYuan","msn_soap_post_request()...\n");
 	msn_soap_set_process_step(soapconn,MSN_SOAP_PROCESSING);
 	soap_head = g_strdup_printf(
 					"POST %s HTTP/1.1\r\n"
@@ -582,7 +582,7 @@ msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request)
 	g_free(soap_head);
 
 #ifdef MSN_SOAP_DEBUG
-	gaim_debug_info("MaYuan","send to  server{%s}\n",request_str);
+	purple_debug_info("MaYuan","send to  server{%s}\n",request_str);
 #endif
 
 	/*free read buffer*/
