@@ -77,9 +77,11 @@ libgnt_la_DEPENDENCIES =
 libgnt_la_LDFLAGS = -export-dynamic
 libgnt_la_LIBADD = \
 	$(GLIB_LIBS) \
-	$(GNT_LIBS)
+	$(GNT_LIBS) \
+	$(LIBXML_LIBS)
 
 AM_CPPFLAGS = \
 	$(GLIB_CFLAGS) \
 	$(GNT_CFLAGS) \
-	$(DEBUG_CFLAGS)
+	$(DEBUG_CFLAGS) \
+	$(LIBXML_CFLAGS)

@@ -203,6 +203,9 @@ AC_CHECK_HEADERS(termios.h)
 
 GNT_CFLAGS=
 GNT_LIBS=
+AC_ARG_WITH(ncurses-headers, [AC_HELP_STRING([--with-ncurses-headers=DIR],
+		[compile finch against the ncurses includes in DIR])],
+		[ac_ncurses_includes="$withval"], [ac_ncurses_includes=""])
 AC_CHECK_LIB(ncursesw, initscr, [GNT_LIBS="-lncursesw"], [enable_gnt=no])
 AC_CHECK_LIB(panelw, update_panels, [GNT_LIBS="$GNT_LIBS -lpanelw"], [enable_gnt=no])
 
@@ -214,8 +217,9 @@ if test "x$enable_gnt" = "xno"; then
 else
 	dnl # Some distros put the headers in ncursesw/, some don't
 	found_ncurses_h=no
-	for f in /usr/include/ncursesw/ncurses.h /usr/include/ncurses.h
+	for location in $ac_ncurses_includes /usr/include/ncursesw /usr/include
 	do
+		f="$location/ncurses.h"
 		AC_CHECK_HEADER($f,[
 			AC_MSG_CHECKING([if $f supports wide characters])
 			AC_TRY_COMPILE([
@@ -226,7 +230,7 @@ else
 				# error get_wch not found!
 				#endif
 			], [
-				dir=`dirname $f`
+				dir=$location
 				if test x"$dir" != x"." ; then
 					GNT_CFLAGS="-I$dir/"
 				else
@@ -241,13 +245,29 @@ else
 			])
 		])
 	done
+	if test x"$found_ncurses_h" != "xyes"; then
+		enable_gnt="no"
+	fi
 fi
 AC_SUBST(GNT_CFLAGS)
 AC_SUBST(GNT_LIBS)
 
 if test "x$enable_gnt" = "xno"; then
 	AC_MSG_ERROR([
-*** You need ncursesw or ncurses.])
+*** You need ncursesw or ncurses and its header files.])
+fi
+
+dnl Check for libxml
+have_libxml=yes
+PKG_CHECK_MODULES(LIBXML, [libxml-2.0], , [
+		AC_MSG_RESULT(no)
+		have_libxml=no
+	])
+AC_SUBST(LIBXML_CFLAGS)
+AC_SUBST(LIBXML_LIBS)
+
+if test "x$have_libxml" = "xno"; then
+	AC_DEFINE(NO_LIBXML, 1, [Do not have libxml2.])
 fi
 
 AC_OUTPUT([Makefile
