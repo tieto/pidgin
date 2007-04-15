@@ -4179,8 +4179,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(gtkblist->window), "buddy_list");
 	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
-	gdk_window_set_decorations(gtkblist->window->window, 
- 					GDK_DECOR_ALL | GDK_DECOR_MAXIMIZE);
 	g_signal_connect(G_OBJECT(gtkblist->window), "focus-in-event",
 			 G_CALLBACK(blist_focus_cb), gtkblist);
 	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;
@@ -4502,6 +4500,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	pidgin_blist_restore_position();
 	gtk_widget_show_all(GTK_WIDGET(gtkblist->vbox));
 	gtk_widget_realize(GTK_WIDGET(gtkblist->window));
+	gdk_window_set_decorations(GDK_WINDOW(gtkblist->window->window),
+				   GDK_DECOR_ALL | GDK_DECOR_MAXIMIZE);
 	purple_blist_set_visible(purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/list_visible"));
 
 	/* start the refresh timer */
