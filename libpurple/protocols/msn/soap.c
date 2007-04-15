@@ -327,6 +327,10 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 		msn_session_set_error(session, MSN_ERROR_SERV_UNAVAILABLE, error);
 	}
+	else if (strstr(soapconn->read_buf, "HTTP/1.1 503 Service Unavailable"))
+	{
+		msn_session_set_error(session, MSN_ERROR_SERV_UNAVAILABLE, NULL);
+	}
 	else if ((strstr(soapconn->read_buf, "HTTP/1.1 200 OK"))
 		||(strstr(soapconn->read_buf, "HTTP/1.1 500")))
 	{
