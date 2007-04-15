@@ -32,12 +32,12 @@ history_la_LDFLAGS          = -module -avoid-version
 iconaway_la_LDFLAGS         = -module -avoid-version
 markerline_la_LDFLAGS       = -module -avoid-version
 notify_la_LDFLAGS           = -module -avoid-version
-pidginrc_la_LDFLAGS           = -module -avoid-version
+pidginrc_la_LDFLAGS         = -module -avoid-version
 relnot_la_LDFLAGS           = -module -avoid-version
 spellchk_la_LDFLAGS         = -module -avoid-version
 timestamp_la_LDFLAGS        = -module -avoid-version
 timestamp_format_la_LDFLAGS = -module -avoid-version
-xmppconsole_la_LDFLAGS     = -module -avoid-version
+xmppconsole_la_LDFLAGS      = -module -avoid-version
 
 if PLUGINS
 
@@ -48,7 +48,7 @@ plugin_LTLIBRARIES = \
 	iconaway.la         \
 	markerline.la       \
 	notify.la           \
-	pidginrc.la           \
+	pidginrc.la         \
 	relnot.la           \
 	spellchk.la         \
 	timestamp.la        \
