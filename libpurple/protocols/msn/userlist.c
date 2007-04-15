@@ -392,7 +392,9 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 		 */
 
 		if (!(list_op & (MSN_LIST_AL_OP | MSN_LIST_BL_OP)))
+		{
 //			got_new_entry(gc, passport, store);
+		}
 	}
 
 	user->list_op |= list_op;
