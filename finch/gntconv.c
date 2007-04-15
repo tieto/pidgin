@@ -308,6 +308,9 @@ finch_create_conversation(PurpleConversation *conv)
 	gnt_widget_set_size(ggc->tv, purple_prefs_get_int(PREF_ROOT "/size/width"),
 			purple_prefs_get_int(PREF_ROOT "/size/height"));
 
+	ggc->info = gnt_vbox_new(FALSE);
+	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->info);
+
 	ggc->entry = gnt_entry_new(NULL);
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->entry);
 	gnt_widget_set_name(ggc->entry, "conversation-window-entry");
@@ -740,5 +743,23 @@ void finch_conversation_set_active(PurpleConversation *conv)
 	title = get_conversation_title(conv, account);
 	gnt_screen_rename_widget(ggconv->window, title);
 	g_free(title);
+}
+
+void finch_conversation_set_info_widget(PurpleConversation *conv, GntWidget *widget)
+{
+	FinchConv *fc = conv->ui_data;
+	int height, width;
+
+	gnt_box_remove_all(GNT_BOX(fc->info));
+
+	if (widget) {
+		gnt_box_add_widget(GNT_BOX(fc->info), widget);
+		gnt_box_readjust(GNT_BOX(fc->info));
+	}
+
+	gnt_widget_get_size(fc->window, &width, &height);
+	gnt_box_readjust(GNT_BOX(fc->window));
+	gnt_screen_resize_widget(fc->window, width, height);
+	gnt_box_give_focus_to_child(GNT_BOX(fc->window), fc->entry);
 }
 
