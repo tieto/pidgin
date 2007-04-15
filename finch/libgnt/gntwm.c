@@ -15,10 +15,12 @@
 #include "gntmarshal.h"
 #include "gnt.h"
 #include "gntbox.h"
+#include "gntlabel.h"
 #include "gntmenu.h"
 #include "gnttextview.h"
 #include "gnttree.h"
 #include "gntutils.h"
+#include "gntwindow.h"
 
 #define IDLE_CHECK_INTERVAL 5 /* 5 seconds */
 
@@ -413,6 +415,35 @@ window_close(GntBindable *bindable, GList *null)
 	if (wm->ordered) {
 		gnt_widget_destroy(wm->ordered->data);
 	}
+
+	return TRUE;
+}
+
+static gboolean
+help_for_widget(GntBindable *bindable, GList *null)
+{
+	GntWM *wm = GNT_WM(bindable);
+	GntWidget *widget, *tree, *win, *active;
+	char *title;
+
+	if (!wm->ordered)
+		return TRUE;
+
+	widget = wm->ordered->data;
+	if (!GNT_IS_BOX(widget))
+		return TRUE;
+	active = GNT_BOX(widget)->active;
+
+	tree = gnt_widget_bindings_view(active);
+	win = gnt_window_new();
+	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(active)));
+	gnt_box_set_title(GNT_BOX(win), title);
+	if (tree)
+		gnt_box_add_widget(GNT_BOX(win), tree);
+	else
+		gnt_box_add_widget(GNT_BOX(win), gnt_label_new("This widget has no customizable bindings."));
+
+	gnt_widget_show(win);
 
 	return TRUE;
 }
@@ -1006,6 +1037,8 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" GNT_KEY_CTRL_J, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-scroll-up", window_scroll_up,
 				"\033" GNT_KEY_CTRL_K, NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-widget", help_for_widget,
+				"\033" "/", NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 
@@ -1230,8 +1263,12 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 
 	idle_update = TRUE;
 
-	if (gnt_bindable_perform_action_key(GNT_BINDABLE(wm), keys))
+	wm->event_stack = TRUE;
+
+	if (gnt_bindable_perform_action_key(GNT_BINDABLE(wm), keys)) {
+		wm->event_stack = FALSE;
 		return TRUE;
+	}
 
 	/* Do some manual checking */
 	if (wm->ordered && wm->mode != GNT_KP_MODE_NORMAL) {
@@ -1262,6 +1299,7 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 			if (ox != x || oy != y) {
 				gnt_screen_move_widget(widget, x, y);
 				window_reverse(widget, TRUE, wm);
+				wm->event_stack = FALSE;
 				return TRUE;
 			}
 		} else if (wm->mode == GNT_KP_MODE_RESIZE) {
@@ -1279,6 +1317,7 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 			if (oh != h || ow != w) {
 				gnt_screen_resize_widget(widget, w, h);
 				window_reverse(widget, TRUE, wm);
+				wm->event_stack = FALSE;
 				return TRUE;
 			}
 		}
@@ -1286,10 +1325,9 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 			window_reverse(widget, FALSE, wm);
 			wm->mode = GNT_KP_MODE_NORMAL;
 		}
+		wm->event_stack = FALSE;
 		return TRUE;
 	}
-
-	wm->event_stack = TRUE;
 
 	/* Escape to close the window-list or action-list window */
 	if (strcmp(keys, "\033") == 0) {
