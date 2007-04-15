@@ -1,0 +1,45 @@
+;;
+;;  bulgarian.nsh
+;;
+;;  Bulgarian language strings for the Windows Pidgin NSIS installer.
+;;  Windows Code page: 1251
+;;
+;;  Author: Hristo Todorov <igel@bofh.bg>
+;;
+
+
+; Startup GTK+ check
+!define GTK_INSTALLER_NEEDED			"GTK+ runtime липсва или трябва да бъде обновена.$\rМоля инсталирайте версия v${GTK_MIN_VERSION} или по-нова"
+
+; Components Page
+!define PIDGIN_SECTION_TITLE			"Pidgin Клиент за Бързи Съобщения (изисква се)"
+!define GTK_SECTION_TITLE			"GTK+ Runtime Среда (required)"
+!define GTK_THEMES_SECTION_TITLE		"GTK+ Теми"
+!define GTK_NOTHEME_SECTION_TITLE		"Без Тема"
+!define GTK_WIMP_SECTION_TITLE			"Wimp Тема"
+!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve Тема"
+!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Тема"
+!define PIDGIN_SECTION_DESCRIPTION		"Файлове на ядрото на Pidgin и библиотеки"
+!define GTK_SECTION_DESCRIPTION			"Мултиплатфорен кит за графичен изглед, използван от Pidgin"
+!define GTK_THEMES_SECTION_DESCRIPTION		"GTK+ темите могат да променят Изгледа на GTK+ приложения."
+!define GTK_NO_THEME_DESC			"Не инсталирайте GTK+ тема"
+!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) е GTK тема която се смесва добре със Windows."
+!define GTK_BLUECURVE_THEME_DESC		"Bluecurve темата."
+!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"Lighthouseblue темата."
+
+; GTK+ Directory Page
+!define GTK_UPGRADE_PROMPT			"Стара версия GTK+ runtime е открита. Искате ли да обновите?$\rNote: Pidgin може да не сработи ако не го направите."
+
+; Pidgin Section Prompts and Texts
+!define PIDGIN_UNINSTALL_DESC			"$(^Name) (само премахване)"
+
+; GTK+ Section Prompts
+!define GTK_INSTALL_ERROR			"Грешка при инсталиране на GTK+ runtime."
+!define GTK_BAD_INSTALL_PATH			"Въведеният път не може да бъде достъпен или създаден."
+
+; GTK+ Themes section
+!define GTK_NO_THEME_INSTALL_RIGHTS		"Нямате права за да инсталирате GTK+ тема."
+
+; Uninstall Section Prompts
+!define un.PIDGIN_UNINSTALL_ERROR_1		"Деисталатоа не може да намери записи в регистъра за Pidgin.$\rВероятно е бил инсталиран от друг потребител."
+!define un.PIDGIN_UNINSTALL_ERROR_2		"Нямате права да деинсталирате тази програма."

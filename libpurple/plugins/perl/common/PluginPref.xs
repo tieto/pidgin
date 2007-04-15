@@ -1,0 +1,144 @@
+#include "module.h"
+
+MODULE = Purple::PluginPref  PACKAGE = Purple::PluginPref::Frame  PREFIX = purple_plugin_pref_frame_
+PROTOTYPES: ENABLE
+
+void
+purple_plugin_pref_frame_add(frame, pref)
+	Purple::PluginPref::Frame frame
+	Purple::PluginPref pref
+
+void
+purple_plugin_pref_frame_destroy(frame)
+	Purple::PluginPref::Frame frame
+
+void
+purple_plugin_pref_frame_get_prefs(frame)
+	Purple::PluginPref::Frame frame
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = purple_plugin_pref_frame_get_prefs(frame); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::PluginPref")));
+	}
+
+Purple::PluginPref::Frame
+purple_plugin_pref_frame_new(class)
+    C_ARGS: /* void */
+
+MODULE = Purple::PluginPref  PACKAGE = Purple::PluginPref  PREFIX = purple_plugin_pref_
+PROTOTYPES: ENABLE
+
+void
+purple_plugin_pref_add_choice(pref, label, choice)
+	Purple::PluginPref pref
+	const char *label
+# Do the appropriate conversion based on the perl type specified.
+# Currently only Strings and Ints will work.
+	gpointer choice = (SvPOKp($arg) ? SvPV($arg, PL_na) : (SvIOKp($arg) ? GINT_TO_POINTER(SvIV($arg)) : NULL));
+
+void
+purple_plugin_pref_destroy(pref)
+	Purple::PluginPref pref
+
+
+void
+purple_plugin_pref_get_bounds(pref, min, max)
+	Purple::PluginPref pref
+	int *min
+	int *max
+
+void
+purple_plugin_pref_get_choices(pref)
+	Purple::PluginPref pref
+PREINIT:
+	GList *l;
+PPCODE:
+	for (l = purple_plugin_pref_get_choices(pref); l != NULL; l = l->next) {
+		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListItem")));
+	}
+
+const char *
+purple_plugin_pref_get_label(pref)
+	Purple::PluginPref pref
+
+gboolean
+purple_plugin_pref_get_masked(pref)
+	Purple::PluginPref pref
+
+unsigned int
+purple_plugin_pref_get_max_length(pref)
+	Purple::PluginPref pref
+
+const char *
+purple_plugin_pref_get_name(pref)
+	Purple::PluginPref pref
+
+Purple::PluginPrefType
+purple_plugin_pref_get_type(pref)
+	Purple::PluginPref pref
+
+Purple::PluginPref
+purple_plugin_pref_new(class)
+    C_ARGS: /* void */
+
+Purple::PluginPref
+purple_plugin_pref_new_with_label(class, label)
+	const char *label
+    C_ARGS:
+	label
+
+Purple::PluginPref
+purple_plugin_pref_new_with_name(class, name)
+	const char *name
+    C_ARGS:
+	name
+
+Purple::PluginPref
+purple_plugin_pref_new_with_name_and_label(class, name, label)
+	const char *name
+	const char *label
+    C_ARGS:
+	name, label
+
+void
+purple_plugin_pref_set_bounds(pref, min, max)
+	Purple::PluginPref pref
+	int min
+	int max
+
+void
+purple_plugin_pref_set_label(pref, label)
+	Purple::PluginPref pref
+	const char *label
+
+void
+purple_plugin_pref_set_masked(pref, mask)
+	Purple::PluginPref pref
+	gboolean mask
+
+void
+purple_plugin_pref_set_max_length(pref, max_length)
+	Purple::PluginPref pref
+	unsigned int max_length
+
+void
+purple_plugin_pref_set_name(pref, name)
+	Purple::PluginPref pref
+	const char *name
+
+void
+purple_plugin_pref_set_type(pref, type)
+	Purple::PluginPref pref
+	Purple::PluginPrefType type
+PREINIT:
+	PurplePluginPrefType gpp_type;
+CODE:
+	gpp_type = PURPLE_PLUGIN_PREF_NONE;
+
+	if (type == 1) {
+		gpp_type = PURPLE_PLUGIN_PREF_CHOICE;
+	} else if (type == 2) {
+		gpp_type = PURPLE_PLUGIN_PREF_INFO;
+	}
+	purple_plugin_pref_set_type(pref, gpp_type);

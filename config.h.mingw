@@ -26,10 +26,10 @@
 #define ENABLE_NLS 1
 
 /* Define to make assertions fatal (useful for debugging). */
-/* #undef GAIM_FATAL_ASSERTS */
+/* #undef PURPLE_FATAL_ASSERTS */
 
 /* Define if plugins are enabled. */
-#define GAIM_PLUGINS 1
+#define PURPLE_PLUGINS 1
 
 /* Define to 1 if you have `alloca', as a function or macro. */
 #define HAVE_ALLOCA 1
@@ -155,7 +155,7 @@
 /* Define to 1 if you have the `getuid' function. */
 /* #define HAVE_GETUID 1 */
 
-/* Gaim always has GLib, but Linphone can be built without it */
+/* Pidgin always has GLib, but Linphone can be built without it */
 /* #undef HAVE_GLIB */
 
 /* Define if you have GNUTLS */
@@ -520,19 +520,19 @@
 /* #undef OLD_PERL */
 
 /* Name of package */
-#define PACKAGE "gaim"
+#define PACKAGE "pidgin"
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "gaim-devel@lists.sourceforge.net"
+#define PACKAGE_BUGREPORT "devel@pidgin.im"
 
 /* Define to the full name of this package. */
-#define PACKAGE_NAME "gaim"
+#define PACKAGE_NAME "pidgin"
 
 /* Define to the full name and version of this package. */
-/* #define PACKAGE_STRING "gaim 2.0.0dev" */
+/* #define PACKAGE_STRING "pidgin 2.0.0dev" */
 
 /* Define to the one symbol short name of this package. */
-#define PACKAGE_TARNAME "gaim"
+#define PACKAGE_TARNAME "pidgin"
 
 /* Define to the version of this package. */
 /* #define PACKAGE_VERSION "2.0.0dev" */
@@ -638,8 +638,10 @@
 #define HAVE_LIBXML 1
 
 /*
- * Following are added for Win32 version of Gaim
+ * Following are added for Win32 version of Pidgin
  */
 #define HAVE_VSNPRINTF 1
 
 #define SIZEOF_TIME_T 4
+
+#define PIDGIN_NAME "Pidgin"

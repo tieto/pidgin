@@ -20,7 +20,7 @@
 use POSIX qw(strftime);
 
 
-my $PACKAGE="gaim";
+my $PACKAGE="pidgin";
 
 
 use Locale::Language;

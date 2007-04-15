@@ -1,0 +1,34 @@
+%%
+headers
+#include <Python.h>
+#include "pygobject.h"
+#include "gnt.h"
+#include "gntbindable.h"
+#include "gntwidget.h"
+#include "gntbox.h"
+#include "gntbutton.h"
+#include "gntcheckbox.h"
+#include "gntcolors.h"
+#include "gntcombobox.h"
+#include "gntentry.h"
+#include "gntfilesel.h"
+#include "gntkeys.h"
+#include "gntlabel.h"
+#include "gntline.h"
+#include "gntmenu.h"
+#include "gntmenuitem.h"
+#include "gntmenuitemcheck.h"
+#include "gntstyle.h"
+#include "gnttextview.h"
+#include "gnttree.h"
+#include "gntutils.h"
+#include "gntwindow.h"
+#include "gntwm.h"
+%%
+modulename gnt
+%%
+import gobject.GObject as PyGObject_Type
+%%
+ignore-glob
+	*_get_gtype
+%%

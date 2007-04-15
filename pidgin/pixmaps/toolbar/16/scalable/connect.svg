@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/s odipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16px"
+   height="16px"
+   id="svg1307"
+   sodipodi:version="0.32"
+   inkscape:version="0.43"
+   sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh"
+   sodipodi:docname="connect.svg"
+   inkscape:export-filename="/home/hbons/Desktop/Gaim Refresh/connect.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
+  <defs
+     id="defs1309">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2307">
+      <stop
+         style="stop-color:#eeeeec;stop-opacity:1;"
+         offset="0"
+         id="stop2309" />
+      <stop
+         style="stop-color:#eeeeec;stop-opacity:0;"
+         offset="1"
+         id="stop2311" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2287">
+      <stop
+         style="stop-color:#d3d7cf;stop-opacity:1;"
+         offset="0"
+         id="stop2289" />
+      <stop
+         style="stop-color:#d3d7cf;stop-opacity:0;"
+         offset="1"
+         id="stop2291" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2235">
+      <stop
+         style="stop-color:#d3d7cf;stop-opacity:1;"
+         offset="0"
+         id="stop2237" />
+      <stop
+         style="stop-color:#d3d7cf;stop-opacity:0;"
+         offset="1"
+         id="stop2239" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2235"
+       id="radialGradient2243"
+       cx="3.4638615"
+       cy="8.5"
+       fx="3.4638615"
+       fy="8.5"
+       r="1.5361387"
+       gradientTransform="matrix(1,0,0,2.929423,0,-16.4001)"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2287"
+       id="radialGradient2293"
+       cx="3.4725401"
+       cy="8.4901399"
+       fx="3.4725401"
+       fy="8.4901399"
+       r="1.8475615"
+       gradientTransform="matrix(1,0,0,3.215392,0,-18.80899)"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient2307"
+       id="radialGradient2313"
+       cx="3.46875"
+       cy="8.46875"
+       fx="3.46875"
+       fy="8.46875"
+       r="1.5625002"
+       gradientTransform="matrix(1,0,0,3.54,0,-21.51062)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.197802"
+     inkscape:cx="13.676238"
+     inkscape:cy="8.4504951"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     inkscape:grid-bbox="true"
+     inkscape:document-units="px"
+     fill="#555753"
+     inkscape:window-width="1268"
+     inkscape:window-height="971"
+     inkscape:window-x="6"
+     inkscape:window-y="21" />
+  <metadata
+     id="metadata1312">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer">
+    <image
+       id="image2203"
+       height="16"
+       width="16"
+       sodipodi:absref="/home/hbons/Desktop/Gaim Refresh/gaim/gtk/pixmaps/stock_connect_16.png"
+       xlink:href="gaim/gtk/pixmaps/stock_connect_16.png"
+       x="-4.5762377"
+       y="17" />
+    <rect
+       style="opacity:1;fill:#3465a4;fill-opacity:1;stroke:#204a87;stroke-width:0.9999994;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2231"
+       width="3.7591434"
+       height="4.0898862"
+       x="3.5015876"
+       y="6.4687538"
+       ry="1.0811869"
+       rx="1.0811878" />
+    <image
+       id="image2213"
+       height="16"
+       width="16"
+       sodipodi:absref="/home/hbons/Desktop/Gaim Refresh/gaim/gtk/pixmaps/stock_disconnect_16.png"
+       xlink:href="gaim/gtk/pixmaps/stock_disconnect_16.png"
+       x="-17"
+       y="-9" />
+    <rect
+       style="opacity:1;fill:#edd400;fill-opacity:1;stroke:#c4a000;stroke-width:0.99999964;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2222"
+       width="5.9919014"
+       height="1.9889754"
+       x="8.4049187"
+       y="10.489324"
+       rx="1.0811872"
+       ry="1.0811882" />
+    <rect
+       style="opacity:1;fill:#edd400;fill-opacity:1;stroke:#c4a000;stroke-width:0.99999928;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2224"
+       width="5.9919014"
+       height="2.0106792"
+       x="8.4130182"
+       y="4.494658"
+       rx="1.0811872"
+       ry="1.0811875" />
+    <rect
+       style="opacity:1;fill:#3465a4;fill-opacity:1;stroke:#204a87;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2218"
+       width="4.5"
+       height="12"
+       x="12.5"
+       y="2.5"
+       ry="1.0811881"
+       rx="1.0811881" />
+    <path
+       style="fill:#3465a4;fill-opacity:1;stroke:#204a87;stroke-width:1.00000036;stroke-miterlimit:4;stroke-opacity:1"
+       d="M 8.4861081,2.4676147 L 9.3875609,2.4676147 C 9.9865394,2.4676147 10.46875,2.9498245 10.46875,3.5488027 L 10.46875,13.386427 C 10.46875,13.985405 9.9865394,14.467615 9.3875609,14.467615 L 8.4861081,14.467615 C 7.8871296,14.467615 6.4138303,13.985405 6.4138303,13.386427 L 6.4138303,3.5488027 C 6.4138303,2.9498245 7.8871296,2.4676147 8.4861081,2.4676147 z "
+       id="rect2220"
+       sodipodi:nodetypes="ccccccccc" />
+    <path
+       sodipodi:type="inkscape:offset"
+       inkscape:radius="-1.0487005"
+       inkscape:original="M 13.59375 2.5 C 12.994772 2.5 12.5 2.9947717 12.5 3.59375 L 12.5 13.40625 C 12.5 14.005228 12.994772 14.5 13.59375 14.5 L 15.90625 14.5 C 16.505228 14.5 17 14.005228 17 13.40625 L 17 3.59375 C 17 2.9947718 16.505228 2.5 15.90625 2.5 L 13.59375 2.5 z "
+       xlink:href="#rect2218"
+       style="opacity:0.14204545;fill:#3465a4;fill-opacity:1;stroke:#ffffff;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="path2315"
+       inkscape:href="#rect2218"
+       d="M 13.59375,3.5625 C 13.572275,3.5625 13.5625,3.5722747 13.5625,3.59375 L 13.5625,13.40625 C 13.5625,13.427725 13.572275,13.4375 13.59375,13.4375 L 15.90625,13.4375 C 15.927725,13.4375 15.9375,13.427725 15.9375,13.40625 L 15.9375,3.59375 C 15.9375,3.5722749 15.927725,3.5625 15.90625,3.5625 L 13.59375,3.5625 z " />
+    <path
+       sodipodi:type="inkscape:offset"
+       inkscape:radius="-0.97353798"
+       inkscape:original="M 8.5 2.46875 C 7.9010215 2.46875 6.40625 2.9635219 6.40625 3.5625 L 6.40625 13.375 C 6.40625 13.973978 7.9010218 14.46875 8.5 14.46875 L 9.375 14.46875 C 9.9739785 14.46875 10.46875 13.973978 10.46875 13.375 L 10.46875 3.5625 C 10.46875 2.9635218 9.9739786 2.46875 9.375 2.46875 L 8.5 2.46875 z "
+       xlink:href="#rect2220"
+       style="opacity:0.14772728;fill:url(#radialGradient2313);fill-opacity:1;stroke:#ffffff;stroke-width:1.00000036;stroke-miterlimit:4;stroke-opacity:1"
+       id="path2295"
+       inkscape:href="#rect2220"
+       d="M 3.53125,3.4375 C 3.4998166,3.4375 2.9853197,3.5418315 2.65625,3.6875 C 2.5388748,3.7394582 2.4675143,3.7716169 2.40625,3.8125 L 2.40625,13.125 C 2.4675143,13.165883 2.5388748,13.198042 2.65625,13.25 C 2.9853198,13.395668 3.4998167,13.5 3.53125,13.5 L 4.40625,13.5 C 4.4691165,13.5 4.53125,13.437866 4.53125,13.375 L 4.53125,3.5625 C 4.53125,3.4996337 4.4691163,3.4375 4.40625,3.4375 L 3.53125,3.4375 z " />
+    <rect
+       style="opacity:1;fill:#555753;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1351"
+       width="3"
+       height="1"
+       x="0"
+       y="8" />
+  </g>
+</svg>
