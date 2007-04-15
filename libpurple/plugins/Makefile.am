@@ -25,7 +25,6 @@ SUBDIRS = \
 plugindir = $(libdir)/libpurple
 
 autoaccept_la_LDFLAGS       = -module -avoid-version
-autoreply_la_LDFLAGS        = -module -avoid-version
 buddynote_la_LDFLAGS        = -module -avoid-version
 idle_la_LDFLAGS             = -module -avoid-version
 joinpart_la_LDFLAGS         = -module -avoid-version
@@ -42,7 +41,6 @@ if PLUGINS
 
 plugin_LTLIBRARIES = \
 	autoaccept.la       \
-	autoreply.la        \
 	buddynote.la        \
 	idle.la             \
 	joinpart.la         \
@@ -54,7 +52,6 @@ plugin_LTLIBRARIES = \
 	$(DBUS_LTLIB)
 
 autoaccept_la_SOURCES       = autoaccept.c
-autoreply_la_SOURCES        = autoreply.c
 buddynote_la_SOURCES        = buddynote.c
 idle_la_SOURCES             = idle.c
 joinpart_la_SOURCES         = joinpart.c
@@ -65,7 +62,6 @@ psychic_la_SOURCES          = psychic.c
 statenotify_la_SOURCES      = statenotify.c
 
 autoaccept_la_LIBADD        = $(GLIB_LIBS)
-autoreply_la_LIBADD         = $(GLIB_LIBS)
 buddynote_la_LIBADD         = $(GLIB_LIBS)
 idle_la_LIBADD              = $(GLIB_LIBS)
 joinpart_la_LIBADD          = $(GLIB_LIBS)
