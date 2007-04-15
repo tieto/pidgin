@@ -1,3 +1,0 @@
-[D-BUS Service]
-Name=im.pidgin.purple.PurpleService
-Exec=/bin/false
