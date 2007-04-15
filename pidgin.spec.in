@@ -34,8 +34,8 @@ BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
 %{?_with_meanwhile:BuildRequires: meanwhile-devel}
 %{?_with_mono:BuildRequires: mono-devel}
 %{?_with_sasl:BuildRequires: cyrus-sasl-devel >= 2}
-%{?_with_silc:BuildRequires: /usr/include/silc/silcclient.h}
-%{?_with_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
+%{!?_without_silc:BuildRequires: /usr/include/silc/silcclient.h}
+%{!?_without_tcl:BuildRequires: tcl, tk, /usr/include/tcl.h}
 %{!?_without_text:BuildRequires: ncurses-devel}
 
 %if "%{_vendor}" == "suse"
@@ -108,20 +108,6 @@ Group:      Applications/Internet
 Requires:   libpurple = %{epoch}:%{version}
 %endif
 
-%if 0%{?_with_silc:1}
-%package -n libpurple-silc
-Summary:    SILC (Secure Internet Live Conferencing) plugin for Pidgin
-Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
-%endif
-
-%if 0%{?_with_tcl:1}
-%package -n libpurple-tcl
-Summary:    Tcl scripting support for Pidgin
-Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
-%endif
-
 %if 0%{!?_without_text:1}
 %package -n finch
 Summary:    A text-based user interface for Pidgin
@@ -154,10 +140,17 @@ documentation, and libraries required for development of Pidgin scripts
 and plugins.
 
 %description -n libpurple
-someone write a good description of libpurple please
+libpurple contains the core IM support for IM clients such as Pidgin
+and Finch.
+
+libpurple supports a variety of messaging protocols including AIM, MSN,
+Yahoo!, Jabber, Bonjour, Gadu-Gadu, ICQ, IRC, Novell Groupwise, QQ,
+Lotus Sametime, SILC, Simple and Zephyr.
 
 %description -n libpurple-devel
-someone write a good description of libpurple-devel please
+The libpurple-devel package contains the header files, developer
+documentation, and libraries required for development of libpurple based
+instant messaging clients or plugins for any libpurple based client.
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %description -n libpurple-bonjour
@@ -175,11 +168,6 @@ Mono plugin loader for Pidgin.  This package will allow you to write or
 use Pidgin plugins written in the .NET programming language.
 %endif
 
-%if 0%{?_with_silc:1}
-%description -n libpurple-silc
-SILC (Secure Internet Live Conferencing) plugin for Pidgin.
-%endif
-
 %if 0%{!?_without_text:1}
 %description -n finch
 A text-based user interface for using libpurple.  This can be run from a
@@ -188,13 +176,9 @@ uses ncurses and our homegrown gnt library for drawing windows
 and text.
 
 %description -n finch-devel
-Finch devel blah blah
-%endif
-
-%if 0%{?_with_tcl:1}
-%description -n libpurple-tcl
-Tcl plugin loader for Pidgin.  This package will allow you to write or
-use Pidgin plugins written in the Tcl programming language.
+The finch-devel package contains the header files, developer
+documentation, and libraries required for development of Finch scripts
+and plugins.
 %endif
 
 %prep
@@ -216,9 +200,9 @@ CFLAGS="$RPM_OPT_FLAGS" ./configure --prefix=%{_prefix} \
                                     %{?_with_perlmakehack:--with-perl-lib=%{buildroot}%{_prefix}} \
                                     %{!?_with_perlmakehack:--with-perl-lib=%{_prefix}} \
                                     %{?_with_sasl:--enable-cyrus-sasl} \
-                                    %{?_with_silc:--with-silc-includes=%{_includedir}/silc} \
-                                    %{?_with_silc:--with-silc-libs=%{_libdir}/silc} \
-                                    %{!?_with_tcl:--disable-tcl} \
+                                    %{!?_without_silc:--with-silc-includes=%{_includedir}/silc} \
+                                    %{!?_without_silc:--with-silc-libs=%{_libdir}/silc} \
+                                    %{?_without_tcl:--disable-tcl} \
                                     %{?_without_text:--disable-consoleui}
 
 make %{?_smp_mflags}
@@ -261,11 +245,11 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/mono.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/*.dll
 %endif
 
-%if 0%{!?_with_silc:1}
+%if 0%{?_without_silc:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libsilcpurple.so
 %endif
 
-%if 0%{!?_with_tcl:1}
+%if 0%{?_without_tcl:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/tcl.so
 %endif
 
@@ -280,12 +264,9 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libgnt.so.*
 find $RPM_BUILD_ROOT%{_libdir}/libpurple -xtype f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" | \
         grep -v /libbonjour.so | \
-        grep -v /libsilcpurple.so | \
         grep -v /libsametime.so | \
         grep -v /mono.so | \
-        grep -v /tcl.so | \
-        grep -v ".dll$" | \
-        grep -v ".tcl$" > %{name}-%{version}-purpleplugins
+        grep -v ".dll$" > %{name}-%{version}-purpleplugins
 
 find $RPM_BUILD_ROOT%{_libdir}/pidgin -xtype f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" > %{name}-%{version}-pidginplugins
@@ -426,20 +407,6 @@ fi
 %{_libdir}/libpurple/*.dll
 %endif
 
-%if 0%{?_with_silc:1}
-%files -n libpurple-silc
-%defattr(-, root, root)
-
-%{_libdir}/libpurple/libsilcpurple.*
-%endif
-
-%if 0%{?_with_tcl:1}
-%files -n libpurple-tcl
-%defattr(-, root, root)
-
-%{_libdir}/libpurple/tcl.so
-%endif
-
 %if 0%{!?_without_text:1}
 %files -f %{name}-%{version}-finchplugins -n finch
 %defattr(-, root, root)
@@ -461,6 +428,12 @@ fi
 %endif
 
 %changelog
+* Sun Apr 15 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Fix for building without Finch
+- Drop -tcl & -silc sub-packages, include them in the main libpurple
+  package (--without tcl and --without silc can be used to build libpurple
+  without support for these).
+
 * Thu Apr 12 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Actually move libpurple.so.* to the libpurple RPM
 
