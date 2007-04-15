@@ -7,8 +7,7 @@ EXTRA_DIST = \
 		Makefile.mingw \
 		PLUGIN_HOWTO \
 		PROGRAMMING_NOTES \
-		README.SVN \
-		README.dbus \
+		README.MTN \
 		README.mingw \
 		config.h.mingw \
 		gaim.pc.in \
