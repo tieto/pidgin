@@ -1,0 +1,183 @@
+/*
+ * Evolution integration plugin for Purple
+ *
+ * Copyright (C) 2003 Christian Hammond.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ * 02111-1307, USA.
+ */
+#include "internal.h"
+#include "gtkblist.h"
+#include "pidgin.h"
+#include "gtkutils.h"
+
+#include "gevolution.h"
+
+void
+gevo_add_buddy(PurpleAccount *account, const char *group_name,
+			   const char *screenname, const char *alias)
+{
+	PurpleConversation *conv = NULL;
+	PurpleBuddy *buddy;
+	PurpleGroup *group;
+
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, screenname, account);
+
+	if ((group = purple_find_group(group_name)) == NULL)
+	{
+		group = purple_group_new(group_name);
+		purple_blist_add_group(group, NULL);
+	}
+
+	buddy = purple_buddy_new(account, screenname, alias);
+	purple_blist_add_buddy(buddy, NULL, group, NULL);
+	purple_account_add_buddy(account, buddy);
+
+	if (conv != NULL)
+	{
+		purple_buddy_icon_update(purple_conv_im_get_icon(PURPLE_CONV_IM(conv)));
+		purple_conversation_update(conv, PURPLE_CONV_UPDATE_ADD);
+	}
+}
+
+GList *
+gevo_get_groups(void)
+{
+	GList *list = NULL;
+	PurpleGroup *g;
+	PurpleBlistNode *gnode;
+
+	if (purple_get_blist()->root == NULL)
+	{
+		list  = g_list_append(list, (gpointer)_("Buddies"));
+	}
+	else
+	{
+		for (gnode = purple_get_blist()->root;
+			 gnode != NULL;
+			 gnode = gnode->next)
+		{
+			if (PURPLE_BLIST_NODE_IS_GROUP(gnode))
+			{
+				g = (PurpleGroup *)gnode;
+				list = g_list_append(list, g->name);
+			}
+		}
+	}
+
+	return list;
+}
+
+EContactField
+gevo_prpl_get_field(PurpleAccount *account, PurpleBuddy *buddy)
+{
+	EContactField protocol_field = 0;
+	const char *protocol_id;
+
+	g_return_val_if_fail(account != NULL, 0);
+
+	protocol_id = purple_account_get_protocol_id(account);
+
+	if (!strcmp(protocol_id, "prpl-oscar"))
+	{
+		PurpleConnection *gc;
+		PurplePluginProtocolInfo *prpl_info;
+
+		gc = purple_account_get_connection(account);
+
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
+		if (!strcmp("aim", prpl_info->list_icon(account, buddy)))
+		{
+			protocol_field = E_CONTACT_IM_AIM;
+		}
+		else
+			protocol_field = E_CONTACT_IM_ICQ;
+	}
+	else if (!strcmp(protocol_id, "prpl-msn"))
+		protocol_field = E_CONTACT_IM_MSN;
+	else if (!strcmp(protocol_id, "prpl-yahoo"))
+		protocol_field = E_CONTACT_IM_YAHOO;
+	else if (!strcmp(protocol_id, "prpl-jabber"))
+		protocol_field = E_CONTACT_IM_JABBER;
+	else if (!strcmp(protocol_id, "prpl-novell"))
+		protocol_field = E_CONTACT_IM_GROUPWISE;
+
+	return protocol_field;
+}
+
+gboolean
+gevo_prpl_is_supported(PurpleAccount *account, PurpleBuddy *buddy)
+{
+	return (gevo_prpl_get_field(account, buddy) != 0);
+}
+
+gboolean
+gevo_load_addressbook(const gchar* uri, EBook **book, GError **error)
+{
+	gboolean result = FALSE;
+
+	g_return_val_if_fail(book != NULL, FALSE);
+
+	if (uri == NULL)
+		*book = e_book_new_system_addressbook(NULL);
+	else
+		*book = e_book_new_from_uri(uri, error);
+
+	result = e_book_open(*book, FALSE, NULL);
+
+	if (!result && *book != NULL)
+	{
+		g_object_unref(*book);
+		*book = NULL;
+	}
+
+	return result;
+}
+
+char *
+gevo_get_email_for_buddy(PurpleBuddy *buddy)
+{
+	EContact *contact;
+	char *mail = NULL;
+
+	contact = gevo_search_buddy_in_contacts(buddy, NULL);
+
+	if (contact != NULL)
+	{
+		mail = g_strdup(e_contact_get(contact, E_CONTACT_EMAIL_1));
+		g_object_unref(contact);
+	}
+
+	if (mail == NULL)
+	{
+		PurpleAccount *account = purple_buddy_get_account(buddy);
+		const char *prpl_id = purple_account_get_protocol_id(account);
+
+		if (!strcmp(prpl_id, "prpl-msn"))
+		{
+			mail = g_strdup(purple_normalize(account,
+										   purple_buddy_get_name(buddy)));
+		}
+		else if (!strcmp(prpl_id, "prpl-yahoo"))
+		{
+			mail = g_strdup_printf("%s@yahoo.com",
+								   purple_normalize(account,
+												  purple_buddy_get_name(buddy)));
+		}
+	}
+
+	return mail;
+}

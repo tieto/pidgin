@@ -1,4 +1,4 @@
-Gaim: The Pimpin' Penguin IM Client that's good for the soul!
+Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.0.0:
 	Build Changes:
@@ -77,6 +77,7 @@ version 2.0.0:
 	   button on the toolbar.)
 	* Performance while joining large chat rooms has been significantly
 	  improved (Aaron Sheldon, Google Summer of Code)
+	* Bi-Directional text support improvements for GtkIMHtml (Shlomi Loubaton)
 
 	Sounds:
 	* Beautiful new default sounds (Brad Turcotte)
@@ -138,6 +139,7 @@ version 2.0.0:
 	* Added support for sending (with the /nudge command) and receiving
 	  "nudges" (Julien Cegarra, Martin Bayard)
 	* Added an account action to open your Hotmail inbox from MSN
+	* Bi-directional text is correctly handled now (Shlomi Loubaton)
 
 	Yahoo Features:
 	* Stealth Settings have been implemented
@@ -187,10 +189,13 @@ version 2.0.0:
 	* SIP/SIMPLE support (Thomas Butter, Google Summer of Code)
 	* Sametime protocol support
 	  Requires the meanwhile library: http://meanwhile.sourceforge.net
-	* QQ protocol support (Mark Huetsch, Google Summer of Code)
-	* Removed support for the Napster and TOC protocols
+	* QQ protocol support (Mark Huetsch, Google Summer of Code, and the
+	  developers of the OpenQ project)
+	* Removed the Napster and TOC protocols plugins
 
 	Other Noteworthy Changes:
+	* The project has new names - libpurple for the core, Pidgin for the Gtk+
+	  UI and Finch for the ncurses based console UI (AOL LLC)
 	* UPnP and NAT traversal support (Adam J. Warrington, Google Summer of
 	  Code)
 	* The modify account dialog now contains two tabs, which should display
@@ -216,6 +221,7 @@ version 2.0.0:
 	  time instead of X11 idle time (Michael Culbertson)
 	* Autocomplete in the buddy pounce dialog (Sadrul Habib Chowdhury)
 	* Non-blocking socket I/O is used in most protocol plugins
+	* All-new icons all over the place (Hylke Bons)
 
 	Preference Changes:
 	* Preferences have been substantially reorganized and cleaned up
@@ -1804,7 +1810,7 @@ version 0.10.0 (09/11/2000):
 	* Redesigned preferences dialog
 	* Redesigned conversation dialog
 	* Removed the Lag-O-Meter (Lag-O-Meter is now a plugin)
-	* SOCKS 4a/5 proxy works
+	* SOCKS 4/5 proxy works
 	* Buddy Pounces are now saved in .gaimrc
 	* Buddy Chats are now saved in .gaimrc
 	* Ability to merge gaim, aim2, aim4 buddylists. Thanks again bmiller!
@@ -1874,7 +1880,7 @@ version 0.9.16 (05/31/2000):
 	  lists, unfortunately).  (Thanks Syd)
 	* Font selection dialog
 	* Small changes to the Oscar/libfaim stuff (see libfaim/README.gaim)
-	* SOCKS 4a proxy support
+	* SOCKS 4 proxy support
 	* Better proxy support overall (you can get people's info now! :) )
 	* Two-way file transfer (you can get and send files, but you still
 	  can't initiate either)

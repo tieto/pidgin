@@ -333,7 +333,7 @@ sub plugin_load {
 }
 @endcode
 
-Now we can provide an UI for manipulating these preferences in our @prefs_info
+Now we can provide an UI for manipulating these preferences in our @c prefs_info
 function.
 
 @code

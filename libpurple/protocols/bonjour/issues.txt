@@ -1,0 +1,9 @@
+==========================================
+============= Known issues ===============
+==========================================
+
+* Status changes don't work
+* Avatars
+* File transfers
+* Typing notifications
+* Check if it works on win32
