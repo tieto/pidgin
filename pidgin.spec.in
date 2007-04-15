@@ -374,7 +374,7 @@ fi
 %{_bindir}/purple-send-async
 %{_bindir}/purple-url-handler
 %{_libdir}/libpurple-client.so.*
-%{_datadir}/dbus-1/services/gaim.service
+%{_datadir}/dbus-1/services/purple.service
 %doc README.dbus
 %doc libpurple/purple-notifications-example
 %endif

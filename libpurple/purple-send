@@ -5,8 +5,8 @@ METHOD_NAME=$1
 if test -z "$METHOD_NAME" 
 then
     cat <<EOF 
-This program calls gaim API functions using DBus and prints the return value.
-If you are not interested in the return value, use gaim-send-async.
+This program calls purple API functions using DBus and prints the return value.
+If you are not interested in the return value, use purple-send-async.
 
 Usage:
 
@@ -17,9 +17,9 @@ to specify the parameters.
 
 Examples:
 
-   $0 GaimAccountsFindConnected string: string:prpl-jabber
-   $0 GaimAccountsGetAll
-   $0 GaimCoreQuit
+   $0 PurpleAccountsFindConnected string: string:prpl-jabber
+   $0 PurpleAccountsGetAll
+   $0 PurpleCoreQuit
 
 Use dbus-viewer to get the list of supported functions and their parameters.
 EOF
@@ -27,6 +27,6 @@ EOF
 fi
 
 shift
-dbus-send --dest=net.sf.gaim.GaimService --print-reply --type=method_call /net/sf/gaim/GaimObject net.sf.gaim.GaimInterface.$METHOD_NAME "$@"
+dbus-send --dest=im.pidgin.purple.PurpleService --print-reply --type=method_call /im/pidgin/purple/PurpleObject im.pidgin.purple.PurpleInterface.$METHOD_NAME "$@"
 
 echo 

@@ -24,8 +24,8 @@
 #ifndef _DBUS_PURPLE_H_
 #define _DBUS_PURPLE_H_
 
-#define DBUS_SERVICE_PURPLE      "net.sf.purple.PurpleService"
-#define DBUS_PATH_PURPLE         "/net/sf/purple/PurpleObject"
-#define DBUS_INTERFACE_PURPLE    "net.sf.purple.PurpleInterface"
+#define DBUS_SERVICE_PURPLE      "im.pidgin.purple.PurpleService"
+#define DBUS_PATH_PURPLE         "/im/pidgin/purple/PurpleObject"
+#define DBUS_INTERFACE_PURPLE    "im.pidgin.purple.PurpleInterface"
 
 #endif /* _DBUS_PURPLE_H_ */

@@ -2,7 +2,7 @@
 #
 # Print the aliases of buddies who have a buddy-icon set.
 #
-# Gaim is the legal property of its developers, whose names are too numerous
+# Purple is the legal property of its developers, whose names are too numerous
 # to list here.  Please refer to the COPYRIGHT file distributed with this
 # source distribution.
 #
@@ -24,13 +24,13 @@
 import dbus
 
 bus = dbus.SessionBus()
-obj = bus.get_object("net.sf.gaim.GaimService", "/net/sf/gaim/GaimObject")
-gaim = dbus.Interface(obj, "net.sf.gaim.GaimInterface")
+obj = bus.get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
-node = gaim.GaimBlistGetRoot()
+node = purple.PurpleBlistGetRoot()
 while node != 0:
-	if gaim.GaimBlistNodeIsBuddy(node):
-		icon = gaim.GaimBuddyGetIcon(node)
+	if purple.PurpleBlistNodeIsBuddy(node):
+		icon = purple.PurpleBuddyGetIcon(node)
 		if icon != 0:
-			print gaim.GaimBuddyGetAlias(node)
-	node = gaim.GaimBlistNodeNext(node, 0)
+			print purple.PurpleBuddyGetAlias(node)
+	node = purple.PurpleBlistNodeNext(node, 0)

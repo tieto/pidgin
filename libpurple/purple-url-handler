@@ -6,8 +6,8 @@ import sys
 import time
 import urllib
 
-obj = dbus.SessionBus().get_object("net.sf.gaim.GaimService", "/net/sf/gaim/GaimObject")
-gaim = dbus.Interface(obj, "net.sf.gaim.GaimInterface")
+obj = dbus.SessionBus().get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
 class CheckedObject:
     def __init__(self, obj):
@@ -27,7 +27,7 @@ class CheckedAttribute:
             raise "Error: " + self.attr + " " + str(args) + " returned " + str(result)
         return result
 
-cgaim = CheckedObject(gaim)
+cpurple = CheckedObject(purple)
 
 def extendlist(list, length, fill):
     if len(list) < length:
@@ -44,42 +44,42 @@ def convert(value):
 def findaccount(protocolname, accountname=""):
     try:
         # prefer connected accounts
-        account = cgaim.GaimAccountsFindConnected(accountname, protocolname)
+        account = cpurple.PurpleAccountsFindConnected(accountname, protocolname)
         return account
     except:
         # try to get any account and connect it
-        account = cgaim.GaimAccountsFindAny(accountname, protocolname)
-        gaim.GaimAccountSetStatusVargs(account, "online", 1)
-        gaim.GaimAccountConnect(account)
+        account = cpurple.PurpleAccountsFindAny(accountname, protocolname)
+        purple.PurpleAccountSetStatusVargs(account, "online", 1)
+        purple.PurpleAccountConnect(account)
         return account
 
 def goim(account, screenname, message=None):
-    # XXX: 1 == GAIM_CONV_TYPE_IM
-    conversation = cgaim.GaimConversationNew(1, account, screenname)
+    # XXX: 1 == PURPLE_CONV_TYPE_IM
+    conversation = cpurple.PurpleConversationNew(1, account, screenname)
     if message:
-        gaim.GaimConvSendConfirm(conversation, message)
+        purple.PurpleConvSendConfirm(conversation, message)
 
 def gochat(account, params, message=None):
-    connection = cgaim.GaimAccountGetConnection(account)
-    gaim.ServJoinChat(connection, params)
+    connection = cpurple.PurpleAccountGetConnection(account)
+    purple.ServJoinChat(connection, params)
 
     if message != None:
     	for i in range(20):
-            # XXX: 2 == GAIM_CONV_TYPE_CHAT
-            conversation = gaim.GaimFindConversationWithAccount(2, params.get("channel", params.get("room")), account)
+            # XXX: 2 == PURPLE_CONV_TYPE_CHAT
+            conversation = purple.PurpleFindConversationWithAccount(2, params.get("channel", params.get("room")), account)
             if conversation:
-                gaim.GaimConvSendConfirm(conversation, message)
+                purple.PurpleConvSendConfirm(conversation, message)
                 break
             else:
                 time.sleep(0.5)
 
 def addbuddy(account, screenname, group="", alias=""):
-    cgaim.GaimBlistRequestAddBuddy(account, screenname, group, alias)
+    cpurple.PurpleBlistRequestAddBuddy(account, screenname, group, alias)
 
 
 def aim(uri):
-    protocol = "prpl-oscar"
-    match = re.match(r"^(aim|icq):([^?]*)(\?(.*))", uri)
+    protocol = "prpl-aim"
+    match = re.match(r"^(aim):([^?]*)(\?(.*))", uri)
     if not match:
         print "Invalid aim URI: %s" % uri
         return
@@ -115,7 +115,30 @@ def gg(uri):
     goim(account, screenname)
 
 def icq(uri):
-    aim(uri)
+    protocol = "prpl-icq"
+    match = re.match(r"^(icq):([^?]*)(\?(.*))", uri)
+    if not match:
+        print "Invalid aim URI: %s" % uri
+        return
+
+    command = urllib.unquote_plus(match.group(2))
+    paramstring = match.group(4)
+    params = {}
+    if paramstring:
+        for param in paramstring.split("&"):
+            key, value = extendlist(param.split("=", 1), 2, "")
+            params[key] = urllib.unquote_plus(value)
+    accountname = params.get("account", "")
+    screenname = params.get("screenname", "")
+
+    account = findaccount(protocol, accountname)
+
+    if command.lower() == "goim":
+        goim(account, screenname, params.get("message"))
+    elif command.lower() == "gochat":
+        gochat(account, params)
+    elif command.lower() == "addbuddy":
+        addbuddy(account, screenname, params.get("group", ""))
 
 def irc(uri):
     protocol = "prpl-irc"

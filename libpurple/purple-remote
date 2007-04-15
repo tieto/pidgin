@@ -9,8 +9,8 @@ import xml.dom.minidom
 
 xml.dom.minidom.Element.all   = xml.dom.minidom.Element.getElementsByTagName
 
-obj = dbus.SessionBus().get_object("net.sf.gaim.GaimService", "/net/sf/gaim/GaimObject")
-gaim = dbus.Interface(obj, "net.sf.gaim.GaimInterface")
+obj = dbus.SessionBus().get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
 class CheckedObject:
     def __init__(self, obj):
@@ -31,7 +31,7 @@ class CheckedAttribute:
         return result
             
 def show_help():
-    print """This program uses DBus to communicate with gaim.
+    print """This program uses DBus to communicate with purple.
 
 Usage:
 
@@ -44,7 +44,7 @@ Each command is of one of the three types:
     FunctionName(value1,value2,...)
 
 The second and third form are provided for completeness but their use
-is not recommended; use gaim-send or gaim-send-async instead.  The
+is not recommended; use purple-send or purple-send-async instead.  The
 second form uses introspection to find out the parameter names and
 their types, therefore it is rather slow.
 
@@ -58,11 +58,11 @@ Examples of commands:
     setstatus?status=away&message=don't disturb
     quit
 
-    GaimAccountsFindConnected?name=&protocol=prpl-jabber
-    GaimAccountFindConnected(,prpl-jabber)
+    PurpleAccountsFindConnected?name=&protocol=prpl-jabber
+    PurpleAccountFindConnected(,prpl-jabber)
 """ % sys.argv[0]
 
-cgaim = CheckedObject(gaim)
+cpurple = CheckedObject(purple)
 
 urlregexp = r"^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?"
 
@@ -81,13 +81,13 @@ def convert(value):
 def findaccount(accountname, protocolname):
     try:
         # prefer connected accounts
-        account = cgaim.GaimAccountsFindConnected(accountname, protocolname)
+        account = cpurple.PurpleAccountsFindConnected(accountname, protocolname)
         return account
     except:
         # try to get any account and connect it
-        account = cgaim.GaimAccountsFindAny(accountname, protocolname)
-        gaim.GaimAccountSetStatusVargs(account, "online", 1)
-        gaim.GaimAccountConnect(account)
+        account = cpurple.PurpleAccountsFindAny(accountname, protocolname)
+        purple.PurpleAccountSetStatusVargs(account, "online", 1)
+        purple.PurpleAccountConnect(account)
         return account
     
 
@@ -110,60 +110,60 @@ def execute(uri):
 
     if command == "goim":
         account = findaccount(accountname, protocol)
-        conversation = cgaim.GaimConversationNew(1, account, params["screenname"])
+        conversation = cpurple.PurpleConversationNew(1, account, params["screenname"])
         if "message" in params:
-            im = cgaim.GaimConversationGetImData(conversation)
-            gaim.GaimConvImSend(im, params["message"])
+            im = cpurple.PurpleConversationGetImData(conversation)
+            purple.PurpleConvImSend(im, params["message"])
         return None
 
     elif command == "gochat":
         account = findaccount(accountname, protocol)
-        connection = cgaim.GaimAccountGetConnection(account)
-        return gaim.ServJoinChat(connection, params)
+        connection = cpurple.PurpleAccountGetConnection(account)
+        return purple.ServJoinChat(connection, params)
 
     elif command == "addbuddy":
         account = findaccount(accountname, protocol)
-        return cgaim.GaimBlistRequestAddBuddy(account, params["screenname"],
+        return cpurple.PurpleBlistRequestAddBuddy(account, params["screenname"],
                                               params.get("group", ""), "")
 
     elif command == "setstatus":
-        current = gaim.GaimSavedstatusGetCurrent()
+        current = purple.PurpleSavedstatusGetCurrent()
 
         if "status" in params:
             status_id = params["status"]
-            status_type = gaim.GaimPrimitiveGetTypeFromId(status_id)
+            status_type = purple.PurplePrimitiveGetTypeFromId(status_id)
         else:
-            status_type = gaim.GaimSavedstatusGetType(current)
-            status_id = gaim.GaimPrimitiveGetIdFromType(status_type)
+            status_type = purple.PurpleSavedstatusGetType(current)
+            status_id = purple.PurplePrimitiveGetIdFromType(status_type)
 
         if "message" in params:
             message = params["message"];
         else:
-            message = gaim.GaimSavedstatusGetMessage(current)
+            message = purple.PurpleSavedstatusGetMessage(current)
 
         if "account" in params:
-            accounts = [cgaim.GaimAccountsFindAny(accountname, protocol)]
+            accounts = [cpurple.PurpleAccountsFindAny(accountname, protocol)]
 
             for account in accounts:
-                status = gaim.GaimAccountGetStatus(account, status_id)
-                type = gaim.GaimStatusGetType(status)
-                gaim.GaimSavedstatusSetSubstatus(current, account, type, message)
-                gaim.GaimSavedstatusActivateForAccount(current, account)
+                status = purple.PurpleAccountGetStatus(account, status_id)
+                type = purple.PurpleStatusGetType(status)
+                purple.PurpleSavedstatusSetSubstatus(current, account, type, message)
+                purple.PurpleSavedstatusActivateForAccount(current, account)
         else:
-            accounts = gaim.GaimAccountsGetAllActive()
-            saved = gaim.GaimSavedstatusNew("", status_type)
-            gaim.GaimSavedstatusSetMessage(saved, message)
-            gaim.GaimSavedstatusActivate(saved)
+            accounts = purple.PurpleAccountsGetAllActive()
+            saved = purple.PurpleSavedstatusNew("", status_type)
+            purple.PurpleSavedstatusSetMessage(saved, message)
+            purple.PurpleSavedstatusActivate(saved)
 
         return None
 
     elif command == "getinfo":
         account = findaccount(accountname, protocol)
-        connection = cgaim.GaimAccountGetConnection(account)
-        return gaim.ServGetInfo(connection, params["screenname"])
+        connection = cpurple.PurpleAccountGetConnection(account)
+        return purple.ServGetInfo(connection, params["screenname"])
 
     elif command == "quit":
-        return gaim.GaimCoreQuit()
+        return purple.PurpleCoreQuit()
 
     elif command == "uri":
         return None
@@ -180,7 +180,7 @@ def execute(uri):
             fargs = []
             for arg in args:
                 fargs.append(convert(arg.strip()))
-            return gaim.__getattr__(name)(*fargs)
+            return purple.__getattr__(name)(*fargs)
         else:
             # introspect the object to get parameter names and types
             # this is slow because the entire introspection info must be downloaded
@@ -200,7 +200,7 @@ def execute(uri):
                                 methodparams.append(int(value))
                             else:
                                 raise "Don't know how to handle type \"%s\"" % type
-                    return gaim.__getattr__(command)(*methodparams)
+                    return purple.__getattr__(command)(*methodparams)
             show_help()
             raise "Unknown command: %s" % command
 
