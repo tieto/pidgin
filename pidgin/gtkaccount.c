@@ -2029,7 +2029,7 @@ add_account_to_liststore(PurpleAccount *account, gpointer user_data)
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook),1);
 
 	set_account(accounts_window->model, &iter, account, global_buddyicon);
-	gtk_window_present(pidgin_blist_get_default_gtk_blist()->window);
+	gtk_window_present(GTK_WINDOW(pidgin_blist_get_default_gtk_blist()->window));
 }
 
 static gboolean
