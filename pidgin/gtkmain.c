@@ -602,6 +602,9 @@ int main(int argc, char *argv[])
 		case '?':	/* show terse help */
 		default:
 			show_usage(argv[0], TRUE);
+#ifdef HAVE_SIGNAL_H
+			g_free(segfault_message);
+#endif
 			return 0;
 			break;
 		}
@@ -610,11 +613,17 @@ int main(int argc, char *argv[])
 	/* show help message */
 	if (opt_help) {
 		show_usage(argv[0], FALSE);
+#ifdef HAVE_SIGNAL_H
+		g_free(segfault_message);
+#endif
 		return 0;
 	}
 	/* show version message */
 	if (opt_version) {
 		printf(PIDGIN_NAME " %s\n", VERSION);
+#ifdef HAVE_SIGNAL_H
+		g_free(segfault_message);
+#endif
 		return 0;
 	}
 
@@ -643,6 +652,9 @@ int main(int argc, char *argv[])
 
 		g_warning("cannot open display: %s", display ? display : "unset");
 		g_free(display);
+#ifdef HAVE_SIGNAL_H
+		g_free(segfault_message);
+#endif
 
 		return 1;
 	}
@@ -667,6 +679,9 @@ int main(int argc, char *argv[])
 		fprintf(stderr,
 				"Initialization of the " PIDGIN_NAME " core failed. Dumping core.\n"
 				"Please report this!\n");
+#ifdef HAVE_SIGNAL_H
+		g_free(segfault_message);
+#endif
 		abort();
 	}
 
