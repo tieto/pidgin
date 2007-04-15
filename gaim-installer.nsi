@@ -10,7 +10,6 @@
 Var name
 Var GTK_FOLDER
 Var GTK_THEME_SEL
-Var LANG_IS_SET
 Var ISSILENT
 Var STARTUP_RUN_KEY
 Var SPELLCHECK_SEL
@@ -41,10 +40,21 @@ SetDateSave on
 !include "MUI.nsh"
 !include "Sections.nsh"
 
+!include "FileFunc.nsh"
+!insertmacro GetParameters
+!insertmacro GetOptions
+!insertmacro GetParent
+
+!include "WordFunc.nsh"
+!insertmacro VersionCompare
+
+!include "TextFunc.nsh"
+!insertmacro ConfigWriteS
+
 ;--------------------------------
 ;Defines
 
-!define GAIM_NSIS_INCLUDE_PATH			".\src\win32\nsis"
+!define GAIM_NSIS_INCLUDE_PATH			".\gtk\win32\nsis"
 !define GAIM_INSTALLER_DEPS			"..\win32-dev\gaim-inst-deps"
 
 !define GAIM_REG_KEY				"SOFTWARE\gaim"
@@ -52,33 +62,50 @@ SetDateSave on
 !define HKLM_APP_PATHS_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\gaim.exe"
 !define GAIM_STARTUP_RUN_KEY			"SOFTWARE\Microsoft\Windows\CurrentVersion\Run"
 !define GAIM_UNINST_EXE				"gaim-uninst.exe"
-!define GAIM_REG_LANG				"Installer Language"
 
-!define GTK_VERSION				"2.6.10"
+!define GTK_MIN_VERSION				"2.6.10"
 !define GTK_REG_KEY				"SOFTWARE\GTK\2.0"
 !define PERL_REG_KEY				"SOFTWARE\Perl"
 !define PERL_DLL				"perl58.dll"
 !define GTK_DEFAULT_INSTALL_PATH		"$COMMONFILES\GTK\2.0"
 !define GTK_RUNTIME_INSTALLER			"..\gtk_installer\gtk-runtime*.exe"
-!define GTK_THEME_DIR				"..\gtk_installer\gtk_themes"
-!define GTK_DEFAULT_THEME_GTKRC_DIR		"share\themes\Default\gtk-2.0"
-!define GTK_DEFAULT_THEME_ENGINE_DIR		"lib\gtk-2.0\2.4.0\engines"
 
 !define ASPELL_REG_KEY				"SOFTWARE\Aspell"
 !define DOWNLOADER_URL				"http://gaim.sourceforge.net/win32/download_redir.php"
 
 ;--------------------------------
+;Version resource
+VIProductVersion "${GAIM_PRODUCT_VERSION}"
+VIAddVersionKey "ProductName" "Gaim"
+VIAddVersionKey "FileVersion" "${GAIM_VERSION}"
+VIAddVersionKey "ProductVersion" "${GAIM_VERSION}"
+VIAddVersionKey "LegalCopyright" ""
+!ifdef WITH_GTK
+VIAddVersionKey "FileDescription" "Gaim Installer (w/ GTK+ Installer)"
+!else
+!ifdef DEBUG
+VIAddVersionKey "FileDescription" "Gaim Installer (Debug Version)"
+!else
+VIAddVersionKey "FileDescription" "Gaim Installer (w/o GTK+ Installer)"
+!endif
+!endif
+
+;--------------------------------
 ;Modern UI Configuration
 
-  !define MUI_ICON				".\pixmaps\gaim-install.ico"
-  !define MUI_UNICON				".\pixmaps\gaim-install.ico"
-  !define MUI_WELCOMEFINISHPAGE_BITMAP		".\src\win32\nsis\gaim-intro.bmp"
+  !define MUI_ICON				".\gtk\pixmaps\gaim-install.ico"
+  !define MUI_UNICON				".\gtk\pixmaps\gaim-install.ico"
+  !define MUI_WELCOMEFINISHPAGE_BITMAP		".\gtk\win32\nsis\gaim-intro.bmp"
   !define MUI_HEADERIMAGE
-  !define MUI_HEADERIMAGE_BITMAP		".\src\win32\nsis\gaim-header.bmp"
+  !define MUI_HEADERIMAGE_BITMAP		".\gtk\win32\nsis\gaim-header.bmp"
 
   ; Alter License section
   !define MUI_LICENSEPAGE_BUTTON		$(GAIM_LICENSE_BUTTON)
   !define MUI_LICENSEPAGE_TEXT_BOTTOM		$(GAIM_LICENSE_BOTTOM_TEXT)
+
+  !define MUI_LANGDLL_REGISTRY_ROOT "HKCU"
+  !define MUI_LANGDLL_REGISTRY_KEY ${GAIM_REG_KEY}
+  !define MUI_LANGDLL_REGISTRY_VALUENAME "Installer Language"
 
   !define MUI_COMPONENTSPAGE_SMALLDESC
   !define MUI_ABORTWARNING
@@ -92,9 +119,7 @@ SetDateSave on
 ;--------------------------------
 ;Pages
 
-!ifndef WITH_GTK
   !define MUI_PAGE_CUSTOMFUNCTION_PRE		preWelcomePage
-!endif
   !insertmacro MUI_PAGE_WELCOME
   !insertmacro MUI_PAGE_LICENSE			"./COPYING"
   !insertmacro MUI_PAGE_COMPONENTS
@@ -224,6 +249,7 @@ Section -SecUninstallOldGaim
   IfErrors +3
   StrCpy $STARTUP_RUN_KEY "HKCU"
   Goto +4
+  ClearErrors
   ReadRegStr $STARTUP_RUN_KEY HKLM "${GAIM_STARTUP_RUN_KEY}" "Gaim"
   IfErrors +2
   StrCpy $STARTUP_RUN_KEY "HKLM"
@@ -269,26 +295,9 @@ Section -SecUninstallOldGaim
               Goto uninstall_problem
 
         uninstall_problem:
-          ; In this case just wipe out previous Gaim install dir..
-          ; We get here because versions 0.60a1 and 0.60a2 don't have versions set in the registry
-          ; and versions 0.60 and lower did not correctly set the uninstall reg string
-          ; (the string was set in quotes)
-          IfSilent do_wipeout
-          MessageBox MB_YESNO $(GAIM_PROMPT_WIPEOUT) IDYES do_wipeout IDNO cancel_install
-          cancel_install:
-            Quit
-
-          do_wipeout:
-            StrCmp $R0 "HKLM" gaim_del_lm_reg gaim_del_cu_reg
-            gaim_del_cu_reg:
-              DeleteRegKey HKCU ${GAIM_REG_KEY}
-              Goto uninstall_prob_cont
-            gaim_del_lm_reg:
-              DeleteRegKey HKLM ${GAIM_REG_KEY}
-
-            uninstall_prob_cont:
-              RMDir /r "$R1"
-
+          ; We can't uninstall.  Either the user must manually uninstall or we ignore and reinstall over it.
+          MessageBox MB_OKCANCEL $(GAIM_PROMPT_CONTINUE_WITHOUT_UNINSTALL) /SD IDOK IDOK done
+          Quit
   done:
 SectionEnd
 
@@ -308,42 +317,32 @@ Section $(GTK_SECTION_TITLE) SecGtk
   File /oname=gtk-runtime.exe ${GTK_RUNTIME_INSTALLER}
   SetOverwrite off
 
-  ; This keeps track whether we install GTK+ or not..
-  StrCpy $R5 "0"
-
   Call DoWeNeedGtk
   Pop $R0
   Pop $R6
 
   StrCmp $R0 "0" have_gtk
   StrCmp $R0 "1" upgrade_gtk
-  StrCmp $R0 "2" no_gtk no_gtk
+  StrCmp $R0 "2" upgrade_gtk
+  StrCmp $R0 "3" no_gtk no_gtk
 
   no_gtk:
     StrCmp $R1 "NONE" gtk_no_install_rights
     ClearErrors
     ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
-    Goto gtk_install_cont
+    IfErrors gtk_install_error done
 
   upgrade_gtk:
     StrCpy $GTK_FOLDER $R6
-    IfSilent skip_mb
-    MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) IDNO done
-    skip_mb:
+    StrCmp $R0 "2" +2 ; Upgrade isn't optional
+    MessageBox MB_YESNO $(GTK_UPGRADE_PROMPT) /SD IDYES IDNO done
     ClearErrors
-    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT'
-    Goto gtk_install_cont
-
-  gtk_install_cont:
-    IfErrors gtk_install_error
-      StrCpy $R5 "1"  ; marker that says we installed...
-      Goto done
+    ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE /S /D=$GTK_FOLDER'
+    IfErrors gtk_install_error done
 
     gtk_install_error:
       Delete "$TEMP\gtk-runtime.exe"
-      IfSilent skip_mb1
-      MessageBox MB_OK $(GTK_INSTALL_ERROR) IDOK
-      skip_mb1:
+      MessageBox MB_OK $(GTK_INSTALL_ERROR) /SD IDOK
       Quit
 
   have_gtk:
@@ -424,7 +423,7 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     SetOutPath "$INSTDIR"
     ; Gaim files
     SetOverwrite on
-    File /r .\win32-install-dir\*.*
+    File /r ${GAIM_INSTALL_DIR}\*.*
     !ifdef DEBUG
     File "${GAIM_INSTALLER_DEPS}\exchndl.dll"
     !endif
@@ -437,19 +436,14 @@ Section $(GAIM_SECTION_TITLE) SecGaim
       SetOutPath "$INSTDIR"
     got_shfolder:
 
-    ; Check if Perl is installed, If not remove perl plugin
+    ; Check if Perl is installed, if so add it to the AppPaths
     ReadRegStr $R2 HKLM ${PERL_REG_KEY} ""
     StrCmp $R2 "" 0 perl_exists
       ReadRegStr $R2 HKCU ${PERL_REG_KEY} ""
-      StrCmp $R2 "" perl_remove perl_exists
-
-      perl_remove:
-        Delete "$INSTDIR\plugins\perl.dll"
-        RMDir /r "$INSTDIR\perlmod"
-        Goto perl_done
+      StrCmp $R2 "" perl_done perl_exists
 
       perl_exists:
-        IfFileExists "$R2\bin\${PERL_DLL}" 0 perl_remove
+        IfFileExists "$R2\bin\${PERL_DLL}" 0 perl_done
         StrCmp $R0 "HKLM" 0 perl_done
           ReadRegStr $R3 HKLM "${HKLM_APP_PATHS_KEY}" "Path"
           WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R3;$R2\bin"
@@ -472,9 +466,6 @@ Section $(GAIM_SECTION_TITLE) SecGaim
     StrCmp $R0 "NONE" done
     SetOverwrite off
 
-    ; Write out installer language
-    WriteRegStr HKCU "${GAIM_REG_KEY}" "${GAIM_REG_LANG}" "$LANGUAGE"
-
     ; write out uninstaller
     SetOverwrite on
     WriteUninstaller "$INSTDIR\${GAIM_UNINST_EXE}"
@@ -492,7 +483,7 @@ SectionEnd ; end of default Gaim section
 ;--------------------------------
 ;Shortcuts
 
-SubSection /e $(GAIM_SHORTCUTS_SECTION_TITLE) SecShortcuts
+SectionGroup /e $(GAIM_SHORTCUTS_SECTION_TITLE) SecShortcuts
   Section /o $(GAIM_DESKTOP_SHORTCUT_SECTION_TITLE) SecDesktopShortcut
     SetOverwrite on
     CreateShortCut "$DESKTOP\Gaim.lnk" "$INSTDIR\gaim.exe"
@@ -504,73 +495,37 @@ SubSection /e $(GAIM_SHORTCUTS_SECTION_TITLE) SecShortcuts
     CreateShortCut "$SMPROGRAMS\Gaim\Gaim.lnk" "$INSTDIR\gaim.exe"
     SetOverwrite off
   SectionEnd
-SubSectionEnd
+SectionGroupEnd
 
 ;--------------------------------
 ;GTK+ Themes
 
-SubSection /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
+SectionGroup /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
   Section /o $(GTK_NOTHEME_SECTION_TITLE) SecGtkNone
-    Call CanWeInstallATheme
-    Pop $R0
-    StrCmp $R0 "" done
-    SetOverwrite on
-    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    CopyFiles $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.plain $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc
-    SetOverwrite off
-    done:
+    Push "Raleigh"
+    Call WriteGtkThemeConfig
   SectionEnd
 
   Section $(GTK_WIMP_SECTION_TITLE) SecGtkWimp
-    Call CanWeInstallATheme
-    Pop $R0
-    StrCmp $R0 "" done
-    SetOverwrite on
-    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    SetOutPath $R0\${GTK_DEFAULT_THEME_ENGINE_DIR}
-    File ${GTK_THEME_DIR}\engines\libwimp.dll
-    SetOutPath $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}
-    File ${GTK_THEME_DIR}\themes\gtkrc.gtkwimp
-    File /oname=gtkrc ${GTK_THEME_DIR}\themes\gtkrc.gtkwimp
-    SetOverwrite off
-    done:
+    Push "MS-Windows"
+    Call WriteGtkThemeConfig
   SectionEnd
 
   Section /o $(GTK_BLUECURVE_SECTION_TITLE) SecGtkBluecurve
-    Call CanWeInstallATheme
-    Pop $R0
-    StrCmp $R0 "" done
-    SetOverwrite on
-    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    SetOutPath $R0\${GTK_DEFAULT_THEME_ENGINE_DIR}
-    File ${GTK_THEME_DIR}\engines\libbluecurve.dll
-    SetOutPath $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}
-    File ${GTK_THEME_DIR}\themes\gtkrc.bluecurve
-    File /oname=gtkrc ${GTK_THEME_DIR}\themes\gtkrc.bluecurve
-    SetOverwrite off
-    done:
+    Push "Bluecurve"
+    Call WriteGtkThemeConfig
   SectionEnd
 
   Section /o $(GTK_LIGHTHOUSEBLUE_SECTION_TITLE) SecGtkLighthouseblue
-    Call CanWeInstallATheme
-    Pop $R0
-    StrCmp $R0 "" done
-    SetOverwrite on
-    Rename $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}\gtkrc.old
-    SetOutPath $R0\${GTK_DEFAULT_THEME_ENGINE_DIR}
-    File ${GTK_THEME_DIR}\engines\liblighthouseblue.dll
-    SetOutPath $R0\${GTK_DEFAULT_THEME_GTKRC_DIR}
-    File ${GTK_THEME_DIR}\themes\gtkrc.lighthouseblue
-    File /oname=gtkrc ${GTK_THEME_DIR}\themes\gtkrc.lighthouseblue
-    SetOverwrite off
-    done:
+    Push "Lighthouseblue"
+    Call WriteGtkThemeConfig
   SectionEnd
-SubSectionEnd
+SectionGroupEnd
 
 ;--------------------------------
 ;Spell Checking
 
-SubSection /e $(GAIM_SPELLCHECK_SECTION_TITLE) SecSpellCheck
+SectionGroup /e $(GAIM_SPELLCHECK_SECTION_TITLE) SecSpellCheck
   Section /o $(GAIM_SPELLCHECK_BRETON) SecSpellCheckBreton
     Push ${SecSpellCheckBreton}
     Call InstallAspellAndDict
@@ -659,7 +614,7 @@ SubSection /e $(GAIM_SPELLCHECK_SECTION_TITLE) SecSpellCheck
     Push ${SecSpellCheckUkrainian}
     Call InstallAspellAndDict
   SectionEnd
-SubSectionEnd
+SectionGroupEnd
 
 ;--------------------------------
 ;Uninstaller Section
@@ -699,25 +654,34 @@ Section Uninstall
     RMDir /r "$INSTDIR\locale"
     RMDir /r "$INSTDIR\pixmaps"
     RMDir /r "$INSTDIR\perlmod"
-    Delete "$INSTDIR\plugins\docklet.dll"
+    Delete "$INSTDIR\plugins\autoaccept.dll"
+    Delete "$INSTDIR\plugins\autoreply.dll"
+    Delete "$INSTDIR\plugins\buddynote.dll"
+    Delete "$INSTDIR\plugins\convcolors.dll"
     Delete "$INSTDIR\plugins\extplacement.dll"
     Delete "$INSTDIR\plugins\gaimrc.dll"
     Delete "$INSTDIR\plugins\history.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
     Delete "$INSTDIR\plugins\idle.dll"
+    Delete "$INSTDIR\plugins\libaim.dll"
     Delete "$INSTDIR\plugins\libgg.dll"
+    Delete "$INSTDIR\plugins\libicq.dll"
     Delete "$INSTDIR\plugins\libirc.dll"
     Delete "$INSTDIR\plugins\libjabber.dll"
     Delete "$INSTDIR\plugins\libmsn.dll"
     Delete "$INSTDIR\plugins\libnapster.dll"
     Delete "$INSTDIR\plugins\libnovell.dll"
-    Delete "$INSTDIR\plugins\liboscar.dll"
+    Delete "$INSTDIR\plugins\libqq.dll"
     Delete "$INSTDIR\plugins\libsametime.dll"
     Delete "$INSTDIR\plugins\libsilc.dll"
     Delete "$INSTDIR\plugins\libsimple.dll"
     Delete "$INSTDIR\plugins\libtoc.dll"
     Delete "$INSTDIR\plugins\libyahoo.dll"
+    Delete "$INSTDIR\plugins\log_reader.dll"
+    Delete "$INSTDIR\plugins\markerline.dll"
+    Delete "$INSTDIR\plugins\newline.dll"
     Delete "$INSTDIR\plugins\notify.dll"
+    Delete "$INSTDIR\plugins\offlinemsg.dll"
     Delete "$INSTDIR\plugins\perl.dll"
     Delete "$INSTDIR\plugins\psychic.dll"
     Delete "$INSTDIR\plugins\relnot.dll"
@@ -739,10 +703,13 @@ Section Uninstall
     Delete "$INSTDIR\sounds\gaim\send.wav"
     RMDir "$INSTDIR\sounds\gaim"
     RMDir "$INSTDIR\sounds"
-    Delete "$INSTDIR\gaim.dll"
+    Delete "$INSTDIR\freebl3.dll"
     Delete "$INSTDIR\gaim.exe"
+    Delete "$INSTDIR\gtkgaim.dll"
     Delete "$INSTDIR\idletrack.dll"
+    Delete "$INSTDIR\libgaim.dll"
     Delete "$INSTDIR\libgtkspell.dll"
+    Delete "$INSTDIR\liboscar.dll"
     Delete "$INSTDIR\libmeanwhile-1.dll"
     Delete "$INSTDIR\libxml2.dll"
     Delete "$INSTDIR\nspr4.dll"
@@ -758,6 +725,7 @@ Section Uninstall
     !ifdef DEBUG
     Delete "$INSTDIR\exchndl.dll"
     !endif
+    Delete "$INSTDIR\install.log"
 
     ;Try to remove Gaim install dir .. if empty
     RMDir "$INSTDIR"
@@ -769,15 +737,11 @@ Section Uninstall
     Goto done
 
   cant_uninstall:
-    IfSilent skip_mb
-    MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_1) IDOK
-    skip_mb:
+    MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_1) /SD IDOK
     Quit
 
   no_rights:
-    IfSilent skip_mb1
-    MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_2) IDOK
-    skip_mb1:
+    MessageBox MB_OK $(un.GAIM_UNINSTALL_ERROR_2) /SD IDOK
     Quit
 
   done:
@@ -861,52 +825,40 @@ SectionEnd ; end of uninstall section
 ;--------------------------------
 ;Functions
 
-;
-; Usage:
-;
-; Call CanWeInstallATheme
-; Pop $R0
-;
-; Return:
-;   "" - If no
-;   "root path of GTK+ installation" - if yes
-;
-Function CanWeInstallATheme
-    Push $1
-    Push $0
+Function WriteGtkThemeConfig
+  Exch $0
+  Push $1
+  Push $2
+  Push $3
 
-    ; Set default.. no rights
-    StrCpy $1 ""
+  Call CheckUserInstallRights
+  Pop $2
+  StrCmp $2 "HKLM" 0 user_theme
 
-    Call CheckUserInstallRights
-    Pop $0
+  ; Global Theme
+  ClearErrors
+  ReadRegStr $2 HKLM ${GTK_REG_KEY} "Path"
+  IfErrors user_theme
+  StrCpy $3 "$2\etc\gtk-2.0\gtkrc"
+  Goto update_theme
+  user_theme:
+  StrCpy $3 "$PROFILE\.gtkrc-2.0"
 
-    ; If no rights check if gtk was installed to gaim dir..
-    StrCmp $0 "NONE" 0 themes_cont
-      StrCmp $GTK_FOLDER $INSTDIR 0 no_rights
-        StrCpy $1 $INSTDIR
-        Goto done
-    themes_cont:
+  update_theme:
+  IfFileExists $3 0 new_file
+  ${ConfigWriteS} $3 "gtk-theme-name =" " $\"$0$\"" $1
+  Goto done
 
-    StrCmp $0 "HKCU" hkcu hklm
+  new_file:
+  FileOpen $1 $3 w
+  FileWrite $1 "gtk-theme-name = $\"$0$\""
+  FileClose $1
 
-    hkcu:
-      ReadRegStr $1 HKCU ${GTK_REG_KEY} "Path"
-      StrCmp $1 "" no_rights done
-
-    hklm:
-      ReadRegStr $1 HKLM ${GTK_REG_KEY} "Path"
-      Goto done
-
-    no_rights:
-      IfSilent skip_mb
-      MessageBox MB_OK $(GTK_NO_THEME_INSTALL_RIGHTS) IDOK
-      skip_mb:
-      StrCpy $1 ""
-
-    done:
-      Pop $0
-      Exch $1
+  done:
+  Pop $3
+  Pop $2
+  Pop $1
+  Pop $0
 FunctionEnd
 
 !macro CheckUserInstallRightsMacro UN
@@ -961,9 +913,7 @@ Function VerifyDir
   Loop:
     IfFileExists $0 dir_exists
     StrCpy $1 $0 ; save last
-    Push $0
-    Call GetParent
-    Pop $0
+    ${GetParent} $0 $0
     StrLen $2 $0
     ; IfFileExists "C:" on xp returns true and on win2k returns false
     ; So we're done in such a case..
@@ -1020,87 +970,11 @@ Function .onVerifyInstDir
   Call VerifyDir
   Pop $0
   StrCmp $0 "0" 0 dir_good
-    Abort
+  Pop $0
+  Abort
 
   dir_good:
   Pop $0
-FunctionEnd
-
-; GetParent
-; input, top of stack  (e.g. C:\Program Files\Poop)
-; output, top of stack (replaces, with e.g. C:\Program Files)
-; modifies no other variables.
-;
-; Usage:
-;   Push "C:\Program Files\Directory\Whatever"
-;   Call GetParent
-;   Pop $R0
-;   ; at this point $R0 will equal "C:\Program Files\Directory"
-Function GetParent
-   Exch $0 ; old $0 is on top of stack
-   Push $1
-   Push $2
-   StrCpy $1 -1
-   loop:
-     StrCpy $2 $0 1 $1
-     StrCmp $2 "" exit
-     StrCmp $2 "\" exit
-     IntOp $1 $1 - 1
-   Goto loop
-   exit:
-     StrCpy $0 $0 $1
-     Pop $2
-     Pop $1
-     Exch $0 ; put $0 on top of stack, restore $0 to original value
-FunctionEnd
-
-
-; CheckGtkVersion
-; inputs: Push 2 GTK+ version strings to check. The major value needs to
-; be equal and the minor value needs to be greater or equal.
-;
-; Usage:
-;   Push "2.1.0"  ; Reference version
-;   Push "2.2.1"  ; Version to check
-;   Call CheckGtkVersion
-;   Pop $R0
-;   $R0 will now equal "1", because 2.2 is greater than 2.1
-;
-Function CheckGtkVersion
-  ; Version we want to check
-  Exch $R0
-  Exch
-  ; Reference version
-  Exch $R1
-  Push $R2
-  Push $R3
-
-  ; Check that the string to check is at least 5 chars long (i.e. x.x.x)
-  StrLen $R2 $R0
-  IntCmp $R2 5 0 bad_version
-
-  ; Major version check
-  StrCpy $R2 $R0 1
-  StrCpy $R3 $R1 1
-  IntCmp $R2 $R3 check_minor bad_version bad_version
-
-  check_minor:
-    StrCpy $R2 $R0 1 2
-    StrCpy $R3 $R1 1 2
-    IntCmp $R2 $R3 good_version bad_version good_version
-
-  bad_version:
-    StrCpy $R0 "0"
-    Goto done
-
-  good_version:
-    StrCpy $R0 "1"
-
-  done:
-    Pop $R3
-    Pop $R2
-    Pop $R1
-    Exch $R0
 FunctionEnd
 
 ;
@@ -1109,9 +983,11 @@ FunctionEnd
 ; First Pop:
 ;   0 - We have the correct version
 ;       Second Pop: Key where Version was found
-;   1 - We have an old version that needs to be upgraded
+;   1 - We have an old version that should work, prompt user for optional upgrade
 ;       Second Pop: HKLM or HKCU depending on where GTK was found.
-;   2 - We don't have Gtk+ at all
+;   2 - We have an old version that needs to be upgraded
+;       Second Pop: HKLM or HKCU depending on where GTK was found.
+;   3 - We don't have Gtk+ at all
 ;       Second Pop: "NONE, HKLM or HKCU" depending on our rights..
 ;
 Function DoWeNeedGtk
@@ -1128,77 +1004,70 @@ Function DoWeNeedGtk
   ;   - If no rights
   ;     - Check HKLM
   Push $0
+  Push $1
   Push $2
   Push $3
-  Push $4
-  Push $5
 
   Call CheckUserInstallRights
-  Pop $3
-  StrCmp $3 "HKLM" check_hklm
-  StrCmp $3 "HKCU" check_hkcu check_hklm
+  Pop $1
+  StrCmp $1 "HKLM" check_hklm
+  StrCmp $1 "HKCU" check_hkcu check_hklm
     check_hkcu:
       ReadRegStr $0 HKCU ${GTK_REG_KEY} "Version"
-      StrCpy $5 "HKCU"
+      StrCpy $2 "HKCU"
       StrCmp $0 "" check_hklm have_gtk
 
     check_hklm:
       ReadRegStr $0 HKLM ${GTK_REG_KEY} "Version"
-      StrCpy $5 "HKLM"
+      StrCpy $2 "HKLM"
       StrCmp $0 "" no_gtk have_gtk
-
 
   have_gtk:
     ; GTK+ is already installed.. check version.
-    Push ${GTK_VERSION} ; Minimum GTK+ version needed
-    Push $0
-    Call CheckGtkVersion
-    Pop $2
-    StrCmp $2 "1" good_version bad_version
-    bad_version:
-      ; Bad version. If hklm ver and we have hkcu or no rights.. return no gtk
-      StrCmp $3 "NONE" no_gtk  ; if no rights.. can't upgrade
-      StrCmp $3 "HKCU" 0 upgrade_gtk ; if HKLM can upgrade..
-        StrCmp $5 "HKLM" no_gtk upgrade_gtk ; have hkcu rights.. if found hklm ver can't upgrade..
+    ${VersionCompare} ${GTK_INSTALL_VERSION} $0 $3
+    IntCmp $3 1 +1 good_version good_version
+    ${VersionCompare} ${GTK_MIN_VERSION} $0 $3
 
-      upgrade_gtk:
-        StrCpy $2 "1"
-        Push $5
-        Push $2
-        Goto done
+      ; Bad version. If hklm ver and we have hkcu or no rights.. return no gtk
+      StrCmp $1 "NONE" no_gtk ; if no rights.. can't upgrade
+      StrCmp $1 "HKCU" 0 +2   ; if HKLM can upgrade..
+      StrCmp $2 "HKLM" no_gtk ; have hkcu rights.. if found hklm ver can't upgrade..
+      Push $2
+    IntCmp $3 1 +3
+      Push "1" ; Optional Upgrade
+      Goto done
+      Push "2" ; Mandatory Upgrade
+      Goto done
 
   good_version:
-    StrCmp $5 "HKLM" have_hklm_gtk have_hkcu_gtk
+    StrCmp $2 "HKLM" have_hklm_gtk have_hkcu_gtk
       have_hkcu_gtk:
         ; Have HKCU version
-        ReadRegStr $4 HKCU ${GTK_REG_KEY} "Path"
+        ReadRegStr $0 HKCU ${GTK_REG_KEY} "Path"
         Goto good_version_cont
 
       have_hklm_gtk:
-        ReadRegStr $4 HKLM ${GTK_REG_KEY} "Path"
+        ReadRegStr $0 HKLM ${GTK_REG_KEY} "Path"
         Goto good_version_cont
 
     good_version_cont:
-      StrCpy $2 "0"
-      Push $4  ; The path to existing GTK+
-      Push $2
+      Push $0  ; The path to existing GTK+
+      Push "0"
       Goto done
 
   no_gtk:
-    StrCpy $2 "2"
-    Push $3 ; our rights
-    Push $2
+    Push $1 ; our rights
+    Push "3"
     Goto done
 
   done:
   ; The top two items on the stack are what we want to return
-  Exch 5
+  Exch 4 
   Pop $0
-  Exch 5
-  Pop $2
-  Pop $5
-  Pop $4
+  Exch 4
   Pop $3
+  Pop $2
+  Pop $1
 FunctionEnd
 
 
@@ -1207,7 +1076,7 @@ Function ${UN}RunCheck
   Push $R0
   System::Call 'kernel32::OpenMutex(i 2031617, b 0, t "gaim_is_running") i .R0'
   IntCmp $R0 0 done
-  MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) IDOK
+    MessageBox MB_OK|MB_ICONEXCLAMATION $(GAIM_IS_RUNNING) /SD IDOK
     Abort
   done:
   Pop $R0
@@ -1221,7 +1090,7 @@ Function .onInit
   System::Call 'kernel32::CreateMutexA(i 0, i 0, t "gaim_installer_running") i .r1 ?e'
   Pop $R0
   StrCmp $R0 0 +3
-    MessageBox MB_OK|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING)
+    MessageBox MB_OK|MB_ICONEXCLAMATION $(INSTALLER_IS_RUNNING) /SD IDOK
     Abort
   Call RunCheck
   StrCpy $name "Gaim ${GAIM_VERSION}"
@@ -1245,10 +1114,14 @@ Function .onInit
       StrCpy $ISSILENT "/S"
   set_gtk_normal:
 
-  Call ParseParameters
+  ${GetParameters} $R0
+  ClearErrors
+  ${GetOptions} $R0 "/L=" $R0
+  IfErrors +3
+  StrCpy $LANGUAGE $R0
+  Goto skip_lang
 
   ; Select Language
-  IntCmp $LANG_IS_SET 1 skip_lang
     ; Display Language selection dialog
     !insertmacro MUI_LANGDLL_DISPLAY
     skip_lang:
@@ -1261,6 +1134,7 @@ Function .onInit
   ReadRegStr $INSTDIR HKCU "${GAIM_REG_KEY}" ""
   IfErrors +2
   StrCmp $INSTDIR "" 0 instdir_done
+  ClearErrors
   ReadRegStr $INSTDIR HKLM "${GAIM_REG_KEY}" ""
   IfErrors +2
   StrCmp $INSTDIR "" 0 instdir_done
@@ -1273,9 +1147,8 @@ Function .onInit
     Goto instdir_done
   user_dir:
     Push $SMPROGRAMS
-    Call GetParent
-    Call GetParent
-    Pop $R2
+    ${GetParent} $SMPROGRAMS $R2
+    ${GetParent} $R2 $R2
     StrCpy $INSTDIR "$R2\Gaim"
 
   instdir_done:
@@ -1286,8 +1159,8 @@ Function un.onInit
   Call un.RunCheck
   StrCpy $name "Gaim ${GAIM_VERSION}"
 
-  ; Get stored language prefrence
-  ReadRegStr $LANGUAGE HKCU ${GAIM_REG_KEY} "${GAIM_REG_LANG}"
+  ; Get stored language preference
+  !insertmacro MUI_UNGETLANGUAGE
 
 FunctionEnd
 
@@ -1322,7 +1195,7 @@ Function .onSelChange
   Push $1
   Push $2
 
-  !insertmacro StartRadioButtons $GTK_THEME_SEL
+  !insertmacro StartRadioButtonsUnselectable $GTK_THEME_SEL
     !insertmacro RadioButton ${SecGtkNone}
     !insertmacro RadioButton ${SecGtkWimp}
     !insertmacro RadioButton ${SecGtkBluecurve}
@@ -1361,26 +1234,56 @@ FunctionEnd
 
 ; Page enter and exit functions..
 
-!ifndef WITH_GTK
 Function preWelcomePage
+  Push R0
+
+!ifndef WITH_GTK
   ; If this installer dosn't have GTK, check whether we need it.
   ; We do this here an not in .onInit because language change in
   ; .onInit doesn't take effect until it is finished.
-    Push $R0
+  Call DoWeNeedGtk
+  Pop $R0
+  Pop $GTK_FOLDER
+
+  IntCmp $R0 1 done done
+  MessageBox MB_OK $(GTK_INSTALLER_NEEDED) /SD IDOK
+  Quit
+
+  done:
+
+!else
+  Push R1
+
+  ; If on Win95/98/ME warn them that the GTK+ version wont work
+  Call GetWindowsVersion
+  Pop $R1
+  StrCmp $R1 "95" win_ver_bad
+  StrCmp $R1 "98" win_ver_bad
+  StrCmp $R1 "ME" win_ver_bad
+  Goto done
+
+  win_ver_bad:
+    !insertmacro UnselectSection ${SecGtk}
+    !insertmacro SetSectionFlag ${SecGtkNone} ${SF_RO}
+    !insertmacro UnselectSection ${SecGtkNone}
+    !insertmacro SetSectionFlag ${SecGtkWimp} ${SF_RO}
+    !insertmacro UnselectSection ${SecGtkWimp}
+    !insertmacro SetSectionFlag ${SecGtkBluecurve} ${SF_RO}
+    !insertmacro UnselectSection ${SecGtkBluecurve}
+    !insertmacro SetSectionFlag ${SecGtkLighthouseblue} ${SF_RO}
+    !insertmacro UnselectSection ${SecGtkLighthouseblue}
+    MessageBox MB_OK $(GTK_WINDOWS_INCOMPATIBLE) /SD IDOK
     Call DoWeNeedGtk
     Pop $R0
-    Pop $GTK_FOLDER
+    Pop $R1
+    IntCmp $R0 1 done done ; Upgrade isn't optional - abort if we don't have a suitable version
+    Quit
 
-    StrCmp $R0 "0" have_gtk need_gtk
-    need_gtk:
-      IfSilent skip_mb
-      MessageBox MB_OK $(GTK_INSTALLER_NEEDED) IDOK
-      skip_mb:
-      Quit
-    have_gtk:
-    Pop $R0
-FunctionEnd
+  done:
+  Pop $R1
 !endif
+  Pop $R0
+FunctionEnd
 
 !ifdef WITH_GTK
 Function preGtkDirPage
@@ -1390,34 +1293,32 @@ Function preGtkDirPage
   Pop $R0
   Pop $R1
 
-  StrCmp $R0 "0" have_gtk
-  StrCmp $R0 "1" upgrade_gtk
-  StrCmp $R0 "2" no_gtk no_gtk
+  IntCmp $R0 2 +2 +2 no_gtk
+  StrCmp $R0 "3" no_gtk no_gtk
 
   ; Don't show dir selector.. Upgrades are done to existing path..
-  have_gtk:
-  upgrade_gtk:
-    Abort
+  Pop $R1
+  Pop $R0
+  Abort
 
   no_gtk:
     StrCmp $R1 "NONE" 0 no_gtk_cont
       ; Got no install rights..
+      Pop $R1
+      Pop $R0
       Abort
     no_gtk_cont:
       ; Suggest path..
       StrCmp $R1 "HKCU" 0 hklm1
-        StrCpy $R0 "$SMPROGRAMS"
-        Push $R0
-        Call GetParent
-        Call GetParent
-        Pop $R0
+        ${GetParent} $SMPROGRAMS $R0
+        ${GetParent} $R0 $R0
         StrCpy $R0 "$R0\GTK\2.0"
         Goto got_path
       hklm1:
         StrCpy $R0 "${GTK_DEFAULT_INSTALL_PATH}"
 
    got_path:
-     StrCpy $name "GTK+ ${GTK_VERSION}"
+     StrCpy $name "GTK+ ${GTK_INSTALL_VERSION}"
      StrCpy $GTK_FOLDER $R0
      Pop $R1
      Pop $R0
@@ -1430,120 +1331,13 @@ Function postGtkDirPage
   Call VerifyDir
   Pop $R0
   StrCmp $R0 "0" 0 done
-    IfSilent skip_mb
-    MessageBox MB_OK $(GTK_BAD_INSTALL_PATH) IDOK
-    skip_mb:
+    MessageBox MB_OK $(GTK_BAD_INSTALL_PATH) /SD IDOK
+    Pop $R0
     Abort
   done:
   Pop $R0
 FunctionEnd
 !endif
-
-; GetParameters
-; input, none
-; output, top of stack (replaces, with e.g. whatever)
-; modifies no other variables.
-Function GetParameters
-
-   Push $R0
-   Push $R1
-   Push $R2
-   Push $R3
-
-   StrCpy $R2 1
-   StrLen $R3 $CMDLINE
-
-   ;Check for quote or space
-   StrCpy $R0 $CMDLINE $R2
-   StrCmp $R0 '"' 0 +3
-     StrCpy $R1 '"'
-     Goto loop
-   StrCpy $R1 " "
-
-   loop:
-     IntOp $R2 $R2 + 1
-     StrCpy $R0 $CMDLINE 1 $R2
-     StrCmp $R0 $R1 get
-     StrCmp $R2 $R3 get
-     Goto loop
-
-   get:
-     IntOp $R2 $R2 + 1
-     StrCpy $R0 $CMDLINE 1 $R2
-     StrCmp $R0 " " get
-     StrCpy $R0 $CMDLINE "" $R2
-
-   Pop $R3
-   Pop $R2
-   Pop $R1
-   Exch $R0
-
-FunctionEnd
-
- ; StrStr
- ; input, top of stack = string to search for
- ;        top of stack-1 = string to search in
- ; output, top of stack (replaces with the portion of the string remaining)
- ; modifies no other variables.
- ;
- ; Usage:
- ;   Push "this is a long ass string"
- ;   Push "ass"
- ;   Call StrStr
- ;   Pop $R0
- ;  ($R0 at this point is "ass string")
-
-Function StrStr
-   Exch $R1 ; st=haystack,old$R1, $R1=needle
-   Exch    ; st=old$R1,haystack
-   Exch $R2 ; st=old$R1,old$R2, $R2=haystack
-   Push $R3
-   Push $R4
-   Push $R5
-   StrLen $R3 $R1
-   StrCpy $R4 0
-   ; $R1=needle
-   ; $R2=haystack
-   ; $R3=len(needle)
-   ; $R4=cnt
-   ; $R5=tmp
-   loop:
-     StrCpy $R5 $R2 $R3 $R4
-     StrCmp $R5 $R1 done
-     StrCmp $R5 "" done
-     IntOp $R4 $R4 + 1
-     Goto loop
-   done:
-   StrCpy $R1 $R2 "" $R4
-   Pop $R5
-   Pop $R4
-   Pop $R3
-   Pop $R2
-   Exch $R1
-FunctionEnd
-
-;
-; Parse the Command line
-;
-; Unattended install command line parameters
-; /L=Language e.g.: /L=1033
-;
-Function ParseParameters
-  Push $R0
-  IntOp $LANG_IS_SET 0 + 0
-  Call GetParameters
-  ;Pop $R0
-  ;Push $R0
-  Push "L="
-  Call StrStr
-  Pop $R0
-  StrCmp $R0 "" next
-  StrCpy $R0 $R0 4 2 ; Strip first 2 chars of string
-  StrCpy $LANGUAGE $R0
-  IntOp $LANG_IS_SET 0 + 1
-  next:
-  Pop $R0
-FunctionEnd
 
 ; GetWindowsVersion
 ;
@@ -1552,7 +1346,7 @@ FunctionEnd
 ;
 ; Returns on top of stack
 ;
-; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003)
+; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003, Vista)
 ; or
 ; '' (Unknown Windows Version)
 ;
@@ -1606,7 +1400,8 @@ Function GetWindowsVersion
 
     StrCmp $R1 '5.0' lbl_winnt_2000
     StrCmp $R1 '5.1' lbl_winnt_XP
-    StrCmp $R1 '5.2' lbl_winnt_2003 lbl_error
+    StrCmp $R1 '5.2' lbl_winnt_2003
+    StrCmp $R1 '6.0' lbl_winnt_vista lbl_error
 
   lbl_winnt_x:
     StrCpy $R0 "NT $R0" 6
@@ -1622,6 +1417,10 @@ Function GetWindowsVersion
 
   lbl_winnt_2003:
     Strcpy $R0 '2003'
+  Goto lbl_done
+
+  lbl_winnt_vista:
+    Strcpy $R0 'Vista'
   Goto lbl_done
 
   lbl_error:
@@ -1766,7 +1565,7 @@ Function InstallAspellAndDict
     Pop $R1
     StrCmp $R1 "" +3
     StrCmp $R1 "cancel" done
-    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_ERROR) : $R1" IDRETRY retry IDCANCEL done
+    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_ERROR) : $R1" /SD IDCANCEL IDRETRY retry IDCANCEL done
 
   retry_dict:
     Push $R0
@@ -1774,7 +1573,7 @@ Function InstallAspellAndDict
     Pop $R1
     StrCmp $R1 "" +3
     StrCmp $R1 "cancel" done
-    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_DICT_ERROR) : $R1" IDRETRY retry_dict
+    MessageBox MB_RETRYCANCEL "$(GAIM_SPELLCHECK_DICT_ERROR) : $R1" /SD IDCANCEL IDRETRY retry_dict
 
   done:
 

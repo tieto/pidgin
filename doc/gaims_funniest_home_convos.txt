@@ -360,3 +360,82 @@ considered ambiguous.  Why use a large word when a dimunitve one will suffice?
                  gaim becomes a text terminal
       [time passes ...]
 21:38 <An_Idiot>  I'm terribly conservative when it comes to security
+
+19:47 <someusr> hey
+19:48 <someusr> how do i set aim to block all users except those on my
+                buddy list?
+19:48 <someusr> don't tell me i have to log in with the regular AIM :(
+19:48 <Paco-Paco> I wouldn't tell you that, because it's wrong
+19:48 <Paco-Paco> how about you look in privacy
+19:49 <someusr> where?
+19:49 <someusr> i can't find it
+19:49 <SimGuy> in Privacy
+19:49 <someusr> OH!
+19:49 <someusr> haha
+19:49 <someusr> thanks!
+
+14:12 <colorshape> Is it possible for me to see my friends webcam via
+                   msn in gaim?
+14:12 <Paco-Paco> no
+14:13 <colorshape> not voice either then i guess?
+14:13 <Paco-Paco> correct
+14:13 <colorshape> ok, then not much to do.
+14:13 <Err> there's always seppuku
+14:14 <Paco-Paco> so true
+14:14 <colorshape> ok, is that another client?
+14:14 <Err> something like that
+
+(17:44:15) elb: what's that one song that's always played at weddings that's not the processional or recessional
+(17:44:37) tehfox: bridal choral or something?
+(17:45:04) seanegan: elb: The Chicken Dance
+(17:45:12) elb: seanegan: oh that's the one
+(17:45:34) ***LSchiere boggles
+(17:45:56) elb: it's the one that goes
+(17:46:31) elb: dunnn dunnnn dunnnnn dunnnn dunnn DUUNN duun DUUUNNN, dun da-da-di da-da-di da-da-da-di-di-di dunn da-da-di dun-da-di-di-diii-di
+(17:49:13) seanegan: Pachelbel's canon?
+(17:49:18) elb: seanegan: YES
+(17:49:25) seanegan: hell yeah!
+(17:49:25) elb: awesome, thanks
+(17:49:28) elb: Kanon in D
+
+edited for brevity, and name changed.
+(13:51:31) l33t_h4x0r: Is there such thing as a gaim ip sniffer for linux?
+(13:51:40) LSchiere: no
+(13:51:46) l33t_h4x0r: You sure?
+(13:51:50) LSchiere: though if there were, I'd still say no
+(13:51:55) l33t_h4x0r: Why?
+(13:52:00) LSchiere: since there's no good reason to be looking for one
+(13:55:12) l33t_h4x0r: Is...this a sensitive subject?
+(13:55:29) seanegan: l33t_h4x0r: not as sensitive as someone's IP address, apparently.
+(13:55:31) Err: no, "needing" to know what someone's IP is without asking them is totally sane, rational, and socially normal
+(13:55:42) l33t_h4x0r: I want to use it for destruive purposes?
+(13:55:50) l33t_h4x0r: Morally wrong.
+(13:56:01) l33t_h4x0r: I'll admit, but a valid reason.
+(13:57:04) l33t_h4x0r: Asking someone would give away my position...
+(13:57:33) l33t_h4x0r: Arlight, nevermind.
+(13:57:36) l33t_h4x0r left the room ("Leaving").
+(13:58:58) LSchiere: *amused* that's the first time in a while that the requester has *agreed* that there is no legit reason to want the feature
+(13:59:19) Err: he was not the sharpest knife in the drawer
+
+14:57 <itchypants> [blah blah blah simple question]
+      [other traffic]
+14:57 <itchypants> [retransmit simple question]
+14:59 <seanegan> itchypants: you need to chill the hell out
+14:59 <itchypants> seanegan, ah okay thanks
+15:00 <seanegan> no problem
+
+(15:57:11) sadrul: the files (at least a couple) in the tar.bz2 are different
+(15:57:23) datallah: right.. that is the problem - the code in svn is fine
+(15:57:31) seanegan: oh, what the hell?
+(15:57:41) seanegan: don't tell me I make dist'ed the wrong tree
+(15:57:46) LSchiere: how does the code in svn differ except in gaim's
+funniest and the spec.in?
+(15:57:50) LSchiere: seanegan: sounds like it
+(15:57:53) datallah: you are such a screw up!
+(15:58:12) seanegan: I sure am
+(15:58:32) seanegan: Ugh!
+(15:58:37) datallah: you must have been distracted by um... plugins
+(15:58:45) seanegan: Don't I test these things?
+(15:58:51) LSchiere: you test things?
+(15:59:06) SimGuy: seanegan: by experience, I think we've determined you do
+not :)

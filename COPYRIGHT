@@ -1,29 +1,36 @@
 Gaim
-Copyright (C) 1998-2005 by the following:
+Copyright (C) 1998-2006 by the following:
 
 If you have contributed to Gaim, you deserve to be on this list.
 Contact us (see: AUTHORS) and we'll add you.
 
+Saleem Abdulrasool
 Dave Ahlswede
 Manuel Amador
 Matt Amato
+Geoffrey Antos
 Daniel Atallah
 Paul Aurich
 Patrick Aussems
 Anibal Avelar
+Ali Albazaz
 Alex Badea
 John Bailey
 Chris Banal
 Luca Barbato
 Levi Bard
+Ryan Barrett
 Kevin Barry
+Lukas Barth
 Derek Battams
 Martin Bayard
 Curtis Beattie
 Dave Bell
 Igor Belyi
 Brian Bernas
+Paul Betts
 Jonas Birmé
+George-Cristian Bîrzan
 Eric Blade
 Ethan Blanton
 Joshua Blanton
@@ -39,16 +46,21 @@ Chris Boyle
 Derrick J Brashear
 Matt Brenneke
 Jeremy Brooks
+Jonathan Brossard
 Philip Brown
 Sean Burke
 Thomas Butter
+Trevor Caira
 Andrea Canciani
+Damien Carbery
 Michael Carlson
+Keegan Carruthers-Smith
 Steve Cavilia
 Julien Cegarra
 Cerulean Studios, LLC
 Jonathan Champ
 Christophe Chapuis
+Patrick Cheung
 Ka-Hing Cheung
 Sadrul Habib Chowdhury
 Brian Chu
@@ -59,6 +71,8 @@ Joe Clarke
 Eoin Coffey
 Jason Cohen
 Todd Cohen
+Jono Cole
+Lorenzo Colitti
 Nathan Conrad
 Felipe Contreras
 Alex Converse
@@ -70,6 +84,7 @@ Jeramey Crawford
 Michael Culbertson
 Martijn Dekker
 Philip Derrin
+Taso N. Devetzis
 Balwinder Singh Dheeman
 Andrew Dieffenbach
 Finlay Dobbie
@@ -85,6 +100,7 @@ Sean Egan <seanegan@gmail.com>
 Nelson Elhage
 Ignacio J. Elia
 Brian Enigma
+Mattias Eriksson
 Stefan Esser
 Steffen Eschenbacher
 Marc Etcheverry
@@ -92,6 +108,7 @@ Larry Ewing
 Gábor Farkas
 Jesse Farmer
 Gavan Fantom (gavan)
+Leonardo Fernandes
 David Fiander
 Rob Flynn <gaim@robflynn.com>
 Rob Foehl (rwf)
@@ -104,11 +121,14 @@ Francesco Fracassi
 Adam Fritzler
 Max G.
 François Gagné
+Andrew Gaul
 Evgueni V. Gavrilov
 Ignacy Gawedzki
+Georgi Georgiev
 Ike Gingerich
 Gustavo Giráldez
 Richard Gobeille
+Ian Goldberg
 Michael Golden
 Charlie Gordon
 Ryan C. Gordon
@@ -125,6 +145,8 @@ Nick Hebner
 Mike Heffner
 Benjamin Herrenschmidt
 Fernando Herrera
+hjheins
+Hil
 Casey Ho
 Iain Holmes
 Joshua Honeycutt
@@ -137,14 +159,20 @@ Karsten Huneycutt
 Kevin Hunter
 Rian Hunter
 Thomas Huriaux
+Vitaliy Ischenko
+Scott Jackson
 Hans Petter Jansson
 Henry Jen
 Benjamin Kahn
+Anders Kaseorg
 Praveen Karadakal
 John Kelm
+Jochen Kemnade
 Akuke Kok
+Konstantin Korikov
 Cole Kowalski
 Gary Kramlich
+Jan Kratochvil
 Andrej Krivulčík
 Patrik Kullman
 Tuomas Kuosmanen
@@ -169,6 +197,7 @@ Norberto Lopes
 Uli Luckas
 Matthew Luckie
 Mike Lundy
+Jason Lynch
 Lucio Maciel
 Brian Macke
 Paolo Maggi
@@ -183,17 +212,20 @@ Kurt McKee
 Torrey McMahon
 Robert McQueen
 Robert Mibus
+Lars T. Mikkelsen
 Benjamin Miller
 Kevin Miller
 Paul Miller
 Arkadiusz Miskiewicz
 Andrew Molloy
+Benjamin Moody
 Tim Mooney
 Sergio Moretto
 Christian Muise
 Richard Nelson
 Dennis Nezic
 Matthew A. Nicholson
+Henning Norén
 Szilard Novaki
 Novell
 Padraig O'Briain
@@ -211,23 +243,27 @@ Riley Patterson
 Havoc Pennington
 Ted Percival
 Eduardo Pérez
+Celso Pinto
 Joao Luís Marques Pinto
 Aleksander Piotrowski
 Julien Pivotto
 Ari Pollak
 Robey Pointer
+Stephen Pope
 Nathan Poznick
 Jory A. Pratt
 Brent Priddy
 Federicco Mena Quintero
 Yosef Radchenko
 David Raeman
+R. Ramkumar
 Mart Raudsepp
 Etan Reisner
 Kristian Rietveld
 Pekka Riikonen
 Tim Ringenbach
 Dennis Ristuccia
+Lee Roach
 Rhett Robinson
 Luciano Miguel Ferreira Rocha
 Andrew Rodland
@@ -243,10 +279,12 @@ Laurent Sansonetti
 Andrew Sayman
 Alceste Scalas
 Carsten Schaar
+Matteo Settenvini
 Colin Seymour
 Luke Schierer
 Ralph Schmieder
 David Schmitt
+Mark Schneider
 Evan Schoenberg
 Federico Schwindt
 Torrey Searle
@@ -260,6 +298,7 @@ Ettore Simone
 John Silvestri
 Craig Slusher
 Alex Smith
+Brad Smith
 Malcolm Smith
 David Smock
 Phil Snowberger
@@ -267,6 +306,7 @@ Eddie Sohn (tr1sk)
 Sony Computer Entertainment America, Inc.
 Mark Spencer
 Lex Spoon
+Chris Stafford
 Kevin Stange
 Richard Stellingwerff
 Charlie Stockman
@@ -293,6 +333,7 @@ Todd Troxell
 Brad Turcotte
 Junichi Uekawa
 István Váradi
+Martijn van Beers
 Philip Van Hoof
 Kristof Vansant
 James Vega
@@ -302,8 +343,11 @@ Bjoern Voigt
 Wan Hing Wah
 Philip Walford
 Nathan Walp
+Jonty Wareing
 Eric Warmenhoven
 Adam J. Warrington
+Denis Washington
+Zsombor Welker
 Andrew Wellington
 Adam Wendt
 Dave West
@@ -313,6 +357,7 @@ Simon Wilkinson
 Dan Willemsen
 Jason Willis
 Matt Wilson
+Dan Winship
 Scott Wolchok
 Pui Lam Wong
 Justin Wood

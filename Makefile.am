@@ -1,33 +1,28 @@
 EXTRA_DIST = \
 		COPYRIGHT \
+		ChangeLog.API \
+		ChangeLog.win32 \
 		Doxyfile.in \
+		HACKING \
+		Makefile.mingw \
+		PLUGIN_HOWTO \
+		PROGRAMMING_NOTES \
+		README.SVN \
+		README.dbus \
+		README.mingw \
 		gaim.pc.in \
 		gaim.spec.in \
 		gaim.apspec.in \
 		gaim.desktop.in \
 		gaim.service.in \
 		gaim-installer.nsi \
-		HACKING \
 		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in \
-		PROGRAMMING_NOTES \
-		ChangeLog.win32 \
 		config.h.mingw \
-		Makefile.mingw \
-		README.mingw \
-		VERSION \
-		VERSION.in \
-		plugins/win32/transparency/Makefile.mingw \
-		plugins/win32/transparency/win2ktrans.c \
-		plugins/win32/winprefs/gtkappbar.c \
-		plugins/win32/winprefs/gtkappbar.h \
-		plugins/win32/winprefs/Makefile.mingw \
-		plugins/win32/winprefs/winprefs.c \
 		po/Makefile.mingw
 
-gaimincludedir=$(includedir)/gaim
-gaiminclude_HEADERS = config.h
+noinst_HEADERS = config.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gaim.pc
@@ -39,16 +34,25 @@ endif
 
 dist-hook: gaim.spec
 	cp gaim.spec $(distdir)
+	rm $(distdir)/config.h
 
-distcheck-hook: plugins/perl/common/Gaim.pm
-#	cp plugins/perl/common/Gaim.pm $(distdir)/plugins/perl/common
+distcheck-hook: libgaim/plugins/perl/common/Gaim.pm gtk/plugins/perl/common/GtkUI.pm
+#	cp libgaim/plugins/perl/common/Gaim.pm $(distdir)/libgaim/plugins/perl/common
 
 appsdir = $(datadir)/applications
 apps_in_files = gaim.desktop.in
 apps_DATA = $(apps_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
-SUBDIRS = doc m4macros pixmaps plugins po sounds src
+if ENABLE_GTK
+GTK_DIR=gtk
+endif
+
+if ENABLE_GNT
+GNT_DIR=console
+endif
+
+SUBDIRS = libgaim doc $(GNT_DIR) $(GTK_DIR) m4macros po
 
 docs: Doxyfile
 if HAVE_DOXYGEN
@@ -65,3 +69,5 @@ endif
 distuninstallcheck_listfiles = \
 	find . -type f -print | grep -v perl | grep -v Gaim.3pm
 
+DISTCLEANFILES= gaim.desktop libgaim/gconf/gaim.schemas intltool-extract \
+			intltool-merge intltool-update

@@ -1,0 +1,27 @@
+0045: IN PROGRESS
+	Multi-User Chat
+0047: IN PROGRESS
+	In-Band Bytestreams
+0060: NEED
+	Pub-Sub
+0071: AWAITING FINAL SPEC
+	XHTML-IM
+0073: NEED
+	Basic IM Protocol Suite
+0080: NEED (Do we?)
+	Geographic Location Information
+0084: NEED
+	User Avatars in Jabber
+0085: NEED
+	Chat State Notifications
+0089: WATCH
+	Generic Alerts
+0093: NEED
+	Roster Item Exchange
+0100: NEED
+	Gateway Interaction (Transports)
+0115: WATCH
+	Client Capabilities
+0117: NEED
+	Intermediate IM Protocol Suite
+

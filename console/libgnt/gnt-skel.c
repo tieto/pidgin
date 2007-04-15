@@ -1,4 +1,4 @@
-#include "gn-skel.h"
+#include "gnt-skel.h"
 
 enum
 {
@@ -11,7 +11,7 @@ static guint signals[SIGS] = { 0 };
 static void
 gnt_skel_draw(GntWidget *widget)
 {
-	DEBUG;
+	GNTDEBUG;
 }
 
 static void
@@ -24,7 +24,7 @@ gnt_skel_map(GntWidget *widget)
 {
 	if (widget->priv.width == 0 || widget->priv.height == 0)
 		gnt_widget_size_request(widget);
-	DEBUG;
+	GNTDEBUG;
 }
 
 static gboolean
@@ -34,23 +34,36 @@ gnt_skel_key_pressed(GntWidget *widget, const char *text)
 }
 
 static void
-gnt_skel_class_init(GntWidgetClass *klass)
+gnt_skel_destroy(GntWidget *widget)
+{
+}
+
+static void
+gnt_skel_class_init(GntSkelClass *klass)
 {
 	GObjectClass *obj_class = G_OBJECT_CLASS(klass);
 
 	parent_class = GNT_WIDGET_CLASS(klass);
+	parent_class->destroy = gnt_skel_destroy;
 	parent_class->draw = gnt_skel_draw;
 	parent_class->map = gnt_skel_map;
 	parent_class->size_request = gnt_skel_size_request;
 	parent_class->key_pressed = gnt_skel_key_pressed;
 
-	DEBUG;
+	parent_class->actions = g_hash_table_duplicate(parent_class->actions, g_str_hash,
+				g_str_equal, NULL, (GDestroyNotify)gnt_widget_action_free);
+	parent_class->bindings = g_hash_table_duplicate(parent_class->bindings, g_str_hash,
+				g_str_equal, NULL, (GDestroyNotify)gnt_widget_action_param_free);
+
+	gnt_widget_actions_read(G_OBJECT_CLASS_TYPE(klass), klass);
+
+	GNTDEBUG;
 }
 
 static void
 gnt_skel_init(GTypeInstance *instance, gpointer class)
 {
-	DEBUG;
+	GNTDEBUG;
 }
 
 /******************************************************************************

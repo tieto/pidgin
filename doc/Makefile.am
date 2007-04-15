@@ -1,8 +1,7 @@
-man_MANS = gaim.1
+man_MANS = gaim.1 gaim-text.1
 
 EXTRA_DIST = \
 	C-HOWTO.dox \
-	CREDITS \
 	FAQ \
 	PERL-HOWTO.dox \
 	TCL-HOWTO.dox \
@@ -15,6 +14,7 @@ EXTRA_DIST = \
 	dbus-server-signals.dox \
 	gaim.1.in \
 	gaims_funniest_home_convos.txt \
+	gaim-text.1.in \
 	gtkaccount-signals.dox \
 	gtkblist-signals.dox \
 	gtkconv-signals.dox \

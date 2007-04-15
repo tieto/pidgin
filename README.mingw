@@ -1,10 +1,6 @@
-How to build Gaim using MinGw
+How to build Gaim using MinGW
 =============================
 
-Since these instructions are constantly changing and in order for me to
-avoid maintaining two versions of these instructions please refer to:
+Since these instructions are constantly changing, please refer to:
 
-http://gaim.sourceforge.net/win32
-
-- Herman
-  
+http://gaim.sourceforge.net/win32/build.php

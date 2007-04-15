@@ -1,29 +1,41 @@
 #!/bin/sh
 
+CONFIGURE_ARGS=""
+if [ -f configure.args ] ; then
+	CONFIGURE_ARGS="${CONFIGURE_ARGS} `cat configure.args`"
+fi
+
+(glib-gettextize --version) < /dev/null > /dev/null 2>&1 || {
+	echo;
+	echo "You must have glib-gettextize installed to compile Gaim.";
+	echo;
+	exit;
+}
+
 (intltoolize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have intltool installed to compile Gaim";
+	echo "You must have intltool installed to compile Gaim.";
 	echo;
 	exit;
 }
 
 (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have libtool installed to compile Gaim";
+	echo "You must have libtool installed to compile Gaim.";
 	echo;
 	exit;
 }
 
 (automake --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have automake installed to compile Gaim";
+	echo "You must have automake installed to compile Gaim.";
 	echo;
 	exit;
 }
 
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have autoconf installed to compile Gaim";
+	echo "You must have autoconf installed to compile Gaim.";
 	echo;
 	exit;
 }
@@ -46,11 +58,16 @@ do
 done
 
 libtoolize -c -f --automake
+glib-gettextize --force --copy
 intltoolize --force --copy
 aclocal $ACLOCAL_FLAGS || exit;
 autoheader || exit;
 automake --add-missing --copy;
 autoconf || exit;
 automake || exit;
-./configure $@
+
+echo;
+echo "Running ./configure ${CONFIGURE_ARGS} $@"
+echo;
+./configure ${CONFIGURE_ARGS} $@
 
