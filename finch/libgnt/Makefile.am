@@ -6,6 +6,8 @@ pkgconfig_DATA = gnt.pc
 
 lib_LTLIBRARIES = libgnt.la
 
+BUILT_SOURCES = gntmarshal.h
+
 libgnt_la_SOURCES = \
 	gntmarshal.c \
 	gntwidget.c \
