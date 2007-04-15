@@ -610,7 +610,7 @@ static gint pidgin_sort_smileys (GtkTreeModel	*model,
 		ret = 1;
 	} else {
 		/* Neither string is "none", default to normal sort */
-		ret = g_utf8_collate(name1,name2);
+		ret = purple_utf8_strcasecmp(name1,name2);
 	}
 
 	g_free(name1);

@@ -63,6 +63,35 @@ void pidginthemes_smiley_themeize(GtkWidget *imhtml)
 	}
 }
 
+static void
+pidginthemes_destroy_smiley_theme(struct smiley_theme *theme)
+{
+	GHashTable *already_freed;
+	struct smiley_list *wer;
+
+	already_freed = g_hash_table_new(g_direct_hash, g_direct_equal);
+	for (wer = theme->list; wer != NULL; wer = theme->list) {
+		while (wer->smileys) {
+			GtkIMHtmlSmiley *uio = wer->smileys->data;
+			if (uio->icon)
+				g_object_unref(uio->icon);
+			if (g_hash_table_lookup(already_freed, uio->file) == NULL) {
+				g_free(uio->file);
+				g_hash_table_insert(already_freed, uio->file, GINT_TO_POINTER(1));
+			}
+			g_free(uio->smile);
+			g_free(uio);
+			wer->smileys = g_slist_remove(wer->smileys, uio);
+		}
+		theme->list = wer->next;
+		g_free(wer->sml);
+		g_free(wer);
+	}
+	theme->list = NULL;
+
+	g_hash_table_destroy(already_freed);
+}
+
 void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 {
 	FILE *f = g_fopen(file, "r");
@@ -164,7 +193,7 @@ void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 					smiley->file = sfile;
 					smiley->smile = g_strdup(l);
 					smiley->hidden = hidden;
-					list->smileys = g_slist_append(list->smileys, smiley);
+					list->smileys = g_slist_prepend(list->smileys, smiley);
 					have_used_sfile = TRUE;
 				}
 				while (isspace(*i))
@@ -180,31 +209,9 @@ void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 	fclose(f);
 
 	if (!theme->name || !theme->desc || !theme->author) {
-		GSList *already_freed = NULL;
-		struct smiley_list *wer = theme->list, *wer2;
-
 		purple_debug_error("gtkthemes", "Invalid file format, not loading smiley theme from '%s'\n", file);
 
-		while (wer) {
-			while (wer->smileys) {
-				GtkIMHtmlSmiley *uio = wer->smileys->data;
-				if (uio->icon)
-					g_object_unref(uio->icon);
-				if (!g_slist_find(already_freed, uio->file)) {
-					g_free(uio->file);
-					already_freed = g_slist_append(already_freed, uio->file);
-				}
-				g_free(uio->smile);
-				g_free(uio);
-				wer->smileys = g_slist_remove(wer->smileys, uio);
-			}
-			wer2 = wer->next;
-			g_free(wer->sml);
-			g_free(wer);
-			wer = wer2;
-		}
-		theme->list = NULL;
-		g_slist_free(already_freed);
+		pidginthemes_destroy_smiley_theme(theme);
 
 		g_free(theme->name);
 		g_free(theme->desc);
@@ -217,36 +224,14 @@ void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 	}
 
 	if (new_theme) {
-		smiley_themes = g_slist_append(smiley_themes, theme);
+		smiley_themes = g_slist_prepend(smiley_themes, theme);
 	}
 
 	if (load) {
 		GList *cnv;
 
-		if (current_smiley_theme) {
-			GSList *already_freed = NULL;
-			struct smiley_list *wer = current_smiley_theme->list, *wer2;
-			while (wer) {
-				while (wer->smileys) {
-					GtkIMHtmlSmiley *uio = wer->smileys->data;
-					if (uio->icon)
-						g_object_unref(uio->icon);
-					if (!g_slist_find(already_freed, uio->file)) {
-						g_free(uio->file);
-						already_freed = g_slist_append(already_freed, uio->file);
-					}
-					g_free(uio->smile);
-					g_free(uio);
-					wer->smileys = g_slist_remove(wer->smileys, uio);
-				}
-				wer2 = wer->next;
-				g_free(wer->sml);
-				g_free(wer);
-				wer = wer2;
-			}
-			current_smiley_theme->list = NULL;
-			g_slist_free(already_freed);
-		}
+		if (current_smiley_theme)
+			pidginthemes_destroy_smiley_theme(current_smiley_theme);
 		current_smiley_theme = theme;
 
 		for (cnv = purple_get_conversations(); cnv != NULL; cnv = cnv->next) {
