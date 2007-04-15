@@ -968,7 +968,7 @@ nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	str = g_strdup_printf(_("%s just sent you a Nudge!"), username);
 	g_free(username);
-	msn_switchboard_report_user(swboard, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, str);
+	msn_switchboard_report_user(swboard, PURPLE_MESSAGE_SYSTEM, str);
 	g_free(str);
 }
 

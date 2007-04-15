@@ -451,11 +451,14 @@ msn_new_xfer(PurpleConnection *gc, const char *who)
 
 	xfer = purple_xfer_new(gc->account, PURPLE_XFER_SEND, who);
 
-	slplink = msn_session_get_slplink(session, who);
+	if (xfer)
+	{
+		slplink = msn_session_get_slplink(session, who);
 
-	xfer->data = slplink;
+		xfer->data = slplink;
 
-	purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
+		purple_xfer_set_init_fnc(xfer, t_msn_xfer_init);
+	}
 
 	return xfer;
 }

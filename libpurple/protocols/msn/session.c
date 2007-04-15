@@ -270,7 +270,11 @@ msn_session_set_bnode(MsnSession *session)
 
 	g_return_if_fail(gc != NULL);
 
-	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next){
+	/* The core used to use msn_add_buddy to add all buddies before
+	 * being logged in. This no longer happens, so we manually iterate
+	 * over the whole buddy list to identify sync issues. */
+	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next)
+	{
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
@@ -314,7 +318,7 @@ msn_session_sync_users(MsnSession *session)
 	 * being logged in. This no longer happens, so we manually iterate
 	 * over the whole buddy list to identify sync issues. 
 	 */
-	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next){
+	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
 		PurpleGroup *group = (PurpleGroup *)gnode;
 		const char *group_name = group->name;
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
@@ -331,14 +335,14 @@ msn_session_sync_users(MsnSession *session)
 				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
 					continue;
 				b = (PurpleBuddy *)bnode;
-				if(b->account == gc->account){
+				if(purple_buddy_get_account(b) == purple_connection_get_account(gc)) {
 					MsnUser *remote_user;
 					gboolean found = FALSE;
 
-					purple_debug_info("MaYuan","buddy name:%s,group name:%s\n",b->name,group_name);
-					remote_user = msn_userlist_find_user(session->userlist, b->name);
+					remote_user = msn_userlist_find_user(session->userlist, purple_buddy_get_name(b));
 
-					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP)){
+					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP))
+					{
 						const char *group_id;
 						GList *l;
 
@@ -350,16 +354,19 @@ msn_session_sync_users(MsnSession *session)
 						}
 						purple_debug_info("MaYuan","group_id:{%s}\n",group_id);
 
-						for (l = remote_user->group_ids; l != NULL; l = l->next){
+						for (l = remote_user->group_ids; l != NULL; l = l->next)
+						{
 							purple_debug_info("MaYuan","l->data:{%s}\n",l->data);
-							if (!g_strcasecmp(group_id ,l->data)){
+							if (!g_strcasecmp(group_id ,l->data))
+							{
 								found = TRUE;
 								break;
 							}
 						}
 					}
 
-					if (!found){
+					if (!found)
+					{
 						/* The user was not on the server list or not in that group
 						 * on the server list */
 						msn_show_sync_issue(session, b->name, group_name);

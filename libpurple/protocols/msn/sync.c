@@ -35,7 +35,8 @@ blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	list_name = cmd->params[0];
 
-	if (!g_ascii_strcasecmp(list_name, "AL")){
+	if (!g_ascii_strcasecmp(list_name, "AL"))
+	{
 		/*
 		 * If the current setting is AL, messages from users who
 		 * are not in BL will be delivered.
@@ -43,7 +44,9 @@ blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		 * In other words, deny some.
 		 */
 		gc->account->perm_deny = PURPLE_PRIVACY_DENY_USERS;
-	}else{
+	}
+	else
+	{
 		/* If the current setting is BL, only messages from people
 		 * who are in the AL will be delivered.
 		 *
@@ -86,7 +89,8 @@ static void
 lsg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session = cmdproc->session;
-	const char *name, *group_id;
+	const char *name;
+	const char *group_id;
 
 	group_id = cmd->params[0];
 	name = purple_url_decode(cmd->params[1]);

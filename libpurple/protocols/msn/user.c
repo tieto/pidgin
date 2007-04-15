@@ -222,16 +222,20 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 
 	g_return_if_fail(user != NULL);
 
-	if (filename == NULL || g_stat(filename, &st) == -1){
+	if (filename == NULL || g_stat(filename, &st) == -1)
+	{
 		msn_user_set_object(user, NULL);
-	}else if ((fp = g_fopen(filename, "rb")) != NULL){
+	}
+	else if ((fp = g_fopen(filename, "rb")) != NULL)
+	{
 		PurpleCipherContext *ctx;
 		char *buf;
 		gsize len;
 		char *base64;
 		unsigned char digest[20];
 
-		if (msnobj == NULL)	{
+		if (msnobj == NULL)
+		{
 			msnobj = msn_object_new();
 			msn_object_set_local(msnobj);
 			msn_object_set_type(msnobj, MSN_OBJECT_USERTILE);
@@ -283,7 +287,9 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 		base64 = purple_base64_encode(digest, sizeof(digest));
 		msn_object_set_sha1c(msnobj, base64);
 		g_free(base64);
-	}else{
+	}
+	else
+	{
 		purple_debug_error("msn", "Unable to open buddy icon %s!\n", filename);
 		msn_user_set_object(user, NULL);
 	}
@@ -317,13 +323,15 @@ msn_user_add_group_id(MsnUser *user, const char* id)
 
 	g = purple_find_group(group_name);
 
-	if ((id == NULL) && (g == NULL)){
+	if ((id == NULL) && (g == NULL))
+	{
 		g = purple_group_new(group_name);
 		purple_blist_add_group(g, NULL);
 	}
 
 	b = purple_find_buddy_in_group(account, passport, g);
-	if (b == NULL){
+	if (b == NULL)
+	{
 		b = purple_buddy_new(account, passport, NULL);
 		purple_blist_add_buddy(b, NULL, g, NULL);
 	}

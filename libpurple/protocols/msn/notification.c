@@ -311,9 +311,11 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	g_snprintf(proto_str, sizeof(proto_str), "MSNP%d", session->protocol_ver);
 
-	for (i = 1; i < cmd->param_count -1; i++){
+	for (i = 1; i < cmd->param_count -1; i++)
+	{
 		purple_debug_info("MaYuan","%s,proto_str:%s\n",cmd->params[i],proto_str);
-		if (strcmp(cmd->params[i], proto_str) >= 0)	{
+		if (strcmp(cmd->params[i], proto_str) >= 0)
+		{
 			protocol_supported = TRUE;
 			break;
 		}
@@ -395,10 +397,13 @@ msg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 	/* NOTE: cmd is not always cmdproc->last_cmd, sometimes cmd is a queued
 	 * command and we are processing it */
-	if (cmd->payload == NULL){
+	if (cmd->payload == NULL)
+	{
 		cmdproc->last_cmd->payload_cb  = msg_cmd_post;
 		cmdproc->servconn->payload_len = atoi(cmd->params[2]);
-	}else{
+	}
+	else
+	{
 		g_return_if_fail(cmd->payload_cb != NULL);
 
 		purple_debug_info("MaYuan","MSG payload:{%s}\n",cmd->payload);
@@ -899,7 +904,8 @@ iln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_user_set_friendly_name(user, friendly);
 
-	if (session->protocol_ver >= 9 && cmd->param_count == 8){
+	if (session->protocol_ver >= 9 && cmd->param_count == 8)
+	{
 		msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[6]));
 		msn_user_set_object(user, msnobj);
 	}
@@ -953,11 +959,15 @@ nln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		msn_user_set_friendly_name(user, friendly);
 	}
 
-	if (session->protocol_ver >= 9){
-		if (cmd->param_count == 7){
+	if (session->protocol_ver >= 9)
+	{
+		if (cmd->param_count == 7)
+		{
 			msnobj = msn_object_new_from_string(purple_url_decode(cmd->params[5]));
 			msn_user_set_object(user, msnobj);
-		}else{
+		}
+		else
+		{
 			msn_user_set_object(user, NULL);
 		}
 	}
@@ -1374,9 +1384,12 @@ xfr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	msn_parse_socket(cmd->params[2], &host, &port);
 
-	if (!strcmp(cmd->params[1], "SB")){
+	if (!strcmp(cmd->params[1], "SB"))
+	{
 		purple_debug_error("msn", "This shouldn't be handled here.\n");
-	}else if (!strcmp(cmd->params[1], "NS")){
+	}
+	else if (!strcmp(cmd->params[1], "NS"))
+	{
 		MsnSession *session;
 
 		session = cmdproc->session;
@@ -1501,7 +1514,8 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		session->passport_info.sid = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "MSPAuth")) != NULL){
+	if ((value = msn_message_get_attr(msg, "MSPAuth")) != NULL)
+	{
 		if (session->passport_info.mspauth != NULL)
 			g_free(session->passport_info.mspauth);
 
@@ -1509,14 +1523,16 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		session->passport_info.mspauth = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "ClientIP")) != NULL){
+	if ((value = msn_message_get_attr(msg, "ClientIP")) != NULL)
+	{
 		if (session->passport_info.client_ip != NULL)
 			g_free(session->passport_info.client_ip);
 
 		session->passport_info.client_ip = g_strdup(value);
 	}
 
-	if ((value = msn_message_get_attr(msg, "ClientPort")) != NULL){
+	if ((value = msn_message_get_attr(msg, "ClientPort")) != NULL)
+	{
 		session->passport_info.client_port = ntohs(atoi(value));
 	}
 
@@ -1766,9 +1782,6 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 
 	cmdproc = notification->servconn->cmdproc;
 
-	if (strcmp(list, "FL") != 0){
-	}
-
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 
@@ -1776,9 +1789,12 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 
 	payload = xmlnode_to_str(adl_node,&payload_len);
 	xmlnode_free(adl_node);
-	if(msn_user_is_yahoo(notification->session->account,who)){
+	if (msn_user_is_yahoo(notification->session->account,who))
+	{
 		msn_notification_fqy_yahoo(notification->session, who);
-	}else{
+	}
+	else
+	{
 		msn_notification_post_adl(notification->servconn->cmdproc,
 							payload,payload_len);
 	}
