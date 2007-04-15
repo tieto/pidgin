@@ -36,7 +36,7 @@
 #include "util.h"
 #include "cmds.h"
 #include "prpl.h"
-#include "msn-utils.h"
+#include "msnutils.h"
 #include "version.h"
 
 #include "switchboard.h"
@@ -431,12 +431,14 @@ msn_new_xfer(GaimConnection *gc, const char *who)
 	session = gc->proto_data;
 
 	xfer = gaim_xfer_new(gc->account, GAIM_XFER_SEND, who);
+	if (xfer)
+	{
+		slplink = msn_session_get_slplink(session, who);
 
-	slplink = msn_session_get_slplink(session, who);
+		xfer->data = slplink;
 
-	xfer->data = slplink;
-
-	gaim_xfer_set_init_fnc(xfer, t_msn_xfer_init);
+		gaim_xfer_set_init_fnc(xfer, t_msn_xfer_init);
+	}
 
 	return xfer;
 }

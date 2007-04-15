@@ -66,8 +66,8 @@ MSNSOURCES = \
 	user.h \
 	userlist.c \
 	userlist.h \
-	msn-utils.c \
-	msn-utils.h
+	msnutils.c \
+	msnutils.h
 
 AM_CFLAGS = $(st)
 

@@ -25,7 +25,7 @@
 #include "notification.h"
 #include "state.h"
 #include "error.h"
-#include "msn-utils.h"
+#include "msnutils.h"
 #include "page.h"
 
 #include "userlist.h"

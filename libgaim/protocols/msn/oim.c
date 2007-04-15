@@ -26,7 +26,7 @@
 #include "msn.h"
 #include "soap.h"
 #include "oim.h"
-#include "msn-utils.h"
+#include "msnutils.h"
 
 /*Local Function Prototype*/
 static void msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid);

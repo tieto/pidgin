@@ -22,7 +22,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 #include "msn.h"
-#include "msn-utils.h"
+#include "msnutils.h"
 #include "slpcall.h"
 #include "slpsession.h"
 
