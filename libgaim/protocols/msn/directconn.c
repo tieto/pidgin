@@ -76,7 +76,6 @@ msn_directconn_send_handshake(MsnDirectConn *directconn)
  * Connection Functions
  **************************************************************************/
 
-#if 0
 static int
 create_listener(int port)
 {
@@ -160,7 +159,6 @@ create_listener(int port)
 
 	return fd;
 }
-#endif
 
 static size_t
 msn_directconn_write(MsnDirectConn *directconn,
@@ -288,6 +286,11 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		/* ERROR */
 		gaim_debug_error("msn", "error reading\n");
 
+		if (directconn->inpa)
+			gaim_input_remove(directconn->inpa);
+
+		close(directconn->fd);
+
 		msn_directconn_destroy(directconn);
 
 		return;
@@ -301,6 +304,11 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 	{
 		/* ERROR */
 		gaim_debug_error("msn", "error reading\n");
+
+		if (directconn->inpa)
+			gaim_input_remove(directconn->inpa);
+
+		close(directconn->fd);
 
 		msn_directconn_destroy(directconn);
 
@@ -348,17 +356,22 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 		/* ERROR */
 		gaim_debug_error("msn", "error reading\n");
 
+		if (directconn->inpa)
+			gaim_input_remove(directconn->inpa);
+
+		close(directconn->fd);
+
 		msn_directconn_destroy(directconn);
 	}
 }
 
 static void
-connect_cb(gpointer data, gint source, const gchar *error_message)
+connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
 	MsnDirectConn* directconn;
 	int fd;
 
-	gaim_debug_misc("msn", "directconn: connect_cb: %d\n", source);
+	gaim_debug_misc("msn", "directconn: connect_cb: %d, %d.\n", source, cond);
 
 	directconn = data;
 	directconn->connect_data = NULL;
@@ -409,6 +422,7 @@ gboolean
 msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 {
 	MsnSession *session;
+	int r;
 
 	g_return_val_if_fail(directconn != NULL, FALSE);
 	g_return_val_if_fail(host       != NULL, TRUE);
@@ -434,7 +448,6 @@ msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 		return FALSE;
 }
 
-#if 0
 void
 msn_directconn_listen(MsnDirectConn *directconn)
 {
@@ -454,7 +467,6 @@ msn_directconn_listen(MsnDirectConn *directconn)
 	directconn->port = port;
 	directconn->c = 0;
 }
-#endif
 
 MsnDirectConn*
 msn_directconn_new(MsnSlpLink *slplink)
@@ -476,6 +488,7 @@ msn_directconn_new(MsnSlpLink *slplink)
 void
 msn_directconn_destroy(MsnDirectConn *directconn)
 {
+
 	if (directconn->connect_data != NULL)
 		gaim_proxy_connect_cancel(directconn->connect_data);
 

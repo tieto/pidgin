@@ -42,7 +42,6 @@ msn_session_new(GaimAccount *account)
 
 	session->user = msn_user_new(session->userlist,
 								 gaim_account_get_username(account), NULL);
-
 	session->bnode = NULL;
 	
 	/*if you want to chat with Yahoo Messenger*/
@@ -271,13 +270,7 @@ msn_session_set_bnode(MsnSession *session)
 
 	g_return_if_fail(gc != NULL);
 
-	/* The core used to use msn_add_buddy to add all buddies before
-	 * being logged in. This no longer happens, so we manually iterate
-	 * over the whole buddy list to identify sync issues. */
-
-	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next) {
-		GaimGroup *group = (GaimGroup *)gnode;
-		const char *group_name = group->name;
+	for (gnode = gaim_get_blist()->root; gnode; gnode = gnode->next){
 		if(!GAIM_BLIST_NODE_IS_GROUP(gnode))
 			continue;
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
@@ -364,11 +357,9 @@ msn_session_sync_users(MsnSession *session)
 								break;
 							}
 						}
-
 					}
 
-					if (!found)
-					{
+					if (!found){
 						/* The user was not on the server list or not in that group
 						 * on the server list */
 						msn_show_sync_issue(session, b->name, group_name);
@@ -503,3 +494,4 @@ msn_session_finish_login(MsnSession *session)
 	/* Sync users */
 	msn_session_sync_users(session);
 }
+

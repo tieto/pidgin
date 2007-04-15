@@ -214,7 +214,7 @@ void msn_contact_destroy(MsnContact *contact);
 
 void msn_contact_connect(MsnContact *contact);
 void msn_get_contact_list(MsnContact * contact,char * update);
-void msn_get_address_book(MsnContact *contact,char * update, char * gupdate);
+void msn_get_address_book(MsnContact *contact, const char * update, const char * gupdate);
 
 /*contact SOAP Operation*/
 void msn_add_contact(MsnContact *contact,const char *passport,const char *groupId);

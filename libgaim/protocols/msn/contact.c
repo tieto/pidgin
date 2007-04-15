@@ -215,11 +215,11 @@ msn_parse_contact_list(MsnContact * contact)
 static void
 msn_get_contact_list_cb(gpointer data, gint source, GaimInputCondition cond)
 {
-	MsnSoapConn * soapconn = data;	
+	MsnSoapConn *soapconn = data;	
 	MsnContact *contact;
 	MsnSession *session;
-	const char * abLastChange;
-	const char * dynamicItemLastChange;
+	const char *abLastChange;
+	const char *dynamicItemLastChange;
 
 	contact = soapconn->parent;
 	g_return_if_fail(contact != NULL);
@@ -235,7 +235,7 @@ msn_get_contact_list_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	abLastChange = gaim_blist_node_get_string(msn_session_get_bnode(contact->session),"ablastChange");
 	dynamicItemLastChange = gaim_blist_node_get_string(msn_session_get_bnode(contact->session),"dynamicItemLastChange");
-	msn_get_address_book(contact,abLastChange,dynamicItemLastChange);
+	msn_get_address_book(contact, abLastChange, dynamicItemLastChange);
 }
 
 static void
@@ -517,7 +517,7 @@ msn_address_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 /*get the address book*/
 void
-msn_get_address_book(MsnContact *contact,char * LastChanged, char * dynamicItemLastChange)
+msn_get_address_book(MsnContact *contact, const char *LastChanged, const char *dynamicItemLastChange)
 {
 	MsnSoapReq *soap_request;
 	char *body = NULL;
@@ -532,7 +532,7 @@ msn_get_address_book(MsnContact *contact,char * LastChanged, char * dynamicItemL
 	}
 	if(dynamicItemLastChange != NULL){
 		update_str = g_strdup_printf(MSN_GET_ADDRESS_UPDATE_XML,
-								ab_update_str,dynamicItemLastChange);
+									 dynamicItemLastChange);
 	}else{
 		update_str = g_strdup(ab_update_str);
 	}
@@ -655,6 +655,7 @@ msn_update_contact_written_cb(gpointer data, gint source, GaimInputCondition con
 }
 
 /*update a contact's Nickname*/
+#if 0
 void
 msn_update_contact(MsnContact *contact,const char* nickname)
 {
@@ -674,6 +675,7 @@ msn_update_contact(MsnContact *contact,const char* nickname)
 
 	g_free(body);
 }
+#endif
 
 static void
 msn_block_read_cb(gpointer data, gint source, GaimInputCondition cond)
@@ -762,6 +764,7 @@ msn_gleams_written_cb(gpointer data, gint source, GaimInputCondition cond)
 //	msn_soap_read_cb(data,source,cond);
 }
 
+#if 0
 /*get the gleams info*/
 void
 msn_get_gleams(MsnContact *contact)
@@ -777,6 +780,7 @@ msn_get_gleams(MsnContact *contact)
 					msn_gleams_written_cb);
 	msn_soap_post(contact->soapconn,soap_request,msn_contact_connect_init);
 }
+#endif
 
 /***************************************************************
  * Group Operation

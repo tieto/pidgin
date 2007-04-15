@@ -251,6 +251,8 @@ msn_oim_prep_send_msg_info(MsnOim *oim,
 {
 	MsnOimSendReq *request;
 
+	g_return_if_fail(oim != NULL);
+
 	request = msn_oim_new_send_req(membername,friendname,tomember,oim->send_seq,msg);
 	g_queue_push_tail(oim->send_queue,request);
 }

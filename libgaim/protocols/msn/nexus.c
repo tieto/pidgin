@@ -25,6 +25,7 @@
 #include "soap.h"
 #include "nexus.h"
 #include "notification.h"
+
 #undef NEXUS_LOGIN_TWN
 
 /*Local Function Prototype*/
@@ -60,6 +61,66 @@ msn_nexus_destroy(MsnNexus *nexus)
 	g_free(nexus);
 }
 
+#if 0 /* khc */
+/**************************************************************************
+ * Util
+ **************************************************************************/
+
+static gssize
+msn_ssl_read(MsnNexus *nexus)
+{
+	gssize len;
+	char temp_buf[4096];
+
+	if ((len = gaim_ssl_read(nexus->gsc, temp_buf,
+			sizeof(temp_buf))) > 0)
+	{
+		nexus->read_buf = g_realloc(nexus->read_buf,
+			nexus->read_len + len + 1);
+		strncpy(nexus->read_buf + nexus->read_len, temp_buf, len);
+		nexus->read_len += len;
+		nexus->read_buf[nexus->read_len] = '\0';
+	}
+
+	return len;
+}
+
+static void
+nexus_write_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnNexus *nexus = data;
+	int len, total_len;
+
+	total_len = strlen(nexus->write_buf);
+
+	len = gaim_ssl_write(nexus->gsc,
+		nexus->write_buf + nexus->written_len,
+		total_len - nexus->written_len);
+
+	if (len < 0 && errno == EAGAIN)
+		return;
+	else if (len <= 0) {
+		gaim_input_remove(nexus->input_handler);
+		nexus->input_handler = 0;
+		/* TODO: notify of the error */
+		return;
+	}
+	nexus->written_len += len;
+
+	if (nexus->written_len < total_len)
+		return;
+
+	gaim_input_remove(nexus->input_handler);
+	nexus->input_handler = 0;
+
+	g_free(nexus->write_buf);
+	nexus->write_buf = NULL;
+	nexus->written_len = 0;
+
+	nexus->written_cb(nexus, source, 0);
+}
+
+#endif
 /**************************************************************************
  * Login
  **************************************************************************/
@@ -71,6 +132,8 @@ nexus_login_error_cb(GaimSslConnection *gsc, GaimSslErrorType error, void *data)
 
 	session = soapconn->session;
 	g_return_if_fail(session != NULL);
+
+	soapconn->gsc = NULL;
 
 	msn_session_set_error(session, MSN_ERROR_AUTH, _("Windows Live ID authentication:Unable to connect"));
 	/* the above line will result in nexus being destroyed, so we don't want
@@ -93,7 +156,6 @@ nexus_login_read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 	nexus = soapconn->parent;
 	g_return_if_fail(nexus != NULL);
-
 	session = nexus->session;
 	g_return_if_fail(session != NULL);
 
@@ -276,12 +338,6 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	request_str = g_strdup_printf("%s%s", head,tail);
 	gaim_debug_misc("msn", "TWN Sending: {%s}\n", request_str);
 
-	buffer = g_strdup_printf("%s,pwd=XXXXXXXX,%s\r\n", head, tail);
-	request_str = g_strdup_printf("%s,pwd=%s,%s\r\n", head, password, tail);
-
-	gaim_debug_misc("msn", "Sending: {%s}\n", buffer);
-
-	g_free(buffer);
 	g_free(head);
 	g_free(tail);
 	g_free(username);
@@ -291,14 +347,120 @@ nexus_login_connect_cb(gpointer data, GaimSslConnection *gsc,
 	msn_soap_write(soapconn,request_str,nexus_login_written_cb);
 
 	return;
-
-
 }
 
+#if 0 /* khc */
+static void
+nexus_connect_written_cb(gpointer data, gint source, GaimInputCondition cond)
+{
+	MsnNexus *nexus = data;
+	int len;
+	char *da_login;
+	char *base, *c;
+
+	if (nexus->input_handler == 0)
+		//TODO: Use gaim_ssl_input_add()?
+		nexus->input_handler = gaim_input_add(nexus->gsc->fd,
+			GAIM_INPUT_READ, nexus_connect_written_cb, nexus);
+
+	/* Get the PassportURLs line. */
+	len = msn_ssl_read(nexus);
+
+	if (len < 0 && errno == EAGAIN)
+		return;
+	else if (len < 0) {
+		gaim_input_remove(nexus->input_handler);
+		nexus->input_handler = 0;
+		g_free(nexus->read_buf);
+		nexus->read_buf = NULL;
+		nexus->read_len = 0;
+		/* TODO: error handling */
+		return;
+	}
+
+	if (g_strstr_len(nexus->read_buf, nexus->read_len,
+			"\r\n\r\n") == NULL)
+		return;
+
+	gaim_input_remove(nexus->input_handler);
+	nexus->input_handler = 0;
+
+	base = strstr(nexus->read_buf, "PassportURLs");
+
+	if (base == NULL)
+	{
+		g_free(nexus->read_buf);
+		nexus->read_buf = NULL;
+		nexus->read_len = 0;
+		return;
+	}
+
+	if ((da_login = strstr(base, "DALogin=")) != NULL)
+	{
+		/* skip over "DALogin=" */
+		da_login += 8;
+
+		if ((c = strchr(da_login, ',')) != NULL)
+			*c = '\0';
+
+		if ((c = strchr(da_login, '/')) != NULL)
+		{
+			nexus->login_path = g_strdup(c);
+			*c = '\0';
+		}
+
+		nexus->login_host = g_strdup(da_login);
+	}
+
+	g_free(nexus->read_buf);
+	nexus->read_buf = NULL;
+	nexus->read_len = 0;
+
+	gaim_ssl_close(nexus->gsc);
+
+	/* Now begin the connection to the login server. */
+	nexus->gsc = gaim_ssl_connect(nexus->session->account,
+			nexus->login_host, GAIM_SSL_DEFAULT_PORT,
+			login_connect_cb, login_error_cb, nexus);
+}
+
+
+#endif
 
 /**************************************************************************
  * Connect
  **************************************************************************/
+
+#if 0 /* khc */
+static void
+nexus_connect_cb(gpointer data, GaimSslConnection *gsc,
+				 GaimInputCondition cond)
+{
+	MsnNexus *nexus;
+	MsnSession *session;
+
+	nexus = data;
+	g_return_if_fail(nexus != NULL);
+
+	session = nexus->session;
+	g_return_if_fail(session != NULL);
+
+	msn_session_set_login_step(session, MSN_LOGIN_STEP_AUTH);
+
+	nexus->write_buf = g_strdup("GET /rdr/pprdr.asp\r\n\r\n");
+	nexus->written_len = 0;
+
+	nexus->read_len = 0;
+
+	nexus->written_cb = nexus_connect_written_cb;
+
+	nexus->input_handler = gaim_input_add(gsc->fd, GAIM_INPUT_WRITE,
+		nexus_write_cb, nexus);
+
+	nexus_write_cb(nexus, gsc->fd, GAIM_INPUT_WRITE);
+}
+
+#endif
 
 void
 msn_nexus_connect(MsnNexus *nexus)
@@ -308,3 +470,4 @@ msn_nexus_connect(MsnNexus *nexus)
 	msn_soap_init(nexus->soapconn,MSN_TWN_SERVER,1,nexus_login_connect_cb,nexus_login_error_cb);
 	msn_soap_connect(nexus->soapconn);
 }
+

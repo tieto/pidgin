@@ -84,8 +84,8 @@ msn_switchboard_destroy(MsnSwitchBoard *swboard)
 	swboard->destroying = TRUE;
 
 	/* If it linked us is because its looking for trouble */
-	while (swboard->slplinks != NULL)
-		msn_slplink_destroy(swboard->slplinks->data);
+	if (swboard->slplink != NULL)
+		msn_slplink_destroy(swboard->slplink);
 
 	/* Destroy the message queue */
 	while ((msg = g_queue_pop_head(swboard->msg_queue)) != NULL)
@@ -645,10 +645,6 @@ bye_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	swboard = cmdproc->data;
 	user = cmd->params[0];
-
-	/* cmdproc->data is set to NULL when the switchboard is destroyed;
-	 * we may get a bye shortly thereafter. */
-	g_return_if_fail(swboard != NULL);
 
 	if (!(swboard->flag & MSN_SB_FLAG_IM) && (swboard->conv != NULL))
 		gaim_debug_error("msn_switchboard", "bye_cmd: helper bug\n");

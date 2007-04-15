@@ -112,8 +112,6 @@ msn_command_from_string(const char *string)
 	MsnCommand *cmd;
 	char *tmp;
 	char *param_start;
-	char *param;
-	int c;
 
 	g_return_val_if_fail(string != NULL, NULL);
 
@@ -127,6 +125,12 @@ msn_command_from_string(const char *string)
 	{
 		*param_start++ = '\0';
 		cmd->params = g_strsplit(param_start, " ", 0);
+	}
+
+	if (cmd->params != NULL)
+	{
+		char *param;
+		int c;
 
 		for (c = 0; cmd->params[c]; c++);
 		cmd->param_count = c;
@@ -134,10 +138,10 @@ msn_command_from_string(const char *string)
 		param = cmd->params[0];
 
 		cmd->trId = is_num(param) ? atoi(param) : 0;
-	}
-	else
+	}else{
 		cmd->trId = 0;
 	}
+
 	/*add payload Length checking*/
 	msn_set_payload_len(cmd);
 	gaim_debug_info("MaYuan","get payload len:%d\n",cmd->payload_len);

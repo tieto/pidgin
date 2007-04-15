@@ -166,9 +166,9 @@ msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
  **************************************************************************/
 
 static void
-connect_cb(gpointer data, gint source, const gchar *error_message)
+connect_cb(gpointer data, gint source, GaimInputCondition cond)
 {
-	MsnServConn *servconn;
+	MsnServConn *servconn = data;
 
 	servconn = data;
 	servconn->connect_data = NULL;
@@ -203,6 +203,7 @@ gboolean
 msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 {
 	MsnSession *session;
+	int r;
 
 	g_return_val_if_fail(servconn != NULL, FALSE);
 	g_return_val_if_fail(host     != NULL, FALSE);
@@ -240,9 +241,9 @@ msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 	{
 		servconn->processing = TRUE;
 		return TRUE;
-	}
-	else
+	}else{
 		return FALSE;
+	}
 }
 
 void
@@ -435,14 +436,12 @@ read_cb(gpointer data, gint source, GaimInputCondition cond)
 
 		servconn->rx_len -= cur_len;
 
-		if (servconn->payload_len)
-		{
+		if (servconn->payload_len){
 			msn_cmdproc_process_payload(servconn->cmdproc, cur, cur_len);
 			servconn->payload_len = 0;
-		}
-		else
-		{
+		}else{
 			msn_cmdproc_process_cmd_text(servconn->cmdproc, cur);
+			servconn->payload_len = servconn->cmdproc->last_cmd->payload_len;
 		}
 	} while (servconn->connected && !servconn->wasted && servconn->rx_len > 0);
 
