@@ -4477,9 +4477,9 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		{
 			gchar *errstr;
 			errstr = g_strdup_printf(dngettext(PACKAGE, "The maximum profile length of %d byte "
-									 "has been exceeded.  It has been truncated it for you.",
+									 "has been exceeded.  It has been truncated for you.",
 									 "The maximum profile length of %d bytes "
-									 "has been exceeded.  It has been truncated it for you.",
+									 "has been exceeded.  It has been truncated for you.",
 									 od->rights.maxsiglen), od->rights.maxsiglen);
 			purple_notify_warning(gc, NULL, _("Profile too long."), errstr);
 			g_free(errstr);
