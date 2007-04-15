@@ -132,9 +132,9 @@ void msn_oim_connect(MsnOim *oim);
 void msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg);
 
 /*Send OIM Message*/
-void msn_oim_prep_send_msg_info(MsnOim *oim,
-					char *membername,char*friendname,char *tomember,
-					char * msg);
+void msn_oim_prep_send_msg_info(MsnOim *oim, const char *membername,
+								const char *friendname, const char *tomember,
+								const char * msg);
 
 void msn_oim_send_msg(MsnOim *oim);
 

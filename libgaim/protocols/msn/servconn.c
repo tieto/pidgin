@@ -203,7 +203,6 @@ gboolean
 msn_servconn_connect(MsnServConn *servconn, const char *host, int port)
 {
 	MsnSession *session;
-	int r;
 
 	g_return_val_if_fail(servconn != NULL, FALSE);
 	g_return_val_if_fail(host     != NULL, FALSE);

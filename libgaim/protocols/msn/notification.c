@@ -37,9 +37,10 @@ static MsnTable *cbs_table;
 /****************************************************************************
  * 	Local Function Prototype
  ****************************************************************************/
-void msn_notification_post_adl(MsnCmdProc *cmdproc,char *payload ,int payload_len);
 
-void msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type);
+static void msn_notification_fqy_yahoo(MsnSession *session, const char *passport);
+static void msn_notification_post_adl(MsnCmdProc *cmdproc, char *payload, int payload_len);
+static void msn_add_contact_xml(xmlnode *mlNode, const char *passport, int list_op, int type);
 
 /**************************************************************************
  * Main
@@ -233,15 +234,17 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	if (!g_ascii_strcasecmp(cmd->params[1], "OK")){
 		/* authenticate OK */
+		/* friendly name part no longer true in msnp11 */
+#if 0
 		const char *friendly = gaim_url_decode(cmd->params[3]);
 
 		gaim_connection_set_display_name(gc, friendly);
-
+#endif
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_SYN);
 
 //		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
 		//TODO we should use SOAP contact to fetch contact list
-	}else if (!g_ascii_strcasecmp(cmd->params[1], "TWN")){
+	} else if (!g_ascii_strcasecmp(cmd->params[1], "TWN")){
 		/* Passport authentication */
 		char **elems, **cur, **tokens;
 
@@ -561,7 +564,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
  * Buddy Lists
  **************************************************************************/
 /* add contact to xmlnode */
-void 
+static void 
 msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 {
 	xmlnode *d_node,*c_node;
@@ -622,10 +625,19 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 	g_free(tokens);
 }
 
-void
+static void
 msn_notification_post_adl(MsnCmdProc *cmdproc,char *payload, int payload_len)
 {
 	MsnTransaction *trans;
+	const char *display_name;
+	const char *friendly;
+
+	display_name = gaim_connection_get_display_name(cmdproc->session->account->gc);
+	if (display_name) {
+		friendly = gaim_url_encode(display_name);
+		msn_cmdproc_send(cmdproc, "PRP", "MFN %s", friendly);
+	}
+
 
 	gaim_debug_info("MaYuan","Send ADL{%s}\n",payload);
 	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
@@ -662,8 +674,8 @@ msn_notification_dump_contact(MsnSession *session)
 }
 
 /*Post FQY to NS,Inform add a Yahoo User*/
-void
-msn_notification_fqy_yahoo(MsnSession *session,char *passport)
+static void
+msn_notification_fqy_yahoo(MsnSession *session, const char *passport)
 {
 	MsnTransaction *trans;
 	MsnCmdProc *cmdproc;
@@ -715,8 +727,10 @@ fqy_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 rml_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
+#if 0
 	MsnTransaction *trans;
 	char * payload;
+#endif
 
 	gaim_debug_info("MaYuan","Process ADL\n");
 #if 0
@@ -820,7 +834,7 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	group_name = gaim_url_decode(cmd->params[2]);
 
-	msn_group_new(session->userlist, group_id, group_name);
+	msn_group_new(session->userlist, cmd->params[3], group_name);
 
 	/* There is a user that must me moved to this group */
 	if (cmd->trans->data)
@@ -1045,6 +1059,12 @@ prp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 			msn_user_set_work_phone(session->user, NULL);
 		else if (!strcmp(type, "PHM"))
 			msn_user_set_mobile_phone(session->user, NULL);
+		else if (!strcmp(type, "MFM")) {
+			type = cmd->params[1];
+			gaim_connection_set_display_name(
+				gaim_account_get_connection(session->account),
+				gaim_url_decode(cmd->params[2]));
+		}
 	}
 }
 
@@ -1052,11 +1072,10 @@ static void
 reg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	int group_id;
-	const char *group_name;
+	const char *group_id, *group_name;
 
 	session = cmdproc->session;
-	group_id = atoi(cmd->params[2]);
+	group_id = cmd->params[2];
 	group_name = gaim_url_decode(cmd->params[3]);
 
 	msn_userlist_rename_group_id(session->userlist, group_id, group_name);
@@ -1082,10 +1101,8 @@ rem_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
 	MsnUser *user;
-	const char *list;
-	const char *passport;
+	const char *group_id, *list, *passport;
 	MsnListId list_id;
-	int group_id;
 
 	session = cmdproc->session;
 	list = cmd->params[1];
@@ -1097,9 +1114,9 @@ rem_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	list_id = msn_get_list_id(list);
 
 	if (cmd->param_count == 5)
-		group_id = atoi(cmd->params[4]);
+		group_id = cmd->params[4];
 	else
-		group_id = -1;
+		group_id = NULL;
 
 	msn_got_rem_user(session, user, list_id, group_id);
 	msn_user_update(user);
@@ -1109,10 +1126,10 @@ static void
 rmg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
-	int group_id;
+	const char *group_id;
 
 	session = cmdproc->session;
-	group_id = atoi(cmd->params[2]);
+	group_id = cmd->params[2];
 
 	msn_userlist_remove_group_id(session->userlist, group_id);
 }
@@ -1120,7 +1137,7 @@ rmg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 rmg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 {
-	int group_id;
+	const char *group_id;
 	char **params;
 
 	params = g_strsplit(trans->params, " ", 0);
@@ -1412,7 +1429,8 @@ ubx_cmd_post(MsnCmdProc *cmdproc, MsnCommand *cmd, char *payload,
 	GaimAccount *account;
 	GaimConnection *gc;
 	MsnUser *user;
-	const char *passport, *psm_str;
+	const char *passport;
+	char *psm_str;
 
 	/*get the payload content*/
 //	gaim_debug_info("MaYuan","UBX {%s} payload{%s}\n",cmd->params[0], cmd->payload);
@@ -1507,7 +1525,7 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	msn_session_set_bnode(session);
 	session->contact = msn_contact_new(session);
 	clLastChange = gaim_blist_node_get_string(msn_session_get_bnode(session),"CLLastChange");
-	msn_get_contact_list(session->contact,clLastChange);
+	msn_get_contact_list(session->contact, clLastChange);
 //	msn_contact_connect(session->contact);
 }
 
@@ -1738,7 +1756,6 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 						   const char *group_id)
 {
 	MsnCmdProc *cmdproc;
-	MsnTransaction *trans;
 	xmlnode *adl_node;
 	char *payload;
 	int payload_len;

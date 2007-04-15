@@ -90,7 +90,7 @@ msn_user_update(MsnUser *user)
 	account = user->userlist->session->account;
 
 	if (user->statusline != NULL) {
-		char *status = g_strdup_printf("%s - %s", user->status, user->statusline);
+		//char *status = g_strdup_printf("%s - %s", user->status, user->statusline);
 		gaim_prpl_got_user_status(account, user->passport, user->status, "message", user->statusline, NULL);
 	}
 	else if (user->status != NULL) {
@@ -188,7 +188,7 @@ msn_user_set_type(MsnUser *user,int type)
 void
 msn_user_set_op(MsnUser *user,int list_op)
 {
-	g_return_if_fail(list_op != NULL);
+	g_return_if_fail(list_op != 0);
 	user->list_op |= list_op;
 }
 
@@ -277,14 +277,14 @@ msn_user_add_group_id(MsnUser *user, const char* id)
 	GaimBuddy *b;
 	GaimGroup *g;
 	const char *passport;
-	const char *group_id;
+	char *group_id;
 	const char *group_name;
 
 	g_return_if_fail(user != NULL);
 	g_return_if_fail(id != NULL);
 
 	group_id = g_strdup(id);
-	user->group_ids = g_list_append(user->group_ids,group_id);
+	user->group_ids = g_list_append(user->group_ids, group_id);
 
 	userlist = user->userlist;
 	account = userlist->session->account;
@@ -337,7 +337,8 @@ msn_user_remove_group_id(MsnUser *user, const char * id)
 	g_return_if_fail(id != NULL);
 
 	user->group_ids = g_list_remove(user->group_ids, id);
-	g_free(id);
+	/* khc need to use g_list_find_custom here to find the right link */
+	//g_free(id);
 }
 
 void

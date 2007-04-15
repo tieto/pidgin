@@ -30,9 +30,18 @@
 
 /*Local Function Prototype*/
 static void msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid);
-void msn_oim_retrieve_connect_init(MsnSoapConn *soapconn);
-void msn_oim_send_connect_init(MsnSoapConn *soapconn);
-void msn_oim_free_send_req(MsnOimSendReq *req);
+static MsnOimSendReq *msn_oim_new_send_req(const char *from_member,
+										   const char *friendname,
+										   const char* to_member,
+										   gint send_seq,
+										   const char *msg);
+static void msn_oim_retrieve_connect_init(MsnSoapConn *soapconn);
+static void msn_oim_send_connect_init(MsnSoapConn *soapconn);
+static void msn_oim_free_send_req(MsnOimSendReq *req);
+static void msn_oim_report_to_user(MsnOim *oim, char *msg_str);
+static void msn_oim_get_process(MsnOim *oim, char *oim_msg);
+static char *msn_oim_msg_to_str(MsnOim *oim, const char *body);
+const void msn_oim_send_process(MsnOim *oim, const char *body, int len);
 
 /*new a OIM object*/
 MsnOim *
@@ -73,11 +82,10 @@ msn_oim_destroy(MsnOim *oim)
 	g_free(oim);
 }
 
-MsnOimSendReq *
-msn_oim_new_send_req(char *from_member,
-				char*friendname,char* to_member,
-				gint send_seq,
-				char *msg)
+static MsnOimSendReq *
+msn_oim_new_send_req(const char *from_member, const char*friendname,
+					 const char* to_member, gint send_seq,
+					 const char *msg)
 {
 	MsnOimSendReq *request;
 	
@@ -90,7 +98,7 @@ msn_oim_new_send_req(char *from_member,
 	return request;
 }
 
-void
+static void
 msn_oim_free_send_req(MsnOimSendReq *req)
 {
 	g_return_if_fail(req != NULL);
@@ -107,8 +115,8 @@ msn_oim_free_send_req(MsnOimSendReq *req)
  * OIM send SOAP request
  * **************************************/
 /*encode the message to OIM Message Format*/
-char * 
-msn_oim_msg_to_str(MsnOim *oim,char *body)
+static char *
+msn_oim_msg_to_str(MsnOim *oim, const char *body)
 {
 	char *oim_body,*oim_base64;
 	
@@ -154,14 +162,13 @@ msn_oim_send_connect_cb(gpointer data, GaimSslConnection *gsc,
  * Process the send return SOAP string
  * If got SOAP Fault,get the lock key,and resend it.
  */
-void
-msn_oim_send_process(MsnOim *oim,char *body,int len)
+const void
+msn_oim_send_process(MsnOim *oim, const char *body, int len)
 {
-	xmlnode *responseNode,*bodyNode;
-	xmlnode	*faultNode,*faultCodeNode,*faultstringNode;
-	xmlnode *detailNode,*challengeNode;
-	char *faultCodeStr,*faultstring;
-	char *challenge;
+	xmlnode *responseNode, *bodyNode;
+	xmlnode	*faultNode, *faultCodeNode, *faultstringNode;
+	xmlnode *detailNode, *challengeNode;
+	char *faultCodeStr, *faultstring;
 
 	responseNode = xmlnode_from_str(body,len);
 	g_return_if_fail(responseNode != NULL);
@@ -245,9 +252,9 @@ msn_oim_send_written_cb(gpointer data, gint source, GaimInputCondition cond)
 }
 
 void
-msn_oim_prep_send_msg_info(MsnOim *oim,
-					char *membername,char*friendname,char *tomember,
-					char * msg)
+msn_oim_prep_send_msg_info(MsnOim *oim, const char *membername,
+						   const char* friendname, const char *tomember,
+						   const char * msg)
 {
 	MsnOimSendReq *request;
 
@@ -324,7 +331,6 @@ msn_oim_delete_read_cb(gpointer data, GaimSslConnection *gsc,
 				 GaimInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;	
-	MsnOim * oim = soapconn->session->oim;
 
 	gaim_debug_info("MaYuan","OIM delete read buffer:{%s}\n",soapconn->body);
 
@@ -404,8 +410,8 @@ msn_oim_get_connect_cb(gpointer data, GaimSslConnection *gsc,
 }
 
 /*Post the Offline Instant Message to User Conversation*/
-void
-msn_oim_report_to_user(MsnOim *oim,char *msg_str)
+static void
+msn_oim_report_to_user(MsnOim *oim, char *msg_str)
 {
 	MsnMessage *message;
 	char *date,*from,*decode_msg;
@@ -413,13 +419,13 @@ msn_oim_report_to_user(MsnOim *oim,char *msg_str)
 	char **tokens;
 	char *start,*end;
 	int has_nick = 0;
-	char *passport_str,*passport;
+	char *passport_str, *passport;
 	char *msg_id;
 
 	message = msn_message_new(MSN_MSG_UNKNOWN);
 
-	msn_message_parse_payload(message,msg_str,strlen(msg_str),
-					MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
+	msn_message_parse_payload(message, msg_str, strlen(msg_str),
+							  MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
 	gaim_debug_info("MaYuan","oim body:{%s}\n",message->body);
 	decode_msg = gaim_base64_decode(message->body,&body_len);
 	date =	(char *)g_hash_table_lookup(message->attr_table, "Date");
@@ -463,8 +469,8 @@ msn_oim_report_to_user(MsnOim *oim,char *msg_str)
 /* Parse the XML data,
  * prepare to report the OIM to user
  */
-void
-msn_oim_get_process(MsnOim *oim,char *oim_msg)
+static void
+msn_oim_get_process(MsnOim *oim, char *oim_msg)
 {
 	xmlnode *oimNode,*bodyNode,*responseNode,*msgNode;
 	char *msg_data,*msg_str;
@@ -569,7 +575,7 @@ msn_oim_post_single_get_msg(MsnOim *oim,const char *msgid)
 }
 
 /*msn oim retrieve server connect init */
-void
+static void
 msn_oim_retrieve_connect_init(MsnSoapConn *soapconn)
 {
 	gaim_debug_info("MaYuan","msn_oim_connect...\n");
@@ -579,7 +585,8 @@ msn_oim_retrieve_connect_init(MsnSoapConn *soapconn)
 }
 
 /*Msn OIM Send Server Connect Init Function*/
-void msn_oim_send_connect_init(MsnSoapConn *sendconn)
+static void
+msn_oim_send_connect_init(MsnSoapConn *sendconn)
 {
 	gaim_debug_info("MaYuan","msn oim send connect init...\n");
 	msn_soap_init(sendconn,MSN_OIM_SEND_HOST,1,

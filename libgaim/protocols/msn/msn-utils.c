@@ -26,6 +26,8 @@
 #include "time.h"
 //#include <openssl/md5.h>
 
+char *rand_guid(void);
+
 /**************************************************************************
  * Util
  **************************************************************************/
@@ -150,12 +152,12 @@ msn_parse_format(const char *mime, char **pre_ret, char **post_ret)
  * Currently only support the UTF-8 and base64 encode
  */
 char *
-msn_encode_mime(char *str)
+msn_encode_mime(const char *str)
 {
 	char *base64;
 	
-	base64 = gaim_base64_encode(str,strlen(str));
-	return g_strdup_printf("=?utf-8?B?%s?=",base64);
+	base64 = gaim_base64_encode((guchar *)str, strlen(str));
+	return g_strdup_printf("=?utf-8?B?%s?=", base64);
 }
 
 /*
@@ -549,7 +551,7 @@ msn_handle_chl(char *input, char *output)
 # endif  /* GCC.  */
 #endif  /* Not __P.  */
 
-#if ! HAVE_LOCALTIME_R && ! defined localtime_r
+#if defined(HAVE_LOCALTIME_R) && ! HAVE_LOCALTIME_R && ! defined localtime_r
 # ifdef _LIBC
 #  define localtime_r __localtime_r
 # else

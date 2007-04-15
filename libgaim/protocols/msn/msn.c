@@ -137,9 +137,12 @@ msn_act_id(GaimConnection *gc, const char *entry)
 		return;
 	}
 
-	msn_cmdproc_send(cmdproc, "REA", "%s %s",
-					 gaim_account_get_username(account),
-					 alias);
+	if (*alias != '\0') {
+		msn_cmdproc_send(cmdproc, "PRP", "MFN %s", alias);
+	} else {
+		msn_cmdproc_send(cmdproc, "PRP", "MFN %s",
+						 gaim_url_encode(gaim_account_get_username(account)));
+	}
 }
 
 static void
@@ -524,7 +527,8 @@ msn_status_text(GaimBuddy *buddy)
 {
 	GaimPresence *presence;
 	GaimStatus *status;
-	char *msg, *psm_str, *tmp2, *text, *name;
+	const char *msg, *name;
+	char *psm_str, *tmp2, *text;
 
 	presence = gaim_buddy_get_presence(buddy);
 	status = gaim_presence_get_active_status(presence);
@@ -903,9 +907,8 @@ msn_send_im(GaimConnection *gc, const char *who, const char *message,
 
 		oim = session->oim;
 		friendname = msn_encode_mime(account->username);
-		msn_oim_prep_send_msg_info(oim,
-			gaim_account_get_username(account),friendname,who,
-			message);
+		msn_oim_prep_send_msg_info(oim, gaim_account_get_username(account),
+								   friendname, who,	message);
 		msn_oim_send_msg(oim);
 	}
 	return 1;

@@ -422,7 +422,6 @@ gboolean
 msn_directconn_connect(MsnDirectConn *directconn, const char *host, int port)
 {
 	MsnSession *session;
-	int r;
 
 	g_return_val_if_fail(directconn != NULL, FALSE);
 	g_return_val_if_fail(host       != NULL, TRUE);

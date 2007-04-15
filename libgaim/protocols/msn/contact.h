@@ -213,7 +213,7 @@ MsnContact * msn_contact_new(MsnSession *session);
 void msn_contact_destroy(MsnContact *contact);
 
 void msn_contact_connect(MsnContact *contact);
-void msn_get_contact_list(MsnContact * contact,char * update);
+void msn_get_contact_list(MsnContact * contact, const char *update);
 void msn_get_address_book(MsnContact *contact, const char * update, const char * gupdate);
 
 /*contact SOAP Operation*/

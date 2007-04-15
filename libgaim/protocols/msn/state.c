@@ -39,7 +39,8 @@ static const char *away_text[] =
 };
 
 /* Local Function Prototype*/
-char * msn_build_psm(char * psmstr,char *mediastr,char * guidstr);
+static char *msn_build_psm(const char *psmstr,const char *mediastr,
+						   const char *guidstr);
 
 /*
  * WLM media PSM info build prcedure
@@ -49,8 +50,8 @@ char * msn_build_psm(char * psmstr,char *mediastr,char * guidstr);
  *	<CurrentMedia>\0Games\01\0Playing {0}\0Game Name\0</CurrentMedia>\
  *	<CurrentMedia>\0Office\01\0Office Message\0Office App Name\0</CurrentMedia>"
  */
-char *
-msn_build_psm(char * psmstr,char *mediastr,char * guidstr)
+static char *
+msn_build_psm(const char *psmstr,const char *mediastr, const char *guidstr)
 {
 	xmlnode *dataNode,*psmNode,*mediaNode,*guidNode;
 	char *result;
@@ -81,11 +82,11 @@ msn_build_psm(char * psmstr,char *mediastr,char * guidstr)
 }
 
 /*get the PSM info from the XML string*/
-const char *
-msn_get_psm(char *xml_str,gsize len)
+char *
+msn_get_psm(char *xml_str, gsize len)
 {
 	xmlnode *payloadNode, *psmNode;
-	char *psm_str,*psm;
+	char *psm_str, *psm;
 	
 	gaim_debug_info("Ma Yuan","msn get PSM\n");
 	payloadNode = xmlnode_from_str(xml_str, len);
@@ -119,7 +120,8 @@ msn_set_psm(MsnSession *session)
 	GaimStatus *status;
 	MsnCmdProc *cmdproc;
 	MsnTransaction *trans;
-	char *payload,*statusline;
+	char *payload;
+	const char *statusline;
 
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(session->notification != NULL);
@@ -133,7 +135,7 @@ msn_set_psm(MsnSession *session)
 	presence = gaim_account_get_presence(account);
 	status = gaim_presence_get_active_status(presence);
 	statusline = gaim_status_get_attr_string(status, "message");
-	session ->psm = g_strdup(msn_build_psm(statusline,NULL,NULL));
+	session ->psm = msn_build_psm(statusline, NULL, NULL);
 	payload = session->psm;
 
 	gaim_debug_info("MaYuan","UUX{%s}\n",payload);

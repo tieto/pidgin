@@ -25,12 +25,12 @@
 #define _MSN_UTILS_H_
 
 /*encode the str to RFC2047 style*/
-char * msn_encode_mime(char *str);
+char * msn_encode_mime(const char *str);
 
 /**
  * Generate the Random GUID
  */
-char * rand_guid();
+char * rand_guid(void);
 
 /**
  * Parses the MSN message formatting into a format compatible with Gaim.

@@ -250,7 +250,7 @@ msn_get_contact_written_cb(gpointer data, gint source, GaimInputCondition cond)
 
 /*SOAP  get contact list*/
 void
-msn_get_contact_list(MsnContact * contact,char * update_time)
+msn_get_contact_list(MsnContact * contact, const char *update_time)
 {
 	MsnSoapReq *soap_request;
 	char *body = NULL;
@@ -378,7 +378,7 @@ msn_parse_addressbook(MsnContact * contact)
 		/*setup the Display Name*/
 		if (!strcmp(type, "Me")){
 			char *friendly;
-			friendly = xmlnode_get_data(xmlnode_get_child(contactInfo,"displayName"));
+			friendly = xmlnode_get_data(xmlnode_get_child(contactInfo, "displayName"));
 			gaim_connection_set_display_name(session->account->gc, gaim_url_decode(friendly));
 			g_free(friendly);
 		}

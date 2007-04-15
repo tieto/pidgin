@@ -48,7 +48,7 @@ struct _MsnUser
 	char * uid;				/*< User Id							*/
 
 	const char *status;     /**< The state of the user.         */
-	const char *statusline;	/**< The state of the user.	*/	
+	char *statusline;	    /**< The state of the user.	*/	
 
 	gboolean idle;          /**< The idle state of the user.    */
 
