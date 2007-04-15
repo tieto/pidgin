@@ -106,10 +106,11 @@ struct _MsnSoapConn{
 
 /*Function Prototype*/
 /*Soap Request Function */
-MsnSoapReq *
-msn_soap_request_new(const char *host,const char *post_url,const char *soap_action,
-				const char *body,
-				GaimInputFunction read_cb,GaimInputFunction written_cb);
+MsnSoapReq *msn_soap_request_new(const char *host, const char *post_url,
+								 const char *soap_action, const char *body,
+								 GaimInputFunction read_cb,
+								 GaimInputFunction written_cb);
+
 void msn_soap_request_free(MsnSoapReq *request);
 void msn_soap_post_request(MsnSoapConn *soapconn,MsnSoapReq *request);
 void msn_soap_post_head_request(MsnSoapConn *soapconn);

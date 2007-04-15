@@ -33,8 +33,6 @@
 /*define This to debug the Contact Server*/
 #undef  MSN_CONTACT_SOAP_DEBUG
 
-void msn_contact_connect_init(MsnSoapConn *soapconn);
-
 /*new a contact*/
 MsnContact *
 msn_contact_new(MsnSession *session)
@@ -144,6 +142,17 @@ msn_parse_contact_list(MsnContact * contact)
 	body = xmlnode_get_child(node,"Body");
 	gaim_debug_misc("MSNCL","body{%p},name:%s\n",body,body->name);
 	response = xmlnode_get_child(body,"FindMembershipResponse");
+
+	if (response == NULL) {
+		/* we may get a response if our cache data is too old:
+		 *
+		 * <faultstring>Need to do full sync. Can't sync deltas Client
+		 * has too old a copy for us to do a delta sync</faultstring>
+		 */
+		msn_get_contact_list(contact, NULL);
+		return;
+	}
+
 	gaim_debug_misc("MSNCL","response{%p},name:%s\n",response,response->name);
 	result =xmlnode_get_child(response,"FindMembershipResult");
 	if(result == NULL){
@@ -263,7 +272,7 @@ msn_get_contact_list(MsnContact * contact, const char *update_time)
 	}else{
 		update_str = g_strdup("");
 	}
-	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE,update_str);
+	body = g_strdup_printf(MSN_GET_CONTACT_TEMPLATE, update_str);
 	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
 					MSN_GET_CONTACT_POST_URL,MSN_GET_CONTACT_SOAP_ACTION,
 					body,
@@ -274,7 +283,7 @@ msn_get_contact_list(MsnContact * contact, const char *update_time)
 	g_free(body);
 }
 
-static void
+static gboolean
 msn_parse_addressbook(MsnContact * contact)
 {
 	MsnSession * session;
@@ -290,17 +299,22 @@ msn_parse_addressbook(MsnContact * contact)
 
 	if(node == NULL){
 		gaim_debug_misc("xml","parse from str err!\n");
-		return;
+		return FALSE;
 	}
 	gaim_debug_misc("xml","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
 	body = xmlnode_get_child(node,"Body");
 	gaim_debug_misc("xml","body{%p},name:%s\n",body,body->name);
 	response = xmlnode_get_child(body,"ABFindAllResponse");
+
+	if (response == NULL) {
+		return FALSE;
+	}
+
 	gaim_debug_misc("xml","response{%p},name:%s\n",response,response->name);
 	result =xmlnode_get_child(response,"ABFindAllResult");
 	if(result == NULL){
 		gaim_debug_misc("MSNAB","receive no address book update\n");
-		return;
+		return TRUE;
 	}
 	gaim_debug_misc("xml","result{%p},name:%s\n",result,result->name);
 
@@ -480,6 +494,7 @@ msn_parse_addressbook(MsnContact * contact)
 
 	xmlnode_free(node);
 	msn_soap_free_read_buf(contact->soapconn);
+	return TRUE;
 }
 
 static void
@@ -495,11 +510,13 @@ msn_get_address_cb(gpointer data, gint source, GaimInputCondition cond)
 	g_return_if_fail(session != NULL);
 
 //	gaim_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
-	msn_parse_addressbook(contact);
-
-	msn_notification_dump_contact(session);
-	msn_set_psm(session);
-	msn_session_finish_login(session);
+	if (msn_parse_addressbook(contact)) {
+		msn_notification_dump_contact(session);
+		msn_set_psm(session);
+		msn_session_finish_login(session);
+	} else {
+		msn_get_address_book(contact, NULL, NULL);
+	}
 
 	/*free the read buffer*/
 	msn_soap_free_read_buf(soapconn);

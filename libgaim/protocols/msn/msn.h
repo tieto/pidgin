@@ -141,4 +141,7 @@ typedef enum
 	 (MSN_CLIENT_ID_RESERVED_2 <<  8) | \
 	 (MSN_CLIENT_ID_CAPABILITIES))
 
+void msn_act_id(GaimConnection *gc, const char *entry);
+
+
 #endif /* _MSN_H_ */

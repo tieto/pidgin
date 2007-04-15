@@ -113,13 +113,16 @@ msn_cmd_nudge(GaimConversation *conv, const gchar *cmd, gchar **args, gchar **er
 	return GAIM_CMD_RET_OK;
 }
 
-static void
+void
 msn_act_id(GaimConnection *gc, const char *entry)
 {
 	MsnCmdProc *cmdproc;
 	MsnSession *session;
 	GaimAccount *account;
 	const char *alias;
+
+	char *soapbody;
+	MsnSoapReq *soap_request;
 
 	session = gc->proto_data;
 	cmdproc = session->notification->cmdproc;
@@ -137,12 +140,27 @@ msn_act_id(GaimConnection *gc, const char *entry)
 		return;
 	}
 
-	if (*alias != '\0') {
-		msn_cmdproc_send(cmdproc, "PRP", "MFN %s", alias);
-	} else {
-		msn_cmdproc_send(cmdproc, "PRP", "MFN %s",
-						 gaim_url_encode(gaim_account_get_username(account)));
+	if (*alias == '\0') {
+		alias = gaim_url_encode(gaim_account_get_username(account));
 	}
+
+	msn_cmdproc_send(cmdproc, "PRP", "MFN %s", alias);
+
+	soapbody = g_strdup_printf(MSN_CONTACT_UPDATE_TEMPLATE, alias);
+	/*build SOAP and POST it*/
+	soap_request = msn_soap_request_new(MSN_CONTACT_SERVER,
+										MSN_ADDRESS_BOOK_POST_URL,
+										MSN_CONTACT_UPDATE_SOAP_ACTION,
+										soapbody,
+										NULL,
+										NULL);
+
+	session->contact->soapconn->read_cb = NULL;
+	msn_soap_post(session->contact->soapconn,
+				  soap_request,
+				  msn_contact_connect_init);
+
+	g_free(soapbody);
 }
 
 static void
@@ -431,14 +449,12 @@ msn_new_xfer(GaimConnection *gc, const char *who)
 	session = gc->proto_data;
 
 	xfer = gaim_xfer_new(gc->account, GAIM_XFER_SEND, who);
-	if (xfer)
-	{
-		slplink = msn_session_get_slplink(session, who);
 
-		xfer->data = slplink;
+	slplink = msn_session_get_slplink(session, who);
 
-		gaim_xfer_set_init_fnc(xfer, t_msn_xfer_init);
-	}
+	xfer->data = slplink;
+
+	gaim_xfer_set_init_fnc(xfer, t_msn_xfer_init);
 
 	return xfer;
 }

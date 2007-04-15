@@ -626,18 +626,9 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 }
 
 static void
-msn_notification_post_adl(MsnCmdProc *cmdproc,char *payload, int payload_len)
+msn_notification_post_adl(MsnCmdProc *cmdproc, char *payload, int payload_len)
 {
 	MsnTransaction *trans;
-	const char *display_name;
-	const char *friendly;
-
-	display_name = gaim_connection_get_display_name(cmdproc->session->account->gc);
-	if (display_name) {
-		friendly = gaim_url_encode(display_name);
-		msn_cmdproc_send(cmdproc, "PRP", "MFN %s", friendly);
-	}
-
 
 	gaim_debug_info("MaYuan","Send ADL{%s}\n",payload);
 	trans = msn_transaction_new(cmdproc, "ADL","%d",strlen(payload));
@@ -655,6 +646,7 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode *adl_node;
 	char *payload;
 	int payload_len;
+	const char *display_name;
 
 	userlist = session->userlist;
 	adl_node = xmlnode_new("ml");
@@ -671,6 +663,13 @@ msn_notification_dump_contact(MsnSession *session)
 	xmlnode_free(adl_node);
 
 	msn_notification_post_adl(session->notification->cmdproc,payload,payload_len);
+
+	display_name = gaim_connection_get_display_name(session->account->gc);
+	if (display_name && strcmp(display_name,
+							   gaim_account_get_username(session->account))) {
+		msn_act_id(session->account->gc, display_name);
+	}
+
 }
 
 /*Post FQY to NS,Inform add a Yahoo User*/
