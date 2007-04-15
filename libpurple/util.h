@@ -1017,7 +1017,10 @@ gchar *purple_utf8_try_convert(const char *str);
 gchar *purple_utf8_salvage(const char *str);
 
 /**
- * Compares two UTF-8 strings case-insensitively.
+ * Compares two UTF-8 strings case-insensitively.  This string is
+ * more expensive than a simple g_utf8_collate() comparison because
+ * it calls g_utf8_casefold() on each string, which allocates new
+ * strings.
  *
  * @param a The first string.
  * @param b The second string.
