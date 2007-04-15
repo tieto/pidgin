@@ -138,7 +138,9 @@ msn_command_from_string(const char *string)
 		param = cmd->params[0];
 
 		cmd->trId = is_num(param) ? atoi(param) : 0;
-	}else{
+	}
+	else
+	{
 		cmd->trId = 0;
 	}
 

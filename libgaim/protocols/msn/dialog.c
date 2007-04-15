@@ -45,9 +45,7 @@ msn_add_cb(MsnAddRemData *data)
 		msn_userlist_add_buddy(userlist, data->who, MSN_LIST_FL, data->group);
 	}
 
-	if (data->group != NULL)
-		g_free(data->group);
-
+	g_free(data->group);
 	g_free(data->who);
 	g_free(data);
 }
@@ -63,9 +61,7 @@ msn_rem_cb(MsnAddRemData *data)
 		msn_userlist_rem_buddy(userlist, data->who, MSN_LIST_FL, data->group);
 	}
 
-	if (data->group != NULL)
-		g_free(data->group);
-
+	g_free(data->group);
 	g_free(data->who);
 	g_free(data);
 }
@@ -93,13 +89,16 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 						  gaim_account_get_username(account),
 						  gaim_account_get_protocol_name(account));
 
-	if (group_name != NULL){
+	if (group_name != NULL)
+	{
 		reason = g_strdup_printf(_("%s on the local list is "
 								   "inside the group \"%s\" but not on "
 								   "the server list. "
 								   "Do you want this buddy to be added?"),
 								 passport, group_name);
-	}else{
+	}
+	else
+	{
 		reason = g_strdup_printf(_("%s is on the local list but "
 								   "not on the server list. "
 								   "Do you want this buddy to be added?"),
@@ -114,11 +113,10 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 	if (group_name != NULL)
 		group = gaim_find_group(group_name);
 
-	if (group != NULL){
+	if (group != NULL)
 		buddy = gaim_find_buddy_in_group(account, passport, group);
-	}else{
+	else	
 		buddy = gaim_find_buddy(account, passport);
-	}
 
 	if (buddy != NULL)
 		gaim_blist_remove_buddy(buddy);

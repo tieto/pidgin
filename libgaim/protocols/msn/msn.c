@@ -988,7 +988,8 @@ msn_set_status(GaimAccount *account, GaimStatus *status)
 
 	gc = gaim_account_get_connection(account);
 
-	if (gc != NULL){
+	if (gc != NULL)
+	{
 		session = gc->proto_data;
 		msn_change_status(session);
 	}
@@ -2129,10 +2130,10 @@ static GaimPluginInfo info =
 	"MSN",                                            /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("Windows Live Messenger Protocol Plugin"),
+	N_("MSN Protocol Plugin"),
 	                                                  /**  description    */
-	N_("Windows Live Messenger Protocol Plugin"),
-	"MaYuan <mayuan2006@gmail.com>",				/**< author         */
+	N_("MSN Protocol Plugin"),
+	"Christian Hammond <chipx86@gnupdate.org>",	  /**< author         */
 	GAIM_WEBSITE,                                     /**< homepage       */
 
 	msn_load,                                         /**< load           */
