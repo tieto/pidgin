@@ -562,7 +562,7 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, const gchar *iconfile)
 	gint prefix_len = strlen(QQ_ICON_PREFIX);
 	gint suffix_len = strlen(QQ_ICON_SUFFIX);
 	gint dir_len = strlen(buddy_icon_dir);
-	gchar *errmsg = g_strconcat(_("Setting custom faces is not currently supported. Please choose an image from "), buddy_icon_dir, ".", NULL);
+	gchar *errmsg = g_strdup_printf(_("Setting custom faces is not currently supported. Please choose an image from %s."), buddy_icon_dir);
 	gboolean icon_global = purple_account_get_bool(gc->account, "use-global-buddyicon", TRUE);
 
 	if (!icon_path)
