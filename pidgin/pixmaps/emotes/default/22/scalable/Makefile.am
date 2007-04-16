@@ -16,6 +16,7 @@ EXTRA_DIST = 	act-up.svg \
 		brb.svg \
 		bye.svg \
 		cake.svg \
+		call-me.svg \
 		camera.svg \
 		can.svg \
 		car.svg \
@@ -109,6 +110,7 @@ EXTRA_DIST = 	act-up.svg \
 		quiet.svg \
 		rainbow.svg \
 		rain.svg \
+		rotfl.svg \
 		rose-dead.svg \
 		rose.svg \
 		sad.svg \
