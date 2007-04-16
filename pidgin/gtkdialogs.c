@@ -373,7 +373,7 @@ void pidgindialogs_about()
 					PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");
 #ifdef _WIN32
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
-						   "#pidgwin on irc.freenode.net<BR><BR>"));
+						   "#pidgin-win32 on irc.freenode.net<BR><BR>"));
 #else
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
 						   "#pidgin on irc.freenode.net<BR><BR>"));
