@@ -86,7 +86,7 @@ endif # PLUGINS
 EXTRA_DIST = \
 	Makefile.mingw \
 	contact_priority.c \
-	gaiminc.c \
+	pidgininc.c \
 	gtk-signals-test.c \
 	mailchk.c \
 	raw.c \
