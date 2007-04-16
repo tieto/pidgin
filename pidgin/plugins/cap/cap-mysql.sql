@@ -1,4 +1,4 @@
--- Contact Availability Prediction plugin for Gaim
+-- Contact Availability Prediction plugin for Pidgin
 --
 -- Copyright (C) 2006 Geoffrey Foster.
 --
