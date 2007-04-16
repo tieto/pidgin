@@ -1,52 +1,52 @@
 #include "gtkmodule.h"
 
-MODULE = Pidgin::Dialogs  PACKAGE = Pidgin::Dialogs  PREFIX = pidgindialogs_
+MODULE = Pidgin::Dialogs  PACKAGE = Pidgin::Dialogs  PREFIX = pidgin_dialogs_
 PROTOTYPES: ENABLE
 
 void
-pidgindialogs_destroy_all()
+pidgin_dialogs_destroy_all()
 
 void
-pidgindialogs_about()
+pidgin_dialogs_about()
 
 void
-pidgindialogs_im()
+pidgin_dialogs_im()
 
 void
-pidgindialogs_im_with_user(account, username)
+pidgin_dialogs_im_with_user(account, username)
 	Purple::Account account
 	const char * username
 
 void
-pidgindialogs_info()
+pidgin_dialogs_info()
 
 void
-pidgindialogs_log()
+pidgin_dialogs_log()
 
 void
-pidgindialogs_alias_contact(contact)
+pidgin_dialogs_alias_contact(contact)
 	Purple::BuddyList::Contact contact
 
 void
-pidgindialogs_alias_buddy(buddy)
+pidgin_dialogs_alias_buddy(buddy)
 	Purple::BuddyList::Buddy buddy
 
 void
-pidgindialogs_alias_chat(chat)
+pidgin_dialogs_alias_chat(chat)
 	Purple::BuddyList::Chat chat
 
 void
-pidgindialogs_remove_buddy(buddy)
+pidgin_dialogs_remove_buddy(buddy)
 	Purple::BuddyList::Buddy buddy
 
 void
-pidgindialogs_remove_group(group)
+pidgin_dialogs_remove_group(group)
 	Purple::BuddyList::Group group
 
 void
-pidgindialogs_remove_chat(chat)
+pidgin_dialogs_remove_chat(chat)
 	Purple::BuddyList::Chat chat
 
 void
-pidgindialogs_remove_contact(contact)
+pidgin_dialogs_remove_contact(contact)
 	Purple::BuddyList::Contact contact
