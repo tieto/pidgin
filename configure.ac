@@ -173,7 +173,7 @@ PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0],
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have the GLib 2.0 development headers installed to build Gaim.
+You must have the GLib 2.0 development headers installed to build.
 ])])
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
@@ -206,7 +206,7 @@ AC_ARG_ENABLE(gtkspell,
 	enable_gtkspell="$enableval", enable_gtkspell="yes")
 AC_ARG_ENABLE(gevolution,
 	[AC_HELP_STRING([--disable-gevolution],
-		[compile without the Gaim Evolution plugin])],
+		[compile without the Evolution plugin])],
 	enable_gevolution="$enableval", enable_gevolution="yes")
 AC_ARG_ENABLE(cap,
 	[AC_HELP_STRING([--disable-cap],
@@ -234,9 +234,8 @@ if test "x$enable_gtkui" = "xyes" ; then
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 
-You must have the GTK+ 2.0 development headers installed to compile Gaim's
-GTK+ interface.  If you only want to build the console interface then
-specify --disable-gtkui when running configure.
+You must have the GTK+ 2.0 development headers installed to compile Pidgin.
+If you only want to build Finch then specify --disable-gtkui when running configure.
 ])])
 
 	AC_SUBST(GTK_CFLAGS)
@@ -451,7 +450,7 @@ PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.6.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have libxml2 >= 2.6.0 development headers installed to build Gaim.
+You must have libxml2 >= 2.6.0 development headers installed to build.
 ])])
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
@@ -931,7 +930,7 @@ dnl # Check for Python
 dnl #######################################################################
 
 dnl Python scripts are used to auto-generate about 3000 lines of C
-dnl and XML code that wraps (part of) the existing Gaim API so that
+dnl and XML code that wraps (part of) the existing API so that
 dnl it is now accessible through D-Bus.
 
 dnl Python is only required if --enable-dbus is used, and only for
