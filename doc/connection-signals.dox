@@ -11,7 +11,7 @@
 
  @signaldef signing-on
   @signalproto
-void (*signing_on)(GaimConnection *gc);
+void (*signing_on)(PurpleConnection *gc);
   @endsignalproto
   @signaldesc
    Emitted when a connection is about to sign on.
@@ -20,7 +20,7 @@ void (*signing_on)(GaimConnection *gc);
 
  @signaldef signed-on
   @signalproto
-void (*signed_on)(GaimConnection *gc);
+void (*signed_on)(PurpleConnection *gc);
   @endsignalproto
   @signaldesc
    Emitted when a connection has signed on.
@@ -29,7 +29,7 @@ void (*signed_on)(GaimConnection *gc);
 
  @signaldef signing-off
   @signalproto
-void (*signing_off)(GaimConnection *gc);
+void (*signing_off)(PurpleConnection *gc);
   @endsignalproto
   @signaldesc
    Emitted when a connection is about to sign off.
@@ -38,7 +38,7 @@ void (*signing_off)(GaimConnection *gc);
 
  @signaldef signed-off
   @signalproto
-void (*signed_off)(GaimConnection *gc);
+void (*signed_off)(PurpleConnection *gc);
   @endsignalproto
   @signaldesc
    Emitted when a connection has signed off.

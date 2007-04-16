@@ -8,7 +8,7 @@
 
  @signaldef playing-sound-event
   @signalproto
-gboolean (*playing_sound_event)(GaimSoundEventID event, GaimAccount *account);
+gboolean (*playing_sound_event)(PurpleSoundEventID event, PurpleAccount *account);
   @endsignalproto
   @signaldesc
    Emitted when gaim is going to play a sound event. This can be used to cancel playing sound by returning TRUE.

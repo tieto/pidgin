@@ -15,7 +15,7 @@
 
  @signaldef account-added
   @signalproto
-void (*account_added)(GaimAccount *account);
+void (*account_added)(PurpleAccount *account);
   @endsignalproto
   @signaldesc
    Emitted when an account is added.
@@ -24,7 +24,7 @@ void (*account_added)(GaimAccount *account);
 
  @signaldef account-connecting
   @signalproto
-void (*account_connecting)(GaimAccount *account);
+void (*account_connecting)(PurpleAccount *account);
   @endsignalproto
   @signaldesc
    This is called when an account is in the process of connecting.
@@ -33,7 +33,7 @@ void (*account_connecting)(GaimAccount *account);
 
  @signaldef account-removed
   @signalproto
-void (*account_removed)(GaimAccount *account);
+void (*account_removed)(PurpleAccount *account);
   @endsignalproto
   @signaldesc
    Emitted when an account is removed.
@@ -42,7 +42,7 @@ void (*account_removed)(GaimAccount *account);
 
  @signaldef account-disabled
   @signalproto
-void (*account_disabled)(GaimAccount *account);
+void (*account_disabled)(PurpleAccount *account);
   @endsignalproto
   @signaldesc
    Emitted when an account is disabled.
@@ -51,7 +51,7 @@ void (*account_disabled)(GaimAccount *account);
 
  @signaldef account-enabled
   @signalproto
-void (*account_enabled)(GaimAccount *account);
+void (*account_enabled)(PurpleAccount *account);
   @endsignalproto
   @signaldesc
    Emitted when an account is enabled.
@@ -60,7 +60,7 @@ void (*account_enabled)(GaimAccount *account);
 
  @signaldef account-setting-info
   @signalproto
-void (*account_setting_info)(GaimAccount *account, const char *new_info);
+void (*account_setting_info)(PurpleAccount *account, const char *new_info);
   @endsignalproto
   @signaldesc
    Emitted when a user is about to send his new user info, or
@@ -71,7 +71,7 @@ void (*account_setting_info)(GaimAccount *account, const char *new_info);
 
  @signaldef account-set-info
   @signalproto
-void (*account_set_info)(GaimAccount *account, const char *new_info);
+void (*account_set_info)(PurpleAccount *account, const char *new_info);
   @endsignalproto
   @signaldesc
    Emitted when a user sent his new user info, or profile, to the server.
@@ -81,7 +81,7 @@ void (*account_set_info)(GaimAccount *account, const char *new_info);
 
  @signaldef account-status-changed
   @signalproto
-void (*account_status_changed)(GaimAccount *account, GaimStatus *old, GaimStatus *new);
+void (*account_status_changed)(PurpleAccount *account, PurpleStatus *old, PurpleStatus *new);
   @endsignalproto
   @signaldesc
    Emitted when the status of an account changes (after the change).
@@ -92,7 +92,7 @@ void (*account_status_changed)(GaimAccount *account, GaimStatus *old, GaimStatus
 
  @signaldef account-alias-changed
   @signalproto
-void (*account_alias_changed)(GaimAccount *account, const char *old);
+void (*account_alias_changed)(PurpleAccount *account, const char *old);
   @endsignalproto
   @signaldesc
    Emitted when the alias of an account changes (after the change).

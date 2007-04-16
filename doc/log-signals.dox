@@ -8,7 +8,7 @@
 
  @signaldef log-timestamp
   @signalproto
-char *(*log_timestamp)(GaimLog *log, time_t when);
+char *(*log_timestamp)(PurpleLog *log, time_t when);
   @endsignalproto
   @signaldesc
    Emitted to allow plugins to customize the timestamp on a message
@@ -17,7 +17,7 @@ char *(*log_timestamp)(GaimLog *log, time_t when);
   @param when The time to be converted to a string.
   @return A textual representation of the time, or @c NULL to use a
           default format.
-  @note Plugins must be careful of logs with a type of GAIM_LOG_SYSTEM.
+  @note Plugins must be careful of logs with a type of PURPLE_LOG_SYSTEM.
  @endsignaldef
 
 */
