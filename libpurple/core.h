@@ -1,5 +1,5 @@
 /**
- * @defgroup core Purple Core
+ * @defgroup core libpurple
  *
  * purple
  *
