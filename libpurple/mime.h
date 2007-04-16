@@ -40,12 +40,12 @@ extern "C" {
  */
 
 /**
- * @typedef PurpleMimeDocument A MIME document.
+ * A MIME document.
  */
 typedef struct _PurpleMimeDocument PurpleMimeDocument;
 
 /**
- * @typedef PurpleMimePart A part of a multipart MIME document.
+ * A part of a multipart MIME document.
  */
 typedef struct _PurpleMimePart PurpleMimePart;
 

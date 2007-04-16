@@ -250,6 +250,11 @@ PurpleProxyConnectData *purple_proxy_connect(void *handle,
 /**
  * Makes a connection through a SOCKS5 proxy.
  *
+ * @param handle     A handle that should be associated with this
+ *                   connection attempt.  The handle can be used
+ *                   to cancel the connection attempt using the
+ *                   purple_proxy_connect_cancel_with_handle()
+ *                   function.
  * @param gpi        The PurpleProxyInfo specifying the proxy settings
  * @param host       The destination host.
  * @param port       The destination port.

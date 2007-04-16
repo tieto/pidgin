@@ -437,7 +437,7 @@ void pidgin_clear_cursor(GtkWidget *widget);
  *
  * @param parent      The parent window
  * @param callback    The callback to call when the window is closed. If the user chose an icon, the char* argument will point to its path
- * @param data        Data to pass to @callback
+ * @param data        Data to pass to @a callback
  * @return            The file dialog 
  */
 GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char*,gpointer), gpointer data);
@@ -485,6 +485,7 @@ char *pidgin_make_pretty_arrows(const char *str);
  * Creates a "mini-dialog" suitable for embedding in the buddy list scrollbook
  *
  * @param handle         A handle
+ * @param stock_id       The ID of a stock image to use in the mini dialog
  * @param primary        The primary text
  * @param secondary      The secondary text
  * @param user_data      Data to pass to the callbacks
@@ -527,10 +528,10 @@ gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf);
 /**
  * This is copied from Gtk to support Gtk 2.0
  *
- * Creates a new path with @first_index and @varargs as indices.
+ * Creates a new path with @a first_index and the varargs as indices.
  *
  * @param first_index    first integer
- * @param varargs        list of integers terminated by -1
+ * @param ...            list of integers terminated by -1
  *
  * @return               A newly created GtkTreePath.
  *
