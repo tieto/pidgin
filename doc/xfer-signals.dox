@@ -62,8 +62,8 @@ void (*file_recv_request)(PurpleXfer *xfer, gpointer data);
    Emitted before the user is prompted for an incoming file-transfer.
    Plugins can intercept the signal to auto-accept/auto-reject the
    requests. To auto-accept the file transfer, use
-   gaim_xfer_request_accepted(). To auto-reject, set the status of the
-   xfer to GAIM_XFER_STATUS_CANCEL_LOCAL.
+   purple_xfer_request_accepted(). To auto-reject, set the status of the
+   xfer to PURPLE_XFER_STATUS_CANCEL_LOCAL.
   @param xfer The file transfer
   @param data User data
  @endsignaldef

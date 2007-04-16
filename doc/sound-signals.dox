@@ -11,7 +11,7 @@
 gboolean (*playing_sound_event)(PurpleSoundEventID event, PurpleAccount *account);
   @endsignalproto
   @signaldesc
-   Emitted when gaim is going to play a sound event. This can be used to cancel playing sound by returning TRUE.
+   Emitted when libpurple is going to play a sound event. This can be used to cancel playing sound by returning TRUE.
   @param event   The event this sound represents.
   @param account The account the sound is being played for.
   @return @c TRUE if the sound should not be played, or @c FALSE otherwise.
