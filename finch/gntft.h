@@ -1,6 +1,6 @@
 /**
  * @file gntft.h GNT File Transfer UI
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

@@ -1,6 +1,6 @@
 /**
  * @file gntplugin.c GNT Plugins API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *
