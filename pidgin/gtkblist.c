@@ -4322,7 +4322,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->treeview = gtk_tree_view_new_with_model(GTK_TREE_MODEL(gtkblist->treemodel));
 
 	gtk_widget_show(gtkblist->treeview);
-	gtk_widget_set_name(gtkblist->treeview, "pidginblist_treeview");
+	gtk_widget_set_name(gtkblist->treeview, "pidgin_blist_treeview");
 
 	g_signal_connect(gtkblist->treeview,
 			 "style-set",
@@ -4465,7 +4465,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	/* Add the statusbox */
 	gtkblist->statusbox = pidgin_status_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
-	gtk_widget_set_name(gtkblist->statusbox, "pidginblist_statusbox");
+	gtk_widget_set_name(gtkblist->statusbox, "pidgin_blist_statusbox");
 	gtk_container_set_border_width(GTK_CONTAINER(gtkblist->statusbox), 3);
 	gtk_widget_show(gtkblist->statusbox);
 

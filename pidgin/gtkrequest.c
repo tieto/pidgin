@@ -372,7 +372,7 @@ pidgin_request_input(const char *title, const char *primary,
 		/* imhtml */
 		frame = pidgin_create_imhtml(TRUE, &entry, &toolbar, NULL);
 		gtk_widget_set_size_request(entry, 320, 130);
-		gtk_widget_set_name(entry, "pidginrequest_imhtml");
+		gtk_widget_set_name(entry, "pidgin_request_imhtml");
 		if (default_value != NULL)
 			gtk_imhtml_append_text(GTK_IMHTML(entry), default_value, GTK_IMHTML_NO_SCROLL);
 		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);

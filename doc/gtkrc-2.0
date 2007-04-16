@@ -11,30 +11,25 @@ gtk-key-theme-name = "Emacs"
 
 # The following section allows you to change the style of the conversation
 # window widgets, log viewer widget, and request and notify window widgets.
-# These only work in Gaim 0.78 or higher.
 style "imhtml-fix"
 {
 font_name = "Sans 10"
 }
 # Set the widget style for the conversation entry box
-widget "*gaim_gtkconv_entry" style "imhtml-fix"
+widget "*pidgin_conv_entry" style "imhtml-fix"
 # Set the widget style for the conversation
-widget "*gaim_gtkconv_imhtml" style "imhtml-fix"
+widget "*pidgin_conv_imhtml" style "imhtml-fix"
 
 # Set the widget style for the log viewer
-widget "*gaim_gtklog_imhtml" style "imhtml-fix"
+widget "*pidgin_log_imhtml" style "imhtml-fix"
 
 # Set the widget style for IMHtml input widgets in request dialogs
-widget "*gaim_gtkrequest_imhtml" style "imhtml-fix"
+widget "*pidgin_request_imhtml" style "imhtml-fix"
 # Set the widget style for IMHtml widgets in notify dialogs
-widget "*gaim_gtknotify_imhtml" style "imhtml-fix"
-
-# Uncommenting the line below sets all IMHtml widgets in Gaim to the same style
-# and will work in Gaim versions prior to 0.78
-#widget_class "*.GtkScrolledWindow.GtkIMHtml" style "imhtml-fix"
+widget "*pidgin_notify_imhtml" style "imhtml-fix"
 
 # The following lets you customize the color of hyperlinks
-# and also the text cursors. The link color thing is Gaim specific
+# and also the text cursors. The link color thing is Pidgin specific
 # but the rest work for any Gtk2 program. You can search the Gtk2
 # docs for other style properties.
 style "my-style-name" {
@@ -46,18 +41,17 @@ widget_class "*" style "my-style-name"
 
 # This style sets the expander size on a treeview to 0, which has the result
 # of reducing the indent for items in the tree. This can be applied to the
-# Gaim buddy list to reduce it's width.
-# This only works in Gaim 0.79 and higher
+# Pidgin buddy list to reduce it's width.
 style "my-narrow-tree"
 {
   GtkTreeView::expander_size = 0
 }
 
 # And apply the style to the buddy list:
-widget "*gaim_gtkblist_treeview" style "my-narrow-tree"
+widget "*pidgin_blist_treeview" style "my-narrow-tree"
 
-# In Gaim 2.0.0 and later, you can set custom keybindings in your theme.  Here
-# is an example to follow
+# In Pidgin, you can set custom keybindings in your theme.
+# Here is an example to follow:
 
 binding "my-bindings"
 {
@@ -73,7 +67,8 @@ binding "my-bindings"
 	bind "<ctrl><alt><shift>F3" { "format_toggle" (4) }
 }
   
-widget "*gaim_gtkconv_entry" binding "my-bindings"
+widget "*pidgin_conv_entry" binding "my-bindings"
  
-#to let you edit your gaim key bindings
+# This lets you edit your Pidgin key bindings from within Pidgin,
+# by hovering over a menu item and hitting a key combo.
 gtk-can-change-accels = 1
