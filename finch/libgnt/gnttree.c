@@ -47,6 +47,8 @@ struct _GntTreeCol
 	int span;       /* How many columns does it span? */
 };
 
+static void tree_selection_changed(GntTree *, GntTreeRow *, GntTreeRow *);
+
 static GntWidgetClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
 
@@ -340,8 +342,10 @@ redraw_tree(GntTree *tree)
 
 	if (tree->top == NULL)
 		tree->top = tree->root;
-	if (tree->current == NULL)
+	if (tree->current == NULL) {
 		tree->current = tree->root;
+		tree_selection_changed(tree, NULL, tree->current);
+	}
 
 	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 
@@ -1394,7 +1398,7 @@ void gnt_tree_set_selected(GntTree *tree , void *key)
 {
 	int dist;
 	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
-	if (!row)
+	if (!row || row == tree->current)
 		return;
 
 	if (tree->top == NULL)
@@ -1409,6 +1413,7 @@ void gnt_tree_set_selected(GntTree *tree , void *key)
 		gnt_tree_scroll(tree, -dist);
 	else
 		redraw_tree(tree);
+	tree_selection_changed(tree, row, tree->current);
 }
 
 void _gnt_tree_init_internals(GntTree *tree, int col)
@@ -1514,6 +1519,7 @@ void gnt_tree_set_expanded(GntTree *tree, void *key, gboolean expanded)
 		row->collapsed = !expanded;
 		if (GNT_WIDGET(tree)->window)
 			gnt_widget_draw(GNT_WIDGET(tree));
+		g_signal_emit(tree, signals[SIG_COLLAPSED], 0, key, row->collapsed);
 	}
 }
 
