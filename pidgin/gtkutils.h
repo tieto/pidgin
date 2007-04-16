@@ -1,6 +1,6 @@
 /**
  * @file gtkutils.h GTK+ utility functions
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

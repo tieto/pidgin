@@ -1,6 +1,6 @@
 /**
  * @file gtkft.c GTK+ File Transfer UI
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

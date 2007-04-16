@@ -1,6 +1,6 @@
 /*
  * @file gtkimhtmltoolbar.c GTK+ IMHtml Toolbar
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

@@ -1,5 +1,5 @@
 /**
- * @defgroup gtkui GTK+ User Interface
+ * @defgroup pidgin Pidgin (GTK+ User Interface)
  *
  * pidgin
  *

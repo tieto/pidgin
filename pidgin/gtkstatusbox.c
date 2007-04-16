@@ -1,6 +1,6 @@
 /*
  * @file gtkstatusbox.c GTK+ Status Selection Widget
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

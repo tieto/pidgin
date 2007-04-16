@@ -1,6 +1,6 @@
 /*
  * @file gtkconn.c GTK+ Connection API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

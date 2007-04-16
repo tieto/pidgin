@@ -1,6 +1,6 @@
 /**
  * @file gtkprivacy.c GTK+ Privacy UI
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

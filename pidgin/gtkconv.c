@@ -1,6 +1,6 @@
 /**
  * @file gtkconv.c GTK+ Conversation API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -7125,7 +7125,7 @@ pidgin_conversations_uninit(void)
 
 /**
  * @file gtkconvwin.c GTK+ Conversation Window API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

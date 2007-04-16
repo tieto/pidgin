@@ -1,6 +1,6 @@
 /*
  * @file gtkscrollbook  GTK+ Scrolling notebook Widget
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

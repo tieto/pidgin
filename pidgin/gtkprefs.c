@@ -1,6 +1,6 @@
 /**
  * @file gtkprefs.c GTK+ Preferences
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

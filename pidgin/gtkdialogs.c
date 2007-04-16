@@ -1,6 +1,6 @@
 /*
  * @file gtkdialogs.c GTK+ Dialogs
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

@@ -1,6 +1,6 @@
 /*
  * @file gtkdnd-hints.c GTK+ Drag-and-Drop arrow hints
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

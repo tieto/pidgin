@@ -1,6 +1,6 @@
 /*
  * @file gtkblist.c GTK+ BuddyList API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

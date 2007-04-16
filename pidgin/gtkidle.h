@@ -1,6 +1,6 @@
 /**
  * @file gtkidle.h GTK+ Idle API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

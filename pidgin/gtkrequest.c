@@ -1,6 +1,6 @@
 /**
  * @file gtkrequest.c GTK+ Request API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

@@ -1,6 +1,6 @@
 /**
  * @file gtkdebug.c GTK+ Debug API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

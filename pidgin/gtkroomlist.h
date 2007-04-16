@@ -1,6 +1,6 @@
 /**
  * @file gtkroomlist.h GTK+ Room List UI
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
