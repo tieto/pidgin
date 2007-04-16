@@ -18,7 +18,7 @@ def ensureimconversation(conversation, account, name):
     if conversation != 0:
         return conversation
     else:
-        # 1 = GAIM_CONV_IM 
+        # 1 = PURPLE_CONV_IM 
         return purple.PurpleConversationNew(1, account, name)
 
 def receivedimmsg(account, name, message, conversation, flags):
