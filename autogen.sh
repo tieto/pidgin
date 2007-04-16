@@ -1,48 +1,47 @@
 #!/bin/sh
 
-SETUP_GETTEXT=./setup-gettext
+CONFIGURE_ARGS=""
+if [ -f configure.args ] ; then
+	CONFIGURE_ARGS="${CONFIGURE_ARGS} `cat configure.args`"
+fi
 
-($SETUP_GETTEXT --gettext-tool) < /dev/null > /dev/null 2>&1 || {
+(glib-gettextize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have gettext installed to compile Gaim";
+	echo "You must have glib-gettextize installed to compile Pidgin.";
+	echo;
+	exit;
+}
+
+(intltoolize --version) < /dev/null > /dev/null 2>&1 || {
+	echo;
+	echo "You must have intltool installed to compile Pidgin.";
 	echo;
 	exit;
 }
 
 (libtoolize --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have libtool installed to compile Gaim";
+	echo "You must have libtool installed to compile Pidgin.";
 	echo;
 	exit;
 }
 
 (automake --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have automake installed to compile Gaim";
+	echo "You must have automake installed to compile Pidgin.";
 	echo;
 	exit;
 }
 
 (autoconf --version) < /dev/null > /dev/null 2>&1 || {
 	echo;
-	echo "You must have autoconf installed to compile Gaim";
+	echo "You must have autoconf installed to compile Pidgin.";
 	echo;
 	exit;
 }
 
-echo "Generating configuration files for Gaim, please wait...."
+echo "Generating configuration files for Pidgin, please wait...."
 echo;
-
-# Backup the po/ChangeLog. This should prevent the annoying
-# gettext ChangeLog modifications.
-
-cp -p po/ChangeLog po/ChangeLog.save
-
-echo "Running gettextize, please ignore non-fatal messages...."
-$SETUP_GETTEXT
-
-# Restore the po/ChangeLog file.
-mv po/ChangeLog.save po/ChangeLog
 
 echo "Running libtoolize, please ignore non-fatal messages...."
 echo n | libtoolize --copy --force || exit;
@@ -58,10 +57,17 @@ do
 	fi
 done
 
-aclocal $ACLOCAL_FLAGS -I ./m4 || exit;
+libtoolize -c -f --automake
+glib-gettextize --force --copy
+intltoolize --force --copy
+aclocal $ACLOCAL_FLAGS || exit;
 autoheader || exit;
 automake --add-missing --copy;
 autoconf || exit;
 automake || exit;
-./configure $@
+
+echo;
+echo "Running ./configure ${CONFIGURE_ARGS} $@"
+echo;
+./configure ${CONFIGURE_ARGS} $@
 

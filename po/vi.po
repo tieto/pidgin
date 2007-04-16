@@ -2345,7 +2345,7 @@ msgstr "Đã ngắt kết nối."
 #, c-format
 msgid ""
 "%s was disconnected due to an error. %s The account has been disabled. "
-"Correct the error and reenable the account to connect."
+"Correct the error and re-enable the account to connect."
 msgstr ""
 
 #: src/gtkconv.c:325
@@ -3340,7 +3340,7 @@ msgstr ""
 
 #: src/gtkimhtml.c:1537
 msgid "_Copy E-Mail Address"
-msgstr "_Sao chép địa chỉ email"
+msgstr "_Sao chép địa chỉ e-mail"
 
 #: src/gtkimhtml.c:1549
 msgid "_Open Link in Browser"
@@ -5854,7 +5854,7 @@ msgstr "Địa chỉ e-mail"
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
 #, fuzzy
 msgid "Search for Jabber users"
-msgstr "Tìm kiếm buddy bằng địa chỉ email"
+msgstr "Tìm kiếm buddy bằng địa chỉ e-mail"
 
 #: src/protocols/jabber/buddy.c:1370
 #, fuzzy
@@ -6574,7 +6574,7 @@ msgstr "Lỗi cú pháp (có thể Gaim có lỗi)"
 
 #: src/protocols/msn/error.c:42
 #, fuzzy
-msgid "Invalid email address"
+msgid "Invalid e-mail address"
 msgstr "Xử lý phòng không hợp lệ"
 
 #: src/protocols/msn/error.c:45
@@ -7610,7 +7610,7 @@ msgstr "Email"
 #: src/protocols/novell/novell.c:1464 src/protocols/oscar/oscar.c:5965
 #: src/protocols/oscar/oscar.c:5972
 msgid "Email Address"
-msgstr "Địa chỉ email"
+msgstr "Địa chỉ e-mail"
 
 #: src/protocols/novell/novell.c:1480
 #, fuzzy
@@ -8270,7 +8270,7 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:4644
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
@@ -8491,13 +8491,13 @@ msgstr "Tên hiển thị sau đây là liên quan với %s"
 
 #: src/protocols/oscar/oscar.c:6140
 #, c-format
-msgid "No results found for email address %s"
-msgstr "Không tìm thấy người nào có điạ chỉ email %s"
+msgid "No results found for e-mail address %s"
+msgstr "Không tìm thấy người nào có điạ chỉ e-mail %s"
 
 #: src/protocols/oscar/oscar.c:6161
 #, c-format
-msgid "You should receive an email asking to confirm %s."
-msgstr "Bạn sẽ nhận được một email yêu cầu xác nhận %s."
+msgid "You should receive an e-mail asking to confirm %s."
+msgstr "Bạn sẽ nhận được một e-mail yêu cầu xác nhận %s."
 
 #: src/protocols/oscar/oscar.c:6163
 msgid "Account Confirmation Requested"
@@ -8531,28 +8531,28 @@ msgstr "Lỗi 0x%04x: Không thể định dạng tên hiển thị bởi vì n�
 #: src/protocols/oscar/oscar.c:6206
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
-"Lỗi 0x%04x: Không đổi được địa chỉ email vì đã có một yêu cầu được xử lý cho "
+"Lỗi 0x%04x: Không đổi được địa chỉ e-mail vì đã có một yêu cầu được xử lý cho "
 "tên hiển thị này."
 
 #: src/protocols/oscar/oscar.c:6209
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
-"Lỗi 0x%04x: Không đổi được địa chỉ email vì có quá nhiều tên hiển thị có "
+"Lỗi 0x%04x: Không đổi được địa chỉ e-mail vì có quá nhiều tên hiển thị có "
 "liên quan với địa chỉ này."
 
 #: src/protocols/oscar/oscar.c:6212
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
-"Lỗi 0x%04x: Không thay đổi được địa chỉ email vì địa chỉ đưa ra không hợp lệ."
+"Lỗi 0x%04x: Không thay đổi được địa chỉ e-mail vì địa chỉ đưa ra không hợp lệ."
 
 #: src/protocols/oscar/oscar.c:6215
 #, c-format
@@ -8574,8 +8574,8 @@ msgstr "Thông tin tài khoản"
 
 #: src/protocols/oscar/oscar.c:6231
 #, c-format
-msgid "The email address for %s is %s"
-msgstr "Địa chỉ email của %s là %s"
+msgid "The e-mail address for %s is %s"
+msgstr "Địa chỉ e-mail của %s là %s"
 
 #: src/protocols/oscar/oscar.c:6298
 msgid ""
@@ -8846,16 +8846,16 @@ msgstr ""
 "vào tên người đó và chọn \"Gửi lại yêu cầu xác thực.\""
 
 #: src/protocols/oscar/oscar.c:8123
-msgid "Find Buddy by E-mail"
-msgstr "Tìm Buddy dựa theo địa chỉ email"
+msgid "Find Buddy by E-Mail"
+msgstr "Tìm Buddy dựa theo địa chỉ e-mail"
 
 #: src/protocols/oscar/oscar.c:8124
 msgid "Search for a buddy by e-mail address"
-msgstr "Tìm kiếm buddy bằng địa chỉ email"
+msgstr "Tìm kiếm buddy bằng địa chỉ e-mail"
 
 #: src/protocols/oscar/oscar.c:8125
 msgid "Type the e-mail address of the buddy you are searching for."
-msgstr "Hãy nhập địa chỉ email của buddy mà bạn cần tìm."
+msgstr "Hãy nhập địa chỉ e-mail của buddy mà bạn cần tìm."
 
 #: src/protocols/oscar/oscar.c:8212 src/protocols/silc/silc.c:817
 msgid "Set User Info..."
@@ -8907,13 +8907,13 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Hiển thị các buddy chờ xác thực"
 
 #: src/protocols/oscar/oscar.c:8275
-msgid "Search for Buddy by Email..."
-msgstr "Tìm kiếm buddy theo email..."
+msgid "Search for Buddy by E-Mail..."
+msgstr "Tìm kiếm buddy theo e-mail..."
 
 #: src/protocols/oscar/oscar.c:8280
 #, fuzzy
 msgid "Search for Buddy by Information"
-msgstr "Tìm kiếm buddy theo email..."
+msgstr "Tìm kiếm buddy theo e-mail..."
 
 #: src/protocols/oscar/oscar.c:8350
 #, fuzzy
@@ -10362,7 +10362,7 @@ msgstr ""
 
 #: src/protocols/silc/util.c:325
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr ""
 
 #: src/protocols/silc/util.c:327
@@ -10486,8 +10486,8 @@ msgid "Dir service temporarily unavailable."
 msgstr "Tạm thời không có dịch vụ thư mục."
 
 #: src/protocols/toc/toc.c:524
-msgid "Email lookup restricted."
-msgstr "Không cho phép tìm kiếm email."
+msgid "E-mail lookup restricted."
+msgstr "Không cho phép tìm kiếm e-mail."
 
 #: src/protocols/toc/toc.c:527
 msgid "Keyword ignored."
@@ -11395,7 +11395,7 @@ msgstr "g003: Lỗi mở kết nối.\n"
 #~ msgid "Check Mail"
 #~ msgstr "Kiểm tra thư"
 
-#~ msgid "Check email every X seconds.\n"
+#~ msgid "Check e-mail every X seconds.\n"
 #~ msgstr "Kiểm tra thư X giây một lần.\n"
 
 #~ msgid "Auto-login"
@@ -12388,7 +12388,7 @@ msgstr "g003: Lỗi mở kết nối.\n"
 
 #, fuzzy
 #~ msgid "Local Addressbook"
-#~ msgstr "Địa chỉ email"
+#~ msgstr "Địa chỉ e-mail"
 
 #, fuzzy
 #~ msgid "_Accounts"

@@ -1,0 +1,20 @@
+SUBDIRS = scalable
+
+EXTRA_DIST =	aim.png \
+		bonjour.png \
+		gadu-gadu.png \
+		novell.png \
+		icq.png \
+		irc.png \
+		jabber.png \
+		meanwhile.png \
+		msn.png \
+		qq.png \
+		silc.png \
+		simple.png \
+		yahoo.png \
+		zephyr.png
+
+pidginprotocolpixdir = $(datadir)/pixmaps/pidgin/protocols/22
+
+pidginprotocolpix_DATA = $(EXTRA_DIST)

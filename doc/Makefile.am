@@ -1,8 +1,7 @@
-man_MANS = gaim.1
+man_MANS = pidgin.1 finch.1
 
 EXTRA_DIST = \
 	C-HOWTO.dox \
-	CREDITS \
 	FAQ \
 	PERL-HOWTO.dox \
 	TCL-HOWTO.dox \
@@ -13,8 +12,8 @@ EXTRA_DIST = \
 	conversation-signals.dox \
 	core-signals.dox \
 	dbus-server-signals.dox \
-	gaim.1.in \
-	gaims_funniest_home_convos.txt \
+	funniest_home_convos.txt \
+	finch.1.in \
 	gtkaccount-signals.dox \
 	gtkblist-signals.dox \
 	gtkconv-signals.dox \
@@ -23,8 +22,11 @@ EXTRA_DIST = \
 	gtkrc-2.0 \
 	log-signals.dox \
 	notify-signals.dox \
+	pidgin.1.in \
+	plugin-i18n.dox \
 	plugin-ids.dox \
 	plugin-signals.dox \
+	savedstatus-signals.dox \
 	sound-signals.dox \
 	the_penguin.txt \
 	xfer-signals.dox

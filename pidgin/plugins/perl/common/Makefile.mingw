@@ -1,0 +1,109 @@
+#
+# Makefile.mingw
+#
+# Description: Makefile for Pidgin perl module.
+#
+
+PIDGIN_TREE_TOP := ../../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
+
+TARGET = Pidgin
+EXTUTILS ?= C:/perl/lib/ExtUtils
+
+CFLAGS += -Wno-comment -Wno-unused
+
+##
+## INCLUDE PATHS
+##
+INCLUDE_PATHS =		-I. \
+			-I$(PIDGIN_TREE_TOP) \
+			-I$(PURPLE_TOP) \
+			-I$(PIDGIN_TOP) \
+			-I$(PIDGIN_TOP)/win32 \
+			-I$(GTK_TOP)/include \
+			-I$(GTK_TOP)/include/atk-1.0 \
+			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/include/gtk-2.0 \
+			-I$(GTK_TOP)/include/pango-1.0 \
+			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(GTK_TOP)/lib/gtk-2.0/include \
+			-I$(PERL_LIB_TOP)/CORE
+
+LIB_PATHS = 		-L$(PERL_LIB_TOP) \
+			-L$(PURPLE_TOP) \
+			-L$(PIDGIN_TOP) \
+			-L$(PURPLE_PERL_TOP) \
+			-L$(GTK_TOP)/lib
+
+##
+##  SOURCES, OBJECTS
+##
+XS_FILES = \
+	GtkUI.xs \
+	GtkAccount.xs \
+	GtkBlist.xs \
+	GtkConn.xs \
+	GtkConv.xs \
+	GtkConvWin.xs \
+	GtkDebug.xs \
+	GtkDialogs.xs \
+	GtkFt.xs \
+	GtkIMHtml.xs \
+	GtkIMHtmlToolbar.xs \
+	GtkLog.xs \
+	GtkMenuTray.xs \
+	GtkPlugin.xs \
+	GtkPluginPref.xs \
+	GtkPounce.xs \
+	GtkPrefs.xs \
+	GtkPrivacy.xs \
+	GtkRoomlist.xs \
+	GtkSavedStatuses.xs \
+	GtkSound.xs \
+	GtkStatusBox.xs \
+	GtkThemes.xs \
+	GtkUtils.xs
+
+
+C_FILES = $(XS_FILES:%.xs=%.c)
+OBJECTS = $(C_FILES:%.c=%.o)
+
+##
+## LIBRARIES
+##
+LIBS =			-lperl58 \
+			-lperl \
+			-lpurple \
+			-lpidgin \
+			-lglib-2.0
+
+include $(PIDGIN_COMMON_RULES)
+
+##
+## TARGETS
+##
+.PHONY: all install clean
+
+all: $(TARGET).dll
+
+$(PURPLE_INSTALL_PERLMOD_DIR)/Purple.pm:
+	$(MAKE) -C $(PURPLE_PERL_TOP)/common -f $(MINGW_MAKEFILE) install
+
+install: all $(PURPLE_INSTALL_PERLMOD_DIR)/Purple.pm
+	rm -f $(PIDGIN_INSTALL_PERLMOD_DIR)/$(TARGET).dll $(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin/$(TARGET).pm
+	mkdir -p $(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin
+	cp $(TARGET).pm $(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin/
+	cp $(TARGET).dll $(PIDGIN_INSTALL_PERLMOD_DIR)
+
+$(C_FILES): $(PIDGIN_CONFIG_H)
+
+$(TARGET).dll: $(PIDGIN_DLL).a $(PURPLE_PERL_DLL).a $(OBJECTS)
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) -o $(TARGET).dll
+
+##
+## CLEAN
+##
+clean:
+	rm -f *.o $(C_FILES) $(TARGET).dll
+
+include $(PIDGIN_COMMON_TARGETS)

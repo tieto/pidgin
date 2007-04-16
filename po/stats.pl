@@ -20,11 +20,12 @@
 use POSIX qw(strftime);
 
 
-my $PACKAGE="gaim";
+my $PACKAGE="pidgin";
 
 
 use Locale::Language;
 
+$lang{'ca@valencia'} = "Catalan (Valencian)";
 $lang{en_AU} = "English (Australian)";
 $lang{en_CA} = "English (Canadian)";
 $lang{en_GB} = "English (British)";
@@ -43,7 +44,7 @@ closedir DIR;
 
 $now = `date`;
 
-system("./update.pl --pot > /dev/null");
+system("intltool-update --pot > /dev/null");
 
 $_ = `msgfmt --statistics $PACKAGE.pot -o /dev/null 2>&1`;
 

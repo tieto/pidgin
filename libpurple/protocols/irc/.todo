@@ -1,0 +1,38 @@
+<todo version="0.1.19">
+    <note priority="veryhigh" time="1058921630" done="1079072308">
+        fix duplication of names on rejoin (depends on convo API)
+        <comment>
+            someone fixed this
+        </comment>
+    </note>
+    <note priority="high" time="1036041787" done="1058754795">
+        no list of people on /join
+        <comment>
+            This is a convo issue, not an IRC issue
+        </comment>
+    </note>
+    <note priority="high" time="1058843325" done="0">
+        /ignore
+    </note>
+    <note priority="medium" time="1036041658" done="1058918372">
+        Error 421, unknown command when going away. sometimes. (has to do with html in away messages?)
+        <comment>
+            I think this was caused by embedded newlines -- fixed, if that's the case.
+        </comment>
+    </note>
+    <note priority="medium" time="1036041674" done="1058921563">
+        /names
+    </note>
+    <note priority="medium" time="1058755195" done="1058918104">
+        Allow text to be sent on /query
+    </note>
+    <note priority="medium" time="1059198036" done="1060103790">
+        error message on unknown commands (don't just pass to ircd)
+    </note>
+    <note priority="low" time="1060015217" done="0">
+        Make /part smarter ... part the current channel with a part message on '/part message' if we can determine the first word is not a channel name
+    </note>
+    <note priority="medium" time="1129562998">
+        UI to see the banlist output in
+    </note>
+</todo>

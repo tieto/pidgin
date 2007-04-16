@@ -90,5 +90,15 @@ void (*account_status_changed)(GaimAccount *account, GaimStatus *old, GaimStatus
   @param new     The status after change.
  @endsignaldef
 
+ @signaldef account-alias-changed
+  @signalproto
+void (*account_alias_changed)(GaimAccount *account, const char *old);
+  @endsignalproto
+  @signaldesc
+   Emitted when the alias of an account changes (after the change).
+  @param account The account for which the alias was changed.
+  @param old     The alias before change.
+ @endsignaldef
+
  */
 // vim: syntax=c tw=75 et

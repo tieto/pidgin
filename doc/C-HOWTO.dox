@@ -8,12 +8,12 @@
  @section getting_started Getting Started
   To develop a plugin you need to have the Gaim source code.  It is generally a
   good idea to compile against the same version of Gaim that you are running.
-  You may also want to develop against CVS.  While we do NOT recomend this for
-  normal users, it makes sense for plugin developers to use CVS to ensure their
+  You may also want to develop against SVN.  While we do NOT recomend this for
+  normal users, it makes sense for plugin developers to use SVN to ensure their
   plugins works with the most recent changes in Gaim.  A lot tends to
   change between versions and it's much easier to fix your plugin as things
-  change rather than waiting until the release.  But please do not abuse CVS.
-  Gaim puts a lot of strain on Source Forge's servers, and we do not need to
+  change rather than waiting until the release.  But please do not abuse SVN.
+  Gaim puts a lot of strain on SourceForge's servers, and we do not need to
   add anymore to it.
 
   If you choose not to head my warnings and develop against a version of Gaim
@@ -22,13 +22,10 @@
   generally set the prefix to /usr/local.  This shouldn't be a problem, except
   that most packages compile and install Gaim with /usr as the prefix.
 
-  All plugins must have @c GAIM_PLUGINS defined.  You can choose to include
-  @c internal.h to do this, but if you choose to do it this way it must be
-  included before any other Gaim files.  Likewise, if you choose to manually
-  define @c GAIM_PLUGINS, the definition must be before including any Gaim
-  files.  Failure to do so will produce the 'plugin foo could not be loaded for
-  an unknown reason'.  This is one of the hardest unknown reasons to track
-  down, so let's try to avoid it at all costs ;)
+  All plugins must have @c GAIM_PLUGINS defined, the definition must be before
+  including any Gaim files.  Failure to do so will produce the 'plugin foo
+  could not be loaded for an unknown reason'.  This is one of the hardest
+  unknown reasons to track down, so let's try to avoid it at all costs ;)
 
  @section hello_world Hello World!
   I know every tutorial has a hello world, so why should Gaim be any different?
@@ -67,7 +64,7 @@ static GaimPluginInfo info = {
 	"Hello World Plugin",
 	"Hello World Plugin",
 	NULL,
-	GAIM_WEBSITE,
+	"http://www.helloworld.tld",
 
 	plugin_load,
 	NULL,
@@ -197,7 +194,7 @@ static GaimPluginInfo info = {
 	NULL,                         /* This is where you can put your name and
                                      email address.  (You are the author right?)
                                    */
-	GAIM_WEBSITE,                 /* This is the website for the plugin.  This
+	"http://www.helloworld.tld",  /* This is the website for the plugin.  This
                                      is helpful if users find bugs in your
                                      plugin so they can help to bring them to
                                      your attention.

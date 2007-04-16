@@ -1,0 +1,65 @@
+<todo version="0.1.19">
+    <note priority="medium" time="1052795456">
+        Bugs
+        <note priority="high" time="1036042035">
+            bug: some people receive blank messages. clicking to ignore font faces font when the requested font isn't found.
+        </note>
+        <note priority="high" time="1036042159">
+            bug: doesn't save blist to file on read from server as this could be introducing new people, esp. if there is no existing file, it should
+        </note>
+        <note priority="high" time="1092939643">
+            when you authorize someone to add you, the corresponding dialog to add them is blank
+        </note>
+        <note priority="medium" time="1036042128">
+            Majortool says to tell sean about "already in opposite list" errors are still happening, now whenever you start gaim. follow from prior conversation. javabsp|away: the (C) and (R) works (23:02:54) MajorTool: LSchiere: yeah what javabsp|away is talking about but its certain ones
+        </note>
+    </note>
+    <note priority="medium" time="1052795462">
+        Features
+        <note priority="medium" time="1036042246" done="1052795280">
+            store group name that buddy is in on server
+        </note>
+        <note priority="verylow" time="1036042948" done="1089237800">
+            File Transfer
+            <comment>
+                shx did this
+            </comment>
+        </note>
+        <note priority="medium" time="1036042588">
+            Group chat support.
+            <note priority="medium" time="1036042573">
+                Typing notification in group chats.
+            </note>
+            <note priority="medium" time="1036042601">
+                Start chat.
+            </note>
+            <note priority="medium" time="1036042611">
+                Better support in general.
+            </note>
+        </note>
+        <note priority="medium" time="1036042780">
+            International friendly name support.
+        </note>
+        <note priority="medium" time="1036042939">
+            Need some way of indicating "invite" in IM window.
+        </note>
+        <note priority="medium" time="1036043086">
+            Auto-reply on away.
+        </note>
+        <note priority="medium" time="1036043093">
+            People search.
+        </note>
+        <note priority="medium" time="1052795877">
+            Mobile MSN support.
+        </note>
+        <note priority="low" time="1093966206">
+            support for displaying the number of emails in the inbox.
+        </note>
+        <note priority="verylow" time="1036042266">
+            Set the friendly name to be the self alias.
+        </note>
+        <note priority="verylow" time="1036043099">
+            Voice chat.
+        </note>
+    </note>
+</todo>

@@ -6,17 +6,16 @@
 
  @signaldef displaying-userinfo
   @signalproto
-void (*displaying_userinfo)(GaimAccount *account, const char *who, char **infotext);
+void (*displaying_userinfo)(GaimAccount *account, const char *who, GaimNotifyUserInfo *user_info);
   @endsignalproto
   @signaldesc
    Emitted before userinfo is handed to the UI to display.
-   @a infotext is a pointer to a string, so a plugin can replace the text that
-   will be displayed.
+   @a user_info can be manipulated via the GaimNotifyUserInfo API in notify.c.
   @note
-   Make sure to free @a *infotext before you replace it!
-  @param account  The account on which the info was obtained.
-  @param who      The screen name of the user whose info is to be displayed.
-  @param infotext A pointer to the userinfo text to be displayed.
+    If adding a GaimNotifyUserInfoEntry, be sure not to free it -- GaimNotifyUserInfo assumes responsibility for its objects.
+  @param account   The account on which the info was obtained.
+  @param who       The screen name of the user whose info is to be displayed.
+  @param user_info The information to be displayed, as GaimNotifyUserInfoEntry objects
  @endsignaldef
 
 */

@@ -5,6 +5,7 @@
   @signal file-recv-start
   @signal file-recv-cancel
   @signal file-recv-complete
+  @signal file-recv-request
   @signal file-send-accept
   @signal file-send-start
   @signal file-send-cancel
@@ -49,6 +50,20 @@ void (*file_recv_complete)(GaimXfer *xfer, gpointer data);
   @endsignalproto
   @signaldesc
    Emitted when an incoming file transfer has been completed.
+  @param xfer The file transfer
+  @param data User data
+ @endsignaldef
+
+ @signaldef file-recv-request
+  @signalproto
+void (*file_recv_request)(GaimXfer *xfer, gpointer data);
+  @endsignalproto
+  @signaldesc
+   Emitted before the user is prompted for an incoming file-transfer.
+   Plugins can intercept the signal to auto-accept/auto-reject the
+   requests. To auto-accept the file transfer, use
+   gaim_xfer_request_accepted(). To auto-reject, set the status of the
+   xfer to GAIM_XFER_STATUS_CANCEL_LOCAL.
   @param xfer The file transfer
   @param data User data
  @endsignaldef

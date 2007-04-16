@@ -1,0 +1,38 @@
+<todo version="0.1.19">
+    <note priority="high" time="1036976065" done="1129563169">
+        offline messages get lost, esp. if more than 1 sent (is this fixed?)
+        <comment>
+            I've not heard a report on this for some time
+        </comment>
+    </note>
+    <note priority="medium" time="1036041356" done="1061347647">
+        color
+        <comment>
+            patch is in, but it doesn't do bg colors right currently and doesn't do default colors
+        </comment>
+        <note priority="high" time="1036041423">
+            &lt;fade&gt; tags need parsed.
+        </note>
+    </note>
+    <note priority="medium" time="1036041385" done="1061347733">
+        display profile
+        <comment>
+            this is as done as it is likely to get any time soon
+        </comment>
+    </note>
+    <note priority="high" time="1036041328">
+        bug: won't allow me to delete myself from my list past sign on
+    </note>
+    <note priority="medium" time="1036041395">
+        make away message display like that of aim/icq/jabber
+    </note>
+    <note priority="medium" time="1036041400">
+        auto reply on away
+    </note>
+    <note priority="verylow" time="1036041308">
+        web cam support
+    </note>
+    <note priority="verylow" time="1036041449">
+        voice chat
+    </note>
+</todo>

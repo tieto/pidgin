@@ -1,0 +1,71 @@
+<todo version="0.1.19">
+    <note priority="high" time="1036040788">
+        watch for aol's upcoming increased aim/icq merge
+    </note>
+    <note priority="medium" time="1036040405">
+        AIM
+        <note priority="high" time="1036040899">
+            option to ignore chat room invitations. (this is something you could vary conceivably want to be done per account, so perhaps a protocol action would be best)
+        </note>
+        <note priority="medium" time="1092939731">
+            buddies in Recent Buddies don't seem to delete right
+        </note>
+        <note priority="low" time="1036040980">
+            direct im
+            <note priority="veryhigh" time="1036040919">
+                some way to close direct connect w/out closing convo.
+            </note>
+            <note priority="low" time="1036040970">
+                canceled direct im should still allow new attempt
+            </note>
+            <note priority="low" time="1036041084">
+                failed direct im attempt should allow new attempt some way to cancel an attempt that isn't happening
+            </note>
+        </note>
+        <note priority="low" time="1036041105">
+            Colors in Chat room are wrong (using Gold too much)
+        </note>
+        <note priority="verylow" time="1036041121">
+            Voice Chat
+        </note>
+    </note>
+    <note priority="medium" time="1036040416">
+        ICQ
+        <note priority="veryhigh" time="1036041206">
+            more privacy options
+        </note>
+        <note priority="veryhigh" time="1036041223">
+            increased authorization support
+            <note priority="medium" time="1038877503">
+                add info to dialog requesting autorization to allow you to check the info of the person who is requesting
+            </note>
+        </note>
+        <note priority="high" time="1036041199">
+            color support
+        </note>
+        <note priority="high" time="1036041251">
+            set status message and of course when gaim can set them, it needs to be able to get the ones it sets. (yes this is redundant. its a reflection of my current mood)
+        </note>
+        <note priority="medium" time="1036041165">
+            Chat (this is different from aim chat)
+        </note>
+        <note priority="medium" time="1036041190">
+            New User Registration
+        </note>
+        <note priority="medium" time="1036041215">
+            more info support
+        </note>
+        <note priority="medium" time="1036041260">
+            search for users
+        </note>
+        <note priority="low" time="1036041152">
+            set the Nickname to be the self-alias
+        </note>
+        <note priority="low" time="1092939688">
+            icq i18n without breaking aim
+        </note>
+    </note>
+    <note priority="medium" time="1036040870">
+        The order of groups and buddies in the server list is not updated when groups and buddies are re-arranged locally in Gaim.
+    </note>
+</todo>

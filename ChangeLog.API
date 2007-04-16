@@ -1,0 +1,694 @@
+Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
+
+version 2.0.0:
+	Please note all functions, defines, and data structures have been
+	re-namespaced to match the new names of Pidgin, Finch, and libpurple.
+	All gaim_gtk_* functions are now pidgin_*, former libgaim functions are
+	now purple_*.  Please consult our doxygen documentation for a complete
+	reference.
+
+	The gaim-compat.h header exists to provide an API compatibility layer
+	for libpurple functions.  As an API compatibility layer, it must be
+	included at compile time to be of use.
+
+	Changed:
+	* All the status stuff.  Yay!
+	* gaim_prefs_connect_callback(), added handle parameter
+	* gtk_imhtml_toolbar now descends from GtkHBox making it easier to add your
+	  own widgets to it
+	* gaim_find_conversation_with_account, added a "type" parameter
+	* gaim_gtk_prefs_labeled_spin_button, the "key" parameter is now a
+	  const char* instead of just a char*
+	* gaim_gtk_prefs_labeled_entry, the "key" parameter is now a const char*
+	  instead of just a char*
+	* the add_buddy perl sub.  The sub now takes the account as the first
+	  argument, and buddy and group as the second and third.  It also adds
+	  the buddy to the server-side buddy list of the given account.
+	* gaim_connection_new, gaim_account_connect and gaim_account_register no
+	  longer return a GaimConnection
+	* keep_alive in GaimConnection is renamed to keepalive
+	* gaim_mkstemp, added a second argument, a boolean, of whether or not the
+	  file is binary
+	* gaim_log_logger_new, rewritten
+	* gaim_conv_window_remove_conversation()'s last argument to be a
+	  GaimConversation.
+	* A new blocked icon: pixmaps/status/default/blocked.png
+	* In pixmaps/status/default: extendedaway.png renamed to extended_away.png
+	* In pixmaps/status/default: na.png renamed to unavailable.png
+	* gtk_imhtml_toggle_bold(): No longer returns a value
+	* gtk_imhtml_toggle_italic(): No longer returns a value
+	* gtk_imhtml_toggle_underline(): No longer returns a value
+	* gtk_imhtml_toggle_strike(): No longer returns a value
+	* gtk_imhtml_scroll_to_end(): Added the smooth paramter
+	* gaim_log_new(), added conv parameter
+	* gaim_buddy_icon_new(), leaves a reference which the caller owns.  Use
+	  gaim_buddy_icon_unref() immediately if you don't want a reference (the
+	  old behavior).
+	* GAIM_CONV_UNKNOWN to GAIM_CONV_TYPE_UNKNOWN.
+	* GAIM_CONV_IM to GAIM_CONV_TYPE_IM.
+	* GAIM_CONV_CHAT to GAIM_CONV_TYPE_CHAT.
+	* GAIM_CONV_MISC to GAIM_CONV_TYPE_MISC.
+	* GAIM_CONV_ANY to GAIM_CONV_TYPE_ANY.
+	* GaimConversationUiOps.write_conv, Replaced const char *who with
+	  const char *name, const char *alias
+	* gaim_conv_chat_add_users(), added extra_msgs and new_arrivals (pass NULL
+	  and FALSE respectively, to get the same behavior as before)
+	* chat_add_users in GaimConversationUiOps, added cbuddies and 
+	  new_arrivals and removed buddies.
+	* chat_rename_user in GaimConversationUiOps, added new_alias
+	* gaim_conv_chat_cb_new(), added alias. (pass NULL to get the same
+	  behavior as before).
+	* GaimConversation.log became GList * GaimConversation.logs, so that a
+	  conversation can have multiple logs at once
+	* gaim_conv_chat_add_user, added extra_msgs
+	* gaim_notify_userinfo, removed primary and secondary parameters
+	* GaimNotifyUiOps.notify_userinfo: removed title, primary, and
+	  secondary parameters
+	* Idle timers are now added and removed in gtkidle.c in response
+	  to the signed-on and signed-off signals
+	* GaimXfer->ops.read, GaimXfer->ops.write, gaim_xfer_set_read_fnc(),
+	  gaim_xfer_set_write_fnc(), gaim_xfer_read(), gaim_xfer_write():
+	  Changed ssize_t to gssize
+	* serv_got_im, serv_got_chat_in, serv_send_im and serv_chat_send all use
+	  GaimMessageFlags instead of GaimConvImFlags / GaimConvChatFlags
+	* All core<->prpl message passing now uses html.  This was previously true
+	  for receiving messages, it's now also true for sending them.  prpls that
+	  don't support html need to gaim_unescape_html() the message.
+	* Notify API: GCallback -> GaimNotifyCloseCallback,
+	              void *user_data -> gpointer user_data
+	* gaim_notify_searchresults_get_rows_count,
+	  gaim_notify_searchresults_get_columns_count: return type now guint
+	* gaim_account_notify_added: No longer checks if there is a
+	  GaimBuddy for the added user, that's left up to the prpls.  See the
+	  documentation for this function and gaim_account_request_add.
+	* gaim_accounts_reorder: new_index is now a gint instead of a size_t
+	* displaying-message signals: displaying-[im|chat]-msg and
+	  displayed-[im|chat]-msg signals are emitted for all messages
+	  (ie, for received messages, sent messages, system messages, error
+	  messages etc.), and the signals now have
+	  gaim_gtk_conversations_get_handle() for their handle.
+	* GAIM_NOTIFY_BUTTON_ADD_BUDDY to GAIM_NOTIFY_BUTTON_ADD
+	* conversation-switched: This signal has been moved from conversation to
+	                         the UI and the signal-handlers only receive the
+	                         conversation that has been switched to.
+	* GaimPluginProtocolInfo: Added offline_message
+	* GaimPluginProtocolInfo: Added whiteboard_prpl_ops
+	* GaimPluginProtocolInfo: Added media_prpl_ops
+	* GaimPluginProtocolInfo: Added "user_info" argument to tooltip_text,
+	                          changed the return type to void
+	* GaimPluginProtocolInfo: Added "full" argument to tooltip_text
+	* gaim_pounce_new(): Added option argument for pounce options
+	* gaim_network_listen() and gaim_network_listen_range(): Added
+	  socket_type parameter to allow creation of UDP listening. Modified
+	  to be asynchronous with a callback to allow for UPnP operation.
+	  Returns a data structure that can be used to cancel the listen
+	  attempt using gaim_network_listen_cancel()
+	* GaimPrefCallback: val is now a gconstpointer instead of a gpointer
+	* gtk_imhtml_get_current_format(): the arguments are now set to TRUE or
+	  FALSE.  Previously they were set to TRUE or left alone.  Also, you
+	  may now pass NULL if you're not interested in a specific formatting.
+	* Smiley Themes: Backslashes must be backslash-escaped.
+	* Plugins: Depedencies are now honored when unloading plugins.
+	* gaim_markup_extract_info_field(): Added format_cb parameter.
+	* gaim_markup_extract_info_field(): Changed GString parameter to a GaimNotifyUserInfo paramter.
+	* gaim_str_to_time(): Added support for parsing the MM/DD/YYYY format.
+	* gaim_plugin_action_new(): label is now const char *
+	* gaim_plugin_pref_new_with_name(): name is now const char *
+	* gaim_plugin_pref_new_with_label(): label is now const char *
+	* gaim_plugin_pref_new_with_name_and_label(): name and label are
+	  now const char *
+	* gaim_plugin_pref_set_name(): name is now const char *
+	* gaim_plugin_pref_get_name(): return type is now const char *
+	* gaim_plugin_pref_set_label(): label is now const char *
+	* gaim_plugin_pref_get_label(): return type is now const char *
+	* gaim_plugin_pref_add_choice(): label is now const char *
+	* struct proto_chat_entry: label is now const char *
+	* struct proto_chat_entry: identifier is now const char *
+	* All network activity has been updated to use non-blocking sockets.
+	  This means that plugins must be updated to expect such a socket from
+	  gaim_proxy_connect() and gaim_network_listen*().
+	* gaim_proxy_connect(): changed to return NULL on error and a pointer
+	  to a GaimProxyConnectInfo object which can be used to cancel
+	  connection attempts using gaim_proxy_connect_cancel().  Also added
+	  a 'handle' parameter that can be used to cancel the connection
+	  attempt using gaim_proxy_connect_cancel_with_handle().
+	* gaim_gethostbyname_async(): Renamed to gaim_dnsquery_a() and
+	  changed to return a pointer to a data structure that can be
+	  used to cancel the pending DNS query using gaim_dnsquery_destroy()
+	* gaim_url_fetch(): Renamed to gaim_util_fetch_url() and changed
+	  to return a pointer to a data structure that can be used to cancel
+	  the pending HTTP request using gaim_util_fetch_url_cancel().
+	  Corresponding callback has changed to accept this data structure
+	  as its first argument, and to accept an error message as an
+	  additional final argument.
+	* gaim_gtk_create_imhtml(): Added sw_ret() parameter
+	* gaim_account_get_log(): Added create parameter
+	* GAIM_CMD_P_VERYHIGH is now GAIM_CMD_P_VERY_HIGH
+	* gtk_imhtml_search_find(): Now wraps around to the top instead of
+	  clearing the search at the end.
+	* gaim_gtkxfer_dialog_show: Can now take NULL to show (and possibly
+	  create) a default gtkxfer dialog.
+	* CHAT_USERS_BUDDY_COLUMN became CHAT_USERS_WEIGHT_COLUMN, along with
+	  a change in the values stored in the column.
+	* gaim_find_buddies() returns a list of all buddies in the account if name
+	  is NULL.
+	* gaim_gtk_set_custom_buddy_icon() sets custom icon for a user.
+	* Hid the definition of _GaimStringref, which already had a warning to
+	  avoid accessing it directly.
+	* notify_userinfo() UI op is passed a GaimNotifyUserInfo instead of a char*
+	  for the user information
+	* gaim_buddy_icon_get_scale_size() and was changed to ALWAYS scale
+	  the icon instead of only when icon_spec->scale_rules contains
+	  GAIM_ICON_SCALE_DISPLAY.  Callers should be changed to check the
+	  scale_rules before calling this function.
+	* gaim_gtk_buddy_icon_get_scale_size() was changed to accept an
+	  additional parameter which is used to determine what kind of
+	  scaling should be done, if any.
+
+	Removed:
+	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
+	  preference)
+	* gaim_escape_html(const char *html) (use g_markup_escape_text(html, -1)
+	  instead)
+	* gaim_accounts_sync, account changes are now scheduled to be saved
+	  automatically
+	* gaim_connection_connect
+	* gaim_connection_disconnect
+	* gaim_connection_register
+	* gaim_accounts_auto_login
+	* gaim_find_conversation, use gaim_find_conversation_with_account instead
+	* gaim_chat_get_display_name
+	* gaim_conversation_set_history, gaim_conversation_get_history, and
+	  GaimConversation->history.  Use gtk_imhtml_get_markup instead.
+	* set_gaim_user_dir to gaim_util_set_user_dir
+	* create_prpl_icon to gaim_gtk_create_prpl_icon
+	* Window flashing support in the core: gaim_conv_window_flash, and flash UI
+	  operation for conversations.  Use signal "received-im-msg" or similar.
+	* All warning stuff from the core.
+	* gaim_gtkconv_get_dest_tab_at_xy(), instead use gaim_gtkconv_get_tab_at_xy()
+	* chat_add_user from GaimConversationUiOps: only chat_add_users is used
+	* chat_remove_user from GaimConversationUiOps: only chat_remove_users is used
+	* uc from the GaimBuddy struct
+	* gaim_sound_get_handle()
+	* gaim_debug_vargs()
+	* serv_add_buddy(); use gaim_account_add_buddy() instead
+	* serv_add_buddies(); use gaim_account_add_buddies() instead
+	* serv_change_passwd(); use gaim_account_change_password() instead
+	* serv_close()
+	* serv_finish_login()
+	* serv_login()
+	* serv_remove_buddy(); use gaim_account_remove_buddy() instead
+	* serv_remove_buddies(); use gaim_account_remove_buddies() instead
+	* serv_rename_group()
+	* serv_set_buddyicon(): use gaim_account_set_buddy_icon() instead
+	* serv_touch_idle(): use gaim_gtk_check_idle() instead
+	* GaimGtkImPane->a_virgin
+	* gaim_str_strip_cr(); use gaim_str_strip_char(str, '\r') instead
+	* gaim_find_buddys_group renamed to gaim_buddy_get_group
+	* gaim_gtkpounce_menu_build()
+	* gaim_gtkpounce_dialog_show()
+	* GaimGtkBuddyList->bpmenu
+	* GaimConvImFlags and GaimConvChatFlags; use GaimMessageFlags instead
+	* cb and user_data from the ops in GaimNotifyUiOps: This is now handled
+	  by the notify API in the core.
+	* GaimConversationUiOps.updated: use the conversation-updated signal
+	* GAIM_SUBTYPE_CONV_WINDOW: windows are now only represented in the UI,
+	  so GAIM_TYPE_BOXED is used for the signal types
+	* gaim_gtk_privacy_is_showable(): We do fallback privacy in the core
+	  now, so this would always be TRUE now.
+	* GaimBlistNodeAction: See GaimMenuAction
+	* gaim_blist_node_action_new(); use gaim_menu_action_new() instead
+	* gaim_date()
+	* gaim_date_full(): See gaim_date_format_full()
+	* gaim_strftime(): See gaim_utf8_strftime()
+	* GAIM_MESSAGE_COLORIZE
+	* user_data from gaim_notify_searchresults_new_rows and from 
+	  notify_searchresults in GaimNotifyUiOps.
+	* gaim_conversation_get_send_history(), and send_history from
+	  GaimConversation
+	* Removed ui_ops from GaimBuddyList. Use gaim_blist_get_ui_ops() instead
+	* GaimGtkConversation: dialogs (dialogs.search moved to GaimGtkWindow)
+	* gaim_show_xfer_dialog: Use gaim_gtk_xfer_dialog_show(NULL) instead.
+	* GaimGtkRoomlistDialog: Nothing used it outside of the file it was in.
+	* gaim_gtk_roomlist_dialog_new: use gaim_gtk_roomlist_show
+	* gaim_gtk_roomlist_dialog_new_with_account: use gaim_gtk_roomlist_show_with_account
+	* binreloc functions
+
+	Added:
+	* gaim_prefs_disconnect_by_handle()
+	* a password field to GaimConnection, which only persists for the
+	  session (when "remember password" is false, account->password is
+	  NEVER set) Use gaim_connection_get_password(GaimConnection *gc)
+	* gaim_log_common_writer, gaim_log_common_lister, gaim_log_common_sizer,
+	  and gaim_log_get_log_dir to allow log formats that use standard Gaim
+	  log directory to use Gaim's built-in code for these purposes.
+	* GaimLogCommonLoggerData struct for a basic logger_data struct to be
+	  used with "common" logger functions.
+	* gaim_gtk_blist_node_is_contact_expanded, returns TRUE if the given
+	  blist node is a buddy inside an expanded contact, or is itself an
+	  expanded contact
+	* GaimLogSet struct, get_log_sets function to GaimLogLogger,
+	  gaim_log_get_log_sets, gaim_log_set_compare
+	* gaim_privacy_check(), to check if a given user is allowed to send
+	  messages to the specified account
+	* gtk_imhtml_clear_formatting()
+	* gtk_imhtml_delete to clear out part of a imhtml buffer
+	* gtk_imhtml_get_protocol_name()
+	* gaim_buddy_icons_get_full_path(), to get the full path of a buddy
+	  icon setting
+	* CHAT_USERS_ALIAS_COLUMN, CHAT_USERS_COLOR_COLUMN,
+	  CHAT_USERS_BUDDY_COLUMN to the list of columns for the chat
+	  user list
+	* gaim_account_add_buddy()
+	* gaim_account_add_buddies()
+	* gaim_account_remove_buddy()
+	* gaim_account_remove_buddies()
+	* gaim_account_change_password()
+	* gaim_account_supports_offline_message()
+	* gaim_conversation_close_logs(), to force a conversation's log(s) to
+	  be closed.  New logs will be opened as necessary.
+	* gaim_got_protocol_handler_uri()
+	* gaim_plugin_get_id()
+	* gaim_plugin_get_name()
+	* gaim_plugin_get_version()
+	* gaim_plugin_get_summary()
+	* gaim_plugin_get_description()
+	* gaim_plugin_get_author()
+	* gaim_plugin_get_homepage()
+	* gaim_gtkconv_switch_active_conversation(GaimConversation *)
+	* gaim_str_strip_char() to strip a given character from
+	  a given string
+	* gaim_util_chrreplace() to replace a given character with a
+	  different character
+	* gaim_gtk_blist_toggle_visibility() to intelligently toggle the
+	  visiblity of the buddy list
+	* gaim_gtk_blist_visibility_manager_add() to indicate the addition of a
+	  visibility manager - see the docs for more information
+	* gaim_gtk_blist_visibility_manager_remove() to indicate the removal of
+	  a visibility manager - see the docs for more information
+	* gaim_gtk_conversations_find_unseen_list() to get a list of conversations
+	  with an "unseen" state >= to the specified state and other criteria
+	* gaim_gtk_conversations_fill_menu() fill a menu from list of conversations
+	* gaim_gtk_create_prpl_icon()
+	* gaim_gtk_create_prpl_icon_with_status()
+	* gaim_gtk_pounces_manager_show()
+	* gaim_gtk_pounces_manager_hide()
+	* gaim_gtk_pounce_editor_show()
+	* GAIM_POUNCE_MESSAGE_RECEIVED
+	* GaimPounceOption
+	* gaim_pounce_set_options()
+	* gaim_pounce_set_options()
+	* GAIM_STOCK_CONNECT, GAIM_STOCK_DISCONNECT
+	* GAIM_STOCK_PLUGIN
+	* gaim_account_request_add: Notifies the user that they were added to
+	                            someone's buddy list, and offers them the choice
+	                            of adding that person to their buddy list.
+	* gaim_blist_alias_contact()
+	* gaim_cipher_http_digest_calculate_session_key()
+	* gaim_cipher_http_digest_calculate_response()
+	* gaim_notify_searchresults_labeled()
+	* GAIM_NOTIFY_BUTTON_LABELED, GAIM_NOTIFY_BUTTON_INFO,
+	  GAIM_NOTIFY_BUTTON_IM, GAIM_NOTIFY_BUTTON_JOIN,
+	  GAIM_NOTIFY_BUTTON_INVITE
+	* stock buttons GAIM_STOCK_IM, GAIM_STOCK_INFO
+	* gaim_conversation_present()
+	* GaimConversationUiOps->present(GaimConversation *)
+	* GaimPlugin.unloadable
+	* gaim_plugin_is_unloadable()
+	* GAIM_PLUGIN_PREF_STRING_FORMAT
+	* gaim_plugin_pref_get_format_type()
+	* gaim_plugin_pref_set_format_type()
+	* GaimStringFormatType
+	* gaim_log_get_handle()
+	* gaim_log_uninit()
+	* GAIM_SUBTYPE_LOG
+	* gaim_marshal_POINTER__POINTER_POINTER
+	* gaim_utf8_ncr_encode()
+	* gaim_gtk_log_init()
+	* gaim_gtk_log_get_handle()
+	* gaim_gtk_log_uninit()
+	* gaim_util_fetch_url_request()
+	* GaimMenuAction
+	* gaim_menu_action_new()
+	* gaim_menu_action_free()
+	* GaimInfoFieldFormatCallback
+	* gaim_utf8_strftime()
+	* gaim_date_format_short()
+	* gaim_date_format_long()
+	* gaim_date_format_full()
+	* gaim_time_format()
+	* gaim_plugin_action_free()
+	* GaimRequestType: Added GAIM_REQUEST_FOLDER
+	* GaimRequestUiOps: Added request_folder
+	* gaim_request_folder()
+	* gaim_gtk_setup_screenname_autocomplete()
+	* gaim_gtk_set_cursor()
+	* gaim_gtk_clear_cursor()
+	* GAIM_MESSAGE_ACTIVE_ONLY
+	* gaim_proxy_get_setup()
+	* GaimNotifySearchResultsCallback: Added user_data.
+	* gaim_notify_searchresults: Added user_data.
+	* gaim_network_listen_cancel(): Can be used to cancel a previous
+	  call to gaim_network_listen() or gaim_network_listen_range()
+	* gaim_proxy_connect_cancel(): Can be used to cancel a pending
+	  gaim_proxy_connect() request
+	* gaim_proxy_connect_cancel_with_handle(): Can be used to cancel
+	  a previous gaim_proxy_connect() request using a specified handle
+	* gaim_dnsquery_destroy(): Can be used to cancel a pending DNS
+	  query.
+	* gaim_util_fetch_url_cancel(): Can be used to cancel a pending
+	  call to gaim_util_fetch_url() or gaim_util_fetch_url_request().
+	* GaimGtkWindow: dialogs.search (previously in GaimGtkConversation)
+	* gaim_buddy_get_server_alias()
+	* gaim_conv_send_confirm()
+	* GaimConversationUiOps.send_confirm
+	* gaim_gtk_roomlist_dialog_show_with_account
+	* gaim_gtk_tree_view_search_equal_func to be used with
+	  gtk_tree_view_set_search_equal_func
+	* gaim_xfer_set_bytes_sent().  Sets the offset in the file to
+	  read from or write to.
+	* gaim_privacy_deny and gaim_privacy_allow
+	* gaim_gtk_blist_set_headline
+	* gaim_gtk_set_urgent
+	* GtkGaimScrollBook and its functions.
+	* purple_markup_unescape_entity()
+	* purple_markup_get_css_property()
+
+	Signals - Changed:  (See the Doxygen docs for details on all signals.)
+	* Signal propagation now stops after a handler returns a non-NULL value.
+	  This value is now returned.  Previously, all registered handlers were
+	  called and the value from the last handler was used.
+	* "buddy-typing" and "buddy-typing-stopped": replaced the GaimConversation*
+	  with GaimAccount*, const char *name.  Also, the signal is now emitted
+	  regardless of whether a conversation exists and regardless of whether
+	  the user is on the buddy list.
+	* "chat-buddy-joined": added the new_arrival argument
+	* "chat-invited" handlers can now return a value to control what happens
+	  to the invite (accept, reject, prompt the user).
+	* "chat-left": Emitted *after* setting chat->left to TRUE.
+	* "drawing-tooltip": the second argument is now a GString* instead of
+	  a char**
+	* "drawing-tooltip": added the "full" argument
+	* "received-im-msg" and "received-chat-msg" to match, both now pass a
+	  conversation pointer and flags
+	* "receiving-im-msg" and "receving-chat-msg" to match, both now pass a
+	  conversation pointer and a pointer to the flags.
+	* "writing-im-msg", "wrote-im-msg", "writing-chat-msg", "wrote-chat-msg":
+	  Now emitted from a difference place in the message handling code.
+	  The arguments also changed.
+	* "displaying-im-msg", "displayed-im-msg", "displaying-chat-msg",
+	  "displayed-chat-msg": Added "who" argument, which changes the order
+	  of the existing arguments.
+
+	Signals - Added:  (See the Doxygen docs for details on all signals.)
+	* "account-disabled"
+	* "account-status-changed"
+	* "account-alias-changed"
+	* "cipher-added"
+	* "cipher-removed"
+	* "conversation-dragging"
+	* "dbus-method-called"
+	* "dbus-introspect"
+	* "file-recv-accept"
+	* "file-recv-start"
+	* "file-recv-cancel"
+	* "file-recv-complete"
+	* "file-recv-request"
+	* "file-send-accept"
+	* "file-send-start"
+	* "file-send-cancel"
+	* "file-send-complete"
+	* "buddy-added"
+	* "buddy-removed"
+	* "blist-node-aliased"
+	* "buddy-status-changed"
+	* "buddy-idle-changed": A buddy's idle status changed.
+	* "buddy-icon-changed"
+	* "buddy-got-login-time": The login time for a buddy is now known
+	* "displaying-userinfo"
+	* "gtkblist-hiding"
+	* "gtkblist-unhiding"
+	* "log-displaying"
+	* "network-configuration-changed"
+	* "savedstatus-changed"
+	* "sendto-extended-menu"
+	* "uri-handler"
+
+	Signals - Removed:
+	* "account-away": replaced by account-status-changed
+	* "account-warned"
+	* "buddy-away": replaced by buddy-status-changed
+	* "buddy-back": replaced by buddy-status-changed
+	* "buddy-idle": replaced by buddy-idle-changed
+	* "buddy-unidle": replaced by buddy-idle-changed
+	* "buddy-icon-cached": replaced by buddy-icon-changed
+	* "conversation-drag-end": replaced by conversation-dragging
+	* "conversation-switching"
+
+version 1.5.0 (8/11/2005):
+	* Added: gaim_xfer_conversation_write
+	  Writes a messages to a conversation window with the use
+	  of the associated file transfer.
+
+version 1.4.0 (7/7/2005):
+	* Added: gaim_buddy_icon_uncache()
+	  Deletes a cached buddy icon for a specified buddy
+	* Added: gaim_buddy_icon_get_type
+	  Attempts to determine the type of a given buddy icon.
+	* Added: buddy-icon-cached signal
+	  Emitted when a new buddy icon is cached.
+
+version 1.3.1 (6/9/2005):
+	* No changes
+
+version 1.3.0 (5/10/2005):
+	* Added: gaim_blist_schedule_save()
+	  This should be used instead of gaim_blist_sync when you
+	  want the blist.xml file to be written to disk.  There
+	  should not be many occasions when you want to do this,
+	  as the functions in the blist API that modify the buddy
+	  list will normally call it for you.
+	* Added: OPT_PROTO_NO_NORMALIZE_CONV
+	  Tells the conversation API to not normalize screen names
+	  in conversations.  This is used by the Jabber PRPL.
+
+version 1.2.1 (4/3/2005):
+	* No changes
+
+version 1.2.0 (3/17/2005):
+	* You can use gaim_signal_connect_priority() and
+	  gaim_signal_connect_priority_vargs() to connect to
+	  Gaim signals with a given priority (Will Gorman)
+	* Added: gaim_conversation_set_features
+		 gaim_conversation_get_features
+	  These allow plugins (notable prpls) to change the
+	  formatting capabilities of an existing conversation.
+	  This comes with a new "features" field in
+	  GaimConversation (Christopher O'Brien)
+	* Added: GAIM_CONNECTION_NO_IMAGES to GaimConectionFlags
+	   (Christopher O'Brien)
+	* Added: GAIM_CBFLAGS_TYPING to GaimConvChatBuddyFlags
+	   (Christopher O'Brien)
+	* Added: gaim_account_request_add which takes the same arguments as
+	*  gaim_account_notify_added but always asks the user if they want to add
+	*  the buddy to the buddy list
+	* Added: An accompanying request_add GaimAccountUiOp
+
+version 1.1.4 (2/24/2005):
+	* No changes
+
+version 1.1.3 (2/17/2005):
+	* No changes
+
+version 1.1.2 (1/20/2005):
+	* No changes
+
+version 1.1.1 (12/28/2004):
+	* No changes
+
+version 1.1.0 (12/02/2004):
+	* Added: gaim_utf8_salvage
+	* Added: binary relocation support in prefix.h
+	         WARNING: If your plugin uses anything inside the
+		 #ifdef ENABLE_BINRELOC from prefix.h, it won't be
+		 loadable on a copy of Gaim compiled without binreloc
+		 support. In particular, watch out for the autoconf-like
+		 macros, and accidently including them through internal.h,
+		 which you probably shouldn't be including anyway.
+
+version 1.0.0 (09/17/2004):
+	* Added: get_chat_name to the GaimPluginProtocolInfo struct
+	* Changed: gaim_blist_update_buddy_presence(), presence changed to
+	           type gboolean
+	* Changed: the versioning scheme, and all the plugin structs
+
+version 0.82 (08/26/2004):
+	Gaim API:
+	* Removed: gaim_gtk_get_dispstyle(), gaim_gtk_change_text()
+	* Removed: multi.h
+	* Renamed: ui.h to gtkdialogs.h
+	* Renamed: gtkinternal.h to gtkgaim.h
+	* Renamed: show_info_dialog to gaim_gtkdialogs_info
+	* Renamed: show_log_dialog to gaim_gtkdialogs_log
+	* Renamed: show_warn_dialog to gaim_gtkdialogs_warn
+	* Renamed: show_im_dialog to gaim_gtkdialogs_im
+	* Renamed: gaim_gtkdialogs_new_im to gaim_gtkdialogs_im_with_user
+	* Renamed: destroy_all_dialogs to gaim_gtkdialogs_destroy_all
+	* Renamed: alias_dialog_bud to gaim_gtkdialogs_alias_buddy
+	* Renamed: alias_dialog_contact to gaim_gtkdialogs_alias_contact
+	* Renamed: alias_dialog_blist_chat to gaim_gtkdialogs_alias_chat
+	* Renamed: show_confirm_del to gaim_gtkdialogs_remove_buddy
+	* Renamed: show_confirm_del_group to gaim_gtkdialogs_remove_group
+	* Renamed: show_confirm_del_blist_chat to gaim_gtkdialogs_remove_chat
+	* Renamed: show_confirm_del_contact to gaim_gtkdialogs_remove_contact
+	* Renamed: show_about to gaim_gtkdialogs_about
+	* Added: gaim_notify_userinfo() and the associated notify_userinfo() UI op
+	         which pass account and contact information associated with the
+	         userinfo
+
+	Buddy List API:
+	* Changed: gaim_blist_request_add_chat(), added name parameter
+	* Added: gaim_contact_on_account()
+	* Added: flags parameter to the GaimBlistNode struct
+
+	Conversation API:
+	* Added: gaim_gtkconv_button_new()
+
+	Protocol Plugin API: v7
+	* Added: chat_info_defaults to the GaimPluginProtocolInfo struct
+
+	Signals:
+	* Added: conversation-updated for any update to the data associated
+	  with the conversation (topic, icon, adding to buddy list, etc.)
+
+	Conversation API:
+	* Changed: gaim_conv_chat_add_user() (added new_arrival parameter)
+
+version 0.81 (08/05/2004):
+	Commands API:
+	* Most functions now have a void *data argument.
+
+	Blist API:
+	* Added: gaim_buddy_get_contact_alias
+	* Renamed: gaim_get_buddy_alias to gaim_buddy_get_alias
+	* Renamed: gaim_get_buddy_alias_only to gaim_buddy_get_alias_only
+
+	Conversation API:
+	* Changed: gaim_conv_chat_add_user(), added flags parameter
+	* Changed: gaim_conv_chat_add_users(), added GList of flags parameter
+	* Changed: gaim_conv_chat_get_users(), now returns a GList of
+	  GaimConvChatBuddy's
+	* Changed: gaim_conv_chat_set_users() now expects a GList of
+	  GaimConvChatBuddy's
+	* Added: gaim_conv_chat_set_user_flags()
+	* Added: gaim_conv_chat_get_user_flags()
+	* Added: gaim_conv_chat_find_user()
+	* Added: gaim_conv_chat_cb_new()
+	* Added: gaim_conv_chat_cb_find()
+	* Added: gaim_conv_chat_cb_destroy()
+	* Added: gaim_conv_chat_cb_get_name()
+
+	Conversation UI ops:
+	* Added: chat_update_user()
+
+	Signals:
+	* Changed: chat-buddy-joining & chat-buddy-joined now include the user's flags
+	* Changed: chat-buddy-joining & chat-buddy-leaving are now booleans, return
+	  TRUE if you don't want the join/leave to be displayed in the UI.
+	* Added: chat-buddy-flags for when user's flags change
+	  gaim_marshal_VOID__POINTER_POINTER_POINTER_UINT_UINT (required for the new
+	  chat-buddy-flags signal)
+	* Added: account-modified for when account settings have been changed.
+
+version 0.80 (07/15/2004):
+	Gaim API:
+	* Removed: PRPL numbers : gaim_account_set_protocol(),
+	  gaim_account_get_protocol(), gaim_accounts_find_with_prpl_num,
+	  gaim_prpl_num_to_id(), gaim_prpl_id_to_num(), GaimProtocol
+
+	Protocol Plugin API: v6
+	* Added: can_receive_file & send_file to the GaimPluginProtocolInfo struct
+
+	Signals:
+	* Changed "chat-invited" to also include the components hash table so
+	  plugins can use serv_join_chat when the signal is emitted.
+	* Added "chat-topic-changed" signal plugins know when a topic is changed.
+
+version 0.79 (06/24/2004):
+	Gaim API:
+	* gaim_url_parse() now takes two additional parameters, which are used
+	  for returning the username and password from the URL, if they exist.
+	* Added: has_focus UI op to GaimConversationUiOps and
+	  GaimConvWindowUiOps.
+	* Added: gaim_conversation_has_focus() and gaim_conv_window_has_focus().
+	* Removed: gaim_blist_save()
+
+	Protocol Plugin API: v5
+	* Changed: add_buddy, add_buddies, remove_buddy, remove_buddies,
+	  rename_group and remove_group to take GaimBuddy's and
+	  GaimGroup's consistently.
+	* Removed: OPT_PROTO_BUDDY_ICON (replaced by icon_spec)
+	* Added: icon_spec to the GaimPluginProtocolInfo struct
+
+version 0.78 (05/30/2004):
+	Plugin API: v4
+	* Added: actions - for plugins to add to the new Plugin Actions menu
+
+	Loader Plugin API: v2 (no changes)
+
+	Protocol Plugin API: v4
+	* Removed: set_dir, get_dir and dir_search (not used, AIM-centric)
+	* Removed: actions (replaced by generic plugin actions)
+
+	Perl Plugin API: v2 (no changes)
+	TCL Plugin API: (no changes)
+
+	Signals:
+	* Added: "blist-node-extended-menu" for extending Buddy, Chat and
+			 Group right-click menus
+	* Added: "drawing-tooltip" for plugins to allow plugins to change text
+			 appearing in tooltips
+	* Added: "gtkblist-created"
+	* Added: "receiving-im-msg" and "receiving-chat-msg" (these behave
+			  exactly like received-*-msg used to)
+	* Added: "buddy-idle-updated" signal, for when the idle time changes.
+	* Changed: "received-im-msg" and "received-chat-msg" no longer pass
+			   pointers to who, message and flags, and are now void.
+	* Removed: "drawing-menu" - it was UI sepecific and
+			   "blist-node-extended-menu" is superior
+
+version 0.77 (04/22/2004):
+	Loader & Protocol Plugins independantly versioned
+	Plugin loading now checks versioning on plugins (Standard, Loader &
+	Protocol)
+	new GAIM_{PLUGIN,PRPL,LOADER}_API_VERSION constants
+
+	Plugin API: v3
+	* Added: prefs_info for UI independant plugin prefs
+
+	Loader Plugin API: v2
+	* Added: api_version at top of GaimPluginLoaderInfo struct
+
+	Protocol Plugin API: v2
+	* Added: api_version at top of GaimPluginProtocolInfo struct
+	* Added: chat_menu for protocol specific extensions to the chat menu
+	* Removed: get_away "Nada used it. Pink elephants on parade."
+	* Removed: protocol_prefs (replaced by generic plugin prefs_info)
+
+	Perl Plugin API: v2 (no changes)
+	TCL API: (no changes)
+
+	Signals:
+	* Added: "conversation-drag-ended"
+
+version 0.76 (04/01/2004):
+	Plugin API: v2
+	Perl Plugin API: v2
+	Loader Plugin API: (not versioned)
+	Protocol Plugin API: (not versioned)
+	* Added: protocol_prefs for protocol specific preferences
+	* Added: reject_chat so protocols can act on chat invite rejection
+
+	TCL Plugin API: (not versioned)
+	* Changes to plugin registration to show descriptions
+

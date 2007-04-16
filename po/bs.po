@@ -64,7 +64,7 @@ msgid "Check Mail"
 msgstr "Provjeri mail"
 
 #: plugins/chkmail.c:203
-msgid "Check email every X seconds.\n"
+msgid "Check e-mail every X seconds.\n"
 msgstr "Provjeri mail svakih X sekundi.\n"
 
 #: plugins/contact_priority.c:84
@@ -3476,7 +3476,7 @@ msgstr "Boja za bojenje hiperlinkova."
 
 #: src/gtkimhtml.c:1296
 msgid "_Copy E-Mail Address"
-msgstr "_Kopiraj email adresu"
+msgstr "_Kopiraj e-mail adresu"
 
 #: src/gtkimhtml.c:1308
 msgid "_Copy Link Location"
@@ -6572,8 +6572,8 @@ msgid "Syntax Error (probably a Gaim bug)"
 msgstr "Sintaksna greška (vjerovatno Gaim bug)"
 
 #: src/protocols/msn/error.c:42
-msgid "Invalid email address"
-msgstr "Pogrešna email adresa"
+msgid "Invalid e-mail address"
+msgstr "Pogrešna e-mail adresa"
 
 #: src/protocols/msn/error.c:45
 msgid "User does not exist"
@@ -8208,12 +8208,12 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:3841
 #, c-format
 msgid ""
-"You have received an ICQ email from %s [%s]\n"
+"You have received an ICQ e-mail from %s [%s]\n"
 "\n"
 "Message is:\n"
 "%s"
 msgstr ""
-"Primili ste ICQ email od %s [%s]\n"
+"Primili ste ICQ e-mail od %s [%s]\n"
 "\n"
 "Poruka je:\n"
 "%s"
@@ -8439,13 +8439,13 @@ msgstr "Rezultati pretrage"
 
 #: src/protocols/oscar/oscar.c:5273
 #, c-format
-msgid "No results found for email address %s"
-msgstr "Nema pronadenih rezultata za email adresu %s"
+msgid "No results found for e-mail address %s"
+msgstr "Nema pronadenih rezultata za e-mail adresu %s"
 
 #: src/protocols/oscar/oscar.c:5294
 #, c-format
-msgid "You should receive an email asking to confirm %s."
-msgstr "Trebali biste dobiti email da potvrdite %s."
+msgid "You should receive an e-mail asking to confirm %s."
+msgstr "Trebali biste dobiti e-mail da potvrdite %s."
 
 #: src/protocols/oscar/oscar.c:5296
 msgid "Account Confirmation Requested"
@@ -8484,28 +8484,28 @@ msgstr ""
 #: src/protocols/oscar/oscar.c:5339
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because there is already a "
+"Error 0x%04x: Unable to change e-mail address because there is already a "
 "request pending for this screen name."
 msgstr ""
-"Greška 0x%04x: Nije moguce promjeniti email adresu, jer vec postoji zahtjev "
+"Greška 0x%04x: Nije moguce promjeniti e-mail adresu, jer vec postoji zahtjev "
 "u toku za ovo ime."
 
 #: src/protocols/oscar/oscar.c:5342
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address has "
+"Error 0x%04x: Unable to change e-mail address because the given address has "
 "too many screen names associated with it."
 msgstr ""
-"Greška 0x%04x: Nije moguce promjeniti email adresu, jer data adresa ima "
+"Greška 0x%04x: Nije moguce promjeniti e-mail adresu, jer data adresa ima "
 "i suviše imena asociranih s njom."
 
 #: src/protocols/oscar/oscar.c:5345
 #, c-format
 msgid ""
-"Error 0x%04x: Unable to change email address because the given address is "
+"Error 0x%04x: Unable to change e-mail address because the given address is "
 "invalid."
 msgstr ""
-"Greška 0x%04x: Nije moguce promjeniti email adresu, jer je data adresa pogrešna."
+"Greška 0x%04x: Nije moguce promjeniti e-mail adresu, jer je data adresa pogrešna."
 
 #: src/protocols/oscar/oscar.c:5348
 #, c-format
@@ -8527,7 +8527,7 @@ msgstr "Informacije o account-u"
 
 #: src/protocols/oscar/oscar.c:5364
 #, c-format
-msgid "The email address for %s is %s"
+msgid "The e-mail address for %s is %s"
 msgstr "Email adresa za %s je %s"
 
 #: src/protocols/oscar/oscar.c:5429
@@ -8785,16 +8785,16 @@ msgstr ""
 "cete na njih desno-kliknuti i izabrati \"Ponovni zahtjev autorizacije.\""
 
 #: src/protocols/oscar/oscar.c:7166
-msgid "Find Buddy by E-mail"
-msgstr "Potražite prijatelja preko emaila"
+msgid "Find Buddy by E-Mail"
+msgstr "Potražite prijatelja preko e-maila"
 
 #: src/protocols/oscar/oscar.c:7167
 msgid "Search for a buddy by e-mail address"
-msgstr "Pretraga za prijateljem preko email adrese"
+msgstr "Pretraga za prijateljem preko e-mail adrese"
 
 #: src/protocols/oscar/oscar.c:7168
 msgid "Type the e-mail address of the buddy you are searching for."
-msgstr "Ukucajte email adresu prijatelja, kojeg tražite."
+msgstr "Ukucajte e-mail adresu prijatelja, kojeg tražite."
 
 #: src/protocols/oscar/oscar.c:7185
 msgid "Available Message:"
@@ -8849,8 +8849,8 @@ msgid "Show Buddies Awaiting Authorization"
 msgstr "Prikaži ocekujuce autorizacije prijatelja"
 
 #: src/protocols/oscar/oscar.c:7326
-msgid "Search for Buddy by Email..."
-msgstr "Traži prijatelja preko emaila..."
+msgid "Search for Buddy by E-Mail..."
+msgstr "Traži prijatelja preko e-maila..."
 
 #: src/protocols/oscar/oscar.c:7331
 msgid "Search for Buddy by Information"
@@ -10138,7 +10138,7 @@ msgstr "Algoritam: \t%s\n"
 
 #: src/protocols/silc/util.c:325
 #, c-format
-msgid "Key Length: \t%d bits\n"
+msgid "Key length: \t%d bits\n"
 msgstr "Dužina kljuca: \t%d bita\n"
 
 #: src/protocols/silc/util.c:327
@@ -10257,8 +10257,8 @@ msgid "Dir service temporarily unavailable."
 msgstr "Dir servis trenutno nedostupan."
 
 #: src/protocols/toc/toc.c:522
-msgid "Email lookup restricted."
-msgstr "Pregledanje emaila zabranjeno."
+msgid "E-mail lookup restricted."
+msgstr "Pregledanje e-maila zabranjeno."
 
 #: src/protocols/toc/toc.c:525
 msgid "Keyword ignored."
