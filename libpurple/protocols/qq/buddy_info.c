@@ -741,19 +741,17 @@ void qq_send_packet_get_level(PurpleConnection *gc, guint32 uid)
 	qq_send_cmd(gc, QQ_CMD_GET_LEVEL, TRUE, 0, TRUE, buf, 5);
 }
 
-/*
 void qq_send_packet_get_buddies_levels(PurpleConnection *gc)
 {
-	guint8 *buf, *tmp, size;
+	guint8 *buf, *tmp;
+	guint16 size;
 	qq_buddy *q_bud;
 	qq_data *qd = (qq_data *) gc->proto_data;
 	GList *node = qd->buddies;
 
 	if (qd->buddies) {
-*/
 		/* server only sends back levels for online buddies, no point
  	 	* in asking for anyone else */
-/*
 		size = 4*g_list_length(qd->buddies) + 1;
 		buf = g_new0(guint8, size);
 		tmp = buf + 1;
@@ -772,7 +770,6 @@ void qq_send_packet_get_buddies_levels(PurpleConnection *gc)
 		g_free(buf);
 	}
 }
-*/
 
 void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc)
 {

@@ -93,9 +93,7 @@ void qq_process_modify_info_reply(guint8 *buf, gint buf_len, PurpleConnection *g
 void qq_process_get_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
 void qq_info_query_free(qq_data *qd);
 void qq_send_packet_get_level(PurpleConnection *gc, guint32 uid);
-/*
 void qq_send_packet_get_buddies_levels(PurpleConnection *gc);
-*/
 void qq_process_get_level_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);
 
 #endif
