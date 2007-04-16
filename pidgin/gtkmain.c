@@ -249,7 +249,7 @@ ui_main()
 
 #endif
 
-	pidginthemes_init();
+	pidgin_themes_init();
 
 	pidgin_blist_setup_sort_methods();
 

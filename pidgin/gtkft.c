@@ -409,7 +409,7 @@ delete_win_cb(GtkWidget *w, GdkEventAny *e, gpointer d)
 
 	dialog = (PidginXferDialog *)d;
 
-	pidginxfer_dialog_hide(dialog);
+	pidgin_xfer_dialog_hide(dialog);
 
 	return TRUE;
 }
@@ -568,7 +568,7 @@ resume_button_cb(GtkButton *button, PidginXferDialog *dialog)
 static void
 remove_button_cb(GtkButton *button, PidginXferDialog *dialog)
 {
-	pidginxfer_dialog_remove_xfer(dialog, dialog->selected_xfer);
+	pidgin_xfer_dialog_remove_xfer(dialog, dialog->selected_xfer);
 }
 
 static void
@@ -580,7 +580,7 @@ stop_button_cb(GtkButton *button, PidginXferDialog *dialog)
 static void
 close_button_cb(GtkButton *button, PidginXferDialog *dialog)
 {
-	pidginxfer_dialog_hide(dialog);
+	pidgin_xfer_dialog_hide(dialog);
 }
 
 
@@ -739,7 +739,7 @@ make_info_table(PidginXferDialog *dialog)
 }
 
 PidginXferDialog *
-pidginxfer_dialog_new(void)
+pidgin_xfer_dialog_new(void)
 {
 	PidginXferDialog *dialog;
 	GtkWidget *window;
@@ -888,7 +888,7 @@ pidginxfer_dialog_new(void)
 }
 
 void
-pidginxfer_dialog_destroy(PidginXferDialog *dialog)
+pidgin_xfer_dialog_destroy(PidginXferDialog *dialog)
 {
 	g_return_if_fail(dialog != NULL);
 
@@ -900,7 +900,7 @@ pidginxfer_dialog_destroy(PidginXferDialog *dialog)
 }
 
 void
-pidginxfer_dialog_show(PidginXferDialog *dialog)
+pidgin_xfer_dialog_show(PidginXferDialog *dialog)
 {
 	PidginXferDialog *tmp;
 
@@ -908,7 +908,7 @@ pidginxfer_dialog_show(PidginXferDialog *dialog)
 		tmp = pidgin_get_xfer_dialog();
 
 		if (tmp == NULL) {
-			tmp = pidginxfer_dialog_new();
+			tmp = pidgin_xfer_dialog_new();
 			pidgin_set_xfer_dialog(tmp);
 		}
 
@@ -919,7 +919,7 @@ pidginxfer_dialog_show(PidginXferDialog *dialog)
 }
 
 void
-pidginxfer_dialog_hide(PidginXferDialog *dialog)
+pidgin_xfer_dialog_hide(PidginXferDialog *dialog)
 {
 	g_return_if_fail(dialog != NULL);
 
@@ -929,7 +929,7 @@ pidginxfer_dialog_hide(PidginXferDialog *dialog)
 }
 
 void
-pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
+pidgin_xfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 	PurpleXferType type;
@@ -945,7 +945,7 @@ pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 	data = PIDGINXFER(xfer);
 	data->in_list = TRUE;
 
-	pidginxfer_dialog_show(dialog);
+	pidgin_xfer_dialog_show(dialog);
 
 	data->last_updated_time = 0;
 
@@ -991,7 +991,7 @@ pidginxfer_dialog_add_xfer(PidginXferDialog *dialog, PurpleXfer *xfer)
 }
 
 void
-pidginxfer_dialog_remove_xfer(PidginXferDialog *dialog,
+pidgin_xfer_dialog_remove_xfer(PidginXferDialog *dialog,
 								PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
@@ -1020,7 +1020,7 @@ pidginxfer_dialog_remove_xfer(PidginXferDialog *dialog,
 }
 
 void
-pidginxfer_dialog_cancel_xfer(PidginXferDialog *dialog,
+pidgin_xfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 								PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
@@ -1039,7 +1039,7 @@ pidginxfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 		return;
 
 	if ((purple_xfer_get_status(xfer) == PURPLE_XFER_STATUS_CANCEL_LOCAL) && (dialog->auto_clear)) {
-		pidginxfer_dialog_remove_xfer(dialog, xfer);
+		pidgin_xfer_dialog_remove_xfer(dialog, xfer);
 		return;
 	}
 
@@ -1068,7 +1068,7 @@ pidginxfer_dialog_cancel_xfer(PidginXferDialog *dialog,
 }
 
 void
-pidginxfer_dialog_update_xfer(PidginXferDialog *dialog,
+pidgin_xfer_dialog_update_xfer(PidginXferDialog *dialog,
 								PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
@@ -1128,7 +1128,7 @@ pidginxfer_dialog_update_xfer(PidginXferDialog *dialog,
 		update_detailed_info(xfer_dialog, xfer);
 
 	if (purple_xfer_is_completed(xfer) && dialog->auto_clear)
-		pidginxfer_dialog_remove_xfer(dialog, xfer);
+		pidgin_xfer_dialog_remove_xfer(dialog, xfer);
 	else
 		update_buttons(dialog, xfer);
 
@@ -1157,14 +1157,14 @@ pidginxfer_dialog_update_xfer(PidginXferDialog *dialog,
 	}
 
 	/* If we got to this point then we know everything is finished */
-	pidginxfer_dialog_hide(dialog);
+	pidgin_xfer_dialog_hide(dialog);
 }
 
 /**************************************************************************
  * File Transfer UI Ops
  **************************************************************************/
 static void
-pidginxfer_new_xfer(PurpleXfer *xfer)
+pidgin_xfer_new_xfer(PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 
@@ -1174,7 +1174,7 @@ pidginxfer_new_xfer(PurpleXfer *xfer)
 }
 
 static void
-pidginxfer_destroy(PurpleXfer *xfer)
+pidgin_xfer_destroy(PurpleXfer *xfer)
 {
 	PidginXferUiData *data;
 
@@ -1187,42 +1187,42 @@ pidginxfer_destroy(PurpleXfer *xfer)
 }
 
 static void
-pidginxfer_add_xfer(PurpleXfer *xfer)
+pidgin_xfer_add_xfer(PurpleXfer *xfer)
 {
 	if (xfer_dialog == NULL)
-		xfer_dialog = pidginxfer_dialog_new();
+		xfer_dialog = pidgin_xfer_dialog_new();
 
-	pidginxfer_dialog_add_xfer(xfer_dialog, xfer);
+	pidgin_xfer_dialog_add_xfer(xfer_dialog, xfer);
 }
 
 static void
-pidginxfer_update_progress(PurpleXfer *xfer, double percent)
+pidgin_xfer_update_progress(PurpleXfer *xfer, double percent)
 {
-	pidginxfer_dialog_update_xfer(xfer_dialog, xfer);
+	pidgin_xfer_dialog_update_xfer(xfer_dialog, xfer);
 }
 
 static void
-pidginxfer_cancel_local(PurpleXfer *xfer)
-{
-	if (xfer_dialog)
-		pidginxfer_dialog_cancel_xfer(xfer_dialog, xfer);
-}
-
-static void
-pidginxfer_cancel_remote(PurpleXfer *xfer)
+pidgin_xfer_cancel_local(PurpleXfer *xfer)
 {
 	if (xfer_dialog)
-		pidginxfer_dialog_cancel_xfer(xfer_dialog, xfer);
+		pidgin_xfer_dialog_cancel_xfer(xfer_dialog, xfer);
+}
+
+static void
+pidgin_xfer_cancel_remote(PurpleXfer *xfer)
+{
+	if (xfer_dialog)
+		pidgin_xfer_dialog_cancel_xfer(xfer_dialog, xfer);
 }
 
 static PurpleXferUiOps ops =
 {
-	pidginxfer_new_xfer,
-	pidginxfer_destroy,
-	pidginxfer_add_xfer,
-	pidginxfer_update_progress,
-	pidginxfer_cancel_local,
-	pidginxfer_cancel_remote
+	pidgin_xfer_new_xfer,
+	pidgin_xfer_destroy,
+	pidgin_xfer_add_xfer,
+	pidgin_xfer_update_progress,
+	pidgin_xfer_cancel_local,
+	pidgin_xfer_cancel_remote
 };
 
 /**************************************************************************
@@ -1240,7 +1240,7 @@ void
 pidgin_xfers_uninit(void)
 {
 	if (xfer_dialog != NULL)
-		pidginxfer_dialog_destroy(xfer_dialog);
+		pidgin_xfer_dialog_destroy(xfer_dialog);
 }
 
 void

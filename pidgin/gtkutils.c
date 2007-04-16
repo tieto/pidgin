@@ -95,7 +95,7 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "url_clicked",
 					 G_CALLBACK(url_clicked_cb), NULL);
 
-	pidginthemes_smiley_themeize(imhtml);
+	pidgin_themes_smiley_themeize(imhtml);
 
 	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
 

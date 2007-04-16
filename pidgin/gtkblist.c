@@ -279,7 +279,7 @@ static void gtk_blist_menu_info_cb(GtkWidget *w, PurpleBuddy *b)
 
 static void gtk_blist_menu_im_cb(GtkWidget *w, PurpleBuddy *b)
 {
-	pidgindialogs_im_with_user(b->account, b->name);
+	pidgin_dialogs_im_with_user(b->account, b->name);
 }
 
 static void gtk_blist_menu_send_file_cb(GtkWidget *w, PurpleBuddy *b)
@@ -355,7 +355,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 		case PURPLE_BLIST_GROUP_NODE:
 			dest = purple_find_group(arg2);
 			if (dest != NULL && strcmp(arg2, ((PurpleGroup*) node)->name)) {
-				pidgindialogs_merge_groups((PurpleGroup*) node, arg2);
+				pidgin_dialogs_merge_groups((PurpleGroup*) node, arg2);
 			} else
 				purple_blist_rename_group((PurpleGroup*)node, arg2);
 			break;
@@ -831,7 +831,7 @@ static void gtk_blist_row_activated_cb(GtkTreeView *tv, GtkTreePath *path, GtkTr
 		else
 			buddy = (PurpleBuddy*)node;
 
-		pidgindialogs_im_with_user(buddy->account, buddy->name);
+		pidgin_dialogs_im_with_user(buddy->account, buddy->name);
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		gtk_blist_join_chat((PurpleChat *)node);
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
@@ -889,13 +889,13 @@ static void
 pidgin_blist_remove_cb (GtkWidget *w, PurpleBlistNode *node)
 {
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
-		pidgindialogs_remove_buddy((PurpleBuddy*)node);
+		pidgin_dialogs_remove_buddy((PurpleBuddy*)node);
 	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		pidgindialogs_remove_chat((PurpleChat*)node);
+		pidgin_dialogs_remove_chat((PurpleChat*)node);
 	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
-		pidgindialogs_remove_group((PurpleGroup*)node);
+		pidgin_dialogs_remove_group((PurpleGroup*)node);
 	} else if (PURPLE_BLIST_NODE_IS_CONTACT(node)) {
-		pidgindialogs_remove_contact((PurpleContact*)node);
+		pidgin_dialogs_remove_contact((PurpleContact*)node);
 	}
 }
 
@@ -2803,10 +2803,10 @@ static GtkItemFactoryEntry blist_menu[] =
 {
 	/* Buddies menu */
 	{ N_("/_Buddies"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgindialogs_im, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW },
+	{ N_("/Buddies/New Instant _Message..."), "<CTL>M", pidgin_dialogs_im, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW },
 	{ N_("/Buddies/Join a _Chat..."), "<CTL>C", pidgin_blist_joinchat_show, 0, "<Item>", NULL },
-	{ N_("/Buddies/Get User _Info..."), "<CTL>I", pidgindialogs_info, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_USER_INFO },
-	{ N_("/Buddies/View User _Log..."), "<CTL>L", pidgindialogs_log, 0, "<Item>", NULL },
+	{ N_("/Buddies/Get User _Info..."), "<CTL>I", pidgin_dialogs_info, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_USER_INFO },
+	{ N_("/Buddies/View User _Log..."), "<CTL>L", pidgin_dialogs_log, 0, "<Item>", NULL },
 	{ "/Buddies/sep1", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Buddies/Show _Offline Buddies"), NULL, pidgin_blist_edit_mode_cb, 1, "<CheckItem>", NULL },
 	{ N_("/Buddies/Show _Empty Groups"), NULL, pidgin_blist_show_empty_groups_cb, 1, "<CheckItem>", NULL },
@@ -2831,7 +2831,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/Pr_eferences"), "<CTL>P", pidgin_prefs_show, 0, "<StockItem>", GTK_STOCK_PREFERENCES },
 	{ N_("/Tools/Pr_ivacy"), NULL, pidgin_privacy_dialog_show, 0, "<Item>", NULL },
 	{ "/Tools/sep2", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Tools/_File Transfers"), "<CTL>T", pidginxfer_dialog_show, 0, "<Item>", NULL },
+	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
@@ -2841,7 +2841,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
-	{ N_("/Help/_About"), NULL, pidgindialogs_about, 0,  "<StockItem>", PIDGIN_STOCK_ABOUT },
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<StockItem>", PIDGIN_STOCK_ABOUT },
 };
 
 /*********************************************************

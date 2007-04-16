@@ -30,21 +30,21 @@
 #include "conversation.h"
 
 /* Functions in gtkdialogs.c (these should actually stay in this file) */
-void pidgindialogs_destroy_all(void);
-void pidgindialogs_about(void);
-void pidgindialogs_im(void);
-void pidgindialogs_im_with_user(PurpleAccount *, const char *);
-void pidgindialogs_info(void);
-void pidgindialogs_log(void);
-void pidgindialogs_alias_contact(PurpleContact *);
-void pidgindialogs_alias_buddy(PurpleBuddy *);
-void pidgindialogs_alias_chat(PurpleChat *);
+void pidgin_dialogs_destroy_all(void);
+void pidgin_dialogs_about(void);
+void pidgin_dialogs_im(void);
+void pidgin_dialogs_im_with_user(PurpleAccount *, const char *);
+void pidgin_dialogs_info(void);
+void pidgin_dialogs_log(void);
+void pidgin_dialogs_alias_contact(PurpleContact *);
+void pidgin_dialogs_alias_buddy(PurpleBuddy *);
+void pidgin_dialogs_alias_chat(PurpleChat *);
 
-void pidgindialogs_remove_buddy(PurpleBuddy *);
-void pidgindialogs_remove_group(PurpleGroup *);
-void pidgindialogs_remove_chat(PurpleChat *);
-void pidgindialogs_remove_contact(PurpleContact *);
-void pidgindialogs_merge_groups(PurpleGroup *, const char *);
+void pidgin_dialogs_remove_buddy(PurpleBuddy *);
+void pidgin_dialogs_remove_group(PurpleGroup *);
+void pidgin_dialogs_remove_chat(PurpleChat *);
+void pidgin_dialogs_remove_contact(PurpleContact *);
+void pidgin_dialogs_merge_groups(PurpleGroup *, const char *);
 
 /* Everything after this should probably be moved elsewhere */
 

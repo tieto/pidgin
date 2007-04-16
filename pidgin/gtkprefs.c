@@ -415,7 +415,7 @@ static GtkTreeRowReference *theme_refresh_theme_list()
 		gtk_tree_row_reference_free(previous_smiley_row);
 	previous_smiley_row = NULL;
 
-	pidginthemes_smiley_theme_probe();
+	pidgin_themes_smiley_theme_probe();
 
 	if (!(themes = smiley_themes))
 		return NULL;
@@ -2018,7 +2018,7 @@ smiley_theme_pref_cb(const char *name, PurplePrefType type,
 	for (themes = smiley_themes; themes; themes = themes->next) {
 		struct smiley_theme *smile = themes->data;
 		if (smile->name && strcmp(themename, smile->name) == 0) {
-			pidginthemes_load_smiley_theme(smile->path, TRUE);
+			pidgin_themes_load_smiley_theme(smile->path, TRUE);
 			break;
 		}
 	}
