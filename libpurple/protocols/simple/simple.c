@@ -593,12 +593,16 @@ static struct transaction *transactions_find(struct simple_account_data *sip, st
 	GSList *transactions = sip->transactions;
 	gchar *cseq = sipmsg_find_header(msg, "CSeq");
 
-	while(transactions) {
-		trans = transactions->data;
-		if(!strcmp(trans->cseq, cseq)) {
-			return trans;
+	if (cseq) {
+		while(transactions) {
+			trans = transactions->data;
+			if(!strcmp(trans->cseq, cseq)) {
+				return trans;
+			}
+			transactions = transactions->next;
 		}
-		transactions = transactions->next;
+	} else {
+		purple_debug(PURPLE_DEBUG_MISC, "simple", "Received message contains no CSeq header.\n");
 	}
 
 	return NULL;

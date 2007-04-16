@@ -16,7 +16,7 @@ General
 
   e.g: fopen("somefile", "wb");
 
-  Not doing so will open files in windows using defaut translation mode. 
+  Not doing so will open files in windows using default translation mode. 
   i.e. newline -> <CR><LF>
 
 Paths
