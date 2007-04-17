@@ -4502,8 +4502,6 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	pidgin_blist_restore_position();
 	gtk_widget_show_all(GTK_WIDGET(gtkblist->vbox));
 	gtk_widget_realize(GTK_WIDGET(gtkblist->window));
-	gdk_window_set_decorations(GDK_WINDOW(gtkblist->window->window),
-				   GDK_DECOR_ALL | GDK_DECOR_MAXIMIZE);
 	purple_blist_set_visible(purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/list_visible"));
 
 	/* start the refresh timer */
