@@ -243,7 +243,7 @@ If you only want to build Finch then specify --disable-gtkui when running config
 
 	dnl We only really need Pango >= 1.4 for decent RTL support
 	PKG_CHECK_MODULES(pango, [pango >= 1.4.0],
-			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),)
+			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
 	dnl #######################################################################
 	dnl # Check for XScreenSaver
