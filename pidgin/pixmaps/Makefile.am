@@ -39,7 +39,7 @@ EXTRA_DIST = \
 		arrow-down.xpm		\
 		arrow-up.xpm		\
 		arrow-right.xpm		\
-		arrow_left.xpm		\
+		arrow-left.xpm		\
 		text_bigger.png			\
 		text_normal.png			\
 		text_smaller.png		\
