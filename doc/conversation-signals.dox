@@ -382,7 +382,7 @@ gint (*chat_invited)(PurpleAccount *account, const char *inviter,
   @param chat           The name of the chat you're being invited to.
   @param invite_message The optional invite message.
   @param components     The components necessary if you want to call 
-                        serv_join_chat
+                        serv_join_chat()
   @return Less than zero if the invitation should be rejected, greater than
           zero if the invitation should be accepted. If zero is returned, the
           default behavior will be maintained: the user will be prompted.

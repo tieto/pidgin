@@ -1,6 +1,6 @@
 /**
  * @file gtksession.h X Windows session management API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

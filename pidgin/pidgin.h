@@ -1,6 +1,6 @@
 /**
  * @file pidgin.h UI definitions and includes
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

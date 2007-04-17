@@ -61,7 +61,6 @@ install: all $(PURPLE_INSTALL_PLUGINS_DIR)
 
 plugins: \
 		autoaccept.dll \
-		autoreply.dll \
 		buddynote.dll \
 		idle.dll \
 		log_reader.dll \

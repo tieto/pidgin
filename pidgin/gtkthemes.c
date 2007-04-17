@@ -36,7 +36,7 @@
 GSList *smiley_themes = NULL;
 struct smiley_theme *current_smiley_theme;
 
-gboolean pidginthemes_smileys_disabled()
+gboolean pidgin_themes_smileys_disabled()
 {
 	if (!current_smiley_theme)
 		return 1;
@@ -44,7 +44,7 @@ gboolean pidginthemes_smileys_disabled()
 	return strcmp(current_smiley_theme->name, "none") == 0;
 }
 
-void pidginthemes_smiley_themeize(GtkWidget *imhtml)
+void pidgin_themes_smiley_themeize(GtkWidget *imhtml)
 {
 	struct smiley_list *list;
 	if (!current_smiley_theme)
@@ -64,7 +64,7 @@ void pidginthemes_smiley_themeize(GtkWidget *imhtml)
 }
 
 static void
-pidginthemes_destroy_smiley_theme(struct smiley_theme *theme)
+pidgin_themes_destroy_smiley_theme(struct smiley_theme *theme)
 {
 	GHashTable *already_freed;
 	struct smiley_list *wer;
@@ -92,7 +92,7 @@ pidginthemes_destroy_smiley_theme(struct smiley_theme *theme)
 	g_hash_table_destroy(already_freed);
 }
 
-void pidginthemes_load_smiley_theme(const char *file, gboolean load)
+void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 {
 	FILE *f = g_fopen(file, "r");
 	char buf[256];
@@ -211,7 +211,7 @@ void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 	if (!theme->name || !theme->desc || !theme->author) {
 		purple_debug_error("gtkthemes", "Invalid file format, not loading smiley theme from '%s'\n", file);
 
-		pidginthemes_destroy_smiley_theme(theme);
+		pidgin_themes_destroy_smiley_theme(theme);
 
 		g_free(theme->name);
 		g_free(theme->desc);
@@ -231,21 +231,21 @@ void pidginthemes_load_smiley_theme(const char *file, gboolean load)
 		GList *cnv;
 
 		if (current_smiley_theme)
-			pidginthemes_destroy_smiley_theme(current_smiley_theme);
+			pidgin_themes_destroy_smiley_theme(current_smiley_theme);
 		current_smiley_theme = theme;
 
 		for (cnv = purple_get_conversations(); cnv != NULL; cnv = cnv->next) {
 			PurpleConversation *conv = cnv->data;
 
 			if (PIDGIN_IS_PIDGIN_CONVERSATION(conv)) {
-				pidginthemes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
-				pidginthemes_smiley_themeize(PIDGIN_CONVERSATION(conv)->entry);
+				pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
+				pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->entry);
 			}
 		}
 	}
 }
 
-void pidginthemes_smiley_theme_probe()
+void pidgin_themes_smiley_theme_probe()
 {
 	GDir *dir;
 	const gchar *file;
@@ -266,7 +266,7 @@ void pidginthemes_smiley_theme_probe()
 				 * We set the second argument to FALSE so that it doesn't load
 				 * the theme yet.
 				 */
-				pidginthemes_load_smiley_theme(path, FALSE);
+				pidgin_themes_load_smiley_theme(path, FALSE);
 				g_free(path);
 			}
 			g_dir_close(dir);
@@ -277,7 +277,7 @@ void pidginthemes_smiley_theme_probe()
 	}
 }
 
-GSList *pidginthemes_get_proto_smileys(const char *id) {
+GSList *pidgin_themes_get_proto_smileys(const char *id) {
 	PurplePlugin *proto;
 	struct smiley_list *list, *def;
 
@@ -303,18 +303,18 @@ GSList *pidginthemes_get_proto_smileys(const char *id) {
 	return list ? list->smileys : def->smileys;
 }
 
-void pidginthemes_init()
+void pidgin_themes_init()
 {
 	GSList *l;
 	const char *current_theme =
 		purple_prefs_get_string(PIDGIN_PREFS_ROOT "/smileys/theme");
 
-	pidginthemes_smiley_theme_probe();
+	pidgin_themes_smiley_theme_probe();
 
 	for (l = smiley_themes; l; l = l->next) {
 		struct smiley_theme *smile = l->data;
 		if (smile->name && strcmp(current_theme, smile->name) == 0) {
-			pidginthemes_load_smiley_theme(smile->path, TRUE);
+			pidgin_themes_load_smiley_theme(smile->path, TRUE);
 			break;
 		}
 	}
@@ -322,7 +322,7 @@ void pidginthemes_init()
 	/* If we still don't have a smiley theme, choose the first one */
 	if (!current_smiley_theme && smiley_themes) {
 		struct smiley_theme *smile = smiley_themes->data;
-		pidginthemes_load_smiley_theme(smile->path, TRUE);
+		pidgin_themes_load_smiley_theme(smile->path, TRUE);
 	}
 
 }

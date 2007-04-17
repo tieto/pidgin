@@ -1,6 +1,6 @@
 /**
  * @file gtksavedstatuses.h GTK+ Saved Status Editor UI
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

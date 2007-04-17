@@ -1,6 +1,6 @@
 /**
  * @file gntrequest.c GNT Request API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

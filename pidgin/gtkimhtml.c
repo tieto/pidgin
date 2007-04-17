@@ -1,6 +1,6 @@
 /*
  * @file gtkimhtml.c GTK+ IMHtml
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

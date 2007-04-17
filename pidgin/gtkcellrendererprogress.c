@@ -1,6 +1,6 @@
 /*
  * @file gtkcellrendererprogress.c GTK+ Cell Renderer Progress
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

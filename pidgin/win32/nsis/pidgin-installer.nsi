@@ -694,7 +694,6 @@ Section Uninstall
     RMDir /r "$INSTDIR\pixmaps"
     RMDir /r "$INSTDIR\perlmod"
     Delete "$INSTDIR\plugins\autoaccept.dll"
-    Delete "$INSTDIR\plugins\autoreply.dll"
     Delete "$INSTDIR\plugins\buddynote.dll"
     Delete "$INSTDIR\plugins\convcolors.dll"
     Delete "$INSTDIR\plugins\extplacement.dll"

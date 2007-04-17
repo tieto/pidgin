@@ -1,6 +1,6 @@
 /*
  * @file gtkconn.c GTK+ Connection API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -96,7 +96,7 @@ pidgin_connection_disconnected(PurpleConnection *gc)
 	if (purple_connections_get_all() != NULL)
 		return;
 
-	pidgindialogs_destroy_all();
+	pidgin_dialogs_destroy_all();
 }
 
 static void

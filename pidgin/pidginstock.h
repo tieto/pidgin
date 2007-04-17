@@ -1,6 +1,6 @@
 /**
  * @file pidginstock.h GTK+ Stock resources
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

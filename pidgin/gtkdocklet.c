@@ -522,7 +522,7 @@ docklet_menu() {
 
 	pidgin_separator(menu);
 
-	menuitem = pidgin_new_item_from_stock(menu, _("New Message..."), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, G_CALLBACK(pidgindialogs_im), NULL, 0, 0, NULL);
+	menuitem = pidgin_new_item_from_stock(menu, _("New Message..."), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, G_CALLBACK(pidgin_dialogs_im), NULL, 0, 0, NULL);
 	if (status == DOCKLET_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 

@@ -1,6 +1,6 @@
 /**
  * @file gtk_eventloop.c Purple Event Loop API (gtk implementation)
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

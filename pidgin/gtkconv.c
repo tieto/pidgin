@@ -1,6 +1,6 @@
 /**
  * @file gtkconv.c GTK+ Conversation API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -626,7 +626,7 @@ add_remove_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 		b = purple_find_buddy(account, name);
 		if (b != NULL)
-			pidgindialogs_remove_buddy(b);
+			pidgin_dialogs_remove_buddy(b);
 		else if (account != NULL && purple_account_is_connected(account))
 			purple_blist_request_add_buddy(account, (char *)name, NULL, NULL);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
@@ -634,7 +634,7 @@ add_remove_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 		c = purple_blist_find_chat(account, name);
 		if (c != NULL)
-			pidgindialogs_remove_chat(c);
+			pidgin_dialogs_remove_chat(c);
 		else if (account != NULL && purple_account_is_connected(account))
 			purple_blist_request_add_chat(account, NULL, NULL, name);
 	}
@@ -968,7 +968,7 @@ invite_cb(GtkWidget *widget, PidginConversation *gtkconv)
 static void
 menu_new_conv_cb(gpointer data, guint action, GtkWidget *widget)
 {
-	pidgindialogs_im();
+	pidgin_dialogs_im();
 }
 
 static void
@@ -1239,13 +1239,13 @@ menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
 
 		b = purple_find_buddy(account, name);
 		if (b != NULL)
-			pidgindialogs_alias_buddy(b);
+			pidgin_dialogs_alias_buddy(b);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		PurpleChat *c;
 
 		c = purple_blist_find_chat(account, name);
 		if (c != NULL)
-			pidgindialogs_alias_chat(c);
+			pidgin_dialogs_alias_chat(c);
 	}
 }
 
@@ -1411,7 +1411,7 @@ chat_do_im(PidginConversation *gtkconv, const char *who)
 	if(!real_who)
 		return;
 
-	pidgindialogs_im_with_user(account, real_who);
+	pidgin_dialogs_im_with_user(account, real_who);
 
 	g_free(real_who);
 }
@@ -1526,7 +1526,7 @@ menu_chat_add_remove_cb(GtkWidget *w, PidginConversation *gtkconv)
 	b       = purple_find_buddy(account, name);
 
 	if (b != NULL)
-		pidgindialogs_remove_buddy(b);
+		pidgin_dialogs_remove_buddy(b);
 	else if (account != NULL && purple_account_is_connected(account))
 		purple_blist_request_add_buddy(account, name, NULL, NULL);
 
@@ -5697,7 +5697,7 @@ pidgin_conv_custom_smiley_add(PurpleConversation *conv, const char *smile, gbool
 	}
 
 	/* If smileys are off, return false */
-	if (pidginthemes_smileys_disabled())
+	if (pidgin_themes_smileys_disabled())
 		return FALSE;
 
 	/* If possible add this smiley to the current theme.
@@ -6024,7 +6024,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 	}
 
 	if (fields & PIDGIN_CONV_SMILEY_THEME)
-		pidginthemes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
+		pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
 
 	if ((fields & PIDGIN_CONV_COLORIZE_TITLE) ||
 			(fields & PIDGIN_CONV_SET_TITLE))
@@ -7125,7 +7125,7 @@ pidgin_conversations_uninit(void)
 
 /**
  * @file gtkconvwin.c GTK+ Conversation Window API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

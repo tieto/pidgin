@@ -49,6 +49,7 @@ libpurple/plugins/perl/common/lib
 libpurple/purple-client-bindings.c
 libpurple/purple-client-bindings.h
 libpurple/purple-client-example
+libpurple/tests/check_libpurple
 libpurple/win32/libpurplerc.rc$
 libtool
 local.mak
@@ -59,6 +60,7 @@ po/Makefile.in.in
 po/POTFILES$
 po/missing
 po/notexist
+po/pidgin.pot
 po/stamp-it
 stamp-h1
 win32-install-dir(\.release)?

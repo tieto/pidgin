@@ -1,6 +1,6 @@
 /*
  * @file gtkimhtmltoolbar.c GTK+ IMHtml Toolbar
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -653,9 +653,9 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 	}
 
 	if (toolbar->sml)
-		smileys = pidginthemes_get_proto_smileys(toolbar->sml);
+		smileys = pidgin_themes_get_proto_smileys(toolbar->sml);
 	else
-		smileys = pidginthemes_get_proto_smileys(NULL);
+		smileys = pidgin_themes_get_proto_smileys(NULL);
 
 	while(smileys) {
 		GtkIMHtmlSmiley *smiley = smileys->data;

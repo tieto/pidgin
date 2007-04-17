@@ -1,6 +1,6 @@
 /**
  * @file gtkaccount.c GTK+ Account Editor UI
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

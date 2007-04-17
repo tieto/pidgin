@@ -1,6 +1,6 @@
 /**
  * @file gntidle.h GNT Idle API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

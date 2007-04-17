@@ -1,6 +1,6 @@
 /**
  * @file gntconv.c GNT Conversation API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

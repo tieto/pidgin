@@ -1,6 +1,6 @@
 /*
  * @file gtksound.c GTK+ Sound
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

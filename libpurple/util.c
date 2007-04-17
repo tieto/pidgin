@@ -1685,9 +1685,9 @@ purple_markup_strip_html(const char *str)
 						if (strncasecmp(str2+st, "href=", 5) == 0)
 						{
 							st += 5;
-							if (str2[st] == '"')
+							if (str2[st] == '"' || str2[st] == '\'')
 							{
-								delim = '"';
+								delim = str2[st];
 								st++;
 							}
 							break;

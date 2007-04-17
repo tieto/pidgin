@@ -11,7 +11,7 @@
 void (*quitting)();
   @endsignalproto
   @signaldesc
-   Emitted when gaim is quitting.
+   Emitted when libpurple is quitting.
  @endsignaldef
 
  */

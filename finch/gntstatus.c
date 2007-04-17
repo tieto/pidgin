@@ -1,6 +1,6 @@
 /**
  * @file gntstatus.c GNT Status API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

@@ -1,28 +1,28 @@
 #include "gtkmodule.h"
 
-MODULE = Pidgin::Themes  PACKAGE = Pidgin::Themes  PREFIX = pidginthemes_
+MODULE = Pidgin::Themes  PACKAGE = Pidgin::Themes  PREFIX = pidgin_themes_
 PROTOTYPES: ENABLE
 
 void
-pidginthemes_init()
+pidgin_themes_init()
 
 gboolean
-pidginthemes_smileys_disabled()
+pidgin_themes_smileys_disabled()
 
 void
-pidginthemes_smiley_theme_probe()
+pidgin_themes_smiley_theme_probe()
 
 void
-pidginthemes_load_smiley_theme(file, load)
+pidgin_themes_load_smiley_theme(file, load)
 	const char * file
 	gboolean load
 
 void
-pidginthemes_get_proto_smileys(id)
+pidgin_themes_get_proto_smileys(id)
 	const char * id
 PREINIT:
 	GSList *l;
 PPCODE:
-	for (l = pidginthemes_get_proto_smileys(id); l != NULL; l = l->next) {
+	for (l = pidgin_themes_get_proto_smileys(id); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Pidgin::IMHtml::Smiley")));
 	}
