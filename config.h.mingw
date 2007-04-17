@@ -279,6 +279,9 @@
 /* Define to 1 if you have the <nss.h> header file. */
 /* #undef HAVE_NSS_H */
 
+/* Define if we have Pango 1.4 or newer. */
+#define HAVE_PANGO14 1
+
 /* Define to 1 if you have the <paths.h> header file. */
 /* #define HAVE_PATHS_H 1 */
 

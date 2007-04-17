@@ -4573,12 +4573,14 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 
 	/* Bi-directional text support */
 	/* Get to the first non-neutral character */
+#ifdef HAVE_PANGO14
 	while ((PANGO_DIRECTION_NEUTRAL == pango_unichar_direction(gtk_text_iter_get_char(&non_neutral_iter)))
 		&& gtk_text_iter_forward_char(&non_neutral_iter));
 	if (PANGO_DIRECTION_RTL == pango_unichar_direction(gtk_text_iter_get_char(&non_neutral_iter))) {
 		is_rtl_message = TRUE;
 		g_string_append(str, "<SPAN style=\"direction:rtl;text-align:right;\">");
 	}
+#endif
 
 	/* First add the tags that are already in progress (we don't care about non-printing tags)*/
 	tags = gtk_text_iter_get_tags(start);

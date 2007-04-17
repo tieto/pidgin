@@ -4900,33 +4900,35 @@ static void pidgin_conv_calculate_newday(PidginConversation *gtkconv, time_t mti
 static void
 str_embed_direction_chars(char **str)
 {
+#ifdef HAVE_PANGO14
 	char pre_str[4];
 	char post_str[10];
-	char *ret = g_malloc(strlen(*str)+13);
+	char *ret;
 
 	if (PANGO_DIRECTION_RTL == pango_find_base_dir(*str, -1))
 	{
-		g_sprintf(pre_str, "%c%c%c", 
+		sprintf(pre_str, "%c%c%c",
 				0xE2, 0x80, 0xAB);	/* RLE */
-		g_sprintf(post_str, "%c%c%c%c%c%c%c%c%c", 
+		sprintf(post_str, "%c%c%c%c%c%c%c%c%c",
 				0xE2, 0x80, 0xAC,	/* PDF */
 				0xE2, 0x80, 0x8E,	/* LRM */
 				0xE2, 0x80, 0xAC);	/* PDF */
 	}
 	else
 	{
-		g_sprintf(pre_str, "%c%c%c", 
+		sprintf(pre_str, "%c%c%c",
 				0xE2, 0x80, 0xAA);	/* LRE */
-		g_sprintf(post_str, "%c%c%c%c%c%c%c%c%c", 
+		sprintf(post_str, "%c%c%c%c%c%c%c%c%c",
 				0xE2, 0x80, 0xAC,	/* PDF */
 				0xE2, 0x80, 0x8F,	/* RLM */
 				0xE2, 0x80, 0xAC);	/* PDF */
 	}
 
-	g_sprintf(ret, "%s%s%s", pre_str, *str, post_str);
+	ret = g_strconcat(pre_str, *str, post_str, NULL);
 
 	g_free(*str);
 	*str = ret;
+#endif
 }
 
 /* Returns true if the given HTML contains RTL text */
