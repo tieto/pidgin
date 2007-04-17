@@ -114,6 +114,7 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_STATUS_BUSY, 	"status", "busy.png", 		TRUE, TRUE, TRUE, TRUE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_BUSY_I, 	"status", "busy_i.png", 	TRUE, FALSE, FALSE, FALSE, FALSE,FALSE },
 	{ PIDGIN_STOCK_STATUS_CHAT, 	"status", "chat.png",		TRUE, TRUE, TRUE, TRUE, FALSE, TRUE },
+	{ PIDGIN_STOCK_STATUS_INVISIBLE,"status", "invisible.png",	TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_STATUS_XA, 	"status", "extended-away.png",	TRUE, TRUE, TRUE, TRUE, FALSE, TRUE },
 	{ PIDGIN_STOCK_STATUS_XA_I, 	"status", "extended-away_i.png",TRUE, FALSE, FALSE, FALSE, FALSE, TRUE },
 	{ PIDGIN_STOCK_STATUS_LOGIN, 	"status", "log-in.png",		TRUE, TRUE, TRUE, TRUE, FALSE, FALSE },
