@@ -39,6 +39,7 @@ INCLUDE_PATHS =	\
 			-I$(GTK_TOP)/include/gtk-2.0 \
 			-I$(GTK_TOP)/include/pango-1.0 \
 			-I$(GTK_TOP)/include/atk-1.0 \
+			-I$(GTK_TOP)/include/cairo \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(GTKSPELL_TOP) \
 			-I$(ASPELL_TOP)/include
