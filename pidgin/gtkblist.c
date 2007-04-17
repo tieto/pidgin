@@ -1140,6 +1140,8 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data) {
 		}
 		if(buddy)
 			serv_get_info(buddy->account->gc, buddy->name);
+	} else if (event->keyval == GDK_F2) {
+		gtk_blist_menu_alias_cb(tv, node);
 	}
 
 	return FALSE;
