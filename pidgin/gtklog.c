@@ -226,6 +226,7 @@ static void delete_log_cb(gpointer *data)
 		GtkTreePath *path = gtk_tree_model_get_path(GTK_TREE_MODEL(treestore), iter);
 		gboolean first = !gtk_tree_path_prev(path);
 
+#if GTK_CHECK_VERSION(2,2,0)
 		if (!gtk_tree_store_remove(treestore, iter) && first)
 		{
 			/* iter was the last child at its level */
@@ -237,6 +238,10 @@ static void delete_log_cb(gpointer *data)
 			}
 		}
 		gtk_tree_path_free(path);
+#else
+		gtk_tree_store_remove(treestore, iter);
+		gtk_tree_path_free(path);
+#endif
 	}
 
 	delete_log_cleanup_cb(data);
