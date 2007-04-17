@@ -723,14 +723,24 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 	}
 	logs = g_list_sort(logs, purple_log_compare);
 
-        pixbuf = gtk_widget_render_icon (image, PIDGIN_STOCK_STATUS_PERSON,
-	                                 gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL), "GtkWindow");
+	pixbuf = gtk_widget_render_icon(image, PIDGIN_STOCK_STATUS_PERSON,
+					gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL), "GtkWindow");
 	gtk_image_set_from_pixbuf(GTK_IMAGE(image), pixbuf);
-	
+
 	if (contact->alias != NULL)
 		name = contact->alias;
 	else if (contact->priority != NULL)
 		name = purple_buddy_get_contact_alias(contact->priority);
+
+	/* This will happen if the contact doesn't have an alias,
+	 * and none of the contact's buddies are online.
+	 * There is probably a better way to deal with this. */
+	if (name == NULL) {
+		if (contact->node.child != NULL && PURPLE_BLIST_NODE_IS_BUDDY(contact->node.child))
+			name = purple_buddy_get_contact_alias((PurpleBuddy *) contact->node.child);
+		if (name == NULL)
+			name = "";
+	}
 
 	title = g_strdup_printf(_("Conversations with %s"), name);
 	display_log_viewer(ht, logs, title, image, total_log_size);
