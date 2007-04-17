@@ -22,7 +22,6 @@ Epoch:      0
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
-Packager:   %{packager}
 Source:     %{name}-@VERSION@.tar.bz2
 BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
@@ -68,8 +67,6 @@ BuildRequires: mozilla-nss-devel
 
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
-# Gadu-Gadu support was split out temporarily (only as gaim)
-Provides: gaim-gadugadu = %{epoch}:%{version}-%{release}
 Obsoletes: gaim
 
 %package devel
@@ -81,11 +78,14 @@ Obsoletes:  gaim-devel
 %package -n libpurple
 Summary:    libpurple library for IM clients like Pidgin and Finch
 Group:      Applications/Internet
+Obsoletes:  gaim-silc
+Obsoletes:  gaim-tcl
+Obsoletes:  gaim-gadugadu
 
 %package -n libpurple-devel
 Summary:    Development headers, documentation, and libraries for libpurple
 Group:      Applications/Internet
-Requires:	libpurple = %{epoch}:%{version}
+Requires:   libpurple = %{epoch}:%{version}
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %package -n libpurple-bonjour
@@ -115,7 +115,7 @@ Group:      Applications/Internet
 Requires:   libpurple = %{epoch}:%{version}
 
 %package -n finch-devel
-Summary:	Headers etc. for finch stuffs
+Summary:    Headers etc. for finch stuffs
 Group:      Applications/Internet
 Requires:   finch = %{epoch}:%{version}, libpurple-devel = %{epoch}:%{version}
 %endif
@@ -427,6 +427,10 @@ fi
 %endif
 
 %changelog
+* Tue Apr 17 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add some Obsolete:s to help upgrades
+- Remove explicit Packager: %%{packager} from spec, it was redundant
+
 * Sun Apr 15 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Fix for building without Finch
 - Drop -tcl & -silc sub-packages, include them in the main libpurple
@@ -493,7 +497,7 @@ fi
 - Fix SILC build requirements to work across more distros
 
 * Mon Oct 11 2004 John Jolly <john.jolly@gmail.com>
-- Added if "%{_vendor}" == "suse" to handle GnuTLS libraries for SuSE
+- Added if "%%{_vendor}" == "suse" to handle GnuTLS libraries for SuSE
 
 * Sat Oct  2 2004 Stu Tomlinson <stu@nosnilmot.com>
 - If --with tcl or silc are not specified, make sure the plugins don't
@@ -518,7 +522,7 @@ fi
 
 * Sun Jul 20 2003 Bjoern Voigt <bjoern@cs.tu-berlin.de>
 - Added pkgconfig build dependency.
-- if "%{_vendor}" != "MandrakeSoft" now also works with rpm 3.x.
+- if "%%{_vendor}" != "MandrakeSoft" now also works with rpm 3.x.
 - Added Gaim-specific directories to list of Gaim's files.
 
 * Wed Jul 16 2003 Ethan Blanton <eblanton@cs.ohiou.edu>
