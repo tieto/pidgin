@@ -27,7 +27,7 @@
 
 #include "gtkimhtml.h"
 #if !GTK_CHECK_VERSION(2,4,0)
-#include "purplecombobox.h"
+#include "pidgincombobox.h"
 #endif
 
 typedef struct {
