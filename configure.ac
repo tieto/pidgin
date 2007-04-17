@@ -1832,7 +1832,7 @@ dnl # Check for check
 dnl #######################################################################
 PKG_CHECK_MODULES(CHECK,[check >= 0.9.4],:,[
 					ifdef([AM_PATH_CHECK],
-					[AM_PATH_CHECK],
+					[AM_PATH_CHECK(0.8.2,:,:)],
 					[AC_MSG_RESULT([no, testing is disabled])])
 				  ])
 AM_CONDITIONAL(HAVE_CHECK, [test "x$CHECK_LIBS" != "x"])
