@@ -7,6 +7,7 @@
 #include <ctype.h>
 
 #define SEARCH_TIMEOUT 4000   /* 4 secs */
+#define SEARCHING(tree)  (tree->search && tree->search->len > 0)
 
 enum
 {
@@ -503,6 +504,14 @@ redraw_tree(GntTree *tree)
 	mvwaddch(widget->window, widget->priv.height - pos - 1, scrcol,
 			(row ?  ACS_DARROW : ' ') | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
 
+	/* If there's a search-text, show it in the bottom of the tree */
+	if (tree->search && tree->search->len > 0) {
+		const char *str = gnt_util_onscreen_width_to_pointer(tree->search->str, scrcol - 1, NULL);
+		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+		mvwaddnstr(widget->window, widget->priv.height - pos - 1, pos,
+				tree->search->str, str - tree->search->str);
+	}
+
 	gnt_widget_queue_update(widget);
 }
 
@@ -576,15 +585,17 @@ action_move_parent(GntBindable *bind, GList *null)
 {
 	GntTree *tree = GNT_TREE(bind);
 	GntTreeRow *row = tree->current;
-	if (row->parent) {
-		int dist;
-		tree->current = row->parent;
-		if ((dist = get_distance(tree->current, tree->top)) > 0)
-			gnt_tree_scroll(tree, -dist);
-		else
-			redraw_tree(tree);
-		tree_selection_changed(tree, row, tree->current);
-	}
+	int dist;
+
+	if (!row->parent || SEARCHING(tree))
+		return FALSE;
+
+	tree->current = row->parent;
+	if ((dist = get_distance(tree->current, tree->top)) > 0)
+		gnt_tree_scroll(tree, -dist);
+	else
+		redraw_tree(tree);
+	tree_selection_changed(tree, row, tree->current);
 	return TRUE;
 }
 
@@ -693,8 +704,15 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 		end_search(tree);
 		gnt_widget_activate(widget);
 	} else if (tree->search) {
+		gboolean changed = TRUE;
 		if (isalnum(*text)) {
 			tree->search = g_string_append_c(tree->search, *text);
+		} else if (g_utf8_collate(text, GNT_KEY_BACKSPACE) == 0) {
+			if (tree->search->len)
+				tree->search->str[--tree->search->len] = '\0';
+		} else
+			changed = FALSE;
+		if (changed) {
 			redraw_tree(tree);
 			g_source_remove(tree->search_timeout);
 			tree->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
