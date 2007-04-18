@@ -318,7 +318,7 @@ fi
 %doc ChangeLog
 %doc NEWS
 %doc README
-%doc README.SVN
+%doc README.MTN
 %doc doc/the_penguin.txt
 %doc %{_mandir}/man1/pidgin.*
 %doc %{_mandir}/man3*/*
