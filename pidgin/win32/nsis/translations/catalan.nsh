@@ -31,11 +31,8 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Menu Inici"
 !define PIDGIN_SECTION_DESCRIPTION		"Fitxers i dlls del nucli de Pidgin"
 !define GTK_SECTION_DESCRIPTION			"Una eina IGU multiplataforma, utilitzada per Pidgin"
-!define GTK_THEMES_SECTION_DESCRIPTION		"Els temes GTK+ poden modificar l'aspecte de les aplicacions GTK+."
-!define GTK_NO_THEME_DESC			"No instal.lis un tema GTK+"
-!define GTK_WIMP_THEME_DESC			"GTK-Imwi (imitador Windows) és un tema GTK que s'integra perfectament en un entorn d'escriptori Windows."
-!define GTK_BLUECURVE_THEME_DESC		"El tema Corba Blava."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"The Lighthouseblue theme."
+
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Enllaços directes per iniciar el Pidgin"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC		"Afegir un enllaç directe al Pidgin a l'Escriptori"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Crear una entrada Pidgin al Menu Inici"

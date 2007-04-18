@@ -33,11 +33,7 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE 	"Menu d'Inici"
 !define PIDGIN_SECTION_DESCRIPTION		"Archius i dlls del nucleu de Pidgin"
 !define GTK_SECTION_DESCRIPTION			"Una ferramenta multi-plataforma GUI, usada per Pidgin"
-!define GTK_THEMES_SECTION_DESCRIPTION		"Els Temes GTK+ poden canviar l'aspecte de les aplicacions GTK+."
-!define GTK_NO_THEME_DESC			"No instalar un tema GTK+"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (imitador Windows) es un tema GTK que s'integra perfectament en l'entorn d'escritori de Windows."
-!define GTK_BLUECURVE_THEME_DESC		"El tema Bluecurve."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"El tema Lighthouseblue."
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   	"Enllaços directes per a iniciar Pidgin"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC   		"Crear un enllaç directe a Pidgin en l'Escritori"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC   		"Crear una entrada per a Pidgin en Menu Inici"

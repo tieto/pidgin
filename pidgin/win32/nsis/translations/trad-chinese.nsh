@@ -32,11 +32,7 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "開始功能表"
 !define PIDGIN_SECTION_DESCRIPTION		"Pidgin 核心檔案及動態函式庫"
 !define GTK_SECTION_DESCRIPTION			"Pidgin 所使用的跨平台圖形介面函式庫"
-!define GTK_THEMES_SECTION_DESCRIPTION		"GTK+ 佈景主題可以用來改變 GTK+ 應用程式的外觀。"
-!define GTK_NO_THEME_DESC			"不安裝 GTK+ 佈景主題"
-!define GTK_WIMP_THEME_DESC			"「GTK-Wimp」(Windows impersonator) 主題可讓 GTK+ 融入 Windows 卓面環環之中。"
-!define GTK_BLUECURVE_THEME_DESC		"「Bluecurve」主題"
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"「Lighthouseblue」主題。"
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"建立 Pidgin 捷徑"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC		"在桌面建立捷徑"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"在開始功能表建立捷徑"
