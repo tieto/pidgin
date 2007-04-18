@@ -29,11 +29,7 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "Meniu Start"
 !define PIDGIN_SECTION_DESCRIPTION		"Fiºiere Pidgin ºi dll-uri"
 !define GTK_SECTION_DESCRIPTION		"Un mediu de dezvoltare multiplatformã utilizat de Pidgin"
-!define GTK_THEMES_SECTION_DESCRIPTION	"Temele GTK+ schimbã aparenþa aplicaþiilor GTK+."
-!define GTK_NO_THEME_DESC			"Fãrã teme GTK+"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp este o temã GTK+ ce imitã mediul grafic Windows."
-!define GTK_BLUECURVE_THEME_DESC		"Tema Bluecurve."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Tema Lighthouseblue."
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   "Scurtãturi pentru pornirea Pidgin"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC   "Creeazã iconiþe Pidgin pe Desktop"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC   "Creeazã o intrare Pidgin în meniul Start"

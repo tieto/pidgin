@@ -25,11 +25,6 @@
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Teema"
 !define PIDGIN_SECTION_DESCRIPTION		"Pidfinin ytimen tiedostot ja dll:t"
 !define GTK_SECTION_DESCRIPTION		"Monipohjainen GUI (käyttäjäulkoasu) työkalupakki, Pidginin käyttämä"
-!define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ teemat voivat muuttaa GTK+ ohjelmien ulkonäköä ja tuntua."
-!define GTK_NO_THEME_DESC			"Älä asenna GTK+ teemoja"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windowsiin mukautuminen) on GTK teema joka sulautuu hyvin Windowsin ympäristöön."
-!define GTK_BLUECURVE_THEME_DESC		"Bluecurve teema."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Lighthouseblue teema."
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Vanha versio GTK+ runtimestä löytynyt. Tahdotko päivittää?$\rHuomio: $(^Name) ei välttämättä toimi mikäli jätät päivittämättä."

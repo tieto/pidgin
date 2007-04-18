@@ -30,11 +30,7 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"ätart Menu"
 !define PIDGIN_SECTION_DESCRIPTION		"Jadro Pidgin-u a nevyhnutnÈ DLL s˙bory"
 !define GTK_SECTION_DESCRIPTION			"MultiplatformovÈ GUI n·stroje, pouûÌvanÈ Pidgin-om"
-!define GTK_THEMES_SECTION_DESCRIPTION		"Pomocou GTK+ grafick˝ch tÈm mÙûete zmeniù vzhæad GTK+ aplik·ciÌ."
-!define GTK_NO_THEME_DESC			"Neinötalovaù GTK+ grafick˙ tÈmu"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) je GTK grafick· tÈma, ktor· pekne ladÌ s prostredÌm Windows."
-!define GTK_BLUECURVE_THEME_DESC		"Bluecurve grafick· tÈma."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"Lighthouseblue grafick· tÈma"
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Z·stupcovia pre Pidgin"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC		"Vytvoriù z·stupcu pre Pidgin na pracovnej ploche"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Vytvoriù odkaz na Pidgin v ätart Menu"

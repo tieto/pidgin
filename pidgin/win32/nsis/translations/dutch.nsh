@@ -28,11 +28,7 @@
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue thema"
 !define PIDGIN_SECTION_DESCRIPTION		"Pidgin hoofdbestanden en dlls"
 !define GTK_SECTION_DESCRIPTION		"Een multi-platform gebruikersinterface, gebruikt door Pidgin"
-!define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ thema's veranderen het uiterlijk en gedrag van GTK+ programma's."
-!define GTK_NO_THEME_DESC			"Geen GTK+ thema installeren"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) is een GTK+ thema wat goed past in een windows omgeving."
-!define GTK_BLUECURVE_THEME_DESC		"Het Bluecurve thema (standaardthema voor RedHat Linux)."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Het Lighthouseblue thema."
+
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Er is een oude versie van GTK+ gevonden. Wilt u deze bijwerken?$\rLet op: $(^Name) werkt misschien niet als u dit niet doet."
