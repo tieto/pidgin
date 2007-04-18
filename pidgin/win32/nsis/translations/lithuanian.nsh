@@ -28,11 +28,7 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Pradiniame meniu"
 !define PIDGIN_SECTION_DESCRIPTION		"Pagrindiniai Pidgin failai"
 !define GTK_SECTION_DESCRIPTION			"Daugiaplatforminis vartotojo sàsajos priemoniø komplektas, naudojamas Pidgin."
-!define GTK_THEMES_SECTION_DESCRIPTION		"GTK+ apipavidalinimai gali pakeisti GTK+ programø iðvaizdà."
-!define GTK_NO_THEME_DESC			"Neádiegti GTK+ apipavidalinimo."
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows imitatorius) yra gerai Windows aplinkoje derantis GTK apipavidalinimas."
-!define GTK_BLUECURVE_THEME_DESC		"Bluecurve apipavidalinimas."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"Lighthouseblue apipavidalinimas."
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Pidgin paleidimo nuorodos"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC		"Sukurti nuorodà á Pidgin darbastalyje."
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Sukurti pradinio meniu áraðà, skirtà Pidgin."

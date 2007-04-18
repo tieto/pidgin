@@ -30,11 +30,7 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Zaèetni meni"
 !define PIDGIN_SECTION_DESCRIPTION		"Temeljne datoteke Pidgin"
 !define GTK_SECTION_DESCRIPTION			"Veèplatformna orodjarna GUI, ki jo uporablja Pidgin"
-!define GTK_THEMES_SECTION_DESCRIPTION		"Teme GTK+ lahko spremenijo videz programov GTK+."
-!define GTK_NO_THEME_DESC			"Brez namestitve teme GTK+"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (oponaševalec Oken) je tema GTK, ki se lepo vklaplja v namizno okolje Windows."
-!define GTK_BLUECURVE_THEME_DESC		"Tema Bluecurve."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"Tema Lighthouseblue."
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Bližnjice za zagon Pidgina"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC		"Ustvari bližnjico za Pidgin na namizju"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Ustvari vnos Pidgin v meniju Start"

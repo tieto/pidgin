@@ -67,6 +67,7 @@
 #define PIDGIN_STOCK_STATUS_BUSY       "pidgin-status-busy"
 #define PIDGIN_STOCK_STATUS_BUSY_I     "pidgin-status-busy-i"
 #define PIDGIN_STOCK_STATUS_CHAT       "pidgin-status-chat"
+#define PIDGIN_STOCK_STATUS_INVISIBLE  "pidgin-status-invisible"
 #define PIDGIN_STOCK_STATUS_XA         "pidgin-status-xa"
 #define PIDGIN_STOCK_STATUS_XA_I       "pidgin-status-xa-i"
 #define PIDGIN_STOCK_STATUS_LOGIN      "pidgin-status-login"

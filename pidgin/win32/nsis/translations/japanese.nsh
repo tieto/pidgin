@@ -31,11 +31,8 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"スタートアップ"
 !define PIDGIN_SECTION_DESCRIPTION		"Pidginの核となるファイルとdll"
 !define GTK_SECTION_DESCRIPTION			"Pidginの使っているマルチプラットフォームGUIツールキット"
-!define GTK_THEMES_SECTION_DESCRIPTION		"GTK+のテーマは、GTK+のアプリケーションのルック＆フィールを変えられます。"
-!define GTK_NO_THEME_DESC			"GTK+のテーマをインストールしない"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator)はWindowsのデスクトップ環境とよく調和したテーマです。"
-!define GTK_BLUECURVE_THEME_DESC		"Bluecurveテーマ。"
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"Lighthouseblueテーマ。"
+
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Pidgin を実行するためのショートカット"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC		"デスクトップに Pidgin のショートカットを作成する"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"スタートメニューに Pidgin の項目を作成する"
