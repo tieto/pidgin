@@ -8,6 +8,7 @@ PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libjabber
+XMPP_TARGET = libxmpp
 TYPE = PLUGIN
 
 # Static or Plugin...
@@ -35,7 +36,8 @@ INCLUDE_PATHS +=	-I. \
 
 LIB_PATHS =		-L$(GTK_TOP)/lib \
 			-L$(LIBXML2_TOP)/lib \
-			-L$(PURPLE_TOP)
+			-L$(PURPLE_TOP) \
+			-L.
 
 ##
 ##  SOURCES, OBJECTS
@@ -59,6 +61,9 @@ C_SRC =			auth.c \
 
 OBJECTS = $(C_SRC:%.c=%.o)
 
+XMPP_C_SRC = libxmpp.c
+XMPP_OBJECTS = $(XMPP_C_SRC:%.c=%.o)
+
 ##
 ## LIBRARIES
 ##
@@ -76,21 +81,25 @@ include $(PIDGIN_COMMON_RULES)
 ##
 .PHONY: all install clean
 
-all: $(TARGET).dll
+all: $(TARGET).dll $(XMPP_TARGET).dll
 
 install: all $(DLL_INSTALL_DIR)
-	cp $(TARGET).dll $(DLL_INSTALL_DIR)
+	cp $(XMPP_TARGET).dll $(DLL_INSTALL_DIR)
+	cp $(TARGET).dll $(PURPLE_INSTALL_DIR)
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 
 $(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
+
+$(XMPP_TARGET).dll: $(TARGET).dll.a $(XMPP_OBJECTS)
+	$(CC) -shared $(XMPP_OBJECTS) $(LIB_PATHS) $(LIBS) -ljabber $(DLL_LD_FLAGS) -o $(XMPP_TARGET).dll
 
 ##
 ## CLEAN RULES
 ##
 clean:
-	rm -f $(OBJECTS)
-	rm -f $(TARGET).dll
+	rm -f $(OBJECTS) $(TARGET).dll $(TARGET).dll.a
+	rm -f $(XMPP_OBJECTS) $(XMPP_TARGET).dll
 
 include $(PIDGIN_COMMON_TARGETS)

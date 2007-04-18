@@ -442,6 +442,11 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     SetOutPath "$INSTDIR"
     ; Pidgin files
     SetOverwrite on
+
+    ;Delete old liboscar and libjabber since they tend to be problematic
+    Delete "$INSTDIR\plugins\liboscar.dll"
+    Delete "$INSTDIR\plugins\libjabber.dll"
+
     File /r ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
     !ifdef DEBUG
     File "${PIDGIN_INSTALLER_DEPS}\exchndl.dll"
@@ -676,7 +681,6 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libgg.dll"
     Delete "$INSTDIR\plugins\libicq.dll"
     Delete "$INSTDIR\plugins\libirc.dll"
-    Delete "$INSTDIR\plugins\libjabber.dll"
     Delete "$INSTDIR\plugins\libmsn.dll"
     Delete "$INSTDIR\plugins\libnapster.dll"
     Delete "$INSTDIR\plugins\libnovell.dll"
@@ -686,6 +690,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libsimple.dll"
     Delete "$INSTDIR\plugins\libtoc.dll"
     Delete "$INSTDIR\plugins\libyahoo.dll"
+    Delete "$INSTDIR\plugins\libxmpp.dll"
     Delete "$INSTDIR\plugins\log_reader.dll"
     Delete "$INSTDIR\plugins\markerline.dll"
     Delete "$INSTDIR\plugins\newline.dll"
@@ -715,6 +720,7 @@ Section Uninstall
     Delete "$INSTDIR\freebl3.dll"
     Delete "$INSTDIR\idletrack.dll"
     Delete "$INSTDIR\libgtkspell.dll"
+    Delete "$INSTDIR\libjabber.dll"
     Delete "$INSTDIR\liboscar.dll"
     Delete "$INSTDIR\libpurple.dll"
     Delete "$INSTDIR\libmeanwhile-1.dll"
