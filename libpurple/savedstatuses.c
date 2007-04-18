@@ -403,6 +403,12 @@ parse_substatus(xmlnode *substatus)
 		g_free(data);
 	}
 
+	if (ret->type == NULL)
+	{
+		g_free(ret);
+		return NULL;
+	}
+
 	/* Read the message */
 	node = xmlnode_get_child(substatus, "message");
 	if ((node != NULL) && ((data = xmlnode_get_data(node)) != NULL))
