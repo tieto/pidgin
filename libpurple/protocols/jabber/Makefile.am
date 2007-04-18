@@ -38,25 +38,31 @@ JABBERSOURCES = auth.c \
 
 AM_CFLAGS = $(st)
 
-libjabber_la_LDFLAGS = -module -avoid-version
+libxmpp_la_LDFLAGS = -module -avoid-version
 
 if STATIC_JABBER
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES = libjabber.a
+noinst_LIBRARIES = libjabber.a libxmpp.a
 pkg_LTLIBRARIES =
 
 libjabber_a_SOURCES = $(JABBERSOURCES)
 libjabber_a_CFLAGS  = $(AM_CFLAGS)
 
+libxmpp_a_SOURCES = libxmpp.c
+libxmpp_a_CFLAGS = $(AM_CFLAGS)
+
 else
 
 st =
-pkg_LTLIBRARIES = libjabber.la
+pkg_LTLIBRARIES = libjabber.la libxmpp.la
 noinst_LIBRARIES =
 
 libjabber_la_SOURCES = $(JABBERSOURCES)
 libjabber_la_LIBADD = $(GLIB_LIBS) $(SASL_LIBS) $(LIBXML_LIBS)
+
+libxmpp_la_SOURCES = libxmpp.c
+libxmpp_la_LIBADD = libjabber.la
 
 endif
 

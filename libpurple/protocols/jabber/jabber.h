@@ -163,4 +163,23 @@ char *jabber_get_next_id(JabberStream *js);
 
 char *jabber_parse_error(JabberStream *js, xmlnode *packet);
 
+/** PRPL functions */
+const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);
+const char* jabber_list_emblem(PurpleBuddy *b);
+char *jabber_status_text(PurpleBuddy *b);
+void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full);
+GList *jabber_status_types(PurpleAccount *account);
+void jabber_login(PurpleAccount *account);
+void jabber_close(PurpleConnection *gc);
+void jabber_idle_set(PurpleConnection *gc, int idle);
+void jabber_keepalive(PurpleConnection *gc);
+void jabber_register_account(PurpleAccount *account);
+void jabber_convo_closed(PurpleConnection *gc, const char *who);
+PurpleChat *jabber_find_blist_chat(PurpleAccount *account, const char *name);
+gboolean jabber_offline_message(const PurpleBuddy *buddy);
+int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
+GList *jabber_actions(PurplePlugin *plugin, gpointer context);
+void jabber_register_commands(void);
+void jabber_init_plugin(PurplePlugin *plugin);
+
 #endif /* _PURPLE_JABBER_H_ */
