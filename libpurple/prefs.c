@@ -1090,30 +1090,30 @@ purple_prefs_get_path_list(const char *name)
 	return ret;
 }
 
-void
-purple_prefs_rename(const char *oldname, const char *newname)
+static void
+purple_prefs_rename_node(struct purple_pref *oldpref, struct purple_pref *newpref)
 {
-	struct purple_pref *oldpref, *newpref;
+	struct purple_pref *child;
+	char *oldname, *newname;
 
-	oldpref = find_pref(oldname);
-
-	/* it's already been renamed, call off the dogs */
-	if(!oldpref)
-		return;
-
-	if (oldpref->first_child != NULL) /* can't rename parents */
+	/* if we're a parent, rename the kids first */
+	for(child = oldpref->first_child; child != NULL; child = child->sibling)
 	{
-		purple_debug_error("prefs", "Unable to rename %s to %s: can't rename parents\n", oldname, newname);
-		return;
-	}
-
-
-	newpref = find_pref(newname);
-
-	if (newpref == NULL)
-	{
-		purple_debug_error("prefs", "Unable to rename %s to %s: new pref not created\n", oldname, newname);
-		return;
+		struct purple_pref *newchild;
+		for(newchild = newpref->first_child; newchild != NULL; newchild = newchild->sibling)
+		{
+			if(!strcmp(child->name, newchild->name))
+			{
+				purple_prefs_rename_node(child, newchild);
+				break;
+			}
+		}
+		if(newchild == NULL) {
+			/* no rename happened, we weren't able to find the new pref */
+			char *tmpname = pref_full_name(child);
+			gaim_debug_error("prefs", "Unable to find rename pref for %s", tmpname);
+			g_free(tmpname);
+		}
 	}
 
 	if (oldpref->type != newpref->type)
@@ -1122,7 +1122,11 @@ purple_prefs_rename(const char *oldname, const char *newname)
 		return;
 	}
 
+	oldname = pref_full_name(oldpref);
+	newname = pref_full_name(newpref);
 	purple_debug_info("prefs", "Renaming %s to %s\n", oldname, newname);
+	g_free(oldname);
+	g_free(newname);
 
 	switch(oldpref->type) {
 		case PURPLE_PREF_NONE:
@@ -1148,6 +1152,28 @@ purple_prefs_rename(const char *oldname, const char *newname)
 	}
 
 	remove_pref(oldpref);
+}
+
+void
+purple_prefs_rename(const char *oldname, const char *newname)
+{
+	struct purple_pref *oldpref, *newpref;
+
+	oldpref = find_pref(oldname);
+
+	/* it's already been renamed, call off the dogs */
+	if(!oldpref)
+		return;
+
+	newpref = find_pref(newname);
+
+	if (newpref == NULL)
+	{
+		purple_debug_error("prefs", "Unable to rename %s to %s: new pref not created\n", oldname, newname);
+		return;
+	}
+
+	purple_prefs_rename_node(oldpref, newpref);
 }
 
 void
