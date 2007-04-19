@@ -267,7 +267,7 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 	g_return_if_fail(GDK_WINDOW_TYPE(gdkwin) != GDK_WINDOW_CHILD);
 
 	if(GDK_WINDOW_DESTROYED(gdkwin))
-	    return;
+		return;
 
 	if(MyFlashWindowEx) {
 		FLASHWINFO info;
@@ -307,6 +307,10 @@ winpidgin_conv_blink(PurpleConversation *conv, PurpleMessageFlags flags) {
 		return;
 	}
 	window = GTK_WINDOW(win->window);
+
+	/* Don't flash if the window is in the foreground */
+	if (GetForegroundWindow() == GDK_WINDOW_HWND(GTK_WIDGET(window)->window))
+		return;
 
 	winpidgin_window_flash(window, TRUE);
 	/* Stop flashing when window receives focus */
