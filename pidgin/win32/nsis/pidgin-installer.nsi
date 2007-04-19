@@ -9,7 +9,6 @@
 ;Global Variables
 Var name
 Var GTK_FOLDER
-Var GTK_THEME_SEL
 Var ISSILENT
 Var STARTUP_RUN_KEY
 Var SPELLCHECK_SEL
@@ -49,9 +48,6 @@ SetDateSave on
 !insertmacro VersionCompare
 !insertmacro WordFind
 
-!include "TextFunc.nsh"
-!insertmacro ConfigWriteS
-
 ;--------------------------------
 ;Defines
 
@@ -78,7 +74,7 @@ SetDateSave on
 !define GTK_RUNTIME_INSTALLER			"..\..\..\..\gtk_installer\gtk-runtime*.exe"
 
 !define ASPELL_REG_KEY				"SOFTWARE\Aspell"
-!define DOWNLOADER_URL				"http://www.pidgin.im/win32/download_redir.php"
+!define DOWNLOADER_URL				"http://pidgin.im/win32/download_redir.php"
 
 ;--------------------------------
 ;Version resource
@@ -121,7 +117,7 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
   !define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_LINK			$(PIDGIN_FINISH_VISIT_WEB_SITE)
-  !define MUI_FINISHPAGE_LINK_LOCATION		"http://www.pidgin.im/win32"
+  !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im/win32"
 
 ;--------------------------------
 ;Pages
@@ -446,6 +442,11 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     SetOutPath "$INSTDIR"
     ; Pidgin files
     SetOverwrite on
+
+    ;Delete old liboscar and libjabber since they tend to be problematic
+    Delete "$INSTDIR\plugins\liboscar.dll"
+    Delete "$INSTDIR\plugins\libjabber.dll"
+
     File /r ..\..\..\${PIDGIN_INSTALL_DIR}\*.*
     !ifdef DEBUG
     File "${PIDGIN_INSTALLER_DEPS}\exchndl.dll"
@@ -517,31 +518,6 @@ SectionGroup /e $(PIDGIN_SHORTCUTS_SECTION_TITLE) SecShortcuts
     CreateDirectory "$SMPROGRAMS\Pidgin"
     CreateShortCut "$SMPROGRAMS\Pidgin\Pidgin.lnk" "$INSTDIR\pidgin.exe"
     SetOverwrite off
-  SectionEnd
-SectionGroupEnd
-
-;--------------------------------
-;GTK+ Themes
-
-SectionGroup /e $(GTK_THEMES_SECTION_TITLE) SecGtkThemes
-  Section /o $(GTK_NOTHEME_SECTION_TITLE) SecGtkNone
-    Push "Raleigh"
-    Call WriteGtkThemeConfig
-  SectionEnd
-
-  Section $(GTK_WIMP_SECTION_TITLE) SecGtkWimp
-    Push "MS-Windows"
-    Call WriteGtkThemeConfig
-  SectionEnd
-
-  Section /o $(GTK_BLUECURVE_SECTION_TITLE) SecGtkBluecurve
-    Push "Bluecurve"
-    Call WriteGtkThemeConfig
-  SectionEnd
-
-  Section /o $(GTK_LIGHTHOUSEBLUE_SECTION_TITLE) SecGtkLighthouseblue
-    Push "Lighthouseblue"
-    Call WriteGtkThemeConfig
   SectionEnd
 SectionGroupEnd
 
@@ -705,7 +681,6 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libgg.dll"
     Delete "$INSTDIR\plugins\libicq.dll"
     Delete "$INSTDIR\plugins\libirc.dll"
-    Delete "$INSTDIR\plugins\libjabber.dll"
     Delete "$INSTDIR\plugins\libmsn.dll"
     Delete "$INSTDIR\plugins\libnapster.dll"
     Delete "$INSTDIR\plugins\libnovell.dll"
@@ -715,6 +690,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\libsimple.dll"
     Delete "$INSTDIR\plugins\libtoc.dll"
     Delete "$INSTDIR\plugins\libyahoo.dll"
+    Delete "$INSTDIR\plugins\libxmpp.dll"
     Delete "$INSTDIR\plugins\log_reader.dll"
     Delete "$INSTDIR\plugins\markerline.dll"
     Delete "$INSTDIR\plugins\newline.dll"
@@ -744,6 +720,7 @@ Section Uninstall
     Delete "$INSTDIR\freebl3.dll"
     Delete "$INSTDIR\idletrack.dll"
     Delete "$INSTDIR\libgtkspell.dll"
+    Delete "$INSTDIR\libjabber.dll"
     Delete "$INSTDIR\liboscar.dll"
     Delete "$INSTDIR\libpurple.dll"
     Delete "$INSTDIR\libmeanwhile-1.dll"
@@ -794,16 +771,6 @@ SectionEnd ; end of uninstall section
   !insertmacro MUI_DESCRIPTION_TEXT ${SecGtk} \
         $(GTK_SECTION_DESCRIPTION)
 !endif
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkThemes} \
-        $(GTK_THEMES_SECTION_DESCRIPTION)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkNone} \
-        $(GTK_NO_THEME_DESC)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkWimp} \
-        $(GTK_WIMP_THEME_DESC)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkBluecurve} \
-        $(GTK_BLUECURVE_THEME_DESC)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecGtkLighthouseblue} \
-        $(GTK_LIGHTHOUSEBLUE_THEME_DESC)
 
   !insertmacro MUI_DESCRIPTION_TEXT ${SecShortcuts} \
         $(PIDGIN_SHORTCUTS_SECTION_DESCRIPTION)
@@ -862,42 +829,6 @@ SectionEnd ; end of uninstall section
 
 ;--------------------------------
 ;Functions
-
-Function WriteGtkThemeConfig
-  Exch $0
-  Push $1
-  Push $2
-  Push $3
-
-  Call CheckUserInstallRights
-  Pop $2
-  StrCmp $2 "HKLM" 0 user_theme
-
-  ; Global Theme
-  ClearErrors
-  ReadRegStr $2 HKLM ${GTK_REG_KEY} "Path"
-  IfErrors user_theme
-  StrCpy $3 "$2\etc\gtk-2.0\gtkrc"
-  Goto update_theme
-  user_theme:
-  StrCpy $3 "$PROFILE\.gtkrc-2.0"
-
-  update_theme:
-  IfFileExists $3 0 new_file
-  ${ConfigWriteS} $3 "gtk-theme-name =" " $\"$0$\"" $1
-  Goto done
-
-  new_file:
-  FileOpen $1 $3 w
-  FileWrite $1 "gtk-theme-name = $\"$0$\""
-  FileClose $1
-
-  done:
-  Pop $3
-  Pop $2
-  Pop $1
-  Pop $0
-FunctionEnd
 
 ; Default the URI handler checkboxes if Pidgin is the current handler or if there is no handler
 Function SelectURIHandlerSelections
@@ -1195,7 +1126,6 @@ Function .onInit
     Abort
   Call RunCheck
   StrCpy $name "Pidgin ${PIDGIN_VERSION}"
-  StrCpy $GTK_THEME_SEL ${SecGtkWimp}
   StrCpy $SPELLCHECK_SEL ""
 
   ;Try to copy the old Gaim installer Lang Reg. key
@@ -1206,12 +1136,6 @@ Function .onInit
   ReadRegStr $R0 HKCU "SOFTWARE\gaim" "Installer Language"
   IfErrors +2
   WriteRegStr HKCU "${PIDGIN_REG_KEY}" "Installer Language" "$R0"
-
-  !insertmacro SetSectionFlag ${SecGtkThemes} ${SF_RO}
-  !insertmacro UnselectSection ${SecGtkThemes}
-  !insertmacro SelectSection $GTK_THEME_SEL
-  !insertmacro SetSectionFlag ${SecSpellCheck} ${SF_RO}
-  !insertmacro UnselectSection ${SecSpellCheck}
 
   ;Mark the dictionaries that are already installed as readonly
   Call SelectAndDisableInstalledDictionaries
@@ -1317,13 +1241,6 @@ Function .onSelChange
   Push $0
   Push $1
   Push $2
-
-  !insertmacro StartRadioButtonsUnselectable $GTK_THEME_SEL
-    !insertmacro RadioButton ${SecGtkNone}
-    !insertmacro RadioButton ${SecGtkWimp}
-    !insertmacro RadioButton ${SecGtkBluecurve}
-    !insertmacro RadioButton ${SecGtkLighthouseblue}
-  !insertmacro EndRadioButtons
 
   ; Check that at most one of the non-readonly spelling dictionaries are selected
   ; We can't use $R0 or $R1 in this block since they're used in the macros

@@ -25,11 +25,7 @@
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Tema"
 !define PIDGIN_SECTION_DESCRIPTION		"Basale Pidgin filer og biblioteker"
 !define GTK_SECTION_DESCRIPTION		"Et multi-platform grafisk interface udviklingsværktøj, bruges af Pidgin"
-!define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ Temaer kan ændre GTK+ programmers generelle udseende."
-!define GTK_NO_THEME_DESC			"Installér ikke noget GTK+ tema"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows efterligner) er et GTK tema som falder i med Windows skrivebordsmiljøet."
-!define GTK_BLUECURVE_THEME_DESC		"The Bluecurve tema."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"The Lighthouseblue tema."
+
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Der blev fundet en ældre version af GTK+ runtime. Ønsker du at opgradere?$\rNB: $(^Name) virker muligvis ikke uden denne opgradering."
