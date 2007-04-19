@@ -1116,17 +1116,19 @@ purple_prefs_rename_node(struct purple_pref *oldpref, struct purple_pref *newpre
 		}
 	}
 
+	oldname = pref_full_name(oldpref);
+	newname = pref_full_name(newpref);
+
 	if (oldpref->type != newpref->type)
 	{
 		purple_debug_error("prefs", "Unable to rename %s to %s: differing types\n", oldname, newname);
+		g_free(oldname);
+		g_free(newname);
 		return;
 	}
 
-	oldname = pref_full_name(oldpref);
-	newname = pref_full_name(newpref);
 	purple_debug_info("prefs", "Renaming %s to %s\n", oldname, newname);
 	g_free(oldname);
-	g_free(newname);
 
 	switch(oldpref->type) {
 		case PURPLE_PREF_NONE:
@@ -1150,6 +1152,7 @@ purple_prefs_rename_node(struct purple_pref *oldpref, struct purple_pref *newpre
 			purple_prefs_set_path_list(newname, oldpref->value.stringlist);
 			break;
 	}
+	g_free(newname);
 
 	remove_pref(oldpref);
 }
