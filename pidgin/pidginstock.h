@@ -38,7 +38,6 @@
 #define PIDGIN_STOCK_CHAT            "pidgin-chat"
 #define PIDGIN_STOCK_CLEAR           "pidgin-clear"
 #define PIDGIN_STOCK_CLOSE_TABS      "pidgin-close-tab"
-#define PIDGIN_STOCK_CONNECT         "pidgin-connect"
 #define PIDGIN_STOCK_DEBUG           "pidgin-debug"
 #define PIDGIN_STOCK_DISCONNECT      "pidgin-disconnect"
 #define PIDGIN_STOCK_DOWNLOAD        "pidgin-download"
