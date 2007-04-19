@@ -540,6 +540,32 @@ pidgin_status_box_class_init (PidginStatusBoxClass *klass)
 	                               );
 }
 
+static GdkPixbuf *
+pidgin_status_box_get_pixbuf(PidginStatusBox *status_box, PurpleStatusPrimitive prim)
+{
+	GdkPixbuf *pixbuf;
+	GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+	if (prim == PURPLE_STATUS_UNAVAILABLE)
+		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_BUSY,
+						 icon_size, "PidginStatusBox");
+	else if (prim == PURPLE_STATUS_AWAY)
+		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AWAY,
+						 icon_size, "PidginStatusBox");
+	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
+		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_XA,
+						 icon_size, "PidginStatusBox");
+	else if (prim == PURPLE_STATUS_INVISIBLE)
+		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_INVISIBLE,
+						 icon_size, "PidginStatusBox");
+	else if (prim == PURPLE_STATUS_OFFLINE)
+		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_OFFLINE,
+						 icon_size, "PidginStatusBox");
+	else
+		pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AVAILABLE,
+						 icon_size, "PidginStatusBox");
+	return pixbuf;
+}
+
 /**
  * This updates the text displayed on the status box so that it shows
  * the current status.  This is the only function in this file that
@@ -636,7 +662,6 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	  {
 	    PurpleStatusType *status_type;
 	    PurpleStatusPrimitive prim;
-	    GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 	    if (account_status) {
 	    	status_type = purple_status_get_type(purple_account_get_active_status(acct));
 	        prim = purple_status_type_get_primitive(status_type);
@@ -644,21 +669,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	    	prim = purple_savedstatus_get_type(saved_status);
 	    }
 
-	    if (prim == PURPLE_STATUS_UNAVAILABLE)
-	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_BUSY,
-		   			         icon_size, "PidginStatusBox");
-	    else if (prim == PURPLE_STATUS_AWAY)
-	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AWAY,
-		 			         icon_size, "PidginStatusBox");
-	    else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
-	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_XA,
-					         icon_size, "PidginStatusBox");
-	    else if (prim == PURPLE_STATUS_OFFLINE)
-	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_OFFLINE,
-					         icon_size, "PidginStatusBox");
-	    else
-	      	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AVAILABLE,
-					         icon_size, "PidginStatusBox");
+		pixbuf = pidgin_status_box_get_pixbuf(status_box, prim);
 #if 0
 		if (account_status)
 			pixbuf = pidgin_create_prpl_icon_with_status(acct,
@@ -876,7 +887,6 @@ status_menu_refresh_iter(PidginStatusBox *status_box)
 static void
 add_popular_statuses(PidginStatusBox *statusbox)
 {
-	GtkIconSize icon_size;
 	GList *list, *cur;
 	GdkPixbuf *pixbuf;
 
@@ -884,8 +894,6 @@ add_popular_statuses(PidginStatusBox *statusbox)
 	if (list == NULL)
 		/* Odd... oh well, nothing we can do about it. */
 		return;
-
-	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 	pidgin_status_box_add_separator(statusbox);
 
@@ -899,21 +907,8 @@ add_popular_statuses(PidginStatusBox *statusbox)
 		/* Get an appropriate status icon */
 		prim = purple_savedstatus_get_type(saved);
 
-		if (prim == PURPLE_STATUS_UNAVAILABLE)
-			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
-					PIDGIN_STOCK_STATUS_BUSY, icon_size, "PidginStatusBox");
-		else if (prim == PURPLE_STATUS_AWAY)
-			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
-					PIDGIN_STOCK_STATUS_AWAY, icon_size, "PidginStatusBox");
-		else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
-			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
-					PIDGIN_STOCK_STATUS_XA, icon_size, "PidginStatusBox");
-		else if (prim == PURPLE_STATUS_OFFLINE)
-			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
-					PIDGIN_STOCK_STATUS_OFFLINE, icon_size, "PidginStatusBox");
-		else
-			pixbuf = gtk_widget_render_icon (GTK_WIDGET(statusbox),
-					PIDGIN_STOCK_STATUS_AVAILABLE, icon_size, "PidginStatusBox");
+
+		pixbuf = pidgin_status_box_get_pixbuf(statusbox, prim);
 
 		if (purple_savedstatus_is_transient(saved))
 		{
@@ -1019,28 +1014,13 @@ add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 	{
 		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
 		PurpleStatusPrimitive prim;
-		GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
 
 		if (!purple_status_type_is_user_settable(status_type))
 			continue;
 
             	prim = purple_status_type_get_primitive(status_type);
 
-            	if (prim == PURPLE_STATUS_UNAVAILABLE)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_BUSY,
-                       		                          icon_size, "PidginStatusBox");
-            	else if (prim == PURPLE_STATUS_AWAY)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AWAY,
-                       		                          icon_size, "PidginStatusBox");
-            	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_XA,
-                        	                         icon_size, "PidginStatusBox");
-            	else if (prim == PURPLE_STATUS_OFFLINE)
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_OFFLINE,
-                        	                         icon_size, "PidginStatusBox");
-            	else
-                	pixbuf = gtk_widget_render_icon (GTK_WIDGET(status_box), PIDGIN_STOCK_STATUS_AVAILABLE,
-                        	                         icon_size, "PidginStatusBox");
+                pixbuf = pidgin_status_box_get_pixbuf(status_box, prim);
 
 		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box),
 					PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf,
