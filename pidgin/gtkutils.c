@@ -1569,6 +1569,9 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, 
         else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
                 pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
                                                  icon_size, "GtkWidget");
+        else if (prim == PURPLE_STATUS_INVISIBLE)
+                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_INVISIBLE,
+                                                 icon_size, "GtkWidget");
         else if (prim == PURPLE_STATUS_OFFLINE)
                 pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,
                                                  icon_size, "GtkWidget");
