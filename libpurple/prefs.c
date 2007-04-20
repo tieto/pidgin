@@ -1111,7 +1111,7 @@ purple_prefs_rename_node(struct purple_pref *oldpref, struct purple_pref *newpre
 		if(newchild == NULL) {
 			/* no rename happened, we weren't able to find the new pref */
 			char *tmpname = pref_full_name(child);
-			gaim_debug_error("prefs", "Unable to find rename pref for %s", tmpname);
+			purple_debug_error("prefs", "Unable to find rename pref for %s", tmpname);
 			g_free(tmpname);
 		}
 	}
