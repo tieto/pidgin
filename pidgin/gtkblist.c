@@ -312,6 +312,47 @@ static void gtk_blist_menu_join_cb(GtkWidget *w, PurpleChat *chat)
 	gtk_blist_join_chat(chat);
 }
 
+static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
+		GtkCellEditable *editable,
+		gchar *path_str,
+		gpointer user_data)
+{
+	GtkTreeIter iter;
+	GtkTreePath *path = NULL;
+	GValue val;
+	PurpleBlistNode *node;
+	const char *text = NULL;
+	char *esc;
+
+	path = gtk_tree_path_new_from_string (path_str);
+	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
+	gtk_tree_path_free (path);
+	val.g_type = 0;
+	gtk_tree_model_get_value (GTK_TREE_MODEL(gtkblist->treemodel), &iter, NODE_COLUMN, &val);
+	node = g_value_get_pointer(&val);
+
+	switch (node->type) {
+	case PURPLE_BLIST_CONTACT_NODE:
+		text = purple_contact_get_alias((PurpleContact *)node);
+		break;
+	case PURPLE_BLIST_BUDDY_NODE:
+		text = purple_buddy_get_alias((PurpleBuddy *)node);
+		break;
+	case PURPLE_BLIST_GROUP_NODE:
+		text = ((PurpleGroup *)node)->name;
+		break;
+	default:
+		g_return_if_reached();
+	}
+
+	esc = g_markup_escape_text(text, -1);
+	if (GTK_IS_ENTRY (editable)) {
+		GtkEntry *entry = GTK_ENTRY (editable);
+		gtk_entry_set_text(entry, esc);
+	}
+	g_free(esc);
+}
+
 static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
 					 char *arg2, gpointer nada)
 {
@@ -371,8 +412,6 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
 {
 	GtkTreeIter iter;
 	GtkTreePath *path;
-	const char *text = NULL;
-	char *esc;
 
 	if (!(get_iter_from_node(node, &iter))) {
 		/* This is either a bug, or the buddy is in a collapsed contact */
@@ -381,27 +420,6 @@ static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
 			/* Now it's definitely a bug */
 			return;
 	}
-
-	switch (node->type) {
-	case PURPLE_BLIST_BUDDY_NODE:
-		text = purple_buddy_get_alias((PurpleBuddy *)node);
-		break;
-	case PURPLE_BLIST_CONTACT_NODE:
-		text = purple_contact_get_alias((PurpleContact *)node);
-		break;
-	case PURPLE_BLIST_GROUP_NODE:
-		text = ((PurpleGroup *)node)->name;
-		break;
-	case PURPLE_BLIST_CHAT_NODE:
-		text = purple_chat_get_name((PurpleChat *)node);
-		break;
-	default:
-		g_return_if_reached();
-	}
-
-	esc = g_markup_escape_text(text, -1);
-	gtk_tree_store_set(gtkblist->treemodel, &iter, NAME_COLUMN, esc, -1);
-	g_free(esc);
 
 	path = gtk_tree_model_get_path(GTK_TREE_MODEL(gtkblist->treemodel), &iter);
 	g_object_set(G_OBJECT(gtkblist->text_rend), "editable", TRUE, NULL);
@@ -4402,6 +4420,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 #endif
 										"markup", NAME_COLUMN,
 										NULL);
+	g_signal_connect(G_OBJECT(rend), "editing-started", G_CALLBACK(gtk_blist_renderer_editing_started_cb), NULL);
 	g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(gtk_blist_renderer_edited_cb), NULL);
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 #if GTK_CHECK_VERSION(2,6,0)
