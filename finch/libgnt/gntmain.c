@@ -211,10 +211,11 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		raise(SIGABRT);
 	}
 
+	gnt_wm_set_event_stack(wm, TRUE);
 	rd += HOLDING_ESCAPE;
 	keys[rd] = 0;
 	if (mouse_enabled && detect_mouse_action(keys))
-		return TRUE;
+		goto end;
 
 	if (HOLDING_ESCAPE)
 		keys[0] = '\033';
@@ -243,7 +244,8 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 		rd -= p;
 		k += p;
 	}
-
+end:
+	gnt_wm_set_event_stack(wm, FALSE);
 	return TRUE;
 }
 

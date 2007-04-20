@@ -164,6 +164,8 @@ void gnt_wm_update_window(GntWM *wm, GntWidget *widget);
 
 void gnt_wm_raise_window(GntWM *wm, GntWidget *widget);
 
+void gnt_wm_set_event_stack(GntWM *wm, gboolean set);
+
 time_t gnt_wm_get_idle_time(void);
 
 G_END_DECLS
