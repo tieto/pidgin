@@ -1263,10 +1263,7 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 
 	idle_update = TRUE;
 
-	wm->event_stack = TRUE;
-
 	if (gnt_bindable_perform_action_key(GNT_BINDABLE(wm), keys)) {
-		wm->event_stack = FALSE;
 		return TRUE;
 	}
 
@@ -1299,7 +1296,6 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 			if (ox != x || oy != y) {
 				gnt_screen_move_widget(widget, x, y);
 				window_reverse(widget, TRUE, wm);
-				wm->event_stack = FALSE;
 				return TRUE;
 			}
 		} else if (wm->mode == GNT_KP_MODE_RESIZE) {
@@ -1317,7 +1313,6 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 			if (oh != h || ow != w) {
 				gnt_screen_resize_widget(widget, w, h);
 				window_reverse(widget, TRUE, wm);
-				wm->event_stack = FALSE;
 				return TRUE;
 			}
 		}
@@ -1325,7 +1320,6 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 			window_reverse(widget, FALSE, wm);
 			wm->mode = GNT_KP_MODE_NORMAL;
 		}
-		wm->event_stack = FALSE;
 		return TRUE;
 	}
 
@@ -1333,7 +1327,6 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 	if (strcmp(keys, "\033") == 0) {
 		if (wm->_list.window) {
 			gnt_widget_destroy(wm->_list.window);
-			wm->event_stack = FALSE;
 			return TRUE;
 		}
 	} else if (keys[0] == '\033' && isdigit(keys[1]) && keys[2] == '\0') {
@@ -1356,7 +1349,6 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 		ret = gnt_widget_key_pressed(wm->_list.window, keys);
 	else if (wm->ordered)
 		ret = gnt_widget_key_pressed(GNT_WIDGET(wm->ordered->data), keys);
-	wm->event_stack = FALSE;
 	return ret;
 }
 
@@ -1540,5 +1532,10 @@ gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntW
 void gnt_wm_raise_window(GntWM *wm, GntWidget *widget)
 {
 	g_signal_emit(wm, signals[SIG_GIVE_FOCUS], 0, widget);
+}
+
+void gnt_wm_set_event_stack(GntWM *wm, gboolean set)
+{
+	wm->event_stack = set;
 }
 
