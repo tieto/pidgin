@@ -2042,11 +2042,10 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 	if (status_box->buddy_icon == NULL)
 	{
 		/* Show a placeholder icon */
-		gchar *filename;
-		filename = g_build_filename(DATADIR, "pixmaps",
-				"pidgin", "insert-image.png", NULL);
-		status_box->buddy_icon = gdk_pixbuf_new_from_file(filename, NULL);
-		g_free(filename);
+		GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+		status_box->buddy_icon = gtk_widget_render_icon(GTK_WIDGET(status_box),
+		                                                PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE,
+		                                                icon_size, "PidginStatusBox");
 	}
 
 	if (status_box->buddy_icon != NULL) {

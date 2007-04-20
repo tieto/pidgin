@@ -3,23 +3,5 @@
         Gaim TODO List
     </title>
     <link filename="./libpurple/protocols/oscar/.todo" priority="medium" time="0"/>
-    <note priority="medium" time="1036029726">
-        WinGaim specific stuff
-        <note priority="high" time="1035995058">
-            wingaim: Gtk windows that appear when you hover over a button, and just stay there and never close until you click on them once
-        </note>
-        <note priority="high" time="1037028106">
-            with 3 or more tabs, only the right most tab is closable. this appears to be a gtk for win32 problem
-        </note>
-        <note priority="medium" time="1035995010">
-            wingaim font issues
-        </note>
-        <note priority="medium" time="1035995227">
-            wingaim: sounds while away?
-        </note>
-        <note priority="low" time="1039544237">
-            Write a seperate program that implements multiple-users.  It should encrypt/decrypt .gaimrc's based on a provided password, then launch gaim -f, with that .gaimrc.
-        </note>
-    </note>
     <link filename="./libpurple/protocols/jabber/.todo" priority="medium" time="1176995038"/>
 </todo>

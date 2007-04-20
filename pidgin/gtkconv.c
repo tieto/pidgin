@@ -4773,6 +4773,9 @@ pidgin_conv_destroy(PurpleConversation *conv)
 		if (gtkconv->u.im->anim != NULL)
 			g_object_unref(G_OBJECT(gtkconv->u.im->anim));
 
+		if (gtkconv->u.im->typing_timer != 0)
+			g_source_remove(gtkconv->u.im->typing_timer);
+
 		g_free(gtkconv->u.im);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		purple_signals_disconnect_by_handle(gtkconv->u.chat);
