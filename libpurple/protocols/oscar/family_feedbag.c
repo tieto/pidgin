@@ -55,17 +55,15 @@ static int aim_ssi_addmoddel(OscarData *od);
  *        if you want to modify the master group.
  * @return Return a pointer to the modified item.
  */
-static struct aim_ssi_item *aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *list, const char *name)
+static void
+aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *list, const char *name)
 {
 	int newlen;
 	struct aim_ssi_item *cur, *group;
 
-	if (!list)
-		return NULL;
-
 	/* Find the group */
 	if (!(group = aim_ssi_itemlist_finditem(list, name, NULL, AIM_SSI_TYPE_GROUP)))
-		return NULL;
+		return;
 
 	/* Find the length for the new additional data */
 	newlen = 0;
@@ -98,8 +96,6 @@ static struct aim_ssi_item *aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *l
 
 		free(newdata);
 	}
-
-	return group;
 }
 
 /**
@@ -185,7 +181,7 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
  */
 static int aim_ssi_itemlist_del(struct aim_ssi_item **list, struct aim_ssi_item *del)
 {
-	if (!list || !(*list) || !del)
+	if (!(*list) || !del)
 		return -EINVAL;
 
 	/* Remove the item from the list */
@@ -225,7 +221,7 @@ static int aim_ssi_itemlist_cmp(struct aim_ssi_item *cur1, struct aim_ssi_item *
 		return 3;
 
 	if ((cur1->data && cur2->data) && (aim_tlvlist_cmp(cur1->data, cur2->data)))
-			return 4;
+		return 4;
 
 	if (cur1->name && !cur2->name)
 		return 5;
@@ -248,13 +244,13 @@ static int aim_ssi_itemlist_cmp(struct aim_ssi_item *cur1, struct aim_ssi_item *
 	return 0;
 }
 
-static int aim_ssi_itemlist_valid(struct aim_ssi_item *list, struct aim_ssi_item *item)
+static gboolean aim_ssi_itemlist_valid(struct aim_ssi_item *list, struct aim_ssi_item *item)
 {
 	struct aim_ssi_item *cur;
 	for (cur=list; cur; cur=cur->next)
 		if (cur == item)
-			return 1;
-	return 0;
+			return TRUE;
+	return FALSE;
 }
 
 /**
@@ -410,12 +406,8 @@ char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, const char *sn
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
 		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x0131, 1);
-		if (tlv && tlv->length) {
-			char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
-			strncpy(alias, (char *)tlv->value, tlv->length);
-			alias[tlv->length] = 0;
-			return alias;
-		}
+		if (tlv && tlv->length)
+			return g_strndup((const gchar *)tlv->value, tlv->length);
 	}
 	return NULL;
 }
@@ -436,10 +428,7 @@ char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *
 	if (cur) {
 		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x013c, 1);
 		if (tlv && tlv->length) {
-			char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
-			strncpy(alias, (char *)tlv->value, tlv->length);
-			alias[tlv->length] = 0;
-			return alias;
+			return g_strndup((const gchar *)tlv->value, tlv->length);
 		}
 	}
 	return NULL;
@@ -592,7 +581,8 @@ static int aim_ssi_sync(OscarData *od)
  * @param od The oscar odion.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-static int aim_ssi_freelist(OscarData *od)
+static void
+aim_ssi_freelist(OscarData *od)
 {
 	struct aim_ssi_item *cur, *del;
 	struct aim_ssi_tmp *curtmp, *deltmp;
@@ -627,38 +617,6 @@ static int aim_ssi_freelist(OscarData *od)
 	od->ssi.local = NULL;
 	od->ssi.pending = NULL;
 	od->ssi.timestamp = (time_t)0;
-
-	return 0;
-}
-
-/**
- * Delete all SSI data.
- *
- * @param od The oscar odion.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_ssi_deletelist(OscarData *od)
-{
-	struct aim_ssi_item *cur, *del;
-
-	if (!od)
-		return -EINVAL;
-
-	/* Free the local list */
-	cur = od->ssi.local;
-	while (cur) {
-		del = cur;
-		cur = cur->next;
-		free(del->name);
-		aim_tlvlist_free(&del->data);
-		free(del);
-	}
-	od->ssi.local = NULL;
-
-	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
 }
 
 /**
@@ -767,8 +725,7 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const c
 			aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
 
 		/* Add the parent */
-		if (!(parent = aim_ssi_itemlist_add(&od->ssi.local, group, 0xFFFF, 0x0000, AIM_SSI_TYPE_GROUP, NULL)))
-			return -ENOMEM;
+		parent = aim_ssi_itemlist_add(&od->ssi.local, group, 0xFFFF, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
 
 		/* Modify the parent's parent (the master group) */
 		aim_ssi_itemlist_rebuildgroup(od->ssi.local, NULL);
