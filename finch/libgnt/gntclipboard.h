@@ -12,8 +12,6 @@
 #define GNT_IS_CLIPBOARD_CLASS(klass)	(G_TYPE_CHECK_CLASS_TYPE((klass), GNT_TYPE_CLIPBOARD))
 #define GNT_CLIPBOARD_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GNT_TYPE_CLIPBOARD, GntClipboardClass))
 
-#define	GNTDEBUG	g_printerr("%s\n", __FUNCTION__)
-
 typedef struct _GntClipboard			GntClipboard;
 typedef struct _GntClipboardClass		GntClipboardClass;
 
