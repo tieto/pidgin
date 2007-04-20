@@ -119,9 +119,6 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 	int i;
 	struct aim_ssi_item *cur, *new;
 
-	if (!list)
-		return NULL;
-
 	new = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item));
 
 	/* Set the name */
@@ -767,8 +764,8 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const c
 	if (!(parent = aim_ssi_itemlist_finditem(od->ssi.local, group, NULL, AIM_SSI_TYPE_GROUP))) {
 		/* Find the parent's parent (the master group) */
 		if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
-			if (aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL) == NULL)
-				return -ENOMEM;
+			aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+
 		/* Add the parent */
 		if (!(parent = aim_ssi_itemlist_add(&od->ssi.local, group, 0xFFFF, 0x0000, AIM_SSI_TYPE_GROUP, NULL)))
 			return -ENOMEM;
@@ -813,6 +810,10 @@ int aim_ssi_addpermit(OscarData *od, const char *name)
 	if (!od || !name)
 		return -EINVAL;
 
+	/* Make sure the master group exists */
+	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+
 	/* Add that bad boy */
 	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_PERMIT, NULL);
 
@@ -834,6 +835,10 @@ int aim_ssi_adddeny(OscarData *od, const char *name)
 
 	if (!od || !name)
 		return -EINVAL;
+
+	/* Make sure the master group exists */
+	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
 
 	/* Add that bad boy */
 	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_DENY, NULL);
@@ -1081,6 +1086,10 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
 	if (!od)
 		return -EINVAL;
 
+	/* Make sure the master group exists */
+	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+
 	/* Find the PDINFO item, or add it if it does not exist */
 	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, NULL, AIM_SSI_TYPE_PDINFO)))
 		tmp = aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0xFFFF, AIM_SSI_TYPE_PDINFO, NULL);
@@ -1112,6 +1121,10 @@ int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint16 iconsumlen)
 
 	if (!od || !iconsum || !iconsumlen)
 		return -EINVAL;
+
+	/* Make sure the master group exists */
+	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
 
 	/* Find the ICONINFO item, or add it if it does not exist */
 	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, "1", AIM_SSI_TYPE_ICONINFO))) {
@@ -1165,6 +1178,10 @@ int aim_ssi_setpresence(OscarData *od, guint32 presence) {
 
 	if (!od)
 		return -EINVAL;
+
+	/* Make sure the master group exists */
+	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
 
 	/* Find the PRESENCEPREFS item, or add it if it does not exist */
 	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS)))
