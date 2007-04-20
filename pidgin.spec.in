@@ -18,7 +18,7 @@ Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       @PACKAGE@
 Version:    %pidginver
 Release:    0%{?beta:.beta%{beta}}
-Epoch:      0
+Epoch:      2
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
@@ -72,7 +72,8 @@ Obsoletes: gaim
 %package devel
 Summary:    Development headers, documentation, and libraries for Pidgin
 Group:      Applications/Internet
-Requires:   pkgconfig, pidgin = %{epoch}:%{version}, libpurple-devel = %{epoch}:%{version}
+Requires:   pidgin = %{epoch}:%{version}, libpurple-devel = %{epoch}:%{version}
+Requires:   pkgconfig
 Obsoletes:  gaim-devel
 
 %package -n libpurple
@@ -86,6 +87,7 @@ Obsoletes:  gaim-gadugadu
 Summary:    Development headers, documentation, and libraries for libpurple
 Group:      Applications/Internet
 Requires:   libpurple = %{epoch}:%{version}
+Requires:   pkgconfig
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %package -n libpurple-bonjour
@@ -118,6 +120,7 @@ Requires:   libpurple = %{epoch}:%{version}
 Summary:    Headers etc. for finch stuffs
 Group:      Applications/Internet
 Requires:   finch = %{epoch}:%{version}, libpurple-devel = %{epoch}:%{version}
+Requires:   pkgconfig
 %endif
 
 %description
@@ -295,7 +298,10 @@ if [ -n "`which gconftool-2 2>/dev/null`" ]; then
         %{_sysconfdir}/gconf/schemas/purple.schemas > /dev/null || :
     killall -HUP gconfd-2 || :
 fi
-/sbin/ldconfig
+
+%post -n libpurple -p /sbin/ldconfig
+
+%post -n finch -p /sbin/ldconfig
 
 %preun
 if [ "$1" -eq 0 -a -n "`which gconftool-2 2>/dev/null`" ]; then
@@ -305,7 +311,9 @@ if [ "$1" -eq 0 -a -n "`which gconftool-2 2>/dev/null`" ]; then
     killall -HUP gconfd-2 || :
 fi
 
-%postun -p /sbin/ldconfig
+%postun -n libpurple -p /sbin/ldconfig
+
+%postun -n finch -p /sbin/ldconfig
 
 %files -f %{name}-%{version}-pidginplugins
 %defattr(-, root, root)
@@ -425,6 +433,12 @@ fi
 %endif
 
 %changelog
+* Thu Apr 19 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Fix pkgconfig Requires
+- Add ldconfig in pre/post scripts for libpurple & finch
+- Bump Epoch to 2 because Fedora unfortunately forgot to drop the Epoch
+  during the rename :(
+
 * Tue Apr 17 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Add some Obsolete:s to help upgrades
 - Remove explicit Packager: %%{packager} from spec, it was redundant
