@@ -229,11 +229,9 @@ set_dialog_icon(AccountPrefsDialog *dialog, gchar *new_cached_icon_path, gchar *
 	if (pixbuf == NULL)
 	{
 		/* Show a placeholder icon */
-		gchar *filename;
-		filename = g_build_filename(DATADIR, "pixmaps",
-				"pidgin", "insert-image.png", NULL);
-		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		g_free(filename);
+		GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+		pixbuf = gtk_widget_render_icon(dialog->window, PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE,
+		                                icon_size, "PidginAccount");
 	}
 
 	gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_entry), pixbuf);
