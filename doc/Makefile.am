@@ -4,6 +4,8 @@ EXTRA_DIST = \
 	C-HOWTO.dox \
 	PERL-HOWTO.dox \
 	TCL-HOWTO.dox \
+	TracFooter.html \
+	TracHeader.html \
 	account-signals.dox \
 	blist-signals.dox \
 	cipher-signals.dox \
