@@ -4,14 +4,14 @@
  *
  * Copyright (C) 2007, Jeff Connelly <myspaceim@xyzzy.cjb.net>
  *
- * Based on Gaim's "C Plugin HOWTO" hello world example.
+ * Based on Purple's "C Plugin HOWTO" hello world example.
  *
  * Code also drawn from myspace:
- *  http://snarfed.org/space/gaim+mock+protocol+plugin
+ *  http://snarfed.org/space/purple+mock+protocol+plugin
  *  Copyright (C) 2004-2007, Ryan Barrett <mockprpl@ryanb.org>
  *
- * and some constructs also based on existing Gaim plugins, which are:
- *   Copyright (C) 2003, Robbert Haarman <gaim@inglorion.net>
+ * and some constructs also based on existing Purple plugins, which are:
+ *   Copyright (C) 2003, Robbert Haarman <purple@inglorion.net>
  *   Copyright (C) 2003, Ethan Blanton <eblanton@cs.purdue.edu>
  *   Copyright (C) 2000-2003, Rob Flynn <rob@tgflinux.com>
  *   Copyright (C) 1998-1999, Mark Spencer <markster@marko.net>
@@ -31,7 +31,7 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#define GAIM_PLUGINS
+#define PURPLE_PLUGIN
 
 #include <string.h>
 #include <errno.h>	/* for EAGAIN */
@@ -46,12 +46,16 @@
 #include <sys/socket.h>
 #endif
 
+#include "internal.h"
+
 #include "notify.h"
 #include "plugin.h"
 #include "version.h"
 #include "cipher.h"     /* for SHA-1 */
 #include "util.h"       /* for base64 */
-#include "debug.h"      /* for gaim_debug_info */
+#include "debug.h"      /* for purple_debug_info */
+
+#include "crypt-rc4.h" /* TODO: use rc4 */
 
 #define MSIM_STATUS_ONLINE      "online"
 #define MSIM_STATUS_AWAY     	"away"
@@ -84,8 +88,8 @@
 typedef struct _MsimSession
 {
     guint magic;                        /**< MSIM_SESSION_STRUCT_MAGIC */
-    GaimAccount *account;           
-    GaimConnection *gc;
+    PurpleAccount *account;           
+    PurpleConnection *gc;
     gchar *sesskey;                     /**< Session key text string from server */
     gchar *userid;                      /**< This user's numeric user ID */
     gint fd;                            /**< File descriptor to/from server */
@@ -109,7 +113,7 @@ typedef struct _send_im_cb_struct
 {
     gchar *who;
     gchar *message;
-    GaimMessageFlags flags;
+    PurpleMessageFlags flags;
 } send_im_cb_struct;
 
 
@@ -118,9 +122,9 @@ static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_
 static inline gboolean msim_is_userid(const gchar *user);
 static void msim_session_destroy(MsimSession *session);
 
-static void init_plugin(GaimPlugin *plugin) 
+static void init_plugin(PurplePlugin *plugin) 
 {
-    gaim_notify_message(plugin, GAIM_NOTIFY_MSG_INFO, "Hello World!",
+    purple_notify_message(plugin, PURPLE_NOTIFY_MSG_INFO, "Hello World!",
                         "This is the Hello World! plugin :)", NULL, NULL, NULL);
 }
 
@@ -129,40 +133,40 @@ static void init_plugin(GaimPlugin *plugin)
  *
  * @return GList of status types.
  */
-static GList *msim_status_types(GaimAccount *acct)
+static GList *msim_status_types(PurpleAccount *acct)
 {
     GList *types;
-    GaimStatusType *type;
+    PurpleStatusType *type;
 
-    gaim_debug_info("myspace", "returning status types for %s: %s, %s, %s\n",
+    purple_debug_info("myspace", "returning status types for %s: %s, %s, %s\n",
                   acct->username,
                   MSIM_STATUS_ONLINE, MSIM_STATUS_AWAY, MSIM_STATUS_OFFLINE, MSIM_STATUS_INVISIBLE);
 
 
     types = NULL;
 
-    type = gaim_status_type_new(GAIM_STATUS_AVAILABLE, MSIM_STATUS_ONLINE,
+    type = purple_status_type_new(PURPLE_STATUS_AVAILABLE, MSIM_STATUS_ONLINE,
                               MSIM_STATUS_ONLINE, TRUE);
-    gaim_status_type_add_attr(type, "message", "Online",
-                            gaim_value_new(GAIM_TYPE_STRING));
+    purple_status_type_add_attr(type, "message", "Online",
+                            purple_value_new(PURPLE_TYPE_STRING));
     types = g_list_append(types, type);
 
-    type = gaim_status_type_new(GAIM_STATUS_AWAY, MSIM_STATUS_AWAY,
+    type = purple_status_type_new(PURPLE_STATUS_AWAY, MSIM_STATUS_AWAY,
                               MSIM_STATUS_AWAY, TRUE);
-    gaim_status_type_add_attr(type, "message", "Away",
-                            gaim_value_new(GAIM_TYPE_STRING));
+    purple_status_type_add_attr(type, "message", "Away",
+                            purple_value_new(PURPLE_TYPE_STRING));
     types = g_list_append(types, type);
 
-    type = gaim_status_type_new(GAIM_STATUS_OFFLINE, MSIM_STATUS_OFFLINE,
+    type = purple_status_type_new(PURPLE_STATUS_OFFLINE, MSIM_STATUS_OFFLINE,
                               MSIM_STATUS_OFFLINE, TRUE);
-    gaim_status_type_add_attr(type, "message", "Offline",
-                            gaim_value_new(GAIM_TYPE_STRING));
+    purple_status_type_add_attr(type, "message", "Offline",
+                            purple_value_new(PURPLE_TYPE_STRING));
     types = g_list_append(types, type);
 
-    type = gaim_status_type_new(GAIM_STATUS_INVISIBLE, MSIM_STATUS_INVISIBLE,
+    type = purple_status_type_new(PURPLE_STATUS_INVISIBLE, MSIM_STATUS_INVISIBLE,
                               MSIM_STATUS_INVISIBLE, TRUE);
-    gaim_status_type_add_attr(type, "message", "Invisible",
-                            gaim_value_new(GAIM_TYPE_STRING));
+    purple_status_type_add_attr(type, "message", "Invisible",
+                            purple_value_new(PURPLE_TYPE_STRING));
     types = g_list_append(types, type);
 
     return types;
@@ -187,14 +191,14 @@ static GHashTable* msim_parse(gchar* msg)
 
     g_return_val_if_fail(msg != NULL, NULL);
 
-    gaim_debug_info("msim", "msim_parse: got <%s>\n", msg);
+    purple_debug_info("msim", "msim_parse: got <%s>\n", msg);
 
     key = NULL;
 
     /* All messages begin with a \ */
     if (msg[0] != '\\' || msg[1] == 0)
     {
-        gaim_debug_info("msim", "msim_parse: incomplete/bad msg, "
+        purple_debug_info("msim", "msim_parse: incomplete/bad msg, "
                 "missing initial backslash: <%s>", msg);
         /* XXX: Should we try to recover, and read to first backslash? */
 
@@ -223,7 +227,7 @@ static GHashTable* msim_parse(gchar* msg)
             } else {
                 /* TODO: Some dictionaries have multiple values for the same
                  * key. Should append to a GList to handle this case. */
-                gaim_debug_info("msim", "msim_parse: key %s already exists, "
+                purple_debug_info("msim", "msim_parse: key %s already exists, "
                 "not overwriting or replacing; ignoring new value %s", key,
                 value);
             }
@@ -239,8 +243,6 @@ static GHashTable* msim_parse(gchar* msg)
     return table;
 }
 
-#include "crypt-rc4.c"
-
 /**
  * Compute the base64'd login challenge response based on username, password, nonce, and IPs.
  *
@@ -253,8 +255,8 @@ static GHashTable* msim_parse(gchar* msg)
  */
 static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], gchar* email, gchar* password)
 {
-    GaimCipherContext *key_context;
-    GaimCipher *sha1;
+    PurpleCipherContext *key_context;
+    PurpleCipher *sha1;
     rc4_state_struct rc4;
     guchar hash_pw[HASH_SIZE];
     guchar key[HASH_SIZE];
@@ -268,7 +270,7 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], gchar
 
     /* Convert ASCII password to UTF16 little endian */
     /* TODO: use the built-in facility to do this, like Nathan Peterson does. */
-    gaim_debug_info("msim", "converting password to utf16le\n");
+    purple_debug_info("msim", "converting password to utf16le\n");
     //printf("pw=<%s>\n",password);
     password_utf16le = g_new0(gchar, strlen(password) * 2);
     for (i = 0; i < strlen(password) * 2; i += 2)
@@ -278,7 +280,7 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], gchar
     }
   
     /* Compute password hash */ 
-    gaim_cipher_digest_region("sha1", (guchar*)password_utf16le, strlen(password) * 2,
+    purple_cipher_digest_region("sha1", (guchar*)password_utf16le, strlen(password) * 2,
             sizeof(hash_pw), hash_pw, NULL);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
@@ -289,11 +291,11 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], gchar
 #endif
 
     /* key = sha1(sha1(pw) + nonce2) */
-    sha1 = gaim_ciphers_find_cipher("sha1");
-    key_context = gaim_cipher_context_new(sha1, NULL);
-    gaim_cipher_context_append(key_context, hash_pw, HASH_SIZE);
-    gaim_cipher_context_append(key_context, nonce + NONCE_HALF_SIZE, NONCE_HALF_SIZE);
-    gaim_cipher_context_digest(key_context, sizeof(key), key, NULL);
+    sha1 = purple_ciphers_find_cipher("sha1");
+    key_context = purple_cipher_context_new(sha1, NULL);
+    purple_cipher_context_append(key_context, hash_pw, HASH_SIZE);
+    purple_cipher_context_append(key_context, nonce + NONCE_HALF_SIZE, NONCE_HALF_SIZE);
+    purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
     printf("key = ");
@@ -326,7 +328,7 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], gchar
             "\x00\x00\x00\x00\x05\x7f\x00\x00\x01\x00\x00\x00\x00\x0a\x00\x00\x40\xc0\xa8\x58\x01\xc0\xa8\x3c\x01", 25);
     crypt_rc4(&rc4, data, data_len);
 
-    response = gaim_base64_encode(data, data_len);
+    response = purple_base64_encode(data, data_len);
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
     printf("response=<%s>\n", response);
 #endif
@@ -354,13 +356,13 @@ static void msim_send(MsimSession *session, const gchar *msg)
     g_return_if_fail(MSIM_SESSION_VALID(session));
     g_return_if_fail(msg != NULL);
    
-    gaim_debug_info("msim", "msim_send: writing <%s>\n", msg);
+    purple_debug_info("msim", "msim_send: writing <%s>\n", msg);
 
     ret = send(session->fd, msg, strlen(msg), 0);
 
     if (ret != strlen(msg))
     {
-        gaim_debug_info("msim", "msim_send(%s): strlen=%d, but only wrote %s\n",
+        purple_debug_info("msim", "msim_send(%s): strlen=%d, but only wrote %s\n",
                 msg, strlen(msg), ret);
         /* TODO: better error */
     }
@@ -376,7 +378,7 @@ static void msim_send(MsimSession *session, const gchar *msg)
  */
 static int msim_login_challenge(MsimSession *session, GHashTable *table) 
 {
-    GaimAccount *account;
+    PurpleAccount *account;
     gchar *nc_str;
     guchar *nc;
     gchar *response_str;
@@ -391,20 +393,20 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
     account = session->account;
     //assert(account);
 
-    gaim_connection_update_progress(session->gc, "Reading challenge", 1, 4);
+    purple_connection_update_progress(session->gc, "Reading challenge", 1, 4);
 
-    gaim_debug_info("msim", "nc=<%s>\n", nc_str);
+    purple_debug_info("msim", "nc=<%s>\n", nc_str);
 
-    nc = (guchar*)gaim_base64_decode(nc_str, &nc_len);
-    gaim_debug_info("msim", "base64 decoded to %d bytes\n", nc_len);
+    nc = (guchar*)purple_base64_decode(nc_str, &nc_len);
+    purple_debug_info("msim", "base64 decoded to %d bytes\n", nc_len);
     if (nc_len != 0x40)
     {
-        gaim_debug_info("msim", "bad nc length: %x != 0x40\n", nc_len);
-        gaim_connection_error(session->gc, "Unexpected challenge length from server");
+        purple_debug_info("msim", "bad nc length: %x != 0x40\n", nc_len);
+        purple_connection_error(session->gc, "Unexpected challenge length from server");
         return 0;
     }
 
-    gaim_connection_update_progress(session->gc, "Logging in", 2, 4);
+    purple_connection_update_progress(session->gc, "Logging in", 2, 4);
 
     printf("going to compute login response\n");
     //response_str = msim_compute_login_response(nc_str, "testuser", "testpw"); //session->gc->account->username, session->gc->account->password);
@@ -419,7 +421,7 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
 
     g_free(response_str);
     
-    gaim_debug_info("msim", "response=<%s>\n", buf);
+    purple_debug_info("msim", "response=<%s>\n", buf);
 
     msim_send(session, buf);
 
@@ -460,7 +462,7 @@ static GHashTable *msim_parse_body(const gchar *body_str)
         key = elements[0];
         if (!key)
         {
-            gaim_debug_info("msim", "msim_parse_body(%s): null key", body_str);
+            purple_debug_info("msim", "msim_parse_body(%s): null key", body_str);
             g_strfreev(elements);
             break;
         }
@@ -468,7 +470,7 @@ static GHashTable *msim_parse_body(const gchar *body_str)
         value = elements[1];
         if (!value)
         {
-            gaim_debug_info("msim", "msim_parse_body(%s): null value", body_str);
+            purple_debug_info("msim", "msim_parse_body(%s): null value", body_str);
             g_strfreev(elements);
             break;
         }
@@ -495,12 +497,12 @@ static GHashTable *msim_parse_body(const gchar *body_str)
  * @param session 
  * @param userid ASCII numeric userid.
  * @param message Text of message to send.
- * @param flags Gaim instant message flags.
+ * @param flags Purple instant message flags.
  *
  * @return 0, since the 'table' parameter is no longer needed.
  *
  */
-static int msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gchar *message, GaimMessageFlags flags)
+static int msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gchar *message, PurpleMessageFlags flags)
 {
     gchar *msg_string;
 
@@ -513,15 +515,15 @@ static int msim_send_im_by_userid(MsimSession *session, const gchar *userid, con
     msg_string = g_strdup_printf("\\bm\\121\\sesskey\\%s\\t\\%s\\cv\\%d\\msg\\%s\\final\\",
             session->sesskey, userid, MSIM_CLIENT_VERSION, message);
 
-    gaim_debug_info("msim", "going to write: %s\n", msg_string);
+    purple_debug_info("msim", "going to write: %s\n", msg_string);
 
     msim_send(session, msg_string);
 
-    /* TODO: notify Gaim that we sent the IM. */
+    /* TODO: notify Purple that we sent the IM. */
 
     /* Not needed since sending messages to yourself is allowed by MSIM! */
     /*if (strcmp(from_username, who) == 0)
-        serv_got_im(gc, from_username, message, GAIM_MESSAGE_RECV, time(NULL));
+        serv_got_im(gc, from_username, message, PURPLE_MESSAGE_RECV, time(NULL));
         */
 
     return 0;
@@ -601,7 +603,7 @@ static int msim_process_reply(MsimSession *session, GHashTable *table)
         {
             g_hash_table_insert(session->user_lookup_cache, g_strdup(username), body);
         } else {
-            gaim_debug_info("msim", "msim_process_reply: not caching <%s>, no UserName",
+            purple_debug_info("msim", "msim_process_reply: not caching <%s>, no UserName",
                     g_hash_table_lookup(table, "body"));
         } 
 
@@ -612,7 +614,7 @@ static int msim_process_reply(MsimSession *session, GHashTable *table)
 
         if (cb)
         {
-            gaim_debug_info("msim", "msim_process_body: calling callback now\n");
+            purple_debug_info("msim", "msim_process_body: calling callback now\n");
             cb(session, table, data);
             g_hash_table_remove(session->user_lookup_cb, GUINT_TO_POINTER(rid));
             g_hash_table_remove(session->user_lookup_cb_data, GUINT_TO_POINTER(rid));
@@ -622,7 +624,7 @@ static int msim_process_reply(MsimSession *session, GHashTable *table)
              * it when it wants. */
             return 1;
         } else {
-            gaim_debug_info("msim", "msim_process_body: no callback for rid %d\n", rid);
+            purple_debug_info("msim", "msim_process_body: no callback for rid %d\n", rid);
         }
     }
     return 0;
@@ -648,17 +650,17 @@ static int msim_error(MsimSession *session, GHashTable *table)
 
     full_errmsg = g_strdup_printf("Protocol error, code %s: %s", err, errmsg);
 
-    gaim_debug_info("msim", "msim_error: %s\n", full_errmsg);
+    purple_debug_info("msim", "msim_error: %s\n", full_errmsg);
 
     /* TODO: check 'fatal' and die if asked to.
      * TODO: do something with the error # (localization of errmsg?)  */
-    gaim_notify_error(session->account, g_strdup("MySpaceIM Error"), 
+    purple_notify_error(session->account, g_strdup("MySpaceIM Error"), 
             full_errmsg, NULL);
 
     if (g_hash_table_lookup(table, "fatal"))
     {
-        gaim_debug_info("msim", "fatal error, destroy session\n");
-        gaim_connection_error(session->gc, full_errmsg);
+        purple_debug_info("msim", "fatal error, destroy session\n");
+        purple_connection_error(session->gc, full_errmsg);
         close(session->fd);
         //msim_session_destroy(session);
     }
@@ -688,7 +690,7 @@ static void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, gpoi
     username = g_hash_table_lookup(body, "UserName");
 
     msg = (gchar*)data;
-    serv_got_im(session->gc, username, msg, GAIM_MESSAGE_RECV, time(NULL));
+    serv_got_im(session->gc, username, msg, PURPLE_MESSAGE_RECV, time(NULL));
 
     g_hash_table_destroy(body);
     g_hash_table_destroy(userinfo);
@@ -714,7 +716,7 @@ static int msim_incoming_im(MsimSession *session, GHashTable *table)
     userid = g_hash_table_lookup(table, "f");
     msg = g_hash_table_lookup(table, "msg");
     
-    gaim_debug_info("msim", "msim_incoming_im: got msg <%s> from <%s>, resolving username\n",
+    purple_debug_info("msim", "msim_incoming_im: got msg <%s> from <%s>, resolving username\n",
             msg, userid);
 
     msim_lookup_user(session, userid, msim_incoming_im_cb, g_strdup(msg));
@@ -740,11 +742,11 @@ static void msim_status_now(gchar *who, gpointer data)
  */
 static void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
 {
-    GaimBuddyList *blist;
-    GaimBuddy *buddy;
-    GaimPresence *presence;
+    PurpleBuddyList *blist;
+    PurpleBuddy *buddy;
+    PurplePresence *presence;
     GHashTable *body;
-    //GaimStatus *status;
+    //PurpleStatus *status;
     gchar **status_array;
     GList *list;
     gchar *status_text, *status_code;
@@ -766,11 +768,11 @@ static void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer 
 
     if (!username)
     {
-        gaim_debug_info("msim", "msim_status_cb: no username?!\n");
+        purple_debug_info("msim", "msim_status_cb: no username?!\n");
         return;
     }
 
-    gaim_debug_info("msim", "msim_status_cb: updating status for <%s> to <%s>\n", username, status_str);
+    purple_debug_info("msim", "msim_status_cb: updating status for <%s> to <%s>\n", username, status_str);
 
     /* TODO: generic functions to split into a GList */
     status_array = g_strsplit(status_str, "|", 0);
@@ -785,27 +787,27 @@ static void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer 
     status_code = g_list_nth_data(list, 2);
     status_text = g_list_nth_data(list, 4);
 
-    blist = gaim_get_blist();
+    blist = purple_get_blist();
 
     /* Add buddy if not found */
-    buddy = gaim_find_buddy(session->account, username);
+    buddy = purple_find_buddy(session->account, username);
     if (!buddy)
     {
-        /* TODO: gaim aliases, userids and usernames */
-        gaim_debug_info("msim", "msim_status: making new buddy for %s\n", username);
-        buddy = gaim_buddy_new(session->account, username, NULL);
+        /* TODO: purple aliases, userids and usernames */
+        purple_debug_info("msim", "msim_status: making new buddy for %s\n", username);
+        buddy = purple_buddy_new(session->account, username, NULL);
 
         /* TODO: sometimes (when click on it), buddy list disappears. Fix. */
-        gaim_blist_add_buddy(buddy, NULL, NULL, NULL);
+        purple_blist_add_buddy(buddy, NULL, NULL, NULL);
     } else {
-        gaim_debug_info("msim", "msim_status: found buddy %s\n", username);
+        purple_debug_info("msim", "msim_status: found buddy %s\n", username);
     }
 
     /* For now, always set status to online. 
      * TODO: make status reflect reality
      * TODO: show headline */
-    presence = gaim_presence_new_for_buddy(buddy);
-    gaim_presence_set_status_active(presence, MSIM_STATUS_ONLINE, TRUE);
+    presence = purple_presence_new_for_buddy(buddy);
+    purple_presence_set_status_active(presence, MSIM_STATUS_ONLINE, TRUE);
 
     g_strfreev(status_array);
     g_list_free(list);
@@ -833,20 +835,20 @@ static int msim_status(MsimSession *session, GHashTable *table)
     status_str = g_hash_table_lookup(table, "msg");
     if (!status_str)
     {
-        gaim_debug_info("msim", "msim_status: bm=100 but no status msg\n");
+        purple_debug_info("msim", "msim_status: bm=100 but no status msg\n");
         return 0;
     }
 
     userid = g_hash_table_lookup(table, "f");
     if (!userid)
     {
-        gaim_debug_info("msim", "msim_status: bm=100 but no f field\n");
+        purple_debug_info("msim", "msim_status: bm=100 but no f field\n");
         return 0;
     }
    
     /* TODO: if buddies were identified on buddy list by uid, wouldn't have to lookup 
      * before updating the status! Much more efficient. */
-    gaim_debug_info("msim", "msim_status: got status msg <%s> for <%s>, scheduling lookup\n",
+    purple_debug_info("msim", "msim_status: got status msg <%s> for <%s>, scheduling lookup\n",
             status_str, userid);
     
     /* Actually update status once obtain username */
@@ -865,7 +867,7 @@ static int msim_status(MsimSession *session, GHashTable *table)
  * @return The return value of the function used to process the message, or -1 if
  * called with invalid parameters.
  */
-static int msim_process(GaimConnection *gc, GHashTable *table)
+static int msim_process(PurpleConnection *gc, GHashTable *table)
 {
     MsimSession *session;
 
@@ -884,7 +886,7 @@ static int msim_process(GaimConnection *gc, GHashTable *table)
     } else if (g_hash_table_lookup(table, "sesskey")) {
         printf("SESSKEY=<%s>\n", (gchar*)g_hash_table_lookup(table, "sesskey"));
 
-        gaim_connection_update_progress(gc, "Connected", 3, 4);
+        purple_connection_update_progress(gc, "Connected", 3, 4);
 
         session->sesskey = g_strdup(g_hash_table_lookup(table, "sesskey"));
 
@@ -892,7 +894,7 @@ static int msim_process(GaimConnection *gc, GHashTable *table)
          * (at least for me). */
         session->userid = g_strdup(g_hash_table_lookup(table, "userid"));
 
-        gaim_connection_set_state(gc, GAIM_CONNECTED);
+        purple_connection_set_state(gc, PURPLE_CONNECTED);
 
         return 0;
     } else if (g_hash_table_lookup(table, "bm"))  {
@@ -922,7 +924,7 @@ static int msim_process(GaimConnection *gc, GHashTable *table)
     } else if (g_hash_table_lookup(table, "error")) {
         return msim_error(session, table);
     } else if (g_hash_table_lookup(table, "ka")) {
-        gaim_debug_info("msim", "msim_process: got keep alive\n");
+        purple_debug_info("msim", "msim_process: got keep alive\n");
         return 0;
     } else {
         printf("<<unhandled>>\n");
@@ -933,16 +935,16 @@ static int msim_process(GaimConnection *gc, GHashTable *table)
 /**
  * Callback when input available.
  *
- * @param gc_uncasted A GaimConnection pointer.
+ * @param gc_uncasted A PurpleConnection pointer.
  * @param source File descriptor.
- * @param cond GAIM_INPUT_READ
+ * @param cond PURPLE_INPUT_READ
  *
  * Reads the input, and dispatches calls msim_process to handle it.
  */
-static void msim_input_cb(gpointer gc_uncasted, gint source, GaimInputCondition cond)
+static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 {
-    GaimConnection *gc;
-    GaimAccount *account;
+    PurpleConnection *gc;
+    PurpleAccount *account;
     MsimSession *session;
     gchar *end;
     int n;
@@ -950,13 +952,13 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, GaimInputCondition 
     g_return_if_fail(gc_uncasted != NULL);
     g_return_if_fail(source >= 0);  /* Note: 0 is a valid fd */
 
-    gc = (GaimConnection*)(gc_uncasted);
-    account = gaim_connection_get_account(gc);
+    gc = (PurpleConnection*)(gc_uncasted);
+    account = purple_connection_get_account(gc);
     session = gc->proto_data;
 
     g_return_if_fail(MSIM_SESSION_VALID(session));
     
-    g_assert(cond == GAIM_INPUT_READ);
+    g_assert(cond == PURPLE_INPUT_READ);
 
     /* Only can handle so much data at once... 
      * If this happens, try recompiling with a higher MSIM_READ_BUF_SIZE.
@@ -964,15 +966,15 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, GaimInputCondition 
      */
     if (session->rxoff == MSIM_READ_BUF_SIZE)
     {
-        gaim_debug_error("msim", "msim_input_cb: %d-byte read buffer full!\n",
+        purple_debug_error("msim", "msim_input_cb: %d-byte read buffer full!\n",
                 MSIM_READ_BUF_SIZE);
-        gaim_connection_error(gc, "Read buffer full");
+        purple_connection_error(gc, "Read buffer full");
         /* TODO: fix 100% CPU after closing */
         close(source);
         return;
     }
 
-    gaim_debug_info("msim", "buffer at %d (max %d), reading up to %d\n",
+    purple_debug_info("msim", "buffer at %d (max %d), reading up to %d\n",
             session->rxoff, MSIM_READ_BUF_SIZE, MSIM_READ_BUF_SIZE - session->rxoff);
 
     /* Read into buffer. On Win32, need recv() not read(). session->fd also holds
@@ -986,8 +988,8 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, GaimInputCondition 
     }
     else if (n < 0)
     {
-        gaim_connection_error(gc, "Read error");
-        gaim_debug_error("msim", "msim_input_cb: read error, ret=%d, "
+        purple_connection_error(gc, "Read error");
+        purple_debug_error("msim", "msim_input_cb: read error, ret=%d, "
 			"error=%s, source=%d, fd=%d (%X))\n", 
 			n, strerror(errno), source, session->fd, session->fd);
         close(source);
@@ -995,8 +997,8 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, GaimInputCondition 
     } 
     else if (n == 0)
     {
-        gaim_debug_info("msim", "msim_input_cb: server disconnected\n");
-        gaim_connection_error(gc, "Server has disconnected");
+        purple_debug_info("msim", "msim_input_cb: server disconnected\n");
+        purple_connection_error(gc, "Server has disconnected");
         return;
     }
 
@@ -1007,14 +1009,14 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, GaimInputCondition 
     if (strlen(session->rxbuf + session->rxoff) != n)
     {
         /* Occurs after login, but it is not a null byte. */
-        gaim_debug_info("msim", "msim_input_cb: strlen=%d, but read %d bytes"
+        purple_debug_info("msim", "msim_input_cb: strlen=%d, but read %d bytes"
                 "--null byte encountered?\n", strlen(session->rxbuf + session->rxoff), n);
-        //gaim_connection_error(gc, "Invalid message - null byte on input");
+        //purple_connection_error(gc, "Invalid message - null byte on input");
         return;
     }
 
     session->rxoff += n;
-    gaim_debug_info("msim", "msim_input_cb: read=%d\n", n);
+    purple_debug_info("msim", "msim_input_cb: read=%d\n", n);
 
     //printf("buf=<%s>\n", session->rxbuf);
 
@@ -1028,8 +1030,8 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, GaimInputCondition 
         table = msim_parse(g_strdup(session->rxbuf));
         if (!table)
         {
-            gaim_debug_info("msim", "msim_input_cb: couldn't parse <%s>\n", session->rxbuf);
-            gaim_connection_error(gc, "Unparseable message");
+            purple_debug_info("msim", "msim_input_cb: couldn't parse <%s>\n", session->rxbuf);
+            purple_connection_error(gc, "Unparseable message");
         }
         else
         {
@@ -1051,31 +1053,31 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, GaimInputCondition 
 /**
  * Callback when connected. Sets up input handlers.
  *
- * @param data A GaimConnection pointer.
+ * @param data A PurpleConnection pointer.
  * @param source File descriptor.
  * @param error_message
  */
 static void msim_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
-    GaimConnection *gc;
+    PurpleConnection *gc;
     MsimSession *session;
 
     g_return_if_fail(data != NULL);
 
-    gc = (GaimConnection*)data;
+    gc = (PurpleConnection*)data;
     session = gc->proto_data;
 
     if (source < 0)
     {
-        gaim_connection_error(gc, "Couldn't connect to host");
-        gaim_connection_error(gc, g_strdup_printf("Couldn't connect to host: %s (%d)", 
+        purple_connection_error(gc, "Couldn't connect to host");
+        purple_connection_error(gc, g_strdup_printf("Couldn't connect to host: %s (%d)", 
                     error_message, source));
         return;
     }
 
     session->fd = source; 
 
-    gc->inpa = gaim_input_add(source, GAIM_INPUT_READ, msim_input_cb, gc);
+    gc->inpa = purple_input_add(source, PURPLE_INPUT_READ, msim_input_cb, gc);
 }
 
 /* Session methods */
@@ -1087,7 +1089,7 @@ static void msim_connect_cb(gpointer data, gint source, const gchar *error_messa
  *
  * @return Pointer to a new session. Free with msim_session_destroy.
  */
-static MsimSession *msim_session_new(GaimAccount *acct)
+static MsimSession *msim_session_new(PurpleAccount *acct)
 {
     MsimSession *session;
 
@@ -1097,7 +1099,7 @@ static MsimSession *msim_session_new(GaimAccount *acct)
 
     session->magic = MSIM_SESSION_STRUCT_MAGIC;
     session->account = acct;
-    session->gc = gaim_account_get_connection(acct);
+    session->gc = purple_account_get_connection(acct);
     session->fd = -1;
     session->user_lookup_cb = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, NULL);  /* do NOT free function pointers! */
     session->user_lookup_cb_data = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_free);
@@ -1131,39 +1133,39 @@ static void msim_session_destroy(MsimSession *session)
  * 
  * @param acct Account information to use to login.
  */
-static void msim_login(GaimAccount *acct)
+static void msim_login(PurpleAccount *acct)
 {
-    GaimConnection *gc;
+    PurpleConnection *gc;
     const char *host;
     int port;
 
     g_return_if_fail(acct != NULL);
 
-    gaim_debug_info("myspace", "logging in %s\n", acct->username);
+    purple_debug_info("myspace", "logging in %s\n", acct->username);
 
-    gc = gaim_account_get_connection(acct);
+    gc = purple_account_get_connection(acct);
     gc->proto_data = msim_session_new(acct);
 
     /* 1. connect to server */
-    gaim_connection_update_progress(gc, "Connecting",
+    purple_connection_update_progress(gc, "Connecting",
                                   0,   /* which connection step this is */
                                   4);  /* total number of steps */
 
     /* TODO: GUI option to be user-modifiable. */
-    host = gaim_account_get_string(acct, "server", MSIM_SERVER);
-    port = gaim_account_get_int(acct, "port", MSIM_PORT);
+    host = purple_account_get_string(acct, "server", MSIM_SERVER);
+    port = purple_account_get_int(acct, "port", MSIM_PORT);
     /* TODO: connect */
-    /* From gaim.sf.net/api:
+    /* From purple.sf.net/api:
      * """Note that this function name can be misleading--although it is called 
      * "proxy connect," it is used for establishing any outgoing TCP connection, 
      * whether through a proxy or not.""" */
 
     /* Calls msim_connect_cb when connected. */
-    if (gaim_proxy_connect(gc, acct, host, port, msim_connect_cb, gc) == NULL)
+    if (purple_proxy_connect(gc, acct, host, port, msim_connect_cb, gc) == NULL)
     {
         /* TODO: try other ports if in auto mode, then save
          * working port and try that first next time. */
-        gaim_connection_error(gc, "Couldn't create socket");
+        purple_connection_error(gc, "Couldn't create socket");
         return;
     }
 
@@ -1175,7 +1177,7 @@ static void msim_login(GaimAccount *acct)
  * 
  * @param gc The connection.
  */
-static void msim_close(GaimConnection *gc)
+static void msim_close(PurpleConnection *gc)
 {
     g_return_if_fail(gc != NULL);
     
@@ -1190,16 +1192,16 @@ static void msim_close(GaimConnection *gc)
  *
  * @return The base icon name string.
  */
-static const gchar *msim_list_icon(GaimAccount *acct, GaimBuddy *buddy)
+static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 {
     /* TODO: use a MySpace icon. hbons submitted one to 
      * http://developer.pidgin.im/wiki/MySpaceIM  - tried placing in
-     * C:\cygwin\home\Jeff\gaim-2.0.0beta6\gtk\pixmaps\status\default 
+     * C:\cygwin\home\Jeff\purple-2.0.0beta6\gtk\pixmaps\status\default 
      * and returning "myspace" but icon shows up blank.
      */
     if (acct == NULL)
     {
-        gaim_debug_info("msim", "msim_list_icon: acct == NULL!\n");
+        purple_debug_info("msim", "msim_list_icon: acct == NULL!\n");
         //exit(-2);
     }
       return "meanwhile";
@@ -1257,7 +1259,7 @@ static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_
     g_return_if_fail(user != NULL);
     g_return_if_fail(cb != NULL);
 
-    gaim_debug_info("msim", "msim_lookup_userid", "asynchronously looking up <%s>\n", user);
+    purple_debug_info("msim", "msim_lookup_userid", "asynchronously looking up <%s>\n", user);
 
     /* TODO: check if this user's info was cached and fresh; if so return immediately */
 #if 0
@@ -1322,8 +1324,8 @@ static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_
  * instant message. If a userid is specified directly, this function is called
  * immediately here.
  */
-static int msim_send_im(GaimConnection *gc, const char *who,
-                            const char *message, GaimMessageFlags flags)
+static int msim_send_im(PurpleConnection *gc, const char *who,
+                            const char *message, PurpleMessageFlags flags)
 {
     MsimSession *session;
     const char *from_username = gc->account->username;
@@ -1333,7 +1335,7 @@ static int msim_send_im(GaimConnection *gc, const char *who,
     g_return_val_if_fail(who != NULL, 0);
     g_return_val_if_fail(message != NULL, 0);
 
-    gaim_debug_info("msim", "sending message from %s to %s: %s\n",
+    purple_debug_info("msim", "sending message from %s to %s: %s\n",
                   from_username, who, message);
 
     session = gc->proto_data;
@@ -1341,7 +1343,7 @@ static int msim_send_im(GaimConnection *gc, const char *who,
     /* If numeric ID, can send message immediately without userid lookup */
     if (msim_is_userid(who))
     {
-        gaim_debug_info("msim", "msim_send_im: numeric 'who' detected, sending asap\n");
+        purple_debug_info("msim", "msim_send_im: numeric 'who' detected, sending asap\n");
         msim_send_im_by_userid(session, who, message, flags);
         return 1;
     }
@@ -1359,7 +1361,7 @@ static int msim_send_im(GaimConnection *gc, const char *who,
 
     /* msim_send_im_by_userid_cb will now be called once userid is looked up */
 
-    /* Return 1 to have Gaim show this IM as being sent, 0 to not. I always
+    /* Return 1 to have Purple show this IM as being sent, 0 to not. I always
      * return 1 even if the message could not be sent, since I don't know if
      * it has failed yet--because the IM is only sent after the userid is
      * retrieved from the server (which happens after this function returns).
@@ -1373,7 +1375,7 @@ static int msim_send_im(GaimConnection *gc, const char *who,
      * you@example.com: just coding a prpl
      *
      * TODO: Make the sent IM's appear as from the user's username, instead of
-     * their email address. Gaim uses the login (in MSIM, the email)--change this.
+     * their email address. Purple uses the login (in MSIM, the email)--change this.
      */
     return 1;
 }
@@ -1387,7 +1389,7 @@ static int msim_send_im(GaimConnection *gc, const char *who,
  *
  * Currently returns the display name. 
  */
-static char *msim_status_text(GaimBuddy *buddy)
+static char *msim_status_text(PurpleBuddy *buddy)
 {
     MsimSession *session;
     GHashTable *userinfo;
@@ -1419,12 +1421,12 @@ static char *msim_status_text(GaimBuddy *buddy)
  * @param full TRUE if should obtain full tooltip text.
  *
  */
-static void msim_tooltip_text(GaimBuddy *buddy, GaimNotifyUserInfo *user_info, gboolean full)
+static void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean full)
 {
     g_return_if_fail(buddy != NULL);
     g_return_if_fail(user_info != NULL);
 
-    if (GAIM_BUDDY_IS_ONLINE(buddy))
+    if (PURPLE_BUDDY_IS_ONLINE(buddy))
     {
         MsimSession *session;
         GHashTable *userinfo;
@@ -1439,19 +1441,19 @@ static void msim_tooltip_text(GaimBuddy *buddy, GaimNotifyUserInfo *user_info, g
         g_assert(userinfo != NULL);
 
         // TODO: if (full), do something different
-        gaim_notify_user_info_add_pair(user_info, "User ID", g_hash_table_lookup(userinfo, "UserID"));
-        gaim_notify_user_info_add_pair(user_info, "Display Name", g_hash_table_lookup(userinfo, "DisplayName"));
-        gaim_notify_user_info_add_pair(user_info, "User Name", g_hash_table_lookup(userinfo, "UserName"));
-        gaim_notify_user_info_add_pair(user_info, "Total Friends", g_hash_table_lookup(userinfo, "TotalFriends"));
-        gaim_notify_user_info_add_pair(user_info, "Song", 
+        purple_notify_user_info_add_pair(user_info, "User ID", g_hash_table_lookup(userinfo, "UserID"));
+        purple_notify_user_info_add_pair(user_info, "Display Name", g_hash_table_lookup(userinfo, "DisplayName"));
+        purple_notify_user_info_add_pair(user_info, "User Name", g_hash_table_lookup(userinfo, "UserName"));
+        purple_notify_user_info_add_pair(user_info, "Total Friends", g_hash_table_lookup(userinfo, "TotalFriends"));
+        purple_notify_user_info_add_pair(user_info, "Song", 
                 g_strdup_printf("%s - %s",
                     (gchar*)g_hash_table_lookup(userinfo, "BandName"),
                     (gchar*)g_hash_table_lookup(userinfo, "SongName")));
     }
 }
 
-/** Callbacks called by Gaim, to access this plugin. */
-static GaimPluginProtocolInfo prpl_info =
+/** Callbacks called by Purple, to access this plugin. */
+static PurplePluginProtocolInfo prpl_info =
 {
     OPT_PROTO_MAIL_CHECK,/* options - TODO: myspace will notify of mail */
     NULL,              /* user_splits */
@@ -1520,16 +1522,16 @@ static GaimPluginProtocolInfo prpl_info =
 
 
 /** Based on MSN's plugin info comments. */
-static GaimPluginInfo info =
+static PurplePluginInfo info =
 {
-    GAIM_PLUGIN_MAGIC,                                
-    GAIM_MAJOR_VERSION,
-    GAIM_MINOR_VERSION,
-    GAIM_PLUGIN_PROTOCOL,                             /**< type           */
+    PURPLE_PLUGIN_MAGIC,                                
+    PURPLE_MAJOR_VERSION,
+    PURPLE_MINOR_VERSION,
+    PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
     NULL,                                             /**< ui_requirement */
     0,                                                /**< flags          */
     NULL,                                             /**< dependencies   */
-    GAIM_PRIORITY_DEFAULT,                            /**< priority       */
+    PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
 
     "prpl-myspace",                                   /**< id             */
     "MySpaceIM",                                      /**< name           */
@@ -1553,4 +1555,4 @@ static GaimPluginInfo info =
 };
 
 
-GAIM_INIT_PLUGIN(myspace, init_plugin, info);
+PURPLE_INIT_PLUGIN(myspace, init_plugin, info);
