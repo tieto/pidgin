@@ -1,0 +1,164 @@
+##
+#
+# Makefile.mingw - Win32 mingw Makefile for MySpaceIM prpl
+#
+# based on:
+#
+# mockprpl
+# (formerly nullprpl)
+# http://snarfed.org/space/gaim+mock+protocol+plugin
+# Copyright 2004-2007, Ryan Barrett <mockprpl@ryanb.org>
+#
+# Makefile.mingw was contributed by Andrew Hart.
+# http://sourceforge.net/users/arhart/
+#
+# If the gaim source is not installed in the same directory as mockprpl, change
+# GAIM_TOP to point to it.
+#
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+#
+#
+
+#
+# PATHS
+#
+
+INCLUDE_DIR :=		.
+GTK_TOP :=		../win32-dev/gtk_2_0
+GAIM_TOP :=		../gaim-2.0.0beta6
+MSIM_ROOT :=		.
+GAIM_INSTALL_DIR :=	$(GAIM_TOP)/win32-install-dir
+
+##
+## VARIABLE DEFINITIONS
+##
+
+TARGET = libmsim
+
+# Compiler Options
+
+CFLAGS =
+
+DEFINES =
+
+# If anyone cares to play with PLUGIN vs STATIC, feel free to change this
+DLL_INSTALL_DIR = $(GAIM_INSTALL_DIR)/plugins
+
+## Static or Plugin... 
+#ifeq ($(TYPE),STATIC)
+#  DEFINES += -DSTATIC
+#  DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)
+#else
+#ifeq ($(TYPE),PLUGIN)
+#  DLL_INSTALL_DIR =	$(GAIM_INSTALL_DIR)/plugins
+#endif
+#endif
+
+
+##
+## INCLUDE  MAKEFILES
+##
+
+include $(GAIM_TOP)/libgaim/win32/global.mak
+
+##
+## INCLUDE PATHS
+##
+
+INCLUDE_PATHS +=	-I$(MSIM_ROOT) \
+			-I$(GTK_TOP)/include \
+			-I$(GTK_TOP)/include/gtk-2.0 \
+			-I$(GTK_TOP)/include/glib-2.0 \
+			-I$(GTK_TOP)/include/pango-1.0 \
+			-I$(GTK_TOP)/include/atk-1.0 \
+			-I$(GTK_TOP)/lib/glib-2.0/include \
+			-I$(GTK_TOP)/lib/gtk-2.0/include \
+			-I$(GAIM_TOP)/libgaim \
+			-I$(GAIM_TOP)/libgaim/win32 \
+			-I$(GAIM_TOP)
+
+
+LIB_PATHS =		-L$(GTK_TOP)/lib \
+			-L$(GAIM_TOP)/libgaim
+
+
+##
+##  SOURCES, OBJECTS
+##
+
+C_SRC =			myspace.c
+
+
+OBJECTS = $(C_SRC:%.c=%.o)
+
+
+##
+## LIBRARIES
+##
+
+LIBS =			-lgtk-win32-2.0 \
+			-lglib-2.0 \
+			-lgdk-win32-2.0 \
+			-lgmodule-2.0 \
+			-lgobject-2.0 \
+			-lws2_32 \
+			-lintl \
+			-lgaim
+
+
+##
+## RULES
+##
+
+# How to make a C file
+
+%.o: %.c
+	$(CC) $(CFLAGS) $(DEFINES) $(INCLUDE_PATHS) -o $@ -c $<
+
+##
+## TARGET DEFINITIONS
+##
+
+.PHONY: all clean
+
+all: $(TARGET).dll
+
+install: $(TARGET).dll
+	cp $(MSIM_ROOT)/$(TARGET).dll $(DLL_INSTALL_DIR)
+
+
+##
+## BUILD Dependencies
+##
+
+$(GAIM_TOP)/libgaim/gaim.lib:
+	$(MAKE) -C $(GAIM_TOP)/libgaim -f Makefile.mingw gaim.lib
+
+##
+## BUILD DLL
+##
+
+$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS) 
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).lib -o $(TARGET).dll
+
+
+##
+## CLEAN RULES
+##
+
+clean:
+	rm -rf *.o
+	rm -rf $(TARGET).dll
+	rm -rf $(TARGET).lib

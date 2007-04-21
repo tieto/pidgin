@@ -1,0 +1,24 @@
+MySpaceIM Protocol Plugin TODO
+
+Listed roughly in descending order of priority. 
+
+- Setup a site for documenting my progress. A blog for updates possibly;
+  definitely a wiki for the documentation. Find out best places for hosting.
+[developer.pidgin.im? created a skeletal wiki page there, ok?]
+
+- Review 0.2 code. General clean up, refactor if necessary, find out if the
+  way things are done currently is the best way. Doxygen docs for each
+  function, and better organization of functions.
+- Win32 support. Update Makefile.mingw to match Makefile, and try compiling it.
+ Email JS once complete to let know.
+- Verify Nathan Peterson's documentation. Incorporate what he has that I don't
+  into mine, with credit.
+- Typing notifications. 
+- Better buddy list support, signing on/off.
+- Use Nathan Peterson's RC4 in cipher.c. Any ciphers should probably go there.
+- All the TODOs and XXX's mentioned in myspace.c.
+- Cosmetic: msim prpl icon.
+- LEARN MONOTONE!
+- Catalog all the error messages.
+- Every other MySpaceIM feature not yet implemented.
+
