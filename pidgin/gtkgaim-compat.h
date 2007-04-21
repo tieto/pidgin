@@ -25,6 +25,8 @@
 #ifndef _GTKGAIM_COMPAT_H_
 #define _GTKGAIM_COMPAT_H_
 
+#include <pidginstock.h>
+
 #define GAIM_ALERT_TITLE PIDGIN_ALERT_TITLE
 #define GAIM_BROWSER_CURRENT PIDGIN_BROWSER_CURRENT
 #define GAIM_BROWSER_DEFAULT PIDGIN_BROWSER_DEFAULT
@@ -39,7 +41,6 @@
 #define GAIM_BUTTON_TEXT_IMAGE PIDGIN_BUTTON_TEXT_IMAGE
 #define GAIM_BUTTON_TEXT PIDGIN_BUTTON_TEXT
 #define GAIM_BUTTON_VERTICAL PIDGIN_BUTTON_VERTICAL
-#define GaimConvPlacementFunc fnc
 #define GaimConvPlacementFunc PidginConvPlacementFunc
 #define GAIM_DIALOG PIDGIN_DIALOG
 #define gaim_dnd_file_manage pidgin_dnd_file_manage
@@ -200,9 +201,9 @@
 #define GaimGtkMenuTrayClass PidginMenuTrayClass
 #define gaim_gtk_menu_tray_get_box pidgin_menu_tray_get_box
 #define gaim_gtk_menu_tray_get_gtype pidgin_menu_tray_get_gtype
-#define GAIM_GTK_MENU_TRAY_H PIDGIN_MENU_TRAY_H
 #define gaim_gtk_menu_tray_new pidgin_menu_tray_new
 #define GaimGtkMenuTray PidginMenuTray
+#define GAIM_GTK_MENU_TRAY PIDGIN_MENU_TRAY
 #define gaim_gtk_menu_tray_prepend pidgin_menu_tray_prepend
 #define gaim_gtk_menu_tray_set_tooltip pidgin_menu_tray_set_tooltip
 #define GAIM_GTK_MODIFY_ACCOUNT_DIALOG PIDGIN_MODIFY_ACCOUNT_DIALOG
@@ -296,6 +297,8 @@
 #define GAIM_HIG_BOX_SPACE PIDGIN_HIG_BOX_SPACE
 #define GAIM_HIG_CAT_SPACE PIDGIN_HIG_CAT_SPACE
 #define GAIM_INVISIBLE_CHAR PIDGIN_INVISIBLE_CHAR
+#define GAIM_IS_GTK_CONVERSATION PIDGIN_IS_PIDGIN_CONVERSATION
+#define GAIM_IS_GTK_PLUGIN PIDGIN_IS_PIDGIN_PLUGIN
 #define gaim_new_check_item pidgin_new_check_item
 #define gaim_new_item_from_stock pidgin_new_item_from_stock
 #define gaim_new_item pidgin_new_item
@@ -318,17 +321,11 @@
 #define GaimStatusBoxItemType PidginStatusBoxItemType
 #define gaim_status_box_new pidgin_status_box_new
 #define gaim_status_box_new_with_account pidgin_status_box_new_with_account
-#define GAIM_STATUS_BOX_NUM_TYPES PIDGIN_STATUS_BOX_NUM_TYPES
 #define GaimStatusBox PidginStatusBox
 #define gaim_status_box_pulse_connecting pidgin_status_box_pulse_connecting
 #define gaim_status_box_set_buddy_icon pidgin_status_box_set_buddy_icon
 #define gaim_status_box_set_connecting pidgin_status_box_set_connecting
 #define gaim_status_box_set_network_available pidgin_status_box_set_network_available
-#define GAIM_STATUS_BOX_TYPE_CUSTOM PIDGIN_STATUS_BOX_TYPE_CUSTOM
-#define GAIM_STATUS_BOX_TYPE_POPULAR PIDGIN_STATUS_BOX_TYPE_POPULAR
-#define GAIM_STATUS_BOX_TYPE_PRIMITIVE PIDGIN_STATUS_BOX_TYPE_PRIMITIVE
-#define GAIM_STATUS_BOX_TYPE_SAVED PIDGIN_STATUS_BOX_TYPE_SAVED
-#define GAIM_STATUS_BOX_TYPE_SEPARATOR PIDGIN_STATUS_BOX_TYPE_SEPARATOR
 #define GAIM_STATUS_ICON_LARGE PIDGIN_STATUS_ICON_LARGE
 #define GaimStatusIconSize PidginStatusIconSize
 #define GAIM_STATUS_ICON_SMALL PIDGIN_STATUS_ICON_SMALL
@@ -354,6 +351,7 @@
 #define GAIM_STOCK_FILE_DONE PIDGIN_STOCK_FILE_DONE
 #define GAIM_STOCK_FILE_TRANSFER PIDGIN_STOCK_FILE_TRANSFER
 #define GAIM_STOCK_IGNORE PIDGIN_STOCK_IGNORE
+#define GAIM_STOCK_IM "gaim-im" /* foo... */
 #define GAIM_STOCK_INVITE PIDGIN_STOCK_INVITE
 #define GAIM_STOCK_MODIFY PIDGIN_STOCK_MODIFY
 #define GAIM_STOCK_OPEN_MAIL PIDGIN_STOCK_OPEN_MAIL
@@ -367,8 +365,6 @@
 #define GAIM_STOCK_UPLOAD PIDGIN_STOCK_UPLOAD
 #define GAIM_TYPE_GTK_CELL_RENDERER_EXPANDER PIDGIN_TYPE_GTK_CELL_RENDERER_EXPANDER
 #define GAIM_TYPE_GTK_CELL_RENDERER_PROGRESS PIDGIN_TYPE_GTK_CELL_RENDERER_PROGRESS
-#define GAIM_TYPE_SCROLL_BOOK PIDGIN_TYPE_SCROLL_BOOK
-#define GAIM_TYPE_STATUS_BOX PIDGIN_TYPE_STATUS_BOX
 #define GAIM_UNSEEN_EVENT PIDGIN_UNSEEN_EVENT
 #define GAIM_UNSEEN_NICK PIDGIN_UNSEEN_NICK
 #define GAIM_UNSEEN_NO_LOG PIDGIN_UNSEEN_NO_LOG
@@ -376,18 +372,38 @@
 #define GaimUnseenState PidginUnseenState
 #define GAIM_UNSEEN_TEXT PIDGIN_UNSEEN_TEXT
 #define GAIM_WINDOW_ICONIFIED PIDGIN_WINDOW_ICONIFIED
+#define GTK_GAIM_IS_SCROLL_BOOK_CLASS PIDGIN_IS_SCROLL_BOOK_CLASS
+#define GTK_GAIM_IS_SCROLL_BOOK PIDGIN_IS_SCROLL_BOOK
+#define GTK_GAIM_IS_STATUS_BOX_CLASS PIDGIN_IS_STATUS_BOX_CLASS
+#define GTK_GAIM_IS_STATUS_BOX PIDGIN_IS_STATUS_BOX
+#define GTK_GAIM_SCROLL_BOOK_CLASS PIDGIN_SCROLL_BOOK_CLASS
+#define GTK_GAIM_SCROLL_BOOK_GET_CLASS PIDGIN_SCROLL_BOOK_GET_CLASS
 #define gtk_gaim_scroll_book_get_type pidgin_scroll_book_get_type
 #define gtk_gaim_scroll_book_new pidgin_scroll_book_new
+#define GTK_GAIM_SCROLL_BOOK PIDGIN_SCROLL_BOOK
+#define gtk_gaim_status_box_add pidgin_status_box_add
 #define gtk_gaim_status_box_add_separator pidgin_status_box_add_separator
+#define GTK_GAIM_STATUS_BOX_CLASS PIDGIN_STATUS_BOX_CLASS
 #define gtk_gaim_status_box_get_buddy_icon pidgin_status_box_get_buddy_icon
+#define GTK_GAIM_STATUS_BOX_GET_CLASS PIDGIN_STATUS_BOX_GET_CLASS
 #define gtk_gaim_status_box_get_message pidgin_status_box_get_message
 #define gtk_gaim_status_box_get_type pidgin_status_box_get_type
 #define GtkGaimStatusBoxItemType PidginStatusBoxItemType
 #define gtk_gaim_status_box_new pidgin_status_box_new
 #define gtk_gaim_status_box_new_with_account pidgin_status_box_new_with_account
+#define GTK_GAIM_STATUS_BOX_NUM_TYPES PIDGIN_STATUS_BOX_NUM_TYPES
+#define GtkGaimStatusBox PidginStatusBox
+#define GTK_GAIM_STATUS_BOX PIDGIN_STATUS_BOX
 #define gtk_gaim_status_box_pulse_connecting pidgin_status_box_pulse_connecting
 #define gtk_gaim_status_box_set_buddy_icon pidgin_status_box_set_buddy_icon
 #define gtk_gaim_status_box_set_connecting pidgin_status_box_set_connecting
 #define gtk_gaim_status_box_set_network_available pidgin_status_box_set_network_available
+#define GTK_GAIM_STATUS_BOX_TYPE_CUSTOM PIDGIN_STATUS_BOX_TYPE_CUSTOM
+#define GTK_GAIM_STATUS_BOX_TYPE_POPULAR PIDGIN_STATUS_BOX_TYPE_POPULAR
+#define GTK_GAIM_STATUS_BOX_TYPE_PRIMITIVE PIDGIN_STATUS_BOX_TYPE_PRIMITIVE
+#define GTK_GAIM_STATUS_BOX_TYPE_SAVED PIDGIN_STATUS_BOX_TYPE_SAVED
+#define GTK_GAIM_STATUS_BOX_TYPE_SEPARATOR PIDGIN_STATUS_BOX_TYPE_SEPARATOR
+#define GTK_GAIM_TYPE_SCROLL_BOOK PIDGIN_TYPE_SCROLL_BOOK
+#define GTK_GAIM_TYPE_STATUS_BOX PIDGIN_TYPE_STATUS_BOX
 
 #endif /* _GTKGAIM_COMPAT_H */
