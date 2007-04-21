@@ -375,7 +375,7 @@
 #define GAIM_UNSEEN_NONE PIDGIN_UNSEEN_NONE
 #define GaimUnseenState PidginUnseenState
 #define GAIM_UNSEEN_TEXT PIDGIN_UNSEEN_TEXT
-#define GAIM_WINDOW_ICONIFIED ->window
+#define GAIM_WINDOW_ICONIFIED PIDGIN_WINDOW_ICONIFIED
 #define gtk_gaim_scroll_book_get_type pidgin_scroll_book_get_type
 #define gtk_gaim_scroll_book_new pidgin_scroll_book_new
 #define gtk_gaim_status_box_add_separator pidgin_status_box_add_separator
