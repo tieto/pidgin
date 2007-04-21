@@ -22,7 +22,7 @@ SUBDIRS = \
 	ssl \
 	$(TCL_DIR)
 
-plugindir = $(libdir)/libpurple
+plugindir = $(libdir)/purple
 
 autoaccept_la_LDFLAGS       = -module -avoid-version
 buddynote_la_LDFLAGS        = -module -avoid-version

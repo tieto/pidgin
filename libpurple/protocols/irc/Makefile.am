@@ -1,6 +1,6 @@
 EXTRA_DIST = PROTOCOL Makefile.mingw
 
-pkgdir = $(libdir)/libpurple
+pkgdir = $(libdir)/purple
 
 IRCSOURCES = irc.c parse.c cmds.c msgs.c irc.h dcc_send.c
 

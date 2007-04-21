@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 		Makefile.mingw
 
-pkgdir = $(libdir)/libpurple
+pkgdir = $(libdir)/purple
 
 BONJOURSOURCES = \
 	bonjour.c \

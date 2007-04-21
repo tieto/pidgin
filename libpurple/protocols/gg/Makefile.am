@@ -13,7 +13,7 @@ EXTRA_DIST = \
 	lib/pubdir50.c \
 	lib/pubdir.c
 
-pkgdir = $(libdir)/libpurple
+pkgdir = $(libdir)/purple
 
 if USE_INTERNAL_LIBGADU
 INTGGSOURCES = \

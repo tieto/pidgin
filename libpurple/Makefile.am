@@ -232,7 +232,7 @@ libpurple_la_LIBADD = \
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/libpurple/\" \
+	-DLIBDIR=\"$(libdir)/purple/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	$(GLIB_CFLAGS) \
