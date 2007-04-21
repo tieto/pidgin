@@ -1043,13 +1043,14 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
 	if (!od)
 		return -EINVAL;
 
-	/* Make sure the master group exists */
-	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
-		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
-
 	/* Find the PDINFO item, or add it if it does not exist */
-	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, NULL, AIM_SSI_TYPE_PDINFO)))
+	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, NULL, AIM_SSI_TYPE_PDINFO))) {
+		/* Make sure the master group exists */
+		if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+			aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+
 		tmp = aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0xFFFF, AIM_SSI_TYPE_PDINFO, NULL);
+	}
 
 	/* Need to add the 0x00ca TLV to the TLV chain */
 	aim_tlvlist_replace_8(&tmp->data, 0x00ca, permdeny);
@@ -1079,12 +1080,12 @@ int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint16 iconsumlen)
 	if (!od || !iconsum || !iconsumlen)
 		return -EINVAL;
 
-	/* Make sure the master group exists */
-	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
-		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
-
 	/* Find the ICONINFO item, or add it if it does not exist */
 	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, "1", AIM_SSI_TYPE_ICONINFO))) {
+		/* Make sure the master group exists */
+		if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+			aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+
 		tmp = aim_ssi_itemlist_add(&od->ssi.local, "1", 0x0000, 0xFFFF, AIM_SSI_TYPE_ICONINFO, NULL);
 	}
 
@@ -1136,13 +1137,14 @@ int aim_ssi_setpresence(OscarData *od, guint32 presence) {
 	if (!od)
 		return -EINVAL;
 
-	/* Make sure the master group exists */
-	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
-		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
-
 	/* Find the PRESENCEPREFS item, or add it if it does not exist */
-	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS)))
+	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS))) {
+		/* Make sure the master group exists */
+		if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+			aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+
 		tmp = aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0xFFFF, AIM_SSI_TYPE_PRESENCEPREFS, NULL);
+	}
 
 	/* Need to add the x00c9 TLV to the TLV chain */
 	aim_tlvlist_replace_32(&tmp->data, 0x00c9, presence);
