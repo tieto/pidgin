@@ -231,7 +231,6 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
-rm -f $RPM_BUILD_ROOT%{_datadir}/pixmaps/gaim.svg
 
 %if 0%{!?_with_howl:1} && 0%{!?_with_avahi:1}
 rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libbonjour.so
