@@ -1416,35 +1416,19 @@ chat_do_im(PidginConversation *gtkconv, const char *who)
 	g_free(real_who);
 }
 
+static void pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user);
+
 static void
 ignore_cb(GtkWidget *w, PidginConversation *gtkconv)
 {
 	PurpleConversation *conv = gtkconv->active_conv;
-	PidginChatPane *gtkchat;
-	PurpleConvChatBuddy *cbuddy;
 	PurpleConvChat *chat;
-	PurpleConvChatBuddyFlags flags;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	GtkTreeSelection *sel;
-	char *name;
-	char *alias;
+	const char *name;
 
-	chat    = PURPLE_CONV_CHAT(conv);
-	gtkchat = gtkconv->u.chat;
+	chat = PURPLE_CONV_CHAT(conv);
+	name = g_object_get_data(G_OBJECT(w), "user_data");
 
-	model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
-	sel   = gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list));
-
-	if (gtk_tree_selection_get_selected(sel, NULL, &iter)) {
-		gtk_tree_model_get(GTK_TREE_MODEL(model), &iter,
-						   CHAT_USERS_NAME_COLUMN, &name,
-						   CHAT_USERS_ALIAS_COLUMN, &alias,
-						   CHAT_USERS_FLAGS_COLUMN, &flags,
-						   -1);
-		gtk_list_store_remove(GTK_LIST_STORE(model), &iter);
-	}
-	else
+	if (name == NULL)
 		return;
 
 	if (purple_conv_chat_is_user_ignored(chat, name))
@@ -1452,11 +1436,7 @@ ignore_cb(GtkWidget *w, PidginConversation *gtkconv)
 	else
 		purple_conv_chat_ignore(chat, name);
 
-	cbuddy = purple_conv_chat_cb_new(name, alias, flags);
-
-	add_chat_buddy_common(conv, cbuddy, NULL);
-	g_free(name);
-	g_free(alias);
+	pidgin_conv_chat_update_user(conv, name);
 }
 
 static void
