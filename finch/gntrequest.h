@@ -49,6 +49,12 @@ void finch_request_init(void);
  */
 void finch_request_uninit(void);
 
+/**
+ * Save the request fields in preferences where the id attribute of each field is the
+ * id of a preference.
+ */
+void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *fields);
+
 /*@}*/
 
 #endif
