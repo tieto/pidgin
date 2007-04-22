@@ -106,12 +106,22 @@ enum {
 	/** A plain-English description of this item */
 	DESC_COLUMN,
 
-	/*
+	/**
 	 * This value depends on TYPE_COLUMN.  For POPULAR types,
 	 * this is the creation time.  For PRIMITIVE types,
 	 * this is the PurpleStatusPrimitive.
 	 */
 	DATA_COLUMN,
+
+	/**
+ 	 * This column stores the GdkPixbuf for the status emblem. Currently only 'saved' is stored
+ 	 */
+	EMBLEM_COLUMN,
+
+	/**
+ 	* This column stores whether to show the emblem.
+ 	*/
+	EMBLEM_VISIBLE_COLUMN,
 
 	NUM_COLUMNS
 };
@@ -889,6 +899,7 @@ add_popular_statuses(PidginStatusBox *statusbox)
 {
 	GList *list, *cur;
 	GdkPixbuf *pixbuf;
+	PidginStatusBoxItemType type = PIDGIN_STATUS_BOX_TYPE_POPULAR;
 
 	list = purple_savedstatuses_get_popular(6);
 	if (list == NULL)
@@ -926,23 +937,10 @@ add_popular_statuses(PidginStatusBox *statusbox)
 				stripped = purple_markup_strip_html(message);
 				purple_util_chrreplace(stripped, '\n', ' ');
 			}
-#if 0
-			/* Overlay a disk in the bottom left corner */
-			emblem = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
-						GTK_STOCK_SAVE, icon_size, "PidginStatusBox");
-			if (emblem != NULL)
-			{
-				width = gdk_pixbuf_get_width(pixbuf) / 2;
-				height = gdk_pixbuf_get_height(pixbuf) / 2;
-				gdk_pixbuf_composite(emblem, pixbuf, 0, height,
-							width, height, 0, height,
-							0.5, 0.5, GDK_INTERP_BILINEAR, 255);
-				g_object_unref(G_OBJECT(emblem));
-			}
-#endif
+			type = PIDGIN_STATUS_BOX_TYPE_SAVED_POPULAR;
 		}
 
-		pidgin_status_box_add(statusbox, PIDGIN_STATUS_BOX_TYPE_POPULAR,
+		pidgin_status_box_add(statusbox, type,
 				pixbuf, purple_savedstatus_get_title(saved), stripped,
 				GINT_TO_POINTER(purple_savedstatus_get_creation_time(saved)));
 		g_free(stripped);
@@ -1586,6 +1584,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 {
 	GtkCellRenderer *text_rend;
 	GtkCellRenderer *icon_rend;
+	GtkCellRenderer *emblem_rend;
 	GtkTextBuffer *buffer;
 	GtkWidget *toplevel;
 	GtkTreeSelection *sel;
@@ -1601,9 +1600,11 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->vsep = gtk_vseparator_new();
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 
-	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-;
+	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, 
+					       G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
+	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, 
+							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
+
 	gtk_cell_view_set_model(GTK_CELL_VIEW(status_box->cell_view), GTK_TREE_MODEL(status_box->store));
 	gtk_list_store_append(status_box->store, &(status_box->iter));
 
@@ -1618,7 +1619,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 
 	text_rend = gtk_cell_renderer_text_new();
 	icon_rend = gtk_cell_renderer_pixbuf_new();
-
+	emblem_rend = gtk_cell_renderer_pixbuf_new();
 	status_box->popup_window = gtk_window_new (GTK_WINDOW_POPUP);
 
 	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (status_box));
@@ -1669,8 +1670,10 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 			status_box->column);
 	gtk_tree_view_column_pack_start(status_box->column, icon_rend, FALSE);
 	gtk_tree_view_column_pack_start(status_box->column, text_rend, TRUE);
+	gtk_tree_view_column_pack_start(status_box->column, emblem_rend, FALSE);
 	gtk_tree_view_column_set_attributes(status_box->column, icon_rend, "pixbuf", ICON_COLUMN, NULL);
 	gtk_tree_view_column_set_attributes(status_box->column, text_rend, "markup", TEXT_COLUMN, NULL);
+	gtk_tree_view_column_set_attributes(status_box->column, emblem_rend, "stock-id", EMBLEM_COLUMN, "visible", EMBLEM_VISIBLE_COLUMN, NULL);
 	gtk_container_add(GTK_CONTAINER(status_box->scrolled_window), status_box->tree_view);
 	gtk_widget_show(status_box->tree_view);
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(status_box->tree_view), TEXT_COLUMN);
@@ -1982,6 +1985,8 @@ pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type,
 			TITLE_COLUMN, title,
 			DESC_COLUMN, desc,
 			DATA_COLUMN, data,
+			EMBLEM_VISIBLE_COLUMN, type == PIDGIN_STATUS_BOX_TYPE_SAVED_POPULAR,
+			EMBLEM_COLUMN, GTK_STOCK_SAVE,
 			-1);
 	g_free(text);
 }
