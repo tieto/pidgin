@@ -1077,8 +1077,8 @@ pidgin_status_box_regenerate(PidginStatusBox *status_box)
 		add_popular_statuses(status_box);
 
 		pidgin_status_box_add_separator(PIDGIN_STATUS_BOX(status_box));
-		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_CUSTOM, pixbuf, _("New..."), NULL, NULL);
-		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_SAVED, pixbuf, _("Saved..."), NULL, NULL);
+		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_CUSTOM, NULL, _("New..."), NULL, NULL);
+		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_SAVED, NULL, _("Saved..."), NULL, NULL);
 		if (pixbuf)	g_object_unref(G_OBJECT(pixbuf));
 
 		status_menu_refresh_iter(status_box);
