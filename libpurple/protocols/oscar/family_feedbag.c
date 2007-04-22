@@ -550,8 +550,10 @@ static int aim_ssi_sync(OscarData *od)
 
 	/* We're out of stuff to do, so tell the AIM servers we're done and exit */
 	if (!od->ssi.pending) {
-		aim_ssi_modend(od);
-		od->ssi.in_transaction = FALSE;
+		if (od->ssi.in_transaction) {
+			aim_ssi_modend(od);
+			od->ssi.in_transaction = FALSE;
+		}
 		return 0;
 	}
 
