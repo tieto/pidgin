@@ -66,7 +66,9 @@ BuildRequires: mozilla-nss-devel
 
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
+
 Obsoletes: gaim
+Provides: gaim
 
 %package devel
 Summary:    Development headers, documentation, and libraries for Pidgin
@@ -74,6 +76,7 @@ Group:      Applications/Internet
 Requires:   pidgin = %{version}, libpurple-devel = %{version}
 Requires:   pkgconfig
 Obsoletes:  gaim-devel
+Provides:   gaim-devel
 
 %package -n libpurple
 Summary:    libpurple library for IM clients like Pidgin and Finch
@@ -430,6 +433,10 @@ fi
 %endif
 
 %changelog
+* Sun Apr 22 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Remove Epoch because it's gone in Fedora now
+- Add virtual provides for gaim & gaim-devel
+
 * Thu Apr 19 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Fix pkgconfig Requires
 - Add ldconfig in pre/post scripts for libpurple & finch
