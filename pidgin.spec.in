@@ -18,7 +18,6 @@ Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       @PACKAGE@
 Version:    %pidginver
 Release:    0%{?beta:.beta%{beta}}
-Epoch:      2
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
@@ -72,7 +71,7 @@ Obsoletes: gaim
 %package devel
 Summary:    Development headers, documentation, and libraries for Pidgin
 Group:      Applications/Internet
-Requires:   pidgin = %{epoch}:%{version}, libpurple-devel = %{epoch}:%{version}
+Requires:   pidgin = %{version}, libpurple-devel = %{version}
 Requires:   pkgconfig
 Obsoletes:  gaim-devel
 
@@ -86,40 +85,40 @@ Obsoletes:  gaim-gadugadu
 %package -n libpurple-devel
 Summary:    Development headers, documentation, and libraries for libpurple
 Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
+Requires:   libpurple = %{version}
 Requires:   pkgconfig
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %package -n libpurple-bonjour
 Summary:    Bonjour plugin for Pidgin
 Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
+Requires:   libpurple = %{version}
 %endif
 
 %if 0%{?_with_meanwhile:1}
 %package -n libpurple-meanwhile
 Summary:    Lotus Sametime plugin for Pidgin using the Meanwhile library
 Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
+Requires:   libpurple = %{version}
 %endif
 
 %if 0%{?_with_mono:1}
 %package -n libpurple-mono
 Summary:    Mono .NET plugin support for Pidgin
 Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
+Requires:   libpurple = %{version}
 %endif
 
 %if 0%{!?_without_text:1}
 %package -n finch
 Summary:    A text-based user interface for Pidgin
 Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
+Requires:   libpurple = %{version}
 
 %package -n finch-devel
 Summary:    Headers etc. for finch stuffs
 Group:      Applications/Internet
-Requires:   finch = %{epoch}:%{version}, libpurple-devel = %{epoch}:%{version}
+Requires:   finch = %{version}, libpurple-devel = %{version}
 Requires:   pkgconfig
 %endif
 
