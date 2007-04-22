@@ -18,7 +18,6 @@ Summary:    A GTK+ based multiprotocol instant messaging client
 Name:       @PACKAGE@
 Version:    %pidginver
 Release:    0%{?beta:.beta%{beta}}
-Epoch:      2
 License:    GPL
 Group:      Applications/Internet
 URL:        http://pidgin.im/
@@ -67,14 +66,17 @@ BuildRequires: mozilla-nss-devel
 
 # For some reason perl isn't always automatically detected as a requirement :(
 Requires: perl
+
 Obsoletes: gaim
+Provides: gaim
 
 %package devel
 Summary:    Development headers, documentation, and libraries for Pidgin
 Group:      Applications/Internet
-Requires:   pidgin = %{epoch}:%{version}, libpurple-devel = %{epoch}:%{version}
+Requires:   pidgin = %{version}, libpurple-devel = %{version}
 Requires:   pkgconfig
 Obsoletes:  gaim-devel
+Provides:   gaim-devel
 
 %package -n libpurple
 Summary:    libpurple library for IM clients like Pidgin and Finch
@@ -86,40 +88,40 @@ Obsoletes:  gaim-gadugadu
 %package -n libpurple-devel
 Summary:    Development headers, documentation, and libraries for libpurple
 Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
+Requires:   libpurple = %{version}
 Requires:   pkgconfig
 
 %if 0%{?_with_howl:1} || 0%{?_with_avahi:1}
 %package -n libpurple-bonjour
 Summary:    Bonjour plugin for Pidgin
 Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
+Requires:   libpurple = %{version}
 %endif
 
 %if 0%{?_with_meanwhile:1}
 %package -n libpurple-meanwhile
 Summary:    Lotus Sametime plugin for Pidgin using the Meanwhile library
 Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
+Requires:   libpurple = %{version}
 %endif
 
 %if 0%{?_with_mono:1}
 %package -n libpurple-mono
 Summary:    Mono .NET plugin support for Pidgin
 Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
+Requires:   libpurple = %{version}
 %endif
 
 %if 0%{!?_without_text:1}
 %package -n finch
 Summary:    A text-based user interface for Pidgin
 Group:      Applications/Internet
-Requires:   libpurple = %{epoch}:%{version}
+Requires:   libpurple = %{version}
 
 %package -n finch-devel
 Summary:    Headers etc. for finch stuffs
 Group:      Applications/Internet
-Requires:   finch = %{epoch}:%{version}, libpurple-devel = %{epoch}:%{version}
+Requires:   finch = %{version}, libpurple-devel = %{version}
 Requires:   pkgconfig
 %endif
 
@@ -431,6 +433,10 @@ fi
 %endif
 
 %changelog
+* Sun Apr 22 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Remove Epoch because it's gone in Fedora now
+- Add virtual provides for gaim & gaim-devel
+
 * Thu Apr 19 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Fix pkgconfig Requires
 - Add ldconfig in pre/post scripts for libpurple & finch
