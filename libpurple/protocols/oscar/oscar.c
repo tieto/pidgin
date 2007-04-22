@@ -3397,10 +3397,9 @@ static int purple_parse_ratechange(OscarData *od, FlapConnection *conn, FlapFram
 
 	if (code == AIM_RATE_CODE_LIMIT)
 	{
-		purple_notify_error(od->gc, NULL, _("Rate limiting error."),
-						  _("The last action you attempted could not be "
-							"performed because you are over the rate limit. "
-							"Please wait 10 seconds and try again."));
+		purple_debug_warning("oscar",  _("The last action you attempted could not be "
+					 	 "performed because you are over the rate limit. "
+						 "Please wait 10 seconds and try again."));
 	}
 
 	return 1;
