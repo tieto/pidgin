@@ -31,7 +31,7 @@ INCLUDE_PATHS +=	-I$(TOC_ROOT) \
 			-I$(LIBPIDGIN_TREE_TOP)/win32 \
 			-I$(PIDGIN_TREE_TOP)
 
-LIB_PATHS =		-L$(GTK_TOP)/lib \
+LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(LIBPIDGIN_TREE_TOP)
 
 ##
