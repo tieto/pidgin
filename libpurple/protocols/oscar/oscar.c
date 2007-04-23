@@ -2898,28 +2898,21 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 		if (userinfo->status[0] != '\0')
 			tmp = oscar_encoding_to_utf8(userinfo->status_encoding,
 											 userinfo->status, userinfo->status_len);
+#ifdef _WIN32
+		if (userinfo->itmsurl[0] != '\0') {
+			gchar *itmsurl, *tmp2;
+			itmsurl = oscar_encoding_to_utf8(userinfo->itmsurl_encoding,
+					userinfo->itmsurl, userinfo->itmsurl_len);
+			tmp2 = g_strdup_printf("<a href=\"%s\">%s</a>",
+					itmsurl, tmp);
+			g_free(tmp);
+			tmp = tmp2;
+			g_free(itmsurl);
+		}
+#endif
 		oscar_user_info_add_pair(user_info, _("Available Message"), tmp);
 		g_free(tmp);
 	}
-
-#if 0
-	/*
-	 * TODO: This code is disabled because it's kind of stupid.  iTunes
-	 *       doesn't run in Linux.  It'd be cool if we surfaced this URL
-	 *       to Windows users, but it would be better to just linkify
-	 *       the available message, above.
-	 */
-
-	/* iTunes Music Store link */
-	if (userinfo->itmsurl != NULL)
-	{
-		if (userinfo->itmsurl[0] != '\0')
-			tmp = oscar_encoding_to_utf8(userinfo->itmsurl_encoding,
-											 userinfo->itmsurl, userinfo->itmsurl_len);
-		oscar_user_info_add_pair(user_info, _("iTunes Music Store Link"), tmp);
-		g_free(tmp);
-	}
-#endif
 
 	/* Away message */
 	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
