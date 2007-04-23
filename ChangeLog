@@ -122,6 +122,8 @@ version 2.0.0:
 	* New music messaging plugin (Christian Muise, Google Summer of Code)
 	* gaim-remote has been superceded by new DBUS bindings within libpurple
 	  (Piotr Zielinski, Google Summer of Code)
+	* The purple-url-handler program has been added to provide a way to
+	  automatically launch IM links via Pidgin or Finch.
 	* The functionality of the auto-reconnect plugin has been
 	  moved into the core, and the plugin itself has been removed.
 	* 'Highlight when nick said' option added to Message Notification
