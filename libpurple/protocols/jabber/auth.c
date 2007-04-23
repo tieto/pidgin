@@ -831,7 +831,7 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 {
 	const char *ns = xmlnode_get_namespace(packet);
 #ifdef HAVE_CYRUS_SASL
-	const int *x;
+	const void *x;
 #endif
 
 	if(!ns || strcmp(ns, "urn:ietf:params:xml:ns:xmpp-sasl")) {
@@ -865,9 +865,9 @@ void jabber_auth_handle_success(JabberStream *js, xmlnode *packet)
 	}
 	/* If we've negotiated a security layer, we need to enable it */
 	sasl_getprop(js->sasl, SASL_SSF, &x);
-	if (*x > 0) {
+	if (*(int *)x > 0) {
 		sasl_getprop(js->sasl, SASL_MAXOUTBUF, &x);
-		js->sasl_maxbuf = *x;
+		js->sasl_maxbuf = *(int *)x;
 	}
 #endif
 

@@ -1001,6 +1001,10 @@ typedef struct aim_userinfo_s
 	char *status_encoding;
 	guint16 status_len;
 
+	char *itmsurl;
+	char *itmsurl_encoding;
+	guint16 itmsurl_len;
+
 	char *away;
 	char *away_encoding;
 	guint16 away_len;
@@ -1214,7 +1218,7 @@ int aim_ssi_cleanlist(OscarData *od);
 int aim_ssi_deletelist(OscarData *od);
 int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask);
 int aim_ssi_setpresence(OscarData *od, guint32 presence);
-int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint16 iconsumlen);
+int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint8 iconsumlen);
 int aim_ssi_delicon(OscarData *od);
 
 

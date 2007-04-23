@@ -2047,9 +2047,9 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 	if (status_box->buddy_icon == NULL)
 	{
 		/* Show a placeholder icon */
-		GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+		GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL);
 		status_box->buddy_icon = gtk_widget_render_icon(GTK_WIDGET(status_box),
-		                                                PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE,
+		                                                PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR,
 		                                                icon_size, "PidginStatusBox");
 	}
 

@@ -31,7 +31,7 @@ PURPLE_INCLUDE_PATHS =	\
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include
 
-INCLUDE_PATHS =	\
+INCLUDE_PATHS +=	\
 			$(PURPLE_INCLUDE_PATHS) \
 			-I$(PIDGIN_IDLETRACK_TOP) \
 			-I$(PIDGIN_TOP) \
@@ -44,7 +44,7 @@ INCLUDE_PATHS =	\
 			-I$(GTKSPELL_TOP) \
 			-I$(ASPELL_TOP)/include
 
-LIB_PATHS =		-L$(GTK_TOP)/lib \
+LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
 			-L$(PIDGIN_TOP) \
 			-L$(PIDGIN_IDLETRACK_TOP) \

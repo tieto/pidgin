@@ -29,7 +29,7 @@ INCLUDE_PATHS =		-I. \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(PERL_LIB_TOP)/CORE
 
-LIB_PATHS = 		-L$(PERL_LIB_TOP) \
+LIB_PATHS += 		-L$(PERL_LIB_TOP) \
 			-L$(PURPLE_TOP) \
 			-L$(PIDGIN_TOP) \
 			-L$(PURPLE_PERL_TOP) \

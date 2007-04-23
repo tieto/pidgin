@@ -1778,8 +1778,20 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	if (have_status_message)
 	{
-		purple_prpl_got_user_status(account, info->sn, status_id,
-								  "message", message, NULL);
+		if ((status_id == OSCAR_STATUS_ID_AVAILABLE) && (info->itmsurl != NULL))
+		{
+			char *itmsurl;
+			itmsurl = oscar_encoding_to_utf8(info->itmsurl_encoding,
+					info->itmsurl, info->itmsurl_len);
+			purple_prpl_got_user_status(account, info->sn, status_id,
+					"message", message, "itmsurl", itmsurl, NULL);
+			g_free(itmsurl);
+		}
+		else
+		{
+			purple_prpl_got_user_status(account, info->sn, status_id,
+					"message", message, NULL);
+		}
 		g_free(message);
 	}
 	else
@@ -2889,6 +2901,25 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 		oscar_user_info_add_pair(user_info, _("Available Message"), tmp);
 		g_free(tmp);
 	}
+
+#if 0
+	/*
+	 * TODO: This code is disabled because it's kind of stupid.  iTunes
+	 *       doesn't run in Linux.  It'd be cool if we surfaced this URL
+	 *       to Windows users, but it would be better to just linkify
+	 *       the available message, above.
+	 */
+
+	/* iTunes Music Store link */
+	if (userinfo->itmsurl != NULL)
+	{
+		if (userinfo->itmsurl[0] != '\0')
+			tmp = oscar_encoding_to_utf8(userinfo->itmsurl_encoding,
+											 userinfo->itmsurl, userinfo->itmsurl_len);
+		oscar_user_info_add_pair(user_info, _("iTunes Music Store Link"), tmp);
+		g_free(tmp);
+	}
+#endif
 
 	/* Away message */
 	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {

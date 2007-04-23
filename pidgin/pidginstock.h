@@ -123,6 +123,7 @@
 #define PIDGIN_STOCK_TOOLBAR_TYPING       "pidgin-typing"
 #define PIDGIN_STOCK_TOOLBAR_USER_INFO    "pidgin-info"
 #define PIDGIN_STOCK_TOOLBAR_UNBLOCK      "pidgin-unblock"
+#define PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR "pidgin-select-avatar"
 
 /* Tray icons */
 #define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-available"
