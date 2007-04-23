@@ -412,9 +412,11 @@ success:
 static void
 file_sel_changed(GntWidget *widget, gpointer old, gpointer current, GntFileSel *sel)
 {
-	g_free(sel->suggest);
-	sel->suggest = NULL;
-	update_location(sel);
+	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_HAS_FOCUS)) {
+		g_free(sel->suggest);
+		sel->suggest = NULL;
+		update_location(sel);
+	}
 }
 
 static void

@@ -75,27 +75,24 @@ plugin_load(PurplePlugin *plugin)
 static PurplePluginInfo info =
 {
 	PURPLE_PLUGIN_MAGIC,
-	PURPLE_MAJOR_VERSION,								/**< major version	*/
-	PURPLE_MINOR_VERSION,
+	PURPLE_MAJOR_VERSION,							/**< major version	*/
+	PURPLE_MINOR_VERSION,							/**< minor version	*/
 	PURPLE_PLUGIN_STANDARD,							/**< type			*/
 	NULL,											/**< ui_requirement	*/
 	0,												/**< flags			*/
 	NULL,											/**< dependencies	*/
-	PURPLE_PRIORITY_DEFAULT,							/**< priority		*/
-
+	PURPLE_PRIORITY_DEFAULT,						/**< priority		*/
 	"core-plugin_pack-buddynote",					/**< id				*/
 	N_("Buddy Notes"),								/**< name			*/
 	VERSION,										/**< version		*/
-	N_("Store notes on particular buddies."),		/**  summary		*/
+	N_("Store notes on particular buddies."),		/**< summary		*/
 	N_("Adds the option to store notes for buddies "
-	   "on your buddy list."),						/**  description	*/
+	   "on your buddy list."),						/**< description	*/
 	"Stu Tomlinson <stu@nosnilmot.com>",			/**< author			*/
 	PURPLE_WEBSITE,									/**< homepage		*/
-
 	plugin_load,									/**< load			*/
 	NULL,											/**< unload			*/
 	NULL,											/**< destroy		*/
-
 	NULL,											/**< ui_info		*/
 	NULL,											/**< extra_info		*/
 	NULL,											/**< prefs_info		*/

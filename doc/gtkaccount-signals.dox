@@ -8,7 +8,7 @@
 
  @signaldef account-modified
   @signalproto
-void (*account-modified)(GaimAccount *account);
+void (*account-modified)(PurpleAccount *account);
   @endsignalproto
   @signaldesc
    Emitted when the settings for an account have been changed and saved.

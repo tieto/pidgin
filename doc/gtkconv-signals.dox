@@ -14,7 +14,7 @@
 
  @signaldef conversation-dragging
   @signalproto
-void (*conversation_dragging)(GaimGtkWindow *source, GaimGtkWindow *destination);
+void (*conversation_dragging)(PidginWindow *source, PidginWindow *destination);
   @endsignalproto
   @signaldesc
    Emitted when a conversation is being drag and dropped between windows.
@@ -24,7 +24,7 @@ void (*conversation_dragging)(GaimGtkWindow *source, GaimGtkWindow *destination)
 
  @signaldef conversation-timestamp
   @signalproto
-char *(*conversation_timestamp)(GaimConversation *conv, time_t when);
+char *(*conversation_timestamp)(PurpleConversation *conv, time_t when);
   @endsignalproto
   @signaldesc
    Emitted to allow plugins to customize the timestamp on a message.
@@ -37,9 +37,9 @@ char *(*conversation_timestamp)(GaimConversation *conv, time_t when);
 
  @signaldef displaying-im-msg
   @signalproto
-gboolean (*displaying_im_msg)(GaimAccount *account, const char *who,
-                              char **message, GaimConversation *conv,
-                              GaimMessageFlags flags);
+gboolean (*displaying_im_msg)(PurpleAccount *account, const char *who,
+                              char **message, PurpleConversation *conv,
+                              PurpleMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted just before a message is displayed in an IM conversation.
@@ -58,9 +58,9 @@ gboolean (*displaying_im_msg)(GaimAccount *account, const char *who,
 
  @signaldef displayed-im-msg
   @signalproto
-void (*displayed_im_msg)(GaimAccount *account, const char *who,
-                         char *message, GaimConversation *conv,
-                         GaimMessageFlags flags);
+void (*displayed_im_msg)(PurpleAccount *account, const char *who,
+                         char *message, PurpleConversation *conv,
+                         PurpleMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted after a message is displayed in an IM conversation.
@@ -73,9 +73,9 @@ void (*displayed_im_msg)(GaimAccount *account, const char *who,
 
  @signaldef displaying-chat-msg
   @signalproto
-gboolean (*displaying_chat_msg)(GaimAccount *account, const char *who,
-                                char **message, GaimConversation *conv,
-                                GaimMessageFlags flags);
+gboolean (*displaying_chat_msg)(PurpleAccount *account, const char *who,
+                                char **message, PurpleConversation *conv,
+                                PurpleMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted just before a message is displayed in a chat.
@@ -94,9 +94,9 @@ gboolean (*displaying_chat_msg)(GaimAccount *account, const char *who,
 
  @signaldef displayed-chat-msg
   @signalproto
-void (*displayed_chat_msg)(GaimAccount *account, const char *who,
-                           char *message, GaimConversation *conv,
-                           GaimMessageFlags flags);
+void (*displayed_chat_msg)(PurpleAccount *account, const char *who,
+                           char *message, PurpleConversation *conv,
+                           PurpleMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted after a message is displayed in a chat conversation.
@@ -109,7 +109,7 @@ void (*displayed_chat_msg)(GaimAccount *account, const char *who,
 
  @signaldef conversation-switched
   @signalproto
-void (*conversation_switched)(GaimConversation *conv);
+void (*conversation_switched)(PurpleConversation *conv);
   @endsignalproto
   @signaldesc
    Emitted when a window switched from one conversation to another.

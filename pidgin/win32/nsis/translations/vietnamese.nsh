@@ -26,11 +26,6 @@
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Theme"
 !define PIDGIN_SECTION_DESCRIPTION		"Các tập tin Pidgin chính và dlls"
 !define GTK_SECTION_DESCRIPTION		"Bộ công cụ giao diện đồ họa đa nền để dùng cho Pidgin"
-!define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ Themes có thể thay đổi diệm mạo và sác thái của các ứng dụng GTK+."
-!define GTK_NO_THEME_DESC			"Không cài đặt GTK+ theme"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) là một GTK theme tích hợp tốt trong môi trường desktop của Windows."
-!define GTK_BLUECURVE_THEME_DESC		"Bluecurve theme."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Lighthouseblue theme."
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Phát hiện thấy có phiên bản cũ của  GTK+ runtime. Bạn muốn nâng cấp không?$\rNote: $(^Name) có thể không chạy nếu không nâng cấp."

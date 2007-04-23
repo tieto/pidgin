@@ -134,14 +134,14 @@ purple_base16_decode(const char *str, gsize *ret_len)
 			accumulator |= str[i] - 48;
 		else
 		{
-			switch(str[i])
+			switch(tolower(str[i]))
 			{
-				case 'a':  case 'A':  accumulator |= 10;  break;
-				case 'b':  case 'B':  accumulator |= 11;  break;
-				case 'c':  case 'C':  accumulator |= 12;  break;
-				case 'd':  case 'D':  accumulator |= 13;  break;
-				case 'e':  case 'E':  accumulator |= 14;  break;
-				case 'f':  case 'F':  accumulator |= 15;  break;
+				case 'a':  accumulator |= 10;  break;
+				case 'b':  accumulator |= 11;  break;
+				case 'c':  accumulator |= 12;  break;
+				case 'd':  accumulator |= 13;  break;
+				case 'e':  accumulator |= 14;  break;
+				case 'f':  accumulator |= 15;  break;
 			}
 		}
 
@@ -861,10 +861,8 @@ purple_str_to_time(const char *timestamp, gboolean utc,
  * Markup Functions
  **************************************************************************/
 
-/* Returns a NULL-terminated string after unescaping an entity
- * (eg. &amp;, &lt; &#38 etc.) starting at s. Returns NULL on failure.*/
-static const char *
-detect_entity(const char *text, int *length)
+const char *
+purple_markup_unescape_entity(const char *text, int *length)
 {
 	const char *pln;
 	int len, pound;
@@ -907,6 +905,69 @@ detect_entity(const char *text, int *length)
 	if (length)
 		*length = len;
 	return pln;
+}
+
+char *
+purple_markup_get_css_property(const gchar *style,
+				const gchar *opt)
+{
+	const gchar *css_str = style;
+	const gchar *css_value_start;
+	const gchar *css_value_end;
+	gchar *tmp;
+	gchar *ret;
+
+	if (!css_str)
+		return NULL;
+
+	/* find the CSS property */
+	while (1)
+	{
+		/* skip whitespace characters */
+		while (*css_str && g_ascii_isspace(*css_str))
+			css_str++;
+		if (!g_ascii_isalpha(*css_str))
+			return NULL;
+		if (g_ascii_strncasecmp(css_str, opt, strlen(opt)))
+		{
+			/* go to next css property positioned after the next ';' */
+			while (*css_str && *css_str != '"' && *css_str != ';')
+				css_str++;
+			if(*css_str != ';')
+				return NULL;
+			css_str++;
+		}
+		else
+			break;
+	}
+
+	/* find the CSS value position in the string */
+	css_str += strlen(opt);
+	while (*css_str && g_ascii_isspace(*css_str))
+		css_str++;
+	if (*css_str != ':')
+		return NULL;
+	css_str++;
+	while (*css_str && g_ascii_isspace(*css_str))
+		css_str++;
+	if (*css_str == '\0' || *css_str == '"' || *css_str == ';')
+		return NULL;
+
+	/* mark the CSS value */
+	css_value_start = css_str;
+	while (*css_str && *css_str != '"' && *css_str != ';')
+		css_str++;
+	css_value_end = css_str - 1;
+
+	/* Removes trailing whitespace */
+	while (css_value_end > css_value_start && g_ascii_isspace(*css_value_end))
+		css_value_end--;
+
+	tmp = g_strndup(css_value_start, css_value_end - css_value_start + 1);
+	ret = purple_unescape_html(tmp);
+	g_free(tmp);
+
+	return ret;
 }
 
 gboolean
@@ -1509,7 +1570,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 			const char *pln;
 			int len;
 
-			if ((pln = detect_entity(c, &len)) == NULL) {
+			if ((pln = purple_markup_unescape_entity(c, &len)) == NULL) {
 				len = 1;
 				g_snprintf(buf, sizeof(buf), "%c", *c);
 				pln = buf;
@@ -1624,9 +1685,9 @@ purple_markup_strip_html(const char *str)
 						if (strncasecmp(str2+st, "href=", 5) == 0)
 						{
 							st += 5;
-							if (str2[st] == '"')
+							if (str2[st] == '"' || str2[st] == '\'')
 							{
-								delim = '"';
+								delim = str2[st];
 								st++;
 							}
 							break;
@@ -1714,7 +1775,7 @@ purple_markup_strip_html(const char *str)
 			visible = TRUE;
 		}
 
-		if (str2[i] == '&' && (ent = detect_entity(str2 + i, &entlen)) != NULL)
+		if (str2[i] == '&' && (ent = purple_markup_unescape_entity(str2 + i, &entlen)) != NULL)
 		{
 			while (*ent)
 				str2[j++] = *ent++;
@@ -2032,7 +2093,7 @@ purple_unescape_html(const char *html) {
 			int len;
 			const char *ent;
 
-			if ((ent = detect_entity(c, &len)) != NULL) {
+			if ((ent = purple_markup_unescape_entity(c, &len)) != NULL) {
 				ret = g_string_append(ret, ent);
 				c += len;
 			} else if (!strncmp(c, "<br>", 4)) {
@@ -2932,7 +2993,7 @@ purple_str_seconds_to_string(guint secs)
 
 	if (secs < 60)
 	{
-		return g_strdup_printf(ngettext("%d second", "%d seconds", secs), secs);
+		return g_strdup_printf(dngettext(PACKAGE, "%d second", "%d seconds", secs), secs);
 	}
 
 	days = secs / (60 * 60 * 24);
@@ -2944,7 +3005,7 @@ purple_str_seconds_to_string(guint secs)
 
 	if (days > 0)
 	{
-		ret = g_strdup_printf(ngettext("%d day", "%d days", days), days);
+		ret = g_strdup_printf(dngettext(PACKAGE, "%d day", "%d days", days), days);
 	}
 
 	if (hrs > 0)
@@ -2952,13 +3013,13 @@ purple_str_seconds_to_string(guint secs)
 		if (ret != NULL)
 		{
 			char *tmp = g_strdup_printf(
-					ngettext("%s, %d hour", "%s, %d hours", hrs),
+					dngettext(PACKAGE, "%s, %d hour", "%s, %d hours", hrs),
 							ret, hrs);
 			g_free(ret);
 			ret = tmp;
 		}
 		else
-			ret = g_strdup_printf(ngettext("%d hour", "%d hours", hrs), hrs);
+			ret = g_strdup_printf(dngettext(PACKAGE, "%d hour", "%d hours", hrs), hrs);
 	}
 
 	if (mins > 0)
@@ -2966,13 +3027,13 @@ purple_str_seconds_to_string(guint secs)
 		if (ret != NULL)
 		{
 			char *tmp = g_strdup_printf(
-					ngettext("%s, %d minute", "%s, %d minutes", mins),
+					dngettext(PACKAGE, "%s, %d minute", "%s, %d minutes", mins),
 							ret, mins);
 			g_free(ret);
 			ret = tmp;
 		}
 		else
-			ret = g_strdup_printf(ngettext("%d minute", "%d minutes", mins), mins);
+			ret = g_strdup_printf(dngettext(PACKAGE, "%d minute", "%d minutes", mins), mins);
 	}
 
 	return ret;

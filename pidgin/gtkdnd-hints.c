@@ -1,6 +1,6 @@
 /*
  * @file gtkdnd-hints.c GTK+ Drag-and-Drop arrow hints
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -46,10 +46,10 @@ typedef struct
  * Info about each hint widget. See DndHintWindowId enum.
  */
 static HintWindowInfo hint_windows[] = { 
-	{ NULL, "tb_drag_arrow_up.xpm",   -13/2,     0 },
-	{ NULL, "tb_drag_arrow_down.xpm", -13/2,   -16 },
-	{ NULL, "tb_drag_arrow_left.xpm",     0, -13/2 },
-	{ NULL, "tb_drag_arrow_right.xpm",  -16, -13/2 },
+	{ NULL, "arrow-up.xpm",   -13/2,     0 },
+	{ NULL, "arrow-down.xpm", -13/2,   -16 },
+	{ NULL, "arrow-left.xpm",     0, -13/2 },
+	{ NULL, "arrow-right.xpm",  -16, -13/2 },
 	{ NULL, NULL, 0, 0 }
 };
 

@@ -16,7 +16,7 @@
   of the following:
 
     - core      - Core plugin, capable of being loaded in any program using
-                  libgaim. It must not use any UI-specific code.
+                  libpurple. It must not use any UI-specific code.
     - prpl      - Protocol plugin, providing additional protocols to
                   connect to.
     - lopl      - Loader plugin, which loads scripts as plugins (like Perl
@@ -34,12 +34,12 @@
   The @em pluginname is the name of your plugin. It can be whatever you like,
   though it's common to keep it all lowercase. Do not use spaces! If you
   want a space, use a '-'. Please do not put a version indicator in the ID.
-  The GaimPlugin structure already has a field for this.
+  The PurplePlugin structure already has a field for this.
 
 
  @section plugin-db Plugin Database
   Although it doesn't exist yet, in time there will be a plugin database
-  on the Gaim website, where users can download and install new plugins.
+  on the Pidgin website, where users can download and install new plugins.
   Plugins will be accessed by your plugin ID, which is one reason why it
   must be unique. 
 

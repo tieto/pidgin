@@ -56,7 +56,6 @@ purple_coresources = \
 	plugin.c \
 	pluginpref.c \
 	pounce.c \
-	prefix.c \
 	prefs.c \
 	privacy.c \
 	proxy.c \
@@ -212,8 +211,7 @@ libpurple_la_SOURCES = \
 	$(dbus_sources)
 
 noinst_HEADERS= \
-	internal.h \
-	prefix.h
+	internal.h 
 
 libpurpleincludedir=$(includedir)/libpurple
 libpurpleinclude_HEADERS = \
@@ -234,7 +232,7 @@ libpurple_la_LIBADD = \
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/libpurple/\" \
+	-DLIBDIR=\"$(libdir)/purple/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	$(GLIB_CFLAGS) \

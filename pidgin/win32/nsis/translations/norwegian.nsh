@@ -30,11 +30,7 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Startmeny"
 !define PIDGIN_SECTION_DESCRIPTION		"Pidgins kjernefiler og dll'er"
 !define GTK_SECTION_DESCRIPTION			"Et GUI-verktøy for flere ulike plattformer, brukes av Pidgin."
-!define GTK_THEMES_SECTION_DESCRIPTION		"GTK+ Tema kan endre utseendet og følelsen av GTK+ applikasjoner."
-!define GTK_NO_THEME_DESC			"Ikke installér noe GTK+ tema."
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows-imitator) er et GTK-tema som passer godt inn i Windows-miljø."
-!define GTK_BLUECURVE_THEME_DESC		"Bluecurve-tema."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"Lighthouseblue-tema."
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Snarveier for å starte Pidgin"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC		"Lag en snarvei til Pidgin på Skrivebordet"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Legg til Pidgin i Startmenyen"

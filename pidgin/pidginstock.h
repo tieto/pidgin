@@ -1,6 +1,6 @@
 /**
  * @file pidginstock.h GTK+ Stock resources
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -38,7 +38,6 @@
 #define PIDGIN_STOCK_CHAT            "pidgin-chat"
 #define PIDGIN_STOCK_CLEAR           "pidgin-clear"
 #define PIDGIN_STOCK_CLOSE_TABS      "pidgin-close-tab"
-#define PIDGIN_STOCK_CONNECT         "pidgin-connect"
 #define PIDGIN_STOCK_DEBUG           "pidgin-debug"
 #define PIDGIN_STOCK_DISCONNECT      "pidgin-disconnect"
 #define PIDGIN_STOCK_DOWNLOAD        "pidgin-download"
@@ -67,6 +66,7 @@
 #define PIDGIN_STOCK_STATUS_BUSY       "pidgin-status-busy"
 #define PIDGIN_STOCK_STATUS_BUSY_I     "pidgin-status-busy-i"
 #define PIDGIN_STOCK_STATUS_CHAT       "pidgin-status-chat"
+#define PIDGIN_STOCK_STATUS_INVISIBLE  "pidgin-status-invisible"
 #define PIDGIN_STOCK_STATUS_XA         "pidgin-status-xa"
 #define PIDGIN_STOCK_STATUS_XA_I       "pidgin-status-xa-i"
 #define PIDGIN_STOCK_STATUS_LOGIN      "pidgin-status-login"
@@ -123,6 +123,7 @@
 #define PIDGIN_STOCK_TOOLBAR_TYPING       "pidgin-typing"
 #define PIDGIN_STOCK_TOOLBAR_USER_INFO    "pidgin-info"
 #define PIDGIN_STOCK_TOOLBAR_UNBLOCK      "pidgin-unblock"
+#define PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR "pidgin-select-avatar"
 
 /* Tray icons */
 #define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-available"

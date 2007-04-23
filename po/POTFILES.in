@@ -36,6 +36,7 @@ libpurple/blist.c
 libpurple/connection.c
 libpurple/conversation.c
 libpurple/dbus-server.c
+libpurple/dbus-server.h
 libpurple/desktopitem.c
 libpurple/dnsquery.c
 libpurple/ft.c
@@ -43,7 +44,6 @@ libpurple/gconf/purple.schemas.in
 libpurple/log.c
 libpurple/plugin.c
 libpurple/plugins/autoaccept.c
-libpurple/plugins/autoreply.c
 libpurple/plugins/buddynote.c
 libpurple/plugins/ciphertest.c
 libpurple/plugins/dbus-example.c
@@ -78,6 +78,7 @@ libpurple/protocols/jabber/auth.c
 libpurple/protocols/jabber/buddy.c
 libpurple/protocols/jabber/chat.c
 libpurple/protocols/jabber/jabber.c
+libpurple/protocols/jabber/libxmpp.c
 libpurple/protocols/jabber/message.c
 libpurple/protocols/jabber/parser.c
 libpurple/protocols/jabber/presence.c
@@ -181,7 +182,6 @@ pidgin/plugins/cap/cap.c
 pidgin/plugins/contact_priority.c
 pidgin/plugins/convcolors.c
 pidgin/plugins/extplacement.c
-pidgin/plugins/gaiminc.c
 pidgin/plugins/gestures/gestures.c
 pidgin/plugins/gevolution/add_buddy_dialog.c
 pidgin/plugins/gevolution/assoc-buddy.c
@@ -196,6 +196,7 @@ pidgin/plugins/mailchk.c
 pidgin/plugins/markerline.c
 pidgin/plugins/musicmessaging/musicmessaging.c
 pidgin/plugins/notify.c
+pidgin/plugins/pidgininc.c
 pidgin/plugins/pidginrc.c
 pidgin/plugins/raw.c
 pidgin/plugins/relnot.c

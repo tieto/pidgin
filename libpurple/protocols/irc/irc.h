@@ -84,6 +84,8 @@ struct irc_conn {
 	guint writeh;
 
 	time_t recv_time;
+
+	char *mode_chars;
 };
 
 struct irc_buddy {

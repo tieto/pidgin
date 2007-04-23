@@ -33,7 +33,7 @@ ALL_LINGUAS=""
 AM_GLIB_GNU_GETTEXT
      @endcode
      The position of these macros in the file don't really matter, but if you
-     have issues either play around with it or feel free to ask one of the Gaim
+     have issues either play around with it or feel free to ask one of the Pidgin
      developers.  Finally add 'po/Makefile.in' to you 'AC_OUTPUT' command.
    - Now create a directory named 'po'.
    - 'cd' into the 'po' directory.
@@ -52,7 +52,7 @@ AM_GLIB_GNU_GETTEXT
      we're done with the autotools part.
    - When you're ready, 'cd' into the directory with the source files for your
      plugin.
-   - Open the file containing the GaimPluginInfo structure.
+   - Open the file containing the PurplePluginInfo structure.
    - If you're not already, please make sure that you are including the
      'config.h' file for you plugin.  Note that 'config.h' could be whatever
 	 you told autohead to use with AM_CONFIG_HEADER.  Also add the following:
@@ -61,13 +61,13 @@ AM_GLIB_GNU_GETTEXT
      @endcode
 	 Make sure that this include is after you include of your 'config.h',
 	 otherwise you will break your build.
-   - This is where things get a bit goofy.  Gaim is going to try and translate
-     our strings using the Gaim gettext package.  So we have to convert them
-	 before Gaim attempts to.
+   - This is where things get a bit goofy.  libpurple is going to try and
+     translate our strings using the libpurple gettext package.  So we have to
+     convert them before libpurple attempts to.
    - To do this, we're going to change the entries for name, summary, and
      description to NULL.
    - Next, locate your 'init_plugin' function.  Your name for this function
-     may vary, but it's the second parameter to 'GAIM_INIT_PLUGIN'.
+     may vary, but it's the second parameter to 'PURPLE_INIT_PLUGIN'.
    - Now add the following within your 'init_plugin' function:
      @code
 #ifdef ENABLE_NLS

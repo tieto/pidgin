@@ -29,6 +29,7 @@
 
 #include <glib-object.h>
 #include <glib.h>
+#include <glib-object.h>
 
 typedef struct _PurpleAccountUiOps PurpleAccountUiOps;
 typedef struct _PurpleAccount      PurpleAccount;
@@ -194,10 +195,11 @@ void purple_account_request_add(PurpleAccount *account, const char *remote_user,
  * user authorizes or denies the remote user from adding him.
  *
  * @param account      The account that was added
- * @param remote_user  The name of the usre that added this account.
+ * @param remote_user  The name of the user that added this account.
  * @param id           The optional ID of the local account. Rarely used.
  * @param alias        The optional alias of the remote user.
  * @param message      The optional message sent from the uer requesting you
+ * @param on_list      Is the remote user already on the buddy list?
  * @param auth_cb      The callback called when the local user accepts
  * @param deny_cb      The callback called when the local user rejects
  * @param user_data    Data to be passed back to the above callbacks
@@ -221,6 +223,18 @@ void purple_account_request_close_with_account(PurpleAccount *account);
  * @param ui_handle	   The ui specific handle for which requests should be closed
  */
 void purple_account_request_close(void *ui_handle);
+
+/**
+ * Requests a password from the user for the account. Does not set the
+ * account password on success; do that in ok_cb if desired.
+ *
+ * @param account     The account to request the password for.
+ * @param ok_cb       The callback for the OK button.
+ * @param cancel_cb   The callback for the cancel button.
+ * @param user_data   User data to be passed into callbacks.
+ */
+void purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
+				     GCallback cancel_cb, void *user_data);
 
 /**
  * Requests information from the user to change the account's password.

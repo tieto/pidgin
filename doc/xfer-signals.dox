@@ -16,7 +16,7 @@
 
  @signaldef file-recv-accept
   @signalproto
-void (*file_recv_accept)(GaimXfer *xfer, gpointer data);
+void (*file_recv_accept)(PurpleXfer *xfer, gpointer data);
   @endsignalproto
   @signaldesc
    Emitted when an incoming file transfer has been accepted.
@@ -26,7 +26,7 @@ void (*file_recv_accept)(GaimXfer *xfer, gpointer data);
 
  @signaldef file-recv-start
   @signalproto
-void (*file_recv_start)(GaimXfer *xfer, gpointer data);
+void (*file_recv_start)(PurpleXfer *xfer, gpointer data);
   @endsignalproto
   @signaldesc
    Emitted when an incoming file transfer has been started.
@@ -36,7 +36,7 @@ void (*file_recv_start)(GaimXfer *xfer, gpointer data);
 
  @signaldef file-recv-cancel
   @signalproto
-void (*file_recv_cancel)(GaimXfer *xfer, gpointer data);
+void (*file_recv_cancel)(PurpleXfer *xfer, gpointer data);
   @endsignalproto
   @signaldesc
    Emitted when an incoming file transfer has been canceled.
@@ -46,7 +46,7 @@ void (*file_recv_cancel)(GaimXfer *xfer, gpointer data);
 
  @signaldef file-recv-complete
   @signalproto
-void (*file_recv_complete)(GaimXfer *xfer, gpointer data);
+void (*file_recv_complete)(PurpleXfer *xfer, gpointer data);
   @endsignalproto
   @signaldesc
    Emitted when an incoming file transfer has been completed.
@@ -56,21 +56,21 @@ void (*file_recv_complete)(GaimXfer *xfer, gpointer data);
 
  @signaldef file-recv-request
   @signalproto
-void (*file_recv_request)(GaimXfer *xfer, gpointer data);
+void (*file_recv_request)(PurpleXfer *xfer, gpointer data);
   @endsignalproto
   @signaldesc
    Emitted before the user is prompted for an incoming file-transfer.
    Plugins can intercept the signal to auto-accept/auto-reject the
    requests. To auto-accept the file transfer, use
-   gaim_xfer_request_accepted(). To auto-reject, set the status of the
-   xfer to GAIM_XFER_STATUS_CANCEL_LOCAL.
+   purple_xfer_request_accepted(). To auto-reject, set the status of the
+   xfer to PURPLE_XFER_STATUS_CANCEL_LOCAL.
   @param xfer The file transfer
   @param data User data
  @endsignaldef
 
  @signaldef file-send-accept
   @signalproto
-void (*file_send_accept)(GaimXfer *xfer, gpointer data);
+void (*file_send_accept)(PurpleXfer *xfer, gpointer data);
   @endsignalproto
   @signaldesc
    Emitted when an outgoing file transfer has been accepted.
@@ -80,7 +80,7 @@ void (*file_send_accept)(GaimXfer *xfer, gpointer data);
 
  @signaldef file-send-start
   @signalproto
-void (*file_send_start)(GaimXfer *xfer, gpointer data);
+void (*file_send_start)(PurpleXfer *xfer, gpointer data);
   @endsignalproto
   @signaldesc
    Emitted when an outgoing file transfer has started.
@@ -90,7 +90,7 @@ void (*file_send_start)(GaimXfer *xfer, gpointer data);
 
  @signaldef file-send-cancel
   @signalproto
-void (*file_send_cancel)(GaimXfer *xfer, gpointer data);
+void (*file_send_cancel)(PurpleXfer *xfer, gpointer data);
   @endsignalproto
   @signaldesc
    Emitted when an outgoing file transfer has been canceled.
@@ -100,7 +100,7 @@ void (*file_send_cancel)(GaimXfer *xfer, gpointer data);
 
  @signaldef file-send-complete
   @signalproto
-void (*file_send_complete)(GaimXfer *xfer, gpointer data);
+void (*file_send_complete)(PurpleXfer *xfer, gpointer data);
   @endsignalproto
   @signaldesc
    Emitted when an outgoing file transfer has been completed.

@@ -1,6 +1,6 @@
 /**
  * @file gtknotify.h GTK+ Notification API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

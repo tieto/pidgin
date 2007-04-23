@@ -1,4 +1,4 @@
-pkgdir = $(libdir)/libpurple
+pkgdir = $(libdir)/purple
 
 ZEPHYRSOURCES = \
 	ZAsyncLocate.c \

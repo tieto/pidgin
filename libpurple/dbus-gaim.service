@@ -1,5 +1,0 @@
-[D-BUS Service]
-Name=net.sf.gaim.GaimService
-
-#replace this by the path to the gaim executable in your system
-Exec=/home/pz215/projects/gaim/src/gaim

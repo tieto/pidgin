@@ -34,11 +34,7 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Menu Démarrer"
 !define PIDGIN_SECTION_DESCRIPTION		"Fichiers et DLLs de base de Pidgin"
 !define GTK_SECTION_DESCRIPTION			"Un ensemble d'outils pour interfaces graphiques multi-plateforme, utilisé par Pidgin"
-!define GTK_THEMES_SECTION_DESCRIPTION		"Les thèmes GTK+ permettent de changer l'aspect des applications GTK+."
-!define GTK_NO_THEME_DESC			"Ne pas installer de thème GTK+"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (imitateur de Windows) est un thème de GTK+ qui se fond dans l'environnement graphique de Windows."
-!define GTK_BLUECURVE_THEME_DESC		"Thème Bluecurve"
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"Thème Lighthouseblue"
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Raccourcis pour lancer Pidgin"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC		"Créer un raccourci pour Pidgin sur le bureau"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Créer un raccourci pour Pidgin dans le menu Démarrer"

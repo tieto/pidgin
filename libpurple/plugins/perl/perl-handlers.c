@@ -183,6 +183,9 @@ destroy_timeout_handler(PurplePerlTimeoutHandler *handler)
 {
 	timeout_handlers = g_list_remove(timeout_handlers, handler);
 
+	if (handler->iotag > 0)
+		g_source_remove(handler->iotag);
+
 	if (handler->callback != NULL)
 		SvREFCNT_dec(handler->callback);
 
@@ -207,7 +210,7 @@ destroy_signal_handler(PurplePerlSignalHandler *handler)
 	g_free(handler);
 }
 
-static int
+static gboolean
 perl_timeout_cb(gpointer data)
 {
 	PurplePerlTimeoutHandler *handler = (PurplePerlTimeoutHandler *)data;
@@ -225,9 +228,12 @@ perl_timeout_cb(gpointer data)
 	FREETMPS;
 	LEAVE;
 
+	/* We're returning FALSE, so no need to manually remove the source */
+	handler->iotag = 0;
+
 	destroy_timeout_handler(handler);
 
-	return 0;
+	return FALSE;
 }
 
 typedef void *DATATYPE;

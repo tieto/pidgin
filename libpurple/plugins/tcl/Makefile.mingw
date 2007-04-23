@@ -4,8 +4,8 @@
 # Description: Makefile for tcl plugin loader plugin.
 #
 
-GAIM_TOP := ../../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = tcl
 TCL_INC_DIR := $(TCL_LIB_TOP)/include
@@ -15,16 +15,16 @@ DEFINES += -DHAVE_TK -DUSE_TCL_STUBS -DUSE_TK_STUBS
 ## INCLUDE PATHS
 ##
 INCLUDE_PATHS +=	-I. \
-			-I$(GAIM_TOP) \
-			-I$(GAIM_LIB_TOP) \
-			-I$(GAIM_LIB_TOP)/win32 \
+			-I$(PIDGIN_TREE_TOP) \
+			-I$(PURPLE_TOP) \
+			-I$(PURPLE_TOP)/win32 \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(TCL_INC_DIR)
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
-			-L$(GAIM_LIB_TOP) \
+			-L$(PURPLE_TOP) \
 			-L$(TCL_LIB_TOP)
 
 ##
@@ -50,7 +50,7 @@ LIBS =	\
 			-ltclstub84 \
 			-ltkstub84
 
-include $(GAIM_COMMON_RULES)
+include $(PIDGIN_COMMON_RULES)
 
 ##
 ## TARGET DEFINITIONS
@@ -59,12 +59,12 @@ include $(GAIM_COMMON_RULES)
 
 all: $(TARGET).dll
 
-install: all $(GAIM_INSTALL_PLUGINS_DIR)
-	cp $(TARGET).dll $(GAIM_INSTALL_PLUGINS_DIR)
+install: all $(PURPLE_INSTALL_PLUGINS_DIR)
+	cp $(TARGET).dll $(PURPLE_INSTALL_PLUGINS_DIR)
 
-$(OBJECTS): $(GAIM_CONFIG_H)
+$(OBJECTS): $(PURPLE_CONFIG_H)
 
-$(TARGET).dll: $(GAIM_LIBGAIM_DLL).a $(OBJECTS)
+$(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -o $(TARGET).dll
 
 ##
@@ -74,4 +74,4 @@ clean:
 	rm -rf $(OBJECTS)
 	rm -rf $(TARGET).dll
 
-include $(GAIM_COMMON_TARGETS)
+include $(PIDGIN_COMMON_TARGETS)

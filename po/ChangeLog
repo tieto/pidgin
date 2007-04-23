@@ -1,14 +1,3 @@
-2007-01-24  gettextize  <bug-gnu-gettext@gnu.org>
-
-	* Makefile.in.in: Upgrade to gettext-0.14.5.
-	* Rules-quot: New file, from gettext-0.14.5.
-	* boldquot.sed: New file, from gettext-0.14.5.
-	* en@boldquot.header: New file, from gettext-0.14.5.
-	* en@quot.header: New file, from gettext-0.14.5.
-	* insert-header.sin: New file, from gettext-0.14.5.
-	* quot.sed: New file, from gettext-0.14.5.
-	* remove-potcdate.sin: New file, from gettext-0.14.5.
-
 Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
 
 version 2.0.0:
@@ -21,7 +10,8 @@ version 2.0.0:
 	* Bulgarian translation updated (Vladimir "Kaladan" Petkov)
 	* Catalan translation updated (Josep Puigdemont)
 	* Chinese (Simplified) translation updated (Funda Wang)
-	* Chinese (Traditional) translation updated (Paladin R. Liu)
+	* Chinese (Hong Kong) translation added (Paladin R. Liu, Ambrose C. Li)
+	* Chinese (Traditional) translation updated (Paladin R. Liu, Ambrose C. Li)
 	* Czech translation updated (Miloslav Trmac)
 	* Danish translation updated (Morten (mbrix) Brix Pedersen,
 	  Peter Bach)
@@ -69,6 +59,7 @@ version 2.0.0:
 	* Serbian translation updated (Nikola Kotur)
 	* Slovak translation updated (Richard Golier, helix84,loptosko,Jozef Káčer)
 	* Slovenian translation updated (Martin Srebotnjak)
+	* Slovenian win32 translation updated (Martin Srebotnjak)
 	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
 	* Spanish gaim.desktop translation updated (Javier Fernandez-Sanguino Peña)	
 	* Swedish translation updated (Peter Hjalmarsson)

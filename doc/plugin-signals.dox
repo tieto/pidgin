@@ -9,7 +9,7 @@
 
  @signaldef plugin-load
   @signalproto
-void (*plugin_load)(GaimPlugin *plugin);
+void (*plugin_load)(PurplePlugin *plugin);
   @endsignalproto
   @signaldesc
    Emitted when a plugin is loaded.
@@ -18,7 +18,7 @@ void (*plugin_load)(GaimPlugin *plugin);
 
  @signaldef plugin-unload
   @signalproto
-void (*plugin_unload)(GaimPlugin *plugin);
+void (*plugin_unload)(PurplePlugin *plugin);
   @endsignalproto
   @signaldesc
    Emitted when a plugin is unloaded.

@@ -234,7 +234,7 @@ void qq_process_get_buddies_online_reply(guint8 *buf, gint buf_len, PurpleConnec
 
 			qq_send_packet_get_buddies_online(gc, position);
 		} else {
-			/* qq_send_packet_get_buddies_levels(gc); */
+			qq_send_packet_get_buddies_levels(gc);
 			qq_refresh_all_buddy_status(gc);
 		}
 

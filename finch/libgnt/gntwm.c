@@ -15,10 +15,12 @@
 #include "gntmarshal.h"
 #include "gnt.h"
 #include "gntbox.h"
+#include "gntlabel.h"
 #include "gntmenu.h"
 #include "gnttextview.h"
 #include "gnttree.h"
 #include "gntutils.h"
+#include "gntwindow.h"
 
 #define IDLE_CHECK_INTERVAL 5 /* 5 seconds */
 
@@ -417,6 +419,35 @@ window_close(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
+static gboolean
+help_for_widget(GntBindable *bindable, GList *null)
+{
+	GntWM *wm = GNT_WM(bindable);
+	GntWidget *widget, *tree, *win, *active;
+	char *title;
+
+	if (!wm->ordered)
+		return TRUE;
+
+	widget = wm->ordered->data;
+	if (!GNT_IS_BOX(widget))
+		return TRUE;
+	active = GNT_BOX(widget)->active;
+
+	tree = gnt_widget_bindings_view(active);
+	win = gnt_window_new();
+	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(active)));
+	gnt_box_set_title(GNT_BOX(win), title);
+	if (tree)
+		gnt_box_add_widget(GNT_BOX(win), tree);
+	else
+		gnt_box_add_widget(GNT_BOX(win), gnt_label_new("This widget has no customizable bindings."));
+
+	gnt_widget_show(win);
+
+	return TRUE;
+}
+
 static void
 destroy__list(GntWidget *widget, GntWM *wm)
 {
@@ -475,11 +506,11 @@ window_list_key_pressed(GntWidget *widget, const char *text, GntWM *wm)
 		GntWidget *sel = gnt_tree_get_selection_data(GNT_TREE(widget));
 		switch (text[0]) {
 			case '-':
-			case '<':
+			case ',':
 				shift_window(wm, sel, -1);
 				break;
-			case '+':
-			case '>':
+			case '=':
+			case '.':
 				shift_window(wm, sel, 1);
 				break;
 			default:
@@ -1006,6 +1037,8 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" GNT_KEY_CTRL_J, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-scroll-up", window_scroll_up,
 				"\033" GNT_KEY_CTRL_K, NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-widget", help_for_widget,
+				"\033" "/", NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 
@@ -1230,8 +1263,9 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 
 	idle_update = TRUE;
 
-	if (gnt_bindable_perform_action_key(GNT_BINDABLE(wm), keys))
+	if (gnt_bindable_perform_action_key(GNT_BINDABLE(wm), keys)) {
 		return TRUE;
+	}
 
 	/* Do some manual checking */
 	if (wm->ordered && wm->mode != GNT_KP_MODE_NORMAL) {
@@ -1289,13 +1323,10 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 		return TRUE;
 	}
 
-	wm->event_stack = TRUE;
-
 	/* Escape to close the window-list or action-list window */
 	if (strcmp(keys, "\033") == 0) {
 		if (wm->_list.window) {
 			gnt_widget_destroy(wm->_list.window);
-			wm->event_stack = FALSE;
 			return TRUE;
 		}
 	} else if (keys[0] == '\033' && isdigit(keys[1]) && keys[2] == '\0') {
@@ -1318,7 +1349,6 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 		ret = gnt_widget_key_pressed(wm->_list.window, keys);
 	else if (wm->ordered)
 		ret = gnt_widget_key_pressed(GNT_WIDGET(wm->ordered->data), keys);
-	wm->event_stack = FALSE;
 	return ret;
 }
 
@@ -1502,5 +1532,10 @@ gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntW
 void gnt_wm_raise_window(GntWM *wm, GntWidget *widget)
 {
 	g_signal_emit(wm, signals[SIG_GIVE_FOCUS], 0, widget);
+}
+
+void gnt_wm_set_event_stack(GntWM *wm, gboolean set)
+{
+	wm->event_stack = set;
 }
 

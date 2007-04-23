@@ -1,6 +1,6 @@
 /**
  * @file gtkpounce.h GTK+ Buddy Pounce API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

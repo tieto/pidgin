@@ -112,7 +112,7 @@ ssl_nss_init_nss(void)
 
 	/* TODO: Fix this so autoconf does the work trying to find this lib. */
 #ifndef _WIN32
-	lib = g_strdup(BR_LIBDIR("/libnssckbi.so"));
+	lib = g_strdup(LIBDIR "/libnssckbi.so");
 #else
 	lib = g_strdup("nssckbi.dll");
 #endif

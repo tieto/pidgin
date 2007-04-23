@@ -1,6 +1,6 @@
 /**
  * @file pidgin.h UI definitions and includes
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -39,7 +39,11 @@
 /**
  * Our UI's identifier.
  */
-#define PIDGIN_UI "pidgin"
+/* leave this as gtk-gaim until we have a decent way to migrate UI-prefs */
+#define PIDGIN_UI "gtk-gaim"
+
+/* change this only when we have a sane upgrade path for old prefs */
+#define PIDGIN_PREFS_ROOT "/gaim/gtk"
 
 #ifndef _WIN32
 # define PIDGIN_ALERT_TITLE ""
@@ -68,7 +72,7 @@
 #if !GTK_CHECK_VERSION(2,6,0)
 #   include "gtkcellview.h"
 #   include "gtkcellviewmenuitem.h"
-#   include "purplecombobox.h"
+#   include "pidgincombobox.h"
 #   if !GTK_CHECK_VERSION(2,4,0)
 #       include "gtkcelllayout.h"
 #   endif /* Less than GTK+ 2.4 */

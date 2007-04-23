@@ -1,6 +1,6 @@
 /**
  * @file gtkthemes.h GTK+ Smiley Theme API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -44,10 +44,10 @@ struct smiley_theme {
 extern struct smiley_theme *current_smiley_theme;
 extern GSList *smiley_themes;
 
-void pidginthemes_init(void);
-gboolean pidginthemes_smileys_disabled(void);
-void pidginthemes_smiley_themeize(GtkWidget *);
-void pidginthemes_smiley_theme_probe(void);
-void pidginthemes_load_smiley_theme(const char *file, gboolean load);
-GSList *pidginthemes_get_proto_smileys(const char *id);
+void pidgin_themes_init(void);
+gboolean pidgin_themes_smileys_disabled(void);
+void pidgin_themes_smiley_themeize(GtkWidget *);
+void pidgin_themes_smiley_theme_probe(void);
+void pidgin_themes_load_smiley_theme(const char *file, gboolean load);
+GSList *pidgin_themes_get_proto_smileys(const char *id);
 #endif /* _PIDGINDIALOGS_H_ */

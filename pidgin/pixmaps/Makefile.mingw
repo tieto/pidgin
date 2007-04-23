@@ -4,10 +4,10 @@
 # Description: Makefile for win32 (mingw) version of Pidgin pixmaps
 #
 
-GAIM_TOP := ../..
-include $(GAIM_TOP)/libpurple/win32/global.mak
+PIDGIN_TREE_TOP := ../..
+include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-datadir := $(GAIM_INSTALL_DIR)
+datadir := $(PIDGIN_INSTALL_DIR)
 include ./Makefile.am
 
 .PHONY: install
@@ -15,7 +15,7 @@ include ./Makefile.am
 install:
 	if test '$(SUBDIRS)'; then \
 	  list='$(SUBDIRS)'; for subdir in $$list; do \
-	    $(MAKE) -C $$subdir -f $(GAIM_WIN32_MAKEFILE) install || exit 1 ;\
+	    $(MAKE) -C $$subdir -f $(MINGW_MAKEFILE) install || exit 1 ;\
 	  done; \
 	fi;
 	if test '$(pidginbuttonpix_DATA)'; then \

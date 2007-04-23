@@ -79,7 +79,7 @@ plugin_load(PurplePlugin *plugin)
 {
 	pidgin_conv_placement_add_fnc("number", _("By conversation count"),
 							   &conv_placement_by_number);
-	purple_prefs_trigger_callback("/purple/gtk/conversations/placement");
+	purple_prefs_trigger_callback(PIDGIN_PREFS_ROOT "/conversations/placement");
 	return TRUE;
 }
 
@@ -87,7 +87,7 @@ static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
 	pidgin_conv_placement_remove_fnc("number");
-	purple_prefs_trigger_callback("/purple/gtk/conversations/placement");
+	purple_prefs_trigger_callback(PIDGIN_PREFS_ROOT "/conversations/placement");
 	return TRUE;
 }
 
@@ -127,10 +127,10 @@ static PurplePluginInfo info =
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
 	PURPLE_PLUGIN_STANDARD,							/**< type			*/
-	PIDGIN_PLUGIN_TYPE,							/**< ui_requirement	*/
+	PIDGIN_PLUGIN_TYPE,								/**< ui_requirement	*/
 	0,												/**< flags			*/
 	NULL,											/**< dependencies	*/
-	PURPLE_PRIORITY_DEFAULT,							/**< priority		*/
+	PURPLE_PRIORITY_DEFAULT,						/**< priority		*/
 	"gtk-extplacement",								/**< id				*/
 	N_("ExtPlacement"),								/**< name			*/
 	VERSION,										/**< version		*/

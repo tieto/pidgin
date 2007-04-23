@@ -739,3 +739,25 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
 	return count;
 }
 
+static gboolean
+scroll_tv(GntWidget *wid, const char *key, GntTextView *tv)
+{
+	if (strcmp(key, GNT_KEY_PGUP) == 0) {
+		gnt_text_view_scroll(tv, -(GNT_WIDGET(tv)->priv.height - 2));
+	} else if (strcmp(key, GNT_KEY_PGDOWN) == 0) {
+		gnt_text_view_scroll(tv, GNT_WIDGET(tv)->priv.height - 2);
+	} else if (strcmp(key, GNT_KEY_DOWN) == 0) {
+		gnt_text_view_scroll(tv, 1);
+	} else if (strcmp(key, GNT_KEY_UP) == 0) {
+		gnt_text_view_scroll(tv, -1);
+	} else {
+		return FALSE;
+	}
+	return TRUE;
+}
+
+void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget)
+{
+	g_signal_connect(G_OBJECT(widget), "key_pressed", G_CALLBACK(scroll_tv), view);
+}
+

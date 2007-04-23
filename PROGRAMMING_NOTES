@@ -1,5 +1,5 @@
-Notes on keeping GAIM OS independant
-------------------------------------
+Notes on keeping Pidgin, Finch, and libpurple OS independant
+------------------------------------------------------------
 
 General
 -------
@@ -7,7 +7,7 @@ General
 
 - Use g_getenv, g_snprintf, g_vsnprintf
 
-- Use gaim_home_dir instead of g_get_home_dir or g_getenv("HOME")
+- Use purple_home_dir instead of g_get_home_dir or g_getenv("HOME")
 
 - Make sure when including win32dep.h that it is the last header to
   be included.
@@ -16,13 +16,13 @@ General
 
   e.g: fopen("somefile", "wb");
 
-  Not doing so will open files in windows using defaut translation mode. 
+  Not doing so will open files in windows using default translation mode. 
   i.e. newline -> <CR><LF>
 
 Paths
 -----
 
-- DATADIR, LOCALEDIR & LIBDIR are defined in wingaim as functions.
+- DATADIR, LOCALEDIR & LIBDIR are defined as functions in the win32 build
   Doing the following will therefore break the windows build:
 
   printf("File in DATADIR is: %s\n", DATADIR G_DIR_SEPARATOR_S "pic.png");
@@ -35,9 +35,9 @@ PLUGINS & PROTOS
 ----------------
 
 - G_MODULE_EXPORT all functions which are to be accessed from outside the
-  scope of its "dll" or "so". (E.G. gaim_plugin_init)
+  scope of its "dll" or "so". (E.G. purple_plugin_init)
 
 - G_MODULE_IMPORT all global variables which are located outside your
   dynamic library. (E.G. connections)
 
-  (Not doing this will cause "Memory Access Violations" in Win32)
+  (Not doing this will cause "Memory Access Violations" in win32)

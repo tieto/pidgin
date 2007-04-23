@@ -136,6 +136,7 @@ pidgin_headers = \
 	gtkexpander.h \
 	gtkft.h \
 	gtkidle.h \
+	gtkgaim-compat.h \
 	gtkimhtml.h \
 	gtkimhtmltoolbar.h \
 	gtklog.h \

@@ -267,7 +267,7 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 	g_return_if_fail(GDK_WINDOW_TYPE(gdkwin) != GDK_WINDOW_CHILD);
 
 	if(GDK_WINDOW_DESTROYED(gdkwin))
-	    return;
+		return;
 
 	if(MyFlashWindowEx) {
 		FLASHWINFO info;
@@ -308,6 +308,10 @@ winpidgin_conv_blink(PurpleConversation *conv, PurpleMessageFlags flags) {
 	}
 	window = GTK_WINDOW(win->window);
 
+	/* Don't flash if the window is in the foreground */
+	if (GetForegroundWindow() == GDK_WINDOW_HWND(GTK_WIDGET(window)->window))
+		return;
+
 	winpidgin_window_flash(window, TRUE);
 	/* Stop flashing when window receives focus */
 	g_signal_connect(G_OBJECT(window), "focus-in-event",
@@ -318,7 +322,7 @@ static gboolean
 winpidgin_conv_im_blink(PurpleAccount *account, const char *who, char **message,
 		PurpleConversation *conv, PurpleMessageFlags flags, void *data)
 {
-	if (purple_prefs_get_bool("/purple/gtk/win32/blink_im"))
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/win32/blink_im"))
 		winpidgin_conv_blink(conv, flags);
 	return FALSE;
 }
@@ -346,8 +350,8 @@ void winpidgin_init(HINSTANCE hint) {
 
 void winpidgin_post_init(void) {
 
-	purple_prefs_add_none("/purple/gtk/win32");
-	purple_prefs_add_bool("/purple/gtk/win32/blink_im", TRUE);
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/win32");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/win32/blink_im", TRUE);
 
 	purple_signal_connect(pidgin_conversations_get_handle(),
 		"displaying-im-msg", &gtkwin32_handle, PURPLE_CALLBACK(winpidgin_conv_im_blink),

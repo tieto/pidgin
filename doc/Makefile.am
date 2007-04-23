@@ -2,9 +2,10 @@ man_MANS = pidgin.1 finch.1
 
 EXTRA_DIST = \
 	C-HOWTO.dox \
-	FAQ \
 	PERL-HOWTO.dox \
 	TCL-HOWTO.dox \
+	TracFooter.html \
+	TracHeader.html \
 	account-signals.dox \
 	blist-signals.dox \
 	cipher-signals.dox \

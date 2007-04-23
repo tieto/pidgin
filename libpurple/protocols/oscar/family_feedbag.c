@@ -55,17 +55,15 @@ static int aim_ssi_addmoddel(OscarData *od);
  *        if you want to modify the master group.
  * @return Return a pointer to the modified item.
  */
-static struct aim_ssi_item *aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *list, const char *name)
+static void
+aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *list, const char *name)
 {
 	int newlen;
 	struct aim_ssi_item *cur, *group;
 
-	if (!list)
-		return NULL;
-
 	/* Find the group */
 	if (!(group = aim_ssi_itemlist_finditem(list, name, NULL, AIM_SSI_TYPE_GROUP)))
-		return NULL;
+		return;
 
 	/* Find the length for the new additional data */
 	newlen = 0;
@@ -98,8 +96,6 @@ static struct aim_ssi_item *aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *l
 
 		free(newdata);
 	}
-
-	return group;
 }
 
 /**
@@ -119,9 +115,6 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 	int i;
 	struct aim_ssi_item *cur, *new;
 
-	if (!list)
-		return NULL;
-
 	new = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item));
 
 	/* Set the name */
@@ -139,8 +132,21 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 			do {
 				new->gid += 0x0001;
 				for (cur=*list, i=0; ((cur) && (!i)); cur=cur->next)
-					if ((cur->type == AIM_SSI_TYPE_GROUP) && (cur->gid == new->gid))
+					if ((cur->type == AIM_SSI_TYPE_GROUP) && (cur->gid == new->gid)) {
 						i=1;
+						break;
+					}
+			} while (i);
+		}
+	} else if (new->gid == 0x0000) {
+		if (new->bid == 0xFFFF) {
+			do {
+				new->bid += 0x0001;
+				for (cur=*list, i=0; ((cur) && (!i)); cur=cur->next)
+					if (((cur->bid == new->bid) && (cur->gid == new->gid)) || (cur->gid == new->bid)) {
+						i=1;
+						break;
+					}
 			} while (i);
 		}
 	} else {
@@ -148,8 +154,10 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 			do {
 				new->bid += 0x0001;
 				for (cur=*list, i=0; ((cur) && (!i)); cur=cur->next)
-					if ((cur->bid == new->bid) && (cur->gid == new->gid))
+					if ((cur->bid == new->bid) && (cur->gid == new->gid)) {
 						i=1;
+						break;
+					}
 			} while (i);
 		}
 	}
@@ -188,7 +196,7 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
  */
 static int aim_ssi_itemlist_del(struct aim_ssi_item **list, struct aim_ssi_item *del)
 {
-	if (!list || !(*list) || !del)
+	if (!(*list) || !del)
 		return -EINVAL;
 
 	/* Remove the item from the list */
@@ -228,7 +236,7 @@ static int aim_ssi_itemlist_cmp(struct aim_ssi_item *cur1, struct aim_ssi_item *
 		return 3;
 
 	if ((cur1->data && cur2->data) && (aim_tlvlist_cmp(cur1->data, cur2->data)))
-			return 4;
+		return 4;
 
 	if (cur1->name && !cur2->name)
 		return 5;
@@ -251,13 +259,13 @@ static int aim_ssi_itemlist_cmp(struct aim_ssi_item *cur1, struct aim_ssi_item *
 	return 0;
 }
 
-static int aim_ssi_itemlist_valid(struct aim_ssi_item *list, struct aim_ssi_item *item)
+static gboolean aim_ssi_itemlist_valid(struct aim_ssi_item *list, struct aim_ssi_item *item)
 {
 	struct aim_ssi_item *cur;
 	for (cur=list; cur; cur=cur->next)
 		if (cur == item)
-			return 1;
-	return 0;
+			return TRUE;
+	return FALSE;
 }
 
 /**
@@ -413,12 +421,8 @@ char *aim_ssi_getalias(struct aim_ssi_item *list, const char *gn, const char *sn
 	struct aim_ssi_item *cur = aim_ssi_itemlist_finditem(list, gn, sn, AIM_SSI_TYPE_BUDDY);
 	if (cur) {
 		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x0131, 1);
-		if (tlv && tlv->length) {
-			char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
-			strncpy(alias, (char *)tlv->value, tlv->length);
-			alias[tlv->length] = 0;
-			return alias;
-		}
+		if (tlv && tlv->length)
+			return g_strndup((const gchar *)tlv->value, tlv->length);
 	}
 	return NULL;
 }
@@ -439,10 +443,7 @@ char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *
 	if (cur) {
 		aim_tlv_t *tlv = aim_tlv_gettlv(cur->data, 0x013c, 1);
 		if (tlv && tlv->length) {
-			char *alias = (char *)malloc((tlv->length+1)*sizeof(char));
-			strncpy(alias, (char *)tlv->value, tlv->length);
-			alias[tlv->length] = 0;
-			return alias;
+			return g_strndup((const gchar *)tlv->value, tlv->length);
 		}
 	}
 	return NULL;
@@ -564,8 +565,10 @@ static int aim_ssi_sync(OscarData *od)
 
 	/* We're out of stuff to do, so tell the AIM servers we're done and exit */
 	if (!od->ssi.pending) {
-		aim_ssi_modend(od);
-		od->ssi.in_transaction = FALSE;
+		if (od->ssi.in_transaction) {
+			aim_ssi_modend(od);
+			od->ssi.in_transaction = FALSE;
+		}
 		return 0;
 	}
 
@@ -595,7 +598,8 @@ static int aim_ssi_sync(OscarData *od)
  * @param od The oscar odion.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-static int aim_ssi_freelist(OscarData *od)
+static void
+aim_ssi_freelist(OscarData *od)
 {
 	struct aim_ssi_item *cur, *del;
 	struct aim_ssi_tmp *curtmp, *deltmp;
@@ -630,38 +634,6 @@ static int aim_ssi_freelist(OscarData *od)
 	od->ssi.local = NULL;
 	od->ssi.pending = NULL;
 	od->ssi.timestamp = (time_t)0;
-
-	return 0;
-}
-
-/**
- * Delete all SSI data.
- *
- * @param od The oscar odion.
- * @return Return 0 if no errors, otherwise return the error number.
- */
-int aim_ssi_deletelist(OscarData *od)
-{
-	struct aim_ssi_item *cur, *del;
-
-	if (!od)
-		return -EINVAL;
-
-	/* Free the local list */
-	cur = od->ssi.local;
-	while (cur) {
-		del = cur;
-		cur = cur->next;
-		free(del->name);
-		aim_tlvlist_free(&del->data);
-		free(del);
-	}
-	od->ssi.local = NULL;
-
-	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
 }
 
 /**
@@ -767,11 +739,10 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const c
 	if (!(parent = aim_ssi_itemlist_finditem(od->ssi.local, group, NULL, AIM_SSI_TYPE_GROUP))) {
 		/* Find the parent's parent (the master group) */
 		if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
-			if (aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL) == NULL)
-				return -ENOMEM;
+			aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+
 		/* Add the parent */
-		if (!(parent = aim_ssi_itemlist_add(&od->ssi.local, group, 0xFFFF, 0x0000, AIM_SSI_TYPE_GROUP, NULL)))
-			return -ENOMEM;
+		parent = aim_ssi_itemlist_add(&od->ssi.local, group, 0xFFFF, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
 
 		/* Modify the parent's parent (the master group) */
 		aim_ssi_itemlist_rebuildgroup(od->ssi.local, NULL);
@@ -810,8 +781,12 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const c
 int aim_ssi_addpermit(OscarData *od, const char *name)
 {
 
-	if (!od || !name)
+	if (!od || !name || !od->ssi.received_data)
 		return -EINVAL;
+
+	/* Make sure the master group exists */
+	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
 
 	/* Add that bad boy */
 	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_PERMIT, NULL);
@@ -832,8 +807,12 @@ int aim_ssi_addpermit(OscarData *od, const char *name)
 int aim_ssi_adddeny(OscarData *od, const char *name)
 {
 
-	if (!od || !name)
+	if (!od || !name || !od->ssi.received_data)
 		return -EINVAL;
+
+	/* Make sure the master group exists */
+	if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+		aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
 
 	/* Add that bad boy */
 	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_DENY, NULL);
@@ -1078,12 +1057,17 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
 {
 	struct aim_ssi_item *tmp;
 
-	if (!od)
+	if (!od || !od->ssi.received_data)
 		return -EINVAL;
 
 	/* Find the PDINFO item, or add it if it does not exist */
-	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, NULL, AIM_SSI_TYPE_PDINFO)))
+	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, NULL, AIM_SSI_TYPE_PDINFO))) {
+		/* Make sure the master group exists */
+		if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+			aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+
 		tmp = aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0xFFFF, AIM_SSI_TYPE_PDINFO, NULL);
+	}
 
 	/* Need to add the 0x00ca TLV to the TLV chain */
 	aim_tlvlist_replace_8(&tmp->data, 0x00ca, permdeny);
@@ -1105,22 +1089,27 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
  * @param iconcsumlen Length of the MD5 checksum given above.  Should be 0x10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint16 iconsumlen)
+int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint8 iconsumlen)
 {
 	struct aim_ssi_item *tmp;
 	guint8 *csumdata;
 
-	if (!od || !iconsum || !iconsumlen)
+	if (!od || !iconsum || !iconsumlen || !od->ssi.received_data)
 		return -EINVAL;
 
 	/* Find the ICONINFO item, or add it if it does not exist */
 	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, "1", AIM_SSI_TYPE_ICONINFO))) {
+		/* Make sure the master group exists */
+		if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+			aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+
 		tmp = aim_ssi_itemlist_add(&od->ssi.local, "1", 0x0000, 0xFFFF, AIM_SSI_TYPE_ICONINFO, NULL);
 	}
 
 	/* Need to add the 0x00d5 TLV to the TLV chain */
 	csumdata = (guint8 *)malloc((iconsumlen+2)*sizeof(guint8));
-	aimutil_put16(&csumdata[0], iconsumlen);
+	aimutil_put8(&csumdata[0], 0x00);
+	aimutil_put8(&csumdata[1], iconsumlen);
 	memcpy(&csumdata[2], iconsum, iconsumlen);
 	aim_tlvlist_replace_raw(&tmp->data, 0x00d5, (iconsumlen+2) * sizeof(guint8), csumdata);
 	free(csumdata);
@@ -1163,12 +1152,17 @@ int aim_ssi_delicon(OscarData *od)
 int aim_ssi_setpresence(OscarData *od, guint32 presence) {
 	struct aim_ssi_item *tmp;
 
-	if (!od)
+	if (!od || !od->ssi.received_data)
 		return -EINVAL;
 
 	/* Find the PRESENCEPREFS item, or add it if it does not exist */
-	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS)))
+	if (!(tmp = aim_ssi_itemlist_finditem(od->ssi.local, NULL, NULL, AIM_SSI_TYPE_PRESENCEPREFS))) {
+		/* Make sure the master group exists */
+		if (aim_ssi_itemlist_find(od->ssi.local, 0x0000, 0x0000) == NULL)
+			aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+
 		tmp = aim_ssi_itemlist_add(&od->ssi.local, NULL, 0x0000, 0xFFFF, AIM_SSI_TYPE_PRESENCEPREFS, NULL);
+	}
 
 	/* Need to add the x00c9 TLV to the TLV chain */
 	aim_tlvlist_replace_32(&tmp->data, 0x00c9, presence);

@@ -1,6 +1,6 @@
 /**
  * @file gntpounce.h GNT Buddy Pounce API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

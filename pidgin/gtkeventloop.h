@@ -1,6 +1,6 @@
 /**
  * @file gtkeventloop.h Pidgin GTK+ Event Loop Implementation
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

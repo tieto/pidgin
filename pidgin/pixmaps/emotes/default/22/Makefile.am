@@ -18,6 +18,7 @@ SMILEYS = 	act-up.png \
 		brb.png \
 		bye.png \
 		cake.png \
+		call-me.png \
 		camera.png \
 		can.png \
 		car.png \
@@ -118,6 +119,7 @@ SMILEYS = 	act-up.png \
 		rain.png \
 		rose-dead.png \
 		rose.png \
+		rotfl.png \
 		sad.png \
 		sarcastic.png \
 		search.png \

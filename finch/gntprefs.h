@@ -1,6 +1,6 @@
 /**
  * @file gntprefs.h GNT Preferences API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

@@ -1,4 +1,4 @@
-plugindir = $(libdir)/libpurple
+plugindir = $(libdir)/purple
 hackdir = $(plugindir)/private
 
 perl_dirs = common
@@ -68,6 +68,7 @@ common_sources = \
         common/Proxy.xs \
         common/Prpl.xs \
         common/Purple.pm \
+        common/Purple.xs \
         common/Request.xs \
         common/Roomlist.xs \
         common/SSLConn.xs \

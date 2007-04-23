@@ -1495,12 +1495,9 @@ static void
 _show_info(PurpleConnection * gc, NMUserRecord * user_record)
 {
 	PurpleNotifyUserInfo *user_info =	purple_notify_user_info_new();
-	GString *info_text;
 	int count, i;
 	NMProperty *property;
 	const char *tag, *value;
-
-	info_text = g_string_new("");
 
 	tag = _("User ID");
 	value = nm_user_record_get_userid(user_record);

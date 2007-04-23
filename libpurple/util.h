@@ -462,6 +462,43 @@ char *purple_markup_slice(const char *str, guint x, guint y);
  */
 char *purple_markup_get_tag_name(const char *tag);
 
+/**
+ * Returns a constant string of the character representation of the HTML
+ * entity pointed to by @a text. For example, purple_markup_unescape_entity("&amp;")
+ * will return "&". The @a text variable is expected to point to an '&',
+ * the first character of the entity. If given an unrecognized entity, the function
+ * returns @c NULL.
+ *
+ * Note that this function, unlike purple_unescape_html(), does not search 
+ * the string for the entity, does not replace the entity, and does not
+ * return a newly allocated string.
+ *
+ * @param text   A string containing an HTML entity.
+ * @param length If not @c NULL, the string length of the entity is stored in this location.
+ *
+ * @return A constant string containing the character representation of the given entity.
+ */
+const char * purple_markup_unescape_entity(const char *text, int *length);
+
+/**
+ * Returns a newly allocated string containing the value of the CSS property specified
+ * in opt. The @a style argument is expected to point to a HTML inline CSS.
+ * The function will seek for the CSS property and return its value.
+ *
+ * For example, purple_markup_get_css_property("direction:rtl;color:#dc4d1b;",
+ * "color") would return "#dc4d1b".
+ *
+ * On error or if the requested property was not found, the function returns
+ * @c NULL.
+ *
+ * @param style A string containing the inline CSS text.
+ * @param opt   The requested CSS property.
+ *
+ * @return The value of the requested CSS property.
+ */
+char * purple_markup_get_css_property(const gchar *style, const gchar *opt);
+
+
 /*@}*/
 
 
@@ -980,7 +1017,10 @@ gchar *purple_utf8_try_convert(const char *str);
 gchar *purple_utf8_salvage(const char *str);
 
 /**
- * Compares two UTF-8 strings case-insensitively.
+ * Compares two UTF-8 strings case-insensitively.  This string is
+ * more expensive than a simple g_utf8_collate() comparison because
+ * it calls g_utf8_casefold() on each string, which allocates new
+ * strings.
  *
  * @param a The first string.
  * @param b The second string.

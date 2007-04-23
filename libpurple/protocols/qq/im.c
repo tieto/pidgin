@@ -123,7 +123,7 @@ guint8 *qq_get_send_im_tail(const gchar *font_color,
 			    const gchar *font_name,
 			    gboolean is_bold, gboolean is_italic, gboolean is_underline, gint tail_len)
 {
-	gchar *s1, *s2;
+	gchar *s1;
 	unsigned char *rgb;
 	gint font_name_len;
 	guint8 *send_im_tail;
@@ -159,13 +159,20 @@ guint8 *qq_get_send_im_tail(const gchar *font_color,
 		s1 = g_strndup(font_color + 1, 6);
 		/* Henry: maybe this is a bug of purple, the string should have
 		 * the length of odd number @_@
+		 * George Ang: This BUG maybe fixed by Purple. adding new byte
+		 * would cause a crash.
 		 */
-		s2 = g_strdup_printf("%sH", s1);
-		rgb = purple_base16_decode(s2, NULL);
+		/* s2 = g_strdup_printf("%sH", s1); */
+		rgb = purple_base16_decode(s1, NULL);
 		g_free(s1);
-		g_free(s2);
-		memcpy(send_im_tail + 2, rgb, 3);
-		g_free(rgb);
+		/* g_free(s2); */
+		if (rgb)
+		{
+			memcpy(send_im_tail + 2, rgb, 3);
+			g_free(rgb);
+		} else {
+			send_im_tail[2] = send_im_tail[3] = send_im_tail[4] = 0;
+		}
 	} else {
 		send_im_tail[2] = send_im_tail[3] = send_im_tail[4] = 0;
 	}

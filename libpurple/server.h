@@ -38,6 +38,8 @@ extern "C" {
  *
  * TODO: Could probably move this into the conversation API.
  *
+ * @param gc    The connection over which to send the typing notification.
+ * @param name  The user to send the typing notification to.
  * @param state One of PURPLE_TYPING, PURPLE_TYPED, or PURPLE_NOT_TYPING.
  * @return A quiet-period, specified in seconds, where Purple will not
  *         send any additional typing notification messages.  Most
@@ -73,11 +75,14 @@ void serv_got_alias(PurpleConnection *gc, const char *who, const char *alias);
  *
  * TODO: Could probably move this into the conversation API.
  *
+ * @param gc      The connection on which the typing message was received.
+ * @param name    The name of the remote user.
  * @param timeout If this is a number greater than 0, then
  *        Purple will wait this number of seconds and then
  *        set this buddy to the PURPLE_NOT_TYPING state.  This
  *        is used by protocols that send repeated typing messages
  *        while the user is composing the message.
+ * @param state   The typing state received
  */
 void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 					 PurpleTypingState state);
@@ -103,8 +108,15 @@ void serv_join_chat(PurpleConnection *, GHashTable *data);
 void serv_reject_chat(PurpleConnection *, GHashTable *data);
 
 /**
- * @param data The hash function should be g_str_hash() and the equal
- *             function should be g_str_equal().
+ * Called by a prpl when an account is invited into a chat.
+ *
+ * @param gc      The connection on which the invite arrived.
+ * @param name    The name of the chat you're being invited to.
+ * @param who     The username of the person inviting the account.
+ * @param message The optional invite message.
+ * @param data    The components necessary if you want to call serv_join_chat().
+ *                The hash function should be g_str_hash() and the equal
+ *                function should be g_str_equal().
  */
 void serv_got_chat_invite(PurpleConnection *gc, const char *name,
 						  const char *who, const char *message,

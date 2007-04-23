@@ -7,13 +7,11 @@ EXTRA_DIST = \
 		Makefile.mingw \
 		PLUGIN_HOWTO \
 		PROGRAMMING_NOTES \
-		README.SVN \
-		README.dbus \
+		README.MTN \
 		README.mingw \
 		config.h.mingw \
 		gaim.pc.in \
 		gaim-uninstalled.pc.in \
-		gaim.service.in \
 		intltool-extract.in \
 		intltool-merge.in \
 		intltool-update.in \
@@ -23,11 +21,6 @@ EXTRA_DIST = \
 		po/Makefile.mingw
 
 noinst_HEADERS = config.h
-
-if ENABLE_DBUS
-dbus_servicedir=$(DBUS_SERVICES_DIR)
-dbus_service_DATA=gaim.service
-endif
 
 dist-hook: pidgin.spec
 	cp pidgin.spec $(distdir)

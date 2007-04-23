@@ -294,6 +294,21 @@ aim_locate_adduserinfo(OscarData *od, aim_userinfo_t *userinfo)
 		cur->status_len = userinfo->status_len;
 	}
 
+	if (userinfo->itmsurl != NULL) {
+		free(cur->itmsurl);
+		free(cur->itmsurl_encoding);
+		if (userinfo->itmsurl_len > 0) {
+			cur->itmsurl = (char *)malloc(userinfo->itmsurl_len);
+			memcpy(cur->itmsurl, userinfo->itmsurl, userinfo->itmsurl_len);
+		} else
+			cur->itmsurl = NULL;
+		if (userinfo->itmsurl_encoding != NULL)
+			cur->itmsurl_encoding = strdup(userinfo->itmsurl_encoding);
+		else
+			cur->itmsurl_encoding = NULL;
+		cur->itmsurl_len = userinfo->itmsurl_len;
+	}
+
 	if (userinfo->away != NULL) {
 		free(cur->away);
 		free(cur->away_encoding);
@@ -577,6 +592,8 @@ aim_info_free(aim_userinfo_t *info)
 	free(info->info_encoding);
 	free(info->status);
 	free(info->status_encoding);
+	free(info->itmsurl);
+	free(info->itmsurl_encoding);
 	free(info->away);
 	free(info->away_encoding);
 }
@@ -838,6 +855,28 @@ aim_info_extract(OscarData *od, ByteStream *bs, aim_userinfo_t *outinfo)
 							outinfo->status_len = 0;
 							outinfo->status = g_strdup("");
 							outinfo->status_encoding = NULL;
+						}
+					} break;
+
+					case 0x0009: { /* An iTunes Music Store link */
+						free(outinfo->itmsurl);
+						free(outinfo->itmsurl_encoding);
+						if (length2 >= 4) {
+							outinfo->itmsurl_len = byte_stream_get16(bs);
+							outinfo->itmsurl = byte_stream_getstr(bs, outinfo->itmsurl_len);
+							if (byte_stream_get16(bs) == 0x0001) {
+								/* We have an encoding */
+								byte_stream_get16(bs);
+								outinfo->itmsurl_encoding = byte_stream_getstr(bs, byte_stream_get16(bs));
+							} else {
+								/* No explicit encoding, client should use UTF-8 */
+								outinfo->itmsurl_encoding = NULL;
+							}
+						} else {
+							byte_stream_advance(bs, length2);
+							outinfo->itmsurl_len = 0;
+							outinfo->itmsurl = g_strdup("");
+							outinfo->itmsurl_encoding = NULL;
 						}
 					} break;
 

@@ -39,9 +39,9 @@ void silcpurple_wb_receive_ch(SilcClient client, SilcClientConnection conn,
 			    SilcUInt32 message_len);
 void silcpurple_wb_start(PurpleWhiteboard *wb);
 void silcpurple_wb_end(PurpleWhiteboard *wb);
-void silcpurple_wb_get_dimensions(PurpleWhiteboard *wb, int *width, int *height);
+void silcpurple_wb_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height);
 void silcpurple_wb_set_dimensions(PurpleWhiteboard *wb, int width, int height);
-void silcpurple_wb_get_brush(PurpleWhiteboard *wb, int *size, int *color);
+void silcpurple_wb_get_brush(const PurpleWhiteboard *wb, int *size, int *color);
 void silcpurple_wb_set_brush(PurpleWhiteboard *wb, int size, int color);
 void silcpurple_wb_send(PurpleWhiteboard *wb, GList *draw_list);
 void silcpurple_wb_clear(PurpleWhiteboard *wb);

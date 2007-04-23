@@ -31,6 +31,7 @@
 
 #include "gtkimhtml.h"
 #include "gtkplugin.h"
+#include "gtkprefs.h"
 #include "gtkutils.h"
 
 #define TIMESTAMP_PLUGIN_ID "gtk-timestamp"
@@ -63,7 +64,7 @@ timestamp_display(PurpleConversation *conv, time_t then, time_t now)
 	if (((y + height) - (rect.y + rect.height)) > height &&
 	    gtk_text_buffer_get_char_count(buffer)) {
 		gboolean smooth = purple_prefs_get_bool(
-			"/purple/gtk/conversations/use_smooth_scrolling");
+			PIDGIN_PREFS_ROOT "/conversations/use_smooth_scrolling");
 		gtk_imhtml_scroll_to_end(GTK_IMHTML(imhtml), smooth);
 	}
 }

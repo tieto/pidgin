@@ -1,6 +1,6 @@
 /**
  * @file gntblist.c GNT BuddyList API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *
@@ -446,6 +446,8 @@ add_group(PurpleGroup *group, FinchBlist *ggblist)
 		return;
 	node->ui_data = gnt_tree_add_row_after(GNT_TREE(ggblist->tree), group,
 			gnt_tree_create_row(GNT_TREE(ggblist->tree), get_display_name(node)), NULL, NULL);
+	gnt_tree_set_expanded(GNT_TREE(ggblist->tree), node,
+		!purple_blist_node_get_bool(node, "collapsed"));
 }
 
 static const char *
@@ -907,6 +909,7 @@ finch_blist_rename_node_cb(PurpleBlistNode *node, PurpleBlistNode *selected)
 {
 	const char *name = NULL;
 	char *prompt;
+	const char *text;
 
 	if (PURPLE_BLIST_NODE_IS_CONTACT(node))
 		name = purple_contact_get_alias((PurpleContact*)node);
@@ -921,8 +924,9 @@ finch_blist_rename_node_cb(PurpleBlistNode *node, PurpleBlistNode *selected)
 
 	prompt = g_strdup_printf(_("Please enter the new name for %s"), name);
 
-	purple_request_input(node, _("Rename"), prompt, _("Enter empty string to reset the name."),
-			name, FALSE, FALSE, NULL, _("Rename"), G_CALLBACK(rename_blist_node),
+	text = PURPLE_BLIST_NODE_IS_GROUP(node) ? _("Rename") : _("Alias");
+	purple_request_input(node, text, prompt, _("Enter empty string to reset the name."),
+			name, FALSE, FALSE, NULL, text, G_CALLBACK(rename_blist_node),
 			_("Cancel"), NULL, node);
 
 	g_free(prompt);
@@ -1133,7 +1137,8 @@ draw_context_menu(FinchBlist *ggblist)
 
 	/* These are common for everything */
 	if (node) {
-		add_custom_action(GNT_MENU(context), _("Rename"),
+		add_custom_action(GNT_MENU(context),
+				PURPLE_BLIST_NODE_IS_GROUP(node) ? _("Rename") : _("Alias"),
 				PURPLE_CALLBACK(finch_blist_rename_node_cb), node);
 		add_custom_action(GNT_MENU(context), _("Remove"),
 				PURPLE_CALLBACK(finch_blist_remove_node_cb), node);
@@ -2105,6 +2110,13 @@ void finch_blist_show()
 }
 
 static void
+group_collapsed(GntWidget *widget, PurpleBlistNode *node, gboolean collapsed, gpointer null)
+{
+	if (PURPLE_BLIST_NODE_IS_GROUP(node))
+		purple_blist_node_set_bool(node, "collapsed", collapsed);
+}
+
+static void
 blist_show(PurpleBuddyList *list)
 {
 	if (ggblist == NULL)
@@ -2171,6 +2183,7 @@ blist_show(PurpleBuddyList *list)
 	g_signal_connect(G_OBJECT(ggblist->tree), "selection_changed", G_CALLBACK(selection_changed), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "key_pressed", G_CALLBACK(key_pressed), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "context-menu", G_CALLBACK(context_menu), ggblist);
+	g_signal_connect(G_OBJECT(ggblist->tree), "collapse-toggled", G_CALLBACK(group_collapsed), NULL);
 	g_signal_connect_after(G_OBJECT(ggblist->tree), "clicked", G_CALLBACK(blist_clicked), ggblist);
 	g_signal_connect(G_OBJECT(ggblist->tree), "activate", G_CALLBACK(selection_activate), ggblist);
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "gained-focus", G_CALLBACK(draw_tooltip),

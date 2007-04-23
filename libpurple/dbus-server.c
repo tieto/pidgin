@@ -143,7 +143,7 @@ purple_dbus_pointer_to_id_error(gpointer ptr, DBusError *error)
 	gint id = purple_dbus_pointer_to_id(ptr);
 
 	if (ptr != NULL && id == 0)
-		dbus_set_error(error, "net.sf.purple.ObjectNotFound",
+		dbus_set_error(error, "im.pidgin.purple.ObjectNotFound",
 				"The return object is not mapped (this is a Purple error)");
 
 	return id;
@@ -156,7 +156,7 @@ purple_dbus_id_to_pointer_error(gint id, PurpleDBusType *type,
 	gpointer ptr = purple_dbus_id_to_pointer(id, type);
 
 	if (ptr == NULL && id != 0)
-		dbus_set_error(error, "net.sf.purple.InvalidHandle",
+		dbus_set_error(error, "im.pidgin.purple.InvalidHandle",
 				"%s object with ID = %i not found", typename, id);
 
 	return ptr;

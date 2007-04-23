@@ -1,6 +1,6 @@
 /**
  * @file gntdebug.h GNT Debug API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

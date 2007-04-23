@@ -30,11 +30,7 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Start Menü"
 !define PIDGIN_SECTION_DESCRIPTION		"Pidgin fájlok és dll-ek"
 !define GTK_SECTION_DESCRIPTION			"A Pidgin által használt többplatformos grafikus eszközkészlet"
-!define GTK_THEMES_SECTION_DESCRIPTION		"A GTK+ témák megváltoztatják a GTK+ alkalmazások kinézetét."
-!define GTK_NO_THEME_DESC			"Ne telepítsen GTK+ témát"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows utánzat), a Windows környezettel harmonizáló GTK téma."
-!define GTK_BLUECURVE_THEME_DESC		"A Bluecurve téma."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC		"A Lighthouseblue téma."
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Parancsikonok a Pidgin indításához"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC		"Parancsikon létrehozása a Pidginhoz az asztalon"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC		"Start Menü bejegyzés létrehozása a Pidginhoz"

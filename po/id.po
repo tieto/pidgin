@@ -5,16 +5,16 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Gaim 1.1.3\\n"
-"Report-Msgid-Bugs-To: \\n"
-"POT-Creation-Date: 2007-03-10 14:10+0000\\n"
-"PO-Revision-Date:  2007-03-10 14:10+0000\\n"
-"Last-Translator: Rai S. Regawa <raireg@yahoo.com>\\n"
-"Language-Team:  <raireg@yahoo.com>\\n"
-"MIME-Version: 1.0\\n"
-"Content-Type: text/plain; charset=iso-8859-1\\n"
-"Content-Transfer-Encoding: 8bit\\n"
-"Plural-Forms: nplurals=2; plural=n>1;\\n"
+"Project-Id-Version: Gaim 1.1.3\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2007-03-10 14:10+0000\n"
+"PO-Revision-Date:  2007-03-10 14:10+0000\n"
+"Last-Translator: Rai S. Regawa <raireg@yahoo.com>\n"
+"Language-Team:  <raireg@yahoo.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n>1;\n"
 
 #: ../gaim.desktop.in.h:1
 msgid "Gaim Internet Messenger"
@@ -424,10 +424,10 @@ msgstr "Diam/Tak Terpakai"
 #: ../console/gntblist.c:1270
 #, c-format
 msgid ""
-"Online: %d\\n"
+"Online: %d\n"
 "Total: %d"
 msgstr ""
-"Online: %d\\n"
+"Online: %d\n"
 "Total: %d"
 
 #: ../console/gntblist.c:1279
@@ -438,10 +438,10 @@ msgstr "Akun: %s (%s)"
 #: ../console/gntblist.c:1291
 #, c-format
 msgid ""
-"\\n"
+"\n"
 "Last Seen: %s ago"
 msgstr ""
-"\\n"
+"\n"
 "Terakhir Terlihat: %s yang lalu"
 
 #: ../console/gntblist.c:1540 ../gtk/gtkdocklet.c:491
@@ -535,10 +535,10 @@ msgstr "%s terputus."
 #: ../console/gntconn.c:40
 #, c-format
 msgid ""
-"%s was disconnected due to the following error:\\n"
+"%s was disconnected due to the following error:\n"
 "%s"
 msgstr ""
-"%s telah terputus karena kesalahan berikut:\\n"
+"%s telah terputus karena kesalahan berikut:\n"
 "%s"
 
 #: ../console/gntconn.c:43 ../gtk/gtkblist.c:3865 ../libgaim/account.c:988
@@ -588,10 +588,10 @@ msgstr "%s [%s]"
 #: ../console/gntconv.c:260 ../console/gntconv.c:432
 #, c-format
 msgid ""
-"\\n"
+"\n"
 "%s is typing..."
 msgstr ""
-"\\n"
+"\n"
 "%s sedang mengetik..."
 
 #: ../console/gntconv.c:399
@@ -600,8 +600,8 @@ msgstr "<JAWAB-OTOMATIS> "
 
 #. Print the list of users in the room
 #: ../console/gntconv.c:501
-msgid "List of users:\\n"
-msgstr "Daftar dari pengguna:\\n"
+msgid "List of users:\n"
+msgstr "Daftar dari pengguna:\n"
 
 #: ../console/gntconv.c:625 ../gtk/gtkconv.c:386
 msgid "Supported debug options are:  version"
@@ -685,29 +685,29 @@ msgstr "Penanda Waktu"
 
 #: ../console/gntgaim.c:227
 #, c-format
-msgid "%s. Try `%s -h' for more information.\\n"
-msgstr "%s. Coba `%s -h' untuk informasi lebih lanjut.\\n"
+msgid "%s. Try `%s -h' for more information.\n"
+msgstr "%s. Coba `%s -h' untuk informasi lebih lanjut.\n"
 
 #: ../console/gntgaim.c:229
 #, c-format
 msgid ""
-"%s\\n"
-"Usage: %s [OPTION]...\\n"
-"\\n"
-"  -c, --config=DIR    use DIR for config files\\n"
-"  -d, --debug         print debugging messages to stdout\\n"
-"  -h, --help          display this help and exit\\n"
-"  -n, --nologin       don't automatically login\\n"
-"  -v, --version       display the current version and exit\\n"
+"%s\n"
+"Usage: %s [OPTION]...\n"
+"\n"
+"  -c, --config=DIR    use DIR for config files\n"
+"  -d, --debug         print debugging messages to stdout\n"
+"  -h, --help          display this help and exit\n"
+"  -n, --nologin       don't automatically login\n"
+"  -v, --version       display the current version and exit\n"
 msgstr ""
-"%s\\n"
-"Usage: %s [OPTION]...\\n"
-"\\n"
-"  -c, --config=DIR    gunakan DIR untuk file konfigurasi\\n"
-"  -d, --debug         cetak pesan-pesandebug ke stdout\\n"
-"  -h, --help          tampilkan bantuan ini dan keluar\\n"
-"  -n, --nologin       jangan login otomatis\\n"
-"  -v, --version       tampilkan versi kini dan keluar\\n"
+"%s\n"
+"Usage: %s [OPTION]...\n"
+"\n"
+"  -c, --config=DIR    gunakan DIR untuk file konfigurasi\n"
+"  -d, --debug         cetak pesan-pesandebug ke stdout\n"
+"  -h, --help          tampilkan bantuan ini dan keluar\n"
+"  -n, --nologin       jangan login otomatis\n"
+"  -v, --version       tampilkan versi kini dan keluar\n"
 
 #: ../console/gntnotify.c:146
 msgid "Emails"
@@ -781,19 +781,19 @@ msgstr "(tidak ada)"
 #: ../console/gntplugin.c:102
 #, c-format
 msgid ""
-"Name: %s\\n"
-"Version: %s\\n"
-"Description: %s\\n"
-"Author: %s\\n"
-"Website: %s\\n"
-"Filename: %s\\n"
+"Name: %s\n"
+"Version: %s\n"
+"Description: %s\n"
+"Author: %s\n"
+"Website: %s\n"
+"Filename: %s\n"
 msgstr ""
-"Nama: %s\\n"
-"Versi: %s\\n"
-"Uraian: %s\\n"
-"Penulis: %s\\n"
-"Situs: %s\\n"
-"Nama File: %s\\n"
+"Nama: %s\n"
+"Versi: %s\n"
+"Uraian: %s\n"
+"Penulis: %s\n"
+"Situs: %s\n"
+"Nama File: %s\n"
 
 #: ../console/gntplugin.c:155
 msgid "Plugin need to be loaded before you can configure it."
@@ -1076,13 +1076,13 @@ msgstr "Historis Plug-in Mensyaratkan Logging"
 
 #: ../console/plugins/gnthistory.c:139 ../gtk/plugins/history.c:148
 msgid ""
-"Logging can be enabled from Tools -> Preferences -> Logging.\\n"
-"\\n"
+"Logging can be enabled from Tools -> Preferences -> Logging.\n"
+"\n"
 "Enabling logs for instant messages and/or chats will activate history for "
 "the same conversation type(s)."
 msgstr ""
-"Logging dapat diaktifkan Tools -> Preferences -> Logging.\\n"
-"\\n"
+"Logging dapat diaktifkan Tools -> Preferences -> Logging.\n"
+"\n"
 "Mengaktifkan log untuk pesan instan dan/atau percakapan akan mengaktifkan historis "
 "untuk jenis-jenis pecakapan yang sama."
 
@@ -1283,23 +1283,23 @@ msgstr "Protokol"
 
 #: ../gtk/gtkaccount.c:2133
 msgid ""
-"<span size='larger' weight='bold'>Welcome to Gaim!</span>\\n"
-"\\n"
+"<span size='larger' weight='bold'>Welcome to Gaim!</span>\n"
+"\n"
 "You have no IM accounts configured. To start connecting with Gaim press the "
 "<b>Add</b> button below and configure your first account. If you want Gaim "
 "to connect to multiple IM accounts, press <b>Add</b> again to configure them "
-"all.\\n"
-"\\n"
+"all.\n"
+"\n"
 "You can come back to this window to add, edit, or remove accounts from "
 "<b>Accounts->Add/Edit</b> in the Buddy List window"
 msgstr ""
-"<span size='larger' weight='bold'>Selamat datang di Gaim!</span>\\n"
-"\\n"
+"<span size='larger' weight='bold'>Selamat datang di Gaim!</span>\n"
+"\n"
 "Anda tidak memiliki akun PI terpasang. Untuk memulai sambungan dengan Gaim tekan "
 "<b>Tambahkan</b> tombol di bawah dan atur akun anda yang pertama. Jika anda ingin Gaim "
 "untuk tersambung ke banyak akun PI, tekan <b>Tambahkan</b> kembali untuk mengatur "
-"semuanya.\\n"
-"\\n"
+"semuanya.\n"
+"\n"
 "Anda dapat kembali ke jendela ini untuk menambahkan, merubah, atau mengahpus akun-akun "
 "dari <b>Accounts->Tambahkan/Ubah</b> pada jendela Daftar Teman"
 
@@ -1327,10 +1327,10 @@ msgstr "Gabung percakapan"
 #: ../gtk/gtkblist.c:730
 msgid ""
 "Please enter the appropriate information about the chat you would like to "
-"join.\\n"
+"join.\n"
 msgstr ""
 "Mohon masukkan informasi yang sesuai mengenai percakapan ke mana anda ingin "
-"bergabung.\\n"
+"bergabung.\n"
 
 #: ../gtk/gtkblist.c:741 ../gtk/gtkpounce.c:529 ../gtk/gtkroomlist.c:399
 msgid "_Account:"
@@ -1475,8 +1475,8 @@ msgid "/_Accounts"
 msgstr "/_Akun-akun"
 
 #: ../gtk/gtkblist.c:2587 ../gtk/gtkblist.c:6279
-msgid "/Accounts/Add\\\\/Edit"
-msgstr "/Akun-akun/Tambahkan\\\\/Ubah"
+msgid "/Accounts/Add\\/Edit"
+msgstr "/Akun-akun/Tambahkan\\/Ubah"
 
 #. Tools
 #: ../gtk/gtkblist.c:2590
@@ -1535,10 +1535,10 @@ msgstr "/Bantuan/_Tentang"
 #: ../gtk/gtkblist.c:2638
 #, c-format
 msgid ""
-"\\n"
+"\n"
 "<b>Account:</b> %s"
 msgstr ""
-"\\n"
+"\n"
 "<b>Akun:</b> %s"
 
 #: ../gtk/gtkblist.c:2722
@@ -1632,10 +1632,10 @@ msgstr "/Piranti/Daftar Kamar"
 
 #: ../gtk/gtkblist.c:3578 ../gtk/gtkdocklet.c:152
 #, c-format
-msgid "%d unread message from %s\\n"
-msgid_plural "%d unread messages from %s\\n"
-msgstr[0] "%d pesan yang belum dibaca dari %s\\n"
-msgstr[1] "%d pesan-pesan yang belum dibaca dari %s\\n"
+msgid "%d unread message from %s\n"
+msgid_plural "%d unread messages from %s\n"
+msgstr[0] "%d pesan yang belum dibaca dari %s\n"
+msgstr[1] "%d pesan-pesan yang belum dibaca dari %s\n"
 
 #: ../gtk/gtkblist.c:3654
 msgid "Manually"
@@ -1685,14 +1685,14 @@ msgstr "/Akun-akun"
 #. Translators: Please maintain the use of -> and <- to refer to menu heirarchy
 #: ../gtk/gtkblist.c:4141
 msgid ""
-"<span weight='bold' size='larger'>Welcome to Gaim!</span>\\n"
-"\\n"
+"<span weight='bold' size='larger'>Welcome to Gaim!</span>\n"
+"\n"
 "You have no accounts enabled. Enable your IM accounts from the <b>Accounts</"
 "b> window at <b>Accounts->Add/Edit</b>. Once you enable accounts, you'll be "
 "able to sign on, set your status, and talk to your friends."
 msgstr ""
-"<span weight='bold' size='larger'>Selamat datang pada Gaim!</span>\\n"
-"\\n"
+"<span weight='bold' size='larger'>Selamat datang pada Gaim!</span>\n"
+"\n"
 "Anda tidak memiliki akun PI terpasang. Aktifkan akun PI anda dari jendela <b>Akun-akun</"
 "b> pada <b>Akun-akun->Tambahkan/Ubah</b>. Sekali anda mengaktifkan akun, anda akan "
 "dapat tersambung, mengatur status anda, dan berbicara dengan teman-teman anda."
@@ -1727,11 +1727,11 @@ msgstr "Teman-teman"
 msgid ""
 "Please enter the screen name of the person you would like to add to your "
 "buddy list. You may optionally enter an alias, or nickname,  for the buddy. "
-"The alias will be displayed in place of the screen name whenever possible.\\n"
+"The alias will be displayed in place of the screen name whenever possible.\n"
 msgstr ""
 "Mohon masukkan nama layar dari orang yang ingin anda tambahkan pada daftar "
 "teman anda. Anda dapat memasukkan nama alias, atau nama panggilan,  untuk "
-"teman ini. Nama alias akan ditampilkan pada tempat nama layar asal memungkinkan.\\n"
+"teman ini. Nama alias akan ditampilkan pada tempat nama layar asal memungkinkan.\n"
 
 #: ../gtk/gtkblist.c:5267 ../gtk/gtkblist.c:5628
 #: ../gtk/plugins/gevolution/add_buddy_dialog.c:554
@@ -1754,10 +1754,10 @@ msgstr ""
 #: ../gtk/gtkblist.c:5583
 msgid ""
 "Please enter an alias, and the appropriate information about the chat you "
-"would like to add to your buddy list.\\n"
+"would like to add to your buddy list.\n"
 msgstr ""
 "Mohon masukkan sebuah alias, dan informasi yang seusai mengenai percakapan "
-"yang anda igin tambahkan pada daftar teman.\\n"
+"yang anda igin tambahkan pada daftar teman.\n"
 
 #: ../gtk/gtkblist.c:5666
 msgid "Please enter the name of the group to be added."
@@ -1798,13 +1798,13 @@ msgstr "/Teman-teman/Atur Teman-teman"
 #: ../gtk/gtkconn.c:179
 #, c-format
 msgid ""
-"%s\\n"
-"\\n"
+"%s\n"
+"\n"
 "Gaim will not attempt to reconnect the account until you correct the error "
 "and re-enable the account."
 msgstr ""
-"%s\\n"
-"\\n"
+"%s\n"
+"\n"
 "Gaim tidak akan mencoba menyambungkan kembali akun sampai anda perbaiki kesalahan "
 "dan mengaktifkan kembali akun."
 
@@ -1847,8 +1847,8 @@ msgstr "Tidak dapat membuka file."
 
 #: ../gtk/gtkconv.c:973
 #, c-format
-msgid "<h1>Conversation with %s</h1>\\n"
-msgstr "<h1>Percakapan dengan %s</h1>\\n"
+msgid "<h1>Conversation with %s</h1>\n"
+msgstr "<h1>Percakapan dengan %s</h1>\n"
 
 #: ../gtk/gtkconv.c:997
 msgid "Save Conversation"
@@ -2709,8 +2709,8 @@ msgid "_Remove Chat"
 msgstr "_Hilangkan Percakapan"
 
 #: ../gtk/gtkdocklet.c:149
-msgid "Right-click for more unread messages...\\n"
-msgstr "Klik-kanan untuk menampilkan lebih banyak pesan yang belum dibaca...\\n"
+msgid "Right-click for more unread messages...\n"
+msgstr "Klik-kanan untuk menampilkan lebih banyak pesan yang belum dibaca...\n"
 
 #: ../gtk/gtkdocklet.c:456
 msgid "Change Status"
@@ -2944,44 +2944,44 @@ msgstr "_Salin Lokasi Link"
 
 #: ../gtk/gtkimhtml.c:3271
 msgid ""
-"<span size='larger' weight='bold'>Unrecognized file type</span>\\n"
-"\\n"
+"<span size='larger' weight='bold'>Unrecognized file type</span>\n"
+"\n"
 "Defaulting to PNG."
 msgstr ""
-"<span size='larger' weight='bold'>Jenis File Tidak Dikenal</span>\\n"
-"\\n"
+"<span size='larger' weight='bold'>Jenis File Tidak Dikenal</span>\n"
+"\n"
 "Distandardkan ke PNG."
 
 #: ../gtk/gtkimhtml.c:3274
 msgid ""
-"Unrecognized file type\\n"
-"\\n"
+"Unrecognized file type\n"
+"\n"
 "Defaulting to PNG."
 msgstr ""
-"Jenis File Tidak Dikenal\\n"
-"\\n"
+"Jenis File Tidak Dikenal\n"
+"\n"
 "Distandardkan ke PNG."
 
 #: ../gtk/gtkimhtml.c:3287
 #, c-format
 msgid ""
-"<span size='larger' weight='bold'>Error saving image</span>\\n"
-"\\n"
+"<span size='larger' weight='bold'>Error saving image</span>\n"
+"\n"
 "%s"
 msgstr ""
-"<span size='larger' weight='bold'>Kesalahan dalam menyimpan gambar</span>\\n"
-"\\n"
+"<span size='larger' weight='bold'>Kesalahan dalam menyimpan gambar</span>\n"
+"\n"
 "%s"
 
 #: ../gtk/gtkimhtml.c:3290
 #, c-format
 msgid ""
-"Error saving image\\n"
-"\\n"
+"Error saving image\n"
+"\n"
 "%s"
 msgstr ""
-">Kesalahan dalam menyimpan gambar\\n"
-"\\n"
+">Kesalahan dalam menyimpan gambar\n"
+"\n"
 "%s"
 
 #: ../gtk/gtkimhtml.c:3370 ../gtk/gtkimhtml.c:3382
@@ -3034,8 +3034,8 @@ msgstr "_Masukkan"
 
 #: ../gtk/gtkimhtmltoolbar.c:487
 #, c-format
-msgid "Failed to store image: %s\\n"
-msgstr "Gagal menyimpan gambar: %s\\n"
+msgid "Failed to store image: %s\n"
+msgstr "Gagal menyimpan gambar: %s\n"
 
 #: ../gtk/gtkimhtmltoolbar.c:513 ../gtk/gtkimhtmltoolbar.c:523
 msgid "Insert Image"
@@ -3141,72 +3141,72 @@ msgstr "Log Sistem"
 
 #: ../gtk/gtkmain.c:344
 #, c-format
-msgid "Gaim %s. Try `%s -h' for more information.\\n"
-msgstr "Gaim %s. Mencoba `%s -h' untuk informasi lebih banyak.\\n"
+msgid "Gaim %s. Try `%s -h' for more information.\n"
+msgstr "Gaim %s. Mencoba `%s -h' untuk informasi lebih banyak.\n"
 
 #: ../gtk/gtkmain.c:346
 #, c-format
 msgid ""
-"Gaim %s\\n"
-"Usage: %s [OPTION]...\\n"
-"\\n"
-"  -c, --config=DIR    use DIR for config files\\n"
-"  -d, --debug         print debugging messages to stdout\\n"
-"  -h, --help          display this help and exit\\n"
-"  -n, --nologin       don't automatically login\\n"
-"  -l, --login[=NAME]  automatically login (optional argument NAME specifies\\n"
-"                      account(s) to use, separated by commas)\\n"
-"  -v, --version       display the current version and exit\\n"
+"Gaim %s\n"
+"Usage: %s [OPTION]...\n"
+"\n"
+"  -c, --config=DIR    use DIR for config files\n"
+"  -d, --debug         print debugging messages to stdout\n"
+"  -h, --help          display this help and exit\n"
+"  -n, --nologin       don't automatically login\n"
+"  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
+"                      account(s) to use, separated by commas)\n"
+"  -v, --version       display the current version and exit\n"
 msgstr ""
-"Gaim %s\\n"
-"Penggunaan: %s [OPTION]...\\n"
-"\\n"
-"  -c, --config=DIR    gunakan DIR untuk konfigurasi file\\n"
-"  -d, --debug         cetak pesan debugg ke stdout\\n"
-"  -h, --help          tampilkan bantuan ini dan keluar\\n"
-"  -n, --nologin       jangan login otomatis\\n"
-"  -l, --login[=NAME]  login otomatis (optional argument NAME specifies\\n"
-"                      akun(-akun) yang digunakan, dipisahkan dengan koma)\\n"
-"  -v, --version       tampilkan versi terakhir dan keluar\\n"
+"Gaim %s\n"
+"Penggunaan: %s [OPTION]...\n"
+"\n"
+"  -c, --config=DIR    gunakan DIR untuk konfigurasi file\n"
+"  -d, --debug         cetak pesan debugg ke stdout\n"
+"  -h, --help          tampilkan bantuan ini dan keluar\n"
+"  -n, --nologin       jangan login otomatis\n"
+"  -l, --login[=NAME]  login otomatis (optional argument NAME specifies\n"
+"                      akun(-akun) yang digunakan, dipisahkan dengan koma)\n"
+"  -v, --version       tampilkan versi terakhir dan keluar\n"
 
 #: ../gtk/gtkmain.c:528
 #, c-format
 msgid ""
-"Gaim has segfaulted and attempted to dump a core file.\\n"
-"This is a bug in the software and has happened through\\n"
-"no fault of your own.\\n"
-"\\n"
-"If you can reproduce the crash, please notify the gaim\\n"
-"developers by reporting a bug at\\n"
-"%sbug.php\\n"
-"\\n"
-"Please make sure to specify what you were doing at the time\\n"
-"and post the backtrace from the core file.  If you do not know\\n"
-"how to get the backtrace, please read the instructions at\\n"
-"%sgdb.php\\n"
-"\\n"
-"If you need further assistance, please IM either SeanEgn or \\n"
-"LSchiere (via AIM).  Contact information for Sean and Luke \\n"
-"on other protocols is at\\n"
-"%scontactinfo.php\\n"
+"Gaim has segfaulted and attempted to dump a core file.\n"
+"This is a bug in the software and has happened through\n"
+"no fault of your own.\n"
+"\n"
+"If you can reproduce the crash, please notify the gaim\n"
+"developers by reporting a bug at\n"
+"%sbug.php\n"
+"\n"
+"Please make sure to specify what you were doing at the time\n"
+"and post the backtrace from the core file.  If you do not know\n"
+"how to get the backtrace, please read the instructions at\n"
+"%sgdb.php\n"
+"\n"
+"If you need further assistance, please IM either SeanEgn or \n"
+"LSchiere (via AIM).  Contact information for Sean and Luke \n"
+"on other protocols is at\n"
+"%scontactinfo.php\n"
 msgstr ""
-"Gaim melakukan kesalahan dan mencoba untuk mebuang file inti.\\n"
-"Ini adalah bug pada piranti lunak dan terjadi bukan atas\\n"
-"kesalahan anda sendiri.\\n"
-"\\n"
-"Apabila anda dapat mengulangi crash, mohon hubungi para\\n"
-"pengembang gaim dengan melaporkan bug pada\\n"
-"%sbug.php\\n"
-"\\n"
-"Mohon pastikan anda menjabarkan apa yang anda lakukan pada saat itu\\n"
-"dan post lacak balik dari file inti. Apabila anda tidak tahu\\n"
-"bagimana mendapatkan lacak balik, mohon baca petunjuk pada\\n"
-"%sgdb.php\\n"
-"\\n"
-"Apabila anda memerlukan bantuan lebih lanjut, mohon PI baik SeanEng atau \\n"
-"LSchiere (melalui AIM).  Informasi kontak untuk Sean dan Luke \\n"
-"pada protokol lain terdapat pada\\n"
-"%scontactinfo.php\\n"
+"Gaim melakukan kesalahan dan mencoba untuk mebuang file inti.\n"
+"Ini adalah bug pada piranti lunak dan terjadi bukan atas\n"
+"kesalahan anda sendiri.\n"
+"\n"
+"Apabila anda dapat mengulangi crash, mohon hubungi para\n"
+"pengembang gaim dengan melaporkan bug pada\n"
+"%sbug.php\n"
+"\n"
+"Mohon pastikan anda menjabarkan apa yang anda lakukan pada saat itu\n"
+"dan post lacak balik dari file inti. Apabila anda tidak tahu\n"
+"bagimana mendapatkan lacak balik, mohon baca petunjuk pada\n"
+"%sgdb.php\n"
+"\n"
+"Apabila anda memerlukan bantuan lebih lanjut, mohon PI baik SeanEng atau \n"
+"LSchiere (melalui AIM).  Informasi kontak untuk Sean dan Luke \n"
+"pada protokol lain terdapat pada\n"
+"%scontactinfo.php\n"
 
 #: ../gtk/gtknotify.c:474
 msgid "Sender"
@@ -3694,10 +3694,10 @@ msgstr "Tab baru"
 #: ../gtk/gtkprefs.c:1318
 #, c-format
 msgid ""
-"_Manual:\\n"
+"_Manual:\n"
 "(%s for URL)"
 msgstr ""
-"_Petunjuk:\\n"
+"_Petunjuk:\n"
 "(%s untuk URL)"
 
 #: ../gtk/gtkprefs.c:1358
@@ -3775,10 +3775,10 @@ msgstr "Tanpa Suara"
 #: ../gtk/gtkprefs.c:1613
 #, c-format
 msgid ""
-"Sound c_ommand:\\n"
+"Sound c_ommand:\n"
 "(%s for filename)"
 msgstr ""
-"P_erintah Suara:\\n"
+"P_erintah Suara:\n"
 "(%s untuk nama file)"
 
 #: ../gtk/gtkprefs.c:1639
@@ -4245,12 +4245,12 @@ msgstr ""
 #: ../gtk/gtkutils.c:2343
 #, c-format
 msgid ""
-"<b>File:</b> %s\\n"
-"<b>File size:</b> %s\\n"
+"<b>File:</b> %s\n"
+"<b>File size:</b> %s\n"
 "<b>Image size:</b> %dx%d"
 msgstr ""
-"<b>File:</b> %s\\n"
-"<b>Ukuran File:</b> %s\\n"
+"<b>File:</b> %s\n"
+"<b>Ukuran File:</b> %s\n"
 "<b>Ukuran Gambar:</b> %dx%d"
 
 #. Label
@@ -4262,8 +4262,8 @@ msgstr "Ikon Teman"
 
 #: ../gtk/gtkutils.c:2653
 #, c-format
-msgid "The file '%s' is too large for %s.  Please try a smaller image.\\n"
-msgstr "File '%s' terlalu besar untuk %s.  Mohon coba gambar yang lebih kecil.\\n"
+msgid "The file '%s' is too large for %s.  Please try a smaller image.\n"
+msgstr "File '%s' terlalu besar untuk %s.  Mohon coba gambar yang lebih kecil.\n"
 
 #: ../gtk/gtkutils.c:2655
 msgid "Icon Error"
@@ -4378,10 +4378,10 @@ msgstr "Nilai point untuk digunakan saat..."
 #: ../gtk/plugins/contact_priority.c:118
 msgid ""
 "The buddy with the <i>largest score</i> is the buddy who will have priority "
-"in the contact.\\n"
+"in the contact.\n"
 msgstr ""
 "Teman dengan <i>skor tertinggi</i> adalah teman yang akan mendapat prioritas "
-"di dalam kontak.\\n"
+"di dalam kontak.\n"
 
 #: ../gtk/plugins/contact_priority.c:125
 msgid "Use last buddy when scores are equal"
@@ -4532,14 +4532,14 @@ msgstr "Contoh plugin yang melakukan sesuatu - lihat deskripsi."
 #. *  description
 #: ../gtk/plugins/gaiminc.c:96
 msgid ""
-"This is a really cool plugin that does a lot of stuff:\\n"
-"- It tells you who wrote the program when you log in\\n"
-"- It reverses all incoming text\\n"
+"This is a really cool plugin that does a lot of stuff:\n"
+"- It tells you who wrote the program when you log in\n"
+"- It reverses all incoming text\n"
 "- It sends a message to people on your list immediately when they sign on"
 msgstr ""
-"Ini betul-betul plugin yang keren yang melakukan banyak hal:\\n"
-"- Menginformasikan siapa yang menulis program saat login\\n"
-"- Membalikkan semua teks masuk\\n"
+"Ini betul-betul plugin yang keren yang melakukan banyak hal:\n"
+"- Menginformasikan siapa yang menulis program saat login\n"
+"- Membalikkan semua teks masuk\n"
 "- Mengirim pesan kepada orang-orang di daftar anda begitu mereka bergabung"
 
 #: ../gtk/plugins/gaimrc.c:41
@@ -4668,18 +4668,18 @@ msgstr "Sediakan dukungan untuk perilaku mouse"
 #. *  description
 #: ../gtk/plugins/gestures/gestures.c:294
 msgid ""
-"Allows support for mouse gestures in conversation windows.\\n"
-"Drag the middle mouse button to perform certain actions:\\n"
-"\\n"
-"Drag down and then to the right to close a conversation.\\n"
-"Drag up and then to the left to switch to the previous conversation.\\n"
+"Allows support for mouse gestures in conversation windows.\n"
+"Drag the middle mouse button to perform certain actions:\n"
+"\n"
+"Drag down and then to the right to close a conversation.\n"
+"Drag up and then to the left to switch to the previous conversation.\n"
 "Drag up and then to the right to switch to the next conversation."
 msgstr ""
-"Memungkinkan dukungan untuk perilaku mouse dalam jendela percakapan.\\n"
-"Tarik tombol tengah mouse untuk menampilkan aksi tertentu:\\n"
-"\\n"
-"Tarik bawah dan kemudian ke kanan untuk menutup sebuah percakapan.\\n"
-"Tarik atas dan kemudian ke kiri untuk berpindah ke percakapan sebelumnya.\\n"
+"Memungkinkan dukungan untuk perilaku mouse dalam jendela percakapan.\n"
+"Tarik tombol tengah mouse untuk menampilkan aksi tertentu:\n"
+"\n"
+"Tarik bawah dan kemudian ke kanan untuk menutup sebuah percakapan.\n"
+"Tarik atas dan kemudian ke kiri untuk berpindah ke percakapan sebelumnya.\n"
 "Tarik atas dan kemudian ke kanan untuk berpindah ke percakapan berikutnya."
 
 #: ../gtk/plugins/gevolution/add_buddy_dialog.c:143
@@ -4960,8 +4960,8 @@ msgid "Notify For"
 msgstr "Beritahu untuk"
 
 #: ../gtk/plugins/notify.c:689
-msgid "\\t_Only when someone says your screen name"
-msgstr "\\t_Hanya ketika seseorang menyebut nama layar anda"
+msgid "\t_Only when someone says your screen name"
+msgstr "\t_Hanya ketika seseorang menyebut nama layar anda"
 
 #: ../gtk/plugins/notify.c:699
 msgid "_Focused windows"
@@ -5069,10 +5069,10 @@ msgstr "Anda menggunakan Gaim versi %s.  Versi terbaru adalah %s.<hr>"
 #: ../gtk/plugins/relnot.c:75
 #, c-format
 msgid ""
-"<b>ChangeLog:</b>\\n"
+"<b>ChangeLog:</b>\n"
 "%s<br><br>"
 msgstr ""
-"<b>LogPerubahan:</b>\\n"
+"<b>LogPerubahan:</b>\n"
 "%s<br><br>"
 
 #: ../gtk/plugins/relnot.c:80
@@ -5385,13 +5385,13 @@ msgstr "Variabel Transparansi untuk daftar teman dan percakapan."
 #: ../gtk/plugins/win32/transparency/win2ktrans.c:663
 msgid ""
 "This plugin enables variable alpha transparency on conversation windows and "
-"the buddy list.\\n"
-"\\n"
+"the buddy list.\n"
+"\n"
 "* Note: This plugin requires Win2000 or greater."
 msgstr ""
 "Plugin ini mengaktifkan variabel transparansi alpha pada jendela percakapan dan "
-"daftar teman.\\n"
-"\\n"
+"daftar teman.\n"
+"\n"
 "* Catatan: Plugin ini memerlukan Win2000 atau di atasnya."
 
 #: ../gtk/plugins/win32/winprefs/winprefs.c:306
@@ -5510,18 +5510,18 @@ msgstr "daftar teman"
 #, c-format
 msgid ""
 "%d buddy from group %s was not removed because it belongs to an account "
-"which is disabled or offline.  This buddy and the group were not removed.\\n"
+"which is disabled or offline.  This buddy and the group were not removed.\n"
 msgid_plural ""
 "%d buddies from group %s were not removed because they belong to accounts "
 "which are currently disabled or offline.  These buddies and the group were "
-"not removed.\\n"
+"not removed.\n"
 msgstr[0] ""
 "%d teman dari kelompok %s tidak dihilangkan karena merupakan bagian dari akun "
-"yang sedang dinonaktifkan atau offline.  Teman dan kelompok ini tidak dihilangkan.\\n"
+"yang sedang dinonaktifkan atau offline.  Teman dan kelompok ini tidak dihilangkan.\n"
 msgstr[1] ""
 "%d teman-teman dari kelompok %s tidak dihilangkan karena merupakan bagian dari akun-akun "
 "yang sedang dinonaktifkan atau offline.   Teman-teman dan kelompok ini tidak"
-"dihilangkan.\\n"
+"dihilangkan.\n"
 
 #: ../libgaim/blist.c:1929
 msgid "Group not removed"
@@ -5616,20 +5616,20 @@ msgid "Failed to get serv name: %s"
 msgstr "Gagal mendapatkan nama serv: %s"
 
 #: ../libgaim/dnsquery.c:491
-msgid "Unable to create new resolver process\\n"
-msgstr "Gagal menciptakan proses penanganan baru\\n"
+msgid "Unable to create new resolver process\n"
+msgstr "Gagal menciptakan proses penanganan baru\n"
 
 #: ../libgaim/dnsquery.c:496
-msgid "Unable to send request to resolver process\\n"
-msgstr "Tidak dapat mengirim permohonan ke proses penanganan\\n"
+msgid "Unable to send request to resolver process\n"
+msgstr "Tidak dapat mengirim permohonan ke proses penanganan\n"
 
 #: ../libgaim/dnsquery.c:529 ../libgaim/dnsquery.c:677
 #, c-format
 msgid ""
-"Error resolving %s:\\n"
+"Error resolving %s:\n"
 "%s"
 msgstr ""
-"Kesalahan penanganan %s:\\n"
+"Kesalahan penanganan %s:\n"
 "%s"
 
 #: ../libgaim/dnsquery.c:532 ../libgaim/dnsquery.c:691
@@ -5641,10 +5641,10 @@ msgstr "Kesalahan penanganan %s: %d"
 #: ../libgaim/dnsquery.c:554
 #, c-format
 msgid ""
-"Error reading from resolver process:\\n"
+"Error reading from resolver process:\n"
 "%s"
 msgstr ""
-"Kesalahan membaca dari proses penanganan:\\n"
+"Kesalahan membaca dari proses penanganan:\n"
 "%s"
 
 #: ../libgaim/dnsquery.c:558
@@ -5663,29 +5663,29 @@ msgstr "Alasan tidak jelas"
 #: ../libgaim/ft.c:195 ../libgaim/protocols/msn/msn.c:408
 #, c-format
 msgid ""
-"Error reading %s: \\n"
-"%s.\\n"
+"Error reading %s: \n"
+"%s.\n"
 msgstr ""
-"Kesalahan pembacaan %s: \\n"
-"%s.\\n"
+"Kesalahan pembacaan %s: \n"
+"%s.\n"
 
 #: ../libgaim/ft.c:199
 #, c-format
 msgid ""
-"Error writing %s: \\n"
-"%s.\\n"
+"Error writing %s: \n"
+"%s.\n"
 msgstr ""
-"Kesalahan penulisan %s: \\n"
-"%s.\\n"
+"Kesalahan penulisan %s: \n"
+"%s.\n"
 
 #: ../libgaim/ft.c:203
 #, c-format
 msgid ""
-"Error accessing %s: \\n"
-"%s.\\n"
+"Error accessing %s: \n"
+"%s.\n"
 msgstr ""
-"Kesalahan mengakses %s: \\n"
-"%s.\\n"
+"Kesalahan mengakses %s: \n"
+"%s.\n"
 
 #: ../libgaim/ft.c:239
 msgid "Directory is not writable."
@@ -5701,8 +5701,8 @@ msgstr "Tidak dapat mengirim direktori."
 
 #: ../libgaim/ft.c:273
 #, c-format
-msgid "%s is not a regular file. Cowardly refusing to overwrite it.\\n"
-msgstr "%s bukan file regular. Dengan pengecut menolok untuk menimpanya.\\n"
+msgid "%s is not a regular file. Cowardly refusing to overwrite it.\n"
+msgstr "%s bukan file regular. Dengan pengecut menolok untuk menimpanya.\n"
 
 #: ../libgaim/ft.c:331
 #, c-format
@@ -5722,12 +5722,12 @@ msgstr "Terima permohonan transfer file dari %s?"
 #: ../libgaim/ft.c:383
 #, c-format
 msgid ""
-"A file is available for download from:\\n"
-"Remote host: %s\\n"
+"A file is available for download from:\n"
+"Remote host: %s\n"
 "Remote port: %d"
 msgstr ""
-"Sebuah file tersedia untuk didownload dari:\\n"
-"Host Jauh: %s\\n"
+"Sebuah file tersedia untuk didownload dari:\n"
+"Host Jauh: %s\n"
 "Port Jauh: %d"
 
 #: ../libgaim/ft.c:416
@@ -5737,8 +5737,8 @@ msgstr "%s menawarkan untuk mengirim file %s"
 
 #: ../libgaim/ft.c:468
 #, c-format
-msgid "%s is not a valid filename.\\n"
-msgstr "%s adalah nama file tidak valid.\\n"
+msgid "%s is not a valid filename.\n"
+msgstr "%s adalah nama file tidak valid.\n"
 
 #: ../libgaim/ft.c:489
 #, c-format
@@ -5980,19 +5980,19 @@ msgstr "XML"
 #, c-format
 msgid ""
 "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s <AUTO-"
-"REPLY>:</b></font> %s<br/>\\n"
+"REPLY>:</b></font> %s<br/>\n"
 msgstr ""
 "<font color=\"#16569E\"><font size=\"2\">(%s)</font> <b>%s <JAWAB-"
-"OTOMATIS>:</b></font> %s<br/>\\n"
+"OTOMATIS>:</b></font> %s<br/>\n"
 
 #: ../libgaim/log.c:1117
 #, c-format
 msgid ""
 "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s <AUTO-"
-"REPLY>:</b></font> %s<br/>\\n"
+"REPLY>:</b></font> %s<br/>\n"
 msgstr ""
 "<font color=\"#A82F2F\"><font size=\"2\">(%s)</font> <b>%s <JAWAB-"
-"OTOMATIS>:</b></font> %s<br/>\\n"
+"OTOMATIS>:</b></font> %s<br/>\n"
 
 #: ../libgaim/log.c:1175 ../libgaim/log.c:1306
 msgid "<font color=\"red\"><b>Unable to find log path!</b></font>"
@@ -6005,8 +6005,8 @@ msgstr "<font color=\"red\"><b>Tidak dapat membaca file: %s</b></font>"
 
 #: ../libgaim/log.c:1249
 #, c-format
-msgid "(%s) %s <AUTO-REPLY>: %s\\n"
-msgstr "(%s) %s <AUTO-REPLY>: %s\\n"
+msgid "(%s) %s <AUTO-REPLY>: %s\n"
+msgstr "(%s) %s <AUTO-REPLY>: %s\n"
 
 #: ../libgaim/plugin.c:282 ../libgaim/protocols/jabber/buddy.c:1685
 #: ../libgaim/protocols/msn/servconn.c:139
@@ -6128,10 +6128,10 @@ msgstr "Terima Otomatis Transfer File..."
 #. XXX: Is there a better way than this? There really should be.
 #: ../libgaim/plugins/autoaccept.c:211
 msgid ""
-"Path to save the files in\\n"
+"Path to save the files in\n"
 "(Please provide the full path)"
 msgstr ""
-"Path untuk menyimipan file in\\n"
+"Path untuk menyimipan file in\n"
 "(Mohon sediakan path lengkap)"
 
 #: ../libgaim/plugins/autoaccept.c:216
@@ -6140,10 +6140,10 @@ msgstr "Tolak otomatis dari pengguna yang tidak terdapat dalam daftar teman"
 
 #: ../libgaim/plugins/autoaccept.c:220
 msgid ""
-"Notify with a popup when an autoaccepted file transfer is complete\\n"
+"Notify with a popup when an autoaccepted file transfer is complete\n"
 "(only when there's no conversation with the sender)"
 msgstr ""
-"Beritahukan degan popup ketika transfer file yang diterima otomatis selesai\\n"
+"Beritahukan degan popup ketika transfer file yang diterima otomatis selesai\n"
 "(hanya ketika tidak ada percakapan dengan pengirim)"
 
 #: ../libgaim/plugins/autoreply.c:23
@@ -6551,14 +6551,14 @@ msgstr "Menyertakan log klien PI lainnya dalam penglihat log."
 #: ../libgaim/plugins/log_reader.c:2134
 msgid ""
 "When viewing logs, this plugin will include logs from other IM clients. "
-"Currently, this includes Adium, MSN Messenger, and Trillian.\\n"
-"\\n"
+"Currently, this includes Adium, MSN Messenger, and Trillian.\n"
+"\n"
 "WARNING: This plugin is still alpha code and may crash frequently.  Use it "
 "at your own risk!"
 msgstr ""
 "Ketika melihat log, plugin ini akan menyertakan log dari klien PI lain. "
-"Saat ini, menyertakan Adium, MSN Messenger, and Trillian.\\n"
-"\\n"
+"Saat ini, menyertakan Adium, MSN Messenger, and Trillian.\n"
+"\n"
 "PERINGATAN: Plugin ini masih berupa kode aplha dan mungkin sering crash.  Gunakan "
 "dengan resiko anda sendiri!"
 
@@ -6858,15 +6858,15 @@ msgstr "Menyediakan dukungan untuk memuat plugin Tcl"
 #: ../libgaim/plugins/tcl/tcl.c:481
 msgid ""
 "Unable to detect ActiveTCL installation. If you wish to use TCL plugins, "
-"install ActiveTCL from http://www.activestate.com\\n"
+"install ActiveTCL from http://www.activestate.com\n"
 msgstr ""
 "Tidak dapat mendeteksi instalasi ActiveTCL. Jika anda ingin menggunakan plugin TCL, "
-"instal ActiveTCL dari http://www.activestate.com\\n"
+"instal ActiveTCL dari http://www.activestate.com\n"
 
 #. Send a message about the connection error
 #: ../libgaim/protocols/bonjour/bonjour.c:111
-msgid "Unable to listen for incoming IM connections\\n"
-msgstr "Tidak dapat mendengarkan sambungan masuk PI\\n"
+msgid "Unable to listen for incoming IM connections\n"
+msgstr "Tidak dapat mendengarkan sambungan masuk PI\n"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:146
 msgid ""
@@ -6975,8 +6975,8 @@ msgstr "Kesalahan Token"
 
 #: ../libgaim/protocols/gg/gg.c:116 ../libgaim/protocols/gg/gg.c:138
 #: ../libgaim/protocols/gg/gg.c:181
-msgid "Unable to fetch the token.\\n"
-msgstr "Tidak dapat mengambil token.\\n"
+msgid "Unable to fetch the token.\n"
+msgstr "Tidak dapat mengambil token.\n"
 
 #: ../libgaim/protocols/gg/gg.c:269 ../libgaim/protocols/gg/gg.c:288
 msgid "Save Buddylist..."
@@ -7019,8 +7019,8 @@ msgid "Passwords do not match."
 msgstr "Kata sandi tidak sama."
 
 #: ../libgaim/protocols/gg/gg.c:394
-msgid "Unable to register new account. Error occurred.\\n"
-msgstr "Tidak dapat mendaftarkan akun baru. Kesalahan terjadi.\\n"
+msgid "Unable to register new account. Error occurred.\n"
+msgstr "Tidak dapat mendaftarkan akun baru. Kesalahan terjadi.\n"
 
 #: ../libgaim/protocols/gg/gg.c:407
 msgid "New Gadu-Gadu Account Registered"
@@ -7113,8 +7113,8 @@ msgid "Your current password is different from the one that you specified."
 msgstr "Kata sandi anda sekarang berbeda dengan yang ditentukan sebelumnya."
 
 #: ../libgaim/protocols/gg/gg.c:716
-msgid "Unable to change password. Error occurred.\\n"
-msgstr "Tidak dapat mengganti kata sandi. Kesalahan terjadi.\\n"
+msgid "Unable to change password. Error occurred.\n"
+msgstr "Tidak dapat mengganti kata sandi. Kesalahan terjadi.\n"
 
 #: ../libgaim/protocols/gg/gg.c:725
 msgid "Change password for the Gadu-Gadu account"
@@ -9105,8 +9105,8 @@ msgstr "Kesalahan Kode Tidak Dikenal %d"
 
 #: ../libgaim/protocols/msn/error.c:236
 #, c-format
-msgid "MSN Error: %s\\n"
-msgstr "Kesalahan MSN: %s\\n"
+msgid "MSN Error: %s\n"
+msgstr "Kesalahan MSN: %s\n"
 
 #: ../libgaim/protocols/msn/msn.c:111
 msgid "You have just sent a Nudge!"
@@ -9570,28 +9570,28 @@ msgstr "TIdak dapat menghapus kelompok"
 msgid ""
 "The MSN server will shut down for maintenance in %d minute. You will "
 "automatically be signed out at that time.  Please finish any conversations "
-"in progress.\\n"
-"\\n"
+"in progress.\n"
+"\n"
 "After the maintenance has been completed, you will be able to successfully "
 "sign in."
 msgid_plural ""
 "The MSN server will shut down for maintenance in %d minutes. You will "
 "automatically be signed out at that time.  Please finish any conversations "
-"in progress.\\n"
-"\\n"
+"in progress.\n"
+"\n"
 "After the maintenance has been completed, you will be able to successfully "
 "sign in."
 msgstr[0] ""
 "Sever MSN server akan mati untuk pemeliharaan dalam %d menit. Anda akan "
 "secara otomatis dikeluarkan pada saat itu.  Mohon akhiri percakapan yang "
-"sedang berlangsung.\\n"
-"\\n"
+"sedang berlangsung.\n"
+"\n"
 "Setelah pemeliharaan selesai, anda akan dapat berbagung dengan sukses."
 msgstr[1] ""
 "Sever MSN server akan mati untuk pemeliharaan dalam %d menit. Anda akan "
 "secara otomatis dikeluarkan pada saat itu.  Mohon akhiri percakapan yang "
-"sedang berlangsung.\\n"
-"\\n"
+"sedang berlangsung.\n"
+"\n"
 "Setelah pemeliharaan selesai, anda akan dapat berbagung dengan sukses."
 
 #: ../libgaim/protocols/msn/servconn.c:135
@@ -9605,10 +9605,10 @@ msgstr "Keslahan Pembacaan"
 #: ../libgaim/protocols/msn/servconn.c:144
 #, c-format
 msgid ""
-"Connection error from %s server:\\n"
+"Connection error from %s server:\n"
 "%s"
 msgstr ""
-"Kesalahan sambungan dari server %s:\\n"
+"Kesalahan sambungan dari server %s:\n"
 "%s"
 
 #: ../libgaim/protocols/msn/session.c:299
@@ -10022,12 +10022,12 @@ msgstr "Undangan ke Percakapan"
 #: ../libgaim/protocols/novell/novell.c:1902
 #, c-format
 msgid ""
-"Invitation from: %s\\n"
-"\\n"
+"Invitation from: %s\n"
+"\n"
 "Sent: %s"
 msgstr ""
-"Undangan dari: %s\\n"
-"\\n"
+"Undangan dari: %s\n"
+"\n"
 "Dikirim: %s"
 
 #: ../libgaim/protocols/novell/novell.c:1904
@@ -10105,10 +10105,10 @@ msgstr "Server menutup sambungan."
 #: ../libgaim/proxy.c:1425
 #, c-format
 msgid ""
-"Lost connection with server:\\n"
+"Lost connection with server:\n"
 "%s"
 msgstr ""
-"Kehilangan sambungan dengan server:\\n"
+"Kehilangan sambungan dengan server:\n"
 "%s"
 
 #: ../libgaim/protocols/oscar/flap_connection.c:384 ../libgaim/proxy.c:1103
@@ -10120,10 +10120,10 @@ msgstr "Menerima data tidak valid pada sambungan dengan server."
 #: ../libgaim/protocols/oscar/flap_connection.c:386
 #, c-format
 msgid ""
-"Could not establish a connection with the server:\\n"
+"Could not establish a connection with the server:\n"
 "%s"
 msgstr ""
-"Tidak dapat membuat sambungan dengan server:\\n"
+"Tidak dapat membuat sambungan dengan server:\n"
 "%s"
 
 #. *< type
@@ -10143,10 +10143,10 @@ msgstr "Plugin Protokol AIM"
 
 #: ../libgaim/protocols/oscar/libaim.c:140
 msgid ""
-"Always use AIM/ICQ proxy server for file transfers\\n"
+"Always use AIM/ICQ proxy server for file transfers\n"
 "(slower, but does not reveal your IP address)"
 msgstr ""
-"Selalu gunakan server proxy AIM/ICQ untuk transfer file\\n"
+"Selalu gunakan server proxy AIM/ICQ untuk transfer file\n"
 "(lebih lambat, tapi tidak mengungkapkan alamat IP anda)"
 
 #. *< type
@@ -10172,10 +10172,10 @@ msgstr "Mengkodekan"
 
 #: ../libgaim/protocols/oscar/libicq.c:143
 msgid ""
-"Always use ICQ proxy server for file transfers\\n"
+"Always use ICQ proxy server for file transfers\n"
 "(slower, but does not reveal your IP address)"
 msgstr ""
-"Selalu gunakan server proxy ICQ untuk transfer file\\n"
+"Selalu gunakan server proxy ICQ untuk transfer file\n"
 "(lebih lambat, tapi tidak mengungkapkan alamat IP anda)"
 
 #: ../libgaim/protocols/oscar/odc.c:40
@@ -10446,19 +10446,19 @@ msgstr "Komentar Teman"
 #: ../libgaim/protocols/oscar/oscar.c:974
 #, c-format
 msgid ""
-"Could not connect to authentication server:\\n"
+"Could not connect to authentication server:\n"
 "%s"
 msgstr ""
-"Tidak dapat tersambung ke server otentikasi:\\n"
+"Tidak dapat tersambung ke server otentikasi:\n"
 "%s"
 
 #: ../libgaim/protocols/oscar/oscar.c:982
 #, c-format
 msgid ""
-"Could not connect to BOS server:\\n"
+"Could not connect to BOS server:\n"
 "%s"
 msgstr ""
-"Tidak dapat tersambung ke server BOS:\\n"
+"Tidak dapat tersambung ke server BOS:\n"
 "%s"
 
 #: ../libgaim/protocols/oscar/oscar.c:1022
@@ -10611,11 +10611,11 @@ msgstr "Pesan Penolakan Otorisasi:"
 #, c-format
 msgid ""
 "The user %u has denied your request to add them to your buddy list for the "
-"following reason:\\n"
+"following reason:\n"
 "%s"
 msgstr ""
 "Pengguna %u menolak permohonan andan untuk menambahkannya ke daftar teman anda "
-"dengan alasan berikut:\\n"
+"dengan alasan berikut:\n"
 "%s"
 
 #: ../libgaim/protocols/oscar/oscar.c:2405
@@ -10631,40 +10631,40 @@ msgstr "Pengguna %u mengabulkan permohonan anda untuk menambahkannya ke daftar t
 #: ../libgaim/protocols/oscar/oscar.c:2420
 #, c-format
 msgid ""
-"You have received a special message\\n"
-"\\n"
-"From: %s [%s]\\n"
+"You have received a special message\n"
+"\n"
+"From: %s [%s]\n"
 "%s"
 msgstr ""
-"Anda menerima pesan khusus\\n"
-"\\n"
-"Dari: %s [%s]\\n"
+"Anda menerima pesan khusus\n"
+"\n"
+"Dari: %s [%s]\n"
 "%s"
 
 #: ../libgaim/protocols/oscar/oscar.c:2428
 #, c-format
 msgid ""
-"You have received an ICQ page\\n"
-"\\n"
-"From: %s [%s]\\n"
+"You have received an ICQ page\n"
+"\n"
+"From: %s [%s]\n"
 "%s"
 msgstr ""
-"Anda menerima pesan ICQ\\n"
-"\\n"
-"Dari: %s [%s]\\n"
+"Anda menerima pesan ICQ\n"
+"\n"
+"Dari: %s [%s]\n"
 "%s"
 
 #: ../libgaim/protocols/oscar/oscar.c:2436
 #, c-format
 msgid ""
-"You have received an ICQ e-mail from %s [%s]\\n"
-"\\n"
-"Message is:\\n"
+"You have received an ICQ e-mail from %s [%s]\n"
+"\n"
+"Message is:\n"
 "%s"
 msgstr ""
-"Anda menerima e-mail ICQ dari %s [%s]\\n"
-"\\n"
-"Pesannya adalah:\\n"
+"Anda menerima e-mail ICQ dari %s [%s]\n"
+"\n"
+"Pesannya adalah:\n"
 "%s"
 
 #: ../libgaim/protocols/oscar/oscar.c:2457
@@ -10728,8 +10728,8 @@ msgstr[1] "Anda melewatkan %hu pesan-pesan dari %s karena alasan tidak jelas."
 
 #: ../libgaim/protocols/oscar/oscar.c:2718
 #, c-format
-msgid "SNAC threw error: %s\\n"
-msgstr "SNAC melempar keslahan: %s\\n"
+msgid "SNAC threw error: %s\n"
+msgstr "SNAC melempar keslahan: %s\n"
 
 #. Data is assumed to be the destination sn
 #: ../libgaim/protocols/oscar/oscar.c:2758
@@ -10932,10 +10932,10 @@ msgstr "Kesalahan 0x%04x: Kesalahan tidak dikenal."
 #: ../libgaim/protocols/oscar/oscar.c:4008
 #, c-format
 msgid ""
-"Your screen name is currently formatted as follows:\\n"
+"Your screen name is currently formatted as follows:\n"
 "%s"
 msgstr ""
-"Nama layar anda saat ini terformat sebagai berikut:\\n"
+"Nama layar anda saat ini terformat sebagai berikut:\n"
 "%s"
 
 #: ../libgaim/protocols/oscar/oscar.c:4009
@@ -11099,11 +11099,11 @@ msgstr "Otorisasi Dikabulkan"
 #, c-format
 msgid ""
 "The user %s has denied your request to add them to your buddy list for the "
-"following reason:\\n"
+"following reason:\n"
 "%s"
 msgstr ""
 "Pengguna %s menolak permintaan anda untuk menambahkannya ke daftar teman anda "
-"dengan alasan berikut:\\n"
+"dengan alasan berikut:\n"
 "%s"
 
 #: ../libgaim/protocols/oscar/oscar.c:5198
@@ -11604,8 +11604,8 @@ msgid "Please input external group ID"
 msgstr "Mohon masukkan ID kelompok eksternal"
 
 #: ../libgaim/protocols/qq/group.c:121
-msgid "You can only search for permanent QQ groups\\n"
-msgstr "Anda hanya dapat mencari kelompok QQ permanen\\n"
+msgid "You can only search for permanent QQ groups\n"
+msgstr "Anda hanya dapat mencari kelompok QQ permanen\n"
 
 #: ../libgaim/protocols/qq/group_im.c:122
 #, c-format
@@ -11708,10 +11708,10 @@ msgstr "Apakah anda yakin ingin keluar dari Qun ini?"
 
 #: ../libgaim/protocols/qq/group_join.c:358
 msgid ""
-"Note, if you are the creator, \\n"
+"Note, if you are the creator, \n"
 "this operation will eventually remove this Qun."
 msgstr ""
-"Catatan: apabila anda pencipta, \\n"
+"Catatan: apabila anda pencipta, \n"
 "operasi ini pada akhirnya akan menghilangkan Qun ini."
 
 #: ../libgaim/protocols/qq/group_join.c:361
@@ -11761,8 +11761,8 @@ msgid "Server ACK"
 msgstr "Server ACK"
 
 #: ../libgaim/protocols/qq/im.c:567
-msgid "Send IM fail\\n"
-msgstr "Pengiriman PI gagal\\n"
+msgid "Send IM fail\n"
+msgstr "Pengiriman PI gagal\n"
 
 #: ../libgaim/protocols/qq/keep_alive.c:85
 msgid "Keep alive error, seems connection lost!"
@@ -11824,43 +11824,43 @@ msgstr "Nama tidak valid"
 
 #: ../libgaim/protocols/qq/qq.c:450
 #, c-format
-msgid "<b>Current Online</b>: %d<br>\\n"
-msgstr "<b>Sedang Online</b>: %d<br>\\n"
+msgid "<b>Current Online</b>: %d<br>\n"
+msgstr "<b>Sedang Online</b>: %d<br>\n"
 
 #: ../libgaim/protocols/qq/qq.c:451
 #, c-format
-msgid "<b>Last Refresh</b>: %s<br>\\n"
-msgstr "<b>Terakhir Diperkini</b>: %s<br>\\n"
+msgid "<b>Last Refresh</b>: %s<br>\n"
+msgstr "<b>Terakhir Diperkini</b>: %s<br>\n"
 
 #: ../libgaim/protocols/qq/qq.c:455
 #, c-format
-msgid "<b>Connection Mode</b>: %s<br>\\n"
-msgstr "<b>Mode Sambungan</b>: %s<br>\\n"
+msgid "<b>Connection Mode</b>: %s<br>\n"
+msgstr "<b>Mode Sambungan</b>: %s<br>\n"
 
 #: ../libgaim/protocols/qq/qq.c:456
 #, c-format
-msgid "<b>Server IP</b>: %s: %d<br>\\n"
-msgstr "<b>IP Server</b>: %s: %d<br>\\n"
+msgid "<b>Server IP</b>: %s: %d<br>\n"
+msgstr "<b>IP Server</b>: %s: %d<br>\n"
 
 #: ../libgaim/protocols/qq/qq.c:457
 #, c-format
-msgid "<b>My Public IP</b>: %s<br>\\n"
-msgstr "<b>IP Publik Saya</b>: %s<br>\\n"
+msgid "<b>My Public IP</b>: %s<br>\n"
+msgstr "<b>IP Publik Saya</b>: %s<br>\n"
 
 #: ../libgaim/protocols/qq/qq.c:462
 #, c-format
-msgid "<b>Login Time</b>: %s<br>\\n"
-msgstr "<b>Waktu Login</b>: %s<br>\\n"
+msgid "<b>Login Time</b>: %s<br>\n"
+msgstr "<b>Waktu Login</b>: %s<br>\n"
 
 #: ../libgaim/protocols/qq/qq.c:463
 #, c-format
-msgid "<b>Last Login IP</b>: %s<br>\\n"
-msgstr "<b>IP Login Terakhir</b>: %s<br>\\n"
+msgid "<b>Last Login IP</b>: %s<br>\n"
+msgstr "<b>IP Login Terakhir</b>: %s<br>\n"
 
 #: ../libgaim/protocols/qq/qq.c:464
 #, c-format
-msgid "<b>Last Login Time</b>: %s\\n"
-msgstr "<b>Waktu Login Terakhir</b>: %s\\n"
+msgid "<b>Last Login Time</b>: %s\n"
+msgstr "<b>Waktu Login Terakhir</b>: %s\n"
 
 #: ../libgaim/protocols/qq/qq.c:468
 msgid "Login Information"
@@ -11893,8 +11893,8 @@ msgstr "Keluar dar QQ Qun ini"
 #. *  summary
 #. *  description
 #: ../libgaim/protocols/qq/qq.c:731 ../libgaim/protocols/qq/qq.c:733
-msgid "QQ Protocol\\tPlugin"
-msgstr "Protokol QQ\\tPlugin"
+msgid "QQ Protocol\tPlugin"
+msgstr "Protokol QQ\tPlugin"
 
 #: ../libgaim/protocols/qq/qq.c:752
 msgid "Login in TCP"
@@ -12261,11 +12261,11 @@ msgstr "Tidak dapat menambahkan pengguna"
 #: ../libgaim/protocols/sametime/sametime.c:5031
 #, c-format
 msgid ""
-"Error reading file %s: \\n"
-"%s\\n"
+"Error reading file %s: \n"
+"%s\n"
 msgstr ""
-"Kesalahan membaca file %s: \\n"
-"%s\\n"
+"Kesalahan membaca file %s: \n"
+"%s\n"
 
 #: ../libgaim/protocols/sametime/sametime.c:5166
 msgid "Remotely Stored Buddy List"
@@ -12493,12 +12493,12 @@ msgstr ""
 #: ../libgaim/protocols/silc/buddy.c:298
 #, c-format
 msgid ""
-"The remote user is waiting key agreement on:\\n"
-"Remote host: %s\\n"
+"The remote user is waiting key agreement on:\n"
+"Remote host: %s\n"
 "Remote port: %d"
 msgstr ""
-"Pengguna terpisah menunggu persetujuan kunci:\\n"
-"Host terpisah: %s\\n"
+"Pengguna terpisah menunggu persetujuan kunci:\n"
+"Host terpisah: %s\n"
 "Port terpisah: %d"
 
 #: ../libgaim/protocols/silc/buddy.c:311
@@ -13142,37 +13142,37 @@ msgstr "Statistik server tidak tersedia"
 #: ../libgaim/protocols/silc/ops.c:1581
 #, c-format
 msgid ""
-"Local server start time: %s\\n"
-"Local server uptime: %s\\n"
-"Local server clients: %d\\n"
-"Local server channels: %d\\n"
-"Local server operators: %d\\n"
-"Local router operators: %d\\n"
-"Local cell clients: %d\\n"
-"Local cell channels: %d\\n"
-"Local cell servers: %d\\n"
-"Total clients: %d\\n"
-"Total channels: %d\\n"
-"Total servers: %d\\n"
-"Total routers: %d\\n"
-"Total server operators: %d\\n"
-"Total router operators: %d\\n"
+"Local server start time: %s\n"
+"Local server uptime: %s\n"
+"Local server clients: %d\n"
+"Local server channels: %d\n"
+"Local server operators: %d\n"
+"Local router operators: %d\n"
+"Local cell clients: %d\n"
+"Local cell channels: %d\n"
+"Local cell servers: %d\n"
+"Total clients: %d\n"
+"Total channels: %d\n"
+"Total servers: %d\n"
+"Total routers: %d\n"
+"Total server operators: %d\n"
+"Total router operators: %d\n"
 msgstr ""
-"Waktu mulai server lokal: %s\\n"
-"Lama hidup server lokal: %s\\n"
-"Klien server lokal: %d\\n"
-"Saluran server lokal: %d\\n"
-"Operator-operator server lokal: %d\\n"
-"Operator-operator router lokal: %d\\n"
-"Klien sel lokal: %d\\n"
-"Saluran sel lokal: %d\\n"
-"Server sel lokal: %d\\n"
-"Total klien: %d\\n"
-"Total saluran: %d\\n"
-"Total server: %d\\n"
-"Total router: %d\\n"
-"Total operator server: %d\\n"
-"Total operator router: %d\\n"
+"Waktu mulai server lokal: %s\n"
+"Lama hidup server lokal: %s\n"
+"Klien server lokal: %d\n"
+"Saluran server lokal: %d\n"
+"Operator-operator server lokal: %d\n"
+"Operator-operator router lokal: %d\n"
+"Klien sel lokal: %d\n"
+"Saluran sel lokal: %d\n"
+"Server sel lokal: %d\n"
+"Total klien: %d\n"
+"Total saluran: %d\n"
+"Total server: %d\n"
+"Total router: %d\n"
+"Total operator server: %d\n"
+"Total operator router: %d\n"
 
 #: ../libgaim/protocols/silc/ops.c:1604
 msgid "Network Statistics"
@@ -13286,15 +13286,15 @@ msgstr "Menerima kunci publik %s. Apakah anda ingin menerima kunci publik ini?"
 #: ../libgaim/protocols/silc/pk.c:112
 #, c-format
 msgid ""
-"Fingerprint and babbleprint for the %s key are:\\n"
-"\\n"
-"%s\\n"
-"%s\\n"
+"Fingerprint and babbleprint for the %s key are:\n"
+"\n"
+"%s\n"
+"%s\n"
 msgstr ""
-"Sidikjari dan babbleprint untuk %s adalah:\\n"
-"\\n"
-"%s\\n"
-"%s\\n"
+"Sidikjari dan babbleprint untuk %s adalah:\n"
+"\n"
+"%s\n"
+"%s\n"
 
 #: ../libgaim/protocols/silc/pk.c:115 ../libgaim/protocols/silc/pk.c:140
 msgid "Verify Public Key"
@@ -13356,10 +13356,10 @@ msgstr "Jatuh cinta"
 
 #: ../libgaim/protocols/silc/silc.c:691
 msgid ""
-"\\n"
+"\n"
 "Your Preferred Contact Methods"
 msgstr ""
-"\\n"
+"\n"
 "Metode Kontak Preferensi Anda"
 
 #: ../libgaim/protocols/silc/silc.c:699 ../libgaim/protocols/silc/util.c:559
@@ -13709,62 +13709,62 @@ msgstr "Membuat pasangan kunci SILC..."
 #. sum: 3 tabs or 24 characters)
 #: ../libgaim/protocols/silc/util.c:355
 #, c-format
-msgid "Real Name: \\t%s\\n"
-msgstr "Nama Asli: \\t%s\\n"
+msgid "Real Name: \t%s\\n"
+msgstr "Nama Asli: \t%s\\n"
 
 #: ../libgaim/protocols/silc/util.c:357
 #, c-format
-msgid "User Name: \\t%s\\n"
-msgstr "Nama Pengguna: \\t%s\\n"
+msgid "User Name: \t%s\\n"
+msgstr "Nama Pengguna: \t%s\\n"
 
 #: ../libgaim/protocols/silc/util.c:359
 #, c-format
-msgid "E-Mail: \\t\\t%s\\n"
-msgstr "Email: \\t\\t%s\\n"
+msgid "E-Mail: \t\\t%s\\n"
+msgstr "Email: \t\\t%s\\n"
 
 #: ../libgaim/protocols/silc/util.c:361
 #, c-format
-msgid "Host Name: \\t%s\\n"
-msgstr "Nama Host: \\t%s\\n"
+msgid "Host Name: \t%s\\n"
+msgstr "Nama Host: \t%s\\n"
 
 #: ../libgaim/protocols/silc/util.c:363
 #, c-format
-msgid "Organization: \\t%s\\n"
-msgstr "Organisasi: \\t%s\\n"
+msgid "Organization: \t%s\\n"
+msgstr "Organisasi: \t%s\\n"
 
 #: ../libgaim/protocols/silc/util.c:365
 #, c-format
-msgid "Country: \\t%s\\n"
-msgstr "Negara: \\t%s\\n"
+msgid "Country: \t%s\\n"
+msgstr "Negara: \t%s\\n"
 
 #: ../libgaim/protocols/silc/util.c:366
 #, c-format
-msgid "Algorithm: \\t%s\\n"
-msgstr "Algoritma: \\t%s\\n"
+msgid "Algorithm: \t%s\\n"
+msgstr "Algoritma: \t%s\\n"
 
 #: ../libgaim/protocols/silc/util.c:367
 #, c-format
-msgid "Key Length: \\t%d bits\\n"
-msgstr "Panjang Kunci: \\t%d bits\\n"
+msgid "Key Length: \t%d bits\\n"
+msgstr "Panjang Kunci: \t%d bits\\n"
 
 #: ../libgaim/protocols/silc/util.c:369
 #, c-format
 msgid ""
-"Public Key Fingerprint:\\n"
-"%s\\n"
-"\\n"
+"Public Key Fingerprint:\n"
+"%s\n"
+"\n"
 msgstr ""
-"Sidik jari Kunci Publik:\\n"
-"%s\\n"
-"\\n"
+"Sidik jari Kunci Publik:\n"
+"%s\n"
+"\n"
 
 #: ../libgaim/protocols/silc/util.c:370
 #, c-format
 msgid ""
-"Public Key Babbleprint:\\n"
+"Public Key Babbleprint:\n"
 "%s"
 msgstr ""
-"Babbleprint Kunci Publik:\\n"
+"Babbleprint Kunci Publik:\n"
 "%s"
 
 #: ../libgaim/protocols/silc/util.c:374 ../libgaim/protocols/silc/util.c:375
@@ -14561,18 +14561,18 @@ msgstr "Masalah sambungan dengan sever YCNT."
 #: ../libgaim/protocols/yahoo/ycht.c:475
 #, c-format
 msgid ""
-"Lost connection with server\\n"
+"Lost connection with server\n"
 "%s"
 msgstr ""
-"Kehilangan sambungan dengan sever\\n"
+"Kehilangan sambungan dengan sever\n"
 "%s"
 
 #: ../libgaim/protocols/zephyr/zephyr.c:355
 msgid ""
-"(There was an error converting this message.\\t Check the 'Encoding' option "
+"(There was an error converting this message.\t Check the 'Encoding' option "
 "in the Account Editor)"
 msgstr ""
-"(Ada kesalahan dalam mengkonversi pesan ini.\\t Periksa pilihan 'Enkoding' "
+"(Ada kesalahan dalam mengkonversi pesan ini.\t Periksa pilihan 'Enkoding' "
 "dalam Perubah Akun)"
 
 #: ../libgaim/protocols/zephyr/zephyr.c:753
@@ -14735,16 +14735,16 @@ msgstr "Tingkat Ekspos"
 #: ../libgaim/proxy.c:1579
 #, c-format
 msgid ""
-"Unable to create socket:\\n"
+"Unable to create socket:\n"
 "%s"
 msgstr ""
-"Tidak dapat membuat soket:\\n"
+"Tidak dapat membuat soket:\n"
 "%s"
 
 #: ../libgaim/proxy.c:644
 #, c-format
-msgid "Unable to parse response from HTTP proxy: %s\\n"
-msgstr "Tidak dapat mem-parse tanggapan dari proxy HTTP: %s\\n"
+msgid "Unable to parse response from HTTP proxy: %s\n"
+msgstr "Tidak dapat mem-parse tanggapan dari proxy HTTP: %s\n"
 
 #: ../libgaim/proxy.c:672 ../libgaim/proxy.c:718 ../libgaim/proxy.c:756
 #: ../libgaim/proxy.c:768
@@ -14797,22 +14797,22 @@ msgstr "Status tersimpan"
 
 #: ../libgaim/server.c:228
 #, c-format
-msgid "%s is now known as %s.\\n"
-msgstr "%s sekarang dikenal sebagai %s.\\n"
+msgid "%s is now known as %s.\n"
+msgstr "%s sekarang dikenal sebagai %s.\n"
 
 #: ../libgaim/server.c:674
 #, c-format
 msgid ""
-"%s has invited %s to the chat room %s:\\n"
+"%s has invited %s to the chat room %s:\n"
 "%s"
 msgstr ""
-"%s telah mengundang %s ke kamar percakapan %s:\\n"
+"%s telah mengundang %s ke kamar percakapan %s:\n"
 "%s"
 
 #: ../libgaim/server.c:679
 #, c-format
-msgid "%s has invited %s to the chat room %s\\n"
-msgstr "%s telah mengundang %s ke kamar percakapan %s:\\n"
+msgid "%s has invited %s to the chat room %s\n"
+msgstr "%s telah mengundang %s ke kamar percakapan %s:\n"
 
 #: ../libgaim/server.c:683
 msgid "Accept chat invitation?"

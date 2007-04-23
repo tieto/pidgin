@@ -7,12 +7,14 @@
 #include <ctype.h>
 
 #define SEARCH_TIMEOUT 4000   /* 4 secs */
+#define SEARCHING(tree)  (tree->search && tree->search->len > 0)
 
 enum
 {
 	SIG_SELECTION_CHANGED,
 	SIG_SCROLLED,
 	SIG_TOGGLED,
+	SIG_COLLAPSED,
 	SIGS,
 };
 
@@ -45,6 +47,8 @@ struct _GntTreeCol
 	char *text;
 	int span;       /* How many columns does it span? */
 };
+
+static void tree_selection_changed(GntTree *, GntTreeRow *, GntTreeRow *);
 
 static GntWidgetClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
@@ -339,8 +343,10 @@ redraw_tree(GntTree *tree)
 
 	if (tree->top == NULL)
 		tree->top = tree->root;
-	if (tree->current == NULL)
+	if (tree->current == NULL) {
 		tree->current = tree->root;
+		tree_selection_changed(tree, NULL, tree->current);
+	}
 
 	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 
@@ -498,6 +504,14 @@ redraw_tree(GntTree *tree)
 	mvwaddch(widget->window, widget->priv.height - pos - 1, scrcol,
 			(row ?  ACS_DARROW : ' ') | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
 
+	/* If there's a search-text, show it in the bottom of the tree */
+	if (tree->search && tree->search->len > 0) {
+		const char *str = gnt_util_onscreen_width_to_pointer(tree->search->str, scrcol - 1, NULL);
+		wbkgdset(widget->window, '\0' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+		mvwaddnstr(widget->window, widget->priv.height - pos - 1, pos,
+				tree->search->str, str - tree->search->str);
+	}
+
 	gnt_widget_queue_update(widget);
 }
 
@@ -571,15 +585,17 @@ action_move_parent(GntBindable *bind, GList *null)
 {
 	GntTree *tree = GNT_TREE(bind);
 	GntTreeRow *row = tree->current;
-	if (row->parent) {
-		int dist;
-		tree->current = row->parent;
-		if ((dist = get_distance(tree->current, tree->top)) > 0)
-			gnt_tree_scroll(tree, -dist);
-		else
-			redraw_tree(tree);
-		tree_selection_changed(tree, row, tree->current);
-	}
+	int dist;
+
+	if (!row->parent || SEARCHING(tree))
+		return FALSE;
+
+	tree->current = row->parent;
+	if ((dist = get_distance(tree->current, tree->top)) > 0)
+		gnt_tree_scroll(tree, -dist);
+	else
+		redraw_tree(tree);
+	tree_selection_changed(tree, row, tree->current);
 	return TRUE;
 }
 
@@ -688,8 +704,15 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 		end_search(tree);
 		gnt_widget_activate(widget);
 	} else if (tree->search) {
+		gboolean changed = TRUE;
 		if (isalnum(*text)) {
 			tree->search = g_string_append_c(tree->search, *text);
+		} else if (g_utf8_collate(text, GNT_KEY_BACKSPACE) == 0) {
+			if (tree->search->len)
+				tree->search->str[--tree->search->len] = '\0';
+		} else
+			changed = FALSE;
+		if (changed) {
 			redraw_tree(tree);
 			g_source_remove(tree->search_timeout);
 			tree->search_timeout = g_timeout_add(SEARCH_TIMEOUT, search_timeout, tree);
@@ -702,6 +725,7 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 		{
 			row->collapsed = !row->collapsed;
 			redraw_tree(tree);
+			g_signal_emit(tree, signals[SIG_COLLAPSED], 0, row->key, row->collapsed);
 		}
 		else if (row && row->choice)
 		{
@@ -855,6 +879,14 @@ gnt_tree_class_init(GntTreeClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
+	signals[SIG_COLLAPSED] = 
+		g_signal_new("collapse-toggled",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 0,
+					 NULL, NULL,
+					 gnt_closure_marshal_VOID__POINTER_BOOLEAN,
+					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_BOOLEAN);
 
 	gnt_bindable_class_register_action(bindable, "move-up", action_up,
 				GNT_KEY_UP, NULL);
@@ -1312,7 +1344,7 @@ void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *te
 	{
 		col = g_list_nth_data(row->columns, colno);
 		g_free(col->text);
-		col->text = g_strdup(text);
+		col->text = g_strdup(text ? text : "");
 
 		if (get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) >= 0)
 			redraw_tree(tree);
@@ -1384,7 +1416,7 @@ void gnt_tree_set_selected(GntTree *tree , void *key)
 {
 	int dist;
 	GntTreeRow *row = g_hash_table_lookup(tree->hash, key);
-	if (!row)
+	if (!row || row == tree->current)
 		return;
 
 	if (tree->top == NULL)
@@ -1399,6 +1431,7 @@ void gnt_tree_set_selected(GntTree *tree , void *key)
 		gnt_tree_scroll(tree, -dist);
 	else
 		redraw_tree(tree);
+	tree_selection_changed(tree, row, tree->current);
 }
 
 void _gnt_tree_init_internals(GntTree *tree, int col)
@@ -1504,6 +1537,7 @@ void gnt_tree_set_expanded(GntTree *tree, void *key, gboolean expanded)
 		row->collapsed = !expanded;
 		if (GNT_WIDGET(tree)->window)
 			gnt_widget_draw(GNT_WIDGET(tree));
+		g_signal_emit(tree, signals[SIG_COLLAPSED], 0, key, row->collapsed);
 	}
 }
 
@@ -1515,7 +1549,7 @@ void gnt_tree_set_show_separator(GntTree *tree, gboolean set)
 void gnt_tree_adjust_columns(GntTree *tree)
 {
 	GntTreeRow *row = tree->root;
-	int *widths, i, twidth, height;
+	int *widths, i, twidth;
 
 	widths = g_new0(int, tree->ncol);
 	while (row) {
@@ -1542,8 +1576,7 @@ void gnt_tree_adjust_columns(GntTree *tree)
 	}
 	g_free(widths);
 
-	gnt_widget_get_size(GNT_WIDGET(tree), NULL, &height);
-	gnt_widget_set_size(GNT_WIDGET(tree), twidth, height);
+	gnt_widget_set_size(GNT_WIDGET(tree), twidth, -1);
 }
 
 void gnt_tree_set_hash_fns(GntTree *tree, gpointer hash, gpointer eq, gpointer kd)

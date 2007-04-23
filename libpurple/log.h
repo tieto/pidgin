@@ -105,7 +105,7 @@ struct _PurpleLogLogger {
 	void (*get_log_sets)(PurpleLogSetCallback cb, GHashTable *sets);
 
 	/* Attempts to delete the specified log, indicating success or failure */
-	gboolean (*delete)(PurpleLog *log);
+	gboolean (*remove)(PurpleLog *log);
 
 	/* Tests whether a log is deletable */
 	gboolean (*is_deletable)(PurpleLog *log);
@@ -472,7 +472,7 @@ gboolean purple_log_common_is_deletable(PurpleLog *log);
  *                     functions are currently available (in order): @c create,
  *                     @c write, @c finalize, @c list, @c read, @c size,
  *                     @c total_size, @c list_syslog, @c get_log_sets,
- *                     @c delete, @c is_deletable.
+ *                     @c remove, @c is_deletable.
  *                     For details on these functions, see PurpleLogLogger.
  *                     Functions may not be skipped. For example, passing
  *                     @c create and @c write is acceptable (for a total of

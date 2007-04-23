@@ -1,6 +1,6 @@
 /*
  * @file gtkimhtml.c GTK+ IMHtml
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -100,7 +100,6 @@ static void insert_cb(GtkTextBuffer *buffer, GtkTextIter *iter, gchar *text, gin
 static void delete_cb(GtkTextBuffer *buffer, GtkTextIter *iter, GtkTextIter *end, GtkIMHtml *imhtml);
 static void insert_ca_cb(GtkTextBuffer *buffer, GtkTextIter *arg1, GtkTextChildAnchor *arg2, gpointer user_data);
 static void gtk_imhtml_apply_tags_on_insert(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end);
-static gboolean gtk_imhtml_is_amp_escape (const gchar *string, gchar **replace, gint *length);
 void gtk_imhtml_close_tags(GtkIMHtml *imhtml, GtkTextIter *iter);
 static void gtk_imhtml_link_drop_cb(GtkWidget *widget, GdkDragContext *context, gint x, gint y, guint time, gpointer user_data);
 static void gtk_imhtml_link_drag_rcv_cb(GtkWidget *widget, GdkDragContext *dc, guint x, guint y, GtkSelectionData *sd, guint info, guint t, GtkIMHtml *imhtml);
@@ -1218,6 +1217,7 @@ gtk_imhtml_finalize (GObject *object)
 
 	g_list_free(imhtml->scalables);
 	g_slist_free(imhtml->im_images);
+	g_queue_free(imhtml->animations);
 	g_free(imhtml->protocol_name);
 	g_free(imhtml->search_string);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
@@ -1399,7 +1399,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 
 
 	imhtml->scalables = NULL;
-
+	imhtml->animations = g_queue_new();
 	gtk_imhtml_set_editable(imhtml, FALSE);
 	g_signal_connect(G_OBJECT(imhtml), "populate-popup",
 					 G_CALLBACK(hijack_menu_cb), NULL);
@@ -1736,7 +1736,7 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 	GtkSmileyTree *t = tree;
 	const gchar *x = text;
 	gint len = 0;
-	gchar *amp;
+	const gchar *amp;
 	gint alen;
 
 	while (*x) {
@@ -1745,7 +1745,7 @@ gtk_smiley_tree_lookup (GtkSmileyTree *tree,
 		if (!t->values)
 			break;
 
-		if(*x == '&' && gtk_imhtml_is_amp_escape(x, &amp, &alen)) {
+		if(*x == '&' && (amp = purple_markup_unescape_entity(x, &alen))) {
 			gboolean matched = TRUE;
 			/* Make sure all chars of the unescaped value match */
 			while (*(amp + 1)) {
@@ -1928,62 +1928,6 @@ gtk_smiley_tree_image (GtkIMHtml     *imhtml,
 
 
 static gboolean
-gtk_imhtml_is_amp_escape (const gchar *string,
-			  gchar       **replace,
-			  gint        *length)
-{
-	static char buf[7];
-	g_return_val_if_fail (string != NULL, FALSE);
-	g_return_val_if_fail (replace != NULL, FALSE);
-	g_return_val_if_fail (length != NULL, FALSE);
-
-	if (!g_ascii_strncasecmp (string, "&amp;", 5)) {
-		*replace = "&";
-		*length = 5;
-	} else if (!g_ascii_strncasecmp (string, "&lt;", 4)) {
-		*replace = "<";
-		*length = 4;
-	} else if (!g_ascii_strncasecmp (string, "&gt;", 4)) {
-		*replace = ">";
-		*length = 4;
-	} else if (!g_ascii_strncasecmp (string, "&nbsp;", 6)) {
-		*replace = " ";
-		*length = 6;
-	} else if (!g_ascii_strncasecmp (string, "&copy;", 6)) {
-		*replace = "©";
-		*length = 6;
-	} else if (!g_ascii_strncasecmp (string, "&quot;", 6)) {
-		*replace = "\"";
-		*length = 6;
-	} else if (!g_ascii_strncasecmp (string, "&reg;", 5)) {
-		*replace = "®";
-		*length = 5;
-	} else if (!g_ascii_strncasecmp (string, "&apos;", 6)) {
-		*replace = "\'";
-		*length = 6;
-	} else if (*(string + 1) == '#') {
-		guint pound = 0;
-		if ((sscanf (string, "&#%u;", &pound) == 1) && pound != 0) {
-			int buflen;
-			if (*(string + 3 + (gint)log10 (pound)) != ';')
-				return FALSE;
-			buflen = g_unichar_to_utf8((gunichar)pound, buf);
-			buf[buflen] = '\0';
-			*replace = buf;
-			*length = 2;
-			while (isdigit ((gint) string [*length])) (*length)++;
-			if (string [*length] == ';') (*length)++;
-		} else {
-			return FALSE;
-		}
-	} else {
-		return FALSE;
-	}
-
-	return TRUE;
-}
-
-static gboolean
 gtk_imhtml_is_tag (const gchar *string,
 		   gchar      **tag,
 		   gint        *len,
@@ -2084,7 +2028,7 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 	gchar *e, *a;
 	gchar *val;
 	gint len;
-	gchar *c;
+	const gchar *c;
 	GString *ret;
 
 	while (g_ascii_strncasecmp (t, opt, strlen (opt))) {
@@ -2120,7 +2064,7 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 	ret = g_string_new("");
 	e = val;
 	while(*e) {
-		if(gtk_imhtml_is_amp_escape(e, &c, &len)) {
+		if((c = purple_markup_unescape_entity(e, &len))) {
 			ret = g_string_append(ret, c);
 			e += len;
 		} else {
@@ -2129,71 +2073,6 @@ gtk_imhtml_get_html_opt (gchar       *tag,
 		}
 	}
 
-	g_free(val);
-
-	return g_string_free(ret, FALSE);
-}
-
-/* Inline CSS Support - Douglas Thrift */
-static gchar*
-gtk_imhtml_get_css_opt (gchar       *style,
-			 const gchar *opt)
-{
-	gchar *t = style;
-	gchar *e, *a;
-	gchar *val;
-	gint len;
-	gchar *c;
-	GString *ret;
-
-	while (g_ascii_strncasecmp (t, opt, strlen (opt))) {
-/*		gboolean quote = FALSE; */
-		if (*t == '\0') break;
-		while (*t && !((*t == ' ') /*&& !quote*/)) {
-/*			if (*t == '\"')
-				quote = ! quote; */
-			t++;
-		}
-		while (*t && (*t == ' ')) t++;
-	}
-
-	if (!g_ascii_strncasecmp (t, opt, strlen (opt))) {
-		t += strlen (opt);
-		while (*t && (*t == ' ')) t++;
-		if (!*t)
-			return NULL;
-	} else {
-		return NULL;
-	}
-
-/*	if ((*t == '\"') || (*t == '\'')) {
-		e = a = ++t;
-		while (*e && (*e != *(t - 1))) e++;
-		if  (*e == '\0') {
-			return NULL;
-		} else
-			val = g_strndup(a, e - a);
-	} else {
-		e = a = t;
-		while (*e && !isspace ((gint) *e)) e++;
-		val = g_strndup(a, e - a);
-	}*/
-
-	e = a = t;
-	while (*e && *e != ';') e++;
-	val = g_strndup(a, e - a);
-
-	ret = g_string_new("");
-	e = val;
-	while(*e) {
-		if(gtk_imhtml_is_amp_escape(e, &c, &len)) {
-			ret = g_string_append(ret, c);
-			e += len;
-		} else {
-			ret = g_string_append_c(ret, *e);
-			e++;
-		}
-	}
 	g_free(val);
 
 	return g_string_free(ret, FALSE);
@@ -2369,7 +2248,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	gint tlen, smilelen, wpos=0;
 	gint type;
 	const gchar *c;
-	gchar *amp;
+	const gchar *amp;
 	gint len_protocol;
 
 	guint	bold = 0,
@@ -2382,6 +2261,9 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 		pre = 0;
 
 	gboolean br = FALSE;
+	gboolean align_right = FALSE;
+	gboolean rtl_direction = FALSE;
+	gint align_line = 0;
 
 	GSList *fonts = NULL;
 	GObject *object;
@@ -2748,28 +2630,32 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 					 * font-size
 					 * text-decoration: underline
 					 * font-weight: bold
+					 * direction: rtl
+					 * text-align: right
 					 *
 					 * TODO:
 					 * background-color
 					 * font-style
 					 */
 					{
-						gchar *style, *color, *background, *family, *size;
+						gchar *style, *color, *background, *family, *size, *direction, *alignment;
 						gchar *textdec, *weight;
 						GtkIMHtmlFontDetail *font, *oldfont = NULL;
 						style = gtk_imhtml_get_html_opt (tag, "style=");
 
 						if (!style) break;
 
-						color = gtk_imhtml_get_css_opt (style, "color:");
-						background = gtk_imhtml_get_css_opt (style, "background:");
-						family = gtk_imhtml_get_css_opt (style,
-							"font-family:");
-						size = gtk_imhtml_get_css_opt (style, "font-size:");
-						textdec = gtk_imhtml_get_css_opt (style, "text-decoration:");
-						weight = gtk_imhtml_get_css_opt (style, "font-weight:");
+						color = purple_markup_get_css_property (style, "color");
+						background = purple_markup_get_css_property (style, "background");
+						family = purple_markup_get_css_property (style, "font-family");
+						size = purple_markup_get_css_property (style, "font-size");
+						textdec = purple_markup_get_css_property (style, "text-decoration");
+						weight = purple_markup_get_css_property (style, "font-weight");
+						direction = purple_markup_get_css_property (style, "direction");
+						alignment = purple_markup_get_css_property (style, "text-align");
 
-						if (!(color || family || size || background || textdec || weight)) {
+
+						if (!(color || family || size || background || textdec || weight || direction || alignment)) {
 							g_free(style);
 							break;
 						}
@@ -2778,6 +2664,25 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
 						ws[0] = '\0'; wpos = 0;
 						/* NEW_BIT (NEW_TEXT_BIT); */
+
+						/* Bi-Directional text support */
+						if (direction && (!strncasecmp(direction, "RTL", 3))) {
+							rtl_direction = TRUE;
+							/* insert RLE character to set direction */
+							ws[wpos++]  = 0xE2;
+							ws[wpos++]  = 0x80;
+							ws[wpos++]  = 0xAB;
+							ws[wpos]  = '\0';
+							gtk_text_buffer_insert(imhtml->text_buffer, iter, ws, wpos);
+							ws[0] = '\0'; wpos = 0;
+						}
+						g_free(direction);
+
+						if (alignment && (!strncasecmp(alignment, "RIGHT", 5))) {
+							align_right = TRUE;
+							align_line = gtk_text_iter_get_line(iter);
+						}
+						g_free(alignment);
 
 						font = g_new0 (GtkIMHtmlFontDetail, 1);
 						if (fonts)
@@ -2987,7 +2892,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 			pos += smilelen;
 			wpos = 0;
 			ws[0] = 0;
-		} else if (*c == '&' && gtk_imhtml_is_amp_escape (c, &amp, &tlen)) {
+		} else if (*c == '&' && (amp = purple_markup_unescape_entity(c, &tlen))) {
 			while(*amp) {
 				ws [wpos++] = *amp++;
 			}
@@ -3034,6 +2939,32 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 	ws[0] = '\0'; wpos = 0;
 
 	/* NEW_BIT(NEW_TEXT_BIT); */
+
+	if(align_right) {
+		/* insert RLM+LRM at beginning of the line to set alignment */
+		GtkTextIter line_iter;
+		line_iter = *iter;
+		gtk_text_iter_set_line(&line_iter, align_line);
+		/* insert RLM character to set alignment */
+		ws[wpos++]  = 0xE2;
+		ws[wpos++]  = 0x80;
+		ws[wpos++]  = 0x8F;
+    
+		if (!rtl_direction)
+		{
+			/* insert LRM character to set direction */
+			/* (alignment=right and direction=LTR) */
+			ws[wpos++]  = 0xE2;
+			ws[wpos++]  = 0x80;
+			ws[wpos++]  = 0x8E;
+		}
+
+		ws[wpos]  = '\0';
+		gtk_text_buffer_insert(imhtml->text_buffer, &line_iter, ws, wpos);
+		gtk_text_buffer_get_end_iter(gtk_text_iter_get_buffer(&line_iter), iter);
+		ws[0] = '\0';
+		wpos = 0;
+	}
 
 	while (fonts) {
 		GtkIMHtmlFontDetail *font = fonts->data;
@@ -4426,6 +4357,22 @@ image_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 	return TRUE;
 }
 
+/* In case the smiley gets removed from the imhtml before it gets removed from the queue */
+static void animated_smiley_destroy_cb(GtkObject *widget, GtkIMHtml *imhtml)
+{
+	GList *l = imhtml->animations->head;
+	while (l) {
+		GList *next = l->next;
+		if (l->data == widget) {
+			if (l == imhtml->animations->tail)
+				imhtml->animations->tail = imhtml->animations->tail->prev;
+			imhtml->animations->head = g_list_delete_link(imhtml->animations->head, l);
+			imhtml->num_animations--;
+		}
+		l = next;
+	}
+}
+
 void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *smiley, GtkTextIter *iter)
 {
 	GdkPixbuf *pixbuf = NULL;
@@ -4444,6 +4391,18 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 					icon = gtk_image_new_from_pixbuf(pixbuf);
 			} else {
 				icon = gtk_image_new_from_animation(annipixbuf);
+				if (imhtml->num_animations == 20) {
+					GtkImage *image = GTK_IMAGE(g_queue_pop_head(imhtml->animations));
+					GdkPixbufAnimation *anim = gtk_image_get_animation(image);
+					if (anim) {
+						GdkPixbuf *pb = gdk_pixbuf_animation_get_static_image(anim);
+						gtk_image_set_from_pixbuf(image, pb);
+					}
+				} else {
+ 					imhtml->num_animations++;
+				}
+				g_signal_connect(G_OBJECT(icon), "destroy", G_CALLBACK(animated_smiley_destroy_cb), imhtml);
+				g_queue_push_tail(imhtml->animations, icon);
 			}
 		}
 	}
@@ -4626,7 +4585,8 @@ static gboolean tag_ends_here(GtkTextTag *tag, GtkTextIter *iter, GtkTextIter *n
 char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *end)
 {
 	gunichar c;
-	GtkTextIter iter, nextiter;
+	GtkTextIter iter, next_iter, non_neutral_iter;
+	gboolean is_rtl_message = FALSE;
 	GString *str = g_string_new("");
 	GSList *tags, *sl;
 	GQueue *q, *r;
@@ -4637,8 +4597,19 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 
 
 	gtk_text_iter_order(start, end);
-	nextiter = iter = *start;
-	gtk_text_iter_forward_char(&nextiter);
+	non_neutral_iter = next_iter = iter = *start;
+	gtk_text_iter_forward_char(&next_iter);
+
+	/* Bi-directional text support */
+	/* Get to the first non-neutral character */
+#ifdef HAVE_PANGO14
+	while ((PANGO_DIRECTION_NEUTRAL == pango_unichar_direction(gtk_text_iter_get_char(&non_neutral_iter)))
+		&& gtk_text_iter_forward_char(&non_neutral_iter));
+	if (PANGO_DIRECTION_RTL == pango_unichar_direction(gtk_text_iter_get_char(&non_neutral_iter))) {
+		is_rtl_message = TRUE;
+		g_string_append(str, "<SPAN style=\"direction:rtl;text-align:right;\">");
+	}
+#endif
 
 	/* First add the tags that are already in progress (we don't care about non-printing tags)*/
 	tags = gtk_text_iter_get_tags(start);
@@ -4692,7 +4663,7 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 		for (sl = tags; sl; sl = sl->next) {
 			tag = sl->data;
 			/** don't worry about non-printing tags ending */
-			if (tag_ends_here(tag, &iter, &nextiter) && strlen(tag_to_html_end(tag)) > 0) {
+			if (tag_ends_here(tag, &iter, &next_iter) && strlen(tag_to_html_end(tag)) > 0) {
 
 				GtkTextTag *tmp;
 
@@ -4700,7 +4671,7 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 					if (tmp == NULL)
 						break;
 
-					if (!tag_ends_here(tmp, &iter, &nextiter) && strlen(tag_to_html_end(tmp)) > 0)
+					if (!tag_ends_here(tmp, &iter, &next_iter) && strlen(tag_to_html_end(tmp)) > 0)
 						g_queue_push_tail(r, tmp);
 					g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tmp)));
 				}
@@ -4719,11 +4690,15 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 
 		g_slist_free(tags);
 		gtk_text_iter_forward_char(&iter);
-		gtk_text_iter_forward_char(&nextiter);
+		gtk_text_iter_forward_char(&next_iter);
 	}
 
 	while ((tag = g_queue_pop_tail(q)))
 		g_string_append(str, tag_to_html_end(GTK_TEXT_TAG(tag)));
+
+	/* Bi-directional text support - close tags */
+	if (is_rtl_message)
+		g_string_append(str, "</SPAN>");
 
 	g_queue_free(q);
 	g_queue_free(r);

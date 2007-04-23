@@ -1,4 +1,4 @@
-bin_PROGRAMS = nullclient
+noinst_PROGRAMS = nullclient
 
 nullclient_SOURCES = defines.h nullclient.c
 nullclient_DEPENDENCIES =

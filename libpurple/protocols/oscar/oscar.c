@@ -1778,18 +1778,32 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 
 	if (have_status_message)
 	{
-		purple_prpl_got_user_status(account, info->sn, status_id,
-								  "message", message, NULL);
+		if ((status_id == OSCAR_STATUS_ID_AVAILABLE) && (info->itmsurl != NULL))
+		{
+			char *itmsurl;
+			itmsurl = oscar_encoding_to_utf8(info->itmsurl_encoding,
+					info->itmsurl, info->itmsurl_len);
+			purple_prpl_got_user_status(account, info->sn, status_id,
+					"message", message, "itmsurl", itmsurl, NULL);
+			g_free(itmsurl);
+		}
+		else
+		{
+			purple_prpl_got_user_status(account, info->sn, status_id,
+					"message", message, NULL);
+		}
 		g_free(message);
 	}
 	else
 	{
 		PurpleBuddy *b = purple_find_buddy(account, info->sn);
-		PurpleStatus *status;
-		const char *active_status_id;
+		PurpleStatus *status = NULL;
+		const char *active_status_id = NULL;
 
-		status = purple_presence_get_active_status(purple_buddy_get_presence(b));
-		active_status_id = purple_status_get_id(status);
+		if (b != NULL) {
+			status = purple_presence_get_active_status(purple_buddy_get_presence(b));
+			active_status_id = purple_status_get_id(status);
+		}
 
 		if (!active_status_id || strcmp(active_status_id, status_id))
 			purple_prpl_got_user_status(account, info->sn, status_id, NULL);
@@ -2556,7 +2570,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 	switch(reason) {
 		case 0: /* Invalid (0) */
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s because it was invalid.",
 				   "You missed %hu messages from %s because they were invalid.",
 				   nummissed),
@@ -2565,7 +2579,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 		case 1: /* Message too large */
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s because it was too large.",
 				   "You missed %hu messages from %s because they were too large.",
 				   nummissed),
@@ -2574,7 +2588,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 		case 2: /* Rate exceeded */
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s because the rate limit has been exceeded.",
 				   "You missed %hu messages from %s because the rate limit has been exceeded.",
 				   nummissed),
@@ -2583,7 +2597,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 		case 3: /* Evil Sender */
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s because he/she was too evil.",
 				   "You missed %hu messages from %s because he/she was too evil.",
 				   nummissed),
@@ -2592,7 +2606,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 		case 4: /* Evil Receiver */
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s because you are too evil.",
 				   "You missed %hu messages from %s because you are too evil.",
 				   nummissed),
@@ -2601,7 +2615,7 @@ static int purple_parse_misses(OscarData *od, FlapConnection *conn, FlapFrame *f
 			break;
 		default:
 			buf = g_strdup_printf(
-				   ngettext(
+				   dngettext(PACKAGE, 
 				   "You missed %hu message from %s for an unknown reason.",
 				   "You missed %hu messages from %s for an unknown reason.",
 				   nummissed),
@@ -2884,6 +2898,18 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 		if (userinfo->status[0] != '\0')
 			tmp = oscar_encoding_to_utf8(userinfo->status_encoding,
 											 userinfo->status, userinfo->status_len);
+#ifdef _WIN32
+		if (userinfo->itmsurl[0] != '\0') {
+			gchar *itmsurl, *tmp2;
+			itmsurl = oscar_encoding_to_utf8(userinfo->itmsurl_encoding,
+					userinfo->itmsurl, userinfo->itmsurl_len);
+			tmp2 = g_strdup_printf("<a href=\"%s\">%s</a>",
+					itmsurl, tmp);
+			g_free(tmp);
+			tmp = tmp2;
+			g_free(itmsurl);
+		}
+#endif
 		oscar_user_info_add_pair(user_info, _("Available Message"), tmp);
 		g_free(tmp);
 	}
@@ -3395,10 +3421,9 @@ static int purple_parse_ratechange(OscarData *od, FlapConnection *conn, FlapFram
 
 	if (code == AIM_RATE_CODE_LIMIT)
 	{
-		purple_notify_error(od->gc, NULL, _("Rate limiting error."),
-						  _("The last action you attempted could not be "
-							"performed because you are over the rate limit. "
-							"Please wait 10 seconds and try again."));
+		purple_debug_warning("oscar",  _("The last action you attempted could not be "
+					 	 "performed because you are over the rate limit. "
+						 "Please wait 10 seconds and try again."));
 	}
 
 	return 1;
@@ -3916,7 +3941,7 @@ static int purple_parse_searchreply(OscarData *od, FlapConnection *conn, FlapFra
 	}
 
 	secondary = g_strdup_printf(
-					ngettext("The following screen name is associated with %s",
+					dngettext(PACKAGE, "The following screen name is associated with %s",
 						 "The following screen names are associated with %s",
 						 num),
 					email);
@@ -4296,11 +4321,11 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		 */
 		if (aim_sn_is_sms(name)) {
 			/* Messaging an SMS (mobile) user */
-			tmp2 = purple_unescape_html(tmp1);
+			tmp2 = purple_markup_strip_html(tmp1);
 		} else if (aim_sn_is_icq(purple_account_get_username(account))) {
 			if (aim_sn_is_icq(name))
 				/* From ICQ to ICQ */
-				tmp2 = purple_unescape_html(tmp1);
+				tmp2 = purple_markup_strip_html(tmp1);
 			else
 				/* From ICQ to AIM */
 				tmp2 = g_strdup(tmp1);
@@ -4474,10 +4499,10 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		if (infolen > od->rights.maxsiglen)
 		{
 			gchar *errstr;
-			errstr = g_strdup_printf(ngettext("The maximum profile length of %d byte "
-									 "has been exceeded.  It has been truncated it for you.",
+			errstr = g_strdup_printf(dngettext(PACKAGE, "The maximum profile length of %d byte "
+									 "has been exceeded.  It has been truncated for you.",
 									 "The maximum profile length of %d bytes "
-									 "has been exceeded.  It has been truncated it for you.",
+									 "has been exceeded.  It has been truncated for you.",
 									 od->rights.maxsiglen), od->rights.maxsiglen);
 			purple_notify_warning(gc, NULL, _("Profile too long."), errstr);
 			g_free(errstr);
@@ -4524,7 +4549,7 @@ oscar_set_info_and_status(PurpleAccount *account, gboolean setinfo, const char *
 		{
 			gchar *errstr;
 
-			errstr = g_strdup_printf(ngettext("The maximum away message length of %d byte "
+			errstr = g_strdup_printf(dngettext(PACKAGE, "The maximum away message length of %d byte "
 									 "has been exceeded.  It has been truncated for you.",
 									 "The maximum away message length of %d bytes "
 									 "has been exceeded.  It has been truncated for you.",
