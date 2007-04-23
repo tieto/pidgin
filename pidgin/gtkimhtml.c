@@ -1217,6 +1217,7 @@ gtk_imhtml_finalize (GObject *object)
 
 	g_list_free(imhtml->scalables);
 	g_slist_free(imhtml->im_images);
+	g_queue_free(imhtml->animations);
 	g_free(imhtml->protocol_name);
 	g_free(imhtml->search_string);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
@@ -1398,7 +1399,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 
 
 	imhtml->scalables = NULL;
-
+	imhtml->animations = g_queue_new();
 	gtk_imhtml_set_editable(imhtml, FALSE);
 	g_signal_connect(G_OBJECT(imhtml), "populate-popup",
 					 G_CALLBACK(hijack_menu_cb), NULL);
@@ -4356,6 +4357,22 @@ image_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 	return TRUE;
 }
 
+/* In case the smiley gets removed from the imhtml before it gets removed from the queue */
+static void animated_smiley_destroy_cb(GtkObject *widget, GtkIMHtml *imhtml)
+{
+	GList *l = imhtml->animations->head;
+	while (l) {
+		GList *next = l->next;
+		if (l->data == widget) {
+			if (l == imhtml->animations->tail)
+				imhtml->animations->tail = imhtml->animations->tail->prev;
+			imhtml->animations->head = g_list_delete_link(imhtml->animations->head, l);
+			imhtml->num_animations--;
+		}
+		l = next;
+	}
+}
+
 void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *smiley, GtkTextIter *iter)
 {
 	GdkPixbuf *pixbuf = NULL;
@@ -4374,6 +4391,18 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 					icon = gtk_image_new_from_pixbuf(pixbuf);
 			} else {
 				icon = gtk_image_new_from_animation(annipixbuf);
+				if (imhtml->num_animations == 20) {
+					GtkImage *image = GTK_IMAGE(g_queue_pop_head(imhtml->animations));
+					GdkPixbufAnimation *anim = gtk_image_get_animation(image);
+					if (anim) {
+						GdkPixbuf *pb = gdk_pixbuf_animation_get_static_image(anim);
+						gtk_image_set_from_pixbuf(image, pb);
+					}
+				} else {
+ 					imhtml->num_animations++;
+				}
+				g_signal_connect(G_OBJECT(icon), "destroy", G_CALLBACK(animated_smiley_destroy_cb), imhtml);
+				g_queue_push_tail(imhtml->animations, icon);
 			}
 		}
 	}
