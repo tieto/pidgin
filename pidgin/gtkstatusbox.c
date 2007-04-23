@@ -1511,7 +1511,6 @@ treeview_activate_current_selection(PidginStatusBox *status_box, GtkTreePath *pa
 		gtk_tree_row_reference_free(status_box->active_row);
 
 	status_box->active_row = gtk_tree_row_reference_new(GTK_TREE_MODEL(status_box->dropdown_store), path);
-
 	pidgin_status_box_popdown (status_box);
 	pidgin_status_box_changed(status_box);
 }
@@ -2387,7 +2386,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 
 	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
 	{
-		if (type == PIDGIN_STATUS_BOX_TYPE_POPULAR)
+		if (type == PIDGIN_STATUS_BOX_TYPE_POPULAR || type == PIDGIN_STATUS_BOX_TYPE_SAVED_POPULAR)
 		{
 			PurpleSavedStatus *saved;
 			saved = purple_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
