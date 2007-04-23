@@ -1001,6 +1001,10 @@ typedef struct aim_userinfo_s
 	char *status_encoding;
 	guint16 status_len;
 
+	char *itmsurl;
+	char *itmsurl_encoding;
+	guint16 itmsurl_len;
+
 	char *away;
 	char *away_encoding;
 	guint16 away_len;
