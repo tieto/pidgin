@@ -28,6 +28,7 @@
 #include <gnt.h>
 
 #include <plugin.h>
+#include <pluginpref.h>
 
 #include <string.h>
 
