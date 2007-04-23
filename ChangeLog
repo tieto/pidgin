@@ -1,14 +1,17 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.0.0:
+	* The project has new names - libpurple for the core, Pidgin for the
+	  GTK+ UI and Finch for the ncurses based console UI (AOL LLC)
+
 	Build Changes:
-	* With the Core/UI split completed, it is now possible to build Gaim
-	  without any UIs, creating a libgaim library upon which other UIs
+	* With the Core/UI split completed, it is now possible to build Pidgin
+	  without any UIs, creating a libpurple library upon which other UIs
 	  may be constructed
-	* A new ncurses-based console UI called gaim-text is now available
+	* A new ncurses-based console UI called Finch is now available
 	  (Sadrul Habib Chowdhury, Google Summer of Code)
 	* Reorganized the source tree to split apart the code for the UI
-	  changes and libgaim targets
+	  changes and libpurple targets
 	* libxml2 is now required.  We switched from gmarkup to libxml2 for
 	  more correct XML parsing.
 
@@ -30,18 +33,18 @@ version 2.0.0:
 	  contains multiple online buddies
 	* Added a "Last Seen" field to buddy tooltips
 	* Contacts will auto-expand when buddies are dragged around
-	* If Gaim is exited with the buddy list hidden in the docklet, it
-	  will remain hidden when Gaim is started again (Scott Shedden)
+	* If Pidgin is exited with the buddy list hidden in the docklet, it
+	  will remain hidden when Pidgin is started again (Scott Shedden)
 	* Improved buddy list searching with CTRL+F
 	* Ability to set a buddy icon for all of your accounts at once via
 	  the buddy list (You can still set per-account icons via the
 	  account editor)
 	* The space wasted by the group expanders has been eliminated and
 	  the expander setting in .gtkrc-2.0 is no longer needed
-	* Authorization requests don't popup new dialogs any more. They are
+	* Authorization requests don't popup new dialogs anymore. They are
 	  displayed at the bottom of the buddy list instead.
-	* New mail notifications don't popup new dialogs any more. The are
-	  displayed at the top of the buddylist instead.
+	* New mail notifications don't popup new dialogs anymore. The are
+	  displayed at the top of the buddy list instead.
 
 	Conversations and Chats:
 	* Timestamps honor the locale.  To use the traditional style,
@@ -64,17 +67,17 @@ version 2.0.0:
 	* Warning dialog when closing a window with unread IM messages
 	* In chats right-click on names in the conversation window to
 	  IM/Send File/Get info/ignore the user
-	* Added tab management options to the tab right-click menu (Sadrul Habib
-	  Chowdhury)
+	* Added tab management options to the tab right-click menu (Sadrul
+	  Habib Chowdhury)
 	* Brand new message queueing system.  Sounds are played when a
 	  message is queued rather than when the message is dequeued
 	  (Casey Harkins)
 	* Ability to find the last message from a user in a chat (Levi Bard
 	  and Sadrul Habib Chowdhury)
 	* Formatting is preserved across messages
-	  (There are known issues with pasting formatted text.  Either use "Paste
-	   as Plain Text", hit Ctrl-R after pasting, or use the Clear Formatting
-	   button on the toolbar.)
+	  (There are known issues with pasting formatted text.  Either use
+	   "Paste as Plain Text", hit Ctrl-R after pasting, or use the Clear
+	   Formatting button on the toolbar.)
 	* Performance while joining large chat rooms has been significantly
 	  improved (Aaron Sheldon, Google Summer of Code)
 	* Bi-Directional text support improvements for GtkIMHtml (Shlomi Loubaton)
@@ -99,7 +102,7 @@ version 2.0.0:
 	* Plugins are now accessed through a separate dialog from the Tools
 	  menu of the Buddy List
 	* Newly installed plugins can now be activated without restarting
-	  Gaim (Sadrul Habib Chowdhury)
+	  Pidgin (Sadrul Habib Chowdhury)
 	* Overhauled the system tray/docklet plugin (Casey Harkins)
 	* Text Replacement Plugin rewritten, works in real time and far more
 	  intuitively (Benjamin Kahn)
@@ -109,30 +112,31 @@ version 2.0.0:
 	  (Levi Bard)
 	* The text replacement plugin offers both case sensitive matching and
 	  automatic case handling
-	* I'dle Ma'ker plugin now has easier an method to unidle accounts, a way
-	  to idle all accounts at once, and a way to unidle all accounts idled by
-	  the plugin (John Bailey, Sadrul Habib Chowdhury)
+	* I'dle Ma'ker plugin now has an easier method to unidle accounts, a
+	  way to idle all accounts at once, and a way to unidle all accounts
+	  idled via the plugin (John Bailey, Sadrul Habib Chowdhury)
 	* The Evolution Integration plugin now supports Groupwise contacts
 	* Mono plugin loader (Eoin Coffey)
 	* Perl plugin loader has been rewritten (John Kelm, Google Summer
 	  of Code)
 	* New music messaging plugin (Christian Muise, Google Summer of Code)
-	* gaim-remote has been superceded by new DBUS bindings within Gaim
+	* gaim-remote has been superceded by new DBUS bindings within libpurple
 	  (Piotr Zielinski, Google Summer of Code)
+	* The purple-url-handler program has been added to provide a way to
+	  automatically launch IM links via Pidgin or Finch.
 	* The functionality of the auto-reconnect plugin has been
-	  moved into the Gaim core, and the plugin itself has been
-	  removed.
+	  moved into the core, and the plugin itself has been removed.
 	* 'Highlight when nick said' option added to Message Notification
 	  plugin.
-	* The system tray icon is now transparent (Dan Winship)
+	* The system tray icon is now properly transparent (Dan Winship)
 	* New Log Reader plugin that can read and display logs from Adium,
 	  MSN Messenger, and Trillian in the log viewer
 	* New Contact Availability plugin that attempts to predict the
 	  times when people in your buddylist will most likely respond
 	  to you, based on times in the past when they have responded
 	  (Geoffrey Foster, Google Summer of Code)
-	* A few new plugins: Autoaccept, Autoreply, Buddy Notes, New Line, Offline
-	  Message Emulation, Conversation Colors and Markerline
+	* A few new plugins: Autoaccept, Autoreply, Buddy Notes, New Line,
+	  Offline Message Emulation, Conversation Colors and Markerline
 
 	MSN Features:
 	* Custom smiley receiving support (Irving Cordova & Francesco Fracassi)
@@ -185,7 +189,7 @@ version 2.0.0:
 	  Summer of Code)
 	* Updated Gadu-Gadu protocol support (Bartosz Oler, Google Summer of
 	  Code).  This requires the libgadu library.  See
-	  http://gaim.sourceforge.net/faq2.php#libgadu for more information.
+	  http://pidgin.im/faq.php#libgadu for more information.
 	* SIP/SIMPLE support (Thomas Butter, Google Summer of Code)
 	* Sametime protocol support
 	  Requires the meanwhile library: http://meanwhile.sourceforge.net
@@ -194,8 +198,6 @@ version 2.0.0:
 	* Removed the Napster and TOC protocols plugins
 
 	Other Noteworthy Changes:
-	* The project has new names - libpurple for the core, Pidgin for the Gtk+
-	  UI and Finch for the ncurses based console UI (AOL LLC)
 	* UPnP and NAT traversal support (Adam J. Warrington, Google Summer of
 	  Code)
 	* The modify account dialog now contains two tabs, which should display
@@ -207,9 +209,9 @@ version 2.0.0:
 	* Buddy icons maintain aspect ratio when resized
 	* The last used directory is remembered for opening or saving files and
 	  buddy icons
-	* Add an SVG version of our desktop icon, gaim.svg (John Oyler)
-	* If a given protocol don't support privacy, we now handle blocking in
-	  the core. (Jean-Yves Lefort)
+	* Add an SVG version of our desktop icon, pidgin.svg (John Oyler)
+	* If a given protocol doesn't support privacy, we now handle blocking
+	  in the core. (Jean-Yves Lefort)
 	* Smiley themes can now include spaces in the smiley definitions.
 	  The spaces (and now backslashes) must be backslash-escaped.
 	  (Sadrul Habib Chowdhury)
@@ -235,7 +237,7 @@ version 2.0.0:
 	* Removed keyboard shortcut preferences for ctrl-B/I/U; enabled by
 	  default, but won't interfere with bindings set by the GTK theme
 	* Removed keyboard shortcuts preferences for ctrl-# to insert a smiley;
-	  behavior removed from Gaim
+	  behavior removed from Pidgin
 	* Removed "Enter" vs. "Ctrl-Enter" to send; "Enter" sends by default,
 	  but it is now possible to change this binding in your GTK theme
 	* Removed "Show multi-colored screennames in chats;" behavior is now
