@@ -111,6 +111,15 @@ remove_toaster(GntToast *toast)
 }
 
 #ifdef HAVE_X11
+static int
+error_handler(Display *dpy, XErrorEvent *error)
+{
+	char buffer[1024];
+	XGetErrorText(dpy, error->error_code, buffer, sizeof(buffer));
+	purple_debug_error("gntgf", "Could not set urgent to the window: %s.\n", buffer);
+	return 0;
+}
+
 static void
 urgent()
 {
@@ -130,9 +139,14 @@ urgent()
 	if (dpy == NULL)
 		return;
 
+	XSetErrorHandler(error_handler);
 	hints = XGetWMHints(dpy, id);
-	hints->flags|=XUrgencyHint;
-	XSetWMHints(dpy, id, hints);
+	if (hints) {
+		hints->flags|=XUrgencyHint;
+		XSetWMHints(dpy, id, hints);
+		XFree(hints);
+	}
+	XSetErrorHandler(NULL);
 
 	XFlush(dpy);
 	XCloseDisplay(dpy);
