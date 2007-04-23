@@ -76,8 +76,8 @@ version 2.0.0:
 	  and Sadrul Habib Chowdhury)
 	* Formatting is preserved across messages
 	  (There are known issues with pasting formatted text.  Either use
-	  "Paste as Plain Text", hit Ctrl-R after pasting, or use the Clear
-	  Formatting button on the toolbar.)
+	   "Paste as Plain Text", hit Ctrl-R after pasting, or use the Clear
+	   Formatting button on the toolbar.)
 	* Performance while joining large chat rooms has been significantly
 	  improved (Aaron Sheldon, Google Summer of Code)
 	* Bi-Directional text support improvements for GtkIMHtml (Shlomi Loubaton)
@@ -112,7 +112,7 @@ version 2.0.0:
 	  (Levi Bard)
 	* The text replacement plugin offers both case sensitive matching and
 	  automatic case handling
-	* I'dle Ma'ker plugin now has easier an method to unidle accounts, a
+	* I'dle Ma'ker plugin now has an easier method to unidle accounts, a
 	  way to idle all accounts at once, and a way to unidle all accounts
 	  idled via the plugin (John Bailey, Sadrul Habib Chowdhury)
 	* The Evolution Integration plugin now supports Groupwise contacts
