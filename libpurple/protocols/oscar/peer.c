@@ -1016,7 +1016,9 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 						  "Images.  Because your IP address will be "
 						  "revealed, this may be considered a privacy "
 						  "risk."),
-						PURPLE_DEFAULT_ACTION_NONE, conn, 2,
+						PURPLE_DEFAULT_ACTION_NONE,
+						account, sn, NULL,
+						conn, 2,
 						_("_Connect"), G_CALLBACK(peer_connection_got_proposition_yes_cb),
 						_("Cancel"), G_CALLBACK(peer_connection_got_proposition_no_cb));
 	}

@@ -42,8 +42,10 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "account.h"
+#include "buddyicon.h"
 #include "core.h"
 #include "internal.h"
+#include "imgstore.h"
 #include "network.h"
 #include "savedstatuses.h"
 #include "status.h"
@@ -383,13 +385,26 @@ setup_icon_box(PidginStatusBox *status_box)
 	if (status_box->account &&
 		!purple_account_get_bool(status_box->account, "use-global-buddyicon", TRUE))
 	{
-		char *string = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(status_box->account));
-		pidgin_status_box_set_buddy_icon(status_box, string);
-		g_free(string);
+		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(status_box->account);
+		pidgin_status_box_set_buddy_icon(status_box, img);
+		purple_imgstore_unref(img);
 	}
 	else
 	{
-		pidgin_status_box_set_buddy_icon(status_box, purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon"));
+		const char *filename = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
+		PurpleStoredImage *img = NULL;
+
+		if (filename != NULL)
+		{
+			gchar *contents;
+			gsize size;
+			if (g_file_get_contents(filename, &contents, &size, NULL))
+			{
+				img = purple_imgstore_add(contents, size, filename);
+			}
+		}
+
+		pidgin_status_box_set_buddy_icon(status_box, img);
 	}
 
 	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
@@ -422,6 +437,8 @@ destroy_icon_box(PidginStatusBox *statusbox)
 	gdk_cursor_unref(statusbox->hand_cursor);
 	gdk_cursor_unref(statusbox->arrow_cursor);
 
+	purple_imgstore_unref(statusbox->buddy_icon_img);
+
 	g_object_unref(G_OBJECT(statusbox->buddy_icon));
 	g_object_unref(G_OBJECT(statusbox->buddy_icon_hover));
 
@@ -431,12 +448,10 @@ destroy_icon_box(PidginStatusBox *statusbox)
 	if (statusbox->icon_box_menu)
 		gtk_widget_destroy(statusbox->icon_box_menu);
 
-	g_free(statusbox->buddy_icon_path);
-
 	statusbox->icon = NULL;
 	statusbox->icon_box = NULL;
 	statusbox->icon_box_menu = NULL;
-	statusbox->buddy_icon_path = NULL;
+	statusbox->buddy_icon_img = NULL;
 	statusbox->buddy_icon = NULL;
 	statusbox->buddy_icon_hover = NULL;
 	statusbox->hand_cursor = NULL;
@@ -489,13 +504,12 @@ pidgin_status_box_finalize(GObject *obj)
 	gdk_cursor_unref(statusbox->hand_cursor);
 	gdk_cursor_unref(statusbox->arrow_cursor);
 
+	purple_imgstore_unref(statusbox->buddy_icon_img);
 	g_object_unref(G_OBJECT(statusbox->buddy_icon));
 	g_object_unref(G_OBJECT(statusbox->buddy_icon_hover));
 
 	if (statusbox->buddy_icon_sel)
 		gtk_widget_destroy(statusbox->buddy_icon_sel);
-
-	g_free(statusbox->buddy_icon_path);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
@@ -680,36 +694,6 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	    }
 
 		pixbuf = pidgin_status_box_get_pixbuf(status_box, prim);
-#if 0
-		if (account_status)
-			pixbuf = pidgin_create_prpl_icon_with_status(acct,
-						purple_status_get_type(purple_account_get_active_status(acct)),
-						0.5);
-		else
-			pixbuf = pidgin_create_purple_icon_with_status(
-						purple_savedstatus_get_type(saved_status),
-						0.5);
-
-		if (!purple_savedstatus_is_transient(saved_status))
-		{
-			GdkPixbuf *emblem;
-
-			/* Overlay a disk in the bottom left corner */
-			emblem = gtk_widget_render_icon(GTK_WIDGET(status_box->vbox),
-						GTK_STOCK_SAVE, icon_size, "PidginStatusBox");
-			if (emblem != NULL)
-			{
-				int width, height;
-				width = gdk_pixbuf_get_width(pixbuf) / 2;
-				height = gdk_pixbuf_get_height(pixbuf) / 2;
-				gdk_pixbuf_composite(emblem, pixbuf, 0, height,
-							width, height, 0, height,
-							0.5, 0.5, GDK_INTERP_BILINEAR, 255);
-				g_object_unref(G_OBJECT(emblem));
-			}
-		}
-#endif
-
 	}
 
 	if (status_box->account != NULL) {
@@ -899,7 +883,6 @@ add_popular_statuses(PidginStatusBox *statusbox)
 {
 	GList *list, *cur;
 	GdkPixbuf *pixbuf;
-	PidginStatusBoxItemType type = PIDGIN_STATUS_BOX_TYPE_POPULAR;
 
 	list = purple_savedstatuses_get_popular(6);
 	if (list == NULL)
@@ -914,6 +897,7 @@ add_popular_statuses(PidginStatusBox *statusbox)
 		const gchar *message;
 		gchar *stripped = NULL;
 		PurpleStatusPrimitive prim;
+		PidginStatusBoxItemType type = PIDGIN_STATUS_BOX_TYPE_POPULAR;
 
 		/* Get an appropriate status icon */
 		prim = purple_savedstatus_get_type(saved);
@@ -1432,20 +1416,21 @@ toggled_cb(GtkWidget *widget, PidginStatusBox *box)
 static void
 buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 {
+	PurpleStoredImage *img = NULL;
 
 	if (box->account) {
 		PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(box->account));
 		if (plug) {
 			PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
 			if (prplinfo && prplinfo->icon_spec.format) {
-				char *icon = NULL;
+				gpointer data = NULL;
+				size_t len = 0;
 				if (filename)
-					icon = pidgin_convert_buddy_icon(plug, filename);
-				purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
-				purple_account_set_ui_string(box->account, PIDGIN_UI, "non-global-buddyicon-cached-path", icon);
+					data = pidgin_convert_buddy_icon(plug, filename, &len);
+				img = purple_buddy_icons_set_account_icon(box->account, data, len);
 				purple_account_set_buddy_icon_path(box->account, filename);
-				purple_account_set_buddy_icon(box->account, icon);
-				g_free(icon);
+
+				purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
 			}
 		}
 	} else {
@@ -1458,17 +1443,20 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 				if (prplinfo != NULL &&
 				    purple_account_get_bool(account, "use-global-buddyicon", TRUE) &&
 				    prplinfo->icon_spec.format) {
-					char *icon = NULL;
+					gpointer data = NULL;
+					size_t len = 0;
 					if (filename)
-						icon = pidgin_convert_buddy_icon(plug, filename);
-					purple_account_set_buddy_icon_path(account, filename);
-					purple_account_set_buddy_icon(account, icon);
-					g_free(icon);
+						data = pidgin_convert_buddy_icon(plug, filename, &len);
+					img = purple_buddy_icons_set_account_icon(box->account, data, len);
+					purple_account_set_buddy_icon_path(box->account, filename);
+
+					purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
 				}
 			}
 		}
 	}
-	pidgin_status_box_set_buddy_icon(box, filename);
+
+	pidgin_status_box_set_buddy_icon(box, img);
 }
 
 static void
@@ -2040,10 +2028,14 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 	status_box->buddy_icon = NULL;
 	status_box->buddy_icon_hover = NULL;
 
-	if ((status_box->buddy_icon_path != NULL) &&
-			(*status_box->buddy_icon_path != '\0'))
-		status_box->buddy_icon = gdk_pixbuf_new_from_file_at_scale(status_box->buddy_icon_path,
-				status_box->icon_size, status_box->icon_size, FALSE, NULL);
+	if (status_box->buddy_icon_img != NULL)
+	{
+		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+		gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(status_box->buddy_icon_img),
+		                        purple_imgstore_get_size(status_box->buddy_icon_img), NULL);
+		gdk_pixbuf_loader_close(loader, NULL);
+		status_box->buddy_icon = gdk_pixbuf_loader_get_pixbuf(loader);
+	}
 
 	if (status_box->buddy_icon == NULL)
 	{
@@ -2064,18 +2056,12 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 }
 
 void
-pidgin_status_box_set_buddy_icon(PidginStatusBox *status_box, const char *filename)
+pidgin_status_box_set_buddy_icon(PidginStatusBox *status_box, PurpleStoredImage *img)
 {
-	g_free(status_box->buddy_icon_path);
-	status_box->buddy_icon_path = g_strdup(filename);
+	purple_imgstore_unref(status_box->buddy_icon_img);
+	status_box->buddy_icon_img = purple_imgstore_ref(img);
 
 	pidgin_status_box_redisplay_buddy_icon(status_box);
-}
-
-const char*
-pidgin_status_box_get_buddy_icon(PidginStatusBox *box)
-{
-	return box->buddy_icon_path;
 }
 
 void

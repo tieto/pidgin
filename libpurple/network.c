@@ -111,13 +111,13 @@ purple_network_set_public_ip(const char *ip)
 
 	/* XXX - Ensure the IP address is valid */
 
-	purple_prefs_set_string("/core/network/public_ip", ip);
+	purple_prefs_set_string("/purple/network/public_ip", ip);
 }
 
 const char *
 purple_network_get_public_ip(void)
 {
-	return purple_prefs_get_string("/core/network/public_ip");
+	return purple_prefs_get_string("/purple/network/public_ip");
 }
 
 const char *
@@ -176,7 +176,7 @@ purple_network_get_my_ip(int fd)
 	PurpleStunNatDiscovery *stun;
 
 	/* Check if the user specified an IP manually */
-	if (!purple_prefs_get_bool("/core/network/auto_ip")) {
+	if (!purple_prefs_get_bool("/purple/network/auto_ip")) {
 		ip = purple_network_get_public_ip();
 		/* Make sure the IP address entered by the user is valid */
 		if ((ip != NULL) && (purple_network_ip_atoi(ip) != NULL))
@@ -387,9 +387,9 @@ purple_network_listen_range(unsigned short start, unsigned short end,
 {
 	PurpleNetworkListenData *ret = NULL;
 
-	if (purple_prefs_get_bool("/core/network/ports_range_use")) {
-		start = purple_prefs_get_int("/core/network/ports_range_start");
-		end = purple_prefs_get_int("/core/network/ports_range_end");
+	if (purple_prefs_get_bool("/purple/network/ports_range_use")) {
+		start = purple_prefs_get_int("/purple/network/ports_range_start");
+		end = purple_prefs_get_int("/purple/network/ports_range_end");
 	} else {
 		if (end < start)
 			end = start;
@@ -660,12 +660,12 @@ purple_network_init(void)
 	}
 #endif
 
-	purple_prefs_add_none  ("/core/network");
-	purple_prefs_add_bool  ("/core/network/auto_ip", TRUE);
-	purple_prefs_add_string("/core/network/public_ip", "");
-	purple_prefs_add_bool  ("/core/network/ports_range_use", FALSE);
-	purple_prefs_add_int   ("/core/network/ports_range_start", 1024);
-	purple_prefs_add_int   ("/core/network/ports_range_end", 2048);
+	purple_prefs_add_none  ("/purple/network");
+	purple_prefs_add_bool  ("/purple/network/auto_ip", TRUE);
+	purple_prefs_add_string("/purple/network/public_ip", "");
+	purple_prefs_add_bool  ("/purple/network/ports_range_use", FALSE);
+	purple_prefs_add_int   ("/purple/network/ports_range_start", 1024);
+	purple_prefs_add_int   ("/purple/network/ports_range_end", 2048);
 
 	purple_upnp_discover(NULL, NULL);
 

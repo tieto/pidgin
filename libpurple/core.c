@@ -31,6 +31,7 @@
 #include "dnsquery.h"
 #include "ft.h"
 #include "idle.h"
+#include "imgstore.h"
 #include "network.h"
 #include "notify.h"
 #include "plugin.h"
@@ -44,6 +45,7 @@
 #include "sslconn.h"
 #include "status.h"
 #include "stun.h"
+#include "util.h"
 
 #ifdef HAVE_DBUS
 #  include "dbus-server.h"
@@ -123,6 +125,9 @@ purple_core_init(const char *ui)
 	purple_plugins_init();
 	purple_plugins_probe(G_MODULE_SUFFIX);
 
+	/* The buddy icon code uses the imgstore, so init it early. */
+	purple_imgstore_init();
+
 	/* Accounts use status and buddy icons, so initialize these before accounts */
 	purple_status_init();
 	purple_buddy_icons_init();
@@ -189,6 +194,7 @@ purple_core_quit(void)
 	purple_xfers_uninit();
 	purple_proxy_uninit();
 	purple_dnsquery_uninit();
+	purple_imgstore_uninit();
 
 	purple_debug_info("main", "Unloading all plugins\n");
 	purple_plugins_destroy_all();
@@ -267,4 +273,378 @@ PurpleCoreUiOps *
 purple_core_get_ui_ops(void)
 {
 	return _ops;
+}
+
+static gboolean
+move_and_symlink_dir(const char *path, const char *basename, const char *old_base, const char *new_base, const char *relative)
+{
+	char *new_name = g_build_filename(new_base, basename, NULL);
+#ifndef _WIN32
+	char *old_name;
+#endif
+	if (g_rename(path, new_name))
+	{
+		purple_debug_error("core", "Error renaming %s to %s: %s\n",
+		                   path, new_name, strerror(errno));
+		g_free(new_name);
+		return FALSE;
+	}
+	g_free(new_name);
+
+#ifndef _WIN32
+	/* NOTE: This new_name is relative. */
+	new_name = g_build_filename(relative, basename, NULL);
+	old_name = g_build_filename(old_base, basename, NULL);
+	if (symlink(new_name, old_name))
+	{
+		purple_debug_warning("core", "Error symlinking %s to %s: %s\n",
+		                     old_name, new_name, strerror(errno));
+	}
+	g_free(old_name);
+	g_free(new_name);
+#endif
+
+	return TRUE;
+}
+
+gboolean
+purple_core_migrate(void)
+{
+#error  This code wants to migrate your .gaim directory to .purple. It is strongly suggested that you back .gaim up before proceeding.
+	const char *user_dir = purple_user_dir();
+	char *old_user_dir = g_strconcat(purple_home_dir(),
+	                                 G_DIR_SEPARATOR_S ".gaim", NULL);
+	char *status_file;
+	FILE *fp;
+	GDir *dir;
+	GError *err;
+	const char *entry;
+#ifndef _WIN32
+	char *logs_dir;
+#endif
+	char *old_icons_dir;
+
+	if (!g_file_test(old_user_dir, G_FILE_TEST_EXISTS))
+	{
+		/* ~/.gaim doesn't exist, so there's nothing to migrate. */
+		g_free(old_user_dir);
+		return TRUE;
+	}
+
+	status_file = g_strconcat(user_dir, G_DIR_SEPARATOR_S "migrating", NULL);
+
+	if (g_file_test(user_dir, G_FILE_TEST_EXISTS))
+	{
+		/* If we're here, we have both ~/.gaim and .purple. */
+
+		if (!g_file_test(status_file, G_FILE_TEST_EXISTS))
+		{
+			/* There's no "migrating" status file,
+			 * so ~/.purple is all up to date. */
+			g_free(status_file);
+			g_free(old_user_dir);
+			return TRUE;
+		}
+	}
+
+	/* If we're here, it's time to migrate from ~/.gaim to ~/.purple. */
+
+        /* Ensure the user directory exists */
+	if (!g_file_test(user_dir, G_FILE_TEST_IS_DIR))
+	{
+		if (g_mkdir(user_dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
+		{
+			purple_debug_error("core", "Error creating directory %s: %s\n",
+			                   user_dir, strerror(errno));
+			g_free(status_file);
+			g_free(old_user_dir);
+			return FALSE;
+		}
+	}
+
+	/* This writes ~/.purple/migrating, which allows us to detect
+	 * incomplete migrations and properly retry. */
+	if (!(fp = g_fopen(status_file, "w")))
+	{
+		purple_debug_error("core", "Error opening file %s for writing: %s\n",
+		                   status_file, strerror(errno));
+		g_free(status_file);
+		g_free(old_user_dir);
+		return FALSE;
+	}
+	fclose(fp);
+
+	/* Open ~/.gaim so we can loop over its contents. */
+	err = NULL;
+	if (!(dir = g_dir_open(old_user_dir, 0, &err)))
+	{
+		purple_debug_error("core", "Error opening directory %s: %s\n",
+		                   status_file,
+		                   (err ? err->message : "Unknown error"));
+		if (err)
+			g_error_free(err);
+		g_free(status_file);
+		g_free(old_user_dir);
+		return FALSE;
+	}
+
+	/* Loop over the contents of ~/.gaim */
+	while ((entry = g_dir_read_name(dir)))
+	{
+		char *name = g_build_filename(old_user_dir, entry, NULL);
+
+#ifndef _WIN32
+		/* Deal with symlinks... */
+		if (g_file_test(name, G_FILE_TEST_IS_SYMLINK))
+		{
+			/* We're only going to duplicate a logs symlink. */
+			if (!strcmp(entry, "logs"))
+			{
+				char buf[MAXPATHLEN];
+
+				if (readlink(name, buf, sizeof(buf) - 1) == -1)
+				{
+					purple_debug_error("core", "Error reading symlink %s: %s\n",
+					                   name, strerror(errno));
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					return FALSE;
+				}
+				buf[sizeof(buf) - 1] = '\0';
+
+				logs_dir = g_strconcat(user_dir, G_DIR_SEPARATOR_S "logs", NULL);
+
+				if (!strcmp(buf, "../.purple/logs") || !strcmp(buf, logs_dir))
+				{
+					/* If the symlink points to the new directory, we're
+					 * likely just trying again after a failed migration,
+					 * so there's no need to fail here. */
+					g_free(logs_dir);
+					continue;
+				}
+
+				/* In case we are trying again after a failed migration, we need
+				 * to unlink any existing symlink.  If it's a directory, this
+				 * will fail, and so will the symlink below, which is good
+				 * because the user should sort things out. */
+				g_unlink(logs_dir);
+
+				/* Relative links will most likely still be
+				 * valid from ~/.purple, though not it's not
+				 * guaranteed.  Oh well. */
+				if (symlink(buf, logs_dir))
+				{
+					purple_debug_error("core", "Error symlinking %s to %s: %s\n",
+					                   logs_dir, buf, strerror(errno));
+					g_free(name);
+					g_free(logs_dir);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					return FALSE;
+				}
+
+				g_free(logs_dir);
+				continue;
+			}
+
+			/* Ignore all other symlinks. */
+			continue;
+		}
+#endif
+
+		/* Deal with directories... */
+		if (g_file_test(name, G_FILE_TEST_IS_DIR))
+		{
+			if (!strcmp(entry, "icons"))
+			{
+				/* This is a special case for the Album plugin, which
+				 * stores data in the icons folder.  We're not copying
+				 * the icons directory over because previous bugs
+				 * meant that it filled up with junk for many users.
+				 * This is a great time to purge it. */
+
+				GDir *icons_dir;
+				char *new_icons_dir;
+				const char *icons_entry;
+
+				err = NULL;
+				if (!(icons_dir = g_dir_open(name, 0, &err)))
+				{
+					purple_debug_error("core", "Error opening directory %s: %s\n",
+					                   name,
+					                   (err ? err->message : "Unknown error"));
+					if (err)
+						g_error_free(err);
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					return FALSE;
+				}
+
+				new_icons_dir = g_build_filename(user_dir, "icons", NULL);
+			        /* Ensure the new icon directory exists */
+				if (!g_file_test(new_icons_dir, G_FILE_TEST_IS_DIR))
+				{
+					if (g_mkdir(new_icons_dir, S_IRUSR | S_IWUSR | S_IXUSR) == -1)
+					{
+						purple_debug_error("core", "Error creating directory %s: %s\n",
+						                   new_icons_dir, strerror(errno));
+						g_free(new_icons_dir);
+						g_dir_close(icons_dir);
+						g_free(name);
+						g_dir_close(dir);
+						g_free(status_file);
+						g_free(old_user_dir);
+						return FALSE;
+					}
+				}
+
+				while ((icons_entry = g_dir_read_name(icons_dir)))
+				{
+					char *icons_name = g_build_filename(name, icons_entry, NULL);
+
+					if (g_file_test(icons_name, G_FILE_TEST_IS_DIR))
+					{
+						if (!move_and_symlink_dir(icons_name, icons_entry,
+						                          name, new_icons_dir, "../../.purple/icons"))
+						{
+							g_free(icons_name);
+							g_free(new_icons_dir);
+							g_dir_close(icons_dir);
+							g_free(name);
+							g_dir_close(dir);
+							g_free(status_file);
+							g_free(old_user_dir);
+							return FALSE;
+						}
+					}
+					g_free(icons_name);
+				}
+
+				g_dir_close(icons_dir);
+			}
+			else if (!strcmp(entry, "plugins"))
+			{
+				/* Do nothing, because we broke plugin compatibility.
+				 * This means that the plugins directory gets left behind. */
+			}
+			else
+			{
+				/* All other directories are moved and symlinked. */
+				if (!move_and_symlink_dir(name, entry, old_user_dir, user_dir, "../.purple"))
+				{
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					return FALSE;
+				}
+			}
+		}
+		else if (g_file_test(name, G_FILE_TEST_IS_REGULAR))
+		{
+			/* Regular files are copied. */
+
+			char *new_name;
+			FILE *new_file;
+
+			if (!(fp = g_fopen(name, "rb")))
+			{
+				purple_debug_error("core", "Error opening file %s for reading: %s\n",
+				                   name, strerror(errno));
+				g_free(name);
+				g_dir_close(dir);
+				g_free(status_file);
+				g_free(old_user_dir);
+				return FALSE;
+			}
+
+			new_name = g_build_filename(user_dir, entry, NULL);
+			if (!(new_file = g_fopen(new_name, "wb")))
+			{
+				purple_debug_error("core", "Error opening file %s for writing: %s\n",
+				                   new_name, strerror(errno));
+				fclose(fp);
+				g_free(new_name);
+				g_free(name);
+				g_dir_close(dir);
+				g_free(status_file);
+				g_free(old_user_dir);
+				return FALSE;
+			}
+
+			while (!feof(fp))
+			{
+				unsigned char buf[256];
+				size_t size;
+
+				size = fread(buf, 1, sizeof(buf), fp);
+				if (size != sizeof(buf) && !feof(fp))
+				{
+					purple_debug_error("core", "Error reading %s: %s\n",
+					                   name, strerror(errno));
+					fclose(new_file);
+					fclose(fp);
+					g_free(new_name);
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					return FALSE;
+				}
+
+				if (!fwrite(buf, size, 1, new_file))
+				{
+					purple_debug_error("core", "Error writing %s: %s\n",
+					                   new_name, strerror(errno));
+					fclose(new_file);
+					fclose(fp);
+					g_free(new_name);
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					return FALSE;
+				}
+			}
+
+			if (fclose(new_file))
+			{
+				purple_debug_error("core", "Error writing: %s: %s\n",
+				                   new_name, strerror(errno));
+			}
+			if (fclose(fp))
+			{
+				purple_debug_warning("core", "Error closing %s: %s\n",
+				                     name, strerror(errno));
+			}
+			g_free(new_name);
+		}
+		else
+			purple_debug_warning("core", "Not a regular file or directory: %s\n", name);
+
+		g_free(name);
+	}
+
+	/* The migration was successful, so delete the status file. */
+	if (g_unlink(status_file))
+	{
+		purple_debug_error("core", "Error unlinking file %s: %s\n",
+		                   status_file, strerror(errno));
+		g_free(status_file);
+		return FALSE;
+	}
+
+	old_icons_dir = g_build_filename(old_user_dir, "icons", NULL);
+	purple_buddy_icon_set_old_icons_dir(old_icons_dir);
+	g_free(old_icons_dir);
+
+	g_free(old_user_dir);
+
+	g_free(status_file);
+	return TRUE;
 }

@@ -289,6 +289,7 @@ void silcpurple_buddy_keyagr_request(SilcClient client,
 {
 	char tmp[128], tmp2[128];
 	SilcPurpleKeyAgrAsk a;
+	PurpleConnection *gc = client->application;
 
 	g_snprintf(tmp, sizeof(tmp),
 		   _("Key agreement request received from %s. Would you like to "
@@ -309,8 +310,8 @@ void silcpurple_buddy_keyagr_request(SilcClient client,
 	a->port = port;
 
 	purple_request_action(client->application, _("Key Agreement Request"), tmp,
-			    hostname ? tmp2 : NULL, 1, a, 2,
-			    _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
+			    hostname ? tmp2 : NULL, 1, gc->account, client_entry->nickname,
+				NULL, a, 2, _("Yes"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb),
 			    _("No"), G_CALLBACK(silcpurple_buddy_keyagr_request_cb));
 }
 
@@ -432,7 +433,7 @@ silcpurple_buddy_privkey_resolved(SilcClient client,
 static void
 silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 {
-        SilcPurple sg = gc->proto_data;
+	SilcPurple sg = gc->proto_data;
 	char *nickname;
 	SilcPurplePrivkey p;
 	SilcClientEntry *clients;
@@ -461,11 +462,11 @@ silcpurple_buddy_privkey(PurpleConnection *gc, const char *name)
 	p->client = sg->client;
 	p->conn = sg->conn;
 	p->client_id = *clients[0]->id;
-        purple_request_input(gc, _("IM With Password"), NULL,
-                           _("Set IM Password"), NULL, FALSE, TRUE, NULL,
-                           _("OK"), G_CALLBACK(silcpurple_buddy_privkey_cb),
-                           _("Cancel"), G_CALLBACK(silcpurple_buddy_privkey_cb),
-			   p);
+	purple_request_input(gc, _("IM With Password"), NULL,
+	                     _("Set IM Password"), NULL, FALSE, TRUE, NULL,
+	                     _("OK"), G_CALLBACK(silcpurple_buddy_privkey_cb),
+	                     _("Cancel"), G_CALLBACK(silcpurple_buddy_privkey_cb),
+	                     gc->account, NULL, NULL, p);
 
 	silc_free(clients);
 	silc_free(nickname);
@@ -987,7 +988,7 @@ silcpurple_add_buddy_save(bool success, void *context)
 					SilcUInt32 data_len;
 					data = silc_mime_get_data(m, &data_len);
 					if (data)
-						purple_buddy_icons_set_for_user(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), (void *)data, data_len);
+						purple_buddy_icons_set_for_user(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), g_memdup(data, data_len), data_len);
 				}
 				silc_mime_free(m);
 			}
@@ -1063,7 +1064,9 @@ silcpurple_add_buddy_ask_pk_cb(SilcPurpleBuddyRes r, gint id)
 	/* Open file selector to select the public key. */
 	purple_request_file(r->client->application, _("Open..."), NULL, FALSE,
 			  G_CALLBACK(silcpurple_add_buddy_ask_import),
-			  G_CALLBACK(silcpurple_add_buddy_ask_pk_cancel), r);
+			  G_CALLBACK(silcpurple_add_buddy_ask_pk_cancel),
+			  purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, r);
+
 }
 
 static void
@@ -1074,7 +1077,8 @@ silcpurple_add_buddy_ask_pk(SilcPurpleBuddyRes r)
 		   r->b->name);
 	purple_request_action(r->client->application, _("Add Buddy"), tmp,
 			    _("To add the buddy you must import his/her public key. "
-			      "Press Import to import a public key."), 0, r, 2,
+			      "Press Import to import a public key."), 0,
+				  purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, r, 2,
 			    _("Cancel"), G_CALLBACK(silcpurple_add_buddy_ask_pk_cb),
 			    _("_Import..."), G_CALLBACK(silcpurple_add_buddy_ask_pk_cb));
 }
@@ -1180,7 +1184,8 @@ silcpurple_add_buddy_select(SilcPurpleBuddyRes r,
 						"the correct user from the list to add to the buddy list."),
 				fields,
 				_("OK"), G_CALLBACK(silcpurple_add_buddy_select_cb),
-				_("Cancel"), G_CALLBACK(silcpurple_add_buddy_select_cancel), r);
+				_("Cancel"), G_CALLBACK(silcpurple_add_buddy_select_cancel),
+				purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), NULL, r);
 }
 
 static void
@@ -1716,7 +1721,7 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, const char *iconfile)
 	}
 
 	t = purple_buddy_icon_get_type((const PurpleBuddyIcon *)&ic);
-	if (!t) {
+	if (!t || !strcmp(t, "icon")) {
 		g_free(ic.data);
 		silc_mime_free(mime);
 		return;

@@ -705,13 +705,13 @@ purple_savedstatus_delete(const char *title)
 	 * If we just deleted our current status or our idleaway status,
 	 * then set the appropriate pref back to 0.
 	 */
-	current = purple_prefs_get_int("/core/savedstatus/default");
+	current = purple_prefs_get_int("/purple/savedstatus/default");
 	if (current == creation_time)
-		purple_prefs_set_int("/core/savedstatus/default", 0);
+		purple_prefs_set_int("/purple/savedstatus/default", 0);
 
-	idleaway = purple_prefs_get_int("/core/savedstatus/idleaway");
+	idleaway = purple_prefs_get_int("/purple/savedstatus/idleaway");
 	if (idleaway == creation_time)
-		purple_prefs_set_int("/core/savedstatus/idleaway", 0);
+		purple_prefs_set_int("/purple/savedstatus/idleaway", 0);
 
 	return TRUE;
 }
@@ -765,7 +765,7 @@ purple_savedstatus_get_default()
 	int creation_time;
 	PurpleSavedStatus *saved_status = NULL;
 
-	creation_time = purple_prefs_get_int("/core/savedstatus/default");
+	creation_time = purple_prefs_get_int("/purple/savedstatus/default");
 
 	if (creation_time != 0)
 		saved_status = g_hash_table_lookup(creation_times, &creation_time);
@@ -779,7 +779,7 @@ purple_savedstatus_get_default()
 		 * using?  In any case, add a default status.
 		 */
 		saved_status = purple_savedstatus_new(NULL, PURPLE_STATUS_AVAILABLE);
-		purple_prefs_set_int("/core/savedstatus/default",
+		purple_prefs_set_int("/purple/savedstatus/default",
 						   purple_savedstatus_get_creation_time(saved_status));
 	}
 
@@ -792,7 +792,7 @@ purple_savedstatus_get_idleaway()
 	int creation_time;
 	PurpleSavedStatus *saved_status = NULL;
 
-	creation_time = purple_prefs_get_int("/core/savedstatus/idleaway");
+	creation_time = purple_prefs_get_int("/purple/savedstatus/idleaway");
 
 	if (creation_time != 0)
 		saved_status = g_hash_table_lookup(creation_times, &creation_time);
@@ -807,7 +807,7 @@ purple_savedstatus_get_idleaway()
 		{
 			saved_status = purple_savedstatus_new(NULL, PURPLE_STATUS_AWAY);
 			purple_savedstatus_set_message(saved_status, DEFAULT_AUTOAWAY_MESSAGE);
-			purple_prefs_set_int("/core/savedstatus/idleaway",
+			purple_prefs_set_int("/purple/savedstatus/idleaway",
 							   purple_savedstatus_get_creation_time(saved_status));
 		}
 	}
@@ -818,7 +818,7 @@ purple_savedstatus_get_idleaway()
 gboolean
 purple_savedstatus_is_idleaway()
 {
-	return purple_prefs_get_bool("/core/savedstatus/isidleaway");
+	return purple_prefs_get_bool("/purple/savedstatus/isidleaway");
 }
 
 void
@@ -836,7 +836,7 @@ purple_savedstatus_set_idleaway(gboolean idleaway)
 		purple_idle_touch();
 
 	old = purple_savedstatus_get_current();
-	purple_prefs_set_bool("/core/savedstatus/isidleaway", idleaway);
+	purple_prefs_set_bool("/purple/savedstatus/isidleaway", idleaway);
 	saved_status = idleaway ? purple_savedstatus_get_idleaway()
 			: purple_savedstatus_get_default();
 
@@ -871,7 +871,7 @@ purple_savedstatus_get_startup()
 	int creation_time;
 	PurpleSavedStatus *saved_status = NULL;
 
-	creation_time = purple_prefs_get_int("/core/savedstatus/startup");
+	creation_time = purple_prefs_get_int("/purple/savedstatus/startup");
 
 	if (creation_time != 0)
 		saved_status = g_hash_table_lookup(creation_times, &creation_time);
@@ -1074,7 +1074,7 @@ purple_savedstatus_activate(PurpleSavedStatus *saved_status)
 	saved_status->usage_count++;
 	saved_statuses = g_list_remove(saved_statuses, saved_status);
 	saved_statuses = g_list_insert_sorted(saved_statuses, saved_status, saved_statuses_sort_func);
-	purple_prefs_set_int("/core/savedstatus/default",
+	purple_prefs_set_int("/purple/savedstatus/default",
 					   purple_savedstatus_get_creation_time(saved_status));
 
 	accounts = purple_accounts_get_all_active();
@@ -1155,12 +1155,12 @@ purple_savedstatuses_init(void)
 	 * sees a creation_time of 0, then it will create a default
 	 * saved status and return that to the user.
 	 */
-	purple_prefs_add_none("/core/savedstatus");
-	purple_prefs_add_int("/core/savedstatus/default", 0);
-	purple_prefs_add_int("/core/savedstatus/startup", 0);
-	purple_prefs_add_bool("/core/savedstatus/startup_current_status", TRUE);
-	purple_prefs_add_int("/core/savedstatus/idleaway", 0);
-	purple_prefs_add_bool("/core/savedstatus/isidleaway", FALSE);
+	purple_prefs_add_none("/purple/savedstatus");
+	purple_prefs_add_int("/purple/savedstatus/default", 0);
+	purple_prefs_add_int("/purple/savedstatus/startup", 0);
+	purple_prefs_add_bool("/purple/savedstatus/startup_current_status", TRUE);
+	purple_prefs_add_int("/purple/savedstatus/idleaway", 0);
+	purple_prefs_add_bool("/purple/savedstatus/isidleaway", FALSE);
 
 	load_statuses();
 

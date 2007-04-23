@@ -191,6 +191,7 @@ void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g)
 	gchar *msg1, *msg2;
 	PurpleConnection *gc;
 	gc_and_uid *g2;
+	gchar *nombre;
 
 	g_return_if_fail(g != NULL);
 
@@ -207,9 +208,13 @@ void qq_reject_add_request_with_gc_and_uid(gc_and_uid *g)
 	msg1 = g_strdup_printf(_("You rejected %d's request"), uid);
 	msg2 = g_strdup(_("Input your reason:"));
 
+	nombre = uid_to_purple_name(uid);
 	purple_request_input(gc, _("Reject request"), msg1, msg2,
 			   _("Sorry, you are not my type..."), TRUE, FALSE,
-			   NULL, _("Reject"), G_CALLBACK(_qq_reject_add_request_real), _("Cancel"), NULL, g2);
+			   NULL, _("Reject"), G_CALLBACK(_qq_reject_add_request_real), _("Cancel"), NULL,
+			   purple_connection_get_account(gc), nombre, NULL,
+			   g2);
+	g_free(nombre);
 }
 
 void qq_add_buddy_with_gc_and_uid(gc_and_uid *g)
@@ -345,6 +350,7 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 	PurpleBuddy *b;
 	gc_and_uid *g;
 	qq_add_buddy_request *req;
+	gchar *nombre;
 
 	g_return_if_fail(buf != NULL && buf_len != 0);
 
@@ -386,7 +392,8 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 
 		if (strtol(reply, NULL, 10) > 0) {	/* need auth */
 			purple_debug(PURPLE_DEBUG_WARNING, "QQ", "Add buddy attempt fails, need authentication\n");
-			b = purple_find_buddy(gc->account, uid_to_purple_name(for_uid));
+			nombre = uid_to_purple_name(for_uid);
+			b = purple_find_buddy(gc->account, nombre);
 			if (b != NULL)
 				purple_blist_remove_buddy(b);
 			g = g_new0(gc_and_uid, 1);
@@ -394,13 +401,16 @@ void qq_process_add_buddy_reply(guint8 *buf, gint buf_len, guint16 seq, PurpleCo
 			g->uid = for_uid;
 			msg = g_strdup_printf(_("User %d needs authentication"), for_uid);
 			purple_request_input(gc, NULL, msg,
-					   _("Input request here"),
+					   _("Input request here"), /* TODO: Awkward string to fix post string freeze - standardize auth dialogues? -evands */
 					   _("Would you be my friend?"),
 					   TRUE, FALSE, NULL, _("Send"),
 					   G_CALLBACK
 					   (_qq_send_packet_add_buddy_auth_with_gc_and_uid),
-					   _("Cancel"), G_CALLBACK(qq_do_nothing_with_gc_and_uid), g);
+					   _("Cancel"), G_CALLBACK(qq_do_nothing_with_gc_and_uid),
+					   purple_connection_get_account(gc), nombre, NULL,
+					   g);
 			g_free(msg);
+			g_free(nombre);
 		} else {	/* add OK */
 			qq_add_buddy_by_recv_packet(gc, for_uid, TRUE, TRUE);
 			msg = g_strdup_printf(_("You have added %d in buddy list"), for_uid);

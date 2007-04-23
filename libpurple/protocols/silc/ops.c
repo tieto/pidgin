@@ -161,7 +161,7 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 		if (channel && !convo)
 			goto out;
 
-		imgid = purple_imgstore_add(data, data_len, "");
+		imgid = purple_imgstore_add_with_id(g_memdup(data, data_len), data_len, "");
 		if (imgid) {
 			cflags |= PURPLE_MESSAGE_IMAGES | PURPLE_MESSAGE_RECV;
 			g_snprintf(tmp, sizeof(tmp), "<IMG ID=\"%d\">", imgid);
@@ -177,7 +177,7 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 					    sender->nickname : "<unknown>",
 					    tmp, cflags, time(NULL));
 
-			purple_imgstore_unref(imgid);
+			purple_imgstore_unref_by_id(imgid);
 			cflags = 0;
 		}
 		goto out;
@@ -1295,7 +1295,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						_("User Information"),
 						buf, 1, client_entry, 2,
 						_("OK"), G_CALLBACK(silcpurple_whois_more),
-						_("_More..."), G_CALLBACK(silcpurple_whois_more));
+						_("_More..."), G_CALLBACK(silcpurple_whois_more), gc->account, NULL, NULL);
 			else
 #endif
 			purple_notify_userinfo(gc, client_entry->nickname, user_info, NULL, NULL);
@@ -1900,17 +1900,18 @@ static void
 silc_ask_passphrase(SilcClient client, SilcClientConnection conn,
 		    SilcAskPassphrase completion, void *context)
 {
+	PurpleConnection *gc = client->application;
 	SilcPurpleAskPassphrase internal = silc_calloc(1, sizeof(*internal));
 
 	if (!internal)
 		return;
 	internal->completion = completion;
 	internal->context = context;
-	purple_request_input(client->application, _("Passphrase"), NULL,
+	purple_request_input(gc, _("Passphrase"), NULL,
 			   _("Passphrase required"), NULL, FALSE, TRUE, NULL,
 			   _("OK"), G_CALLBACK(silc_ask_passphrase_cb),
 			   _("Cancel"), G_CALLBACK(silc_ask_passphrase_cb),
-			   internal);
+			   purple_connection_get_account(gc), NULL, NULL, internal);
 }
 
 

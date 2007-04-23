@@ -26,6 +26,8 @@
 #ifndef _PURPLE_IMGSTORE_H_
 #define _PURPLE_IMGSTORE_H_
 
+#include <glib.h>
+
 struct _PurpleStoredImage;
 typedef struct _PurpleStoredImage PurpleStoredImage;
 
@@ -34,17 +36,41 @@ extern "C" {
 #endif
 
 /**
- * Add an image to the store. The caller owns a reference
- * to the image in the store, and must dereference the image
- * with purple_imgstore_unref for it to be freed.
+ * Add an image to the store.
  *
- * @param data		Pointer to the image data.
+ * The caller owns a reference to the image in the store, and must dereference
+ * the image with purple_imgstore_unref() for it to be freed.
+ *
+ * No ID is allocated when using this function.  If you need to reference the
+ * image by an ID, use purple_imgstore_add_with_id() instead.
+ *
+ * @param data		Pointer to the image data, which the imgstore will take
+ *                      ownership of and free as appropriate.  If you want a
+ *                      copy of the data, make it before calling this function.
+ * @param size		Image data's size.
+ * @param filename	Filename associated with image.
+ *
+ * @return The stored image.
+ */
+PurpleStoredImage *
+purple_imgstore_add(gpointer data, size_t size, const char *filename);
+
+/**
+ * Add an image to the store, allocating an ID.
+ *
+ * The caller owns a reference to the image in the store, and must dereference
+ * the image with purple_imgstore_unref_by_id() or purple_imgstore_unref()
+ * for it to be freed.
+ *
+ * @param data		Pointer to the image data, which the imgstore will take
+ *                      ownership of and free as appropriate.  If you want a
+ *                      copy of the data, make it before calling this function.
  * @param size		Image data's size.
  * @param filename	Filename associated with image.
 
  * @return ID for the image.
  */
-int purple_imgstore_add(const void *data, size_t size, const char *filename);
+int purple_imgstore_add_with_id(gpointer data, size_t size, const char *filename);
 
 /**
  * Retrieve an image from the store. The caller does not own a
@@ -54,22 +80,22 @@ int purple_imgstore_add(const void *data, size_t size, const char *filename);
  *
  * @return A pointer to the requested image, or NULL if it was not found.
  */
-PurpleStoredImage *purple_imgstore_get(int id);
+PurpleStoredImage *purple_imgstore_find_by_id(int id);
 
 /**
  * Retrieves a pointer to the image's data.
  *
- * @param i	The Image
+ * @param img	The Image
  *
  * @return A pointer to the data, which must not
  *         be freed or modified.
  */
-gpointer purple_imgstore_get_data(PurpleStoredImage *i);
+gconstpointer purple_imgstore_get_data(PurpleStoredImage *img);
 
 /**
  * Retrieves the length of the image's data.
  *
- * @param i	The Image
+ * @param img	The Image
  *
  * @return The size of the data that the pointer returned by
  *         purple_imgstore_get_data points to.
@@ -79,30 +105,82 @@ size_t purple_imgstore_get_size(PurpleStoredImage *i);
 /**
  * Retrieves a pointer to the image's filename.
  *
- * @param i	The Image
+ * @param img	The image
  *
  * @return A pointer to the filename, which must not
  *         be freed or modified.
  */
-const char *purple_imgstore_get_filename(PurpleStoredImage *i);
+const char *purple_imgstore_get_filename(PurpleStoredImage *img);
 
 /**
- * Increment the reference count for an image in the store. The
- * image will be removed from the store when the reference count
- * is zero.
+ * Returns an extension corresponding to the image's file type.
+ *
+ * @param img  The image.
+ *
+ * @return The icon's extension or "icon" if unknown.
+ */
+const char *purple_imgstore_get_extension(PurpleStoredImage *img);
+
+/**
+ * Increment the reference count.
+ *
+ * @param img The image.
+ *
+ * @return @a img
+ */
+PurpleStoredImage *
+purple_imgstore_ref(PurpleStoredImage *img);
+
+/**
+ * Decrement the reference count.
+ *
+ * If the reference count reaches zero, the image will be freed.
+ *
+ * @param img The image.
+ *
+ * @return @a img or @c NULL if the reference count reached zero.
+ */
+PurpleStoredImage *
+purple_imgstore_unref(PurpleStoredImage *img);
+
+/**
+ * Increment the reference count using an ID.
+ *
+ * This is a convience wrapper for purple_imgstore_find_by_id() and
+ * purple_imgstore_ref(), so if you have a PurpleStoredImage, it'll
+ * be more efficient to call purple_imgstore_ref() directly.
  *
  * @param id		The ID for the image.
  */
-void purple_imgstore_ref(int id);
+void purple_imgstore_ref_by_id(int id);
 
 /**
- * Decrement the reference count for an image in the store. The
- * image will be removed from the store when the reference count
- * is zero.
+ * Decrement the reference count using an ID.
+ *
+ * This is a convience wrapper for purple_imgstore_find_by_id() and
+ * purple_imgstore_unref(), so if you have a PurpleStoredImage, it'll
+ * be more efficient to call purple_imgstore_unref() directly.
  *
  * @param id		The ID for the image.
  */
-void purple_imgstore_unref(int id);
+void purple_imgstore_unref_by_id(int id);
+
+/**
+ * Returns the image store subsystem handle.
+ *
+ * @return The subsystem handle.
+ */
+void *purple_imgstore_get_handle(void);
+
+/**
+ * Initializes the image store subsystem.
+ */
+void purple_imgstore_init(void);
+
+/**
+ * Uninitializes the image store subsystem.
+ */
+void purple_imgstore_uninit(void);
 
 #ifdef __cplusplus
 }
