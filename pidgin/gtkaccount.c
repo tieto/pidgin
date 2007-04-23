@@ -333,8 +333,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
 			GError *converr = NULL;
 			gchar *tmp, *rtmp;
-			/* It looks like we're dealing with a local file. Let's
-			 * just untar it in the right place */
+			/* It looks like we're dealing with a local file. */
 			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
 				purple_debug(PURPLE_DEBUG_ERROR, "buddyicon", "%s\n",
 					   (converr ? converr->message :
