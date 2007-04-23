@@ -58,7 +58,7 @@ __END__
 
 =head1 NAME
 
-libpurple - Perl extension to the libpurple instant messenger library.
+Purple - Perl extension to the libpurple instant messenger library.
 
 =head1 SYNOPSIS
 

@@ -848,6 +848,18 @@ purple_buddy_icon_set_old_icons_dir(const char *dirname)
 }
 
 static void
+delete_buddy_icon_settings(PurpleBlistNode *node, const char *setting_name)
+{
+	purple_blist_node_remove_setting(node, setting_name);
+
+	if (!strcmp(setting_name, "buddy_icon"))
+	{
+		purple_blist_node_remove_setting(node, "avatar_hash");
+		purple_blist_node_remove_setting(node, "icon_checksum");
+	}
+}
+
+static void
 migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
                    const char *dirname, const char *filename)
 {
@@ -875,8 +887,10 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 		FILE *file;
 		char *new_filename;
 
-		if (!read_icon_file(path, &icon_data, &icon_len))
+		if (!read_icon_file(path, &icon_data, &icon_len) ||
+		    icon_data == NULL || icon_len > 0)
 		{
+			delete_buddy_icon_settings(node, setting_name);
 			g_free(path);
 			return;
 		}
@@ -886,6 +900,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 		new_filename = purple_buddy_icon_data_calculate_filename(icon_data, icon_len);
 		if (new_filename == NULL)
 		{
+			delete_buddy_icon_settings(node, setting_name);
 			return;
 		}
 
@@ -908,6 +923,8 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 			                   path, strerror(errno));
 			g_free(new_filename);
 			g_free(path);
+
+			delete_buddy_icon_settings(node, setting_name);
 			return;
 		}
 		g_free(path);
@@ -931,13 +948,19 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 			}
 			else
 			{
-				int checksum = purple_blist_node_get_int(node, "icon_checksum");
-				if (checksum != 0)
+				PurpleAccount *account = purple_buddy_get_account((PurpleBuddy *)node);
+				const char *prpl_id = purple_account_get_protocol_id(account);
+
+				if (!strcmp(prpl_id, "prpl-yahoo"))
 				{
-					char *checksum_str = g_strdup_printf("%i", checksum);
-					purple_blist_node_remove_setting(node, "icon_checksum");
-					purple_blist_node_set_string(node, "icon_checksum", checksum_str);
-					g_free(checksum_str);
+					int checksum = purple_blist_node_get_int(node, "icon_checksum");
+					if (checksum != 0)
+					{
+						char *checksum_str = g_strdup_printf("%i", checksum);
+						purple_blist_node_remove_setting(node, "icon_checksum");
+						purple_blist_node_set_string(node, "icon_checksum", checksum_str);
+						g_free(checksum_str);
+					}
 				}
 			}
 		}
@@ -945,16 +968,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 	else
 	{
 		/* If the icon is gone, drop the setting... */
-		purple_blist_node_remove_setting(node,
-		                                 setting_name);
-
-		if (!strcmp(setting_name, "buddy_icon"))
-		{
-			purple_blist_node_remove_setting(node,
-			                                 "avatar_hash");
-			purple_blist_node_remove_setting(node,
-			                                 "icon_checksum");
-		}
+		delete_buddy_icon_settings(node, setting_name);
 		g_free(path);
 	}
 }
@@ -1006,7 +1020,7 @@ purple_buddy_icons_blist_loaded_cb()
 		}
 	}
 
-        while (node != NULL)
+	while (node != NULL)
 	{
 		if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 		{
@@ -1048,7 +1062,7 @@ purple_buddy_icons_blist_loaded_cb()
 				{
 					migrate_buddy_icon(node,
 					                   "custom_buddy_icon",
-					                    dirname, filename);
+					                   dirname, filename);
 				}
 				else
 				{
@@ -1065,7 +1079,7 @@ purple_buddy_icons_blist_loaded_cb()
 			}
 		}
 		node = purple_blist_node_next(node, TRUE);
-        }
+	}
 }
 
 void

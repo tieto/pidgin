@@ -18,11 +18,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin - Клиент для мгновенного обмена сообщениями по различным протоколам (необходимо)."
 !define GTK_SECTION_TITLE			"GTK+ окружение для запуска (необходимо)."
-!define GTK_THEMES_SECTION_TITLE		"Темы для GTK+."
-!define GTK_NOTHEME_SECTION_TITLE		"Без темы."
-!define GTK_WIMP_SECTION_TITLE		"Тема 'Wimp Theme'"
-!define GTK_BLUECURVE_SECTION_TITLE		"Тема 'Bluecurve'."
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Тема 'Light House Blue'."
 !define PIDGIN_SECTION_DESCRIPTION		"Основная часть Pidgin и библиотеки."
 !define GTK_SECTION_DESCRIPTION		"Мультиплатформенный графический инструментарий, используемый Pidgin."
 
@@ -38,9 +33,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Ошибка при установке окружения GTK+."
 !define GTK_BAD_INSTALL_PATH			"Путь который Вы ввели недоступен или не существует."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"У Вас нет прав на установление темы для GTK+."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Программа удаления не может найти данные Pidgin в регистре..$\rВероятно это приложение установил другой пользователь."

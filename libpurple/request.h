@@ -1332,7 +1332,7 @@ void *purple_request_action_varg(void *handle, const char *title,
  * @param cancel_text The text for the @c Cancel button.
  * @param cancel_cb   The callback for the @c Cancel button.
  * @param account	  The PurpleAccount associated with this request, or NULL if none is
- * @param who		  The username of the buddy assocaited with this request, or NULL if none is
+ * @param who		  The username of the buddy associated with this request, or NULL if none is
  * @param conv		  The PurpleConversation associated with this request, or NULL if none is 
  * @param user_data   The data to pass to the callback.
  *

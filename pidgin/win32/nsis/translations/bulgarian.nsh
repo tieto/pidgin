@@ -14,11 +14,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin Клиент за Бързи Съобщения (изисква се)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime Среда (required)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ Теми"
-!define GTK_NOTHEME_SECTION_TITLE		"Без Тема"
-!define GTK_WIMP_SECTION_TITLE			"Wimp Тема"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve Тема"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Тема"
 !define PIDGIN_SECTION_DESCRIPTION		"Файлове на ядрото на Pidgin и библиотеки"
 !define GTK_SECTION_DESCRIPTION			"Мултиплатфорен кит за графичен изглед, използван от Pidgin"
 
@@ -32,9 +27,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Грешка при инсталиране на GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Въведеният път не може да бъде достъпен или създаден."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Нямате права за да инсталирате GTK+ тема."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Деисталатоа не може да намери записи в регистъра за Pidgin.$\rВероятно е бил инсталиран от друг потребител."

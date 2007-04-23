@@ -1,11 +1,46 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([pidgin], [2.0.0beta7devel], [devel@pidgin.im])
+AC_PREREQ([2.50])
+
+# Making releases:
+#   purple_micro_version += 1
+# if any functions have been added:
+#   purple_micro_version = 0
+#   purple_minor_version += 1
+# if backwards compatibility has been broken
+#   purple_minor_version = 0
+#   purple_micro_version = 0
+#   purple_major_version += 1;
+#
+m4_define([purple_major_version], [2])
+m4_define([purple_minor_version], [0])
+m4_define([purple_micro_version], [0])
+m4_define([purple_version_suffix], [devel])
+m4_define([purple_version],
+          [purple_major_version.purple_minor_version.purple_micro_version])
+m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
+
+AC_INIT([pidgin], [purple_display_version], [devel@pidgin.im])
+
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 #AM_INIT_AUTOMAKE([foreign dist-bzip2])
 
-AC_PREREQ([2.50])
+PURPLE_MAJOR_VERSION=purple_major_version
+PURPLE_MINOR_VERSION=purple_minor_version
+PURPLE_MICRO_VERSION=purple_micro_version
+PURPLE_VERSION=[purple_display_version]
+AC_SUBST(PURPLE_MAJOR_VERSION)
+AC_SUBST(PURPLE_MINOR_VERSION)
+AC_SUBST(PURPLE_MICRO_VERSION)
+AC_SUBST(PURPLE_VERSION)
+
+m4_define([lt_current], [m4_eval(100 * purple_major_version + purple_minor_version)])
+m4_define([lt_age], [purple_minor_version])
+m4_define([lt_revision], [purple_micro_version])
+LT_VERSION_INFO="lt_current:lt_revision:lt_age"
+AC_SUBST(LT_VERSION_INFO)
+
 
 AC_DEFINE(PIDGIN_NAME, "Pidgin", [The user-visible application name])
 
@@ -807,7 +842,22 @@ AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 AC_CHECK_HEADER(sys/utsname.h)
 AC_CHECK_FUNC(uname)
 
-AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
+AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], enable_fortify="$enableval", enable_fortify=yes)
+
+AC_ARG_ENABLE(mcheck, [AC_HELP_STRING([--enable-mcheck], [compile with mcheck (malloc debugging) support])], enable_mcheck="$enableval", enable_mcheck="$enable_debug")
+if test "x$enable_mcheck" = "xyes" ; then
+	orig_LIBS="$LIBS"
+	LIBS="$LIBS -lmcheck"
+	AC_MSG_CHECKING(for mcheck support)
+	AC_TRY_COMPILE([], [
+		int main() {return 0;}
+	], [
+		AC_MSG_RESULT(yes)
+	], [
+		AC_MSG_RESULT(no)
+		LIBS="$orig_LIBS"
+	])
+fi
 
 if test "x$GCC" = "xyes"; then
 	dnl We enable -Wall later.
@@ -835,10 +885,12 @@ if test "x$GCC" = "xyes"; then
 			"-Waggregate-return" \
 			"-Wcast-align" \
 			"-Wdeclaration-after-statement" \
+			"-Wendif-labels" \
 			"-Werror-implicit-function-declaration" \
 			"-Wextra -Wno-sign-compare -Wno-unused-parameter" \
 			"-Winit-self" \
 			"-Wmissing-declarations" \
+			"-Wmissing-noreturn" \
 			"-Wmissing-prototypes" \
 			"-Wnested-externs" \
 			"-Wpointer-arith" \
@@ -875,7 +927,7 @@ if test "x$GCC" = "xyes"; then
 			}
 		], [
 			AC_MSG_RESULT(yes)
-			DEBUG_CFLAGS="$DEBUG_CFLAGS -D_FORTIFY_SOURCE=2"
+			DEBUG_CFLAGS="$DEBUG_CFLAGS -Wp,-D_FORTIFY_SOURCE=2"
 		], [
 			AC_MSG_RESULT(no)
 		])
@@ -1996,6 +2048,7 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/yahoo/Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
+		   libpurple/version.h
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc

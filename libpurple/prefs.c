@@ -1102,13 +1102,14 @@ purple_prefs_get_path_list(const char *name)
 static void
 purple_prefs_rename_node(struct purple_pref *oldpref, struct purple_pref *newpref)
 {
-	struct purple_pref *child;
+	struct purple_pref *child, *next;
 	char *oldname, *newname;
 
 	/* if we're a parent, rename the kids first */
-	for(child = oldpref->first_child; child != NULL; child = child->sibling)
+	for(child = oldpref->first_child; child != NULL; child = next)
 	{
 		struct purple_pref *newchild;
+		next = child->sibling;
 		for(newchild = newpref->first_child; newchild != NULL; newchild = newchild->sibling)
 		{
 			if(!strcmp(child->name, newchild->name))
@@ -1120,7 +1121,7 @@ purple_prefs_rename_node(struct purple_pref *oldpref, struct purple_pref *newpre
 		if(newchild == NULL) {
 			/* no rename happened, we weren't able to find the new pref */
 			char *tmpname = pref_full_name(child);
-			purple_debug_error("prefs", "Unable to find rename pref for %s", tmpname);
+			purple_debug_error("prefs", "Unable to find rename pref for %s\n", tmpname);
 			g_free(tmpname);
 		}
 	}
@@ -1327,6 +1328,8 @@ purple_prefs_disconnect_by_handle(void *handle)
 void
 purple_prefs_update_old()
 {
+	purple_prefs_rename("/core", "/purple");
+
 	/* Remove some no-longer-used prefs */
 	purple_prefs_remove("/purple/away/auto_response/enabled");
 	purple_prefs_remove("/purple/away/auto_response/idle_only");
@@ -1360,7 +1363,6 @@ purple_prefs_update_old()
 		purple_prefs_set_int("/purple/sound/while_status", 3);
 	}
 	purple_prefs_remove("/purple/sound/while_away");
-	purple_prefs_rename("/core", "/purple");
 }
 
 void *

@@ -2014,6 +2014,17 @@ pidgin_status_box_set_connecting(PidginStatusBox *status_box, gboolean connectin
 }
 
 static void
+pixbuf_size_prepared_cb(GdkPixbufLoader *loader, int width, int height, gpointer data)
+{
+#if GTK_CHECK_VERSION(2,2,0)
+	int w, h;
+	GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MEDIUM);
+	gtk_icon_size_lookup(icon_size, &w, &h);
+	gdk_pixbuf_loader_set_size(loader, w, h);
+#endif
+}
+
+static void
 pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 {
 
@@ -2031,6 +2042,7 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 	if (status_box->buddy_icon_img != NULL)
 	{
 		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+		g_signal_connect(G_OBJECT(loader), "size-prepared", G_CALLBACK(pixbuf_size_prepared_cb), NULL);
 		gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(status_box->buddy_icon_img),
 		                        purple_imgstore_get_size(status_box->buddy_icon_img), NULL);
 		gdk_pixbuf_loader_close(loader, NULL);
@@ -2047,7 +2059,7 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 	}
 
 	if (status_box->buddy_icon != NULL) {
-	        status_box->icon_opaque = pidgin_gdk_pixbuf_is_opaque(status_box->buddy_icon);
+		status_box->icon_opaque = pidgin_gdk_pixbuf_is_opaque(status_box->buddy_icon);
 		gtk_image_set_from_pixbuf(GTK_IMAGE(status_box->icon), status_box->buddy_icon);
 		status_box->buddy_icon_hover = gdk_pixbuf_copy(status_box->buddy_icon);
 		do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 32);

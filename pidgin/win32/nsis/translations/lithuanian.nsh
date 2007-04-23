@@ -18,11 +18,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin pokalbiø klientas (bûtinas)"
 !define GTK_SECTION_TITLE			"GTK+ vykdymo meto aplinka (bûtina)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ apipavidalinimai"
-!define GTK_NOTHEME_SECTION_TITLE		"Jokio apipavidalinimo"
-!define GTK_WIMP_SECTION_TITLE			"Wimp apipavidalinimas"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve apipavidalinimas"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue apipavidalinimas"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"Nuorodos"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Darbalaukyje"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Pradiniame meniu"
@@ -45,9 +40,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"GTK+ vykdymo meto aplinkos diegimo klaida."
 !define GTK_BAD_INSTALL_PATH			"Jûsø nurodytas katalogas neprieinamas ar negali bûti sukurtas."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Neturite teisiø ádiegti GTK+ apipavidalinimà."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Ðalinimo programa nerado Pidgin registro áraðø.$\rGalbût kitas vartotojas instaliavo ðià programà."

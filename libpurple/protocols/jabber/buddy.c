@@ -955,22 +955,23 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					gboolean photo = (strcmp(child->name, "PHOTO") == 0);
 
 					data = purple_base64_decode(bintext, &size);
+					if (data) {
+						jbi->vcard_imgids = g_slist_prepend(jbi->vcard_imgids, GINT_TO_POINTER(purple_imgstore_add_with_id(g_memdup(data, size), size, "logo.png")));
+						g_string_append_printf(info_text,
+								"<b>%s:</b> <img id='%d'><br/>",
+								photo ? _("Photo") : _("Logo"),
+								GPOINTER_TO_INT(jbi->vcard_imgids->data));
+	
+						purple_cipher_digest_region("sha1", (guchar *)data, size,
+								sizeof(hashval), hashval, NULL);
+						p = hash;
+						for(i=0; i<20; i++, p+=2)
+							snprintf(p, 3, "%02x", hashval[i]);
 
-					jbi->vcard_imgids = g_slist_prepend(jbi->vcard_imgids, GINT_TO_POINTER(purple_imgstore_add_with_id(g_memdup(data, size), size, "logo.png")));
-					g_string_append_printf(info_text,
-							"<b>%s:</b> <img id='%d'><br/>",
-							photo ? _("Photo") : _("Logo"),
-							GPOINTER_TO_INT(jbi->vcard_imgids->data));
-
-					purple_cipher_digest_region("sha1", (guchar *)data, size,
-							sizeof(hashval), hashval, NULL);
-					p = hash;
-					for(i=0; i<20; i++, p+=2)
-						snprintf(p, 3, "%02x", hashval[i]);
-
-					purple_buddy_icons_set_for_user(js->gc->account, bare_jid,
-							data, size, hash);
-					g_free(bintext);
+						purple_buddy_icons_set_for_user(js->gc->account, bare_jid,
+								data, size, hash);
+						g_free(bintext);
+					}
 				}
 			}
 			g_free(text);

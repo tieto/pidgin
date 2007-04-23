@@ -18,11 +18,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Wymagany jest Pidgin Instant Messaging Client"
 !define GTK_SECTION_TITLE			"Wymagany jest runtime œrodowiska GTK+"
-!define GTK_THEMES_SECTION_TITLE		"Temat GTK+"
-!define GTK_NOTHEME_SECTION_TITLE		"Brak tematów"
-!define GTK_WIMP_SECTION_TITLE		"Temat Wimp"
-!define GTK_BLUECURVE_SECTION_TITLE		"Temat Bluecurve "
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Temat Light House Blue"
 !define PIDGIN_SECTION_DESCRIPTION		"Zbiory Core Pidgin oraz dll"
 !define GTK_SECTION_DESCRIPTION		"Wieloplatformowe narzêdzie GUI, u¿ywane w Pidgin"
 
@@ -38,9 +33,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"B³¹d instalacji runtime-a GTK+."
 !define GTK_BAD_INSTALL_PATH			"Nie ma dostêpu do wybranej œcie¿ki / ³aty."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Nie masz uprawnieñ do zainstalowania tematu GTK+."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Deinstalator nie mo¿e znaleŸæ rejestrów dla Pidgin.$\r Wskazuje to na to, ¿e instalacjê przeprowadzi³ inny u¿ytkownik."

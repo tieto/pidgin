@@ -116,6 +116,8 @@ purple_core_init(const char *ui)
 	purple_dbus_init();
 #endif
 
+	purple_ciphers_init();
+
 	/* Initialize all static protocols. */
 	static_proto_init();
 
@@ -134,7 +136,6 @@ purple_core_init(const char *ui)
 
 	purple_accounts_init();
 	purple_savedstatuses_init();
-	purple_ciphers_init();
 	purple_notify_init();
 	purple_connections_init();
 	purple_conversations_init();
@@ -310,7 +311,6 @@ move_and_symlink_dir(const char *path, const char *basename, const char *old_bas
 gboolean
 purple_core_migrate(void)
 {
-#error You probably want to back up your .gaim directory right now. This revision is going to destroy it, potentially not in the way we've intended
 	const char *user_dir = purple_user_dir();
 	char *old_user_dir = g_strconcat(purple_home_dir(),
 	                                 G_DIR_SEPARATOR_S ".gaim", NULL);

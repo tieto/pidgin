@@ -2860,16 +2860,16 @@ void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
 				void *user_data,  ...)
 {
 	GtkWidget *vbox;
-        GtkWidget *hbox;
-        GtkWidget *hbox2;
-        GtkWidget *label;
-        GtkWidget *button;
-        GtkWidget *img = NULL;
+	GtkWidget *hbox;
+	GtkWidget *hbox2;
+	GtkWidget *label;
+	GtkWidget *button;
+	GtkWidget *img = NULL;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	char label_text[2048];
 	const char *button_text;
 	GCallback callback;
-	char *primary_esc, *secondary_esc;
+	char *primary_esc, *secondary_esc = NULL;
 	va_list args;
 	static gboolean first_call = TRUE;
 
@@ -2877,7 +2877,7 @@ void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
 	vbox = gtk_vbox_new(FALSE,0);
-        gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BOX_SPACE);
 
 	g_object_set_data(G_OBJECT(vbox), "gc" ,gc);
 	minidialogs = g_slist_prepend(minidialogs, vbox);
@@ -2890,10 +2890,10 @@ void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
 				    PURPLE_CALLBACK(connection_signed_off_cb), NULL);
 	}
 
-      	hbox = gtk_hbox_new(FALSE, 0);
-        gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-        if (img != NULL)
+	if (img != NULL)
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	primary_esc = g_markup_escape_text(primary, -1);
@@ -2902,14 +2902,15 @@ void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
 		secondary_esc = g_markup_escape_text(secondary, -1);
 	g_snprintf(label_text, sizeof(label_text),
 		   "<span weight=\"bold\" size=\"smaller\">%s</span>%s<span size=\"smaller\">%s</span>",
-		   primary_esc, secondary ? "\n" : "", secondary?secondary_esc:"");
+		   primary_esc, secondary ? "\n" : "", secondary_esc ? secondary_esc : "");
 	g_free(primary_esc);
+	g_free(secondary_esc);
 	label = gtk_label_new(NULL);
 	gtk_widget_set_size_request(label, purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25,-1);
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
-        gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-        gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-        gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
 	hbox2 = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);

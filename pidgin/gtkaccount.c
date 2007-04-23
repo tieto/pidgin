@@ -194,11 +194,11 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 }
 
 static void
-set_dialog_icon(AccountPrefsDialog *dialog, gpointer *data, size_t len, gchar *new_icon_path)
+set_dialog_icon(AccountPrefsDialog *dialog, gpointer data, size_t len, gchar *new_icon_path)
 {
 	GdkPixbuf *pixbuf = NULL;
 
-	purple_imgstore_unref(dialog->icon_img);
+	dialog->icon_img = purple_imgstore_unref(dialog->icon_img);
 	if (data != NULL)
 	{
 		if (len > 0)

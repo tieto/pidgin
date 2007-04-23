@@ -23,11 +23,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin Snabbmeddelandeklient (obligatorisk)"
 !define GTK_SECTION_TITLE			"GTK+-körmiljö (obligatorisk)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+-teman"
-!define GTK_NOTHEME_SECTION_TITLE		"Inget tema"
-!define GTK_WIMP_SECTION_TITLE		"Wimp-tema"
-!define GTK_BLUECURVE_SECTION_TITLE	"Bluecurve-tema"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue-tema"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE "Genvägar"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE "Skrivbord"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "Startmeny"
@@ -50,9 +45,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fel vid installation av GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Den sökväg du angivit går inte att komma åt eller skapa."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Du har inte rättigheter att installera ett GTK+tema."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1         "Avinstalleraren kunde inte hitta registervärden för Pidgin.$\rAntagligen har en annan användare installerat applikationen."

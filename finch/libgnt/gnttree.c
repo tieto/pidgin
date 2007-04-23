@@ -152,9 +152,7 @@ get_last_child(GntTreeRow *row)
 
 	while(row->next)
 		row = row->next;
-	if (!row->collapsed && row->child)
-		row = get_last_child(row->child);
-	return row;
+	return get_last_child(row);
 }
 
 static GntTreeRow *

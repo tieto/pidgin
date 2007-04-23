@@ -54,7 +54,14 @@ master_suite(void)
 int main(void)
 {
 	int number_failed;
-	SRunner *sr = srunner_create (master_suite());
+	SRunner *sr;
+
+	/* Make g_return_... functions fatal, ALWAYS.
+	 * As this is the test code, this is NOT controlled
+	 * by PURPLE_FATAL_ASSERTS. */
+	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
+
+	sr = srunner_create (master_suite());
 
 	srunner_add_suite(sr, cipher_suite());
 	srunner_add_suite(sr, jabber_jutil_suite());
