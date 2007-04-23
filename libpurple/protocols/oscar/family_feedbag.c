@@ -132,8 +132,21 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 			do {
 				new->gid += 0x0001;
 				for (cur=*list, i=0; ((cur) && (!i)); cur=cur->next)
-					if ((cur->type == AIM_SSI_TYPE_GROUP) && (cur->gid == new->gid))
+					if ((cur->type == AIM_SSI_TYPE_GROUP) && (cur->gid == new->gid)) {
 						i=1;
+						break;
+					}
+			} while (i);
+		}
+	} else if (new->gid == 0x0000) {
+		if (new->bid == 0xFFFF) {
+			do {
+				new->bid += 0x0001;
+				for (cur=*list, i=0; ((cur) && (!i)); cur=cur->next)
+					if (((cur->bid == new->bid) && (cur->gid == new->gid)) || (cur->gid == new->bid)) {
+						i=1;
+						break;
+					}
 			} while (i);
 		}
 	} else {
@@ -141,8 +154,10 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 			do {
 				new->bid += 0x0001;
 				for (cur=*list, i=0; ((cur) && (!i)); cur=cur->next)
-					if ((cur->bid == new->bid) && (cur->gid == new->gid))
+					if ((cur->bid == new->bid) && (cur->gid == new->gid)) {
 						i=1;
+						break;
+					}
 			} while (i);
 		}
 	}
@@ -766,7 +781,7 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const c
 int aim_ssi_addpermit(OscarData *od, const char *name)
 {
 
-	if (!od || !name)
+	if (!od || !name || !od->ssi.received_data)
 		return -EINVAL;
 
 	/* Make sure the master group exists */
@@ -792,7 +807,7 @@ int aim_ssi_addpermit(OscarData *od, const char *name)
 int aim_ssi_adddeny(OscarData *od, const char *name)
 {
 
-	if (!od || !name)
+	if (!od || !name || !od->ssi.received_data)
 		return -EINVAL;
 
 	/* Make sure the master group exists */
@@ -1042,7 +1057,7 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
 {
 	struct aim_ssi_item *tmp;
 
-	if (!od)
+	if (!od || !od->ssi.received_data)
 		return -EINVAL;
 
 	/* Find the PDINFO item, or add it if it does not exist */
@@ -1074,12 +1089,12 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
  * @param iconcsumlen Length of the MD5 checksum given above.  Should be 0x10 bytes.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint16 iconsumlen)
+int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint8 iconsumlen)
 {
 	struct aim_ssi_item *tmp;
 	guint8 *csumdata;
 
-	if (!od || !iconsum || !iconsumlen)
+	if (!od || !iconsum || !iconsumlen || !od->ssi.received_data)
 		return -EINVAL;
 
 	/* Find the ICONINFO item, or add it if it does not exist */
@@ -1093,7 +1108,8 @@ int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint16 iconsumlen)
 
 	/* Need to add the 0x00d5 TLV to the TLV chain */
 	csumdata = (guint8 *)malloc((iconsumlen+2)*sizeof(guint8));
-	aimutil_put16(&csumdata[0], iconsumlen);
+	aimutil_put8(&csumdata[0], 0x00);
+	aimutil_put8(&csumdata[1], iconsumlen);
 	memcpy(&csumdata[2], iconsum, iconsumlen);
 	aim_tlvlist_replace_raw(&tmp->data, 0x00d5, (iconsumlen+2) * sizeof(guint8), csumdata);
 	free(csumdata);
@@ -1136,7 +1152,7 @@ int aim_ssi_delicon(OscarData *od)
 int aim_ssi_setpresence(OscarData *od, guint32 presence) {
 	struct aim_ssi_item *tmp;
 
-	if (!od)
+	if (!od || !od->ssi.received_data)
 		return -EINVAL;
 
 	/* Find the PRESENCEPREFS item, or add it if it does not exist */
