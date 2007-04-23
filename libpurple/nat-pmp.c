@@ -64,7 +64,7 @@ typedef struct {
 
 typedef struct {
 	uint8_t		version;
-	uint8_t		opcode; // 128 + n
+	uint8_t		opcode; /* 128 + n */
 	uint16_t	resultcode;
 	uint32_t	epoch;
 	uint32_t	address;
@@ -417,7 +417,7 @@ purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned s
 	bzero(&req, sizeof(PurplePmpMapRequest));
 	req.version = 0;
 	req.opcode	= ((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP);	
-	req.privateport = htons(privateport); //	What a difference byte ordering makes...d'oh!
+	req.privateport = htons(privateport); /* What a difference byte ordering makes...d'oh! */
 	req.publicport = htons(publicport);
 	req.lifetime = htonl(lifetime);
 

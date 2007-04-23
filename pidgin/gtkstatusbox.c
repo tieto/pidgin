@@ -1273,8 +1273,10 @@ static gboolean button_pressed_cb(GtkWidget *widget, GdkEventButton *event, Pidg
 	if (event->button != 1)
 		return FALSE;
 	gtk_combo_box_popup(GTK_COMBO_BOX(box));
-	// Disabled until button_released_cb works
-	// gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), TRUE);
+	/* Disabled until button_released_cb works */
+#if 0
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), TRUE);
+#endif
 	return TRUE;
 }
 #endif

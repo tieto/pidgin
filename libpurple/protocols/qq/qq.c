@@ -399,7 +399,6 @@ static void _qq_menu_block_buddy(PurpleBlistNode * node)
 	gc_and_uid *g;
 	PurpleBuddy *buddy;
 	PurpleConnection *gc;
-//	const gchar *who = param_who;	gfhuang
 	const gchar *who;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_BUDDY(node));
@@ -503,7 +502,8 @@ static void _qq_menu_manage_group(PurpleBlistNode * node)
 }
 */
 
-/* TODO: re-enable this
+#if 0
+/* TODO: re-enable this */
 static void _qq_menu_send_file(PurpleBlistNode * node, gpointer ignored)
 {
 	PurpleBuddy *buddy;
@@ -513,13 +513,13 @@ static void _qq_menu_send_file(PurpleBlistNode * node, gpointer ignored)
 	g_return_if_fail (PURPLE_BLIST_NODE_IS_BUDDY (node));
 	buddy = (PurpleBuddy *) node;
 	q_bud = (qq_buddy *) buddy->proto_data;
-//	if (is_online (q_bud->status)) {
+/*	if (is_online (q_bud->status)) { */
 	gc = purple_account_get_connection (buddy->account);
 	g_return_if_fail (gc != NULL && gc->proto_data != NULL);
 	qq_send_file(gc, buddy->name, NULL);
-//	}
+/*	} */
 }
-*/
+#endif
 
 /* protocol related menus */
 static GList *_qq_actions(PurplePlugin *plugin, gpointer context)
@@ -575,22 +575,20 @@ static GList *_qq_buddy_menu(PurpleBlistNode * node)
 		return _qq_chat_menu(node);
 
 	m = NULL;
-	return m;
-}
 
-/* TODO : not working, temp commented out by gfhuang
+/* TODO : not working, temp commented out by gfhuang */
+#if 0
 
-	act = purple_menu_action_new(_("Block this buddy"), PURPLE_CALLBACK(_qq_menu_block_buddy), NULL, NULL); //add NULL by gfhuang
+	act = purple_menu_action_new(_("Block this buddy"), PURPLE_CALLBACK(_qq_menu_block_buddy), NULL, NULL); /* add NULL by gfhuang */
 	m = g_list_append(m, act);
-//	if (q_bud && is_online(q_bud->status)) {
-		act = purple_menu_action_new(_("Send File"), PURPLE_CALLBACK(_qq_menu_send_file), NULL, NULL); //add NULL by gfhuang
+/*	if (q_bud && is_online(q_bud->status)) { */
+		act = purple_menu_action_new(_("Send File"), PURPLE_CALLBACK(_qq_menu_send_file), NULL, NULL); /* add NULL by gfhuang */
 		m = g_list_append(m, act);
-//	}
-*/
-/*
+/*	} */
+#endif
+
 	return m;
 }
-*/
 
 
 static void _qq_keep_alive(PurpleConnection *gc)
