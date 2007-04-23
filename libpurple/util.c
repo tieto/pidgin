@@ -65,7 +65,7 @@ struct _PurpleUtilFetchUrlData
 };
 
 static char custom_home_dir[MAXPATHLEN];
-static char home_dir[MAXPATHLEN];
+static char home_dir[MAXPATHLEN] = "";
 
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
@@ -2251,7 +2251,7 @@ purple_user_dir(void)
 {
 	if (custom_home_dir != NULL && *custom_home_dir) {
 		strcpy ((char*) &home_dir, (char*) &custom_home_dir);
-	} else {
+	} else if (!*home_dir) {
 		const gchar *hd = purple_home_dir();
 
 		if (hd) {
