@@ -3,6 +3,7 @@ Description=Default Pidgin smileys
 Icon=smile.png
 Author=Hylke Bons
 
+# default smileys
 [default]
 smile.png           :)      :-)
 smile-big.png       :-D     :-d     :D      :d
