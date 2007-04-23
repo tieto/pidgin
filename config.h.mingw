@@ -325,7 +325,7 @@
 /* #define HAVE_SIGNAL_H 1 */
 
 /* Define if we have silcmime.h */
-/* #undef HAVE_SILCMIME_H */
+#define HAVE_SILCMIME_H 1
 
 /* Define to 1 if you have the <smime.h> header file. */
 /* #undef HAVE_SMIME_H */

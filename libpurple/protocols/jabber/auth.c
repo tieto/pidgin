@@ -294,7 +294,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
 							_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-							2, js->gc->account,
+							2, js->gc->account, NULL, NULL, NULL,
 							allow_cyrus_plaintext_auth,
 							disallow_plaintext_auth);
 					return;
