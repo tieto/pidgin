@@ -2002,6 +2002,8 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 		(event->keyval == GDK_F10) ||
 		(event->keyval == GDK_Shift_L) ||
 		(event->keyval == GDK_Shift_R) ||
+		(event->keyval == GDK_Control_L) ||
+		(event->keyval == GDK_Control_R) ||
 		(event->keyval == GDK_Escape) ||
 		(event->keyval == GDK_Up) ||
 		(event->keyval == GDK_Down) ||
@@ -2205,25 +2207,25 @@ static GList *get_prpl_icon_list(PurpleAccount *account)
 	if (l)
 		return l;
 	filename = g_strdup_printf("%s.png", prpl);
-	
+
 	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "16", filename, NULL);
 	pixbuf = gdk_pixbuf_new_from_file(path, NULL);
 	if (pixbuf)
 		l = g_list_append(l, pixbuf);
 	g_free(path);
-	
+
 	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", filename, NULL);
         pixbuf = gdk_pixbuf_new_from_file(path, NULL);
         if (pixbuf)
                 l = g_list_append(l, pixbuf);
         g_free(path);
-	
+
 	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "48", filename, NULL);
         pixbuf = gdk_pixbuf_new_from_file(path, NULL);
         if (pixbuf)
                 l = g_list_append(l, pixbuf);
         g_free(path);
-	
+
 	g_hash_table_insert(prpl_lists, g_strdup(prpl), l);
 	return l;
 }
@@ -2308,7 +2310,7 @@ update_tab_icon(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv;
 	PidginWindow *win;
-	GList *l;	
+	GList *l;
 	GdkPixbuf *status = NULL;
 
 	g_return_if_fail(conv != NULL);
@@ -3159,7 +3161,7 @@ update_typing_icon(PidginConversation *gtkconv)
 	}
 
 	if (gtkwin->menu.typing_icon == NULL)
-	{	
+	{
 		gtkwin->menu.typing_icon = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
 		pidgin_menu_tray_append(PIDGIN_MENU_TRAY(gtkwin->menu.tray),
 								  gtkwin->menu.typing_icon,
@@ -3465,7 +3467,7 @@ get_chat_buddy_status_icon(PurpleConvChat *chat, const char *name, PurpleConvCha
 
 	pixbuf = gtk_widget_render_icon (gtkconv->tab_cont, image, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL),
 				 	 "GtkTreeView");
-	
+
 	if (!pixbuf)
 		return NULL;
 
@@ -3473,6 +3475,7 @@ get_chat_buddy_status_icon(PurpleConvChat *chat, const char *name, PurpleConvCha
 	g_object_unref(pixbuf);
 
 	if (flags && purple_conv_chat_is_user_ignored(chat, name)) {
+/* TODO: the .../status/default directory isn't installed, should it be? */
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "status", "default", "ignored.png", NULL);
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 		g_free(filename);
@@ -7848,7 +7851,7 @@ pidgin_conv_windows_get_list()
 	return window_list;
 }
 
-static GList* 
+static GList*
 make_status_icon_list(const char *stock, GtkWidget *w)
 {
 	GList *l = NULL;
@@ -7863,8 +7866,8 @@ make_status_icon_list(const char *stock, GtkWidget *w)
 	return l;
 }
 
-static void 
-create_icon_lists(GtkWidget *w) 
+static void
+create_icon_lists(GtkWidget *w)
 {
 	available_list = make_status_icon_list(PIDGIN_STOCK_STATUS_AVAILABLE, w);
 	busy_list = make_status_icon_list(PIDGIN_STOCK_STATUS_BUSY, w);
