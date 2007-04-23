@@ -92,7 +92,16 @@ purple_pref *find_pref(const char *name)
 	if (name[1] == '\0')
 		return &prefs;
 	else
-		return g_hash_table_lookup(prefs_hash, name);
+	{
+		/* When we're initializing, the debug system is
+		 * initialized before the prefs system, but debug
+		 * calls will end up calling prefs functions, so we
+		 * need to deal cleanly here. */
+		if (prefs_hash)
+			return g_hash_table_lookup(prefs_hash, name);
+		else
+			return NULL;
+	}
 }
 
 
