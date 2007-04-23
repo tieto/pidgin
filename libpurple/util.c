@@ -2245,24 +2245,16 @@ purple_home_dir(void)
 #endif
 }
 
-/* Returns the argument passed to -c IFF it was present, or ~/.gaim IFF it
- * exists, else ~/.purple. */
+/* Returns the argument passed to -c IFF it was present, or ~/.purple. */
 const char *
 purple_user_dir(void)
 {
-	if (custom_home_dir != NULL && strlen(custom_home_dir) > 0) {
+	if (custom_home_dir != NULL && *custom_home_dir) {
 		strcpy ((char*) &home_dir, (char*) &custom_home_dir);
 	} else {
 		const gchar *hd = purple_home_dir();
 
 		if (hd) {
-			g_strlcpy((char*) &home_dir, hd, sizeof(home_dir));
-			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".gaim",
-					sizeof(home_dir));
-
-			if (g_file_test(home_dir, G_FILE_TEST_EXISTS))
-				return home_dir;
-
 			g_strlcpy((char*) &home_dir, hd, sizeof(home_dir));
 			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".purple",
 					sizeof(home_dir));
