@@ -1,5 +1,5 @@
 Name=Default
-Description=Default Pidgin smileys
+Description=Pidgin smileys (default)
 Icon=smile.png
 Author=Hylke Bons
 
@@ -299,7 +299,7 @@ laugh.png           :)) :-))
 bye.png             =;
 arrogant.png        [-(
 thinking.png        :-?
-#waiting.png         :-w :-W        MISSING         
+waiting.png         :-w :-W               
 #at_wits_end        ~x( ~X(         MISSING: "Why.Does.This.Not.Work.AAAAARGH!!"    => angry smily shouting and pulling hair off
 smile-big.png       :D :-D :d :-d
 tongue.png          :-P :P :-p :p
@@ -325,7 +325,6 @@ sweat.png           #:-S #:-s
 rotfl.png           =))    
 #loser              L-) l-)         MISSING/YAHOO 6: "Loser!"
 party.png	          <:-P <:-p
-tremble.png         :-SS :-Ss :-sS :-ss
 cowboy.png          <):)
 desire.png          8->
 alien.png		        =:) >-)
@@ -348,11 +347,11 @@ shame.png		        [-X [-x
 flag.png		        **==
 clover.png		      %%-
 musical-note.png	  :-"
-#nailbiting.png      :-SS :-ss            DUPLICATE DEFINITION/MISSING
-#giggle.png	        ;))             MISSING
-#worship.png	        ^:)^            MISSING
+nailbiting.png      :-SS :-ss
+giggle.png	        ;))            
+worship.png	        ^:)^          
 star.png		            (*)
-#yahoo_madtongue.gif	    >:P >:p                 TODO
+mad-tongue.png      >:p
 #yahoo_waving.gif	        >:/                     TODO
 #yahoo_talktohand.gif	    :-@                     TODO
 #yahoo_youkiddingme.gif	    :-j :-J               TODO
