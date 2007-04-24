@@ -144,7 +144,7 @@ purple_imgstore_unref(PurpleStoredImage *img)
 
 	if (img->refcount == 0)
 	{
-		purple_signal_emit(purple_blist_get_handle(),
+		purple_signal_emit(purple_imgstore_get_handle(),
 		                   "image-deleting", img);
 
 		if (img->id)
