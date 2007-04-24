@@ -5,9 +5,9 @@ version 2.0.0:
 	  GTK+ UI and Finch for the ncurses based console UI (AOL LLC)
 
 	Build Changes:
-	* With the Core/UI split completed, it is now possible to build Pidgin
-	  without any UIs, creating a libpurple library upon which other UIs
-	  may be constructed
+	* With the Core/UI split complete, it is now possible to build
+	  libpurple without any UIs, creating a library upon which other
+	  UIs may be constructed
 	* A new ncurses-based console UI called Finch is now available
 	  (Sadrul Habib Chowdhury, Google Summer of Code)
 	* Reorganized the source tree to split apart the code for the UI
@@ -43,7 +43,7 @@ version 2.0.0:
 	  the expander setting in .gtkrc-2.0 is no longer needed
 	* Authorization requests don't popup new dialogs anymore. They are
 	  displayed at the bottom of the buddy list instead.
-	* New mail notifications don't popup new dialogs anymore. The are
+	* New mail notifications don't popup new dialogs anymore. They are
 	  displayed at the top of the buddy list instead.
 
 	Conversations and Chats:
