@@ -545,8 +545,7 @@ void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const 
 		data_len = fread(data, 1, st.st_size, file);
 		fclose(file);
 		purple_buddy_icons_set_for_user(account, who, data, data_len);
-		icon = purple_buddy_icons_find(account, who);
-		purple_buddy_icon_set_path(icon, iconfile);
+		// TODO: Set a blist setting or something
 	}
 }
 
@@ -609,7 +608,8 @@ static void _qq_update_buddy_icon(PurpleAccount *account, const gchar *name, gin
 	gchar *icon_path;
 	PurpleBuddyIcon *icon = purple_buddy_icons_find(account, name);
 	gchar *icon_num_str = face_to_icon_str(face);
-	const gchar *old_path = purple_buddy_icon_get_path(icon);
+	// TODO: This needs to use a blist setting or something.
+	const gchar *old_path = NULL;
 	const gchar *buddy_icon_dir = qq_buddy_icon_dir();
 
 	icon_path = g_strconcat(buddy_icon_dir, G_DIR_SEPARATOR_S, QQ_ICON_PREFIX, 
