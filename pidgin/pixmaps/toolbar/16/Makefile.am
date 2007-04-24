@@ -4,6 +4,7 @@ EXTRA_DIST = 	accounts.png \
 		change-bgcolor.png \
 		change-fgcolor.png \
 		emote-select.png \
+		font-face.png \
 		font-size-down.png \
 		font-size-up.png \
 		insert-image.png \
