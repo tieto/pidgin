@@ -2204,6 +2204,8 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 				if (!(icon = purple_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
 					return NULL;
 			data = purple_buddy_icon_get_data(icon, &len);
+			if (data == NULL)
+				return NULL;
 		}
 	}
 
@@ -2213,13 +2215,13 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	loader = gdk_pixbuf_loader_new();
 	gdk_pixbuf_loader_write(loader, data, len, NULL);
 	gdk_pixbuf_loader_close(loader, NULL);
-
-	purple_imgstore_unref(custom_img);
-
 	buf = gdk_pixbuf_loader_get_pixbuf(loader);
 	if (buf)
 		g_object_ref(G_OBJECT(buf));
 	g_object_unref(G_OBJECT(loader));
+
+	// TODO: FIX THIS!!!
+	//purple_imgstore_unref(custom_img);
 
 	if (buf) {
 		int orig_width, orig_height;

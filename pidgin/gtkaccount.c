@@ -302,8 +302,10 @@ icon_filesel_choose_cb(const char *filename, gpointer data)
 
 	dialog = data;
 
+#if 0
 	if (filename != NULL)
 		set_dialog_icon(dialog, pidgin_convert_buddy_icon(dialog->plugin, filename), g_strdup(filename));
+#endif
 
 	dialog->icon_filesel = NULL;
 }
@@ -342,7 +344,9 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			}
 			if ((rtmp = strchr(tmp, '\r')) || (rtmp = strchr(tmp, '\n')))
 				*rtmp = '\0';
+#if 0
 			set_dialog_icon(dialog, pidgin_convert_buddy_icon(dialog->plugin, tmp), g_strdup(tmp));
+#endif
 			g_free(tmp);
 		}
 		gtk_drag_finish(dc, TRUE, FALSE, t);
@@ -1159,10 +1163,12 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		else if (purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon") && icon_change)
 		{
 			const char *filename = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
+#if 0
 			char *icon = pidgin_convert_buddy_icon(dialog->plugin, filename);
 			purple_account_set_buddy_icon_path(account, filename);
 			purple_account_set_buddy_icon(account, icon);
 			g_free(icon);
+#endif
 		}
 	}
 

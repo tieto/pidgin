@@ -678,7 +678,7 @@ int main(int argc, char *argv[])
 		char *old = g_strconcat(purple_home_dir(),
 		                        G_DIR_SEPARATOR_S ".gaim", NULL);
 		const char *text = _(
-			"Pidgin encountered errors migrating your settings "
+			"%s encountered errors migrating your settings "
 			"from %s to %s. Please investigate and complete the "
 			"migration by hand.");
 		GtkWidget *dialog;
@@ -687,7 +687,8 @@ int main(int argc, char *argv[])
 		                                0,
 		                                GTK_MESSAGE_ERROR,
 		                                GTK_BUTTONS_CLOSE,
-		                                text, old, purple_user_dir());
+		                                text, PIDGIN_NAME,
+		                                old, purple_user_dir());
 		g_free(old);
 
 		g_signal_connect_swapped(dialog, "response",

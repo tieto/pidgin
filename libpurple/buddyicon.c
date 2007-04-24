@@ -567,6 +567,7 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 				icon->ref_count = 0;
 				icon->img = NULL;
 				purple_buddy_icon_set_data(icon, data, len);
+				g_free(data);
 			}
 			g_free(path);
 		}
@@ -614,6 +615,7 @@ purple_buddy_icons_find_custom_icon(PurpleContact *contact)
 	{
 		g_free(path);
 		img = purple_buddy_icon_data_new(data, len, custom_icon_file);
+		g_free(data);
 		g_hash_table_insert(custom_icon_cache, contact, img);
 		return img;
 	}
@@ -629,6 +631,7 @@ purple_buddy_icons_set_custom_icon(PurpleContact *contact,
 	PurpleStoredImage *old_img;
 	PurpleStoredImage *img = NULL;
 	char *old_icon;
+	PurpleBlistNode *child;
 
 	old_img = g_hash_table_lookup(custom_icon_cache, contact);
 
@@ -653,8 +656,27 @@ purple_buddy_icons_set_custom_icon(PurpleContact *contact,
 	unref_filename(old_icon);
 	g_free(old_icon);
 
-
 	g_hash_table_insert(custom_icon_cache, contact, img);
+
+	for (child = contact->node.child ; child ; child = child->next)
+	{
+		PurpleBuddy *buddy;
+		PurpleConversation *conv;
+
+		if (!PURPLE_BLIST_NODE_IS_BUDDY(child))
+			continue;
+
+		buddy = (PurpleBuddy *)child;
+
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+		                                             purple_buddy_get_name(buddy),
+		                                             purple_buddy_get_account(buddy));
+		if (conv)
+			purple_conversation_update(conv, PURPLE_CONV_UPDATE_ICON);
+
+		purple_blist_update_buddy_icon(buddy);
+	}
+
 	purple_imgstore_unref(old_img);
 }
 
@@ -787,11 +809,13 @@ purple_buddy_icons_blist_loaded_cb()
 				}
 				else
 				{
+					char *path = g_build_filename(dirname, filename, NULL);
 					if (!g_file_test(filename, G_FILE_TEST_EXISTS))
 					{
 						purple_blist_node_remove_setting(node,
 						                                 "buddy_icon");
 					}
+					g_free(path);
 					ref_filename(filename);
 				}
 			}
@@ -811,11 +835,13 @@ purple_buddy_icons_blist_loaded_cb()
 				}
 				else
 				{
-					if (!g_file_test(filename, G_FILE_TEST_EXISTS))
+					char *path = g_build_filename(dirname, filename, NULL);
+					if (!g_file_test(path, G_FILE_TEST_EXISTS))
 					{
 						purple_blist_node_remove_setting(node,
 						                                 "custom_buddy_icon");
 					}
+					g_free(path);
 					ref_filename(filename);
 				}
 			}

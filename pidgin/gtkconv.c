@@ -2482,23 +2482,6 @@ saveicon_writefile_cb(void *user_data, const char *filename)
 	fclose(fp);
 }
 
-static const char *
-custom_icon_pref_name(PidginConversation *gtkconv)
-{
-	PurpleConversation *conv;
-	PurpleAccount *account;
-	PurpleBuddy *buddy;
-
-	conv = gtkconv->active_conv;
-	account = purple_conversation_get_account(conv);
-	buddy = purple_find_buddy(account, purple_conversation_get_name(conv));
-	if (buddy) {
-		PurpleContact *contact = purple_buddy_get_contact(buddy);
-		return purple_blist_node_get_string((PurpleBlistNode*)contact, "custom_buddy_icon");
-	}
-	return NULL;
-}
-
 static void
 custom_icon_sel_cb(const char *filename, gpointer data)
 {
@@ -2574,7 +2557,8 @@ static gboolean
 icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 {
 	static GtkWidget *menu = NULL;
-	const char *pref;
+	PurpleConversation *conv;
+	PurpleBuddy *buddy;
 
 	if (e->button != 3 || e->type != GDK_BUTTON_PRESS)
 		return FALSE;
@@ -2608,11 +2592,18 @@ icon_menu(GtkObject *obj, GdkEventButton *e, PidginConversation *gtkconv)
 							 0, 0, NULL);
 
 	/* Is there a custom icon for this person? */
-	pref = custom_icon_pref_name(gtkconv);
-	if (pref && *pref) {
-		pidgin_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
-							G_CALLBACK(remove_custom_icon_cb), gtkconv,
-							0, 0, NULL);
+	conv = gtkconv->active_conv;
+	buddy = purple_find_buddy(purple_conversation_get_account(conv),
+	                          purple_conversation_get_name(conv));
+	if (buddy)
+	{
+		PurpleContact *contact = purple_buddy_get_contact(buddy);
+		if (contact && purple_buddy_icons_has_custom_icon(contact))
+		{
+			pidgin_new_item_from_stock(menu, _("Remove Custom Icon"), NULL,
+			                           G_CALLBACK(remove_custom_icon_cb), gtkconv,
+			                           0, 0, NULL);
+		}
 	}
 
 	gtk_menu_popup(GTK_MENU(menu), NULL, NULL, NULL, NULL, e->button, e->time);
@@ -6175,12 +6166,14 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	PidginConversation *gtkconv;
 	PidginWindow *win;
 
+	PurpleBuddy *buddy;
+
 	GdkPixbufLoader *loader;
 	GdkPixbufAnimation *anim;
 	GError *err = NULL;
 
-	const char *custom = NULL;
-	const void *data = NULL;
+	PurpleStoredImage *custom_img = NULL;
+	gconstpointer data = NULL;
 	size_t len;
 
 	GdkPixbuf *buf;
@@ -6237,17 +6230,18 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	if (purple_conversation_get_gc(conv) == NULL)
 		return;
 
-	custom = custom_icon_pref_name(gtkconv);
-	if (custom) {
-		/* There is a custom icon for this user */
-		char *contents = NULL;
-		if (!g_file_get_contents(custom, &contents, &len, &err)) {
-			purple_debug_warning("custom icon", "could not load custom icon %s for %s\n",
-						custom, purple_conversation_get_name(conv));
-			g_error_free(err);
-			err = NULL;
-		} else
-			data = contents;
+	buddy = purple_find_buddy(account, purple_conversation_get_name(conv));
+	if (buddy)
+	{
+		PurpleContact *contact = purple_buddy_get_contact(buddy);
+		if (contact) {
+			custom_img = purple_buddy_icons_find_custom_icon(contact);
+			if (custom_img) {
+				/* There is a custom icon for this user */
+				data = purple_imgstore_get_data(custom_img);
+				len = purple_imgstore_get_size(custom_img);
+			}
+		}
 	}
 
 	if (data == NULL) {
@@ -6257,7 +6251,9 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 			return;
 
 		data = purple_buddy_icon_get_data(icon, &len);
-		custom = NULL;
+
+		if (data == NULL)
+			return;
 	}
 
 	loader = gdk_pixbuf_loader_new();
@@ -6268,8 +6264,8 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 		g_object_ref(G_OBJECT(anim));
 	g_object_unref(loader);
 
-	if (custom)
-		g_free((void*)data);
+	// TODO: FIX THIS!!!
+	//purple_imgstore_unref(custom_img);
 
 	if (!anim)
 		return;
@@ -6280,9 +6276,6 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 				   "Buddy icon error: %s\n", err->message);
 		g_error_free(err);
 	}
-
-	if (!gtkconv->u.im->anim)
-		return;
 
 	if (gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)) {
 		gtkconv->u.im->iter = NULL;

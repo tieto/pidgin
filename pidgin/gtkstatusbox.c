@@ -1439,8 +1439,10 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 			PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
 			if (prplinfo && prplinfo->icon_spec.format) {
 				char *icon = NULL;
+#if 0
 				if (filename)
 					icon = pidgin_convert_buddy_icon(plug, filename);
+#endif
 				purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
 				purple_account_set_ui_string(box->account, PIDGIN_UI, "non-global-buddyicon-cached-path", icon);
 				purple_account_set_buddy_icon_path(box->account, filename);
@@ -1459,8 +1461,10 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 				    purple_account_get_bool(account, "use-global-buddyicon", TRUE) &&
 				    prplinfo->icon_spec.format) {
 					char *icon = NULL;
+#if 0
 					if (filename)
 						icon = pidgin_convert_buddy_icon(plug, filename);
+#endif
 					purple_account_set_buddy_icon_path(account, filename);
 					purple_account_set_buddy_icon(account, icon);
 					g_free(icon);

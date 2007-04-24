@@ -55,7 +55,7 @@ purple_imgstore_add(gconstpointer data, size_t size, const char *filename)
 	g_return_val_if_fail(data != NULL, 0);
 	g_return_val_if_fail(size > 0, 0);
 
-	img = g_slice_new(PurpleStoredImage);
+	img = g_new(PurpleStoredImage, 1);
 	img->data = g_memdup(data, size);
 	img->size = size;
 	img->filename = g_strdup(filename);
@@ -146,10 +146,12 @@ purple_imgstore_unref(PurpleStoredImage *img)
 	{
 		purple_signal_emit(purple_imgstore_get_handle(),
 		                   "image-deleting", img);
-
 		if (img->id)
 			g_hash_table_remove(imgstore, GINT_TO_POINTER(img->id));
-		g_slice_free(PurpleStoredImage, img);
+
+		g_free(img->data);
+		g_free(img->filename);
+		g_free(img);
 	}
 
 	return img;
