@@ -62,7 +62,6 @@ ref_filename(const char *filename)
 	g_return_if_fail(filename != NULL);
 
 	refs = GPOINTER_TO_INT(g_hash_table_lookup(icon_file_cache, filename));
-	printf("refs before increment = %d\n", refs);
 
 	g_hash_table_insert(icon_file_cache, g_strdup(filename),
 	                    GINT_TO_POINTER(refs + 1));
@@ -77,7 +76,6 @@ unref_filename(const char *filename)
 		return;
 
 	refs = GPOINTER_TO_INT(g_hash_table_lookup(icon_file_cache, filename));
-	printf("refs before decrement = %d\n", refs);
 
 	if (refs == 1)
 	{
@@ -176,31 +174,32 @@ purple_buddy_icon_data_uncache_file(const char *filename)
 
 	/* It's possible that there are other references to this icon
 	 * cache file that are not currently loaded into memory. */
-	printf("file has %d refs\n", GPOINTER_TO_INT(g_hash_table_lookup(icon_file_cache, filename)));
 	if (GPOINTER_TO_INT(g_hash_table_lookup(icon_file_cache, filename)))
 		return;
 
 	dirname  = purple_buddy_icons_get_cache_dir();
 	path = g_build_filename(dirname, filename, NULL);
 
-	printf("Going to unlink %s\n", path);
 	if (g_file_test(path, G_FILE_TEST_EXISTS))
 	{
 		if (g_unlink(path))
 		{
-			printf("Failed to unlink %s\n", path);
-
 			purple_debug_error("buddyicon", "Failed to delete %s: %s\n",
 			                   path, strerror(errno));
 		}
 		else
 		{
-			printf("Unlinked %s\n", path);
 			purple_debug_info("buddyicon", "Deleted cache file: %s\n", path);
 		}
 	}
 
 	g_free(path);
+}
+
+gboolean
+value_equals(gpointer key, gpointer value, gpointer user_data)
+{
+	return (value == user_data);
 }
 
 static void
@@ -212,6 +211,10 @@ image_deleting_cb(PurpleStoredImage *img, gpointer data)
 	{
 		purple_buddy_icon_data_uncache_file(filename);
 		g_hash_table_remove(icon_data_cache, filename);
+
+		/* We could make this O(1) by using another hash table, but
+		 * this is probably good enough. */
+		g_hash_table_foreach_remove(custom_icon_cache, value_equals, img);
 	}
 }
 
@@ -385,14 +388,12 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 			purple_blist_node_set_string((PurpleBlistNode *)buddy,
 			                             "buddy_icon",
 			                             filename);
-			printf("Calling ref_filename(%s)\n", filename);
 			ref_filename(filename);
 		}
 		else
 		{
 			purple_blist_node_remove_setting((PurpleBlistNode *)buddy, "buddy_icon");
 		}
-		printf("Calling unref_filename(%s)\n", old_icon);
 		unref_filename(old_icon);
 		g_free(old_icon);
 	}
@@ -418,10 +419,8 @@ purple_buddy_icon_set_data(PurpleBuddyIcon *icon, guchar *data, size_t len)
 	if (data != NULL && len > 0)
 		icon->img = purple_buddy_icon_data_new(data, len, NULL);
 
-	printf("Calling purple_buddy_icon_update\n");
 	purple_buddy_icon_update(icon);
 
-	printf("Calling purple_imgstore_unref\n");
 	purple_imgstore_unref(old_img);
 }
 
@@ -815,8 +814,9 @@ purple_buddy_icons_blist_loaded_cb()
 						purple_blist_node_remove_setting(node,
 						                                 "buddy_icon");
 					}
+					else
+						ref_filename(filename);
 					g_free(path);
-					ref_filename(filename);
 				}
 			}
 		}
@@ -841,8 +841,9 @@ purple_buddy_icons_blist_loaded_cb()
 						purple_blist_node_remove_setting(node,
 						                                 "custom_buddy_icon");
 					}
+					else
+						ref_filename(filename);
 					g_free(path);
-					ref_filename(filename);
 				}
 			}
 		}

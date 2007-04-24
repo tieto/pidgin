@@ -6259,13 +6259,13 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	loader = gdk_pixbuf_loader_new();
 	gdk_pixbuf_loader_write(loader, data, len, NULL);
 	gdk_pixbuf_loader_close(loader, &err);
+
+	purple_imgstore_unref(custom_img);
+
 	anim = gdk_pixbuf_loader_get_animation(loader);
 	if (anim)
 		g_object_ref(G_OBJECT(anim));
 	g_object_unref(loader);
-
-	// TODO: FIX THIS!!!
-	//purple_imgstore_unref(custom_img);
 
 	if (!anim)
 		return;
