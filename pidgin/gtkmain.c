@@ -145,7 +145,7 @@ dologin_named(const char *name)
 static void sighandler(int sig);
 
 /**
- * Reap all our dead children.  Sometimes Purple forks off a separate
+ * Reap all our dead children.  Sometimes libpurple forks off a separate
  * process to do some stuff.  When that process exits we are
  * informed about it so that we can call waitpid() and let it
  * stop being a zombie.
@@ -160,7 +160,7 @@ static void sighandler(int sig);
  * it continues with the initialization process.  This means that
  * we have a race condition where GStreamer is waitpid()ing for its
  * child to die and we're catching the SIGCHLD signal.  If GStreamer
- * is awarded the zombied process then everything is ok.  But if Purple
+ * is awarded the zombied process then everything is ok.  But if libpurple
  * reaps the zombie process then the GStreamer initialization sequence
  * fails.
  *
@@ -677,7 +677,7 @@ int main(int argc, char *argv[])
 	{
 		char *old = g_strconcat(purple_home_dir(),
 		                        G_DIR_SEPARATOR_S ".gaim", NULL);
-		char *text = _(
+		const char *text = _(
 			"Pidgin encountered errors migrating your settings "
 			"from %s to %s. Please investigate and complete the "
 			"migration by hand.");

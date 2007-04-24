@@ -2569,6 +2569,27 @@ purple_mkstemp(char **fpath, gboolean binary)
 	return fp;
 }
 
+const char *
+purple_util_get_image_extension(gpointer data, size_t len)
+{
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(len   > 0,    NULL);
+
+	if (len >= 4)
+	{
+		if (!strncmp((char *)data, "BM", 2))
+			return "bmp";
+		else if (!strncmp((char *)data, "GIF8", 4))
+			return "gif";
+		else if (!strncmp((char *)data, "\xff\xd8\xff\xe0", 4))
+			return "jpg";
+		else if (!strncmp((char *)data, "\x89PNG", 4))
+			return "png";
+	}
+
+	return "icon";
+}
+
 gboolean
 purple_program_is_valid(const char *program)
 {

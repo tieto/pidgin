@@ -78,12 +78,12 @@ url_clicked_cb(GtkWidget *w, const char *uri)
 }
 
 static GtkIMHtmlFuncs gtkimhtml_cbs = {
-	(GtkIMHtmlGetImageFunc)purple_imgstore_get,
+	(GtkIMHtmlGetImageFunc)purple_imgstore_find_by_id,
 	(GtkIMHtmlGetImageDataFunc)purple_imgstore_get_data,
 	(GtkIMHtmlGetImageSizeFunc)purple_imgstore_get_size,
 	(GtkIMHtmlGetImageFilenameFunc)purple_imgstore_get_filename,
-	purple_imgstore_ref,
-	purple_imgstore_unref,
+	purple_imgstore_ref_by_id,
+	purple_imgstore_unref_by_id,
 };
 
 void
@@ -1350,13 +1350,13 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 
 			return;
 		}
-		id = purple_imgstore_add(filedata, size, data->filename);
+		id = purple_imgstore_add_with_id(filedata, size, data->filename);
 		g_free(filedata);
 
 		gtk_text_buffer_get_iter_at_mark(GTK_IMHTML(gtkconv->entry)->text_buffer, &iter,
 						 gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer));
 		gtk_imhtml_insert_image_at_iter(GTK_IMHTML(gtkconv->entry), id, &iter);
-		purple_imgstore_unref(id);
+		purple_imgstore_unref_by_id(id);
 
 		break;
 	}

@@ -2538,7 +2538,7 @@ icon_menu_save_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	g_return_if_fail(conv != NULL);
 
-	ext = purple_buddy_icon_get_type(purple_conv_im_get_icon(PURPLE_CONV_IM(conv)));
+	ext = purple_buddy_icon_get_extension(purple_conv_im_get_icon(PURPLE_CONV_IM(conv)));
 
 	buf = g_strdup_printf("%s.%s", purple_normalize(conv->account, conv->name), ext);
 

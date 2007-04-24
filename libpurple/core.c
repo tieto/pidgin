@@ -31,6 +31,7 @@
 #include "dnsquery.h"
 #include "ft.h"
 #include "idle.h"
+#include "imgstore.h"
 #include "network.h"
 #include "notify.h"
 #include "plugin.h"
@@ -124,6 +125,9 @@ purple_core_init(const char *ui)
 	purple_plugins_init();
 	purple_plugins_probe(G_MODULE_SUFFIX);
 
+	/* The buddy icon code uses the imgstore, so init it early. */
+	purple_imgstore_init();
+
 	/* Accounts use status and buddy icons, so initialize these before accounts */
 	purple_status_init();
 	purple_buddy_icons_init();
@@ -190,6 +194,7 @@ purple_core_quit(void)
 	purple_xfers_uninit();
 	purple_proxy_uninit();
 	purple_dnsquery_uninit();
+	purple_imgstore_uninit();
 
 	purple_debug_info("main", "Unloading all plugins\n");
 	purple_plugins_destroy_all();

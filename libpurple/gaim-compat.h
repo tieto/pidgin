@@ -351,7 +351,7 @@
 #define gaim_buddy_icon_get_account   purple_buddy_icon_get_account
 #define gaim_buddy_icon_get_username  purple_buddy_icon_get_username
 #define gaim_buddy_icon_get_data      purple_buddy_icon_get_data
-#define gaim_buddy_icon_get_type      purple_buddy_icon_get_type
+#define gaim_buddy_icon_get_type      purple_buddy_icon_get_extension
 
 #define gaim_buddy_icons_set_for_user   purple_buddy_icons_set_for_user
 #define gaim_buddy_icons_find           purple_buddy_icons_find
@@ -962,13 +962,13 @@
 
 #define GaimStoredImage  PurpleStoredImage
 
-#define gaim_imgstore_add           purple_imgstore_add
-#define gaim_imgstore_get           purple_imgstore_get
+#define gaim_imgstore_add           purple_imgstore_add_with_id
+#define gaim_imgstore_get           purple_imgstore_find_by_id
 #define gaim_imgstore_get_data      purple_imgstore_get_data
 #define gaim_imgstore_get_size      purple_imgstore_get_size
 #define gaim_imgstore_get_filename  purple_imgstore_get_filename
-#define gaim_imgstore_ref           purple_imgstore_ref
-#define gaim_imgstore_unref         purple_imgstore_unref
+#define gaim_imgstore_ref           purple_imgstore_ref_by_id
+#define gaim_imgstore_unref         purple_imgstore_unref_by_id
 
 
 /* from log.h */
@@ -2232,7 +2232,7 @@
 #define gaim_value_new_outgoing       purple_value_new_outgoing
 #define gaim_value_destroy            purple_value_destroy
 #define gaim_value_dup                purple_value_dup
-#define gaim_value_get_type           purple_value_get_type
+#define gaim_value_purple_buddy_icon_get_extensionget_type           purple_value_get_type
 #define gaim_value_get_subtype        purple_value_get_subtype
 #define gaim_value_get_specific_type  purple_value_get_specific_type
 #define gaim_value_is_outgoing        purple_value_is_outgoing

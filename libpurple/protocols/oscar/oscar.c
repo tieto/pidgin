@@ -4140,11 +4140,11 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 		id = g_datalist_get_data(&attribs, "id");
 
 		/* ... if it refers to a valid purple image ... */
-		if (id && (image = purple_imgstore_get(atoi(id)))) {
+		if (id && (image = purple_imgstore_find_by_id(atoi(id)))) {
 			/* ... append the message from start to the tag ... */
 			unsigned long size = purple_imgstore_get_size(image);
 			const char *filename = purple_imgstore_get_filename(image);
-			gpointer imgdata = purple_imgstore_get_data(image);
+			gconstpointer imgdata = purple_imgstore_get_data(image);
 
 			oscar_id++;
 
