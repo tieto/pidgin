@@ -2698,7 +2698,7 @@ static void im_recv_mime(struct mwConversation *conv,
       cid = make_cid(cid);
 
       /* add image to the purple image store */
-      img = purple_imgstore_add(d_dat, d_len, cid);
+      img = purple_imgstore_add_with_id(d_dat, d_len, cid);
       g_free(d_dat);
 
       /* map the cid to the image store identifier */
@@ -2772,7 +2772,7 @@ static void im_recv_mime(struct mwConversation *conv,
 
   /* dereference all the imgages */
   while(images) {
-    purple_imgstore_unref(GPOINTER_TO_INT(images->data));
+    purple_imgstore_unref_by_id(GPOINTER_TO_INT(images->data));
     images = g_list_delete_link(images, images);
   }
 }
@@ -3856,7 +3856,7 @@ static char *im_mime_convert(PurpleConnection *gc,
     /* find the imgstore data by the id tag */
     id = g_datalist_get_data(&attr, "id");
     if(id && *id)
-      img = purple_imgstore_get(atoi(id));
+      img = purple_imgstore_find_by_id(atoi(id));
 
     if(img) {
       char *cid;
@@ -3882,9 +3882,8 @@ static char *im_mime_convert(PurpleConnection *gc,
 
       /* obtain and base64 encode the image data, and put it in the
 	 mime part */
-      data = purple_imgstore_get_data(img);
       size = purple_imgstore_get_size(img);
-      data = purple_base64_encode(data, (gsize) size);
+      data = purple_base64_encode(purple_imgstore_get_data(img), (gsize) size);
       purple_mime_part_set_data(part, data);
       g_free(data);
 

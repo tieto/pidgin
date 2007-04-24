@@ -161,7 +161,7 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 		if (channel && !convo)
 			goto out;
 
-		imgid = purple_imgstore_add(data, data_len, "");
+		imgid = purple_imgstore_add_with_id(data, data_len, "");
 		if (imgid) {
 			cflags |= PURPLE_MESSAGE_IMAGES | PURPLE_MESSAGE_RECV;
 			g_snprintf(tmp, sizeof(tmp), "<IMG ID=\"%d\">", imgid);
@@ -177,7 +177,7 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 					    sender->nickname : "<unknown>",
 					    tmp, cflags, time(NULL));
 
-			purple_imgstore_unref(imgid);
+			purple_imgstore_unref_by_id(imgid);
 			cflags = 0;
 		}
 		goto out;
