@@ -142,9 +142,10 @@ static void
 docklet_x11_blank_icon()
 {
 	if (!blank_icon) {
+		GtkIconSize size = GTK_ICON_SIZE_LARGE_TOOLBAR;
 		gint width, height;
-
-		gtk_icon_size_lookup(GTK_ICON_SIZE_LARGE_TOOLBAR, &width, &height);
+		g_object_get(G_OBJECT(image), "icon-size", &size, NULL);
+		gtk_icon_size_lookup(size, &width, &height);
 		blank_icon = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, width, height);
 		gdk_pixbuf_fill(blank_icon, 0);
 	}
