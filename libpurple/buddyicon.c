@@ -379,7 +379,7 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 
 		old_icon = g_strdup(purple_blist_node_get_string((PurpleBlistNode *)buddy,
 		                                                 "buddy_icon"));
-		if (icon->img)
+		if (icon->img && purple_buddy_icons_is_caching())
 		{
 			const char *filename = purple_imgstore_get_filename(icon->img);
 			purple_blist_node_set_string((PurpleBlistNode *)buddy,
@@ -637,7 +637,7 @@ purple_buddy_icons_set_custom_icon(PurpleContact *contact,
 
 	old_icon = g_strdup(purple_blist_node_get_string((PurpleBlistNode *)contact,
 	                                                 "custom_buddy_icon"));
-	if (img)
+	if (img && purple_buddy_icons_is_caching())
 	{
 		const char *filename = purple_imgstore_get_filename(img);
 		purple_blist_node_set_string((PurpleBlistNode *)contact,
