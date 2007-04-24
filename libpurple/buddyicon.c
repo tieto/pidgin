@@ -491,33 +491,18 @@ purple_buddy_icons_set_for_user(PurpleAccount *account, const char *username,
 static gboolean
 read_icon_file(const char *path, guchar **data, size_t *len)
 {
-	struct stat st;
+	GError *err = NULL;
 
-	if (!g_stat(path, &st))
+	if (!g_file_get_contents(path, data, len, &err))
 	{
-		FILE *f = g_fopen(path, "rb");
-		if (f)
-		{
-			*data = g_malloc(st.st_size);
-			if (!fread(*data, st.st_size, 1, f))
-			{
-				purple_debug_error("buddyicon", "Error reading %s: %s\n",
-				                   path, strerror(errno));
-				g_free(*data);
-				return FALSE;
-			}
-			fclose(f);
+		purple_debug_error("buddyicon", "Error reading %s: %s\n",
+		                   path, err->message);
+		g_error_free(err);
 
-			*len = st.st_size;
-			return TRUE;
-		}
-		else
-		{
-			purple_debug_error("buddyicon", "Unable to open file %s for reading: %s\n",
-			                   path, strerror(errno));
-		}
+		return FALSE;
 	}
-	return FALSE;
+
+	return TRUE;
 }
 
 PurpleBuddyIcon *
