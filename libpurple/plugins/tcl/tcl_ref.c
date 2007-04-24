@@ -114,16 +114,17 @@ static int purple_tcl_ref_set(Tcl_Interp *interp, Tcl_Obj *obj)
 	char *ptr;
 	PurpleStringref *type;
 	void *value;
+	int magicnumber = strlen("purple-");
 
-	if (strlen(bytes) < 7
-	    || strncmp(bytes, "purple-", 7)
+	if (strlen(bytes) < magicnumber
+	    || strncmp(bytes, "purple-", magicnumber)
 	    || (ptr = strchr(bytes, ':')) == NULL
-	    || (ptr - bytes) == 7)
+	    || (ptr - bytes) == magicnumber)
 		goto badobject;
 
 	/* Bad Ethan */
 	*ptr = '\0';
-	type = purple_stringref_new(bytes + 7);
+	type = purple_stringref_new(bytes + magicnumber);
 	*ptr = ':';
 	ptr++;
 
