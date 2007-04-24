@@ -638,7 +638,6 @@ purple_buddy_icons_set_custom_icon(PurpleContact *contact,
 		                                 "custom_buddy_icon");
 	}
 	unref_filename(old_icon);
-	g_free(old_icon);
 
 	g_hash_table_insert(custom_icon_cache, contact, img);
 
@@ -661,7 +660,16 @@ purple_buddy_icons_set_custom_icon(PurpleContact *contact,
 		purple_blist_update_buddy_icon(buddy);
 	}
 
-	purple_imgstore_unref(old_img);
+	if (old_img)
+		purple_imgstore_unref(old_img);
+	else
+	{
+		/* The old icon may not have been loaded into memory.  In that
+		 * case, we'll need to uncache the filename.  The filenames
+		 * are ref-counted, so this is safe. */
+		purple_buddy_icon_data_uncache_file(old_icon);
+	}
+	g_free(old_icon);
 }
 
 void
