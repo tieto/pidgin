@@ -752,7 +752,7 @@ purple_buddy_icons_blist_loaded_cb()
 	const char *dirname = purple_buddy_icons_get_cache_dir();
 
 	// TODO: TEMP
-	old_icons_dir = g_strdup("/home/rlaager/.gaim/icons");
+	//old_icons_dir = g_strdup("/home/rlaager/.gaim/icons");
 
 	/* Doing this once here saves having to check it inside a loop. */
 	if (old_icons_dir != NULL)
