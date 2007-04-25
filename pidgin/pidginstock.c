@@ -152,6 +152,7 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_TOOLBAR_BLOCK, "emblems", "blocked.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_FGCOLOR, "toolbar", "change-fgcolor.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_SMILEY, "toolbar", "emote-select.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
+	{ PIDGIN_STOCK_TOOLBAR_FONT_FACE, "toolbar", "font-face.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER, "toolbar", "font-size-down.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_TEXT_LARGER, "toolbar", "font-size-up.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },
 	{ PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE, "toolbar", "insert-image.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE },

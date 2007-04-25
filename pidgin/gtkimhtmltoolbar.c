@@ -982,7 +982,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 
 	/* Font Face */
 
-	button = pidgin_pixbuf_toolbar_button_from_stock(GTK_STOCK_SELECT_FONT);
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_FONT_FACE);
 	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
 	gtk_tooltips_set_tip(toolbar->tooltips, button,
