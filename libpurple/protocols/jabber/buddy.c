@@ -383,7 +383,6 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	JabberIq *iq;
 	JabberStream *js = gc->proto_data;
 	xmlnode *vc_node;
-	char *avatar_file = NULL;
 	struct tag_attr *tag_attr;
 
 	g_free(js->avatar_hash);
@@ -393,7 +392,6 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	 * Send only if there's actually any *information* to send
 	 */
 	vc_node = info ? xmlnode_from_str(info, -1) : NULL;
-	avatar_file = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(gc->account));
 
 	if(!vc_node) {
 		vc_node = xmlnode_new("vCard");
@@ -403,26 +401,28 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 	if (vc_node->name &&
 			!g_ascii_strncasecmp(vc_node->name, "vCard", 5)) {
-		GError *error = NULL;
-		gchar *avatar_data_tmp;
-		guchar *avatar_data;
-		gsize avatar_len;
+		PurpleStoredImage *img;
 
-		if(avatar_file && g_file_get_contents(avatar_file, &avatar_data_tmp, &avatar_len, &error)) {
+		if ((img = purple_buddy_icons_find_account_icon(gc->account))) {
+			gconstpointer avatar_data;
+			gsize avatar_len;
 			xmlnode *photo, *binval;
 			gchar *enc;
 			int i;
 			unsigned char hashval[20];
 			char *p, hash[41];
 
-			avatar_data = (guchar *) avatar_data_tmp;
+			avatar_data = purple_imgstore_get_data(img);
+			avatar_len = purple_imgstore_get_size(img);
 			photo = xmlnode_new_child(vc_node, "PHOTO");
 			binval = xmlnode_new_child(photo, "BINVAL");
 			enc = purple_base64_encode(avatar_data, avatar_len);
 
-			purple_cipher_digest_region("sha1", (guchar *)avatar_data,
+			purple_cipher_digest_region("sha1", avatar_data,
 									  avatar_len, sizeof(hashval),
 									  hashval, NULL);
+
+			purple_imgstore_unref(img);
 
 			p = hash;
 			for(i=0; i<20; i++, p+=2)
@@ -431,11 +431,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 			xmlnode_insert_data(binval, enc, -1);
 			g_free(enc);
-			g_free(avatar_data);
-		} else if (error != NULL) {
-			g_error_free(error);
 		}
-		g_free(avatar_file);
 
 		iq = jabber_iq_new(js, JABBER_IQ_SET);
 		xmlnode_insert_child(iq->node, vc_node);
@@ -445,7 +441,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	}
 }
 
-void jabber_set_buddy_icon(PurpleConnection *gc, const char *iconfile)
+void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	PurplePresence *gpresence;
 	PurpleStatus *status;

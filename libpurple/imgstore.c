@@ -86,21 +86,29 @@ PurpleStoredImage *purple_imgstore_find_by_id(int id) {
 }
 
 gconstpointer purple_imgstore_get_data(PurpleStoredImage *img) {
+	g_return_val_if_fail(img != NULL, NULL);
+
 	return img->data;
 }
 
 size_t purple_imgstore_get_size(PurpleStoredImage *img)
 {
+	g_return_val_if_fail(img != NULL, 0);
+
 	return img->size;
 }
 
 const char *purple_imgstore_get_filename(PurpleStoredImage *img)
 {
+	g_return_val_if_fail(img != NULL, NULL);
+
 	return img->filename;
 }
 
 const char *purple_imgstore_get_extension(PurpleStoredImage *img)
 {
+	g_return_val_if_fail(img != NULL, NULL);
+
 	return purple_util_get_image_extension(img->data, img->size);
 }
 

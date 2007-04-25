@@ -2682,11 +2682,10 @@ static void yahoo_server_check(PurpleAccount *account)
 static void yahoo_picture_check(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	char *buddyicon;
+	PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
 
-	buddyicon = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(account));
-	yahoo_set_buddy_icon(gc, buddyicon);
-	g_free(buddyicon);
+	yahoo_set_buddy_icon(gc, img);
+	purple_imgstore_unref(img);
 }
 
 static int get_yahoo_status_from_purple_status(PurpleStatus *status)

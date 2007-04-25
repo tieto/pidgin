@@ -1895,7 +1895,7 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleMessageFlags flags = 0;
 	struct buddyinfo *bi;
-	char *iconfile;
+	PurpleStoredImage *img;
 	GString *message;
 	gchar *tmp;
 	aim_mpmsg_section_t *curpart;
@@ -1932,33 +1932,19 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 		}
 	}
 
-	iconfile = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(account));
-	if ((iconfile != NULL) &&
+	img = purple_buddy_icons_find_account_icon(account);
+	if ((img != NULL) &&
 	    (args->icbmflags & AIM_IMFLAGS_BUDDYREQ) && !bi->ico_sent && bi->ico_informed) {
-		FILE *file;
-		struct stat st;
-
-		if (!g_stat(iconfile, &st)) {
-			guchar *buf = g_malloc(st.st_size);
-			file = g_fopen(iconfile, "rb");
-			if (file) {
-				/* XXX - Use g_file_get_contents() */
-				/* g_file_get_contents(iconfile, &data, &len, NULL); */
-				int len = fread(buf, 1, st.st_size, file);
-				purple_debug_info("oscar",
-						   "Sending buddy icon to %s (%d bytes, "
-						   "%lu reported)\n",
-						   userinfo->sn, len, st.st_size);
-				aim_im_sendch2_icon(od, userinfo->sn, buf, st.st_size,
-					st.st_mtime, aimutil_iconsum(buf, st.st_size));
-				fclose(file);
-			} else
-				purple_debug_error("oscar", "Can't open buddy icon file!\n");
-			g_free(buf);
-		} else
-			purple_debug_error("oscar", "Can't stat buddy icon file!\n");
+		gconstpointer data = purple_imgstore_get_data(img);
+		size_t len = purple_imgstore_get_size(img);
+		purple_debug_info("oscar",
+				   "Sending buddy icon to %s (%d bytes)\n",
+				   userinfo->sn, len);
+		/* TODO: XXX: FIXME: Does this actually need the mtime of the file? */
+		aim_im_sendch2_icon(od, userinfo->sn, data, len,
+			time(NULL), aimutil_iconsum(data, len));
 	}
-	g_free(iconfile);
+	purple_imgstore_unref(img);
 
 	message = g_string_new("");
 	curpart = args->mpmsg.parts;
@@ -3295,29 +3281,17 @@ static gboolean purple_icon_timerfunc(gpointer data) {
 	}
 
 	if (od->set_icon) {
-		struct stat st;
-		char *iconfile = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(purple_connection_get_account(gc)));
-		if (iconfile == NULL) {
+		PurpleAccount *account = purple_connection_get_account(gc);
+		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
+		if (img == NULL) {
 			aim_ssi_delicon(od);
-		} else if (!g_stat(iconfile, &st)) {
-			guchar *buf = g_malloc(st.st_size);
-			FILE *file = g_fopen(iconfile, "rb");
-			if (file) {
-				/* XXX - Use g_file_get_contents()? */
-				fread(buf, 1, st.st_size, file);
-				fclose(file);
-				purple_debug_info("oscar",
-					   "Uploading icon to icon server\n");
-				aim_bart_upload(od, buf, st.st_size);
-			} else
-				purple_debug_error("oscar",
-					   "Can't open buddy icon file!\n");
-			g_free(buf);
 		} else {
-			purple_debug_error("oscar",
-				   "Can't stat buddy icon file!\n");
+			purple_debug_info("oscar",
+				   "Uploading icon to icon server\n");
+			aim_bart_upload(od, purple_imgstore_get_data(img), 
+			                purple_imgstore_get_size(img));
+			purple_imgstore_unref(img);
 		}
-		g_free(iconfile);
 		od->set_icon = FALSE;
 	}
 
@@ -4178,13 +4152,11 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	PurpleAccount *account;
 	PeerConnection *conn;
 	int ret;
-	char *iconfile;
 	char *tmp1, *tmp2;
 
 	od = (OscarData *)gc->proto_data;
 	account = purple_connection_get_account(gc);
 	ret = 0;
-	iconfile = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(account));
 
 	if (imflags & PURPLE_MESSAGE_AUTO_RESP)
 		tmp1 = purple_str_sub_away_formatters(message, name);
@@ -4199,9 +4171,9 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	} else {
 		struct buddyinfo *bi;
 		struct aim_sendimext_args args;
-		struct stat st;
 		gsize len;
 		PurpleConversation *conv;
+		PurpleStoredImage *img;
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, name, account);
 
@@ -4250,44 +4222,38 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			bi->ico_need = FALSE;
 		}
 
-		if (iconfile && !g_stat(iconfile, &st)) {
-			FILE *file = g_fopen(iconfile, "rb");
-			if (file) {
-				guchar *buf = g_malloc(st.st_size);
-				/* TODO: Use g_file_get_contents()? */
-				fread(buf, 1, st.st_size, file);
-				fclose(file);
+		img = purple_buddy_icons_find_account_icon(account);
+		if (img) {
+			gconstpointer data = purple_imgstore_get_data(img);
+			args.iconlen   = purple_imgstore_get_size(img);
+			args.iconsum   = aimutil_iconsum(data, args.iconlen);
+			/* TODO: XXX: FIXME: Deal with the timestamp issue. */
+			args.iconstamp = time(NULL);
 
-				args.iconlen   = st.st_size;
-				args.iconsum   = aimutil_iconsum(buf, st.st_size);
-				args.iconstamp = st.st_mtime;
-
-				if ((args.iconlen != bi->ico_me_len) || (args.iconsum != bi->ico_me_csum) || (args.iconstamp != bi->ico_me_time)) {
-					bi->ico_informed = FALSE;
-					bi->ico_sent     = FALSE;
-				}
-
-				/*
-				 * TODO:
-				 * For some reason sending our icon to people only works
-				 * when we're the ones who initiated the conversation.  If
-				 * the other person sends the first IM then they never get
-				 * the icon.  We should fix that.
-				 */
-				if (!bi->ico_informed) {
-					purple_debug_info("oscar",
-							   "Claiming to have a buddy icon\n");
-					args.flags |= AIM_IMFLAGS_HASICON;
-					bi->ico_me_len = args.iconlen;
-					bi->ico_me_csum = args.iconsum;
-					bi->ico_me_time = args.iconstamp;
-					bi->ico_informed = TRUE;
-				}
-
-				g_free(buf);
+			if ((args.iconlen != bi->ico_me_len) || (args.iconsum != bi->ico_me_csum) || (args.iconstamp != bi->ico_me_time)) {
+				bi->ico_informed = FALSE;
+				bi->ico_sent     = FALSE;
 			}
+
+			/*
+			 * TODO:
+			 * For some reason sending our icon to people only works
+			 * when we're the ones who initiated the conversation.  If
+			 * the other person sends the first IM then they never get
+			 * the icon.  We should fix that.
+			 */
+			if (!bi->ico_informed) {
+				purple_debug_info("oscar",
+						   "Claiming to have a buddy icon\n");
+				args.flags |= AIM_IMFLAGS_HASICON;
+				bi->ico_me_len = args.iconlen;
+				bi->ico_me_csum = args.iconsum;
+				bi->ico_me_time = args.iconstamp;
+				bi->ico_informed = TRUE;
+			}
+
+			purple_imgstore_unref(img);
 		}
-		g_free(iconfile);
 
 		args.destsn = name;
 
@@ -4761,8 +4727,7 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	PurpleBuddy *b;
 	struct aim_ssi_item *curitem;
 	guint32 tmp;
-	const char *icon_path;
-	char *cached_icon_path;
+	PurpleStoredImage *img;
 	va_list ap;
 	guint16 fmtver, numitems;
 	guint32 timestamp;
@@ -4995,10 +4960,9 @@ static int purple_ssi_parselist(OscarData *od, FlapConnection *conn, FlapFrame *
 	 * the event that the local user set a new icon while this
 	 * account was offline.
 	 */
-	icon_path = purple_account_get_buddy_icon(account);
-	cached_icon_path = purple_buddy_icons_get_full_path(icon_path);
-	oscar_set_icon(gc, cached_icon_path);
-	g_free(cached_icon_path);
+	img = purple_buddy_icons_find_account_icon(account);
+	oscar_set_icon(gc, img);
+	purple_imgstore_unref(img);
 
 	return 1;
 }
@@ -5600,37 +5564,27 @@ static int oscar_icon_req(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 					od->set_icon = TRUE;
 					aim_srv_requestnew(od, SNAC_FAMILY_BART);
 				} else {
-					struct stat st;
-					char *iconfile = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(purple_connection_get_account(gc)));
-					if (iconfile == NULL) {
+					PurpleAccount *account = purple_connection_get_account(gc);
+					PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
+					if (img == NULL) {
 						aim_ssi_delicon(od);
-					} else if (!g_stat(iconfile, &st)) {
-						guchar *buf = g_malloc(st.st_size);
-						FILE *file = g_fopen(iconfile, "rb");
-						if (file) {
-							/* XXX - Use g_file_get_contents()? */
-							fread(buf, 1, st.st_size, file);
-							fclose(file);
-							purple_debug_info("oscar",
-											"Uploading icon to icon server\n");
-							aim_bart_upload(od, buf, st.st_size);
-						} else
-							purple_debug_error("oscar",
-											 "Can't open buddy icon file!\n");
-						g_free(buf);
 					} else {
-						purple_debug_error("oscar",
-										 "Can't stat buddy icon file!\n");
+
+						purple_debug_info("oscar",
+										"Uploading icon to icon server\n");
+						aim_bart_upload(od, purple_imgstore_get_data(img),
+						                purple_imgstore_get_size(img));
+						purple_imgstore_unref(img);
 					}
-					g_free(iconfile);
 				}
 			} else if (flags == 0x81) {
-				char *iconfile = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(purple_connection_get_account(gc)));
-				if (iconfile == NULL)
+				PurpleAccount *account = purple_connection_get_account(gc);
+				PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
+				if (img == NULL)
 					aim_ssi_delicon(od);
 				else {
 					aim_ssi_seticon(od, md5, length);
-					g_free(iconfile);
+					purple_imgstore_unref(img);
 				}
 			}
 		} break;
@@ -6212,41 +6166,28 @@ static void oscar_show_imforwardingurl(PurplePluginAction *action)
 	purple_notify_uri(gc, "http://mymobile.aol.com/dbreg/register?action=imf&clientID=1");
 }
 
-void oscar_set_icon(PurpleConnection *gc, const char *iconfile)
+void oscar_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	OscarData *od = gc->proto_data;
-	FILE *file;
-	struct stat st;
 
-	if (iconfile == NULL) {
+	if (img == NULL) {
 		aim_ssi_delicon(od);
-	} else if (!g_stat(iconfile, &st)) {
-		guchar *buf = g_malloc(st.st_size);
-		file = g_fopen(iconfile, "rb");
-		if (file)
-		{
-			PurpleCipher *cipher;
-			PurpleCipherContext *context;
-			guchar md5[16];
-			int len;
+	} else {
+		PurpleCipher *cipher;
+		PurpleCipherContext *context;
+		guchar md5[16];
+		gconstpointer data = purple_imgstore_get_data(img);
+		size_t len = purple_imgstore_get_size(img);
 
-			/* XXX - Use g_file_get_contents()? */
-			len = fread(buf, 1, st.st_size, file);
-			fclose(file);
 
-			cipher = purple_ciphers_find_cipher("md5");
-			context = purple_cipher_context_new(cipher, NULL);
-			purple_cipher_context_append(context, buf, len);
-			purple_cipher_context_digest(context, 16, md5, NULL);
-			purple_cipher_context_destroy(context);
+		cipher = purple_ciphers_find_cipher("md5");
+		context = purple_cipher_context_new(cipher, NULL);
+		purple_cipher_context_append(context, data, len);
+		purple_cipher_context_digest(context, 16, md5, NULL);
+		purple_cipher_context_destroy(context);
 
-			aim_ssi_seticon(od, md5, 16);
-		} else
-			purple_debug_error("oscar",
-				   "Can't open buddy icon file!\n");
-		g_free(buf);
-	} else
-		purple_debug_error("oscar", "Can't stat buddy icon file!\n");
+		aim_ssi_seticon(od, md5, 16);
+	}
 }
 
 /**

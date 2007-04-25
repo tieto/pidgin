@@ -36,8 +36,6 @@ typedef struct _PurpleBuddyIcon PurpleBuddyIcon;
 extern "C" {
 #endif
 
-// TODO: Deal with this.
-char *purple_buddy_icons_get_full_path(const char *icon);
 
 /**************************************************************************/
 /** @name Buddy Icon API                                                  */
@@ -151,6 +149,22 @@ gconstpointer purple_buddy_icon_get_data(const PurpleBuddyIcon *icon, size_t *le
  */
 const char *purple_buddy_icon_get_extension(const PurpleBuddyIcon *icon);
 
+/**
+ * Returns a full path to an icon.
+ *
+ * If the icon has data and the file exists in the cache, this will return
+ * a full path to the cache file.
+ *
+ * In general, it is not appropriate to be poking in the icon cache
+ * directly.  If you find yourself wanting to use this function, think
+ * very long and hard about it, and then don't.
+ *
+ * @param icon The buddy icon
+ *
+ * @return A full path to the file, or @c NULL under various conditions.
+ */
+char *purple_buddy_icon_get_full_path(PurpleBuddyIcon *icon);
+
 /*@}*/
 
 /**************************************************************************/
@@ -209,7 +223,46 @@ gboolean
 purple_buddy_icons_has_custom_icon(PurpleContact *contact);
 
 /**
+ * Returns the buddy icon image for an account.
+ *
+ * The caller owns a reference to the image in the store, and must dereference
+ * the image with purple_imgstore_unref() for it to be freed.
+ *
+ * This function deals with loading the icon from the cache, if
+ * needed, so it should be called in any case where you want the
+ * appropriate icon.
+ *
+ * @param account The account
+ *
+ * @return The account's buddy icon image.
+ */
+PurpleStoredImage *
+purple_buddy_icons_find_account_icon(PurpleAccount *account);
+
+/**
+ * Sets a buddy icon for an account.
+ *
+ * This function will deal with saving a record of the icon,
+ * caching the data, etc.
+ *
+ * @param account   The account for which to set a custom icon.
+ * @param icon_data The image data of the icon, which the
+ *                  buddy icon code will free.
+ * @param icon_len  The length of the data in @a icon_data.
+ *
+ * @return The icon that was set.  The caller does NOT own
+ *         a reference to this, and must call purple_imgstore_ref()
+ *         if it wants one.
+ */
+PurpleStoredImage *
+purple_buddy_icons_set_account_icon(PurpleAccount *account,
+                                    guchar *icon_data, size_t icon_len);
+
+/**
  * Returns the custom buddy icon image for a contact.
+ *
+ * The caller owns a reference to the image in the store, and must dereference
+ * the image with purple_imgstore_unref() for it to be freed.
  *
  * This function deals with loading the icon from the cache, if
  * needed, so it should be called in any case where you want the
@@ -229,10 +282,15 @@ purple_buddy_icons_find_custom_icon(PurpleContact *contact);
  * caching the data, etc.
  *
  * @param contact   The contact for which to set a custom icon.
- * @param icon_data The image data of the icon.
+ * @param icon_data The image data of the icon, which the
+ *                  buddy icon code will free.
  * @param icon_len  The length of the data in @a icon_data.
+ *
+ * @return The icon that was set.  The caller does NOT own
+ *         a reference to this, and must call purple_imgstore_ref()
+ *         if it wants one.
  */
-void
+PurpleStoredImage *
 purple_buddy_icons_set_custom_icon(PurpleContact *contact,
                                    guchar *icon_data, size_t icon_len);
 

@@ -514,15 +514,12 @@ void yahoo_buddy_icon_upload(PurpleConnection *gc, struct yahoo_buddy_icon_uploa
 	}
 }
 
-void yahoo_set_buddy_icon(PurpleConnection *gc, const char *iconfile)
+void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	PurpleAccount *account = gc->account;
-	gchar *icondata;
-	gsize len;
-	GError *error = NULL;
 
-	if (iconfile == NULL) {
+	if (img == NULL) {
 		g_free(yd->picture_url);
 		yd->picture_url = NULL;
 
@@ -533,14 +530,19 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, const char *iconfile)
 			/* Tell everyone we ain't got one no more */
 			yahoo_send_picture_update(gc, 0);
 
-	} else if (g_file_get_contents(iconfile, &icondata, &len, &error)) {
-		GString *s = g_string_new_len(icondata, len);
+	} else {
+		gconstpointer data = purple_imgstore_get_data(img);
+		size_t len = purple_imgstore_get_size(img);
+		GString *s = g_string_new_len(data, len);
 		struct yahoo_buddy_icon_upload_data *d;
 		int oldcksum = purple_account_get_int(account, YAHOO_PICCKSUM_SETTING, 0);
 		int expire = purple_account_get_int(account, YAHOO_PICEXPIRE_SETTING, 0);
 		const char *oldurl = purple_account_get_string(account, YAHOO_PICURL_SETTING, NULL);
+		char *iconfile;
 
-		g_free(icondata);
+		/* TODO: At some point, it'd be nice to fix this for real, or
+		 * TODO: at least change it to be something like:
+		 * TODO: purple_imgstore_get_filename(img); */
 		yd->picture_checksum = g_string_hash(s);
 
 		if ((yd->picture_checksum == oldcksum) &&
@@ -553,11 +555,15 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, const char *iconfile)
 			return;
 		}
 
+		/* TODO: FIXME: This is completely wrong.  The upload code needs to
+		 * TODO: be modified to work with a PurpleStoredImage. */
+		iconfile = g_build_filename(purple_buddy_icons_get_cache_dir(),
+		                            purple_imgstore_get_filename(img), NULL);
 		d = g_new0(struct yahoo_buddy_icon_upload_data, 1);
 		d->gc = gc;
 		d->str = s;
 		d->fd = -1;
-		d->filename = g_strdup(iconfile);
+		d->filename = iconfile;
 
 		if (!yd->logged_in) {
 			yd->picture_upload_todo = d;
@@ -566,10 +572,5 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, const char *iconfile)
 
 		yahoo_buddy_icon_upload(gc, d);
 
-	} else {
-		purple_debug_error("yahoo",
-				"Could not read buddy icon file '%s': %s\n",
-				iconfile, error->message);
-		g_error_free(error);
 	}
 }

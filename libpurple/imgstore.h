@@ -26,6 +26,8 @@
 #ifndef _PURPLE_IMGSTORE_H_
 #define _PURPLE_IMGSTORE_H_
 
+#include <glib.h>
+
 struct _PurpleStoredImage;
 typedef struct _PurpleStoredImage PurpleStoredImage;
 

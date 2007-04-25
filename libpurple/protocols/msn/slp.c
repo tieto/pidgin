@@ -248,14 +248,14 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 	if (!strcmp(euf_guid, "A4268EEC-FEC5-49E5-95C3-F126696BDBF6"))
 	{
 		/* Emoticon or UserDisplay */
+		char *content;
+		gsize len;
 		MsnSlpSession *slpsession;
 		MsnSlpLink *slplink;
 		MsnSlpMessage *slpmsg;
 		MsnObject *obj;
 		char *msnobj_data;
-		const char *file_name;
-		char *content;
-		gsize len;
+		PurpleStoredImage *img;
 		int type;
 
 		/* Send Ok */
@@ -281,9 +281,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			g_return_if_reached();
 		}
 
-		file_name = msn_object_get_real_location(obj);
-
-		if (file_name == NULL)
+		img = msn_object_get_image(obj);
+		if (img == NULL)
 		{
 			purple_debug_error("msn", "Wrong object.\n");
 			msn_object_destroy(obj);
@@ -314,7 +313,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 #ifdef MSN_DEBUG_SLP
 		slpmsg->info = "SLP DATA";
 #endif
-		msn_slpmsg_open_file(slpmsg, file_name);
+		msn_slpmsg_set_image(slpmsg, img);
 		msn_slplink_queue_slpmsg(slplink, slpmsg);
 	}
 	else if (!strcmp(euf_guid, "5D3E02AB-6190-11D3-BBBB-00C04F795683"))
@@ -1075,8 +1074,8 @@ msn_request_user_display(MsnUser *user)
 	else
 	{
 		MsnObject *my_obj = NULL;
-		gchar *data = NULL;
-		gsize len = 0;
+		gconstpointer data = NULL;
+		size_t len = 0;
 
 #ifdef MSN_DEBUG_UD
 		purple_debug_info("msn", "Requesting our own user display\n");
@@ -1086,14 +1085,12 @@ msn_request_user_display(MsnUser *user)
 
 		if (my_obj != NULL)
 		{
-			const char *filename = msn_object_get_real_location(my_obj);
-
-			if (filename != NULL)
-				g_file_get_contents(filename, &data, &len, NULL);
+			PurpleStoredImage *img = msn_object_get_image(my_obj);
+			data = purple_imgstore_get_data(img);
+			len = purple_imgstore_get_size(img);
 		}
 
-		purple_buddy_icons_set_for_user(account, user->passport, (void *)data, len, info);
-		g_free(data);
+		purple_buddy_icons_set_for_user(account, user->passport, data, len, info);
 
 		/* Free one window slot */
 		session->userlist->buddy_icon_window++;

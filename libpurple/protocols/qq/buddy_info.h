@@ -86,7 +86,7 @@ typedef struct _contact_info {
 
 void qq_refresh_buddy_and_myself(contact_info *info, PurpleConnection *gc);
 void qq_send_packet_get_info(PurpleConnection *gc, guint32 uid, gboolean show_window);
-void qq_set_my_buddy_icon(PurpleConnection *gc, const gchar *iconfile);
+void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
 void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const gchar *icon_num, const gchar *iconfile);
 void qq_prepare_modify_info(PurpleConnection *gc);
 void qq_process_modify_info_reply(guint8 *buf, gint buf_len, PurpleConnection *gc);

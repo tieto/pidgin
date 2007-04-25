@@ -1290,7 +1290,7 @@ msn_convo_closed(PurpleConnection *gc, const char *who)
 }
 
 static void
-msn_set_buddy_icon(PurpleConnection *gc, const char *filename)
+msn_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	MsnSession *session;
 	MsnUser *user;
@@ -1298,7 +1298,7 @@ msn_set_buddy_icon(PurpleConnection *gc, const char *filename)
 	session = gc->proto_data;
 	user = session->user;
 
-	msn_user_set_buddy_icon(user, filename);
+	msn_user_set_buddy_icon(user, img);
 
 	msn_change_status(session);
 }

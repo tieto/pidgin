@@ -546,7 +546,7 @@ void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const 
 }
 
 /* TODO: custom faces for QQ members and users with level >= 16 */
-void qq_set_my_buddy_icon(PurpleConnection *gc, const gchar *iconfile)
+void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	gchar *icon;
 	gint icon_num;
