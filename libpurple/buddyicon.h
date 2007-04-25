@@ -54,11 +54,13 @@ char *purple_buddy_icons_get_full_path(const char *icon);
  * @param username  The username the icon belongs to.
  * @param icon_data The buddy icon data.
  * @param icon_len  The buddy icon length.
+ * @param checksum  A protocol checksum from the prpl or @c NULL.
  *
  * @return The buddy icon structure.
  */
 PurpleBuddyIcon *purple_buddy_icon_new(PurpleAccount *account, const char *username,
-								void *icon_data, size_t icon_len);
+                                       void *icon_data, size_t icon_len,
+                                       const char *checksum);
 
 /**
  * Increments the reference count on a buddy icon.
@@ -93,8 +95,11 @@ void purple_buddy_icon_update(PurpleBuddyIcon *icon);
  * @param icon The buddy icon.
  * @param data The buddy icon data received over the wire.
  * @param len  The length of the data in @a data.
+ * @param checksum  A protocol checksum from the prpl or @c NULL.
  */
-void purple_buddy_icon_set_data(PurpleBuddyIcon *icon, guchar *data, size_t len);
+void
+purple_buddy_icon_set_data(PurpleBuddyIcon *icon, guchar *data,
+                           size_t len, const char *checksum);
 
 /**
  * Returns the buddy icon's account.
@@ -113,6 +118,17 @@ PurpleAccount *purple_buddy_icon_get_account(const PurpleBuddyIcon *icon);
  * @return The username.
  */
 const char *purple_buddy_icon_get_username(const PurpleBuddyIcon *icon);
+
+/**
+ * Returns the buddy icon's checksum.
+ *
+ * This function is really only for prpl use.
+ *
+ * @param icon The buddy icon.
+ *
+ * @return The checksum.
+ */
+const char *purple_buddy_icon_get_checksum(const PurpleBuddyIcon *icon);
 
 /**
  * Returns the buddy icon's data.
@@ -149,12 +165,27 @@ const char *purple_buddy_icon_get_extension(const PurpleBuddyIcon *icon);
  * @param username  The username of the user.
  * @param icon_data The icon data.
  * @param icon_len  The length of the icon data.
+ * @param checksum  A protocol checksum from the prpl or @c NULL.
  *
  * @return The buddy icon set, or NULL if no icon was set.
  */
 void
 purple_buddy_icons_set_for_user(PurpleAccount *account, const char *username,
-                                void *icon_data, size_t icon_len);
+                                void *icon_data, size_t icon_len,
+                                const char *checksum);
+
+/**
+ * Returns the checksum for the buddy icon of a specified buddy.
+ *
+ * This avoids loading the icon image data from the cache if it's
+ * not already loaded for some other reason.
+ *
+ * @param buddy The buddy
+ *
+ * @return The checksum.
+ */
+const char *
+purple_buddy_icons_get_checksum_for_user(PurpleBuddy *buddy);
 
 /**
  * Returns the buddy icon information for a user.

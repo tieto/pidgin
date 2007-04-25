@@ -965,15 +965,14 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 							photo ? _("Photo") : _("Logo"),
 							GPOINTER_TO_INT(jbi->vcard_imgids->data));
 
-					purple_buddy_icons_set_for_user(js->gc->account, bare_jid,
-							data, size);
-
 					purple_cipher_digest_region("sha1", (guchar *)data, size,
 							sizeof(hashval), hashval, NULL);
 					p = hash;
 					for(i=0; i<20; i++, p+=2)
 						snprintf(p, 3, "%02x", hashval[i]);
-					purple_blist_node_set_string((PurpleBlistNode*)b, "avatar_hash", hash);
+
+					purple_buddy_icons_set_for_user(js->gc->account, bare_jid,
+							data, size, hash);
 
 					g_free(data);
 					g_free(bintext);

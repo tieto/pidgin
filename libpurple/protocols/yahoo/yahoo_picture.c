@@ -49,7 +49,6 @@ yahoo_fetch_picture_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 {
 	struct yahoo_fetch_picture_data *d;
 	struct yahoo_data *yd;
-	PurpleBuddy *b;
 
 	d = user_data;
 	yd = d->gc->proto_data;
@@ -60,10 +59,9 @@ yahoo_fetch_picture_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	} else if (len == 0) {
 		purple_debug_error("yahoo", "Fetched an icon with length 0.  Strange.\n");
 	} else {
-		purple_buddy_icons_set_for_user(purple_connection_get_account(d->gc), d->who, (void *)pic_data, len);
-		b = purple_find_buddy(purple_connection_get_account(d->gc), d->who);
-		if (b)
-			purple_blist_node_set_int((PurpleBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY, d->checksum);
+		char *checksum = g_strdup_printf("%i", d->checksum);
+		purple_buddy_icons_set_for_user(purple_connection_get_account(d->gc), d->who, (void *)pic_data, len, checksum);
+		g_free(checksum);
 	}
 
 	g_free(d->who);
@@ -117,7 +115,9 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		PurpleUtilFetchUrlData *url_data;
 		struct yahoo_fetch_picture_data *data;
 		PurpleBuddy *b = purple_find_buddy(gc->account, who);
-		if (b && (checksum == purple_blist_node_get_int((PurpleBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY)))
+
+		/* FIXME: Cleanup this strtol() stuff if possible. */
+		if (b && (checksum == strtol(purple_buddy_icons_get_checksum_for_user(b), NULL, 10)))
 			return;
 
 		data = g_new0(struct yahoo_fetch_picture_data, 1);
@@ -166,11 +166,8 @@ void yahoo_process_picture_update(PurpleConnection *gc, struct yahoo_packet *pkt
 		if (icon == 2)
 			yahoo_send_picture_request(gc, who);
 		else if ((icon == 0) || (icon == 1)) {
-			PurpleBuddy *b = purple_find_buddy(gc->account, who);
 			YahooFriend *f;
-			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0);
-			if (b)
-				purple_blist_node_remove_setting((PurpleBlistNode *)b, YAHOO_ICON_CHECKSUM_KEY);
+			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0, NULL);
 			if ((f = yahoo_friend_find(gc, who)))
 				yahoo_friend_set_buddy_icon_need_request(f, TRUE);
 			purple_debug_misc("yahoo", "Setting user %s's icon to NULL.\n", who);
@@ -203,7 +200,9 @@ void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *p
 
 	if (who) {
 		PurpleBuddy *b = purple_find_buddy(gc->account, who);
-		if (b && (checksum != purple_blist_node_get_int((PurpleBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY)))
+
+		/* FIXME: Cleanup this strtol() stuff if possible. */
+		if (b && (checksum != strtol(purple_buddy_icons_get_checksum_for_user(b), NULL, 10)))
 			yahoo_send_picture_request(gc, who);
 	}
 }
@@ -276,11 +275,8 @@ void yahoo_process_avatar_update(PurpleConnection *gc, struct yahoo_packet *pkt)
 		if (avatar == 2)
 			yahoo_send_picture_request(gc, who);
 		else if ((avatar == 0) || (avatar == 1)) {
-			PurpleBuddy *b = purple_find_buddy(gc->account, who);
 			YahooFriend *f;
-			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0);
-			if (b)
-				purple_blist_node_remove_setting((PurpleBlistNode *)b, YAHOO_ICON_CHECKSUM_KEY);
+			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0, NULL);
 			if ((f = yahoo_friend_find(gc, who)))
 				yahoo_friend_set_buddy_icon_need_request(f, TRUE);
 			purple_debug_misc("yahoo", "Setting user %s's icon to NULL.\n", who);

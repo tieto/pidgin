@@ -48,7 +48,6 @@
 
 #define WEBMESSENGER_URL "http://login.yahoo.com/config/login?.src=pg"
 
-#define YAHOO_ICON_CHECKSUM_KEY "icon_checksum"
 #define YAHOO_PICURL_SETTING "picture_url"
 #define YAHOO_PICCKSUM_SETTING "picture_checksum"
 #define YAHOO_PICEXPIRE_SETTING "picture_expire"

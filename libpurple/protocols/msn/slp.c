@@ -870,7 +870,7 @@ buddy_icon_cached(PurpleConnection *gc, MsnObject *obj)
 	if (buddy == NULL)
 		return FALSE;
 
-	old = purple_blist_node_get_string((PurpleBlistNode *)buddy, "icon_checksum");
+	old = purple_buddy_icons_get_checksum_for_user(buddy);
 	new = msn_object_get_sha1(obj);
 
 	if (new == NULL)
@@ -956,22 +956,7 @@ msn_queue_buddy_icon_request(MsnUser *user)
 
 	if (obj == NULL)
 	{
-		/* It seems the user has not set a msnobject */
-		GSList *sl, *list;
-
-		list = purple_find_buddies(account, user->passport);
-
-		for (sl = list; sl != NULL; sl = sl->next)
-		{
-			PurpleBuddy *buddy = (PurpleBuddy *)sl->data;
-			if (buddy->icon)
-				purple_blist_node_remove_setting((PurpleBlistNode*)buddy, "icon_checksum");
-		}
-		g_slist_free(list);
-
-		/* TODO: I think we need better buddy icon core functions. */
-		purple_buddy_icons_set_for_user(account, user->passport, NULL, 0);
-
+		purple_buddy_icons_set_for_user(account, user->passport, NULL, 0, NULL);
 		return;
 	}
 
@@ -1001,7 +986,6 @@ got_user_display(MsnSlpCall *slpcall,
 	MsnUserList *userlist;
 	const char *info;
 	PurpleAccount *account;
-	GSList *sl, *list;
 
 	g_return_if_fail(slpcall != NULL);
 
@@ -1013,18 +997,8 @@ got_user_display(MsnSlpCall *slpcall,
 	userlist = slpcall->slplink->session->userlist;
 	account = slpcall->slplink->session->account;
 
-	/* TODO: I think we need better buddy icon core functions. */
 	purple_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
-								  (void *)data, size);
-
-	list = purple_find_buddies(account, slpcall->slplink->remote_user);
-
-	for (sl = list; sl != NULL; sl = sl->next)
-	{
-		PurpleBuddy *buddy = (PurpleBuddy *)sl->data;
-		purple_blist_node_set_string((PurpleBlistNode*)buddy, "icon_checksum", info);
-	}
-	g_slist_free(list);
+								  (void *)data, size, info);
 
 #if 0
 	/* Free one window slot */
@@ -1103,7 +1077,6 @@ msn_request_user_display(MsnUser *user)
 		MsnObject *my_obj = NULL;
 		gchar *data = NULL;
 		gsize len = 0;
-		GSList *sl, *list;
 
 #ifdef MSN_DEBUG_UD
 		purple_debug_info("msn", "Requesting our own user display\n");
@@ -1120,17 +1093,8 @@ msn_request_user_display(MsnUser *user)
 		}
 
 		/* TODO: I think we need better buddy icon core functions. */
-		purple_buddy_icons_set_for_user(account, user->passport, (void *)data, len);
+		purple_buddy_icons_set_for_user(account, user->passport, (void *)data, len, info);
 		g_free(data);
-
-		list = purple_find_buddies(account, user->passport);
-
-		for (sl = list; sl != NULL; sl = sl->next)
-		{
-			PurpleBuddy *buddy = (PurpleBuddy *)sl->data;
-			purple_blist_node_set_string((PurpleBlistNode*)buddy, "icon_checksum", info);
-		}
-		g_slist_free(list);
 
 		/* Free one window slot */
 		session->userlist->buddy_icon_window++;
