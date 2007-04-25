@@ -767,7 +767,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		/* Everything is good to go--sign on already */
-		if (!purple_prefs_get_bool("/core/savedstatus/startup_current_status"))
+		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
 			purple_savedstatus_activate(purple_savedstatus_get_startup());
 		purple_accounts_restore_current_statuses();
 	}

@@ -131,7 +131,7 @@ static void
 toggle_keep_open_cb(GntWidget *w)
 {
 	xfer_dialog->keep_open = !xfer_dialog->keep_open;
-	purple_prefs_set_bool("/purple/gnt/filetransfer/keep_open",
+	purple_prefs_set_bool("/finch/filetransfer/keep_open",
 						xfer_dialog->keep_open);
 }
 
@@ -139,7 +139,7 @@ static void
 toggle_clear_finished_cb(GntWidget *w)
 {
 	xfer_dialog->auto_clear = !xfer_dialog->auto_clear;
-	purple_prefs_set_bool("/purple/gnt/filetransfer/clear_finished",
+	purple_prefs_set_bool("/finch/filetransfer/clear_finished",
 						xfer_dialog->auto_clear);
 }
 
@@ -183,9 +183,9 @@ finch_xfer_dialog_new(void)
 		xfer_dialog = g_new0(PurpleGntXferDialog, 1);
 
 	xfer_dialog->keep_open =
-		purple_prefs_get_bool("/purple/gnt/filetransfer/keep_open");
+		purple_prefs_get_bool("/finch/filetransfer/keep_open");
 	xfer_dialog->auto_clear =
-		purple_prefs_get_bool("/purple/gnt/filetransfer/clear_finished");
+		purple_prefs_get_bool("/finch/filetransfer/clear_finished");
 
 	/* Create the window. */
 	xfer_dialog->window = window = gnt_vbox_new(FALSE);
@@ -507,9 +507,9 @@ static PurpleXferUiOps ops =
 void
 finch_xfers_init(void)
 {
-	purple_prefs_add_none("/purple/gnt/filetransfer");
-	purple_prefs_add_bool("/purple/gnt/filetransfer/clear_finished", TRUE);
-	purple_prefs_add_bool("/purple/gnt/filetransfer/keep_open", FALSE);
+	purple_prefs_add_none("/finch/filetransfer");
+	purple_prefs_add_bool("/finch/filetransfer/clear_finished", TRUE);
+	purple_prefs_add_bool("/finch/filetransfer/keep_open", FALSE);
 }
 
 void

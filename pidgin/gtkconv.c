@@ -2153,7 +2153,7 @@ insert_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *position,
 
 	conv = gtkconv->active_conv;
 
-	if (!purple_prefs_get_bool("/core/conversations/im/send_typing"))
+	if (!purple_prefs_get_bool("/purple/conversations/im/send_typing"))
 		return;
 
 	got_typing_keypress(gtkconv, (gtk_text_iter_is_start(position) &&
@@ -2172,7 +2172,7 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 
 	conv = gtkconv->active_conv;
 
-	if (!purple_prefs_get_bool("/core/conversations/im/send_typing"))
+	if (!purple_prefs_get_bool("/purple/conversations/im/send_typing"))
 		return;
 
 	im = PURPLE_CONV_IM(conv);
