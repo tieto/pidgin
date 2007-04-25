@@ -1300,6 +1300,8 @@ rc4_uninit(PurpleCipherContext *context) {
 	rc4_ctx = NULL;
 }
 
+
+
 static void
 rc4_set_key (PurpleCipherContext *context, const guchar * key) {
 	struct RC4Context *ctx;
@@ -1332,6 +1334,20 @@ rc4_set_opt(PurpleCipherContext *context, const gchar *name, void *value) {
 	if(!strcmp(name, "key_len")) {
 		ctx->key_len = GPOINTER_TO_INT(value);
 	}
+}
+
+static size_t 
+rc4_get_key_size (PurpleCipherContext *context)
+{
+	struct RC4Context *ctx;
+
+	g_return_val_if_fail(context, -1);
+
+	ctx = purple_cipher_context_get_data(context);
+
+	g_return_val_if_fail(ctx, -1);
+
+	return ctx->key_len;
 }
 
 static void *
@@ -1394,7 +1410,7 @@ static PurpleCipherOps RC4Ops = {
 	NULL,          /* set salt      */
 	NULL,          /* get salt size */
 	rc4_set_key,   /* set key       */
-	NULL           /* get key size  */
+	rc4_get_key_size/* get key size  */
 };
 
 /*******************************************************************************
