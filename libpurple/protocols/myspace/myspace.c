@@ -329,7 +329,6 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], gchar
     memcpy(data + NONCE_HALF_SIZE + strlen(email),
             /* IP addresses of network interfaces */
             "\x00\x00\x00\x00\x05\x7f\x00\x00\x01\x00\x00\x00\x00\x0a\x00\x00\x40\xc0\xa8\x58\x01\xc0\xa8\x3c\x01", 25);
-//    crypt_rc4(&rc4, data, data_len);
 
 	data_out = g_new0(guchar, data_len);
     purple_cipher_context_encrypt(rc4, (const guchar*)data, 

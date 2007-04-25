@@ -2,7 +2,7 @@ EXTRA_DIST = README TODO ChangeLog myspace.png Makefile.mingw
 
 pkgdir = $(libdir)/libpurple
 
-SOURCES = crypt-rc4.c myspace.c
+SOURCES = myspace.c
 
 AM_CFLAGS = $(st)
 
