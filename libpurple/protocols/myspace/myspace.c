@@ -55,8 +55,6 @@
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */
 
-#include "crypt-rc4.h" /* TODO: use rc4 */
-
 #define MSIM_STATUS_ONLINE      "online"
 #define MSIM_STATUS_AWAY     	"away"
 #define MSIM_STATUS_OFFLINE   	"offline"
@@ -257,13 +255,15 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], gchar
 {
     PurpleCipherContext *key_context;
     PurpleCipher *sha1;
-    rc4_state_struct rc4;
+	PurpleCipherContext *rc4;
     guchar hash_pw[HASH_SIZE];
     guchar key[HASH_SIZE];
     gchar* password_utf16le;
     guchar* data;
+	guchar* data_out;
     gchar* response;
-    int i, data_len;
+    int i;
+	size_t data_len, data_out_len;
 
     //memset(nonce, 0, NONCE_HALF_SIZE);
     //memset(nonce + NONCE_HALF_SIZE, 1, NONCE_HALF_SIZE);
@@ -306,9 +306,12 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], gchar
     printf("\n");
 #endif
 
+	rc4 = purple_cipher_context_new_by_name("rc4", NULL);
+
     /* Note: 'key' variable is 0x14 bytes (from SHA-1 hash), 
      * but only first 0x10 used for the RC4 key. */
-    crypt_rc4_init(&rc4, key, 0x10);
+	purple_cipher_context_set_option(rc4, "key_len", (gpointer)0x10);
+	purple_cipher_context_set_key(rc4, key);
 
     /* TODO: obtain IPs of network interfaces. This is not immediately
      * important because you can still connect and perform basic
@@ -326,9 +329,16 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], gchar
     memcpy(data + NONCE_HALF_SIZE + strlen(email),
             /* IP addresses of network interfaces */
             "\x00\x00\x00\x00\x05\x7f\x00\x00\x01\x00\x00\x00\x00\x0a\x00\x00\x40\xc0\xa8\x58\x01\xc0\xa8\x3c\x01", 25);
-    crypt_rc4(&rc4, data, data_len);
+//    crypt_rc4(&rc4, data, data_len);
 
-    response = purple_base64_encode(data, data_len);
+	data_out = g_new0(guchar, data_len);
+    purple_cipher_context_encrypt(rc4, (const guchar*)data, 
+			data_len, data_out, &data_out_len);
+	g_assert(data_out_len == data_len);
+	purple_cipher_context_destroy(rc4);
+
+    response = purple_base64_encode(data_out, data_out_len);
+	g_free(data_out);
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
     printf("response=<%s>\n", response);
 #endif
