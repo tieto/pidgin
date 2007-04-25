@@ -62,6 +62,7 @@ SMILEYS = 	act-up.png \
 		foot-in-mouth.png \
 		freaked-out.png \
 		ghost.png \
+		giggle.png \
 		girl.png \
 		glasses-cool.png \
 		glasses-nerdy.png \
@@ -87,6 +88,7 @@ SMILEYS = 	act-up.png \
 		love-over.png \
 		love.png \
 		lying.png \
+		mad-tongue.png \
 		mail.png \
 		mean.png \
 		meeting.png \
@@ -99,6 +101,7 @@ SMILEYS = 	act-up.png \
 		msn_online.png \
 		msn.png \
 		musical-note.png \
+		nailbiting.png \
 		neutral.png \
 		party.png \
 		peace.png \
@@ -158,10 +161,12 @@ SMILEYS = 	act-up.png \
 		umbrella.png \
 		vampire.png \
 		victory.png \
+		waiting.png \
 		watermelon.png \
 		weep.png \
 		wilt.png \
 		wink.png \
+		worship.png \
 		yawn.png \
 		yin-yang.png
 

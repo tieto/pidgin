@@ -107,7 +107,7 @@ static struct developer patch_writers[] = {
 static struct developer retired_developers[] = {
 	{"Herman Bloggs",		N_("win32 port"), "herman@bluedigits.com"},
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
-	{"Rob Flynn",			N_("maintainer"), "purple@robflynn.com"},
+	{"Rob Flynn",			N_("maintainer"), NULL},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
@@ -264,7 +264,7 @@ static void destroy_about()
 }
 
 /* This function puts the version number onto the pixmap we use in the 'about' 
- * screen in Purple. */
+ * screen in Pidgin. */
 static void
 pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	GdkPixmap *pixmap;
