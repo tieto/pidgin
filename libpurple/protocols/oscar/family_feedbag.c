@@ -112,7 +112,7 @@ aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *list, const char *name)
  */
 static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, const char *name, guint16 gid, guint16 bid, guint16 type, aim_tlvlist_t *data)
 {
-	int i;
+	gboolean exists;
 	struct aim_ssi_item *cur, *new;
 
 	new = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item));
@@ -131,34 +131,37 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 		if ((new->gid == 0xFFFF) && name) {
 			do {
 				new->gid += 0x0001;
-				for (cur=*list, i=0; ((cur) && (!i)); cur=cur->next)
+				exists = FALSE;
+				for (cur = *list; cur != NULL; cur = cur->next)
 					if ((cur->type == AIM_SSI_TYPE_GROUP) && (cur->gid == new->gid)) {
-						i=1;
+						exists = TRUE;
 						break;
 					}
-			} while (i);
+			} while (exists);
 		}
 	} else if (new->gid == 0x0000) {
 		if (new->bid == 0xFFFF) {
 			do {
 				new->bid += 0x0001;
-				for (cur=*list, i=0; ((cur) && (!i)); cur=cur->next)
+				exists = FALSE;
+				for (cur = *list; cur != NULL; cur = cur->next)
 					if (((cur->bid == new->bid) && (cur->gid == new->gid)) || (cur->gid == new->bid)) {
-						i=1;
+						exists = TRUE;
 						break;
 					}
-			} while (i);
+			} while (exists);
 		}
 	} else {
 		if (new->bid == 0xFFFF) {
 			do {
 				new->bid += 0x0001;
-				for (cur=*list, i=0; ((cur) && (!i)); cur=cur->next)
+				exists = FALSE;
+				for (cur = *list; cur != NULL; cur = cur->next)
 					if ((cur->bid == new->bid) && (cur->gid == new->gid)) {
-						i=1;
+						exists = TRUE;
 						break;
 					}
-			} while (i);
+			} while (exists);
 		}
 	}
 
