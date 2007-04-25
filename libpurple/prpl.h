@@ -176,8 +176,11 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * Returns the base icon name for the given buddy and account.
-	 * If buddy is NULL, it will return the name to use for the account's
-	 * icon.  This must be implemented.
+	 * If buddy is NULL and the account is non-NULL, it will return the 
+	 * name to use for the account's icon. If both are NULL, it will
+	 * return the name to use for the protocol's icon.
+	 *
+	 * This must be implemented.
 	 */
 	const char *(*list_icon)(PurpleAccount *account, PurpleBuddy *buddy);
 

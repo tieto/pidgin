@@ -6034,28 +6034,28 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		    purple_conv_im_get_typing_state(im) == PURPLE_TYPING)
 		{
 			atk_object_set_description(accessibility_obj, _("Typing"));
-			strncpy(style, "color=\"#47A046\"", sizeof(style));
+			strncpy(style, "color=\"#4e9a06\"", sizeof(style));
 		}
 		else if (im != NULL &&
 		         purple_conv_im_get_typing_state(im) == PURPLE_TYPED)
 		{
 			atk_object_set_description(accessibility_obj, _("Stopped Typing"));
-			strncpy(style, "color=\"#D1940C\"", sizeof(style));
+			strncpy(style, "color=\"#c4a000\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_NICK)
 		{
 			atk_object_set_description(accessibility_obj, _("Nick Said"));
-			strncpy(style, "color=\"#0D4E91\" style=\"italic\" weight=\"bold\"", sizeof(style));
+			strncpy(style, "color=\"#204a87\" style=\"italic\" weight=\"bold\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)
 		{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
-			strncpy(style, "color=\"#DF421E\" weight=\"bold\"", sizeof(style));
+			strncpy(style, "color=\"#a40000\" weight=\"bold\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
 		{
 			atk_object_set_description(accessibility_obj, _("New Event"));
-			strncpy(style, "color=\"#868272\" style=\"italic\"", sizeof(style));
+			strncpy(style, "color=\"#888a85\" style=\"italic\"", sizeof(style));
 		}
 
 		if (*style != '\0')
