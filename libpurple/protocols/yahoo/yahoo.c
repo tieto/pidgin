@@ -76,7 +76,8 @@ yahoo_rem_permit(PurpleConnection *gc, const char *who)
 	purple_privacy_permit_remove(gc->account,who,TRUE);
 }
 
-gboolean yahoo_privacy_check(PurpleConnection *gc, const char *who)
+gboolean
+yahoo_privacy_check(PurpleConnection *gc, const char *who)
 {
 	/* returns TRUE if allowed through, FALSE otherwise */
 	gboolean permitted;
