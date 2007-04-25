@@ -1090,7 +1090,7 @@ msn_request_user_display(MsnUser *user)
 			len = purple_imgstore_get_size(img);
 		}
 
-		purple_buddy_icons_set_for_user(account, user->passport, data, len, info);
+		purple_buddy_icons_set_for_user(account, user->passport, g_memdup(data, len), len, info);
 
 		/* Free one window slot */
 		session->userlist->buddy_icon_window++;

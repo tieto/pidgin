@@ -443,10 +443,12 @@ purple_buddy_icon_set_data(PurpleBuddyIcon *icon, guchar *data,
 	icon->img = NULL;
 
 	if (data != NULL)
+	{
 		if (len > 0)
 			icon->img = purple_buddy_icon_data_new(data, len, NULL);
 		else
 			g_free(data);
+	}
 
 	icon->checksum = g_strdup(checksum);
 
@@ -696,8 +698,7 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	}
 	else
 	{
-		// TODO
-		// purple_account_remove_setting(account, "buddy_icon");
+		purple_account_set_string(account, "buddy_icon", NULL);
 	}
 	unref_filename(old_icon);
 
@@ -963,9 +964,6 @@ purple_buddy_icons_blist_loaded_cb()
 {
 	PurpleBlistNode *node = purple_blist_get_root();
 	const char *dirname = purple_buddy_icons_get_cache_dir();
-
-	// TODO: TEMP
-	//old_icons_dir = g_strdup("/home/rlaager/.gaim/icons");
 
 	/* Doing this once here saves having to check it inside a loop. */
 	if (old_icons_dir != NULL)

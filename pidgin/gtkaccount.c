@@ -200,10 +200,12 @@ set_dialog_icon(AccountPrefsDialog *dialog, gpointer *data, size_t len, gchar *n
 
 	purple_imgstore_unref(dialog->icon_img);
 	if (data != NULL)
+	{
 		if (len > 0)
 			dialog->icon_img = purple_imgstore_add(data, len, new_icon_path);
 		else
 			g_free(data);
+	}
 
 	if (dialog->icon_img != NULL) {
 		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();

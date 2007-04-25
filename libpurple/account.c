@@ -740,7 +740,17 @@ parse_account(xmlnode *node)
 	child = xmlnode_get_child(node, "buddyicon");
 	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
 	{
-		// TODO: Read the file and cache it using the new system
+		const char *dirname = purple_buddy_icons_get_cache_dir();
+		char *filename = g_build_filename(dirname, data, NULL);
+		gchar *contents;
+		gsize len;
+
+		if (g_file_get_contents(filename, &contents, &len, NULL))
+		{
+			purple_buddy_icons_set_account_icon(ret, (guchar *)contents, len);
+		}
+
+		g_free(filename);
 		g_free(data);
 	}
 
