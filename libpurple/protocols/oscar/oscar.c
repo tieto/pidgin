@@ -5776,7 +5776,7 @@ oscar_status_types(PurpleAccount *account)
 				purple_value_new(PURPLE_TYPE_STRING), NULL);
 	status_types = g_list_prepend(status_types, type);
 
-	type = purple_status_type_new_with_attrs(PURPLE_STATUS_EXTENDED_AWAY,
+	type = purple_status_type_new_with_attrs(PURPLE_STATUS_UNAVAILABLE,
 				OSCAR_STATUS_ID_DND,
 				_("Do Not Disturb"), TRUE, is_icq, FALSE,
 				"message", _("Message"),
