@@ -498,18 +498,15 @@ purple_buddy_icons_set_for_user(PurpleAccount *account, const char *username,
                                 void *icon_data, size_t icon_len,
                                 const char *checksum)
 {
+	PurpleBuddyIcon *icon;
+
 	g_return_if_fail(account  != NULL);
 	g_return_if_fail(username != NULL);
 
-	if (icon_data != NULL && icon_len > 0)
-	{
-		PurpleBuddyIcon *icon;
+	icon = purple_buddy_icons_find(account, username);
 
-		icon = purple_buddy_icons_find(account, username);
-
-		if (icon != NULL)
-			purple_buddy_icon_set_data(icon, icon_data, icon_len, checksum);
-	}
+	if (icon != NULL)
+		purple_buddy_icon_set_data(icon, icon_data, icon_len, checksum);
 	else
 	{
 		PurpleBuddyIcon *icon = purple_buddy_icon_new(account, username, icon_data, icon_len, checksum);
