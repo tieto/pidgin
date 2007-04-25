@@ -1869,7 +1869,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		{
 			char buf[1024];
 			purple_debug_info("msn", "%s is %d bytes\n", photo_url_text, len);
-			id = purple_imgstore_add(url_text, len, NULL);
+			id = purple_imgstore_add_with_id(url_text, len, NULL);
 			g_snprintf(buf, sizeof(buf), "<img id=\"%d\"><br>", id);
 			purple_notify_user_info_prepend_pair(user_info, NULL, buf);
 		}
@@ -1888,7 +1888,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	g_free(photo_url_text);
 	g_free(info2_data);
 	if (id != -1)
-		purple_imgstore_unref(id);
+		purple_imgstore_unref_by_id(id);
 #endif
 }
 

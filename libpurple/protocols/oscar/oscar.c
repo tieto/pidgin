@@ -1841,34 +1841,14 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	bi->ipaddr = info->icqinfo.ipaddr;
 
 	if (info->iconcsumlen) {
-		const char *filename, *saved_b16 = NULL;
-		char *b16 = NULL, *filepath = NULL;
+		const char *saved_b16 = NULL;
+		char *b16 = NULL;
 		PurpleBuddy *b = NULL;
 
 		b16 = purple_base16_encode(info->iconcsum, info->iconcsumlen);
 		b = purple_find_buddy(account, info->sn);
-		/*
-		 * If for some reason the checksum is valid, but cached file is not..
-		 * we want to know.
-		 */
 		if (b != NULL)
-			filename = purple_blist_node_get_string((PurpleBlistNode*)b, "buddy_icon");
-		else
-			filename = NULL;
-		if (filename != NULL) {
-			if (g_file_test(filename, G_FILE_TEST_EXISTS))
-				saved_b16 = purple_blist_node_get_string((PurpleBlistNode*)b,
-						"icon_checksum");
-			else {
-				filepath = g_build_filename(purple_buddy_icons_get_cache_dir(),
-											filename, NULL);
-				if (g_file_test(filepath, G_FILE_TEST_EXISTS))
-					saved_b16 = purple_blist_node_get_string((PurpleBlistNode*)b,
-															"icon_checksum");
-				g_free(filepath);
-			}
-		} else
-			saved_b16 = NULL;
+			saved_b16 = purple_buddy_icons_get_checksum_for_user(b);
 
 		if (!b16 || !saved_b16 || strcmp(b16, saved_b16)) {
 			GSList *cur = od->requesticon;
@@ -2177,7 +2157,8 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	{
 		purple_buddy_icons_set_for_user(account, userinfo->sn,
 									  args->info.icon.icon,
-									  args->info.icon.length);
+									  args->info.icon.length,
+									  NULL);
 	}
 
 	else if (args->type & OSCAR_CAPABILITY_ICQSERVERRELAY)
@@ -3273,16 +3254,10 @@ static int purple_icon_parseicon(OscarData *od, FlapConnection *conn, FlapFrame 
 	 * no icon is set.  Ignore these.
 	 */
 	if ((iconlen > 0) && (iconlen != 90)) {
-		char *b16;
-		PurpleBuddy *b;
+		char *b16 = purple_base16_encode(iconcsum, iconcsumlen);
 		purple_buddy_icons_set_for_user(purple_connection_get_account(gc),
-									  sn, icon, iconlen);
-		b16 = purple_base16_encode(iconcsum, iconcsumlen);
-		b = purple_find_buddy(gc->account, sn);
-		if ((b16 != NULL) && (b != NULL)) {
-			purple_blist_node_set_string((PurpleBlistNode*)b, "icon_checksum", b16);
-			g_free(b16);
-		}
+									  sn, icon, iconlen, b16);
+		g_free(b16);
 	}
 
 	cur = od->requesticon;
@@ -4140,11 +4115,11 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 		id = g_datalist_get_data(&attribs, "id");
 
 		/* ... if it refers to a valid purple image ... */
-		if (id && (image = purple_imgstore_get(atoi(id)))) {
+		if (id && (image = purple_imgstore_find_by_id(atoi(id)))) {
 			/* ... append the message from start to the tag ... */
 			unsigned long size = purple_imgstore_get_size(image);
 			const char *filename = purple_imgstore_get_filename(image);
-			gpointer imgdata = purple_imgstore_get_data(image);
+			gconstpointer imgdata = purple_imgstore_get_data(image);
 
 			oscar_id++;
 

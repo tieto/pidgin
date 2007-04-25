@@ -27,140 +27,162 @@
 #include <glib.h>
 #include "debug.h"
 #include "imgstore.h"
+#include "util.h"
 
-static GSList *imgstore = NULL;
+static GHashTable *imgstore;
 static int nextid = 0;
 
 /**
  * Stored image
  *
- * Represents a single IM image awaiting display and/or transmission.
- * Now that this type is basicly private too, these two structs could
- * probably be combined.
+ * NOTE: purple_imgstore_add() creates these without zeroing the memory, so
+ * NOTE: make sure to update that function when adding members.
  */
 struct _PurpleStoredImage
 {
-	char *data;		/**< The image data.		*/
+	int id;
+	guint8 refcount;
 	size_t size;		/**< The image data's size.	*/
 	char *filename;		/**< The filename (for the UI)	*/
+	gpointer data;		/**< The image data.		*/
 };
 
-typedef struct
+PurpleStoredImage *
+purple_imgstore_add(gconstpointer data, size_t size, const char *filename)
 {
-	int id;
-	int refcount;
-	PurpleStoredImage *img;
-} PurpleStoredImagePriv;
-
-/* private functions */
-
-static PurpleStoredImagePriv *purple_imgstore_get_priv(int id) {
-	GSList *tmp = imgstore;
-	PurpleStoredImagePriv *priv = NULL;
-
-	g_return_val_if_fail(id > 0, NULL);
-
-	while (tmp && !priv) {
-		PurpleStoredImagePriv *tmp_priv = tmp->data;
-
-		if (tmp_priv->id == id)
-			priv = tmp_priv;
-
-		tmp = tmp->next;
-	}
-
-	if (!priv)
-		purple_debug(PURPLE_DEBUG_ERROR, "imgstore", "failed to find image id %d\n", id);
-
-	return priv;
-}
-
-static void purple_imgstore_free_priv(PurpleStoredImagePriv *priv) {
-	PurpleStoredImage *img = NULL;
-
-	g_return_if_fail(priv != NULL);
-
-	img = priv->img;
-	if (img) {
-		g_free(img->data);
-		g_free(img->filename);
-		g_free(img);
-	}
-
-	purple_debug(PURPLE_DEBUG_INFO, "imgstore", "freed image id %d\n", priv->id);
-
-	g_free(priv);
-
-	imgstore = g_slist_remove(imgstore, priv);
-}
-
-/* public functions */
-
-int purple_imgstore_add(const void *data, size_t size, const char *filename) {
-	PurpleStoredImagePriv *priv;
 	PurpleStoredImage *img;
 
 	g_return_val_if_fail(data != NULL, 0);
 	g_return_val_if_fail(size > 0, 0);
 
-	img = g_new0(PurpleStoredImage, 1);
+	img = g_new(PurpleStoredImage, 1);
 	img->data = g_memdup(data, size);
 	img->size = size;
 	img->filename = g_strdup(filename);
+	img->refcount = 1;
+	img->id = 0;
 
-	priv = g_new0(PurpleStoredImagePriv, 1);
-	priv->id = ++nextid;
-	priv->refcount = 1;
-	priv->img = img;
-
-	imgstore = g_slist_append(imgstore, priv);
-	purple_debug(PURPLE_DEBUG_INFO, "imgstore", "added image id %d\n", priv->id);
-
-	return priv->id;
+	return img;
 }
 
-PurpleStoredImage *purple_imgstore_get(int id) {
-	PurpleStoredImagePriv *priv = purple_imgstore_get_priv(id);
+int
+purple_imgstore_add_with_id(gconstpointer data, size_t size, const char *filename)
+{
+	PurpleStoredImage *img = purple_imgstore_add(data, size, filename);
+	img->id = ++nextid;
 
-	g_return_val_if_fail(priv != NULL, NULL);
+	g_hash_table_insert(imgstore, GINT_TO_POINTER(img->id), img);
 
-	purple_debug(PURPLE_DEBUG_INFO, "imgstore", "retrieved image id %d\n", priv->id);
-
-	return priv->img;
+	return img->id;
 }
 
-gpointer purple_imgstore_get_data(PurpleStoredImage *i) {
-	return i->data;
+PurpleStoredImage *purple_imgstore_find_by_id(int id) {
+	PurpleStoredImage *img = g_hash_table_lookup(imgstore, GINT_TO_POINTER(id));
+
+	if (img != NULL)
+		purple_debug_misc("imgstore", "retrieved image id %d\n", img->id);
+
+	return img;
 }
 
-size_t purple_imgstore_get_size(PurpleStoredImage *i) {
-	return i->size;
+gconstpointer purple_imgstore_get_data(PurpleStoredImage *img) {
+	return img->data;
 }
 
-const char *purple_imgstore_get_filename(PurpleStoredImage *i) {
-	return i->filename;
+size_t purple_imgstore_get_size(PurpleStoredImage *img)
+{
+	return img->size;
 }
 
-void purple_imgstore_ref(int id) {
-	PurpleStoredImagePriv *priv = purple_imgstore_get_priv(id);
-
-	g_return_if_fail(priv != NULL);
-
-	(priv->refcount)++;
-
-	purple_debug(PURPLE_DEBUG_INFO, "imgstore", "referenced image id %d (count now %d)\n", priv->id, priv->refcount);
+const char *purple_imgstore_get_filename(PurpleStoredImage *img)
+{
+	return img->filename;
 }
 
-void purple_imgstore_unref(int id) {
-	PurpleStoredImagePriv *priv = purple_imgstore_get_priv(id);
+const char *purple_imgstore_get_extension(PurpleStoredImage *img)
+{
+	return purple_util_get_image_extension(img->data, img->size);
+}
 
-	g_return_if_fail(priv != NULL);
-	g_return_if_fail(priv->refcount > 0);
+void purple_imgstore_ref_by_id(int id)
+{
+	PurpleStoredImage *img = purple_imgstore_find_by_id(id);
 
-	(priv->refcount)--;
+	g_return_if_fail(img != NULL);
 
-	purple_debug(PURPLE_DEBUG_INFO, "imgstore", "unreferenced image id %d (count now %d)\n", priv->id, priv->refcount);
+	purple_imgstore_ref(img);
+}
 
-	if (priv->refcount == 0)
-		purple_imgstore_free_priv(priv);
+void purple_imgstore_unref_by_id(int id)
+{
+	PurpleStoredImage *img = purple_imgstore_find_by_id(id);
+
+	g_return_if_fail(img != NULL);
+
+	purple_imgstore_unref(img);
+}
+
+PurpleStoredImage *
+purple_imgstore_ref(PurpleStoredImage *img)
+{
+	g_return_val_if_fail(img != NULL, NULL);
+
+	img->refcount++;
+
+	return img;
+}
+
+PurpleStoredImage *
+purple_imgstore_unref(PurpleStoredImage *img)
+{
+	if (img == NULL)
+		return NULL;
+
+	g_return_val_if_fail(img->refcount > 0, NULL);
+
+	img->refcount--;
+
+	if (img->refcount == 0)
+	{
+		purple_signal_emit(purple_imgstore_get_handle(),
+		                   "image-deleting", img);
+		if (img->id)
+			g_hash_table_remove(imgstore, GINT_TO_POINTER(img->id));
+
+		g_free(img->data);
+		g_free(img->filename);
+		g_free(img);
+	}
+
+	return img;
+}
+
+void *
+purple_imgstore_get_handle()
+{
+	static int handle;
+
+	return &handle;
+}
+
+void
+purple_imgstore_init()
+{
+	void *handle = purple_imgstore_get_handle();
+
+	purple_signal_register(handle, "image-deleting",
+	                       purple_marshal_VOID__POINTER, NULL,
+	                       1,
+	                       purple_value_new(PURPLE_TYPE_SUBTYPE,
+	                                        PURPLE_SUBTYPE_STORED_IMAGE));
+
+	imgstore = g_hash_table_new(g_int_hash, g_int_equal);
+}
+
+void
+purple_imgstore_uninit()
+{
+	g_hash_table_destroy(imgstore);
+
+	purple_signals_unregister_by_instance(purple_blist_get_handle());
 }

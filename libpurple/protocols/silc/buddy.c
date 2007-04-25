@@ -1716,7 +1716,7 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, const char *iconfile)
 	}
 
 	t = purple_buddy_icon_get_type((const PurpleBuddyIcon *)&ic);
-	if (!t) {
+	if (!t || !strcmp(t, "icon")) {
 		g_free(ic.data);
 		silc_mime_free(mime);
 		return;
