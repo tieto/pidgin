@@ -200,6 +200,10 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 					i++;
 
 			}
+
+			/* Reverse the Smiley list since it was built in reverse order for efficiency reasons */
+			list->smileys = g_slist_reverse(list->smileys);
+
 			if (!have_used_sfile)
 				g_free(sfile);
 		}
