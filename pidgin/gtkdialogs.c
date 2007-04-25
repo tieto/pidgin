@@ -264,7 +264,7 @@ static void destroy_about()
 }
 
 /* This function puts the version number onto the pixmap we use in the 'about' 
- * screen in Purple. */
+ * screen in Pidgin. */
 static void
 pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	GdkPixmap *pixmap;
