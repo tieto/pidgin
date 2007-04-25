@@ -955,7 +955,7 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 					data = purple_base64_decode(bintext, &size);
 
-					jbi->vcard_imgids = g_slist_prepend(jbi->vcard_imgids, GINT_TO_POINTER(purple_imgstore_add_with_id(data, size, "logo.png")));
+					jbi->vcard_imgids = g_slist_prepend(jbi->vcard_imgids, GINT_TO_POINTER(purple_imgstore_add_with_id(g_memdup(data, size), size, "logo.png")));
 					g_string_append_printf(info_text,
 							"<b>%s:</b> <img id='%d'><br/>",
 							photo ? _("Photo") : _("Logo"),
@@ -969,8 +969,6 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 
 					purple_buddy_icons_set_for_user(js->gc->account, bare_jid,
 							data, size, hash);
-
-					g_free(data);
 					g_free(bintext);
 				}
 			}

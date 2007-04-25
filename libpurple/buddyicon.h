@@ -88,10 +88,11 @@ PurpleBuddyIcon *purple_buddy_icon_unref(PurpleBuddyIcon *icon);
 void purple_buddy_icon_update(PurpleBuddyIcon *icon);
 
 /**
- * Sets the buddy icon's data that was received over the wire.
+ * Sets the buddy icon's data.
  *
  * @param icon The buddy icon.
- * @param data The buddy icon data received over the wire.
+ * @param data The buddy icon data, which the buddy icon code
+ *             takes ownership of and will free.
  * @param len  The length of the data in @a data.
  * @param checksum  A protocol checksum from the prpl or @c NULL.
  */
@@ -177,7 +178,8 @@ char *purple_buddy_icon_get_full_path(PurpleBuddyIcon *icon);
  *
  * @param account   The account the user is on.
  * @param username  The username of the user.
- * @param icon_data The icon data.
+ * @param icon_data The buddy icon data, which the buddy icon code
+ *                  takes ownership of and will free.
  * @param icon_len  The length of the icon data.
  * @param checksum  A protocol checksum from the prpl or @c NULL.
  *

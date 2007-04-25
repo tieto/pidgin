@@ -44,14 +44,16 @@ extern "C" {
  * No ID is allocated when using this function.  If you need to reference the
  * image by an ID, use purple_imgstore_add_with_id() instead.
  *
- * @param data		Pointer to the image data.
+ * @param data		Pointer to the image data, which the imgstore will take
+ *                      ownership of and free as appropriate.  If you want a
+ *                      copy of the data, make it before calling this function.
  * @param size		Image data's size.
  * @param filename	Filename associated with image.
  *
  * @return The stored image.
  */
 PurpleStoredImage *
-purple_imgstore_add(gconstpointer data, size_t size, const char *filename);
+purple_imgstore_add(gpointer data, size_t size, const char *filename);
 
 /**
  * Add an image to the store, allocating an ID.
@@ -60,13 +62,15 @@ purple_imgstore_add(gconstpointer data, size_t size, const char *filename);
  * the image with purple_imgstore_unref_by_id() or purple_imgstore_unref()
  * for it to be freed.
  *
- * @param data		Pointer to the image data.
+ * @param data		Pointer to the image data, which the imgstore will take
+ *                      ownership of and free as appropriate.  If you want a
+ *                      copy of the data, make it before calling this function.
  * @param size		Image data's size.
  * @param filename	Filename associated with image.
 
  * @return ID for the image.
  */
-int purple_imgstore_add_with_id(gconstpointer data, size_t size, const char *filename);
+int purple_imgstore_add_with_id(gpointer data, size_t size, const char *filename);
 
 /**
  * Retrieve an image from the store. The caller does not own a
