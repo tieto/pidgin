@@ -878,7 +878,7 @@ buddy_icon_cached(PurpleConnection *gc, MsnObject *obj)
 
 	/* If the old and new checksums are the same, and the file actually exists,
 	 * then return TRUE */
-	if (old != NULL && !strcmp(old, new) && (purple_buddy_icons_find(account, purple_buddy_get_name(buddy)) != NULL))
+	if (old != NULL && !strcmp(old, new))
 		return TRUE;
 
 	return FALSE;
@@ -1092,7 +1092,6 @@ msn_request_user_display(MsnUser *user)
 				g_file_get_contents(filename, &data, &len, NULL);
 		}
 
-		/* TODO: I think we need better buddy icon core functions. */
 		purple_buddy_icons_set_for_user(account, user->passport, (void *)data, len, info);
 		g_free(data);
 
