@@ -233,8 +233,6 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 				snprintf(p, 3, "%02x", hashval[i]);
 
 			purple_buddy_icons_set_for_user(js->gc->account, from, data, size, hash);
-
-			g_free(data);
 			g_free(text);
 		}
 	}

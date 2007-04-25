@@ -541,7 +541,6 @@ void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const 
 	else
 	{
 		purple_buddy_icons_set_for_user(account, who, data, len, icon_num);
-		g_free(data);
 	}
 }
 

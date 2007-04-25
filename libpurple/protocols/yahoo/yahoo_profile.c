@@ -1022,7 +1022,7 @@ yahoo_got_photo(PurpleUtilFetchUrlData *url_data, gpointer data,
 					photo_url_text, url_text);
 		} else {
 			purple_debug_info("yahoo", "%s is %d bytes\n", photo_url_text, len);
-			id = purple_imgstore_add_with_id(url_text, len, NULL);
+			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 			
 			tmp = g_strdup_printf("<img id=\"%d\"><br>", id);
 			purple_notify_user_info_add_pair(user_info, NULL, tmp);

@@ -236,7 +236,10 @@ purple_buddy_icon_data_new(guchar *icon_data, size_t icon_len, const char *filen
 	{
 		file = purple_buddy_icon_data_calculate_filename(icon_data, icon_len);
 		if (file == NULL)
+		{
+			g_free(icon_data);
 			return NULL;
+		}
 	}
 	else
 		file = g_strdup(filename);
@@ -244,6 +247,7 @@ purple_buddy_icon_data_new(guchar *icon_data, size_t icon_len, const char *filen
 	if ((img = g_hash_table_lookup(icon_data_cache, file)))
 	{
 		g_free(file);
+		g_free(icon_data);
 		return purple_imgstore_ref(img);
 	}
 
@@ -438,8 +442,11 @@ purple_buddy_icon_set_data(PurpleBuddyIcon *icon, guchar *data,
 	old_img = icon->img;
 	icon->img = NULL;
 
-	if (data != NULL && len > 0)
-		icon->img = purple_buddy_icon_data_new(data, len, NULL);
+	if (data != NULL)
+		if (len > 0)
+			icon->img = purple_buddy_icon_data_new(data, len, NULL);
+		else
+			g_free(data);
 
 	icon->checksum = g_strdup(checksum);
 
@@ -610,7 +617,6 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 				icon->img = NULL;
 				checksum = g_strdup(purple_blist_node_get_string((PurpleBlistNode*)b, "icon_checksum"));
 				purple_buddy_icon_set_data(icon, data, len, checksum);
-				g_free(data);
 			}
 			g_free(path);
 		}
@@ -658,7 +664,6 @@ purple_buddy_icons_find_account_icon(PurpleAccount *account)
 	{
 		g_free(path);
 		img = purple_buddy_icon_data_new(data, len, account_icon_file);
-		g_free(data);
 		g_hash_table_insert(pointer_icon_cache, account, img);
 		return img;
 	}
@@ -680,7 +685,6 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	if (icon_data != NULL && icon_len > 0)
 	{
 		img = purple_buddy_icon_data_new(icon_data, icon_len, NULL);
-		g_free(icon_data);
 	}
 
 	old_icon = g_strdup(purple_account_get_string(account, "buddy_icon", NULL));
@@ -757,7 +761,6 @@ purple_buddy_icons_find_custom_icon(PurpleContact *contact)
 	{
 		g_free(path);
 		img = purple_buddy_icon_data_new(data, len, custom_icon_file);
-		g_free(data);
 		g_hash_table_insert(pointer_icon_cache, contact, img);
 		return img;
 	}
@@ -780,7 +783,6 @@ purple_buddy_icons_set_custom_icon(PurpleContact *contact,
 	if (icon_data != NULL && icon_len > 0)
 	{
 		img = purple_buddy_icon_data_new(icon_data, icon_len, NULL);
-		g_free(icon_data);
 	}
 
 	old_icon = g_strdup(purple_blist_node_get_string((PurpleBlistNode *)contact,

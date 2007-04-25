@@ -2699,7 +2699,6 @@ static void im_recv_mime(struct mwConversation *conv,
 
       /* add image to the purple image store */
       img = purple_imgstore_add_with_id(d_dat, d_len, cid);
-      g_free(d_dat);
 
       /* map the cid to the image store identifier */
       g_hash_table_insert(img_by_cid, cid, GINT_TO_POINTER(img));

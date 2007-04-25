@@ -1351,7 +1351,6 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 			return;
 		}
 		id = purple_imgstore_add_with_id(filedata, size, data->filename);
-		g_free(filedata);
 
 		gtk_text_buffer_get_iter_at_mark(GTK_IMHTML(gtkconv->entry)->text_buffer, &iter,
 						 gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer));

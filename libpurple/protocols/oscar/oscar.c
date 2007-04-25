@@ -2142,7 +2142,7 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 	else if (args->type & OSCAR_CAPABILITY_BUDDYICON)
 	{
 		purple_buddy_icons_set_for_user(account, userinfo->sn,
-									  args->info.icon.icon,
+									  g_memdup(args->info.icon.icon, args->info.icon.length),
 									  args->info.icon.length,
 									  NULL);
 	}
@@ -3242,7 +3242,7 @@ static int purple_icon_parseicon(OscarData *od, FlapConnection *conn, FlapFrame 
 	if ((iconlen > 0) && (iconlen != 90)) {
 		char *b16 = purple_base16_encode(iconcsum, iconcsumlen);
 		purple_buddy_icons_set_for_user(purple_connection_get_account(gc),
-									  sn, icon, iconlen, b16);
+									  sn, g_memdup(icon, iconlen), iconlen, b16);
 		g_free(b16);
 	}
 

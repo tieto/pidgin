@@ -401,7 +401,6 @@ setup_icon_box(PidginStatusBox *status_box)
 			if (g_file_get_contents(filename, &contents, &size, NULL))
 			{
 				img = purple_imgstore_add(contents, size, filename);
-				g_free(contents);
 			}
 		}
 

@@ -997,7 +997,7 @@ got_user_display(MsnSlpCall *slpcall,
 	account = slpcall->slplink->session->account;
 
 	purple_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
-								  (void *)data, size, info);
+								  g_memdup(data, size), size, info);
 
 #if 0
 	/* Free one window slot */

@@ -48,7 +48,7 @@ struct _PurpleStoredImage
 };
 
 PurpleStoredImage *
-purple_imgstore_add(gconstpointer data, size_t size, const char *filename)
+purple_imgstore_add(gpointer data, size_t size, const char *filename)
 {
 	PurpleStoredImage *img;
 
@@ -56,7 +56,7 @@ purple_imgstore_add(gconstpointer data, size_t size, const char *filename)
 	g_return_val_if_fail(size > 0, 0);
 
 	img = g_new(PurpleStoredImage, 1);
-	img->data = g_memdup(data, size);
+	img->data = data;
 	img->size = size;
 	img->filename = g_strdup(filename);
 	img->refcount = 1;
@@ -66,7 +66,7 @@ purple_imgstore_add(gconstpointer data, size_t size, const char *filename)
 }
 
 int
-purple_imgstore_add_with_id(gconstpointer data, size_t size, const char *filename)
+purple_imgstore_add_with_id(gpointer data, size_t size, const char *filename)
 {
 	PurpleStoredImage *img = purple_imgstore_add(data, size, filename);
 	img->id = ++nextid;

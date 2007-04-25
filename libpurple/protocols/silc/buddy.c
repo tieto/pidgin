@@ -987,7 +987,7 @@ silcpurple_add_buddy_save(bool success, void *context)
 					SilcUInt32 data_len;
 					data = silc_mime_get_data(m, &data_len);
 					if (data)
-						purple_buddy_icons_set_for_user(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), (void *)data, data_len);
+						purple_buddy_icons_set_for_user(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), g_memdup(data, data_len), data_len);
 				}
 				silc_mime_free(m);
 			}
