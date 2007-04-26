@@ -263,7 +263,7 @@ silcpurple_wb_request(SilcClient client, const unsigned char *message,
 	SilcPurple sg;
 
 	gc = client->application;
-        sg = gc->proto_data;
+	sg = gc->proto_data;
 
 	/* Open whiteboard automatically if requested */
 	if (purple_account_get_bool(sg->account, "open-wb", FALSE)) {
@@ -299,7 +299,8 @@ silcpurple_wb_request(SilcClient client, const unsigned char *message,
 	req->channel = channel;
 	req->sg = sg;
 
-	purple_request_action(gc, _("Whiteboard"), tmp, NULL, 1, req, 2,
+	purple_request_action(gc, _("Whiteboard"), tmp, NULL, 1,
+				sg->account, sender->nickname, NULL, req, 2,
 			    _("Yes"), G_CALLBACK(silcpurple_wb_request_cb),
 			    _("No"), G_CALLBACK(silcpurple_wb_request_cb));
 }

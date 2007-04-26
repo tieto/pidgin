@@ -290,7 +290,8 @@ silcpurple_chat_chpk_cb(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 		/* Add new public key */
 		purple_request_file(sg->gc, _("Open Public Key..."), NULL, FALSE,
 				  G_CALLBACK(silcpurple_chat_chpk_add),
-				  G_CALLBACK(silcpurple_chat_chpk_cancel), sgc);
+				  G_CALLBACK(silcpurple_chat_chpk_cancel),
+				  purple_connection_get_account(sg->gc), NULL, NULL, sgc);
 		return;
 	}
 
@@ -421,7 +422,8 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 		purple_request_fields(sg->gc, _("Channel Authentication"),
 				    _("Channel Authentication"), t, fields,
 				    _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
-				    _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok), sgc);
+				    _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok),
+					purple_connection_get_account(sg->gc), NULL, NULL, sgc);
 		return;
 	}
 	sgc->pubkeys = silc_buffer_copy(channel_pubkeys);
@@ -459,7 +461,8 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 	purple_request_fields(sg->gc, _("Channel Authentication"),
 			    _("Channel Authentication"), t, fields,
 			    _("Add / Remove"), G_CALLBACK(silcpurple_chat_chpk_cb),
-			    _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok), sgc);
+			    _("OK"), G_CALLBACK(silcpurple_chat_chauth_ok),
+				purple_connection_get_account(sg->gc), NULL, NULL, sgc);
 
 	silc_argument_payload_free(chpks);
 }
@@ -594,7 +597,8 @@ silcpurple_chat_prv(PurpleBlistNode *node, gpointer data)
 		   p->channel);
 	purple_request_fields(gc, _("Add Channel Private Group"), NULL, tmp, fields,
 			    _("Add"), G_CALLBACK(silcpurple_chat_prv_add),
-			    _("Cancel"), G_CALLBACK(silcpurple_chat_prv_cancel), p);
+			    _("Cancel"), G_CALLBACK(silcpurple_chat_prv_cancel),
+				purple_connection_get_account(gc), NULL, NULL, p);
 }
 
 
@@ -723,7 +727,8 @@ silcpurple_chat_ulimit(PurpleBlistNode *node, gpointer data)
 			   _("Set user limit on channel. Set to zero to reset user limit."),
 			   tmp, FALSE, FALSE, NULL,
 			   _("OK"), G_CALLBACK(silcpurple_chat_ulimit_cb),
-			   _("Cancel"), G_CALLBACK(silcpurple_chat_ulimit_cb), s);
+			   _("Cancel"), G_CALLBACK(silcpurple_chat_ulimit_cb),
+			   purple_connection_get_account(gc), NULL, NULL, s);
 }
 
 static void
