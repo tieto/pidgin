@@ -72,6 +72,7 @@ static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid *g)
 {
 	PurpleConnection *gc;
 	guint32 uid;
+	gchar *nombre;
 
 	g_return_if_fail(g != NULL);
 
@@ -80,17 +81,23 @@ static void _qq_search_before_auth_with_gc_and_uid(gc_and_uid *g)
 	g_return_if_fail(gc != 0 && uid != 0);
 
 	qq_send_packet_get_info(gc, uid, TRUE);	/* we wanna see window */
+
+	nombre = uid_to_purple_name(uid);
+	/* TODO: 'wanna' is not an appropriate word for this string. Fix after string freeze. */
 	purple_request_action
-	    (gc, NULL, _("Do you wanna approve the request?"), "", 2, g, 2,
-	     _("Reject"),
-	     G_CALLBACK(qq_reject_add_request_with_gc_and_uid),
+	    (gc, NULL, _("Do you wanna approve the request?"), "", 2,
+		 purple_connection_get_account(gc), nombre, NULL,
+		 g, 2,
+	     _("Reject"), G_CALLBACK(qq_reject_add_request_with_gc_and_uid),
 	     _("Approve"), G_CALLBACK(qq_approve_add_request_with_gc_and_uid));
+	g_free(nombre);
 }
 
 static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 {
 	PurpleConnection *gc;
 	guint32 uid;
+	gchar *nombre;
 
 	g_return_if_fail(g != NULL);
 
@@ -99,9 +106,15 @@ static void _qq_search_before_add_with_gc_and_uid(gc_and_uid *g)
 	g_return_if_fail(gc != 0 && uid != 0);
 
 	qq_send_packet_get_info(gc, uid, TRUE);	/* we wanna see window */
+	/* TODO: 'wanna' is not an appropriate word for this string. Fix after string freeze. */
+	nombre = uid_to_purple_name(uid);
 	purple_request_action
-	    (gc, NULL, _("Do you wanna add this buddy?"), "", 2, g, 2,
-	     _("Cancel"), NULL, _("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid));
+	    (gc, NULL, _("Do you wanna add this buddy?"), "", 2,
+		 purple_connection_get_account(gc), nombre, NULL,
+		 g, 2,
+	     _("Cancel"), NULL,
+		 _("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid));
+	g_free(nombre);
 }
 
 /* Send ACK if the sys message needs an ACK */
@@ -147,7 +160,7 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 	uid = strtol(from, NULL, 10);
 	name = uid_to_purple_name(uid);
 	b = purple_find_buddy(gc->account, name);
-	g_free(name);
+
 	if (b == NULL) {	/* the person is not in my list */
 		g = g_new0(gc_and_uid, 1);
 		g->gc = gc;
@@ -155,10 +168,11 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 		message = g_strdup_printf(_("You have been added by %s"), from);
 		_qq_sys_msg_log_write(gc, message, from);
 		purple_request_action(gc, NULL, message,
-				    _("Would like to add him?"), 2, g, 3,
-				    _("Cancel"), NULL, _("Add"),
-				    G_CALLBACK
-				    (qq_add_buddy_with_gc_and_uid),
+				    _("Would like to add him?"), 2,
+					purple_connection_get_account(gc), name, NULL,
+					g, 3,
+				    _("Cancel"), NULL,
+					_("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid),
 				    _("Search"), G_CALLBACK(_qq_search_before_add_with_gc_and_uid));
 	} else {
 		message = g_strdup_printf(_("%s has added you [%s]"), from, to);
@@ -166,6 +180,7 @@ static void _qq_process_msg_sys_being_added(PurpleConnection *gc, gchar *from, g
 		purple_notify_info(gc, NULL, message, NULL);
 	}
 
+	g_free(name);
 	g_free(message);
 }
 
@@ -219,12 +234,18 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 	g->gc = gc;
 	g->uid = uid;
 
+	name = uid_to_purple_name(uid);
+
+	/* TODO: 'wanna' is not an appropriate word for this string. Fix after string freeze */
+	/* TODO: this should go through purple_account_request_authorization() */
 	message = g_strdup_printf(_("%s wanna add you [%s] as friends"), from, to);
 	reason = g_strdup_printf(_("Message: %s"), msg_utf8);
 	_qq_sys_msg_log_write(gc, message, from);
 
 	purple_request_action
-	    (gc, NULL, message, reason, 2, g, 3,
+	    (gc, NULL, message, reason, 2,
+		purple_connection_get_account(gc), name, NULL,
+		 g, 3,
 	     _("Reject"),
 	     G_CALLBACK(qq_reject_add_request_with_gc_and_uid),
 	     _("Approve"),
@@ -234,22 +255,24 @@ static void _qq_process_msg_sys_add_contact_request(PurpleConnection *gc, gchar 
 	g_free(message);
 	g_free(reason);
 
-	name = uid_to_purple_name(uid);
+	/* XXX: Is this needed once the above goes through purple_account_request_authorization()? */
 	b = purple_find_buddy(gc->account, name);
-	g_free(name);
 	if (b == NULL) {	/* the person is not in my list  */
 		g2 = g_new0(gc_and_uid, 1);
 		g2->gc = gc;
 		g2->uid = strtol(from, NULL, 10);
 		message = g_strdup_printf(_("%s is not in your buddy list"), from);
 		purple_request_action(gc, NULL, message,
-				    _("Would you like to add him?"), 2, g2,
-				    3, _("Cancel"), NULL, _("Add"),
-				    G_CALLBACK
-				    (qq_add_buddy_with_gc_and_uid),
+				    _("Would you like to add him?"), 2,
+					purple_connection_get_account(gc), name, NULL,
+					g2, 3,
+					_("Cancel"), NULL,
+					_("Add"), G_CALLBACK(qq_add_buddy_with_gc_and_uid),
 				    _("Search"), G_CALLBACK(_qq_search_before_add_with_gc_and_uid));
 		g_free(message);
 	}
+
+	g_free(name);
 }
 
 void qq_process_msg_sys(guint8 *buf, gint buf_len, guint16 seq, PurpleConnection *gc)

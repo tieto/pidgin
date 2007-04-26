@@ -985,7 +985,9 @@ yahoo_buddy_add_deny_reason_cb(struct yahoo_add_request *add_req) {
 	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
 			NULL, _("No reason given."), TRUE, FALSE, NULL, 
 			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
-			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb), add_req);
+			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb),
+			purple_connection_get_account(add_req->gc), add_req->who, NULL,
+			add_req);
 }
 
 static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt) {
@@ -1890,7 +1892,9 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 		g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
 					"user is on your buddy list.  Clicking \"Yes\" "
 					"will remove and ignore the buddy."), who);
-		purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0, b,
+		purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
+						gc->account, who, NULL,
+						b,
 						G_CALLBACK(ignore_buddy),
 						G_CALLBACK(keep_buddy));
 		break;
@@ -3222,10 +3226,13 @@ static void yahoo_act_id(PurpleConnection *gc, const char *entry)
 static void yahoo_show_act_id(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
+	/* XXX Typo: This should be _("Activate which ID?") - fix after string freeze is over */
 	purple_request_input(gc, NULL, _("Active which ID?"), NULL,
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static void yahoo_show_chat_goto(PurplePluginAction *action)
@@ -3234,7 +3241,9 @@ static void yahoo_show_chat_goto(PurplePluginAction *action)
 	purple_request_input(gc, NULL, _("Join who in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {

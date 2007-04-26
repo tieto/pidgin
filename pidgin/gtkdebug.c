@@ -231,7 +231,9 @@ static void
 save_cb(GtkWidget *w, DebugWindow *win)
 {
 	purple_request_file(win, _("Save Debug Log"), "purple-debug.log", TRUE,
-					  G_CALLBACK(save_writefile_cb), NULL, win);
+					  G_CALLBACK(save_writefile_cb), NULL,
+					  NULL, NULL, NULL,
+					  win);
 }
 
 static void

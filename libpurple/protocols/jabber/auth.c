@@ -480,7 +480,9 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 			purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 					_("Plaintext Authentication"),
 					_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-					2, js->gc->account, allow_plaintext_auth,
+					2,
+					purple_connection_get_account(js->gc), NULL, NULL,
+					purple_connection_get_account(js->gc), allow_plaintext_auth,
 					disallow_plaintext_auth);
 			return;
 		}
@@ -562,7 +564,9 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 				purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 						_("Plaintext Authentication"),
 						_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-						2, js->gc->account, allow_plaintext_auth,
+						2,
+						purple_connection_get_account(js->gc), NULL, NULL,
+						purple_connection_get_account(js->gc), allow_plaintext_auth,
 						disallow_plaintext_auth);
 				return;
 			}
