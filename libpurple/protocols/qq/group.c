@@ -122,6 +122,7 @@ PurpleRoomlist *qq_roomlist_get_list(PurpleConnection *gc)
 			   NULL, FALSE, FALSE, NULL, 
 			   _("Search"), G_CALLBACK(_qq_group_search_callback), 
 			   _("Cancel"), G_CALLBACK(_qq_group_search_cancel_callback), 
+			   purple_connection_get_account(gc), NULL, NULL,
 			   gc);
 
 	return qd->roomlist;

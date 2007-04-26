@@ -1135,6 +1135,7 @@ purple_request_input(void *handle, const char *title, const char *primary,
 				   gboolean multiline, gboolean masked, gchar *hint,
 				   const char *ok_text, GCallback ok_cb,
 				   const char *cancel_text, GCallback cancel_cb,
+				   PurpleAccount *account, const char *who, PurpleConversation *conv,
 				   void *user_data)
 {
 	PurpleRequestUiOps *ops;
@@ -1155,6 +1156,7 @@ purple_request_input(void *handle, const char *title, const char *primary,
 											 multiline, masked, hint,
 											 ok_text, ok_cb,
 											 cancel_text, cancel_cb,
+											 account, who, conv,
 											 user_data);
 
 		handles = g_list_append(handles, info);
@@ -1170,6 +1172,7 @@ purple_request_choice(void *handle, const char *title, const char *primary,
 					const char *secondary, unsigned int default_value,
 					const char *ok_text, GCallback ok_cb,
 					const char *cancel_text, GCallback cancel_cb,
+					PurpleAccount *account, const char *who, PurpleConversation *conv,
 					void *user_data, ...)
 {
 	void *ui_handle;
@@ -1181,7 +1184,8 @@ purple_request_choice(void *handle, const char *title, const char *primary,
 	va_start(args, user_data);
 	ui_handle = purple_request_choice_varg(handle, title, primary, secondary,
 					     default_value, ok_text, ok_cb,
-					     cancel_text, cancel_cb, user_data, args);
+					     cancel_text, cancel_cb,
+					     account, who, conv, user_data, args);
 	va_end(args);
 
 	return ui_handle;
@@ -1193,6 +1197,7 @@ purple_request_choice_varg(void *handle, const char *title,
 			 unsigned int default_value,
 			 const char *ok_text, GCallback ok_cb,
 			 const char *cancel_text, GCallback cancel_cb,
+			 PurpleAccount *account, const char *who, PurpleConversation *conv,
 			 void *user_data, va_list choices)
 {
 	PurpleRequestUiOps *ops;
@@ -1212,6 +1217,7 @@ purple_request_choice_varg(void *handle, const char *title,
 						      default_value,
 						      ok_text, ok_cb,
 						      cancel_text, cancel_cb,
+							  account, who, conv,
 						      user_data, choices);
 
 		handles = g_list_append(handles, info);
@@ -1225,6 +1231,7 @@ purple_request_choice_varg(void *handle, const char *title,
 void *
 purple_request_action(void *handle, const char *title, const char *primary,
 					const char *secondary, unsigned int default_action,
+					PurpleAccount *account, const char *who, PurpleConversation *conv,
 					void *user_data, size_t action_count, ...)
 {
 	void *ui_handle;
@@ -1234,8 +1241,8 @@ purple_request_action(void *handle, const char *title, const char *primary,
 
 	va_start(args, action_count);
 	ui_handle = purple_request_action_varg(handle, title, primary, secondary,
-										 default_action, user_data,
-										 action_count, args);
+										 default_action, account, who, conv,
+										 user_data, action_count, args);
 	va_end(args);
 
 	return ui_handle;
@@ -1244,8 +1251,9 @@ purple_request_action(void *handle, const char *title, const char *primary,
 void *
 purple_request_action_varg(void *handle, const char *title,
 						 const char *primary, const char *secondary,
-						 unsigned int default_action, void *user_data,
-						 size_t action_count, va_list actions)
+						 unsigned int default_action,
+						 PurpleAccount *account, const char *who, PurpleConversation *conv,
+						  void *user_data, size_t action_count, va_list actions)
 {
 	PurpleRequestUiOps *ops;
 
@@ -1260,8 +1268,8 @@ purple_request_action_varg(void *handle, const char *title,
 		info->type      = PURPLE_REQUEST_ACTION;
 		info->handle    = handle;
 		info->ui_handle = ops->request_action(title, primary, secondary,
-											  default_action, user_data,
-											  action_count, actions);
+											  default_action, account, who, conv,
+											  user_data, action_count, actions);
 
 		handles = g_list_append(handles, info);
 
@@ -1276,6 +1284,7 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 					const char *secondary, PurpleRequestFields *fields,
 					const char *ok_text, GCallback ok_cb,
 					const char *cancel_text, GCallback cancel_cb,
+					PurpleAccount *account, const char *who, PurpleConversation *conv,
 					void *user_data)
 {
 	PurpleRequestUiOps *ops;
@@ -1295,6 +1304,7 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 		info->ui_handle = ops->request_fields(title, primary, secondary,
 											  fields, ok_text, ok_cb,
 											  cancel_text, cancel_cb,
+											  account, who, conv,
 											  user_data);
 
 		handles = g_list_append(handles, info);
@@ -1308,7 +1318,9 @@ purple_request_fields(void *handle, const char *title, const char *primary,
 void *
 purple_request_file(void *handle, const char *title, const char *filename,
 				  gboolean savedialog,
-				  GCallback ok_cb, GCallback cancel_cb, void *user_data)
+				  GCallback ok_cb, GCallback cancel_cb,
+				  PurpleAccount *account, const char *who, PurpleConversation *conv,
+				  void *user_data)
 {
 	PurpleRequestUiOps *ops;
 
@@ -1321,7 +1333,8 @@ purple_request_file(void *handle, const char *title, const char *filename,
 		info->type      = PURPLE_REQUEST_FILE;
 		info->handle    = handle;
 		info->ui_handle = ops->request_file(title, filename, savedialog,
-											ok_cb, cancel_cb, user_data);
+											ok_cb, cancel_cb,
+											account, who, conv, user_data);
 		handles = g_list_append(handles, info);
 		return info->ui_handle;
 	}
@@ -1331,7 +1344,9 @@ purple_request_file(void *handle, const char *title, const char *filename,
 
 void *
 purple_request_folder(void *handle, const char *title, const char *dirname,
-				  GCallback ok_cb, GCallback cancel_cb, void *user_data)
+				  GCallback ok_cb, GCallback cancel_cb,
+				  PurpleAccount *account, const char *who, PurpleConversation *conv,
+				  void *user_data)
 {
 	PurpleRequestUiOps *ops;
 
@@ -1344,7 +1359,9 @@ purple_request_folder(void *handle, const char *title, const char *dirname,
 		info->type      = PURPLE_REQUEST_FOLDER;
 		info->handle    = handle;
 		info->ui_handle = ops->request_folder(title, dirname,
-											ok_cb, cancel_cb, user_data);
+											ok_cb, cancel_cb,
+											account, who, conv,
+											user_data);
 		handles = g_list_append(handles, info);
 		return info->ui_handle;
 	}

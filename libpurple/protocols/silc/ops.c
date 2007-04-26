@@ -1295,7 +1295,7 @@ silc_command_reply(SilcClient client, SilcClientConnection conn,
 						_("User Information"),
 						buf, 1, client_entry, 2,
 						_("OK"), G_CALLBACK(silcpurple_whois_more),
-						_("_More..."), G_CALLBACK(silcpurple_whois_more));
+						_("_More..."), G_CALLBACK(silcpurple_whois_more), gc->account, NULL, NULL);
 			else
 #endif
 			purple_notify_userinfo(gc, client_entry->nickname, user_info, NULL, NULL);
@@ -1900,17 +1900,18 @@ static void
 silc_ask_passphrase(SilcClient client, SilcClientConnection conn,
 		    SilcAskPassphrase completion, void *context)
 {
+	PurpleConnection *gc = client->application;
 	SilcPurpleAskPassphrase internal = silc_calloc(1, sizeof(*internal));
 
 	if (!internal)
 		return;
 	internal->completion = completion;
 	internal->context = context;
-	purple_request_input(client->application, _("Passphrase"), NULL,
+	purple_request_input(gc, _("Passphrase"), NULL,
 			   _("Passphrase required"), NULL, FALSE, TRUE, NULL,
 			   _("OK"), G_CALLBACK(silc_ask_passphrase_cb),
 			   _("Cancel"), G_CALLBACK(silc_ask_passphrase_cb),
-			   internal);
+			   purple_connection_get_account(gc), NULL, NULL, internal);
 }
 
 

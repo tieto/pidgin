@@ -164,6 +164,14 @@ version 2.0.0:
 	* gaim_gtk_buddy_icon_get_scale_size() was changed to accept an
 	  additional parameter which is used to determine what kind of
 	  scaling should be done, if any.
+    * purple_request_input(), purple_request_choice(),
+      purple_request_choice_varg(), purple_request_action(),
+      purple_request_action_varg(), purple_request_fields(),
+      purple_request_yes_no(), purple_request_ok_cancel(),
+      purple_request_accept_cancel(), purple_request_file(), and
+      purple_request_folder() was changed to accept account, who, and
+      conversation parameters for associating the request with an account, a
+      buddy, or a conversation.
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute

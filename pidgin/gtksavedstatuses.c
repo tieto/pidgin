@@ -330,8 +330,9 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 	else
 		title = g_strdup(_("Are you sure you want to delete the selected saved statuses?"));
 
-	purple_request_action(dialog, NULL, title,
-		 NULL, 0, sel_titles, 2,
+	purple_request_action(dialog, NULL, title, NULL, 0,
+		 NULL, NULL, NULL,
+		 sel_titles, 2,
 		_("Delete"), status_window_delete_confirm_cb,
 		_("Cancel"), status_window_delete_cancel_cb);
 

@@ -295,8 +295,11 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	data2[0] = lv->treestore;
 	data2[1] = data[3]; /* iter */
 	data2[2] = log;
-	purple_request_action(lv, NULL, "Delete Log?", tmp,
-	                    0, data2, 2, _("Delete"), delete_log_cb, _("Cancel"), delete_log_cleanup_cb);
+	purple_request_action(lv, NULL, "Delete Log?", tmp, 0, 
+						NULL, NULL, NULL,
+						data2, 2,
+						_("Delete"), delete_log_cb,
+						_("Cancel"), delete_log_cleanup_cb);
 	g_free(tmp);
 }
 

@@ -482,6 +482,7 @@ static void create_modify_info_dialogue(PurpleConnection *gc, const contact_info
 			_("Modify my information"), NULL, fields,
 			_("Update my information"), G_CALLBACK(modify_info_ok_cb),
 			_("Cancel"), G_CALLBACK(modify_info_cancel_cb),
+			purple_connection_get_account(gc), NULL, NULL,
 			mid);
 	}
 }
