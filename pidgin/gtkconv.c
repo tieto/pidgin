@@ -6061,7 +6061,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)
 		{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
-			strncpy(style, "color=\"#a40000\" weight=\"bold\"", sizeof(style));
+			strncpy(style, "color=\"#cc0000\" weight=\"bold\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
 		{
