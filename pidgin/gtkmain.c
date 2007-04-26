@@ -241,10 +241,10 @@ ui_main()
 	char *icon_path;
 	int i;
 	const char *icon_sizes[] = {
-		"16",
-		"24",
-		"32",
-		"48"
+		"16x16",
+		"24x24",
+		"32x32",
+		"48x48"
 	};
 
 #endif
@@ -256,7 +256,7 @@ ui_main()
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
 	for(i=0; i<G_N_ELEMENTS(icon_sizes); i++) {
-		icon_path = g_build_filename(DATADIR, "pixmaps", "pidgin", "icons", icon_sizes[i], "pidgin.png", NULL);
+		icon_path = g_build_filename(DATADIR, "pixmaps", "icons", "hicolor", icon_sizes[i], "apps", "pidgin.png", NULL);
 		icon = gdk_pixbuf_new_from_file(icon_path, NULL);
 		g_free(icon_path);
 		if (icon) {
