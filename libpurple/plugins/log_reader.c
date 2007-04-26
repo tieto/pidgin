@@ -71,7 +71,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 	g_return_val_if_fail(sn != NULL, list);
 	g_return_val_if_fail(account != NULL, list);
 
-	logdir = purple_prefs_get_string("/plugins/purple/log_reader/adium/log_directory");
+	logdir = purple_prefs_get_string("/plugins/core/log_reader/adium/log_directory");
 
 	/* By clearing the log directory path, this logger can be (effectively) disabled. */
 	if (!*logdir)
@@ -295,7 +295,7 @@ static int adium_logger_size (PurpleLog *log)
 
 	data = log->logger_data;
 
-	if (purple_prefs_get_bool("/plugins/purple/log_reader/fast_sizes")) {
+	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes")) {
 		struct stat st;
 
 		if (!data->path || stat(data->path, &st))
@@ -359,7 +359,7 @@ static int fire_logger_size (PurpleLog *log)
 {
 	g_return_val_if_fail(log != NULL, 0);
 
-	if (purple_prefs_get_bool("/plugins/purple/log_reader/fast_sizes"))
+	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
 		return 0;
 
 	/* TODO: Do something here. */
@@ -411,7 +411,7 @@ static int messenger_plus_logger_size (PurpleLog *log)
 {
 	g_return_val_if_fail(log != NULL, 0);
 
-	if (purple_prefs_get_bool("/plugins/purple/log_reader/fast_sizes"))
+	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
 		return 0;
 
 	/* TODO: Do something here. */
@@ -636,7 +636,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	if (strcmp(account->protocol_id, "prpl-msn"))
 		return list;
 
-	logdir = purple_prefs_get_string("/plugins/purple/log_reader/msn/log_directory");
+	logdir = purple_prefs_get_string("/plugins/core/log_reader/msn/log_directory");
 
 	/* By clearing the log directory path, this logger can be (effectively) disabled. */
 	if (!*logdir)
@@ -968,7 +968,7 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		}
 
 		their_name = from_name;
-		if (from_name && purple_prefs_get_bool("/plugins/purple/log_reader/use_name_heuristics")) {
+		if (from_name && purple_prefs_get_bool("/plugins/core/log_reader/use_name_heuristics")) {
 			const char *friendly_name = purple_connection_get_display_name(log->account->gc);
 
 			if (friendly_name != NULL) {
@@ -1153,7 +1153,7 @@ static int msn_logger_size (PurpleLog *log)
 
 	g_return_val_if_fail(log != NULL, 0);
 
-	if (purple_prefs_get_bool("/plugins/purple/log_reader/fast_sizes"))
+	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes"))
 		return 0;
 
 	text = msn_logger_read(log, NULL);
@@ -1216,7 +1216,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 	g_return_val_if_fail(sn != NULL, list);
 	g_return_val_if_fail(account != NULL, list);
 
-	logdir = purple_prefs_get_string("/plugins/purple/log_reader/trillian/log_directory");
+	logdir = purple_prefs_get_string("/plugins/core/log_reader/trillian/log_directory");
 
 	/* By clearing the log directory path, this logger can be (effectively) disabled. */
 	if (!*logdir)
@@ -1687,7 +1687,7 @@ static int trillian_logger_size (PurpleLog *log)
 
 	data = log->logger_data;
 
-	if (purple_prefs_get_bool("/plugins/purple/log_reader/fast_sizes")) {
+	if (purple_prefs_get_bool("/plugins/core/log_reader/fast_sizes")) {
 		return data ? data->length : 0;
 	}
 
@@ -1727,17 +1727,17 @@ init_plugin(PurplePlugin *plugin)
 
 	g_return_if_fail(plugin != NULL);
 
-	purple_prefs_add_none("/plugins/purple/log_reader");
+	purple_prefs_add_none("/plugins/core/log_reader");
 
 
 	/* Add general preferences. */
 
-	purple_prefs_add_bool("/plugins/purple/log_reader/fast_sizes", FALSE);
-	purple_prefs_add_bool("/plugins/purple/log_reader/use_name_heuristics", TRUE);
+	purple_prefs_add_bool("/plugins/core/log_reader/fast_sizes", FALSE);
+	purple_prefs_add_bool("/plugins/core/log_reader/use_name_heuristics", TRUE);
 
 
 	/* Add Adium log directory preference. */
-	purple_prefs_add_none("/plugins/purple/log_reader/adium");
+	purple_prefs_add_none("/plugins/core/log_reader/adium");
 
 	/* Calculate default Adium log directory. */
 #ifdef _WIN32
@@ -1747,7 +1747,7 @@ init_plugin(PurplePlugin *plugin)
 			"Adium 2.0", "Users", "Default", "Logs", NULL);
 #endif
 
-	purple_prefs_add_string("/plugins/purple/log_reader/adium/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/adium/log_directory", path);
 
 #ifndef _WIN32
 	g_free(path);
@@ -1755,7 +1755,7 @@ init_plugin(PurplePlugin *plugin)
 
 
 	/* Add Fire log directory preference. */
-	purple_prefs_add_none("/plugins/purple/log_reader/fire");
+	purple_prefs_add_none("/plugins/core/log_reader/fire");
 
 	/* Calculate default Fire log directory. */
 #ifdef _WIN32
@@ -1765,7 +1765,7 @@ init_plugin(PurplePlugin *plugin)
 			"Fire", "Sessions", NULL);
 #endif
 
-	purple_prefs_add_string("/plugins/purple/log_reader/fire/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/fire/log_directory", path);
 
 #ifndef _WIN32
 	g_free(path);
@@ -1773,7 +1773,7 @@ init_plugin(PurplePlugin *plugin)
 
 
 	/* Add Messenger Plus! log directory preference. */
-	purple_prefs_add_none("/plugins/purple/log_reader/messenger_plus");
+	purple_prefs_add_none("/plugins/core/log_reader/messenger_plus");
 
 	/* Calculate default Messenger Plus! log directory. */
 #ifdef _WIN32
@@ -1794,12 +1794,12 @@ init_plugin(PurplePlugin *plugin)
 		path = g_strdup("");
 #endif
 
-	purple_prefs_add_string("/plugins/purple/log_reader/messenger_plus/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/messenger_plus/log_directory", path);
 	g_free(path);
 
 
 	/* Add MSN Messenger log directory preference. */
-	purple_prefs_add_none("/plugins/purple/log_reader/msn");
+	purple_prefs_add_none("/plugins/core/log_reader/msn");
 
 	/* Calculate default MSN message history directory. */
 #ifdef _WIN32
@@ -1820,12 +1820,12 @@ init_plugin(PurplePlugin *plugin)
 		path = g_strdup("");
 #endif
 
-	purple_prefs_add_string("/plugins/purple/log_reader/msn/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/msn/log_directory", path);
 	g_free(path);
 
 
 	/* Add Trillian log directory preference. */
-	purple_prefs_add_none("/plugins/purple/log_reader/trillian");
+	purple_prefs_add_none("/plugins/core/log_reader/trillian");
 
 #ifdef _WIN32
 	/* XXX: While a major hack, this is the most reliable way I could
@@ -1892,7 +1892,7 @@ init_plugin(PurplePlugin *plugin)
 			if (logdir) {
 				g_strchomp(logdir);
 				purple_prefs_add_string(
-					"/plugins/purple/log_reader/trillian/log_directory", logdir);
+					"/plugins/core/log_reader/trillian/log_directory", logdir);
 				found = TRUE;
 			}
 
@@ -1920,7 +1920,7 @@ init_plugin(PurplePlugin *plugin)
 						line += (sizeof("Directory=") - 1);
 						g_strchomp(line);
 						purple_prefs_add_string(
-							"/plugins/purple/log_reader/trillian/log_directory",
+							"/plugins/core/log_reader/trillian/log_directory",
 							line);
 						found = TRUE;
 					}
@@ -1957,7 +1957,7 @@ init_plugin(PurplePlugin *plugin)
 		path = g_strdup("");
 #endif
 
-	purple_prefs_add_string("/plugins/purple/log_reader/trillian/log_directory", path);
+	purple_prefs_add_string("/plugins/core/log_reader/trillian/log_directory", path);
 	g_free(path);
 
 #ifdef _WIN32
@@ -2068,11 +2068,11 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/purple/log_reader/fast_sizes", _("Fast size calculations"));
+		"/plugins/core/log_reader/fast_sizes", _("Fast size calculations"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/purple/log_reader/use_name_heuristics", _("Use name heuristics"));
+		"/plugins/core/log_reader/use_name_heuristics", _("Use name heuristics"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
 
@@ -2082,25 +2082,25 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/purple/log_reader/adium/log_directory", _("Adium"));
+		"/plugins/core/log_reader/adium/log_directory", _("Adium"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
 #if 0
 	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/purple/log_reader/fire/log_directory", _("Fire"));
+		"/plugins/core/log_reader/fire/log_directory", _("Fire"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/purple/log_reader/messenger_plus/log_directory", _("Messenger Plus!"));
+		"/plugins/core/log_reader/messenger_plus/log_directory", _("Messenger Plus!"));
 	purple_plugin_pref_frame_add(frame, ppref);
 #endif
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/purple/log_reader/msn/log_directory", _("MSN Messenger"));
+		"/plugins/core/log_reader/msn/log_directory", _("MSN Messenger"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-		"/plugins/purple/log_reader/trillian/log_directory", _("Trillian"));
+		"/plugins/core/log_reader/trillian/log_directory", _("Trillian"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	return frame;

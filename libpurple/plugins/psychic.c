@@ -24,7 +24,7 @@
 #define PLUGIN_AUTHOR   "Christopher O'Brien <siege@preoccupied.net>"
 
 
-#define PREFS_BASE    "/plugins/purple/psychic"
+#define PREFS_BASE    "/plugins/core/psychic"
 #define PREF_BUDDIES  PREFS_BASE "/buddies_only"
 #define PREF_NOTICE   PREFS_BASE "/show_notice"
 #define PREF_STATUS   PREFS_BASE "/activate_online"

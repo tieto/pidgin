@@ -36,7 +36,7 @@
 #include <pounce.h>
 #include <request.h>
 
-#define	PREF_PREFIX		"/plugins/purple/" PLUGIN_ID
+#define	PREF_PREFIX		"/plugins/core/" PLUGIN_ID
 #define	PREF_ALWAYS		PREF_PREFIX "/always"
 
 typedef struct _OfflineMsg OfflineMsg;

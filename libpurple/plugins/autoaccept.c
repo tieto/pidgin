@@ -47,7 +47,7 @@
 #include <notify.h>
 #include <util.h>
 
-#define PREF_PREFIX		"/plugins/purple/" PLUGIN_ID
+#define PREF_PREFIX		"/plugins/core/" PLUGIN_ID
 #define PREF_PATH		PREF_PREFIX "/path"
 #define PREF_STRANGER	PREF_PREFIX "/reject_stranger"
 #define PREF_NOTIFY		PREF_PREFIX "/notify"
