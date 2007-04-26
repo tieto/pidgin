@@ -680,36 +680,6 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	    }
 
 		pixbuf = pidgin_status_box_get_pixbuf(status_box, prim);
-#if 0
-		if (account_status)
-			pixbuf = pidgin_create_prpl_icon_with_status(acct,
-						purple_status_get_type(purple_account_get_active_status(acct)),
-						0.5);
-		else
-			pixbuf = pidgin_create_purple_icon_with_status(
-						purple_savedstatus_get_type(saved_status),
-						0.5);
-
-		if (!purple_savedstatus_is_transient(saved_status))
-		{
-			GdkPixbuf *emblem;
-
-			/* Overlay a disk in the bottom left corner */
-			emblem = gtk_widget_render_icon(GTK_WIDGET(status_box->vbox),
-						GTK_STOCK_SAVE, icon_size, "PidginStatusBox");
-			if (emblem != NULL)
-			{
-				int width, height;
-				width = gdk_pixbuf_get_width(pixbuf) / 2;
-				height = gdk_pixbuf_get_height(pixbuf) / 2;
-				gdk_pixbuf_composite(emblem, pixbuf, 0, height,
-							width, height, 0, height,
-							0.5, 0.5, GDK_INTERP_BILINEAR, 255);
-				g_object_unref(G_OBJECT(emblem));
-			}
-		}
-#endif
-
 	}
 
 	if (status_box->account != NULL) {
