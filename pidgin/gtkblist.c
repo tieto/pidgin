@@ -3954,6 +3954,7 @@ connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 
 	enabled = purple_account_get_enabled(account, purple_core_get_ui());
 	purple_request_action(account, _("Connection Error"), primary, text, 2,
+						account, NULL, NULL,
 						account, 3,
 						_("OK"), NULL,
 						_("Modify Account"), PURPLE_CALLBACK(ce_modify_account_cb),
@@ -5805,7 +5806,9 @@ pidgin_blist_request_add_group(void)
 					   _("Please enter the name of the group to be added."),
 					   NULL, FALSE, FALSE, NULL,
 					   _("Add"), G_CALLBACK(add_group_cb),
-					   _("Cancel"), NULL, NULL);
+					   _("Cancel"), NULL,
+					   NULL, NULL, NULL,
+					   NULL);
 }
 
 void

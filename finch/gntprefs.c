@@ -232,6 +232,8 @@ void finch_prefs_show_all()
 	add_pref_group(fields, _("Idle"), idle);
 
 	purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
-			_("Save"), G_CALLBACK(save_cb), _("Cancel"), free_strings, NULL);
+			_("Save"), G_CALLBACK(save_cb), _("Cancel"), free_strings,
+			NULL, NULL, NULL,
+			NULL);
 }
 
