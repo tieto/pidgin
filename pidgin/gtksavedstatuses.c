@@ -1585,13 +1585,23 @@ enum {
 	/** The text displayed on the status box.  This column is visible. */
 	SS_MENU_TEXT_COLUMN,
 
-	/*
+	/**
 	 * This value depends on SS_MENU_TYPE_COLUMN.  For _SAVEDSTATUS types,
 	 * this is the creation time.  For _PRIMITIVE types,
 	 * this is the PurpleStatusPrimitive.
 	 */
 	SS_MENU_DATA_COLUMN,
 
+	/**
+	 * This is the emblem to use for this status
+	 */
+	SS_MENU_EMBLEM_COLUMN,
+
+	/**
+	 * And whether or not that emblem is visible
+	 */
+	SS_MENU_EMBLEM_VISIBLE_COLUMN,
+	
 	SS_MENU_NUM_COLUMNS
 };
 
@@ -1646,6 +1656,7 @@ static gboolean pidgin_status_menu_add_primitive(GtkListStore *model, GtkWidget 
 			   SS_MENU_ICON_COLUMN, pixbuf,
 			   SS_MENU_TEXT_COLUMN, purple_primitive_get_name_from_type(primitive),
 			   SS_MENU_DATA_COLUMN, GINT_TO_POINTER(primitive),
+			   SS_MENU_EMBLEM_VISIBLE_COLUMN, FALSE,
 			   -1);
 	if (pixbuf != NULL)
 		g_object_unref(pixbuf);
@@ -1669,8 +1680,10 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 	GtkTreeIter iter;
 	GtkCellRenderer *text_rend;
 	GtkCellRenderer *icon_rend;
+	GtkCellRenderer *emblem_rend;
 
-	model = gtk_list_store_new(SS_MENU_NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_POINTER);
+	model = gtk_list_store_new(SS_MENU_NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF,
+				   G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
 
 	combobox = gtk_combo_box_new();
 
@@ -1697,35 +1710,16 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 		PurpleSavedStatus *status = (PurpleSavedStatus *) cur->data;
 		if (!purple_savedstatus_is_transient(status))
 		{
-			/* Get an appropriate status icon */
 			pixbuf = pidgin_create_status_icon(purple_savedstatus_get_type(status),
 							combobox, PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
-
-			/* Overlay a disk in the bottom left corner */
-			emblem = gtk_widget_render_icon(GTK_WIDGET(combobox),
-						GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU, "PidginStatusMenu");
-			if (emblem != NULL)
-			{
-				/* copy the pixbuf so we're not modifying the stock image data when we overlay the disk */
-				GdkPixbuf *pixbuf2 = gdk_pixbuf_copy(pixbuf);
-				int width = gdk_pixbuf_get_width(pixbuf) / 2;
-				int height = gdk_pixbuf_get_height(pixbuf) / 2;
-
-				g_object_unref(G_OBJECT(pixbuf));
-				pixbuf = pixbuf2;
-
-				gdk_pixbuf_composite(emblem, pixbuf, 0, height,
-						     width, height, 0, height,
-						     0.5, 0.5, GDK_INTERP_BILINEAR, 255);
-				g_object_unref(G_OBJECT(emblem));
-			}
-
 			gtk_list_store_append(model, &iter);
 			gtk_list_store_set(model, &iter,
 				SS_MENU_TYPE_COLUMN, SS_MENU_ENTRY_TYPE_SAVEDSTATUS,
 				SS_MENU_ICON_COLUMN, pixbuf,
 				SS_MENU_TEXT_COLUMN, purple_savedstatus_get_title(status),
 				SS_MENU_DATA_COLUMN, GINT_TO_POINTER(purple_savedstatus_get_creation_time(status)),
+				SS_MENU_EMBLEM_COLUMN, GTK_STOCK_SAVE,
+				SS_MENU_EMBLEM_VISIBLE_COLUMN, TRUE,
 				-1);
 			g_object_unref(G_OBJECT(pixbuf));
 
@@ -1740,11 +1734,14 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 
 	text_rend = gtk_cell_renderer_text_new();
 	icon_rend = gtk_cell_renderer_pixbuf_new();
+	emblem_rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), icon_rend, FALSE);
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), text_rend, TRUE);
+	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(combobox), emblem_rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combobox), icon_rend, "pixbuf", SS_MENU_ICON_COLUMN, NULL);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combobox), text_rend, "markup", SS_MENU_TEXT_COLUMN, NULL);
-
+	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combobox), emblem_rend,
+					"stock-id", SS_MENU_EMBLEM_COLUMN, "visible", SS_MENU_EMBLEM_VISIBLE_COLUMN, NULL);
 
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combobox), index);
 	g_signal_connect(G_OBJECT(combobox), "changed", G_CALLBACK(status_menu_cb), callback);
