@@ -45,7 +45,7 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-									"/plugins/core/pluginpref_example/bool",
+									"/plugins/purple/pluginpref_example/bool",
 									"boolean pref");
 	purple_plugin_pref_frame_add(frame, ppref);
 
@@ -53,13 +53,13 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-									"/plugins/core/pluginpref_example/int",
+									"/plugins/purple/pluginpref_example/int",
 									"integer pref");
 	purple_plugin_pref_set_bounds(ppref, 0, 255);
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-									"/plugins/core/pluginpref_example/int_choice",
+									"/plugins/purple/pluginpref_example/int_choice",
 									"integer choice");
 	purple_plugin_pref_set_type(ppref, PURPLE_PLUGIN_PREF_CHOICE);
 	purple_plugin_pref_add_choice(ppref, "One", GINT_TO_POINTER(1));
@@ -76,24 +76,24 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-								"/plugins/core/pluginpref_example/string",
+								"/plugins/purple/pluginpref_example/string",
 								"string pref");
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-								"/plugins/core/pluginpref_example/masked_string",
+								"/plugins/purple/pluginpref_example/masked_string",
 								"masked string");
 	purple_plugin_pref_set_masked(ppref, TRUE);
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-							"/plugins/core/pluginpref_example/max_string",
+							"/plugins/purple/pluginpref_example/max_string",
 							"string pref\n(max length of 16)");
 	purple_plugin_pref_set_max_length(ppref, 16);
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
-							"/plugins/core/pluginpref_example/string_choice",
+							"/plugins/purple/pluginpref_example/string_choice",
 							"string choice");
 	purple_plugin_pref_set_type(ppref, PURPLE_PLUGIN_PREF_CHOICE);
 	purple_plugin_pref_add_choice(ppref, "red", "red");
@@ -147,16 +147,16 @@ static PurplePluginInfo info =
 static void
 init_plugin(PurplePlugin *plugin)
 {
-	purple_prefs_add_none("/plugins/core/pluginpref_example");
-	purple_prefs_add_bool("/plugins/core/pluginpref_example/bool", TRUE);
-	purple_prefs_add_int("/plugins/core/pluginpref_example/int", 0);
-	purple_prefs_add_int("/plugins/core/pluginpref_example/int_choice", 1);
-	purple_prefs_add_string("/plugins/core/pluginpref_example/string",
+	purple_prefs_add_none("/plugins/purple/pluginpref_example");
+	purple_prefs_add_bool("/plugins/purple/pluginpref_example/bool", TRUE);
+	purple_prefs_add_int("/plugins/purple/pluginpref_example/int", 0);
+	purple_prefs_add_int("/plugins/purple/pluginpref_example/int_choice", 1);
+	purple_prefs_add_string("/plugins/purple/pluginpref_example/string",
 							"string");
-	purple_prefs_add_string("/plugins/core/pluginpref_example/max_string",
+	purple_prefs_add_string("/plugins/purple/pluginpref_example/max_string",
 							"max length string");
-	purple_prefs_add_string("/plugins/core/pluginpref_example/masked_string", "masked");
-	purple_prefs_add_string("/plugins/core/pluginpref_example/string_choice", "red");
+	purple_prefs_add_string("/plugins/purple/pluginpref_example/masked_string", "masked");
+	purple_prefs_add_string("/plugins/purple/pluginpref_example/string_choice", "red");
 }
 
 PURPLE_INIT_PLUGIN(ppexample, init_plugin, info)

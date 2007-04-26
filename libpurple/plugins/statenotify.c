@@ -45,7 +45,7 @@ buddy_status_changed_cb(PurpleBuddy *buddy, PurpleStatus *old_status,
 	available = purple_status_is_available(status);
 	old_available = purple_status_is_available(old_status);
 
-	if (purple_prefs_get_bool("/plugins/core/statenotify/notify_away")) {
+	if (purple_prefs_get_bool("/plugins/purple/statenotify/notify_away")) {
 		if (available && !old_available)
 			write_status(buddy, _("%s is no longer away."));
 		else if (!available && old_available)
@@ -57,7 +57,7 @@ static void
 buddy_idle_changed_cb(PurpleBuddy *buddy, gboolean old_idle, gboolean idle,
                       void *data)
 {
-	if (purple_prefs_get_bool("/plugins/core/statenotify/notify_idle")) {
+	if (purple_prefs_get_bool("/plugins/purple/statenotify/notify_idle")) {
 		if (idle) {
 			write_status(buddy, _("%s has become idle."));
 		} else {
@@ -69,14 +69,14 @@ buddy_idle_changed_cb(PurpleBuddy *buddy, gboolean old_idle, gboolean idle,
 static void
 buddy_signon_cb(PurpleBuddy *buddy, void *data)
 {
-	if (purple_prefs_get_bool("/plugins/core/statenotify/notify_signon"))
+	if (purple_prefs_get_bool("/plugins/purple/statenotify/notify_signon"))
 		write_status(buddy, _("%s has signed on."));
 }
 
 static void
 buddy_signoff_cb(PurpleBuddy *buddy, void *data)
 {
-	if (purple_prefs_get_bool("/plugins/core/statenotify/notify_signon"))
+	if (purple_prefs_get_bool("/plugins/purple/statenotify/notify_signon"))
 		write_status(buddy, _("%s has signed off."));
 }
 
@@ -91,13 +91,13 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	ppref = purple_plugin_pref_new_with_label(_("Notify When"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_away", _("Buddy Goes _Away"));
+	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/purple/statenotify/notify_away", _("Buddy Goes _Away"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_idle", _("Buddy Goes _Idle"));
+	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/purple/statenotify/notify_idle", _("Buddy Goes _Idle"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
-	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/core/statenotify/notify_signon", _("Buddy _Signs On/Off"));
+	ppref = purple_plugin_pref_new_with_name_and_label("/plugins/purple/statenotify/notify_signon", _("Buddy _Signs On/Off"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
 	return frame;
@@ -163,10 +163,10 @@ static PurplePluginInfo info =
 static void
 init_plugin(PurplePlugin *plugin)
 {
-	purple_prefs_add_none("/plugins/core/statenotify");
-	purple_prefs_add_bool("/plugins/core/statenotify/notify_away", TRUE);
-	purple_prefs_add_bool("/plugins/core/statenotify/notify_idle", TRUE);
-	purple_prefs_add_bool("/plugins/core/statenotify/notify_signon", TRUE);
+	purple_prefs_add_none("/plugins/purple/statenotify");
+	purple_prefs_add_bool("/plugins/purple/statenotify/notify_away", TRUE);
+	purple_prefs_add_bool("/plugins/purple/statenotify/notify_idle", TRUE);
+	purple_prefs_add_bool("/plugins/purple/statenotify/notify_signon", TRUE);
 }
 
 PURPLE_INIT_PLUGIN(statenotify, init_plugin, info)

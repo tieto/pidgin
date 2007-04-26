@@ -1900,7 +1900,7 @@ proxy_pref_cb(const char *name, PurplePrefType type,
 {
 	PurpleProxyInfo *info = purple_global_proxy_get_info();
 
-	if (!strcmp(name, "/core/proxy/type")) {
+	if (!strcmp(name, "/purple/proxy/type")) {
 		int proxytype;
 		const char *type = value;
 
@@ -1918,13 +1918,13 @@ proxy_pref_cb(const char *name, PurplePrefType type,
 			proxytype = -1;
 
 		purple_proxy_info_set_type(info, proxytype);
-	} else if (!strcmp(name, "/core/proxy/host"))
+	} else if (!strcmp(name, "/purple/proxy/host"))
 		purple_proxy_info_set_host(info, value);
-	else if (!strcmp(name, "/core/proxy/port"))
+	else if (!strcmp(name, "/purple/proxy/port"))
 		purple_proxy_info_set_port(info, GPOINTER_TO_INT(value));
-	else if (!strcmp(name, "/core/proxy/username"))
+	else if (!strcmp(name, "/purple/proxy/username"))
 		purple_proxy_info_set_username(info, value);
-	else if (!strcmp(name, "/core/proxy/password"))
+	else if (!strcmp(name, "/purple/proxy/password"))
 		purple_proxy_info_set_password(info, value);
 }
 
@@ -1945,24 +1945,24 @@ purple_proxy_init(void)
 	global_proxy_info = purple_proxy_info_new();
 
 	/* Proxy */
-	purple_prefs_add_none("/core/proxy");
-	purple_prefs_add_string("/core/proxy/type", "none");
-	purple_prefs_add_string("/core/proxy/host", "");
-	purple_prefs_add_int("/core/proxy/port", 0);
-	purple_prefs_add_string("/core/proxy/username", "");
-	purple_prefs_add_string("/core/proxy/password", "");
+	purple_prefs_add_none("/purple/proxy");
+	purple_prefs_add_string("/purple/proxy/type", "none");
+	purple_prefs_add_string("/purple/proxy/host", "");
+	purple_prefs_add_int("/purple/proxy/port", 0);
+	purple_prefs_add_string("/purple/proxy/username", "");
+	purple_prefs_add_string("/purple/proxy/password", "");
 
 	/* Setup callbacks for the preferences. */
 	handle = purple_proxy_get_handle();
-	purple_prefs_connect_callback(handle, "/core/proxy/type", proxy_pref_cb,
+	purple_prefs_connect_callback(handle, "/purple/proxy/type", proxy_pref_cb,
 		NULL);
-	purple_prefs_connect_callback(handle, "/core/proxy/host", proxy_pref_cb,
+	purple_prefs_connect_callback(handle, "/purple/proxy/host", proxy_pref_cb,
 		NULL);
-	purple_prefs_connect_callback(handle, "/core/proxy/port", proxy_pref_cb,
+	purple_prefs_connect_callback(handle, "/purple/proxy/port", proxy_pref_cb,
 		NULL);
-	purple_prefs_connect_callback(handle, "/core/proxy/username",
+	purple_prefs_connect_callback(handle, "/purple/proxy/username",
 		proxy_pref_cb, NULL);
-	purple_prefs_connect_callback(handle, "/core/proxy/password",
+	purple_prefs_connect_callback(handle, "/purple/proxy/password",
 		proxy_pref_cb, NULL);
 }
 

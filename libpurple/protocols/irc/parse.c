@@ -64,6 +64,8 @@ static struct _irc_msg {
 	{ "318", "nt:", irc_msg_endwhois },	/* End of WHOIS			*/
 	{ "319", "nn:", irc_msg_whois },	/* Whois channels		*/
 	{ "320", "nn:", irc_msg_whois },	/* Whois (fn ident)		*/
+	{ "314", "nnvvv:", irc_msg_whois },	/* Whowas user			*/
+	{ "369", "nt:", irc_msg_endwhois },	/* End of WHOWAS		*/
 	{ "321", "*", irc_msg_list },		/* Start of list		*/
 	{ "322", "ncv:", irc_msg_list },	/* List.			*/
 	{ "323", ":", irc_msg_list },		/* End of list.			*/
@@ -78,6 +80,7 @@ static struct _irc_msg {
 	{ "376", "n:", irc_msg_motd },		/* End of MOTD			*/
 	{ "391", "nv:", irc_msg_time },		/* Time reply			*/
 	{ "401", "nt:", irc_msg_nonick },	/* No such nick/chan		*/
+	{ "406", "nt:", irc_msg_nonick },	/* No such nick for WHOWAS	*/
 	{ "403", "nc:", irc_msg_nochan },	/* No such channel		*/
 	{ "404", "nt:", irc_msg_nosend },	/* Cannot send to chan		*/
 	{ "421", "nv:", irc_msg_unknown },	/* Unknown command		*/
@@ -148,6 +151,7 @@ static struct _irc_user_cmd {
 	{ "voice", ":", irc_cmd_op, N_("voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You must be a channel operator to do this.") },
 	{ "wallops", ":", irc_cmd_wallops, N_("wallops &lt;message&gt;:  If you don't know what this is, you probably can't use it.") },
 	{ "whois", "tt", irc_cmd_whois, N_("whois [server] &lt;nick&gt;:  Get information on a user.") },
+	{ "whowas", "t", irc_cmd_whowas, N_("whowas &lt;nick&gt;: Get information on a user that has logged off.") },
 	{ NULL, NULL, NULL, NULL }
 };
 

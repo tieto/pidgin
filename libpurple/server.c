@@ -138,7 +138,7 @@ int serv_send_im(PurpleConnection *gc, const char *name, const char *message,
 	 * XXX - If "only auto-reply when away & idle" is set, then shouldn't
 	 * this only reset lar->sent if we're away AND idle?
 	 */
-	auto_reply_pref = purple_prefs_get_string("/core/away/auto_reply");
+	auto_reply_pref = purple_prefs_get_string("/purple/away/auto_reply");
 	if ((gc->flags & PURPLE_CONNECTION_AUTO_RESP) &&
 			!purple_presence_is_available(presence) &&
 			strcmp(auto_reply_pref, "never")) {
@@ -503,7 +503,7 @@ void serv_got_im(PurpleConnection *gc, const char *who, const char *msg,
 		const gchar *auto_reply_pref;
 		const char *away_msg = NULL;
 
-		auto_reply_pref = purple_prefs_get_string("/core/away/auto_reply");
+		auto_reply_pref = purple_prefs_get_string("/purple/away/auto_reply");
 
 		presence = purple_account_get_presence(account);
 		status = purple_presence_get_active_status(presence);

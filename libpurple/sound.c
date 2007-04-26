@@ -34,7 +34,7 @@ static PurpleSoundUiOps *sound_ui_ops = NULL;
 static gboolean
 purple_sound_play_required(const PurpleAccount *account)
 {
-	gint pref_status = purple_prefs_get_int("/core/sound/while_status");
+	gint pref_status = purple_prefs_get_int("/purple/sound/while_status");
 
 	if (pref_status == 3)
 	{
@@ -125,8 +125,8 @@ purple_sound_init()
 	                     purple_value_new(PURPLE_TYPE_SUBTYPE,
 	                                    PURPLE_SUBTYPE_ACCOUNT));
 
-	purple_prefs_add_none("/core/sound");
-	purple_prefs_add_int("/core/sound/while_status", STATUS_AVAILABLE);
+	purple_prefs_add_none("/purple/sound");
+	purple_prefs_add_int("/purple/sound/while_status", STATUS_AVAILABLE);
 }
 
 void

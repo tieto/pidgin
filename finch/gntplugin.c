@@ -97,7 +97,7 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 void
 finch_plugins_save_loaded(void)
 {
-	purple_plugins_save_loaded("/purple/gnt/plugins/loaded");
+	purple_plugins_save_loaded("/finch/plugins/loaded");
 }
 
 static void

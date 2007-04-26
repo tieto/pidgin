@@ -53,7 +53,7 @@
 #include "gntstatus.h"
 #include <string.h>
 
-#define PREF_ROOT "/purple/gnt/blist"
+#define PREF_ROOT "/finch/blist"
 #define TYPING_TIMEOUT 4000
 
 typedef struct
@@ -1197,7 +1197,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str)
 		prpl_info->tooltip_text(buddy, user_info, TRUE);
 	}
 
-	if (purple_prefs_get_bool("/purple/gnt/blist/idletime")) {
+	if (purple_prefs_get_bool("/finch/blist/idletime")) {
 		PurplePresence *pre = purple_buddy_get_presence(buddy);
 		if (purple_presence_is_idle(pre)) {
 			time_t idle = purple_presence_get_idle_time(pre);

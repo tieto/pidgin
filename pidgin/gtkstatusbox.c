@@ -899,7 +899,6 @@ add_popular_statuses(PidginStatusBox *statusbox)
 {
 	GList *list, *cur;
 	GdkPixbuf *pixbuf;
-	PidginStatusBoxItemType type = PIDGIN_STATUS_BOX_TYPE_POPULAR;
 
 	list = purple_savedstatuses_get_popular(6);
 	if (list == NULL)
@@ -914,6 +913,7 @@ add_popular_statuses(PidginStatusBox *statusbox)
 		const gchar *message;
 		gchar *stripped = NULL;
 		PurpleStatusPrimitive prim;
+		PidginStatusBoxItemType type = PIDGIN_STATUS_BOX_TYPE_POPULAR;
 
 		/* Get an appropriate status icon */
 		prim = purple_savedstatus_get_type(saved);

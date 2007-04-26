@@ -33,12 +33,12 @@
 
 /* The number of minutes before a person is considered
  * to have stopped being part of active conversation. */
-#define DELAY_PREF "/plugins/core/joinpart/delay"
+#define DELAY_PREF "/plugins/purple/joinpart/delay"
 #define DELAY_DEFAULT 10
 
 /* The number of people that must be in a room for this
  * plugin to have any effect */
-#define THRESHOLD_PREF "/plugins/core/joinpart/threshold"
+#define THRESHOLD_PREF "/plugins/purple/joinpart/threshold"
 #define THRESHOLD_DEFAULT 20
 
 struct joinpart_key
@@ -285,7 +285,7 @@ static PurplePluginInfo info =
 static void
 init_plugin(PurplePlugin *plugin)
 {
-	purple_prefs_add_none("/plugins/core/joinpart");
+	purple_prefs_add_none("/plugins/purple/joinpart");
 
 	purple_prefs_add_int(DELAY_PREF, DELAY_DEFAULT);
 	purple_prefs_add_int(THRESHOLD_PREF, THRESHOLD_DEFAULT);
