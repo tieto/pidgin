@@ -1023,7 +1023,7 @@ purple_buddy_icons_blist_loaded_cb()
 				else
 				{
 					char *path = g_build_filename(dirname, filename, NULL);
-					if (!g_file_test(filename, G_FILE_TEST_EXISTS))
+					if (!g_file_test(path, G_FILE_TEST_EXISTS))
 					{
 						purple_blist_node_remove_setting(node,
 						                                 "buddy_icon");
