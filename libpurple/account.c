@@ -968,6 +968,7 @@ purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
                         fields,
                         _("OK"), ok_cb,
                         _("Cancel"), cancel_cb,
+						account, NULL, NULL,
                         user_data);
 	g_free(primary);
 }
@@ -1217,6 +1218,7 @@ purple_account_request_change_password(PurpleAccount *account)
 						fields,
 						_("OK"), G_CALLBACK(change_password_cb),
 						_("Cancel"), NULL,
+						account, NULL, NULL,
 						account);
 }
 
@@ -1250,7 +1252,9 @@ purple_account_request_change_user_info(PurpleAccount *account)
 					   TRUE, FALSE, ((gc != NULL) &&
 					   (gc->flags & PURPLE_CONNECTION_HTML) ? "html" : NULL),
 					   _("Save"), G_CALLBACK(set_user_info_cb),
-					   _("Cancel"), NULL, account);
+					   _("Cancel"), NULL,
+					   account, NULL, NULL,
+					   account);
 }
 
 void

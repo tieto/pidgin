@@ -172,6 +172,7 @@ version 2.0.0:
 	* Added /nickserv, /memoserv, /chanserv and /operserv
 	  commands (Joao Luís Marques Pinto)
 	* Added CTCP VERSION via /version (Andrej Krivulčík)
+	* Added /whowas command (achris)
 
 	Jabber Features:
 	* Support for SRV lookups

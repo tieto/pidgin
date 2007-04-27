@@ -104,6 +104,7 @@ void qq_process_recv_group_im_apply_join
 	guint8 group_type;
 	gchar *reason_utf8, *msg, *reason;
 	group_member_opt *g;
+	gchar *nombre;
 
 	g_return_if_fail(internal_group_id > 0 && data != NULL && len > 0);
 
@@ -128,9 +129,13 @@ void qq_process_recv_group_im_apply_join
 	g->internal_group_id = internal_group_id;
 	g->member = user_uid;
 
+	nombre = uid_to_purple_name(user_uid);
+
 	purple_request_action(gc, _("QQ Qun Operation"),
 			    msg, reason,
-			    2, g, 3,
+			    2,
+				purple_connection_get_account(gc), nombre, NULL,
+				g, 3,
 			    _("Approve"),
 			    G_CALLBACK
 			    (qq_group_approve_application_with_struct),
@@ -139,6 +144,7 @@ void qq_process_recv_group_im_apply_join
 			    (qq_group_reject_application_with_struct),
 			    _("Search"), G_CALLBACK(qq_group_search_application_with_struct));
 
+	g_free(nombre);
 	g_free(reason);
 	g_free(msg);
 	g_free(reason_utf8);

@@ -445,7 +445,7 @@ got_invite(MsnSlpCall *slpcall,
 			char *ip_port;
 			int port;
 
-			/* ip_addr = purple_prefs_get_string("/core/ft/public_ip"); */
+			/* ip_addr = purple_prefs_get_string("/purple/ft/public_ip"); */
 			ip_port = "5190";
 			listening = "true";
 			nonce = rand_guid();

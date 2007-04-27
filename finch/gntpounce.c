@@ -255,15 +255,15 @@ save_pounce_cb(GntWidget *w, PurpleGntPounceDialog *dialog)
 									 "reason", reason);
 
 	/* Set the defaults for next time. */
-	purple_prefs_set_bool("/purple/gnt/pounces/default_actions/open-window",
+	purple_prefs_set_bool("/finch/pounces/default_actions/open-window",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->open_win)));
-	purple_prefs_set_bool("/purple/gnt/pounces/default_actions/popup-notify",
+	purple_prefs_set_bool("/finch/pounces/default_actions/popup-notify",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->popup)));
-	purple_prefs_set_bool("/purple/gnt/pounces/default_actions/send-message",
+	purple_prefs_set_bool("/finch/pounces/default_actions/send-message",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->send_msg)));
-	purple_prefs_set_bool("/purple/gnt/pounces/default_actions/execute-command",
+	purple_prefs_set_bool("/finch/pounces/default_actions/execute-command",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->exec_cmd)));
-	purple_prefs_set_bool("/purple/gnt/pounces/default_actions/play-beep",
+	purple_prefs_set_bool("/finch/pounces/default_actions/play-beep",
 		gnt_check_box_get_checked(GNT_CHECK_BOX(dialog->play_sound)));
 
 	purple_pounce_set_save(dialog->pounce,
@@ -580,15 +580,15 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 		}
 
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->open_win),
-			purple_prefs_get_bool("/purple/gnt/pounces/default_actions/open-window"));
+			purple_prefs_get_bool("/finch/pounces/default_actions/open-window"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->popup),
-			purple_prefs_get_bool("/purple/gnt/pounces/default_actions/popup-notify"));
+			purple_prefs_get_bool("/finch/pounces/default_actions/popup-notify"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->send_msg),
-			purple_prefs_get_bool("/purple/gnt/pounces/default_actions/send-message"));
+			purple_prefs_get_bool("/finch/pounces/default_actions/send-message"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->exec_cmd),
-			purple_prefs_get_bool("/purple/gnt/pounces/default_actions/execute-command"));
+			purple_prefs_get_bool("/finch/pounces/default_actions/execute-command"));
 		gnt_check_box_set_checked(GNT_CHECK_BOX(dialog->play_sound),
-			purple_prefs_get_bool("/purple/gnt/pounces/default_actions/play-beep"));
+			purple_prefs_get_bool("/finch/pounces/default_actions/play-beep"));
 	}
 
 	gnt_widget_show(window);
@@ -647,7 +647,9 @@ pounces_manager_delete_cb(GntButton *button, gpointer user_data)
 	pouncer = purple_account_get_username(account);
 	pouncee = purple_pounce_get_pouncee(pounce);
 	buf = g_strdup_printf(_("Are you sure you want to delete the pounce on %s for %s?"), pouncee, pouncer);
-	purple_request_action(pounce, NULL, buf, NULL, 0, pounce, 2,
+	purple_request_action(pounce, NULL, buf, NULL, 0,
+						account, pouncee, NULL,
+						pounce, 2,
 						_("Delete"), pounces_manager_delete_confirm_cb,
 						_("Cancel"), NULL);
 	g_free(buf);
@@ -924,19 +926,19 @@ finch_pounces_init(void)
 	purple_pounces_register_handler(FINCH_UI, pounce_cb, new_pounce,
 								  free_pounce);
 
-	purple_prefs_add_none("/purple/gnt/pounces");
-	purple_prefs_add_none("/purple/gnt/pounces/default_actions");
-	purple_prefs_add_bool("/purple/gnt/pounces/default_actions/open-window",
+	purple_prefs_add_none("/finch/pounces");
+	purple_prefs_add_none("/finch/pounces/default_actions");
+	purple_prefs_add_bool("/finch/pounces/default_actions/open-window",
 						FALSE);
-	purple_prefs_add_bool("/purple/gnt/pounces/default_actions/popup-notify",
+	purple_prefs_add_bool("/finch/pounces/default_actions/popup-notify",
 						TRUE);
-	purple_prefs_add_bool("/purple/gnt/pounces/default_actions/send-message",
+	purple_prefs_add_bool("/finch/pounces/default_actions/send-message",
 						FALSE);
-	purple_prefs_add_bool("/purple/gnt/pounces/default_actions/execute-command",
+	purple_prefs_add_bool("/finch/pounces/default_actions/execute-command",
 						FALSE);
-	purple_prefs_add_bool("/purple/gnt/pounces/default_actions/play-beep",
+	purple_prefs_add_bool("/finch/pounces/default_actions/play-beep",
 						FALSE);
-	purple_prefs_add_none("/purple/gnt/pounces/dialog");
+	purple_prefs_add_none("/finch/pounces/dialog");
 
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",
 						finch_pounces_get_handle(),

@@ -121,7 +121,7 @@ check_idleness()
 
 	purple_signal_emit(purple_blist_get_handle(), "update-idle");
 
-	idle_reporting = purple_prefs_get_string("/core/away/idle_reporting");
+	idle_reporting = purple_prefs_get_string("/purple/away/idle_reporting");
 	report_idle = TRUE;
 	if (!strcmp(idle_reporting, "system") &&
 		(idle_ui_ops != NULL) && (idle_ui_ops->get_time_idle != NULL))
@@ -142,7 +142,7 @@ check_idleness()
 	}
 
 	/* Auto-away stuff */
-	auto_away = purple_prefs_get_bool("/core/away/away_when_idle");
+	auto_away = purple_prefs_get_bool("/purple/away/away_when_idle");
 
 	/* If we're not reporting idle, we can still do auto-away.
 	 * First try "system" and if that isn't possible, use "purple" */
@@ -154,11 +154,11 @@ check_idleness()
 	}
 
 	if (auto_away &&
-		(time_idle > (60 * purple_prefs_get_int("/core/away/mins_before_away"))))
+		(time_idle > (60 * purple_prefs_get_int("/purple/away/mins_before_away"))))
 	{
 		purple_savedstatus_set_idleaway(TRUE);
 	}
-	else if (time_idle < 60 * purple_prefs_get_int("/core/away/mins_before_away"))
+	else if (time_idle < 60 * purple_prefs_get_int("/purple/away/mins_before_away"))
 	{
 		purple_savedstatus_set_idleaway(FALSE);
 	}
