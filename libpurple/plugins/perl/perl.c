@@ -608,4 +608,23 @@ init_plugin(PurplePlugin *plugin)
 	loader_info.exts = g_list_append(loader_info.exts, "pl");
 }
 
+#ifdef __SUNPRO_C
+#pragma init (my_init)
+#else
+void __attribute__ ((constructor)) my_init(void);
+#endif
+
+void
+my_init(void)
+{
+	/* Mostly evil hack... puts perl.so's symbols in the global table but
+	 * does not create a circular dependency because g_module_open will
+	 * only open the library once. */
+	/* Do we need to keep track of the returned GModule here so that we
+	 * can g_module_close it when this plugin gets unloaded?
+	 * At the moment I don't think this plugin can ever get unloaded but
+	 * in case that becomes possible this wants to get noted. */
+	g_module_open("perl.so", 0);
+}
+
 PURPLE_INIT_PLUGIN(perl, init_plugin, info)

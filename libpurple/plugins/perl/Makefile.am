@@ -1,13 +1,11 @@
 plugindir = $(libdir)/purple
-hackdir = $(plugindir)/private
 
 perl_dirs = common
 
 plugin_LTLIBRARIES = perl.la
-hack_LTLIBRARIES = libpurpleperl.la
 
 perl_la_LDFLAGS = -module -avoid-version
-perl_la_LIBADD = $(GLIB_LIBS) $(PERL_LIBS) libpurpleperl.la
+perl_la_LIBADD = $(GLIB_LIBS) $(PERL_LIBS)
 perl_la_SOURCES = \
 	perl.c \
 	perl-common.c \
@@ -17,12 +15,7 @@ perl_la_SOURCES = \
 
 perl_la_DEPENDENCIES = \
 	.libs/libperl_orig.a \
-	.libs/DynaLoader.a \
-	libpurpleperl.la
-
-libpurpleperl_la_LDFLAGS = -module -avoid-version
-libpurpleperl_la_LIBADD = $(GLIB_LIBS)
-libpurpleperl_la_SOURCES = libpurpleperl.c
+	.libs/DynaLoader.a
 
 .libs/libperl_orig.a:
 	@mkdir -p .libs
@@ -89,8 +82,7 @@ common_sources = \
 EXTRA_DIST = \
 	Makefile.mingw \
 	common/Makefile.mingw \
-	$(common_sources) \
-	libpurpleperl.c
+	$(common_sources)
 
 common/Makefile: common/Makefile.PL
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
