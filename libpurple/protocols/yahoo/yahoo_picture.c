@@ -115,9 +115,11 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		PurpleUtilFetchUrlData *url_data;
 		struct yahoo_fetch_picture_data *data;
 		PurpleBuddy *b = purple_find_buddy(gc->account, who);
+		const char *locksum = NULL;
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */
-		if (b && (checksum == strtol(purple_buddy_icons_get_checksum_for_user(b), NULL, 10)))
+		if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL && 
+				(checksum == strtol(locksum, NULL, 10)))
 			return;
 
 		data = g_new0(struct yahoo_fetch_picture_data, 1);
@@ -200,9 +202,11 @@ void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *p
 
 	if (who) {
 		PurpleBuddy *b = purple_find_buddy(gc->account, who);
+		const char *locksum = NULL;
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */
-		if (b && (checksum != strtol(purple_buddy_icons_get_checksum_for_user(b), NULL, 10)))
+		if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL && 
+				(checksum != strtol(locksum, NULL, 10)))
 			yahoo_send_picture_request(gc, who);
 	}
 }
