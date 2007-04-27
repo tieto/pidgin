@@ -29,9 +29,11 @@ typedef struct
 	WINDOW *window;
 	int scroll;
 	PANEL *panel;
+
+	GntWS *ws;
 } GntNode;
 
-typedef struct _GnttWM GntWM;
+typedef struct _GntWM GntWM;
 
 typedef struct _GntPosition
 {
@@ -48,7 +50,7 @@ typedef struct _GntAction
 	void (*callback)();
 } GntAction;
 
-struct _GnttWM
+struct _GntWM
 {
 	GntBindable inherit;
 

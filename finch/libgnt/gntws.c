@@ -151,3 +151,8 @@ gnt_ws_get_gtype(void)
 	return type;
 }
 
+const char * gnt_ws_get_name(GntWS *ws)
+{
+	return ws->name;
+}
+

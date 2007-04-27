@@ -54,4 +54,6 @@ void gnt_ws_draw_taskbar(GntWS *, gboolean reposition);
 void gnt_ws_hide(GntWS *, GHashTable *);
 void gnt_ws_show(GntWS *, GHashTable *);
 
+const char * gnt_ws_get_name(GntWS *ws);
+
 #endif
