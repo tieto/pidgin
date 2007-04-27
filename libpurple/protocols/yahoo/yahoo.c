@@ -342,6 +342,8 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 		}
 		case 192: /* Pictures, aka Buddy Icons, checksum */
 		{
+			/* FIXME: Please, if you know this protocol,
+			 * FIXME: fix up the strtol() stuff if possible. */
 			int cksum = strtol(pair->value, NULL, 10);
 			PurpleBuddy *b;
 
@@ -353,9 +355,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (!cksum || (cksum == -1)) {
 				if (f)
 					yahoo_friend_set_buddy_icon_need_request(f, TRUE);
-				purple_buddy_icons_set_for_user(gc->account, name, NULL, 0);
-				if (b)
-					purple_blist_node_remove_setting((PurpleBlistNode *)b, YAHOO_ICON_CHECKSUM_KEY);
+				purple_buddy_icons_set_for_user(gc->account, name, NULL, 0, NULL);
 				break;
 			}
 
@@ -363,7 +363,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				break;
 
 			yahoo_friend_set_buddy_icon_need_request(f, FALSE);
-			if (b && cksum != purple_blist_node_get_int((PurpleBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY))
+			if (b && cksum != strtol(purple_buddy_icons_get_checksum_for_user(b), NULL, 10))
 				yahoo_send_picture_request(gc, name);
 
 			break;
@@ -2686,11 +2686,10 @@ static void yahoo_server_check(PurpleAccount *account)
 static void yahoo_picture_check(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	char *buddyicon;
+	PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
 
-	buddyicon = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(account));
-	yahoo_set_buddy_icon(gc, buddyicon);
-	g_free(buddyicon);
+	yahoo_set_buddy_icon(gc, img);
+	purple_imgstore_unref(img);
 }
 
 static int get_yahoo_status_from_purple_status(PurpleStatus *status)

@@ -14,7 +14,7 @@
    id="svg4345"
    sodipodi:version="0.32"
    inkscape:version="0.44.1"
-   sodipodi:docbase="/home/hbons/Desktop"
+   sodipodi:docbase="/home/hbons/Desktop/icons/48/scalable"
    sodipodi:docname="pidgin.svg"
    inkscape:export-filename="/home/hbons/Desktop/pidgin.png"
    inkscape:export-xdpi="90"
@@ -239,7 +239,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="1.1545694"
      inkscape:cx="31.681369"
-     inkscape:cy="19.034466"
+     inkscape:cy="18.601404"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
@@ -421,18 +421,6 @@
        d="M 11.689238,9.8218679 C 13.591296,8.0161941 17.219555,11.23544 17.564573,12.891665 L 14.543472,12.891665 L 11.689238,9.8218679 z "
        id="rect5189"
        sodipodi:nodetypes="cccc" />
-    <path
-       style="opacity:1;fill:#a46aaf;fill-opacity:1"
-       d="M 36.0625,8 C 33.978257,8 33.334928,10.523086 34.78125,12.9375 C 35.250389,13.720651 36.209636,15 36.402559,15 L 36.402559,14.125 C 35.812486,13.197242 35.955376,12.283021 36.125,12.0625 C 36.202572,11.961654 36.363163,11.875 36.5,11.875 C 36.8422,11.875 37.464321,11.409445 37.78125,10.90625 C 38.00166,10.556303 38.037627,10.361453 38,9.78125 C 37.924562,8.6180502 37.228501,8 36.0625,8 z "
-       id="path6521"
-       transform="matrix(1.249263,0,0,1.142857,-10.47637,-1.142855)"
-       sodipodi:nodetypes="csccssssc" />
-    <path
-       style="opacity:1;fill:#a46aaf;fill-opacity:1"
-       d="M 36.0625,8 C 33.978257,8 33.334928,10.523086 34.78125,12.9375 C 35.250389,13.720651 36.209644,15.000004 36.402567,15.000004 L 36.402567,14.125004 C 35.812494,13.197246 35.955376,12.283021 36.125,12.0625 C 36.202572,11.961654 36.363163,11.875 36.5,11.875 C 36.8422,11.875 37.464321,11.409445 37.78125,10.90625 C 38.00166,10.556303 38.037627,10.361453 38,9.78125 C 37.924562,8.6180502 37.228501,8 36.0625,8 z "
-       id="path6531"
-       transform="matrix(-1.249263,0,0,-1.142857,85.47638,22.14286)"
-       sodipodi:nodetypes="csccssssc" />
     <path
        transform="matrix(1.180326,0,0,0.867993,13.1795,-6.80859)"
        style="fill:url(#linearGradient6569);fill-opacity:1.0;stroke:none;stroke-width:1.0283047;stroke-miterlimit:4;stroke-opacity:1"

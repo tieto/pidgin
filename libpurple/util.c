@@ -65,7 +65,7 @@ struct _PurpleUtilFetchUrlData
 };
 
 static char custom_home_dir[MAXPATHLEN];
-static char home_dir[MAXPATHLEN];
+static char home_dir[MAXPATHLEN] = "";
 
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
@@ -2245,24 +2245,16 @@ purple_home_dir(void)
 #endif
 }
 
-/* Returns the argument passed to -c IFF it was present, or ~/.gaim IFF it
- * exists, else ~/.purple. */
+/* Returns the argument passed to -c IFF it was present, or ~/.purple. */
 const char *
 purple_user_dir(void)
 {
-	if (custom_home_dir != NULL && strlen(custom_home_dir) > 0) {
+	if (custom_home_dir != NULL && *custom_home_dir) {
 		strcpy ((char*) &home_dir, (char*) &custom_home_dir);
-	} else {
+	} else if (!*home_dir) {
 		const gchar *hd = purple_home_dir();
 
 		if (hd) {
-			g_strlcpy((char*) &home_dir, hd, sizeof(home_dir));
-			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".gaim",
-					sizeof(home_dir));
-
-			if (g_file_test(home_dir, G_FILE_TEST_EXISTS))
-				return home_dir;
-
 			g_strlcpy((char*) &home_dir, hd, sizeof(home_dir));
 			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".purple",
 					sizeof(home_dir));
@@ -2577,6 +2569,27 @@ purple_mkstemp(char **fpath, gboolean binary)
 	return fp;
 }
 
+const char *
+purple_util_get_image_extension(gconstpointer data, size_t len)
+{
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(len   > 0,    NULL);
+
+	if (len >= 4)
+	{
+		if (!strncmp((char *)data, "BM", 2))
+			return "bmp";
+		else if (!strncmp((char *)data, "GIF8", 4))
+			return "gif";
+		else if (!strncmp((char *)data, "\xff\xd8\xff\xe0", 4))
+			return "jpg";
+		else if (!strncmp((char *)data, "\x89PNG", 4))
+			return "png";
+	}
+
+	return "icon";
+}
+
 gboolean
 purple_program_is_valid(const char *program)
 {
@@ -2654,7 +2667,7 @@ purple_running_kde(void)
 gboolean
 purple_running_osx(void)
 {
-#if defined(__APPLE__)	
+#if defined(__APPLE__)
 	return TRUE;
 #else
 	return FALSE;
@@ -3072,7 +3085,6 @@ void purple_got_protocol_handler_uri(const char *uri)
 	char *cmd;
 	GHashTable *params = NULL;
 	int len;
-printf("got handler uri \n");
 	if (!(tmp = strchr(uri, ':')) || tmp == uri) {
 		purple_debug_error("util", "Malformed protocol handler message - missing protocol.\n");
 		return;
@@ -4195,7 +4207,7 @@ void purple_restore_default_signal_handlers(void)
 	signal(SIGABRT, SIG_DFL);	/* 6:  abort program */
 
 #ifdef SIGPOLL
-	signal(SIGPOLL,  SIG_DFL);	/* 7:  pollable event (POSIX) */	
+	signal(SIGPOLL,  SIG_DFL);	/* 7:  pollable event (POSIX) */
 #endif /* SIGPOLL */
 
 #ifdef SIGEMT
@@ -4211,7 +4223,7 @@ void purple_restore_default_signal_handlers(void)
 	signal(SIGTERM, SIG_DFL);	/* 15: software termination signal */
 	signal(SIGCHLD, SIG_DFL);	/* 20: child status has changed */
 	signal(SIGXCPU, SIG_DFL);	/* 24: exceeded CPU time limit */
-	signal(SIGXFSZ, SIG_DFL);	/* 25: exceeded file size limit */	
+	signal(SIGXFSZ, SIG_DFL);	/* 25: exceeded file size limit */
 #endif /* HAVE_SIGNAL_H */
 #endif /* !_WIN32 */
 }

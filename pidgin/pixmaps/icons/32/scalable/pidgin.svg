@@ -14,8 +14,8 @@
    id="svg4345"
    sodipodi:version="0.32"
    inkscape:version="0.44.1"
-   sodipodi:docbase="/home/hbons/Desktop"
-   sodipodi:docname="pidgin32.svg"
+   sodipodi:docbase="/home/hbons/Desktop/icons/32/scalable"
+   sodipodi:docname="pidgin.svg"
    inkscape:export-filename="/home/hbons/Desktop/pidgin32.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
@@ -231,7 +231,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="21.220032"
      inkscape:cx="25.558911"
-     inkscape:cy="16.962156"
+     inkscape:cy="16.938593"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
@@ -403,18 +403,6 @@
        d="M -0.99929609,42.004237 C 3.5188333,45.348102 4.1278823,38.950282 4.9828709,38.950282 C 5.8260957,38.950282 6.1724645,45.375511 10.014606,42.007796 C 9.2074596,43.955072 6.7265914,47.014858 5.6807127,47.014858 C 4.6230593,47.014858 0.31231911,44.880662 -0.99929609,42.004237 z "
        id="path6561"
        sodipodi:nodetypes="czczc" />
-    <path
-       style="opacity:1;fill:#a46aaf;fill-opacity:1"
-       d="M 36.0625,8 C 33.978257,8 33.334928,10.523086 34.78125,12.9375 C 35.250389,13.720651 36.209636,15 36.402559,15 L 36.402559,14.125 C 35.812486,13.197242 35.955376,12.283021 36.125,12.0625 C 36.202572,11.961654 36.363163,11.875 36.5,11.875 C 36.8422,11.875 37.464321,11.409445 37.78125,10.90625 C 38.00166,10.556303 38.037627,10.361453 38,9.78125 C 37.924562,8.6180502 37.228501,8 36.0625,8 z "
-       id="path6521"
-       transform="translate(-14.00114,-2)"
-       sodipodi:nodetypes="csccssssc" />
-    <path
-       style="opacity:1;fill:#a46aaf;fill-opacity:1"
-       d="M 36.0625,8 C 33.978257,8 33.334928,10.523086 34.78125,12.9375 C 35.250389,13.720651 36.209644,15.000004 36.402567,15.000004 L 36.402567,14.125004 C 35.812494,13.197246 35.955376,12.283021 36.125,12.0625 C 36.202572,11.961654 36.363163,11.875 36.5,11.875 C 36.8422,11.875 37.464321,11.409445 37.78125,10.90625 C 38.00166,10.556303 38.037627,10.361453 38,9.78125 C 37.924562,8.6180502 37.228501,8 36.0625,8 z "
-       id="path6531"
-       transform="matrix(-0.999997,0,0,-0.999999,63.00101,17.99999)"
-       sodipodi:nodetypes="csccssssc" />
     <path
        transform="matrix(0.798987,0,0,0.495994,8.99846,-1.319104)"
        style="fill:url(#linearGradient6823);fill-opacity:1.0;stroke:none;stroke-width:1.0283047;stroke-miterlimit:4;stroke-opacity:1"

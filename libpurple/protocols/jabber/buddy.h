@@ -91,7 +91,7 @@ GList *jabber_blist_node_menu(PurpleBlistNode *node);
 
 void jabber_set_info(PurpleConnection *gc, const char *info);
 void jabber_setup_set_info(PurplePluginAction *action);
-void jabber_set_buddy_icon(PurpleConnection *gc, const char *iconfile);
+void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img);
 
 const char *jabber_buddy_state_get_name(JabberBuddyState state);
 const char *jabber_buddy_state_get_status_id(JabberBuddyState state);

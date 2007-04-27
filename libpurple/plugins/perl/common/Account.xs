@@ -59,7 +59,7 @@ purple_account_set_user_info(account, user_info)
     const char *user_info
 
 void
-purple_account_set_buddy_icon(account, icon)
+purple_account_set_buddy_icon_path(account, icon)
     Purple::Account account
     const char *icon
 
@@ -144,7 +144,7 @@ purple_account_get_user_info(account)
     Purple::Account account
 
 const char *
-purple_account_get_buddy_icon(account)
+purple_account_get_buddy_icon_path(account)
     Purple::Account account
 
 const char *

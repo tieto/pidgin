@@ -445,11 +445,13 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 /**
  * Converts a buddy icon to the required size and format
  * 
- * @param plugin     The prpl to conver the icon
- * @param path       The path of a buddy icon to convert
- * @return           The name of a new buddy icon
+ * @param plugin     The prpl to convert the icon
+ * @param path       The path of a file to convert
+ * @param len        If not @c NULL, the length of the returned data will be set here.
+ *
+ * @return           The converted image data, or @c NULL if an error occurred.
  */
-char* pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path);
+gpointer pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len);
 
 #if !GTK_CHECK_VERSION(2,6,0)
 /**

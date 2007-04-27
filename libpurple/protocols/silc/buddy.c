@@ -987,8 +987,10 @@ silcpurple_add_buddy_save(bool success, void *context)
 					const unsigned char *data;
 					SilcUInt32 data_len;
 					data = silc_mime_get_data(m, &data_len);
-					if (data)
-						purple_buddy_icons_set_for_user(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), (void *)data, data_len);
+					if (data) {
+						/* TODO: Check if SILC gives us something to use as the checksum instead */
+						purple_buddy_icons_set_for_user(purple_buddy_get_account(r->b), purple_buddy_get_name(r->b), g_memdup(data, data_len), data_len, NULL);
+					}
 				}
 				silc_mime_free(m);
 			}
@@ -1681,48 +1683,31 @@ GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 }
 
 #ifdef SILC_ATTRIBUTE_USER_ICON
-void silcpurple_buddy_set_icon(PurpleConnection *gc, const char *iconfile)
+void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	SilcPurple sg = gc->proto_data;
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	SilcMime mime;
-	PurpleBuddyIcon ic;
 	char type[32];
 	unsigned char *icon;
 	const char *t;
-	struct stat st;
-	FILE *fp;
 	SilcAttributeObjMime obj;
 
 	/* Remove */
-	if (!iconfile) {
+	if (!img) {
 		silc_client_attribute_del(client, conn,
 					  SILC_ATTRIBUTE_USER_ICON, NULL);
 		return;
 	}
 
 	/* Add */
-	if (g_stat(iconfile, &st) < 0)
-		return;
-	fp = g_fopen(iconfile, "rb");
-	if (!fp)
-		return;
-	ic.data = g_malloc(st.st_size);
-	if (!ic.data)
-		return;
-	ic.len = fread(ic.data, 1, st.st_size, fp);
-	fclose(fp);
-
 	mime = silc_mime_alloc();
-	if (!mime) {
-		g_free(ic.data);
+	if (!mime)
 		return;
-	}
 
-	t = purple_buddy_icon_get_type((const PurpleBuddyIcon *)&ic);
-	if (!t) {
-		g_free(ic.data);
+	t = purple_util_get_image_extension(purple_imgstore_get_data(img), purple_imgstore_get_size(img));
+	if (!t || !strcmp(t, "icon")) {
 		silc_mime_free(mime);
 		return;
 	}
@@ -1730,7 +1715,7 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, const char *iconfile)
 		t = "jpeg";
 	g_snprintf(type, sizeof(type), "image/%s", t);
 	silc_mime_add_field(mime, "Content-Type", type);
-	silc_mime_add_data(mime, ic.data, ic.len);
+	silc_mime_add_data(mime, purple_imgstore_get_data(img), purple_imgstore_get_size(img));
 
 	obj.mime = icon = silc_mime_encode(mime, &obj.mime_len);
 	if (obj.mime)
@@ -1738,7 +1723,6 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, const char *iconfile)
 					  SILC_ATTRIBUTE_USER_ICON, &obj, sizeof(obj));
 
 	silc_free(icon);
-	g_free(ic.data);
 	silc_mime_free(mime);
 }
 #endif
