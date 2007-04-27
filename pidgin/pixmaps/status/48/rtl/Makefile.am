@@ -1,4 +1,4 @@
-EXTRA_DIST = 	chat.png extended-away.png
+EXTRA_DIST = 	extended-away.png
 
 pidginstatuspixdir = $(datadir)/pixmaps/pidgin/status/48/rtl
 

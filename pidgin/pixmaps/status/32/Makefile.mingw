@@ -18,3 +18,5 @@ install:
 	  cp $(pidginstatuspix_DATA) $(pidginstatuspixdir); \
 	fi;
 
+	$(MAKE) -C rtl -f Makefile.mingw install || exit 1; \
+
