@@ -231,7 +231,9 @@ static void
 save_cb(GtkWidget *w, DebugWindow *win)
 {
 	purple_request_file(win, _("Save Debug Log"), "purple-debug.log", TRUE,
-					  G_CALLBACK(save_writefile_cb), NULL, win);
+					  G_CALLBACK(save_writefile_cb), NULL,
+					  NULL, NULL, NULL,
+					  win);
 }
 
 static void
@@ -264,7 +266,7 @@ timestamps_cb(GtkWidget *w, DebugWindow *win)
 {
 	win->timestamps = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
 
-	purple_prefs_set_bool("/core/debug/timestamps", win->timestamps);
+	purple_prefs_set_bool("/purple/debug/timestamps", win->timestamps);
 }
 
 static void
@@ -786,9 +788,9 @@ debug_window_new(void)
 		                                    win);
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-		                             purple_prefs_get_bool("/core/debug/timestamps"));
+		                             purple_prefs_get_bool("/purple/debug/timestamps"));
 
-		purple_prefs_connect_callback(handle, "/core/debug/timestamps",
+		purple_prefs_connect_callback(handle, "/purple/debug/timestamps",
 		                            timestamps_pref_cb, button);
 
 #ifdef HAVE_REGEX_H
@@ -1052,7 +1054,7 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 		return;
 	}
 
-	timestamps = purple_prefs_get_bool("/core/debug/timestamps");
+	timestamps = purple_prefs_get_bool("/purple/debug/timestamps");
 
 	/*
 	 * For some reason we only print the timestamp if category is

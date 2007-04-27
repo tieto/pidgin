@@ -417,6 +417,7 @@ insert_link_cb(GtkWidget *w, GtkIMHtmlToolbar *toolbar)
 					    fields,
 					    _("_Insert"), G_CALLBACK(do_insert_link_cb),
 					    _("Cancel"), G_CALLBACK(cancel_link_cb),
+						NULL, NULL, NULL,
 					    toolbar);
 		g_free(msg);
 		g_free(desc);
@@ -480,8 +481,7 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 
 	name = strrchr(filename, G_DIR_SEPARATOR) + 1;
 
-	id = purple_imgstore_add(filedata, size, name);
-	g_free(filedata);
+	id = purple_imgstore_add_with_id(filedata, size, name);
 
 	if (id == 0) {
 		buf = g_strdup_printf(_("Failed to store image: %s\n"), filename);
@@ -499,7 +499,7 @@ do_insert_image_cb(GtkWidget *widget, int response, GtkIMHtmlToolbar *toolbar)
 	gtk_text_buffer_get_iter_at_mark(gtk_text_view_get_buffer(GTK_TEXT_VIEW(toolbar->imhtml)),
 									 &iter, ins);
 	gtk_imhtml_insert_image_at_iter(GTK_IMHTML(toolbar->imhtml), id, &iter);
-	purple_imgstore_unref(id);
+	purple_imgstore_unref_by_id(id);
 }
 
 

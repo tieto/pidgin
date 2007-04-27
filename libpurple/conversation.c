@@ -281,7 +281,7 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 		if ((icon = purple_buddy_icons_find(account, name)))
 			purple_conv_im_set_icon(conv->u.im, icon);
 
-		if (purple_prefs_get_bool("/core/logging/log_ims"))
+		if (purple_prefs_get_bool("/purple/logging/log_ims"))
 		{
 			purple_conversation_set_logging(conv, TRUE);
 			open_log(conv);
@@ -303,7 +303,7 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 			purple_conv_chat_set_nick(conv->u.chat,
 									purple_account_get_username(account));
 
-		if (purple_prefs_get_bool("/core/logging/log_chats"))
+		if (purple_prefs_get_bool("/purple/logging/log_chats"))
 		{
 			purple_conversation_set_logging(conv, TRUE);
 			open_log(conv);
@@ -352,7 +352,7 @@ purple_conversation_destroy(PurpleConversation *conv)
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		{
-			if (purple_prefs_get_bool("/core/conversations/im/send_typing"))
+			if (purple_prefs_get_bool("/purple/conversations/im/send_typing"))
 				serv_send_typing(gc, name, PURPLE_NOT_TYPING);
 
 			if (gc && prpl_info->convo_closed != NULL)
@@ -425,8 +425,7 @@ purple_conversation_destroy(PurpleConversation *conv)
 		purple_conv_im_stop_typing_timeout(conv->u.im);
 		purple_conv_im_stop_send_typed_timeout(conv->u.im);
 
-		if (conv->u.im->icon != NULL)
-			purple_buddy_icon_unref(conv->u.im->icon);
+		purple_buddy_icon_unref(conv->u.im->icon);
 		conv->u.im->icon = NULL;
 
 		PURPLE_DBUS_UNREGISTER_POINTER(conv->u.im);
@@ -941,8 +940,7 @@ purple_conv_im_set_icon(PurpleConvIm *im, PurpleBuddyIcon *icon)
 
 	if (im->icon != icon)
 	{
-		if (im->icon != NULL)
-			purple_buddy_icon_unref(im->icon);
+		purple_buddy_icon_unref(im->icon);
 
 		im->icon = (icon == NULL ? NULL : purple_buddy_icon_ref(icon));
 	}
@@ -1159,9 +1157,11 @@ purple_conv_send_confirm(PurpleConversation *conv, const char *message)
 	data[0] = conv;
 	data[1] = (gpointer)message;
 
-	purple_request_action(conv, NULL, _("Send Message"), text, 0, data, 2,
-	                    _("_Send Message"), G_CALLBACK(purple_conv_send_confirm_cb),
-	                    _("Cancel"), NULL);
+	purple_request_action(conv, NULL, _("Send Message"), text, 0,
+						  purple_conversation_get_account(conv), NULL, conv,
+						  data, 2,
+						  _("_Send Message"), G_CALLBACK(purple_conv_send_confirm_cb),
+						  _("Cancel"), NULL);
 }
 
 void
@@ -1665,7 +1665,7 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 	if (is_me)
 		purple_conv_chat_set_nick(chat, new_user);
 
-	if (purple_prefs_get_bool("/core/conversations/chat/show_nick_change") &&
+	if (purple_prefs_get_bool("/purple/conversations/chat/show_nick_change") &&
 	    !purple_conv_chat_is_user_ignored(chat, new_user)) {
 
 		if (is_me) {
@@ -2003,15 +2003,15 @@ purple_conversations_init(void)
 	 **********************************************************************/
 
 	/* Conversations */
-	purple_prefs_add_none("/core/conversations");
+	purple_prefs_add_none("/purple/conversations");
 
 	/* Conversations -> Chat */
-	purple_prefs_add_none("/core/conversations/chat");
-	purple_prefs_add_bool("/core/conversations/chat/show_nick_change", TRUE);
+	purple_prefs_add_none("/purple/conversations/chat");
+	purple_prefs_add_bool("/purple/conversations/chat/show_nick_change", TRUE);
 
 	/* Conversations -> IM */
-	purple_prefs_add_none("/core/conversations/im");
-	purple_prefs_add_bool("/core/conversations/im/send_typing", TRUE);
+	purple_prefs_add_none("/purple/conversations/im");
+	purple_prefs_add_bool("/purple/conversations/im/send_typing", TRUE);
 
 
 	/**********************************************************************

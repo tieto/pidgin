@@ -334,7 +334,9 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 
 	handle = purple_request_fields(js->gc, title, title, instructions, fields,
 			_("OK"), G_CALLBACK(jabber_x_data_ok_cb),
-			_("Cancel"), G_CALLBACK(jabber_x_data_cancel_cb), data);
+			_("Cancel"), G_CALLBACK(jabber_x_data_cancel_cb),
+			purple_connection_get_account(js->gc), /* XXX Do we have a who here? */ NULL, NULL,
+			data);
 
 	g_free(title);
 	g_free(instructions);

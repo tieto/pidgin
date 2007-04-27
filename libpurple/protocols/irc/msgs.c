@@ -236,18 +236,20 @@ void irc_msg_chanmode(struct irc_conn *irc, const char *name, const char *from, 
 void irc_msg_whois(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	if (!irc->whois.nick) {
-		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unexpected WHOIS reply for %s\n", args[1]);
+		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unexpected %s reply for %s\n", !strcmp(name, "314") ? "WHOWAS" : "WHOIS"
+											   , args[1]);
 		return;
 	}
 
 	if (purple_utf8_strcasecmp(irc->whois.nick, args[1])) {
-		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Got WHOIS reply for %s while waiting for %s\n", args[1], irc->whois.nick);
+		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Got %s reply for %s while waiting for %s\n", !strcmp(name, "314") ? "WHOWAS" : "WHOIS"
+												      , args[1], irc->whois.nick);
 		return;
 	}
 
 	if (!strcmp(name, "301")) {
 		irc->whois.away = g_strdup(args[2]);
-	} else if (!strcmp(name, "311")) {
+	} else if (!strcmp(name, "311") || !strcmp(name, "314")) {
 		irc->whois.userhost = g_strdup_printf("%s@%s", args[2], args[3]);
 		irc->whois.name = g_strdup(args[5]);
 	} else if (!strcmp(name, "312")) {
@@ -273,11 +275,13 @@ void irc_msg_endwhois(struct irc_conn *irc, const char *name, const char *from, 
 	PurpleNotifyUserInfo *user_info;
 
 	if (!irc->whois.nick) {
-		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unexpected End of WHOIS for %s\n", args[1]);
+		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Unexpected End of %s for %s\n", !strcmp(name, "369") ? "WHOWAS" : "WHOIS" 
+											     , args[1]);
 		return;
 	}
 	if (purple_utf8_strcasecmp(irc->whois.nick, args[1])) {
-		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Received end of WHOIS for %s, expecting %s\n", args[1], irc->whois.nick);
+		purple_debug(PURPLE_DEBUG_WARNING, "irc", "Received end of %s for %s, expecting %s\n", !strcmp(name, "369") ? "WHOWAS" : "WHOIS" 
+													 , args[1], irc->whois.nick);
 		return;
 	}
 

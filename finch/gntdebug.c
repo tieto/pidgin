@@ -36,7 +36,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define PREF_ROOT "/purple/gnt/debug"
+#define PREF_ROOT "/finch/debug"
 
 static struct
 {
@@ -135,7 +135,7 @@ static void
 toggle_timestamps(GntWidget *w, gpointer n)
 {
 	debug.timestamps = !debug.timestamps;
-	purple_prefs_set_bool("/core/debug/timestamps", debug.timestamps);
+	purple_prefs_set_bool("/purple/debug/timestamps", debug.timestamps);
 }
 
 /* Xerox */
@@ -196,7 +196,7 @@ size_changed_cb(GntWidget *widget, int oldw, int oldh)
 void finch_debug_window_show()
 {
 	debug.paused = FALSE;
-	debug.timestamps = purple_prefs_get_bool("/core/debug/timestamps");
+	debug.timestamps = purple_prefs_get_bool("/purple/debug/timestamps");
 	if (debug.window == NULL)
 	{
 		GntWidget *wid, *box;

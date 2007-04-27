@@ -295,8 +295,11 @@ static void log_delete_log_cb(GtkWidget *menuitem, gpointer *data)
 	data2[0] = lv->treestore;
 	data2[1] = data[3]; /* iter */
 	data2[2] = log;
-	purple_request_action(lv, NULL, "Delete Log?", tmp,
-	                    0, data2, 2, _("Delete"), delete_log_cb, _("Cancel"), delete_log_cleanup_cb);
+	purple_request_action(lv, NULL, "Delete Log?", tmp, 0, 
+						NULL, NULL, NULL,
+						data2, 2,
+						_("Delete"), delete_log_cb,
+						_("Cancel"), delete_log_cleanup_cb);
 	g_free(tmp);
 }
 
@@ -517,14 +520,14 @@ static PidginLogViewer *display_log_viewer(struct log_viewer_hash_t *ht, GList *
 		const char *log_preferences = NULL;
 
 		if (ht == NULL) {
-			if (!purple_prefs_get_bool("/core/logging/log_system"))
+			if (!purple_prefs_get_bool("/purple/logging/log_system"))
 				log_preferences = _("System events will only be logged if the \"Log all status changes to system log\" preference is enabled.");
 		} else {
 			if (ht->type == PURPLE_LOG_IM) {
-				if (!purple_prefs_get_bool("/core/logging/log_ims"))
+				if (!purple_prefs_get_bool("/purple/logging/log_ims"))
 					log_preferences = _("Instant messages will only be logged if the \"Log all instant messages\" preference is enabled.");
 			} else if (ht->type == PURPLE_LOG_CHAT) {
-				if (!purple_prefs_get_bool("/core/logging/log_chats"))
+				if (!purple_prefs_get_bool("/purple/logging/log_chats"))
 					log_preferences = _("Chats will only be logged if the \"Log all chats\" preference is enabled.");
 			}
 		}

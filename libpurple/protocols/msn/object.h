@@ -24,6 +24,8 @@
 #ifndef _MSN_OBJECT_H_
 #define _MSN_OBJECT_H_
 
+#include "imgstore.h"
+
 #include "internal.h"
 
 typedef enum
@@ -44,7 +46,7 @@ typedef struct
 	char *creator;
 	int size;
 	MsnObjectType type;
-	char *real_location;
+	PurpleStoredImage *img;
 	char *location;
 	char *friendly;
 	char *sha1d;
@@ -134,6 +136,14 @@ void msn_object_set_sha1d(MsnObject *obj, const char *sha1d);
 void msn_object_set_sha1c(MsnObject *obj, const char *sha1c);
 
 /**
+ * Associates an image with a MsnObject.
+ *
+ * @param obj The object.
+ * @param img The image to associate.
+ */
+void msn_object_set_image(MsnObject *obj, PurpleStoredImage *img);
+
+/**
  * Returns a MsnObject's creator value.
  *
  * @param obj The object.
@@ -205,9 +215,15 @@ const char *msn_object_get_sha1c(const MsnObject *obj);
  */
 const char *msn_object_get_sha1(const MsnObject *obj);
 
+/**
+ * Returns the image associated with the MsnObject.
+ *
+ * @param obj The object.
+ *
+ * @return The associated image.
+ */
+PurpleStoredImage *msn_object_get_image(const MsnObject *obj);
+
 void msn_object_set_local(MsnObject *obj);
-const char *msn_object_get_real_location(const MsnObject *obj);
-void msn_object_set_real_location(MsnObject *obj,
-								  const char *real_location);
 
 #endif /* _MSN_OBJECT_H_ */

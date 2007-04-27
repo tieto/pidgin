@@ -11,6 +11,7 @@ void
 pidgin_load_accels()
 
 gchar_own *
-pidgin_convert_buddy_icon(plugin, path)
+pidgin_convert_buddy_icon(plugin, path, size)
 	Purple::Plugin plugin
 	const char * path
+	size_t *size

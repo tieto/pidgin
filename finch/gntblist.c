@@ -53,7 +53,7 @@
 #include "gntstatus.h"
 #include <string.h>
 
-#define PREF_ROOT "/purple/gnt/blist"
+#define PREF_ROOT "/finch/blist"
 #define TYPING_TIMEOUT 4000
 
 typedef struct
@@ -114,6 +114,7 @@ static void update_buddy_display(PurpleBuddy *buddy, FinchBlist *ggblist);
 static void account_signed_on_cb(void);
 
 /* Sort functions */
+static int blist_node_compare_position(PurpleBlistNode *n1, PurpleBlistNode *n2);
 static int blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2);
 static int blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2);
 static int blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2);
@@ -313,7 +314,11 @@ finch_request_add_buddy(PurpleAccount *account, const char *username, const char
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(NULL, _("Add Buddy"), NULL, _("Please enter buddy information."),
-			fields, _("Add"), G_CALLBACK(add_buddy_cb), _("Cancel"), NULL, NULL);
+			fields,
+			_("Add"), G_CALLBACK(add_buddy_cb),
+			_("Cancel"), NULL,
+			account, NULL, NULL,
+			NULL);
 }
 
 static void
@@ -380,7 +385,9 @@ finch_request_add_chat(PurpleAccount *account, PurpleGroup *grp, const char *ali
 
 	purple_request_fields(NULL, _("Add Chat"), NULL,
 			_("You can edit more information from the context menu later."),
-			fields, _("Add"), G_CALLBACK(add_chat_cb), _("Cancel"), NULL, NULL);
+			fields, _("Add"), G_CALLBACK(add_chat_cb), _("Cancel"), NULL,
+			NULL, NULL, NULL,
+			NULL);
 }
 
 static void
@@ -413,7 +420,9 @@ finch_request_add_group()
 {
 	purple_request_input(NULL, _("Add Group"), NULL, _("Enter the name of the group"),
 			NULL, FALSE, FALSE, NULL,
-			_("Add"), G_CALLBACK(add_group_cb), _("Cancel"), NULL, NULL);
+			_("Add"), G_CALLBACK(add_group_cb), _("Cancel"), NULL,
+			NULL, NULL, NULL,
+			NULL);
 }
 
 static PurpleBlistUiOps blist_ui_ops =
@@ -739,7 +748,9 @@ chat_components_edit(PurpleChat *chat, PurpleBlistNode *selected)
 	g_list_free(parts);
 
 	purple_request_fields(NULL, _("Edit Chat"), NULL, _("Please Update the necessary fields."),
-			fields, _("Edit"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL, chat);
+			fields, _("Edit"), G_CALLBACK(chat_components_edit_ok), _("Cancel"), NULL,
+			NULL, NULL, NULL,
+			chat);
 }
 
 static void
@@ -927,7 +938,9 @@ finch_blist_rename_node_cb(PurpleBlistNode *node, PurpleBlistNode *selected)
 	text = PURPLE_BLIST_NODE_IS_GROUP(node) ? _("Rename") : _("Alias");
 	purple_request_input(node, text, prompt, _("Enter empty string to reset the name."),
 			name, FALSE, FALSE, NULL, text, G_CALLBACK(rename_blist_node),
-			_("Cancel"), NULL, node);
+			_("Cancel"), NULL,
+			NULL, NULL, NULL,
+			node);
 
 	g_free(prompt);
 }
@@ -990,6 +1003,7 @@ finch_blist_remove_node(PurpleBlistNode *node)
 static void
 finch_blist_remove_node_cb(PurpleBlistNode *node, PurpleBlistNode *selected)
 {
+	PurpleAccount *account = NULL;
 	char *primary;
 	const char *name, *sec = NULL;
 
@@ -999,12 +1013,12 @@ finch_blist_remove_node_cb(PurpleBlistNode *node, PurpleBlistNode *selected)
 		name = purple_contact_get_alias(c);
 		if (c->totalsize > 1)
 			sec = _("Removing this contact will also remove all the buddies in the contact");
-	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
+	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		name = purple_buddy_get_name((PurpleBuddy*)node);
-	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
+		account = purple_buddy_get_account((PurpleBuddy*)node);
+	} else if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 		name = purple_chat_get_name((PurpleChat*)node);
-	else if (PURPLE_BLIST_NODE_IS_GROUP(node))
-	{
+	} else if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		name = ((PurpleGroup*)node)->name;
 		sec = _("Removing this group will also remove all the buddies in the group");
 	}
@@ -1016,7 +1030,9 @@ finch_blist_remove_node_cb(PurpleBlistNode *node, PurpleBlistNode *selected)
 	/* XXX: anything to do with the returned ui-handle? */
 	purple_request_action(node, _("Confirm Remove"),
 			primary, sec,
-			1, node, 2,
+			1,
+			account, name, NULL,
+			node, 2,
 			_("Remove"), finch_blist_remove_node,
 			_("Cancel"), NULL);
 	g_free(primary);
@@ -1197,7 +1213,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str)
 		prpl_info->tooltip_text(buddy, user_info, TRUE);
 	}
 
-	if (purple_prefs_get_bool("/purple/gnt/blist/idletime")) {
+	if (purple_prefs_get_bool("/finch/blist/idletime")) {
 		PurplePresence *pre = purple_buddy_get_presence(buddy);
 		if (purple_presence_is_idle(pre)) {
 			time_t idle = purple_presence_get_idle_time(pre);
@@ -1763,6 +1779,15 @@ savedstatus_changed(PurpleSavedStatus *now, PurpleSavedStatus *old)
 }
 
 static int
+blist_node_compare_position(PurpleBlistNode *n1, PurpleBlistNode *n2)
+{
+	while ((n1 = n1->prev) != NULL)
+		if (n1 == n2)
+			return 1;
+	return -1;
+}
+
+static int
 blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2)
 {
 	const char *s1, *s2;
@@ -1773,10 +1798,6 @@ blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	
 	switch (n1->type)
 	{
-		case PURPLE_BLIST_GROUP_NODE:
-			s1 = ((PurpleGroup*)n1)->name;
-			s2 = ((PurpleGroup*)n2)->name;
-			break;
 		case PURPLE_BLIST_CHAT_NODE:
 			s1 = purple_chat_get_name((PurpleChat*)n1);
 			s2 = purple_chat_get_name((PurpleChat*)n2);
@@ -1790,7 +1811,7 @@ blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2)
 			s2 = purple_contact_get_alias((PurpleContact*)n2);
 			break;
 		default:
-			return -1;
+			return blist_node_compare_position(n1, n2);
 	}
 
 	us1 = g_utf8_strup(s1, -1);
@@ -1821,6 +1842,7 @@ blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2)
 				return ret;
 			break;
 		default:
+			return blist_node_compare_position(n1, n2);
 			break;
 	}
 
@@ -1867,6 +1889,7 @@ blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2)
 				return ret;
 			break;
 		default:
+			return blist_node_compare_position(n1, n2);
 			break;
 	}
 	ret = blist_node_compare_text(n1, n2);
@@ -2052,6 +2075,7 @@ send_im_select(GntMenuItem *item, gpointer n)
 						fields,
 						_("OK"), G_CALLBACK(send_im_select_cb),
 						_("Cancel"), NULL,
+						NULL, NULL, NULL,
 						NULL);
 }
 

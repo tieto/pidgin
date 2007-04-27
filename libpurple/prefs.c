@@ -438,14 +438,14 @@ purple_prefs_load()
 	/* I introduced a bug in 2.0.0beta2.  This fixes the broken
 	 * scores on upgrade.  This can be removed sometime shortly
 	 * after 2.0.0 final is released. -- rlaager */
-	if (purple_prefs_get_int("/core/status/scores/offline") == -500 &&
-	    purple_prefs_get_int("/core/status/scores/available") == 100 &&
-	    purple_prefs_get_int("/core/status/scores/invisible") == -50 &&
-	    purple_prefs_get_int("/core/status/scores/away") == -100 &&
-	    purple_prefs_get_int("/core/status/scores/extended_away") == -200 &&
-	    purple_prefs_get_int("/core/status/scores/idle") == -400)
+	if (purple_prefs_get_int("/purple/status/scores/offline") == -500 &&
+	    purple_prefs_get_int("/purple/status/scores/available") == 100 &&
+	    purple_prefs_get_int("/purple/status/scores/invisible") == -50 &&
+	    purple_prefs_get_int("/purple/status/scores/away") == -100 &&
+	    purple_prefs_get_int("/purple/status/scores/extended_away") == -200 &&
+	    purple_prefs_get_int("/purple/status/scores/idle") == -400)
 	{
-		purple_prefs_set_int("/core/status/scores/idle", -10);
+		purple_prefs_set_int("/purple/status/scores/idle", -10);
 	}
 
 	return TRUE;
@@ -1120,7 +1120,7 @@ purple_prefs_rename_node(struct purple_pref *oldpref, struct purple_pref *newpre
 		if(newchild == NULL) {
 			/* no rename happened, we weren't able to find the new pref */
 			char *tmpname = pref_full_name(child);
-			purple_debug_error("prefs", "Unable to find rename pref for %s", tmpname);
+			purple_debug_error("prefs", "Unable to find rename pref for %s\n", tmpname);
 			g_free(tmpname);
 		}
 	}
@@ -1328,25 +1328,25 @@ void
 purple_prefs_update_old()
 {
 	/* Remove some no-longer-used prefs */
-	purple_prefs_remove("/core/away/auto_response/enabled");
-	purple_prefs_remove("/core/away/auto_response/idle_only");
-	purple_prefs_remove("/core/away/auto_response/in_active_conv");
-	purple_prefs_remove("/core/away/auto_response/sec_before_resend");
-	purple_prefs_remove("/core/away/auto_response");
-	purple_prefs_remove("/core/away/default_message");
-	purple_prefs_remove("/core/buddies/use_server_alias");
-	purple_prefs_remove("/core/conversations/away_back_on_send");
-	purple_prefs_remove("/core/conversations/send_urls_as_links");
-	purple_prefs_remove("/core/conversations/im/show_login");
-	purple_prefs_remove("/core/conversations/chat/show_join");
-	purple_prefs_remove("/core/conversations/chat/show_leave");
-	purple_prefs_remove("/core/conversations/combine_chat_im");
-	purple_prefs_remove("/core/conversations/use_alias_for_title");
-	purple_prefs_remove("/core/logging/log_signon_signoff");
-	purple_prefs_remove("/core/logging/log_idle_state");
-	purple_prefs_remove("/core/logging/log_away_state");
-	purple_prefs_remove("/core/logging/log_own_states");
-	purple_prefs_remove("/core/status/scores/hidden");
+	purple_prefs_remove("/purple/away/auto_response/enabled");
+	purple_prefs_remove("/purple/away/auto_response/idle_only");
+	purple_prefs_remove("/purple/away/auto_response/in_active_conv");
+	purple_prefs_remove("/purple/away/auto_response/sec_before_resend");
+	purple_prefs_remove("/purple/away/auto_response");
+	purple_prefs_remove("/purple/away/default_message");
+	purple_prefs_remove("/purple/buddies/use_server_alias");
+	purple_prefs_remove("/purple/conversations/away_back_on_send");
+	purple_prefs_remove("/purple/conversations/send_urls_as_links");
+	purple_prefs_remove("/purple/conversations/im/show_login");
+	purple_prefs_remove("/purple/conversations/chat/show_join");
+	purple_prefs_remove("/purple/conversations/chat/show_leave");
+	purple_prefs_remove("/purple/conversations/combine_chat_im");
+	purple_prefs_remove("/purple/conversations/use_alias_for_title");
+	purple_prefs_remove("/purple/logging/log_signon_signoff");
+	purple_prefs_remove("/purple/logging/log_idle_state");
+	purple_prefs_remove("/purple/logging/log_away_state");
+	purple_prefs_remove("/purple/logging/log_own_states");
+	purple_prefs_remove("/purple/status/scores/hidden");
 	purple_prefs_remove("/plugins/core/autorecon/hide_connected_error");
 	purple_prefs_remove("/plugins/core/autorecon/hide_connecting_error");
 	purple_prefs_remove("/plugins/core/autorecon/hide_reconnecting_dialog");
@@ -1354,12 +1354,13 @@ purple_prefs_update_old()
 	purple_prefs_remove("/plugins/core/autorecon");
 
 	/* Convert old sounds while_away pref to new 3-way pref. */
-	if (purple_prefs_exists("/core/sound/while_away") &&
-	    purple_prefs_get_bool("/core/sound/while_away"))
+	if (purple_prefs_exists("/purple/sound/while_away") &&
+	    purple_prefs_get_bool("/purple/sound/while_away"))
 	{
-		purple_prefs_set_int("/core/sound/while_status", 3);
+		purple_prefs_set_int("/purple/sound/while_status", 3);
 	}
-	purple_prefs_remove("/core/sound/while_away");
+	purple_prefs_remove("/purple/sound/while_away");
+	purple_prefs_rename("/core", "/purple");
 }
 
 void *
@@ -1379,52 +1380,52 @@ purple_prefs_init(void)
 
 	purple_prefs_connect_callback(handle, "/", prefs_save_cb, NULL);
 
-	purple_prefs_add_none("/core");
+	purple_prefs_add_none("/purple");
 	purple_prefs_add_none("/plugins");
 	purple_prefs_add_none("/plugins/core");
 	purple_prefs_add_none("/plugins/lopl");
 	purple_prefs_add_none("/plugins/prpl");
 
 	/* Away */
-	purple_prefs_add_none("/core/away");
-	purple_prefs_add_string("/core/away/idle_reporting", "system");
-	purple_prefs_add_bool("/core/away/away_when_idle", TRUE);
-	purple_prefs_add_int("/core/away/mins_before_away", 5);
+	purple_prefs_add_none("/purple/away");
+	purple_prefs_add_string("/purple/away/idle_reporting", "system");
+	purple_prefs_add_bool("/purple/away/away_when_idle", TRUE);
+	purple_prefs_add_int("/purple/away/mins_before_away", 5);
 
 	/* Away -> Auto-Reply */
-	if (!purple_prefs_exists("/core/away/auto_response/enabled") ||
-	    !purple_prefs_exists("/core/away/auto_response/idle_only"))
+	if (!purple_prefs_exists("/purple/away/auto_response/enabled") ||
+	    !purple_prefs_exists("/purple/away/auto_response/idle_only"))
 	{
-		purple_prefs_add_string("/core/away/auto_reply", "awayidle");
+		purple_prefs_add_string("/purple/away/auto_reply", "awayidle");
 	}
 	else
 	{
-		if (!purple_prefs_get_bool("/core/away/auto_response/enabled"))
+		if (!purple_prefs_get_bool("/purple/away/auto_response/enabled"))
 		{
-			purple_prefs_add_string("/core/away/auto_reply", "never");
+			purple_prefs_add_string("/purple/away/auto_reply", "never");
 		}
 		else
 		{
-			if (purple_prefs_get_bool("/core/away/auto_response/idle_only"))
+			if (purple_prefs_get_bool("/purple/away/auto_response/idle_only"))
 			{
-				purple_prefs_add_string("/core/away/auto_reply", "awayidle");
+				purple_prefs_add_string("/purple/away/auto_reply", "awayidle");
 			}
 			else
 			{
-				purple_prefs_add_string("/core/away/auto_reply", "away");
+				purple_prefs_add_string("/purple/away/auto_reply", "away");
 			}
 		}
 	}
 
 	/* Buddies */
-	purple_prefs_add_none("/core/buddies");
+	purple_prefs_add_none("/purple/buddies");
 
 	/* Contact Priority Settings */
-	purple_prefs_add_none("/core/contact");
-	purple_prefs_add_bool("/core/contact/last_match", FALSE);
-	purple_prefs_remove("/core/contact/offline_score");
-	purple_prefs_remove("/core/contact/away_score");
-	purple_prefs_remove("/core/contact/idle_score");
+	purple_prefs_add_none("/purple/contact");
+	purple_prefs_add_bool("/purple/contact/last_match", FALSE);
+	purple_prefs_remove("/purple/contact/offline_score");
+	purple_prefs_remove("/purple/contact/away_score");
+	purple_prefs_remove("/purple/contact/idle_score");
 }
 
 void

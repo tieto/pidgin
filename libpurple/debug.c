@@ -63,8 +63,8 @@ purple_debug_vargs(PurpleDebugLevel level, const char *category,
 		gchar *ts_s;
 
 		if ((category != NULL) &&
-			(purple_prefs_exists("/core/debug/timestamps")) &&
-			(purple_prefs_get_bool("/core/debug/timestamps"))) {
+			(purple_prefs_exists("/purple/debug/timestamps")) &&
+			(purple_prefs_get_bool("/purple/debug/timestamps"))) {
 			const char *mdate;
 
 			time_t mtime = time(NULL);
@@ -189,11 +189,11 @@ purple_debug_get_ui_ops(void)
 void
 purple_debug_init(void)
 {
-	purple_prefs_add_none("/core/debug");
+	purple_prefs_add_none("/purple/debug");
 
 	/*
 	 * This pref is currently used by both the console
 	 * output and the debug window output.
 	 */
-	purple_prefs_add_bool("/core/debug/timestamps", FALSE);
+	purple_prefs_add_bool("/purple/debug/timestamps", FALSE);
 }

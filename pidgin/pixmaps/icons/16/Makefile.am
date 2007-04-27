@@ -2,7 +2,7 @@ SUBDIRS = scalable
 
 EXTRA_DIST = pidgin.png 
 
-pidginiconspixdir = $(datadir)/pixmaps/pidgin/icons/16
+pidginiconspixdir = $(datadir)/icons/hicolor/16x16/apps
 
 pidginiconspix_DATA = $(EXTRA_DIST)
 

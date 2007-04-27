@@ -373,8 +373,8 @@ void silcpurple_show_public_key(SilcPurple sg,
 
 	purple_request_action(sg->gc, _("Public Key Information"),
 			    _("Public Key Information"),
-			    buf, 0, context, 1,
-			    _("Close"), callback);
+			    buf, 0, purple_connection_get_account(sg->gc),
+				NULL, NULL, context, 1, _("Close"), callback);
 
 	g_free(buf);
 	silc_free(fingerprint);
@@ -676,9 +676,9 @@ SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
 		}
 
 		id = g_datalist_get_data(&attribs, "id");
-		if (id && (image = purple_imgstore_get(atoi(id)))) {
+		if (id && (image = purple_imgstore_find_by_id(atoi(id)))) {
 			unsigned long imglen = purple_imgstore_get_size(image);
-			gpointer img = purple_imgstore_get_data(image);
+			gconstpointer img = purple_imgstore_get_data(image);
 
 			p = silc_mime_alloc();
 

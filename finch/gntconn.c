@@ -43,6 +43,7 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 			act, text);
 
 	purple_request_action(account, _("Connection Error"), primary, secondary, 1,
+						account, NULL, NULL,
 						account, 2,
 						_("OK"), NULL,
 						_("Connect"),

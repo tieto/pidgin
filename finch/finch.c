@@ -272,8 +272,31 @@ init_libpurple(int argc, char **argv)
 	 * Fire up this baby.
 	 */
 
-	/* Because we don't want debug-messages to show up and corrup the display */
+	/* We don't want debug-messages to show up and corrupt the display */
 	purple_debug_set_enabled(debug_enabled);
+
+	/* If we're using a custom configuration directory, we
+	 * do NOT want to migrate, or weird things will happen. */
+	if (opt_config_dir_arg == NULL)
+	{
+		if (!purple_core_migrate())
+		{
+			char *old = g_strconcat(purple_home_dir(),
+			                        G_DIR_SEPARATOR_S ".gaim", NULL);
+			char *text = g_strdup_printf(_(
+				"%s encountered errors migrating your settings "
+				"from %s to %s. Please investigate and complete the "
+				"migration by hand."), _("Finch"),
+				old, purple_user_dir());
+
+			g_free(old);
+
+			purple_print_utf8_to_console(stderr, text);
+			g_free(text);
+
+			return 0;
+		}
+	}
 
 	purple_core_set_ui_ops(gnt_core_get_ui_ops());
 	purple_eventloop_set_ui_ops(gnt_eventloop_get_ui_ops());
@@ -300,9 +323,11 @@ init_libpurple(int argc, char **argv)
 	/* TODO: Move prefs loading into purple_prefs_init() */
 	purple_prefs_load();
 	purple_prefs_update_old();
+	purple_prefs_rename("/gaim/gnt", "/finch");
+	purple_prefs_rename("/purple/gnt", "/finch");
 
 	/* load plugins we had when we quit */
-	purple_plugins_load_saved("/purple/gnt/plugins/loaded");
+	purple_plugins_load_saved("/finch/plugins/loaded");
 
 	/* TODO: Move pounces loading into purple_pounces_init() */
 	purple_pounces_load();
@@ -326,7 +351,7 @@ init_libpurple(int argc, char **argv)
 	else
 	{
 		/* Everything is good to go--sign on already */
-		if (!purple_prefs_get_bool("/core/savedstatus/startup_current_status"))
+		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
 			purple_savedstatus_activate(purple_savedstatus_get_startup());
 		purple_accounts_restore_current_statuses();
 	}
