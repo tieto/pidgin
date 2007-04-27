@@ -792,6 +792,8 @@ load_accounts(void)
 	}
 
 	xmlnode_free(node);
+
+	purple_buddy_icons_account_loaded_cb();
 }
 
 
