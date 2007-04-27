@@ -114,6 +114,7 @@ static void update_buddy_display(PurpleBuddy *buddy, FinchBlist *ggblist);
 static void account_signed_on_cb(void);
 
 /* Sort functions */
+static int blist_node_compare_position(PurpleBlistNode *n1, PurpleBlistNode *n2);
 static int blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2);
 static int blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2);
 static int blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2);
@@ -1778,6 +1779,15 @@ savedstatus_changed(PurpleSavedStatus *now, PurpleSavedStatus *old)
 }
 
 static int
+blist_node_compare_position(PurpleBlistNode *n1, PurpleBlistNode *n2)
+{
+	while ((n1 = n1->prev) != NULL)
+		if (n1 == n2)
+			return 1;
+	return -1;
+}
+
+static int
 blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2)
 {
 	const char *s1, *s2;
@@ -1788,10 +1798,6 @@ blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	
 	switch (n1->type)
 	{
-		case PURPLE_BLIST_GROUP_NODE:
-			s1 = ((PurpleGroup*)n1)->name;
-			s2 = ((PurpleGroup*)n2)->name;
-			break;
 		case PURPLE_BLIST_CHAT_NODE:
 			s1 = purple_chat_get_name((PurpleChat*)n1);
 			s2 = purple_chat_get_name((PurpleChat*)n2);
@@ -1805,7 +1811,7 @@ blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2)
 			s2 = purple_contact_get_alias((PurpleContact*)n2);
 			break;
 		default:
-			return -1;
+			return blist_node_compare_position(n1, n2);
 	}
 
 	us1 = g_utf8_strup(s1, -1);
@@ -1836,6 +1842,7 @@ blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2)
 				return ret;
 			break;
 		default:
+			return blist_node_compare_position(n1, n2);
 			break;
 	}
 
@@ -1882,6 +1889,7 @@ blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2)
 				return ret;
 			break;
 		default:
+			return blist_node_compare_position(n1, n2);
 			break;
 	}
 	ret = blist_node_compare_text(n1, n2);
