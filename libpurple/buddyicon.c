@@ -98,6 +98,7 @@ purple_buddy_icon_data_calculate_filename(guchar *icon_data, size_t icon_len)
 {
 	PurpleCipherContext *context;
 	gchar digest[41];
+	const char *ext;
 
 	context = purple_cipher_context_new_by_name("sha1", NULL);
 	if (context == NULL)
@@ -115,9 +116,10 @@ purple_buddy_icon_data_calculate_filename(guchar *icon_data, size_t icon_len)
 	}
 	purple_cipher_context_destroy(context);
 
+	ext = purple_util_get_image_extension(icon_data, icon_len);
+
 	/* Return the filename */
-	return g_strdup_printf("%s.%s", digest,
-	                       purple_util_get_image_extension(icon_data, icon_len));
+	return g_strdup_printf("%s%s%s", digest, ext ? "." : "", ext ? ext : "");
 }
 
 static void
