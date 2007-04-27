@@ -106,9 +106,9 @@ msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 						 long long size)
 {
 	/* We can only have one data source at a time. */
-	g_return_if_fail(slpmsg->buffer);
-	g_return_if_fail(slpmsg->img);
-	g_return_if_fail(slpmsg->fp);
+	g_return_if_fail(slpmsg->buffer == NULL);
+	g_return_if_fail(slpmsg->img == NULL);
+	g_return_if_fail(slpmsg->fp == NULL);
 
 	if (body != NULL)
 		slpmsg->buffer = g_memdup(body, size);
@@ -122,9 +122,9 @@ void
 msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img)
 {
 	/* We can only have one data source at a time. */
-	g_return_if_fail(slpmsg->buffer);
-	g_return_if_fail(slpmsg->img);
-	g_return_if_fail(slpmsg->fp);
+	g_return_if_fail(slpmsg->buffer == NULL);
+	g_return_if_fail(slpmsg->img == NULL);
+	g_return_if_fail(slpmsg->fp == NULL);
 
 	slpmsg->img = purple_imgstore_ref(img);
 	slpmsg->buffer = (guchar *)purple_imgstore_get_data(img);
@@ -137,9 +137,9 @@ msn_slpmsg_open_file(MsnSlpMessage *slpmsg, const char *file_name)
 	struct stat st;
 
 	/* We can only have one data source at a time. */
-	g_return_if_fail(slpmsg->buffer);
-	g_return_if_fail(slpmsg->img);
-	g_return_if_fail(slpmsg->fp);
+	g_return_if_fail(slpmsg->buffer == NULL);
+	g_return_if_fail(slpmsg->img == NULL);
+	g_return_if_fail(slpmsg->fp == NULL);
 
 	slpmsg->fp = g_fopen(file_name, "rb");
 
