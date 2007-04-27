@@ -6,6 +6,7 @@
 #include "config.h"
 
 #include <ctype.h>
+#include <gmodule.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -47,6 +48,8 @@ static void gnt_wm_win_moved(GntWM *wm, GntNode *node);
 static void gnt_wm_give_focus(GntWM *wm, GntWidget *widget);
 static void update_window_in_list(GntWM *wm, GntWidget *wid);
 static void shift_window(GntWM *wm, GntWidget *widget, int dir);
+static gboolean workspace_next(GntBindable *wm, GList *n);
+static gboolean workspace_prev(GntBindable *wm, GList *n);
 
 static gboolean write_already(gpointer data);
 static int write_timeout;
@@ -70,61 +73,8 @@ free_node(gpointer data)
 	g_free(node);
 }
 
-static void
-draw_taskbar(GntWM *wm, gboolean reposition)
-{
-	static WINDOW *taskbar = NULL;
-	GList *iter;
-	int n, width = 0;
-	int i;
-
-	if (taskbar == NULL) {
-		taskbar = newwin(1, getmaxx(stdscr), getmaxy(stdscr) - 1, 0);
-	} else if (reposition) {
-		int Y_MAX = getmaxy(stdscr) - 1;
-		mvwin(taskbar, Y_MAX, 0);
-	}
-
-	wbkgdset(taskbar, '\0' | COLOR_PAIR(GNT_COLOR_NORMAL));
-	werase(taskbar);
-
-	n = g_list_length(wm->list);
-	if (n)
-		width = getmaxx(stdscr) / n;
-
-	for (i = 0, iter = wm->list; iter; iter = iter->next, i++)
-	{
-		GntWidget *w = iter->data;
-		int color;
-		const char *title;
-
-		if (w == wm->ordered->data) {
-			/* This is the current window in focus */
-			color = GNT_COLOR_TITLE;
-		} else if (GNT_WIDGET_IS_FLAG_SET(w, GNT_WIDGET_URGENT)) {
-			/* This is a window with the URGENT hint set */
-			color = GNT_COLOR_URGENT;
-		} else {
-			color = GNT_COLOR_NORMAL;
-		}
-		wbkgdset(taskbar, '\0' | COLOR_PAIR(color));
-		if (iter->next)
-			mvwhline(taskbar, 0, width * i, ' ' | COLOR_PAIR(color), width);
-		else
-			mvwhline(taskbar, 0, width * i, ' ' | COLOR_PAIR(color), getmaxx(stdscr) - width * i);
-		title = GNT_BOX(w)->title;
-		mvwprintw(taskbar, 0, width * i, "%s", title ? title : "<gnt>");
-		if (i)
-			mvwaddch(taskbar, 0, width *i - 1, ACS_VLINE | A_STANDOUT | COLOR_PAIR(GNT_COLOR_NORMAL));
-
-		update_window_in_list(wm, w);
-	}
-
-	wrefresh(taskbar);
-}
-
-static void
-copy_win(GntWidget *widget, GntNode *node)
+void
+gnt_wm_copy_win(GntWidget *widget, GntNode *node)
 {
 	WINDOW *src, *dst;
 	int shadow;
@@ -265,9 +215,17 @@ static void
 gnt_wm_init(GTypeInstance *instance, gpointer class)
 {
 	GntWM *wm = GNT_WM(instance);
-	wm->list = NULL;
-	wm->ordered = NULL;
+	wm->workspaces = NULL;
+	gnt_style_read_workspaces(wm);
+	if (wm->workspaces == NULL) {
+		wm->cws = g_object_new(GNT_TYPE_WS, NULL);
+		gnt_ws_set_name(wm->cws, "default");
+		gnt_wm_add_workspace(wm, wm->cws);
+	} else {
+		wm->cws = wm->workspaces->data;
+	}
 	wm->event_stack = FALSE;
+	wm->tagged = NULL;
 	wm->windows = NULL;
 	wm->actions = NULL;
 	wm->nodes = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, free_node);
@@ -276,6 +234,7 @@ gnt_wm_init(GTypeInstance *instance, gpointer class)
 		read_window_positions(wm);
 	g_timeout_add(IDLE_CHECK_INTERVAL * 1000, check_idle, NULL);
 	time(&last_active_time);
+	gnt_wm_switch_workspace(wm, 0);
 }
 
 static void
@@ -287,23 +246,23 @@ switch_window(GntWM *wm, int direction)
 	if (wm->_list.window || wm->menu)
 		return;
 
-	if (!wm->ordered || !wm->ordered->next)
+	if (!wm->cws->ordered || !wm->cws->ordered->next)
 		return;
 
-	w = wm->ordered->data;
-	pos = g_list_index(wm->list, w);
+	w = wm->cws->ordered->data;
+	pos = g_list_index(wm->cws->list, w);
 	pos += direction;
 
 	if (pos < 0)
-		wid = g_list_last(wm->list)->data;
-	else if (pos >= g_list_length(wm->list))
-		wid = wm->list->data;
+		wid = g_list_last(wm->cws->list)->data;
+	else if (pos >= g_list_length(wm->cws->list))
+		wid = wm->cws->list->data;
 	else if (pos >= 0)
-		wid = g_list_nth_data(wm->list, pos);
+		wid = g_list_nth_data(wm->cws->list, pos);
 
-	wm->ordered = g_list_bring_to_front(wm->ordered, wid);
+	wm->cws->ordered = g_list_bring_to_front(wm->cws->ordered, wid);
 
-	gnt_wm_raise_window(wm, wm->ordered->data);
+	gnt_wm_raise_window(wm, wm->cws->ordered->data);
 
 	if (w != wid) {
 		gnt_widget_set_focus(w, FALSE);
@@ -334,7 +293,7 @@ switch_window_n(GntBindable *bind, GList *list)
 	GList *l;
 	int n;
 
-	if (!wm->ordered)
+	if (!wm->cws->ordered)
 		return TRUE;
 
 	if (list)
@@ -342,9 +301,9 @@ switch_window_n(GntBindable *bind, GList *list)
 	else
 		n = 0;
 
-	w = wm->ordered->data;
+	w = wm->cws->ordered->data;
 
-	if ((l = g_list_nth(wm->list, n)) != NULL)
+	if ((l = g_list_nth(wm->cws->list, n)) != NULL)
 	{
 		gnt_wm_raise_window(wm, l->data);
 	}
@@ -363,17 +322,17 @@ window_scroll_up(GntBindable *bindable, GList *null)
 	GntWidget *window;
 	GntNode *node;
 
-	if (!wm->ordered)
+	if (!wm->cws->ordered)
 		return TRUE;
 
-	window = wm->ordered->data;
+	window = wm->cws->ordered->data;
 	node = g_hash_table_lookup(wm->nodes, window);
 	if (!node)
 		return TRUE;
 
 	if (node->scroll) {
 		node->scroll--;
-		copy_win(window, node);
+		gnt_wm_copy_win(window, node);
 		update_screen(wm);
 	}
 	return TRUE;
@@ -387,10 +346,10 @@ window_scroll_down(GntBindable *bindable, GList *null)
 	GntNode *node;
 	int w, h;
 
-	if (!wm->ordered)
+	if (!wm->cws->ordered)
 		return TRUE;
 
-	window = wm->ordered->data;
+	window = wm->cws->ordered->data;
 	node = g_hash_table_lookup(wm->nodes, window);
 	if (!node)
 		return TRUE;
@@ -398,7 +357,7 @@ window_scroll_down(GntBindable *bindable, GList *null)
 	gnt_widget_get_size(window, &w, &h);
 	if (h - node->scroll > getmaxy(node->window)) {
 		node->scroll++;
-		copy_win(window, node);
+		gnt_wm_copy_win(window, node);
 		update_screen(wm);
 	}
 	return TRUE;
@@ -412,8 +371,8 @@ window_close(GntBindable *bindable, GList *null)
 	if (wm->_list.window)
 		return TRUE;
 
-	if (wm->ordered) {
-		gnt_widget_destroy(wm->ordered->data);
+	if (wm->cws->ordered) {
+		gnt_widget_destroy(wm->cws->ordered->data);
 	}
 
 	return TRUE;
@@ -426,10 +385,10 @@ help_for_widget(GntBindable *bindable, GList *null)
 	GntWidget *widget, *tree, *win, *active;
 	char *title;
 
-	if (!wm->ordered)
+	if (!wm->cws->ordered)
 		return TRUE;
 
-	widget = wm->ordered->data;
+	widget = wm->cws->ordered->data;
 	if (!GNT_IS_BOX(widget))
 		return TRUE;
 	active = GNT_BOX(widget)->active;
@@ -478,7 +437,7 @@ window_list_activate(GntTree *tree, GntWM *wm)
 {
 	GntWidget *widget = gnt_tree_get_selection_data(GNT_TREE(tree));
 
-	if (!wm->ordered || !widget)
+	if (!wm->cws->ordered || !widget)
 		return;
 
 	gnt_widget_destroy(wm->_list.window);
@@ -490,7 +449,7 @@ populate_window_list(GntWM *wm)
 {
 	GList *iter;
 	GntTree *tree = GNT_TREE(wm->windows->tree);
-	for (iter = wm->list; iter; iter = iter->next) {
+	for (iter = wm->cws->list; iter; iter = iter->next) {
 		GntBox *box = GNT_BOX(iter->data);
 
 		gnt_tree_add_row_last(tree, box,
@@ -502,7 +461,7 @@ populate_window_list(GntWM *wm)
 static gboolean
 window_list_key_pressed(GntWidget *widget, const char *text, GntWM *wm)
 {
-	if (text[1] == 0 && wm->ordered) {
+	if (text[1] == 0 && wm->cws->ordered) {
 		GntWidget *sel = gnt_tree_get_selection_data(GNT_TREE(widget));
 		switch (text[0]) {
 			case '-':
@@ -533,7 +492,7 @@ window_list(GntBindable *bindable, GList *null)
 	if (wm->_list.window || wm->menu)
 		return TRUE;
 
-	if (!wm->ordered)
+	if (!wm->cws->ordered)
 		return TRUE;
 
 	setup__list(wm);
@@ -546,7 +505,7 @@ window_list(GntBindable *bindable, GList *null)
 	
 	populate_window_list(wm);
 
-	gnt_tree_set_selected(GNT_TREE(tree), wm->ordered->data);
+	gnt_tree_set_selected(GNT_TREE(tree), wm->cws->ordered->data);
 	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(window_list_activate), wm);
 	g_signal_connect(G_OBJECT(tree), "key_pressed", G_CALLBACK(window_list_key_pressed), wm);
 
@@ -673,7 +632,7 @@ dump_screen(GntBindable *bindable, GList *null)
 static void
 shift_window(GntWM *wm, GntWidget *widget, int dir)
 {
-	GList *all = wm->list;
+	GList *all = wm->cws->list;
 	GList *list = g_list_find(all, widget);
 	int length, pos;
 	if (!list)
@@ -693,8 +652,8 @@ shift_window(GntWM *wm, GntWidget *widget, int dir)
 
 	all = g_list_insert(all, widget, pos);
 	all = g_list_delete_link(all, list);
-	wm->list = all;
-	draw_taskbar(wm, FALSE);
+	wm->cws->list = all;
+	gnt_ws_draw_taskbar(wm->cws, FALSE);
 }
 
 static gboolean
@@ -704,7 +663,7 @@ shift_left(GntBindable *bindable, GList *null)
 	if (wm->_list.window)
 		return TRUE;
 
-	shift_window(wm, wm->ordered->data, -1);
+	shift_window(wm, wm->cws->ordered->data, -1);
 	return TRUE;
 }
 
@@ -715,7 +674,7 @@ shift_right(GntBindable *bindable, GList *null)
 	if (wm->_list.window)
 		return TRUE;
 
-	shift_window(wm, wm->ordered->data, 1);
+	shift_window(wm, wm->cws->ordered->data, 1);
 	return TRUE;
 }
 
@@ -839,7 +798,7 @@ window_reverse(GntWidget *win, gboolean set, GntWM *wm)
 	for (i = 0; i < h; i += reverse_char(d, i, 0, set));
 	for (i = 0; i < h; i += reverse_char(d, i, w-1, set));
 
-	copy_win(win, g_hash_table_lookup(wm->nodes, win));
+	gnt_wm_copy_win(win, g_hash_table_lookup(wm->nodes, win));
 	update_screen(wm);
 }
 
@@ -849,11 +808,11 @@ start_move(GntBindable *bindable, GList *null)
 	GntWM *wm = GNT_WM(bindable);
 	if (wm->_list.window || wm->menu)
 		return TRUE;
-	if (!wm->ordered)
+	if (!wm->cws->ordered)
 		return TRUE;
 
 	wm->mode = GNT_KP_MODE_MOVE;
-	window_reverse(GNT_WIDGET(wm->ordered->data), TRUE, wm);
+	window_reverse(GNT_WIDGET(wm->cws->ordered->data), TRUE, wm);
 
 	return TRUE;
 }
@@ -864,11 +823,11 @@ start_resize(GntBindable *bindable, GList *null)
 	GntWM *wm = GNT_WM(bindable);
 	if (wm->_list.window || wm->menu)
 		return TRUE;
-	if (!wm->ordered)
+	if (!wm->cws->ordered)
 		return TRUE;
 
 	wm->mode = GNT_KP_MODE_RESIZE;
-	window_reverse(GNT_WIDGET(wm->ordered->data), TRUE, wm);
+	window_reverse(GNT_WIDGET(wm->cws->ordered->data), TRUE, wm);
 
 	return TRUE;
 }
@@ -900,9 +859,58 @@ refresh_screen(GntBindable *bindable, GList *null)
 
 	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, NULL);
 	update_screen(wm);
-	draw_taskbar(wm, TRUE);
+	gnt_ws_draw_taskbar(wm->cws, TRUE);
 
 	return FALSE;
+}
+
+static void remove_tag(gpointer wid, gpointer wim)
+{
+	GntWM *wm = GNT_WM(wim);
+	GntWidget *w = GNT_WIDGET(wid);
+	wm->tagged = g_list_remove(wm->tagged, w);
+	mvwhline(w->window, 0, 1, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL), 3);
+	gnt_widget_draw(w);
+}
+
+static gboolean
+tag_widget(GntBindable *b, GList *params)
+{
+	GntWM *wm = GNT_WM(b);
+	GntWidget *widget;
+
+	if (!wm->cws->ordered)
+		return FALSE;
+	widget = wm->cws->ordered->data;
+
+	if (g_list_find(wm->tagged, widget)) {
+		remove_tag(widget, wm);
+		return TRUE;
+	}
+
+	wm->tagged = g_list_prepend(wm->tagged, widget);
+	wbkgdset(widget->window, ' ' | COLOR_PAIR(GNT_COLOR_HIGHLIGHT));
+	mvwprintw(widget->window, 0, 1, "[T]");
+	gnt_widget_draw(widget);
+	return TRUE;
+}
+
+static void
+widget_move_ws(gpointer wid, gpointer w)
+{
+	GntWM *wm = GNT_WM(w);
+	gnt_wm_widget_move_workspace(wm, wm->cws, GNT_WIDGET(wid));
+}
+
+static gboolean
+place_tagged(GntBindable *b, GList *params)
+{
+	GntWM *wm = GNT_WM(b);
+	g_list_foreach(wm->tagged, widget_move_ws, wm);
+	g_list_foreach(wm->tagged, remove_tag, wm);
+	g_list_free(wm->tagged);
+	wm->tagged = NULL;
+	return TRUE;
 }
 
 static void
@@ -1039,6 +1047,14 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" GNT_KEY_CTRL_K, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-widget", help_for_widget,
 				"\033" "/", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "workspace-next", workspace_next,
+				"\033" ">", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "workspace-prev", workspace_prev,
+				"\033" "<", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-tag", tag_widget,
+				"\033" "t", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "place-tagged", place_tagged,
+				"\033" "T", NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 
@@ -1081,6 +1097,104 @@ gnt_wm_get_gtype(void)
 
 	return type;
 }
+
+void
+gnt_wm_add_workspace(GntWM *wm, GntWS *ws)
+{
+	wm->workspaces = g_list_append(wm->workspaces, ws);
+}
+
+gboolean
+gnt_wm_switch_workspace(GntWM *wm, gint n)
+{
+	GntWS *s = g_list_nth_data(wm->workspaces, n);
+	if (!s)
+		return FALSE;
+
+	if (wm->_list.window) {
+		gnt_widget_destroy(wm->_list.window);
+	}
+	gnt_ws_hide(wm->cws, wm->nodes);
+	wm->cws = s;
+	gnt_ws_show(wm->cws, wm->nodes);
+
+	gnt_ws_draw_taskbar(wm->cws, TRUE);
+	update_screen(wm);
+	if (wm->cws->ordered)
+		gnt_widget_set_focus(wm->cws->ordered->data, TRUE);
+	return TRUE;
+}
+
+gboolean
+gnt_wm_switch_workspace_prev(GntWM *wm)
+{
+	int n = g_list_index(wm->workspaces, wm->cws);
+	return gnt_wm_switch_workspace(wm, --n);
+}
+
+gboolean
+gnt_wm_switch_workspace_next(GntWM *wm)
+{
+	int n = g_list_index(wm->workspaces, wm->cws);
+	return gnt_wm_switch_workspace(wm, ++n);
+}
+
+static gboolean
+workspace_next(GntBindable *wm, GList *n)
+{
+	return gnt_wm_switch_workspace_next(GNT_WM(wm));
+}
+
+static gboolean
+workspace_prev(GntBindable *wm, GList *n)
+{
+	return gnt_wm_switch_workspace_prev(GNT_WM(wm));
+}
+
+void
+gnt_wm_widget_move_workspace(GntWM *wm, GntWS *neww, GntWidget *widget)
+{
+	GntWS *oldw = gnt_wm_widget_find_workspace(wm, widget);
+	if (!oldw || oldw == neww)
+		return;
+	gnt_ws_remove_widget(oldw, widget);
+	gnt_ws_add_widget(neww, widget);
+	if (neww == wm->cws) {
+		gnt_ws_widget_show(widget, wm->nodes);
+	} else {
+		gnt_ws_widget_hide(widget, wm->nodes);
+	}
+}
+
+static gint widget_in_workspace(gconstpointer workspace, gconstpointer wid)
+{
+	GntWS *s = (GntWS *)workspace;
+	if (s->list && g_list_find(s->list, wid))
+		return 0;
+	return 1;
+}
+
+GntWS *gnt_wm_widget_find_workspace(GntWM *wm, GntWidget *widget)
+{
+	GList *l = g_list_find_custom(wm->workspaces, widget, widget_in_workspace);
+	if (l)
+		return l->data;
+	return NULL;
+}
+
+static void free_workspaces(gpointer data, gpointer n)
+{
+	GntWS *s = data;
+	g_free(s->name);
+}
+
+void gnt_wm_set_workspaces(GntWM *wm, GList *workspaces)
+{
+	g_list_foreach(wm->workspaces, free_workspaces, NULL);
+	wm->workspaces = workspaces;
+	gnt_wm_switch_workspace(wm, 0);
+}
+
 static void
 update_window_in_list(GntWM *wm, GntWidget *wid)
 {
@@ -1089,7 +1203,7 @@ update_window_in_list(GntWM *wm, GntWidget *wid)
 	if (wm->windows == NULL)
 		return;
 
-	if (wid == wm->ordered->data)
+	if (wid == wm->cws->ordered->data)
 		flag |= GNT_TEXT_FLAG_DIM;
 	else if (GNT_WIDGET_IS_FLAG_SET(wid, GNT_WIDGET_URGENT))
 		flag |= GNT_TEXT_FLAG_BOLD;
@@ -1143,7 +1257,7 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 		w = MIN(w, maxx);
 		h = MIN(h, maxy);
 		node->window = newwin(h + shadow, w + shadow, y, x);
-		copy_win(widget, node);
+		gnt_wm_copy_win(widget, node);
 	}
 #endif
 
@@ -1154,15 +1268,15 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 		if (node->me != wm->_list.window) {
 			GntWidget *w = NULL;
 
-			if (wm->ordered)
-				w = wm->ordered->data;
+			if (wm->cws->ordered)
+				w = wm->cws->ordered->data;
 
-			wm->list = g_list_append(wm->list, widget);
+			wm->cws->list = g_list_append(wm->cws->list, widget);
 
 			if (wm->event_stack)
-				wm->ordered = g_list_prepend(wm->ordered, widget);
+				wm->cws->ordered = g_list_prepend(wm->cws->ordered, widget);
 			else
-				wm->ordered = g_list_append(wm->ordered, widget);
+				wm->cws->ordered = g_list_append(wm->cws->ordered, widget);
 
 			gnt_widget_set_focus(widget, TRUE);
 			if (w)
@@ -1213,7 +1327,7 @@ void gnt_wm_new_window(GntWM *wm, GntWidget *widget)
 	}
 
 	update_screen(wm);
-	draw_taskbar(wm, FALSE);
+	gnt_ws_draw_taskbar(wm->cws, FALSE);
 }
 
 void gnt_wm_window_decorate(GntWM *wm, GntWidget *widget)
@@ -1223,8 +1337,11 @@ void gnt_wm_window_decorate(GntWM *wm, GntWidget *widget)
 
 void gnt_wm_window_close(GntWM *wm, GntWidget *widget)
 {
+	GntWS *s;
 	GntNode *node;
 	int pos;
+
+	s = gnt_wm_widget_find_workspace(wm, widget);
 
 	if ((node = g_hash_table_lookup(wm->nodes, widget)) == NULL)
 		return;
@@ -1236,18 +1353,20 @@ void gnt_wm_window_close(GntWM *wm, GntWidget *widget)
 		gnt_tree_remove(GNT_TREE(wm->windows->tree), widget);
 	}
 
-	pos = g_list_index(wm->list, widget);
+	if (s) {
+		pos = g_list_index(s->list, widget);
 
-	if (pos != -1) {
-		wm->list = g_list_remove(wm->list, widget);
-		wm->ordered = g_list_remove(wm->ordered, widget);
+		if (pos != -1) {
+			s->list = g_list_remove(s->list, widget);
+			s->ordered = g_list_remove(s->ordered, widget);
 
-		if (wm->ordered)
-			gnt_wm_raise_window(wm, wm->ordered->data);
+			if (s->ordered && wm->cws == s)
+				gnt_wm_raise_window(wm, s->ordered->data);
+		}
 	}
 
 	update_screen(wm);
-	draw_taskbar(wm, FALSE);
+	gnt_ws_draw_taskbar(wm->cws, FALSE);
 }
 
 time_t gnt_wm_get_idle_time()
@@ -1268,10 +1387,10 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 	}
 
 	/* Do some manual checking */
-	if (wm->ordered && wm->mode != GNT_KP_MODE_NORMAL) {
+	if (wm->cws->ordered && wm->mode != GNT_KP_MODE_NORMAL) {
 		int xmin = 0, ymin = 0, xmax = getmaxx(stdscr), ymax = getmaxy(stdscr) - 1;
 		int x, y, w, h;
-		GntWidget *widget = GNT_WIDGET(wm->ordered->data);
+		GntWidget *widget = GNT_WIDGET(wm->cws->ordered->data);
 		int ox, oy, ow, oh;
 
 		gnt_widget_get_position(widget, &x, &y);
@@ -1347,8 +1466,8 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 		ret = gnt_widget_key_pressed(GNT_WIDGET(wm->menu), keys);
 	else if (wm->_list.window)
 		ret = gnt_widget_key_pressed(wm->_list.window, keys);
-	else if (wm->ordered)
-		ret = gnt_widget_key_pressed(GNT_WIDGET(wm->ordered->data), keys);
+	else if (wm->cws->ordered)
+		ret = gnt_widget_key_pressed(GNT_WIDGET(wm->cws->ordered->data), keys);
 	return ret;
 }
 
@@ -1482,9 +1601,9 @@ gnt_wm_give_focus(GntWM *wm, GntWidget *widget)
 		return;
 	
 	if (widget != wm->_list.window && !GNT_IS_MENU(widget) &&
-				wm->ordered->data != widget) {
-		GntWidget *w = wm->ordered->data;
-		wm->ordered = g_list_bring_to_front(wm->ordered, widget);
+				wm->cws->ordered->data != widget) {
+		GntWidget *w = wm->cws->ordered->data;
+		wm->cws->ordered = g_list_bring_to_front(wm->cws->ordered, widget);
 		gnt_widget_set_focus(w, FALSE);
 	}
 
@@ -1498,27 +1617,31 @@ gnt_wm_give_focus(GntWM *wm, GntWidget *widget)
 		top_panel(nd->panel);
 	}
 	update_screen(wm);
-	draw_taskbar(wm, FALSE);
+	gnt_ws_draw_taskbar(wm->cws, FALSE);
 }
 
 void gnt_wm_update_window(GntWM *wm, GntWidget *widget)
 {
-	GntNode *node;
+	GntNode *node = NULL;
+	GntWS *ws;
 
 	while (widget->parent)
 		widget = widget->parent;
 	if (!GNT_IS_MENU(widget))
 		gnt_box_sync_children(GNT_BOX(widget));
 
+	ws = gnt_wm_widget_find_workspace(wm, widget);
 	node = g_hash_table_lookup(wm->nodes, widget);
 	if (node == NULL) {
 		gnt_wm_new_window(wm, widget);
 	} else
 		g_signal_emit(wm, signals[SIG_UPDATE_WIN], 0, node);
 
-	copy_win(widget, node);
-	update_screen(wm);
-	draw_taskbar(wm, FALSE);
+	if (ws == wm->cws || GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_TRANSIENT)) {
+		gnt_wm_copy_win(widget, node);
+		update_screen(wm);
+		gnt_ws_draw_taskbar(wm->cws, FALSE);
+	}
 }
 
 gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntWidget *widget)

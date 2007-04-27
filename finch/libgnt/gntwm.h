@@ -1,6 +1,9 @@
+#ifndef GNTWM_H
+#define GNTWM_H
 
 #include "gntwidget.h"
 #include "gntmenu.h"
+#include "gntws.h"
 
 #include <panel.h>
 #include <time.h>
@@ -51,8 +54,9 @@ struct _GnttWM
 
 	GMainLoop *loop;
 
-	GList *list;      /* List of windows ordered on their creation time */
-	GList *ordered;   /* List of windows ordered on their focus */
+	GList *workspaces;
+	GList *tagged; /* tagged windows */
+	GntWS *cws;
 
 	struct {
 		GntWidget *window;
@@ -146,6 +150,15 @@ G_BEGIN_DECLS
 
 GType gnt_wm_get_gtype(void);
 
+void gnt_wm_add_workspace(GntWM *wm, GntWS *ws);
+
+gboolean gnt_wm_switch_workspace(GntWM *wm, gint n);
+gboolean gnt_wm_switch_workspace_prev(GntWM *wm);
+gboolean gnt_wm_switch_workspace_next(GntWM *wm);
+void gnt_wm_widget_move_workspace(GntWM *wm, GntWS *neww, GntWidget *widget);
+void gnt_wm_set_workspaces(GntWM *wm, GList *workspaces);
+GntWS *gnt_wm_widget_find_workspace(GntWM *wm, GntWidget *widget);
+
 void gnt_wm_new_window(GntWM *wm, GntWidget *widget);
 
 void gnt_wm_window_decorate(GntWM *wm, GntWidget *widget);
@@ -166,6 +179,10 @@ void gnt_wm_raise_window(GntWM *wm, GntWidget *widget);
 
 void gnt_wm_set_event_stack(GntWM *wm, gboolean set);
 
+void gnt_wm_copy_win(GntWidget *widget, GntNode *node);
+
 time_t gnt_wm_get_idle_time(void);
 
 G_END_DECLS
+
+#endif

@@ -1,5 +1,6 @@
 #include "gntstyle.h"
 #include "gntcolors.h"
+#include "gntws.h"
 
 #include <ctype.h>
 #include <string.h>
@@ -87,6 +88,31 @@ parse_key(const char *key)
 	return (char *)gnt_key_translate(key);
 }
 
+void gnt_style_read_workspaces(GntWM *wm)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	gchar i;
+	gchar *name;
+	if (!g_key_file_has_group(gkfile, "Workspaces")) {
+		printf("SHIT\n");
+		return;
+	}
+
+	for (i = '1'; i <= '9'; i++) {
+		char key[] = "name-1";
+		key[5] = i;
+		name = g_key_file_get_string(gkfile, "Workspaces", key, NULL);
+		if (name) {
+			GntWS *ws = g_object_new(GNT_TYPE_WS, NULL);
+			gnt_ws_set_name(ws, name);
+			gnt_wm_add_workspace(wm, ws);
+			g_free(name);
+		} else {
+			return;
+		}
+	}
+#endif
+}
 void gnt_style_read_actions(GType type, GntBindableClass *klass)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
