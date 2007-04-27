@@ -2570,7 +2570,7 @@ purple_mkstemp(char **fpath, gboolean binary)
 }
 
 const char *
-purple_util_get_image_extension(gpointer data, size_t len)
+purple_util_get_image_extension(gconstpointer data, size_t len)
 {
 	g_return_val_if_fail(data != NULL, NULL);
 	g_return_val_if_fail(len   > 0,    NULL);
@@ -2667,7 +2667,7 @@ purple_running_kde(void)
 gboolean
 purple_running_osx(void)
 {
-#if defined(__APPLE__)	
+#if defined(__APPLE__)
 	return TRUE;
 #else
 	return FALSE;
@@ -4207,7 +4207,7 @@ void purple_restore_default_signal_handlers(void)
 	signal(SIGABRT, SIG_DFL);	/* 6:  abort program */
 
 #ifdef SIGPOLL
-	signal(SIGPOLL,  SIG_DFL);	/* 7:  pollable event (POSIX) */	
+	signal(SIGPOLL,  SIG_DFL);	/* 7:  pollable event (POSIX) */
 #endif /* SIGPOLL */
 
 #ifdef SIGEMT
@@ -4223,7 +4223,7 @@ void purple_restore_default_signal_handlers(void)
 	signal(SIGTERM, SIG_DFL);	/* 15: software termination signal */
 	signal(SIGCHLD, SIG_DFL);	/* 20: child status has changed */
 	signal(SIGXCPU, SIG_DFL);	/* 24: exceeded CPU time limit */
-	signal(SIGXFSZ, SIG_DFL);	/* 25: exceeded file size limit */	
+	signal(SIGXFSZ, SIG_DFL);	/* 25: exceeded file size limit */
 #endif /* HAVE_SIGNAL_H */
 #endif /* !_WIN32 */
 }

@@ -469,7 +469,7 @@ char *purple_markup_get_tag_name(const char *tag);
  * the first character of the entity. If given an unrecognized entity, the function
  * returns @c NULL.
  *
- * Note that this function, unlike purple_unescape_html(), does not search 
+ * Note that this function, unlike purple_unescape_html(), does not search
  * the string for the entity, does not replace the entity, and does not
  * return a newly allocated string.
  *
@@ -606,7 +606,7 @@ FILE *purple_mkstemp(char **path, gboolean binary);
  * @return The appropriate extension, or "icon" if unknown.
  */
 const char *
-purple_util_get_image_extension(gpointer data, size_t len);
+purple_util_get_image_extension(gconstpointer data, size_t len);
 
 /*@}*/
 
