@@ -425,8 +425,7 @@ purple_conversation_destroy(PurpleConversation *conv)
 		purple_conv_im_stop_typing_timeout(conv->u.im);
 		purple_conv_im_stop_send_typed_timeout(conv->u.im);
 
-		if (conv->u.im->icon != NULL)
-			purple_buddy_icon_unref(conv->u.im->icon);
+		purple_buddy_icon_unref(conv->u.im->icon);
 		conv->u.im->icon = NULL;
 
 		PURPLE_DBUS_UNREGISTER_POINTER(conv->u.im);
@@ -941,8 +940,7 @@ purple_conv_im_set_icon(PurpleConvIm *im, PurpleBuddyIcon *icon)
 
 	if (im->icon != icon)
 	{
-		if (im->icon != NULL)
-			purple_buddy_icon_unref(im->icon);
+		purple_buddy_icon_unref(im->icon);
 
 		im->icon = (icon == NULL ? NULL : purple_buddy_icon_ref(icon));
 	}

@@ -78,12 +78,12 @@ url_clicked_cb(GtkWidget *w, const char *uri)
 }
 
 static GtkIMHtmlFuncs gtkimhtml_cbs = {
-	(GtkIMHtmlGetImageFunc)purple_imgstore_get,
+	(GtkIMHtmlGetImageFunc)purple_imgstore_find_by_id,
 	(GtkIMHtmlGetImageDataFunc)purple_imgstore_get_data,
 	(GtkIMHtmlGetImageSizeFunc)purple_imgstore_get_size,
 	(GtkIMHtmlGetImageFilenameFunc)purple_imgstore_get_filename,
-	purple_imgstore_ref,
-	purple_imgstore_unref,
+	purple_imgstore_ref_by_id,
+	purple_imgstore_unref_by_id,
 };
 
 void
@@ -1350,13 +1350,12 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 
 			return;
 		}
-		id = purple_imgstore_add(filedata, size, data->filename);
-		g_free(filedata);
+		id = purple_imgstore_add_with_id(filedata, size, data->filename);
 
 		gtk_text_buffer_get_iter_at_mark(GTK_IMHTML(gtkconv->entry)->text_buffer, &iter,
 						 gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer));
 		gtk_imhtml_insert_image_at_iter(GTK_IMHTML(gtkconv->entry), id, &iter);
-		purple_imgstore_unref(id);
+		purple_imgstore_unref_by_id(id);
 
 		break;
 	}
@@ -2418,15 +2417,14 @@ str_array_match(char **a, char **b)
 }
 #endif
 
-char *
-pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
+gpointer
+pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 {
 	PurplePluginProtocolInfo *prpl_info;
 #if GTK_CHECK_VERSION(2,2,0)
 	char **prpl_formats;
 	int width, height;
 	char **pixbuf_formats = NULL;
-	struct stat st;
 	GdkPixbufFormat *format;
 	GdkPixbuf *pixbuf;
 #if !GTK_CHECK_VERSION(2,4,0)
@@ -2435,28 +2433,11 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 #endif
 	gchar *contents;
 	gsize length;
-	const char *dirname;
-	char *random;
-	char *filename;
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 	g_return_val_if_fail(prpl_info->icon_spec.format != NULL, NULL);
 
-	dirname = purple_buddy_icons_get_cache_dir();
-	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
-		purple_debug_info("buddyicon", "Creating icon cache directory.\n");
-
-		if (g_mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
-			purple_debug_error("buddyicon",
-							 "Unable to create directory %s: %s\n",
-							 dirname, strerror(errno));
-			return NULL;
-		}
-	}
-
-	random = g_strdup_printf("%x", g_random_int());
-	filename = g_build_filename(dirname, random, NULL);
 
 #if GTK_CHECK_VERSION(2,2,0)
 #if GTK_CHECK_VERSION(2,4,0)
@@ -2487,47 +2468,21 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		   prpl_info->icon_spec.max_height >= height)))                   /* The icon is the correct size */
 #endif
 	{
-		FILE *image;
-
 #if GTK_CHECK_VERSION(2,2,0)
 		g_strfreev(prpl_formats);
 		g_strfreev(pixbuf_formats);
 #endif
-
-		/* We don't need to scale the image, so copy it to the cache folder verbatim */
+		/* We don't need to scale the image. */
 
 		contents = NULL;
-		if (!g_file_get_contents(path, &contents, &length, NULL) ||
-		    (image = g_fopen(filename, "wb")) == NULL)
+		if (!g_file_get_contents(path, &contents, &length, NULL))
 		{
-			g_free(random);
-			g_free(filename);
 			g_free(contents);
-#if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
-			g_object_unref(G_OBJECT(pixbuf));
-#endif
-			return NULL;
-		}
-
-		if (fwrite(contents, 1, length, image) != length)
-		{
-			fclose(image);
-			g_unlink(filename);
-
-			g_free(random);
-			g_free(filename);
-			g_free(contents);
-#if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
-			g_object_unref(G_OBJECT(pixbuf));
-#endif
-			return NULL;
-		}
-		fclose(image);
-		g_free(contents);
-
 #if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
 		g_object_unref(G_OBJECT(pixbuf));
 #endif
+			return NULL;
+		}
 	}
 #if GTK_CHECK_VERSION(2,2,0)
 	else
@@ -2536,6 +2491,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		GError *error = NULL;
 		GdkPixbuf *scale;
 		gboolean success = FALSE;
+		char *filename = NULL;
 
 		g_strfreev(pixbuf_formats);
 
@@ -2543,8 +2499,6 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		if (error) {
 			purple_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
 			g_error_free(error);
-			g_free(random);
-			g_free(filename);
 			g_strfreev(prpl_formats);
 			return NULL;
 		}
@@ -2567,6 +2521,17 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		}
 
 		for (i = 0; prpl_formats[i]; i++) {
+			FILE *fp;
+
+			g_free(filename);
+			fp = purple_mkstemp(&filename, TRUE);
+			if (!fp)
+			{
+				g_free(filename);
+				return NULL;
+			}
+			fclose(fp);
+
 			purple_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
 			/* The "compression" param wasn't supported until gdk-pixbuf 2.8.
 			 * Using it in previous versions causes the save to fail (and an assert message).  */
@@ -2595,29 +2560,33 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		g_object_unref(G_OBJECT(pixbuf));
 		if (!success) {
 			purple_debug_error("buddyicon", "Could not convert icon to usable format.\n");
-			g_free(random);
+			return NULL;
+		}
+
+		contents = NULL;
+		if (!g_file_get_contents(filename, &contents, &length, NULL))
+		{
+			purple_debug_error("buddyicon",
+					"Could not read '%s', which we just wrote to disk.\n",
+					filename);
+
+			g_free(contents);
 			g_free(filename);
 			return NULL;
 		}
-	}
 
-	if (g_stat(filename, &st) != 0) {
-		purple_debug_error("buddyicon",
-				"Could not stat '%s', which we just wrote to disk: %s\n",
-				filename, strerror(errno));
-		g_free(random);
+		g_unlink(filename);
 		g_free(filename);
-		return NULL;
 	}
 
-	/* Check the file size */
+	/* Check the image size */
 	/*
 	 * TODO: If the file is too big, it would be cool if we checked if
 	 *       the prpl supported jpeg, and then we could convert to that
 	 *       and use a lower quality setting.
 	 */
 	if ((prpl_info->icon_spec.max_filesize != 0) &&
-		(st.st_size > prpl_info->icon_spec.max_filesize))
+	    (length > prpl_info->icon_spec.max_filesize))
 	{
 		gchar *tmp;
 		tmp = g_strdup_printf(_("The file '%s' is too large for %s.  Please try a smaller image.\n"),
@@ -2627,16 +2596,15 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		purple_debug_info("buddyicon",
 				"'%s' was converted to an image which is %" G_GSIZE_FORMAT
 				" bytes, but the maximum icon size for %s is %" G_GSIZE_FORMAT
-				" bytes\n", path, st.st_size, plugin->info->name,
+				" bytes\n", path, length, plugin->info->name,
 				prpl_info->icon_spec.max_filesize);
 		g_free(tmp);
-		g_free(random);
-		g_free(filename);
 		return NULL;
 	}
 
-	g_free(filename);
-	return random;
+	if (len)
+		*len = length;
+	return contents;
 #else
 	/*
 	 * The chosen icon wasn't the right size, and we're using
@@ -2789,10 +2757,10 @@ gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
 
 void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename)
 {
-	PurpleConversation *conv;
 	PurpleBuddy *buddy;
-	PurpleBlistNode *node;
-	char *path = NULL;
+	PurpleContact *contact;
+	gpointer data = NULL;
+	size_t len = 0;
 
 	buddy = purple_find_buddy(account, who);
 	if (!buddy) {
@@ -2800,35 +2768,20 @@ void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const
 		return;
 	}
 
-	node = (PurpleBlistNode*)purple_buddy_get_contact(buddy);
-	path = (char*)purple_blist_node_get_string(node, "custom_buddy_icon");
-	if (path) {
-		struct stat st;
-		if (g_stat(path, &st) == 0)
-			g_unlink(path);
-		path = NULL;
-	}
+	contact = purple_buddy_get_contact(buddy);
 
 	if (filename) {
-		char *newfile;
+		const char *prpl_id = purple_account_get_protocol_id(account);
+		PurplePlugin *prpl = purple_find_prpl(prpl_id);
 
-		newfile = pidgin_convert_buddy_icon(purple_find_prpl(purple_account_get_protocol_id(account)),
-						filename);
-		path = purple_buddy_icons_get_full_path(newfile);
-		g_free(newfile);
+		data = pidgin_convert_buddy_icon(prpl, filename, &len);
+
+		/* We don't want to delete the old icon if the new one didn't load. */
+		if (data == NULL)
+			return;
 	}
 
-	purple_blist_node_set_string(node, "custom_buddy_icon", path);
-	g_free(path);
-
-	/* Update the conversation */
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, account);
-	if (conv)
-		purple_conversation_update(conv, PURPLE_CONV_UPDATE_ICON);
-
-	/* Update the buddylist */
-	if (buddy)
-		purple_blist_update_buddy_icon(buddy);
+	purple_buddy_icons_set_custom_icon(contact, data, len);
 }
 
 char *pidgin_make_pretty_arrows(const char *str)

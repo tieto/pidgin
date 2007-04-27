@@ -122,8 +122,7 @@ typedef struct
 	GtkWidget *icon_filesel;
 	GtkWidget *icon_preview;
 	GtkWidget *icon_text;
-	char *cached_icon_path;
-	char *icon_path;
+	PurpleStoredImage *icon_img;
 
 	/* Protocol Options */
 	GtkWidget *protocol_frame;
@@ -195,20 +194,25 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 }
 
 static void
-set_dialog_icon(AccountPrefsDialog *dialog, gchar *new_cached_icon_path, gchar *new_icon_path)
+set_dialog_icon(AccountPrefsDialog *dialog, gpointer *data, size_t len, gchar *new_icon_path)
 {
-	char *filename;
 	GdkPixbuf *pixbuf = NULL;
 
-	g_free(dialog->cached_icon_path);
-	g_free(dialog->icon_path);
-	dialog->cached_icon_path = new_cached_icon_path;
-	dialog->icon_path = new_icon_path;
+	purple_imgstore_unref(dialog->icon_img);
+	if (data != NULL)
+	{
+		if (len > 0)
+			dialog->icon_img = purple_imgstore_add(data, len, new_icon_path);
+		else
+			g_free(data);
+	}
 
-	filename = purple_buddy_icons_get_full_path(dialog->cached_icon_path);
-	if (filename != NULL) {
-		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		g_free(filename);
+	if (dialog->icon_img != NULL) {
+		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+		gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(dialog->icon_img),
+		                        purple_imgstore_get_size(dialog->icon_img), NULL);
+		gdk_pixbuf_loader_close(loader, NULL);
+		pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
 	}
 
 	if (pixbuf && dialog->prpl_info &&
@@ -298,12 +302,14 @@ screenname_changed_cb(GtkEntry *entry, AccountPrefsDialog *dialog)
 static void
 icon_filesel_choose_cb(const char *filename, gpointer data)
 {
-	AccountPrefsDialog *dialog;
-
-	dialog = data;
+	AccountPrefsDialog *dialog = data;
 
 	if (filename != NULL)
-		set_dialog_icon(dialog, pidgin_convert_buddy_icon(dialog->plugin, filename), g_strdup(filename));
+	{
+		size_t len;
+		gpointer data = pidgin_convert_buddy_icon(dialog->plugin, filename, &len);
+		set_dialog_icon(dialog, data, len, g_strdup(filename));
+	}
 
 	dialog->icon_filesel = NULL;
 }
@@ -318,7 +324,7 @@ icon_select_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 static void
 icon_reset_cb(GtkWidget *button, AccountPrefsDialog *dialog)
 {
-	set_dialog_icon(dialog, NULL, NULL);
+	set_dialog_icon(dialog, NULL, 0, NULL);
 }
 
 static void
@@ -333,6 +339,9 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
 			GError *converr = NULL;
 			gchar *tmp, *rtmp;
+			gpointer data;
+			size_t len;
+
 			/* It looks like we're dealing with a local file. */
 			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
 				purple_debug(PURPLE_DEBUG_ERROR, "buddyicon", "%s\n",
@@ -342,8 +351,10 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 			}
 			if ((rtmp = strchr(tmp, '\r')) || (rtmp = strchr(tmp, '\n')))
 				*rtmp = '\0';
-			set_dialog_icon(dialog, pidgin_convert_buddy_icon(dialog->plugin, tmp), g_strdup(tmp));
-			g_free(tmp);
+
+			data = pidgin_convert_buddy_icon(dialog->plugin, tmp, &len);
+			/* This takes ownership of tmp */
+			set_dialog_icon(dialog, data, len, tmp);
 		}
 		gtk_drag_finish(dc, TRUE, FALSE, t);
 	}
@@ -591,8 +602,8 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(dialog->icon_entry);
 	/* TODO: Uh, isn't this next line pretty useless? */
 	pidgin_set_accessible_label (dialog->icon_entry, label);
-	dialog->cached_icon_path = NULL;
-	dialog->icon_path = NULL;
+	purple_imgstore_unref(dialog->icon_img);
+	dialog->icon_img = NULL;
 
 	vbox2 = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), vbox2, TRUE, TRUE, 0);
@@ -617,19 +628,27 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	}
 
 	if (dialog->account != NULL) {
+		PurpleStoredImage *img;
+		gpointer data = NULL;
+		size_t len = 0;
+
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->new_mail_check),
 					     purple_account_get_check_mail(dialog->account));
 
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->icon_check),
 					     !purple_account_get_bool(dialog->account, "use-global-buddyicon",
 								       TRUE));
-		set_dialog_icon(dialog,
-				g_strdup(purple_account_get_ui_string(dialog->account,
-						PIDGIN_UI, "non-global-buddyicon-cached-path", NULL)),
-				g_strdup(purple_account_get_ui_string(dialog->account,
-						PIDGIN_UI, "non-global-buddyicon-path", NULL)));
+
+		img = purple_buddy_icons_find_account_icon(dialog->account);
+		if (img)
+		{
+			len = purple_imgstore_get_size(img);
+			data = g_memdup(purple_imgstore_get_data(img), len);
+		}
+		set_dialog_icon(dialog, data, len,
+		                g_strdup(purple_account_get_buddy_icon_path(dialog->account)));
 	} else {
-		set_dialog_icon(dialog, NULL, NULL);
+		set_dialog_icon(dialog, NULL, 0, NULL);
 	}
 
 	if (!dialog->prpl_info ||
@@ -1072,22 +1091,7 @@ account_win_destroy_cb(GtkWidget *w, GdkEvent *event,
 	g_list_free(dialog->protocol_opt_entries);
 	g_free(dialog->protocol_id);
 
-	if (dialog->cached_icon_path != NULL)
-	{
-		const char *icon = purple_account_get_ui_string(dialog->account, PIDGIN_UI, "non-global-buddyicon-cached-path", NULL);
-		if (dialog->cached_icon_path != NULL && (icon == NULL || strcmp(dialog->cached_icon_path, icon)))
-		{
-			/* The user set an icon, which would've been cached by convert_buddy_icon,
-			 * but didn't save the changes. Delete the cache file. */
-			char *filename = g_build_filename(purple_buddy_icons_get_cache_dir(), dialog->cached_icon_path, NULL);
-			g_unlink(filename);
-			g_free(filename);
-		}
-
-		g_free(dialog->cached_icon_path);
-	}
-
-	g_free(dialog->icon_path);
+	purple_imgstore_unref(dialog->icon_img);
 
 	if (dialog->icon_filesel)
 		gtk_widget_destroy(dialog->icon_filesel);
@@ -1143,26 +1147,37 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 	if (prpl_info != NULL && prpl_info->icon_spec.format != NULL)
 	{
+		const char *filename;
+
 		if (new || purple_account_get_bool(account, "use-global-buddyicon", TRUE) ==
 			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)))
 		{
 			icon_change = TRUE;
 		}
 		purple_account_set_bool(account, "use-global-buddyicon", !gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)));
-		purple_account_set_ui_string(account, PIDGIN_UI, "non-global-buddyicon-cached-path", dialog->cached_icon_path);
-		purple_account_set_ui_string(account, PIDGIN_UI, "non-global-buddyicon-path", dialog->icon_path);
+
 		if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(dialog->icon_check)))
 		{
-			purple_account_set_buddy_icon_path(account, dialog->icon_path);
-			purple_account_set_buddy_icon(account, dialog->cached_icon_path);
+			if (dialog->icon_img)
+			{
+				size_t len = purple_imgstore_get_size(dialog->icon_img);
+				purple_buddy_icons_set_account_icon(account,
+				                                    g_memdup(purple_imgstore_get_data(dialog->icon_img), len),
+				                                    len);
+				purple_account_set_buddy_icon_path(account, purple_imgstore_get_filename(dialog->icon_img));
+			}
+			else
+			{
+				purple_buddy_icons_set_account_icon(account, NULL, 0);
+				purple_account_set_buddy_icon_path(account, NULL);
+			}
 		}
-		else if (purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon") && icon_change)
+		else if ((filename = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon")) && icon_change)
 		{
-			const char *filename = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
-			char *icon = pidgin_convert_buddy_icon(dialog->plugin, filename);
+			size_t len;
+			gpointer data = pidgin_convert_buddy_icon(dialog->plugin, filename, &len);
 			purple_account_set_buddy_icon_path(account, filename);
-			purple_account_set_buddy_icon(account, icon);
-			g_free(icon);
+			purple_buddy_icons_set_account_icon(account, data, len);
 		}
 	}
 
@@ -1977,7 +1992,7 @@ static void
 set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkPixbuf *global_buddyicon)
 {
 	GdkPixbuf *pixbuf, *buddyicon = NULL;
-	const char *path = NULL;
+	PurpleStoredImage *img = NULL;
 
 	pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM);
 	if ((pixbuf != NULL) && purple_account_is_disconnected(account))
@@ -1988,12 +2003,22 @@ set_account(GtkListStore *store, GtkTreeIter *iter, PurpleAccount *account, GdkP
 			buddyicon = g_object_ref(G_OBJECT(global_buddyicon));
 		/* This is for when set_account() is called for a single account */
 		else
-			path = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
-	} else
-		path = purple_account_get_ui_string(account, PIDGIN_UI, "non-global-buddyicon-path", NULL);
+			img = purple_buddy_icons_find_account_icon(account);
+	} else {
+		img = purple_buddy_icons_find_account_icon(account);
+	}
 
-	if (path != NULL) {
-		GdkPixbuf *buddyicon_pixbuf = gdk_pixbuf_new_from_file(path, NULL);
+	if (img != NULL) {
+		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+		GdkPixbuf *buddyicon_pixbuf;
+
+		gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(img),
+		                        purple_imgstore_get_size(img), NULL);
+		gdk_pixbuf_loader_close(loader, NULL);
+		buddyicon_pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
+
+		purple_imgstore_unref(img);
+
 		if (buddyicon_pixbuf != NULL) {
 			buddyicon = gdk_pixbuf_scale_simple(buddyicon_pixbuf, 22, 22, GDK_INTERP_HYPER);
 			g_object_unref(G_OBJECT(buddyicon_pixbuf));

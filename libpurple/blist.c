@@ -605,6 +605,9 @@ purple_blist_load()
 	}
 
 	xmlnode_free(purple);
+
+	/* This tells the buddy icon code to do its thing. */
+	purple_buddy_icons_blist_loaded_cb();
 }
 
 
@@ -1141,19 +1144,11 @@ purple_buddy_set_icon(PurpleBuddy *buddy, PurpleBuddyIcon *icon)
 {
 	g_return_if_fail(buddy != NULL);
 
-	if (buddy->icon != icon) {
-		if (buddy->icon != NULL)
-			purple_buddy_icon_unref(buddy->icon);
-		
+	if (buddy->icon != icon)
+	{
+		purple_buddy_icon_unref(buddy->icon);
 		buddy->icon = (icon != NULL ? purple_buddy_icon_ref(icon) : NULL);
 	}
-
-	if (buddy->icon)
-		purple_buddy_icon_cache(icon, buddy);
-	else
-		purple_buddy_icon_uncache(buddy);
-
-	purple_blist_schedule_save();
 
 	purple_signal_emit(purple_blist_get_handle(), "buddy-icon-changed", buddy);
 
@@ -1783,9 +1778,6 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	contact = (PurpleContact *)cnode;
 	group = (PurpleGroup *)gnode;
 
-	/* Delete any buddy icon. */
-	purple_buddy_icon_uncache(buddy);
-
 	/* Remove the node from its parent */
 	if (node->prev)
 		node->prev->next = node->next;
@@ -1831,8 +1823,7 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	purple_signal_emit(purple_blist_get_handle(), "buddy-removed", buddy);
 
 	/* Delete the node */
-	if (buddy->icon != NULL)
-		purple_buddy_icon_unref(buddy->icon);
+	purple_buddy_icon_unref(buddy->icon);
 	g_hash_table_destroy(buddy->node.settings);
 	purple_presence_remove_buddy(buddy->presence, buddy);
 	purple_presence_destroy(buddy->presence);

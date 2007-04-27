@@ -184,4 +184,15 @@
 
 #define PURPLE_WEBSITE "http://pidgin.im/"
 
+/* This is for the buddy list to notify the buddy icon code that
+ * it's done loading.  We may want to replace this with a signal. */
+void
+purple_buddy_icons_blist_loaded_cb(void);
+
+/* This is for the purple_core_migrate() code to tell the buddy
+ * icon subsystem about the old icons directory so it can
+ * migrate any icons in use. */
+void
+purple_buddy_icon_set_old_icons_dir(const char *dirname);
+
 #endif /* _PURPLE_INTERNAL_H_ */

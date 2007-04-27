@@ -598,6 +598,25 @@ xmlnode *purple_util_read_xml_from_file(const char *filename,
 FILE *purple_mkstemp(char **path, gboolean binary);
 
 /**
+ * Returns an extension corresponding to the image data's file type.
+ *
+ * @param data A pointer to the image data
+ * @param len  The length of the image data
+ *
+ * @return The appropriate extension, or "icon" if unknown.
+ */
+const char *
+purple_util_get_image_extension(gpointer data, size_t len);
+
+/*@}*/
+
+
+/**************************************************************************/
+/** @name Environment Detection Functions                                 */
+/**************************************************************************/
+/*@{*/
+
+/**
  * Checks if the given program name is valid and executable.
  *
  * @param program The file name of the application.
@@ -1118,6 +1137,7 @@ const char *_purple_oscar_convert(const char *act, const char *protocol);
  * inherit the handlers of the parent.
  */
 void purple_restore_default_signal_handlers(void);
+
 #ifdef __cplusplus
 }
 #endif

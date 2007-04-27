@@ -81,7 +81,7 @@ void oscar_move_buddy(PurpleConnection *gc, const char *name, const char *old_gr
 void oscar_rename_group(PurpleConnection *gc, const char *old_name, PurpleGroup *group, GList *moved_buddies);
 void oscar_convo_closed(PurpleConnection *gc, const char *who);
 const char *oscar_normalize(const PurpleAccount *account, const char *str);
-void oscar_set_icon(PurpleConnection *gc, const char *iconfile);
+void oscar_set_icon(PurpleConnection *gc, PurpleStoredImage *img);
 gboolean oscar_can_receive_file(PurpleConnection *gc, const char *who);
 void oscar_send_file(PurpleConnection *gc, const char *who, const char *file);
 PurpleXfer *oscar_new_xfer(PurpleConnection *gc, const char *who);

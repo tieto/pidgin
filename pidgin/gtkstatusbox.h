@@ -30,6 +30,7 @@
 #include <gtk/gtk.h>
 #include "gtkimhtml.h"
 #include "account.h"
+#include "imgstore.h"
 #include "savedstatuses.h"
 #include "status.h"
 #include <gtk/gtktreemodel.h>
@@ -89,7 +90,7 @@ struct _PidginStatusBox
 	GtkWidget *vbox, *sw;
 	GtkWidget *imhtml;
 
-	char      *buddy_icon_path;
+	PurpleStoredImage *buddy_icon_img;
 	GdkPixbuf *buddy_icon;
 	GdkPixbuf *buddy_icon_hover;
 	GtkWidget *buddy_icon_sel;
@@ -176,10 +177,7 @@ void
 pidgin_status_box_pulse_connecting(PidginStatusBox *status_box);
 
 void
-pidgin_status_box_set_buddy_icon(PidginStatusBox *status_box, const char *filename);
-
-const char *
-pidgin_status_box_get_buddy_icon(PidginStatusBox *status_box);
+pidgin_status_box_set_buddy_icon(PidginStatusBox *status_box, PurpleStoredImage *img);
 
 char *pidgin_status_box_get_message(PidginStatusBox *status_box);
 
