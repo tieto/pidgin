@@ -310,7 +310,7 @@ move_and_symlink_dir(const char *path, const char *basename, const char *old_bas
 gboolean
 purple_core_migrate(void)
 {
-#error  This code wants to migrate your .gaim directory to .purple. It is strongly suggested that you back .gaim up before proceeding.
+#error You probably want to back up your .gaim directory right now. This revision is going to destroy it, potentially not in the way we've intended
 	const char *user_dir = purple_user_dir();
 	char *old_user_dir = g_strconcat(purple_home_dir(),
 	                                 G_DIR_SEPARATOR_S ".gaim", NULL);
@@ -597,7 +597,7 @@ purple_core_migrate(void)
 					return FALSE;
 				}
 
-				if (!fwrite(buf, size, 1, new_file))
+				if (!fwrite(buf, size, 1, new_file) && ferror(new_file) != 0)
 				{
 					purple_debug_error("core", "Error writing %s: %s\n",
 					                   new_name, strerror(errno));
