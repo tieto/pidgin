@@ -14,9 +14,9 @@
    id="svg4345"
    sodipodi:version="0.32"
    inkscape:version="0.44.1"
-   sodipodi:docbase="/home/hbons/Desktop/icons/32/scalable"
+   sodipodi:docbase="/home/hbons/code/pidgin-mtn/pidgin/pixmaps/icons/32/scalable"
    sodipodi:docname="pidgin.svg"
-   inkscape:export-filename="/home/hbons/Desktop/pidgin32.png"
+   inkscape:export-filename="/home/hbons/code/pidgin-mtn/pidgin/pixmaps/icons/32/pidgin.png"
    inkscape:export-xdpi="90"
    inkscape:export-ydpi="90"
    version="1.0">
@@ -231,7 +231,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="21.220032"
      inkscape:cx="25.558911"
-     inkscape:cy="16.938593"
+     inkscape:cy="16.91503"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
@@ -397,12 +397,6 @@
        d="M 11.689238,9.8218679 C 13.591296,8.0161941 17.174576,11.994261 17.519594,13.650486 L 14.543472,12.891665 L 11.689238,9.8218679 z "
        id="rect5189"
        sodipodi:nodetypes="cccc" />
-    <path
-       transform="matrix(0.798987,0,0,0.495994,22.79842,2.215302)"
-       style="fill:url(#linearGradient6569);fill-opacity:1;stroke:none;stroke-width:1.0283047;stroke-miterlimit:4;stroke-opacity:1"
-       d="M -0.99929609,42.004237 C 3.5188333,45.348102 4.1278823,38.950282 4.9828709,38.950282 C 5.8260957,38.950282 6.1724645,45.375511 10.014606,42.007796 C 9.2074596,43.955072 6.7265914,47.014858 5.6807127,47.014858 C 4.6230593,47.014858 0.31231911,44.880662 -0.99929609,42.004237 z "
-       id="path6561"
-       sodipodi:nodetypes="czczc" />
     <path
        transform="matrix(0.798987,0,0,0.495994,8.99846,-1.319104)"
        style="fill:url(#linearGradient6823);fill-opacity:1.0;stroke:none;stroke-width:1.0283047;stroke-miterlimit:4;stroke-opacity:1"
