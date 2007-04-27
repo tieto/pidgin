@@ -192,5 +192,5 @@ purple_imgstore_uninit()
 {
 	g_hash_table_destroy(imgstore);
 
-	purple_signals_unregister_by_instance(purple_blist_get_handle());
+	purple_signals_unregister_by_instance(purple_imgstore_get_handle());
 }
