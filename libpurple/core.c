@@ -310,6 +310,7 @@ move_and_symlink_dir(const char *path, const char *basename, const char *old_bas
 gboolean
 purple_core_migrate(void)
 {
+#error  This code wants to migrate your .gaim directory to .purple. It is strongly suggested that you back .gaim up before proceeding.
 	const char *user_dir = purple_user_dir();
 	char *old_user_dir = g_strconcat(purple_home_dir(),
 	                                 G_DIR_SEPARATOR_S ".gaim", NULL);

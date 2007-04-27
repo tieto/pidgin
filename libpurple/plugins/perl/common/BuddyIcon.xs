@@ -16,16 +16,11 @@ purple_buddy_icon_update(icon)
 	Purple::Buddy::Icon icon
 
 void
-purple_buddy_icon_set_custom_data(icon, data, len)
+purple_buddy_icon_set_data(icon, data, len, checksum)
 	Purple::Buddy::Icon icon
 	void * data
 	size_t len
-
-void
-purple_buddy_icon_set_protocol_data(icon, data, len)
-	Purple::Buddy::Icon icon
-	void * data
-	size_t len
+	char *checksum
 
 Purple::Account
 purple_buddy_icon_get_account(icon)
@@ -41,7 +36,7 @@ purple_buddy_icon_get_data(icon, len)
 	size_t &len
 
 const char *
-purple_buddy_icon_get_type(icon)
+purple_buddy_icon_get_extension(icon)
 	Purple::Buddy::Icon icon
 
 void
