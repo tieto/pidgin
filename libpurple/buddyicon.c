@@ -972,8 +972,8 @@ purple_buddy_icons_account_loaded_cb()
 
 		if (account_icon_file != NULL)
 		{
-			char *path = g_build_filename(dirname, filename, NULL);
-			if (!g_file_test(filename, G_FILE_TEST_EXISTS))
+			char *path = g_build_filename(dirname, account_icon_file, NULL);
+			if (!g_file_test(path, G_FILE_TEST_EXISTS))
 			{
 				purple_account_set_string(account, "buddy_icon", NULL);
 			} else {
