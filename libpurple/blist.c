@@ -2334,7 +2334,6 @@ void purple_blist_remove_account(PurpleAccount *account)
 					buddy = (PurpleBuddy *)bnode;
 					if (account == buddy->account) {
 						PurplePresence *presence;
-						recompute = TRUE;
 
 						presence = purple_buddy_get_presence(buddy);
 
@@ -2354,8 +2353,14 @@ void purple_blist_remove_account(PurpleAccount *account)
 						if (!g_list_find(list, presence))
 							list = g_list_prepend(list, presence);
 
-						if (ops && ops->remove)
+						if (contact->priority == buddy)
+							purple_contact_invalidate_priority_buddy(contact);
+						else
+							recompute = TRUE;
+
+						if (ops && ops->remove) {
 							ops->remove(purplebuddylist, bnode);
+						}
 					}
 				}
 				if (recompute) {
