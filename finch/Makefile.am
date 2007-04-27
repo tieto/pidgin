@@ -1,5 +1,3 @@
-if ENABLE_GNT
-
 EXTRA_DIST = \
 		getopt.c \
 		getopt.h \
@@ -7,7 +5,11 @@ EXTRA_DIST = \
 
 SUBDIRS = libgnt plugins
 
+if ENABLE_GNT
+
 bin_PROGRAMS = finch
+
+endif
 
 finch_SOURCES = \
 	gntaccount.c \
@@ -74,4 +76,3 @@ AM_CPPFLAGS = \
 	$(DBUS_CFLAGS) \
 	$(LIBXML_CFLAGS) \
 	$(GNT_CFLAGS)
-endif
