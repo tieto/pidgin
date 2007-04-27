@@ -39,7 +39,7 @@ LIB_PATHS += 		-L$(PERL_LIB_TOP) \
 ##  SOURCES, OBJECTS
 ##
 XS_FILES = \
-	GtkUI.xs \
+	Pidgin.xs \
 	GtkAccount.xs \
 	GtkBlist.xs \
 	GtkConn.xs \

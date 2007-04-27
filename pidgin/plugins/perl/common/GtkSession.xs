@@ -1,6 +1,6 @@
 #include "gtkmodule.h"
 
-MODULE = Purple::GtkUI::Session  PACKAGE = Purple::GtkUI::Session  PREFIX = gaim_gtk_session_
+MODULE = Pidgin::Session  PACKAGE = Pidgin::Session  PREFIX = pidgin_session_
 PROTOTYPES: ENABLE
 
 void

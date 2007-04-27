@@ -93,6 +93,8 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #include "perl-common.h"
 #include "perl-handlers.h"
 
+#include <gmodule.h>
+
 #define PERL_PLUGIN_ID "core-perl"
 
 PerlInterpreter *my_perl = NULL;
@@ -578,11 +580,11 @@ static PurplePluginInfo info =
 	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_LOADER,                               /**< type           */
+	PURPLE_PLUGIN_LOADER,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
 
 	PERL_PLUGIN_ID,                                   /**< id             */
 	N_("Perl Plugin Loader"),                         /**< name           */
@@ -590,7 +592,7 @@ static PurplePluginInfo info =
 	N_("Provides support for loading perl plugins."), /**< summary        */
 	N_("Provides support for loading perl plugins."), /**< description    */
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                   /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */

@@ -35,49 +35,47 @@ perl_la_DEPENDENCIES = \
 		$(LN_S) $(DYNALOADER_A) .libs/DynaLoader.a; \
 	fi
 
-
 common_sources = \
-        common/Account.xs \
-        common/AccountOpts.xs \
-        common/BuddyIcon.xs \
-        common/BuddyList.xs \
-        common/Cipher.xs \
-        common/Cmds.xs \
-        common/Core.xs \
-        common/Connection.xs \
-        common/Conversation.xs \
-        common/Debug.xs \
-        common/FT.xs \
-        common/ImgStore.xs \
-        common/Log.xs \
-        common/Makefile.PL.in \
-        common/Network.xs \
-        common/Notify.xs \
-        common/Plugin.xs \
-        common/PluginPref.xs \
-        common/Pounce.xs \
-        common/Prefs.xs \
-        common/Privacy.xs \
-        common/Proxy.xs \
-        common/Prpl.xs \
-        common/Purple.pm \
-        common/Purple.xs \
-        common/Request.xs \
-        common/Roomlist.xs \
-        common/SSLConn.xs \
-        common/SavedStatuses.xs \
-        common/Server.xs \
-        common/Signal.xs \
-        common/Sound.xs \
-        common/Status.xs \
-        common/Stringref.xs \
-        common/Util.xs \
-        common/XMLNode.xs \
-        common/fallback/const-c.inc \
-        common/fallback/const-xs.inc \
-        common/module.h \
-        common/typemap
-
+	common/Account.xs \
+	common/AccountOpts.xs \
+	common/BuddyIcon.xs \
+	common/BuddyList.xs \
+	common/Cipher.xs \
+	common/Cmds.xs \
+	common/Core.xs \
+	common/Connection.xs \
+	common/Conversation.xs \
+	common/Debug.xs \
+	common/FT.xs \
+	common/ImgStore.xs \
+	common/Log.xs \
+	common/Makefile.PL.in \
+	common/Network.xs \
+	common/Notify.xs \
+	common/Plugin.xs \
+	common/PluginPref.xs \
+	common/Pounce.xs \
+	common/Prefs.xs \
+	common/Privacy.xs \
+	common/Proxy.xs \
+	common/Prpl.xs \
+	common/Purple.pm \
+	common/Purple.xs \
+	common/Request.xs \
+	common/Roomlist.xs \
+	common/SSLConn.xs \
+	common/SavedStatuses.xs \
+	common/Server.xs \
+	common/Signal.xs \
+	common/Sound.xs \
+	common/Status.xs \
+	common/Stringref.xs \
+	common/Util.xs \
+	common/XMLNode.xs \
+	common/module.h \
+	common/typemap \
+	common/fallback/const-c.inc \
+	common/fallback/const-xs.inc
 
 EXTRA_DIST = \
 	Makefile.mingw \
@@ -148,7 +146,6 @@ distclean-generic:
 			${LN_S} -f ../${srcdir}/$$f $$f; \
 		done; \
 	fi
-
 
 AM_CPPFLAGS = \
 	-DVERSION=\"$(VERSION)\" \
