@@ -962,6 +962,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 void
 purple_buddy_icons_account_loaded_cb()
 {
+	const char *dirname = purple_buddy_icons_get_cache_dir();
 	GList *cur;
 
 	for (cur = purple_accounts_get_all(); cur != NULL; cur = cur->next)
