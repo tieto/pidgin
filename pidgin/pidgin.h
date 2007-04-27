@@ -43,7 +43,7 @@
 #define PIDGIN_UI "gtk-gaim"
 
 /* change this only when we have a sane upgrade path for old prefs */
-#define PIDGIN_PREFS_ROOT "/gaim/gtk"
+#define PIDGIN_PREFS_ROOT "/pidgin"
 
 #ifndef _WIN32
 # define PIDGIN_ALERT_TITLE ""

@@ -741,7 +741,8 @@ silcpurple_attrs(PurplePluginAction *action)
 			      "you would like other users to see about yourself."),
 			    fields,
 			    _("OK"), G_CALLBACK(silcpurple_attrs_cb),
-			    _("Cancel"), G_CALLBACK(silcpurple_attrs_cancel), gc);
+			    _("Cancel"), G_CALLBACK(silcpurple_attrs_cancel),
+				gc->account, NULL, NULL, gc);
 }
 
 static void
@@ -946,7 +947,8 @@ silcpurple_create_keypair(PurplePluginAction *action)
 	purple_request_fields(gc, _("Create New SILC Key Pair"),
 			    _("Create New SILC Key Pair"), NULL, fields,
 			    _("Generate Key Pair"), G_CALLBACK(silcpurple_create_keypair_cb),
-			    _("Cancel"), G_CALLBACK(silcpurple_create_keypair_cancel), gc);
+			    _("Cancel"), G_CALLBACK(silcpurple_create_keypair_cancel),
+				gc->account, NULL, NULL, gc);
 
 	g_strfreev(u);
 	silc_free(hostname);

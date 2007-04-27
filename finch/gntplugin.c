@@ -97,7 +97,7 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 void
 finch_plugins_save_loaded(void)
 {
-	purple_plugins_save_loaded("/purple/gnt/plugins/loaded");
+	purple_plugins_save_loaded("/finch/plugins/loaded");
 }
 
 static void
@@ -333,6 +333,8 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 	}
 
 	purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
-			_("Save"), G_CALLBACK(finch_request_save_in_prefs), _("Cancel"), NULL, NULL);
+			_("Save"), G_CALLBACK(finch_request_save_in_prefs), _("Cancel"), NULL,
+			NULL, NULL, NULL,
+			NULL);
 }
 

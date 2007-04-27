@@ -1012,7 +1012,9 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 
 	purple_request_file(PIDGIN_CONVERSATION(conv), _("Save Conversation"),
 					  purple_escape_filename(buf),
-					  TRUE, G_CALLBACK(savelog_writefile_cb), NULL, conv);
+					  TRUE, G_CALLBACK(savelog_writefile_cb), NULL,
+					  NULL, NULL, conv,
+					  conv);
 
 	g_free(buf);
 }
@@ -2153,7 +2155,7 @@ insert_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *position,
 
 	conv = gtkconv->active_conv;
 
-	if (!purple_prefs_get_bool("/core/conversations/im/send_typing"))
+	if (!purple_prefs_get_bool("/purple/conversations/im/send_typing"))
 		return;
 
 	got_typing_keypress(gtkconv, (gtk_text_iter_is_start(position) &&
@@ -2172,7 +2174,7 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 
 	conv = gtkconv->active_conv;
 
-	if (!purple_prefs_get_bool("/core/conversations/im/send_typing"))
+	if (!purple_prefs_get_bool("/purple/conversations/im/send_typing"))
 		return;
 
 	im = PURPLE_CONV_IM(conv);
@@ -2545,7 +2547,9 @@ icon_menu_save_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	buf = g_strdup_printf("%s.%s", purple_normalize(conv->account, conv->name), ext);
 
 	purple_request_file(gtkconv, _("Save Icon"), buf, TRUE,
-					 G_CALLBACK(saveicon_writefile_cb), NULL, gtkconv);
+					 G_CALLBACK(saveicon_writefile_cb), NULL,
+					conv->account, NULL, conv,
+					gtkconv);
 
 	g_free(buf);
 }
@@ -6061,7 +6065,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_TEXT)
 		{
 			atk_object_set_description(accessibility_obj, _("Unread Messages"));
-			strncpy(style, "color=\"#a40000\" weight=\"bold\"", sizeof(style));
+			strncpy(style, "color=\"#cc0000\" weight=\"bold\"", sizeof(style));
 		}
 		else if (gtkconv->unseen_state == PIDGIN_UNSEEN_EVENT)
 		{

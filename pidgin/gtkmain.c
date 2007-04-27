@@ -240,11 +240,15 @@ ui_main()
 	GdkPixbuf *icon = NULL;
 	char *icon_path;
 	int i;
-	const char *icon_sizes[] = {
-		"16",
-		"24",
-		"32",
-		"48"
+	struct {
+		const char *dir;
+		const char *filename;
+	} icon_sizes[] = {
+		{"16x16", "pidgin.png"},
+		{"24x24", "pidgin.png"},
+		{"32x32", "pidgin.png"},
+		{"48x48", "pidgin.png"},
+		{"scalable", "pidgin.svg"}
 	};
 
 #endif
@@ -256,7 +260,7 @@ ui_main()
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
 	for(i=0; i<G_N_ELEMENTS(icon_sizes); i++) {
-		icon_path = g_build_filename(DATADIR, "pixmaps", "pidgin", "icons", icon_sizes[i], "pidgin.png", NULL);
+		icon_path = g_build_filename(DATADIR, "icons", "hicolor", icon_sizes[i].dir, "apps", icon_sizes[i].filename, NULL);
 		icon = gdk_pixbuf_new_from_file(icon_path, NULL);
 		g_free(icon_path);
 		if (icon) {
@@ -767,7 +771,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		/* Everything is good to go--sign on already */
-		if (!purple_prefs_get_bool("/core/savedstatus/startup_current_status"))
+		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
 			purple_savedstatus_activate(purple_savedstatus_get_startup());
 		purple_accounts_restore_current_statuses();
 	}

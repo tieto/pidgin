@@ -43,7 +43,7 @@
 #include "gntentry.h"
 #include "gnttextview.h"
 
-#define PREF_ROOT	"/purple/gnt/conversations"
+#define PREF_ROOT	"/finch/conversations"
 
 #include "config.h"
 
@@ -52,7 +52,7 @@ send_typing_notification(GntWidget *w, FinchConv *ggconv)
 {
 	const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
 	gboolean empty = (!text || !*text);
-	if (purple_prefs_get_bool("/purple/gnt/conversations/notify_typing")) {
+	if (purple_prefs_get_bool("/finch/conversations/notify_typing")) {
 		PurpleConversation *conv = ggconv->active_conv;
 		PurpleConvIm *im = PURPLE_CONV_IM(conv);
 		if (!empty) {
@@ -381,7 +381,7 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 	/* Unnecessary to print the timestamp for delayed message */
 	if (!(flags & PURPLE_MESSAGE_DELAYED) &&
-			purple_prefs_get_bool("/purple/gnt/conversations/timestamps"))
+			purple_prefs_get_bool("/finch/conversations/timestamps"))
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					purple_utf8_strftime("(%H:%M:%S) ", localtime(&mtime)), GNT_TEXT_FLAG_DIM);
 

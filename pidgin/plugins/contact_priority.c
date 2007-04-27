@@ -80,7 +80,7 @@ get_config_frame(PurplePlugin *plugin)
 	PurpleAccount *account = NULL;
 	int i;
 
-	gboolean last_match = purple_prefs_get_bool("/core/contact/last_match");
+	gboolean last_match = purple_prefs_get_bool("/purple/contact/last_match");
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
@@ -95,7 +95,7 @@ get_config_frame(PurplePlugin *plugin)
 	/* Status Spinboxes */
 	for (i = 0 ; statuses[i].id != NULL && statuses[i].description != NULL ; i++)
 	{
-		char *pref = g_strconcat("/core/status/scores/", statuses[i].id, NULL);
+		char *pref = g_strconcat("/purple/status/scores/", statuses[i].id, NULL);
 
 		hbox = gtk_hbox_new(FALSE, 5);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -124,7 +124,7 @@ get_config_frame(PurplePlugin *plugin)
 
 	check = gtk_check_button_new_with_label(_("Use last buddy when scores are equal"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check), last_match);
-	g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(pref_update), "/core/contact/last_match");
+	g_signal_connect(G_OBJECT(check), "toggled", G_CALLBACK(pref_update), "/purple/contact/last_match");
 	gtk_box_pack_start(GTK_BOX(hbox), check, FALSE, FALSE, 0);
 
 	frame = pidgin_make_frame(ret, _("Point values to use for account..."));

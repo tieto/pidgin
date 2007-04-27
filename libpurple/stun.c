@@ -371,7 +371,7 @@ static gboolean call_callback(gpointer data) {
 }
 
 PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
-	const char *servername = purple_prefs_get_string("/core/network/stun_server");
+	const char *servername = purple_prefs_get_string("/purple/network/stun_server");
 
 	purple_debug_info("stun", "using server %s\n", servername);
 
@@ -428,6 +428,6 @@ PurpleStunNatDiscovery *purple_stun_discover(StunCallback cb) {
 }
 
 void purple_stun_init() {
-	purple_prefs_add_string("/core/network/stun_server", "");
+	purple_prefs_add_string("/purple/network/stun_server", "");
 	purple_stun_discover(NULL);
 }

@@ -644,7 +644,7 @@ purple_contact_compute_priority_buddy(PurpleContact *contact)
 			                            purple_buddy_get_presence(buddy));
 
 			if (cmp > 0 || (cmp == 0 &&
-			                purple_prefs_get_bool("/core/contact/last_match")))
+			                purple_prefs_get_bool("/purple/contact/last_match")))
 			{
 				new_priority = buddy;
 			}

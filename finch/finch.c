@@ -300,9 +300,11 @@ init_libpurple(int argc, char **argv)
 	/* TODO: Move prefs loading into purple_prefs_init() */
 	purple_prefs_load();
 	purple_prefs_update_old();
+	purple_prefs_rename("/gaim/gnt", "/finch");
+	purple_prefs_rename("/purple/gnt", "/finch");
 
 	/* load plugins we had when we quit */
-	purple_plugins_load_saved("/purple/gnt/plugins/loaded");
+	purple_plugins_load_saved("/finch/plugins/loaded");
 
 	/* TODO: Move pounces loading into purple_pounces_init() */
 	purple_pounces_load();
@@ -326,7 +328,7 @@ init_libpurple(int argc, char **argv)
 	else
 	{
 		/* Everything is good to go--sign on already */
-		if (!purple_prefs_get_bool("/core/savedstatus/startup_current_status"))
+		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
 			purple_savedstatus_activate(purple_savedstatus_get_startup());
 		purple_accounts_restore_current_statuses();
 	}

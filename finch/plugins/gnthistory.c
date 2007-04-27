@@ -57,7 +57,7 @@ static void historize(PurpleConversation *c)
 
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */
-		if (!purple_prefs_get_bool("/core/logging/log_ims"))
+		if (!purple_prefs_get_bool("/purple/logging/log_ims"))
 			return;
 
 		/* Find buddies for this conversation. */
@@ -101,7 +101,7 @@ static void historize(PurpleConversation *c)
 	{
 		/* If we're not logging, don't show anything.
 		 * Otherwise, we might show a very old log. */
-		if (!purple_prefs_get_bool("/core/logging/log_chats"))
+		if (!purple_prefs_get_bool("/purple/logging/log_chats"))
 			return;
 
 		logs = purple_log_get_logs(PURPLE_LOG_CHAT, name, account);
@@ -132,8 +132,8 @@ static void historize(PurpleConversation *c)
 static void
 history_prefs_check(PurplePlugin *plugin)
 {
-	if (!purple_prefs_get_bool("/core/logging/log_ims") &&
-	    !purple_prefs_get_bool("/core/logging/log_chats"))
+	if (!purple_prefs_get_bool("/purple/logging/log_ims") &&
+	    !purple_prefs_get_bool("/purple/logging/log_chats"))
 	{
 		purple_notify_warning(plugin, NULL, _("History Plugin Requires Logging"),
 							_("Logging can be enabled from Tools -> Preferences -> Logging.\n\n"
@@ -155,9 +155,9 @@ plugin_load(PurplePlugin *plugin)
 						"conversation-created",
 						plugin, PURPLE_CALLBACK(historize), NULL);
 
-	purple_prefs_connect_callback(plugin, "/core/logging/log_ims",
+	purple_prefs_connect_callback(plugin, "/purple/logging/log_ims",
 								history_prefs_cb, plugin);
-	purple_prefs_connect_callback(plugin, "/core/logging/log_chats",
+	purple_prefs_connect_callback(plugin, "/purple/logging/log_chats",
 								history_prefs_cb, plugin);
 
 	history_prefs_check(plugin);

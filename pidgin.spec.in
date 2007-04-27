@@ -337,6 +337,7 @@ fi
 
 %{_bindir}/pidgin
 %{_datadir}/pixmaps/pidgin
+%{_datadir}/icons/hicolor/*/apps/pidgin.png
 %dir %{_datadir}/sounds/pidgin
 %{_datadir}/sounds/pidgin/*
 %{_datadir}/applications/*
@@ -347,7 +348,7 @@ fi
 %defattr(-, root, root)
 
 %{_libdir}/libpurple.so.*
-%dir %{_libdir}/libpurple
+%dir %{_libdir}/purple
 %attr(755, root, root) %{perl_vendorarch}/Purple.pm
 %dir %{perl_vendorarch}/auto/Purple
 %attr(755, root, root) %{perl_vendorarch}/auto/Purple/Purple.so
@@ -433,6 +434,9 @@ fi
 %endif
 
 %changelog
+* Wed Apr 25 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Update libpurple to pick up plugins in %%{_libdir}/purple
+
 * Sun Apr 22 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Remove Epoch because it's gone in Fedora now
 - Add virtual provides for gaim & gaim-devel
