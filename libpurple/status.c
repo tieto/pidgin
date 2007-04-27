@@ -637,9 +637,6 @@ notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 
 		g_free(tmp);
 	}
-
-	if (ops != NULL && ops->update != NULL)
-		ops->update(purple_get_blist(), (PurpleBlistNode*)buddy);
 }
 
 static void
