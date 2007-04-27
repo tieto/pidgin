@@ -20,11 +20,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin 即时通讯程序(必需)"
 !define GTK_SECTION_TITLE			"GTK+ 运行时刻环境(必需)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ 主题"
-!define GTK_NOTHEME_SECTION_TITLE		"无主题"
-!define GTK_WIMP_SECTION_TITLE		"Wimp 主题"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve 主题"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue 主题"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE "快捷方式"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE "桌面"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "开始菜单"
@@ -47,9 +42,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"安装 GTK+ 运行时刻失败。"
 !define GTK_BAD_INSTALL_PATH			"无法访问或创建您输入的路径。"
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"您没有权限安装 GTK+ 主题。"
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1         "卸载程序找不到 Pidgin 的注册表项目。$\r可能是另外的用户安装了此程序。"

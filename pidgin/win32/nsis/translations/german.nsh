@@ -21,11 +21,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin Instant Messaging Client (erforderlich)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime Umgebung (erforderlich)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ Themen"
-!define GTK_NOTHEME_SECTION_TITLE		"Kein Thema"
-!define GTK_WIMP_SECTION_TITLE		"Wimp Thema"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve Thema"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Thema"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE	"Verknüpfungen"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Desktop"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Startmenü"
@@ -48,9 +43,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fehler beim Installieren der GTK+ Runtime."
 !define GTK_BAD_INSTALL_PATH			"Der Pfad, den Sie eingegeben haben, existiert nicht und kann nicht erstellt werden."
- 
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Sie haben keine Berechtigung, ein GTK+ Thema zu installieren."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Der Deinstaller konnte keine Registrierungsschlüssel für Pidgin finden.$\rEs ist wahrscheinlich, daß ein anderer Benutzer diese Anwendung installiert hat."

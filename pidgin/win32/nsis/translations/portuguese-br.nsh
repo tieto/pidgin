@@ -18,11 +18,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Cliente de mensagens instantâneas Pidgin (requerido)"
 !define GTK_SECTION_TITLE			"Ambiente de tempo de execução do GTK+ (requerido)"
-!define GTK_THEMES_SECTION_TITLE		"Temas do GTK+"
-!define GTK_NOTHEME_SECTION_TITLE		"Nenhum tema"
-!define GTK_WIMP_SECTION_TITLE		"Tema 'Wimp'"
-!define GTK_BLUECURVE_SECTION_TITLE		"Tema 'Bluecurve'"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Tema 'Light House Blue'"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE "Atalhos"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE "Área de Trabalho"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "Menu Iniciar"
@@ -42,9 +37,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Erro ao instalar o ambiente de tempo de execução do GTK+."
 !define GTK_BAD_INSTALL_PATH			"O caminho que você digitou não pôde ser acessado ou criado."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Você não tem permissão para instalar um tema do GTK+."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visite a página da web do Pidgin para Windows"

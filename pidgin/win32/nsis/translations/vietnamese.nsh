@@ -19,11 +19,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Trình Khách Thông Điệp Tức Thời Pidgin (phải có)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime Environment (phải có)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ Theme"
-!define GTK_NOTHEME_SECTION_TITLE		"Không có Theme"
-!define GTK_WIMP_SECTION_TITLE		"Wimp Theme"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve Theme"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Theme"
 !define PIDGIN_SECTION_DESCRIPTION		"Các tập tin Pidgin chính và dlls"
 !define GTK_SECTION_DESCRIPTION		"Bộ công cụ giao diện đồ họa đa nền để dùng cho Pidgin"
 
@@ -39,9 +34,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Lỗi cài đặt GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Đường dẫn mà bạn nhập có thể không truy cập được hay không tạo được."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Bạn không có quyền hạn để cài đặt GTK+ theme."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Trình gỡ cài đặt không tìm được các  registry entry cho Pidgin.$\rCó thể là chương trình được người dùng khác cài đặt."

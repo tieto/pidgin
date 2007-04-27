@@ -22,11 +22,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin 主程式 (必需)"
 !define GTK_SECTION_TITLE			"GTK+ 執行環境 (必需)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ 佈景主題"
-!define GTK_NOTHEME_SECTION_TITLE		"不安裝佈景主題"
-!define GTK_WIMP_SECTION_TITLE			"Wimp 佈景主題"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve 佈景主題"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue 佈景主題"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"捷徑"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"桌面捷徑"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "開始功能表"
@@ -49,9 +44,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"安裝 GTK+ 執行環境時發生錯誤。"
 !define GTK_BAD_INSTALL_PATH			"您所輸入的安裝目錄無法存取或建立。"
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"您目前的權限無法安裝 GTK+ 佈景主題。"
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"移除程式無法找到 Pidgin 的安裝資訊。$\r這應該是有其他的使用者重新安裝了這個程式。"
