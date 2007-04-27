@@ -71,13 +71,13 @@ purple_imgstore_add_with_id(gpointer data, size_t size, const char *filename)
 	PurpleStoredImage *img = purple_imgstore_add(data, size, filename);
 	img->id = ++nextid;
 
-	g_hash_table_insert(imgstore, &(img->id), img);
+	g_hash_table_insert(imgstore, GINT_TO_POINTER(img->id), img);
 
 	return img->id;
 }
 
 PurpleStoredImage *purple_imgstore_find_by_id(int id) {
-	PurpleStoredImage *img = g_hash_table_lookup(imgstore, &id);
+	PurpleStoredImage *img = g_hash_table_lookup(imgstore, GINT_TO_POINTER(id));
 
 	if (img != NULL)
 		purple_debug_misc("imgstore", "retrieved image id %d\n", img->id);
@@ -155,7 +155,7 @@ purple_imgstore_unref(PurpleStoredImage *img)
 		purple_signal_emit(purple_imgstore_get_handle(),
 		                   "image-deleting", img);
 		if (img->id)
-			g_hash_table_remove(imgstore, &img->id);
+			g_hash_table_remove(imgstore, GINT_TO_POINTER(img->id));
 
 		g_free(img->data);
 		g_free(img->filename);
