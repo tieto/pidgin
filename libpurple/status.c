@@ -597,8 +597,6 @@ static void
 notify_buddy_status_update(PurpleBuddy *buddy, PurplePresence *presence,
 		PurpleStatus *old_status, PurpleStatus *new_status)
 {
-	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
-
 	if (purple_prefs_get_bool("/purple/logging/log_system"))
 	{
 		time_t current_time = time(NULL);
