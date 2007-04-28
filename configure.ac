@@ -850,10 +850,12 @@ if test "x$GCC" = "xyes"; then
 			"-Waggregate-return" \
 			"-Wcast-align" \
 			"-Wdeclaration-after-statement" \
+			"-Wendif-labels" \
 			"-Werror-implicit-function-declaration" \
 			"-Wextra -Wno-sign-compare -Wno-unused-parameter" \
 			"-Winit-self" \
 			"-Wmissing-declarations" \
+			"-Wmissing-noreturn" \
 			"-Wmissing-prototypes" \
 			"-Wnested-externs" \
 			"-Wpointer-arith" \
@@ -890,7 +892,7 @@ if test "x$GCC" = "xyes"; then
 			}
 		], [
 			AC_MSG_RESULT(yes)
-			DEBUG_CFLAGS="$DEBUG_CFLAGS -D_FORTIFY_SOURCE=2"
+			DEBUG_CFLAGS="$DEBUG_CFLAGS -Wp,-D_FORTIFY_SOURCE=2"
 		], [
 			AC_MSG_RESULT(no)
 		])
