@@ -237,7 +237,7 @@ add_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *dir,
 
 /* Altered from do_colorshift in gnome-panel */
 static void
-do_alphashift (GdkPixbuf *dest, GdkPixbuf *src, int shift)
+do_alphashift (GdkPixbuf *dest, GdkPixbuf *src)
 {
         gint i, j;
         gint width, height, has_alpha, srcrowstride, destrowstride;
@@ -245,7 +245,6 @@ do_alphashift (GdkPixbuf *dest, GdkPixbuf *src, int shift)
         guchar *original_pixels;
         guchar *pixsrc;
         guchar *pixdest;
-        int val;
         guchar a;
 
         has_alpha = gdk_pixbuf_get_has_alpha (src);
@@ -267,8 +266,7 @@ do_alphashift (GdkPixbuf *dest, GdkPixbuf *src, int shift)
                         *(pixdest++) = *(pixsrc++);
                         *(pixdest++) = *(pixsrc++);
                         a = *(pixsrc++);
-                        val = a - shift;
-                        *(pixdest++) = CLAMP(val, 0, 255);
+                        *(pixdest++) = a / 2;
                 }
         }
 }
@@ -286,7 +284,7 @@ add_translucent_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *
 
 	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir, size, file, NULL);
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	do_alphashift(pixbuf, pixbuf, 128);
+	do_alphashift(pixbuf, pixbuf);
 
 	source = gtk_icon_source_new();
         gtk_icon_source_set_pixbuf(source, pixbuf);
@@ -314,7 +312,7 @@ add_translucent_sized_icon(GtkIconSet *iconset, GtkIconSize sizeid, const char *
        if (rtl) {
 		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", dir, size, "rtl", file, NULL);
  		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		do_alphashift(pixbuf, pixbuf, 128);
+		do_alphashift(pixbuf, pixbuf);
 		source = gtk_icon_source_new();
                 gtk_icon_source_set_pixbuf(source, pixbuf);
                 gtk_icon_source_set_direction(source, GTK_TEXT_DIR_RTL);
