@@ -160,6 +160,7 @@ purple_imgstore_unref(PurpleStoredImage *img)
 		g_free(img->data);
 		g_free(img->filename);
 		g_free(img);
+		img = NULL;
 	}
 
 	return img;
