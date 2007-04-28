@@ -6,7 +6,6 @@ EXTRA_DIST = \
 		HACKING \
 		Makefile.mingw \
 		PLUGIN_HOWTO \
-		PROGRAMMING_NOTES \
 		README.MTN \
 		README.mingw \
 		config.h.mingw \
