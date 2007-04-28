@@ -197,7 +197,7 @@ static GHashTable* msim_parse(gchar* msg)
     if (msg[0] != '\\' || msg[1] == 0)
     {
         purple_debug_info("msim", "msim_parse: incomplete/bad msg, "
-                "missing initial backslash: <%s>", msg);
+                "missing initial backslash: <%s>\n", msg);
         /* XXX: Should we try to recover, and read to first backslash? */
 
         g_free(msg);
@@ -226,7 +226,7 @@ static GHashTable* msim_parse(gchar* msg)
                 /* TODO: Some dictionaries have multiple values for the same
                  * key. Should append to a GList to handle this case. */
                 purple_debug_info("msim", "msim_parse: key %s already exists, "
-                "not overwriting or replacing; ignoring new value %s", key,
+                "not overwriting or replacing; ignoring new value %s\n", key,
                 value);
             }
         } else {
@@ -251,7 +251,8 @@ static GHashTable* msim_parse(gchar* msg)
  * @return Encoded login challenge response, ready to send to the server. Must be g_free()'d
  *         when finished.
  */
-static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], gchar* email, gchar* password)
+static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], 
+		gchar* email, gchar* password)
 {
     PurpleCipherContext *key_context;
     PurpleCipher *sha1;
@@ -262,26 +263,40 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], gchar
     guchar* data;
 	guchar* data_out;
     gchar* response;
-    int i;
 	size_t data_len, data_out_len;
+	gsize conv_bytes_read, conv_bytes_written;
+	GError* conv_error;
 
     //memset(nonce, 0, NONCE_HALF_SIZE);
     //memset(nonce + NONCE_HALF_SIZE, 1, NONCE_HALF_SIZE);
 
     /* Convert ASCII password to UTF16 little endian */
-    /* TODO: use the built-in facility to do this, like Nathan Peterson does. */
-    purple_debug_info("msim", "converting password to utf16le\n");
-    //printf("pw=<%s>\n",password);
+    purple_debug_info("msim", "converting password to UTF-16LE\n");
+	conv_error = NULL;
+	password_utf16le = g_convert(password, -1, "UTF-16LE", "UTF-8", 
+			&conv_bytes_read, &conv_bytes_written, &conv_error);
+	g_assert(conv_bytes_read == strlen(password));
+	if (conv_error != NULL)
+	{
+		purple_debug_error("msim", 
+				"g_convert password UTF8->UTF16LE failed: %s",
+				conv_error->message);
+		g_error_free(conv_error);
+	}
+
+#if 0
     password_utf16le = g_new0(gchar, strlen(password) * 2);
     for (i = 0; i < strlen(password) * 2; i += 2)
     {
         password_utf16le[i] = password[i / 2];
         password_utf16le[i + 1] = 0;
     }
+#endif
   
     /* Compute password hash */ 
-    purple_cipher_digest_region("sha1", (guchar*)password_utf16le, strlen(password) * 2,
-            sizeof(hash_pw), hash_pw, NULL);
+    purple_cipher_digest_region("sha1", (guchar*)password_utf16le, 
+			conv_bytes_written, sizeof(hash_pw), hash_pw, NULL);
+	g_free(password_utf16le);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
     printf("pwhash = ");
@@ -371,7 +386,8 @@ static void msim_send(MsimSession *session, const gchar *msg)
 
     if (ret != strlen(msg))
     {
-        purple_debug_info("msim", "msim_send(%s): strlen=%d, but only wrote %s\n",
+        purple_debug_info("msim", 
+				"msim_send(%s): strlen=%d, but only wrote %s\n",
                 msg, strlen(msg), ret);
         /* TODO: better error */
     }
@@ -471,7 +487,8 @@ static GHashTable *msim_parse_body(const gchar *body_str)
         key = elements[0];
         if (!key)
         {
-            purple_debug_info("msim", "msim_parse_body(%s): null key", body_str);
+            purple_debug_info("msim", "msim_parse_body(%s): null key\n", 
+					body_str);
             g_strfreev(elements);
             break;
         }
@@ -479,7 +496,8 @@ static GHashTable *msim_parse_body(const gchar *body_str)
         value = elements[1];
         if (!value)
         {
-            purple_debug_info("msim", "msim_parse_body(%s): null value", body_str);
+            purple_debug_info("msim", "msim_parse_body(%s): null value\n", 
+					body_str);
             g_strfreev(elements);
             break;
         }
@@ -612,7 +630,8 @@ static int msim_process_reply(MsimSession *session, GHashTable *table)
         {
             g_hash_table_insert(session->user_lookup_cache, g_strdup(username), body);
         } else {
-            purple_debug_info("msim", "msim_process_reply: not caching <%s>, no UserName",
+            purple_debug_info("msim", 
+					"msim_process_reply: not caching <%s>, no UserName\n",
                     g_hash_table_lookup(table, "body"));
         } 
 
@@ -623,7 +642,8 @@ static int msim_process_reply(MsimSession *session, GHashTable *table)
 
         if (cb)
         {
-            purple_debug_info("msim", "msim_process_body: calling callback now\n");
+            purple_debug_info("msim", 
+					"msim_process_body: calling callback now\n");
             cb(session, table, data);
             g_hash_table_remove(session->user_lookup_cb, GUINT_TO_POINTER(rid));
             g_hash_table_remove(session->user_lookup_cb_data, GUINT_TO_POINTER(rid));
@@ -633,7 +653,8 @@ static int msim_process_reply(MsimSession *session, GHashTable *table)
              * it when it wants. */
             return 1;
         } else {
-            purple_debug_info("msim", "msim_process_body: no callback for rid %d\n", rid);
+            purple_debug_info("msim", 
+					"msim_process_body: no callback for rid %d\n", rid);
         }
     }
     return 0;
@@ -725,7 +746,8 @@ static int msim_incoming_im(MsimSession *session, GHashTable *table)
     userid = g_hash_table_lookup(table, "f");
     msg = g_hash_table_lookup(table, "msg");
     
-    purple_debug_info("msim", "msim_incoming_im: got msg <%s> from <%s>, resolving username\n",
+    purple_debug_info("msim", 
+			"msim_incoming_im: got msg <%s> from <%s>, resolving username\n",
             msg, userid);
 
     msim_lookup_user(session, userid, msim_incoming_im_cb, g_strdup(msg));
@@ -781,7 +803,9 @@ static void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer 
         return;
     }
 
-    purple_debug_info("msim", "msim_status_cb: updating status for <%s> to <%s>\n", username, status_str);
+    purple_debug_info("msim", 
+			"msim_status_cb: updating status for <%s> to <%s>\n", 
+			username, status_str);
 
     /* TODO: generic functions to split into a GList */
     status_array = g_strsplit(status_str, "|", 0);
@@ -803,7 +827,8 @@ static void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer 
     if (!buddy)
     {
         /* TODO: purple aliases, userids and usernames */
-        purple_debug_info("msim", "msim_status: making new buddy for %s\n", username);
+        purple_debug_info("msim", 
+				"msim_status: making new buddy for %s\n", username);
         buddy = purple_buddy_new(session->account, username, NULL);
 
         /* TODO: sometimes (when click on it), buddy list disappears. Fix. */
@@ -857,7 +882,8 @@ static int msim_status(MsimSession *session, GHashTable *table)
    
     /* TODO: if buddies were identified on buddy list by uid, wouldn't have to lookup 
      * before updating the status! Much more efficient. */
-    purple_debug_info("msim", "msim_status: got status msg <%s> for <%s>, scheduling lookup\n",
+    purple_debug_info("msim", 
+			"msim_status: got status msg <%s> for <%s>, scheduling lookup\n",
             status_str, userid);
     
     /* Actually update status once obtain username */
@@ -984,7 +1010,8 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
     }
 
     purple_debug_info("msim", "buffer at %d (max %d), reading up to %d\n",
-            session->rxoff, MSIM_READ_BUF_SIZE, MSIM_READ_BUF_SIZE - session->rxoff);
+            session->rxoff, MSIM_READ_BUF_SIZE, 
+			MSIM_READ_BUF_SIZE - session->rxoff);
 
     /* Read into buffer. On Win32, need recv() not read(). session->fd also holds
      * the file descriptor, but it sometimes differs from the 'source' parameter.
@@ -1019,7 +1046,8 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
     {
         /* Occurs after login, but it is not a null byte. */
         purple_debug_info("msim", "msim_input_cb: strlen=%d, but read %d bytes"
-                "--null byte encountered?\n", strlen(session->rxbuf + session->rxoff), n);
+                "--null byte encountered?\n", 
+				strlen(session->rxbuf + session->rxoff), n);
         //purple_connection_error(gc, "Invalid message - null byte on input");
         return;
     }
@@ -1039,7 +1067,8 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
         table = msim_parse(g_strdup(session->rxbuf));
         if (!table)
         {
-            purple_debug_info("msim", "msim_input_cb: couldn't parse <%s>\n", session->rxbuf);
+            purple_debug_info("msim", "msim_input_cb: couldn't parse <%s>\n", 
+					session->rxbuf);
             purple_connection_error(gc, "Unparseable message");
         }
         else
@@ -1268,7 +1297,8 @@ static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_
     g_return_if_fail(user != NULL);
     g_return_if_fail(cb != NULL);
 
-    purple_debug_info("msim", "msim_lookup_userid", "asynchronously looking up <%s>\n", user);
+    purple_debug_info("msim", "msim_lookup_userid", 
+			"asynchronously looking up <%s>\n", user);
 
     /* TODO: check if this user's info was cached and fresh; if so return immediately */
 #if 0
@@ -1352,7 +1382,8 @@ static int msim_send_im(PurpleConnection *gc, const char *who,
     /* If numeric ID, can send message immediately without userid lookup */
     if (msim_is_userid(who))
     {
-        purple_debug_info("msim", "msim_send_im: numeric 'who' detected, sending asap\n");
+        purple_debug_info("msim", 
+				"msim_send_im: numeric 'who' detected, sending asap\n");
         msim_send_im_by_userid(session, who, message, flags);
         return 1;
     }
