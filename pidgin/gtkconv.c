@@ -3134,7 +3134,10 @@ update_typing_icon(PidginConversation *gtkconv)
 		gtk_widget_hide(gtkwin->menu.typing_icon);
 	}
 
-	if (!im || (purple_conv_im_get_typing_state(im) == PURPLE_NOT_TYPING)) {
+	if (im == NULL)
+		return;
+
+	if (purple_conv_im_get_typing_state(im) == PURPLE_NOT_TYPING) {
 		if (gtkconv->u.im->typing_timer != 0)
 			g_source_remove(gtkconv->u.im->typing_timer);
 		return;
