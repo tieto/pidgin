@@ -948,13 +948,19 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 			}
 			else
 			{
-				int checksum = purple_blist_node_get_int(node, "icon_checksum");
-				if (checksum != 0)
+				PurpleAccount account = purple_buddy_get_account((PurpleBuddy *)node);
+				const char *prpl_id = purple_account_get_protocol_id(account);
+
+				if (!strcmp(prpl_id, "prpl-yahoo"))
 				{
-					char *checksum_str = g_strdup_printf("%i", checksum);
-					purple_blist_node_remove_setting(node, "icon_checksum");
-					purple_blist_node_set_string(node, "icon_checksum", checksum_str);
-					g_free(checksum_str);
+					int checksum = purple_blist_node_get_int(node, "icon_checksum");
+					if (checksum != 0)
+					{
+						char *checksum_str = g_strdup_printf("%i", checksum);
+						purple_blist_node_remove_setting(node, "icon_checksum");
+						purple_blist_node_set_string(node, "icon_checksum", checksum_str);
+						g_free(checksum_str);
+					}
 				}
 			}
 		}
