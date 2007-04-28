@@ -2,7 +2,7 @@
  *
  * \author Jeff Connelly
  *
- * Copyright (C) 2007, Jeff Connelly <myspaceim@xyzzy.cjb.net>
+ * Copyright (C) 2007, Jeff Connelly <jeff2@homing.pidgin.im>
  *
  * Based on Purple's "C Plugin HOWTO" hello world example.
  *
@@ -55,70 +55,7 @@
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */
 
-#define MSIM_STATUS_ONLINE      "online"
-#define MSIM_STATUS_AWAY     	"away"
-#define MSIM_STATUS_OFFLINE   	"offline"
-#define MSIM_STATUS_INVISIBLE 	"invisible"
-
-/* Build version of MySpaceIM to report to servers */
-#define MSIM_CLIENT_VERSION     673
-
-#define MSIM_SERVER         "im.myspace.akadns.net"
-//#define MSIM_SERVER         "localhost"
-#define MSIM_PORT           1863        /* TODO: alternate ports and automatic */
-
-/* Constants */
-#define HASH_SIZE           0x14        /**< Size of SHA-1 hash for login */
-#define NONCE_HALF_SIZE     0x20        /**< Half of decoded 'nc' field */
-#define MSIM_READ_BUF_SIZE  5*1024      /**< Receive buffer size */
-#define MSIM_FINAL_STRING   "\\final\\" /**< Message end marker */
-
-/* Messages */
-#define MSIM_BM_INSTANT     1
-#define MSIM_BM_STATUS      100
-#define MSIM_BM_ACTION      121
-/*#define MSIM_BM_UNKNOWN1    122*/
-
-/* Random number in every MsimSession, to ensure it is valid. */
-#define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
-
-/* Everything needed to keep track of a session. */
-typedef struct _MsimSession
-{
-    guint magic;                        /**< MSIM_SESSION_STRUCT_MAGIC */
-    PurpleAccount *account;           
-    PurpleConnection *gc;
-    gchar *sesskey;                     /**< Session key text string from server */
-    gchar *userid;                      /**< This user's numeric user ID */
-    gint fd;                            /**< File descriptor to/from server */
-
-    GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
-    GHashTable *user_lookup_cb_data;    /**< Username -> userid lookup callback data */
-    GHashTable *user_lookup_cache;      /**< Cached information on users */
-
-    gchar *rxbuf;                       /**< Receive buffer */
-    guint rxoff;                        /**< Receive buffer offset */
-} MsimSession;
-
-#define MSIM_SESSION_VALID(s) (session != NULL && session->magic == MSIM_SESSION_STRUCT_MAGIC)
-
-/* Callback for when a user's information is received, initiated from a user lookup. */
-typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, GHashTable *userinfo, gpointer data);
-
-/* Passed to MSIM_USER_LOOKUP_CB for msim_send_im_cb - called when
- * user information is available, ready to send a message. */
-typedef struct _send_im_cb_struct
-{
-    gchar *who;
-    gchar *message;
-    PurpleMessageFlags flags;
-} send_im_cb_struct;
-
-
-/* TODO: .h file */
-static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb, gpointer data);
-static inline gboolean msim_is_userid(const gchar *user);
-static void msim_session_destroy(MsimSession *session);
+#include "myspace.h"
 
 static void init_plugin(PurplePlugin *plugin) 
 {
@@ -143,6 +80,7 @@ static GList *msim_status_types(PurpleAccount *acct)
 
     types = NULL;
 
+	/* TODO: Clean up - I don't like all this repetition */
     type = purple_status_type_new(PURPLE_STATUS_AVAILABLE, MSIM_STATUS_ONLINE,
                               MSIM_STATUS_ONLINE, TRUE);
     purple_status_type_add_attr(type, "message", "Online",
@@ -170,6 +108,28 @@ static GList *msim_status_types(PurpleAccount *acct)
     return types;
 }
 
+/**
+ * Return the icon name for a buddy and account.
+ *
+ * @param acct The account to find the icon for, or NULL for protocol icon.
+ * @param buddy The buddy to find the icon for, or NULL for the account icon.
+ *
+ * @return The base icon name string.
+ */
+static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
+{
+    /* TODO: use a MySpace icon. hbons submitted one to 
+     * http://developer.pidgin.im/wiki/MySpaceIM  - tried placing in
+     * C:\cygwin\home\Jeff\purple-2.0.0beta6\gtk\pixmaps\status\default 
+     * and returning "myspace" but icon shows up blank.
+     */
+    if (acct == NULL)
+    {
+        purple_debug_info("msim", "msim_list_icon: acct == NULL!\n");
+        //exit(-2);
+    }
+      return "meanwhile";
+}
 /** 
  * Parse a MySpaceIM protocol message into a hash table. 
  *
@@ -242,123 +202,69 @@ static GHashTable* msim_parse(gchar* msg)
 }
 
 /**
- * Compute the base64'd login challenge response based on username, password, nonce, and IPs.
+ * Parse a \x1c-separated "dictionary" of key=value pairs into a hash table.
  *
- * @param nonce The base64 encoded nonce ('nc') field from the server.
- * @param email User's email address (used as login name).
- * @param password User's cleartext password.
+ * @param body_str The text of the dictionary to parse. Often the
+ *                  value for the 'body' field.
  *
- * @return Encoded login challenge response, ready to send to the server. Must be g_free()'d
- *         when finished.
+ * @return Hash table of the keys and values. Must g_hash_table_destroy() when done.
  */
-static gchar* msim_compute_login_response(guchar nonce[2*NONCE_HALF_SIZE], 
-		gchar* email, gchar* password)
+static GHashTable *msim_parse_body(const gchar *body_str)
 {
-    PurpleCipherContext *key_context;
-    PurpleCipher *sha1;
-	PurpleCipherContext *rc4;
-    guchar hash_pw[HASH_SIZE];
-    guchar key[HASH_SIZE];
-    gchar* password_utf16le;
-    guchar* data;
-	guchar* data_out;
-    gchar* response;
-	size_t data_len, data_out_len;
-	gsize conv_bytes_read, conv_bytes_written;
-	GError* conv_error;
+    GHashTable *table;
+    gchar *item;
+    gchar **items;
+    gchar **elements;
+    guint i;
 
-    //memset(nonce, 0, NONCE_HALF_SIZE);
-    //memset(nonce + NONCE_HALF_SIZE, 1, NONCE_HALF_SIZE);
+    g_return_val_if_fail(body_str != NULL, NULL);
 
-    /* Convert ASCII password to UTF16 little endian */
-    purple_debug_info("msim", "converting password to UTF-16LE\n");
-	conv_error = NULL;
-	password_utf16le = g_convert(password, -1, "UTF-16LE", "UTF-8", 
-			&conv_bytes_read, &conv_bytes_written, &conv_error);
-	g_assert(conv_bytes_read == strlen(password));
-	if (conv_error != NULL)
-	{
-		purple_debug_error("msim", 
-				"g_convert password UTF8->UTF16LE failed: %s",
-				conv_error->message);
-		g_error_free(conv_error);
-	}
-
-#if 0
-    password_utf16le = g_new0(gchar, strlen(password) * 2);
-    for (i = 0; i < strlen(password) * 2; i += 2)
+    table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+ 
+    for (items = g_strsplit(body_str, "\x1c", 0), i = 0; 
+        (item = items[i]);
+        i++)
     {
-        password_utf16le[i] = password[i / 2];
-        password_utf16le[i + 1] = 0;
+        gchar *key, *value;
+
+        //printf("TOK=<%s>\n", token);
+        elements = g_strsplit(item, "=", 2);
+
+        key = elements[0];
+        if (!key)
+        {
+            purple_debug_info("msim", "msim_parse_body(%s): null key\n", 
+					body_str);
+            g_strfreev(elements);
+            break;
+        }
+
+        value = elements[1];
+        if (!value)
+        {
+            purple_debug_info("msim", "msim_parse_body(%s): null value\n", 
+					body_str);
+            g_strfreev(elements);
+            break;
+        }
+
+        //printf("-- %s: %s\n", key, value);
+
+        /* XXX: This overwrites duplicates. */
+        /* TODO: make the GHashTable values be GList's, and append to the list if 
+         * there is already a value of the same key name. This is important for
+         * the WebChallenge message. */
+        g_hash_table_insert(table, g_strdup(key), g_strdup(value));
+        
+        g_strfreev(elements);
     }
-#endif
-  
-    /* Compute password hash */ 
-    purple_cipher_digest_region("sha1", (guchar*)password_utf16le, 
-			conv_bytes_written, sizeof(hash_pw), hash_pw, NULL);
-	g_free(password_utf16le);
 
-#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
-    printf("pwhash = ");
-    for (i = 0; i < sizeof(hash_pw); i++)
-        printf("%.2x ", hash_pw[i]);
-    printf("\n");
-#endif
+    g_strfreev(items);
 
-    /* key = sha1(sha1(pw) + nonce2) */
-    sha1 = purple_ciphers_find_cipher("sha1");
-    key_context = purple_cipher_context_new(sha1, NULL);
-    purple_cipher_context_append(key_context, hash_pw, HASH_SIZE);
-    purple_cipher_context_append(key_context, nonce + NONCE_HALF_SIZE, NONCE_HALF_SIZE);
-    purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
-
-#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
-    printf("key = ");
-    for (i = 0; i < sizeof(key); i++)
-    {
-        printf("%.2x ", key[i]);
-    }
-    printf("\n");
-#endif
-
-	rc4 = purple_cipher_context_new_by_name("rc4", NULL);
-
-    /* Note: 'key' variable is 0x14 bytes (from SHA-1 hash), 
-     * but only first 0x10 used for the RC4 key. */
-	purple_cipher_context_set_option(rc4, "key_len", (gpointer)0x10);
-	purple_cipher_context_set_key(rc4, key);
-
-    /* TODO: obtain IPs of network interfaces. This is not immediately
-     * important because you can still connect and perform basic
-     * functions of the protocol. There is also a high chance that the addreses
-     * are RFC1918 private, so the servers couldn't do anything with them
-     * anyways except make note of that fact. Probably important for any
-     * kind of direct connection, or file transfer functionality.
-     */
-    /* rc4 encrypt:
-     * nonce1+email+IP list */
-    data_len = NONCE_HALF_SIZE + strlen(email) + 25;
-    data = g_new0(guchar, data_len);
-    memcpy(data, nonce, NONCE_HALF_SIZE);
-    memcpy(data + NONCE_HALF_SIZE, email, strlen(email));
-    memcpy(data + NONCE_HALF_SIZE + strlen(email),
-            /* IP addresses of network interfaces */
-            "\x00\x00\x00\x00\x05\x7f\x00\x00\x01\x00\x00\x00\x00\x0a\x00\x00\x40\xc0\xa8\x58\x01\xc0\xa8\x3c\x01", 25);
-
-	data_out = g_new0(guchar, data_len);
-    purple_cipher_context_encrypt(rc4, (const guchar*)data, 
-			data_len, data_out, &data_out_len);
-	g_assert(data_out_len == data_len);
-	purple_cipher_context_destroy(rc4);
-
-    response = purple_base64_encode(data_out, data_out_len);
-	g_free(data_out);
-#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
-    printf("response=<%s>\n", response);
-#endif
-
-    return response;
+    return table;
 }
+
+
 
 static void print_hash_item(gpointer key, gpointer value, gpointer user_data)
 {
@@ -389,10 +295,52 @@ static void msim_send(MsimSession *session, const gchar *msg)
         purple_debug_info("msim", 
 				"msim_send(%s): strlen=%d, but only wrote %s\n",
                 msg, strlen(msg), ret);
-        /* TODO: better error */
+        /* TODO: better error -or- TODO: send all, loop unless ret=-1 */
     }
 }
 
+/** 
+ * Start logging in to the MSIM servers.
+ * 
+ * @param acct Account information to use to login.
+ */
+static void msim_login(PurpleAccount *acct)
+{
+    PurpleConnection *gc;
+    const char *host;
+    int port;
+
+    g_return_if_fail(acct != NULL);
+
+    purple_debug_info("myspace", "logging in %s\n", acct->username);
+
+    gc = purple_account_get_connection(acct);
+    gc->proto_data = msim_session_new(acct);
+
+    /* 1. connect to server */
+    purple_connection_update_progress(gc, "Connecting",
+                                  0,   /* which connection step this is */
+                                  4);  /* total number of steps */
+
+    /* TODO: GUI option to be user-modifiable. */
+    host = purple_account_get_string(acct, "server", MSIM_SERVER);
+    port = purple_account_get_int(acct, "port", MSIM_PORT);
+    /* TODO: connect */
+    /* From purple.sf.net/api:
+     * """Note that this function name can be misleading--although it is called 
+     * "proxy connect," it is used for establishing any outgoing TCP connection, 
+     * whether through a proxy or not.""" */
+
+    /* Calls msim_connect_cb when connected. */
+    if (purple_proxy_connect(gc, acct, host, port, msim_connect_cb, gc) == NULL)
+    {
+        /* TODO: try other ports if in auto mode, then save
+         * working port and try that first next time. */
+        purple_connection_error(gc, "Couldn't create socket");
+        return;
+    }
+
+}
 /**
  * Process a login challenge, sending a response. 
  *
@@ -456,66 +404,190 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
 }
 
 /**
- * Parse a \x1c-separated "dictionary" of key=value pairs into a hash table.
+ * Compute the base64'd login challenge response based on username, password, nonce, and IPs.
  *
- * @param body_str The text of the dictionary to parse. Often the
- *                  value for the 'body' field.
+ * @param nonce The base64 encoded nonce ('nc') field from the server.
+ * @param email User's email address (used as login name).
+ * @param password User's cleartext password.
  *
- * @return Hash table of the keys and values. Must g_hash_table_destroy() when done.
+ * @return Encoded login challenge response, ready to send to the server. Must be g_free()'d
+ *         when finished.
  */
-static GHashTable *msim_parse_body(const gchar *body_str)
+static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE], 
+		gchar* email, gchar* password)
 {
-    GHashTable *table;
-    gchar *item;
-    gchar **items;
-    gchar **elements;
-    guint i;
+    PurpleCipherContext *key_context;
+    PurpleCipher *sha1;
+	PurpleCipherContext *rc4;
+    guchar hash_pw[HASH_SIZE];
+    guchar key[HASH_SIZE];
+    gchar* password_utf16le;
+    guchar* data;
+	guchar* data_out;
+    gchar* response;
+	size_t data_len, data_out_len;
+	gsize conv_bytes_read, conv_bytes_written;
+	GError* conv_error;
 
-    g_return_val_if_fail(body_str != NULL, NULL);
+    //memset(nonce, 0, NONCE_SIZE);
+    //memset(nonce + NONCE_SIZE, 1, NONCE_SIZE);
 
-    table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
- 
-    for (items = g_strsplit(body_str, "\x1c", 0), i = 0; 
-        (item = items[i]);
-        i++)
+    /* Convert ASCII password to UTF16 little endian */
+    purple_debug_info("msim", "converting password to UTF-16LE\n");
+	conv_error = NULL;
+	password_utf16le = g_convert(password, -1, "UTF-16LE", "UTF-8", 
+			&conv_bytes_read, &conv_bytes_written, &conv_error);
+	g_assert(conv_bytes_read == strlen(password));
+	if (conv_error != NULL)
+	{
+		purple_debug_error("msim", 
+				"g_convert password UTF8->UTF16LE failed: %s",
+				conv_error->message);
+		g_error_free(conv_error);
+	}
+
+    /* Compute password hash */ 
+    purple_cipher_digest_region("sha1", (guchar*)password_utf16le, 
+			conv_bytes_written, sizeof(hash_pw), hash_pw, NULL);
+	g_free(password_utf16le);
+
+#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
+    printf("pwhash = ");
+    for (i = 0; i < sizeof(hash_pw); i++)
+        printf("%.2x ", hash_pw[i]);
+    printf("\n");
+#endif
+
+    /* key = sha1(sha1(pw) + nonce2) */
+    sha1 = purple_ciphers_find_cipher("sha1");
+    key_context = purple_cipher_context_new(sha1, NULL);
+    purple_cipher_context_append(key_context, hash_pw, HASH_SIZE);
+    purple_cipher_context_append(key_context, nonce + NONCE_SIZE, NONCE_SIZE);
+    purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
+
+#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
+    printf("key = ");
+    for (i = 0; i < sizeof(key); i++)
     {
-        gchar *key, *value;
+        printf("%.2x ", key[i]);
+    }
+    printf("\n");
+#endif
 
-        //printf("TOK=<%s>\n", token);
-        elements = g_strsplit(item, "=", 2);
+	rc4 = purple_cipher_context_new_by_name("rc4", NULL);
 
-        key = elements[0];
-        if (!key)
-        {
-            purple_debug_info("msim", "msim_parse_body(%s): null key\n", 
-					body_str);
-            g_strfreev(elements);
-            break;
-        }
+    /* Note: 'key' variable is 0x14 bytes (from SHA-1 hash), 
+     * but only first 0x10 used for the RC4 key. */
+	purple_cipher_context_set_option(rc4, "key_len", (gpointer)0x10);
+	purple_cipher_context_set_key(rc4, key);
 
-        value = elements[1];
-        if (!value)
-        {
-            purple_debug_info("msim", "msim_parse_body(%s): null value\n", 
-					body_str);
-            g_strfreev(elements);
-            break;
-        }
+    /* TODO: obtain IPs of network interfaces. This is not immediately
+     * important because you can still connect and perform basic
+     * functions of the protocol. There is also a high chance that the addreses
+     * are RFC1918 private, so the servers couldn't do anything with them
+     * anyways except make note of that fact. Probably important for any
+     * kind of direct connection, or file transfer functionality.
+     */
+    /* rc4 encrypt:
+     * nonce1+email+IP list */
+    data_len = NONCE_SIZE + strlen(email) + 25;
+    data = g_new0(guchar, data_len);
+    memcpy(data, nonce, NONCE_SIZE);
+    memcpy(data + NONCE_SIZE, email, strlen(email));
+    memcpy(data + NONCE_SIZE + strlen(email),
+            /* IP addresses of network interfaces */
+            "\x00\x00\x00\x00\x05\x7f\x00\x00\x01\x00\x00\x00\x00\x0a\x00\x00\x40\xc0\xa8\x58\x01\xc0\xa8\x3c\x01", 25);
 
-        //printf("-- %s: %s\n", key, value);
+	data_out = g_new0(guchar, data_len);
+    purple_cipher_context_encrypt(rc4, (const guchar*)data, 
+			data_len, data_out, &data_out_len);
+	g_assert(data_out_len == data_len);
+	purple_cipher_context_destroy(rc4);
 
-        /* XXX: This overwrites duplicates. */
-        /* TODO: make the GHashTable values be GList's, and append to the list if 
-         * there is already a value of the same key name. This is important for
-         * the WebChallenge message. */
-        g_hash_table_insert(table, g_strdup(key), g_strdup(value));
-        
-        g_strfreev(elements);
+    response = purple_base64_encode(data_out, data_out_len);
+	g_free(data_out);
+#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
+    printf("response=<%s>\n", response);
+#endif
+
+    return response;
+}
+
+/**
+ * Schedule an IM to be sent once the user ID is looked up. 
+ *
+ * @param gc Connection.
+ * @param who A user id, email, or username to send the message to.
+ * @param message Instant message text to send.
+ * @param flags Flags.
+ *
+ * @return 1 in all cases, even if the message delivery is destined to fail.
+ *
+ * Allows sending to a user by username, email address, or userid. If
+ * a username or email address is given, the userid must be looked up.
+ * This function does that by calling msim_lookup_user(), setting up
+ * a msim_send_im_by_userid_cb() callback function called when the userid
+ * response is received from the server. 
+ *
+ * The callback function calls msim_send_im_by_userid() to send the actual
+ * instant message. If a userid is specified directly, this function is called
+ * immediately here.
+ */
+static int msim_send_im(PurpleConnection *gc, const char *who,
+                            const char *message, PurpleMessageFlags flags)
+{
+    MsimSession *session;
+    const char *from_username = gc->account->username;
+    send_im_cb_struct *cbinfo;
+
+    g_return_val_if_fail(gc != NULL, 0);
+    g_return_val_if_fail(who != NULL, 0);
+    g_return_val_if_fail(message != NULL, 0);
+
+    purple_debug_info("msim", "sending message from %s to %s: %s\n",
+                  from_username, who, message);
+
+    session = gc->proto_data;
+
+    /* If numeric ID, can send message immediately without userid lookup */
+    if (msim_is_userid(who))
+    {
+        purple_debug_info("msim", 
+				"msim_send_im: numeric 'who' detected, sending asap\n");
+        msim_send_im_by_userid(session, who, message, flags);
+        return 1;
     }
 
-    g_strfreev(items);
+    /* Otherwise, add callback to IM when userid of destination is available */
 
-    return table;
+    /* Setup a callback for when the userid is available */
+    cbinfo = g_new0(send_im_cb_struct, 1);
+    cbinfo->who = g_strdup(who);
+    cbinfo->message = g_strdup(message);
+    cbinfo->flags = flags;
+
+    /* Send the request to lookup the userid */
+    msim_lookup_user(session, who, msim_send_im_by_userid_cb, cbinfo); 
+
+    /* msim_send_im_by_userid_cb will now be called once userid is looked up */
+
+    /* Return 1 to have Purple show this IM as being sent, 0 to not. I always
+     * return 1 even if the message could not be sent, since I don't know if
+     * it has failed yet--because the IM is only sent after the userid is
+     * retrieved from the server (which happens after this function returns).
+     *
+     * TODO: In MySpace, you login with your email address, but don't talk to other
+     * users using their email address. So there is currently an asymmetry in the 
+     * IM windows when using this plugin:
+     *
+     * you@example.com: hello
+     * some_other_user: what's going on?
+     * you@example.com: just coding a prpl
+     *
+     * TODO: Make the sent IM's appear as from the user's username, instead of
+     * their email address. Purple uses the login (in MSIM, the email)--change this.
+     */
+    return 1;
 }
 
 /**
@@ -590,6 +662,137 @@ static void msim_send_im_by_userid_cb(MsimSession *session, GHashTable *userinfo
     g_free(s->who);
 } 
 
+/**
+ * Callback to handle incoming messages, after resolving userid.
+ *
+ * @param session 
+ * @param userinfo Message from server on user's info, containing UserName.
+ * @param data A gchar* of the incoming instant message's text.
+ */
+static void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
+{
+    gchar *msg;
+    gchar *username;
+    GHashTable *body;
+
+    g_return_if_fail(MSIM_SESSION_VALID(session));
+    g_return_if_fail(userinfo != NULL);
+
+    body = msim_parse_body(g_hash_table_lookup(userinfo, "body"));
+    g_assert(body != NULL);
+
+    username = g_hash_table_lookup(body, "UserName");
+
+    msg = (gchar*)data;
+    serv_got_im(session->gc, username, msg, PURPLE_MESSAGE_RECV, time(NULL));
+
+    g_hash_table_destroy(body);
+    g_hash_table_destroy(userinfo);
+}
+
+/**
+ * Handle an incoming message.
+ *
+ * @param session The session
+ * @param table Message from the server, containing 'f' (userid from) and 'msg'.
+ *
+ * @return 0, since table can be freed.
+ */
+static int msim_incoming_im(MsimSession *session, GHashTable *table)
+{
+    gchar *userid;
+    gchar *msg;
+
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
+    g_return_val_if_fail(table != NULL, 0);
+
+
+    userid = g_hash_table_lookup(table, "f");
+    msg = g_hash_table_lookup(table, "msg");
+    
+    purple_debug_info("msim", 
+			"msim_incoming_im: got msg <%s> from <%s>, resolving username\n",
+            msg, userid);
+
+    msim_lookup_user(session, userid, msim_incoming_im_cb, g_strdup(msg));
+
+    return 0;
+}
+
+
+/**
+ * Process a message. 
+ *
+ * @param gc Connection.
+ * @param table Any message from the server.
+ *
+ * @return The return value of the function used to process the message, or -1 if
+ * called with invalid parameters.
+ */
+static int msim_process(PurpleConnection *gc, GHashTable *table)
+{
+    MsimSession *session;
+
+    g_return_val_if_fail(gc != NULL, -1);
+    g_return_val_if_fail(table != NULL, -1);
+
+    session = (MsimSession*)gc->proto_data;
+
+    printf("-------- message -------------\n");
+    g_hash_table_foreach(table, print_hash_item, NULL);
+    printf("------------------------------\n");
+
+    if (g_hash_table_lookup(table, "nc"))
+    {
+        return msim_login_challenge(session, table);
+    } else if (g_hash_table_lookup(table, "sesskey")) {
+        printf("SESSKEY=<%s>\n", (gchar*)g_hash_table_lookup(table, "sesskey"));
+
+        purple_connection_update_progress(gc, "Connected", 3, 4);
+
+        session->sesskey = g_strdup(g_hash_table_lookup(table, "sesskey"));
+
+        /* Comes with: proof,profileid,userid,uniquenick -- all same values
+         * (at least for me). */
+        session->userid = g_strdup(g_hash_table_lookup(table, "userid"));
+
+        purple_connection_set_state(gc, PURPLE_CONNECTED);
+
+        return 0;
+    } else if (g_hash_table_lookup(table, "bm"))  {
+        guint bm;
+       
+        bm = atoi(g_hash_table_lookup(table, "bm"));
+        switch (bm)
+        {
+            case MSIM_BM_STATUS:
+                return msim_status(session, table);
+            case MSIM_BM_INSTANT:
+                return msim_incoming_im(session, table);
+            default:
+                /* Not really an IM, but show it for informational 
+                 * purposes during development. */
+                return msim_incoming_im(session, table);
+        }
+
+        if (bm == MSIM_BM_STATUS)
+        {
+            return msim_status(session, table);
+        } else { /* else if strcmp(bm, "1") == 0)  */
+            return msim_incoming_im(session, table);
+        }
+    } else if (g_hash_table_lookup(table, "rid")) {
+        return msim_process_reply(session, table);
+    } else if (g_hash_table_lookup(table, "error")) {
+        return msim_error(session, table);
+    } else if (g_hash_table_lookup(table, "ka")) {
+        purple_debug_info("msim", "msim_process: got keep alive\n");
+        return 0;
+    } else {
+        printf("<<unhandled>>\n");
+        return 0;
+    }
+}
 /**
  * Process a message reply from the server.
  *
@@ -694,63 +897,6 @@ static int msim_error(MsimSession *session, GHashTable *table)
         close(session->fd);
         //msim_session_destroy(session);
     }
-
-    return 0;
-}
-
-/**
- * Callback to handle incoming messages, after resolving userid.
- *
- * @param session 
- * @param userinfo Message from server on user's info, containing UserName.
- * @param data A gchar* of the incoming instant message's text.
- */
-static void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
-{
-    gchar *msg;
-    gchar *username;
-    GHashTable *body;
-
-    g_return_if_fail(MSIM_SESSION_VALID(session));
-    g_return_if_fail(userinfo != NULL);
-
-    body = msim_parse_body(g_hash_table_lookup(userinfo, "body"));
-    g_assert(body != NULL);
-
-    username = g_hash_table_lookup(body, "UserName");
-
-    msg = (gchar*)data;
-    serv_got_im(session->gc, username, msg, PURPLE_MESSAGE_RECV, time(NULL));
-
-    g_hash_table_destroy(body);
-    g_hash_table_destroy(userinfo);
-}
-
-/**
- * Handle an incoming message.
- *
- * @param session The session
- * @param table Message from the server, containing 'f' (userid from) and 'msg'.
- *
- * @return 0, since table can be freed.
- */
-static int msim_incoming_im(MsimSession *session, GHashTable *table)
-{
-    gchar *userid;
-    gchar *msg;
-
-    g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(table != NULL, 0);
-
-
-    userid = g_hash_table_lookup(table, "f");
-    msg = g_hash_table_lookup(table, "msg");
-    
-    purple_debug_info("msim", 
-			"msim_incoming_im: got msg <%s> from <%s>, resolving username\n",
-            msg, userid);
-
-    msim_lookup_user(session, userid, msim_incoming_im_cb, g_strdup(msg));
 
     return 0;
 }
@@ -893,79 +1039,6 @@ static int msim_status(MsimSession *session, GHashTable *table)
 }
 
 
-/**
- * Process a message. 
- *
- * @param gc Connection.
- * @param table Any message from the server.
- *
- * @return The return value of the function used to process the message, or -1 if
- * called with invalid parameters.
- */
-static int msim_process(PurpleConnection *gc, GHashTable *table)
-{
-    MsimSession *session;
-
-    g_return_val_if_fail(gc != NULL, -1);
-    g_return_val_if_fail(table != NULL, -1);
-
-    session = (MsimSession*)gc->proto_data;
-
-    printf("-------- message -------------\n");
-    g_hash_table_foreach(table, print_hash_item, NULL);
-    printf("------------------------------\n");
-
-    if (g_hash_table_lookup(table, "nc"))
-    {
-        return msim_login_challenge(session, table);
-    } else if (g_hash_table_lookup(table, "sesskey")) {
-        printf("SESSKEY=<%s>\n", (gchar*)g_hash_table_lookup(table, "sesskey"));
-
-        purple_connection_update_progress(gc, "Connected", 3, 4);
-
-        session->sesskey = g_strdup(g_hash_table_lookup(table, "sesskey"));
-
-        /* Comes with: proof,profileid,userid,uniquenick -- all same values
-         * (at least for me). */
-        session->userid = g_strdup(g_hash_table_lookup(table, "userid"));
-
-        purple_connection_set_state(gc, PURPLE_CONNECTED);
-
-        return 0;
-    } else if (g_hash_table_lookup(table, "bm"))  {
-        guint bm;
-       
-        bm = atoi(g_hash_table_lookup(table, "bm"));
-        switch (bm)
-        {
-            case MSIM_BM_STATUS:
-                return msim_status(session, table);
-            case MSIM_BM_INSTANT:
-                return msim_incoming_im(session, table);
-            default:
-                /* Not really an IM, but show it for informational 
-                 * purposes during development. */
-                return msim_incoming_im(session, table);
-        }
-
-        if (bm == MSIM_BM_STATUS)
-        {
-            return msim_status(session, table);
-        } else { /* else if strcmp(bm, "1") == 0)  */
-            return msim_incoming_im(session, table);
-        }
-    } else if (g_hash_table_lookup(table, "rid")) {
-        return msim_process_reply(session, table);
-    } else if (g_hash_table_lookup(table, "error")) {
-        return msim_error(session, table);
-    } else if (g_hash_table_lookup(table, "ka")) {
-        purple_debug_info("msim", "msim_process: got keep alive\n");
-        return 0;
-    } else {
-        printf("<<unhandled>>\n");
-        return 0;
-    }
-}
 
 /**
  * Callback when input available.
@@ -1165,49 +1238,7 @@ static void msim_session_destroy(MsimSession *session)
 
     g_free(session);
 }
-
-/** 
- * Start logging in to the MSIM servers.
- * 
- * @param acct Account information to use to login.
- */
-static void msim_login(PurpleAccount *acct)
-{
-    PurpleConnection *gc;
-    const char *host;
-    int port;
-
-    g_return_if_fail(acct != NULL);
-
-    purple_debug_info("myspace", "logging in %s\n", acct->username);
-
-    gc = purple_account_get_connection(acct);
-    gc->proto_data = msim_session_new(acct);
-
-    /* 1. connect to server */
-    purple_connection_update_progress(gc, "Connecting",
-                                  0,   /* which connection step this is */
-                                  4);  /* total number of steps */
-
-    /* TODO: GUI option to be user-modifiable. */
-    host = purple_account_get_string(acct, "server", MSIM_SERVER);
-    port = purple_account_get_int(acct, "port", MSIM_PORT);
-    /* TODO: connect */
-    /* From purple.sf.net/api:
-     * """Note that this function name can be misleading--although it is called 
-     * "proxy connect," it is used for establishing any outgoing TCP connection, 
-     * whether through a proxy or not.""" */
-
-    /* Calls msim_connect_cb when connected. */
-    if (purple_proxy_connect(gc, acct, host, port, msim_connect_cb, gc) == NULL)
-    {
-        /* TODO: try other ports if in auto mode, then save
-         * working port and try that first next time. */
-        purple_connection_error(gc, "Couldn't create socket");
-        return;
-    }
-
-}                 
+                 
 
 
 /** 
@@ -1222,28 +1253,6 @@ static void msim_close(PurpleConnection *gc)
     msim_session_destroy(gc->proto_data);
 }
 
-/**
- * Return the icon name for a buddy and account.
- *
- * @param acct The account to find the icon for.
- * @param buddy The buddy to find the icon for, or NULL for the accoun icon.
- *
- * @return The base icon name string.
- */
-static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
-{
-    /* TODO: use a MySpace icon. hbons submitted one to 
-     * http://developer.pidgin.im/wiki/MySpaceIM  - tried placing in
-     * C:\cygwin\home\Jeff\purple-2.0.0beta6\gtk\pixmaps\status\default 
-     * and returning "myspace" but icon shows up blank.
-     */
-    if (acct == NULL)
-    {
-        purple_debug_info("msim", "msim_list_icon: acct == NULL!\n");
-        //exit(-2);
-    }
-      return "meanwhile";
-}
 
 /**
  * Check if a string is a userid (all numeric).
@@ -1343,82 +1352,6 @@ static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_
     msim_send(session, msg_string);
 } 
 
-/**
- * Schedule an IM to be sent once the user ID is looked up. 
- *
- * @param gc Connection.
- * @param who A user id, email, or username to send the message to.
- * @param message Instant message text to send.
- * @param flags Flags.
- *
- * @return 1 in all cases, even if the message delivery is destined to fail.
- *
- * Allows sending to a user by username, email address, or userid. If
- * a username or email address is given, the userid must be looked up.
- * This function does that by calling msim_lookup_user(), setting up
- * a msim_send_im_by_userid_cb() callback function called when the userid
- * response is received from the server. 
- *
- * The callback function calls msim_send_im_by_userid() to send the actual
- * instant message. If a userid is specified directly, this function is called
- * immediately here.
- */
-static int msim_send_im(PurpleConnection *gc, const char *who,
-                            const char *message, PurpleMessageFlags flags)
-{
-    MsimSession *session;
-    const char *from_username = gc->account->username;
-    send_im_cb_struct *cbinfo;
-
-    g_return_val_if_fail(gc != NULL, 0);
-    g_return_val_if_fail(who != NULL, 0);
-    g_return_val_if_fail(message != NULL, 0);
-
-    purple_debug_info("msim", "sending message from %s to %s: %s\n",
-                  from_username, who, message);
-
-    session = gc->proto_data;
-
-    /* If numeric ID, can send message immediately without userid lookup */
-    if (msim_is_userid(who))
-    {
-        purple_debug_info("msim", 
-				"msim_send_im: numeric 'who' detected, sending asap\n");
-        msim_send_im_by_userid(session, who, message, flags);
-        return 1;
-    }
-
-    /* Otherwise, add callback to IM when userid of destination is available */
-
-    /* Setup a callback for when the userid is available */
-    cbinfo = g_new0(send_im_cb_struct, 1);
-    cbinfo->who = g_strdup(who);
-    cbinfo->message = g_strdup(message);
-    cbinfo->flags = flags;
-
-    /* Send the request to lookup the userid */
-    msim_lookup_user(session, who, msim_send_im_by_userid_cb, cbinfo); 
-
-    /* msim_send_im_by_userid_cb will now be called once userid is looked up */
-
-    /* Return 1 to have Purple show this IM as being sent, 0 to not. I always
-     * return 1 even if the message could not be sent, since I don't know if
-     * it has failed yet--because the IM is only sent after the userid is
-     * retrieved from the server (which happens after this function returns).
-     *
-     * TODO: In MySpace, you login with your email address, but don't talk to other
-     * users using their email address. So there is currently an asymmetry in the 
-     * IM windows when using this plugin:
-     *
-     * you@example.com: hello
-     * some_other_user: what's going on?
-     * you@example.com: just coding a prpl
-     *
-     * TODO: Make the sent IM's appear as from the user's username, instead of
-     * their email address. Purple uses the login (in MSIM, the email)--change this.
-     */
-    return 1;
-}
 
 /**
  * Obtain the status text for a buddy.
