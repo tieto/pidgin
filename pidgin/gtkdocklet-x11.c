@@ -77,7 +77,7 @@ docklet_x11_destroyed_cb(GtkWidget *widget, void *data)
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
 
-	g_idle_add(docklet_x11_create_cb, NULL);
+	g_idle_add(docklet_x11_recreate_cb, NULL);
 }
 
 static void
