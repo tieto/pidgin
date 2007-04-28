@@ -2163,7 +2163,6 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	const guchar *data = NULL;
 	gsize len;
 	PurpleBuddy *buddy = NULL;
-	PurpleChat *chat = NULL;
 	PurpleAccount *account = NULL;
 	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleStoredImage *custom_img;
@@ -2172,16 +2171,14 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 		buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
 	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (PurpleBuddy*)node;
-	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
-		chat = (PurpleChat*)node;
 	} else {
 		return NULL;
 	}
 
-	if(buddy != NULL)
-		account = purple_buddy_get_account(buddy);
-	else if(chat != NULL)
-		account = chat->account;
+	if(buddy == NULL)
+		return NULL;
+
+	account = purple_buddy_get_account(buddy);
 
 	if(account && account->gc)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
@@ -2199,18 +2196,14 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	}
 
 	if (data == NULL) {
-		if(buddy != NULL) {
-			if (!(icon = purple_buddy_get_icon(buddy)))
-				if (!(icon = purple_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
-					return NULL;
-			data = purple_buddy_icon_get_data(icon, &len);
-			if (data == NULL)
+		if (!(icon = purple_buddy_get_icon(buddy)))
+			if (!(icon = purple_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
 				return NULL;
-		}
-	}
+		data = purple_buddy_icon_get_data(icon, &len);
 
-	if(data == NULL)
-		return NULL;
+		if(data == NULL)
+			return NULL;
+	}
 
 	loader = gdk_pixbuf_loader_new();
 	gdk_pixbuf_loader_write(loader, data, len, NULL);
