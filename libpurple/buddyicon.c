@@ -1058,7 +1058,7 @@ purple_buddy_icons_blist_loaded_cb()
 				{
 					migrate_buddy_icon(node,
 					                   "custom_buddy_icon",
-					                    dirname, filename);
+					                   dirname, filename);
 				}
 				else
 				{
