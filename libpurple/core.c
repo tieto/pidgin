@@ -116,6 +116,8 @@ purple_core_init(const char *ui)
 	purple_dbus_init();
 #endif
 
+	purple_ciphers_init();
+
 	/* Initialize all static protocols. */
 	static_proto_init();
 
@@ -134,7 +136,6 @@ purple_core_init(const char *ui)
 
 	purple_accounts_init();
 	purple_savedstatuses_init();
-	purple_ciphers_init();
 	purple_notify_init();
 	purple_connections_init();
 	purple_conversations_init();
