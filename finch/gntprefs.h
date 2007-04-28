@@ -40,6 +40,10 @@ void finch_prefs_init(void);
  */
 void finch_prefs_show_all(void);
 
+/**
+ * You don't need to know about this.
+ */
+void finch_prefs_update_old(void);
 /*@}*/
 
 #endif
