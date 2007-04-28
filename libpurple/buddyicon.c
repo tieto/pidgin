@@ -948,7 +948,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 			}
 			else
 			{
-				PurpleAccount account = purple_buddy_get_account((PurpleBuddy *)node);
+				PurpleAccount *account = purple_buddy_get_account((PurpleBuddy *)node);
 				const char *prpl_id = purple_account_get_protocol_id(account);
 
 				if (!strcmp(prpl_id, "prpl-yahoo"))
