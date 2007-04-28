@@ -57,10 +57,13 @@ PIDGIN_PORTABLE_EXE := $(PIDGIN_TOP)/pidgin-portable.exe
 GCCWARNINGS := -Waggregate-return -Wcast-align -Wdeclaration-after-statement -Werror-implicit-function-declaration -Wextra -Wno-sign-compare -Wno-unused-parameter -Winit-self -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wundef
 
 # parse the version number from the configure.ac file if it is newer
-#AC_INIT([pidgin], [2.0.0dev], [devel@pidgin.im])
+#m4_define([purple_major_version], [2])
+#m4_define([purple_minor_version], [0])
+#m4_define([purple_micro_version], [0])
+#m4_define([purple_version_suffix], [devel])
 PIDGIN_VERSION := $(shell \
   if [ ! $(PIDGIN_TREE_TOP)/VERSION -nt $(PIDGIN_TREE_TOP)/configure.ac ]; then \
-    awk 'BEGIN {FS="\\] *, *\\["} /^AC_INIT\(.+\)/ {printf("%s",$$2); exit}' \
+    awk 'BEGIN {FS="[\\(\\)\\[\\]]"} /^m4_define..purple_(major|minor)_version/ {printf("%s.",$$5);} /^m4_define..purple_micro_version/ {printf("%s",$$5);} /^m4_define..purple_version_suffix/ {printf("%s",$$5); exit}' \
       $(PIDGIN_TREE_TOP)/configure.ac > $(PIDGIN_TREE_TOP)/VERSION; \
   fi; \
   cat $(PIDGIN_TREE_TOP)/VERSION \
