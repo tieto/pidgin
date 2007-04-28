@@ -1102,13 +1102,14 @@ purple_prefs_get_path_list(const char *name)
 static void
 purple_prefs_rename_node(struct purple_pref *oldpref, struct purple_pref *newpref)
 {
-	struct purple_pref *child;
+	struct purple_pref *child, *next;
 	char *oldname, *newname;
 
 	/* if we're a parent, rename the kids first */
-	for(child = oldpref->first_child; child != NULL; child = child->sibling)
+	for(child = oldpref->first_child; child != NULL; child = next)
 	{
 		struct purple_pref *newchild;
+		next = child->sibling;
 		for(newchild = newpref->first_child; newchild != NULL; newchild = newchild->sibling)
 		{
 			if(!strcmp(child->name, newchild->name))
