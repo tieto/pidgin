@@ -328,8 +328,7 @@ init_libpurple(int argc, char **argv)
 	/* TODO: Move prefs loading into purple_prefs_init() */
 	purple_prefs_load();
 	purple_prefs_update_old();
-	purple_prefs_rename("/gaim/gnt", "/finch");
-	purple_prefs_rename("/purple/gnt", "/finch");
+	finch_prefs_update_old();
 
 	/* load plugins we had when we quit */
 	purple_plugins_load_saved("/finch/plugins/loaded");
