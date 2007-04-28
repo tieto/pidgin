@@ -2029,8 +2029,6 @@ smiley_theme_pref_cb(const char *name, PurplePrefType type,
 void
 pidgin_prefs_init(void)
 {
-	/* only change this when we have a sane prefs migration path */
-	purple_prefs_add_none("/gaim");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "");
 	purple_prefs_add_none("/plugins/gtk");
 
@@ -2061,7 +2059,12 @@ pidgin_prefs_init(void)
 								smiley_theme_pref_cb, NULL);
 }
 
-void pidgin_prefs_update_old() {
+void pidgin_prefs_update_old()
+{
+	const char *str;
+
+	purple_prefs_rename("/gaim/gtk", PIDGIN_PREFS_ROOT);
+
 	/* Rename some old prefs */
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_ims", "/purple/logging/log_ims");
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_chats", "/purple/logging/log_chats");
@@ -2076,6 +2079,9 @@ void pidgin_prefs_update_old() {
 
 	/* this string pref moved into the core, try to be friendly */
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/idle/reporting_method", "/purple/away/idle_reporting");
+	if ((str = purple_prefs_get_string("/purple/away/idle_reporting")) &&
+			strcmp(str, "gaim") == 0)
+		purple_prefs_set_string("/purple/away/idle_reporting", "purple");
 
 	/* Remove some no-longer-used prefs */
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/auto_expand_contacts");
@@ -2125,5 +2131,4 @@ void pidgin_prefs_update_old() {
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/away/queue_messages");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/away");
 	purple_prefs_remove("/plugins/gtk/docklet/queue_messages");
-	purple_prefs_rename("/gaim/gtk", "/pidgin");
 }

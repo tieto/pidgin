@@ -1328,6 +1328,8 @@ purple_prefs_disconnect_by_handle(void *handle)
 void
 purple_prefs_update_old()
 {
+	purple_prefs_rename("/core", "/purple");
+
 	/* Remove some no-longer-used prefs */
 	purple_prefs_remove("/purple/away/auto_response/enabled");
 	purple_prefs_remove("/purple/away/auto_response/idle_only");
@@ -1361,7 +1363,6 @@ purple_prefs_update_old()
 		purple_prefs_set_int("/purple/sound/while_status", 3);
 	}
 	purple_prefs_remove("/purple/sound/while_away");
-	purple_prefs_rename("/core", "/purple");
 }
 
 void *
