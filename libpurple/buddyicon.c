@@ -1020,7 +1020,7 @@ purple_buddy_icons_blist_loaded_cb()
 		}
 	}
 
-        while (node != NULL)
+	while (node != NULL)
 	{
 		if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 		{
@@ -1079,7 +1079,7 @@ purple_buddy_icons_blist_loaded_cb()
 			}
 		}
 		node = purple_blist_node_next(node, TRUE);
-        }
+	}
 }
 
 void

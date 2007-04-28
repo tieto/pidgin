@@ -2,7 +2,7 @@ EXTRA_DIST = \
 		PROTOCOL \
 		Makefile.mingw
 
-pkgdir = $(libdir)/purple
+pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 TOCSOURCES = toc.c
 

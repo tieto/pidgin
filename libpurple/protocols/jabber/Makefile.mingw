@@ -89,7 +89,7 @@ install: all $(DLL_INSTALL_DIR)
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 
-$(TARGET).dll: $(PURPLE_DLL).a $(OBJECTS)
+$(TARGET).dll $(TARGET).dll.a: $(PURPLE_DLL).a $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
 $(XMPP_TARGET).dll: $(TARGET).dll.a $(XMPP_OBJECTS)

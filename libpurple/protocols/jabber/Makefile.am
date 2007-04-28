@@ -3,7 +3,7 @@ EXTRA_DIST = \
 		win32/posix.uname.c \
 		win32/utsname.h
 
-pkgdir = $(libdir)/purple
+pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 JABBERSOURCES = auth.c \
 			  auth.h \

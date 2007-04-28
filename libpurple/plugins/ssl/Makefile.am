@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 		Makefile.mingw
 
-plugindir = $(libdir)/purple
+plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 ssl_la_LDFLAGS        = -module -avoid-version
 ssl_gnutls_la_LDFLAGS = -module -avoid-version
