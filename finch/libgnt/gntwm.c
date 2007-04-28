@@ -55,6 +55,7 @@ static gboolean write_already(gpointer data);
 static int write_timeout;
 static time_t last_active_time;
 static gboolean idle_update;
+static GList *act = NULL; /* list of WS with unseen activitiy */
 
 static GList *
 g_list_bring_to_front(GList *list, gpointer data)
@@ -86,6 +87,32 @@ gnt_wm_copy_win(GntWidget *widget, GntNode *node)
 	copywin(src, dst, node->scroll, 0, 0, 0, getmaxy(dst) - 1, getmaxx(dst) - 1, 0);
 }
 
+static void
+update_act_msg()
+{
+	GntWidget *label;
+	GList *iter;
+	static GntWidget *message = NULL;
+	GString *text = g_string_new("act: ");
+	if (message)
+		gnt_widget_destroy(message);
+	if (g_list_length(act) == 0)
+		return;
+	for (iter = act; iter; iter = iter->next) {
+		GntWS *ws = iter->data;
+		g_string_sprintfa(text, "%s, ", gnt_ws_get_name(ws));
+	}
+	g_string_erase(text, text->len - 2, 2);
+	message = gnt_vbox_new(FALSE);
+	label = gnt_label_new_with_format(text->str, GNT_TEXT_FLAG_BOLD | GNT_TEXT_FLAG_HIGHLIGHT);
+	GNT_WIDGET_UNSET_FLAGS(GNT_BOX(message), GNT_WIDGET_CAN_TAKE_FOCUS);
+	GNT_WIDGET_SET_FLAGS(GNT_BOX(message), GNT_WIDGET_TRANSIENT);
+	gnt_box_add_widget(GNT_BOX(message), label);
+	gnt_widget_set_name(message, "wm-message");
+	gnt_widget_set_position(message, 0, 0);
+	gnt_widget_draw(message);
+	g_string_free(text, TRUE);
+}
 static gboolean
 update_screen(GntWM *wm)
 {
@@ -958,7 +985,6 @@ static gboolean
 workspace_list(GntBindable *b, GList *params)
 {
 	GntWM *wm = GNT_WM(b);
-	GntWidget *tree, *win;
 
 	if (wm->_list.window || wm->menu)
 		return TRUE;
@@ -1177,8 +1203,15 @@ gnt_wm_switch_workspace(GntWM *wm, gint n)
 
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
 	update_screen(wm);
-	if (wm->cws->ordered)
+	if (wm->cws->ordered) {
 		gnt_widget_set_focus(wm->cws->ordered->data, TRUE);
+		gnt_wm_raise_window(wm, wm->cws->ordered->data);
+	}
+
+	if (act && g_list_find(act, wm->cws)) {
+		act = g_list_remove(act, wm->cws);
+		update_act_msg();
+	}
 	return TRUE;
 }
 
@@ -1707,6 +1740,10 @@ void gnt_wm_update_window(GntWM *wm, GntWidget *widget)
 		gnt_wm_copy_win(widget, node);
 		update_screen(wm);
 		gnt_ws_draw_taskbar(wm->cws, FALSE);
+	} else if (ws != wm->cws && GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_URGENT)) {
+		if (!act || (act && !g_list_find(act, ws)))
+			act = g_list_prepend(act, ws);
+		update_act_msg();
 	}
 }
 

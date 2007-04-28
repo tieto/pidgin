@@ -5,6 +5,8 @@
 #include <ctype.h>
 #include <string.h>
 
+#define MAX_WORKSPACES 99
+
 #if GLIB_CHECK_VERSION(2,6,0)
 static GKeyFile *gkfile;
 #endif
@@ -91,16 +93,14 @@ parse_key(const char *key)
 void gnt_style_read_workspaces(GntWM *wm)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
-	gchar i;
+	int i;
 	gchar *name;
-	if (!g_key_file_has_group(gkfile, "Workspaces")) {
-		printf("SHIT\n");
+	if (!g_key_file_has_group(gkfile, "Workspaces"))
 		return;
-	}
 
-	for (i = '1'; i <= '9'; i++) {
-		char key[] = "name-1";
-		key[5] = i;
+	for (i = 1; i <= MAX_WORKSPACES; i++) {
+		char *key = calloc(8, 1);
+		sprintf(key, "name-%d", i);
 		name = g_key_file_get_string(gkfile, "Workspaces", key, NULL);
 		if (name) {
 			GntWS *ws = g_object_new(GNT_TYPE_WS, NULL);
