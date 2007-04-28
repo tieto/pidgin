@@ -26,6 +26,7 @@ EXTRA_DIST = \
 	male.png \
 	meanwhile.png \
 	msn.png \
+	myspace.png \
 	notauthorized.png \
 	novell.png \
 	occupied.png \

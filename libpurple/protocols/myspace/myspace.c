@@ -123,12 +123,7 @@ static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
      * C:\cygwin\home\Jeff\purple-2.0.0beta6\gtk\pixmaps\status\default 
      * and returning "myspace" but icon shows up blank.
      */
-    if (acct == NULL)
-    {
-        purple_debug_info("msim", "msim_list_icon: acct == NULL!\n");
-        //exit(-2);
-    }
-      return "meanwhile";
+    return "myspace";
 }
 /** 
  * Parse a MySpaceIM protocol message into a hash table. 
