@@ -1,4 +1,4 @@
-package Purple::GtkUI;
+package Pidgin;
 
 use 5.008;
 use strict;
@@ -10,18 +10,18 @@ our $VERSION = '0.01';
 use Purple;
 
 require XSLoader;
-XSLoader::load('Purple::GtkUI', $VERSION);
+XSLoader::load('Pidgin', $VERSION);
 
 1;
 __END__
 
 =head1 NAME
 
-Purple::GtkUI - Perl extension for the Pidgin instant messenger.
+Pidgin - Perl extension for the Pidgin instant messenger.
 
 =head1 SYNOPSIS
 
-    use Purple::GtkUI;
+    use Pidgin;
 
 =head1 ABSTRACT
 
