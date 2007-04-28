@@ -310,7 +310,6 @@ move_and_symlink_dir(const char *path, const char *basename, const char *old_bas
 gboolean
 purple_core_migrate(void)
 {
-#error You probably want to back up your .gaim directory right now. This revision is going to destroy it, potentially not in the way we've intended
 	const char *user_dir = purple_user_dir();
 	char *old_user_dir = g_strconcat(purple_home_dir(),
 	                                 G_DIR_SEPARATOR_S ".gaim", NULL);
