@@ -167,7 +167,9 @@ static GHashTable* msim_parse(gchar* msg)
             (token = tokens[i]);
             i++)
     {
-        //printf("tok=<%s>, i%2=%d\n", token, i % 2);
+#if MSIM_DEBUG_PARSE
+        purple_debug_info("msim", "tok=<%s>, i%2=%d\n", token, i % 2);
+#endif
         if (i % 2)
         {
             value = token;
@@ -175,7 +177,9 @@ static GHashTable* msim_parse(gchar* msg)
             /* Check if key already exists */
             if (g_hash_table_lookup(table, key) == NULL)
             {
-                //printf("insert: |%s|=|%s|\n", key, value);
+#if MSIM_DEBUG_PARSE
+                purple_debug_info("msim", "insert: |%s|=|%s|\n", key, value);
+#endif
                 g_hash_table_insert(table, g_strdup(key), g_strdup(value));
             } else {
                 /* TODO: Some dictionaries have multiple values for the same
@@ -222,7 +226,6 @@ static GHashTable *msim_parse_body(const gchar *body_str)
     {
         gchar *key, *value;
 
-        //printf("TOK=<%s>\n", token);
         elements = g_strsplit(item, "=", 2);
 
         key = elements[0];
@@ -243,7 +246,9 @@ static GHashTable *msim_parse_body(const gchar *body_str)
             break;
         }
 
-        //printf("-- %s: %s\n", key, value);
+#if MSIM_DEBUG_PARSE
+        purple_debug_info("msim", "-- %s: %s\n", key, value);
+#endif
 
         /* XXX: This overwrites duplicates. */
         /* TODO: make the GHashTable values be GList's, and append to the list if 
@@ -261,10 +266,12 @@ static GHashTable *msim_parse_body(const gchar *body_str)
 
 
 
+#if MSIM_DEBUG_MSG
 static void print_hash_item(gpointer key, gpointer value, gpointer user_data)
 {
-    printf("%s=%s\n", (char*)key, (char*)value);
+    purple_debug_info("msim", "%s=%s\n", (char*)key, (char*)value);
 }
+#endif
 
 /** 
  * Send an arbitrary protocol message.
@@ -376,10 +383,7 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
 
     purple_connection_update_progress(session->gc, "Logging in", 2, 4);
 
-    printf("going to compute login response\n");
-    //response_str = msim_compute_login_response(nc_str, "testuser", "testpw"); //session->gc->account->username, session->gc->account->password);
     response_str = msim_compute_login_response(nc, account->username, account->password);
-    printf("got back login response\n");
 
     g_free(nc);
 
@@ -423,6 +427,9 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
 	size_t data_len, data_out_len;
 	gsize conv_bytes_read, conv_bytes_written;
 	GError* conv_error;
+#if MSIM_DEBUG_LOGIN_CHALLENGE
+	int i;
+#endif
 
     //memset(nonce, 0, NONCE_SIZE);
     //memset(nonce + NONCE_SIZE, 1, NONCE_SIZE);
@@ -446,11 +453,11 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
 			conv_bytes_written, sizeof(hash_pw), hash_pw, NULL);
 	g_free(password_utf16le);
 
-#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
-    printf("pwhash = ");
+#if MSIM_DEBUG_LOGIN_CHALLENGE
+    purple_debug_info("msim", "pwhash = ");
     for (i = 0; i < sizeof(hash_pw); i++)
-        printf("%.2x ", hash_pw[i]);
-    printf("\n");
+        purple_debug_info("msim", "%.2x ", hash_pw[i]);
+    purple_debug_info("msim", "\n");
 #endif
 
     /* key = sha1(sha1(pw) + nonce2) */
@@ -460,13 +467,13 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
     purple_cipher_context_append(key_context, nonce + NONCE_SIZE, NONCE_SIZE);
     purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
 
-#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
-    printf("key = ");
+#if MSIM_DEBUG_LOGIN_CHALLENGE
+    purple_debug_info("msim", "key = ");
     for (i = 0; i < sizeof(key); i++)
     {
-        printf("%.2x ", key[i]);
+        purple_debug_info("msim", "%.2x ", key[i]);
     }
-    printf("\n");
+    purple_debug_info("msim", "\n");
 #endif
 
 	rc4 = purple_cipher_context_new_by_name("rc4", NULL);
@@ -501,8 +508,8 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
 
     response = purple_base64_encode(data_out, data_out_len);
 	g_free(data_out);
-#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
-    printf("response=<%s>\n", response);
+#if MSIM_DEBUG_LOGIN_CHALLENGE
+    purple_debug_info("msim", "response=<%s>\n", response);
 #endif
 
     return response;
@@ -733,15 +740,17 @@ static int msim_process(PurpleConnection *gc, GHashTable *table)
 
     session = (MsimSession*)gc->proto_data;
 
-    printf("-------- message -------------\n");
+#if MSIM_DEBUG_MSG
+    purple_debug_info("msim", "-------- message -------------\n");
     g_hash_table_foreach(table, print_hash_item, NULL);
-    printf("------------------------------\n");
+    purple_debug_info("msim", "------------------------------\n");
+#endif
 
     if (g_hash_table_lookup(table, "nc"))
     {
         return msim_login_challenge(session, table);
     } else if (g_hash_table_lookup(table, "sesskey")) {
-        printf("SESSKEY=<%s>\n", (gchar*)g_hash_table_lookup(table, "sesskey"));
+        purple_debug_info("msim", "SESSKEY=<%s>\n", (gchar*)g_hash_table_lookup(table, "sesskey"));
 
         purple_connection_update_progress(gc, "Connected", 3, 4);
 
@@ -784,7 +793,10 @@ static int msim_process(PurpleConnection *gc, GHashTable *table)
         purple_debug_info("msim", "msim_process: got keep alive\n");
         return 0;
     } else {
-        printf("<<unhandled>>\n");
+		/* TODO: dump unknown msgs to file, so user can send them to me
+		 * if they wish, to help add support for new messages (inspired
+		 * by Alexandr Shutko, who maintains OSCAR protocol documentation). */
+        purple_debug_info("msim", "msim_process: unhandled message\n");
         return 0;
     }
 }
@@ -1123,14 +1135,18 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
     session->rxoff += n;
     purple_debug_info("msim", "msim_input_cb: read=%d\n", n);
 
-    //printf("buf=<%s>\n", session->rxbuf);
+#if MSIM_DEBUG_RXBUF
+    purple_debug_info("msim", "buf=<%s>\n", session->rxbuf);
+#endif
 
     /* Look for \\final\\ end markers. If found, process message. */
     while((end = strstr(session->rxbuf, MSIM_FINAL_STRING)))
     {
         GHashTable *table;
 
-        //printf("in loop: buf=<%s>\n", session->rxbuf);
+#if MSIM_DEBUG_RXBUF
+        purple_debug_info("msim", "in loop: buf=<%s>\n", session->rxbuf);
+#endif
         *end = 0;
         table = msim_parse(g_strdup(session->rxbuf));
         if (!table)
@@ -1207,11 +1223,15 @@ static MsimSession *msim_session_new(PurpleAccount *acct)
     session->account = acct;
     session->gc = purple_account_get_connection(acct);
     session->fd = -1;
-    session->user_lookup_cb = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, NULL);  /* do NOT free function pointers! */
-    session->user_lookup_cb_data = g_hash_table_new_full(g_direct_hash, g_direct_equal, NULL, g_free);
-    session->user_lookup_cache = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, (GDestroyNotify)g_hash_table_destroy);
+    session->user_lookup_cb = g_hash_table_new_full(g_direct_hash, 
+			g_direct_equal, NULL, NULL);  /* do NOT free function pointers! */
+    session->user_lookup_cb_data = g_hash_table_new_full(g_direct_hash, 
+			g_direct_equal, NULL, g_free);
+    session->user_lookup_cache = g_hash_table_new_full(g_str_hash, g_str_equal,
+		   	g_free, (GDestroyNotify)g_hash_table_destroy);
     session->rxoff = 0;
     session->rxbuf = g_new0(gchar, MSIM_READ_BUF_SIZE);
+	session->next_rid = 1;
     
     return session;
 }
@@ -1315,7 +1335,8 @@ static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_
     }
 #endif
 
-    rid = rand(); //om();
+    rid = session->next_rid;
+	++session->next_rid;
 
     /* Setup callback. Response will be associated with request using 'rid'. */
     g_hash_table_insert(session->user_lookup_cb, GUINT_TO_POINTER(rid), cb);

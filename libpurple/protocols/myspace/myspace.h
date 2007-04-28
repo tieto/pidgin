@@ -19,6 +19,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/* Debugging options (1 to enable, 0 disable) */
+#define MSIM_DEBUG_MSG					1
+/* Low-level and rarely needed */
+#define MSIM_DEBUG_PARSE 				0
+#define MSIM_DEBUG_LOGIN_CHALLENGE		0
+#define MSIM_DEBUG_RXBUF				0
+
 /* Statuses */
 #define MSIM_STATUS_ONLINE      "online"
 #define MSIM_STATUS_AWAY        "away"
@@ -64,7 +71,7 @@ typedef struct _MsimSession
 
     gchar *rxbuf;                       /**< Receive buffer */
     guint rxoff;                        /**< Receive buffer offset */
-	/* TODO: rid, store here and increment instead of random. */
+	guint next_rid;						/**< Next request/response ID */
 } MsimSession;
 
 /* Check if an MsimSession is valid */
