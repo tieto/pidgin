@@ -117,7 +117,7 @@ install: install_shallow all
 	sed -e 's/@PURPLE_VERSION@/$(PURPLE_VERSION)/g' \
 	    $@.in > $@
 
-$(OBJECTS): $(PURPLE_CONFIG_H)
+$(OBJECTS): $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H)
 
 $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
