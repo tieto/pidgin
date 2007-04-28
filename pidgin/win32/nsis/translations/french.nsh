@@ -24,11 +24,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin client de messagerie instantanée (obligatoire)"
 !define GTK_SECTION_TITLE			"Bibliothèques GTK+ (obligatoire)"
-!define GTK_THEMES_SECTION_TITLE		"Thèmes GTK+"
-!define GTK_NOTHEME_SECTION_TITLE		"Pas de thème"
-!define GTK_WIMP_SECTION_TITLE			"Thème Wimp"
-!define GTK_BLUECURVE_SECTION_TITLE		"Thème Bluecurve"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Thème Light House Blue"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"Raccourcis"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Bureau"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Menu Démarrer"
@@ -51,9 +46,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Erreur lors de l'installation des bibliothèques GTK+"
 !define GTK_BAD_INSTALL_PATH			"Le dossier d'installation ne peut pas être créé ou n'est pas accessible."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Vous n'avez pas les permissions pour installer un thème GTK+."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Le programme de désinstallation n'a pas retrouvé les entrées de Pidgin dans la base de registres.$\rL'application a peut-être été installée par un utilisateur différent."

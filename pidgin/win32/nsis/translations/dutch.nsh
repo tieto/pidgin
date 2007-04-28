@@ -21,11 +21,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin Instant Messaging Client (vereist)"
 !define GTK_SECTION_TITLE			"GTK+ runtime-omgeving (vereist)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ thema's"
-!define GTK_NOTHEME_SECTION_TITLE		"Geen thema"
-!define GTK_WIMP_SECTION_TITLE		"Wimp thema"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve thema"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue thema"
 !define PIDGIN_SECTION_DESCRIPTION		"Pidgin hoofdbestanden en dlls"
 !define GTK_SECTION_DESCRIPTION		"Een multi-platform gebruikersinterface, gebruikt door Pidgin"
 
@@ -42,9 +37,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fout bij installatie van GTK+ runtime omgeving."
 !define GTK_BAD_INSTALL_PATH			"Het door u gegeven pad kan niet benaderd worden."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"U heeft geen toestemming om een GTK+ thema te installeren."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Het verwijderingsprogramma voor Pidgin kon geen register-ingangen voor Pidgin vinden.$\rWaarschijnlijk heeft een andere gebruiker het programma geïnstalleerd."

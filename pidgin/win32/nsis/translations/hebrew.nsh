@@ -18,11 +18,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"(חובה) .Pidgin תוכנת"
 !define GTK_SECTION_TITLE			"(חובה) .GTK+ סביבת"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ מראות של"
-!define GTK_NOTHEME_SECTION_TITLE		"ללא מראה"
-!define GTK_WIMP_SECTION_TITLE		"Wimp מראה"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve מראה"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue מראה"
 !define PIDGIN_SECTION_DESCRIPTION		".בסיססים DLL-ו Pidgin קבצי"
 !define GTK_SECTION_DESCRIPTION		".מולטי-פלטפורמיים GUI כלי"
 
@@ -38,9 +33,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			".GTK+ שגיאה בהתקנת סביבת"
 !define GTK_BAD_INSTALL_PATH			".המסלול שציינת לא יכול להיווצר"
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		".GTK+ אין לך זכות להתקין מראה של"
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		".GTK+ ההתקנה לא מצאה את הרישומים של$\r.יכול להיות שמשמתמש אחר התקין את התוכנה הזאת"

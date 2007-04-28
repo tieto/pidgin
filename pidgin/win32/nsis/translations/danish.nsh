@@ -18,11 +18,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin Instant Messaging Client (obligatorisk)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime Environment (obligatorisk)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ Temaer"
-!define GTK_NOTHEME_SECTION_TITLE		"Intet Tema"
-!define GTK_WIMP_SECTION_TITLE		"Wimp Tema"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve Tema"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Tema"
 !define PIDGIN_SECTION_DESCRIPTION		"Basale Pidgin filer og biblioteker"
 !define GTK_SECTION_DESCRIPTION		"Et multi-platform grafisk interface udviklingsværktøj, bruges af Pidgin"
 
@@ -39,9 +34,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fejl under installeringen af GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Stien du har angivet kan ikke findes eller oprettes."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Du har ikke tilladelse til at installere et GTK+ tema."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Afinstallationen kunne ikke finde Pidgin i registreringsdatabasen.$\rMuligvis har en anden bruger installeret programmet."

@@ -100,7 +100,7 @@ gconstpointer purple_imgstore_get_data(PurpleStoredImage *img);
  * @return The size of the data that the pointer returned by
  *         purple_imgstore_get_data points to.
  */
-size_t purple_imgstore_get_size(PurpleStoredImage *i);
+size_t purple_imgstore_get_size(PurpleStoredImage *img);
 
 /**
  * Retrieves a pointer to the image's filename.

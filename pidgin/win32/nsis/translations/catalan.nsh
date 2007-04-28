@@ -21,11 +21,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Client Pidgin de Missatgeria Instantània (necessari)"
 !define GTK_SECTION_TITLE			"Entorn d'Execució GTK+ (necessari)"
-!define GTK_THEMES_SECTION_TITLE		"Temes GTK+"
-!define GTK_NOTHEME_SECTION_TITLE		"Sense tema"
-!define GTK_WIMP_SECTION_TITLE			"Tema Imwi"
-!define GTK_BLUECURVE_SECTION_TITLE		"Tema Corba Blava"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Tema Light House Blue"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"Enllaços directes"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Escriptori"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Menu Inici"
@@ -50,9 +45,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Error installlant l'entorn d'execució GTK+."
 !define GTK_BAD_INSTALL_PATH			"El directori que has introduït no pot ésser accedit o creat."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"No tens permisos per instal.lar un tema GTK+."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"L'instal.lador podria no trobar les entrades del registre de Pidgin.$\rProbablement un altre usuari ha instal.lat aquesta aplicació."

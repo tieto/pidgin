@@ -22,12 +22,7 @@
 
 ; Components Page
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_SECTION_TITLE			"Pidgin Instant Messaging Client (required)"
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_SECTION_TITLE			"GTK+ Runtime Environment (required)"
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_THEMES_SECTION_TITLE		"GTK+ Themes"
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_NOTHEME_SECTION_TITLE		"No Theme"
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_WIMP_SECTION_TITLE			"MS-Windows (WIMP) Theme"
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_BLUECURVE_SECTION_TITLE		"Bluecurve Theme"
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Theme"
+!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_SECTION_TITLE			"GTK+ Runtime (required if not present)"
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_SHORTCUTS_SECTION_TITLE		"Shortcuts"
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Desktop"
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Start Menu"
@@ -52,9 +47,6 @@
 ; GTK+ Section Prompts
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_INSTALL_ERROR			"Error installing GTK+ runtime."
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_BAD_INSTALL_PATH			"The path you entered can not be accessed or created."
-
-; GTK+ Themes section
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_NO_THEME_INSTALL_RIGHTS		"You do not have permission to install a GTK+ theme."
 
 ; URL Handler section
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING URI_HANDLERS_SECTION_TITLE		"URI Handlers"

@@ -345,6 +345,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			/* FIXME: Please, if you know this protocol,
 			 * FIXME: fix up the strtol() stuff if possible. */
 			int cksum = strtol(pair->value, NULL, 10);
+			const char *locksum = NULL;
 			PurpleBuddy *b;
 
 			if (!name)
@@ -363,7 +364,8 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				break;
 
 			yahoo_friend_set_buddy_icon_need_request(f, FALSE);
-			if (b && cksum != strtol(purple_buddy_icons_get_checksum_for_user(b), NULL, 10))
+			if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL &&
+					cksum != strtol(locksum, NULL, 10))
 				yahoo_send_picture_request(gc, name);
 
 			break;
