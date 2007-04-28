@@ -2696,6 +2696,7 @@ const char *
 purple_normalize(const PurpleAccount *account, const char *str)
 {
 	const char *ret = NULL;
+	static char buf[BUF_LEN];
 
 	if (account != NULL)
 	{
@@ -2712,7 +2713,6 @@ purple_normalize(const PurpleAccount *account, const char *str)
 
 	if (ret == NULL)
 	{
-		static char buf[BUF_LEN];
 		char *tmp;
 
 		tmp = g_utf8_normalize(str, -1, G_NORMALIZE_DEFAULT);
