@@ -350,7 +350,7 @@ fi
 %defattr(-, root, root)
 
 %{_libdir}/libpurple.so.*
-%dir %{_libdir}/purple
+%dir %{_libdir}/purple-2
 %attr(755, root, root) %{perl_vendorarch}/Purple.pm
 %dir %{perl_vendorarch}/auto/Purple
 %attr(755, root, root) %{perl_vendorarch}/auto/Purple/Purple.so

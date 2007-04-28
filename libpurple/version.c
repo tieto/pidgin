@@ -1,7 +1,6 @@
-/**
- * @file version.h Purple Versioning
- *
- * purple
+/*
+ * @file version.c Version Functions
+ * @ingroup core
  *
  * Purple is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
@@ -21,22 +20,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#ifndef _PURPLE_VERSION_H_
-#define _PURPLE_VERSION_H_
 
-#define PURPLE_MAJOR_VERSION 2
-#define PURPLE_MINOR_VERSION 0
-#define PURPLE_MICRO_VERSION 0
+#include "internal.h"
 
-#define PURPLE_VERSION_CHECK(x,y,z) ((x) == PURPLE_MAJOR_VERSION && ((y) < PURPLE_MINOR_VERSION || ((y) == PURPLE_MINOR_VERSION && (z) <= PURPLE_MICRO_VERSION)))
+#include "version.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+const guint purple_major_version = PURPLE_MAJOR_VERSION;
+const guint purple_minor_version = PURPLE_MINOR_VERSION;
+const guint purple_micro_version = PURPLE_MICRO_VERSION;
 
-#ifdef __cplusplus
+const char *purple_version_check(guint required_major, guint required_minor, guint required_micro)
+{
+	if (required_major > PURPLE_MAJOR_VERSION)
+		return "libpurple version too old (major mismatch)";
+	if (required_major < PURPLE_MAJOR_VERSION)
+		return "libpurple version too new (major mismatch)";
+	if (required_minor > PURPLE_MINOR_VERSION)
+		return "libpurple version too old (minor mismatch)";
+	if ((required_minor == PURPLE_MINOR_VERSION) && (required_micro > PURPLE_MICRO_VERSION))
+		return "libpurple version too old (micro mismatch)";
+	return NULL;
 }
-#endif
-
-#endif /* _PURPLE_VERSION_H_ */
-
