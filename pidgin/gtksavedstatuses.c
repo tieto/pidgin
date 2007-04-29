@@ -1677,7 +1677,7 @@ GtkWidget *pidgin_status_menu(PurpleSavedStatus *current_status, GCallback callb
 	GList *sorted, *cur;
 	int i = 0;
 	int index = -1;
-	GdkPixbuf *pixbuf, *emblem;
+	GdkPixbuf *pixbuf;
 	GtkTreeIter iter;
 	GtkCellRenderer *text_rend;
 	GtkCellRenderer *icon_rend;
