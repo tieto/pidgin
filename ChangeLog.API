@@ -172,6 +172,15 @@ version 2.0.0:
 	  purple_request_folder() was changed to accept account, who, and
 	  conversation parameters for associating the request with an account, a
 	  buddy, or a conversation.
+	* Significant changes to the buddy icon and imgstore APIs.  If you
+	  were using any of it, it's best to look at the header files or
+	  Doxygen documentation, but here are some significant changes:
+	    purple_buddy_icon_new() now takes ownership of ("frees") icon_data
+	    purple_buddy_icon_set_data(): likewise for data
+	    purple_buddy_icon_set_for_user(): likewise for data
+	    purple_buddy_icon_set_for_user() now takes a checksum parameter
+	    purple_imgstore_add() was renamed to purple_imgstore_add_with_id()
+	      which takes ownership of data
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
