@@ -68,6 +68,8 @@ struct _GntWM
 		*actions;         /* Action-list window */
 
 	GHashTable *nodes;    /* GntWidget -> GntNode */
+	GHashTable *name_places;    /* window name -> ws*/
+	GHashTable *title_places;    /* window title -> ws */
 
 	GList *acts;          /* List of actions */
 

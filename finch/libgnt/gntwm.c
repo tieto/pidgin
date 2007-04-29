@@ -6,6 +6,7 @@
 #include "config.h"
 
 #include <ctype.h>
+#include <glib/gprintf.h>
 #include <gmodule.h>
 #include <stdlib.h>
 #include <string.h>
@@ -243,6 +244,8 @@ gnt_wm_init(GTypeInstance *instance, gpointer class)
 {
 	GntWM *wm = GNT_WM(instance);
 	wm->workspaces = NULL;
+	wm->name_places = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+	wm->title_places = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	gnt_style_read_workspaces(wm);
 	if (wm->workspaces == NULL) {
 		wm->cws = g_object_new(GNT_TYPE_WS, NULL);
@@ -1309,6 +1312,29 @@ update_window_in_list(GntWM *wm, GntWidget *wid)
 	gnt_tree_set_row_flags(GNT_TREE(wm->windows->tree), wid, flag);
 }
 
+static gboolean
+match_title(gpointer title, gpointer n, gpointer wid_title)
+{
+	/* maybe check for regex.h? */
+	if (g_strrstr((gchar *)wid_title, (gchar *)title))
+		return TRUE;
+	return FALSE;
+}
+
+static GntWS *
+new_widget_find_workspace(GntWM *wm, GntWidget *widget, gchar *wid_title)
+{
+	GntWS *ret;
+	const gchar *name;
+	ret = g_hash_table_find(wm->title_places, match_title, wid_title);
+	if (ret)
+		return ret;
+	name = gnt_widget_get_name(widget);
+	if (name)
+		ret = g_hash_table_lookup(wm->name_places, name);
+	return ret ? ret : wm->cws;
+}
+
 static void
 gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 {
@@ -1363,19 +1389,25 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 	set_panel_userptr(node->panel, node);
 
 	if (!transient) {
+		GntWS *ws = wm->cws;
 		if (node->me != wm->_list.window) {
 			GntWidget *w = NULL;
 
-			if (wm->cws->ordered)
-				w = wm->cws->ordered->data;
+			if (GNT_IS_BOX(widget)) {
+				char *title = GNT_BOX(widget)->title;
+				ws = new_widget_find_workspace(wm, widget, title);
+			}
 
-			node->ws = wm->cws;
-			wm->cws->list = g_list_append(wm->cws->list, widget);
+			if (ws->ordered)
+				w = ws->ordered->data;
+
+			node->ws = ws;
+			ws->list = g_list_append(ws->list, widget);
 
 			if (wm->event_stack)
-				wm->cws->ordered = g_list_prepend(wm->cws->ordered, widget);
+				ws->ordered = g_list_prepend(ws->ordered, widget);
 			else
-				wm->cws->ordered = g_list_append(wm->cws->ordered, widget);
+				ws->ordered = g_list_append(ws->ordered, widget);
 
 			gnt_widget_set_focus(widget, TRUE);
 			if (w)
@@ -1383,10 +1415,14 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 		}
 
 		if (wm->event_stack || node->me == wm->_list.window) {
+			if (wm->cws != ws)
+				gnt_wm_switch_workspace(wm, g_list_index(wm->workspaces, ws));
 			gnt_wm_raise_window(wm, node->me);
 		} else {
 			bottom_panel(node->panel);     /* New windows should not grab focus */
 			gnt_widget_set_urgent(node->me);
+			if (wm->cws != ws)
+				gnt_ws_widget_hide(widget, wm->nodes);
 		}
 	}
 }

@@ -3,6 +3,7 @@
 #include "gntws.h"
 
 #include <ctype.h>
+#include <glib/gprintf.h>
 #include <string.h>
 
 #define MAX_WORKSPACES 99
@@ -95,21 +96,37 @@ void gnt_style_read_workspaces(GntWM *wm)
 #if GLIB_CHECK_VERSION(2,6,0)
 	int i;
 	gchar *name;
-	if (!g_key_file_has_group(gkfile, "Workspaces"))
-		return;
+	gsize c;
 
-	for (i = 1; i <= MAX_WORKSPACES; i++) {
-		char *key = calloc(8, 1);
-		sprintf(key, "name-%d", i);
-		name = g_key_file_get_string(gkfile, "Workspaces", key, NULL);
-		if (name) {
-			GntWS *ws = g_object_new(GNT_TYPE_WS, NULL);
-			gnt_ws_set_name(ws, name);
-			gnt_wm_add_workspace(wm, ws);
-			g_free(name);
-		} else {
+	for (i = 1; i < MAX_WORKSPACES; ++i) {
+		int j;
+		GntWS *ws;
+		gchar **titles;
+		char *group = calloc(12, 1);
+		g_sprintf(group, "Workspace-%d", i);
+		name = g_key_file_get_value(gkfile, group, "name", NULL);
+		if (!name)
 			return;
+
+		ws = g_object_new(GNT_TYPE_WS, NULL);
+		gnt_ws_set_name(ws, name);
+		gnt_wm_add_workspace(wm, ws);
+		g_free(name);
+
+		titles = g_key_file_get_string_list(gkfile, group, "window-names", &c, NULL);
+		if (titles) {
+			for (j = 0; j < c; ++j)
+				g_hash_table_replace(wm->name_places, g_strdup(titles[j]), ws);
+			g_strfreev(titles);
 		}
+
+		titles = g_key_file_get_string_list(gkfile, group, "window-titles", &c, NULL);
+		if (titles) {
+			for (j = 0; j < c; ++j)
+				g_hash_table_replace(wm->title_places, g_strdup(titles[j]), ws);
+			g_strfreev(titles);
+		}
+		g_free(group);
 	}
 #endif
 }
