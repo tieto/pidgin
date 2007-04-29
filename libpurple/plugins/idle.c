@@ -327,7 +327,13 @@ static PurplePluginInfo info =
 	NULL,
 	NULL,
 	NULL,
-	actions
+	actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

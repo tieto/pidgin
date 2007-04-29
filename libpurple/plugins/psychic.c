@@ -120,6 +120,12 @@ static PurplePluginUiInfo prefs_info = {
   get_plugin_pref_frame,
   0,    /* page_num (Reserved) */
   NULL, /* frame (Reserved) */
+  
+  /* padding */
+  NULL,
+  NULL,
+  NULL,
+  NULL
 };
 
 
@@ -149,6 +155,12 @@ static PurplePluginInfo info = {
   NULL,                   /**< extra_info */
   &prefs_info,            /**< prefs_info */
   NULL,                   /**< actions */
+
+  /* padding */
+  NULL,
+  NULL,
+  NULL,
+  NULL
 };
 
 
