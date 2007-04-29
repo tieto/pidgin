@@ -1447,10 +1447,10 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 					size_t len = 0;
 					if (filename)
 						data = pidgin_convert_buddy_icon(plug, filename, &len);
-					img = purple_buddy_icons_set_account_icon(box->account, data, len);
-					purple_account_set_buddy_icon_path(box->account, filename);
+					img = purple_buddy_icons_set_account_icon(account, data, len);
+					purple_account_set_buddy_icon_path(account, filename);
 
-					purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
+					purple_account_set_bool(account, "use-global-buddyicon", (filename != NULL));
 				}
 			}
 		}
