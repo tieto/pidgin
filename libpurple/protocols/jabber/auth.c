@@ -819,7 +819,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		} else {
 			response = xmlnode_new("response");
 			xmlnode_set_namespace(response, "urn:ietf:params:xml:ns:xmpp-sasl");
-			if (c_out) {
+			if (clen > 0) {
 				enc_out = purple_base64_encode((unsigned char*)c_out, clen);
 				xmlnode_insert_data(response, enc_out, -1);
 				g_free(enc_out);
