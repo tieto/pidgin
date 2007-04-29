@@ -6,10 +6,10 @@
 # When not doing betas comment this out
 # NOTE: %defines in spec files are evaluated in comments so the correct
 #       way to comment it out is to replace the % with #
-#define beta 7
+%define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "@VERSION@"|sed -e 's/dev//; s/beta.*//')
+%define pidginver %(echo "@VERSION@"|sed -e 's/dev.*//; s/beta.*//')
 %else
 %define pidginver @VERSION@
 %endif
@@ -334,8 +334,8 @@ fi
 
 %dir %{_libdir}/pidgin
 %dir %{perl_vendorarch}/Purple
-%attr(755, root, root) %{perl_vendorarch}/Purple/*
-%attr(755, root, root) %{perl_vendorarch}/auto/Purple/GtkUI*
+%attr(755, root, root) %{perl_vendorarch}/Pidgin.pm
+%attr(755, root, root) %{perl_vendorarch}/auto/Pidgin
 
 %{_bindir}/pidgin
 %{_datadir}/pixmaps/pidgin
@@ -352,9 +352,7 @@ fi
 %{_libdir}/libpurple.so.*
 %dir %{_libdir}/purple-2
 %attr(755, root, root) %{perl_vendorarch}/Purple.pm
-%dir %{perl_vendorarch}/auto/Purple
-%attr(755, root, root) %{perl_vendorarch}/auto/Purple/Purple.so
-%attr(755, root, root) %{perl_vendorarch}/auto/Purple/autosplit.ix
+%attr(755, root, root) %{perl_vendorarch}/auto/Purple
 
 %{_datadir}/pixmaps/purple
 
@@ -436,6 +434,9 @@ fi
 %endif
 
 %changelog
+* Sun Apr 29 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Update to reflect perl Purple::GtkUI -> Pidgin change
+
 * Wed Apr 25 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Update libpurple to pick up plugins in %%{_libdir}/purple
 
