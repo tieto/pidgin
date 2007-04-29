@@ -867,7 +867,7 @@ purple_buddy_icons_set_custom_icon(PurpleContact *contact,
 }
 
 void
-purple_buddy_icon_set_old_icons_dir(const char *dirname)
+_purple_buddy_icon_set_old_icons_dir(const char *dirname)
 {
 	old_icons_dir = g_strdup(dirname);
 }
@@ -1012,7 +1012,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 }
 
 void
-purple_buddy_icons_account_loaded_cb()
+_purple_buddy_icons_account_loaded_cb()
 {
 	const char *dirname = purple_buddy_icons_get_cache_dir();
 	GList *cur;
@@ -1037,7 +1037,7 @@ purple_buddy_icons_account_loaded_cb()
 }
 
 void
-purple_buddy_icons_blist_loaded_cb()
+_purple_buddy_icons_blist_loaded_cb()
 {
 	PurpleBlistNode *node = purple_blist_get_root();
 	const char *dirname = purple_buddy_icons_get_cache_dir();
