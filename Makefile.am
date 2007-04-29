@@ -17,7 +17,8 @@ EXTRA_DIST = \
 		pidgin.apspec.in \
 		pidgin.spec.in \
 		pidgin.desktop.in \
-		po/Makefile.mingw
+		po/Makefile.mingw \
+		valgrind-suppressions
 
 noinst_HEADERS = config.h
 

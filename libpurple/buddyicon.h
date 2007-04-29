@@ -261,6 +261,19 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
                                     guchar *icon_data, size_t icon_len);
 
 /**
+ * Returns the timestamp of when the icon was set.
+ *
+ * This is intended for use in protocols that require a timestamp for
+ * buddy icon update reasons.
+ *
+ * @param account The account
+ *
+ * @return The time the icon was set, or 0 if an error occurred.
+ */
+time_t
+purple_buddy_icons_get_account_icon_timestamp(PurpleAccount *account);
+
+/**
  * Returns the custom buddy icon image for a contact.
  *
  * The caller owns a reference to the image in the store, and must dereference

@@ -345,7 +345,7 @@
 #define gaim_buddy_icon_update   purple_buddy_icon_update
 
 #define gaim_buddy_icon_set_data(icon, data, len) \
-        purple_buddy_icon_set_protocol_data(icon, g_memdup(data, len), len, NULL);
+        purple_buddy_icon_set_data(icon, g_memdup(data, len), len, NULL);
 
 #define gaim_buddy_icon_get_account   purple_buddy_icon_get_account
 #define gaim_buddy_icon_get_username  purple_buddy_icon_get_username
@@ -353,7 +353,7 @@
 #define gaim_buddy_icon_get_type      purple_buddy_icon_get_extension
 
 #define gaim_buddy_icons_set_for_user(icon, data, len) \
-        purple_buddy_icons_set_for_user(icon, g_memdup(data, len), len)
+        purple_buddy_icons_set_for_user(icon, g_memdup(data, len), len, NULL)
 #define gaim_buddy_icons_find           purple_buddy_icons_find
 #define gaim_buddy_icons_set_caching    purple_buddy_icons_set_caching
 #define gaim_buddy_icons_is_caching     purple_buddy_icons_is_caching
@@ -961,7 +961,8 @@
 
 #define GaimStoredImage  PurpleStoredImage
 
-#define gaim_imgstore_add(data, size, filename) purple_imgstore_add_with_id(g_memdup(data, size), size, filename)
+#define gaim_imgstore_add(data, size, filename) \
+        purple_imgstore_add_with_id(g_memdup(data, size), size, filename)
 #define gaim_imgstore_get           purple_imgstore_find_by_id
 #define gaim_imgstore_get_data      purple_imgstore_get_data
 #define gaim_imgstore_get_size      purple_imgstore_get_size

@@ -154,7 +154,7 @@ set_creation_time(PurpleSavedStatus *status, time_t creation_time)
 }
 
 /**
- * A magic number is calcuated for each status, and then the
+ * A magic number is calculated for each status, and then the
  * statuses are ordered by the magic number.  The magic number
  * is the date the status was last used offset by one day for
  * each time the status has been used (but only by 10 days at

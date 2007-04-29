@@ -641,7 +641,7 @@ purple_core_migrate(void)
 	}
 
 	old_icons_dir = g_build_filename(old_user_dir, "icons", NULL);
-	purple_buddy_icon_set_old_icons_dir(old_icons_dir);
+	_purple_buddy_icon_set_old_icons_dir(old_icons_dir);
 	g_free(old_icons_dir);
 
 	g_free(old_user_dir);
