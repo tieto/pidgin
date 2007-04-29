@@ -221,7 +221,7 @@ libpurpleinclude_HEADERS = \
 	$(dbus_headers)
 
 libpurple_la_DEPENDENCIES = $(STATIC_LINK_LIBS)
-libpurple_la_LDFLAGS = -export-dynamic -version-info $(LT_VERSION_INFO) -no-undefined
+libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
 libpurple_la_LIBADD = \
 	$(DBUS_LIBS) \
 	$(GLIB_LIBS) \

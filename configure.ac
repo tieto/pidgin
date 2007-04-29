@@ -1,24 +1,41 @@
 dnl Process this file with autoconf to produce a configure script.
 AC_PREREQ([2.50])
 
-# Making releases:
-#   purple_micro_version += 1
-# if any functions have been added:
+# UPDATING VERSION NUMBERS FOR RELEASES
+#
+# purple_micro_version += 1
+#
+# If any functions have been added to libpurple, Pidgin, or Finch:
 #   purple_micro_version = 0
 #   purple_minor_version += 1
-#   lt_current += 1
-# if backwards compatibility has been broken
+#   purple_lt_current += 1
+#
+# If backwards compatibility has been broken in libpurple, Pidgin, or Finch:
 #   purple_micro_version = 0
 #   purple_minor_version = 0
 #   purple_major_version += 1;
-#   lt_current += 1
+#   purple_lt_current += 1
 #
 # purple_version_suffix should be similar to one of the following:
 #   For beta releases:          [beta2]
 #   For code under development: [devel]
 #   For production releases:    []
 #
-m4_define([lt_current], [0])
+# If any code has changed in libgnt:
+#   gnt_micro_version += 1
+#
+# If any functions have been added to libgnt:
+#   gnt_micro_version = 0
+#   gnt_minor_version += 1
+#   gnt_lt_current += 1
+#
+# If backwards compatibility has been broken in libgnt:
+#   gnt_micro_version = 0
+#   gnt_minor_version = 0
+#   gnt_major_version += 1;
+#   gnt_lt_current += 1
+#
+m4_define([purple_lt_current], [0])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [0])
 m4_define([purple_micro_version], [0])
@@ -26,6 +43,12 @@ m4_define([purple_version_suffix], [beta7])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
+
+m4_define([gnt_lt_current], [0])
+m4_define([gnt_major_version], [1])
+m4_define([gnt_minor_version], [0])
+m4_define([gnt_micro_version], [0])
+
 
 AC_INIT([pidgin], [purple_display_version], [devel@pidgin.im])
 
@@ -43,11 +66,17 @@ AC_SUBST(PURPLE_MINOR_VERSION)
 AC_SUBST(PURPLE_MICRO_VERSION)
 AC_SUBST(PURPLE_VERSION)
 
-m4_define([lt_revision], [purple_micro_version])
-m4_define([lt_age], [purple_minor_version])
-LT_VERSION_INFO="lt_current:lt_revision:lt_age"
-AC_SUBST(LT_VERSION_INFO)
+PURPLE_LT_VERSION_INFO="purple_lt_current:purple_micro_version:purple_minor_version"
+AC_SUBST(PURPLE_LT_VERSION_INFO)
 
+GNT_MAJOR_VERSION=gnt_major_version
+GNT_MINOR_VERSION=gnt_minor_version
+GNT_MICRO_VERSION=gnt_micro_version
+AC_SUBST(GNT_MAJOR_VERSION)
+AC_SUBST(GNT_MINOR_VERSION)
+AC_SUBST(GNT_MICRO_VERSION)
+GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
+AC_SUBST(GNT_LT_VERSION_INFO)
 
 AC_DEFINE(PIDGIN_NAME, "Pidgin", [The user-visible application name])
 
@@ -684,6 +713,7 @@ else
 	GADU_LIBS="$GADU_LIBS -lgadu"
 	AC_CHECK_LIB(gadu, gg_libgadu_version, [gadu_libs=yes], , $GADU_LIBS)
 fi
+GADU_CFLAGS=`echo $GADU_CFLAGS |$sedpath 's/-Wall//'`
 
 if test "x$gadu_libs" = "xyes"; then
 	AC_MSG_CHECKING(for libgadu GPL compatibility)
