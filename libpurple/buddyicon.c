@@ -721,7 +721,7 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 
 	if (old_img)
 		purple_imgstore_unref(old_img);
-	else
+	else if (old_icon)
 	{
 		/* The old icon may not have been loaded into memory.  In that
 		 * case, we'll need to uncache the filename.  The filenames
