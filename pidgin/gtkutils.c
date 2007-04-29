@@ -3070,7 +3070,6 @@ gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
         for (i = 1; i < height - 1; i++) {
                 row = pixels + (i*rowstride);
                 if (row[3] != 0xff || row[rowstride-1] != 0xff) {
-                        printf("0: %d, last: %d\n", row[3], row[rowstride-1]);
                         return FALSE;
                 }
         }
