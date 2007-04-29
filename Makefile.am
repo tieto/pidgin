@@ -26,7 +26,7 @@ dist-hook: pidgin.spec
 	cp pidgin.spec $(distdir)
 	rm $(distdir)/config.h
 
-distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/GtkUI.pm
+distcheck-hook: libpurple/plugins/perl/common/Purple.pm pidgin/plugins/perl/common/Pidgin.pm
 #	cp libpurple/plugins/perl/common/Gaim.pm $(distdir)/libpurple/plugins/perl/common
 
 appsdir = $(datadir)/applications
