@@ -713,6 +713,7 @@ else
 	GADU_LIBS="$GADU_LIBS -lgadu"
 	AC_CHECK_LIB(gadu, gg_libgadu_version, [gadu_libs=yes], , $GADU_LIBS)
 fi
+GADU_CFLAGS=`echo $GADU_CFLAGS |$sedpath 's/-Wall//'`
 
 if test "x$gadu_libs" = "xyes"; then
 	AC_MSG_CHECKING(for libgadu GPL compatibility)
