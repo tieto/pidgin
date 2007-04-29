@@ -1699,8 +1699,17 @@ remove_typing_cb(gpointer null)
 
 	newmessage = gnt_entry_get_text(GNT_ENTRY(ggblist->statustext));
 	item = gnt_combo_box_get_selected_data(GNT_COMBO_BOX(ggblist->status));
-	g_return_val_if_fail(item->type == STATUS_PRIMITIVE, FALSE);
-	newprim = item->u.prim;
+
+	switch (item->type) {
+		case STATUS_PRIMITIVE:
+			newprim = item->u.prim;
+			break;
+		case STATUS_SAVED_POPULAR:
+			newprim = purple_savedstatus_get_type(item->u.saved);
+			break;
+		default:
+			goto end;  /* 'New' or 'Saved' is selected, but this should never happen. */
+	}
 
 	if (newprim != prim || ((message && !newmessage) ||
 				(!message && newmessage) ||
@@ -1718,6 +1727,7 @@ remove_typing_cb(gpointer null)
 	}
 
 	gnt_box_give_focus_to_child(GNT_BOX(ggblist->window), ggblist->tree);
+end:
 	if (ggblist->typing)
 		g_source_remove(ggblist->typing);
 	ggblist->typing = 0;
