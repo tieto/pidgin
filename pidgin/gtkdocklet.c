@@ -118,6 +118,9 @@ docklet_update_status()
 	DockletStatus newstatus = DOCKLET_STATUS_OFFLINE;
 	gboolean pending = FALSE, connecting = FALSE;
 
+	/* get the current savedstatus */
+	saved_status = purple_savedstatus_get_current();
+
 	/* determine if any ims have unseen messages */
 	convs = get_pending_list(DOCKLET_TOOLTIP_LINE_LIMIT);
 
@@ -168,7 +171,10 @@ docklet_update_status()
 		g_list_free(convs);
 
 	} else if (ui_ops->set_tooltip) {
-		ui_ops->set_tooltip(PIDGIN_NAME);
+		char *tooltip_text = g_strconcat(PIDGIN_NAME " - ",
+			purple_savedstatus_get_title(saved_status), NULL);
+		ui_ops->set_tooltip(tooltip_text);
+		g_free(tooltip_text);
 	}
 
 	for(l = purple_accounts_get_all(); l != NULL; l = l->next) {
@@ -187,7 +193,6 @@ docklet_update_status()
 			connecting = TRUE;
 	}
 
-	saved_status = purple_savedstatus_get_current();
 	prim = purple_savedstatus_get_type(saved_status);
 	if (pending)
 		newstatus = DOCKLET_STATUS_PENDING;
