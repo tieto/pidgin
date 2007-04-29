@@ -607,7 +607,7 @@ purple_blist_load()
 	xmlnode_free(purple);
 
 	/* This tells the buddy icon code to do its thing. */
-	purple_buddy_icons_blist_loaded_cb();
+	_purple_buddy_icons_blist_loaded_cb();
 }
 
 
