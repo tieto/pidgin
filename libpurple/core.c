@@ -401,8 +401,9 @@ purple_core_migrate(void)
 			if (!strcmp(entry, "logs"))
 			{
 				char buf[MAXPATHLEN];
+				size_t linklen;
 
-				if (readlink(name, buf, sizeof(buf) - 1) == -1)
+				if ((linklen = readlink(name, buf, sizeof(buf) - 1) == -1))
 				{
 					purple_debug_error("core", "Error reading symlink %s: %s\n",
 					                   name, strerror(errno));
@@ -412,7 +413,7 @@ purple_core_migrate(void)
 					g_free(old_user_dir);
 					return FALSE;
 				}
-				buf[sizeof(buf) - 1] = '\0';
+				buf[linklen] = '\0';
 
 				logs_dir = g_strconcat(user_dir, G_DIR_SEPARATOR_S "logs", NULL);
 
