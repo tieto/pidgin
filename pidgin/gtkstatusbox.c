@@ -2225,7 +2225,8 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 							PurpleSavedStatusSub *sub = purple_savedstatus_get_substatus(ss, acct);
 							if (sub) {
 								const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_type(sub);
-								if (!strcmp(purple_status_type_get_id(sub_type),
+								const char *subtype_status_id = purple_status_type_get_id(sub_type);
+								if (subtype_status_id && !strcmp(subtype_status_id,
 										purple_status_type_get_id(acct_status_type)))
 									found = TRUE;
 							}
