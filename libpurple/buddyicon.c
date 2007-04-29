@@ -208,7 +208,7 @@ value_equals(gpointer key, gpointer value, gpointer user_data)
 }
 
 static void
-image_deleting_cb(PurpleStoredImage *img, gpointer data)
+image_deleting_cb(const PurpleStoredImage *img, gpointer data)
 {
 	const char *filename = purple_imgstore_get_filename(img);
 
