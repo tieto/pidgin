@@ -1706,7 +1706,7 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 	if (!mime)
 		return;
 
-	t = purple_util_get_image_extension(purple_imgstore_get_data(img), purple_imgstore_get_size(img));
+	t = purple_imgstore_get_extension(img);
 	if (!t || !strcmp(t, "icon")) {
 		silc_mime_free(mime);
 		return;

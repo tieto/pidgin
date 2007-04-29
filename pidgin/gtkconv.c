@@ -2370,8 +2370,13 @@ redraw_icon(gpointer data)
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	account = purple_conversation_get_account(conv);
-	if(account && account->gc)
+
+	if(account && account->gc) {
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl);
+	} else {
+		gtkconv->u.im->icon_timer = 0;
+		return FALSE;
+	}
 
 	gtkconv->auto_resize = TRUE;
 	g_idle_add(reset_auto_resize_cb, gtkconv);

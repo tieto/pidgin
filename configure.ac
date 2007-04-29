@@ -11,10 +11,15 @@ AC_PREREQ([2.50])
 #   purple_micro_version = 0
 #   purple_major_version += 1;
 #
+# purple_version_suffix should be similar to one of the following:
+#   For beta releases:          [beta2]
+#   For code under development: [devel]
+#   For production releases:    []
+#
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [0])
 m4_define([purple_micro_version], [0])
-m4_define([purple_version_suffix], [devel])
+m4_define([purple_version_suffix], [beta7])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))

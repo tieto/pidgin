@@ -92,7 +92,7 @@ responsecompare(gconstpointer ar, gconstpointer br)
 
 #ifndef _WIN32
 
-static void
+G_GNUC_NORETURN static void
 resolve(int in, int out)
 {
 	GList *ret = NULL;

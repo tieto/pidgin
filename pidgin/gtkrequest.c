@@ -472,7 +472,9 @@ pidgin_request_choice(const char *title, const char *primary,
 
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
-
+#ifdef _WIN32
+		gtk_window_set_title(GTK_WINDOW(dialog), PIDGIN_ALERT_TITLE);
+#endif
 
 	gtk_dialog_add_button(GTK_DIALOG(dialog),
 			      text_to_stock(cancel_text), 0);
@@ -580,6 +582,9 @@ pidgin_request_action(const char *title, const char *primary,
 
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
+#ifdef _WIN32
+		gtk_window_set_title(GTK_WINDOW(dialog), PIDGIN_ALERT_TITLE);
+#endif
 
 	for (i = 0; i < action_count; i++) {
 		gtk_dialog_add_button(GTK_DIALOG(dialog),
@@ -1068,6 +1073,9 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(win), title);
+#ifdef _WIN32
+		gtk_window_set_title(GTK_WINDOW(win), PIDGIN_ALERT_TITLE);
+#endif
 
 	gtk_window_set_role(GTK_WINDOW(win), "multifield");
 	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
@@ -1609,7 +1617,7 @@ pidgin_request_folder(const char *title, const char *dirname,
 	data->cbs[0] = cancel_cb;
 	data->cbs[1] = ok_cb;
 	data->u.file.savedialog = FALSE;
-	
+
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	dirsel = gtk_file_chooser_dialog_new(
 						title ? title : _("Select Folder..."),
