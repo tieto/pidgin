@@ -212,6 +212,10 @@ image_deleting_cb(PurpleStoredImage *img, gpointer data)
 {
 	const char *filename = purple_imgstore_get_filename(img);
 
+	/* If there's no filename, it can't be one of our images. */
+	if (filename == NULL)
+		return;
+
 	if (img == g_hash_table_lookup(icon_data_cache, filename))
 	{
 		purple_buddy_icon_data_uncache_file(filename);
