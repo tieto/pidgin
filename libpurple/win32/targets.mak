@@ -15,9 +15,6 @@ $(PURPLE_VERSION_H): $(PURPLE_VERSION_H).in
 	  /^m4_define..purple_minor_version/ {system("sed -i -e s/@PURPLE_MINOR_VERSION@/"$$5"/ $(PURPLE_VERSION_H)");} \
 	  /^m4_define..purple_micro_version/ {system("sed -i -e s/@PURPLE_MICRO_VERSION@/"$$5"/ $(PURPLE_VERSION_H)"); exit}' $(PIDGIN_TREE_TOP)/configure.ac
 
-	sed -e s/@PURPLE_MAJOR_VERSION@/2/ -e s/@PURPLE_MINOR_VERSION@/0/ -e s/@PURPLE_MICRO_VERSION@/0/ $(PURPLE_TOP)/version.h.in > $(PURPLE_VERSION_H)
-
-
 $(PURPLE_DLL) $(PURPLE_DLL).a: $(PURPLE_VERSION_H)
 	$(MAKE) -C $(PURPLE_TOP) -f $(MINGW_MAKEFILE) libpurple.dll
 
