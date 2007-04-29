@@ -237,24 +237,24 @@ find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 
 %if 0%{!?_with_howl:1} && 0%{!?_with_avahi:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libbonjour.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libbonjour.so
 %endif
 
 %if 0%{!?_with_meanwhile:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libsametime.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libsametime.so
 %endif
 
 %if 0%{!?_with_mono:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/mono.so
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/*.dll
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/mono.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/*.dll
 %endif
 
 %if 0%{?_without_silc:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libsilcpurple.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libsilcpurple.so
 %endif
 
 %if 0%{?_without_tcl:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/tcl.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/tcl.so
 %endif
 
 %if 0%{?_without_text:1}
@@ -265,7 +265,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libgnt.so.*
 
 %find_lang %{name}
 
-find $RPM_BUILD_ROOT%{_libdir}/libpurple -xtype f -print | \
+find $RPM_BUILD_ROOT%{_libdir}/purple-2 -xtype f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" | \
         grep -v /libbonjour.so | \
         grep -v /libsametime.so | \
