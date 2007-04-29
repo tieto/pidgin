@@ -359,7 +359,13 @@ static PurpleSslOps ssl_ops =
 	ssl_nss_connect,
 	ssl_nss_close,
 	ssl_nss_read,
-	ssl_nss_write
+	ssl_nss_write,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 #endif /* HAVE_NSS */
@@ -422,7 +428,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
-	NULL                                              /**< actions        */
+	NULL,                                             /**< actions        */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

@@ -208,7 +208,13 @@ static PurpleSslOps ssl_ops =
 	ssl_gnutls_connect,
 	ssl_gnutls_close,
 	ssl_gnutls_read,
-	ssl_gnutls_write
+	ssl_gnutls_write,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 #endif /* HAVE_GNUTLS */
@@ -270,7 +276,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
-	NULL                                              /**< actions        */
+	NULL,                                             /**< actions        */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void
