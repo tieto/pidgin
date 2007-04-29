@@ -1124,7 +1124,8 @@ purple_buddy_icons_init()
 		g_direct_hash, g_direct_equal,
 		NULL, (GFreeFunc)g_hash_table_destroy);
 
-	icon_data_cache = g_hash_table_new(g_str_hash, g_str_equal);
+	icon_data_cache = g_hash_table_new_full(g_str_hash, g_str_equal,
+	                                        g_free, NULL);
 	icon_file_cache = g_hash_table_new_full(g_str_hash, g_str_equal,
 	                                        g_free, NULL);
 	pointer_icon_cache = g_hash_table_new(g_direct_hash, g_direct_equal);
