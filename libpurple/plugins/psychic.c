@@ -9,6 +9,7 @@
 #include "signals.h"
 #include "status.h"
 #include "version.h"
+#include "privacy.h"
 
 #include "plugin.h"
 #include "pluginpref.h"
@@ -44,6 +45,11 @@ buddy_typing_cb(PurpleAccount *acct, const char *name, void *data) {
   if(purple_prefs_get_bool(PREF_BUDDIES) &&
      ! purple_find_buddy(acct, name)) {
     purple_debug_info("psychic", "not in blist, doing nothing\n");
+    return;
+  }
+
+  if(FALSE == purple_privacy_check(acct, name)) {
+    purple_debug_info("psychic", "user %s is blocked", name);
     return;
   }
 
