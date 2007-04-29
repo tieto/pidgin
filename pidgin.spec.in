@@ -362,7 +362,6 @@ fi
 %{_bindir}/purple-send-async
 %{_bindir}/purple-url-handler
 %{_libdir}/libpurple-client.so.*
-%doc README.dbus
 %doc libpurple/purple-notifications-example
 %endif
 
