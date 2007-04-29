@@ -6,16 +6,19 @@ AC_PREREQ([2.50])
 # if any functions have been added:
 #   purple_micro_version = 0
 #   purple_minor_version += 1
+#   lt_current += 1
 # if backwards compatibility has been broken
-#   purple_minor_version = 0
 #   purple_micro_version = 0
+#   purple_minor_version = 0
 #   purple_major_version += 1;
+#   lt_current += 1
 #
 # purple_version_suffix should be similar to one of the following:
 #   For beta releases:          [beta2]
 #   For code under development: [devel]
 #   For production releases:    []
 #
+m4_define([lt_current], [0])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [0])
 m4_define([purple_micro_version], [0])
@@ -40,9 +43,8 @@ AC_SUBST(PURPLE_MINOR_VERSION)
 AC_SUBST(PURPLE_MICRO_VERSION)
 AC_SUBST(PURPLE_VERSION)
 
-m4_define([lt_current], [m4_eval(100 * purple_major_version + purple_minor_version)])
-m4_define([lt_age], [purple_minor_version])
 m4_define([lt_revision], [purple_micro_version])
+m4_define([lt_age], [purple_minor_version])
 LT_VERSION_INFO="lt_current:lt_revision:lt_age"
 AC_SUBST(LT_VERSION_INFO)
 
