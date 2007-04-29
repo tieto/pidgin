@@ -1542,8 +1542,7 @@ pidgin_request_file(const char *title, const char *filename,
 		else
 			gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(filesel), filename);
 	}
-	if ((filename == NULL || *filename == '\0' || !g_file_test(filename, G_FILE_TEST_EXISTS)) &&
-				(current_folder != NULL) && (*current_folder != '\0')) {
+	if ((current_folder != NULL) && (*current_folder != '\0')) {
 		folder_set = gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(filesel), current_folder);
 	}
 
