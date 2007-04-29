@@ -8,7 +8,7 @@
 $(PIDGIN_CONFIG_H): $(PIDGIN_TREE_TOP)/config.h.mingw
 	cp $(PIDGIN_TREE_TOP)/config.h.mingw $(PIDGIN_CONFIG_H)
 
-$(PURPLE_VERSION_H): $(PURPLE_VERSION_H).in
+$(PURPLE_VERSION_H): $(PURPLE_VERSION_H).in $(PIDGIN_TREE_TOP)/configure.ac
 	cp $(PURPLE_VERSION_H).in $(PURPLE_VERSION_H)
 	awk 'BEGIN {FS="[\\(\\)\\[\\]]"} \
 	  /^m4_define..purple_major_version/ {system("sed -i -e s/@PURPLE_MAJOR_VERSION@/"$$5"/ $(PURPLE_VERSION_H)");} \
