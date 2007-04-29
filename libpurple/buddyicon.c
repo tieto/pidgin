@@ -212,6 +212,10 @@ image_deleting_cb(PurpleStoredImage *img, gpointer data)
 {
 	const char *filename = purple_imgstore_get_filename(img);
 
+	/* If there's no filename, it can't be one of our images. */
+	if (filename == NULL)
+		return;
+
 	if (img == g_hash_table_lookup(icon_data_cache, filename))
 	{
 		purple_buddy_icon_data_uncache_file(filename);
@@ -908,9 +912,19 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 		FILE *file;
 		char *new_filename;
 
-		if (!read_icon_file(path, &icon_data, &icon_len) ||
-		    icon_data == NULL || icon_len <= 0)
+		if (!read_icon_file(path, &icon_data, &icon_len))
 		{
+			g_free(path);
+			delete_buddy_icon_settings(node, setting_name);
+			return;
+		}
+
+		if (icon_data == NULL || icon_len <= 0)
+		{
+			/* This really applies to the icon_len check.
+			 * icon_data should never be NULL if
+			 * read_icon_file() returns TRUE. */
+			purple_debug_error("buddyicon", "Empty buddy icon file: %s\n", path);
 			delete_buddy_icon_settings(node, setting_name);
 			g_free(path);
 			return;
@@ -921,8 +935,11 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 		new_filename = purple_buddy_icon_data_calculate_filename(icon_data, icon_len);
 		if (new_filename == NULL)
 		{
+			purple_debug_error("buddyicon",
+				"New icon filename is NULL. This should never happen! "
+				"The old filename was: %s\n", path);
 			delete_buddy_icon_settings(node, setting_name);
-			return;
+			g_return_if_reached();
 		}
 
 		path = g_build_filename(dirname, new_filename, NULL);
@@ -988,7 +1005,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 	}
 	else
 	{
-		/* If the icon is gone, drop the setting... */
+		purple_debug_error("buddyicon", "Old icon file doesn't exist: %s\n", path);
 		delete_buddy_icon_settings(node, setting_name);
 		g_free(path);
 	}
