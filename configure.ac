@@ -21,6 +21,7 @@ AC_PREREQ([2.50])
 #   For code under development: [devel]
 #   For production releases:    []
 #
+#
 # If any code has changed in libgnt:
 #   gnt_micro_version += 1
 #
@@ -35,6 +36,13 @@ AC_PREREQ([2.50])
 #   gnt_major_version += 1;
 #   gnt_lt_current += 1
 #
+# gnt_version_suffix should be similar to one of the following:
+#   For beta releases:          [beta2]
+#   For code under development: [devel]
+#   For production releases:    []
+#
+# Make sure to update finch/libgnt/configure.ac with libgnt version changes.
+#
 m4_define([purple_lt_current], [0])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [0])
@@ -48,6 +56,10 @@ m4_define([gnt_lt_current], [0])
 m4_define([gnt_major_version], [1])
 m4_define([gnt_minor_version], [0])
 m4_define([gnt_micro_version], [0])
+m4_define([gnt_version_suffix], [beta7])
+m4_define([gnt_version],
+          [gnt_major_version.gnt_minor_version.gnt_micro_version])
+m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
 
 
 AC_INIT([pidgin], [purple_display_version], [devel@pidgin.im])
@@ -72,9 +84,12 @@ AC_SUBST(PURPLE_LT_VERSION_INFO)
 GNT_MAJOR_VERSION=gnt_major_version
 GNT_MINOR_VERSION=gnt_minor_version
 GNT_MICRO_VERSION=gnt_micro_version
+GNT_VERSION=[gnt_display_version]
 AC_SUBST(GNT_MAJOR_VERSION)
 AC_SUBST(GNT_MINOR_VERSION)
 AC_SUBST(GNT_MICRO_VERSION)
+AC_SUBST(GNT_VERSION)
+
 GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
 AC_SUBST(GNT_LT_VERSION_INFO)
 
