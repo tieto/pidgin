@@ -178,6 +178,11 @@ struct _PurpleBlistUiOps
 	void (*request_add_chat)(PurpleAccount *account, PurpleGroup *group,
 							 const char *alias, const char *name);
 	void (*request_add_group)(void);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 #ifdef __cplusplus
