@@ -173,7 +173,7 @@ $(libpurple_la_OBJECTS): dbus-types.h
 libpurple_client_lib = libpurple-client.la
 
 libpurple_client_la_SOURCES = purple-client.c purple-client.h
-
+libpurple_client_la_LDFLAGS = -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
 libpurple_client_la_LIBADD = $(DBUS_LIBS)
 
 purple-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
