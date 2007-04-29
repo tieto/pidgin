@@ -694,11 +694,13 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	{
 		const char *filename = purple_imgstore_get_filename(img);
 		purple_account_set_string(account, "buddy_icon", filename);
+		purple_account_set_int(account, "buddy_icon_timestamp", time(NULL));
 		ref_filename(filename);
 	}
 	else
 	{
 		purple_account_set_string(account, "buddy_icon", NULL);
+		purple_account_set_int(account, "buddy_icon_timestamp", 0);
 	}
 	unref_filename(old_icon);
 
@@ -731,6 +733,25 @@ purple_buddy_icons_set_account_icon(PurpleAccount *account,
 	g_free(old_icon);
 
 	return img;
+}
+
+time_t
+purple_buddy_icons_get_account_icon_timestamp(PurpleAccount *account)
+{
+	time_t ret;
+
+	g_return_val_if_fail(account != NULL, 0);
+
+	ret = purple_account_get_int(account, "buddy_icon_timestamp", 0);
+
+	/* This deals with migration cases. */
+	if (ret == 0 && purple_account_get_string(account, "buddy_icon", NULL) != NULL)
+	{
+		ret = time(NULL);
+		purple_account_set_int(account, "buddy_icon_timestamp", ret);
+	}
+
+	return ret;
 }
 
 PurpleStoredImage *

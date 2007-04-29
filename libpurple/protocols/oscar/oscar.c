@@ -1941,9 +1941,9 @@ static int incomingim_chan1(OscarData *od, FlapConnection *conn, aim_userinfo_t 
 		purple_debug_info("oscar",
 				   "Sending buddy icon to %s (%d bytes)\n",
 				   userinfo->sn, len);
-		/* TODO: XXX: FIXME: Does this actually need the mtime of the file? */
 		aim_im_sendch2_icon(od, userinfo->sn, data, len,
-			time(NULL), aimutil_iconsum(data, len));
+			purple_buddy_icons_get_account_icon_timestamp(account),
+			aimutil_iconsum(data, len));
 	}
 	purple_imgstore_unref(img);
 
@@ -4232,8 +4232,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 			gconstpointer data = purple_imgstore_get_data(img);
 			args.iconlen   = purple_imgstore_get_size(img);
 			args.iconsum   = aimutil_iconsum(data, args.iconlen);
-			/* TODO: XXX: FIXME: Deal with the timestamp issue. */
-			args.iconstamp = time(NULL);
+			args.iconstamp = purple_buddy_icons_get_account_icon_timestamp(account);
 
 			if ((args.iconlen != bi->ico_me_len) || (args.iconsum != bi->ico_me_csum) || (args.iconstamp != bi->ico_me_time)) {
 				bi->ico_informed = FALSE;
