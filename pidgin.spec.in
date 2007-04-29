@@ -333,13 +333,12 @@ fi
 %doc %{_mandir}/man3*/*
 
 %dir %{_libdir}/pidgin
-%dir %{perl_vendorarch}/Purple
 %attr(755, root, root) %{perl_vendorarch}/Pidgin.pm
 %attr(755, root, root) %{perl_vendorarch}/auto/Pidgin
 
 %{_bindir}/pidgin
 %{_datadir}/pixmaps/pidgin
-%{_datadir}/icons/hicolor/*/apps/pidgin.png
+%{_datadir}/icons/hicolor/*/apps/pidgin.*
 %dir %{_datadir}/sounds/pidgin
 %{_datadir}/sounds/pidgin/*
 %{_datadir}/applications/*
@@ -379,7 +378,6 @@ fi
 %doc ChangeLog.API
 %doc HACKING
 %doc PLUGIN_HOWTO
-%doc PROGRAMMING_NOTES
 
 %dir %{_includedir}/libpurple
 %{_includedir}/libpurple/*.h
@@ -395,22 +393,22 @@ fi
 %files -n libpurple-bonjour
 %defattr(-, root, root)
 
-%{_libdir}/libpurple/libbonjour.*
+%{_libdir}/purple-2/libbonjour.*
 %endif
 
 %if 0%{?_with_meanwhile:1}
 %files -n libpurple-meanwhile
 %defattr(-, root, root)
 
-%{_libdir}/libpurple/libsametime.*
+%{_libdir}/purple-2/libsametime.*
 %endif
 
 %if 0%{?_with_mono:1}
 %files libpurple-mono
 %defattr(-, root, root)
 
-%{_libdir}/libpurple/mono.so
-%{_libdir}/libpurple/*.dll
+%{_libdir}/purple-2/mono.so
+%{_libdir}/purple-2/*.dll
 %endif
 
 %if 0%{!?_without_text:1}
