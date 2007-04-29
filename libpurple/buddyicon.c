@@ -909,7 +909,7 @@ migrate_buddy_icon(PurpleBlistNode *node, const char *setting_name,
 		char *new_filename;
 
 		if (!read_icon_file(path, &icon_data, &icon_len) ||
-		    icon_data == NULL || icon_len > 0)
+		    icon_data == NULL || icon_len <= 0)
 		{
 			delete_buddy_icon_settings(node, setting_name);
 			g_free(path);
