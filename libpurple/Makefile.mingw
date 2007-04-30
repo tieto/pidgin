@@ -127,7 +127,7 @@ $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
 ##
 clean:
 	rm -f $(OBJECTS) $(RC_SRC)
-	rm -f $(TARGET).dll $(TARGET).dll.a
+	rm -f $(TARGET).dll $(TARGET).dll.a $(PURPLE_VERSION_H)
 	$(MAKE) -C $(PURPLE_PROTOS_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PURPLE_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean
 
