@@ -199,6 +199,12 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
 	0,
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 
@@ -228,7 +234,13 @@ static PurplePluginInfo info =
 	NULL,					/* ui_info				*/
 	NULL,					/* extra_info			*/
 	&prefs_info,				/* prefs_info			*/
-	NULL					/* actions				*/
+	NULL,					/* actions				*/
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

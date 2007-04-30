@@ -399,6 +399,12 @@ static PurplePluginLoaderInfo tcl_loader_info =
 	tcl_load_plugin,
 	tcl_unload_plugin,
 	tcl_destroy_plugin,
+
+	/* pidgin */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo tcl_info =
@@ -423,6 +429,12 @@ static PurplePluginInfo tcl_info =
 	NULL,
 	NULL,
 	&tcl_loader_info,
+	NULL,
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
 	NULL,
 	NULL
 };

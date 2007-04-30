@@ -3495,6 +3495,11 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,						/* send_raw */
 	NULL,						/* roomlist_room_serialize */
 
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info = {
@@ -3522,6 +3527,12 @@ static PurplePluginInfo info = {
 
 	NULL,					/**< ui_info        */
 	&prpl_info,				/**< extra_info     */
+	NULL,
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
 	NULL,
 	NULL
 };

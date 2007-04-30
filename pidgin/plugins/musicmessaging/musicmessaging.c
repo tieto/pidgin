@@ -649,7 +649,13 @@ get_config_frame(PurplePlugin *plugin)
 static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,
-	0 /* page_num (reserved) */
+	0, /* page_num (reserved) */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info = {
@@ -677,7 +683,13 @@ static PurplePluginInfo info = {
     &ui_info,                                            /**< ui_info        */
     NULL,                                                /**< extra_info     */
     NULL,
-    NULL
+    NULL,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

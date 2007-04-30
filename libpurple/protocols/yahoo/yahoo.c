@@ -3948,7 +3948,13 @@ static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 	yahoo_doodle_get_brush,
 	yahoo_doodle_set_brush,
 	yahoo_doodle_send_draw_list,
-	yahoo_doodle_clear
+	yahoo_doodle_clear,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginProtocolInfo prpl_info =
@@ -4015,6 +4021,12 @@ static PurplePluginProtocolInfo prpl_info =
 	&yahoo_whiteboard_prpl_ops,
 	NULL, /* send_raw */
 	NULL, /* roomlist_room_serialize */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -4042,7 +4054,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,
-	yahoo_actions
+	yahoo_actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

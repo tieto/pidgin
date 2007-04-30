@@ -350,7 +350,11 @@ static PurpleCoreUiOps core_ops =
 	pidgin_prefs_init,
 	debug_init,
 	pidgin_ui_init,
-	pidgin_quit
+	pidgin_quit,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurpleCoreUiOps *

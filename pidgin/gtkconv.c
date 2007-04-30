@@ -6161,6 +6161,10 @@ static PurpleConversationUiOps conversation_ui_ops =
 	pidgin_conv_custom_smiley_write,  /* custom_smiley_write  */
 	pidgin_conv_custom_smiley_close,  /* custom_smiley_close  */
 	pidgin_conv_send_confirm,         /* send_confirm         */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleConversationUiOps *

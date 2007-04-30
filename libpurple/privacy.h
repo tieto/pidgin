@@ -53,6 +53,10 @@ typedef struct
 	void (*deny_added)(PurpleAccount *account, const char *name);
 	void (*deny_removed)(PurpleAccount *account, const char *name);
 
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 } PurplePrivacyUiOps;
 
 /**

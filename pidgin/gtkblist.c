@@ -5865,7 +5865,11 @@ static PurpleBlistUiOps blist_ui_ops =
 	pidgin_blist_set_visible,
 	pidgin_blist_request_add_buddy,
 	pidgin_blist_request_add_chat,
-	pidgin_blist_request_add_group
+	pidgin_blist_request_add_group,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 

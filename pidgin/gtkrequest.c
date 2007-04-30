@@ -1676,7 +1676,11 @@ static PurpleRequestUiOps ops =
 	pidgin_request_fields,
 	pidgin_request_file,
 	pidgin_close_request,
-	pidgin_request_folder
+	pidgin_request_folder,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleRequestUiOps *

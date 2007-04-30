@@ -549,7 +549,11 @@ static PurpleSoundUiOps sound_ui_ops =
 	pidgin_sound_init,
 	pidgin_sound_uninit,
 	pidgin_sound_play_file,
-	pidgin_sound_play_event
+	pidgin_sound_play_event,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleSoundUiOps *

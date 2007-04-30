@@ -85,7 +85,11 @@ static PurpleWhiteboardUiOps ui_ops =
 	pidgin_whiteboard_set_brush,
 	pidgin_whiteboard_draw_brush_point,
 	pidgin_whiteboard_draw_brush_line,
-	pidgin_whiteboard_clear
+	pidgin_whiteboard_clear,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 /******************************************************************************

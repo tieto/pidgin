@@ -107,6 +107,12 @@ static PurpleEventLoopUiOps glib_eventloops =
 	g_source_remove,
 	glib_input_add,
 	g_source_remove,
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 /*** End of the eventloop functions. ***/
@@ -149,6 +155,12 @@ static PurpleCoreUiOps null_core_uiops =
 	NULL,
 	NULL,
 	null_ui_init,
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 

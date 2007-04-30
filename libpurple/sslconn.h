@@ -73,6 +73,10 @@ typedef struct
 	size_t (*read)(PurpleSslConnection *gsc, void *data, size_t len);
 	size_t (*write)(PurpleSslConnection *gsc, const void *data, size_t len);
 
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 } PurpleSslOps;
 
 #ifdef __cplusplus

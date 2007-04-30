@@ -95,7 +95,13 @@ finch_debug_is_enabled(PurpleDebugLevel level, const char *category)
 static PurpleDebugUiOps uiops =
 {
 	finch_debug_print,
-	finch_debug_is_enabled
+	finch_debug_is_enabled,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleDebugUiOps *finch_debug_get_ui_ops()

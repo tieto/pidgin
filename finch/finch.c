@@ -59,7 +59,13 @@ static PurpleCoreUiOps core_ops =
 	finch_prefs_init,
 	debug_init,
 	gnt_ui_init,
-	gnt_ui_uninit
+	gnt_ui_uninit,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurpleCoreUiOps *
@@ -149,7 +155,13 @@ static PurpleEventLoopUiOps eventloop_ops =
 	g_source_remove,
 	gnt_input_add,
 	g_source_remove,
-	NULL /* input_get_error */
+	NULL, /* input_get_error */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurpleEventLoopUiOps *

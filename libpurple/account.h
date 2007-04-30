@@ -66,6 +66,11 @@ struct _PurpleAccountUiOps
 				 const char *alias, const char *message, gboolean on_list, 
 				 GCallback authorize_cb, GCallback deny_cb, void *user_data);
 	void (*close_account_request)(void *ui_handle);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 struct _PurpleAccount

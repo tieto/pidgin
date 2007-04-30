@@ -102,6 +102,11 @@ struct _PurplePluginInfo
 	void *extra_info;
 	PurplePluginUiInfo *prefs_info; /**< Used by any plugin to display preferences.  If #ui_info has been specified, this will be ignored. */
 	GList *(*actions)(PurplePlugin *plugin, gpointer context);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 /**
@@ -115,6 +120,11 @@ struct _PurplePluginLoaderInfo
 	gboolean (*load)(PurplePlugin *plugin);
 	gboolean (*unload)(PurplePlugin *plugin);
 	void     (*destroy)(PurplePlugin *plugin);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 /**
@@ -132,6 +142,11 @@ struct _PurplePlugin
 	void *extra;                           /**< Plugin-specific data.     */
 	gboolean unloadable;                   /**< Unloadable                */
 	GList *dependent_plugins;              /**< Plugins depending on this */
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 #define PURPLE_PLUGIN_LOADER_INFO(plugin) \
@@ -142,6 +157,11 @@ struct _PurplePluginUiInfo {
 
 	int page_num;                                         /**< Reserved */
 	PurplePluginPrefFrame *frame;                           /**< Reserved */
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 #define PURPLE_PLUGIN_HAS_PREF_FRAME(plugin) \

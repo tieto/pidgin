@@ -2920,6 +2920,12 @@ static PurplePluginProtocolInfo prpl_info = {
 	NULL,					/* whiteboard_prpl_ops */
 	NULL,					/* send_raw */
 	NULL,					/* roomlist_room_serialize */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info = {
@@ -2950,6 +2956,12 @@ static PurplePluginInfo info = {
 	&prpl_info,					  /**< extra_info     */
 	NULL,
 	zephyr_actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void init_plugin(PurplePlugin * plugin)
