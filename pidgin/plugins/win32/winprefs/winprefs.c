@@ -352,7 +352,13 @@ static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 static PidginPluginUiInfo ui_info =
 {
 	get_config_frame,
-	0
+	0,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -376,6 +382,12 @@ static PurplePluginInfo info =
 	plugin_unload,
 	NULL,
 	&ui_info,
+	NULL,
+	NULL,
+	NULL,
+
+	/* padding */
+	NULL,
 	NULL,
 	NULL,
 	NULL
