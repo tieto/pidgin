@@ -98,11 +98,14 @@ static void init_plugin(PurplePlugin *plugin);
 static GList *msim_status_types(PurpleAccount *acct);
 static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy);
 
+static gchar *msim_unescape(const gchar *msg);
+static gchar *msim_escape(const gchar *msg);
+static gchar *str_replace(const gchar* str, const gchar *old, const gchar *new);
 static GHashTable* msim_parse(gchar* msg);
 static GHashTable *msim_parse_body(const gchar *body_str);
 
 static void print_hash_item(gpointer key, gpointer value, gpointer user_data);
-static void msim_send(MsimSession *session, const gchar *msg);
+static gboolean msim_send(MsimSession *session, const gchar *msg);
 
 static void msim_login(PurpleAccount *acct);
 static int msim_login_challenge(MsimSession *session, GHashTable *table);

@@ -125,6 +125,75 @@ static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
      */
     return "myspace";
 }
+
+/**
+ * Unescape a protocol message.
+ *
+ * @param msg The message to unescape.
+ *
+ * @return The unescaped message. Caller must g_free().
+ *
+ * Messages should be unescaped after being received, as part of
+ * the parsing process.
+ */
+static gchar *msim_unescape(const gchar *msg)
+{
+	/* TODO: make more elegant, refactor with msim_escape */
+	gchar *tmp, *ret;
+	
+	tmp = str_replace(msg, "/1", "/");
+	ret = str_replace(tmp, "/2", "\\");
+	g_free(tmp);
+	return ret;
+}
+
+/**
+ * Escape a protocol message.
+ *
+ * @param msg The message to escape.
+ *
+ * @return The escaped message. Caller must g_free().
+ *
+ * Messages should be escaped before sending.
+ */
+static gchar *msim_escape(const gchar *msg)
+{
+	/* TODO: make more elegant, refactor with msim_unescape */
+	gchar *tmp, *ret;
+	
+	tmp = str_replace(msg, "/", "/1");
+	ret = str_replace(tmp, "\\", "/2");
+	g_free(tmp);
+
+	return ret;
+}
+
+/**
+ * Replace 'old' with 'new' in 'str'.
+ *
+ * @param str The original string.
+ * @param old The substring of 'str' to replace.
+ * @param new The replacement for 'old' within 'str'.
+ *
+ * @return A _new_ string, based on 'str', with 'old' replaced
+ * 		by 'new'. Must be g_free()'d by caller.
+ *
+ * This string replace method is based on
+ * http://mail.gnome.org/archives/gtk-app-devel-list/2000-July/msg00201.html
+ *
+ */
+static gchar *str_replace(const gchar* str, const gchar *old, const gchar *new)
+{
+	char **items;
+	char *ret;
+
+	items = g_strsplit(str, old, -1);
+	ret = g_strjoinv(new, items);
+	g_free(items);
+	return ret;
+}
+
+
 /** 
  * Parse a MySpaceIM protocol message into a hash table. 
  *
@@ -172,7 +241,10 @@ static GHashTable* msim_parse(gchar* msg)
 #endif
         if (i % 2)
         {
-            value = token;
+			/* Odd-numbered ordinal is a value */
+		
+			/* Note: returns a new string */	
+            value = msim_unescape(token);
 
             /* Check if key already exists */
             if (g_hash_table_lookup(table, key) == NULL)
@@ -180,7 +252,11 @@ static GHashTable* msim_parse(gchar* msg)
 #if MSIM_DEBUG_PARSE
                 purple_debug_info("msim", "insert: |%s|=|%s|\n", key, value);
 #endif
-                g_hash_table_insert(table, g_strdup(key), g_strdup(value));
+				/* Insert - strdup 'key' because it will be g_strfreev'd (as 'tokens'),
+				 * but do not strdup 'value' because it was newly allocated by
+				 * msim_unescape(). 
+				 */
+                g_hash_table_insert(table, g_strdup(key), value);
             } else {
                 /* TODO: Some dictionaries have multiple values for the same
                  * key. Should append to a GList to handle this case. */
@@ -189,6 +265,7 @@ static GHashTable* msim_parse(gchar* msg)
                 value);
             }
         } else {
+			/* Even numbered index is a key name */
             key = token;
         }
     }
@@ -277,28 +354,41 @@ static void print_hash_item(gpointer key, gpointer value, gpointer user_data)
  * Send an arbitrary protocol message.
  *
  * @param session 
- * @param msg The textual, encoded message to send.
+ * @param msg The textual, packed message to send.
+ *
+ * @return TRUE if succeeded, FALSE if not.
  *
  * Note: this does not send instant messages. For that, see msim_send_im.
  */
-static void msim_send(MsimSession *session, const gchar *msg)
+static gboolean msim_send(MsimSession *session, const gchar *msg)
 {
-    int ret;
+	int total_bytes_sent, total_bytes;
 
-    g_return_if_fail(MSIM_SESSION_VALID(session));
-    g_return_if_fail(msg != NULL);
-   
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
+
     purple_debug_info("msim", "msim_send: writing <%s>\n", msg);
 
-    ret = send(session->fd, msg, strlen(msg), 0);
+	/* Loop until all data is sent, or a failure occurs. */
+	total_bytes_sent = 0;
+	total_bytes = strlen(msg);
+	do
+	{
+		int bytes_sent;
 
-    if (ret != strlen(msg))
-    {
-        purple_debug_info("msim", 
-				"msim_send(%s): strlen=%d, but only wrote %s\n",
-                msg, strlen(msg), ret);
-        /* TODO: better error -or- TODO: send all, loop unless ret=-1 */
-    }
+		bytes_sent = send(session->fd, msg + total_bytes_sent, 
+			total_bytes - total_bytes_sent, 0);
+
+		if (bytes_sent < 0)
+		{
+			purple_debug_info("msim", "msim_send(%s): send() failed: %s\n",
+					msg, g_strerror(errno));
+			return FALSE;
+		}
+		total_bytes_sent += bytes_sent;
+
+	} while(total_bytes_sent < total_bytes);
+	return TRUE;
 }
 
 /** 
@@ -388,6 +478,8 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
     g_free(nc);
 
     /* Reply */
+	/* TODO: escape values. A response_str with a / in it (\ is not in base64) will
+	 * cause a login failure! / must be encoded as /1. */
     buf = g_strdup_printf("\\login2\\%d\\username\\%s\\response\\%s\\clientver\\%d\\reconn\\%d\\status\\%d\\id\\1\\final\\",
             196610, account->username, response_str, MSIM_CLIENT_VERSION, 0, 100);
 
@@ -612,9 +704,16 @@ static int msim_send_im_by_userid(MsimSession *session, const gchar *userid, con
     g_return_val_if_fail(msim_is_userid(userid) == TRUE, 0);
     g_return_val_if_fail(message != NULL, 0);
 
+	/* XXX: delete after escape each value */
+	message = msim_escape(message);
+
     /* TODO: constants for bm types */
+	/* TODO: escape values */
     msg_string = g_strdup_printf("\\bm\\121\\sesskey\\%s\\t\\%s\\cv\\%d\\msg\\%s\\final\\",
             session->sesskey, userid, MSIM_CLIENT_VERSION, message);
+
+	/* XXX: delete after escape each value */
+	g_free(message);
 
     purple_debug_info("msim", "going to write: %s\n", msg_string);
 
@@ -1362,6 +1461,7 @@ static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_
         lid = 7;
     }
 
+	/* TODO: escape values */
     msg_string = g_strdup_printf("\\persist\\1\\sesskey\\%s\\cmd\\1\\dsn\\%d\\uid\\%s\\lid\\%d\\rid\\%d\\body\\%s=%s\\final\\",
             session->sesskey, dsn, session->userid, lid, rid, field_name, user);
 
