@@ -110,7 +110,7 @@ size_t purple_imgstore_get_size(PurpleStoredImage *img);
  * @return A pointer to the filename, which must not
  *         be freed or modified.
  */
-const char *purple_imgstore_get_filename(PurpleStoredImage *img);
+const char *purple_imgstore_get_filename(const PurpleStoredImage *img);
 
 /**
  * Returns an extension corresponding to the image's file type.

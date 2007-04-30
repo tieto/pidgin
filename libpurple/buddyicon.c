@@ -223,7 +223,7 @@ image_deleting_cb(const PurpleStoredImage *img, gpointer data)
 
 		/* We could make this O(1) by using another hash table, but
 		 * this is probably good enough. */
-		g_hash_table_foreach_remove(pointer_icon_cache, value_equals, img);
+		g_hash_table_foreach_remove(pointer_icon_cache, value_equals, (gpointer)img);
 	}
 }
 
