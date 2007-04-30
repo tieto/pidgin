@@ -1,3 +1,12 @@
+
+2007-04-29 Jeff Connelly <jeff2@homing.pidgin.com> 
+
+* NOTE: This code is now being developed under Monotone, in the
+  im.pidgin.soc.2007.msimprpl branch on my local computer, which
+  is periodically sync'd with pidgin.im's Monotone database.
+
+  Changes will be logged to Monotone.
+
 2007-04-15 Jeff Connelly <myspaceim@xyzzy.cjb.net> - 0.4
 
 * Gracefully handle a full receive buffer
