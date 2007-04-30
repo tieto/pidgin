@@ -303,7 +303,7 @@ init_libpurple(int argc, char **argv)
 			char *text = g_strdup_printf(_(
 				"%s encountered errors migrating your settings "
 				"from %s to %s. Please investigate and complete the "
-				"migration by hand."), _("Finch"),
+				"migration by hand. Please report this error at http://developer.pidgin.im"), _("Finch"),
 				old, purple_user_dir());
 
 			g_free(old);
