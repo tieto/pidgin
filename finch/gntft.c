@@ -498,7 +498,13 @@ static PurpleXferUiOps ops =
 	finch_xfer_add_xfer,
 	finch_xfer_update_progress,
 	finch_xfer_cancel_local,
-	finch_xfer_cancel_remote
+	finch_xfer_cancel_remote,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 /**************************************************************************
