@@ -572,7 +572,13 @@ static PurplePluginLoaderInfo loader_info =
 	probe_perl_plugin,                                /**< probe          */
 	load_perl_plugin,                                 /**< load           */
 	unload_perl_plugin,                               /**< unload         */
-	destroy_perl_plugin                               /**< destroy        */
+	destroy_perl_plugin,                              /**< destroy        */
+	
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -600,6 +606,12 @@ static PurplePluginInfo info =
 
 	NULL,                                             /**< ui_info        */
 	&loader_info,                                     /**< extra_info     */
+	NULL,
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
 	NULL,
 	NULL
 };
