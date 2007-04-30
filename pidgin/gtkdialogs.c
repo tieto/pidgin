@@ -92,6 +92,7 @@ static struct developer developers[] = {
 
 /* Order: Alphabetical by Last Name */
 static struct developer patch_writers[] = {
+	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
 	{"Ka-Hing 'javabsp' Cheung",	NULL,	NULL},
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
