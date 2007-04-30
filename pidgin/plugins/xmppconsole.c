@@ -873,7 +873,13 @@ static PurplePluginInfo info =
 	NULL,                                         /**< ui_info        */
 	NULL,                                             /**< extra_info     */
 	NULL,
-	actions
+	actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void
