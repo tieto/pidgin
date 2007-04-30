@@ -698,6 +698,12 @@ static PurplePluginProtocolInfo prpl_info	= {
 	NULL,							/* PurpleWhiteboardPrplOps */
 	NULL,							/* send_raw */
 	NULL,							/* roomlist_room_serialize */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info = {
@@ -727,7 +733,13 @@ static PurplePluginInfo info = {
 	NULL,				/**< ui_info		*/
 	&prpl_info,			/**< extra_info		*/
 	NULL,				/**< prefs_info		*/
-	_qq_actions
+	_qq_actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 
