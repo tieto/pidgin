@@ -84,6 +84,8 @@ Group:      Applications/Internet
 Obsoletes:  gaim-silc
 Obsoletes:  gaim-tcl
 Obsoletes:  gaim-gadugadu
+Obsoletes:  pidgin-tcl < 2.0.0
+Obsoletes:  pidgin-silc < 2.0.0
 
 %package -n libpurple-devel
 Summary:    Development headers, documentation, and libraries for libpurple
