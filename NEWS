@@ -1,6 +1,17 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-2.0.0:
+2.0.0beta7 (4/19/2007):
+	Sean: Beta 7. The final beta. A few major changes from beta6. For
+	starters, we have some new names. That's pretty cool. We have a new
+	logo, to go along with it. And a lot of great icons! As Nathan mentions
+	below, we're totally back in the open now, having a signed agreement
+	from AOL that puts us in the clear. We all really regret having to go
+	completely dark for so long. Anyway, unlike betas1-6, which were of
+	normal release quality, this one is actually beta quality. There are
+	a few significant known issues, and a lot of changes that need a lot
+	of real-world testing. So, if you'd like to help us out, give it a
+	whirl, and let us know if you run into any major issues.
+
 	Nathan:  So, the secret is out now.  We renamed to Pidgin.  I'd just
 	like to apologize to everyone we've had to keep in the dark for the
 	last however-many months.  I know it looked like development slowed
