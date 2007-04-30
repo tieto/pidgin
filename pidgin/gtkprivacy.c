@@ -644,7 +644,11 @@ static PurplePrivacyUiOps privacy_ops =
 	pidgin_permit_added_removed,
 	pidgin_permit_added_removed,
 	pidgin_deny_added_removed,
-	pidgin_deny_added_removed
+	pidgin_deny_added_removed,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurplePrivacyUiOps *

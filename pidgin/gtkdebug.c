@@ -1116,7 +1116,11 @@ pidgin_debug_is_enabled(PurpleDebugLevel level, const char *category)
 static PurpleDebugUiOps ops =
 {
 	pidgin_debug_print,
-	pidgin_debug_is_enabled
+	pidgin_debug_is_enabled,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleDebugUiOps *

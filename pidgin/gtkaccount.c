@@ -2571,7 +2571,11 @@ static PurpleAccountUiOps ui_ops =
 	NULL,
 	pidgin_accounts_request_add,
 	pidgin_accounts_request_authorization,
-	pidgin_accounts_request_close
+	pidgin_accounts_request_close,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleAccountUiOps *

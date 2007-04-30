@@ -789,7 +789,11 @@ static PurpleRoomlistUiOps ops = {
 	pidgin_roomlist_set_fields,
 	pidgin_roomlist_add_room,
 	pidgin_roomlist_in_progress,
-	pidgin_roomlist_destroy
+	pidgin_roomlist_destroy,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 
