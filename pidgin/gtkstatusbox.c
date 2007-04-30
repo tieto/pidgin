@@ -1449,9 +1449,18 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 						data = pidgin_convert_buddy_icon(plug, filename, &len);
 					img = purple_buddy_icons_set_account_icon(account, data, len);
 					purple_account_set_buddy_icon_path(account, filename);
-
-					purple_account_set_bool(account, "use-global-buddyicon", (filename != NULL));
 				}
+			}
+		}
+
+		/* Even if no accounts were processed, load the icon that was set. */
+		if (filename != NULL)
+		{
+			gchar *contents;
+			gsize size;
+			if (g_file_get_contents(filename, &contents, &size, NULL))
+			{
+				img = purple_imgstore_add(contents, size, filename);
 			}
 		}
 	}
