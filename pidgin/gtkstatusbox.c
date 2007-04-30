@@ -1452,6 +1452,17 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 				}
 			}
 		}
+
+		/* Even if no accounts were processed, load the icon that was set. */
+		if (filename != NULL)
+		{
+			gchar *contents;
+			gsize size;
+			if (g_file_get_contents(filename, &contents, &size, NULL))
+			{
+				img = purple_imgstore_add(contents, size, filename);
+			}
+		}
 	}
 
 	pidgin_status_box_set_buddy_icon(box, img);
