@@ -1,4 +1,5 @@
 #include "gnt.h"
+#include "gntwm.h"
 
 typedef enum
 {
@@ -20,6 +21,8 @@ gboolean gnt_style_get_bool(GntStyle style, gboolean def);
 void gnt_styles_get_keyremaps(GType type, GHashTable *hash);
 
 void gnt_style_read_actions(GType type, GntBindableClass *klass);
+
+void gnt_style_read_workspaces(GntWM *wm);
 
 void gnt_init_styles(void);
 
