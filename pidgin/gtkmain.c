@@ -318,6 +318,7 @@ pidgin_ui_init(void)
 	pidgin_xfers_init();
 	pidgin_roomlist_init();
 	pidgin_log_init();
+	pidgin_docklet_init();
 }
 
 static void
@@ -745,7 +746,6 @@ int main(int argc, char *argv[])
 
 	/* load plugins we had when we quit */
 	purple_plugins_load_saved(PIDGIN_PREFS_ROOT "/plugins/loaded");
-	pidgin_docklet_init();
 
 	/* TODO: Move pounces loading into purple_pounces_init() */
 	purple_pounces_load();
