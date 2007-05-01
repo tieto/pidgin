@@ -2467,7 +2467,6 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 		{
 			gtk_widget_hide_all(status_box->vbox);
 			activate_currently_selected_status(status_box); /* This is where we actually set the status */
-			return;
 		}
 	}
 	pidgin_status_box_refresh(status_box);
