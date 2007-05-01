@@ -2684,7 +2684,7 @@ msgstr ""
 #: ../libpurple/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 
 #: ../libpurple/plugins/psychic.c:66
@@ -2960,8 +2960,8 @@ msgid "AIM Account"
 msgstr "AIM 账户"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:583
-msgid "XMPP Account"
-msgstr "XMPP 账户"
+msgid "Jabber Account"
+msgstr "Jabber 账户"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -4111,8 +4111,8 @@ msgstr "描述"
 
 #: ../libpurple/protocols/jabber/buddy.c:582
 #: ../libpurple/protocols/jabber/buddy.c:583
-msgid "Edit XMPP vCard"
-msgstr "编辑 XMPP vCard"
+msgid "Edit Jabber vCard"
+msgstr "编辑 Jabber vCard"
 
 #: ../libpurple/protocols/jabber/buddy.c:584
 msgid ""
@@ -4225,7 +4225,7 @@ msgstr "姓"
 msgid "The following are the results of your search"
 msgstr "下面是您搜索的结果"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libpurple/protocols/jabber/buddy.c:1674
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -4248,7 +4248,7 @@ msgid "Server Instructions: %s"
 msgstr "服务器指令：%s"
 
 #: ../libpurple/protocols/jabber/buddy.c:1736
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: ../libpurple/protocols/jabber/buddy.c:1756
@@ -4260,8 +4260,8 @@ msgstr "电子邮件地址"
 
 #: ../libpurple/protocols/jabber/buddy.c:1765
 #: ../libpurple/protocols/jabber/buddy.c:1766
-msgid "Search for XMPP users"
-msgstr "搜索 XMPP 用户"
+msgid "Search for Jabber users"
+msgstr "搜索 Jabber 用户"
 
 #. "Search"
 #: ../libpurple/protocols/jabber/buddy.c:1767
@@ -4404,8 +4404,8 @@ msgstr "无法创建套接字"
 
 #: ../libpurple/protocols/jabber/jabber.c:567
 #: ../libpurple/protocols/jabber/jabber.c:910
-msgid "Invalid XMPP ID"
-msgstr "无效的 XMPP ID"
+msgid "Invalid Jabber ID"
+msgstr "无效的 Jabber ID"
 
 #: ../libpurple/protocols/jabber/jabber.c:638
 #, c-format
@@ -4459,8 +4459,8 @@ msgstr "请在下面填入信息以注册您新的账户。"
 
 #: ../libpurple/protocols/jabber/jabber.c:873
 #: ../libpurple/protocols/jabber/jabber.c:874
-msgid "Register New XMPP Account"
-msgstr "注册新的 XMPP 账户"
+msgid "Register New Jabber Account"
+msgstr "注册新的 Jabber 账户"
 
 #. Register button
 #: ../libpurple/protocols/jabber/jabber.c:875 ../pidgin/gtkaccount.c:1478
@@ -4534,8 +4534,8 @@ msgstr "再次输入新密码"
 
 #: ../libpurple/protocols/jabber/jabber.c:1368
 #: ../libpurple/protocols/jabber/jabber.c:1369
-msgid "Change XMPP Password"
-msgstr "更改 XMPP 密码"
+msgid "Change Jabber Password"
+msgstr "更改 Jabber 密码"
 
 #: ../libpurple/protocols/jabber/jabber.c:1369
 msgid "Please enter your new password"
@@ -4589,8 +4589,8 @@ msgid "Item Not Found"
 msgstr "项目未找到"
 
 #: ../libpurple/protocols/jabber/jabber.c:1481
-msgid "Malformed XMPP ID"
-msgstr "XMPP ID 格式错误"
+msgid "Malformed Jabber ID"
+msgstr "Jabber ID 格式错误"
 
 #: ../libpurple/protocols/jabber/jabber.c:1483
 msgid "Not Acceptable"
@@ -4852,8 +4852,8 @@ msgstr "msg &lt;用户&gt; &lt;消息&gt;: 向另外的好友发送私人消息�
 #. *  description
 #: ../libpurple/protocols/jabber/jabber.c:1972
 #: ../libpurple/protocols/jabber/jabber.c:1974
-msgid "XMPP Protocol Plugin"
-msgstr "XMPP 协议插件"
+msgid "Jabber Protocol Plugin"
+msgstr "Jabber 协议插件"
 
 #: ../libpurple/protocols/jabber/jabber.c:2000
 msgid "Force old (port 5223) SSL"
@@ -4895,8 +4895,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "投递到 %s 的消息失败: %s"
 
 #: ../libpurple/protocols/jabber/message.c:272
-msgid "XMPP Message Error"
-msgstr "XMPP 消息错误"
+msgid "Jabber Message Error"
+msgstr "Jabber 消息错误"
 
 #: ../libpurple/protocols/jabber/message.c:352
 #, c-format
@@ -12106,8 +12106,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "骇客和专属驱动程序[lazy bum]"
 
 #: ../pidgin/gtkdialogs.c:113
-msgid "XMPP developer"
-msgstr "XMPP 开发者"
+msgid "Jabber developer"
+msgstr "Jabber 开发者"
 
 #: ../pidgin/gtkdialogs.c:114
 msgid "original author"
@@ -12384,7 +12384,7 @@ msgstr "关于 %s"
 #: ../pidgin/gtkdialogs.c:359
 #, c-format
 msgid ""
-"%s is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, "
+"%s is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, "
 "ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, "
 "Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You "
 "may modify and redistribute the program under the terms of the GPL (version "
@@ -14707,10 +14707,10 @@ msgstr "允许您发送原样输入基于文本的协议。"
 
 #: ../pidgin/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"允许您将输入原样发送给基于文本的协议(XMPP，MSN，IRC，TOC)。在输入框中按回车"
+"允许您将输入原样发送给基于文本的协议(Jabber，MSN，IRC，TOC)。在输入框中按回车"
 "键可以发送。看看调试窗口。"
 
 #: ../pidgin/plugins/relnot.c:71
