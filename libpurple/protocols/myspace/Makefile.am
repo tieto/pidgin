@@ -1,30 +1,26 @@
-EXTRA_DIST = README TODO ChangeLog myspace.png Makefile.mingw
+EXTRA_DIST = Makefile.mingw
 
-pkgdir = $(libdir)/libpurple
+pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 SOURCES = myspace.c
 
 AM_CFLAGS = $(st)
 
-libirc_la_LDFLAGS = -module -avoid-version
+libmyspace_la_LDFLAGS = -module -avoid-version
 
 if STATIC_MYSPACE
 
 st = -DPURPLE_STATIC_PRPL
-noinst_LIBRARIES = libirc.a
-pkg_LTLIBRARIES =
-
-libirc_a_SOURCES = $(SOURCES)
-libirc_a_CFLAGS  = $(AM_CFLAGS)
+noinst_LIBRARIES     = libmyspace.a
+libmyspace_a_SOURCES = $(SOURCES)
+libmyspace_a_CFLAGS  = $(AM_CFLAGS)
 
 else
 
 st =
-pkg_LTLIBRARIES = libirc.la
-noinst_LIBRARIES =
-
-libirc_la_SOURCES = $(SOURCES)
-libirc_la_LIBADD  = $(GLIB_LIBS)
+pkg_LTLIBRARIES       = libmyspace.la
+libmyspace_la_SOURCES = $(SOURCES)
+libmyspace_la_LIBADD  = $(GLIB_LIBS)
 
 endif
 
