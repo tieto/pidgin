@@ -3550,9 +3550,6 @@ update_menu_bar(PidginBuddyList *gtkblist)
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Add Chat..."));
 	gtk_widget_set_sensitive(widget, pidgin_blist_joinchat_is_showable());
 
-	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Buddy Pounces"));
-	gtk_widget_set_sensitive(widget, (purple_accounts_get_all() != NULL));
-
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Privacy"));
 	gtk_widget_set_sensitive(widget, (purple_connections_get_all() != NULL));
 
