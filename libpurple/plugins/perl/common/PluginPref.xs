@@ -3,6 +3,33 @@
 MODULE = Purple::PluginPref  PACKAGE = Purple::PluginPref::Frame  PREFIX = purple_plugin_pref_frame_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *string_format_stash = gv_stashpv("Purple::String::Format::Type", 1);
+	HV *plugin_pref_stash = gv_stashpv("Purple::PluginPref::Type", 1);
+
+	static const constiv *civ, string_format_const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_STRING_FORMAT_TYPE_##name}
+		const_iv(NONE),
+		const_iv(MULTILINE),
+		const_iv(HTML),
+	};
+	static const constiv plugin_pref_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_PLUGIN_PREF_##name}
+		const_iv(NONE),
+		const_iv(CHOICE),
+		const_iv(INFO),
+		const_iv(STRING_FORMAT),
+	};
+
+	for (civ = string_format_const_iv + sizeof(string_format_const_iv) / sizeof(string_format_const_iv[0]); civ-- > string_format_const_iv; )
+		newCONSTSUB(string_format_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = plugin_pref_const_iv + sizeof(plugin_pref_const_iv) / sizeof(plugin_pref_const_iv[0]); civ-- > plugin_pref_const_iv; )
+		newCONSTSUB(plugin_pref_stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 void
 purple_plugin_pref_frame_add(frame, pref)
 	Purple::PluginPref::Frame frame

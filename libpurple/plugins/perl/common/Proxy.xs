@@ -3,6 +3,24 @@
 MODULE = Purple::Proxy  PACKAGE = Purple::Proxy  PREFIX = purple_proxy_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *stash = gv_stashpv("Purple::ProxyType::", 1);
+
+	static const constiv *civ, const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_PROXY_##name}
+		const_iv(USE_GLOBAL),
+		const_iv(NONE),
+		const_iv(HTTP),
+		const_iv(SOCKS4),
+		const_iv(SOCKS5),
+		const_iv(USE_ENVVAR),
+	};
+
+	for (civ = const_iv + sizeof(const_iv) / sizeof(const_iv[0]); civ-- > const_iv; )
+		newCONSTSUB(stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 Purple::ProxyInfo
 purple_global_proxy_get_info()
 

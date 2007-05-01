@@ -80,6 +80,41 @@ purple_perl_request_cancel_cb(void * data, PurpleRequestFields *fields)
 MODULE = Purple::Request  PACKAGE = Purple::Request  PREFIX = purple_request_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *request_stash = gv_stashpv("Purple::RequestType", 1);
+	HV *request_field_stash = gv_stashpv("Purple::RequestFieldType", 1);
+
+	static const constiv *civ, request_const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_REQUEST_##name}
+		const_iv(INPUT),
+		const_iv(CHOICE),
+		const_iv(ACTION),
+		const_iv(FIELDS),
+		const_iv(FILE),
+		const_iv(FOLDER),
+	};
+	static const constiv request_field_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_REQUEST_FIELD_##name}
+		const_iv(NONE),
+		const_iv(STRING),
+		const_iv(INTEGER),
+		const_iv(BOOLEAN),
+		const_iv(CHOICE),
+		const_iv(LIST),
+		const_iv(LABEL),
+		const_iv(IMAGE),
+		const_iv(ACCOUNT),
+	};
+
+	for (civ = request_const_iv + sizeof(request_const_iv) / sizeof(request_const_iv[0]); civ-- > request_const_iv; )
+		newCONSTSUB(request_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = request_field_const_iv + sizeof(request_field_const_iv) / sizeof(request_field_const_iv[0]); civ-- > request_field_const_iv; )
+		newCONSTSUB(request_field_stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 void *
 purple_request_input(handle, title, primary, secondary, default_value, multiline, masked, hint, ok_text, ok_cb, cancel_text, cancel_cb)
 	Purple::Plugin handle

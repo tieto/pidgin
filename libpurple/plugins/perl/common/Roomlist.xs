@@ -3,6 +3,31 @@
 MODULE = Purple::Roomlist  PACKAGE = Purple::Roomlist  PREFIX = purple_roomlist_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *room_stash = gv_stashpv("Purple::Roomlist::Room::Type", 1);
+	HV *field_stash = gv_stashpv("Purple::Roomlist::Field::Type", 1);
+
+	static const constiv *civ, room_const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_ROOMLIST_ROOMTYPE_##name}
+		const_iv(CATEGORY),
+		const_iv(ROOM),
+	};
+	static const constiv field_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_ROOMLIST_FIELD_##name}
+		const_iv(BOOL),
+		const_iv(INT),
+		const_iv(STRING),
+	};
+
+	for (civ = room_const_iv + sizeof(room_const_iv) / sizeof(room_const_iv[0]); civ-- > room_const_iv; )
+		newCONSTSUB(room_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = field_const_iv + sizeof(field_const_iv) / sizeof(field_const_iv[0]); civ-- > field_const_iv; )
+		newCONSTSUB(field_stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 void 
 purple_roomlist_cancel_get_list(list)
 	Purple::Roomlist list

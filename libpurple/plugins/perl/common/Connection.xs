@@ -3,6 +3,21 @@
 MODULE = Purple::Connection  PACKAGE = Purple::Connection  PREFIX = purple_connection_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *stash = gv_stashpv("Purple::Connection::State", 1);
+
+	static const constiv *civ, const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_##name}
+		const_iv(DISCONNECTED),
+		const_iv(CONNECTED),
+		const_iv(CONNECTING),
+	};
+
+	for (civ = const_iv + sizeof(const_iv) / sizeof(const_iv[0]); civ-- > const_iv; )
+		newCONSTSUB(stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 Purple::Account
 purple_connection_get_account(gc)
 	Purple::Connection gc

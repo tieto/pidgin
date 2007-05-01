@@ -3,6 +3,47 @@
 MODULE = Purple::Notify  PACKAGE = Purple::Notify  PREFIX = purple_notify_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *type_stash = gv_stashpv("Purple::Notify::Type", 1);
+	HV *msg_type_stash = gv_stashpv("Purple::Notify:Msg", 1);
+	HV *user_info_stash = gv_stashpv("Purple::NotifyUserInfo::Type", 1);
+
+	static const constiv *civ, type_const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_NOTIFY_##name}
+		const_iv(MESSAGE),
+		const_iv(EMAIL),
+		const_iv(EMAILS),
+		const_iv(FORMATTED),
+		const_iv(SEARCHRESULTS),
+		const_iv(USERINFO),
+		const_iv(URI),
+	};
+	static const constiv msg_type_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_NOTIFY_MSG_##name}
+		const_iv(ERROR),
+		const_iv(WARNING),
+		const_iv(INFO),
+	};
+	static const constiv user_info_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_NOTIFY_USER_INFO_ENTRY_##name}
+		const_iv(PAIR),
+		const_iv(SECTION_BREAK),
+		const_iv(SECTION_HEADER),
+	};
+
+	for (civ = type_const_iv + sizeof(type_const_iv) / sizeof(type_const_iv[0]); civ-- > type_const_iv; )
+		newCONSTSUB(type_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = msg_type_const_iv + sizeof(msg_type_const_iv) / sizeof(msg_type_const_iv[0]); civ-- > msg_type_const_iv; )
+		newCONSTSUB(msg_type_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = user_info_const_iv + sizeof(user_info_const_iv) / sizeof(user_info_const_iv[0]); civ-- > user_info_const_iv; )
+		newCONSTSUB(user_info_stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 void
 purple_notify_close(type, ui_handle)
 	Purple::NotifyType type

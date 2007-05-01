@@ -3,6 +3,36 @@
 MODULE = Purple::Xfer  PACKAGE = Purple::Xfer  PREFIX = purple_xfer_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *type_stash = gv_stashpv("Purple::Xfer::Type", 1);
+	HV *status_stash = gv_stashpv("Purple::Xfer::Status", 1);
+
+	static const constiv *civ, type_const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_XFER_##name}
+		const_iv(UNKNOWN),
+		const_iv(SEND),
+		const_iv(RECEIVE),
+	};
+	static const constiv status_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_XFER_STATUS_##name}
+		const_iv(UNKNOWN),
+		const_iv(NOT_STARTED),
+		const_iv(ACCEPTED),
+		const_iv(STARTED),
+		const_iv(DONE),
+		const_iv(CANCEL_LOCAL),
+		const_iv(CANCEL_REMOTE),
+	};
+
+	for (civ = type_const_iv + sizeof(type_const_iv) / sizeof(type_const_iv[0]); civ-- > type_const_iv; )
+		newCONSTSUB(type_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = status_const_iv + sizeof(status_const_iv) / sizeof(status_const_iv[0]); civ-- > status_const_iv; )
+		newCONSTSUB(status_stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 Purple::Xfer
 purple_xfer_new(class, account, type, who)
 	Purple::Account account

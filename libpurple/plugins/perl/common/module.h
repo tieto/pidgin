@@ -276,3 +276,7 @@ typedef void *				Purple__Handle;
 
 typedef gchar gchar_own;
 
+typedef struct _constiv {
+	const char *name;
+	IV iv;
+} constiv;

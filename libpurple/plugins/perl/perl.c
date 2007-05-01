@@ -102,8 +102,13 @@ PerlInterpreter *my_perl = NULL;
 static PurplePluginUiInfo ui_info =
 {
 	purple_perl_get_plugin_frame,
-	0,   /* page_num (Reserved) */
-	NULL /* frame (Reserved)    */
+	0,    /* page_num (Reserved) */
+	NULL, /* frame (Reserved)    */
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 #ifdef PURPLE_GTKPERL

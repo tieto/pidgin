@@ -3,6 +3,30 @@
 MODULE = Purple::Log  PACKAGE = Purple::Log  PREFIX = purple_log_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *type_stash = gv_stashpv("Purple::Log::Type", 1);
+	HV *flags_stash = gv_stashpv("Purple::Log:ReadFlags::", 1);
+
+	static const constiv *civ, type_const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_LOG_##name}
+		const_iv(IM),
+		const_iv(CHAT),
+		const_iv(SYSTEM),
+	};
+	static const constiv flags_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_LOG_READ_##name}
+		const_iv(NO_NEWLINE),
+	};
+
+	for (civ = type_const_iv + sizeof(type_const_iv) / sizeof(type_const_iv[0]); civ-- > type_const_iv; )
+		newCONSTSUB(type_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = flags_const_iv + sizeof(flags_const_iv) / sizeof(flags_const_iv[0]); civ-- > flags_const_iv; )
+		newCONSTSUB(flags_stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 int
 purple_log_common_sizer(log)
 	Purple::Log log
