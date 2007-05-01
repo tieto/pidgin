@@ -27,7 +27,9 @@ SUBDIRS = \
 plugindir = $(libdir)/pidgin
 
 convcolors_la_LDFLAGS       = -module -avoid-version
+contact_priority_la_LDFLAGS = -module -avoid-version
 extplacement_la_LDFLAGS     = -module -avoid-version
+gtk_signals_test_la_LDFLAGS = -module -avoid-version
 history_la_LDFLAGS          = -module -avoid-version
 iconaway_la_LDFLAGS         = -module -avoid-version
 markerline_la_LDFLAGS       = -module -avoid-version
@@ -55,8 +57,14 @@ plugin_LTLIBRARIES = \
 	timestamp_format.la \
 	xmppconsole.la
 
+noinst_LTLIBRARIES = \
+	contact_priority.la \
+	gtk_signals_test.la
+
 convcolors_la_SOURCES       = convcolors.c
+contact_priority_la_SOURCES = contact_priority.c
 extplacement_la_SOURCES     = extplacement.c
+gtk_signals_test_la_SOURCES = gtk-signals-test.c
 history_la_SOURCES          = history.c
 iconaway_la_SOURCES         = iconaway.c
 markerline_la_SOURCES       = markerline.c
@@ -69,7 +77,9 @@ timestamp_format_la_SOURCES = timestamp_format.c
 xmppconsole_la_SOURCES      = xmppconsole.c
 
 convcolors_la_LIBADD        = $(GTK_LIBS)
+contact_priority_la_LIBADD  = $(GTK_LIBS)
 extplacement_la_LIBADD      = $(GTK_LIBS)
+gtk_signals_test_la_LIBADD  = $(GTK_LIBS)
 history_la_LIBADD           = $(GTK_LIBS)
 iconaway_la_LIBADD          = $(GTK_LIBS)
 markerline_la_LIBADD        = $(GTK_LIBS)
@@ -85,8 +95,6 @@ endif # PLUGINS
 
 EXTRA_DIST = \
 	Makefile.mingw \
-	contact_priority.c \
-	gtk-signals-test.c \
 	mailchk.c \
 	pidgininc.c \
 	raw.c \
