@@ -4,6 +4,26 @@
 MODULE = Purple::BuddyList  PACKAGE = Purple  PREFIX = purple_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *stash = gv_stashpv("Purple::BuddyList::Node", 1);
+
+	static const constiv *civ, const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_BLIST_##name##_NODE}
+		const_iv(GROUP),
+		const_iv(CONTACT),
+		const_iv(BUDDY),
+		const_iv(CHAT),
+		const_iv(OTHER),
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_BLIST_NODE_FLAG_##name}
+		const_iv(NO_SAVE),
+	};
+
+	for (civ = const_iv + sizeof(const_iv) / sizeof(const_iv[0]); civ-- > const_iv; )
+		newCONSTSUB(stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 Purple::BuddyList
 purple_get_blist()
 
@@ -30,14 +50,17 @@ PPCODE:
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::BuddyList::Buddy")));
 	}
 
+Purple::BuddyList::Group
+purple_find_group(name)
+	const char *name
+
+MODULE = Purple::BuddyList  PACKAGE = Purple::Find  PREFIX = purple_
+PROTOTYPES: ENABLE
+
 gboolean
 purple_group_on_account(group, account)
 	Purple::BuddyList::Group  group
 	Purple::Account account
-
-Purple::BuddyList::Group
-purple_find_group(name)
-	const char *name
 
 MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Contact  PREFIX = purple_contact_
 PROTOTYPES: ENABLE
