@@ -21,11 +21,14 @@ BOOT:
 		newCONSTSUB(stash, (char *)civ->name, newSViv(civ->iv));
 }
 
-Purple::ProxyInfo
-purple_global_proxy_get_info()
-
 Purple::Handle
 purple_proxy_get_handle()
+
+void
+purple_proxy_init()
+
+MODULE = Purple::Proxy  PACKAGE = Purple::ProxyInfo  PREFIX = purple_proxy_info_
+PROTOTYPES: ENABLE
 
 void
 purple_proxy_info_destroy(info)
@@ -79,5 +82,8 @@ purple_proxy_info_set_username(info, username)
 	Purple::ProxyInfo info
 	const char *username
 
-void
-purple_proxy_init()
+MODULE = Purple::Proxy  PACKAGE = Purple::Proxy  PREFIX = purple_
+PROTOTYPES: ENABLE
+
+Purple::ProxyInfo
+purple_global_proxy_get_info()

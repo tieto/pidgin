@@ -50,14 +50,17 @@ PPCODE:
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::BuddyList::Buddy")));
 	}
 
+Purple::BuddyList::Group
+purple_find_group(name)
+	const char *name
+
+MODULE = Purple::BuddyList  PACKAGE = Purple::Find  PREFIX = purple_
+PROTOTYPES: ENABLE
+
 gboolean
 purple_group_on_account(group, account)
 	Purple::BuddyList::Group  group
 	Purple::Account account
-
-Purple::BuddyList::Group
-purple_find_group(name)
-	const char *name
 
 MODULE = Purple::BuddyList  PACKAGE = Purple::BuddyList::Contact  PREFIX = purple_contact_
 PROTOTYPES: ENABLE

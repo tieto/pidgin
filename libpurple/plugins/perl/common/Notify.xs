@@ -93,8 +93,44 @@ purple_notify_userinfo(gc, who, user_info, cb, user_data)
 	Purple::NotifyCloseCallback cb
 	gpointer user_data
 
+Purple::NotifyUiOps
+purple_notify_get_ui_ops()
+
+void
+purple_notify_set_ui_ops(ops)
+	Purple::NotifyUiOps ops
+
+void *
+purple_notify_message(handle, type, title, primary, secondary, cb, user_data)
+	void * handle
+	Purple::NotifyMsgType type
+	const char *title
+	const char *primary
+	const char *secondary
+	Purple::NotifyCloseCallback cb
+	gpointer user_data
+
+void *
+purple_notify_searchresults(gc, title, primary, secondary, results, cb, user_data)
+	Purple::Connection gc
+	const char *title
+	const char *primary
+	const char *secondary
+	Purple::NotifySearchResults results
+	Purple::NotifyCloseCallback cb
+	gpointer user_data
+
+void *
+purple_notify_uri(handle, uri)
+	void * handle
+	const char *uri
+
+MODULE = Purple::Notify  PACKAGE = Purple::NotifyUserInfo  PREFIX = purple_notify_user_info_
+PROTOTYPES: ENABLE
+
 Purple::NotifyUserInfo
-purple_notify_user_info_new()
+purple_notify_user_info_new(class)
+	C_ARGS: /* void */
 
 void
 purple_notify_user_info_destroy(user_info)
@@ -143,37 +179,3 @@ purple_notify_user_info_entry_get_label(user_info_entry)
 gchar *
 purple_notify_user_info_entry_get_value(user_info_entry)
 	Purple::NotifyUserInfoEntry user_info_entry
-
-Purple::NotifyUiOps
-purple_notify_get_ui_ops()
-
-
-void *
-purple_notify_message(handle, type, title, primary, secondary, cb, user_data)
-	void * handle
-	Purple::NotifyMsgType type
-	const char *title
-	const char *primary
-	const char *secondary
-	Purple::NotifyCloseCallback cb
-	gpointer user_data
-
-void *
-purple_notify_searchresults(gc, title, primary, secondary, results, cb, user_data)
-	Purple::Connection gc
-	const char *title
-	const char *primary
-	const char *secondary
-	Purple::NotifySearchResults results
-	Purple::NotifyCloseCallback cb
-	gpointer user_data
-
-void
-purple_notify_set_ui_ops(ops)
-	Purple::NotifyUiOps ops
-
-void *
-purple_notify_uri(handle, uri)
-	void * handle
-	const char *uri
-
