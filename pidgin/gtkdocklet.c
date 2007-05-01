@@ -206,6 +206,8 @@ docklet_update_status()
 		newstatus = DOCKLET_STATUS_XA;
 	else if (prim == PURPLE_STATUS_OFFLINE)
 		newstatus = DOCKLET_STATUS_OFFLINE;
+	else if (prim == PURPLE_STATUS_INVISIBLE)
+		newstatus = DOCKLET_STATUS_INVISIBLE;
 	else
 		newstatus = DOCKLET_STATUS_AVAILABLE;
 

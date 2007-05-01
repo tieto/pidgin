@@ -496,6 +496,8 @@ static void winpidgin_tray_update_icon(DockletStatus icon) {
 		case DOCKLET_STATUS_XA:
 			icon_name = PIDGIN_STOCK_TRAY_XA;
 			break;
+		case DOCKLET_STATUS_INVISIBLE:
+			icon_name = PIDGIN_STOCK_TRAY_INVISIBLE;
 		}
 
 		g_return_if_fail(icon_name != NULL);
@@ -569,6 +571,8 @@ static void winpidgin_tray_create() {
 			MAKEINTRESOURCE(PIDGIN_TRAY_CONNECTING_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
 		cached_icons[DOCKLET_STATUS_PENDING] = (HICON) LoadImage(winpidgin_dll_hinstance(),
 			MAKEINTRESOURCE(PIDGIN_TRAY_PENDING_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
+		cached_icons[DOCKLET_STATUS_INVISIBLE] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+			MAKEINTRESOURCE(PIDGIN_TRAY_INVISIBLE_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
 	}
 
 	/* Create icon in systray */

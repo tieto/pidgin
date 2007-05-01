@@ -118,6 +118,9 @@ docklet_x11_update_icon(DockletStatus icon)
 		case DOCKLET_STATUS_XA:
 			icon_name = PIDGIN_STOCK_TRAY_XA;
 			break;
+		case DOCKLET_STATUS_INVISIBLE:
+			icon_name = PIDGIN_STOCK_TRAY_INVISIBLE;
+			break;
 	}
 
 	if(icon_name) {
