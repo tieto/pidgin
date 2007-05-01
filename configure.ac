@@ -2061,7 +2061,9 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/toolbar/22/scalable/Makefile
 		   pidgin/pixmaps/tray/Makefile
 		   pidgin/pixmaps/tray/16/Makefile
+		   pidgin/pixmaps/tray/16/scalable/Makefile
 		   pidgin/pixmaps/tray/22/Makefile
+		   pidgin/pixmaps/tray/22/scalable/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile

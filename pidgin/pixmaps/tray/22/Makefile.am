@@ -1,3 +1,5 @@
+SUBSIRS = scalable
+
 TRAY_ICONS =	tray-away.png \
 		tray-busy.png \
 		tray-connecting.png \
