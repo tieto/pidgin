@@ -229,10 +229,9 @@ make DESTDIR=$RPM_BUILD_ROOT install
 # Delete files that we don't want to put in any of the RPMs
 rm -f $RPM_BUILD_ROOT%{_libdir}/finch/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/pidgin/*.la
-rm -f $RPM_BUILD_ROOT%{_libdir}/purple/*.la
-rm -f $RPM_BUILD_ROOT%{_libdir}/purple/liboscar.so
-rm -f $RPM_BUILD_ROOT%{_libdir}/purple/libjabber.so
-rm -f $RPM_BUILD_ROOT%{_libdir}/purple/private/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/liboscar.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libjabber.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
@@ -291,9 +290,11 @@ rm -rf %{buildroot}
 %pre
 if [ "$1" -gt 1 -a -n "`which gconftool-2 2>/dev/null`" ]; then
     export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
-    gconftool-2 --makefile-uninstall-rule \
-        %{_sysconfdir}/gconf/schemas/purple.schemas >/dev/null || :
-    killall -HUP gconfd-2 || :
+    if [ -f %{_sysconfdir}/gconf/schemas/purple.schemas ]; then
+        gconftool-2 --makefile-uninstall-rule \
+            %{_sysconfdir}/gconf/schemas/purple.schemas >/dev/null || :
+        killall -HUP gconfd-2 || :
+    fi
 fi
 
 %post
@@ -303,6 +304,8 @@ if [ -n "`which gconftool-2 2>/dev/null`" ]; then
         %{_sysconfdir}/gconf/schemas/purple.schemas > /dev/null || :
     killall -HUP gconfd-2 || :
 fi
+touch --no-create %{_datadir}/icons/hicolor || :
+%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
 
 %post -n libpurple -p /sbin/ldconfig
 
@@ -315,6 +318,10 @@ if [ "$1" -eq 0 -a -n "`which gconftool-2 2>/dev/null`" ]; then
       %{_sysconfdir}/gconf/schemas/purple.schemas > /dev/null || :
     killall -HUP gconfd-2 || :
 fi
+
+%postun
+touch --no-create %{_datadir}/icons/hicolor || :
+%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
 
 %postun -n libpurple -p /sbin/ldconfig
 
@@ -433,6 +440,11 @@ fi
 %endif
 
 %changelog
+* Tue May  1 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Run gtk-update-icon-cache on installation/uninstallation
+- Guard against errors when upgrading from Gaim/Pidgin 1.5.x which had
+  no schemas file
+
 * Sun Apr 29 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Update to reflect perl Purple::GtkUI -> Pidgin change
 
