@@ -2445,7 +2445,7 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "གསང་དཀྲོགས་མི་དང་འདྲེན་བྱེད་བཀོད་སྒྲིག་འབད་འབདཝ [ལེ་ལོ་ཅན bum]"
 
 #: ../gtk/gtkdialogs.c:107
-msgid "XMPP developer"
+msgid "Jabber developer"
 msgstr "ཇེབ་བར་བཟོ་མི།"
 
 #: ../gtk/gtkdialogs.c:108
@@ -2709,7 +2709,7 @@ msgid "About Gaim"
 msgstr "གཱེམ་གྱི་སྐོར་ལས"
 
 #: ../gtk/gtkdialogs.c:329
-msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
+msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
 msgstr "གེམ་འདི་ ཨེ་ཨའི་ཨེམ་ ཨེམ་ཨེསི་ཨེན་ ཡ་ཧུ་! ཇེབ་བར་ ཨའི་སི་ཀིའུ་ ཨའི་ཨར་སི་ ཨེསི་ཨའི་ཨེལ་སི་ ནོ་བེལ་སྡེ་རིམ་ ལོ་ཊསི་དུས་གཅིག་པ་ ཛེ་ཕིའར་ ག་ཌུ་-ག་ཌུ་ དང་ ཀིའུ་ཀིའུ་ཚུ་ཆ་མཉམ་རང་ ཚར་གཅིག་གུ་ལུ་ལག་ལེན་འཐབ་ནིའི་ལྕོགས་གྲུབ་ཡོད་པའི་ འཕྲིན་གཏོང་ཞབས་ཏོག་སྤྱོད་མི་སྦྱོང་ཚན་གཅིག་ཨིན། འདི་ ཇི་ཊི་ཀེ་+ ལག་ལེན་འཐབ་ཐོག་ལས་འབྲི་ཡོདཔ་ཨིན། <BR><BR> ཁྱོད་ཀྱིས་ ལས་རིམ་འདི་ ཇི་པི་ཨེལ་ (ཐོན་རིམ་ ༢ ཡང་ན་ཤུལ་ལས་) ཐ་སྙད་ཚུའི་འོག་ལུ་ ལེགས་བཅོས་འབད་དེ་ལོག་བགོ་བཀྲམ་འབད་བཏུབ་ཨིན། ཇི་པི་ཨེལ་གྱི་འདྲ་བཤུས་གཅིག་ 'COPYING' ཡིག་སྣོད་ནང་ཤོམ་ཏེ་ཡོདཔ་དང་གེམ་དང་གཅིག་ཁར་བགོ་བཀྲམ་འབད་དེ་ཡོད། གེམ་འདི་ དེའི་ གྲོགས་རམ་འབད་མི་ཚུ་གིས་ བདག་དབང་ཐོབ་སྟེ་ཡོདཔ་ཨིན། གྲོགས་རམ་པ་ཚུའི་ཐོ་ཡིག་ཡོངས་རྫོགས་དོན་ལུ་ 'COPYRIGHT' ཡིག་སྣོད་བལྟ། ང་བཅས་ཀྱིས་ ལས་རིམ་དེའི་དོན་ལུ་ ཉེན་ལེན་བྱིན་ནི་མེདཔ་ཨིན།<BR><BR>"
 
 #: ../gtk/gtkdialogs.c:343
@@ -5186,7 +5186,7 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "གཞི་བཞག་ཚིག་ཡིག་གནད་སྤེལ་ལམ་ལུགས་ཚུ་ལུ་རགས་པ་ཨིན་པུཊི་གཏང་བཅུགཔ་ཨིན།"
 
 #: ../gtk/plugins/raw.c:178
-msgid "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
+msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
 msgstr "གཞི་བཞག་ཚིག་ཡིག་གནད་སྤེལ་ལམ་ལུགས་ཚུ་ལུ་རགས་པ་ཨིན་པུཊི་གཏང་བཅུགཔ་ཨིན(ཇེབ་བར་ ཨེམ་ཨེསི་ཨེན་ ཨའི་ཨར་སི་ ཊི་ཨོ་སི)འདི་གཏང་ནིའི་དོན་ལུ་ཐོ་བཀོད་སྒྲོམ་ནང་ལུ་ 'ཨེན་ཊར' འདི་ཨེབ། རྐྱེན་སེལ་སྒོ་སྒྲིག་འདི་བལྟ།"
 
 #: ../gtk/plugins/relnot.c:69
@@ -6392,7 +6392,7 @@ msgid "Psychic mode for incoming conversation"
 msgstr "ནང་འབྱོར་འབད་བའི་གྲོས་གླེང་དོན་ལུ་སེམས་ཁམས་དང་འབྲེལ་བའི་ཐབས་ལམ།"
 
 #: ../libgaim/plugins/psychic.c:21
-msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr "ལག་ལེན་པ་གཞན་མི་ཚུ་གིས་ཁྱོད་ལུ་འཕྲིན་དོན་གཏང་ནི་འགོ་བཙུགསཔ་ད་ གྲོས་གླེང་ཝིན་ཌོཝསི་ཚུ་འབྱུང་ནི་ལུ་རྒྱུ་རྐྱེན་འབདཝ་ཨིན། འ་ནི་གིས་ ཨེ་ཨའི་ཨེམ་ ཨའི་སི་ཀིའུ་ ཇེབ་བར་ དུས་ཚོད་གཅིག་པ་དང་ ཡ་ཧུ་ལུ་ ལཱ་འབདཝ་ཨིན།!"
 
 #. This is a quote from Star Wars.  You should
@@ -6663,7 +6663,7 @@ msgid "AIM Account"
 msgstr "ཨེ་ཨའི་ཨེམ་ རྩིས་ཐོ།"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:593
-msgid "XMPP Account"
+msgid "Jabber Account"
 msgstr "ཇེབ་བར་རྩིས་ཐོ།"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
@@ -7773,7 +7773,7 @@ msgstr "སྐྱེ་བའི་ཉིནམ།"
 
 #: ../libgaim/protocols/jabber/buddy.c:582
 #: ../libgaim/protocols/jabber/buddy.c:583
-msgid "Edit XMPP vCard"
+msgid "Edit Jabber vCard"
 msgstr "ཇབ་བར་ ཝི་ཤོག་བྱང་ ཞུན་དག་འབད།"
 
 #: ../libgaim/protocols/jabber/buddy.c:584
@@ -7889,7 +7889,7 @@ msgstr "མཇུག་མིང་།"
 msgid "The following are the results of your search"
 msgstr "འོག་ལུ་ཡོད་མི་ཚུ་ ཁྱོད་ཀྱི་འཚོལ་ཞིབ་ཀྱི་གྲུབ་འབྲས་ཚུ་ཨིན།"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1631
 msgid "Find a contact by entering the search criteria in the given fields. Note: Each field supports wild card searches (%)"
 msgstr "བྱིན་ཏེ་ཡོད་པའི་ ས་སྒོ་ཚུ་ནང་ འཚོལ་ཞིབ་ཁྱད་ཚད་བཙུགས་ཐོག་ལས་འབྲེལ་ས་འཚོལ། དྲན་དགོཔ: ས་སྒོ་རེ་རེ་གིས་ ཝའིལ་ཀཌིསི་འཚོལ་ཞིབ་ཚུ་རྒྱབ་སྐྱོར་འབདཝ་ཨིན། (%)"
@@ -7910,7 +7910,7 @@ msgid "Server Instructions: %s"
 msgstr "སར་བར་བསླབ་སྟོན་ཚུ།: %s"
 
 #: ../libgaim/protocols/jabber/buddy.c:1693
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr "མཐུན་པའི་ཇེབ་བར་ལག་ལེན་པ་ཚུ་འཚོལ་ཞིབ་འབད་ནིའི་དོན་ལུ་ ས་སྒོ་གཅིག་ཡང་ན་མངམ་བཀང་།"
 
 #: ../libgaim/protocols/jabber/buddy.c:1713
@@ -7922,7 +7922,7 @@ msgstr "གློག་འཕྲིན་ཁ་བྱང་།"
 
 #: ../libgaim/protocols/jabber/buddy.c:1722
 #: ../libgaim/protocols/jabber/buddy.c:1723
-msgid "Search for XMPP users"
+msgid "Search for Jabber users"
 msgstr "ཇེབ་བར་ལག་ལེན་པ་ཚུ་ལུ་འཚོལ་ཞིབ་འབད།"
 
 #: ../libgaim/protocols/jabber/buddy.c:1737
@@ -8054,7 +8054,7 @@ msgstr "སོ་ཀེཊི་བཟོ་བསྐྲུན་འབད་མ
 
 #: ../libgaim/protocols/jabber/jabber.c:545
 #: ../libgaim/protocols/jabber/jabber.c:888
-msgid "Invalid XMPP ID"
+msgid "Invalid Jabber ID"
 msgstr "ནུས་མེད་ ཇབ་བར ཨའི་ཌི།"
 
 #: ../libgaim/protocols/jabber/jabber.c:616
@@ -8109,7 +8109,7 @@ msgstr "ཁྱོད་རའི་རྩིས་ཐོ་གསརཔ་ ཐ�
 
 #: ../libgaim/protocols/jabber/jabber.c:851
 #: ../libgaim/protocols/jabber/jabber.c:852
-msgid "Register New XMPP Account"
+msgid "Register New Jabber Account"
 msgstr "ཇར་བར་རྩིས་ཐོ་གསརཔ་ ཐོ་བཀོད་འབད།"
 
 #: ../libgaim/protocols/jabber/jabber.c:1013
@@ -8173,7 +8173,7 @@ msgstr "ཆོག་ཡིག(ལོག་སྟེ)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1349
 #: ../libgaim/protocols/jabber/jabber.c:1350
-msgid "Change XMPP Password"
+msgid "Change Jabber Password"
 msgstr "ཇབ་བར་ཆོག་ཡིག་ བསྒྱུར་བཅོས་འབད།"
 
 #: ../libgaim/protocols/jabber/jabber.c:1350
@@ -8228,7 +8228,7 @@ msgid "Item Not Found"
 msgstr "རྣམ་གྲངས་མ་ཐོབ།"
 
 #: ../libgaim/protocols/jabber/jabber.c:1460
-msgid "Malformed XMPP ID"
+msgid "Malformed Jabber ID"
 msgstr "བཟོ་གྱུར་བའི་ ཇབ་བར་ ཨའི་ཌི།"
 
 #: ../libgaim/protocols/jabber/jabber.c:1462
@@ -8486,7 +8486,7 @@ msgstr "ཨེམ་ཨེསི་ཇི &lt;ལག་ལེན་པ&gt; &lt;�
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1948
 #: ../libgaim/protocols/jabber/jabber.c:1950
-msgid "XMPP Protocol Plugin"
+msgid "Jabber Protocol Plugin"
 msgstr "ཇབ་བར་གནད་སྤེལ་ལམ་ལུགས་ ནང་བསྐྱོད།"
 
 #: ../libgaim/protocols/jabber/jabber.c:1976
@@ -8529,7 +8529,7 @@ msgid "Message delivery to %s failed: %s"
 msgstr "%s ལུ་འཕྲིན་དོན་འགྲེམ་སྤེལ་འབད་ནི་འཐུས་ཤོར་བྱུང་ཡོདཔ།%s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "XMPP Message Error"
+msgid "Jabber Message Error"
 msgstr "ཇབ་བར་འཕྲིན་དོན་འཛོལ་བ།"
 
 #: ../libgaim/protocols/jabber/message.c:316
@@ -14932,7 +14932,7 @@ msgstr "%s: %s ལུ་མཐུད་མ་ཚུགས།"
 #~ msgstr "<span weight=\"bold\" size=\"larger\">གཱེམ v%s</span>"
 #~ msgid ""
 #~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-#~ "XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
+#~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 #~ "all at once.  It is written using Gtk+ and is licensed under the GPL."
 #~ "<BR><BR>"
 #~ msgstr ""
@@ -15277,9 +15277,9 @@ msgstr "%s: %s ལུ་མཐུད་མ་ཚུགས།"
 #~ msgstr ""
 #~ "ནང་བསྐྱོད་ཀྱི་དོན་ལས་ སར་བར་ལུ་ ཏི་ཨེལ་ཨེསི/ཨེསི་ཨེསི་ཨེལ་ དགོས་མཁོ་ཡོདཔ་ཨིན། རྩིས་ཐོའི་རྒྱུ་དངོས་ནང་"
 #~ "ལས \"ཐོབ་ཚུགས་པ་ཅིན་ ཊི་ཨེལ་ཨེསི་ ལག་ལེན་འཐབ\"  སེལ་འཐུ་འབད།"
-#~ msgid "XMPP ID"
+#~ msgid "Jabber ID"
 #~ msgstr "ཇབ་བར་ཨའི་ཌི།"
-#~ msgid "XMPP Profile"
+#~ msgid "Jabber Profile"
 #~ msgstr "ཇབ་ཇར་གསལ་སྡུད།"
 #~ msgid "Roomlist Error"
 #~ msgstr "ཁང་མིག་ཐོ་ཡིག་གི་འཛོལ་བ།"

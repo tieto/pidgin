@@ -1214,7 +1214,7 @@ msgstr ""
 
 #: ../plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 
@@ -3285,8 +3285,8 @@ msgstr ""
 
 #: ../src/gtkdialogs.c:98
 #, fuzzy
-msgid "XMPP developer"
-msgstr "XMPP"
+msgid "Jabber developer"
+msgstr "Jabber"
 
 #: ../src/gtkdialogs.c:99
 msgid "original author"
@@ -3473,7 +3473,7 @@ msgstr "Gaim-ის შესახებ"
 #: ../src/gtkdialogs.c:250
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
 "and Gadu-Gadu all at once.  It is written using GTK+.<BR><BR>You may modify "
 "and redistribute the program under the terms of the GPL (version 2 or "
 "later).  A copy of the GPL is contained in the 'COPYING' file distributed "
@@ -6381,8 +6381,8 @@ msgid "Birthday"
 msgstr "დაბადების დღე"
 
 #: ../src/protocols/jabber/buddy.c:567 ../src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
-msgstr "XMPP vCard-ის რედაქტირება"
+msgid "Edit Jabber vCard"
+msgstr "Jabber vCard-ის რედაქტირება"
 
 #: ../src/protocols/jabber/buddy.c:569
 msgid ""
@@ -6466,7 +6466,7 @@ msgid "The following are the results of your search"
 msgstr ""
 
 #: ../src/protocols/jabber/buddy.c:1381
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: ../src/protocols/jabber/buddy.c:1385 ../src/protocols/jabber/jabber.c:701
@@ -6484,7 +6484,7 @@ msgid "E-Mail Address"
 msgstr "E-Mail მისამართი"
 
 #: ../src/protocols/jabber/buddy.c:1409 ../src/protocols/jabber/buddy.c:1410
-msgid "Search for XMPP users"
+msgid "Search for Jabber users"
 msgstr ""
 
 #: ../src/protocols/jabber/buddy.c:1424
@@ -6605,8 +6605,8 @@ msgid "Unable to create socket"
 msgstr "ვერ ვქმნი სოკეტს"
 
 #: ../src/protocols/jabber/jabber.c:451 ../src/protocols/jabber/jabber.c:788
-msgid "Invalid XMPP ID"
-msgstr "არასწორი XMPP ID"
+msgid "Invalid Jabber ID"
+msgstr "არასწორი Jabber ID"
 
 #: ../src/protocols/jabber/jabber.c:521
 #, c-format
@@ -6653,8 +6653,8 @@ msgid "Please fill out the information below to register your new account."
 msgstr ""
 
 #: ../src/protocols/jabber/jabber.c:752 ../src/protocols/jabber/jabber.c:753
-msgid "Register New XMPP Account"
-msgstr "ახალი XMPP ანგარიშის რეგისტრაცია"
+msgid "Register New Jabber Account"
+msgstr "ახალი Jabber ანგარიშის რეგისტრაცია"
 
 #: ../src/protocols/jabber/jabber.c:897
 #, fuzzy
@@ -6721,8 +6721,8 @@ msgid "Password (again)"
 msgstr "პაროლი (კიდევ ერთხელ)"
 
 #: ../src/protocols/jabber/jabber.c:1230 ../src/protocols/jabber/jabber.c:1231
-msgid "Change XMPP Password"
-msgstr "შეცვალე XMPP პაროლი"
+msgid "Change Jabber Password"
+msgstr "შეცვალე Jabber პაროლი"
 
 #: ../src/protocols/jabber/jabber.c:1231
 msgid "Please enter your new password"
@@ -6773,8 +6773,8 @@ msgid "Item Not Found"
 msgstr ""
 
 #: ../src/protocols/jabber/jabber.c:1341
-msgid "Malformed XMPP ID"
-msgstr "არასწორი XMPP ID"
+msgid "Malformed Jabber ID"
+msgstr "არასწორი Jabber ID"
 
 #: ../src/protocols/jabber/jabber.c:1343
 msgid "Not Acceptable"
@@ -7021,8 +7021,8 @@ msgstr ""
 #. *  summary
 #. *  description
 #: ../src/protocols/jabber/jabber.c:1766 ../src/protocols/jabber/jabber.c:1768
-msgid "XMPP Protocol Plugin"
-msgstr "XMPP პროტოკოლის პლაგინი"
+msgid "Jabber Protocol Plugin"
+msgstr "Jabber პროტოკოლის პლაგინი"
 
 #: ../src/protocols/jabber/jabber.c:1794
 msgid "Use TLS if available"
@@ -7070,8 +7070,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr ""
 
 #: ../src/protocols/jabber/message.c:233
-msgid "XMPP Message Error"
-msgstr "XMPP შეტყობინების შეცდომა"
+msgid "Jabber Message Error"
+msgstr "Jabber შეტყობინების შეცდომა"
 
 #: ../src/protocols/jabber/message.c:297
 #, c-format

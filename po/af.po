@@ -2285,8 +2285,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr ""
 
 #: ../gtk/gtkdialogs.c:108
-msgid "XMPP developer"
-msgstr "XMPP-programmeerder"
+msgid "Jabber developer"
+msgstr "Jabber-programmeerder"
 
 #: ../gtk/gtkdialogs.c:109
 msgid "original author"
@@ -2518,7 +2518,7 @@ msgstr "Omtrent Gaim"
 #: ../gtk/gtkdialogs.c:335
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+."
 "<BR><BR>You may modify and redistribute the program under the terms of the "
 "GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' "
@@ -2526,7 +2526,7 @@ msgid ""
 "the 'COPYRIGHT' file for the complete list of contributors.  We provide no "
 "warranty for this program.<BR><BR>"
 msgstr ""
-"Gaim is 'n modulêre geselskliënt wat AIM, MSN, Yahoo!, XMPP, ICQ, IRC, "
+"Gaim is 'n modulêre geselskliënt wat AIM, MSN, Yahoo!, Jabber, ICQ, IRC, "
 "SILC, SIP/SIMPLENovell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-"
 "Gadu, en QQ als gelyktydig kan gebruik.  Dit is geskryf met GTK+.<BR><BR>U "
 "mag die program aanpas en herversprei onderhewig aan die voorwaardes van die "
@@ -5084,7 +5084,7 @@ msgstr ""
 
 #: ../gtk/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 
@@ -6587,7 +6587,7 @@ msgstr ""
 #: ../libgaim/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 
 #: ../libgaim/plugins/psychic.c:66
@@ -6836,8 +6836,8 @@ msgid "AIM Account"
 msgstr "AIM-rekening"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:594
-msgid "XMPP Account"
-msgstr "XMPP-rekening"
+msgid "Jabber Account"
+msgstr "Jabber-rekening"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -7908,8 +7908,8 @@ msgstr "Verjaardag"
 
 #: ../libgaim/protocols/jabber/buddy.c:582
 #: ../libgaim/protocols/jabber/buddy.c:583
-msgid "Edit XMPP vCard"
-msgstr "Wysig XMPP-vCard"
+msgid "Edit Jabber vCard"
+msgstr "Wysig Jabber-vCard"
 
 #: ../libgaim/protocols/jabber/buddy.c:584
 msgid ""
@@ -8024,7 +8024,7 @@ msgstr "Van"
 msgid "The following are the results of your search"
 msgstr "Die volgende is die resultate van u soektog"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1667
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -8047,8 +8047,8 @@ msgid "Server Instructions: %s"
 msgstr "Bedienerinstruksies: %s"
 
 #: ../libgaim/protocols/jabber/buddy.c:1729
-msgid "Fill in one or more fields to search for any matching XMPP users."
-msgstr "Vul een of meer velde in om te soek vir passende XMPP-gebruikers."
+msgid "Fill in one or more fields to search for any matching Jabber users."
+msgstr "Vul een of meer velde in om te soek vir passende Jabber-gebruikers."
 
 #: ../libgaim/protocols/jabber/buddy.c:1749
 #: ../libgaim/protocols/novell/novell.c:1488
@@ -8059,8 +8059,8 @@ msgstr "E-posadres"
 
 #: ../libgaim/protocols/jabber/buddy.c:1758
 #: ../libgaim/protocols/jabber/buddy.c:1759
-msgid "Search for XMPP users"
-msgstr "Soek vir XMPP-gebruikers"
+msgid "Search for Jabber users"
+msgstr "Soek vir Jabber-gebruikers"
 
 #: ../libgaim/protocols/jabber/buddy.c:1773
 msgid "Invalid Directory"
@@ -8189,8 +8189,8 @@ msgstr "Kan nie sok skep nie"
 
 #: ../libgaim/protocols/jabber/jabber.c:552
 #: ../libgaim/protocols/jabber/jabber.c:895
-msgid "Invalid XMPP ID"
-msgstr "Ongeldige XMPP-ID"
+msgid "Invalid Jabber ID"
+msgstr "Ongeldige Jabber-ID"
 
 #: ../libgaim/protocols/jabber/jabber.c:623
 #, c-format
@@ -8243,8 +8243,8 @@ msgstr "Vul die inligting onder in om die nuwe rekening te registreer."
 
 #: ../libgaim/protocols/jabber/jabber.c:858
 #: ../libgaim/protocols/jabber/jabber.c:859
-msgid "Register New XMPP Account"
-msgstr "Registreer 'n nuwe XMPP-rekening"
+msgid "Register New Jabber Account"
+msgstr "Registreer 'n nuwe Jabber-rekening"
 
 #: ../libgaim/protocols/jabber/jabber.c:1025
 msgid "Initializing Stream"
@@ -8307,8 +8307,8 @@ msgstr "Wagwoord (weer)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1362
 #: ../libgaim/protocols/jabber/jabber.c:1363
-msgid "Change XMPP Password"
-msgstr "Verander XMPP-wagwoord"
+msgid "Change Jabber Password"
+msgstr "Verander Jabber-wagwoord"
 
 #: ../libgaim/protocols/jabber/jabber.c:1363
 msgid "Please enter your new password"
@@ -8362,8 +8362,8 @@ msgid "Item Not Found"
 msgstr "Item nie gevind nie"
 
 #: ../libgaim/protocols/jabber/jabber.c:1473
-msgid "Malformed XMPP ID"
-msgstr "Misvormde XMPP-ID"
+msgid "Malformed Jabber ID"
+msgstr "Misvormde Jabber-ID"
 
 #: ../libgaim/protocols/jabber/jabber.c:1475
 msgid "Not Acceptable"
@@ -8625,8 +8625,8 @@ msgstr ""
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1962
 #: ../libgaim/protocols/jabber/jabber.c:1964
-msgid "XMPP Protocol Plugin"
-msgstr "Inprop vir XMPP-protokol"
+msgid "Jabber Protocol Plugin"
+msgstr "Inprop vir Jabber-protokol"
 
 #: ../libgaim/protocols/jabber/jabber.c:1990
 msgid "Force old (port 5223) SSL"
@@ -8668,8 +8668,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Boodskapaflewering na %s het misluk: %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "XMPP Message Error"
-msgstr "XMPP-boodskapfout"
+msgid "Jabber Message Error"
+msgstr "Jabber-boodskapfout"
 
 #: ../libgaim/protocols/jabber/message.c:316
 #, c-format

@@ -836,7 +836,7 @@ msgstr "Омогућава да пошаљете изворни текст на 
 
 #: plugins/raw.c:154
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Омогућава да пошаљете изворни текст протоколима који га прихватају (Џабер, "
@@ -2745,7 +2745,7 @@ msgid "libfaim maintainer"
 msgstr "одржавалац libfaim-а"
 
 #: src/gtkdialogs.c:92
-msgid "XMPP developer"
+msgid "Jabber developer"
 msgstr "Џабер програмер"
 
 #: src/gtkdialogs.c:93
@@ -2915,7 +2915,7 @@ msgstr "О Гаиму"
 #: src/gtkdialogs.c:226
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
 msgstr ""
 "Гаим је прошириви клијент за брзе поруке који може да користи АИМ, ICQ, "
@@ -5567,7 +5567,7 @@ msgid "Birthday"
 msgstr "Рођендан"
 
 #: src/protocols/jabber/buddy.c:567 src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
+msgid "Edit Jabber vCard"
 msgstr "Уређивање Џабер визит-карте"
 
 #: src/protocols/jabber/buddy.c:569
@@ -5577,7 +5577,7 @@ msgid ""
 msgstr "Све доле наведене опције нису обавезне. Унесите само податке које желите."
 
 #: src/protocols/jabber/buddy.c:616
-msgid "XMPP ID"
+msgid "Jabber ID"
 msgstr "Џабер ИД"
 
 #: src/protocols/jabber/buddy.c:642 src/protocols/jabber/jabber.c:1711
@@ -5662,7 +5662,7 @@ msgid "The following are the results of your search"
 msgstr "Доле су резултати ваше претраге"
 
 #: src/protocols/jabber/buddy.c:1327
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr "Попуните једно или више поља да бисте тражили Џабер кориснике."
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
@@ -5680,7 +5680,7 @@ msgid "E-Mail Address"
 msgstr "Адреса е-поште"
 
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
-msgid "Search for XMPP users"
+msgid "Search for Jabber users"
 msgstr "Тражи Џабер кориснике"
 
 #: src/protocols/jabber/buddy.c:1370
@@ -5801,7 +5801,7 @@ msgid "Unable to create socket"
 msgstr "Не могу начинити сокет"
 
 #: src/protocols/jabber/jabber.c:403 src/protocols/jabber/jabber.c:740
-msgid "Invalid XMPP ID"
+msgid "Invalid Jabber ID"
 msgstr "Неисправан Џабер ИБ"
 
 #: src/protocols/jabber/jabber.c:473
@@ -5848,7 +5848,7 @@ msgid "Please fill out the information below to register your new account."
 msgstr "Молим испуните податке испод да региструјете нови налог."
 
 #: src/protocols/jabber/jabber.c:704 src/protocols/jabber/jabber.c:705
-msgid "Register New XMPP Account"
+msgid "Register New Jabber Account"
 msgstr "Региструј нови Џабер налог"
 
 #: src/protocols/jabber/jabber.c:842
@@ -5920,7 +5920,7 @@ msgid "Password (again)"
 msgstr "Лозинка (поновите)"
 
 #: src/protocols/jabber/jabber.c:1160 src/protocols/jabber/jabber.c:1161
-msgid "Change XMPP Password"
+msgid "Change Jabber Password"
 msgstr "Измените Џабер лозинку"
 
 #: src/protocols/jabber/jabber.c:1161
@@ -5970,7 +5970,7 @@ msgid "Item Not Found"
 msgstr "Није нађено"
 
 #: src/protocols/jabber/jabber.c:1271
-msgid "Malformed XMPP ID"
+msgid "Malformed Jabber ID"
 msgstr "Неисправан Џабер ИБ"
 
 #: src/protocols/jabber/jabber.c:1273
@@ -6215,7 +6215,7 @@ msgstr "msg &lt;надимак&gt; &lt;порука&gt;:  Шаље приват�
 #. *  summary
 #. *  description
 #: src/protocols/jabber/jabber.c:1686 src/protocols/jabber/jabber.c:1688
-msgid "XMPP Protocol Plugin"
+msgid "Jabber Protocol Plugin"
 msgstr "Додатак за Џабер протокол"
 
 #: src/protocols/jabber/jabber.c:1714
@@ -6264,7 +6264,7 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Испорука поруке за %s није успела: %s"
 
 #: src/protocols/jabber/message.c:233
-msgid "XMPP Message Error"
+msgid "Jabber Message Error"
 msgstr "Џабер грешка поруке"
 
 #: src/protocols/jabber/message.c:297

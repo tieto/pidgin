@@ -1312,10 +1312,10 @@ msgstr "Modu psikikoa datorren elkarrizketerako "
 #: ../plugins/psychic.c:24
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 "Solasaldi lehioa azaltzen da beste erabiltzaile batek  mezua zeuri bidaltzen hasten denean. "
-"Honek funtzionatzen du AIM,ICQ,XMPP,Sametime eta Yahoo!"
+"Honek funtzionatzen du AIM,ICQ,Jabber,Sametime eta Yahoo!"
 
 #: ../plugins/psychic.c:60
 # , fuzzy
@@ -1344,10 +1344,10 @@ msgstr "Testuan oinarritutako protokoloetara formaturik gabeko sarrera bidaltzek
 
 #: ../plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Testuan oinarritutako protokoloetara (XMPP, MSN, IRC, TOC) formaturik "
+"Testuan oinarritutako protokoloetara (Jabber, MSN, IRC, TOC) formaturik "
 "gabeko testua bidaltzeko. Sakatu 'Sartu' sarrera-koadroan, eta zaindu "
 "arazketa-leihoa."
 
@@ -3400,8 +3400,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker eta zehaztutako kontrolatzailea [lazy bum]"
 
 #: ../src/gtkdialogs.c:101
-msgid "XMPP developer"
-msgstr "XMPP garatzailea"
+msgid "Jabber developer"
+msgstr "Jabber garatzailea"
 
 #: ../src/gtkdialogs.c:102
 msgid "original author"
@@ -3602,7 +3602,7 @@ msgstr "Gaim-i buruz"
 #: ../src/gtkdialogs.c:261
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
 "and Gadu-Gadu all at once.  It is written using GTK+.<BR><BR>You may modify "
 "and redistribute the program under the terms of the GPL (version 2 or "
 "later).  A copy of the GPL is contained in the 'COPYING' file distributed "
@@ -3610,7 +3610,7 @@ msgid ""
 "file for the complete list of contributors.  We provide no warranty for this "
 "program.<BR><BR>"
 msgstr ""
-"Gaim berehalako mezuen bezero modularra da  AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
+"Gaim berehalako mezuen bezero modularra da  AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
 "eta Gadu-Gadu momentu berean erabiltzeko gaitasuna duena. GTK+ erabiliz idatzi izan da .<BR><BR> Programa hau aldatu eta ber-banatu dezakezu  GPL terminopean (2 bertsioa edo beranduagokoa). GPL -ren kopia COPYING izeneko fitxategi baten dago gaim distribuzioarekin batera. Gaim \"copyright\"-a du bere laguntzaileen eskutik. Ikusi ezazy COPYRIGHT fitxategia laguntzaileen zerrenda osoa ikusteko. Ez dugu programa honen bermea zihurtatzen.<BR><BR>"
 
 #: ../src/gtkdialogs.c:275
@@ -6633,8 +6633,8 @@ msgid "Birthday"
 msgstr "Urtebetetzea"
 
 #: ../src/protocols/jabber/buddy.c:567 ../src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
-msgstr "Editatu XMPP vCard-a"
+msgid "Edit Jabber vCard"
+msgstr "Editatu Jabber vCard-a"
 
 #: ../src/protocols/jabber/buddy.c:569
 msgid ""
@@ -6733,8 +6733,8 @@ msgid "Server Instructions: %s"
 msgstr "Zerbitzariaren aginduak:%s"
 
 #: ../src/protocols/jabber/buddy.c:1392
-msgid "Fill in one or more fields to search for any matching XMPP users."
-msgstr "Bete ezazu bat edo eremu gehiago edozein XMPP erabiltzaileren topaketarako. "
+msgid "Fill in one or more fields to search for any matching Jabber users."
+msgstr "Bete ezazu bat edo eremu gehiago edozein Jabber erabiltzaileren topaketarako. "
 
 #: ../src/protocols/jabber/buddy.c:1411 ../src/protocols/novell/novell.c:1490
 #: ../src/protocols/oscar/oscar.c:6178 ../src/protocols/oscar/oscar.c:6185
@@ -6742,8 +6742,8 @@ msgid "E-Mail Address"
 msgstr "Helbide elektronikoa"
 
 #: ../src/protocols/jabber/buddy.c:1420 ../src/protocols/jabber/buddy.c:1421
-msgid "Search for XMPP users"
-msgstr "Bilatu XMPP erabiltzaileak"
+msgid "Search for Jabber users"
+msgstr "Bilatu Jabber erabiltzaileak"
 
 #: ../src/protocols/jabber/buddy.c:1435
 msgid "Invalid Directory"
@@ -6864,8 +6864,8 @@ msgid "Unable to create socket"
 msgstr "Ezin da socket-a sortu"
 
 #: ../src/protocols/jabber/jabber.c:520 ../src/protocols/jabber/jabber.c:857
-msgid "Invalid XMPP ID"
-msgstr "XMPP ID baliogabea"
+msgid "Invalid Jabber ID"
+msgstr "Jabber ID baliogabea"
 
 #: ../src/protocols/jabber/jabber.c:590
 #, c-format
@@ -6911,8 +6911,8 @@ msgid "Please fill out the information below to register your new account."
 msgstr "Eman datuak behean, zure kontu berria erregistratzeko."
 
 #: ../src/protocols/jabber/jabber.c:821 ../src/protocols/jabber/jabber.c:822
-msgid "Register New XMPP Account"
-msgstr "Erregistratu XMPP kontu berria"
+msgid "Register New Jabber Account"
+msgstr "Erregistratu Jabber kontu berria"
 
 #: ../src/protocols/jabber/jabber.c:983
 msgid "Initializing Stream"
@@ -6975,8 +6975,8 @@ msgid "Password (again)"
 msgstr "Pasahitza (berriro)"
 
 #: ../src/protocols/jabber/jabber.c:1317 ../src/protocols/jabber/jabber.c:1318
-msgid "Change XMPP Password"
-msgstr "Aldatu XMPP pasahitza"
+msgid "Change Jabber Password"
+msgstr "Aldatu Jabber pasahitza"
 
 #: ../src/protocols/jabber/jabber.c:1318
 msgid "Please enter your new password"
@@ -7027,8 +7027,8 @@ msgid "Item Not Found"
 msgstr "Elementua ez da aurkitu"
 
 #: ../src/protocols/jabber/jabber.c:1428
-msgid "Malformed XMPP ID"
-msgstr "Gaizki osatutako XMPP IDa"
+msgid "Malformed Jabber ID"
+msgstr "Gaizki osatutako Jabber IDa"
 
 #: ../src/protocols/jabber/jabber.c:1430
 msgid "Not Acceptable"
@@ -7291,8 +7291,8 @@ msgstr ""
 #. *  summary
 #. *  description
 #: ../src/protocols/jabber/jabber.c:1883 ../src/protocols/jabber/jabber.c:1885
-msgid "XMPP Protocol Plugin"
-msgstr "XMPP protokoloaren plugin-a"
+msgid "Jabber Protocol Plugin"
+msgstr "Jabber protokoloaren plugin-a"
 
 #: ../src/protocols/jabber/jabber.c:1911
 msgid "Use TLS if available"
@@ -7340,8 +7340,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "%s(r)i mezua bidaltzeak huts egin du: %s"
 
 #: ../src/protocols/jabber/message.c:227
-msgid "XMPP Message Error"
-msgstr "XMPP mezuaren errorea"
+msgid "Jabber Message Error"
+msgstr "Jabber mezuaren errorea"
 
 #: ../src/protocols/jabber/message.c:295
 #, c-format

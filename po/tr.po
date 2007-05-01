@@ -829,7 +829,7 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr ""
 
 #: plugins/raw.c:154
-msgid "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
+msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 
 #: plugins/relnot.c:63
@@ -2833,8 +2833,8 @@ msgid "libfaim maintainer"
 msgstr "libfaim bakýmcýsý"
 
 #: src/gtkdialogs.c:92
-msgid "XMPP developer"
-msgstr "XMPP geliþtiricisi"
+msgid "Jabber developer"
+msgstr "Jabber geliþtiricisi"
 
 #: src/gtkdialogs.c:93
 msgid "original author"
@@ -3022,8 +3022,8 @@ msgid "About Gaim"
 msgstr "Gaim Hakkýnda"
 
 #: src/gtkdialogs.c:226
-msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
-msgstr "Gaim; AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu hesaplarýnýza ayný anda baðlanmanýzý saðlayan modüler bir mesaj programýdýr. GTK+ kullanýlarak yazýlmýþ olup GNU GPL lisansý altýndadýr.<BR><BR>"
+msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
+msgstr "Gaim; AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu hesaplarýnýza ayný anda baðlanmanýzý saðlayan modüler bir mesaj programýdýr. GTK+ kullanýlarak yazýlmýþ olup GNU GPL lisansý altýndadýr.<BR><BR>"
 
 #: src/gtkdialogs.c:235
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
@@ -5717,7 +5717,7 @@ msgstr "Doðum Günü"
 
 #: src/protocols/jabber/buddy.c:567
 #: src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
+msgid "Edit Jabber vCard"
 msgstr "VCard Dosyasýný Düzenle"
 
 #: src/protocols/jabber/buddy.c:569
@@ -5725,8 +5725,8 @@ msgid "All items below are optional. Enter only the information with which you f
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:616
-msgid "XMPP ID"
-msgstr "XMPP ID"
+msgid "Jabber ID"
+msgstr "Jabber ID"
 
 #: src/protocols/jabber/buddy.c:642
 #: src/protocols/jabber/jabber.c:1711
@@ -5814,7 +5814,7 @@ msgid "The following are the results of your search"
 msgstr "Arama sonuçlarýnýz"
 
 #: src/protocols/jabber/buddy.c:1327
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331
@@ -5836,8 +5836,8 @@ msgstr "E-Posta Adresi"
 
 #: src/protocols/jabber/buddy.c:1355
 #: src/protocols/jabber/buddy.c:1356
-msgid "Search for XMPP users"
-msgstr "XMPP kullanýcýlarý ara"
+msgid "Search for Jabber users"
+msgstr "Jabber kullanýcýlarý ara"
 
 #: src/protocols/jabber/buddy.c:1370
 msgid "Invalid Directory"
@@ -5966,8 +5966,8 @@ msgstr "Baðlantý açýlamýyor"
 
 #: src/protocols/jabber/jabber.c:403
 #: src/protocols/jabber/jabber.c:740
-msgid "Invalid XMPP ID"
-msgstr "Geçersiz XMPP ID"
+msgid "Invalid Jabber ID"
+msgstr "Geçersiz Jabber ID"
 
 #: src/protocols/jabber/jabber.c:473
 #, c-format
@@ -6021,8 +6021,8 @@ msgstr "Kaydolmak için aþaðýdaki bilgileri tamamlayýn."
 
 #: src/protocols/jabber/jabber.c:704
 #: src/protocols/jabber/jabber.c:705
-msgid "Register New XMPP Account"
-msgstr "Yeni XMPP Hesabý Oluþtur"
+msgid "Register New Jabber Account"
+msgstr "Yeni Jabber Hesabý Oluþtur"
 
 #: src/protocols/jabber/jabber.c:842
 msgid "Initializing Stream"
@@ -6102,8 +6102,8 @@ msgstr "Yeni þifre (tekrar)"
 
 #: src/protocols/jabber/jabber.c:1160
 #: src/protocols/jabber/jabber.c:1161
-msgid "Change XMPP Password"
-msgstr "XMPP Þifresini Deðiþtir"
+msgid "Change Jabber Password"
+msgstr "Jabber Þifresini Deðiþtir"
 
 #: src/protocols/jabber/jabber.c:1161
 msgid "Please enter your new password"
@@ -6155,8 +6155,8 @@ msgid "Item Not Found"
 msgstr "Nesne Bulunamadý"
 
 #: src/protocols/jabber/jabber.c:1271
-msgid "Malformed XMPP ID"
-msgstr "Malformed XMPP ID"
+msgid "Malformed Jabber ID"
+msgstr "Malformed Jabber ID"
 
 #: src/protocols/jabber/jabber.c:1273
 msgid "Not Acceptable"
@@ -6399,8 +6399,8 @@ msgstr "msg &lt;takmaisim&gt; &lt;mesaj&gt;:  Kullanýcýya özel mesaj gönder"
 #. *  description
 #: src/protocols/jabber/jabber.c:1686
 #: src/protocols/jabber/jabber.c:1688
-msgid "XMPP Protocol Plugin"
-msgstr "XMPP Protokol Eklentisi"
+msgid "Jabber Protocol Plugin"
+msgstr "Jabber Protokol Eklentisi"
 
 #: src/protocols/jabber/jabber.c:1714
 msgid "Use TLS if available"
@@ -6449,8 +6449,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "%s için mesaj gönderimi baþarýsýz: %s"
 
 #: src/protocols/jabber/message.c:233
-msgid "XMPP Message Error"
-msgstr "XMPP Mesaj Hatasý"
+msgid "Jabber Message Error"
+msgstr "Jabber Mesaj Hatasý"
 
 #: src/protocols/jabber/message.c:297
 #, c-format
@@ -11498,8 +11498,8 @@ msgstr "g003: Baðlantýyý açmada hata.\n"
 #, fuzzy
 #~ msgid "Invalid nickname"
 #~ msgstr "Geçersiz Kullanýcý Adý"
-#~ msgid "XMPP Profile"
-#~ msgstr "XMPP Profili"
+#~ msgid "Jabber Profile"
+#~ msgstr "Jabber Profili"
 #~ msgid "Roomlist Error"
 #~ msgstr "Oda Listesi Hatasý"
 #~ msgid "Logged out"

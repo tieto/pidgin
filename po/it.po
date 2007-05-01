@@ -2873,8 +2873,8 @@ msgid "Psychic mode for incoming conversation"
 msgstr "Modalità psichica per le conversazioni in ingresso"
 
 #: ../libpurple/plugins/psychic.c:21
-msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
-msgstr "Fa sì che la finestra di conversazione appaia non appena un altro utente inizia a scriverti. Funziona con AIM, ICQ, XMPP, Sametime e Yahoo!"
+msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
+msgstr "Fa sì che la finestra di conversazione appaia non appena un altro utente inizia a scriverti. Funziona con AIM, ICQ, Jabber, Sametime e Yahoo!"
 
 #: ../libpurple/plugins/psychic.c:66
 msgid "You feel a disturbance in the force..."
@@ -3152,8 +3152,8 @@ msgid "AIM Account"
 msgstr "Account AIM"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:583
-msgid "XMPP Account"
-msgstr "Account XMPP"
+msgid "Jabber Account"
+msgstr "Account Jabber"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -4300,8 +4300,8 @@ msgstr "Descrizione"
 
 #: ../libpurple/protocols/jabber/buddy.c:582
 #: ../libpurple/protocols/jabber/buddy.c:583
-msgid "Edit XMPP vCard"
-msgstr "Modifica la vCard di XMPP"
+msgid "Edit Jabber vCard"
+msgstr "Modifica la vCard di Jabber"
 
 #: ../libpurple/protocols/jabber/buddy.c:584
 msgid "All items below are optional. Enter only the information with which you feel comfortable."
@@ -4413,7 +4413,7 @@ msgstr "Cognome"
 msgid "The following are the results of your search"
 msgstr "Ecco i risultati della tua ricerca"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libpurple/protocols/jabber/buddy.c:1674
 msgid "Find a contact by entering the search criteria in the given fields. Note: Each field supports wild card searches (%)"
 msgstr ""
@@ -4436,7 +4436,7 @@ msgid "Server Instructions: %s"
 msgstr "Informazioni sul server"
 
 #: ../libpurple/protocols/jabber/buddy.c:1736
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: ../libpurple/protocols/jabber/buddy.c:1756
@@ -4448,8 +4448,8 @@ msgstr "Indirizzo e-mail"
 
 #: ../libpurple/protocols/jabber/buddy.c:1765
 #: ../libpurple/protocols/jabber/buddy.c:1766
-msgid "Search for XMPP users"
-msgstr "Cerca utenti XMPP"
+msgid "Search for Jabber users"
+msgstr "Cerca utenti Jabber"
 
 #. "Search"
 #: ../libpurple/protocols/jabber/buddy.c:1767
@@ -4593,8 +4593,8 @@ msgstr "Impossibile creare il socket"
 
 #: ../libpurple/protocols/jabber/jabber.c:567
 #: ../libpurple/protocols/jabber/jabber.c:910
-msgid "Invalid XMPP ID"
-msgstr "ID XMPP non valido"
+msgid "Invalid Jabber ID"
+msgstr "ID Jabber non valido"
 
 #: ../libpurple/protocols/jabber/jabber.c:638
 #, c-format
@@ -4648,8 +4648,8 @@ msgstr "Riempi i seguenti campi per registrare il tuo nuovo account."
 
 #: ../libpurple/protocols/jabber/jabber.c:873
 #: ../libpurple/protocols/jabber/jabber.c:874
-msgid "Register New XMPP Account"
-msgstr "Registra un nuovo account XMPP"
+msgid "Register New Jabber Account"
+msgstr "Registra un nuovo account Jabber"
 
 #. Register button
 #: ../libpurple/protocols/jabber/jabber.c:875
@@ -4724,8 +4724,8 @@ msgstr "Password (di nuovo)"
 
 #: ../libpurple/protocols/jabber/jabber.c:1368
 #: ../libpurple/protocols/jabber/jabber.c:1369
-msgid "Change XMPP Password"
-msgstr "Cambia la password di XMPP"
+msgid "Change Jabber Password"
+msgstr "Cambia la password di Jabber"
 
 #: ../libpurple/protocols/jabber/jabber.c:1369
 msgid "Please enter your new password"
@@ -4779,8 +4779,8 @@ msgid "Item Not Found"
 msgstr "Elemento non trovato"
 
 #: ../libpurple/protocols/jabber/jabber.c:1481
-msgid "Malformed XMPP ID"
-msgstr "Formato ID XMPP non valido"
+msgid "Malformed Jabber ID"
+msgstr "Formato ID Jabber non valido"
 
 #: ../libpurple/protocols/jabber/jabber.c:1483
 msgid "Not Acceptable"
@@ -5038,8 +5038,8 @@ msgstr "msg &lt;utente&gt; &lt;messaggio&gt;: Invia un messaggio privato ad un a
 #. *  description
 #: ../libpurple/protocols/jabber/jabber.c:1977
 #: ../libpurple/protocols/jabber/jabber.c:1979
-msgid "XMPP Protocol Plugin"
-msgstr "Plugin per il protocollo XMPP"
+msgid "Jabber Protocol Plugin"
+msgstr "Plugin per il protocollo Jabber"
 
 #: ../libpurple/protocols/jabber/jabber.c:2005
 msgid "Force old (port 5223) SSL"
@@ -5083,8 +5083,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Invio del messaggio a %s fallito: %s"
 
 #: ../libpurple/protocols/jabber/message.c:272
-msgid "XMPP Message Error"
-msgstr "Errore messaggio XMPP"
+msgid "Jabber Message Error"
+msgstr "Errore messaggio Jabber"
 
 #: ../libpurple/protocols/jabber/message.c:352
 #, c-format
@@ -12284,8 +12284,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker e autista designato [lazy bum]"
 
 #: ../pidgin/gtkdialogs.c:114
-msgid "XMPP developer"
-msgstr "Sviluppatore per XMPP"
+msgid "Jabber developer"
+msgstr "Sviluppatore per Jabber"
 
 #: ../pidgin/gtkdialogs.c:115
 msgid "original author"
@@ -12598,8 +12598,8 @@ msgstr "Informazioni su Gaim"
 
 #: ../pidgin/gtkdialogs.c:360
 #, c-format
-msgid "%s is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
-msgstr "%s è un client modulare di messaggistica in grado di usare allo stesso tempo i protocolli AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu e QQ. È scritto utilizzando GTK+.<BR><BR>È possibile modificare e ridistribuire il programma nei termini della licenza GPL (versione 2 o successiva).  Una copia della GPL è contenuta nel file 'COPYING' distribuito con %s. Il copyright di %s appartiene ai suoi autori. Per una lista completa degli autori, vedere il file 'COPYRIGHT'.  Il programma è fornito senza nessuna garanzia.<BR><BR>"
+msgid "%s is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
+msgstr "%s è un client modulare di messaggistica in grado di usare allo stesso tempo i protocolli AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu e QQ. È scritto utilizzando GTK+.<BR><BR>È possibile modificare e ridistribuire il programma nei termini della licenza GPL (versione 2 o successiva).  Una copia della GPL è contenuta nel file 'COPYING' distribuito con %s. Il copyright di %s appartiene ai suoi autori. Per una lista completa degli autori, vedere il file 'COPYRIGHT'.  Il programma è fornito senza nessuna garanzia.<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:375
 #, fuzzy
@@ -14915,8 +14915,8 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "Permette di inviare input raw ai protocolli text-based."
 
 #: ../pidgin/plugins/raw.c:178
-msgid "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
-msgstr "Permette di inviare input raw ai protocolli text-based (XMPP, MSN, IRC, TOC). Premi 'Invio' nella casella di immissione per inviare il testo. Controlla la finestra di debug."
+msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
+msgstr "Permette di inviare input raw ai protocolli text-based (Jabber, MSN, IRC, TOC). Premi 'Invio' nella casella di immissione per inviare il testo. Controlla la finestra di debug."
 
 #: ../pidgin/plugins/relnot.c:71
 #, fuzzy, c-format
@@ -15875,12 +15875,12 @@ msgstr ""
 #, fuzzy
 #~ msgid ""
 #~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-#~ "XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
+#~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 #~ "all at once.  It is written using GTK+ and is licensed under the GNU GPL."
 #~ "<BR><BR>"
 #~ msgstr ""
 #~ "Gaim è un client modulare per messaggi immediati in grado di usare AIM, "
-#~ "MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr e "
+#~ "MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr e "
 #~ "Gadu-Gadu allo stesso tempo. È scritto utilizzando Gtk+ ed è distribuito "
 #~ "sotto licenza GPL.<BR><BR>"
 #~ msgid "Active Developers"
@@ -15937,8 +15937,8 @@ msgstr ""
 #~ msgstr "Cambia password"
 #~ msgid "Realname"
 #~ msgstr "Vero nome"
-#~ msgid "XMPP ID"
-#~ msgstr "ID XMPP"
+#~ msgid "Jabber ID"
+#~ msgstr "ID Jabber"
 #~ msgid "Email Address"
 #~ msgstr "Indirizzo e-mail"
 #~ msgid "Error processing event or response (%s)."
@@ -16560,8 +16560,8 @@ msgstr ""
 #~ msgstr "Informazioni sul contatto per %s"
 #~ msgid "Invalid nickname '%s'"
 #~ msgstr "Nickname '%s' non valido"
-#~ msgid "XMPP Profile"
-#~ msgstr "Profilo di XMPP"
+#~ msgid "Jabber Profile"
+#~ msgstr "Profilo di Jabber"
 #~ msgid "Roomlist Error"
 #~ msgstr "Errore nella lista delle stanze"
 #~ msgid "The user %s wants to add you to their buddy list."

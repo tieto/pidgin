@@ -575,8 +575,8 @@ void jabber_setup_set_info(PurplePluginAction *action)
 	if(x_vc_data != NULL)
 		xmlnode_free(x_vc_data);
 
-	purple_request_fields(gc, _("Edit XMPP vCard"),
-						_("Edit XMPP vCard"),
+	purple_request_fields(gc, _("Edit Jabber vCard"),
+						_("Edit Jabber vCard"),
 						_("All items below are optional. Enter only the "
 						  "information with which you feel comfortable."),
 						fields,
@@ -1729,7 +1729,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		if(!instructions)
 		{
 			instructions = g_strdup(_("Fill in one or more fields to search "
-						  "for any matching XMPP users."));
+						  "for any matching Jabber users."));
 		}
 
 		if(xmlnode_get_child(query, "first")) {
@@ -1757,8 +1757,8 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		usi->js = js;
 		usi->directory_server = g_strdup(from);
 
-		purple_request_fields(js->gc, _("Search for XMPP users"),
-				_("Search for XMPP users"), instructions, fields,
+		purple_request_fields(js->gc, _("Search for Jabber users"),
+				_("Search for Jabber users"), instructions, fields,
 				_("Search"), G_CALLBACK(user_search_cb),
 				_("Cancel"), G_CALLBACK(user_search_cancel_cb),
 				NULL, NULL, NULL,

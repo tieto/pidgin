@@ -2365,8 +2365,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hakeris ir negeriantis, nes prie vairo [tingus netikėlis]"
 
 #: ../gtk/gtkdialogs.c:108
-msgid "XMPP developer"
-msgstr "XMPP kūrėjas"
+msgid "Jabber developer"
+msgstr "Jabber kūrėjas"
 
 #: ../gtk/gtkdialogs.c:109
 msgid "original author"
@@ -2598,7 +2598,7 @@ msgstr "Apie Gaim"
 #: ../gtk/gtkdialogs.c:335
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+."
 "<BR><BR>You may modify and redistribute the program under the terms of the "
 "GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' "
@@ -2607,7 +2607,7 @@ msgid ""
 "warranty for this program.<BR><BR>"
 msgstr ""
 "Gaim yra modulinė pokalbių programa, su kuria galima bendrauti AIM, MSN, "
-"Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus "
+"Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus "
 "Sametime, Bonjour, Zephyr, Gadu-Gadu ir QQ tinkluose – visuose vienu metu.  "
 "Gaim parašyta naudojanat GTK+.<br><br>Jūs galite keisti ir platinti šią "
 "programą GPL (2 ar vėlesnės versijos) sąlygomis.  GPL kopija yra faile "
@@ -5327,10 +5327,10 @@ msgstr "Leidžia Jums tiesiogiai įvesti tekstinių protokolų komandas."
 
 #: ../gtk/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Leidžia Jums siųsti neapdorotą įvesti tekstiniams protokolams (XMPP, MSN, "
+"Leidžia Jums siųsti neapdorotą įvesti tekstiniams protokolams (Jabber, MSN, "
 "IRC, TOC). Paspauskite 'Enter' įvedimo langelyje išsiuntimui. Stebėkite "
 "derinimo langą."
 
@@ -6998,10 +6998,10 @@ msgstr "Išankstinis įeinančių žinučių numatymas"
 #: ../libgaim/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 "Atidaro pokalbių langus, kai kiti vartotojai tik pradeda rašyti Jums "
-"žinutę.  Ši funkcija veikia AIM, ICQ, XMPP, Sametime ir Yahoo! "
+"žinutę.  Ši funkcija veikia AIM, ICQ, Jabber, Sametime ir Yahoo! "
 "protokoluose."
 
 #: ../libgaim/plugins/psychic.c:66
@@ -7292,8 +7292,8 @@ msgid "AIM Account"
 msgstr "AIM paskyra"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:594
-msgid "XMPP Account"
-msgstr "XMPP paskyra"
+msgid "Jabber Account"
+msgstr "Jabber paskyra"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -8425,8 +8425,8 @@ msgstr "Gimtadienis"
 
 #: ../libgaim/protocols/jabber/buddy.c:582
 #: ../libgaim/protocols/jabber/buddy.c:583
-msgid "Edit XMPP vCard"
-msgstr "Redaguoti XMPP vCard vizitinę kortelę"
+msgid "Edit Jabber vCard"
+msgstr "Redaguoti Jabber vCard vizitinę kortelę"
 
 #: ../libgaim/protocols/jabber/buddy.c:584
 msgid ""
@@ -8542,7 +8542,7 @@ msgstr "Pavardė"
 msgid "The following are the results of your search"
 msgstr "Toliau yra Jūsų paieškos rezultatai"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1667
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -8567,8 +8567,8 @@ msgid "Server Instructions: %s"
 msgstr "Serverio instrukcijos: %s"
 
 #: ../libgaim/protocols/jabber/buddy.c:1729
-msgid "Fill in one or more fields to search for any matching XMPP users."
-msgstr "Užpildykite vieną ar daugiau laukų XMPP vartotojų paieškai."
+msgid "Fill in one or more fields to search for any matching Jabber users."
+msgstr "Užpildykite vieną ar daugiau laukų Jabber vartotojų paieškai."
 
 #: ../libgaim/protocols/jabber/buddy.c:1749
 #: ../libgaim/protocols/novell/novell.c:1488
@@ -8579,8 +8579,8 @@ msgstr "El. pašto adresas"
 
 #: ../libgaim/protocols/jabber/buddy.c:1758
 #: ../libgaim/protocols/jabber/buddy.c:1759
-msgid "Search for XMPP users"
-msgstr "Ieškoti XMPP vartotojų"
+msgid "Search for Jabber users"
+msgstr "Ieškoti Jabber vartotojų"
 
 #: ../libgaim/protocols/jabber/buddy.c:1773
 msgid "Invalid Directory"
@@ -8709,8 +8709,8 @@ msgstr "Negalima sukurti jungties"
 
 #: ../libgaim/protocols/jabber/jabber.c:552
 #: ../libgaim/protocols/jabber/jabber.c:895
-msgid "Invalid XMPP ID"
-msgstr "Neteisingas XMPP ID"
+msgid "Invalid Jabber ID"
+msgstr "Neteisingas Jabber ID"
 
 #: ../libgaim/protocols/jabber/jabber.c:623
 #, c-format
@@ -8763,8 +8763,8 @@ msgstr "Jūsų naujo abonento registravimui prašome įvesti informaciją žemia
 
 #: ../libgaim/protocols/jabber/jabber.c:858
 #: ../libgaim/protocols/jabber/jabber.c:859
-msgid "Register New XMPP Account"
-msgstr "Registruoti naują XMPP abonentą"
+msgid "Register New Jabber Account"
+msgstr "Registruoti naują Jabber abonentą"
 
 #: ../libgaim/protocols/jabber/jabber.c:1025
 msgid "Initializing Stream"
@@ -8827,8 +8827,8 @@ msgstr "Pakartotas slaptažodis"
 
 #: ../libgaim/protocols/jabber/jabber.c:1362
 #: ../libgaim/protocols/jabber/jabber.c:1363
-msgid "Change XMPP Password"
-msgstr "Pakeisti XMPP slaptažodį"
+msgid "Change Jabber Password"
+msgstr "Pakeisti Jabber slaptažodį"
 
 #: ../libgaim/protocols/jabber/jabber.c:1363
 msgid "Please enter your new password"
@@ -8882,8 +8882,8 @@ msgid "Item Not Found"
 msgstr "Nerastas elementas"
 
 #: ../libgaim/protocols/jabber/jabber.c:1473
-msgid "Malformed XMPP ID"
-msgstr "Neteisingai suformuotas XMPP ID"
+msgid "Malformed Jabber ID"
+msgstr "Neteisingai suformuotas Jabber ID"
 
 #: ../libgaim/protocols/jabber/jabber.c:1475
 msgid "Not Acceptable"
@@ -9155,8 +9155,8 @@ msgstr ""
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1962
 #: ../libgaim/protocols/jabber/jabber.c:1964
-msgid "XMPP Protocol Plugin"
-msgstr "XMPP protokolo papildinys"
+msgid "Jabber Protocol Plugin"
+msgstr "Jabber protokolo papildinys"
 
 #: ../libgaim/protocols/jabber/jabber.c:1990
 msgid "Force old (port 5223) SSL"
@@ -9198,8 +9198,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Žinutės pristatymas gavėjui %s nepavyko: %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "XMPP Message Error"
-msgstr "XMPP pranešimo klaida"
+msgid "Jabber Message Error"
+msgstr "Jabber pranešimo klaida"
 
 #: ../libgaim/protocols/jabber/message.c:316
 #, c-format

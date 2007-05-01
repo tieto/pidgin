@@ -2305,8 +2305,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker és kijelölt vezető"
 
 #: ../gtk/gtkdialogs.c:108
-msgid "XMPP developer"
-msgstr "XMPP fejlesztő"
+msgid "Jabber developer"
+msgstr "Jabber fejlesztő"
 
 #: ../gtk/gtkdialogs.c:109
 msgid "original author"
@@ -2538,7 +2538,7 @@ msgstr "A Gaim névjegye"
 #: ../gtk/gtkdialogs.c:335
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+."
 "<BR><BR>You may modify and redistribute the program under the terms of the "
 "GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' "
@@ -2546,7 +2546,7 @@ msgid ""
 "the 'COPYRIGHT' file for the complete list of contributors.  We provide no "
 "warranty for this program.<BR><BR>"
 msgstr ""
-"A Gaim egy moduláris üzenetküldő kliens AIM, MSN, Yahoo!, XMPP, ICQ, IRC, "
+"A Gaim egy moduláris üzenetküldő kliens AIM, MSN, Yahoo!, Jabber, ICQ, IRC, "
 "SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, "
 "Gadu-Gadu és QQ protokollok egyidejű használatának képességével. A Gtk+ "
 "használatával készül és GPL licenc alatt terjeszthető.<BR><BR>A programot "
@@ -5152,10 +5152,10 @@ msgstr "Nyers adatküldésre ad lehetőséget szövegalapú protokollok számár
 
 #: ../gtk/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Nyers adatküldésre ad lehetőséget szövegalapú protokollok számára (XMPP, "
+"Nyers adatküldésre ad lehetőséget szövegalapú protokollok számára (Jabber, "
 "MSN, IRC, TOC). Nyomja meg az \"Enter\" billentyűt a küldéshez. Figyelje a "
 "hibakereső ablakot."
 
@@ -6763,10 +6763,10 @@ msgstr "Szellemmód bejövő kapcsolathoz"
 #: ../libgaim/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 "Hatására a társalgási ablakok megjelennek, amint más felhasználók elkezdik "
-"üzenetüket írni.  Ez az AIM, ICQ, XMPP, Sametime és Yahoo! protokollokkal "
+"üzenetüket írni.  Ez az AIM, ICQ, Jabber, Sametime és Yahoo! protokollokkal "
 "működik."
 
 #: ../libgaim/plugins/psychic.c:66
@@ -7018,8 +7018,8 @@ msgid "AIM Account"
 msgstr "AIM fiók"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:594
-msgid "XMPP Account"
-msgstr "XMPP fiók"
+msgid "Jabber Account"
+msgstr "Jabber fiók"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -8134,8 +8134,8 @@ msgstr "Születésnap"
 
 #: ../libgaim/protocols/jabber/buddy.c:582
 #: ../libgaim/protocols/jabber/buddy.c:583
-msgid "Edit XMPP vCard"
-msgstr "XMPP vCard szerkesztése"
+msgid "Edit Jabber vCard"
+msgstr "Jabber vCard szerkesztése"
 
 #: ../libgaim/protocols/jabber/buddy.c:584
 msgid ""
@@ -8250,7 +8250,7 @@ msgstr "Vezetéknév"
 msgid "The following are the results of your search"
 msgstr "A keresés eredményei a következők"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1667
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -8275,8 +8275,8 @@ msgid "Server Instructions: %s"
 msgstr "Kiszolgálóutasítások: %s"
 
 #: ../libgaim/protocols/jabber/buddy.c:1729
-msgid "Fill in one or more fields to search for any matching XMPP users."
-msgstr "Töltsön ki legalább egy mezőt a megfelelő XMPP felhasználók kereséséhez."
+msgid "Fill in one or more fields to search for any matching Jabber users."
+msgstr "Töltsön ki legalább egy mezőt a megfelelő Jabber felhasználók kereséséhez."
 
 #: ../libgaim/protocols/jabber/buddy.c:1749
 #: ../libgaim/protocols/novell/novell.c:1488
@@ -8287,8 +8287,8 @@ msgstr "E-mail cím"
 
 #: ../libgaim/protocols/jabber/buddy.c:1758
 #: ../libgaim/protocols/jabber/buddy.c:1759
-msgid "Search for XMPP users"
-msgstr "XMPP felhasználók keresése"
+msgid "Search for Jabber users"
+msgstr "Jabber felhasználók keresése"
 
 #: ../libgaim/protocols/jabber/buddy.c:1773
 msgid "Invalid Directory"
@@ -8417,8 +8417,8 @@ msgstr "Nem lehet létrehozni foglalatot"
 
 #: ../libgaim/protocols/jabber/jabber.c:552
 #: ../libgaim/protocols/jabber/jabber.c:895
-msgid "Invalid XMPP ID"
-msgstr "Érvénytelen XMPP azonosító"
+msgid "Invalid Jabber ID"
+msgstr "Érvénytelen Jabber azonosító"
 
 #: ../libgaim/protocols/jabber/jabber.c:623
 #, c-format
@@ -8471,8 +8471,8 @@ msgstr "Kérem adja meg a következő információkat az új fiók regisztrálá
 
 #: ../libgaim/protocols/jabber/jabber.c:858
 #: ../libgaim/protocols/jabber/jabber.c:859
-msgid "Register New XMPP Account"
-msgstr "Új XMPP fiók regisztrálása"
+msgid "Register New Jabber Account"
+msgstr "Új Jabber fiók regisztrálása"
 
 #: ../libgaim/protocols/jabber/jabber.c:1025
 msgid "Initializing Stream"
@@ -8535,8 +8535,8 @@ msgstr "Jelszó (még egyszer)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1362
 #: ../libgaim/protocols/jabber/jabber.c:1363
-msgid "Change XMPP Password"
-msgstr "XMPP jelszó megváltoztatása"
+msgid "Change Jabber Password"
+msgstr "Jabber jelszó megváltoztatása"
 
 #: ../libgaim/protocols/jabber/jabber.c:1363
 msgid "Please enter your new password"
@@ -8590,8 +8590,8 @@ msgid "Item Not Found"
 msgstr "Az elem nem található"
 
 #: ../libgaim/protocols/jabber/jabber.c:1473
-msgid "Malformed XMPP ID"
-msgstr "Rosszul formázott XMPP azonosító"
+msgid "Malformed Jabber ID"
+msgstr "Rosszul formázott Jabber azonosító"
 
 #: ../libgaim/protocols/jabber/jabber.c:1475
 msgid "Not Acceptable"
@@ -8860,8 +8860,8 @@ msgstr ""
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1962
 #: ../libgaim/protocols/jabber/jabber.c:1964
-msgid "XMPP Protocol Plugin"
-msgstr "XMPP protokollbővítmény"
+msgid "Jabber Protocol Plugin"
+msgstr "Jabber protokollbővítmény"
 
 #: ../libgaim/protocols/jabber/jabber.c:1990
 msgid "Force old (port 5223) SSL"
@@ -8903,8 +8903,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Az üzenet eljuttatása a következőhöz: %s sikertelen: %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "XMPP Message Error"
-msgstr "XMPP üzenethiba"
+msgid "Jabber Message Error"
+msgstr "Jabber üzenethiba"
 
 #: ../libgaim/protocols/jabber/message.c:316
 #, c-format

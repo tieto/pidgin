@@ -892,8 +892,8 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "Ju lejon të dërgoni input bruto te protokolle me bazë teksti "
 
 #: plugins/raw.c:154
-msgid "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
-msgstr "Ju lejon të fusni të dhëna bruto në protokolle me bazë teksti (XMPP, MSN, IRC, TOC). Për të dërguar, shtypni 'Enter' te kuti futjesh. Kqyrni dritare \"debug\"."
+msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
+msgstr "Ju lejon të fusni të dhëna bruto në protokolle me bazë teksti (Jabber, MSN, IRC, TOC). Për të dërguar, shtypni 'Enter' te kuti futjesh. Kqyrni dritare \"debug\"."
 
 #: plugins/relnot.c:63
 #, c-format
@@ -2943,8 +2943,8 @@ msgid "libfaim maintainer"
 msgstr "mirëmbajtësi i libfaim"
 
 #: src/gtkdialogs.c:92
-msgid "XMPP developer"
-msgstr "zhvillues i XMPP-it"
+msgid "Jabber developer"
+msgstr "zhvillues i Jabber-it"
 
 #: src/gtkdialogs.c:93
 msgid "original author"
@@ -3133,8 +3133,8 @@ msgid "About Gaim"
 msgstr "Rreth Gaim"
 
 #: src/gtkdialogs.c:226
-msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
-msgstr "Gaim-i është një klient modular shkëmbimi mesazhesh i aftë të përdorë njëherazi AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, dhe Gadu-Gadu.  Është shkruajtur duke përdorur Gtk+ dhe licensuar sipas GNU GPL.<BR><BR>"
+msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
+msgstr "Gaim-i është një klient modular shkëmbimi mesazhesh i aftë të përdorë njëherazi AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, dhe Gadu-Gadu.  Është shkruajtur duke përdorur Gtk+ dhe licensuar sipas GNU GPL.<BR><BR>"
 
 #: src/gtkdialogs.c:235
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
@@ -5856,16 +5856,16 @@ msgstr "Ditëlindje"
 
 #: src/protocols/jabber/buddy.c:567
 #: src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
-msgstr "Përpuno vCard për XMPP"
+msgid "Edit Jabber vCard"
+msgstr "Përpuno vCard për Jabber"
 
 #: src/protocols/jabber/buddy.c:569
 msgid "All items below are optional. Enter only the information with which you feel comfortable."
 msgstr "Tërë elementët më poshtë janë si mundësi. Jepni vetëm të dhënat të cilat mendoni se nuk ju prishin punë. "
 
 #: src/protocols/jabber/buddy.c:616
-msgid "XMPP ID"
-msgstr "ID XMPP"
+msgid "Jabber ID"
+msgstr "ID Jabber"
 
 #: src/protocols/jabber/buddy.c:642
 #: src/protocols/jabber/jabber.c:1711
@@ -5955,8 +5955,8 @@ msgid "The following are the results of your search"
 msgstr "Çka vijon është përfundimi i kërkimit tuaj"
 
 #: src/protocols/jabber/buddy.c:1327
-msgid "Fill in one or more fields to search for any matching XMPP users."
-msgstr "Plotësoni një ose më tepër fusha për kërkim të cilitdo përdorues XMPP që ka përputhje."
+msgid "Fill in one or more fields to search for any matching Jabber users."
+msgstr "Plotësoni një ose më tepër fusha për kërkim të cilitdo përdorues Jabber që ka përputhje."
 
 #  First Name
 #: src/protocols/jabber/buddy.c:1331
@@ -5980,8 +5980,8 @@ msgstr "Vendndodhje E-Mail"
 
 #: src/protocols/jabber/buddy.c:1355
 #: src/protocols/jabber/buddy.c:1356
-msgid "Search for XMPP users"
-msgstr "Kërko për përdoruesas XMPP"
+msgid "Search for Jabber users"
+msgstr "Kërko për përdoruesas Jabber"
 
 #: src/protocols/jabber/buddy.c:1370
 msgid "Invalid Directory"
@@ -6110,8 +6110,8 @@ msgstr "I pazoti të krijoj \"socket\""
 
 #: src/protocols/jabber/jabber.c:403
 #: src/protocols/jabber/jabber.c:740
-msgid "Invalid XMPP ID"
-msgstr "ID XMPP i pavlefshëm"
+msgid "Invalid Jabber ID"
+msgstr "ID Jabber i pavlefshëm"
 
 #: src/protocols/jabber/jabber.c:473
 #, c-format
@@ -6166,8 +6166,8 @@ msgstr "Për të regjistruar llogarinë tuaj të re, ju lutem plotësoni të dh�
 
 #: src/protocols/jabber/jabber.c:704
 #: src/protocols/jabber/jabber.c:705
-msgid "Register New XMPP Account"
-msgstr "Regjistro Llogari të Re XMPP"
+msgid "Register New Jabber Account"
+msgstr "Regjistro Llogari të Re Jabber"
 
 #: src/protocols/jabber/jabber.c:842
 msgid "Initializing Stream"
@@ -6247,8 +6247,8 @@ msgstr "Fjalëkalim (sërish)"
 
 #: src/protocols/jabber/jabber.c:1160
 #: src/protocols/jabber/jabber.c:1161
-msgid "Change XMPP Password"
-msgstr "Ndrysho Fjalëkalim XMPP-i"
+msgid "Change Jabber Password"
+msgstr "Ndrysho Fjalëkalim Jabber-i"
 
 #: src/protocols/jabber/jabber.c:1161
 msgid "Please enter your new password"
@@ -6301,8 +6301,8 @@ msgid "Item Not Found"
 msgstr "Objekt i Pagjetur"
 
 #: src/protocols/jabber/jabber.c:1271
-msgid "Malformed XMPP ID"
-msgstr "ID XMPP-i i Keqformësuar"
+msgid "Malformed Jabber ID"
+msgstr "ID Jabber-i i Keqformësuar"
 
 #: src/protocols/jabber/jabber.c:1273
 msgid "Not Acceptable"
@@ -6549,8 +6549,8 @@ msgstr "msg &lt;përdorues&gt; &lt;mesazh&gt;:  Dërgo një mesazh vetjak një p
 #. *  summary
 #: src/protocols/jabber/jabber.c:1686
 #: src/protocols/jabber/jabber.c:1688
-msgid "XMPP Protocol Plugin"
-msgstr "Protokoll Shtojce XMPP"
+msgid "Jabber Protocol Plugin"
+msgstr "Protokoll Shtojce Jabber"
 
 #: src/protocols/jabber/jabber.c:1714
 msgid "Use TLS if available"
@@ -6600,8 +6600,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Dështoi shpërndarja e mesazhit për %s: %s"
 
 #: src/protocols/jabber/message.c:233
-msgid "XMPP Message Error"
-msgstr "Gabim Mesazhi XMPP "
+msgid "Jabber Message Error"
+msgstr "Gabim Mesazhi Jabber "
 
 #: src/protocols/jabber/message.c:297
 #, c-format

@@ -839,7 +839,7 @@ msgstr ""
 
 #: plugins/raw.c:154
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 
@@ -2779,8 +2779,8 @@ msgstr "예전 libfaim 관리자"
 
 #: src/gtkdialogs.c:92
 #, fuzzy
-msgid "XMPP developer"
-msgstr "예전 재버(XMPP) 개발자"
+msgid "Jabber developer"
+msgstr "예전 재버(Jabber) 개발자"
 
 #: src/gtkdialogs.c:93
 msgid "original author"
@@ -2955,10 +2955,10 @@ msgstr "게임은"
 #, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
 msgstr ""
-"게임은 AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, "
+"게임은 AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, "
 "Zephyr, Gadu-Gadu를 한꺼번에 지원하는 모듈 기반의 메신저입니다.  Gtk+를 이용"
 "하여 만들어졌으며 GPL 라이센스를 따릅니다.<BR><BR>"
 
@@ -5612,8 +5612,8 @@ msgid "Birthday"
 msgstr "생년월일"
 
 #: src/protocols/jabber/buddy.c:567 src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
-msgstr "XMPP vCard 고치기"
+msgid "Edit Jabber vCard"
+msgstr "Jabber vCard 고치기"
 
 #: src/protocols/jabber/buddy.c:569
 msgid ""
@@ -5624,7 +5624,7 @@ msgstr ""
 "세요."
 
 #: src/protocols/jabber/buddy.c:616
-msgid "XMPP ID"
+msgid "Jabber ID"
 msgstr "재버 아이디"
 
 #: src/protocols/jabber/buddy.c:642 src/protocols/jabber/jabber.c:1711
@@ -5703,7 +5703,7 @@ msgid "The following are the results of your search"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1327
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
@@ -5722,7 +5722,7 @@ msgstr "메일 주소"
 
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
 #, fuzzy
-msgid "Search for XMPP users"
+msgid "Search for Jabber users"
 msgstr "메일 주소로 친구 찾기"
 
 #: src/protocols/jabber/buddy.c:1370
@@ -5849,7 +5849,7 @@ msgid "Unable to create socket"
 msgstr "소켓을 만들 수 없음"
 
 #: src/protocols/jabber/jabber.c:403 src/protocols/jabber/jabber.c:740
-msgid "Invalid XMPP ID"
+msgid "Invalid Jabber ID"
 msgstr "잘못된 재버 아이디"
 
 #: src/protocols/jabber/jabber.c:473
@@ -5896,7 +5896,7 @@ msgid "Please fill out the information below to register your new account."
 msgstr "새 계정을 만드려면 아래의 정보를 채워주세요."
 
 #: src/protocols/jabber/jabber.c:704 src/protocols/jabber/jabber.c:705
-msgid "Register New XMPP Account"
+msgid "Register New Jabber Account"
 msgstr "새 재버 계정 등록"
 
 #: src/protocols/jabber/jabber.c:842
@@ -5969,7 +5969,7 @@ msgid "Password (again)"
 msgstr "새 열쇠글 (다시)"
 
 #: src/protocols/jabber/jabber.c:1160 src/protocols/jabber/jabber.c:1161
-msgid "Change XMPP Password"
+msgid "Change Jabber Password"
 msgstr "재버 열쇠글 바꾸기"
 
 #: src/protocols/jabber/jabber.c:1161
@@ -6020,7 +6020,7 @@ msgid "Item Not Found"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1271
-msgid "Malformed XMPP ID"
+msgid "Malformed Jabber ID"
 msgstr "잘못된 재버 아이디"
 
 #: src/protocols/jabber/jabber.c:1273
@@ -6284,8 +6284,8 @@ msgstr ""
 #. *  summary
 #. *  description
 #: src/protocols/jabber/jabber.c:1686 src/protocols/jabber/jabber.c:1688
-msgid "XMPP Protocol Plugin"
-msgstr "XMPP 프로토콜 플러그인"
+msgid "Jabber Protocol Plugin"
+msgstr "Jabber 프로토콜 플러그인"
 
 #: src/protocols/jabber/jabber.c:1714
 msgid "Use TLS if available"
@@ -6336,7 +6336,7 @@ msgstr ""
 
 #: src/protocols/jabber/message.c:233
 #, fuzzy
-msgid "XMPP Message Error"
+msgid "Jabber Message Error"
 msgstr "재버 오류"
 
 #: src/protocols/jabber/message.c:297
@@ -11863,7 +11863,7 @@ msgstr "g003: 연결중 에러 발생.\n"
 #~ msgid "Invalid nickname"
 #~ msgstr "잘못된 사용자 이름"
 
-#~ msgid "XMPP Profile"
+#~ msgid "Jabber Profile"
 #~ msgstr "재버 프로필"
 
 #~ msgid "Roomlist Error"

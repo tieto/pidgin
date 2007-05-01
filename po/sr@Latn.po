@@ -855,7 +855,7 @@ msgstr "Omogućava da pošaljete izvorni tekst na tekst—protokole."
 
 #: plugins/raw.c:154
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Omogućava da pošaljete izvorni tekst protokolima koji ga prihvataju (DŽaber, "
@@ -2824,7 +2824,7 @@ msgstr "prethodni održavalac libfaim-a"
 
 #: src/gtkdialogs.c:92
 #, fuzzy
-msgid "XMPP developer"
+msgid "Jabber developer"
 msgstr "bivši DŽaber programer"
 
 #: src/gtkdialogs.c:93
@@ -2997,7 +2997,7 @@ msgstr "O Gaimu"
 #, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
 msgstr ""
 "Gaim je proširivi klijent za brze poruke koji može da koristi AIM, ICQ, "
@@ -5731,7 +5731,7 @@ msgid "Birthday"
 msgstr "Rođendan"
 
 #: src/protocols/jabber/buddy.c:567 src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
+msgid "Edit Jabber vCard"
 msgstr "Uređivanje DŽaber vizit-karte"
 
 #: src/protocols/jabber/buddy.c:569
@@ -5742,7 +5742,7 @@ msgstr ""
 "Sve dole navedene opcije nisu obavezne. Unesite samo podatke koje želite."
 
 #: src/protocols/jabber/buddy.c:616
-msgid "XMPP ID"
+msgid "Jabber ID"
 msgstr "DŽaber ID"
 
 #: src/protocols/jabber/buddy.c:642 src/protocols/jabber/jabber.c:1711
@@ -5828,7 +5828,7 @@ msgid "The following are the results of your search"
 msgstr "Dole su rezultati pretrage: "
 
 #: src/protocols/jabber/buddy.c:1327
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
@@ -5847,7 +5847,7 @@ msgstr "Adresa e-pošte"
 
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
 #, fuzzy
-msgid "Search for XMPP users"
+msgid "Search for Jabber users"
 msgstr "Traži drugara"
 
 #: src/protocols/jabber/buddy.c:1370
@@ -5973,7 +5973,7 @@ msgid "Unable to create socket"
 msgstr "Ne mogu načiniti soket"
 
 #: src/protocols/jabber/jabber.c:403 src/protocols/jabber/jabber.c:740
-msgid "Invalid XMPP ID"
+msgid "Invalid Jabber ID"
 msgstr "Neispravan DŽaber IB"
 
 #: src/protocols/jabber/jabber.c:473
@@ -6020,7 +6020,7 @@ msgid "Please fill out the information below to register your new account."
 msgstr "Molim ispunite podatke ispod da registrujete novi nalog."
 
 #: src/protocols/jabber/jabber.c:704 src/protocols/jabber/jabber.c:705
-msgid "Register New XMPP Account"
+msgid "Register New Jabber Account"
 msgstr "Registruj novi DŽaber nalog"
 
 #: src/protocols/jabber/jabber.c:842
@@ -6093,7 +6093,7 @@ msgid "Password (again)"
 msgstr "Lozinka (ponovite)"
 
 #: src/protocols/jabber/jabber.c:1160 src/protocols/jabber/jabber.c:1161
-msgid "Change XMPP Password"
+msgid "Change Jabber Password"
 msgstr "Izmenite DŽaber lozinku"
 
 #: src/protocols/jabber/jabber.c:1161
@@ -6144,7 +6144,7 @@ msgid "Item Not Found"
 msgstr "Nije nađeno"
 
 #: src/protocols/jabber/jabber.c:1271
-msgid "Malformed XMPP ID"
+msgid "Malformed Jabber ID"
 msgstr "Neispravan DŽaber IB"
 
 #: src/protocols/jabber/jabber.c:1273
@@ -6392,7 +6392,7 @@ msgstr ""
 #. *  summary
 #. *  description
 #: src/protocols/jabber/jabber.c:1686 src/protocols/jabber/jabber.c:1688
-msgid "XMPP Protocol Plugin"
+msgid "Jabber Protocol Plugin"
 msgstr "Dodatak za DŽaber protokol"
 
 #: src/protocols/jabber/jabber.c:1714
@@ -6443,7 +6443,7 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Isporuka poruke za %s nije uspela: %s"
 
 #: src/protocols/jabber/message.c:233
-msgid "XMPP Message Error"
+msgid "Jabber Message Error"
 msgstr "DŽaber greška poruke"
 
 #: src/protocols/jabber/message.c:297
@@ -12244,7 +12244,7 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ msgid "Invalid nickname"
 #~ msgstr "Neispravan nadimak"
 
-#~ msgid "XMPP Profile"
+#~ msgid "Jabber Profile"
 #~ msgstr "DŽaber profil"
 
 #~ msgid "Roomlist Error"
@@ -13114,11 +13114,11 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ "Lozinka koju ste uneli je ista kao i Vaša sadašnja lozinka. Vaša lozinka "
 #~ "ostaje ista."
 
-#~ msgid "XMPP Error %s"
+#~ msgid "Jabber Error %s"
 #~ msgstr "DŽaber greška %s"
 
 #~ msgid ""
-#~ "The XMPP user %s does not exist and was therefore not added to your "
+#~ "The Jabber user %s does not exist and was therefore not added to your "
 #~ "roster."
 #~ msgstr ""
 #~ "DŽaber korisnik %s ne postoji, i zato nije dodat u Vaš spisak drugara."
@@ -13138,7 +13138,7 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ msgid "Requesting Authentication Method"
 #~ msgstr "Zahtev načina identifikacije"
 
-#~ msgid "The user %s is an invalid XMPP I.D. and was therefore not added."
+#~ msgid "The user %s is an invalid Jabber I.D. and was therefore not added."
 #~ msgstr "Korisnik %s je neispravno DŽaber ime, i stoga nije dodat."
 
 #~ msgid "View Error Msg"
@@ -13289,7 +13289,7 @@ msgstr "g003: Greška pri otvaranju veze.\n"
 #~ "  Adam Fritzler (former libfaim maintainer)<BR>  Eric Warmenhoven (former "
 #~ "lead developer)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
 #~ "\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (former maintainer)<BR>  "
-#~ "Jim Seymour (former XMPP developer)<BR>  Mark Spencer (original author) "
+#~ "Jim Seymour (former Jabber developer)<BR>  Mark Spencer (original author) "
 #~ "&lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  "
 #~ "Syd Logan (hacker and designated driver [lazy bum])<BR><BR>"
 #~ msgstr ""

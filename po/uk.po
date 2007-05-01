@@ -857,11 +857,11 @@ msgstr ""
 
 #: plugins/raw.c:154
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Дозволяє надіслати необроблений ввід, використовуючи протоколи на основі "
-"тексту (XMPP, MSN, IRC, TOC). Для надсилання натисніть Еnter у області "
+"тексту (Jabber, MSN, IRC, TOC). Для надсилання натисніть Еnter у області "
 "вводу. Слідкуйте за вікном налагодження."
 
 #: plugins/relnot.c:63
@@ -2831,8 +2831,8 @@ msgstr "колишня особа, що підтримувала libfaim"
 
 #: src/gtkdialogs.c:92
 #, fuzzy
-msgid "XMPP developer"
-msgstr "попередній розробник XMPP"
+msgid "Jabber developer"
+msgstr "попередній розробник Jabber"
 
 #: src/gtkdialogs.c:93
 msgid "original author"
@@ -3004,11 +3004,11 @@ msgstr "Про Gaim"
 #, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
 msgstr ""
 "GaimGaim - модульний клієнт обміну повідомленнями, що дозволяє "
-"використовувати AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, "
+"використовувати AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, "
 "Napster, Zephyr, та Gadu-Gadu одразу.  Він написаний з використанням Gtk+ та "
 "поширюється на умовах GPL.<BR><BR>"
 
@@ -5017,7 +5017,7 @@ msgstr "Ел.пошта"
 #: src/protocols/gg/gg.c:1495 src/protocols/gg/gg.c:1496
 #, fuzzy
 msgid "Register New Gadu-Gadu Account"
-msgstr "Зареєструвати новий обліковий запис XMPP"
+msgstr "Зареєструвати новий обліковий запис Jabber"
 
 #: src/protocols/gg/gg.c:1497
 msgid "Please, fill in the following fields"
@@ -5744,8 +5744,8 @@ msgid "Birthday"
 msgstr "День народження"
 
 #: src/protocols/jabber/buddy.c:567 src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
-msgstr "Змінити картку XMPP "
+msgid "Edit Jabber vCard"
+msgstr "Змінити картку Jabber "
 
 #: src/protocols/jabber/buddy.c:569
 msgid ""
@@ -5754,8 +5754,8 @@ msgid ""
 msgstr "Всі наступні елементи є необов'язковими. Заповнюйте на власний розсуд."
 
 #: src/protocols/jabber/buddy.c:616
-msgid "XMPP ID"
-msgstr "XMPP ID"
+msgid "Jabber ID"
+msgstr "Jabber ID"
 
 #: src/protocols/jabber/buddy.c:642 src/protocols/jabber/jabber.c:1711
 msgid "Resource"
@@ -5833,7 +5833,7 @@ msgid "The following are the results of your search"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1327
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
@@ -5852,7 +5852,7 @@ msgstr "Адреса ел.пошти"
 
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
 #, fuzzy
-msgid "Search for XMPP users"
+msgid "Search for Jabber users"
 msgstr "Шукати користувача за адресою ел.пошти"
 
 #: src/protocols/jabber/buddy.c:1370
@@ -5978,8 +5978,8 @@ msgid "Unable to create socket"
 msgstr "Не вдається створити сокет"
 
 #: src/protocols/jabber/jabber.c:403 src/protocols/jabber/jabber.c:740
-msgid "Invalid XMPP ID"
-msgstr "Неправильний XMPP ID"
+msgid "Invalid Jabber ID"
+msgstr "Неправильний Jabber ID"
 
 #: src/protocols/jabber/jabber.c:473
 #, c-format
@@ -6025,8 +6025,8 @@ msgid "Please fill out the information below to register your new account."
 msgstr "Заповніть наступні поля для реєстрації нового облікового запису."
 
 #: src/protocols/jabber/jabber.c:704 src/protocols/jabber/jabber.c:705
-msgid "Register New XMPP Account"
-msgstr "Зареєструвати новий обліковий запис XMPP"
+msgid "Register New Jabber Account"
+msgstr "Зареєструвати новий обліковий запис Jabber"
 
 #: src/protocols/jabber/jabber.c:842
 msgid "Initializing Stream"
@@ -6098,8 +6098,8 @@ msgid "Password (again)"
 msgstr "Пароль (ще раз)"
 
 #: src/protocols/jabber/jabber.c:1160 src/protocols/jabber/jabber.c:1161
-msgid "Change XMPP Password"
-msgstr "Змінити пароль XMPP"
+msgid "Change Jabber Password"
+msgstr "Змінити пароль Jabber"
 
 #: src/protocols/jabber/jabber.c:1161
 msgid "Please enter your new password"
@@ -6149,8 +6149,8 @@ msgid "Item Not Found"
 msgstr "Елемент не знайдено"
 
 #: src/protocols/jabber/jabber.c:1271
-msgid "Malformed XMPP ID"
-msgstr "Неправильний XMPP ID"
+msgid "Malformed Jabber ID"
+msgstr "Неправильний Jabber ID"
 
 #: src/protocols/jabber/jabber.c:1273
 msgid "Not Acceptable"
@@ -6397,8 +6397,8 @@ msgstr ""
 #. *  summary
 #. *  description
 #: src/protocols/jabber/jabber.c:1686 src/protocols/jabber/jabber.c:1688
-msgid "XMPP Protocol Plugin"
-msgstr "Модуль протоколу XMPP"
+msgid "Jabber Protocol Plugin"
+msgstr "Модуль протоколу Jabber"
 
 #: src/protocols/jabber/jabber.c:1714
 msgid "Use TLS if available"
@@ -6448,8 +6448,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Не вдається доставити повідомлення для %s: %s"
 
 #: src/protocols/jabber/message.c:233
-msgid "XMPP Message Error"
-msgstr "Помилка повідомлення XMPP"
+msgid "Jabber Message Error"
+msgstr "Помилка повідомлення Jabber"
 
 #: src/protocols/jabber/message.c:297
 #, c-format
@@ -12252,8 +12252,8 @@ msgstr "g003: Помилка відкривання з'єднання.\n"
 #~ msgid "Invalid nickname"
 #~ msgstr "Неправильне прізвисько"
 
-#~ msgid "XMPP Profile"
-#~ msgstr "Профіль XMPP"
+#~ msgid "Jabber Profile"
+#~ msgstr "Профіль Jabber"
 
 #~ msgid "Roomlist Error"
 #~ msgstr "Помилка списку кімнат"

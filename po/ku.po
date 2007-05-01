@@ -1003,10 +1003,10 @@ msgstr "Ji bo axaftinên tên moda medyûm"
 #: ../plugins/psychic.c:24
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 "Dema kesên din ji te re peyam nivîsand wê bixweber paceya axaftinê vebe. Ev "
-"ji bo AIM,ICQ, XMPP, Sametime û Yahoo dixebite."
+"ji bo AIM,ICQ, Jabber, Sametime û Yahoo dixebite."
 
 #: ../plugins/psychic.c:60
 msgid "You feel a disturbance in the force..."
@@ -1034,10 +1034,10 @@ msgstr "dihêle ku tu têketanên negihiştî bişînî protokolên nivîskî."
 
 #: ../plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"dihêle ku tu têketanên negihiştî bişînî protokolên nivîskî (XMPP, MSN, "
+"dihêle ku tu têketanên negihiştî bişînî protokolên nivîskî (Jabber, MSN, "
 "IRC, TOC). ji bo şandinê  'Enter' bitikîne.li Paceya vebijartinê binhêre."
 
 #: ../plugins/relnot.c:63
@@ -2408,7 +2408,7 @@ msgstr "Girêde"
 #: ../src/gtkblist.c:3545
 #, fuzzy
 msgid "Re-enable Account"
-msgstr "Hesabeke Nû ya XMPP Biafirîne"
+msgstr "Hesabeke Nû ya Jabber Biafirîne"
 
 #: ../src/gtkblist.c:3566
 #, c-format
@@ -3038,8 +3038,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "Hacker û pêşkêşkera sepandî [lazy bum]"
 
 #: ../src/gtkdialogs.c:101
-msgid "XMPP developer"
-msgstr "Pêşvebirê XMPP"
+msgid "Jabber developer"
+msgstr "Pêşvebirê Jabber"
 
 #: ../src/gtkdialogs.c:102
 msgid "original author"
@@ -3239,7 +3239,7 @@ msgstr "Derbarê Gaimê de"
 #: ../src/gtkdialogs.c:261
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
 "and Gadu-Gadu all at once.  It is written using GTK+.<BR><BR>You may modify "
 "and redistribute the program under the terms of the GPL (version 2 or "
 "later).  A copy of the GPL is contained in the 'COPYING' file distributed "
@@ -6210,8 +6210,8 @@ msgid "Birthday"
 msgstr "Roja dayîkbûnê"
 
 #: ../src/protocols/jabber/buddy.c:567 ../src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
-msgstr "VCarda XMPP serast bike"
+msgid "Edit Jabber vCard"
+msgstr "VCarda Jabber serast bike"
 
 #: ../src/protocols/jabber/buddy.c:569
 msgid ""
@@ -6307,7 +6307,7 @@ msgid "Server Instructions: %s"
 msgstr "Avakerên pêşkêşker: %s"
 
 #: ../src/protocols/jabber/buddy.c:1392
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: ../src/protocols/jabber/buddy.c:1411 ../src/protocols/novell/novell.c:1490
@@ -6316,8 +6316,8 @@ msgid "E-Mail Address"
 msgstr "Navnîşana E-peyamê"
 
 #: ../src/protocols/jabber/buddy.c:1420 ../src/protocols/jabber/buddy.c:1421
-msgid "Search for XMPP users"
-msgstr "Bikarhênerên XMPP Bigere"
+msgid "Search for Jabber users"
+msgstr "Bikarhênerên Jabber Bigere"
 
 #: ../src/protocols/jabber/buddy.c:1435
 msgid "Invalid Directory"
@@ -6438,8 +6438,8 @@ msgid "Unable to create socket"
 msgstr "Girêdan venabe"
 
 #: ../src/protocols/jabber/jabber.c:520 ../src/protocols/jabber/jabber.c:857
-msgid "Invalid XMPP ID"
-msgstr "ID'a XMPP a nederbasdar"
+msgid "Invalid Jabber ID"
+msgstr "ID'a Jabber a nederbasdar"
 
 #: ../src/protocols/jabber/jabber.c:590
 #, c-format
@@ -6485,8 +6485,8 @@ msgid "Please fill out the information below to register your new account."
 msgstr "Ji bo tomarbûnê, agahiyên li jêr biqedîne."
 
 #: ../src/protocols/jabber/jabber.c:821 ../src/protocols/jabber/jabber.c:822
-msgid "Register New XMPP Account"
-msgstr "Hesabeke Nû ya XMPP Biafirîne"
+msgid "Register New Jabber Account"
+msgstr "Hesabeke Nû ya Jabber Biafirîne"
 
 #: ../src/protocols/jabber/jabber.c:983
 msgid "Initializing Stream"
@@ -6549,8 +6549,8 @@ msgid "Password (again)"
 msgstr "Şîfre (dîsa)"
 
 #: ../src/protocols/jabber/jabber.c:1317 ../src/protocols/jabber/jabber.c:1318
-msgid "Change XMPP Password"
-msgstr "Şîfreya XMPP biguherîne"
+msgid "Change Jabber Password"
+msgstr "Şîfreya Jabber biguherîne"
 
 #: ../src/protocols/jabber/jabber.c:1318
 msgid "Please enter your new password"
@@ -6599,8 +6599,8 @@ msgid "Item Not Found"
 msgstr "Bireser Nehat Dîtin"
 
 #: ../src/protocols/jabber/jabber.c:1428
-msgid "Malformed XMPP ID"
-msgstr "Malformed XMPP ID"
+msgid "Malformed Jabber ID"
+msgstr "Malformed Jabber ID"
 
 #: ../src/protocols/jabber/jabber.c:1430
 msgid "Not Acceptable"
@@ -6862,8 +6862,8 @@ msgstr ""
 #. *< version
 #. *  summary
 #: ../src/protocols/jabber/jabber.c:1883 ../src/protocols/jabber/jabber.c:1885
-msgid "XMPP Protocol Plugin"
-msgstr "Pêveke Protokola XMPP"
+msgid "Jabber Protocol Plugin"
+msgstr "Pêveke Protokola Jabber"
 
 #: ../src/protocols/jabber/jabber.c:1911
 msgid "Use TLS if available"
@@ -6910,8 +6910,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Peyam ji %s re nehat şandin: %s"
 
 #: ../src/protocols/jabber/message.c:227
-msgid "XMPP Message Error"
-msgstr "Xeletiya Peyam a XMPP"
+msgid "Jabber Message Error"
+msgstr "Xeletiya Peyam a Jabber"
 
 #: ../src/protocols/jabber/message.c:295
 #, c-format
@@ -12791,8 +12791,8 @@ msgstr "g003:Çewtî di vekirina girêdanê de.\n"
 #~ msgid "<main>/Conversation/Close"
 #~ msgstr "<main>/Nivîsandin/Bigire"
 
-#~ msgid "former XMPP developer"
-#~ msgstr "Pêşxistinkara XMPP"
+#~ msgid "former Jabber developer"
+#~ msgstr "Pêşxistinkara Jabber"
 
 #~ msgid "Azerbaijani"
 #~ msgstr "Azerbaijani"
@@ -12833,11 +12833,11 @@ msgstr "g003:Çewtî di vekirina girêdanê de.\n"
 
 #~ msgid ""
 #~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-#~ "XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
+#~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 #~ "at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 #~ msgstr ""
 #~ "Gaim; pêşkêşkareke peyaman a modulî ye û di heman demê de dikarî xwe bi "
-#~ "hesabên xwe yên AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, "
+#~ "hesabên xwe yên AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, "
 #~ "Napster, Zephyr, û Gadu-Gadu ve girê bidî. Bi GTK+ hatiye nivîsandin û di "
 #~ "bin banê lîsansa GPL de ye.<BR><BR>"
 
@@ -13329,11 +13329,11 @@ msgstr "g003:Çewtî di vekirina girêdanê de.\n"
 #~ msgid "Invalid nickname '%s'"
 #~ msgstr "Nicka nederbasdar '%s'"
 
-#~ msgid "XMPP ID"
-#~ msgstr "ID ya XMPP"
+#~ msgid "Jabber ID"
+#~ msgstr "ID ya Jabber"
 
-#~ msgid "XMPP Profile"
-#~ msgstr "Profîla XMPP"
+#~ msgid "Jabber Profile"
+#~ msgstr "Profîla Jabber"
 
 #~ msgid "Roomlist Error"
 #~ msgstr "Xeletiya Lîsteya Odeyê"

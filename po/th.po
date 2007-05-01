@@ -1204,7 +1204,7 @@ msgstr ""
 #: ../plugins/psychic.c:24
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 
 #: ../plugins/psychic.c:60
@@ -1233,7 +1233,7 @@ msgstr ""
 
 #: ../plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 
@@ -3228,7 +3228,7 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr ""
 
 #: ../src/gtkdialogs.c:101
-msgid "XMPP developer"
+msgid "Jabber developer"
 msgstr ""
 
 #: ../src/gtkdialogs.c:102
@@ -3429,7 +3429,7 @@ msgstr "เกี่ยวกับ Gaim"
 #: ../src/gtkdialogs.c:261
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
 "and Gadu-Gadu all at once.  It is written using GTK+.<BR><BR>You may modify "
 "and redistribute the program under the terms of the GPL (version 2 or "
 "later).  A copy of the GPL is contained in the 'COPYING' file distributed "
@@ -6352,8 +6352,8 @@ msgid "Birthday"
 msgstr "วันเกิด"
 
 #: ../src/protocols/jabber/buddy.c:567 ../src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
-msgstr "แก้ไข XMPP vCard"
+msgid "Edit Jabber vCard"
+msgstr "แก้ไข Jabber vCard"
 
 #: ../src/protocols/jabber/buddy.c:569
 msgid ""
@@ -6451,7 +6451,7 @@ msgid "Server Instructions: %s"
 msgstr ""
 
 #: ../src/protocols/jabber/buddy.c:1392
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr "กรอกข้อมูลเกี่ยวกับผู้ใช้ที่ต้องการค้นหา"
 
 #: ../src/protocols/jabber/buddy.c:1411 ../src/protocols/novell/novell.c:1490
@@ -6460,8 +6460,8 @@ msgid "E-Mail Address"
 msgstr "ที่อยู่อีเมล"
 
 #: ../src/protocols/jabber/buddy.c:1420 ../src/protocols/jabber/buddy.c:1421
-msgid "Search for XMPP users"
-msgstr "ค้นหาผู้ใช้ XMPP"
+msgid "Search for Jabber users"
+msgstr "ค้นหาผู้ใช้ Jabber"
 
 #: ../src/protocols/jabber/buddy.c:1435
 msgid "Invalid Directory"
@@ -6582,7 +6582,7 @@ msgid "Unable to create socket"
 msgstr ""
 
 #: ../src/protocols/jabber/jabber.c:520 ../src/protocols/jabber/jabber.c:857
-msgid "Invalid XMPP ID"
+msgid "Invalid Jabber ID"
 msgstr ""
 
 #: ../src/protocols/jabber/jabber.c:590
@@ -6629,8 +6629,8 @@ msgid "Please fill out the information below to register your new account."
 msgstr "กรุณากรอกข้อมูลในการลงทะเบียนบัญชีผู้ใช้ใหม่"
 
 #: ../src/protocols/jabber/jabber.c:821 ../src/protocols/jabber/jabber.c:822
-msgid "Register New XMPP Account"
-msgstr "ลงทะเบียนผู้ใช้ XMPP ใหม่"
+msgid "Register New Jabber Account"
+msgstr "ลงทะเบียนผู้ใช้ Jabber ใหม่"
 
 #: ../src/protocols/jabber/jabber.c:983
 msgid "Initializing Stream"
@@ -6693,8 +6693,8 @@ msgid "Password (again)"
 msgstr "รหัสผ่าน (ซ้ำ)"
 
 #: ../src/protocols/jabber/jabber.c:1317 ../src/protocols/jabber/jabber.c:1318
-msgid "Change XMPP Password"
-msgstr "เปลี่ยนรหัสผ่าน XMPP"
+msgid "Change Jabber Password"
+msgstr "เปลี่ยนรหัสผ่าน Jabber"
 
 #: ../src/protocols/jabber/jabber.c:1318
 msgid "Please enter your new password"
@@ -6745,7 +6745,7 @@ msgid "Item Not Found"
 msgstr ""
 
 #: ../src/protocols/jabber/jabber.c:1428
-msgid "Malformed XMPP ID"
+msgid "Malformed Jabber ID"
 msgstr ""
 
 #: ../src/protocols/jabber/jabber.c:1430
@@ -7006,8 +7006,8 @@ msgstr ""
 #. *  summary
 #. *  description
 #: ../src/protocols/jabber/jabber.c:1883 ../src/protocols/jabber/jabber.c:1885
-msgid "XMPP Protocol Plugin"
-msgstr "ปลั๊กอิน XMPP"
+msgid "Jabber Protocol Plugin"
+msgstr "ปลั๊กอิน Jabber"
 
 #: ../src/protocols/jabber/jabber.c:1911
 msgid "Use TLS if available"
@@ -7055,7 +7055,7 @@ msgid "Message delivery to %s failed: %s"
 msgstr ""
 
 #: ../src/protocols/jabber/message.c:227
-msgid "XMPP Message Error"
+msgid "Jabber Message Error"
 msgstr ""
 
 #: ../src/protocols/jabber/message.c:295

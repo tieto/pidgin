@@ -930,7 +930,7 @@ msgid "You have mail!"
 msgstr "您收到郵件！"
 
 # FIXME check - 20061025
-#  NOTE XMPP 術語，見上
+#  NOTE Jabber 術語，見上
 #: ../finch/gntnotify.c:155 ../libpurple/protocols/jabber/jabber.c:1161
 msgid "From"
 msgstr "已認證對方"
@@ -2832,9 +2832,9 @@ msgstr "「未卜先知」將要開始的交談"
 #: ../libpurple/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
-"對方一開始與您交談，就立即打開交談視窗。適用於 AIM、ICQ、XMPP、Sametime 及 "
+"對方一開始與您交談，就立即打開交談視窗。適用於 AIM、ICQ、Jabber、Sametime 及 "
 "Yahoo。"
 
 #: ../libpurple/plugins/psychic.c:66
@@ -3113,8 +3113,8 @@ msgid "AIM Account"
 msgstr "AIM 帳號"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:583
-msgid "XMPP Account"
-msgstr "XMPP 帳號"
+msgid "Jabber Account"
+msgstr "Jabber 帳號"
 
 # NOTE 這是通訊協定名稱，不是問候語
 #: ../libpurple/protocols/bonjour/bonjour.h:35
@@ -3613,7 +3613,7 @@ msgid "Couldn't connect to host"
 msgstr "無法連到伺服器"
 
 # FIXME ambiguous - 20061025
-# NOTE XMPP 協定 Stream Error 的一種，即 <remote-connection-failed/>
+# NOTE Jabber 協定 Stream Error 的一種，即 <remote-connection-failed/>
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
 # XXX 真正的意思是「無法連線至認證所需的遠端資源」，不是「連線失敗」（見上列文章）
 #: ../libpurple/protocols/irc/irc.c:424
@@ -4302,8 +4302,8 @@ msgstr "描述"
 
 #: ../libpurple/protocols/jabber/buddy.c:582
 #: ../libpurple/protocols/jabber/buddy.c:583
-msgid "Edit XMPP vCard"
-msgstr "編輯 XMPP vCard"
+msgid "Edit Jabber vCard"
+msgstr "編輯 Jabber vCard"
 
 #: ../libpurple/protocols/jabber/buddy.c:584
 msgid ""
@@ -4324,7 +4324,7 @@ msgstr "作業系統"
 
 # TODO Untranslated
 # NOTE 譯文刪除 by Ambrose
-# NOTE XMPP 協定的「Resource」一詞通常係指一種使用者自定的字串，
+# NOTE Jabber 協定的「Resource」一詞通常係指一種使用者自定的字串，
 # NOTE 用以表示在多處地方同時登入了的情形下，目前的實在位置
 # NOTE 見 http://www.jabber.org/user/userguide.html
 #: ../libpurple/protocols/jabber/buddy.c:668
@@ -4387,7 +4387,7 @@ msgstr "取消上線狀態通知"
 msgid "(Re-)Request authorization"
 msgstr "要求或重新要求認證"
 
-# NOTE XMPP協定的「Subscribe」一詞乃「加入好友名單」的意思
+# NOTE Jabber協定的「Subscribe」一詞乃「加入好友名單」的意思
 # NOTE 見 http://www.jabber.org/user/userguide.html
 #. if(NOT ME)
 #. shouldn't this just happen automatically when the buddy is
@@ -4427,7 +4427,7 @@ msgstr "姓"
 msgid "The following are the results of your search"
 msgstr "以下為搜尋結果"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libpurple/protocols/jabber/buddy.c:1674
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -4452,8 +4452,8 @@ msgid "Server Instructions: %s"
 msgstr "伺服器指令：%s"
 
 #: ../libpurple/protocols/jabber/buddy.c:1736
-msgid "Fill in one or more fields to search for any matching XMPP users."
-msgstr "填入一個或多個欄位，以搜尋XMPP使用者。"
+msgid "Fill in one or more fields to search for any matching Jabber users."
+msgstr "填入一個或多個欄位，以搜尋Jabber使用者。"
 
 #: ../libpurple/protocols/jabber/buddy.c:1756
 #: ../libpurple/protocols/novell/novell.c:1488
@@ -4464,8 +4464,8 @@ msgstr "電子郵件"
 
 #: ../libpurple/protocols/jabber/buddy.c:1765
 #: ../libpurple/protocols/jabber/buddy.c:1766
-msgid "Search for XMPP users"
-msgstr "搜尋XMPP使用者"
+msgid "Search for Jabber users"
+msgstr "搜尋Jabber使用者"
 
 #. "Search"
 #: ../libpurple/protocols/jabber/buddy.c:1767
@@ -4618,8 +4618,8 @@ msgstr "無法建立 Socket"
 
 #: ../libpurple/protocols/jabber/jabber.c:567
 #: ../libpurple/protocols/jabber/jabber.c:910
-msgid "Invalid XMPP ID"
-msgstr "XMPP 帳號無效"
+msgid "Invalid Jabber ID"
+msgstr "Jabber 帳號無效"
 
 #: ../libpurple/protocols/jabber/jabber.c:638
 #, c-format
@@ -4673,8 +4673,8 @@ msgstr "為您的新帳戶註冊，請填寫下列資料："
 
 #: ../libpurple/protocols/jabber/jabber.c:873
 #: ../libpurple/protocols/jabber/jabber.c:874
-msgid "Register New XMPP Account"
-msgstr "註冊新的 XMPP 帳戶"
+msgid "Register New Jabber Account"
+msgstr "註冊新的 Jabber 帳戶"
 
 #. Register button
 #: ../libpurple/protocols/jabber/jabber.c:875 ../pidgin/gtkaccount.c:1478
@@ -4712,17 +4712,17 @@ msgstr "未認證"
 msgid "Both"
 msgstr "已互相認證"
 
-#  NOTE XMPP 術語，見上
+#  NOTE Jabber 術語，見上
 #: ../libpurple/protocols/jabber/jabber.c:1159
 msgid "From (To pending)"
 msgstr "已認證對方（但仍等待對方認證您）"
 
-#  NOTE XMPP 術語，見上
+#  NOTE Jabber 術語，見上
 #: ../libpurple/protocols/jabber/jabber.c:1164
 msgid "To"
 msgstr "已獲對方認證"
 
-#  NOTE XMPP 術語，見上
+#  NOTE Jabber 術語，見上
 #: ../libpurple/protocols/jabber/jabber.c:1166
 msgid "None (To pending)"
 msgstr "無（但正等待對方認證您）"
@@ -4733,7 +4733,7 @@ msgstr "無（但正等待對方認證您）"
 msgid "None"
 msgstr "無"
 
-#  NOTE XMPP 術語，見上
+#  NOTE Jabber 術語，見上
 #: ../libpurple/protocols/jabber/jabber.c:1171
 msgid "Subscription"
 msgstr "認證狀態"
@@ -4757,8 +4757,8 @@ msgstr "舊密碼（再次確認）"
 
 #: ../libpurple/protocols/jabber/jabber.c:1368
 #: ../libpurple/protocols/jabber/jabber.c:1369
-msgid "Change XMPP Password"
-msgstr "修改 XMPP 密碼"
+msgid "Change Jabber Password"
+msgstr "修改 Jabber 密碼"
 
 #: ../libpurple/protocols/jabber/jabber.c:1369
 msgid "Please enter your new password"
@@ -4787,7 +4787,7 @@ msgstr "搜尋使用者..."
 msgid "Bad Request"
 msgstr "傳送網址時發生了不明的錯誤"
 
-#  NOTE XMPP 錯誤 <conflict/>，表示已透過同一名稱或在同一位址，以相同的 Resource
+#  NOTE Jabber 錯誤 <conflict/>，表示已透過同一名稱或在同一位址，以相同的 Resource
 #  NOTE（大概係指登入用的使用者自定字串）或工作階段登入，以致無法存取
 #  NOTE 詳見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-23.txt
 #  NOTE 譯文更動 by Ambrose
@@ -4799,13 +4799,13 @@ msgstr "名稱或位址衝突"
 msgid "Feature Not Implemented"
 msgstr "該功能尚未實作"
 
-#  NOTE XMPP 錯誤 <forbidden/>，意思正常（表示權限不夠）
+#  NOTE Jabber 錯誤 <forbidden/>，意思正常（表示權限不夠）
 #  NOTE 詳見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-23.txt
 #: ../libpurple/protocols/jabber/jabber.c:1473
 msgid "Forbidden"
 msgstr "權限不夠"
 
-#  NOTE XMPP 錯誤 <gone/>，表示使用者或伺服器曾經上線，後來離了線
+#  NOTE Jabber 錯誤 <gone/>，表示使用者或伺服器曾經上線，後來離了線
 #  NOTE 詳見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-23.txt
 #: ../libpurple/protocols/jabber/jabber.c:1475
 msgid "Gone"
@@ -4821,10 +4821,10 @@ msgid "Item Not Found"
 msgstr "項目未找到"
 
 #: ../libpurple/protocols/jabber/jabber.c:1481
-msgid "Malformed XMPP ID"
-msgstr "畸型的 XMPP ID"
+msgid "Malformed Jabber ID"
+msgstr "畸型的 Jabber ID"
 
-#  NOTE XMPP 錯誤 <not-acceptable/>，表示所送出的要求未能達到伺服器或收件人所訂下的
+#  NOTE Jabber 錯誤 <not-acceptable/>，表示所送出的要求未能達到伺服器或收件人所訂下的
 #  NOTE 條件（例如訊息中含有禁字），以致無法存取
 #  NOTE 詳見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-23.txt
 #: ../libpurple/protocols/jabber/jabber.c:1483
@@ -4839,7 +4839,7 @@ msgstr "不被允許"
 msgid "Payment Required"
 msgstr "必須付款"
 
-#  NOTE XMPP 錯誤 <recipient-unavailable/>
+#  NOTE Jabber 錯誤 <recipient-unavailable/>
 #  NOTE 詳見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-23.txt
 #  NOTE「暫時無法聯絡」應該比「不存在」通順
 #  NOTE 譯文更動 by Ambrose
@@ -4863,14 +4863,14 @@ msgstr "遠端伺服器逾時"
 msgid "Server Overloaded"
 msgstr "伺服器超載"
 
-#  NOTE XMPP 錯誤 <service-unavailable/>，表示伺服器收到一個意義不明的指令
+#  NOTE Jabber 錯誤 <service-unavailable/>，表示伺服器收到一個意義不明的指令
 #  NOTE 詳見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-23.txt
 #  NOTE 譯文更動 by Ambrose
 #: ../libpurple/protocols/jabber/jabber.c:1503
 msgid "Service Unavailable"
 msgstr "不提供該項服務"
 
-#  NOTE XMPP 錯誤 <subscription-required/>，表示使用「服務」前
+#  NOTE Jabber 錯誤 <subscription-required/>，表示使用「服務」前
 #  NOTE 必須事先取得「Subscription」（認證）
 #  NOTE 詳見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-23.txt
 #: ../libpurple/protocols/jabber/jabber.c:1505
@@ -4919,10 +4919,10 @@ msgid "Bad Namespace Prefix"
 msgstr "無效的 Namespace Prefix"
 
 # FIXME 很不通順，譯文有待改進
-# NOTE XMPP 協定的「Resource」一詞為使用者自定的一種字串，
+# NOTE Jabber 協定的「Resource」一詞為使用者自定的一種字串，
 # NOTE 表示在多處地方同時登入了的情形下，目前的實在位置
 # NOTE 見 http://www.jabber.org/user/userguide.html
-# NOTE XMPP 協定中 Stanza Error 的一種，即 <conflict/>
+# NOTE Jabber 協定中 Stanza Error 的一種，即 <conflict/>
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
 #: ../libpurple/protocols/jabber/jabber.c:1544
 msgid "Resource Conflict"
@@ -4933,13 +4933,13 @@ msgstr "已經以指定的 Resource 在其他地方登入"
 msgid "Connection Timeout"
 msgstr "連線已逾時"
 
-# NOTE XMPP 協定中 Stream Error 的一種，即 <host-gone/>
+# NOTE Jabber 協定中 Stream Error 的一種，即 <host-gone/>
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
 #: ../libpurple/protocols/jabber/jabber.c:1548
 msgid "Host Gone"
 msgstr "伺服器已不再支援所給定的伺服器名稱"
 
-# NOTE XMPP 協定中 Stream Error 的一種，即 <host-unknown/>
+# NOTE Jabber 協定中 Stream Error 的一種，即 <host-unknown/>
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
 #: ../libpurple/protocols/jabber/jabber.c:1550
 msgid "Host Unknown"
@@ -4963,45 +4963,45 @@ msgid "Invalid XML"
 msgstr "無效的 XML"
 
 # XXX 這是暫譯，譯文有待改進
-# NOTE XMPP 協定中的「nonmatching-hosts」
+# NOTE Jabber 協定中的「nonmatching-hosts」
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
 #: ../libpurple/protocols/jabber/jabber.c:1562
 msgid "Non-matching Hosts"
 msgstr "主機名稱不相乎"
 
 # XXX 這是暫譯，譯文有待改進。不過好像真的有人這樣寫，大概沒有太大的問題
-# NOTE XMPP 協定 xmpp-core 中 Stream Error 的一種，即 <policy-violation/>
+# NOTE Jabber 協定 xmpp-core 中 Stream Error 的一種，即 <policy-violation/>
 # NOTE 見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-19.html
 #: ../libpurple/protocols/jabber/jabber.c:1566
 msgid "Policy Violation"
 msgstr "違反了服務政策"
 
-# NOTE XMPP 協定 Stream Error 的一種，即 <remote-connection-failed/>
+# NOTE Jabber 協定 Stream Error 的一種，即 <remote-connection-failed/>
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
 #: ../libpurple/protocols/jabber/jabber.c:1568
 msgid "Remote Connection Failed"
 msgstr "無法連線至認證所需的遠端資源"
 
-# NOTE XMPP 協定 Stream Error 的一種，即 <resource-constraint/>
+# NOTE Jabber 協定 Stream Error 的一種，即 <resource-constraint/>
 # NOTE 在這裏的 Resource 一詞與登入時使用者所用的 Resource 一詞意義並不相同
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
 #: ../libpurple/protocols/jabber/jabber.c:1570
 msgid "Resource Constraint"
 msgstr "伺服器資源短缺"
 
-# NOTE XMPP 協定 xmpp-core 中 Stream Error 的一種，即 <restricted-xml/>
+# NOTE Jabber 協定 xmpp-core 中 Stream Error 的一種，即 <restricted-xml/>
 # NOTE 見 http://www.jabber.org/ietf/draft-ietf-xmpp-core-18.html
 #: ../libpurple/protocols/jabber/jabber.c:1572
 msgid "Restricted XML"
-msgstr "XML 中存在有 XMPP 協定不容許的 XML 元素"
+msgstr "XML 中存在有 Jabber 協定不容許的 XML 元素"
 
-# NOTE XMPP 協定中 Stream Error 的一種，即 <see-other-host/>
+# NOTE Jabber 協定中 Stream Error 的一種，即 <see-other-host/>
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
 #: ../libpurple/protocols/jabber/jabber.c:1574
 msgid "See Other Host"
 msgstr "伺服器在認證期間要求了重新導向至另一伺服器"
 
-# NOTE XMPP 協定中 Stream Error 的一種，即 <system-shutdown/>
+# NOTE Jabber 協定中 Stream Error 的一種，即 <system-shutdown/>
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-June/001226.html
 #: ../libpurple/protocols/jabber/jabber.c:1576
 msgid "System Shutdown"
@@ -5017,13 +5017,13 @@ msgstr "傳送網址時發生了不明的錯誤"
 msgid "Unsupported Encoding"
 msgstr "伺服器不支援給定的字元編碼"
 
-# NOTE XMPP 協定中 Stream Error 的一種，即 <unsupported-stanza-type/>
+# NOTE Jabber 協定中 Stream Error 的一種，即 <unsupported-stanza-type/>
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-March/000752.html
 #: ../libpurple/protocols/jabber/jabber.c:1582
 msgid "Unsupported Stanza Type"
 msgstr "伺服器不支援給定的段落類別 (Stanza Type)"
 
-# NOTE XMPP 協定中 Stream Error 的一種，即 <unsupported-version/>
+# NOTE Jabber 協定中 Stream Error 的一種，即 <unsupported-version/>
 # NOTE 見 http://www.jabber.org/pipermail/xmppwg/2003-March/000752.html
 #: ../libpurple/protocols/jabber/jabber.c:1584
 msgid "Unsupported Version"
@@ -5144,8 +5144,8 @@ msgstr "msg &lt;使用者&gt; &lt;訊息&gt;：傳送私人訊息給另一個使
 #. *  description
 #: ../libpurple/protocols/jabber/jabber.c:1972
 #: ../libpurple/protocols/jabber/jabber.c:1974
-msgid "XMPP Protocol Plugin"
-msgstr "XMPP 協定模組"
+msgid "Jabber Protocol Plugin"
+msgstr "Jabber 協定模組"
 
 #: ../libpurple/protocols/jabber/jabber.c:2000
 msgid "Force old (port 5223) SSL"
@@ -5188,8 +5188,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "無法傳送訊息到 %s：%s"
 
 #: ../libpurple/protocols/jabber/message.c:272
-msgid "XMPP Message Error"
-msgstr "XMPP 訊息錯誤"
+msgid "Jabber Message Error"
+msgstr "Jabber 訊息錯誤"
 
 #: ../libpurple/protocols/jabber/message.c:352
 #, c-format
@@ -12660,8 +12660,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "程式編寫者兼指定司機 [死懶鬼]"
 
 #: ../pidgin/gtkdialogs.c:113
-msgid "XMPP developer"
-msgstr "XMPP 開發者"
+msgid "Jabber developer"
+msgstr "Jabber 開發者"
 
 #: ../pidgin/gtkdialogs.c:114
 msgid "original author"
@@ -12959,7 +12959,7 @@ msgstr "關於 %s"
 #: ../pidgin/gtkdialogs.c:359
 #, c-format
 msgid ""
-"%s is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, "
+"%s is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, "
 "ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, "
 "Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You "
 "may modify and redistribute the program under the terms of the GPL (version "
@@ -12968,7 +12968,7 @@ msgid ""
 "'COPYRIGHT' file for the complete list of contributors.  We provide no "
 "warranty for this program.<BR><BR>"
 msgstr ""
-"%s 係一個以 GTK+ 開發的模組化訊息程式，同時提供 AIM、MSN、Yahoo!、XMPP、"
+"%s 係一個以 GTK+ 開發的模組化訊息程式，同時提供 AIM、MSN、Yahoo!、Jabber、"
 "ICQ、IRC、SILC、SIP/SIMPLE、Novell GroupWise、Lotus Sametime、Bonjour、"
 "Zephyr、Gadu-Gadu 及 QQ 等功能。<BR><BR>倘若您希望修改或發佈這個程式，只需按"
 "照 GPL（第二版或任何以後的版本）的條款即可；%s 內已附有一份 GPL, 收錄在名為"
@@ -15381,10 +15381,10 @@ msgstr "讓您直接輸入指令對各種文字模式的通訊協定進行操作
 
 #: ../pidgin/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"讓您直接輸入指令對各種文字模式的通訊協定（例如 XMPP、MSN、IRC 及 TOC）進行"
+"讓您直接輸入指令對各種文字模式的通訊協定（例如 Jabber、MSN、IRC 及 TOC）進行"
 "操作。在輸入欄位輸入指令，按 Enter 後鍵送出；相關資訊會在除錯視窗顯示。"
 
 # XXX 暫譯
@@ -15748,7 +15748,7 @@ msgstr "帳號："
 msgid "<font color='#777777'>Not connected to XMPP</font>"
 msgstr "<font color='#777777'>未有連線至 XMPP</font>"
 
-#  NOTE XMPP 的「stanza」譯「段落」，下同
+#  NOTE Jabber 的「stanza」譯「段落」，下同
 #: ../pidgin/plugins/xmppconsole.c:790
 msgid "Insert an <iq/> stanza."
 msgstr "插入 <iq/> 段落。"
@@ -16517,10 +16517,10 @@ msgstr "幫助為 XMPP 伺服器或客戶端進行除錯。"
 #~ msgid "_Warn"
 #~ msgstr "警告(_W)"
 
-#~ msgid "XMPP ID"
-#~ msgstr "XMPP 帳號"
+#~ msgid "Jabber ID"
+#~ msgstr "Jabber 帳號"
 
-#  NOTE XMPP 術語，見上
+#  NOTE Jabber 術語，見上
 #~ msgid "(pending)"
 #~ msgstr "（等待認證）"
 

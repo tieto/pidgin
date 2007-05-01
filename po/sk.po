@@ -2358,8 +2358,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker a vymenovaný šofér [lenivý zadok]"
 
 #: ../gtk/gtkdialogs.c:108
-msgid "XMPP developer"
-msgstr "XMPP vývojár"
+msgid "Jabber developer"
+msgstr "Jabber vývojár"
 
 #: ../gtk/gtkdialogs.c:109
 msgid "original author"
@@ -2587,7 +2587,7 @@ msgstr "O programe Gaim"
 #: ../gtk/gtkdialogs.c:332
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+."
 "<BR><BR>You may modify and redistribute the program under the terms of the "
 "GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' "
@@ -2596,7 +2596,7 @@ msgid ""
 "warranty for this program.<BR><BR>"
 msgstr ""
 "Gaim je modulárny IM klient, ktorý podporuje protokol AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
 "a Gadu-Gadu.  Je vytvorený pomocou knižnice GTK+.<BR><BR>Tento program "
 "môžete upravovať a distribuovať podľa podmienok licencie GPL (vo verzii 2 alebo "
 "novšej).  Kópia licencie GPL sa nachádza v súbore 'COPYING', ktorý je dodávaný "
@@ -5103,10 +5103,10 @@ msgstr "Nechá vás odoslať priamy vstup textovo-založeným protokolom."
 
 #: ../gtk/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Nechá vás odoslať priamy vstup textovo-založeným protokolom (XMPP, MSN, "
+"Nechá vás odoslať priamy vstup textovo-založeným protokolom (Jabber, MSN, "
 "IRC, TOC). Pre odoslanie stlačte Enter vo vstupnom poli. Sledujte ladiace "
 "okno."
 
@@ -6365,11 +6365,11 @@ msgstr "Psychický mód pre prichádzajúci rozhovor"
 #: ../libgaim/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 "Spôsobí, že okná konverzácie sa objavia v momente, keď vám ostatní "
 "používatelia začnú písať správu.  Funguje pre protokoly AIM, ICQ, "
-"XMPP, Sametime a Yahoo!"
+"Jabber, Sametime a Yahoo!"
 
 #: ../libgaim/plugins/psychic.c:66
 msgid "You feel a disturbance in the force..."
@@ -6639,8 +6639,8 @@ msgid "AIM Account"
 msgstr "AIM účet"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:593
-msgid "XMPP Account"
-msgstr "XMPP účet"
+msgid "Jabber Account"
+msgstr "Jabber účet"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -7755,8 +7755,8 @@ msgstr "Narodeniny"
 
 #: ../libgaim/protocols/jabber/buddy.c:585
 #: ../libgaim/protocols/jabber/buddy.c:586
-msgid "Edit XMPP vCard"
-msgstr "Upraviť XMPP vCard"
+msgid "Edit Jabber vCard"
+msgstr "Upraviť Jabber vCard"
 
 #: ../libgaim/protocols/jabber/buddy.c:587
 msgid ""
@@ -7874,7 +7874,7 @@ msgstr "Priezvisko"
 msgid "The following are the results of your search"
 msgstr "Nižšie sú výsledky vášho vyhľadávania"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1637
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -7899,7 +7899,7 @@ msgid "Server Instructions: %s"
 msgstr "Inštrukcie serveru: %s"
 
 #: ../libgaim/protocols/jabber/buddy.c:1699
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr "Vyplňte jedno alebo viac políčok na hľadanie "
 
 #: ../libgaim/protocols/jabber/buddy.c:1719
@@ -7911,8 +7911,8 @@ msgstr "E-mailová adresa"
 
 #: ../libgaim/protocols/jabber/buddy.c:1728
 #: ../libgaim/protocols/jabber/buddy.c:1729
-msgid "Search for XMPP users"
-msgstr "Vyhľadávať používateľov XMPP"
+msgid "Search for Jabber users"
+msgstr "Vyhľadávať používateľov Jabber"
 
 #: ../libgaim/protocols/jabber/buddy.c:1743
 msgid "Invalid Directory"
@@ -8041,8 +8041,8 @@ msgstr "Nepodarilo sa vytvoriť socket"
 
 #: ../libgaim/protocols/jabber/jabber.c:549
 #: ../libgaim/protocols/jabber/jabber.c:892
-msgid "Invalid XMPP ID"
-msgstr "Nesprávne XMPP ID"
+msgid "Invalid Jabber ID"
+msgstr "Nesprávne Jabber ID"
 
 #: ../libgaim/protocols/jabber/jabber.c:620
 #, c-format
@@ -8095,8 +8095,8 @@ msgstr "Ak si chcete zaregistrovať nový účet, vyplňte, prosím, nižšie uv
 
 #: ../libgaim/protocols/jabber/jabber.c:855
 #: ../libgaim/protocols/jabber/jabber.c:856
-msgid "Register New XMPP Account"
-msgstr "Registrovať nový XMPP účet"
+msgid "Register New Jabber Account"
+msgstr "Registrovať nový Jabber účet"
 
 #: ../libgaim/protocols/jabber/jabber.c:1020
 msgid "Initializing Stream"
@@ -8159,8 +8159,8 @@ msgstr "Heslo (znovu)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1356
 #: ../libgaim/protocols/jabber/jabber.c:1357
-msgid "Change XMPP Password"
-msgstr "Zmeniť XMPP heslo"
+msgid "Change Jabber Password"
+msgstr "Zmeniť Jabber heslo"
 
 #: ../libgaim/protocols/jabber/jabber.c:1357
 msgid "Please enter your new password"
@@ -8214,8 +8214,8 @@ msgid "Item Not Found"
 msgstr "Položka nenájdená"
 
 #: ../libgaim/protocols/jabber/jabber.c:1467
-msgid "Malformed XMPP ID"
-msgstr "Chybné XMPP ID"
+msgid "Malformed Jabber ID"
+msgstr "Chybné Jabber ID"
 
 #: ../libgaim/protocols/jabber/jabber.c:1469
 msgid "Not Acceptable"
@@ -8480,8 +8480,8 @@ msgstr "msg &lt;používateľ&gt; &lt;správa&gt;: Odosle súkromnú správu in�
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1956
 #: ../libgaim/protocols/jabber/jabber.c:1958
-msgid "XMPP Protocol Plugin"
-msgstr "Modul protokolu XMPP"
+msgid "Jabber Protocol Plugin"
+msgstr "Modul protokolu Jabber"
 
 #: ../libgaim/protocols/jabber/jabber.c:1984
 msgid "Force old (port 5223) SSL"
@@ -8523,8 +8523,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Doručenie správy používateľovi %s zlyhalo: %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "XMPP Message Error"
-msgstr "Chyba správy XMPP"
+msgid "Jabber Message Error"
+msgstr "Chyba správy Jabber"
 
 #: ../libgaim/protocols/jabber/message.c:316
 #, c-format

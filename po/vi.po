@@ -871,10 +871,10 @@ msgstr "Để bạn gửi dữ liệu nhập đến các giao thức dựa trên
 
 #: plugins/raw.c:154
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Để bạn gửi dữ liệu nhập đến giao thức dựa trên văn bản (XMPP, MSN, IRC, "
+"Để bạn gửi dữ liệu nhập đến giao thức dựa trên văn bản (Jabber, MSN, IRC, "
 "TOC). Nhấn 'Enter' trong hộp nhập để gửi đi. Theo dõi cửa sổ gỡ rối."
 
 #: plugins/relnot.c:63
@@ -2845,8 +2845,8 @@ msgstr "người bảo trì thư viện trước đây"
 
 #: src/gtkdialogs.c:92
 #, fuzzy
-msgid "XMPP developer"
-msgstr "người lập trình XMPP trước đây"
+msgid "Jabber developer"
+msgstr "người lập trình Jabber trước đây"
 
 #: src/gtkdialogs.c:93
 msgid "original author"
@@ -3022,11 +3022,11 @@ msgstr "Giới thiệu Gaim"
 #, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
 msgstr ""
 "Gaim là trình khách nhắn tin có khả năng sử dụng AIM, ICQ, Yahoo!, MSN, IRC, "
-"XMPP, Napster, Zephyr, và Gadu-Gadu. Gaim sử dụng Gtk+ và đăng ký theo GPL."
+"Jabber, Napster, Zephyr, và Gadu-Gadu. Gaim sử dụng Gtk+ và đăng ký theo GPL."
 "<BR><BR>"
 
 #: src/gtkdialogs.c:235
@@ -5058,7 +5058,7 @@ msgstr "Email"
 #: src/protocols/gg/gg.c:1495 src/protocols/gg/gg.c:1496
 #, fuzzy
 msgid "Register New Gadu-Gadu Account"
-msgstr "Đăng ký tài khoản XMPP mới"
+msgstr "Đăng ký tài khoản Jabber mới"
 
 #: src/protocols/gg/gg.c:1497
 msgid "Please, fill in the following fields"
@@ -5745,8 +5745,8 @@ msgid "Birthday"
 msgstr "Ngày sinh"
 
 #: src/protocols/jabber/buddy.c:567 src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
-msgstr "Soạn XMPP vCard"
+msgid "Edit Jabber vCard"
+msgstr "Soạn Jabber vCard"
 
 #: src/protocols/jabber/buddy.c:569
 msgid ""
@@ -5755,8 +5755,8 @@ msgid ""
 msgstr "Mọi mục bên dưới là tùy chọn. Chỉ nhập thông tin bạn thấy cần thiết."
 
 #: src/protocols/jabber/buddy.c:616
-msgid "XMPP ID"
-msgstr "XMPP ID"
+msgid "Jabber ID"
+msgstr "Jabber ID"
 
 #: src/protocols/jabber/buddy.c:642 src/protocols/jabber/jabber.c:1711
 msgid "Resource"
@@ -5834,7 +5834,7 @@ msgid "The following are the results of your search"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1327
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
@@ -5853,7 +5853,7 @@ msgstr "Địa chỉ e-mail"
 
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
 #, fuzzy
-msgid "Search for XMPP users"
+msgid "Search for Jabber users"
 msgstr "Tìm kiếm buddy bằng địa chỉ e-mail"
 
 #: src/protocols/jabber/buddy.c:1370
@@ -5982,8 +5982,8 @@ msgid "Unable to create socket"
 msgstr "Không tạo được socket"
 
 #: src/protocols/jabber/jabber.c:403 src/protocols/jabber/jabber.c:740
-msgid "Invalid XMPP ID"
-msgstr "ID XMPP không hợp lệ"
+msgid "Invalid Jabber ID"
+msgstr "ID Jabber không hợp lệ"
 
 #: src/protocols/jabber/jabber.c:473
 #, c-format
@@ -6029,8 +6029,8 @@ msgid "Please fill out the information below to register your new account."
 msgstr "Hãy điền thông tin bên dưới để đăng ký tài khoản mới cho bạn."
 
 #: src/protocols/jabber/jabber.c:704 src/protocols/jabber/jabber.c:705
-msgid "Register New XMPP Account"
-msgstr "Đăng ký tài khoản XMPP mới"
+msgid "Register New Jabber Account"
+msgstr "Đăng ký tài khoản Jabber mới"
 
 #: src/protocols/jabber/jabber.c:842
 msgid "Initializing Stream"
@@ -6107,8 +6107,8 @@ msgid "Password (again)"
 msgstr "Nhập lại mật khẩu"
 
 #: src/protocols/jabber/jabber.c:1160 src/protocols/jabber/jabber.c:1161
-msgid "Change XMPP Password"
-msgstr "Đổi mật khẩu XMPP"
+msgid "Change Jabber Password"
+msgstr "Đổi mật khẩu Jabber"
 
 #: src/protocols/jabber/jabber.c:1161
 msgid "Please enter your new password"
@@ -6162,8 +6162,8 @@ msgstr ""
 
 #: src/protocols/jabber/jabber.c:1271
 #, fuzzy
-msgid "Malformed XMPP ID"
-msgstr "ID XMPP không hợp lệ"
+msgid "Malformed Jabber ID"
+msgstr "ID Jabber không hợp lệ"
 
 #: src/protocols/jabber/jabber.c:1273
 #, fuzzy
@@ -6421,8 +6421,8 @@ msgstr ""
 #. *  summary
 #. *  description
 #: src/protocols/jabber/jabber.c:1686 src/protocols/jabber/jabber.c:1688
-msgid "XMPP Protocol Plugin"
-msgstr "Plugin giao thức XMPP"
+msgid "Jabber Protocol Plugin"
+msgstr "Plugin giao thức Jabber"
 
 #: src/protocols/jabber/jabber.c:1714
 msgid "Use TLS if available"
@@ -6472,8 +6472,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Không gửi được thông điệp tới %s: %s"
 
 #: src/protocols/jabber/message.c:233
-msgid "XMPP Message Error"
-msgstr "Lỗi Thông Điệp XMPP"
+msgid "Jabber Message Error"
+msgstr "Lỗi Thông Điệp Jabber"
 
 #: src/protocols/jabber/message.c:297
 #, c-format
@@ -12229,8 +12229,8 @@ msgstr "g003: Lỗi mở kết nối.\n"
 #~ msgid "Invalid nickname"
 #~ msgstr "Tên người dùng không hợp lệ"
 
-#~ msgid "XMPP Profile"
-#~ msgstr "Lý lịch XMPP"
+#~ msgid "Jabber Profile"
+#~ msgstr "Lý lịch Jabber"
 
 #, fuzzy
 #~ msgid "Roomlist Error"

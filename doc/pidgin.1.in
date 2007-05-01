@@ -28,7 +28,7 @@ Pidgin v@VERSION@ \- Instant Messaging client
 
 .SH DESCRIPTION
 .PP
-Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP,
+Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber,
 ICQ, IRC, SILC, SIP/SIMPLE Novell GroupWise, Lotus Sametime, Bonjour,
 Zephyr, Gadu-Gadu, and QQ all at once.  It has many common features found in
 other clients, as well as many unique features.  Pidgin is not endorsed by or

@@ -2565,8 +2565,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker och fyllechaffis [lat typ]"
 
 #: ../gtk/gtkdialogs.c:108
-msgid "XMPP developer"
-msgstr "XMPP-utvecklare"
+msgid "Jabber developer"
+msgstr "Jabber-utvecklare"
 
 #: ../gtk/gtkdialogs.c:109
 msgid "original author"
@@ -2835,8 +2835,8 @@ msgid "About Gaim"
 msgstr "Om Gaim"
 
 #: ../gtk/gtkdialogs.c:332
-msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
-msgstr "Gaim är en modulär meddelandeklient kapabel att använda AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu och QQ samtidigt.  Det är skrivet med GTK+.<BR><BR>Du kan ändra och distribuera programmet enligt GPL (version 2 eller senare).  En kopia av GPL finns i filen 'COPYING' som kommer med Gaim.  Gaim är kopieringsskyddad av dess bidragsgivare.  Se filen 'COPYRIGHT' för en komplett lista av bidragsgivare.  Vi ger inga garantier för detta program.<BR><BR>"
+msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
+msgstr "Gaim är en modulär meddelandeklient kapabel att använda AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu och QQ samtidigt.  Det är skrivet med GTK+.<BR><BR>Du kan ändra och distribuera programmet enligt GPL (version 2 eller senare).  En kopia av GPL finns i filen 'COPYING' som kommer med Gaim.  Gaim är kopieringsskyddad av dess bidragsgivare.  Se filen 'COPYRIGHT' för en komplett lista av bidragsgivare.  Vi ger inga garantier för detta program.<BR><BR>"
 
 #: ../gtk/gtkdialogs.c:347
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
@@ -5356,8 +5356,8 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "Låter dig skicka rå indata till textbaserade protokoll."
 
 #: ../gtk/plugins/raw.c:178
-msgid "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
-msgstr "Låter dig skicka rå indata till textbaserade protokoll (XMPP, MSN, IRC, TOC). Tryck \"Enter\" i inmatningsrutan för att skicka. Titta i felsökningsfönstret."
+msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
+msgstr "Låter dig skicka rå indata till textbaserade protokoll (Jabber, MSN, IRC, TOC). Tryck \"Enter\" i inmatningsrutan för att skicka. Titta i felsökningsfönstret."
 
 #: ../gtk/plugins/relnot.c:69
 #, c-format
@@ -6585,8 +6585,8 @@ msgid "Psychic mode for incoming conversation"
 msgstr "Siande läge för inkommande konversation"
 
 #: ../libgaim/plugins/psychic.c:21
-msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
-msgstr "Får konversationsfönster att dyka upp då andra användare börjar att skicka meddelande till dig. Detta fungerar för AIM, ICQ, XMPP, Sametime och Yahoo!"
+msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
+msgstr "Får konversationsfönster att dyka upp då andra användare börjar att skicka meddelande till dig. Detta fungerar för AIM, ICQ, Jabber, Sametime och Yahoo!"
 
 #: ../libgaim/plugins/psychic.c:66
 msgid "You feel a disturbance in the force..."
@@ -6841,8 +6841,8 @@ msgid "AIM Account"
 msgstr "AIM-konto"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:594
-msgid "XMPP Account"
-msgstr "XMPP-konto"
+msgid "Jabber Account"
+msgstr "Jabber-konto"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -7924,12 +7924,12 @@ msgstr "Roll"
 msgid "Birthday"
 msgstr "Födelsedag"
 
-# "vCard" fattar ingen som inte insatt i XMPP vad det betyder.
+# "vCard" fattar ingen som inte insatt i Jabber vad det betyder.
 # Visitkort känner däremot de flesta till.
 #: ../libgaim/protocols/jabber/buddy.c:582
 #: ../libgaim/protocols/jabber/buddy.c:583
-msgid "Edit XMPP vCard"
-msgstr "Redigera XMPP-visitkort"
+msgid "Edit Jabber vCard"
+msgstr "Redigera Jabber-visitkort"
 
 #: ../libgaim/protocols/jabber/buddy.c:584
 msgid "All items below are optional. Enter only the information with which you feel comfortable."
@@ -7947,7 +7947,7 @@ msgstr "Operativsystem"
 
 # Detta begrepp är ju skumt nog som det är på engelska, så det kanske
 # är lika bra att använda ett svensk ord som är nästan snarlikt så
-# att åtminstone de som känner till vad Resource betyder i XMPP
+# att åtminstone de som känner till vad Resource betyder i Jabber
 # fattar vad det är."Resurs" används också i strängen "Resurskonflikt"
 # på ett annat ställe i denna fil.
 #: ../libgaim/protocols/jabber/buddy.c:654
@@ -8046,7 +8046,7 @@ msgstr "Efternamn"
 msgid "The following are the results of your search"
 msgstr "Din sökning gav följande resultat"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1637
 msgid "Find a contact by entering the search criteria in the given fields. Note: Each field supports wild card searches (%)"
 msgstr "Hitta en kontakt genom att ange sökkriteriet i de givna fälten. Notera: Alla fälten stödjer wild card sökningar (%)"
@@ -8067,8 +8067,8 @@ msgid "Server Instructions: %s"
 msgstr "Serverinstruktioner: %s"
 
 #: ../libgaim/protocols/jabber/buddy.c:1699
-msgid "Fill in one or more fields to search for any matching XMPP users."
-msgstr "Fyll i ett eller flera fält för att söka efter matchande XMPPanvändare."
+msgid "Fill in one or more fields to search for any matching Jabber users."
+msgstr "Fyll i ett eller flera fält för att söka efter matchande Jabberanvändare."
 
 #: ../libgaim/protocols/jabber/buddy.c:1719
 #: ../libgaim/protocols/novell/novell.c:1488
@@ -8079,8 +8079,8 @@ msgstr "E-postadress"
 
 #: ../libgaim/protocols/jabber/buddy.c:1728
 #: ../libgaim/protocols/jabber/buddy.c:1729
-msgid "Search for XMPP users"
-msgstr "Sök efter XMPPanvändare"
+msgid "Search for Jabber users"
+msgstr "Sök efter Jabberanvändare"
 
 #: ../libgaim/protocols/jabber/buddy.c:1743
 msgid "Invalid Directory"
@@ -8211,8 +8211,8 @@ msgstr "Kan inte skapa socket"
 
 #: ../libgaim/protocols/jabber/jabber.c:550
 #: ../libgaim/protocols/jabber/jabber.c:893
-msgid "Invalid XMPP ID"
-msgstr "Ogiltigt XMPP-ID"
+msgid "Invalid Jabber ID"
+msgstr "Ogiltigt Jabber-ID"
 
 #: ../libgaim/protocols/jabber/jabber.c:621
 #, c-format
@@ -8266,8 +8266,8 @@ msgstr "Fyll i informationen nedan för att registrera ditt nya konto."
 
 #: ../libgaim/protocols/jabber/jabber.c:856
 #: ../libgaim/protocols/jabber/jabber.c:857
-msgid "Register New XMPP Account"
-msgstr "Registrera nytt XMPP-konto"
+msgid "Register New Jabber Account"
+msgstr "Registrera nytt Jabber-konto"
 
 #: ../libgaim/protocols/jabber/jabber.c:1023
 msgid "Initializing Stream"
@@ -8330,8 +8330,8 @@ msgstr "Lösenord (igen)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1363
 #: ../libgaim/protocols/jabber/jabber.c:1364
-msgid "Change XMPP Password"
-msgstr "Byt XMPP-lösenord"
+msgid "Change Jabber Password"
+msgstr "Byt Jabber-lösenord"
 
 #: ../libgaim/protocols/jabber/jabber.c:1364
 msgid "Please enter your new password"
@@ -8385,8 +8385,8 @@ msgid "Item Not Found"
 msgstr "Föremålet hittades inte"
 
 #: ../libgaim/protocols/jabber/jabber.c:1474
-msgid "Malformed XMPP ID"
-msgstr "Felformaterat XMPP-ID"
+msgid "Malformed Jabber ID"
+msgstr "Felformaterat Jabber-ID"
 
 #: ../libgaim/protocols/jabber/jabber.c:1476
 msgid "Not Acceptable"
@@ -8643,8 +8643,8 @@ msgstr "msg &lt;användare&gt; &lt;meddelande&gt;:  Skicka ett privat meddelande
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1963
 #: ../libgaim/protocols/jabber/jabber.c:1965
-msgid "XMPP Protocol Plugin"
-msgstr "XMPP-insticksmodul"
+msgid "Jabber Protocol Plugin"
+msgstr "Jabber-insticksmodul"
 
 #: ../libgaim/protocols/jabber/jabber.c:1991
 msgid "Force old (port 5223) SSL"
@@ -8686,8 +8686,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Leverans av meddelande till %s misslyckades: %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "XMPP Message Error"
-msgstr "XMPP-meddelandefel"
+msgid "Jabber Message Error"
+msgstr "Jabber-meddelandefel"
 
 #: ../libgaim/protocols/jabber/message.c:316
 #, c-format

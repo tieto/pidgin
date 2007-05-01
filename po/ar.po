@@ -1321,7 +1321,7 @@ msgid "Psychic mode for incoming conversation"
 msgstr ""
 
 #: ../plugins/psychic.c:21
-msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 
 #. This is a quote from Star Wars.  You should
@@ -1355,7 +1355,7 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr ""
 
 #: ../plugins/raw.c:178
-msgid "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
+msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 
 #: ../plugins/relnot.c:63
@@ -3600,7 +3600,7 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr ""
 
 #: ../src/gtkdialogs.c:102
-msgid "XMPP developer"
+msgid "Jabber developer"
 msgstr ""
 
 #: ../src/gtkdialogs.c:103
@@ -3893,7 +3893,7 @@ msgid "About Gaim"
 msgstr " FileZilla  عن"
 
 #: ../src/gtkdialogs.c:271
-msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Zephyr, and Gadu-Gadu all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
+msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Zephyr, and Gadu-Gadu all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
 msgstr ""
 
 #: ../src/gtkdialogs.c:285
@@ -6034,7 +6034,7 @@ msgstr "حساب سهم"
 
 #: ../src/protocols/bonjour/bonjour.c:592
 #, fuzzy
-msgid "XMPP Account"
+msgid "Jabber Account"
 msgstr "حساب سهم"
 
 #: ../src/protocols/bonjour/bonjour.h:35
@@ -7243,7 +7243,7 @@ msgstr "يوم الميلاد"
 #: ../src/protocols/jabber/buddy.c:588
 #: ../src/protocols/jabber/buddy.c:589
 #, fuzzy
-msgid "Edit XMPP vCard"
+msgid "Edit Jabber vCard"
 msgstr "... ID3 تحرير وسوم"
 
 #: ../src/protocols/jabber/buddy.c:590
@@ -7368,7 +7368,7 @@ msgstr "الاسم الاخير"
 msgid "The following are the results of your search"
 msgstr ""
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../src/protocols/jabber/buddy.c:1633
 msgid "Find a contact by entering the search criteria in the given fields. Note: Each field supports wild card searches (%)"
 msgstr ""
@@ -7391,7 +7391,7 @@ msgid "Server Instructions: %s"
 msgstr "نوع &الخادم:"
 
 #: ../src/protocols/jabber/buddy.c:1695
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: ../src/protocols/jabber/buddy.c:1715
@@ -7404,7 +7404,7 @@ msgstr "العنوان الأحادي"
 
 #: ../src/protocols/jabber/buddy.c:1724
 #: ../src/protocols/jabber/buddy.c:1725
-msgid "Search for XMPP users"
+msgid "Search for Jabber users"
 msgstr ""
 
 #: ../src/protocols/jabber/buddy.c:1739
@@ -7552,7 +7552,7 @@ msgstr " جارى الالغاءlisten socket فشل فى تصنيع "
 #: ../src/protocols/jabber/jabber.c:535
 #: ../src/protocols/jabber/jabber.c:873
 #, fuzzy
-msgid "Invalid XMPP ID"
+msgid "Invalid Jabber ID"
 msgstr "الـURI '%s' غير سليم"
 
 #: ../src/protocols/jabber/jabber.c:605
@@ -7612,7 +7612,7 @@ msgstr ""
 
 #: ../src/protocols/jabber/jabber.c:836
 #: ../src/protocols/jabber/jabber.c:837
-msgid "Register New XMPP Account"
+msgid "Register New Jabber Account"
 msgstr ""
 
 #: ../src/protocols/jabber/jabber.c:999
@@ -7698,7 +7698,7 @@ msgstr "نص كلمة السر"
 #: ../src/protocols/jabber/jabber.c:1337
 #: ../src/protocols/jabber/jabber.c:1338
 #, fuzzy
-msgid "Change XMPP Password"
+msgid "Change Jabber Password"
 msgstr "طلب كلمة المرور"
 
 #: ../src/protocols/jabber/jabber.c:1338
@@ -7764,7 +7764,7 @@ msgstr ":غير موجود MP3  مقبس تصدير "
 
 #: ../src/protocols/jabber/jabber.c:1448
 #, fuzzy
-msgid "Malformed XMPP ID"
+msgid "Malformed Jabber ID"
 msgstr "Malformed chunk data: %s"
 
 #: ../src/protocols/jabber/jabber.c:1450
@@ -8053,7 +8053,7 @@ msgstr ""
 #: ../src/protocols/jabber/jabber.c:1903
 #: ../src/protocols/jabber/jabber.c:1905
 #, fuzzy
-msgid "XMPP Protocol Plugin"
+msgid "Jabber Protocol Plugin"
 msgstr ":غير موجود MP3  مقبس تصدير "
 
 #: ../src/protocols/jabber/jabber.c:1931
@@ -8107,7 +8107,7 @@ msgstr "فشل التغيير الى الدليل '%s' (%s)"
 
 #: ../src/protocols/jabber/message.c:236
 #, fuzzy
-msgid "XMPP Message Error"
+msgid "Jabber Message Error"
 msgstr "خطأ أثناء التحويل: %s"
 
 #: ../src/protocols/jabber/message.c:316

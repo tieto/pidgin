@@ -2538,7 +2538,7 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "হ্যাকার ও নিয়োজিত ড্রাইভার [কুঁড়ের হদ্দো]"
 
 #: ../gtk/gtkdialogs.c:108
-msgid "XMPP developer"
+msgid "Jabber developer"
 msgstr "জ্যাবার ডেভেলপার"
 
 #: ../gtk/gtkdialogs.c:109
@@ -2817,7 +2817,7 @@ msgid "About Gaim"
 msgstr "গেইম সম্বন্ধে"
 
 #: ../gtk/gtkdialogs.c:335
-msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
+msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
 msgstr ""
 
 #: ../gtk/gtkdialogs.c:350
@@ -5388,7 +5388,7 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "টেক্সট-ভিত্তিক প্রোটকলে অরুপান্তরিত ইনপুট পাঠাতে সহায়তা করে।"
 
 #: ../gtk/plugins/raw.c:178
-msgid "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
+msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
 msgstr "টেক্সট-ভিত্তিক প্রোটকলগুলোতে অরুপান্তরিত ইনপুট পাঠাতে সহায়তা করে (জ্যাবার, MSN, IRC, TOC)। পাঠাতে হলে এন্ট্রি বক্সে 'Enter' চাপুন। ডিবাগ উইন্ডোটিতে খেয়াল রাখুন।"
 
 #: ../gtk/plugins/relnot.c:69
@@ -6949,7 +6949,7 @@ msgid "Psychic mode for incoming conversation"
 msgstr "আগত আইএম সংযোগ শুনতে ব্যর্থ\n"
 
 #: ../libgaim/plugins/psychic.c:21
-msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 
 #: ../libgaim/plugins/psychic.c:66
@@ -7205,7 +7205,7 @@ msgid "AIM Account"
 msgstr "এআইএম অ্যাকাউন্ট"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:594
-msgid "XMPP Account"
+msgid "Jabber Account"
 msgstr "জ্যাবার অ্যাকাউন্ট"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
@@ -8297,8 +8297,8 @@ msgstr "জন্মদিন"
 
 #: ../libgaim/protocols/jabber/buddy.c:582
 #: ../libgaim/protocols/jabber/buddy.c:583
-msgid "Edit XMPP vCard"
-msgstr "XMPP vCard সম্পাদন"
+msgid "Edit Jabber vCard"
+msgstr "Jabber vCard সম্পাদন"
 
 #: ../libgaim/protocols/jabber/buddy.c:584
 msgid "All items below are optional. Enter only the information with which you feel comfortable."
@@ -8410,7 +8410,7 @@ msgstr "পদবী"
 msgid "The following are the results of your search"
 msgstr "আপনার অনুসন্ধান এর নিম্নক্ত ফলাফল পাওয়া গেছে"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1672
 msgid "Find a contact by entering the search criteria in the given fields. Note: Each field supports wild card searches (%)"
 msgstr ""
@@ -8433,7 +8433,7 @@ msgid "Server Instructions: %s"
 msgstr "সার্ভার সংক্রান্ত তথ্য"
 
 #: ../libgaim/protocols/jabber/buddy.c:1734
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr "জ্যাবার ব্যবহারকারীর মিল অনুসন্ধান করতে এক বা একাধিক ক্ষেত্র পূরন করুন।"
 
 #: ../libgaim/protocols/jabber/buddy.c:1754
@@ -8445,7 +8445,7 @@ msgstr "ইমেইল"
 
 #: ../libgaim/protocols/jabber/buddy.c:1763
 #: ../libgaim/protocols/jabber/buddy.c:1764
-msgid "Search for XMPP users"
+msgid "Search for Jabber users"
 msgstr "জ্যাবার ব্যবহারকারী অনুসন্ধান"
 
 #: ../libgaim/protocols/jabber/buddy.c:1778
@@ -8576,7 +8576,7 @@ msgstr "সকেট তৈরী করতে ব্যর্থ"
 
 #: ../libgaim/protocols/jabber/jabber.c:555
 #: ../libgaim/protocols/jabber/jabber.c:898
-msgid "Invalid XMPP ID"
+msgid "Invalid Jabber ID"
 msgstr "অবৈধ জ্যাবার আইডি"
 
 #: ../libgaim/protocols/jabber/jabber.c:626
@@ -8631,7 +8631,7 @@ msgstr "আপনার নতুন অ্যাকাউন্ট রেজি
 
 #: ../libgaim/protocols/jabber/jabber.c:861
 #: ../libgaim/protocols/jabber/jabber.c:862
-msgid "Register New XMPP Account"
+msgid "Register New Jabber Account"
 msgstr "নতুন জ্যাবার অ্যাকাউন্ট রেজিষ্ট্রেশন করুন"
 
 #: ../libgaim/protocols/jabber/jabber.c:1030
@@ -8695,7 +8695,7 @@ msgstr "পাসওয়ার্ড (আবার)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1367
 #: ../libgaim/protocols/jabber/jabber.c:1368
-msgid "Change XMPP Password"
+msgid "Change Jabber Password"
 msgstr "জ্যাবার পাসওয়ার্ড পরিবর্তন"
 
 #: ../libgaim/protocols/jabber/jabber.c:1368
@@ -8750,7 +8750,7 @@ msgid "Item Not Found"
 msgstr ""
 
 #: ../libgaim/protocols/jabber/jabber.c:1478
-msgid "Malformed XMPP ID"
+msgid "Malformed Jabber ID"
 msgstr ""
 
 #: ../libgaim/protocols/jabber/jabber.c:1480
@@ -9008,7 +9008,7 @@ msgstr ""
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1967
 #: ../libgaim/protocols/jabber/jabber.c:1969
-msgid "XMPP Protocol Plugin"
+msgid "Jabber Protocol Plugin"
 msgstr "জ্যাবার প্রোটোকল প্লাগইন"
 
 #: ../libgaim/protocols/jabber/jabber.c:1995
@@ -9051,7 +9051,7 @@ msgid "Message delivery to %s failed: %s"
 msgstr "%s কে বার্তা পাঠানো ব্যর্থ হয়েছে: %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "XMPP Message Error"
+msgid "Jabber Message Error"
 msgstr "জ্যবার বার্তা ত্রুটি"
 
 #: ../libgaim/protocols/jabber/message.c:316

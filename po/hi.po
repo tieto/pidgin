@@ -974,7 +974,7 @@ msgstr "अक्षर आधारित प्रोटॅकोल पर �
 
 #: plugins/raw.c:154
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "अक्षर आधारित प्रोटॅकोल पर अपूर्ण इनपुट भेजने देता है. (जैबर, एमएसएन, आईआरसी, टीओसी). "
@@ -3033,7 +3033,7 @@ msgstr "पूर्व लिबफेम मेंटेनर"
 
 #: src/gtkdialogs.c:92
 #, fuzzy
-msgid "XMPP developer"
+msgid "Jabber developer"
 msgstr "पूर्व जेबर डेवलपर्स"
 
 #: src/gtkdialogs.c:93
@@ -3206,7 +3206,7 @@ msgstr "गेम के बारे में"
 #, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
 msgstr ""
 "गेम एक माड्यूलर इंस्टेंट मैसेन्जिंग क्लायन्ट है जो एआईएम, आईसीक्यू, याहू!, एमएसएन, आईआरसी, "
@@ -5973,7 +5973,7 @@ msgid "Birthday"
 msgstr "जन्मदिन"
 
 #: src/protocols/jabber/buddy.c:567 src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
+msgid "Edit Jabber vCard"
 msgstr "जैबर वीकार्ड का संपादन करें"
 
 #: src/protocols/jabber/buddy.c:569
@@ -5983,7 +5983,7 @@ msgid ""
 msgstr "सब चीज़ें वैकल्पिक हैं। जिस जानकारी को भरने में आपको को समस्या न हो केवल वही भरें।"
 
 #: src/protocols/jabber/buddy.c:616
-msgid "XMPP ID"
+msgid "Jabber ID"
 msgstr "जैबर आइ डी"
 
 #: src/protocols/jabber/buddy.c:642 src/protocols/jabber/jabber.c:1711
@@ -6062,7 +6062,7 @@ msgid "The following are the results of your search"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1327
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
@@ -6081,7 +6081,7 @@ msgstr "इमेल पता"
 
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
 #, fuzzy
-msgid "Search for XMPP users"
+msgid "Search for Jabber users"
 msgstr "बड्डी की खोज ईमेल पता द्वारा करें"
 
 #: src/protocols/jabber/buddy.c:1370
@@ -6207,8 +6207,8 @@ msgid "Unable to create socket"
 msgstr "सोकेट बनाने में असमर्थ"
 
 #: src/protocols/jabber/jabber.c:403 src/protocols/jabber/jabber.c:740
-msgid "Invalid XMPP ID"
-msgstr "अवौध जैबर आईडी(XMPP ID)"
+msgid "Invalid Jabber ID"
+msgstr "अवौध जैबर आईडी(Jabber ID)"
 
 #: src/protocols/jabber/jabber.c:473
 #, c-format
@@ -6258,7 +6258,7 @@ msgid "Please fill out the information below to register your new account."
 msgstr "कृपया नया नया खाता रेजिस्टर करने के लिए नीचे दी गयी जानकारी भरें।"
 
 #: src/protocols/jabber/jabber.c:704 src/protocols/jabber/jabber.c:705
-msgid "Register New XMPP Account"
+msgid "Register New Jabber Account"
 msgstr "नया जैबर खाता रेजिस्टर करें"
 
 #: src/protocols/jabber/jabber.c:842
@@ -6331,8 +6331,8 @@ msgid "Password (again)"
 msgstr "पासवर्ड (फिर से)"
 
 #: src/protocols/jabber/jabber.c:1160 src/protocols/jabber/jabber.c:1161
-msgid "Change XMPP Password"
-msgstr "जैबर(XMPP) पासवर्ड बदलें"
+msgid "Change Jabber Password"
+msgstr "जैबर(Jabber) पासवर्ड बदलें"
 
 #: src/protocols/jabber/jabber.c:1161
 msgid "Please enter your new password"
@@ -6382,8 +6382,8 @@ msgid "Item Not Found"
 msgstr "चीज़ नहीं मिली"
 
 #: src/protocols/jabber/jabber.c:1271
-msgid "Malformed XMPP ID"
-msgstr "अमान्य जैबर(XMPP) आइ डी"
+msgid "Malformed Jabber ID"
+msgstr "अमान्य जैबर(Jabber) आइ डी"
 
 #: src/protocols/jabber/jabber.c:1273
 msgid "Not Acceptable"
@@ -6646,7 +6646,7 @@ msgstr "msg &lt;उपयोगकर्ता&gt; &lt;संदेश&gt;:  क
 #. *  summary
 #. *  description
 #: src/protocols/jabber/jabber.c:1686 src/protocols/jabber/jabber.c:1688
-msgid "XMPP Protocol Plugin"
+msgid "Jabber Protocol Plugin"
 msgstr "जैबर प्रोटॅकोल प्लगइन"
 
 #: src/protocols/jabber/jabber.c:1714
@@ -6697,7 +6697,7 @@ msgid "Message delivery to %s failed: %s"
 msgstr "%s को संदेश भेजना विफल: %s"
 
 #: src/protocols/jabber/message.c:233
-msgid "XMPP Message Error"
+msgid "Jabber Message Error"
 msgstr "जैबर संदेश त्रुटि "
 
 #: src/protocols/jabber/message.c:297
@@ -12481,7 +12481,7 @@ msgstr "g003: कनेक्शन करने में त्रुटी.\n
 #~ msgid "Invalid nickname"
 #~ msgstr "अवैध उपयोगकर्ता-नाम"
 
-#~ msgid "XMPP Profile"
+#~ msgid "Jabber Profile"
 #~ msgstr "जै़बर प्रोफ़ाइल"
 
 #~ msgid "Roomlist Error"

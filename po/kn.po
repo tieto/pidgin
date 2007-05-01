@@ -2100,7 +2100,7 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr ""
 
 #: ../gtk/gtkdialogs.c:102
-msgid "XMPP developer"
+msgid "Jabber developer"
 msgstr ""
 
 #: ../gtk/gtkdialogs.c:103
@@ -2317,7 +2317,7 @@ msgstr "'ಗೈಮ್ ಕುರಿತು"
 #: ../gtk/gtkdialogs.c:321
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Zephyr, Gadu-Gadu, "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Zephyr, Gadu-Gadu, "
 "and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and "
 "redistribute the program under the terms of the GPL (version 2 or later).  A "
 "copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  "
@@ -4910,7 +4910,7 @@ msgstr ""
 
 #: ../gtk/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 
@@ -6022,7 +6022,7 @@ msgstr ""
 #: ../libgaim/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 
 #. This is a quote from Star Wars.  You should
@@ -6277,7 +6277,7 @@ msgid "AIM Account"
 msgstr ""
 
 #: ../libgaim/protocols/bonjour/bonjour.c:592
-msgid "XMPP Account"
+msgid "Jabber Account"
 msgstr ""
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
@@ -7414,7 +7414,7 @@ msgstr "ಹುಟ್ಟುಹಬ್ಬ"
 
 #: ../libgaim/protocols/jabber/buddy.c:588
 #: ../libgaim/protocols/jabber/buddy.c:589
-msgid "Edit XMPP vCard"
+msgid "Edit Jabber vCard"
 msgstr ""
 
 #: ../libgaim/protocols/jabber/buddy.c:590
@@ -7527,7 +7527,7 @@ msgstr ""
 "ನಿಮ್ಮ ಹುಡುಕುವಿಕೆಯ "
 "ಫಲಿತಾಂಶಗಳು ಇಲ್ಲಿವೆ"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1633
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -7550,7 +7550,7 @@ msgid "Server Instructions: %s"
 msgstr "ಸರ್ವರ್ ಸೂಚನೆಗಳು %s"
 
 #: ../libgaim/protocols/jabber/buddy.c:1695
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 
 #: ../libgaim/protocols/jabber/buddy.c:1715
@@ -7562,7 +7562,7 @@ msgstr "ವಿ-ಅಂಚೆ ವಿಳಾಸ"
 
 #: ../libgaim/protocols/jabber/buddy.c:1724
 #: ../libgaim/protocols/jabber/buddy.c:1725
-msgid "Search for XMPP users"
+msgid "Search for Jabber users"
 msgstr ""
 
 #: ../libgaim/protocols/jabber/buddy.c:1739
@@ -7695,7 +7695,7 @@ msgstr ""
 
 #: ../libgaim/protocols/jabber/jabber.c:532
 #: ../libgaim/protocols/jabber/jabber.c:875
-msgid "Invalid XMPP ID"
+msgid "Invalid Jabber ID"
 msgstr ""
 
 #: ../libgaim/protocols/jabber/jabber.c:603
@@ -7752,7 +7752,7 @@ msgstr ""
 
 #: ../libgaim/protocols/jabber/jabber.c:838
 #: ../libgaim/protocols/jabber/jabber.c:839
-msgid "Register New XMPP Account"
+msgid "Register New Jabber Account"
 msgstr ""
 
 #: ../libgaim/protocols/jabber/jabber.c:1004
@@ -7824,8 +7824,8 @@ msgstr "ಪ್ರವೇಶಪದ(ಇನ್ನೊಮ್ಮೆ)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1343
 #: ../libgaim/protocols/jabber/jabber.c:1344
-msgid "Change XMPP Password"
-msgstr "XMPP ಪ್ರವೇಶಪದ ಬದಲಿಸಿ..."
+msgid "Change Jabber Password"
+msgstr "Jabber ಪ್ರವೇಶಪದ ಬದಲಿಸಿ..."
 
 #: ../libgaim/protocols/jabber/jabber.c:1344
 msgid "Please enter your new password"
@@ -7879,7 +7879,7 @@ msgid "Item Not Found"
 msgstr ""
 
 #: ../libgaim/protocols/jabber/jabber.c:1454
-msgid "Malformed XMPP ID"
+msgid "Malformed Jabber ID"
 msgstr ""
 
 #: ../libgaim/protocols/jabber/jabber.c:1456
@@ -8147,7 +8147,7 @@ msgstr ""
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1933
 #: ../libgaim/protocols/jabber/jabber.c:1935
-msgid "XMPP Protocol Plugin"
+msgid "Jabber Protocol Plugin"
 msgstr ""
 
 #: ../libgaim/protocols/jabber/jabber.c:1961
@@ -8200,7 +8200,7 @@ msgid "Message delivery to %s failed: %s"
 msgstr " %s ರಿಗೆ ಸಂದೇಶ ವಿತರಣೆ ವಿಫಲ : %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "XMPP Message Error"
+msgid "Jabber Message Error"
 msgstr ""
 
 #: ../libgaim/protocols/jabber/message.c:316

@@ -1250,11 +1250,11 @@ msgstr "Modo psíquico para conversações a chegar"
 #: ../plugins/psychic.c:24
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 "Faz com que as janelas de conversações apareçam quando os outros "
 "utilizadores começam a escrever para si.  Isto funciona para AIM, ICQ, "
-"XMPP, Sametime e Yahoo!"
+"Jabber, Sametime e Yahoo!"
 
 #: ../plugins/psychic.c:60
 msgid "You feel a disturbance in the force..."
@@ -1282,10 +1282,10 @@ msgstr "Permite enviar entrada pura para protocolos baseados em texto."
 
 #: ../plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Permite enviar entrada pura para protocolos (XMPP, MSN, IRC, TOC) baseados "
+"Permite enviar entrada pura para protocolos (Jabber, MSN, IRC, TOC) baseados "
 "em texto. Pressione 'Enter' na caixa de entrada para enviar. Verifique a "
 "janela de debug."
 
@@ -3329,8 +3329,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker e dirigente designado [vagabundo preguiçoso]"
 
 #: ../src/gtkdialogs.c:101
-msgid "XMPP developer"
-msgstr "desenvolvedor do XMPP"
+msgid "Jabber developer"
+msgstr "desenvolvedor do Jabber"
 
 #: ../src/gtkdialogs.c:102
 msgid "original author"
@@ -3522,7 +3522,7 @@ msgstr "Sobre o Gaim"
 #: ../src/gtkdialogs.c:257
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, "
 "and Gadu-Gadu all at once.  It is written using GTK+.<BR><BR>You may modify "
 "and redistribute the program under the terms of the GPL (version 2 or "
 "later).  A copy of the GPL is contained in the 'COPYING' file distributed "
@@ -3531,7 +3531,7 @@ msgid ""
 "program.<BR><BR>"
 msgstr ""
 "O Gaim é um cliente de mensagens modular capaz de usar o AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zepyhr, e "
+"Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zepyhr, e "
 "Gadu-Gadu todos ao mesmo tempo.  Está escrito usando GTK+.<BR><BR>Pode "
 "modificar e redistribuir o programa sob os termos da GPL (versão 2 ou "
 "posterior).  Uma cópia da GPL está contida no ficheiro 'COPYING' distribuído "
@@ -6549,8 +6549,8 @@ msgid "Birthday"
 msgstr "Data de nascimento"
 
 #: ../src/protocols/jabber/buddy.c:567 ../src/protocols/jabber/buddy.c:568
-msgid "Edit XMPP vCard"
-msgstr "Editar vCard do XMPP"
+msgid "Edit Jabber vCard"
+msgstr "Editar vCard do Jabber"
 
 #: ../src/protocols/jabber/buddy.c:569
 msgid ""
@@ -6635,9 +6635,9 @@ msgid "The following are the results of your search"
 msgstr "Os seguintes são os resultados da sua pesquisa"
 
 #: ../src/protocols/jabber/buddy.c:1388
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
-"Preencha um ou mais campos para procurar todos os utilizadores XMPP que "
+"Preencha um ou mais campos para procurar todos os utilizadores Jabber que "
 "correspondem."
 
 #: ../src/protocols/jabber/buddy.c:1392 ../src/protocols/jabber/jabber.c:770
@@ -6655,8 +6655,8 @@ msgid "E-Mail Address"
 msgstr "Endereço de e-mail"
 
 #: ../src/protocols/jabber/buddy.c:1416 ../src/protocols/jabber/buddy.c:1417
-msgid "Search for XMPP users"
-msgstr "Pesquisar Utilizadores XMPP"
+msgid "Search for Jabber users"
+msgstr "Pesquisar Utilizadores Jabber"
 
 #: ../src/protocols/jabber/buddy.c:1431
 msgid "Invalid Directory"
@@ -6777,8 +6777,8 @@ msgid "Unable to create socket"
 msgstr "Impossível criar socket"
 
 #: ../src/protocols/jabber/jabber.c:520 ../src/protocols/jabber/jabber.c:857
-msgid "Invalid XMPP ID"
-msgstr "Identificador XMPP Inválido"
+msgid "Invalid Jabber ID"
+msgstr "Identificador Jabber Inválido"
 
 #: ../src/protocols/jabber/jabber.c:590
 #, c-format
@@ -6821,8 +6821,8 @@ msgstr ""
 "Por favor preencha a seguinte informçaão para registar a sua nova conta."
 
 #: ../src/protocols/jabber/jabber.c:821 ../src/protocols/jabber/jabber.c:822
-msgid "Register New XMPP Account"
-msgstr "Registar Nova Conta XMPP"
+msgid "Register New Jabber Account"
+msgstr "Registar Nova Conta Jabber"
 
 #: ../src/protocols/jabber/jabber.c:983
 msgid "Initializing Stream"
@@ -6885,8 +6885,8 @@ msgid "Password (again)"
 msgstr "Senha (novamente)"
 
 #: ../src/protocols/jabber/jabber.c:1317 ../src/protocols/jabber/jabber.c:1318
-msgid "Change XMPP Password"
-msgstr "Alterar Senha do XMPP"
+msgid "Change Jabber Password"
+msgstr "Alterar Senha do Jabber"
 
 #: ../src/protocols/jabber/jabber.c:1318
 msgid "Please enter your new password"
@@ -6937,8 +6937,8 @@ msgid "Item Not Found"
 msgstr "Ítem Não Encontrado"
 
 #: ../src/protocols/jabber/jabber.c:1428
-msgid "Malformed XMPP ID"
-msgstr "ID XMPP Inválido"
+msgid "Malformed Jabber ID"
+msgstr "ID Jabber Inválido"
 
 #: ../src/protocols/jabber/jabber.c:1430
 msgid "Not Acceptable"
@@ -7205,8 +7205,8 @@ msgstr ""
 #. *  summary
 #. *  description
 #: ../src/protocols/jabber/jabber.c:1883 ../src/protocols/jabber/jabber.c:1885
-msgid "XMPP Protocol Plugin"
-msgstr "Plugin do Protocolo XMPP"
+msgid "Jabber Protocol Plugin"
+msgstr "Plugin do Protocolo Jabber"
 
 #: ../src/protocols/jabber/jabber.c:1911
 msgid "Use TLS if available"
@@ -7254,8 +7254,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Entrega de Mensagem para %s falhou: %s"
 
 #: ../src/protocols/jabber/message.c:227
-msgid "XMPP Message Error"
-msgstr "Erro de Mensagem do XMPP"
+msgid "Jabber Message Error"
+msgstr "Erro de Mensagem do Jabber"
 
 #: ../src/protocols/jabber/message.c:295
 #, c-format

@@ -2817,10 +2817,10 @@ msgstr "Modo psíquico para conversaciones entrantes"
 #: ../libpurple/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
 msgstr ""
 "Hace que aparezcan las ventanas de conversación cuando un usuario empieza a "
-"enviarle un mensaje. Esto funciona con AIM, ICQ, XMPP, Sametime y Yahoo!"
+"enviarle un mensaje. Esto funciona con AIM, ICQ, Jabber, Sametime y Yahoo!"
 
 #: ../libpurple/plugins/psychic.c:66
 msgid "You feel a disturbance in the force..."
@@ -3100,8 +3100,8 @@ msgid "AIM Account"
 msgstr "Cuenta AIM"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:583
-msgid "XMPP Account"
-msgstr "Cuenta XMPP"
+msgid "Jabber Account"
+msgstr "Cuenta Jabber"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -4285,8 +4285,8 @@ msgstr "Descripción"
 
 #: ../libpurple/protocols/jabber/buddy.c:582
 #: ../libpurple/protocols/jabber/buddy.c:583
-msgid "Edit XMPP vCard"
-msgstr "Editar vCard de XMPP"
+msgid "Edit Jabber vCard"
+msgstr "Editar vCard de Jabber"
 
 #: ../libpurple/protocols/jabber/buddy.c:584
 msgid ""
@@ -4401,7 +4401,7 @@ msgstr "Apellidos"
 msgid "The following are the results of your search"
 msgstr "Éstos son los resultados de su búsqueda"
 
-#. current comment from XMPP User Directory users.jabber.org
+#. current comment from Jabber User Directory users.jabber.org
 #: ../libpurple/protocols/jabber/buddy.c:1674
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -4426,10 +4426,10 @@ msgid "Server Instructions: %s"
 msgstr "Instrucciones del servidor: %s"
 
 #: ../libpurple/protocols/jabber/buddy.c:1736
-msgid "Fill in one or more fields to search for any matching XMPP users."
+msgid "Fill in one or more fields to search for any matching Jabber users."
 msgstr ""
 "Rellene uno o más de los campos mostrados a continuación para buscar a un "
-"usuario XMPP que los tengan."
+"usuario Jabber que los tengan."
 
 #: ../libpurple/protocols/jabber/buddy.c:1756
 #: ../libpurple/protocols/novell/novell.c:1488
@@ -4440,8 +4440,8 @@ msgstr "Dirección de correo electrónico"
 
 #: ../libpurple/protocols/jabber/buddy.c:1765
 #: ../libpurple/protocols/jabber/buddy.c:1766
-msgid "Search for XMPP users"
-msgstr "Buscar usuarios XMPP"
+msgid "Search for Jabber users"
+msgstr "Buscar usuarios Jabber"
 
 #. "Search"
 #: ../libpurple/protocols/jabber/buddy.c:1767
@@ -4584,8 +4584,8 @@ msgstr "No se pudo crear el socket"
 
 #: ../libpurple/protocols/jabber/jabber.c:567
 #: ../libpurple/protocols/jabber/jabber.c:910
-msgid "Invalid XMPP ID"
-msgstr "ID de XMPP no válido"
+msgid "Invalid Jabber ID"
+msgstr "ID de Jabber no válido"
 
 #: ../libpurple/protocols/jabber/jabber.c:638
 #, c-format
@@ -4641,8 +4641,8 @@ msgstr ""
 
 #: ../libpurple/protocols/jabber/jabber.c:873
 #: ../libpurple/protocols/jabber/jabber.c:874
-msgid "Register New XMPP Account"
-msgstr "Registrando cuenta nueva de XMPP"
+msgid "Register New Jabber Account"
+msgstr "Registrando cuenta nueva de Jabber"
 
 #. Register button
 #: ../libpurple/protocols/jabber/jabber.c:875 ../pidgin/gtkaccount.c:1478
@@ -4716,8 +4716,8 @@ msgstr "Contraseña (de nuevo)"
 
 #: ../libpurple/protocols/jabber/jabber.c:1368
 #: ../libpurple/protocols/jabber/jabber.c:1369
-msgid "Change XMPP Password"
-msgstr "Cambiar contraseña de XMPP"
+msgid "Change Jabber Password"
+msgstr "Cambiar contraseña de Jabber"
 
 #: ../libpurple/protocols/jabber/jabber.c:1369
 msgid "Please enter your new password"
@@ -4771,8 +4771,8 @@ msgid "Item Not Found"
 msgstr "Elemento no encontrado"
 
 #: ../libpurple/protocols/jabber/jabber.c:1481
-msgid "Malformed XMPP ID"
-msgstr "ID de XMPP no válido"
+msgid "Malformed Jabber ID"
+msgstr "ID de Jabber no válido"
 
 #: ../libpurple/protocols/jabber/jabber.c:1483
 msgid "Not Acceptable"
@@ -5040,8 +5040,8 @@ msgstr ""
 #. *  description
 #: ../libpurple/protocols/jabber/jabber.c:1972
 #: ../libpurple/protocols/jabber/jabber.c:1974
-msgid "XMPP Protocol Plugin"
-msgstr "Complemento de protocolo XMPP"
+msgid "Jabber Protocol Plugin"
+msgstr "Complemento de protocolo Jabber"
 
 #: ../libpurple/protocols/jabber/jabber.c:2000
 msgid "Force old (port 5223) SSL"
@@ -5083,8 +5083,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Falló el envío de mensaje a %s: %s"
 
 #: ../libpurple/protocols/jabber/message.c:272
-msgid "XMPP Message Error"
-msgstr "Mensaje de error de XMPP"
+msgid "Jabber Message Error"
+msgstr "Mensaje de error de Jabber"
 
 #: ../libpurple/protocols/jabber/message.c:352
 #, c-format
@@ -12525,8 +12525,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker y diseñador de controladores [lazy bum]"
 
 #: ../pidgin/gtkdialogs.c:113
-msgid "XMPP developer"
-msgstr "desarrollador de XMPP"
+msgid "Jabber developer"
+msgstr "desarrollador de Jabber"
 
 #: ../pidgin/gtkdialogs.c:114
 msgid "original author"
@@ -12800,7 +12800,7 @@ msgstr "Acerca de %s"
 #: ../pidgin/gtkdialogs.c:359
 #, c-format
 msgid ""
-"%s is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, "
+"%s is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, "
 "ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, "
 "Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You "
 "may modify and redistribute the program under the terms of the GPL (version "
@@ -12810,7 +12810,7 @@ msgid ""
 "warranty for this program.<BR><BR>"
 msgstr ""
 "%s es un cliente de mensajería modular capaz de utilizar AIM, MSN, Yahoo!, "
-"XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu y QQ todos al mismo tiempo. Está escrito "
 "utilizando GTK+.<BR><BR>Puede modificar y redistribuir este programa bajo "
 "los términos de la GPL (versión 2 o posterior). Se incluye una copia de la "
@@ -15236,10 +15236,10 @@ msgstr "Le permite enviar datos en bruto a protocolos basados en texto."
 
 #: ../pidgin/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Le permite enviar datos en bruto a protocolos basados en texto (XMPP, MSN, "
+"Le permite enviar datos en bruto a protocolos basados en texto (Jabber, MSN, "
 "IRC,  TOC). Pulse «Intro» en la caja de entrada para enviarlo. Observe la "
 "ventana de depuración."
 
@@ -16433,8 +16433,8 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ msgid "_Warn"
 #~ msgstr "_Avisar"
 
-#~ msgid "XMPP ID"
-#~ msgstr "ID XMPP"
+#~ msgid "Jabber ID"
+#~ msgstr "ID Jabber"
 
 #~ msgid "Hide IP address"
 #~ msgstr "Ocultar dirección IP"
@@ -16480,12 +16480,12 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 
 #~ msgid ""
 #~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-#~ "XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, "
+#~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, "
 #~ "Zephyr, and Gadu-Gadu all at once.  It is written using GTK+ and is "
 #~ "licensed under the GNU GPL.<BR><BR>"
 #~ msgstr ""
 #~ "Gaim es un cliente modular de mensajería instantánea, capaz de utilizar "
-#~ "AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus "
+#~ "AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus "
 #~ "Sametime, Napster, Zephyr y Gadu-Gadu al mismo tiempo.  Está escrito "
 #~ "usando Gtk+ y se licencia con la GPL.<BR><BR>"
 
@@ -16688,12 +16688,12 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 
 #~ msgid ""
 #~ "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-#~ "XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
+#~ "Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu "
 #~ "all at once.  It is written using GTK+ and is licensed under the GNU GPL."
 #~ "<BR><BR>"
 #~ msgstr ""
 #~ "Gaim es un cliente modular de mensajería instantánea, capaz de utilizar "
-#~ "AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, "
+#~ "AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, "
 #~ "Zephyr y Gadu-Gadu al mismo tiempo.  Está escrito usando Gtk+ y está "
 #~ "licencia bajo la GPL de GNU.<BR><BR>"
 
@@ -17523,8 +17523,8 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ msgid "Invalid nickname '%s'"
 #~ msgstr "Apodo '%s' inválido"
 
-#~ msgid "XMPP Profile"
-#~ msgstr "Perfil XMPP"
+#~ msgid "Jabber Profile"
+#~ msgstr "Perfil Jabber"
 
 #~ msgid "Roomlist Error"
 #~ msgstr "Error en la lista de salas"
@@ -18356,14 +18356,14 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ "La nueva contraseña que usted introdujo es la misma que la actual.  Su "
 #~ "contraseña seguirá siendo la misma."
 
-#~ msgid "XMPP Error %s"
-#~ msgstr "Error XMPP %s"
+#~ msgid "Jabber Error %s"
+#~ msgstr "Error Jabber %s"
 
 #~ msgid ""
-#~ "The XMPP user %s does not exist and was therefore not added to your "
+#~ "The Jabber user %s does not exist and was therefore not added to your "
 #~ "roster."
 #~ msgstr ""
-#~ "El usuario XMPP %s no existe y por lo tanto no se lo añadirá a su "
+#~ "El usuario Jabber %s no existe y por lo tanto no se lo añadirá a su "
 #~ "«roster»."
 
 #~ msgid "No such user."
@@ -18378,9 +18378,9 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ msgid "Requesting Authentication Method"
 #~ msgstr "Solicitando método de autenticación"
 
-#~ msgid "The user %s is an invalid XMPP I.D. and was therefore not added."
+#~ msgid "The user %s is an invalid Jabber I.D. and was therefore not added."
 #~ msgstr ""
-#~ "El usuario %s es un I.D. de XMPP inválido y por lo tanto no fue añadido."
+#~ "El usuario %s es un I.D. de Jabber inválido y por lo tanto no fue añadido."
 
 #~ msgid "View Error Msg"
 #~ msgstr "Ver mensaje de error"
@@ -18595,14 +18595,14 @@ msgstr "Este complemento es útil para depurar clientes o servidores XMPP."
 #~ "  Adam Fritzler (former libfaim maintainer)<BR>  Eric Warmenhoven (former "
 #~ "lead developer)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
 #~ "\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (former maintainer)<BR>  "
-#~ "Jim Seymour (former XMPP developer)<BR>  Mark Spencer (original author) "
+#~ "Jim Seymour (former Jabber developer)<BR>  Mark Spencer (original author) "
 #~ "&lt;<A HREF=\"mailto:markster@marko.net\">markster@marko.net</A>&gt;<BR>  "
 #~ "Syd Logan (hacker and designated driver [lazy bum])<BR><BR>"
 #~ msgstr ""
 #~ "  Adam Fritzler (antiguo mantenimiento de libfaim)<BR>  Eric Warmenhoven "
 #~ "(antiguo desarrollador líder)&lt;<A HREF=\"mailto:warmenhoven@yahoo.com"
 #~ "\">warmenhoven@yahoo.com</A>&gt;<BR>  Jim Duchek (antiguo mantenedor)"
-#~ "<BR>  Jim Seymour (antiguo desarrollador de XMPP)<BR>  Mark Spencer "
+#~ "<BR>  Jim Seymour (antiguo desarrollador de Jabber)<BR>  Mark Spencer "
 #~ "(autor original) &lt;<A HREF=\"mailto:markster@marko.net\">markster@marko."
 #~ "net</A>&gt;<BR>  Syd Logan (hacker y conductor por designación [lazy bum])"
 #~ "<BR><BR>"

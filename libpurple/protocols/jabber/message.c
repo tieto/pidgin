@@ -269,7 +269,7 @@ static void handle_error(JabberMessage *jm)
 	buf = g_strdup_printf(_("Message delivery to %s failed: %s"),
 			jm->from, jm->error ? jm->error : "");
 
-	purple_notify_formatted(jm->js->gc, _("XMPP Message Error"), _("XMPP Message Error"), buf,
+	purple_notify_formatted(jm->js->gc, _("Jabber Message Error"), _("Jabber Message Error"), buf,
 			jm->xhtml ? jm->xhtml : jm->body, NULL, NULL);
 
 	g_free(buf);
