@@ -2760,10 +2760,10 @@ msgstr "Meediotila sisääntuleville keskusteluille"
 #: ../libpurple/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
 msgstr ""
 "Keskusteluikkunat ilmestyvät, kun muut käyttäjät alkavat kirjoittaa viestiä "
-"sinulle. Tämä toimii AIM-, ICQ-, Jabber-, Sametime- ja Yahoo!-"
+"sinulle. Tämä toimii AIM-, ICQ-, XMPP-, Sametime- ja Yahoo!-"
 "yhteiskäytännöillä."
 
 #: ../libpurple/plugins/psychic.c:66
@@ -3042,8 +3042,8 @@ msgid "AIM Account"
 msgstr "AIM-tili"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:583
-msgid "Jabber Account"
-msgstr "Jabber-tili"
+msgid "XMPP Account"
+msgstr "XMPP-tili"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -4221,8 +4221,8 @@ msgstr "Kuvaus"
 
 #: ../libpurple/protocols/jabber/buddy.c:582
 #: ../libpurple/protocols/jabber/buddy.c:583
-msgid "Edit Jabber vCard"
-msgstr "Muokkaa Jabberin vCardia"
+msgid "Edit XMPP vCard"
+msgstr "Muokkaa XMPPin vCardia"
 
 #: ../libpurple/protocols/jabber/buddy.c:584
 msgid ""
@@ -4337,7 +4337,7 @@ msgstr "Sukunimi"
 msgid "The following are the results of your search"
 msgstr "Hakutulokset"
 
-#. current comment from Jabber User Directory users.jabber.org
+#. current comment from XMPP User Directory users.jabber.org
 #: ../libpurple/protocols/jabber/buddy.c:1674
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -4362,8 +4362,8 @@ msgid "Server Instructions: %s"
 msgstr "Palvelimen ohjeet: %s"
 
 #: ../libpurple/protocols/jabber/buddy.c:1736
-msgid "Fill in one or more fields to search for any matching Jabber users."
-msgstr "Täytä yksi tai useampia kentistä etsiäksesi Jabber-käyttäjiä."
+msgid "Fill in one or more fields to search for any matching XMPP users."
+msgstr "Täytä yksi tai useampia kentistä etsiäksesi XMPP-käyttäjiä."
 
 #: ../libpurple/protocols/jabber/buddy.c:1756
 #: ../libpurple/protocols/novell/novell.c:1488
@@ -4374,8 +4374,8 @@ msgstr "Sähköpostiosoite"
 
 #: ../libpurple/protocols/jabber/buddy.c:1765
 #: ../libpurple/protocols/jabber/buddy.c:1766
-msgid "Search for Jabber users"
-msgstr "Etsi Jabber-käyttäjiä"
+msgid "Search for XMPP users"
+msgstr "Etsi XMPP-käyttäjiä"
 
 #. "Search"
 #: ../libpurple/protocols/jabber/buddy.c:1767
@@ -4518,8 +4518,8 @@ msgstr "Pistokkeen luonti epäonnistui"
 
 #: ../libpurple/protocols/jabber/jabber.c:567
 #: ../libpurple/protocols/jabber/jabber.c:910
-msgid "Invalid Jabber ID"
-msgstr "Epäkelpo Jabber ID"
+msgid "Invalid XMPP ID"
+msgstr "Epäkelpo XMPP ID"
 
 #: ../libpurple/protocols/jabber/jabber.c:638
 #, c-format
@@ -4573,8 +4573,8 @@ msgstr "Syötä alla olevat tiedot rekisteröidäksesi uuden tilin."
 
 #: ../libpurple/protocols/jabber/jabber.c:873
 #: ../libpurple/protocols/jabber/jabber.c:874
-msgid "Register New Jabber Account"
-msgstr "Rekisteröi uusi Jabber-tili"
+msgid "Register New XMPP Account"
+msgstr "Rekisteröi uusi XMPP-tili"
 
 #. Register button
 #: ../libpurple/protocols/jabber/jabber.c:875 ../pidgin/gtkaccount.c:1478
@@ -4648,8 +4648,8 @@ msgstr "Salasana (uudelleen)"
 
 #: ../libpurple/protocols/jabber/jabber.c:1368
 #: ../libpurple/protocols/jabber/jabber.c:1369
-msgid "Change Jabber Password"
-msgstr "Vaihda Jabber-salasana"
+msgid "Change XMPP Password"
+msgstr "Vaihda XMPP-salasana"
 
 #: ../libpurple/protocols/jabber/jabber.c:1369
 msgid "Please enter your new password"
@@ -4703,8 +4703,8 @@ msgid "Item Not Found"
 msgstr "Kohdetta ei löytynyt"
 
 #: ../libpurple/protocols/jabber/jabber.c:1481
-msgid "Malformed Jabber ID"
-msgstr "Epäkelpo Jabber ID"
+msgid "Malformed XMPP ID"
+msgstr "Epäkelpo XMPP ID"
 
 #: ../libpurple/protocols/jabber/jabber.c:1483
 msgid "Not Acceptable"
@@ -4972,8 +4972,8 @@ msgstr ""
 #. *  description
 #: ../libpurple/protocols/jabber/jabber.c:1972
 #: ../libpurple/protocols/jabber/jabber.c:1974
-msgid "Jabber Protocol Plugin"
-msgstr "Jabber-yhteyskäytäntöliitännäinen"
+msgid "XMPP Protocol Plugin"
+msgstr "XMPP-yhteyskäytäntöliitännäinen"
 
 #: ../libpurple/protocols/jabber/jabber.c:2000
 msgid "Force old (port 5223) SSL"
@@ -5015,8 +5015,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Viestin toimitus %s:lle epäonnistui: %s"
 
 #: ../libpurple/protocols/jabber/message.c:272
-msgid "Jabber Message Error"
-msgstr "Jabber viestivirhe"
+msgid "XMPP Message Error"
+msgstr "XMPP viestivirhe"
 
 #: ../libpurple/protocols/jabber/message.c:352
 #, c-format
@@ -12404,8 +12404,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hakkeri ja kuski [laiska pummi]"
 
 #: ../pidgin/gtkdialogs.c:113
-msgid "Jabber developer"
-msgstr "Jabber-kehittäjä"
+msgid "XMPP developer"
+msgstr "XMPP-kehittäjä"
 
 #: ../pidgin/gtkdialogs.c:114
 msgid "original author"
@@ -12677,7 +12677,7 @@ msgstr "Tietoja %sistä"
 #: ../pidgin/gtkdialogs.c:359
 #, c-format
 msgid ""
-"%s is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, "
+"%s is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, "
 "ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, "
 "Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You "
 "may modify and redistribute the program under the terms of the GPL (version "
@@ -12687,7 +12687,7 @@ msgid ""
 "warranty for this program.<BR><BR>"
 msgstr ""
 "%s on modulaarinen pikaviestinsovellus, joka kykenee käyttämään AIM-, MSN-, "
-"Yahoo!-, Jabber-, ICQ-, IRC-, SILC-, SIP/SIMPLE-, Novell GroupWise-, Lotus "
+"Yahoo!-, XMPP-, ICQ-, IRC-, SILC-, SIP/SIMPLE-, Novell GroupWise-, Lotus "
 "Sametime-, Bonjour-, Zephyr-, Gadu-Gadu- ja QQ-yhteyskäytäntöjä "
 "yhtäaikaisesti. Se on ohjelmoitu käyttäen Gtk+-kirjastoa.<BR><BR>Voit "
 "muokata ja jakaa ohjelmaa GPL-lisenssin (versio 2 tai myöhempi) ehdoilla. "
@@ -15077,11 +15077,11 @@ msgstr ""
 
 #: ../pidgin/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Antaa sinun lähettää raakamuotoista syötettä tekstipohjaisilla  "
-"yhteyskäytännöillä (Jabber MSN, IRC, TOC). Paina \"Enter\" "
+"yhteyskäytännöillä (XMPP MSN, IRC, TOC). Paina \"Enter\" "
 "viestinsyöttölaatikossa lähettääksesi. Tarkkaile virheenjäljitysikkunaa."
 
 #: ../pidgin/plugins/relnot.c:71
@@ -16092,10 +16092,10 @@ msgstr ""
 #~ msgstr "Sinulla on jo meneillään oleva haku. Odota sen päättymistä."
 
 #~ msgid ""
-#~ "Could not query the directory server. Either the Jabber user directory "
+#~ "Could not query the directory server. Either the XMPP user directory "
 #~ "specified is invalid or directory server could not be reached."
 #~ msgstr ""
-#~ "Ei voitu tehdä hakua hakemistopalvelimelle. Joko määritelty Jabber-"
+#~ "Ei voitu tehdä hakua hakemistopalvelimelle. Joko määritelty XMPP-"
 #~ "käyttäjähakemisto on virheellinen, tai hakemistopalvelimelle ei päästy."
 
 #~ msgid "Direct IM with %s closed"
@@ -16376,8 +16376,8 @@ msgstr ""
 #~ msgid "Host name"
 #~ msgstr "Isäntä"
 
-#~ msgid "Jabber ID"
-#~ msgstr "Jabber ID"
+#~ msgid "XMPP ID"
+#~ msgstr "XMPP ID"
 
 #~ msgid "(pending)"
 #~ msgstr "(odottaa)"
@@ -16704,8 +16704,8 @@ msgstr ""
 #~ msgid "Buddy Information for %s"
 #~ msgstr "Tuttavan %s tiedot"
 
-#~ msgid "Jabber Profile"
-#~ msgstr "Jabber-profiili"
+#~ msgid "XMPP Profile"
+#~ msgstr "XMPP-profiili"
 
 #~ msgid "User Properties"
 #~ msgstr "Käyttäjän valinnat"

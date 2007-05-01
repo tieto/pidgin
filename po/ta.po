@@ -1025,7 +1025,7 @@ msgid "Psychic mode for incoming conversation"
 msgstr "உள்வரும் உரையாடலுக்கு உளவியல் முறைமை"
 
 #: ../plugins/psychic.c:24
-msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
+msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
 msgstr "மற்ற பயனர்கள் செய்திகளை அனுப்பத் துவங்கினால் உரையாடல் சாளரங்களை உருவாக்கும். ஏஐஎம் ஐசீக்யூ ஜாப்பார் சேம்டைம் மற்றும் யாகூ! உடன் வேலை செய்யும்."
 
 #: ../plugins/psychic.c:60
@@ -1053,7 +1053,7 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "எழுத்தை அடிப்படையாக கொண்ட சொருகுபொருளுக்கு உள்ளது உள்ளபடி உள்ள உள்ளீடுகளை கொடுக்க அனுமதிக்கிறது."
 
 #: ../plugins/raw.c:178
-msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
+msgid "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
 msgstr "எழுத்து முறை வரைமுறைக்கு உள்ளீடுகளை அப்படியே அனுப்ப அனுமதிக்கிறது (ஜாப்பர், எம்எஸ்என், ஐஆர்சி, டிஓசி). நுழைவு பெட்டியில்  'Enter' ஐ சொடுக்குவதன் மூலம் அனுப்பலாம். பிழையறிக்கை சாளரத்தை கவனிக்கவும்."
 
 #: ../plugins/relnot.c:63
@@ -3157,7 +3157,7 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "அத்துமீறர் மற்றும் பணி அமர்வு செய்யப் பட்ட இயக்குநர் [lazy bum]"
 
 #: ../src/gtkdialogs.c:101
-msgid "Jabber developer"
+msgid "XMPP developer"
 msgstr "ஜாப்பர் உருவாக்குபவர்"
 
 #: ../src/gtkdialogs.c:102
@@ -3391,7 +3391,7 @@ msgid "About Gaim"
 msgstr "கெய்ம் பற்றி"
 
 #: ../src/gtkdialogs.c:261
-msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, and Gadu-Gadu all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
+msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, and Gadu-Gadu all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
 msgstr "கெய்ம் ஏஐஎம், எம்எஸ்என், யாகூ, ஜப்பார், ஐசிக்யூ, ஐஆர்சி, எஸ்ஐஎல்சி, நோவெல், குரூப்வைஸ், லோட்டஸ் சேம் டைம், நேப்ஸ்டர், ஜெபய்ர், காடு-காடு ஆகிய பல கூறுகளையும் உபயோகிக்கக் கூடிய தகவல் தொடர்பாளர். GTK+ ஐ உபயோகித்து இது எழுதப் பட்டு உள்ளது. <BR><BR> நீங்கள் ஜிபிஎல் ( 2 ஆம் பதிப்பு அல்லது அதற்கும் புதிய)  இன் வயறைக்கு உட் பட்டு இதை மாற்றலாம், மறு பரிமாற்றம் செய்யலாம்.  ஜிபிஎல் இன் பிரதி கெய்ம் உடன் 'COPYING' என்ற கோப்பில் உள்ளது. கெய்ம் இல் அதன் பங்களிப்பவர்களுக்கு காப்புரிமை உள்ளது. 'COPYRIGHT' கோப்பில் அவர்கள் பட்டியலை பார்க்கலாம். இந்த நிரலுக்கு எந்தவித உத்திரவாதமும் கிடையாது.<BR><BR>"
 
 #: ../src/gtkdialogs.c:275
@@ -6409,7 +6409,7 @@ msgstr "பிறந்தநாள்"
 
 #: ../src/protocols/jabber/buddy.c:567
 #: ../src/protocols/jabber/buddy.c:568
-msgid "Edit Jabber vCard"
+msgid "Edit XMPP vCard"
 msgstr "ஜாப்பர் விகார்ட் ஐ தொகு"
 
 #: ../src/protocols/jabber/buddy.c:569
@@ -6514,7 +6514,7 @@ msgid "Server Instructions: %s"
 msgstr "சேவையக கட்டளைகள்: %s"
 
 #: ../src/protocols/jabber/buddy.c:1392
-msgid "Fill in one or more fields to search for any matching Jabber users."
+msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr "ஜாப்பர் பயனாளர்களை தேட ஒன்று அல்லது மேற்பட்ட புலங்களை பூர்த்தி செய்க."
 
 #: ../src/protocols/jabber/buddy.c:1411
@@ -6526,7 +6526,7 @@ msgstr "மின்னஞ்சல்"
 
 #: ../src/protocols/jabber/buddy.c:1420
 #: ../src/protocols/jabber/buddy.c:1421
-msgid "Search for Jabber users"
+msgid "Search for XMPP users"
 msgstr "ஜாப்பர் பயனாளர்களை தேடுகிறது"
 
 #: ../src/protocols/jabber/buddy.c:1435
@@ -6658,7 +6658,7 @@ msgstr "கொள் குழியை (சாக்கெட்டை) உர�
 
 #: ../src/protocols/jabber/jabber.c:520
 #: ../src/protocols/jabber/jabber.c:857
-msgid "Invalid Jabber ID"
+msgid "Invalid XMPP ID"
 msgstr "செல்லாத ஜாப்பர் அடையாளம்"
 
 #: ../src/protocols/jabber/jabber.c:590
@@ -6713,7 +6713,7 @@ msgstr "உங்களது புதிய கணக்கை பதிவத
 
 #: ../src/protocols/jabber/jabber.c:821
 #: ../src/protocols/jabber/jabber.c:822
-msgid "Register New Jabber Account"
+msgid "Register New XMPP Account"
 msgstr "புதிய ஜாப்பர் கணக்கை பதிவு செய்"
 
 #: ../src/protocols/jabber/jabber.c:983
@@ -6785,7 +6785,7 @@ msgstr "கடவுச்சொல் (மீண்டும்)"
 
 #: ../src/protocols/jabber/jabber.c:1317
 #: ../src/protocols/jabber/jabber.c:1318
-msgid "Change Jabber Password"
+msgid "Change XMPP Password"
 msgstr "ஜாப்பர் கடவுச்சொல்லை மாற்று"
 
 #: ../src/protocols/jabber/jabber.c:1318
@@ -6838,7 +6838,7 @@ msgid "Item Not Found"
 msgstr "உருப்படி காண வில்லை"
 
 #: ../src/protocols/jabber/jabber.c:1428
-msgid "Malformed Jabber ID"
+msgid "Malformed XMPP ID"
 msgstr "கேடான ஜாப்பர் அடையாளம்"
 
 #: ../src/protocols/jabber/jabber.c:1430
@@ -7095,7 +7095,7 @@ msgstr "தகவல் &lt;பயனாளர்&gt; &lt;தகவல்&gt;: �
 #. *  summary
 #: ../src/protocols/jabber/jabber.c:1883
 #: ../src/protocols/jabber/jabber.c:1885
-msgid "Jabber Protocol Plugin"
+msgid "XMPP Protocol Plugin"
 msgstr "ஜாப்பர் நெறிமுறை சொருகுபொருள்"
 
 #: ../src/protocols/jabber/jabber.c:1911
@@ -7145,7 +7145,7 @@ msgid "Message delivery to %s failed: %s"
 msgstr "%s க்கு அனுப்பிய தகவல் பட்டுவாடா செய்யத்தவறியது: %s"
 
 #: ../src/protocols/jabber/message.c:227
-msgid "Jabber Message Error"
+msgid "XMPP Message Error"
 msgstr "ஜாப்பர் தகவல் பிழை"
 
 #: ../src/protocols/jabber/message.c:295

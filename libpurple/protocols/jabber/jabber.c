@@ -562,7 +562,7 @@ jabber_login(PurpleAccount *account)
 	js->write_buffer = purple_circ_buffer_new(512);
 
 	if(!js->user) {
-		purple_connection_error(gc, _("Invalid Jabber ID"));
+		purple_connection_error(gc, _("Invalid XMPP ID"));
 		return;
 	}
 
@@ -868,8 +868,8 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 			instructions = g_strdup(_("Please fill out the information below "
 						"to register your new account."));
 
-		purple_request_fields(js->gc, _("Register New Jabber Account"),
-				_("Register New Jabber Account"), instructions, fields,
+		purple_request_fields(js->gc, _("Register New XMPP Account"),
+				_("Register New XMPP Account"), instructions, fields,
 				_("Register"), G_CALLBACK(jabber_register_cb),
 				_("Cancel"), G_CALLBACK(jabber_register_cancel_cb),
 				purple_connection_get_account(js->gc), NULL, NULL,
@@ -907,7 +907,7 @@ void jabber_register_account(PurpleAccount *account)
 	js->next_id = g_random_int();
 
 	if(!js->user) {
-		purple_connection_error(gc, _("Invalid Jabber ID"));
+		purple_connection_error(gc, _("Invalid XMPP ID"));
 		return;
 	}
 
@@ -1365,8 +1365,8 @@ static void jabber_password_change(PurplePluginAction *action)
 	purple_request_field_string_set_masked(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
-	purple_request_fields(js->gc, _("Change Jabber Password"),
-			_("Change Jabber Password"), _("Please enter your new password"),
+	purple_request_fields(js->gc, _("Change XMPP Password"),
+			_("Change XMPP Password"), _("Please enter your new password"),
 			fields, _("OK"), G_CALLBACK(jabber_password_change_cb),
 			_("Cancel"), NULL,
 			purple_connection_get_account(gc), NULL, NULL,			  
@@ -1480,7 +1480,7 @@ char *jabber_parse_error(JabberStream *js, xmlnode *packet)
 		} else if(xmlnode_get_child(error, "item-not-found")) {
 			text = _("Item Not Found");
 		} else if(xmlnode_get_child(error, "jid-malformed")) {
-			text = _("Malformed Jabber ID");
+			text = _("Malformed XMPP ID");
 		} else if(xmlnode_get_child(error, "not-acceptable")) {
 			text = _("Not Acceptable");
 		} else if(xmlnode_get_child(error, "not-allowed")) {
