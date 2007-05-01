@@ -284,7 +284,7 @@ Section -SecUninstallOldPidgin
   try_uninstall:
     StrCmp $R1 "" done
       ; Version key started with 0.60a3. Prior versions can't be
-      ; automaticlly uninstalled.
+      ; automatically uninstalled.
       StrCmp $R2 "" uninstall_problem
         ; Check if we have uninstall string..
         IfFileExists $R3 0 uninstall_problem
@@ -344,7 +344,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
   StrCmp $R0 "0" have_gtk
   StrCmp $R0 "1" upgrade_gtk
   StrCmp $R0 "2" upgrade_gtk
-  StrCmp $R0 "3" no_gtk no_gtk
+  ;StrCmp $R0 "3" no_gtk no_gtk
 
   no_gtk:
     StrCmp $R1 "NONE" gtk_no_install_rights
@@ -1137,6 +1137,9 @@ Function .onInit
   ReadRegStr $R0 HKCU "SOFTWARE\gaim" "Installer Language"
   IfErrors +2
   WriteRegStr HKCU "${PIDGIN_REG_KEY}" "Installer Language" "$R0"
+
+  !insertmacro SetSectionFlag ${SecSpellCheck} ${SF_RO}
+  !insertmacro UnselectSection ${SecSpellCheck}
 
   ;Mark the dictionaries that are already installed as readonly
   Call SelectAndDisableInstalledDictionaries
