@@ -2945,8 +2945,8 @@ msgid "Psychic mode for incoming conversation"
 msgstr "Telepatski način za dohodne pogovore"
 
 #: ../libpurple/plugins/psychic.c:21
-msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
-msgstr "Povzroči pojavitev pogovornih oken, ko vam začnejo drugi uporabniki sporočati. To deluje za AIM, ICQ, Jabber, Sametime in Yahoo!"
+msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+msgstr "Povzroči pojavitev pogovornih oken, ko vam začnejo drugi uporabniki sporočati. To deluje za AIM, ICQ, XMPP, Sametime in Yahoo!"
 
 #: ../libpurple/plugins/psychic.c:66
 msgid "You feel a disturbance in the force..."
@@ -3221,8 +3221,8 @@ msgid "AIM Account"
 msgstr "Račun AIM"
 
 #: ../libpurple/protocols/bonjour/bonjour.c:583
-msgid "Jabber Account"
-msgstr "Račun Jabber"
+msgid "XMPP Account"
+msgstr "Račun XMPP"
 
 #: ../libpurple/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -4358,8 +4358,8 @@ msgstr "Opis"
 
 #: ../libpurple/protocols/jabber/buddy.c:582
 #: ../libpurple/protocols/jabber/buddy.c:583
-msgid "Edit Jabber vCard"
-msgstr "Urejanje Jabber vVizitke"
+msgid "Edit XMPP vCard"
+msgstr "Urejanje XMPP vVizitke"
 
 #: ../libpurple/protocols/jabber/buddy.c:584
 msgid "All items below are optional. Enter only the information with which you feel comfortable."
@@ -4471,7 +4471,7 @@ msgstr "Priimek"
 msgid "The following are the results of your search"
 msgstr "To so rezultati vašega iskanja"
 
-#. current comment from Jabber User Directory users.jabber.org
+#. current comment from XMPP User Directory users.jabber.org
 #: ../libpurple/protocols/jabber/buddy.c:1674
 msgid "Find a contact by entering the search criteria in the given fields. Note: Each field supports wild card searches (%)"
 msgstr "Najdi stik z vnosom iskalnih kriterijev v dana polja. Opomba: vsa polja dovoljujejo iskanje z nadomestnimi znaki (%)."
@@ -4492,8 +4492,8 @@ msgid "Server Instructions: %s"
 msgstr "Ukazi strežniku: %s"
 
 #: ../libpurple/protocols/jabber/buddy.c:1736
-msgid "Fill in one or more fields to search for any matching Jabber users."
-msgstr "Izpolnite eno ali več polj za iskanje uporabnikov Jabberja."
+msgid "Fill in one or more fields to search for any matching XMPP users."
+msgstr "Izpolnite eno ali več polj za iskanje uporabnikov XMPPja."
 
 #: ../libpurple/protocols/jabber/buddy.c:1756
 #: ../libpurple/protocols/novell/novell.c:1488
@@ -4504,8 +4504,8 @@ msgstr "E-naslov"
 
 #: ../libpurple/protocols/jabber/buddy.c:1765
 #: ../libpurple/protocols/jabber/buddy.c:1766
-msgid "Search for Jabber users"
-msgstr "Išči uporabnike Jabberja"
+msgid "Search for XMPP users"
+msgstr "Išči uporabnike XMPPja"
 
 #. "Search"
 #: ../libpurple/protocols/jabber/buddy.c:1767
@@ -4648,8 +4648,8 @@ msgstr "Ni mogoče ustvariti vtičnice"
 
 #: ../libpurple/protocols/jabber/jabber.c:567
 #: ../libpurple/protocols/jabber/jabber.c:910
-msgid "Invalid Jabber ID"
-msgstr "Neveljaven Jabber ID"
+msgid "Invalid XMPP ID"
+msgstr "Neveljaven XMPP ID"
 
 #: ../libpurple/protocols/jabber/jabber.c:638
 #, c-format
@@ -4703,8 +4703,8 @@ msgstr "Za registracijo novega računa morate izpolniti spodnja polja."
 
 #: ../libpurple/protocols/jabber/jabber.c:873
 #: ../libpurple/protocols/jabber/jabber.c:874
-msgid "Register New Jabber Account"
-msgstr "Registrirajte nov račun za Jabber"
+msgid "Register New XMPP Account"
+msgstr "Registrirajte nov račun za XMPP"
 
 #. Register button
 #: ../libpurple/protocols/jabber/jabber.c:875
@@ -4779,8 +4779,8 @@ msgstr "Novo geslo (ponovno)"
 
 #: ../libpurple/protocols/jabber/jabber.c:1368
 #: ../libpurple/protocols/jabber/jabber.c:1369
-msgid "Change Jabber Password"
-msgstr "Spremeni geslo za Jabber"
+msgid "Change XMPP Password"
+msgstr "Spremeni geslo za XMPP"
 
 #: ../libpurple/protocols/jabber/jabber.c:1369
 msgid "Please enter your new password"
@@ -4834,8 +4834,8 @@ msgid "Item Not Found"
 msgstr "Predmeta ni mogoče najti"
 
 #: ../libpurple/protocols/jabber/jabber.c:1481
-msgid "Malformed Jabber ID"
-msgstr "Nepravilen Jabber ID"
+msgid "Malformed XMPP ID"
+msgstr "Nepravilen XMPP ID"
 
 #: ../libpurple/protocols/jabber/jabber.c:1483
 msgid "Not Acceptable"
@@ -5093,8 +5093,8 @@ msgstr "msg &lt;uporabnik&gt; &lt;sporočilo&gt;:  Pošljite zasebno sporočilo 
 #. *  description
 #: ../libpurple/protocols/jabber/jabber.c:1972
 #: ../libpurple/protocols/jabber/jabber.c:1974
-msgid "Jabber Protocol Plugin"
-msgstr "Dodatek za protokol Jabber"
+msgid "XMPP Protocol Plugin"
+msgstr "Dodatek za protokol XMPP"
 
 #: ../libpurple/protocols/jabber/jabber.c:2000
 msgid "Force old (port 5223) SSL"
@@ -5136,8 +5136,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Dostava sporočila za uporabnika %s ni uspela: %s"
 
 #: ../libpurple/protocols/jabber/message.c:272
-msgid "Jabber Message Error"
-msgstr "Napaka sporočila Jabber"
+msgid "XMPP Message Error"
+msgstr "Napaka sporočila XMPP"
 
 #: ../libpurple/protocols/jabber/message.c:352
 #, c-format
@@ -12236,8 +12236,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "heker in uradni vodja [lenoba]"
 
 #: ../pidgin/gtkdialogs.c:113
-msgid "Jabber developer"
-msgstr "razvijalec podpore protokola Jabber"
+msgid "XMPP developer"
+msgstr "razvijalec podpore protokola XMPP"
 
 #: ../pidgin/gtkdialogs.c:114
 msgid "original author"
@@ -12544,8 +12544,8 @@ msgstr "O programu %s"
 
 #: ../pidgin/gtkdialogs.c:359
 #, c-format
-msgid "%s is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
-msgstr "%s je modularen odjemalec za neposredna sporočila, ki lahko hkrati uporablja protokole AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu in QQ. Napisan je s pomočjo Gtk+.<BR><BR>Program lahko spreminjate in razširjate pod pogoji licence GPL (različice 2 ali novejše).  Kopija licence GPL je v datoteki 'COPYING', ki je distribuirana s programom %s.  %s je zaščitena znamka svojih avtorjev.  Oglejte si datoteko 'COPYRIGHT' za popoln seznam sodelavcev.  Za program ni na voljo nikakršna garancija.<BR><BR>"
+msgid "%s is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with %s.  %s is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
+msgstr "%s je modularen odjemalec za neposredna sporočila, ki lahko hkrati uporablja protokole AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu in QQ. Napisan je s pomočjo Gtk+.<BR><BR>Program lahko spreminjate in razširjate pod pogoji licence GPL (različice 2 ali novejše).  Kopija licence GPL je v datoteki 'COPYING', ki je distribuirana s programom %s.  %s je zaščitena znamka svojih avtorjev.  Oglejte si datoteko 'COPYRIGHT' za popoln seznam sodelavcev.  Za program ni na voljo nikakršna garancija.<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:374
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgwin on irc.freenode.net<BR><BR>"
@@ -14861,8 +14861,8 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "Omogoča neposreden vnos v protokole."
 
 #: ../pidgin/plugins/raw.c:178
-msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
-msgstr "Omogoča pošiljanje golih ukazov za protokole, ki temeljijo na besedilu (Jabber, MSN, IRC, TOC). Pritisnite 'Enter' za pošiljanje in opazujte kodno okno."
+msgid "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
+msgstr "Omogoča pošiljanje golih ukazov za protokole, ki temeljijo na besedilu (XMPP, MSN, IRC, TOC). Pritisnite 'Enter' za pošiljanje in opazujte kodno okno."
 
 #: ../pidgin/plugins/relnot.c:71
 #, c-format

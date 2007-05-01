@@ -136,11 +136,11 @@ static void dll_prep() {
 
 	if (path) {
 		/* Set up the settings dir base to be \\path\to
-		 * The actual settings dir will be \\path\to\.pidgin */
-		char settingsdir[strlen(path) + strlen("PIDGINHOME=") + 1];
+		 * The actual settings dir will be \\path\to\.purple */
+		char settingsdir[strlen(path) + strlen("PURPLEHOME=") + 1];
 		char aspelldir[strlen(path) + strlen("PIDGIN_ASPELL_DIR=\\Aspell\\bin") + 1];
 
-		snprintf(settingsdir, sizeof(settingsdir), "PIDGINHOME=%s", path);
+		snprintf(settingsdir, sizeof(settingsdir), "PURPLEHOME=%s", path);
 		printf("Setting settings dir: %s\n", settingsdir);
 		putenv(settingsdir);
 

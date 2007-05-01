@@ -1,6 +1,6 @@
 #include "gtkmodule.h"
 
-MODULE = Pidgin::Xfer  PACKAGE = Pidgin::Xfer  PREFIX = pidgin_xfer_
+MODULE = Pidgin::Xfer  PACKAGE = Pidgin::Xfer  PREFIX = pidgin_
 PROTOTYPES: ENABLE
 
 void

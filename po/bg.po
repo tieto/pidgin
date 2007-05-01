@@ -2345,8 +2345,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr ""
 
 #: ../gtk/gtkdialogs.c:108
-msgid "Jabber developer"
-msgstr "Разработчик на Jabber"
+msgid "XMPP developer"
+msgstr "Разработчик на XMPP"
 
 #: ../gtk/gtkdialogs.c:109
 msgid "original author"
@@ -2586,7 +2586,7 @@ msgstr "Относно Gaim"
 #, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+."
 "<BR><BR>You may modify and redistribute the program under the terms of the "
 "GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' "
@@ -2595,7 +2595,7 @@ msgid ""
 "warranty for this program.<BR><BR>"
 msgstr ""
 "Gaim програма за изпращане на съобщения чрез протоколите AIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, и "
+"XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, Napster, Zephyr, и "
 "Gadu-Gadu едновременно. Написан е чрез Gtk+.<BR><BR> Имате право да "
 "променяте и разпространявате  програмата под условията на лиценза GPL "
 "(версия 1 или по-нова) Копие на GPL може да бъде намерен във файла \"COPYING"
@@ -5226,11 +5226,11 @@ msgstr ""
 
 #: ../gtk/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Позволява изпращането на необработени данни до текстово-базирани протоколи "
-"(Jabber, MSN, IRC, TOC). За изпращане - натиснете „Enter“ в полето за "
+"(XMPP, MSN, IRC, TOC). За изпращане - натиснете „Enter“ в полето за "
 "писане. Обърнете внимание на прозореца за отстраняване на грешки."
 
 #: ../gtk/plugins/relnot.c:69
@@ -6849,7 +6849,7 @@ msgstr "Не може да бъде установена нова връзка."
 #: ../libgaim/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
 msgstr ""
 
 #: ../libgaim/plugins/psychic.c:66
@@ -7109,7 +7109,7 @@ msgstr "Добавяне на акаунт"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:594
 #, fuzzy
-msgid "Jabber Account"
+msgid "XMPP Account"
 msgstr "Активиране на акаунт"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
@@ -8191,8 +8191,8 @@ msgstr "Рожденна дата"
 
 #: ../libgaim/protocols/jabber/buddy.c:582
 #: ../libgaim/protocols/jabber/buddy.c:583
-msgid "Edit Jabber vCard"
-msgstr "Редактиране на Jabber-визитка"
+msgid "Edit XMPP vCard"
+msgstr "Редактиране на XMPP-визитка"
 
 #: ../libgaim/protocols/jabber/buddy.c:584
 msgid ""
@@ -8306,7 +8306,7 @@ msgstr "Фамилия"
 msgid "The following are the results of your search"
 msgstr ""
 
-#. current comment from Jabber User Directory users.jabber.org
+#. current comment from XMPP User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1667
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -8331,7 +8331,7 @@ msgid "Server Instructions: %s"
 msgstr "Данни за сървъра"
 
 #: ../libgaim/protocols/jabber/buddy.c:1729
-msgid "Fill in one or more fields to search for any matching Jabber users."
+msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 
 #: ../libgaim/protocols/jabber/buddy.c:1749
@@ -8343,8 +8343,8 @@ msgstr "Е-поща"
 
 #: ../libgaim/protocols/jabber/buddy.c:1758
 #: ../libgaim/protocols/jabber/buddy.c:1759
-msgid "Search for Jabber users"
-msgstr "Търсене за потребители на Jabber"
+msgid "Search for XMPP users"
+msgstr "Търсене за потребители на XMPP"
 
 #: ../libgaim/protocols/jabber/buddy.c:1773
 msgid "Invalid Directory"
@@ -8475,8 +8475,8 @@ msgstr "Грешка при създаване на сокет"
 
 #: ../libgaim/protocols/jabber/jabber.c:552
 #: ../libgaim/protocols/jabber/jabber.c:895
-msgid "Invalid Jabber ID"
-msgstr "Невалиден ID за Jabber"
+msgid "Invalid XMPP ID"
+msgstr "Невалиден ID за XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:623
 #, c-format
@@ -8530,8 +8530,8 @@ msgstr "Попълнете формуляра, за да регистрират�
 
 #: ../libgaim/protocols/jabber/jabber.c:858
 #: ../libgaim/protocols/jabber/jabber.c:859
-msgid "Register New Jabber Account"
-msgstr "Регистриране на нов Jabber-абонамент"
+msgid "Register New XMPP Account"
+msgstr "Регистриране на нов XMPP-абонамент"
 
 #: ../libgaim/protocols/jabber/jabber.c:1025
 msgid "Initializing Stream"
@@ -8594,8 +8594,8 @@ msgstr "Парола (отново)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1362
 #: ../libgaim/protocols/jabber/jabber.c:1363
-msgid "Change Jabber Password"
-msgstr "Смяна на парола за Jabber"
+msgid "Change XMPP Password"
+msgstr "Смяна на парола за XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1363
 msgid "Please enter your new password"
@@ -8649,7 +8649,7 @@ msgid "Item Not Found"
 msgstr "Записът не е намерен"
 
 #: ../libgaim/protocols/jabber/jabber.c:1473
-msgid "Malformed Jabber ID"
+msgid "Malformed XMPP ID"
 msgstr ""
 
 #: ../libgaim/protocols/jabber/jabber.c:1475
@@ -8916,8 +8916,8 @@ msgstr ""
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1962
 #: ../libgaim/protocols/jabber/jabber.c:1964
-msgid "Jabber Protocol Plugin"
-msgstr "Модул за протокола Jabber"
+msgid "XMPP Protocol Plugin"
+msgstr "Модул за протокола XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1990
 #, fuzzy
@@ -8960,8 +8960,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Съобщението не можа да достигне до %s: %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "Jabber Message Error"
-msgstr "Грешка в Jabber-съобщение"
+msgid "XMPP Message Error"
+msgstr "Грешка в XMPP-съобщение"
 
 #: ../libgaim/protocols/jabber/message.c:316
 #, c-format

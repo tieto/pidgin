@@ -859,11 +859,11 @@ msgstr ""
 
 #: plugins/raw.c:154
 msgid ""
-"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Ikwenza uthumele ungeniso kwiiprothokholi ezingalungiswanga ezisekwe "
-"kumbhalo (Jabber, MSN, IRC, TOC). Cofa u-'Enter' kwibhokisi lokuqalisa "
+"kumbhalo (XMPP, MSN, IRC, TOC). Cofa u-'Enter' kwibhokisi lokuqalisa "
 "ukuthumela. Jonga ifestile yokulungisa isiphene."
 
 #: plugins/relnot.c:63
@@ -2839,8 +2839,8 @@ msgstr "umlondolozi wangaphambili we-libfaim"
 
 #: src/gtkdialogs.c:92
 #, fuzzy
-msgid "Jabber developer"
-msgstr "umphuhlisi wangaphambili weJabber"
+msgid "XMPP developer"
+msgstr "umphuhlisi wangaphambili weXMPP"
 
 #: src/gtkdialogs.c:93
 msgid "original author"
@@ -3013,11 +3013,11 @@ msgstr "Malunga neGaim"
 #, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
+"XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
 msgstr ""
 "I-Gaim ngumxhasi omiselweyo wemiyalezo okwaziyo ukusebenzisa iAIM, iMSN, "
-"iYahoo!, iJabber, iICQ, iSILC, iNovell GroupWise, iNapster, iZephyr, neGadu-"
+"iYahoo!, iXMPP, iICQ, iSILC, iNovell GroupWise, iNapster, iZephyr, neGadu-"
 "Gadu zonke ngexexha elinye.  Ibhalwa kusetyenziswa iGtk+ yaye inelayisensi "
 "ngaphantsi kweGPL.<BR><BR>"
 
@@ -5024,7 +5024,7 @@ msgstr "I-imeyile"
 #: src/protocols/gg/gg.c:1495 src/protocols/gg/gg.c:1496
 #, fuzzy
 msgid "Register New Gadu-Gadu Account"
-msgstr "Bhalisa i-Akhawunti eNtsha yeJabber"
+msgstr "Bhalisa i-Akhawunti eNtsha yeXMPP"
 
 #: src/protocols/gg/gg.c:1497
 msgid "Please, fill in the following fields"
@@ -5757,8 +5757,8 @@ msgid "Birthday"
 msgstr "Umhla wokuZalwa"
 
 #: src/protocols/jabber/buddy.c:567 src/protocols/jabber/buddy.c:568
-msgid "Edit Jabber vCard"
-msgstr "Hlela i-Jabber vCard"
+msgid "Edit XMPP vCard"
+msgstr "Hlela i-XMPP vCard"
 
 #: src/protocols/jabber/buddy.c:569
 msgid ""
@@ -5769,8 +5769,8 @@ msgstr ""
 "ukhululekile ngalo."
 
 #: src/protocols/jabber/buddy.c:616
-msgid "Jabber ID"
-msgstr "ISazizi seJabber"
+msgid "XMPP ID"
+msgstr "ISazizi seXMPP"
 
 #: src/protocols/jabber/buddy.c:642 src/protocols/jabber/jabber.c:1711
 msgid "Resource"
@@ -5848,7 +5848,7 @@ msgid "The following are the results of your search"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1327
-msgid "Fill in one or more fields to search for any matching Jabber users."
+msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
@@ -5867,7 +5867,7 @@ msgstr "Idilesi ye-iMeyili"
 
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
 #, fuzzy
-msgid "Search for Jabber users"
+msgid "Search for XMPP users"
 msgstr "Zingela umhlobo ngedilesi ye-imeyile"
 
 #: src/protocols/jabber/buddy.c:1370
@@ -5993,8 +5993,8 @@ msgid "Unable to create socket"
 msgstr "Akukwazeki ukuyila isokethi"
 
 #: src/protocols/jabber/jabber.c:403 src/protocols/jabber/jabber.c:740
-msgid "Invalid Jabber ID"
-msgstr "ISazisi esingasebenziyo seJabber"
+msgid "Invalid XMPP ID"
+msgstr "ISazisi esingasebenziyo seXMPP"
 
 #: src/protocols/jabber/jabber.c:473
 #, c-format
@@ -6040,8 +6040,8 @@ msgid "Please fill out the information below to register your new account."
 msgstr "Nceda uzalise ulwazi ngezantsi ukubhalisa i-akhawunti yakho entsha."
 
 #: src/protocols/jabber/jabber.c:704 src/protocols/jabber/jabber.c:705
-msgid "Register New Jabber Account"
-msgstr "Bhalisa i-Akhawunti eNtsha yeJabber"
+msgid "Register New XMPP Account"
+msgstr "Bhalisa i-Akhawunti eNtsha yeXMPP"
 
 #: src/protocols/jabber/jabber.c:842
 msgid "Initializing Stream"
@@ -6113,8 +6113,8 @@ msgid "Password (again)"
 msgstr "I-Password (kwakhona)"
 
 #: src/protocols/jabber/jabber.c:1160 src/protocols/jabber/jabber.c:1161
-msgid "Change Jabber Password"
-msgstr "Tshintsha i-password yeJabber"
+msgid "Change XMPP Password"
+msgstr "Tshintsha i-password yeXMPP"
 
 #: src/protocols/jabber/jabber.c:1161
 msgid "Please enter your new password"
@@ -6164,8 +6164,8 @@ msgid "Item Not Found"
 msgstr "Into ayiFunyanwanga"
 
 #: src/protocols/jabber/jabber.c:1271
-msgid "Malformed Jabber ID"
-msgstr "Isazisi seJabber esakheke kakubi"
+msgid "Malformed XMPP ID"
+msgstr "Isazisi seXMPP esakheke kakubi"
 
 #: src/protocols/jabber/jabber.c:1273
 msgid "Not Acceptable"
@@ -6412,8 +6412,8 @@ msgstr ""
 #. *  summary
 #. *  description
 #: src/protocols/jabber/jabber.c:1686 src/protocols/jabber/jabber.c:1688
-msgid "Jabber Protocol Plugin"
-msgstr "ImiThetho yokuSebenza yokuNgenisa iJabber"
+msgid "XMPP Protocol Plugin"
+msgstr "ImiThetho yokuSebenza yokuNgenisa iXMPP"
 
 #: src/protocols/jabber/jabber.c:1714
 msgid "Use TLS if available"
@@ -6463,8 +6463,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Akuphumelelekanga ukunikela %s yomyalezo: %s"
 
 #: src/protocols/jabber/message.c:233
-msgid "Jabber Message Error"
-msgstr "ImPazamo yoMyalezo weJabber"
+msgid "XMPP Message Error"
+msgstr "ImPazamo yoMyalezo weXMPP"
 
 #: src/protocols/jabber/message.c:297
 #, c-format
@@ -12287,8 +12287,8 @@ msgstr "g003: Impazamo yokuvula inxibelelwano.\n"
 #~ msgid "Invalid nickname"
 #~ msgstr "IGama lomSebenzisi elingaSebenziyo"
 
-#~ msgid "Jabber Profile"
-#~ msgstr "Inkangeleko yeJabber"
+#~ msgid "XMPP Profile"
+#~ msgstr "Inkangeleko yeXMPP"
 
 #~ msgid "Roomlist Error"
 #~ msgstr "Impazamo yoLuhlu lweGumbi"

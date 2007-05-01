@@ -855,10 +855,10 @@ msgstr "Let deg sende direktekommandoar i tekstbaserte protokollar."
 
 #: plugins/raw.c:154
 msgid ""
-"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Let deg sende direktekommandoar i tekstbaserte protokollar (t.d. Jabber, "
+"Let deg sende direktekommandoar i tekstbaserte protokollar (t.d. XMPP, "
 "MSN, IRC). Trykk 'Enter' for å sende og sjekk avlusingsvindauget."
 
 #: plugins/relnot.c:63
@@ -2821,8 +2821,8 @@ msgstr "tidlegare libfaim-ansvarleg"
 
 #: src/gtkdialogs.c:92
 #, fuzzy
-msgid "Jabber developer"
-msgstr "tidlegare Jabber-utviklar"
+msgid "XMPP developer"
+msgstr "tidlegare XMPP-utviklar"
 
 #: src/gtkdialogs.c:93
 msgid "original author"
@@ -2994,11 +2994,11 @@ msgstr "Om Gaim"
 #, fuzzy
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
+"XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
 msgstr ""
 "Gaim er ein modulbasert lynmeldingsklient der du kan nytte AIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr og Gadu-Gadu "
+"XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr og Gadu-Gadu "
 "samstundes. Programmet er skrive i Gtk+ og lisensiert under GPL (Gnome "
 "Public License).<BR><BR>"
 
@@ -5002,7 +5002,7 @@ msgstr "Epost"
 #: src/protocols/gg/gg.c:1495 src/protocols/gg/gg.c:1496
 #, fuzzy
 msgid "Register New Gadu-Gadu Account"
-msgstr "Registrer ein ny Jabberkonto"
+msgstr "Registrer ein ny XMPPkonto"
 
 #: src/protocols/gg/gg.c:1497
 msgid "Please, fill in the following fields"
@@ -5708,8 +5708,8 @@ msgid "Birthday"
 msgstr "Fødselsdag"
 
 #: src/protocols/jabber/buddy.c:567 src/protocols/jabber/buddy.c:568
-msgid "Edit Jabber vCard"
-msgstr "Endre Jabber-vCard"
+msgid "Edit XMPP vCard"
+msgstr "Endre XMPP-vCard"
 
 #: src/protocols/jabber/buddy.c:569
 msgid ""
@@ -5720,8 +5720,8 @@ msgstr ""
 "komfortabel med å gje frå deg."
 
 #: src/protocols/jabber/buddy.c:616
-msgid "Jabber ID"
-msgstr "Jabber ID"
+msgid "XMPP ID"
+msgstr "XMPP ID"
 
 #: src/protocols/jabber/buddy.c:642 src/protocols/jabber/jabber.c:1711
 msgid "Resource"
@@ -5799,7 +5799,7 @@ msgid "The following are the results of your search"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1327
-msgid "Fill in one or more fields to search for any matching Jabber users."
+msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
@@ -5817,7 +5817,7 @@ msgid "E-Mail Address"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
-msgid "Search for Jabber users"
+msgid "Search for XMPP users"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1370
@@ -5944,8 +5944,8 @@ msgid "Unable to create socket"
 msgstr "Klarte ikkje å lage ein sokket"
 
 #: src/protocols/jabber/jabber.c:403 src/protocols/jabber/jabber.c:740
-msgid "Invalid Jabber ID"
-msgstr "Ugyldig Jabber-ID"
+msgid "Invalid XMPP ID"
+msgstr "Ugyldig XMPP-ID"
 
 #: src/protocols/jabber/jabber.c:473
 #, c-format
@@ -5991,8 +5991,8 @@ msgid "Please fill out the information below to register your new account."
 msgstr "Fyll ut informasjonen under for å registrere den nye kontoen din."
 
 #: src/protocols/jabber/jabber.c:704 src/protocols/jabber/jabber.c:705
-msgid "Register New Jabber Account"
-msgstr "Registrer ein ny Jabberkonto"
+msgid "Register New XMPP Account"
+msgstr "Registrer ein ny XMPPkonto"
 
 #: src/protocols/jabber/jabber.c:842
 msgid "Initializing Stream"
@@ -6064,8 +6064,8 @@ msgid "Password (again)"
 msgstr "Passord (om att)"
 
 #: src/protocols/jabber/jabber.c:1160 src/protocols/jabber/jabber.c:1161
-msgid "Change Jabber Password"
-msgstr "Endre Jabber-passord"
+msgid "Change XMPP Password"
+msgstr "Endre XMPP-passord"
 
 #: src/protocols/jabber/jabber.c:1161
 msgid "Please enter your new password"
@@ -6115,8 +6115,8 @@ msgid "Item Not Found"
 msgstr "Elementet vart ikkje funne"
 
 #: src/protocols/jabber/jabber.c:1271
-msgid "Malformed Jabber ID"
-msgstr "Misdanna Jabber-ID"
+msgid "Malformed XMPP ID"
+msgstr "Misdanna XMPP-ID"
 
 #: src/protocols/jabber/jabber.c:1273
 msgid "Not Acceptable"
@@ -6369,8 +6369,8 @@ msgstr ""
 #. *  summary
 #. *  description
 #: src/protocols/jabber/jabber.c:1686 src/protocols/jabber/jabber.c:1688
-msgid "Jabber Protocol Plugin"
-msgstr "Jabber-protokolltillegg"
+msgid "XMPP Protocol Plugin"
+msgstr "XMPP-protokolltillegg"
 
 #: src/protocols/jabber/jabber.c:1714
 msgid "Use TLS if available"
@@ -6420,8 +6420,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Meldinga til %s kom ikkje fram (%s)"
 
 #: src/protocols/jabber/message.c:233
-msgid "Jabber Message Error"
-msgstr "Jabber meldingsfeil"
+msgid "XMPP Message Error"
+msgstr "XMPP meldingsfeil"
 
 #: src/protocols/jabber/message.c:297
 #, c-format
@@ -11967,8 +11967,8 @@ msgstr "g003: Feil under opning av tilkopling.\n"
 #~ msgid "Invalid nickname"
 #~ msgstr "Ugyldig kallenamn"
 
-#~ msgid "Jabber Profile"
-#~ msgstr "Jabberprofil"
+#~ msgid "XMPP Profile"
+#~ msgstr "XMPPprofil"
 
 #~ msgid "Roomlist Error"
 #~ msgstr "Feil i romlista"

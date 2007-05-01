@@ -2316,8 +2316,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "χάκερ και οδηγάρα [τεμπέλαρος]"
 
 #: ../gtk/gtkdialogs.c:108
-msgid "Jabber developer"
-msgstr "υπεύθυνος ανάπτυξης του Jabber"
+msgid "XMPP developer"
+msgstr "υπεύθυνος ανάπτυξης του XMPP"
 
 #: ../gtk/gtkdialogs.c:109
 msgid "original author"
@@ -2549,7 +2549,7 @@ msgstr "Σχετικά με το Gaim"
 #: ../gtk/gtkdialogs.c:335
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+."
 "<BR><BR>You may modify and redistribute the program under the terms of the "
 "GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' "
@@ -2558,7 +2558,7 @@ msgid ""
 "warranty for this program.<BR><BR>"
 msgstr ""
 "Το Gaim είναι ένας ευμετάβλητος πελάτης ανταλλαγής μηνυμάτων που μπορεί να "
-"χρησιμοποιεί τα AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu και QQ, όλα ταυτόχρονα.  Είναι γραμμένο με τη χρήση GTK+.<BR><BR>Μπορείτε να τροποποιήσετε και να "
+"χρησιμοποιεί τα AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu και QQ, όλα ταυτόχρονα.  Είναι γραμμένο με τη χρήση GTK+.<BR><BR>Μπορείτε να τροποποιήσετε και να "
 "αναδιανείμετε το πρόγραμμα υπό τους όρους της άδειας χρήσης GPL (έκδοση 2 ή "
 "νεότερη).  Ένα αντίγραφο της άδειας χρήσης GPL περιέχεται στο αρχείο COPYING "
 "που διανέμεται μαζί με το Gaim.  Το Gaim είναι πνευματική ιδιοκτησία των "
@@ -5158,11 +5158,11 @@ msgstr ""
 
 #: ../gtk/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 "Σας επιτρέπει να στέλνετε ακατέργαστη είσοδο σε πρωτόκολλα βασισμένα σε "
-"κείμενο. (Jabber, MSN, IRC, TOC). Πατήστε 'Enter' στο παράθυρο εισόδου για "
+"κείμενο. (XMPP, MSN, IRC, TOC). Πατήστε 'Enter' στο παράθυρο εισόδου για "
 "να στείλετε.  Ελέγξτε το παράθυρο αποσφαλμάτωσης."
 
 #: ../gtk/plugins/relnot.c:69
@@ -6755,10 +6755,10 @@ msgstr ""
 #: ../libgaim/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
 msgstr ""
 "Προκαλεί την εμφάνιση παραθύρων συζήτησης όταν οι άλλοι χρήστες σας στέλνουν "
-"μηνύματα.  Αυτό δουλεύει για το AIM, το ICQ, το Jabber, το Sametime και το "
+"μηνύματα.  Αυτό δουλεύει για το AIM, το ICQ, το XMPP, το Sametime και το "
 "Yahoo!"
 
 #: ../libgaim/plugins/psychic.c:66
@@ -7010,8 +7010,8 @@ msgid "AIM Account"
 msgstr "Λογαριασμός AIM"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:594
-msgid "Jabber Account"
-msgstr "Λογαριασμός Jabber"
+msgid "XMPP Account"
+msgstr "Λογαριασμός XMPP"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -8124,8 +8124,8 @@ msgstr "Ημερομηνία γέννησης"
 
 #: ../libgaim/protocols/jabber/buddy.c:582
 #: ../libgaim/protocols/jabber/buddy.c:583
-msgid "Edit Jabber vCard"
-msgstr "Επεξεργασία Jabber vCard"
+msgid "Edit XMPP vCard"
+msgstr "Επεξεργασία XMPP vCard"
 
 #: ../libgaim/protocols/jabber/buddy.c:584
 msgid ""
@@ -8240,7 +8240,7 @@ msgstr "Επώνυμο"
 msgid "The following are the results of your search"
 msgstr "Τα ακόλουθα είναι τα αποτελέσματα της αναζήτησής σας"
 
-#. current comment from Jabber User Directory users.jabber.org
+#. current comment from XMPP User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1667
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -8263,9 +8263,9 @@ msgid "Server Instructions: %s"
 msgstr "Οδηγίες εξυπηρετητή: %s"
 
 #: ../libgaim/protocols/jabber/buddy.c:1729
-msgid "Fill in one or more fields to search for any matching Jabber users."
+msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
-"Συμπληρώστε ένα ή περισσότερα πεδία για την αναζήτηση χρηστών Jabber που "
+"Συμπληρώστε ένα ή περισσότερα πεδία για την αναζήτηση χρηστών XMPP που "
 "ταιριάζουν."
 
 #: ../libgaim/protocols/jabber/buddy.c:1749
@@ -8277,8 +8277,8 @@ msgstr "Διεύθυνση e-mail"
 
 #: ../libgaim/protocols/jabber/buddy.c:1758
 #: ../libgaim/protocols/jabber/buddy.c:1759
-msgid "Search for Jabber users"
-msgstr "Αναζήτηση χρηστών Jabber"
+msgid "Search for XMPP users"
+msgstr "Αναζήτηση χρηστών XMPP"
 
 #: ../libgaim/protocols/jabber/buddy.c:1773
 msgid "Invalid Directory"
@@ -8407,8 +8407,8 @@ msgstr "Αδυναμία δημιουργίας υποδοχέα"
 
 #: ../libgaim/protocols/jabber/jabber.c:552
 #: ../libgaim/protocols/jabber/jabber.c:895
-msgid "Invalid Jabber ID"
-msgstr "Μη έγκυρο Jabber ID"
+msgid "Invalid XMPP ID"
+msgstr "Μη έγκυρο XMPP ID"
 
 #: ../libgaim/protocols/jabber/jabber.c:623
 #, c-format
@@ -8463,8 +8463,8 @@ msgstr ""
 
 #: ../libgaim/protocols/jabber/jabber.c:858
 #: ../libgaim/protocols/jabber/jabber.c:859
-msgid "Register New Jabber Account"
-msgstr "Καταχώρηση νέου λογαριασμού Jabber"
+msgid "Register New XMPP Account"
+msgstr "Καταχώρηση νέου λογαριασμού XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1025
 msgid "Initializing Stream"
@@ -8527,8 +8527,8 @@ msgstr "Κωδικός (ξανά)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1362
 #: ../libgaim/protocols/jabber/jabber.c:1363
-msgid "Change Jabber Password"
-msgstr "Αλλαγή κωδικού Jabber"
+msgid "Change XMPP Password"
+msgstr "Αλλαγή κωδικού XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1363
 msgid "Please enter your new password"
@@ -8582,8 +8582,8 @@ msgid "Item Not Found"
 msgstr "Το αντικείμενο δε βρέθηκε"
 
 #: ../libgaim/protocols/jabber/jabber.c:1473
-msgid "Malformed Jabber ID"
-msgstr "Παραμορφωμένο Jabber ID"
+msgid "Malformed XMPP ID"
+msgstr "Παραμορφωμένο XMPP ID"
 
 #: ../libgaim/protocols/jabber/jabber.c:1475
 msgid "Not Acceptable"
@@ -8848,8 +8848,8 @@ msgstr ""
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1962
 #: ../libgaim/protocols/jabber/jabber.c:1964
-msgid "Jabber Protocol Plugin"
-msgstr "Πρόσθετο πρωτοκόλλου Jabber"
+msgid "XMPP Protocol Plugin"
+msgstr "Πρόσθετο πρωτοκόλλου XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1990
 msgid "Force old (port 5223) SSL"
@@ -8891,8 +8891,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Μεταφορά μηνύματος σε %s απέτυχε: %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "Jabber Message Error"
-msgstr "Σφάλμα μηνύματος Jabber"
+msgid "XMPP Message Error"
+msgstr "Σφάλμα μηνύματος XMPP"
 
 #: ../libgaim/protocols/jabber/message.c:316
 #, c-format

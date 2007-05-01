@@ -847,10 +847,10 @@ msgstr "Dopušta slanje sirovih podataka u tekst-bazirane protokole."
 
 #: plugins/raw.c:154
 msgid ""
-"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Dopušta slanje sirovih podataka u tekst-bazirane protokole (Jabber, MSN, IRC, TOC). Pritisnite "
+"Dopušta slanje sirovih podataka u tekst-bazirane protokole (XMPP, MSN, IRC, TOC). Pritisnite "
 "'Enter' u upisno polje da biste poslali. Gledajte debug prozor."
 
 #: plugins/relnot.c:63
@@ -2976,8 +2976,8 @@ msgid "former maintainer"
 msgstr "bivši održavatelj"
 
 #: src/gtkdialogs.c:93
-msgid "former Jabber developer"
-msgstr "bivši Jabber razvijatelj"
+msgid "former XMPP developer"
+msgstr "bivši XMPP razvijatelj"
 
 #: src/gtkdialogs.c:94
 msgid "original author"
@@ -3179,11 +3179,11 @@ msgstr "<span weight=\"bold\" size=\"larger\">Gaim v%s</span>"
 #: src/gtkdialogs.c:244
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
+"XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using Gtk+ and is licensed under the GPL.<BR><BR>"
 msgstr ""
 "Gaim je modularni klijent za poruke, koji je u mogucnosti da koristi u isto vrijeme "
-" AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, i Gadu-Gadu. "
+" AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, i Gadu-Gadu. "
 "Napisan je koristeci Gtk+ i licenciran pod GPL. <BR><BR>"
 
 #: src/gtkdialogs.c:254
@@ -5827,8 +5827,8 @@ msgid "Birthday"
 msgstr "Rodendan"
 
 #: src/protocols/jabber/buddy.c:509 src/protocols/jabber/buddy.c:510
-msgid "Edit Jabber vCard"
-msgstr "Uredi Jabber vCard"
+msgid "Edit XMPP vCard"
+msgstr "Uredi XMPP vCard"
 
 #: src/protocols/jabber/buddy.c:511
 msgid ""
@@ -5838,8 +5838,8 @@ msgstr ""
 "Sve tacke niže su opcionalne. Unesite samo informacije koje hocete."
 
 #: src/protocols/jabber/buddy.c:556
-msgid "Jabber ID"
-msgstr "Jabber ID"
+msgid "XMPP ID"
+msgstr "XMPP ID"
 
 #: src/protocols/jabber/buddy.c:566 src/protocols/jabber/buddy.c:573
 #: src/protocols/jabber/buddy.c:586 src/protocols/jabber/jabber.c:971
@@ -5873,8 +5873,8 @@ msgid "Logo"
 msgstr "Logo"
 
 #: src/protocols/jabber/buddy.c:786
-msgid "Jabber Profile"
-msgstr "Jabber profil"
+msgid "XMPP Profile"
+msgstr "XMPP profil"
 
 #: src/protocols/jabber/buddy.c:941
 msgid "Un-hide From"
@@ -6012,8 +6012,8 @@ msgid "SSL Handshake Failed"
 msgstr "SSL rukovanje nije uspjelo"
 
 #: src/protocols/jabber/jabber.c:378 src/protocols/jabber/jabber.c:711
-msgid "Invalid Jabber ID"
-msgstr "Pogrešan Jabber ID"
+msgid "Invalid XMPP ID"
+msgstr "Pogrešan XMPP ID"
 
 #: src/protocols/jabber/jabber.c:409 src/protocols/jabber/jabber.c:741
 msgid "SSL support unavailable"
@@ -6074,8 +6074,8 @@ msgid "Please fill out the information below to register your new account."
 msgstr "Popunite informacije niže, da registrujete vaš novi account."
 
 #: src/protocols/jabber/jabber.c:675 src/protocols/jabber/jabber.c:676
-msgid "Register New Jabber Account"
-msgstr "Registruj novi Jabber account"
+msgid "Register New XMPP Account"
+msgstr "Registruj novi XMPP account"
 
 #: src/protocols/jabber/jabber.c:759
 msgid "Logged out"
@@ -6161,8 +6161,8 @@ msgid "Password (again)"
 msgstr "Lozinka (ponovo)"
 
 #: src/protocols/jabber/jabber.c:1084 src/protocols/jabber/jabber.c:1085
-msgid "Change Jabber Password"
-msgstr "Promjeni Jabber lozinku"
+msgid "Change XMPP Password"
+msgstr "Promjeni XMPP lozinku"
 
 #: src/protocols/jabber/jabber.c:1085
 msgid "Please enter your new password"
@@ -6201,8 +6201,8 @@ msgid "Item Not Found"
 msgstr "Unos nije pronaden"
 
 #: src/protocols/jabber/jabber.c:1191
-msgid "Malformed Jabber ID"
-msgstr "Pogrešno formiran Jabber ID"
+msgid "Malformed XMPP ID"
+msgstr "Pogrešno formiran XMPP ID"
 
 #: src/protocols/jabber/jabber.c:1193
 msgid "Not Acceptable"
@@ -6435,8 +6435,8 @@ msgstr "Sakrij operativni sistem"
 #. *  summary
 #. *  description
 #: src/protocols/jabber/jabber.c:1595 src/protocols/jabber/jabber.c:1597
-msgid "Jabber Protocol Plugin"
-msgstr "Jabber protokol plugin"
+msgid "XMPP Protocol Plugin"
+msgstr "XMPP protokol plugin"
 
 #: src/protocols/jabber/jabber.c:1620
 msgid "Resource"
@@ -6480,8 +6480,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Dostava poruke prema %s nije uspjela: %s"
 
 #: src/protocols/jabber/message.c:233
-msgid "Jabber Message Error"
-msgstr "Greška Jabber poruke"
+msgid "XMPP Message Error"
+msgstr "Greška XMPP poruke"
 
 #: src/protocols/jabber/message.c:297
 #, c-format

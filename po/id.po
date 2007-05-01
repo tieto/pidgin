@@ -2294,8 +2294,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker dan driver yang ditujukan [si pemalas]"
 
 #: ../gtk/gtkdialogs.c:108
-msgid "Jabber developer"
-msgstr "Pengembang Jabber"
+msgid "XMPP developer"
+msgstr "Pengembang XMPP"
 
 #: ../gtk/gtkdialogs.c:109
 msgid "original author"
@@ -2529,7 +2529,7 @@ msgstr "Tentang Gaim"
 #: ../gtk/gtkdialogs.c:335
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+."
 "<BR><BR>You may modify and redistribute the program under the terms of the "
 "GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' "
@@ -2538,7 +2538,7 @@ msgid ""
 "warranty for this program.<BR><BR>"
 msgstr ""
 "Gaim adalah klien pengiriman pesan modular yang dapat menggunakanAIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu, dan QQ secara bersamaan.  Ditulis menggunakan GTK+."
 "<BR><BR>Anda dapat memodifikasi dan mendistribusikan program ini sesuai aturan "
 "GPL (versi 2 atau setelahnya).  Sebuah salinan GPL tercantum dalam bagian 'COPYING' "
@@ -5055,10 +5055,10 @@ msgstr "Membiarkan anda mengirim input mentah ke protokol berbasis teks."
 
 #: ../gtk/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Membiarkan anda mengirim input mentah ke protokol berbasis teks (Jabber, MSN, IRC, "
+"Membiarkan anda mengirim input mentah ke protokol berbasis teks (XMPP, MSN, IRC, "
 "TOC). Tekan 'Enter' dalam kotak tempat memasukkan untuk mengirim. Perhatikan jendela debug."
 
 #: ../gtk/plugins/relnot.c:69
@@ -6668,10 +6668,10 @@ msgstr "Mode Ramalan untuk percakapan masuk"
 #: ../libgaim/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
 msgstr ""
 "Menyebabkan jendela percakapan muncul ketika pengguna lain mulai mengirim pesan pada anda.  "
-"Ini berfungsi untuk AIM, ICQ, Jabber, Sametime, dan Yahoo!"
+"Ini berfungsi untuk AIM, ICQ, XMPP, Sametime, dan Yahoo!"
 
 #: ../libgaim/plugins/psychic.c:66
 msgid "You feel a disturbance in the force..."
@@ -6924,8 +6924,8 @@ msgid "AIM Account"
 msgstr "Akun AIM"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:594
-msgid "Jabber Account"
-msgstr "Akun Jabber"
+msgid "XMPP Account"
+msgstr "Akun XMPP"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -8035,8 +8035,8 @@ msgstr "Ulang Tahun"
 
 #: ../libgaim/protocols/jabber/buddy.c:582
 #: ../libgaim/protocols/jabber/buddy.c:583
-msgid "Edit Jabber vCard"
-msgstr "Rubah vCard Jabber"
+msgid "Edit XMPP vCard"
+msgstr "Rubah vCard XMPP"
 
 #: ../libgaim/protocols/jabber/buddy.c:584
 msgid ""
@@ -8151,7 +8151,7 @@ msgstr "Nama Belakang"
 msgid "The following are the results of your search"
 msgstr "Berikut ini adalah hasil pencarian anda"
 
-#. current comment from Jabber User Directory users.jabber.org
+#. current comment from XMPP User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1667
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -8176,8 +8176,8 @@ msgid "Server Instructions: %s"
 msgstr "Instruksi Server: %s"
 
 #: ../libgaim/protocols/jabber/buddy.c:1729
-msgid "Fill in one or more fields to search for any matching Jabber users."
-msgstr "Masukkan satu atau beberapa bagian untuk mencari pengguna Jabber yang sesuai."
+msgid "Fill in one or more fields to search for any matching XMPP users."
+msgstr "Masukkan satu atau beberapa bagian untuk mencari pengguna XMPP yang sesuai."
 
 #: ../libgaim/protocols/jabber/buddy.c:1749
 #: ../libgaim/protocols/novell/novell.c:1488
@@ -8188,8 +8188,8 @@ msgstr "Alamat Email"
 
 #: ../libgaim/protocols/jabber/buddy.c:1758
 #: ../libgaim/protocols/jabber/buddy.c:1759
-msgid "Search for Jabber users"
-msgstr "Cari pengguna Jabber"
+msgid "Search for XMPP users"
+msgstr "Cari pengguna XMPP"
 
 #: ../libgaim/protocols/jabber/buddy.c:1773
 msgid "Invalid Directory"
@@ -8318,8 +8318,8 @@ msgstr "Tidak dapat menciptakan soket"
 
 #: ../libgaim/protocols/jabber/jabber.c:552
 #: ../libgaim/protocols/jabber/jabber.c:895
-msgid "Invalid Jabber ID"
-msgstr "ID Jabber tidak valid"
+msgid "Invalid XMPP ID"
+msgstr "ID XMPP tidak valid"
 
 #: ../libgaim/protocols/jabber/jabber.c:623
 #, c-format
@@ -8372,8 +8372,8 @@ msgstr "Mohon masukkan informasi di bawah ini untuk mendaftarkan akun baru anda.
 
 #: ../libgaim/protocols/jabber/jabber.c:858
 #: ../libgaim/protocols/jabber/jabber.c:859
-msgid "Register New Jabber Account"
-msgstr "Daftarkan Akun Jabber Baru"
+msgid "Register New XMPP Account"
+msgstr "Daftarkan Akun XMPP Baru"
 
 #: ../libgaim/protocols/jabber/jabber.c:1025
 msgid "Initializing Stream"
@@ -8436,8 +8436,8 @@ msgstr "Kata Sandi (lagi)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1362
 #: ../libgaim/protocols/jabber/jabber.c:1363
-msgid "Change Jabber Password"
-msgstr "Ganti Kata Sandi Jabber"
+msgid "Change XMPP Password"
+msgstr "Ganti Kata Sandi XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1363
 msgid "Please enter your new password"
@@ -8491,8 +8491,8 @@ msgid "Item Not Found"
 msgstr "Item Tidak Ditemukan"
 
 #: ../libgaim/protocols/jabber/jabber.c:1473
-msgid "Malformed Jabber ID"
-msgstr "ID Jabber salah bentuk"
+msgid "Malformed XMPP ID"
+msgstr "ID XMPP salah bentuk"
 
 #: ../libgaim/protocols/jabber/jabber.c:1475
 msgid "Not Acceptable"
@@ -8759,8 +8759,8 @@ msgstr ""
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1962
 #: ../libgaim/protocols/jabber/jabber.c:1964
-msgid "Jabber Protocol Plugin"
-msgstr "Plugin Protokol Jabber"
+msgid "XMPP Protocol Plugin"
+msgstr "Plugin Protokol XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1990
 msgid "Force old (port 5223) SSL"
@@ -8802,8 +8802,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Pengiriman pesan ke %s gagal: %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "Jabber Message Error"
-msgstr "Kesalahan Pesan Jabber"
+msgid "XMPP Message Error"
+msgstr "Kesalahan Pesan XMPP"
 
 #: ../libgaim/protocols/jabber/message.c:316
 #, c-format

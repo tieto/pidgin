@@ -2570,8 +2570,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker i conductor designat"
 
 #: ../gtk/gtkdialogs.c:108
-msgid "Jabber developer"
-msgstr "Desenvolupador de Jabber"
+msgid "XMPP developer"
+msgstr "Desenvolupador de XMPP"
 
 #: ../gtk/gtkdialogs.c:109
 msgid "original author"
@@ -2849,8 +2849,8 @@ msgid "About Gaim"
 msgstr "Quant al Gaim"
 
 #: ../gtk/gtkdialogs.c:335
-msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
-msgstr "El Gaim és un client missatgeria instantània modular, capaç d'utilitzar els protocols AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, i QQ, tots alhora. Utilitza la biblioteca de programació GTK+.<BR><BR>Podeu modificar i redistribuir el programa sota els termes de la GPL (versió 2 o posterior). Hi ha una còpia de la GPL dins del fitxer 'COPYING' que es distribueix amb el Gaim. Els drets d'autor del Gaim pertany als seus col·laboradors. El fitxer 'COPYRIGHT' conté una llista completa de tots els contribuïdors. No us proporcionem cap mena de garantia amb este programa.<BR><BR>"
+msgid "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+.<BR><BR>You may modify and redistribute the program under the terms of the GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' file distributed with Gaim.  Gaim is copyrighted by its contributors.  See the 'COPYRIGHT' file for the complete list of contributors.  We provide no warranty for this program.<BR><BR>"
+msgstr "El Gaim és un client missatgeria instantània modular, capaç d'utilitzar els protocols AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu, i QQ, tots alhora. Utilitza la biblioteca de programació GTK+.<BR><BR>Podeu modificar i redistribuir el programa sota els termes de la GPL (versió 2 o posterior). Hi ha una còpia de la GPL dins del fitxer 'COPYING' que es distribueix amb el Gaim. Els drets d'autor del Gaim pertany als seus col·laboradors. El fitxer 'COPYRIGHT' conté una llista completa de tots els contribuïdors. No us proporcionem cap mena de garantia amb este programa.<BR><BR>"
 
 #: ../gtk/gtkdialogs.c:350
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #wingaim on irc.freenode.net<BR><BR>"
@@ -5431,8 +5431,8 @@ msgid "Lets you send raw input to text-based protocols."
 msgstr "Vos permet enviar dades en brut als protocols en mode text."
 
 #: ../gtk/plugins/raw.c:178
-msgid "Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
-msgstr "Permet enviar dades en brut als protocols en mode text (Jabber, MSN, IRC, TOC). Premeu la tecla de retorn a la caixa d'entrada per a enviar-les. Observeu la finestra de depuració."
+msgid "Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit 'Enter' in the entry box to send. Watch the debug window."
+msgstr "Permet enviar dades en brut als protocols en mode text (XMPP, MSN, IRC, TOC). Premeu la tecla de retorn a la caixa d'entrada per a enviar-les. Observeu la finestra de depuració."
 
 #: ../gtk/plugins/relnot.c:69
 #, c-format
@@ -6984,8 +6984,8 @@ msgid "Psychic mode for incoming conversation"
 msgstr "Mode psíquic per a converses entrants"
 
 #: ../libgaim/plugins/psychic.c:21
-msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
-msgstr "Fa que apareguen finestres de conversa així que altres usuaris vos comencen a enviar missatges. Funciona per a AIM, ICQ, Jabber, Sametime, i Yahoo!"
+msgid "Causes conversation windows to appear as other users begin to message you.  This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
+msgstr "Fa que apareguen finestres de conversa així que altres usuaris vos comencen a enviar missatges. Funciona per a AIM, ICQ, XMPP, Sametime, i Yahoo!"
 
 #: ../libgaim/plugins/psychic.c:66
 msgid "You feel a disturbance in the force..."
@@ -7238,8 +7238,8 @@ msgid "AIM Account"
 msgstr "Compte AIM"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:594
-msgid "Jabber Account"
-msgstr "Compte Jabber"
+msgid "XMPP Account"
+msgstr "Compte XMPP"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -8325,8 +8325,8 @@ msgstr "Data de naixement"
 
 #: ../libgaim/protocols/jabber/buddy.c:582
 #: ../libgaim/protocols/jabber/buddy.c:583
-msgid "Edit Jabber vCard"
-msgstr "Edita la vCard del Jabber"
+msgid "Edit XMPP vCard"
+msgstr "Edita la vCard del XMPP"
 
 #: ../libgaim/protocols/jabber/buddy.c:584
 msgid "All items below are optional. Enter only the information with which you feel comfortable."
@@ -8438,7 +8438,7 @@ msgstr "Cognoms"
 msgid "The following are the results of your search"
 msgstr "El que segueix són els resultats de la vostra cerca"
 
-#. current comment from Jabber User Directory users.jabber.org
+#. current comment from XMPP User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1672
 msgid "Find a contact by entering the search criteria in the given fields. Note: Each field supports wild card searches (%)"
 msgstr "Trobeu un contacte entrant el criteri de la cerca en els camps indicats. Nota: cada camp permet caràcters que actuen de comodí (%)"
@@ -8459,7 +8459,7 @@ msgid "Server Instructions: %s"
 msgstr "Instruccions del servidor: %s"
 
 #: ../libgaim/protocols/jabber/buddy.c:1734
-msgid "Fill in one or more fields to search for any matching Jabber users."
+msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr "Introduïu un o més camps per cercar usuaris que hi coincidisquen."
 
 #: ../libgaim/protocols/jabber/buddy.c:1754
@@ -8471,8 +8471,8 @@ msgstr "Adreça electrònica"
 
 #: ../libgaim/protocols/jabber/buddy.c:1763
 #: ../libgaim/protocols/jabber/buddy.c:1764
-msgid "Search for Jabber users"
-msgstr "Cerca usuaris de Jabber"
+msgid "Search for XMPP users"
+msgstr "Cerca usuaris de XMPP"
 
 #: ../libgaim/protocols/jabber/buddy.c:1778
 msgid "Invalid Directory"
@@ -8602,8 +8602,8 @@ msgstr "No s'ha pogut crear el sòcol"
 
 #: ../libgaim/protocols/jabber/jabber.c:552
 #: ../libgaim/protocols/jabber/jabber.c:895
-msgid "Invalid Jabber ID"
-msgstr "ID Jabber invàlid"
+msgid "Invalid XMPP ID"
+msgstr "ID XMPP invàlid"
 
 #: ../libgaim/protocols/jabber/jabber.c:623
 #, c-format
@@ -8657,8 +8657,8 @@ msgstr "Empleneu els camps següents per a registrar un compte nou."
 
 #: ../libgaim/protocols/jabber/jabber.c:858
 #: ../libgaim/protocols/jabber/jabber.c:859
-msgid "Register New Jabber Account"
-msgstr "Registra un compte Jabber nou"
+msgid "Register New XMPP Account"
+msgstr "Registra un compte XMPP nou"
 
 #: ../libgaim/protocols/jabber/jabber.c:1025
 msgid "Initializing Stream"
@@ -8721,8 +8721,8 @@ msgstr "Contrasenya (repetiu-la)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1362
 #: ../libgaim/protocols/jabber/jabber.c:1363
-msgid "Change Jabber Password"
-msgstr "Canvia la contrasenya per al Jabber"
+msgid "Change XMPP Password"
+msgstr "Canvia la contrasenya per al XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1363
 msgid "Please enter your new password"
@@ -8776,8 +8776,8 @@ msgid "Item Not Found"
 msgstr "No s'ha trobat l'element"
 
 #: ../libgaim/protocols/jabber/jabber.c:1473
-msgid "Malformed Jabber ID"
-msgstr "l'ID Jabber està mal format"
+msgid "Malformed XMPP ID"
+msgstr "l'ID XMPP està mal format"
 
 #: ../libgaim/protocols/jabber/jabber.c:1475
 msgid "Not Acceptable"
@@ -9035,8 +9035,8 @@ msgstr "msg &lt;usuari&gt; &lt;missatge&gt;:  Envia un missatge privat a un altr
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1962
 #: ../libgaim/protocols/jabber/jabber.c:1964
-msgid "Jabber Protocol Plugin"
-msgstr "Connector per al protocol Jabber"
+msgid "XMPP Protocol Plugin"
+msgstr "Connector per al protocol XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1990
 msgid "Force old (port 5223) SSL"
@@ -9078,8 +9078,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "No s'ha pogut fer arribar el missatge a %s: %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "Jabber Message Error"
-msgstr "Missatge d'error de Jabber"
+msgid "XMPP Message Error"
+msgstr "Missatge d'error de XMPP"
 
 #: ../libgaim/protocols/jabber/message.c:316
 #, c-format
@@ -15608,8 +15608,8 @@ msgstr "No s'ha pogut conectar a %s: %s"
 #~ msgstr "No s'ha pogut obrir el fitxer"
 #~ msgid "Change password"
 #~ msgstr "Canvia la contrasenya"
-#~ msgid "Jabber ID"
-#~ msgstr "ID per al Jabber"
+#~ msgid "XMPP ID"
+#~ msgstr "ID per al XMPP"
 #~ msgid "Error processing event or response (%s)."
 #~ msgstr "S'ha produït un error en processar una incidència o resposta (%s)."
 #~ msgid "Unable to set AIM away message."

@@ -73,9 +73,9 @@ common_sources = \
 	common/Util.xs \
 	common/XMLNode.xs \
 	common/module.h \
-	common/typemap \
-	common/fallback/const-c.inc \
-	common/fallback/const-xs.inc
+	common/typemap
+#	common/fallback/const-c.inc \
+#	common/fallback/const-xs.inc
 
 EXTRA_DIST = \
 	Makefile.mingw \
@@ -139,7 +139,7 @@ distclean-generic:
 	done
 
 	@rm -f Makefile
-	@rm -f common/const-c.inc common/const-xs.inc
+#	@rm -f common/const-c.inc common/const-xs.inc
 
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
 		for f in ${common_sources}; do \

@@ -3,6 +3,25 @@
 MODULE = Purple::Prefs  PACKAGE = Purple::Prefs  PREFIX = purple_prefs_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *stash = gv_stashpv("Purple::Pref::Type", 1);
+
+	static const constiv *civ, const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_PREF_##name}
+		const_iv(NONE),
+		const_iv(BOOLEAN),
+		const_iv(INT),
+		const_iv(STRING),
+		const_iv(STRING_LIST),
+		const_iv(PATH),
+		const_iv(PATH_LIST),
+	};
+
+	for (civ = const_iv + sizeof(const_iv) / sizeof(const_iv[0]); civ-- > const_iv; )
+		newCONSTSUB(stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 void
 purple_prefs_add_bool(name, value)
 	const char *name

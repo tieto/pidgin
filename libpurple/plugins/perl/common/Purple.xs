@@ -1,6 +1,5 @@
 #include "module.h"
 #include "../perl-handlers.h"
-#include "const-c.inc"
 
 /* Prototypes for the BOOT section below. */
 PURPLE_PERL_BOOT_PROTO(Account);
@@ -39,8 +38,6 @@ PURPLE_PERL_BOOT_PROTO(XMLNode);
 
 MODULE = Purple PACKAGE = Purple PREFIX = purple_
 PROTOTYPES: ENABLE
-
-INCLUDE: const-xs.inc
 
 BOOT:
 	PURPLE_PERL_BOOT(Account);

@@ -2308,8 +2308,8 @@ msgid "hacker and designated driver [lazy bum]"
 msgstr "hacker e deseñador de controladores [lazy bum]"
 
 #: ../gtk/gtkdialogs.c:108
-msgid "Jabber developer"
-msgstr "desenvolvedor de Jabber"
+msgid "XMPP developer"
+msgstr "desenvolvedor de XMPP"
 
 #: ../gtk/gtkdialogs.c:109
 msgid "original author"
@@ -2541,7 +2541,7 @@ msgstr "Acerca do Gaim"
 #: ../gtk/gtkdialogs.c:335
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
+"XMPP, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, "
 "Bonjour, Zephyr, Gadu-Gadu, and QQ all at once.  It is written using GTK+."
 "<BR><BR>You may modify and redistribute the program under the terms of the "
 "GPL (version 2 or later).  A copy of the GPL is contained in the 'COPYING' "
@@ -2550,7 +2550,7 @@ msgid ""
 "warranty for this program.<BR><BR>"
 msgstr ""
 "Gaim é un cliente modular de mensaxaría instantánea, capaz de utilizar AIM, "
-"MSN, Yahoo!, Jabber, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, "
+"MSN, Yahoo!, XMPP, ICQ, IRC, SILC, Novell GroupWise, Lotus Sametime, "
 "Napster, Zephyr, e Gadu-Gadu ao mesmo tempo. Está escrito usando Gtk+."
 "<BR><BR> Pode modificar e redistribuír este programa baixo os termos da GPL "
 "(versión 2 ou posterior). Inclúese unha copia da licenza GPL no ficheiro "
@@ -5131,10 +5131,10 @@ msgstr "Permítelle enviar datos en bruto a protocolos baseados en texto."
 
 #: ../gtk/plugins/raw.c:178
 msgid ""
-"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
-"Permítelle enviar datos en bruto a protocolos baseados en texto (Jabber, "
+"Permítelle enviar datos en bruto a protocolos baseados en texto (XMPP, "
 "MSN, IRC, TOC). Prema 'Intor' na caixa de entrada para envialo. Observe a "
 "ventá de depuración."
 
@@ -6668,10 +6668,10 @@ msgstr "Modo psíquico para conversas entrantes"
 #: ../libgaim/plugins/psychic.c:21
 msgid ""
 "Causes conversation windows to appear as other users begin to message you.  "
-"This works for AIM, ICQ, Jabber, Sametime, and Yahoo!"
+"This works for AIM, ICQ, XMPP, Sametime, and Yahoo!"
 msgstr ""
 "Fai que aparezan as ventás da conversa cando un usuario comeza a enviarlle "
-"unha mensaxe. Isto funciona con AIM, ICQ, Jabber, Sametime e Yahoo!"
+"unha mensaxe. Isto funciona con AIM, ICQ, XMPP, Sametime e Yahoo!"
 
 #: ../libgaim/plugins/psychic.c:66
 msgid "You feel a disturbance in the force..."
@@ -6922,8 +6922,8 @@ msgid "AIM Account"
 msgstr "Conta de AIM"
 
 #: ../libgaim/protocols/bonjour/bonjour.c:594
-msgid "Jabber Account"
-msgstr "Conta de Jabber"
+msgid "XMPP Account"
+msgstr "Conta de XMPP"
 
 #: ../libgaim/protocols/bonjour/bonjour.h:35
 msgid "Bonjour"
@@ -8032,8 +8032,8 @@ msgstr "Ano de nacemento"
 
 #: ../libgaim/protocols/jabber/buddy.c:582
 #: ../libgaim/protocols/jabber/buddy.c:583
-msgid "Edit Jabber vCard"
-msgstr "Editar vCard de Jabber"
+msgid "Edit XMPP vCard"
+msgstr "Editar vCard de XMPP"
 
 #: ../libgaim/protocols/jabber/buddy.c:584
 msgid ""
@@ -8148,7 +8148,7 @@ msgstr "Apelidos"
 msgid "The following are the results of your search"
 msgstr "Os resultados da súa busca son os seguintes"
 
-#. current comment from Jabber User Directory users.jabber.org
+#. current comment from XMPP User Directory users.jabber.org
 #: ../libgaim/protocols/jabber/buddy.c:1667
 msgid ""
 "Find a contact by entering the search criteria in the given fields. Note: "
@@ -8173,10 +8173,10 @@ msgid "Server Instructions: %s"
 msgstr "Instrucións do servidor: %s"
 
 #: ../libgaim/protocols/jabber/buddy.c:1729
-msgid "Fill in one or more fields to search for any matching Jabber users."
+msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 "Encha un ou máis dos campos amosados a seguir para localizar usuarios "
-"Jabber."
+"XMPP."
 
 #: ../libgaim/protocols/jabber/buddy.c:1749
 #: ../libgaim/protocols/novell/novell.c:1488
@@ -8187,8 +8187,8 @@ msgstr "Enderezo de correo electrónico"
 
 #: ../libgaim/protocols/jabber/buddy.c:1758
 #: ../libgaim/protocols/jabber/buddy.c:1759
-msgid "Search for Jabber users"
-msgstr "Localizar usuarios de Jabber"
+msgid "Search for XMPP users"
+msgstr "Localizar usuarios de XMPP"
 
 #: ../libgaim/protocols/jabber/buddy.c:1773
 msgid "Invalid Directory"
@@ -8317,8 +8317,8 @@ msgstr "Non se puido crear o conectador "
 
 #: ../libgaim/protocols/jabber/jabber.c:550
 #: ../libgaim/protocols/jabber/jabber.c:893
-msgid "Invalid Jabber ID"
-msgstr "ID de Jabber non válido"
+msgid "Invalid XMPP ID"
+msgstr "ID de XMPP non válido"
 
 #: ../libgaim/protocols/jabber/jabber.c:621
 #, c-format
@@ -8371,8 +8371,8 @@ msgstr "Cubre a información que se indica abaixo para rexistrar a nova conta."
 
 #: ../libgaim/protocols/jabber/jabber.c:856
 #: ../libgaim/protocols/jabber/jabber.c:857
-msgid "Register New Jabber Account"
-msgstr "Rexistrando a conta nova de Jabber"
+msgid "Register New XMPP Account"
+msgstr "Rexistrando a conta nova de XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1023
 msgid "Initializing Stream"
@@ -8435,8 +8435,8 @@ msgstr "Contrasinal (de novo)"
 
 #: ../libgaim/protocols/jabber/jabber.c:1360
 #: ../libgaim/protocols/jabber/jabber.c:1361
-msgid "Change Jabber Password"
-msgstr "Modificar o contrasinal de Jabber"
+msgid "Change XMPP Password"
+msgstr "Modificar o contrasinal de XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1361
 msgid "Please enter your new password"
@@ -8490,8 +8490,8 @@ msgid "Item Not Found"
 msgstr "Elemento non atopado"
 
 #: ../libgaim/protocols/jabber/jabber.c:1471
-msgid "Malformed Jabber ID"
-msgstr "ID de Jabber inválido"
+msgid "Malformed XMPP ID"
+msgstr "ID de XMPP inválido"
 
 #: ../libgaim/protocols/jabber/jabber.c:1473
 msgid "Not Acceptable"
@@ -8758,8 +8758,8 @@ msgstr ""
 #. *  description
 #: ../libgaim/protocols/jabber/jabber.c:1960
 #: ../libgaim/protocols/jabber/jabber.c:1962
-msgid "Jabber Protocol Plugin"
-msgstr "Complemento de protocolo Jabber"
+msgid "XMPP Protocol Plugin"
+msgstr "Complemento de protocolo XMPP"
 
 #: ../libgaim/protocols/jabber/jabber.c:1988
 msgid "Force old (port 5223) SSL"
@@ -8801,8 +8801,8 @@ msgid "Message delivery to %s failed: %s"
 msgstr "Fallou o envío da mensaxe a %s: %s"
 
 #: ../libgaim/protocols/jabber/message.c:236
-msgid "Jabber Message Error"
-msgstr "Mensaxe de erro de Jabber"
+msgid "XMPP Message Error"
+msgstr "Mensaxe de erro de XMPP"
 
 #: ../libgaim/protocols/jabber/message.c:316
 #, c-format

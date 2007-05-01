@@ -28,43 +28,10 @@ static void purple_perl_util_url_cb(PurpleUtilFetchUrlData *url_data, void *user
 MODULE = Purple::Util  PACKAGE = Purple::Util  PREFIX = purple_
 PROTOTYPES: ENABLE
 
-void
-purple_util_fetch_url(handle, url, full, user_agent, http11, cb)
-	Purple::Plugin handle
-	const char *url
-	gboolean full
-	const char *user_agent
-	gboolean http11
-	SV * cb
-CODE:
-	PurplePerlUrlData *gpr;
-	STRLEN len;
-	char *basename;
-
-	basename = g_path_get_basename(handle->path);
-	purple_perl_normalize_script_name(basename);
-	gpr = g_new(PurplePerlUrlData, 1);
-
-	gpr->cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cb, len));
-	g_free(basename);
-	purple_util_fetch_url(url, full, user_agent, http11, purple_perl_util_url_cb, gpr);
-
 int
 purple_build_dir(path, mode)
 	const char *path
 	int mode
-
-const char *
-purple_date_format_full(tm)
-	const struct tm *tm
-
-const char *
-purple_date_format_long(tm)
-	const struct tm *tm
-
-const char *
-purple_date_format_short(tm)
-	const struct tm *tm
 
 gboolean
 purple_email_is_valid(address)
@@ -80,53 +47,6 @@ purple_fd_get_ip(fd)
 
 const gchar *
 purple_home_dir()
-
-gboolean
-purple_markup_extract_info_field(str, len, user_info, start_token, skip, end_token, check_value, no_value_token, display_name, is_link, link_prefix, format_cb)
-	const char *str
-	int len
-	Purple::NotifyUserInfo user_info
-	const char *start_token
-	int skip
-	const char *end_token
-	char check_value
-	const char *no_value_token
-	const char *display_name
-	gboolean is_link
-	const char *link_prefix
-	Purple::Util::InfoFieldFormatCallback format_cb
-
-gboolean
-purple_markup_find_tag(needle, haystack, start, end, attributes)
-	const char *needle
-	const char *haystack
-	const char **start
-	const char **end
-	GData **attributes
-
-gchar_own *
-purple_markup_get_tag_name(tag)
-	const char *tag
-
-void
-purple_markup_html_to_xhtml(html, dest_xhtml, dest_plain)
-	const char *html
-	char **dest_xhtml
-	char **dest_plain
-
-gchar_own *
-purple_markup_linkify(str)
-	const char *str
-
-gchar_own *
-purple_markup_slice(str, x, y)
-	const char *str
-	guint x
-	guint y
-
-gchar_own *
-purple_markup_strip_html(str)
-	const char *str
 
 gboolean
 purple_message_meify(message, len)
@@ -146,46 +66,6 @@ purple_normalize(account, str)
 gboolean
 purple_program_is_valid(program)
 	const char *program
-
-gchar_own *
-purple_str_add_cr(str)
-	const char *str
-
-gchar_own *
-purple_str_binary_to_ascii(binary, len)
-	const unsigned char *binary
-	guint len
-
-gboolean
-purple_str_has_prefix(s, p)
-	const char *s
-	const char *p
-
-gboolean
-purple_str_has_suffix(s, x)
-	const char *s
-	const char *x
-
-gchar_own *
-purple_str_seconds_to_string(sec)
-	guint sec
-
-gchar_own *
-purple_str_size_to_units(size)
-	size_t size
-
-void
-purple_str_strip_char(str, thechar)
-	char *str
-	char thechar
-
-time_t
-purple_str_to_time(timestamp, utc = FALSE, tm = NULL, tz_off = NULL, rest = NULL)
-	const char *timestamp
-	gboolean utc
-	struct tm *tm
-	long *tz_off
-	const char **rest
 
 gchar_own *
 purple_strcasereplace(string, delimiter, replacement)
@@ -255,6 +135,138 @@ purple_user_dir()
 
 const char *
 purple_utf8_strftime(const char *format, const struct tm *tm);
+
+MODULE = Purple::Util  PACKAGE = Purple::Util::Str  PREFIX = purple_str_
+PROTOTYPES: ENABLE
+
+gchar_own *
+purple_str_add_cr(str)
+	const char *str
+
+gchar_own *
+purple_str_binary_to_ascii(binary, len)
+	const unsigned char *binary
+	guint len
+
+gboolean
+purple_str_has_prefix(s, p)
+	const char *s
+	const char *p
+
+gboolean
+purple_str_has_suffix(s, x)
+	const char *s
+	const char *x
+
+gchar_own *
+purple_str_seconds_to_string(sec)
+	guint sec
+
+gchar_own *
+purple_str_size_to_units(size)
+	size_t size
+
+void
+purple_str_strip_char(str, thechar)
+	char *str
+	char thechar
+
+time_t
+purple_str_to_time(timestamp, utc = FALSE, tm = NULL, tz_off = NULL, rest = NULL)
+	const char *timestamp
+	gboolean utc
+	struct tm *tm
+	long *tz_off
+	const char **rest
+
+MODULE = Purple::Util  PACKAGE = Purple::Util::Date  PREFIX = purple_date_
+PROTOTYPES: ENABLE
+
+const char *
+purple_date_format_full(tm)
+	const struct tm *tm
+
+const char *
+purple_date_format_long(tm)
+	const struct tm *tm
+
+const char *
+purple_date_format_short(tm)
+	const struct tm *tm
+
+MODULE = Purple::Util  PACKAGE = Purple::Util::Markup  PREFIX = purple_markup_
+PROTOTYPES: ENABLE
+
+gboolean
+purple_markup_extract_info_field(str, len, user_info, start_token, skip, end_token, check_value, no_value_token, display_name, is_link, link_prefix, format_cb)
+	const char *str
+	int len
+	Purple::NotifyUserInfo user_info
+	const char *start_token
+	int skip
+	const char *end_token
+	char check_value
+	const char *no_value_token
+	const char *display_name
+	gboolean is_link
+	const char *link_prefix
+	Purple::Util::InfoFieldFormatCallback format_cb
+
+gboolean
+purple_markup_find_tag(needle, haystack, start, end, attributes)
+	const char *needle
+	const char *haystack
+	const char **start
+	const char **end
+	GData **attributes
+
+gchar_own *
+purple_markup_get_tag_name(tag)
+	const char *tag
+
+void
+purple_markup_html_to_xhtml(html, dest_xhtml, dest_plain)
+	const char *html
+	char **dest_xhtml
+	char **dest_plain
+
+gchar_own *
+purple_markup_linkify(str)
+	const char *str
+
+gchar_own *
+purple_markup_slice(str, x, y)
+	const char *str
+	guint x
+	guint y
+
+gchar_own *
+purple_markup_strip_html(str)
+	const char *str
+
+MODULE = Purple::Util  PACKAGE = Purple::Util  PREFIX = purple_util_
+PROTOTYPES: ENABLE
+
+void
+purple_util_fetch_url(handle, url, full, user_agent, http11, cb)
+	Purple::Plugin handle
+	const char *url
+	gboolean full
+	const char *user_agent
+	gboolean http11
+	SV * cb
+CODE:
+	PurplePerlUrlData *gpr;
+	STRLEN len;
+	char *basename;
+
+	basename = g_path_get_basename(handle->path);
+	purple_perl_normalize_script_name(basename);
+	gpr = g_new(PurplePerlUrlData, 1);
+
+	gpr->cb = g_strdup_printf("Purple::Script::%s::%s", basename, SvPV(cb, len));
+	g_free(basename);
+	purple_util_fetch_url(url, full, user_agent, http11, purple_perl_util_url_cb, gpr);
 
 void
 purple_util_set_user_dir(dir)

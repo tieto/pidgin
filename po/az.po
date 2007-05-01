@@ -823,7 +823,7 @@ msgstr "Mətn təməlli protokollara sadə mətn yollama imkanı verir."
 
 #: plugins/raw.c:154
 msgid ""
-"Lets you send raw input to text-based protocols (Jabber, MSN, IRC, TOC). Hit "
+"Lets you send raw input to text-based protocols (XMPP, MSN, IRC, TOC). Hit "
 "'Enter' in the entry box to send. Watch the debug window."
 msgstr ""
 
@@ -2749,8 +2749,8 @@ msgstr ""
 
 #: src/gtkdialogs.c:92
 #, fuzzy
-msgid "Jabber developer"
-msgstr "Jabber Profili"
+msgid "XMPP developer"
+msgstr "XMPP Profili"
 
 #: src/gtkdialogs.c:93
 msgid "original author"
@@ -2922,7 +2922,7 @@ msgstr ""
 #: src/gtkdialogs.c:226
 msgid ""
 "Gaim is a modular messaging client capable of using AIM, MSN, Yahoo!, "
-"Jabber, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
+"XMPP, ICQ, IRC, SILC, Novell GroupWise, Napster, Zephyr, and Gadu-Gadu all "
 "at once.  It is written using GTK+ and is licensed under the GNU GPL.<BR><BR>"
 msgstr ""
 
@@ -5552,7 +5552,7 @@ msgid "Birthday"
 msgstr "Ad Günü"
 
 #: src/protocols/jabber/buddy.c:567 src/protocols/jabber/buddy.c:568
-msgid "Edit Jabber vCard"
+msgid "Edit XMPP vCard"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:569
@@ -5562,8 +5562,8 @@ msgid ""
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:616
-msgid "Jabber ID"
-msgstr "Jabber ID-si"
+msgid "XMPP ID"
+msgstr "XMPP ID-si"
 
 #: src/protocols/jabber/buddy.c:642 src/protocols/jabber/jabber.c:1711
 msgid "Resource"
@@ -5641,7 +5641,7 @@ msgid "The following are the results of your search"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1327
-msgid "Fill in one or more fields to search for any matching Jabber users."
+msgid "Fill in one or more fields to search for any matching XMPP users."
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1331 src/protocols/jabber/jabber.c:653
@@ -5659,7 +5659,7 @@ msgid "E-Mail Address"
 msgstr "E-Poçt Ünvanı"
 
 #: src/protocols/jabber/buddy.c:1355 src/protocols/jabber/buddy.c:1356
-msgid "Search for Jabber users"
+msgid "Search for XMPP users"
 msgstr ""
 
 #: src/protocols/jabber/buddy.c:1370
@@ -5783,7 +5783,7 @@ msgid "Unable to create socket"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:403 src/protocols/jabber/jabber.c:740
-msgid "Invalid Jabber ID"
+msgid "Invalid XMPP ID"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:473
@@ -5830,7 +5830,7 @@ msgid "Please fill out the information below to register your new account."
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:704 src/protocols/jabber/jabber.c:705
-msgid "Register New Jabber Account"
+msgid "Register New XMPP Account"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:842
@@ -5903,7 +5903,7 @@ msgid "Password (again)"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1160 src/protocols/jabber/jabber.c:1161
-msgid "Change Jabber Password"
+msgid "Change XMPP Password"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1161
@@ -5954,7 +5954,7 @@ msgid "Item Not Found"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1271
-msgid "Malformed Jabber ID"
+msgid "Malformed XMPP ID"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1273
@@ -6199,7 +6199,7 @@ msgstr ""
 #. *  summary
 #. *  description
 #: src/protocols/jabber/jabber.c:1686 src/protocols/jabber/jabber.c:1688
-msgid "Jabber Protocol Plugin"
+msgid "XMPP Protocol Plugin"
 msgstr ""
 
 #: src/protocols/jabber/jabber.c:1714
@@ -6249,7 +6249,7 @@ msgid "Message delivery to %s failed: %s"
 msgstr ""
 
 #: src/protocols/jabber/message.c:233
-msgid "Jabber Message Error"
+msgid "XMPP Message Error"
 msgstr ""
 
 #: src/protocols/jabber/message.c:297
