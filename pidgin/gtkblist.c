@@ -1172,8 +1172,9 @@ create_group_menu (PurpleBlistNode *node, PurpleGroup *g)
 	GtkWidget *item;
 
 	menu = gtk_menu_new();
-	pidgin_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
+	item = pidgin_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
 				 G_CALLBACK(pidgin_blist_add_buddy_cb), node, 0, 0, NULL);
+	gtk_widget_set_sensitive(item, purple_connections_get_all() != NULL);
 	item = pidgin_new_item_from_stock(menu, _("Add a C_hat"), GTK_STOCK_ADD,
 				 G_CALLBACK(pidgin_blist_add_chat_cb), node, 0, 0, NULL);
 	gtk_widget_set_sensitive(item, pidgin_blist_joinchat_is_showable());
