@@ -114,6 +114,7 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
   !define MUI_ABORTWARNING
 
   ;Finish Page config
+  !define MUI_FINISHPAGE_NOAUTOCLOSE
   !define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_LINK			$(PIDGIN_FINISH_VISIT_WEB_SITE)
