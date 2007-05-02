@@ -294,8 +294,7 @@ msn_object_find_local(const char *sha1)
 
 	g_return_val_if_fail(sha1 != NULL, NULL);
 
-	for (l = local_objs; l != NULL; l = l->next)
-	{
+	for (l = local_objs; l != NULL; l = l->next){
 		MsnObject *local_obj = l->data;
 
 		if (!strcmp(msn_object_get_sha1(local_obj), sha1))
@@ -344,3 +343,4 @@ msn_object_get_real_location(const MsnObject *obj)
 
 	return NULL;
 }
+
