@@ -686,6 +686,15 @@ GSList *purple_group_get_accounts(PurpleGroup *g);
 gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account);
 
 /**
+ * Returns the name of a group.
+ *
+ * @param group The group.
+ *
+ * @return The name of the group.
+ */
+const char *purple_group_get_name(PurpleGroup *group);
+
+/**
  * Called when an account gets signed on.  Tells the UI to update all the
  * buddies.
  *

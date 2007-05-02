@@ -2042,6 +2042,8 @@ const char *purple_chat_get_name(PurpleChat *chat)
 
 	if ((chat->alias != NULL) && (*chat->alias != '\0'))
 		return chat->alias;
+	if (chat->account->gc == NULL)
+		return NULL;
 
 	parts = PURPLE_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->chat_info(chat->account->gc);
 	pce = parts->data;
@@ -2404,6 +2406,13 @@ gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account)
 		}
 	}
 	return FALSE;
+}
+
+const char *purple_group_get_name(PurpleGroup *group)
+{
+	g_return_val_if_fail(group != NULL, NULL);
+
+	return group->name;
 }
 
 void
