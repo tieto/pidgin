@@ -122,7 +122,8 @@ EXTRA_DIST = \
 	filectl.c \
 	fortuneprofile.pl \
 	ipc-test-client.c \
-	ipc-test-server.c
+	ipc-test-server.c \
+	startup.py
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
