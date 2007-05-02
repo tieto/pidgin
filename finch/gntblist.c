@@ -1421,6 +1421,7 @@ draw_tooltip(FinchBlist *ggblist)
 static void
 selection_changed(GntWidget *widget, gpointer old, gpointer current, FinchBlist *ggblist)
 {
+	remove_peripherals(ggblist);
 	draw_tooltip(ggblist);
 }
 
