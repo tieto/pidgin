@@ -460,6 +460,7 @@ initialize_default_account_values()
 	const char *fullname = NULL;
 #endif
 	char *splitpoint = NULL;
+	char *tmp;
 	char hostname[255];
 
 #ifndef _WIN32
@@ -545,7 +546,16 @@ initialize_default_account_values()
 	if (splitpoint != NULL)
 	{
 		default_firstname = g_strndup(fullname, splitpoint - fullname);
-		default_lastname = g_strdup(&splitpoint[1]);
+		tmp = &splitpoint[1];
+		
+		/* The last name may be followed by a comma and additional data.
+		 * Only use the last name itself.
+		 */
+		splitpoint = strchr(tmp, ',');
+		if (splitpoint != NULL)
+			default_lastname = g_strndup(tmp, splitpoint - tmp);			
+		else
+			default_lastname = g_strdup(tmp);
 	}
 	else
 	{
