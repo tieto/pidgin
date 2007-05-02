@@ -112,7 +112,7 @@ static void savedstatus_changed(PurpleSavedStatus *now, PurpleSavedStatus *old);
 static void blist_show(PurpleBuddyList *list);
 static void update_node_display(PurpleBlistNode *buddy, FinchBlist *ggblist);
 static void update_buddy_display(PurpleBuddy *buddy, FinchBlist *ggblist);
-static void account_signed_on_cb(void);
+static void account_signed_on_cb(PurpleConnection *pc, gpointer null);
 
 /* Sort functions */
 static int blist_node_compare_position(PurpleBlistNode *n1, PurpleBlistNode *n2);
@@ -2065,7 +2065,7 @@ reconstruct_accounts_menu()
 }
 
 static void
-account_signed_on_cb()
+account_signed_on_cb(PurpleConnection *pc, gpointer null)
 {
 	PurpleBlistNode *node;
 
@@ -2073,7 +2073,8 @@ account_signed_on_cb()
 			node = purple_blist_node_next(node, FALSE)) {
 		if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 			PurpleChat *chat = (PurpleChat*)node;
-			if (purple_blist_node_get_bool(node, "gnt-autojoin"))
+			if (chat->account == purple_connection_get_account(pc) &&
+					purple_blist_node_get_bool(node, "gnt-autojoin"))
 				serv_join_chat(purple_account_get_connection(chat->account), chat->components);
 		}
 	}
