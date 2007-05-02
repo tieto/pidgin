@@ -179,6 +179,7 @@ int irc_cmd_time(struct irc_conn *irc, const char *cmd, const char *target, cons
 int irc_cmd_topic(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_wallops(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 int irc_cmd_whois(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
+int irc_cmd_whowas(struct irc_conn *irc, const char *cmd, const char *target, const char **args);
 
 PurpleXfer *irc_dccsend_new_xfer(PurpleConnection *gc, const char *who);
 void irc_dccsend_send_file(PurpleConnection *gc, const char *who, const char *file);

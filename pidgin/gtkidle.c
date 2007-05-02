@@ -120,10 +120,14 @@ pidgin_get_time_idle()
 static PurpleIdleUiOps ui_ops =
 {
 #if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
-	pidgin_get_time_idle
+	pidgin_get_time_idle,
 #else
-	NULL
+	NULL,
 #endif /* USE_SCREENSAVER || HAVE_IOKIT */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleIdleUiOps *

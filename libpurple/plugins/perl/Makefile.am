@@ -1,13 +1,11 @@
-plugindir = $(libdir)/purple
-hackdir = $(plugindir)/private
+plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 perl_dirs = common
 
 plugin_LTLIBRARIES = perl.la
-hack_LTLIBRARIES = libpurpleperl.la
 
 perl_la_LDFLAGS = -module -avoid-version
-perl_la_LIBADD = $(GLIB_LIBS) $(PERL_LIBS) libpurpleperl.la
+perl_la_LIBADD = $(GLIB_LIBS) $(PERL_LIBS)
 perl_la_SOURCES = \
 	perl.c \
 	perl-common.c \
@@ -17,12 +15,7 @@ perl_la_SOURCES = \
 
 perl_la_DEPENDENCIES = \
 	.libs/libperl_orig.a \
-	.libs/DynaLoader.a \
-	libpurpleperl.la
-
-libpurpleperl_la_LDFLAGS = -module -avoid-version
-libpurpleperl_la_LIBADD = $(GLIB_LIBS)
-libpurpleperl_la_SOURCES = libpurpleperl.c
+	.libs/DynaLoader.a
 
 .libs/libperl_orig.a:
 	@mkdir -p .libs
@@ -42,55 +35,52 @@ libpurpleperl_la_SOURCES = libpurpleperl.c
 		$(LN_S) $(DYNALOADER_A) .libs/DynaLoader.a; \
 	fi
 
-
 common_sources = \
-        common/Account.xs \
-        common/AccountOpts.xs \
-        common/BuddyIcon.xs \
-        common/BuddyList.xs \
-        common/Cipher.xs \
-        common/Cmds.xs \
-        common/Core.xs \
-        common/Connection.xs \
-        common/Conversation.xs \
-        common/Debug.xs \
-        common/FT.xs \
-        common/ImgStore.xs \
-        common/Log.xs \
-        common/Makefile.PL.in \
-        common/Network.xs \
-        common/Notify.xs \
-        common/Plugin.xs \
-        common/PluginPref.xs \
-        common/Pounce.xs \
-        common/Prefs.xs \
-        common/Privacy.xs \
-        common/Proxy.xs \
-        common/Prpl.xs \
-        common/Purple.pm \
-        common/Purple.xs \
-        common/Request.xs \
-        common/Roomlist.xs \
-        common/SSLConn.xs \
-        common/SavedStatuses.xs \
-        common/Server.xs \
-        common/Signal.xs \
-        common/Sound.xs \
-        common/Status.xs \
-        common/Stringref.xs \
-        common/Util.xs \
-        common/XMLNode.xs \
-        common/fallback/const-c.inc \
-        common/fallback/const-xs.inc \
-        common/module.h \
-        common/typemap
-
+	common/Account.xs \
+	common/AccountOpts.xs \
+	common/BuddyIcon.xs \
+	common/BuddyList.xs \
+	common/Cipher.xs \
+	common/Cmds.xs \
+	common/Core.xs \
+	common/Connection.xs \
+	common/Conversation.xs \
+	common/Debug.xs \
+	common/FT.xs \
+	common/ImgStore.xs \
+	common/Log.xs \
+	common/Makefile.PL.in \
+	common/Network.xs \
+	common/Notify.xs \
+	common/Plugin.xs \
+	common/PluginPref.xs \
+	common/Pounce.xs \
+	common/Prefs.xs \
+	common/Privacy.xs \
+	common/Proxy.xs \
+	common/Prpl.xs \
+	common/Purple.pm \
+	common/Purple.xs \
+	common/Request.xs \
+	common/Roomlist.xs \
+	common/SSLConn.xs \
+	common/SavedStatuses.xs \
+	common/Server.xs \
+	common/Signal.xs \
+	common/Sound.xs \
+	common/Status.xs \
+	common/Stringref.xs \
+	common/Util.xs \
+	common/XMLNode.xs \
+	common/module.h \
+	common/typemap
+#	common/fallback/const-c.inc \
+#	common/fallback/const-xs.inc
 
 EXTRA_DIST = \
 	Makefile.mingw \
 	common/Makefile.mingw \
-	$(common_sources) \
-	libpurpleperl.c
+	$(common_sources)
 
 common/Makefile: common/Makefile.PL
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
@@ -149,14 +139,13 @@ distclean-generic:
 	done
 
 	@rm -f Makefile
-	@rm -f common/const-c.inc common/const-xs.inc
+#	@rm -f common/const-c.inc common/const-xs.inc
 
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
 		for f in ${common_sources}; do \
 			${LN_S} -f ../${srcdir}/$$f $$f; \
 		done; \
 	fi
-
 
 AM_CPPFLAGS = \
 	-DVERSION=\"$(VERSION)\" \

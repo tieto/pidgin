@@ -21,11 +21,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidginインスタントメッセンジャ (必須)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime Environment (必須)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+のテーマ"
-!define GTK_NOTHEME_SECTION_TITLE		"テーマなし"
-!define GTK_WIMP_SECTION_TITLE			"Wimpテーマ"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurveテーマ"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blueテーマ"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"ショートカット"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"デスクトップ"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"スタートアップ"
@@ -49,9 +44,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"GTK+ランタイムのインストールでエラーが発生しました。"
 !define GTK_BAD_INSTALL_PATH			"あなたの入力したパスにアクセスまたは作成できません。"
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"あなたはGTK+のテーマをインストールする権限を持っていません。"
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"アンインストーラはPidginのレジストリエントリを発見できませんでした。$\rおそらく別のユーザにインストールされたでしょう。"

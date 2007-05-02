@@ -521,6 +521,7 @@ purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info)
 	}
 	
 	g_list_free(user_info->user_info_entries);
+	g_free(user_info);
 }
 
 GList *

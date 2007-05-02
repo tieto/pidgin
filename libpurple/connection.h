@@ -71,6 +71,10 @@ typedef struct
 	void (*network_connected)();
 	void (*network_disconnected)();
 
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 } PurpleConnectionUiOps;
 
 struct _PurpleConnection

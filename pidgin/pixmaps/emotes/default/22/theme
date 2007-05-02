@@ -1,8 +1,9 @@
 Name=Default
-Description=Default Pidgin smileys
+Description=Pidgin smileys (default)
 Icon=smile.png
 Author=Hylke Bons
 
+# default smileys
 [default]
 smile.png           :)      :-)
 smile-big.png       :-D     :-d     :D      :d
@@ -35,36 +36,10 @@ moneymouth.png      :-$
 foot-in-mouth.png   :-!
 embarrassed.png     :-[
 angel.png           O:-)
-thinking.png        :-\
+thinking.png        :-\\    :-/
 crying.png          :'(
 shut-mouth.png      :-X
 glasses-cool.png    8-)
-
-### Following JEP 0038
-[Jabber]
-smile.png           :-)     :)
-sad.png             :-(     :(
-wink.png            ;-)     ;)
-crying.png          :'-(    :'(
-angry.png           >:-(    >:(
-good.png            :yes:
-bad.png             :no:
-#wait.png            :wait:
-rose.png            @->--   :rose:
-phone.png           :telephone:
-mail.png            :email:
-lamp.png            :jabber:
-cake.png            :cake:
-kiss.png            :kiss:
-love.png            :heart:
-love-over.png       :brokenheart:
-musical-note.png    :music:
-beer.png            :beer:
-coffee.png          :coffee:
-coins.png           :money:
-moon.png            :moon:
-sun.png             :sun:
-star.png            :star: 
 
 ### Following Windows Live Messenger 8.1
 [MSN]
@@ -253,7 +228,7 @@ kiss.png            :-*
 embarrassed.png     :-[
 angel.png           O:-)
 shut-mouth.png      :-X :X
-thinking.png        :-\
+thinking.png        :-\\
 shout.png           >:o >:O
 smile-big.png       :-D :D
 moneymouth.png      :-$
@@ -267,14 +242,14 @@ sick.png            :-!
 devil.png           ]:->
 rose.png            @}->--
 bomb.png            @=
-good.png            *THUMBS UP*
+good.png            *THUMBS\ UP*
 beer.png            *DRINK*
-in-love.png         *IN LOVE*
+in-love.png         *IN\ LOVE*
 
 ### Following Yahoo! Messenger 8.1
 [Yahoo]
 smile.png           :) :-)
-question.png        :-/ :-\
+question.png        :-/ :-\\
 shock.png           :-O :O :-o :o 
 devil.png           >:)
 angel.png           O:-) o:-) 0:-)
@@ -298,7 +273,7 @@ laugh.png           :)) :-))
 bye.png             =;
 arrogant.png        [-(
 thinking.png        :-?
-waiting.png         :-w :-W         
+waiting.png         :-w :-W
 #at_wits_end        ~x( ~X(         MISSING: "Why.Does.This.Not.Work.AAAAARGH!!"    => angry smily shouting and pulling hair off
 smile-big.png       :D :-D :d :-d
 tongue.png          :-P :P :-p :p
@@ -324,7 +299,6 @@ sweat.png           #:-S #:-s
 rotfl.png           =))    
 #loser              L-) l-)         MISSING/YAHOO 6: "Loser!"
 party.png	          <:-P <:-p
-tremble.png         :-SS :-Ss :-sS :-ss
 cowboy.png          <):)
 desire.png          8->
 alien.png		        =:) >-)
@@ -332,7 +306,7 @@ beat-up.png		      b-( B-(
 chicken.png		      ~:>
 coffee.png		      ~o) ~O)
 cow.png			        3:-O 3:-o
-dance.png		        \:D/ \:d/
+dance.png		        \\:D/ \\:d/
 rose.png		        @};-
 dont-know.png	    	:-L :-l
 skeleton.png		    8-X 8-x
@@ -351,7 +325,7 @@ nailbiting.png      :-SS :-ss
 giggle.png	        ;))
 worship.png	        ^:)^
 star.png		            (*)
-#yahoo_madtongue.gif	    >:P >:p                 TODO
+mad-tongue.png      >:p
 #yahoo_waving.gif	        >:/                     TODO
 #yahoo_talktohand.gif	    :-@                     TODO
 #yahoo_youkiddingme.gif	    :-j :-J               TODO

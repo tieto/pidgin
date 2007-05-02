@@ -106,6 +106,7 @@ msn_show_sync_issue(MsnSession *session, const char *passport,
 	}
 
 	purple_request_action(gc, NULL, msg, reason, PURPLE_DEFAULT_ACTION_NONE, 
+						purple_connection_get_account(gc), data->who, NULL,
 						data, 2,
 						_("Yes"), G_CALLBACK(msn_add_cb),
 						_("No"), G_CALLBACK(msn_rem_cb));

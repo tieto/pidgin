@@ -27,6 +27,8 @@
 #ifndef _GAIM_COMPAT_H_
 #define _GAIM_COMPAT_H_
 
+#include <glib.h>
+
 /* from account.h */
 #define GaimAccountUiOps PurpleAccountUiOps
 #define GaimAccount PurpleAccount
@@ -51,7 +53,6 @@
 #define gaim_account_set_password            purple_account_set_password
 #define gaim_account_set_alias               purple_account_set_alias
 #define gaim_account_set_user_info           purple_account_set_user_info
-#define gaim_account_set_buddy_icon          purple_account_set_buddy_icon
 #define gaim_account_set_buddy_icon_path     purple_account_set_buddy_icon_path
 #define gaim_account_set_protocol_id         purple_account_set_protocol_id
 #define gaim_account_set_connection          purple_account_set_connection
@@ -81,7 +82,6 @@
 #define gaim_account_get_password           purple_account_get_password
 #define gaim_account_get_alias              purple_account_get_alias
 #define gaim_account_get_user_info          purple_account_get_user_info
-#define gaim_account_get_buddy_icon         purple_account_get_buddy_icon
 #define gaim_account_get_buddy_icon_path    purple_account_get_buddy_icon_path
 #define gaim_account_get_protocol_id        purple_account_get_protocol_id
 #define gaim_account_get_protocol_name      purple_account_get_protocol_name
@@ -338,32 +338,27 @@
 
 #define GaimBuddyIcon  PurpleBuddyIcon
 
-#define gaim_buddy_icon_new      purple_buddy_icon_new
-#define gaim_buddy_icon_destroy  purple_buddy_icon_destroy
+#define gaim_buddy_icon_new(account, username, icon_data, icon_len)\
+        purple_buddy_icon_new(account, username, g_memdup(icon_data, icon_len), icon_len)
 #define gaim_buddy_icon_ref      purple_buddy_icon_ref
 #define gaim_buddy_icon_unref    purple_buddy_icon_unref
 #define gaim_buddy_icon_update   purple_buddy_icon_update
-#define gaim_buddy_icon_cache    purple_buddy_icon_cache
-#define gaim_buddy_icon_uncache  purple_buddy_icon_uncache
 
-#define gaim_buddy_icon_set_account   purple_buddy_icon_set_account
-#define gaim_buddy_icon_set_username  purple_buddy_icon_set_username
-#define gaim_buddy_icon_set_data      purple_buddy_icon_set_data
-#define gaim_buddy_icon_set_path      purple_buddy_icon_set_path
+#define gaim_buddy_icon_set_data(icon, data, len) \
+        purple_buddy_icon_set_data(icon, g_memdup(data, len), len, NULL);
 
 #define gaim_buddy_icon_get_account   purple_buddy_icon_get_account
 #define gaim_buddy_icon_get_username  purple_buddy_icon_get_username
 #define gaim_buddy_icon_get_data      purple_buddy_icon_get_data
-#define gaim_buddy_icon_get_path      purple_buddy_icon_get_path
-#define gaim_buddy_icon_get_type      purple_buddy_icon_get_type
+#define gaim_buddy_icon_get_type      purple_buddy_icon_get_extension
 
-#define gaim_buddy_icons_set_for_user   purple_buddy_icons_set_for_user
+#define gaim_buddy_icons_set_for_user(icon, data, len) \
+        purple_buddy_icons_set_for_user(icon, g_memdup(data, len), len, NULL)
 #define gaim_buddy_icons_find           purple_buddy_icons_find
 #define gaim_buddy_icons_set_caching    purple_buddy_icons_set_caching
 #define gaim_buddy_icons_is_caching     purple_buddy_icons_is_caching
 #define gaim_buddy_icons_set_cache_dir  purple_buddy_icons_set_cache_dir
 #define gaim_buddy_icons_get_cache_dir  purple_buddy_icons_get_cache_dir
-#define gaim_buddy_icons_get_full_path  purple_buddy_icons_get_full_path
 #define gaim_buddy_icons_get_handle     purple_buddy_icons_get_handle
 
 #define gaim_buddy_icons_init    purple_buddy_icons_init
@@ -949,7 +944,6 @@
 
 /* from gaim-client.h */
 
-/* XXX: should this be purple_init, or pidgin_init */
 #define gaim_init  purple_init
 
 /* from idle.h */
@@ -967,13 +961,14 @@
 
 #define GaimStoredImage  PurpleStoredImage
 
-#define gaim_imgstore_add           purple_imgstore_add
-#define gaim_imgstore_get           purple_imgstore_get
+#define gaim_imgstore_add(data, size, filename) \
+        purple_imgstore_add_with_id(g_memdup(data, size), size, filename)
+#define gaim_imgstore_get           purple_imgstore_find_by_id
 #define gaim_imgstore_get_data      purple_imgstore_get_data
 #define gaim_imgstore_get_size      purple_imgstore_get_size
 #define gaim_imgstore_get_filename  purple_imgstore_get_filename
-#define gaim_imgstore_ref           purple_imgstore_ref
-#define gaim_imgstore_unref         purple_imgstore_unref
+#define gaim_imgstore_ref           purple_imgstore_ref_by_id
+#define gaim_imgstore_unref         purple_imgstore_unref_by_id
 
 
 /* from log.h */
@@ -2237,7 +2232,7 @@
 #define gaim_value_new_outgoing       purple_value_new_outgoing
 #define gaim_value_destroy            purple_value_destroy
 #define gaim_value_dup                purple_value_dup
-#define gaim_value_get_type           purple_value_get_type
+#define gaim_value_purple_buddy_icon_get_extensionget_type           purple_value_get_type
 #define gaim_value_get_subtype        purple_value_get_subtype
 #define gaim_value_get_specific_type  purple_value_get_specific_type
 #define gaim_value_is_outgoing        purple_value_is_outgoing

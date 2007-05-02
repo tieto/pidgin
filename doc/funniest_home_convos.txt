@@ -451,3 +451,12 @@ not :)
 (07:54:03 PM) clueless21:  what's an im client?
 (07:54:25 PM) Nathan Walp: it lets you chat with other people, like we are chatting now
 (07:54:45 PM) clueless21:  oooooooooo... thanks
+
+23:58 -!- seanegan is now known as beta7
+23:58 <beta7> Hey, guys, remember me?
+23:59 <beta7> We were all supposed to be working on getting me out.
+23:59 <beta7> you guys remember that?
+23:59 -!- mode/#pidgin [+o elb] by ChanServ
+23:59 -!- beta7 was kicked from #pidgin by elb [getting feisty, are we?]
+23:59 -!- mode/#pidgin [-o elb] by ChanServ
+23:59 <marv> elb: good job getting beta7 out

@@ -268,7 +268,9 @@ msn_show_set_friendly_name(PurplePluginAction *action)
 						 "see you as."),
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_act_id),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static void
@@ -283,7 +285,9 @@ msn_show_set_home_phone(PurplePluginAction *action)
 	purple_request_input(gc, NULL, _("Set your home phone number."), NULL,
 					   msn_user_get_home_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_home_phone_cb),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static void
@@ -298,7 +302,9 @@ msn_show_set_work_phone(PurplePluginAction *action)
 	purple_request_input(gc, NULL, _("Set your work phone number."), NULL,
 					   msn_user_get_work_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_work_phone_cb),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static void
@@ -313,7 +319,9 @@ msn_show_set_mobile_phone(PurplePluginAction *action)
 	purple_request_input(gc, NULL, _("Set your mobile phone number."), NULL,
 					   msn_user_get_mobile_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_mobile_phone_cb),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static void
@@ -327,7 +335,9 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 						_("Do you want to allow or disallow people on "
 						  "your buddy list to send you MSN Mobile pages "
 						  "to your cell phone or other mobile device?"),
-						-1, gc, 3,
+						-1, 
+						purple_connection_get_account(gc), NULL, NULL,
+						gc, 3,
 						_("Allow"), G_CALLBACK(enable_msn_pages_cb),
 						_("Disallow"), G_CALLBACK(disable_msn_pages_cb),
 						_("Cancel"), NULL);
@@ -375,6 +385,7 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 					   NULL, TRUE, FALSE, NULL,
 					   _("Page"), G_CALLBACK(send_to_mobile_cb),
 					   _("Close"), G_CALLBACK(close_mobile_page_cb),
+					   purple_connection_get_account(gc), purple_buddy_get_name(buddy), NULL,
 					   data);
 }
 
@@ -1412,7 +1423,7 @@ msn_convo_closed(PurpleConnection *gc, const char *who)
 }
 
 static void
-msn_set_buddy_icon(PurpleConnection *gc, const char *filename)
+msn_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	MsnSession *session;
 	MsnUser *user;
@@ -1420,7 +1431,7 @@ msn_set_buddy_icon(PurpleConnection *gc, const char *filename)
 	session = gc->proto_data;
 	user = session->user;
 
-	msn_user_set_buddy_icon(user, filename);
+	msn_user_set_buddy_icon(user, img);
 
 	msn_change_status(session);
 }
@@ -1992,7 +2003,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		{
 			char buf[1024];
 			purple_debug_info("msn", "%s is %d bytes\n", photo_url_text, len);
-			id = purple_imgstore_add(url_text, len, NULL);
+			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 			g_snprintf(buf, sizeof(buf), "<img id=\"%d\"><br>", id);
 			purple_notify_user_info_prepend_pair(user_info, NULL, buf);
 		}
@@ -2011,7 +2022,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	g_free(photo_url_text);
 	g_free(info2_data);
 	if (id != -1)
-		purple_imgstore_unref(id);
+		purple_imgstore_unref_by_id(id);
 #endif
 }
 
@@ -2181,6 +2192,12 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* whiteboard_prpl_ops */
 	NULL,					/* send_raw */
 	NULL,					/* roomlist_room_serialize */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -2211,7 +2228,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
-	msn_actions
+	msn_actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

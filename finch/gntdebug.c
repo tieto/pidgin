@@ -36,7 +36,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#define PREF_ROOT "/purple/gnt/debug"
+#define PREF_ROOT "/finch/debug"
 
 static struct
 {
@@ -95,7 +95,13 @@ finch_debug_is_enabled(PurpleDebugLevel level, const char *category)
 static PurpleDebugUiOps uiops =
 {
 	finch_debug_print,
-	finch_debug_is_enabled
+	finch_debug_is_enabled,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleDebugUiOps *finch_debug_get_ui_ops()
@@ -135,7 +141,7 @@ static void
 toggle_timestamps(GntWidget *w, gpointer n)
 {
 	debug.timestamps = !debug.timestamps;
-	purple_prefs_set_bool("/core/debug/timestamps", debug.timestamps);
+	purple_prefs_set_bool("/purple/debug/timestamps", debug.timestamps);
 }
 
 /* Xerox */
@@ -196,7 +202,7 @@ size_changed_cb(GntWidget *widget, int oldw, int oldh)
 void finch_debug_window_show()
 {
 	debug.paused = FALSE;
-	debug.timestamps = purple_prefs_get_bool("/core/debug/timestamps");
+	debug.timestamps = purple_prefs_get_bool("/purple/debug/timestamps");
 	if (debug.window == NULL)
 	{
 		GntWidget *wid, *box;

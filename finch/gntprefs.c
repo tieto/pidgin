@@ -35,15 +35,26 @@ static GList *freestrings;  /* strings to be freed when the pref-window is close
 
 void finch_prefs_init()
 {
-	purple_prefs_add_none("/purple");
-	purple_prefs_add_none("/purple/gnt");
+	purple_prefs_add_none("/finch");
 
-	purple_prefs_add_none("/purple/gnt/plugins");
-	purple_prefs_add_path_list("/purple/gnt/plugins/loaded", NULL);
+	purple_prefs_add_none("/finch/plugins");
+	purple_prefs_add_path_list("/finch/plugins/loaded", NULL);
 
-	purple_prefs_add_none("/purple/gnt/conversations");
-	purple_prefs_add_bool("/purple/gnt/conversations/timestamps", TRUE);
-	purple_prefs_add_bool("/purple/gnt/conversations/notify_typing", FALSE); /* XXX: Not functional yet */
+	purple_prefs_add_none("/finch/conversations");
+	purple_prefs_add_bool("/finch/conversations/timestamps", TRUE);
+	purple_prefs_add_bool("/finch/conversations/notify_typing", FALSE);
+}
+
+void finch_prefs_update_old()
+{
+	const char *str = NULL;
+
+	purple_prefs_rename("/gaim/gnt", "/finch");
+	purple_prefs_rename("/purple/gnt", "/finch");
+
+	if ((str = purple_prefs_get_string("/purple/away/idle_reporting")) &&
+			strcmp(str, "gaim") == 0)
+		purple_prefs_set_string("/purple/away/idle_reporting", "purple");
 }
 
 typedef struct
@@ -156,34 +167,34 @@ get_pref_field(Prefs *prefs)
 
 static Prefs blist[] = 
 {
-	{PURPLE_PREF_BOOLEAN, "/purple/gnt/blist/idletime", N_("Show Idle Time"), NULL},
-	{PURPLE_PREF_BOOLEAN, "/purple/gnt/blist/showoffline", N_("Show Offline Buddies"), NULL},
+	{PURPLE_PREF_BOOLEAN, "/finch/blist/idletime", N_("Show Idle Time"), NULL},
+	{PURPLE_PREF_BOOLEAN, "/finch/blist/showoffline", N_("Show Offline Buddies"), NULL},
 	{PURPLE_PREF_NONE, NULL, NULL, NULL}
 };
 
 static Prefs convs[] = 
 {
-	{PURPLE_PREF_BOOLEAN, "/purple/gnt/conversations/timestamps", N_("Show Timestamps"), NULL},
-	{PURPLE_PREF_BOOLEAN, "/purple/gnt/conversations/notify_typing", N_("Notify buddies when you are typing"), NULL},
+	{PURPLE_PREF_BOOLEAN, "/finch/conversations/timestamps", N_("Show Timestamps"), NULL},
+	{PURPLE_PREF_BOOLEAN, "/finch/conversations/notify_typing", N_("Notify buddies when you are typing"), NULL},
 	{PURPLE_PREF_NONE, NULL, NULL, NULL}
 };
 
 static Prefs logging[] = 
 {
-	{PURPLE_PREF_STRING, "/core/logging/format", N_("Log format"), get_log_options},
-	{PURPLE_PREF_BOOLEAN, "/core/logging/log_ims", N_("Log IMs"), NULL},
-	{PURPLE_PREF_BOOLEAN, "/core/logging/log_chats", N_("Log chats"), NULL},
-	{PURPLE_PREF_BOOLEAN, "/core/logging/log_system", N_("Log status change events"), NULL},
+	{PURPLE_PREF_STRING, "/purple/logging/format", N_("Log format"), get_log_options},
+	{PURPLE_PREF_BOOLEAN, "/purple/logging/log_ims", N_("Log IMs"), NULL},
+	{PURPLE_PREF_BOOLEAN, "/purple/logging/log_chats", N_("Log chats"), NULL},
+	{PURPLE_PREF_BOOLEAN, "/purple/logging/log_system", N_("Log status change events"), NULL},
 	{PURPLE_PREF_NONE, NULL, NULL, NULL},
 };
 
 /* XXX: Translate after the freeze */
 static Prefs idle[] =
 {
-	{PURPLE_PREF_STRING, "/core/away/idle_reporting", "Report Idle time", get_idle_options},
-	{PURPLE_PREF_BOOLEAN, "/core/away/away_when_idle", "Change status when idle", NULL},
-	{PURPLE_PREF_INT, "/core/away/mins_before_away", "Minutes before changing status", NULL},
-	{PURPLE_PREF_INT, "/core/savedstatus/idleaway", "Change status to", get_status_titles},
+	{PURPLE_PREF_STRING, "/purple/away/idle_reporting", "Report Idle time", get_idle_options},
+	{PURPLE_PREF_BOOLEAN, "/purple/away/away_when_idle", "Change status when idle", NULL},
+	{PURPLE_PREF_INT, "/purple/away/mins_before_away", "Minutes before changing status", NULL},
+	{PURPLE_PREF_INT, "/purple/savedstatus/idleaway", "Change status to", get_status_titles},
 	{PURPLE_PREF_NONE, NULL, NULL, NULL},
 };
 
@@ -231,6 +242,8 @@ void finch_prefs_show_all()
 	add_pref_group(fields, _("Idle"), idle);
 
 	purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
-			_("Save"), G_CALLBACK(save_cb), _("Cancel"), free_strings, NULL);
+			_("Save"), G_CALLBACK(save_cb), _("Cancel"), free_strings,
+			NULL, NULL, NULL,
+			NULL);
 }
 

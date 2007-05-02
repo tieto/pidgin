@@ -114,16 +114,18 @@ static int purple_tcl_ref_set(Tcl_Interp *interp, Tcl_Obj *obj)
 	char *ptr;
 	PurpleStringref *type;
 	void *value;
+	static const char const *prefix = "purple-";
+	static const int prefixlen = sizeof(prefix) - 1;
 
-	if (strlen(bytes) < 7
-	    || strncmp(bytes, "purple-", 7)
+	if (strlen(bytes) < prefixlen
+	    || strncmp(bytes, prefix, prefixlen)
 	    || (ptr = strchr(bytes, ':')) == NULL
-	    || (ptr - bytes) == 7)
+	    || (ptr - bytes) == prefixlen)
 		goto badobject;
 
 	/* Bad Ethan */
 	*ptr = '\0';
-	type = purple_stringref_new(bytes + 7);
+	type = purple_stringref_new(bytes + prefixlen);
 	*ptr = ':';
 	ptr++;
 

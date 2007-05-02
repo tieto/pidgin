@@ -76,7 +76,8 @@ yahoo_rem_permit(PurpleConnection *gc, const char *who)
 	purple_privacy_permit_remove(gc->account,who,TRUE);
 }
 
-gboolean yahoo_privacy_check(PurpleConnection *gc, const char *who)
+gboolean
+yahoo_privacy_check(PurpleConnection *gc, const char *who)
 {
 	/* returns TRUE if allowed through, FALSE otherwise */
 	gboolean permitted;
@@ -342,7 +343,10 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 		}
 		case 192: /* Pictures, aka Buddy Icons, checksum */
 		{
+			/* FIXME: Please, if you know this protocol,
+			 * FIXME: fix up the strtol() stuff if possible. */
 			int cksum = strtol(pair->value, NULL, 10);
+			const char *locksum = NULL;
 			PurpleBuddy *b;
 
 			if (!name)
@@ -353,9 +357,7 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 			if (!cksum || (cksum == -1)) {
 				if (f)
 					yahoo_friend_set_buddy_icon_need_request(f, TRUE);
-				purple_buddy_icons_set_for_user(gc->account, name, NULL, 0);
-				if (b)
-					purple_blist_node_remove_setting((PurpleBlistNode *)b, YAHOO_ICON_CHECKSUM_KEY);
+				purple_buddy_icons_set_for_user(gc->account, name, NULL, 0, NULL);
 				break;
 			}
 
@@ -363,7 +365,8 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				break;
 
 			yahoo_friend_set_buddy_icon_need_request(f, FALSE);
-			if (b && cksum != purple_blist_node_get_int((PurpleBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY))
+			if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL &&
+					cksum != strtol(locksum, NULL, 10))
 				yahoo_send_picture_request(gc, name);
 
 			break;
@@ -985,7 +988,9 @@ yahoo_buddy_add_deny_reason_cb(struct yahoo_add_request *add_req) {
 	purple_request_input(add_req->gc, NULL, _("Authorization denied message:"),
 			NULL, _("No reason given."), TRUE, FALSE, NULL, 
 			_("OK"), G_CALLBACK(yahoo_buddy_add_deny_cb),
-			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb), add_req);
+			_("Cancel"), G_CALLBACK(yahoo_buddy_add_deny_noreason_cb),
+			purple_connection_get_account(add_req->gc), add_req->who, NULL,
+			add_req);
 }
 
 static void yahoo_buddy_added_us(PurpleConnection *gc, struct yahoo_packet *pkt) {
@@ -1890,7 +1895,9 @@ static void yahoo_process_ignore(PurpleConnection *gc, struct yahoo_packet *pkt)
 		g_snprintf(buf, sizeof(buf), _("You have tried to ignore %s, but the "
 					"user is on your buddy list.  Clicking \"Yes\" "
 					"will remove and ignore the buddy."), who);
-		purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0, b,
+		purple_request_yes_no(gc, NULL, _("Ignore buddy?"), buf, 0,
+						gc->account, who, NULL,
+						b,
 						G_CALLBACK(ignore_buddy),
 						G_CALLBACK(keep_buddy));
 		break;
@@ -2682,11 +2689,10 @@ static void yahoo_server_check(PurpleAccount *account)
 static void yahoo_picture_check(PurpleAccount *account)
 {
 	PurpleConnection *gc = purple_account_get_connection(account);
-	char *buddyicon;
+	PurpleStoredImage *img = purple_buddy_icons_find_account_icon(account);
 
-	buddyicon = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(account));
-	yahoo_set_buddy_icon(gc, buddyicon);
-	g_free(buddyicon);
+	yahoo_set_buddy_icon(gc, img);
+	purple_imgstore_unref(img);
 }
 
 static int get_yahoo_status_from_purple_status(PurpleStatus *status)
@@ -3222,10 +3228,13 @@ static void yahoo_act_id(PurpleConnection *gc, const char *entry)
 static void yahoo_show_act_id(PurplePluginAction *action)
 {
 	PurpleConnection *gc = (PurpleConnection *) action->context;
+	/* XXX Typo: This should be _("Activate which ID?") - fix after string freeze is over */
 	purple_request_input(gc, NULL, _("Active which ID?"), NULL,
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_act_id),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static void yahoo_show_chat_goto(PurplePluginAction *action)
@@ -3234,7 +3243,9 @@ static void yahoo_show_chat_goto(PurplePluginAction *action)
 	purple_request_input(gc, NULL, _("Join who in chat?"), NULL,
 					   "", FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(yahoo_chat_goto),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static GList *yahoo_actions(PurplePlugin *plugin, gpointer context) {
@@ -3937,7 +3948,13 @@ static PurpleWhiteboardPrplOps yahoo_whiteboard_prpl_ops =
 	yahoo_doodle_get_brush,
 	yahoo_doodle_set_brush,
 	yahoo_doodle_send_draw_list,
-	yahoo_doodle_clear
+	yahoo_doodle_clear,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginProtocolInfo prpl_info =
@@ -4004,6 +4021,12 @@ static PurplePluginProtocolInfo prpl_info =
 	&yahoo_whiteboard_prpl_ops,
 	NULL, /* send_raw */
 	NULL, /* roomlist_room_serialize */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -4031,7 +4054,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,
-	yahoo_actions
+	yahoo_actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

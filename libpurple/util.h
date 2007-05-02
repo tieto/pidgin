@@ -469,7 +469,7 @@ char *purple_markup_get_tag_name(const char *tag);
  * the first character of the entity. If given an unrecognized entity, the function
  * returns @c NULL.
  *
- * Note that this function, unlike purple_unescape_html(), does not search 
+ * Note that this function, unlike purple_unescape_html(), does not search
  * the string for the entity, does not replace the entity, and does not
  * return a newly allocated string.
  *
@@ -596,6 +596,25 @@ xmlnode *purple_util_read_xml_from_file(const char *filename,
  * @return A file pointer to the temporary file, or @c NULL on failure.
  */
 FILE *purple_mkstemp(char **path, gboolean binary);
+
+/**
+ * Returns an extension corresponding to the image data's file type.
+ *
+ * @param data A pointer to the image data
+ * @param len  The length of the image data
+ *
+ * @return The appropriate extension, or "icon" if unknown.
+ */
+const char *
+purple_util_get_image_extension(gconstpointer data, size_t len);
+
+/*@}*/
+
+
+/**************************************************************************/
+/** @name Environment Detection Functions                                 */
+/**************************************************************************/
+/*@{*/
 
 /**
  * Checks if the given program name is valid and executable.
@@ -1118,6 +1137,7 @@ const char *_purple_oscar_convert(const char *act, const char *protocol);
  * inherit the handlers of the parent.
  */
 void purple_restore_default_signal_handlers(void);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1222,7 +1222,11 @@ static PurpleXferUiOps ops =
 	pidgin_xfer_add_xfer,
 	pidgin_xfer_update_progress,
 	pidgin_xfer_cancel_local,
-	pidgin_xfer_cancel_remote
+	pidgin_xfer_cancel_remote,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 /**************************************************************************

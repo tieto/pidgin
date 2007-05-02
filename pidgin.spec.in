@@ -6,10 +6,10 @@
 # When not doing betas comment this out
 # NOTE: %defines in spec files are evaluated in comments so the correct
 #       way to comment it out is to replace the % with #
-#define beta 7
+%define beta 7
 
 %if 0%{?beta}
-%define pidginver %(echo "@VERSION@"|sed -e 's/dev//; s/beta.*//')
+%define pidginver %(echo "@VERSION@"|sed -e 's/dev.*//; s/beta.*//')
 %else
 %define pidginver @VERSION@
 %endif
@@ -84,6 +84,8 @@ Group:      Applications/Internet
 Obsoletes:  gaim-silc
 Obsoletes:  gaim-tcl
 Obsoletes:  gaim-gadugadu
+Obsoletes:  pidgin-tcl < 2.0.0
+Obsoletes:  pidgin-silc < 2.0.0
 
 %package -n libpurple-devel
 Summary:    Development headers, documentation, and libraries for libpurple
@@ -227,32 +229,33 @@ make DESTDIR=$RPM_BUILD_ROOT install
 # Delete files that we don't want to put in any of the RPMs
 rm -f $RPM_BUILD_ROOT%{_libdir}/finch/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/pidgin/*.la
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/*.la
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/private/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/liboscar.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libjabber.so
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 rm -f $RPM_BUILD_ROOT%{perl_archlib}/perllocal.pod
 find $RPM_BUILD_ROOT -type f -name .packlist -exec rm -f {} ';'
 find $RPM_BUILD_ROOT -type f -name '*.bs' -empty -exec rm -f {} ';'
 
 %if 0%{!?_with_howl:1} && 0%{!?_with_avahi:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libbonjour.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libbonjour.so
 %endif
 
 %if 0%{!?_with_meanwhile:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libsametime.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libsametime.so
 %endif
 
 %if 0%{!?_with_mono:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/mono.so
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/*.dll
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/mono.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/*.dll
 %endif
 
 %if 0%{?_without_silc:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/libsilcpurple.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/libsilcpurple.so
 %endif
 
 %if 0%{?_without_tcl:1}
-rm -f $RPM_BUILD_ROOT%{_libdir}/libpurple/tcl.so
+rm -f $RPM_BUILD_ROOT%{_libdir}/purple-2/tcl.so
 %endif
 
 %if 0%{?_without_text:1}
@@ -263,7 +266,7 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/libgnt.so.*
 
 %find_lang %{name}
 
-find $RPM_BUILD_ROOT%{_libdir}/libpurple -xtype f -print | \
+find $RPM_BUILD_ROOT%{_libdir}/purple-2 -xtype f -print | \
         sed "s@^$RPM_BUILD_ROOT@@g" | \
         grep -v /libbonjour.so | \
         grep -v /libsametime.so | \
@@ -287,9 +290,11 @@ rm -rf %{buildroot}
 %pre
 if [ "$1" -gt 1 -a -n "`which gconftool-2 2>/dev/null`" ]; then
     export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
-    gconftool-2 --makefile-uninstall-rule \
-        %{_sysconfdir}/gconf/schemas/purple.schemas >/dev/null || :
-    killall -HUP gconfd-2 || :
+    if [ -f %{_sysconfdir}/gconf/schemas/purple.schemas ]; then
+        gconftool-2 --makefile-uninstall-rule \
+            %{_sysconfdir}/gconf/schemas/purple.schemas >/dev/null || :
+        killall -HUP gconfd-2 || :
+    fi
 fi
 
 %post
@@ -299,6 +304,8 @@ if [ -n "`which gconftool-2 2>/dev/null`" ]; then
         %{_sysconfdir}/gconf/schemas/purple.schemas > /dev/null || :
     killall -HUP gconfd-2 || :
 fi
+touch --no-create %{_datadir}/icons/hicolor || :
+%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
 
 %post -n libpurple -p /sbin/ldconfig
 
@@ -311,6 +318,10 @@ if [ "$1" -eq 0 -a -n "`which gconftool-2 2>/dev/null`" ]; then
       %{_sysconfdir}/gconf/schemas/purple.schemas > /dev/null || :
     killall -HUP gconfd-2 || :
 fi
+
+%postun
+touch --no-create %{_datadir}/icons/hicolor || :
+%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
 
 %postun -n libpurple -p /sbin/ldconfig
 
@@ -331,12 +342,12 @@ fi
 %doc %{_mandir}/man3*/*
 
 %dir %{_libdir}/pidgin
-%dir %{perl_vendorarch}/Purple
-%attr(755, root, root) %{perl_vendorarch}/Purple/*
-%attr(755, root, root) %{perl_vendorarch}/auto/Purple/GtkUI*
+%attr(755, root, root) %{perl_vendorarch}/Pidgin.pm
+%attr(755, root, root) %{perl_vendorarch}/auto/Pidgin
 
 %{_bindir}/pidgin
 %{_datadir}/pixmaps/pidgin
+%{_datadir}/icons/hicolor/*/apps/pidgin.*
 %dir %{_datadir}/sounds/pidgin
 %{_datadir}/sounds/pidgin/*
 %{_datadir}/applications/*
@@ -347,11 +358,9 @@ fi
 %defattr(-, root, root)
 
 %{_libdir}/libpurple.so.*
-%dir %{_libdir}/libpurple
+%dir %{_libdir}/purple-2
 %attr(755, root, root) %{perl_vendorarch}/Purple.pm
-%dir %{perl_vendorarch}/auto/Purple
-%attr(755, root, root) %{perl_vendorarch}/auto/Purple/Purple.so
-%attr(755, root, root) %{perl_vendorarch}/auto/Purple/autosplit.ix
+%attr(755, root, root) %{perl_vendorarch}/auto/Purple
 
 %{_datadir}/pixmaps/purple
 
@@ -362,7 +371,6 @@ fi
 %{_bindir}/purple-send-async
 %{_bindir}/purple-url-handler
 %{_libdir}/libpurple-client.so.*
-%doc README.dbus
 %doc libpurple/purple-notifications-example
 %endif
 
@@ -378,7 +386,6 @@ fi
 %doc ChangeLog.API
 %doc HACKING
 %doc PLUGIN_HOWTO
-%doc PROGRAMMING_NOTES
 
 %dir %{_includedir}/libpurple
 %{_includedir}/libpurple/*.h
@@ -394,22 +401,22 @@ fi
 %files -n libpurple-bonjour
 %defattr(-, root, root)
 
-%{_libdir}/libpurple/libbonjour.*
+%{_libdir}/purple-2/libbonjour.*
 %endif
 
 %if 0%{?_with_meanwhile:1}
 %files -n libpurple-meanwhile
 %defattr(-, root, root)
 
-%{_libdir}/libpurple/libsametime.*
+%{_libdir}/purple-2/libsametime.*
 %endif
 
 %if 0%{?_with_mono:1}
 %files libpurple-mono
 %defattr(-, root, root)
 
-%{_libdir}/libpurple/mono.so
-%{_libdir}/libpurple/*.dll
+%{_libdir}/purple-2/mono.so
+%{_libdir}/purple-2/*.dll
 %endif
 
 %if 0%{!?_without_text:1}
@@ -433,6 +440,17 @@ fi
 %endif
 
 %changelog
+* Tue May  1 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Run gtk-update-icon-cache on installation/uninstallation
+- Guard against errors when upgrading from Gaim/Pidgin 1.5.x which had
+  no schemas file
+
+* Sun Apr 29 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Update to reflect perl Purple::GtkUI -> Pidgin change
+
+* Wed Apr 25 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Update libpurple to pick up plugins in %%{_libdir}/purple
+
 * Sun Apr 22 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Remove Epoch because it's gone in Fedora now
 - Add virtual provides for gaim & gaim-devel

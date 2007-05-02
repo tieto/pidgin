@@ -214,23 +214,20 @@ msn_user_set_op(MsnUser *user,int list_op)
 }
 
 void
-msn_user_set_buddy_icon(MsnUser *user, const char *filename)
+msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
 {
-	struct stat st;
-	FILE *fp;
 	MsnObject *msnobj = msn_user_get_object(user);
 
 	g_return_if_fail(user != NULL);
 
-	if (filename == NULL || g_stat(filename, &st) == -1)
-	{
+	if (img == NULL)
 		msn_user_set_object(user, NULL);
-	}
-	else if ((fp = g_fopen(filename, "rb")) != NULL)
+	else
 	{
 		PurpleCipherContext *ctx;
 		char *buf;
-		gsize len;
+		gconstpointer data = purple_imgstore_get_data(img);
+		size_t size = purple_imgstore_get_size(img);
 		char *base64;
 		unsigned char digest[20];
 
@@ -245,26 +242,20 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 			msn_user_set_object(user, msnobj);
 		}
 
-		msn_object_set_real_location(msnobj, filename);
-
-		buf = g_malloc(st.st_size);
-		len = fread(buf, 1, st.st_size, fp);
-
-		fclose(fp);
+		msn_object_set_image(msnobj, img);
 
 		/* Compute the SHA1D field. */
 		memset(digest, 0, sizeof(digest));
 
 		ctx = purple_cipher_context_new_by_name("sha1", NULL);
-		purple_cipher_context_append(ctx, (const guchar *)buf, st.st_size);
+		purple_cipher_context_append(ctx, data, size);
 		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
-		g_free(buf);
 
 		base64 = purple_base64_encode(digest, sizeof(digest));
 		msn_object_set_sha1d(msnobj, base64);
 		g_free(base64);
 
-		msn_object_set_size(msnobj, st.st_size);
+		msn_object_set_size(msnobj, size);
 
 		/* Compute the SHA1C field. */
 		buf = g_strdup_printf(
@@ -279,7 +270,7 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 		memset(digest, 0, sizeof(digest));
 
 		purple_cipher_context_reset(ctx, NULL);
-		purple_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
+		purple_cipher_context_append(ctx, data, strlen((char *)data));
 		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
 		purple_cipher_context_destroy(ctx);
 		g_free(buf);
@@ -287,11 +278,6 @@ msn_user_set_buddy_icon(MsnUser *user, const char *filename)
 		base64 = purple_base64_encode(digest, sizeof(digest));
 		msn_object_set_sha1c(msnobj, base64);
 		g_free(base64);
-	}
-	else
-	{
-		purple_debug_error("msn", "Unable to open buddy icon %s!\n", filename);
-		msn_user_set_object(user, NULL);
 	}
 }
 

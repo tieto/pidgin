@@ -108,6 +108,12 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* whiteboard_prpl_ops */
 	jabber_prpl_send_raw,			/* send_raw */
 	jabber_roomlist_room_serialize, /* roomlist_room_serialize */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)
@@ -170,7 +176,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
-	jabber_actions
+	jabber_actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

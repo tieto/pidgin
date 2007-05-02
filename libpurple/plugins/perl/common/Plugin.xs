@@ -3,6 +3,22 @@
 MODULE = Purple::Plugin  PACKAGE = Purple::Plugin  PREFIX = purple_plugin_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *stash = gv_stashpv("Purple::Plugin::Type", 1);
+
+	static const constiv *civ, const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_PLUGIN_##name}
+		const_iv(UNKNOWN),
+		const_iv(STANDARD),
+		const_iv(LOADER),
+		const_iv(PROTOCOL),
+	};
+
+	for (civ = const_iv + sizeof(const_iv) / sizeof(const_iv[0]); civ-- > const_iv; )
+		newCONSTSUB(stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 Purple::Plugin
 purple_plugin_new(native, path)
 	gboolean native

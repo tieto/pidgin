@@ -25,6 +25,7 @@
 #include "internal.h"
 #include "pidgin.h"
 #include "debug.h"
+#include "prefs.h"
 #include "pidginstock.h"
 
 #include "gtkdialogs.h"
@@ -32,7 +33,8 @@
 #include "eggtrayicon.h"
 #include "gtkdocklet.h"
 
-#define EMBED_TIMEOUT 5000
+#define SHORT_EMBED_TIMEOUT 5000
+#define LONG_EMBED_TIMEOUT 15000
 
 /* globals */
 static EggTrayIcon *docklet = NULL;
@@ -44,12 +46,12 @@ static DockletStatus icon_status = 0;
 static int docklet_height = 0;
 
 /* protos */
-static void docklet_x11_create(void);
+static void docklet_x11_create(gboolean);
 
 static gboolean
-docklet_x11_create_cb()
+docklet_x11_recreate_cb()
 {
-	docklet_x11_create();
+	docklet_x11_create(TRUE);
 
 	return FALSE; /* for when we're called by the glib idle handler */
 }
@@ -62,6 +64,7 @@ docklet_x11_embedded_cb(GtkWidget *widget, void *data)
 	g_source_remove(embed_timeout);
 	embed_timeout = 0;
 	pidgin_docklet_embedded();
+	purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/docklet/x11/embedded", FALSE);
 }
 
 static void
@@ -74,7 +77,7 @@ docklet_x11_destroyed_cb(GtkWidget *widget, void *data)
 	g_object_unref(G_OBJECT(docklet));
 	docklet = NULL;
 
-	g_idle_add(docklet_x11_create_cb, NULL);
+	g_idle_add(docklet_x11_recreate_cb, NULL);
 }
 
 static void
@@ -115,6 +118,9 @@ docklet_x11_update_icon(DockletStatus icon)
 		case DOCKLET_STATUS_XA:
 			icon_name = PIDGIN_STOCK_TRAY_XA;
 			break;
+		case DOCKLET_STATUS_INVISIBLE:
+			icon_name = PIDGIN_STOCK_TRAY_INVISIBLE;
+			break;
 	}
 
 	if(icon_name) {
@@ -142,9 +148,10 @@ static void
 docklet_x11_blank_icon()
 {
 	if (!blank_icon) {
+		GtkIconSize size = GTK_ICON_SIZE_LARGE_TOOLBAR;
 		gint width, height;
-
-		gtk_icon_size_lookup(GTK_ICON_SIZE_LARGE_TOOLBAR, &width, &height);
+		g_object_get(G_OBJECT(image), "icon-size", &size, NULL);
+		gtk_icon_size_lookup(size, &width, &height);
 		blank_icon = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, width, height);
 		gdk_pixbuf_fill(blank_icon, 0);
 	}
@@ -235,7 +242,7 @@ docklet_x11_embed_timeout_cb()
 }
 
 static void
-docklet_x11_create()
+docklet_x11_create(gboolean recreate)
 {
 	GtkWidget *box;
 
@@ -271,17 +278,35 @@ docklet_x11_create()
 	 * previous visibility state.  If the docklet does not get embedded within
 	 * the timeout, it will be removed as a visibility manager until it does
 	 * get embedded.  Ideally, we would only call docklet_embedded() when the
-	 * icon was actually embedded.
+	 * icon was actually embedded. This only happens when the docklet is first
+	 * created, not when being recreated.
+	 *
+	 * The x11 docklet tracks whether it successfully embedded in a pref and
+	 * allows for a longer timeout period if it successfully embedded the last
+	 * time it was run. This should hopefully solve problems with the buddy
+	 * list not properly starting hidden when gaim is started on login.
 	 */
-	pidgin_docklet_embedded();
-	embed_timeout = g_timeout_add(EMBED_TIMEOUT, docklet_x11_embed_timeout_cb, NULL);
+	if(!recreate) {
+		pidgin_docklet_embedded();
+		if(purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/x11/embedded")) {
+			embed_timeout = g_timeout_add(LONG_EMBED_TIMEOUT, docklet_x11_embed_timeout_cb, NULL);
+		} else {
+			embed_timeout = g_timeout_add(SHORT_EMBED_TIMEOUT, docklet_x11_embed_timeout_cb, NULL);
+		}
+	}
 
 	purple_debug(PURPLE_DEBUG_INFO, "docklet", "created\n");
 }
 
+static void
+docklet_x11_create_ui_op()
+{
+	docklet_x11_create(FALSE);
+}
+
 static struct docklet_ui_ops ui_ops =
 {
-	docklet_x11_create,
+	docklet_x11_create_ui_op,
 	docklet_x11_destroy,
 	docklet_x11_update_icon,
 	docklet_x11_blank_icon,
@@ -297,4 +322,6 @@ void
 docklet_ui_init()
 {
 	pidgin_docklet_set_ui_ops(&ui_ops);
+	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/docklet/x11");
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/docklet/x11/embedded", FALSE);
 }

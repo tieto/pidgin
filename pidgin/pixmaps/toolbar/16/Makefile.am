@@ -1,19 +1,16 @@
 SUBDIRS = scalable
 
-EXTRA_DIST = 	accounts.png \
-		change-bgcolor.png \
+EXTRA_DIST = change-bgcolor.png \
 		change-fgcolor.png \
 		emote-select.png \
+		font-face.png \
 		font-size-down.png \
 		font-size-up.png \
 		insert-image.png \
 		insert-link.png \
 		message-new.png \
 		plugins.png \
-		typing.png \
-		unblock.png \
-		user-info.png \
-		window-icon.png
+		unblock.png
 
 pidgintoolbarpixdir = $(datadir)/pixmaps/pidgin/toolbar/16
 pidgintoolbarpix_DATA = $(EXTRA_DIST)

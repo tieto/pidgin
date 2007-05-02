@@ -1112,7 +1112,11 @@ static PurpleNotifyUiOps ops =
 	pidgin_notify_searchresults_new_rows,
 	pidgin_notify_userinfo,
 	pidgin_notify_uri,
-	pidgin_close_notify
+	pidgin_close_notify,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleNotifyUiOps *

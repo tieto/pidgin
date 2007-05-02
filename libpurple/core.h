@@ -33,6 +33,10 @@ typedef struct
 	void (*ui_init)(void);
 	void (*quit)(void);
 
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 } PurpleCoreUiOps;
 
 #ifdef __cplusplus
@@ -105,6 +109,17 @@ void purple_core_set_ui_ops(PurpleCoreUiOps *ops);
  * @return The core's UI ops structure.
  */
 PurpleCoreUiOps *purple_core_get_ui_ops(void);
+
+/**
+ * Migrates from .gaim to .purple.
+ *
+ * UIs MUST NOT call this if they have been told to use a custom
+ * user directory.
+ *
+ * @return A boolean indicating success or migration failure. On failure,
+ *         the application must display an error to the user and then exit.
+ */
+gboolean purple_core_migrate(void);
 
 #ifdef __cplusplus
 }

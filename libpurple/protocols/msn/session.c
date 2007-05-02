@@ -480,7 +480,7 @@ msn_session_finish_login(MsnSession *session)
 {
 	PurpleAccount *account;
 	PurpleConnection *gc;
-	char *icon;
+	PurpleStoredImage *img;
 
 	if (session->logged_in)
 		return;
@@ -488,9 +488,9 @@ msn_session_finish_login(MsnSession *session)
 	account = session->account;
 	gc = purple_account_get_connection(account);
 
-	icon = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(session->account));
-	msn_user_set_buddy_icon(session->user, icon);
-	g_free(icon);
+	img = purple_buddy_icons_find_account_icon(session->account);
+	msn_user_set_buddy_icon(session->user, img);
+	purple_imgstore_unref(img);
 
 	session->logged_in = TRUE;
 

@@ -66,9 +66,9 @@ XS_FILES =		Account.xs \
 				Status.xs \
 				Stringref.xs \
 				Util.xs \
-				XMLNode.xs \
+				XMLNode.xs
 
-FALLBACKS =	const-c.inc const-xs.inc
+#FALLBACKS =	const-c.inc const-xs.inc
 C_FILES = $(XS_FILES:%.xs=%.c)
 OBJECTS = $(C_FILES:%.c=%.o)
 

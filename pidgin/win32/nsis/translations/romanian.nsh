@@ -19,11 +19,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Client de mesagerie instant (obligatoriu)"
 !define GTK_SECTION_TITLE			"Mediu GTK+ (obligatoriu)"
-!define GTK_THEMES_SECTION_TITLE		"Teme GTK+"
-!define GTK_NOTHEME_SECTION_TITLE		"Fãrã teme"
-!define GTK_WIMP_SECTION_TITLE		"Temã Wimp"
-!define GTK_BLUECURVE_SECTION_TITLE		"Temã Bluecurve"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Temã Light House Blue"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE "Scurtãturi"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE "Desktop"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "Meniu Start"
@@ -46,9 +41,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Eroare la instalarea mediului GTK+."
 !define GTK_BAD_INSTALL_PATH			"Directorul specificat nu poate fi accesat sau creat."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Nu aveþi drepturile de acces necesare instalãrii unei teme GTK+."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1         "Programul de dezinstalare nu a gãsit intrãri Pidgin în regiºtri.$\rProbabil un alt utilizator a instalat aceastã aplicaþie."

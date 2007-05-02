@@ -177,6 +177,11 @@ struct _PurpleConversationUiOps
 	void (*custom_smiley_close)(PurpleConversation *conv, const char *smile);
 
 	void (*send_confirm)(PurpleConversation *conv, const char *message);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 /**

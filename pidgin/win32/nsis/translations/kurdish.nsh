@@ -21,11 +21,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin Instant Messaging Client (pêwîst)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime Environment (pêwîst)"
-!define GTK_THEMES_SECTION_TITLE		"Dirbên GTK+"
-!define GTK_NOTHEME_SECTION_TITLE		"Dirb tunebe"
-!define GTK_WIMP_SECTION_TITLE		"Dirbê Wimp"
-!define GTK_BLUECURVE_SECTION_TITLE	"Dirbê Bluecurve"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Dirbê Light House Blue"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE "Riyên kin"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE "Sermasê"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "Menuya destpêkê"
@@ -48,9 +43,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Di sazkirina GTK+ de çewtî derket."
 !define GTK_BAD_INSTALL_PATH			"rêya te nivîsand nayê gihiþtin an afirandin."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS	"Destûra sazkirina dirbekî GTK+ tune."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Raker têketiyên registry yên Pidgin nedît. $\rQey bikarhênereke din vê bername saz kir."

@@ -3,10 +3,6 @@
 MODULE = Purple::Buddy::Icon PACKAGE = Purple::Buddy::Icon   PREFIX = purple_buddy_icon_
 PROTOTYPES: ENABLE
 
-void
-purple_buddy_icon_destroy(icon)
-	Purple::Buddy::Icon icon
-
 Purple::Buddy::Icon
 purple_buddy_icon_ref(icon)
 	Purple::Buddy::Icon icon
@@ -20,25 +16,11 @@ purple_buddy_icon_update(icon)
 	Purple::Buddy::Icon icon
 
 void
-purple_buddy_icon_cache(icon, buddy)
-	Purple::Buddy::Icon icon
-	Purple::BuddyList::Buddy buddy
-
-void
-purple_buddy_icon_set_account(icon, account)
-	Purple::Buddy::Icon icon
-	Purple::Account account
-
-void
-purple_buddy_icon_set_username(icon, username)
-	Purple::Buddy::Icon icon
-	const char * username
-
-void
-purple_buddy_icon_set_data(icon, data, len)
+purple_buddy_icon_set_data(icon, data, len, checksum)
 	Purple::Buddy::Icon icon
 	void * data
 	size_t len
+	char *checksum
 
 Purple::Account
 purple_buddy_icon_get_account(icon)
@@ -54,7 +36,7 @@ purple_buddy_icon_get_data(icon, len)
 	size_t &len
 
 const char *
-purple_buddy_icon_get_type(icon)
+purple_buddy_icon_get_extension(icon)
 	Purple::Buddy::Icon icon
 
 void

@@ -160,9 +160,9 @@ void msn_user_set_store_name(MsnUser *user, const char *name);
  * Sets the buddy icon for a local user.
  *
  * @param user     The user.
- * @param filename The path to the buddy icon.
+ * @param img      The buddy icon image
  */
-void msn_user_set_buddy_icon(MsnUser *user, const char *filename);
+void msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img);
 
 /**
  * Sets the group ID list for a user.

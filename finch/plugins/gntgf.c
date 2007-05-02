@@ -378,6 +378,12 @@ static PurplePluginInfo info =
 	config_frame,
 	NULL,
 	NULL,
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 

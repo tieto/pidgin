@@ -2698,8 +2698,7 @@ static void im_recv_mime(struct mwConversation *conv,
       cid = make_cid(cid);
 
       /* add image to the purple image store */
-      img = purple_imgstore_add(d_dat, d_len, cid);
-      g_free(d_dat);
+      img = purple_imgstore_add_with_id(d_dat, d_len, cid);
 
       /* map the cid to the image store identifier */
       g_hash_table_insert(img_by_cid, cid, GINT_TO_POINTER(img));
@@ -2772,7 +2771,7 @@ static void im_recv_mime(struct mwConversation *conv,
 
   /* dereference all the imgages */
   while(images) {
-    purple_imgstore_unref(GPOINTER_TO_INT(images->data));
+    purple_imgstore_unref_by_id(GPOINTER_TO_INT(images->data));
     images = g_list_delete_link(images, images);
   }
 }
@@ -3387,6 +3386,7 @@ static void blist_menu_conf_create(PurpleBuddy *buddy, const char *msg) {
 		      msgA, msg1, fields,
 		      _("Create"), G_CALLBACK(conf_create_prompt_join),
 		      _("Cancel"), G_CALLBACK(conf_create_prompt_cancel),
+			  acct, purple_buddy_get_name(buddy), NULL,
 		      buddy);
   g_free(msg1);
 }
@@ -3472,6 +3472,7 @@ static void blist_menu_conf_list(PurpleBuddy *buddy,
 		      msgA, msg, fields,
 		      _("Invite"), G_CALLBACK(conf_select_prompt_invite),
 		      _("Cancel"), G_CALLBACK(conf_select_prompt_cancel),
+			  acct, purple_buddy_get_name(buddy), NULL,
 		      buddy);
   g_free(msg);
 }
@@ -3642,6 +3643,7 @@ static void prompt_host(PurpleConnection *gc) {
 		     MW_PLUGIN_DEFAULT_HOST, FALSE, FALSE, NULL,
 		     _("Connect"), G_CALLBACK(prompt_host_ok_cb),
 		     _("Cancel"), G_CALLBACK(prompt_host_cancel_cb),
+			 acct, NULL, NULL,
 		     gc);
 
   g_free(msg);
@@ -3856,7 +3858,7 @@ static char *im_mime_convert(PurpleConnection *gc,
     /* find the imgstore data by the id tag */
     id = g_datalist_get_data(&attr, "id");
     if(id && *id)
-      img = purple_imgstore_get(atoi(id));
+      img = purple_imgstore_find_by_id(atoi(id));
 
     if(img) {
       char *cid;
@@ -3882,9 +3884,8 @@ static char *im_mime_convert(PurpleConnection *gc,
 
       /* obtain and base64 encode the image data, and put it in the
 	 mime part */
-      data = purple_imgstore_get_data(img);
       size = purple_imgstore_get_size(img);
-      data = purple_base64_encode(data, (gsize) size);
+      data = purple_base64_encode(purple_imgstore_get_data(img), (gsize) size);
       purple_mime_part_set_data(part, data);
       g_free(data);
 
@@ -5210,6 +5211,7 @@ static void st_import_action(PurplePluginAction *act) {
 
   purple_request_file(gc, title, NULL, FALSE,
 		    G_CALLBACK(st_import_action_cb), NULL,
+		    account, NULL, NULL,
 		    gc);
 
   g_free(title);
@@ -5249,6 +5251,7 @@ static void st_export_action(PurplePluginAction *act) {
 
   purple_request_file(gc, title, NULL, TRUE,
 		    G_CALLBACK(st_export_action_cb), NULL,
+			account, NULL, NULL,
 		    gc);
 
   g_free(title);
@@ -5386,6 +5389,7 @@ static void remote_group_multi(struct mwResolveResult *result,
 		      msgA, msg, fields,
 		      _("Add Group"), G_CALLBACK(remote_group_multi_cb),
 		      _("Cancel"), G_CALLBACK(remote_group_multi_cleanup),
+			  purple_connection_get_account(gc), result->name, NULL,
 		      pd);
 
   g_free(msg);
@@ -5475,6 +5479,7 @@ static void remote_group_action(PurplePluginAction *act) {
 		     FALSE, FALSE, NULL,
 		     _("Add"), G_CALLBACK(remote_group_action_cb),
 		     _("Cancel"), NULL,
+			 purple_connection_get_account(gc), NULL, NULL,
 		     gc);
 }
 
@@ -5599,7 +5604,8 @@ static void search_action(PurplePluginAction *act) {
 		     FALSE, FALSE, NULL,
 		     _("Search"), G_CALLBACK(search_action_cb),
 		     _("Cancel"), NULL,
-		     gc);
+			 purple_connection_get_account(gc), NULL, NULL,
+			 gc);
 }
 
 

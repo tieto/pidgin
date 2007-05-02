@@ -92,6 +92,7 @@ static struct developer developers[] = {
 
 /* Order: Alphabetical by Last Name */
 static struct developer patch_writers[] = {
+	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
 	{"Ka-Hing 'javabsp' Cheung",	NULL,	NULL},
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
@@ -107,7 +108,7 @@ static struct developer patch_writers[] = {
 static struct developer retired_developers[] = {
 	{"Herman Bloggs",		N_("win32 port"), "herman@bluedigits.com"},
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
-	{"Rob Flynn",			N_("maintainer"), "purple@robflynn.com"},
+	{"Rob Flynn",			N_("maintainer"), NULL},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
@@ -264,7 +265,7 @@ static void destroy_about()
 }
 
 /* This function puts the version number onto the pixmap we use in the 'about' 
- * screen in Purple. */
+ * screen in Pidgin. */
 static void
 pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	GdkPixmap *pixmap;
@@ -285,7 +286,7 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	context = gtk_widget_get_pango_context(widget);
 	layout = pango_layout_new(context);
 
-	markup = g_strdup_printf("<span foreground=\"#FFFFFF\" size=\"larger\">%s</span>", VERSION);
+	markup = g_strdup_printf("<span foreground=\"#5c3566\">%s</span>", VERSION);
 	pango_layout_set_font_description(layout, style->font_desc);
 	pango_layout_set_markup(layout, markup, strlen(markup));
 	g_free(markup);
@@ -719,6 +720,7 @@ pidgin_dialogs_im(void)
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_im_cb),
 						_("Cancel"), NULL,
+						NULL, NULL, NULL,
 						NULL);
 }
 
@@ -856,6 +858,7 @@ pidgin_dialogs_info(void)
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_info_cb),
 						_("Cancel"), NULL,
+						NULL, NULL, NULL,
 						NULL);
 }
 
@@ -947,6 +950,7 @@ pidgin_dialogs_log(void)
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_log_cb),
 						_("Cancel"), NULL,
+						NULL, NULL, NULL,
 						NULL);
 }
 
@@ -965,7 +969,9 @@ pidgin_dialogs_alias_contact(PurpleContact *contact)
 					   _("Enter an alias for this contact."),
 					   contact->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_contact_cb),
-					   _("Cancel"), NULL, contact);
+					   _("Cancel"), NULL,
+					   NULL, purple_contact_get_alias(contact), NULL,
+					   contact);
 }
 
 static void
@@ -987,7 +993,9 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 	purple_request_input(NULL, _("Alias Buddy"), NULL,
 					   secondary, buddy->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_buddy_cb),
-					   _("Cancel"), NULL, buddy);
+					   _("Cancel"), NULL,
+					   purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
+					   buddy);
 
 	g_free(secondary);
 }
@@ -1007,7 +1015,9 @@ pidgin_dialogs_alias_chat(PurpleChat *chat)
 					   _("Enter an alias for this chat."),
 					   chat->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_chat_cb),
-					   _("Cancel"), NULL, chat);
+					   _("Cancel"), NULL,
+					   chat->account, NULL, NULL,
+					   chat);
 }
 
 static void
@@ -1049,9 +1059,12 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 						"want to continue?", contact->totalsize - 1),
 					buddy->name, contact->totalsize - 1);
 
-		purple_request_action(contact, NULL, _("Remove Contact"), text, 0, contact, 2,
+		purple_request_action(contact, NULL, _("Remove Contact"), text, 0,
+				NULL, purple_contact_get_alias(contact), NULL,
+				contact, 2,
 				_("_Remove Contact"), G_CALLBACK(pidgin_dialogs_remove_contact_cb),
-				_("Cancel"), NULL);
+				_("Cancel"),
+				NULL);
 
 		g_free(text);
 	}
@@ -1087,7 +1100,9 @@ pidgin_dialogs_merge_groups(PurpleGroup *source, const char *new_name)
 	ggp->parent = source;
 	ggp->new_name = g_strdup(new_name);
 	
-	purple_request_action(source, NULL, _("Merge Groups"), text, 0, ggp, 2,
+	purple_request_action(source, NULL, _("Merge Groups"), text, 0,
+			NULL, NULL, NULL,
+			ggp, 2,
 			_("_Merge Groups"), G_CALLBACK(pidgin_dialogs_merge_groups_cb),
 			_("Cancel"), G_CALLBACK(free_ggmo));
 
@@ -1141,7 +1156,9 @@ pidgin_dialogs_remove_group(PurpleGroup *group)
 	text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"),
 						   group->name);
 
-	purple_request_action(group, NULL, _("Remove Group"), text, 0, group, 2,
+	purple_request_action(group, NULL, _("Remove Group"), text, 0,
+						NULL, NULL, NULL,
+						group, 2,
 						_("_Remove Group"), G_CALLBACK(pidgin_dialogs_remove_group_cb),
 						_("Cancel"), NULL);
 
@@ -1178,7 +1195,9 @@ pidgin_dialogs_remove_buddy(PurpleBuddy *buddy)
 	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"),
 						   buddy->name);
 
-	purple_request_action(buddy, NULL, _("Remove Buddy"), text, 0, buddy, 2,
+	purple_request_action(buddy, NULL, _("Remove Buddy"), text, 0,
+						purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
+						buddy, 2,
 						_("_Remove Buddy"), G_CALLBACK(pidgin_dialogs_remove_buddy_cb),
 						_("Cancel"), NULL);
 
@@ -1203,7 +1222,9 @@ pidgin_dialogs_remove_chat(PurpleChat *chat)
 	text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"),
 			name ? name : "");
 
-	purple_request_action(chat, NULL, _("Remove Chat"), text, 0, chat, 2,
+	purple_request_action(chat, NULL, _("Remove Chat"), text, 0,
+						chat->account, NULL, NULL,
+						chat, 2,
 						_("_Remove Chat"), G_CALLBACK(pidgin_dialogs_remove_chat_cb),
 						_("Cancel"), NULL);
 

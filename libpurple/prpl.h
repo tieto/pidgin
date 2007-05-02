@@ -59,6 +59,7 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
 #include "blist.h"
 #include "conversation.h"
 #include "ft.h"
+#include "imgstore.h"
 #include "notify.h"
 #include "proxy.h"
 #include "plugin.h"
@@ -175,8 +176,11 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * Returns the base icon name for the given buddy and account.
-	 * If buddy is NULL, it will return the name to use for the account's
-	 * icon.  This must be implemented.
+	 * If buddy is NULL and the account is non-NULL, it will return the 
+	 * name to use for the account's icon. If both are NULL, it will
+	 * return the name to use for the protocol's icon.
+	 *
+	 * This must be implemented.
 	 */
 	const char *(*list_icon)(PurpleAccount *account, PurpleBuddy *buddy);
 
@@ -281,7 +285,9 @@ struct _PurplePluginProtocolInfo
 
 	const char *(*normalize)(const PurpleAccount *, const char *);
 
-	void (*set_buddy_icon)(PurpleConnection *, const char *cached_path);
+	/* The prpl does NOT own a reference to img.  If it needs one, it
+	 * must purple_imgstore_ref(img) itself. */
+	void (*set_buddy_icon)(PurpleConnection *, PurpleStoredImage *img);
 
 	void (*remove_group)(PurpleConnection *gc, PurpleGroup *group);
 
@@ -309,6 +315,11 @@ struct _PurplePluginProtocolInfo
 
 	/* room list serialize */
 	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 #define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \

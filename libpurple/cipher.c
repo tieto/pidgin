@@ -339,7 +339,13 @@ static PurpleCipherOps MD5Ops = {
 	NULL,			/* set salt */
 	NULL,			/* get salt size */
 	NULL,			/* set key */
-	NULL			/* get key size */
+	NULL,			/* get key size */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 /*******************************************************************************
@@ -588,7 +594,13 @@ static PurpleCipherOps MD4Ops = {
 	NULL,                   /* set salt */
 	NULL,                   /* get salt size */
 	NULL,                   /* set key */
-	NULL                    /* get key size */
+	NULL,                   /* get key size */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 /******************************************************************************
@@ -1006,7 +1018,13 @@ static PurpleCipherOps DESOps = {
 	NULL,                   /* set salt */
 	NULL,                   /* get salt size */
 	des_set_key,		/* set key */
-	NULL                    /* get key size */
+	NULL,                   /* get key size */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 
@@ -1247,7 +1265,13 @@ static PurpleCipherOps SHA1Ops = {
 	NULL,			/* set salt			*/
 	NULL,			/* get salt size	*/
 	NULL,			/* set key			*/
-	NULL			/* get key size		*/
+	NULL,			/* get key size		*/
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 /*******************************************************************************

@@ -8,6 +8,7 @@ EXTRA_DIST = \
 		purple-url-handler \
 		purple.pc.in \
 		purple-uninstalled.pc.in \
+		version.h.in \
 		Makefile.mingw \
 		win32/global.mak \
 		win32/libc_interface.c \
@@ -75,6 +76,7 @@ purple_coresources = \
 	upnp.c \
 	util.c \
 	value.c \
+	version.c \
 	xmlnode.c \
 	whiteboard.c
 
@@ -171,7 +173,7 @@ $(libpurple_la_OBJECTS): dbus-types.h
 libpurple_client_lib = libpurple-client.la
 
 libpurple_client_la_SOURCES = purple-client.c purple-client.h
-
+libpurple_client_la_LDFLAGS = -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
 libpurple_client_la_LIBADD = $(DBUS_LIBS)
 
 purple-client-bindings.c: dbus-analyze-functions.py $(dbus_exported)
@@ -219,7 +221,7 @@ libpurpleinclude_HEADERS = \
 	$(dbus_headers)
 
 libpurple_la_DEPENDENCIES = $(STATIC_LINK_LIBS)
-libpurple_la_LDFLAGS = -export-dynamic
+libpurple_la_LDFLAGS = -export-dynamic -version-info $(PURPLE_LT_VERSION_INFO) -no-undefined
 libpurple_la_LIBADD = \
 	$(DBUS_LIBS) \
 	$(GLIB_LIBS) \
@@ -232,7 +234,7 @@ libpurple_la_LIBADD = \
 AM_CPPFLAGS = \
 	-DBR_PTHREADS=0 \
 	-DDATADIR=\"$(datadir)\" \
-	-DLIBDIR=\"$(libdir)/purple/\" \
+	-DLIBDIR=\"$(libdir)/purple-$(PURPLE_MAJOR_VERSION)/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
 	$(GLIB_CFLAGS) \

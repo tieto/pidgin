@@ -9,6 +9,7 @@
 #include "signals.h"
 #include "status.h"
 #include "version.h"
+#include "privacy.h"
 
 #include "plugin.h"
 #include "pluginpref.h"
@@ -44,6 +45,11 @@ buddy_typing_cb(PurpleAccount *acct, const char *name, void *data) {
   if(purple_prefs_get_bool(PREF_BUDDIES) &&
      ! purple_find_buddy(acct, name)) {
     purple_debug_info("psychic", "not in blist, doing nothing\n");
+    return;
+  }
+
+  if(FALSE == purple_privacy_check(acct, name)) {
+    purple_debug_info("psychic", "user %s is blocked", name);
     return;
   }
 
@@ -120,6 +126,12 @@ static PurplePluginUiInfo prefs_info = {
   get_plugin_pref_frame,
   0,    /* page_num (Reserved) */
   NULL, /* frame (Reserved) */
+  
+  /* padding */
+  NULL,
+  NULL,
+  NULL,
+  NULL
 };
 
 
@@ -149,6 +161,12 @@ static PurplePluginInfo info = {
   NULL,                   /**< extra_info */
   &prefs_info,            /**< prefs_info */
   NULL,                   /**< actions */
+
+  /* padding */
+  NULL,
+  NULL,
+  NULL,
+  NULL
 };
 
 

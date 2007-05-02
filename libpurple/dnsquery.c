@@ -140,7 +140,7 @@ purple_dnsquery_ui_resolve(PurpleDnsQueryData *query_data)
  * Begin the DNS resolver child process functions.
  */
 #ifdef HAVE_SIGNAL_H
-static void
+G_GNUC_NORETURN static void
 trap_gdb_bug()
 {
 	const char *message =
@@ -158,7 +158,7 @@ trap_gdb_bug()
 }
 #endif
 
-static void
+G_GNUC_NORETURN static void
 purple_dnsquery_resolver_run(int child_out, int child_in, gboolean show_debug)
 {
 	dns_params_t dns_params;

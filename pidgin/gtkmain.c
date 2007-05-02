@@ -145,7 +145,7 @@ dologin_named(const char *name)
 static void sighandler(int sig);
 
 /**
- * Reap all our dead children.  Sometimes Purple forks off a separate
+ * Reap all our dead children.  Sometimes libpurple forks off a separate
  * process to do some stuff.  When that process exits we are
  * informed about it so that we can call waitpid() and let it
  * stop being a zombie.
@@ -160,7 +160,7 @@ static void sighandler(int sig);
  * it continues with the initialization process.  This means that
  * we have a race condition where GStreamer is waitpid()ing for its
  * child to die and we're catching the SIGCHLD signal.  If GStreamer
- * is awarded the zombied process then everything is ok.  But if Purple
+ * is awarded the zombied process then everything is ok.  But if libpurple
  * reaps the zombie process then the GStreamer initialization sequence
  * fails.
  *
@@ -240,11 +240,15 @@ ui_main()
 	GdkPixbuf *icon = NULL;
 	char *icon_path;
 	int i;
-	const char *icon_sizes[] = {
-		"16",
-		"24",
-		"32",
-		"48"
+	struct {
+		const char *dir;
+		const char *filename;
+	} icon_sizes[] = {
+		{"16x16", "pidgin.png"},
+		{"24x24", "pidgin.png"},
+		{"32x32", "pidgin.png"},
+		{"48x48", "pidgin.png"},
+		{"scalable", "pidgin.svg"}
 	};
 
 #endif
@@ -256,7 +260,7 @@ ui_main()
 #ifndef _WIN32
 	/* use the nice PNG icon for all the windows */
 	for(i=0; i<G_N_ELEMENTS(icon_sizes); i++) {
-		icon_path = g_build_filename(DATADIR, "pixmaps", "pidgin", "icons", icon_sizes[i], "pidgin.png", NULL);
+		icon_path = g_build_filename(DATADIR, "icons", "hicolor", icon_sizes[i].dir, "apps", icon_sizes[i].filename, NULL);
 		icon = gdk_pixbuf_new_from_file(icon_path, NULL);
 		g_free(icon_path);
 		if (icon) {
@@ -314,6 +318,7 @@ pidgin_ui_init(void)
 	pidgin_xfers_init();
 	pidgin_roomlist_init();
 	pidgin_log_init();
+	pidgin_docklet_init();
 }
 
 static void
@@ -346,7 +351,11 @@ static PurpleCoreUiOps core_ops =
 	pidgin_prefs_init,
 	debug_init,
 	pidgin_ui_init,
-	pidgin_quit
+	pidgin_quit,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurpleCoreUiOps *
@@ -446,6 +455,7 @@ int main(int argc, char *argv[])
 	int opt;
 	gboolean gui_check;
 	gboolean debug_enabled;
+	gboolean migration_failed = FALSE;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},
@@ -639,6 +649,15 @@ int main(int argc, char *argv[])
 
 	purple_debug_set_enabled(debug_enabled);
 
+	/* If we're using a custom configuration directory, we
+	 * do NOT want to migrate, or weird things will happen. */
+	if (opt_config_dir_arg == NULL)
+	{
+		if (!purple_core_migrate())
+		{
+			migration_failed = TRUE;
+		}
+	}
 
 	search_path = g_build_filename(purple_user_dir(), "gtkrc-2.0", NULL);
 	gtk_rc_add_default_file(search_path);
@@ -662,6 +681,37 @@ int main(int argc, char *argv[])
 #ifdef _WIN32
 	winpidgin_init(hint);
 #endif
+
+	if (migration_failed)
+	{
+		char *old = g_strconcat(purple_home_dir(),
+		                        G_DIR_SEPARATOR_S ".gaim", NULL);
+		const char *text = _(
+			"%s encountered errors migrating your settings "
+			"from %s to %s. Please investigate and complete the "
+			"migration by hand. Please report this error at http://developer.pidgin.im");
+		GtkWidget *dialog;
+
+		dialog = gtk_message_dialog_new(NULL,
+		                                0,
+		                                GTK_MESSAGE_ERROR,
+		                                GTK_BUTTONS_CLOSE,
+		                                text, PIDGIN_NAME,
+		                                old, purple_user_dir());
+		g_free(old);
+
+		g_signal_connect_swapped(dialog, "response",
+		                         G_CALLBACK(gtk_main_quit), NULL);
+
+		gtk_widget_show_all(dialog);
+
+		gtk_main();
+
+#ifdef HAVE_SIGNAL_H
+		g_free(segfault_message);
+#endif
+		return 0;
+	}
 
 	purple_core_set_ui_ops(pidgin_core_get_ui_ops());
 	purple_eventloop_set_ui_ops(pidgin_eventloop_get_ui_ops());
@@ -696,7 +746,6 @@ int main(int argc, char *argv[])
 
 	/* load plugins we had when we quit */
 	purple_plugins_load_saved(PIDGIN_PREFS_ROOT "/plugins/loaded");
-	pidgin_docklet_init();
 
 	/* TODO: Move pounces loading into purple_pounces_init() */
 	purple_pounces_load();
@@ -767,7 +816,7 @@ int main(int argc, char *argv[])
 	else
 	{
 		/* Everything is good to go--sign on already */
-		if (!purple_prefs_get_bool("/core/savedstatus/startup_current_status"))
+		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
 			purple_savedstatus_activate(purple_savedstatus_get_startup());
 		purple_accounts_restore_current_statuses();
 	}

@@ -35,7 +35,13 @@ finch_get_idle_time()
 
 static PurpleIdleUiOps ui_ops =
 {
-	finch_get_idle_time
+	finch_get_idle_time,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleIdleUiOps *

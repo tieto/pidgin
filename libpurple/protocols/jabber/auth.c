@@ -294,7 +294,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
 							_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-							2, js->gc->account,
+							2, js->gc->account, NULL, NULL, NULL,
 							allow_cyrus_plaintext_auth,
 							disallow_plaintext_auth);
 					return;
@@ -480,7 +480,9 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 			purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 					_("Plaintext Authentication"),
 					_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-					2, js->gc->account, allow_plaintext_auth,
+					2,
+					purple_connection_get_account(js->gc), NULL, NULL,
+					purple_connection_get_account(js->gc), allow_plaintext_auth,
 					disallow_plaintext_auth);
 			return;
 		}
@@ -562,7 +564,9 @@ static void auth_old_cb(JabberStream *js, xmlnode *packet, gpointer data)
 				purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 						_("Plaintext Authentication"),
 						_("This server requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-						2, js->gc->account, allow_plaintext_auth,
+						2,
+						purple_connection_get_account(js->gc), NULL, NULL,
+						purple_connection_get_account(js->gc), allow_plaintext_auth,
 						disallow_plaintext_auth);
 				return;
 			}
@@ -815,7 +819,7 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		} else {
 			response = xmlnode_new("response");
 			xmlnode_set_namespace(response, "urn:ietf:params:xml:ns:xmpp-sasl");
-			if (c_out) {
+			if (clen > 0) {
 				enc_out = purple_base64_encode((unsigned char*)c_out, clen);
 				xmlnode_insert_data(response, enc_out, -1);
 				g_free(enc_out);

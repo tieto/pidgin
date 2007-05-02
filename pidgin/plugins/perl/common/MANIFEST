@@ -21,8 +21,8 @@ GtkSession.xs
 GtkSound.xs
 GtkStatusBox.xs
 GtkThemes.xs
-GtkUI.pm
-GtkUI.xs
 GtkUtils.xs
 MANIFEST
+Pidgin.pm
+Pidgin.xs
 typemap

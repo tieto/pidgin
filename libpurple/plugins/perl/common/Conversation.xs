@@ -3,6 +3,93 @@
 MODULE = Purple::Conversation  PACKAGE = Purple  PREFIX = purple_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *type_stash = gv_stashpv("Purple::Conversation::Type", 1);
+	HV *update_stash = gv_stashpv("Purple::Conversation::Update::Type", 1);
+	HV *typing_stash = gv_stashpv("Purple::Conversation::TypingState", 1);
+	HV *flags_stash = gv_stashpv("Purple::Conversation::Flags", 1);
+	HV *cbflags_stash = gv_stashpv("Purple::Conversation::ChatBuddy::Flags", 1);
+
+	static const constiv *civ, type_const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_CONV_TYPE_##name}
+		const_iv(UNKNOWN),
+		const_iv(IM),
+		const_iv(CHAT),
+		const_iv(MISC),
+		const_iv(ANY),
+	};
+	static const constiv update_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_CONV_UPDATE_##name}
+		const_iv(ADD),
+		const_iv(REMOVE),
+		const_iv(ACCOUNT),
+		const_iv(TYPING),
+		const_iv(UNSEEN),
+		const_iv(LOGGING),
+		const_iv(TOPIC),
+/*
+		const_iv(ONLINE),
+		const_iv(OFFLINE),
+*/
+		const_iv(AWAY),
+		const_iv(ICON),
+		const_iv(TITLE),
+		const_iv(CHATLEFT),
+		const_iv(FEATURES),
+	};
+	static const constiv typing_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_##name}
+		const_iv(NOT_TYPING),
+		const_iv(TYPING),
+		const_iv(TYPED),
+	};
+	static const constiv flags_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_MESSAGE_##name}
+		const_iv(SEND),
+		const_iv(RECV),
+		const_iv(SYSTEM),
+		const_iv(AUTO_RESP),
+		const_iv(ACTIVE_ONLY),
+		const_iv(NICK),
+		const_iv(NO_LOG),
+		const_iv(WHISPER),
+		const_iv(ERROR),
+		const_iv(DELAYED),
+		const_iv(RAW),
+		const_iv(IMAGES),
+		const_iv(NOTIFY),
+	};
+	static const constiv cbflags_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_CBFLAGS_##name}
+		const_iv(NONE),
+		const_iv(VOICE),
+		const_iv(HALFOP),
+		const_iv(OP),
+		const_iv(FOUNDER),
+		const_iv(TYPING),
+	};
+
+	for (civ = type_const_iv + sizeof(type_const_iv) / sizeof(type_const_iv[0]); civ-- > type_const_iv; )
+		newCONSTSUB(type_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = update_const_iv + sizeof(update_const_iv) / sizeof(update_const_iv[0]); civ-- > update_const_iv; )
+		newCONSTSUB(update_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = typing_const_iv + sizeof(typing_const_iv) / sizeof(typing_const_iv[0]); civ-- > typing_const_iv; )
+		newCONSTSUB(typing_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = flags_const_iv + sizeof(flags_const_iv) / sizeof(flags_const_iv[0]); civ-- > flags_const_iv; )
+		newCONSTSUB(flags_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = cbflags_const_iv + sizeof(cbflags_const_iv) / sizeof(cbflags_const_iv[0]); civ-- > cbflags_const_iv; )
+		newCONSTSUB(cbflags_stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 void
 purple_get_ims()
 PREINIT:

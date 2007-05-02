@@ -564,6 +564,7 @@ pidgin_request_add_permit(PurpleAccount *account, const char *name)
 			NULL, FALSE, FALSE, NULL,
 			_("_Permit"), G_CALLBACK(add_permit_block_cb),
 			_("Cancel"), G_CALLBACK(destroy_request_data),
+			account, name, NULL,
 			data);
 	}
 	else {
@@ -574,7 +575,9 @@ pidgin_request_add_permit(PurpleAccount *account, const char *name)
 
 
 		purple_request_action(account, _("Permit User"), primary, secondary,
-							0, data, 2,
+							0,
+							account, name, NULL,
+							data, 2,
 							_("_Permit"), G_CALLBACK(confirm_permit_block_cb),
 							_("Cancel"), G_CALLBACK(destroy_request_data));
 
@@ -602,6 +605,7 @@ pidgin_request_add_block(PurpleAccount *account, const char *name)
 			NULL, FALSE, FALSE, NULL,
 			_("_Block"), G_CALLBACK(add_permit_block_cb),
 			_("Cancel"), G_CALLBACK(destroy_request_data),
+			account, name, NULL,
 			data);
 	}
 	else {
@@ -610,7 +614,9 @@ pidgin_request_add_block(PurpleAccount *account, const char *name)
 			g_strdup_printf(_("Are you sure you want to block %s?"), name);
 
 		purple_request_action(account, _("Block User"), primary, secondary,
-							0, data, 2,
+							0,
+							account, name, NULL,
+							data, 2,
 							_("_Block"), G_CALLBACK(confirm_permit_block_cb),
 							_("Cancel"), G_CALLBACK(destroy_request_data));
 
@@ -638,7 +644,11 @@ static PurplePrivacyUiOps privacy_ops =
 	pidgin_permit_added_removed,
 	pidgin_permit_added_removed,
 	pidgin_deny_added_removed,
-	pidgin_deny_added_removed
+	pidgin_deny_added_removed,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurplePrivacyUiOps *
