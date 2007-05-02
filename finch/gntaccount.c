@@ -1,6 +1,6 @@
 /**
  * @file gntaccount.c GNT Account API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

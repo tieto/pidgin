@@ -1,6 +1,6 @@
 /**
  * @file gntnotify.h GNT Notify API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

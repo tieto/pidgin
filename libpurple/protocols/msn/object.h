@@ -196,6 +196,15 @@ const char *msn_object_get_sha1d(const MsnObject *obj);
  */
 const char *msn_object_get_sha1c(const MsnObject *obj);
 
+/**
+ * Returns a MsnObject's SHA1C value if it exists, otherwise SHA1D.
+ *
+ * @param obj The object.
+ *
+ * @return The SHA1C value.
+ */
+const char *msn_object_get_sha1(const MsnObject *obj);
+
 void msn_object_set_local(MsnObject *obj);
 const char *msn_object_get_real_location(const MsnObject *obj);
 void msn_object_set_real_location(MsnObject *obj,

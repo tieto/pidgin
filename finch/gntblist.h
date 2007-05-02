@@ -1,6 +1,6 @@
 /**
  * @file gntblist.h GNT BuddyList API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

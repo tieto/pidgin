@@ -1,6 +1,6 @@
 /**
  * @file gntplugin.h GNT Plugins API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *
@@ -28,6 +28,7 @@
 #include <gnt.h>
 
 #include <plugin.h>
+#include <pluginpref.h>
 
 #include <string.h>
 

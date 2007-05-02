@@ -1,6 +1,6 @@
 /**
  * @file gtkaccount.c GTK+ Account Editor UI
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -229,11 +229,9 @@ set_dialog_icon(AccountPrefsDialog *dialog, gchar *new_cached_icon_path, gchar *
 	if (pixbuf == NULL)
 	{
 		/* Show a placeholder icon */
-		gchar *filename;
-		filename = g_build_filename(DATADIR, "pixmaps",
-				"pidgin", "insert-image.png", NULL);
-		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		g_free(filename);
+		GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL);
+		pixbuf = gtk_widget_render_icon(dialog->window, PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR,
+		                                icon_size, "PidginAccount");
 	}
 
 	gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_entry), pixbuf);
@@ -335,8 +333,7 @@ account_dnd_recv(GtkWidget *widget, GdkDragContext *dc, gint x, gint y,
 		if (!g_ascii_strncasecmp(name, "file://", 7)) {
 			GError *converr = NULL;
 			gchar *tmp, *rtmp;
-			/* It looks like we're dealing with a local file. Let's
-			 * just untar it in the right place */
+			/* It looks like we're dealing with a local file. */
 			if(!(tmp = g_filename_from_uri(name, NULL, &converr))) {
 				purple_debug(PURPLE_DEBUG_ERROR, "buddyicon", "%s\n",
 					   (converr ? converr->message :
@@ -2029,7 +2026,7 @@ add_account_to_liststore(PurpleAccount *account, gpointer user_data)
 	gtk_notebook_set_current_page(GTK_NOTEBOOK(accounts_window->notebook),1);
 
 	set_account(accounts_window->model, &iter, account, global_buddyicon);
-	gtk_window_present(pidgin_blist_get_default_gtk_blist()->window);
+	gtk_window_present(GTK_WINDOW(pidgin_blist_get_default_gtk_blist()->window));
 }
 
 static gboolean

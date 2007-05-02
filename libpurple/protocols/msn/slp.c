@@ -794,7 +794,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	MsnObject *obj;
 	char **tokens;
 	char *smile, *body_str;
-	const char *body, *who, *sha1c;
+	const char *body, *who, *sha1;
 	guint tok;
 	size_t body_len;
 
@@ -826,7 +826,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			break;
 
 		who = msn_object_get_creator(obj);
-		sha1c = msn_object_get_sha1c(obj);
+		sha1 = msn_object_get_sha1(obj);
 
 		slplink = msn_session_get_slplink(session, who);
 
@@ -843,14 +843,14 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, session->account, who);
 		}
 
-		if (purple_conv_custom_smiley_add(conv, smile, "sha1", sha1c, TRUE)) {
+		if (purple_conv_custom_smiley_add(conv, smile, "sha1", sha1, TRUE)) {
 			msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 		}
 
 		msn_object_destroy(obj);
 		obj =   NULL;
 		who =   NULL;
-		sha1c = NULL;
+		sha1 = NULL;
 	}
 	g_strfreev(tokens);
 }
@@ -872,7 +872,7 @@ buddy_icon_cached(PurpleConnection *gc, MsnObject *obj)
 		return FALSE;
 
 	old = purple_blist_node_get_string((PurpleBlistNode *)buddy, "icon_checksum");
-	new = msn_object_get_sha1c(obj);
+	new = msn_object_get_sha1(obj);
 
 	if (new == NULL)
 		return FALSE;
@@ -1091,7 +1091,7 @@ msn_request_user_display(MsnUser *user)
 
 	obj = msn_user_get_object(user);
 
-	info = msn_object_get_sha1c(obj);
+	info = msn_object_get_sha1(obj);
 
 	if (g_ascii_strcasecmp(user->passport,
 						   purple_account_get_username(account)))

@@ -1,6 +1,6 @@
 /*
  * @file gtkdialogs.c GTK+ Dialogs
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -195,6 +195,8 @@ static struct translator current_translators[] = {
 	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", "prf_q@users.sf.net"},
 	{N_("Vietnamese"),          "vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
 	{N_("Simplified Chinese"),  "zh_CN", "Funda Wang", "fundawang@linux.net.cn"},
+	{N_("Hong Kong Chinese"),   "zh_HK", "Ambrose C. Li", "acli@ada.dhs.org"},
+	{N_("Hong Kong Chinese"),   "zh_HK", "Paladin R. Liu", "paladin@ms1.hinet.net"},
 	{N_("Traditional Chinese"), "zh_TW", "Ambrose C. Li", "acli@ada.dhs.org"},
 	{N_("Traditional Chinese"), "zh_TW", "Paladin R. Liu", "paladin@ms1.hinet.net"},
 	{NULL, NULL, NULL, NULL}
@@ -246,7 +248,7 @@ static struct artist artists[] = {
 };
 
 void
-pidgindialogs_destroy_all()
+pidgin_dialogs_destroy_all()
 {
 	while (dialogwindows) {
 		gtk_widget_destroy(dialogwindows->data);
@@ -299,7 +301,7 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	g_object_unref(G_OBJECT(pixmap));
 }
 
-void pidgindialogs_about()
+void pidgin_dialogs_about()
 {
 	GtkWidget *hbox;
 	GtkWidget *vbox;
@@ -373,7 +375,7 @@ void pidgindialogs_about()
 					PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");
 #ifdef _WIN32
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
-						   "#pidgwin on irc.freenode.net<BR><BR>"));
+						   "#pidgin-win32 on irc.freenode.net<BR><BR>"));
 #else
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
 						   "#pidgin on irc.freenode.net<BR><BR>"));
@@ -674,7 +676,7 @@ g_string_append(str, "<br/>  <b>Library Support</b><br/>");
 }
 
 static void
-pidgindialogs_im_cb(gpointer data, PurpleRequestFields *fields)
+pidgin_dialogs_im_cb(gpointer data, PurpleRequestFields *fields)
 {
 	PurpleAccount *account;
 	const char *username;
@@ -682,11 +684,11 @@ pidgindialogs_im_cb(gpointer data, PurpleRequestFields *fields)
 	account  = purple_request_fields_get_account(fields, "account");
 	username = purple_request_fields_get_string(fields,  "screenname");
 
-	pidgindialogs_im_with_user(account, username);
+	pidgin_dialogs_im_with_user(account, username);
 }
 
 void
-pidgindialogs_im(void)
+pidgin_dialogs_im(void)
 {
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
@@ -715,13 +717,13 @@ pidgindialogs_im(void)
 						_("Please enter the screen name or alias of the person "
 						  "you would like to IM."),
 						fields,
-						_("OK"), G_CALLBACK(pidgindialogs_im_cb),
+						_("OK"), G_CALLBACK(pidgin_dialogs_im_cb),
 						_("Cancel"), NULL,
 						NULL);
 }
 
 void
-pidgindialogs_im_with_user(PurpleAccount *account, const char *username)
+pidgin_dialogs_im_with_user(PurpleAccount *account, const char *username)
 {
 	PurpleConversation *conv;
 
@@ -737,7 +739,7 @@ pidgindialogs_im_with_user(PurpleAccount *account, const char *username)
 }
 
 static gboolean
-pidgindialogs_ee(const char *ee)
+pidgin_dialogs_ee(const char *ee)
 {
 	GtkWidget *window;
 	GtkWidget *hbox;
@@ -802,7 +804,7 @@ pidgindialogs_ee(const char *ee)
 }
 
 static void
-pidgindialogs_info_cb(gpointer data, PurpleRequestFields *fields)
+pidgin_dialogs_info_cb(gpointer data, PurpleRequestFields *fields)
 {
 	char *username;
 	gboolean found = FALSE;
@@ -814,7 +816,7 @@ pidgindialogs_info_cb(gpointer data, PurpleRequestFields *fields)
 		purple_request_fields_get_string(fields,  "screenname")));
 
 	if (username != NULL && purple_str_has_suffix(username, "rocksmyworld"))
-		found = pidgindialogs_ee(username);
+		found = pidgin_dialogs_ee(username);
 
 	if (!found && username != NULL && *username != '\0' && account != NULL)
 		serv_get_info(purple_account_get_connection(account), username);
@@ -823,7 +825,7 @@ pidgindialogs_info_cb(gpointer data, PurpleRequestFields *fields)
 }
 
 void
-pidgindialogs_info(void)
+pidgin_dialogs_info(void)
 {
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
@@ -852,13 +854,13 @@ pidgindialogs_info(void)
 						_("Please enter the screen name or alias of the person "
 						  "whose info you would like to view."),
 						fields,
-						_("OK"), G_CALLBACK(pidgindialogs_info_cb),
+						_("OK"), G_CALLBACK(pidgin_dialogs_info_cb),
 						_("Cancel"), NULL,
 						NULL);
 }
 
 static void
-pidgindialogs_log_cb(gpointer data, PurpleRequestFields *fields)
+pidgin_dialogs_log_cb(gpointer data, PurpleRequestFields *fields)
 {
 	char *username;
 	PurpleAccount *account;
@@ -903,7 +905,7 @@ pidgindialogs_log_cb(gpointer data, PurpleRequestFields *fields)
  * TODO - This needs to deal with logs of all types, not just IM logs.
  */
 void
-pidgindialogs_log(void)
+pidgin_dialogs_log(void)
 {
 	PurpleRequestFields *fields;
 	PurpleRequestFieldGroup *group;
@@ -943,38 +945,38 @@ pidgindialogs_log(void)
 						_("Please enter the screen name or alias of the person "
 						  "whose log you would like to view."),
 						fields,
-						_("OK"), G_CALLBACK(pidgindialogs_log_cb),
+						_("OK"), G_CALLBACK(pidgin_dialogs_log_cb),
 						_("Cancel"), NULL,
 						NULL);
 }
 
 static void
-pidgindialogs_alias_contact_cb(PurpleContact *contact, const char *new_alias)
+pidgin_dialogs_alias_contact_cb(PurpleContact *contact, const char *new_alias)
 {
 	purple_contact_set_alias(contact, new_alias);
 }
 
 void
-pidgindialogs_alias_contact(PurpleContact *contact)
+pidgin_dialogs_alias_contact(PurpleContact *contact)
 {
 	g_return_if_fail(contact != NULL);
 
 	purple_request_input(NULL, _("Alias Contact"), NULL,
 					   _("Enter an alias for this contact."),
 					   contact->alias, FALSE, FALSE, NULL,
-					   _("Alias"), G_CALLBACK(pidgindialogs_alias_contact_cb),
+					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_contact_cb),
 					   _("Cancel"), NULL, contact);
 }
 
 static void
-pidgindialogs_alias_buddy_cb(PurpleBuddy *buddy, const char *new_alias)
+pidgin_dialogs_alias_buddy_cb(PurpleBuddy *buddy, const char *new_alias)
 {
 	purple_blist_alias_buddy(buddy, new_alias);
 	serv_alias_buddy(buddy);
 }
 
 void
-pidgindialogs_alias_buddy(PurpleBuddy *buddy)
+pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 {
 	gchar *secondary;
 
@@ -984,32 +986,32 @@ pidgindialogs_alias_buddy(PurpleBuddy *buddy)
 
 	purple_request_input(NULL, _("Alias Buddy"), NULL,
 					   secondary, buddy->alias, FALSE, FALSE, NULL,
-					   _("Alias"), G_CALLBACK(pidgindialogs_alias_buddy_cb),
+					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_buddy_cb),
 					   _("Cancel"), NULL, buddy);
 
 	g_free(secondary);
 }
 
 static void
-pidgindialogs_alias_chat_cb(PurpleChat *chat, const char *new_alias)
+pidgin_dialogs_alias_chat_cb(PurpleChat *chat, const char *new_alias)
 {
 	purple_blist_alias_chat(chat, new_alias);
 }
 
 void
-pidgindialogs_alias_chat(PurpleChat *chat)
+pidgin_dialogs_alias_chat(PurpleChat *chat)
 {
 	g_return_if_fail(chat != NULL);
 
 	purple_request_input(NULL, _("Alias Chat"), NULL,
 					   _("Enter an alias for this chat."),
 					   chat->alias, FALSE, FALSE, NULL,
-					   _("Alias"), G_CALLBACK(pidgindialogs_alias_chat_cb),
+					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_chat_cb),
 					   _("Cancel"), NULL, chat);
 }
 
 static void
-pidgindialogs_remove_contact_cb(PurpleContact *contact)
+pidgin_dialogs_remove_contact_cb(PurpleContact *contact)
 {
 	PurpleBlistNode *bnode, *cnode;
 	PurpleGroup *group;
@@ -1025,7 +1027,7 @@ pidgindialogs_remove_contact_cb(PurpleContact *contact)
 }
 
 void
-pidgindialogs_remove_contact(PurpleContact *contact)
+pidgin_dialogs_remove_contact(PurpleContact *contact)
 {
 	PurpleBuddy *buddy = purple_contact_get_priority_buddy(contact);
 
@@ -1034,7 +1036,7 @@ pidgindialogs_remove_contact(PurpleContact *contact)
 
 	if (((PurpleBlistNode*)contact)->child == (PurpleBlistNode*)buddy &&
 			!((PurpleBlistNode*)buddy)->next) {
-		pidgindialogs_remove_buddy(buddy);
+		pidgin_dialogs_remove_buddy(buddy);
 	} else {
 		gchar *text;
 		text = g_strdup_printf(
@@ -1048,7 +1050,7 @@ pidgindialogs_remove_contact(PurpleContact *contact)
 					buddy->name, contact->totalsize - 1);
 
 		purple_request_action(contact, NULL, _("Remove Contact"), text, 0, contact, 2,
-				_("_Remove Contact"), G_CALLBACK(pidgindialogs_remove_contact_cb),
+				_("_Remove Contact"), G_CALLBACK(pidgin_dialogs_remove_contact_cb),
 				_("Cancel"), NULL);
 
 		g_free(text);
@@ -1062,14 +1064,14 @@ static void free_ggmo(struct _PidginGroupMergeObject *ggp)
 }
 
 static void
-pidgindialogs_merge_groups_cb(struct _PidginGroupMergeObject *GGP)
+pidgin_dialogs_merge_groups_cb(struct _PidginGroupMergeObject *GGP)
 {
 	purple_blist_rename_group(GGP->parent, GGP->new_name);
 	free_ggmo(GGP);
 }
 
 void
-pidgindialogs_merge_groups(PurpleGroup *source, const char *new_name)
+pidgin_dialogs_merge_groups(PurpleGroup *source, const char *new_name)
 {
 	gchar *text;
 	struct _PidginGroupMergeObject *ggp;
@@ -1086,14 +1088,14 @@ pidgindialogs_merge_groups(PurpleGroup *source, const char *new_name)
 	ggp->new_name = g_strdup(new_name);
 	
 	purple_request_action(source, NULL, _("Merge Groups"), text, 0, ggp, 2,
-			_("_Merge Groups"), G_CALLBACK(pidgindialogs_merge_groups_cb),
+			_("_Merge Groups"), G_CALLBACK(pidgin_dialogs_merge_groups_cb),
 			_("Cancel"), G_CALLBACK(free_ggmo));
 
 	g_free(text);
 }
 
 static void
-pidgindialogs_remove_group_cb(PurpleGroup *group)
+pidgin_dialogs_remove_group_cb(PurpleGroup *group)
 {
 	PurpleBlistNode *cnode, *bnode;
 
@@ -1130,7 +1132,7 @@ pidgindialogs_remove_group_cb(PurpleGroup *group)
 }
 
 void
-pidgindialogs_remove_group(PurpleGroup *group)
+pidgin_dialogs_remove_group(PurpleGroup *group)
 {
 	gchar *text;
 
@@ -1140,7 +1142,7 @@ pidgindialogs_remove_group(PurpleGroup *group)
 						   group->name);
 
 	purple_request_action(group, NULL, _("Remove Group"), text, 0, group, 2,
-						_("_Remove Group"), G_CALLBACK(pidgindialogs_remove_group_cb),
+						_("_Remove Group"), G_CALLBACK(pidgin_dialogs_remove_group_cb),
 						_("Cancel"), NULL);
 
 	g_free(text);
@@ -1148,7 +1150,7 @@ pidgindialogs_remove_group(PurpleGroup *group)
 
 /* XXX - Some of this should be moved into the core, methinks. */
 static void
-pidgindialogs_remove_buddy_cb(PurpleBuddy *buddy)
+pidgin_dialogs_remove_buddy_cb(PurpleBuddy *buddy)
 {
 	PurpleGroup *group;
 	gchar *name;
@@ -1167,7 +1169,7 @@ pidgindialogs_remove_buddy_cb(PurpleBuddy *buddy)
 }
 
 void
-pidgindialogs_remove_buddy(PurpleBuddy *buddy)
+pidgin_dialogs_remove_buddy(PurpleBuddy *buddy)
 {
 	gchar *text;
 
@@ -1177,20 +1179,20 @@ pidgindialogs_remove_buddy(PurpleBuddy *buddy)
 						   buddy->name);
 
 	purple_request_action(buddy, NULL, _("Remove Buddy"), text, 0, buddy, 2,
-						_("_Remove Buddy"), G_CALLBACK(pidgindialogs_remove_buddy_cb),
+						_("_Remove Buddy"), G_CALLBACK(pidgin_dialogs_remove_buddy_cb),
 						_("Cancel"), NULL);
 
 	g_free(text);
 }
 
 static void
-pidgindialogs_remove_chat_cb(PurpleChat *chat)
+pidgin_dialogs_remove_chat_cb(PurpleChat *chat)
 {
 	purple_blist_remove_chat(chat);
 }
 
 void
-pidgindialogs_remove_chat(PurpleChat *chat)
+pidgin_dialogs_remove_chat(PurpleChat *chat)
 {
 	const gchar *name;
 	gchar *text;
@@ -1202,7 +1204,7 @@ pidgindialogs_remove_chat(PurpleChat *chat)
 			name ? name : "");
 
 	purple_request_action(chat, NULL, _("Remove Chat"), text, 0, chat, 2,
-						_("_Remove Chat"), G_CALLBACK(pidgindialogs_remove_chat_cb),
+						_("_Remove Chat"), G_CALLBACK(pidgin_dialogs_remove_chat_cb),
 						_("Cancel"), NULL);
 
 	g_free(text);

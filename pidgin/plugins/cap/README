@@ -3,7 +3,7 @@ Google Summer of Code 2006
 Student: Geoffrey Foster
 Mentor: Mark Doliner
 
-The Contact Availability Prediction plugin (CAP) attempts to provide feedback as to the availability of buddies in your buddy list beyond that of their status. It gathers various bits of information as you use Gaim (and the plugin is running) and provides a "Response Probability" value between 0.0 and 1.0. For those new to probability a value of 0 means 0% chance and 1 means 100% chance.
+The Contact Availability Prediction plugin (CAP) attempts to provide feedback as to the availability of buddies in your buddy list beyond that of their status. It gathers various bits of information as you use Pidgin (and the plugin is running) and provides a "Response Probability" value between 0.0 and 1.0. For those new to probability a value of 0 means 0% chance and 1 means 100% chance.
 
 Currently the probability value is only displayed in the tooltip of a buddy but in future graphs will be available showing usage patterns.
 

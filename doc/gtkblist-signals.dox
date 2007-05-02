@@ -11,7 +11,7 @@
 
  @signaldef gtkblist-hiding
   @signalproto
-void (*gtkblist-hiding)(GaimBuddyList *blist);
+void (*gtkblist-hiding)(PurpleBuddyList *blist);
   @endsignalproto
   @signaldesc
    Emitted when the buddy list is about to be hidden.
@@ -20,7 +20,7 @@ void (*gtkblist-hiding)(GaimBuddyList *blist);
 
  @signaldef gtkblist-unhiding
   @signalproto
-void (*gtkblist-unhiding)(GaimBuddyList *blist);
+void (*gtkblist-unhiding)(PurpleBuddyList *blist);
   @endsignalproto
   @signaldesc
    Emitted when the buddy list is about to be unhidden.
@@ -29,7 +29,7 @@ void (*gtkblist-unhiding)(GaimBuddyList *blist);
 
  @signaldef gtkblist-created
   @signalproto
-void (*gtkblist-created)(GaimBuddyList *blist);
+void (*gtkblist-created)(PurpleBuddyList *blist);
   @endsignalproto
   @signaldesc
    Emitted when the buddy list is created.
@@ -38,7 +38,7 @@ void (*gtkblist-created)(GaimBuddyList *blist);
 
  @signaldef drawing-tooltip
   @signalproto
-void (*drawing-tooltip)(GaimBlistNode *node, GString *text, gboolean full);
+void (*drawing-tooltip)(PurpleBlistNode *node, GString *text, gboolean full);
   @endsignalproto
   @signaldesc
    Emitted just before a tooltip is displayed.

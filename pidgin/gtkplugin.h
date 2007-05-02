@@ -1,6 +1,6 @@
 /**
  * @file gtkplugin.h GTK+ Plugin API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

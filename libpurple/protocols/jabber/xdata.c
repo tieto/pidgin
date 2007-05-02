@@ -64,6 +64,8 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 				case JABBER_X_DATA_JID_SINGLE:
 					{
 					const char *value = purple_request_field_string_get_value(field);
+					if (value == NULL)
+						break;
 					fieldnode = xmlnode_new_child(result, "field");
 					xmlnode_set_attrib(fieldnode, "var", id);
 					valuenode = xmlnode_new_child(fieldnode, "value");
@@ -75,6 +77,8 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 					{
 					char **pieces, **p;
 					const char *value = purple_request_field_string_get_value(field);
+					if (value == NULL)
+						break;
 					fieldnode = xmlnode_new_child(result, "field");
 					xmlnode_set_attrib(fieldnode, "var", id);
 

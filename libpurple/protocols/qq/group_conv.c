@@ -50,36 +50,54 @@ void qq_group_conv_refresh_online_member(PurpleConnection *gc, qq_group *group)
 {
 	GList *names, *list, *flags;
 	qq_buddy *member;
-	gchar *member_name;
+	gchar *member_name, *member_uid;
 	PurpleConversation *conv;
 	gint flag;
 	g_return_if_fail(group != NULL);
 
 	names = NULL;
 	flags = NULL;
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, 
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
 			group->group_name_utf8, purple_connection_get_account(gc));
 	if (conv != NULL && group->members != NULL) {
 		list = group->members;
 		while (list != NULL) {
 			member = (qq_buddy *) list->data;
-			/* always put it even offline */
-			names = g_list_append(names,
-					/* we need unique identifiers for everyone in the chat or else we'll 
- 					* run into problems with functions like get_cb_real_name from qq.c */
-					(member->nickname != NULL && *(member->nickname) != '\0') ?
+
+			/* we need unique identifiers for everyone in the chat or else we'll
+			 * run into problems with functions like get_cb_real_name from qq.c */
+			member_name =   (member->nickname != NULL && *(member->nickname) != '\0') ?
 					g_strdup_printf("%s (qq-%u)", member->nickname, member->uid) :
-					g_strdup_printf("(qq-%u)", member->uid));
+					g_strdup_printf("(qq-%u)", member->uid);
+			member_uid = g_strdup_printf("(qq-%u)", member->uid);
+
 			flag = 0;
 			/* TYPING to put online above OP and FOUNDER */
-			if (is_online(member->status)) flag |= (PURPLE_CBFLAGS_TYPING | PURPLE_CBFLAGS_VOICE);
+			if (is_online(member->status))
+				flag |= (PURPLE_CBFLAGS_TYPING | PURPLE_CBFLAGS_VOICE);
 			if(1 == (member->role & 1)) flag |= PURPLE_CBFLAGS_OP;
 			if(member->uid == group->creator_uid) flag |= PURPLE_CBFLAGS_FOUNDER;
-			flags = g_list_append(flags, GINT_TO_POINTER(flag));
+
+			if (purple_conv_chat_find_user(PURPLE_CONV_CHAT(conv), member_name))
+			{
+				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(conv),
+						member_name,
+						flag);
+			} else if (purple_conv_chat_find_user(PURPLE_CONV_CHAT(conv), member_uid))
+			{
+				purple_conv_chat_user_set_flags(PURPLE_CONV_CHAT(conv),
+						member_uid,
+						flag);
+				purple_conv_chat_rename_user(PURPLE_CONV_CHAT(conv), member_uid, member_name);
+			} else {
+				/* always put it even offline */
+				names = g_list_append(names, member_name);
+				flags = g_list_append(flags, GINT_TO_POINTER(flag));
+			}
+			g_free(member_uid);
 			list = list->next;
 		}
-		
-		purple_conv_chat_clear_users(PURPLE_CONV_CHAT(conv));
+
 		purple_conv_chat_add_users(PURPLE_CONV_CHAT(conv), names, NULL, flags, FALSE);
 	}
 	/* clean up names */
@@ -88,5 +106,5 @@ void qq_group_conv_refresh_online_member(PurpleConnection *gc, qq_group *group)
 		names = g_list_remove(names, member_name);
 		g_free(member_name);
 	}
-	g_list_free(flags);	
+	g_list_free(flags);
 }

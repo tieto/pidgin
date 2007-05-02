@@ -1,6 +1,6 @@
 /**
  * @file gtknickcolors.h GTK+ Conversation API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  * Pidgin is the legal property of its developers, whose names are too numerous

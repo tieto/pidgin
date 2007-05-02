@@ -1,6 +1,6 @@
 /**
  * @file gtkplugin.c GTK+ Plugins support
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

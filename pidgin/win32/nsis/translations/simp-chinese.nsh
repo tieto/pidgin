@@ -30,11 +30,7 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "开始菜单"
 !define PIDGIN_SECTION_DESCRIPTION		"Pidgin 核心文件和 DLLs"
 !define GTK_SECTION_DESCRIPTION		"Pidgin 所用的多平台 GUI 工具包"
-!define GTK_THEMES_SECTION_DESCRIPTION	"GTK+ 主题可以更改 GTK+ 程序的观感。"
-!define GTK_NO_THEME_DESC			"不安装 GTK+ 主题"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp 是适合 Windows 桌面环境的 GTK+ 主题。"
-!define GTK_BLUECURVE_THEME_DESC		"Bluecurve 主题。"
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Lighthouseblue 主题。"
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   "启动 Pidgin 的快捷方式"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC   "在桌面上创建 Pidgin 的快捷方式"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC   "在开始菜单中创建 Pidgin 的快捷方式"

@@ -1,6 +1,6 @@
 /**
  * @file gtklog.h GTK+ Log viewer
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

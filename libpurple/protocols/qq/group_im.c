@@ -63,6 +63,7 @@ void qq_send_packet_group_im(PurpleConnection *gc, qq_group *group, const gchar 
 	g_return_if_fail(group != NULL && msg != NULL);
 
 	msg_filtered = purple_markup_strip_html(msg);
+	purple_debug_info("QQ_MESG", "filterd qq qun mesg: %s\n", msg_filtered);
 	msg_len = strlen(msg_filtered);
 	data_len = 7 + msg_len + QQ_SEND_IM_AFTER_MSG_LEN;
 	raw_data = g_newa(guint8, data_len);

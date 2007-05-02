@@ -17,7 +17,7 @@
 
  @signaldef buddy-status-changed
   @signalproto
-void (*buddy_away)(GaimBuddy *buddy, GaimStatus *old_status, GaimStatus *status);
+void (*buddy_away)(PurpleBuddy *buddy, PurpleStatus *old_status, PurpleStatus *status);
   @endsignalproto
   @signaldesc
    Emitted when a buddy on your buddy list goes away.
@@ -28,7 +28,7 @@ void (*buddy_away)(GaimBuddy *buddy, GaimStatus *old_status, GaimStatus *status)
 
  @signaldef buddy-idle-changed
   @signalproto
-void (*buddy_idle)(GaimBuddy *buddy, gboolean old_idle, gboolean idle);
+void (*buddy_idle)(PurpleBuddy *buddy, gboolean old_idle, gboolean idle);
   @endsignalproto
   @signaldesc
    Emitted when a buddy on your buddy list becomes idle.
@@ -39,7 +39,7 @@ void (*buddy_idle)(GaimBuddy *buddy, gboolean old_idle, gboolean idle);
 
  @signaldef buddy-signed-on
   @signalproto
-void (*buddy_signed_on)(GaimBuddy *buddy);
+void (*buddy_signed_on)(PurpleBuddy *buddy);
   @endsignalproto
   @signaldesc
    Emitted when a buddy on your buddy list signs on.
@@ -48,7 +48,7 @@ void (*buddy_signed_on)(GaimBuddy *buddy);
 
  @signaldef buddy-signed-off
   @signalproto
-void (*buddy_signed_off)(GaimBuddy *buddy);
+void (*buddy_signed_off)(PurpleBuddy *buddy);
   @endsignalproto
   @signaldesc
    Emitted when a buddy on your buddy list signs off.
@@ -65,16 +65,16 @@ void (*update_idle)();
 
  @signaldef blist-node-extended-menu
   @signalproto
-void (*blist_node_extended_menu)(GaimBlistNode *node, GList **menu)
+void (*blist_node_extended_menu)(PurpleBlistNode *node, GList **menu)
   @endsignalproto
   @signaldesc
    Emitted when a buddlist menu is being constructed @a menu is a pointer to
-   a GList of GaimBlistNodeAction's allowing a plugin to add menu items
+   a GList of PurpleBlistNodeAction's allowing a plugin to add menu items
  @endsignaldef
 
  @signaldef buddy-added
   @signalproto
-void (*buddy_added)(GaimBuddy *buddy)
+void (*buddy_added)(PurpleBuddy *buddy)
   @endsignalproto
   @signaldesc
    Emitted when a new buddy is added to the buddy list.
@@ -82,7 +82,7 @@ void (*buddy_added)(GaimBuddy *buddy)
 
  @signaldef buddy-icon-changed
   @signalproto
-void (*buddy_icon_changed)(GaimBuddy *buddy)
+void (*buddy_icon_changed)(PurpleBuddy *buddy)
   @endsignalproto
   @signaldesc
    Emitted when a buddy's icon is set.
@@ -90,7 +90,7 @@ void (*buddy_icon_changed)(GaimBuddy *buddy)
 
  @signaldef buddy-removed
   @signalproto
-void (*buddy_removed)(GaimBuddy *buddy)
+void (*buddy_removed)(PurpleBuddy *buddy)
   @endsignalproto
   @signaldesc
    Emitted when a buddy is removed from the buddy list.
@@ -98,7 +98,7 @@ void (*buddy_removed)(GaimBuddy *buddy)
 
  @signaldef blist-node-aliased
   @signalproto
-void (*blist_node_aliased)(GaimBlistNode *node, const char *old_alias)
+void (*blist_node_aliased)(PurpleBlistNode *node, const char *old_alias)
   @endsignalproto
   @signaldesc
    Emitted when a blist node (buddy, chat, or contact) is aliased.

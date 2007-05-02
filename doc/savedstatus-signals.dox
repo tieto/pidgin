@@ -8,7 +8,7 @@
 
  @signaldef savedstatus-changed
   @signalproto
-void (*savedstatus_changed)(GaimSavedStatus *new, GaimSavedStatus *old);
+void (*savedstatus_changed)(PurpleSavedStatus *new, PurpleSavedStatus *old);
   @endsignalproto
   @signaldesc
    Emitted when a new saved status is activated.

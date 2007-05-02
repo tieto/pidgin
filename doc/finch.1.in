@@ -45,7 +45,7 @@ messages shown in the \fBDebug\fR window are the same as the ones printed in
 stderr.
 .TP
 .B \-c, \-\-config=\fIDIR\fB
-Use \fIDIR\fR as the directory for config files instead of \fI~/.gaim\fR.
+Use \fIDIR\fR as the directory for config files instead of \fI~/.purple\fR.
 .TP
 .B \-h, \-\-help
 Print this help and exit.
@@ -125,7 +125,7 @@ mouse = 1
 .br
 # To use some custom window-manager
 .br
-wm = /usr/local/lib/gaim/s.so
+wm = /usr/local/lib/purple/s.so
 .br
 # Remember window-positions based on the titles (on by default)
 .br

@@ -25,11 +25,6 @@
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue מראה"
 !define PIDGIN_SECTION_DESCRIPTION		".בסיססים DLL-ו Pidgin קבצי"
 !define GTK_SECTION_DESCRIPTION		".מולטי-פלטפורמיים GUI כלי"
-!define GTK_THEMES_SECTION_DESCRIPTION	" .GTK+ יכולים לשנות את המראה של תוכנות GTK+ מראות"
-!define GTK_NO_THEME_DESC			".GTK+ לא להתקין מראה של"
-!define GTK_WIMP_THEME_DESC			".זה מראה שמשתלב למראה של חלונות GTK-Wimp (Windows impersonator)"
-!define GTK_BLUECURVE_THEME_DESC		".Bluecurve המראה של"
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	".Lighthouseblueהמראה של"
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"A?נמצאה. לשדרג GTK+ סביבה ישנה של$\rNote: .יכול לא לעבוד אם לא $(^Name)"

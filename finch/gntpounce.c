@@ -1,6 +1,6 @@
 /**
  * @file gntpounce.c GNT Buddy Pounce API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *
@@ -285,7 +285,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 	PurpleGntPounceDialog *dialog;
 	GntWidget *window;
 	GntWidget *bbox;
-	GntWidget *hbox;
+	GntWidget *hbox, *vbox;
 	GntWidget *button;
 	GntWidget *combo;
 	GList *list;
@@ -366,6 +366,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 		gnt_entry_set_text(GNT_ENTRY(dialog->buddy_entry), name);
 	}
 
+	/* Create the event frame */
 	gnt_box_add_widget(GNT_BOX(window), gnt_line_new(FALSE));
 	gnt_box_add_widget(GNT_BOX(window), gnt_label_new_with_format(_("Pounce When Buddy..."), GNT_TEXT_FLAG_BOLD));
 
@@ -380,30 +381,29 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 	dialog->stop_typing = gnt_check_box_new(_("Stops typing"));
 	dialog->message_recv = gnt_check_box_new(_("Sends a message"));
 
-	hbox = gnt_hbox_new(FALSE);
+	hbox = gnt_hbox_new(TRUE);
 	gnt_box_set_pad(GNT_BOX(hbox), 2);
-	gnt_box_add_widget(GNT_BOX(hbox), dialog->signon);
-	gnt_box_add_widget(GNT_BOX(hbox), dialog->signoff);
-	gnt_box_add_widget(GNT_BOX(window), hbox);
-	hbox = gnt_hbox_new(FALSE);
-	gnt_box_set_pad(GNT_BOX(hbox), 2);
-	gnt_box_add_widget(GNT_BOX(hbox), dialog->away);
-	gnt_box_add_widget(GNT_BOX(hbox), dialog->away_return);
-	gnt_box_add_widget(GNT_BOX(window), hbox);
-	hbox = gnt_hbox_new(FALSE);
-	gnt_box_set_pad(GNT_BOX(hbox), 2);
-	gnt_box_add_widget(GNT_BOX(hbox), dialog->idle);
-	gnt_box_add_widget(GNT_BOX(hbox), dialog->idle_return);
-	gnt_box_add_widget(GNT_BOX(window), hbox);
-	hbox = gnt_hbox_new(FALSE);
-	gnt_box_set_pad(GNT_BOX(hbox), 2);
-	gnt_box_add_widget(GNT_BOX(hbox), dialog->typing);
-	gnt_box_add_widget(GNT_BOX(hbox), dialog->typed);
-	gnt_box_add_widget(GNT_BOX(window), hbox);
-	hbox = gnt_hbox_new(FALSE);
-	gnt_box_set_pad(GNT_BOX(hbox), 2);
-	gnt_box_add_widget(GNT_BOX(hbox), dialog->stop_typing);
-	gnt_box_add_widget(GNT_BOX(hbox), dialog->message_recv);
+
+	vbox = gnt_vbox_new(FALSE);
+	gnt_box_set_pad(GNT_BOX(vbox), 0);
+	gnt_box_add_widget(GNT_BOX(hbox), vbox);
+
+	gnt_box_add_widget(GNT_BOX(vbox), dialog->signon);
+	gnt_box_add_widget(GNT_BOX(vbox), dialog->away);
+	gnt_box_add_widget(GNT_BOX(vbox), dialog->idle);
+	gnt_box_add_widget(GNT_BOX(vbox), dialog->typing);
+	gnt_box_add_widget(GNT_BOX(vbox), dialog->stop_typing);
+
+	vbox = gnt_vbox_new(FALSE);
+	gnt_box_set_pad(GNT_BOX(vbox), 0);
+	gnt_box_add_widget(GNT_BOX(hbox), vbox);
+
+	gnt_box_add_widget(GNT_BOX(vbox), dialog->signoff);
+	gnt_box_add_widget(GNT_BOX(vbox), dialog->away_return);
+	gnt_box_add_widget(GNT_BOX(vbox), dialog->idle_return);
+	gnt_box_add_widget(GNT_BOX(vbox), dialog->typed);
+	gnt_box_add_widget(GNT_BOX(vbox), dialog->message_recv);
+
 	gnt_box_add_widget(GNT_BOX(window), hbox);
 
 	/* Create the "Action" frame. */

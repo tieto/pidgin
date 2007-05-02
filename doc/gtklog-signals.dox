@@ -8,7 +8,7 @@
 
  @signaldef log-displaying
   @signalproto
-void (*log_displaying)(GaimGtkLogViewer *viewer, GaimLog *log);
+void (*log_displaying)(PidginLogViewer *viewer, PurpleLog *log);
   @endsignalproto
   @signaldesc
    Emitted when a log is being displayed.

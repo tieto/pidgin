@@ -1,6 +1,6 @@
 /**
  * @file gtkconvwin.h GTK+ Conversation Window API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

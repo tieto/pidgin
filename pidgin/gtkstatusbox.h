@@ -1,6 +1,6 @@
 /*
  * @file gtkstatusbox.c GTK+ Status Selection Widget
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -55,6 +55,7 @@ typedef enum
 	PIDGIN_STATUS_BOX_TYPE_SEPARATOR,
 	PIDGIN_STATUS_BOX_TYPE_PRIMITIVE,
 	PIDGIN_STATUS_BOX_TYPE_POPULAR,
+	PIDGIN_STATUS_BOX_TYPE_SAVED_POPULAR,
 	PIDGIN_STATUS_BOX_TYPE_CUSTOM,
 	PIDGIN_STATUS_BOX_TYPE_SAVED,
 	PIDGIN_STATUS_BOX_NUM_TYPES

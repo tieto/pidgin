@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 		Makefile.mingw
 
-pkgdir = $(libdir)/libpurple
+pkgdir = $(libdir)/purple
 
 QQSOURCES = \
 	buddy_info.c \

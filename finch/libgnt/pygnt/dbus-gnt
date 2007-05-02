@@ -37,23 +37,23 @@ def wrote_msg(account, who, msg, conv, flags):
 gnt.gnt_init()
 
 bus = dbus.SessionBus()
-obj = bus.get_object("net.sf.purple.PurpleService", "/net/sf/purple/PurpleObject")
-purple = dbus.Interface(obj, "net.sf.purple.PurpleInterface")
+obj = bus.get_object("im.pidgin.purple.PurpleService", "/im/pidgin/purple/PurpleObject")
+purple = dbus.Interface(obj, "im.pidgin.purple.PurpleInterface")
 
 bus.add_signal_receiver(buddysignedon,
-                        dbus_interface = "net.sf.purple.PurpleInterface",
+                        dbus_interface = "im.pidgin.purple.PurpleInterface",
                         signal_name = "BuddySignedOn")
 
 bus.add_signal_receiver(wrote_msg,
-                        dbus_interface = "net.sf.purple.PurpleInterface",
+                        dbus_interface = "im.pidgin.purple.PurpleInterface",
                         signal_name = "WroteImMsg")
 
 bus.add_signal_receiver(wrote_msg,
-                        dbus_interface = "net.sf.purple.PurpleInterface",
+                        dbus_interface = "im.pidgin.purple.PurpleInterface",
                         signal_name = "WroteChatMsg")
 
 bus.add_signal_receiver(conv_closed,
-                        dbus_interface = "net.sf.purple.PurpleInterface",
+                        dbus_interface = "im.pidgin.purple.PurpleInterface",
                         signal_name = "DeletingConversation")
 
 def get_dict_key(conv):

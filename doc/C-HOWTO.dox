@@ -1,37 +1,27 @@
 /** @page c-howto C Plugin HOWTO
 
  @section Introduction
-  C plugins are native plugins.  They have complete access to all of the api,
+  C plugins are native plugins.  They have complete access to all of the API,
   and can do basically whatever they want.  All of the protocol plugins, as
-  well as the perl and tcl loader plugins are written in C.
+  well as the Mono, Perl, and Tcl loader plugins are written in C.
 
  @section getting_started Getting Started
-  To develop a plugin you need to have the Gaim source code.  It is generally a
-  good idea to compile against the same version of Gaim that you are running.
-  You may also want to develop against SVN.  While we do NOT recomend this for
-  normal users, it makes sense for plugin developers to use SVN to ensure their
-  plugins works with the most recent changes in Gaim.  A lot tends to
-  change between versions and it's much easier to fix your plugin as things
-  change rather than waiting until the release.  But please do not abuse SVN.
-  Gaim puts a lot of strain on SourceForge's servers, and we do not need to
-  add anymore to it.
+  To develop a plugin you need to have the libpurple and (for UI plugins) the
+  Pidgin/Finch source code or development headers.  It is generally a good idea
+  to compile against the same version of Pidgin that you are running.  You may
+  also want to develop against the code in our Monotone repository if you need
+  to use a new feature.  Please do not abuse our Monotone repository, however.
 
-  If you choose not to head my warnings and develop against a version of Gaim
-  that is different from what you're running, then your Gaim source must at
-  the very least be configured.  Note that just running configure will
-  generally set the prefix to /usr/local.  This shouldn't be a problem, except
-  that most packages compile and install Gaim with /usr as the prefix.
-
-  All plugins must have @c GAIM_PLUGINS defined, the definition must be before
-  including any Gaim files.  Failure to do so will produce the 'plugin foo
-  could not be loaded for an unknown reason'.  This is one of the hardest
-  unknown reasons to track down, so let's try to avoid it at all costs ;)
+  All plugins must have @c PURPLE_PLUGINS defined and the definition must be
+  before including any libpurple, Pidgin, or Finch header files.  Failure to do
+  so can lead to strange errors that are hard to diagnose.  Just don't forget!
 
  @section hello_world Hello World!
-  I know every tutorial has a hello world, so why should Gaim be any different?
+  I know every tutorial has a hello world, so why should libpurple be any
+  different?
 
   @code
-#define GAIM_PLUGINS
+#define PURPLE_PLUGINS
 
 #include <glib.h>
 
@@ -40,22 +30,22 @@
 #include "version.h"
 
 static gboolean
-plugin_load(GaimPlugin *plugin) {
-	gaim_notify_message(plugin, GAIM_NOTIFY_MSG_INFO, "Hello World!",
+plugin_load(PurplePlugin *plugin) {
+	purple_notify_message(plugin, PURPLE_NOTIFY_MSG_INFO, "Hello World!",
 						"This is the Hello World! plugin :)", NULL, NULL, NULL);
 
 	return TRUE;
 }
 
-static GaimPluginInfo info = {
-	GAIM_PLUGIN_MAGIC,
-	GAIM_MAJOR_VERSION,
-	GAIM_MINOR_VERSION,
-	GAIM_PLUGIN_STANDARD,
+static PurplePluginInfo info = {
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_STANDARD,
 	NULL,
 	0,
 	NULL,
-	GAIM_PRIORITY_DEFAULT,
+	PURPLE_PRIORITY_DEFAULT,
 
 	"core-hello_world",
 	"Hello World!",
@@ -64,7 +54,7 @@ static GaimPluginInfo info = {
 	"Hello World Plugin",
 	"Hello World Plugin",
 	NULL,
-	"http://www.helloworld.tld",
+	"http://helloworld.tld",
 
 	plugin_load,
 	NULL,
@@ -77,196 +67,186 @@ static GaimPluginInfo info = {
 };
 
 static void
-init_plugin(GaimPlugin *plugin) {
+init_plugin(PurplePlugin *plugin)
+{
 }
 
-GAIM_INIT_PLUGIN(hello_world, init_plugin, info);
+PURPLE_INIT_PLUGIN(hello_world, init_plugin, info);
 
   @endcode
 
-  Okay, so what does all this mean?  We start off by defining @c GAIM_PLUGINS
+  Okay, so what does all this mean?  We start off by defining @c PURPLE_PLUGINS
   like described before.  Next we include glib.h, mainly for gboolean and the
-  glib wrappers of the standard c types.  We could just use stdio and use
-  an int for the gboolean but since Gaim uses glib internally, we might as
-  well do the same.
+  glib wrappers of the standard C types.
 
   Next, we include plugin.h which has all the plugin specific stuff that we
-  need.  For example @c GaimPlugin, @c GaimPluginInfo, @c GAIM_PLUGIN_MAGIC,
-  and @c GAIM_INIT_PLUGIN().
+  need.  For example: @c PurplePlugin, @c PurplePluginInfo,
+  @c PURPLE_PLUGIN_MAGIC, and @c PURPLE_INIT_PLUGIN().
 
-  Our last include is version.h which defines @c GAIM_MAJOR_VERSION, and
-  @c GAIM_MINOR_VERSION.  There is not much you need to know about these,
-  except that they are required and will stop your plugin from crashing Gaim
+  Our last include is version.h which defines @c PURPLE_MAJOR_VERSION, and
+  @c PURPLE_MINOR_VERSION.  There is not much you need to know about these,
+  except that they are required and will stop your plugin from crashing Pidgin
   when something has changed that you plugin does not know about yet.
 
   plugin_load is not required.  It is called when the plugin is loaded so that
   you can initialize any variables and so on.  But in this plugin we'll just
   use it to display a message.
 
-  Next we have the @c GaimPluginInfo structure.  Every plugin MUST have one of
+  Next we have the @c PurplePluginInfo structure.  Every plugin MUST have one of
   these.  Below is a code snipet of the same struct used in @c hello_world with
   comments describing what each is.
 
   @code
-static GaimPluginInfo info = {
-	GAIM_PLUGIN_MAGIC,          /* Plugin magic, this should always be
-                                   GAIM_PLUGIN_MAGIC.  This value gets
-                                   incremented inside of Gaim so that plugins
-                                   that haven't been updated yet will fail to
-                                   load and avoid potential crashes while
-                                   loading old plugins.
-                                  */
-	GAIM_MAJOR_VERSION,          /* This is also defined in Gaim.  It helps
-                                    Gaim's plugin system determine what version
-                                    of Gaim this plugin was compiled for, and
-                                    whether loading it will cause problems.
-                                  */
-	GAIM_MINOR_VERSION,          /* See previous */
-	GAIM_PLUGIN_STANDARD,        /* GaimPluginType, there are 4 different values
-                                    for this field.  The first is
-                                    GAIM_PLUGIN_UNKNOWN,  which should not be
-                                    used.  The second is GAIM_PLUGIN_STANDARD,
-                                    this is the value most plugins will use.
-                                    Next we have GAIM_PLUGIN_LOADER,  this is
-                                    the type you want to load if your plugin
-                                    is going to make it possible to load non-
-                                    native plugins.  For example, perl and tcl.
-                                    Last, we have GAIM_PLUGIN_PROTOCOL.  If
-                                    your plugin is going to allow the user to
-                                    connect to another network, this is the
-                                    type you'd want to use.
-                                  */
-	NULL,                         /* This field is the ui requirement.  This
-                                     value should be a string.  If you're
-                                     writing a core plugin, this should be NULL
-                                     and the plugin should not contain any ui
-                                     specific code.  If you're writing a gtk
-                                     plugin, you can use the
-                                     GAIM_GTK_PLUGIN_TYPE macro.  All other ui
-                                     plugins are dependent on their ui
-                                     implementation, and is outside the scope of
-                                     this howto.
-                                   */
-	0,                            /* This field is for plugin flags.  Currently,
-                                     the only flag available to plugins is
-                                     invisible (GAIM_PLUGIN_FLAG_INVISIBLE).
-                                     This plugin is currently used by the ssl
-                                     plugin, the tcl loader, and the perl
-                                     loaded.  It causes the plugin to NOT
-                                     appear in the list of plugins in Gaim's
-                                     preferences window.
-                                   */
-	NULL,                         /* This is a GList of plugin dependencies.  In
-                                     other words, a GList of plugin id's that
-                                     your plugin depends on.  If your plugin
-                                     does not have any dependencies, set this
-                                     value to NULL.
-                                   */
-	GAIM_PRIORITY_DEFAULT,        /* This is the priority Gaim with give your
-                                     plugin.  There are three possible values
-                                     for this field, GAIM_PRIORITY_DEFAULT,
-                                     GAIM_PRIORITY_HIGHEST, and
-                                     GAIM_PRIORITY_LOWEST
-                                   */
+static PurplePluginInfo info = {
+	PURPLE_PLUGIN_MAGIC,    /* Plugin magic, this must always be
+                                   PURPLE_PLUGIN_MAGIC.
+                                 */
+	PURPLE_MAJOR_VERSION,   /* This is also defined in libpurple.  It helps
+                                   libpurple's plugin system determine which
+                                   version of libpurple this plugin was
+                                   compiled for, and whether loading it will
+                                   cause problems.
+                                 */
+	PURPLE_MINOR_VERSION,   /* See previous */
+	PURPLE_PLUGIN_STANDARD, /* PurplePluginType: There are 4 different
+                                   values for this field.  The first is
+                                   PURPLE_PLUGIN_UNKNOWN, which should not be
+                                   used.  The second is PURPLE_PLUGIN_STANDARD;
+                                   this is the value most plugins will use.
+                                   Next, we have PURPLE_PLUGIN_LOADER; this is
+                                   the type you want to load if your plugin
+                                   is going to make it possible to load non-
+                                   native plugins.  For example, the Perl and
+                                   Tcl loader plugins are of this type.
+                                   Last, we have PURPLE_PLUGIN_PROTOCOL.  If
+                                   your plugin is going to allow the user to
+                                   connect to another network, this is the
+                                   type you'd want to use.
+                                 */
+	NULL,                   /* This field is the UI requirement.  If you're
+                                   writing a core plugin, this must be NULL
+                                   and the plugin must not contain any UI
+                                   code.  If you're writing a Pidgin plugin,
+                                   you need to use PIDGIN_PLUGIN_TYPE.  If you
+                                   are writing a Finch plugin, you would use
+                                   FINCH_PLUGIN_TYPE.
+                                 */
+	0,                      /* This field is for plugin flags.  Currently,
+                                   the only flag available to plugins is
+                                   invisible (PURPLE_PLUGIN_FLAG_INVISIBLE).
+                                   It causes the plugin to NOT appear in the
+                                   list of plugins.
+                                 */
+	NULL,                   /* This is a GList of plugin dependencies.  In
+                                   other words, a GList of plugin id's that
+                                   your plugin depends on.  Set this value to
+                                   NULL no matter what.  If your plugin has
+                                   dependencies, set them at run-time in the
+                                   plugin_init function.
+                                 */
+	PURPLE_PRIORITY_DEFAULT,/* This is the priority libpurple with give your
+                                   plugin.  There are three possible values
+                                   for this field, PURPLE_PRIORITY_DEFAULT,
+                                   PURPLE_PRIORITY_HIGHEST, and
+                                   PURPLE_PRIORITY_LOWEST
+                                 */
 
-	"core-hello_world",           /* This is your plugin's id.  There is a whole
-                                     page dedicated to this in the
-                                     'related-pages' section of Gaim's API docs.
-                                   */
-	"Hello World!",               /* This is your plugin name.  This is what
-                                     will be displayed for your plugin in the ui.
-                                   */
-	1.1,                          /* This is the version of your plugin.  For
-                                     the sake of simplicity, I'm using the Gaim
-                                     version.
-                                   */
+	"core-hello_world",     /* This is your plugin's id.  There is a whole
+                                   page dedicated to this in the Related Pages
+                                   section of the API docs.
+                                 */
+	"Hello World!",         /* This is your plugin's name.  This is what
+                                   will be displayed for your plugin in the UI.
+                                 */
+	1.1,                    /* This is the version of your plugin. */
 
-	"Hello World Plugin",         /* This is the summary of your plugin.  It
-                                     should be a short little blurb.  The ui
-                                     determines where, if at all, to display
-                                     this.
-                                   */
-	"Hello World Plugin",         /* This is the description of your plugin. It
-                                     can be as long and as descriptive as you
-                                     like.  And like the summary, it's up to the
-                                     ui where, if at all, to display this.
-                                   */
-	NULL,                         /* This is where you can put your name and
-                                     email address.  (You are the author right?)
-                                   */
-	"http://www.helloworld.tld",  /* This is the website for the plugin.  This
-                                     is helpful if users find bugs in your
-                                     plugin so they can help to bring them to
-                                     your attention.
-                                   */
+	"Hello World Plugin",   /* This is the summary of your plugin.  It
+                                   should be a short little blurb.  The UI
+                                   determines where, if at all, to display
+                                   this.
+                                 */
+	"Hello World Plugin",   /* This is the description of your plugin. It
+                                   can be as long and as descriptive as you
+                                   like.  And like the summary, it's up to the
+                                   UI where, if at all, to display this (and
+                                   how much to display).
+                                 */
+	NULL,                   /* This is where you can put your name and
+                                   e-mail address.
+                                 */
+	"http://helloworld.tld",/* This is the website for the plugin.  This
+                                   tells users where to find new versions,
+                                   report bugs, etc.
+                                 */
 
-	plugin_load,                  /* This is a pointer to a function for Gaim to
-                                     call when it is loading your plugin.  It
-                                     should be in the form of:
+	plugin_load,            /* This is a pointer to a function for
+                                   libpurple to call when it is loading the
+                                   plugin.  It should be of the type:
 
-                                     gboolean function_name(GaimPlugin *plugin)
+                                   gboolean plugin_load(PurplePlugin *plugin)
 
-                                     Returning TRUE will tell Gaim to continue
-                                     loading your plugin, while FALSE will tell
-                                     Gaim to stop trying to load it.
-                                   */
-	NULL,                         /* Same as above except it is called when
-                                     Gaim tries to unload your plugin.  It
-                                     should be in the form of:
+                                   Returning FALSE will stop the loading of the
+                                   plugin.  Anything else would evaluate as
+                                   TRUE and the plugin will continue to load.
+                                 */
+	NULL,                   /* Same as above except it is called when
+                                   libpurple tries to unload your plugin.  It
+                                   should be of the type:
 
-                                     gboolean function_name(GaimPlugin *plugin)
+                                   gboolean plugin_unload(PurplePlugin *plugin)
 
-                                     Where returning TRUE will tell Gaim to
-                                     continue unloading and false to not continue
-                                     unloading your plugin.
-                                   */
-	NULL,                         /* Similar to the two above members, except
-                                     this is called when Gaim tries to destory
-                                     the plugin.  This is generally only called
-                                     when for some reason or another the plugin
-                                     fails to probe correctly.  It should be in
-                                     the form of:
+                                   Returning TRUE will tell libpurple to
+                                   continue unloading while FALSE will stop
+                                   the unloading of your plugin.
+                                 */
+	NULL,                   /* Similar to the two above members, except
+                                   this is called when libpurple tries to
+                                   destory the plugin.  This is generally only
+                                   called when for some reason or another the
+                                   plugin fails to probe correctly.  It should
+                                   be of the type:
 
-                                     void function_name(GaimPlugin *plugin)
-                                   */
+                                   void plugin_destroy(PurplePlugin *plugin)
+                                 */
 
-	NULL,                         /* This is a pointer to a ui specific struct.
-                                     For a gtk plugin it will be a pointer to a
-                                     GaimGtkPluginUiInfo struct.
-                                   */
-	NULL,                         /* This is a pointer to either a 
-                                     GaimPluginLoaderInfo struct or a
-                                     GaimPluginProtocolInfo struct, and is
-                                     beyond the scope of this document.
-                                   */
-	NULL,                         /* This is a pointer to a GaimPluginUiInfo
-                                     struct.  It is a core/ui split way for
-                                     core plugins to have a ui configuration
-                                     frame.  You can find an example of this
-                                     code in plugins/pluginpref_example.c
-                                   */
-	NULL                          /* Finally the last member of the structure,
-                                     is a function pointer where you can define
-                                     menu entries for 'Tools->Plugin Actions'.
-                                     It should be in the form of:
+	NULL,                   /* This is a pointer to a UI-specific struct.
+                                   For a Pidgin plugin it will be a pointer to a
+                                   PidginPluginUiInfo struct, for example.
+                                 */
+	NULL,                   /* This is a pointer to either a 
+                                   PurplePluginLoaderInfo struct or a
+                                   PurplePluginProtocolInfo struct, and is
+                                   beyond the scope of this document.
+                                 */
+	NULL,                   /* This is a pointer to a PurplePluginUiInfo
+                                   struct.  It is a core/ui split way for
+                                   core plugins to have a UI configuration
+                                   frame.  You can find an example of this
+                                   code in:
+                                     libpurple/plugins/pluginpref_example.c
+                                 */
+	NULL                    /* Finally, the last member of the structure
+                                   is a function pointer where you can define
+                                   "plugin actions".  The UI controls how
+                                   they're displayed.  It should be of the
+                                   type:
 
-                                     GList *function_name(GaimPlugin *plugin, 
-                                                          gpointer context)
+                                   GList *function_name(PurplePlugin *plugin, 
+                                                        gpointer context)
 
-                                     It should return a GList of
-                                     GaimPluginActions.
-                                   */
+                                    It must return a GList of
+                                    PurplePluginActions.
+                                 */
 };
   @endcode
 
-  Finally we have @c init_plugin and @c GAIM_INIT_PLUGIN.  @c init_plugin is a
-  function that gets called when Gaim probes the plugin.  Most plugins will
-  add their preferences to the pref tree here, more about that later.
-  @c GAIM_INIT_PLUGIN is a macro that EVERY plugin MUST have.  @c GAIM_INIT_PLUGIN
-  tells Gaim some very basic things about your plugin, like what name to use
-  if the plugin is compiled staticly, the @c init_plugin function, and
-  the name of the @c GaimPluginInfo structure.  As you may have guess this
-  also gets read when Gaim is probing your plugin.  If this is missing you
-  will get the infamous "plugin unloadable for unknown reasons", so do not
-  forget it.
+  Finally we have @c init_plugin and @c PURPLE_INIT_PLUGIN.  @c init_plugin is
+  a function that gets called when libpurple probes the plugin.  Most plugins
+  will add their preferences to the pref tree here--more about that later.
+  @c PURPLE_INIT_PLUGIN is a macro that EVERY plugin MUST have.
+  @c PURPLE_INIT_PLUGIN tells libpurple some very basic things about your
+  plugin, like what name to use if the plugin is compiled staticly, the
+  @c init_plugin function, and the name of the PurplePluginInfo structure.  As
+  you may have guessed, this also gets read when libpurple is probing your
+  plugin.  If this is missing, the plugin will not load.
  */

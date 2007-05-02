@@ -1,6 +1,6 @@
 /**
  * @file gntconn.c GNT Connection API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *

@@ -1,4 +1,4 @@
-monodir=$(libdir)/libpurple
+monodir=$(libdir)/purple
 
 mono_sources = \
 	BlistNode.cs \

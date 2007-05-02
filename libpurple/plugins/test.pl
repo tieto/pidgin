@@ -9,7 +9,7 @@ use Gaim;
 	summary          => 'Provides as a test base for the perl plugin.',
 	description      => 'Provides as a test base for the perl plugin.',
 	author           => 'Christian Hammond <chipx86@gnupdate.org>',
-	url              => 'http://gaim.sf.net/',
+	url              => 'http://pidgin.im',
 
 	load             => "plugin_load",
 	unload           => "plugin_unload"

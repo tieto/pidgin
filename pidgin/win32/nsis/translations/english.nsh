@@ -5,8 +5,8 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Version 3
-;;  Note: If translating this file, replace "!insertmacro PIDGIN_MACRO_DEFAULT_STRING"
-;;  with "!define".
+;;  Note: If translating this file, replace '!insertmacro PIDGIN_MACRO_DEFAULT_STRING'
+;;  with '!define'.
 
 ; Make sure to update the PIDGIN_MACRO_LANGUAGEFILE_END macro in
 ; langmacros.nsh when updating this file
@@ -33,11 +33,7 @@
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Start Menu"
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_SECTION_DESCRIPTION		"Core Pidgin files and dlls"
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_SECTION_DESCRIPTION		"A multi-platform GUI toolkit, used by Pidgin"
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_THEMES_SECTION_DESCRIPTION		"GTK+ Themes can change the look and feel of GTK+ applications."
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_NO_THEME_DESC			"Don't install a GTK+ theme"
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) is a GTK theme that blends well into the Windows desktop environment."
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_BLUECURVE_THEME_DESC		"The Bluecurve theme."
-!insertmacro PIDGIN_MACRO_DEFAULT_STRING GTK_LIGHTHOUSEBLUE_THEME_DESC		"The Lighthouseblue theme."
+
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Shortcuts for starting Pidgin"
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_DESKTOP_SHORTCUT_DESC		"Create a shortcut to Pidgin on the Desktop"
 !insertmacro PIDGIN_MACRO_DEFAULT_STRING PIDGIN_STARTMENU_SHORTCUT_DESC		"Create a Start Menu entry for Pidgin"

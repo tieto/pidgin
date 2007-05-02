@@ -134,14 +134,14 @@ purple_base16_decode(const char *str, gsize *ret_len)
 			accumulator |= str[i] - 48;
 		else
 		{
-			switch(str[i])
+			switch(tolower(str[i]))
 			{
-				case 'a':  case 'A':  accumulator |= 10;  break;
-				case 'b':  case 'B':  accumulator |= 11;  break;
-				case 'c':  case 'C':  accumulator |= 12;  break;
-				case 'd':  case 'D':  accumulator |= 13;  break;
-				case 'e':  case 'E':  accumulator |= 14;  break;
-				case 'f':  case 'F':  accumulator |= 15;  break;
+				case 'a':  accumulator |= 10;  break;
+				case 'b':  accumulator |= 11;  break;
+				case 'c':  accumulator |= 12;  break;
+				case 'd':  accumulator |= 13;  break;
+				case 'e':  accumulator |= 14;  break;
+				case 'f':  accumulator |= 15;  break;
 			}
 		}
 
@@ -1685,9 +1685,9 @@ purple_markup_strip_html(const char *str)
 						if (strncasecmp(str2+st, "href=", 5) == 0)
 						{
 							st += 5;
-							if (str2[st] == '"')
+							if (str2[st] == '"' || str2[st] == '\'')
 							{
-								delim = '"';
+								delim = str2[st];
 								st++;
 							}
 							break;

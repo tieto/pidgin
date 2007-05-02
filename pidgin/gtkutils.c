@@ -1,6 +1,6 @@
 /**
  * @file gtkutils.c GTK+ utility functions
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -95,7 +95,7 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "url_clicked",
 					 G_CALLBACK(url_clicked_cb), NULL);
 
-	pidginthemes_smiley_themeize(imhtml);
+	pidgin_themes_smiley_themeize(imhtml);
 
 	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
 
@@ -1568,6 +1568,9 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, 
                                                  icon_size, "GtkWidget");
         else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
                 pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_XA,
+                                                 icon_size, "GtkWidget");
+        else if (prim == PURPLE_STATUS_INVISIBLE)
+                pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_INVISIBLE,
                                                  icon_size, "GtkWidget");
         else if (prim == PURPLE_STATUS_OFFLINE)
                 pixbuf = gtk_widget_render_icon (w, PIDGIN_STOCK_STATUS_OFFLINE,

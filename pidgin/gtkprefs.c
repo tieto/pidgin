@@ -1,6 +1,6 @@
 /**
  * @file gtkprefs.c GTK+ Preferences
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -415,7 +415,7 @@ static GtkTreeRowReference *theme_refresh_theme_list()
 		gtk_tree_row_reference_free(previous_smiley_row);
 	previous_smiley_row = NULL;
 
-	pidginthemes_smiley_theme_probe();
+	pidgin_themes_smiley_theme_probe();
 
 	if (!(themes = smiley_themes))
 		return NULL;
@@ -610,7 +610,7 @@ static gint pidgin_sort_smileys (GtkTreeModel	*model,
 		ret = 1;
 	} else {
 		/* Neither string is "none", default to normal sort */
-		ret = g_utf8_collate(name1,name2);
+		ret = purple_utf8_strcasecmp(name1,name2);
 	}
 
 	g_free(name1);
@@ -925,7 +925,7 @@ conv_page()
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
 
 	frame = pidgin_create_imhtml(TRUE, &imhtml, &toolbar, NULL);
-	gtk_widget_set_name(imhtml, "pidginprefs_font_imhtml");
+	gtk_widget_set_name(imhtml, "pidgin_prefs_font_imhtml");
 	gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(imhtml), TRUE);
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml),
 									GTK_IMHTML_BOLD |
@@ -2018,7 +2018,7 @@ smiley_theme_pref_cb(const char *name, PurplePrefType type,
 	for (themes = smiley_themes; themes; themes = themes->next) {
 		struct smiley_theme *smile = themes->data;
 		if (smile->name && strcmp(themename, smile->name) == 0) {
-			pidginthemes_load_smiley_theme(smile->path, TRUE);
+			pidgin_themes_load_smiley_theme(smile->path, TRUE);
 			break;
 		}
 	}

@@ -1,6 +1,6 @@
 /**
  * @file gntprefs.c GNT Preferences API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *
@@ -198,57 +198,7 @@ free_strings()
 static void
 save_cb(void *data, PurpleRequestFields *allfields)
 {
-	GList *list;
-	for (list = purple_request_fields_get_groups(allfields); list; list = list->next)
-	{
-		PurpleRequestFieldGroup *group = list->data;
-		GList *fields = purple_request_field_group_get_fields(group);
-		
-		for (; fields ; fields = fields->next)
-		{
-			PurpleRequestField *field = fields->data;
-			PurpleRequestFieldType type = purple_request_field_get_type(field);
-			PurplePrefType pt;
-			gpointer val = NULL;
-			const char *id = purple_request_field_get_id(field);
-
-			switch (type)
-			{
-				case PURPLE_REQUEST_FIELD_LIST:
-					val = purple_request_field_list_get_selected(field)->data;
-					break;
-				case PURPLE_REQUEST_FIELD_BOOLEAN:
-					val = GINT_TO_POINTER(purple_request_field_bool_get_value(field));
-					break;
-				case PURPLE_REQUEST_FIELD_INTEGER:
-					val = GINT_TO_POINTER(purple_request_field_int_get_value(field));
-					break;
-				case PURPLE_REQUEST_FIELD_STRING:
-					val = (gpointer)purple_request_field_string_get_value(field);
-					break;
-				default:
-					break;
-			}
-
-			pt = purple_prefs_get_type(id);
-			switch (pt)
-			{
-				case PURPLE_PREF_INT:
-					if (type == PURPLE_REQUEST_FIELD_LIST) /* Lists always return string */
-						sscanf(val, "%ld", (long int *)&val);
-					purple_prefs_set_int(id, GPOINTER_TO_INT(val));
-					break;
-				case PURPLE_PREF_BOOLEAN:
-					purple_prefs_set_bool(id, GPOINTER_TO_INT(val));
-					break;
-				case PURPLE_PREF_STRING:
-					purple_prefs_set_string(id, val);
-					break;
-				default:
-					break;
-			}
-		}
-	}
+	finch_request_save_in_prefs(data, allfields);
 	free_strings();
 }
 

@@ -31,11 +31,7 @@
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE "Menuya destpêkê"
 !define PIDGIN_SECTION_DESCRIPTION		"Dosiyên cevherî ya Pidgin û dll"
 !define GTK_SECTION_DESCRIPTION		"Paketa amûrên GUI ji bo gelek platforman, ji hêla Pidgin tê bikaranîn."
-!define GTK_THEMES_SECTION_DESCRIPTION	"Dirbên GTK+ dikarin ruyê bernameyên GTK biguherînin."
-!define GTK_NO_THEME_DESC			"Dirbeke GTK+ saz neke"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) dirbeyke GTK ya wekî derdora sermaseyê ya Windowsê."
-!define GTK_BLUECURVE_THEME_DESC		"Dirbê Bluecurve."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"Dirbê Lighthouseblue."
+
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION   "rêya kin a ji bo destpêkirina Pidgin"
 !define PIDGIN_DESKTOP_SHORTCUT_DESC   "rêya kin a Pidgin di sermasêyê de çêke"
 !define PIDGIN_STARTMENU_SHORTCUT_DESC   "Pidgin ê binivîse menuya destpêk"

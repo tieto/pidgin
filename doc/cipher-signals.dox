@@ -9,7 +9,7 @@
 
  @signaldef cipher-added
   @signalproto
-void (*cipher_added)(GaimCipher *cipher);
+void (*cipher_added)(PurpleCipher *cipher);
   @endsignalproto
   @signaldesc
    Emitted when a cipher is added.
@@ -18,7 +18,7 @@ void (*cipher_added)(GaimCipher *cipher);
 
  @signaldef cipher-removed
   @signalproto
-void (*cipher_removed)(GaimCipher *cipher);
+void (*cipher_removed)(PurpleCipher *cipher);
   @endsignalproto
   @signaldesc
    Emitted when a cipher is removed.

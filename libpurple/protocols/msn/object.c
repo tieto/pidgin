@@ -92,9 +92,10 @@ msn_object_new_from_string(const char *str)
 	GET_STRING_TAG(sha1c,    "SHA1C");
 
 	/* If we are missing any of the required elements then discard the object */
+	/* SHA1C is not always sent anymore */
 	if (obj->creator == NULL || obj->size == 0 || obj->type == 0
 			|| obj->location == NULL || obj->friendly == NULL
-			|| obj->sha1d == NULL || obj->sha1c == NULL) {
+			|| obj->sha1d == NULL /*|| obj->sha1c == NULL*/) {
 		purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
 		msn_object_destroy(obj);
 		obj = NULL;
@@ -274,17 +275,29 @@ msn_object_get_sha1c(const MsnObject *obj)
 	return obj->sha1c;
 }
 
+const char *
+msn_object_get_sha1(const MsnObject *obj)
+{
+	g_return_val_if_fail(obj != NULL, NULL);
+
+	if(obj->sha1c != NULL) {
+		return obj->sha1c;
+	} else {
+		return obj->sha1d;
+	}
+}
+
 static MsnObject *
-msn_object_find_local(const char *sha1c)
+msn_object_find_local(const char *sha1)
 {
 	GList *l;
 
-	g_return_val_if_fail(sha1c != NULL, NULL);
+	g_return_val_if_fail(sha1 != NULL, NULL);
 
 	for (l = local_objs; l != NULL; l = l->next){
 		MsnObject *local_obj = l->data;
 
-		if (!strcmp(msn_object_get_sha1c(local_obj), sha1c))
+		if (!strcmp(msn_object_get_sha1(local_obj), sha1))
 			return local_obj;
 	}
 
@@ -323,7 +336,7 @@ msn_object_get_real_location(const MsnObject *obj)
 
 	g_return_val_if_fail(obj != NULL, NULL);
 
-	local_obj = msn_object_find_local(msn_object_get_sha1c(obj));
+	local_obj = msn_object_find_local(msn_object_get_sha1(obj));
 
 	if (local_obj != NULL)
 		return local_obj->real_location;

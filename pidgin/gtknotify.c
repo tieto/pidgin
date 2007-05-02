@@ -1,6 +1,6 @@
 /**
  * @file gtknotify.c GTK+ Notification API
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -597,7 +597,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 
 	/* Add the imhtml */
 	frame = pidgin_create_imhtml(FALSE, &imhtml, NULL, NULL);
-	gtk_widget_set_name(imhtml, "pidginnotify_imhtml");
+	gtk_widget_set_name(imhtml, "pidgin_notify_imhtml");
 	gtk_imhtml_set_format_functions(GTK_IMHTML(imhtml),
 			gtk_imhtml_get_format_functions(GTK_IMHTML(imhtml)) | GTK_IMHTML_IMAGE);
 	gtk_widget_set_size_request(imhtml, 300, 250);

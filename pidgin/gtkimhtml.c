@@ -1,6 +1,6 @@
 /*
  * @file gtkimhtml.c GTK+ IMHtml
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *
@@ -1217,6 +1217,7 @@ gtk_imhtml_finalize (GObject *object)
 
 	g_list_free(imhtml->scalables);
 	g_slist_free(imhtml->im_images);
+	g_queue_free(imhtml->animations);
 	g_free(imhtml->protocol_name);
 	g_free(imhtml->search_string);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
@@ -1398,7 +1399,7 @@ static void gtk_imhtml_init (GtkIMHtml *imhtml)
 
 
 	imhtml->scalables = NULL;
-
+	imhtml->animations = g_queue_new();
 	gtk_imhtml_set_editable(imhtml, FALSE);
 	g_signal_connect(G_OBJECT(imhtml), "populate-popup",
 					 G_CALLBACK(hijack_menu_cb), NULL);
@@ -4356,6 +4357,22 @@ image_expose(GtkWidget *widget, GdkEventExpose *event, gpointer user_data)
 	return TRUE;
 }
 
+/* In case the smiley gets removed from the imhtml before it gets removed from the queue */
+static void animated_smiley_destroy_cb(GtkObject *widget, GtkIMHtml *imhtml)
+{
+	GList *l = imhtml->animations->head;
+	while (l) {
+		GList *next = l->next;
+		if (l->data == widget) {
+			if (l == imhtml->animations->tail)
+				imhtml->animations->tail = imhtml->animations->tail->prev;
+			imhtml->animations->head = g_list_delete_link(imhtml->animations->head, l);
+			imhtml->num_animations--;
+		}
+		l = next;
+	}
+}
+
 void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *smiley, GtkTextIter *iter)
 {
 	GdkPixbuf *pixbuf = NULL;
@@ -4374,6 +4391,18 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 					icon = gtk_image_new_from_pixbuf(pixbuf);
 			} else {
 				icon = gtk_image_new_from_animation(annipixbuf);
+				if (imhtml->num_animations == 20) {
+					GtkImage *image = GTK_IMAGE(g_queue_pop_head(imhtml->animations));
+					GdkPixbufAnimation *anim = gtk_image_get_animation(image);
+					if (anim) {
+						GdkPixbuf *pb = gdk_pixbuf_animation_get_static_image(anim);
+						gtk_image_set_from_pixbuf(image, pb);
+					}
+				} else {
+ 					imhtml->num_animations++;
+				}
+				g_signal_connect(G_OBJECT(icon), "destroy", G_CALLBACK(animated_smiley_destroy_cb), imhtml);
+				g_queue_push_tail(imhtml->animations, icon);
 			}
 		}
 	}
@@ -4573,12 +4602,14 @@ char *gtk_imhtml_get_markup_range(GtkIMHtml *imhtml, GtkTextIter *start, GtkText
 
 	/* Bi-directional text support */
 	/* Get to the first non-neutral character */
+#ifdef HAVE_PANGO14
 	while ((PANGO_DIRECTION_NEUTRAL == pango_unichar_direction(gtk_text_iter_get_char(&non_neutral_iter)))
 		&& gtk_text_iter_forward_char(&non_neutral_iter));
 	if (PANGO_DIRECTION_RTL == pango_unichar_direction(gtk_text_iter_get_char(&non_neutral_iter))) {
 		is_rtl_message = TRUE;
 		g_string_append(str, "<SPAN style=\"direction:rtl;text-align:right;\">");
 	}
+#endif
 
 	/* First add the tags that are already in progress (we don't care about non-printing tags)*/
 	tags = gtk_text_iter_get_tags(start);

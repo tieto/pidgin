@@ -1,6 +1,6 @@
 /*
  * @file gtkcellrendererexpander.c GTK+ Cell Renderer Expander
- * @ingroup gtkui
+ * @ingroup pidgin
  *
  * pidgin
  *

@@ -1,6 +1,6 @@
 /**
  * @file gntblist.c GNT BuddyList API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *
@@ -909,6 +909,7 @@ finch_blist_rename_node_cb(PurpleBlistNode *node, PurpleBlistNode *selected)
 {
 	const char *name = NULL;
 	char *prompt;
+	const char *text;
 
 	if (PURPLE_BLIST_NODE_IS_CONTACT(node))
 		name = purple_contact_get_alias((PurpleContact*)node);
@@ -923,8 +924,9 @@ finch_blist_rename_node_cb(PurpleBlistNode *node, PurpleBlistNode *selected)
 
 	prompt = g_strdup_printf(_("Please enter the new name for %s"), name);
 
-	purple_request_input(node, _("Rename"), prompt, _("Enter empty string to reset the name."),
-			name, FALSE, FALSE, NULL, _("Rename"), G_CALLBACK(rename_blist_node),
+	text = PURPLE_BLIST_NODE_IS_GROUP(node) ? _("Rename") : _("Alias");
+	purple_request_input(node, text, prompt, _("Enter empty string to reset the name."),
+			name, FALSE, FALSE, NULL, text, G_CALLBACK(rename_blist_node),
 			_("Cancel"), NULL, node);
 
 	g_free(prompt);
@@ -1135,7 +1137,8 @@ draw_context_menu(FinchBlist *ggblist)
 
 	/* These are common for everything */
 	if (node) {
-		add_custom_action(GNT_MENU(context), _("Rename"),
+		add_custom_action(GNT_MENU(context),
+				PURPLE_BLIST_NODE_IS_GROUP(node) ? _("Rename") : _("Alias"),
 				PURPLE_CALLBACK(finch_blist_rename_node_cb), node);
 		add_custom_action(GNT_MENU(context), _("Remove"),
 				PURPLE_CALLBACK(finch_blist_remove_node_cb), node);

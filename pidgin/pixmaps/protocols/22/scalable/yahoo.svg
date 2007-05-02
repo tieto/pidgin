@@ -7,16 +7,19 @@
    xmlns:svg="http://www.w3.org/2000/svg"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://inkscape.sourceforge.net/DTD/s odipodi-0.dtd"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="24"
    height="24"
    id="svg1307"
    sodipodi:version="0.32"
-   inkscape:version="0.43"
+   inkscape:version="0.44.1"
    version="1.0"
-   sodipodi:docbase="/home/hbons/Desktop/Gaim Refresh/protocols"
-   sodipodi:docname="yahoo.svg">
+   sodipodi:docbase="/home/hbons/GUI/Tango/Gaim Refresh/protocols/22/scalable"
+   sodipodi:docname="yahoo.svg"
+   inkscape:export-filename="/home/hbons/GUI/Tango/Gaim Refresh/protocols/22/yahoo.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs1309">
     <linearGradient
@@ -82,7 +85,7 @@
      inkscape:pageshadow="2"
      inkscape:zoom="29.290175"
      inkscape:cx="18.292625"
-     inkscape:cy="12.773865"
+     inkscape:cy="12.739723"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
@@ -93,7 +96,7 @@
      inkscape:window-width="1268"
      inkscape:window-height="971"
      inkscape:window-x="6"
-     inkscape:window-y="21" />
+     inkscape:window-y="25" />
   <metadata
      id="metadata1312">
     <rdf:RDF>
@@ -146,12 +149,5 @@
        d="M 18.485372,6.4981503 L 22.514636,6.4981503 L 18.576821,12.500953 L 18.485372,6.4981503 z "
        id="rect4112"
        sodipodi:nodetypes="cccc" />
-    <rect
-       style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       id="rect4115"
-       width="1"
-       height="1"
-       x="15"
-       y="12" />
   </g>
 </svg>

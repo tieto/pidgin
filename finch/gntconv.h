@@ -1,6 +1,6 @@
 /**
  * @file gntconv.h GNT Conversation API
- * @ingroup gntui
+ * @ingroup finch
  *
  * finch
  *
@@ -47,6 +47,8 @@ struct _FinchConv
 	GntWidget *window;        /* the container */
 	GntWidget *entry;         /* entry */
 	GntWidget *tv;            /* text-view */
+	GntWidget *menu;          /* future use */
+	GntWidget *info;
 
 	union
 	{
@@ -88,6 +90,15 @@ void finch_conversation_uninit(void);
  * @param conv The conversation to make active.
  */
 void finch_conversation_set_active(PurpleConversation *conv);
+
+/**
+ * Sets the information widget for the conversation window.
+ *
+ * @param conv   The conversation.
+ * @param widget The widget containing the information. If @c NULL,
+ *               the current information widget is removed.
+ */
+void finch_conversation_set_info_widget(PurpleConversation *conv, GntWidget *widget);
 
 /*@}*/
 

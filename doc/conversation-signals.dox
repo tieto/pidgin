@@ -33,9 +33,9 @@
 
  @signaldef writing-im-msg
   @signalproto
-gboolean (*writing_im_msg)(GaimAccount *account, const char *who,
-                           char **message, GaimConversation *conv,
-                           GaimMessageFlags flags);
+gboolean (*writing_im_msg)(PurpleAccount *account, const char *who,
+                           char **message, PurpleConversation *conv,
+                           PurpleMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted before a message is written in an IM conversation. If the
@@ -53,9 +53,9 @@ gboolean (*writing_im_msg)(GaimAccount *account, const char *who,
 
  @signaldef wrote-im-msg
   @signalproto
-void (*wrote_im_msg)(GaimAccount *account, const char *who,
-                     char *message, GaimConversation *conv,
-                     GaimMessageFlags flags);
+void (*wrote_im_msg)(PurpleAccount *account, const char *who,
+                     char *message, PurpleConversation *conv,
+                     PurpleMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted after a message is written and possibly displayed in a conversation.
@@ -68,7 +68,7 @@ void (*wrote_im_msg)(GaimAccount *account, const char *who,
 
  @signaldef sending-im-msg
   @signalproto
-void (*sending_im_msg)(GaimAccount *account, const char *receiver,
+void (*sending_im_msg)(PurpleAccount *account, const char *receiver,
                        char **message);
   @endsignalproto
   @signaldesc
@@ -83,7 +83,7 @@ void (*sending_im_msg)(GaimAccount *account, const char *receiver,
 
  @signaldef sent-im-msg
   @signalproto
-void (*sent_im_msg)(GaimAccount *account, const char *receiver,
+void (*sent_im_msg)(PurpleAccount *account, const char *receiver,
                     const char *message);
   @endsignalproto
   @signaldesc
@@ -95,9 +95,9 @@ void (*sent_im_msg)(GaimAccount *account, const char *receiver,
 
  @signaldef receiving-im-msg
   @signalproto
-gboolean (*receiving_im_msg)(GaimAccount *account, char **sender,
-                             char **message, GaimConversation *conv,
-                             GaimMessageFlags *flags);
+gboolean (*receiving_im_msg)(PurpleAccount *account, char **sender,
+                             char **message, PurpleConversation *conv,
+                             PurpleMessageFlags *flags);
   @endsignalproto
   @signaldesc
    Emitted when an IM is received. The callback can replace the name of the
@@ -116,8 +116,8 @@ gboolean (*receiving_im_msg)(GaimAccount *account, char **sender,
 
  @signaldef received-im-msg
   @signalproto
-void (*received_im_msg)(GaimAccount *account, char *sender, char *message,
-                        GaimConversation *conv, GaimMessageFlags flags);
+void (*received_im_msg)(PurpleAccount *account, char *sender, char *message,
+                        PurpleConversation *conv, PurpleMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted after an IM is received.
@@ -130,9 +130,9 @@ void (*received_im_msg)(GaimAccount *account, char *sender, char *message,
 
  @signaldef writing-chat-msg
   @signalproto
-gboolean (*writing_chat_msg)(GaimAccount *account, const char *who,
-                             char **message, GaimConversation *conv,
-                             GaimMessageFlags flags);
+gboolean (*writing_chat_msg)(PurpleAccount *account, const char *who,
+                             char **message, PurpleConversation *conv,
+                             PurpleMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted before a message is written in a chat conversation. If the
@@ -150,9 +150,9 @@ gboolean (*writing_chat_msg)(GaimAccount *account, const char *who,
 
  @signaldef wrote-chat-msg
   @signalproto
-void (*wrote_chat_msg)(GaimAccount *account, const char *who,
-                       char *message, GaimConversation *conv,
-                       GaimMessageFlags flags);
+void (*wrote_chat_msg)(PurpleAccount *account, const char *who,
+                       char *message, PurpleConversation *conv,
+                       PurpleMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted after a message is written and possibly displayed in a chat.
@@ -165,7 +165,7 @@ void (*wrote_chat_msg)(GaimAccount *account, const char *who,
 
  @signaldef sending-chat-msg
   @signalproto
-void (*sending_chat_msg)(GaimAccount *account, char **message, int id);
+void (*sending_chat_msg)(PurpleAccount *account, char **message, int id);
   @endsignalproto
   @signaldesc
    Emitted before sending a message to a chat. @a message is a pointer to the
@@ -179,7 +179,7 @@ void (*sending_chat_msg)(GaimAccount *account, char **message, int id);
 
  @signaldef sent-chat-msg
   @signalproto
-void (*sent_chat_msg)(GaimAccount *account, const char *message, int id);
+void (*sent_chat_msg)(PurpleAccount *account, const char *message, int id);
   @endsignalproto
   @signaldesc
    Emitted after sending a message to a chat.
@@ -190,8 +190,8 @@ void (*sent_chat_msg)(GaimAccount *account, const char *message, int id);
 
  @signaldef receiving-chat-msg
   @signalproto
-gboolean (*receiving_chat_msg)(GaimAccount *account, char **sender,
-                              char **message, GaimConversation *conv, int *flags);
+gboolean (*receiving_chat_msg)(PurpleAccount *account, char **sender,
+                              char **message, PurpleConversation *conv, int *flags);
   @endsignalproto
   @signaldesc
    Emitted when a chat message is received. The callback can replace the
@@ -210,8 +210,8 @@ gboolean (*receiving_chat_msg)(GaimAccount *account, char **sender,
 
  @signaldef received-chat-msg
   @signalproto
-void (*received_chat_msg)(GaimAccount *account, char *sender, char *message,
-                              GaimConversation *conv, GaimMessageFlags flags);
+void (*received_chat_msg)(PurpleAccount *account, char *sender, char *message,
+                              PurpleConversation *conv, PurpleMessageFlags flags);
   @endsignalproto
   @signaldesc
    Emitted after a chat message is received.
@@ -224,7 +224,7 @@ void (*received_chat_msg)(GaimAccount *account, char *sender, char *message,
 
  @signaldef conversation-created
   @signalproto
-void (*conversation_created)(GaimConversation *conv);
+void (*conversation_created)(PurpleConversation *conv);
   @endsignalproto
   @signaldesc
    Emitted when a new conversation is created.
@@ -233,8 +233,8 @@ void (*conversation_created)(GaimConversation *conv);
 
  @signaldef conversation-updated
   @signalproto
-void (*conversation_updated)(GaimConversation *conv, 
-                             GaimConvUpdateType type);
+void (*conversation_updated)(PurpleConversation *conv, 
+                             PurpleConvUpdateType type);
   @endsignalproto
   @signaldesc
    Emitted when a conversation is updated.
@@ -244,7 +244,7 @@ void (*conversation_updated)(GaimConversation *conv,
 
  @signaldef deleting-conversation
   @signalproto
-void (*deleting_conversation)(GaimConversation *conv);
+void (*deleting_conversation)(PurpleConversation *conv);
   @endsignalproto
   @signaldesc
    Emitted just before a conversation is to be destroyed.
@@ -253,7 +253,7 @@ void (*deleting_conversation)(GaimConversation *conv);
 
  @signaldef buddy-typing
   @signalproto
-void (*buddy_typing)(GaimAccount *account, const char *name);
+void (*buddy_typing)(PurpleAccount *account, const char *name);
   @endsignalproto
   @signaldesc
    Emitted when a buddy starts typing in a conversation window.
@@ -263,7 +263,7 @@ void (*buddy_typing)(GaimAccount *account, const char *name);
 
  @signaldef buddy-typing-stopped
   @signalproto
-void (*buddy_typing_stopped)(GaimAccount *account, const char *name);
+void (*buddy_typing_stopped)(PurpleAccount *account, const char *name);
   @endsignalproto
   @signaldesc
    Emitted when a buddy stops typing in a conversation window.
@@ -273,8 +273,8 @@ void (*buddy_typing_stopped)(GaimAccount *account, const char *name);
 
  @signaldef chat-buddy-joining
   @signalproto
-gboolean (*chat_buddy_joining)(GaimConversation *conv, const char *name,
-                           GaimConvChatBuddyFlags flags);
+gboolean (*chat_buddy_joining)(PurpleConversation *conv, const char *name,
+                           PurpleConvChatBuddyFlags flags);
   @endsignalproto
   @signaldesc
    Emitted when a buddy is joining a chat, before the list of
@@ -287,8 +287,8 @@ gboolean (*chat_buddy_joining)(GaimConversation *conv, const char *name,
 
  @signaldef chat-buddy-joined
   @signalproto
-void (*chat_buddy_joined)(GaimConversation *conv, const char *name,
-                          GaimConvChatBuddyFlags flags,
+void (*chat_buddy_joined)(PurpleConversation *conv, const char *name,
+                          PurpleConvChatBuddyFlags flags,
                           gboolean new_arrival);
   @endsignalproto
   @signaldesc
@@ -301,9 +301,9 @@ void (*chat_buddy_joined)(GaimConversation *conv, const char *name,
 
  @signaldef chat-buddy-flags
   @signalproto
-void (*chat_buddy_flags)(GaimConversation *conv, const char *name,
-                         GaimConvChatBuddyFlags oldflags,
-                         GaimConvChatBuddyFlags newflags);
+void (*chat_buddy_flags)(PurpleConversation *conv, const char *name,
+                         PurpleConvChatBuddyFlags oldflags,
+                         PurpleConvChatBuddyFlags newflags);
   @endsignalproto
   @signaldesc
    Emitted when a user in a chat changes flags.
@@ -315,7 +315,7 @@ void (*chat_buddy_flags)(GaimConversation *conv, const char *name,
 
  @signaldef chat-buddy-leaving
   @signalproto
-gboolean (*chat_buddy_leaving)(GaimConversation *conv, const char *name,
+gboolean (*chat_buddy_leaving)(PurpleConversation *conv, const char *name,
                            const char *reason);
   @endsignalproto
   @signaldesc
@@ -329,7 +329,7 @@ gboolean (*chat_buddy_leaving)(GaimConversation *conv, const char *name,
 
  @signaldef chat-buddy-left
   @signalproto
-void (*chat_buddy_left)(GaimConversation *conv, const char *name,
+void (*chat_buddy_left)(PurpleConversation *conv, const char *name,
                         const char *reason);
   @endsignalproto
   @signaldesc
@@ -342,7 +342,7 @@ void (*chat_buddy_left)(GaimConversation *conv, const char *name,
 
  @signaldef chat-inviting-user
   @signalproto
-void (*chat_inviting_user)(GaimConversation *conv, const char *name,
+void (*chat_inviting_user)(PurpleConversation *conv, const char *name,
                            char **invite_message);
   @endsignalproto
   @signaldesc
@@ -359,7 +359,7 @@ void (*chat_inviting_user)(GaimConversation *conv, const char *name,
 
  @signaldef chat-invited-user
   @signalproto
-void (*chat_invited_user)(GaimConversation *conv, const char *name,
+void (*chat_invited_user)(PurpleConversation *conv, const char *name,
                           const char *invite_message);
   @endsignalproto
   @signaldesc
@@ -371,7 +371,7 @@ void (*chat_invited_user)(GaimConversation *conv, const char *name,
 
  @signaldef chat-invited
   @signalproto
-gint (*chat_invited)(GaimAccount *account, const char *inviter,
+gint (*chat_invited)(PurpleAccount *account, const char *inviter,
                      const char *chat, const char *invite_message
                      const GHashTable *components);
   @endsignalproto
@@ -382,7 +382,7 @@ gint (*chat_invited)(GaimAccount *account, const char *inviter,
   @param chat           The name of the chat you're being invited to.
   @param invite_message The optional invite message.
   @param components     The components necessary if you want to call 
-                        serv_join_chat
+                        serv_join_chat()
   @return Less than zero if the invitation should be rejected, greater than
           zero if the invitation should be accepted. If zero is returned, the
           default behavior will be maintained: the user will be prompted.
@@ -390,7 +390,7 @@ gint (*chat_invited)(GaimAccount *account, const char *inviter,
 
  @signaldef chat-joined
   @signalproto
-void (*chat_joined)(GaimConversation *conv);
+void (*chat_joined)(PurpleConversation *conv);
   @endsignalproto
   @signaldesc
    Emitted when an account joins a chat room.
@@ -399,7 +399,7 @@ void (*chat_joined)(GaimConversation *conv);
 
  @signaldef chat-left
   @signalproto
-void (*chat_left)(GaimConversation *conv);
+void (*chat_left)(PurpleConversation *conv);
   @endsignalproto
   @signaldesc
    Emitted when an account leaves a chat room.
@@ -408,7 +408,7 @@ void (*chat_left)(GaimConversation *conv);
 
  @signaldef chat-topic-changed
   @signalproto
-void (*chat_topic_changed)(GaimConversation *conv, const char *who, const char *topic);
+void (*chat_topic_changed)(PurpleConversation *conv, const char *who, const char *topic);
   @endsignalproto
   @signaldesc
    Emitted when the topic is changed in a chat.

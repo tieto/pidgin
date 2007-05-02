@@ -25,11 +25,7 @@
 !define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Tema Light House Blue"
 !define PIDGIN_SECTION_DESCRIPTION		"Ficheiros e dlls principais de Core"
 !define GTK_SECTION_DESCRIPTION		"Unha suite de ferramentas GUI multiplataforma, utilizada por Pidgin"
-!define GTK_THEMES_SECTION_DESCRIPTION	"Os temas poden cambiar a apariencia de aplicacións GTK+."
-!define GTK_NO_THEME_DESC			"Non instalar un tema GTK+"
-!define GTK_WIMP_THEME_DESC			"GTK-Wimp (Windows impersonator) é un tema GTK que se mestura moi bien co entorno de escritorio de Windows."
-!define GTK_BLUECURVE_THEME_DESC		"O tema Bluecurve."
-!define GTK_LIGHTHOUSEBLUE_THEME_DESC	"O tema Lighthouseblue."
+
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Atopouse unha versión antiga do executable de GTK+. ¿Desexa actualizala?$\rObservación: $(^Name) non funcionará a menos que o faga."

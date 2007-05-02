@@ -52,7 +52,7 @@ darwin*)
 	;;
 esac
 
-ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_TW"
+ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
 dnl we don't use autobreak on cygwin!!
@@ -173,7 +173,7 @@ PKG_CHECK_MODULES(GLIB, [glib-2.0 >= 2.0.0 gobject-2.0 gmodule-2.0 gthread-2.0],
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have the GLib 2.0 development headers installed to build Gaim.
+You must have the GLib 2.0 development headers installed to build.
 ])])
 AC_SUBST(GLIB_CFLAGS)
 AC_SUBST(GLIB_LIBS)
@@ -206,7 +206,7 @@ AC_ARG_ENABLE(gtkspell,
 	enable_gtkspell="$enableval", enable_gtkspell="yes")
 AC_ARG_ENABLE(gevolution,
 	[AC_HELP_STRING([--disable-gevolution],
-		[compile without the Gaim Evolution plugin])],
+		[compile without the Evolution plugin])],
 	enable_gevolution="$enableval", enable_gevolution="yes")
 AC_ARG_ENABLE(cap,
 	[AC_HELP_STRING([--disable-cap],
@@ -234,13 +234,16 @@ if test "x$enable_gtkui" = "xyes" ; then
 		AC_MSG_RESULT(no)
 		AC_MSG_ERROR([
 
-You must have the GTK+ 2.0 development headers installed to compile Gaim's
-GTK+ interface.  If you only want to build the console interface then
-specify --disable-gtkui when running configure.
+You must have the GTK+ 2.0 development headers installed to compile Pidgin.
+If you only want to build Finch then specify --disable-gtkui when running configure.
 ])])
 
 	AC_SUBST(GTK_CFLAGS)
 	AC_SUBST(GTK_LIBS)
+
+	dnl We only really need Pango >= 1.4 for decent RTL support
+	PKG_CHECK_MODULES(pango, [pango >= 1.4.0],
+			AC_DEFINE(HAVE_PANGO14, 1, [Define if we have Pango 1.4 or newer.]),:)
 
 	dnl #######################################################################
 	dnl # Check for XScreenSaver
@@ -451,7 +454,7 @@ PKG_CHECK_MODULES(LIBXML, [libxml-2.0 >= 2.6.0], , [
 	AC_MSG_RESULT(no)
 	AC_MSG_ERROR([
 
-You must have libxml2 >= 2.6.0 development headers installed to build Gaim.
+You must have libxml2 >= 2.6.0 development headers installed to build.
 ])])
 AC_SUBST(LIBXML_CFLAGS)
 AC_SUBST(LIBXML_LIBS)
@@ -931,7 +934,7 @@ dnl # Check for Python
 dnl #######################################################################
 
 dnl Python scripts are used to auto-generate about 3000 lines of C
-dnl and XML code that wraps (part of) the existing Gaim API so that
+dnl and XML code that wraps (part of) the existing API so that
 dnl it is now accessible through D-Bus.
 
 dnl Python is only required if --enable-dbus is used, and only for
@@ -1833,7 +1836,7 @@ dnl # Check for check
 dnl #######################################################################
 PKG_CHECK_MODULES(CHECK,[check >= 0.9.4],:,[
 					ifdef([AM_PATH_CHECK],
-					[AM_PATH_CHECK],
+					[AM_PATH_CHECK(0.8.2,:,:)],
 					[AC_MSG_RESULT([no, testing is disabled])])
 				  ])
 AM_CONDITIONAL(HAVE_CHECK, [test "x$CHECK_LIBS" != "x"])
@@ -1893,7 +1896,6 @@ fi
 
 AC_OUTPUT([Makefile
 		   Doxyfile
-		   gaim.service
 		   doc/Makefile
 		   doc/pidgin.1
 		   doc/finch.1
@@ -1951,6 +1953,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/toolbar/Makefile
 		   pidgin/pixmaps/toolbar/16/Makefile
 		   pidgin/pixmaps/toolbar/16/scalable/Makefile
+		   pidgin/pixmaps/toolbar/22/Makefile
+		   pidgin/pixmaps/toolbar/22/scalable/Makefile
 		   pidgin/pixmaps/tray/Makefile
 		   pidgin/pixmaps/tray/16/Makefile
 		   pidgin/pixmaps/tray/22/Makefile

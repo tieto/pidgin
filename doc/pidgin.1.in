@@ -39,7 +39,7 @@ The following options are provided by Pidgin using the standard GNU
 command line syntax:
 .TP
 .B \-c, \-\-config=\fIDIR\fB
-Use \fIDIR\fR as the directory for config files instead of \fI~/.gaim\fR.
+Use \fIDIR\fR as the directory for config files instead of \fI~/.purple\fR.
 .TP
 .B \-d, \-\-debug
 Print debugging messages to stdout.  These are the same debugging messages
@@ -90,7 +90,7 @@ discussed later.
 .B View Log
 Pidgin is capable of automatically log its activities.  These logs are
 either plain text files (with a .txt extension) or html files (with a
-\&.html extension) located under the \fI~/.gaim/logs\fR directory.  This
+\&.html extension) located under the \fI~/.purple/logs\fR directory.  This
 menu command will display Pidgin's log viewer with logs loaded for that
 buddy or chat.
 .TP
@@ -478,24 +478,24 @@ more information about Tcl scripting.
 .br
 \fI@prefix@/lib/pidgin/\fR: Pidgin's plugins directory.
 .br
-\fI~/.gaim/prefs.xml\fR: Pidgin's configuration file.
+\fI~/.purple/prefs.xml\fR: Pidgin's configuration file.
 .br
-\fI~/.gaim/accounts.xml\fR: information about your accounts.
+\fI~/.purple/accounts.xml\fR: information about your accounts.
 .br
-\fI~/.gaim/status.xml\fR: stores your away messages.
+\fI~/.purple/status.xml\fR: stores your away messages.
 .br
-\fI~/.gaim/pounces.xml\fR: stores your buddy pounces.
+\fI~/.purple/pounces.xml\fR: stores your buddy pounces.
 .br
-\fI~/.gaim/logs/PROTOCOL/ACCOUNT/SCREENNAME/DATE.log\fR: conversation logs.
+\fI~/.purple/logs/PROTOCOL/ACCOUNT/SCREENNAME/DATE.{html,txt}\fR: conversation logs.
 .br
-\fI~/.gaim/blist.xml\fR: the buddy list.
+\fI~/.purple/blist.xml\fR: the buddy list.
 .br
-\fI~/.gaim/plugins/\fR: users local plugins
+\fI~/.purple/plugins/\fR: users local plugins
 
 .SH BUGS
-Known bugs are listed at
+The bug tracker can be reached by visiting:
 .br
-\fIhttp://sourceforge.net/tracker/?group_id=235&atid=100235\fR
+\fIhttp://developer.pidgin.im/report\fR
 
 .SH PATCHES
 If you fix a bug in Pidgin (or otherwise enhance it), please submit a

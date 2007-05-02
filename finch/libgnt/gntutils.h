@@ -39,3 +39,8 @@ gboolean gnt_boolean_handled_accumulator(GSignalInvocationHint *ihint,
  */
 GntWidget *gnt_widget_bindings_view(GntWidget *widget);
 
+/**
+ * Parse widgets from 'string'.
+ */
+void gnt_util_parse_widgets(const char *string, int num, ...);
+
