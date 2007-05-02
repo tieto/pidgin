@@ -2871,7 +2871,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 			tmp = oscar_encoding_to_utf8(userinfo->status_encoding,
 											 userinfo->status, userinfo->status_len);
 #if defined (_WIN32) || defined (__APPLE__)
-		if (userinfo->itmsurl[0] != '\0') {
+		if (userinfo->itmsurl && (userinfo->itmsurl[0] != '\0')) {
 			gchar *itmsurl, *tmp2;
 			itmsurl = oscar_encoding_to_utf8(userinfo->itmsurl_encoding,
 					userinfo->itmsurl, userinfo->itmsurl_len);
