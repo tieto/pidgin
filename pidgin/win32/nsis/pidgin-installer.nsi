@@ -1648,7 +1648,7 @@ Function InstallAspell
   StrCpy $R1 "$TEMP\aspell_installer.exe"
   StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=aspell_core"
   DetailPrint "Downloading Aspell... ($R2)"
-  NSISdl::download $R2 $R1
+  NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
   StrCmp $R0 "success" +2
     Goto done
@@ -1688,7 +1688,7 @@ Function InstallAspellDictionary
   StrCpy $R1 "$TEMP\aspell_dict-$R0.exe"
   StrCpy $R3 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=lang_$R0"
   DetailPrint "Downloading the Aspell $R0 Dictionary... ($R3)"
-  NSISdl::download $R3 $R1
+  NSISdl::download /TIMEOUT=10000 $R3 $R1
   Pop $R3
   StrCmp $R3 "success" +3
     StrCpy $R0 $R3
