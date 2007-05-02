@@ -125,7 +125,7 @@ shock.png           /惊讶 /:O /jy /surprised
 curl-lip.png        /撇嘴 /:~ /pz /curl_lip
 desire.png          /色 /:* /se /desire
 dazed.png           /发呆 /:| /dazed
-party.png           /得意 /8-) /dy /revel (to revel in)
+party.png           /得意 /8-) /dy /revel
 crying.png          /:< /ll /cry
 bashful.png         /害羞 /:$ /hx /bashful
 shut-mouth.png      /闭嘴 /:X /bz /shut_mouth
@@ -141,7 +141,7 @@ glasses-cool.png    /酷 /:+ /kuk /cool
 doctor.png          /非典 /:# /feid /SARS
 silly.png           /抓狂 /:Q /zk /crazy
 sick.png            /吐 /:T /tu /vomit
-snicker.png         /偷笑 /;p /tx /titter (snicker)
+snicker.png         /偷笑 /;p /tx /titter
 cute.png            /可爱 /;-D /ka /cute
 disdain.png         /白眼 /;d /by /disdain
 arrogant.png        /傲慢 /;o /am /arrogant
@@ -152,21 +152,21 @@ sweat.png           /流汗 /:L /sweat
 smirk.png           /憨笑 /:> /hanx /smirk
 soldier.png         /大兵 /:; /db /soldier
 struggle.png        /奋斗 /;f /fendou /struggle
-curse.png           /咒骂 /:-S /zhm /curse (swear)
-question.png        /疑问 /? /yiw /question (confused)
+curse.png           /咒骂 /:-S /zhm /curse
+question.png        /疑问 /? /yiw /question
 quiet.png           /嘘... /;x /xu /shh
 hypnotized.png      /晕 /;@ /yun /dizzy
 excruciating.png    /折磨 /:8 /zhem /excrutiating
-freaked-out.png     /衰 /;! /shuai /freaked_out (pissed off)
+freaked-out.png     /衰 /;! /shuai /freaked_out
 skeleton.png        /骷髅 /!!! /kl /skeleton
 hammer.png          /敲打 /xx  /qiao /hammer
 bye.png             /再见        /bye /zj /bye
-go-away.png         /闪人 /go /shan /go (going somewhere)
-tremble.png         /发抖 /shake /fad /shake (tremble)
+go-away.png         /闪人 /go /shan /go
+tremble.png         /发抖 /shake /fad /shake
 in-love.png         /爱情 /love /aiq /love
 jump.png            /跳 /jump /tiao /jump
 search.png          /找 /find /zhao /search
-lashes.png          /美眉 /& /mm /beautiful_eyebrows (synonym for beauty)
+lashes.png          /美眉 /& /mm /beautiful_eyebrows
 pig.png             /猪头 /pig /zt /pig
 cat.png             /猫咪 /cat /mm /cat
 dog.png             /小狗 /dog /xg /dog
@@ -201,11 +201,11 @@ good.png            /强 /strong /qiang /thumbs_up
 bad.png             /弱 /weak /ruo /thumbs_down
 handshake.png       /握手 /share /ws /handshake
 victory.png         /胜利 /v /shl /victory
-beauty.png          /美女 /<J> /mn /beauty (noun)
-qq.png              /Q仔 /<QQ> /qz /qq (QQ's penguin logo)
+beauty.png          /美女 /<J> /mn /beauty
+qq.png              /Q仔 /<QQ> /qz /qq
 blowkiss.png        /飞吻 /<L> /fw /blow_kiss
 angry.png           /怄火 /<O> /oh  /angry
-liquor.png          /白酒 /<B> /bj /baijiu (a type of Chinese liquor)
+liquor.png          /白酒 /<B> /bj /baijiu
 can.png             /汽水 /<U> /qsh /soda
 watermelon.png      /西瓜 /<W> /xigua /watermelon
 rain.png            /下雨 /<!!> /xy /rain
