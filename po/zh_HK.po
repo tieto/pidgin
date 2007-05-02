@@ -12976,9 +12976,9 @@ msgstr ""
 "名詳列在名為「COPYRIGHT」的檔案內。本程式恕不提供任何保用。<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:374
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgwin on irc.freenode.net<BR><BR>"
+msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin-win32 on irc.freenode.net<BR><BR>"
 msgstr ""
-"<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net 上的 #pidgwin 頻道<BR><BR>"
+"<FONT SIZE=\"4\">IRC:</FONT> irc.freenode.net 上的 #pidgin-win32 頻道<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:377
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"

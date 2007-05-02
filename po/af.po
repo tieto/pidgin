@@ -12345,7 +12345,7 @@ msgstr ""
 
 #: ../pidgin/gtkdialogs.c:374
 #, fuzzy
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgwin on irc.freenode.net<BR><BR>"
+msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin-win32 on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #wingaim op irc.freenode.net<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:377
