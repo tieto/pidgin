@@ -12823,8 +12823,8 @@ msgstr ""
 "Programm.<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:375
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgwin on irc.freenode.net<BR><BR>"
-msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgwin auf irc.freenode.net<BR><BR>"
+msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin-win32 on irc.freenode.net<BR><BR>"
+msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin-win32 auf irc.freenode.net<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:378
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"
