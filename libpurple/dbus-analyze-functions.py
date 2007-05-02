@@ -102,7 +102,7 @@ class Binding:
         # pointers ... 
         if (len(type) == 2) and (type[1] == pointer):
             # strings
-            if type[0] == "char":
+            if type[0] in ["char", "gchar"]:
                 if const:
                     return self.inputstring(type, name)
                 else:
@@ -134,7 +134,7 @@ class Binding:
             const = True
 
         # a string
-        if type == ["char", pointer]:
+        if type == ["char", pointer] or type == ["gchar", pointer]:
             return self.outputstring(type, name, const)
 
         # simple types (ints, booleans, enums, ...)
