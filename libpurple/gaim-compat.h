@@ -115,7 +115,6 @@
 #define gaim_account_add_buddy       purple_account_add_buddy
 #define gaim_account_add_buddies     purple_account_add_buddies
 #define gaim_account_remove_buddy    purple_account_remove_buddy
-#define gaim_account_remove_buddies  purple_account_remove_buddies
 
 #define gaim_account_remove_group  purple_account_remove_group
 
@@ -1997,7 +1996,6 @@
 #define gaim_presence_get_account        purple_presence_get_account
 #define gaim_presence_get_conversation   purple_presence_get_conversation
 #define gaim_presence_get_chat_user      purple_presence_get_chat_user
-#define gaim_presence_get_buddies        purple_presence_get_buddies
 #define gaim_presence_get_statuses       purple_presence_get_statuses
 #define gaim_presence_get_status         purple_presence_get_status
 #define gaim_presence_get_active_status  purple_presence_get_active_status
