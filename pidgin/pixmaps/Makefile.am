@@ -12,7 +12,7 @@ EXTRA_DIST = \
 		pidgin.ico
 
 pidginbuttonpixdir = $(datadir)/pixmaps/pidgin/buttons
-pidginbuttonpix_DATA = about_menu.png edit.png pause.png
+pidginbuttonpix_DATA = edit.png pause.png
 
 pidgindistpixdir = $(datadir)/pixmaps/pidgin
 pidgindistpix_DATA = logo.png arrow-down.xpm arrow-left.xpm arrow-right.xpm arrow-up.xpm

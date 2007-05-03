@@ -1086,7 +1086,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
 		{
 			pidgin_new_item_from_stock(menu, _("_Send File"),
-									 PIDGIN_STOCK_FILE_TRANSFER,
+									 PIDGIN_STOCK_TOOLBAR_SEND_FILE,
 									 G_CALLBACK(gtk_blist_menu_send_file_cb),
 									 buddy, 0, 0, NULL);
 		}
