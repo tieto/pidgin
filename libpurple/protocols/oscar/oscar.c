@@ -5571,7 +5571,7 @@ static int oscar_icon_req(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 			length = va_arg(ap, int);
 			md5 = va_arg(ap, guchar *);
 
-			if (flags == 0x41) {
+			if ((flags == 0x00) || (flags == 0x41)) {
 				if (!flap_connection_getbytype(od, SNAC_FAMILY_BART) && !od->iconconnecting) {
 					od->iconconnecting = TRUE;
 					od->set_icon = TRUE;
