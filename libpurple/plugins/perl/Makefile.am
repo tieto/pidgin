@@ -77,10 +77,14 @@ common_sources = \
 #	common/fallback/const-c.inc \
 #	common/fallback/const-xs.inc
 
+perl_scripts = \
+	scripts/function_list.pl
+
 EXTRA_DIST = \
 	Makefile.mingw \
 	common/Makefile.mingw \
-	$(common_sources)
+	$(common_sources) \
+	$(perl_scripts)
 
 common/Makefile: common/Makefile.PL
 	@if test "x${top_srcdir}" != "x${top_builddir}"; then \
