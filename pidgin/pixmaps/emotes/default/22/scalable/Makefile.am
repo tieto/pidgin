@@ -126,6 +126,7 @@ EXTRA_DIST = 	act-up.svg \
 		sigarette.svg \
 		silly.svg \
 		skeleton.svg \
+		skywalker.svg \
 		sleepy.svg \
 		smile-big.svg \
 		smile.svg \

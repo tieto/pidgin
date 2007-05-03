@@ -9,6 +9,7 @@ EXTRA_DIST = 	aol-client.png \
 		free-for-chat.png \
 		game.png \
 		half-operator.png \
+		hiptop.png \
 		male.png \
 		mobile.png \
 		not-authorized.png \

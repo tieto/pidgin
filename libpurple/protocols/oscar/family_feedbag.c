@@ -139,13 +139,13 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 					}
 			} while (exists);
 		}
-	} else if (new->gid == 0x0000) {
+	} else if (type == AIM_SSI_TYPE_ICONINFO) {
 		if (new->bid == 0xFFFF) {
 			do {
 				new->bid += 0x0001;
 				exists = FALSE;
 				for (cur = *list; cur != NULL; cur = cur->next)
-					if (((cur->bid == new->bid) && (cur->gid == new->gid)) || (cur->gid == new->bid)) {
+					if ((cur->bid >= new->bid) || (cur->gid >= new->bid)) {
 						exists = TRUE;
 						break;
 					}
