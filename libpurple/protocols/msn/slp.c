@@ -955,7 +955,7 @@ msn_queue_buddy_icon_request(MsnUser *user)
 
 	if (obj == NULL)
 	{
-		/* TODO purple_buddy_icons_set_for_user(account, user->passport, NULL, 0, NULL); */
+		purple_buddy_icons_set_for_user(account, user->passport, NULL, 0, NULL);
 		return;
 	}
 
