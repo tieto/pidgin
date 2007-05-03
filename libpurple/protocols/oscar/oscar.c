@@ -280,7 +280,8 @@ oscar_encoding_extract(const char *encoding)
 
 	/* Make sure encoding begins with charset= */
 	if (strncmp(encoding, "text/aolrtf; charset=", 21) &&
-		strncmp(encoding, "text/x-aolrtf; charset=", 23))
+		strncmp(encoding, "text/x-aolrtf; charset=", 23) &&
+		strncmp(encoding, "text/plain; charset=", 20))
 	{
 		return NULL;
 	}
