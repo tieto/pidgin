@@ -372,7 +372,7 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 	PurpleAccount *account;
 	const char *username;
 	PurpleBuddyIcon *icon_to_set;
-	GSList *sl, *list;
+	GSList *buddies;
 
 	g_return_if_fail(icon != NULL);
 
@@ -386,11 +386,10 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 	 * the icon when they realize it has no data. */
 	icon_to_set = icon->img ? icon : NULL;
 
-	for (list = sl = purple_find_buddies(account, username);
-	     sl != NULL;
-	     sl = sl->next)
+	buddies = purple_find_buddies(account, username);
+	while (buddies != NULL)
 	{
-		PurpleBuddy *buddy = (PurpleBuddy *)sl->data;
+		PurpleBuddy *buddy = (PurpleBuddy *)buddies->data;
 		char *old_icon;
 
 		purple_buddy_set_icon(buddy, icon_to_set);
@@ -425,9 +424,9 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 		}
 		unref_filename(old_icon);
 		g_free(old_icon);
-	}
 
-	g_slist_free(list);
+		buddies = g_slist_delete_link(buddies, buddies);
+	}
 
 	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, username, account);
 

@@ -161,7 +161,7 @@ void
 purple_connection_destroy(PurpleConnection *gc)
 {
 	PurpleAccount *account;
-	GSList *buddies, *tmp;
+	GSList *buddies;
 #if 0
 	GList *wins;
 #endif
@@ -197,11 +197,11 @@ purple_connection_destroy(PurpleConnection *gc)
 
 	/* Clear out the proto data that was freed in the prpl close method*/
 	buddies = purple_find_buddies(account, NULL);
-	for (tmp = buddies; tmp; tmp = tmp->next) {
-		PurpleBuddy *buddy = tmp->data;
+	while (buddies != NULL) {
+		PurpleBuddy *buddy = buddies->data;
 		buddy->proto_data = NULL;
+		buddies = g_slist_delete_link(buddies, buddies);
 	}
-	g_slist_free(buddies);
 
 	connections = g_list_remove(connections, gc);
 

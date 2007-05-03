@@ -210,22 +210,24 @@ void
 serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	GSList *buds, *buddies = purple_find_buddies(account, who);
+	GSList *buddies = purple_find_buddies(account, who);
 	PurpleBuddy *b;
 	PurpleConversation *conv;
 
-	for (buds = buddies; buds; buds = buds->next)
+	while (buddies != NULL)
 	{
-		b = buds->data;
+		b = buddies->data;
+		buddies = g_slist_delete_link(buddies, buddies);
+
 		if ((b->server_alias == NULL && alias == NULL) ||
 		    (b->server_alias && alias && !strcmp(b->server_alias, alias)))
 		{
 			continue;
 		}
+
 		purple_blist_server_alias_buddy(b, alias);
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, account);
-
 		if (conv != NULL && alias != NULL && strcmp(alias, who))
 		{
 			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
@@ -237,7 +239,6 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 			g_free(tmp);
 		}
 	}
-	g_slist_free(buddies);
 }
 
 /*
