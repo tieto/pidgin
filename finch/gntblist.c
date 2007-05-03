@@ -1152,6 +1152,9 @@ draw_context_menu(FinchBlist *ggblist)
 	int x, y, top, width;
 	char *title = NULL;
 
+	if (ggblist->context)
+		return;
+
 	tree = GNT_TREE(ggblist->tree);
 
 	node = gnt_tree_get_selection_data(tree);
