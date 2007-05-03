@@ -1770,7 +1770,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 											 info->status, info->status_len);
 	}
 
-	if (info->flags & AIM_FLAG_WIRELESS || info->capabilities & OSCAR_CAPABILITY_HIPTOP)
+	if (info->flags & AIM_FLAG_WIRELESS)
 	{
 		purple_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_MOBILE, NULL);
 	} else {
@@ -5428,6 +5428,8 @@ const char* oscar_list_emblem(PurpleBuddy *b)
 			return "admin";
 		if (userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
 			return "bot";
+		if (userinfo->capabilities & OSCAR_CAPABILITY_HIPTOP)
+			return "hiptop";
 		if (userinfo->flags & AIM_FLAG_AOL)
 			return "aol-client";
 		if (userinfo->capabilities & OSCAR_CAPABILITY_SECUREIM)
