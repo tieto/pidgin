@@ -947,7 +947,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	url = cmd->params[2];
 
 	buf = g_strdup_printf("%s%lu%s",
-			   session->passport_info.mspauth,
+			   session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
 			   time(NULL) - session->passport_info.sl,
 			   purple_connection_get_password(account->gc));
 
