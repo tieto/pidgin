@@ -62,6 +62,7 @@ EXTRA_DIST = 	act-up.svg \
 		girl.svg \
 		glasses-cool.svg \
 		glasses-nerdy.svg \
+		goat.svg \
 		go-away.svg \
 		good.svg \
 		hammer.svg \
