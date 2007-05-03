@@ -138,6 +138,7 @@ static GHashTable *buddy_presences = NULL;
 
 #define SCORE_IDLE      8
 #define SCORE_IDLE_TIME 9
+#define SCORE_OFFLINE_MESSAGE 10
 
 /**************************************************************************
  * PurpleStatusPrimitive API
@@ -1572,8 +1573,14 @@ purple_presence_compare(const PurplePresence *presence1,
 		PurpleStatus *status = (PurpleStatus *)l->data;
 		PurpleStatusType *type = purple_status_get_type(status);
 
-		if (purple_status_is_active(status))
+		if (purple_status_is_active(status)) {
 			score1 += primitive_scores[purple_status_type_get_primitive(type)];
+			if (!purple_status_is_online(status)) {
+				PurpleBuddy *b = purple_presence_get_buddy(presence1);
+				if (b && purple_account_supports_offline_message(purple_buddy_get_account(b),b))
+					score1 += primitive_scores[SCORE_OFFLINE_MESSAGE];
+			}
+		}
 	}
 	score1 += purple_account_get_int(purple_presence_get_account(presence1), "score", 0);
 
@@ -1583,8 +1590,15 @@ purple_presence_compare(const PurplePresence *presence1,
 		PurpleStatus *status = (PurpleStatus *)l->data;
 		PurpleStatusType *type = purple_status_get_type(status);
 
-		if (purple_status_is_active(status))
+		if (purple_status_is_active(status)) {
 			score2 += primitive_scores[purple_status_type_get_primitive(type)];
+			if (!purple_status_is_online(status)) {
+				PurpleBuddy *b = purple_presence_get_buddy(presence2);
+				if (b && purple_account_supports_offline_message(purple_buddy_get_account(b),b))
+					score2 += primitive_scores[SCORE_OFFLINE_MESSAGE];
+			}
+
+		}
 	}
 	score2 += purple_account_get_int(purple_presence_get_account(presence2), "score", 0);
 
@@ -1688,6 +1702,8 @@ purple_status_init(void)
 			primitive_scores[PURPLE_STATUS_EXTENDED_AWAY]);
 	purple_prefs_add_int("/purple/status/scores/idle",
 			primitive_scores[SCORE_IDLE]);
+	purple_prefs_add_int("/purple/status/scores/offline_msg",
+			primitive_scores[SCORE_OFFLINE_MESSAGE]);
 
 	purple_prefs_connect_callback(handle, "/purple/status/scores/offline",
 			score_pref_changed_cb,
@@ -1707,6 +1723,9 @@ purple_status_init(void)
 	purple_prefs_connect_callback(handle, "/purple/status/scores/idle",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(SCORE_IDLE));
+	purple_prefs_connect_callback(handle, "/purple/status/scores/offline_msg",
+			score_pref_changed_cb,
+			GINT_TO_POINTER(SCORE_OFFLINE_MESSAGE));
 
 	buddy_presences = g_hash_table_new_full(purple_buddy_presences_hash,
 											purple_buddy_presences_equal,
