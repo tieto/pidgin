@@ -1,7 +1,6 @@
 SUBDIRS = animations buddy_icons dialogs emblems emotes icons protocols status toolbar tray
 
 EXTRA_DIST = \
-		about_menu.png			\
 		edit.png			\
 		logo.png			\
 		pause.png			\
