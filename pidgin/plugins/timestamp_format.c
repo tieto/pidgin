@@ -58,7 +58,8 @@ static char *timestamp_cb_common(PurpleConversation *conv,
                                  time_t t,
                                  gboolean show_date,
                                  gboolean force,
-                                 const char *dates)
+                                 const char *dates,
+								 gboolean parens)
 {
 	g_return_val_if_fail(dates != NULL, NULL);
 
@@ -68,15 +69,15 @@ static char *timestamp_cb_common(PurpleConversation *conv,
 	{
 		struct tm *tm = localtime(&t);
 		if (force)
-			return g_strdup(purple_utf8_strftime("%Y-%m-%d %H:%M:%S", tm));
+			return g_strdup_printf("%s%s%s", parens ? "(" : "", purple_utf8_strftime("%Y-%m-%d %H:%M:%S", tm), parens ? ")" : "");
 		else
-			return g_strdup(purple_date_format_long(tm));
+			return g_strdup_printf("%s%s%s", parens ? "(" : "", purple_date_format_long(tm), parens ? ")" : "");
 	}
 
 	if (force)
 	{
 		struct tm *tm = localtime(&t);
-		return g_strdup(purple_utf8_strftime("%H:%M:%S", tm));
+		return g_strdup_printf("%s%s%s", parens ? "(" : "", purple_utf8_strftime("%H:%M:%S", tm), parens ? ")" : "");
 	}
 
 	return NULL;
@@ -92,7 +93,7 @@ static char *conversation_timestamp_cb(PurpleConversation *conv,
 
 	g_return_val_if_fail(conv != NULL, NULL);
 
-	return timestamp_cb_common(conv, t, show_date, force, dates);
+	return timestamp_cb_common(conv, t, show_date, force, dates, TRUE);
 }
 
 static char *log_timestamp_cb(PurpleLog *log, time_t t, gboolean show_date, gpointer data)
@@ -104,7 +105,7 @@ static char *log_timestamp_cb(PurpleLog *log, time_t t, gboolean show_date, gpoi
 
 	g_return_val_if_fail(log != NULL, NULL);
 
-	return timestamp_cb_common(log->conv, t, show_date, force, dates);
+	return timestamp_cb_common(log->conv, t, show_date, force, dates, FALSE);
 }
 
 static gboolean
