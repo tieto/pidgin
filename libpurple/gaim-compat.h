@@ -115,6 +115,7 @@
 #define gaim_account_add_buddy       purple_account_add_buddy
 #define gaim_account_add_buddies     purple_account_add_buddies
 #define gaim_account_remove_buddy    purple_account_remove_buddy
+#define gaim_account_remove_buddies  purple_account_remove_buddies
 
 #define gaim_account_remove_group  purple_account_remove_group
 
@@ -1985,7 +1986,6 @@
 #define gaim_presence_new_for_conv       purple_presence_new_for_conv
 #define gaim_presence_new_for_buddy      purple_presence_new_for_buddy
 #define gaim_presence_destroy            purple_presence_destroy
-#define gaim_presence_remove_buddy       purple_presence_remove_buddy
 #define gaim_presence_add_status         purple_presence_add_status
 #define gaim_presence_add_list           purple_presence_add_list
 #define gaim_presence_set_status_active  purple_presence_set_status_active

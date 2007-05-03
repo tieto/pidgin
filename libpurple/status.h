@@ -752,9 +752,6 @@ PurplePresence *purple_presence_new_for_buddy(PurpleBuddy *buddy);
  * All statuses added to this list will be destroyed along with
  * the presence.
  *
- * If this presence belongs to a buddy, you must call
- * purple_presence_remove_buddy() first.
- *
  * @param presence The presence to destroy.
  */
 void purple_presence_destroy(PurplePresence *presence);
