@@ -379,12 +379,15 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 	account  = purple_buddy_icon_get_account(icon);
 	username = purple_buddy_icon_get_username(icon);
 
-	/* If no data exists, then call the functions below with NULL to
-	 * unset the icon.  They will then unref the icon and it should be
-	 * destroyed.  The only way it wouldn't be destroyed is if someone
+	/* If no data exists (icon->img == NULL), then call the functions below
+	 * with NULL to unset the icon.  They will then unref the icon and it should
+	 * be destroyed.  The only way it wouldn't be destroyed is if someone
 	 * else is holding a reference to it, in which case they can kill
 	 * the icon when they realize it has no data. */
 	icon_to_set = icon->img ? icon : NULL;
+
+	/* Ensure that icon remains valid throughout */
+	if (icon) purple_buddy_icon_ref(icon);
 
 	buddies = purple_find_buddies(account, username);
 	while (buddies != NULL)
@@ -393,7 +396,6 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 		char *old_icon;
 
 		purple_buddy_set_icon(buddy, icon_to_set);
-
 		old_icon = g_strdup(purple_blist_node_get_string((PurpleBlistNode *)buddy,
 		                                                 "buddy_icon"));
 		if (icon->img && purple_buddy_icons_is_caching())
@@ -431,6 +433,9 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 
 	if (conv != NULL)
 		purple_conv_im_set_icon(PURPLE_CONV_IM(conv), icon_to_set);
+	
+	/* icon's refcount was incremented above */
+	if (icon) purple_buddy_icon_unref(icon);
 }
 
 void
