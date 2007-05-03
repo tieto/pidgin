@@ -1086,7 +1086,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
 		{
 			pidgin_new_item_from_stock(menu, _("_Send File"),
-									 PIDGIN_STOCK_FILE_TRANSFER,
+									 PIDGIN_STOCK_TOOLBAR_SEND_FILE,
 									 G_CALLBACK(gtk_blist_menu_send_file_cb),
 									 buddy, 0, 0, NULL);
 		}
@@ -2851,7 +2851,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
-	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<StockItem>", PIDGIN_STOCK_ABOUT },
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
 };
 
 /*********************************************************

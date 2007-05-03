@@ -1311,7 +1311,6 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 
 	if (purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_BUDDY)
 	{
-		const GList *l;
 		time_t current_time = time(NULL);
 
 		update_buddy_idle(purple_presence_get_buddy(presence), presence, current_time,
