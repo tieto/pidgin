@@ -131,6 +131,8 @@ purple_coreheaders = \
 	xmlnode.h \
 	whiteboard.h
 
+BUILT_SOURCES = version.h
+
 if ENABLE_DBUS
 
 CLEANFILES = \

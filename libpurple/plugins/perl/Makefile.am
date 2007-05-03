@@ -155,6 +155,7 @@ AM_CPPFLAGS = \
 	-DVERSION=\"$(VERSION)\" \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
