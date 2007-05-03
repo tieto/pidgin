@@ -136,6 +136,7 @@ SMILEYS = 	act-up.png \
 		sigarette.png \
 		silly.png \
 		skeleton.png \
+		skywalker.png \
 		sleepy.png \
 		smile-big.png \
 		smile.png \
