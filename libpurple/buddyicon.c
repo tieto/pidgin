@@ -394,7 +394,6 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 
 		purple_buddy_set_icon(buddy, icon_to_set);
 
-
 		old_icon = g_strdup(purple_blist_node_get_string((PurpleBlistNode *)buddy,
 		                                                 "buddy_icon"));
 		if (icon->img && purple_buddy_icons_is_caching())
@@ -453,6 +452,7 @@ purple_buddy_icon_set_data(PurpleBuddyIcon *icon, guchar *data,
 			g_free(data);
 	}
 
+	g_free(icon->checksum);
 	icon->checksum = g_strdup(checksum);
 
 	purple_buddy_icon_update(icon);
@@ -523,7 +523,7 @@ purple_buddy_icons_set_for_user(PurpleAccount *account, const char *username,
 
 	if (icon != NULL)
 		purple_buddy_icon_set_data(icon, icon_data, icon_len, checksum);
-	else
+	else if (icon_data && icon_len > 0)
 	{
 		PurpleBuddyIcon *icon = purple_buddy_icon_new(account, username, icon_data, icon_len, checksum);
 		purple_buddy_icon_unref(icon);
@@ -616,11 +616,10 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 			{
 				const char *checksum;
 
-				if (icon == NULL)
-					icon = purple_buddy_icon_create(account, username);
+				icon = purple_buddy_icon_create(account, username);
 				icon->ref_count = 0;
 				icon->img = NULL;
-				checksum = g_strdup(purple_blist_node_get_string((PurpleBlistNode*)b, "icon_checksum"));
+				checksum = purple_blist_node_get_string((PurpleBlistNode*)b, "icon_checksum");
 				purple_buddy_icon_set_data(icon, data, len, checksum);
 			}
 			g_free(path);
