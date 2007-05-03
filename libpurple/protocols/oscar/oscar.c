@@ -5430,8 +5430,6 @@ const char* oscar_list_emblem(PurpleBuddy *b)
 			return "bot";
 		if (userinfo->capabilities & OSCAR_CAPABILITY_HIPTOP)
 			return "hiptop";
-		if (userinfo->flags & AIM_FLAG_AOL)
-			return "aol-client";
 		if (userinfo->capabilities & OSCAR_CAPABILITY_SECUREIM)
 			return "secure";
 	}
