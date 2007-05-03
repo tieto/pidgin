@@ -3389,7 +3389,7 @@ generate_send_to_items(PidginWindow *win)
 			for (iter = g_list_last(list); iter != NULL; iter = iter->prev)
 			{
 				PurplePresence *pre = iter->data;
-				PurpleBuddy *buddy = purple_presence_get_buddies(pre)->data;
+				PurpleBuddy *buddy = purple_presence_get_buddy(pre);
 				create_sendto_item(menu, sg, &group, buddy,
 							purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 			}

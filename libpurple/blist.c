@@ -1825,7 +1825,6 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	/* Delete the node */
 	purple_buddy_icon_unref(buddy->icon);
 	g_hash_table_destroy(buddy->node.settings);
-	purple_presence_remove_buddy(buddy->presence, buddy);
 	purple_presence_destroy(buddy->presence);
 	g_free(buddy->name);
 	g_free(buddy->alias);
