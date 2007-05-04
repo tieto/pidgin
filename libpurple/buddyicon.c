@@ -279,6 +279,7 @@ purple_buddy_icon_create(PurpleAccount *account, const char *username)
 	icon->account = account;
 	icon->username = g_strdup(username);
 	icon->checksum = NULL;
+	icon->ref_count = 1;
 
 	icon_cache = g_hash_table_lookup(account_cache, account);
 
@@ -653,7 +654,6 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 				const char *checksum;
 
 				icon = purple_buddy_icon_create(account, username);
-				icon->ref_count = 0;
 				icon->img = NULL;
 				checksum = purple_blist_node_get_string((PurpleBlistNode*)b, "icon_checksum");
 				purple_buddy_icon_set_data(icon, data, len, checksum);
