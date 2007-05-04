@@ -314,9 +314,6 @@ purple_buddy_icon_new(PurpleAccount *account, const char *username,
 	if (icon == NULL)
 		icon = purple_buddy_icon_create(account, username);
 
-	/* Take a reference for the caller of this function. */
-	icon->ref_count = 1;
-
 	/* purple_buddy_icon_set_data() sets img, but it
 	 * references img first, so we need to initialize it */
 	icon->img = NULL;
@@ -519,19 +516,53 @@ purple_buddy_icons_set_for_user(PurpleAccount *account, const char *username,
                                 void *icon_data, size_t icon_len,
                                 const char *checksum)
 {
-	PurpleBuddyIcon *icon;
+	GHashTable *icon_cache;
+	PurpleBuddyIcon *icon = NULL;
 
 	g_return_if_fail(account  != NULL);
 	g_return_if_fail(username != NULL);
 
-	icon = purple_buddy_icons_find(account, username);
+	icon_cache = g_hash_table_lookup(account_cache, account);
+
+	if (icon_cache != NULL)
+		icon = g_hash_table_lookup(icon_cache, username);
 
 	if (icon != NULL)
 		purple_buddy_icon_set_data(icon, icon_data, icon_len, checksum);
 	else if (icon_data && icon_len > 0)
 	{
-		PurpleBuddyIcon *icon = purple_buddy_icon_new(account, username, icon_data, icon_len, checksum);
-		purple_buddy_icon_unref(icon);
+		if (icon_data != NULL && icon_len > 0)
+		{
+			PurpleBuddyIcon *icon = purple_buddy_icon_new(account, username, icon_data, icon_len, checksum);
+
+			/* purple_buddy_icon_new() calls
+			 * purple_buddy_icon_set_data(), which calls
+			 * purple_buddy_icon_update(), which has the buddy list
+			 * and conversations take references as appropriate.
+			 * This function doesn't return icon, so we can't
+			 * leave a reference dangling. */
+			purple_buddy_icon_unref(icon);
+		}
+		else
+		{
+			/* If the buddy list or a conversation was holding a
+			 * reference, we'd have found the icon in the cache.
+			 * Since we know we're deleting the icon, we only
+			 * need a subset of purple_buddy_icon_update(). */
+
+			GSList *buddies = purple_find_buddies(account, username);
+			while (buddies != NULL)
+			{
+				PurpleBuddy *buddy = (PurpleBuddy *)buddies->data;
+
+				unref_filename(purple_blist_node_get_string((PurpleBlistNode *)buddy, "buddy_icon"));
+				purple_blist_node_remove_setting((PurpleBlistNode *)buddy, "buddy_icon");
+				purple_blist_node_remove_setting((PurpleBlistNode *)buddy, "icon_checksum");
+
+				buddies = g_slist_delete_link(buddies, buddies);
+			}
+
+		}
 	}
 }
 
@@ -633,7 +664,7 @@ purple_buddy_icons_find(PurpleAccount *account, const char *username)
 		purple_buddy_icons_set_caching(caching);
 	}
 
-	return icon;
+	return purple_buddy_icon_ref(icon);
 }
 
 gboolean

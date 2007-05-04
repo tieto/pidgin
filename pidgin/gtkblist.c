@@ -2160,7 +2160,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 {
 	GdkPixbuf *buf, *ret = NULL;
 	GdkPixbufLoader *loader;
-	PurpleBuddyIcon *icon;
+	PurpleBuddyIcon *icon = NULL;
 	const guchar *data = NULL;
 	gsize len;
 	PurpleBuddy *buddy = NULL;
@@ -2197,9 +2197,9 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	}
 
 	if (data == NULL) {
-		if (!(icon = purple_buddy_get_icon(buddy)))
-			if (!(icon = purple_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
-				return NULL;
+		/* Not sure I like this...*/
+		if (!(icon = purple_buddy_icons_find(buddy->account, buddy->name)))
+			return NULL;
 		data = purple_buddy_icon_get_data(icon, &len);
 
 		if(data == NULL)
@@ -2211,6 +2211,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	gdk_pixbuf_loader_close(loader, NULL);
 
 	purple_imgstore_unref(custom_img);
+	purple_buddy_icon_unref(icon);
 
 	buf = gdk_pixbuf_loader_get_pixbuf(loader);
 	if (buf)

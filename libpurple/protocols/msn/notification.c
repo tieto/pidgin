@@ -947,7 +947,7 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	url = cmd->params[2];
 
 	buf = g_strdup_printf("%s%lu%s",
-			   session->passport_info.mspauth,
+			   session->passport_info.mspauth ? session->passport_info.mspauth : "BOGUS",
 			   time(NULL) - session->passport_info.sl,
 			   purple_connection_get_password(account->gc));
 
@@ -1142,33 +1142,25 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 
 	if ((value = msn_message_get_attr(msg, "kv")) != NULL)
 	{
-		if (session->passport_info.kv != NULL)
-			g_free(session->passport_info.kv);
-
+		g_free(session->passport_info.kv);
 		session->passport_info.kv = g_strdup(value);
 	}
 
 	if ((value = msn_message_get_attr(msg, "sid")) != NULL)
 	{
-		if (session->passport_info.sid != NULL)
-			g_free(session->passport_info.sid);
-
+		g_free(session->passport_info.sid);
 		session->passport_info.sid = g_strdup(value);
 	}
 
 	if ((value = msn_message_get_attr(msg, "MSPAuth")) != NULL)
 	{
-		if (session->passport_info.mspauth != NULL)
-			g_free(session->passport_info.mspauth);
-
+		g_free(session->passport_info.mspauth);
 		session->passport_info.mspauth = g_strdup(value);
 	}
 
 	if ((value = msn_message_get_attr(msg, "ClientIP")) != NULL)
 	{
-		if (session->passport_info.client_ip != NULL)
-			g_free(session->passport_info.client_ip);
-
+		g_free(session->passport_info.client_ip);
 		session->passport_info.client_ip = g_strdup(value);
 	}
 
@@ -1279,11 +1271,8 @@ email_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 					  msn_user_get_passport(session->user),
 					  session->passport_info.file, NULL, NULL);
 
-	if (from != NULL)
-		g_free(from);
-
-	if (subject != NULL)
-		g_free(subject);
+	g_free(from);
+	g_free(subject);
 
 	g_hash_table_destroy(table);
 }

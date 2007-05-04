@@ -354,7 +354,6 @@
 
 #define gaim_buddy_icons_set_for_user(icon, data, len) \
         purple_buddy_icons_set_for_user(icon, g_memdup(data, len), len, NULL)
-#define gaim_buddy_icons_find           purple_buddy_icons_find
 #define gaim_buddy_icons_set_caching    purple_buddy_icons_set_caching
 #define gaim_buddy_icons_is_caching     purple_buddy_icons_is_caching
 #define gaim_buddy_icons_set_cache_dir  purple_buddy_icons_set_cache_dir
