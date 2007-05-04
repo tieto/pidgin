@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.0.0:
+version 2.0.0 (5/3/2007):
 	Please note all functions, defines, and data structures have been
 	re-namespaced to match the new names of Pidgin, Finch, and libpurple.
 	All gaim_gtk_* functions are now pidgin_*, former libgaim functions are
