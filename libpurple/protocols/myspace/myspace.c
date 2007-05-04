@@ -351,16 +351,15 @@ static void print_hash_item(gpointer key, gpointer value, gpointer user_data)
 #endif
 
 /** 
- * Send an arbitrary protocol message.
+ * Send raw data to the server.
  *
  * @param session 
- * @param msg The textual, packed message to send.
+ * @param msg The raw data to send.
  *
  * @return TRUE if succeeded, FALSE if not.
  *
- * Note: this does not send instant messages. For that, see msim_send_im.
  */
-static gboolean msim_send(MsimSession *session, const gchar *msg)
+static gboolean msim_send_raw(MsimSession *session, const gchar *msg)
 {
 	int total_bytes_sent, total_bytes;
 
@@ -381,7 +380,7 @@ static gboolean msim_send(MsimSession *session, const gchar *msg)
 
 		if (bytes_sent < 0)
 		{
-			purple_debug_info("msim", "msim_send(%s): send() failed: %s\n",
+			purple_debug_info("msim", "msim_send_raw(%s): send() failed: %s\n",
 					msg, g_strerror(errno));
 			return FALSE;
 		}
@@ -389,6 +388,17 @@ static gboolean msim_send(MsimSession *session, const gchar *msg)
 
 	} while(total_bytes_sent < total_bytes);
 	return TRUE;
+}
+
+/**
+ * Send a message to the server.
+ *
+ * @param session
+ * @param ... A sequence of gchar* key/value pairs, terminated with NULL
+ */
+static gboolean msim_send(MsimSession *session, ...)
+{
+	/* TODO: implement this */
 }
 
 /** 
@@ -487,7 +497,7 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
     
     purple_debug_info("msim", "response=<%s>\n", buf);
 
-    msim_send(session, buf);
+    msim_send_raw(session, buf);
 
     g_free(buf);
 
@@ -713,11 +723,11 @@ static int msim_send_im_by_userid(MsimSession *session, const gchar *userid, con
             session->sesskey, userid, MSIM_CLIENT_VERSION, message);
 
 	/* XXX: delete after escape each value */
-	g_free(message);
+	g_free((char*)message);
 
     purple_debug_info("msim", "going to write: %s\n", msg_string);
 
-    msim_send(session, msg_string);
+    msim_send_raw(session, msg_string);
 
     /* TODO: notify Purple that we sent the IM. */
 
@@ -1465,7 +1475,7 @@ static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_
     msg_string = g_strdup_printf("\\persist\\1\\sesskey\\%s\\cmd\\1\\dsn\\%d\\uid\\%s\\lid\\%d\\rid\\%d\\body\\%s=%s\\final\\",
             session->sesskey, dsn, session->userid, lid, rid, field_name, user);
 
-    msim_send(session, msg_string);
+    msim_send_raw(session, msg_string);
 } 
 
 
@@ -1605,7 +1615,11 @@ static PurplePluginProtocolInfo prpl_info =
     NULL,              /* offline_message */
     NULL,              /* whiteboard_prpl_ops */
     NULL,              /* send_raw */
-    NULL               /* roomlist_room_serialize */
+    NULL,              /* roomlist_room_serialize */
+	NULL,			   /* _purple_reserved1 */
+	NULL,			   /* _purple_reserved2 */
+	NULL,			   /* _purple_reserved3 */
+	NULL 			   /* _purple_reserved4 */
 };
 
 
@@ -1640,7 +1654,12 @@ static PurplePluginInfo info =
     NULL,                                             /**< prefs_info     */
 
     /* msim_actions */
-    NULL
+    NULL,
+
+	NULL,											  /**< reserved1      */
+	NULL,											  /**< reserved2      */
+	NULL,											  /**< reserved3      */
+	NULL 											  /**< reserved4      */
 };
 
 

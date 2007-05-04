@@ -105,7 +105,8 @@ static GHashTable* msim_parse(gchar* msg);
 static GHashTable *msim_parse_body(const gchar *body_str);
 
 static void print_hash_item(gpointer key, gpointer value, gpointer user_data);
-static gboolean msim_send(MsimSession *session, const gchar *msg);
+static gboolean msim_send_raw(MsimSession *session, const gchar *msg);
+static gboolean msim_send(MsimSession *session, ...);
 
 static void msim_login(PurpleAccount *acct);
 static int msim_login_challenge(MsimSession *session, GHashTable *table);
