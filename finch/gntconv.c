@@ -42,13 +42,18 @@
 #include "gnt.h"
 #include "gntbox.h"
 #include "gntentry.h"
-#include "gnttextview.h"
+#include "gntlabel.h"
 #include "gntmenu.h"
 #include "gntmenuitem.h"
 #include "gntmenuitemcheck.h"
+#include "gnttextview.h"
+#include "gnttree.h"
+#include "gntutils.h"
 #include "gntwindow.h"
 
 #define PREF_ROOT	"/finch/conversations"
+#define PREF_CHAT   PREF_ROOT "/chats"
+#define PREF_USERLIST PREF_CHAT "/userlist"
 
 #include "config.h"
 
@@ -350,7 +355,7 @@ generate_send_to_menu(FinchConv *ggc)
 	}
 	for (list = g_list_last(list); list != NULL; list = list->prev) {
 		PurplePresence *pre = list->data;
-		PurpleBuddy *buddy = purple_presence_get_buddies(pre)->data;
+		PurpleBuddy *buddy = purple_presence_get_buddy(pre);
 		PurpleAccount *account = purple_buddy_get_account(buddy);
 		gchar *name = g_strdup(purple_buddy_get_name(buddy));
 		gchar *text = g_strdup_printf("%s (%s)", purple_buddy_get_name(buddy), purple_account_get_username(account));
@@ -408,6 +413,14 @@ gg_create_menu(FinchConv *ggc)
 }
 
 static void
+create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
+{
+	PurpleAccount *account = purple_conversation_get_account(fc->active_conv);
+	char *name = gnt_tree_get_selection_data(GNT_TREE(widget));
+	purple_conversation_new(PURPLE_CONV_TYPE_IM, account, name);
+}
+
+static void
 finch_create_conversation(PurpleConversation *conv)
 {
 	FinchConv *ggc = conv->ui_data;
@@ -447,10 +460,27 @@ finch_create_conversation(PurpleConversation *conv)
 	gg_create_menu(ggc);
 
 	ggc->tv = gnt_text_view_new();
-	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->tv);
 	gnt_widget_set_name(ggc->tv, "conversation-window-textview");
 	gnt_widget_set_size(ggc->tv, purple_prefs_get_int(PREF_ROOT "/size/width"),
 			purple_prefs_get_int(PREF_ROOT "/size/height"));
+
+	if (type == PURPLE_CONV_TYPE_CHAT) {
+		GntWidget *hbox, *tree;
+		FinchConvChat *fc = ggc->u.chat = g_new0(FinchConvChat, 1);
+		hbox = gnt_hbox_new(FALSE);
+		gnt_box_set_pad(GNT_BOX(hbox), 0);
+		tree = fc->userlist = gnt_tree_new();
+		gnt_tree_set_compare_func(GNT_TREE(tree), (GCompareFunc)g_utf8_collate);
+		gnt_tree_set_hash_fns(GNT_TREE(tree), g_str_hash, g_str_equal, g_free);
+		GNT_WIDGET_SET_FLAGS(tree, GNT_WIDGET_NO_BORDER);
+		gnt_box_add_widget(GNT_BOX(hbox), ggc->tv);
+		gnt_box_add_widget(GNT_BOX(hbox), tree);
+		gnt_box_add_widget(GNT_BOX(ggc->window), hbox);
+		g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(create_conv_from_userlist), ggc);
+		gnt_widget_set_visible(tree, purple_prefs_get_bool(PREF_USERLIST));
+	} else {
+		gnt_box_add_widget(GNT_BOX(ggc->window), ggc->tv);
+	}
 
 	ggc->info = gnt_vbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->info);
@@ -482,6 +512,7 @@ finch_create_conversation(PurpleConversation *conv)
 	}
 
 	g_free(title);
+	gnt_box_give_focus_to_child(GNT_BOX(ggc->window), ggc->entry);
 }
 
 static void
@@ -494,6 +525,7 @@ finch_destroy_conversation(PurpleConversation *conv)
 		ggc->active_conv = ggc->list->data;
 	
 	if (ggc->list == NULL) {
+		g_free(ggc->u.chat);
 		gnt_widget_destroy(ggc->window);
 		g_free(ggc);
 	}
@@ -524,8 +556,7 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv), "\n", GNT_TEXT_FLAG_NORMAL);
 
 	/* Unnecessary to print the timestamp for delayed message */
-	if (!(flags & PURPLE_MESSAGE_DELAYED) &&
-			purple_prefs_get_bool("/finch/conversations/timestamps"))
+	if (purple_prefs_get_bool("/finch/conversations/timestamps"))
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(ggconv->tv),
 					purple_utf8_strftime("(%H:%M:%S) ", localtime(&mtime)), GNT_TEXT_FLAG_DIM);
 
@@ -654,8 +685,11 @@ finch_chat_add_users(PurpleConversation *conv, GList *users, gboolean new_arriva
 	for (; users; users = users->next)
 	{
 		PurpleConvChatBuddy *cbuddy = users->data;
+		GntTree *tree = GNT_TREE(ggc->u.chat->userlist);
 		gnt_entry_add_suggest(entry, cbuddy->name);
 		gnt_entry_add_suggest(entry, cbuddy->alias);
+		gnt_tree_add_row_after(tree, g_strdup(cbuddy->name),
+				gnt_tree_create_row(tree, cbuddy->alias), NULL, NULL);
 	}
 }
 
@@ -665,9 +699,13 @@ finch_chat_rename_user(PurpleConversation *conv, const char *old, const char *ne
 	/* Update the name for string completion */
 	FinchConv *ggc = conv->ui_data;
 	GntEntry *entry = GNT_ENTRY(ggc->entry);
+	GntTree *tree = GNT_TREE(ggc->u.chat->userlist);
 	gnt_entry_remove_suggest(entry, old);
 	gnt_entry_add_suggest(entry, new_n);
 	gnt_entry_add_suggest(entry, new_a);
+	gnt_tree_remove(tree, (gpointer)old);
+	gnt_tree_add_row_after(tree, g_strdup(new_n),
+			gnt_tree_create_row(tree, new_a), NULL, NULL);
 }
 
 static void
@@ -676,8 +714,11 @@ finch_chat_remove_user(PurpleConversation *conv, GList *list)
 	/* Remove the name from string completion */
 	FinchConv *ggc = conv->ui_data;
 	GntEntry *entry = GNT_ENTRY(ggc->entry);
-	for (; list; list = list->next)
+	for (; list; list = list->next) {
+		GntTree *tree = GNT_TREE(ggc->u.chat->userlist);
 		gnt_entry_remove_suggest(entry, list->data);
+		gnt_tree_remove(tree, list->data);
+	}
 }
 
 static void
@@ -821,6 +862,23 @@ cmd_show_window(PurpleConversation *conv, const char *cmd, char **args, char **e
 	return PURPLE_CMD_STATUS_OK;
 }
 
+static PurpleCmdRet
+users_command_cb(PurpleConversation *conv, const char *cmd, char **args, char **error, gpointer data)
+{
+	FinchConv *fc = conv->ui_data;
+	FinchConvChat *ch;
+	if (!fc)
+		return PURPLE_CMD_STATUS_FAILED;
+
+	ch = fc->u.chat;
+	gnt_widget_set_visible(ch->userlist,
+			(GNT_WIDGET_IS_FLAG_SET(ch->userlist, GNT_WIDGET_INVISIBLE)));
+	gnt_box_readjust(GNT_BOX(fc->window));
+	gnt_box_give_focus_to_child(GNT_BOX(fc->window), fc->entry);
+	purple_prefs_set_bool(PREF_USERLIST, !(GNT_WIDGET_IS_FLAG_SET(ch->userlist, GNT_WIDGET_INVISIBLE)));
+	return PURPLE_CMD_STATUS_OK;
+}
+
 void finch_conversation_init()
 {
 	purple_prefs_add_none(PREF_ROOT);
@@ -830,6 +888,8 @@ void finch_conversation_init()
 	purple_prefs_add_none(PREF_ROOT "/position");
 	purple_prefs_add_int(PREF_ROOT "/position/x", 0);
 	purple_prefs_add_int(PREF_ROOT "/position/y", 0);
+	purple_prefs_add_none(PREF_CHAT);
+	purple_prefs_add_bool(PREF_USERLIST, FALSE);
 
 	/* Xerox the commands */
 	purple_cmd_register("say", "S", PURPLE_CMD_P_DEFAULT,
@@ -847,6 +907,9 @@ void finch_conversation_init()
 	purple_cmd_register("help", "w", PURPLE_CMD_P_DEFAULT,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, NULL,
 	                  help_command_cb, _("help &lt;command&gt;:  Help on a specific command."), NULL);
+	purple_cmd_register("users", "", PURPLE_CMD_P_DEFAULT,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, NULL,
+	                  users_command_cb, _("users:  Show the list of users in the chat."), NULL);
 
 	/* Now some commands to bring up some other windows */
 	purple_cmd_register("plugins", "", PURPLE_CMD_P_DEFAULT,
