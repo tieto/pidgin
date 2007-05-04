@@ -2522,9 +2522,7 @@ FILE *
 purple_mkstemp(char **fpath, gboolean binary)
 {
 	const gchar *tmpdir;
-#ifndef _WIN32
 	int fd;
-#endif
 	FILE *fp = NULL;
 
 	g_return_val_if_fail(fpath != NULL, NULL);
@@ -2532,19 +2530,11 @@ purple_mkstemp(char **fpath, gboolean binary)
 	if((tmpdir = (gchar*)g_get_tmp_dir()) != NULL) {
 		if((*fpath = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", tmpdir, purple_mkstemp_templ)) != NULL) {
 #ifdef _WIN32
-			char* result = _mktemp( *fpath );
-			if( result == NULL )
-				purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
-						   "Problem creating the template\n");
-			else
-			{
-				if( (fp = g_fopen( result, binary?"wb+":"w+")) == NULL ) {
-					purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
-							   "Couldn't fopen() %s\n", result);
-				}
-			}
+			fd = g_mkstemp(*fpath);
 #else
-			if((fd = mkstemp(*fpath)) == -1) {
+			fd = mkstemp(*fpath));
+#endif
+			if(fd == -1) {
 				purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
 						   "Couldn't make \"%s\", error: %d\n",
 						   *fpath, errno);
@@ -2555,7 +2545,7 @@ purple_mkstemp(char **fpath, gboolean binary)
 							   "Couldn't fdopen(), error: %d\n", errno);
 				}
 			}
-#endif
+
 			if(!fp) {
 				g_free(*fpath);
 				*fpath = NULL;
