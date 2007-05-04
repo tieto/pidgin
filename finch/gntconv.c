@@ -37,11 +37,16 @@
 #include "gntplugin.h"
 #include "gntprefs.h"
 #include "gntstatus.h"
+#include "gntpounce.h"
 
 #include "gnt.h"
 #include "gntbox.h"
 #include "gntentry.h"
 #include "gnttextview.h"
+#include "gntmenu.h"
+#include "gntmenuitem.h"
+#include "gntmenuitemcheck.h"
+#include "gntwindow.h"
 
 #define PREF_ROOT	"/finch/conversations"
 
@@ -266,6 +271,143 @@ finch_conv_get_handle()
 }
 
 static void
+clear_scrollback_cb(GntMenuItem *item, gpointer ggconv)
+{
+	FinchConv *ggc = ggconv;
+	gnt_text_view_clear(GNT_TEXT_VIEW(ggc->tv));
+}
+
+static void
+send_file_cb(GntMenuItem *item, gpointer ggconv)
+{
+	FinchConv *ggc = ggconv;
+	serv_send_file(purple_conversation_get_gc(ggc->active_conv),
+			purple_conversation_get_name(ggc->active_conv), NULL);
+}
+
+static void
+add_pounce_cb(GntMenuItem *item, gpointer ggconv)
+{
+	FinchConv *ggc = ggconv;
+	finch_pounce_editor_show(
+			purple_conversation_get_account(ggc->active_conv),
+			purple_conversation_get_name(ggc->active_conv), NULL);
+}
+
+static void
+get_info_cb(GntMenuItem *item, gpointer ggconv)
+{
+	FinchConv *ggc = ggconv;
+	serv_get_info(purple_conversation_get_gc(ggc->active_conv),
+			purple_conversation_get_name(ggc->active_conv));
+}
+
+static void
+toggle_timestamps_cb(GntMenuItem *item, gpointer ggconv)
+{
+	purple_prefs_set_bool(PREF_ROOT "/timestamps",
+		!purple_prefs_get_bool(PREF_ROOT "/timestamps"));
+}
+
+static void
+send_to_cb(GntMenuItem *m, gpointer n)
+{
+	PurpleAccount *account = g_object_get_data(G_OBJECT(m), "purple_account");
+	gchar *buddy = g_object_get_data(G_OBJECT(m), "purple_buddy_name");
+	PurpleConversation *conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, buddy);
+	finch_conversation_set_active(conv);
+}
+
+static void
+generate_send_to_menu(FinchConv *ggc)
+{
+	GntWidget *sub, *menu = ggc->menu;
+	GntMenuItem *item;
+	GSList *buds;
+	GList *list = NULL;
+
+	buds = purple_find_buddies(ggc->active_conv->account, ggc->active_conv->name);
+	if (!buds)
+		return;
+
+	item = gnt_menuitem_new(_("Send To"));
+	gnt_menu_add_item(GNT_MENU(menu), item);
+	sub = gnt_menu_new(GNT_MENU_POPUP);
+	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+
+	for (; buds; buds = buds->next) {
+		PurpleBlistNode *node = (PurpleBlistNode *)purple_buddy_get_contact((PurpleBuddy *)buds->data);
+		for (node = node->child; node != NULL; node = node->next) {
+			PurpleBuddy *buddy = (PurpleBuddy *)node;
+			PurpleAccount *account = purple_buddy_get_account(buddy);
+			if (purple_account_is_connected(account)) {
+				/* Use the PurplePresence to get unique buddies. */
+				PurplePresence *presence = purple_buddy_get_presence(buddy);
+				if (!g_list_find(list, presence))
+					list = g_list_prepend(list, presence);
+			}
+		}
+	}
+	for (list = g_list_last(list); list != NULL; list = list->prev) {
+		PurplePresence *pre = list->data;
+		PurpleBuddy *buddy = purple_presence_get_buddies(pre)->data;
+		PurpleAccount *account = purple_buddy_get_account(buddy);
+		gchar *name = g_strdup(purple_buddy_get_name(buddy));
+		gchar *text = g_strdup_printf("%s (%s)", purple_buddy_get_name(buddy), purple_account_get_username(account));
+		item = gnt_menuitem_new(text);
+		g_free(text);
+		gnt_menu_add_item(GNT_MENU(sub), item);
+		gnt_menuitem_set_callback(item, send_to_cb, NULL);
+		g_object_set_data(G_OBJECT(item), "purple_account", account);
+		g_object_set_data_full(G_OBJECT(item), "purple_buddy_name", name, g_free);
+	}
+	g_list_free(list);
+	g_slist_free(buds);
+}
+
+static void
+gg_create_menu(FinchConv *ggc)
+{
+	GntWidget *menu, *sub;
+	GntMenuItem *item;
+
+	ggc->menu = menu = gnt_menu_new(GNT_MENU_TOPLEVEL);
+	gnt_window_set_menu(GNT_WINDOW(ggc->window), GNT_MENU(menu));
+
+	item = gnt_menuitem_new(_("Conversation"));
+	gnt_menu_add_item(GNT_MENU(menu), item);
+
+	sub = gnt_menu_new(GNT_MENU_POPUP);
+	gnt_menuitem_set_submenu(item, GNT_MENU(sub));
+
+	item = gnt_menuitem_new(_("Clear Scrollback"));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(item, clear_scrollback_cb, ggc);
+
+	item = gnt_menuitem_check_new(_("Show Timestamps"));
+	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
+		purple_prefs_get_bool(PREF_ROOT "/timestamps"));
+	gnt_menu_add_item(GNT_MENU(sub), item);
+	gnt_menuitem_set_callback(item, toggle_timestamps_cb, ggc);
+
+	if (purple_conversation_get_type(ggc->active_conv) == PURPLE_CONV_TYPE_IM) {
+		item = gnt_menuitem_new(_("Send File"));
+		gnt_menu_add_item(GNT_MENU(sub), item);
+		gnt_menuitem_set_callback(item, send_file_cb, ggc);
+
+		item = gnt_menuitem_new(_("Add Buddy Pounce..."));
+		gnt_menu_add_item(GNT_MENU(sub), item);
+		gnt_menuitem_set_callback(item, add_pounce_cb, ggc);
+
+		item = gnt_menuitem_new(_("Get Info"));
+		gnt_menu_add_item(GNT_MENU(sub), item);
+		gnt_menuitem_set_callback(item, get_info_cb, ggc);
+
+		generate_send_to_menu(ggc);
+	}
+}
+
+static void
 finch_create_conversation(PurpleConversation *conv)
 {
 	FinchConv *ggc = conv->ui_data;
@@ -296,11 +438,13 @@ finch_create_conversation(PurpleConversation *conv)
 	type = purple_conversation_get_type(conv);
 	title = get_conversation_title(conv, account);
 
-	ggc->window = gnt_box_new(FALSE, TRUE);
+	ggc->window = gnt_vwindow_new(FALSE);
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
 	gnt_box_set_pad(GNT_BOX(ggc->window), 0);
 	gnt_widget_set_name(ggc->window, "conversation-window");
+
+	gg_create_menu(ggc);
 
 	ggc->tv = gnt_text_view_new();
 	gnt_box_add_widget(GNT_BOX(ggc->window), ggc->tv);
