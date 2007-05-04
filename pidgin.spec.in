@@ -26,6 +26,10 @@ BuildRoot:  %{_tmppath}/%{name}-%{version}-root
 
 # Generic build requirements
 BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
+BuildRequires: gtk2-devel
+
+%{!?_without_startupnotification:BuildRequires: startup-notification-devel}
+%{!?_without_modularx:BuildRequires: libSM-devel, libXScrnSaver-devel}
 %{?_with_avahi:BuildRequires: avahi-compat-howl-devel}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
 %{?_with_howl:BuildRequires: howl-devel}
@@ -49,11 +53,10 @@ BuildRequires: gnutls-devel
 # Mandrake 10.1 and lower || Mandrake 10.2 (and higher?)
 %if "%{_vendor}" == "MandrakeSoft" || "%{_vendor}" == "Mandrakesoft" || "%{_vendor}" == "Mandriva"
 # For Mandrake/Mandriva:
-BuildRequires: libgtk+2.0_0-devel, libnss3-devel, perl-devel
+BuildRequires: libnss3-devel, perl-devel
 Obsoletes:  libgaim-remote0
 %else
 # For SuSE, Red Hat, Fedora and others:
-BuildRequires: gtk2-devel
 %if "%{_vendor}" != "suse"
 # For Red Hat, Fedora and others:
 # let's assume RH & FC1 are the only brain-dead distros missing the
@@ -440,7 +443,14 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %changelog
-* Tue May  1 2007 Stu Tomlinson <stu@nosnilmot.com>
+* Thu May 3 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Add missing BuildRequires: startup-notification-devel, if you really
+  need to build on a distro without it use --without startupnotification
+- Add BuildRequires: libSM-devel, libXScrnSaver-devel for distros with
+  modular X. For those without, build with --without modularx
+- Change Mandriva BuildRequires to gkt2-devel (reported by Götz Waschk)
+
+* Tue May 1 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Run gtk-update-icon-cache on installation/uninstallation
 - Guard against errors when upgrading from Gaim/Pidgin 1.5.x which had
   no schemas file
