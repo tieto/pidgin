@@ -199,8 +199,9 @@ version 2.0.0:
 	* Removed the Napster and TOC protocols plugins
 
 	Other Noteworthy Changes:
-	* UPnP and NAT traversal support (Adam J. Warrington, Google Summer of
+	* NAT traversal support via UPnP (Adam J. Warrington, Google Summer of
 	  Code)
+	* NAT traversal support via NAT-PMP (Evan Schoenberg and R. Tyler Ballance)
 	* The modify account dialog now contains two tabs, which should display
 	  better at lower resolutions (Sadrul Habib Chowdhury)
 	* New "find buddy" results dialog (Alex Converse)
