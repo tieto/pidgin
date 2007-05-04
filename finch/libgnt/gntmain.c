@@ -12,13 +12,16 @@
 
 #include "gnt.h"
 #include "gntbox.h"
+#include "gntbutton.h"
 #include "gntcolors.h"
 #include "gntclipboard.h"
 #include "gntkeys.h"
+#include "gntlabel.h"
 #include "gntmenu.h"
 #include "gntstyle.h"
 #include "gnttree.h"
 #include "gntutils.h"
+#include "gntwindow.h"
 #include "gntwm.h"
 
 #include <panel.h>
@@ -303,6 +306,49 @@ clean_pid(void)
 }
 
 static void
+exit_confirmed(gpointer null)
+{
+	gnt_bindable_perform_action_named(GNT_BINDABLE(wm), "wm-quit", NULL);
+}
+
+static void
+exit_win_close(GntWidget *w, GntWidget **win)
+{
+	*win = NULL;
+}
+
+static void
+ask_before_exit()
+{
+	static GntWidget *win = NULL;
+	GntWidget *bbox, *button;
+
+	if (win)
+		goto raise;
+
+	win = gnt_vwindow_new(FALSE);
+	gnt_box_add_widget(GNT_BOX(win), gnt_label_new("Are you sure you want to quit?"));
+	gnt_box_set_title(GNT_BOX(win), "Quit?");
+	gnt_box_set_alignment(GNT_BOX(win), GNT_ALIGN_MID);
+	g_signal_connect(G_OBJECT(win), "destroy", G_CALLBACK(exit_win_close), &win);
+
+	bbox = gnt_hbox_new(FALSE);
+	gnt_box_add_widget(GNT_BOX(win), bbox);
+
+	button = gnt_button_new("Quit");
+	g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(exit_confirmed), NULL);
+	gnt_box_add_widget(GNT_BOX(bbox), button);
+
+	button = gnt_button_new("Cancel");
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gnt_widget_destroy), win);
+	gnt_box_add_widget(GNT_BOX(bbox), button);
+
+	gnt_widget_show(win);
+raise:
+	gnt_wm_raise_window(wm, win);
+}
+
+static void
 sighandler(int sig)
 {
 	switch (sig) {
@@ -317,6 +363,10 @@ sighandler(int sig)
 	case SIGCHLD:
 		clean_pid();
 		signal(SIGCHLD, sighandler);
+		break;
+	case SIGINT:
+		ask_before_exit();
+		signal(SIGINT, sighandler);
 		break;
 	}
 }
@@ -387,6 +437,7 @@ void gnt_init()
 	signal(SIGWINCH, sighandler);
 #endif
 	signal(SIGCHLD, sighandler);
+	signal(SIGINT, sighandler);
 	signal(SIGPIPE, SIG_IGN);
 
 	g_type_init();
