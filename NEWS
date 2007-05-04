@@ -1,5 +1,20 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.0.0 (5/3/2007):
+	Luke: We have finally managed to get 2.0.0 out the door, after nearly
+	but not quite 2 years of effort and fustration.  No one regrets more
+	than I that we were unable to make any of betas 3-6 the actual release.
+	But at long last, it is out, and life can return to a more normal
+	state.  There were many tough calls to be made in the last 2 years.
+	Not everyone has agreed with the resulting decisions, that is un-
+	fortunate, but unavoidable.  Suffice it to say that despite what
+	some users appear to think, a ton of thought, argument, discussion,
+	and experimentation has gone into this release.  This release
+	builds on many years of experience, both as developers writing the
+	code, users using it, and in supporting other users.  I hope that
+	those who download and install this will give it a fair shot, and
+	attempt to avoid knee-jerk reactions.
+
 2.0.0beta7 (4/29/2007):
 	Sean: Beta 7. The final beta. A few major changes from beta6. For
 	starters, we have some new names. That's pretty cool. We have a new
