@@ -44,6 +44,29 @@ get_beginning_of_word(GntEntry *entry)
 }
 
 static gboolean
+complete_suggest(GntEntry *entry, const char *text)
+{
+	gboolean changed = FALSE;
+	if (entry->word) {
+		char *s = get_beginning_of_word(entry);
+		const char *iter = text;
+		while (*iter && toupper(*s) == toupper(*iter)) {
+			if (*s != *iter)
+				changed = TRUE;
+			*s++ = *iter++;
+		}
+		if (*iter) {
+			gnt_entry_key_pressed(GNT_WIDGET(entry), iter);
+			changed = TRUE;
+		}
+	} else {
+		gnt_entry_set_text_internal(entry, text);
+		changed = TRUE;
+	}
+	return changed;
+}
+
+static gboolean
 show_suggest_dropdown(GntEntry *entry)
 {
 	char *suggest = NULL;
@@ -51,6 +74,7 @@ show_suggest_dropdown(GntEntry *entry)
 	int offset = 0, x, y;
 	int count = 0;
 	GList *iter;
+	const char *text = NULL;
 
 	if (entry->word)
 	{
@@ -85,7 +109,7 @@ show_suggest_dropdown(GntEntry *entry)
 
 	for (count = 0, iter = entry->suggests; iter; iter = iter->next)
 	{
-		const char *text = iter->data;
+		text = iter->data;
 		if (g_ascii_strncasecmp(suggest, text, len) == 0 && strlen(text) >= len)
 		{
 			gnt_tree_add_row_after(GNT_TREE(entry->ddown), (gpointer)text,
@@ -96,13 +120,16 @@ show_suggest_dropdown(GntEntry *entry)
 	}
 	g_free(suggest);
 
-	if (count == 0)
-	{
+	if (count == 0) {
 		destroy_suggest(entry);
 		return FALSE;
+	} else if (count == 1) {
+		destroy_suggest(entry);
+		return complete_suggest(entry, text);
+	} else {
+		gnt_widget_draw(entry->ddown->parent);
 	}
 
-	gnt_widget_draw(entry->ddown->parent);
 	return TRUE;
 }
 
@@ -324,10 +351,7 @@ suggest_show(GntBindable *bind, GList *null)
 {
 	GntEntry *entry = GNT_ENTRY(bind);
 	if (entry->ddown) {
-		if (g_list_length(GNT_TREE(entry->ddown)->list) == 1)
-			gnt_entry_key_pressed(GNT_WIDGET(entry), "\r");
-		else
-			gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-down");
+		gnt_bindable_perform_action_named(GNT_BINDABLE(entry->ddown), "move-down");
 		return TRUE;
 	}
 	return show_suggest_dropdown(entry);
@@ -512,33 +536,11 @@ gnt_entry_key_pressed(GntWidget *widget, const char *text)
 	}
 	else
 	{
-		if (text[0] == '\t')
-		{
-			if (entry->ddown)
-				destroy_suggest(entry);
-			else if (entry->suggests)
-				return show_suggest_dropdown(entry);
-
-			return FALSE;
-		}
-		else if (text[0] == '\r' && entry->ddown)
+		if ((text[0] == '\r' || text[0] == ' ') && entry->ddown)
 		{
 			char *text = g_strdup(gnt_tree_get_selection_data(GNT_TREE(entry->ddown)));
 			destroy_suggest(entry);
-			if (entry->word)
-			{
-				char *s = get_beginning_of_word(entry);
-				char *iter = text;
-				while (*iter && toupper(*s) == toupper(*iter))
-				{
-					*s++ = *iter++;
-				}
-				gnt_entry_key_pressed(widget, iter);
-			}
-			else
-			{
-				gnt_entry_set_text_internal(entry, text);
-			}
+			complete_suggest(entry, text);
 			g_free(text);
 			entry_text_changed(entry);
 			return TRUE;
