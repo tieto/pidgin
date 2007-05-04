@@ -15,6 +15,17 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	those who download and install this will give it a fair shot, and
 	attempt to avoid knee-jerk reactions.
 
+	Evan: One small step for bird, one giant leap for birdkind... except
+	this is hardly one small step. A lot more has changed from Gaim 1.5.0
+	than just the name. Pidgin has a *very* attractive new look, a whole
+	new member of the family (Finch, formerly gaim-console) has been born,
+	and libpurple has come into its own as a solid, full-featured library
+	powering the greatest IM clients around. Bugs were fixed and
+	features were added by the hundreds (thousands?) since the last
+	major release, all while improving performance and resisting feature
+	creep. As Luke said, a ton of thought and effort has gone into
+	Pidgin 2.0.0; I'm proud to have played a part.
+
 2.0.0beta7 (4/29/2007):
 	Sean: Beta 7. The final beta. A few major changes from beta6. For
 	starters, we have some new names. That's pretty cool. We have a new
