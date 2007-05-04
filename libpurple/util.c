@@ -2532,7 +2532,7 @@ purple_mkstemp(char **fpath, gboolean binary)
 #ifdef _WIN32
 			fd = g_mkstemp(*fpath);
 #else
-			fd = mkstemp(*fpath));
+			fd = mkstemp(*fpath);
 #endif
 			if(fd == -1) {
 				purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
