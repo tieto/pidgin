@@ -588,9 +588,7 @@ static int aim_ssi_sync(OscarData *od)
 	od->ssi.waiting_for_ack = TRUE;
 
 	/* Now go mail off our data and wait 4 to 6 weeks */
-	aim_ssi_addmoddel(od);
-
-	return 0;
+	return aim_ssi_addmoddel(od);;
 }
 
 /**
