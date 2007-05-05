@@ -418,6 +418,7 @@ pidgin_sound_play_file(const char *filename)
 	if (!strcmp(method, "custom")) {
 		const char *sound_cmd;
 		char *command;
+		char *esc_filename;
 		GError *error = NULL;
 
 		sound_cmd = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/sound/command");
@@ -429,16 +430,19 @@ pidgin_sound_play_file(const char *filename)
 			return;
 		}
 
+		esc_filename = g_strdup_printf("'%s'", filename);
+
 		if(strstr(sound_cmd, "%s"))
-			command = purple_strreplace(sound_cmd, "%s", filename);
+			command = purple_strreplace(sound_cmd, "%s", esc_filename);
 		else
-			command = g_strdup_printf("%s %s", sound_cmd, filename);
+			command = g_strdup_printf("%s %s", sound_cmd, esc_filename);
 
 		if(!g_spawn_command_line_async(command, &error)) {
 			purple_debug_error("gtksound", "sound command could not be launched: %s\n", error->message);
 			g_error_free(error);
 		}
 
+		g_free(esc_filename);
 		g_free(command);
 		return;
 	}
