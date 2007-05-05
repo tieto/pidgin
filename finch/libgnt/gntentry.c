@@ -75,6 +75,7 @@ show_suggest_dropdown(GntEntry *entry)
 	int count = 0;
 	GList *iter;
 	const char *text = NULL;
+	const char *sgst = NULL;
 
 	if (entry->word)
 	{
@@ -116,6 +117,7 @@ show_suggest_dropdown(GntEntry *entry)
 					gnt_tree_create_row(GNT_TREE(entry->ddown), text),
 					NULL, NULL);
 			count++;
+			sgst = text;
 		}
 	}
 	g_free(suggest);
@@ -125,7 +127,7 @@ show_suggest_dropdown(GntEntry *entry)
 		return FALSE;
 	} else if (count == 1) {
 		destroy_suggest(entry);
-		return complete_suggest(entry, text);
+		return complete_suggest(entry, sgst);
 	} else {
 		gnt_widget_draw(entry->ddown->parent);
 	}
