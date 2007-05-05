@@ -5098,7 +5098,6 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	purple_debug_info("oscar",
 			   "ssi: %s has given you permission to add him to your buddy list\n", sn);
 
-	/* XXX Should data->nick store the alias and nombre just have the sn? -evands */
 	buddy = purple_find_buddy(gc->account, sn);
 	if (buddy && (purple_buddy_get_alias_only(buddy)))
 		nombre = g_strdup_printf("%s (%s)", sn, purple_buddy_get_alias_only(buddy));
@@ -5109,7 +5108,7 @@ static int purple_ssi_authgiven(OscarData *od, FlapConnection *conn, FlapFrame *
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
 	data->name = g_strdup(sn);
-	data->nick = NULL;
+	data->nick = (buddy ? g_strdup(purple_buddy_get_alias_only(buddy)) : NULL);
 
 	purple_request_yes_no(gc, NULL, _("Authorization Given"), dialog_msg,
 						PURPLE_DEFAULT_ACTION_NONE,
@@ -5130,7 +5129,6 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 	char *sn;
 	char *msg;
 	PurpleAccount *account = purple_connection_get_account(gc);
-	gchar *nombre;
 	gchar *reason = NULL;
 	struct name_data *data;
 	PurpleBuddy *buddy;
@@ -5144,10 +5142,6 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 			   "ssi: received authorization request from %s\n", sn);
 
 	buddy = purple_find_buddy(account, sn);
-	if (buddy && (purple_buddy_get_alias_only(buddy)))
-		nombre = g_strdup_printf("%s (%s)", sn, purple_buddy_get_alias_only(buddy));
-	else
-		nombre = g_strdup(sn);
 
 	if (msg != NULL)
 		reason = purple_plugin_oscar_decode_im_part(account, sn, AIM_CHARSET_CUSTOM, 0x0000, msg, strlen(msg));
@@ -5155,12 +5149,12 @@ static int purple_ssi_authrequest(OscarData *od, FlapConnection *conn, FlapFrame
 	data = g_new(struct name_data, 1);
 	data->gc = gc;
 	data->name = g_strdup(sn);
-	data->nick = NULL;
+	data->nick = (buddy ? g_strdup(purple_buddy_get_alias_only(buddy)) : NULL);
 
-	purple_account_request_authorization(account, nombre, NULL, NULL,
+	purple_account_request_authorization(account, sn, NULL,
+			(buddy ? purple_buddy_get_alias_only(buddy) : NULL),
 			reason, buddy != NULL, G_CALLBACK(purple_auth_grant),
 			G_CALLBACK(purple_auth_dontgrant_msgprompt), data);
-	g_free(nombre);
 	g_free(reason);
 
 	return 1;
@@ -5791,8 +5785,8 @@ static void oscar_buddycb_edit_comment(PurpleBlistNode *node, gpointer ignore) {
 	comment_utf8 = comment ? oscar_utf8_try_convert(gc->account, comment) : NULL;
 
 	data->gc = gc;
-	data->name = g_strdup(buddy->name);
-	data->nick = NULL;
+	data->name = g_strdup(purple_buddy_get_name(buddy));
+	data->nick = g_strdup(purple_buddy_get_alias_only(buddy));
 
 	title = g_strdup_printf(_("Buddy Comment for %s"), data->name);
 	purple_request_input(gc, title, _("Buddy Comment:"), NULL,
