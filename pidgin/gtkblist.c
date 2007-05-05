@@ -4881,7 +4881,12 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 	status = pidgin_blist_get_status_icon((PurpleBlistNode*)buddy,
 						PIDGIN_STATUS_ICON_SMALL);
 
-	avatar = pidgin_blist_get_buddy_icon((PurpleBlistNode *)buddy, TRUE, TRUE);
+	/* Speed it up if we don't want buddy icons. */
+	if(biglist)
+		avatar = pidgin_blist_get_buddy_icon((PurpleBlistNode *)buddy, TRUE, TRUE);
+	else
+		avatar = NULL;
+
 	if (!avatar) {
 		g_object_ref(G_OBJECT(gtkblist->empty_avatar));
 		avatar = gtkblist->empty_avatar;
@@ -5059,6 +5064,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		GdkPixbuf *avatar;
 		GdkPixbuf *emblem;
 		char *mark;
+		gboolean showicons = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 
 		if(!insert_node(list, node, &iter))
 			return;
@@ -5066,7 +5072,12 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		status = pidgin_blist_get_status_icon(node,
 				 PIDGIN_STATUS_ICON_SMALL);
 		emblem = pidgin_blist_get_emblem(node);
-		avatar = pidgin_blist_get_buddy_icon(node, TRUE, FALSE);
+
+		/* Speed it up if we don't want buddy icons. */
+		if(showicons)
+			avatar = pidgin_blist_get_buddy_icon(node, TRUE, FALSE);
+		else
+			avatar = NULL;
 
 		mark = g_markup_escape_text(purple_chat_get_name(chat), -1);
 

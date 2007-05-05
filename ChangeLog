@@ -1,5 +1,9 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.0.1 (??/??/????):
+	* Buddy list update speedups when buddy icons are not being
+	  displayed.  (Scott Wolchok)
+
 version 2.0.0 (5/3/2007):
 	* The project has new names - libpurple for the core, Pidgin for the
 	  GTK+ UI and Finch for the ncurses based console UI (AOL LLC)
