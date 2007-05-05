@@ -29,30 +29,25 @@
  */
 
 #include "nat-pmp.h"
+#include "internal.h"
 #include "debug.h"
 #include "signals.h"
 #include "network.h"
 
-#include <sys/types.h>
-#ifndef _WIN32
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
+#ifdef HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
-
-#include <net/if.h>
-#include <net/route.h>
-
-#include <netdb.h>
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
 
-#include <errno.h>
+/* We will need sysctl() and NET_RT_DUMP, both of which are not present
+ * on all platforms, to continue. */
+#if defined(HAVE_SYS_SYSCTL_H) && defined(NET_RT_DUMP)
 
-#ifdef NET_RT_DUMP
+#include <sys/types.h>
+#include <net/route.h>
 
 #define PMP_DEBUG	1
 
@@ -548,4 +543,4 @@ purple_pmp_init()
 {
 
 }
-#endif /* #ifndef NET_RT_DUMP */
+#endif /* #if !(defined(HAVE_SYS_SYCTL_H) && defined(NET_RT_DUMP)) */
