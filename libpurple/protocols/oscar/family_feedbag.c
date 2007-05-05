@@ -714,9 +714,7 @@ int aim_ssi_cleanlist(OscarData *od)
 		aim_ssi_itemlist_del(&od->ssi.local, cur);
 
 	/* If we've made any changes then sync our list with the server's */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -769,9 +767,7 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const c
 	aim_ssi_itemlist_rebuildgroup(od->ssi.local, group);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -795,9 +791,7 @@ int aim_ssi_addpermit(OscarData *od, const char *name)
 	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_PERMIT, NULL);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -821,9 +815,7 @@ int aim_ssi_adddeny(OscarData *od, const char *name)
 	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_DENY, NULL);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -865,9 +857,7 @@ int aim_ssi_delbuddy(OscarData *od, const char *name, const char *group)
 	}
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -892,9 +882,7 @@ int aim_ssi_delpermit(OscarData *od, const char *name)
 	aim_ssi_itemlist_del(&od->ssi.local, del);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -919,9 +907,7 @@ int aim_ssi_deldeny(OscarData *od, const char *name)
 	aim_ssi_itemlist_del(&od->ssi.local, del);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -977,9 +963,7 @@ int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *sn, const char
 		aim_tlvlist_remove(&tmp->data, 0x0131);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -1009,9 +993,7 @@ int aim_ssi_editcomment(OscarData *od, const char *gn, const char *sn, const cha
 		aim_tlvlist_remove(&tmp->data, 0x013c);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -1037,9 +1019,7 @@ int aim_ssi_rename_group(OscarData *od, const char *oldgn, const char *newgn)
 	strcpy(group->name, newgn);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -1079,9 +1059,7 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
 	aim_tlvlist_replace_32(&tmp->data, 0x00cb, vismask);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -1171,9 +1149,7 @@ int aim_ssi_setpresence(OscarData *od, guint32 presence) {
 	aim_tlvlist_replace_32(&tmp->data, 0x00c9, presence);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /*
