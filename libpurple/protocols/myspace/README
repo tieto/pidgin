@@ -1,33 +1,27 @@
-MySpaceIM Protocol Plugin 0.3     by Jeff Connelly 20070414
+MySpaceIM Protocol Plugin      by Jeff Connelly 20070414
 
 ** Note: this code is being developed under Google Summer of Code.
 
-Greetings. This package contains a plugin for Gaim (now named Pidgin, but
-the plugin does not yet take this into consideration) to connect to the new
-MySpaceIM instant messaging network and send/receive messages. Functionality
-is only basic as of yet, and this code should be considered beta quality.
+Greetings. This package contains a plugin for libpurple (as used in
+Pidgin, formerly Gaim) to connect to the new MySpaceIM instant messaging 
+network and send/receive messages. Functionality is only basic as of yet, 
+and this code should be considered beta quality.
 
-Currently implemented:
+For features and TODO, see http://developer.pidgin.im/wiki/MySpaceIM
 
-- Parsing most of the protocol
-- Logging in using RC4/SHA1-based authentication
-- Sending messages, by numeric userid, username, or email
-- Receiving messages (displays username)
-- Some buddy list support (show all users on buddy list as username); not stable
-- Tooltip text (shows, among other things, currently playing song)
-- Win32 support
+Login using your _email address_ you use to login to myspace.com. You can't
+login using your numeric ID or alias.
 
-To try it out, login to your account and send a message to yourself
-(by your username or numeric uid (email not yet supported)) or tom (6221).
-In either case you should get a reply. You should also be able to talk to
-other MySpaceIM users if you desire. Replies will always be shown as coming
-from a user's username, even if you IM by email or userid.
+To test it out, send a message to yourself (by your username or numeric 
+uid (email not yet supported)) or tom (6221). In either case you should 
+get a reply. You should also be able to talk to other MySpaceIM users if 
+you desire. Replies will always be shown as coming from a user's username, 
+even if you IM by email or userid.
 
 There is a lot of work still to be done:
 - Better buddy list support, signing on/off
 - Status (online/offline/invisible, w/ message)
 - Typing notifications
-- Use Nathan Peterson's RC4 in cipher.c
 - General clean up of code
 - All the TODOs and XXX's mentioned in myspace.c
 - Every other MySpaceIM feature not yet implemented
@@ -38,4 +32,5 @@ Enjoy,
 -Jeff Connelly
 California Polytechnic State University at San Luis Obispo
 myspaceim@xyzzy.cjb.net
+jeff2@homing.pidgin.im
 
