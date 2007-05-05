@@ -430,7 +430,7 @@ pidgin_sound_play_file(const char *filename)
 			return;
 		}
 
-		esc_filename = g_strdup_printf("'%s'", filename);
+		esc_filename = g_shell_quote(filename);
 
 		if(strstr(sound_cmd, "%s"))
 			command = purple_strreplace(sound_cmd, "%s", esc_filename);
