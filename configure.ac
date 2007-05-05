@@ -1187,7 +1187,7 @@ if test "$enable_perl" = yes ; then
 	PERL_CFLAGS=`$perlpath -MExtUtils::Embed -e ccopts 2>/dev/null`
 	if test "_$PERL_CFLAGS" = _ ; then
 		AC_MSG_RESULT([not found, building without perl.])
-		enable_perl = no
+		enable_perl=no
 	else
 		PERL_LIBS=`$perlpath -MExtUtils::Embed -e ldopts 2>/dev/null |$sedpath 's/-lgdbm //'`
 		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-ldb //'`
