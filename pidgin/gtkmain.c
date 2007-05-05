@@ -500,16 +500,16 @@ int main(int argc, char *argv[])
 			"no fault of your own.\n\n"
 			"If you can reproduce the crash, please notify the Pidgin\n"
 			"developers by reporting a bug at\n"
-			"%sbug.php\n\n"
+			"%snewticket/\n\n"
 			"Please make sure to specify what you were doing at the time\n"
 			"and post the backtrace from the core file.  If you do not know\n"
 			"how to get the backtrace, please read the instructions at\n"
-			"%sgdb.php\n\n"
+			"%swiki/GetABacktrace\n\n"
 			"If you need further assistance, please IM either SeanEgn or \n"
 			"LSchiere (via AIM).  Contact information for Sean and Luke \n"
 			"on other protocols is at\n"
-			"%scontactinfo.php\n"),
-			PIDGIN_NAME, PURPLE_WEBSITE, PURPLE_WEBSITE, PURPLE_WEBSITE
+			"%swiki/DeveloperPages\n"),
+			PIDGIN_NAME, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE
 		);
 
 		/* we have to convert the message (UTF-8 to console
