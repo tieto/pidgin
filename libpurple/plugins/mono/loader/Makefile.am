@@ -17,7 +17,6 @@ mono_la_LDFLAGS  = -module -avoid-version
 mono_la_LIBADD = $(MONO_LIBS)
 
 AM_CPPFLAGS = \
-	-DVERSION=\"$(VERSION)\" \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
 	$(DEBUG_CFLAGS) \

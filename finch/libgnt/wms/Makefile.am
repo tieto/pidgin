@@ -15,7 +15,6 @@ EXTRA_DIST =
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
-	-DVERSION=\"$(VERSION)\" \
 	-I$(top_srcdir)/libpurple \
 	-I$(top_srcdir)/finch \
 	-I$(top_srcdir)/finch/libgnt \
