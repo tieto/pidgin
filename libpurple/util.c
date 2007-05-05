@@ -2529,11 +2529,7 @@ purple_mkstemp(char **fpath, gboolean binary)
 
 	if((tmpdir = (gchar*)g_get_tmp_dir()) != NULL) {
 		if((*fpath = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", tmpdir, purple_mkstemp_templ)) != NULL) {
-#ifdef _WIN32
 			fd = g_mkstemp(*fpath);
-#else
-			fd = mkstemp(*fpath));
-#endif
 			if(fd == -1) {
 				purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
 						   "Couldn't make \"%s\", error: %d\n",
