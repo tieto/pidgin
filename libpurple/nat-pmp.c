@@ -44,7 +44,6 @@
 #include <net/route.h>
 
 #include <netdb.h>
-#include <err.h>
 #endif
 
 #include <stdio.h>
@@ -58,35 +57,35 @@
 #define PMP_DEBUG	1
 
 typedef struct {
-	uint8_t	version;
-	uint8_t opcode;
+	guint8	version;
+	guint8 opcode;
 } PurplePmpIpRequest;
 
 typedef struct {
-	uint8_t		version;
-	uint8_t		opcode; /* 128 + n */
-	uint16_t	resultcode;
-	uint32_t	epoch;
-	uint32_t	address;
+	guint8		version;
+	guint8		opcode; /* 128 + n */
+	guint16		resultcode;
+	guint32		epoch;
+	guint32		address;
 } PurplePmpIpResponse;
 
 typedef struct {
-	uint8_t		version;
-	uint8_t		opcode;
+	guint8		version;
+	guint8		opcode;
 	char		reserved[2];
-	uint16_t	privateport;
-	uint16_t	publicport;
-	uint32_t	lifetime;
+	guint16		privateport;
+	guint16		publicport;
+	guint32		lifetime;
 } PurplePmpMapRequest;
 
 struct _PurplePmpMapResponse {
-	uint8_t		version;
-	uint8_t		opcode;
-	uint16_t	resultcode;
-	uint32_t	epoch;
-	uint16_t	privateport;
-	uint16_t	publicport;
-	uint32_t	lifetime;
+	guint8		version;
+	guint8		opcode;
+	guint16		resultcode;
+	guint32		epoch;
+	guint16		privateport;
+	guint16		publicport;
+	guint32		lifetime;
 };
 
 typedef struct _PurplePmpMapResponse PurplePmpMapResponse;
