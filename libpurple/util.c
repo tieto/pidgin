@@ -1739,6 +1739,7 @@ purple_markup_strip_html(const char *str)
 				else if (strncasecmp(str2 + i, "<p>", 3) == 0
 				 || strncasecmp(str2 + i, "<tr", 3) == 0
 				 || strncasecmp(str2 + i, "<br", 3) == 0
+				 || strncasecmp(str2 + i, "<hr", 3) == 0
 				 || strncasecmp(str2 + i, "<li", 3) == 0
 				 || strncasecmp(str2 + i, "<div", 4) == 0
 				 || strncasecmp(str2 + i, "</table>", 8) == 0)
