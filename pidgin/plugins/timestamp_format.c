@@ -23,7 +23,7 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	ppref = purple_plugin_pref_new_with_label(_("Timestamp Format Options"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
-	tmp = g_strdup_printf(_("_Force (traditional %s) 24-hour time format"), PIDGIN_NAME);
+	tmp = g_strdup_printf(_("_Force 24-hour time format"));
 	ppref = purple_plugin_pref_new_with_name_and_label(
 			"/plugins/gtk/timestamp_format/force_24hr",
 			tmp);
