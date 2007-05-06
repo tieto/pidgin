@@ -280,7 +280,8 @@ oscar_encoding_extract(const char *encoding)
 
 	/* Make sure encoding begins with charset= */
 	if (strncmp(encoding, "text/aolrtf; charset=", 21) &&
-		strncmp(encoding, "text/x-aolrtf; charset=", 23))
+		strncmp(encoding, "text/x-aolrtf; charset=", 23) &&
+		strncmp(encoding, "text/plain; charset=", 20))
 	{
 		return NULL;
 	}
@@ -1343,7 +1344,7 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			purple_connection_error(gc, _("The AOL Instant Messenger service is temporarily unavailable."));
 			break;
 		case 0x18:
-			/* connecting too frequently */
+			/* screen name connecting too frequently */
 			gc->wants_to_die = TRUE;
 			purple_connection_error(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			break;
@@ -1352,6 +1353,11 @@ purple_parse_auth_resp(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 			gc->wants_to_die = TRUE;
 			g_snprintf(buf, sizeof(buf), _("The client version you are using is too old. Please upgrade at %s"), PURPLE_WEBSITE);
 			purple_connection_error(gc, buf);
+			break;
+		case 0x1d:
+			/* IP address connecting too frequently */
+			gc->wants_to_die = TRUE;
+			purple_connection_error(gc, _("You have been connecting and disconnecting too frequently. Wait ten minutes and try again. If you continue to try, you will need to wait even longer."));
 			break;
 		default:
 			purple_connection_error(gc, _("Authentication failed"));
@@ -1770,7 +1776,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 											 info->status, info->status_len);
 	}
 
-	if (info->flags & AIM_FLAG_WIRELESS || info->capabilities & OSCAR_CAPABILITY_HIPTOP)
+	if (info->flags & AIM_FLAG_WIRELESS)
 	{
 		purple_prpl_got_user_status(account, info->sn, OSCAR_STATUS_ID_MOBILE, NULL);
 	} else {
@@ -5428,8 +5434,8 @@ const char* oscar_list_emblem(PurpleBuddy *b)
 			return "admin";
 		if (userinfo->flags & AIM_FLAG_ACTIVEBUDDY)
 			return "bot";
-		if (userinfo->flags & AIM_FLAG_AOL)
-			return "aol-client";
+		if (userinfo->capabilities & OSCAR_CAPABILITY_HIPTOP)
+			return "hiptop";
 		if (userinfo->capabilities & OSCAR_CAPABILITY_SECUREIM)
 			return "secure";
 	}
@@ -5565,7 +5571,7 @@ static int oscar_icon_req(OscarData *od, FlapConnection *conn, FlapFrame *fr, ..
 			length = va_arg(ap, int);
 			md5 = va_arg(ap, guchar *);
 
-			if (flags == 0x41) {
+			if ((flags == 0x00) || (flags == 0x41)) {
 				if (!flap_connection_getbytype(od, SNAC_FAMILY_BART) && !od->iconconnecting) {
 					od->iconconnecting = TRUE;
 					od->set_icon = TRUE;

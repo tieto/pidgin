@@ -518,6 +518,7 @@ gboolean gnt_screen_menu_show(gpointer newmenu)
 	gnt_widget_draw(GNT_WIDGET(wm->menu));
 
 	g_signal_connect(G_OBJECT(wm->menu), "hide", G_CALLBACK(reset_menu), NULL);
+	g_signal_connect(G_OBJECT(wm->menu), "destroy", G_CALLBACK(reset_menu), NULL);
 
 	return TRUE;
 }

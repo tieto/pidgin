@@ -91,8 +91,7 @@ struct _PurplePresence
 		{
 			PurpleAccount *account;
 			char *name;
-			size_t ref_count;
-			GList *buddies;
+			PurpleBuddy *buddy;
 
 		} buddy;
 
@@ -131,13 +130,15 @@ static int primitive_scores[] =
 	-200,   /* extended away            */
 	-400,   /* mobile                   */
 	-10,    /* idle, special case.      */
-	-5      /* idle time, special case. */
+	-5,     /* idle time, special case. */
+	10      /* Offline messageable      */
 };
 
 static GHashTable *buddy_presences = NULL;
 
 #define SCORE_IDLE      8
 #define SCORE_IDLE_TIME 9
+#define SCORE_OFFLINE_MESSAGE 10
 
 /**************************************************************************
  * PurpleStatusPrimitive API
@@ -658,13 +659,8 @@ notify_status_update(PurplePresence *presence, PurpleStatus *old_status,
 	}
 	else if (context == PURPLE_PRESENCE_CONTEXT_BUDDY)
 	{
-		const GList *l;
-
-		for (l = purple_presence_get_buddies(presence); l != NULL; l = l->next)
-		{
-			notify_buddy_status_update((PurpleBuddy *)l->data, presence,
+			notify_buddy_status_update(purple_presence_get_buddy(presence), presence,
 					old_status, new_status);
-		}
 	}
 }
 
@@ -1148,10 +1144,7 @@ purple_presence_new_for_buddy(PurpleBuddy *buddy)
 		g_free(key->name);
 		g_free(key);
 	}
-
-	presence->u.buddy.ref_count++;
-	presence->u.buddy.buddies = g_list_append(presence->u.buddy.buddies,
-			buddy);
+	presence->u.buddy.buddy = buddy;
 
 	return presence;
 }
@@ -1164,9 +1157,6 @@ purple_presence_destroy(PurplePresence *presence)
 	if (purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_BUDDY)
 	{
 		PurpleStatusBuddyKey key;
-
-		if(presence->u.buddy.ref_count != 0)
-			return;
 
 		key.account = presence->u.buddy.account;
 		key.name    = presence->u.buddy.name;
@@ -1187,27 +1177,6 @@ purple_presence_destroy(PurplePresence *presence)
 
 	PURPLE_DBUS_UNREGISTER_POINTER(presence);
 	g_free(presence);
-}
-
-/*
- * TODO: Maybe we should cal purple_presence_destroy() after we
- *       decrement the ref count?  I don't see why we should
- *       make other places do it manually when we can do it here.
- */
-void
-purple_presence_remove_buddy(PurplePresence *presence, PurpleBuddy *buddy)
-{
-	g_return_if_fail(presence != NULL);
-	g_return_if_fail(buddy    != NULL);
-	g_return_if_fail(purple_presence_get_context(presence) ==
-			PURPLE_PRESENCE_CONTEXT_BUDDY);
-
-	if (g_list_find(presence->u.buddy.buddies, buddy) != NULL)
-	{
-		presence->u.buddy.buddies = g_list_remove(presence->u.buddy.buddies,
-				buddy);
-		presence->u.buddy.ref_count--;
-	}
 }
 
 void
@@ -1342,14 +1311,10 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 
 	if (purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_BUDDY)
 	{
-		const GList *l;
 		time_t current_time = time(NULL);
 
-		for (l = purple_presence_get_buddies(presence); l != NULL; l = l->next)
-		{
-			update_buddy_idle((PurpleBuddy *)l->data, presence, current_time,
-			old_idle, idle);
-		}
+		update_buddy_idle(purple_presence_get_buddy(presence), presence, current_time,
+		old_idle, idle);
 	}
 	else if(purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_ACCOUNT)
 	{
@@ -1443,14 +1408,14 @@ purple_presence_get_chat_user(const PurplePresence *presence)
 	return presence->u.chat.user;
 }
 
-const GList *
-purple_presence_get_buddies(const PurplePresence *presence)
+PurpleBuddy *
+purple_presence_get_buddy(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, NULL);
 	g_return_val_if_fail(purple_presence_get_context(presence) ==
 			PURPLE_PRESENCE_CONTEXT_BUDDY, NULL);
 
-	return presence->u.buddy.buddies;
+	return presence->u.buddy.buddy;
 }
 
 const GList *
@@ -1607,8 +1572,14 @@ purple_presence_compare(const PurplePresence *presence1,
 		PurpleStatus *status = (PurpleStatus *)l->data;
 		PurpleStatusType *type = purple_status_get_type(status);
 
-		if (purple_status_is_active(status))
+		if (purple_status_is_active(status)) {
 			score1 += primitive_scores[purple_status_type_get_primitive(type)];
+			if (!purple_status_is_online(status)) {
+				PurpleBuddy *b = purple_presence_get_buddy(presence1);
+				if (b && purple_account_supports_offline_message(purple_buddy_get_account(b),b))
+					score1 += primitive_scores[SCORE_OFFLINE_MESSAGE];
+			}
+		}
 	}
 	score1 += purple_account_get_int(purple_presence_get_account(presence1), "score", 0);
 
@@ -1618,8 +1589,15 @@ purple_presence_compare(const PurplePresence *presence1,
 		PurpleStatus *status = (PurpleStatus *)l->data;
 		PurpleStatusType *type = purple_status_get_type(status);
 
-		if (purple_status_is_active(status))
+		if (purple_status_is_active(status)) {
 			score2 += primitive_scores[purple_status_type_get_primitive(type)];
+			if (!purple_status_is_online(status)) {
+				PurpleBuddy *b = purple_presence_get_buddy(presence2);
+				if (b && purple_account_supports_offline_message(purple_buddy_get_account(b),b))
+					score2 += primitive_scores[SCORE_OFFLINE_MESSAGE];
+			}
+
+		}
 	}
 	score2 += purple_account_get_int(purple_presence_get_account(presence2), "score", 0);
 
@@ -1723,6 +1701,8 @@ purple_status_init(void)
 			primitive_scores[PURPLE_STATUS_EXTENDED_AWAY]);
 	purple_prefs_add_int("/purple/status/scores/idle",
 			primitive_scores[SCORE_IDLE]);
+	purple_prefs_add_int("/purple/status/scores/offline_msg",
+			primitive_scores[SCORE_OFFLINE_MESSAGE]);
 
 	purple_prefs_connect_callback(handle, "/purple/status/scores/offline",
 			score_pref_changed_cb,
@@ -1742,6 +1722,9 @@ purple_status_init(void)
 	purple_prefs_connect_callback(handle, "/purple/status/scores/idle",
 			score_pref_changed_cb,
 			GINT_TO_POINTER(SCORE_IDLE));
+	purple_prefs_connect_callback(handle, "/purple/status/scores/offline_msg",
+			score_pref_changed_cb,
+			GINT_TO_POINTER(SCORE_OFFLINE_MESSAGE));
 
 	buddy_presences = g_hash_table_new_full(purple_buddy_presences_hash,
 											purple_buddy_presences_equal,

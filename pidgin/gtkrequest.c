@@ -1547,7 +1547,7 @@ pidgin_request_file(const char *title, const char *filename,
 	if ((filename != NULL) && (*filename != '\0')) {
 		if (savedialog)
 			gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(filesel), filename);
-		else
+		else if (g_file_test(filename, G_FILE_TEST_EXISTS))
 			gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(filesel), filename);
 	}
 	if ((filename == NULL || *filename == '\0' || !g_file_test(filename, G_FILE_TEST_EXISTS)) &&
@@ -1556,7 +1556,7 @@ pidgin_request_file(const char *title, const char *filename,
 	}
 
 #ifdef _WIN32
-	if (!folder_set) {
+	if (!folder_set && (filename == NULL || *filename == '\0' || !g_file_test(filename, G_FILE_TEST_EXISTS))) {
 		char *my_documents = wpurple_get_special_folder(CSIDL_PERSONAL);
 
 		if (my_documents != NULL) {

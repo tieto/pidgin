@@ -270,7 +270,7 @@ msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
 		memset(digest, 0, sizeof(digest));
 
 		purple_cipher_context_reset(ctx, NULL);
-		purple_cipher_context_append(ctx, data, strlen((char *)data));
+		purple_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
 		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
 		purple_cipher_context_destroy(ctx);
 		g_free(buf);

@@ -12697,9 +12697,9 @@ msgstr ""
 "anna ohjelmalle minkäänlaista takuuta.<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:374
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgwin on irc.freenode.net<BR><BR>"
+msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin-win32 on irc.freenode.net<BR><BR>"
 msgstr ""
-"<FONT SIZE=\"4\">IRC:</FONT> #pidgwin palvelimella irc.freenode.net<BR><BR>"
+"<FONT SIZE=\"4\">IRC:</FONT> #pidgin-win32 palvelimella irc.freenode.net<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:377
 msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin on irc.freenode.net<BR><BR>"

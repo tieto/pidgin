@@ -1086,7 +1086,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
 		{
 			pidgin_new_item_from_stock(menu, _("_Send File"),
-									 PIDGIN_STOCK_FILE_TRANSFER,
+									 PIDGIN_STOCK_TOOLBAR_SEND_FILE,
 									 G_CALLBACK(gtk_blist_menu_send_file_cb),
 									 buddy, 0, 0, NULL);
 		}
@@ -1172,8 +1172,9 @@ create_group_menu (PurpleBlistNode *node, PurpleGroup *g)
 	GtkWidget *item;
 
 	menu = gtk_menu_new();
-	pidgin_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
+	item = pidgin_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
 				 G_CALLBACK(pidgin_blist_add_buddy_cb), node, 0, 0, NULL);
+	gtk_widget_set_sensitive(item, purple_connections_get_all() != NULL);
 	item = pidgin_new_item_from_stock(menu, _("Add a C_hat"), GTK_STOCK_ADD,
 				 G_CALLBACK(pidgin_blist_add_chat_cb), node, 0, 0, NULL);
 	gtk_widget_set_sensitive(item, pidgin_blist_joinchat_is_showable());
@@ -2159,7 +2160,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 {
 	GdkPixbuf *buf, *ret = NULL;
 	GdkPixbufLoader *loader;
-	PurpleBuddyIcon *icon;
+	PurpleBuddyIcon *icon = NULL;
 	const guchar *data = NULL;
 	gsize len;
 	PurpleBuddy *buddy = NULL;
@@ -2196,9 +2197,9 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	}
 
 	if (data == NULL) {
-		if (!(icon = purple_buddy_get_icon(buddy)))
-			if (!(icon = purple_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
-				return NULL;
+		/* Not sure I like this...*/
+		if (!(icon = purple_buddy_icons_find(buddy->account, buddy->name)))
+			return NULL;
 		data = purple_buddy_icon_get_data(icon, &len);
 
 		if(data == NULL)
@@ -2210,6 +2211,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	gdk_pixbuf_loader_close(loader, NULL);
 
 	purple_imgstore_unref(custom_img);
+	purple_buddy_icon_unref(icon);
 
 	buf = gdk_pixbuf_loader_get_pixbuf(loader);
 	if (buf)
@@ -2849,7 +2851,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
-	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<StockItem>", PIDGIN_STOCK_ABOUT },
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
 };
 
 /*********************************************************

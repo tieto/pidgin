@@ -390,6 +390,7 @@ version 2.0.0:
 	* GtkGaimScrollBook and its functions.
 	* purple_markup_unescape_entity()
 	* purple_markup_get_css_property()
+	* purple_group_get_name()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

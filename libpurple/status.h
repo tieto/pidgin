@@ -752,22 +752,9 @@ PurplePresence *purple_presence_new_for_buddy(PurpleBuddy *buddy);
  * All statuses added to this list will be destroyed along with
  * the presence.
  *
- * If this presence belongs to a buddy, you must call
- * purple_presence_remove_buddy() first.
- *
  * @param presence The presence to destroy.
  */
 void purple_presence_destroy(PurplePresence *presence);
-
-/**
- * Removes a buddy from a presence.
- *
- * This must be done before destroying a buddy in a presence.
- *
- * @param presence The presence.
- * @param buddy    The buddy.
- */
-void purple_presence_remove_buddy(PurplePresence *presence, PurpleBuddy *buddy);
 
 /**
  * Adds a status to a presence.
@@ -869,13 +856,13 @@ PurpleConversation *purple_presence_get_conversation(const PurplePresence *prese
 const char *purple_presence_get_chat_user(const PurplePresence *presence);
 
 /**
- * Returns a presence's list of buddies.
+ * Returns the presence's buddy.
  *
  * @param presence The presence.
  *
- * @return The presence's list of buddies.
+ * @return The presence's buddy.
  */
-const GList *purple_presence_get_buddies(const PurplePresence *presence);
+PurpleBuddy *purple_presence_get_buddy(const PurplePresence *presence);
 
 /**
  * Returns all the statuses in a presence.

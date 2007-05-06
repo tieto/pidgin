@@ -67,6 +67,7 @@ SMILEYS = 	act-up.png \
 		glasses-cool.png \
 		glasses-nerdy.png \
 		go-away.png \
+		goat.png \
 		good.png \
 		hammer.png \
 		handcuffs.png \
@@ -136,6 +137,7 @@ SMILEYS = 	act-up.png \
 		sigarette.png \
 		silly.png \
 		skeleton.png \
+		skywalker.png \
 		sleepy.png \
 		smile-big.png \
 		smile.png \

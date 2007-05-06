@@ -1343,10 +1343,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		proxy_info = NULL;
 	}
 
-
-	/* We no longer need the data from the dialog window */
-	account_win_destroy_cb(NULL, NULL, dialog);
-
 	/* If this is a new account, add it to our list */
 	if (new)
 		purple_accounts_add(account);
@@ -1363,6 +1359,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			purple_account_set_enabled(account, PIDGIN_UI, TRUE);
 		}
 	}
+
+	/* We no longer need the data from the dialog window */
+	account_win_destroy_cb(NULL, NULL, dialog);
 
 	return account;
 }

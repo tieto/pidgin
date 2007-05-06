@@ -279,7 +279,11 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 
 		ims = g_list_append(ims, conv);
 		if ((icon = purple_buddy_icons_find(account, name)))
+		{
 			purple_conv_im_set_icon(conv->u.im, icon);
+			/* purple_conv_im_set_icon refs the icon. */
+			purple_buddy_icon_unref(icon);
+		}
 
 		if (purple_prefs_get_bool("/purple/logging/log_ims"))
 		{

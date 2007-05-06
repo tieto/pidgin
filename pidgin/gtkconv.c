@@ -1579,7 +1579,7 @@ create_chat_menu(PurpleConversation *conv, const char *who, PurpleConnection *gc
 		if (prpl_info && prpl_info->send_file)
 		{
 			button = pidgin_new_item_from_stock(menu, _("Send File"),
-				PIDGIN_STOCK_FILE_TRANSFER, G_CALLBACK(menu_chat_send_file_cb),
+				PIDGIN_STOCK_TOOLBAR_SEND_FILE, G_CALLBACK(menu_chat_send_file_cb),
 				PIDGIN_CONVERSATION(conv), 0, 0, NULL);
 
 			if (gc == NULL || prpl_info == NULL ||
@@ -2767,7 +2767,7 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ "/Conversation/sep1", NULL, NULL, 0, "<Separator>", NULL },
 
-	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", PIDGIN_STOCK_FILE_TRANSFER },
+	{ N_("/Conversation/Se_nd File..."), NULL, menu_send_file_cb, 0, "<StockItem>", PIDGIN_STOCK_TOOLBAR_SEND_FILE },
 	{ N_("/Conversation/Add Buddy _Pounce..."), NULL, menu_add_pounce_cb,
 			0, "<Item>", NULL },
 	{ N_("/Conversation/_Get Info"), "<CTL>O", menu_get_info_cb, 0,
@@ -3389,7 +3389,7 @@ generate_send_to_items(PidginWindow *win)
 			for (iter = g_list_last(list); iter != NULL; iter = iter->prev)
 			{
 				PurplePresence *pre = iter->data;
-				PurpleBuddy *buddy = purple_presence_get_buddies(pre)->data;
+				PurpleBuddy *buddy = purple_presence_get_buddy(pre);
 				create_sendto_item(menu, sg, &group, buddy,
 							purple_buddy_get_account(buddy), purple_buddy_get_name(buddy));
 			}

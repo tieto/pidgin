@@ -31,7 +31,6 @@
 /** @name Stock images                                                    */
 /**************************************************************************/
 /*@{*/
-#define PIDGIN_STOCK_ABOUT           "pidgin-about"
 #define PIDGIN_STOCK_ACTION          "pidgin-action"
 #define PIDGIN_STOCK_ALIAS           "pidgin-alias"
 #define PIDGIN_STOCK_AWAY            "pidgin-away"
@@ -45,7 +44,6 @@
 #define PIDGIN_STOCK_FGCOLOR         "pidgin-fgcolor"
 #define PIDGIN_STOCK_FILE_CANCELED   "pidgin-file-canceled"
 #define PIDGIN_STOCK_FILE_DONE       "pidgin-file-done"
-#define PIDGIN_STOCK_FILE_TRANSFER   "pidgin-file-transfer"
 #define PIDGIN_STOCK_IGNORE          "pidgin-ignore"
 #define PIDGIN_STOCK_INVITE          "pidgin-invite"
 #define PIDGIN_STOCK_MODIFY          "pidgin-modify"
@@ -125,6 +123,7 @@
 #define PIDGIN_STOCK_TOOLBAR_USER_INFO    "pidgin-info"
 #define PIDGIN_STOCK_TOOLBAR_UNBLOCK      "pidgin-unblock"
 #define PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR "pidgin-select-avatar"
+#define PIDGIN_STOCK_TOOLBAR_SEND_FILE    "pidgin-send-file"
 
 /* Tray icons */
 #define PIDGIN_STOCK_TRAY_AVAILABLE       "pidgin-tray-available"

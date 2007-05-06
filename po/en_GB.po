@@ -12653,7 +12653,7 @@ msgstr ""
 "warranty for this program.<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:375
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgwin on irc.freenode.net<BR><BR>"
+msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin-win32 on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidwgin on irc.freenode.net<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:378
