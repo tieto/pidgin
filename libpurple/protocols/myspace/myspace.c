@@ -236,7 +236,7 @@ static GHashTable* msim_parse(gchar* msg)
             (token = tokens[i]);
             i++)
     {
-#if MSIM_DEBUG_PARSE
+#ifdef MSIM_DEBUG_PARSE
         purple_debug_info("msim", "tok=<%s>, i%2=%d\n", token, i % 2);
 #endif
         if (i % 2)
@@ -249,7 +249,7 @@ static GHashTable* msim_parse(gchar* msg)
             /* Check if key already exists */
             if (g_hash_table_lookup(table, key) == NULL)
             {
-#if MSIM_DEBUG_PARSE
+#ifdef MSIM_DEBUG_PARSE
                 purple_debug_info("msim", "insert: |%s|=|%s|\n", key, value);
 #endif
 				/* Insert - strdup 'key' because it will be g_strfreev'd (as 'tokens'),
@@ -323,7 +323,7 @@ static GHashTable *msim_parse_body(const gchar *body_str)
             break;
         }
 
-#if MSIM_DEBUG_PARSE
+#ifdef MSIM_DEBUG_PARSE
         purple_debug_info("msim", "-- %s: %s\n", key, value);
 #endif
 
@@ -343,7 +343,7 @@ static GHashTable *msim_parse_body(const gchar *body_str)
 
 
 
-#if MSIM_DEBUG_MSG
+#ifdef MSIM_DEBUG_MSG
 static void print_hash_item(gpointer key, gpointer value, gpointer user_data)
 {
     purple_debug_info("msim", "%s=%s\n", (char*)key, (char*)value);
@@ -504,6 +504,114 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
     return 0;
 }
 
+#ifndef MSIM_USE_PURPLE_RC4
+/* No RC4 in this version of libpurple, so bring our own. */
+
+/* 
+   Unix SMB/CIFS implementation.
+
+   a partial implementation of RC4 designed for use in the 
+   SMB authentication protocol
+
+   Copyright (C) Andrew Tridgell 1998
+
+   $Id: crypt-rc4.c 12116 2004-09-27 23:29:22Z guy $
+   
+   This program is free software; you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation; either version 2 of the License, or
+   (at your option) any later version.
+   
+   This program is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   
+   You should have received a copy of the GNU General Public License
+   along with this program; if not, write to the Free Software
+   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+   
+   Modified by Jeff Connelly for MySpaceIM Gaim plugin.
+*/
+
+#include <glib.h>
+#include <string.h>
+
+/* Perform RC4 on a block of data using specified key.  "data" is a pointer
+   to the block to be processed.  Output is written to same memory as input,
+   so caller may need to make a copy before calling this function, since
+   the input will be overwritten.  
+   
+   Taken from Samba source code.  Modified to allow us to maintain state
+   between calls to crypt_rc4.
+*/
+
+void crypt_rc4_init(rc4_state_struct *rc4_state, 
+		    const unsigned char *key, int key_len)
+{
+  int ind;
+  unsigned char j = 0;
+  unsigned char *s_box;
+
+  memset(rc4_state, 0, sizeof(rc4_state_struct));
+  s_box = rc4_state->s_box;
+  
+  for (ind = 0; ind < 256; ind++)
+  {
+    s_box[ind] = (unsigned char)ind;
+  }
+
+  for( ind = 0; ind < 256; ind++)
+  {
+     unsigned char tc;
+
+     j += (s_box[ind] + key[ind%key_len]);
+
+     tc = s_box[ind];
+     s_box[ind] = s_box[j];
+     s_box[j] = tc;
+  }
+
+}
+
+void crypt_rc4(rc4_state_struct *rc4_state, unsigned char *data, int data_len)
+{
+  unsigned char *s_box;
+  unsigned char index_i;
+  unsigned char index_j;
+  int ind;
+
+  /* retrieve current state from the state struct (so we can resume where
+     we left off) */
+  index_i = rc4_state->index_i;
+  index_j = rc4_state->index_j;
+  s_box = rc4_state->s_box;
+
+  for( ind = 0; ind < data_len; ind++)
+  {
+    unsigned char tc;
+    unsigned char t;
+
+    index_i++;
+    index_j += s_box[index_i];
+
+    tc = s_box[index_i];
+    s_box[index_i] = s_box[index_j];
+    s_box[index_j] = tc;
+
+    t = s_box[index_i] + s_box[index_j];
+    data[ind] = data[ind] ^ s_box[t];
+  }
+
+  /* Store the updated state */
+  rc4_state->index_i = index_i;
+  rc4_state->index_j = index_j;
+}
+
+#endif /* !MSIM_USE_PURPLE_RC4 */
+
+
 /**
  * Compute the base64'd login challenge response based on username, password, nonce, and IPs.
  *
@@ -519,7 +627,12 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
 {
     PurpleCipherContext *key_context;
     PurpleCipher *sha1;
+#ifdef MSIM_USE_PURPLE_RC4
 	PurpleCipherContext *rc4;
+#else
+	rc4_state_struct rc4;
+#endif
+
     guchar hash_pw[HASH_SIZE];
     guchar key[HASH_SIZE];
     gchar* password_utf16le;
@@ -529,7 +642,7 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
 	size_t data_len, data_out_len;
 	gsize conv_bytes_read, conv_bytes_written;
 	GError* conv_error;
-#if MSIM_DEBUG_LOGIN_CHALLENGE
+#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
 	int i;
 #endif
 
@@ -555,7 +668,7 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
 			conv_bytes_written, sizeof(hash_pw), hash_pw, NULL);
 	g_free(password_utf16le);
 
-#if MSIM_DEBUG_LOGIN_CHALLENGE
+#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
     purple_debug_info("msim", "pwhash = ");
     for (i = 0; i < sizeof(hash_pw); i++)
         purple_debug_info("msim", "%.2x ", hash_pw[i]);
@@ -569,7 +682,7 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
     purple_cipher_context_append(key_context, nonce + NONCE_SIZE, NONCE_SIZE);
     purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
 
-#if MSIM_DEBUG_LOGIN_CHALLENGE
+#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
     purple_debug_info("msim", "key = ");
     for (i = 0; i < sizeof(key); i++)
     {
@@ -578,12 +691,14 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
     purple_debug_info("msim", "\n");
 #endif
 
+#ifdef MSIM_USE_PURPLE_RC4
 	rc4 = purple_cipher_context_new_by_name("rc4", NULL);
 
     /* Note: 'key' variable is 0x14 bytes (from SHA-1 hash), 
      * but only first 0x10 used for the RC4 key. */
 	purple_cipher_context_set_option(rc4, "key_len", (gpointer)0x10);
 	purple_cipher_context_set_key(rc4, key);
+#endif
 
     /* TODO: obtain IPs of network interfaces. This is not immediately
      * important because you can still connect and perform basic
@@ -599,18 +714,32 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
     memcpy(data, nonce, NONCE_SIZE);
     memcpy(data + NONCE_SIZE, email, strlen(email));
     memcpy(data + NONCE_SIZE + strlen(email),
-            /* IP addresses of network interfaces */
+            /* TODO: IP addresses of network interfaces */
             "\x00\x00\x00\x00\x05\x7f\x00\x00\x01\x00\x00\x00\x00\x0a\x00\x00\x40\xc0\xa8\x58\x01\xc0\xa8\x3c\x01", 25);
 
+#ifdef MSIM_USE_PURPLE_RC4
 	data_out = g_new0(guchar, data_len);
+
     purple_cipher_context_encrypt(rc4, (const guchar*)data, 
 			data_len, data_out, &data_out_len);
-	g_assert(data_out_len == data_len);
 	purple_cipher_context_destroy(rc4);
+#else
+	/* Use our own RC4 code */
+	purple_debug_info("msim", "Using non-purple RC4 cipher code in this version\n");
+	crypt_rc4_init(&rc4, key, 0x10);
+	crypt_rc4(&rc4, data, data_len);
+	data_out_len = data_len;
+	data_out = data;
+#endif
+
+	g_assert(data_out_len == data_len);
 
     response = purple_base64_encode(data_out, data_out_len);
+#ifdef MSIM_USE_PURPLE_RC4
 	g_free(data_out);
-#if MSIM_DEBUG_LOGIN_CHALLENGE
+#endif
+
+#ifdef MSIM_DEBUG_LOGIN_CHALLENGE
     purple_debug_info("msim", "response=<%s>\n", response);
 #endif
 
@@ -849,7 +978,7 @@ static int msim_process(PurpleConnection *gc, GHashTable *table)
 
     session = (MsimSession*)gc->proto_data;
 
-#if MSIM_DEBUG_MSG
+#ifdef MSIM_DEBUG_MSG
     purple_debug_info("msim", "-------- message -------------\n");
     g_hash_table_foreach(table, print_hash_item, NULL);
     purple_debug_info("msim", "------------------------------\n");
@@ -1244,7 +1373,7 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
     session->rxoff += n;
     purple_debug_info("msim", "msim_input_cb: read=%d\n", n);
 
-#if MSIM_DEBUG_RXBUF
+#ifdef MSIM_DEBUG_RXBUF
     purple_debug_info("msim", "buf=<%s>\n", session->rxbuf);
 #endif
 
@@ -1253,7 +1382,7 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
     {
         GHashTable *table;
 
-#if MSIM_DEBUG_RXBUF
+#ifdef MSIM_DEBUG_RXBUF
         purple_debug_info("msim", "in loop: buf=<%s>\n", session->rxbuf);
 #endif
         *end = 0;
