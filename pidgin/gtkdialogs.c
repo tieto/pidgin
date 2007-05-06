@@ -350,7 +350,9 @@ void pidgin_dialogs_about()
 	gdk_pixbuf_unref(pixbuf);
 	/* Insert the logo */
 	obj = gtk_widget_get_accessible(logo);
-	atk_object_set_description(obj, PIDGIN_NAME " " VERSION);
+	tmp = g_strconcat(PIDGIN_NAME, " " VERSION, NULL);
+	atk_object_set_description(obj, tmp);
+	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
 	frame = pidgin_create_imhtml(FALSE, &text, NULL, NULL);
@@ -506,9 +508,9 @@ void pidgin_dialogs_about()
 #endif
 
 #ifdef HAVE_SSL
-	g_string_append(str, "  <b>SSL:</b> " PIDGIN_NAME " was compiled with SSL support.<br/>");
+	g_string_append(str, "  <b>SSL:</b> SSL support is present.<br/>");
 #else
-	g_string_append(str, "  <b>SSL:</b> " PIDGIN_NAME " was <b><i>NOT</i></b> compiled with any SSL support!<br/>");
+	g_string_append(str, "  <b>SSL:</b> SSL support was <b><i>NOT</i></b> compiled!<br/>");
 #endif
 
 /* This might be useful elsewhere too, but it is particularly useful for

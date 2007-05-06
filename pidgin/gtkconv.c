@@ -376,7 +376,7 @@ debug_command_cb(PurpleConversation *conv,
 	PurpleCmdStatus status;
 
 	if (!g_ascii_strcasecmp(args[0], "version")) {
-		tmp = g_strdup_printf("me is using " PIDGIN_NAME " v%s.", VERSION);
+		tmp = g_strdup_printf("me is using %s v%s.", PIDGIN_NAME, VERSION);
 		markup = g_markup_escape_text(tmp, -1);
 
 		status = purple_cmd_do_command(conv, tmp, markup, error);

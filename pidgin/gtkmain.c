@@ -498,8 +498,8 @@ int main(int argc, char *argv[])
 			"%s has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
-			"If you can reproduce the crash, please notify the Pidgin\n"
-			"developers by reporting a bug at\n"
+			"If you can reproduce the crash, please notify the developers\n"
+			"by reporting a bug at:\n"
 			"%snewticket/\n\n"
 			"Please make sure to specify what you were doing at the time\n"
 			"and post the backtrace from the core file.  If you do not know\n"
@@ -630,7 +630,7 @@ int main(int argc, char *argv[])
 	}
 	/* show version message */
 	if (opt_version) {
-		printf(PIDGIN_NAME " %s\n", VERSION);
+		printf("%s %s\n", PIDGIN_NAME, VERSION);
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
 #endif
@@ -667,7 +667,7 @@ int main(int argc, char *argv[])
 	if (!gui_check) {
 		char *display = gdk_get_display();
 
-		printf(PIDGIN_NAME " %s\n", VERSION);
+		printf("%s %s\n", PIDGIN_NAME, VERSION);
 
 		g_warning("cannot open display: %s", display ? display : "unset");
 		g_free(display);
@@ -727,7 +727,7 @@ int main(int argc, char *argv[])
 
 	if (!purple_core_init(PIDGIN_UI)) {
 		fprintf(stderr,
-				"Initialization of the " PIDGIN_NAME " core failed. Dumping core.\n"
+				"Initialization of the libpurple core failed. Dumping core.\n"
 				"Please report this!\n");
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);

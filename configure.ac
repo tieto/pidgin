@@ -93,8 +93,6 @@ AC_SUBST(GNT_VERSION)
 GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
 AC_SUBST(GNT_LT_VERSION_INFO)
 
-AC_DEFINE(PIDGIN_NAME, "Pidgin", [The user-visible application name])
-
 AC_PATH_PROG(sedpath, sed)
 
 dnl Storing configure arguments

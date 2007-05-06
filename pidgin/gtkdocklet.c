@@ -171,7 +171,7 @@ docklet_update_status()
 		g_list_free(convs);
 
 	} else if (ui_ops->set_tooltip) {
-		char *tooltip_text = g_strconcat(PIDGIN_NAME " - ",
+		char *tooltip_text = g_strconcat(PIDGIN_NAME, " - ",
 			purple_savedstatus_get_title(saved_status), NULL);
 		ui_ops->set_tooltip(tooltip_text);
 		g_free(tooltip_text);

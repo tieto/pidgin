@@ -45,6 +45,9 @@
 /* change this only when we have a sane upgrade path for old prefs */
 #define PIDGIN_PREFS_ROOT "/pidgin"
 
+/* Translators may want to transliterate the name. */
+#define PIDGIN_NAME _("Pidgin")
+
 #ifndef _WIN32
 # define PIDGIN_ALERT_TITLE ""
 #else
