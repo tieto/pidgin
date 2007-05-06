@@ -89,8 +89,7 @@ show_debug_cmd(MsnCmdProc *cmdproc, gboolean incoming, const char *command)
 
 	tmp = (incoming) ? 'S' : 'C';
 
-	if ((show[len - 1] == '\n') && (show[len - 2] == '\r'))
-	{
+	if ((show[len - 1] == '\n') && (show[len - 2] == '\r')){
 		show[len - 2] = '\0';
 	}
 
@@ -127,14 +126,14 @@ msn_cmdproc_send_trans(MsnCmdProc *cmdproc, MsnTransaction *trans)
 		trans->callbacks = g_hash_table_lookup(cmdproc->cbs_table->cmds,
 											   trans->command);
 
-	if (trans->payload != NULL)
-	{
+	if (trans->payload != NULL){
 		data = g_realloc(data, len + trans->payload_len);
 		memcpy(data + len, trans->payload, trans->payload_len);
 		len += trans->payload_len;
 	}
 
 	msn_servconn_write(servconn, data, len);
+//	purple_debug_info("<<","%s\n",data);
 
 	g_free(data);
 }
@@ -228,8 +227,7 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnMsgTypeCb cb;
 
-	if (msn_message_get_content_type(msg) == NULL)
-	{
+	if (msn_message_get_content_type(msg) == NULL){
 		purple_debug_misc("msn", "failed to find message content\n");
 		return;
 	}
@@ -237,8 +235,7 @@ msn_cmdproc_process_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	cb = g_hash_table_lookup(cmdproc->cbs_table->msgs,
 							 msn_message_get_content_type(msg));
 
-	if (cb == NULL)
-	{
+	if (cb == NULL){
 		purple_debug_warning("msn", "Unhandled content-type '%s'\n",
 						   msn_message_get_content_type(msg));
 

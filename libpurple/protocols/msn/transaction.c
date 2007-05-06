@@ -205,8 +205,7 @@ transaction_timeout(gpointer data)
 void
 msn_transaction_set_timeout_cb(MsnTransaction *trans, MsnTimeoutCb cb)
 {
-	if (trans->timer)
-	{
+	if (trans->timer){
 		purple_debug_error("msn", "This shouldn't be happening\n");
 		purple_timeout_remove(trans->timer);
 	}

@@ -1,5 +1,5 @@
 /**
- * @file msn-utils.h Utility functions
+ * @file msnutils.h Utility functions
  *
  * purple
  *
@@ -24,6 +24,14 @@
 #ifndef _MSN_UTILS_H_
 #define _MSN_UTILS_H_
 
+/*encode the str to RFC2047 style*/
+char * msn_encode_mime(const char *str);
+
+/**
+ * Generate the Random GUID
+ */
+char * rand_guid(void);
+
 /**
  * Parses the MSN message formatting into a format compatible with Purple.
  *
@@ -47,5 +55,10 @@ void msn_parse_format(const char *mime, char **pre_ret, char **post_ret);
 void msn_import_html(const char *html, char **attributes, char **message);
 
 void msn_parse_socket(const char *str, char **ret_host, int *ret_port);
+void msn_handle_chl(char *input, char *output);
+int isBigEndian(void);
+unsigned int swapInt(unsigned int dw);
+char * msn_strptime (const char *buf,const char *format,struct tm *tm);
+
 
 #endif /* _MSN_UTILS_H_ */

@@ -75,6 +75,7 @@
 #ifndef _WIN32
 #include <sys/time.h>
 #include <sys/wait.h>
+#include <sys/time.h>
 #endif
 #include <ctype.h>
 #include <errno.h>
