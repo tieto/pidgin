@@ -280,6 +280,8 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 		error = _("You must provide a group.");
 	else if (!account)
 		error = _("You must select an account.");
+	else if (!purple_account_is_connected(account))
+		error = _("The selected account is not online.");
 
 	if (error)
 	{
