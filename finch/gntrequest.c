@@ -497,7 +497,9 @@ finch_request_fields(const char *title, const char *primary,
 				field->ui_data = combo;
 
 				all = purple_request_field_account_get_show_all(field);
-				def = purple_request_field_account_get_default_value(field);
+				def = purple_request_field_account_get_value(field);
+				if (!def)
+					def = purple_request_field_account_get_default_value(field);
 
 				if (all)
 					list = purple_accounts_get_all();
