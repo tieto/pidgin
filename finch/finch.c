@@ -274,6 +274,8 @@ init_libpurple(int argc, char **argv)
 	}
 	/* show version message */
 	if (opt_version) {
+		/* Translators may want to transliterate the name.
+		 It is not to be translated. */
 		printf("%s %s\n", _("Finch"), VERSION);
 		return 0;
 	}
