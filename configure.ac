@@ -139,6 +139,19 @@ esac
 ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
 
+dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
+dnl AM_GLIB_GNU_GETTEXT found it.
+
+if test x$MSGFMT = xno -o x$GMSGFMT = x
+then
+	AC_ERROR([
+
+The msgfmt command is required to build libpurple.  If it is installed
+on your system, ensure that it is in your path.  If it is not, install
+GNU gettext to continue.
+])
+fi
+
 dnl we don't use autobreak on cygwin!!
 dnl AC_CYGWIN
 
