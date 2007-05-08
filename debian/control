@@ -21,7 +21,6 @@ Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:U
 Replaces: gaim (<< 1:2.0.0+beta6-3)
 Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good, python-dbus
 Suggests: gnome-panel (>= 2.1) | kicker (>= 3.1) | docker, evolution-data-server (>= 1.6.0), ${shlibs:Suggests}
-Conflicts: gaim-encryption (<= 3.0~beta7-1), gaim-librvp (<= 0.9.5-2), nautilus-sendto (<= 0.8-2)
 Description: multi-protocol instant messaging client
  Pidgin is a graphical, modular Instant Messaging client capable of using
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, Gadu-Gadu, Bonjour,
@@ -77,6 +76,7 @@ Package: pidgin-dbg
 Priority: extra
 Architecture: any
 Depends: pidgin (= ${source:Version}), pidgin-data (= ${source:Version}), ${shlibs:Depends}
+Replaces: gaim-dbg (<< 1:2.0.0+beta6-3)
 Description: Debugging symbols for Pidgin 
  This package includes the debugging symbols useful for debugging Pidgin
  and its plugins, contained in the pidgin package. The debugging symbols are
