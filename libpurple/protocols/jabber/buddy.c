@@ -1793,7 +1793,7 @@ void jabber_user_search_begin(PurplePluginAction *action)
 
 	purple_request_input(gc, _("Enter a User Directory"), _("Enter a User Directory"),
 			_("Select a user directory to search"),
-			js->user_directories ? js->user_directories->data : "users.jabber.org",
+			js->user_directories ? js->user_directories->data : NULL,
 			FALSE, FALSE, NULL,
 			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search_ok),
 			_("Cancel"), NULL,
