@@ -306,6 +306,8 @@ pidgin_sound_init(void)
 
 #ifdef USE_GSTREAMER
 	purple_debug_info("sound", "Initializing sound output drivers.\n");
+	if (!g_thread_supported())
+		g_thread_init(NULL);
 	if ((gst_init_failed = !gst_init_check(NULL, NULL, &error))) {
 		purple_notify_error(NULL, _("GStreamer Failure"),
 					_("GStreamer failed to initialize."),
