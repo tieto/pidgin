@@ -39,6 +39,7 @@ void finch_prefs_init()
 
 	purple_prefs_add_none("/finch/plugins");
 	purple_prefs_add_path_list("/finch/plugins/loaded", NULL);
+	purple_prefs_add_path_list("/finch/plugins/seen", NULL);
 
 	purple_prefs_add_none("/finch/conversations");
 	purple_prefs_add_bool("/finch/conversations/timestamps", TRUE);
