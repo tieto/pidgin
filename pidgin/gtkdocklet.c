@@ -49,7 +49,9 @@
 
 /* globals */
 static struct docklet_ui_ops *ui_ops = NULL;
-static DockletStatus status = DOCKLET_STATUS_OFFLINE;
+static PurpleStatusPrimitive status = PURPLE_STATUS_OFFLINE;
+static gboolean pending = FALSE;
+static gboolean connecting = FALSE;
 static gboolean enable_join_chat = FALSE;
 static guint docklet_blinking_timer = 0;
 static gboolean visible = FALSE;
@@ -66,21 +68,17 @@ docklet_blink_icon()
 
 	blinked = !blinked;
 
-	switch (status) {
-		case DOCKLET_STATUS_PENDING:
-			if (blinked) {
-				if (ui_ops && ui_ops->blank_icon)
-					ui_ops->blank_icon();
-			} else {
-				if (ui_ops && ui_ops->update_icon)
-					ui_ops->update_icon(status);
-			}
-			ret = TRUE; /* keep blinking */
-			break;
-		default:
-			docklet_blinking_timer = 0;
-			blinked = FALSE;
-			break;
+	if(pending && !connecting) {
+		if (blinked) {
+			if (ui_ops && ui_ops->blank_icon)
+				ui_ops->blank_icon();
+		} else {
+			pidgin_docklet_update_icon();
+		}
+		ret = TRUE; /* keep blinking */
+	} else {
+		docklet_blinking_timer = 0;
+		blinked = FALSE;
 	}
 
 	return ret;
@@ -114,9 +112,8 @@ docklet_update_status()
 	GList *convs, *l;
 	int count;
 	PurpleSavedStatus *saved_status;
-	PurpleStatusPrimitive prim;
-	DockletStatus newstatus = DOCKLET_STATUS_OFFLINE;
-	gboolean pending = FALSE, connecting = FALSE;
+	PurpleStatusPrimitive newstatus = PURPLE_STATUS_OFFLINE;
+	gboolean newpending = FALSE, newconnecting = FALSE;
 
 	/* get the current savedstatus */
 	saved_status = purple_savedstatus_get_current();
@@ -141,7 +138,7 @@ docklet_update_status()
 	}
 
 	if (convs != NULL) {
-		pending = TRUE;
+		newpending = TRUE;
 
 		/* set tooltip if messages are pending */
 		if (ui_ops->set_tooltip) {
@@ -190,38 +187,22 @@ docklet_update_status()
 
 		account_status = purple_account_get_active_status(account);
 		if (purple_account_is_connecting(account))
-			connecting = TRUE;
+			newconnecting = TRUE;
 	}
 
-	prim = purple_savedstatus_get_type(saved_status);
-	if (pending)
-		newstatus = DOCKLET_STATUS_PENDING;
-	else if (connecting)
-		newstatus = DOCKLET_STATUS_CONNECTING;
-	else if (prim == PURPLE_STATUS_UNAVAILABLE)
-		newstatus = DOCKLET_STATUS_BUSY;
-	else if (prim == PURPLE_STATUS_AWAY)
-		newstatus = DOCKLET_STATUS_AWAY;
-	else if (prim == PURPLE_STATUS_EXTENDED_AWAY)
-		newstatus = DOCKLET_STATUS_XA;
-	else if (prim == PURPLE_STATUS_OFFLINE)
-		newstatus = DOCKLET_STATUS_OFFLINE;
-	else if (prim == PURPLE_STATUS_INVISIBLE)
-		newstatus = DOCKLET_STATUS_INVISIBLE;
-	else
-		newstatus = DOCKLET_STATUS_AVAILABLE;
+	newstatus = purple_savedstatus_get_type(saved_status);
 
 	/* update the icon if we changed status */
-	if (status != newstatus) {
+	if (status != newstatus || pending!=newpending || connecting!=newconnecting) {
 		status = newstatus;
+		pending = newpending;
+		connecting = newconnecting;
 
-		if (ui_ops && ui_ops->update_icon)
-			ui_ops->update_icon(status);
+		pidgin_docklet_update_icon();
 
 		/* and schedule the blinker function if messages are pending */
-		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink") &&
-		    status == DOCKLET_STATUS_PENDING
-		    && docklet_blinking_timer == 0) {
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/docklet/blink")
+			&& pending && !connecting && docklet_blinking_timer == 0) {
 			docklet_blinking_timer = g_timeout_add(500, docklet_blink_icon, NULL);
 		}
 	}
@@ -510,7 +491,7 @@ docklet_menu() {
 
 	menuitem = gtk_menu_item_new_with_label(_("Unread Messages"));
 
-	if (status == DOCKLET_STATUS_PENDING) {
+	if (pending) {
 		GtkWidget *submenu = gtk_menu_new();
 		GList *l = get_pending_list(0);
 		if (l == NULL) {
@@ -530,7 +511,7 @@ docklet_menu() {
 	pidgin_separator(menu);
 
 	menuitem = pidgin_new_item_from_stock(menu, _("New Message..."), PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW, G_CALLBACK(pidgin_dialogs_im), NULL, 0, 0, NULL);
-	if (status == DOCKLET_STATUS_OFFLINE)
+	if (status == PURPLE_STATUS_OFFLINE)
 		gtk_widget_set_sensitive(menuitem, FALSE);
 
 	menuitem = docklet_status_submenu();
@@ -558,10 +539,6 @@ docklet_menu() {
 
 	pidgin_separator(menu);
 
-	/* TODO: need a submenu to change status, this needs to "link"
-	 * to the status in the buddy list gtkstatusbox
-	 */
-
 	pidgin_new_item_from_stock(menu, _("Quit"), GTK_STOCK_QUIT, G_CALLBACK(purple_core_quit), NULL, 0, 0, NULL);
 
 #ifdef _WIN32
@@ -578,11 +555,18 @@ docklet_menu() {
  * public api for ui_ops
  **************************************************************************/
 void
+pidgin_docklet_update_icon()
+{
+	if (ui_ops && ui_ops->update_icon)
+		ui_ops->update_icon(status, connecting, pending);
+}
+
+void
 pidgin_docklet_clicked(int button_type)
 {
 	switch (button_type) {
 		case 1:
-			if (status == DOCKLET_STATUS_PENDING) {
+			if (pending) {
 				GList *l = get_pending_list(1);
 				if (l != NULL) {
 					purple_conversation_present((PurpleConversation *)l->data);
@@ -608,8 +592,7 @@ pidgin_docklet_embedded()
 	}
 	visible = TRUE;
 	docklet_update_status();
-	if (ui_ops && ui_ops->update_icon)
-		ui_ops->update_icon(status);
+	pidgin_docklet_update_icon();
 }
 
 void
@@ -625,7 +608,7 @@ pidgin_docklet_remove()
 			docklet_blinking_timer = 0;
 		}
 		visible = FALSE;
-		status = DOCKLET_STATUS_OFFLINE;
+		status = PURPLE_STATUS_OFFLINE;
 	}
 }
 
