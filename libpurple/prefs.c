@@ -937,7 +937,7 @@ purple_prefs_set_path_list(const char *name, GList *value)
 
 		if(pref->type != PURPLE_PREF_PATH_LIST) {
 			purple_debug_error("prefs",
-					"purple_prefs_set_path_list: %s not a string list pref\n",
+					"purple_prefs_set_path_list: %s not a path list pref\n",
 					name);
 			return;
 		}
