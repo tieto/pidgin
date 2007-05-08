@@ -398,7 +398,7 @@ char *jabber_google_format_to_html(const char *text)
 					*(p+1) == '<')) {
 				bold_count++;
 				in_bold = FALSE;
-			} else if (preceding_space && !in_bold) {
+			} else if (preceding_space && !in_bold && !g_unichar_isspace(*(p+1))) {
 				bold_count++;
 				in_bold = TRUE;
 			}
@@ -409,7 +409,7 @@ char *jabber_google_format_to_html(const char *text)
 					*(p+1) == '<')) {
 				italic_count++;
 				in_italic = FALSE;
-			} else if (preceding_space && !in_italic) {
+			} else if (preceding_space && !in_italic && !g_unichar_isspace(*(p+1))) {
 				italic_count++;
 				in_italic = TRUE;
 			}
@@ -445,7 +445,7 @@ char *jabber_google_format_to_html(const char *text)
 				str = g_string_append(str, "</b>");
 				in_bold = FALSE;
 				bold_count--;
-			} else if (preceding_space && bold_count > 1) {
+			} else if (preceding_space && bold_count > 1 && !g_unichar_isspace(*(p+1))) {
 				str = g_string_append(str, "<b>");
 				bold_count--;
 				in_bold = TRUE;
@@ -459,7 +459,7 @@ char *jabber_google_format_to_html(const char *text)
 				str = g_string_append(str, "</i>");
 				italic_count--;
 				in_italic = FALSE;
-			} else if (preceding_space && italic_count > 1) {
+			} else if (preceding_space && italic_count > 1 && !g_unichar_isspace(*(p+1))) {
 				str = g_string_append(str, "<i>");
 				italic_count--;
 				in_italic = TRUE;
