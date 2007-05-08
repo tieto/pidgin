@@ -1,3 +1,9 @@
+pidgin (2.0.0+dfsg.1-2) unstable; urgency=low
+
+  * Change pidgin-dev depends from glib to gtk (Closes: #422738)
+
+ -- Ari Pollak <ari@debian.org>  Mon, 07 May 2007 21:09:45 -0400
+
 pidgin (2.0.0+dfsg.1-1) unstable; urgency=low
 
   * New upstream release

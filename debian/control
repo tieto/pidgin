@@ -12,8 +12,8 @@ Build-Depends: cdbs (>= 0.4.37), debhelper (>= 5.0.0),
  libdbus-glib-1-dev, dbus, python (>= 2.4), libavahi-compat-howl-dev,
  libxml-parser-perl, libncursesw5-dev, libsasl2-dev, doxygen
 Standards-Version: 3.6.1
-XS-Vcs-Svn: svn://svn.debian.org/svn/pkg-gnome/packages/unstable/pidgin
-XS-Vcs-Browser: http://svn.debian.org/wsvn/pkg-gnome/packages/unstable/pidgin
+XS-Vcs-Svn: svn://svn.debian.org/svn/pkg-gnome/packages/unstable/pidgin/
+XS-Vcs-Browser: http://svn.debian.org/wsvn/pkg-gnome/packages/unstable/pidgin/
 
 Package: pidgin
 Architecture: any
@@ -64,7 +64,7 @@ Description: multi-protocol instant messaging client - data files
 Package: pidgin-dev
 Section: devel
 Architecture: all
-Depends: pidgin (= ${source:Version}), pidgin-data (= ${source:Version}), pkg-config, libglib2.0-dev
+Depends: pidgin (= ${source:Version}), pidgin-data (= ${source:Version}), pkg-config, libgtk2.0-dev
 Description: multi-protocol instant messaging client - development files
  This package contains the headers and other development files not included in
  the main pidgin package. Install this if you wish to compile your own plugins,
