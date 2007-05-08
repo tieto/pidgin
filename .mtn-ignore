@@ -66,3 +66,4 @@ po/stamp-it
 stamp-h1
 win32-install-dir(\.release)?
 VERSION$
+\.hg.*
