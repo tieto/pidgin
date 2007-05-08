@@ -1079,7 +1079,7 @@ void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, c
 	if (!args || !args[1] || !args[2] || !gc)
 		return;
 
-	msg = g_strdup_printf(_("Cannot join %s:"), args[1]);
+	msg = g_strdup_printf(_("Cannot join %s: Registration is required."), args[1]);
 	purple_notify_error(gc, _("Cannot join channel"), msg, args[2]);
 	g_free(msg);
 }
