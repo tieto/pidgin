@@ -103,17 +103,17 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	if (purple_running_gnome()) {
 		char *path, *font;
 		PangoFontDescription *desc = NULL;
-				
+
 		if ((path = g_find_program_in_path("gconftool-2"))) {
 			g_free(path);
 			if (!g_spawn_command_line_sync(
-					"gconftool-2 -g /desktop/gnome/interface/document_font_name", 
+					"gconftool-2 -g /desktop/gnome/interface/document_font_name",
 					&font, NULL, NULL, NULL))
 				return;
 		}
 		desc = pango_font_description_from_string(font);
 		g_free(font);
-		
+
 		if (desc) {
 			gtk_widget_modify_font(imhtml, desc);
 			pango_font_description_free(desc);
@@ -2279,6 +2279,10 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 
 	if (!filename || g_stat(filename, &st))
 	{
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+		gtk_file_chooser_set_preview_widget_active(
+					GTK_FILE_CHOOSER(dialog->icon_filesel), FALSE);
+#endif /* FILECHOOSER */
 		g_free(filename);
 		return;
 	}
