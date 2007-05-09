@@ -564,7 +564,12 @@ jabber_login(PurpleAccount *account)
 		purple_connection_error(gc, _("Invalid XMPP ID"));
 		return;
 	}
-
+	
+	if (!js->user->domain || *(js->user->domain) == '\0') {
+		purple_connection_error(gc, _("Invalid XMPP ID. Domain must be set."));
+		return;
+	}
+	
 	if(!js->user->resource) {
 		char *me;
 		js->user->resource = g_strdup("Home");

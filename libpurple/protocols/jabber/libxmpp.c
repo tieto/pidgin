@@ -191,7 +191,8 @@ init_plugin(PurplePlugin *plugin)
         PurpleAccountUserSplit *split;
         PurpleAccountOption *option;
 
-        split = purple_account_user_split_new(_("Server"), NULL, '@');
+	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
+        split = purple_account_user_split_new(_("Domain"), NULL, '@');
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
         split = purple_account_user_split_new(_("Resource"), "Home", '/');
