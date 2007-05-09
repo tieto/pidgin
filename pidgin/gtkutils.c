@@ -444,13 +444,13 @@ protocol_menu_cb(GtkWidget *optmenu, GCallback cb)
 	protocol = g_object_get_data(G_OBJECT(item), "protocol");
 
 	if (!strcmp(protocol, "prpl-fake"))
-	{
-		guint index = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(item), "real_index"));
-		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), index);
+		protocol = g_object_get_data(G_OBJECT(item), "real_protocol");
+
+	if (!strcmp(protocol, g_object_get_data(G_OBJECT(optmenu), "last_protocol")))
 		return;
-	}
 
 	user_data = (g_object_get_data(G_OBJECT(optmenu), "user_data"));
+	g_object_set_data(G_OBJECT(optmenu), "last_protocol", (gpointer)protocol);
 
 	if (cb != NULL)
 		((void (*)(GtkWidget *, const char *, gpointer))cb)(item, protocol,
@@ -545,7 +545,15 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 		pidgin_protocol_option_menu_item(menu, sg, image, plugin->info->name, plugin->info->id);
 
 		if (id != NULL && !strcmp(plugin->info->id, id))
+		{
+			g_object_set_data(G_OBJECT(optmenu), "last_protocol", plugin->info->id);
 			selected_index = i;
+		}
+		else if (i == 0)
+		{
+			/* Ensure we set the protocol even if id is NULL or can't be found. */
+			g_object_set_data(G_OBJECT(optmenu), "last_protocol", plugin->info->id);
+		}
 
 		if (!strcmp(plugin->info->id, "prpl-jabber"))
 		{
@@ -556,7 +564,7 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 				image = gtk_image_new();
 
 			gtalk_item = pidgin_protocol_option_menu_item(menu, sg, image, _("Google Talk (XMPP)"), "prpl-fake");
-			g_object_set_data(G_OBJECT(gtalk_item), "real_index", GUINT_TO_POINTER(i));
+			g_object_set_data(G_OBJECT(gtalk_item), "real_protocol", plugin->info->id);
 			i++;
 		}
 
