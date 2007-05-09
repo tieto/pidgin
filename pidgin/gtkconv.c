@@ -4978,6 +4978,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	char *bracket;
 	int tag_count = 0;
 	gboolean is_rtl_message = FALSE;
+	GtkSmileyTree *tree = NULL;
+	GHashTable *smiley_data = NULL;
 
 	g_return_if_fail(conv != NULL);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -5121,6 +5123,17 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_font_options |= GTK_IMHTML_USE_POINTSIZE;
 	}
 
+	if (!(flags & PURPLE_MESSAGE_RECV))
+	{
+		/* Temporarily revert to the original smiley-data to avoid showing up
+		 * custom smileys of the buddy when sending message
+		 */
+		tree = GTK_IMHTML(gtkconv->imhtml)->default_smilies;
+		GTK_IMHTML(gtkconv->imhtml)->default_smilies =
+								GTK_IMHTML(gtkconv->entry)->default_smilies;
+		smiley_data = GTK_IMHTML(gtkconv->imhtml)->smiley_data;
+		GTK_IMHTML(gtkconv->imhtml)->smiley_data = GTK_IMHTML(gtkconv->entry)->smiley_data;
+	}
 
 	/* TODO: These colors should not be hardcoded so log.c can use them */
 	if (flags & PURPLE_MESSAGE_RAW) {
@@ -5152,24 +5165,10 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		 * escaped entities making the string longer */
 		int tag_start_offset = alias ? (strlen(alias_escaped) - strlen(alias)) : 0;
 		int tag_end_offset = 0;
-		GtkSmileyTree *tree = NULL;
-		GHashTable *smiley_data = NULL;
 
 		/* Enforce direction on alias */
 		if (is_rtl_message)
 			str_embed_direction_chars(&alias_escaped);
-
-		if (flags & PURPLE_MESSAGE_SEND)
-		{
-			/* Temporarily revert to the original smiley-data to avoid showing up
-			 * custom smileys of the buddy when sending message
-			 */
-			tree = GTK_IMHTML(gtkconv->imhtml)->default_smilies;
-			GTK_IMHTML(gtkconv->imhtml)->default_smilies =
-									GTK_IMHTML(gtkconv->entry)->default_smilies;
-			smiley_data = GTK_IMHTML(gtkconv->imhtml)->smiley_data;
-			GTK_IMHTML(gtkconv->imhtml)->smiley_data = GTK_IMHTML(gtkconv->entry)->smiley_data;
-		}
 
 		if (flags & PURPLE_MESSAGE_WHISPER) {
 			str = g_malloc(1024);
@@ -5312,13 +5311,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
 							 with_font_tag, gtk_font_options | gtk_font_options_all);
 
-		if (flags & PURPLE_MESSAGE_SEND)
-		{
-			/* Restore the smiley-data */
-			GTK_IMHTML(gtkconv->imhtml)->default_smilies = tree;
-			GTK_IMHTML(gtkconv->imhtml)->smiley_data = smiley_data;
-		}
-
 		g_free(with_font_tag);
 		g_free(new_message);
 	}
@@ -5342,6 +5334,13 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			unseen = PIDGIN_UNSEEN_TEXT;
 
 		gtkconv_set_unseen(gtkconv, unseen);
+	}
+
+	if (!(flags & PURPLE_MESSAGE_RECV))
+	{
+		/* Restore the smiley-data */
+		GTK_IMHTML(gtkconv->imhtml)->default_smilies = tree;
+		GTK_IMHTML(gtkconv->imhtml)->smiley_data = smiley_data;
 	}
 
 	purple_signal_emit(pidgin_conversations_get_handle(),
@@ -5607,15 +5606,25 @@ static void pidgin_conv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer u
 				icon, smiley->icon, smiley->smile);
 #endif
 		if (icon) {
+			GList *wids;
 			gtk_widget_show(icon);
 
 			anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
+			wids = gtk_text_child_anchor_get_widgets(anchor);
 
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", purple_unescape_html(smiley->smile), g_free);
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley->smile), g_free);
 
-			if (smiley->imhtml)
-				gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->imhtml), icon, anchor);
+			if (smiley->imhtml) {
+				if (wids) {
+					GList *children = gtk_container_get_children(GTK_CONTAINER(wids->data));
+					g_list_foreach(children, (GFunc)gtk_widget_destroy, NULL);
+					g_list_free(children);
+					gtk_container_add(GTK_CONTAINER(wids->data), icon);
+				} else
+					gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->imhtml), icon, anchor);
+			}
+			g_list_free(wids);
 		}
 
 	}
