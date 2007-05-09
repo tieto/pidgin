@@ -192,7 +192,7 @@ init_plugin(PurplePlugin *plugin)
         PurpleAccountOption *option;
 
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
-        split = purple_account_user_split_new(_("Domain"), NULL, '@');
+        split = purple_account_user_split_new(_("Domain"), "gmail.com", '@');
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
         split = purple_account_user_split_new(_("Resource"), "Home", '/');
