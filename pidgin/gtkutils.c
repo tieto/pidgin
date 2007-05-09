@@ -558,6 +558,13 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 		if (!strcmp(plugin->info->id, "prpl-jabber"))
 		{
 			GtkWidget *gtalk_item;
+
+			filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
+			                            "16", "google-talk.png", NULL);
+			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+			g_free(filename);
+
+
 			if (pixbuf)
 				image = gtk_image_new_from_pixbuf(pixbuf);
 			else
