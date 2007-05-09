@@ -396,17 +396,26 @@ gg_create_menu(FinchConv *ggc)
 	gnt_menuitem_set_callback(item, toggle_timestamps_cb, ggc);
 
 	if (purple_conversation_get_type(ggc->active_conv) == PURPLE_CONV_TYPE_IM) {
-		item = gnt_menuitem_new(_("Send File"));
-		gnt_menu_add_item(GNT_MENU(sub), item);
-		gnt_menuitem_set_callback(item, send_file_cb, ggc);
+		PurpleAccount *account = purple_conversation_get_account(ggc->active_conv);
+		PurplePluginProtocolInfo *pinfo = account->gc ? PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl) : NULL;
+
+		if (pinfo && pinfo->get_info) {
+			item = gnt_menuitem_new(_("Get Info"));
+			gnt_menu_add_item(GNT_MENU(sub), item);
+			gnt_menuitem_set_callback(item, get_info_cb, ggc);
+		}
 
 		item = gnt_menuitem_new(_("Add Buddy Pounce..."));
 		gnt_menu_add_item(GNT_MENU(sub), item);
 		gnt_menuitem_set_callback(item, add_pounce_cb, ggc);
 
-		item = gnt_menuitem_new(_("Get Info"));
-		gnt_menu_add_item(GNT_MENU(sub), item);
-		gnt_menuitem_set_callback(item, get_info_cb, ggc);
+		if (pinfo && pinfo->send_file &&
+				(!pinfo->can_receive_file ||
+				 	pinfo->can_receive_file(account->gc, purple_conversation_get_name(ggc->active_conv)))) {
+			item = gnt_menuitem_new(_("Send File"));
+			gnt_menu_add_item(GNT_MENU(sub), item);
+			gnt_menuitem_set_callback(item, send_file_cb, ggc);
+		}
 
 		generate_send_to_menu(ggc);
 	}

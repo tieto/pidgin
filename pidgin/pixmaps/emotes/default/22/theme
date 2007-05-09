@@ -21,7 +21,7 @@ shut-mouth.png      :-X
 moneymouth.png      :-$
 foot-in-mouth.png   :-!
 shout.png           >:o     >:O
-! skywalker.png     C:-) c:-) C:) c:)
+! skywalker.png     C:-)    c:-)    C:)     c:)
 ! monkey.png        :-(|)
 
 ### Following AIM 6.1
@@ -42,6 +42,8 @@ thinking.png        :-\\    :-/
 crying.png          :'(
 shut-mouth.png      :-X
 glasses-cool.png    8-)
+! skywalker.png     C:-)    c:-)    C:)     c:)
+! monkey.png        :-(|)
 
 ### Following Windows Live Messenger 8.1
 [MSN]
@@ -121,6 +123,14 @@ party.png           <:o)
 eyeroll.png         8-)
 yawn.png            |-) 
 goat.png            (nah)
+! skywalker.png     C:-)    c:-)    C:)     c:)
+! monkey.png        :-(|)
+
+### Hidden MSN emotes
+sigarette.png      	(ci)    (CI)
+handcuffs.png       (%)
+console.png			(xx)    (XX)
+fingers-crossed.png	(yn)    (YN)
 
 ### Following QQ 2006
 [QQ]
@@ -217,6 +227,8 @@ snowman.png         /雪人   /<Z>     /xr       /snowman
 star.png            /星星   /<*>     /xixing   /star
 girl.png            /女     /<00>    /nv       /woman
 boy.png             /男     /<11>    /nan      /man
+! skywalker.png     C:-)    c:-)    C:)     c:)
+! monkey.png        :-(|)
 
 ### Following ICQ 5.1
 [ICQ]
@@ -248,6 +260,8 @@ bomb.png            @=
 good.png            *THUMBS\ UP*
 beer.png            *DRINK*
 in-love.png         *IN\ LOVE*
+! skywalker.png     C:-)    c:-)    C:)     c:)
+! monkey.png        :-(|)
 
 ### Following Yahoo! Messenger 8.1
 [Yahoo]
@@ -294,7 +308,7 @@ sarcastic.png       /:)
 eyeroll.png         8-|
 silly.png           8-}
 clap.png            =D>     =d>
-#phbbbt             >:P     >:p     MISSING/YAHOO 6: "You are dumb! - No you are!!" => tongue on pissed of smily
+mad-tongue.png      >:P     >:p
 #timeout            :-t     :-T     MISSING: "Let's have a break."
 hug-left.png        >:D<    >:d<
 love-over.png       =((
@@ -302,8 +316,13 @@ sweat.png           #:-S    #:-s
 rotfl.png           =))    
 #loser              L-)     l-)     MISSING/YAHOO 6: "Loser!"
 party.png           <:-P    <:-p
+nailbiting.png      :-SS	:-Ss	:-sS	:-ss
 cowboy.png          <):)
 desire.png          8->
+! skywalker.png     C:-)    c:-)    C:)     c:)
+! monkey.png        :-(|)
+
+### Hidden Yahoo emotes
 alien.png           =:)     >-)
 beat-up.png         b-(     B-(
 chicken.png         ~:>
@@ -324,17 +343,16 @@ shame.png           [-X     [-x
 flag.png            **==
 clover.png          %%-
 musical-note.png    :-"
-nailbiting.png      :-SS    :-ss
 giggle.png          ;))
 worship.png         ^:)^
 star.png            (*)
-mad-tongue.png      >:p
-#yahoo_waving.gif        >:/             TODO
-#yahoo_talktohand.gif    :-@             TODO
-#yahoo_youkiddingme.gif  :-j     :-J     TODO
+#waving.png         >:/
+#talktohand.png     :-@
+#youkiddingme.png   :-j :-J
 
 ### These only work in a certain IMvironment
-#yahoo_malefighter1.gif o->     O->
-#yahoo_malefighter2.gif o=>     O=>
-#yahoo_femalefighter.gif o-+     O-+
+#malefighter1.png   o->     O->
+#malefighter2.png   o=>     O=>
+#femalefighter.png  o-+     O-+
 yin-yang.png        (%)
+
