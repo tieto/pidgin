@@ -563,7 +563,7 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 			else
 				image = gtk_image_new();
 
-			gtalk_item = pidgin_protocol_option_menu_item(menu, sg, image, _("Google Talk (XMPP)"), "prpl-fake");
+			gtalk_item = pidgin_protocol_option_menu_item(menu, sg, image, _("Google Talk"), "prpl-fake");
 			g_object_set_data(G_OBJECT(gtalk_item), "real_protocol", plugin->info->id);
 			i++;
 		}
