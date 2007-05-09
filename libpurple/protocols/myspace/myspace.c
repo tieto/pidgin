@@ -59,8 +59,24 @@
 
 static void init_plugin(PurplePlugin *plugin) 
 {
-    purple_notify_message(plugin, PURPLE_NOTIFY_MSG_INFO, "Hello World!",
-                        "This is the Hello World! plugin :)", NULL, NULL, NULL);
+}
+
+/** 
+ * Load the plugin.
+ */
+static gboolean msim_load(PurplePlugin *plugin)
+{
+#ifdef MSIM_USE_PURPLE_RC4
+	/* If compiled to use RC4 from libpurple, check if it is really there. */
+	if (!purple_ciphers_find_cipher("rc4"))
+	{
+		purple_debug_error("msim", "compiled with MSIM_USE_PURPLE_RC4 but rc4 not in libpurple - not loading MySpaceIM plugin!\n");
+		purple_notify_error(plugin, "Missing Cipher", "The RC4 cipher could not be found",
+				"Recompile without MSIM_USE_PURPLE_RC4, or upgrade to a libpurple with RC4 support. MySpaceIM plugin will not be loaded.");
+		return FALSE;
+	}
+#endif
+	return TRUE;
 }
 
 /**
@@ -1775,7 +1791,7 @@ static PurplePluginInfo info =
     "Jeff Connelly <myspaceim@xyzzy.cjb.net>",        /**< author         */
     "http://developer.pidgin.im/wiki/MySpaceIM/",     /**< homepage       */
 
-    NULL,                                             /**< load           */
+    msim_load,                                        /**< load           */
     NULL,                                             /**< unload         */
     NULL,                                             /**< destroy        */
     NULL,                                             /**< ui_info        */
