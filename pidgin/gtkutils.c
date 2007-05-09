@@ -442,56 +442,11 @@ protocol_menu_cb(GtkWidget *optmenu, GCallback cb)
 	item = gtk_menu_get_active(GTK_MENU(menu));
 
 	protocol = g_object_get_data(G_OBJECT(item), "protocol");
-
-	if (!strcmp(protocol, "prpl-fake"))
-	{
-		guint index = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT(item), "real_index"));
-		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), index);
-		return;
-	}
-
 	user_data = (g_object_get_data(G_OBJECT(optmenu), "user_data"));
 
 	if (cb != NULL)
 		((void (*)(GtkWidget *, const char *, gpointer))cb)(item, protocol,
 															user_data);
-}
-
-static GtkWidget *
-pidgin_protocol_option_menu_item(GtkWidget *menu, GtkSizeGroup *sg, GtkWidget *image,
-                                  const char *name, const char *id)
-{
-	GtkWidget *item;
-	GtkWidget *hbox;
-	GtkWidget *label;
-
-	/* Create the item. */
-	item = gtk_menu_item_new();
-
-	/* Create the hbox. */
-	hbox = gtk_hbox_new(FALSE, 4);
-	gtk_container_add(GTK_CONTAINER(item), hbox);
-	gtk_widget_show(hbox);
-
-	gtk_size_group_add_widget(sg, image);
-
-	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
-	gtk_widget_show(image);
-
-	/* Create the label. */
-	label = gtk_label_new(name);
-	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-	gtk_widget_show(label);
-
-	g_object_set_data(G_OBJECT(item), "protocol", (gpointer)id);
-
-	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-	gtk_widget_show(item);
-	pidgin_set_accessible_label (item, label);
-
-	return item;
 }
 
 GtkWidget *
@@ -500,10 +455,13 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 {
 	PurplePluginProtocolInfo *prpl_info;
 	PurplePlugin *plugin;
+	GtkWidget *hbox;
+	GtkWidget *label;
 	GtkWidget *optmenu;
 	GtkWidget *menu;
-	GdkPixbuf *pixbuf;
+	GtkWidget *item;
 	GtkWidget *image;
+	GdkPixbuf *pixbuf;
 	GList *p;
 	GtkSizeGroup *sg;
 	char *filename;
@@ -528,6 +486,14 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 		plugin = (PurplePlugin *)p->data;
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
+		/* Create the item. */
+		item = gtk_menu_item_new();
+
+		/* Create the hbox. */
+		hbox = gtk_hbox_new(FALSE, 4);
+		gtk_container_add(GTK_CONTAINER(item), hbox);
+		gtk_widget_show(hbox);
+
 		/* Load the image. */
 		proto_name = prpl_info->list_icon(NULL, NULL);
 		g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
@@ -537,31 +503,34 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 		g_free(filename);
 
-		if (pixbuf)
+		if (pixbuf) {
 			image = gtk_image_new_from_pixbuf(pixbuf);
+
+			g_object_unref(G_OBJECT(pixbuf));
+		}
 		else
 			image = gtk_image_new();
 
-		pidgin_protocol_option_menu_item(menu, sg, image, plugin->info->name, plugin->info->id);
+		gtk_size_group_add_widget(sg, image);
+
+		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
+		gtk_widget_show(image);
+
+		/* Create the label. */
+		label = gtk_label_new(plugin->info->name);
+		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+		gtk_widget_show(label);
+
+		g_object_set_data(G_OBJECT(item), "protocol", plugin->info->id);
+
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+		gtk_widget_show(item);
+		pidgin_set_accessible_label (item, label);
 
 		if (id != NULL && !strcmp(plugin->info->id, id))
 			selected_index = i;
-
-		if (!strcmp(plugin->info->id, "prpl-jabber"))
-		{
-			GtkWidget *gtalk_item;
-			if (pixbuf)
-				image = gtk_image_new_from_pixbuf(pixbuf);
-			else
-				image = gtk_image_new();
-
-			gtalk_item = pidgin_protocol_option_menu_item(menu, sg, image, _("Google Talk (XMPP)"), "prpl-fake");
-			g_object_set_data(G_OBJECT(gtalk_item), "real_index", GUINT_TO_POINTER(i));
-			i++;
-		}
-
-		if (pixbuf)
-			g_object_unref(G_OBJECT(pixbuf));
 	}
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
