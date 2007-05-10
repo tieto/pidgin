@@ -385,11 +385,19 @@ static void
 add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GtkWidget *frame;
+	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *entry;
 	GList *user_splits;
 	GList *l, *l2;
 	char *username = NULL;
+
+	if (dialog->protocol_menu != NULL)
+	{
+		gtk_widget_ref(dialog->protocol_menu);
+		hbox = g_object_get_data(G_OBJECT(dialog->protocol_menu), "container");
+		gtk_container_remove(GTK_CONTAINER(hbox), dialog->protocol_menu);
+	}
 
 	if (dialog->login_frame != NULL)
 		gtk_widget_destroy(dialog->login_frame);
@@ -409,10 +417,17 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(vbox);
 
 	/* Protocol */
-	dialog->protocol_menu = pidgin_protocol_option_menu_new(
-			dialog->protocol_id, G_CALLBACK(set_account_protocol_cb), dialog);
+	if (dialog->protocol_menu == NULL)
+	{
+		dialog->protocol_menu = pidgin_protocol_option_menu_new(
+				dialog->protocol_id, G_CALLBACK(set_account_protocol_cb), dialog);
+		gtk_widget_ref(dialog->protocol_menu);
+	}
 
-	add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
+	hbox = add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
+	g_object_set_data(G_OBJECT(dialog->protocol_menu), "container", hbox);
+
+	gtk_widget_unref(dialog->protocol_menu);
 
 	/* Screen name */
 	dialog->screenname_entry = gtk_entry_new();

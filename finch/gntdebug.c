@@ -43,7 +43,6 @@ static struct
 	GntWidget *window;
 	GntWidget *tview;
 	gboolean paused;
-	gboolean timestamps;
 } debug;
 
 static void
@@ -54,14 +53,11 @@ finch_debug_print(PurpleDebugLevel level, const char *category,
 	{
 		int pos = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(debug.tview));
 		GntTextFormatFlags flag = GNT_TEXT_FLAG_NORMAL;
-
-		if (debug.timestamps) {
-			const char *mdate;
-			time_t mtime = time(NULL);
-			mdate = purple_utf8_strftime("%H:%M:%S ", localtime(&mtime));
-			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview),
-					mdate, flag);
-		}
+		const char *mdate;
+		time_t mtime = time(NULL);
+		mdate = purple_utf8_strftime("%H:%M:%S ", localtime(&mtime));
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview),
+				mdate, flag);
 
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview),
 				category, GNT_TEXT_FLAG_BOLD);
@@ -137,13 +133,6 @@ toggle_pause(GntWidget *w, gpointer n)
 	debug.paused = !debug.paused;
 }
 
-static void
-toggle_timestamps(GntWidget *w, gpointer n)
-{
-	debug.timestamps = !debug.timestamps;
-	purple_prefs_set_bool("/purple/debug/timestamps", debug.timestamps);
-}
-
 /* Xerox */
 static void
 purple_glib_log_handler(const gchar *domain, GLogLevelFlags flags,
@@ -202,7 +191,6 @@ size_changed_cb(GntWidget *widget, int oldw, int oldh)
 void finch_debug_window_show()
 {
 	debug.paused = FALSE;
-	debug.timestamps = purple_prefs_get_bool("/purple/debug/timestamps");
 	if (debug.window == NULL)
 	{
 		GntWidget *wid, *box;
@@ -236,12 +224,6 @@ void finch_debug_window_show()
 
 		wid = gnt_check_box_new(_("Pause"));
 		g_signal_connect(G_OBJECT(wid), "toggled", G_CALLBACK(toggle_pause), NULL);
-		GNT_WIDGET_SET_FLAGS(wid, GNT_WIDGET_GROW_Y);
-		gnt_box_add_widget(GNT_BOX(box), wid);
-
-		wid = gnt_check_box_new(_("Timestamps"));
-		gnt_check_box_set_checked(GNT_CHECK_BOX(wid), debug.timestamps);
-		g_signal_connect(G_OBJECT(wid), "toggled", G_CALLBACK(toggle_timestamps), NULL);
 		GNT_WIDGET_SET_FLAGS(wid, GNT_WIDGET_GROW_Y);
 		gnt_box_add_widget(GNT_BOX(box), wid);
 

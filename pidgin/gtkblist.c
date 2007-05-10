@@ -274,6 +274,11 @@ static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, g
 
 static void gtk_blist_menu_info_cb(GtkWidget *w, PurpleBuddy *b)
 {
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	purple_notify_userinfo(b->account->gc, purple_buddy_get_name(b), info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
+
 	serv_get_info(b->account->gc, b->name);
 }
 
