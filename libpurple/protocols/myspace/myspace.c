@@ -905,7 +905,7 @@ static void msim_send_im_by_userid_cb(MsimSession *session, GHashTable *userinfo
     g_return_if_fail(userinfo != NULL);
 
     body = msim_parse_body(g_hash_table_lookup(userinfo, "body"));
-    g_assert(body);
+	g_return_if_fail(body != NULL);
 
     userid = g_hash_table_lookup(body, "UserID");
 
@@ -935,7 +935,7 @@ static void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, gpoi
     g_return_if_fail(userinfo != NULL);
 
     body = msim_parse_body(g_hash_table_lookup(userinfo, "body"));
-    g_assert(body != NULL);
+	g_return_if_fail(body != NULL);
 
     username = g_hash_table_lookup(body, "UserName");
 
@@ -1198,7 +1198,7 @@ static void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer 
     status_str = (gchar*)data;
 
     body = msim_parse_body(g_hash_table_lookup(userinfo, "body"));
-    g_assert(body);
+	g_return_if_fail(body != NULL);
 
     username = g_hash_table_lookup(body, "UserName");
     /* Note: DisplayName doesn't seem to be resolvable. It could be displayed on
@@ -1326,8 +1326,7 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
     session = gc->proto_data;
 
     g_return_if_fail(MSIM_SESSION_VALID(session));
-    
-    g_assert(cond == PURPLE_INPUT_READ);
+    g_return_if_fail(cond == PURPLE_INPUT_READ);
 
     /* Only can handle so much data at once... 
      * If this happens, try recompiling with a higher MSIM_READ_BUF_SIZE.
@@ -1629,9 +1628,8 @@ static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_
  *
  * @param buddy The buddy to obtain status text for.
  *
- * @return Status text.
+ * @return Status text, or NULL if error.
  *
- * Currently returns the display name. 
  */
 static char *msim_status_text(PurpleBuddy *buddy)
 {
@@ -1642,8 +1640,8 @@ static char *msim_status_text(PurpleBuddy *buddy)
     g_return_val_if_fail(buddy != NULL, NULL);
 
     session = (MsimSession*)buddy->account->gc->proto_data;
-    g_assert(MSIM_SESSION_VALID(session));
-    g_assert(session->user_lookup_cache != NULL);
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
+    g_return_val_if_fail(session->user_lookup_cache != NULL, NULL);
 
     userinfo = g_hash_table_lookup(session->user_lookup_cache, buddy->name);
     if (!userinfo)
@@ -1652,7 +1650,7 @@ static char *msim_status_text(PurpleBuddy *buddy)
     }
 
     display_name = g_hash_table_lookup(userinfo, "DisplayName");
-    g_assert(display_name != NULL);
+    g_return_val_if_fail(display_name != NULL, NULL);
 
     return g_strdup(display_name);
 }
@@ -1677,12 +1675,12 @@ static void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_inf
 
         session = (MsimSession*)buddy->account->gc->proto_data;
 
-        g_assert(MSIM_SESSION_VALID(session));
-        g_assert(session->user_lookup_cache);
+        g_return_if_fail(MSIM_SESSION_VALID(session));
+        g_return_if_fail(session->user_lookup_cache);
 
         userinfo = g_hash_table_lookup(session->user_lookup_cache, buddy->name);
 
-        g_assert(userinfo != NULL);
+        g_return_if_fail(userinfo != NULL);
 
         // TODO: if (full), do something different
         purple_notify_user_info_add_pair(user_info, "User ID", g_hash_table_lookup(userinfo, "UserID"));
