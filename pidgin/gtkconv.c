@@ -3116,7 +3116,7 @@ typing_animation(gpointer data) {
 	}
 	if (gtkwin->menu.typing_icon == NULL) {
 		 gtkwin->menu.typing_icon = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
- 		 pidgin_menu_tray_append(PIDGIN_MENU_TRAY(gtkwin->menu.tray),
+		 pidgin_menu_tray_append(PIDGIN_MENU_TRAY(gtkwin->menu.tray),
                                                                   gtkwin->menu.typing_icon,
                                                                   _("User is typing..."));
 	} else {
@@ -3148,8 +3148,10 @@ update_typing_icon(PidginConversation *gtkconv)
 		return;
 
 	if (purple_conv_im_get_typing_state(im) == PURPLE_NOT_TYPING) {
-		if (gtkconv->u.im->typing_timer != 0)
+		if (gtkconv->u.im->typing_timer != 0) {
 			g_source_remove(gtkconv->u.im->typing_timer);
+			gtkconv->u.im->typing_timer = 0;
+		}
 		return;
 	}
 
