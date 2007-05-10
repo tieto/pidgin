@@ -3,14 +3,25 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.0.1 (??/??/????):
 	* Buddy list update speedups when buddy icons are not being
 	  displayed.  (Scott Wolchok)
-	* Custom smileys on MSN can be saved by right-clicking on them.
+	* Fix icons on docklet change status menu to match the status selector
+	* Custom smileys on MSN can be saved by right-clicking on them
+	* Fix a crash deleting a buddy that is in the Buddy List more than once
+	* Compile fixes for Solaris
+	* Fix GTalk formatting when there's a space before/after a */_
+	* Fix Log viewer crash when the filename is not in the expected format
+	* Get User Info now provides immediate feedback, and is updated when the
+	  user information is available
+	* Make the choose buddy icon dialog correctly list the current directory
+	* Fix for buddy icons disappearing
+	* Timestamps are always on in debug output (-d) and Debug Window now
+	* Don't escape html entities in Yahoo! system messages
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
-	  "/users" command.
-	* Menus in the conversation windows.
-	* Improved tab completion support.
-	* Ctrl+c prompts with a dialog before exiting.
+	  "/users" command
+	* Menus in the conversation windows
+	* Improved tab completion support
+	* Ctrl+c prompts with a dialog before exiting
 
 version 2.0.0 (5/3/2007):
 	* The project has new names - libpurple for the core, Pidgin for the

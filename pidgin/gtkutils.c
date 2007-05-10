@@ -2323,24 +2323,10 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 		GTK_FILE_SELECTION(dialog->icon_filesel)));
 #endif /* FILECHOOSER */
 
-	if (!filename || g_stat(filename, &st))
+	if (!filename || g_stat(filename, &st) || !(pixbuf = gdk_pixbuf_new_from_file(filename, NULL)))
 	{
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-		gtk_file_chooser_set_preview_widget_active(
-					GTK_FILE_CHOOSER(dialog->icon_filesel), FALSE);
-#endif /* FILECHOOSER */
-		g_free(filename);
-		return;
-	}
-
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	if (!pixbuf) {
 		gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), NULL);
 		gtk_label_set_markup(GTK_LABEL(dialog->icon_text), "");
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-		gtk_file_chooser_set_preview_widget_active(
-					GTK_FILE_CHOOSER(dialog->icon_filesel), FALSE);
-#endif /* FILECHOOSER */
 		g_free(filename);
 		return;
 	}
@@ -2357,10 +2343,6 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 	scale = gdk_pixbuf_scale_simple(pixbuf, width * 50 / height,
 									50, GDK_INTERP_BILINEAR);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), scale);
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	gtk_file_chooser_set_preview_widget_active(
-					GTK_FILE_CHOOSER(dialog->icon_filesel), TRUE);
-#endif /* FILECHOOSER */
 	gtk_label_set_markup(GTK_LABEL(dialog->icon_text), markup);
 
 	g_object_unref(G_OBJECT(pixbuf));
@@ -2375,7 +2357,9 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char *, gpointer), gpointer data) {
 	struct _icon_chooser *dialog = g_new0(struct _icon_chooser, 1);
 
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+	GtkWidget *vbox;
+#else
 	GtkWidget *hbox;
 	GtkWidget *tv;
 	GtkTreeSelection *sel;
@@ -2406,9 +2390,17 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 
 	dialog->icon_preview = gtk_image_new();
 	dialog->icon_text = gtk_label_new(NULL);
-	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
-	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog->icon_filesel),
-					    GTK_WIDGET(dialog->icon_preview));
+
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_widget_set_size_request(GTK_WIDGET(vbox), -1, 50);
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(dialog->icon_preview), TRUE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox), GTK_WIDGET(dialog->icon_text), FALSE, FALSE, 0);
+	gtk_widget_show_all(vbox);
+
+	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog->icon_filesel), vbox);
+	gtk_file_chooser_set_preview_widget_active(GTK_FILE_CHOOSER(dialog->icon_filesel), TRUE);
+	gtk_file_chooser_set_use_preview_label(GTK_FILE_CHOOSER(dialog->icon_filesel), FALSE);
+
 	g_signal_connect(G_OBJECT(dialog->icon_filesel), "update-preview",
 					 G_CALLBACK(icon_preview_change_cb), dialog);
 	g_signal_connect(G_OBJECT(dialog->icon_filesel), "response",
@@ -2422,7 +2414,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog->icon_filesel),
 										current_folder);
 
-	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
+	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview),-1, 50);
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(
 		GTK_BOX(GTK_FILE_SELECTION(dialog->icon_filesel)->main_vbox),
