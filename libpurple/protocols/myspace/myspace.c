@@ -71,8 +71,11 @@ static gboolean msim_load(PurplePlugin *plugin)
 	if (!purple_ciphers_find_cipher("rc4"))
 	{
 		purple_debug_error("msim", "compiled with MSIM_USE_PURPLE_RC4 but rc4 not in libpurple - not loading MySpaceIM plugin!\n");
-		purple_notify_error(plugin, "Missing Cipher", "The RC4 cipher could not be found",
-				"Recompile without MSIM_USE_PURPLE_RC4, or upgrade to a libpurple with RC4 support. MySpaceIM plugin will not be loaded.");
+		purple_notify_error(plugin, _("Missing Cipher"), 
+				_("The RC4 cipher could not be found"),
+				_("Recompile without MSIM_USE_PURPLE_RC4, or upgrade "
+					"to a libpurple with RC4 support (>= 2.0.1). MySpaceIM "
+					"plugin will not be loaded.");
 		return FALSE;
 	}
 #endif
@@ -89,7 +92,7 @@ static GList *msim_status_types(PurpleAccount *acct)
     GList *types;
     PurpleStatusType *type;
 
-    purple_debug_info("myspace", "returning status types for %s: %s, %s, %s\n",
+    purple_debug_info("myspace", _("returning status types for %s: %s, %s, %s\n"),
                   acct->username,
                   MSIM_STATUS_ONLINE, MSIM_STATUS_AWAY, MSIM_STATUS_OFFLINE, MSIM_STATUS_INVISIBLE);
 
@@ -99,25 +102,25 @@ static GList *msim_status_types(PurpleAccount *acct)
 	/* TODO: Clean up - I don't like all this repetition */
     type = purple_status_type_new(PURPLE_STATUS_AVAILABLE, MSIM_STATUS_ONLINE,
                               MSIM_STATUS_ONLINE, TRUE);
-    purple_status_type_add_attr(type, "message", "Online",
+    purple_status_type_add_attr(type, "message", _("Online"),
                             purple_value_new(PURPLE_TYPE_STRING));
     types = g_list_append(types, type);
 
     type = purple_status_type_new(PURPLE_STATUS_AWAY, MSIM_STATUS_AWAY,
                               MSIM_STATUS_AWAY, TRUE);
-    purple_status_type_add_attr(type, "message", "Away",
+    purple_status_type_add_attr(type, "message", _("Away"),
                             purple_value_new(PURPLE_TYPE_STRING));
     types = g_list_append(types, type);
 
     type = purple_status_type_new(PURPLE_STATUS_OFFLINE, MSIM_STATUS_OFFLINE,
                               MSIM_STATUS_OFFLINE, TRUE);
-    purple_status_type_add_attr(type, "message", "Offline",
+    purple_status_type_add_attr(type, "message", _("Offline"),
                             purple_value_new(PURPLE_TYPE_STRING));
     types = g_list_append(types, type);
 
     type = purple_status_type_new(PURPLE_STATUS_INVISIBLE, MSIM_STATUS_INVISIBLE,
                               MSIM_STATUS_INVISIBLE, TRUE);
-    purple_status_type_add_attr(type, "message", "Invisible",
+    purple_status_type_add_attr(type, "message", _("Invisible"),
                             purple_value_new(PURPLE_TYPE_STRING));
     types = g_list_append(types, type);
 
@@ -436,7 +439,7 @@ static void msim_login(PurpleAccount *acct)
     gc->proto_data = msim_session_new(acct);
 
     /* 1. connect to server */
-    purple_connection_update_progress(gc, "Connecting",
+    purple_connection_update_progress(gc, _("Connecting"),
                                   0,   /* which connection step this is */
                                   4);  /* total number of steps */
 
@@ -454,7 +457,7 @@ static void msim_login(PurpleAccount *acct)
     {
         /* TODO: try other ports if in auto mode, then save
          * working port and try that first next time. */
-        purple_connection_error(gc, "Couldn't create socket");
+        purple_connection_error(gc, _("Couldn't create socket"));
         return;
     }
 
@@ -484,7 +487,7 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
     account = session->account;
     //assert(account);
 
-    purple_connection_update_progress(session->gc, "Reading challenge", 1, 4);
+    purple_connection_update_progress(session->gc, _("Reading challenge"), 1, 4);
 
     purple_debug_info("msim", "nc=<%s>\n", nc_str);
 
@@ -493,11 +496,11 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
     if (nc_len != 0x40)
     {
         purple_debug_info("msim", "bad nc length: %x != 0x40\n", nc_len);
-        purple_connection_error(session->gc, "Unexpected challenge length from server");
+        purple_connection_error(session->gc, _("Unexpected challenge length from server"));
         return 0;
     }
 
-    purple_connection_update_progress(session->gc, "Logging in", 2, 4);
+    purple_connection_update_progress(session->gc, _("Logging in"), 2, 4);
 
     response_str = msim_compute_login_response(nc, account->username, account->password);
 
@@ -1006,7 +1009,7 @@ static int msim_process(PurpleConnection *gc, GHashTable *table)
     } else if (g_hash_table_lookup(table, "sesskey")) {
         purple_debug_info("msim", "SESSKEY=<%s>\n", (gchar*)g_hash_table_lookup(table, "sesskey"));
 
-        purple_connection_update_progress(gc, "Connected", 3, 4);
+        purple_connection_update_progress(gc, _("Connected"), 3, 4);
 
         session->sesskey = g_strdup(g_hash_table_lookup(table, "sesskey"));
 
@@ -1142,13 +1145,13 @@ static int msim_error(MsimSession *session, GHashTable *table)
     err = g_hash_table_lookup(table, "err");
     errmsg = g_hash_table_lookup(table, "errmsg");
 
-    full_errmsg = g_strdup_printf("Protocol error, code %s: %s", err, errmsg);
+    full_errmsg = g_strdup_printf(_("Protocol error, code %s: %s"), err, errmsg);
 
     purple_debug_info("msim", "msim_error: %s\n", full_errmsg);
 
     /* TODO: check 'fatal' and die if asked to.
      * TODO: do something with the error # (localization of errmsg?)  */
-    purple_notify_error(session->account, g_strdup("MySpaceIM Error"), 
+    purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
             full_errmsg, NULL);
 
     if (g_hash_table_lookup(table, "fatal"))
@@ -1336,7 +1339,7 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
     {
         purple_debug_error("msim", "msim_input_cb: %d-byte read buffer full!\n",
                 MSIM_READ_BUF_SIZE);
-        purple_connection_error(gc, "Read buffer full");
+        purple_connection_error(gc, _("Read buffer full"));
         /* TODO: fix 100% CPU after closing */
         close(source);
         return;
@@ -1357,7 +1360,7 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
     }
     else if (n < 0)
     {
-        purple_connection_error(gc, "Read error");
+        purple_connection_error(gc, _("Read error"));
         purple_debug_error("msim", "msim_input_cb: read error, ret=%d, "
 			"error=%s, source=%d, fd=%d (%X))\n", 
 			n, strerror(errno), source, session->fd, session->fd);
@@ -1367,7 +1370,7 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
     else if (n == 0)
     {
         purple_debug_info("msim", "msim_input_cb: server disconnected\n");
-        purple_connection_error(gc, "Server has disconnected");
+        purple_connection_error(gc, _("Server has disconnected"));
         return;
     }
 
@@ -1406,7 +1409,7 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
         {
             purple_debug_info("msim", "msim_input_cb: couldn't parse <%s>\n", 
 					session->rxbuf);
-            purple_connection_error(gc, "Unparseable message");
+            purple_connection_error(gc, _("Unparseable message"));
         }
         else
         {
@@ -1444,8 +1447,8 @@ static void msim_connect_cb(gpointer data, gint source, const gchar *error_messa
 
     if (source < 0)
     {
-        purple_connection_error(gc, "Couldn't connect to host");
-        purple_connection_error(gc, g_strdup_printf("Couldn't connect to host: %s (%d)", 
+        purple_connection_error(gc, _("Couldn't connect to host"));
+        purple_connection_error(gc, g_strdup_printf(_("Couldn't connect to host: %s (%d)"), 
                     error_message, source));
         return;
     }
