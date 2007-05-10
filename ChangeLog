@@ -16,6 +16,8 @@ version 2.0.1 (??/??/????):
 	* Timestamps are always on in debug output (-d) and Debug Window now
 	* Don't escape html entities in Yahoo! system messages
 	* Fix for the choose buddy icon dialog resizing strangely as files are selected
+	* Receives notifications when XMPP buddies send "leaving chat"
+	  messages
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
