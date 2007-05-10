@@ -18,6 +18,8 @@ version 2.0.1 (??/??/????):
 	* Fix for the choose buddy icon dialog resizing strangely as files are selected
 	* Receives notifications when XMPP buddies send "leaving chat"
 	  messages
+	* Fix the typing animation so it doesn't stop animating once a conversation
+	  has gone from typing -> not typing -> typing
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
