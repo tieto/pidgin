@@ -996,6 +996,10 @@ if test "x$GCC" = "xyes"; then
 		])
 	fi
 
+	if test "x$enable_debug" = "xyes"; then
+		CFLAGS="$CFLAGS -O0"
+	fi
+
 	DEBUG_CFLAGS="-Wall $DEBUG_CFLAGS"
 	CFLAGS="-g $CFLAGS"
 fi
@@ -2000,14 +2004,9 @@ AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
 
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
+
 if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
-fi
-
-AC_ARG_ENABLE(fatal-asserts, [AC_HELP_STRING([--enable-fatal-asserts],
-	[make assertions fatal (useful for debugging)])], , enable_fatal_asserts=no)
-if test "x$enable_fatal_asserts" = "xyes" ; then
-	AC_DEFINE(PURPLE_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
 fi
 
 AC_OUTPUT([Makefile
@@ -2158,7 +2157,6 @@ echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
 echo
 echo Print debugging messages...... : $enable_debug
-echo Assertions are fatal.......... : $enable_fatal_asserts
 echo
 eval eval echo Pidgin will be installed in $bindir.
 if test "x$pidginpath" != "x" ; then
