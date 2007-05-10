@@ -922,9 +922,6 @@ static void yahoo_process_sysmessage(PurpleConnection *gc, struct yahoo_packet *
 	if (!msg || !g_utf8_validate(msg, -1, NULL))
 		return;
 
-	/* TODO: Does this really need to be escaped?  It seems like it doesn't. */
-	escmsg = g_markup_escape_text(msg, -1);
-
 	prim = g_strdup_printf(_("Yahoo! system message for %s:"),
 	                       me?me:purple_connection_get_display_name(gc));
 	purple_notify_info(NULL, NULL, prim, escmsg);
