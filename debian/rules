@@ -57,12 +57,8 @@ build/pidgin-dev::
 	cd build; make docs
 
 binary-install/pidgin-dev::
-	dh_installdirs -ppidgin-dev usr/share/doc/pidgin-data \
-			usr/share/doc/pidgin-data/html
 	dh_installdocs -ppidgin-dev debian/README.Debian.dev
 	rm -f debian/pidgin-dev/usr/share/doc/pidgin-data/copyright
-	cp build/doc/html/*.{html,gif,png} \
-		debian/pidgin-dev/usr/share/doc/pidgin-data/html
 
 cleanbuilddir/pidgin-dev::
 	rm -f debian/dh_pidgin.1

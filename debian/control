@@ -52,7 +52,6 @@ Description: multi-protocol instant messaging client
 Package: pidgin-data
 Architecture: all
 Depends: ${misc:Depends}
-Replaces: gaim-data (<< 1:2.0.0+beta6-3)
 Recommends: pidgin
 Enhances: pidgin
 Description: multi-protocol instant messaging client - data files
@@ -64,6 +63,7 @@ Package: pidgin-dev
 Section: devel
 Architecture: all
 Depends: pidgin (= ${source:Version}), pidgin-data (= ${source:Version}), pkg-config, libgtk2.0-dev
+Replaces: gaim-dev (<< 1:2.0.0+beta6-3)
 Description: multi-protocol instant messaging client - development files
  This package contains the headers and other development files not included in
  the main pidgin package. Install this if you wish to compile your own plugins,

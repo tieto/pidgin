@@ -1,3 +1,10 @@
+pidgin (2.0.0+dfsg.1-4) unstable; urgency=low
+
+  * Remove bashism in debian/rules
+  * Make pidgin-dev Replaces: gaim-dev (Closes: #422724)
+
+ -- Ari Pollak <ari@debian.org>  Fri, 11 May 2007 18:42:08 -0400
+
 pidgin (2.0.0+dfsg.1-3) unstable; urgency=low
 
   * Make pidgin-dbg Replaces: gaim-dbg (Closes: #422845)

@@ -1,3 +1,4 @@
+build/doc/html/*.{html,gif,png} usr/share/doc/pidgin-data/html
 debian/tmp/usr/include
 debian/tmp/usr/lib/*.so
 debian/tmp/usr/lib/pkgconfig
