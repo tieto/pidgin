@@ -981,6 +981,10 @@ if test "x$GCC" = "xyes"; then
 		])
 	fi
 
+	if test "x$enable_debug" = "xyes"; then
+		CFLAGS="$CFLAGS -O0"
+	fi
+
 	DEBUG_CFLAGS="-Wall $DEBUG_CFLAGS"
 	CFLAGS="-g $CFLAGS"
 fi
