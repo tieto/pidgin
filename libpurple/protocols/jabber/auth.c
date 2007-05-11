@@ -292,7 +292,7 @@ static void jabber_auth_start_cyrus(JabberStream *js)
 				 */
 				} else if (!plaintext) {
 					char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-							js->user->domain);
+							js->gc->account->username);
 					purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 							_("Plaintext Authentication"),
 							msg,
@@ -481,7 +481,7 @@ jabber_auth_start(JabberStream *js, xmlnode *packet)
 
 		if(js->gsc == NULL && !purple_account_get_bool(js->gc->account, "auth_plain_in_clear", FALSE)) {
 			char *msg = g_strdup_printf(_("%s requires plaintext authentication over an unencrypted connection.  Allow this and continue authentication?"),
-					js->user->domain);
+					js->gc->account->username);
 			purple_request_yes_no(js->gc, _("Plaintext Authentication"),
 					_("Plaintext Authentication"),
 					msg,
