@@ -5125,7 +5125,7 @@ msgid ""
 "%s on the local list is inside the group \"%s\" but not on the server list. "
 "Do you want this buddy to be added?"
 msgstr ""
-"%s est dans le groupe « %s » sur la liste locale mais pas pas sur le "
+"%s est dans le groupe « %s » sur la liste locale mais pas sur le "
 "serveur. Voulez-vous ajouter ce contact ?"
 
 #: ../libpurple/protocols/msn/dialog.c:124
@@ -5134,7 +5134,7 @@ msgid ""
 "%s is on the local list but not on the server list. Do you want this buddy "
 "to be added?"
 msgstr ""
-"%s est sur la liste locale mais pas pas sur le serveur. Voulez-vous ajouter "
+"%s est sur la liste locale mais pas sur le serveur. Voulez-vous ajouter "
 "ce contact ?"
 
 #: ../libpurple/protocols/msn/error.c:36
