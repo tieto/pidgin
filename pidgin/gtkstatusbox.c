@@ -197,7 +197,7 @@ update_to_reflect_account_status(PidginStatusBox *status_box, PurpleAccount *acc
 	const char *message;
 
 	statustype = purple_status_type_find_with_id((GList *)purple_account_get_status_types(account),
-						     purple_status_type_get_id(purple_status_get_type(newstatus)));
+	                                           (char *)purple_status_type_get_id(purple_status_get_type(newstatus)));
 
 	for (l = purple_account_get_status_types(account); l != NULL; l = l->next) {
 		PurpleStatusType *status_type = (PurpleStatusType *)l->data;
@@ -1524,8 +1524,7 @@ treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, PidginStatu
 	if (ewidget != status_box->tree_view) {
 		if (ewidget == status_box->toggle_button &&
 		    status_box->popup_in_progress &&
-			gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(status_box->toggle_button)))
-		{
+		    gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (status_box->toggle_button))) {
 			pidgin_status_box_popdown (status_box);
 			return TRUE;
 		}
@@ -1744,11 +1743,14 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 						PURPLE_CALLBACK(current_savedstatus_changed_cb),
 						status_box);
 	purple_signal_connect(purple_accounts_get_handle(), "account-enabled", status_box,
-			      PURPLE_CALLBACK(account_enabled_cb), status_box);
+						PURPLE_CALLBACK(account_enabled_cb),
+						status_box);
 	purple_signal_connect(purple_accounts_get_handle(), "account-disabled", status_box,
-			      PURPLE_CALLBACK(account_enabled_cb), status_box);
+						PURPLE_CALLBACK(account_enabled_cb),
+						status_box);
 	purple_signal_connect(purple_accounts_get_handle(), "account-status-changed", status_box,
-			      PURPLE_CALLBACK(account_status_changed_cb), status_box);
+						PURPLE_CALLBACK(account_status_changed_cb),
+						status_box);
 
 	purple_prefs_connect_callback(status_box, PIDGIN_PREFS_ROOT "/conversations/spellcheck",
 								spellcheck_prefs_cb, status_box);
@@ -1967,7 +1969,8 @@ pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type,
 		escaped_title = g_markup_escape_text(title, -1);
 		escaped_desc = g_markup_escape_text(desc, -1);
 		text = g_strdup_printf("%s - <span color=\"%s\" size=\"smaller\">%s</span>",
-					escaped_title, aa_color, escaped_desc);
+					escaped_title,
+				       aa_color, escaped_desc);
 		g_free(escaped_title);
 		g_free(escaped_desc);
 	}
