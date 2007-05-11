@@ -1434,7 +1434,13 @@ static PurpleCipherOps RC4Ops = {
 	NULL,          /* set salt      */
 	NULL,          /* get salt size */
 	rc4_set_key,   /* set key       */
-	rc4_get_key_size/* get key size  */
+	rc4_get_key_size, /* get key size  */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 /*******************************************************************************
