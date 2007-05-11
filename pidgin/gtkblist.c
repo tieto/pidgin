@@ -2091,28 +2091,28 @@ roundify(GdkPixbuf *pixbuf) {
 
 	if (width < 6 || height < 6)
 		return;
-
+	
 	/* Top left */
 	pixels[3] = 0;
 	pixels[7] = 0x80;
 	pixels[11] = 0xC0;
 	pixels[rowstride + 3] = 0x80;
 	pixels[rowstride * 2 + 3] = 0xC0;
-
+	
 	/* Top right */
 	pixels[width * 4 - 1] = 0;
 	pixels[width * 4 - 5] = 0x80;
 	pixels[width * 4 - 9] = 0xC0;
 	pixels[rowstride + (width * 4) - 1] = 0x80;
 	pixels[(2 * rowstride) + (width * 4) - 1] = 0xC0;
-
+	
 	/* Bottom left */
 	pixels[(height - 1) * rowstride + 3] = 0;
 	pixels[(height - 1) * rowstride + 7] = 0x80;
 	pixels[(height - 1) * rowstride + 11] = 0xC0;
 	pixels[(height - 2) * rowstride + 3] = 0x80;
 	pixels[(height - 3) * rowstride + 3] = 0xC0;
-
+	
 	/* Bottom right */
 	pixels[height * rowstride - 1] = 0;
 	pixels[(height - 1) * rowstride - 1] = 0x80;
@@ -3152,8 +3152,7 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
 			buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
-			if (buddy != NULL)
-				gtkbuddynode = ((PurpleBlistNode*)buddy)->ui_data;
+			gtkbuddynode = ((PurpleBlistNode*)buddy)->ui_data;
 		}
 	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (PurpleBuddy*)node;
