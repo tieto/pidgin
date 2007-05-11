@@ -905,22 +905,7 @@ AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 AC_CHECK_HEADER(sys/utsname.h)
 AC_CHECK_FUNC(uname)
 
-AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], enable_fortify="$enableval", enable_fortify=yes)
-
-AC_ARG_ENABLE(mcheck, [AC_HELP_STRING([--enable-mcheck], [compile with mcheck (malloc debugging) support])], enable_mcheck="$enableval", enable_mcheck="$enable_debug")
-if test "x$enable_mcheck" = "xyes" ; then
-	orig_LIBS="$LIBS"
-	LIBS="$LIBS -lmcheck"
-	AC_MSG_CHECKING(for mcheck support)
-	AC_TRY_COMPILE([], [
-		int main() {return 0;}
-	], [
-		AC_MSG_RESULT(yes)
-	], [
-		AC_MSG_RESULT(no)
-		LIBS="$orig_LIBS"
-	])
-fi
+AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
 
 if test "x$GCC" = "xyes"; then
 	dnl We enable -Wall later.

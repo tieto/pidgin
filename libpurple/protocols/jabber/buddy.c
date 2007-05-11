@@ -1195,7 +1195,7 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 
 		/* this is to fix the feeling of irritation I get when trying
 		 * to get info on a friend running Trillian, which doesn't
-		 * respont (with an error or otherwise) to jabber:iq:last
+		 * respond (with an error or otherwise) to jabber:iq:last
 		 * requests.  There are a number of Trillian users in my
 		 * office. */
 		if(!_client_is_blacklisted(jbr, "jabber:iq:last")) {

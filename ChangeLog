@@ -20,6 +20,10 @@ version 2.0.1 (??/??/????):
 	  messages
 	* Fix the typing animation so it doesn't stop animating once a conversation
 	  has gone from typing -> not typing -> typing
+	* Fix error messages when joing XMPP chats
+	* Identify the account when warning about plaintext auth over an
+	  unencrypted channel
+	* Fix XMPP SASL authentication error when using Cyrus and a connect server
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
