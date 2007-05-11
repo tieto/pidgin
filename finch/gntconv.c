@@ -57,6 +57,9 @@
 
 #include "config.h"
 
+static void finch_write_common(PurpleConversation *conv, const char *who,
+		const char *message, PurpleMessageFlags flags, time_t mtime);
+
 static void
 send_typing_notification(GntWidget *w, FinchConv *ggconv)
 {
@@ -266,6 +269,13 @@ update_buddy_typing(PurpleAccount *account, const char *who, gpointer null)
 	}
 	gnt_screen_rename_widget(ggc->window, title);
 	g_free(title);
+}
+
+static void
+chat_left_cb(PurpleConversation *conv, gpointer null)
+{
+	finch_write_common(conv, NULL, _("You have left this chat."),
+			PURPLE_MESSAGE_SYSTEM, time(NULL));
 }
 
 static gpointer
@@ -519,10 +529,6 @@ finch_create_conversation(PurpleConversation *conv)
 
 	if (type == PURPLE_CONV_TYPE_IM) {
 		g_signal_connect(G_OBJECT(ggc->entry), "text_changed", G_CALLBACK(send_typing_notification), ggc);
-		purple_signal_connect(purple_conversations_get_handle(), "buddy-typing", finch_conv_get_handle(),
-						PURPLE_CALLBACK(update_buddy_typing), NULL);
-		purple_signal_connect(purple_conversations_get_handle(), "buddy-typing-stopped", finch_conv_get_handle(),
-						PURPLE_CALLBACK(update_buddy_typing), NULL);
 	}
 
 	g_free(title);
@@ -944,10 +950,18 @@ void finch_conversation_init()
 	purple_cmd_register("status", "", PURPLE_CMD_P_DEFAULT,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
 	                  cmd_show_window, _("statuses: Show the savedstatuses window."), finch_savedstatus_show_all);
+
+	purple_signal_connect(purple_conversations_get_handle(), "buddy-typing", finch_conv_get_handle(),
+					PURPLE_CALLBACK(update_buddy_typing), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "buddy-typing-stopped", finch_conv_get_handle(),
+					PURPLE_CALLBACK(update_buddy_typing), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "chat-left", finch_conv_get_handle(),
+					PURPLE_CALLBACK(chat_left_cb), NULL);
 }
 
 void finch_conversation_uninit()
 {
+	purple_signals_disconnect_by_handle(finch_conv_get_handle());
 }
 
 void finch_conversation_set_active(PurpleConversation *conv)
