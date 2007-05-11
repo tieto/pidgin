@@ -54,9 +54,9 @@ match_string(const char *category, const char *args)
 	const char *str = gnt_entry_get_text(GNT_ENTRY(debug.search));
 	if (!str || !*str)
 		return TRUE;
-	if (g_ascii_strcasecmp(str, category) == 0)
+	if (g_strrstr(category, str) != NULL)
 		return TRUE;
-	if (g_ascii_strcasecmp(str, args) == 0)
+	if (g_strrstr(args, str) != NULL)
 		return TRUE;
 	return FALSE;
 }
