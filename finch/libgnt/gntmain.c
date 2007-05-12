@@ -145,10 +145,7 @@ detect_mouse_action(const char *buffer)
 	} else
 		return FALSE;
 
-	if (!widget)
-		return FALSE;
-
-	if (gnt_wm_process_click(wm, event, x, y, widget))
+	if (widget && gnt_wm_process_click(wm, event, x, y, widget))
 		return TRUE;
 	
 	if (event == GNT_LEFT_MOUSE_DOWN && widget && widget != wm->_list.window &&
@@ -180,7 +177,8 @@ detect_mouse_action(const char *buffer)
 		offset = 0;
 	}
 
-	gnt_widget_clicked(widget, event, x, y);
+	if (widget)
+		gnt_widget_clicked(widget, event, x, y);
 	return TRUE;
 }
 
