@@ -510,7 +510,10 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 	const char *proto_name;
 	char buf[256];
 	int i, selected_index = -1;
-	char *gtalk_name = g_strdup(_("Google Talk"));
+	char *gtalk_name = NULL;
+
+	if (purple_find_prpl("prpl-jabber"))
+		gtalk_name = g_strdup(_("Google Talk"));
 
 	optmenu = gtk_option_menu_new();
 	gtk_widget_show(optmenu);
