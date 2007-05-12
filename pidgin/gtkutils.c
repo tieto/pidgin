@@ -510,6 +510,7 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 	const char *proto_name;
 	char buf[256];
 	int i, selected_index = -1;
+	char *gtalk_name = g_strdup(_("Google Talk"));
 
 	optmenu = gtk_option_menu_new();
 	gtk_widget_show(optmenu);
@@ -527,6 +528,29 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 
 		plugin = (PurplePlugin *)p->data;
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
+
+		if (gtalk_name && strcmp(gtalk_name, plugin->info->name) < 0)
+		{
+			GtkWidget *gtalk_item;
+
+			filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
+			                            "16", "google-talk.png", NULL);
+			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+			g_free(filename);
+
+
+			if (pixbuf)
+				image = gtk_image_new_from_pixbuf(pixbuf);
+			else
+				image = gtk_image_new();
+
+			gtalk_item = pidgin_protocol_option_menu_item(menu, sg, image, gtalk_name, "prpl-fake");
+			g_object_set_data(G_OBJECT(gtalk_item), "real_protocol", plugin->info->id);
+			i++;
+
+			g_free(gtalk_name);
+			gtalk_name = NULL;
+		}
 
 		/* Load the image. */
 		proto_name = prpl_info->list_icon(NULL, NULL);
@@ -555,29 +579,15 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 			g_object_set_data(G_OBJECT(optmenu), "last_protocol", plugin->info->id);
 		}
 
-		if (!strcmp(plugin->info->id, "prpl-jabber"))
-		{
-			GtkWidget *gtalk_item;
-
-			filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
-			                            "16", "google-talk.png", NULL);
-			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-			g_free(filename);
-
-
-			if (pixbuf)
-				image = gtk_image_new_from_pixbuf(pixbuf);
-			else
-				image = gtk_image_new();
-
-			gtalk_item = pidgin_protocol_option_menu_item(menu, sg, image, _("Google Talk"), "prpl-fake");
-			g_object_set_data(G_OBJECT(gtalk_item), "real_protocol", plugin->info->id);
-			i++;
-		}
-
 		if (pixbuf)
 			g_object_unref(G_OBJECT(pixbuf));
 	}
+
+	/* This is only needed if Pidgin has zero prpls compiled in, but
+	 * I'm doing it because it's proper and might make a difference
+	 * for automated source checkers. */
+	g_free(gtalk_name);
+
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
 
