@@ -90,9 +90,9 @@ lsg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session = cmdproc->session;
 	const char *name;
-	int group_id;
+	const char *group_id;
 
-	group_id = atoi(cmd->params[0]);
+	group_id = cmd->params[0];
 	name = purple_url_decode(cmd->params[1]);
 
 	msn_group_new(session->userlist, group_id, name);

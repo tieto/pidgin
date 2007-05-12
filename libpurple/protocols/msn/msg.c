@@ -23,6 +23,7 @@
  */
 #include "msn.h"
 #include "msg.h"
+#define MSN_DEBUG_MSG
 
 MsnMessage *
 msn_message_new(MsnMsgType type)
@@ -104,8 +105,7 @@ msn_message_unref(MsnMessage *msg)
 	purple_debug_info("msn", "message unref (%p)[%d]\n", msg, msg->ref_count);
 #endif
 
-	if (msg->ref_count == 0)
-	{
+	if (msg->ref_count == 0){
 		msn_message_destroy(msg);
 
 		return NULL;
@@ -126,7 +126,7 @@ msn_message_new_plain(const char *message)
 	msn_message_set_charset(msg, "UTF-8");
 	msn_message_set_flag(msg, 'A');
 	msn_message_set_attr(msg, "X-MMS-IM-Format",
-						 "FN=MS%20Sans%20Serif; EF=; CO=0; PF=0");
+						 "FN=MS%20Sans%20Serif; EF=; CO=0; CS=86;PF=0");
 
 	message_cr = purple_str_add_cr(message);
 	msn_message_set_bin_data(msg, message_cr, strlen(message_cr));
@@ -206,7 +206,8 @@ msn_message_parse_slp_body(MsnMessage *msg, const char *body, size_t len)
 
 void
 msn_message_parse_payload(MsnMessage *msg,
-						  const char *payload, size_t payload_len)
+						  const char *payload, size_t payload_len,
+						  const char *line_dem,const char *body_dem)
 {
 	char *tmp_base, *tmp;
 	const char *content_type;
@@ -214,12 +215,12 @@ msn_message_parse_payload(MsnMessage *msg,
 	char **elems, **cur, **tokens;
 
 	g_return_if_fail(payload != NULL);
-
+//	purple_debug_info("MaYuan","payload:{%s}\n",payload);
 	tmp_base = tmp = g_malloc0(payload_len + 1);
 	memcpy(tmp_base, payload, payload_len);
 
 	/* Parse the attributes. */
-	end = strstr(tmp, "\r\n\r\n");
+	end = strstr(tmp, body_dem);
 	/* TODO? some clients use \r delimiters instead of \r\n, the official client
 	 * doesn't send such messages, but does handle receiving them. We'll just
 	 * avoid crashing for now */
@@ -229,10 +230,9 @@ msn_message_parse_payload(MsnMessage *msg,
 	}
 	*end = '\0';
 
-	elems = g_strsplit(tmp, "\r\n", 0);
+	elems = g_strsplit(tmp, line_dem, 0);
 
-	for (cur = elems; *cur != NULL; cur++)
-	{
+	for (cur = elems; *cur != NULL; cur++){
 		const char *key, *value;
 
 		tokens = g_strsplit(*cur, ": ", 2);
@@ -240,20 +240,17 @@ msn_message_parse_payload(MsnMessage *msg,
 		key = tokens[0];
 		value = tokens[1];
 
-		if (!strcmp(key, "MIME-Version"))
-		{
+		/*if not MIME content ,then return*/
+		if (!strcmp(key, "MIME-Version")){
 			g_strfreev(tokens);
 			continue;
 		}
 
-		if (!strcmp(key, "Content-Type"))
-		{
+		if (!strcmp(key, "Content-Type")){
 			char *charset, *c;
 
-			if ((c = strchr(value, ';')) != NULL)
-			{
-				if ((charset = strchr(c, '=')) != NULL)
-				{
+			if ((c = strchr(value, ';')) != NULL){
+				if ((charset = strchr(c, '=')) != NULL)	{
 					charset++;
 					msn_message_set_charset(msg, charset);
 				}
@@ -262,9 +259,7 @@ msn_message_parse_payload(MsnMessage *msg,
 			}
 
 			msn_message_set_content_type(msg, value);
-		}
-		else
-		{
+		}else{
 			msn_message_set_attr(msg, key, value);
 		}
 
@@ -274,14 +269,13 @@ msn_message_parse_payload(MsnMessage *msg,
 	g_strfreev(elems);
 
 	/* Proceed to the end of the "\r\n\r\n" */
-	tmp = end + 4;
+	tmp = end + strlen(body_dem);
 
 	/* Now we *should* be at the body. */
 	content_type = msn_message_get_content_type(msg);
 
 	if (content_type != NULL &&
-		!strcmp(content_type, "application/x-msnmsgrp2p"))
-	{
+		!strcmp(content_type, "application/x-msnmsgrp2p")){
 		MsnSlpHeader header;
 		MsnSlpFooter footer;
 		int body_len;
@@ -323,9 +317,7 @@ msn_message_parse_payload(MsnMessage *msg,
 			tmp += sizeof(footer);
 			msg->msnslp_footer.value = GUINT32_FROM_BE(footer.value);
 		}
-	}
-	else
-	{
+	}else{
 		if (payload_len - (tmp - tmp_base) > 0) {
 			msg->body_len = payload_len - (tmp - tmp_base);
 			msg->body = g_malloc0(msg->body_len + 1);
@@ -476,15 +468,14 @@ msn_message_gen_payload(MsnMessage *msg, size_t *ret_size)
 	}
 	else
 	{
-		if (body != NULL)
-		{
+		if (body != NULL){
 			memcpy(n, body, body_len);
 			n += body_len;
+			*n = '\0';
 		}
 	}
 
-	if (ret_size != NULL)
-	{
+	if (ret_size != NULL){
 		*ret_size = n - base;
 
 		if (*ret_size > 1664)
@@ -523,14 +514,11 @@ msn_message_set_bin_data(MsnMessage *msg, const void *data, size_t len)
 	if (msg->body != NULL)
 		g_free(msg->body);
 
-	if (data != NULL && len > 0)
-	{
+	if (data != NULL && len > 0){
 		msg->body = g_malloc0(len + 1);
 		memcpy(msg->body, data, len);
 		msg->body_len = len;
-	}
-	else
-	{
+	}else{
 		msg->body = NULL;
 		msg->body_len = 0;
 	}
@@ -785,3 +773,4 @@ msn_message_show_readable(MsnMessage *msg, const char *info,
 
 	g_string_free(str, TRUE);
 }
+
