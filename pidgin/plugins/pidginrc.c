@@ -61,16 +61,16 @@ static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
 static const char *font_prefs[] = {
 	"/plugins/gtk/purplerc/font/*pidgin_conv_entry",
 	"/plugins/gtk/purplerc/font/*pidgin_conv_imhtml",
-	"/plugins/gtk/purplerc/font/*pidginlog_imhtml",
-	"/plugins/gtk/purplerc/font/*pidginrequest_imhtml",
-	"/plugins/gtk/purplerc/font/*pidginnotify_imhtml",
+	"/plugins/gtk/purplerc/font/*pidgin_log_imhtml",
+	"/plugins/gtk/purplerc/font/*pidgin_request_imhtml",
+	"/plugins/gtk/purplerc/font/*pidgin_notify_imhtml",
 };
 static const char *font_prefs_set[] = {
 	"/plugins/gtk/purplerc/set/font/*pidgin_conv_entry",
 	"/plugins/gtk/purplerc/set/font/*pidgin_conv_imhtml",
-	"/plugins/gtk/purplerc/set/font/*pidginlog_imhtml",
-	"/plugins/gtk/purplerc/set/font/*pidginrequest_imhtml",
-	"/plugins/gtk/purplerc/set/font/*pidginnotify_imhtml",
+	"/plugins/gtk/purplerc/set/font/*pidgin_log_imhtml",
+	"/plugins/gtk/purplerc/set/font/*pidgin_request_imhtml",
+	"/plugins/gtk/purplerc/set/font/*pidgin_notify_imhtml",
 };
 static const char *font_names[] = {
 	N_("Conversation Entry"),
@@ -167,7 +167,7 @@ purplerc_make_changes()
 				g_string_append_printf(style_string,
 				                       "style \"%s_style\"\n"
 				                       "{font_name = \"%s\"}\n"
-				                       "widget \"%s\""
+				                       "widget \"%s\" "
 				                       "style \"%s_style\"\n",
 				                       prefbase, pref,
 				                       prefbase, prefbase);
@@ -260,7 +260,7 @@ purplerc_write(GtkWidget *widget, gpointer data)
 				g_string_append_printf(style_string,
 				                       "style \"%s_style\"\n"
 				                       "{font_name = \"%s\"}\n"
-				                       "widget \"%s\""
+				                       "widget \"%s\" "
 				                       "style \"%s_style\"\n",
 				                       prefbase, pref,
 				                       prefbase, prefbase);
