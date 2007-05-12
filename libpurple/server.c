@@ -576,15 +576,20 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 		purple_conv_im_set_typing_state(im, state);
 		purple_conv_im_update_typing(im);
 	} else {
-		if (state == PURPLE_TYPING)
+		switch (state)
 		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typing", gc->account, name);
-		}
-		else
-		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typed", gc->account, name);
+			case PURPLE_TYPING:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typing", gc->account, name);
+				break;
+			case PURPLE_TYPED:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typed", gc->account, name);
+				break;
+			case PURPLE_NOT_TYPING:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typing-stopped", gc->account, name);
+				break;
 		}
 	}
 
