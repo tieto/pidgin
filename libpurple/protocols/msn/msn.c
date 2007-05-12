@@ -409,33 +409,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 static void
 t_msn_xfer_init(PurpleXfer *xfer)
 {
-	MsnSlpLink *slplink;
-	const char *filename;
-	FILE *fp;
-
-	filename = purple_xfer_get_local_filename(xfer);
-
-	slplink = xfer->data;
-
-	if ((fp = g_fopen(filename, "rb")) == NULL)
-	{
-		PurpleAccount *account;
-		const char *who;
-		char *msg;
-
-		account = slplink->session->account;
-		who = slplink->remote_user;
-
-		msg = g_strdup_printf(_("Error reading %s: \n%s.\n"),
-							  filename, strerror(errno));
-		purple_xfer_error(purple_xfer_get_type(xfer), account, xfer->who, msg);
-		purple_xfer_cancel_local(xfer);
-		g_free(msg);
-
-		return;
-	}
-	fclose(fp);
-
+	MsnSlpLink *slplink = xfer->data;
 	msn_slplink_request_ft(slplink, xfer);
 }
 
