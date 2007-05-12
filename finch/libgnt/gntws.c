@@ -1,15 +1,18 @@
 #include <gmodule.h>
 
 #include "gntbox.h"
-#include "gntws.h"
-#include "gntwm.h"
 #include "gntwidget.h"
+#include "gntwindow.h"
+#include "gntwm.h"
+#include "gntws.h"
 
 static void
 widget_hide(gpointer data, gpointer nodes)
 {
 	GntWidget *widget = GNT_WIDGET(data);
 	GntNode *node = g_hash_table_lookup(nodes, widget);
+	if (GNT_IS_WINDOW(widget))
+		gnt_window_workspace_hiding(GNT_WINDOW(widget));
 	hide_panel(node->panel);
 }
 

@@ -281,7 +281,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 
 		notfirst = TRUE;
 
-		if (len > width) {
+		if (len > width - 2) {
 			len = width - 1;
 			cut = TRUE;
 		}
