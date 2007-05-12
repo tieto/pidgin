@@ -48,6 +48,10 @@ static void gnt_wm_give_focus(GntWM *wm, GntWidget *widget);
 static void update_window_in_list(GntWM *wm, GntWidget *wid);
 static void shift_window(GntWM *wm, GntWidget *widget, int dir);
 
+#ifndef NO_WIDECHAR
+static int widestringwidth(wchar_t *wide);
+#endif
+
 static gboolean write_already(gpointer data);
 static int write_timeout;
 static time_t last_active_time;
@@ -136,6 +140,65 @@ copy_win(GntWidget *widget, GntNode *node)
 	copywin(src, dst, node->scroll, 0, 0, 0, getmaxy(dst) - 1, getmaxx(dst) - 1, 0);
 }
 
+/**
+ * The following is a workaround for a bug in most versions of ncursesw.
+ * Read about it in: http://article.gmane.org/gmane.comp.lib.ncurses.bugs/2751
+ * 
+ * In short, if a panel hides one cell of a multi-cell character, then the rest
+ * of the characters in that line get screwed. The workaround here is to erase
+ * any such character preemptively.
+ *
+ * Caveat: If a wide character is erased, and the panel above it is moved enough
+ * to expose the entire character, it is not always redrawn.
+ */
+static void
+work_around_for_ncurses_bug()
+{
+#ifndef NO_WIDECHAR
+	PANEL *panel = NULL;
+	while ((panel = panel_below(panel)) != NULL) {
+		int sx, ex, sy, ey, w, y;
+		cchar_t ch;
+		PANEL *below = panel;
+
+		sx = panel->win->_begx;
+		ex = panel->win->_maxx + sx;
+		sy = panel->win->_begy;
+		ey = panel->win->_maxy + sy;
+
+		while ((below = panel_below(below)) != NULL) {
+			if (sy > below->win->_begy + below->win->_maxy ||
+					ey < below->win->_begy)
+				continue;
+			if (sx > below->win->_begx + below->win->_maxx ||
+					ex < below->win->_begx)
+				continue;
+			for (y = MAX(sy, below->win->_begy); y <= MIN(ey, below->win->_begy + below->win->_maxy); y++) {
+				if (mvwin_wch(below->win, y - below->win->_begy, sx - 1 - below->win->_begx, &ch) != OK)
+					goto right;
+				w = widestringwidth(ch.chars);
+				if (w > 1 && (ch.attr & 1)) {
+					ch.chars[0] = ' ';
+					ch.attr &= ~ A_CHARTEXT;
+					mvwadd_wch(below->win, y - below->win->_begy, sx - 1 - below->win->_begx, &ch);
+					touchline(below->win, y - below->win->_begy, 1);
+				}
+right:
+				if (mvwin_wch(below->win, y - below->win->_begy, ex + 1 - below->win->_begx, &ch) != OK)
+					continue;
+				w = widestringwidth(ch.chars);
+				if (w > 1 && !(ch.attr & 1)) {
+					ch.chars[0] = ' ';
+					ch.attr &= ~ A_CHARTEXT;
+					mvwadd_wch(below->win, y - below->win->_begy, ex + 1 - below->win->_begx, &ch);
+					touchline(below->win, y - below->win->_begy, 1);
+				}
+			}
+		}
+	}
+#endif
+}
+
 static gboolean
 update_screen(GntWM *wm)
 {
@@ -148,6 +211,7 @@ update_screen(GntWM *wm)
 			top = top->submenu;
 		}
 	}
+	work_around_for_ncurses_bug();
 	update_panels();
 	doupdate();
 	return TRUE;
