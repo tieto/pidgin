@@ -73,6 +73,15 @@ typedef struct
 
 } MsnGetInfoStepTwoData;
 
+typedef struct
+{
+	PurpleConnection *gc;
+	const char *who;
+	char *msg;
+	PurpleMessageFlags flags;
+	time_t when;
+} MsnIMData;
+
 static const char *
 msn_normalize(const PurpleAccount *account, const char *str)
 {
@@ -727,6 +736,16 @@ msn_close(PurpleConnection *gc)
 	gc->proto_data = NULL;
 }
 
+static gboolean
+msn_send_me_im(gpointer data)
+{
+	MsnIMData *imdata = data;
+	serv_got_im(imdata->gc, imdata->who, imdata->msg, imdata->flags, imdata->when);
+	g_free(imdata->msg);
+	g_free(imdata);
+	return FALSE;
+}
+
 static int
 msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			PurpleMessageFlags flags)
@@ -779,6 +798,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	{
 		char *body_str, *body_enc, *pre, *post;
 		const char *format;
+		MsnIMData *imdata = g_new0(MsnIMData, 1);
 		/*
 		 * In MSN, you can't send messages to yourself, so
 		 * we'll fake like we received it ;)
@@ -796,8 +816,12 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		g_free(post);
 
 		serv_got_typing_stopped(gc, who);
-		serv_got_im(gc, who, body_str, flags, time(NULL));
-		g_free(body_str);
+		imdata->gc = gc;
+		imdata->who = who;
+		imdata->msg = body_str;
+		imdata->flags = flags;
+		imdata->when = time(NULL);
+		g_idle_add(msn_send_me_im, imdata);
 	}
 
 	msn_message_destroy(msg);
