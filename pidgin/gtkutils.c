@@ -61,11 +61,10 @@
 #include "gtkthemes.h"
 #include "gtkutils.h"
 
-typedef struct
-	{
+typedef struct {
 	GtkWidget *menu ;
 	gint default_item ;
-	} AOP_MENU ;
+} AOP_MENU ;
 
 static guint accels_save_timer = 0;
 
@@ -437,7 +436,7 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 }
 
 static gpointer
-aop_option_menu_get_selected (GtkWidget *optmenu, GtkWidget **p_item)
+aop_option_menu_get_selected(GtkWidget *optmenu, GtkWidget **p_item)
 {
 	GtkWidget *menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
 	GtkWidget *item = gtk_menu_get_active(GTK_MENU(menu));
@@ -452,7 +451,7 @@ aop_menu_cb(GtkWidget *optmenu, GCallback cb)
 	GtkWidget *item;
 	gpointer per_item_data;
 
-	per_item_data = aop_option_menu_get_selected (optmenu, &item) ;
+	per_item_data = aop_option_menu_get_selected(optmenu, &item) ;
 
 	if (cb != NULL)
 		((void (*)(GtkWidget *, gpointer, gpointer))cb)(item, per_item_data,
@@ -460,86 +459,86 @@ aop_menu_cb(GtkWidget *optmenu, GCallback cb)
 }
 
 static GtkWidget *
-aop_menu_item_new (GtkSizeGroup *sg, GdkPixbuf *pixbuf, char *lbl, gpointer per_item_data)
+aop_menu_item_new(GtkSizeGroup *sg, GdkPixbuf *pixbuf, char *lbl, gpointer per_item_data)
 {
 	GtkWidget *item ;
 	GtkWidget *hbox ;
 	GtkWidget *image ;
 	GtkWidget *label ;
 
-	item = g_object_new (GTK_TYPE_MENU_ITEM, "visible", TRUE, NULL) ;
-	hbox = g_object_new (GTK_TYPE_HBOX, "visible", TRUE, "homogeneous", FALSE, "spacing", 4, NULL) ;
+	item = g_object_new(GTK_TYPE_MENU_ITEM, "visible", TRUE, NULL) ;
+	hbox = g_object_new(GTK_TYPE_HBOX, "visible", TRUE, "homogeneous", FALSE, "spacing", 4, NULL) ;
 
 	/* Create the image */
 	if (NULL == pixbuf)
-		image = g_object_new (GTK_TYPE_IMAGE, "visible", TRUE, NULL) ;
+		image = g_object_new(GTK_TYPE_IMAGE, "visible", TRUE, NULL) ;
 	else
-		image = g_object_new (GTK_TYPE_IMAGE, "visible", TRUE, "pixbuf", pixbuf, NULL) ;
+		image = g_object_new(GTK_TYPE_IMAGE, "visible", TRUE, "pixbuf", pixbuf, NULL) ;
 
 	if (NULL != sg)
-		gtk_size_group_add_widget (sg, image) ;
+		gtk_size_group_add_widget(sg, image) ;
 
 	/* Create the label */
-	label = g_object_new (GTK_TYPE_LABEL, "visible", TRUE, "justify", GTK_JUSTIFY_LEFT, "xalign", (gdouble)0.0, "yalign", (gdouble)0.5, "label", lbl, NULL) ;
+	label = g_object_new(GTK_TYPE_LABEL, "visible", TRUE, "justify", GTK_JUSTIFY_LEFT, "xalign", (gdouble)0.0, "yalign", (gdouble)0.5, "label", lbl, NULL) ;
 	
-	gtk_container_add (GTK_CONTAINER (item), hbox) ;
-	gtk_container_add_with_properties (GTK_CONTAINER (hbox), image, "expand", FALSE, "fill", FALSE, "padding", 0, NULL) ;
-	gtk_container_add_with_properties (GTK_CONTAINER (hbox), label, "expand", TRUE, "fill", TRUE, "padding", 0, NULL) ;
+	gtk_container_add(GTK_CONTAINER(item), hbox) ;
+	gtk_container_add_with_properties(GTK_CONTAINER (hbox), image, "expand", FALSE, "fill", FALSE, "padding", 0, NULL) ;
+	gtk_container_add_with_properties(GTK_CONTAINER (hbox), label, "expand", TRUE, "fill", TRUE, "padding", 0, NULL) ;
 
-	g_object_set_data (G_OBJECT (item), "aop_per_item_data", per_item_data) ;
+	g_object_set_data(G_OBJECT (item), "aop_per_item_data", per_item_data) ;
 
-	pidgin_set_accessible_label (item, label);
+	pidgin_set_accessible_label(item, label);
 
 	return item ;
 }
 
 static GtkWidget *
-aop_option_menu_new (AOP_MENU *aop_menu, GCallback cb, gpointer user_data)
+aop_option_menu_new(AOP_MENU *aop_menu, GCallback cb, gpointer user_data)
 {
 	GtkWidget *optmenu;
 
-	optmenu = g_object_new (GTK_TYPE_OPTION_MENU, "visible", TRUE, NULL) ;
-	gtk_option_menu_set_menu (GTK_OPTION_MENU (optmenu), aop_menu->menu) ;
+	optmenu = g_object_new(GTK_TYPE_OPTION_MENU, "visible", TRUE, NULL) ;
+	gtk_option_menu_set_menu(GTK_OPTION_MENU (optmenu), aop_menu->menu) ;
 	if (aop_menu->default_item != -1)
-		gtk_option_menu_set_history (GTK_OPTION_MENU (optmenu), aop_menu->default_item) ;
+		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), aop_menu->default_item) ;
 
-	g_object_set_data_full (G_OBJECT (optmenu), "aop_menu", aop_menu, (GDestroyNotify)g_free) ;
-	g_object_set_data (G_OBJECT (optmenu), "user_data", user_data) ;
+	g_object_set_data_full(G_OBJECT(optmenu), "aop_menu", aop_menu, (GDestroyNotify)g_free) ;
+	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data) ;
 
-	g_signal_connect (G_OBJECT (optmenu), "changed", G_CALLBACK (aop_menu_cb), cb) ;
+	g_signal_connect(G_OBJECT(optmenu), "changed", G_CALLBACK(aop_menu_cb), cb) ;
 
 	return optmenu ;
 }
 
 static void
-aop_option_menu_replace_menu (GtkWidget *optmenu, AOP_MENU *new_aop_menu)
+aop_option_menu_replace_menu(GtkWidget *optmenu, AOP_MENU *new_aop_menu)
 {
-	if (NULL != gtk_option_menu_get_menu (GTK_OPTION_MENU(optmenu)))
+	if (NULL != gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu)))
 		gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));
-	gtk_option_menu_set_menu (GTK_OPTION_MENU (optmenu), new_aop_menu->menu) ;
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), new_aop_menu->menu) ;
 	if (-1 != new_aop_menu->default_item)
-		gtk_option_menu_set_history (GTK_OPTION_MENU (optmenu), new_aop_menu->default_item) ;
-	g_object_set_data_full (G_OBJECT (optmenu), "aop_menu", new_aop_menu, (GDestroyNotify)g_free) ;
+		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), new_aop_menu->default_item) ;
+	g_object_set_data_full(G_OBJECT(optmenu), "aop_menu", new_aop_menu, (GDestroyNotify)g_free) ;
 }
 
 static void
-aop_option_menu_select_by_data (GtkWidget *optmenu, gpointer data)
+aop_option_menu_select_by_data(GtkWidget *optmenu, gpointer data)
 {
 	guint idx ;
 	GList *llItr = NULL ;
 
-	for (idx = 0, llItr = GTK_MENU_SHELL (gtk_option_menu_get_menu (GTK_OPTION_MENU (optmenu)))->children ;
+	for (idx = 0, llItr = GTK_MENU_SHELL(gtk_option_menu_get_menu(GTK_OPTION_MENU (optmenu)))->children ;
 			 llItr != NULL ;
 			 llItr = llItr->next, idx++)
-		if (data == g_object_get_data (G_OBJECT (llItr->data), "aop_per_item_data"))
+		if (data == g_object_get_data(G_OBJECT(llItr->data), "aop_per_item_data"))
 			{
-			gtk_option_menu_set_history (GTK_OPTION_MENU (optmenu), idx) ;
+			gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), idx) ;
 			break ;
 			}
 }
 
 static GdkPixbuf *
-get_prpl_pixbuf (PurplePluginProtocolInfo *prpl_info)
+get_prpl_pixbuf(PurplePluginProtocolInfo *prpl_info)
 {
 	const char *proto_name ;
 	GdkPixbuf *pixbuf = NULL ;
@@ -549,15 +548,15 @@ get_prpl_pixbuf (PurplePluginProtocolInfo *prpl_info)
 	proto_name = prpl_info->list_icon(NULL, NULL) ;
 	if (NULL == proto_name) return NULL ;
 
-	g_snprintf (buf, sizeof (buf), "%s.png", proto_name) ;
-	filename = g_build_filename (DATADIR, "pixmaps", "pidgin", "protocols", "16", buf, NULL) ;
-	pixbuf = gdk_pixbuf_new_from_file (filename, NULL) ;
-	g_free (filename) ;
+	g_snprintf(buf, sizeof(buf), "%s.png", proto_name) ;
+	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "16", buf, NULL) ;
+	pixbuf = gdk_pixbuf_new_from_file(filename, NULL) ;
+	g_free(filename) ;
 
 	return pixbuf ;
 }
 
-static AOP_MENU *create_protocols_menu (const char *default_proto_id)
+static AOP_MENU *create_protocols_menu(const char *default_proto_id)
 {
 	AOP_MENU *aop_menu = NULL ;
 	PurplePluginProtocolInfo *prpl_info;
@@ -568,10 +567,10 @@ static AOP_MENU *create_protocols_menu (const char *default_proto_id)
 	char *gtalk_name = NULL ;
 	int i;
 
-	aop_menu = g_malloc0 (sizeof (AOP_MENU)) ;
+	aop_menu = g_malloc0(sizeof(AOP_MENU)) ;
 	aop_menu->default_item = -1 ;
-	aop_menu->menu = g_object_new (GTK_TYPE_MENU, "visible", TRUE, NULL) ;
-	sg = g_object_new (GTK_TYPE_SIZE_GROUP, "mode", GTK_SIZE_GROUP_HORIZONTAL, NULL) ;
+	aop_menu->menu = g_object_new(GTK_TYPE_MENU, "visible", TRUE, NULL) ;
+	sg = g_object_new(GTK_TYPE_SIZE_GROUP, "mode", GTK_SIZE_GROUP_HORIZONTAL, NULL) ;
 
 	if (purple_find_prpl("prpl-jabber"))
 		gtalk_name = _("Google Talk");
@@ -598,18 +597,18 @@ static AOP_MENU *create_protocols_menu (const char *default_proto_id)
 			gtalk_name = NULL ;
 		}
 
-		pixbuf = get_prpl_pixbuf (prpl_info) ;
+		pixbuf = get_prpl_pixbuf(prpl_info) ;
 
 		gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
-			aop_menu_item_new (sg, pixbuf, plugin->info->name, plugin->info->id)) ;
+			aop_menu_item_new(sg, pixbuf, plugin->info->name, plugin->info->id)) ;
 		if (NULL != pixbuf)
-			g_object_unref (pixbuf) ;
+			g_object_unref(pixbuf) ;
 
 		if (default_proto_id != NULL && !strcmp(plugin->info->id, default_proto_id))
 			aop_menu->default_item = i;
 	}
 
-	g_object_unref (sg) ;
+	g_object_unref(sg) ;
 
 	return aop_menu ;
 }
@@ -618,13 +617,13 @@ GtkWidget *
 pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 								  gpointer user_data)
 {
-	return aop_option_menu_new (create_protocols_menu (id), cb, user_data) ;
+	return aop_option_menu_new(create_protocols_menu(id), cb, user_data) ;
 }
 
 PurpleAccount *
 pidgin_account_option_menu_get_selected(GtkWidget *optmenu)
 {
-	return (PurpleAccount *)aop_option_menu_get_selected (optmenu, NULL) ;
+	return (PurpleAccount *)aop_option_menu_get_selected(optmenu, NULL) ;
 }
 
 static AOP_MENU *
@@ -645,9 +644,9 @@ create_account_menu(PurpleAccount *default_account,
 	else
 		list = purple_connections_get_all();
 
-	aop_menu = g_malloc0 (sizeof (AOP_MENU)) ;
+	aop_menu = g_malloc0(sizeof(AOP_MENU)) ;
 	aop_menu->default_item = -1 ;
-	aop_menu->menu = g_object_new (GTK_TYPE_MENU, "visible", TRUE, NULL) ;
+	aop_menu->menu = g_object_new(GTK_TYPE_MENU, "visible", TRUE, NULL) ;
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (p = list, i = 0; p != NULL; p = p->next, i++) {
@@ -674,7 +673,7 @@ create_account_menu(PurpleAccount *default_account,
 
 		/* Load the image. */
 		if (prpl_info != NULL) {
-			pixbuf = get_prpl_pixbuf (prpl_info) ;
+			pixbuf = get_prpl_pixbuf(prpl_info) ;
 
 			if (pixbuf != NULL) {
 				if (purple_account_is_disconnected(account) && show_all &&
@@ -695,10 +694,10 @@ create_account_menu(PurpleAccount *default_account,
 		}
 
 		gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
-			aop_menu_item_new (sg, pixbuf, buf, account));
+			aop_menu_item_new(sg, pixbuf, buf, account));
 
 		if (NULL != pixbuf)
-			g_object_unref (pixbuf) ;
+			g_object_unref(pixbuf) ;
 
 		if (default_account != NULL && account == default_account)
 			aop_menu->default_item = i;
@@ -716,11 +715,11 @@ regenerate_account_menu(GtkWidget *optmenu)
 	PurpleAccount *account;
 	PurpleFilterAccountFunc filter_func;
 
-	account = (PurpleAccount *)aop_option_menu_get_selected (optmenu, NULL) ;
+	account = (PurpleAccount *)aop_option_menu_get_selected(optmenu, NULL) ;
 	show_all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(optmenu), "show_all"));
 	filter_func = g_object_get_data(G_OBJECT(optmenu), "filter_func");
 
-	aop_option_menu_replace_menu (optmenu, create_account_menu (account, filter_func, show_all)) ;
+	aop_option_menu_replace_menu(optmenu, create_account_menu(account, filter_func, show_all)) ;
 }
 
 static void
@@ -747,7 +746,7 @@ account_menu_destroyed_cb(GtkWidget *optmenu, GdkEvent *event,
 void
 pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *account)
 {
-	aop_option_menu_select_by_data (optmenu, (gpointer)account) ;
+	aop_option_menu_select_by_data(optmenu, (gpointer)account) ;
 }
 
 GtkWidget *
@@ -759,7 +758,7 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 	GtkWidget *optmenu;
 
 	/* Create the option menu */
-	optmenu = aop_option_menu_new (create_account_menu (default_account, filter_func, show_all), cb, user_data) ;
+	optmenu = aop_option_menu_new(create_account_menu(default_account, filter_func, show_all), cb, user_data) ;
 
 	g_signal_connect(G_OBJECT(optmenu), "destroy",
 					 G_CALLBACK(account_menu_destroyed_cb), NULL);
@@ -1823,7 +1822,7 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 		return TRUE;
 
 	if (optmenu != NULL)
-		aop_option_menu_select_by_data (optmenu, (gpointer)account) ;
+		aop_option_menu_select_by_data(optmenu, (gpointer)account) ;
 
 	return TRUE;
 }
