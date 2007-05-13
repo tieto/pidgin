@@ -158,7 +158,9 @@ void
 msn_xfer_completed_cb(MsnSlpCall *slpcall, const guchar *body,
 					  gsize size)
 {
-	purple_xfer_set_completed(slpcall->xfer, TRUE);
+	PurpleXfer *xfer = slpcall->xfer;
+	purple_xfer_set_completed(xfer, TRUE);
+	purple_xfer_end(xfer);
 }
 
 /**************************************************************************

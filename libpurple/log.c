@@ -778,7 +778,7 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name, PurpleAcco
 			if (tz_off != PURPLE_NO_TZ_OFF)
 				tm.tm_gmtoff = tz_off - tm.tm_gmtoff;
 
-			if (rest == NULL || (end = strchr(rest, '.')) == NULL || strchr(rest, ' ') != NULL)
+			if (stamp == 0 || rest == NULL || (end = strchr(rest, '.')) == NULL || strchr(rest, ' ') != NULL)
 			{
 				log = purple_log_new(type, name, account, NULL, stamp, NULL);
 			}
@@ -792,7 +792,7 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name, PurpleAcco
 #else
 			time_t stamp = purple_str_to_time(filename, FALSE, &tm, NULL, NULL);
 
-			log = purple_log_new(type, name, account, NULL, stamp, &tm);
+			log = purple_log_new(type, name, account, NULL, stamp, (stamp != 0) ?  &tm : NULL);
 #endif
 
 			log->logger = logger;

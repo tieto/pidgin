@@ -144,8 +144,8 @@ detect_mouse_action(const char *buffer)
 		event = GNT_MOUSE_UP;
 	} else
 		return FALSE;
-	
-	if (gnt_wm_process_click(wm, event, x, y, widget))
+
+	if (widget && gnt_wm_process_click(wm, event, x, y, widget))
 		return TRUE;
 	
 	if (event == GNT_LEFT_MOUSE_DOWN && widget && widget != wm->_list.window &&
@@ -177,7 +177,8 @@ detect_mouse_action(const char *buffer)
 		offset = 0;
 	}
 
-	gnt_widget_clicked(widget, event, x, y);
+	if (widget)
+		gnt_widget_clicked(widget, event, x, y);
 	return TRUE;
 }
 
@@ -348,6 +349,10 @@ raise:
 	gnt_wm_raise_window(wm, win);
 }
 
+#ifdef SIGWINCH
+static void (*org_winch_handler)(int);
+#endif
+
 static void
 sighandler(int sig)
 {
@@ -357,6 +362,7 @@ sighandler(int sig)
 		werase(stdscr);
 		wrefresh(stdscr);
 		g_idle_add(refresh_screen, NULL);
+		org_winch_handler(sig);
 		signal(SIGWINCH, sighandler);
 		break;
 #endif
@@ -434,7 +440,7 @@ void gnt_init()
 	wrefresh(stdscr);
 
 #ifdef SIGWINCH
-	signal(SIGWINCH, sighandler);
+	org_winch_handler = signal(SIGWINCH, sighandler);
 #endif
 	signal(SIGCHLD, sighandler);
 	signal(SIGINT, sighandler);

@@ -672,6 +672,11 @@ info_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	PurpleConversation *conv = gtkconv->active_conv;
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+		purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+		purple_notify_userinfo(conv->account->gc, purple_conversation_get_name(conv), info, NULL, NULL);
+		purple_notify_user_info_destroy(info);
+
 		serv_get_info(purple_conversation_get_gc(conv),
 					  purple_conversation_get_name(conv));
 
@@ -3111,7 +3116,7 @@ typing_animation(gpointer data) {
 	}
 	if (gtkwin->menu.typing_icon == NULL) {
 		 gtkwin->menu.typing_icon = gtk_image_new_from_stock(stock_id, GTK_ICON_SIZE_MENU);
- 		 pidgin_menu_tray_append(PIDGIN_MENU_TRAY(gtkwin->menu.tray),
+		 pidgin_menu_tray_append(PIDGIN_MENU_TRAY(gtkwin->menu.tray),
                                                                   gtkwin->menu.typing_icon,
                                                                   _("User is typing..."));
 	} else {
@@ -3143,8 +3148,10 @@ update_typing_icon(PidginConversation *gtkconv)
 		return;
 
 	if (purple_conv_im_get_typing_state(im) == PURPLE_NOT_TYPING) {
-		if (gtkconv->u.im->typing_timer != 0)
+		if (gtkconv->u.im->typing_timer != 0) {
 			g_source_remove(gtkconv->u.im->typing_timer);
+			gtkconv->u.im->typing_timer = 0;
+		}
 		return;
 	}
 
@@ -4120,6 +4127,7 @@ setup_chat_pane(PidginConversation *gtkconv)
 	GtkTreeViewColumn *col;
 	void *blist_handle = purple_blist_get_handle();
 	GList *focus_chain = NULL;
+	int ul_width;
 
 	gtkchat = gtkconv->u.chat;
 	gc      = purple_conversation_get_gc(conv);
@@ -4220,8 +4228,13 @@ setup_chat_pane(PidginConversation *gtkconv)
 												   "pixbuf", CHAT_USERS_ICON_COLUMN, NULL);
 	gtk_tree_view_column_set_sizing(col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
-	gtk_widget_set_size_request(lbox,
-	                            purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/userlist_width"), -1);
+	ul_width = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/userlist_width");
+	gtk_widget_set_size_request(lbox, ul_width, -1);
+
+	/* Hack to prevent completely collapsed userlist coming back with a 1 pixel width.
+	 * I would have liked to use the GtkPaned "max-position", but for some reason that didn't work */
+	if (ul_width == 0)
+		gtk_paned_set_position(GTK_PANED(hpaned), 999999);
 
 	g_signal_connect(G_OBJECT(list), "button_press_event",
 					 G_CALLBACK(right_click_chat_cb), gtkconv);
@@ -4978,6 +4991,8 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	char *bracket;
 	int tag_count = 0;
 	gboolean is_rtl_message = FALSE;
+	GtkSmileyTree *tree = NULL;
+	GHashTable *smiley_data = NULL;
 
 	g_return_if_fail(conv != NULL);
 	gtkconv = PIDGIN_CONVERSATION(conv);
@@ -5121,6 +5136,17 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_font_options |= GTK_IMHTML_USE_POINTSIZE;
 	}
 
+	if (!(flags & PURPLE_MESSAGE_RECV))
+	{
+		/* Temporarily revert to the original smiley-data to avoid showing up
+		 * custom smileys of the buddy when sending message
+		 */
+		tree = GTK_IMHTML(gtkconv->imhtml)->default_smilies;
+		GTK_IMHTML(gtkconv->imhtml)->default_smilies =
+								GTK_IMHTML(gtkconv->entry)->default_smilies;
+		smiley_data = GTK_IMHTML(gtkconv->imhtml)->smiley_data;
+		GTK_IMHTML(gtkconv->imhtml)->smiley_data = GTK_IMHTML(gtkconv->entry)->smiley_data;
+	}
 
 	/* TODO: These colors should not be hardcoded so log.c can use them */
 	if (flags & PURPLE_MESSAGE_RAW) {
@@ -5152,24 +5178,10 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		 * escaped entities making the string longer */
 		int tag_start_offset = alias ? (strlen(alias_escaped) - strlen(alias)) : 0;
 		int tag_end_offset = 0;
-		GtkSmileyTree *tree = NULL;
-		GHashTable *smiley_data = NULL;
 
 		/* Enforce direction on alias */
 		if (is_rtl_message)
 			str_embed_direction_chars(&alias_escaped);
-
-		if (flags & PURPLE_MESSAGE_SEND)
-		{
-			/* Temporarily revert to the original smiley-data to avoid showing up
-			 * custom smileys of the buddy when sending message
-			 */
-			tree = GTK_IMHTML(gtkconv->imhtml)->default_smilies;
-			GTK_IMHTML(gtkconv->imhtml)->default_smilies =
-									GTK_IMHTML(gtkconv->entry)->default_smilies;
-			smiley_data = GTK_IMHTML(gtkconv->imhtml)->smiley_data;
-			GTK_IMHTML(gtkconv->imhtml)->smiley_data = GTK_IMHTML(gtkconv->entry)->smiley_data;
-		}
 
 		if (flags & PURPLE_MESSAGE_WHISPER) {
 			str = g_malloc(1024);
@@ -5312,13 +5324,6 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 		gtk_imhtml_append_text(GTK_IMHTML(gtkconv->imhtml),
 							 with_font_tag, gtk_font_options | gtk_font_options_all);
 
-		if (flags & PURPLE_MESSAGE_SEND)
-		{
-			/* Restore the smiley-data */
-			GTK_IMHTML(gtkconv->imhtml)->default_smilies = tree;
-			GTK_IMHTML(gtkconv->imhtml)->smiley_data = smiley_data;
-		}
-
 		g_free(with_font_tag);
 		g_free(new_message);
 	}
@@ -5342,6 +5347,13 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 			unseen = PIDGIN_UNSEEN_TEXT;
 
 		gtkconv_set_unseen(gtkconv, unseen);
+	}
+
+	if (!(flags & PURPLE_MESSAGE_RECV))
+	{
+		/* Restore the smiley-data */
+		GTK_IMHTML(gtkconv->imhtml)->default_smilies = tree;
+		GTK_IMHTML(gtkconv->imhtml)->smiley_data = smiley_data;
 	}
 
 	purple_signal_emit(pidgin_conversations_get_handle(),
@@ -5544,9 +5556,9 @@ pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 
 	flags = purple_conv_chat_user_get_flags(chat, user);
 
-	cbuddy = purple_conv_chat_cb_new(user, alias, flags);
-
-	add_chat_buddy_common(conv, cbuddy, NULL);
+	cbuddy = purple_conv_chat_cb_find(chat, user);
+	if (cbuddy)
+		add_chat_buddy_common(conv, cbuddy, NULL);
 	g_free(alias);
 }
 
@@ -5607,15 +5619,25 @@ static void pidgin_conv_custom_smiley_closed(GdkPixbufLoader *loader, gpointer u
 				icon, smiley->icon, smiley->smile);
 #endif
 		if (icon) {
+			GList *wids;
 			gtk_widget_show(icon);
 
 			anchor = GTK_TEXT_CHILD_ANCHOR(current->data);
+			wids = gtk_text_child_anchor_get_widgets(anchor);
 
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", purple_unescape_html(smiley->smile), g_free);
 			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_htmltext", g_strdup(smiley->smile), g_free);
 
-			if (smiley->imhtml)
-				gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->imhtml), icon, anchor);
+			if (smiley->imhtml) {
+				if (wids) {
+					GList *children = gtk_container_get_children(GTK_CONTAINER(wids->data));
+					g_list_foreach(children, (GFunc)gtk_widget_destroy, NULL);
+					g_list_free(children);
+					gtk_container_add(GTK_CONTAINER(wids->data), icon);
+				} else
+					gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(smiley->imhtml), icon, anchor);
+			}
+			g_list_free(wids);
 		}
 
 	}

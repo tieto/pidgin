@@ -970,20 +970,20 @@ purple_conv_im_set_typing_state(PurpleConvIm *im, PurpleTypingState state)
 	{
 		im->typing_state = state;
 
-		if (state == PURPLE_TYPING)
+		switch (state)
 		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typing", im->conv->account, im->conv->name);
-		}
-		else if (state == PURPLE_TYPED)
-		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typed", im->conv->account, im->conv->name);
-		}
-		else if (state == PURPLE_NOT_TYPING)
-		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typing-stopped", im->conv->account, im->conv->name);
+			case PURPLE_TYPING:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typing", im->conv->account, im->conv->name);
+				break;
+			case PURPLE_TYPED:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typed", im->conv->account, im->conv->name);
+				break;
+			case PURPLE_NOT_TYPING:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typing-stopped", im->conv->account, im->conv->name);
+				break;
 		}
 	}
 }

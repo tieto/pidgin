@@ -362,7 +362,8 @@ void pidgin_dialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		_("%s is a modular messaging client capable of using "
+		_("%s is a graphical modular messaging client based on "
+		  "libpurple which is capable of connecting to "
 		  "AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
 		  "Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, "
 		  "Gadu-Gadu, and QQ all at once.  "
