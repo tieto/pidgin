@@ -92,7 +92,7 @@ static GList *msim_status_types(PurpleAccount *acct)
     GList *types;
     PurpleStatusType *type;
 
-    purple_debug_info("myspace", _("returning status types for %s: %s, %s, %s\n"),
+    purple_debug_info("myspace", "returning status types for %s: %s, %s, %s\n",
                   acct->username,
                   MSIM_STATUS_ONLINE, MSIM_STATUS_AWAY, MSIM_STATUS_OFFLINE, MSIM_STATUS_INVISIBLE);
 
