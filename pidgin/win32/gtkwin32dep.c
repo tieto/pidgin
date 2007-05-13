@@ -282,6 +282,7 @@ winpidgin_window_flash(GtkWindow *window, gboolean flash) {
 		info.cbSize = sizeof(FLASHWINFO);
 		info.hwnd = GDK_WINDOW_HWND(gdkwin);
 		if (flash) {
+			info.uCount = 3;
 			info.dwFlags = FLASHW_ALL | FLASHW_TIMER;
 		} else
 			info.dwFlags = FLASHW_STOP;
