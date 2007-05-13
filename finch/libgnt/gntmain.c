@@ -94,7 +94,7 @@ detect_mouse_action(const char *buffer)
 	GntWidget *widget = NULL;
 	PANEL *p = NULL;
 
-	if (!wm->ordered || buffer[0] != 27)
+	if (!wm->cws->ordered || buffer[0] != 27)
 		return FALSE;
 	
 	buffer++;
@@ -150,7 +150,7 @@ detect_mouse_action(const char *buffer)
 	
 	if (event == GNT_LEFT_MOUSE_DOWN && widget && widget != wm->_list.window &&
 			!GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_TRANSIENT)) {
-		if (widget != wm->ordered->data) {
+		if (widget != wm->cws->ordered->data) {
 			gnt_wm_raise_window(wm, widget);
 		}
 		if (y == widget->priv.y) {
@@ -161,7 +161,7 @@ detect_mouse_action(const char *buffer)
 	} else if (event == GNT_MOUSE_UP) {
 		if (button == MOUSE_NONE && y == getmaxy(stdscr) - 1) {
 			/* Clicked on the taskbar */
-			int n = g_list_length(wm->list);
+			int n = g_list_length(wm->cws->list);
 			if (n) {
 				int width = getmaxx(stdscr) / n;
 				gnt_bindable_perform_action_named(GNT_BINDABLE(wm), "switch-window-n", x/width, NULL);
@@ -494,7 +494,7 @@ gboolean gnt_widget_has_focus(GntWidget *widget)
 
 	if (widget == wm->_list.window)
 		return TRUE;
-	if (wm->ordered && wm->ordered->data == widget) {
+	if (wm->cws->ordered && wm->cws->ordered->data == widget) {
 		if (GNT_IS_BOX(widget) &&
 				(GNT_BOX(widget)->active == w || widget == w))
 			return TRUE;
@@ -507,7 +507,7 @@ void gnt_widget_set_urgent(GntWidget *widget)
 	while (widget->parent)
 		widget = widget->parent;
 
-	if (wm->ordered && wm->ordered->data == widget)
+	if (wm->cws->ordered && wm->cws->ordered->data == widget)
 		return;
 
 	GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_URGENT);
