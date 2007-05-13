@@ -604,6 +604,25 @@ purple_dbus_dispatch_init(void)
 		return;
 	}
 
+	if (result != DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER) {
+		DBusMessage *msg = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "PurpleBlistShow") ;
+
+		if (NULL != msg) {
+			DBusMessage *reply = NULL ;
+			DBusError dbus_error ;
+
+			dbus_error_init(&dbus_error) ;
+			reply = dbus_connection_send_with_reply_and_block(purple_dbus_connection, msg, 5000, &dbus_error) ;
+			dbus_message_unref(msg) ;
+			if (NULL != reply)
+				dbus_message_unref(reply) ;
+			dbus_error_free(&dbus_error) ;
+		}
+
+		purple_core_quit() ;
+		_exit(0) ;
+	}
+
 	dbus_connection_setup_with_g_main(purple_dbus_connection, NULL);
 
 	purple_debug_misc("dbus", "okkk\n");

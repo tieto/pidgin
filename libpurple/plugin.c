@@ -359,7 +359,7 @@ purple_plugin_probe(const char *filename)
 		purple_plugin_destroy(plugin);
 		return NULL;
 	}
-	else if (plugin->info->ui_requirement &&
+	else if (plugin->info->ui_requirement && NULL != purple_core_get_ui() &&
 			strcmp(plugin->info->ui_requirement, purple_core_get_ui()))
 	{
 		plugin->error = g_strdup_printf(_("You are using %s, but this plugin requires %s."),

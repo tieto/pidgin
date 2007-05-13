@@ -7996,6 +7996,9 @@ pidgin_conv_window_destroy(PidginWindow *win)
 	purple_prefs_disconnect_by_handle(win);
 	window_list = g_list_remove(window_list, win);
 
+	if (NULL == win)
+		return ;
+
 	/* Close the "Find" dialog if it's open */
 	if (win->dialogs.search)
 		gtk_widget_destroy(win->dialogs.search);
