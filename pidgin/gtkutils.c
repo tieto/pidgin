@@ -510,10 +510,10 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 	const char *proto_name;
 	char buf[256];
 	int i, selected_index = -1;
-	char *gtalk_name = NULL;
+	const char *gtalk_name = NULL;
 
 	if (purple_find_prpl("prpl-jabber"))
-		gtalk_name = g_strdup(_("Google Talk"));
+		gtalk_name = _("Google Talk");
 
 	optmenu = gtk_option_menu_new();
 	gtk_widget_show(optmenu);
@@ -548,10 +548,9 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 				image = gtk_image_new();
 
 			gtalk_item = pidgin_protocol_option_menu_item(menu, sg, image, gtalk_name, "prpl-fake");
-			g_object_set_data(G_OBJECT(gtalk_item), "real_protocol", plugin->info->id);
+			g_object_set_data(G_OBJECT(gtalk_item), "real_protocol", "prpl-jabber");
 			i++;
 
-			g_free(gtalk_name);
 			gtalk_name = NULL;
 		}
 
@@ -585,12 +584,6 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 		if (pixbuf)
 			g_object_unref(G_OBJECT(pixbuf));
 	}
-
-	/* This is only needed if Pidgin has zero prpls compiled in, but
-	 * I'm doing it because it's proper and might make a difference
-	 * for automated source checkers. */
-	g_free(gtalk_name);
-
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
 
