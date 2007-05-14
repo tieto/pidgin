@@ -3388,7 +3388,7 @@ static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHt
 		return FALSE;
 
 	pix = gdk_pixbuf_animation_get_static_image(anim);
-	image = gtk_imhtml_image_new(pix, NULL, 0);
+	image = gtk_imhtml_image_new(pix, smiley->smile, 0);
 	ret = gtk_imhtml_image_clicked(w, event, (GtkIMHtmlImage*)image);
 	g_object_set_data_full(G_OBJECT(w), "image-data", image, (GDestroyNotify)gtk_imhtml_image_free);
 	g_object_unref(G_OBJECT(pix));
