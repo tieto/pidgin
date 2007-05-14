@@ -327,7 +327,6 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 	GValue val;
 	PurpleBlistNode *node;
 	const char *text = NULL;
-	char *esc;
 
 	path = gtk_tree_path_new_from_string (path_str);
 	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
@@ -350,12 +349,10 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 		g_return_if_reached();
 	}
 
-	esc = g_markup_escape_text(text, -1);
 	if (GTK_IS_ENTRY (editable)) {
 		GtkEntry *entry = GTK_ENTRY (editable);
-		gtk_entry_set_text(entry, esc);
+		gtk_entry_set_text(entry, text);
 	}
-	g_free(esc);
 }
 
 static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
