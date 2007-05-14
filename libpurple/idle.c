@@ -268,7 +268,7 @@ void
 purple_idle_init()
 {
 	/* Add the timer to check if we're idle */
-	idle_timer = purple_timeout_add(IDLEMARK * 1000, check_idleness_timer, NULL);
+	idle_timer = purple_timeout_add(1000 * (IDLEMARK + 1), check_idleness_timer, NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "sent-im-msg",
 						purple_idle_get_handle(),
