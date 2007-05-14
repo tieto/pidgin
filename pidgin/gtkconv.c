@@ -176,6 +176,7 @@ static GdkColor* generate_nick_colors(guint *numcolors, GdkColor background);
 static gboolean color_is_visible(GdkColor foreground, GdkColor background, int color_contrast, int brightness_contrast);
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
+static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
 
 static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
 	static GdkColor col;
@@ -6512,16 +6513,18 @@ static void
 tab_side_pref_cb(const char *name, PurplePrefType type,
 				 gconstpointer value, gpointer data)
 {
-	GList *l;
+	GList *gtkwins, *gtkconvs;
 	GtkPositionType pos;
-	PidginWindow *win;
+	PidginWindow *gtkwin;
 
 	pos = GPOINTER_TO_INT(value);
 
-	for (l = pidgin_conv_windows_get_list(); l != NULL; l = l->next) {
-		win = l->data;
-
-		gtk_notebook_set_tab_pos(GTK_NOTEBOOK(win->notebook), pos&~8);
+	for (gtkwins = pidgin_conv_windows_get_list(); gtkwins != NULL; gtkwins = gtkwins->next) {
+		gtkwin = gtkwins->data;
+		gtk_notebook_set_tab_pos(GTK_NOTEBOOK(gtkwin->notebook), pos&~8);
+		for (gtkconvs = gtkwin->gtkconvs; gtkconvs != NULL; gtkconvs = gtkconvs->next) {
+			pidgin_conv_tab_pack(gtkwin, gtkconvs->data);
+		}
 	}
 }
 
@@ -8056,34 +8059,16 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 {
 	PurpleConversation *conv = gtkconv->active_conv;
 	PidginConversation *focus_gtkconv;
-	GtkWidget *tabby, *menu_tabby;
 	GtkWidget *tab_cont = gtkconv->tab_cont;
 	GtkWidget *close_image;
 	PurpleConversationType conv_type;
 	const gchar *tmp_lab;
 	gint close_button_width, close_button_height, focus_width, focus_pad;
-	gboolean tabs_side = FALSE;
-	gint angle = 0;
 
 	conv_type = purple_conversation_get_type(conv);
 
-
 	win->gtkconvs = g_list_append(win->gtkconvs, gtkconv);
 	gtkconv->win = win;
-
-	if (purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_LEFT ||
-	    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_RIGHT)
-		tabs_side = TRUE;
-	else if (purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == (GTK_POS_LEFT|8))
-		angle = 90;
-	else if (purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == (GTK_POS_RIGHT|8))
-		angle = 270;
-
-	if (angle)
-		gtkconv->tabby = tabby = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	else
-		gtkconv->tabby = tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtkconv->menu_tabby = menu_tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 
 	/* Close button. */
 	gtkconv->close = gtk_button_new();
@@ -8128,56 +8113,25 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 	/* Tab label. */
 	gtkconv->tab_label = gtk_label_new(tmp_lab = purple_conversation_get_title(conv));
 
-#if GTK_CHECK_VERSION(2,6,0)
-	if (!angle)
-		g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_END, NULL);
-	gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), 6);
-	if (tabs_side) {
-		gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), MIN(g_utf8_strlen(tmp_lab, -1), 12));
-	}
-	if (angle)
-		gtk_label_set_angle(GTK_LABEL(gtkconv->tab_label), angle);
-#endif
-	gtkconv->menu_label = gtk_label_new(purple_conversation_get_title(conv));
-#if 0
-	gtk_misc_set_alignment(GTK_MISC(gtkconv->tab_label), 0.00, 0.5);
-	gtk_misc_set_padding(GTK_MISC(gtkconv->tab_label), 4, 0);
-#endif
+	gtkconv->menu_tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtkconv->menu_label = gtk_label_new(purple_conversation_get_title(gtkconv->active_conv));
+	gtk_box_pack_start(GTK_BOX(gtkconv->menu_tabby), gtkconv->menu_icon, FALSE, FALSE, 0);
 
-	/* Pack it all together. */
-	if (angle == 90)
-		gtk_box_pack_start(GTK_BOX(tabby), gtkconv->close, FALSE, FALSE, 0);
-	else
-		gtk_box_pack_start(GTK_BOX(tabby), gtkconv->icon, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(menu_tabby), gtkconv->menu_icon,
-	                   FALSE, FALSE, 0);
-
-	gtk_widget_show_all(gtkconv->icon);
 	gtk_widget_show_all(gtkconv->menu_icon);
 
-	gtk_box_pack_start(GTK_BOX(tabby), gtkconv->tab_label, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(menu_tabby), gtkconv->menu_label, TRUE, TRUE, 0);
-	gtk_widget_show(gtkconv->tab_label);
+	gtk_box_pack_start(GTK_BOX(gtkconv->menu_tabby), gtkconv->menu_label, TRUE, TRUE, 0);
 	gtk_widget_show(gtkconv->menu_label);
 	gtk_misc_set_alignment(GTK_MISC(gtkconv->menu_label), 0, 0);
 
-	if (angle == 90)
-		gtk_box_pack_start(GTK_BOX(tabby), gtkconv->icon, FALSE, FALSE, 0);
-	else
-		gtk_box_pack_start(GTK_BOX(tabby), gtkconv->close, FALSE, FALSE, 0);
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/close_on_tabs"))
-		gtk_widget_show(gtkconv->close);
-
-	gtk_widget_show(tabby);
-	gtk_widget_show(menu_tabby);
+	gtk_widget_show(gtkconv->menu_tabby);
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		pidgin_conv_update_buddy_icon(conv);
 
-	/* Add this pane to the conversation's notebook. */
-	gtk_notebook_append_page_menu(GTK_NOTEBOOK(win->notebook), tab_cont, tabby, menu_tabby);
-	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(win->notebook), tab_cont, !tabs_side && !angle, TRUE, GTK_PACK_START);
+	/* Build and set conversations tab */
+	pidgin_conv_tab_pack(win, gtkconv);
 
+	gtk_notebook_set_menu_label(GTK_NOTEBOOK(win->notebook), tab_cont, gtkconv->menu_tabby);
 
 	gtk_widget_show(tab_cont);
 
@@ -8196,6 +8150,87 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 
 	if (pidgin_conv_window_get_gtkconv_count(win) == 1)
 		update_send_to_selection(win);
+}
+
+static void
+pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
+{
+	gboolean tabs_side = FALSE;
+	gint angle = 0;
+	GtkWidget *first, *third;
+
+	if (purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_LEFT ||
+	    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_RIGHT)
+		tabs_side = TRUE;
+	else if (purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == (GTK_POS_LEFT|8))
+		angle = 90;
+	else if (purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == (GTK_POS_RIGHT|8))
+		angle = 270;
+
+#if GTK_CHECK_VERSION(2,6,0)
+	if (!angle)
+		g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_END,  NULL);
+	else
+		g_object_set(G_OBJECT(gtkconv->tab_label), "ellipsize", PANGO_ELLIPSIZE_NONE, NULL);
+	gtk_label_set_width_chars(GTK_LABEL(gtkconv->tab_label), 6);
+	if (tabs_side) {
+		gtk_label_set_width_chars(
+			GTK_LABEL(gtkconv->tab_label),
+			MIN(g_utf8_strlen(gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)), -1), 12)
+		);
+	}
+	if (angle)
+		gtk_label_set_angle(GTK_LABEL(gtkconv->tab_label), angle);
+#endif
+
+#if 0
+	gtk_misc_set_alignment(GTK_MISC(gtkconv->tab_label), 0.00, 0.5);
+	gtk_misc_set_padding(GTK_MISC(gtkconv->tab_label), 4, 0);
+#endif
+
+	if (angle)
+		gtkconv->tabby = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	else
+		gtkconv->tabby = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+
+	/* select the correct ordering for verticle tabs */
+	if (angle == 90) {
+		first = gtkconv->close;
+		third = gtkconv->icon;
+	} else {
+		first = gtkconv->icon;
+		third = gtkconv->close;
+	}
+
+	if (gtkconv->tab_label->parent == NULL) {
+		/* Pack if it's a new widget */
+		gtk_box_pack_start(GTK_BOX(gtkconv->tabby), first,              FALSE, FALSE, 0);
+		gtk_box_pack_start(GTK_BOX(gtkconv->tabby), gtkconv->tab_label, TRUE,  TRUE,  0);
+		gtk_box_pack_start(GTK_BOX(gtkconv->tabby), third,              FALSE, FALSE, 0);
+
+		/* Add this pane to the conversation's notebook. */
+		gtk_notebook_append_page(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, gtkconv->tabby);
+	} else {
+		/* reparent old widgets on preference changes */
+		gtk_widget_reparent(first,              gtkconv->tabby);
+		gtk_widget_reparent(gtkconv->tab_label, gtkconv->tabby);
+		gtk_widget_reparent(third,              gtkconv->tabby);
+		gtk_box_set_child_packing(GTK_BOX(gtkconv->tabby), first,              FALSE, FALSE, 0, GTK_PACK_START);
+		gtk_box_set_child_packing(GTK_BOX(gtkconv->tabby), gtkconv->tab_label, TRUE,  TRUE,  0, GTK_PACK_START);
+		gtk_box_set_child_packing(GTK_BOX(gtkconv->tabby), third,              FALSE, FALSE, 0, GTK_PACK_START);
+
+		/* Reset the tabs label to the new version */
+		gtk_notebook_set_tab_label(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, gtkconv->tabby);
+	}
+
+	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, !tabs_side && !angle, TRUE, GTK_PACK_START);
+
+	/* show the widgets */
+	gtk_widget_show(gtkconv->icon);
+	gtk_widget_show(gtkconv->tab_label);
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/close_on_tabs"))
+		gtk_widget_show(gtkconv->close);
+	gtk_widget_show(gtkconv->tabby);
 }
 
 void
