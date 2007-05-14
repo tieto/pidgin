@@ -264,7 +264,7 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 		while (*charset == ' ')
 			charset++;
 
-		if (!strcasecmp("UTF-8", charset)) {
+		if (!g_ascii_strcasecmp("UTF-8", charset)) {
 			if (g_utf8_validate(string, -1, NULL))
 				utf8 = g_strdup(string);
 		} else {
