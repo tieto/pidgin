@@ -31,7 +31,6 @@
 #include "signals.h"
 
 #define IDLEMARK 600 /* 10 minutes! */
-#define IDLE_CHECK_INTERVAL 5 /* 5 seconds */
 
 typedef enum
 {
@@ -92,6 +91,8 @@ set_account_unidle(PurpleAccount *account)
 	purple_presence_set_idle(presence, FALSE, 0);
 }
 
+
+static gint time_until_next_idle_event;
 /*
  * This function should be called when you think your idle state
  * may have changed.  Maybe you're over the 10-minute mark and
@@ -110,14 +111,17 @@ set_account_unidle(PurpleAccount *account)
  * 2. Set or unset your auto-away message.
  * 3. Report your current idle time to the IM server.
  */
-static gint
-check_idleness()
+
+static void
+check_idleness(void)
 {
 	time_t time_idle;
 	gboolean auto_away;
 	const gchar *idle_reporting;
 	gboolean report_idle;
 	GList *l;
+	gint away_seconds = 0;
+	static int no_away = 0;
 
 	purple_signal_emit(purple_blist_get_handle(), "update-idle");
 
@@ -153,14 +157,24 @@ check_idleness()
 			time_idle = time(NULL) - last_active_time;
 	}
 
-	if (auto_away &&
-		(time_idle > (60 * purple_prefs_get_int("/purple/away/mins_before_away"))))
+	time_until_next_idle_event = IDLEMARK - time_idle; /* reasonable start upperbound */
+
+	if (auto_away || !no_away)
+		away_seconds = 60 * purple_prefs_get_int("/purple/away/mins_before_away");
+
+	if (auto_away && time_idle > away_seconds)
 	{
 		purple_savedstatus_set_idleaway(TRUE);
+		no_away = 0;
+		if (time_idle < away_seoncs && (away_seconds - time_idle) < time_until_next_idle_event)
+			time_until_next_idle_event = away_seconds - time_idle;
 	}
-	else if (time_idle < 60 * purple_prefs_get_int("/purple/away/mins_before_away"))
+	else if (!no_away && time_idle < away_seconds)
 	{
 		purple_savedstatus_set_idleaway(FALSE);
+		no_away = 1;
+		if (time_idle < away_seconds && (away_seconds - time_idle) < time_until_next_idle_event)
+			time_until_next_idle_event = away_seconds - time_idle;
 	}
 
 	/* Idle reporting stuff */
@@ -177,8 +191,21 @@ check_idleness()
 		while (idled_accts != NULL)
 			set_account_unidle(idled_accts->data);
 	}
+	
+	if (time_until_next_idle_event < 0)
+		time_until_next_idle_event = IDLEMARK;
+}
 
-	return TRUE;
+
+/*
+ * Check idle and set the timer to fire at the next idle-worth event 
+ */
+static gint
+check_idleness_timer()
+{
+	check_idleness();
+	idle_timer = purple_timeout_add(1000 * (time_until_next_idle_event + 1), check_idleness_timer, NULL);
+	return FALSE;
 }
 
 static void
@@ -241,7 +268,7 @@ void
 purple_idle_init()
 {
 	/* Add the timer to check if we're idle */
-	idle_timer = purple_timeout_add(IDLE_CHECK_INTERVAL * 1000, check_idleness, NULL);
+	idle_timer = purple_timeout_add(IDLEMARK * 1000, check_idleness_timer, NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "sent-im-msg",
 						purple_idle_get_handle(),
