@@ -493,7 +493,8 @@ finch_create_conversation(PurpleConversation *conv)
 		FinchConvChat *fc = ggc->u.chat = g_new0(FinchConvChat, 1);
 		hbox = gnt_hbox_new(FALSE);
 		gnt_box_set_pad(GNT_BOX(hbox), 0);
-		tree = fc->userlist = gnt_tree_new();
+		tree = fc->userlist = gnt_tree_new_with_columns(2);
+		gnt_tree_set_col_width(GNT_TREE(tree), 0, 1);   /* The flag column */
 		gnt_tree_set_compare_func(GNT_TREE(tree), (GCompareFunc)g_utf8_collate);
 		gnt_tree_set_hash_fns(GNT_TREE(tree), g_str_hash, g_str_equal, g_free);
 		GNT_WIDGET_SET_FLAGS(tree, GNT_WIDGET_NO_BORDER);
@@ -675,6 +676,20 @@ finch_write_conv(PurpleConversation *conv, const char *who, const char *alias,
 	finch_write_common(conv, name, message, flags, mtime);
 }
 
+static const char *
+chat_flag_text(PurpleConvChatBuddyFlags flags)
+{
+	if (flags & PURPLE_CBFLAGS_FOUNDER)
+		return "~";
+	if (flags & PURPLE_CBFLAGS_OP)
+		return "@";
+	if (flags & PURPLE_CBFLAGS_HALFOP)
+		return "%";
+	if (flags & PURPLE_CBFLAGS_VOICE)
+		return "+";
+	return " ";
+}
+
 static void
 finch_chat_add_users(PurpleConversation *conv, GList *users, gboolean new_arrivals)
 {
@@ -709,7 +724,7 @@ finch_chat_add_users(PurpleConversation *conv, GList *users, gboolean new_arriva
 		gnt_entry_add_suggest(entry, cbuddy->name);
 		gnt_entry_add_suggest(entry, cbuddy->alias);
 		gnt_tree_add_row_after(tree, g_strdup(cbuddy->name),
-				gnt_tree_create_row(tree, cbuddy->alias), NULL, NULL);
+				gnt_tree_create_row(tree, chat_flag_text(cbuddy->flags), cbuddy->alias), NULL, NULL);
 	}
 }
 
@@ -720,12 +735,15 @@ finch_chat_rename_user(PurpleConversation *conv, const char *old, const char *ne
 	FinchConv *ggc = conv->ui_data;
 	GntEntry *entry = GNT_ENTRY(ggc->entry);
 	GntTree *tree = GNT_TREE(ggc->u.chat->userlist);
+	PurpleConvChatBuddy *cb = purple_conv_chat_cb_find(PURPLE_CONV_CHAT(conv), new_n);
+
 	gnt_entry_remove_suggest(entry, old);
+	gnt_tree_remove(tree, (gpointer)old);
+
 	gnt_entry_add_suggest(entry, new_n);
 	gnt_entry_add_suggest(entry, new_a);
-	gnt_tree_remove(tree, (gpointer)old);
 	gnt_tree_add_row_after(tree, g_strdup(new_n),
-			gnt_tree_create_row(tree, new_a), NULL, NULL);
+			gnt_tree_create_row(tree, chat_flag_text(cb->flags), new_a), NULL, NULL);
 }
 
 static void
@@ -744,6 +762,9 @@ finch_chat_remove_user(PurpleConversation *conv, GList *list)
 static void
 finch_chat_update_user(PurpleConversation *conv, const char *user)
 {
+	PurpleConvChatBuddy *cb = purple_conv_chat_cb_find(PURPLE_CONV_CHAT(conv), user);
+	FinchConv *ggc = conv->ui_data;
+	gnt_tree_change_text(GNT_TREE(ggc->u.chat->userlist), (gpointer)user, 0, chat_flag_text(cb->flags));
 }
 
 static PurpleConversationUiOps conv_ui_ops = 

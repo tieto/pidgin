@@ -103,14 +103,21 @@ pidgin_get_time_idle()
 
 	/* Query xscreensaver */
 	static XScreenSaverInfo *mit_info = NULL;
+	static int has_extension = -1;
 	int event_base, error_base;
-	if (XScreenSaverQueryExtension(GDK_DISPLAY(), &event_base, &error_base)) {
-		if (mit_info == NULL) {
+
+	if (has_extension == -1)
+		has_extension = XScreenSaverQueryExtension(GDK_DISPLAY(), &event_base, &error_base);
+
+	if (has_extension)
+	{
+		if (mit_info == NULL)
 			mit_info = XScreenSaverAllocInfo();
-		}
+
 		XScreenSaverQueryInfo(GDK_DISPLAY(), GDK_ROOT_WINDOW(), mit_info);
 		return (mit_info->idle) / 1000;
-	} else
+	}
+	else
 		return 0;
 #  endif /* !_WIN32 */
 # endif /* !HAVE_IOKIT */
