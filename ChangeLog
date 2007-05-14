@@ -24,6 +24,7 @@ version 2.0.1 (??/??/????):
 	* Identify the account when warning about plaintext auth over an
 	  unencrypted channel
 	* Fix XMPP SASL authentication error when using Cyrus and a connect server
+	* Fix changing tab locations to update properly
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
