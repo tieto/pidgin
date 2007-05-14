@@ -39,7 +39,7 @@ static MsnTable *cbs_table;
  ****************************************************************************/
 
 static void msn_notification_fqy_yahoo(MsnSession *session, const char *passport);
-static void msn_notification_post_adl(MsnCmdProc *cmdproc, char *payload, int payload_len);
+static void msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_len);
 static void msn_add_contact_xml(xmlnode *mlNode, const char *passport, int list_op, int type);
 
 /**************************************************************************
@@ -631,7 +631,7 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 }
 
 static void
-msn_notification_post_adl(MsnCmdProc *cmdproc, char *payload, int payload_len)
+msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_len)
 {
 	MsnTransaction *trans;
 
@@ -645,29 +645,42 @@ msn_notification_post_adl(MsnCmdProc *cmdproc, char *payload, int payload_len)
 void
 msn_notification_dump_contact(MsnSession *session)
 {
-	MsnUserList *userlist;
 	MsnUser *user;
 	GList *l;
 	xmlnode *adl_node;
 	char *payload;
 	int payload_len;
+	int adl_count = 0;
 	const char *display_name;
 
-	userlist = session->userlist;
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 	xmlnode_set_attrib(adl_node, "l", "1");
-
+	
 	/*get the userlist*/
-	for (l = userlist->users; l != NULL; l = l->next){
+	for (l = session->userlist->users; l != NULL; l = l->next){
 		user = l->data;
-		msn_add_contact_xml(adl_node,user->passport,user->list_op&MSN_LIST_OP_MASK,user->type);
+		msn_add_contact_xml(adl_node, user->passport,
+			user->list_op & MSN_LIST_OP_MASK, user->type);
+
+		/* each ADL command may contain up to 150 contacts */
+		if (++adl_count % 150 == 0 || l->next == NULL) {
+			payload = xmlnode_to_str(adl_node,&payload_len);
+
+			msn_notification_post_adl(session->notification->cmdproc,
+				payload, payload_len);
+
+			g_free(payload);
+			xmlnode_free(adl_node);
+
+			if (l->next) {
+				adl_node = xmlnode_new("ml");
+				adl_node->child = NULL;
+				xmlnode_set_attrib(adl_node, "l", "1");
+			}
+		}
 	}
 
-	payload = xmlnode_to_str(adl_node,&payload_len);
-	xmlnode_free(adl_node);
-
-	msn_notification_post_adl(session->notification->cmdproc,payload,payload_len);
 
 	display_name = purple_connection_get_display_name(session->account->gc);
 	if (display_name && strcmp(display_name,
