@@ -611,9 +611,9 @@ static void mw_aware_list_clear(struct mwAwareList *list) {
 
 
 static struct mwAwareListHandler mw_aware_list_handler = {
-  .on_aware = mw_aware_list_on_aware,
-  .on_attrib = mw_aware_list_on_attrib,
-  .clear = mw_aware_list_clear,
+  mw_aware_list_on_aware,
+  mw_aware_list_on_attrib,
+  mw_aware_list_clear,
 };
 
 
