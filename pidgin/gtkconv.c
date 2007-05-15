@@ -7408,8 +7408,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		PidginWindow *dest_win;
 		GtkNotebook *dest_notebook;
 		GtkWidget *tab;
-		gint nb_x, nb_y, page_num;
-		gint arrow1_x, arrow1_y, arrow2_x, arrow2_y;
+		gint page_num;
 		gboolean horiz_tabs = FALSE;
 		PidginConversation *gtkconv;
 		gboolean to_right = FALSE;
@@ -7425,51 +7424,34 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 		dest_notebook = GTK_NOTEBOOK(dest_win->notebook);
 
-		gdk_window_get_origin(GTK_WIDGET(dest_notebook)->window, &nb_x, &nb_y);
-
-		arrow1_x = arrow2_x = nb_x;
-		arrow1_y = arrow2_y = nb_y;
-
 		page_num = pidgin_conv_get_tab_at_xy(dest_win,
 		                                      e->x_root, e->y_root, &to_right);
 		to_right = to_right && (win != dest_win);
 
 		if (gtk_notebook_get_tab_pos(dest_notebook) == GTK_POS_TOP ||
-		    gtk_notebook_get_tab_pos(dest_notebook) == GTK_POS_BOTTOM) {
-
-			    horiz_tabs = TRUE;
-		    }
+				gtk_notebook_get_tab_pos(dest_notebook) == GTK_POS_BOTTOM) {
+			horiz_tabs = TRUE;
+		}
 
 		gtkconv = pidgin_conv_window_get_gtkconv_at_index(dest_win, page_num);
 		tab = gtkconv->tabby;
 
 		if (horiz_tabs) {
-			arrow1_x = arrow2_x = nb_x + tab->allocation.x;
-
 			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
-				arrow1_x += tab->allocation.width;
-				arrow2_x += tab->allocation.width;
+				dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
+				dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
+			} else {
+				dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
+				dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
 			}
-
-			arrow1_y = nb_y + tab->allocation.y;
-			arrow2_y = nb_y + tab->allocation.y + tab->allocation.height;
 		} else {
-			arrow1_x = nb_x + tab->allocation.x;
-			arrow2_x = nb_x + tab->allocation.x + tab->allocation.width;
-			arrow1_y = arrow2_y = nb_y + tab->allocation.y;
-
 			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
-				arrow1_y += tab->allocation.height;
-				arrow2_y += tab->allocation.height;
+				dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
+				dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
+			} else {
+				dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
+				dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
 			}
-		}
-
-		if (horiz_tabs) {
-			dnd_hints_show(HINT_ARROW_DOWN, arrow1_x, arrow1_y);
-			dnd_hints_show(HINT_ARROW_UP,   arrow2_x, arrow2_y);
-		} else {
-			dnd_hints_show(HINT_ARROW_RIGHT, arrow1_x, arrow1_y);
-			dnd_hints_show(HINT_ARROW_LEFT,  arrow2_x, arrow2_y);
 		}
 	}
 
