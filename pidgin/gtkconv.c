@@ -4597,6 +4597,18 @@ buddy_update_cb(PurpleBlistNode *bnode, gpointer null)
 	}
 }
 
+static gboolean
+ignore_middle_click(GtkWidget *widget, GdkEventButton *e, gpointer null)
+{
+	/* A click on the pane is propagated to the notebook containing the pane.
+	 * So if Stu accidentally aims high and middle clicks on the pane-handle,
+	 * it causes a conversation tab to close. Let's stop that from happening.
+	 */
+	if (e->button == 2 && e->type == GDK_BUTTON_PRESS)
+		return TRUE;
+	return FALSE;
+}
+
 /**************************************************************************
  * Conversation UI operations
  **************************************************************************/
@@ -4670,6 +4682,8 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	                  te, sizeof(te) / sizeof(GtkTargetEntry),
 	                  GDK_ACTION_COPY);
 
+	g_signal_connect(G_OBJECT(pane), "button_press_event",
+	                 G_CALLBACK(ignore_middle_click), NULL);
 	g_signal_connect(G_OBJECT(pane), "drag_data_received",
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
