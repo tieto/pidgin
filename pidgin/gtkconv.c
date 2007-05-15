@@ -3977,6 +3977,12 @@ blist_node_aliased_cb(PurpleBlistNode *node, const char *old_alias, PurpleConver
 	}
 	else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 		update_chat_alias((PurpleBuddy *)node, conv, gc, prpl_info);
+	else if (PURPLE_BLIST_NODE_IS_CHAT(node) &&
+			purple_conversation_get_account(conv) == ((PurpleChat*)node)->account)
+	{
+		if (old_alias == NULL || g_utf8_collate(old_alias, purple_conversation_get_title(conv)) == 0)
+			pidgin_conv_update_fields(conv, PIDGIN_CONV_SET_TITLE);
+	}
 }
 
 static void
