@@ -327,7 +327,6 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 	GValue val;
 	PurpleBlistNode *node;
 	const char *text = NULL;
-	char *esc;
 
 	path = gtk_tree_path_new_from_string (path_str);
 	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
@@ -350,12 +349,10 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 		g_return_if_reached();
 	}
 
-	esc = g_markup_escape_text(text, -1);
 	if (GTK_IS_ENTRY (editable)) {
 		GtkEntry *entry = GTK_ENTRY (editable);
-		gtk_entry_set_text(entry, esc);
+		gtk_entry_set_text(entry, text);
 	}
-	g_free(esc);
 }
 
 static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
@@ -3957,6 +3954,9 @@ connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 	g_free(primary);
 	gtk_widget_destroy(GTK_WIDGET(widget));
 	g_hash_table_remove(gtkblist->connection_errors, account);
+	if (gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons)) == NULL) {
+		gtk_widget_hide(gtkblist->error_buttons);
+	}
 }
 
 /* Add some buttons that show connection errors */
@@ -3977,7 +3977,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	                       escaped);
 	g_free(escaped);
 
-	hbox = gtk_hbox_new(FALSE, 0);
+	hbox = gtk_hbox_new(FALSE, 6);
 
 	/* Create the icon */
 	if ((status_type = purple_account_get_status_type_with_primitive(account,
@@ -3987,8 +3987,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 			image = gtk_image_new_from_pixbuf(pixbuf);
 			g_object_unref(pixbuf);
 
-			gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE,
-			                   PIDGIN_HIG_BOX_SPACE);
+			gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
 		}
 	}
 
@@ -3999,8 +3998,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 #if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
-	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE,
-	                   PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
 	/* Create the actual button and put the icon and text on it */
 	button = gtk_button_new();
@@ -4011,6 +4009,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	gtk_widget_show_all(button);
 	gtk_box_pack_end(GTK_BOX(gtkblist->error_buttons), button,
 	                 FALSE, FALSE, 0);
+	gtk_widget_show_all(gtkblist->error_buttons);
 }
 
 void
@@ -4476,7 +4475,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	/* Create an empty vbox used for showing connection errors */
 	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->error_buttons, FALSE, FALSE, 0);
-
+        gtk_container_set_border_width(GTK_CONTAINER(gtkblist->error_buttons), 3);
+	
 	/* Add the statusbox */
 	gtkblist->statusbox = pidgin_status_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
@@ -4573,6 +4573,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 						gtkblist);
 
 	gtk_widget_hide(gtkblist->headline_hbox);
+	gtk_widget_hide(gtkblist->error_buttons);
 
 	/* emit our created signal */
 	purple_signal_emit(handle, "gtkblist-created", list);

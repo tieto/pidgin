@@ -3285,6 +3285,9 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 		gfud->inpa = 0;
 		close(gfud->fd);
 		gfud->fd = -1;
+		gfud->request_written = 0;
+		gfud->len = 0;
+		gfud->data_len = 0;
 
 		g_free(gfud->website.user);
 		g_free(gfud->website.passwd);
@@ -3497,7 +3500,7 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	}
 	gfud->request_written += len;
 
-	if (gfud->request_written != total_len)
+	if (gfud->request_written < total_len)
 		return;
 
 	/* We're done writing our request, now start reading the response */
