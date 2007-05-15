@@ -71,7 +71,7 @@ static void irc_chat_remove_buddy(PurpleConversation *convo, char *data[2])
 	g_free(message);
 }
 
-static void irc_connected(struct irc_conn *irc, const char *nick);
+static void irc_connected(struct irc_conn *irc, const char *nick)
 {
 	PurpleConnection *gc;
 	PurpleStatus *status;
@@ -145,14 +145,10 @@ void irc_msg_luser(struct irc_conn *irc, const char *name, const char *from, cha
 	if (!args || !args[0])
 		return;
 
-	gc = purple_account_get_connection(irc->account);
-	if (!gc)
-		return;
-
 	if (!strcmp(name, "251")) {
 		/* 251 is required, so we pluck our nick from here and
 		 * finalize connection */
-		irc_connected(irc, args[0])
+		irc_connected(irc, args[0]);
 		/* Some IRC servers seem to not send a 255 numeric, so
 		 * I guess we can't require it; 251 will do. */
 	/* } else if (!strcmp(name, "255")) { */

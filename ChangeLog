@@ -30,6 +30,7 @@ version 2.0.1 (??/??/????):
 	* File transfer progress for transfers on MSN is now correctly displayed
 	* You can set/change alias of buddies/chats by double-clicking on the
 	  conversation tabs. (Ma Xuan)
+	* Fix IRC connection bug with dircproxy (xjoe)
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
