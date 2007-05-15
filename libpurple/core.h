@@ -121,6 +121,14 @@ PurpleCoreUiOps *purple_core_get_ui_ops(void);
  */
 gboolean purple_core_migrate(void);
 
+/**
+ * Ensures that only one instance is running.
+ *
+ * @return A boolean such that success indicates that this is the first instance,
+ *         whereas failure indicates that there is another instance running.
+ */
+gboolean purple_core_ensure_single_instance(void);
+
 #ifdef __cplusplus
 }
 #endif
