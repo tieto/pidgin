@@ -288,10 +288,10 @@ static char *purple_dbus_owner_user_dir(void)
 	DBusError dbus_error;
 	char *remote_user_dir = NULL;
 
-	if (NULL == (dbus_connection = purple_dbus_get_connection()))
+	if ((dbus_connection = purple_dbus_get_connection()) == NULL)
 		return NULL;
 
-	if (NULL == (msg = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "PurpleUserDir")))
+	if ((msg = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "PurpleUserDir")) == NULL)
 		return NULL;
 
 	dbus_error_init(&dbus_error);
@@ -299,15 +299,14 @@ static char *purple_dbus_owner_user_dir(void)
 	dbus_message_unref(msg);
 	dbus_error_free(&dbus_error);
 
-	if (NULL != reply)
-		{
+	if (reply) {
 		dbus_error_init(&dbus_error);
 		dbus_message_get_args(reply, &dbus_error, DBUS_TYPE_STRING, &remote_user_dir, DBUS_TYPE_INVALID);
-		if (NULL != remote_user_dir)
+		if (remote_user_dir)
 			remote_user_dir = g_strdup(remote_user_dir);
 		dbus_error_free(&dbus_error);
 		dbus_message_unref(reply);
-		}
+	}
 
 	return remote_user_dir;
 }
@@ -316,16 +315,18 @@ static void purple_dbus_owner_show_buddy_list(void)
 {
 	DBusError dbus_error;
 	DBusMessage *msg = NULL, *reply = NULL;
-	DBusConnection *dbus_connection = purple_dbus_get_connection();
+	DBusConnection *dbus_connection = NULL;
 
-	if (NULL == dbus_connection) return;
+	if ((dbus_connection = purple_dbus_get_connection()) == NULL)
+		return;
 
-	if (NULL == (msg = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "PurpleBlistShow")))
+	if ((msg = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "PurpleBlistShow")) == NULL)
 		return ;
 
 	dbus_error_init(&dbus_error);
-	if (NULL != (reply = dbus_connection_send_with_reply_and_block(dbus_connection, msg, 5000, &dbus_error)))
+	if ((reply = dbus_connection_send_with_reply_and_block(dbus_connection, msg, 5000, &dbus_error)) != NULL) {
 		dbus_message_unref(msg);
+	}
 	dbus_error_free(&dbus_error);
 }
 #endif /* HAVE_DBUS */
@@ -334,18 +335,17 @@ gboolean purple_core_ensure_single_instance()
 {
 gboolean is_single_instance = TRUE;
 #ifdef HAVE_DBUS
-	if (is_single_instance) /* in the future, other mechanisms might have already set this to FALSE */
+	/* in the future, other mechanisms might have already set this to FALSE */
+	if (is_single_instance) {
 		if (!purple_dbus_is_owner()) {
 			const char *user_dir = purple_user_dir();
 			char *dbus_owner_user_dir = purple_dbus_owner_user_dir();
 
 			if (NULL == user_dir && NULL != dbus_owner_user_dir)
 				is_single_instance = TRUE;
-			else
-			if (NULL != user_dir && NULL == dbus_owner_user_dir)
+			else if (NULL != user_dir && NULL == dbus_owner_user_dir)
 				is_single_instance = TRUE;
-			else
-			if (NULL == user_dir && NULL == dbus_owner_user_dir)
+			else if (NULL == user_dir && NULL == dbus_owner_user_dir)
 				is_single_instance = FALSE;
 			else
 				is_single_instance = strcmp(dbus_owner_user_dir, user_dir);
@@ -355,6 +355,7 @@ gboolean is_single_instance = TRUE;
 
 			g_free(dbus_owner_user_dir);
 		}
+	}
 #endif /* HAVE_DBUS */
 	return is_single_instance;
 }

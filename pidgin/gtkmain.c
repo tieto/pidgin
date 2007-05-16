@@ -730,13 +730,12 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
-	if (!purple_core_ensure_single_instance ())
-		{
+	if (!purple_core_ensure_single_instance()) {
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
 #endif
 		return 0 ;
-		}
+	}
 		
 
 	/* TODO: Move blist loading into purple_blist_init() */

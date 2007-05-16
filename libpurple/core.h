@@ -124,8 +124,8 @@ gboolean purple_core_migrate(void);
 /**
  * Ensures that only one instance is running.
  *
- * @return A boolean such that success indicates that this is the first instance,
- *         whereas failure indicates that there is another instance running.
+ * @return A boolean such that @c TRUE indicates that this is the first instance,
+ *         whereas @c FALSE indicates that there is another instance running.
  */
 gboolean purple_core_ensure_single_instance(void);
 
