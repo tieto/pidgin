@@ -302,9 +302,7 @@ static char *purple_dbus_owner_user_dir(void)
 	if (reply) {
 		dbus_error_init(&dbus_error);
 		dbus_message_get_args(reply, &dbus_error, DBUS_TYPE_STRING, &remote_user_dir, DBUS_TYPE_INVALID);
-		if (remote_user_dir) {
-			remote_user_dir = g_strdup(remote_user_dir);
-		}
+		remote_user_dir = g_strdup(remote_user_dir);
 		dbus_error_free(&dbus_error);
 		dbus_message_unref(reply);
 	}

@@ -731,6 +731,7 @@ int main(int argc, char *argv[])
 	}
 
 	if (!purple_core_ensure_single_instance()) {
+		purple_core_quit();
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
 #endif
