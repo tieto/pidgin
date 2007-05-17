@@ -628,14 +628,40 @@ dump_screen(GntBindable *bindable, GList *null)
 	int x, y;
 	chtype old = 0, now = 0;
 	FILE *file = fopen("dump.html", "w");
+	struct {
+		char ascii;
+		char *unicode;
+	} unis[] = {
+		{'q', "&#x2500;"},
+		{'t', "&#x251c;"},
+		{'u', "&#x2524;"},
+		{'x', "&#x2502;"},
+		{'-', "&#x2191;"},
+		{'.', "&#x2193;"},
+		{'l', "&#x250c;"},
+		{'k', "&#x2510;"},
+		{'m', "&#x2514;"},
+		{'j', "&#x2518;"},
+		{'a', "&#x2592;"},
+		{'\0', NULL}
+	};
 
+	fprintf(file, "<head>\n  <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n</head>\n<body>\n");
 	fprintf(file, "<pre>");
 	for (y = 0; y < getmaxy(stdscr); y++) {
 		for (x = 0; x < getmaxx(stdscr); x++) {
-			char ch;
+			char ch[2] = {0, 0}, *print;
+#ifdef NO_WIDECHAR
 			now = mvwinch(curscr, y, x);
-			ch = now & A_CHARTEXT;
-			now ^= ch;
+			ch[0] = now & A_CHARTEXT;
+			now ^= ch[0];
+#else
+			cchar_t wch;
+			char unicode[12];
+			mvwin_wch(curscr, y, x, &wch);
+			now = wch.attr;
+			ch[0] = (char)(wch.chars[0] & 0xff);
+#endif
 
 #define CHECK(attr, start, end) \
 			do \
@@ -688,48 +714,39 @@ dump_screen(GntBindable *bindable, GList *null)
 				fprintf(file, "<span style=\"background:#%02x%02x%02x;color:#%02x%02x%02x\">",
 						bg.r, bg.g, bg.b, fg.r, fg.g, fg.b);
 			}
+			print = ch;
+#ifndef NO_WIDECHAR
+			if (wch.chars[0] > 255) {
+				snprintf(unicode, sizeof(unicode), "&#x%x;", wch.chars[0]);
+				print = unicode;
+			}
+#endif
 			if (now & A_ALTCHARSET)
 			{
-				switch (ch)
-				{
-					case 'q':
-						ch = '-'; break;
-					case 't':
-					case 'u':
-					case 'x':
-						ch = '|'; break;
-					case 'v':
-					case 'w':
-					case 'l':
-					case 'm':
-					case 'k':
-					case 'j':
-					case 'n':
-						ch = '+'; break;
-					case '-':
-						ch = '^'; break;
-					case '.':
-						ch = 'v'; break;
-					case 'a':
-						ch = '#'; break;
-					default:
-						ch = ' '; break;
+				int u;
+				for (u = 0; unis[u].ascii; u++) {
+					if (ch[0] == unis[u].ascii) {
+						print = unis[u].unicode;
+						break;
+					}
 				}
+				if (!unis[u].ascii)
+					print = " ";
 			}
-			if (ch == '&')
+			if (ch[0] == '&')
 				fprintf(file, "&amp;");
-			else if (ch == '<')
+			else if (ch[0] == '<')
 				fprintf(file, "&lt;");
-			else if (ch == '>')
+			else if (ch[0] == '>')
 				fprintf(file, "&gt;");
 			else
-				fprintf(file, "%c", ch);
+				fprintf(file, "%s", print);
 			old = now;
 		}
 		fprintf(file, "</span>\n");
 		old = 0;
 	}
-	fprintf(file, "</pre>");
+	fprintf(file, "</pre>\n</body>");
 	fclose(file);
 	return TRUE;
 }
