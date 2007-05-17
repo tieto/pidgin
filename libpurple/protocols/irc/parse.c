@@ -227,7 +227,7 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 	enclist = purple_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
 	encodings = g_strsplit(enclist, ",", 2);
 
-	if (encodings[0] == NULL || !strcasecmp("UTF-8", encodings[0])) {
+	if (encodings[0] == NULL || !g_ascii_strcasecmp("UTF-8", encodings[0])) {
 		g_strfreev(encodings);
 		return g_strdup(string);
 	}

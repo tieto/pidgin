@@ -78,7 +78,8 @@ common_sources = \
 #	common/fallback/const-xs.inc
 
 perl_scripts = \
-	scripts/function_list.pl
+	scripts/function_list.pl \
+	scripts/signals-test.pl
 
 EXTRA_DIST = \
 	Makefile.mingw \
