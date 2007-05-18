@@ -143,21 +143,14 @@ static void pidgin_whiteboard_create(PurpleWhiteboard *wb)
 		gtkwb->brush_color = 0xff0000;
 	}
 
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtkwb->window = window;
-	gtk_widget_set_name(window, wb->who);
-
 	/* Try and set window title as the name of the buddy, else just use their
 	 * username
 	 */
 	buddy = purple_find_buddy(wb->account, wb->who);
 
-	if (buddy != NULL)
-		gtk_window_set_title((GtkWindow*)(window), purple_buddy_get_contact_alias(buddy));
-	else
-		gtk_window_set_title((GtkWindow*)(window), wb->who);
-
-	gtk_window_set_resizable((GtkWindow*)(window), FALSE);
+	window = pidgin_create_window(buddy != NULL ? purple_buddy_get_contact_alias(buddy) : wb->who, 0, NULL, FALSE);
+	gtkwb->window = window;
+	gtk_widget_set_name(window, wb->who);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(whiteboard_close_cb), gtkwb);

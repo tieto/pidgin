@@ -93,6 +93,16 @@ void pidgin_setup_imhtml(GtkWidget *imhtml);
 GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret);
 
 /**
+ * Creates a new window
+ *
+ * @param title        The window title, or @c NULL
+ * @param border_width The window's desired border width
+ * @param role         A string indicating what the window is responsible for doing, or @c NULL
+ * @param resizable    Whether the window should be resizable (@c TRUE) or not (@c FALSE)
+ */
+GtkWidget *pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable);
+
+/**
  * Toggles the sensitivity of a widget.
  *
  * @param widget    @c NULL. Used for signal handlers.

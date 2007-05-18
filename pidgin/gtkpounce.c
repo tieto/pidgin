@@ -498,15 +498,9 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	/* Create the window. */
-	dialog->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	dialog->window = window = pidgin_create_window((cur_pounce == NULL ? _("New Buddy Pounce") : _("Edit Buddy Pounce")),
+		PIDGIN_HIG_BORDER, "buddy_pounce", FALSE) ;
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_window_set_role(GTK_WINDOW(window), "buddy_pounce");
-	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
-	gtk_window_set_title(GTK_WINDOW(window),
-						 (cur_pounce == NULL
-						  ? _("New Buddy Pounce") : _("Edit Buddy Pounce")));
-
-	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);
@@ -1323,11 +1317,8 @@ pidgin_pounces_manager_show(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/pounces/dialog/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/pounces/dialog/height");
 
-	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	dialog->window = win = pidgin_create_window(_("Buddy Pounces"), PIDGIN_HIG_BORDER, "pounces", TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
-	gtk_window_set_role(GTK_WINDOW(win), "pounces");
-	gtk_window_set_title(GTK_WINDOW(win), _("Buddy Pounces"));
-	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(pounces_manager_destroy_cb), dialog);

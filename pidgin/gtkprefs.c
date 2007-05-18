@@ -1948,11 +1948,7 @@ void pidgin_prefs_show(void)
 	/* Back to instant-apply! I win!  BU-HAHAHA! */
 
 	/* Create the window */
-	prefs = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(prefs), "preferences");
-	gtk_window_set_title(GTK_WINDOW(prefs), _("Preferences"));
-	gtk_window_set_resizable (GTK_WINDOW(prefs), FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(prefs), PIDGIN_HIG_BORDER);
+	prefs = pidgin_create_window(_("Preferences"), PIDGIN_HIG_BORDER, "preferences", FALSE);
 	g_signal_connect(G_OBJECT(prefs), "destroy",
 					 G_CALLBACK(delete_prefs), NULL);
 
