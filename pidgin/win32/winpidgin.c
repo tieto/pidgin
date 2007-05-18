@@ -145,7 +145,7 @@ static void dll_prep() {
 		putenv(settingsdir);
 
 		snprintf(aspelldir, sizeof(aspelldir), "PIDGIN_ASPELL_DIR=%s\\Aspell\\bin", path);
-		printf("%s\n", aspelldir);
+		printf("%s", aspelldir);
 		putenv(aspelldir);
 
 		/* set the GTK+ path to be \\path\to\GTK\bin */
