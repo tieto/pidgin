@@ -982,7 +982,8 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 	else
 	{
-		fputs("<html>\n"
+		fputs("<!-- saved from url=(0013)about:internet -->\n"
+			  "<html>\n"
 			  "<head>\n"
 			  "<noscript>\n"
 			  "<meta http-equiv=\"Refresh\" content=\"0; "

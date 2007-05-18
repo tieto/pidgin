@@ -24,9 +24,14 @@ version 2.0.1 (??/??/????):
 	* Identify the account when warning about plaintext auth over an
 	  unencrypted channel
 	* Fix XMPP SASL authentication error when using Cyrus and a connect server
+	* Fix changing tab locations to update properly
 	* Turning off "Show formatting on incoming messages" now ignores
 	  formatting in <span> tags too
 	* File transfer progress for transfers on MSN is now correctly displayed
+	* You can set/change alias of buddies/chats by double-clicking on the
+	  conversation tabs (Ma Xuan)
+	* Fix IRC connection bug with dircproxy (xjoe)
+	* Ctrl+[shift]+tab focuses the next most active tab (William Thompson)
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
@@ -39,6 +44,7 @@ version 2.0.1 (??/??/????):
 	* Work around an ncurses bug which appears when half of a multi-cell
 	  character is covered by an upper-level window
 	* New plugins are shown in bold text in the plugin dialog
+	* Nicer HTML screendumps
 
 version 2.0.0 (5/3/2007):
 	* The project has new names - libpurple for the core, Pidgin for the

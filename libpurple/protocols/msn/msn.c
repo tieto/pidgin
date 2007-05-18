@@ -619,7 +619,7 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 	account = purple_connection_get_account(gc);
 	user = msn_normalize(account, purple_account_get_username(account));
 
-	if (strstr(user, "@hotmail.com") != NULL)
+	if (strstr(user, "@hotmail.") != NULL)
 	{
 		m = g_list_append(m, NULL);
 		act = purple_plugin_action_new(_("Open Hotmail Inbox"),
