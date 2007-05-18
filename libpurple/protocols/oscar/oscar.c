@@ -4143,6 +4143,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 			conn->sn, msg->str, &tmp, &tmplen, &charset, &charsubset);
 	g_string_free(msg, TRUE);
 	msg = g_string_new_len(tmp, tmplen);
+	g_free(tmp);
 
 	/* Append any binary data that we may have */
 	if (oscar_id) {
