@@ -763,6 +763,7 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 	slpcall->progress_cb = msn_xfer_progress_cb;
 	slpcall->cb = msn_xfer_completed_cb;
 	slpcall->xfer = xfer;
+	purple_xfer_ref(slpcall->xfer);
 
 	slpcall->pending = TRUE;
 
