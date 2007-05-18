@@ -1755,7 +1755,8 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 static void
 move_to_next_unread_tab(PidginConversation *gtkconv, gboolean forward)
 {
-	PidginConversation *next_gtkconv = NULL;
+	PidginConversation *next_gtkconv = NULL, *most_active = NULL;
+	PidginUnseenState unseen_state = PIDGIN_UNSEEN_NONE;
 	PidginWindow *win;
 	int initial, i, total, diff;
 
@@ -1771,17 +1772,21 @@ move_to_next_unread_tab(PidginConversation *gtkconv, gboolean forward)
 
 	for (i = (initial + diff) % total; i != initial; i = (i + diff) % total) {
 		next_gtkconv = pidgin_conv_window_get_gtkconv_at_index(win, i);
-		if (next_gtkconv->unseen_state > 0)
-			break;
+		if (next_gtkconv->unseen_state > unseen_state) {
+			most_active = next_gtkconv;
+			unseen_state = most_active->unseen_state;
+			if(PIDGIN_UNSEEN_NICK == unseen_state) /* highest possible state */
+				break;
+		}
 	}
 
-	if (i == initial) { /* no new messages */
+	if (most_active == NULL) { /* no new messages */
 		i = (i + diff) % total;
-		next_gtkconv = pidgin_conv_window_get_gtkconv_at_index(win, i);
+		most_active = pidgin_conv_window_get_gtkconv_at_index(win, i);
 	}
 
-	if (next_gtkconv != NULL && next_gtkconv != gtkconv)
-		pidgin_conv_window_switch_gtkconv(win, next_gtkconv);
+	if (most_active != NULL && most_active != gtkconv)
+		pidgin_conv_window_switch_gtkconv(win, most_active);
 }
 
 static gboolean
