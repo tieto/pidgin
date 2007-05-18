@@ -235,6 +235,11 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, PidginConversation *gt
 		return FALSE;
 	}
 
+	/* Don't save the window's size if it is maximized.
+	 * It is annoying because the window reopens at that size, but not maximized */
+	if (gdk_window_get_state(w->window) & GDK_WINDOW_STATE_MAXIMIZED)
+		return FALSE;
+
 	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the
 	 * tab bar will fit, but then I don't want new windows taking up the entire screen.  I check to see
 	 * if there is only one conversation in the window.  This way we'll be setting new windows to the
