@@ -454,8 +454,10 @@ aop_menu_cb(GtkWidget *optmenu, GCallback cb)
 	per_item_data = aop_option_menu_get_selected(optmenu, &item);
 
 	if (cb != NULL)
+	{
 		((void (*)(GtkWidget *, gpointer, gpointer))cb)(item, per_item_data,
-															 g_object_get_data(G_OBJECT(optmenu), "user_data"));
+		                                                g_object_get_data(G_OBJECT(optmenu), "user_data"));
+	}
 }
 
 static GtkWidget *
