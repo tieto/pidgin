@@ -8030,10 +8030,7 @@ pidgin_conv_window_new()
 	window_list = g_list_append(window_list, win);
 
 	/* Create the window. */
-	win->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(win->window), "conversation");
-	gtk_window_set_resizable(GTK_WINDOW(win->window), TRUE);
-	gtk_container_set_border_width(GTK_CONTAINER(win->window), 0);
+	win->window = pidgin_create_window(NULL, 0, "conversation", TRUE);
 	GTK_WINDOW(win->window)->allow_shrink = TRUE;
 
 	if (available_list == NULL) {

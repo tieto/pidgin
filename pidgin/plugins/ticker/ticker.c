@@ -70,12 +70,10 @@ static void buddy_ticker_create_window() {
 		return;
 	}
 
-	tickerwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	tickerwindow = pidgin_create_window(_("Buddy Ticker"), 0, "ticker", TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(tickerwindow), 500, -1);
 	g_signal_connect(G_OBJECT(tickerwindow), "delete_event",
 			G_CALLBACK (buddy_ticker_destroy_window), NULL);
-	gtk_window_set_title (GTK_WINDOW(tickerwindow), _("Buddy Ticker"));
-	gtk_window_set_role (GTK_WINDOW(tickerwindow), "ticker");
 
 	ticker = gtk_ticker_new();
 	gtk_ticker_set_spacing(GTK_TICKER(ticker), 20);
