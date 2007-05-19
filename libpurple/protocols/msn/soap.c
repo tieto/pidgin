@@ -302,6 +302,43 @@ msn_soap_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 			PURPLE_SSL_DEFAULT_PORT, msn_soap_connect_cb,
 			msn_soap_error_cb, soapconn);
 	}
+	/* Another case of redirection, active on May, 2007
+	   See http://msnpiki.msnfanatic.com/index.php/MSNP13:SOAPTweener#Redirect
+	 */
+	else if (strstr(soapconn->read_buf,
+                    "<faultcode>psf:Redirect</faultcode>") != NULL)
+	{
+		char *location, *c;
+
+		location = strstr(soapconn->read_buf, "<psf:redirectUrl>");
+		/* Omit the tag preceding the URL */
+		location += strlen("<psf:redirectUrl>");
+		location = strstr(location, ":/");
+		if (location == NULL)
+		{
+			msn_soap_free_read_buf(soapconn);
+			return;
+		}
+
+		location += strlen("://"); /* Skip http:// or https:// */
+
+		if ( (c = strstr(location, "</psf:redirectUrl>")) != NULL )
+			*c = '\0';
+
+		if ( (c = strstr(location, "/")) != NULL )
+		{
+			g_free(soapconn->login_path);
+			soapconn->login_path = g_strdup(c);
+			*c = '\0';
+		}
+
+		g_free(soapconn->login_host);
+		soapconn->login_host = g_strdup(location);
+
+		purple_ssl_connect(session->account, soapconn->login_host,
+			PURPLE_SSL_DEFAULT_PORT, msn_soap_connect_cb,
+			msn_soap_error_cb, soapconn);
+	}
 	else if (strstr(soapconn->read_buf, "HTTP/1.1 401 Unauthorized") != NULL)
 	{
 		const char *error;
