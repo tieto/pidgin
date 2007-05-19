@@ -3017,7 +3017,7 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 	PangoLogAttr *log_attrs;
 	gchar *word;
 
-	if (strcasecmp(key, "Global Thermonuclear War") == 0)
+	if (g_ascii_strcasecmp(key, "Global Thermonuclear War") == 0)
 	{
 		purple_notify_info(NULL, "WOPR",
 				"Wouldn't you prefer a nice game of chess?", NULL);
