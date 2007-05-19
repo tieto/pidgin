@@ -76,7 +76,7 @@ static GList *
 get_idle_options()
 {
 	GList *list = NULL;
-	list = g_list_append(list, _("Based on keyboard use"));
+	list = g_list_append(list, (char *)_("Based on keyboard use"));
 	list = g_list_append(list, "system");
 	list = g_list_append(list, (char*)_("From last sent message"));
 	list = g_list_append(list, "purple");
