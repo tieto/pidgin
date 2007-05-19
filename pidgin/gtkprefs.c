@@ -1472,7 +1472,7 @@ reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
 	purple_prefs_set_path(pref, "");
 	g_free(pref);
 
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), "(default)");
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), _("(default)"));
 }
 
 static void
@@ -1561,7 +1561,7 @@ static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	file = purple_prefs_get_path(pref);
 	g_free(pref);
 	if (sound_entry)
-		gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
+		gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : _("(default)"));
 	g_value_unset (&val);
 }
 
@@ -1753,7 +1753,7 @@ sound_page()
 			       pidgin_sound_get_event_option(0));
 	file = purple_prefs_get_path(pref);
 	g_free(pref);
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : _("(default)"));
 	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 
