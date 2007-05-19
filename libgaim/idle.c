@@ -241,7 +241,7 @@ void
 gaim_idle_init()
 {
 	/* Add the timer to check if we're idle */
-	idle_timer = gaim_timeout_add(IDLE_CHECK_INTERVAL * 1000, check_idleness, NULL);
+	idle_timer = gaim_timeout_add_seconds(IDLE_CHECK_INTERVAL , check_idleness_timer, NULL);
 
 	gaim_signal_connect(gaim_conversations_get_handle(), "sent-im-msg",
 						gaim_idle_get_handle(),

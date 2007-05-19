@@ -116,6 +116,7 @@ static guint gaim_gtk_input_add(gint fd, GaimInputCondition condition, GaimInput
 static GaimEventLoopUiOps eventloop_ops =
 {
 	g_timeout_add,
+	NULL,
 	(guint (*)(guint))g_source_remove,
 	gaim_gtk_input_add,
 	(guint (*)(guint))g_source_remove

@@ -52,6 +52,7 @@ struct _GaimEventLoopUiOps
 	 * @see g_timeout_add, gaim_timeout_add
 	 **/
 	guint (*timeout_add)(guint interval, GSourceFunc function, gpointer data);
+	guint (*timeout_add_seconds)(guint interval, GSourceFunc function, gpointer data);
 
 	/**
 	 * Removes a callback timer.
@@ -89,6 +90,7 @@ struct _GaimEventLoopUiOps
  *         gaim_timeout_remove to remove the timer.
  */
 guint gaim_timeout_add(guint interval, GSourceFunc function, gpointer data);
+guint gaim_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data);
 
 /**
  * Removes a timeout handler.

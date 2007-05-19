@@ -1008,7 +1008,7 @@ gaim_conv_im_start_typing_timeout(GaimConvIm *im, int timeout)
 	conv = gaim_conv_im_get_conversation(im);
 	name = gaim_conversation_get_name(conv);
 
-	im->typing_timeout = gaim_timeout_add(timeout * 1000, reset_typing_cb, conv);
+	im->typing_timeout = gaim_timeout_add_seconds(timeout, reset_typing_cb, conv);
 }
 
 void

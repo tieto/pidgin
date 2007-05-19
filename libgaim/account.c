@@ -415,7 +415,7 @@ static void
 schedule_accounts_save()
 {
 	if (save_timer == 0)
-		save_timer = gaim_timeout_add(5000, save_cb, NULL);
+		save_timer = gaim_timeout_add_seconds(5, save_cb, NULL);
 }
 
 

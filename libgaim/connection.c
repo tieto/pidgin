@@ -72,7 +72,7 @@ update_keepalive(GaimConnection *gc, gboolean on)
 	if (on && !gc->keepalive)
 	{
 		gaim_debug_info("connection", "Activating keepalive.\n");
-		gc->keepalive = gaim_timeout_add(30000, send_keepalive, gc);
+		gc->keepalive = gaim_timeout_add_seconds(30, send_keepalive, gc);
 	}
 	else if (!on && gc->keepalive > 0)
 	{
