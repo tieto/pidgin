@@ -299,7 +299,8 @@ static char *purple_dbus_owner_user_dir(void)
 	dbus_message_unref(msg);
 	dbus_error_free(&dbus_error);
 
-	if (reply) {
+	if (reply)
+	{
 		dbus_error_init(&dbus_error);
 		dbus_message_get_args(reply, &dbus_error, DBUS_TYPE_STRING, &remote_user_dir, DBUS_TYPE_INVALID);
 		remote_user_dir = g_strdup(remote_user_dir);
@@ -323,20 +324,24 @@ static void purple_dbus_owner_show_buddy_list(void)
 		return;
 
 	dbus_error_init(&dbus_error);
-	if ((reply = dbus_connection_send_with_reply_and_block(dbus_connection, msg, 5000, &dbus_error)) != NULL) {
+	if ((reply = dbus_connection_send_with_reply_and_block(dbus_connection, msg, 5000, &dbus_error)) != NULL)
+	{
 		dbus_message_unref(msg);
 	}
 	dbus_error_free(&dbus_error);
 }
 #endif /* HAVE_DBUS */
 
-gboolean purple_core_ensure_single_instance()
+gboolean
+purple_core_ensure_single_instance()
 {
-gboolean is_single_instance = TRUE;
+	gboolean is_single_instance = TRUE;
 #ifdef HAVE_DBUS
 	/* in the future, other mechanisms might have already set this to FALSE */
-	if (is_single_instance) {
-		if (!purple_dbus_is_owner()) {
+	if (is_single_instance)
+	{
+		if (!purple_dbus_is_owner())
+		{
 			const char *user_dir = purple_user_dir();
 			char *dbus_owner_user_dir = purple_dbus_owner_user_dir();
 
