@@ -3977,6 +3977,12 @@ blist_node_aliased_cb(PurpleBlistNode *node, const char *old_alias, PurpleConver
 	}
 	else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 		update_chat_alias((PurpleBuddy *)node, conv, gc, prpl_info);
+	else if (PURPLE_BLIST_NODE_IS_CHAT(node) &&
+			purple_conversation_get_account(conv) == ((PurpleChat*)node)->account)
+	{
+		if (old_alias == NULL || g_utf8_collate(old_alias, purple_conversation_get_title(conv)) == 0)
+			pidgin_conv_update_fields(conv, PIDGIN_CONV_SET_TITLE);
+	}
 }
 
 static void
@@ -4591,6 +4597,18 @@ buddy_update_cb(PurpleBlistNode *bnode, gpointer null)
 	}
 }
 
+static gboolean
+ignore_middle_click(GtkWidget *widget, GdkEventButton *e, gpointer null)
+{
+	/* A click on the pane is propagated to the notebook containing the pane.
+	 * So if Stu accidentally aims high and middle clicks on the pane-handle,
+	 * it causes a conversation tab to close. Let's stop that from happening.
+	 */
+	if (e->button == 2 && e->type == GDK_BUTTON_PRESS)
+		return TRUE;
+	return FALSE;
+}
+
 /**************************************************************************
  * Conversation UI operations
  **************************************************************************/
@@ -4664,6 +4682,8 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	                  te, sizeof(te) / sizeof(GtkTargetEntry),
 	                  GDK_ACTION_COPY);
 
+	g_signal_connect(G_OBJECT(pane), "button_press_event",
+	                 G_CALLBACK(ignore_middle_click), NULL);
 	g_signal_connect(G_OBJECT(pane), "drag_data_received",
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
@@ -7815,6 +7835,105 @@ right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, PidginWindow *
 }
 
 static void
+remove_edit_entry(PidginConversation *gtkconv, GtkWidget *entry)
+{
+	g_signal_handlers_disconnect_matched(G_OBJECT(entry), G_SIGNAL_MATCH_DATA,
+				0, 0, NULL, NULL, gtkconv);
+	gtk_widget_show(gtkconv->tab_label);
+	gtk_widget_grab_focus(gtkconv->entry);
+	gtk_widget_destroy(entry);
+}
+
+static gboolean
+alias_focus_cb(GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
+{
+	remove_edit_entry(user_data, widget);
+	return FALSE;
+}
+
+static gboolean
+alias_key_press_cb(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
+{
+	if (event->keyval == GDK_Escape) {
+		remove_edit_entry(user_data, widget);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static void
+alias_cb(GtkEntry *entry, gpointer user_data)
+{
+	PidginConversation *gtkconv;
+	PurpleConversation *conv;
+	PurpleAccount *account;
+	const char *name;
+
+	gtkconv = (PidginConversation *)user_data;
+	if (gtkconv == NULL) {
+		return;
+	}
+	conv    = gtkconv->active_conv;
+	account = purple_conversation_get_account(conv);
+	name    = purple_conversation_get_name(conv);
+
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		PurpleBuddy *buddy;
+		buddy = purple_find_buddy(account, name);
+		if (buddy != NULL) {
+			purple_blist_alias_buddy(buddy,
+                                                 gtk_entry_get_text(entry));
+		}
+		serv_alias_buddy(buddy);
+	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {	        
+		PurpleChat *chat;
+
+		chat = purple_blist_find_chat(account, name);
+		if (chat != NULL) {
+			purple_blist_alias_chat(chat,
+			                        gtk_entry_get_text(entry));
+		}
+	}
+	remove_edit_entry(user_data, GTK_WIDGET(entry));
+}
+
+static gboolean
+alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConversation *gtkconv)
+{
+	GtkWidget *entry = NULL;
+
+	if (event->button != 1 || event->type != GDK_2BUTTON_PRESS) {
+		return FALSE;
+	}
+
+	if (!GTK_WIDGET_VISIBLE(gtkconv->tab_label)) {
+		/* There's already an entry for alias. Let's not create another one. */
+		return FALSE;
+	}
+
+	/* alias label */
+	entry = gtk_entry_new();
+	gtk_entry_set_has_frame(GTK_ENTRY(entry), FALSE);
+	gtk_entry_set_width_chars(GTK_ENTRY(entry), 10);
+	gtk_entry_set_alignment(GTK_ENTRY(entry), 0.5);
+
+	gtk_box_pack_start(GTK_BOX(gtkconv->tabby), entry, TRUE, TRUE, 0);
+	/* after the tab label */
+	gtk_box_reorder_child(GTK_BOX(gtkconv->tabby), entry, 2);
+
+	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(alias_cb), gtkconv);
+	g_signal_connect(G_OBJECT(entry), "focus-out-event", G_CALLBACK(alias_focus_cb), gtkconv);
+	g_signal_connect(G_OBJECT(entry), "key-press-event", G_CALLBACK(alias_key_press_cb), gtkconv);
+	gtk_entry_set_text(GTK_ENTRY(entry),
+			gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+	gtk_widget_show(entry);
+	gtk_widget_hide(gtkconv->tab_label);
+	gtk_widget_grab_focus(entry);
+
+	return FALSE;
+}
+
+static void
 switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
                gpointer user_data)
 {
@@ -8157,7 +8276,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 {
 	gboolean tabs_side = FALSE;
 	gint angle = 0;
-	GtkWidget *first, *third;
+	GtkWidget *first, *third, *ebox;
 
 	if (purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_LEFT ||
 	    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_RIGHT)
@@ -8202,6 +8321,11 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 		third = gtkconv->close;
 	}
 
+	ebox = gtk_event_box_new();
+	gtk_container_add(GTK_CONTAINER(ebox), gtkconv->tabby);
+	g_signal_connect(G_OBJECT(ebox), "button-press-event",
+					G_CALLBACK(alias_double_click_cb), gtkconv);
+
 	if (gtkconv->tab_label->parent == NULL) {
 		/* Pack if it's a new widget */
 		gtk_box_pack_start(GTK_BOX(gtkconv->tabby), first,              FALSE, FALSE, 0);
@@ -8209,7 +8333,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 		gtk_box_pack_start(GTK_BOX(gtkconv->tabby), third,              FALSE, FALSE, 0);
 
 		/* Add this pane to the conversation's notebook. */
-		gtk_notebook_append_page(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, gtkconv->tabby);
+		gtk_notebook_append_page(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, ebox);
 	} else {
 		/* reparent old widgets on preference changes */
 		gtk_widget_reparent(first,              gtkconv->tabby);
@@ -8220,7 +8344,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 		gtk_box_set_child_packing(GTK_BOX(gtkconv->tabby), third,              FALSE, FALSE, 0, GTK_PACK_START);
 
 		/* Reset the tabs label to the new version */
-		gtk_notebook_set_tab_label(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, gtkconv->tabby);
+		gtk_notebook_set_tab_label(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, ebox);
 	}
 
 	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, !tabs_side && !angle, TRUE, GTK_PACK_START);
@@ -8231,6 +8355,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/close_on_tabs"))
 		gtk_widget_show(gtkconv->close);
 	gtk_widget_show(gtkconv->tabby);
+	gtk_widget_show(ebox);
 }
 
 void
