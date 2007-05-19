@@ -65,6 +65,12 @@ static GHashTable *map_id_node;
 static GHashTable *map_id_type;
 
 static gchar *init_error;
+static int dbus_request_name_reply = DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER;
+
+gboolean purple_dbus_is_owner(void)
+{
+	return(DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER == dbus_request_name_reply);
+}
 
 /**
  * This function initializes the pointer-id traslation system.  It
@@ -592,6 +598,7 @@ purple_dbus_dispatch_init(void)
 		return;
 	}
 
+	dbus_request_name_reply =
 	result = dbus_bus_request_name(purple_dbus_connection,
 			DBUS_SERVICE_PURPLE, 0, &error);
 
