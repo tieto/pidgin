@@ -5556,9 +5556,9 @@ pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 
 	flags = purple_conv_chat_user_get_flags(chat, user);
 
-	cbuddy = purple_conv_chat_cb_new(user, alias, flags);
-
-	add_chat_buddy_common(conv, cbuddy, NULL);
+	cbuddy = purple_conv_chat_cb_find(chat, user);
+	if (cbuddy)
+		add_chat_buddy_common(conv, cbuddy, NULL);
 	g_free(alias);
 }
 
