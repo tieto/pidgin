@@ -99,6 +99,8 @@ GtkWidget *pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWi
  * @param border_width The window's desired border width
  * @param role         A string indicating what the window is responsible for doing, or @c NULL
  * @param resizable    Whether the window should be resizable (@c TRUE) or not (@c FALSE)
+ *
+ * @since 2.1.0
  */
 GtkWidget *pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable);
 
