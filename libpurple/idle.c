@@ -323,7 +323,7 @@ purple_idle_init()
 						PURPLE_CALLBACK(signing_off_cb), NULL);
 
 	purple_prefs_connect_callback(purple_idle_get_handle(), "/purple/away/idle_reporting",
-	                              idle_reporting_cb, NULL)
+	                              idle_reporting_cb, NULL);
 
 	purple_idle_touch();
 }
