@@ -2,6 +2,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.1.0 (??/??/????):
 	Added:
+	* pidgin_create_window()
 	* purple_core_ensure_single_instance()
 	* purple_dbus_is_owner()
 
