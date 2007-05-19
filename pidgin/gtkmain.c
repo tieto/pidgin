@@ -735,7 +735,7 @@ int main(int argc, char *argv[])
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
 #endif
-		return 0 ;
+		return 0;
 	}
 		
 

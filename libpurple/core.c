@@ -320,7 +320,7 @@ static void purple_dbus_owner_show_buddy_list(void)
 		return;
 
 	if ((msg = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "PurpleBlistShow")) == NULL)
-		return ;
+		return;
 
 	dbus_error_init(&dbus_error);
 	if ((reply = dbus_connection_send_with_reply_and_block(dbus_connection, msg, 5000, &dbus_error)) != NULL) {
@@ -356,6 +356,7 @@ gboolean is_single_instance = TRUE;
 		}
 	}
 #endif /* HAVE_DBUS */
+
 	return is_single_instance;
 }
 
