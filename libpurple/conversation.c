@@ -1497,7 +1497,7 @@ purple_conv_chat_cb_compare(PurpleConvChatBuddy *a, PurpleConvChatBuddy *b)
 	} else if (a->buddy != b->buddy) {
 		ret = a->buddy ? -1 : 1;
 	} else {
-		ret = strcasecmp(user1, user2);
+		ret = purple_utf8_strcasecmp(user1, user2);
 	}
 
 	return ret;

@@ -747,7 +747,7 @@ finch_chat_rename_user(PurpleConversation *conv, const char *old, const char *ne
 }
 
 static void
-finch_chat_remove_user(PurpleConversation *conv, GList *list)
+finch_chat_remove_users(PurpleConversation *conv, GList *list)
 {
 	/* Remove the name from string completion */
 	FinchConv *ggc = conv->ui_data;
@@ -769,20 +769,25 @@ finch_chat_update_user(PurpleConversation *conv, const char *user)
 
 static PurpleConversationUiOps conv_ui_ops = 
 {
-	.create_conversation = finch_create_conversation,
-	.destroy_conversation = finch_destroy_conversation,
-	.write_chat = finch_write_chat,
-	.write_im = finch_write_im,
-	.write_conv = finch_write_conv,
-	.chat_add_users = finch_chat_add_users,
-	.chat_rename_user = finch_chat_rename_user,
-	.chat_remove_users = finch_chat_remove_user,
-	.chat_update_user = finch_chat_update_user,
-	.present = NULL,
-	.has_focus = NULL,
-	.custom_smiley_add = NULL,
-	.custom_smiley_write = NULL,
-	.custom_smiley_close = NULL
+	finch_create_conversation,
+	finch_destroy_conversation,
+	finch_write_chat,
+	finch_write_im,
+	finch_write_conv,
+	finch_chat_add_users,
+	finch_chat_rename_user,
+	finch_chat_remove_users,
+	finch_chat_update_user,
+	NULL, /* present */
+	NULL, /* has_focus */
+	NULL, /* custom_smiley_add */
+	NULL, /* custom_smiley_write */
+	NULL, /* custom_smiley_close */
+	NULL, /* send_confirm */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleConversationUiOps *finch_conv_get_ui_ops()
