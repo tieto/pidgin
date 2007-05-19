@@ -157,7 +157,12 @@ check_idleness(void)
 			time_idle = time(NULL) - last_active_time;
 	}
 
-	time_until_next_idle_event = IDLEMARK - time_idle; /* reasonable start upperbound */
+	time_until_next_idle_event = IDLEMARK - time_idle;
+	if (time_until_next_idle_event < 0)
+	{
+		/* If we're already idle, check again in a minute. */
+		time_until_next_idle_event = 60;
+	}
 
 	if (auto_away || !no_away)
 		away_seconds = 60 * purple_prefs_get_int("/purple/away/mins_before_away");
@@ -189,9 +194,6 @@ check_idleness(void)
 		while (idled_accts != NULL)
 			set_account_unidle(idled_accts->data);
 	}
-	
-	if (time_until_next_idle_event < 0)
-		time_until_next_idle_event = IDLEMARK;
 }
 
 
