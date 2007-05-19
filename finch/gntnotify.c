@@ -405,17 +405,21 @@ finch_notify_searchresults(PurpleConnection *gc, const char *title,
 
 static PurpleNotifyUiOps ops = 
 {
-	.notify_message = finch_notify_message,
-	.close_notify = finch_close_notify,       /* The rest of the notify-uiops return a GntWidget.
-                                              These widgets should be destroyed from here. */
-	.notify_formatted = finch_notify_formatted,
-	.notify_email = finch_notify_email,
-	.notify_emails = finch_notify_emails,
-	.notify_userinfo = finch_notify_userinfo,
+	finch_notify_message,
+	finch_notify_email,
+	finch_notify_emails,
+	finch_notify_formatted,
+	finch_notify_searchresults,
+	finch_notify_sr_new_rows,
+	finch_notify_userinfo,
+	NULL,                     /* notify_uri is of low-priority to me. --sadrul */
+	finch_close_notify,       /* The rest of the notify-uiops return a GntWidget.
+                                     These widgets should be destroyed from here. */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 
-	.notify_searchresults = finch_notify_searchresults,
-	.notify_searchresults_new_rows = finch_notify_sr_new_rows,
-	.notify_uri = NULL                     /* This is of low-priority to me */
 };
 
 PurpleNotifyUiOps *finch_notify_get_ui_ops()
