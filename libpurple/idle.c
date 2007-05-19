@@ -166,14 +166,12 @@ check_idleness(void)
 	{
 		purple_savedstatus_set_idleaway(TRUE);
 		no_away = 0;
-		if (time_idle < away_seconds && (away_seconds - time_idle) < time_until_next_idle_event)
-			time_until_next_idle_event = away_seconds - time_idle;
 	}
 	else if (!no_away && time_idle < away_seconds)
 	{
 		purple_savedstatus_set_idleaway(FALSE);
 		no_away = 1;
-		if (time_idle < away_seconds && (away_seconds - time_idle) < time_until_next_idle_event)
+		if ((away_seconds - time_idle) < time_until_next_idle_event)
 			time_until_next_idle_event = away_seconds - time_idle;
 	}
 
