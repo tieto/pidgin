@@ -472,7 +472,7 @@ aop_menu_item_new(GtkSizeGroup *sg, GdkPixbuf *pixbuf, const char *lbl, gpointer
 	hbox = g_object_new(GTK_TYPE_HBOX, "visible", TRUE, "homogeneous", FALSE, "spacing", 4, NULL);
 
 	/* Create the image */
-	if (pixbuf)
+	if (pixbuf == NULL)
 		image = g_object_new(GTK_TYPE_IMAGE, "visible", TRUE, NULL);
 	else
 		image = g_object_new(GTK_TYPE_IMAGE, "visible", TRUE, "pixbuf", pixbuf, NULL);
@@ -581,7 +581,8 @@ static AOP_MENU *create_protocols_menu(const char *default_proto_id)
 
 	for (p = purple_plugins_get_protocols(), i = 0;
 		 p != NULL;
-		 p = p->next, i++) {
+		 p = p->next, i++)
+	{
 
 		plugin = (PurplePlugin *)p->data;
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
