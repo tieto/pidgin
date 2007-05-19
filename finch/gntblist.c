@@ -447,9 +447,13 @@ static PurpleBlistUiOps blist_ui_ops =
 	node_remove,
 	NULL,
 	NULL,
-	.request_add_buddy = finch_request_add_buddy,
-	.request_add_chat = finch_request_add_chat,
-	.request_add_group = finch_request_add_group
+	finch_request_add_buddy,
+	finch_request_add_chat,
+	finch_request_add_group,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static gpointer
