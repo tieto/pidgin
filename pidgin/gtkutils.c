@@ -459,7 +459,7 @@ aop_menu_cb(GtkWidget *optmenu, GCallback cb)
 }
 
 static GtkWidget *
-aop_menu_item_new(GtkSizeGroup *sg, GdkPixbuf *pixbuf, char *lbl, gpointer per_item_data)
+aop_menu_item_new(GtkSizeGroup *sg, GdkPixbuf *pixbuf, const char *lbl, gpointer per_item_data)
 {
 	GtkWidget *item;
 	GtkWidget *hbox;
@@ -566,7 +566,7 @@ static AOP_MENU *create_protocols_menu(const char *default_proto_id)
 	GdkPixbuf *pixbuf = NULL;
 	GtkSizeGroup *sg;
 	GList *p;
-	char *gtalk_name = NULL;
+	const char *gtalk_name = NULL;
 	int i;
 
 	aop_menu = g_malloc0(sizeof(AOP_MENU));
