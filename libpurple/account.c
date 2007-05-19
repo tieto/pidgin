@@ -548,9 +548,9 @@ parse_status(xmlnode *node, PurpleAccount *account)
 	data = xmlnode_get_attrib(node, "active");
 	if (data == NULL)
 		return;
-	if (strcasecmp(data, "true") == 0)
+	if (g_ascii_strcasecmp(data, "true") == 0)
 		active = TRUE;
-	else if (strcasecmp(data, "false") == 0)
+	else if (g_ascii_strcasecmp(data, "false") == 0)
 		active = FALSE;
 	else
 		return;

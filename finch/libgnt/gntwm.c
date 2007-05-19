@@ -697,7 +697,11 @@ dump_screen(GntBindable *bindable, GList *null)
 				if (bgp == -1)
 					bgp = COLOR_WHITE;
 				if (now & A_REVERSE)
-					fgp ^= bgp ^= fgp ^= bgp;  /* *wink* */
+				{
+					short tmp = fgp;
+					fgp = bgp;
+					bgp = tmp;
+				}
 				ret = color_content(fgp, &r, &g, &b);
 				fg.r = r; fg.b = b; fg.g = g;
 				ret = color_content(bgp, &r, &g, &b);

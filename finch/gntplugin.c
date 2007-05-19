@@ -67,11 +67,10 @@ decide_conf_button(PurplePlugin *plugin)
 static void
 plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 {
-	/* TODO: Mark these strings for translation after the freeze */
 	if (gnt_tree_get_choice(GNT_TREE(tree), plugin))
 	{
 		if (!purple_plugin_load(plugin)) {
-			purple_notify_error(NULL, "ERROR", "loading plugin failed", NULL);
+			purple_notify_error(NULL, _("ERROR"), _("loading plugin failed"), NULL);
 			gnt_tree_set_choice(GNT_TREE(tree), plugin, FALSE);
 		}
 	}
@@ -80,7 +79,7 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 		GntWidget *win;
 
 		if (!purple_plugin_unload(plugin)) {
-			purple_notify_error(NULL, "ERROR", "unloading plugin failed", NULL);
+			purple_notify_error(NULL, _("ERROR"), _("unloading plugin failed"), NULL);
 			gnt_tree_set_choice(GNT_TREE(tree), plugin, TRUE);
 		}
 
