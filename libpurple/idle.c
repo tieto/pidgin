@@ -230,7 +230,7 @@ check_idleness_timer()
 	if (time_until_next_idle_event == 0)
 		idle_timer = 0;
 	else
-		idle_timer = purple_timeout_add(1000 * (time_until_next_idle_event + 1), check_idleness_timer, NULL);
+		idle_timer = purple_timeout_add_seconds(time_until_next_idle_event + 1, check_idleness_timer, NULL);
 	return FALSE;
 }
 
@@ -310,7 +310,7 @@ void
 purple_idle_init()
 {
 	/* Add the timer to check if we're idle */
-	idle_timer = purple_timeout_add(1000 * (IDLEMARK + 1), check_idleness_timer, NULL);
+	idle_timer = purple_timeout_add_seconds((IDLEMARK + 1), check_idleness_timer, NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "sent-im-msg",
 						purple_idle_get_handle(),

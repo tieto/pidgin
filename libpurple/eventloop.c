@@ -35,6 +35,17 @@ purple_timeout_add(guint interval, GSourceFunc function, gpointer data)
 	return ops->timeout_add(interval, function, data);
 }
 
+guint
+gaim_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data)
+{
+	GaimEventLoopUiOps *ops = gaim_eventloop_get_ui_ops();
+
+	if (ops->timeout_add_seconds)
+		return ops->timeout_add_seconds(interval, function, data);
+	else
+		return ops->timeout_add(1000 * interval, function, data);
+}
+
 gboolean
 purple_timeout_remove(guint tag)
 {

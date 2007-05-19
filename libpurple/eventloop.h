@@ -48,10 +48,16 @@ typedef struct _PurpleEventLoopUiOps PurpleEventLoopUiOps;
 struct _PurpleEventLoopUiOps
 {
 	/**
-	 * Creates a callback timer.
+	 * Creates a callback timer with an interval measured in milliseconds.
 	 * @see g_timeout_add, purple_timeout_add
 	 **/
 	guint (*timeout_add)(guint interval, GSourceFunc function, gpointer data);
+
+	/**
+	 * Creates a callback timer with an interval measured in seconds.
+	 * @see g_timeout_add_seconds, purple_timeout_add_seconds
+	 **/
+	guint (*timeout_add_seconds)(guint interval, GSourceFunc function, gpointer data);
 
 	/**
 	 * Removes a callback timer.
