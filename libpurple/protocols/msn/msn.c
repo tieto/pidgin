@@ -342,7 +342,6 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 
 	if (session->passport_info.file == NULL)
 	{
-		MsnCmdProc *cmdproc = session->notification->cmdproc;
 		purple_notify_error(gc, NULL,
 						  _("This Hotmail account may not be active."), NULL);
 		return;
