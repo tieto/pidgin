@@ -776,14 +776,15 @@ got_emoticon(MsnSlpCall *slpcall,
 	gc = slpcall->slplink->session->account->gc;
 	who = slpcall->slplink->remote_user;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, gc->account);
+	if ((conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_ANY, who, gc->account))) {
 
-	/* FIXME: it would be better if we wrote the data as we received it
-	          instead of all at once, calling write multiple times and
-	          close once at the very end
-	*/
-	purple_conv_custom_smiley_write(conv, slpcall->data_info, data, size);
-	purple_conv_custom_smiley_close(conv, slpcall->data_info );
+		/* FIXME: it would be better if we wrote the data as we received it
+		   instead of all at once, calling write multiple times and
+		   close once at the very end
+		 */
+		purple_conv_custom_smiley_write(conv, slpcall->data_info, data, size);
+		purple_conv_custom_smiley_close(conv, slpcall->data_info );
+	}
 #ifdef MSN_DEBUG_UD
 	purple_debug_info("msn", "Got smiley: %s\n", slpcall->data_info);
 #endif
