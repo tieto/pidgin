@@ -120,7 +120,11 @@ static PurpleEventLoopUiOps eventloop_ops =
 	pidgin_input_add,
 	g_source_remove,
 	NULL, /* input_get_error */
+#if GLIB_VERSION_CHECK(2,14,0)
+	g_timeout_add_seconds,
+#else
 	NULL,
+#endif
 	NULL,
 	NULL,
 	NULL
