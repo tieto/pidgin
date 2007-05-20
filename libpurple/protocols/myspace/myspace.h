@@ -73,6 +73,9 @@
 #define MSIM_BM_ACTION      121
 /*#define MSIM_BM_UNKNOWN1    122*/
 
+/* Authentication algorithm for login2 */
+#define MSIM_AUTH_ALGORITHM	196610
+
 /* Random number in every MsimSession, to ensure it is valid. */
 #define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
 

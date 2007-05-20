@@ -649,7 +649,7 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
 	 */
 #if 0
 	msim_send(session, 
-			"login2", g_strdup_printf("%d", 196610),
+			"login2", g_strdup_printf("%d", MSIM_AUTH_ALGORITHM),
 			"username", g_strdup(account->username),
 			"response", g_strdup(response_str),
 			"clientver", g_strdup_printf("%d", MSIM_CLIENT_VERSION),
@@ -662,7 +662,7 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
 	/* TODO: use msim_send. But, response_str must NOT be escaped. */
 	/* \login2\196610\username\msimprpl@xyzzy.cjb.net\response\nseVXvvrwgQsv7FUAbHJLMP8YPEGKHftwN+Z0zCjmxOTOc0/nVPQWZ5Znv5i6kh26XfZlqNzvoPqaXNbXL6TsSZpU/guAAg0o6XBA1e/Sw==\clientver\673\reconn\0\status\100\id\1\final\ - works*/
 	buf = g_strdup_printf("\\login2\\%d\\username\\%s\\response\\%s\\clientver\\%d\\reconn\\%d\\status\\%d\\id\\1\\final\\",
-				196610, account->username, response_str, MSIM_CLIENT_VERSION, 0, 100);
+				MSIM_AUTH_ALGORITHM, account->username, response_str, MSIM_CLIENT_VERSION, 0, 100);
 
     
     purple_debug_info("msim", "response=<%s>\n", buf);
@@ -882,7 +882,9 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
      */
     /* rc4 encrypt:
      * nonce1+email+IP list */
-    data_len = NONCE_SIZE + strlen(email) + 25;
+    data_len = NONCE_SIZE + strlen(email) 
+		/* TODO: change to length of IP list */
+		+ 25;
     data = g_new0(guchar, data_len);
     memcpy(data, nonce, NONCE_SIZE);
     memcpy(data + NONCE_SIZE, email, strlen(email));
@@ -1010,22 +1012,22 @@ static int msim_send_im(PurpleConnection *gc, const char *who,
 static int msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gchar *message, PurpleMessageFlags flags)
 {
     gchar *msg_string;
+	gchar *escaped_message;
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
     g_return_val_if_fail(userid != NULL, 0);
     g_return_val_if_fail(msim_is_userid(userid) == TRUE, 0);
     g_return_val_if_fail(message != NULL, 0);
 
-	/* XXX: delete after escape each value */
-	message = msim_escape(message);
+	/* TODO: Remove this code and use MsimMessage after it is implemented and escapes strings. */
+	escaped_message = msim_escape(message);
 
-    /* TODO: constants for bm types */
 	/* TODO: escape values */
-    msg_string = g_strdup_printf("\\bm\\121\\sesskey\\%s\\t\\%s\\cv\\%d\\msg\\%s\\final\\",
-            session->sesskey, userid, MSIM_CLIENT_VERSION, message);
+    msg_string = g_strdup_printf("\\bm\\%d\\sesskey\\%s\\t\\%s\\cv\\%d\\msg\\%s\\final\\",
+            MSIM_BM_INSTANT, session->sesskey, userid, MSIM_CLIENT_VERSION, message);
 
-	/* XXX: delete after escape each value */
-	g_free((char*)message);
+	/* TODO: Remove this code and use MsimMessage after it is implemented and escapes strings. */
+	g_free(escaped_message);
 
     purple_debug_info("msim", "going to write: %s\n", msg_string);
 
@@ -1433,14 +1435,14 @@ static int msim_status(MsimSession *session, GHashTable *table)
     status_str = g_hash_table_lookup(table, "msg");
     if (!status_str)
     {
-        purple_debug_info("msim", "msim_status: bm=100 but no status msg\n");
+        purple_debug_info("msim", "msim_status: bm is status but no status msg\n");
         return 0;
     }
 
     userid = g_hash_table_lookup(table, "f");
     if (!userid)
     {
-        purple_debug_info("msim", "msim_status: bm=100 but no f field\n");
+        purple_debug_info("msim", "msim_status: bm is status but no f field\n");
         return 0;
     }
    
