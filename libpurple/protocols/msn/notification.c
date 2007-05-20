@@ -592,6 +592,10 @@ static void
 qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	static int count = 0;
+	MsnSession *session = cmdproc->session;
+
+	if (session->passport_info.file == NULL)
+		return;
 
 	if (count++ < 26)
 		return;
