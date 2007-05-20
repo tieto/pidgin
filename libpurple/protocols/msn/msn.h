@@ -62,12 +62,24 @@
 #define USEROPT_MSNPORT 4
 #define MSN_PORT 1863
 
+/* Windows Live Messenger Server*/
+#define WLM_SERVER			"muser.messenger.hotmail.com"
+#define WLM_PORT			1863
+#define WLM_PROT_VER		13
+/*This MSNP14 Support chat with Yahoo Messenger*/
+#define WLM_YAHOO_PROT_VER	14
+
+#define WLM_MAX_PROTOCOL	14
+#define WLM_MIN_PROTOCOL	13
+
 #define MSN_TYPING_RECV_TIMEOUT 6
 #define MSN_TYPING_SEND_TIMEOUT	4
 
 #define HOTMAIL_URL "http://www.hotmail.com/cgi-bin/folders"
 #define PASSPORT_URL "http://lc1.law13.hotmail.passport.com/cgi-bin/dologin?login="
-#define PROFILE_URL "http://spaces.msn.com/profile.aspx?mem="
+/*#define PROFILE_URL "http://spaces.msn.com/profile.aspx?mem="*/
+#define PROFILE_URL "http://spaces.live.com/profile.aspx?mem="
+#define PHOTO_URL	" contactparams:photopreauthurl=\""
 
 #define USEROPT_HOTMAIL 0
 
@@ -88,6 +100,7 @@ typedef enum
 	MSN_LIST_RL_OP = 0x08
 
 } MsnListOp;
+#define MSN_LIST_OP_MASK	0x07
 
 typedef enum
 {
@@ -127,5 +140,8 @@ typedef enum
 	 (MSN_CLIENT_ID_RESERVED_1 << 16) | \
 	 (MSN_CLIENT_ID_RESERVED_2 <<  8) | \
 	 (MSN_CLIENT_ID_CAPABILITIES))
+
+void msn_act_id(PurpleConnection *gc, const char *entry);
+
 
 #endif /* _MSN_H_ */
