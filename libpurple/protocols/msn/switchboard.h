@@ -102,7 +102,7 @@ struct _MsnSwitchBoard
 
 	MsnSBErrorType error; /**< The error that occurred in this switchboard
 							(if applicable). */
-	MsnSlpLink *slplink; /**< The slplink that is using this switchboard. */
+	GList *slplinks; /**< The list of slplinks that are using this switchboard. */
 };
 
 /**
