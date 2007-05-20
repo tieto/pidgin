@@ -173,7 +173,7 @@ void *purple_dbus_get_handle(void);
  * 
  * @since 2.1.0
  */
-gboolean purple_dbus_is_owner();
+gboolean purple_dbus_is_owner(void);
 
 /**
  * Starts Purple's D-BUS server.  It is responsible for handling DBUS
