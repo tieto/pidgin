@@ -54,12 +54,6 @@ struct _PurpleEventLoopUiOps
 	guint (*timeout_add)(guint interval, GSourceFunc function, gpointer data);
 
 	/**
-	 * Creates a callback timer with an interval measured in seconds.
-	 * @see g_timeout_add_seconds, purple_timeout_add_seconds
-	 **/
-	guint (*timeout_add_seconds)(guint interval, GSourceFunc function, gpointer data);
-
-	/**
 	 * Removes a callback timer.
 	 * @see purple_timeout_remove, g_source_remove
 	 */
@@ -87,7 +81,20 @@ struct _PurpleEventLoopUiOps
 	 */
 	int (*input_get_error)(int fd, int *error);
 
-	void (*_purple_reserved1)(void);
+	/**
+	 * Creates a callback timer with an interval measured in seconds.
+	 *
+	 * This allows UIs to group timers for better power efficiency.  For
+	 * this reason, @a interval may be rounded by up to a second.
+	 *
+	 * Implementation of this UI op is optional.  If it's not implemented,
+	 * calls to purple_timeout_add_seconds() will be serviced by the
+	 * timeout_add UI op.
+	 *
+	 * @see g_timeout_add_seconds, purple_timeout_add_seconds()
+	 **/
+	guint (*timeout_add_seconds)(guint interval, GSourceFunc function, gpointer data);
+
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
@@ -99,10 +106,33 @@ struct _PurpleEventLoopUiOps
 /*@{*/
 /**
  * Creates a callback timer.
+ * 
  * The timer will repeat until the function returns @c FALSE. The
  * first call will be at the end of the first interval.
+ *
+ * If the timer is in a multiple of seconds, use purple_timeout_add_seconds()
+ * instead as it allows UIs to group timers for power efficiency.
+ *
  * @param interval	The time between calls of the function, in
- *					milliseconds.
+ *                      milliseconds.
+ * @param function	The function to call.
+ * @param data		data to pass to @a function.
+ * @return A handle to the timer which can be passed to 
+ *         purple_timeout_remove to remove the timer.
+ */
+guint purple_timeout_add(guint interval, GSourceFunc function, gpointer data);
+
+/**
+ * Creates a callback timer.
+ *
+ * The timer will repeat until the function returns @c FALSE. The
+ * first call will be at the end of the first interval.
+ *
+ * This function allows UIs to group timers for better power efficiency.  For
+ * this reason, @a interval may be rounded by up to a second.
+ * 
+ * @param interval	The time between calls of the function, in
+ *                      seconds.
  * @param function	The function to call.
  * @param data		data to pass to @a function.
  * @return A handle to the timer which can be passed to 
