@@ -41,6 +41,7 @@ version 2.0.1 (??/??/????):
 	  and the XScreenSaver change will reduce Pidgin's effect on power
 	  consumption when running with NO_HZ.  (Arjan van de Ven with Intel
 	  Corporation)
+	* Conversation -> Save As will now use aliases.
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
