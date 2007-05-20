@@ -4212,7 +4212,7 @@ purple_escape_filename(const char *str)
 		gunichar c = g_utf8_get_char(iter);
 		/* If the character is an ASCII character and is alphanumeric,
 		 * or one of the specified values, no need to escape */
-		if (c < 128 && (isalnum(c) || c == '@' || c == '-' ||
+		if (c < 128 && (g_ascii_isalnum(c) || c == '@' || c == '-' ||
 				c == '_' || c == '.' || c == '#')) {
 			buf[j++] = c;
 		} else {
