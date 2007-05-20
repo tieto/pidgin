@@ -137,7 +137,9 @@ Purple::RoomlistFieldType			T_IV
 Purple::RoomlistRoomType			T_IV
 
 Purple::SavedStatus			T_PurpleObj
-Purple::SavedStatusSub			T_PurpleObj
+const Purple::SavedStatus			T_PurpleObj
+Purple::SavedStatus::Sub			T_PurpleObj
+const Purple::SavedStatus::Sub			T_PurpleObj
 Purple::SoundEventID			T_IV
 Purple::Sound::UiOps			T_PurpleObj
 
