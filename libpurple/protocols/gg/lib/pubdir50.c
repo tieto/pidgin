@@ -347,7 +347,7 @@ int gg_pubdir50_handle_reply(struct gg_event *e, const char *packet, int length)
 
 		/* je¶li dostali¶my namier na nastêpne wyniki, to znaczy ¿e
 		 * mamy koniec wyników i nie jest to kolejna osoba. */
-		if (!g_ascii_strcasecmp(field, "nextstart")) {
+		if (!strcasecmp(field, "nextstart")) {
 			res->next = atoi(value);
 			num--;
 		} else {
@@ -390,7 +390,7 @@ const char *gg_pubdir50_get(gg_pubdir50_t res, int num, const char *field)
 	}
 
 	for (i = 0; i < res->entries_count; i++) {
-		if (res->entries[i].num == num && !g_ascii_strcasecmp(res->entries[i].field, field)) {
+		if (res->entries[i].num == num && !strcasecmp(res->entries[i].field, field)) {
 			value = res->entries[i].value;
 			break;
 		}
