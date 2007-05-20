@@ -138,7 +138,7 @@ guint purple_timeout_add(guint interval, GSourceFunc function, gpointer data);
  * @return A handle to the timer which can be passed to 
  *         purple_timeout_remove to remove the timer.
  */
-guint purple_timeout_add(guint interval, GSourceFunc function, gpointer data);
+guint purple_timeout_add_seconds(guint interval, GSourceFunc function, gpointer data);
 
 /**
  * Removes a timeout handler.
