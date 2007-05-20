@@ -35,6 +35,7 @@
 
 #include <string.h>
 #include <errno.h>	/* for EAGAIN */
+#include <stdarg.h>
 
 #include <glib.h>
 
@@ -381,11 +382,12 @@ static void print_hash_item(gpointer key, gpointer value, gpointer user_data)
 static gboolean msim_send_raw(MsimSession *session, const gchar *msg)
 {
 	int total_bytes_sent, total_bytes;
+    
+	purple_debug_info("msim", "msim_send: writing <%s>\n", msg);
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
     g_return_val_if_fail(msg != NULL, FALSE);
 
-    purple_debug_info("msim", "msim_send: writing <%s>\n", msg);
 
 	/* Loop until all data is sent, or a failure occurs. */
 	total_bytes_sent = 0;
@@ -410,14 +412,127 @@ static gboolean msim_send_raw(MsimSession *session, const gchar *msg)
 }
 
 /**
- * Send a message to the server.
+ * Pack a key=value item into a part of a protocol messge.
+ */
+static void msim_pack_each(gpointer key, gpointer value, gpointer user_data)
+{
+	gchar ***items;		/* wow, a pointer to a pointer to a pointer */
+	gchar *item;
+	gchar *escaped_key, *escaped_value;
+
+	items = user_data;
+
+	escaped_key = msim_escape((gchar *)key);
+	escaped_value = msim_escape((gchar *)value);
+
+	item = g_strdup_printf("%s\\%s", escaped_key, escaped_value);
+	
+	g_free(escaped_key);
+	g_free(escaped_value);
+
+	**items = item;
+	++(*items);
+}
+
+/**
+ * Pack a hash table of a protocol of a message into a string suitable
+ * for sending.
+ *
+ * @return The packed string; caller must g_free() when no longer needed.
+ */
+static gchar *msim_pack(GHashTable *table)
+{
+	gchar **items, **items_tmp;
+	gchar *raw;
+	guint i;
+
+	items = (gchar **)g_new0(gchar *, g_hash_table_size(table));
+
+	items_tmp = items;
+	g_hash_table_foreach(table, (GHFunc)msim_pack_each, &items_tmp);
+
+	/* Join each item of the message. */
+	raw = g_strjoinv("\\", items);
+
+	/* Free each item, then the array itself. */
+	for (i = 0; i < g_hash_table_size(table); ++i)
+	{
+		g_free(items[i]);
+	}
+	g_free(items);
+
+	return raw;
+}
+
+/**
+ * Send a message to the server, by a hash table.
  *
  * @param session
- * @param ... A sequence of gchar* key/value pairs, terminated with NULL
+ * @param table A hash table of the message to send.
  */
+static gboolean msim_sendh(MsimSession *session, GHashTable *table)
+{
+	gchar *raw_msg;
+	gboolean success;
+
+	raw_msg = msim_pack(table);
+	success = msim_send_raw(session, raw_msg);
+
+	g_free(raw_msg);
+
+	return success;
+}
+
+/**
+ *
+ * Send a message to the server, whose contents is specified using 
+ * variable arguments.
+ *
+ * @param session
+ * @param ... A sequence of gchar* key/value pairs, terminated with NULL. The strings will be copied.
+ *
+ * This function exists for coding convenience: a message can be created
+ * and sent in one line of code. Internally it calls msim_sendh().
+ */
+
 static gboolean msim_send(MsimSession *session, ...)
 {
-	/* TODO: implement this */
+	va_list argp;
+	GHashTable *table;
+	gchar *key, *value;
+	gboolean success;
+    
+	table = g_hash_table_new_full((GHashFunc)g_str_hash, 
+            (GEqualFunc)g_str_equal, g_free, g_free);
+
+	/* Parse key, value pairs until NULL. */
+	va_start(argp, session);
+	do
+	{
+		key = va_arg(argp, gchar *);
+		if (!key)
+		{
+			break;
+		}
+
+		value = va_arg(argp, gchar *);
+		if (!value)
+		{
+			purple_debug_info("msim", "msim_send: no value for key '%s', ignoring\n", key);
+			break;
+		}
+
+		g_hash_table_insert(table, g_strdup(key), g_strdup(value));
+	} while(key && value);
+
+	/* Actually send the message. */
+	success = msim_sendh(session, table);
+
+	/* Cleanup. */
+	va_end(argp);	
+	g_hash_table_destroy(table);
+
+	return success;
 }
 
 /** 
