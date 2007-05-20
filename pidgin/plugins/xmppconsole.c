@@ -29,6 +29,7 @@
 #if !GTK_CHECK_VERSION(2,4,0)
 #include "pidgincombobox.h"
 #endif
+#include "gtkutils.h"
 
 typedef struct {
 	PurpleConnection *gc;
