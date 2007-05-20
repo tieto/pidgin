@@ -345,7 +345,6 @@ msn_show_hotmail_inbox(PurplePluginAction *action)
 		MsnCmdProc *cmdproc = session->notification->cmdproc;
 		purple_notify_error(gc, NULL,
 						  _("This Hotmail account may not be active."), NULL);
-		msn_cmdproc_send(cmdproc, "URL", "%s", "INBOX");
 		return;
 	}
 
@@ -621,7 +620,8 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 	account = purple_connection_get_account(gc);
 	user = msn_normalize(account, purple_account_get_username(account));
 
-	if (strstr(user, "@hotmail.") != NULL)
+	if ((strstr(user, "@hotmail.") != NULL) ||
+		(strstr(user, "@msn.com") != NULL))
 	{
 		m = g_list_append(m, NULL);
 		act = purple_plugin_action_new(_("Open Hotmail Inbox"),
