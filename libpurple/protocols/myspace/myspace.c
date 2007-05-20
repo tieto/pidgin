@@ -51,16 +51,13 @@
 
 #include "notify.h"
 #include "plugin.h"
+#include "accountopt.h"
 #include "version.h"
 #include "cipher.h"     /* for SHA-1 */
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */
 
 #include "myspace.h"
-
-static void init_plugin(PurplePlugin *plugin) 
-{
-}
 
 /** 
  * Load the plugin.
@@ -138,11 +135,8 @@ static GList *msim_status_types(PurpleAccount *acct)
  */
 static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 {
-    /* TODO: use a MySpace icon. hbons submitted one to 
-     * http://developer.pidgin.im/wiki/MySpaceIM  - tried placing in
-     * C:\cygwin\home\Jeff\purple-2.0.0beta6\gtk\pixmaps\status\default 
-     * and returning "myspace" but icon shows up blank.
-     */
+    /* Use a MySpace icon submitted by hbons submitted one at
+     * http://developer.pidgin.im/wiki/MySpaceIM. */
     return "myspace";
 }
 
@@ -418,10 +412,13 @@ static void msim_pack_each(gpointer key, gpointer value, gpointer user_data)
 {
 	gchar ***items;		/* wow, a pointer to a pointer to a pointer */
 	gchar *item;
-	gchar *escaped_key, *escaped_value;
 
 	items = user_data;
 
+	/* Not all values should be escaped! (base64'd binary, 'response' must not be). 
+	 * TODO: escape the values that should be, don't escape what shouldn't! */
+#if 0
+	gchar *escaped_key, *escaped_value;
 	escaped_key = msim_escape((gchar *)key);
 	escaped_value = msim_escape((gchar *)value);
 
@@ -429,6 +426,10 @@ static void msim_pack_each(gpointer key, gpointer value, gpointer user_data)
 	
 	g_free(escaped_key);
 	g_free(escaped_value);
+#else
+
+	item = g_strdup_printf("%s\\%s", (gchar *)key, (gchar *)value);
+#endif
 
 	**items = item;
 	++(*items);
@@ -510,6 +511,8 @@ static gboolean msim_sendh(MsimSession *session, GHashTable *table)
  *
  * This function exists for coding convenience: a message can be created
  * and sent in one line of code. Internally it calls msim_sendh().
+ *
+ * TODO: types
  */
 
 static gboolean msim_send(MsimSession *session, ...)
@@ -575,10 +578,9 @@ static void msim_login(PurpleAccount *acct)
                                   0,   /* which connection step this is */
                                   4);  /* total number of steps */
 
-    /* TODO: GUI option to be user-modifiable. */
     host = purple_account_get_string(acct, "server", MSIM_SERVER);
     port = purple_account_get_int(acct, "port", MSIM_PORT);
-    /* TODO: connect */
+
     /* From purple.sf.net/api:
      * """Note that this function name can be misleading--although it is called 
      * "proxy connect," it is used for establishing any outgoing TCP connection, 
@@ -657,9 +659,7 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
 			NULL);
 #else
 
-	/* TODO: escape values. A response_str with a / in it (\ is not in base64) will
-	 * cause a login failure. / must be encoded as /1. */
-
+	/* TODO: use msim_send. But, response_str must NOT be escaped. */
 	/* \login2\196610\username\msimprpl@xyzzy.cjb.net\response\nseVXvvrwgQsv7FUAbHJLMP8YPEGKHftwN+Z0zCjmxOTOc0/nVPQWZ5Znv5i6kh26XfZlqNzvoPqaXNbXL6TsSZpU/guAAg0o6XBA1e/Sw==\clientver\673\reconn\0\status\100\id\1\final\ - works*/
 	buf = g_strdup_printf("\\login2\\%d\\username\\%s\\response\\%s\\clientver\\%d\\reconn\\%d\\status\\%d\\id\\1\\final\\",
 				196610, account->username, response_str, MSIM_CLIENT_VERSION, 0, 100);
@@ -1962,5 +1962,17 @@ static PurplePluginInfo info =
 	NULL 											  /**< reserved4      */
 };
 
+static void init_plugin(PurplePlugin *plugin) 
+{
+	PurpleAccountOption *option;
+
+	/* TODO: default to automatically try different ports. Make the user be
+	 * able to set the first port to try (like LastConnectedPort in Windows client).  */
+	option = purple_account_option_string_new(_("Connect server"), "server", MSIM_SERVER);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = purple_account_option_int_new(_("Connect port"), "port", MSIM_PORT);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+}
 
 PURPLE_INIT_PLUGIN(myspace, init_plugin, info);
