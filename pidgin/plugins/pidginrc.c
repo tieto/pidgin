@@ -45,15 +45,12 @@ static const char *color_names[] = {
 static GtkWidget *color_widgets[G_N_ELEMENTS(color_prefs)];
 
 static const char *widget_size_prefs[] = {
-	"/plugins/gtk/purplerc/size/GtkTreeView::expander_size",
 	"/plugins/gtk/purplerc/size/GtkTreeView::horizontal_separator"
 };
 static const char *widget_size_prefs_set[] = {
-	"/plugins/gtk/purplerc/set/size/GtkTreeView::expander_size",
 	"/plugins/gtk/purplerc/set/size/GtkTreeView::horizontal_separator"
 };
 static const char *widget_size_names[] = {
-	N_("GtkTreeView Expander Size"),
 	N_("GtkTreeView Horizontal Separation")
 };
 static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
