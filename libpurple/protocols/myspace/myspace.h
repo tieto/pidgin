@@ -38,6 +38,15 @@
 
 /* Constants */
 
+/* Protocol field types */
+#define MSIM_TYPE_INTEGER		0
+#define MSIM_TYPE_STRING		1
+#define MSIM_TYPE_BINARY		2
+#define MSIM_TYPE_BOOLEAN		3
+#define MSIM_TYPE_DICTIONARY	4
+#define MSIM_TYPE_LIST			5
+
+
 /* Statuses */
 #define MSIM_STATUS_ONLINE      "online"
 #define MSIM_STATUS_AWAY        "away"
