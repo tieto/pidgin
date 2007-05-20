@@ -1874,6 +1874,11 @@ purple_markup_linkify(const char *text)
 			while (1) {
 				if (badchar(*t) || badentity(t)) {
 
+					if ((!g_ascii_strncasecmp(c, "http://", 7) && (t - c == 7)) ||
+						(!g_ascii_strncasecmp(c, "https://", 8) && (t - c == 8))) {
+						break;
+					}
+
 					if (*(t) == ',' && (*(t + 1) != ' ')) {
 						t++;
 						continue;
@@ -1933,6 +1938,12 @@ purple_markup_linkify(const char *text)
 			t = c;
 			while (1) {
 				if (badchar(*t) || badentity(t)) {
+
+					if ((!g_ascii_strncasecmp(c, "ftp://", 6) && (t - c == 6)) ||
+						(!g_ascii_strncasecmp(c, "sftp://", 7) && (t - c == 7))) {
+						break;
+					}
+
 					if (*(t - 1) == '.')
 						t--;
 					if ((*(t - 1) == ')' && (inside_paren > 0))) {
@@ -1984,8 +1995,21 @@ purple_markup_linkify(const char *text)
 			t = c;
 			while (1) {
 				if (badchar(*t) || badentity(t)) {
+					char *d;
+					if (t - c == 7) {
+						break;
+					}
 					if (*(t - 1) == '.')
 						t--;
+					if ((d = strstr(c + 7, "?")) != NULL && d < t)
+						url_buf = g_strndup(c + 7, d - c - 7);
+					else
+						url_buf = g_strndup(c + 7, t - c - 7);
+					if (!purple_email_is_valid(url_buf)) {
+						g_free(url_buf);
+						break;
+					}
+					g_free(url_buf);
 					url_buf = g_strndup(c, t - c);
 					tmpurlbuf = purple_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
@@ -1997,6 +2021,39 @@ purple_markup_linkify(const char *text)
 				}
 				if (!t)
 					break;
+				t++;
+
+			}
+		} else if ((*c=='x') && (!g_ascii_strncasecmp(c, "xmpp:", 5)) &&
+				   (c == text || badchar(c[-1]) || badentity(c-1))) {
+			t = c;
+			while (1) {
+				if (badchar(*t) || badentity(t)) {
+
+					if (t - c == 5) {
+						break;
+					}
+
+					if (*(t) == ',' && (*(t + 1) != ' ')) {
+						t++;
+						continue;
+					}
+
+					if (*(t - 1) == '.')
+						t--;
+					if ((*(t - 1) == ')' && (inside_paren > 0))) {
+						t--;
+					}
+
+					url_buf = g_strndup(c, t - c);
+					tmpurlbuf = purple_unescape_html(url_buf);
+					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
+							tmpurlbuf, url_buf);
+					g_free(url_buf);
+					g_free(tmpurlbuf);
+					c = t;
+					break;
+				}
 				t++;
 
 			}
