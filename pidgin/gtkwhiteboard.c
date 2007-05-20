@@ -28,6 +28,7 @@
 #include "debug.h"
 
 #include "gtkwhiteboard.h"
+#include "gtkutils.h"
 
 /******************************************************************************
  * Prototypes
