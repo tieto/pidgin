@@ -446,9 +446,18 @@ static gchar *msim_pack(GHashTable *table)
 	gchar *raw;
 	guint i;
 
-	items = (gchar **)g_new0(gchar *, g_hash_table_size(table));
+	/* Create an array with enough elements for each part of the
+	 * protocol message - one for each item, plus one for the initial \\,
+	 * another for the ending \\final\\, and the last for NULL terminator.
+	 */
+	items = (gchar **)g_new0(gchar *, g_hash_table_size(table) + 3);
 
-	items_tmp = items;
+	/* Beginning and ending markers. */
+	items[0] = g_strdup("");	
+	items[g_hash_table_size(table) + 1] = g_strdup("final");
+	items[g_hash_table_size(table) + 2] = g_strdup("");
+
+	items_tmp = items + 1;
 	g_hash_table_foreach(table, (GHFunc)msim_pack_each, &items_tmp);
 
 	/* Join each item of the message. */
@@ -491,6 +500,14 @@ static gboolean msim_sendh(MsimSession *session, GHashTable *table)
  * @param session
  * @param ... A sequence of gchar* key/value pairs, terminated with NULL. The strings will be copied.
  *
+ * IMPORTANT: The key/value pair strings are not copied. The 'key' strings 
+ * are not freed, but the 'value' pair is. Use g_strdup() to pass a static
+ * string as a value. This function operates this way so that you can easily
+ * use a call to g_strdup_printf() for the 'value' strings and not have to
+ * worry about freeing the memory.
+ *
+ * It bears repeating: THE VALUE STRINGS WILL BE FREED. Copy if static.
+ *
  * This function exists for coding convenience: a message can be created
  * and sent in one line of code. Internally it calls msim_sendh().
  */
@@ -503,7 +520,7 @@ static gboolean msim_send(MsimSession *session, ...)
 	gboolean success;
     
 	table = g_hash_table_new_full((GHashFunc)g_str_hash, 
-            (GEqualFunc)g_str_equal, g_free, g_free);
+            (GEqualFunc)g_str_equal, NULL, g_free);
 
 	/* Parse key, value pairs until NULL. */
 	va_start(argp, session);
@@ -522,7 +539,7 @@ static gboolean msim_send(MsimSession *session, ...)
 			break;
 		}
 
-		g_hash_table_insert(table, g_strdup(key), g_strdup(value));
+		g_hash_table_insert(table, key, value);
 	} while(key && value);
 
 	/* Actually send the message. */
@@ -622,18 +639,40 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
     g_free(nc);
 
     /* Reply */
-	/* TODO: escape values. A response_str with a / in it (\ is not in base64) will
-	 * cause a login failure! / must be encoded as /1. */
-    buf = g_strdup_printf("\\login2\\%d\\username\\%s\\response\\%s\\clientver\\%d\\reconn\\%d\\status\\%d\\id\\1\\final\\",
-            196610, account->username, response_str, MSIM_CLIENT_VERSION, 0, 100);
+	/* \status\100\id\1\login2\196610\username\msimprpl@xyzzy.cjb.net\clientver\673\reconn\0\response\+6M+DQhovMxwdt1ceIervus9O5K+X9BR02w6B4+4+Zrg66pWrSzX94ER8efSb8Ju9kye2MnDdpTDwybziACy2mQFWIB9Mf5/1Tdlr6kAtJA==\final\ 
+	 this fails. what is it?
+	 - escaping? no, removing msim_escape() still causes login failure. should verify.
+	 - message order? should login2 come first?
+	 - something else?
+	 */
+#if 0
+	msim_send(session, 
+			"login2", g_strdup_printf("%d", 196610),
+			"username", g_strdup(account->username),
+			"response", g_strdup(response_str),
+			"clientver", g_strdup_printf("%d", MSIM_CLIENT_VERSION),
+			"reconn", g_strdup_printf("%d", 0),
+			"status", g_strdup_printf("%d", 100),
+			"id", g_strdup_printf("%d", 1),
+			NULL);
+#else
 
-    g_free(response_str);
+	/* TODO: escape values. A response_str with a / in it (\ is not in base64) will
+	 * cause a login failure. / must be encoded as /1. */
+
+	/* \login2\196610\username\msimprpl@xyzzy.cjb.net\response\nseVXvvrwgQsv7FUAbHJLMP8YPEGKHftwN+Z0zCjmxOTOc0/nVPQWZ5Znv5i6kh26XfZlqNzvoPqaXNbXL6TsSZpU/guAAg0o6XBA1e/Sw==\clientver\673\reconn\0\status\100\id\1\final\ - works*/
+	buf = g_strdup_printf("\\login2\\%d\\username\\%s\\response\\%s\\clientver\\%d\\reconn\\%d\\status\\%d\\id\\1\\final\\",
+				196610, account->username, response_str, MSIM_CLIENT_VERSION, 0, 100);
+
     
     purple_debug_info("msim", "response=<%s>\n", buf);
 
     msim_send_raw(session, buf);
 
     g_free(buf);
+#endif
+
+    g_free(response_str);
 
     return 0;
 }
