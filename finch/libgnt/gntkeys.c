@@ -127,7 +127,7 @@ void gnt_keys_refine(char *text)
 			*(text + 1) -= 64;  /* Say wha? */
 		}
 	}
-//	fprintf(stderr,"gnt_keys_refine::text==%d %d %d\n",*(unsigned char*)text,*(unsigned char *)(text+1),*(unsigned char *)(text +2));
+/*	fprintf(stderr,"gnt_keys_refine::text==%d %d %d\n",*(unsigned char*)text,*(unsigned char *)(text+1),*(unsigned char *)(text +2)); */
 }
 
 const char *gnt_key_translate(const char *name)
