@@ -484,9 +484,9 @@ aop_menu_item_new(GtkSizeGroup *sg, GdkPixbuf *pixbuf, const char *lbl, gpointer
 
 	/* Create the label */
 	label = gtk_label_new (lbl);
-	gtk_widget_show (lbl);
+	gtk_widget_show (label);
 	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-	gtk_misc_set_alignment(GTK_MISC(label, 0.0, 0.5));
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
 	
 	gtk_container_add(GTK_CONTAINER(item), hbox);
 	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
@@ -661,7 +661,8 @@ create_account_menu(PurpleAccount *default_account,
 
 	aop_menu = g_malloc0(sizeof(AopMenu));
 	aop_menu->default_item = -1;
-	aop_menu->menu = g_object_new(GTK_TYPE_MENU, "visible", TRUE, NULL);
+	aop_menu->menu = gtk_menu_new();
+	gtk_widget_show(aop_menu->menu);
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (p = list, i = 0; p != NULL; p = p->next, i++) {
