@@ -224,13 +224,12 @@ io_invoke(GIOChannel *source, GIOCondition cond, gpointer null)
 	if (HOLDING_ESCAPE)
 		keys[0] = '\033';
 	k = keys;
-	if(*k < 0){//alt not sending ESC
+	if(*k < 0){ /* Alt not sending ESC* */
 		*(k + 1) = 128 - *k;
 		*k = 27;
 		*(k + 2) = 0;
 		rd++;
 	}
-//	fprintf(stderr,"io_invoke:%d %d %d %d\n",rd, *k, *(k+1), *(k+2));
 	while (rd) {
 		char back;
 		int p;
