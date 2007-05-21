@@ -508,13 +508,13 @@ static void tls_init(JabberStream *js)
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->gc);
 }
 
-static void jabber_login_connect(JabberStream *js, const char *server, int port)
+static void jabber_login_connect(JabberStream *js, const char *fqdn, const char *host, int port)
 {
 #ifdef HAVE_CYRUS_SASL
-	js->serverFQDN = g_strdup(server);
+	js->serverFQDN = g_strdup(fqdn);
 #endif
 
-	if (purple_proxy_connect(js->gc, js->gc->account, server,
+	if (purple_proxy_connect(js->gc, js->gc->account, host,
 			port, jabber_login_callback, js->gc) == NULL)
 		purple_connection_error(js->gc, _("Unable to create socket"));
 }
@@ -527,10 +527,10 @@ static void srv_resolved_cb(PurpleSrvResponse *resp, int results, gpointer data)
 	js->srv_query_data = NULL;
 
 	if(results) {
-		jabber_login_connect(js, resp->hostname, resp->port);
+		jabber_login_connect(js, resp->hostname, resp->hostname, resp->port);
 		g_free(resp);
 	} else {
-		jabber_login_connect(js, js->user->domain,
+		jabber_login_connect(js, js->user->domain, js->user->domain,
 			purple_account_get_int(js->gc->account, "port", 5222));
 	}
 }
@@ -556,7 +556,6 @@ jabber_login(PurpleAccount *account)
 			g_free, (GDestroyNotify)jabber_buddy_free);
 	js->chats = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, (GDestroyNotify)jabber_chat_free);
-	js->chat_servers = g_list_append(NULL, g_strdup("conference.jabber.org"));
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
@@ -565,7 +564,12 @@ jabber_login(PurpleAccount *account)
 		purple_connection_error(gc, _("Invalid XMPP ID"));
 		return;
 	}
-
+	
+	if (!js->user->domain || *(js->user->domain) == '\0') {
+		purple_connection_error(gc, _("Invalid XMPP ID. Domain must be set."));
+		return;
+	}
+	
 	if(!js->user->resource) {
 		char *me;
 		js->user->resource = g_strdup("Home");
@@ -600,7 +604,7 @@ jabber_login(PurpleAccount *account)
 	 * invoke the magic of SRV lookups, to figure out host and port */
 	if(!js->gsc) {
 		if(connect_server[0]) {
-			jabber_login_connect(js, connect_server, purple_account_get_int(account, "port", 5222));
+			jabber_login_connect(js, js->user->domain, connect_server, purple_account_get_int(account, "port", 5222));
 		} else {
 			js->srv_query_data = purple_srv_resolve("xmpp-client",
 					"tcp", js->user->domain, srv_resolved_cb, js);
@@ -945,7 +949,7 @@ void jabber_register_account(PurpleAccount *account)
 
 	if(!js->gsc) {
 		if (connect_server[0]) {
-			jabber_login_connect(js, server,
+			jabber_login_connect(js, js->user->domain, server,
 			                     purple_account_get_int(account,
 			                                          "port", 5222));
 		} else {

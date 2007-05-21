@@ -39,6 +39,7 @@ void finch_prefs_init()
 
 	purple_prefs_add_none("/finch/plugins");
 	purple_prefs_add_path_list("/finch/plugins/loaded", NULL);
+	purple_prefs_add_path_list("/finch/plugins/seen", NULL);
 
 	purple_prefs_add_none("/finch/conversations");
 	purple_prefs_add_bool("/finch/conversations/timestamps", TRUE);
@@ -75,7 +76,7 @@ static GList *
 get_idle_options()
 {
 	GList *list = NULL;
-	list = g_list_append(list, "Based on keyboard use"); /* XXX: string freeze */
+	list = g_list_append(list, (char *)_("Based on keyboard use"));
 	list = g_list_append(list, "system");
 	list = g_list_append(list, (char*)_("From last sent message"));
 	list = g_list_append(list, "purple");

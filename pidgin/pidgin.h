@@ -45,7 +45,8 @@
 /* change this only when we have a sane upgrade path for old prefs */
 #define PIDGIN_PREFS_ROOT "/pidgin"
 
-/* Translators may want to transliterate the name. */
+/* Translators may want to transliterate the name.
+ It is not to be translated. */
 #define PIDGIN_NAME _("Pidgin")
 
 #ifndef _WIN32

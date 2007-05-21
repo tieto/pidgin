@@ -35,6 +35,7 @@ static char *irc_mask_nick(const char *mask);
 static char *irc_mask_userhost(const char *mask);
 static void irc_chat_remove_buddy(PurpleConversation *convo, char *data[2]);
 static void irc_buddy_status(char *name, struct irc_buddy *ib, struct irc_conn *irc);
+static void irc_connected(struct irc_conn *irc, const char *nick);
 
 static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name,
                                    const char *from, const char *to,
@@ -70,6 +71,52 @@ static void irc_chat_remove_buddy(PurpleConversation *convo, char *data[2])
 	g_free(message);
 }
 
+static void irc_connected(struct irc_conn *irc, const char *nick)
+{
+	PurpleConnection *gc;
+	PurpleStatus *status;
+	PurpleBlistNode *gnode, *cnode, *bnode;
+
+	if ((gc = purple_account_get_connection(irc->account)) == NULL
+	    || PURPLE_CONNECTION_IS_CONNECTED(gc))
+		return;
+
+	purple_connection_set_display_name(gc, nick);
+	purple_connection_set_state(gc, PURPLE_CONNECTED);
+
+	/* If we're away then set our away message */
+	status = purple_account_get_active_status(irc->account);
+	if (!purple_status_get_type(status) != PURPLE_STATUS_AVAILABLE) {
+		PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+		prpl_info->set_status(irc->account, status);
+	}
+
+	/* this used to be in the core, but it's not now */
+	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
+		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
+			continue;
+		for(cnode = gnode->child; cnode; cnode = cnode->next) {
+			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
+				continue;
+			for(bnode = cnode->child; bnode; bnode = bnode->next) {
+				PurpleBuddy *b;
+				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
+					continue;
+				b = (PurpleBuddy *)bnode;
+				if(b->account == gc->account) {
+					struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
+					ib->name = g_strdup(b->name);
+					g_hash_table_insert(irc->buddies, ib->name, ib);
+				}
+			}
+		}
+	}
+
+	irc_blist_timeout(irc);
+	if (!irc->timer)
+		irc->timer = purple_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
+}
+
 void irc_msg_default(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	purple_debug(PURPLE_DEBUG_INFO, "irc", "Unrecognized message: %s\n", args[0]);
@@ -95,56 +142,16 @@ void irc_msg_features(struct irc_conn *irc, const char *name, const char *from, 
 
 void irc_msg_luser(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
-	PurpleConnection *gc;
-	PurpleStatus *status;
-	PurpleBlistNode *gnode, *cnode, *bnode;
-
-	if (!args || !args[0] || !args[1])
-		return;
-
-	gc = purple_account_get_connection(irc->account);
-	if (!gc)
+	if (!args || !args[0])
 		return;
 
 	if (!strcmp(name, "251")) {
-		/* 251 is required, so we pluck our nick from here */
-		purple_connection_set_display_name(gc, args[0]);
+		/* 251 is required, so we pluck our nick from here and
+		 * finalize connection */
+		irc_connected(irc, args[0]);
 		/* Some IRC servers seem to not send a 255 numeric, so
 		 * I guess we can't require it; 251 will do. */
 	/* } else if (!strcmp(name, "255")) { */
-		purple_connection_set_state(gc, PURPLE_CONNECTED);
-
-		/* If we're away then set our away message */
-		status = purple_account_get_active_status(irc->account);
-		if (!purple_status_get_type(status) != PURPLE_STATUS_AVAILABLE) {
-			PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-			prpl_info->set_status(irc->account, status);
-		}
-
-		/* this used to be in the core, but it's not now */
-		for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
-			if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-				continue;
-			for(cnode = gnode->child; cnode; cnode = cnode->next) {
-				if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-					continue;
-				for(bnode = cnode->child; bnode; bnode = bnode->next) {
-					PurpleBuddy *b;
-					if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-						continue;
-					b = (PurpleBuddy *)bnode;
-					if(b->account == gc->account) {
-						struct irc_buddy *ib = g_new0(struct irc_buddy, 1);
-						ib->name = g_strdup(b->name);
-						g_hash_table_insert(irc->buddies, ib->name, ib);
-					}
-				}
-			}
-		}
-
-		irc_blist_timeout(irc);
-		if (!irc->timer)
-			irc->timer = purple_timeout_add(45000, (GSourceFunc)irc_blist_timeout, (gpointer)irc);
 	}
 }
 
@@ -523,6 +530,9 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 {
 	char *escaped;
 
+	if (!args || !args[0])
+		return;
+
 	if (!irc->motd)
 		irc->motd = g_string_new("");
 
@@ -532,7 +542,9 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 		irc->motd = g_string_new("");
 		return;
 	} else if (!strcmp(name, "376")) {
-		/* We no longer have to do anything for ENDMOTD */
+		/* dircproxy 1.0.5 does not send 251 on reconnection, so
+		 * finalize the connection here if it is not already done. */
+		irc_connected(irc, args[0]);
 		return;
 	}
 
@@ -540,6 +552,9 @@ void irc_msg_motd(struct irc_conn *irc, const char *name, const char *from, char
 		purple_debug_error("irc", "IRC server sent MOTD without STARTMOTD\n");
 		return;
 	}
+
+	if (!args[1])
+		return;
 
 	escaped = g_markup_escape_text(args[1], -1);
 	g_string_append_printf(irc->motd, "%s<br>", escaped);
@@ -1079,7 +1094,7 @@ void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, c
 	if (!args || !args[1] || !args[2] || !gc)
 		return;
 
-	msg = g_strdup_printf(_("Cannot join %s:"), args[1]);
+	msg = g_strdup_printf(_("Cannot join %s: Registration is required."), args[1]);
 	purple_notify_error(gc, _("Cannot join channel"), msg, args[2]);
 	g_free(msg);
 }

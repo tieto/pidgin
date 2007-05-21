@@ -57,6 +57,9 @@
 
 #include "config.h"
 
+static void finch_write_common(PurpleConversation *conv, const char *who,
+		const char *message, PurpleMessageFlags flags, time_t mtime);
+
 static void
 send_typing_notification(GntWidget *w, FinchConv *ggconv)
 {
@@ -268,6 +271,13 @@ update_buddy_typing(PurpleAccount *account, const char *who, gpointer null)
 	g_free(title);
 }
 
+static void
+chat_left_cb(PurpleConversation *conv, gpointer null)
+{
+	finch_write_common(conv, NULL, _("You have left this chat."),
+			PURPLE_MESSAGE_SYSTEM, time(NULL));
+}
+
 static gpointer
 finch_conv_get_handle()
 {
@@ -303,6 +313,11 @@ static void
 get_info_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *ggc = ggconv;
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	purple_notify_userinfo(ggc->active_conv->account->gc, purple_conversation_get_name(ggc->active_conv), info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
+
 	serv_get_info(purple_conversation_get_gc(ggc->active_conv),
 			purple_conversation_get_name(ggc->active_conv));
 }
@@ -396,17 +411,26 @@ gg_create_menu(FinchConv *ggc)
 	gnt_menuitem_set_callback(item, toggle_timestamps_cb, ggc);
 
 	if (purple_conversation_get_type(ggc->active_conv) == PURPLE_CONV_TYPE_IM) {
-		item = gnt_menuitem_new(_("Send File"));
-		gnt_menu_add_item(GNT_MENU(sub), item);
-		gnt_menuitem_set_callback(item, send_file_cb, ggc);
+		PurpleAccount *account = purple_conversation_get_account(ggc->active_conv);
+		PurplePluginProtocolInfo *pinfo = account->gc ? PURPLE_PLUGIN_PROTOCOL_INFO(account->gc->prpl) : NULL;
+
+		if (pinfo && pinfo->get_info) {
+			item = gnt_menuitem_new(_("Get Info"));
+			gnt_menu_add_item(GNT_MENU(sub), item);
+			gnt_menuitem_set_callback(item, get_info_cb, ggc);
+		}
 
 		item = gnt_menuitem_new(_("Add Buddy Pounce..."));
 		gnt_menu_add_item(GNT_MENU(sub), item);
 		gnt_menuitem_set_callback(item, add_pounce_cb, ggc);
 
-		item = gnt_menuitem_new(_("Get Info"));
-		gnt_menu_add_item(GNT_MENU(sub), item);
-		gnt_menuitem_set_callback(item, get_info_cb, ggc);
+		if (pinfo && pinfo->send_file &&
+				(!pinfo->can_receive_file ||
+				 	pinfo->can_receive_file(account->gc, purple_conversation_get_name(ggc->active_conv)))) {
+			item = gnt_menuitem_new(_("Send File"));
+			gnt_menu_add_item(GNT_MENU(sub), item);
+			gnt_menuitem_set_callback(item, send_file_cb, ggc);
+		}
 
 		generate_send_to_menu(ggc);
 	}
@@ -469,7 +493,8 @@ finch_create_conversation(PurpleConversation *conv)
 		FinchConvChat *fc = ggc->u.chat = g_new0(FinchConvChat, 1);
 		hbox = gnt_hbox_new(FALSE);
 		gnt_box_set_pad(GNT_BOX(hbox), 0);
-		tree = fc->userlist = gnt_tree_new();
+		tree = fc->userlist = gnt_tree_new_with_columns(2);
+		gnt_tree_set_col_width(GNT_TREE(tree), 0, 1);   /* The flag column */
 		gnt_tree_set_compare_func(GNT_TREE(tree), (GCompareFunc)g_utf8_collate);
 		gnt_tree_set_hash_fns(GNT_TREE(tree), g_str_hash, g_str_equal, g_free);
 		GNT_WIDGET_SET_FLAGS(tree, GNT_WIDGET_NO_BORDER);
@@ -505,10 +530,6 @@ finch_create_conversation(PurpleConversation *conv)
 
 	if (type == PURPLE_CONV_TYPE_IM) {
 		g_signal_connect(G_OBJECT(ggc->entry), "text_changed", G_CALLBACK(send_typing_notification), ggc);
-		purple_signal_connect(purple_conversations_get_handle(), "buddy-typing", finch_conv_get_handle(),
-						PURPLE_CALLBACK(update_buddy_typing), NULL);
-		purple_signal_connect(purple_conversations_get_handle(), "buddy-typing-stopped", finch_conv_get_handle(),
-						PURPLE_CALLBACK(update_buddy_typing), NULL);
 	}
 
 	g_free(title);
@@ -655,6 +676,20 @@ finch_write_conv(PurpleConversation *conv, const char *who, const char *alias,
 	finch_write_common(conv, name, message, flags, mtime);
 }
 
+static const char *
+chat_flag_text(PurpleConvChatBuddyFlags flags)
+{
+	if (flags & PURPLE_CBFLAGS_FOUNDER)
+		return "~";
+	if (flags & PURPLE_CBFLAGS_OP)
+		return "@";
+	if (flags & PURPLE_CBFLAGS_HALFOP)
+		return "%";
+	if (flags & PURPLE_CBFLAGS_VOICE)
+		return "+";
+	return " ";
+}
+
 static void
 finch_chat_add_users(PurpleConversation *conv, GList *users, gboolean new_arrivals)
 {
@@ -689,7 +724,7 @@ finch_chat_add_users(PurpleConversation *conv, GList *users, gboolean new_arriva
 		gnt_entry_add_suggest(entry, cbuddy->name);
 		gnt_entry_add_suggest(entry, cbuddy->alias);
 		gnt_tree_add_row_after(tree, g_strdup(cbuddy->name),
-				gnt_tree_create_row(tree, cbuddy->alias), NULL, NULL);
+				gnt_tree_create_row(tree, chat_flag_text(cbuddy->flags), cbuddy->alias), NULL, NULL);
 	}
 }
 
@@ -700,16 +735,19 @@ finch_chat_rename_user(PurpleConversation *conv, const char *old, const char *ne
 	FinchConv *ggc = conv->ui_data;
 	GntEntry *entry = GNT_ENTRY(ggc->entry);
 	GntTree *tree = GNT_TREE(ggc->u.chat->userlist);
+	PurpleConvChatBuddy *cb = purple_conv_chat_cb_find(PURPLE_CONV_CHAT(conv), new_n);
+
 	gnt_entry_remove_suggest(entry, old);
+	gnt_tree_remove(tree, (gpointer)old);
+
 	gnt_entry_add_suggest(entry, new_n);
 	gnt_entry_add_suggest(entry, new_a);
-	gnt_tree_remove(tree, (gpointer)old);
 	gnt_tree_add_row_after(tree, g_strdup(new_n),
-			gnt_tree_create_row(tree, new_a), NULL, NULL);
+			gnt_tree_create_row(tree, chat_flag_text(cb->flags), new_a), NULL, NULL);
 }
 
 static void
-finch_chat_remove_user(PurpleConversation *conv, GList *list)
+finch_chat_remove_users(PurpleConversation *conv, GList *list)
 {
 	/* Remove the name from string completion */
 	FinchConv *ggc = conv->ui_data;
@@ -724,24 +762,32 @@ finch_chat_remove_user(PurpleConversation *conv, GList *list)
 static void
 finch_chat_update_user(PurpleConversation *conv, const char *user)
 {
+	PurpleConvChatBuddy *cb = purple_conv_chat_cb_find(PURPLE_CONV_CHAT(conv), user);
+	FinchConv *ggc = conv->ui_data;
+	gnt_tree_change_text(GNT_TREE(ggc->u.chat->userlist), (gpointer)user, 0, chat_flag_text(cb->flags));
 }
 
 static PurpleConversationUiOps conv_ui_ops = 
 {
-	.create_conversation = finch_create_conversation,
-	.destroy_conversation = finch_destroy_conversation,
-	.write_chat = finch_write_chat,
-	.write_im = finch_write_im,
-	.write_conv = finch_write_conv,
-	.chat_add_users = finch_chat_add_users,
-	.chat_rename_user = finch_chat_rename_user,
-	.chat_remove_users = finch_chat_remove_user,
-	.chat_update_user = finch_chat_update_user,
-	.present = NULL,
-	.has_focus = NULL,
-	.custom_smiley_add = NULL,
-	.custom_smiley_write = NULL,
-	.custom_smiley_close = NULL
+	finch_create_conversation,
+	finch_destroy_conversation,
+	finch_write_chat,
+	finch_write_im,
+	finch_write_conv,
+	finch_chat_add_users,
+	finch_chat_rename_user,
+	finch_chat_remove_users,
+	finch_chat_update_user,
+	NULL, /* present */
+	NULL, /* has_focus */
+	NULL, /* custom_smiley_add */
+	NULL, /* custom_smiley_write */
+	NULL, /* custom_smiley_close */
+	NULL, /* send_confirm */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleConversationUiOps *finch_conv_get_ui_ops()
@@ -930,10 +976,18 @@ void finch_conversation_init()
 	purple_cmd_register("status", "", PURPLE_CMD_P_DEFAULT,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
 	                  cmd_show_window, _("statuses: Show the savedstatuses window."), finch_savedstatus_show_all);
+
+	purple_signal_connect(purple_conversations_get_handle(), "buddy-typing", finch_conv_get_handle(),
+					PURPLE_CALLBACK(update_buddy_typing), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "buddy-typing-stopped", finch_conv_get_handle(),
+					PURPLE_CALLBACK(update_buddy_typing), NULL);
+	purple_signal_connect(purple_conversations_get_handle(), "chat-left", finch_conv_get_handle(),
+					PURPLE_CALLBACK(chat_left_cb), NULL);
 }
 
 void finch_conversation_uninit()
 {
+	purple_signals_disconnect_by_handle(finch_conv_get_handle());
 }
 
 void finch_conversation_set_active(PurpleConversation *conv)

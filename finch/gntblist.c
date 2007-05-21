@@ -447,9 +447,13 @@ static PurpleBlistUiOps blist_ui_ops =
 	node_remove,
 	NULL,
 	NULL,
-	.request_add_buddy = finch_request_add_buddy,
-	.request_add_chat = finch_request_add_chat,
-	.request_add_group = finch_request_add_group
+	finch_request_add_buddy,
+	finch_request_add_chat,
+	finch_request_add_group,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static gpointer
@@ -955,7 +959,7 @@ finch_blist_rename_node_cb(PurpleBlistNode *node, PurpleBlistNode *selected)
 
 	prompt = g_strdup_printf(_("Please enter the new name for %s"), name);
 
-	text = PURPLE_BLIST_NODE_IS_GROUP(node) ? _("Rename") : _("Alias");
+	text = PURPLE_BLIST_NODE_IS_GROUP(node) ? _("Rename") : _("Set Alias");
 	purple_request_input(node, text, prompt, _("Enter empty string to reset the name."),
 			name, FALSE, FALSE, NULL, text, G_CALLBACK(rename_blist_node),
 			_("Cancel"), NULL,

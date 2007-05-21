@@ -28,11 +28,12 @@ Pidgin v@VERSION@ \- Instant Messaging client
 
 .SH DESCRIPTION
 .PP
-Pidgin is a modular messaging client capable of using AIM, MSN, Yahoo!, XMPP,
-ICQ, IRC, SILC, SIP/SIMPLE Novell GroupWise, Lotus Sametime, Bonjour,
-Zephyr, Gadu-Gadu, and QQ all at once.  It has many common features found in
-other clients, as well as many unique features.  Pidgin is not endorsed by or
-affiliated with America Online, ICQ, Microsoft, or Yahoo.
+\fBpidgin\fR is a graphical modular messaging client based on libpurple
+which is capable of connecting to AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC,
+Novell GroupWise, Lotus Sametime, Zephyr, Gadu-Gadu, and QQ all at once. It has
+many common features found in other clients, as well as many unique features.
+Finch is not endorsed by or affiliated with America Online, ICQ, Microsoft, or
+Yahoo.
 
 .SH OPTIONS
 The following options are provided by Pidgin using the standard GNU

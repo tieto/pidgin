@@ -91,6 +91,7 @@ static struct _irc_msg {
 	{ "442", "nc:", irc_msg_notinchan },	/* Not in channel		*/
 	{ "473", "nc:", irc_msg_inviteonly },	/* Tried to join invite-only	*/
 	{ "474", "nc:", irc_msg_banned },	/* Banned from channel		*/
+	{ "477", "nc:", irc_msg_regonly },	/* Registration Required	*/
 	{ "478", "nct:", irc_msg_banfull },	/* Banlist is full		*/
 	{ "482", "nc:", irc_msg_notop },	/* Need to be op to do that	*/
 	{ "501", "n:", irc_msg_badmode },	/* Unknown mode flag		*/
@@ -226,7 +227,7 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 	enclist = purple_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
 	encodings = g_strsplit(enclist, ",", 2);
 
-	if (encodings[0] == NULL || !strcasecmp("UTF-8", encodings[0])) {
+	if (encodings[0] == NULL || !g_ascii_strcasecmp("UTF-8", encodings[0])) {
 		g_strfreev(encodings);
 		return g_strdup(string);
 	}
@@ -263,7 +264,7 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 		while (*charset == ' ')
 			charset++;
 
-		if (!strcasecmp("UTF-8", charset)) {
+		if (!g_ascii_strcasecmp("UTF-8", charset)) {
 			if (g_utf8_validate(string, -1, NULL))
 				utf8 = g_strdup(string);
 		} else {

@@ -156,15 +156,15 @@ static struct translator current_translators[] = {
 	{N_("French"),              "fr", "Éric Boumaour", "zongo_fr@users.sourceforge.net"},
 	{N_("Galician"),            "gl", "Ignacio Casal Quinteiro", "nacho.resa@gmail.com"},
 	{N_("Gujarati"),            "gu", "Ankit Patel", "ankit_patel@users.sf.net"},
-	{N_("Gujarati"),            "gu", "Gujarati Language Team", "indianoss-gujarati@lists.sourceforge.net"},
+	{N_("Gujarati"),            "gu", N_("Gujarati Language Team"), "indianoss-gujarati@lists.sourceforge.net"},
 	{N_("Hebrew"),              "he", "Shalom Craimer", "scraimer@gmail.com"},
 	{N_("Hindi"),               "hi", "Ravishankar Shrivastava", "raviratlami@yahoo.com"},
 	{N_("Hungarian"),           "hu", "Zoltan Sutto", "sutto.zoltan@rutinsoft.hu"},
 	{N_("Indonesian"),          "id", "Rai S. Regawa", "raireg@yahoo.com"},
 	{N_("Italian"),             "it", "Claudio Satriano", "satriano@na.infn.it"},
 	{N_("Japanese"),            "ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
-	{N_("Georgian"),            "ka", "Ubuntu Georgian Translators", "alexander.didebulidze@stusta.mhn.de"},
-	{N_("Kannada"),             "kn", "Kannada Translation team", "translation@sampada.info"},
+	{N_("Georgian"),            "ka", N_("Ubuntu Georgian Translators"), "alexander.didebulidze@stusta.mhn.de"},
+	{N_("Kannada"),             "kn", N_("Kannada Translation team"), "translation@sampada.info"},
 	{N_("Korean"),              "ko", "Kyung-uk Son", "vvs740@chol.com"},
 	{N_("Kurdish"),             "ku", "Erdal Ronahi", "erdal.ronahi@gmail.com"},
 	{N_("Kurdish"),             "ku", "Amed Ç. Jiyan", "amedcj@hotmail.com"},
@@ -362,7 +362,8 @@ void pidgin_dialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		_("%s is a modular messaging client capable of using "
+		_("%s is a graphical modular messaging client based on "
+		  "libpurple which is capable of connecting to "
 		  "AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
 		  "Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, "
 		  "Gadu-Gadu, and QQ all at once.  "

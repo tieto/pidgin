@@ -972,7 +972,8 @@ begin_transfer(PurpleXfer *xfer, PurpleInputCondition cond)
 
 	fseek(xfer->dest_fp, xfer->bytes_sent, SEEK_SET);
 
-	xfer->watcher = purple_input_add(xfer->fd, cond, transfer_cb, xfer);
+	if (xfer->fd)
+		xfer->watcher = purple_input_add(xfer->fd, cond, transfer_cb, xfer);
 
 	xfer->start_time = time(NULL);
 

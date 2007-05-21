@@ -416,7 +416,7 @@ purple_buddy_icon_update(PurpleBuddyIcon *icon)
 			}
 			ref_filename(filename);
 		}
-		else
+		else if (!icon->img)
 		{
 			purple_blist_node_remove_setting((PurpleBlistNode *)buddy, "buddy_icon");
 			purple_blist_node_remove_setting((PurpleBlistNode *)buddy, "icon_checksum");
