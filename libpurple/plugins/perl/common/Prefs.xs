@@ -94,8 +94,9 @@ purple_prefs_get_string_list(name)
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = purple_prefs_get_string_list(name); l != NULL; l = l->next) {
+	for (l = purple_prefs_get_string_list(name); l != NULL; l = g_list_delete_link(l, l)) {
 		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
+		g_free(l->data);
 	}
 
 Purple::PrefType
