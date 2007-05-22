@@ -1989,6 +1989,19 @@ purple_conv_chat_cb_get_name(PurpleConvChatBuddy *cb)
 	return cb->name;
 }
 
+GList *
+purple_conversation_get_extended_menu(PurpleConversation *conv)
+{
+	GList *menu = NULL;
+
+	g_return_val_if_fail(conv != NULL, NULL);
+
+	purple_signal_emit(purple_conversations_get_handle(),
+			"conversation-extended-menu", conv, &menu);
+	return menu;
+}
+
+
 void *
 purple_conversations_get_handle(void)
 {
@@ -2252,6 +2265,12 @@ purple_conversations_init(void)
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "conversation-extended-menu",
+			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     purple_value_new(PURPLE_TYPE_SUBTYPE,
+					    PURPLE_SUBTYPE_CONVERSATION),
+			     purple_value_new(PURPLE_TYPE_BOXED, "GList **"));
 }
 
 void

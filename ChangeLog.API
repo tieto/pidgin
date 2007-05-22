@@ -1,5 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.1.0 (?/?/?):
+	Added:
+	* purple_conversation_get_extended_menu
+
+	Signals - Added: (See the Doxygen docs for details on all signals.)
+	* "conversation-extended-menu"
+
 version 2.0.0 (5/3/2007):
 	Please note all functions, defines, and data structures have been
 	re-namespaced to match the new names of Pidgin, Finch, and libpurple.
