@@ -2,7 +2,7 @@ EXTRA_DIST = Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
-SOURCES = myspace.c
+SOURCES = myspace.c message.c
 
 AM_CFLAGS = $(st)
 

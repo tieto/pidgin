@@ -1,13 +1,13 @@
 #
 # Makefile.mingw
 #
-# Description: Makefile for win32 (mingw) version of libirc
+# Description: Makefile for win32 (mingw) version of libmyspace
 #
 
 PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
-TARGET = libirc
+TARGET = libmyspace
 TYPE = PLUGIN
 
 # Static or Plugin...
@@ -37,11 +37,7 @@ LIB_PATHS =		-L$(GTK_TOP)/lib \
 ##
 ##  SOURCES, OBJECTS
 ##
-C_SRC =			cmds.c \
-			dcc_send.c \
-			irc.c \
-			msgs.c \
-			parse.c
+C_SRC =			myspace.c message.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
 

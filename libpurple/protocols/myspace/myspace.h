@@ -19,6 +19,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#ifndef _MYSPACE_MYSPACE_H
+#define _MYSPACE_MYSPACE_H
+
 /* Conditional compilation options */
 
 /* Debugging options */
@@ -37,15 +40,6 @@
  * RC4 code and only support libpurple with RC4. */
 
 /* Constants */
-
-/* Protocol field types */
-#define MSIM_TYPE_INTEGER		0
-#define MSIM_TYPE_STRING		1
-#define MSIM_TYPE_BINARY		2
-#define MSIM_TYPE_BOOLEAN		3
-#define MSIM_TYPE_DICTIONARY	4
-#define MSIM_TYPE_LIST			5
-
 
 /* Statuses */
 #define MSIM_STATUS_ONLINE      "online"
@@ -122,9 +116,11 @@ static void init_plugin(PurplePlugin *plugin);
 static GList *msim_status_types(PurpleAccount *acct);
 static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy);
 
+/* TODO: move these three functions to message.c/h */
 static gchar *msim_unescape(const gchar *msg);
 static gchar *msim_escape(const gchar *msg);
 static gchar *str_replace(const gchar* str, const gchar *old, const gchar *new);
+
 static GHashTable *msim_parse(gchar* msg);
 static GHashTable* msim_parse_body(const gchar *body_str);
 
@@ -213,3 +209,5 @@ void crypt_rc4_init(rc4_state_struct *rc4_state,
 
 void crypt_rc4(rc4_state_struct *rc4_state, unsigned char *data, int data_len);
 #endif	/* !MSIM_USE_PURPLE_RC4 */
+
+#endif /* !_MYSPACE_MYSPACE_H */

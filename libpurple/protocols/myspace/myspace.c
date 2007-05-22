@@ -58,6 +58,7 @@
 #include "debug.h"      /* for purple_debug_info */
 
 #include "myspace.h"
+#include "message.h"
 
 /** 
  * Load the plugin.
@@ -143,12 +144,7 @@ static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 /**
  * Unescape a protocol message.
  *
- * @param msg The message to unescape.
- *
  * @return The unescaped message. Caller must g_free().
- *
- * Messages should be unescaped after being received, as part of
- * the parsing process.
  */
 static gchar *msim_unescape(const gchar *msg)
 {
@@ -164,11 +160,7 @@ static gchar *msim_unescape(const gchar *msg)
 /**
  * Escape a protocol message.
  *
- * @param msg The message to escape.
- *
  * @return The escaped message. Caller must g_free().
- *
- * Messages should be escaped before sending.
  */
 static gchar *msim_escape(const gchar *msg)
 {
@@ -206,6 +198,7 @@ static gchar *str_replace(const gchar* str, const gchar *old, const gchar *new)
 	g_free(items);
 	return ret;
 }
+
 
 
 /** 
@@ -405,91 +398,19 @@ static gboolean msim_send_raw(MsimSession *session, const gchar *msg)
 	return TRUE;
 }
 
-/**
- * Pack a key=value item into a part of a protocol messge.
+/** Send an existing MsimMessage.
  */
-static void msim_pack_each(gpointer key, gpointer value, gpointer user_data)
+
+/* TODO: move to message.c */
+static gboolean msim_msg_send(MsimSession *session, MsimMessage *msg)
 {
-	gchar ***items;		/* wow, a pointer to a pointer to a pointer */
-	gchar *item;
-
-	items = user_data;
-
-	/* Not all values should be escaped! (base64'd binary, 'response' must not be). 
-	 * TODO: escape the values that should be, don't escape what shouldn't! */
-#if 0
-	gchar *escaped_key, *escaped_value;
-	escaped_key = msim_escape((gchar *)key);
-	escaped_value = msim_escape((gchar *)value);
-
-	item = g_strdup_printf("%s\\%s", escaped_key, escaped_value);
-	
-	g_free(escaped_key);
-	g_free(escaped_value);
-#else
-
-	item = g_strdup_printf("%s\\%s", (gchar *)key, (gchar *)value);
-#endif
-
-	**items = item;
-	++(*items);
-}
-
-/**
- * Pack a hash table of a protocol of a message into a string suitable
- * for sending.
- *
- * @return The packed string; caller must g_free() when no longer needed.
- */
-static gchar *msim_pack(GHashTable *table)
-{
-	gchar **items, **items_tmp;
 	gchar *raw;
-	guint i;
-
-	/* Create an array with enough elements for each part of the
-	 * protocol message - one for each item, plus one for the initial \\,
-	 * another for the ending \\final\\, and the last for NULL terminator.
-	 */
-	items = (gchar **)g_new0(gchar *, g_hash_table_size(table) + 3);
-
-	/* Beginning and ending markers. */
-	items[0] = g_strdup("");	
-	items[g_hash_table_size(table) + 1] = g_strdup("final");
-	items[g_hash_table_size(table) + 2] = g_strdup("");
-
-	items_tmp = items + 1;
-	g_hash_table_foreach(table, (GHFunc)msim_pack_each, &items_tmp);
-
-	/* Join each item of the message. */
-	raw = g_strjoinv("\\", items);
-
-	/* Free each item, then the array itself. */
-	for (i = 0; i < g_hash_table_size(table); ++i)
-	{
-		g_free(items[i]);
-	}
-	g_free(items);
-
-	return raw;
-}
-
-/**
- * Send a message to the server, by a hash table.
- *
- * @param session
- * @param table A hash table of the message to send.
- */
-static gboolean msim_sendh(MsimSession *session, GHashTable *table)
-{
-	gchar *raw_msg;
 	gboolean success;
-
-	raw_msg = msim_pack(table);
-	success = msim_send_raw(session, raw_msg);
-
-	g_free(raw_msg);
-
+	
+	raw = msim_msg_pack(msg);
+	success = msim_send_raw(session, raw);
+	g_free(raw);
+	
 	return success;
 }
 
@@ -499,7 +420,7 @@ static gboolean msim_sendh(MsimSession *session, GHashTable *table)
  * variable arguments.
  *
  * @param session
- * @param ... A sequence of gchar* key/value pairs, terminated with NULL. The strings will be copied.
+ * @param ... A sequence of gchar* key/value pairs, terminated with NULL. 
  *
  * IMPORTANT: The key/value pair strings are not copied. The 'key' strings 
  * are not freed, but the 'value' pair is. Use g_strdup() to pass a static
@@ -510,20 +431,19 @@ static gboolean msim_sendh(MsimSession *session, GHashTable *table)
  * It bears repeating: THE VALUE STRINGS WILL BE FREED. Copy if static.
  *
  * This function exists for coding convenience: a message can be created
- * and sent in one line of code. Internally it calls msim_sendh().
+ * and sent in one line of code. Internally it calls msim_msg_send().
  *
- * TODO: types
  */
 
 static gboolean msim_send(MsimSession *session, ...)
 {
 	va_list argp;
-	GHashTable *table;
 	gchar *key, *value;
+	MsimMessageType type;
 	gboolean success;
+	MsimMessage *msg;
     
-	table = g_hash_table_new_full((GHashFunc)g_str_hash, 
-            (GEqualFunc)g_str_equal, NULL, g_free);
+	msg = msim_msg_new();
 
 	/* Parse key, value pairs until NULL. */
 	va_start(argp, session);
@@ -535,22 +455,34 @@ static gboolean msim_send(MsimSession *session, ...)
 			break;
 		}
 
-		value = va_arg(argp, gchar *);
-		if (!value)
-		{
-			purple_debug_info("msim", "msim_send: no value for key '%s', ignoring\n", key);
-			break;
-		}
+		type = va_arg(argp, int);
 
-		g_hash_table_insert(table, key, value);
+		switch (type)
+		{
+			case MSIM_TYPE_INTEGER: 
+				msim_msg_append(msg, key, type, GUINT_TO_POINTER(va_arg(argp, int)));
+				break;
+				
+			case MSIM_TYPE_STRING:
+				value = va_arg(argp, char *);
+
+				g_return_val_if_fail(value != NULL, FALSE);
+
+				msim_msg_append(msg, key, type, value);
+				break;
+
+			default:
+				purple_debug_info("msim", "msim_send: unknown type %d\n", type);
+				break;
+		}
 	} while(key && value);
 
 	/* Actually send the message. */
-	success = msim_sendh(session, table);
+	success = msim_msg_send(session, msg);
 
 	/* Cleanup. */
 	va_end(argp);	
-	g_hash_table_destroy(table);
+	msim_msg_free(msg);
 
 	return success;
 }
@@ -1964,9 +1896,23 @@ static PurplePluginInfo info =
 	NULL 											  /**< reserved4      */
 };
 
+#include "message.h"
+
 static void init_plugin(PurplePlugin *plugin) 
 {
 	PurpleAccountOption *option;
+#ifdef _TEST_MSIM_MSG
+	MsimMessage *msg = msim_msg_new();
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, "v1");
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_INTEGER, 42);
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, "v43");
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, "v5");
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, "v7");
+	purple_debug_info("msim", "msg=%s\n", msim_msg_pack(msg));
+	purple_debug_info("msim", "msg=%s\n", msim_msg_debug_string(msg));
+	msim_msg_free(msg);
+	exit(0);
+#endif
 
 	/* TODO: default to automatically try different ports. Make the user be
 	 * able to set the first port to try (like LastConnectedPort in Windows client).  */
