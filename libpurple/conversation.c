@@ -2009,6 +2009,7 @@ purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
 	char *mark = (markup && *markup) ? NULL : g_markup_escape_text(cmdline, -1), *err = NULL;
 	PurpleCmdStatus status = purple_cmd_do_command(conv, cmdline, mark ? mark : markup, error ? error : &err);
 	g_free(mark);
+	g_free(err);
 	return (status == PURPLE_CMD_STATUS_OK);
 }
 
