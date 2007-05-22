@@ -95,7 +95,7 @@ PREINIT:
 	GList *l;
 PPCODE:
 	for (l = purple_prefs_get_string_list(name); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::PrefValue")));
+		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
 	}
 
 Purple::PrefType
