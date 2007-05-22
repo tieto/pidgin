@@ -3,6 +3,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 version 2.1.0 (?/?/?):
 	Added:
 	* purple_conversation_get_extended_menu
+	* purple_conversation_do_command
 
 	Signals - Added: (See the Doxygen docs for details on all signals.)
 	* "conversation-extended-menu"

@@ -21,6 +21,7 @@
  */
 #include "internal.h"
 #include "blist.h"
+#include "cmds.h"
 #include "conversation.h"
 #include "dbus-maybe.h"
 #include "debug.h"
@@ -2001,6 +2002,15 @@ purple_conversation_get_extended_menu(PurpleConversation *conv)
 	return menu;
 }
 
+gboolean
+purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
+				const gchar *markup, gchar **error)
+{
+	char *mark = (markup && *markup) ? NULL : g_markup_escape_text(cmdline, -1), *err = NULL;
+	PurpleCmdStatus status = purple_cmd_do_command(conv, cmdline, mark ? mark : markup, error ? error : &err);
+	g_free(mark);
+	return (status == PURPLE_CMD_STATUS_OK);
+}
 
 void *
 purple_conversations_get_handle(void)
