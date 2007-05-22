@@ -183,6 +183,7 @@
 #define purple_strlcat(dest, src) g_strlcat(dest, src, sizeof(dest))
 
 #define PURPLE_WEBSITE "http://pidgin.im/"
+#define PURPLE_DEVEL_WEBSITE "http://developer.pidgin.im/"
 
 /* This is for the accounts code to notify the buddy icon code that
  * it's done loading.  We may want to replace this with a signal. */

@@ -49,8 +49,8 @@ static int error(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 
 	/* XXX freesnac()? */
 	if (snac2)
-		free(snac2->data);
-	free(snac2);
+		g_free(snac2->data);
+	g_free(snac2);
 
 	return ret;
 }
@@ -107,14 +107,14 @@ static int reply(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 	 */
 	while ((cur = aim_tlv_getstr(tlvlist, 0x0001, j+1)) && j < m)
 	{
-		buf = realloc(buf, (j+1) * (MAXSNLEN+1));
+		buf = g_realloc(buf, (j+1) * (MAXSNLEN+1));
 
 		strncpy(&buf[j * (MAXSNLEN+1)], cur, MAXSNLEN);
-		free(cur);
+		g_free(cur);
 
 		j++;
 	}
-	free(cur);
+	g_free(cur);
 
 	aim_tlvlist_free(&tlvlist);
 
@@ -123,10 +123,10 @@ static int reply(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 
 	/* XXX freesnac()? */
 	if (snac2)
-		free(snac2->data);
-	free(snac2);
+		g_free(snac2->data);
+	g_free(snac2);
 
-	free(buf);
+	g_free(buf);
 
 	return ret;
 }

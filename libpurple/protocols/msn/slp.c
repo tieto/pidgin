@@ -158,7 +158,9 @@ void
 msn_xfer_completed_cb(MsnSlpCall *slpcall, const guchar *body,
 					  gsize size)
 {
-	purple_xfer_set_completed(slpcall->xfer, TRUE);
+	PurpleXfer *xfer = slpcall->xfer;
+	purple_xfer_set_completed(xfer, TRUE);
+	purple_xfer_end(xfer);
 }
 
 /**************************************************************************
@@ -361,6 +363,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			purple_xfer_set_cancel_recv_fnc(xfer, msn_xfer_cancel);
 
 			slpcall->xfer = xfer;
+			purple_xfer_ref(slpcall->xfer);
+
 			xfer->data = slpcall;
 
 			purple_xfer_request(xfer);

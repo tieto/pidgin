@@ -113,7 +113,7 @@ IcbmCookie *aim_mkcookie(guint8 *c, int type, void *data)
 	if (!c)
 		return NULL;
 
-	cookie = calloc(1, sizeof(IcbmCookie));
+	cookie = g_new0(IcbmCookie, 1);
 
 	cookie->data = data;
 	cookie->type = type;
@@ -172,8 +172,8 @@ int aim_cookie_free(OscarData *od, IcbmCookie *cookie)
 			prev = &cur->next;
 	}
 
-	free(cookie->data);
-	free(cookie);
+	g_free(cookie->data);
+	g_free(cookie);
 
 	return 0;
 }

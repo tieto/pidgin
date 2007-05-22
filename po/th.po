@@ -3065,7 +3065,7 @@ msgstr "ดูข้อมูลของคู่สนทนา"
 #: ../src/gtkconv.c:4958 ../src/gtkconv.c:5067
 #, c-format
 msgid "%d person in room"
-msgstr "ในห้องมี %s คน"
+msgstr "ในห้องมี %d คน"
 
 #: ../src/gtkconv.c:5624 ../src/gtkstatusbox.c:366
 msgid "Typing"

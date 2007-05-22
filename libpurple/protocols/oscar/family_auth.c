@@ -79,7 +79,7 @@ aim_encode_password(const char *password, guint8 *encoded)
 
 #ifdef USE_OLD_MD5
 static int
-aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
+aim_encode_password_md5(const char *password, size_t password_len, const char *key, guint8 *digest)
 {
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
@@ -88,7 +88,7 @@ aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
 
 	context = purple_cipher_context_new(cipher, NULL);
 	purple_cipher_context_append(context, (const guchar *)key, strlen(key));
-	purple_cipher_context_append(context, (const guchar *)password, strlen(password));
+	purple_cipher_context_append(context, (const guchar *)password, password_len);
 	purple_cipher_context_append(context, (const guchar *)AIM_MD5_STRING, strlen(AIM_MD5_STRING));
 	purple_cipher_context_digest(context, 16, digest, NULL);
 	purple_cipher_context_destroy(context);
@@ -97,7 +97,7 @@ aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
 }
 #else
 static int
-aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
+aim_encode_password_md5(const char *password, size_t password_len, const char *key, guint8 *digest)
 {
 	PurpleCipher *cipher;
 	PurpleCipherContext *context;
@@ -106,7 +106,7 @@ aim_encode_password_md5(const char *password, const char *key, guint8 *digest)
 	cipher = purple_ciphers_find_cipher("md5");
 
 	context = purple_cipher_context_new(cipher, NULL);
-	purple_cipher_context_append(context, (const guchar *)password, strlen(password));
+	purple_cipher_context_append(context, (const guchar *)password, password_len);
 	purple_cipher_context_digest(context, 16, passdigest, NULL);
 	purple_cipher_context_destroy(context);
 
@@ -134,7 +134,7 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 	guint8 *password_encoded;
 
 	passwdlen = strlen(password);
-	password_encoded = (guint8 *)malloc(passwdlen+1);
+	password_encoded = (guint8 *)g_malloc(passwdlen+1);
 	if (passwdlen > MAXICQPASSLEN)
 		passwdlen = MAXICQPASSLEN;
 
@@ -159,7 +159,7 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 
 	aim_tlvlist_write(&frame->data, &tl);
 
-	free(password_encoded);
+	g_free(password_encoded);
 	aim_tlvlist_free(&tl);
 
 	flap_connection_send(conn, frame);
@@ -198,12 +198,13 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
  *
  */
 int
-aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, ClientInfo *ci, const char *key)
+aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key)
 {
 	FlapFrame *frame;
 	aim_tlvlist_t *tl = NULL;
 	guint8 digest[16];
 	aim_snacid_t snacid;
+	size_t password_len;
 
 	if (!ci || !sn || !password)
 		return -EINVAL;
@@ -221,18 +222,14 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 
 	aim_tlvlist_add_str(&tl, 0x0001, sn);
 
-	/* Truncate ICQ passwords, if necessary */
-	if (isdigit(sn[0]) && (strlen(password) > MAXICQPASSLEN))
-	{
-		char truncated[MAXICQPASSLEN + 1];
-		strncpy(truncated, password, MAXICQPASSLEN);
-		truncated[MAXICQPASSLEN] = 0;
-		aim_encode_password_md5(truncated, key, digest);
-	}
-	else
-	{
-		aim_encode_password_md5(password, key, digest);
-	}
+	/* Truncate ICQ and AOL passwords, if necessary */
+	password_len = strlen(password);
+	if (isdigit(sn[0]) && (password_len > MAXICQPASSLEN))
+		password_len = MAXICQPASSLEN;
+	else if (truncate_pass && password_len > 8)
+		password_len = 8;
+
+	aim_encode_password_md5(password, password_len, key, digest);
 
 	aim_tlvlist_add_raw(&tl, 0x0025, 16, digest);
 
@@ -520,18 +517,29 @@ keyparse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	int keylen, ret = 1;
 	aim_rxcallback_t userfunc;
 	char *keystr;
+	aim_tlvlist_t *tlvlist;
+	gboolean truncate_pass;
 
 	keylen = byte_stream_get16(bs);
 	keystr = byte_stream_getstr(bs, keylen);
+	tlvlist = aim_tlvlist_read(bs);
+
+	/*
+	 * If the truncate_pass TLV exists then we should truncate the
+	 * user's password to 8 characters.  This flag is sent when you
+	 * try to log in with an AOL user's screen name.
+	 */
+	truncate_pass = aim_tlv_gettlv(tlvlist, 0x0026, 1) != NULL;
 
 	/* XXX - When GiantGrayPanda signed on AIM I got a thing asking me to register
 	 * for the netscape network.  This SNAC had a type 0x0058 TLV with length 10.
 	 * Data is 0x0007 0004 3e19 ae1e 0006 0004 0000 0005 */
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
-		ret = userfunc(od, conn, frame, keystr);
+		ret = userfunc(od, conn, frame, keystr, (int)truncate_pass);
 
-	free(keystr);
+	g_free(keystr);
+	aim_tlvlist_free(&tlvlist);
 
 	return ret;
 }

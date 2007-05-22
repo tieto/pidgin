@@ -99,7 +99,7 @@ typedef enum
 	/**
 	 * Use a unique name, not an alias, for chat rooms.
 	 *
-	 * Jabber lets you choose what name you want for chat.
+	 * XMPP lets you choose what name you want for chat.
 	 * So it shouldn't be pulling the alias for when you're in chat;
 	 * it gets annoying.
 	 */
@@ -108,7 +108,7 @@ typedef enum
 	/**
 	 * Chat rooms have topics.
 	 *
-	 * IRC and Jabber support this.
+	 * IRC and XMPP support this.
 	 */
 	OPT_PROTO_CHAT_TOPIC = 0x00000008,
 
@@ -145,7 +145,7 @@ typedef enum
 	/**
 	 * Allows font size to be specified in sane point size
 	 *
-	 * Probably just Jabber and Y!M
+	 * Probably just XMPP and Y!M
 	 */
 	OPT_PROTO_USE_POINTSIZE = 0x00000100,
 

@@ -56,11 +56,17 @@ finch_connection_report_disconnect(PurpleConnection *gc, const char *text)
 
 static PurpleConnectionUiOps ops = 
 {
-	.connect_progress = NULL,
-	.connected = NULL,
-	.disconnected = NULL,
-	.notice = NULL,
-	.report_disconnect = finch_connection_report_disconnect
+	NULL, /* connect_progress */
+	NULL, /* connected */
+	NULL, /* disconnected */
+	NULL, /* notice */
+	finch_connection_report_disconnect,
+	NULL, /* network_connected */
+	NULL, /* network_disconnected */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleConnectionUiOps *finch_connections_get_ui_ops()

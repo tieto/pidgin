@@ -519,8 +519,7 @@ SectionGroup /e $(PIDGIN_SHORTCUTS_SECTION_TITLE) SecShortcuts
   SectionEnd
   Section $(PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE) SecStartMenuShortcut
     SetOverwrite on
-    CreateDirectory "$SMPROGRAMS\Pidgin"
-    CreateShortCut "$SMPROGRAMS\Pidgin\Pidgin.lnk" "$INSTDIR\pidgin.exe"
+    CreateShortCut "$SMPROGRAMS\Pidgin.lnk" "$INSTDIR\pidgin.exe"
     SetOverwrite off
   SectionEnd
 SectionGroupEnd
@@ -750,7 +749,6 @@ Section Uninstall
     RMDir "$INSTDIR"
 
     ; Shortcuts..
-    RMDir /r "$SMPROGRAMS\Pidgin"
     Delete "$DESKTOP\Pidgin.lnk"
 
     Goto done

@@ -6,7 +6,7 @@
 
 G_BEGIN_DECLS
 
-/* BOOLEAN:VOID (/dev/stdin:1) */
+/* BOOLEAN:VOID (./genmarshal:1) */
 extern void gnt_closure_marshal_BOOLEAN__VOID (GClosure     *closure,
                                                GValue       *return_value,
                                                guint         n_param_values,
@@ -14,7 +14,7 @@ extern void gnt_closure_marshal_BOOLEAN__VOID (GClosure     *closure,
                                                gpointer      invocation_hint,
                                                gpointer      marshal_data);
 
-/* BOOLEAN:STRING (/dev/stdin:2) */
+/* BOOLEAN:STRING (./genmarshal:2) */
 extern void gnt_closure_marshal_BOOLEAN__STRING (GClosure     *closure,
                                                  GValue       *return_value,
                                                  guint         n_param_values,
@@ -22,7 +22,7 @@ extern void gnt_closure_marshal_BOOLEAN__STRING (GClosure     *closure,
                                                  gpointer      invocation_hint,
                                                  gpointer      marshal_data);
 
-/* VOID:INT,INT,INT,INT (/dev/stdin:3) */
+/* VOID:INT,INT,INT,INT (./genmarshal:3) */
 extern void gnt_closure_marshal_VOID__INT_INT_INT_INT (GClosure     *closure,
                                                        GValue       *return_value,
                                                        guint         n_param_values,
@@ -30,7 +30,7 @@ extern void gnt_closure_marshal_VOID__INT_INT_INT_INT (GClosure     *closure,
                                                        gpointer      invocation_hint,
                                                        gpointer      marshal_data);
 
-/* VOID:INT,INT (/dev/stdin:4) */
+/* VOID:INT,INT (./genmarshal:4) */
 extern void gnt_closure_marshal_VOID__INT_INT (GClosure     *closure,
                                                GValue       *return_value,
                                                guint         n_param_values,
@@ -38,7 +38,7 @@ extern void gnt_closure_marshal_VOID__INT_INT (GClosure     *closure,
                                                gpointer      invocation_hint,
                                                gpointer      marshal_data);
 
-/* VOID:POINTER,POINTER (/dev/stdin:5) */
+/* VOID:POINTER,POINTER (./genmarshal:5) */
 extern void gnt_closure_marshal_VOID__POINTER_POINTER (GClosure     *closure,
                                                        GValue       *return_value,
                                                        guint         n_param_values,
@@ -46,7 +46,7 @@ extern void gnt_closure_marshal_VOID__POINTER_POINTER (GClosure     *closure,
                                                        gpointer      invocation_hint,
                                                        gpointer      marshal_data);
 
-/* BOOLEAN:INT,INT (/dev/stdin:6) */
+/* BOOLEAN:INT,INT (./genmarshal:6) */
 extern void gnt_closure_marshal_BOOLEAN__INT_INT (GClosure     *closure,
                                                   GValue       *return_value,
                                                   guint         n_param_values,
@@ -54,7 +54,7 @@ extern void gnt_closure_marshal_BOOLEAN__INT_INT (GClosure     *closure,
                                                   gpointer      invocation_hint,
                                                   gpointer      marshal_data);
 
-/* BOOLEAN:INT,INT,INT (/dev/stdin:7) */
+/* BOOLEAN:INT,INT,INT (./genmarshal:7) */
 extern void gnt_closure_marshal_BOOLEAN__INT_INT_INT (GClosure     *closure,
                                                       GValue       *return_value,
                                                       guint         n_param_values,
@@ -62,7 +62,7 @@ extern void gnt_closure_marshal_BOOLEAN__INT_INT_INT (GClosure     *closure,
                                                       gpointer      invocation_hint,
                                                       gpointer      marshal_data);
 
-/* BOOLEAN:POINTER,POINTER,POINTER (/dev/stdin:8) */
+/* BOOLEAN:POINTER,POINTER,POINTER (./genmarshal:8) */
 extern void gnt_closure_marshal_BOOLEAN__POINTER_POINTER_POINTER (GClosure     *closure,
                                                                   GValue       *return_value,
                                                                   guint         n_param_values,
@@ -70,7 +70,7 @@ extern void gnt_closure_marshal_BOOLEAN__POINTER_POINTER_POINTER (GClosure     *
                                                                   gpointer      invocation_hint,
                                                                   gpointer      marshal_data);
 
-/* BOOLEAN:INT,INT,INT,POINTER (/dev/stdin:9) */
+/* BOOLEAN:INT,INT,INT,POINTER (./genmarshal:9) */
 extern void gnt_closure_marshal_BOOLEAN__INT_INT_INT_POINTER (GClosure     *closure,
                                                               GValue       *return_value,
                                                               guint         n_param_values,
@@ -78,7 +78,7 @@ extern void gnt_closure_marshal_BOOLEAN__INT_INT_INT_POINTER (GClosure     *clos
                                                               gpointer      invocation_hint,
                                                               gpointer      marshal_data);
 
-/* VOID:STRING,STRING (/dev/stdin:10) */
+/* VOID:STRING,STRING (./genmarshal:10) */
 extern void gnt_closure_marshal_VOID__STRING_STRING (GClosure     *closure,
                                                      GValue       *return_value,
                                                      guint         n_param_values,
@@ -86,7 +86,7 @@ extern void gnt_closure_marshal_VOID__STRING_STRING (GClosure     *closure,
                                                      gpointer      invocation_hint,
                                                      gpointer      marshal_data);
 
-/* VOID:POINTER,BOOLEAN (/dev/stdin:11) */
+/* VOID:POINTER,BOOLEAN (./genmarshal:11) */
 extern void gnt_closure_marshal_VOID__POINTER_BOOLEAN (GClosure     *closure,
                                                        GValue       *return_value,
                                                        guint         n_param_values,

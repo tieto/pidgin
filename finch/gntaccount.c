@@ -930,11 +930,15 @@ finch_request_close(void *uihandle)
 
 static PurpleAccountUiOps ui_ops =
 {
-	.notify_added = notify_added,
-	.status_changed = NULL,
-	.request_add  = request_add,
-	.request_authorize = finch_request_authorize,
-	.close_account_request = finch_request_close
+	notify_added,
+	NULL,
+	request_add,
+	finch_request_authorize,
+	finch_request_close,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleAccountUiOps *finch_accounts_get_ui_ops()

@@ -18,9 +18,10 @@ XS-Vcs-Browser: http://svn.debian.org/wsvn/pkg-gnome/packages/unstable/pidgin/
 Package: pidgin
 Architecture: any
 Depends: pidgin-data (>= ${source:Upstream-Version}), pidgin-data (<< ${source:Upstream-Version}-z) (${shlibs:Depends}, libsasl2-modules
+Conflicts: gaim (<< 1:2.0.0+beta6-3)
 Replaces: gaim (<< 1:2.0.0+beta6-3)
 Recommends: gstreamer0.10-plugins-base, gstreamer0.10-plugins-good, python-dbus
-Suggests: gnome-panel (>= 2.1) | kicker (>= 3.1) | docker, evolution-data-server (>= 1.6.0), ${shlibs:Suggests}
+Suggests: gnome-panel (>= 2.1) | kicker (>= 3.1) | docker, evolution-data-server (>= 1.10.0), ${shlibs:Suggests}
 Description: multi-protocol instant messaging client
  Pidgin is a graphical, modular Instant Messaging client capable of using
  AIM/ICQ, Yahoo!, MSN, IRC, Jabber, Napster, Zephyr, Gadu-Gadu, Bonjour,
@@ -63,6 +64,7 @@ Package: pidgin-dev
 Section: devel
 Architecture: all
 Depends: pidgin (= ${source:Version}), pidgin-data (= ${source:Version}), pkg-config, libgtk2.0-dev
+Conflicts: gaim-dev (<< 1:2.0.0+beta6-3)
 Replaces: gaim-dev (<< 1:2.0.0+beta6-3)
 Description: multi-protocol instant messaging client - development files
  This package contains the headers and other development files not included in
@@ -76,6 +78,7 @@ Package: pidgin-dbg
 Priority: extra
 Architecture: any
 Depends: pidgin (= ${source:Version}), pidgin-data (= ${source:Version}), ${shlibs:Depends}
+Conflicts: gaim-dbg (<< 1:2.0.0+beta6-3)
 Replaces: gaim-dbg (<< 1:2.0.0+beta6-3)
 Description: Debugging symbols for Pidgin 
  This package includes the debugging symbols useful for debugging Pidgin

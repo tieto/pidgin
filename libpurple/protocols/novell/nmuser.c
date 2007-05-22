@@ -944,7 +944,7 @@ nm_send_remove_privacy_item(NMUser *user, const char *dn, gboolean allow_list,
 	}
 
 	/* Remove item from the cached list */
-	if ((node = g_slist_find_custom(*list_ptr, dn, (GCompareFunc)nm_utf8_strcasecmp))) {
+	if ((node = g_slist_find_custom(*list_ptr, dn, (GCompareFunc)purple_utf8_strcasecmp))) {
 		*list_ptr = g_slist_remove_link(*list_ptr, node);
 		g_slist_free_1(node);
 	}
@@ -1223,13 +1223,13 @@ _create_privacy_list(NMUser * user, NMRequest *request)
 	locate = nm_locate_field(NM_A_LOCKED_ATTR_LIST, user->fields);
 	if (locate && locate->ptr_value) {
 		if (locate->type == NMFIELD_TYPE_UTF8 &&
-			(nm_utf8_strcasecmp(locate->ptr_value, NM_A_BLOCKING) == 0)) {
+			(purple_utf8_strcasecmp(locate->ptr_value, NM_A_BLOCKING) == 0)) {
 			user->privacy_locked = TRUE;
 		} else if (locate->type == NMFIELD_TYPE_MV ||
 				   locate->type == NMFIELD_TYPE_ARRAY) {
 			NMField *tmp = (NMField *)locate->ptr_value;
 			while (tmp && tmp->tag) {
-				if (nm_utf8_strcasecmp(tmp->ptr_value, NM_A_BLOCKING) == 0) {
+				if (purple_utf8_strcasecmp(tmp->ptr_value, NM_A_BLOCKING) == 0) {
 					user->privacy_locked = TRUE;
 					break;
 				}
@@ -1800,25 +1800,11 @@ nm_process_response(NMUser * user)
  * Some utility functions...haven't figured out where
  * they belong yet.
  */
-gint
-nm_utf8_strcasecmp(gconstpointer str1, gconstpointer str2)
-{
-	gint rv;
-	char *str1_down = g_utf8_strdown(str1, -1);
-	char *str2_down = g_utf8_strdown(str2, -1);
-
-	rv = g_utf8_collate(str1_down, str2_down);
-
-	g_free(str1_down);
-	g_free(str2_down);
-
-	return rv;
-}
 
 gboolean
 nm_utf8_str_equal(gconstpointer str1, gconstpointer str2)
 {
-	return (nm_utf8_strcasecmp(str1, str2) == 0);
+	return (purple_utf8_strcasecmp(str1, str2) == 0);
 }
 
 char *

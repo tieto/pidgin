@@ -41,8 +41,8 @@ freetlv(aim_tlv_t **oldtlv)
 	if (!oldtlv || !*oldtlv)
 		return;
 
-	free((*oldtlv)->value);
-	free(*oldtlv);
+	g_free((*oldtlv)->value);
+	g_free(*oldtlv);
 	*oldtlv = NULL;
 
 	return;
@@ -103,7 +103,7 @@ aim_tlvlist_t *aim_tlvlist_read(ByteStream *bs)
 				cur->tlv->value = byte_stream_getraw(bs, length);
 				if (!cur->tlv->value) {
 					freetlv(&cur->tlv);
-					free(cur);
+					g_free(cur);
 					aim_tlvlist_free(&list);
 					return NULL;
 				}
@@ -159,7 +159,7 @@ aim_tlvlist_t *aim_tlvlist_readnum(ByteStream *bs, guint16 num)
 			cur->tlv->value = byte_stream_getraw(bs, length);
 			if (!cur->tlv->value) {
 				freetlv(&cur->tlv);
-				free(cur);
+				g_free(cur);
 				aim_tlvlist_free(&list);
 				return NULL;
 			}
@@ -216,7 +216,7 @@ aim_tlvlist_t *aim_tlvlist_readlen(ByteStream *bs, guint16 len)
 			cur->tlv->value = byte_stream_getraw(bs, length);
 			if (!cur->tlv->value) {
 				freetlv(&cur->tlv);
-				free(cur);
+				g_free(cur);
 				aim_tlvlist_free(&list);
 				return NULL;
 			}
@@ -271,8 +271,8 @@ int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two)
 	aim_tlvlist_write(&bs2, &two);
 
 	if (memcmp(bs1.data, bs2.data, bs1.len)) {
-		free(bs1.data);
-		free(bs2.data);
+		g_free(bs1.data);
+		g_free(bs2.data);
 		return 1;
 	}
 
@@ -304,7 +304,7 @@ void aim_tlvlist_free(aim_tlvlist_t **list)
 		freetlv(&cur->tlv);
 
 		tmp = cur->next;
-		free(cur);
+		g_free(cur);
 		cur = tmp;
 	}
 
@@ -600,7 +600,7 @@ int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const guint16 type, const guin
 	if (cur == NULL)
 		return aim_tlvlist_add_raw(list, type, length, value);
 
-	free(cur->tlv->value);
+	g_free(cur->tlv->value);
 	cur->tlv->length = length;
 	if (cur->tlv->length > 0) {
 		cur->tlv->value = g_memdup(value, length);
@@ -705,9 +705,9 @@ void aim_tlvlist_remove(aim_tlvlist_t **list, const guint16 type)
 	}
 
 	/* Free the removed item */
-	free(del->tlv->value);
-	free(del->tlv);
-	free(del);
+	g_free(del->tlv->value);
+	g_free(del->tlv);
+	g_free(del);
 }
 
 /**
@@ -808,7 +808,7 @@ aim_tlv_getvalue_as_string(aim_tlv_t *tlv)
 {
 	char *ret;
 
-	ret = malloc(tlv->length + 1);
+	ret = g_malloc(tlv->length + 1);
 	memcpy(ret, tlv->value, tlv->length);
 	ret[tlv->length] = '\0';
 

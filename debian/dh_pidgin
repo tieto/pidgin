@@ -37,7 +37,7 @@ if (! defined $pidgin_version) {
      error("pidgin is not installed.  (Probably forgot to Build-Depend on pidgin)");
 }
 if ($pidgin_version =~ m/(\d+:)?(\d+)\.(\d+)\.(.*)/) {
-     $pidgin_epoch = $1;
+     $pidgin_epoch = $1 || "";
      $pidgin_major = $2;
      $pidgin_minor = $3;
      $pidgin_rest = $4;

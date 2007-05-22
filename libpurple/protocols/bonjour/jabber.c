@@ -242,7 +242,7 @@ _check_buddy_by_address(gpointer key, gpointer value, gpointer data)
 	if (cbba->bj->account == gb->account)
 	{
 		bb = gb->proto_data;
-		if ((bb != NULL) && (g_strcasecmp(bb->ip, cbba->address) == 0))
+		if ((bb != NULL) && (g_ascii_strcasecmp(bb->ip, cbba->address) == 0))
 			*(cbba->gb) = gb;
 	}
 }

@@ -49,7 +49,6 @@ typedef struct
 
 	GtkListStore *store;
 
-	gboolean timestamps;
 	gboolean paused;
 
 #ifdef HAVE_REGEX_H
@@ -78,6 +77,7 @@ static char debug_fg_colors[][8] = {
 };
 
 static DebugWindow *debug_win = NULL;
+static guint debug_enabled_timer = 0;
 
 #ifdef HAVE_REGEX_H
 static void regex_filter_all(DebugWindow *win);
@@ -259,21 +259,6 @@ pause_cb(GtkWidget *w, DebugWindow *win)
 			regex_show_all(win);
 	}
 #endif /* HAVE_REGEX_H */
-}
-
-static void
-timestamps_cb(GtkWidget *w, DebugWindow *win)
-{
-	win->timestamps = gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w));
-
-	purple_prefs_set_bool("/purple/debug/timestamps", win->timestamps);
-}
-
-static void
-timestamps_pref_cb(const char *name, PurplePrefType type,
-				   gconstpointer value, gpointer data)
-{
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(data), GPOINTER_TO_INT(value));
 }
 
 /******************************************************************************
@@ -691,7 +676,6 @@ debug_window_new(void)
 	GtkWidget *vbox;
 	GtkWidget *toolbar;
 	GtkWidget *frame;
-	GtkWidget *button;
 	GtkWidget *image;
 	gint width, height;
 	void *handle;
@@ -778,20 +762,6 @@ debug_window_new(void)
 		                                    NULL, _("Pause"), _("Pause"),
 		                                    NULL, image,
 		                                    G_CALLBACK(pause_cb), win);
-
-		/* Timestamps */
-		button = gtk_toolbar_append_element(GTK_TOOLBAR(toolbar),
-		                                    GTK_TOOLBAR_CHILD_TOGGLEBUTTON,
-		                                    NULL, _("Timestamps"),
-		                                    _("Timestamps"), NULL, NULL,
-		                                    G_CALLBACK(timestamps_cb),
-		                                    win);
-
-		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button),
-		                             purple_prefs_get_bool("/purple/debug/timestamps"));
-
-		purple_prefs_connect_callback(handle, "/purple/debug/timestamps",
-		                            timestamps_pref_cb, button);
 
 #ifdef HAVE_REGEX_H
 		/* regex stuff */
@@ -895,14 +865,24 @@ debug_window_new(void)
 	return win;
 }
 
+static gboolean
+debug_enabled_timeout_cb(gpointer data)
+{
+	debug_enabled_timer = 0;
+
+	if (data)
+		pidgin_debug_window_show();
+	else
+		pidgin_debug_window_hide();
+
+	return FALSE;
+}
+
 static void
 debug_enabled_cb(const char *name, PurplePrefType type,
 				 gconstpointer value, gpointer data)
 {
-	if (value)
-		pidgin_debug_window_show();
-	else
-		pidgin_debug_window_hide();
+	debug_enabled_timer = g_timeout_add(0, debug_enabled_timeout_cb, GINT_TO_POINTER(GPOINTER_TO_INT(value)));
 }
 
 static void
@@ -1015,6 +995,9 @@ void
 pidgin_debug_uninit(void)
 {
 	purple_debug_set_ui_ops(NULL);
+
+	if (debug_enabled_timer != 0)
+		g_source_remove(debug_enabled_timer);
 }
 
 void
@@ -1044,9 +1027,10 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 #ifdef HAVE_REGEX_H
 	GtkTreeIter iter;
 #endif /* HAVE_REGEX_H */
-	gboolean timestamps;
 	gchar *ts_s;
 	gchar *esc_s, *cat_s, *tmp, *s;
+	const char *mdate;
+	time_t mtime;
 
 	if (debug_win == NULL ||
 		!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/debug/enabled"))
@@ -1054,22 +1038,9 @@ pidgin_debug_print(PurpleDebugLevel level, const char *category,
 		return;
 	}
 
-	timestamps = purple_prefs_get_bool("/purple/debug/timestamps");
-
-	/*
-	 * For some reason we only print the timestamp if category is
-	 * not NULL.  Why the hell do we do that?  --Mark
-	 */
-	if ((category != NULL) && (timestamps)) {
-		const char *mdate;
-
-		time_t mtime = time(NULL);
-		mdate = purple_utf8_strftime("%H:%M:%S", localtime(&mtime));
-		ts_s = g_strdup_printf("(%s) ", mdate);
-	} else {
-		ts_s = g_strdup("");
-	}
-
+	mtime = time(NULL);
+	mdate = purple_utf8_strftime("%H:%M:%S", localtime(&mtime));
+	ts_s = g_strdup_printf("(%s) ", mdate);
 	if (category == NULL)
 		cat_s = g_strdup("");
 	else

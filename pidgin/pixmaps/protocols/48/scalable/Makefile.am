@@ -1,6 +1,7 @@
 EXTRA_DIST = 	aim.svg \
 		bonjour.svg \
 		gadu-gadu.svg \
+		google-talk.svg \
 		novell.svg \
 		icq.svg \
 		irc.svg \

@@ -1,3 +1,13 @@
+pidgin (2.0.1-1) unstable; urgency=low
+
+  * New upstream release
+    - Should fix some buddy list synchronization crashes (Closes: #424062)
+  * Fix gevolution dependency exclusion
+  * Add appropriate Conflicts in addition to Replaces
+  * Fix dh_pidgin warning due to current lack of package epoch
+
+ -- Ari Pollak <ari@debian.org>  Mon, 21 May 2007 23:44:41 -0400
+
 pidgin (2.0.0+dfsg.1-4) unstable; urgency=low
 
   * Remove bashism in debian/rules

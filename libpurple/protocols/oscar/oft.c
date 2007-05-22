@@ -568,7 +568,7 @@ peer_oft_recv_frame(PeerConnection *conn, ByteStream *bs)
 			break;
 	}
 
-	free(frame.name);
+	g_free(frame.name);
 }
 
 /*******************************************************************/
