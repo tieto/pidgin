@@ -190,7 +190,7 @@ static int parseresults(OscarData *od, FlapConnection *conn, aim_module_t *mod, 
 	while (numresults) {
 		struct aim_odir *new;
 		aim_tlvlist_t *tl = aim_tlvlist_readnum(bs, byte_stream_get16(bs));
-		new = (struct aim_odir *)malloc(sizeof(struct aim_odir));
+		new = (struct aim_odir *)g_malloc(sizeof(struct aim_odir));
 		new->first = aim_tlv_getstr(tl, 0x0001, 1);
 		new->last = aim_tlv_getstr(tl, 0x0002, 1);
 		new->middle = aim_tlv_getstr(tl, 0x0003, 1);
@@ -217,21 +217,21 @@ static int parseresults(OscarData *od, FlapConnection *conn, aim_module_t *mod, 
 	while (results) {
 		struct aim_odir *del = results;
 		results = results->next;
-		free(del->first);
-		free(del->last);
-		free(del->middle);
-		free(del->maiden);
-		free(del->email);
-		free(del->country);
-		free(del->state);
-		free(del->city);
-		free(del->sn);
-		free(del->interest);
-		free(del->nick);
-		free(del->zip);
-		free(del->region);
-		free(del->address);
-		free(del);
+		g_free(del->first);
+		g_free(del->last);
+		g_free(del->middle);
+		g_free(del->maiden);
+		g_free(del->email);
+		g_free(del->country);
+		g_free(del->state);
+		g_free(del->city);
+		g_free(del->sn);
+		g_free(del->interest);
+		g_free(del->nick);
+		g_free(del->zip);
+		g_free(del->region);
+		g_free(del->address);
+		g_free(del);
 	}
 
 	return ret;
