@@ -214,11 +214,6 @@ init_libpurple(int argc, char **argv)
 		{0, 0, 0, 0}
 	};
 
-#ifdef PURPLE_FATAL_ASSERTS
-	/* Make g_return_... functions fatal. */
-	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
-#endif
-
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");

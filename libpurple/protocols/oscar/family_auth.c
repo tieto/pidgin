@@ -134,7 +134,7 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 	guint8 *password_encoded;
 
 	passwdlen = strlen(password);
-	password_encoded = (guint8 *)malloc(passwdlen+1);
+	password_encoded = (guint8 *)g_malloc(passwdlen+1);
 	if (passwdlen > MAXICQPASSLEN)
 		passwdlen = MAXICQPASSLEN;
 
@@ -159,7 +159,7 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 
 	aim_tlvlist_write(&frame->data, &tl);
 
-	free(password_encoded);
+	g_free(password_encoded);
 	aim_tlvlist_free(&tl);
 
 	flap_connection_send(conn, frame);
@@ -531,7 +531,7 @@ keyparse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, keystr);
 
-	free(keystr);
+	g_free(keystr);
 
 	return ret;
 }
@@ -589,18 +589,18 @@ auth_shutdown(OscarData *od, aim_module_t *mod)
 {
 	if (od->authinfo != NULL)
 	{
-		free(od->authinfo->sn);
-		free(od->authinfo->bosip);
-		free(od->authinfo->errorurl);
-		free(od->authinfo->email);
-		free(od->authinfo->chpassurl);
-		free(od->authinfo->latestrelease.name);
-		free(od->authinfo->latestrelease.url);
-		free(od->authinfo->latestrelease.info);
-		free(od->authinfo->latestbeta.name);
-		free(od->authinfo->latestbeta.url);
-		free(od->authinfo->latestbeta.info);
-		free(od->authinfo);
+		g_free(od->authinfo->sn);
+		g_free(od->authinfo->bosip);
+		g_free(od->authinfo->errorurl);
+		g_free(od->authinfo->email);
+		g_free(od->authinfo->chpassurl);
+		g_free(od->authinfo->latestrelease.name);
+		g_free(od->authinfo->latestrelease.url);
+		g_free(od->authinfo->latestrelease.info);
+		g_free(od->authinfo->latestbeta.name);
+		g_free(od->authinfo->latestbeta.url);
+		g_free(od->authinfo->latestbeta.info);
+		g_free(od->authinfo);
 	}
 }
 

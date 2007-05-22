@@ -2761,7 +2761,8 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						}
 						if (textdec && font->underline != 1
 							&& g_ascii_strcasecmp(textdec, "underline") == 0
-							&& (imhtml->format_functions & GTK_IMHTML_UNDERLINE))
+							&& (imhtml->format_functions & GTK_IMHTML_UNDERLINE)
+							&& !(options & GTK_IMHTML_NO_FORMATTING))
 						{
 						    gtk_imhtml_toggle_underline(imhtml);
 						    font->underline = 1;
@@ -2790,7 +2791,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 								else
 									font->bold = 0;
 							}
-							if ((font->bold && oldfont && !oldfont->bold) || (oldfont && oldfont->bold && !font->bold) || (font->bold && !oldfont))
+							if (((font->bold && oldfont && !oldfont->bold) || (oldfont && oldfont->bold && !font->bold) || (font->bold && !oldfont)) && !(options & GTK_IMHTML_NO_FORMATTING))
 							{
 								gtk_imhtml_toggle_bold(imhtml);
 							}
@@ -2816,33 +2817,36 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 
 						if (!oldfont) {
 							gtk_imhtml_font_set_size(imhtml, 3);
-							if (font->underline)
+							if (font->underline && !(options & GTK_IMHTML_NO_FORMATTING))
 							    gtk_imhtml_toggle_underline(imhtml);
-							if (font->bold)
+							if (font->bold && !(options & GTK_IMHTML_NO_FORMATTING))
 								gtk_imhtml_toggle_bold(imhtml);
-							gtk_imhtml_toggle_fontface(imhtml, NULL);
-							gtk_imhtml_toggle_forecolor(imhtml, NULL);
-							gtk_imhtml_toggle_backcolor(imhtml, NULL);
+							if (!(options & GTK_IMHTML_NO_FONTS))
+								gtk_imhtml_toggle_fontface(imhtml, NULL);
+							if (!(options & GTK_IMHTML_NO_COLOURS))
+								gtk_imhtml_toggle_forecolor(imhtml, NULL);
+							if (!(options & GTK_IMHTML_NO_COLOURS))
+								gtk_imhtml_toggle_backcolor(imhtml, NULL);
 						}
 						else
 						{
 
-						    if (font->size != oldfont->size)
+						    if ((font->size != oldfont->size) && !(options & GTK_IMHTML_NO_SIZES))
 							    gtk_imhtml_font_set_size(imhtml, oldfont->size);
 
-							if (font->underline != oldfont->underline)
+							if ((font->underline != oldfont->underline) && !(options & GTK_IMHTML_NO_FORMATTING))
 							    gtk_imhtml_toggle_underline(imhtml);
 
-							if ((font->bold && !oldfont->bold) || (oldfont->bold && !font->bold))
+							if (((font->bold && !oldfont->bold) || (oldfont->bold && !font->bold)) && !(options & GTK_IMHTML_NO_FORMATTING))
 								gtk_imhtml_toggle_bold(imhtml);
 
-							if (font->face && (!oldfont->face || strcmp(font->face, oldfont->face) != 0))
+							if (font->face && (!oldfont->face || strcmp(font->face, oldfont->face) != 0) && !(options & GTK_IMHTML_NO_FONTS))
 							    gtk_imhtml_toggle_fontface(imhtml, oldfont->face);
 
-							if (font->fore && (!oldfont->fore || strcmp(font->fore, oldfont->fore) != 0))
+							if (font->fore && (!oldfont->fore || strcmp(font->fore, oldfont->fore) != 0) && !(options & GTK_IMHTML_NO_COLOURS))
 							    gtk_imhtml_toggle_forecolor(imhtml, oldfont->fore);
 
-							if (font->back && (!oldfont->back || strcmp(font->back, oldfont->back) != 0))
+							if (font->back && (!oldfont->back || strcmp(font->back, oldfont->back) != 0) && !(options & GTK_IMHTML_NO_COLOURS))
 						      gtk_imhtml_toggle_backcolor(imhtml, oldfont->back);
 						}
 
@@ -3384,7 +3388,7 @@ static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHt
 		return FALSE;
 
 	pix = gdk_pixbuf_animation_get_static_image(anim);
-	image = gtk_imhtml_image_new(pix, NULL, 0);
+	image = gtk_imhtml_image_new(pix, smiley->smile, 0);
 	ret = gtk_imhtml_image_clicked(w, event, (GtkIMHtmlImage*)image);
 	g_object_set_data_full(G_OBJECT(w), "image-data", image, (GDestroyNotify)gtk_imhtml_image_free);
 	g_object_unref(G_OBJECT(pix));
@@ -4437,7 +4441,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 		}
 	}
 
-	if (imhtml_smiley->flags & GTK_IMHTML_SMILEY_CUSTOM) {
+	if (imhtml_smiley && imhtml_smiley->flags & GTK_IMHTML_SMILEY_CUSTOM) {
 		ebox = gtk_event_box_new();
 		gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
 		gtk_widget_show(ebox);

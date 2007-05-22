@@ -1012,12 +1012,24 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+	PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
+	const char *name;
 	gchar *buf;
+	gchar *c;
 
-	buf = g_strdup_printf("%s.html", purple_normalize(conv->account, conv->name));
+	if (buddy != NULL)
+		name = purple_buddy_get_contact_alias(buddy);
+	else
+		name = purple_normalize(conv->account, conv->name);
 
+	buf = g_strdup_printf("%s.html", name);
+	for (c = buf ; *c ; c++)
+	{
+		if (*c == '/' || *c == '\\')
+			*c = ' ';
+	}
 	purple_request_file(PIDGIN_CONVERSATION(conv), _("Save Conversation"),
-					  purple_escape_filename(buf),
+					  buf,
 					  TRUE, G_CALLBACK(savelog_writefile_cb), NULL,
 					  NULL, NULL, conv,
 					  conv);
@@ -1755,7 +1767,8 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 static void
 move_to_next_unread_tab(PidginConversation *gtkconv, gboolean forward)
 {
-	PidginConversation *next_gtkconv = NULL;
+	PidginConversation *next_gtkconv = NULL, *most_active = NULL;
+	PidginUnseenState unseen_state = PIDGIN_UNSEEN_NONE;
 	PidginWindow *win;
 	int initial, i, total, diff;
 
@@ -1771,17 +1784,21 @@ move_to_next_unread_tab(PidginConversation *gtkconv, gboolean forward)
 
 	for (i = (initial + diff) % total; i != initial; i = (i + diff) % total) {
 		next_gtkconv = pidgin_conv_window_get_gtkconv_at_index(win, i);
-		if (next_gtkconv->unseen_state > 0)
-			break;
+		if (next_gtkconv->unseen_state > unseen_state) {
+			most_active = next_gtkconv;
+			unseen_state = most_active->unseen_state;
+			if(PIDGIN_UNSEEN_NICK == unseen_state) /* highest possible state */
+				break;
+		}
 	}
 
-	if (i == initial) { /* no new messages */
+	if (most_active == NULL) { /* no new messages */
 		i = (i + diff) % total;
-		next_gtkconv = pidgin_conv_window_get_gtkconv_at_index(win, i);
+		most_active = pidgin_conv_window_get_gtkconv_at_index(win, i);
 	}
 
-	if (next_gtkconv != NULL && next_gtkconv != gtkconv)
-		pidgin_conv_window_switch_gtkconv(win, next_gtkconv);
+	if (most_active != NULL && most_active != gtkconv)
+		pidgin_conv_window_switch_gtkconv(win, most_active);
 }
 
 static gboolean
@@ -3977,6 +3994,12 @@ blist_node_aliased_cb(PurpleBlistNode *node, const char *old_alias, PurpleConver
 	}
 	else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 		update_chat_alias((PurpleBuddy *)node, conv, gc, prpl_info);
+	else if (PURPLE_BLIST_NODE_IS_CHAT(node) &&
+			purple_conversation_get_account(conv) == ((PurpleChat*)node)->account)
+	{
+		if (old_alias == NULL || g_utf8_collate(old_alias, purple_conversation_get_title(conv)) == 0)
+			pidgin_conv_update_fields(conv, PIDGIN_CONV_SET_TITLE);
+	}
 }
 
 static void
@@ -4128,6 +4151,7 @@ setup_chat_pane(PidginConversation *gtkconv)
 	GtkTreeViewColumn *col;
 	void *blist_handle = purple_blist_get_handle();
 	GList *focus_chain = NULL;
+	int ul_width;
 
 	gtkchat = gtkconv->u.chat;
 	gc      = purple_conversation_get_gc(conv);
@@ -4228,8 +4252,13 @@ setup_chat_pane(PidginConversation *gtkconv)
 												   "pixbuf", CHAT_USERS_ICON_COLUMN, NULL);
 	gtk_tree_view_column_set_sizing(col, GTK_TREE_VIEW_COLUMN_AUTOSIZE);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(list), col);
-	gtk_widget_set_size_request(lbox,
-	                            purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/userlist_width"), -1);
+	ul_width = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/userlist_width");
+	gtk_widget_set_size_request(lbox, ul_width, -1);
+
+	/* Hack to prevent completely collapsed userlist coming back with a 1 pixel width.
+	 * I would have liked to use the GtkPaned "max-position", but for some reason that didn't work */
+	if (ul_width == 0)
+		gtk_paned_set_position(GTK_PANED(hpaned), 999999);
 
 	g_signal_connect(G_OBJECT(list), "button_press_event",
 					 G_CALLBACK(right_click_chat_cb), gtkconv);
@@ -4585,6 +4614,18 @@ buddy_update_cb(PurpleBlistNode *bnode, gpointer null)
 	}
 }
 
+static gboolean
+ignore_middle_click(GtkWidget *widget, GdkEventButton *e, gpointer null)
+{
+	/* A click on the pane is propagated to the notebook containing the pane.
+	 * So if Stu accidentally aims high and middle clicks on the pane-handle,
+	 * it causes a conversation tab to close. Let's stop that from happening.
+	 */
+	if (e->button == 2 && e->type == GDK_BUTTON_PRESS)
+		return TRUE;
+	return FALSE;
+}
+
 /**************************************************************************
  * Conversation UI operations
  **************************************************************************/
@@ -4658,6 +4699,8 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 	                  te, sizeof(te) / sizeof(GtkTargetEntry),
 	                  GDK_ACTION_COPY);
 
+	g_signal_connect(G_OBJECT(pane), "button_press_event",
+	                 G_CALLBACK(ignore_middle_click), NULL);
 	g_signal_connect(G_OBJECT(pane), "drag_data_received",
 	                 G_CALLBACK(conv_dnd_recv), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "drag_data_received",
@@ -5551,9 +5594,9 @@ pidgin_conv_chat_update_user(PurpleConversation *conv, const char *user)
 
 	flags = purple_conv_chat_user_get_flags(chat, user);
 
-	cbuddy = purple_conv_chat_cb_new(user, alias, flags);
-
-	add_chat_buddy_common(conv, cbuddy, NULL);
+	cbuddy = purple_conv_chat_cb_find(chat, user);
+	if (cbuddy)
+		add_chat_buddy_common(conv, cbuddy, NULL);
 	g_free(alias);
 }
 
@@ -7382,8 +7425,7 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		PidginWindow *dest_win;
 		GtkNotebook *dest_notebook;
 		GtkWidget *tab;
-		gint nb_x, nb_y, page_num;
-		gint arrow1_x, arrow1_y, arrow2_x, arrow2_y;
+		gint page_num;
 		gboolean horiz_tabs = FALSE;
 		PidginConversation *gtkconv;
 		gboolean to_right = FALSE;
@@ -7399,51 +7441,34 @@ notebook_motion_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 
 		dest_notebook = GTK_NOTEBOOK(dest_win->notebook);
 
-		gdk_window_get_origin(GTK_WIDGET(dest_notebook)->window, &nb_x, &nb_y);
-
-		arrow1_x = arrow2_x = nb_x;
-		arrow1_y = arrow2_y = nb_y;
-
 		page_num = pidgin_conv_get_tab_at_xy(dest_win,
 		                                      e->x_root, e->y_root, &to_right);
 		to_right = to_right && (win != dest_win);
 
 		if (gtk_notebook_get_tab_pos(dest_notebook) == GTK_POS_TOP ||
-		    gtk_notebook_get_tab_pos(dest_notebook) == GTK_POS_BOTTOM) {
-
-			    horiz_tabs = TRUE;
-		    }
+				gtk_notebook_get_tab_pos(dest_notebook) == GTK_POS_BOTTOM) {
+			horiz_tabs = TRUE;
+		}
 
 		gtkconv = pidgin_conv_window_get_gtkconv_at_index(dest_win, page_num);
 		tab = gtkconv->tabby;
 
 		if (horiz_tabs) {
-			arrow1_x = arrow2_x = nb_x + tab->allocation.x;
-
 			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
-				arrow1_x += tab->allocation.width;
-				arrow2_x += tab->allocation.width;
+				dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
+				dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
+			} else {
+				dnd_hints_show_relative(HINT_ARROW_DOWN, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
+				dnd_hints_show_relative(HINT_ARROW_UP, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
 			}
-
-			arrow1_y = nb_y + tab->allocation.y;
-			arrow2_y = nb_y + tab->allocation.y + tab->allocation.height;
 		} else {
-			arrow1_x = nb_x + tab->allocation.x;
-			arrow2_x = nb_x + tab->allocation.x + tab->allocation.width;
-			arrow1_y = arrow2_y = nb_y + tab->allocation.y;
-
 			if (((gpointer)win == (gpointer)dest_win && win->drag_tab < page_num) || to_right) {
-				arrow1_y += tab->allocation.height;
-				arrow2_y += tab->allocation.height;
+				dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_BOTTOM);
+				dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_BOTTOM);
+			} else {
+				dnd_hints_show_relative(HINT_ARROW_RIGHT, tab, HINT_POSITION_LEFT, HINT_POSITION_TOP);
+				dnd_hints_show_relative(HINT_ARROW_LEFT, tab, HINT_POSITION_RIGHT, HINT_POSITION_TOP);
 			}
-		}
-
-		if (horiz_tabs) {
-			dnd_hints_show(HINT_ARROW_DOWN, arrow1_x, arrow1_y);
-			dnd_hints_show(HINT_ARROW_UP,   arrow2_x, arrow2_y);
-		} else {
-			dnd_hints_show(HINT_ARROW_RIGHT, arrow1_x, arrow1_y);
-			dnd_hints_show(HINT_ARROW_LEFT,  arrow2_x, arrow2_y);
 		}
 	}
 
@@ -7809,6 +7834,105 @@ right_click_menu_cb(GtkNotebook *notebook, GdkEventButton *event, PidginWindow *
 }
 
 static void
+remove_edit_entry(PidginConversation *gtkconv, GtkWidget *entry)
+{
+	g_signal_handlers_disconnect_matched(G_OBJECT(entry), G_SIGNAL_MATCH_DATA,
+				0, 0, NULL, NULL, gtkconv);
+	gtk_widget_show(gtkconv->tab_label);
+	gtk_widget_grab_focus(gtkconv->entry);
+	gtk_widget_destroy(entry);
+}
+
+static gboolean
+alias_focus_cb(GtkWidget *widget, GdkEventFocus *event, gpointer user_data)
+{
+	remove_edit_entry(user_data, widget);
+	return FALSE;
+}
+
+static gboolean
+alias_key_press_cb(GtkWidget *widget, GdkEventKey *event, gpointer user_data)
+{
+	if (event->keyval == GDK_Escape) {
+		remove_edit_entry(user_data, widget);
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static void
+alias_cb(GtkEntry *entry, gpointer user_data)
+{
+	PidginConversation *gtkconv;
+	PurpleConversation *conv;
+	PurpleAccount *account;
+	const char *name;
+
+	gtkconv = (PidginConversation *)user_data;
+	if (gtkconv == NULL) {
+		return;
+	}
+	conv    = gtkconv->active_conv;
+	account = purple_conversation_get_account(conv);
+	name    = purple_conversation_get_name(conv);
+
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		PurpleBuddy *buddy;
+		buddy = purple_find_buddy(account, name);
+		if (buddy != NULL) {
+			purple_blist_alias_buddy(buddy,
+                                                 gtk_entry_get_text(entry));
+		}
+		serv_alias_buddy(buddy);
+	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {	        
+		PurpleChat *chat;
+
+		chat = purple_blist_find_chat(account, name);
+		if (chat != NULL) {
+			purple_blist_alias_chat(chat,
+			                        gtk_entry_get_text(entry));
+		}
+	}
+	remove_edit_entry(user_data, GTK_WIDGET(entry));
+}
+
+static gboolean
+alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConversation *gtkconv)
+{
+	GtkWidget *entry = NULL;
+
+	if (event->button != 1 || event->type != GDK_2BUTTON_PRESS) {
+		return FALSE;
+	}
+
+	if (!GTK_WIDGET_VISIBLE(gtkconv->tab_label)) {
+		/* There's already an entry for alias. Let's not create another one. */
+		return FALSE;
+	}
+
+	/* alias label */
+	entry = gtk_entry_new();
+	gtk_entry_set_has_frame(GTK_ENTRY(entry), FALSE);
+	gtk_entry_set_width_chars(GTK_ENTRY(entry), 10);
+	gtk_entry_set_alignment(GTK_ENTRY(entry), 0.5);
+
+	gtk_box_pack_start(GTK_BOX(gtkconv->tabby), entry, TRUE, TRUE, 0);
+	/* after the tab label */
+	gtk_box_reorder_child(GTK_BOX(gtkconv->tabby), entry, 2);
+
+	g_signal_connect(G_OBJECT(entry), "activate", G_CALLBACK(alias_cb), gtkconv);
+	g_signal_connect(G_OBJECT(entry), "focus-out-event", G_CALLBACK(alias_focus_cb), gtkconv);
+	g_signal_connect(G_OBJECT(entry), "key-press-event", G_CALLBACK(alias_key_press_cb), gtkconv);
+	gtk_entry_set_text(GTK_ENTRY(entry),
+			gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
+	gtk_widget_show(entry);
+	gtk_widget_hide(gtkconv->tab_label);
+	gtk_widget_grab_focus(entry);
+
+	return FALSE;
+}
+
+static void
 switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
                gpointer user_data)
 {
@@ -8151,7 +8275,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 {
 	gboolean tabs_side = FALSE;
 	gint angle = 0;
-	GtkWidget *first, *third;
+	GtkWidget *first, *third, *ebox;
 
 	if (purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_LEFT ||
 	    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/tab_side") == GTK_POS_RIGHT)
@@ -8196,6 +8320,12 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 		third = gtkconv->close;
 	}
 
+	ebox = gtk_event_box_new();
+	gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
+	gtk_container_add(GTK_CONTAINER(ebox), gtkconv->tabby);
+	g_signal_connect(G_OBJECT(ebox), "button-press-event",
+					G_CALLBACK(alias_double_click_cb), gtkconv);
+
 	if (gtkconv->tab_label->parent == NULL) {
 		/* Pack if it's a new widget */
 		gtk_box_pack_start(GTK_BOX(gtkconv->tabby), first,              FALSE, FALSE, 0);
@@ -8203,7 +8333,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 		gtk_box_pack_start(GTK_BOX(gtkconv->tabby), third,              FALSE, FALSE, 0);
 
 		/* Add this pane to the conversation's notebook. */
-		gtk_notebook_append_page(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, gtkconv->tabby);
+		gtk_notebook_append_page(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, ebox);
 	} else {
 		/* reparent old widgets on preference changes */
 		gtk_widget_reparent(first,              gtkconv->tabby);
@@ -8214,7 +8344,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 		gtk_box_set_child_packing(GTK_BOX(gtkconv->tabby), third,              FALSE, FALSE, 0, GTK_PACK_START);
 
 		/* Reset the tabs label to the new version */
-		gtk_notebook_set_tab_label(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, gtkconv->tabby);
+		gtk_notebook_set_tab_label(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, ebox);
 	}
 
 	gtk_notebook_set_tab_label_packing(GTK_NOTEBOOK(win->notebook), gtkconv->tab_cont, !tabs_side && !angle, TRUE, GTK_PACK_START);
@@ -8225,6 +8355,7 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/close_on_tabs"))
 		gtk_widget_show(gtkconv->close);
 	gtk_widget_show(gtkconv->tabby);
+	gtk_widget_show(ebox);
 }
 
 void

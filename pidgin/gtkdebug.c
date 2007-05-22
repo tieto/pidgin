@@ -77,6 +77,7 @@ static char debug_fg_colors[][8] = {
 };
 
 static DebugWindow *debug_win = NULL;
+static guint debug_enabled_timer = 0;
 
 #ifdef HAVE_REGEX_H
 static void regex_filter_all(DebugWindow *win);
@@ -864,14 +865,24 @@ debug_window_new(void)
 	return win;
 }
 
+static gboolean
+debug_enabled_timeout_cb(gpointer data)
+{
+	debug_enabled_timer = 0;
+
+	if (data)
+		pidgin_debug_window_show();
+	else
+		pidgin_debug_window_hide();
+
+	return FALSE;
+}
+
 static void
 debug_enabled_cb(const char *name, PurplePrefType type,
 				 gconstpointer value, gpointer data)
 {
-	if (value)
-		pidgin_debug_window_show();
-	else
-		pidgin_debug_window_hide();
+	debug_enabled_timer = g_timeout_add(0, debug_enabled_timeout_cb, GINT_TO_POINTER(GPOINTER_TO_INT(value)));
 }
 
 static void
@@ -984,6 +995,9 @@ void
 pidgin_debug_uninit(void)
 {
 	purple_debug_set_ui_ops(NULL);
+
+	if (debug_enabled_timer != 0)
+		g_source_remove(debug_enabled_timer);
 }
 
 void

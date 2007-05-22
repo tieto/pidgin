@@ -782,7 +782,8 @@ pidgin_blist_joinchat_show(void)
 	gtk_widget_show_all(data->window);
 }
 
-static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data) {
+static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data)
+{
 	PurpleBlistNode *node;
 	GValue val;
 
@@ -806,7 +807,8 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 	}
 }
 
-static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data) {
+static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data)
+{
 	PurpleBlistNode *node;
 	GValue val;
 
@@ -817,6 +819,8 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 
 	if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		char *title;
+		struct _pidgin_blist_node *gtknode;
+		PurpleBlistNode *cnode;
 
 		title = pidgin_get_group_title(node, FALSE);
 
@@ -827,6 +831,17 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 		g_free(title);
 
 		purple_blist_node_set_bool(node, "collapsed", TRUE);
+
+		for(cnode = node->child; cnode; cnode = cnode->next) {
+			if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
+				gtknode = cnode->ui_data;
+				if (!gtknode->contact_expanded)
+					continue;
+				gtknode->contact_expanded = FALSE;
+				pidgin_blist_update_contact(NULL, cnode);
+			}
+		}
+
 	} else if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		pidgin_blist_collapse_contact_cb(NULL, node);
 	}
