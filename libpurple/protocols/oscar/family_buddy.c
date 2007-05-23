@@ -135,7 +135,7 @@ aim_buddylist_set(OscarData *od, FlapConnection *conn, const char *buddy_list)
 	char *localcpy = NULL;
 	char *tmpptr = NULL;
 
-	if (!buddy_list || !(localcpy = strdup(buddy_list)))
+	if (!buddy_list || !(localcpy = g_strdup(buddy_list)))
 		return -EINVAL;
 
 	for (tmpptr = strtok(localcpy, "&"); tmpptr; ) {
@@ -162,7 +162,7 @@ aim_buddylist_set(OscarData *od, FlapConnection *conn, const char *buddy_list)
 
 	flap_connection_send(conn, frame);
 
-	free(localcpy);
+	g_free(localcpy);
 
 	return 0;
 }

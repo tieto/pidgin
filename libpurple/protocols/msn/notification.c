@@ -589,6 +589,23 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 }
 
 static void
+qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
+{
+	static int count = 0;
+	MsnSession *session = cmdproc->session;
+
+	if (session->passport_info.file == NULL)
+		return;
+
+	if (count++ < 26)
+		return;
+
+	count = 0;
+	msn_cmdproc_send(cmdproc, "URL", "%s", "INBOX");
+}
+
+
+static void
 fln_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSlpLink *slplink;
@@ -982,7 +999,8 @@ url_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	}
 	else
 	{
-		fputs("<html>\n"
+		fputs("<!-- saved from url=(0013)about:internet -->\n"
+			  "<html>\n"
 			  "<head>\n"
 			  "<noscript>\n"
 			  "<meta http-equiv=\"Refresh\" content=\"0; "
@@ -1404,7 +1422,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, NULL, "ADD", add_cmd);
 
 	msn_table_add_cmd(cbs_table, NULL, "QRY", NULL);
-	msn_table_add_cmd(cbs_table, NULL, "QNG", NULL);
+	msn_table_add_cmd(cbs_table, NULL, "QNG", qng_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "FLN", fln_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "NLN", nln_cmd);
 	msn_table_add_cmd(cbs_table, NULL, "ILN", iln_cmd);

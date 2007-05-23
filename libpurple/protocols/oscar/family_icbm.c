@@ -468,16 +468,16 @@ int aim_im_sendch2_chatinvite(OscarData *od, const char *sn, const char *msg, gu
 	aim_putsnac(&frame->data, 0x0004, 0x0006, 0x0000, snacid);
 
 	/* XXX should be uncached by an unwritten 'invite accept' handler */
-	priv = malloc(sizeof(struct aim_invite_priv));
-	priv->sn = strdup(sn);
-	priv->roomname = strdup(roomname);
+	priv = g_malloc(sizeof(struct aim_invite_priv));
+	priv->sn = g_strdup(sn);
+	priv->roomname = g_strdup(roomname);
 	priv->exchange = exchange;
 	priv->instance = instance;
 
 	if ((msgcookie = aim_mkcookie(cookie, AIM_COOKIETYPE_INVITE, priv)))
 		aim_cachecookie(od, msgcookie);
 	else
-		free(priv);
+		g_free(priv);
 
 	/* ICBM Header */
 	aim_im_puticbm(&frame->data, cookie, 0x0002, sn);
@@ -1279,8 +1279,8 @@ static int outgoingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, channel, sn, msg, icbmflags, flag1, flag2);
 
-	free(sn);
-	free(msg);
+	g_free(sn);
+	g_free(msg);
 	aim_tlvlist_free(&tlvlist);
 
 	return ret;
@@ -1335,7 +1335,7 @@ static int mpmsg_addsection(OscarData *od, aim_mpmsg_t *mpm, guint16 charset, gu
 {
 	aim_mpmsg_section_t *sec;
 
-	sec = malloc(sizeof(aim_mpmsg_section_t));
+	sec = g_malloc(sizeof(aim_mpmsg_section_t));
 
 	sec->charset = charset;
 	sec->charsubset = charsubset;
@@ -1362,11 +1362,11 @@ int aim_mpmsg_addraw(OscarData *od, aim_mpmsg_t *mpm, guint16 charset, guint16 c
 {
 	gchar *dup;
 
-	dup = malloc(datalen);
+	dup = g_malloc(datalen);
 	memcpy(dup, data, datalen);
 
 	if (mpmsg_addsection(od, mpm, charset, charsubset, dup, datalen) == -1) {
-		free(dup);
+		g_free(dup);
 		return -1;
 	}
 
@@ -1378,11 +1378,11 @@ int aim_mpmsg_addascii(OscarData *od, aim_mpmsg_t *mpm, const char *ascii)
 {
 	gchar *dup;
 
-	if (!(dup = strdup(ascii)))
+	if (!(dup = g_strdup(ascii)))
 		return -1;
 
 	if (mpmsg_addsection(od, mpm, 0x0000, 0x0000, dup, strlen(ascii)) == -1) {
-		free(dup);
+		g_free(dup);
 		return -1;
 	}
 
@@ -1395,7 +1395,7 @@ int aim_mpmsg_addunicode(OscarData *od, aim_mpmsg_t *mpm, const guint16 *unicode
 	ByteStream bs;
 	int i;
 
-	buf = malloc(unicodelen * 2);
+	buf = g_malloc(unicodelen * 2);
 
 	byte_stream_init(&bs, (guchar *)buf, unicodelen * 2);
 
@@ -1404,7 +1404,7 @@ int aim_mpmsg_addunicode(OscarData *od, aim_mpmsg_t *mpm, const guint16 *unicode
 		byte_stream_put16(&bs, unicode[i]);
 
 	if (mpmsg_addsection(od, mpm, 0x0002, 0x0000, buf, byte_stream_curpos(&bs)) == -1) {
-		free(buf);
+		g_free(buf);
 		return -1;
 	}
 
@@ -1419,8 +1419,8 @@ void aim_mpmsg_free(OscarData *od, aim_mpmsg_t *mpm)
 		aim_mpmsg_section_t *tmp;
 
 		tmp = cur->next;
-		free(cur->data);
-		free(cur);
+		g_free(cur->data);
+		g_free(cur);
 		cur = tmp;
 	}
 
@@ -1659,7 +1659,7 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 				purple_debug_misc("oscar", "Received an IM containing an invalid message part from %s.  They are probably trying to do something malicious.\n", userinfo->sn);
 				break;
 			}
-			free(args.extdata);
+			g_free(args.extdata);
 			args.extdatalen = length;
 			if (args.extdatalen == 0)
 				args.extdata = NULL;
@@ -1686,8 +1686,8 @@ static int incomingim_ch1(OscarData *od, FlapConnection *conn, aim_module_t *mod
 		ret = userfunc(od, conn, frame, channel, userinfo, &args);
 
 	aim_mpmsg_free(od, &args.mpmsg);
-	free(args.features);
-	free(args.extdata);
+	g_free(args.features);
+	g_free(args.extdata);
 
 	return ret;
 }
@@ -1733,10 +1733,10 @@ incomingim_ch2_buddylist(OscarData *od, FlapConnection *conn, aim_module_t *mod,
 
 			purple_debug_misc("oscar", "got a buddy list from %s: group %s, buddy %s\n", userinfo->sn, gn, bn);
 
-			free(bn);
+			g_free(bn);
 		}
 
-		free(gn);
+		g_free(gn);
 	}
 
 	return;
@@ -1745,7 +1745,7 @@ incomingim_ch2_buddylist(OscarData *od, FlapConnection *conn, aim_module_t *mod,
 static void
 incomingim_ch2_buddyicon_free(OscarData *od, IcbmArgsCh2 *args)
 {
-	free(args->info.icon.icon);
+	g_free(args->info.icon.icon);
 
 	return;
 }
@@ -1767,7 +1767,7 @@ static void
 incomingim_ch2_chat_free(OscarData *od, IcbmArgsCh2 *args)
 {
 	/* XXX - aim_chat_roominfo_free() */
-	free(args->info.chat.roominfo.name);
+	g_free(args->info.chat.roominfo.name);
 
 	return;
 }
@@ -1786,7 +1786,7 @@ incomingim_ch2_chat(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 static void
 incomingim_ch2_icqserverrelay_free(OscarData *od, IcbmArgsCh2 *args)
 {
-	free((char *)args->info.rtfmsg.rtfmsg);
+	g_free((char *)args->info.rtfmsg.rtfmsg);
 }
 
 /*
@@ -1832,7 +1832,7 @@ incomingim_ch2_icqserverrelay(OscarData *od, FlapConnection *conn, aim_module_t 
 static void
 incomingim_ch2_sendfile_free(OscarData *od, IcbmArgsCh2 *args)
 {
-	free(args->info.sendfile.filename);
+	g_free(args->info.sendfile.filename);
 }
 
 /* Someone is sending us a file */
@@ -1918,11 +1918,11 @@ static int incomingim_ch2(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	{
 		purple_debug_warning("oscar",
 				"Cookies don't match in rendezvous ICBM, bailing out.\n");
-		free(cookie2);
+		g_free(cookie2);
 		return 1;
 	}
 	memcpy(args.cookie, cookie2, 8);
-	free(cookie2);
+	g_free(cookie2);
 
 	/*
 	 * The next 16bytes are a capability block so we can
@@ -2074,9 +2074,9 @@ static int incomingim_ch2(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	if (args.destructor)
 		((ch2_args_destructor_t)args.destructor)(od, &args);
 
-	free((char *)args.msg);
-	free((char *)args.encoding);
-	free((char *)args.language);
+	g_free((char *)args.msg);
+	g_free((char *)args.encoding);
+	g_free((char *)args.language);
 
 	aim_tlvlist_free(&list2);
 
@@ -2107,7 +2107,7 @@ static int incomingim_ch4(OscarData *od, FlapConnection *conn, aim_module_t *mod
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, channel, userinfo, &args);
 
-	free(args.msg);
+	g_free(args.msg);
 
 	return ret;
 }
@@ -2210,7 +2210,7 @@ static int incomingim(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fl
 	}
 
 	aim_info_free(&userinfo);
-	free(cookie);
+	g_free(cookie);
 
 	return ret;
 }
@@ -2379,7 +2379,7 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 				if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 					ret = userfunc(od, conn, frame, channel, sn, reason, state, msg);
 
-				free(msg);
+				g_free(msg);
 			} break;
 
 			default: {
@@ -2389,8 +2389,8 @@ static int clientautoresp(OscarData *od, FlapConnection *conn, aim_module_t *mod
 		} /* end switch */
 	}
 
-	free(cookie);
-	free(sn);
+	g_free(cookie);
+	g_free(sn);
 
 	return ret;
 }
@@ -2418,8 +2418,8 @@ static int msgack(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFr
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, ch, sn);
 
-	free(sn);
-	free(cookie);
+	g_free(sn);
+	g_free(cookie);
 
 	return ret;
 }
@@ -2502,7 +2502,7 @@ static int mtn_receive(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, type1, sn, type2);
 
-	free(sn);
+	g_free(sn);
 
 	return ret;
 }
