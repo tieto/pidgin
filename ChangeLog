@@ -26,6 +26,9 @@ version 2.0.1 (??/??/????):
 	* Fix XMPP SASL authentication error when using Cyrus and a connect server
 	* Fix changing tab locations to update properly
 	* ALSA added as a possible sound method
+	* Added Google Talk to the accounts dropdown
+	* Google Talk accounts will not import buddies from your Gmail addres
+	  book
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
