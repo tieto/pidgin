@@ -25,6 +25,7 @@ version 2.0.1 (??/??/????):
 	  unencrypted channel
 	* Fix XMPP SASL authentication error when using Cyrus and a connect server
 	* Fix changing tab locations to update properly
+	* ALSA added as a possible sound method
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
