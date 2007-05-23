@@ -365,9 +365,11 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				break;
 
 			yahoo_friend_set_buddy_icon_need_request(f, FALSE);
-			if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL &&
-					cksum != strtol(locksum, NULL, 10))
-				yahoo_send_picture_request(gc, name);
+			if (b) {
+				locksum = purple_buddy_icons_get_checksum_for_user(b);
+				if (!locksum || (cksum != strtol(locksum, NULL, 10)))
+					yahoo_send_picture_request(gc, name);
+			}
 
 			break;
 		}
