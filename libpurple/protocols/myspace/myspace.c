@@ -6,7 +6,7 @@
  *
  * Based on Purple's "C Plugin HOWTO" hello world example.
  *
- * Code also drawn from myspace:
+ * Code also drawn from mockprpl:
  *  http://snarfed.org/space/purple+mock+protocol+plugin
  *  Copyright (C) 2004-2007, Ryan Barrett <mockprpl@ryanb.org>
  *
@@ -33,37 +33,13 @@
 
 #define PURPLE_PLUGIN
 
-#include <string.h>
-#include <errno.h>	/* for EAGAIN */
-#include <stdarg.h>
-
-#include <glib.h>
-
-#ifdef _WIN32
-#include "win32dep.h"
-#else
-/* For recv() and send(); needed to match Win32 */
-#include <sys/types.h>
-#include <sys/socket.h>
-#endif
-
-#include "internal.h"
-
-#include "notify.h"
-#include "plugin.h"
-#include "accountopt.h"
-#include "version.h"
-#include "cipher.h"     /* for SHA-1 */
-#include "util.h"       /* for base64 */
-#include "debug.h"      /* for purple_debug_info */
-
 #include "myspace.h"
 #include "message.h"
 
 /** 
  * Load the plugin.
  */
-static gboolean msim_load(PurplePlugin *plugin)
+gboolean msim_load(PurplePlugin *plugin)
 {
 #ifdef MSIM_USE_PURPLE_RC4
 	/* If compiled to use RC4 from libpurple, check if it is really there. */
@@ -74,7 +50,7 @@ static gboolean msim_load(PurplePlugin *plugin)
 				_("The RC4 cipher could not be found"),
 				_("Recompile without MSIM_USE_PURPLE_RC4, or upgrade "
 					"to a libpurple with RC4 support (>= 2.0.1). MySpaceIM "
-					"plugin will not be loaded.");
+					"plugin will not be loaded."));
 		return FALSE;
 	}
 #endif
@@ -86,7 +62,7 @@ static gboolean msim_load(PurplePlugin *plugin)
  *
  * @return GList of status types.
  */
-static GList *msim_status_types(PurpleAccount *acct)
+GList *msim_status_types(PurpleAccount *acct)
 {
     GList *types;
     PurpleStatusType *type;
@@ -134,7 +110,7 @@ static GList *msim_status_types(PurpleAccount *acct)
  *
  * @return The base icon name string.
  */
-static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
+const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 {
     /* Use a MySpace icon submitted by hbons submitted one at
      * http://developer.pidgin.im/wiki/MySpaceIM. */
@@ -146,7 +122,7 @@ static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
  *
  * @return The unescaped message. Caller must g_free().
  */
-static gchar *msim_unescape(const gchar *msg)
+gchar *msim_unescape(const gchar *msg)
 {
 	/* TODO: make more elegant, refactor with msim_escape */
 	gchar *tmp, *ret;
@@ -162,7 +138,7 @@ static gchar *msim_unescape(const gchar *msg)
  *
  * @return The escaped message. Caller must g_free().
  */
-static gchar *msim_escape(const gchar *msg)
+gchar *msim_escape(const gchar *msg)
 {
 	/* TODO: make more elegant, refactor with msim_unescape */
 	gchar *tmp, *ret;
@@ -188,7 +164,7 @@ static gchar *msim_escape(const gchar *msg)
  * http://mail.gnome.org/archives/gtk-app-devel-list/2000-July/msg00201.html
  *
  */
-static gchar *str_replace(const gchar* str, const gchar *old, const gchar *new)
+gchar *str_replace(const gchar* str, const gchar *old, const gchar *new)
 {
 	char **items;
 	char *ret;
@@ -209,7 +185,7 @@ static gchar *str_replace(const gchar* str, const gchar *old, const gchar *new)
  * @return Hash table of message. Caller should destroy with
  *              g_hash_table_destroy() when done.
  */
-static GHashTable* msim_parse(gchar* msg)
+GHashTable* msim_parse(gchar* msg)
 {
     GHashTable *table;
     gchar *token;
@@ -292,7 +268,7 @@ static GHashTable* msim_parse(gchar* msg)
  *
  * @return Hash table of the keys and values. Must g_hash_table_destroy() when done.
  */
-static GHashTable *msim_parse_body(const gchar *body_str)
+GHashTable *msim_parse_body(const gchar *body_str)
 {
     GHashTable *table;
     gchar *item;
@@ -351,7 +327,7 @@ static GHashTable *msim_parse_body(const gchar *body_str)
 
 
 #ifdef MSIM_DEBUG_MSG
-static void print_hash_item(gpointer key, gpointer value, gpointer user_data)
+void print_hash_item(gpointer key, gpointer value, gpointer user_data)
 {
     purple_debug_info("msim", "%s=%s\n", (char*)key, (char*)value);
 }
@@ -366,11 +342,11 @@ static void print_hash_item(gpointer key, gpointer value, gpointer user_data)
  * @return TRUE if succeeded, FALSE if not.
  *
  */
-static gboolean msim_send_raw(MsimSession *session, const gchar *msg)
+gboolean msim_send_raw(MsimSession *session, const gchar *msg)
 {
 	int total_bytes_sent, total_bytes;
     
-	purple_debug_info("msim", "msim_send: writing <%s>\n", msg);
+	purple_debug_info("msim", "msim_send_raw: writing <%s>\n", msg);
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
     g_return_val_if_fail(msg != NULL, FALSE);
@@ -398,101 +374,12 @@ static gboolean msim_send_raw(MsimSession *session, const gchar *msg)
 	return TRUE;
 }
 
-/** Send an existing MsimMessage.
- */
-
-/* TODO: move to message.c */
-static gboolean msim_msg_send(MsimSession *session, MsimMessage *msg)
-{
-	gchar *raw;
-	gboolean success;
-	
-	raw = msim_msg_pack(msg);
-	success = msim_send_raw(session, raw);
-	g_free(raw);
-	
-	return success;
-}
-
-/**
- *
- * Send a message to the server, whose contents is specified using 
- * variable arguments.
- *
- * @param session
- * @param ... A sequence of gchar* key/value pairs, terminated with NULL. 
- *
- * IMPORTANT: The key/value pair strings are not copied. The 'key' strings 
- * are not freed, but the 'value' pair is. Use g_strdup() to pass a static
- * string as a value. This function operates this way so that you can easily
- * use a call to g_strdup_printf() for the 'value' strings and not have to
- * worry about freeing the memory.
- *
- * It bears repeating: THE VALUE STRINGS WILL BE FREED. Copy if static.
- *
- * This function exists for coding convenience: a message can be created
- * and sent in one line of code. Internally it calls msim_msg_send().
- *
- */
-
-static gboolean msim_send(MsimSession *session, ...)
-{
-	va_list argp;
-	gchar *key, *value;
-	MsimMessageType type;
-	gboolean success;
-	MsimMessage *msg;
-    
-	msg = msim_msg_new();
-
-	/* Parse key, value pairs until NULL. */
-	va_start(argp, session);
-	do
-	{
-		key = va_arg(argp, gchar *);
-		if (!key)
-		{
-			break;
-		}
-
-		type = va_arg(argp, int);
-
-		switch (type)
-		{
-			case MSIM_TYPE_INTEGER: 
-				msim_msg_append(msg, key, type, GUINT_TO_POINTER(va_arg(argp, int)));
-				break;
-				
-			case MSIM_TYPE_STRING:
-				value = va_arg(argp, char *);
-
-				g_return_val_if_fail(value != NULL, FALSE);
-
-				msim_msg_append(msg, key, type, value);
-				break;
-
-			default:
-				purple_debug_info("msim", "msim_send: unknown type %d\n", type);
-				break;
-		}
-	} while(key && value);
-
-	/* Actually send the message. */
-	success = msim_msg_send(session, msg);
-
-	/* Cleanup. */
-	va_end(argp);	
-	msim_msg_free(msg);
-
-	return success;
-}
-
 /** 
  * Start logging in to the MSIM servers.
  * 
  * @param acct Account information to use to login.
  */
-static void msim_login(PurpleAccount *acct)
+void msim_login(PurpleAccount *acct)
 {
     PurpleConnection *gc;
     const char *host;
@@ -536,14 +423,14 @@ static void msim_login(PurpleAccount *acct)
  *
  * @return 0, since the 'table' parameter is no longer needed.
  */
-static int msim_login_challenge(MsimSession *session, GHashTable *table) 
+int msim_login_challenge(MsimSession *session, GHashTable *table) 
 {
     PurpleAccount *account;
     gchar *nc_str;
     guchar *nc;
-    gchar *response_str;
+    gchar *response;
     gsize nc_len;
-    gchar *buf;
+	guint response_len;
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
     g_return_val_if_fail(table != NULL, 0);
@@ -568,43 +455,20 @@ static int msim_login_challenge(MsimSession *session, GHashTable *table)
 
     purple_connection_update_progress(session->gc, _("Logging in"), 2, 4);
 
-    response_str = msim_compute_login_response(nc, account->username, account->password);
+    response = msim_compute_login_response(nc, account->username, account->password, &response_len);
 
     g_free(nc);
 
-    /* Reply */
-	/* \status\100\id\1\login2\196610\username\msimprpl@xyzzy.cjb.net\clientver\673\reconn\0\response\+6M+DQhovMxwdt1ceIervus9O5K+X9BR02w6B4+4+Zrg66pWrSzX94ER8efSb8Ju9kye2MnDdpTDwybziACy2mQFWIB9Mf5/1Tdlr6kAtJA==\final\ 
-	 this fails. what is it?
-	 - escaping? no, removing msim_escape() still causes login failure. should verify.
-	 - message order? should login2 come first?
-	 - something else?
-	 */
-#if 0
 	msim_send(session, 
-			"login2", g_strdup_printf("%d", MSIM_AUTH_ALGORITHM),
-			"username", g_strdup(account->username),
-			"response", g_strdup(response_str),
-			"clientver", g_strdup_printf("%d", MSIM_CLIENT_VERSION),
-			"reconn", g_strdup_printf("%d", 0),
-			"status", g_strdup_printf("%d", 100),
-			"id", g_strdup_printf("%d", 1),
+			"login2", MSIM_TYPE_INTEGER, MSIM_AUTH_ALGORITHM,
+			"username", MSIM_TYPE_STRING, g_strdup(account->username),
+			/* GString and gchar * response will be freed in msim_msg_free() in msim_send(). */
+			"response", MSIM_TYPE_BINARY, g_string_new_len(response, response_len),
+			"clientver", MSIM_TYPE_INTEGER, MSIM_CLIENT_VERSION,
+			"reconn", MSIM_TYPE_INTEGER, 0,
+			"status", MSIM_TYPE_INTEGER, 100,
+			"id", MSIM_TYPE_INTEGER, 1,
 			NULL);
-#else
-
-	/* TODO: use msim_send. But, response_str must NOT be escaped. */
-	/* \login2\196610\username\msimprpl@xyzzy.cjb.net\response\nseVXvvrwgQsv7FUAbHJLMP8YPEGKHftwN+Z0zCjmxOTOc0/nVPQWZ5Znv5i6kh26XfZlqNzvoPqaXNbXL6TsSZpU/guAAg0o6XBA1e/Sw==\clientver\673\reconn\0\status\100\id\1\final\ - works*/
-	buf = g_strdup_printf("\\login2\\%d\\username\\%s\\response\\%s\\clientver\\%d\\reconn\\%d\\status\\%d\\id\\1\\final\\",
-				MSIM_AUTH_ALGORITHM, account->username, response_str, MSIM_CLIENT_VERSION, 0, 100);
-
-    
-    purple_debug_info("msim", "response=<%s>\n", buf);
-
-    msim_send_raw(session, buf);
-
-    g_free(buf);
-#endif
-
-    g_free(response_str);
 
     return 0;
 }
@@ -723,12 +587,13 @@ void crypt_rc4(rc4_state_struct *rc4_state, unsigned char *data, int data_len)
  * @param nonce The base64 encoded nonce ('nc') field from the server.
  * @param email User's email address (used as login name).
  * @param password User's cleartext password.
+ * @param response_len Will be written with response length.
  *
- * @return Encoded login challenge response, ready to send to the server. Must be g_free()'d
+ * @return Binary login challenge response, ready to send to the server. Must be g_free()'d
  *         when finished.
  */
-static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE], 
-		gchar* email, gchar* password)
+gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE], 
+		gchar* email, gchar* password, guint* response_len)
 {
     PurpleCipherContext *key_context;
     PurpleCipher *sha1;
@@ -743,7 +608,6 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
     gchar* password_utf16le;
     guchar* data;
 	guchar* data_out;
-    gchar* response;
 	size_t data_len, data_out_len;
 	gsize conv_bytes_read, conv_bytes_written;
 	GError* conv_error;
@@ -841,16 +705,13 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
 
 	g_assert(data_out_len == data_len);
 
-    response = purple_base64_encode(data_out, data_out_len);
-#ifdef MSIM_USE_PURPLE_RC4
-	g_free(data_out);
-#endif
-
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
-    purple_debug_info("msim", "response=<%s>\n", response);
+    purple_debug_info("msim", "response=<%s>\n", data_out);
 #endif
 
-    return response;
+	*response_len = data_out_len;
+
+    return (gchar*)data_out;
 }
 
 /**
@@ -873,7 +734,7 @@ static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
  * instant message. If a userid is specified directly, this function is called
  * immediately here.
  */
-static int msim_send_im(PurpleConnection *gc, const char *who,
+int msim_send_im(PurpleConnection *gc, const char *who,
                             const char *message, PurpleMessageFlags flags)
 {
     MsimSession *session;
@@ -941,31 +802,20 @@ static int msim_send_im(PurpleConnection *gc, const char *who,
  * @return 0, since the 'table' parameter is no longer needed.
  *
  */
-static int msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gchar *message, PurpleMessageFlags flags)
+int msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gchar *message, PurpleMessageFlags flags)
 {
-    gchar *msg_string;
-	gchar *escaped_message;
-
     g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
     g_return_val_if_fail(userid != NULL, 0);
     g_return_val_if_fail(msim_is_userid(userid) == TRUE, 0);
     g_return_val_if_fail(message != NULL, 0);
 
-	/* TODO: Remove this code and use MsimMessage after it is implemented and escapes strings. */
-	escaped_message = msim_escape(message);
-
-	/* TODO: escape values */
-    msg_string = g_strdup_printf("\\bm\\%d\\sesskey\\%s\\t\\%s\\cv\\%d\\msg\\%s\\final\\",
-            MSIM_BM_INSTANT, session->sesskey, userid, MSIM_CLIENT_VERSION, message);
-
-	/* TODO: Remove this code and use MsimMessage after it is implemented and escapes strings. */
-	g_free(escaped_message);
-
-    purple_debug_info("msim", "going to write: %s\n", msg_string);
-
-    msim_send_raw(session, msg_string);
-
-    /* TODO: notify Purple that we sent the IM. */
+	msim_send(session, 
+			"bm", MSIM_TYPE_INTEGER, MSIM_BM_INSTANT,
+			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+			"t", MSIM_TYPE_STRING, g_strdup(userid),
+			"cv", MSIM_TYPE_INTEGER, MSIM_CLIENT_VERSION,
+			"msg", MSIM_TYPE_STRING, g_strdup(message),
+			NULL);	
 
     /* Not needed since sending messages to yourself is allowed by MSIM! */
     /*if (strcmp(from_username, who) == 0)
@@ -986,7 +836,7 @@ static int msim_send_im_by_userid(MsimSession *session, const gchar *userid, con
  * @param data A send_im_cb_struct* of information on the IM to send.
  *
  */
-static void msim_send_im_by_userid_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
+void msim_send_im_by_userid_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
 {
     send_im_cb_struct *s;
     gchar *userid;
@@ -1016,7 +866,7 @@ static void msim_send_im_by_userid_cb(MsimSession *session, GHashTable *userinfo
  * @param userinfo Message from server on user's info, containing UserName.
  * @param data A gchar* of the incoming instant message's text.
  */
-static void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
+void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
 {
     gchar *msg;
     gchar *username;
@@ -1045,7 +895,7 @@ static void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, gpoi
  *
  * @return 0, since table can be freed.
  */
-static int msim_incoming_im(MsimSession *session, GHashTable *table)
+int msim_incoming_im(MsimSession *session, GHashTable *table)
 {
     gchar *userid;
     gchar *msg;
@@ -1076,7 +926,7 @@ static int msim_incoming_im(MsimSession *session, GHashTable *table)
  * @return The return value of the function used to process the message, or -1 if
  * called with invalid parameters.
  */
-static int msim_process(PurpleConnection *gc, GHashTable *table)
+int msim_process(PurpleConnection *gc, GHashTable *table)
 {
     MsimSession *session;
 
@@ -1153,7 +1003,7 @@ static int msim_process(PurpleConnection *gc, GHashTable *table)
  *
  * @return 0, since the 'table' field is no longer needed.
  */
-static int msim_process_reply(MsimSession *session, GHashTable *table)
+int msim_process_reply(MsimSession *session, GHashTable *table)
 {
     gchar *rid_str;
 
@@ -1223,7 +1073,7 @@ static int msim_process_reply(MsimSession *session, GHashTable *table)
  *
  * @return 0, since 'table' can be freed.
  */
-static int msim_error(MsimSession *session, GHashTable *table)
+int msim_error(MsimSession *session, GHashTable *table)
 {
     gchar *err, *errmsg, *full_errmsg;
 
@@ -1255,7 +1105,7 @@ static int msim_error(MsimSession *session, GHashTable *table)
 
 #if 0
 /* Not sure about this */
-static void msim_status_now(gchar *who, gpointer data)
+void msim_status_now(gchar *who, gpointer data)
 {
     printf("msim_status_now: %s\n", who);
 }
@@ -1269,7 +1119,7 @@ static void msim_status_now(gchar *who, gpointer data)
  * @param data gchar* status string.
  *
  */
-static void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
+void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
 {
     PurpleBuddyList *blist;
     PurpleBuddy *buddy;
@@ -1356,7 +1206,7 @@ static void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer 
  *
  * @return 0, since 'table' can be freed.
  */
-static int msim_status(MsimSession *session, GHashTable *table)
+int msim_status(MsimSession *session, GHashTable *table)
 {
     gchar *status_str;
     gchar *userid;
@@ -1401,7 +1251,7 @@ static int msim_status(MsimSession *session, GHashTable *table)
  *
  * Reads the input, and dispatches calls msim_process to handle it.
  */
-static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
+void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 {
     PurpleConnection *gc;
     PurpleAccount *account;
@@ -1523,7 +1373,7 @@ static void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputConditio
  * @param source File descriptor.
  * @param error_message
  */
-static void msim_connect_cb(gpointer data, gint source, const gchar *error_message)
+void msim_connect_cb(gpointer data, gint source, const gchar *error_message)
 {
     PurpleConnection *gc;
     MsimSession *session;
@@ -1555,7 +1405,7 @@ static void msim_connect_cb(gpointer data, gint source, const gchar *error_messa
  *
  * @return Pointer to a new session. Free with msim_session_destroy.
  */
-static MsimSession *msim_session_new(PurpleAccount *acct)
+MsimSession *msim_session_new(PurpleAccount *acct)
 {
     MsimSession *session;
 
@@ -1585,7 +1435,7 @@ static MsimSession *msim_session_new(PurpleAccount *acct)
  *
  * @param session The session to destroy.
  */
-static void msim_session_destroy(MsimSession *session)
+void msim_session_destroy(MsimSession *session)
 {
     g_return_if_fail(MSIM_SESSION_VALID(session));
 
@@ -1605,7 +1455,7 @@ static void msim_session_destroy(MsimSession *session)
  * 
  * @param gc The connection.
  */
-static void msim_close(PurpleConnection *gc)
+void msim_close(PurpleConnection *gc)
 {
     g_return_if_fail(gc != NULL);
     
@@ -1620,7 +1470,7 @@ static void msim_close(PurpleConnection *gc)
  *
  * @return TRUE if is userid, FALSE if not.
  */
-static inline gboolean msim_is_userid(const gchar *user)
+gboolean msim_is_userid(const gchar *user)
 {
     g_return_val_if_fail(user != NULL, FALSE);
 
@@ -1639,7 +1489,7 @@ static inline gboolean msim_is_userid(const gchar *user)
  * between a user represented by an email address from
  * other forms of identification.
  */ 
-static inline gboolean msim_is_email(const gchar *user)
+gboolean msim_is_email(const gchar *user)
 {
     g_return_val_if_fail(user != NULL, FALSE);
 
@@ -1655,10 +1505,9 @@ static inline gboolean msim_is_email(const gchar *user)
  * @param cb Callback, called with user information when available.
  * @param data An arbitray data pointer passed to the callback.
  */
-static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb, gpointer data)
+void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb, gpointer data)
 {
     gchar *field_name;
-    gchar *msg_string;
     guint rid, cmd, dsn, lid;
 
     g_return_if_fail(MSIM_SESSION_VALID(session));
@@ -1706,11 +1555,18 @@ static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_
         lid = 7;
     }
 
-	/* TODO: escape values */
-    msg_string = g_strdup_printf("\\persist\\1\\sesskey\\%s\\cmd\\1\\dsn\\%d\\uid\\%s\\lid\\%d\\rid\\%d\\body\\%s=%s\\final\\",
-            session->sesskey, dsn, session->userid, lid, rid, field_name, user);
 
-    msim_send_raw(session, msg_string);
+	msim_send(session,
+			"persist", MSIM_TYPE_INTEGER, 1,
+			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+			"cmd", MSIM_TYPE_INTEGER, 1,
+			"dsn", MSIM_TYPE_INTEGER, dsn,
+			"uid", MSIM_TYPE_STRING, g_strdup(session->userid),
+			"lid", MSIM_TYPE_INTEGER, lid,
+			"rid", MSIM_TYPE_INTEGER, rid,
+			/* TODO: dictionary field type */
+			"body", MSIM_TYPE_STRING, g_strdup_printf("%s=%s", field_name, user),
+			NULL);
 } 
 
 
@@ -1722,7 +1578,7 @@ static void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_
  * @return Status text, or NULL if error.
  *
  */
-static char *msim_status_text(PurpleBuddy *buddy)
+char *msim_status_text(PurpleBuddy *buddy)
 {
     MsimSession *session;
     GHashTable *userinfo;
@@ -1754,7 +1610,7 @@ static char *msim_status_text(PurpleBuddy *buddy)
  * @param full TRUE if should obtain full tooltip text.
  *
  */
-static void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean full)
+void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboolean full)
 {
     g_return_if_fail(buddy != NULL);
     g_return_if_fail(user_info != NULL);
@@ -1786,7 +1642,7 @@ static void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_inf
 }
 
 /** Callbacks called by Purple, to access this plugin. */
-static PurplePluginProtocolInfo prpl_info =
+PurplePluginProtocolInfo prpl_info =
 {
     OPT_PROTO_MAIL_CHECK,/* options - TODO: myspace will notify of mail */
     NULL,              /* user_splits */
@@ -1859,7 +1715,7 @@ static PurplePluginProtocolInfo prpl_info =
 
 
 /** Based on MSN's plugin info comments. */
-static PurplePluginInfo info =
+PurplePluginInfo info =
 {
     PURPLE_PLUGIN_MAGIC,                                
     PURPLE_MAJOR_VERSION,
@@ -1898,18 +1754,19 @@ static PurplePluginInfo info =
 
 #include "message.h"
 
-static void init_plugin(PurplePlugin *plugin) 
+void init_plugin(PurplePlugin *plugin) 
 {
 	PurpleAccountOption *option;
 #ifdef _TEST_MSIM_MSG
 	MsimMessage *msg = msim_msg_new();
-	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, "v1");
+	msg = msim_msg_append(msg, "bx", MSIM_TYPE_BINARY, g_string_new_len(g_strdup("XXX"), 3));
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v1"));
 	msg = msim_msg_append(msg, "k1", MSIM_TYPE_INTEGER, 42);
-	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, "v43");
-	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, "v5");
-	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, "v7");
-	purple_debug_info("msim", "msg=%s\n", msim_msg_pack(msg));
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v43"));
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v52/xxx\\yyy"));
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v7"));
 	purple_debug_info("msim", "msg=%s\n", msim_msg_debug_string(msg));
+	purple_debug_info("msim", "msg=%s\n", msim_msg_pack(msg));
 	msim_msg_free(msg);
 	exit(0);
 #endif

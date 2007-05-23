@@ -22,6 +22,32 @@
 #ifndef _MYSPACE_MYSPACE_H
 #define _MYSPACE_MYSPACE_H
 
+/* Other includes */
+#include <string.h>
+#include <errno.h>	/* for EAGAIN */
+#include <stdarg.h>
+
+#include <glib.h>
+
+#ifdef _WIN32
+#include "win32dep.h"
+#else
+/* For recv() and send(); needed to match Win32 */
+#include <sys/types.h>
+#include <sys/socket.h>
+#endif
+
+#include "internal.h"
+
+#include "notify.h"
+#include "plugin.h"
+#include "accountopt.h"
+#include "version.h"
+#include "cipher.h"     /* for SHA-1 */
+#include "util.h"       /* for base64 */
+#include "debug.h"      /* for purple_debug_info */
+
+
 /* Conditional compilation options */
 
 /* Debugging options */
@@ -112,65 +138,67 @@ typedef struct _send_im_cb_struct
 
 
 /* Functions */
-static void init_plugin(PurplePlugin *plugin);
-static GList *msim_status_types(PurpleAccount *acct);
-static const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy);
+gboolean msim_load(PurplePlugin *plugin);
+GList *msim_status_types(PurpleAccount *acct);
+const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy);
 
 /* TODO: move these three functions to message.c/h */
-static gchar *msim_unescape(const gchar *msg);
-static gchar *msim_escape(const gchar *msg);
-static gchar *str_replace(const gchar* str, const gchar *old, const gchar *new);
+gchar *msim_unescape(const gchar *msg);
+gchar *msim_escape(const gchar *msg);
+gchar *str_replace(const gchar* str, const gchar *old, const gchar *new);
 
-static GHashTable *msim_parse(gchar* msg);
-static GHashTable* msim_parse_body(const gchar *body_str);
+GHashTable *msim_parse(gchar* msg);
+GHashTable* msim_parse_body(const gchar *body_str);
 
-static void print_hash_item(gpointer key, gpointer value, gpointer user_data);
-static gboolean msim_send_raw(MsimSession *session, const gchar *msg);
-static gchar *msim_pack(GHashTable *table);
-static gboolean msim_sendh(MsimSession *session, GHashTable *table);
-static gboolean msim_send(MsimSession *session, ...);
+void print_hash_item(gpointer key, gpointer value, gpointer user_data);
+gboolean msim_send_raw(MsimSession *session, const gchar *msg);
+gchar *msim_pack(GHashTable *table);
+gboolean msim_sendh(MsimSession *session, GHashTable *table);
+gboolean msim_send(MsimSession *session, ...);
 
-static void msim_login(PurpleAccount *acct);
-static int msim_login_challenge(MsimSession *session, GHashTable *table);
-static gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
-		        gchar* email, gchar* password);
+void msim_login(PurpleAccount *acct);
+int msim_login_challenge(MsimSession *session, GHashTable *table);
+gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
+		        gchar* email, gchar* password, guint *response_len);
 
-static int msim_send_im(PurpleConnection *gc, const char *who,
+int msim_send_im(PurpleConnection *gc, const char *who,
 		const char *message, PurpleMessageFlags flags);
-static int msim_send_im_by_userid(MsimSession *session, const gchar *userid, 
+int msim_send_im_by_userid(MsimSession *session, const gchar *userid, 
 		const gchar *message, PurpleMessageFlags flags);
-static void msim_send_im_by_userid_cb(MsimSession *session, 
+void msim_send_im_by_userid_cb(MsimSession *session, 
 		GHashTable *userinfo, gpointer data);
-static void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, 
+void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, 
 		gpointer data);
-static int msim_incoming_im(MsimSession *session, GHashTable *table);
+int msim_incoming_im(MsimSession *session, GHashTable *table);
 
-static int msim_process_reply(MsimSession *session, GHashTable *table);
-static int msim_process(PurpleConnection *gc, GHashTable *table);
+int msim_process_reply(MsimSession *session, GHashTable *table);
+int msim_process(PurpleConnection *gc, GHashTable *table);
 
-static int msim_error(MsimSession *session, GHashTable *table);
-static void msim_status_cb(MsimSession *session, GHashTable *userinfo, 
+int msim_error(MsimSession *session, GHashTable *table);
+void msim_status_cb(MsimSession *session, GHashTable *userinfo, 
 		gpointer data);
-static int msim_status(MsimSession *session, GHashTable *table);
-static void msim_input_cb(gpointer gc_uncasted, gint source, 
+int msim_status(MsimSession *session, GHashTable *table);
+void msim_input_cb(gpointer gc_uncasted, gint source, 
 		PurpleInputCondition cond);
-static void msim_connect_cb(gpointer data, gint source, 
+void msim_connect_cb(gpointer data, gint source, 
 		const gchar *error_message);
 
-static MsimSession *msim_session_new(PurpleAccount *acct);
-static void msim_session_destroy(MsimSession *session);
+MsimSession *msim_session_new(PurpleAccount *acct);
+void msim_session_destroy(MsimSession *session);
 
-static void msim_close(PurpleConnection *gc);
+void msim_close(PurpleConnection *gc);
 
-static inline gboolean msim_is_userid(const gchar *user);
-static inline gboolean msim_is_email(const gchar *user);
+gboolean msim_is_userid(const gchar *user);
+gboolean msim_is_email(const gchar *user);
 
-static void msim_lookup_user(MsimSession *session, const gchar *user, 
+void msim_lookup_user(MsimSession *session, const gchar *user, 
 		MSIM_USER_LOOKUP_CB cb, gpointer data);
 
-static char *msim_status_text(PurpleBuddy *buddy);
-static void msim_tooltip_text(PurpleBuddy *buddy, 
+char *msim_status_text(PurpleBuddy *buddy);
+void msim_tooltip_text(PurpleBuddy *buddy, 
 		PurpleNotifyUserInfo *user_info, gboolean full);
+
+void init_plugin(PurplePlugin *plugin);
 
 #ifndef MSIM_USE_PURPLE_RC4
 /* 
