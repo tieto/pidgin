@@ -25,12 +25,6 @@ version 2.0.1 (??/??/????):
 	  unencrypted channel
 	* Fix XMPP SASL authentication error when using Cyrus and a connect server
 	* Fix changing tab locations to update properly
-<<<<<<< variant A
-	* ALSA added as a possible sound method
-	* Added Google Talk to the accounts dropdown
-	* Google Talk accounts will not import buddies from your Gmail addres
-	  book
->>>>>>> variant B
 	* Turning off "Show formatting on incoming messages" now ignores
 	  formatting in <span> tags too
 	* File transfer progress for transfers on MSN is now correctly displayed
@@ -49,8 +43,9 @@ version 2.0.1 (??/??/????):
 	  consumption when running with NO_HZ.  (Arjan van de Ven with Intel
 	  Corporation)
 	* Conversation -> Save As will now use aliases.
-####### Ancestor
-======= end
+	* ALSA added as a possible sound method
+	* Google Talk accounts will not import buddies from your Gmail address
+	  book
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
