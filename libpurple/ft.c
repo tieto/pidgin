@@ -891,7 +891,7 @@ transfer_cb(gpointer data, gint source, PurpleInputCondition condition)
 		r = purple_xfer_read(xfer, &buffer);
 		if (r > 0) {
 			fwrite(buffer, 1, r, xfer->dest_fp);
-		} else if(r <= 0) {
+		} else if(r < 0) {
 			purple_xfer_cancel_remote(xfer);
 			return;
 		}
