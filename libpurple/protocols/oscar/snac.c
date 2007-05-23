@@ -57,7 +57,7 @@ aim_snacid_t aim_cachesnac(OscarData *od, const guint16 family, const guint16 ty
 	snac.flags = flags;
 
 	if (datalen) {
-		if (!(snac.data = malloc(datalen)))
+		if (!(snac.data = g_malloc(datalen)))
 			return 0; /* er... */
 		memcpy(snac.data, data, datalen);
 	} else
@@ -78,7 +78,7 @@ aim_snacid_t aim_newsnac(OscarData *od, aim_snac_t *newsnac)
 	if (!newsnac)
 		return 0;
 
-	if (!(snac = malloc(sizeof(aim_snac_t))))
+	if (!(snac = g_malloc(sizeof(aim_snac_t))))
 		return 0;
 	memcpy(snac, newsnac, sizeof(aim_snac_t));
 	snac->issuetime = time(NULL);
@@ -109,7 +109,7 @@ aim_snac_t *aim_remsnac(OscarData *od, aim_snacid_t id)
 		if (cur->id == id) {
 			*prev = cur->next;
 			if (cur->flags & AIM_SNACFLAGS_DESTRUCTOR) {
-				free(cur->data);
+				g_free(cur->data);
 				cur->data = NULL;
 			}
 			return cur;
@@ -145,8 +145,8 @@ void aim_cleansnacs(OscarData *od, int maxage)
 
 				*prev = cur->next;
 
-				free(cur->data);
-				free(cur);
+				g_free(cur->data);
+				g_free(cur);
 			} else
 				prev = &cur->next;
 		}

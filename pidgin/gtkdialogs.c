@@ -378,13 +378,8 @@ void pidgin_dialogs_about()
 
 	g_string_append(str, "<FONT SIZE=\"4\">URL:</FONT> <A HREF=\""
 					PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");
-#ifdef _WIN32
-	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
-						   "#pidgin-win32 on irc.freenode.net<BR><BR>"));
-#else
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
 						   "#pidgin on irc.freenode.net<BR><BR>"));
-#endif
 
 	/* Current Developers */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
