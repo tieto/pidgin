@@ -4201,9 +4201,6 @@ setup_chat_pane(PidginConversation *gtkconv)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
 	                               imhtml_sw_hscroll, GTK_POLICY_ALWAYS);
 
-	gtk_widget_set_size_request(gtkconv->imhtml,
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/default_width"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/default_height"));
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "size-allocate",
 					 G_CALLBACK(size_allocate_cb), gtkconv);
 
@@ -4380,9 +4377,6 @@ setup_im_pane(PidginConversation *gtkconv)
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
 	                               imhtml_sw_hscroll, GTK_POLICY_ALWAYS);
 
-	gtk_widget_set_size_request(gtkconv->imhtml,
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_width"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_height"));
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "size-allocate",
 	                 G_CALLBACK(size_allocate_cb), gtkconv);
 
@@ -7708,6 +7702,11 @@ before_switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
+	if (gtkconv->u.im->typing_timer != 0) {
+		g_source_remove(gtkconv->u.im->typing_timer);
+		gtkconv->u.im->typing_timer = 0;
+	}
+
 	stop_anim(NULL, gtkconv);
 }
 static void
@@ -8040,8 +8039,9 @@ pidgin_conv_window_new()
 	gtk_window_set_role(GTK_WINDOW(win->window), "conversation");
 	gtk_window_set_resizable(GTK_WINDOW(win->window), TRUE);
 	gtk_container_set_border_width(GTK_CONTAINER(win->window), 0);
-	GTK_WINDOW(win->window)->allow_shrink = TRUE;
-
+	gtk_window_set_default_size(win->window,
+				purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_width"),
+		                purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_height"));
 	if (available_list == NULL) {
 		create_icon_lists(win->window);
 	}
