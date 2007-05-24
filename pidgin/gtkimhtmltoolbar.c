@@ -899,10 +899,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 {
 	GtkWidget *hbox = GTK_WIDGET(toolbar);
 	GtkWidget *button;
-	GtkWidget *bbox;
-	GtkWidget *label;
 	GtkWidget *sep;
-	GtkWidget *image;
 	GtkSizeGroup *sg;
 
 	toolbar->imhtml = NULL;
@@ -915,7 +912,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 
 	toolbar->tooltips = gtk_tooltips_new();
 
-	gtk_box_set_spacing(GTK_BOX(toolbar), 0);
+	gtk_box_set_spacing(GTK_BOX(toolbar), 3);
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 
 	/* Bold */
@@ -984,16 +981,12 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
 
 	/* Font Face */
-	button = gtk_toggle_button_new();
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	bbox = gtk_hbox_new(FALSE, 3);
-	gtk_container_add(GTK_CONTAINER(button), bbox);
-	image = gtk_image_new_from_stock(GTK_STOCK_BOLD, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
-	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
-	label = gtk_label_new(_("Font"));
-	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
+
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_FONT_FACE);
+	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_widget_show_all(button);
+	gtk_tooltips_set_tip(toolbar->tooltips, button,
+			_("Font face"), NULL);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(toggle_font), toolbar);
@@ -1027,20 +1020,13 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	/* Sep */
 	sep = gtk_vseparator_new();
 	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
 
-	/* Reset formatting */	
-	button = gtk_toggle_button_new();
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	bbox = gtk_hbox_new(FALSE, 3);
-	gtk_container_add(GTK_CONTAINER(button), bbox);
-	image = gtk_image_new_from_stock(PIDGIN_STOCK_CLEAR, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
-	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
-	label = gtk_label_new(_("Reset font"));
-	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
+	/* Reset Formatting */
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_CLEAR);
+	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_widget_show_all(button);
-
+	gtk_tooltips_set_tip(toolbar->tooltips, button,
+			     _("Reset formatting"), NULL);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(clear_formatting_cb), toolbar);
@@ -1050,7 +1036,6 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	/* Sep */
 	sep = gtk_vseparator_new();
 	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
-	gtk_widget_show(sep);
 
 	/* Insert Link */
 	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT_LINK);
@@ -1074,16 +1059,10 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->image = button;
 
 	/* Insert Smiley */
-	button = gtk_toggle_button_new();
-	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
-	bbox = gtk_hbox_new(FALSE, 3);
-	gtk_container_add(GTK_CONTAINER(button), bbox);
-	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
-	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
-	label = gtk_label_new(_("Insert"));
-	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY);
+	gtk_size_group_add_widget(sg, button);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_widget_show_all(button);
+	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Insert smiley"), NULL);
 
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(insert_smiley_cb), toolbar);
@@ -1091,7 +1070,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->smiley = button;
 
 	toolbar->sml = NULL;
-	gtk_widget_show(hbox);
+	gtk_widget_show_all(hbox);
 }
 
 GtkWidget *gtk_imhtmltoolbar_new()
