@@ -7714,6 +7714,11 @@ before_switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
+	if (gtkconv->u.im->typing_timer != 0) {
+		g_source_remove(gtkconv->u.im->typing_timer);
+		gtkconv->u.im->typing_timer = 0;
+	}
+
 	stop_anim(NULL, gtkconv);
 }
 static void
