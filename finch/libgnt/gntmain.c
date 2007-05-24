@@ -359,8 +359,7 @@ sighandler(int sig)
 	switch (sig) {
 #ifdef SIGWINCH
 	case SIGWINCH:
-		werase(stdscr);
-		wrefresh(stdscr);
+		erase();
 		g_idle_add(refresh_screen, NULL);
 		org_winch_handler(sig);
 		signal(SIGWINCH, sighandler);
