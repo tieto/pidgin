@@ -48,9 +48,14 @@ struct _PurpleSslConnection
 	char *host;
 	/** Port to connect to */
 	int port;
+	/** Data to pass to PurpleSslConnection::connect_cb() */
 	void *connect_cb_data;
+	/** Callback triggered once the SSL handshake is complete */
 	PurpleSslInputFunction connect_cb;
+	/** TODO: Document me! */
 	PurpleSslErrorFunction error_cb;
+	/** Data passed to PurpleSslConnection::recv_cb() */
+	/* TODO: Is this stuff even used?? */
 	void *recv_cb_data;
 	PurpleSslInputFunction recv_cb;
 
@@ -66,9 +71,8 @@ struct _PurpleSslConnection
 /**
  * SSL implementation operations structure.
  *
- * Every SSL implementation must provide all of these and register it.
+ * Every SSL implementation must provide all of these and register it via purple_ssl_set_ops()
  * These should not be called directly! Instead, use the purple_ssl_* functions.
- * @see purple_ssl_set_ops
  */
 typedef struct
 {
