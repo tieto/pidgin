@@ -52,16 +52,19 @@ struct _PurpleSslConnection
 	void *connect_cb_data;
 	/** Callback triggered once the SSL handshake is complete */
 	PurpleSslInputFunction connect_cb;
-	/** TODO: Document me! */
+	/** Callback triggered if there is an error during connection */
 	PurpleSslErrorFunction error_cb;
 	/** Data passed to PurpleSslConnection::recv_cb() */
-	/* TODO: Is this stuff even used?? */
 	void *recv_cb_data;
+	/** User-defined callback executed when the SSL connection receives data */
 	PurpleSslInputFunction recv_cb;
 
 	/** File descriptor used to refer to the socket */
 	int fd;
+	/** Glib event source ID; used to refer to the received data callback 
+	 * in the glib eventloop */
 	int inpa;
+	/** Data related to the underlying TCP connection */
 	PurpleProxyConnectData *connect_data;
 
 	/** Internal connection data managed by the SSL backend (GnuTLS/LibNSS/whatever) */
