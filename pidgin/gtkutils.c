@@ -947,6 +947,15 @@ pidgin_load_accels()
 	g_free(filename);
 }
 
+void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name)
+{
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	purple_notify_userinfo(conn, name, info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
+	serv_get_info(conn, name);
+}
+
 gboolean
 pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 							PurpleAccount **ret_account, char **ret_protocol,

@@ -274,12 +274,7 @@ static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, g
 
 static void gtk_blist_menu_info_cb(GtkWidget *w, PurpleBuddy *b)
 {
-	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
-	purple_notify_userinfo(b->account->gc, purple_buddy_get_name(b), info, NULL, NULL);
-	purple_notify_user_info_destroy(info);
-
-	serv_get_info(b->account->gc, b->name);
+	pidgin_retrieve_user_info(b->account->gc, purple_buddy_get_name(b));
 }
 
 static void gtk_blist_menu_im_cb(GtkWidget *w, PurpleBuddy *b)
@@ -1147,7 +1142,8 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 }
 
 static gboolean
-gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data) {
+gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
+{
 	PurpleBlistNode *node;
 	GValue val;
 	GtkTreeIter iter;
@@ -1174,7 +1170,7 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data) {
 			return FALSE;
 		}
 		if(buddy)
-			serv_get_info(buddy->account->gc, buddy->name);
+			pidgin_retrieve_user_info(buddy->account->gc, buddy->name);
 	} else if (event->keyval == GDK_F2) {
 		gtk_blist_menu_alias_cb(tv, node);
 	}
@@ -1428,7 +1424,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 		if (prpl && prpl_info->get_info)
-			serv_get_info(b->account->gc, b->name);
+			pidgin_retrieve_user_info(b->account->gc, b->name);
 		handled = TRUE;
 	}
 

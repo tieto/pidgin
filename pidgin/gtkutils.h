@@ -309,6 +309,14 @@ gboolean pidgin_save_accels(gpointer data);
 void pidgin_load_accels(void);
 
 /**
+ * Get information about a user. Show immediate feedback.
+ *
+ * @param conn   The connection to get information from.
+ * @param name   The user to get information about.
+ */
+void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name);
+
+/**
  * Parses an application/x-im-contact MIME message and returns the
  * data inside.
  *
