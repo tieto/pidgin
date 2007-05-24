@@ -237,13 +237,14 @@ pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle)
 		gtk_widget_show(to_toggle);
 }
 
-void pidgin_separator(GtkWidget *menu)
+GtkWidget *pidgin_separator(GtkWidget *menu)
 {
 	GtkWidget *menuitem;
 
 	menuitem = gtk_separator_menu_item_new();
 	gtk_widget_show(menuitem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	return menuitem;
 }
 
 GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str)

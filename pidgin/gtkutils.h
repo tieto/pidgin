@@ -130,8 +130,10 @@ void pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle);
  * Adds a separator to a menu.
  *
  * @param menu The menu to add a separator to.
+ *
+ * @return The separator.
  */
-void pidgin_separator(GtkWidget *menu);
+GtkWidget *pidgin_separator(GtkWidget *menu);
 
 /**
  * Creates a menu item.
