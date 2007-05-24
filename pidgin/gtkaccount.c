@@ -388,6 +388,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *entry;
+	GtkWidget *menu;
+	GtkWidget *item;
 	GList *user_splits;
 	GList *l, *l2;
 	char *username = NULL;
@@ -474,7 +476,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		GtkWidget *entry = l->data;
 		PurpleAccountUserSplit *split = l2->data;
-		const char *value = NULL;
+		const char *value = NULL, *protocol = NULL;
 		char *c;
 
 		if (dialog->account != NULL) {
@@ -488,9 +490,16 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				value = c;
 			}
 		}
-
 		if (value == NULL)
 			value = purple_account_user_split_get_default_value(split);
+
+		/* Google Talk default domain hackery! */
+		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
+		item = gtk_menu_get_active(GTK_MENU(menu));
+		protocol = g_object_get_data(G_OBJECT(item), "protocol");
+		if (value == NULL && !strcmp(protocol, "prpl-fake") && 
+			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
+			value = "gmail.com";
 
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), value);
