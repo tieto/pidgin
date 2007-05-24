@@ -44,7 +44,9 @@ typedef void (*PurpleSslErrorFunction)(PurpleSslConnection *, PurpleSslErrorType
 
 struct _PurpleSslConnection
 {
+	/** Hostname to which the SSL connection will be made */
 	char *host;
+	/** Port to connect to */
 	int port;
 	void *connect_cb_data;
 	PurpleSslInputFunction connect_cb;
@@ -52,10 +54,12 @@ struct _PurpleSslConnection
 	void *recv_cb_data;
 	PurpleSslInputFunction recv_cb;
 
+	/** File descriptor used to refer to the socket */
 	int fd;
 	int inpa;
 	PurpleProxyConnectData *connect_data;
 
+	/** Internal connection data managed by the SSL backend (GnuTLS/LibNSS/whatever) */
 	void *private_data;
 };
 
