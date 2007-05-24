@@ -63,6 +63,7 @@ struct _PurpleSslConnection
  * SSL implementation operations structure.
  *
  * Every SSL implementation must provide all of these and register it.
+ * These should not be called directly! Instead, use the purple_ssl_* functions.
  * @see purple_ssl_set_ops
  */
 typedef struct
@@ -76,7 +77,10 @@ typedef struct
 	/** Sets up the SSL connection for a PurpleSslConnection once
      *  the TCP connection has been established */
 	void (*connectfunc)(PurpleSslConnection *gsc);
-	/** Destroys the SSL connection provided */
+	/** Destroys the internal data of the SSL connection provided.
+	 *  Freeing gsc itself is left to purple_ssl_close()
+	 *
+	 */
 	void (*close)(PurpleSslConnection *gsc);
 	/** Reads data from a connection (like POSIX read())
 	 * @param gsc	Connection context
