@@ -160,6 +160,7 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_TOOLBAR_UNBLOCK, "toolbar", "unblock.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR, "toolbar", "select-avatar.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_TOOLBAR_SEND_FILE, "toolbar", "send-file.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TOOLBAR_INSERT, "toolbar", "insert.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 
 	{ PIDGIN_STOCK_TRAY_AVAILABLE, "tray", "tray-online.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_TRAY_INVISIBLE, "tray", "tray-invisible.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
