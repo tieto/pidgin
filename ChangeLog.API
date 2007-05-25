@@ -6,6 +6,7 @@ version 2.1.0 (?/?/?):
 	* purple_conversation_do_command
 	* pidgin_retrieve_user_info, shows immediate feedback when getting
 	  information about a user.
+	* gtk_imhtml_setup_entry
 
 	Changed:
 	* pidgin_separator returns the separator added to the menu.

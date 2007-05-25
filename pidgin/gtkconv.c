@@ -267,65 +267,7 @@ static void
 default_formatize(PidginConversation *c)
 {
 	PurpleConversation *conv = c->active_conv;
-
-	if (conv->features & PURPLE_CONNECTION_HTML)
-	{
-		char color[8];
-		GdkColor fg_color, bg_color;
-
-		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold") != GTK_IMHTML(c->entry)->edit.bold)
-			gtk_imhtml_toggle_bold(GTK_IMHTML(c->entry));
-
-		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic") != GTK_IMHTML(c->entry)->edit.italic)
-			gtk_imhtml_toggle_italic(GTK_IMHTML(c->entry));
-
-		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline") != GTK_IMHTML(c->entry)->edit.underline)
-			gtk_imhtml_toggle_underline(GTK_IMHTML(c->entry));
-
-		gtk_imhtml_toggle_fontface(GTK_IMHTML(c->entry),
-			purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/font_face"));
-
-		if (!(conv->features & PURPLE_CONNECTION_NO_FONTSIZE))
-		{
-			int size = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size");
-
-			/* 3 is the default. */
-			if (size != 3)
-				gtk_imhtml_font_set_size(GTK_IMHTML(c->entry), size);
-		}
-
-		if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"), "") != 0)
-		{
-			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"),
-							&fg_color);
-			g_snprintf(color, sizeof(color), "#%02x%02x%02x",
-									fg_color.red   / 256,
-									fg_color.green / 256,
-									fg_color.blue  / 256);
-		} else
-			strcpy(color, "");
-
-		gtk_imhtml_toggle_forecolor(GTK_IMHTML(c->entry), color);
-
-		if(!(conv->features & PURPLE_CONNECTION_NO_BGCOLOR) &&
-		   strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"), "") != 0)
-		{
-			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"),
-							&bg_color);
-			g_snprintf(color, sizeof(color), "#%02x%02x%02x",
-									bg_color.red   / 256,
-									bg_color.green / 256,
-									bg_color.blue  / 256);
-		} else
-			strcpy(color, "");
-
-		gtk_imhtml_toggle_background(GTK_IMHTML(c->entry), color);
-
-		if (conv->features & PURPLE_CONNECTION_FORMATTING_WBFO)
-			gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(c->entry), TRUE);
-		else
-			gtk_imhtml_set_whole_buffer_formatting_only(GTK_IMHTML(c->entry), FALSE);
-	}
+	gtk_imhtml_setup_entry(GTK_IMHTML(c->entry), conv->features);
 }
 
 static void
