@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.0.1 (??/??/????):
+version 2.0.1 (05/24/2007):
 	* Buddy list update speedups when buddy icons are not being
 	  displayed.  (Scott Wolchok)
 	* Fix icons on docklet change status menu to match the status selector
