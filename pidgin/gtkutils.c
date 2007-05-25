@@ -681,7 +681,6 @@ create_account_menu(PurpleAccount *default_account,
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (p = list, i = 0; p != NULL; p = p->next, i++) {
-		PurplePluginProtocolInfo *prpl_info = NULL;
 		PurplePlugin *plugin;
 
 		if (show_all)
@@ -886,6 +885,15 @@ pidgin_load_accels()
 	                            "accels", NULL);
 	gtk_accel_map_load(filename);
 	g_free(filename);
+}
+
+void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name)
+{
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	purple_notify_userinfo(conn, name, info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
+	serv_get_info(conn, name);
 }
 
 gboolean
