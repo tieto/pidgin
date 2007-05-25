@@ -824,17 +824,20 @@ create_group_menu(GntMenu *menu, PurpleGroup *group)
 			PURPLE_CALLBACK(finch_add_group), group);
 }
 
+void finch_retrieve_user_info(PurpleConnection *conn, const char *name)
+{
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	purple_notify_userinfo(conn, name, info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
+
+	serv_get_info(conn, name);
+}
+
 static void
 finch_blist_get_buddy_info_cb(PurpleBuddy *buddy, PurpleBlistNode *selected)
 {
-	/* Add a userinfo with a "Retrieving information", which will later be updated
-	 * when the server finally returns the information. */
-	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
-	purple_notify_userinfo(buddy->account->gc, purple_buddy_get_name(buddy), info, NULL, NULL);
-	purple_notify_user_info_destroy(info);
-
-	serv_get_info(buddy->account->gc, purple_buddy_get_name(buddy));
+	finch_retrieve_user_info(buddy->account->gc, purple_buddy_get_name(buddy));
 }
 
 static void

@@ -28,6 +28,8 @@
 #include <gtk/gtktooltips.h>
 #include <gtk/gtkimage.h>
 
+#include "connection.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -785,6 +787,14 @@ char **gtk_imhtml_get_markup_lines(GtkIMHtml *imhtml);
  * @return A string containing the unformatted text.
  */
 char *gtk_imhtml_get_text(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *stop);
+
+/**
+ * Setup formatting for an imhtml depending on the flags specified.
+ *
+ * @param imhtml  The GTK+ IM/HTML.
+ * @param flags   The connection flag which describes the allowed types of formatting.
+ */
+void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags);
 
 /*@}*/
 
