@@ -762,7 +762,7 @@ account_menu_destroyed_cb(GtkWidget *optmenu, GdkEvent *event,
 void
 pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *account)
 {
-	aop_option_menu_select_by_data(optmenu, (gpointer)account);
+	aop_option_menu_select_by_data(optmenu, account);
 }
 
 GtkWidget *
@@ -1837,7 +1837,7 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 		return TRUE;
 
 	if (optmenu != NULL)
-		aop_option_menu_select_by_data(optmenu, (gpointer)account);
+		aop_option_menu_select_by_data(optmenu, account);
 
 	return TRUE;
 }
