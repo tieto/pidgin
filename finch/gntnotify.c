@@ -168,7 +168,7 @@ setup_email_dialog()
 			gnt_label_new_with_format(_("You have mail!"), GNT_TEXT_FLAG_BOLD));
 
 	emaildialog.tree = tree = gnt_tree_new_with_columns(3);
-	gnt_tree_set_column_titles(GNT_TREE(tree), _("Account"), _("From"), _("Subject"));
+	gnt_tree_set_column_titles(GNT_TREE(tree), _("Account"), _("Sender"), _("Subject"));
 	gnt_tree_set_show_title(GNT_TREE(tree), TRUE);
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, 15);
 	gnt_tree_set_col_width(GNT_TREE(tree), 1, 25);

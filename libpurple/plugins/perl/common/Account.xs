@@ -215,6 +215,7 @@ PPCODE:
         t_GL = g_list_append(t_GL, SvPV(*av_fetch((AV *)SvRV(list), i, 0), t_sl));
     }
     purple_account_add_buddies(account, t_GL);
+    g_list_free(t_GL);
 
 void
 purple_account_add_buddy(account, buddy)
@@ -252,6 +253,8 @@ PPCODE:
         t_GL2 = g_list_append(t_GL2, SvPV(*av_fetch((AV *)SvRV(B), i, 0), t_sl));
     }
     purple_account_remove_buddies(account, t_GL1, t_GL2);
+    g_list_free(t_GL1);
+    g_list_free(t_GL2);
 
 void
 purple_account_remove_buddy(account, buddy, group)
