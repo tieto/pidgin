@@ -237,13 +237,14 @@ pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle)
 		gtk_widget_show(to_toggle);
 }
 
-void pidgin_separator(GtkWidget *menu)
+GtkWidget *pidgin_separator(GtkWidget *menu)
 {
 	GtkWidget *menuitem;
 
 	menuitem = gtk_separator_menu_item_new();
 	gtk_widget_show(menuitem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	return menuitem;
 }
 
 GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str)
@@ -944,6 +945,15 @@ pidgin_load_accels()
 	                            "accels", NULL);
 	gtk_accel_map_load(filename);
 	g_free(filename);
+}
+
+void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name)
+{
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	purple_notify_userinfo(conn, name, info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
+	serv_get_info(conn, name);
 }
 
 gboolean
@@ -1696,62 +1706,61 @@ menu_action_cb(GtkMenuItem *item, gpointer object)
 		callback(object, data);
 }
 
-void
+GtkWidget *
 pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
                             gpointer object)
 {
-	if (act == NULL) {
-		pidgin_separator(menu);
-	} else {
-		GtkWidget *menuitem;
+	GtkWidget *menuitem;
+	if (act == NULL)
+		return pidgin_separator(menu);
 
-		if (act->children == NULL) {
-			menuitem = gtk_menu_item_new_with_mnemonic(act->label);
+	if (act->children == NULL) {
+		menuitem = gtk_menu_item_new_with_mnemonic(act->label);
 
-			if (act->callback != NULL) {
-				g_object_set_data(G_OBJECT(menuitem),
-				                  "purplecallback",
-				                  act->callback);
-				g_object_set_data(G_OBJECT(menuitem),
-				                  "purplecallbackdata",
-				                  act->data);
-				g_signal_connect(G_OBJECT(menuitem), "activate",
-				                 G_CALLBACK(menu_action_cb),
-				                 object);
-			} else {
-				gtk_widget_set_sensitive(menuitem, FALSE);
-			}
-
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+		if (act->callback != NULL) {
+			g_object_set_data(G_OBJECT(menuitem),
+							  "purplecallback",
+							  act->callback);
+			g_object_set_data(G_OBJECT(menuitem),
+							  "purplecallbackdata",
+							  act->data);
+			g_signal_connect(G_OBJECT(menuitem), "activate",
+							 G_CALLBACK(menu_action_cb),
+							 object);
 		} else {
-			GList *l = NULL;
-			GtkWidget *submenu = NULL;
-			GtkAccelGroup *group;
-
-			menuitem = gtk_menu_item_new_with_mnemonic(act->label);
-			gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
-
-			submenu = gtk_menu_new();
-			gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
-
-			group = gtk_menu_get_accel_group(GTK_MENU(menu));
-			if (group) {
-				char *path = g_strdup_printf("%s/%s", GTK_MENU_ITEM(menuitem)->accel_path, act->label);
-				gtk_menu_set_accel_path(GTK_MENU(submenu), path);
-				g_free(path);
-				gtk_menu_set_accel_group(GTK_MENU(submenu), group);
-			}
-
-			for (l = act->children; l; l = l->next) {
-				PurpleMenuAction *act = (PurpleMenuAction *)l->data;
-
-				pidgin_append_menu_action(submenu, act, object);
-			}
-			g_list_free(act->children);
-			act->children = NULL;
+			gtk_widget_set_sensitive(menuitem, FALSE);
 		}
-		purple_menu_action_free(act);
+
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	} else {
+		GList *l = NULL;
+		GtkWidget *submenu = NULL;
+		GtkAccelGroup *group;
+
+		menuitem = gtk_menu_item_new_with_mnemonic(act->label);
+		gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+
+		submenu = gtk_menu_new();
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(menuitem), submenu);
+
+		group = gtk_menu_get_accel_group(GTK_MENU(menu));
+		if (group) {
+			char *path = g_strdup_printf("%s/%s", GTK_MENU_ITEM(menuitem)->accel_path, act->label);
+			gtk_menu_set_accel_path(GTK_MENU(submenu), path);
+			g_free(path);
+			gtk_menu_set_accel_group(GTK_MENU(submenu), group);
+		}
+
+		for (l = act->children; l; l = l->next) {
+			PurpleMenuAction *act = (PurpleMenuAction *)l->data;
+
+			pidgin_append_menu_action(submenu, act, object);
+		}
+		g_list_free(act->children);
+		act->children = NULL;
 	}
+	purple_menu_action_free(act);
+	return menuitem;
 }
 
 #if GTK_CHECK_VERSION(2,3,0)
