@@ -3180,7 +3180,7 @@ update_typing_icon(PidginConversation *gtkconv)
 		stock_id = PIDGIN_STOCK_ANIMATION_TYPING1;
 		tooltip = _("User is typing...");
 	} else {
-		stock_id = PIDGIN_STOCK_ANIMATION_TYPING0;
+		stock_id = PIDGIN_STOCK_ANIMATION_TYPING5;
 		tooltip = _("User has typed something and stopped");
 		g_source_remove(gtkconv->u.im->typing_timer);
 		gtkconv->u.im->typing_timer = 0;
@@ -7713,6 +7713,11 @@ before_switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		return;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
+
+	if (gtkconv->u.im->typing_timer != 0) {
+		g_source_remove(gtkconv->u.im->typing_timer);
+		gtkconv->u.im->typing_timer = 0;
+	}
 
 	stop_anim(NULL, gtkconv);
 }

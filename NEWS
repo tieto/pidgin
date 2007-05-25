@@ -1,5 +1,41 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.0.1 (5/24/2007):
+	Sean: 2.0.1! Three weeks later, as scheduled! It is so nice to have
+	regular, frequent, releases again! This is a bugfix release; We have
+	fixed over 100 issues reported to us at http://developer.pidgin.im.
+	Thanks to everyone for their great work, and look for the next release
+	in another three weeks!
+
+	Stu: Lots'o'fixes in this. I don't know how you users find so many
+	things for us to fix. 24 hours in a day (sadly). 24 is divisible by the
+	sum of its digits and by their product. It is the smallest composite
+	number, the product of whose divisors is a cube.
+
+	Luke: I requested that we have a bug fix release, and so we have!
+	Many, though unfortunately not all, of the reports that have been
+	submitted to us since 2.0.0 have been fixed now, and so you should
+	all have a much more stable experience with this release.  I also
+	want to thank the many users who have resubmitted their reports
+	as we close out the old Source Forge bug tracker.  If all goes well,
+	your report will get the attention it deserves as we continue to
+	work on Pidgin, Finch, and libpurple.
+
+	Nathan: A ton of fixes have gone into this release.  The feedback
+	we've gotten on 2.0.0 has been incredible.  Hopefully we've resolved
+	most of the critical issues with 2.0.1.  If we haven't, I'm sure
+	our wonderful users will let us hear about it.  I seem to be
+	forgetting something...oh, right, I haven't promised any cool new
+	features in the next release!  So, I promise at least one cool new
+	feature in the next release...you just might have to adjust your
+	definition of 'cool' to get it.
+
+	Etan: Perl plugins now have access to almost all of the savedstatus
+	API functions. I also removed a couple of the preferences from the
+	Pidgin GTK+ Theme Control plugin which should help many of the people
+	for whom the configuration dialog size was a problem. The removed
+	preferences no longer had the effects they were added to have anyway.
+
 2.0.0 (5/3/2007):
 	Sean: 2.0.0! It's real exciting to finally release Pidgin 2.0.0! I'm
 	really proud of all the work we've all done. I'm pumped. And, while

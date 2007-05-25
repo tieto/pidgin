@@ -1089,10 +1089,20 @@ static void irc_msg_handle_privmsg(struct irc_conn *irc, const char *name, const
 void irc_msg_regonly(struct irc_conn *irc, const char *name, const char *from, char **args)
 {
 	PurpleConnection *gc = purple_account_get_connection(irc->account);
+	PurpleConversation *convo;
 	char *msg;
 
 	if (!args || !args[1] || !args[2] || !gc)
 		return;
+
+	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, args[1], irc->account);
+	if (convo) {
+		/* This is a channel we're already in; for some reason,
+		 * freenode feels the need to notify us that in some
+		 * hypothetical other situation this might not have
+		 * succeeded.  Suppress that. */
+		return;
+	}
 
 	msg = g_strdup_printf(_("Cannot join %s: Registration is required."), args[1]);
 	purple_notify_error(gc, _("Cannot join channel"), msg, args[2]);

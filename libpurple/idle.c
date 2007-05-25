@@ -102,9 +102,8 @@ static gint time_until_next_idle_event;
  * should be set.
  *
  * There is no harm to calling this many many times, other than
- * it will be kinda slow.  This is called every 5 seconds by a
- * timer set when Purple starts.  It is also called when
- * you send an IM, a chat, etc.
+ * it will be kinda slow.  This is called by a timer set when
+ * Purple starts.  It is also called when you send an IM, a chat, etc.
  *
  * This function has 3 sections.
  * 1. Get your idle time.  It will query XScreenSaver or Windows
