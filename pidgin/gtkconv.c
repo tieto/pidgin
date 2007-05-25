@@ -673,14 +673,8 @@ info_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	PurpleConversation *conv = gtkconv->active_conv;
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-		PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-		purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
-		purple_notify_userinfo(conv->account->gc, purple_conversation_get_name(conv), info, NULL, NULL);
-		purple_notify_user_info_destroy(info);
-
-		serv_get_info(purple_conversation_get_gc(conv),
+		pidgin_retrieve_user_info(purple_conversation_get_gc(conv),
 					  purple_conversation_get_name(conv));
-
 		gtk_widget_grab_focus(gtkconv->entry);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		/* Get info of the person currently selected in the GtkTreeView */
@@ -2928,10 +2922,65 @@ regenerate_options_items(PidginWindow *win)
 	gtk_widget_show_all(menu);
 }
 
+static void
+remove_from_list(GtkWidget *widget, PidginWindow *win)
+{
+	GList *list = g_object_get_data(G_OBJECT(win->window), "plugin-actions");
+	list = g_list_remove(list, widget);
+	g_object_set_data(G_OBJECT(win->window), "plugin-actions", list);
+}
+
+static void
+regenerate_plugins_items(PidginWindow *win)
+{
+	GList *action_items;
+	GtkWidget *menu;
+	GList *list;
+	PidginConversation *gtkconv;
+	PurpleConversation *conv;
+	GtkWidget *item;
+
+	if (win->window == NULL || win == hidden_convwin)
+		return;
+
+	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	if (gtkconv == NULL)
+		return;
+
+	conv = gtkconv->active_conv;
+	action_items = g_object_get_data(G_OBJECT(win->window), "plugin-actions");
+
+	/* Remove the old menuitems */
+	while (action_items) {
+		g_signal_handlers_disconnect_by_func(G_OBJECT(action_items->data),
+					G_CALLBACK(remove_from_list), win);
+		gtk_widget_destroy(action_items->data);
+		action_items = g_list_delete_link(action_items, action_items);
+	}
+
+	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Options"));
+
+	list = purple_conversation_get_extended_menu(conv);
+	if (list) {
+		action_items = g_list_prepend(NULL, (item = pidgin_separator(menu)));
+		g_signal_connect(G_OBJECT(item), "destroy", G_CALLBACK(remove_from_list), win);
+	}
+
+	for(; list; list = g_list_delete_link(list, list)) {
+		PurpleMenuAction *act = (PurpleMenuAction *) list->data;
+		item = pidgin_append_menu_action(menu, act, conv);
+		action_items = g_list_prepend(action_items, item);
+		gtk_widget_show_all(item);
+		g_signal_connect(G_OBJECT(item), "destroy", G_CALLBACK(remove_from_list), win);
+	}
+	g_object_set_data(G_OBJECT(win->window), "plugin-actions", action_items);
+}
+
 static void menubar_activated(GtkWidget *item, gpointer data)
 {
 	PidginWindow *win = data;
 	regenerate_options_items(win);
+	regenerate_plugins_items(win);
 
 	/* The following are to make sure the 'More' submenu is not regenerated every time
 	 * the focus shifts from 'Conversations' to some other menu and back. */
@@ -4206,10 +4255,10 @@ setup_chat_pane(PidginConversation *gtkconv)
 	                               &imhtml_sw_hscroll, NULL);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
 	                               imhtml_sw_hscroll, GTK_POLICY_ALWAYS);
-
 	gtk_widget_set_size_request(gtkconv->imhtml,
 			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/default_width"),
 			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/default_height"));
+
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "size-allocate",
 					 G_CALLBACK(size_allocate_cb), gtkconv);
 
@@ -4389,6 +4438,7 @@ setup_im_pane(PidginConversation *gtkconv)
 	gtk_widget_set_size_request(gtkconv->imhtml,
 			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_width"),
 			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_height"));
+
 	g_signal_connect(G_OBJECT(gtkconv->imhtml), "size-allocate",
 	                 G_CALLBACK(size_allocate_cb), gtkconv);
 
@@ -7964,6 +8014,7 @@ switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 
 	generate_send_to_items(win);
 	regenerate_options_items(win);
+	regenerate_plugins_items(win);
 
 	pidgin_conv_switch_active_conversation(conv);
 
@@ -8032,6 +8083,12 @@ create_icon_lists(GtkWidget *w)
 	offline_list = make_status_icon_list(PIDGIN_STOCK_STATUS_OFFLINE, w);
 	away_list = make_status_icon_list(PIDGIN_STOCK_STATUS_AWAY, w);
 	prpl_lists = g_hash_table_new(g_str_hash, g_str_equal);
+}
+
+static void
+plugin_changed_cb(PurplePlugin *p, gpointer data)
+{
+	regenerate_plugins_items(data);
 }
 
 PidginWindow *
@@ -8108,6 +8165,13 @@ pidgin_conv_window_new()
 
 	gtk_widget_show(testidea);
 
+	/* Update the plugin actions when plugins are (un)loaded */
+	purple_signal_connect(purple_plugins_get_handle(), "plugin-load",
+			win, PURPLE_CALLBACK(plugin_changed_cb), win);
+	purple_signal_connect(purple_plugins_get_handle(), "plugin-unload",
+			win, PURPLE_CALLBACK(plugin_changed_cb), win);
+
+
 #ifdef _WIN32
 	g_signal_connect(G_OBJECT(win->window), "show",
 	                 G_CALLBACK(winpidgin_ensure_onscreen), win->window);
@@ -8147,6 +8211,7 @@ pidgin_conv_window_destroy(PidginWindow *win)
 	g_object_unref(G_OBJECT(win->menu.item_factory));
 
 	purple_notify_close_with_handle(win);
+	purple_signals_disconnect_by_handle(win);
 
 	g_free(win);
 }
