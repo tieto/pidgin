@@ -4164,45 +4164,17 @@ static void resize_imhtml_cb(PidginConversation *gtkconv)
 	}
 }
 
-static GtkWidget *
-setup_chat_pane(PidginConversation *gtkconv)
+static void
+setup_chat_topic(PidginConversation *gtkconv, GtkWidget *vbox)
 {
-	PurplePluginProtocolInfo *prpl_info;
 	PurpleConversation *conv = gtkconv->active_conv;
-	PidginChatPane *gtkchat;
-	PurpleConnection *gc;
-	GtkWidget *vpaned, *hpaned;
-	GtkWidget *vbox, *hbox, *frame;
-	GtkWidget *imhtml_sw;
-	GtkPolicyType imhtml_sw_hscroll;
-	GtkWidget *lbox;
-	GtkWidget *label;
-	GtkWidget *list;
-	GtkWidget *sw;
-	GtkListStore *ls;
-	GtkCellRenderer *rend;
-	GtkTreeViewColumn *col;
-	void *blist_handle = purple_blist_get_handle();
-	GList *focus_chain = NULL;
-	int ul_width;
-
-	gtkchat = gtkconv->u.chat;
-	gc      = purple_conversation_get_gc(conv);
-	g_return_val_if_fail(gc != NULL, NULL);
-	g_return_val_if_fail(gc->prpl != NULL, NULL);
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-	/* Setup the outer pane. */
-	vpaned = gtk_vpaned_new();
-	gtk_widget_show(vpaned);
-
-	/* Setup the top part of the pane. */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_paned_pack1(GTK_PANED(vpaned), vbox, TRUE, TRUE);
-	gtk_widget_show(vbox);
-
+	PurpleConnection *gc = purple_conversation_get_gc(conv);
+	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 	if (prpl_info->options & OPT_PROTO_CHAT_TOPIC)
 	{
+		GtkWidget *hbox, *label;
+		PidginChatPane *gtkchat = gtkconv->u.chat;
+		
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
 		gtk_widget_show(hbox);
@@ -4223,35 +4195,19 @@ setup_chat_pane(PidginConversation *gtkconv)
 		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 0);
 		gtk_widget_show(gtkchat->topic_text);
 	}
+}
 
-	/* Setup the horizontal pane. */
-	hpaned = gtk_hpaned_new();
-	gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
-	gtk_widget_show(hpaned);
-
-	/* Setup gtkihmtml. */
-	frame = pidgin_create_imhtml(FALSE, &gtkconv->imhtml, NULL, &imhtml_sw);
-	gtk_widget_set_name(gtkconv->imhtml, "pidgin_conv_imhtml");
-	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml), TRUE);
-	gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
-	gtk_widget_show(frame);
-	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
-	                               &imhtml_sw_hscroll, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
-	                               imhtml_sw_hscroll, GTK_POLICY_ALWAYS);
-	gtk_widget_set_size_request(gtkconv->imhtml,
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/default_width"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/default_height"));
-
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "size-allocate",
-					 G_CALLBACK(size_allocate_cb), gtkconv);
-
-	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
-						   G_CALLBACK(entry_stop_rclick_cb), NULL);
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_press_event",
-						   G_CALLBACK(refocus_entry_cb), gtkconv);
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_release_event",
-						   G_CALLBACK(refocus_entry_cb), gtkconv);
+static void
+setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
+{
+	PidginChatPane *gtkchat = gtkconv->u.chat;
+	GtkWidget *lbox, *sw, *list;
+	GtkListStore *ls;
+	GtkCellRenderer *rend;
+	GtkTreeViewColumn *col;
+	int ul_width;
+	void *blist_handle = purple_blist_get_handle();
+	PurpleConversation *conv = gtkconv->active_conv;
 
 	/* Build the right pane. */
 	lbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -4299,9 +4255,7 @@ setup_chat_pane(PidginConversation *gtkconv)
 			 G_CALLBACK(gtkconv_chat_popup_menu_cb), gtkconv);
 	g_signal_connect(G_OBJECT(lbox), "size-allocate", G_CALLBACK(lbox_size_allocate_cb), gtkconv);
 
-
 	rend = gtk_cell_renderer_text_new();
-
 	g_object_set(rend,
 				 "foreground-set", TRUE,
 				 "weight-set", TRUE,
@@ -4332,10 +4286,72 @@ setup_chat_pane(PidginConversation *gtkconv)
 	gtkchat->list = list;
 
 	gtk_container_add(GTK_CONTAINER(sw), list);
+}
+
+static GtkWidget *
+setup_common_pane(PidginConversation *gtkconv)
+{
+	GtkWidget *paned, *vbox, *frame, *imhtml_sw;
+	PurpleConversation *conv = gtkconv->active_conv;
+	gboolean chat = (conv->type == PURPLE_CONV_TYPE_CHAT);
+	GtkPolicyType imhtml_sw_hscroll;
+
+	paned = gtk_vpaned_new();
+	gtk_widget_show(paned);
+
+	/* Setup the top part of the pane */
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_paned_pack1(GTK_PANED(paned), vbox, TRUE, TRUE);
+	gtk_widget_show(vbox);
+
+	/* Setup the gtkimhtml widget */
+	frame = pidgin_create_imhtml(FALSE, &gtkconv->imhtml, NULL, &imhtml_sw);
+	if (chat) {
+		GtkWidget *hpaned;
+
+		/* Add the topic */
+		setup_chat_topic(gtkconv, vbox);
+
+		/* Add the gtkimhtml frame */
+		hpaned = gtk_hpaned_new();
+		gtk_box_pack_start(GTK_BOX(vbox), hpaned, TRUE, TRUE, 0);
+		gtk_widget_show(hpaned);
+		gtk_paned_pack1(GTK_PANED(hpaned), frame, TRUE, TRUE);
+
+		/* Now add the userlist */
+		setup_chat_userlist(gtkconv, hpaned);
+	} else {
+		gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
+	}
+	gtk_widget_show(frame);
+
+	gtk_widget_set_name(gtkconv->imhtml, "pidgin_conv_imhtml");
+	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),TRUE);
+
+	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
+	                               &imhtml_sw_hscroll, NULL);
+	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
+	                               imhtml_sw_hscroll, GTK_POLICY_ALWAYS);
+
+	gtk_widget_set_size_request(gtkconv->imhtml,
+			chat ? purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/default_width") :
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_width"),
+			chat ? purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/default_height") :
+			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_height"));
+
+	g_signal_connect(G_OBJECT(gtkconv->imhtml), "size-allocate",
+	                 G_CALLBACK(size_allocate_cb), gtkconv);
+
+	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
+	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
+	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_press_event",
+	                 G_CALLBACK(refocus_entry_cb), gtkconv);
+	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_release_event",
+	                 G_CALLBACK(refocus_entry_cb), gtkconv);
 
 	/* Setup the bottom half of the conversation window */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_paned_pack2(GTK_PANED(vpaned), vbox, FALSE, TRUE);
+	gtk_paned_pack2(GTK_PANED(paned), vbox, FALSE, TRUE);
 	gtk_widget_show(vbox);
 
 	gtkconv->lower_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
@@ -4351,118 +4367,15 @@ setup_chat_pane(PidginConversation *gtkconv)
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 	gtk_widget_show(frame);
 
-	g_signal_connect(G_OBJECT(gtkconv->entry), "populate-popup",
-					 G_CALLBACK(entry_popup_menu_cb), gtkconv);
-
 	gtk_widget_set_name(gtkconv->entry, "pidgin_conv_entry");
 	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
-								 purple_account_get_protocol_name(conv->account));
+			purple_account_get_protocol_name(conv->account));
 	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/entry_height"));
-	gtkconv->entry_buffer =
-		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
-	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", gtkconv);
-	g_signal_connect_swapped(G_OBJECT(gtkconv->entry_buffer), "changed",
-                                 G_CALLBACK(resize_imhtml_cb), gtkconv);
-
-	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
-	                 G_CALLBACK(entry_key_press_cb), gtkconv);
-	g_signal_connect_after(G_OBJECT(gtkconv->entry), "message_send",
-	                       G_CALLBACK(send_cb), gtkconv);
-	g_signal_connect_after(G_OBJECT(gtkconv->entry), "button_press_event",
-	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
-	g_signal_connect(G_OBJECT(gtkconv->lower_hbox), "size-allocate",
-	                 G_CALLBACK(size_allocate_cb), gtkconv);
-
-	default_formatize(gtkconv);
-
-	/*
-	 * Focus for chat windows should be as follows:
-	 * Tab title -> chat topic -> conversation scrollback -> user list ->
-	 *   user list buttons -> entry -> buttons at bottom
-	 */
-	focus_chain = g_list_prepend(focus_chain, gtkconv->entry);
-	gtk_container_set_focus_chain(GTK_CONTAINER(vbox), focus_chain);
-
-	return vpaned;
-}
-
-static GtkWidget *
-setup_im_pane(PidginConversation *gtkconv)
-{
-	PurpleConversation *conv = gtkconv->active_conv;
-	GtkWidget *frame;
-	GtkWidget *imhtml_sw;
-	GtkPolicyType imhtml_sw_hscroll;
-	GtkWidget *paned;
-	GtkWidget *vbox;
-	GtkWidget *vbox2;
-	GList *focus_chain = NULL;
-
-	/* Setup the outer pane */
-	paned = gtk_vpaned_new();
-	gtk_widget_show(paned);
-
-	/* Setup the top part of the pane */
-	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_paned_pack1(GTK_PANED(paned), vbox, TRUE, TRUE);
-	gtk_widget_show(vbox);
-
-	/* Setup the gtkimhtml widget */
-	frame = pidgin_create_imhtml(FALSE, &gtkconv->imhtml, NULL, &imhtml_sw);
-	gtk_widget_set_name(gtkconv->imhtml, "pidgin_conv_imhtml");
-	gtk_imhtml_show_comments(GTK_IMHTML(gtkconv->imhtml),TRUE);
-	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
-	gtk_widget_show(frame);
-	gtk_scrolled_window_get_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
-	                               &imhtml_sw_hscroll, NULL);
-	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(imhtml_sw),
-	                               imhtml_sw_hscroll, GTK_POLICY_ALWAYS);
-
-	gtk_widget_set_size_request(gtkconv->imhtml,
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_width"),
-			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/default_height"));
-
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "size-allocate",
-	                 G_CALLBACK(size_allocate_cb), gtkconv);
-
-	g_signal_connect_after(G_OBJECT(gtkconv->imhtml), "button_press_event",
-	                       G_CALLBACK(entry_stop_rclick_cb), NULL);
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_press_event",
-	                 G_CALLBACK(refocus_entry_cb), gtkconv);
-	g_signal_connect(G_OBJECT(gtkconv->imhtml), "key_release_event",
-	                 G_CALLBACK(refocus_entry_cb), gtkconv);
-
-	/* Setup the bottom half of the conversation window */
-	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_paned_pack2(GTK_PANED(paned), vbox2, FALSE, TRUE);
-	gtk_widget_show(vbox2);
-
-	gtkconv->lower_hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox2), gtkconv->lower_hbox, TRUE, TRUE, 0);
-	gtk_widget_show(gtkconv->lower_hbox);
-
-	vbox2 = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_end(GTK_BOX(gtkconv->lower_hbox), vbox2, TRUE, TRUE, 0);
-	gtk_widget_show(vbox2);
-
-	/* Setup the toolbar, entry widget and all signals */
-	frame = pidgin_create_imhtml(TRUE, &gtkconv->entry, &gtkconv->toolbar, NULL);
-	gtk_box_pack_start(GTK_BOX(vbox2), frame, TRUE, TRUE, 0);
-	gtk_widget_show(frame);
-
-	g_signal_connect(G_OBJECT(gtkconv->entry), "populate-popup",
-					 G_CALLBACK(entry_popup_menu_cb), gtkconv);
-
-	gtk_widget_set_name(gtkconv->entry, "pidgin_conv_entry");
-	gtk_imhtml_set_protocol_name(GTK_IMHTML(gtkconv->entry),
-								 purple_account_get_protocol_name(conv->account));
-	gtk_widget_set_size_request(gtkconv->lower_hbox, -1,
+			chat ? purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/chat/entry_height") :
 			purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/im/entry_height"));
-	gtkconv->entry_buffer =
-		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
-	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", gtkconv);
 
+	g_signal_connect(G_OBJECT(gtkconv->entry), "populate-popup",
+	                 G_CALLBACK(entry_popup_menu_cb), gtkconv);
 	g_signal_connect(G_OBJECT(gtkconv->entry), "key_press_event",
 	                 G_CALLBACK(entry_key_press_cb), gtkconv);
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "message_send",
@@ -4472,32 +4385,28 @@ setup_im_pane(PidginConversation *gtkconv)
 	g_signal_connect(G_OBJECT(gtkconv->lower_hbox), "size-allocate",
 	                 G_CALLBACK(size_allocate_cb), gtkconv);
 
-	g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "insert_text",
-	                 G_CALLBACK(insert_text_cb), gtkconv);
-	g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "delete_range",
-	                 G_CALLBACK(delete_text_cb), gtkconv);
+	gtkconv->entry_buffer =
+		gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtkconv->entry));
+	g_object_set_data(G_OBJECT(gtkconv->entry_buffer), "user_data", gtkconv);
+
+	if (!chat) {
+		/* For sending typing notifications for IMs */
+		g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "insert_text",
+						 G_CALLBACK(insert_text_cb), gtkconv);
+		g_signal_connect(G_OBJECT(gtkconv->entry_buffer), "delete_range",
+						 G_CALLBACK(delete_text_cb), gtkconv);
+		gtkconv->u.im->typing_timer = 0;
+		gtkconv->u.im->animate = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/animate_buddy_icons");
+		gtkconv->u.im->show_icon = TRUE;
+	}
+
 	g_signal_connect_swapped(G_OBJECT(gtkconv->entry_buffer), "changed",
 				 G_CALLBACK(resize_imhtml_cb), gtkconv);
 
-	/* had to move this after the imtoolbar is attached so that the
-	 * signals get fired to toggle the buttons on the toolbar as well.
-	 */
 	default_formatize(gtkconv);
-
 	g_signal_connect_after(G_OBJECT(gtkconv->entry), "format_function_clear",
-						   G_CALLBACK(clear_formatting_cb), gtkconv);
+	                       G_CALLBACK(clear_formatting_cb), gtkconv);
 
-	gtkconv->u.im->animate = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/im/animate_buddy_icons");
-	gtkconv->u.im->show_icon = TRUE;
-
-	/*
-	 * Focus for IM windows should be as follows:
-	 * Tab title -> conversation scrollback -> entry
-	 */
-	focus_chain = g_list_prepend(focus_chain, gtkconv->entry);
-	gtk_container_set_focus_chain(GTK_CONTAINER(vbox2), focus_chain);
-
-	gtkconv->u.im->typing_timer = 0;
 	return paned;
 }
 
@@ -4693,12 +4602,10 @@ private_gtkconv_new(PurpleConversation *conv, gboolean hidden)
 
 	if (conv_type == PURPLE_CONV_TYPE_IM) {
 		gtkconv->u.im = g_malloc0(sizeof(PidginImPane));
-
-		pane = setup_im_pane(gtkconv);
 	} else if (conv_type == PURPLE_CONV_TYPE_CHAT) {
 		gtkconv->u.chat = g_malloc0(sizeof(PidginChatPane));
-		pane = setup_chat_pane(gtkconv);
 	}
+	pane = setup_common_pane(gtkconv);
 
 	gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->imhtml),
 			gtk_imhtml_get_format_functions(GTK_IMHTML(gtkconv->imhtml)) | GTK_IMHTML_IMAGE);
