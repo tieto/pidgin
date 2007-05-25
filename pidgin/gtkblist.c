@@ -3820,15 +3820,17 @@ account_status_changed(PurpleAccount *account, PurpleStatus *old,
 static gboolean
 gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, PidginBuddyList *gtkblist)
 {
-	GtkWidget *imhtml;
+	GtkWidget *widget;
 
 	if (!gtkblist)
 		return FALSE;
 
-	imhtml = gtk_window_get_focus(GTK_WINDOW(gtkblist->window));
+	widget = gtk_window_get_focus(GTK_WINDOW(gtkblist->window));
 
-	if (GTK_IS_IMHTML(imhtml) && gtk_bindings_activate(GTK_OBJECT(imhtml), event->keyval, event->state))
-		return TRUE;
+	if (GTK_IS_IMHTML(widget) || GTK_IS_ENTRY(widget)) {
+		if (gtk_bindings_activate(GTK_OBJECT(widget), event->keyval, event->state))
+			return TRUE;
+	}
 	return FALSE;
 }
 
