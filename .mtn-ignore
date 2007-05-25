@@ -5,6 +5,7 @@
 .*/perl/common/blib.*
 .*/perl/common/pm_to_blib$
 .*\.bs$
+.*\.def$
 .*\.dll$
 .*\.exe$
 intltool-.*
@@ -30,7 +31,7 @@ pidgin.desktop$
 pidgin.spec$
 pidgin-.*.tar.gz
 pidgin-.*.tar.bz2
-pidgin/pidgin
+pidgin/pidgin$
 pidgin/plugins/musicmessaging/music-messaging-bindings.c
 pidgin/plugins/perl/common/Makefile.PL$
 pidgin/win32/pidgin_dll_rc.rc$
@@ -50,7 +51,7 @@ libpurple/purple-client-bindings.c
 libpurple/purple-client-bindings.h
 libpurple/purple-client-example
 libpurple/tests/check_libpurple
-libpurple/version.h
+libpurple/version.h$
 libpurple/win32/libpurplerc.rc$
 libtool
 local.mak
