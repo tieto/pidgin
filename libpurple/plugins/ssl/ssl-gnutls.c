@@ -24,12 +24,14 @@
 #include "plugin.h"
 #include "sslconn.h"
 #include "version.h"
+#include "util.h"
 
 #define SSL_GNUTLS_PLUGIN_ID "ssl-gnutls"
 
 #ifdef HAVE_GNUTLS
 
 #include <gnutls/gnutls.h>
+#include <gnutls/x509.h>
 
 typedef struct
 {
@@ -94,6 +96,67 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 	} else {
 		purple_debug_info("gnutls", "Handshake complete\n");
 
+		{
+		  const gnutls_datum_t *cert_list;
+		  unsigned int cert_list_size = 0;
+		  gnutls_session_t session=gnutls_data->session;
+		  
+		  cert_list =
+		    gnutls_certificate_get_peers(session, &cert_list_size);
+		  
+		  purple_debug_info("gnutls",
+				    "Peer provided %d certs\n",
+				    cert_list_size);
+		  int i;
+		  for (i=0; i<cert_list_size; i++)
+		    {
+		      gchar fpr_bin[256];
+		      gsize fpr_bin_sz = sizeof(fpr_bin);
+		      gchar * fpr_asc = NULL;
+		      gchar tbuf[256];
+		      gsize tsz=sizeof(tbuf);
+		      gchar * tasc = NULL;
+		      gnutls_x509_crt_t cert;
+		      
+		      gnutls_x509_crt_init(&cert);
+		      gnutls_x509_crt_import (cert, &cert_list[i],
+					      GNUTLS_X509_FMT_DER);
+		      
+		      gnutls_x509_crt_get_fingerprint(cert, GNUTLS_MAC_SHA,
+						      fpr_bin, &fpr_bin_sz);
+		      
+		      fpr_asc =
+			purple_base16_encode_chunked(fpr_bin,fpr_bin_sz);
+		      
+		      purple_debug_info("gnutls", 
+					"Lvl %d SHA1 fingerprint: %s\n",
+					i, fpr_asc);
+		      
+		      tsz=sizeof(tbuf);
+		      gnutls_x509_crt_get_serial(cert,tbuf,&tsz);
+		      tasc=
+			purple_base16_encode_chunked(tbuf, tsz);
+		      purple_debug_info("gnutls",
+					"Serial: %s\n",
+					tasc);
+		      g_free(tasc);
+
+		      tsz=sizeof(tbuf);
+		      gnutls_x509_crt_get_dn (cert, tbuf, &tsz);
+		      purple_debug_info("gnutls",
+					"Cert DN: %s\n",
+					tbuf);
+		      tsz=sizeof(tbuf);
+		      gnutls_x509_crt_get_issuer_dn (cert, tbuf, &tsz);
+		      purple_debug_info("gnutls",
+					"Cert Issuer DN: %s\n",
+					tbuf);
+
+		      g_free(fpr_asc); fpr_asc = NULL;
+		      gnutls_x509_crt_deinit(cert);
+		    }
+		  
+		}
 		gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
 	}
 
