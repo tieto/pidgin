@@ -3,7 +3,7 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 2.0.1 (5/24/2007):
 	Sean: 2.0.1! Three weeks later, as scheduled! It is so nice to have
 	regular, frequent, releases again! This is a bugfix release; We have
-	fixed over 100 issues reported to us at http://developer.pidgin.im.
+ 	fixed over 100 issues reported to us at http://developer.pidgin.im.
 	Thanks to everyone for their great work, and look for the next release
 	in another three weeks!
 
@@ -11,6 +11,15 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	things for us to fix. 24 hours in a day (sadly). 24 is divisible by the
 	sum of its digits and by their product. It is the smallest composite
 	number, the product of whose divisors is a cube.
+
+	Luke: I requested that we have a bug fix release, and so we have!
+	Many, though unfortunately not all, of the reports that have been
+	submitted to us since 2.0.0 have been fixed now, and so you should
+	all have a much more stable experience with this release.  I also
+	want to thank the many users who have resubmitted their reports
+	as we close out the old Source Forge bug tracker.  If all goes well,
+	your report will get the attention it deserves as we continue to
+	work on Pidgin, Finch, and libpurple.
 
 2.0.0 (5/3/2007):
 	Sean: 2.0.0! It's real exciting to finally release Pidgin 2.0.0! I'm
