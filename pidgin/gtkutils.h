@@ -414,8 +414,10 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive primitive, GtkWidget
  * @param menu    The menu to append to.
  * @param act     The PurpleMenuAction to append.
  * @param gobject The object to be passed to the action callback.
+ *
+ * @return   The menuitem added.
  */
-void pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
+GtkWidget *pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
                                  gpointer gobject);
 
 /**

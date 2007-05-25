@@ -9,6 +9,7 @@ version 2.1.0 (?/?/?):
 
 	Changed:
 	* pidgin_separator returns the separator added to the menu.
+	* pidgin_append_menu_action returns the menuitem added to the menu.
 
 	Signals - Added: (See the Doxygen docs for details on all signals.)
 	* "conversation-extended-menu"
