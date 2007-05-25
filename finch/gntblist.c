@@ -1876,9 +1876,10 @@ blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	const char *s1, *s2;
 	char *us1, *us2;
 	int ret;
-	
-	g_return_val_if_fail(n1->type == n2->type, -1);
-	
+
+	if (n1->type != n2->type)
+		return blist_node_compare_position(n1, n2);
+
 	switch (n1->type)
 	{
 		case PURPLE_BLIST_CHAT_NODE:
@@ -1911,7 +1912,8 @@ blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2)
 {
 	int ret;
 
-	g_return_val_if_fail(n1->type == n2->type, -1);
+	if (n1->type != n2->type)
+		return blist_node_compare_position(n1, n2);
 
 	switch (n1->type) {
 		case PURPLE_BLIST_CONTACT_NODE:
@@ -1955,7 +1957,8 @@ blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	int ret;
 	PurpleBuddy *b1, *b2;
 
-	g_return_val_if_fail(n1->type == n2->type, -1);
+	if (n1->type != n2->type)
+		return blist_node_compare_position(n1, n2);
 
 	switch (n1->type) {
 		case PURPLE_BLIST_BUDDY_NODE:
