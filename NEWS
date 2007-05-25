@@ -21,6 +21,21 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	your report will get the attention it deserves as we continue to
 	work on Pidgin, Finch, and libpurple.
 
+	Nathan: A ton of fixes have gone into this release.  The feedback
+	we've gotten on 2.0.0 has been incredible.  Hopefully we've resolved
+	most of the critical issues with 2.0.1.  If we haven't, I'm sure
+	our wonderful users will let us hear about it.  I seem to be
+	forgetting something...oh, right, I haven't promised any cool new
+	features in the next release!  So, I promise at least one cool new
+	feature in the next release...you just might have to adjust your
+	definition of 'cool' to get it.
+
+	Etan: Perl plugins now have access to almost all of the savedstatus
+	API functions. I also removed a couple of the preferences from the
+	Pidgin GTK+ Theme Control plugin which should help many of the people
+	for whom the configuration dialog size was a problem. The removed
+	preferences no longer had the effects they were added to have anyway.
+
 2.0.0 (5/3/2007):
 	Sean: 2.0.0! It's real exciting to finally release Pidgin 2.0.0! I'm
 	really proud of all the work we've all done. I'm pumped. And, while
