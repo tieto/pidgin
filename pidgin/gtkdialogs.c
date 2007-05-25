@@ -823,7 +823,7 @@ pidgin_dialogs_info_cb(gpointer data, PurpleRequestFields *fields)
 		found = pidgin_dialogs_ee(username);
 
 	if (!found && username != NULL && *username != '\0' && account != NULL)
-		serv_get_info(purple_account_get_connection(account), username);
+		pidgin_retrieve_user_info(purple_account_get_connection(account), username);
 
 	g_free(username);
 }

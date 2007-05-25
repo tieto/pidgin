@@ -237,13 +237,14 @@ pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle)
 		gtk_widget_show(to_toggle);
 }
 
-void pidgin_separator(GtkWidget *menu)
+GtkWidget *pidgin_separator(GtkWidget *menu)
 {
 	GtkWidget *menuitem;
 
 	menuitem = gtk_separator_menu_item_new();
 	gtk_widget_show(menuitem);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menu), menuitem);
+	return menuitem;
 }
 
 GtkWidget *pidgin_new_item(GtkWidget *menu, const char *str)
@@ -944,6 +945,15 @@ pidgin_load_accels()
 	                            "accels", NULL);
 	gtk_accel_map_load(filename);
 	g_free(filename);
+}
+
+void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name)
+{
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	purple_notify_userinfo(conn, name, info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
+	serv_get_info(conn, name);
 }
 
 gboolean

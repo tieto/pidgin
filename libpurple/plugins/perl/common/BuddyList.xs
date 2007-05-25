@@ -263,7 +263,7 @@ purple_blist_node_get_extended_menu(node)
 PREINIT:
 	GList *l;
 PPCODE:
-	for (l = purple_blist_node_get_extended_menu(node); l != NULL; l = l->next) {
+	for (l = purple_blist_node_get_extended_menu(node); l != NULL; l = g_list_delete_link(l, l)) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Menu::Action")));
 	}
 

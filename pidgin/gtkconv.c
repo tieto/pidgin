@@ -673,14 +673,8 @@ info_cb(GtkWidget *widget, PidginConversation *gtkconv)
 	PurpleConversation *conv = gtkconv->active_conv;
 
 	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
-		PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-		purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
-		purple_notify_userinfo(conv->account->gc, purple_conversation_get_name(conv), info, NULL, NULL);
-		purple_notify_user_info_destroy(info);
-
-		serv_get_info(purple_conversation_get_gc(conv),
+		pidgin_retrieve_user_info(purple_conversation_get_gc(conv),
 					  purple_conversation_get_name(conv));
-
 		gtk_widget_grab_focus(gtkconv->entry);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		/* Get info of the person currently selected in the GtkTreeView */
