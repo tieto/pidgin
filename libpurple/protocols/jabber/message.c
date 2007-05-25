@@ -544,7 +544,6 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	char *buf;
 	char *xhtml;
 	char *resource;
-	char *c;
 
 	if(!who || !msg)
 		return 0;
