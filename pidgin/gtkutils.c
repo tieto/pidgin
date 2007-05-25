@@ -495,6 +495,39 @@ pidgin_protocol_option_menu_item(GtkWidget *menu, GtkSizeGroup *sg, GtkWidget *i
 	return item;
 }
 
+static GdkPixbuf *
+pidgin_create_prpl_icon_from_prpl(PurplePlugin *prpl, PidginPrplIconSize size, PurpleAccount *account)
+{
+	PurplePluginProtocolInfo *prpl_info;
+	const char *protoname = NULL;
+	char buf[MAXPATHLEN];
+	char *filename = NULL;
+	GdkPixbuf *pixbuf;
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	if (prpl_info->list_icon == NULL)
+		return NULL;
+
+	protoname = prpl_info->list_icon(account, NULL);
+	if (protoname == NULL)
+		return NULL;
+
+	/*
+	 * Status icons will be themeable too, and then it will look up
+	 * protoname from the theme
+	 */
+	g_snprintf(buf, sizeof(buf), "%s.png", protoname);
+
+	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
+				    size == PIDGIN_PRPL_ICON_SMALL ? "16" :
+				    size == PIDGIN_PRPL_ICON_MEDIUM ? "22" : "48",
+				    buf, NULL);
+	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+
+	return pixbuf;
+}
+
 GtkWidget *
 pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 								  gpointer user_data)
@@ -508,8 +541,6 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 	GList *p;
 	GtkSizeGroup *sg;
 	char *filename;
-	const char *proto_name;
-	char buf[256];
 	int i, selected_index = -1;
 	const char *gtalk_name = NULL;
 
@@ -556,13 +587,7 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 		}
 
 		/* Load the image. */
-		proto_name = prpl_info->list_icon(NULL, NULL);
-		g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
-
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
-									"16", buf, NULL);
-		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		g_free(filename);
+		pixbuf = pidgin_create_prpl_icon_from_prpl(plugin, PIDGIN_PRPL_ICON_SMALL, NULL);
 
 		if (pixbuf)
 			image = gtk_image_new_from_pixbuf(pixbuf);
@@ -638,10 +663,7 @@ create_account_menu(GtkWidget *optmenu, PurpleAccount *default_account,
 	GtkWidget *label;
 	GdkPixbuf *pixbuf;
 	GList *list;
-	GList *p;
 	GtkSizeGroup *sg;
-	char *filename;
-	const char *proto_name;
 	char buf[256];
 	int i, selected_index = -1;
 
@@ -655,14 +677,12 @@ create_account_menu(GtkWidget *optmenu, PurpleAccount *default_account,
 
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
-	for (p = list, i = 0; p != NULL; p = p->next, i++) {
-		PurplePluginProtocolInfo *prpl_info = NULL;
-		PurplePlugin *plugin;
+	for (i = 0; list != NULL; list = list->next, i++) {
 
 		if (show_all)
-			account = (PurpleAccount *)p->data;
+			account = (PurpleAccount *)list->data;
 		else {
-			PurpleConnection *gc = (PurpleConnection *)p->data;
+			PurpleConnection *gc = (PurpleConnection *)list->data;
 
 			account = purple_connection_get_account(gc);
 		}
@@ -672,11 +692,6 @@ create_account_menu(GtkWidget *optmenu, PurpleAccount *default_account,
 			continue;
 		}
 
-		plugin = purple_find_prpl(purple_account_get_protocol_id(account));
-
-		if (plugin != NULL)
-			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
-
 		/* Create the item. */
 		item = gtk_menu_item_new();
 
@@ -685,27 +700,16 @@ create_account_menu(GtkWidget *optmenu, PurpleAccount *default_account,
 		gtk_container_add(GTK_CONTAINER(item), hbox);
 		gtk_widget_show(hbox);
 
-		/* Load the image. */
-		if (prpl_info != NULL) {
-			proto_name = prpl_info->list_icon(account, NULL);
-			g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
+		pixbuf = pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL);
 
-			filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
-			                            "16", buf, NULL);
-			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-			g_free(filename);
+		if (pixbuf != NULL) {
+			if (purple_account_is_disconnected(account) && show_all &&
+					purple_connections_get_all())
+				gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
 
-			if (pixbuf != NULL) {
-				if (purple_account_is_disconnected(account) && show_all &&
-						purple_connections_get_all())
-					gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
+			image = gtk_image_new_from_pixbuf(pixbuf);
 
-				image = gtk_image_new_from_pixbuf(pixbuf);
-
-				g_object_unref(G_OBJECT(pixbuf));
-			}
-			else
-				image = gtk_image_new();
+			g_object_unref(G_OBJECT(pixbuf));
 		}
 		else
 			image = gtk_image_new();
@@ -1652,45 +1656,17 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive prim, GtkWidget *w, 
 
 }
 
-
 GdkPixbuf *
 pidgin_create_prpl_icon(PurpleAccount *account, PidginPrplIconSize size)
 {
 	PurplePlugin *prpl;
-	PurplePluginProtocolInfo *prpl_info;
-	const char *protoname = NULL;
-	char buf[256]; /* TODO: We should use a define for max file length */
-	char *filename = NULL;
-	GdkPixbuf *pixbuf;
-
 	g_return_val_if_fail(account != NULL, NULL);
 
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 	if (prpl == NULL)
 		return NULL;
 
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
-	if (prpl_info->list_icon == NULL)
-		return NULL;
-
-	protoname = prpl_info->list_icon(account, NULL);
-	if (protoname == NULL)
-		return NULL;
-
-	/*
-	 * Status icons will be themeable too, and then it will look up
-	 * protoname from the theme
-	 */
-	g_snprintf(buf, sizeof(buf), "%s.png", protoname);
-
-	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
-				    size == PIDGIN_PRPL_ICON_SMALL ? "16" :
-				    size == PIDGIN_PRPL_ICON_MEDIUM ? "22" : "48",
-				    buf, NULL);
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	g_free(filename);
-
-	return pixbuf;
+	return pidgin_create_prpl_icon_from_prpl(prpl, size, account);
 }
 
 static void

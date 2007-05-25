@@ -2218,34 +2218,18 @@ delete_text_cb(GtkTextBuffer *textbuffer, GtkTextIter *start_pos,
 static GList *get_prpl_icon_list(PurpleAccount *account)
 {
 	GList *l = NULL;
-	GdkPixbuf *pixbuf;
-	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(account)));
-	const char *prpl = prpl_info->list_icon(account, NULL);
-	char *filename, *path;
-	l = g_hash_table_lookup(prpl_lists, prpl);
+	PurplePlugin *prpl = purple_find_prpl(purple_account_get_protocol_id(account));
+	PurplePluginProtocolInfo *prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+	const char *prplname = prpl_info->list_icon(account, NULL);
+	l = g_hash_table_lookup(prpl_lists, prplname);
 	if (l)
 		return l;
-	filename = g_strdup_printf("%s.png", prpl);
 
-	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "16", filename, NULL);
-	pixbuf = gdk_pixbuf_new_from_file(path, NULL);
-	if (pixbuf)
-		l = g_list_append(l, pixbuf);
-	g_free(path);
+	l = g_list_prepend(l, pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_LARGE));
+	l = g_list_prepend(l, pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_MEDIUM));
+	l = g_list_prepend(l, pidgin_create_prpl_icon(account, PIDGIN_PRPL_ICON_SMALL));
 
-	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "22", filename, NULL);
-        pixbuf = gdk_pixbuf_new_from_file(path, NULL);
-        if (pixbuf)
-                l = g_list_append(l, pixbuf);
-        g_free(path);
-
-	path = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "48", filename, NULL);
-        pixbuf = gdk_pixbuf_new_from_file(path, NULL);
-        if (pixbuf)
-                l = g_list_append(l, pixbuf);
-        g_free(path);
-
-	g_hash_table_insert(prpl_lists, g_strdup(prpl), l);
+	g_hash_table_insert(prpl_lists, g_strdup(prplname), l);
 	return l;
 }
 
