@@ -261,51 +261,6 @@ msn_session_get_swboard(MsnSession *session, const char *username,
 	return swboard;
 }
 
-/*setup the bnode, for MSN SOAP contact/address book op*/
-void 
-msn_session_set_bnode(MsnSession *session)
-{
-	PurpleBlistNode *gnode, *cnode, *bnode;
-	PurpleConnection *gc = purple_account_get_connection(session->account);
-
-	g_return_if_fail(gc != NULL);
-
-	/* The core used to use msn_add_buddy to add all buddies before
-	 * being logged in. This no longer happens, so we manually iterate
-	 * over the whole buddy list to identify sync issues. */
-	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next)
-	{
-		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
-			continue;
-		for(cnode = gnode->child; cnode; cnode = cnode->next) {
-			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
-				continue;
-			for(bnode = cnode->child; bnode; bnode = bnode->next) {
-				PurpleBuddy *b;
-				if(!PURPLE_BLIST_NODE_IS_BUDDY(bnode))
-					continue;
-				b = (PurpleBuddy *)bnode;
-				if(b->account == gc->account){
-					session->bnode = bnode;
-					return;
-				}
-			}
-		}
-	}
-	session->bnode = NULL;
-}
-
-/*get bnode*/
-PurpleBlistNode *
-msn_session_get_bnode(MsnSession *session)
-{
-#if 1
-	return session->bnode;
-#else
-	return purple_get_blist()->root;
-#endif
-}
-
 static void
 msn_session_sync_users(MsnSession *session)
 {

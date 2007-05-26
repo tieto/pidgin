@@ -169,7 +169,7 @@ msn_parse_contact_list(MsnContact * contact)
 	LastChangeNode = xmlnode_get_child(service,"LastChange");
 	LastChangeStr = xmlnode_get_data(LastChangeNode);
 	purple_debug_misc("MSNCL","LastChangeNode0 %s\n",LastChangeStr);	
-	purple_blist_node_set_string(msn_session_get_bnode(contact->session),"CLLastChange",LastChangeStr);
+	purple_account_set_string(session->account, "CLLastChange",LastChangeStr);
 	purple_debug_misc("MSNCL","LastChangeNode %s\n",LastChangeStr);
 	
 	memberships =xmlnode_get_child(service,"Memberships");
@@ -242,8 +242,8 @@ msn_get_contact_list_cb(gpointer data, gint source, PurpleInputCondition cond)
 	/*free the read buffer*/
 	msn_soap_free_read_buf(soapconn);
 
-	abLastChange = purple_blist_node_get_string(msn_session_get_bnode(contact->session),"ablastChange");
-	dynamicItemLastChange = purple_blist_node_get_string(msn_session_get_bnode(contact->session),"dynamicItemLastChange");
+	abLastChange = purple_account_get_string(session->account, "ablastChange", NULL);
+	dynamicItemLastChange = purple_account_get_string(session->account, "dynamicItemLastChange", NULL);
 	msn_get_address_book(contact, abLastChange, dynamicItemLastChange);
 }
 
@@ -485,12 +485,12 @@ msn_parse_addressbook(MsnContact * contact)
 		LastChangeNode = xmlnode_get_child(abNode,"lastChange");
 		lastchange = xmlnode_get_data(LastChangeNode);
 		purple_debug_info("MsnAB"," lastchanged Time:{%s}\n",lastchange);
-		purple_blist_node_set_string(msn_session_get_bnode(contact->session),"ablastChange",lastchange);
-		
+		purple_account_set_string(session->account, "ablastChange", lastchange);
+
 		DynamicItemLastChangedNode = xmlnode_get_child(abNode,"DynamicItemLastChanged");
 		dynamicChange = xmlnode_get_data(DynamicItemLastChangedNode);
 		purple_debug_info("MsnAB"," DynamicItemLastChanged :{%s}\n",dynamicChange);
-		purple_blist_node_set_string(msn_session_get_bnode(contact->session),"DynamicItemLastChanged",lastchange);
+		purple_account_set_string(session->account, "DynamicItemLastChanged", lastchange);
 	}
 
 	xmlnode_free(node);

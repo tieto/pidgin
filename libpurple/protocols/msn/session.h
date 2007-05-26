@@ -246,8 +246,4 @@ PurpleConversation *msn_session_get_conv(MsnSession *session,const char *passpor
 void msn_session_report_user(MsnSession *session,const char *passport,
 							char *msg,PurpleMessageFlags flags);
 
-void msn_session_set_bnode(MsnSession *session);
-
-PurpleBlistNode *msn_session_get_bnode(MsnSession *session);
-
 #endif /* _MSN_SESSION_H_ */

@@ -1584,9 +1584,8 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	/*starting retrieve the contact list*/
 	msn_userlist_load(session);
 	
-	msn_session_set_bnode(session);
 	session->contact = msn_contact_new(session);
-	clLastChange = purple_blist_node_get_string(msn_session_get_bnode(session),"CLLastChange");
+	clLastChange = purple_account_get_string(session->account, "CLLastChange", NULL);
 	msn_get_contact_list(session->contact, clLastChange);
 //	msn_contact_connect(session->contact);
 }
