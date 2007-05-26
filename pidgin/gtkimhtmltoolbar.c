@@ -643,7 +643,7 @@ static gboolean
 smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event, GtkIMHtmlToolbar *toolbar)
 {
 	gboolean close_dialog = 
-		(GDK_KEY_PRESS    == event->type) ? (GDK_Escape == event->key.keval) :
+		(GDK_KEY_PRESS    == event->type) ? (GDK_Escape == event->key.keyval) :
 		(GDK_BUTTON_PRESS == event->type) ? (1 == event->button.button) : FALSE;
 
 	if (close_dialog)
