@@ -164,8 +164,7 @@ msn_session_find_swboard(MsnSession *session, const char *username)
 	return NULL;
 }
 
-/*get the conversation*/
-PurpleConversation *
+static PurpleConversation *
 msn_session_get_conv(MsnSession *session,const char *passport)
 {
 	PurpleAccount *account;

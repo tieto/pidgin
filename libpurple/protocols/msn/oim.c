@@ -449,7 +449,8 @@ msn_oim_report_to_user(MsnOim *oim, char *msg_str)
 	g_free(passport_str);
 	purple_debug_info("MaYuan","oim Date:{%s},passport{%s}\n",date,passport);
 
-	msn_session_report_user(oim->session,passport,decode_msg,PURPLE_MESSAGE_SYSTEM);
+	/* XXX: TODO: set the time from date */
+	serv_got_im(oim->session->account->gc, passport, decode_msg, 0, time(NULL));
 
 	/*Now get the oim message ID from the oim_list.
 	 * and append to read list to prepare for deleting the Offline Message when sign out
