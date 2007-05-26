@@ -1,4 +1,6 @@
 EXTRA_DIST = \
+		directconn.c \
+		directconn.h \
 		Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
@@ -12,8 +14,6 @@ MSNSOURCES = \
 	contact.h\
 	dialog.c \
 	dialog.h \
-	directconn.c \
-	directconn.h \
 	error.c \
 	error.h \
 	group.c \

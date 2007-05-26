@@ -112,8 +112,10 @@ msn_slplink_destroy(MsnSlpLink *slplink)
 	if (slplink->remote_user != NULL)
 		g_free(slplink->remote_user);
 
+#if 0
 	if (slplink->directconn != NULL)
 		msn_directconn_destroy(slplink->directconn);
+#endif
 
 	while (slplink->slp_calls != NULL)
 		msn_slp_call_destroy(slplink->slp_calls->data);
