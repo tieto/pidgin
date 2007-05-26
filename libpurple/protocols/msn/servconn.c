@@ -166,7 +166,7 @@ msn_servconn_got_error(MsnServConn *servconn, MsnServConnError error)
  **************************************************************************/
 
 static void
-connect_cb(gpointer data, gint source, PurpleInputCondition cond)
+connect_cb(gpointer data, gint source, const char *error_msg)
 {
 	MsnServConn *servconn;
 
