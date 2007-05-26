@@ -656,6 +656,7 @@ msn_delete_contact(MsnContact *contact,const char *contactId)
 	g_free(body);
 }
 
+#if 0
 static void
 msn_update_contact_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
@@ -673,7 +674,6 @@ msn_update_contact_written_cb(gpointer data, gint source, PurpleInputCondition c
 }
 
 /*update a contact's Nickname*/
-#if 0
 void
 msn_update_contact(MsnContact *contact,const char* nickname)
 {
@@ -766,6 +766,7 @@ msn_unblock_contact(MsnContact *contact,const char* passport)
 	g_free(body);
 }
 
+#if 0
 static void
 msn_gleams_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
@@ -782,7 +783,6 @@ msn_gleams_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 //	msn_soap_read_cb(data,source,cond);
 }
 
-#if 0
 /*get the gleams info*/
 void
 msn_get_gleams(MsnContact *contact)
