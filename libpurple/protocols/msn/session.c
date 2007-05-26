@@ -42,8 +42,7 @@ msn_session_new(PurpleAccount *account)
 
 	session->user = msn_user_new(session->userlist,
 								 purple_account_get_username(account), NULL);
-	session->bnode = NULL;
-	
+
 	/*if you want to chat with Yahoo Messenger*/
 	//session->protocol_ver = WLM_YAHOO_PROT_VER;
 	session->protocol_ver = WLM_PROT_VER;

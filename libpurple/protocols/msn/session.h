@@ -111,10 +111,7 @@ struct _MsnSession
 
 	/*psm info*/
 	char *psm;
-	
-	/*first blist contact node*/
-	PurpleBlistNode *bnode;
-	
+
 	struct
 	{
 		/*t and p, get via USR TWN*/
