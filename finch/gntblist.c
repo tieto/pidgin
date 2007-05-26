@@ -824,14 +824,16 @@ create_group_menu(GntMenu *menu, PurpleGroup *group)
 			PURPLE_CALLBACK(finch_add_group), group);
 }
 
-void finch_retrieve_user_info(PurpleConnection *conn, const char *name)
+gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name)
 {
 	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	gpointer uihandle;
 	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
-	purple_notify_userinfo(conn, name, info, NULL, NULL);
+	uihandle = purple_notify_userinfo(conn, name, info, NULL, NULL);
 	purple_notify_user_info_destroy(info);
 
 	serv_get_info(conn, name);
+	return uihandle;
 }
 
 static void

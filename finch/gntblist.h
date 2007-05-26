@@ -95,8 +95,10 @@ void finch_blist_set_size(int width, int height);
  *
  * @param conn   The connection to get information fro
  * @param name   The user to get information about.
+ *
+ * @return  Returns the ui-handle for the userinfo notification.
  */
-void finch_retrieve_user_info(PurpleConnection *conn, const char *name);
+gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name);
 
 /*@}*/
 

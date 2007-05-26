@@ -31,6 +31,7 @@
 #include <gntlabel.h>
 #include <gntline.h>
 #include <gnttree.h>
+#include <gntwindow.h>
 
 #include <account.h>
 #include <accountopt.h>
@@ -40,6 +41,7 @@
 #include <request.h>
 
 #include "gntaccount.h"
+#include "gntblist.h"
 #include "finch.h"
 
 #include <string.h>
@@ -850,25 +852,25 @@ typedef struct {
 } auth_and_add;
 
 static void
-authorize_and_add_cb(auth_and_add *aa)
+free_auth_and_add(auth_and_add *aa)
 {
-	aa->auth_cb(aa->data);
-	purple_blist_request_add_buddy(aa->account, aa->username,
-	 	                    NULL, aa->alias);
-
 	g_free(aa->username);
 	g_free(aa->alias);
 	g_free(aa);
 }
 
 static void
+authorize_and_add_cb(auth_and_add *aa)
+{
+	aa->auth_cb(aa->data);
+	purple_blist_request_add_buddy(aa->account, aa->username,
+	 	                    NULL, aa->alias);
+}
+
+static void
 deny_no_add_cb(auth_and_add *aa)
 {
 	aa->deny_cb(aa->data);
-
-	g_free(aa->username);
-	g_free(aa->alias);
-	g_free(aa);
 }
 
 static void *
@@ -898,18 +900,37 @@ finch_request_authorize(PurpleAccount *account, const char *remote_user,
 		                (message != NULL ? message  : ""));
 	if (!on_list) {
 		auth_and_add *aa = g_new(auth_and_add, 1);
+		GntWidget *widget;
 		aa->auth_cb = (PurpleAccountRequestAuthorizationCb)auth_cb;
 		aa->deny_cb = (PurpleAccountRequestAuthorizationCb)deny_cb;
 		aa->data = user_data;
 		aa->username = g_strdup(remote_user);
 		aa->alias = g_strdup(alias);
 		aa->account = account;
-		uihandle = purple_request_action(NULL, _("Authorize buddy?"), buffer, NULL,
+
+		uihandle = gnt_vwindow_new(FALSE);
+		gnt_box_set_title(GNT_BOX(uihandle), _("Authorize buddy?"));
+		gnt_box_set_pad(GNT_BOX(uihandle), 0);
+
+		widget = purple_request_action(NULL, _("Authorize buddy?"), buffer, NULL,
 			PURPLE_DEFAULT_ACTION_NONE,
 			account, remote_user, NULL,
 			aa, 2,
 			_("Authorize"), authorize_and_add_cb,
 			_("Deny"), deny_no_add_cb);
+		gnt_screen_release(widget);
+		gnt_box_set_toplevel(GNT_BOX(widget), FALSE);
+		gnt_box_add_widget(GNT_BOX(uihandle), widget);
+
+		gnt_box_add_widget(GNT_BOX(uihandle), gnt_hline_new());
+
+		widget = finch_retrieve_user_info(account->gc, remote_user);
+		gnt_box_set_toplevel(GNT_BOX(widget), FALSE);
+		gnt_screen_release(widget);
+		gnt_box_add_widget(GNT_BOX(uihandle), widget);
+		gnt_widget_show(uihandle);
+
+		g_signal_connect_swapped(G_OBJECT(uihandle), "destroy", G_CALLBACK(free_auth_and_add), aa);
 	} else {
 		uihandle = purple_request_action(NULL, _("Authorize buddy?"), buffer, NULL,
 			PURPLE_DEFAULT_ACTION_NONE,
