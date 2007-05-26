@@ -899,8 +899,10 @@ finch_request_authorize(PurpleAccount *account, const char *remote_user,
 		                (message != NULL ? ": " : "."),
 		                (message != NULL ? message  : ""));
 	if (!on_list) {
-		auth_and_add *aa = g_new(auth_and_add, 1);
 		GntWidget *widget;
+		GList *iter;
+		auth_and_add *aa = g_new(auth_and_add, 1);
+
 		aa->auth_cb = (PurpleAccountRequestAuthorizationCb)auth_cb;
 		aa->deny_cb = (PurpleAccountRequestAuthorizationCb)deny_cb;
 		aa->data = user_data;
@@ -925,6 +927,13 @@ finch_request_authorize(PurpleAccount *account, const char *remote_user,
 		gnt_box_add_widget(GNT_BOX(uihandle), gnt_hline_new());
 
 		widget = finch_retrieve_user_info(account->gc, remote_user);
+		for (iter = GNT_BOX(widget)->list; iter; iter = iter->next) {
+			if (GNT_IS_BUTTON(iter->data)) {
+				gnt_widget_destroy(iter->data);
+				gnt_box_remove(GNT_BOX(widget), iter->data);
+				break;
+			}
+		}
 		gnt_box_set_toplevel(GNT_BOX(widget), FALSE);
 		gnt_screen_release(widget);
 		gnt_box_add_widget(GNT_BOX(uihandle), widget);

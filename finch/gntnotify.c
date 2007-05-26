@@ -69,6 +69,7 @@ finch_notify_message(PurpleNotifyMsgType type, const char *title,
 	gnt_box_set_title(GNT_BOX(window), title);
 	gnt_box_set_fill(GNT_BOX(window), FALSE);
 	gnt_box_set_alignment(GNT_BOX(window), GNT_ALIGN_MID);
+	gnt_box_set_pad(GNT_BOX(window), 0);
 
 	if (primary)
 		gnt_box_add_widget(GNT_BOX(window),
