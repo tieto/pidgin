@@ -344,20 +344,26 @@ msn_user_is_online(PurpleAccount *account, const char *name)
  * TODO: we need to identify it via contact  parse
  */
 gboolean
-msn_user_is_yahoo(PurpleAccount *account ,const char *name)
+msn_user_is_yahoo(PurpleAccount *account, const char *name)
 {
 	return (strstr(name,"yahoo") != NULL);
 }
 
 void
-msn_user_remove_group_id(MsnUser *user, const char * id)
+msn_user_remove_group_id(MsnUser *user, const char *id)
 {
+	GList *l;
+
 	g_return_if_fail(user != NULL);
 	g_return_if_fail(id != NULL);
 
-	user->group_ids = g_list_remove(user->group_ids, id);
-	/* khc need to use g_list_find_custom here to find the right link */
-	//g_free(id);
+	l = g_list_find_custom(user->group_ids, id, (GCompareFunc)strcmp);
+
+	if (l == NULL)
+		return;
+
+	g_free(l->data);
+	user->group_ids = g_list_remove_link(user->group_ids, l);
 }
 
 void
