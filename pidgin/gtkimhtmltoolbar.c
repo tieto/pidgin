@@ -37,6 +37,8 @@
 #include "gtkthemes.h"
 #include "gtkutils.h"
 
+#include <gdk/gdkkeysyms.h>
+
 static GtkHBoxClass *parent_class = NULL;
 
 static void toggle_button_set_active_block(GtkToggleButton *button,
@@ -625,7 +627,6 @@ sort_smileys(struct smiley_button_list *ls, GtkIMHtmlToolbar *toolbar, int *widt
 	return ls;
 }
 
-
 static gboolean
 smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley)
 {
@@ -638,6 +639,18 @@ smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley)
 	return TRUE;
 }
 
+static gboolean
+smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event, GtkIMHtmlToolbar *toolbar)
+{
+	gboolean close_dialog = 
+		(GDK_EVENT_KEY    == event->type) ? (GDK_Escape == event->key.keval) :
+		(GDK_EVENT_BUTTON == event->type) ? (1 == event->button.button) : FALSE;
+
+	if (close_dialog)
+		close_smiley_dialog(NULL, NULL, toolbar);
+
+	return close_dialog;
+}
 
 static void
 insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
@@ -721,6 +734,9 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 		smiley_table = gtk_label_new(_("This theme has no available smileys."));
 	}
 
+	gtk_widget_add_events (dialog, GDK_KEY_PRESS_MASK | GDK_BUTTON_PRESS_MASK) ;
+	g_signal_connect (G_OBJECT (dialog), "key-press-event", (GCallback)smiley_dialog_input_cb, toolbar) ;
+	g_signal_connect (G_OBJECT (dialog), "button-press-event", (GCallback)smiley_dialog_input_cb, toolbar) ;
 	gtk_container_add(GTK_CONTAINER(dialog), smiley_table);
 
 	gtk_widget_show(smiley_table);
