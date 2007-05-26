@@ -114,7 +114,8 @@ user_is_there(MsnUser *user, int list_id, const char * group_id)
 	if (!(user->list_op & list_op))
 		return FALSE;
 
-	if (list_id == MSN_LIST_FL){
+	if (list_id == MSN_LIST_FL)
+	{
 		if (group_id != NULL)
 			return user_is_in_group(user, group_id);
 	}
@@ -164,7 +165,8 @@ msn_request_add_group(MsnUserList *userlist, const char *who,
 
 	data->who = g_strdup(who);
 
-	if (old_group_name){
+	if (old_group_name)
+	{
 		data->old_group_name = g_strdup(old_group_name);
 		/*delete the old group via SOAP action*/
 		msn_del_group(session,old_group_name);
@@ -356,7 +358,8 @@ msn_got_lst_user(MsnSession *session, MsnUser *user,
 	if (list_op & MSN_LIST_FL_OP)
 	{
 		GSList *c;
-		for (c = group_ids; c != NULL; c = g_slist_next(c))	{
+		for (c = group_ids; c != NULL; c = g_slist_next(c))
+		{
 			char *group_id;
 			group_id = c->data;
 			msn_user_add_group_id(user, group_id);
@@ -518,7 +521,8 @@ msn_userlist_find_group_with_id(MsnUserList *userlist, const char * id)
 	g_return_val_if_fail(userlist != NULL, NULL);
 	g_return_val_if_fail(id       != NULL, NULL);
 
-	for (l = userlist->groups; l != NULL; l = l->next){
+	for (l = userlist->groups; l != NULL; l = l->next)
+	{
 		MsnGroup *group = l->data;
 
 		if (!g_strcasecmp(group->id,id))
@@ -616,10 +620,12 @@ msn_userlist_rem_buddy(MsnUserList *userlist,
 
 	group_id = NULL;
 
-	if (group_name != NULL){
+	if (group_name != NULL)
+	{
 		group_id = msn_userlist_find_group_id(userlist, group_name);
 
-		if (group_id == NULL){
+		if (group_id == NULL)
+		{
 			/* Whoa, there is no such group. */
 			purple_debug_error("msn", "Group doesn't exist: %s\n", group_name);
 			return;
@@ -660,7 +666,8 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 		/* only notify the user about problems adding to the friends list
 		 * maybe we should do something else for other lists, but it probably
 		 * won't cause too many problems if we just ignore it */
-		if (list_id == MSN_LIST_FL)	{
+		if (list_id == MSN_LIST_FL)
+		{
 			char *str = g_strdup_printf(_("Unable to add \"%s\"."), who);
 			purple_notify_error(NULL, NULL, str,
 							  _("The screen name specified is invalid."));

@@ -487,7 +487,6 @@ msn_directconn_new(MsnSlpLink *slplink)
 void
 msn_directconn_destroy(MsnDirectConn *directconn)
 {
-
 	if (directconn->connect_data != NULL)
 		purple_proxy_connect_cancel(directconn->connect_data);
 

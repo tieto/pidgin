@@ -121,9 +121,12 @@ connect_cb(MsnServConn *servconn)
 
 	vers = g_strjoinv(" ", a);
 
-	if (session->login_step == MSN_LOGIN_STEP_START){
+	if (session->login_step == MSN_LOGIN_STEP_START)
+	{
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE);
-	}else{
+	}
+	else
+	{
 		msn_session_set_login_step(session, MSN_LOGIN_STEP_HANDSHAKE2);
 	}
 
@@ -174,16 +177,22 @@ group_error_helper(MsnSession *session, const char *msg, const char *group_id, i
 	account = session->account;
 	gc = purple_account_get_connection(account);
 
-	if (error == 224){
-		if (group_id == 0){
+	if (error == 224)
+	{
+		if (group_id == 0)
+		{
 			return;
-		}else{
+		}
+		else
+		{
 			const char *group_name;
 			group_name = msn_userlist_find_group_name(session->userlist,group_id);
 			reason = g_strdup_printf(_("%s is not a valid group."),
 									 group_name);
 		}
-	}else{
+	}
+	else
+	{
 		reason = g_strdup(_("Unknown error."));
 	}
 
@@ -232,7 +241,8 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	account = session->account;
 	gc = purple_account_get_connection(account);
 
-	if (!g_ascii_strcasecmp(cmd->params[1], "OK")){
+	if (!g_ascii_strcasecmp(cmd->params[1], "OK"))
+	{
 		/* authenticate OK */
 		/* friendly name part no longer true in msnp11 */
 #if 0
@@ -244,7 +254,9 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 //		msn_cmdproc_send(cmdproc, "SYN", "%s", "0");
 		//TODO we should use SOAP contact to fetch contact list
-	} else if (!g_ascii_strcasecmp(cmd->params[1], "TWN")){
+	}
+	else if (!g_ascii_strcasecmp(cmd->params[1], "TWN"))
+	{
 		/* Passport authentication */
 		char **elems, **cur, **tokens;
 
@@ -254,9 +266,11 @@ usr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		session->nexus->challenge_data_str = g_strdup(cmd->params[3]);
 		elems = g_strsplit(cmd->params[3], ",", 0);
 
-		for (cur = elems; *cur != NULL; cur++){
+		for (cur = elems; *cur != NULL; cur++)
+		{
 			tokens = g_strsplit(*cur, "=", 2);
-			if(tokens[0]&&tokens[1]){
+			if(tokens[0]&&tokens[1])
+			{
 				purple_debug_info("MaYuan","challenge %p,key:%s,value:%s\n",
 									session->nexus->challenge_data,tokens[0],tokens[1]);
 				g_hash_table_insert(session->nexus->challenge_data, tokens[0], tokens[1]);
@@ -321,7 +335,8 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 		}
 	}
 
-	if (!protocol_supported){
+	if (!protocol_supported)
+	{
 		msn_session_set_error(session, MSN_ERROR_UNSUPPORTED_PROTOCOL,
 							  NULL);
 		return;
@@ -531,7 +546,7 @@ ubm_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 /**************************************************************************
  * Challenges
- *  we use MD5 to caculate the Chanllenges 
+ *  we use MD5 to caculate the Challenges
  **************************************************************************/
 static void
 chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
@@ -551,7 +566,8 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	purple_cipher_context_digest(context, sizeof(digest), digest, NULL);
 	purple_cipher_context_destroy(context);
 
-	for (i = 0; i < 16; i++){
+	for (i = 0; i < 16; i++)
+	{
 		g_snprintf(buf + (i*2), 3, "%02x", digest[i]);
 	}
 #else

@@ -265,10 +265,13 @@ msn_change_status(MsnSession *session)
 
 	msnobj = msn_user_get_object(user);
 
-	if (msnobj == NULL){
+	if (msnobj == NULL)
+	{
 		msn_cmdproc_send(cmdproc, "CHG", "%s %d", state_text,
 						 MSN_CLIENT_ID);
-	}else{
+	}
+	else
+	{
 		char *msnobj_str;
 
 		msnobj_str = msn_object_to_string(msnobj);

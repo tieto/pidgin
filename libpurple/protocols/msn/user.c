@@ -60,9 +60,11 @@ msn_user_destroy(MsnUser *user)
 	if (user->clientcaps != NULL)
 		g_hash_table_destroy(user->clientcaps);
 
-	if (user->group_ids != NULL){
+	if (user->group_ids != NULL)
+	{
 		GList *l;
-		for (l = user->group_ids; l != NULL; l = l->next){
+		for (l = user->group_ids; l != NULL; l = l->next)
+		{
 			g_free(l->data);
 		}
 		g_list_free(user->group_ids);
@@ -183,7 +185,8 @@ msn_user_set_store_name(MsnUser *user, const char *name)
 {
 	g_return_if_fail(user != NULL);
 
-	if (name != NULL){
+	if (name != NULL)
+	{
 		g_free(user->store_name);
 		user->store_name = g_strdup(name);
 	}
@@ -199,7 +202,7 @@ msn_user_set_uid(MsnUser *user, const char *uid)
 }
 
 void
-msn_user_set_type(MsnUser *user,int type)
+msn_user_set_type(MsnUser *user, int type)
 {
 	g_return_if_fail(user != NULL);
 
@@ -207,9 +210,10 @@ msn_user_set_type(MsnUser *user,int type)
 }
 
 void
-msn_user_set_op(MsnUser *user,int list_op)
+msn_user_set_op(MsnUser *user, int list_op)
 {
-	g_return_if_fail(list_op != 0);
+	g_return_if_fail(user != NULL);
+
 	user->list_op |= list_op;
 }
 

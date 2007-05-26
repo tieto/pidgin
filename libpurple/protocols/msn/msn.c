@@ -665,11 +665,11 @@ msn_status_types(PurpleAccount *account)
 	status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE,
 			NULL, NULL, FALSE, TRUE, FALSE);
 	types = g_list_append(types, status);
-	
+
 	status = purple_status_type_new_full(PURPLE_STATUS_MOBILE,
 			"mobile", NULL, FALSE, FALSE, TRUE);
 	types = g_list_append(types, status);
-	
+
 	return types;
 }
 
@@ -795,8 +795,7 @@ msn_login(PurpleAccount *account)
 		return;
 	}
 
-	if (purple_account_get_bool(account, "http_method", FALSE))
-		http_method = TRUE;
+	http_method = purple_account_get_bool(account, "http_method", FALSE);
 
 	host = purple_account_get_string(account, "server", MSN_SERVER);
 	port = purple_account_get_int(account, "port", MSN_PORT);
@@ -939,8 +938,8 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		MsnSession *session;
 		MsnOim *oim;
 		char *friendname;
-		
-		purple_debug_info("MaYuan","prepare to send offline Message\n");		
+
+		purple_debug_info("MaYuan","prepare to send offline Message\n");
 		session = gc->proto_data;
 		/* XXX/khc: hack */
 		if (!session->oim)
@@ -1012,7 +1011,8 @@ msn_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	gc = purple_account_get_connection(account);
 
-	if (gc != NULL){
+	if (gc != NULL)
+	{
 		session = gc->proto_data;
 		msn_change_status(session);
 	}
@@ -1237,9 +1237,12 @@ msn_set_permit_deny(PurpleConnection *gc)
 	cmdproc = session->notification->cmdproc;
 
 	if (account->perm_deny == PURPLE_PRIVACY_ALLOW_ALL ||
-		account->perm_deny == PURPLE_PRIVACY_DENY_USERS){
+		account->perm_deny == PURPLE_PRIVACY_DENY_USERS)
+	{
 		msn_cmdproc_send(cmdproc, "BLP", "%s", "AL");
-	}else{
+	}
+	else
+	{
 		msn_cmdproc_send(cmdproc, "BLP", "%s", "BL");
 	}
 }
@@ -1389,11 +1392,14 @@ msn_rename_group(PurpleConnection *gc, const char *old_name,
 	purple_debug_info("MaYuan","rename group:old{%s},new{%s}",old_name,enc_new_group_name);
 	old_gid = msn_userlist_find_group_id(session->userlist, old_name);
 
-	if (old_gid != NULL){
+	if (old_gid != NULL)
+	{
 		/*find a Group*/
 		msn_cmdproc_send(cmdproc, "REG", "%d %s 0", old_gid,
 						 enc_new_group_name);
-	}else{
+	}
+	else
+	{
 		/*not found*/
 		msn_cmdproc_send(cmdproc, "ADG", "%s 0", enc_new_group_name);
 	}
@@ -1462,11 +1468,13 @@ msn_remove_group(PurpleConnection *gc, PurpleGroup *group)
 
 	/*we can't delete the default group*/
 	if(!strcmp(group->name,MSN_INDIVIDUALS_GROUP_NAME)||
-		!strcmp(group->name,MSN_NON_IM_GROUP_NAME)){
+		!strcmp(group->name,MSN_NON_IM_GROUP_NAME))
+	{
 		return ;
 	}
 	group_id = msn_userlist_find_group_id(session->userlist, group->name);
-	if (group_id != NULL){
+	if (group_id != NULL)
+	{
 		msn_del_group(session,group_id);
 	}
 }
@@ -1482,16 +1490,19 @@ msn_tooltip_extract_info_text(PurpleNotifyUserInfo *user_info, MsnGetInfoData *i
 	b = purple_find_buddy(purple_connection_get_account(info_data->gc),
 						info_data->name);
 
-	if (b){
+	if (b)
+	{
 		char *tmp;
 
-		if (b->alias && b->alias[0]){
+		if (b->alias && b->alias[0])
+		{
 			char *aliastext = g_markup_escape_text(b->alias, -1);
 			purple_notify_user_info_add_pair(user_info, _("Alias"), aliastext);
 			g_free(aliastext);
 		}
 
-		if (b->server_alias){
+		if (b->server_alias)
+		{
 			char *nicktext = g_markup_escape_text(b->server_alias, -1);
 			tmp = g_strdup_printf("<font sml=\"msn\">%s</font><br>", nicktext);
 			purple_notify_user_info_add_pair(user_info, _("Nickname"), tmp);
@@ -1515,7 +1526,8 @@ msn_get_photo_url(const char *url_text)
 {
 	char *p, *q;
 
-	if ((p = strstr(url_text, PHOTO_URL)) != NULL){
+	if ((p = strstr(url_text, PHOTO_URL)) != NULL)
+	{
 		p += strlen(PHOTO_URL);
 	}
 	if (p && (strncmp(p, "http://",strlen("http://")) == 0) && ((q = strchr(p, '"')) != NULL))
@@ -2232,7 +2244,8 @@ static PurplePluginInfo info =
 	N_("Windows Live Messenger Protocol Plugin"),
 	                                                  /**  description    */
 	N_("Windows Live Messenger Protocol Plugin"),
-	"MaYuan <mayuan2006@gmail.com>",				/**< author         */
+	"Christian Hammond <chipx86@gnupdate.org>, "
+	"MaYuan <mayuan2006@gmail.com>",				  /**< author         */
 	PURPLE_WEBSITE,                                     /**< homepage       */
 
 	msn_load,                                         /**< load           */

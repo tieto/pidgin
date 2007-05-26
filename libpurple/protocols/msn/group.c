@@ -88,4 +88,3 @@ msn_group_get_name(const MsnGroup *group)
 
 	return group->name;
 }
-

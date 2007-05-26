@@ -989,13 +989,16 @@ connect_cb(MsnServConn *servconn)
 	swboard = cmdproc->data;
 	g_return_if_fail(swboard != NULL);
 
-	if (msn_switchboard_is_invited(swboard)){
+	if (msn_switchboard_is_invited(swboard))
+	{
 		swboard->empty = FALSE;
 
 		msn_cmdproc_send(cmdproc, "ANS", "%s %s %s",
 						 purple_account_get_username(account),
 						 swboard->auth_key, swboard->session_id);
-	}else{
+	}
+	else
+	{
 		msn_cmdproc_send(cmdproc, "USR", "%s %s",
 						 purple_account_get_username(account),
 						 swboard->auth_key);
