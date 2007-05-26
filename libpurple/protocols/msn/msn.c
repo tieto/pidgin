@@ -1420,7 +1420,12 @@ msn_convo_closed(PurpleConnection *gc, const char *who)
 
 	conv = swboard->conv;
 
-	msn_switchboard_release(swboard, MSN_SB_FLAG_IM);
+	/* If we release the switchboard here, it may still have messages
+	   pending ACK which would result in incorrect unsent message errors.
+	   Just let it timeout... This is *so* going to screw with people who
+	   use dumb clients that report "User has closed the conversation window" */
+	/* msn_switchboard_release(swboard, MSN_SB_FLAG_IM); */
+	swboard->conv = NULL;
 
 	/* If other switchboards managed to associate themselves with this
 	 * conv, make sure they know it's gone! */

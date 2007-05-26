@@ -1625,16 +1625,19 @@ purple_parse_login(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	ClientInfo info = CLIENTINFO_PURPLE;
 	va_list ap;
 	char *key;
+	gboolean truncate_pass;
 
 	gc = od->gc;
 	account = purple_connection_get_account(gc);
 
 	va_start(ap, fr);
 	key = va_arg(ap, char *);
+	truncate_pass = va_arg(ap, int);
 	va_end(ap);
 
 	aim_send_login(od, conn, purple_account_get_username(account),
-				   purple_connection_get_password(gc), &info, key);
+			purple_connection_get_password(gc), truncate_pass,
+			&info, key);
 
 	purple_connection_update_progress(gc, _("Password sent"), 2, OSCAR_CONNECT_STEPS);
 	ck[2] = 0x6c;

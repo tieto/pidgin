@@ -612,27 +612,61 @@ void jabber_auth_start_old(JabberStream *js)
 	jabber_iq_send(iq);
 }
 
+/* Parts of this algorithm are inspired by stuff in libgsasl */
 static GHashTable* parse_challenge(const char *challenge)
 {
+	const char *token_start, *val_start, *val_end, *cur;
 	GHashTable *ret = g_hash_table_new_full(g_str_hash, g_str_equal,
 			g_free, g_free);
-	char **pairs;
-	int i;
 
-	pairs = g_strsplit(challenge, ",", -1);
-
-	for(i=0; pairs[i]; i++) {
-		char **keyval = g_strsplit(pairs[i], "=", 2);
-		if(keyval[0] && keyval[1]) {
-			if(keyval[1][0] == '"' && keyval[1][strlen(keyval[1])-1] == '"')
-				g_hash_table_replace(ret, g_strdup(keyval[0]), g_strndup(keyval[1]+1, strlen(keyval[1])-2));
-			else
-				g_hash_table_replace(ret, g_strdup(keyval[0]), g_strdup(keyval[1]));
+	cur = challenge;
+	while(*cur != '\0') {
+		/* Find the end of the token */
+		gboolean in_quotes = FALSE;
+		char *name, *value = NULL;
+		token_start = cur;
+		while(*cur != '\0' && (in_quotes || (!in_quotes && *cur != ','))) {
+			if (*cur == '"')
+				in_quotes = !in_quotes;
+			cur++;
 		}
-		g_strfreev(keyval);
-	}
 
-	g_strfreev(pairs);
+		/* Find start of value.  */
+		val_start = strchr(token_start, '=');
+		if (val_start == NULL || val_start > cur)
+			val_start = cur;
+
+		if (token_start != val_start) {
+			name = g_strndup(token_start, val_start - token_start);
+
+			if (val_start != cur) {
+				val_start++;
+				while (val_start != cur && (*val_start == ' ' || *val_start == '\t'
+						|| *val_start == '\r' || *val_start == '\n'
+						|| *val_start == '"'))
+					val_start++;
+
+				val_end = cur;
+				while (val_end != val_start && (*val_end == ' ' || *val_end == ',' || *val_end == '\t'
+						|| *val_end == '\r' || *val_start == '\n'
+						|| *val_end == '"'))
+					val_end--;
+
+				if (val_start != val_end)
+					value = g_strndup(val_start, val_end - val_start + 1);
+			}
+
+			g_hash_table_replace(ret, name, value);
+		}
+
+		/* Find the start of the next token, if there is one */
+		if (*cur != '\0') {
+			cur++;
+			while (*cur == ' ' || *cur == ',' || *cur == '\t'
+					|| *cur == '\r' || *cur == '\n')
+				cur++;
+		}
+	}
 
 	return ret;
 }
@@ -738,13 +772,13 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 		} else {
 			/* assemble a response, and send it */
 			/* see RFC 2831 */
-			GString *response = g_string_new("");
-			char *a2;
-			char *auth_resp;
-			char *buf;
-			char *cnonce;
 			char *realm;
 			char *nonce;
+
+			/* Make sure the auth string contains everything that should be there.
+			   This isn't everything in RFC2831, but it is what we need. */
+
+			nonce = g_hash_table_lookup(parts, "nonce");
 
 			/* we're actually supposed to prompt the user for a realm if
 			 * the server doesn't send one, but that really complicates things,
@@ -754,48 +788,55 @@ jabber_auth_handle_challenge(JabberStream *js, xmlnode *packet)
 			if(!realm)
 				realm = js->user->domain;
 
-			cnonce = g_strdup_printf("%x%u%x", g_random_int(), (int)time(NULL),
-					g_random_int());
-			nonce = g_hash_table_lookup(parts, "nonce");
+			if (nonce == NULL || realm == NULL)
+				purple_connection_error(js->gc, _("Invalid challenge from server"));
+			else {
+				GString *response = g_string_new("");
+				char *a2;
+				char *auth_resp;
+				char *buf;
+				char *cnonce;
 
+				cnonce = g_strdup_printf("%x%u%x", g_random_int(), (int)time(NULL),
+						g_random_int());
 
-			a2 = g_strdup_printf("AUTHENTICATE:xmpp/%s", realm);
-			auth_resp = generate_response_value(js->user,
-					purple_connection_get_password(js->gc), nonce, cnonce, a2, realm);
-			g_free(a2);
+				a2 = g_strdup_printf("AUTHENTICATE:xmpp/%s", realm);
+				auth_resp = generate_response_value(js->user,
+						purple_connection_get_password(js->gc), nonce, cnonce, a2, realm);
+				g_free(a2);
 
-			a2 = g_strdup_printf(":xmpp/%s", realm);
-			js->expected_rspauth = generate_response_value(js->user,
-					purple_connection_get_password(js->gc), nonce, cnonce, a2, realm);
-			g_free(a2);
+				a2 = g_strdup_printf(":xmpp/%s", realm);
+				js->expected_rspauth = generate_response_value(js->user,
+						purple_connection_get_password(js->gc), nonce, cnonce, a2, realm);
+				g_free(a2);
 
+				g_string_append_printf(response, "username=\"%s\"", js->user->node);
+				g_string_append_printf(response, ",realm=\"%s\"", realm);
+				g_string_append_printf(response, ",nonce=\"%s\"", nonce);
+				g_string_append_printf(response, ",cnonce=\"%s\"", cnonce);
+				g_string_append_printf(response, ",nc=00000001");
+				g_string_append_printf(response, ",qop=auth");
+				g_string_append_printf(response, ",digest-uri=\"xmpp/%s\"", realm);
+				g_string_append_printf(response, ",response=%s", auth_resp);
+				g_string_append_printf(response, ",charset=utf-8");
 
-			g_string_append_printf(response, "username=\"%s\"", js->user->node);
-			g_string_append_printf(response, ",realm=\"%s\"", realm);
-			g_string_append_printf(response, ",nonce=\"%s\"", nonce);
-			g_string_append_printf(response, ",cnonce=\"%s\"", cnonce);
-			g_string_append_printf(response, ",nc=00000001");
-			g_string_append_printf(response, ",qop=auth");
-			g_string_append_printf(response, ",digest-uri=\"xmpp/%s\"", realm);
-			g_string_append_printf(response, ",response=%s", auth_resp);
-			g_string_append_printf(response, ",charset=utf-8");
+				g_free(auth_resp);
+				g_free(cnonce);
 
-			g_free(auth_resp);
-			g_free(cnonce);
+				enc_out = purple_base64_encode((guchar *)response->str, response->len);
 
-			enc_out = purple_base64_encode((guchar *)response->str, response->len);
+				purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded response (%d): %s\n", response->len, response->str);
 
-			purple_debug(PURPLE_DEBUG_MISC, "jabber", "decoded response (%d): %s\n", response->len, response->str);
+				buf = g_strdup_printf("<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>%s</response>", enc_out);
 
-			buf = g_strdup_printf("<response xmlns='urn:ietf:params:xml:ns:xmpp-sasl'>%s</response>", enc_out);
+				jabber_send_raw(js, buf, -1);
 
-			jabber_send_raw(js, buf, -1);
+				g_free(buf);
 
-			g_free(buf);
+				g_free(enc_out);
 
-			g_free(enc_out);
-
-			g_string_free(response, TRUE);
+				g_string_free(response, TRUE);
+			}
 		}
 
 		g_free(enc_in);

@@ -136,7 +136,7 @@ int aim_bos_changevisibility(OscarData *od, FlapConnection *conn, int changetype
 	else
 		return -EINVAL;
 
-	localcpy = strdup(denylist);
+	localcpy = g_strdup(denylist);
 
 	listcount = aimutil_itemcnt(localcpy, '&');
 	packlen = aimutil_tokslen(localcpy, 99, '&') + listcount + 9;
@@ -152,9 +152,9 @@ int aim_bos_changevisibility(OscarData *od, FlapConnection *conn, int changetype
 		byte_stream_put8(&frame->data, strlen(tmpptr));
 		byte_stream_putstr(&frame->data, tmpptr);
 
-		free(tmpptr);
+		g_free(tmpptr);
 	}
-	free(localcpy);
+	g_free(localcpy);
 
 	flap_connection_send(conn, frame);
 

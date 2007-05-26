@@ -44,33 +44,68 @@ typedef void (*PurpleSslErrorFunction)(PurpleSslConnection *, PurpleSslErrorType
 
 struct _PurpleSslConnection
 {
+	/** Hostname to which the SSL connection will be made */
 	char *host;
+	/** Port to connect to */
 	int port;
+	/** Data to pass to PurpleSslConnection::connect_cb() */
 	void *connect_cb_data;
+	/** Callback triggered once the SSL handshake is complete */
 	PurpleSslInputFunction connect_cb;
+	/** Callback triggered if there is an error during connection */
 	PurpleSslErrorFunction error_cb;
+	/** Data passed to PurpleSslConnection::recv_cb() */
 	void *recv_cb_data;
+	/** User-defined callback executed when the SSL connection receives data */
 	PurpleSslInputFunction recv_cb;
 
+	/** File descriptor used to refer to the socket */
 	int fd;
+	/** Glib event source ID; used to refer to the received data callback 
+	 * in the glib eventloop */
 	int inpa;
+	/** Data related to the underlying TCP connection */
 	PurpleProxyConnectData *connect_data;
 
+	/** Internal connection data managed by the SSL backend (GnuTLS/LibNSS/whatever) */
 	void *private_data;
 };
 
 /**
  * SSL implementation operations structure.
  *
- * Every SSL implementation must provide all of these and register it.
+ * Every SSL implementation must provide all of these and register it via purple_ssl_set_ops()
+ * These should not be called directly! Instead, use the purple_ssl_* functions.
  */
 typedef struct
 {
+	/** Initializes the SSL system provided.
+     *  @return TRUE if initialization succeeded
+     */
 	gboolean (*init)(void);
+	/** Unloads the SSL system. Inverse of init. */
 	void (*uninit)(void);
+	/** Sets up the SSL connection for a PurpleSslConnection once
+     *  the TCP connection has been established */
 	void (*connectfunc)(PurpleSslConnection *gsc);
+	/** Destroys the internal data of the SSL connection provided.
+	 *  Freeing gsc itself is left to purple_ssl_close()
+	 *
+	 */
 	void (*close)(PurpleSslConnection *gsc);
+	/** Reads data from a connection (like POSIX read())
+	 * @param gsc	Connection context
+	 * @param data	Pointer to buffer to drop data into
+	 * @param len	Maximum number of bytes to read
+	 * @return	Number of bytes actually written into the buffer, or <0 on error
+	*/
 	size_t (*read)(PurpleSslConnection *gsc, void *data, size_t len);
+	/** Writes data to a connection (like POSIX send())
+	* @param gsc	Connection context
+	* @param data	Data buffer to send data from
+	* @param len	Number of bytes to send from buffer
+	* @return	The number of bytes written (may be less than len) or <0 on error
+	*/
 	size_t (*write)(PurpleSslConnection *gsc, const void *data, size_t len);
 
 	void (*_purple_reserved1)(void);
@@ -135,6 +170,7 @@ PurpleSslConnection *purple_ssl_connect_fd(PurpleAccount *account, int fd,
 
 /**
  * Adds an input watcher for the specified SSL connection.
+ * Once the SSL handshake is complete, use this to watch for actual data across it.
  *
  * @param gsc   The SSL connection handle.
  * @param func  The callback function.

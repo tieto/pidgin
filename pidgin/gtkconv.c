@@ -1012,12 +1012,24 @@ menu_save_as_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
 	PurpleConversation *conv = pidgin_conv_window_get_active_conversation(win);
+	PurpleBuddy *buddy = purple_find_buddy(conv->account, conv->name);
+	const char *name;
 	gchar *buf;
+	gchar *c;
 
-	buf = g_strdup_printf("%s.html", purple_normalize(conv->account, conv->name));
+	if (buddy != NULL)
+		name = purple_buddy_get_contact_alias(buddy);
+	else
+		name = purple_normalize(conv->account, conv->name);
 
+	buf = g_strdup_printf("%s.html", name);
+	for (c = buf ; *c ; c++)
+	{
+		if (*c == '/' || *c == '\\')
+			*c = ' ';
+	}
 	purple_request_file(PIDGIN_CONVERSATION(conv), _("Save Conversation"),
-					  purple_escape_filename(buf),
+					  buf,
 					  TRUE, G_CALLBACK(savelog_writefile_cb), NULL,
 					  NULL, NULL, conv,
 					  conv);
@@ -3168,7 +3180,7 @@ update_typing_icon(PidginConversation *gtkconv)
 		stock_id = PIDGIN_STOCK_ANIMATION_TYPING1;
 		tooltip = _("User is typing...");
 	} else {
-		stock_id = PIDGIN_STOCK_ANIMATION_TYPING0;
+		stock_id = PIDGIN_STOCK_ANIMATION_TYPING5;
 		tooltip = _("User has typed something and stopped");
 		g_source_remove(gtkconv->u.im->typing_timer);
 		gtkconv->u.im->typing_timer = 0;
@@ -7701,6 +7713,11 @@ before_switch_conv_cb(GtkNotebook *notebook, GtkWidget *page, gint page_num,
 		return;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
+
+	if (gtkconv->u.im->typing_timer != 0) {
+		g_source_remove(gtkconv->u.im->typing_timer);
+		gtkconv->u.im->typing_timer = 0;
+	}
 
 	stop_anim(NULL, gtkconv);
 }

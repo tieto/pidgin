@@ -1,6 +1,6 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.0.1 (??/??/????):
+version 2.0.1 (05/24/2007):
 	* Buddy list update speedups when buddy icons are not being
 	  displayed.  (Scott Wolchok)
 	* Fix icons on docklet change status menu to match the status selector
@@ -32,6 +32,7 @@ version 2.0.1 (??/??/????):
 	  conversation tabs (Ma Xuan)
 	* Fix IRC connection bug with dircproxy (xjoe)
 	* Ctrl+[shift]+tab focuses the next most active tab (William Thompson)
+	* Fix Open Hotmail Inbox for MSN to work more reliably
 	* Add a Google Talk item to the protocol list, to help users who think
 	  we don't support Google Talk.  The item acts just like "XMPP".
 	* Remember if the X server supports XScreenSaver, to avoid waking it
@@ -41,6 +42,10 @@ version 2.0.1 (??/??/????):
 	  and the XScreenSaver change will reduce Pidgin's effect on power
 	  consumption when running with NO_HZ.  (Arjan van de Ven with Intel
 	  Corporation)
+	* Conversation -> Save As will now use aliases.
+	* ALSA added as a possible sound method
+	* Google Talk accounts will not import buddies from your Gmail address
+	  book
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using
