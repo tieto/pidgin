@@ -498,27 +498,6 @@ msn_convert_iso8601(const char *timestr,struct tm tm_time)
 /***************************************************************************
  * MSN Challenge Computing Function
  ***************************************************************************/
-/*check the edian of system*/
-int 
-isBigEndian(void)
-{
-		short int word = 0x0100;
-		char *byte = (char *)&word;
-
-		return(byte[0]);
-}
-
-/*swap utility*/
-unsigned int 
-swapInt(unsigned int dw)
-{
-		unsigned int tmp;
-		tmp =  (dw & 0x000000FF);
-		tmp = ((dw & 0x0000FF00) >> 0x08) | (tmp << 0x08);
-		tmp = ((dw & 0x00FF0000) >> 0x10) | (tmp << 0x08);
-		tmp = ((dw & 0xFF000000) >> 0x18) | (tmp << 0x08);
-		return(tmp);
-}
 
 /*
  * Handle MSN Chanllege computation
@@ -539,10 +518,7 @@ msn_handle_chl(char *input, char *output)
 
 		long long nHigh=0, nLow=0;
 
-		int i, bigEndian;
-
-		/* Determine our endianess */
-		bigEndian = isBigEndian();
+		int i;
 
 		/* Create the MD5 hash by using Purple MD5 algorithm*/
 		cipher = purple_ciphers_find_cipher("md5");
@@ -558,9 +534,8 @@ msn_handle_chl(char *input, char *output)
 		/* Split it into four integers */
 		md5Parts = (unsigned int *)md5Hash;
 		for(i=0; i<4; i++){  
-				/* check for endianess */
-				if(bigEndian)
-						md5Parts[i] = swapInt(md5Parts[i]);
+				/* adjust endianess */
+				md5Parts[i] = GUINT_TO_LE(md5Parts[i]);
 
 				/* & each integer with 0x7FFFFFFF          */
 				/* and save one unmodified array for later */
@@ -581,10 +556,8 @@ msn_handle_chl(char *input, char *output)
 		for (i=0; i<(strlen(buf)/4)-1; i+=2){
 				long long temp;
 
-				if(bigEndian){
-						chlStringParts[i]   = swapInt(chlStringParts[i]);
-						chlStringParts[i+1] = swapInt(chlStringParts[i+1]);
-				}
+				chlStringParts[i]   = GUINT_TO_LE(chlStringParts[i]);
+				chlStringParts[i+1] = GUINT_TO_LE(chlStringParts[i+1]);
 
 				temp=(md5Parts[0] * (((0x0E79A9C1 * (long long)chlStringParts[i]) % 0x7FFFFFFF)+nHigh) + md5Parts[1])%0x7FFFFFFF;
 				nHigh=(md5Parts[2] * (((long long)chlStringParts[i+1]+temp) % 0x7FFFFFFF) + md5Parts[3]) % 0x7FFFFFFF;
@@ -598,9 +571,9 @@ msn_handle_chl(char *input, char *output)
 		newHashParts[2]^=nHigh;
 		newHashParts[3]^=nLow;
 
-		/* swap more bytes if big endian */
-		for(i=0; i<4 && bigEndian; i++)
-				newHashParts[i] = swapInt(newHashParts[i]); 
+		/* adjust endianness */
+		for(i=0; i<4; i++)
+				newHashParts[i] = GUINT_TO_LE(newHashParts[i]); 
 
 		/* make a string of the parts */
 		newHash = (unsigned char *)newHashParts;
