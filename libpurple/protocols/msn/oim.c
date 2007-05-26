@@ -41,7 +41,7 @@ static void msn_oim_free_send_req(MsnOimSendReq *req);
 static void msn_oim_report_to_user(MsnOim *oim, char *msg_str);
 static void msn_oim_get_process(MsnOim *oim, char *oim_msg);
 static char *msn_oim_msg_to_str(MsnOim *oim, const char *body);
-const void msn_oim_send_process(MsnOim *oim, const char *body, int len);
+static void msn_oim_send_process(MsnOim *oim, const char *body, int len);
 
 /*new a OIM object*/
 MsnOim *
@@ -162,7 +162,7 @@ msn_oim_send_connect_cb(gpointer data, PurpleSslConnection *gsc,
  * Process the send return SOAP string
  * If got SOAP Fault,get the lock key,and resend it.
  */
-const void
+static void
 msn_oim_send_process(MsnOim *oim, const char *body, int len)
 {
 	xmlnode *responseNode, *bodyNode;
@@ -227,11 +227,10 @@ oim_send_process_fail:
 }
 
 static void
-msn_oim_send_read_cb(gpointer data, PurpleSslConnection *gsc,
-				 PurpleInputCondition cond)
+msn_oim_send_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
 	MsnSoapConn * soapconn = data;
-	MsnSession 	*session = soapconn->session;
+	MsnSession *session = soapconn->session;
 	MsnOim * oim;
 
 	g_return_if_fail(session != NULL);
@@ -327,10 +326,9 @@ msn_oim_send_msg(MsnOim *oim)
  * OIM delete SOAP request
  * **************************************/
 static void
-msn_oim_delete_read_cb(gpointer data, PurpleSslConnection *gsc,
-				 PurpleInputCondition cond)
+msn_oim_delete_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	MsnSoapConn * soapconn = data;	
+	MsnSoapConn * soapconn = data;
 
 	purple_debug_info("MaYuan","OIM delete read buffer:{%s}\n",soapconn->body);
 
@@ -342,7 +340,7 @@ msn_oim_delete_read_cb(gpointer data, PurpleSslConnection *gsc,
 static void
 msn_oim_delete_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	MsnSoapConn * soapconn = data;	
+	MsnSoapConn * soapconn = data;
 
 	soapconn->read_cb = msn_oim_delete_read_cb;
 }
@@ -427,7 +425,7 @@ msn_oim_report_to_user(MsnOim *oim, char *msg_str)
 	msn_message_parse_payload(message, msg_str, strlen(msg_str),
 							  MSG_OIM_LINE_DEM, MSG_OIM_BODY_DEM);
 	purple_debug_info("MaYuan","oim body:{%s}\n",message->body);
-	decode_msg = purple_base64_decode(message->body,&body_len);
+	decode_msg = (char *)purple_base64_decode(message->body,&body_len);
 	date =	(char *)g_hash_table_lookup(message->attr_table, "Date");
 	from =	(char *)g_hash_table_lookup(message->attr_table, "From");
 	if(strstr(from," ")){
@@ -489,10 +487,9 @@ msn_oim_get_process(MsnOim *oim, char *oim_msg)
 }
 
 static void
-msn_oim_get_read_cb(gpointer data, PurpleSslConnection *gsc,
-				 PurpleInputCondition cond)
+msn_oim_get_read_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	MsnSoapConn * soapconn = data;	
+	MsnSoapConn * soapconn = data;
 	MsnOim * oim = soapconn->session->oim;
 
 	purple_debug_info("MaYuan","OIM get read buffer:{%s}\n",soapconn->body);
@@ -508,7 +505,7 @@ msn_oim_get_read_cb(gpointer data, PurpleSslConnection *gsc,
 static void
 msn_oim_get_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 {
-	MsnSoapConn * soapconn = data;	
+	MsnSoapConn * soapconn = data;
 
 	soapconn->read_cb = msn_oim_get_read_cb;
 //	msn_soap_read_cb(data,source,cond);
@@ -521,7 +518,7 @@ void
 msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 {
 	xmlnode *mdNode,*mNode,*ENode,*INode,*rtNode,*nNode;
-	char *passport,*rTime,*msgid,*nickname;
+	char *passport,*msgid,*nickname, *rTime = NULL;
 
 	mdNode = xmlnode_from_str(xmlmsg, strlen(xmlmsg));
 	for(mNode = xmlnode_get_child(mdNode, "M"); mNode;
