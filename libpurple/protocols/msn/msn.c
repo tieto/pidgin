@@ -640,13 +640,13 @@ msn_status_types(PurpleAccount *account)
 	types = g_list_append(types, status);
 
 	status = purple_status_type_new_with_attrs(
-			PURPLE_STATUS_AWAY, "busy", _("Busy"), TRUE, TRUE, FALSE,
+			PURPLE_STATUS_UNAVAILABLE, "busy", _("Busy"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, status);
 	status = purple_status_type_new_with_attrs(
-			PURPLE_STATUS_AWAY, "phone", _("On the Phone"), TRUE, TRUE, FALSE,
+			PURPLE_STATUS_UNAVAILABLE, "phone", _("On the Phone"), TRUE, TRUE, FALSE,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"currentmedia", _("Current media"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
