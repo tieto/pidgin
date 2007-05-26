@@ -1197,7 +1197,7 @@ rmg_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
 
 	params = g_strsplit(trans->params, " ", 0);
 
-	group_id = atoi(params[0]);
+	group_id = params[0];
 
 	group_error_helper(cmdproc->session, _("Unable to delete group"), group_id, error);
 
