@@ -7919,7 +7919,9 @@ alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConver
 	entry = gtk_entry_new();
 	gtk_entry_set_has_frame(GTK_ENTRY(entry), FALSE);
 	gtk_entry_set_width_chars(GTK_ENTRY(entry), 10);
+#if GTK_CHECK_VERSION(2,4,0)
 	gtk_entry_set_alignment(GTK_ENTRY(entry), 0.5);
+#endif
 
 	gtk_box_pack_start(GTK_BOX(gtkconv->tabby), entry, TRUE, TRUE, 0);
 	/* after the tab label */
@@ -8326,7 +8328,9 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 	}
 
 	ebox = gtk_event_box_new();
+#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
+#endif
 	gtk_container_add(GTK_CONTAINER(ebox), gtkconv->tabby);
 	g_signal_connect(G_OBJECT(ebox), "button-press-event",
 					G_CALLBACK(alias_double_click_cb), gtkconv);
