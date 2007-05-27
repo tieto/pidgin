@@ -918,7 +918,8 @@ static void numeric_spinner_prefs_cb(GtkSpinButton *spinbutton, gpointer user_da
 
 static PidginPluginUiInfo ui_info = {
 	get_config_frame,
-	0 /* page_num (reserved) */
+	0 /* page_num (reserved) */,
+	NULL,NULL,NULL,NULL
 };
 
 static PurplePluginInfo info = {
@@ -944,7 +945,8 @@ static PurplePluginInfo info = {
 	&ui_info,										/**< ui_info		*/
 	NULL,											/**< extra_info	 */
 	NULL,											/**< prefs_info		*/
-	NULL
+	NULL,
+	NULL,NULL,NULL,NULL
 };
 
 static GtkWidget * get_config_frame(PurplePlugin *plugin) {
