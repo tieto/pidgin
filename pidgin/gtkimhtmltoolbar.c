@@ -71,7 +71,9 @@ static void
 do_small(GtkWidget *smalltb, GtkIMHtmlToolbar *toolbar)
 {
 	g_return_if_fail(toolbar != NULL);
-	gtk_imhtml_font_shrink(GTK_IMHTML(toolbar->imhtml));
+	/* Only shrink the font on activation, not deactivation as well */
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(smalltb)))
+		gtk_imhtml_font_shrink(GTK_IMHTML(toolbar->imhtml));
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
@@ -79,7 +81,9 @@ static void
 do_big(GtkWidget *large, GtkIMHtmlToolbar *toolbar)
 {
 	g_return_if_fail(toolbar);
-	gtk_imhtml_font_grow(GTK_IMHTML(toolbar->imhtml));
+	/* Only grow the font on activation, not deactivation as well */
+	if (gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(large)))
+		gtk_imhtml_font_grow(GTK_IMHTML(toolbar->imhtml));
 	gtk_widget_grab_focus(toolbar->imhtml);
 }
 
