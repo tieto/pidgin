@@ -1602,15 +1602,17 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		session->passport_info.sl = atol(value);
 
 	/*starting retrieve the contact list*/
-#ifdef MSN_PARTIAL_ADDRESSBOOK
-	msn_userlist_load(session);
-#endif
-	session->contact = msn_contact_new(session);
 	clLastChange = purple_account_get_string(session->account, "CLLastChange", NULL);
+	session->contact = msn_contact_new(session);
+#ifdef MSN_PARTIAL_LISTS
+	/* msn_userlist_load defeats all attempts at trying to detect blist sync issues */
+	msn_userlist_load(session);
 	msn_get_contact_list(session->contact, clLastChange);
-#if 0
+#else
 	/* always get the full list? */
 	msn_get_contact_list(session->contact, NULL);
+#endif
+#if 0
 	msn_contact_connect(session->contact);
 #endif
 }

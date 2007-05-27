@@ -249,7 +249,7 @@ msn_get_contact_list_cb(gpointer data, gint source, PurpleInputCondition cond)
 	abLastChange = purple_account_get_string(session->account, "ablastChange", NULL);
 	dynamicItemLastChange = purple_account_get_string(session->account, "dynamicItemLastChange", NULL);
 
-#ifdef MSN_PARTIAL_ADDRESSBOOK
+#ifdef MSN_PARTIAL_LISTS
 	/* XXX: this should be enabled when we can correctly do partial
 	   syncs with the server. Currently we need to retrieve the whole
 	   list to detect sync issues */
