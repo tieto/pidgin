@@ -7,6 +7,7 @@ version 2.1.0 (?/?/?):
 	* pidgin_retrieve_user_info, shows immediate feedback when getting
 	  information about a user.
 	* gtk_imhtml_setup_entry
+	* purple_xfer_get_remote_user
 
 	Changed:
 	* pidgin_separator returns the separator added to the menu.
