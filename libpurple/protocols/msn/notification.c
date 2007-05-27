@@ -785,7 +785,7 @@ rml_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 	char * payload;
 #endif
 
-	purple_debug_info("MaYuan","Process ADL\n");
+	purple_debug_info("MaYuan","Process RML\n");
 #if 0
 	trans = msn_transaction_new(cmdproc, "RML","");
 
