@@ -460,7 +460,7 @@ aop_menu_cb(GtkWidget *optmenu, GCallback cb)
 }
 
 static GtkWidget *
-aop_menu_item_new(GtkSizeGroup *sg, GdkPixbuf *pixbuf, const char *lbl, gpointer per_item_data)
+aop_menu_item_new(GtkSizeGroup *sg, GdkPixbuf *pixbuf, const char *lbl, gpointer per_item_data, const char *data)
 {
 	GtkWidget *item;
 	GtkWidget *hbox;
@@ -493,6 +493,7 @@ aop_menu_item_new(GtkSizeGroup *sg, GdkPixbuf *pixbuf, const char *lbl, gpointer
 	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
+	g_object_set_data(G_OBJECT (item), data, per_item_data);
 	g_object_set_data(G_OBJECT (item), "aop_per_item_data", per_item_data);
 
 	pidgin_set_accessible_label(item, label);
@@ -614,11 +615,14 @@ create_protocols_menu(const char *default_proto_id)
 		if (gtalk_name && strcmp(gtalk_name, plugin->info->name) < 0) {
 			char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
 			                                  "16", "google-talk.png", NULL);
+			GtkWidget *item;
+
 			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 			g_free(filename);
 
 			gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
-				aop_menu_item_new(sg, pixbuf, gtalk_name, "prpl-jabber"));
+				item = aop_menu_item_new(sg, pixbuf, gtalk_name, "prpl-jabber", "protocol"));
+			g_object_set_data(G_OBJECT(item), "fake", GINT_TO_POINTER(1));
 
 			if (pixbuf)
 				g_object_unref(pixbuf);
@@ -629,7 +633,7 @@ create_protocols_menu(const char *default_proto_id)
 		pixbuf = pidgin_create_prpl_icon_from_prpl(plugin, PIDGIN_PRPL_ICON_SMALL, NULL);
 
 		gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
-			aop_menu_item_new(sg, pixbuf, plugin->info->name, plugin->info->id));
+			aop_menu_item_new(sg, pixbuf, plugin->info->name, plugin->info->id, "protocol"));
 
 		if (pixbuf)
 			g_object_unref(pixbuf);
@@ -718,7 +722,7 @@ create_account_menu(PurpleAccount *default_account,
 		}
 
 		gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
-			aop_menu_item_new(sg, pixbuf, buf, account));
+			aop_menu_item_new(sg, pixbuf, buf, account, "account"));
 
 		if (pixbuf)
 			g_object_unref(pixbuf);
