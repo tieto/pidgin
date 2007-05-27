@@ -25,8 +25,8 @@
 #include "command.h"
 
 /*local Function prototype*/
-int msn_get_payload_position(char *str);
-int msn_set_payload_len(MsnCommand *cmd);
+static int msn_get_payload_position(char *str);
+static int msn_set_payload_len(MsnCommand *cmd);
 
 static gboolean
 is_num(char *str)
@@ -67,7 +67,7 @@ msn_check_payload_cmd(char *str)
 }
 
 /*get the payload positon*/
-int msn_get_payload_position(char *str)
+static int msn_get_payload_position(char *str)
 {
 	/*because MSG has "MSG hotmail hotmail [payload length]"*/
 	if(!(strcmp(str,"MSG"))|| (!strcmp(str,"UBX")) ){
@@ -85,7 +85,7 @@ int msn_get_payload_position(char *str)
 /*
  * set command Payload length
  */
-int
+static int
 msn_set_payload_len(MsnCommand *cmd)
 {
 	char * param;
