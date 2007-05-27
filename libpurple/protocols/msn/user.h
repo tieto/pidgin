@@ -31,6 +31,17 @@ typedef struct _MsnUser  MsnUser;
 
 #include "userlist.h"
 
+typedef enum
+{
+	MSN_USER_TYPE_UNKNOWN  = 0x00,
+	MSN_USER_TYPE_PASSPORT = 0x01,
+	MSN_USER_TYPE_UNKNOWN1 = 0x02,
+	MSN_USER_TYPE_MOBILE   = 0x04,
+	MSN_USER_TYPE_UNKNOWN2 = 0x08,
+	MSN_USER_TYPE_UNKNOWN3 = 0x10,
+	MSN_USER_TYPE_YAHOO    = 0x20
+} MsnUserType;
+
 /**
  * A user.
  */
@@ -70,8 +81,8 @@ struct _MsnUser
 
 	GHashTable *clientcaps; /**< The client's capabilities.     */
 
-	int type;
-	int list_op;
+	MsnUserType type;       /**< The user type                  */
+	int list_op;            /**< Which lists the user is in     */
 };
 
 /**************************************************************************/
@@ -205,7 +216,7 @@ void msn_user_set_home_phone(MsnUser *user, const char *number);
 void msn_user_set_work_phone(MsnUser *user, const char *number);
 
 void msn_user_set_uid(MsnUser *user, const char *uid);
-void msn_user_set_type(MsnUser *user,int type);
+void msn_user_set_type(MsnUser *user, MsnUserType type);
 
 /**
  * Sets the mobile phone number for a user.

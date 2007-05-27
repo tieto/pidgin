@@ -40,7 +40,7 @@ static MsnTable *cbs_table;
 
 static void msn_notification_fqy_yahoo(MsnSession *session, const char *passport);
 static void msn_notification_post_adl(MsnCmdProc *cmdproc, const char *payload, int payload_len);
-static void msn_add_contact_xml(xmlnode *mlNode, const char *passport, int list_op, int type);
+static void msn_add_contact_xml(xmlnode *mlNode, const char *passport, int list_op, MsnUserType type);
 
 /**************************************************************************
  * Main
@@ -586,7 +586,7 @@ chl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
  **************************************************************************/
 /* add contact to xmlnode */
 static void 
-msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
+msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op, MsnUserType type)
 {
 	xmlnode *d_node,*c_node;
 	char **tokens;
@@ -633,10 +633,10 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 	xmlnode_set_attrib(c_node,"t",type_str);
 #else
 	if(g_strrstr(domain,"yahoo") != NULL){
-		type_str = g_strdup_printf("32");
+		type_str = g_strdup_printf("%d", MSN_USER_TYPE_YAHOO);
 	}else{
 		/*passport*/
-		type_str = g_strdup_printf("1");
+		type_str = g_strdup_printf("%d", MSN_USER_TYPE_PASSPORT);
 	}
 	/*mobile*/
 	//type_str = g_strdup_printf("4");
@@ -1864,7 +1864,7 @@ msn_notification_add_buddy(MsnNotification *notification, const char *list,
 	adl_node = xmlnode_new("ml");
 	adl_node->child = NULL;
 
-	msn_add_contact_xml(adl_node,who,1,1);
+	msn_add_contact_xml(adl_node,who,1,MSN_USER_TYPE_PASSPORT);
 
 	payload = xmlnode_to_str(adl_node,&payload_len);
 	xmlnode_free(adl_node);
@@ -1894,7 +1894,7 @@ msn_notification_rem_buddy(MsnNotification *notification, const char *list,
 	rml_node = xmlnode_new("ml");
 	rml_node->child = NULL;
 
-	msn_add_contact_xml(rml_node,who,1,1);
+	msn_add_contact_xml(rml_node,who,1,MSN_USER_TYPE_PASSPORT);
 
 	payload = xmlnode_to_str(rml_node,&payload_len);
 	xmlnode_free(rml_node);

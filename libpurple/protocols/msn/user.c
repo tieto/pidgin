@@ -202,7 +202,7 @@ msn_user_set_uid(MsnUser *user, const char *uid)
 }
 
 void
-msn_user_set_type(MsnUser *user, int type)
+msn_user_set_type(MsnUser *user, MsnUserType type)
 {
 	g_return_if_fail(user != NULL);
 

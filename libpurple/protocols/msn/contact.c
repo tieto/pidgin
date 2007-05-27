@@ -105,16 +105,16 @@ static int
 msn_get_user_type(char * type)
 {
 	if(!strcmp(type,"Regular")){
-		return 1;
+		return MSN_USER_TYPE_PASSPORT;
 	}
 	if(!strcmp(type,"Live")){
-		return 1;
+		return MSN_USER_TYPE_PASSPORT;
 	}
 	if(!strcmp(type,"LivePending")){
-		return 1;
+		return MSN_USER_TYPE_PASSPORT;
 	}
 
-	return 0;
+	return MSN_USER_TYPE_UNKNOWN;
 }
 
 /*parse contact list*/
