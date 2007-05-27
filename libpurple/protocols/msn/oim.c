@@ -532,7 +532,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 	INode = xmlnode_get_child(ENode, "IU");
 	unread = xmlnode_get_data(INode);
 
-	if (unread != NULL)
+	if (unread != NULL && purple_account_get_check_mail(session->account))
 	{
 		int count = atoi(unread);
 
