@@ -195,7 +195,7 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 	faultCodeStr = xmlnode_get_data(faultCodeNode);
 	purple_debug_info("MaYuan","fault code:{%s}\n",faultCodeStr);
 
-	if(strcmp(faultCodeStr,"q0:AuthenticationFailed")){
+	if(!strcmp(faultCodeStr,"q0:AuthenticationFailed")){
 		/*other Fault Reason?*/
 		goto oim_send_process_fail;
 	}
@@ -209,9 +209,12 @@ msn_oim_send_process(MsnOim *oim, const char *body, int len)
 	 */
 	detailNode = xmlnode_get_child(faultNode, "detail");
 	if(detailNode == NULL){
-			goto oim_send_process_fail;
+		goto oim_send_process_fail;
 	}
 	challengeNode = xmlnode_get_child(detailNode,"LockKeyChallenge");
+	if (challengeNode == NULL) {
+		goto oim_send_process_fail;
+	}
 
 	g_free(oim->challenge);
 	oim->challenge = xmlnode_get_data(challengeNode);
@@ -520,10 +523,38 @@ msn_oim_get_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 void
 msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 {
-	xmlnode *mdNode,*mNode,*ENode,*INode,*rtNode,*nNode;
-	char *passport,*msgid,*nickname, *rTime = NULL;
+	xmlnode *node, *mdNode,*mNode,*ENode,*INode,*rtNode,*nNode;
+	char *passport,*msgid,*nickname, *unread, *rTime = NULL;
 
-	mdNode = xmlnode_from_str(xmlmsg, strlen(xmlmsg));
+	node = xmlnode_from_str(xmlmsg, strlen(xmlmsg));
+
+	ENode = xmlnode_get_child(node, "E");
+	INode = xmlnode_get_child(ENode, "IU");
+	unread = xmlnode_get_data(INode);
+
+	if (unread != NULL)
+	{
+		int count = atoi(unread);
+
+		if (count > 0)
+		{
+			MsnSession *session = oim->session;
+			const char *passport;
+			const char *url;
+
+			passport = msn_user_get_passport(session->user);
+			url = session->passport_info.file;
+
+			purple_notify_emails(session->account->gc, atoi(unread), FALSE, NULL, NULL,
+					&passport, &url, NULL, NULL);
+		}
+	}
+
+	mdNode = xmlnode_get_child(node, "MD");
+	if (mdNode == NULL) {
+		xmlnode_free(node);
+		return;
+	}
 	for(mNode = xmlnode_get_child(mdNode, "M"); mNode;
 					mNode = xmlnode_get_next_twin(mNode)){
 		/*email Node*/
@@ -537,17 +568,21 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 		nickname = xmlnode_get_data(nNode);
 		/*receive time*/
 		rtNode = xmlnode_get_child(mNode,"RT");
-		if(rtNode != NULL)
+		if(rtNode != NULL) {
 			rTime = xmlnode_get_data(rtNode);
-/*		purple_debug_info("MaYuan","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime);*/
+			rtNode = NULL;
+		}
+/*		purple_debug_info("MaYuan","E:{%s},I:{%s},rTime:{%s}\n",passport,msgid,rTime); */
 
 		oim->oim_list = g_list_append(oim->oim_list,msgid);
 		msn_oim_post_single_get_msg(oim,msgid);
 		g_free(passport);
-//		g_free(msgid);
+		g_free(msgid);
 		g_free(rTime);
+		rTime = NULL;
 		g_free(nickname);
 	}
+	xmlnode_free(node);
 }
 
 /*Post to get the Offline Instant Message*/

@@ -689,7 +689,11 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 		}
 	}
 
-	user = msn_userlist_find_user(userlist, who);
+	/* XXX: using _add_user here may not be correct (should add them in the
+	   ACK to the ADL command, and we might also want to make sure the user's groups
+	   are correct. but for now we need to make sure they exist early enough that
+	   the ILN command doesn't screw us up */
+	user = msn_userlist_find_add_user(userlist, who, who);
 
 	/* First we're going to check if it's already there. */
 	if (user_is_there(user, list_id, group_id))
@@ -700,6 +704,10 @@ msn_userlist_add_buddy(MsnUserList *userlist,
 	}
 
 	store_name = (user != NULL) ? get_store_name(user) : who;
+
+	/* XXX: see XXX above, this should really be done when we get the response from
+	   the server */
+	msn_user_set_op(user, list_id);
 
 	/* Then request the add to the server. */
 	list = lists[list_id];

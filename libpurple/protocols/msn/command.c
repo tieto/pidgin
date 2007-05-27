@@ -24,10 +24,6 @@
 #include "msn.h"
 #include "command.h"
 
-/*local Function prototype*/
-static int msn_get_payload_position(char *str);
-static int msn_set_payload_len(MsnCommand *cmd);
-
 static gboolean
 is_num(char *str)
 {
@@ -59,51 +55,29 @@ msn_check_payload_cmd(char *str)
 		(!strcmp(str,"UBM")) ||
 		(!strcmp(str,"FQY")) ||
 		(!strcmp(str,"UUN")) ||
-		(!strcmp(str,"UUX"))){
+		(!strcmp(str,"UUX")) ||
+		(is_num(str))){
 			return TRUE;
 		}
 
 	return FALSE;
 }
 
-/*get the payload positon*/
-static int msn_get_payload_position(char *str)
-{
-	/*because MSG has "MSG hotmail hotmail [payload length]"*/
-	if(!(strcmp(str,"MSG"))|| (!strcmp(str,"UBX")) ){
-		return 2;
-	}
-	/*Yahoo User Message UBM 
-	 * Format UBM email@yahoo.com 32 1 [payload length]*/
-	if(!(strcmp(str,"UBM"))|| (!strcmp(str,"UUM")) ){
-		return 3;
-	}
-
-	return 1;
-}
-
 /*
  * set command Payload length
  */
-static int
+static void
 msn_set_payload_len(MsnCommand *cmd)
 {
-	char * param;
+	char *param;
+	int len = 0;
 
-	if(msn_check_payload_cmd(cmd->command)){
-		param = cmd->params[msn_get_payload_position(cmd->command)];
-#if 0
-		if(!(strcmp(cmd->command,"MSG"))){
-			param = cmd->params[2];
-		}else{
-			param = cmd->params[1];
-		}
-#endif
-		cmd->payload_len = is_num(param) ? atoi(param) : 0;
-	}else{
-		cmd->payload_len = 0;
+	if (msn_check_payload_cmd(cmd->command) && (cmd->param_count > 0)){
+		param = cmd->params[cmd->param_count - 1];
+		len = is_num(param) ? atoi(param) : 0;
 	}
-	return 0;
+
+	cmd->payload_len = len;
 }
 
 MsnCommand *

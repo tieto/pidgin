@@ -273,9 +273,10 @@ msn_session_sync_users(MsnSession *session)
 	 */
 	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
 		PurpleGroup *group = (PurpleGroup *)gnode;
-		const char *group_name = group->name;
+		const char *group_name;
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
+		group_name = group->name;
 		if(!g_strcasecmp(group_name, MSN_INDIVIDUALS_GROUP_NAME)
 						||	!g_strcasecmp(group_name,MSN_NON_IM_GROUP_NAME)){
 			continue;
@@ -322,7 +323,7 @@ msn_session_sync_users(MsnSession *session)
 					{
 						/* The user was not on the server list or not in that group
 						 * on the server list */
-						msn_show_sync_issue(session, b->name, group_name);
+						msn_show_sync_issue(session, purple_buddy_get_name(b), group_name);
 					}
 				}
 			}

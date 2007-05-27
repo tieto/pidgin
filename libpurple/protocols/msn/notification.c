@@ -599,7 +599,8 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 	domain = tokens[1];
 
 	/*find a domain Node*/
-	for(d_node = xmlnode_get_child(mlNode,"d"); d_node; d_node = xmlnode_get_next_twin(d_node)){
+	for(d_node = xmlnode_get_child(mlNode,"d"); d_node; d_node = xmlnode_get_next_twin(d_node))
+	{
 		const char * attr = NULL;
 		purple_debug_info("MaYuan","d_node:%s\n",d_node->name);
 		attr = xmlnode_get_attrib(d_node,"n");
@@ -610,7 +611,8 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 			break;
 		}
 	}
-	if(d_node == NULL){
+	if(d_node == NULL)
+	{
 		/*domain not found, create a new domain Node*/
 		purple_debug_info("MaYuan","get No d_node\n");
 		d_node = xmlnode_new("d");
@@ -623,7 +625,7 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 	xmlnode_set_attrib(c_node,"n",email);
 
 	list_op_str = g_strdup_printf("%d",list_op);
-	purple_debug_info("MaYuan","list_op:%d\n",list_op_str);
+	purple_debug_info("MaYuan","list_op:%d\n",list_op);
 	xmlnode_set_attrib(c_node,"l",list_op_str);
 	g_free(list_op_str);
 #if 0
@@ -643,7 +645,7 @@ msn_add_contact_xml(xmlnode *mlNode,const char *passport,int list_op,int type)
 #endif
 	xmlnode_insert_child(d_node, c_node);
 
-	g_free(tokens);
+	g_strfreev(tokens);
 }
 
 static void
@@ -740,6 +742,24 @@ static void
 adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	purple_debug_info("MaYuan","Process ADL\n");
+}
+
+static void
+adl_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
+{
+	MsnSession *session;
+	PurpleAccount *account;
+	PurpleConnection *gc;
+	char *reason = NULL;
+
+	session = cmdproc->session;
+	account = session->account;
+	gc = purple_account_get_connection(account);
+
+	purple_debug_error("msn","ADL error\n");
+	reason = g_strdup_printf(_("Unknown error (%d)"), error);
+	purple_notify_error(gc, NULL, _("Unable to add user"), reason);
+	g_free(reason);
 }
 
 static void
@@ -1582,12 +1602,17 @@ profile_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 		session->passport_info.sl = atol(value);
 
 	/*starting retrieve the contact list*/
+#ifdef MSN_PARTIAL_ADDRESSBOOK
 	msn_userlist_load(session);
-	
+#endif
 	session->contact = msn_contact_new(session);
 	clLastChange = purple_account_get_string(session->account, "CLLastChange", NULL);
 	msn_get_contact_list(session->contact, clLastChange);
-//	msn_contact_connect(session->contact);
+#if 0
+	/* always get the full list? */
+	msn_get_contact_list(session->contact, NULL);
+	msn_contact_connect(session->contact);
+#endif
 }
 
 static void
@@ -1648,58 +1673,72 @@ static void
 initial_mdata_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 {
 	MsnSession *session;
-	char **elems, **cur, **tokens;
+	PurpleConnection *gc;
+	GHashTable *table;
+	const char *mdata, *unread;
 
-//	purple_debug_info("MaYuan","mdata...{%s} \n",msg->body);
+	session = cmdproc->session;
+	gc = session->account->gc;
 
-//	/*time debug*/
-	{
-	const char *timestr;
-	time_t t;
-	struct tm *tm;
-	char datestr[]="2006-07-15T07:21:26+0700";
-	GDate *date;
-	time(&t);
-	tm = gmtime(&t);
-	timestr = purple_utf8_strftime("%a, %d %b %Y %T %Z", tm);
-//	strftime(datestr,strlen(datestr),"%a",tm);
-	date = g_date_new();
-	g_date_set_parse(date,datestr);
-	purple_debug_info("MaYuan","date is NULL?date valid%d\n",g_date_valid(date));
-	g_date_free(date);
-	purple_debug_info("MaYuan","utf8 time:{%s}\n",timestr);
-	}
+	if (strcmp(msg->remote_user, "Hotmail"))
+		/* This isn't an official message. */
+		return;
 
 	/*new a oim session*/
-	session = cmdproc->session;
 	session->oim = msn_oim_new(session);
 //	msn_oim_connect(session->oim);
 
-	/*parse offline message data*/
-	elems = g_strsplit(msg->body, "\r\n", 0);
-	for (cur = elems; *cur != NULL; cur++){
-		const char *key, *value;
+	table = msn_message_get_hashtable_from_body(msg);
 
-//		purple_debug_info("MaYuan","cur:{%s}\n",*cur);
-		tokens = g_strsplit(*cur, ": ", 2);
+	mdata = g_hash_table_lookup(table, "Mail-Data");
 
-		key = tokens[0];
-		value = tokens[1];
+	if (mdata != NULL)
+		msn_parse_oim_msg(session->oim, mdata);
 
-		/*if not MIME content ,then return*/
-		if ((key != NULL) && (!strcmp(key, "Mail-Data")) ){
-//			purple_debug_info("MaYuan","data:{%s}\n",value);
-			msn_parse_oim_msg(session->oim,value);
-			g_strfreev(tokens);
-			break;
-		}
-
-		g_strfreev(tokens);
+	if (g_hash_table_lookup(table, "Inbox-URL") == NULL)
+	{
+		g_hash_table_destroy(table);
+		return;
 	}
 
-	g_strfreev(elems);
-/* test code for add group*/
-//	msn_add_group(session,"hello");
+	if (session->passport_info.file == NULL)
+	{
+		MsnTransaction *trans;
+		trans = msn_transaction_new(cmdproc, "URL", "%s", "INBOX");
+		msn_transaction_queue_cmd(trans, msg->cmd);
+
+		msn_cmdproc_send_trans(cmdproc, trans);
+
+		g_hash_table_destroy(table);
+		return;
+	}
+
+	if (!purple_account_get_check_mail(session->account))
+	{
+		g_hash_table_destroy(table);
+		return;
+	}
+
+	unread = g_hash_table_lookup(table, "Inbox-Unread");
+
+	if (unread != NULL)
+	{
+		int count = atoi(unread);
+
+		if (count > 0)
+		{
+			const char *passport;
+			const char *url;
+
+			passport = msn_user_get_passport(session->user);
+			url = session->passport_info.file;
+
+			purple_notify_emails(gc, atoi(unread), FALSE, NULL, NULL,
+							   &passport, &url, NULL, NULL);
+		}
+	}
+
+	g_hash_table_destroy(table);
 }
 
 /*offline Message Notification*/
@@ -1923,6 +1962,7 @@ msn_notification_init(void)
 	msn_table_add_cmd(cbs_table, "fallback", "XFR", xfr_cmd);
 
 	msn_table_add_error(cbs_table, "ADD", add_error);
+	msn_table_add_error(cbs_table, "ADL", adl_error);
 	msn_table_add_error(cbs_table, "REG", reg_error);
 	msn_table_add_error(cbs_table, "RMG", rmg_error);
 	/* msn_table_add_error(cbs_table, "REA", rea_error); */

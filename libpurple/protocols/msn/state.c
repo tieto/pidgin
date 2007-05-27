@@ -89,11 +89,12 @@ msn_parse_currentmedia(const char *cmedia)
 	char *buffer=NULL, *inptr, *outptr, *tmpptr;
 	int length, strings, tmp;
 
-	purple_debug_info("msn", "Parsing currentmedia string: \"%s\"\n", cmedia);
-	if( (cmedia == NULL) || (!strcmp(cmedia, ""))) {
+	if((cmedia == NULL) || (*cmedia == '\0')) {
 		purple_debug_info("msn", "No currentmedia string\n");
 		return NULL;
 	}
+
+	purple_debug_info("msn", "Parsing currentmedia string: \"%s\"\n", cmedia);
 
 	cmedia_array=g_strsplit(cmedia, "\\0", 0);
 
@@ -231,7 +232,7 @@ msn_set_psm(MsnSession *session)
 	presence = purple_account_get_presence(account);
 	status = purple_presence_get_active_status(presence);
 	statusline = purple_status_get_attr_string(status, "message");
-	session ->psm = msn_build_psm(statusline, NULL, NULL);
+	session->psm = msn_build_psm(statusline, NULL, NULL);
 	payload = session->psm;
 
 	purple_debug_info("MaYuan","UUX{%s}\n",payload);

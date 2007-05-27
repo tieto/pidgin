@@ -173,6 +173,10 @@ msn_parse_contact_list(MsnContact * contact)
 	purple_debug_misc("MSNCL","LastChangeNode %s\n",LastChangeStr);
 	
 	memberships =xmlnode_get_child(service,"Memberships");
+	if (memberships == NULL) {
+		xmlnode_free(node);
+		return;
+	}
 	purple_debug_misc("MSNCL","memberships{%p},name:%s\n",memberships,memberships->name);
 	for(membershipnode = xmlnode_get_child(memberships, "Membership"); membershipnode;
 					membershipnode = xmlnode_get_next_twin(membershipnode)){
@@ -244,7 +248,15 @@ msn_get_contact_list_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 	abLastChange = purple_account_get_string(session->account, "ablastChange", NULL);
 	dynamicItemLastChange = purple_account_get_string(session->account, "dynamicItemLastChange", NULL);
+
+#ifdef MSN_PARTIAL_ADDRESSBOOK
+	/* XXX: this should be enabled when we can correctly do partial
+	   syncs with the server. Currently we need to retrieve the whole
+	   list to detect sync issues */
 	msn_get_address_book(contact, abLastChange, dynamicItemLastChange);
+#else
+	msn_get_address_book(contact, NULL, NULL);
+#endif
 }
 
 static void
@@ -283,45 +295,17 @@ msn_get_contact_list(MsnContact * contact, const char *update_time)
 	g_free(body);
 }
 
-static gboolean
-msn_parse_addressbook(MsnContact * contact)
+static void
+msn_parse_addressbook_groups(MsnContact *contact, xmlnode *node)
 {
-	MsnSession * session;
-	xmlnode * node,*body,*response,*result;
-	xmlnode *groups,*group,*groupname,*groupId,*groupInfo;
-	xmlnode	*contacts,*contactNode,*contactId,*contactInfo,*contactType,*passportName,*displayName,*groupIds,*guid;
-	xmlnode *abNode;
-	char *group_name,*group_id;
+	MsnSession *session = contact->session;
+	xmlnode *group;
 
-	session = contact->session;
-	purple_debug_misc("xml","parse addressbook:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
-	node = 	xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
-
-	if(node == NULL){
-		purple_debug_misc("xml","parse from str err!\n");
-		return FALSE;
-	}
-	purple_debug_misc("xml","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
-	body = xmlnode_get_child(node,"Body");
-	purple_debug_misc("xml","body{%p},name:%s\n",body,body->name);
-	response = xmlnode_get_child(body,"ABFindAllResponse");
-
-	if (response == NULL) {
-		return FALSE;
-	}
-
-	purple_debug_misc("xml","response{%p},name:%s\n",response,response->name);
-	result =xmlnode_get_child(response,"ABFindAllResult");
-	if(result == NULL){
-		purple_debug_misc("MSNAB","receive no address book update\n");
-		return TRUE;
-	}
-	purple_debug_misc("xml","result{%p},name:%s\n",result,result->name);
-
-	/*Process Group List*/
-	groups =xmlnode_get_child(result,"groups");
-	for(group = xmlnode_get_child(groups, "Group"); group;
+	for(group = xmlnode_get_child(node, "Group"); group;
 					group = xmlnode_get_next_twin(group)){
+		xmlnode *groupId, *groupInfo, *groupname;
+		char *group_id, *group_name;
+
 		groupId = xmlnode_get_child(group,"groupId");
 		group_id = xmlnode_get_data(groupId);
 		groupInfo = xmlnode_get_child(group,"groupInfo");
@@ -338,45 +322,23 @@ msn_parse_addressbook(MsnContact * contact)
 		purple_debug_misc("MsnAB","group_id:%s name:%s\n",group_id,group_name);
 		if ((purple_find_group(group_name)) == NULL){
 			PurpleGroup *g = purple_group_new(group_name);
-			purple_blist_node_set_string(&(g->node),"groupId",group_id);
 			purple_blist_add_group(g, NULL);
 		}
 		g_free(group_id);
 		g_free(group_name);
 	}
-	/*add a default No group to set up the no group Membership*/
-	group_id = g_strdup(MSN_INDIVIDUALS_GROUP_ID);
-	group_name = g_strdup(MSN_INDIVIDUALS_GROUP_NAME);
-	msn_group_new(session->userlist,group_id , group_name);
-	if (group_id != NULL){
-		purple_debug_misc("MsnAB","group_id:%s name:%s,value:%d\n",group_id,group_name,*group_name=='\0');
-		if ((purple_find_group(group_name)) == NULL){
-			PurpleGroup *g = purple_group_new(group_name);
-			purple_blist_add_group(g, NULL);
-		}
-	}
-	g_free(group_name);
-	g_free(group_id);
+}
 
-	/*add a default No group to set up the no group Membership*/
-	group_id = g_strdup(MSN_NON_IM_GROUP_ID);
-	group_name = g_strdup(MSN_NON_IM_GROUP_NAME);
-	msn_group_new(session->userlist,group_id , group_name);
-	if (group_id != NULL){
-		purple_debug_misc("MsnAB","group_id:%s name:%s,value:%d\n",group_id,group_name,*group_name=='\0');
-		if ((purple_find_group(group_name)) == NULL){
-			PurpleGroup *g = purple_group_new(group_name);
-			purple_blist_add_group(g, NULL);
-		}
-	}
-	g_free(group_name);
-	g_free(group_id);
+static void
+msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
+{
+	MsnSession *session = contact->session;
+	xmlnode *contactNode;
 
-	/*Process contact List*/
-	purple_debug_info("MSNAB","process contact list...\n");
-	contacts =xmlnode_get_child(result,"contacts");
-	for(contactNode = xmlnode_get_child(contacts, "Contact"); contactNode;
+	for(contactNode = xmlnode_get_child(node, "Contact"); contactNode;
 				contactNode = xmlnode_get_next_twin(contactNode)){
+		xmlnode *contactId,*contactInfo,*contactType,*passportName,*displayName,*guid;
+		xmlnode *groupIds;
 		MsnUser *user;
 		char *passport,*Name,*uid,*type;
 
@@ -444,7 +406,7 @@ msn_parse_addressbook(MsnContact * contact)
 		if(displayName == NULL){
 			Name = g_strdup(passport);
 		}else{
-			Name =xmlnode_get_data(displayName);	
+			Name =xmlnode_get_data(displayName);
 		}
 
 		purple_debug_misc("MsnAB","passport:{%s} uid:{%s} display:{%s}\n",
@@ -453,7 +415,6 @@ msn_parse_addressbook(MsnContact * contact)
 		user = msn_userlist_find_add_user(session->userlist, passport,Name);
 		msn_user_set_uid(user,uid);
 		msn_user_set_type(user,msn_get_user_type(type));
-		user->list_op |= MSN_LIST_FL_OP;
 		g_free(Name);
 		g_free(passport);
 		g_free(uid);
@@ -464,6 +425,7 @@ msn_parse_addressbook(MsnContact * contact)
 		if(groupIds){
 			for(guid = xmlnode_get_child(groupIds, "guid");guid;
 							guid = xmlnode_get_next_twin(guid)){
+				char *group_id;
 				group_id = xmlnode_get_data(guid);
 				msn_user_add_group_id(user,group_id);
 				purple_debug_misc("MsnAB","guid:%s\n",group_id);
@@ -471,10 +433,76 @@ msn_parse_addressbook(MsnContact * contact)
 			}
 		}else{
 			/*not in any group,Then set default group*/
-			group_id = g_strdup(MSN_INDIVIDUALS_GROUP_ID);
-			msn_user_add_group_id(user,group_id);
-			g_free(group_id);
+			msn_user_add_group_id(user, MSN_INDIVIDUALS_GROUP_ID);
 		}
+
+		msn_got_lst_user(session, user, MSN_LIST_FL_OP, NULL);
+	}
+}
+
+static gboolean
+msn_parse_addressbook(MsnContact * contact)
+{
+	MsnSession * session;
+	xmlnode * node,*body,*response,*result;
+	xmlnode *groups;
+	xmlnode	*contacts;
+	xmlnode *abNode;
+
+	session = contact->session;
+	purple_debug_misc("xml","parse addressbook:{%s}\nsize:%d\n",contact->soapconn->body,contact->soapconn->body_len);
+	node = xmlnode_from_str(contact->soapconn->body, contact->soapconn->body_len);
+
+	if(node == NULL){
+		purple_debug_misc("xml","parse from str err!\n");
+		return FALSE;
+	}
+	purple_debug_misc("xml","node{%p},name:%s,child:%s,last:%s\n",node,node->name,node->child->name,node->lastchild->name);
+	body = xmlnode_get_child(node,"Body");
+	purple_debug_misc("xml","body{%p},name:%s\n",body,body->name);
+	response = xmlnode_get_child(body,"ABFindAllResponse");
+
+	if (response == NULL) {
+		return FALSE;
+	}
+
+	purple_debug_misc("xml","response{%p},name:%s\n",response,response->name);
+	result =xmlnode_get_child(response,"ABFindAllResult");
+	if(result == NULL){
+		purple_debug_misc("MSNAB","receive no address book update\n");
+		return TRUE;
+	}
+	purple_debug_misc("xml","result{%p},name:%s\n",result,result->name);
+
+	/*Process Group List*/
+	groups = xmlnode_get_child(result,"groups");
+	if (groups != NULL) {
+		msn_parse_addressbook_groups(contact, groups);
+	}
+
+	/*add a default No group to set up the no group Membership*/
+	msn_group_new(session->userlist, MSN_INDIVIDUALS_GROUP_ID,
+				  MSN_INDIVIDUALS_GROUP_NAME);
+	purple_debug_misc("MsnAB","group_id:%s name:%s\n",
+					  MSN_INDIVIDUALS_GROUP_ID, MSN_INDIVIDUALS_GROUP_NAME);
+	if ((purple_find_group(MSN_INDIVIDUALS_GROUP_NAME)) == NULL){
+		PurpleGroup *g = purple_group_new(MSN_INDIVIDUALS_GROUP_NAME);
+		purple_blist_add_group(g, NULL);
+	}
+
+	/*add a default No group to set up the no group Membership*/
+	msn_group_new(session->userlist, MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
+	purple_debug_misc("MsnAB","group_id:%s name:%s\n", MSN_NON_IM_GROUP_ID, MSN_NON_IM_GROUP_NAME);
+	if ((purple_find_group(MSN_NON_IM_GROUP_NAME)) == NULL){
+		PurpleGroup *g = purple_group_new(MSN_NON_IM_GROUP_NAME);
+		purple_blist_add_group(g, NULL);
+	}
+
+	/*Process contact List*/
+	purple_debug_info("MSNAB","process contact list...\n");
+	contacts =xmlnode_get_child(result,"contacts");
+	if (contacts != NULL) {
+		msn_parse_addressbook_contacts(contact, contacts);
 	}
 
 	abNode =xmlnode_get_child(result,"ab");
