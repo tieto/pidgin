@@ -901,6 +901,7 @@ static void
 syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
 	MsnSession *session;
+	MsnSync *sync;
 	int total_users;
 
 	session = cmdproc->session;
@@ -919,22 +920,12 @@ syn_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	total_users  = atoi(cmd->params[2]);
 
-	if (total_users == 0)
-	{
-		msn_session_finish_login(session);
-	}
-	else
-	{
-		/* syn_table */
-		MsnSync *sync;
+	sync = msn_sync_new(session);
+	sync->total_users = total_users;
+	sync->old_cbs_table = cmdproc->cbs_table;
 
-		sync = msn_sync_new(session);
-		sync->total_users = total_users;
-		sync->old_cbs_table = cmdproc->cbs_table;
-
-		session->sync = sync;
-		cmdproc->cbs_table = sync->cbs_table;
-	}
+	session->sync = sync;
+	cmdproc->cbs_table = sync->cbs_table;
 }
 
 /**************************************************************************
