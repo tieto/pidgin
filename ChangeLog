@@ -5,7 +5,7 @@ version 2.1.0 (??/??/????):
 	* Core changes to allow UIs to use second-granularity for scheduling.
 	  Pidgin and Finch, which use the glib event loop, were changed to use
 	  g_timeout_add_seconds() on glib >= 2.14 when possible.  This allows
-	  glib to properly group our longer timers to increase power efficiency.
+	  glib to better group our longer timers to increase power efficiency.
 	  (Arjan van de Ven with Intel Corporation)
 
 	Pidgin:
