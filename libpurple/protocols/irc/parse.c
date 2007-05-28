@@ -402,6 +402,22 @@ char *irc_mirc2txt (const char *string)
 		switch (result[i]) {
 		case '\002':
 		case '\003':
+			/* Foreground color */
+			if (isdigit(result[i + 1]))
+				i++;
+			if (isdigit(result[i + 1]))
+				i++;
+			/* Optional comma and background color */
+			if (result[i + 1] == ',') {
+				i++;
+				if (isdigit(result[i + 1]))
+					i++;
+				if (isdigit(result[i + 1]))
+					i++;
+			}
+			/* Note that i still points to the last character
+			 * of the color selection string. */
+			continue;
 		case '\007':
 		case '\017':
 		case '\026':
