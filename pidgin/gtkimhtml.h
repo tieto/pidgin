@@ -27,6 +27,7 @@
 #include <gtk/gtktextview.h>
 #include <gtk/gtktooltips.h>
 #include <gtk/gtkimage.h>
+#include "gtksourceundomanager.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -126,6 +127,7 @@ struct _GtkIMHtml {
 
 	GSList *im_images;
 	GtkIMHtmlFuncs *funcs;
+	GtkSourceUndoManager *undo_manager;
 };
 
 struct _GtkIMHtmlClass {
@@ -137,6 +139,8 @@ struct _GtkIMHtmlClass {
 	void (*clear_format)(GtkIMHtml *);
 	void (*update_format)(GtkIMHtml *);
 	gboolean (*message_send)(GtkIMHtml *);
+	void (*undo)(GtkIMHtml *);
+	void (*redo)(GtkIMHtml *);
 };
 
 struct _GtkIMHtmlFontDetail {

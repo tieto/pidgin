@@ -1602,6 +1602,7 @@ sound_page()
 #ifdef USE_GSTREAMER
 			_("Automatic"), "automatic",
 			"ESD", "esd",
+			"ALSA", "alsa",
 #endif
 			_("Command"), "custom",
 			_("No sounds"), "none",

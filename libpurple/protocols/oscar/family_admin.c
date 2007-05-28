@@ -81,12 +81,12 @@ infochange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 
 		switch (type) {
 			case 0x0001: {
-				free(sn);
+				g_free(sn);
 				sn = byte_stream_getstr(bs, length);
 			} break;
 
 			case 0x0004: {
-				free(url);
+				g_free(url);
 				url = byte_stream_getstr(bs, length);
 			} break;
 
@@ -95,7 +95,7 @@ infochange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 			} break;
 
 			case 0x0011: {
-				free(email);
+				g_free(email);
 				if (length == 0)
 					email = g_strdup("*suppressed");
 				else
@@ -109,9 +109,9 @@ infochange(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		userfunc(od, conn, frame, (snac->subtype == 0x0005) ? 1 : 0, perms, err, url, sn, email);
 
-	free(sn);
-	free(url);
-	free(email);
+	g_free(sn);
+	g_free(url);
+	g_free(email);
 
 	return 1;
 }

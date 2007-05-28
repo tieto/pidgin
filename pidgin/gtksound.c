@@ -466,6 +466,12 @@ pidgin_sound_play_file(const char *filename)
 			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
 			return;
 		}
+	} else if (!strcmp(method, "alsa")) {
+		sink = gst_element_factory_make("alsasink", "sink");
+		if (!sink) {
+			purple_debug_error("sound", "Unable to create GStreamer audiosink.\n");
+			return;
+		}
 	} else {
 		purple_debug_error("sound", "Unknown sound method '%s'\n", method);
 		return;

@@ -388,6 +388,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *entry;
+	GtkWidget *menu;
+	GtkWidget *item;
 	GList *user_splits;
 	GList *l, *l2;
 	char *username = NULL;
@@ -474,7 +476,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		GtkWidget *entry = l->data;
 		PurpleAccountUserSplit *split = l2->data;
-		const char *value = NULL;
+		const char *value = NULL, *protocol = NULL;
 		char *c;
 
 		if (dialog->account != NULL) {
@@ -488,9 +490,16 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				value = c;
 			}
 		}
-
 		if (value == NULL)
 			value = purple_account_user_split_get_default_value(split);
+
+		/* Google Talk default domain hackery! */
+		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
+		item = gtk_menu_get_active(GTK_MENU(menu));
+		protocol = g_object_get_data(G_OBJECT(item), "protocol");
+		if (value == NULL && !strcmp(protocol, "prpl-fake") && 
+			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
+			value = "gmail.com";
 
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), value);
@@ -680,7 +689,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	PurpleAccountOption *option;
 	PurpleAccount *account;
-	GtkWidget *frame, *vbox, *check, *entry, *combo;
+	GtkWidget *frame, *vbox, *check, *entry, *combo, *menu, *item;
 	const GList *list, *node;
 	gint i, idx, int_value;
 	GtkListStore *model;
@@ -690,7 +699,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GList *l;
 	char buf[1024];
 	char *title;
-	const char *str_value;
+	const char *str_value, *protocol;
 	gboolean bool_value;
 
 	if (dialog->protocol_frame != NULL) {
@@ -813,6 +822,14 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 						gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
 				}
 
+				/* Google Talk default domain hackery! */
+				menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
+				item = gtk_menu_get_active(GTK_MENU(menu));
+				protocol = g_object_get_data(G_OBJECT(item), "protocol");
+				if (str_value == NULL && !strcmp(protocol, "prpl-fake") &&
+					!strcmp(_("Connect server"),  purple_account_option_get_text(option)))
+					str_value = "talk.google.com";	
+		
 				if (str_value != NULL)
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
 
