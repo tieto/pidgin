@@ -92,6 +92,29 @@ pidgin_themes_destroy_smiley_theme(struct smiley_theme *theme)
 	g_hash_table_destroy(already_freed);
 }
 
+static void pidgin_smiley_themes_destroy_all()
+{
+	static struct smiley_theme *theme = NULL;
+	GSList *iter = NULL;
+
+	for (iter = smiley_themes ; iter ; iter = iter->next) {
+		if ((theme = ((struct smiley_theme *)(iter->data))) != NULL) {
+			pidgin_themes_destroy_smiley_theme(theme);
+
+			g_free(theme->name);
+			g_free(theme->desc);
+			g_free(theme->author);
+			g_free(theme->icon);
+			g_free(theme->path);
+			g_free(theme);
+		}
+	}
+
+	if (smiley_themes)
+		g_slist_free(smiley_themes);
+	smiley_themes = NULL;
+}
+
 void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 {
 	FILE *f = g_fopen(file, "r");
@@ -253,10 +276,12 @@ void pidgin_themes_smiley_theme_probe()
 {
 	GDir *dir;
 	const gchar *file;
-	gchar *path;
+	gchar *path, *test_path;
 	int l;
-
 	char* probedirs[3];
+
+	pidgin_smiley_themes_destroy_all();
+
 	probedirs[0] = g_build_filename(DATADIR, "pixmaps", "pidgin", "emotes", NULL);
 	probedirs[1] = g_build_filename(purple_user_dir(), "smileys", NULL);
 	probedirs[2] = 0;
@@ -264,14 +289,20 @@ void pidgin_themes_smiley_theme_probe()
 		dir = g_dir_open(probedirs[l], 0, NULL);
 		if (dir) {
 			while ((file = g_dir_read_name(dir))) {
-				path = g_build_filename(probedirs[l], file, "theme", NULL);
+				test_path = g_build_filename(probedirs[l], file, NULL);
+				if (g_file_test(test_path, G_FILE_TEST_IS_DIR)) {
+					path = g_build_filename(probedirs[l], file, "theme", NULL);
 
-				/* Here we check to see that the theme has proper syntax.
-				 * We set the second argument to FALSE so that it doesn't load
-				 * the theme yet.
-				 */
-				pidgin_themes_load_smiley_theme(path, FALSE);
-				g_free(path);
+					/* Here we check to see that the theme has proper syntax.
+					 * We set the second argument to FALSE so that it doesn't load
+					 * the theme yet.
+					 *
+					 * Not quite ... we need to re-load the themes to enable theme removal
+					 */
+					pidgin_themes_load_smiley_theme(path, TRUE);
+					g_free(path);
+				}
+				g_free(test_path);
 			}
 			g_dir_close(dir);
 		} else if (l == 1) {
@@ -279,6 +310,8 @@ void pidgin_themes_smiley_theme_probe()
 		}
 		g_free(probedirs[l]);
 	}
+
+	current_smiley_theme = (struct smiley_theme *)(smiley_themes ? smiley_themes->data : NULL);
 }
 
 GSList *pidgin_themes_get_proto_smileys(const char *id) {

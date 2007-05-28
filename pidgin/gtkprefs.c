@@ -619,12 +619,95 @@ static gint pidgin_sort_smileys (GtkTreeModel	*model,
 	return ret;
 }
 
+static void request_theme_file_name_cb (gpointer data, char *theme_file_name)
+{
+	theme_install_theme (theme_file_name, NULL) ;
+}
+
+static void
+add_theme_button_clicked_cb(GtkWidget *button, gpointer null)
+{
+	purple_request_file (NULL, _("Install Theme"), NULL, FALSE, (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, NULL) ;
+}
+
+static void
+remove_theme_button_clicked_cb(GtkWidget *button, GtkTreeView *tree_view)
+{
+	static GtkTreeModel *tm = NULL;
+	static GtkTreeSelection *sel = NULL;
+	static GtkTreeIter itr;
+	static char *theme_path = NULL, *theme_name = NULL, *slash_before_filename = NULL;
+
+	if ((tm = gtk_tree_view_get_model(tree_view)) == NULL) return;
+	if ((sel = gtk_tree_view_get_selection(tree_view)) == NULL) return;
+	if (!gtk_tree_selection_get_selected(sel, NULL, &itr)) return;
+
+	gtk_tree_model_get(tm, &itr, 2, &theme_path, 3, &theme_name, -1);
+
+	if (theme_name) {
+		if (strcmp(theme_name, "none")) {
+			if(theme_path) {
+				g_print ("g_strrstr(\"%s\", \"%s\")\n", theme_path, G_DIR_SEPARATOR_S);
+				if ((slash_before_filename = g_strrstr(theme_path, G_DIR_SEPARATOR_S)) != NULL) {
+					GtkTreeRowReference *theme_rowref;
+					char *dir_file = NULL;
+					GDir *theme_dir = NULL;
+
+					*slash_before_filename = 0;
+					if ((theme_dir = g_dir_open(theme_path, 0, NULL)) != NULL) {
+						while((dir_file = (char *)g_dir_read_name(theme_dir)) != NULL) {
+							if ((dir_file = g_strdup_printf ("%s%s%s", theme_path, G_DIR_SEPARATOR_S, dir_file)) != NULL) {
+								g_print("Deleting file \"%s\"\n", dir_file);
+#ifdef _WIN32
+								/* UNTESTED ! */
+								DeleteFile(dir_file);
+#else /* !_WIN32 */
+								unlink(dir_file);
+#endif /* _WIN32 */
+								g_free(dir_file);
+							}
+						}
+
+					g_dir_close(theme_dir);
+
+#ifdef _WIN32
+					/* UNTESTED ! */
+					RemoveDirectory(theme_path);
+#else /* !_WIN32 */
+					rmdir(theme_path);
+#endif /* _WIN32 */
+
+					/*
+					 * Currently theme_refresh_theme_list() is rigged to remove all smiley themes and re-probe them. This is fine,
+					 * but for the next minor version we should add a pidgin_themes_remove_smiley_theme(struct smiley_theme *theme)
+					 * to gtkthemes.[ch] which will remove an individual theme (IOW the core of the loop in
+					 * gtkthemes.c:pidgin_smiley_themes_destroy_all()).
+					 */
+					if (previous_smiley_row)
+						gtk_tree_row_reference_free(previous_smiley_row);
+					previous_smiley_row = NULL;
+					if ((theme_rowref = theme_refresh_theme_list()) != NULL)
+						gtk_tree_row_reference_free(theme_rowref);
+
+					} else g_print("Failed to open theme directory\n");
+				} else g_print("Couldn't chop theme file name from path\n");
+			} else g_print("Theme path is NULL\n");
+		} else g_print("Theme name is \"none\"\n");
+	} else g_print("Theme name is NULL!\n");
+
+	g_free(theme_name);
+	g_free(theme_path);
+}
+
 static GtkWidget *
 theme_page()
 {
+	GtkWidget *hbox_buttons;
+	GtkWidget *alignment;
 	GtkWidget *ret;
 	GtkWidget *sw;
 	GtkWidget *view;
+	GtkWidget *add_button, *remove_button;
 	GtkCellRenderer *rend;
 	GtkTreeViewColumn *col;
 	GtkTreeSelection *sel;
@@ -693,6 +776,24 @@ theme_page()
 		gtk_tree_selection_select_path(sel, path);
 		gtk_tree_path_free(path);
 	}
+
+	alignment = gtk_alignment_new(1.0, 0.5, 0.0, 1.0);
+	gtk_widget_show(alignment);
+	gtk_box_pack_start(GTK_BOX(ret), alignment, FALSE, TRUE, 0);
+
+	hbox_buttons = gtk_hbox_new(TRUE, PIDGIN_HIG_CAT_SPACE);
+	gtk_widget_show(hbox_buttons);
+	gtk_container_add(GTK_CONTAINER(alignment), hbox_buttons);
+
+	add_button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_widget_show(add_button);
+	gtk_box_pack_start(GTK_BOX(hbox_buttons), add_button, FALSE, TRUE, 0);
+	g_signal_connect(G_OBJECT(add_button), "clicked", (GCallback)add_theme_button_clicked_cb, NULL);
+
+	remove_button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+	gtk_widget_show(remove_button);
+	gtk_box_pack_start(GTK_BOX(hbox_buttons), remove_button, FALSE, TRUE, 0);
+	g_signal_connect(G_OBJECT(remove_button), "clicked", (GCallback)remove_theme_button_clicked_cb, view);
 
 	gtk_widget_show_all(ret);
 
