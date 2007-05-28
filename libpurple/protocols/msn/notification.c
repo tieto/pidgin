@@ -325,10 +325,9 @@ ver_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	g_snprintf(proto_str, sizeof(proto_str), "MSNP%d", session->protocol_ver);
 
-	for (i = 1; i < cmd->param_count -1; i++)
+	for (i = 1; i < cmd->param_count; i++)
 	{
-		purple_debug_info("MaYuan","%s,proto_str:%s\n",cmd->params[i],proto_str);
-		if (strcmp(cmd->params[i], proto_str) >= 0)
+		if (!strcmp(cmd->params[i], proto_str))
 		{
 			protocol_supported = TRUE;
 			break;
