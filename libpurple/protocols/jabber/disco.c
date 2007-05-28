@@ -324,9 +324,14 @@ jabber_disco_server_items_result_cb(JabberStream *js, xmlnode *packet, gpointer 
 	for(child = xmlnode_get_child(query, "item"); child;
 			child = xmlnode_get_next_twin(child)) {
 		JabberIq *iq;
-		const char *jid;
+		const char *jid, *node;
 
 		if(!(jid = xmlnode_get_attrib(child, "jid")))
+			continue;
+
+		/* we don't actually care about the specific nodes,
+		 * so we won't query them */
+		if((node = xmlnode_get_attrib(child, "node")))
 			continue;
 
 		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");
