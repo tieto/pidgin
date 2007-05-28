@@ -3239,7 +3239,7 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 				ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_XA,
 						icon_size, "GtkTreeView");
 		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_OFFLINE))
-			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_OFFLINE,
+			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_OFFLINE_I,
 					icon_size, "GtkTreeView");
 		else if (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
 			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE_I,
@@ -3413,8 +3413,16 @@ static gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected)
 				"<span color='%s' size='smaller'>%s</span>",
 				dim_grey(), esc, dim_grey(),
 				statustext != NULL ? statustext : "");
-	}
+	} else if (!PURPLE_BUDDY_IS_ONLINE(b)) {
+		if (!selected && !statustext) /* We handle selected text later */
+			text = g_strdup_printf("<span color='%s'>%s</span>", dim_grey(), esc);
+		else if (!selected && !text)
+			text = g_strdup_printf("<span color='%s'>%s</span>\n"
+				"<span color='%s' size='smaller'>%s</span>",
+				dim_grey(), esc, dim_grey(),
+				statustext != NULL ? statustext : "");
 
+	}
 	/* Not idle and not selected */
 	else if (!selected && !text)
 	{
