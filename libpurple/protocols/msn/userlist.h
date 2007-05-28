@@ -35,7 +35,8 @@ typedef enum
 	MSN_LIST_FL,
 	MSN_LIST_AL,
 	MSN_LIST_BL,
-	MSN_LIST_RL
+	MSN_LIST_RL,
+	MSN_LIST_PL
 
 } MsnListId;
 

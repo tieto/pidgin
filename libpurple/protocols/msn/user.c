@@ -340,13 +340,25 @@ msn_user_is_online(PurpleAccount *account, const char *name)
 	return PURPLE_BUDDY_IS_ONLINE(buddy);
 }
 
-/*check to see if user is yahoo user?
- * TODO: we need to identify it via contact  parse
- */
 gboolean
 msn_user_is_yahoo(PurpleAccount *account, const char *name)
 {
-	return (strstr(name,"yahoo") != NULL);
+	MsnSession *session = NULL;
+	MsnUser *user;
+	PurpleConnection *gc;
+
+	gc = purple_account_get_connection(account);
+	if (gc != NULL)
+		session = gc->proto_data;
+
+	if ((session != NULL) && (session->protocol_ver == WLM_PROT_VER))
+		return FALSE;
+
+	if ((session != NULL) && (user = msn_userlist_find_user(session->userlist, name)) != NULL)
+	{
+		return (user->type == MSN_USER_TYPE_YAHOO);
+	}
+	return (strstr(name,"@yahoo.") != NULL);
 }
 
 void

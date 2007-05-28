@@ -97,7 +97,8 @@ typedef enum
 	MSN_LIST_FL_OP = 0x01,
 	MSN_LIST_AL_OP = 0x02,
 	MSN_LIST_BL_OP = 0x04,
-	MSN_LIST_RL_OP = 0x08
+	MSN_LIST_RL_OP = 0x08,
+	MSN_LIST_PL_OP = 0x10
 
 } MsnListOp;
 #define MSN_LIST_OP_MASK	0x07

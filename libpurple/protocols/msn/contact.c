@@ -96,6 +96,8 @@ msn_get_memberrole(char * role)
 		return MSN_LIST_BL_OP;
 	}else if(!strcmp(role,"Reverse")){
 		return MSN_LIST_RL_OP;
+	}else if(!strcmp(role,"Pending")){
+		return MSN_LIST_PL_OP;
 	}
 	return 0;
 }
@@ -340,6 +342,7 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 		xmlnode *contactId,*contactInfo,*contactType,*passportName,*displayName,*guid;
 		xmlnode *groupIds;
 		MsnUser *user;
+		MsnUserType usertype;
 		char *passport,*Name,*uid,*type;
 
 		passport = NULL;
@@ -359,7 +362,7 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 			g_free(friendly);
 			continue; /* Not adding own account as buddy to buddylist */
 		}
-
+		usertype = msn_get_user_type(type);
 		passportName = xmlnode_get_child(contactInfo,"passportName");
 		if(passportName == NULL){
 			xmlnode *emailsNode, *contactEmailNode, *emailNode;
@@ -385,6 +388,7 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 					emailNode = xmlnode_get_child(contactEmailNode,"email");
 					passport = xmlnode_get_data(emailNode);
 					purple_debug_info("MsnAB","Yahoo User %s\n",passport);
+					usertype = MSN_USER_TYPE_YAHOO;
 					break;
 				}else{
 					/*TODO maybe we can just ignore it in Purple?*/
@@ -414,7 +418,7 @@ msn_parse_addressbook_contacts(MsnContact *contact, xmlnode *node)
 
 		user = msn_userlist_find_add_user(session->userlist, passport,Name);
 		msn_user_set_uid(user,uid);
-		msn_user_set_type(user,msn_get_user_type(type));
+		msn_user_set_type(user, usertype);
 		g_free(Name);
 		g_free(passport);
 		g_free(uid);
