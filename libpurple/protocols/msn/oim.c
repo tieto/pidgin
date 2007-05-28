@@ -525,6 +525,7 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 {
 	xmlnode *node, *mdNode,*mNode,*ENode,*INode,*rtNode,*nNode;
 	char *passport,*msgid,*nickname, *unread, *rTime = NULL;
+	MsnSession *session = oim->session;
 
 	node = xmlnode_from_str(xmlmsg, strlen(xmlmsg));
 
@@ -538,7 +539,6 @@ msn_parse_oim_msg(MsnOim *oim,const char *xmlmsg)
 
 		if (count > 0)
 		{
-			MsnSession *session = oim->session;
 			const char *passport;
 			const char *url;
 
