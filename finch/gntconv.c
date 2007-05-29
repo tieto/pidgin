@@ -64,7 +64,7 @@ static void
 send_typing_notification(GntWidget *w, FinchConv *ggconv)
 {
 	const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
-	gboolean empty = (!text || !*text);
+	gboolean empty = (!text || !*text || (*text == '/'));
 	if (purple_prefs_get_bool("/finch/conversations/notify_typing")) {
 		PurpleConversation *conv = ggconv->active_conv;
 		PurpleConvIm *im = PURPLE_CONV_IM(conv);
