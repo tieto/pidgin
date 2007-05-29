@@ -95,7 +95,7 @@ user_is_in_group(MsnUser *user, const char * group_id)
 	if (group_id == NULL)
 		return FALSE;
 
-	if (g_list_find(user->group_ids, group_id))
+	if (g_list_find_custom(user->group_ids, group_id, (GCompareFunc)strcmp))
 		return TRUE;
 
 	return FALSE;

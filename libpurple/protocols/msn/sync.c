@@ -145,10 +145,10 @@ lst_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 		for (c = tokens; *c != NULL; c++)
 		{
-			int id;
+			char *id;
 
-			id = atoi(*c);
-			group_ids = g_slist_append(group_ids, GINT_TO_POINTER(id));
+			id = *c;
+			group_ids = g_slist_append(group_ids, g_strdup(id));
 		}
 
 		g_strfreev(tokens);
