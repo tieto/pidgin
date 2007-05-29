@@ -1208,7 +1208,7 @@ char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *
 gboolean aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn);
 
 /* Client functions for changing SSI data */
-int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth);
+int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, GSList *tlvlist, const char *alias, const char *comment, const char *smsnum, gboolean needauth);
 int aim_ssi_addpermit(OscarData *od, const char *name);
 int aim_ssi_adddeny(OscarData *od, const char *name);
 int aim_ssi_delbuddy(OscarData *od, const char *name, const char *group);

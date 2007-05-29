@@ -670,7 +670,7 @@ int aim_ssi_cleanlist(OscarData *od)
 				aim_ssi_deldeny(od, NULL);
 		} else if ((cur->type == AIM_SSI_TYPE_BUDDY) && ((cur->gid == 0x0000) || (!aim_ssi_itemlist_find(od->ssi.local, cur->gid, 0x0000)))) {
 			char *alias = aim_ssi_getalias(od->ssi.local, NULL, cur->name);
-			aim_ssi_addbuddy(od, cur->name, "orphans", alias, NULL, NULL, 0);
+			aim_ssi_addbuddy(od, cur->name, "orphans", NULL, alias, NULL, NULL, FALSE);
 			aim_ssi_delbuddy(od, cur->name, NULL);
 			g_free(alias);
 		}
@@ -721,15 +721,15 @@ int aim_ssi_cleanlist(OscarData *od)
  * @param od The oscar odion.
  * @param name The name of the item.
  * @param group The group of the item.
+ * @param data A TLV list to use as the additional data for this item.
  * @param alias The alias/nickname of the item, or NULL.
  * @param comment The buddy comment for the item, or NULL.
  * @param smsnum The locally assigned SMS number, or NULL.
  * @return Return 0 if no errors, otherwise return the error number.
  */
-int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth)
+int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, GSList *data, const char *alias, const char *comment, const char *smsnum, gboolean needauth)
 {
 	struct aim_ssi_item *parent;
-	GSList *data = NULL;
 
 	if (!od || !name || !group)
 		return -EINVAL;
@@ -750,11 +750,11 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const c
 	/* Create a TLV list for the new buddy */
 	if (needauth)
 		aim_tlvlist_add_noval(&data, 0x0066);
-	if (alias)
+	if (alias != NULL)
 		aim_tlvlist_add_str(&data, 0x0131, alias);
-	if (smsnum)
+	if (smsnum != NULL)
 		aim_tlvlist_add_str(&data, 0x013a, smsnum);
-	if (comment)
+	if (comment != NULL)
 		aim_tlvlist_add_str(&data, 0x013c, comment);
 
 	/* Add that bad boy */
@@ -920,56 +920,24 @@ int aim_ssi_deldeny(OscarData *od, const char *name)
  */
 int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const char *sn)
 {
-	struct aim_ssi_item *buddy, *parent;
-	GSList *datacopy;
-
-	if (!od | !oldgn | !newgn | !sn)
-		return -EINVAL;
+	struct aim_ssi_item *buddy;
+	GSList *data;
 
 	/* Find the buddy */
-	if (!(buddy = aim_ssi_itemlist_finditem(od->ssi.local, oldgn, sn, AIM_SSI_TYPE_BUDDY)))
+	buddy = aim_ssi_itemlist_finditem(od->ssi.local, oldgn, sn, AIM_SSI_TYPE_BUDDY);
+	if (buddy == NULL)
 		return -EINVAL;
 
 	/* Make a copy of the buddy's TLV list */
-	datacopy = aim_tlvlist_copy(buddy->data);
+	data = aim_tlvlist_copy(buddy->data);
 
-	/* Remove the item from the list */
-	aim_ssi_itemlist_del(&od->ssi.local, buddy);
+	/* Delete the old item */
+	aim_ssi_delbuddy(od, sn, oldgn);
 
-	/* Modify the parent group */
-	aim_ssi_itemlist_rebuildgroup(od->ssi.local, oldgn);
+	/* Add the new item using the EXACT SAME TLV list */
+	aim_ssi_addbuddy(od, sn, newgn, data, NULL, NULL, NULL, FALSE);
 
-	/* Check if we should delete the parent group */
-	if ((parent = aim_ssi_itemlist_finditem(od->ssi.local, oldgn, NULL, AIM_SSI_TYPE_GROUP)) && (!parent->data)) {
-		aim_ssi_itemlist_del(&od->ssi.local, parent);
-
-		/* Modify the parent group */
-		aim_ssi_itemlist_rebuildgroup(od->ssi.local, NULL);
-	}
-
-	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	/* Find the parent */
-	if (!(parent = aim_ssi_itemlist_finditem(od->ssi.local, newgn, NULL, AIM_SSI_TYPE_GROUP))) {
-		/* Add the parent */
-		parent = aim_ssi_itemlist_add(&od->ssi.local, newgn, 0xFFFF, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
-
-		/* Modify the parent's parent (the master group) */
-		aim_ssi_itemlist_rebuildgroup(od->ssi.local, NULL);
-	}
-
-	/* Add that bad boy */
-	aim_ssi_itemlist_add(&od->ssi.local, sn, parent->gid, 0xFFFF, AIM_SSI_TYPE_BUDDY, datacopy);
-
-	/* Free the previously created TLV list copy */
-	aim_tlvlist_free(datacopy);
-
-	/* Modify the parent group */
-	aim_ssi_itemlist_rebuildgroup(od->ssi.local, newgn);
-
-	/* Sync our local list with the server list */
-	return aim_ssi_sync(od);
+	return 0;
 }
 
 /**
