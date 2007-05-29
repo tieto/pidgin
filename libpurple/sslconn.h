@@ -32,7 +32,8 @@
 typedef enum
 {
 	PURPLE_SSL_HANDSHAKE_FAILED = 1,
-	PURPLE_SSL_CONNECT_FAILED = 2
+	PURPLE_SSL_CONNECT_FAILED = 2,
+	PURPLE_SSL_PEER_AUTH_FAILED = 3
 } PurpleSslErrorType;
 
 typedef struct _PurpleSslConnection PurpleSslConnection;
