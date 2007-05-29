@@ -60,6 +60,7 @@ static GtkWidget *prefsnotebook;
 
 static GtkWidget *sound_entry = NULL;
 static GtkListStore *smiley_theme_store = NULL;
+static GtkWidget *smiley_theme_tree_view = NULL;
 static GtkWidget *prefs_proxy_frame = NULL;
 
 static GtkWidget *prefs = NULL;
@@ -366,6 +367,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	GValue val;
 	GtkTreePath *path, *oldpath;
 	struct smiley_theme *new_theme, *old_theme;
+	GtkWidget *remove_button = g_object_get_data(G_OBJECT(sel), "remove_button");
 
 	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
 		return;
@@ -375,6 +377,14 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	gtk_tree_model_get_value(model, &iter, 3, &val);
 	path = gtk_tree_model_get_path(model, &iter);
 	themename = g_value_get_string(&val);
+
+	/*
+	 * Disallow removal of the "none" theme - note that there's a double check, so even if
+	 * the button is not disabled here, the "none" theme still won't be removed when its clicked.
+	 */
+	if (remove_button)
+		gtk_widget_set_sensitive(remove_button, strcmp(themename, "none"));
+
 	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", themename);
 	g_value_unset (&val);
 
@@ -513,9 +523,23 @@ static void theme_install_theme(char *path, char *extn) {
 #endif
 	g_free(destdir);
 
-	theme_rowref = theme_refresh_theme_list();
-	if (theme_rowref != NULL)
+	if ((theme_rowref = theme_refresh_theme_list()) != NULL) {
+		GtkTreeIter itr;
+		GtkTreeModel *tm;
+		GtkTreePath *tp = NULL;
+		GtkTreeSelection *sel = NULL;
+
+		if ((sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(smiley_theme_tree_view))) != NULL) {
+			if ((tm = gtk_tree_row_reference_get_model(theme_rowref)) != NULL) {
+				if ((tp = gtk_tree_row_reference_get_path(theme_rowref)) != NULL) {
+					if (gtk_tree_model_get_iter(tm, &itr, tp))
+						gtk_tree_selection_select_iter(sel, &itr);
+					gtk_tree_path_free(tp);
+				}
+			}
+		}
 		gtk_tree_row_reference_free(theme_rowref);
+	}
 }
 
 static void
@@ -647,7 +671,6 @@ remove_theme_button_clicked_cb(GtkWidget *button, GtkTreeView *tree_view)
 	if (theme_name) {
 		if (strcmp(theme_name, "none")) {
 			if(theme_path) {
-				g_print ("g_strrstr(\"%s\", \"%s\")\n", theme_path, G_DIR_SEPARATOR_S);
 				if ((slash_before_filename = g_strrstr(theme_path, G_DIR_SEPARATOR_S)) != NULL) {
 					GtkTreeRowReference *theme_rowref;
 					char *dir_file = NULL;
@@ -657,43 +680,39 @@ remove_theme_button_clicked_cb(GtkWidget *button, GtkTreeView *tree_view)
 					if ((theme_dir = g_dir_open(theme_path, 0, NULL)) != NULL) {
 						while((dir_file = (char *)g_dir_read_name(theme_dir)) != NULL) {
 							if ((dir_file = g_strdup_printf ("%s%s%s", theme_path, G_DIR_SEPARATOR_S, dir_file)) != NULL) {
-								g_print("Deleting file \"%s\"\n", dir_file);
-#ifdef _WIN32
-								/* UNTESTED ! */
-								DeleteFile(dir_file);
-#else /* !_WIN32 */
-								unlink(dir_file);
-#endif /* _WIN32 */
+								g_unlink(dir_file);
 								g_free(dir_file);
 							}
 						}
 
 					g_dir_close(theme_dir);
-
-#ifdef _WIN32
-					/* UNTESTED ! */
-					RemoveDirectory(theme_path);
-#else /* !_WIN32 */
-					rmdir(theme_path);
-#endif /* _WIN32 */
+					g_rmdir(theme_path);
 
 					/*
-					 * Currently theme_refresh_theme_list() is rigged to remove all smiley themes and re-probe them. This is fine,
-					 * but for the next minor version we should add a pidgin_themes_remove_smiley_theme(struct smiley_theme *theme)
-					 * to gtkthemes.[ch] which will remove an individual theme (IOW the core of the loop in
-					 * gtkthemes.c:pidgin_smiley_themes_destroy_all()).
+					 * Currently theme_refresh_theme_list() is rigged to remove all smiley themes which have disappeared from disk.
+					 * This is fine, but for the next minor version we should add a
+					 * pidgin_themes_remove_smiley_theme(struct smiley_theme *theme) to gtkthemes.[ch] which will remove an 
+					 * individual theme from the list.
 					 */
 					if (previous_smiley_row)
 						gtk_tree_row_reference_free(previous_smiley_row);
 					previous_smiley_row = NULL;
-					if ((theme_rowref = theme_refresh_theme_list()) != NULL)
-						gtk_tree_row_reference_free(theme_rowref);
+					if ((theme_rowref = theme_refresh_theme_list()) != NULL) {
+						GtkTreePath *tp = NULL;
 
-					} else g_print("Failed to open theme directory\n");
-				} else g_print("Couldn't chop theme file name from path\n");
-			} else g_print("Theme path is NULL\n");
-		} else g_print("Theme name is \"none\"\n");
-	} else g_print("Theme name is NULL!\n");
+						if ((tp = gtk_tree_row_reference_get_path(theme_rowref)) != NULL) {
+							if (gtk_tree_model_get_iter(tm, &itr, tp))
+								gtk_tree_selection_select_iter(sel, &itr);
+							gtk_tree_path_free(tp);
+						}
+						gtk_tree_row_reference_free(theme_rowref);
+					}
+
+					}
+				}
+			}
+		}
+	}
 
 	g_free(theme_name);
 	g_free(theme_path);
@@ -736,7 +755,7 @@ theme_page()
 
 	rowref = theme_refresh_theme_list();
 
-	view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(smiley_theme_store));
+	view = smiley_theme_tree_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL(smiley_theme_store));
 
 	gtk_drag_dest_set(view, GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP, te,
 					sizeof(te) / sizeof(GtkTargetEntry) , GDK_ACTION_COPY | GDK_ACTION_MOVE);
@@ -795,9 +814,14 @@ theme_page()
 	gtk_box_pack_start(GTK_BOX(hbox_buttons), remove_button, FALSE, TRUE, 0);
 	g_signal_connect(G_OBJECT(remove_button), "clicked", (GCallback)remove_theme_button_clicked_cb, view);
 
+	g_object_set_data(G_OBJECT(sel), "remove_button", remove_button);
+
 	gtk_widget_show_all(ret);
 
 	pidgin_set_accessible_label (view, label);
+
+	/* Handle initial selection */
+	smiley_sel(sel, GTK_TREE_MODEL(smiley_theme_store));
 
 	return ret;
 }
