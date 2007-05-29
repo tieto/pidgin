@@ -224,6 +224,8 @@ static void ssl_gnutls_authcheck_ask(PurpleSslConnection * gsc)
 
       gnutls_x509_crt_deinit(cert);
     } /* if (0 == ... */
+
+  purple_debug_info("gnutls","Requested user verification for certificate from %s\n", gsc->host);
 }
 
 static void ssl_gnutls_handshake_cb(gpointer data, gint source,
@@ -328,6 +330,7 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 		} /* End keydata spitting */
 
 		/* Ask for cert verification */
+		ssl_gnutls_authcheck_ask(gsc);
 	}
 
 }
