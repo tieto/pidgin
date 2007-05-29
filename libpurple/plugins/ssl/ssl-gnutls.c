@@ -194,7 +194,7 @@ static void ssl_gnutls_authcheck_ask(PurpleSslConnection * gsc)
 
 	secondary = g_strdup_printf
 	  (
-	   _("Certificate name: %s\nKey fingerprint (SHA1):%s\nSerial Number:%s\nTODO: Expiration dates, etc.\n"),
+	   _("Certificate name:\n%s\n\nKey fingerprint (SHA1): %s\n\nSerial Number: %s\n\nTODO: Expiration dates, etc.\n"),
 	   dn, fpr_asc, ser_asc
 	   );
 
@@ -267,7 +267,8 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 		    gnutls_certificate_get_peers(session, &cert_list_size);
 		  
 		  purple_debug_info("gnutls",
-				    "Peer provided %d certs\n",
+				    "Peer %s provided %d certs\n",
+				    gsc->host,
 				    cert_list_size);
 
 		  for (i=0; i<cert_list_size; i++)
