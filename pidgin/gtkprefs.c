@@ -525,17 +525,14 @@ static void theme_install_theme(char *path, char *extn) {
 
 	if ((theme_rowref = theme_refresh_theme_list()) != NULL) {
 		GtkTreeIter itr;
-		GtkTreeModel *tm;
 		GtkTreePath *tp = NULL;
 		GtkTreeSelection *sel = NULL;
 
 		if ((sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(smiley_theme_tree_view))) != NULL) {
-			if ((tm = gtk_tree_row_reference_get_model(theme_rowref)) != NULL) {
-				if ((tp = gtk_tree_row_reference_get_path(theme_rowref)) != NULL) {
-					if (gtk_tree_model_get_iter(tm, &itr, tp))
-						gtk_tree_selection_select_iter(sel, &itr);
-					gtk_tree_path_free(tp);
-				}
+			if ((tp = gtk_tree_row_reference_get_path(theme_rowref)) != NULL) {
+				if (gtk_tree_model_get_iter(GTK_TREE_MODEL(smiley_theme_store), &itr, tp))
+					gtk_tree_selection_select_iter(sel, &itr);
+				gtk_tree_path_free(tp);
 			}
 		}
 		gtk_tree_row_reference_free(theme_rowref);
