@@ -110,7 +110,7 @@ aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *list, const char *name)
  * @param data The additional data for the new item.
  * @return A pointer to the newly created item.
  */
-static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, const char *name, guint16 gid, guint16 bid, guint16 type, aim_tlvlist_t *data)
+static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, const char *name, guint16 gid, guint16 bid, guint16 type, GSList *data)
 {
 	gboolean exists;
 	struct aim_ssi_item *cur, *new;
@@ -214,7 +214,7 @@ static int aim_ssi_itemlist_del(struct aim_ssi_item **list, struct aim_ssi_item 
 
 	/* Free the removed item */
 	g_free(del->name);
-	aim_tlvlist_free(&del->data);
+	aim_tlvlist_free(del->data);
 	g_free(del);
 
 	return 0;
@@ -610,7 +610,7 @@ aim_ssi_freelist(OscarData *od)
 		del = cur;
 		cur = cur->next;
 		g_free(del->name);
-		aim_tlvlist_free(&del->data);
+		aim_tlvlist_free(del->data);
 		g_free(del);
 	}
 
@@ -619,7 +619,7 @@ aim_ssi_freelist(OscarData *od)
 		del = cur;
 		cur = cur->next;
 		g_free(del->name);
-		aim_tlvlist_free(&del->data);
+		aim_tlvlist_free(del->data);
 		g_free(del);
 	}
 
@@ -729,7 +729,7 @@ int aim_ssi_cleanlist(OscarData *od)
 int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth)
 {
 	struct aim_ssi_item *parent;
-	aim_tlvlist_t *data = NULL;
+	GSList *data = NULL;
 
 	if (!od || !name || !group)
 		return -EINVAL;
@@ -759,7 +759,7 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const c
 
 	/* Add that bad boy */
 	aim_ssi_itemlist_add(&od->ssi.local, name, parent->gid, 0xFFFF, AIM_SSI_TYPE_BUDDY, data);
-	aim_tlvlist_free(&data);
+	aim_tlvlist_free(data);
 
 	/* Modify the parent group */
 	aim_ssi_itemlist_rebuildgroup(od->ssi.local, group);
@@ -920,18 +920,56 @@ int aim_ssi_deldeny(OscarData *od, const char *name)
  */
 int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const char *sn)
 {
-	char *alias;
-	gboolean waitingforauth;
+	struct aim_ssi_item *buddy, *parent;
+	GSList *datacopy;
 
-	alias = aim_ssi_getalias(od->ssi.local, oldgn, sn);
-	waitingforauth = aim_ssi_waitingforauth(od->ssi.local, oldgn, sn);
+	if (!od | !oldgn | !newgn | !sn)
+		return -EINVAL;
 
-	aim_ssi_delbuddy(od, sn, oldgn);
-	aim_ssi_addbuddy(od, sn, newgn, alias, NULL, NULL, waitingforauth);
+	/* Find the buddy */
+	if (!(buddy = aim_ssi_itemlist_finditem(od->ssi.local, oldgn, sn, AIM_SSI_TYPE_BUDDY)))
+		return -EINVAL;
 
-	g_free(alias);
+	/* Make a copy of the buddy's TLV list */
+	datacopy = aim_tlvlist_copy(buddy->data);
 
-	return 0;
+	/* Remove the item from the list */
+	aim_ssi_itemlist_del(&od->ssi.local, buddy);
+
+	/* Modify the parent group */
+	aim_ssi_itemlist_rebuildgroup(od->ssi.local, oldgn);
+
+	/* Check if we should delete the parent group */
+	if ((parent = aim_ssi_itemlist_finditem(od->ssi.local, oldgn, NULL, AIM_SSI_TYPE_GROUP)) && (!parent->data)) {
+		aim_ssi_itemlist_del(&od->ssi.local, parent);
+
+		/* Modify the parent group */
+		aim_ssi_itemlist_rebuildgroup(od->ssi.local, NULL);
+	}
+
+	/* Sync our local list with the server list */
+	aim_ssi_sync(od);
+
+	/* Find the parent */
+	if (!(parent = aim_ssi_itemlist_finditem(od->ssi.local, newgn, NULL, AIM_SSI_TYPE_GROUP))) {
+		/* Add the parent */
+		parent = aim_ssi_itemlist_add(&od->ssi.local, newgn, 0xFFFF, 0x0000, AIM_SSI_TYPE_GROUP, NULL);
+
+		/* Modify the parent's parent (the master group) */
+		aim_ssi_itemlist_rebuildgroup(od->ssi.local, NULL);
+	}
+
+	/* Add that bad boy */
+	aim_ssi_itemlist_add(&od->ssi.local, sn, parent->gid, 0xFFFF, AIM_SSI_TYPE_BUDDY, datacopy);
+
+	/* Free the previously created TLV list copy */
+	aim_tlvlist_free(datacopy);
+
+	/* Modify the parent group */
+	aim_ssi_itemlist_rebuildgroup(od->ssi.local, newgn);
+
+	/* Sync our local list with the server list */
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -1172,7 +1210,7 @@ static int parserights(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 {
 	int ret = 0, i;
 	aim_rxcallback_t userfunc;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	aim_tlv_t *tlv;
 	ByteStream bstream;
 	guint16 *maxitems;
@@ -1182,7 +1220,7 @@ static int parserights(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 
 	/* TLV 0x0004 contains the maximum number of each item */
 	if (!(tlv = aim_tlv_gettlv(tlvlist, 0x0004, 1))) {
-		aim_tlvlist_free(&tlvlist);
+		aim_tlvlist_free(tlvlist);
 		return 0;
 	}
 
@@ -1196,7 +1234,7 @@ static int parserights(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, tlv->length/2, maxitems);
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 	g_free(maxitems);
 
 	return ret;
@@ -1267,7 +1305,7 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 	guint8 fmtver; /* guess */
 	guint16 namelen, gid, bid, type;
 	char *name;
-	aim_tlvlist_t *data;
+	GSList *data;
 
 	fmtver = byte_stream_get8(bs); /* Version of ssi data.  Should be 0x00 */
 	od->ssi.numitems += byte_stream_get16(bs); /* # of items in this SSI SNAC */
@@ -1284,7 +1322,7 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 		data = aim_tlvlist_readlen(bs, byte_stream_get16(bs));
 		aim_ssi_itemlist_add(&od->ssi.official, name, gid, bid, type, data);
 		g_free(name);
-		aim_tlvlist_free(&data);
+		aim_tlvlist_free(data);
 	}
 
 	/* Read in the timestamp */
@@ -1352,7 +1390,7 @@ static int aim_ssi_addmoddel(OscarData *od)
 		if (cur->item->name)
 			snaclen += strlen(cur->item->name);
 		if (cur->item->data)
-			snaclen += aim_tlvlist_size(&cur->item->data);
+			snaclen += aim_tlvlist_size(cur->item->data);
 	}
 
 	frame = flap_frame_new(od, 0x02, snaclen);
@@ -1367,7 +1405,7 @@ static int aim_ssi_addmoddel(OscarData *od)
 		byte_stream_put16(&frame->data, cur->item->gid);
 		byte_stream_put16(&frame->data, cur->item->bid);
 		byte_stream_put16(&frame->data, cur->item->type);
-		byte_stream_put16(&frame->data, cur->item->data ? aim_tlvlist_size(&cur->item->data) : 0);
+		byte_stream_put16(&frame->data, cur->item->data ? aim_tlvlist_size(cur->item->data) : 0);
 		if (cur->item->data)
 			aim_tlvlist_write(&frame->data, &cur->item->data);
 	}
@@ -1389,7 +1427,7 @@ static int parseadd(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 	aim_rxcallback_t userfunc;
 	char *name;
 	guint16 len, gid, bid, type;
-	aim_tlvlist_t *data;
+	GSList *data;
 
 	while (byte_stream_empty(bs)) {
 		if ((len = byte_stream_get16(bs)))
@@ -1406,7 +1444,7 @@ static int parseadd(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 
 		aim_ssi_itemlist_add(&od->ssi.local, name, gid, bid, type, data);
 		aim_ssi_itemlist_add(&od->ssi.official, name, gid, bid, type, data);
-		aim_tlvlist_free(&data);
+		aim_tlvlist_free(data);
 
 		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 			ret = userfunc(od, conn, frame, type, name);
@@ -1428,7 +1466,7 @@ static int parsemod(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 	aim_rxcallback_t userfunc;
 	char *name;
 	guint16 len, gid, bid, type;
-	aim_tlvlist_t *data;
+	GSList *data;
 	struct aim_ssi_item *item;
 
 	while (byte_stream_empty(bs)) {
@@ -1453,7 +1491,7 @@ static int parsemod(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 				strcpy(item->name, name);
 			} else
 				item->name = NULL;
-			aim_tlvlist_free(&item->data);
+			aim_tlvlist_free(item->data);
 			item->data = aim_tlvlist_copy(data);
 		}
 
@@ -1465,7 +1503,7 @@ static int parsemod(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 				strcpy(item->name, name);
 			} else
 				item->name = NULL;
-			aim_tlvlist_free(&item->data);
+			aim_tlvlist_free(item->data);
 			item->data = aim_tlvlist_copy(data);
 		}
 
@@ -1473,7 +1511,7 @@ static int parsemod(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 			ret = userfunc(od, conn, frame);
 
 		g_free(name);
-		aim_tlvlist_free(&data);
+		aim_tlvlist_free(data);
 	}
 
 	return ret;
@@ -1561,7 +1599,7 @@ static int parseack(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 							strcpy(cur->item->name, cur1->name);
 						} else
 							cur->item->name = NULL;
-						aim_tlvlist_free(&cur->item->data);
+						aim_tlvlist_free(cur->item->data);
 						cur->item->data = aim_tlvlist_copy(cur1->data);
 					}
 				} else
@@ -1595,7 +1633,7 @@ static int parseack(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 							strcpy(cur1->name, cur->item->name);
 						} else
 							cur1->name = NULL;
-						aim_tlvlist_free(&cur1->data);
+						aim_tlvlist_free(cur1->data);
 						cur1->data = aim_tlvlist_copy(cur->item->data);
 					}
 				} else
