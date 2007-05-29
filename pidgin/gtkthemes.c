@@ -302,8 +302,6 @@ void pidgin_themes_smiley_theme_probe()
 					/* Here we check to see that the theme has proper syntax.
 					 * We set the second argument to FALSE so that it doesn't load
 					 * the theme yet.
-					 *
-					 * Not quite ... we need to re-load the themes to enable theme removal
 					 */
 					pidgin_themes_load_smiley_theme(path, FALSE);
 					g_free(path);
