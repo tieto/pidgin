@@ -155,6 +155,31 @@ purple_base16_decode(const char *str, gsize *ret_len)
 	return data;
 }
 
+gchar *
+purple_base16_encode_chunked(const guchar *data, gsize len)
+{
+	int i;
+	gchar *ascii = NULL;
+
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(len > 0,   NULL);
+
+	/* For each byte of input, we need 2 bytes for the hex representation
+	 * and 1 for the colon.
+	 * The final colon will be replaced by a terminating NULL
+	 */
+	ascii = g_malloc(len * 3 + 1);
+
+	for (i = 0; i < len; i++)
+		g_snprintf(&ascii[i * 3], 4, "%02hhx:", data[i]);
+
+	/* Replace the final colon with NULL */
+	ascii[len * 3 - 1] = 0;
+
+	return ascii;
+}
+
+
 /**************************************************************************
  * Base64 Functions
  **************************************************************************/
