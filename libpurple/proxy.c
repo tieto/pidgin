@@ -1059,6 +1059,22 @@ proxy_connect_socks4(PurpleProxyConnectData *connect_data, struct sockaddr *addr
 	}
 }
 
+static gboolean
+s5_ensure_buffer_length(PurpleProxyConnectData *connect_data, int len)
+{
+	if(connect_data->read_len < len) {
+		if(connect_data->read_buf_len < len) {
+			/* it's not just that we haven't read enough, it's that we haven't tried to read enough yet */
+			purple_debug_info("s5", "reallocing from %d to %d\n", connect_data->read_buf_len, len);
+			connect_data->read_buf_len = len;
+			connect_data->read_buffer = g_realloc(connect_data->read_buffer, connect_data->read_buf_len);
+		}
+		return FALSE;
+	}
+
+	return TRUE;
+}
+
 static void
 s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 {
@@ -1067,15 +1083,13 @@ s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 	int len;
 
 	if (connect_data->read_buffer == NULL) {
-		connect_data->read_buf_len = 512;
+		connect_data->read_buf_len = 4;
 		connect_data->read_buffer = g_malloc(connect_data->read_buf_len);
 		connect_data->read_len = 0;
 	}
 
 	dest = connect_data->read_buffer + connect_data->read_len;
 	buf = connect_data->read_buffer;
-
-	purple_debug_info("socks5 proxy", "Able to read again.\n");
 
 	len = read(connect_data->fd, dest, (connect_data->read_buf_len - connect_data->read_len));
 
@@ -1119,32 +1133,30 @@ s5_canread_again(gpointer data, gint source, PurpleInputCondition cond)
 	/* Skip past BND.ADDR */
 	switch(buf[3]) {
 		case 0x01: /* the address is a version-4 IP address, with a length of 4 octets */
-			if(connect_data->read_len < 4 + 4)
+			if(!s5_ensure_buffer_length(connect_data, 4 + 4))
 				return;
 			buf += 4 + 4;
 			break;
 		case 0x03: /* the address field contains a fully-qualified domain name.  The first
 					  octet of the address field contains the number of octets of name that
 					  follow, there is no terminating NUL octet. */
-			if(connect_data->read_len < 4 + 1)
+			if(!s5_ensure_buffer_length(connect_data, 4 + 1))
 				return;
-			buf += 4 + 1;
-			if(connect_data->read_len < 4 + 1 + buf[0])
+			buf += 4;
+			if(!s5_ensure_buffer_length(connect_data, 4 + 1 + buf[0]))
 				return;
-			buf += buf[0];
+			buf += buf[0] + 1;
 			break;
 		case 0x04: /* the address is a version-6 IP address, with a length of 16 octets */
-			if(connect_data->read_len < 4 + 16)
+			if(!s5_ensure_buffer_length(connect_data, 4 + 16))
 				return;
 			buf += 4 + 16;
 			break;
 	}
 
-	if(connect_data->read_len < (buf - connect_data->read_buffer) + 2)
-		return;
-
 	/* Skip past BND.PORT */
-	buf += 2;
+	if(!s5_ensure_buffer_length(connect_data, (buf - connect_data->read_buffer) + 2))
+		return;
 
 	purple_proxy_connect_data_connected(connect_data);
 }

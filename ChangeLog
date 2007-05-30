@@ -14,6 +14,16 @@ version 2.1.0 (??/??/????):
 	  second time will raise the buddy list.  (Gabriel Schulhof)
 	* Undo capability in the conversation window
 
+version 2.0.2 (??/??/????):
+	libpurple:
+	* Moving an ICQ buddy from one group to another no longer
+	  re-requests authorization from that person (Rene Hausleitner)
+	* Added nullprpl, an example protocol plugin (Ryan Barrett)
+	* Fixed SOCKS5 bug which caused Jabber file receiving to fail
+
+	Finch:
+	* Auto account reconnecting
+
 version 2.0.1 (05/24/2007):
 	* Buddy list update speedups when buddy icons are not being
 	  displayed.  (Scott Wolchok)

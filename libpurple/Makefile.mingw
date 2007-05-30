@@ -120,7 +120,7 @@ install: install_shallow all
 $(OBJECTS): $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H)
 
 $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(TARGET).def,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
 ##
 ## CLEAN RULES

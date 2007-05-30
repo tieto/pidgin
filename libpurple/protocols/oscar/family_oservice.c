@@ -123,7 +123,7 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 	FlapConnection *conn;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 	struct chatsnacinfo csi;
 
 	conn = flap_connection_findbygroup(od, SNAC_FAMILY_BOS);
@@ -145,9 +145,9 @@ aim_chat_join(OscarData *od, guint16 exchange, const char *roomname, guint16 ins
 	 */
 	byte_stream_put16(&frame->data, 0x000e);
 
-	aim_tlvlist_add_chatroom(&tl, 0x0001, exchange, roomname, instance);
-	aim_tlvlist_write(&frame->data, &tl);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_add_chatroom(&tlvlist, 0x0001, exchange, roomname, instance);
+	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 
@@ -160,7 +160,7 @@ redirect(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 {
 	struct aim_redirect_data redir;
 	aim_rxcallback_t userfunc;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	aim_snac_t *origsnac = NULL;
 	int ret = 0;
 
@@ -171,7 +171,7 @@ redirect(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	if (!aim_tlv_gettlv(tlvlist, 0x000d, 1) ||
 			!aim_tlv_gettlv(tlvlist, 0x0005, 1) ||
 			!aim_tlv_gettlv(tlvlist, 0x0006, 1)) {
-		aim_tlvlist_free(&tlvlist);
+		aim_tlvlist_free(tlvlist);
 		return 0;
 	}
 
@@ -201,7 +201,7 @@ redirect(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		g_free(origsnac->data);
 	g_free(origsnac);
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }
@@ -606,7 +606,7 @@ migrate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame
 	aim_rxcallback_t userfunc;
 	int ret = 0;
 	guint16 groupcount, i;
-	aim_tlvlist_t *tl;
+	GSList *tlvlist;
 	char *ip = NULL;
 	aim_tlv_t *cktlv;
 
@@ -630,17 +630,17 @@ migrate(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame
 		purple_debug_misc("oscar", "bifurcated migration unsupported -- group 0x%04x\n", group);
 	}
 
-	tl = aim_tlvlist_read(bs);
+	tlvlist = aim_tlvlist_read(bs);
 
-	if (aim_tlv_gettlv(tl, 0x0005, 1))
-		ip = aim_tlv_getstr(tl, 0x0005, 1);
+	if (aim_tlv_gettlv(tlvlist, 0x0005, 1))
+		ip = aim_tlv_getstr(tlvlist, 0x0005, 1);
 
-	cktlv = aim_tlv_gettlv(tl, 0x0006, 1);
+	cktlv = aim_tlv_gettlv(tlvlist, 0x0006, 1);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, ip, cktlv ? cktlv->value : NULL);
 
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_free(tlvlist);
 	g_free(ip);
 
 	return ret;
@@ -653,7 +653,7 @@ motd(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, a
 	aim_rxcallback_t userfunc;
 	char *msg = NULL;
 	int ret = 0;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	guint16 id;
 
 	/*
@@ -681,7 +681,7 @@ motd(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, a
 
 	g_free(msg);
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }
@@ -805,24 +805,24 @@ aim_srv_setextrainfo(OscarData *od,
 	FlapConnection *conn;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, SNAC_FAMILY_ICBM)))
 		return -EINVAL;
 
 	if (seticqstatus)
 	{
-		aim_tlvlist_add_32(&tl, 0x0006, icqstatus |
+		aim_tlvlist_add_32(&tlvlist, 0x0006, icqstatus |
 				AIM_ICQ_STATE_HIDEIP | AIM_ICQ_STATE_DIRECTREQUIREAUTH);
 	}
 
 #if 0
 	if (other_stuff_that_isnt_implemented)
 	{
-		aim_tlvlist_add_raw(&tl, 0x000c, 0x0025,
+		aim_tlvlist_add_raw(&tlvlist, 0x000c, 0x0025,
 				chunk_of_x25_bytes_with_ip_address_etc);
-		aim_tlvlist_add_raw(&tl, 0x0011, 0x0005, unknown 0x01 61 10 f6 41);
-		aim_tlvlist_add_16(&tl, 0x0012, unknown 0x00 00);
+		aim_tlvlist_add_raw(&tlvlist, 0x0011, 0x0005, unknown 0x01 61 10 f6 41);
+		aim_tlvlist_add_16(&tlvlist, 0x0012, unknown 0x00 00);
 	}
 #endif
 
@@ -851,18 +851,18 @@ aim_srv_setextrainfo(OscarData *od,
 			byte_stream_putstr(&tmpbs, itmsurl);
 		byte_stream_put16(&tmpbs, 0x0000);
 
-		aim_tlvlist_add_raw(&tl, 0x001d,
+		aim_tlvlist_add_raw(&tlvlist, 0x001d,
 				byte_stream_curpos(&tmpbs), tmpbs.data);
 		g_free(tmpbs.data);
 	}
 
-	frame = flap_frame_new(od, 0x02, 10 + aim_tlvlist_size(&tl));
+	frame = flap_frame_new(od, 0x02, 10 + aim_tlvlist_size(tlvlist));
 
 	snacid = aim_cachesnac(od, 0x0001, 0x001e, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, 0x0001, 0x001e, 0x0000, snacid);
 
-	aim_tlvlist_write(&frame->data, &tl);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 
@@ -913,14 +913,14 @@ memrequest(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint32 offset, len;
-	aim_tlvlist_t *list;
+	GSList *tlvlist;
 	char *modname;
 
 	offset = byte_stream_get32(bs);
 	len = byte_stream_get32(bs);
-	list = aim_tlvlist_read(bs);
+	tlvlist = aim_tlvlist_read(bs);
 
-	modname = aim_tlv_getstr(list, 0x0001, 1);
+	modname = aim_tlv_getstr(tlvlist, 0x0001, 1);
 
 	purple_debug_info("oscar", "Got memory request for data at 0x%08lx (%d bytes) of requested %s\n", offset, len, modname ? modname : "aim.exe");
 
@@ -928,7 +928,7 @@ memrequest(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 		ret = userfunc(od, conn, frame, offset, len, modname);
 
 	g_free(modname);
-	aim_tlvlist_free(&list);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }

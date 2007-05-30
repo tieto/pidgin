@@ -488,11 +488,6 @@ static void gtk_blist_show_systemlog_cb()
 	pidgin_syslog_show();
 }
 
-static void gtk_blist_show_onlinehelp_cb()
-{
-	purple_notify_uri(NULL, PURPLE_WEBSITE "documentation.php");
-}
-
 static void
 do_join_chat(PidginJoinChatData *data)
 {
@@ -2845,6 +2840,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/Add C_hat..."), NULL, pidgin_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add _Group..."), NULL, purple_blist_request_add_group, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ "/Buddies/sep3", NULL, NULL, 0, "<Separator>", NULL },
+	{ N_("/Buddies/_About Pidgin"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
 	{ N_("/Buddies/_Quit"), "<CTL>Q", purple_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT },
 
 	/* Accounts menu */
@@ -2861,14 +2857,9 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<Item>", NULL },
+	{ N_("/Tools/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
-
-	/* Help */
-	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
-	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
-	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
-	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
 };
 
 /*********************************************************
@@ -3413,8 +3404,16 @@ static gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected)
 				"<span color='%s' size='smaller'>%s</span>",
 				dim_grey(), esc, dim_grey(),
 				statustext != NULL ? statustext : "");
-	}
+	} else if (!PURPLE_BUDDY_IS_ONLINE(b)) {
+		if (!selected && !statustext) /* We handle selected text later */
+			text = g_strdup_printf("<span color='%s'>%s</span>", dim_grey(), esc);
+		else if (!selected && !text)
+			text = g_strdup_printf("<span color='%s'>%s</span>\n"
+				"<span color='%s' size='smaller'>%s</span>",
+				dim_grey(), esc, dim_grey(),
+				statustext != NULL ? statustext : "");
 
+	}
 	/* Not idle and not selected */
 	else if (!selected && !text)
 	{
@@ -5779,6 +5778,8 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 	gtk_box_pack_end(GTK_BOX(rowbox), data->alias_entry, TRUE, TRUE, 0);
 	gtk_entry_set_activates_default(GTK_ENTRY(data->alias_entry), TRUE);
 	pidgin_set_accessible_label (data->alias_entry, label);
+	if (name != NULL)
+		gtk_widget_grab_focus(data->alias_entry);
 
 	rowbox = gtk_hbox_new(FALSE, 5);
 	gtk_box_pack_start(GTK_BOX(vbox), rowbox, FALSE, FALSE, 0);
