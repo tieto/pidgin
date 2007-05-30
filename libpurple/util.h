@@ -118,6 +118,21 @@ gchar *purple_base16_encode(const guchar *data, gsize len);
  */
 guchar *purple_base16_decode(const char *str, gsize *ret_len);
 
+/**
+ * Converts a chunk of binary data to a chunked base-16 representation
+ * (handy for key fingerprints)
+ *
+ * Example output: 01:23:45:67:89:AB:CD:EF
+ *
+ * @param data The data to convert.
+ * @param len  The length of the data.
+ *
+ * @return The base-16 string in the ASCII chunked encoding.  Must be
+ *         g_free'd when no longer needed.
+ */
+gchar *purple_base16_encode_chunked(const guchar *data, gsize len);
+
+
 /*@}*/
 
 /**************************************************************************/
