@@ -151,9 +151,9 @@ parseicon(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, sn, iconcsumtype, iconcsum, iconcsumlen, icon, iconlen);
 
-	free(sn);
-	free(iconcsum);
-	free(icon);
+	g_free(sn);
+	g_free(iconcsum);
+	g_free(icon);
 
 	return ret;
 }

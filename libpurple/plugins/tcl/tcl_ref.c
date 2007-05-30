@@ -114,7 +114,7 @@ static int purple_tcl_ref_set(Tcl_Interp *interp, Tcl_Obj *obj)
 	char *ptr;
 	PurpleStringref *type;
 	void *value;
-	static const char const *prefix = "purple-";
+	static const char prefix[] = "purple-";
 	static const int prefixlen = sizeof(prefix) - 1;
 
 	if (strlen(bytes) < prefixlen

@@ -22,20 +22,8 @@ install:
 	  mkdir -p $(pidginbuttonpixdir); \
 	  cp $(pidginbuttonpix_DATA) $(pidginbuttonpixdir); \
 	fi;
-	if test '$(pidgindialogpix_DATA)'; then \
-	  mkdir -p $(pidgindialogpixdir); \
-	  cp $(pidgindialogpix_DATA) $(pidgindialogpixdir); \
-	fi;
-	if test '$(pidginiconpix_DATA)'; then \
-	  mkdir -p $(pidginiconpixdir); \
-	  cp $(pidginiconpix_DATA) $(pidginiconpixdir); \
-	fi;
 	if test '$(pidgindistpix_DATA)'; then \
 	  mkdir -p $(pidgindistpixdir); \
 	  cp $(pidgindistpix_DATA) $(pidgindistpixdir); \
 	fi;
-#	if test '$(distpixmap_DATA)'; then \
-#	  mkdir -p $(distpixmapdir); \
-#	  cp $(distpixmap_DATA) $(distpixmapdir); \
-#	fi;
 

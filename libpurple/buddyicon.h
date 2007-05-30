@@ -54,7 +54,7 @@ extern "C" {
  * @param icon_len  The buddy icon length.
  * @param checksum  A protocol checksum from the prpl or @c NULL.
  *
- * @return The buddy icon structure.
+ * @return The buddy icon structure, with a reference for the caller.
  */
 PurpleBuddyIcon *purple_buddy_icon_new(PurpleAccount *account, const char *username,
                                        void *icon_data, size_t icon_len,
@@ -209,7 +209,8 @@ purple_buddy_icons_get_checksum_for_user(PurpleBuddy *buddy);
  * @param account  The account the user is on.
  * @param username The username of the user.
  *
- * @return The icon data if found, or @c NULL if not found.
+ * @return The icon (with a reference for the caller) if found, or @c NULL if
+ *         not found.
  */
 PurpleBuddyIcon *
 purple_buddy_icons_find(PurpleAccount *account, const char *username);

@@ -279,7 +279,11 @@ purple_conversation_new(PurpleConversationType type, PurpleAccount *account,
 
 		ims = g_list_append(ims, conv);
 		if ((icon = purple_buddy_icons_find(account, name)))
+		{
 			purple_conv_im_set_icon(conv->u.im, icon);
+			/* purple_conv_im_set_icon refs the icon. */
+			purple_buddy_icon_unref(icon);
+		}
 
 		if (purple_prefs_get_bool("/purple/logging/log_ims"))
 		{
@@ -966,20 +970,20 @@ purple_conv_im_set_typing_state(PurpleConvIm *im, PurpleTypingState state)
 	{
 		im->typing_state = state;
 
-		if (state == PURPLE_TYPING)
+		switch (state)
 		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typing", im->conv->account, im->conv->name);
-		}
-		else if (state == PURPLE_TYPED)
-		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typed", im->conv->account, im->conv->name);
-		}
-		else if (state == PURPLE_NOT_TYPING)
-		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typing-stopped", im->conv->account, im->conv->name);
+			case PURPLE_TYPING:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typing", im->conv->account, im->conv->name);
+				break;
+			case PURPLE_TYPED:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typed", im->conv->account, im->conv->name);
+				break;
+			case PURPLE_NOT_TYPING:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typing-stopped", im->conv->account, im->conv->name);
+				break;
 		}
 	}
 }
@@ -1493,7 +1497,7 @@ purple_conv_chat_cb_compare(PurpleConvChatBuddy *a, PurpleConvChatBuddy *b)
 	} else if (a->buddy != b->buddy) {
 		ret = a->buddy ? -1 : 1;
 	} else {
-		ret = strcasecmp(user1, user2);
+		ret = purple_utf8_strcasecmp(user1, user2);
 	}
 
 	return ret;

@@ -178,6 +178,7 @@ pidgin/gtkstatusbox.c
 pidgin/gtkutils.c
 pidgin/gtkwhiteboard.c
 pidgin/pidgincombobox.c
+pidgin/pidgin.h
 pidgin/pidginstock.c
 pidgin/plugins/cap/cap.c
 pidgin/plugins/contact_priority.c

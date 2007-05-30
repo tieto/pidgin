@@ -46,8 +46,8 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [0])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [0])
-m4_define([purple_micro_version], [0])
-m4_define([purple_version_suffix], [beta7])
+m4_define([purple_micro_version], [1])
+m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
@@ -55,8 +55,8 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [0])
 m4_define([gnt_major_version], [1])
 m4_define([gnt_minor_version], [0])
-m4_define([gnt_micro_version], [0])
-m4_define([gnt_version_suffix], [beta7])
+m4_define([gnt_micro_version], [1])
+m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
 m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
@@ -92,8 +92,6 @@ AC_SUBST(GNT_VERSION)
 
 GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
 AC_SUBST(GNT_LT_VERSION_INFO)
-
-AC_DEFINE(PIDGIN_NAME, "Pidgin", [The user-visible application name])
 
 AC_PATH_PROG(sedpath, sed)
 
@@ -140,6 +138,19 @@ esac
 
 ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
+
+dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
+dnl AM_GLIB_GNU_GETTEXT found it.
+
+if test x$MSGFMT = xno -o x$GMSGFMT = x
+then
+	AC_ERROR([
+
+The msgfmt command is required to build libpurple.  If it is installed
+on your system, ensure that it is in your path.  If it is not, install
+GNU gettext to continue.
+])
+fi
 
 dnl we don't use autobreak on cygwin!!
 dnl AC_CYGWIN
@@ -898,22 +909,7 @@ AM_CONDITIONAL(EXTERNAL_LIBZEPHYR, test "x$zephyr" != "xno")
 AC_CHECK_HEADER(sys/utsname.h)
 AC_CHECK_FUNC(uname)
 
-AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], enable_fortify="$enableval", enable_fortify=yes)
-
-AC_ARG_ENABLE(mcheck, [AC_HELP_STRING([--enable-mcheck], [compile with mcheck (malloc debugging) support])], enable_mcheck="$enableval", enable_mcheck="$enable_debug")
-if test "x$enable_mcheck" = "xyes" ; then
-	orig_LIBS="$LIBS"
-	LIBS="$LIBS -lmcheck"
-	AC_MSG_CHECKING(for mcheck support)
-	AC_TRY_COMPILE([], [
-		int main() {return 0;}
-	], [
-		AC_MSG_RESULT(yes)
-	], [
-		AC_MSG_RESULT(no)
-		LIBS="$orig_LIBS"
-	])
-fi
+AC_ARG_ENABLE(fortify, [AC_HELP_STRING([--disable-fortify], [compile without FORTIFY_SOURCE support])], , enable_fortify=yes)
 
 if test "x$GCC" = "xyes"; then
 	dnl We enable -Wall later.
@@ -1191,7 +1187,7 @@ if test "$enable_perl" = yes ; then
 	PERL_CFLAGS=`$perlpath -MExtUtils::Embed -e ccopts 2>/dev/null`
 	if test "_$PERL_CFLAGS" = _ ; then
 		AC_MSG_RESULT([not found, building without perl.])
-		enable_perl = no
+		enable_perl=no
 	else
 		PERL_LIBS=`$perlpath -MExtUtils::Embed -e ldopts 2>/dev/null |$sedpath 's/-lgdbm //'`
 		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-ldb //'`
@@ -1926,6 +1922,7 @@ AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
 AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
+AC_CHECK_HEADERS(sys/sysctl.h sys/socket.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
 AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
@@ -1992,14 +1989,9 @@ AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
 
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
+
 if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
-fi
-
-AC_ARG_ENABLE(fatal-asserts, [AC_HELP_STRING([--enable-fatal-asserts],
-	[make assertions fatal (useful for debugging)])], , enable_fatal_asserts=no)
-if test "x$enable_fatal_asserts" = "xyes" ; then
-	AC_DEFINE(PURPLE_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
 fi
 
 AC_OUTPUT([Makefile
@@ -2065,7 +2057,9 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/toolbar/22/scalable/Makefile
 		   pidgin/pixmaps/tray/Makefile
 		   pidgin/pixmaps/tray/16/Makefile
+		   pidgin/pixmaps/tray/16/scalable/Makefile
 		   pidgin/pixmaps/tray/22/Makefile
+		   pidgin/pixmaps/tray/22/scalable/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile
@@ -2149,7 +2143,6 @@ echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
 echo
 echo Print debugging messages...... : $enable_debug
-echo Assertions are fatal.......... : $enable_fatal_asserts
 echo
 eval eval echo Pidgin will be installed in $bindir.
 if test "x$pidginpath" != "x" ; then

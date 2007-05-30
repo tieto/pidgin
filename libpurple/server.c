@@ -20,6 +20,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  *
  */
+
+/* This file is the fullcrap */
+
 #include "internal.h"
 #include "blist.h"
 #include "conversation.h"
@@ -207,22 +210,24 @@ void
 serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
-	GSList *buds, *buddies = purple_find_buddies(account, who);
+	GSList *buddies = purple_find_buddies(account, who);
 	PurpleBuddy *b;
 	PurpleConversation *conv;
 
-	for (buds = buddies; buds; buds = buds->next)
+	while (buddies != NULL)
 	{
-		b = buds->data;
+		b = buddies->data;
+		buddies = g_slist_delete_link(buddies, buddies);
+
 		if ((b->server_alias == NULL && alias == NULL) ||
 		    (b->server_alias && alias && !strcmp(b->server_alias, alias)))
 		{
 			continue;
 		}
+
 		purple_blist_server_alias_buddy(b, alias);
 
 		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, b->name, account);
-
 		if (conv != NULL && alias != NULL && strcmp(alias, who))
 		{
 			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
@@ -234,7 +239,6 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 			g_free(tmp);
 		}
 	}
-	g_slist_free(buddies);
 }
 
 /*
@@ -572,15 +576,20 @@ void serv_got_typing(PurpleConnection *gc, const char *name, int timeout,
 		purple_conv_im_set_typing_state(im, state);
 		purple_conv_im_update_typing(im);
 	} else {
-		if (state == PURPLE_TYPING)
+		switch (state)
 		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typing", gc->account, name);
-		}
-		else
-		{
-			purple_signal_emit(purple_conversations_get_handle(),
-							 "buddy-typed", gc->account, name);
+			case PURPLE_TYPING:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typing", gc->account, name);
+				break;
+			case PURPLE_TYPED:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typed", gc->account, name);
+				break;
+			case PURPLE_NOT_TYPING:
+				purple_signal_emit(purple_conversations_get_handle(),
+								   "buddy-typing-stopped", gc->account, name);
+				break;
 		}
 	}
 

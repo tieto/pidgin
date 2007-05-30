@@ -96,13 +96,13 @@ class Binding:
 
         if len(type) == 1:
             # simple types (int, gboolean, etc.) and enums
-            if (type[0] in simpletypes) or (type[0].startswith("Purple")):
+            if (type[0] in simpletypes) or ((type[0].startswith("Purple") and not type[0].endswith("Callback"))):
                 return self.inputsimple(type, name)
 
         # pointers ... 
         if (len(type) == 2) and (type[1] == pointer):
             # strings
-            if type[0] == "char":
+            if type[0] in ["char", "gchar"]:
                 if const:
                     return self.inputstring(type, name)
                 else:
@@ -118,7 +118,6 @@ class Binding:
             # unknown pointers are always replaced with NULL
             else:
                 return self.inputpointer(type, name)
-                return
 
         raise myexception
 
@@ -134,7 +133,7 @@ class Binding:
             const = True
 
         # a string
-        if type == ["char", pointer]:
+        if type == ["char", pointer] or type == ["gchar", pointer]:
             return self.outputstring(type, name, const)
 
         # simple types (ints, booleans, enums, ...)

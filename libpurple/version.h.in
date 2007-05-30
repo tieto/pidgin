@@ -36,10 +36,6 @@
 extern "C" {
 #endif
 
-const guint purple_major_version;
-const guint purple_minor_version;
-const guint purple_micro_version;
-
 /**
  * Checks that the libpurple version is compatible with the requested
  * version

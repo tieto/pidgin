@@ -45,7 +45,8 @@
  *  LOCALS
  */
 static HWND systray_hwnd = NULL;
-static HICON cached_icons[DOCKLET_STATUS_CONNECTING + 1];
+/* additional two cached_icons entries for pending and connecting icons */
+static HICON cached_icons[PURPLE_STATUS_NUM_PRIMITIVES + 2];
 static GtkWidget *image = NULL;
 static NOTIFYICONDATA _nicon_data;
 
@@ -466,44 +467,56 @@ static void systray_remove_nid(void) {
 	Shell_NotifyIcon(NIM_DELETE, &_nicon_data);
 }
 
-static void winpidgin_tray_update_icon(DockletStatus icon) {
+static void winpidgin_tray_update_icon(PurpleStatusPrimitive status,
+		gboolean connecting, gboolean pending) {
 
+	int icon_index;
 	g_return_if_fail(image != NULL);
-	g_return_if_fail(icon < (sizeof(cached_icons) / sizeof(HICON)));
+
+	if(connecting)
+		icon_index = PURPLE_STATUS_NUM_PRIMITIVES;
+	else if(pending)
+		icon_index = PURPLE_STATUS_NUM_PRIMITIVES+1;
+	else
+		icon_index = status;
+
+	g_return_if_fail(icon_index < (sizeof(cached_icons) / sizeof(HICON)));
 
 	/* Look up and cache the HICON if we don't already have it */
-	if (cached_icons[icon] == NULL) {
+	if (cached_icons[icon_index] == NULL) {
 		const gchar *icon_name = NULL;
-		switch (icon) {
-		case DOCKLET_STATUS_OFFLINE:
-			icon_name = PIDGIN_STOCK_TRAY_OFFLINE;
-			break;
-		case DOCKLET_STATUS_CONNECTING:
-			icon_name = PIDGIN_STOCK_TRAY_CONNECT;
-			break;
-		case DOCKLET_STATUS_AVAILABLE:
-			icon_name = PIDGIN_STOCK_TRAY_AVAILABLE;
-			break;
-		case DOCKLET_STATUS_PENDING:
-			icon_name = PIDGIN_STOCK_TRAY_PENDING;
-			break;
-		case DOCKLET_STATUS_AWAY:
-			icon_name = PIDGIN_STOCK_TRAY_AWAY;
-			break;
-		case DOCKLET_STATUS_BUSY:
-			icon_name = PIDGIN_STOCK_TRAY_BUSY;
-			break;
-		case DOCKLET_STATUS_XA:
-			icon_name = PIDGIN_STOCK_TRAY_XA;
-			break;
+		switch (status) {
+			case PURPLE_STATUS_OFFLINE:
+				icon_name = PIDGIN_STOCK_TRAY_OFFLINE;
+				break;
+			case PURPLE_STATUS_AWAY:
+				icon_name = PIDGIN_STOCK_TRAY_AWAY;
+				break;
+			case PURPLE_STATUS_UNAVAILABLE:
+				icon_name = PIDGIN_STOCK_TRAY_BUSY;
+				break;
+			case PURPLE_STATUS_EXTENDED_AWAY:
+				icon_name = PIDGIN_STOCK_TRAY_XA;
+				break;
+			case PURPLE_STATUS_INVISIBLE:
+				icon_name = PIDGIN_STOCK_TRAY_INVISIBLE;
+				break;
+			default:
+				icon_name = PIDGIN_STOCK_TRAY_AVAILABLE;
+				break;
 		}
 
+		if (pending)
+			icon_name = PIDGIN_STOCK_TRAY_PENDING;
+		if (connecting)
+			icon_name = PIDGIN_STOCK_TRAY_CONNECT;
+	
 		g_return_if_fail(icon_name != NULL);
 
-		cached_icons[icon] = load_hicon_from_stock(icon_name);
+		cached_icons[icon_index] = load_hicon_from_stock(icon_name);
 	}
 
-	systray_change_icon(cached_icons[icon]);
+	systray_change_icon(cached_icons[icon_index]);
 }
 
 static void winpidgin_tray_blank_icon() {
@@ -555,20 +568,22 @@ static void winpidgin_tray_create() {
 	 * That is why we use custom 4-bit icons for pre XP Windowses */
 	if (osinfo.dwMajorVersion < 5 || (osinfo.dwMajorVersion == 5 && osinfo.dwMinorVersion == 0))
 	{
-		cached_icons[DOCKLET_STATUS_OFFLINE] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+		cached_icons[PURPLE_STATUS_OFFLINE] = (HICON) LoadImage(winpidgin_dll_hinstance(),
 			MAKEINTRESOURCE(PIDGIN_TRAY_OFFLINE_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
-		cached_icons[DOCKLET_STATUS_AVAILABLE] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+		cached_icons[PURPLE_STATUS_AVAILABLE] = (HICON) LoadImage(winpidgin_dll_hinstance(),
 			MAKEINTRESOURCE(PIDGIN_TRAY_AVAILABLE_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
-		cached_icons[DOCKLET_STATUS_AWAY] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+		cached_icons[PURPLE_STATUS_AWAY] = (HICON) LoadImage(winpidgin_dll_hinstance(),
 			MAKEINTRESOURCE(PIDGIN_TRAY_AWAY_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
-		cached_icons[DOCKLET_STATUS_XA] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+		cached_icons[PURPLE_STATUS_EXTENDED_AWAY] = (HICON) LoadImage(winpidgin_dll_hinstance(),
 			MAKEINTRESOURCE(PIDGIN_TRAY_XA_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
-		cached_icons[DOCKLET_STATUS_BUSY] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+		cached_icons[PURPLE_STATUS_UNAVAILABLE] = (HICON) LoadImage(winpidgin_dll_hinstance(),
 			MAKEINTRESOURCE(PIDGIN_TRAY_BUSY_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
-		cached_icons[DOCKLET_STATUS_CONNECTING] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+		cached_icons[PURPLE_STATUS_NUM_PRIMITIVES] = (HICON) LoadImage(winpidgin_dll_hinstance(),
 			MAKEINTRESOURCE(PIDGIN_TRAY_CONNECTING_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
-		cached_icons[DOCKLET_STATUS_PENDING] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+		cached_icons[PURPLE_STATUS_NUM_PRIMITIVES+1] = (HICON) LoadImage(winpidgin_dll_hinstance(),
 			MAKEINTRESOURCE(PIDGIN_TRAY_PENDING_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
+		cached_icons[PURPLE_STATUS_INVISIBLE] = (HICON) LoadImage(winpidgin_dll_hinstance(),
+			MAKEINTRESOURCE(PIDGIN_TRAY_INVISIBLE_4BIT), IMAGE_ICON, 16, 16, LR_CREATEDIBSECTION);
 	}
 
 	/* Create icon in systray */

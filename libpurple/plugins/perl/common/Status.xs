@@ -42,6 +42,38 @@ purple_status_set_active_with_attrs(status, active, args)
 MODULE = Purple::Status  PACKAGE = Purple::Presence  PREFIX = purple_presence_
 PROTOTYPES: ENABLE
 
+BOOT:
+{
+	HV *context_stash = gv_stashpv("Purple::Presence::Context", 1);
+	HV *primitive_stash = gv_stashpv("Purple::Status::Primitive", 1);
+
+	static const constiv *civ, context_const_iv[] = {
+#define const_iv(name) {#name, (IV)PURPLE_PRESENCE_CONTEXT_##name}
+		const_iv(UNSET),
+		const_iv(ACCOUNT),
+		const_iv(CONV),
+		const_iv(BUDDY),
+	};
+	static const constiv primitive_const_iv[] = {
+#undef const_iv
+#define const_iv(name) {#name, (IV)PURPLE_STATUS_##name}
+		const_iv(UNSET),
+		const_iv(OFFLINE),
+		const_iv(AVAILABLE),
+		const_iv(UNAVAILABLE),
+		const_iv(INVISIBLE),
+		const_iv(AWAY),
+		const_iv(EXTENDED_AWAY),
+		const_iv(MOBILE),
+	};
+
+	for (civ = context_const_iv + sizeof(context_const_iv) / sizeof(context_const_iv[0]); civ-- > context_const_iv; )
+		newCONSTSUB(context_stash, (char *)civ->name, newSViv(civ->iv));
+
+	for (civ = primitive_const_iv + sizeof(primitive_const_iv) / sizeof(primitive_const_iv[0]); civ-- > primitive_const_iv; )
+		newCONSTSUB(primitive_stash, (char *)civ->name, newSViv(civ->iv));
+}
+
 void
 purple_presence_add_list(presence, source_list)
 	Purple::Presence presence
@@ -80,16 +112,6 @@ purple_presence_get_account(presence)
 Purple::Status
 purple_presence_get_active_status(presence)
 	Purple::Presence presence
-
-void
-purple_presence_get_buddies(presence)
-	Purple::Presence presence
-PREINIT:
-	const GList *l;
-PPCODE:
-	for (l = purple_presence_get_buddies(presence); l != NULL; l = l->next) {
-		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::BuddyList::Buddy")));
-	}
 
 const char *
 purple_presence_get_chat_user(presence)
@@ -163,11 +185,6 @@ purple_presence_new_for_buddy(buddy)
 Purple::Presence
 purple_presence_new_for_conv(conv)
 	Purple::Conversation conv
-
-void
-purple_presence_remove_buddy(presence, buddy)
-	Purple::Presence presence
-	Purple::BuddyList::Buddy buddy
 
 void
 purple_presence_set_idle(presence, idle, idle_time)

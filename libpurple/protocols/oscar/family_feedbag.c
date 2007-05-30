@@ -81,7 +81,7 @@ aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *list, const char *name)
 	if (newlen > 0) {
 		guint8 *newdata;
 
-		newdata = (guint8 *)malloc((newlen)*sizeof(guint8));
+		newdata = (guint8 *)g_malloc((newlen)*sizeof(guint8));
 		newlen = 0;
 		if (group->gid == 0x0000) {
 			for (cur=list; cur; cur=cur->next)
@@ -94,7 +94,7 @@ aim_ssi_itemlist_rebuildgroup(struct aim_ssi_item *list, const char *name)
 		}
 		aim_tlvlist_replace_raw(&group->data, 0x00c8, newlen, newdata);
 
-		free(newdata);
+		g_free(newdata);
 	}
 }
 
@@ -115,11 +115,11 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 	gboolean exists;
 	struct aim_ssi_item *cur, *new;
 
-	new = (struct aim_ssi_item *)malloc(sizeof(struct aim_ssi_item));
+	new = (struct aim_ssi_item *)g_malloc(sizeof(struct aim_ssi_item));
 
 	/* Set the name */
 	if (name) {
-		new->name = (char *)malloc((strlen(name)+1)*sizeof(char));
+		new->name = (char *)g_malloc((strlen(name)+1)*sizeof(char));
 		strcpy(new->name, name);
 	} else
 		new->name = NULL;
@@ -139,13 +139,13 @@ static struct aim_ssi_item *aim_ssi_itemlist_add(struct aim_ssi_item **list, con
 					}
 			} while (exists);
 		}
-	} else if (new->gid == 0x0000) {
+	} else if (type == AIM_SSI_TYPE_ICONINFO) {
 		if (new->bid == 0xFFFF) {
 			do {
 				new->bid += 0x0001;
 				exists = FALSE;
 				for (cur = *list; cur != NULL; cur = cur->next)
-					if (((cur->bid == new->bid) && (cur->gid == new->gid)) || (cur->gid == new->bid)) {
+					if ((cur->bid >= new->bid) || (cur->gid >= new->bid)) {
 						exists = TRUE;
 						break;
 					}
@@ -213,9 +213,9 @@ static int aim_ssi_itemlist_del(struct aim_ssi_item **list, struct aim_ssi_item 
 	}
 
 	/* Free the removed item */
-	free(del->name);
+	g_free(del->name);
 	aim_tlvlist_free(&del->data);
-	free(del);
+	g_free(del);
 
 	return 0;
 }
@@ -510,7 +510,7 @@ static int aim_ssi_sync(OscarData *od)
 		for (cur1=od->ssi.local; cur1 && (n < 15); cur1=cur1->next) {
 			if (!aim_ssi_itemlist_find(od->ssi.official, cur1->gid, cur1->bid)) {
 				n++;
-				new = (struct aim_ssi_tmp *)malloc(sizeof(struct aim_ssi_tmp));
+				new = (struct aim_ssi_tmp *)g_malloc(sizeof(struct aim_ssi_tmp));
 				new->action = SNAC_SUBTYPE_FEEDBAG_ADD;
 				new->ack = 0xffff;
 				new->name = NULL;
@@ -530,7 +530,7 @@ static int aim_ssi_sync(OscarData *od)
 		for (cur1=od->ssi.official; cur1 && (n < 15); cur1=cur1->next) {
 			if (!aim_ssi_itemlist_find(od->ssi.local, cur1->gid, cur1->bid)) {
 				n++;
-				new = (struct aim_ssi_tmp *)malloc(sizeof(struct aim_ssi_tmp));
+				new = (struct aim_ssi_tmp *)g_malloc(sizeof(struct aim_ssi_tmp));
 				new->action = SNAC_SUBTYPE_FEEDBAG_DEL;
 				new->ack = 0xffff;
 				new->name = NULL;
@@ -551,7 +551,7 @@ static int aim_ssi_sync(OscarData *od)
 			cur2 = aim_ssi_itemlist_find(od->ssi.official, cur1->gid, cur1->bid);
 			if (cur2 && (aim_ssi_itemlist_cmp(cur1, cur2))) {
 				n++;
-				new = (struct aim_ssi_tmp *)malloc(sizeof(struct aim_ssi_tmp));
+				new = (struct aim_ssi_tmp *)g_malloc(sizeof(struct aim_ssi_tmp));
 				new->action = SNAC_SUBTYPE_FEEDBAG_MOD;
 				new->ack = 0xffff;
 				new->name = NULL;
@@ -588,9 +588,7 @@ static int aim_ssi_sync(OscarData *od)
 	od->ssi.waiting_for_ack = TRUE;
 
 	/* Now go mail off our data and wait 4 to 6 weeks */
-	aim_ssi_addmoddel(od);
-
-	return 0;
+	return aim_ssi_addmoddel(od);;
 }
 
 /**
@@ -611,25 +609,25 @@ aim_ssi_freelist(OscarData *od)
 	while (cur) {
 		del = cur;
 		cur = cur->next;
-		free(del->name);
+		g_free(del->name);
 		aim_tlvlist_free(&del->data);
-		free(del);
+		g_free(del);
 	}
 
 	cur = od->ssi.local;
 	while (cur) {
 		del = cur;
 		cur = cur->next;
-		free(del->name);
+		g_free(del->name);
 		aim_tlvlist_free(&del->data);
-		free(del);
+		g_free(del);
 	}
 
 	curtmp = od->ssi.pending;
 	while (curtmp) {
 		deltmp = curtmp;
 		curtmp = curtmp->next;
-		free(deltmp);
+		g_free(deltmp);
 	}
 
 	od->ssi.numitems = 0;
@@ -674,7 +672,7 @@ int aim_ssi_cleanlist(OscarData *od)
 			char *alias = aim_ssi_getalias(od->ssi.local, NULL, cur->name);
 			aim_ssi_addbuddy(od, cur->name, "orphans", alias, NULL, NULL, 0);
 			aim_ssi_delbuddy(od, cur->name, NULL);
-			free(alias);
+			g_free(alias);
 		}
 		cur = next;
 	}
@@ -714,9 +712,7 @@ int aim_ssi_cleanlist(OscarData *od)
 		aim_ssi_itemlist_del(&od->ssi.local, cur);
 
 	/* If we've made any changes then sync our list with the server's */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -769,9 +765,7 @@ int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const c
 	aim_ssi_itemlist_rebuildgroup(od->ssi.local, group);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -795,9 +789,7 @@ int aim_ssi_addpermit(OscarData *od, const char *name)
 	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_PERMIT, NULL);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -821,9 +813,7 @@ int aim_ssi_adddeny(OscarData *od, const char *name)
 	aim_ssi_itemlist_add(&od->ssi.local, name, 0x0000, 0xFFFF, AIM_SSI_TYPE_DENY, NULL);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -865,9 +855,7 @@ int aim_ssi_delbuddy(OscarData *od, const char *name, const char *group)
 	}
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -892,9 +880,7 @@ int aim_ssi_delpermit(OscarData *od, const char *name)
 	aim_ssi_itemlist_del(&od->ssi.local, del);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -919,9 +905,7 @@ int aim_ssi_deldeny(OscarData *od, const char *name)
 	aim_ssi_itemlist_del(&od->ssi.local, del);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -945,7 +929,7 @@ int aim_ssi_movebuddy(OscarData *od, const char *oldgn, const char *newgn, const
 	aim_ssi_delbuddy(od, sn, oldgn);
 	aim_ssi_addbuddy(od, sn, newgn, alias, NULL, NULL, waitingforauth);
 
-	free(alias);
+	g_free(alias);
 
 	return 0;
 }
@@ -977,9 +961,7 @@ int aim_ssi_aliasbuddy(OscarData *od, const char *gn, const char *sn, const char
 		aim_tlvlist_remove(&tmp->data, 0x0131);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -1009,9 +991,7 @@ int aim_ssi_editcomment(OscarData *od, const char *gn, const char *sn, const cha
 		aim_tlvlist_remove(&tmp->data, 0x013c);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -1032,14 +1012,12 @@ int aim_ssi_rename_group(OscarData *od, const char *oldgn, const char *newgn)
 	if (!(group = aim_ssi_itemlist_finditem(od->ssi.local, oldgn, NULL, AIM_SSI_TYPE_GROUP)))
 		return -EINVAL;
 
-	free(group->name);
-	group->name = (char *)malloc((strlen(newgn)+1)*sizeof(char));
+	g_free(group->name);
+	group->name = (char *)g_malloc((strlen(newgn)+1)*sizeof(char));
 	strcpy(group->name, newgn);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -1079,9 +1057,7 @@ int aim_ssi_setpermdeny(OscarData *od, guint8 permdeny, guint32 vismask)
 	aim_tlvlist_replace_32(&tmp->data, 0x00cb, vismask);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /**
@@ -1110,12 +1086,12 @@ int aim_ssi_seticon(OscarData *od, const guint8 *iconsum, guint8 iconsumlen)
 	}
 
 	/* Need to add the 0x00d5 TLV to the TLV chain */
-	csumdata = (guint8 *)malloc((iconsumlen+2)*sizeof(guint8));
+	csumdata = (guint8 *)g_malloc((iconsumlen+2)*sizeof(guint8));
 	aimutil_put8(&csumdata[0], 0x00);
 	aimutil_put8(&csumdata[1], iconsumlen);
 	memcpy(&csumdata[2], iconsum, iconsumlen);
 	aim_tlvlist_replace_raw(&tmp->data, 0x00d5, (iconsumlen+2) * sizeof(guint8), csumdata);
-	free(csumdata);
+	g_free(csumdata);
 
 	/* Need to add the 0x0131 TLV to the TLV chain, used to cache the icon */
 	aim_tlvlist_replace_noval(&tmp->data, 0x0131);
@@ -1171,9 +1147,7 @@ int aim_ssi_setpresence(OscarData *od, guint32 presence) {
 	aim_tlvlist_replace_32(&tmp->data, 0x00c9, presence);
 
 	/* Sync our local list with the server list */
-	aim_ssi_sync(od);
-
-	return 0;
+	return aim_ssi_sync(od);
 }
 
 /*
@@ -1214,7 +1188,7 @@ static int parserights(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 
 	byte_stream_init(&bstream, tlv->value, tlv->length);
 
-	maxitems = (guint16 *)malloc((tlv->length/2)*sizeof(guint16));
+	maxitems = (guint16 *)g_malloc((tlv->length/2)*sizeof(guint16));
 
 	for (i=0; i<(tlv->length/2); i++)
 		maxitems[i] = byte_stream_get16(&bstream);
@@ -1223,7 +1197,7 @@ static int parserights(OscarData *od, FlapConnection *conn, aim_module_t *mod, F
 		ret = userfunc(od, conn, frame, tlv->length/2, maxitems);
 
 	aim_tlvlist_free(&tlvlist);
-	free(maxitems);
+	g_free(maxitems);
 
 	return ret;
 }
@@ -1309,7 +1283,7 @@ static int parsedata(OscarData *od, FlapConnection *conn, aim_module_t *mod, Fla
 		type = byte_stream_get16(bs);
 		data = aim_tlvlist_readlen(bs, byte_stream_get16(bs));
 		aim_ssi_itemlist_add(&od->ssi.official, name, gid, bid, type, data);
-		free(name);
+		g_free(name);
 		aim_tlvlist_free(&data);
 	}
 
@@ -1437,7 +1411,7 @@ static int parseadd(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 			ret = userfunc(od, conn, frame, type, name);
 
-		free(name);
+		g_free(name);
 	}
 
 	return ret;
@@ -1473,9 +1447,9 @@ static int parsemod(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 		/* Replace the 2 local items with the given one */
 		if ((item = aim_ssi_itemlist_find(od->ssi.local, gid, bid))) {
 			item->type = type;
-			free(item->name);
+			g_free(item->name);
 			if (name) {
-				item->name = (char *)malloc((strlen(name)+1)*sizeof(char));
+				item->name = (char *)g_malloc((strlen(name)+1)*sizeof(char));
 				strcpy(item->name, name);
 			} else
 				item->name = NULL;
@@ -1485,9 +1459,9 @@ static int parsemod(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 
 		if ((item = aim_ssi_itemlist_find(od->ssi.official, gid, bid))) {
 			item->type = type;
-			free(item->name);
+			g_free(item->name);
 			if (name) {
-				item->name = (char *)malloc((strlen(name)+1)*sizeof(char));
+				item->name = (char *)g_malloc((strlen(name)+1)*sizeof(char));
 				strcpy(item->name, name);
 			} else
 				item->name = NULL;
@@ -1498,7 +1472,7 @@ static int parsemod(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 		if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 			ret = userfunc(od, conn, frame);
 
-		free(name);
+		g_free(name);
 		aim_tlvlist_free(&data);
 	}
 
@@ -1569,7 +1543,7 @@ static int parseack(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 				/* Make sure cur->item is still valid memory */
 				if (aim_ssi_itemlist_valid(od->ssi.local, cur->item)) {
 					if (cur->item->name) {
-						cur->name = (char *)malloc((strlen(cur->item->name)+1)*sizeof(char));
+						cur->name = (char *)g_malloc((strlen(cur->item->name)+1)*sizeof(char));
 						strcpy(cur->name, cur->item->name);
 					}
 					aim_ssi_itemlist_del(&od->ssi.local, cur->item);
@@ -1581,9 +1555,9 @@ static int parseack(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 				if (aim_ssi_itemlist_valid(od->ssi.local, cur->item)) {
 					struct aim_ssi_item *cur1;
 					if ((cur1 = aim_ssi_itemlist_find(od->ssi.official, cur->item->gid, cur->item->bid))) {
-						free(cur->item->name);
+						g_free(cur->item->name);
 						if (cur1->name) {
-							cur->item->name = (char *)malloc((strlen(cur1->name)+1)*sizeof(char));
+							cur->item->name = (char *)g_malloc((strlen(cur1->name)+1)*sizeof(char));
 							strcpy(cur->item->name, cur1->name);
 						} else
 							cur->item->name = NULL;
@@ -1615,9 +1589,9 @@ static int parseack(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 				if (aim_ssi_itemlist_valid(od->ssi.local, cur->item)) {
 					struct aim_ssi_item *cur1;
 					if ((cur1 = aim_ssi_itemlist_find(od->ssi.official, cur->item->gid, cur->item->bid))) {
-						free(cur1->name);
+						g_free(cur1->name);
 						if (cur->item->name) {
-							cur1->name = (char *)malloc((strlen(cur->item->name)+1)*sizeof(char));
+							cur1->name = (char *)g_malloc((strlen(cur->item->name)+1)*sizeof(char));
 							strcpy(cur1->name, cur->item->name);
 						} else
 							cur1->name = NULL;
@@ -1646,8 +1620,8 @@ static int parseack(OscarData *od, FlapConnection *conn, aim_module_t *mod, Flap
 	while (cur && (cur->ack != 0xffff)) {
 		del = cur;
 		cur = cur->next;
-		free(del->name);
-		free(del);
+		g_free(del->name);
+		g_free(del);
 	}
 	od->ssi.pending = cur;
 
@@ -1783,8 +1757,8 @@ static int receiveauthgrant(OscarData *od, FlapConnection *conn, aim_module_t *m
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, sn, msg);
 
-	free(sn);
-	free(msg);
+	g_free(sn);
+	g_free(msg);
 
 	return ret;
 }
@@ -1857,8 +1831,8 @@ static int receiveauthrequest(OscarData *od, FlapConnection *conn, aim_module_t 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, sn, msg);
 
-	free(sn);
-	free(msg);
+	g_free(sn);
+	g_free(msg);
 
 	return ret;
 }
@@ -1944,8 +1918,8 @@ static int receiveauthreply(OscarData *od, FlapConnection *conn, aim_module_t *m
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, sn, reply, msg);
 
-	free(sn);
-	free(msg);
+	g_free(sn);
+	g_free(msg);
 
 	return ret;
 }
@@ -1969,7 +1943,7 @@ static int receiveadded(OscarData *od, FlapConnection *conn, aim_module_t *mod, 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, sn);
 
-	free(sn);
+	g_free(sn);
 
 	return ret;
 }

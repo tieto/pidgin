@@ -98,7 +98,7 @@ size_t purple_imgstore_get_size(PurpleStoredImage *img)
 	return img->size;
 }
 
-const char *purple_imgstore_get_filename(PurpleStoredImage *img)
+const char *purple_imgstore_get_filename(const PurpleStoredImage *img)
 {
 	g_return_val_if_fail(img != NULL, NULL);
 

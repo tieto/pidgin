@@ -25,22 +25,13 @@
 #ifndef _GTKDOCKLET_H_
 #define _GTKDOCKLET_H_
 
-typedef enum
-{
-	DOCKLET_STATUS_OFFLINE,
-	DOCKLET_STATUS_AVAILABLE,
-	DOCKLET_STATUS_PENDING,
-	DOCKLET_STATUS_AWAY,
-	DOCKLET_STATUS_BUSY,
-	DOCKLET_STATUS_XA,
-	DOCKLET_STATUS_CONNECTING
-} DockletStatus;
+#include "status.h"
 
 struct docklet_ui_ops
 {
 	void (*create)(void);
 	void (*destroy)(void);
-	void (*update_icon)(DockletStatus);
+	void (*update_icon)(PurpleStatusPrimitive, gboolean, gboolean);
 	void (*blank_icon)(void);
 	void (*set_tooltip)(gchar *);
 	GtkMenuPositionFunc position_menu;
@@ -48,6 +39,7 @@ struct docklet_ui_ops
 
 
 /* functions in gtkdocklet.c */
+void pidgin_docklet_update_icon(void);
 void pidgin_docklet_clicked(int);
 void pidgin_docklet_embedded(void);
 void pidgin_docklet_remove(void);

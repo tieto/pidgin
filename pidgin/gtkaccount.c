@@ -385,11 +385,21 @@ static void
 add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	GtkWidget *frame;
+	GtkWidget *hbox;
 	GtkWidget *vbox;
 	GtkWidget *entry;
+	GtkWidget *menu;
+	GtkWidget *item;
 	GList *user_splits;
 	GList *l, *l2;
 	char *username = NULL;
+
+	if (dialog->protocol_menu != NULL)
+	{
+		gtk_widget_ref(dialog->protocol_menu);
+		hbox = g_object_get_data(G_OBJECT(dialog->protocol_menu), "container");
+		gtk_container_remove(GTK_CONTAINER(hbox), dialog->protocol_menu);
+	}
 
 	if (dialog->login_frame != NULL)
 		gtk_widget_destroy(dialog->login_frame);
@@ -409,10 +419,17 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_widget_show(vbox);
 
 	/* Protocol */
-	dialog->protocol_menu = pidgin_protocol_option_menu_new(
-			dialog->protocol_id, G_CALLBACK(set_account_protocol_cb), dialog);
+	if (dialog->protocol_menu == NULL)
+	{
+		dialog->protocol_menu = pidgin_protocol_option_menu_new(
+				dialog->protocol_id, G_CALLBACK(set_account_protocol_cb), dialog);
+		gtk_widget_ref(dialog->protocol_menu);
+	}
 
-	add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
+	hbox = add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
+	g_object_set_data(G_OBJECT(dialog->protocol_menu), "container", hbox);
+
+	gtk_widget_unref(dialog->protocol_menu);
 
 	/* Screen name */
 	dialog->screenname_entry = gtk_entry_new();
@@ -459,7 +476,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		GtkWidget *entry = l->data;
 		PurpleAccountUserSplit *split = l2->data;
-		const char *value = NULL;
+		const char *value = NULL, *protocol = NULL;
 		char *c;
 
 		if (dialog->account != NULL) {
@@ -473,9 +490,16 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				value = c;
 			}
 		}
-
 		if (value == NULL)
 			value = purple_account_user_split_get_default_value(split);
+
+		/* Google Talk default domain hackery! */
+		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
+		item = gtk_menu_get_active(GTK_MENU(menu));
+		protocol = g_object_get_data(G_OBJECT(item), "protocol");
+		if (value == NULL && !strcmp(protocol, "prpl-fake") && 
+			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
+			value = "gmail.com";
 
 		if (value != NULL)
 			gtk_entry_set_text(GTK_ENTRY(entry), value);
@@ -665,7 +689,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 {
 	PurpleAccountOption *option;
 	PurpleAccount *account;
-	GtkWidget *frame, *vbox, *check, *entry, *combo;
+	GtkWidget *frame, *vbox, *check, *entry, *combo, *menu, *item;
 	const GList *list, *node;
 	gint i, idx, int_value;
 	GtkListStore *model;
@@ -675,7 +699,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GList *l;
 	char buf[1024];
 	char *title;
-	const char *str_value;
+	const char *str_value, *protocol;
 	gboolean bool_value;
 
 	if (dialog->protocol_frame != NULL) {
@@ -798,6 +822,14 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 						gtk_entry_set_invisible_char(GTK_ENTRY(entry), PIDGIN_INVISIBLE_CHAR);
 				}
 
+				/* Google Talk default domain hackery! */
+				menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
+				item = gtk_menu_get_active(GTK_MENU(menu));
+				protocol = g_object_get_data(G_OBJECT(item), "protocol");
+				if (str_value == NULL && !strcmp(protocol, "prpl-fake") &&
+					!strcmp(_("Connect server"),  purple_account_option_get_text(option)))
+					str_value = "talk.google.com";	
+		
 				if (str_value != NULL)
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
 
@@ -1343,10 +1375,6 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 		proxy_info = NULL;
 	}
 
-
-	/* We no longer need the data from the dialog window */
-	account_win_destroy_cb(NULL, NULL, dialog);
-
 	/* If this is a new account, add it to our list */
 	if (new)
 		purple_accounts_add(account);
@@ -1363,6 +1391,9 @@ ok_account_prefs_cb(GtkWidget *w, AccountPrefsDialog *dialog)
 			purple_account_set_enabled(account, PIDGIN_UI, TRUE);
 		}
 	}
+
+	/* We no longer need the data from the dialog window */
+	account_win_destroy_cb(NULL, NULL, dialog);
 
 	return account;
 }

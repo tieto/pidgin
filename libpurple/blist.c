@@ -1825,7 +1825,6 @@ void purple_blist_remove_buddy(PurpleBuddy *buddy)
 	/* Delete the node */
 	purple_buddy_icon_unref(buddy->icon);
 	g_hash_table_destroy(buddy->node.settings);
-	purple_presence_remove_buddy(buddy->presence, buddy);
 	purple_presence_destroy(buddy->presence);
 	g_free(buddy->name);
 	g_free(buddy->alias);
@@ -2037,13 +2036,18 @@ const char *purple_chat_get_name(PurpleChat *chat)
 	struct proto_chat_entry *pce;
 	GList *parts;
 	char *ret;
+	PurplePlugin *prpl;
+	PurplePluginProtocolInfo *prpl_info = NULL;
 
 	g_return_val_if_fail(chat != NULL, NULL);
 
 	if ((chat->alias != NULL) && (*chat->alias != '\0'))
 		return chat->alias;
 
-	parts = PURPLE_PLUGIN_PROTOCOL_INFO(chat->account->gc->prpl)->chat_info(chat->account->gc);
+	prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
+
+	parts = prpl_info->chat_info(chat->account->gc);
 	pce = parts->data;
 	ret = g_hash_table_lookup(chat->components, pce->identifier);
 	g_list_foreach(parts, (GFunc)g_free, NULL);
@@ -2404,6 +2408,13 @@ gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account)
 		}
 	}
 	return FALSE;
+}
+
+const char *purple_group_get_name(PurpleGroup *group)
+{
+	g_return_val_if_fail(group != NULL, NULL);
+
+	return group->name;
 }
 
 void

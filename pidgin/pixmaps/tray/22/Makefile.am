@@ -1,7 +1,10 @@
+SUBDIRS = scalable
+
 TRAY_ICONS =	tray-away.png \
 		tray-busy.png \
 		tray-connecting.png \
 		tray-extended-away.png \
+		tray-invisible.png \
 		tray-message.png \
 		tray-offline.png \
 		tray-online.png

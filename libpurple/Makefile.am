@@ -131,6 +131,8 @@ purple_coreheaders = \
 	xmlnode.h \
 	whiteboard.h
 
+BUILT_SOURCES = version.h
+
 if ENABLE_DBUS
 
 CLEANFILES = \
@@ -149,8 +151,8 @@ dbus_sources  = dbus-server.c dbus-useful.c
 dbus_headers  = dbus-bindings.h dbus-purple.h dbus-server.h dbus-useful.h dbus-define-api.h
 
 dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
-                connection.h conversation.h core.h log.h prefs.h roomlist.h \
-                savedstatuses.h status.h server.h xmlnode.h
+                connection.h conversation.h core.h log.h notify.h prefs.h roomlist.h \
+                savedstatuses.h status.h server.h util.h xmlnode.h
 
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders))
 dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))

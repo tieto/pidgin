@@ -54,8 +54,8 @@ parsepopup(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fr
 		ret = userfunc(od, conn, frame, msg, url, width, height, delay);
 
 	aim_tlvlist_free(&tl);
-	free(msg);
-	free(url);
+	g_free(msg);
+	g_free(url);
 
 	return ret;
 }

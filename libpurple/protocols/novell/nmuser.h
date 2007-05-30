@@ -646,18 +646,6 @@ gboolean nm_user_is_privacy_locked(NMUser *user);
  */
 gboolean nm_are_guids_equal(const char *guid1, const char *guid2);
 
-
-/**
- * Case insensitive compare for utf8 strings
- *
- * @param guid1	First string to compare
- * @param guid2 Second string to compare
- *
- * @return 		-1 if str1 < str2, 0 if str1 = str2, 1 if str1 > str2
- *
- */
-gint nm_utf8_strcasecmp(gconstpointer str1, gconstpointer str2);
-
 /**
  * Compare UTF8 strings for equality only (case insensitive)
  *

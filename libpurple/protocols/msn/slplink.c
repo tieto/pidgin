@@ -482,6 +482,8 @@ send_file_cb(MsnSlpSession *slpsession)
 {
 	MsnSlpCall *slpcall;
 	MsnSlpMessage *slpmsg;
+	struct stat st;
+	PurpleXfer *xfer;
 
 	slpcall = slpsession->slpcall;
 	slpmsg = msn_slpmsg_new(slpcall->slplink);
@@ -491,7 +493,12 @@ send_file_cb(MsnSlpSession *slpsession)
 #ifdef MSN_DEBUG_SLP
 	slpmsg->info = "SLP FILE";
 #endif
-	msn_slpmsg_open_file(slpmsg, purple_xfer_get_local_filename(slpcall->xfer));
+	xfer = (PurpleXfer *)slpcall->xfer;
+	purple_xfer_start(slpcall->xfer, 0, NULL, 0);
+	slpmsg->fp = xfer->dest_fp;
+	if (g_stat(purple_xfer_get_local_filename(xfer), &st) == 0)
+		slpmsg->size = st.st_size;
+	xfer->dest_fp = NULL; /* Disable double fclose() */
 
 	msn_slplink_send_slpmsg(slpcall->slplink, slpmsg);
 }
@@ -551,9 +558,10 @@ msn_slplink_process_msg(MsnSlpLink *slplink, MsnMessage *msg)
 
 					if (xfer != NULL)
 					{
-						slpmsg->fp =
-							g_fopen(purple_xfer_get_local_filename(slpmsg->slpcall->xfer),
-								  "wb");
+						purple_xfer_start(slpmsg->slpcall->xfer,
+							0, NULL, 0);
+						slpmsg->fp = ((PurpleXfer *)slpmsg->slpcall->xfer)->dest_fp;
+						xfer->dest_fp = NULL; /* Disable double fclose() */
 					}
 				}
 			}
@@ -755,6 +763,7 @@ msn_slplink_request_ft(MsnSlpLink *slplink, PurpleXfer *xfer)
 	slpcall->progress_cb = msn_xfer_progress_cb;
 	slpcall->cb = msn_xfer_completed_cb;
 	slpcall->xfer = xfer;
+	purple_xfer_ref(slpcall->xfer);
 
 	slpcall->pending = TRUE;
 

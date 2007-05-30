@@ -354,7 +354,6 @@
 
 #define gaim_buddy_icons_set_for_user(icon, data, len) \
         purple_buddy_icons_set_for_user(icon, g_memdup(data, len), len, NULL)
-#define gaim_buddy_icons_find           purple_buddy_icons_find
 #define gaim_buddy_icons_set_caching    purple_buddy_icons_set_caching
 #define gaim_buddy_icons_is_caching     purple_buddy_icons_is_caching
 #define gaim_buddy_icons_set_cache_dir  purple_buddy_icons_set_cache_dir
@@ -1986,7 +1985,6 @@
 #define gaim_presence_new_for_conv       purple_presence_new_for_conv
 #define gaim_presence_new_for_buddy      purple_presence_new_for_buddy
 #define gaim_presence_destroy            purple_presence_destroy
-#define gaim_presence_remove_buddy       purple_presence_remove_buddy
 #define gaim_presence_add_status         purple_presence_add_status
 #define gaim_presence_add_list           purple_presence_add_list
 #define gaim_presence_set_status_active  purple_presence_set_status_active
@@ -1997,7 +1995,6 @@
 #define gaim_presence_get_account        purple_presence_get_account
 #define gaim_presence_get_conversation   purple_presence_get_conversation
 #define gaim_presence_get_chat_user      purple_presence_get_chat_user
-#define gaim_presence_get_buddies        purple_presence_get_buddies
 #define gaim_presence_get_statuses       purple_presence_get_statuses
 #define gaim_presence_get_status         purple_presence_get_status
 #define gaim_presence_get_active_status  purple_presence_get_active_status

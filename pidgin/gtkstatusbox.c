@@ -2334,11 +2334,16 @@ static void update_size(PidginStatusBox *status_box)
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
 
+	height = 0;
 	wrapped_lines = 1;
 	gtk_text_buffer_get_start_iter(buffer, &iter);
-	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
-	while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(status_box->imhtml), &iter))
+	do {
+		gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
+		height += oneline.height;
 		wrapped_lines++;
+		if (wrapped_lines > 4)
+			break;
+	} while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(status_box->imhtml), &iter));
 
 	lines = gtk_text_buffer_get_line_count(buffer);
 
@@ -2350,8 +2355,8 @@ static void update_size(PidginStatusBox *status_box)
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(status_box->imhtml));
 	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(status_box->imhtml));
 
-	height = (oneline.height + pad_top + pad_bottom) * lines;
-	height += (oneline.height + pad_inside) * (wrapped_lines - lines);
+	height += (pad_top + pad_bottom) * lines;
+	height += (pad_inside) * (wrapped_lines - lines);
 
 	gtk_widget_set_size_request(status_box->vbox, -1, height + PIDGIN_HIG_BOX_SPACE);
 }
@@ -2467,7 +2472,6 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 		{
 			gtk_widget_hide_all(status_box->vbox);
 			activate_currently_selected_status(status_box); /* This is where we actually set the status */
-			return;
 		}
 	}
 	pidgin_status_box_refresh(status_box);

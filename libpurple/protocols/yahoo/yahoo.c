@@ -365,9 +365,11 @@ static void yahoo_process_status(PurpleConnection *gc, struct yahoo_packet *pkt)
 				break;
 
 			yahoo_friend_set_buddy_icon_need_request(f, FALSE);
-			if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL &&
-					cksum != strtol(locksum, NULL, 10))
-				yahoo_send_picture_request(gc, name);
+			if (b) {
+				locksum = purple_buddy_icons_get_checksum_for_user(b);
+				if (!locksum || (cksum != strtol(locksum, NULL, 10)))
+					yahoo_send_picture_request(gc, name);
+			}
 
 			break;
 		}
@@ -906,7 +908,7 @@ static void yahoo_process_message(PurpleConnection *gc, struct yahoo_packet *pkt
 static void yahoo_process_sysmessage(PurpleConnection *gc, struct yahoo_packet *pkt)
 {
 	GSList *l = pkt->hash;
-	char *prim, *me = NULL, *msg = NULL, *escmsg = NULL;
+	char *prim, *me = NULL, *msg = NULL;
 
 	while (l) {
 		struct yahoo_pair *pair = l->data;
@@ -922,14 +924,10 @@ static void yahoo_process_sysmessage(PurpleConnection *gc, struct yahoo_packet *
 	if (!msg || !g_utf8_validate(msg, -1, NULL))
 		return;
 
-	/* TODO: Does this really need to be escaped?  It seems like it doesn't. */
-	escmsg = g_markup_escape_text(msg, -1);
-
 	prim = g_strdup_printf(_("Yahoo! system message for %s:"),
 	                       me?me:purple_connection_get_display_name(gc));
-	purple_notify_info(NULL, NULL, prim, escmsg);
+	purple_notify_info(NULL, NULL, prim, msg);
 	g_free(prim);
-	g_free(escmsg);
 }
 
 struct yahoo_add_request {

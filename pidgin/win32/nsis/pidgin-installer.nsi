@@ -114,6 +114,7 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
   !define MUI_ABORTWARNING
 
   ;Finish Page config
+  !define MUI_FINISHPAGE_NOAUTOCLOSE
   !define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_LINK			$(PIDGIN_FINISH_VISIT_WEB_SITE)
@@ -155,6 +156,7 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
 
   !insertmacro MUI_LANGUAGE "English"
 
+  !insertmacro MUI_LANGUAGE "Afrikaans"
   !insertmacro MUI_LANGUAGE "Albanian"
   !insertmacro MUI_LANGUAGE "Bulgarian"
   !insertmacro MUI_LANGUAGE "Catalan"
@@ -192,6 +194,7 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
 
   !include "${PIDGIN_NSIS_INCLUDE_PATH}\langmacros.nsh"
 
+  !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "AFRIKAANS"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\afrikaans.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "ALBANIAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\albanian.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "BULGARIAN"	"${PIDGIN_NSIS_INCLUDE_PATH}\translations\bulgarian.nsh"
   !insertmacro PIDGIN_MACRO_INCLUDE_LANGFILE "CATALAN"		"${PIDGIN_NSIS_INCLUDE_PATH}\translations\catalan.nsh"
@@ -258,7 +261,7 @@ Section -SecUninstallOldPidgin
   ReadRegStr $STARTUP_RUN_KEY HKCU "${STARTUP_RUN_KEY}" $R7
   IfErrors +3
   StrCpy $STARTUP_RUN_KEY "HKCU"
-  Goto +4
+  Goto +5
   ClearErrors
   ReadRegStr $STARTUP_RUN_KEY HKLM "${STARTUP_RUN_KEY}" $R7
   IfErrors +2
@@ -280,9 +283,9 @@ Section -SecUninstallOldPidgin
 
   ; If a previous version exists, remove it
   try_uninstall:
-    StrCmp $R1 "" done
+    StrCmp $R1 "" no_version_found
       ; Version key started with 0.60a3. Prior versions can't be
-      ; automaticlly uninstalled.
+      ; automatically uninstalled.
       StrCmp $R2 "" uninstall_problem
         ; Check if we have uninstall string..
         IfFileExists $R3 0 uninstall_problem
@@ -304,16 +307,18 @@ Section -SecUninstallOldPidgin
               Delete "$TEMP\$R6"
               Goto uninstall_problem
 
-        uninstall_problem:
+        no_version_found:
+          ;We've already tried to fallback to an old gaim instance
+          StrCmp $R7 "Gaim" done
           ; If we couldn't uninstall Pidgin, try to uninstall Gaim
-          StrCmp $R4 ${PIDGIN_REG_KEY} cannot_uninstall
+          StrCpy $STARTUP_RUN_KEY "NONE"
           StrCpy $R4 ${OLD_GAIM_REG_KEY}
           StrCpy $R5 ${OLD_GAIM_UNINSTALL_KEY}
           StrCpy $R6 ${OLD_GAIM_UNINST_EXE}
           StrCpy $R7 "Gaim"
           Goto start_comparison
 
-          cannot_uninstall:
+        uninstall_problem:
           ; We can't uninstall.  Either the user must manually uninstall or we ignore and reinstall over it.
           MessageBox MB_OKCANCEL $(PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL) /SD IDOK IDOK done
           Quit
@@ -342,7 +347,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
   StrCmp $R0 "0" have_gtk
   StrCmp $R0 "1" upgrade_gtk
   StrCmp $R0 "2" upgrade_gtk
-  StrCmp $R0 "3" no_gtk no_gtk
+  ;StrCmp $R0 "3" no_gtk no_gtk
 
   no_gtk:
     StrCmp $R1 "NONE" gtk_no_install_rights
@@ -514,8 +519,7 @@ SectionGroup /e $(PIDGIN_SHORTCUTS_SECTION_TITLE) SecShortcuts
   SectionEnd
   Section $(PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE) SecStartMenuShortcut
     SetOverwrite on
-    CreateDirectory "$SMPROGRAMS\Pidgin"
-    CreateShortCut "$SMPROGRAMS\Pidgin\Pidgin.lnk" "$INSTDIR\pidgin.exe"
+    CreateShortCut "$SMPROGRAMS\Pidgin.lnk" "$INSTDIR\pidgin.exe"
     SetOverwrite off
   SectionEnd
 SectionGroupEnd
@@ -745,7 +749,6 @@ Section Uninstall
     RMDir "$INSTDIR"
 
     ; Shortcuts..
-    RMDir /r "$SMPROGRAMS\Pidgin"
     Delete "$DESKTOP\Pidgin.lnk"
 
     Goto done
@@ -1135,6 +1138,9 @@ Function .onInit
   ReadRegStr $R0 HKCU "SOFTWARE\gaim" "Installer Language"
   IfErrors +2
   WriteRegStr HKCU "${PIDGIN_REG_KEY}" "Installer Language" "$R0"
+
+  !insertmacro SetSectionFlag ${SecSpellCheck} ${SF_RO}
+  !insertmacro UnselectSection ${SecSpellCheck}
 
   ;Mark the dictionaries that are already installed as readonly
   Call SelectAndDisableInstalledDictionaries
@@ -1640,7 +1646,7 @@ Function InstallAspell
   StrCpy $R1 "$TEMP\aspell_installer.exe"
   StrCpy $R2 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=aspell_core"
   DetailPrint "Downloading Aspell... ($R2)"
-  NSISdl::download $R2 $R1
+  NSISdl::download /TIMEOUT=10000 $R2 $R1
   Pop $R0
   StrCmp $R0 "success" +2
     Goto done
@@ -1680,7 +1686,7 @@ Function InstallAspellDictionary
   StrCpy $R1 "$TEMP\aspell_dict-$R0.exe"
   StrCpy $R3 "${DOWNLOADER_URL}?version=${PIDGIN_VERSION}&dl_pkg=lang_$R0"
   DetailPrint "Downloading the Aspell $R0 Dictionary... ($R3)"
-  NSISdl::download $R3 $R1
+  NSISdl::download /TIMEOUT=10000 $R3 $R1
   Pop $R3
   StrCmp $R3 "success" +3
     StrCpy $R0 $R3

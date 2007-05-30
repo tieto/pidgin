@@ -26,12 +26,17 @@ plugindir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 autoaccept_la_LDFLAGS       = -module -avoid-version
 buddynote_la_LDFLAGS        = -module -avoid-version
+ciphertest_la_LDFLAGS		= -module -avoid-version
+codeinline_la_LDFLAGS		= -module -avoid-version
 idle_la_LDFLAGS             = -module -avoid-version
 joinpart_la_LDFLAGS         = -module -avoid-version
 log_reader_la_LDFLAGS       = -module -avoid-version
 newline_la_LDFLAGS          = -module -avoid-version
 offlinemsg_la_LDFLAGS       = -module -avoid-version
+pluginpref_example_la_LDFLAGS = -module -avoid-version
 psychic_la_LDFLAGS          = -module -avoid-version
+signals_test_la_LDFLAGS		= -module -avoid-version
+simple_la_LDFLAGS			= -module -avoid-version
 statenotify_la_LDFLAGS      = -module -avoid-version
 
 # this can't be in a conditional otherwise automake 1.4 yells
@@ -51,24 +56,41 @@ plugin_LTLIBRARIES = \
 	statenotify.la      \
 	$(DBUS_LTLIB)
 
+noinst_LTLIBRARIES = \
+	ciphertest.la \
+	codeinline.la \
+	pluginpref_example.la \
+	signals_test.la \
+	simple.la
+
 autoaccept_la_SOURCES       = autoaccept.c
 buddynote_la_SOURCES        = buddynote.c
+ciphertest_la_SOURCES		= ciphertest.c
+codeinline_la_SOURCES		= codeinline.c
 idle_la_SOURCES             = idle.c
 joinpart_la_SOURCES         = joinpart.c
 log_reader_la_SOURCES       = log_reader.c
 newline_la_SOURCES          = newline.c
 offlinemsg_la_SOURCES       = offlinemsg.c
+pluginpref_example_la_SOURCES = pluginpref_example.c
 psychic_la_SOURCES          = psychic.c
+signals_test_la_SOURCES		= signals-test.c
+simple_la_SOURCES			= simple.c
 statenotify_la_SOURCES      = statenotify.c
 
 autoaccept_la_LIBADD        = $(GLIB_LIBS)
 buddynote_la_LIBADD         = $(GLIB_LIBS)
+ciphertest_la_LIBADD		= $(GLIB_LIBS)
+codeinline_la_LIBADD		= $(GLIB_LIBS)
 idle_la_LIBADD              = $(GLIB_LIBS)
 joinpart_la_LIBADD          = $(GLIB_LIBS)
 log_reader_la_LIBADD        = $(GLIB_LIBS)
 newline_la_LIBADD           = $(GLIB_LIBS)
 offlinemsg_la_LIBADD        = $(GLIB_LIBS)
+pluginpref_example_la_LIBADD = $(GLIB_LIBS)
 psychic_la_LIBADD           = $(GLIB_LIBS)
+signals_test_la_LIBADD		= $(GLIB_LIBS)
+simple_la_LIBADD			= $(GLIB_LIBS)
 statenotify_la_LIBADD       = $(GLIB_LIBS)
 
 if ENABLE_DBUS
@@ -96,21 +118,17 @@ endif # PLUGINS
 
 EXTRA_DIST = \
 	Makefile.mingw \
-	ciphertest.c \
 	dbus-buddyicons-example.py \
 	filectl.c \
 	fortuneprofile.pl \
 	ipc-test-client.c \
 	ipc-test-server.c \
-	pluginpref_example.c \
-	signals-test.c \
-	simple.c
+	startup.py
 
 AM_CPPFLAGS = \
 	-DDATADIR=\"$(datadir)\" \
-	-DVERSION=\"$(VERSION)\" \
-	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(PLUGIN_CFLAGS) \
