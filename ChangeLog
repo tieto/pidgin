@@ -5,6 +5,7 @@ version 2.0.2 (??/??/????):
 	* Moving an ICQ buddy from one group to another no longer
 	  re-requests authorization from that person (Rene Hausleitner)
 	* Added nullprpl, an example protocol plugin (Ryan Barrett)
+	* Fixed SOCKS5 bug which caused Jabber file receiving to fail
 
 	Finch:
 	* Auto account reconnecting
