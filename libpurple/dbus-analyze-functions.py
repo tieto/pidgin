@@ -166,8 +166,11 @@ class ClientBinding (Binding):
         self.returncode = []
 
     def flush(self):
+	paramslist = ", ".join(self.paramshdr)
+	if (paramslist == "") :
+	    paramslist = "void"
         print "%s %s(%s)" % (self.functiontype, self.function.name,
-                             ", ".join(self.paramshdr)),
+                             paramslist),
 
         if self.headersonly:
             print ";"
