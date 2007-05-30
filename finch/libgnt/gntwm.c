@@ -57,6 +57,8 @@ static int write_timeout;
 static time_t last_active_time;
 static gboolean idle_update;
 
+static gboolean ignore_keys = FALSE;
+
 static GList *
 g_list_bring_to_front(GList *list, gpointer data)
 {
@@ -1012,6 +1014,22 @@ toggle_clipboard(GntBindable *bindable, GList *n)
 	return TRUE;
 }
 
+static gboolean
+ignore_keys_start(GntBindable *bindable, GList *n){
+	GntWM *wm = GNT_WM(bindable);
+
+	if(!wm->menu && !wm->_list.window && wm->mode == GNT_KP_MODE_NORMAL){
+		ignore_keys = TRUE;
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static gboolean
+ignore_keys_end(GntBindable *bindable, GList *n){
+	return ignore_keys ? !(ignore_keys = FALSE) : FALSE;
+}
+
 static void
 gnt_wm_class_init(GntWMClass *klass)
 {
@@ -1139,15 +1157,19 @@ gnt_wm_class_init(GntWMClass *klass)
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "refresh-screen", refresh_screen,
 				"\033" "l", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "switch-window-n", switch_window_n,
-				NULL, NULL);
+				NULL,       NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-scroll-down", window_scroll_down,
 				"\033" GNT_KEY_CTRL_J, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-scroll-up", window_scroll_up,
 				"\033" GNT_KEY_CTRL_K, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-widget", help_for_widget,
 				"\033" "/", NULL);
-	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard",
-				toggle_clipboard, "\033" "C", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard", toggle_clipboard, 
+				"\033" "C", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-start", ignore_keys_start, 
+				GNT_KEY_CTRL_G, NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-end", ignore_keys_end, 
+				"\033" GNT_KEY_CTRL_G, NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 
@@ -1371,6 +1393,15 @@ gboolean gnt_wm_process_input(GntWM *wm, const char *keys)
 	keys = gnt_bindable_remap_keys(GNT_BINDABLE(wm), keys);
 
 	idle_update = TRUE;
+
+	if(ignore_keys){
+		if(keys && !strcmp(keys, "\033" GNT_KEY_CTRL_G)){
+			if(gnt_bindable_perform_action_key(GNT_BINDABLE(wm), keys)){
+				return TRUE;
+			}
+		}
+		return wm->ordered ? gnt_widget_key_pressed(GNT_WIDGET(wm->ordered->data), keys) : FALSE;
+	}
 
 	if (gnt_bindable_perform_action_key(GNT_BINDABLE(wm), keys)) {
 		return TRUE;
