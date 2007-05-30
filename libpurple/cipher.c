@@ -1447,14 +1447,14 @@ static PurpleCipherOps RC4Ops = {
  * Structs
  ******************************************************************************/
 struct _PurpleCipher {
-	gchar *name;
-	PurpleCipherOps *ops;
-	guint ref;
+	gchar *name;          /**< Internal name - used for searching */
+	PurpleCipherOps *ops; /**< Operations supported by this cipher */
+	guint ref;            /**< Reference count */
 };
 
 struct _PurpleCipherContext {
-	PurpleCipher *cipher;
-	gpointer data;
+	PurpleCipher *cipher; /**< Cipher this context is under */
+	gpointer data;        /**< Internal cipher state data */
 };
 
 /******************************************************************************
