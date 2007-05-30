@@ -70,6 +70,7 @@
 #define PIDGIN_STOCK_STATUS_LOGIN      "pidgin-status-login"
 #define PIDGIN_STOCK_STATUS_LOGOUT     "pidgin-status-logout"
 #define PIDGIN_STOCK_STATUS_OFFLINE    "pidgin-status-offline"
+#define PIDGIN_STOCK_STATUS_OFFLINE_I  "pidgin-status-offline"
 #define PIDGIN_STOCK_STATUS_PERSON     "pidgin-status-person"
 #define PIDGIN_STOCK_STATUS_MESSAGE    "pidgin-status-message"
 
