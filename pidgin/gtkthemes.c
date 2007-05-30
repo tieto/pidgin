@@ -150,7 +150,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 		} else if (!g_ascii_strncasecmp(i, "Name=", strlen("Name="))) {
 			int len;
 			g_free(theme->name);
-			theme->name = g_strdup(i+ strlen("Name="));
+			theme->name = g_strdup(i + strlen("Name="));
 			len = strlen(theme->name);
 			theme->name[len-1] = 0;
 			if(len > 2 && theme->name[len-2] == '\r')

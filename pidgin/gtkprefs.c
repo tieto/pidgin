@@ -382,7 +382,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	new_theme = current_smiley_theme;
 	description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 								"<span size='smaller' foreground='white'>%s</span>",
-								new_theme->name, new_theme->author, new_theme->desc);
+								_(new_theme->name), _(new_theme->author), _(new_theme->desc));
 	gtk_list_store_set(smiley_theme_store, &iter, 1, description, -1);
 	g_free(description);
 
@@ -391,7 +391,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 		if (gtk_tree_model_get_iter(model, &iter, oldpath)) {
 			description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 								"<span size='smaller' foreground='dim grey'>%s</span>",
-								old_theme->name, old_theme->author, old_theme->desc);
+								_(old_theme->name), _(old_theme->author), _(old_theme->desc));
 			gtk_list_store_set(smiley_theme_store, &iter, 1,
 				description, -1);
 			g_free(description);
@@ -426,7 +426,7 @@ static GtkTreeRowReference *theme_refresh_theme_list()
 		struct smiley_theme *theme = themes->data;
 		char *description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 						    "<span size='smaller' foreground='dim grey'>%s</span>",
-						    theme->name, theme->author, theme->desc);
+						    _(theme->name), _(theme->author), _(theme->desc));
 		gtk_list_store_append (smiley_theme_store, &iter);
 
 		/*
