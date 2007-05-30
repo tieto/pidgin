@@ -745,12 +745,18 @@ void finch_accounts_init()
 			finch_accounts_get_handle(),
 			PURPLE_CALLBACK(account_abled_cb), GINT_TO_POINTER(TRUE));
 
-	for (iter = purple_accounts_get_all(); iter; iter = iter->next) {
-		if (purple_account_get_enabled(iter->data, FINCH_UI))
-			break;
-	}
-	if (!iter)
+	iter = purple_accounts_get_all();
+	if (iter) {
+		for (; iter; iter = iter->next) {
+			if (purple_account_get_enabled(iter->data, FINCH_UI))
+				break;
+		}
+		if (!iter)
+			finch_accounts_show_all();
+	} else {
+		edit_account(NULL);
 		finch_accounts_show_all();
+	}
 }
 
 void finch_accounts_uninit()
