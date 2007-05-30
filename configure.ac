@@ -2085,6 +2085,7 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/jabber/Makefile
 		   libpurple/protocols/msn/Makefile
 		   libpurple/protocols/novell/Makefile
+		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
 		   libpurple/protocols/qq/Makefile
 		   libpurple/protocols/sametime/Makefile

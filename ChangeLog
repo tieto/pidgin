@@ -1,8 +1,10 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.0.2 (??/??/????):
+	libpurple:
 	* Moving an ICQ buddy from one group to another no longer
 	  re-requests authorization from that person (Rene Hausleitner)
+	* Added nullprpl, an example protocol plugin (Ryan Barrett)
 
 	Finch:
 	* Auto account reconnecting
