@@ -125,17 +125,17 @@ aim_admin_setnick(OscarData *od, FlapConnection *conn, const char *newnick)
 {
 	FlapFrame *fr;
 	aim_snacid_t snacid;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 
 	fr = flap_frame_new(od, 0x02, 10+2+2+strlen(newnick));
 
 	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
 
-	aim_tlvlist_add_str(&tl, 0x0001, newnick);
+	aim_tlvlist_add_str(&tlvlist, 0x0001, newnick);
 
-	aim_tlvlist_write(&fr->data, &tl);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_write(&fr->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, fr);
 
@@ -151,7 +151,7 @@ int
 aim_admin_changepasswd(OscarData *od, FlapConnection *conn, const char *newpw, const char *curpw)
 {
 	FlapFrame *fr;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 	aim_snacid_t snacid;
 
 	fr = flap_frame_new(od, 0x02, 10+4+strlen(curpw)+4+strlen(newpw));
@@ -160,13 +160,13 @@ aim_admin_changepasswd(OscarData *od, FlapConnection *conn, const char *newpw, c
 	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
 
 	/* new password TLV t(0002) */
-	aim_tlvlist_add_str(&tl, 0x0002, newpw);
+	aim_tlvlist_add_str(&tlvlist, 0x0002, newpw);
 
 	/* current password TLV t(0012) */
-	aim_tlvlist_add_str(&tl, 0x0012, curpw);
+	aim_tlvlist_add_str(&tlvlist, 0x0012, curpw);
 
-	aim_tlvlist_write(&fr->data, &tl);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_write(&fr->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, fr);
 
@@ -182,17 +182,17 @@ aim_admin_setemail(OscarData *od, FlapConnection *conn, const char *newemail)
 {
 	FlapFrame *fr;
 	aim_snacid_t snacid;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 
 	fr = flap_frame_new(od, 0x02, 10+2+2+strlen(newemail));
 
 	snacid = aim_cachesnac(od, 0x0007, 0x0004, 0x0000, NULL, 0);
 	aim_putsnac(&fr->data, 0x0007, 0x0004, 0x0000, snacid);
 
-	aim_tlvlist_add_str(&tl, 0x0011, newemail);
+	aim_tlvlist_add_str(&tlvlist, 0x0011, newemail);
 
-	aim_tlvlist_write(&fr->data, &tl);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_write(&fr->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, fr);
 
@@ -223,17 +223,17 @@ accountconfirm(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	guint16 status;
-	/* aim_tlvlist_t *tl; */
+	/* GSList *tlvlist; */
 
 	status = byte_stream_get16(bs);
 	/* Status is 0x0013 if unable to confirm at this time */
 
-	/* tl = aim_tlvlist_read(bs); */
+	/* tlvlist = aim_tlvlist_read(bs); */
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, status);
 
-	/* aim_tlvlist_free(&tl); */
+	/* aim_tlvlist_free(tlvlist); */
 
 	return ret;
 }

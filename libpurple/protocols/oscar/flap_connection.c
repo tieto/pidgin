@@ -61,13 +61,13 @@ void
 flap_connection_send_version_with_cookie(OscarData *od, FlapConnection *conn, guint16 length, const guint8 *chipsahoy)
 {
 	FlapFrame *frame;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 
 	frame = flap_frame_new(od, 0x01, 4 + 2 + 2 + length);
 	byte_stream_put32(&frame->data, 0x00000001);
-	aim_tlvlist_add_raw(&tl, 0x0006, length, chipsahoy);
-	aim_tlvlist_write(&frame->data, &tl);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_add_raw(&tlvlist, 0x0006, length, chipsahoy);
+	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 }
@@ -693,7 +693,7 @@ parse_fakesnac(OscarData *od, FlapConnection *conn, FlapFrame *frame, guint16 fa
 static void
 parse_flap_ch4(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 {
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	char *msg = NULL;
 	guint16 code = 0;
 	aim_rxcallback_t userfunc;
@@ -721,7 +721,7 @@ parse_flap_ch4(OscarData *od, FlapConnection *conn, FlapFrame *frame)
 	if ((userfunc = aim_callhandler(od, AIM_CB_FAM_SPECIAL, AIM_CB_SPECIAL_CONNERR)))
 		userfunc(od, conn, frame, code, msg);
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	g_free(msg);
 }

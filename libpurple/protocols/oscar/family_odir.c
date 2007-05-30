@@ -43,22 +43,22 @@ int aim_odir_email(OscarData *od, const char *region, const char *email)
 	FlapConnection *conn;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x000f)) || !region || !email)
 		return -EINVAL;
 
 	/* Create a TLV chain, write it to the outgoing frame, then free the chain */
-	aim_tlvlist_add_str(&tl, 0x001c, region);
-	aim_tlvlist_add_16(&tl, 0x000a, 0x0001); /* Type of search */
-	aim_tlvlist_add_str(&tl, 0x0005, email);
+	aim_tlvlist_add_str(&tlvlist, 0x001c, region);
+	aim_tlvlist_add_16(&tlvlist, 0x000a, 0x0001); /* Type of search */
+	aim_tlvlist_add_str(&tlvlist, 0x0005, email);
 
-	frame = flap_frame_new(od, 0x02, 10+aim_tlvlist_size(&tl));
+	frame = flap_frame_new(od, 0x02, 10+aim_tlvlist_size(tlvlist));
 	snacid = aim_cachesnac(od, 0x000f, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, 0x000f, 0x0002, 0x0000, snacid);
 
-	aim_tlvlist_write(&frame->data, &tl);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 
@@ -91,41 +91,41 @@ int aim_odir_name(OscarData *od, const char *region, const char *first, const ch
 	FlapConnection *conn;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x000f)) || !region)
 		return -EINVAL;
 
 	/* Create a TLV chain, write it to the outgoing frame, then free the chain */
-	aim_tlvlist_add_str(&tl, 0x001c, region);
-	aim_tlvlist_add_16(&tl, 0x000a, 0x0000); /* Type of search */
+	aim_tlvlist_add_str(&tlvlist, 0x001c, region);
+	aim_tlvlist_add_16(&tlvlist, 0x000a, 0x0000); /* Type of search */
 	if (first)
-		aim_tlvlist_add_str(&tl, 0x0001, first);
+		aim_tlvlist_add_str(&tlvlist, 0x0001, first);
 	if (last)
-		aim_tlvlist_add_str(&tl, 0x0002, last);
+		aim_tlvlist_add_str(&tlvlist, 0x0002, last);
 	if (middle)
-		aim_tlvlist_add_str(&tl, 0x0003, middle);
+		aim_tlvlist_add_str(&tlvlist, 0x0003, middle);
 	if (maiden)
-		aim_tlvlist_add_str(&tl, 0x0004, maiden);
+		aim_tlvlist_add_str(&tlvlist, 0x0004, maiden);
 	if (country)
-		aim_tlvlist_add_str(&tl, 0x0006, country);
+		aim_tlvlist_add_str(&tlvlist, 0x0006, country);
 	if (state)
-		aim_tlvlist_add_str(&tl, 0x0007, state);
+		aim_tlvlist_add_str(&tlvlist, 0x0007, state);
 	if (city)
-		aim_tlvlist_add_str(&tl, 0x0008, city);
+		aim_tlvlist_add_str(&tlvlist, 0x0008, city);
 	if (nick)
-		aim_tlvlist_add_str(&tl, 0x000c, nick);
+		aim_tlvlist_add_str(&tlvlist, 0x000c, nick);
 	if (zip)
-		aim_tlvlist_add_str(&tl, 0x000d, zip);
+		aim_tlvlist_add_str(&tlvlist, 0x000d, zip);
 	if (address)
-		aim_tlvlist_add_str(&tl, 0x0021, address);
+		aim_tlvlist_add_str(&tlvlist, 0x0021, address);
 
-	frame = flap_frame_new(od, 0x02, 10+aim_tlvlist_size(&tl));
+	frame = flap_frame_new(od, 0x02, 10+aim_tlvlist_size(tlvlist));
 	snacid = aim_cachesnac(od, 0x000f, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, 0x000f, 0x0002, 0x0000, snacid);
 
-	aim_tlvlist_write(&frame->data, &tl);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 
@@ -145,23 +145,23 @@ int aim_odir_interest(OscarData *od, const char *region, const char *interest)
 	FlapConnection *conn;
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 
 	if (!od || !(conn = flap_connection_findbygroup(od, 0x000f)) || !region)
 		return -EINVAL;
 
 	/* Create a TLV chain, write it to the outgoing frame, then free the chain */
-	aim_tlvlist_add_str(&tl, 0x001c, region);
-	aim_tlvlist_add_16(&tl, 0x000a, 0x0001); /* Type of search */
+	aim_tlvlist_add_str(&tlvlist, 0x001c, region);
+	aim_tlvlist_add_16(&tlvlist, 0x000a, 0x0001); /* Type of search */
 	if (interest)
-		aim_tlvlist_add_str(&tl, 0x0001, interest);
+		aim_tlvlist_add_str(&tlvlist, 0x0001, interest);
 
-	frame = flap_frame_new(od, 0x02, 10+aim_tlvlist_size(&tl));
+	frame = flap_frame_new(od, 0x02, 10+aim_tlvlist_size(tlvlist));
 	snacid = aim_cachesnac(od, 0x000f, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, 0x000f, 0x0002, 0x0000, snacid);
 
-	aim_tlvlist_write(&frame->data, &tl);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 
@@ -189,22 +189,22 @@ static int parseresults(OscarData *od, FlapConnection *conn, aim_module_t *mod, 
 	/* Allocate a linked list, 1 node per result */
 	while (numresults) {
 		struct aim_odir *new;
-		aim_tlvlist_t *tl = aim_tlvlist_readnum(bs, byte_stream_get16(bs));
+		GSList *tlvlist = aim_tlvlist_readnum(bs, byte_stream_get16(bs));
 		new = (struct aim_odir *)g_malloc(sizeof(struct aim_odir));
-		new->first = aim_tlv_getstr(tl, 0x0001, 1);
-		new->last = aim_tlv_getstr(tl, 0x0002, 1);
-		new->middle = aim_tlv_getstr(tl, 0x0003, 1);
-		new->maiden = aim_tlv_getstr(tl, 0x0004, 1);
-		new->email = aim_tlv_getstr(tl, 0x0005, 1);
-		new->country = aim_tlv_getstr(tl, 0x0006, 1);
-		new->state = aim_tlv_getstr(tl, 0x0007, 1);
-		new->city = aim_tlv_getstr(tl, 0x0008, 1);
-		new->sn = aim_tlv_getstr(tl, 0x0009, 1);
-		new->interest = aim_tlv_getstr(tl, 0x000b, 1);
-		new->nick = aim_tlv_getstr(tl, 0x000c, 1);
-		new->zip = aim_tlv_getstr(tl, 0x000d, 1);
-		new->region = aim_tlv_getstr(tl, 0x001c, 1);
-		new->address = aim_tlv_getstr(tl, 0x0021, 1);
+		new->first = aim_tlv_getstr(tlvlist, 0x0001, 1);
+		new->last = aim_tlv_getstr(tlvlist, 0x0002, 1);
+		new->middle = aim_tlv_getstr(tlvlist, 0x0003, 1);
+		new->maiden = aim_tlv_getstr(tlvlist, 0x0004, 1);
+		new->email = aim_tlv_getstr(tlvlist, 0x0005, 1);
+		new->country = aim_tlv_getstr(tlvlist, 0x0006, 1);
+		new->state = aim_tlv_getstr(tlvlist, 0x0007, 1);
+		new->city = aim_tlv_getstr(tlvlist, 0x0008, 1);
+		new->sn = aim_tlv_getstr(tlvlist, 0x0009, 1);
+		new->interest = aim_tlv_getstr(tlvlist, 0x000b, 1);
+		new->nick = aim_tlv_getstr(tlvlist, 0x000c, 1);
+		new->zip = aim_tlv_getstr(tlvlist, 0x000d, 1);
+		new->region = aim_tlv_getstr(tlvlist, 0x001c, 1);
+		new->address = aim_tlv_getstr(tlvlist, 0x0021, 1);
 		new->next = results;
 		results = new;
 		numresults--;

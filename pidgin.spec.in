@@ -95,6 +95,7 @@ Obsoletes:  gaim-tcl
 Obsoletes:  gaim-gadugadu
 Obsoletes:  pidgin-tcl < 2.0.0
 Obsoletes:  pidgin-silc < 2.0.0
+%{?_with_sasl:Requires:   cyrus-sasl-plain, cyrus-sasl-md5}
 
 %package -n libpurple-devel
 Summary:    Development headers, documentation, and libraries for libpurple
@@ -449,6 +450,9 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %changelog
+* Sun May 27 2007 Stu Tomlinson <stu@nosnilmot.com>
+- add cyrus-sasl-plain & cyrus-sasl-md5 to Requires
+
 * Thu May 24 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Silence errors from gtk-update-icon-cache
 - Change Mandriva build dependencies to reflect the correct (lower case)
