@@ -253,8 +253,8 @@ static void ggp_action_buddylist_delete(PurplePluginAction *action)
 
 /*
  */
-/* static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, gchar *file) {{{ */
-static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, gchar *file)
+/* static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *file) {{{ */
+static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *file)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 
@@ -277,7 +277,7 @@ static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, gchar *file)
 		purple_debug_error("gg", "Could not open file: %s\n", file);
 		purple_notify_error(account, _("Couldn't open file"), msg, NULL);
 		g_free(msg);
-		g_free(file);
+		g_free(buddylist);
 		return;
 	}
 
