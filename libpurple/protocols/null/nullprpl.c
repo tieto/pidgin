@@ -115,11 +115,9 @@ static void call_if_nullprpl(gpointer data, gpointer userdata) {
 
 static void foreach_nullprpl_gc(GcFunc fn, PurpleConnection *from,
                                 gpointer userdata) {
-  GcFuncData gcfdata = { .fn = fn,
-                         .from = from,
-                         .userdata = userdata };
+  GcFuncData gcfdata = { fn, from, userdata };
   g_list_foreach(purple_connections_get_all(), call_if_nullprpl,
-                 (gpointer)&gcfdata);
+                 &gcfdata);
 }
 
 
@@ -147,12 +145,12 @@ static void call_chat_func(gpointer data, gpointer userdata) {
 static void foreach_gc_in_chat(ChatFunc fn, PurpleConnection *from,
                                int id, gpointer userdata) {
   PurpleConversation *conv = purple_find_chat(from, id);
-  ChatFuncData cfdata = { .fn = fn,
-                          .from_chat = purple_conversation_get_chat_data(conv),
-                          .userdata = userdata };
+  ChatFuncData cfdata = { fn,
+                          purple_conversation_get_chat_data(conv),
+                          userdata };
 
   g_list_foreach(purple_connections_get_all(), call_chat_func,
-                 (gpointer)&cfdata);
+                 &cfdata);
 }
 
 
@@ -1065,7 +1063,7 @@ static PurplePluginProtocolInfo prpl_info =
       128,                             /* max_height */
       10000,                           /* max_filesize */
       PURPLE_ICON_SCALE_DISPLAY,       /* scale_rules */
-    },
+  },
   nullprpl_list_icon,                  /* list_icon */
   nullprpl_list_emblem,                /* list_emblem */
   nullprpl_status_text,                /* status_text */
