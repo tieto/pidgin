@@ -2721,6 +2721,7 @@ static gboolean pidgin_blist_drag_motion_cb(GtkWidget *tv, GdkDragContext *drag_
 {
 	GtkTreePath *path;
 	int delay;
+	GdkRectangle rect;
 
 	/*
 	 * When dragging a buddy into a contact, this is the delay before
@@ -2736,7 +2737,17 @@ static gboolean pidgin_blist_drag_motion_cb(GtkWidget *tv, GdkDragContext *drag_
 	}
 
 	gtk_tree_view_get_path_at_pos(GTK_TREE_VIEW(tv), x, y, &path, NULL, NULL, NULL);
-	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &gtkblist->tip_rect);
+	gtk_tree_view_get_cell_area(GTK_TREE_VIEW(tv), path, NULL, &rect);
+
+	/* Only autoexpand when in the middle of the cell to avoid annoying un-intended expands */
+	if (y < rect.y + (rect.height / 3) ||
+	    y > rect.y + (2 * (rect.height /3)))
+		return FALSE;
+	
+	rect.height = rect.height / 3;
+	rect.y += rect.height;
+
+	gtkblist->tip_rect = rect;
 
 	if (path)
 		gtk_tree_path_free(path);
