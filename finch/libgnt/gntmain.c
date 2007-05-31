@@ -1,5 +1,5 @@
 #define _GNU_SOURCE
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(__unix__)
 #define _XOPEN_SOURCE_EXTENDED
 #endif
 
@@ -359,8 +359,7 @@ sighandler(int sig)
 	switch (sig) {
 #ifdef SIGWINCH
 	case SIGWINCH:
-		werase(stdscr);
-		wrefresh(stdscr);
+		erase();
 		g_idle_add(refresh_screen, NULL);
 		org_winch_handler(sig);
 		signal(SIGWINCH, sighandler);
