@@ -25,6 +25,7 @@
 static void msim_msg_free_element(gpointer data, gpointer user_data);
 static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, gchar *sep, gchar *begin, gchar *end);
+static gchar *msim_msg_element_as_string(MsimMessageElement *elem);
 
 MsimMessage *msim_msg_new(void)
 {
@@ -137,6 +138,7 @@ gboolean msim_send(MsimSession *session, ...)
 
 		type = va_arg(argp, int);
 
+		/* Interpret variadic arguments. */
 		switch (type)
 		{
 			case MSIM_TYPE_INTEGER: 
@@ -177,8 +179,6 @@ gboolean msim_send(MsimSession *session, ...)
 }
 
 
-
-
 /** Append a new element to a message. 
  *
  * @param name Textual name of element (static string, neither copied nor freed).
@@ -197,7 +197,7 @@ gboolean msim_send(MsimSession *session, ...)
  *
  * * MSIM_TYPE_STRING: gchar *. The data WILL BE FREED - use g_strdup() if needed.
  *
- * * MSIM_TYPE_BINARY: g_string_new_len(data, length). The data and GString will be freed.
+ * * MSIM_TYPE_BINARY: g_string_new_len(data, length). The data AND GString will be freed.
  *
  * * MSIM_TYPE_DICTIONARY: TODO
  *
@@ -321,47 +321,86 @@ gchar *msim_msg_debug_string(MsimMessage *msg)
 	return msim_msg_pack_using(msg, msim_msg_debug_string_element, "\n", "<MsimMessage: \n", ">");
 }
 
-/** Pack an element into its protocol representation.
+/** Return a message element data as a new string, converting from other types (integer, etc.) if necessary.
+ *
+ * @return gchar * The data as a string, or NULL. Caller must g_free().
+ */
+static gchar *msim_msg_element_as_string(MsimMessageElement *elem)
+{
+	switch (elem->type)
+	{
+		case MSIM_TYPE_INTEGER:
+			return g_strdup_printf("%d", GPOINTER_TO_UINT(elem->data));
+
+		case MSIM_TYPE_STRING:
+			/* Strings get escaped. msim_escape() creates a new string. */
+			return msim_escape((gchar *)elem->data);
+
+		case MSIM_TYPE_BINARY:
+			{
+				GString *gs;
+
+				gs = (GString *)elem->data;
+				/* Do not escape! */
+				return purple_base64_encode((guchar *)gs->str, gs->len);
+			}
+
+		case MSIM_TYPE_BOOLEAN:
+			/* These strings are not actually used by the wire protocol
+			 * -- see msim_msg_pack_element. */
+			return g_strdup(GPOINTER_TO_UINT(elem->data) ? "True" : "False");
+
+		case MSIM_TYPE_DICTIONARY:
+			/* TODO: pack using k=v\034k2=v2\034... */
+			return NULL;
+			
+		case MSIM_TYPE_LIST:
+			/* TODO: pack using a|b|c|d|... */
+			return NULL;
+
+		default:
+			purple_debug_info("msim", "field %s, unknown type %d\n", elem->name, elem->type);
+			return NULL;
+	}
+}
+
+/** Pack an element into its protocol representation. 
  *
  * @param data Pointer to an MsimMessageElement.
- * @param user_data 
+ * @param user_data Pointer to a gchar ** array of string items.
+ *
+ * Called by msim_msg_pack(). Will pack the MsimMessageElement into
+ * a part of the protocol string and append it to the array. Caller
+ * is responsible for creating array to correct dimensions, and
+ * freeing each string element of the array added by this function.
  */
 static void msim_msg_pack_element(gpointer data, gpointer user_data)
 {
 	MsimMessageElement *elem;
-	gchar *string;
+	gchar *string, *data_string;
 	gchar ***items;
-	gchar *binary;
-	gchar *escaped;
-	GString *gs;
 
 	elem = (MsimMessageElement *)data;
 	items = user_data;
 
+	data_string = msim_msg_element_as_string(elem);
+
 	switch (elem->type)
 	{
+		/* These types are represented by key name/value pairs. */
 		case MSIM_TYPE_INTEGER:
-			string = g_strdup_printf("%s\\%d", elem->name, GPOINTER_TO_UINT(elem->data));
-			break;
-
 		case MSIM_TYPE_STRING:
-			/* Strings get escaped. */
-			escaped = msim_escape((gchar *)elem->data);
-			string = g_strdup_printf("%s\\%s", elem->name, escaped);
-			g_free(escaped);
-			break;
-
 		case MSIM_TYPE_BINARY:
-			gs = (GString *)elem->data;
-			binary = purple_base64_encode((guchar*)gs->str, gs->len);
-			/* Do not escape! */
-			string = g_strdup_printf("%s\\%s", elem->name, binary);
-			g_free(binary);
+		case MSIM_TYPE_DICTIONARY:
+		case MSIM_TYPE_LIST:
+			string = g_strconcat("%s", "\\", data_string, NULL);
 			break;
 
+		/* Boolean is represented by absence or presence of name. */
 		case MSIM_TYPE_BOOLEAN:
 			if (GPOINTER_TO_UINT(elem->data))
 			{
+				/* True - leave in, with blank value. */
 				string = g_strdup_printf("%s\\\\", elem->name);
 			} else {
 				/* False - leave out. */
@@ -369,20 +408,13 @@ static void msim_msg_pack_element(gpointer data, gpointer user_data)
 			}
 			break;
 
-		case MSIM_TYPE_DICTIONARY:
-			/* TODO: pack using k=v\034k2=v2\034... */
-			string = g_strdup_printf("%s\\TODO", elem->name);
-			break;
-			
-		case MSIM_TYPE_LIST:
-			/* TODO: pack using a|b|c|d|... */
-			string = g_strdup_printf("%s\\TODO", elem->name);
-			break;
-
 		default:
+			g_free(data_string);
 			g_return_if_fail(FALSE);
 			break;
 	}
+
+	g_free(data_string);
 
 	**items = string;
 	++(*items);
@@ -400,3 +432,206 @@ gchar *msim_msg_pack(MsimMessage *msg)
 	return msim_msg_pack_using(msg, msim_msg_pack_element, "\\", "\\", "\\final\\");
 }
 
+/** 
+ * Parse a raw protocol message string into a MsimMessage *.
+ *
+ * @param raw The raw message string to parse, will be g_free()'d.
+ *
+ * @return MsimMessage *. Caller should msim_msg_free() when done.
+ */
+MsimMessage *msim_parse(gchar *raw)
+{
+	MsimMessage *msg;
+    gchar *token;
+    gchar **tokens;
+    gchar *key;
+    gchar *value;
+    int i;
+
+    g_return_val_if_fail(raw != NULL, NULL);
+
+    purple_debug_info("msim", "msim_parse: got <%s>\n", raw);
+
+    key = NULL;
+
+    /* All messages begin with a \. */
+    if (raw[0] != '\\' || raw[1] == 0)
+    {
+        purple_debug_info("msim", "msim_parse: incomplete/bad string, "
+                "missing initial backslash: <%s>\n", raw);
+        /* XXX: Should we try to recover, and read to first backslash? */
+
+        g_free(raw);
+        return NULL;
+    }
+
+    msg = msim_msg_new();
+
+    for (tokens = g_strsplit(raw + 1, "\\", 0), i = 0; 
+            (token = tokens[i]);
+            i++)
+    {
+#ifdef MSIM_DEBUG_PARSE
+        purple_debug_info("msim", "tok=<%s>, i%2=%d\n", token, i % 2);
+#endif
+        if (i % 2)
+        {
+			/* Odd-numbered ordinal is a value. */
+		
+			/* Note: returns a new string. */	
+            value = msim_unescape(token);
+
+			/* Always append strings, since protocol has no incoming
+			 * type information for each field. */
+			msim_msg_append(msg, key, MSIM_TYPE_STRING, value);
+#ifdef MSIM_DEBUG_PARSE
+			purple_debug_info("msim", "insert string: |%s|=|%s|\n", key, value);
+#endif
+        } else {
+			/* Even numbered indexes are key names. */
+            key = token;
+        }
+    }
+    g_strfreev(tokens);
+
+    /* Can free now since all data was copied to hash key/values */
+    g_free(raw);
+
+    return msg;
+}
+
+/**
+ * Parse a \x1c-separated "dictionary" of key=value pairs into a hash table.
+ *
+ * @param body_str The text of the dictionary to parse. Often the
+ *                  value for the 'body' field.
+ *
+ * @return Hash table of the keys and values. Must g_hash_table_destroy() when done.
+ */
+GHashTable *msim_parse_body(const gchar *body_str)
+{
+    GHashTable *table;
+    gchar *item;
+    gchar **items;
+    gchar **elements;
+    guint i;
+
+    g_return_val_if_fail(body_str != NULL, NULL);
+
+    table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
+ 
+    for (items = g_strsplit(body_str, "\x1c", 0), i = 0; 
+        (item = items[i]);
+        i++)
+    {
+        gchar *key, *value;
+
+        elements = g_strsplit(item, "=", 2);
+
+        key = elements[0];
+        if (!key)
+        {
+            purple_debug_info("msim", "msim_parse_body(%s): null key\n", 
+					body_str);
+            g_strfreev(elements);
+            break;
+        }
+
+        value = elements[1];
+        if (!value)
+        {
+            purple_debug_info("msim", "msim_parse_body(%s): null value\n", 
+					body_str);
+            g_strfreev(elements);
+            break;
+        }
+
+#ifdef MSIM_DEBUG_PARSE
+        purple_debug_info("msim", "-- %s: %s\n", key, value);
+#endif
+
+        /* XXX: This overwrites duplicates. */
+        /* TODO: make the GHashTable values be GList's, and append to the list if 
+         * there is already a value of the same key name. This is important for
+         * the WebChallenge message. */
+        g_hash_table_insert(table, g_strdup(key), g_strdup(value));
+        
+        g_strfreev(elements);
+    }
+
+    g_strfreev(items);
+
+    return table;
+}
+
+/** Return the first MsimMessageElement * with given name in the MsimMessage *. 
+ *
+ * @param name Name to search for.
+ *
+ * @return MsimMessageElement * matching name, or NULL.
+ *
+ * Note: useful fields of MsimMessageElement are 'data' and 'type'.
+ */
+MsimMessageElement *msim_msg_get_element(MsimMessage *msg, gchar *name)
+{
+	GList *i;
+
+	/* Linear search for the given name. O(n) but n is small. */
+	for (i = g_list_first(msg); i != NULL; i = g_list_next(msg))
+	{
+		MsimMessageElement *elem;
+
+		elem = i->data;
+		g_return_val_if_fail(elem != NULL, NULL);
+
+		if (strcmp(elem->name, name) == 0)
+			return elem;
+	}
+	return NULL;
+}
+
+/** Return the data of an element of a given name, as a string.
+ *
+ * @param name Name of element.
+ *
+ * @return gchar * The message string. Caller must g_free().
+ */
+gchar *msim_msg_get_string(MsimMessage *msg, gchar *name)
+{
+	MsimMessageElement *elem;
+
+	elem = msim_msg_get_element(msg, name);
+	if (!elem)
+		return NULL;
+
+	return msim_msg_element_as_string(elem);
+}
+
+/** Return the data of an element of a given name, as an integer.
+ *
+ * @param name Name of element.
+ *
+ * @return guint Numeric representation of data, or 0 if could not be converted.
+ *
+ * Useful to obtain an element's data if you know it should be an integer,
+ * even if it is not stored as an MSIM_TYPE_INTEGER. MSIM_TYPE_STRING will
+ * be converted handled correctly, for example.
+ */
+guint msim_msg_get_integer(MsimMessage *msg, gchar *name)
+{
+	MsimMessageElement *elem;
+
+	elem = msim_msg_get_element(msg, name);
+
+	switch (elem->type)
+	{
+		case MSIM_TYPE_INTEGER:
+			return GPOINTER_TO_UINT(elem->data);
+
+		case MSIM_TYPE_STRING:
+			return (guint)atoi((gchar *)elem->data);
+
+		default:
+			return 0;
+	}
+}

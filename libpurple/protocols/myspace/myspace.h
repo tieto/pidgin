@@ -48,6 +48,10 @@
 #include "debug.h"      /* for purple_debug_info */
 
 
+/* MySpaceIM includes */
+#include "session.h"
+#include "message.h"
+
 /* Conditional compilation options */
 
 /* Debugging options */
@@ -67,12 +71,6 @@
  * RC4 code and only support libpurple with RC4. */
 
 /* Constants */
-
-/* Statuses */
-#define MSIM_STATUS_ONLINE      "online"
-#define MSIM_STATUS_AWAY        "away"
-#define MSIM_STATUS_OFFLINE     "offline"
-#define MSIM_STATUS_INVISIBLE   "invisible"
 
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
 #define MSIM_CLIENT_VERSION     673
@@ -96,32 +94,6 @@
 
 /* Authentication algorithm for login2 */
 #define MSIM_AUTH_ALGORITHM	196610
-
-/* Random number in every MsimSession, to ensure it is valid. */
-#define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
-
-/* Everything needed to keep track of a session. */
-typedef struct _MsimSession
-{
-    guint magic;                        /**< MSIM_SESSION_STRUCT_MAGIC */
-    PurpleAccount *account;
-    PurpleConnection *gc;
-    gchar *sesskey;                     /**< Session key text string from server */
-    gchar *userid;                      /**< This user's numeric user ID */
-    gint fd;                            /**< File descriptor to/from server */
-
-    GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
-    GHashTable *user_lookup_cb_data;    /**< Username -> userid lookup callback data */
-    GHashTable *user_lookup_cache;      /**< Cached information on users */
-
-    gchar *rxbuf;                       /**< Receive buffer */
-    guint rxoff;                        /**< Receive buffer offset */
-	guint next_rid;						/**< Next request/response ID */
-} MsimSession;
-
-/* Check if an MsimSession is valid */
-#define MSIM_SESSION_VALID(s) (session != NULL && \
-		session->magic == MSIM_SESSION_STRUCT_MAGIC)
 
 /* Callback function pointer type for when a user's information is received, 
  * initiated from a user lookup. */
@@ -148,9 +120,6 @@ gchar *msim_unescape(const gchar *msg);
 gchar *msim_escape(const gchar *msg);
 gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
 
-GHashTable *msim_parse(gchar *msg);
-GHashTable *msim_parse_body(const gchar *body_str);
-
 void print_hash_item(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_send_raw(MsimSession *session, const gchar *msg);
 gchar *msim_pack(GHashTable *table);
@@ -173,7 +142,7 @@ void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo,
 int msim_incoming_im(MsimSession *session, GHashTable *table);
 
 int msim_process_reply(MsimSession *session, GHashTable *table);
-int msim_process(PurpleConnection *gc, GHashTable *table);
+int msim_process(PurpleConnection *gc, MsimMessage *msg);
 
 int msim_error(MsimSession *session, GHashTable *table);
 void msim_status_cb(MsimSession *session, GHashTable *userinfo, 

@@ -22,7 +22,9 @@
 #ifndef _MYSPACE_MESSAGE_H
 #define _MYSPACE_MESSAGE_H
 
-#include "myspace.h"
+#include <glib.h>
+
+#include "session.h"
 
 /* Types */
 #define MsimMessage GList		/* #define instead of typedef to avoid casting */
@@ -48,6 +50,14 @@ void msim_msg_free(MsimMessage *msg);
 MsimMessage *msim_msg_append(MsimMessage *msg, gchar *name, MsimMessageType type, gpointer data);
 gchar *msim_msg_debug_string(MsimMessage *msg);
 gchar *msim_msg_pack(MsimMessage *msg);
+
 gboolean msim_msg_send(MsimSession *session, MsimMessage *msg);
+
+MsimMessage *msim_parse(gchar *raw);
+GHashTable *msim_parse_body(const gchar *body_str);
+
+MsimMessageElement *msim_msg_get_element(MsimMessage *msg, gchar *name);
+gchar *msim_msg_get_string(MsimMessage *msg, gchar *name);
+guint msim_msg_get_integer(MsimMessage *msg, gchar *name);
 
 #endif /* _MYSPACE_MESSAGE_H */

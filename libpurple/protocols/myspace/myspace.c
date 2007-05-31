@@ -33,8 +33,8 @@
 
 #define PURPLE_PLUGIN
 
-#include "myspace.h"
 #include "message.h"
+#include "myspace.h"
 
 /** 
  * Load the plugin.
@@ -65,39 +65,33 @@ gboolean msim_load(PurplePlugin *plugin)
 GList *msim_status_types(PurpleAccount *acct)
 {
     GList *types;
-    PurpleStatusType *type;
+    PurpleStatusType *status;
 
-    purple_debug_info("myspace", "returning status types for %s: %s, %s, %s\n",
-                  acct->username,
-                  MSIM_STATUS_ONLINE, MSIM_STATUS_AWAY, MSIM_STATUS_OFFLINE, MSIM_STATUS_INVISIBLE);
-
+    purple_debug_info("myspace", "returning status types\n");
 
     types = NULL;
 
-	/* TODO: Clean up - I don't like all this repetition */
-    type = purple_status_type_new(PURPLE_STATUS_AVAILABLE, MSIM_STATUS_ONLINE,
-                              MSIM_STATUS_ONLINE, TRUE);
-    purple_status_type_add_attr(type, "message", _("Online"),
-                            purple_value_new(PURPLE_TYPE_STRING));
-    types = g_list_append(types, type);
+	/* TODO: Fix these:
+	 *
+	 * g_log: purple_presence_get_active_status: assertion `presence != NULL' failed
+	 * g_log: purple_status_get_name: assertion `status != NULL' failed
+	 * [...]
+	 *
+	 * and 
+	 * g_log: purple_presence_set_status_active: assertion `status != NULL' failed
+	 * [...]
+	 */
+    status = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, NULL, NULL, FALSE, TRUE, FALSE);
+    types = g_list_append(types, status);
 
-    type = purple_status_type_new(PURPLE_STATUS_AWAY, MSIM_STATUS_AWAY,
-                              MSIM_STATUS_AWAY, TRUE);
-    purple_status_type_add_attr(type, "message", _("Away"),
-                            purple_value_new(PURPLE_TYPE_STRING));
-    types = g_list_append(types, type);
+    status = purple_status_type_new_full(PURPLE_STATUS_AWAY, NULL, NULL, FALSE, TRUE, FALSE);
+    types = g_list_append(types, status);
 
-    type = purple_status_type_new(PURPLE_STATUS_OFFLINE, MSIM_STATUS_OFFLINE,
-                              MSIM_STATUS_OFFLINE, TRUE);
-    purple_status_type_add_attr(type, "message", _("Offline"),
-                            purple_value_new(PURPLE_TYPE_STRING));
-    types = g_list_append(types, type);
+    status = purple_status_type_new_full(PURPLE_STATUS_OFFLINE, NULL, NULL, FALSE, TRUE, FALSE);
+    types = g_list_append(types, status);
 
-    type = purple_status_type_new(PURPLE_STATUS_INVISIBLE, MSIM_STATUS_INVISIBLE,
-                              MSIM_STATUS_INVISIBLE, TRUE);
-    purple_status_type_add_attr(type, "message", _("Invisible"),
-                            purple_value_new(PURPLE_TYPE_STRING));
-    types = g_list_append(types, type);
+    status = purple_status_type_new_full(PURPLE_STATUS_INVISIBLE, NULL, NULL, FALSE, TRUE, FALSE);
+    types = g_list_append(types, status);
 
     return types;
 }
@@ -175,154 +169,6 @@ gchar *str_replace(const gchar *str, const gchar *old, const gchar *new)
 	return ret;
 }
 
-
-
-/** 
- * Parse a MySpaceIM protocol message into a hash table. 
- *
- * @param msg The message string to parse, will be g_free()'d.
- *
- * @return Hash table of message. Caller should destroy with
- *              g_hash_table_destroy() when done.
- */
-GHashTable *msim_parse(gchar *msg)
-{
-    GHashTable *table;
-    gchar *token;
-    gchar **tokens;
-    gchar *key;
-    gchar *value;
-    int i;
-
-    g_return_val_if_fail(msg != NULL, NULL);
-
-    purple_debug_info("msim", "msim_parse: got <%s>\n", msg);
-
-    key = NULL;
-
-    /* All messages begin with a \ */
-    if (msg[0] != '\\' || msg[1] == 0)
-    {
-        purple_debug_info("msim", "msim_parse: incomplete/bad msg, "
-                "missing initial backslash: <%s>\n", msg);
-        /* XXX: Should we try to recover, and read to first backslash? */
-
-        g_free(msg);
-        return NULL;
-    }
-
-    /* Create table of strings, set to call g_free on destroy. */
-    table = g_hash_table_new_full((GHashFunc)g_str_hash, 
-            (GEqualFunc)g_str_equal, g_free, g_free);
-
-    for (tokens = g_strsplit(msg + 1, "\\", 0), i = 0; 
-            (token = tokens[i]);
-            i++)
-    {
-#ifdef MSIM_DEBUG_PARSE
-        purple_debug_info("msim", "tok=<%s>, i%2=%d\n", token, i % 2);
-#endif
-        if (i % 2)
-        {
-			/* Odd-numbered ordinal is a value */
-		
-			/* Note: returns a new string */	
-            value = msim_unescape(token);
-
-            /* Check if key already exists */
-            if (g_hash_table_lookup(table, key) == NULL)
-            {
-#ifdef MSIM_DEBUG_PARSE
-                purple_debug_info("msim", "insert: |%s|=|%s|\n", key, value);
-#endif
-				/* Insert - strdup 'key' because it will be g_strfreev'd (as 'tokens'),
-				 * but do not strdup 'value' because it was newly allocated by
-				 * msim_unescape(). 
-				 */
-                g_hash_table_insert(table, g_strdup(key), value);
-            } else {
-                /* TODO: Some dictionaries have multiple values for the same
-                 * key. Should append to a GList to handle this case. */
-                purple_debug_info("msim", "msim_parse: key %s already exists, "
-                "not overwriting or replacing; ignoring new value %s\n", key,
-                value);
-            }
-        } else {
-			/* Even numbered index is a key name */
-            key = token;
-        }
-    }
-    g_strfreev(tokens);
-
-    /* Can free now since all data was copied to hash key/values */
-    g_free(msg);
-
-    return table;
-}
-
-/**
- * Parse a \x1c-separated "dictionary" of key=value pairs into a hash table.
- *
- * @param body_str The text of the dictionary to parse. Often the
- *                  value for the 'body' field.
- *
- * @return Hash table of the keys and values. Must g_hash_table_destroy() when done.
- */
-GHashTable *msim_parse_body(const gchar *body_str)
-{
-    GHashTable *table;
-    gchar *item;
-    gchar **items;
-    gchar **elements;
-    guint i;
-
-    g_return_val_if_fail(body_str != NULL, NULL);
-
-    table = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
- 
-    for (items = g_strsplit(body_str, "\x1c", 0), i = 0; 
-        (item = items[i]);
-        i++)
-    {
-        gchar *key, *value;
-
-        elements = g_strsplit(item, "=", 2);
-
-        key = elements[0];
-        if (!key)
-        {
-            purple_debug_info("msim", "msim_parse_body(%s): null key\n", 
-					body_str);
-            g_strfreev(elements);
-            break;
-        }
-
-        value = elements[1];
-        if (!value)
-        {
-            purple_debug_info("msim", "msim_parse_body(%s): null value\n", 
-					body_str);
-            g_strfreev(elements);
-            break;
-        }
-
-#ifdef MSIM_DEBUG_PARSE
-        purple_debug_info("msim", "-- %s: %s\n", key, value);
-#endif
-
-        /* XXX: This overwrites duplicates. */
-        /* TODO: make the GHashTable values be GList's, and append to the list if 
-         * there is already a value of the same key name. This is important for
-         * the WebChallenge message. */
-        g_hash_table_insert(table, g_strdup(key), g_strdup(value));
-        
-        g_strfreev(elements);
-    }
-
-    g_strfreev(items);
-
-    return table;
-}
 
 
 
@@ -923,21 +769,31 @@ int msim_incoming_im(MsimSession *session, GHashTable *table)
  * @return The return value of the function used to process the message, or -1 if
  * called with invalid parameters.
  */
-int msim_process(PurpleConnection *gc, GHashTable *table)
+int msim_process(PurpleConnection *gc, MsimMessage *msg)
 {
     MsimSession *session;
 
     g_return_val_if_fail(gc != NULL, -1);
-    g_return_val_if_fail(table != NULL, -1);
+    g_return_val_if_fail(msg != NULL, -1);
 
     session = (MsimSession *)gc->proto_data;
 
 #ifdef MSIM_DEBUG_MSG
-    purple_debug_info("msim", "-------- message -------------\n");
-    g_hash_table_foreach(table, print_hash_item, NULL);
-    purple_debug_info("msim", "------------------------------\n");
+	{
+		gchar *debug_msg;
+
+		purple_debug_info("msim", "-------- message -------------\n");
+
+		debug_msg = msim_msg_debug_string(msg);
+		purple_debug_info("msim", debug_msg);
+		g_free(debug_msg);
+
+		purple_debug_info("msim", "------------------------------\n");
+	}
 #endif
 
+	/* TODO: convert to use MsimMessage. */
+#if 0	
     if (g_hash_table_lookup(table, "nc"))
     {
         return msim_login_challenge(session, table);
@@ -991,7 +847,11 @@ int msim_process(PurpleConnection *gc, GHashTable *table)
         purple_debug_info("msim", "msim_process: unhandled message\n");
         return 0;
     }
+#else
+	return 0;
+#endif
 }
+
 /**
  * Process a message reply from the server.
  *
@@ -1186,7 +1046,7 @@ void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
      * TODO: make status reflect reality
      * TODO: show headline */
     presence = purple_presence_new_for_buddy(buddy);
-    purple_presence_set_status_active(presence, MSIM_STATUS_ONLINE, TRUE);
+    /* purple_presence_set_status_active(presence, PURPLE_STATUS_AVAILABLE, TRUE); */
 
     g_strfreev(status_array);
     g_list_free(list);
@@ -1263,8 +1123,8 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
     account = purple_connection_get_account(gc);
     session = gc->proto_data;
 
-    g_return_if_fail(MSIM_SESSION_VALID(session));
     g_return_if_fail(cond == PURPLE_INPUT_READ);
+    g_return_if_fail(MSIM_SESSION_VALID(session));
 
     /* Only can handle so much data at once... 
      * If this happens, try recompiling with a higher MSIM_READ_BUF_SIZE.
@@ -1333,14 +1193,14 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
     /* Look for \\final\\ end markers. If found, process message. */
     while((end = strstr(session->rxbuf, MSIM_FINAL_STRING)))
     {
-        GHashTable *table;
+        MsimMessage *msg;
 
 #ifdef MSIM_DEBUG_RXBUF
         purple_debug_info("msim", "in loop: buf=<%s>\n", session->rxbuf);
 #endif
         *end = 0;
-        table = msim_parse(g_strdup(session->rxbuf));
-        if (!table)
+        msg = msim_parse(g_strdup(session->rxbuf));
+        if (!msg)
         {
             purple_debug_info("msim", "msim_input_cb: couldn't parse <%s>\n", 
 					session->rxbuf);
@@ -1349,8 +1209,8 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
         else
         {
             /* Process message. Returns 0 to free */
-            if (msim_process(gc, table) == 0)
-                g_hash_table_destroy(table);
+            if (msim_process(gc, msg) == 0)
+				msim_msg_free(msg);
         }
 
         /* Move remaining part of buffer to beginning. */
@@ -1511,7 +1371,7 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
     g_return_if_fail(user != NULL);
     g_return_if_fail(cb != NULL);
 
-    purple_debug_info("msim", "msim_lookup_userid", 
+    purple_debug_info("msim", "msim_lookup_userid: "
 			"asynchronously looking up <%s>\n", user);
 
     /* TODO: check if this user's info was cached and fresh; if so return immediately */
@@ -1754,18 +1614,23 @@ PurplePluginInfo info =
 void init_plugin(PurplePlugin *plugin) 
 {
 	PurpleAccountOption *option;
-#ifdef _TEST_MSIM_MSG
-	MsimMessage *msg = msim_msg_new();
-	msg = msim_msg_append(msg, "bx", MSIM_TYPE_BINARY, g_string_new_len(g_strdup("XXX"), 3));
-	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v1"));
-	msg = msim_msg_append(msg, "k1", MSIM_TYPE_INTEGER, 42);
-	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v43"));
-	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v52/xxx\\yyy"));
-	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v7"));
-	purple_debug_info("msim", "msg=%s\n", msim_msg_debug_string(msg));
-	purple_debug_info("msim", "msg=%s\n", msim_msg_pack(msg));
-	msim_msg_free(msg);
-	exit(0);
+#ifdef  _TEST_MSIM_MSG
+	{
+		MsimMessage *msg;
+
+		purple_debug_info("msim", "testing MsimMessage\n");
+		msg = msim_msg_new();
+		msg = msim_msg_append(msg, "bx", MSIM_TYPE_BINARY, g_string_new_len(g_strdup("XXX"), 3));
+		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v1"));
+		msg = msim_msg_append(msg, "k1", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(42));
+		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v43"));
+		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v52/xxx\\yyy"));
+		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v7"));
+		purple_debug_info("msim", "msg=%s\n", msim_msg_debug_string(msg));
+		purple_debug_info("msim", "msg=%s\n", msim_msg_pack(msg));
+		msim_msg_free(msg);
+		exit(0);
+	}
 #endif
 
 	/* TODO: default to automatically try different ports. Make the user be
