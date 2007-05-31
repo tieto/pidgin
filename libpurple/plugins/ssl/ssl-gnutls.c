@@ -137,10 +137,10 @@ static void ssl_gnutls_authcheck_ask(PurpleSslConnection * gsc)
   else
     {
       /* Grab the first certificate and display some data about it */
-      guchar fpr_bin[256];     /* Raw binary key fingerprint */
+      gchar fpr_bin[256];     /* Raw binary key fingerprint */
       gsize fpr_bin_sz = sizeof(fpr_bin); /* Size of above (used later) */
       gchar * fpr_asc = NULL; /* ASCII representation of key fingerprint */
-      guchar ser_bin[256];     /* Certificate Serial Number field */
+      gchar ser_bin[256];     /* Certificate Serial Number field */
       gsize ser_bin_sz = sizeof(ser_bin);
       gchar * ser_asc = NULL;
       gchar dn[1024];          /* Certificate Name field */
@@ -215,7 +215,7 @@ static void ssl_gnutls_authcheck_ask(PurpleSslConnection * gsc)
 
 	g_free(primary);
 	g_free(secondary);
-      } /* End dialog construction */
+      }
 
 
       /* Cleanup! */
@@ -223,7 +223,7 @@ static void ssl_gnutls_authcheck_ask(PurpleSslConnection * gsc)
       g_free(ser_asc);
 
       gnutls_x509_crt_deinit(cert);
-    } /* if (0 == ... */
+    }
 }
 
 static void ssl_gnutls_handshake_cb(gpointer data, gint source,
@@ -259,7 +259,6 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 		  const gnutls_datum_t *cert_list;
 		  unsigned int cert_list_size = 0;
 		  gnutls_session_t session=gnutls_data->session;
-		  int i;
 		  
 		  cert_list =
 		    gnutls_certificate_get_peers(session, &cert_list_size);
@@ -267,17 +266,16 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 		  purple_debug_info("gnutls",
 				    "Peer provided %d certs\n",
 				    cert_list_size);
-
+		  int i;
 		  for (i=0; i<cert_list_size; i++)
 		    {
-		      guchar fpr_bin[256];
+		      gchar fpr_bin[256];
 		      gsize fpr_bin_sz = sizeof(fpr_bin);
 		      gchar * fpr_asc = NULL;
-		      guchar tbuf[256];
+		      gchar tbuf[256];
 		      gsize tsz=sizeof(tbuf);
 		      gchar * tasc = NULL;
 		      gnutls_x509_crt_t cert;
-		      int ret;
 		      
 		      gnutls_x509_crt_init(&cert);
 		      gnutls_x509_crt_import (cert, &cert_list[i],
@@ -294,7 +292,7 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 					i, fpr_asc);
 		      
 		      tsz=sizeof(tbuf);
-		      gnutls_x509_crt_get_serial(cert,tbuf,&tsz);
+		      int ret = gnutls_x509_crt_get_serial(cert,tbuf,&tsz);
 		      tasc=
 			purple_base16_encode_chunked(tbuf, tsz);
 		      purple_debug_info("gnutls",
