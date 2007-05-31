@@ -8,6 +8,7 @@ version 2.1.0 (?/?/?):
 	  information about a user.
 	* gtk_imhtml_setup_entry
 	* purple_xfer_get_remote_user
+	* purple_blist_node_get_type
 
 	Changed:
 	* pidgin_separator returns the separator added to the menu.
