@@ -59,7 +59,8 @@
 
 /* RC4 didn't make it into Libpurple 2.0.0's cipher suite, so we have
  * to use our own RC4 code (from Samba) by not defining this. */
-/*#define MSIM_USE_PURPLE_RC4			*/
+/* RC4 is in Libpurple 2.0.1, so define this. */
+#define MSIM_USE_PURPLE_RC4			
 
 /* TODO: when RC4 makes it into libpurple, use the PURPLE_VERSION_CHECK 
  * macro to conditionally compile. And then later, get rid of our own
