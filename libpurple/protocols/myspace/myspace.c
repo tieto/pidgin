@@ -164,7 +164,7 @@ gchar *msim_escape(const gchar *msg)
  * http://mail.gnome.org/archives/gtk-app-devel-list/2000-July/msg00201.html
  *
  */
-gchar *str_replace(const gchar* str, const gchar *old, const gchar *new)
+gchar *str_replace(const gchar *str, const gchar *old, const gchar *new)
 {
 	char **items;
 	char *ret;
@@ -185,7 +185,7 @@ gchar *str_replace(const gchar* str, const gchar *old, const gchar *new)
  * @return Hash table of message. Caller should destroy with
  *              g_hash_table_destroy() when done.
  */
-GHashTable* msim_parse(gchar* msg)
+GHashTable *msim_parse(gchar *msg)
 {
     GHashTable *table;
     gchar *token;
@@ -329,7 +329,7 @@ GHashTable *msim_parse_body(const gchar *body_str)
 #ifdef MSIM_DEBUG_MSG
 void print_hash_item(gpointer key, gpointer value, gpointer user_data)
 {
-    purple_debug_info("msim", "%s=%s\n", (char*)key, (char*)value);
+    purple_debug_info("msim", "%s=%s\n", (char *)key, (char *)value);
 }
 #endif
 
@@ -444,7 +444,7 @@ int msim_login_challenge(MsimSession *session, GHashTable *table)
 
     purple_debug_info("msim", "nc=<%s>\n", nc_str);
 
-    nc = (guchar*)purple_base64_decode(nc_str, &nc_len);
+    nc = (guchar *)purple_base64_decode(nc_str, &nc_len);
     purple_debug_info("msim", "base64 decoded to %d bytes\n", nc_len);
     if (nc_len != 0x40)
     {
@@ -592,8 +592,8 @@ void crypt_rc4(rc4_state_struct *rc4_state, unsigned char *data, int data_len)
  * @return Binary login challenge response, ready to send to the server. Must be g_free()'d
  *         when finished.
  */
-gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE], 
-		gchar* email, gchar* password, guint* response_len)
+gchar *msim_compute_login_response(guchar nonce[2 * NONCE_SIZE], 
+		gchar *email, gchar *password, guint *response_len)
 {
     PurpleCipherContext *key_context;
     PurpleCipher *sha1;
@@ -605,18 +605,15 @@ gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
 
     guchar hash_pw[HASH_SIZE];
     guchar key[HASH_SIZE];
-    gchar* password_utf16le;
-    guchar* data;
-	guchar* data_out;
+    gchar *password_utf16le;
+    guchar *data;
+	guchar *data_out;
 	size_t data_len, data_out_len;
 	gsize conv_bytes_read, conv_bytes_written;
-	GError* conv_error;
+	GError *conv_error;
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
 	int i;
 #endif
-
-    //memset(nonce, 0, NONCE_SIZE);
-    //memset(nonce + NONCE_SIZE, 1, NONCE_SIZE);
 
     /* Convert ASCII password to UTF16 little endian */
     purple_debug_info("msim", "converting password to UTF-16LE\n");
@@ -633,7 +630,7 @@ gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
 	}
 
     /* Compute password hash */ 
-    purple_cipher_digest_region("sha1", (guchar*)password_utf16le, 
+    purple_cipher_digest_region("sha1", (guchar *)password_utf16le, 
 			conv_bytes_written, sizeof(hash_pw), hash_pw, NULL);
 	g_free(password_utf16le);
 
@@ -691,7 +688,7 @@ gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
 #ifdef MSIM_USE_PURPLE_RC4
 	data_out = g_new0(guchar, data_len);
 
-    purple_cipher_context_encrypt(rc4, (const guchar*)data, 
+    purple_cipher_context_encrypt(rc4, (const guchar *)data, 
 			data_len, data_out, &data_out_len);
 	purple_cipher_context_destroy(rc4);
 #else
@@ -711,7 +708,7 @@ gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
 
 	*response_len = data_out_len;
 
-    return (gchar*)data_out;
+    return (gchar *)data_out;
 }
 
 /**
@@ -833,7 +830,7 @@ int msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gcha
  * @param session 
  * @param userinfo User info message from server containing a 'body' field
  *                 with a 'UserID' key. This is where the user ID is taken from.
- * @param data A send_im_cb_struct* of information on the IM to send.
+ * @param data A send_im_cb_struct * of information on the IM to send.
  *
  */
 void msim_send_im_by_userid_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
@@ -850,7 +847,7 @@ void msim_send_im_by_userid_cb(MsimSession *session, GHashTable *userinfo, gpoin
 
     userid = g_hash_table_lookup(body, "UserID");
 
-    s = (send_im_cb_struct*)data;
+    s = (send_im_cb_struct *)data;
     msim_send_im_by_userid(session, userid, s->message, s->flags);
 
     g_hash_table_destroy(body);
@@ -864,7 +861,7 @@ void msim_send_im_by_userid_cb(MsimSession *session, GHashTable *userinfo, gpoin
  *
  * @param session 
  * @param userinfo Message from server on user's info, containing UserName.
- * @param data A gchar* of the incoming instant message's text.
+ * @param data A gchar * of the incoming instant message's text.
  */
 void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
 {
@@ -880,7 +877,7 @@ void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, gpointer da
 
     username = g_hash_table_lookup(body, "UserName");
 
-    msg = (gchar*)data;
+    msg = (gchar *)data;
     serv_got_im(session->gc, username, msg, PURPLE_MESSAGE_RECV, time(NULL));
 
     g_hash_table_destroy(body);
@@ -933,7 +930,7 @@ int msim_process(PurpleConnection *gc, GHashTable *table)
     g_return_val_if_fail(gc != NULL, -1);
     g_return_val_if_fail(table != NULL, -1);
 
-    session = (MsimSession*)gc->proto_data;
+    session = (MsimSession *)gc->proto_data;
 
 #ifdef MSIM_DEBUG_MSG
     purple_debug_info("msim", "-------- message -------------\n");
@@ -945,7 +942,7 @@ int msim_process(PurpleConnection *gc, GHashTable *table)
     {
         return msim_login_challenge(session, table);
     } else if (g_hash_table_lookup(table, "sesskey")) {
-        purple_debug_info("msim", "SESSKEY=<%s>\n", (gchar*)g_hash_table_lookup(table, "sesskey"));
+        purple_debug_info("msim", "SESSKEY=<%s>\n", (gchar *)g_hash_table_lookup(table, "sesskey"));
 
         purple_connection_update_progress(gc, _("Connected"), 3, 4);
 
@@ -1116,7 +1113,7 @@ void msim_status_now(gchar *who, gpointer data)
  *
  * @param session 
  * @param userinfo Looked up user information from server.
- * @param data gchar* status string.
+ * @param data gchar * status string.
  *
  */
 void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
@@ -1136,7 +1133,7 @@ void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
     g_return_if_fail(MSIM_SESSION_VALID(session));
     g_return_if_fail(userinfo != NULL);
 
-    status_str = (gchar*)data;
+    status_str = (gchar *)data;
 
     body = msim_parse_body(g_hash_table_lookup(userinfo, "body"));
 	g_return_if_fail(body != NULL);
@@ -1262,7 +1259,7 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
     g_return_if_fail(gc_uncasted != NULL);
     g_return_if_fail(source >= 0);  /* Note: 0 is a valid fd */
 
-    gc = (PurpleConnection*)(gc_uncasted);
+    gc = (PurpleConnection *)(gc_uncasted);
     account = purple_connection_get_account(gc);
     session = gc->proto_data;
 
@@ -1380,7 +1377,7 @@ void msim_connect_cb(gpointer data, gint source, const gchar *error_message)
 
     g_return_if_fail(data != NULL);
 
-    gc = (PurpleConnection*)data;
+    gc = (PurpleConnection *)data;
     session = gc->proto_data;
 
     if (source < 0)
@@ -1586,7 +1583,7 @@ char *msim_status_text(PurpleBuddy *buddy)
 
     g_return_val_if_fail(buddy != NULL, NULL);
 
-    session = (MsimSession*)buddy->account->gc->proto_data;
+    session = (MsimSession *)buddy->account->gc->proto_data;
     g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
     g_return_val_if_fail(session->user_lookup_cache != NULL, NULL);
 
@@ -1620,7 +1617,7 @@ void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboo
         MsimSession *session;
         GHashTable *userinfo;
 
-        session = (MsimSession*)buddy->account->gc->proto_data;
+        session = (MsimSession *)buddy->account->gc->proto_data;
 
         g_return_if_fail(MSIM_SESSION_VALID(session));
         g_return_if_fail(session->user_lookup_cache);
@@ -1636,8 +1633,8 @@ void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboo
         purple_notify_user_info_add_pair(user_info, "Total Friends", g_hash_table_lookup(userinfo, "TotalFriends"));
         purple_notify_user_info_add_pair(user_info, "Song", 
                 g_strdup_printf("%s - %s",
-                    (gchar*)g_hash_table_lookup(userinfo, "BandName"),
-                    (gchar*)g_hash_table_lookup(userinfo, "SongName")));
+                    (gchar *)g_hash_table_lookup(userinfo, "BandName"),
+                    (gchar *)g_hash_table_lookup(userinfo, "SongName")));
     }
 }
 

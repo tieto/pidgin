@@ -85,14 +85,14 @@
 /* Constants */
 #define HASH_SIZE           0x14        /**< Size of SHA-1 hash for login */
 #define NONCE_SIZE          0x20        /**< Half of decoded 'nc' field */
-#define MSIM_READ_BUF_SIZE  5*1024      /**< Receive buffer size */
+#define MSIM_READ_BUF_SIZE  5 * 1024    /**< Receive buffer size */
 #define MSIM_FINAL_STRING   "\\final\\" /**< Message end marker */
 
 /* Messages */
 #define MSIM_BM_INSTANT     1
 #define MSIM_BM_STATUS      100
 #define MSIM_BM_ACTION      121
-/*#define MSIM_BM_UNKNOWN1    122*/
+/* #define MSIM_BM_UNKNOWN1    122 */
 
 /* Authentication algorithm for login2 */
 #define MSIM_AUTH_ALGORITHM	196610
@@ -146,10 +146,10 @@ const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy);
 /* TODO: move these three functions to message.c/h */
 gchar *msim_unescape(const gchar *msg);
 gchar *msim_escape(const gchar *msg);
-gchar *str_replace(const gchar* str, const gchar *old, const gchar *new);
+gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
 
-GHashTable *msim_parse(gchar* msg);
-GHashTable* msim_parse_body(const gchar *body_str);
+GHashTable *msim_parse(gchar *msg);
+GHashTable *msim_parse_body(const gchar *body_str);
 
 void print_hash_item(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_send_raw(MsimSession *session, const gchar *msg);
@@ -159,8 +159,8 @@ gboolean msim_send(MsimSession *session, ...);
 
 void msim_login(PurpleAccount *acct);
 int msim_login_challenge(MsimSession *session, GHashTable *table);
-gchar* msim_compute_login_response(guchar nonce[2*NONCE_SIZE],
-		        gchar* email, gchar* password, guint *response_len);
+gchar *msim_compute_login_response(guchar nonce[2 * NONCE_SIZE],
+		        gchar *email, gchar *password, guint *response_len);
 
 int msim_send_im(PurpleConnection *gc, const char *who,
 		const char *message, PurpleMessageFlags flags);
