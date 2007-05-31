@@ -318,6 +318,7 @@ pidgin_ui_init(void)
 	pidgin_xfers_init();
 	pidgin_roomlist_init();
 	pidgin_log_init();
+	pidgin_docklet_init();
 }
 
 static void
@@ -472,12 +473,7 @@ int main(int argc, char *argv[])
 #else
 	debug_enabled = FALSE;
 #endif
-
-#ifdef PURPLE_FATAL_ASSERTS
-	/* Make g_return_... functions fatal. */
-	g_log_set_always_fatal(G_LOG_LEVEL_CRITICAL);
-#endif
-
+	
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
@@ -497,18 +493,18 @@ int main(int argc, char *argv[])
 			"%s has segfaulted and attempted to dump a core file.\n"
 			"This is a bug in the software and has happened through\n"
 			"no fault of your own.\n\n"
-			"If you can reproduce the crash, please notify the Pidgin\n"
-			"developers by reporting a bug at\n"
-			"%sbug.php\n\n"
+			"If you can reproduce the crash, please notify the developers\n"
+			"by reporting a bug at:\n"
+			"%snewticket/\n\n"
 			"Please make sure to specify what you were doing at the time\n"
 			"and post the backtrace from the core file.  If you do not know\n"
 			"how to get the backtrace, please read the instructions at\n"
-			"%sgdb.php\n\n"
+			"%swiki/GetABacktrace\n\n"
 			"If you need further assistance, please IM either SeanEgn or \n"
 			"LSchiere (via AIM).  Contact information for Sean and Luke \n"
 			"on other protocols is at\n"
-			"%scontactinfo.php\n"),
-			PIDGIN_NAME, PURPLE_WEBSITE, PURPLE_WEBSITE, PURPLE_WEBSITE
+			"%swiki/DeveloperPages\n"),
+			PIDGIN_NAME, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE, PURPLE_DEVEL_WEBSITE
 		);
 
 		/* we have to convert the message (UTF-8 to console
@@ -629,7 +625,7 @@ int main(int argc, char *argv[])
 	}
 	/* show version message */
 	if (opt_version) {
-		printf(PIDGIN_NAME " %s\n", VERSION);
+		printf("%s %s\n", PIDGIN_NAME, VERSION);
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
 #endif
@@ -666,7 +662,7 @@ int main(int argc, char *argv[])
 	if (!gui_check) {
 		char *display = gdk_get_display();
 
-		printf(PIDGIN_NAME " %s\n", VERSION);
+		printf("%s %s\n", PIDGIN_NAME, VERSION);
 
 		g_warning("cannot open display: %s", display ? display : "unset");
 		g_free(display);
@@ -726,7 +722,7 @@ int main(int argc, char *argv[])
 
 	if (!purple_core_init(PIDGIN_UI)) {
 		fprintf(stderr,
-				"Initialization of the " PIDGIN_NAME " core failed. Dumping core.\n"
+				"Initialization of the libpurple core failed. Dumping core.\n"
 				"Please report this!\n");
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
@@ -745,7 +741,6 @@ int main(int argc, char *argv[])
 
 	/* load plugins we had when we quit */
 	purple_plugins_load_saved(PIDGIN_PREFS_ROOT "/plugins/loaded");
-	pidgin_docklet_init();
 
 	/* TODO: Move pounces loading into purple_pounces_init() */
 	purple_pounces_load();

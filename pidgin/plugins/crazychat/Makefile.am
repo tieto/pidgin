@@ -33,6 +33,7 @@ crazychat_la_LIBADD = $(GTKGLEXT_LIBS)
 
 AM_CPPFLAGS = -DPURPLE_PLUGINS \
 	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/pidgin \
 	$(GTK_CFLAGS) \
 	$(GTKGLEXT_CFLAGS) \

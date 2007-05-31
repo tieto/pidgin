@@ -157,7 +157,10 @@ void yahoo_process_picture_update(PurpleConnection *gc, struct yahoo_packet *pkt
 		case 5:
 			/* us */
 			break;
+		/* NOTE: currently the server seems to only send 213; 206 was used
+		 * in older versions. Check whether it's still needed. */
 		case 206:
+		case 213:
 			icon = strtol(pair->value, NULL, 10);
 			break;
 		}
@@ -205,9 +208,11 @@ void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *p
 		const char *locksum = NULL;
 
 		/* FIXME: Cleanup this strtol() stuff if possible. */
-		if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL && 
-				(checksum != strtol(locksum, NULL, 10)))
-			yahoo_send_picture_request(gc, who);
+		if (b) {
+			locksum = purple_buddy_icons_get_checksum_for_user(b);
+			if (!locksum || (checksum != strtol(locksum, NULL, 10)))
+				yahoo_send_picture_request(gc, who);
+		}
 	}
 }
 

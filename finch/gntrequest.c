@@ -497,7 +497,9 @@ finch_request_fields(const char *title, const char *primary,
 				field->ui_data = combo;
 
 				all = purple_request_field_account_get_show_all(field);
-				def = purple_request_field_account_get_default_value(field);
+				def = purple_request_field_account_get_value(field);
+				if (!def)
+					def = purple_request_field_account_get_default_value(field);
 
 				if (all)
 					list = purple_accounts_get_all();
@@ -610,13 +612,17 @@ finch_request_file(const char *title, const char *filename,
 
 static PurpleRequestUiOps uiops =
 {
-	.request_input = finch_request_input,
-	.close_request = finch_close_request,
-	.request_choice = finch_request_choice,
-	.request_action = finch_request_action,
-	.request_fields = finch_request_fields,
-	.request_file = finch_request_file,
-	.request_folder = NULL                        /* No plans for this */
+	finch_request_input,
+	finch_request_choice,
+	finch_request_action,
+	finch_request_fields,
+	finch_request_file,
+	finch_close_request,
+	NULL,                       /* No plans for request_folder */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleRequestUiOps *finch_request_get_ui_ops()

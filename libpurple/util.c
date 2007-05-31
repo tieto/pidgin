@@ -1739,6 +1739,7 @@ purple_markup_strip_html(const char *str)
 				else if (strncasecmp(str2 + i, "<p>", 3) == 0
 				 || strncasecmp(str2 + i, "<tr", 3) == 0
 				 || strncasecmp(str2 + i, "<br", 3) == 0
+				 || strncasecmp(str2 + i, "<hr", 3) == 0
 				 || strncasecmp(str2 + i, "<li", 3) == 0
 				 || strncasecmp(str2 + i, "<div", 4) == 0
 				 || strncasecmp(str2 + i, "</table>", 8) == 0)
@@ -1873,6 +1874,11 @@ purple_markup_linkify(const char *text)
 			while (1) {
 				if (badchar(*t) || badentity(t)) {
 
+					if ((!g_ascii_strncasecmp(c, "http://", 7) && (t - c == 7)) ||
+						(!g_ascii_strncasecmp(c, "https://", 8) && (t - c == 8))) {
+						break;
+					}
+
 					if (*(t) == ',' && (*(t + 1) != ' ')) {
 						t++;
 						continue;
@@ -1932,6 +1938,12 @@ purple_markup_linkify(const char *text)
 			t = c;
 			while (1) {
 				if (badchar(*t) || badentity(t)) {
+
+					if ((!g_ascii_strncasecmp(c, "ftp://", 6) && (t - c == 6)) ||
+						(!g_ascii_strncasecmp(c, "sftp://", 7) && (t - c == 7))) {
+						break;
+					}
+
 					if (*(t - 1) == '.')
 						t--;
 					if ((*(t - 1) == ')' && (inside_paren > 0))) {
@@ -1983,8 +1995,21 @@ purple_markup_linkify(const char *text)
 			t = c;
 			while (1) {
 				if (badchar(*t) || badentity(t)) {
+					char *d;
+					if (t - c == 7) {
+						break;
+					}
 					if (*(t - 1) == '.')
 						t--;
+					if ((d = strstr(c + 7, "?")) != NULL && d < t)
+						url_buf = g_strndup(c + 7, d - c - 7);
+					else
+						url_buf = g_strndup(c + 7, t - c - 7);
+					if (!purple_email_is_valid(url_buf)) {
+						g_free(url_buf);
+						break;
+					}
+					g_free(url_buf);
 					url_buf = g_strndup(c, t - c);
 					tmpurlbuf = purple_unescape_html(url_buf);
 					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
@@ -1996,6 +2021,39 @@ purple_markup_linkify(const char *text)
 				}
 				if (!t)
 					break;
+				t++;
+
+			}
+		} else if ((*c=='x') && (!g_ascii_strncasecmp(c, "xmpp:", 5)) &&
+				   (c == text || badchar(c[-1]) || badentity(c-1))) {
+			t = c;
+			while (1) {
+				if (badchar(*t) || badentity(t)) {
+
+					if (t - c == 5) {
+						break;
+					}
+
+					if (*(t) == ',' && (*(t + 1) != ' ')) {
+						t++;
+						continue;
+					}
+
+					if (*(t - 1) == '.')
+						t--;
+					if ((*(t - 1) == ')' && (inside_paren > 0))) {
+						t--;
+					}
+
+					url_buf = g_strndup(c, t - c);
+					tmpurlbuf = purple_unescape_html(url_buf);
+					g_string_append_printf(ret, "<A HREF=\"%s\">%s</A>",
+							tmpurlbuf, url_buf);
+					g_free(url_buf);
+					g_free(tmpurlbuf);
+					c = t;
+					break;
+				}
 				t++;
 
 			}
@@ -2522,29 +2580,15 @@ FILE *
 purple_mkstemp(char **fpath, gboolean binary)
 {
 	const gchar *tmpdir;
-#ifndef _WIN32
 	int fd;
-#endif
 	FILE *fp = NULL;
 
 	g_return_val_if_fail(fpath != NULL, NULL);
 
 	if((tmpdir = (gchar*)g_get_tmp_dir()) != NULL) {
 		if((*fpath = g_strdup_printf("%s" G_DIR_SEPARATOR_S "%s", tmpdir, purple_mkstemp_templ)) != NULL) {
-#ifdef _WIN32
-			char* result = _mktemp( *fpath );
-			if( result == NULL )
-				purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
-						   "Problem creating the template\n");
-			else
-			{
-				if( (fp = g_fopen( result, binary?"wb+":"w+")) == NULL ) {
-					purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
-							   "Couldn't fopen() %s\n", result);
-				}
-			}
-#else
-			if((fd = mkstemp(*fpath)) == -1) {
+			fd = g_mkstemp(*fpath);
+			if(fd == -1) {
 				purple_debug(PURPLE_DEBUG_ERROR, "purple_mkstemp",
 						   "Couldn't make \"%s\", error: %d\n",
 						   *fpath, errno);
@@ -2555,7 +2599,7 @@ purple_mkstemp(char **fpath, gboolean binary)
 							   "Couldn't fdopen(), error: %d\n", errno);
 				}
 			}
-#endif
+
 			if(!fp) {
 				g_free(*fpath);
 				*fpath = NULL;
@@ -3115,10 +3159,13 @@ void purple_got_protocol_handler_uri(const char *uri)
 					keyend = tmp;
 
 				if (keyend && keyend != pairstart) {
+					char *p;
 					key = g_strndup(pairstart, (keyend - pairstart));
 					/* If there is an explicit value */
 					if (keyend != tmp && keyend != (tmp - 1))
 						value = g_strndup(keyend + 1, (tmp - keyend - 1));
+					for (p = key; *p; ++p)
+						*p = g_ascii_tolower(*p);
 					g_hash_table_insert(params, key, value);
 				}
 				keyend = value = NULL;
@@ -3298,6 +3345,9 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 		gfud->inpa = 0;
 		close(gfud->fd);
 		gfud->fd = -1;
+		gfud->request_written = 0;
+		gfud->len = 0;
+		gfud->data_len = 0;
 
 		g_free(gfud->website.user);
 		g_free(gfud->website.passwd);
@@ -3510,7 +3560,7 @@ url_fetch_send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	}
 	gfud->request_written += len;
 
-	if (gfud->request_written != total_len)
+	if (gfud->request_written < total_len)
 		return;
 
 	/* We're done writing our request, now start reading the response */
@@ -4165,7 +4215,7 @@ purple_escape_filename(const char *str)
 		gunichar c = g_utf8_get_char(iter);
 		/* If the character is an ASCII character and is alphanumeric,
 		 * or one of the specified values, no need to escape */
-		if (c < 128 && (isalnum(c) || c == '@' || c == '-' ||
+		if (c < 128 && (g_ascii_isalnum(c) || c == '@' || c == '-' ||
 				c == '_' || c == '.' || c == '#')) {
 			buf[j++] = c;
 		} else {

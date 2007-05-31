@@ -50,6 +50,11 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
 	NULL,
+	NULL,
+	/* Padding */
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 

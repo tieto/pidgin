@@ -103,17 +103,17 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 	if (purple_running_gnome()) {
 		char *path, *font;
 		PangoFontDescription *desc = NULL;
-				
+
 		if ((path = g_find_program_in_path("gconftool-2"))) {
 			g_free(path);
 			if (!g_spawn_command_line_sync(
-					"gconftool-2 -g /desktop/gnome/interface/document_font_name", 
+					"gconftool-2 -g /desktop/gnome/interface/document_font_name",
 					&font, NULL, NULL, NULL))
 				return;
 		}
 		desc = pango_font_description_from_string(font);
 		g_free(font);
-		
+
 		if (desc) {
 			gtk_widget_modify_font(imhtml, desc);
 			pango_font_description_free(desc);
@@ -442,11 +442,56 @@ protocol_menu_cb(GtkWidget *optmenu, GCallback cb)
 	item = gtk_menu_get_active(GTK_MENU(menu));
 
 	protocol = g_object_get_data(G_OBJECT(item), "protocol");
+
+	if (!strcmp(protocol, "prpl-fake"))
+		protocol = g_object_get_data(G_OBJECT(item), "real_protocol");
+
+	if (!strcmp(protocol, g_object_get_data(G_OBJECT(optmenu), "last_protocol")))
+		return;
+
 	user_data = (g_object_get_data(G_OBJECT(optmenu), "user_data"));
+	g_object_set_data(G_OBJECT(optmenu), "last_protocol", (gpointer)protocol);
 
 	if (cb != NULL)
 		((void (*)(GtkWidget *, const char *, gpointer))cb)(item, protocol,
 															user_data);
+}
+
+static GtkWidget *
+pidgin_protocol_option_menu_item(GtkWidget *menu, GtkSizeGroup *sg, GtkWidget *image,
+                                  const char *name, const char *id)
+{
+	GtkWidget *item;
+	GtkWidget *hbox;
+	GtkWidget *label;
+
+	/* Create the item. */
+	item = gtk_menu_item_new();
+
+	/* Create the hbox. */
+	hbox = gtk_hbox_new(FALSE, 4);
+	gtk_container_add(GTK_CONTAINER(item), hbox);
+	gtk_widget_show(hbox);
+
+	gtk_size_group_add_widget(sg, image);
+
+	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
+	gtk_widget_show(image);
+
+	/* Create the label. */
+	label = gtk_label_new(name);
+	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+	gtk_widget_show(label);
+
+	g_object_set_data(G_OBJECT(item), "protocol", (gpointer)id);
+
+	gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
+	gtk_widget_show(item);
+	pidgin_set_accessible_label (item, label);
+
+	return item;
 }
 
 GtkWidget *
@@ -455,19 +500,20 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 {
 	PurplePluginProtocolInfo *prpl_info;
 	PurplePlugin *plugin;
-	GtkWidget *hbox;
-	GtkWidget *label;
 	GtkWidget *optmenu;
 	GtkWidget *menu;
-	GtkWidget *item;
-	GtkWidget *image;
 	GdkPixbuf *pixbuf;
+	GtkWidget *image;
 	GList *p;
 	GtkSizeGroup *sg;
 	char *filename;
 	const char *proto_name;
 	char buf[256];
 	int i, selected_index = -1;
+	const char *gtalk_name = NULL;
+
+	if (purple_find_prpl("prpl-jabber"))
+		gtalk_name = _("Google Talk");
 
 	optmenu = gtk_option_menu_new();
 	gtk_widget_show(optmenu);
@@ -486,13 +532,27 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 		plugin = (PurplePlugin *)p->data;
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
-		/* Create the item. */
-		item = gtk_menu_item_new();
+		if (gtalk_name && strcmp(gtalk_name, plugin->info->name) < 0)
+		{
+			GtkWidget *gtalk_item;
 
-		/* Create the hbox. */
-		hbox = gtk_hbox_new(FALSE, 4);
-		gtk_container_add(GTK_CONTAINER(item), hbox);
-		gtk_widget_show(hbox);
+			filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
+			                            "16", "google-talk.png", NULL);
+			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+			g_free(filename);
+
+
+			if (pixbuf)
+				image = gtk_image_new_from_pixbuf(pixbuf);
+			else
+				image = gtk_image_new();
+
+			gtalk_item = pidgin_protocol_option_menu_item(menu, sg, image, gtalk_name, "prpl-fake");
+			g_object_set_data(G_OBJECT(gtalk_item), "real_protocol", "prpl-jabber");
+			i++;
+
+			gtalk_name = NULL;
+		}
 
 		/* Load the image. */
 		proto_name = prpl_info->list_icon(NULL, NULL);
@@ -503,34 +563,26 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 		g_free(filename);
 
-		if (pixbuf) {
+		if (pixbuf)
 			image = gtk_image_new_from_pixbuf(pixbuf);
-
-			g_object_unref(G_OBJECT(pixbuf));
-		}
 		else
 			image = gtk_image_new();
 
-		gtk_size_group_add_widget(sg, image);
-
-		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
-		gtk_widget_show(image);
-
-		/* Create the label. */
-		label = gtk_label_new(plugin->info->name);
-		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-		gtk_widget_show(label);
-
-		g_object_set_data(G_OBJECT(item), "protocol", plugin->info->id);
-
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-		gtk_widget_show(item);
-		pidgin_set_accessible_label (item, label);
+		pidgin_protocol_option_menu_item(menu, sg, image, plugin->info->name, plugin->info->id);
 
 		if (id != NULL && !strcmp(plugin->info->id, id))
+		{
+			g_object_set_data(G_OBJECT(optmenu), "last_protocol", plugin->info->id);
 			selected_index = i;
+		}
+		else if (i == 0)
+		{
+			/* Ensure we set the protocol even if id is NULL or can't be found. */
+			g_object_set_data(G_OBJECT(optmenu), "last_protocol", plugin->info->id);
+		}
+
+		if (pixbuf)
+			g_object_unref(G_OBJECT(pixbuf));
 	}
 
 	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
@@ -1417,7 +1469,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			char *str, *str2;
 
 			str = g_strdup_printf(_("Cannot send folder %s."), basename);
-			str2 = g_strdup_printf(_("%s cannot transfer a folder. You will need to send the files within individually"), PIDGIN_NAME);
+			str2 = g_strdup_printf(_("%s cannot transfer a folder. You will need to send the files within individually."), PIDGIN_NAME);
 
 			purple_notify_error(NULL, NULL,
 					  str, str2);
@@ -2277,20 +2329,10 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 		GTK_FILE_SELECTION(dialog->icon_filesel)));
 #endif /* FILECHOOSER */
 
-	if (!filename || g_stat(filename, &st))
+	if (!filename || g_stat(filename, &st) || !(pixbuf = gdk_pixbuf_new_from_file(filename, NULL)))
 	{
-		g_free(filename);
-		return;
-	}
-
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	if (!pixbuf) {
 		gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), NULL);
 		gtk_label_set_markup(GTK_LABEL(dialog->icon_text), "");
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-		gtk_file_chooser_set_preview_widget_active(
-					GTK_FILE_CHOOSER(dialog->icon_filesel), FALSE);
-#endif /* FILECHOOSER */
 		g_free(filename);
 		return;
 	}
@@ -2307,10 +2349,6 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 	scale = gdk_pixbuf_scale_simple(pixbuf, width * 50 / height,
 									50, GDK_INTERP_BILINEAR);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), scale);
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	gtk_file_chooser_set_preview_widget_active(
-					GTK_FILE_CHOOSER(dialog->icon_filesel), TRUE);
-#endif /* FILECHOOSER */
 	gtk_label_set_markup(GTK_LABEL(dialog->icon_text), markup);
 
 	g_object_unref(G_OBJECT(pixbuf));
@@ -2325,7 +2363,9 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char *, gpointer), gpointer data) {
 	struct _icon_chooser *dialog = g_new0(struct _icon_chooser, 1);
 
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+	GtkWidget *vbox;
+#else
 	GtkWidget *hbox;
 	GtkWidget *tv;
 	GtkTreeSelection *sel;
@@ -2356,9 +2396,17 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 
 	dialog->icon_preview = gtk_image_new();
 	dialog->icon_text = gtk_label_new(NULL);
-	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
-	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog->icon_filesel),
-					    GTK_WIDGET(dialog->icon_preview));
+
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_widget_set_size_request(GTK_WIDGET(vbox), -1, 50);
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(dialog->icon_preview), TRUE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox), GTK_WIDGET(dialog->icon_text), FALSE, FALSE, 0);
+	gtk_widget_show_all(vbox);
+
+	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog->icon_filesel), vbox);
+	gtk_file_chooser_set_preview_widget_active(GTK_FILE_CHOOSER(dialog->icon_filesel), TRUE);
+	gtk_file_chooser_set_use_preview_label(GTK_FILE_CHOOSER(dialog->icon_filesel), FALSE);
+
 	g_signal_connect(G_OBJECT(dialog->icon_filesel), "update-preview",
 					 G_CALLBACK(icon_preview_change_cb), dialog);
 	g_signal_connect(G_OBJECT(dialog->icon_filesel), "response",
@@ -2372,7 +2420,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog->icon_filesel),
 										current_folder);
 
-	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
+	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview),-1, 50);
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(
 		GTK_BOX(GTK_FILE_SELECTION(dialog->icon_filesel)->main_vbox),
@@ -2969,7 +3017,7 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 	PangoLogAttr *log_attrs;
 	gchar *word;
 
-	if (strcasecmp(key, "Global Thermonuclear War") == 0)
+	if (g_ascii_strcasecmp(key, "Global Thermonuclear War") == 0)
 	{
 		purple_notify_info(NULL, "WOPR",
 				"Wouldn't you prefer a nice game of chess?", NULL);

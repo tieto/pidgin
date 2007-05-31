@@ -575,8 +575,8 @@ void jabber_setup_set_info(PurplePluginAction *action)
 	if(x_vc_data != NULL)
 		xmlnode_free(x_vc_data);
 
-	purple_request_fields(gc, _("Edit Jabber vCard"),
-						_("Edit Jabber vCard"),
+	purple_request_fields(gc, _("Edit XMPP vCard"),
+						_("Edit XMPP vCard"),
 						_("All items below are optional. Enter only the "
 						  "information with which you feel comfortable."),
 						fields,
@@ -1118,6 +1118,24 @@ static gboolean jabber_buddy_get_info_timeout(gpointer data)
 	return FALSE;
 }
 
+static gboolean _client_is_blacklisted(JabberBuddyResource *jbr, const char *ns)
+{
+	/* can't be blacklisted if we don't know what you're running yet */
+	if(!jbr->client.name)
+		return FALSE;
+
+	if(!strcmp(ns, "jabber:iq:last")) {
+		if(!strcmp(jbr->client.name, "Trillian")) {
+			if(!strcmp(jbr->client.version, "3.1.0.121")) {
+				/* verified by nwalp 2007/05/09 */
+				return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
+}
+
 static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 {
 	JabberIq *iq;
@@ -1175,11 +1193,18 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 			jabber_iq_send(iq);
 		}
 
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
-		xmlnode_set_attrib(iq->node, "to", full_jid);
-		jabber_iq_set_callback(iq, jabber_last_parse, jbi);
-		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
-		jabber_iq_send(iq);
+		/* this is to fix the feeling of irritation I get when trying
+		 * to get info on a friend running Trillian, which doesn't
+		 * respond (with an error or otherwise) to jabber:iq:last
+		 * requests.  There are a number of Trillian users in my
+		 * office. */
+		if(!_client_is_blacklisted(jbr, "jabber:iq:last")) {
+			iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
+			xmlnode_set_attrib(iq->node, "to", full_jid);
+			jabber_iq_set_callback(iq, jabber_last_parse, jbi);
+			jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
+			jabber_iq_send(iq);
+		}
 
 		g_free(full_jid);
 	}
@@ -1729,7 +1754,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		if(!instructions)
 		{
 			instructions = g_strdup(_("Fill in one or more fields to search "
-						  "for any matching Jabber users."));
+						  "for any matching XMPP users."));
 		}
 
 		if(xmlnode_get_child(query, "first")) {
@@ -1757,8 +1782,8 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		usi->js = js;
 		usi->directory_server = g_strdup(from);
 
-		purple_request_fields(js->gc, _("Search for Jabber users"),
-				_("Search for Jabber users"), instructions, fields,
+		purple_request_fields(js->gc, _("Search for XMPP users"),
+				_("Search for XMPP users"), instructions, fields,
 				_("Search"), G_CALLBACK(user_search_cb),
 				_("Cancel"), G_CALLBACK(user_search_cancel_cb),
 				NULL, NULL, NULL,
@@ -1793,7 +1818,7 @@ void jabber_user_search_begin(PurplePluginAction *action)
 
 	purple_request_input(gc, _("Enter a User Directory"), _("Enter a User Directory"),
 			_("Select a user directory to search"),
-			js->user_directories ? js->user_directories->data : "users.jabber.org",
+			js->user_directories ? js->user_directories->data : NULL,
 			FALSE, FALSE, NULL,
 			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search_ok),
 			_("Cancel"), NULL,

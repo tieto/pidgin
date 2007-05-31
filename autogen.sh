@@ -2,7 +2,7 @@
 
 CONFIGURE_ARGS=""
 if [ -f configure.args ] ; then
-	CONFIGURE_ARGS="${CONFIGURE_ARGS} `cat configure.args`"
+	. configure.args
 fi
 
 (glib-gettextize --version) < /dev/null > /dev/null 2>&1 || {

@@ -601,11 +601,14 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 
 static void _qq_update_buddy_icon(PurpleAccount *account, const gchar *name, gint face)
 {
-	PurpleBuddyIcon *icon = purple_buddy_icons_find(account, name);
+	PurpleBuddy *buddy;
 	gchar *icon_num_str = face_to_icon_str(face);
-	const gchar *old_icon_num = purple_buddy_icon_get_checksum(icon);
+	const gchar *old_icon_num = NULL;
 
-	if (icon == NULL || old_icon_num == NULL ||
+	if ((buddy = purple_find_buddy(account, name)))
+		old_icon_num = purple_buddy_icons_get_checksum_for_user(buddy);
+
+	if (old_icon_num == NULL ||
 	    strcmp(icon_num_str, old_icon_num))
 	{
 		gchar *icon_path;

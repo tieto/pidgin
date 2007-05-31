@@ -405,6 +405,12 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,                                                    /* whiteboard_prpl_ops */
 	NULL,                                                    /* send_raw */
 	NULL,                                                    /* roomlist_room_serialize */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -435,6 +441,12 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 
@@ -448,6 +460,7 @@ initialize_default_account_values()
 	const char *fullname = NULL;
 #endif
 	char *splitpoint = NULL;
+	char *tmp;
 	char hostname[255];
 
 #ifndef _WIN32
@@ -533,7 +546,16 @@ initialize_default_account_values()
 	if (splitpoint != NULL)
 	{
 		default_firstname = g_strndup(fullname, splitpoint - fullname);
-		default_lastname = g_strdup(&splitpoint[1]);
+		tmp = &splitpoint[1];
+		
+		/* The last name may be followed by a comma and additional data.
+		 * Only use the last name itself.
+		 */
+		splitpoint = strchr(tmp, ',');
+		if (splitpoint != NULL)
+			default_lastname = g_strndup(tmp, splitpoint - tmp);			
+		else
+			default_lastname = g_strdup(tmp);
 	}
 	else
 	{
@@ -580,7 +602,7 @@ init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_string_new(_("AIM Account"), "AIM", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
-	option = purple_account_option_string_new(_("Jabber Account"), "jid", "");
+	option = purple_account_option_string_new(_("XMPP Account"), "jid", "");
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	my_protocol = plugin;

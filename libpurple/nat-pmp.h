@@ -31,7 +31,6 @@
 #ifndef _PURPLE_NAT_PMP_H
 #define _PURPLE_NAT_PMP_H
 
-#include <stdint.h>
 #include <glib.h>
 
 #define PURPLE_PMP_LIFETIME	3600	/* 3600 seconds */

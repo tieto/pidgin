@@ -10,6 +10,7 @@ EXTRA_DIST = change-bgcolor.png \
 		insert-link.png \
 		message-new.png \
 		plugins.png \
+		send-file.png \
 		unblock.png
 
 pidgintoolbarpixdir = $(datadir)/pixmaps/pidgin/toolbar/16

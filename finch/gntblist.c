@@ -112,7 +112,8 @@ static void savedstatus_changed(PurpleSavedStatus *now, PurpleSavedStatus *old);
 static void blist_show(PurpleBuddyList *list);
 static void update_node_display(PurpleBlistNode *buddy, FinchBlist *ggblist);
 static void update_buddy_display(PurpleBuddy *buddy, FinchBlist *ggblist);
-static void account_signed_on_cb(void);
+static void account_signed_on_cb(PurpleConnection *pc, gpointer null);
+static void finch_request_add_buddy(PurpleAccount *account, const char *username, const char *grp, const char *alias);
 
 /* Sort functions */
 static int blist_node_compare_position(PurpleBlistNode *n1, PurpleBlistNode *n2);
@@ -280,9 +281,12 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 		error = _("You must provide a group.");
 	else if (!account)
 		error = _("You must select an account.");
+	else if (!purple_account_is_connected(account))
+		error = _("The selected account is not online.");
 
 	if (error)
 	{
+		finch_request_add_buddy(account, username, group, alias);
 		purple_notify_error(NULL, _("Error"), _("Error adding buddy"), error);
 		return;
 	}
@@ -445,9 +449,13 @@ static PurpleBlistUiOps blist_ui_ops =
 	node_remove,
 	NULL,
 	NULL,
-	.request_add_buddy = finch_request_add_buddy,
-	.request_add_chat = finch_request_add_chat,
-	.request_add_group = finch_request_add_group
+	finch_request_add_buddy,
+	finch_request_add_chat,
+	finch_request_add_group,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static gpointer
@@ -819,6 +827,13 @@ create_group_menu(GntMenu *menu, PurpleGroup *group)
 static void
 finch_blist_get_buddy_info_cb(PurpleBuddy *buddy, PurpleBlistNode *selected)
 {
+	/* Add a userinfo with a "Retrieving information", which will later be updated
+	 * when the server finally returns the information. */
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	purple_notify_userinfo(buddy->account->gc, purple_buddy_get_name(buddy), info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
+
 	serv_get_info(buddy->account->gc, purple_buddy_get_name(buddy));
 }
 
@@ -946,7 +961,7 @@ finch_blist_rename_node_cb(PurpleBlistNode *node, PurpleBlistNode *selected)
 
 	prompt = g_strdup_printf(_("Please enter the new name for %s"), name);
 
-	text = PURPLE_BLIST_NODE_IS_GROUP(node) ? _("Rename") : _("Alias");
+	text = PURPLE_BLIST_NODE_IS_GROUP(node) ? _("Rename") : _("Set Alias");
 	purple_request_input(node, text, prompt, _("Enter empty string to reset the name."),
 			name, FALSE, FALSE, NULL, text, G_CALLBACK(rename_blist_node),
 			_("Cancel"), NULL,
@@ -1151,6 +1166,9 @@ draw_context_menu(FinchBlist *ggblist)
 	GntTree *tree = NULL;
 	int x, y, top, width;
 	char *title = NULL;
+
+	if (ggblist->context)
+		return;
 
 	tree = GNT_TREE(ggblist->tree);
 
@@ -1421,6 +1439,7 @@ draw_tooltip(FinchBlist *ggblist)
 static void
 selection_changed(GntWidget *widget, gpointer old, gpointer current, FinchBlist *ggblist)
 {
+	remove_peripherals(ggblist);
 	draw_tooltip(ggblist);
 }
 
@@ -1854,9 +1873,10 @@ blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	const char *s1, *s2;
 	char *us1, *us2;
 	int ret;
-	
-	g_return_val_if_fail(n1->type == n2->type, -1);
-	
+
+	if (n1->type != n2->type)
+		return blist_node_compare_position(n1, n2);
+
 	switch (n1->type)
 	{
 		case PURPLE_BLIST_CHAT_NODE:
@@ -1889,7 +1909,8 @@ blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2)
 {
 	int ret;
 
-	g_return_val_if_fail(n1->type == n2->type, -1);
+	if (n1->type != n2->type)
+		return blist_node_compare_position(n1, n2);
 
 	switch (n1->type) {
 		case PURPLE_BLIST_CONTACT_NODE:
@@ -1933,7 +1954,8 @@ blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	int ret;
 	PurpleBuddy *b1, *b2;
 
-	g_return_val_if_fail(n1->type == n2->type, -1);
+	if (n1->type != n2->type)
+		return blist_node_compare_position(n1, n2);
 
 	switch (n1->type) {
 		case PURPLE_BLIST_BUDDY_NODE:
@@ -2065,7 +2087,7 @@ reconstruct_accounts_menu()
 }
 
 static void
-account_signed_on_cb()
+account_signed_on_cb(PurpleConnection *pc, gpointer null)
 {
 	PurpleBlistNode *node;
 
@@ -2073,7 +2095,8 @@ account_signed_on_cb()
 			node = purple_blist_node_next(node, FALSE)) {
 		if (PURPLE_BLIST_NODE_IS_CHAT(node)) {
 			PurpleChat *chat = (PurpleChat*)node;
-			if (purple_blist_node_get_bool(node, "gnt-autojoin"))
+			if (chat->account == purple_connection_get_account(pc) &&
+					purple_blist_node_get_bool(node, "gnt-autojoin"))
 				serv_join_chat(purple_account_get_connection(chat->account), chat->components);
 		}
 	}
@@ -2163,7 +2186,7 @@ create_menu()
 	gnt_menu_add_item(GNT_MENU(sub), item);
 	gnt_menuitem_set_callback(GNT_MENU_ITEM(item), send_im_select, NULL);
 
-	item = gnt_menuitem_check_new(_("Toggle offline buddies"));
+	item = gnt_menuitem_check_new(_("Show offline buddies"));
 	gnt_menuitem_check_set_checked(GNT_MENU_ITEM_CHECK(item),
 				purple_prefs_get_bool(PREF_ROOT "/showoffline"));
 	gnt_menu_add_item(GNT_MENU(sub), item);

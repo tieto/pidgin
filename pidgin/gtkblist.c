@@ -274,6 +274,11 @@ static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, g
 
 static void gtk_blist_menu_info_cb(GtkWidget *w, PurpleBuddy *b)
 {
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	purple_notify_userinfo(b->account->gc, purple_buddy_get_name(b), info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
+
 	serv_get_info(b->account->gc, b->name);
 }
 
@@ -322,7 +327,6 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 	GValue val;
 	PurpleBlistNode *node;
 	const char *text = NULL;
-	char *esc;
 
 	path = gtk_tree_path_new_from_string (path_str);
 	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
@@ -345,12 +349,10 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 		g_return_if_reached();
 	}
 
-	esc = g_markup_escape_text(text, -1);
 	if (GTK_IS_ENTRY (editable)) {
 		GtkEntry *entry = GTK_ENTRY (editable);
-		gtk_entry_set_text(entry, esc);
+		gtk_entry_set_text(entry, text);
 	}
-	g_free(esc);
 }
 
 static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
@@ -780,7 +782,8 @@ pidgin_blist_joinchat_show(void)
 	gtk_widget_show_all(data->window);
 }
 
-static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data) {
+static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data)
+{
 	PurpleBlistNode *node;
 	GValue val;
 
@@ -804,7 +807,8 @@ static void gtk_blist_row_expanded_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTre
 	}
 }
 
-static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data) {
+static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTreePath *path, gpointer user_data)
+{
 	PurpleBlistNode *node;
 	GValue val;
 
@@ -815,6 +819,8 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 
 	if (PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		char *title;
+		struct _pidgin_blist_node *gtknode;
+		PurpleBlistNode *cnode;
 
 		title = pidgin_get_group_title(node, FALSE);
 
@@ -825,6 +831,17 @@ static void gtk_blist_row_collapsed_cb(GtkTreeView *tv, GtkTreeIter *iter, GtkTr
 		g_free(title);
 
 		purple_blist_node_set_bool(node, "collapsed", TRUE);
+
+		for(cnode = node->child; cnode; cnode = cnode->next) {
+			if (PURPLE_BLIST_NODE_IS_CONTACT(cnode)) {
+				gtknode = cnode->ui_data;
+				if (!gtknode->contact_expanded)
+					continue;
+				gtknode->contact_expanded = FALSE;
+				pidgin_blist_update_contact(NULL, cnode);
+			}
+		}
+
 	} else if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		pidgin_blist_collapse_contact_cb(NULL, node);
 	}
@@ -1086,7 +1103,7 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 			prpl_info->can_receive_file(buddy->account->gc, buddy->name))
 		{
 			pidgin_new_item_from_stock(menu, _("_Send File"),
-									 PIDGIN_STOCK_FILE_TRANSFER,
+									 PIDGIN_STOCK_TOOLBAR_SEND_FILE,
 									 G_CALLBACK(gtk_blist_menu_send_file_cb),
 									 buddy, 0, 0, NULL);
 		}
@@ -1172,8 +1189,9 @@ create_group_menu (PurpleBlistNode *node, PurpleGroup *g)
 	GtkWidget *item;
 
 	menu = gtk_menu_new();
-	pidgin_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
+	item = pidgin_new_item_from_stock(menu, _("Add a _Buddy"), GTK_STOCK_ADD,
 				 G_CALLBACK(pidgin_blist_add_buddy_cb), node, 0, 0, NULL);
+	gtk_widget_set_sensitive(item, purple_connections_get_all() != NULL);
 	item = pidgin_new_item_from_stock(menu, _("Add a C_hat"), GTK_STOCK_ADD,
 				 G_CALLBACK(pidgin_blist_add_chat_cb), node, 0, 0, NULL);
 	gtk_widget_set_sensitive(item, pidgin_blist_joinchat_is_showable());
@@ -2085,28 +2103,28 @@ roundify(GdkPixbuf *pixbuf) {
 
 	if (width < 6 || height < 6)
 		return;
-	
+
 	/* Top left */
 	pixels[3] = 0;
 	pixels[7] = 0x80;
 	pixels[11] = 0xC0;
 	pixels[rowstride + 3] = 0x80;
 	pixels[rowstride * 2 + 3] = 0xC0;
-	
+
 	/* Top right */
 	pixels[width * 4 - 1] = 0;
 	pixels[width * 4 - 5] = 0x80;
 	pixels[width * 4 - 9] = 0xC0;
 	pixels[rowstride + (width * 4) - 1] = 0x80;
 	pixels[(2 * rowstride) + (width * 4) - 1] = 0xC0;
-	
+
 	/* Bottom left */
 	pixels[(height - 1) * rowstride + 3] = 0;
 	pixels[(height - 1) * rowstride + 7] = 0x80;
 	pixels[(height - 1) * rowstride + 11] = 0xC0;
 	pixels[(height - 2) * rowstride + 3] = 0x80;
 	pixels[(height - 3) * rowstride + 3] = 0xC0;
-	
+
 	/* Bottom right */
 	pixels[height * rowstride - 1] = 0;
 	pixels[(height - 1) * rowstride - 1] = 0x80;
@@ -2159,7 +2177,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 {
 	GdkPixbuf *buf, *ret = NULL;
 	GdkPixbufLoader *loader;
-	PurpleBuddyIcon *icon;
+	PurpleBuddyIcon *icon = NULL;
 	const guchar *data = NULL;
 	gsize len;
 	PurpleBuddy *buddy = NULL;
@@ -2196,9 +2214,9 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	}
 
 	if (data == NULL) {
-		if (!(icon = purple_buddy_get_icon(buddy)))
-			if (!(icon = purple_buddy_icons_find(buddy->account, buddy->name))) /* Not sure I like this...*/
-				return NULL;
+		/* Not sure I like this...*/
+		if (!(icon = purple_buddy_icons_find(buddy->account, buddy->name)))
+			return NULL;
 		data = purple_buddy_icon_get_data(icon, &len);
 
 		if(data == NULL)
@@ -2210,6 +2228,7 @@ static GdkPixbuf *pidgin_blist_get_buddy_icon(PurpleBlistNode *node,
 	gdk_pixbuf_loader_close(loader, NULL);
 
 	purple_imgstore_unref(custom_img);
+	purple_buddy_icon_unref(icon);
 
 	buf = gdk_pixbuf_loader_get_pixbuf(loader);
 	if (buf)
@@ -2849,7 +2868,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
 	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
 	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
-	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<StockItem>", PIDGIN_STOCK_ABOUT },
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
 };
 
 /*********************************************************
@@ -3145,7 +3164,8 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 	if(PURPLE_BLIST_NODE_IS_CONTACT(node)) {
 		if(!gtknode->contact_expanded) {
 			buddy = purple_contact_get_priority_buddy((PurpleContact*)node);
-			gtkbuddynode = ((PurpleBlistNode*)buddy)->ui_data;
+			if (buddy != NULL)
+				gtkbuddynode = ((PurpleBlistNode*)buddy)->ui_data;
 		}
 	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (PurpleBuddy*)node;
@@ -3550,9 +3570,6 @@ update_menu_bar(PidginBuddyList *gtkblist)
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Buddies/Add Chat..."));
 	gtk_widget_set_sensitive(widget, pidgin_blist_joinchat_is_showable());
 
-	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Buddy Pounces"));
-	gtk_widget_set_sensitive(widget, (purple_accounts_get_all() != NULL));
-
 	widget = gtk_item_factory_get_widget(gtkblist->ift, N_("/Tools/Privacy"));
 	gtk_widget_set_sensitive(widget, (purple_connections_get_all() != NULL));
 
@@ -3952,6 +3969,9 @@ connection_error_button_clicked_cb(GtkButton *widget, gpointer user_data)
 	g_free(primary);
 	gtk_widget_destroy(GTK_WIDGET(widget));
 	g_hash_table_remove(gtkblist->connection_errors, account);
+	if (gtk_container_get_children(GTK_CONTAINER(gtkblist->error_buttons)) == NULL) {
+		gtk_widget_hide(gtkblist->error_buttons);
+	}
 }
 
 /* Add some buttons that show connection errors */
@@ -3972,7 +3992,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	                       escaped);
 	g_free(escaped);
 
-	hbox = gtk_hbox_new(FALSE, 0);
+	hbox = gtk_hbox_new(FALSE, 6);
 
 	/* Create the icon */
 	if ((status_type = purple_account_get_status_type_with_primitive(account,
@@ -3982,8 +4002,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 			image = gtk_image_new_from_pixbuf(pixbuf);
 			g_object_unref(pixbuf);
 
-			gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE,
-			                   PIDGIN_HIG_BOX_SPACE);
+			gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
 		}
 	}
 
@@ -3994,8 +4013,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 #if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(label, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
 #endif
-	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE,
-	                   PIDGIN_HIG_BOX_SPACE);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
 	/* Create the actual button and put the icon and text on it */
 	button = gtk_button_new();
@@ -4006,6 +4024,7 @@ create_connection_error_buttons(gpointer key, gpointer value,
 	gtk_widget_show_all(button);
 	gtk_box_pack_end(GTK_BOX(gtkblist->error_buttons), button,
 	                 FALSE, FALSE, 0);
+	gtk_widget_show_all(gtkblist->error_buttons);
 }
 
 void
@@ -4471,7 +4490,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	/* Create an empty vbox used for showing connection errors */
 	gtkblist->error_buttons = gtk_vbox_new(FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->error_buttons, FALSE, FALSE, 0);
-
+        gtk_container_set_border_width(GTK_CONTAINER(gtkblist->error_buttons), 3);
+	
 	/* Add the statusbox */
 	gtkblist->statusbox = pidgin_status_box_new();
 	gtk_box_pack_start(GTK_BOX(gtkblist->vbox), gtkblist->statusbox, FALSE, TRUE, 0);
@@ -4568,6 +4588,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 						gtkblist);
 
 	gtk_widget_hide(gtkblist->headline_hbox);
+	gtk_widget_hide(gtkblist->error_buttons);
 
 	/* emit our created signal */
 	purple_signal_emit(handle, "gtkblist-created", list);
@@ -4882,7 +4903,12 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 	status = pidgin_blist_get_status_icon((PurpleBlistNode*)buddy,
 						PIDGIN_STATUS_ICON_SMALL);
 
-	avatar = pidgin_blist_get_buddy_icon((PurpleBlistNode *)buddy, TRUE, TRUE);
+	/* Speed it up if we don't want buddy icons. */
+	if(biglist)
+		avatar = pidgin_blist_get_buddy_icon((PurpleBlistNode *)buddy, TRUE, TRUE);
+	else
+		avatar = NULL;
+
 	if (!avatar) {
 		g_object_ref(G_OBJECT(gtkblist->empty_avatar));
 		avatar = gtkblist->empty_avatar;
@@ -5060,6 +5086,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		GdkPixbuf *avatar;
 		GdkPixbuf *emblem;
 		char *mark;
+		gboolean showicons = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 
 		if(!insert_node(list, node, &iter))
 			return;
@@ -5067,7 +5094,12 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 		status = pidgin_blist_get_status_icon(node,
 				 PIDGIN_STATUS_ICON_SMALL);
 		emblem = pidgin_blist_get_emblem(node);
-		avatar = pidgin_blist_get_buddy_icon(node, TRUE, FALSE);
+
+		/* Speed it up if we don't want buddy icons. */
+		if(showicons)
+			avatar = pidgin_blist_get_buddy_icon(node, TRUE, FALSE);
+		else
+			avatar = NULL;
 
 		mark = g_markup_escape_text(purple_chat_get_name(chat), -1);
 

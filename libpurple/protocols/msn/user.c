@@ -83,7 +83,7 @@ msn_user_update(MsnUser *user)
 
 	if (user->status != NULL) {
 		if (!strcmp(user->status, "offline") && user->mobile) {
-			purple_prpl_got_user_status(account, user->passport, "available", NULL);
+			purple_prpl_got_user_status(account, user->passport, "offline", NULL);
 			purple_prpl_got_user_status(account, user->passport, "mobile", NULL);
 		} else {
 			purple_prpl_got_user_status(account, user->passport, user->status, NULL);
@@ -207,7 +207,7 @@ msn_user_set_buddy_icon(MsnUser *user, PurpleStoredImage *img)
 		memset(digest, 0, sizeof(digest));
 
 		purple_cipher_context_reset(ctx, NULL);
-		purple_cipher_context_append(ctx, data, strlen((char *)data));
+		purple_cipher_context_append(ctx, (const guchar *)buf, strlen(buf));
 		purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
 		purple_cipher_context_destroy(ctx);
 		g_free(buf);

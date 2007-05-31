@@ -212,7 +212,7 @@ def msnim(uri):
     elif command.lower() == "add":
         addbuddy(account, screenname)
 
-def myspaceim(uri):
+def myim(uri):
 	protocol = "prpl-myspace"
 	print "TODO: send uri: ", uri
 	assert False, "Not implemented"
@@ -315,7 +315,7 @@ def main(argv=sys.argv):
         elif type == "msnim":
             msnim(uri)
         elif type == "myim":
-            myspaceim(uri)
+            myim(uri)
         elif type == "sip":
             sip(uri)
         elif type == "xmpp":
@@ -323,7 +323,7 @@ def main(argv=sys.argv):
         elif type == "ymsgr":
             ymsgr(uri)
         else:
-            print "Unkown protocol: %s" % type
+            print "Unknown protocol: %s" % type
     except dbus.dbus_bindings.DBusException:
         print "ERROR: Is there a libpurple-powered client (e.g. Pidgin or Finch) running?"
 

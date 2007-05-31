@@ -12548,7 +12548,7 @@ msgid "%s is a modular messaging client capable of using AIM, MSN, Yahoo!, Jabbe
 msgstr "%s je modularen odjemalec za neposredna sporočila, ki lahko hkrati uporablja protokole AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, Gadu-Gadu in QQ. Napisan je s pomočjo Gtk+.<BR><BR>Program lahko spreminjate in razširjate pod pogoji licence GPL (različice 2 ali novejše).  Kopija licence GPL je v datoteki 'COPYING', ki je distribuirana s programom %s.  %s je zaščitena znamka svojih avtorjev.  Oglejte si datoteko 'COPYRIGHT' za popoln seznam sodelavcev.  Za program ni na voljo nikakršna garancija.<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:374
-msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgwin on irc.freenode.net<BR><BR>"
+msgid "<FONT SIZE=\"4\">IRC:</FONT> #pidgin-win32 on irc.freenode.net<BR><BR>"
 msgstr "<FONT SIZE=\"4\">IRC:</FONT> #pidgin na irc.freenode.net<BR><BR>"
 
 #: ../pidgin/gtkdialogs.c:377

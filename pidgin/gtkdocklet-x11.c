@@ -42,7 +42,6 @@ static GtkWidget *image = NULL;
 static GtkTooltips *tooltips = NULL;
 static GdkPixbuf *blank_icon = NULL;
 static int embed_timeout = 0;
-static DockletStatus icon_status = 0;
 static int docklet_height = 0;
 
 /* protos */
@@ -90,35 +89,37 @@ docklet_x11_clicked_cb(GtkWidget *button, GdkEventButton *event, void *data)
 }
 
 static void
-docklet_x11_update_icon(DockletStatus icon)
+docklet_x11_update_icon(PurpleStatusPrimitive status, gboolean connecting, gboolean pending)
 {
 	const gchar *icon_name = NULL;
 
 	g_return_if_fail(image != NULL);
 
-	switch (icon) {
-		case DOCKLET_STATUS_OFFLINE:
+	switch (status) {
+		case PURPLE_STATUS_OFFLINE:
 			icon_name = PIDGIN_STOCK_TRAY_OFFLINE;
 			break;
-		case DOCKLET_STATUS_CONNECTING:
-			icon_name = PIDGIN_STOCK_TRAY_CONNECT;
-			break;
-		case DOCKLET_STATUS_AVAILABLE:
-			icon_name = PIDGIN_STOCK_TRAY_AVAILABLE;
-			break;
-		case DOCKLET_STATUS_PENDING:
-			icon_name = PIDGIN_STOCK_TRAY_PENDING;
-			break;
-		case DOCKLET_STATUS_AWAY:
+		case PURPLE_STATUS_AWAY:
 			icon_name = PIDGIN_STOCK_TRAY_AWAY;
 			break;
-		case DOCKLET_STATUS_BUSY:
+		case PURPLE_STATUS_UNAVAILABLE:
 			icon_name = PIDGIN_STOCK_TRAY_BUSY;
 			break;
-		case DOCKLET_STATUS_XA:
+		case PURPLE_STATUS_EXTENDED_AWAY:
 			icon_name = PIDGIN_STOCK_TRAY_XA;
 			break;
+		case PURPLE_STATUS_INVISIBLE:
+			icon_name = PIDGIN_STOCK_TRAY_INVISIBLE;
+			break;
+		default:
+			icon_name = PIDGIN_STOCK_TRAY_AVAILABLE;
+			break;
 	}
+
+	if (pending)
+		icon_name = PIDGIN_STOCK_TRAY_PENDING;
+	if (connecting)
+		icon_name = PIDGIN_STOCK_TRAY_CONNECT;
 
 	if(icon_name) {
 		int icon_size;
@@ -129,7 +130,6 @@ docklet_x11_update_icon(DockletStatus icon)
 
 		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, icon_size);
 	}
-	icon_status = icon;
 }
 
 static void
@@ -138,7 +138,7 @@ docklet_x11_resize_icon(GtkWidget *widget)
 	if (docklet_height == widget->allocation.height)
 		return;
 	docklet_height = widget->allocation.height;
-	docklet_x11_update_icon(icon_status);
+	pidgin_docklet_update_icon();
 }
 
 static void

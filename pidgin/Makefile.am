@@ -27,6 +27,7 @@ EXTRA_DIST = \
 		win32/nsis/pidgin-installer.nsi \
 		win32/nsis/pidgin-plugin.nsh \
 		win32/nsis/langmacros.nsh \
+		win32/nsis/translations/afrikaans.nsh \
 		win32/nsis/translations/albanian.nsh \
 		win32/nsis/translations/bulgarian.nsh \
 		win32/nsis/translations/catalan.nsh \

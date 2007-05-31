@@ -1,7 +1,7 @@
 /*
- * purple - WinPurple Options Plugin
+ * pidgin - Windows Pidgin Options Plugin
  *
- * Purple is the legal property of its developers, whose names are too numerous
+ * Pidgin is the legal property of its developers, whose names are too numerous
  * to list here.  Please refer to the COPYRIGHT file distributed with this
  * source distribution.
  *
@@ -204,11 +204,11 @@ winprefs_set_autostart(GtkWidget *w) {
 	char *runval = NULL;
 
 	if(gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(w)))
-		runval = g_strdup_printf("%s" G_DIR_SEPARATOR_S "purple.exe", wpurple_install_dir());
+		runval = g_strdup_printf("%s" G_DIR_SEPARATOR_S "pidgin.exe", wpurple_install_dir());
 
-	if(!wpurple_write_reg_string(HKEY_CURRENT_USER, RUNKEY, "Purple", runval)
+	if(!wpurple_write_reg_string(HKEY_CURRENT_USER, RUNKEY, "Pidgin", runval)
 		/* For Win98 */
-		&& !wpurple_write_reg_string(HKEY_LOCAL_MACHINE, RUNKEY, "Purple", runval))
+		&& !wpurple_write_reg_string(HKEY_LOCAL_MACHINE, RUNKEY, "Pidgin", runval))
 			purple_debug_error(WINPREFS_PLUGIN_ID, "Could not set registry key value\n");
 
 	g_free(runval);
@@ -318,8 +318,8 @@ static GtkWidget* get_config_frame(PurplePlugin *plugin) {
 	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), button, FALSE, FALSE, 0);
 
-	if ((run_key_val = wpurple_read_reg_string(HKEY_CURRENT_USER, RUNKEY, "Purple"))
-			|| (run_key_val = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, RUNKEY, "Purple"))) {
+	if ((run_key_val = wpurple_read_reg_string(HKEY_CURRENT_USER, RUNKEY, "Pidgin"))
+			|| (run_key_val = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, RUNKEY, "Pidgin"))) {
 		gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), TRUE);
 		g_free(run_key_val);
 	}
@@ -372,7 +372,7 @@ static PurplePluginInfo info =
 	NULL,
 	PURPLE_PRIORITY_DEFAULT,
 	WINPREFS_PLUGIN_ID,
-	N_("Pidgwin Options"),
+	N_("Windows Pidgin Options"),
 	VERSION,
 	N_("Options specific to Pidgin for Windows."),
 	N_("Provides options specific to Pidgin for Windows , such as buddy list docking."),
