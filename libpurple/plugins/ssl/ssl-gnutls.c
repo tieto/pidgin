@@ -22,7 +22,6 @@
 #include "internal.h"
 #include "debug.h"
 #include "plugin.h"
-#include "request.h"
 #include "sslconn.h"
 #include "version.h"
 #include "util.h"
@@ -50,8 +49,8 @@ ssl_gnutls_init_gnutls(void)
 	gnutls_global_init();
 
 	gnutls_certificate_allocate_credentials(&xcred);
-	/*gnutls_certificate_set_x509_trust_file(xcred, "ca.pem",
-	  GNUTLS_X509_FMT_PEM);*/
+	gnutls_certificate_set_x509_trust_file(xcred, "ca.pem",
+		GNUTLS_X509_FMT_PEM);
 }
 
 static gboolean
@@ -68,163 +67,6 @@ ssl_gnutls_uninit(void)
 	gnutls_certificate_free_credentials(xcred);
 }
 
-/** Callback from the dialog in ssl_gnutls_authcheck_ask */
-static void ssl_gnutls_authcheck_cb(PurpleSslConnection * gsc, gint choice)
-{
-  if (NULL == gsc)
-    {
-      purple_debug_error("gnutls","Inappropriate NULL argument at %s:%d\n",
-			 __FILE__, (int) __LINE__);
-      return;
-    }
-
-  switch(choice)
-    {
-    case 1: /* "Accept" */
-      /* TODO: Shoud PURPLE_INPUT_READ be hardcoded? */
-      gsc->connect_cb(gsc->connect_cb_data, gsc, PURPLE_INPUT_READ);
-      break;
-
-    default: /* "Cancel" or otherwise...? */
-      purple_debug_info("gnutls",
-			"User rejected certificate from %s\n",
-			gsc->host);
-      if(gsc->error_cb != NULL)
-	gsc->error_cb(gsc, PURPLE_SSL_PEER_AUTH_FAILED,
-		      gsc->connect_cb_data);
-      purple_ssl_close(gsc);
-    }
-}
-
-/** Pop up a dialog asking for verification of the given certificate */
-static void ssl_gnutls_authcheck_ask(PurpleSslConnection * gsc)
-{
-  PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
-
-  const gnutls_datum_t *cert_list;
-  unsigned int cert_list_size = 0;
-  gnutls_session_t session=gnutls_data->session;
-  
-  cert_list =
-    gnutls_certificate_get_peers(session, &cert_list_size);
-
-  if (0 == cert_list_size || NULL == cert_list)
-    {
-      /* Peer provided no certificates at all.
-	 TODO: We should write a witty message here.
-      */
-      gchar * primary = g_strdup_printf
-	(
-	 _("Peer %s provided no certificates.\n Connect anyway?"),
-	 gsc->host
-	 );
-
-      purple_request_accept_cancel
-	(gsc,
-	 _("SSL Authorization Request"),
-	 primary,
-	 _("The server you are connecting to presented no certificates identifying itself. You have no assurance that you are not connecting to an imposter. Connect anyway?"),
-	 2, /* Default action is "Cancel" */
-	 NULL, NULL, /* There is no way to extract account data from
-			a connection handle, it seems. */
-	 NULL,       /* Same goes for the conversation data */
-	 gsc,        /* Pass connection ptr to callback */
-	 ssl_gnutls_authcheck_cb, /* Accept */
-	 ssl_gnutls_authcheck_cb  /* Cancel */
-	 );
-      g_free(primary);
-    }
-  else
-    {
-      /* Grab the first certificate and display some data about it */
-      gchar fpr_bin[256];     /* Raw binary key fingerprint */
-      gsize fpr_bin_sz = sizeof(fpr_bin); /* Size of above (used later) */
-      gchar * fpr_asc = NULL; /* ASCII representation of key fingerprint */
-      gchar ser_bin[256];     /* Certificate Serial Number field */
-      gsize ser_bin_sz = sizeof(ser_bin);
-      gchar * ser_asc = NULL;
-      gchar dn[1024];          /* Certificate Name field */
-      gsize dn_sz = sizeof(dn);
-      /* TODO: Analyze certificate time/date stuff */
-      gboolean CERT_OK = TRUE; /* Is the certificate "good"? */
-
-      gnutls_x509_crt_t cert; /* Certificate data itself */
-
-      /* Suck the certificate data into the structure */
-      gnutls_x509_crt_init(&cert);
-      gnutls_x509_crt_import (cert, &cert_list[0],
-			      GNUTLS_X509_FMT_DER);
-
-      /* Read key fingerprint */
-      gnutls_x509_crt_get_fingerprint(cert, GNUTLS_MAC_SHA,
-				      fpr_bin, &fpr_bin_sz);
-      fpr_asc = purple_base16_encode_chunked(fpr_bin,fpr_bin_sz);
-
-      /* Read serial number */
-      gnutls_x509_crt_get_serial(cert, ser_bin, &ser_bin_sz);
-      ser_asc = purple_base16_encode_chunked(ser_bin,ser_bin_sz);
-
-      /* Read the certificate DN field */
-      gnutls_x509_crt_get_dn(cert, dn, &dn_sz);
-
-      /* TODO: Certificate checking here */
-
-
-      /* Build the dialog */
-      {
-	gchar * primary = NULL;
-	gchar * secondary = NULL;
-
-	if ( CERT_OK == TRUE )
-	  {
-	    primary = g_strdup_printf
-	      (
-	       _("Certificate from %s is valid. Accept?"),
-	       gsc->host
-	       );
-	  }
-	else
-	  {
-	    primary = g_strdup_printf
-	      (
-	       _("Certificate from %s not valid! Accept anyway?"),
-	       gsc->host
-	       );
-	  }
-
-	secondary = g_strdup_printf
-	  (
-	   _("Certificate name: %s\nKey fingerprint (SHA1):%s\nSerial Number:%s\nTODO: Expiration dates, etc.\n"),
-	   dn, fpr_asc, ser_asc
-	   );
-
-	purple_request_accept_cancel
-	  (gsc,
-	   _("SSL Authorization Request"),
-	   primary,
-	   secondary,
-	   (CERT_OK == TRUE ? 1:2), /* Default action depends on certificate
-				       status. */
-	   NULL, NULL, /* There is no way to extract account data from
-			  a connection handle, it seems. */
-	   NULL,       /* Same goes for the conversation data */
-	   gsc,        /* Pass connection ptr to callback */
-	   ssl_gnutls_authcheck_cb, /* Accept */
-	   ssl_gnutls_authcheck_cb  /* Cancel */
-	 );
-
-	g_free(primary);
-	g_free(secondary);
-      }
-
-
-      /* Cleanup! */
-      g_free(fpr_asc);
-      g_free(ser_asc);
-
-      gnutls_x509_crt_deinit(cert);
-    }
-}
 
 static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 		PurpleInputCondition cond)
@@ -254,7 +96,6 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 	} else {
 		purple_debug_info("gnutls", "Handshake complete\n");
 
-		/* Spit some key info to debug */
 		{
 		  const gnutls_datum_t *cert_list;
 		  unsigned int cert_list_size = 0;
@@ -292,12 +133,12 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 					i, fpr_asc);
 		      
 		      tsz=sizeof(tbuf);
-		      int ret = gnutls_x509_crt_get_serial(cert,tbuf,&tsz);
+		      gnutls_x509_crt_get_serial(cert,tbuf,&tsz);
 		      tasc=
 			purple_base16_encode_chunked(tbuf, tsz);
 		      purple_debug_info("gnutls",
-					"Serial: %s(%d bytes, ret=%d)\n",
-					tasc, tsz, ret);
+					"Serial: %s\n",
+					tasc);
 		      g_free(tasc);
 
 		      tsz=sizeof(tbuf);
@@ -311,21 +152,12 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 					"Cert Issuer DN: %s\n",
 					tbuf);
 
-		      tsz=sizeof(tbuf);
-		      gnutls_x509_crt_get_key_id(cert,0, tbuf, &tsz);
-		      tasc = purple_base16_encode_chunked(tbuf, tsz);
-		      purple_debug_info("gnutls",
-					"Key ID: %s\n",
-					tasc);
-		      g_free(tasc);
-
 		      g_free(fpr_asc); fpr_asc = NULL;
 		      gnutls_x509_crt_deinit(cert);
-		    } /* for */
+		    }
 		  
-		} /* End keydata spitting */
-
-		/* Ask for cert verification */
+		}
+		gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
 	}
 
 }
