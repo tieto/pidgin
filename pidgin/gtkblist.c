@@ -3246,6 +3246,9 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 		else if (purple_presence_is_idle(p) && size == PIDGIN_STATUS_ICON_SMALL)
 			ret = gtk_widget_render_icon (GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE_I,
 					icon_size, "GtkTreeView");
+		else if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_INVISIBLE))
+			ret = gtk_widget_render_icon(GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_INVISIBLE,
+					icon_size, "GtkTreeView");
 		else
 			ret = gtk_widget_render_icon(GTK_WIDGET(gtkblist->treeview), PIDGIN_STOCK_STATUS_AVAILABLE,
 					icon_size, "GtkTreeView");
