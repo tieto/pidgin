@@ -7,6 +7,8 @@ version 2.1.0 (??/??/????):
 	  g_timeout_add_seconds() on glib >= 2.14 when possible.  This allows
 	  glib to better group our longer timers to increase power efficiency.
 	  (Arjan van de Ven with Intel Corporation)
+	* No longer linkifies screennames containing @ signs in join/part
+	  notifications in chats
 
 	Pidgin:
 	* Ensure only one copy of Pidgin is running with a given configuration
