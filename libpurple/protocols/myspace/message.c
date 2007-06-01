@@ -393,7 +393,7 @@ static void msim_msg_pack_element(gpointer data, gpointer user_data)
 		case MSIM_TYPE_BINARY:
 		case MSIM_TYPE_DICTIONARY:
 		case MSIM_TYPE_LIST:
-			string = g_strconcat("%s", "\\", data_string, NULL);
+			string = g_strconcat(elem->name, "\\", data_string, NULL);
 			break;
 
 		/* Boolean is represented by absence or presence of name. */
@@ -647,8 +647,12 @@ guint msim_msg_get_integer(MsimMessage *msg, gchar *name)
  *
  * @return TRUE if successful, FALSE if not.
  */
-gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data, guint *binary_length)
+gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data, gsize *binary_length)
 {
+	MsimMessageElement *elem;
+
+	elem = msim_msg_get(msg, name);
+
 	switch (elem->type)
 	{
 		case MSIM_TYPE_STRING:
@@ -670,7 +674,7 @@ gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data,
 			 * by msimprpl code for things like instant messages - stuff that should be
 			 * escaped if needed). DWIM.
 			 */
-			*binary_data = (guchar *)purple_base64_decode((gchar *)elem->data, binary_length);
+			*binary_data = (gchar *)purple_base64_decode((const gchar *)elem->data, binary_length);
 			return TRUE;
 
 		case MSIM_TYPE_BINARY:
@@ -681,7 +685,7 @@ gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data,
 
 				/* Duplicate data, so caller can g_free() it. */
 				*binary_data = g_new0(char, gs->len);
-				memcpy(*binary_data, gs->data, gs->len);
+				memcpy(*binary_data, gs->str, gs->len);
 
 				*binary_length = gs->len;
 

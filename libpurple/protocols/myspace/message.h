@@ -61,6 +61,6 @@ GHashTable *msim_parse_body(const gchar *body_str);
 MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name);
 gchar *msim_msg_get_string(MsimMessage *msg, gchar *name);
 guint msim_msg_get_integer(MsimMessage *msg, gchar *name);
-gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data, guint *binary_length);
+gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data, gsize *binary_length);
 
 #endif /* _MYSPACE_MESSAGE_H */
