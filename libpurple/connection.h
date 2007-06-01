@@ -279,7 +279,7 @@ GList *purple_connections_get_connecting(void);
  * TODO: Eventually this bad boy will be removed, because it is
  *       a gross fix for a crashy problem.
  */
-#define PURPLE_CONNECTION_IS_VALID(gc) (g_list_find(purple_connections_get_all(), (gc)))
+#define PURPLE_CONNECTION_IS_VALID(gc) (g_list_find(purple_connections_get_all(), (gc)) != NULL)
 
 /*@}*/
 

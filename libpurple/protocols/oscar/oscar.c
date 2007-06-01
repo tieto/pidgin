@@ -2202,7 +2202,7 @@ purple_auth_request(struct name_data *data, char *msg)
 				   buddy->name, group->name);
 		aim_ssi_sendauthrequest(od, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
 		if (!aim_ssi_itemlist_finditem(od->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))
-			aim_ssi_addbuddy(od, buddy->name, group->name, purple_buddy_get_alias_only(buddy), NULL, NULL, 1);
+			aim_ssi_addbuddy(od, buddy->name, group->name, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, TRUE);
 	}
 }
 
@@ -4592,7 +4592,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 	if ((od->ssi.received_data) && !(aim_ssi_itemlist_finditem(od->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))) {
 		purple_debug_info("oscar",
 				   "ssi: adding buddy %s to group %s\n", buddy->name, group->name);
-		aim_ssi_addbuddy(od, buddy->name, group->name, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
+		aim_ssi_addbuddy(od, buddy->name, group->name, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
 	}
 
 	/* XXX - Should this be done from AIM accounts, as well? */

@@ -179,6 +179,8 @@ pidgin/gtkwhiteboard.c
 pidgin/pidgincombobox.c
 pidgin/pidgin.h
 pidgin/pidginstock.c
+pidgin/pixmaps/emotes/default/22/default.theme.in
+pidgin/pixmaps/emotes/none/none.theme.in
 pidgin/plugins/cap/cap.c
 pidgin/plugins/contact_priority.c
 pidgin/plugins/convcolors.c

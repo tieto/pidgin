@@ -1172,7 +1172,7 @@ struct aim_ssi_item
 	guint16 gid;
 	guint16 bid;
 	guint16 type;
-	struct aim_tlvlist_s *data;
+	GSList *data;
 	struct aim_ssi_item *next;
 };
 
@@ -1208,7 +1208,7 @@ char *aim_ssi_getcomment(struct aim_ssi_item *list, const char *gn, const char *
 gboolean aim_ssi_waitingforauth(struct aim_ssi_item *list, const char *gn, const char *sn);
 
 /* Client functions for changing SSI data */
-int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, const char *alias, const char *comment, const char *smsnum, int needauth);
+int aim_ssi_addbuddy(OscarData *od, const char *name, const char *group, GSList *tlvlist, const char *alias, const char *comment, const char *smsnum, gboolean needauth);
 int aim_ssi_addpermit(OscarData *od, const char *name);
 int aim_ssi_adddeny(OscarData *od, const char *name);
 int aim_ssi_delbuddy(OscarData *od, const char *name, const char *group);
@@ -1357,54 +1357,47 @@ typedef struct aim_tlv_s
 	guint8 *value;
 } aim_tlv_t;
 
-/* TLV List structure */
-typedef struct aim_tlvlist_s
-{
-	aim_tlv_t *tlv;
-	struct aim_tlvlist_s *next;
-} aim_tlvlist_t;
-
 /* TLV handling functions */
 char *aim_tlv_getvalue_as_string(aim_tlv_t *tlv);
 
-aim_tlv_t *aim_tlv_gettlv(aim_tlvlist_t *list, guint16 type, const int nth);
-int aim_tlv_getlength(aim_tlvlist_t *list, guint16 type, const int nth);
-char *aim_tlv_getstr(aim_tlvlist_t *list, const guint16 type, const int nth);
-guint8 aim_tlv_get8(aim_tlvlist_t *list, const guint16 type, const int nth);
-guint16 aim_tlv_get16(aim_tlvlist_t *list, const guint16 type, const int nth);
-guint32 aim_tlv_get32(aim_tlvlist_t *list, const guint16 type, const int nth);
+aim_tlv_t *aim_tlv_gettlv(GSList *list, guint16 type, const int nth);
+int aim_tlv_getlength(GSList *list, guint16 type, const int nth);
+char *aim_tlv_getstr(GSList *list, const guint16 type, const int nth);
+guint8 aim_tlv_get8(GSList *list, const guint16 type, const int nth);
+guint16 aim_tlv_get16(GSList *list, const guint16 type, const int nth);
+guint32 aim_tlv_get32(GSList *list, const guint16 type, const int nth);
 
 /* TLV list handling functions */
-aim_tlvlist_t *aim_tlvlist_read(ByteStream *bs);
-aim_tlvlist_t *aim_tlvlist_readnum(ByteStream *bs, guint16 num);
-aim_tlvlist_t *aim_tlvlist_readlen(ByteStream *bs, guint16 len);
-aim_tlvlist_t *aim_tlvlist_copy(aim_tlvlist_t *orig);
+GSList *aim_tlvlist_read(ByteStream *bs);
+GSList *aim_tlvlist_readnum(ByteStream *bs, guint16 num);
+GSList *aim_tlvlist_readlen(ByteStream *bs, guint16 len);
+GSList *aim_tlvlist_copy(GSList *orig);
 
-int aim_tlvlist_count(aim_tlvlist_t **list);
-int aim_tlvlist_size(aim_tlvlist_t **list);
-int aim_tlvlist_cmp(aim_tlvlist_t *one, aim_tlvlist_t *two);
-int aim_tlvlist_write(ByteStream *bs, aim_tlvlist_t **list);
-void aim_tlvlist_free(aim_tlvlist_t **list);
+int aim_tlvlist_count(GSList *list);
+int aim_tlvlist_size(GSList *list);
+int aim_tlvlist_cmp(GSList *one, GSList *two);
+int aim_tlvlist_write(ByteStream *bs, GSList **list);
+void aim_tlvlist_free(GSList *list);
 
-int aim_tlvlist_add_raw(aim_tlvlist_t **list, const guint16 type, const guint16 length, const guint8 *value);
-int aim_tlvlist_add_noval(aim_tlvlist_t **list, const guint16 type);
-int aim_tlvlist_add_8(aim_tlvlist_t **list, const guint16 type, const guint8 value);
-int aim_tlvlist_add_16(aim_tlvlist_t **list, const guint16 type, const guint16 value);
-int aim_tlvlist_add_32(aim_tlvlist_t **list, const guint16 type, const guint32 value);
-int aim_tlvlist_add_str(aim_tlvlist_t **list, const guint16 type, const char *value);
-int aim_tlvlist_add_caps(aim_tlvlist_t **list, const guint16 type, const guint32 caps);
-int aim_tlvlist_add_userinfo(aim_tlvlist_t **list, guint16 type, aim_userinfo_t *userinfo);
-int aim_tlvlist_add_chatroom(aim_tlvlist_t **list, guint16 type, guint16 exchange, const char *roomname, guint16 instance);
-int aim_tlvlist_add_frozentlvlist(aim_tlvlist_t **list, guint16 type, aim_tlvlist_t **tl);
+int aim_tlvlist_add_raw(GSList **list, const guint16 type, const guint16 length, const guint8 *value);
+int aim_tlvlist_add_noval(GSList **list, const guint16 type);
+int aim_tlvlist_add_8(GSList **list, const guint16 type, const guint8 value);
+int aim_tlvlist_add_16(GSList **list, const guint16 type, const guint16 value);
+int aim_tlvlist_add_32(GSList **list, const guint16 type, const guint32 value);
+int aim_tlvlist_add_str(GSList **list, const guint16 type, const char *value);
+int aim_tlvlist_add_caps(GSList **list, const guint16 type, const guint32 caps);
+int aim_tlvlist_add_userinfo(GSList **list, guint16 type, aim_userinfo_t *userinfo);
+int aim_tlvlist_add_chatroom(GSList **list, guint16 type, guint16 exchange, const char *roomname, guint16 instance);
+int aim_tlvlist_add_frozentlvlist(GSList **list, guint16 type, GSList **tl);
 
-int aim_tlvlist_replace_raw(aim_tlvlist_t **list, const guint16 type, const guint16 lenth, const guint8 *value);
-int aim_tlvlist_replace_str(aim_tlvlist_t **list, const guint16 type, const char *str);
-int aim_tlvlist_replace_noval(aim_tlvlist_t **list, const guint16 type);
-int aim_tlvlist_replace_8(aim_tlvlist_t **list, const guint16 type, const guint8 value);
-int aim_tlvlist_replace_16(aim_tlvlist_t **list, const guint16 type, const guint16 value);
-int aim_tlvlist_replace_32(aim_tlvlist_t **list, const guint16 type, const guint32 value);
+int aim_tlvlist_replace_raw(GSList **list, const guint16 type, const guint16 lenth, const guint8 *value);
+int aim_tlvlist_replace_str(GSList **list, const guint16 type, const char *str);
+int aim_tlvlist_replace_noval(GSList **list, const guint16 type);
+int aim_tlvlist_replace_8(GSList **list, const guint16 type, const guint8 value);
+int aim_tlvlist_replace_16(GSList **list, const guint16 type, const guint16 value);
+int aim_tlvlist_replace_32(GSList **list, const guint16 type, const guint32 value);
 
-void aim_tlvlist_remove(aim_tlvlist_t **list, const guint16 type);
+void aim_tlvlist_remove(GSList **list, const guint16 type);
 
 
 

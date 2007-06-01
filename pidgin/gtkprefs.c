@@ -382,7 +382,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	new_theme = current_smiley_theme;
 	description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 								"<span size='smaller' foreground='white'>%s</span>",
-								new_theme->name, new_theme->author, new_theme->desc);
+								_(new_theme->name), _(new_theme->author), _(new_theme->desc));
 	gtk_list_store_set(smiley_theme_store, &iter, 1, description, -1);
 	g_free(description);
 
@@ -391,7 +391,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 		if (gtk_tree_model_get_iter(model, &iter, oldpath)) {
 			description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 								"<span size='smaller' foreground='dim grey'>%s</span>",
-								old_theme->name, old_theme->author, old_theme->desc);
+								_(old_theme->name), _(old_theme->author), _(old_theme->desc));
 			gtk_list_store_set(smiley_theme_store, &iter, 1,
 				description, -1);
 			g_free(description);
@@ -426,7 +426,7 @@ static GtkTreeRowReference *theme_refresh_theme_list()
 		struct smiley_theme *theme = themes->data;
 		char *description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 						    "<span size='smaller' foreground='dim grey'>%s</span>",
-						    theme->name, theme->author, theme->desc);
+						    _(theme->name), _(theme->author), _(theme->desc));
 		gtk_list_store_append (smiley_theme_store, &iter);
 
 		/*
@@ -881,6 +881,15 @@ interface_page()
 	return ret;
 }
 
+#if GTK_CHECK_VERSION(2,4,0)
+static void
+pidgin_custom_font_set(GtkFontButton *font_button, gpointer nul)
+{
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/custom_font",
+				gtk_font_button_get_font_name(font_button));
+}
+#endif
+
 static GtkWidget *
 conv_page()
 {
@@ -889,8 +898,16 @@ conv_page()
 	GtkWidget *toolbar;
 	GtkWidget *iconpref1;
 	GtkWidget *iconpref2;
+	GtkWidget *fontpref;
 	GtkWidget *imhtml;
 	GtkWidget *frame;
+
+#if GTK_CHECK_VERSION(2,4,0)
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *font_button;
+	const char *font_name;
+#endif
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
@@ -920,6 +937,26 @@ conv_page()
 
 #ifdef _WIN32
 	pidgin_prefs_checkbox(_("F_lash window when IMs are received"), PIDGIN_PREFS_ROOT "/win32/blink_im", vbox);
+#endif
+
+#if GTK_CHECK_VERSION(2,4,0)
+	vbox = pidgin_make_frame(ret, _("Font"));
+	if (purple_running_gnome())
+		fontpref = pidgin_prefs_checkbox(_("Use document font from _theme"), PIDGIN_PREFS_ROOT "/conversations/use_theme_font", vbox);
+	else
+		fontpref = pidgin_prefs_checkbox(_("Use font from _theme"), PIDGIN_PREFS_ROOT "/conversations/use_theme_font", vbox);
+	hbox = gtk_hbox_new(FALSE, 3);
+	label = gtk_label_new_with_mnemonic(_("Conversation _font:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	font_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
+	font_button = gtk_font_button_new_with_font(purple_prefs_get_string(font_name ? font_name : NULL));
+	gtk_font_button_set_show_style(GTK_FONT_BUTTON(font_button), TRUE);
+	gtk_box_pack_start(GTK_BOX(hbox), font_button, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font"))
+		gtk_widget_set_sensitive(hbox, FALSE);
+	g_signal_connect(G_OBJECT(fontpref), "clicked", G_CALLBACK(pidgin_toggle_sensitive), hbox);
+	g_signal_connect(G_OBJECT(font_button), "font-set", G_CALLBACK(pidgin_custom_font_set), NULL);
 #endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));

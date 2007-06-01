@@ -205,7 +205,7 @@ execute_perl(const char *function, int argc, char **args)
 		purple_debug(PURPLE_DEBUG_ERROR, "perl",
 				   "Perl function %s exited abnormally: %s\n",
 				   function, SvPV(ERRSV, na));
-		POPs;
+		(void)POPs;
 	} else if (count != 1) {
 		/*
 		 * This should NEVER happen.  G_SCALAR ensures that we WILL
