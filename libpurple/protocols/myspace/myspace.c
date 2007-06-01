@@ -700,7 +700,7 @@ void msim_send_im_by_userid_cb(MsimSession *session, MsimMessage *userinfo, gpoi
     g_hash_table_destroy(body);
     /* g_hash_table_destroy(userinfo); */
 	/* TODO: do we need to free userinfo here? */
-	msim_msg_free(userinfo);
+	/* msim_msg_free(userinfo); */
     g_free(s->message);
     g_free(s->who);
 } 
@@ -722,7 +722,7 @@ void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer d
 
 	body_str = msim_msg_get_string(userinfo, "body");
     body = msim_parse_body(body_str);
-	g_free(body);
+	g_free(body_str);
 	g_return_if_fail(body != NULL);
 
     username = g_hash_table_lookup(body, "UserName");
@@ -730,7 +730,7 @@ void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer d
     msg = (gchar *)data;
     serv_got_im(session->gc, username, msg, PURPLE_MESSAGE_RECV, time(NULL));
 
-	msim_msg_free(userinfo);  /* TODO: Should we? */
+	/* msim_msg_free(userinfo);   */ /* TODO: Should we? */
     g_hash_table_destroy(body);
 }
 
@@ -1056,7 +1056,7 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
     g_strfreev(status_array);
     g_list_free(list);
     g_hash_table_destroy(body);
-    msim_msg_free(userinfo); /* TODO: right? */
+    /* msim_msg_free(userinfo);  TODO: right? */
     /* Do not free status_str - it will currently be freed by g_hash_table_destroy 
 	 * on session->user_lookup_cb_data. But this is questionable (TODO: unask) since
 	 * sometimes user_lookup_cb_data stores integers in gpointers, and sometimes
