@@ -215,6 +215,9 @@ node_update(PurpleBuddyList *list, PurpleBlistNode *node)
 	if (list->ui_data == NULL)
 		return;   /* XXX: this is probably the place to auto-join chats */
 
+	if (ggblist->window == NULL)
+		return;
+
 	if (node->ui_data != NULL) {
 		gnt_tree_change_text(GNT_TREE(ggblist->tree), node,
 				0, get_display_name(node));
