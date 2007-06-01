@@ -483,7 +483,7 @@ MsimMessage *msim_parse(gchar *raw)
 
 			/* Always append strings, since protocol has no incoming
 			 * type information for each field. */
-			msim_msg_append(msg, key, MSIM_TYPE_STRING, value);
+			msg = msim_msg_append(msg, g_strdup(key), MSIM_TYPE_STRING, value);
 #ifdef MSIM_DEBUG_PARSE
 			purple_debug_info("msim", "insert string: |%s|=|%s|\n", key, value);
 #endif
