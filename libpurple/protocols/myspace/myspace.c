@@ -265,33 +265,30 @@ void msim_login(PurpleAccount *acct)
  * Process a login challenge, sending a response. 
  *
  * @param session 
- * @param table Hash table of login challenge message.
+ * @param msg Login challenge message.
  *
- * @return 0, since the 'table' parameter is no longer needed.
+ * @return 0, since the 'msg' parameter is no longer needed.
  */
-int msim_login_challenge(MsimSession *session, GHashTable *table) 
+int msim_login_challenge(MsimSession *session, MsimMessage *msg) 
 {
     PurpleAccount *account;
-    gchar *nc_str;
-    guchar *nc;
     gchar *response;
-    gsize nc_len;
 	guint response_len;
+	gchar *nc;
+	gsize nc_len;
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(table != NULL, 0);
+    g_return_val_if_fail(msg != NULL, 0);
 
-    nc_str = g_hash_table_lookup(table, "nc");
+    g_return_val_if_fail(msim_msg_get_binary(msg, "nc", &nc, &nc_len), 0);
 
     account = session->account;
     //assert(account);
 
     purple_connection_update_progress(session->gc, _("Reading challenge"), 1, 4);
 
-    purple_debug_info("msim", "nc=<%s>\n", nc_str);
+    purple_debug_info("msim", "nc is %d bytes, decoded\n", nc_len);
 
-    nc = (guchar *)purple_base64_decode(nc_str, &nc_len);
-    purple_debug_info("msim", "base64 decoded to %d bytes\n", nc_len);
     if (nc_len != 0x40)
     {
         purple_debug_info("msim", "bad nc length: %x != 0x40\n", nc_len);
@@ -438,7 +435,7 @@ void crypt_rc4(rc4_state_struct *rc4_state, unsigned char *data, int data_len)
  * @return Binary login challenge response, ready to send to the server. Must be g_free()'d
  *         when finished.
  */
-gchar *msim_compute_login_response(guchar nonce[2 * NONCE_SIZE], 
+gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE], 
 		gchar *email, gchar *password, guint *response_len)
 {
     PurpleCipherContext *key_context;
@@ -491,7 +488,7 @@ gchar *msim_compute_login_response(guchar nonce[2 * NONCE_SIZE],
     sha1 = purple_ciphers_find_cipher("sha1");
     key_context = purple_cipher_context_new(sha1, NULL);
     purple_cipher_context_append(key_context, hash_pw, HASH_SIZE);
-    purple_cipher_context_append(key_context, nonce + NONCE_SIZE, NONCE_SIZE);
+    purple_cipher_context_append(key_context, (guchar *)(nonce + NONCE_SIZE), NONCE_SIZE);
     purple_cipher_context_digest(key_context, sizeof(key), key, NULL);
 
 #ifdef MSIM_DEBUG_LOGIN_CHALLENGE
@@ -642,7 +639,7 @@ int msim_send_im(PurpleConnection *gc, const char *who,
  * @param message Text of message to send.
  * @param flags Purple instant message flags.
  *
- * @return 0, since the 'table' parameter is no longer needed.
+ * @return 0
  *
  */
 int msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gchar *message, PurpleMessageFlags flags)
@@ -676,19 +673,23 @@ int msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gcha
  * @param session 
  * @param userinfo User info message from server containing a 'body' field
  *                 with a 'UserID' key. This is where the user ID is taken from.
+ *                 Will be destroyed after use.
  * @param data A send_im_cb_struct * of information on the IM to send.
  *
  */
-void msim_send_im_by_userid_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
+void msim_send_im_by_userid_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
     send_im_cb_struct *s;
     gchar *userid;
     GHashTable *body;
+	gchar *body_str;
 
     g_return_if_fail(MSIM_SESSION_VALID(session));
     g_return_if_fail(userinfo != NULL);
 
-    body = msim_parse_body(g_hash_table_lookup(userinfo, "body"));
+	body_str = msim_msg_get_string(userinfo, "body");
+    body = msim_parse_body(body_str);
+	g_free(body_str);
 	g_return_if_fail(body != NULL);
 
     userid = g_hash_table_lookup(body, "UserID");
@@ -697,7 +698,9 @@ void msim_send_im_by_userid_cb(MsimSession *session, GHashTable *userinfo, gpoin
     msim_send_im_by_userid(session, userid, s->message, s->flags);
 
     g_hash_table_destroy(body);
-    g_hash_table_destroy(userinfo);
+    /* g_hash_table_destroy(userinfo); */
+	/* TODO: do we need to free userinfo here? */
+	msim_msg_free(userinfo);
     g_free(s->message);
     g_free(s->who);
 } 
@@ -709,16 +712,17 @@ void msim_send_im_by_userid_cb(MsimSession *session, GHashTable *userinfo, gpoin
  * @param userinfo Message from server on user's info, containing UserName.
  * @param data A gchar * of the incoming instant message's text.
  */
-void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
+void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
-    gchar *msg;
-    gchar *username;
+    gchar *msg, *username, *body_str;
     GHashTable *body;
 
     g_return_if_fail(MSIM_SESSION_VALID(session));
     g_return_if_fail(userinfo != NULL);
 
-    body = msim_parse_body(g_hash_table_lookup(userinfo, "body"));
+	body_str = msim_msg_get_string(userinfo, "body");
+    body = msim_parse_body(body_str);
+	g_free(body);
 	g_return_if_fail(body != NULL);
 
     username = g_hash_table_lookup(body, "UserName");
@@ -726,35 +730,35 @@ void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, gpointer da
     msg = (gchar *)data;
     serv_got_im(session->gc, username, msg, PURPLE_MESSAGE_RECV, time(NULL));
 
+	msim_msg_free(userinfo);  /* TODO: Should we? */
     g_hash_table_destroy(body);
-    g_hash_table_destroy(userinfo);
 }
 
 /**
  * Handle an incoming message.
  *
  * @param session The session
- * @param table Message from the server, containing 'f' (userid from) and 'msg'.
+ * @param msg Message from the server, containing 'f' (userid from) and 'msg'.
  *
- * @return 0, since table can be freed.
+ * @return 0, since msg can be freed.
  */
-int msim_incoming_im(MsimSession *session, GHashTable *table)
+int msim_incoming_im(MsimSession *session, MsimMessage *msg)
 {
     gchar *userid;
-    gchar *msg;
+    gchar *msg_text;
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(table != NULL, 0);
+    g_return_val_if_fail(msg != NULL, 0);
 
-
-    userid = g_hash_table_lookup(table, "f");
-    msg = g_hash_table_lookup(table, "msg");
+	/* TODO: where freed? */
+    userid = msim_msg_get_string(msg, "f");
+    msg_text = msim_msg_get_string(msg, "msg");
     
     purple_debug_info("msim", 
 			"msim_incoming_im: got msg <%s> from <%s>, resolving username\n",
-            msg, userid);
+            msg_text, userid);
 
-    msim_lookup_user(session, userid, msim_incoming_im_cb, g_strdup(msg));
+    msim_lookup_user(session, userid, msim_incoming_im_cb, msg_text);
 
     return 0;
 }
@@ -764,7 +768,7 @@ int msim_incoming_im(MsimSession *session, GHashTable *table)
  * Process a message. 
  *
  * @param gc Connection.
- * @param table Any message from the server.
+ * @param msg Any message from the server.
  *
  * @return The return value of the function used to process the message, or -1 if
  * called with invalid parameters.
@@ -792,52 +796,52 @@ int msim_process(PurpleConnection *gc, MsimMessage *msg)
 	}
 #endif
 
-	/* TODO: convert to use MsimMessage. */
-#if 0	
-    if (g_hash_table_lookup(table, "nc"))
+    if (msim_msg_get(msg, "nc"))
     {
-        return msim_login_challenge(session, table);
-    } else if (g_hash_table_lookup(table, "sesskey")) {
-        purple_debug_info("msim", "SESSKEY=<%s>\n", (gchar *)g_hash_table_lookup(table, "sesskey"));
+        return msim_login_challenge(session, msg);
+    } else if (msim_msg_get(msg, "sesskey")) {
 
         purple_connection_update_progress(gc, _("Connected"), 3, 4);
 
-        session->sesskey = g_strdup(g_hash_table_lookup(table, "sesskey"));
+		/* Freed in msim_session_destroy */
+        session->sesskey = msim_msg_get_string(msg, "sesskey");
+        purple_debug_info("msim", "SESSKEY=<%s>\n", session->sesskey);
 
         /* Comes with: proof,profileid,userid,uniquenick -- all same values
          * (at least for me). */
-        session->userid = g_strdup(g_hash_table_lookup(table, "userid"));
+		/* Freed in msim_session_destroy */
+        session->userid = msim_msg_get_string(msg, "userid");
 
         purple_connection_set_state(gc, PURPLE_CONNECTED);
 
         return 0;
-    } else if (g_hash_table_lookup(table, "bm"))  {
+    } else if (msim_msg_get(msg, "bm"))  {
         guint bm;
        
-        bm = atoi(g_hash_table_lookup(table, "bm"));
+        bm = msim_msg_get_integer(msg, "bm");
         switch (bm)
         {
             case MSIM_BM_STATUS:
-                return msim_status(session, table);
+                return msim_status(session, msg);
             case MSIM_BM_INSTANT:
-                return msim_incoming_im(session, table);
+                return msim_incoming_im(session, msg);
             default:
                 /* Not really an IM, but show it for informational 
                  * purposes during development. */
-                return msim_incoming_im(session, table);
+                return msim_incoming_im(session, msg);
         }
 
         if (bm == MSIM_BM_STATUS)
         {
-            return msim_status(session, table);
+            return msim_status(session, msg);
         } else { /* else if strcmp(bm, "1") == 0)  */
-            return msim_incoming_im(session, table);
+            return msim_incoming_im(session, msg);
         }
-    } else if (g_hash_table_lookup(table, "rid")) {
-        return msim_process_reply(session, table);
-    } else if (g_hash_table_lookup(table, "error")) {
-        return msim_error(session, table);
-    } else if (g_hash_table_lookup(table, "ka")) {
+    } else if (msim_msg_get(msg, "rid")) {
+        return msim_process_reply(session, msg);
+    } else if (msim_msg_get(msg, "error")) {
+        return msim_error(session, msg);
+    } else if (msim_msg_get(msg, "ka")) {
         purple_debug_info("msim", "msim_process: got keep alive\n");
         return 0;
     } else {
@@ -847,38 +851,30 @@ int msim_process(PurpleConnection *gc, MsimMessage *msg)
         purple_debug_info("msim", "msim_process: unhandled message\n");
         return 0;
     }
-#else
-	return 0;
-#endif
 }
 
 /**
  * Process a message reply from the server.
  *
  * @param session 
- * @param table Message reply from server.
+ * @param msg Message reply from server.
  *
- * @return 0, since the 'table' field is no longer needed.
+ * @return 0, since the 'msg' field is no longer needed.
  */
-int msim_process_reply(MsimSession *session, GHashTable *table)
+int msim_process_reply(MsimSession *session, MsimMessage *msg)
 {
-    gchar *rid_str;
-
     g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(table != NULL, 0);
+    g_return_val_if_fail(msg != NULL, 0);
     
-    rid_str = g_hash_table_lookup(table, "rid");
-
-    if (rid_str)  /* msim_lookup_user sets callback for here */
+    if (msim_msg_get(msg, "rid"))  /* msim_lookup_user sets callback for here */
     {
         MSIM_USER_LOOKUP_CB cb;
         gpointer data;
         guint rid;
-
         GHashTable *body;
-        gchar *username;
+        gchar *username, *body_str;
 
-        rid = atol(rid_str);
+        rid = msim_msg_get_integer(msg, "rid");
 
         /* Cache the user info. Currently, the GHashTable of user info in
          * this cache never expires so is never freed. TODO: expire and destroy
@@ -886,19 +882,22 @@ int msim_process_reply(MsimSession *session, GHashTable *table)
          * Some information never changes (username->userid map), some does.
          * TODO: Cache what doesn't change only
          */
-        body = msim_parse_body(g_hash_table_lookup(table, "body"));
+		body_str = msim_msg_get_string(msg, "body");
+        body = msim_parse_body(body_str);
+		g_free(body_str);
+
+		/* TODO: implement a better hash-like interface, and use it. */
         username = g_hash_table_lookup(body, "UserName");
         if (username)
         {
+			/* TODO: permanently associated with blist item, if in buddy in blist */
             g_hash_table_insert(session->user_lookup_cache, g_strdup(username), body);
         } else {
             purple_debug_info("msim", 
-					"msim_process_reply: not caching <%s>, no UserName\n",
-                    g_hash_table_lookup(table, "body"));
+					"msim_process_reply: not caching body, no UserName\n");
         } 
 
         /* If a callback is registered for this userid lookup, call it. */
-
         cb = g_hash_table_lookup(session->user_lookup_cb, GUINT_TO_POINTER(rid));
         data = g_hash_table_lookup(session->user_lookup_cb_data, GUINT_TO_POINTER(rid));
 
@@ -906,12 +905,12 @@ int msim_process_reply(MsimSession *session, GHashTable *table)
         {
             purple_debug_info("msim", 
 					"msim_process_body: calling callback now\n");
-            cb(session, table, data);
+            cb(session, msg, data);
             g_hash_table_remove(session->user_lookup_cb, GUINT_TO_POINTER(rid));
             g_hash_table_remove(session->user_lookup_cb_data, GUINT_TO_POINTER(rid));
 
             /* Return 1 to tell caller of msim_process (msim_input_cb) to
-             * not destroy 'table'; allow 'cb' to hang on to it and destroy
+             * not destroy 'msg'; allow 'cb' to hang on to it and destroy
              * it when it wants. */
             return 1;
         } else {
@@ -926,21 +925,24 @@ int msim_process_reply(MsimSession *session, GHashTable *table)
  * Handle an error from the server.
  *
  * @param session 
- * @param table The message.
+ * @param msg The message.
  *
- * @return 0, since 'table' can be freed.
+ * @return 0, since 'msg' can be freed.
  */
-int msim_error(MsimSession *session, GHashTable *table)
+int msim_error(MsimSession *session, MsimMessage *msg)
 {
-    gchar *err, *errmsg, *full_errmsg;
+    gchar *errmsg, *full_errmsg;
+	guint err;
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(table != NULL, 0);
+    g_return_val_if_fail(msg != NULL, 0);
 
-    err = g_hash_table_lookup(table, "err");
-    errmsg = g_hash_table_lookup(table, "errmsg");
+    err = msim_msg_get_integer(msg, "err");
+    errmsg = msim_msg_get_string(msg, "errmsg");
 
-    full_errmsg = g_strdup_printf(_("Protocol error, code %s: %s"), err, errmsg);
+    full_errmsg = g_strdup_printf(_("Protocol error, code %d: %s"), err, errmsg);
+
+	g_free(errmsg);
 
     purple_debug_info("msim", "msim_error: %s\n", full_errmsg);
 
@@ -949,7 +951,7 @@ int msim_error(MsimSession *session, GHashTable *table)
     purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
             full_errmsg, NULL);
 
-    if (g_hash_table_lookup(table, "fatal"))
+    if (msim_msg_get(msg, "fatal"))
     {
         purple_debug_info("msim", "fatal error, destroy session\n");
         purple_connection_error(session->gc, full_errmsg);
@@ -973,15 +975,16 @@ void msim_status_now(gchar *who, gpointer data)
  *
  * @param session 
  * @param userinfo Looked up user information from server.
- * @param data gchar * status string.
+ * @param data gchar * status string, will be freed.
  *
  */
-void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
+void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
     PurpleBuddyList *blist;
     PurpleBuddy *buddy;
     PurplePresence *presence;
     GHashTable *body;
+	gchar *body_str;
     //PurpleStatus *status;
     gchar **status_array;
     GList *list;
@@ -995,7 +998,9 @@ void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
 
     status_str = (gchar *)data;
 
-    body = msim_parse_body(g_hash_table_lookup(userinfo, "body"));
+	body_str = msim_msg_get_string(userinfo, "body");
+    body = msim_parse_body(body_str);
+	g_free(body_str);
 	g_return_if_fail(body != NULL);
 
     username = g_hash_table_lookup(body, "UserName");
@@ -1051,34 +1056,41 @@ void msim_status_cb(MsimSession *session, GHashTable *userinfo, gpointer data)
     g_strfreev(status_array);
     g_list_free(list);
     g_hash_table_destroy(body);
-    g_hash_table_destroy(userinfo);
-    /* Do not free status_str - it will be freed by g_hash_table_destroy on session->userid_lookup_cb_data */
+    msim_msg_free(userinfo); /* TODO: right? */
+    /* Do not free status_str - it will currently be freed by g_hash_table_destroy 
+	 * on session->user_lookup_cb_data. But this is questionable (TODO: unask) since
+	 * sometimes user_lookup_cb_data stores integers in gpointers, and sometimes
+	 * real gpointers that need to be freed, like our status_str. 
+	 */
+	/* g_free(status_str); */
 }
 
 /**
  * Process incoming status messages.
  *
  * @param session
- * @param table Status update message.
+ * @param msg Status update message.
  *
- * @return 0, since 'table' can be freed.
+ * @return 0, since 'msg' can be freed.
  */
-int msim_status(MsimSession *session, GHashTable *table)
+int msim_status(MsimSession *session, MsimMessage *msg)
 {
     gchar *status_str;
     gchar *userid;
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(table != NULL, 0);
+    g_return_val_if_fail(msg != NULL, 0);
 
-    status_str = g_hash_table_lookup(table, "msg");
+	/* TODO: free */
+    status_str = msim_msg_get_string(msg, "msg");
     if (!status_str)
     {
         purple_debug_info("msim", "msim_status: bm is status but no status msg\n");
         return 0;
     }
 
-    userid = g_hash_table_lookup(table, "f");
+	/* TODO: free */
+    userid = msim_msg_get_string(msg, "f");
     if (!userid)
     {
         purple_debug_info("msim", "msim_status: bm is status but no f field\n");
@@ -1091,8 +1103,12 @@ int msim_status(MsimSession *session, GHashTable *table)
 			"msim_status: got status msg <%s> for <%s>, scheduling lookup\n",
             status_str, userid);
     
-    /* Actually update status once obtain username */
-    msim_lookup_user(session, userid, msim_status_cb, g_strdup(status_str));
+    /* Actually update status, once username is obtained. 
+	 * status_str() will currently be freed by g_hash_table_destroy() on
+	 * user_lookup_cb_data (TODO: this is questionable, since it can also
+	 * store gpointers. Fix this, and the 2 other TODOs of the same problem.)
+	 */
+    msim_lookup_user(session, userid, msim_status_cb, status_str);
 
     return 0;
 }
@@ -1275,9 +1291,12 @@ MsimSession *msim_session_new(PurpleAccount *acct)
     session->gc = purple_account_get_connection(acct);
     session->fd = -1;
     session->user_lookup_cb = g_hash_table_new_full(g_direct_hash, 
-			g_direct_equal, NULL, NULL);  /* do NOT free function pointers! */
+			g_direct_equal, NULL, NULL);  /* do NOT free function pointers! (values) */
     session->user_lookup_cb_data = g_hash_table_new_full(g_direct_hash, 
-			g_direct_equal, NULL, g_free);
+			g_direct_equal, NULL, g_free);/* TODO: we don't know what the values are,
+											 they could be integers inside gpointers
+											 or strings, but we free them anyway.
+											 Figure this out, once free cache. */
     session->user_lookup_cache = g_hash_table_new_full(g_str_hash, g_str_equal,
 		   	g_free, (GDestroyNotify)g_hash_table_destroy);
     session->rxoff = 0;

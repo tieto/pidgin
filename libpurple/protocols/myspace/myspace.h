@@ -122,7 +122,7 @@ typedef struct _MsimSession
 
 /* Callback function pointer type for when a user's information is received, 
  * initiated from a user lookup. */
-typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, GHashTable *userinfo,
+typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, MsimMessage *userinfo,
 	   gpointer data);
 
 /* Passed to MSIM_USER_LOOKUP_CB for msim_send_im_cb - called when
@@ -147,13 +147,10 @@ gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
 
 void print_hash_item(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_send_raw(MsimSession *session, const gchar *msg);
-gchar *msim_pack(GHashTable *table);
-gboolean msim_sendh(MsimSession *session, GHashTable *table);
-gboolean msim_send(MsimSession *session, ...);
 
 void msim_login(PurpleAccount *acct);
-int msim_login_challenge(MsimSession *session, GHashTable *table);
-gchar *msim_compute_login_response(guchar nonce[2 * NONCE_SIZE],
+int msim_login_challenge(MsimSession *session, MsimMessage *msg);
+gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE],
 		        gchar *email, gchar *password, guint *response_len);
 
 int msim_send_im(PurpleConnection *gc, const char *who,
@@ -161,18 +158,18 @@ int msim_send_im(PurpleConnection *gc, const char *who,
 int msim_send_im_by_userid(MsimSession *session, const gchar *userid, 
 		const gchar *message, PurpleMessageFlags flags);
 void msim_send_im_by_userid_cb(MsimSession *session, 
-		GHashTable *userinfo, gpointer data);
-void msim_incoming_im_cb(MsimSession *session, GHashTable *userinfo, 
+		MsimMessage *userinfo, gpointer data);
+void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, 
 		gpointer data);
-int msim_incoming_im(MsimSession *session, GHashTable *table);
+int msim_incoming_im(MsimSession *session, MsimMessage *msg);
 
-int msim_process_reply(MsimSession *session, GHashTable *table);
+int msim_process_reply(MsimSession *session, MsimMessage *msg);
 int msim_process(PurpleConnection *gc, MsimMessage *msg);
 
-int msim_error(MsimSession *session, GHashTable *table);
-void msim_status_cb(MsimSession *session, GHashTable *userinfo, 
+int msim_error(MsimSession *session, MsimMessage *msg);
+void msim_status_cb(MsimSession *session, MsimMessage *userinfo, 
 		gpointer data);
-int msim_status(MsimSession *session, GHashTable *table);
+int msim_status(MsimSession *session, MsimMessage *msg);
 void msim_input_cb(gpointer gc_uncasted, gint source, 
 		PurpleInputCondition cond);
 void msim_connect_cb(gpointer data, gint source, 
