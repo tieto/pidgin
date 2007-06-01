@@ -24,8 +24,6 @@
 
 #include <glib.h>
 
-#include "session.h"
-
 /* Types */
 #define MsimMessage GList		/* #define instead of typedef to avoid casting */
 typedef struct _MsimMessageElement
@@ -51,7 +49,10 @@ MsimMessage *msim_msg_append(MsimMessage *msg, gchar *name, MsimMessageType type
 gchar *msim_msg_debug_string(MsimMessage *msg);
 gchar *msim_msg_pack(MsimMessage *msg);
 
-gboolean msim_msg_send(MsimSession *session, MsimMessage *msg);
+/* Defined in myspace.h */
+struct _MsimSession;
+
+gboolean msim_msg_send(struct _MsimSession *session, MsimMessage *msg);
 
 MsimMessage *msim_parse(gchar *raw);
 GHashTable *msim_parse_body(const gchar *body_str);

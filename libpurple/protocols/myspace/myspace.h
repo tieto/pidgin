@@ -49,7 +49,6 @@
 
 
 /* MySpaceIM includes */
-#include "session.h"
 #include "message.h"
 
 /* Conditional compilation options */
@@ -94,6 +93,32 @@
 
 /* Authentication algorithm for login2 */
 #define MSIM_AUTH_ALGORITHM	196610
+
+/* Random number in every MsimSession, to ensure it is valid. */
+#define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
+
+/* Everything needed to keep track of a session. */
+typedef struct _MsimSession
+{
+    guint magic;                        /**< MSIM_SESSION_STRUCT_MAGIC */
+    PurpleAccount *account;
+    PurpleConnection *gc;
+    gchar *sesskey;                     /**< Session key text string from server */
+    gchar *userid;                      /**< This user's numeric user ID */
+    gint fd;                            /**< File descriptor to/from server */
+
+    GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
+    GHashTable *user_lookup_cb_data;    /**< Username -> userid lookup callback data */
+    GHashTable *user_lookup_cache;      /**< Cached information on users */
+
+    gchar *rxbuf;                       /**< Receive buffer */
+    guint rxoff;                        /**< Receive buffer offset */
+	guint next_rid;						/**< Next request/response ID */
+} MsimSession;
+
+/* Check if an MsimSession is valid */
+#define MSIM_SESSION_VALID(s) (session != NULL && \
+		session->magic == MSIM_SESSION_STRUCT_MAGIC)
 
 /* Callback function pointer type for when a user's information is received, 
  * initiated from a user lookup. */
