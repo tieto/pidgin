@@ -1,5 +1,5 @@
 #define _GNU_SOURCE
-#if defined(__APPLE__)
+#if defined(__APPLE__) || defined(__unix__)
 #define _XOPEN_SOURCE_EXTENDED
 #endif
 
@@ -980,12 +980,11 @@ refresh_screen(GntBindable *bindable, GList *null)
 	GntWM *wm = GNT_WM(bindable);
 
 	endwin();
-	refresh();
-	curs_set(0);   /* endwin resets the cursor to normal */
 
 	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, NULL);
 	update_screen(wm);
 	draw_taskbar(wm, TRUE);
+	curs_set(0);   /* endwin resets the cursor to normal */
 
 	return FALSE;
 }
