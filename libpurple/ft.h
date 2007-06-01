@@ -237,6 +237,15 @@ PurpleXferType purple_xfer_get_type(const PurpleXfer *xfer);
 PurpleAccount *purple_xfer_get_account(const PurpleXfer *xfer);
 
 /**
+ * Returns the name of the remote user.
+ *
+ * @param xfer The file transfer.
+ *
+ * @return The name of the remote user.
+ */
+const char *purple_xfer_get_remote_user(const PurpleXfer *xfer);
+
+/**
  * Returns the status of the xfer.
  *
  * @param xfer The file transfer.
