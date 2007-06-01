@@ -579,7 +579,7 @@ MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name)
 	GList *i;
 
 	/* Linear search for the given name. O(n) but n is small. */
-	for (i = g_list_first(msg); i != NULL; i = g_list_next(msg))
+	for (i = g_list_first(msg); i != NULL; i = g_list_next(i))
 	{
 		MsimMessageElement *elem;
 
