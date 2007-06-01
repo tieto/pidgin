@@ -1457,8 +1457,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			else
 				purple_request_choice(NULL, NULL,
 						    _("You have dragged an image"),
-						    (ft ? _("You can send this image as a file transfer or "
-							   "embed it into this message, or use it as the buddy icon for this user.") :
+						    (ft ? _("You can send this image as a file transfer, or use it as the buddy icon for this user.") :
 						    _("You can insert this image into this message, or use it as the buddy icon for this user")),
 						    (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
 							"OK", (GCallback)dnd_image_ok_callback,
