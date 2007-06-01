@@ -111,6 +111,7 @@ PIDGIN_LIBS =	\
 		-lintl \
 		-lglib-2.0 \
 		-lgobject-2.0 \
+		-lgthread-2.0 \
 		-lpurple \
 		-lz \
 		-lidletrack \
