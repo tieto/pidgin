@@ -52,6 +52,7 @@ gchar *msim_msg_pack(MsimMessage *msg);
 /* Defined in myspace.h */
 struct _MsimSession;
 
+gboolean msim_send(struct _MsimSession *session, ...);
 gboolean msim_msg_send(struct _MsimSession *session, MsimMessage *msg);
 
 MsimMessage *msim_parse(gchar *raw);
