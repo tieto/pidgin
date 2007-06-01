@@ -631,9 +631,26 @@ guint msim_msg_get_integer(MsimMessage *msg, gchar *name)
 			return GPOINTER_TO_UINT(elem->data);
 
 		case MSIM_TYPE_STRING:
+			/* TODO: find out if we need larger integers */
 			return (guint)atoi((gchar *)elem->data);
 
 		default:
 			return 0;
+	}
+}
+
+/** Return the data of an element of a given name, as a binary GString.
+ *
+ * @return GString * of binary data, or NULL.
+ */
+GString *msim_msg_get_binary(MsimMessage *msg, gchar *name)
+{
+	switch (elem->type)
+	{
+		case MSIM_TYPE_BINARY:
+			return (GString *)elem->data;
+
+		default:
+			return NULL;
 	}
 }
