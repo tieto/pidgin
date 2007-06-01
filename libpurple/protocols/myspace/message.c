@@ -641,16 +641,60 @@ guint msim_msg_get_integer(MsimMessage *msg, gchar *name)
 
 /** Return the data of an element of a given name, as a binary GString.
  *
- * @return GString * of binary data, or NULL.
+ * @param binary_data A pointer to a new pointer, which will be filled in with the binary data. CALLER MUST g_free().
+ *
+ * @param binary_length A pointer to an integer, which will be set to the binary data length.
+ *
+ * @return TRUE if successful, FALSE if not.
  */
-GString *msim_msg_get_binary(MsimMessage *msg, gchar *name)
+gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data, guint *binary_length)
 {
 	switch (elem->type)
 	{
+		case MSIM_TYPE_STRING:
+			/* Currently, incoming messages get stored as MSIM_TYPE_STRING.
+			 * This is fine for integers and strings, since they can easily be
+			 * converted in msim_get_*, as desirable. However, it may not work
+			 * well for binary strings. Consider:
+			 *
+			 * Incoming base64'd elements get tagged as MSIM_TYPE_STRING.
+			 * msim_msg_get_binary() sees MSIM_TYPE_STRING, base64 decodes, returns.
+			 * everything is fine.
+			 * But then, msim_send() is called on the incoming message, which has
+			 * a base64'd MSIM_TYPE_STRING that really is encoded binary. The values
+			 * will be escaped since strings are escaped, and / becomes /2; no good.
+			 *
+			 * TODO: Make incoming messages be tagged with MSIM_TYPE_UNKNOWN, and
+			 * converted appropriately. They can still be "strings", just they won't
+			 * be tagged as MSIM_TYPE_STRING (as MSIM_TYPE_STRING is intended to be used
+			 * by msimprpl code for things like instant messages - stuff that should be
+			 * escaped if needed). DWIM.
+			 */
+			*binary_data = (guchar *)purple_base64_decode((gchar *)elem->data, binary_length);
+			return TRUE;
+
 		case MSIM_TYPE_BINARY:
-			return (GString *)elem->data;
+			{
+				GString *gs;
+
+				gs = (GString *)elem->data;
+
+				/* Duplicate data, so caller can g_free() it. */
+				*binary_data = g_new0(char, gs->len);
+				memcpy(*binary_data, gs->data, gs->len);
+
+				*binary_length = gs->len;
+
+				return TRUE;
+			}
+
+
+			/* Rejected because if it isn't already a GString, have to g_new0 it and
+			 * then caller has to ALSO free the GString! 
+			 *
+			 * return (GString *)elem->data; */
 
 		default:
-			return NULL;
+			return FALSE;
 	}
 }
