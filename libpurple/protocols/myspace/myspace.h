@@ -82,7 +82,7 @@
 /* Constants */
 #define HASH_SIZE           0x14        /**< Size of SHA-1 hash for login */
 #define NONCE_SIZE          0x20        /**< Half of decoded 'nc' field */
-#define MSIM_READ_BUF_SIZE  5 * 1024    /**< Receive buffer size */
+#define MSIM_READ_BUF_SIZE  (5 * 1024)  /**< Receive buffer size */
 #define MSIM_FINAL_STRING   "\\final\\" /**< Message end marker */
 
 /* Messages */
