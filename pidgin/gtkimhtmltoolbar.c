@@ -852,6 +852,64 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *location,
 	update_buttons(toolbar);
 }
 
+
+/* This comes from gtkmenutoolbutton.c from gtk+
+ * Copyright (C) 2003 Ricardo Fernandez Pascual
+ * Copyright (C) 2004 Paolo Borelli
+ */
+menu_position_func (GtkMenu           *menu,
+                    int               *x,
+                    int               *y,
+                    gboolean          *push_in,
+                    GtkWidget         *widget)
+{
+  GtkRequisition req;
+  GtkRequisition menu_req;
+  GtkOrientation orientation;
+  GtkTextDirection direction;
+  GdkRectangle monitor;
+  gint monitor_num;
+  GdkScreen *screen;
+
+  gtk_widget_size_request (GTK_WIDGET (widget), &menu_req);
+
+  direction = gtk_widget_get_direction (widget);
+
+  screen = gtk_widget_get_screen (GTK_WIDGET (menu));
+  monitor_num = gdk_screen_get_monitor_at_window (screen, widget->window);
+  if (monitor_num < 0)
+    monitor_num = 0;
+  gdk_screen_get_monitor_geometry (screen, monitor_num, &monitor);
+
+  gdk_window_get_origin (widget->window, x, y);
+  *x += widget->allocation.x;
+    *y += widget->allocation.y;
+
+      if (direction == GTK_TEXT_DIR_LTR)
+	*x += MAX (widget->allocation.width - menu_req.width, 0);
+      else if (menu_req.width > widget->allocation.width)
+        *x -= menu_req.width - widget->allocation.width;
+
+      if ((*y + widget->allocation.height + menu_req.height) <= monitor.y + monitor.height)
+	*y += widget->allocation.height;
+      else if ((*y - menu_req.height) >= monitor.y)
+	*y -= menu_req.height;
+      else if (monitor.y + monitor.height - (*y + widget->allocation.height) > *y)
+	*y += widget->allocation.height;
+      else
+	*y -= menu_req.height;
+  *push_in = FALSE;
+}
+
+static void pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu) {
+	gtk_widget_show_all(menu);
+	gtk_menu_popup(menu, NULL, NULL, menu_position_func, button, 0, gtk_get_current_event_time());
+}
+
+static void pidgin_menu_deactivate(GtkWidget *menu, GtkToggleButton *button) {
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(button), FALSE);
+}
+
 enum {
 	LAST_SIGNAL
 };
@@ -899,12 +957,91 @@ static void gtk_imhtmltoolbar_class_init (GtkIMHtmlToolbarClass *class)
 	gobject_class->finalize = gtk_imhtmltoolbar_finalize;
 }
 
+static void gtk_imhtmltoolbar_create_old_buttons(GtkIMHtmlToolbar *toolbar)
+{
+	GtkWidget *button;
+	/* Bold */
+	button = pidgin_pixbuf_toolbar_button_from_stock(GTK_STOCK_BOLD);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(do_bold), toolbar);
+	toolbar->bold = button;
+
+
+	/* Italic */
+	button = pidgin_pixbuf_toolbar_button_from_stock(GTK_STOCK_ITALIC);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(do_italic), toolbar);
+	toolbar->italic = button;
+
+	/* Underline */
+	button = pidgin_pixbuf_toolbar_button_from_stock(GTK_STOCK_UNDERLINE);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(do_underline), toolbar);
+	toolbar->underline = button;
+
+	/* Increase font size */
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_TEXT_LARGER);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(do_big), toolbar);
+	toolbar->larger_size = button;
+
+	/* Decrease font size */
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(do_small), toolbar);
+	toolbar->smaller_size = button;
+
+	/* Font Face */
+
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_FONT_FACE);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(toggle_font), toolbar);
+	toolbar->font = button;
+
+	/* Foreground Color */
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_FGCOLOR);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(toggle_fg_color), toolbar);
+	toolbar->fgcolor = button;
+
+	/* Background Color */
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_BGCOLOR);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(toggle_bg_color), toolbar);
+	toolbar->bgcolor = button;
+
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT_LINK);
+	g_signal_connect(G_OBJECT(button), "clicked",
+				 G_CALLBACK(insert_link_cb), toolbar);
+	toolbar->link = button;
+
+	/* Insert IM Image */
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(insert_image_cb), toolbar);
+	toolbar->image = button;
+
+	/* Insert Smiley */
+	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY);
+	g_signal_connect(G_OBJECT(button), "clicked",
+			 G_CALLBACK(insert_smiley_cb), toolbar);
+	toolbar->smiley = button;
+
+
+}
+
 static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 {
 	GtkWidget *hbox = GTK_WIDGET(toolbar);
+	GtkWidget *bbox;
+	GtkWidget *image;
+	GtkWidget *label;
+	GtkWidget *insert_button;
+	GtkWidget *font_button;
+	GtkWidget *font_menu;
+	GtkWidget *insert_menu;
 	GtkWidget *button;
 	GtkWidget *sep;
-	GtkSizeGroup *sg;
 
 	toolbar->imhtml = NULL;
 	toolbar->font_dialog = NULL;
@@ -917,164 +1054,116 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	toolbar->tooltips = gtk_tooltips_new();
 
 	gtk_box_set_spacing(GTK_BOX(toolbar), 3);
-	sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
+
+	gtk_imhtmltoolbar_create_old_buttons(toolbar);
 
 	/* Bold */
-	button = pidgin_pixbuf_toolbar_button_from_stock(GTK_STOCK_BOLD);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Bold"), NULL);
+	font_button = gtk_toggle_button_new();
+	gtk_button_set_relief(GTK_BUTTON(font_button), GTK_RELIEF_NONE);
+	bbox = gtk_hbox_new(FALSE, 3);
+	gtk_container_add(GTK_CONTAINER(font_button), bbox);
+	image = gtk_image_new_from_stock(GTK_STOCK_BOLD, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
+	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
+	label = gtk_label_new_with_mnemonic(_("_Font"));
+	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), font_button, FALSE, FALSE, 0);
+	gtk_widget_show_all(font_button);
 
-	g_signal_connect(G_OBJECT(button), "clicked",
-			 G_CALLBACK(do_bold), toolbar);
+	font_menu = gtk_menu_new();
+	
+	button = gtk_check_menu_item_new_with_mnemonic(_("_Bold"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->bold);
+	gtk_menu_shell_append(font_menu, button);
 
-	toolbar->bold = button;
+	button = gtk_check_menu_item_new_with_mnemonic(_("_Italic"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->italic);
+	gtk_menu_shell_append(font_menu, button);
+	
+	button = gtk_check_menu_item_new_with_mnemonic(_("_Underline"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->underline);
+	gtk_menu_shell_append(font_menu, button);
 
-	/* Italic */
-	button = pidgin_pixbuf_toolbar_button_from_stock(GTK_STOCK_ITALIC);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Italic"), NULL);
+	button = gtk_menu_item_new_with_mnemonic(_("_Larger"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->larger_size);
+	gtk_menu_shell_append(font_menu, button);
 
-	g_signal_connect(G_OBJECT(button), "clicked",
-			 G_CALLBACK(do_italic), toolbar);
+	button = gtk_menu_item_new_with_mnemonic(_("_Normal"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->normal_size);
+	gtk_menu_shell_append(font_menu, button);
 
-	toolbar->italic = button;
+	button = gtk_menu_item_new_with_mnemonic(_("_Smaller"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smaller_size);
+	gtk_menu_shell_append(font_menu, button);
 
-	/* Underline */
-	button = pidgin_pixbuf_toolbar_button_from_stock(GTK_STOCK_UNDERLINE);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Underline"), NULL);
+	button = gtk_menu_item_new_with_mnemonic(_("_Font face"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->font);
+	gtk_menu_shell_append(font_menu, button);
 
-	g_signal_connect(G_OBJECT(button), "clicked",
-			 G_CALLBACK(do_underline), toolbar);
+	button = gtk_menu_item_new_with_mnemonic(_("_Foreground color"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->fgcolor);
+	gtk_menu_shell_append(font_menu, button);
 
-	toolbar->underline = button;
-
-	/* Sep */
-	sep = gtk_vseparator_new();
-	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
-
-	/* Increase font size */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_TEXT_LARGER);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button,
-			     _("Larger font size"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-			 G_CALLBACK(do_big), toolbar);
-
-	toolbar->larger_size = button;
-
-	/* Decrease font size */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button,
-			     _("Smaller font size"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-			 G_CALLBACK(do_small), toolbar);
-
-	toolbar->smaller_size = button;
+	button = gtk_menu_item_new_with_mnemonic(_("_Background color"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->bgcolor);
+	gtk_menu_shell_append(font_menu, button);
+	
+	g_signal_connect(G_OBJECT(font_button), "clicked", G_CALLBACK(pidgin_menu_clicked), font_menu);
+	g_signal_connect(G_OBJECT(font_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), font_button);	
 
 	/* Sep */
 	sep = gtk_vseparator_new();
 	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
-
-	/* Font Face */
-
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_FONT_FACE);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button,
-			_("Font face"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-			 G_CALLBACK(toggle_font), toolbar);
-
-	toolbar->font = button;
-
-	/* Foreground Color */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_FGCOLOR);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button,
-			     _("Foreground font color"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-			 G_CALLBACK(toggle_fg_color), toolbar);
-
-	toolbar->fgcolor = button;
-
-	/* Background Color */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_BGCOLOR);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button,
-			     _("Background color"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-			 G_CALLBACK(toggle_bg_color), toolbar);
-
-	toolbar->bgcolor = button;
-
-	/* Sep */
-	sep = gtk_vseparator_new();
-	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
+	gtk_widget_show_all(sep);
 
 	/* Reset Formatting */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_CLEAR);
-	gtk_size_group_add_widget(sg, button);
+	button = gtk_toggle_button_new();
+	gtk_button_set_relief(GTK_BUTTON(button), GTK_RELIEF_NONE);
+	bbox = gtk_hbox_new(FALSE, 3);
+	gtk_container_add(GTK_CONTAINER(button), bbox);
+	image = gtk_image_new_from_stock(PIDGIN_STOCK_CLEAR, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
+	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
+	label = gtk_label_new_with_mnemonic(_("_Reset font"));
+	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button,
-			     _("Reset formatting"), NULL);
-
+	gtk_widget_show_all(button);
 	g_signal_connect(G_OBJECT(button), "clicked",
 			 G_CALLBACK(clear_formatting_cb), toolbar);
-
 	toolbar->clear = button;
 
 	/* Sep */
 	sep = gtk_vseparator_new();
 	gtk_box_pack_start(GTK_BOX(hbox), sep, FALSE, FALSE, 0);
+	gtk_widget_show_all(sep);
 
 	/* Insert Link */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT_LINK);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Insert link"), NULL);
-	g_signal_connect(G_OBJECT(button), "clicked",
-				 G_CALLBACK(insert_link_cb), toolbar);
+	insert_button = gtk_toggle_button_new();
+	gtk_button_set_relief(GTK_BUTTON(insert_button), GTK_RELIEF_NONE);
+	bbox = gtk_hbox_new(FALSE, 3);
+	gtk_container_add(GTK_CONTAINER(insert_button), bbox);
+	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
+	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
+	label = gtk_label_new_with_mnemonic(_("_Insert"));
+	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), insert_button, FALSE, FALSE, 0);
+	gtk_widget_show_all(insert_button);
 
-	toolbar->link = button;
+	insert_menu = gtk_menu_new();
+	
+	button = gtk_menu_item_new_with_mnemonic(_("_Smiley"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
+	gtk_menu_shell_append(insert_menu, button);
+	
+	button = gtk_menu_item_new_with_mnemonic(_("_Image"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->image);
+	gtk_menu_shell_append(insert_menu, button);
 
-	/* Insert IM Image */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Insert image"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-			 G_CALLBACK(insert_image_cb), toolbar);
-
-	toolbar->image = button;
-
-	/* Insert Smiley */
-	button = pidgin_pixbuf_toolbar_button_from_stock(PIDGIN_STOCK_TOOLBAR_SMILEY);
-	gtk_size_group_add_widget(sg, button);
-	gtk_box_pack_start(GTK_BOX(hbox), button, FALSE, FALSE, 0);
-	gtk_tooltips_set_tip(toolbar->tooltips, button, _("Insert smiley"), NULL);
-
-	g_signal_connect(G_OBJECT(button), "clicked",
-			 G_CALLBACK(insert_smiley_cb), toolbar);
-
-	toolbar->smiley = button;
-
+	button = gtk_menu_item_new_with_mnemonic(_("_Link"));
+	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
+	gtk_menu_shell_append(insert_menu, button);
+	
+	g_signal_connect(G_OBJECT(insert_button), "clicked", G_CALLBACK(pidgin_menu_clicked), insert_menu);
+	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);	
 	toolbar->sml = NULL;
-	gtk_widget_show_all(hbox);
 }
 
 GtkWidget *gtk_imhtmltoolbar_new()

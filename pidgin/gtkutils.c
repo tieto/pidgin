@@ -94,6 +94,7 @@ static GtkIMHtmlFuncs gtkimhtml_cbs = {
 void
 pidgin_setup_imhtml(GtkWidget *imhtml)
 {
+	PangoFontDescription *desc = NULL;
 	g_return_if_fail(imhtml != NULL);
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
 
@@ -104,10 +105,12 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 
 	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
 
-	/* Use the GNOME "document" font, if applicable */
-	if (purple_running_gnome()) {
+	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
+		const char *font = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
+		desc = pango_font_description_from_string(font);
+	} else if (purple_running_gnome()) {
+		/* Use the GNOME "document" font, if applicable */
 		char *path, *font;
-		PangoFontDescription *desc = NULL;
 
 		if ((path = g_find_program_in_path("gconftool-2"))) {
 			g_free(path);
@@ -118,11 +121,11 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 		}
 		desc = pango_font_description_from_string(font);
 		g_free(font);
-
-		if (desc) {
-			gtk_widget_modify_font(imhtml, desc);
-			pango_font_description_free(desc);
-		}
+	}
+	
+	if (desc) {
+		gtk_widget_modify_font(imhtml, desc);
+		pango_font_description_free(desc);
 	}
 }
 
@@ -1454,8 +1457,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			else
 				purple_request_choice(NULL, NULL,
 						    _("You have dragged an image"),
-						    (ft ? _("You can send this image as a file transfer or "
-							   "embed it into this message, or use it as the buddy icon for this user.") :
+						    (ft ? _("You can send this image as a file transfer, or use it as the buddy icon for this user.") :
 						    _("You can insert this image into this message, or use it as the buddy icon for this user")),
 						    (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
 							"OK", (GCallback)dnd_image_ok_callback,

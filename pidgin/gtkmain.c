@@ -473,6 +473,9 @@ int main(int argc, char *argv[])
 #else
 	debug_enabled = FALSE;
 #endif
+
+	/* This is the first Glib function call. Make sure to initialize GThread bfeore then */
+	g_thread_init(NULL);
 	
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
