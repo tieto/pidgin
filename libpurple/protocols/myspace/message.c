@@ -570,9 +570,11 @@ GHashTable *msim_parse_body(const gchar *body_str)
  *
  * @return MsimMessageElement * matching name, or NULL.
  *
- * Note: useful fields of MsimMessageElement are 'data' and 'type'.
+ * Note: useful fields of MsimMessageElement are 'data' and 'type', which
+ * you can access directly. But it is often more convenient to use
+ * another msim_msg_get_* that converts the data to what type you want.
  */
-MsimMessageElement *msim_msg_get_element(MsimMessage *msg, gchar *name)
+MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name)
 {
 	GList *i;
 
@@ -600,7 +602,7 @@ gchar *msim_msg_get_string(MsimMessage *msg, gchar *name)
 {
 	MsimMessageElement *elem;
 
-	elem = msim_msg_get_element(msg, name);
+	elem = msim_msg_get(msg, name);
 	if (!elem)
 		return NULL;
 
@@ -621,7 +623,7 @@ guint msim_msg_get_integer(MsimMessage *msg, gchar *name)
 {
 	MsimMessageElement *elem;
 
-	elem = msim_msg_get_element(msg, name);
+	elem = msim_msg_get(msg, name);
 
 	switch (elem->type)
 	{
