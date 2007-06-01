@@ -108,8 +108,12 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 	type = purple_conversation_get_type(conv);
 
-	/* Always linkfy the text for display */
-	displayed = purple_markup_linkify(message);
+	/* Always linkfy the text for display, unless we're
+	 * explicitly asked to do otheriwse*/
+	if(msgflags & PURPLE_MESSAGE_NO_LINKIFY)
+		displayed = g_strdup(message);
+	else
+		displayed = purple_markup_linkify(message);
 
 	if ((conv->features & PURPLE_CONNECTION_HTML) &&
 		!(msgflags & PURPLE_MESSAGE_RAW))

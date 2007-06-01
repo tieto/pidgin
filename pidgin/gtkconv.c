@@ -5062,7 +5062,11 @@ pidgin_conv_write_conv(PurpleConversation *conv, const char *name, const char *a
 	g_return_if_fail(gc != NULL);
 
 	/* Make sure URLs are clickable */
-	displaying = purple_markup_linkify(message);
+	if(flags & PURPLE_MESSAGE_NO_LINKIFY)
+		displaying = g_strdup(message);
+	else
+		displaying = purple_markup_linkify(message);
+
 	plugin_return = GPOINTER_TO_INT(purple_signal_emit_return_1(
 							pidgin_conversations_get_handle(), (type == PURPLE_CONV_TYPE_IM ?
 							"displaying-im-msg" : "displaying-chat-msg"),
