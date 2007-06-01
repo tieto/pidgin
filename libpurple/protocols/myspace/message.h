@@ -57,7 +57,7 @@ gboolean msim_msg_send(struct _MsimSession *session, MsimMessage *msg);
 MsimMessage *msim_parse(gchar *raw);
 GHashTable *msim_parse_body(const gchar *body_str);
 
-MsimMessageElement *msim_msg_get_element(MsimMessage *msg, gchar *name);
+MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name);
 gchar *msim_msg_get_string(MsimMessage *msg, gchar *name);
 guint msim_msg_get_integer(MsimMessage *msg, gchar *name);
 gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data, guint *binary_length);
