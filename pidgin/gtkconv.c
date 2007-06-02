@@ -608,7 +608,7 @@ static void chat_do_info(PidginConversation *gtkconv, const char *who)
 				purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)), who);
 		}
 		else
-			prpl_info->get_info(gc, who);
+			pidgin_retrieve_user_info(gc, who);
 	}
 }
 
