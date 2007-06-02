@@ -1960,7 +1960,7 @@ purple_conv_chat_cb_find(PurpleConvChat *chat, const char *name)
 
 	for (l = purple_conv_chat_get_users(chat); l; l = l->next) {
 		cb = l->data;
-		if (!purple_utf8_strcasecmp(cb->name, name))
+		if (!g_utf8_collate(cb->name, name))
 			return cb;
 	}
 
