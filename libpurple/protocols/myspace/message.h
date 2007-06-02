@@ -36,6 +36,7 @@ typedef struct _MsimMessageElement
 typedef gchar MsimMessageType;
 
 /* Protocol field types */
+#define MSIM_TYPE_RAW			'-'
 #define MSIM_TYPE_INTEGER		'i'
 #define MSIM_TYPE_STRING		's'
 #define MSIM_TYPE_BINARY		'b'

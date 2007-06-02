@@ -25,7 +25,7 @@
 static void msim_msg_free_element(gpointer data, gpointer user_data);
 static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, gchar *sep, gchar *begin, gchar *end);
-static gchar *msim_msg_element_as_string(MsimMessageElement *elem);
+static gchar *msim_msg_element_pack(MsimMessageElement *elem);
 
 MsimMessage *msim_msg_new(void)
 {
@@ -47,6 +47,7 @@ static void msim_msg_free_element(gpointer data, gpointer user_data)
 			/* Integer value stored in gpointer - no need to free(). */
 			break;
 
+		case MSIM_TYPE_RAW:			    /* Fall through */
 		case MSIM_TYPE_STRING:
 			/* Always free strings - caller should have g_strdup()'d if
 			 * string was static or temporary and not to be freed. */
@@ -197,6 +198,8 @@ gboolean msim_send(MsimSession *session, ...)
  *
  * * MSIM_TYPE_STRING: gchar *. The data WILL BE FREED - use g_strdup() if needed.
  *
+ * * MSIM_TYPE_RAW: gchar *. The data WILL BE FREED - use g_strdup() if needed.
+ *
  * * MSIM_TYPE_BINARY: g_string_new_len(data, length). The data AND GString will be freed.
  *
  * * MSIM_TYPE_DICTIONARY: TODO
@@ -272,6 +275,10 @@ static void msim_msg_debug_string_element(gpointer data, gpointer user_data)
 			string = g_strdup_printf("%s(integer): %d", elem->name, GPOINTER_TO_UINT(elem->data));
 			break;
 
+		case MSIM_TYPE_RAW:
+			string = g_strdup_printf("%s(raw): %s", elem->name, (gchar *)elem->data);
+			break;
+
 		case MSIM_TYPE_STRING:
 			string = g_strdup_printf("%s(string): %s", elem->name, (gchar *)elem->data);
 			break;
@@ -321,16 +328,24 @@ gchar *msim_msg_debug_string(MsimMessage *msg)
 	return msim_msg_pack_using(msg, msim_msg_debug_string_element, "\n", "<MsimMessage: \n", ">");
 }
 
-/** Return a message element data as a new string, converting from other types (integer, etc.) if necessary.
+/** Return a message element data as a new string for a raw protocol message, converting from other types (integer, etc.) if necessary.
  *
  * @return gchar * The data as a string, or NULL. Caller must g_free().
+ *
+ * Returns a string suitable for inclusion in a raw protocol message, not necessarily
+ * optimal for human consumption. For example, strings are escaped. Use 
+ * msim_msg_get_string() if you want a string, which in some cases is same as this.
  */
-static gchar *msim_msg_element_as_string(MsimMessageElement *elem)
+static gchar *msim_msg_element_pack(MsimMessageElement *elem)
 {
 	switch (elem->type)
 	{
 		case MSIM_TYPE_INTEGER:
 			return g_strdup_printf("%d", GPOINTER_TO_UINT(elem->data));
+
+		case MSIM_TYPE_RAW:
+			/* Not un-escaped - this is a raw element, already escaped if necessary. */
+			return (gchar *)elem->data;
 
 		case MSIM_TYPE_STRING:
 			/* Strings get escaped. msim_escape() creates a new string. */
@@ -383,12 +398,13 @@ static void msim_msg_pack_element(gpointer data, gpointer user_data)
 	elem = (MsimMessageElement *)data;
 	items = user_data;
 
-	data_string = msim_msg_element_as_string(elem);
+	data_string = msim_msg_element_pack(elem);
 
 	switch (elem->type)
 	{
-		/* These types are represented by key name/value pairs. */
+		/* These types are represented by key name/value pairs (converted above). */
 		case MSIM_TYPE_INTEGER:
+		case MSIM_TYPE_RAW:
 		case MSIM_TYPE_STRING:
 		case MSIM_TYPE_BINARY:
 		case MSIM_TYPE_DICTIONARY:
@@ -477,13 +493,12 @@ MsimMessage *msim_parse(gchar *raw)
         if (i % 2)
         {
 			/* Odd-numbered ordinal is a value. */
+			value = token;
 		
-			/* Note: returns a new string. */	
-            value = msim_unescape(token);
-
-			/* Always append strings, since protocol has no incoming
-			 * type information for each field. */
-			msg = msim_msg_append(msg, g_strdup(key), MSIM_TYPE_STRING, value);
+			/* Incoming protocol messages get tagged as MSIM_TYPE_RAW, which
+			 * represents an untyped piece of data. msim_msg_get_* will
+			 * convert to appropriate types for caller, and handle unescaping if needed. */
+			msg = msim_msg_append(msg, g_strdup(key), MSIM_TYPE_RAW, g_strdup(value));
 #ifdef MSIM_DEBUG_PARSE
 			purple_debug_info("msim", "insert string: |%s|=|%s|\n", key, value);
 #endif
@@ -596,7 +611,11 @@ MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name)
  *
  * @param name Name of element.
  *
- * @return gchar * The message string. Caller must g_free().
+ * @return gchar * The data as a string. Caller must g_free().
+ *
+ * Note that msim_msg_element_pack() is similar, but returns a string
+ * for inclusion into a raw protocol string (escaped and everything).
+ * This function unescapes the string for you, if needed.
  */
 gchar *msim_msg_get_string(MsimMessage *msg, gchar *name)
 {
@@ -606,7 +625,25 @@ gchar *msim_msg_get_string(MsimMessage *msg, gchar *name)
 	if (!elem)
 		return NULL;
 
-	return msim_msg_element_as_string(elem);
+	switch (elem->type)
+	{
+		case MSIM_TYPE_INTEGER:
+			return g_strdup_printf("%d", GPOINTER_TO_UINT(elem->data));
+
+		case MSIM_TYPE_RAW:
+			/* Raw element from incoming message - if its a string, it'll
+			 * be escaped. */
+			return msim_unescape((gchar *)elem->data);
+
+		case MSIM_TYPE_STRING:
+			/* Already unescaped. */
+			return (gchar *)elem->data;
+
+		default:
+			purple_debug_info("msim", "msim_msg_get_string: type %d unknown, name %s\n",
+					elem->type, name);
+			return NULL;
+	}
 }
 
 /** Return the data of an element of a given name, as an integer.
@@ -630,6 +667,7 @@ guint msim_msg_get_integer(MsimMessage *msg, gchar *name)
 		case MSIM_TYPE_INTEGER:
 			return GPOINTER_TO_UINT(elem->data);
 
+		case MSIM_TYPE_RAW:
 		case MSIM_TYPE_STRING:
 			/* TODO: find out if we need larger integers */
 			return (guint)atoi((gchar *)elem->data);
@@ -655,24 +693,26 @@ gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data,
 
 	switch (elem->type)
 	{
-		case MSIM_TYPE_STRING:
-			/* Currently, incoming messages get stored as MSIM_TYPE_STRING.
-			 * This is fine for integers and strings, since they can easily be
-			 * converted in msim_get_*, as desirable. However, it may not work
+		case MSIM_TYPE_RAW:
+			 /* Incoming messages are tagged with MSIM_TYPE_RAW, and
+			 * converted appropriately. They can still be "strings", just they won't
+			 * be tagged as MSIM_TYPE_STRING (as MSIM_TYPE_STRING is intended to be used
+			 * by msimprpl code for things like instant messages - stuff that should be
+			 * escaped if needed). DWIM.
+			 */
+	
+			/* Previously, incoming messages were stored as MSIM_TYPE_STRING.
+			 * This was fine for integers and strings, since they can easily be
+			 * converted in msim_get_*, as desirable. However, it does not work
 			 * well for binary strings. Consider:
 			 *
-			 * Incoming base64'd elements get tagged as MSIM_TYPE_STRING.
+			 * If incoming base64'd elements were tagged as MSIM_TYPE_STRING.
 			 * msim_msg_get_binary() sees MSIM_TYPE_STRING, base64 decodes, returns.
 			 * everything is fine.
 			 * But then, msim_send() is called on the incoming message, which has
 			 * a base64'd MSIM_TYPE_STRING that really is encoded binary. The values
 			 * will be escaped since strings are escaped, and / becomes /2; no good.
 			 *
-			 * TODO: Make incoming messages be tagged with MSIM_TYPE_UNKNOWN, and
-			 * converted appropriately. They can still be "strings", just they won't
-			 * be tagged as MSIM_TYPE_STRING (as MSIM_TYPE_STRING is intended to be used
-			 * by msimprpl code for things like instant messages - stuff that should be
-			 * escaped if needed). DWIM.
 			 */
 			*binary_data = (gchar *)purple_base64_decode((const gchar *)elem->data, binary_length);
 			return TRUE;
@@ -699,6 +739,8 @@ gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data,
 			 * return (GString *)elem->data; */
 
 		default:
+			purple_debug_info("msim", "msim_msg_get_binary: unhandled type %d for key %s\n",
+					elem->type, name);
 			return FALSE;
 	}
 }
