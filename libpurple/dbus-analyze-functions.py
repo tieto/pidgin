@@ -365,7 +365,8 @@ class ServerBinding (Binding):
             self.cdecls.append("\tconst char *%s;" % name)
         else:
             self.cdecls.append("\tchar *%s;" % name)
-        self.ccode.append("\t%s = null_to_empty(%s);" % (name, self.call))
+        self.ccode.append("\tif ((%s = %s) == NULL)" % (name, self.call))
+        self.ccode.append("\t\t%s = \"\";" % (name))
         self.cparamsout.append(("STRING", name))
         self.addouttype("s", name)
         if not const:
