@@ -1706,7 +1706,9 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 			g_free(escaped2);
 		}
 
-		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write(conv, NULL, tmp,
+				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
+				time(NULL));
 	}
 }
 
