@@ -13,6 +13,10 @@ version 2.1.0 (??/??/????):
 	* purple_timeout_add_seconds()
 	    Callers should prefer this to purple_timeout_add() for timers
 	    longer than 1 second away.  Be aware of the rounding, though.
+	* PURPLE_MESSAGE_NO_LINKIFY message flag to indicate that the message
+	  should not be auto-linkified
+	* OPT_PROTO_SLASH_COMMANDS_NATIVE protocol option to indicate that
+	  slash commands are "native" to the protocol
 
 version 2.0.0 (5/3/2007):
 	Please note all functions, defines, and data structures have been
