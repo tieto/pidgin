@@ -1,4 +1,4 @@
-EXTRA_DIST = Makefile.mingw null/
+EXTRA_DIST = Makefile.mingw
 
 DIST_SUBDIRS = bonjour gg irc jabber msn novell null oscar qq sametime silc toc simple yahoo zephyr
 
