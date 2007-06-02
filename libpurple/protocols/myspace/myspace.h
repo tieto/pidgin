@@ -163,6 +163,7 @@ int msim_login_challenge(MsimSession *session, MsimMessage *msg);
 gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE],
 		        gchar *email, gchar *password, guint *response_len);
 
+
 int msim_send_im(PurpleConnection *gc, const char *who,
 		const char *message, PurpleMessageFlags flags);
 int msim_send_im_by_userid(MsimSession *session, const gchar *userid, 
@@ -172,6 +173,9 @@ void msim_send_im_by_userid_cb(MsimSession *session,
 void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, 
 		gpointer data);
 int msim_incoming_im(MsimSession *session, MsimMessage *msg);
+int msim_incoming_action(MsimSession *session, MsimMessage *msg);
+
+unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state);
 
 int msim_process_reply(MsimSession *session, MsimMessage *msg);
 int msim_process(PurpleConnection *gc, MsimMessage *msg);

@@ -736,7 +736,7 @@ void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer d
 }
 
 /**
- * Handle an incoming message.
+ * Handle an incoming instant message.
  *
  * @param session The session
  * @param msg Message from the server, containing 'f' (userid from) and 'msg'.
@@ -764,6 +764,54 @@ int msim_incoming_im(MsimSession *session, MsimMessage *msg)
     return 0;
 }
 
+/**
+ * Handle an incoming action message.
+ *
+ * @param session
+ * @param msg
+ *
+ * @return 0
+ *
+ * INCOMPLETE
+ */
+int msim_incoming_action(MsimSession *session, MsimMessage *msg)
+{
+	/* TODO: process */
+	purple_debug_info("msim", "msim_incoming_action: action <%s> from <%d>\n",
+			msim_msg_get_string(msg, "msg"), msim_msg_get_integer(msg, "f"));
+	return 0;
+}
+
+/** 
+ * Handle when our user starts or stops typing to another user.
+ *
+ * @param gc
+ * @param name The buddy name to which our user is typing to
+ * @param state PURPLE_TYPING, PURPLE_TYPED, PURPLE_NOT_TYPING
+ *
+ * NOT CURRENTLY USED OR COMPLETE
+ */
+unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state)
+{
+	char *typing_str;
+
+	switch (state)
+	{	
+		case PURPLE_TYPING: 
+			typing_str = "%typing%"; 
+			break;
+
+		case PURPLE_TYPED:
+		case PURPLE_NOT_TYPING:
+		default:
+			typing_str = "%stoptyping%";
+			break;
+	}
+
+	purple_debug_info("msim", "msim_send_typing(%s): %d\n", name, state);
+	//msim_send_action(name, typing_str);
+	return 0;
+}
 
 /**
  * Process a message. 
@@ -822,6 +870,8 @@ int msim_process(PurpleConnection *gc, MsimMessage *msg)
                 return msim_status(session, msg);
             case MSIM_BM_INSTANT:
                 return msim_incoming_im(session, msg);
+			case MSIM_BM_ACTION:
+				return msim_incoming_action(session, msg);
             default:
                 /* Not really an IM, but show it for informational 
                  * purposes during development. */
@@ -851,7 +901,7 @@ int msim_process(PurpleConnection *gc, MsimMessage *msg)
 }
 
 /**
- * Process a message reply from the server.
+ * Process a persistance message reply from the server.
  *
  * @param session 
  * @param msg Message reply from server.
@@ -1552,7 +1602,7 @@ PurplePluginProtocolInfo prpl_info =
     msim_close,        /* close */
     msim_send_im,      /* send_im */
     NULL,              /* set_info */
-    NULL,              /* send_typing */
+    msim_send_typing,  /* send_typing */
     NULL,              /* get_info */
     NULL,              /* set_away */
     NULL,              /* set_idle */
