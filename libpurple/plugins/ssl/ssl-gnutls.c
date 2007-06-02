@@ -293,6 +293,48 @@ ssl_gnutls_write(PurpleSslConnection *gsc, const void *data, size_t len)
 	return s;
 }
 
+/* Forward declarations are fun!
+   TODO: This is a stupid place for this */
+static Certificate *
+x509_import_from_datum(const gnutls_datum_t dt);
+
+static GList *
+ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
+{
+	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
+
+	/* List of Certificate instances to return */
+	GList * peer_certs = NULL;
+
+	/* List of raw certificates as given by GnuTLS */
+	const gnutls_datum_t *cert_list;
+	unsigned int cert_list_size = 0;
+
+	unsigned int i;
+	
+	/* This should never, ever happen. */
+	g_return_val_if_fail( gnutls_certificate_type_get (gnutls_data->session) == GNUTLS_CRT_X509, NULL);
+
+	/* Get the certificate list from GnuTLS */
+	/* TODO: I am _pretty sure_ this doesn't block or do other exciting things */
+	cert_list = gnutls_certificate_get_peers(gnutls_data->session,
+						 &cert_list_size);
+
+	/* Convert each certificate to a Certificate and append it to the list */
+	for (i = 0; i < cert_list_size; i++) {
+		Certificate * newcrt = x509_import_from_datum(cert_list[i]);
+		/* Append is somewhat inefficient on linked lists, but is easy
+		   to read. If someone complains, I'll change it.
+		   TODO: Is anyone complaining? (Maybe elb?) */
+		peer_certs = g_list_append(peer_certs, newcrt);
+	}
+
+	/* cert_list shouldn't need free()-ing */
+	/* TODO: double-check this */
+
+	return peer_certs;
+}
+
 /************************************************************************/
 /* X.509 functionality                                                  */
 /************************************************************************/
@@ -303,6 +345,36 @@ const gchar * SCHEME_NAME = "x509";
 static CertificateScheme x509_gnutls = {
 	"x509"   /* Scheme name */
 };
+
+/** Transforms a gnutls_datum_t containing an X.509 certificate into a Certificate instance under the x509_gnutls scheme
+ *
+ * @param dt  Datum to transform
+ *
+ * @return A newly allocated Certificate structure of the x509_gnutls scheme
+ */
+static Certificate *
+x509_import_from_datum(const gnutls_datum_t dt)
+{
+	/* Internal certificate data structure */
+	gnutls_x509_crt_t *certdat;
+	/* New certificate to return */
+	Certificate * crt;
+
+	/* Allocate and prepare the internal certificate data */
+	certdat = g_new(gnutls_x509_crt_t, 1);
+	gnutls_x509_crt_init(certdat);
+
+	/* Perform the actual certificate parse */
+	/* Yes, certdat SHOULD be dereferenced */
+	gnutls_x509_crt_import(*certdat, &dt, GNUTLS_X509_FMT_PEM);
+	
+	/* Allocate the certificate and load it with data */
+	crt = g_new(Certificate, 1);
+	crt->scheme = &x509_gnutls;
+	crt->data = certdat;
+
+	return crt;
+}
 
 /** Imports a PEM-formatted X.509 certificate from the specified file.
  * @param filename Filename to import from. Format is PEM
@@ -315,10 +387,7 @@ x509_import_from_file(const gchar * filename)
 	Certificate *crt;  /* Certificate being constructed */
 	gchar *buf;        /* Used to load the raw file data */
 	gsize buf_sz;      /* Size of the above */
-	gnutls_datum_t dt; /* Struct to pass to GnuTLS */
-
-	/* Internal certificate data structure */
-	gnutls_x509_crt_t *certdat;
+	gnutls_datum_t dt; /* Struct to pass down to GnuTLS */
 
 	purple_debug_info("gnutls",
 			  "Attempting to load X.509 certificate from %s\n",
@@ -334,23 +403,13 @@ x509_import_from_file(const gchar * filename)
 			    NULL      /* No error checking for now */
 		);
 	
-	/* Allocate and prepare the internal certificate data */
-	certdat = g_new(gnutls_x509_crt_t, 1);
-	gnutls_x509_crt_init(certdat);
-	
 	/* Load the datum struct */
 	dt.data = (unsigned char *) buf;
 	dt.size = buf_sz;
 
-	/* Perform the actual certificate parse */
-	/* Yes, certdat SHOULD be dereferenced */
-	gnutls_x509_crt_import(*certdat, &dt, GNUTLS_X509_FMT_PEM);
+	/* Perform the conversion */
+	crt = x509_import_from_datum(dt);
 	
-	/* Allocate the certificate and load it with data */
-	crt = g_new(Certificate, 1);
-	crt->scheme = &x509_gnutls;
-	crt->data = certdat;
-
 	/* Cleanup */
 	g_free(buf);
 
