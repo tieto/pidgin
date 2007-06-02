@@ -710,7 +710,7 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	data->results = results;
 
 	/* Create the window */
-	pidgin_create_window(title ? title :_("Search Results"), PIDGIN_HIG_BORDER, NULL, TRUE);
+	window = pidgin_create_window(title ? title :_("Search Results"), PIDGIN_HIG_BORDER, NULL, TRUE);
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
 
 	g_signal_connect_swapped(G_OBJECT(window), "delete_event",
