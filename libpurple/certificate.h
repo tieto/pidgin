@@ -42,7 +42,8 @@ typedef struct _CertificateScheme CertificateScheme;
  *  A CertificateScheme must implement all of the fields in the structure,
  *  and register it using TODO:purple_register_certscheme()
  *
- *  There may be only ONE 
+ *  There may be only ONE CertificateScheme provided for each certificate
+ *  type, as specified by the "name" field.
  */
 struct _CertificateScheme
 {
