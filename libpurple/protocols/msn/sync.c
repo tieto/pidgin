@@ -195,6 +195,8 @@ bpr_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 
 	user = sync->last_user;
 
+	g_return_if_fail(user != NULL);
+
 	type     = cmd->params[0];
 	value    = cmd->params[1];
 

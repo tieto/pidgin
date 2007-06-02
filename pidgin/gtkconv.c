@@ -235,6 +235,10 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, PidginConversation *gt
 		return FALSE;
 	}
 
+	if (gdk_window_get_state(gtkconv->win->window->window) & GDK_WINDOW_STATE_MAXIMIZED) {
+		return FALSE;
+	}
+
 	/* I find that I resize the window when it has a bunch of conversations in it, mostly so that the
 	 * tab bar will fit, but then I don't want new windows taking up the entire screen.  I check to see
 	 * if there is only one conversation in the window.  This way we'll be setting new windows to the
@@ -6950,6 +6954,9 @@ pidgin_conversations_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/tabs", TRUE);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/tab_side", GTK_POS_TOP);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/scrollback_lines", 4000);
+
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font", TRUE);
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/custom_font", "");
 
 	/* Conversations -> Chat */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/chat");
