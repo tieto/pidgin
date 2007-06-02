@@ -87,7 +87,7 @@ void pidgin_themes_remove_smiley_theme(const char *file)
 
 	if ((last_slash = g_strrstr(theme_dir, G_DIR_SEPARATOR_S)) != NULL) {
 		GSList *iter = NULL;
-		struct smiley_theme *theme = NULL;
+		struct smiley_theme *theme = NULL, *new_theme = NULL;
 
 		*last_slash = 0;
 
@@ -101,8 +101,13 @@ void pidgin_themes_remove_smiley_theme(const char *file)
 				break ;
 		}
 		if (iter) {
-			if (theme == current_smiley_theme)
-				current_smiley_theme = ((struct smiley_theme *)(NULL == iter->next ? (smiley_themes == iter ? NULL : smiley_themes->data) : iter->next->data));
+			if (theme == current_smiley_theme) {
+				new_theme = ((struct smiley_theme *)(NULL == iter->next ? (smiley_themes == iter ? NULL : smiley_themes->data) : iter->next->data));
+				if (new_theme)
+					purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", new_theme->name);
+				else
+					current_smiley_theme = NULL;
+			}
 			smiley_themes = g_slist_delete_link(smiley_themes, iter);
 
 			/* Destroy theme structure */
