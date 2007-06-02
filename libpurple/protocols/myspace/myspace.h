@@ -1,6 +1,4 @@
-/* MySpaceIM Protocol Plugin, headr file
- *
- * \author Jeff Connelly
+/* MySpaceIM Protocol Plugin, header file
  *
  * Copyright (C) 2007, Jeff Connelly <jeff2@homing.pidgin.im>
  *

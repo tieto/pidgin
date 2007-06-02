@@ -34,6 +34,7 @@
 #define PURPLE_PLUGIN
 
 #include "message.h"
+#include "persist.h"
 #include "myspace.h"
 
 /** 
@@ -886,7 +887,8 @@ int msim_process_reply(MsimSession *session, MsimMessage *msg)
         username = g_hash_table_lookup(body, "UserName");
         if (username)
         {
-			/* TODO: permanently associated with blist item, if in buddy in blist */
+			/* TODO: permanently associated with blist item, if in buddy in blist,
+			 * See purple_blist_node_set_int(). */
             g_hash_table_insert(session->user_lookup_cache, g_strdup(username), body);
         } else {
             purple_debug_info("msim", 
@@ -1409,22 +1411,21 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
 
     /* Send request */
 
-    cmd = 1;
+    cmd = MSIM_CMD_GET;
 
     if (msim_is_userid(user))
     {
-        /* TODO: document cmd,dsn,lid */
         field_name = "UserID";
-        dsn = 4;
-        lid = 3;
+        dsn = MG_MYSPACE_INFO_BY_ID_DSN; 
+        lid = MG_MYSPACE_INFO_BY_ID_LID; 
     } else if (msim_is_email(user)) {
         field_name = "Email";
-        dsn = 5;
-        lid = 7;
+        dsn = MG_MYSPACE_INFO_BY_STRING_DSN;
+        lid = MG_MYSPACE_INFO_BY_STRING_LID;
     } else {
         field_name = "UserName";
-        dsn = 5;
-        lid = 7;
+        dsn = MG_MYSPACE_INFO_BY_STRING_DSN;
+        lid = MG_MYSPACE_INFO_BY_STRING_LID;
     }
 
 
