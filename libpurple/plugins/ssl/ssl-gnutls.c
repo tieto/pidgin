@@ -46,6 +46,17 @@ static gnutls_certificate_client_credentials xcred;
 static void
 ssl_gnutls_init_gnutls(void)
 {
+	/* Configure GnuTLS to use glib memory management */
+	/* I expect that this isn't really necessary, but it may prevent
+	   some bugs */
+	gnutls_global_set_mem_functions(
+		g_malloc0, /* malloc */
+		g_malloc0, /* secure malloc */
+		NULL,      /* mem_is_secure */
+		g_realloc, /* realloc */
+		g_free     /* free */
+		);
+	
 	gnutls_global_init();
 
 	gnutls_certificate_allocate_credentials(&xcred);
