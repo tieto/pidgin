@@ -104,6 +104,7 @@ static void add_contact(PurpleContact *contact, FinchBlist *ggblist);
 static void add_group(PurpleGroup *group, FinchBlist *ggblist);
 static void add_chat(PurpleChat *chat, FinchBlist *ggblist);
 static void add_node(PurpleBlistNode *node, FinchBlist *ggblist);
+static void node_update(PurpleBuddyList *list, PurpleBlistNode *node);
 static void draw_tooltip(FinchBlist *ggblist);
 static gboolean remove_typing_cb(gpointer null);
 static void remove_peripherals(FinchBlist *ggblist);
@@ -189,6 +190,8 @@ node_remove(PurpleBuddyList *list, PurpleBlistNode *node)
 		if ((!purple_prefs_get_bool(PREF_ROOT "/showoffline") && !is_contact_online(contact)) ||
 				contact->currentsize < 1)
 			node_remove(list, (PurpleBlistNode*)contact);
+		else
+			node_update(list, (PurpleBlistNode*)contact);
 	} else if (!PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		PurpleGroup *group = (PurpleGroup*)node->parent;
 		if ((!purple_prefs_get_bool(PREF_ROOT "/showoffline") && !is_group_online(group)) ||
