@@ -108,8 +108,12 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 	type = purple_conversation_get_type(conv);
 
-	/* Always linkfy the text for display */
-	displayed = purple_markup_linkify(message);
+	/* Always linkfy the text for display, unless we're
+	 * explicitly asked to do otheriwse*/
+	if(msgflags & PURPLE_MESSAGE_NO_LINKIFY)
+		displayed = g_strdup(message);
+	else
+		displayed = purple_markup_linkify(message);
 
 	if ((conv->features & PURPLE_CONNECTION_HTML) &&
 		!(msgflags & PURPLE_MESSAGE_RAW))
@@ -1010,7 +1014,7 @@ purple_conv_im_start_typing_timeout(PurpleConvIm *im, int timeout)
 	conv = purple_conv_im_get_conversation(im);
 	name = purple_conversation_get_name(conv);
 
-	im->typing_timeout = purple_timeout_add(timeout * 1000, reset_typing_cb, conv);
+	im->typing_timeout = purple_timeout_add_seconds(timeout, reset_typing_cb, conv);
 }
 
 void
@@ -1576,7 +1580,9 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 			}
 			g_free(escaped);
 
-			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write(conv, NULL, tmp,
+					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
+					time(NULL));
 			g_free(tmp);
 		}
 
@@ -1700,7 +1706,9 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 			g_free(escaped2);
 		}
 
-		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write(conv, NULL, tmp,
+				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
+				time(NULL));
 	}
 }
 
@@ -1777,7 +1785,9 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 			}
 			g_free(escaped);
 
-			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write(conv, NULL, tmp,
+					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
+					time(NULL));
 			g_free(tmp);
 		}
 

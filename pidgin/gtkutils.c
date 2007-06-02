@@ -130,6 +130,22 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 }
 
 GtkWidget *
+pidgin_create_window(const char *title, guint border_width, const char *role, gboolean resizable)
+{
+	GtkWindow *wnd = NULL;
+
+	wnd = GTK_WINDOW(gtk_window_new(GTK_WINDOW_TOPLEVEL));
+	if (title)
+		gtk_window_set_title(wnd, title);
+	gtk_container_set_border_width(GTK_CONTAINER(wnd), border_width);
+	if (role)
+		gtk_window_set_role(wnd, role);
+	gtk_window_set_resizable(wnd, resizable);
+
+	return GTK_WIDGET(wnd);
+}
+
+GtkWidget *
 pidgin_create_imhtml(gboolean editable, GtkWidget **imhtml_ret, GtkWidget **toolbar_ret, GtkWidget **sw_ret)
 {
 	GtkWidget *frame;

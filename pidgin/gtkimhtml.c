@@ -31,6 +31,8 @@
 #include "util.h"
 #include "gtkimhtml.h"
 #include "gtksourceiter.h"
+#include "gtksourceundomanager.h"
+#include "gtksourceview-marshal.h"
 #include <gtk/gtk.h>
 #include <glib/gerror.h>
 #include <gdk/gdkkeysyms.h>
@@ -136,6 +138,8 @@ enum {
 	CLEAR_FORMAT,
 	UPDATE_FORMAT,
 	MESSAGE_SEND,
+	UNDO,
+	REDO,
 	LAST_SIGNAL
 };
 static guint signals [LAST_SIGNAL] = { 0 };
@@ -1126,6 +1130,23 @@ static gboolean gtk_imhtml_button_press_event(GtkIMHtml *imhtml, GdkEventButton 
 	return FALSE;
 }
 
+static void
+gtk_imhtml_undo(GtkIMHtml *imhtml) {
+	g_return_if_fail(GTK_IS_IMHTML(imhtml));
+	g_return_if_fail(imhtml->editable);
+	
+	gtk_source_undo_manager_undo(imhtml->undo_manager);
+}
+
+static void
+gtk_imhtml_redo(GtkIMHtml *imhtml) {
+	g_return_if_fail(GTK_IS_IMHTML(imhtml));
+	g_return_if_fail(imhtml->editable);
+	
+	gtk_source_undo_manager_redo(imhtml->undo_manager);
+
+}
+
 static gboolean imhtml_message_send(GtkIMHtml *imhtml)
 {
 	return FALSE;
@@ -1209,6 +1230,7 @@ gtk_imhtml_finalize (GObject *object)
 	g_queue_free(imhtml->animations);
 	g_free(imhtml->protocol_name);
 	g_free(imhtml->search_string);
+	g_object_unref(imhtml->undo_manager);
 	G_OBJECT_CLASS(parent_class)->finalize (object);
 }
 
@@ -1272,10 +1294,32 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 					     NULL,
 					     0, g_cclosure_marshal_VOID__VOID,
 					     G_TYPE_NONE, 0);
+        signals [UNDO] = g_signal_new ("undo",
+                        		      G_TYPE_FROM_CLASS (klass),
+		                              G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                		              G_STRUCT_OFFSET (GtkIMHtmlClass, undo),
+		                              NULL,
+		                              NULL,
+                		              gtksourceview_marshal_VOID__VOID,
+		                              G_TYPE_NONE,
+		                              0);
+        signals [REDO] = g_signal_new ("redo",
+                        		      G_TYPE_FROM_CLASS (klass),
+		                              G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+		                              G_STRUCT_OFFSET (GtkIMHtmlClass, redo),
+		                              NULL,
+		                              NULL,
+		                              gtksourceview_marshal_VOID__VOID,
+		                              G_TYPE_NONE,
+		                              0);
+
+
 
 	klass->toggle_format = imhtml_toggle_format;
 	klass->message_send = imhtml_message_send;
 	klass->clear_format = imhtml_clear_formatting;
+	klass->undo = gtk_imhtml_undo;
+	klass->redo = gtk_imhtml_redo;
 
 	gobject_class->finalize = gtk_imhtml_finalize;
 	widget_class->drag_motion = gtk_text_view_drag_motion;
@@ -1300,12 +1344,17 @@ static void gtk_imhtml_class_init (GtkIMHtmlClass *klass)
 	gtk_binding_entry_add_signal (binding_set, GDK_r, GDK_CONTROL_MASK, "format_function_clear", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_KP_Enter, 0, "message_send", 0);
 	gtk_binding_entry_add_signal (binding_set, GDK_Return, 0, "message_send", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK, "undo", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_z, GDK_CONTROL_MASK | GDK_SHIFT_MASK, "redo", 0);
+        gtk_binding_entry_add_signal (binding_set, GDK_F14, 0, "undo", 0);
+
 }
 
 static void gtk_imhtml_init (GtkIMHtml *imhtml)
 {
 	GtkTextIter iter;
 	imhtml->text_buffer = gtk_text_buffer_new(NULL);
+	imhtml->undo_manager = gtk_source_undo_manager_new(imhtml->text_buffer);
 	gtk_text_buffer_get_end_iter (imhtml->text_buffer, &iter);
 	gtk_text_view_set_buffer(GTK_TEXT_VIEW(imhtml), imhtml->text_buffer);
 	gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(imhtml), GTK_WRAP_WORD_CHAR);

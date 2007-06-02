@@ -442,10 +442,7 @@ gevo_add_buddy_dialog_show(PurpleAccount *account, const char *username,
 	if (username != NULL)
 		dialog->username = g_strdup(username);
 
-	dialog->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(dialog->win), "add_buddy");
-	gtk_window_set_title(GTK_WINDOW(dialog->win), _("Add Buddy"));
-	gtk_container_set_border_width(GTK_CONTAINER(dialog->win), 12);
+	dialog->win = pidgin_create_window(_("Add Buddy"), PIDGIN_HIG_BORDER, "add_buddy", TRUE);
 	gtk_widget_set_size_request(dialog->win, -1, 400);
 
 	g_signal_connect(G_OBJECT(dialog->win), "delete_event",

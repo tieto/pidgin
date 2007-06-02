@@ -4208,7 +4208,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD }};
 	if (gtkblist && gtkblist->window) {
-		purple_blist_set_visible(purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/list_visible"));
+		purple_blist_set_visible(TRUE);
 		return;
 	}
 
@@ -4217,9 +4217,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 	gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);
 
-	gtkblist->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(gtkblist->window), "buddy_list");
-	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
+	gtkblist->window = pidgin_create_window(_("Buddy List"), 0, "buddy_list", TRUE);
 	g_signal_connect(G_OBJECT(gtkblist->window), "focus-in-event",
 			 G_CALLBACK(blist_focus_cb), gtkblist);
 	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;

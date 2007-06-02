@@ -733,6 +733,15 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
+	if (!purple_core_ensure_single_instance()) {
+		purple_core_quit();
+#ifdef HAVE_SIGNAL_H
+		g_free(segfault_message);
+#endif
+		return 0;
+	}
+		
+
 	/* TODO: Move blist loading into purple_blist_init() */
 	purple_set_blist(purple_blist_new());
 	purple_blist_load();
