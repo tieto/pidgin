@@ -35,9 +35,9 @@
 extern "C" {
 #endif
 
-gint purple_dbus_pointer_to_id(gconstpointer node);
+gint purple_dbus_pointer_to_id(gpointer node);
 gpointer purple_dbus_id_to_pointer(gint id, PurpleDBusType *type);
-gint  purple_dbus_pointer_to_id_error(gconstpointer ptr, DBusError *error);
+gint  purple_dbus_pointer_to_id_error(gpointer ptr, DBusError *error);
 gpointer purple_dbus_id_to_pointer_error(gint id, PurpleDBusType *type,
 				       const char *typename, DBusError *error);
 

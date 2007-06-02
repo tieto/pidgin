@@ -1275,7 +1275,6 @@ void
 purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_time)
 {
 	gboolean old_idle;
-	time_t current_time;
 
 	g_return_if_fail(presence != NULL);
 
@@ -1286,14 +1285,14 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 	presence->idle      = idle;
 	presence->idle_time = (idle ? idle_time : 0);
 
-	current_time = time(NULL);
-
 	if (purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_BUDDY)
 	{
+		time_t current_time = time(NULL);
+
 		update_buddy_idle(purple_presence_get_buddy(presence), presence, current_time,
-		                  old_idle, idle);
+		old_idle, idle);
 	}
-	else if (purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_ACCOUNT)
+	else if(purple_presence_get_context(presence) == PURPLE_PRESENCE_CONTEXT_ACCOUNT)
 	{
 		PurpleAccount *account;
 		PurpleConnection *gc;
@@ -1313,10 +1312,9 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 					msg = g_strdup_printf(_("+++ %s became idle"), purple_account_get_username(account));
 				else
 					msg = g_strdup_printf(_("+++ %s became unidle"), purple_account_get_username(account));
-
 				purple_log_write(log, PURPLE_MESSAGE_SYSTEM,
-				                 purple_account_get_username(account),
-				                 (idle ? idle_time : current_time), msg);
+							   purple_account_get_username(account),
+							   idle_time, msg);
 				g_free(msg);
 			}
 		}
@@ -1328,7 +1326,7 @@ purple_presence_set_idle(PurplePresence *presence, gboolean idle, time_t idle_ti
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
 
 		if (prpl_info && prpl_info->set_idle)
-			prpl_info->set_idle(gc, (idle ? (current_time - idle_time) : 0));
+			prpl_info->set_idle(gc, (idle ? (time(NULL) - idle_time) : 0));
 	}
 }
 
