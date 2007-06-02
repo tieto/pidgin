@@ -50,6 +50,7 @@ void gnt_init_keys()
 	INSERT_KEY("pagedown", GNT_KEY_PGDOWN);
 	INSERT_KEY("insert",   GNT_KEY_INS);
 	INSERT_KEY("delete",   GNT_KEY_DEL);
+	INSERT_KEY("back_tab", GNT_KEY_BACK_TAB);
 
 	INSERT_KEY("left",   GNT_KEY_LEFT);
 	INSERT_KEY("right",  GNT_KEY_RIGHT);
