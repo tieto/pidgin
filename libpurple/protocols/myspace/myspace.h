@@ -92,6 +92,18 @@
 /* Authentication algorithm for login2 */
 #define MSIM_AUTH_ALGORITHM	196610
 
+/* Indexes into status string (0|1|2|3|..., but 0 always empty) */
+#define MSIM_STATUS_ORDINAL_EMPTY		0
+#define MSIM_STATUS_ORDINAL_UNKNOWNs	1
+#define MSIM_STATUS_ORDINAL_ONLINE		2
+#define MSIM_STATUS_ORDINAL_UNKNOWNss	3
+#define MSIM_STATUS_ORDINAL_HEADLINE	4
+#define MSIM_STATUS_ORDINAL_UNKNOWNls	5
+#define MSIM_STATUS_ORDINAL_UNKNOWN		6
+#define MSIM_STATUS_ORDINAL_UNKNOWN1	7
+#define MSIM_STATUS_ORDINAL_UNKNOWNp	8
+#define MSIM_STATUS_ORDINAL_UNKNOWN2	9
+
 /* Random number in every MsimSession, to ensure it is valid. */
 #define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
 

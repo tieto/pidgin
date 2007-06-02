@@ -980,15 +980,14 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
     PurpleBuddyList *blist;
     PurpleBuddy *buddy;
-    PurplePresence *presence;
     GHashTable *body;
 	gchar *body_str;
     //PurpleStatus *status;
     gchar **status_array;
     GList *list;
-    gchar *status_text, *status_code;
+    gchar *status_headline;
     gchar *status_str;
-    gint i;
+    gint i, status_code, purple_status_code;
     gchar *username;
 
     g_return_if_fail(MSIM_SESSION_VALID(session));
@@ -1015,18 +1014,28 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 			"msim_status_cb: updating status for <%s> to <%s>\n", 
 			username, status_str);
 
-    /* TODO: generic functions to split into a GList */
+    /* TODO: generic functions to split into a GList, part of MsimMessage */
     status_array = g_strsplit(status_str, "|", 0);
     for (list = NULL, i = 0;
             status_array[i];
             i++)
     {
+		/* Note: this adds the 0th ordinal too, which might not be a value
+		 * at all (the 0 in the 0|1|2|3... status fields, but 0 always appears blank).
+		 */
         list = g_list_append(list, status_array[i]);
     }
 
-    /* Example fields: |s|0|ss|Offline */
-    status_code = g_list_nth_data(list, 2);
-    status_text = g_list_nth_data(list, 4);
+    /* Example fields: 
+	 *  |s|0|ss|Offline 
+	 *  |s|1|ss|:-)|ls||ip|0|p|0 
+	 *
+	 * TODO: write list support in MsimMessage, and use it here.
+	 */
+
+    status_code = atoi(g_list_nth_data(list, MSIM_STATUS_ORDINAL_ONLINE));
+	purple_debug_info("msim", "msim_status_cb: %s's status code = %d\n", username, status_code);
+    status_headline = g_list_nth_data(list, MSIM_STATUS_ORDINAL_HEADLINE);
 
     blist = purple_get_blist();
 
@@ -1045,11 +1054,21 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
         purple_debug_info("msim", "msim_status: found buddy %s\n", username);
     }
 
-    /* For now, always set status to online. 
-     * TODO: make status reflect reality
-     * TODO: show headline */
-    presence = purple_presence_new_for_buddy(buddy);
-    /* purple_presence_set_status_active(presence, PURPLE_STATUS_AVAILABLE, TRUE); */
+    /* TODO: show headline */
+  
+    /* Set user status */	
+    switch (status_code)
+	{
+		case 1: purple_status_code = PURPLE_STATUS_AVAILABLE;
+				break;
+		case 0: purple_status_code = PURPLE_STATUS_OFFLINE;	
+				break;
+		default:
+				purple_debug_info("msim", "msim_status_cb for %s, unknown status code %d\n",
+						username, status_code);
+				purple_status_code = PURPLE_STATUS_AVAILABLE;
+	}
+	purple_prpl_got_user_status(session->account, username, purple_primitive_get_id_from_type(purple_status_code), NULL);
 
     g_strfreev(status_array);
     g_list_free(list);
@@ -1538,9 +1557,9 @@ PurplePluginProtocolInfo prpl_info =
     NULL,              /* set_away */
     NULL,              /* set_idle */
     NULL,              /* change_passwd */
-    NULL,              /* add_buddy */
+    NULL,              /* add_buddy TODO */
     NULL,              /* add_buddies */
-    NULL,              /* remove_buddy */
+    NULL,              /* remove_buddy TODO */
     NULL,              /* remove_buddies */
     NULL,              /* add_permit */
     NULL,              /* add_deny */
@@ -1593,15 +1612,15 @@ PurplePluginInfo info =
     PURPLE_PLUGIN_MAGIC,                                
     PURPLE_MAJOR_VERSION,
     PURPLE_MINOR_VERSION,
-    PURPLE_PLUGIN_PROTOCOL,                             /**< type           */
-    NULL,                                             /**< ui_requirement */
-    0,                                                /**< flags          */
-    NULL,                                             /**< dependencies   */
-    PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+    PURPLE_PLUGIN_PROTOCOL,                            /**< type           */
+    NULL,                                              /**< ui_requirement */
+    0,                                                 /**< flags          */
+    NULL,                                              /**< dependencies   */
+    PURPLE_PRIORITY_DEFAULT,                           /**< priority       */
 
     "prpl-myspace",                                   /**< id             */
     "MySpaceIM",                                      /**< name           */
-    "0.6"                                             /**< version        */
+    "0.6",                                            /**< version        */
                                                       /**  summary        */
     "MySpaceIM Protocol Plugin",
                                                       /**  description    */
