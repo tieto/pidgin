@@ -786,13 +786,9 @@ int msim_process(PurpleConnection *gc, MsimMessage *msg)
 	{
 		gchar *debug_msg;
 
-		purple_debug_info("msim", "-------- message -------------\n");
-
 		debug_msg = msim_msg_debug_string(msg);
-		purple_debug_info("msim", debug_msg);
+		purple_debug_info("msim", "%s\n", debug_msg);
 		g_free(debug_msg);
-
-		purple_debug_info("msim", "------------------------------\n");
 	}
 #endif
 

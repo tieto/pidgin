@@ -325,7 +325,7 @@ gchar *msim_msg_debug_string(MsimMessage *msg)
 		return g_strdup("<MsimMessage: empty>");
 	}
 
-	return msim_msg_pack_using(msg, msim_msg_debug_string_element, "\n", "<MsimMessage: \n", ">");
+	return msim_msg_pack_using(msg, msim_msg_debug_string_element, "\n", "<MsimMessage: \n", "\n/MsimMessage>");
 }
 
 /** Return a message element data as a new string for a raw protocol message, converting from other types (integer, etc.) if necessary.
@@ -493,6 +493,7 @@ MsimMessage *msim_parse(gchar *raw)
         if (i % 2)
         {
 			/* Odd-numbered ordinal is a value. */
+
 			value = token;
 		
 			/* Incoming protocol messages get tagged as MSIM_TYPE_RAW, which
