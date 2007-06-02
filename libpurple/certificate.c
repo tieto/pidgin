@@ -33,12 +33,5 @@
 /** List holding pointers to all registered certificate schemes */
 GList *cert_schemes = NULL;
 
-struct _Certificate
-{
-	/** Scheme this certificate is under */
-	CertificateScheme * scheme;
-	/** Opaque pointer to internal data */
-	gpointer data;
-};
 
 

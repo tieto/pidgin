@@ -21,6 +21,7 @@
  */
 #include "internal.h"
 #include "debug.h"
+#include "certificate.h"
 #include "plugin.h"
 #include "sslconn.h"
 #include "version.h"
@@ -49,17 +50,22 @@ ssl_gnutls_init_gnutls(void)
 	/* Configure GnuTLS to use glib memory management */
 	/* I expect that this isn't really necessary, but it may prevent
 	   some bugs */
+	/* TODO: It may be necessary to wrap this allocators for GnuTLS.
+	   If there are strange bugs, perhaps look here (yes, I am a
+	   hypocrite) */
 	gnutls_global_set_mem_functions(
-		g_malloc0, /* malloc */
-		g_malloc0, /* secure malloc */
+		(gnutls_alloc_function)   g_malloc0, /* malloc */
+		(gnutls_alloc_function)   g_malloc0, /* secure malloc */
 		NULL,      /* mem_is_secure */
-		g_realloc, /* realloc */
-		g_free     /* free */
+		(gnutls_realloc_function) g_realloc, /* realloc */
+		(gnutls_free_function)    g_free     /* free */
 		);
 	
 	gnutls_global_init();
 
 	gnutls_certificate_allocate_credentials(&xcred);
+
+	/* TODO: I can likely remove this */
 	gnutls_certificate_set_x509_trust_file(xcred, "ca.pem",
 		GNUTLS_X509_FMT_PEM);
 }
@@ -285,6 +291,107 @@ ssl_gnutls_write(PurpleSslConnection *gsc, const void *data, size_t len)
 	}
 
 	return s;
+}
+
+/************************************************************************/
+/* X.509 functionality                                                  */
+/************************************************************************/
+const gchar * SCHEME_NAME = "x509";
+
+/* X.509 certificate operations provided by this plugin */
+/* TODO: Flesh this out! */
+static CertificateScheme x509_gnutls = {
+	"x509"   /* Scheme name */
+};
+
+/** Imports a PEM-formatted X.509 certificate from the specified file.
+ * @param filename Filename to import from. Format is PEM
+ *
+ * @return A newly allocated Certificate structure of the x509_gnutls scheme
+ */
+static Certificate *
+x509_import_from_file(const gchar * filename)
+{
+	Certificate *crt;  /* Certificate being constructed */
+	gchar *buf;        /* Used to load the raw file data */
+	gsize buf_sz;      /* Size of the above */
+	gnutls_datum_t dt; /* Struct to pass to GnuTLS */
+
+	/* Internal certificate data structure */
+	gnutls_x509_crt_t *certdat;
+
+	purple_debug_info("gnutls",
+			  "Attempting to load X.509 certificate from %s\n",
+			  filename);
+	
+	/* Next, we'll simply yank the entire contents of the file
+	   into memory */
+	/* TODO: Should I worry about very large files here? */
+	/* TODO: Error checking */
+	g_file_get_contents(filename,
+			    &buf,
+			    &buf_sz,
+			    NULL      /* No error checking for now */
+		);
+	
+	/* Allocate and prepare the internal certificate data */
+	certdat = g_new(gnutls_x509_crt_t, 1);
+	gnutls_x509_crt_init(certdat);
+	
+	/* Load the datum struct */
+	dt.data = (unsigned char *) buf;
+	dt.size = buf_sz;
+
+	/* Perform the actual certificate parse */
+	/* Yes, certdat SHOULD be dereferenced */
+	gnutls_x509_crt_import(*certdat, &dt, GNUTLS_X509_FMT_PEM);
+	
+	/* Allocate the certificate and load it with data */
+	crt = g_new(Certificate, 1);
+	crt->scheme = &x509_gnutls;
+	crt->data = certdat;
+
+	/* Cleanup */
+	g_free(buf);
+
+	return crt;
+}
+
+/** Frees a Certificate
+ *
+ *  Destroys a Certificate's internal data structures and frees the pointer
+ *  given.
+ *  @param crt  Certificate instance to be destroyed. It WILL NOT be destroyed
+ *              if it is not of the correct CertificateScheme. Can be NULL
+ *
+ */
+static void
+x509_destroy_certificate(Certificate * crt)
+{
+	/* TODO: Issue a warning here? */
+	if (NULL == crt) return;
+
+	/* Check that the scheme is x509_gnutls */
+	if ( crt->scheme != &x509_gnutls ) {
+		purple_debug_error("gnutls",
+				   "destroy_certificate attempted on certificate of wrong scheme (scheme was %s, expected %s)\n",
+				   crt->scheme->name,
+				   SCHEME_NAME);
+		return;
+	}
+
+	/* TODO: Different error checking? */
+	g_return_if_fail(crt->data != NULL);
+	g_return_if_fail(crt->scheme != NULL);
+
+	/* Destroy the GnuTLS-specific data */
+	gnutls_x509_crt_deinit( *( (gnutls_x509_crt_t *) crt->data ) );
+	g_free(crt->data);
+
+	/* TODO: Reference counting here? */
+
+	/* Kill the structure itself */
+	g_free(crt);
 }
 
 static PurpleSslOps ssl_ops =

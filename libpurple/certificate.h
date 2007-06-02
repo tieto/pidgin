@@ -35,7 +35,21 @@
 extern "C" {
 #endif /* __cplusplus */
 
+typedef struct _Certificate Certificate;
 typedef struct _CertificateScheme CertificateScheme;
+
+/** A certificate instance
+ *
+ *  An opaque data structure representing a single certificate under some
+ *  CertificateScheme
+ */
+struct _Certificate
+{
+	/** Scheme this certificate is under */
+	CertificateScheme * scheme;
+	/** Opaque pointer to internal data */
+	gpointer data;
+};
 
 /** A certificate type
  *
