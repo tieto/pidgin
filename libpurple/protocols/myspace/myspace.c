@@ -1601,7 +1601,7 @@ PurplePluginInfo info =
 
     "prpl-myspace",                                   /**< id             */
     "MySpaceIM",                                      /**< name           */
-    "0.4",                                            /**< version        */
+    "0.6"                                             /**< version        */
                                                       /**  summary        */
     "MySpaceIM Protocol Plugin",
                                                       /**  description    */
