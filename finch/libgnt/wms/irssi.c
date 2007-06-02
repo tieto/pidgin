@@ -35,18 +35,16 @@ void gntwm_init(GntWM **wm);
 
 static void (*org_new_window)(GntWM *wm, GntWidget *win);
 
-static GntWidget *
-find_widget(GntWM *wm, const char *wname)
+/* This is changed whenever the buddylist is opened/closed or resized. */
+static int buddylistwidth;
+
+static gboolean
+is_budddylist(GntWidget *win)
 {
-	const GList *iter = wm->list;
-	for (; iter; iter = iter->next) {
-		GntWidget *widget = iter->data;
-		const char *name = gnt_widget_get_name(widget);
-		if (name && strcmp(name, wname) == 0) {
-			return widget;
-		}
-	}
-	return NULL;
+	const char *name = gnt_widget_get_name(win);
+	if (name && strcmp(name, "buddylist") == 0)
+		return TRUE;
+	return FALSE;
 }
 
 static void
@@ -64,8 +62,6 @@ static void
 irssi_new_window(GntWM *wm, GntWidget *win)
 {
 	const char *name;
-	int bw;
-	GntWidget *blist;
 
 	name = gnt_widget_get_name(win);
 	if (!name || strcmp(name, "conversation-window")) {
@@ -79,23 +75,41 @@ irssi_new_window(GntWM *wm, GntWidget *win)
 				mvwin(win->window, y, x);
 			} else {
 				remove_border_set_position_size(wm, win, 0, 0, -1, getmaxy(stdscr) - 1);
+				gnt_widget_get_size(win, &buddylistwidth, NULL);
+				mvwvline(stdscr, 0, buddylistwidth, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL), getmaxy(stdscr) - 1);
+				buddylistwidth++;
 			}
 		}
 		org_new_window(wm, win);
 		return;
 	}
 
-	blist = find_widget(wm, "buddylist");
-	if (blist) {
-		gnt_widget_get_size(blist, &bw, NULL);
-		bw++;
-	} else {
-		bw = 0;
-	}
-
 	/* The window we have here is a conversation window. */
-	remove_border_set_position_size(wm, win, bw, 0, getmaxx(stdscr) - bw, getmaxy(stdscr) - 1);
+	remove_border_set_position_size(wm, win, buddylistwidth, 0,
+			getmaxx(stdscr) - buddylistwidth, getmaxy(stdscr) - 1);
 	org_new_window(wm, win);
+}
+
+static void
+irssi_window_resized(GntWM *wm, GntNode *node)
+{
+	if (!is_budddylist(node->me))
+		return;
+
+	if (buddylistwidth)
+		mvwvline(stdscr, 0, buddylistwidth - 1,
+				' ' | COLOR_PAIR(GNT_COLOR_NORMAL), getmaxy(stdscr) - 1);
+	gnt_widget_get_size(node->me, &buddylistwidth, NULL);
+	mvwvline(stdscr, 0, buddylistwidth, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL), getmaxy(stdscr) - 1);
+	buddylistwidth++;
+}
+
+static gboolean
+irssi_close_window(GntWM *wm, GntWidget *win)
+{
+	if (is_budddylist(win))
+		buddylistwidth = 0;
+	return FALSE;
 }
 
 static void
@@ -106,6 +120,8 @@ irssi_class_init(IrssiClass *klass)
 	org_new_window = pclass->new_window;
 
 	pclass->new_window = irssi_new_window;
+	pclass->window_resized = irssi_window_resized;
+	pclass->close_window = irssi_close_window;
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 	GNTDEBUG;
@@ -113,6 +129,7 @@ irssi_class_init(IrssiClass *klass)
 
 void gntwm_init(GntWM **wm)
 {
+	buddylistwidth = 0;
 	*wm = g_object_new(TYPE_IRSSI, NULL);
 }
 
