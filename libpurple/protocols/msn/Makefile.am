@@ -1,4 +1,6 @@
 EXTRA_DIST = \
+		directconn.c \
+		directconn.h \
 		Makefile.mingw
 
 pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
@@ -8,10 +10,10 @@ MSNSOURCES = \
 	cmdproc.h \
 	command.c \
 	command.h \
+	contact.c\
+	contact.h\
 	dialog.c \
 	dialog.h \
-	directconn.c \
-	directconn.h \
 	error.c \
 	error.h \
 	group.c \
@@ -30,6 +32,8 @@ MSNSOURCES = \
 	notification.h \
 	object.c \
 	object.h \
+	oim.c\
+	oim.h\
 	page.c \
 	page.h \
 	servconn.c \
@@ -46,6 +50,8 @@ MSNSOURCES = \
 	slpmsg.h \
 	slpsession.c \
 	slpsession.h \
+	soap.c\
+	soap.h\
 	state.c \
 	state.h \
 	switchboard.c \
@@ -60,8 +66,8 @@ MSNSOURCES = \
 	user.h \
 	userlist.c \
 	userlist.h \
-	msn-utils.c \
-	msn-utils.h
+	msnutils.c \
+	msnutils.h
 
 AM_CFLAGS = $(st)
 
