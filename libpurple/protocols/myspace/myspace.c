@@ -988,10 +988,10 @@ gboolean msim_error(MsimSession *session, MsimMessage *msg)
 	/* Destroy session if fatal. */
     if (msim_msg_get(msg, "fatal"))
     {
-        purple_debug_info("msim", "fatal error, destroy session\n");
+        purple_debug_info("msim", "fatal error, closing\n");
         purple_connection_error(session->gc, full_errmsg);
         close(session->fd);
-        msim_session_destroy(session);
+		/* Do not call msim_session_destroy(session) - called in msim_close(). */
     }
 
     return TRUE;
@@ -1167,7 +1167,7 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
     return TRUE;
 }
 
-/** Allow user to add a buddy to their buddy list. TODO: make work. Should receive statuses from added buddy. */
+/** Add a buddy to user's buddy list. TODO: make work. Should receive statuses from added buddy. */
 void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	MsimSession *session;
@@ -1179,12 +1179,13 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 	if (!msim_send(session,
 			"addbuddy", MSIM_TYPE_BOOLEAN, TRUE,
 			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
-			/* Currently only allow numeric ID. TODO: Lookup screen name/email to uid. */
+			/* Currently only allow numeric ID. TODO: Lookup username/email to uid. */
 			"newprofileid", MSIM_TYPE_STRING, g_strdup(buddy->name),
 			"reason", MSIM_TYPE_STRING, g_strdup(""),
 			NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("'addbuddy' command failed."));
+		return;
 	}
 
 	/* TODO: update blocklist */
@@ -1204,10 +1205,48 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 				"Visibility=1\034"
 				"NickName=\034"
 				"NameSelect=0",
-				buddy->name, group->name)))
+				buddy->name, group->name),
+			NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("persist command failed"));
+		return;
 	}
+}
+
+/** Remove a buddy from the user's buddy list. */
+void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+{
+	MsimSession *session;
+
+	session = (MsimSession *)gc->proto_data;
+
+	if (!msim_send(session,
+				"delbuddy", MSIM_TYPE_BOOLEAN, TRUE,
+				"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+				/* TODO: Lookup username/email to uid, currently on userid. */
+				"delprofileid", MSIM_TYPE_STRING, g_strdup(buddy->name),
+				NULL))
+	{
+		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("'delbuddy' command failed"));
+		return;
+	}
+
+	if (!msim_send(session,
+			"persist", MSIM_TYPE_INTEGER, 1,
+			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_DELETE,
+			"dsn", MSIM_TYPE_INTEGER, MD_DELETE_BUDDY_DSN,
+			"lid", MSIM_TYPE_INTEGER, MD_DELETE_BUDDY_LID,
+			"uid", MSIM_TYPE_INTEGER, 42, /* TODO: put YOUR userid here */
+			"rid", MSIM_TYPE_INTEGER, session->next_rid++,
+			"body", MSIM_TYPE_STRING, g_strdup_printf("ContactID=%s", buddy->name),
+			NULL))
+	{
+		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("persist command failed"));	
+		return;
+	}
+
+	/* TODO: update blocklist */
 }
 
 
@@ -1648,9 +1687,9 @@ PurplePluginProtocolInfo prpl_info =
     NULL,              /* set_away */
     NULL,              /* set_idle */
     NULL,              /* change_passwd */
-    msim_add_buddy,    /* add_buddy TODO */
+    msim_add_buddy,    /* add_buddy */
     NULL,              /* add_buddies */
-    NULL,              /* remove_buddy TODO */
+    msim_remove_buddy, /* remove_buddy */
     NULL,              /* remove_buddies */
     NULL,              /* add_permit */
     NULL,              /* add_deny */
