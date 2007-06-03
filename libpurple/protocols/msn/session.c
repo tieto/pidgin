@@ -316,6 +316,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 							 "temporarily."));
 			break;
 		case MSN_ERROR_AUTH:
+			gc->wants_to_die = TRUE;
 			msg = g_strdup_printf(_("Unable to authenticate: %s"),
 								  (info == NULL ) ?
 								  _("Unknown error") : info);

@@ -432,7 +432,7 @@ static int nullprpl_send_im(PurpleConnection *gc, const char *who,
                     from_username, who, message);
 
   /* is the sender blocked by the recipient's privacy settings? */
-  if (!purple_privacy_check(to_acct, gc->account->username)) {
+  if (to_acct && !purple_privacy_check(to_acct, gc->account->username)) {
     char *msg = g_strdup_printf(
       _("Your message was blocked by %s's privacy settings."), who);
     purple_debug_info("nullprpl",

@@ -1423,6 +1423,22 @@ static char *msn_info_date_reformat(const char *field, size_t len)
 	if (found) \
 		sect_info = TRUE;
 
+#define MSN_GOT_INFO_GET_FIELD_NO_SEARCH(a, b) \
+	found = purple_markup_extract_info_field(stripped, stripped_len, user_info, \
+			"\n" a ":", 0, "\n", 0, "Undisclosed", b, 0, NULL, msn_info_strip_search_link); \
+	if (found) \
+		sect_info = TRUE;
+
+static char *
+msn_info_strip_search_link(const char *field, size_t len)
+{
+	const char *c;
+	if ((c = strstr(field, " (http://spaces.live.com/default.aspx?page=searchresults")) == NULL &&
+		(c = strstr(field, " (http://spaces.msn.com/default.aspx?page=searchresults")) == NULL)
+		return g_strndup(field, len);
+	return g_strndup(field, c - field);
+}
+
 static void
 msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		const gchar *url_text, size_t len, const gchar *error_message)
@@ -1538,10 +1554,10 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	
 	/* General */
 	MSN_GOT_INFO_GET_FIELD("Nickname", _("Nickname"));
-	MSN_GOT_INFO_GET_FIELD("Age", _("Age"));
-	MSN_GOT_INFO_GET_FIELD("Gender", _("Gender"));
-	MSN_GOT_INFO_GET_FIELD("Occupation", _("Occupation"));
-	MSN_GOT_INFO_GET_FIELD("Location", _("Location"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Age", _("Age"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Gender", _("Gender"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Occupation", _("Occupation"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Location", _("Location"));
 
 	/* Extract their Interests and put it in */
 	found = purple_markup_extract_info_field(stripped, stripped_len, user_info,
@@ -1802,7 +1818,10 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		/* This doesn't work with the new spaces profiles - Stu 3/2/06
 		char *p = strstr(url_buffer, "Unknown Member </TITLE>");
 		 * This might not work for long either ... */
+		/* Nope, it failed some time before 5/2/07 :(
 		char *p = strstr(url_buffer, "form id=\"SpacesSearch\" name=\"SpacesSearch\"");
+		 * Let's see how long this one holds out for ... */
+		char *p = strstr(url_buffer, "<form id=\"profile_form\" name=\"profile_form\" action=\"http&#58;&#47;&#47;spaces.live.com&#47;profile.aspx&#63;cid&#61;0\"");
 		PurpleBuddy *b = purple_find_buddy
 				(purple_connection_get_account(info_data->gc), info_data->name);
 		purple_notify_user_info_add_pair(user_info, _("Error retrieving profile"),

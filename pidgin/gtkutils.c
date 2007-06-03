@@ -628,6 +628,7 @@ create_protocols_menu(const char *default_proto_id)
 				g_object_unref(pixbuf);
 
 			gtalk_name = NULL;
+			i++;
 		}
 
 		pixbuf = get_prpl_pixbuf(prpl_info);
