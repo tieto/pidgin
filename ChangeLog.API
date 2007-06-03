@@ -17,6 +17,7 @@ version 2.1.0 (??/??/????):
 	  should not be auto-linkified
 	* OPT_PROTO_SLASH_COMMANDS_NATIVE protocol option to indicate that
 	  slash commands are "native" to the protocol
+	* getstatus command for purple-remote
 
 version 2.0.0 (5/3/2007):
 	Please note all functions, defines, and data structures have been
