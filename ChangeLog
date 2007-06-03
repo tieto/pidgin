@@ -4,7 +4,6 @@ version 2.0.2 (??/??/????):
 	Pidgin:
 	* Added a custom conversation font option to preferences
 	* Fixed smiley ordering in the insert smiley popup to be more intuitive
-	* Fixed buddies sometimes rendering half-height
 
 	libpurple:
 	* Moving an ICQ buddy from one group to another no longer
