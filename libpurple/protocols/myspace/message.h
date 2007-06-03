@@ -54,7 +54,14 @@ gchar *msim_msg_pack(MsimMessage *msg);
 /* Defined in myspace.h */
 struct _MsimSession;
 
-gboolean msim_send(struct _MsimSession *session, ...);
+gboolean msim_send(struct _MsimSession *session, ...) 
+#ifdef __GNUC__
+	/* Cause gcc to emit "a missing sentinel in function call" if forgot
+	 * to write NULL as last, terminating parameter. */
+	__attribute__((__sentinel__(0)))
+#endif
+	;
+
 gboolean msim_msg_send(struct _MsimSession *session, MsimMessage *msg);
 
 MsimMessage *msim_parse(gchar *raw);
