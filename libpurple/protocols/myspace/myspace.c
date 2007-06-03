@@ -651,7 +651,7 @@ gboolean msim_send_im_by_userid(MsimSession *session, const gchar *userid, const
 
 	return msim_send(session, 
 			"bm", MSIM_TYPE_INTEGER, MSIM_BM_INSTANT,
-			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"t", MSIM_TYPE_STRING, g_strdup(userid),
 			"cv", MSIM_TYPE_INTEGER, MSIM_CLIENT_VERSION,
 			"msg", MSIM_TYPE_STRING, g_strdup(message),
@@ -846,8 +846,8 @@ gboolean msim_process(PurpleConnection *gc, MsimMessage *msg)
         purple_connection_update_progress(gc, _("Connected"), 3, 4);
 
 		/* Freed in msim_session_destroy */
-        session->sesskey = msim_msg_get_string(msg, "sesskey");
-        purple_debug_info("msim", "SESSKEY=<%s>\n", session->sesskey);
+        session->sesskey = msim_msg_get_integer(msg, "sesskey");
+        purple_debug_info("msim", "SESSKEY=<%d>\n", session->sesskey);
 
         /* Comes with: proof,profileid,userid,uniquenick -- all same values
          * (at least for me). */
@@ -1178,7 +1178,7 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 
 	if (!msim_send(session,
 			"addbuddy", MSIM_TYPE_BOOLEAN, TRUE,
-			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			/* Currently only allow numeric ID. TODO: Lookup username/email to uid. */
 			"newprofileid", MSIM_TYPE_STRING, g_strdup(buddy->name),
 			"reason", MSIM_TYPE_STRING, g_strdup(""),
@@ -1192,7 +1192,7 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 
 	if (!msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
-			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_PUT,
 			"dsn", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_DSN,
 			"lid", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_LID,
@@ -1222,7 +1222,7 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 
 	if (!msim_send(session,
 				"delbuddy", MSIM_TYPE_BOOLEAN, TRUE,
-				"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+				"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 				/* TODO: Lookup username/email to uid, currently on userid. */
 				"delprofileid", MSIM_TYPE_STRING, g_strdup(buddy->name),
 				NULL))
@@ -1233,7 +1233,7 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 
 	if (!msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
-			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_DELETE,
 			"dsn", MSIM_TYPE_INTEGER, MD_DELETE_BUDDY_DSN,
 			"lid", MSIM_TYPE_INTEGER, MD_DELETE_BUDDY_LID,
@@ -1464,7 +1464,6 @@ void msim_session_destroy(MsimSession *session)
 
     g_free(session->rxbuf);
     g_free(session->userid);
-    g_free(session->sesskey);
 
     g_free(session);
 }
@@ -1580,7 +1579,7 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
 
 	g_return_if_fail(msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
-			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"cmd", MSIM_TYPE_INTEGER, 1,
 			"dsn", MSIM_TYPE_INTEGER, dsn,
 			"uid", MSIM_TYPE_STRING, g_strdup(session->userid),

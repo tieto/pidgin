@@ -113,7 +113,7 @@ typedef struct _MsimSession
     guint magic;                        /**< MSIM_SESSION_STRUCT_MAGIC */
     PurpleAccount *account;
     PurpleConnection *gc;
-    gchar *sesskey;                     /**< Session key text string from server */
+    guint sesskey;                      /**< Session key from server */
     gchar *userid;                      /**< This user's numeric user ID */
     gint fd;                            /**< File descriptor to/from server */
 
