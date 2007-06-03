@@ -198,8 +198,10 @@ pidgin_smiley_themes_remove_non_existing()
 	/* Remove all elements whose data is NULL */
 	smiley_themes = g_slist_remove_all(smiley_themes, NULL);
 
-	if (!current_smiley_theme && smiley_themes)
-		current_smiley_theme = ((struct smiley_theme *)(g_slist_last(smiley_themes)->data));
+	if (!current_smiley_theme && smiley_themes) {
+		struct smiley_theme *smile = g_slist_last(smiley_themes)->data;
+		pidgin_themes_load_smiley_theme(smile->path, TRUE);
+	}
 }
 
 void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
@@ -388,8 +390,10 @@ void pidgin_themes_smiley_theme_probe()
 		g_free(probedirs[l]);
 	}
 
-	if (!current_smiley_theme && smiley_themes)
-		current_smiley_theme = ((struct smiley_theme *)(smiley_themes->data));
+	if (!current_smiley_theme && smiley_themes) {
+		struct smiley_theme *smile = smiley_themes->data;
+		pidgin_themes_load_smiley_theme(smile->path, TRUE);
+	}
 }
 
 GSList *pidgin_themes_get_proto_smileys(const char *id) {
@@ -439,5 +443,4 @@ void pidgin_themes_init()
 		struct smiley_theme *smile = smiley_themes->data;
 		pidgin_themes_load_smiley_theme(smile->path, TRUE);
 	}
-
 }
