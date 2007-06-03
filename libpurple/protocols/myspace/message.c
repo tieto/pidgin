@@ -212,6 +212,7 @@ gboolean msim_send(MsimSession *session, ...)
 		switch (type)
 		{
 			case MSIM_TYPE_INTEGER: 
+			case MSIM_TYPE_BOOLEAN: 
 				msg = msim_msg_append(msg, key, type, GUINT_TO_POINTER(va_arg(argp, int)));
 				break;
 				

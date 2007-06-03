@@ -184,6 +184,9 @@ gboolean msim_error(MsimSession *session, MsimMessage *msg);
 void msim_status_cb(MsimSession *session, MsimMessage *userinfo, 
 		gpointer data);
 gboolean msim_status(MsimSession *session, MsimMessage *msg);
+
+void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
+
 void msim_input_cb(gpointer gc_uncasted, gint source, 
 		PurpleInputCondition cond);
 void msim_connect_cb(gpointer data, gint source, 

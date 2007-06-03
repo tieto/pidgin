@@ -991,7 +991,7 @@ gboolean msim_error(MsimSession *session, MsimMessage *msg)
         purple_debug_info("msim", "fatal error, destroy session\n");
         purple_connection_error(session->gc, full_errmsg);
         close(session->fd);
-        //msim_session_destroy(session);
+        msim_session_destroy(session);
     }
 
     return TRUE;
@@ -1167,6 +1167,49 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
     return TRUE;
 }
 
+/** Allow user to add a buddy to their buddy list. TODO: make work. Should receive statuses from added buddy. */
+void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
+{
+	MsimSession *session;
+
+	session = (MsimSession *)gc->proto_data;
+	purple_debug_info("msim", "msim_add_buddy: want to add %s to %s\n", buddy->name,
+			group ? group->name : "(no group)");
+
+	if (!msim_send(session,
+			"addbuddy", MSIM_TYPE_BOOLEAN, TRUE,
+			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+			/* Currently only allow numeric ID. TODO: Lookup screen name/email to uid. */
+			"newprofileid", MSIM_TYPE_STRING, g_strdup(buddy->name),
+			"reason", MSIM_TYPE_STRING, g_strdup(""),
+			NULL))
+	{
+		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("'addbuddy' command failed."));
+	}
+
+	/* TODO: update blocklist */
+
+	if (!msim_send(session,
+			"persist", MSIM_TYPE_INTEGER, 1,
+			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
+			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_PUT,
+			"dsn", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_DSN,
+			"lid", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_LID,
+			/* TODO: msim_send_persist, to handle all this rid business */
+			"rid", MSIM_TYPE_INTEGER, session->next_rid++,
+			"body", MSIM_TYPE_STRING,
+				g_strdup_printf("ContactID=%s\034"
+				"GroupName=%s\034"
+				"Position=1000\034"
+				"Visibility=1\034"
+				"NickName=\034"
+				"NameSelect=0",
+				buddy->name, group->name)))
+	{
+		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("persist command failed"));
+	}
+}
+
 
 
 /**
@@ -1176,7 +1219,7 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
  * @param source File descriptor.
  * @param cond PURPLE_INPUT_READ
  *
- * Reads the input, and dispatches calls msim_process to handle it.
+ * Reads the input, and dispatches msim_process() to handle it.
  */
 void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 {
@@ -1397,6 +1440,8 @@ void msim_session_destroy(MsimSession *session)
 void msim_close(PurpleConnection *gc)
 {
     g_return_if_fail(gc != NULL);
+
+	purple_debug_info("msim", "msim_close: destroying session\n");
     
     msim_session_destroy(gc->proto_data);
 }
@@ -1603,7 +1648,7 @@ PurplePluginProtocolInfo prpl_info =
     NULL,              /* set_away */
     NULL,              /* set_idle */
     NULL,              /* change_passwd */
-    NULL,              /* add_buddy TODO */
+    msim_add_buddy,    /* add_buddy TODO */
     NULL,              /* add_buddies */
     NULL,              /* remove_buddy TODO */
     NULL,              /* remove_buddies */
@@ -1689,8 +1734,6 @@ PurplePluginInfo info =
 	NULL,											  /**< reserved3      */
 	NULL 											  /**< reserved4      */
 };
-
-#include "message.h"
 
 void init_plugin(PurplePlugin *plugin) 
 {
