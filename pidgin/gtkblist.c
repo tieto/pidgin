@@ -4737,8 +4737,15 @@ static void pidgin_blist_selection_changed(GtkTreeSelection *selection, gpointer
 				NODE_COLUMN, &new_selection, -1);
 	}
 
-	/* we set this up as a timeout, otherwise the blist flickers */
-	g_timeout_add(0, (GSourceFunc)do_selection_changed, new_selection);
+	/* we set this up as a timeout, otherwise the blist flickers ...
+	 * but we don't do it for groups, because it causes total bizarness -
+	 * the previously selected buddy node might rendered at half height.
+	 */
+	if ((new_selection != NULL) && PURPLE_BLIST_NODE_IS_GROUP(new_selection)) {
+		do_selection_changed(new_selection);
+	} else {
+		g_timeout_add(0, (GSourceFunc)do_selection_changed, new_selection);
+	}
 }
 
 static gboolean insert_node(PurpleBuddyList *list, PurpleBlistNode *node, GtkTreeIter *iter)
