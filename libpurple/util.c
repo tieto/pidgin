@@ -46,6 +46,7 @@ struct _PurpleUtilFetchUrlData
 	} website;
 
 	char *url;
+	int num_times_redirected;
 	gboolean full;
 	char *user_agent;
 	gboolean http11;
@@ -3186,6 +3187,17 @@ void purple_got_protocol_handler_uri(const char *uri)
 		g_hash_table_destroy(params);
 }
 
+/*
+ * TODO: Should probably add a "gboolean *ret_ishttps" parameter that
+ *       is set to TRUE if this URL is https, otherwise it is set to
+ *       FALSE.  But that change will break the API.
+ *
+ *       This is important for Yahoo! web messenger login.  They now
+ *       force https login, and if you access the web messenger login
+ *       page via http then it redirects you to the https version, but
+ *       purple_util_fetch_url() ignores the "https" and attempts to
+ *       fetch the URL via http again, which gets redirected again.
+ */
 gboolean
 purple_url_parse(const char *url, char **ret_host, int *ret_port,
 			   char **ret_path, char **ret_user, char **ret_passwd)
@@ -3206,10 +3218,14 @@ purple_url_parse(const char *url, char **ret_host, int *ret_port,
 
 	g_return_val_if_fail(url != NULL, FALSE);
 
-	if ((turl = strstr(url, "http://")) != NULL ||
-		(turl = strstr(url, "HTTP://")) != NULL)
+	if ((turl = purple_strcasestr(url, "http://")) != NULL)
 	{
 		turl += 7;
+		url = turl;
+	}
+	else if ((turl = purple_strcasestr(url, "https://")) != NULL)
+	{
+		turl += 8;
 		url = turl;
 	}
 
@@ -3291,85 +3307,92 @@ parse_redirect(const char *data, size_t data_len, gint sock,
 			   PurpleUtilFetchUrlData *gfud)
 {
 	gchar *s;
+	gchar *new_url, *temp_url, *end;
+	gboolean full;
+	int len;
 
-	if ((s = g_strstr_len(data, data_len, "Location: ")) != NULL)
+	if ((s = g_strstr_len(data, data_len, "Location: ")) == NULL)
+		/* We're not being redirected */
+		return FALSE;
+
+	s += strlen("Location: ");
+	end = strchr(s, '\r');
+
+	/* Just in case :) */
+	if (end == NULL)
+		end = strchr(s, '\n');
+
+	if (end == NULL)
+		return FALSE;
+
+	len = end - s;
+
+	new_url = g_malloc(len + 1);
+	strncpy(new_url, s, len);
+	new_url[len] = '\0';
+
+	full = gfud->full;
+
+	if (*new_url == '/' || g_strstr_len(new_url, len, "://") == NULL)
 	{
-		gchar *new_url, *temp_url, *end;
-		gboolean full;
-		int len;
+		temp_url = new_url;
 
-		s += strlen("Location: ");
-		end = strchr(s, '\r');
+		new_url = g_strdup_printf("%s:%d%s", gfud->website.address,
+								  gfud->website.port, temp_url);
 
-		/* Just in case :) */
-		if (end == NULL)
-			end = strchr(s, '\n');
+		g_free(temp_url);
 
-		if (end == NULL)
-			return FALSE;
+		full = FALSE;
+	}
 
-		len = end - s;
+	purple_debug_info("util", "Redirecting to %s\n", new_url);
 
-		new_url = g_malloc(len + 1);
-		strncpy(new_url, s, len);
-		new_url[len] = '\0';
-
-		full = gfud->full;
-
-		if (*new_url == '/' || g_strstr_len(new_url, len, "://") == NULL)
-		{
-			temp_url = new_url;
-
-			new_url = g_strdup_printf("%s:%d%s", gfud->website.address,
-									  gfud->website.port, temp_url);
-
-			g_free(temp_url);
-
-			full = FALSE;
-		}
-
-		purple_debug_info("util", "Redirecting to %s\n", new_url);
-
-		/*
-		 * Try again, with this new location.  This code is somewhat
-		 * ugly, but we need to reuse the gfud because whoever called
-		 * us is holding a reference to it.
-		 */
-		g_free(gfud->url);
-		gfud->url = new_url;
-		gfud->full = full;
-		g_free(gfud->request);
-		gfud->request = NULL;
-
-		purple_input_remove(gfud->inpa);
-		gfud->inpa = 0;
-		close(gfud->fd);
-		gfud->fd = -1;
-		gfud->request_written = 0;
-		gfud->len = 0;
-		gfud->data_len = 0;
-
-		g_free(gfud->website.user);
-		g_free(gfud->website.passwd);
-		g_free(gfud->website.address);
-		g_free(gfud->website.page);
-		purple_url_parse(new_url, &gfud->website.address, &gfud->website.port,
-					   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
-
-		gfud->connect_data = purple_proxy_connect(NULL, NULL,
-				gfud->website.address, gfud->website.port,
-				url_fetch_connect_cb, gfud);
-
-		if (gfud->connect_data == NULL)
-		{
-			purple_util_fetch_url_error(gfud, _("Unable to connect to %s"),
-					gfud->website.address);
-		}
-
+	gfud->num_times_redirected++;
+	if (gfud->num_times_redirected >= 5)
+	{
+		purple_util_fetch_url_error(gfud,
+				_("Could not open %s: Redirected too many times"),
+				gfud->url);
 		return TRUE;
 	}
 
-	return FALSE;
+	/*
+	 * Try again, with this new location.  This code is somewhat
+	 * ugly, but we need to reuse the gfud because whoever called
+	 * us is holding a reference to it.
+	 */
+	g_free(gfud->url);
+	gfud->url = new_url;
+	gfud->full = full;
+	g_free(gfud->request);
+	gfud->request = NULL;
+
+	purple_input_remove(gfud->inpa);
+	gfud->inpa = 0;
+	close(gfud->fd);
+	gfud->fd = -1;
+	gfud->request_written = 0;
+	gfud->len = 0;
+	gfud->data_len = 0;
+
+	g_free(gfud->website.user);
+	g_free(gfud->website.passwd);
+	g_free(gfud->website.address);
+	g_free(gfud->website.page);
+	purple_url_parse(new_url, &gfud->website.address, &gfud->website.port,
+				   &gfud->website.page, &gfud->website.user, &gfud->website.passwd);
+
+	gfud->connect_data = purple_proxy_connect(NULL, NULL,
+			gfud->website.address, gfud->website.port,
+			url_fetch_connect_cb, gfud);
+
+	if (gfud->connect_data == NULL)
+	{
+		purple_util_fetch_url_error(gfud, _("Unable to connect to %s"),
+				gfud->website.address);
+	}
+
+	return TRUE;
 }
 
 static size_t

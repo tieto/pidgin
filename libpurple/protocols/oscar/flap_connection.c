@@ -303,7 +303,7 @@ flap_connection_close(OscarData *od, FlapConnection *conn)
 		}
 	}
 
-	if (conn->fd != -1)
+	if (conn->fd >= 0)
 	{
 		if (conn->type == SNAC_FAMILY_LOCATE)
 			flap_connection_send_close(od, conn);
@@ -792,7 +792,7 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 			}
 
 			/* If there was an error then close the connection */
-			if (read == -1)
+			if (read < 0)
 			{
 				if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 					/* No worries */
@@ -853,7 +853,7 @@ flap_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 				break;
 			}
 
-			if (read == -1)
+			if (read < 0)
 			{
 				if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 					/* No worries */
@@ -902,7 +902,7 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	ret = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
 	if (ret <= 0)
 	{
-		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+		if (ret < 0 && ((errno == EAGAIN)) || ((errno == EWOULDBLOCK)))
 			/* No worries */
 			return;
 
@@ -936,7 +936,7 @@ flap_connection_send_byte_stream(ByteStream *bs, FlapConnection *conn, size_t co
 	purple_circ_buffer_append(conn->buffer_outgoing, bs->data, count);
 
 	/* If we haven't already started writing stuff, then start the cycle */
-	if ((conn->watcher_outgoing == 0) && (conn->fd != -1))
+	if ((conn->watcher_outgoing == 0) && (conn->fd >= 0))
 	{
 		conn->watcher_outgoing = purple_input_add(conn->fd,
 				PURPLE_INPUT_WRITE, send_cb, conn);
