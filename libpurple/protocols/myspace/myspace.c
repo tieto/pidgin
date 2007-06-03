@@ -268,9 +268,9 @@ void msim_login(PurpleAccount *acct)
  * @param session 
  * @param msg Login challenge message.
  *
- * @return 0, since the 'msg' parameter is no longer needed.
+ * @return TRUE if successful, FALSE if not
  */
-int msim_login_challenge(MsimSession *session, MsimMessage *msg) 
+gboolean msim_login_challenge(MsimSession *session, MsimMessage *msg) 
 {
     PurpleAccount *account;
     gchar *response;
@@ -278,13 +278,14 @@ int msim_login_challenge(MsimSession *session, MsimMessage *msg)
 	gchar *nc;
 	gsize nc_len;
 
-    g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(msg != NULL, 0);
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
 
-    g_return_val_if_fail(msim_msg_get_binary(msg, "nc", &nc, &nc_len), 0);
+    g_return_val_if_fail(msim_msg_get_binary(msg, "nc", &nc, &nc_len), FALSE);
 
     account = session->account;
-    //assert(account);
+
+	g_return_val_if_fail(account != NULL, FALSE);
 
     purple_connection_update_progress(session->gc, _("Reading challenge"), 1, 4);
 
@@ -294,7 +295,7 @@ int msim_login_challenge(MsimSession *session, MsimMessage *msg)
     {
         purple_debug_info("msim", "bad nc length: %x != 0x40\n", nc_len);
         purple_connection_error(session->gc, _("Unexpected challenge length from server"));
-        return 0;
+        return FALSE;
     }
 
     purple_connection_update_progress(session->gc, _("Logging in"), 2, 4);
@@ -303,7 +304,7 @@ int msim_login_challenge(MsimSession *session, MsimMessage *msg)
 
     g_free(nc);
 
-	msim_send(session, 
+	return msim_send(session, 
 			"login2", MSIM_TYPE_INTEGER, MSIM_AUTH_ALGORITHM,
 			"username", MSIM_TYPE_STRING, g_strdup(account->username),
 			/* GString and gchar * response will be freed in msim_msg_free() in msim_send(). */
@@ -313,8 +314,6 @@ int msim_login_challenge(MsimSession *session, MsimMessage *msg)
 			"status", MSIM_TYPE_INTEGER, 100,
 			"id", MSIM_TYPE_INTEGER, 1,
 			NULL);
-
-    return 0;
 }
 
 #ifndef MSIM_USE_PURPLE_RC4
@@ -640,17 +639,17 @@ int msim_send_im(PurpleConnection *gc, const char *who,
  * @param message Text of message to send.
  * @param flags Purple instant message flags.
  *
- * @return 0
+ * @return TRUE if successful.
  *
  */
-int msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gchar *message, PurpleMessageFlags flags)
+gboolean msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gchar *message, PurpleMessageFlags flags)
 {
     g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
     g_return_val_if_fail(userid != NULL, 0);
     g_return_val_if_fail(msim_is_userid(userid) == TRUE, 0);
     g_return_val_if_fail(message != NULL, 0);
 
-	msim_send(session, 
+	return msim_send(session, 
 			"bm", MSIM_TYPE_INTEGER, MSIM_BM_INSTANT,
 			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
 			"t", MSIM_TYPE_STRING, g_strdup(userid),
@@ -662,8 +661,6 @@ int msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gcha
     /*if (strcmp(from_username, who) == 0)
         serv_got_im(gc, from_username, message, PURPLE_MESSAGE_RECV, time(NULL));
         */
-
-    return 0;
 }
 
 
@@ -741,15 +738,15 @@ void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer d
  * @param session The session
  * @param msg Message from the server, containing 'f' (userid from) and 'msg'.
  *
- * @return 0, since msg can be freed.
+ * @return TRUE if successful.
  */
-int msim_incoming_im(MsimSession *session, MsimMessage *msg)
+gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg)
 {
     gchar *userid;
     gchar *msg_text;
 
-    g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(msg != NULL, 0);
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
 
 	/* TODO: where freed? */
     userid = msim_msg_get_string(msg, "f");
@@ -761,7 +758,7 @@ int msim_incoming_im(MsimSession *session, MsimMessage *msg)
 
     msim_lookup_user(session, userid, msim_incoming_im_cb, msg_text);
 
-    return 0;
+    return TRUE;
 }
 
 /**
@@ -770,16 +767,17 @@ int msim_incoming_im(MsimSession *session, MsimMessage *msg)
  * @param session
  * @param msg
  *
- * @return 0
+ * @return TRUE if successful.
  *
  * INCOMPLETE
  */
-int msim_incoming_action(MsimSession *session, MsimMessage *msg)
+gboolean msim_incoming_action(MsimSession *session, MsimMessage *msg)
 {
 	/* TODO: process */
 	purple_debug_info("msim", "msim_incoming_action: action <%s> from <%d>\n",
 			msim_msg_get_string(msg, "msg"), msim_msg_get_integer(msg, "f"));
-	return 0;
+
+	return FALSE;
 }
 
 /** 
@@ -819,10 +817,9 @@ unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypi
  * @param gc Connection.
  * @param msg Any message from the server.
  *
- * @return The return value of the function used to process the message, or -1 if
- * called with invalid parameters.
+ * @return TRUE if successful. FALSE if processing failed.
  */
-int msim_process(PurpleConnection *gc, MsimMessage *msg)
+gboolean msim_process(PurpleConnection *gc, MsimMessage *msg)
 {
     MsimSession *session;
 
@@ -859,7 +856,7 @@ int msim_process(PurpleConnection *gc, MsimMessage *msg)
 
         purple_connection_set_state(gc, PURPLE_CONNECTED);
 
-        return 0;
+        return TRUE;
     } else if (msim_msg_get(msg, "bm"))  {
         guint bm;
        
@@ -877,26 +874,19 @@ int msim_process(PurpleConnection *gc, MsimMessage *msg)
                  * purposes during development. */
                 return msim_incoming_im(session, msg);
         }
-
-        if (bm == MSIM_BM_STATUS)
-        {
-            return msim_status(session, msg);
-        } else { /* else if strcmp(bm, "1") == 0)  */
-            return msim_incoming_im(session, msg);
-        }
     } else if (msim_msg_get(msg, "rid")) {
         return msim_process_reply(session, msg);
     } else if (msim_msg_get(msg, "error")) {
         return msim_error(session, msg);
     } else if (msim_msg_get(msg, "ka")) {
         purple_debug_info("msim", "msim_process: got keep alive\n");
-        return 0;
+        return TRUE;
     } else {
 		/* TODO: dump unknown msgs to file, so user can send them to me
 		 * if they wish, to help add support for new messages (inspired
 		 * by Alexandr Shutko, who maintains OSCAR protocol documentation). */
         purple_debug_info("msim", "msim_process: unhandled message\n");
-        return 0;
+        return FALSE;
     }
 }
 
@@ -906,12 +896,12 @@ int msim_process(PurpleConnection *gc, MsimMessage *msg)
  * @param session 
  * @param msg Message reply from server.
  *
- * @return 0, since the 'msg' field is no longer needed.
+ * @return TRUE if successful.
  */
-int msim_process_reply(MsimSession *session, MsimMessage *msg)
+gboolean msim_process_reply(MsimSession *session, MsimMessage *msg)
 {
-    g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(msg != NULL, 0);
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
     
     if (msim_msg_get(msg, "rid"))  /* msim_lookup_user sets callback for here */
     {
@@ -953,20 +943,17 @@ int msim_process_reply(MsimSession *session, MsimMessage *msg)
         {
             purple_debug_info("msim", 
 					"msim_process_body: calling callback now\n");
-            cb(session, msg, data);
+			/* Clone message, so that the callback 'cb' can use it (needs to free it also). */
+            cb(session, msim_msg_clone(msg), data);
             g_hash_table_remove(session->user_lookup_cb, GUINT_TO_POINTER(rid));
             g_hash_table_remove(session->user_lookup_cb_data, GUINT_TO_POINTER(rid));
-
-            /* Return 1 to tell caller of msim_process (msim_input_cb) to
-             * not destroy 'msg'; allow 'cb' to hang on to it and destroy
-             * it when it wants. */
-            return 1;
         } else {
             purple_debug_info("msim", 
 					"msim_process_body: no callback for rid %d\n", rid);
         }
     }
-    return 0;
+
+	return TRUE;
 }
 
 /**
@@ -975,15 +962,15 @@ int msim_process_reply(MsimSession *session, MsimMessage *msg)
  * @param session 
  * @param msg The message.
  *
- * @return 0, since 'msg' can be freed.
+ * @return TRUE if successfully reported error.
  */
-int msim_error(MsimSession *session, MsimMessage *msg)
+gboolean msim_error(MsimSession *session, MsimMessage *msg)
 {
     gchar *errmsg, *full_errmsg;
 	guint err;
 
-    g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(msg != NULL, 0);
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
 
     err = msim_msg_get_integer(msg, "err");
     errmsg = msim_msg_get_string(msg, "errmsg");
@@ -994,11 +981,11 @@ int msim_error(MsimSession *session, MsimMessage *msg)
 
     purple_debug_info("msim", "msim_error: %s\n", full_errmsg);
 
-    /* TODO: check 'fatal' and die if asked to.
-     * TODO: do something with the error # (localization of errmsg?)  */
+    /* TODO: do something with the error # (localization of errmsg?)  */
     purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
             full_errmsg, NULL);
 
+	/* Destroy session if fatal. */
     if (msim_msg_get(msg, "fatal"))
     {
         purple_debug_info("msim", "fatal error, destroy session\n");
@@ -1007,7 +994,7 @@ int msim_error(MsimSession *session, MsimMessage *msg)
         //msim_session_destroy(session);
     }
 
-    return 0;
+    return TRUE;
 }
 
 #if 0
@@ -1138,22 +1125,22 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
  * @param session
  * @param msg Status update message.
  *
- * @return 0, since 'msg' can be freed.
+ * @return TRUE if successful.
  */
-int msim_status(MsimSession *session, MsimMessage *msg)
+gboolean msim_status(MsimSession *session, MsimMessage *msg)
 {
     gchar *status_str;
     gchar *userid;
 
-    g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(msg != NULL, 0);
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
 
 	/* TODO: free */
     status_str = msim_msg_get_string(msg, "msg");
     if (!status_str)
     {
         purple_debug_info("msim", "msim_status: bm is status but no status msg\n");
-        return 0;
+        return FALSE;
     }
 
 	/* TODO: free */
@@ -1161,7 +1148,7 @@ int msim_status(MsimSession *session, MsimMessage *msg)
     if (!userid)
     {
         purple_debug_info("msim", "msim_status: bm is status but no f field\n");
-        return 0;
+        return FALSE;
     }
    
     /* TODO: if buddies were identified on buddy list by uid, wouldn't have to lookup 
@@ -1177,7 +1164,7 @@ int msim_status(MsimSession *session, MsimMessage *msg)
 	 */
     msim_lookup_user(session, userid, msim_status_cb, status_str);
 
-    return 0;
+    return TRUE;
 }
 
 
@@ -1291,9 +1278,18 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
         }
         else
         {
-            /* Process message. Returns 0 to free */
-            if (msim_process(gc, msg) == 0)
-				msim_msg_free(msg);
+            /* Process message and then free it (processing function should
+			 * clone message if it wants to keep it afterwards.) */
+            if (!msim_process(gc, msg))
+			{
+				gchar *dbs;
+
+				dbs = msim_msg_debug_string(msg);
+				purple_debug_info("msim", "msim_input_cb: processing message failed on msg: %s\n",
+						dbs);
+				g_free(dbs);
+			}
+			msim_msg_free(msg);
         }
 
         /* Move remaining part of buffer to beginning. */
@@ -1498,7 +1494,7 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
     }
 
 
-	msim_send(session,
+	g_return_if_fail(msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_STRING, g_strdup(session->sesskey),
 			"cmd", MSIM_TYPE_INTEGER, 1,
@@ -1508,7 +1504,7 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
 			"rid", MSIM_TYPE_INTEGER, rid,
 			/* TODO: dictionary field type */
 			"body", MSIM_TYPE_STRING, g_strdup_printf("%s=%s", field_name, user),
-			NULL);
+			NULL));
 } 
 
 
@@ -1711,8 +1707,9 @@ void init_plugin(PurplePlugin *plugin)
 		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v43"));
 		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v52/xxx\\yyy"));
 		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v7"));
-		purple_debug_info("msim", "msg=%s\n", msim_msg_debug_string(msg));
-		purple_debug_info("msim", "msg=%s\n", msim_msg_pack(msg));
+		purple_debug_info("msim", "msg debug str=%s\n", msim_msg_debug_string(msg));
+		purple_debug_info("msim", "msg packed=%s\n", msim_msg_pack(msg));
+		purple_debug_info("msim", "msg cloned=%s\n", msim_msg_pack(msim_msg_clone(msg)));
 		msim_msg_free(msg);
 		exit(0);
 	}

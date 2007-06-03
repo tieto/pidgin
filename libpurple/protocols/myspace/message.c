@@ -27,13 +27,82 @@ static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, gchar *sep, gchar *begin, gchar *end);
 static gchar *msim_msg_element_pack(MsimMessageElement *elem);
 
+/** Create a new MsimMessage. */
 MsimMessage *msim_msg_new(void)
 {
 	/* Just an empty list. */
 	return NULL;
 }
 
-/** Free an individual message element. */
+/** Clone an individual element.
+ *
+ * @param data MsimMessageElement * to clone.
+ * @param user_data Pointer to MsimMessage * to add cloned element to.
+ */
+static void msim_msg_clone_element(gpointer data, gpointer user_data)
+{
+	MsimMessageElement *elem;
+	MsimMessage **new;
+	gpointer new_data;
+
+	elem = (MsimMessageElement *)data;
+	new = (MsimMessage **)user_data;
+
+	switch (elem->type)
+	{
+		case MSIM_TYPE_BOOLEAN:
+		case MSIM_TYPE_INTEGER:
+			new_data = elem->data;
+			break;
+
+		case MSIM_TYPE_RAW:
+		case MSIM_TYPE_STRING:
+			new_data = g_strdup((gchar *)elem->data);
+			break;
+
+		case MSIM_TYPE_BINARY:
+			{
+				GString *gs;
+
+				gs = (GString *)elem->data;
+
+				new_data = g_string_new_len(gs->str, gs->len);
+			}
+			break;
+		/* TODO: other types */
+		default:
+			purple_debug_info("msim", "msim_msg_clone_element: unknown type %d\n", elem->type);
+			g_return_if_fail(NULL);
+	}
+
+	/* Append cloned data. Note that the 'name' field is a static string, so it
+	 * never needs to be copied nor freed. */
+	*new = msim_msg_append(*new, elem->name, elem->type, new_data);
+}
+
+/** Clone an existing MsimMessage. 
+ *
+ * @return Cloned message; caller should free with msim_msg_free().
+ */
+MsimMessage *msim_msg_clone(MsimMessage *old)
+{
+	MsimMessage *new;
+
+	if (!old)
+		return NULL;
+
+	new = msim_msg_new();
+
+	g_list_foreach(old, msim_msg_clone_element, &new);
+
+	return new;
+}
+
+/** Free an individual message element. 
+ *
+ * @param data MsimMessageElement * to free.
+ * @param user_data Not used; required to match g_list_foreach() callback prototype.
+ */
 static void msim_msg_free_element(gpointer data, gpointer user_data)
 {
 	MsimMessageElement *elem;
@@ -42,12 +111,12 @@ static void msim_msg_free_element(gpointer data, gpointer user_data)
 
 	switch (elem->type)
 	{
-		case MSIM_TYPE_BOOLEAN:			/* Fall through  */
+		case MSIM_TYPE_BOOLEAN:
 		case MSIM_TYPE_INTEGER:
 			/* Integer value stored in gpointer - no need to free(). */
 			break;
 
-		case MSIM_TYPE_RAW:			    /* Fall through */
+		case MSIM_TYPE_RAW:
 		case MSIM_TYPE_STRING:
 			/* Always free strings - caller should have g_strdup()'d if
 			 * string was static or temporary and not to be freed. */

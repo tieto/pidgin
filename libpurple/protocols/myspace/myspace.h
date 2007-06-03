@@ -159,7 +159,7 @@ void print_hash_item(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_send_raw(MsimSession *session, const gchar *msg);
 
 void msim_login(PurpleAccount *acct);
-int msim_login_challenge(MsimSession *session, MsimMessage *msg);
+gboolean msim_login_challenge(MsimSession *session, MsimMessage *msg);
 gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE],
 		        gchar *email, gchar *password, guint *response_len);
 
@@ -177,13 +177,13 @@ int msim_incoming_action(MsimSession *session, MsimMessage *msg);
 
 unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state);
 
-int msim_process_reply(MsimSession *session, MsimMessage *msg);
-int msim_process(PurpleConnection *gc, MsimMessage *msg);
+gboolean msim_process_reply(MsimSession *session, MsimMessage *msg);
+gboolean msim_process(PurpleConnection *gc, MsimMessage *msg);
 
-int msim_error(MsimSession *session, MsimMessage *msg);
+gboolean msim_error(MsimSession *session, MsimMessage *msg);
 void msim_status_cb(MsimSession *session, MsimMessage *userinfo, 
 		gpointer data);
-int msim_status(MsimSession *session, MsimMessage *msg);
+gboolean msim_status(MsimSession *session, MsimMessage *msg);
 void msim_input_cb(gpointer gc_uncasted, gint source, 
 		PurpleInputCondition cond);
 void msim_connect_cb(gpointer data, gint source, 
