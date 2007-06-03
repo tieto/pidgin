@@ -376,7 +376,7 @@ static void msim_msg_debug_string_element(gpointer data, gpointer user_data)
 			break;
 
 		default:
-			string = g_strdup_printf("%s(unknown type %d (%c)", elem->name, elem->type);
+			string = g_strdup_printf("%s(unknown type %d (%c)", elem->name, elem->type, elem->type);
 			break;
 	}
 
