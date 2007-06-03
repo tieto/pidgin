@@ -2,6 +2,11 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 version 2.1.0 (??/??/????):
 	Added:
+	* purple-remote: added getstatus command
+	* OPT_PROTO_SLASH_COMMANDS_NATIVE protocol option to indicate that
+	  slash commands are "native" to the protocol
+	* PURPLE_MESSAGE_NO_LINKIFY message flag to indicate that the message
+	  should not be auto-linkified
 	* PurpleEventLoopUiOps.timeout_add_seconds
 	    UIs can now use better scheduling for whole-second timers.  For
 	    example, clients based on the glib event loop can now use
@@ -13,11 +18,6 @@ version 2.1.0 (??/??/????):
 	* purple_timeout_add_seconds()
 	    Callers should prefer this to purple_timeout_add() for timers
 	    longer than 1 second away.  Be aware of the rounding, though.
-	* PURPLE_MESSAGE_NO_LINKIFY message flag to indicate that the message
-	  should not be auto-linkified
-	* OPT_PROTO_SLASH_COMMANDS_NATIVE protocol option to indicate that
-	  slash commands are "native" to the protocol
-	* getstatus command for purple-remote
 
 version 2.0.0 (5/3/2007):
 	Please note all functions, defines, and data structures have been
