@@ -1124,10 +1124,10 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 	if (((PurpleBlistNode*)buddy)->parent->child->next && !sub && !contact_expanded) {
 		pidgin_separator(menu);
 		pidgin_append_blist_node_privacy_menu(menu, (PurpleBlistNode *)buddy);
-		pidgin_new_item_from_stock(menu, _("Alias..."), PIDGIN_STOCK_ALIAS,
+		pidgin_new_item_from_stock(menu, _("_Alias..."), PIDGIN_STOCK_ALIAS,
 				G_CALLBACK(gtk_blist_menu_alias_cb),
 				contact, 0, 0, NULL);
-		pidgin_new_item_from_stock(menu, _("Remove"), GTK_STOCK_REMOVE,
+		pidgin_new_item_from_stock(menu, _("_Remove"), GTK_STOCK_REMOVE,
 				G_CALLBACK(pidgin_blist_remove_cb),
 				contact, 0, 0, NULL);
 	} else if (!sub || contact_expanded) {
