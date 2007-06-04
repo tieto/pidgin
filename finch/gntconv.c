@@ -64,7 +64,7 @@ static void
 send_typing_notification(GntWidget *w, FinchConv *ggconv)
 {
 	const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
-	gboolean empty = (!text || !*text);
+	gboolean empty = (!text || !*text || (*text == '/'));
 	if (purple_prefs_get_bool("/finch/conversations/notify_typing")) {
 		PurpleConversation *conv = ggconv->active_conv;
 		PurpleConvIm *im = PURPLE_CONV_IM(conv);
@@ -313,12 +313,7 @@ static void
 get_info_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *ggc = ggconv;
-	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
-	purple_notify_userinfo(ggc->active_conv->account->gc, purple_conversation_get_name(ggc->active_conv), info, NULL, NULL);
-	purple_notify_user_info_destroy(info);
-
-	serv_get_info(purple_conversation_get_gc(ggc->active_conv),
+	finch_retrieve_user_info(purple_conversation_get_gc(ggc->active_conv),
 			purple_conversation_get_name(ggc->active_conv));
 }
 
