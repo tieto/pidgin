@@ -362,7 +362,7 @@ silcpurple_login(PurpleAccount *account)
 
 	/* Schedule SILC using Glib's event loop */
 #ifndef _WIN32
-	sg->scheduler = g_timeout_add(5, (GSourceFunc)silcpurple_scheduler, sg);
+	sg->scheduler = g_timeout_add(50, (GSourceFunc)silcpurple_scheduler, sg);
 #else
 	sg->scheduler = g_timeout_add(300, (GSourceFunc)silcpurple_scheduler, sg);
 #endif
