@@ -573,7 +573,7 @@ help_for_widget_activate(GntBindable *bindable, gpointer widget)
 	GList * currentRowData,*itr;
 	char * tmp;
 
-	rebind_info = (RebindInfo*)malloc(sizeof(RebindInfo));
+	rebind_info = g_new0(RebindInfo,1);
 	rebind_info->keys = NULL;
 	rebind_info->klass = GNT_BINDABLE_GET_CLASS(widget);
 	currentRowData = gnt_tree_get_selection_text_list(tree);
