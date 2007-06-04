@@ -902,7 +902,7 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	ret = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
 	if (ret <= 0)
 	{
-		if (ret < 0 && ((errno == EAGAIN)) || ((errno == EWOULDBLOCK)))
+		if (ret < 0 && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
 			/* No worries */
 			return;
 
