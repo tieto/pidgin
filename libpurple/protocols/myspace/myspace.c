@@ -694,11 +694,12 @@ void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
  *
  * @param session 
  * @param userinfo Message from server on user's info, containing UserName.
- * @param data A gchar * of the incoming instant message's text.
+ * @param data A MsimMessage * of the incoming message.
  */
 void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
-    gchar *msg, *username, *body_str;
+    gchar *username, *body_str;
+	MsimMessage *msg;
     GHashTable *body;
 
     g_return_if_fail(MSIM_SESSION_VALID(session));
@@ -711,11 +712,12 @@ void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer d
 
     username = g_hash_table_lookup(body, "UserName");
 
-    msg = (gchar *)data;
-    serv_got_im(session->gc, username, msg, PURPLE_MESSAGE_RECV, time(NULL));
+    msg = (MsimMessage *)data;
+    serv_got_im(session->gc, username, msim_msg_get_string(msg, "msg"), PURPLE_MESSAGE_RECV, time(NULL));
 
 	/* msim_msg_free(userinfo);   */ /* TODO: Should we? */
     g_hash_table_destroy(body);
+	msim_msg_free(msg);
 }
 
 /**
@@ -729,21 +731,19 @@ void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer d
 gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg)
 {
     gchar *userid;
-    gchar *msg_text;
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
     g_return_val_if_fail(msg != NULL, FALSE);
 
 	/* TODO: where freed? */
     userid = msim_msg_get_string(msg, "f");
-    msg_text = msim_msg_get_string(msg, "msg");
     
     purple_debug_info("msim", 
-			"msim_incoming_im: got msg <%s> from <%s>, resolving username\n",
-            msg_text, userid);
+			"msim_incoming_im: got msg from <%s>, resolving username\n", userid);
 
 	/* TODO: don't use callbacks */
-    msim_lookup_user(session, userid, msim_incoming_im_cb, msg_text);
+	/* msg will be freed in callback */
+    msim_lookup_user(session, userid, msim_incoming_im_cb, msim_msg_clone(msg));
 
     return TRUE;
 }
