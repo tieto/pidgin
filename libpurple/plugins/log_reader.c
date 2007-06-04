@@ -1500,16 +1500,15 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 						g_string_append_c(temp, *link);
 						link++;
 					}
-					if (link) {
+					if (*link)
 						link++;
 
-						g_string_append(temp, "\">");
-						while (*link && *link != ' ') {
-							g_string_append_c(temp, *link);
-							link++;
-						}
-						g_string_append(temp, "</a>");
+					g_string_append(temp, "\">");
+					while (*link && *link != ' ') {
+						g_string_append_c(temp, *link);
+						link++;
 					}
+					g_string_append(temp, "</a>");
 
 					g_string_append(temp, link);
 
