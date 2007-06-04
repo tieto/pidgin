@@ -1604,8 +1604,7 @@ int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];
-		if (pos->modname)
-			g_free(pos->modname);
+		g_free(pos->modname);
 		g_free(pos);
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
 			"Check %s for updates."), PURPLE_WEBSITE);
