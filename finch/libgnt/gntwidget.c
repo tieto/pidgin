@@ -367,7 +367,7 @@ gnt_widget_draw(GntWidget *widget)
 
 	g_signal_emit(widget, signals[SIG_DRAW], 0);
 	gnt_widget_queue_update(widget);
-	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_DRAWING);
+	GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_DRAWING | GNT_WIDGET_INVISIBLE);
 }
 
 gboolean
