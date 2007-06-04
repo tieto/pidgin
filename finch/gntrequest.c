@@ -612,13 +612,17 @@ finch_request_file(const char *title, const char *filename,
 
 static PurpleRequestUiOps uiops =
 {
-	.request_input = finch_request_input,
-	.close_request = finch_close_request,
-	.request_choice = finch_request_choice,
-	.request_action = finch_request_action,
-	.request_fields = finch_request_fields,
-	.request_file = finch_request_file,
-	.request_folder = NULL                        /* No plans for this */
+	finch_request_input,
+	finch_request_choice,
+	finch_request_action,
+	finch_request_fields,
+	finch_request_file,
+	finch_close_request,
+	NULL,                       /* No plans for request_folder */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleRequestUiOps *finch_request_get_ui_ops()
@@ -668,10 +672,13 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *allfields)
 			pt = purple_prefs_get_type(id);
 			switch (pt) {
 				case PURPLE_PREF_INT:
+				{
+					long int tmp;
 					if (type == PURPLE_REQUEST_FIELD_LIST) /* Lists always return string */
-						sscanf(val, "%ld", (long int *)&val);
-					purple_prefs_set_int(id, GPOINTER_TO_INT(val));
+						sscanf(val, "%ld", &tmp);
+					purple_prefs_set_int(id, (gint)tmp);
 					break;
+				}
 				case PURPLE_PREF_BOOLEAN:
 					purple_prefs_set_bool(id, GPOINTER_TO_INT(val));
 					break;

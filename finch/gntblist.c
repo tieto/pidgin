@@ -113,6 +113,7 @@ static void blist_show(PurpleBuddyList *list);
 static void update_node_display(PurpleBlistNode *buddy, FinchBlist *ggblist);
 static void update_buddy_display(PurpleBuddy *buddy, FinchBlist *ggblist);
 static void account_signed_on_cb(PurpleConnection *pc, gpointer null);
+static void finch_request_add_buddy(PurpleAccount *account, const char *username, const char *grp, const char *alias);
 
 /* Sort functions */
 static int blist_node_compare_position(PurpleBlistNode *n1, PurpleBlistNode *n2);
@@ -285,6 +286,7 @@ add_buddy_cb(void *data, PurpleRequestFields *allfields)
 
 	if (error)
 	{
+		finch_request_add_buddy(account, username, group, alias);
 		purple_notify_error(NULL, _("Error"), _("Error adding buddy"), error);
 		return;
 	}
@@ -447,9 +449,13 @@ static PurpleBlistUiOps blist_ui_ops =
 	node_remove,
 	NULL,
 	NULL,
-	.request_add_buddy = finch_request_add_buddy,
-	.request_add_chat = finch_request_add_chat,
-	.request_add_group = finch_request_add_group
+	finch_request_add_buddy,
+	finch_request_add_chat,
+	finch_request_add_group,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static gpointer
@@ -1867,9 +1873,10 @@ blist_node_compare_text(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	const char *s1, *s2;
 	char *us1, *us2;
 	int ret;
-	
-	g_return_val_if_fail(n1->type == n2->type, -1);
-	
+
+	if (n1->type != n2->type)
+		return blist_node_compare_position(n1, n2);
+
 	switch (n1->type)
 	{
 		case PURPLE_BLIST_CHAT_NODE:
@@ -1902,7 +1909,8 @@ blist_node_compare_status(PurpleBlistNode *n1, PurpleBlistNode *n2)
 {
 	int ret;
 
-	g_return_val_if_fail(n1->type == n2->type, -1);
+	if (n1->type != n2->type)
+		return blist_node_compare_position(n1, n2);
 
 	switch (n1->type) {
 		case PURPLE_BLIST_CONTACT_NODE:
@@ -1946,7 +1954,8 @@ blist_node_compare_log(PurpleBlistNode *n1, PurpleBlistNode *n2)
 	int ret;
 	PurpleBuddy *b1, *b2;
 
-	g_return_val_if_fail(n1->type == n2->type, -1);
+	if (n1->type != n2->type)
+		return blist_node_compare_position(n1, n2);
 
 	switch (n1->type) {
 		case PURPLE_BLIST_BUDDY_NODE:

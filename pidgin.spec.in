@@ -29,7 +29,6 @@ BuildRequires: libtool, pkgconfig, intltool, gettext, libxml2-devel
 BuildRequires: gtk2-devel
 
 %{!?_without_startupnotification:BuildRequires: startup-notification-devel}
-%{!?_without_modularx:BuildRequires: libSM-devel, libXScrnSaver-devel}
 %{?_with_avahi:BuildRequires: avahi-compat-howl-devel}
 %{!?_without_gtkspell:BuildRequires: gtkspell-devel}
 %{?_with_howl:BuildRequires: howl-devel}
@@ -55,7 +54,10 @@ BuildRequires: gnutls-devel
 # For Mandrake/Mandriva:
 BuildRequires: libnss3-devel, perl-devel
 Obsoletes:  libgaim-remote0
+%{!?_without_modularx:BuildRequires: libsm-devel, libxscrnsaver-devel}
 %else
+# For !Mandriva
+%{!?_without_modularx:BuildRequires: libSM-devel, libXScrnSaver-devel}
 # For SuSE, Red Hat, Fedora and others:
 %if "%{_vendor}" != "suse"
 # For Red Hat, Fedora and others:
@@ -93,6 +95,7 @@ Obsoletes:  gaim-tcl
 Obsoletes:  gaim-gadugadu
 Obsoletes:  pidgin-tcl < 2.0.0
 Obsoletes:  pidgin-silc < 2.0.0
+%{?_with_sasl:Requires:   cyrus-sasl-plain, cyrus-sasl-md5}
 
 %package -n libpurple-devel
 Summary:    Development headers, documentation, and libraries for libpurple
@@ -312,7 +315,7 @@ if [ -n "`which gconftool-2 2>/dev/null`" ]; then
     killall -HUP gconfd-2 &> /dev/null || :
 fi
 touch --no-create %{_datadir}/icons/hicolor || :
-%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
+%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
 
 %post -n libpurple -p /sbin/ldconfig
 
@@ -328,7 +331,7 @@ fi
 
 %postun
 touch --no-create %{_datadir}/icons/hicolor || :
-%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor || :
+%{_bindir}/gtk-update-icon-cache --quiet %{_datadir}/icons/hicolor &> /dev/null || :
 
 %postun -n libpurple -p /sbin/ldconfig
 
@@ -447,6 +450,14 @@ touch --no-create %{_datadir}/icons/hicolor || :
 %endif
 
 %changelog
+* Sun May 27 2007 Stu Tomlinson <stu@nosnilmot.com>
+- add cyrus-sasl-plain & cyrus-sasl-md5 to Requires
+
+* Thu May 24 2007 Stu Tomlinson <stu@nosnilmot.com>
+- Silence errors from gtk-update-icon-cache
+- Change Mandriva build dependencies to reflect the correct (lower case)
+  names for libSM-devel & libXScrnSaver-devel (Sunny Dubey)
+
 * Thu May 10 2007 Stu Tomlinson <stu@nosnilmot.com>
 - Add scriptlet Requires for GConf2 to fix schema installation
 - Silence harmless errors when gconfd-2 is not running at install time

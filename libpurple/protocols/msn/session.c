@@ -316,6 +316,7 @@ msn_session_set_error(MsnSession *session, MsnErrorType error,
 							 "temporarily."));
 			break;
 		case MSN_ERROR_AUTH:
+			gc->wants_to_die = TRUE;
 			msg = g_strdup_printf(_("Unable to authenticate: %s"),
 								  (info == NULL ) ?
 								  _("Unknown error") : info);
@@ -404,4 +405,9 @@ msn_session_finish_login(MsnSession *session)
 
 	/* Sync users */
 	msn_session_sync_users(session);
+	/* It seems that some accounts that haven't accessed hotmail for a while
+	 * and @msn.com accounts don't automatically get the initial email
+	 * notification so we always request it on login
+	 */
+	msn_cmdproc_send(session->notification->cmdproc, "URL", "%s", "INBOX");
 }

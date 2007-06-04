@@ -1497,7 +1497,7 @@ purple_conv_chat_cb_compare(PurpleConvChatBuddy *a, PurpleConvChatBuddy *b)
 	} else if (a->buddy != b->buddy) {
 		ret = a->buddy ? -1 : 1;
 	} else {
-		ret = strcasecmp(user1, user2);
+		ret = purple_utf8_strcasecmp(user1, user2);
 	}
 
 	return ret;
@@ -1535,20 +1535,22 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 		PurpleConvChatBuddyFlags flag = GPOINTER_TO_INT(fl->data);
 		const char *extra_msg = (extra_msgs ? extra_msgs->data : NULL);
 
-		if (!strcmp(chat->nick, purple_normalize(conv->account, user))) {
-			const char *alias2 = purple_account_get_alias(conv->account);
-			if (alias2 != NULL)
-				alias = alias2;
-			else
-			{
-				const char *display_name = purple_connection_get_display_name(gc);
-				if (display_name != NULL)
-					alias = display_name;
+		if(!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+			if (!strcmp(chat->nick, purple_normalize(conv->account, user))) {
+				const char *alias2 = purple_account_get_alias(conv->account);
+				if (alias2 != NULL)
+					alias = alias2;
+				else
+				{
+					const char *display_name = purple_connection_get_display_name(gc);
+					if (display_name != NULL)
+						alias = display_name;
+				}
+			} else {
+				PurpleBuddy *buddy;
+				if ((buddy = purple_find_buddy(gc->account, user)) != NULL)
+					alias = purple_buddy_get_contact_alias(buddy);
 			}
-		} else if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
-			PurpleBuddy *buddy;
-			if ((buddy = purple_find_buddy(gc->account, user)) != NULL)
-				alias = purple_buddy_get_contact_alias(buddy);
 		}
 
 		quiet = GPOINTER_TO_INT(purple_signal_emit_return_1(purple_conversations_get_handle(),
@@ -1633,14 +1635,16 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 		/* Note this for later. */
 		is_me = TRUE;
 
-		alias = purple_account_get_alias(conv->account);
-		if (alias != NULL)
-			new_alias = alias;
-		else
-		{
-			const char *display_name = purple_connection_get_display_name(gc);
-			if (display_name != NULL)
-				alias = display_name;
+		if(!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
+			alias = purple_account_get_alias(conv->account);
+			if (alias != NULL)
+				new_alias = alias;
+			else
+			{
+				const char *display_name = purple_connection_get_display_name(gc);
+				if (display_name != NULL)
+					alias = display_name;
+			}
 		}
 	} else if (!(prpl_info->options & OPT_PROTO_UNIQUE_CHATNAME)) {
 		PurpleBuddy *buddy;
@@ -1960,7 +1964,7 @@ purple_conv_chat_cb_find(PurpleConvChat *chat, const char *name)
 
 	for (l = purple_conv_chat_get_users(chat); l; l = l->next) {
 		cb = l->data;
-		if (!purple_utf8_strcasecmp(cb->name, name))
+		if (!g_utf8_collate(cb->name, name))
 			return cb;
 	}
 

@@ -119,12 +119,12 @@ silcpurple_keepalive(PurpleConnection *gc)
 				NULL, 0);
 }
 
-static int
+static gboolean
 silcpurple_scheduler(gpointer *context)
 {
 	SilcPurple sg = (SilcPurple)context;
 	silc_client_run_one(sg->client);
-	return 1;
+	return TRUE;
 }
 
 static void
@@ -361,11 +361,7 @@ silcpurple_login(PurpleAccount *account)
 	}
 
 	/* Schedule SILC using Glib's event loop */
-#ifndef _WIN32
-	sg->scheduler = g_timeout_add(5, (GSourceFunc)silcpurple_scheduler, sg);
-#else
-	sg->scheduler = g_timeout_add(300, (GSourceFunc)silcpurple_scheduler, sg);
-#endif
+	sg->scheduler = purple_timeout_add(300, (GSourceFunc)silcpurple_scheduler, sg);
 }
 
 static int
@@ -391,13 +387,13 @@ silcpurple_close(PurpleConnection *gc)
 
 	/* Send QUIT */
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", "Download Purple: " PURPLE_WEBSITE, NULL);
+				 "QUIT", "Download this: " PURPLE_WEBSITE, NULL);
 
 	if (sg->conn)
 		silc_client_close_connection(sg->client, sg->conn);
 
-	g_source_remove(sg->scheduler);
-	g_timeout_add(1, (GSourceFunc)silcpurple_close_final, sg);
+	purple_timeout_remove(sg->scheduler);
+	purple_timeout_add(1, (GSourceFunc)silcpurple_close_final, sg);
 }
 
 
@@ -1552,7 +1548,7 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", (args && args[0]) ? args[0] : "Download Purple: " PURPLE_WEBSITE, NULL);
+				 "QUIT", (args && args[0]) ? args[0] : "Download this: " PURPLE_WEBSITE, NULL);
 
 	return PURPLE_CMD_RET_OK;
 }

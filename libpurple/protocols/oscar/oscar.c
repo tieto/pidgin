@@ -304,15 +304,15 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 
 	if ((encoding == NULL) || encoding[0] == '\0') {
 		purple_debug_info("oscar", "Empty encoding, assuming UTF-8\n");
-	} else if (!strcasecmp(encoding, "iso-8859-1")) {
+	} else if (!g_ascii_strcasecmp(encoding, "iso-8859-1")) {
 		utf8 = g_convert(text, textlen, "UTF-8", "iso-8859-1", NULL, NULL, NULL);
-	} else if (!strcasecmp(encoding, "ISO-8859-1-Windows-3.1-Latin-1") ||
-	           !strcasecmp(encoding, "us-ascii"))
+	} else if (!g_ascii_strcasecmp(encoding, "ISO-8859-1-Windows-3.1-Latin-1") ||
+	           !g_ascii_strcasecmp(encoding, "us-ascii"))
 	{
 		utf8 = g_convert(text, textlen, "UTF-8", "Windows-1252", NULL, NULL, NULL);
-	} else if (!strcasecmp(encoding, "unicode-2-0")) {
+	} else if (!g_ascii_strcasecmp(encoding, "unicode-2-0")) {
 		utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
-	} else if (strcasecmp(encoding, "utf-8")) {
+	} else if (g_ascii_strcasecmp(encoding, "utf-8")) {
 		purple_debug_warning("oscar", "Unrecognized character encoding \"%s\", "
 						   "attempting to convert to UTF-8 anyway\n", encoding);
 		utf8 = g_convert(text, textlen, "UTF-8", encoding, NULL, NULL, NULL);
@@ -362,7 +362,7 @@ purple_plugin_oscar_convert_to_utf8(const gchar *data, gsize datalen, const char
 	if ((charsetstr == NULL) || (*charsetstr == '\0'))
 		return NULL;
 
-	if (strcasecmp("UTF-8", charsetstr)) {
+	if (g_ascii_strcasecmp("UTF-8", charsetstr)) {
 		if (fallback)
 			ret = g_convert_with_fallback(data, datalen, "UTF-8", charsetstr, "?", NULL, NULL, &err);
 		else
@@ -1604,8 +1604,7 @@ int purple_memrequest(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 			straight_to_hell, pos) == NULL)
 	{
 		char buf[256];
-		if (pos->modname)
-			g_free(pos->modname);
+		g_free(pos->modname);
 		g_free(pos);
 		g_snprintf(buf, sizeof(buf), _("You may be disconnected shortly.  "
 			"Check %s for updates."), PURPLE_WEBSITE);
@@ -1625,16 +1624,19 @@ purple_parse_login(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 	ClientInfo info = CLIENTINFO_PURPLE;
 	va_list ap;
 	char *key;
+	gboolean truncate_pass;
 
 	gc = od->gc;
 	account = purple_connection_get_account(gc);
 
 	va_start(ap, fr);
 	key = va_arg(ap, char *);
+	truncate_pass = va_arg(ap, int);
 	va_end(ap);
 
 	aim_send_login(od, conn, purple_account_get_username(account),
-				   purple_connection_get_password(gc), &info, key);
+			purple_connection_get_password(gc), truncate_pass,
+			&info, key);
 
 	purple_connection_update_progress(gc, _("Password sent"), 2, OSCAR_CONNECT_STEPS);
 	ck[2] = 0x6c;
@@ -2199,7 +2201,7 @@ purple_auth_request(struct name_data *data, char *msg)
 				   buddy->name, group->name);
 		aim_ssi_sendauthrequest(od, data->name, msg ? msg : _("Please authorize me so I can add you to my buddy list."));
 		if (!aim_ssi_itemlist_finditem(od->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))
-			aim_ssi_addbuddy(od, buddy->name, group->name, purple_buddy_get_alias_only(buddy), NULL, NULL, 1);
+			aim_ssi_addbuddy(od, buddy->name, group->name, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, TRUE);
 	}
 }
 
@@ -4143,6 +4145,7 @@ purple_odc_send_im(PeerConnection *conn, const char *message, PurpleMessageFlags
 			conn->sn, msg->str, &tmp, &tmplen, &charset, &charsubset);
 	g_string_free(msg, TRUE);
 	msg = g_string_new_len(tmp, tmplen);
+	g_free(tmp);
 
 	/* Append any binary data that we may have */
 	if (oscar_id) {
@@ -4588,7 +4591,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 	if ((od->ssi.received_data) && !(aim_ssi_itemlist_finditem(od->ssi.local, group->name, buddy->name, AIM_SSI_TYPE_BUDDY))) {
 		purple_debug_info("oscar",
 				   "ssi: adding buddy %s to group %s\n", buddy->name, group->name);
-		aim_ssi_addbuddy(od, buddy->name, group->name, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
+		aim_ssi_addbuddy(od, buddy->name, group->name, NULL, purple_buddy_get_alias_only(buddy), NULL, NULL, 0);
 	}
 
 	/* XXX - Should this be done from AIM accounts, as well? */

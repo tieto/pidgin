@@ -106,10 +106,11 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 		return;
 
 	disconnected = purple_account_is_disconnected(account);
-	primitive = purple_status_type_get_primitive(purple_status_get_type(status));
 
 	if(disconnected)
 		return;
+
+	primitive = purple_status_type_get_primitive(purple_status_get_type(status));
 
 	gc = purple_account_get_connection(account);
 	js = gc->proto_data;

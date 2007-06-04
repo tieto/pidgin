@@ -92,6 +92,7 @@ set_account_unidle(PurpleAccount *account)
 }
 
 
+static gboolean no_away = FALSE;
 static gint time_until_next_idle_event;
 /*
  * This function should be called when you think your idle state
@@ -101,9 +102,8 @@ static gint time_until_next_idle_event;
  * should be set.
  *
  * There is no harm to calling this many many times, other than
- * it will be kinda slow.  This is called every 5 seconds by a
- * timer set when Purple starts.  It is also called when
- * you send an IM, a chat, etc.
+ * it will be kinda slow.  This is called by a timer set when
+ * Purple starts.  It is also called when you send an IM, a chat, etc.
  *
  * This function has 3 sections.
  * 1. Get your idle time.  It will query XScreenSaver or Windows
@@ -118,46 +118,67 @@ check_idleness(void)
 	time_t time_idle;
 	gboolean auto_away;
 	const gchar *idle_reporting;
-	gboolean report_idle;
-	GList *l;
+	gboolean report_idle = TRUE;
 	gint away_seconds = 0;
-	static int no_away = 0;
+	gint idle_recheck_interval = 0;
 
 	purple_signal_emit(purple_blist_get_handle(), "update-idle");
 
 	idle_reporting = purple_prefs_get_string("/purple/away/idle_reporting");
-	report_idle = TRUE;
+	auto_away = purple_prefs_get_bool("/purple/away/away_when_idle");
+
 	if (!strcmp(idle_reporting, "system") &&
 		(idle_ui_ops != NULL) && (idle_ui_ops->get_time_idle != NULL))
 	{
 		/* Use system idle time (mouse or keyboard movement, etc.) */
 		time_idle = idle_ui_ops->get_time_idle();
+		idle_recheck_interval = 60;
 	}
 	else if (!strcmp(idle_reporting, "purple"))
 	{
 		/* Use 'Purple idle' */
 		time_idle = time(NULL) - last_active_time;
+		idle_recheck_interval = 0;
 	}
 	else
 	{
 		/* Don't report idle time */
 		time_idle = 0;
 		report_idle = FALSE;
-	}
 
-	/* Auto-away stuff */
-	auto_away = purple_prefs_get_bool("/purple/away/away_when_idle");
-
-	/* If we're not reporting idle, we can still do auto-away.
-	 * First try "system" and if that isn't possible, use "purple" */
-	if (!report_idle && auto_away) {
-		if ((idle_ui_ops != NULL) && (idle_ui_ops->get_time_idle != NULL))
-			time_idle = idle_ui_ops->get_time_idle();
+		/* If we're not reporting idle, we can still do auto-away.
+		 * First try "system" and if that isn't possible, use "purple" */
+		if (auto_away)
+		{
+			if ((idle_ui_ops != NULL) && (idle_ui_ops->get_time_idle != NULL))
+			{
+				time_idle = idle_ui_ops->get_time_idle();
+				idle_recheck_interval = 60;
+			}
+			else
+			{
+				time_idle = time(NULL) - last_active_time;
+				idle_recheck_interval = 0;
+			}
+		}
 		else
-			time_idle = time(NULL) - last_active_time;
+		{
+			if (!no_away)
+			{
+				purple_savedstatus_set_idleaway(FALSE);
+				no_away = TRUE;
+			}
+			time_until_next_idle_event = 0;
+			return;
+		}
 	}
 
-	time_until_next_idle_event = IDLEMARK - time_idle; /* reasonable start upperbound */
+	time_until_next_idle_event = IDLEMARK - time_idle;
+	if (time_until_next_idle_event < 0)
+	{
+		/* If we're already idle, check again as appropriate. */
+		time_until_next_idle_event = idle_recheck_interval;
+	}
 
 	if (auto_away || !no_away)
 		away_seconds = 60 * purple_prefs_get_int("/purple/away/mins_before_away");
@@ -165,21 +186,20 @@ check_idleness(void)
 	if (auto_away && time_idle > away_seconds)
 	{
 		purple_savedstatus_set_idleaway(TRUE);
-		no_away = 0;
-		if (time_idle < away_seconds && (away_seconds - time_idle) < time_until_next_idle_event)
-			time_until_next_idle_event = away_seconds - time_idle;
+		no_away = FALSE;
 	}
 	else if (!no_away && time_idle < away_seconds)
 	{
+		no_away = TRUE;
 		purple_savedstatus_set_idleaway(FALSE);
-		no_away = 1;
-		if (time_idle < away_seconds && (away_seconds - time_idle) < time_until_next_idle_event)
+		if (time_until_next_idle_event == 0 || (away_seconds - time_idle) < time_until_next_idle_event)
 			time_until_next_idle_event = away_seconds - time_idle;
 	}
 
 	/* Idle reporting stuff */
 	if (report_idle && (time_idle >= IDLEMARK))
 	{
+		GList *l;
 		for (l = purple_connections_get_all(); l != NULL; l = l->next)
 		{
 			PurpleConnection *gc = l->data;
@@ -191,9 +211,6 @@ check_idleness(void)
 		while (idled_accts != NULL)
 			set_account_unidle(idled_accts->data);
 	}
-	
-	if (time_until_next_idle_event < 0)
-		time_until_next_idle_event = IDLEMARK;
 }
 
 
@@ -204,7 +221,10 @@ static gint
 check_idleness_timer()
 {
 	check_idleness();
-	idle_timer = purple_timeout_add(1000 * (time_until_next_idle_event + 1), check_idleness_timer, NULL);
+	if (time_until_next_idle_event == 0)
+		idle_timer = 0;
+	else
+		idle_timer = purple_timeout_add(1000 * (time_until_next_idle_event + 1), check_idleness_timer, NULL);
 	return FALSE;
 }
 
@@ -232,10 +252,26 @@ signing_off_cb(PurpleConnection *gc, void *data)
 	set_account_unidle(account);
 }
 
+static void
+idle_reporting_cb(const char *name, PurplePrefType type, gconstpointer val, gpointer data)
+{
+	if (idle_timer)
+		purple_timeout_remove(idle_timer);
+	idle_timer = 0;
+	check_idleness_timer();
+}
+
 void
 purple_idle_touch()
 {
 	time(&last_active_time);
+	if (!no_away)
+	{
+		if (idle_timer)
+			purple_timeout_remove(idle_timer);
+		idle_timer = 0;
+		check_idleness_timer();
+	}
 }
 
 void
@@ -280,6 +316,9 @@ purple_idle_init()
 						purple_idle_get_handle(),
 						PURPLE_CALLBACK(signing_off_cb), NULL);
 
+	purple_prefs_connect_callback(purple_idle_get_handle(), "/purple/away/idle_reporting",
+	                              idle_reporting_cb, NULL);
+
 	purple_idle_touch();
 }
 
@@ -287,6 +326,7 @@ void
 purple_idle_uninit()
 {
 	purple_signals_disconnect_by_handle(purple_idle_get_handle());
+	purple_prefs_disconnect_by_handle(purple_idle_get_handle());
 
 	/* Remove the idle timer */
 	if (idle_timer > 0)

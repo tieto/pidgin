@@ -2,7 +2,6 @@ import re
 import string
 import sys
 
-
 # types translated into "int"
 simpletypes = ["int", "gint", "guint", "gboolean"]
 
@@ -166,8 +165,11 @@ class ClientBinding (Binding):
         self.returncode = []
 
     def flush(self):
+	paramslist = ", ".join(self.paramshdr)
+	if (paramslist == "") :
+	    paramslist = "void"
         print "%s %s(%s)" % (self.functiontype, self.function.name,
-                             ", ".join(self.paramshdr)),
+                             paramslist),
 
         if self.headersonly:
             print ";"
@@ -359,8 +361,12 @@ class ServerBinding (Binding):
         self.ccode.append("\t%s;" % self.call) # just call the function
 
     def outputstring(self, type, name, const):
-        self.cdecls.append("\tconst char *%s;" % name)
-        self.ccode.append("\t%s = null_to_empty(%s);" % (name, self.call))
+        if const:
+            self.cdecls.append("\tconst char *%s;" % name)
+        else:
+            self.cdecls.append("\tchar *%s;" % name)
+        self.ccode.append("\tif ((%s = %s) == NULL)" % (name, self.call))
+        self.ccode.append("\t\t%s = \"\";" % (name))
         self.cparamsout.append(("STRING", name))
         self.addouttype("s", name)
         if not const:

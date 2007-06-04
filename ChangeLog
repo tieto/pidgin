@@ -1,6 +1,23 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.0.1 (??/??/????):
+version 2.0.2 (??/??/????):
+	Pidgin:
+	* Added a custom conversation font option to preferences
+	* Fixed smiley ordering in the insert smiley popup to be more intuitive
+
+	libpurple:
+	* Moving an ICQ buddy from one group to another no longer
+	  re-requests authorization from that person (Rene Hausleitner)
+	* Added nullprpl, an example protocol plugin (Ryan Barrett)
+	* Fixed SOCKS5 bug which caused Jabber file receiving to fail
+	* Remove MSN's random "Authorization Failed" dialogs
+	* Fix MSN to correctly detect incorrect passwords and disable the account
+	* Get User Info on MSN is now more reliable & accurate
+
+	Finch:
+	* Auto account reconnecting
+
+version 2.0.1 (05/24/2007):
 	* Buddy list update speedups when buddy icons are not being
 	  displayed.  (Scott Wolchok)
 	* Fix icons on docklet change status menu to match the status selector
@@ -32,6 +49,20 @@ version 2.0.1 (??/??/????):
 	  conversation tabs (Ma Xuan)
 	* Fix IRC connection bug with dircproxy (xjoe)
 	* Ctrl+[shift]+tab focuses the next most active tab (William Thompson)
+	* Fix Open Hotmail Inbox for MSN to work more reliably
+	* Add a Google Talk item to the protocol list, to help users who think
+	  we don't support Google Talk.  The item acts just like "XMPP".
+	* Remember if the X server supports XScreenSaver, to avoid waking it
+	  every 5 seconds.  (Arjan van de Ven with Intel Corporation)
+	* Change our idle checking to poll only as necessary and raise the
+	  unidle timeout from 5 seconds to 60 when using XScreenSaver.  This
+	  and the XScreenSaver change will reduce Pidgin's effect on power
+	  consumption when running with NO_HZ.  (Arjan van de Ven with Intel
+	  Corporation)
+	* Conversation -> Save As will now use aliases.
+	* ALSA added as a possible sound method
+	* Google Talk accounts will not import buddies from your Gmail address
+	  book
 
 	Finch:
 	* Userlist in chat windows, which can be turned on or off using

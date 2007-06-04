@@ -50,7 +50,7 @@ int aim_chatnav_createroom(OscarData *od, FlapConnection *conn, const char *name
 	static const char charset[] = {"us-ascii"};
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 
 	frame = flap_frame_new(od, 0x02, 1152);
 
@@ -85,15 +85,15 @@ int aim_chatnav_createroom(OscarData *od, FlapConnection *conn, const char *name
 	/* detail level */
 	byte_stream_put8(&frame->data, 0x01);
 
-	aim_tlvlist_add_str(&tl, 0x00d3, name);
-	aim_tlvlist_add_str(&tl, 0x00d6, charset);
-	aim_tlvlist_add_str(&tl, 0x00d7, lang);
+	aim_tlvlist_add_str(&tlvlist, 0x00d3, name);
+	aim_tlvlist_add_str(&tlvlist, 0x00d6, charset);
+	aim_tlvlist_add_str(&tlvlist, 0x00d7, lang);
 
 	/* tlvcount */
-	byte_stream_put16(&frame->data, aim_tlvlist_count(&tl));
-	aim_tlvlist_write(&frame->data, &tl);
+	byte_stream_put16(&frame->data, aim_tlvlist_count(tlvlist));
+	aim_tlvlist_write(&frame->data, &tlvlist);
 
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 
@@ -109,7 +109,7 @@ parseinfo_perms(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFram
 	int curexchange;
 	aim_tlv_t *exchangetlv;
 	guint8 maxrooms = 0;
-	aim_tlvlist_t *tlvlist, *innerlist;
+	GSList *tlvlist, *innerlist;
 
 	tlvlist = aim_tlvlist_read(bs);
 
@@ -133,7 +133,7 @@ parseinfo_perms(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFram
 
 		curexchange++;
 
-		exchanges = realloc(exchanges, curexchange * sizeof(struct aim_chat_exchangeinfo));
+		exchanges = g_realloc(exchanges, curexchange * sizeof(struct aim_chat_exchangeinfo));
 
 		/* exchange number */
 		exchanges[curexchange-1].number = byte_stream_get16(&tbs);
@@ -290,7 +290,7 @@ parseinfo_perms(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFram
 		}
 #endif
 
-		aim_tlvlist_free(&innerlist);
+		aim_tlvlist_free(innerlist);
 	}
 
 	/*
@@ -300,14 +300,14 @@ parseinfo_perms(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFram
 		ret = userfunc(od, conn, frame, snac2->type, maxrooms, curexchange, exchanges);
 
 	for (curexchange--; curexchange >= 0; curexchange--) {
-		free(exchanges[curexchange].name);
-		free(exchanges[curexchange].charset1);
-		free(exchanges[curexchange].lang1);
-		free(exchanges[curexchange].charset2);
-		free(exchanges[curexchange].lang2);
+		g_free(exchanges[curexchange].name);
+		g_free(exchanges[curexchange].charset1);
+		g_free(exchanges[curexchange].lang1);
+		g_free(exchanges[curexchange].charset2);
+		g_free(exchanges[curexchange].lang2);
 	}
-	free(exchanges);
-	aim_tlvlist_free(&tlvlist);
+	g_free(exchanges);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }
@@ -316,7 +316,7 @@ static int
 parseinfo_create(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs, aim_snac_t *snac2)
 {
 	aim_rxcallback_t userfunc;
-	aim_tlvlist_t *tlvlist, *innerlist;
+	GSList *tlvlist, *innerlist;
 	char *ck = NULL, *fqcn = NULL, *name = NULL;
 	guint16 exchange = 0, instance = 0, unknown = 0, flags = 0, maxmsglen = 0, maxoccupancy = 0;
 	guint32 createtime = 0;
@@ -330,7 +330,7 @@ parseinfo_create(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 
 	if (!(bigblock = aim_tlv_gettlv(tlvlist, 0x0004, 1))) {
 		purple_debug_misc("oscar", "no bigblock in top tlv in create room response\n");
-		aim_tlvlist_free(&tlvlist);
+		aim_tlvlist_free(tlvlist);
 		return 0;
 	}
 
@@ -344,8 +344,8 @@ parseinfo_create(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 
 	if (detaillevel != 0x02) {
 		purple_debug_misc("oscar", "unknown detaillevel in create room response (0x%02x)\n", detaillevel);
-		aim_tlvlist_free(&tlvlist);
-		free(ck);
+		aim_tlvlist_free(tlvlist);
+		g_free(ck);
 		return 0;
 	}
 
@@ -378,11 +378,11 @@ parseinfo_create(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 		ret = userfunc(od, conn, frame, snac2->type, fqcn, instance, exchange, flags, createtime, maxmsglen, maxoccupancy, createperms, unknown, name, ck);
 	}
 
-	free(ck);
-	free(name);
-	free(fqcn);
-	aim_tlvlist_free(&innerlist);
-	aim_tlvlist_free(&tlvlist);
+	g_free(ck);
+	g_free(name);
+	g_free(fqcn);
+	aim_tlvlist_free(innerlist);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }
@@ -442,8 +442,8 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 		purple_debug_misc("oscar", "chatnav_parse_info: unknown request subtype (%04x)\n", snac2->type);
 
 	if (snac2)
-		free(snac2->data);
-	free(snac2);
+		g_free(snac2->data);
+	g_free(snac2);
 
 	return ret;
 }

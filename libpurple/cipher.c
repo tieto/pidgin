@@ -1447,14 +1447,14 @@ static PurpleCipherOps RC4Ops = {
  * Structs
  ******************************************************************************/
 struct _PurpleCipher {
-	gchar *name;
-	PurpleCipherOps *ops;
-	guint ref;
+	gchar *name;          /**< Internal name - used for searching */
+	PurpleCipherOps *ops; /**< Operations supported by this cipher */
+	guint ref;            /**< Reference count */
 };
 
 struct _PurpleCipherContext {
-	PurpleCipher *cipher;
-	gpointer data;
+	PurpleCipher *cipher; /**< Cipher this context is under */
+	gpointer data;        /**< Internal cipher state data */
 };
 
 /******************************************************************************
@@ -2000,8 +2000,8 @@ gchar *purple_cipher_http_digest_calculate_session_key(
 	/* Check for a supported algorithm. */
 	g_return_val_if_fail(algorithm == NULL ||
 						 *algorithm == '\0' ||
-						 strcasecmp(algorithm, "MD5") ||
-						 strcasecmp(algorithm, "MD5-sess"), NULL);
+						 g_ascii_strcasecmp(algorithm, "MD5") ||
+						 g_ascii_strcasecmp(algorithm, "MD5-sess"), NULL);
 
 	cipher = purple_ciphers_find_cipher("md5");
 	g_return_val_if_fail(cipher != NULL, NULL);
@@ -2014,7 +2014,7 @@ gchar *purple_cipher_http_digest_calculate_session_key(
 	purple_cipher_context_append(context, (guchar *)":", 1);
 	purple_cipher_context_append(context, (guchar *)password, strlen(password));
 
-	if (algorithm != NULL && !strcasecmp(algorithm, "MD5-sess"))
+	if (algorithm != NULL && !g_ascii_strcasecmp(algorithm, "MD5-sess"))
 	{
 		guchar digest[16];
 
@@ -2065,14 +2065,14 @@ gchar *purple_cipher_http_digest_calculate_response(
 	/* Check for a supported algorithm. */
 	g_return_val_if_fail(algorithm == NULL ||
 						 *algorithm == '\0' ||
-						 strcasecmp(algorithm, "MD5") ||
-						 strcasecmp(algorithm, "MD5-sess"), NULL);
+						 g_ascii_strcasecmp(algorithm, "MD5") ||
+						 g_ascii_strcasecmp(algorithm, "MD5-sess"), NULL);
 
 	/* Check for a supported "quality of protection". */
 	g_return_val_if_fail(qop == NULL ||
 						 *qop == '\0' ||
-						 strcasecmp(qop, "auth") ||
-						 strcasecmp(qop, "auth-int"), NULL);
+						 g_ascii_strcasecmp(qop, "auth") ||
+						 g_ascii_strcasecmp(qop, "auth-int"), NULL);
 
 	cipher = purple_ciphers_find_cipher("md5");
 	g_return_val_if_fail(cipher != NULL, NULL);
@@ -2083,7 +2083,7 @@ gchar *purple_cipher_http_digest_calculate_response(
 	purple_cipher_context_append(context, (guchar *)":", 1);
 	purple_cipher_context_append(context, (guchar *)digest_uri, strlen(digest_uri));
 
-	if (qop != NULL && !strcasecmp(qop, "auth-int"))
+	if (qop != NULL && !g_ascii_strcasecmp(qop, "auth-int"))
 	{
 		PurpleCipherContext *context2;
 		gchar entity_hash[33];

@@ -70,6 +70,7 @@
 #define PIDGIN_STOCK_STATUS_LOGIN      "pidgin-status-login"
 #define PIDGIN_STOCK_STATUS_LOGOUT     "pidgin-status-logout"
 #define PIDGIN_STOCK_STATUS_OFFLINE    "pidgin-status-offline"
+#define PIDGIN_STOCK_STATUS_OFFLINE_I  "pidgin-status-offline"
 #define PIDGIN_STOCK_STATUS_PERSON     "pidgin-status-person"
 #define PIDGIN_STOCK_STATUS_MESSAGE    "pidgin-status-message"
 
@@ -104,6 +105,7 @@
 #define PIDGIN_STOCK_ANIMATION_TYPING2	"pidgin-anim-typing2"
 #define PIDGIN_STOCK_ANIMATION_TYPING3	"pidgin-anim-typing3"
 #define PIDGIN_STOCK_ANIMATION_TYPING4	"pidgin-anim-typing4"
+#define PIDGIN_STOCK_ANIMATION_TYPING5	"pidgin-anim-typing5"
 
 /* Toolbar (and menu) icons */
 #define PIDGIN_STOCK_TOOLBAR_ACCOUNTS     "pidgin-accounts"
@@ -114,6 +116,7 @@
 #define PIDGIN_STOCK_TOOLBAR_FONT_FACE	  "pidgin-font-face"
 #define PIDGIN_STOCK_TOOLBAR_TEXT_SMALLER "pidgin-text-smaller"
 #define PIDGIN_STOCK_TOOLBAR_TEXT_LARGER  "pidgin-text-larger"
+#define PIDGIN_STOCK_TOOLBAR_INSERT       "pidgin-insert"
 #define PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE "pidgin-insert-image"
 #define PIDGIN_STOCK_TOOLBAR_INSERT_LINK  "pidgin-insert-link"
 #define PIDGIN_STOCK_TOOLBAR_MESSAGE_NEW  "pidgin-message-new"

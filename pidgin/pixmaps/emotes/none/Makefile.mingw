@@ -10,11 +10,14 @@ include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 datadir = $(PIDGIN_INSTALL_DIR)
 include ./Makefile.am
 
-.PHONY: install
+.PHONY: install clean
 
-install:
+install: theme
 	if test '$(pidginsmileypix_DATA)'; then \
 	  mkdir -p $(pidginsmileypixdir); \
 	  cp $(pidginsmileypix_DATA) $(pidginsmileypixdir); \
 	fi;
+
+clean:
+	rm -f theme
 

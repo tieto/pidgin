@@ -217,6 +217,14 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 	char *jid_norm = g_strdup(jabber_normalize(account, jid));
 
 	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", "google:roster");
+	const char *subscription = xmlnode_get_attrib(item, "subscription");
+	
+	if (!subscription || !strcmp(subscription, "none")) {
+		/* The Google Talk servers will automatically add people from your Gmail address book
+		 * with subscription=none. If we see someone with subscription=none, ignore them.
+		 */
+		return FALSE;
+	}
 	
 	while (list) {
 		if (!strcmp(jid_norm, (char*)list->data)) {

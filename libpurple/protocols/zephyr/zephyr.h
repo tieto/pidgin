@@ -109,7 +109,7 @@ typedef struct _ZNotice_t {
     ZChecksum_t		z_checksum;
     int			z_num_other_fields;
     char		*z_other_fields[Z_MAXOTHERFIELDS];
-    void		*z_message;
+    caddr_t		z_message;
     int			z_message_len;
 } ZNotice_t;
 
