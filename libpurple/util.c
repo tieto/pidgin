@@ -1260,14 +1260,17 @@ struct purple_parse_tag {
 								pt->dest_tag = y; \
 								tags = g_list_prepend(tags, pt); \
 							} \
-							xhtml = g_string_append(xhtml, "<" y); \
-							c += strlen("<" x ); \
-							xhtml = g_string_append(xhtml, innards->str); \
-							xhtml = g_string_append_c(xhtml, '>'); \
+							if(xhtml) { \
+								xhtml = g_string_append(xhtml, "<" y); \
+								xhtml = g_string_append(xhtml, innards->str); \
+								xhtml = g_string_append_c(xhtml, '>'); \
+							} \
 							c = p + 1; \
 						} else { \
-							xhtml = g_string_append(xhtml, "&lt;"); \
-							plain = g_string_append_c(plain, '<'); \
+							if(xhtml) \
+								xhtml = g_string_append(xhtml, "&lt;"); \
+							if(plain) \
+								plain = g_string_append_c(plain, '<'); \
 							c++; \
 						} \
 						g_string_free(innards, TRUE); \
@@ -1276,16 +1279,19 @@ struct purple_parse_tag {
 						if(!g_ascii_strncasecmp(c, "<" x, strlen("<" x)) && \
 								(*(c+strlen("<" x)) == '>' || \
 								 !g_ascii_strncasecmp(c+strlen("<" x), "/>", 2))) { \
-							xhtml = g_string_append(xhtml, "<" y); \
+							if(xhtml) \
+								xhtml = g_string_append(xhtml, "<" y); \
 							c += strlen("<" x); \
 							if(*c != '/') { \
 								struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1); \
 								pt->src_tag = x; \
 								pt->dest_tag = y; \
 								tags = g_list_prepend(tags, pt); \
-								xhtml = g_string_append_c(xhtml, '>'); \
+								if(xhtml) \
+									xhtml = g_string_append_c(xhtml, '>'); \
 							} else { \
-								xhtml = g_string_append(xhtml, "/>");\
+								if(xhtml) \
+									xhtml = g_string_append(xhtml, "/>");\
 							} \
 							c = strchr(c, '>') + 1; \
 							continue; \
@@ -1295,10 +1301,17 @@ void
 purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						  char **plain_out)
 {
-	GString *xhtml = g_string_new("");
-	GString *plain = g_string_new("");
+	GString *xhtml = NULL;
+	GString *plain = NULL;
 	GList *tags = NULL, *tag;
 	const char *c = html;
+
+	g_return_if_fail(xhtml_out != NULL || plain_out != NULL);
+
+	if(xhtml_out)
+		xhtml = g_string_new("");
+	if(plain_out)
+		plain = g_string_new("");
 
 	while(c && *c) {
 		if(*c == '<') {
@@ -1315,7 +1328,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				if(tag) {
 					while(tags) {
 						struct purple_parse_tag *pt = tags->data;
-						g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
+						if(xhtml)
+							g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
 						if(tags == tag)
 							break;
 						tags = g_list_remove(tags, pt);
@@ -1333,8 +1347,10 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					if(*end == '>') {
 						c = end+1;
 					} else {
-						xhtml = g_string_append(xhtml, "&lt;");
-						plain = g_string_append_c(plain, '<');
+						if(xhtml)
+							xhtml = g_string_append(xhtml, "&lt;");
+						if(plain)
+							plain = g_string_append_c(plain, '<');
 						c++;
 					}
 				}
@@ -1363,7 +1379,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				ALLOW_TAG("span");
 				ALLOW_TAG("strong");
 				ALLOW_TAG("ul");
-
+				ALLOW_TAG("img");
+				
 				/* we skip <HR> because it's not legal in XHTML-IM.  However,
 				 * we still want to send something sensible, so we put a
 				 * linebreak in its place. <BR> also needs special handling
@@ -1374,8 +1391,9 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 							!g_ascii_strncasecmp(c+3, "/>", 2) ||
 							!g_ascii_strncasecmp(c+3, " />", 3))) {
 					c = strchr(c, '>') + 1;
-					xhtml = g_string_append(xhtml, "<br/>");
-					if(*c != '\n')
+					if(xhtml)
+						xhtml = g_string_append(xhtml, "<br/>");
+					if(plain && *c != '\n')
 						plain = g_string_append_c(plain, '\n');
 					continue;
 				}
@@ -1385,7 +1403,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
 					c = strchr(c, '>') + 1;
-					xhtml = g_string_append(xhtml, "<span style='font-weight: bold;'>");
+					if(xhtml)
+						xhtml = g_string_append(xhtml, "<span style='font-weight: bold;'>");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<u>", 3) || !g_ascii_strncasecmp(c, "<underline>", strlen("<underline>"))) {
@@ -1394,7 +1413,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
 					c = strchr(c, '>') + 1;
-					xhtml = g_string_append(xhtml, "<span style='text-decoration: underline;'>");
+					if (xhtml)
+						xhtml = g_string_append(xhtml, "<span style='text-decoration: underline;'>");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<s>", 3) || !g_ascii_strncasecmp(c, "<strike>", strlen("<strike>"))) {
@@ -1403,7 +1423,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
 					c = strchr(c, '>') + 1;
-					xhtml = g_string_append(xhtml, "<span style='text-decoration: line-through;'>");
+					if(xhtml)
+						xhtml = g_string_append(xhtml, "<span style='text-decoration: line-through;'>");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<sub>", 5)) {
@@ -1412,7 +1433,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
 					c = strchr(c, '>') + 1;
-					xhtml = g_string_append(xhtml, "<span style='vertical-align:sub;'>");
+					if(xhtml)
+						xhtml = g_string_append(xhtml, "<span style='vertical-align:sub;'>");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<sup>", 5)) {
@@ -1421,7 +1443,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
 					c = strchr(c, '>') + 1;
-					xhtml = g_string_append(xhtml, "<span style='vertical-align:super;'>");
+					if(xhtml)
+						xhtml = g_string_append(xhtml, "<span style='vertical-align:super;'>");
 					continue;
 				}
 				if(!g_ascii_strncasecmp(c, "<font", 5) && (*(c+5) == '>' || *(c+5) == ' ')) {
@@ -1515,7 +1538,10 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
 					if(style->len)
-						g_string_append_printf(xhtml, "<span style='%s'>", g_strstrip(style->str));
+					{
+						if(xhtml)
+							g_string_append_printf(xhtml, "<span style='%s'>", g_strstrip(style->str));
+					}
 					else
 						pt->ignore = TRUE;
 					g_string_free(style, TRUE);
@@ -1535,7 +1561,8 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 								color = g_string_append_c(color, *q);
 								q++;
 							}
-							g_string_append_printf(xhtml, "<span style='background: %s;'>", g_strstrip(color->str));
+							if(xhtml)
+								g_string_append_printf(xhtml, "<span style='background: %s;'>", g_strstrip(color->str));
 							g_string_free(color, TRUE);
 							if ((c = strchr(c, '>')) != NULL)
 								c++;
@@ -1556,14 +1583,17 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				if(!g_ascii_strncasecmp(c, "<!--", strlen("<!--"))) {
 					char *p = strstr(c + strlen("<!--"), "-->");
 					if(p) {
-						xhtml = g_string_append(xhtml, "<!--");
+						if(xhtml)
+							xhtml = g_string_append(xhtml, "<!--");
 						c += strlen("<!--");
 						continue;
 					}
 				}
 
-				xhtml = g_string_append(xhtml, "&lt;");
-				plain = g_string_append_c(plain, '<');
+				if(xhtml)
+					xhtml = g_string_append(xhtml, "&lt;");
+				if(plain)
+					plain = g_string_append_c(plain, '<');
 				c++;
 			}
 		} else if(*c == '&') {
@@ -1576,29 +1606,31 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 				g_snprintf(buf, sizeof(buf), "%c", *c);
 				pln = buf;
 			}
-			xhtml = g_string_append_len(xhtml, c, len);
-			plain = g_string_append(plain, pln);
+			if(xhtml)
+				xhtml = g_string_append_len(xhtml, c, len);
+			if(plain)
+				plain = g_string_append(plain, pln);
 			c += len;
 		} else {
-			xhtml = g_string_append_c(xhtml, *c);
-			plain = g_string_append_c(plain, *c);
+			if(xhtml)
+				xhtml = g_string_append_c(xhtml, *c);
+			if(plain)
+				plain = g_string_append_c(plain, *c);
 			c++;
 		}
 	}
-	tag = tags;
-	while(tag) {
-		struct purple_parse_tag *pt = tag->data;
-		if(!pt->ignore)
-			g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
-		tag = tag->next;
+	if(xhtml) {
+		for (tag = tags; tag ; tag = tag->next) {
+			struct purple_parse_tag *pt = tag->data;
+			if(!pt->ignore)
+				g_string_append_printf(xhtml, "</%s>", pt->dest_tag);
+		}
 	}
 	g_list_free(tags);
 	if(xhtml_out)
-		*xhtml_out = g_strdup(xhtml->str);
+		*xhtml_out = g_string_free(xhtml, FALSE);
 	if(plain_out)
-		*plain_out = g_strdup(plain->str);
-	g_string_free(xhtml, TRUE);
-	g_string_free(plain, TRUE);
+		*plain_out = g_string_free(plain, FALSE);
 }
 
 /* The following are probably reasonable changes:

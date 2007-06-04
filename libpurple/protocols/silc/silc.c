@@ -361,7 +361,7 @@ silcpurple_login(PurpleAccount *account)
 	}
 
 	/* Schedule SILC using Glib's event loop */
-	sg->scheduler = g_timeout_add(300, (GSourceFunc)silcpurple_scheduler, sg);
+	sg->scheduler = purple_timeout_add(300, (GSourceFunc)silcpurple_scheduler, sg);
 }
 
 static int
@@ -392,8 +392,8 @@ silcpurple_close(PurpleConnection *gc)
 	if (sg->conn)
 		silc_client_close_connection(sg->client, sg->conn);
 
-	g_source_remove(sg->scheduler);
-	g_timeout_add(1, (GSourceFunc)silcpurple_close_final, sg);
+	purple_timeout_remove(sg->scheduler);
+	purple_timeout_add(1, (GSourceFunc)silcpurple_close_final, sg);
 }
 
 

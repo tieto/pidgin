@@ -1482,39 +1482,66 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			 * ">
 			 * Then, replace the next " " (or add this if the end-of-line is reached) with:
 			 * </a>
+			 * 
+			 * As implemented, this isn't perfect, but it should cover common cases.
 			 */
 			link_temp_line = NULL;
-			while ((link = strstr(line, "(Link: "))) {
-				GString *temp;
+			while ((link = strstr(line, "(Link: ")))
+			{
+				char *tmp = link;
 
-				*link = '\0';
-				temp = g_string_new(line);
-				g_string_append(temp, "<a href=\"");
+				link += 7;
+				if (*link)
+				{
+					char *end_paren;
+					char *space;
+					GString *temp;
 
-				link += (sizeof("(Link: ") - 1);
-				if (*link) {
-					while (*link && *link != ')') {
-						g_string_append_c(temp, *link);
-						link++;
+					if (!(end_paren = strstr(link, ")")))
+					{
+						/* Something is not as we expect.  Bail out. */
+						break;
 					}
-					if (*link)
-						link++;
 
+					*tmp = '\0';
+					temp = g_string_new(line);
+
+					/* Start an <a> tag. */
+					g_string_append(temp, "<a href=\"");
+
+					/* Append up to the ) */
+					g_string_append_len(temp, link, end_paren - link);
+
+					/* Finish the <a> tag. */
 					g_string_append(temp, "\">");
-					while (*link && *link != ' ') {
-						g_string_append_c(temp, *link);
-						link++;
+
+					/* The \r is a bit of a hack to keep there from being a \r in
+					 * the link text, which may not matter. */
+					if ((space = strstr(end_paren, " ")) || (space = strstr(end_paren, "\r")))
+					{
+						g_string_append_len(temp, end_paren + 1, space - end_paren - 1);
+
+						/* Close the <a> tag. */
+						g_string_append(temp, "</a>");
+
+						space++;
+						if (*space)
+						{
+							g_string_append_c(temp, ' ');
+							/* Keep the rest of the line. */
+							g_string_append(temp, space);
+						}
 					}
-					g_string_append(temp, "</a>");
+					else
+					{
+						/* There is no space before the end of the line. */
+						g_string_append(temp, end_paren + 1);
+						/* Close the <a> tag. */
+						g_string_append(temp, "</a>");
+					}
 
-					g_string_append(temp, link);
-
-					/* Free the last round's line. */
-					if (link_temp_line)
-						g_free(line);
-
-					line = temp->str;
-					g_string_free(temp, FALSE);
+					g_free(link_temp_line);
+					line = g_string_free(temp, FALSE);
 
 					/* Save this memory location so we can free it later. */
 					link_temp_line = line;
@@ -1654,8 +1681,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 			g_string_append_c(formatted, '\n');
 
-			if (link_temp_line)
-				g_free(link_temp_line);
+			g_free(link_temp_line);
 
 			c++;
 			line = c;
