@@ -1594,11 +1594,13 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 	}
 	g_list_free(tags);
 	if(xhtml_out)
-		*xhtml_out = g_strdup(xhtml->str);
+		*xhtml_out = g_string_free(xhtml, FALSE);
+	else
+		g_string_free(xhtml, TRUE);
 	if(plain_out)
-		*plain_out = g_strdup(plain->str);
-	g_string_free(xhtml, TRUE);
-	g_string_free(plain, TRUE);
+		*plain_out = g_string_free(plain, FALSE);
+	else
+		g_string_free(plain, TRUE);
 }
 
 /* The following are probably reasonable changes:
