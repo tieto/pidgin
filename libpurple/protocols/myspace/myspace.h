@@ -135,14 +135,6 @@ typedef struct _MsimSession
 typedef void (*MSIM_USER_LOOKUP_CB)(MsimSession *session, MsimMessage *userinfo,
           gpointer data);
 
-/* Passed to MSIM_USER_LOOKUP_CB for msim_send_im_cb - called when
- * user information is available, ready to send a message. */
-typedef struct _send_im_cb_struct
-{
-    gchar *who;
-    gchar *message;
-} send_im_cb_struct;
-
 /* Functions */
 gboolean msim_load(PurplePlugin *plugin);
 GList *msim_status_types(PurpleAccount *acct);
@@ -164,9 +156,7 @@ gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE],
 
 int msim_send_im(PurpleConnection *gc, const char *who, const char *message, 
 	PurpleMessageFlags flags);
-int msim_send_im_by_userid(MsimSession *session, const gchar *userid, 
-		const gchar *message);
-void msim_send_im_by_userid_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
 void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, 
 		               gpointer data);
 

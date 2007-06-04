@@ -567,12 +567,11 @@ gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE],
  * Allows sending to a user by username, email address, or userid. If
  * a username or email address is given, the userid must be looked up.
  * This function does that by calling msim_lookup_user(), setting up
- * a msim_send_im_by_userid_cb() callback function called when the userid
+ * a msim_send_im_cb() callback function called when the userid
  * response is received from the server. 
  *
- * The callback function calls msim_send_im_by_userid() to send the actual
- * instant message. If a userid is specified directly, this function is called
- * immediately here.
+ * The callback function sends the actual message. But if a userid is 
+ * specified directly, this function is called immediately here.
  *
  * TODO: change all that above.
  */
@@ -580,8 +579,8 @@ int msim_send_im(PurpleConnection *gc, const char *who,
                             const char *message, PurpleMessageFlags flags)
 {
     MsimSession *session;
+	MsimMessage *msg;
     const char *from_username = gc->account->username;
-    send_im_cb_struct *cbinfo;
 
     g_return_val_if_fail(gc != NULL, 0);
     g_return_val_if_fail(who != NULL, 0);
@@ -594,28 +593,43 @@ int msim_send_im(PurpleConnection *gc, const char *who,
 
     session = gc->proto_data;
 
+	msg = msim_msg_new(TRUE,
+			"bm", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(MSIM_BM_INSTANT),
+			"sesskey", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(session->sesskey),
+			/* 't' will be inserted here */
+			"cv", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(MSIM_CLIENT_VERSION),
+			"msg", MSIM_TYPE_STRING, g_strdup(message),
+			NULL);
+
     /* If numeric ID, can send message immediately without userid lookup */
     if (msim_is_userid(who))
     {
         purple_debug_info("msim", 
 				"msim_send_im: numeric 'who' detected, sending asap\n");
-        msim_send_im_by_userid(session, who, message);
-        return 1;
+		/* 't' must be before 'cv', or error in parsing message. */
+		msg = msim_msg_insert_before(msg, "cv", "t", MSIM_TYPE_STRING, g_strdup(who));
+
+		if (!msim_msg_send(session, msg))
+		{
+			msim_msg_free(msg);
+			return -1;
+		} else {
+			msim_msg_free(msg);
+			return 1;  /* Positive value on success */
+		}
     }
+
+	/* TODO XXX: if on buddy list, check if 'uid' is set, and if so, send it there! No lookup. */
 
     /* Otherwise, add callback to IM when userid of destination is available */
 
     /* Setup a callback for when the userid is available */
-	/* TODO: instead, create and pass an MsimMessage */
-    cbinfo = g_new0(send_im_cb_struct, 1);
-    cbinfo->who = g_strdup(who);
-    cbinfo->message = g_strdup(message);
 
     /* Send the request to lookup the userid */
 	/* TODO: don't use callbacks */
-    msim_lookup_user(session, who, msim_send_im_by_userid_cb, cbinfo); 
+    msim_lookup_user(session, who, msim_send_im_cb, msg); 
 
-    /* msim_send_im_by_userid_cb will now be called once userid is looked up */
+    /* msim_send_im_cb will now be called once userid is looked up */
 
     /* Return 1 to have Purple show this IM as being sent, 0 to not. I always
      * return 1 even if the message could not be sent, since I don't know if
@@ -637,51 +651,18 @@ int msim_send_im(PurpleConnection *gc, const char *who,
 }
 
 /**
- * Immediately send an IM to a user, by their numeric user ID.
- *
- * @param session 
- * @param userid ASCII numeric userid.
- * @param message Text of message to send.
- *
- * @return TRUE if successful.
- *
- */
-gboolean msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gchar *message)
-{
-    g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
-    g_return_val_if_fail(userid != NULL, 0);
-    g_return_val_if_fail(msim_is_userid(userid) == TRUE, 0);
-    g_return_val_if_fail(message != NULL, 0);
-
-	return msim_send(session, 
-			"bm", MSIM_TYPE_INTEGER, MSIM_BM_INSTANT,
-			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			"t", MSIM_TYPE_STRING, g_strdup(userid),
-			"cv", MSIM_TYPE_INTEGER, MSIM_CLIENT_VERSION,
-			"msg", MSIM_TYPE_STRING, g_strdup(message),
-			NULL);	
-
-    /* Not needed since sending messages to yourself is allowed by MSIM! */
-    /*if (strcmp(from_username, who) == 0)
-        serv_got_im(gc, from_username, message, PURPLE_MESSAGE_RECV, time(NULL));
-        */
-}
-
-
-/**
  * Callback called when ready to send an IM by userid (the userid has been looked up).
- * Calls msim_send_im_by_userid. 
  *
  * @param session 
  * @param userinfo User info message from server containing a 'body' field
  *                 with a 'UserID' key. This is where the user ID is taken from.
  *                 Will be destroyed after use.
- * @param data A send_im_cb_struct * of information on the IM to send.
+ * @param data A MsimMessage * to send, which will have the 't' field added (userid to).
  *
  */
-void msim_send_im_by_userid_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
+void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
-    send_im_cb_struct *s;
+	MsimMessage *msg;
     gchar *userid;
     GHashTable *body;
 	gchar *body_str;
@@ -696,15 +677,16 @@ void msim_send_im_by_userid_cb(MsimSession *session, MsimMessage *userinfo, gpoi
 
     userid = g_hash_table_lookup(body, "UserID");
 
-    s = (send_im_cb_struct *)data;
-    msim_send_im_by_userid(session, userid, s->message);
+    msg = (MsimMessage *)data;
+	/* 't' must be before 'cv', or get a server error parsing message. */
+	msg = msim_msg_insert_before(msg, "cv", "t", MSIM_TYPE_STRING, userid);
+
+	g_return_if_fail(msim_msg_send(session, msg));
 
     g_hash_table_destroy(body);
     /* g_hash_table_destroy(userinfo); */
 	/* TODO: do we need to free userinfo here? */
 	/* msim_msg_free(userinfo); */
-    g_free(s->message);
-    g_free(s->who);
 } 
 
 /**
@@ -1425,9 +1407,9 @@ MsimSession *msim_session_new(PurpleAccount *acct)
     session->user_lookup_cb = g_hash_table_new_full(g_direct_hash, 
 			g_direct_equal, NULL, NULL);  /* do NOT free function pointers! (values) */
     session->user_lookup_cb_data = g_hash_table_new_full(g_direct_hash, 
-			g_direct_equal, NULL, g_free);/* TODO: we don't know what the values are,
+			g_direct_equal, NULL, NULL);/* TODO: we don't know what the values are,
 											 they could be integers inside gpointers
-											 or strings, but we free them anyway.
+											 or strings, so I don't freed them.
 											 Figure this out, once free cache. */
     session->user_lookup_cache = g_hash_table_new_full(g_str_hash, g_str_equal,
 		   	g_free, (GDestroyNotify)g_hash_table_destroy);
@@ -1769,7 +1751,7 @@ void init_plugin(PurplePlugin *plugin)
 		MsimMessage *msg;
 
 		purple_debug_info("msim", "testing MsimMessage\n");
-		msg = msim_msg_new();
+		msg = msim_msg_new(FALSE);
 		msg = msim_msg_append(msg, "bx", MSIM_TYPE_BINARY, g_string_new_len(g_strdup("XXX"), 3));
 		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v1"));
 		msg = msim_msg_append(msg, "k1", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(42));
