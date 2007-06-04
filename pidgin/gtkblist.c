@@ -2852,7 +2852,7 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/Add _Group..."), NULL, purple_blist_request_add_group, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ "/Buddies/sep3", NULL, NULL, 0, "<Separator>", NULL },
 #if GTK_CHECK_VERSION(2,6,0)
-	{ N_("/Buddies/_About Pidgin"), NULL, pidgin_dialogs_about, 0,  "<Item>", GTK_STOCK_ABOUT },
+	{ N_("/Buddies/_About Pidgin"), NULL, pidgin_dialogs_about, 0,  "<StockItem>", GTK_STOCK_ABOUT },
 #else /* GTK < 2.6.0 */
 	{ N_("/Buddies/_About Pidgin"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
 #endif /* GTK >= 2.6.0 */
