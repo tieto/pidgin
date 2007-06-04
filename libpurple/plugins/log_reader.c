@@ -1484,7 +1484,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			 * </a>
 			 */
 			link_temp_line = NULL;
-			while ((link = g_strstr_len(line, strlen(line), "(Link: "))) {
+			while ((link = strstr(line, "(Link: "))) {
 				GString *temp;
 
 				*link = '\0';
