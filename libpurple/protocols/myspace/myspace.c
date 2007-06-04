@@ -830,11 +830,7 @@ gboolean msim_process(PurpleConnection *gc, MsimMessage *msg)
 
 #ifdef MSIM_DEBUG_MSG
 	{
-		gchar *debug_msg;
-
-		debug_msg = msim_msg_debug_string(msg);
-		purple_debug_info("msim", "%s\n", debug_msg);
-		g_free(debug_msg);
+		msim_msg_dump("ready to process: %s\n", msg);
 	}
 #endif
 
@@ -1087,6 +1083,8 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 
         /* TODO: sometimes (when click on it), buddy list disappears. Fix. */
         purple_blist_add_buddy(buddy, NULL, NULL, NULL);
+		//purple_blist_set_int(&buddy->node, "uid", XYZ);
+		exit(0);
     } else {
         purple_debug_info("msim", "msim_status: found buddy %s\n", username);
     }
@@ -1364,12 +1362,7 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 			 * clone message if it wants to keep it afterwards.) */
             if (!msim_process(gc, msg))
 			{
-				gchar *dbs;
-
-				dbs = msim_msg_debug_string(msg);
-				purple_debug_info("msim", "msim_input_cb: processing message failed on msg: %s\n",
-						dbs);
-				g_free(dbs);
+				msim_msg_dump("msim_input_cb: processing message failed on msg: %s\n", msg);
 			}
 			msim_msg_free(msg);
         }
@@ -1789,6 +1782,7 @@ void init_plugin(PurplePlugin *plugin)
 		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v52/xxx\\yyy"));
 		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v7"));
 		purple_debug_info("msim", "msg debug str=%s\n", msim_msg_debug_string(msg));
+		msim_msg_debug_dump("msg debug str=%s\n", msg);
 		purple_debug_info("msim", "msg packed=%s\n", msim_msg_pack(msg));
 		purple_debug_info("msim", "msg cloned=%s\n", msim_msg_pack(msim_msg_clone(msg)));
 		msim_msg_free(msg);

@@ -291,7 +291,7 @@ MsimMessage *msim_msg_append(MsimMessage *msg, gchar *name, MsimMessageType type
 }
 
 /** Pack a string using the given GFunc and seperator.
- * Used by msim_msg_debug_string() and msim_msg_pack().
+ * Used by msim_msg_dump() and msim_msg_pack().
  */
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, gchar *sep, gchar *begin, gchar *end)
 {
@@ -384,18 +384,25 @@ static void msim_msg_debug_string_element(gpointer data, gpointer user_data)
 	++(*items);
 }
 
-/** Return a human-readable string of the message.
+/** Print a human-readable string of the message to Purple's debug log.
  *
- * @return A string. Caller must g_free().
+ * @param fmt_string A static string, in which '%s' will be replaced.
  */
-gchar *msim_msg_debug_string(MsimMessage *msg)
+void msim_msg_dump(gchar *fmt_string, MsimMessage *msg)
 {
+	gchar *debug_str;
+
 	if (!msg)
 	{
-		return g_strdup("<MsimMessage: empty>");
+		debug_str = g_strdup("<MsimMessage: empty>");
+	} else {
+		debug_str = msim_msg_pack_using(msg, msim_msg_debug_string_element, 
+				"\n", "<MsimMessage: \n", "\n/MsimMessage>");
 	}
 
-	return msim_msg_pack_using(msg, msim_msg_debug_string_element, "\n", "<MsimMessage: \n", "\n/MsimMessage>");
+	purple_debug_info("msim", fmt_string, debug_str);
+
+	g_free(debug_str);
 }
 
 /** Return a message element data as a new string for a raw protocol message, converting from other types (integer, etc.) if necessary.
