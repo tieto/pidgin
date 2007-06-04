@@ -573,6 +573,8 @@ gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE],
  * The callback function calls msim_send_im_by_userid() to send the actual
  * instant message. If a userid is specified directly, this function is called
  * immediately here.
+ *
+ * TODO: change all that above.
  */
 int msim_send_im(PurpleConnection *gc, const char *who,
                             const char *message, PurpleMessageFlags flags)
@@ -602,12 +604,14 @@ int msim_send_im(PurpleConnection *gc, const char *who,
     /* Otherwise, add callback to IM when userid of destination is available */
 
     /* Setup a callback for when the userid is available */
+	/* TODO: instead, create and pass an MsimMessage */
     cbinfo = g_new0(send_im_cb_struct, 1);
     cbinfo->who = g_strdup(who);
     cbinfo->message = g_strdup(message);
     cbinfo->flags = flags;
 
     /* Send the request to lookup the userid */
+	/* TODO: don't use callbacks */
     msim_lookup_user(session, who, msim_send_im_by_userid_cb, cbinfo); 
 
     /* msim_send_im_by_userid_cb will now be called once userid is looked up */
@@ -756,6 +760,7 @@ gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg)
 			"msim_incoming_im: got msg <%s> from <%s>, resolving username\n",
             msg_text, userid);
 
+	/* TODO: don't use callbacks */
     msim_lookup_user(session, userid, msim_incoming_im_cb, msg_text);
 
     return TRUE;
@@ -1037,11 +1042,7 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
     /* Note: DisplayName doesn't seem to be resolvable. It could be displayed on
      * the buddy list, if the UserID was stored along with it. */
 
-    if (!username)
-    {
-        purple_debug_info("msim", "msim_status_cb: no username?!\n");
-        return;
-    }
+	g_return_if_fail(username != NULL);
 
     purple_debug_info("msim", 
 			"msim_status_cb: updating status for <%s> to <%s>\n", 
@@ -1081,10 +1082,10 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 				"msim_status: making new buddy for %s\n", username);
         buddy = purple_buddy_new(session->account, username, NULL);
 
-        /* TODO: sometimes (when click on it), buddy list disappears. Fix. */
         purple_blist_add_buddy(buddy, NULL, NULL, NULL);
-		//purple_blist_set_int(&buddy->node, "uid", XYZ);
-		exit(0);
+		/* All buddies on list should have 'uid' integer associated with them. */
+		purple_blist_node_set_int(&buddy->node, "uid", atoi(g_hash_table_lookup(body, "UserID")));
+		purple_debug_info("msim", "UID=%d\n", purple_blist_node_get_int(&buddy->node, "uid"));
     } else {
         purple_debug_info("msim", "msim_status: found buddy %s\n", username);
     }
@@ -1135,19 +1136,11 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
 
 	/* TODO: free */
     status_str = msim_msg_get_string(msg, "msg");
-    if (!status_str)
-    {
-        purple_debug_info("msim", "msim_status: bm is status but no status msg\n");
-        return FALSE;
-    }
+	g_return_val_if_fail(status != NULL, FALSE);
 
 	/* TODO: free */
     userid = msim_msg_get_string(msg, "f");
-    if (!userid)
-    {
-        purple_debug_info("msim", "msim_status: bm is status but no f field\n");
-        return FALSE;
-    }
+	g_return_val_if_fail(userid != NULL, FALSE);
    
     /* TODO: if buddies were identified on buddy list by uid, wouldn't have to lookup 
      * before updating the status! Much more efficient. */
@@ -1160,6 +1153,7 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
 	 * user_lookup_cb_data (TODO: this is questionable, since it can also
 	 * store gpointers. Fix this, and the 2 other TODOs of the same problem.)
 	 */
+	/* TODO: don't use callbacks */
     msim_lookup_user(session, userid, msim_status_cb, status_str);
 
     return TRUE;
@@ -1520,6 +1514,7 @@ gboolean msim_is_email(const gchar *user)
  * @param cb Callback, called with user information when available.
  * @param data An arbitray data pointer passed to the callback.
  */
+/* TODO: change to not use callbacks */
 void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_CB cb, gpointer data)
 {
     gchar *field_name;
