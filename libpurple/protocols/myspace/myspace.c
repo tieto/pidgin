@@ -993,11 +993,12 @@ void msim_status_now(gchar *who, gpointer data)
  *
  * @param session 
  * @param userinfo Looked up user information from server.
- * @param data gchar * status string, will be freed.
+ * @param data MsimMessage * The status message.
  *
  */
 void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
+	MsimMessage *msg;
     PurpleBuddyList *blist;
     PurpleBuddy *buddy;
     GHashTable *body;
@@ -1013,7 +1014,9 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
     g_return_if_fail(MSIM_SESSION_VALID(session));
     g_return_if_fail(userinfo != NULL);
 
-    status_str = (gchar *)data;
+	msg = (MsimMessage *)data;
+
+    status_str = msim_msg_get_string(msg, "msg");
 
 	body_str = msim_msg_get_string(userinfo, "body");
     body = msim_parse_body(body_str);
@@ -1089,15 +1092,10 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 	purple_prpl_got_user_status(session->account, username, purple_primitive_get_id_from_type(purple_status_code), NULL);
 
     g_strfreev(status_array);
+	g_free(status_str);
     g_list_free(list);
     g_hash_table_destroy(body);
-    /* msim_msg_free(userinfo);  TODO: right? */
-    /* Do not free status_str - it will currently be freed by g_hash_table_destroy 
-	 * on session->user_lookup_cb_data. But this is questionable (TODO: unask) since
-	 * sometimes user_lookup_cb_data stores integers in gpointers, and sometimes
-	 * real gpointers that need to be freed, like our status_str. 
-	 */
-	/* g_free(status_str); */
+	msim_msg_free(msg);
 }
 
 /**
@@ -1110,25 +1108,19 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
  */
 gboolean msim_status(MsimSession *session, MsimMessage *msg)
 {
-    gchar *status_str;
     gchar *userid;
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
     g_return_val_if_fail(msg != NULL, FALSE);
 
-	/* TODO: free */
-    status_str = msim_msg_get_string(msg, "msg");
-	g_return_val_if_fail(status_str != NULL, FALSE);
-
-	/* TODO: free */
+	/* TODO: free? */
     userid = msim_msg_get_string(msg, "f");
 	g_return_val_if_fail(userid != NULL, FALSE);
    
     /* TODO: if buddies were identified on buddy list by uid, wouldn't have to lookup 
      * before updating the status! Much more efficient. */
     purple_debug_info("msim", 
-			"msim_status: got status msg <%s> for <%s>, scheduling lookup\n",
-            status_str, userid);
+			"msim_status: got status for <%s>, scheduling lookup\n", userid);
     
     /* Actually update status, once username is obtained. 
 	 * status_str() will currently be freed by g_hash_table_destroy() on
@@ -1136,7 +1128,8 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
 	 * store gpointers. Fix this, and the 2 other TODOs of the same problem.)
 	 */
 	/* TODO: don't use callbacks */
-    msim_lookup_user(session, userid, msim_status_cb, status_str);
+	/* callback will free cloned msg */
+    msim_lookup_user(session, userid, msim_status_cb, msim_msg_clone(msg));
 
     return TRUE;
 }
