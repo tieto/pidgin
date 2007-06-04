@@ -1488,8 +1488,6 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 				GString *temp;
 
 				*link = '\0';
-				link++;
-
 				temp = g_string_new(line);
 				g_string_append(temp, "<a href=\"");
 
