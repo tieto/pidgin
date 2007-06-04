@@ -10,6 +10,7 @@ version 2.1.0 (??/??/????):
 	* No longer linkifies screennames containing @ signs in join/part
 	  notifications in chats
 	* With the HTML logger, images in conversations are now saved.
+	  NOTE: Saved images are not yet displayed when loading logs.
 
 	Pidgin:
 	* Ensure only one copy of Pidgin is running with a given configuration
