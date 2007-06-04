@@ -587,6 +587,8 @@ int msim_send_im(PurpleConnection *gc, const char *who,
     g_return_val_if_fail(who != NULL, 0);
     g_return_val_if_fail(message != NULL, 0);
 
+	/* 'flags' has many options, not used here. */
+
     purple_debug_info("msim", "sending message from %s to %s: %s\n",
                   from_username, who, message);
 
@@ -597,7 +599,7 @@ int msim_send_im(PurpleConnection *gc, const char *who,
     {
         purple_debug_info("msim", 
 				"msim_send_im: numeric 'who' detected, sending asap\n");
-        msim_send_im_by_userid(session, who, message, flags);
+        msim_send_im_by_userid(session, who, message);
         return 1;
     }
 
@@ -608,7 +610,6 @@ int msim_send_im(PurpleConnection *gc, const char *who,
     cbinfo = g_new0(send_im_cb_struct, 1);
     cbinfo->who = g_strdup(who);
     cbinfo->message = g_strdup(message);
-    cbinfo->flags = flags;
 
     /* Send the request to lookup the userid */
 	/* TODO: don't use callbacks */
@@ -641,12 +642,11 @@ int msim_send_im(PurpleConnection *gc, const char *who,
  * @param session 
  * @param userid ASCII numeric userid.
  * @param message Text of message to send.
- * @param flags Purple instant message flags.
  *
  * @return TRUE if successful.
  *
  */
-gboolean msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gchar *message, PurpleMessageFlags flags)
+gboolean msim_send_im_by_userid(MsimSession *session, const gchar *userid, const gchar *message)
 {
     g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
     g_return_val_if_fail(userid != NULL, 0);
@@ -697,7 +697,7 @@ void msim_send_im_by_userid_cb(MsimSession *session, MsimMessage *userinfo, gpoi
     userid = g_hash_table_lookup(body, "UserID");
 
     s = (send_im_cb_struct *)data;
-    msim_send_im_by_userid(session, userid, s->message, s->flags);
+    msim_send_im_by_userid(session, userid, s->message);
 
     g_hash_table_destroy(body);
     /* g_hash_table_destroy(userinfo); */
@@ -1136,7 +1136,7 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
 
 	/* TODO: free */
     status_str = msim_msg_get_string(msg, "msg");
-	g_return_val_if_fail(status != NULL, FALSE);
+	g_return_val_if_fail(status_str != NULL, FALSE);
 
 	/* TODO: free */
     userid = msim_msg_get_string(msg, "f");
