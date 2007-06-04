@@ -497,7 +497,8 @@ window_close(GntBindable *bindable, GList *null)
 }
 
 static gboolean
-free_rebind_info(){
+free_rebind_info()
+{
 	g_free(rebind_info->keys);
 	g_free(rebind_info->name);
 	g_free(rebind_info->params);
@@ -506,7 +507,8 @@ free_rebind_info(){
 }
 
 static gboolean
-help_for_widget_cancel_button_activate(GntBindable *bindable, gpointer data){
+help_for_widget_cancel_button_activate(GntBindable *bindable, gpointer data)
+{
 	free_rebind_info();
 
 	gnt_widget_destroy(GNT_WIDGET(data));
@@ -514,7 +516,8 @@ help_for_widget_cancel_button_activate(GntBindable *bindable, gpointer data){
 }
 
 static gboolean
-help_for_widget_bind_button_activate(GntBindable *bindable, gpointer data){
+help_for_widget_bind_button_activate(GntBindable *bindable, gpointer data)
+{
 
 	/* This will be where the rebinding happens */
 /*	if(rebind_info->keys){
@@ -529,14 +532,13 @@ help_for_widget_bind_button_activate(GntBindable *bindable, gpointer data){
 }
 
 static gboolean
-help_for_widget_grab_key(GntBindable *bindable, const char *text, gpointer *data){
+help_for_widget_grab_key(GntBindable *bindable, const char *text, gpointer *data)
+{
 
 	GntLabel *label = GNT_LABEL(data);
 	char *newText;
 
 	if(text && *text){
-
-		fprintf(stderr,"%d %d\n",*text,text[1]);
 
 		if(!strcmp(text, GNT_KEY_CTRL_I) || !strcmp(text, GNT_KEY_ENTER)){
 			return FALSE;
@@ -552,8 +554,8 @@ help_for_widget_grab_key(GntBindable *bindable, const char *text, gpointer *data
 	return FALSE;
 } 
 static void
-help_for_widget_activate(GntBindable *bindable, gpointer widget){
-	
+help_for_widget_activate(GntBindable *bindable, gpointer widget)
+{
 				
 	GntTree * tree = GNT_TREE(bindable);
 
