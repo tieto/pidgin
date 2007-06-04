@@ -27,13 +27,90 @@ static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, gchar *sep, gchar *begin, gchar *end);
 static gchar *msim_msg_element_pack(MsimMessageElement *elem);
 static GList *msim_msg_get_node(MsimMessage *msg, gchar *name);
+static MsimMessage *msim_msg_new_v(va_list argp);
 
-/** Create a new MsimMessage. */
-MsimMessage *msim_msg_new(void)
+/** Create a new MsimMessage. 
+ * 
+ * @param not_empty FALSE if message is empty, TRUE if variadic arguments follow.
+ * @param ... A sequence of gchar* key/type/value triplets, terminated with NULL. 
+ *
+ * See msim_msg_append() documentation for details on types.
+ */
+MsimMessage *msim_msg_new(gboolean not_empty, ...)
 {
-	/* Just an empty list. */
-	return NULL;
+	va_list argp;
+
+	va_start(argp, not_empty);
+
+	if (not_empty)
+		return msim_msg_new_v(argp);
+	else
+		return NULL;
 }
+
+/** Create a new message from va_list and its first argument.
+ *
+ * @param argp A va_list of variadic arguments, already started with va_start(). Will be va_end()'d.
+ * @return New MsimMessage *, must be freed with msim_msg_free().
+ *
+ * For internal use - users probably want msim_msg_new() or msim_send().
+ */
+static MsimMessage *msim_msg_new_v(va_list argp)
+{
+	gchar *key, *value;
+	MsimMessageType type;
+	GString *gs;
+	MsimMessage *msg;
+
+	/* Begin with an empty message. */
+	msg = NULL;
+
+	/* Read key, type, value triplets until NULL. */
+	do
+	{
+		key = va_arg(argp, gchar *);
+		if (!key)
+		{
+			break;
+		}
+
+		type = va_arg(argp, int);
+
+		/* Interpret variadic arguments. */
+		switch (type)
+		{
+			case MSIM_TYPE_INTEGER: 
+			case MSIM_TYPE_BOOLEAN: 
+				msg = msim_msg_append(msg, key, type, GUINT_TO_POINTER(va_arg(argp, int)));
+				break;
+				
+			case MSIM_TYPE_STRING:
+				value = va_arg(argp, char *);
+
+				g_return_val_if_fail(value != NULL, FALSE);
+
+				msg = msim_msg_append(msg, key, type, value);
+				break;
+
+			case MSIM_TYPE_BINARY:
+				gs = va_arg(argp, GString *);
+
+				g_return_val_if_fail(gs != NULL, FALSE);
+
+				/* msim_msg_free() will free this GString the caller created. */
+				msg = msim_msg_append(msg, key, type, gs);
+				break;
+
+			default:
+				purple_debug_info("msim", "msim_send: unknown type %d (%c)\n", type, type);
+				break;
+		}
+	} while(key);
+	va_end(argp);	
+
+	return msg;
+}
+
 
 /** Clone an individual element.
  *
@@ -92,7 +169,7 @@ MsimMessage *msim_msg_clone(MsimMessage *old)
 	if (!old)
 		return NULL;
 
-	new = msim_msg_new();
+	new = msim_msg_new(FALSE);
 
 	g_list_foreach(old, msim_msg_clone_element, &new);
 
@@ -188,63 +265,17 @@ gboolean msim_msg_send(MsimSession *session, MsimMessage *msg)
  */
 gboolean msim_send(MsimSession *session, ...)
 {
-	va_list argp;
-	gchar *key, *value;
-	MsimMessageType type;
 	gboolean success;
 	MsimMessage *msg;
-	GString *gs;
+	va_list argp;
     
-	msg = msim_msg_new();
-
-	/* Read key, type, value triplets until NULL. */
 	va_start(argp, session);
-	do
-	{
-		key = va_arg(argp, gchar *);
-		if (!key)
-		{
-			break;
-		}
-
-		type = va_arg(argp, int);
-
-		/* Interpret variadic arguments. */
-		switch (type)
-		{
-			case MSIM_TYPE_INTEGER: 
-			case MSIM_TYPE_BOOLEAN: 
-				msg = msim_msg_append(msg, key, type, GUINT_TO_POINTER(va_arg(argp, int)));
-				break;
-				
-			case MSIM_TYPE_STRING:
-				value = va_arg(argp, char *);
-
-				g_return_val_if_fail(value != NULL, FALSE);
-
-				msg = msim_msg_append(msg, key, type, value);
-				break;
-
-			case MSIM_TYPE_BINARY:
-				gs = va_arg(argp, GString *);
-
-				g_return_val_if_fail(gs != NULL, FALSE);
-
-				/* msim_msg_free() will free this GString the caller created. */
-				msg = msim_msg_append(msg, key, type, gs);
-				break;
-
-			default:
-				purple_debug_info("msim", "msim_send: unknown type %d (%c)\n", type, type);
-				break;
-		}
-	} while(key);
+	msg = msim_msg_new_v(argp);
 
 	/* Actually send the message. */
 	success = msim_msg_send(session, msg);
 
 	/* Cleanup. */
-	va_end(argp);	
 	msim_msg_free(msg);
 
 	return success;
@@ -587,7 +618,7 @@ MsimMessage *msim_parse(gchar *raw)
         return NULL;
     }
 
-    msg = msim_msg_new();
+    msg = msim_msg_new(FALSE);
 
     for (tokens = g_strsplit(raw + 1, "\\", 0), i = 0; 
             (token = tokens[i]);

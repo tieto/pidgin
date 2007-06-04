@@ -44,7 +44,9 @@ typedef gchar MsimMessageType;
 #define MSIM_TYPE_DICTIONARY	'd'
 #define MSIM_TYPE_LIST			'l'
 
-MsimMessage *msim_msg_new(void);
+MsimMessage *msim_msg_new(gboolean not_empty, ...);
+/* No sentinel attribute, because can leave off varargs if not_empty is FALSE. */
+
 MsimMessage *msim_msg_clone(MsimMessage *old);
 void msim_msg_free(MsimMessage *msg);
 MsimMessage *msim_msg_append(MsimMessage *msg, gchar *name, MsimMessageType type, gpointer data);
