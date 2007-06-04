@@ -1491,9 +1491,8 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 				temp = g_string_new(line);
 				g_string_append(temp, "<a href=\"");
 
-				if (strlen(link) >= 6) {
-					link += (sizeof("(Link: ") - 1);
-
+				link += (sizeof("(Link: ") - 1);
+				if (*link) {
 					while (*link && *link != ')') {
 						g_string_append_c(temp, *link);
 						link++;
