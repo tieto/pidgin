@@ -29,6 +29,7 @@
   @signal chat-joined
   @signal chat-left
   @signal chat-topic-changed
+  @signal conversation-extended-menu
  @endsignals
 
  @signaldef writing-im-msg
@@ -417,5 +418,15 @@ void (*chat_topic_changed)(PurpleConversation *conv, const char *who, const char
   @param topic The new topic.
  @endsignaldef
 
+ @signaldef conversation-extended-menu
+  @signalproto
+void (*conversation_extended_menu)(PurpleConversation *conv, GList **list);
+  @endsignalproto
+  @signaldesc
+   Emitted when the UI requests a list of plugin actions for a
+   conversation.
+  @param conv   The conversation.
+  @param list   A pointer to the list of actions.
+ @endsignaldef
 */
 // vim: syntax=c tw=75 et

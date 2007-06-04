@@ -21,6 +21,7 @@
  */
 #include "internal.h"
 #include "blist.h"
+#include "cmds.h"
 #include "conversation.h"
 #include "dbus-maybe.h"
 #include "debug.h"
@@ -1999,6 +2000,29 @@ purple_conv_chat_cb_get_name(PurpleConvChatBuddy *cb)
 	return cb->name;
 }
 
+GList *
+purple_conversation_get_extended_menu(PurpleConversation *conv)
+{
+	GList *menu = NULL;
+
+	g_return_val_if_fail(conv != NULL, NULL);
+
+	purple_signal_emit(purple_conversations_get_handle(),
+			"conversation-extended-menu", conv, &menu);
+	return menu;
+}
+
+gboolean
+purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
+				const gchar *markup, gchar **error)
+{
+	char *mark = (markup && *markup) ? NULL : g_markup_escape_text(cmdline, -1), *err = NULL;
+	PurpleCmdStatus status = purple_cmd_do_command(conv, cmdline, mark ? mark : markup, error ? error : &err);
+	g_free(mark);
+	g_free(err);
+	return (status == PURPLE_CMD_STATUS_OK);
+}
+
 void *
 purple_conversations_get_handle(void)
 {
@@ -2262,6 +2286,12 @@ purple_conversations_init(void)
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "conversation-extended-menu",
+			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     purple_value_new(PURPLE_TYPE_SUBTYPE,
+					    PURPLE_SUBTYPE_CONVERSATION),
+			     purple_value_new(PURPLE_TYPE_BOXED, "GList **"));
 }
 
 void

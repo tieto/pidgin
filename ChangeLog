@@ -19,12 +19,16 @@ version 2.1.0 (??/??/????):
 version 2.0.2 (??/??/????):
 	Pidgin:
 	* Added a custom conversation font option to preferences
+	* Fixed smiley ordering in the insert smiley popup to be more intuitive
 
 	libpurple:
 	* Moving an ICQ buddy from one group to another no longer
 	  re-requests authorization from that person (Rene Hausleitner)
 	* Added nullprpl, an example protocol plugin (Ryan Barrett)
 	* Fixed SOCKS5 bug which caused Jabber file receiving to fail
+	* Remove MSN's random "Authorization Failed" dialogs
+	* Fix MSN to correctly detect incorrect passwords and disable the account
+	* Get User Info on MSN is now more reliable & accurate
 
 	Finch:
 	* Auto account reconnecting

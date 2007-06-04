@@ -142,8 +142,10 @@ void pidgin_toggle_showhide(GtkWidget *widget, GtkWidget *to_toggle);
  * Adds a separator to a menu.
  *
  * @param menu The menu to add a separator to.
+ *
+ * @return The separator.
  */
-void pidgin_separator(GtkWidget *menu);
+GtkWidget *pidgin_separator(GtkWidget *menu);
 
 /**
  * Creates a menu item.
@@ -319,6 +321,14 @@ gboolean pidgin_save_accels(gpointer data);
 void pidgin_load_accels(void);
 
 /**
+ * Get information about a user. Show immediate feedback.
+ *
+ * @param conn   The connection to get information from.
+ * @param name   The user to get information about.
+ */
+void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name);
+
+/**
  * Parses an application/x-im-contact MIME message and returns the
  * data inside.
  *
@@ -416,8 +426,10 @@ GdkPixbuf * pidgin_create_status_icon(PurpleStatusPrimitive primitive, GtkWidget
  * @param menu    The menu to append to.
  * @param act     The PurpleMenuAction to append.
  * @param gobject The object to be passed to the action callback.
+ *
+ * @return   The menuitem added.
  */
-void pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
+GtkWidget *pidgin_append_menu_action(GtkWidget *menu, PurpleMenuAction *act,
                                  gpointer gobject);
 
 /**

@@ -121,7 +121,7 @@ check_idleness(void)
 	gboolean report_idle;
 	GList *l;
 	gint away_seconds = 0;
-	gint idle_recheck_interval;
+	gint idle_recheck_interval = 0;
 
 	purple_signal_emit(purple_blist_get_handle(), "update-idle");
 
