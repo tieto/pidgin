@@ -119,12 +119,12 @@ silcpurple_keepalive(PurpleConnection *gc)
 				NULL, 0);
 }
 
-static int
+static gboolean
 silcpurple_scheduler(gpointer *context)
 {
 	SilcPurple sg = (SilcPurple)context;
 	silc_client_run_one(sg->client);
-	return 1;
+	return TRUE;
 }
 
 static void
@@ -361,11 +361,7 @@ silcpurple_login(PurpleAccount *account)
 	}
 
 	/* Schedule SILC using Glib's event loop */
-#ifndef _WIN32
-	sg->scheduler = g_timeout_add(50, (GSourceFunc)silcpurple_scheduler, sg);
-#else
 	sg->scheduler = g_timeout_add(300, (GSourceFunc)silcpurple_scheduler, sg);
-#endif
 }
 
 static int
