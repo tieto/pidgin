@@ -1484,35 +1484,28 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			 * </a>
 			 */
 			link_temp_line = NULL;
-			while ((link = g_strstr_len(line, strlen(line), "(Link: "))) {
+			while ((link = strstr(line, "(Link: "))) {
 				GString *temp;
 
-				if (!*link)
-					continue;
-
 				*link = '\0';
-				link++;
-
 				temp = g_string_new(line);
 				g_string_append(temp, "<a href=\"");
 
-				if (strlen(link) >= 6) {
-					link += (sizeof("(Link: ") - 1);
-
+				link += (sizeof("(Link: ") - 1);
+				if (*link) {
 					while (*link && *link != ')') {
 						g_string_append_c(temp, *link);
 						link++;
 					}
-					if (link) {
+					if (*link)
 						link++;
 
-						g_string_append(temp, "\">");
-						while (*link && *link != ' ') {
-							g_string_append_c(temp, *link);
-							link++;
-						}
-						g_string_append(temp, "</a>");
+					g_string_append(temp, "\">");
+					while (*link && *link != ' ') {
+						g_string_append_c(temp, *link);
+						link++;
 					}
+					g_string_append(temp, "</a>");
 
 					g_string_append(temp, link);
 
