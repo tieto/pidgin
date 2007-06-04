@@ -32,6 +32,7 @@
 
 #include "account.h"
 #include "xmlnode.h"
+#include "notify.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -622,6 +623,12 @@ FILE *purple_mkstemp(char **path, gboolean binary);
  */
 const char *
 purple_util_get_image_extension(gconstpointer data, size_t len);
+
+/**
+ * Returns a SHA-1 hash string of the data passed in with the correct file
+ * extention appended.
+ */
+char *purple_util_get_image_filename(gconstpointer image_data, size_t image_len);
 
 /*@}*/
 

@@ -9,6 +9,7 @@ version 2.1.0 (??/??/????):
 	  (Arjan van de Ven with Intel Corporation)
 	* No longer linkifies screennames containing @ signs in join/part
 	  notifications in chats
+	* With the HTML logger, images in conversations are now saved.
 
 	Pidgin:
 	* Ensure only one copy of Pidgin is running with a given configuration

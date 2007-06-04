@@ -15,6 +15,7 @@ version 2.1.0 (??/??/????):
 	* purple_core_ensure_single_instance()
 	    This is for UIs to use to ensure only one copy is running.
 	* purple_dbus_is_owner()
+	* purple_image_data_calculate_filename()
 	* purple_timeout_add_seconds()
 	    Callers should prefer this to purple_timeout_add() for timers
 	    longer than 1 second away.  Be aware of the rounding, though.
