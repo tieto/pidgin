@@ -48,6 +48,7 @@ MsimMessage *msim_msg_new(void);
 MsimMessage *msim_msg_clone(MsimMessage *old);
 void msim_msg_free(MsimMessage *msg);
 MsimMessage *msim_msg_append(MsimMessage *msg, gchar *name, MsimMessageType type, gpointer data);
+MsimMessage *msim_msg_insert_before(MsimMessage *msg, gchar *name_before, gchar *name, MsimMessageType type, gpointer data);
 void msim_msg_dump(char *fmt_string, MsimMessage *msg);
 gchar *msim_msg_pack(MsimMessage *msg);
 

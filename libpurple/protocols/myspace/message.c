@@ -26,6 +26,7 @@ static void msim_msg_free_element(gpointer data, gpointer user_data);
 static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, gchar *sep, gchar *begin, gchar *end);
 static gchar *msim_msg_element_pack(MsimMessageElement *elem);
+static GList *msim_msg_get_node(MsimMessage *msg, gchar *name);
 
 /** Create a new MsimMessage. */
 MsimMessage *msim_msg_new(void)
@@ -249,6 +250,23 @@ gboolean msim_send(MsimSession *session, ...)
 	return success;
 }
 
+/** Create a new MsimMessageElement * - must be g_free()'d. 
+ *
+ * For internal use; users probably want msim_msg_append() or msim_msg_insert_before(). 
+ */
+static MsimMessageElement *msim_msg_element_new(gchar *name, MsimMessageType type, gpointer data)
+{
+	MsimMessageElement *elem;
+
+	elem = g_new0(MsimMessageElement, 1);
+
+	elem->name = name;
+	elem->type = type;
+	elem->data = data;
+
+	return elem;
+}
+
 
 /** Append a new element to a message. 
  *
@@ -279,15 +297,26 @@ gboolean msim_send(MsimSession *session, ...)
  * */
 MsimMessage *msim_msg_append(MsimMessage *msg, gchar *name, MsimMessageType type, gpointer data)
 {
-	MsimMessageElement *elem;
+	return g_list_append(msg, msim_msg_element_new(name, type, data));
+}
 
-	elem = g_new0(MsimMessageElement, 1);
+/** Insert a new element into a message, before the given element name.
+ *
+ * @param name_before Name of the element to insert the new element before. If 
+ * 					  could not be found, new element will be inserted at end.
+ *
+ * See msim_msg_append() for usage of other parameters, and an important note about return value.
+ */
+MsimMessage *msim_msg_insert_before(MsimMessage *msg, gchar *name_before, gchar *name, MsimMessageType type, gpointer data)
+{
+	MsimMessageElement *new_elem;
+	GList *node_before;
 
-	elem->name = name;
-	elem->type = type;
-	elem->data = data;
+	new_elem = msim_msg_element_new(name, type, data);	
 
-	return g_list_append(msg, elem);
+	node_before = msim_msg_get_node(msg, name_before);
+
+	return g_list_insert_before(msg, node_before, new_elem);
 }
 
 /** Pack a string using the given GFunc and seperator.
@@ -657,17 +686,11 @@ GHashTable *msim_parse_body(const gchar *body_str)
     return table;
 }
 
-/** Return the first MsimMessageElement * with given name in the MsimMessage *. 
- *
- * @param name Name to search for.
- *
- * @return MsimMessageElement * matching name, or NULL.
- *
- * Note: useful fields of MsimMessageElement are 'data' and 'type', which
- * you can access directly. But it is often more convenient to use
- * another msim_msg_get_* that converts the data to what type you want.
+/** Search for and return the node in msg, matching name, or NULL. 
+ * For internal use - users probably want to use msim_msg_get() to
+ * access the MsimMessageElement *, instead of the GList * container.
  */
-MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name)
+static GList *msim_msg_get_node(MsimMessage *msg, gchar *name)
 {
 	GList *i;
 
@@ -680,9 +703,32 @@ MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name)
 		g_return_val_if_fail(elem != NULL, NULL);
 
 		if (strcmp(elem->name, name) == 0)
-			return elem;
+			return i;
 	}
 	return NULL;
+}
+
+
+
+/** Return the first MsimMessageElement * with given name in the MsimMessage *. 
+ *
+ * @param name Name to search for.
+ *
+ * @return MsimMessageElement * matching name, or NULL.
+ *
+ * Note: useful fields of MsimMessageElement are 'data' and 'type', which
+ * you can access directly. But it is often more convenient to use
+ * another msim_msg_get_* that converts the data to what type you want.
+ */
+MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name)
+{
+	GList *node;
+
+	node = msim_msg_get_node(msg, name);
+	if (node)
+		return (MsimMessageElement *)node->data;
+	else
+		return NULL;
 }
 
 /** Return the data of an element of a given name, as a string.
