@@ -1449,7 +1449,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->src_tag = "img";
 					pt->dest_tag = "img";
 					tags = g_list_prepend(tags, pt);
-					if(src && src->len)
+					if(xhtml && src && src->len)
 						g_string_append_printf(xhtml, "<img src='%s' alt=''>", g_strstrip(src->str));
 					else
 						pt->ignore = TRUE;
