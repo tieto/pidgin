@@ -61,11 +61,13 @@ static gboolean idle_update;
 
 static gboolean ignore_keys = FALSE;
 
-typedef struct {
-	char * keys; /* Keystrokes being bound to the action */
+typedef struct
+{
+	const char * keys; /* Keystrokes being bound to the action */
 	GntBindableClass * klass; /* Class of the object that's getting keys rebound */
-	char * name;  /* Name of the action ie:window-close, wm-quit, refresh-screen */
-	void * params; /* Parameters to pass to the callback */
+	const char * name; /* The name of the action */
+	GList * params; /* The list of paramaters */
+	
 } RebindInfo;
 
 RebindInfo * rebind_info;
@@ -496,14 +498,12 @@ window_close(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
-static gboolean
+static void 
 free_rebind_info()
 {
-	g_free(rebind_info->keys);
 	g_free(rebind_info->name);
-	g_free(rebind_info->params);
+	g_free(rebind_info->keys);
 	g_free(rebind_info);
-	
 }
 
 static gboolean
@@ -519,10 +519,10 @@ static gboolean
 help_for_widget_bind_button_activate(GntBindable *bindable, gpointer data)
 {
 
-	/* This will be where the rebinding happens */
-/*	if(rebind_info->keys){
-		gnt_bindable_class_register_action(rebind_info->klass,rebind_info->name,NULL,rebind_info->keys,rebind_info->params);
-	} */
+	gnt_bindable_register_binding(rebind_info->klass,
+																rebind_info->name,
+																rebind_info->keys,
+																rebind_info->params);
 
 	free_rebind_info();
 	
@@ -536,18 +536,22 @@ help_for_widget_grab_key(GntBindable *bindable, const char *text, gpointer *data
 {
 
 	GntLabel *label = GNT_LABEL(data);
-	char *newText;
+	char *new_text;
+	const char *tmp;
 
 	if(text && *text){
 
 		if(!strcmp(text, GNT_KEY_CTRL_I) || !strcmp(text, GNT_KEY_ENTER)){
 			return FALSE;
 		}
+		
+		tmp = gnt_key_lookup(text);
+		new_text = g_strdup_printf("KEY: \"%s\"",tmp);
+		gnt_label_set_text(label,new_text);
 
-		newText = g_strdup_printf("KEY: \"%s\"",text);
-		gnt_label_set_text(label,newText); 
+		rebind_info->keys = g_strdup(text);
 
-		g_free(newText);
+		g_free(new_text);
 
 		return TRUE;
 	}
@@ -562,41 +566,51 @@ help_for_widget_activate(GntBindable *bindable, gpointer widget)
 	GntWidget *vbox = gnt_box_new(FALSE,TRUE);
 
 	GntWidget *label;
-	const char * widgetName = g_type_name(G_OBJECT_TYPE(widget));
-	
+	const char * widget_name = g_type_name(G_OBJECT_TYPE(widget));
+	char * keys;
+
 	GntWidget *key_label;
 	
 	GntWidget *bind_button, *cancel_button;
 	GntWidget *button_box;
 	
 	GntWidget *win = gnt_window_new();
-	GList * currentRowData,*itr;
+	GList * current_row_data,*itr;
 	char * tmp;
 
 	rebind_info = g_new0(RebindInfo,1);
-	rebind_info->keys = NULL;
+
 	rebind_info->klass = GNT_BINDABLE_GET_CLASS(widget);
-	currentRowData = gnt_tree_get_selection_text_list(tree);
-	rebind_info->name = g_list_nth_data(currentRowData,1);
+
+	current_row_data = gnt_tree_get_selection_text_list(tree);
+	rebind_info->name = g_strdup(g_list_nth_data(current_row_data,1));
+
+	keys = gnt_tree_get_selection_data(tree);
+	rebind_info->keys = g_strdup(gnt_key_translate(keys));
+
 	rebind_info->params = NULL;
 
-	itr = currentRowData;
+	fprintf(stderr,"name: '%s' keys: '%s'\n",rebind_info->name,keys);
+
+	itr = current_row_data;
 	while(itr){
 		g_free(itr->data);
 		itr = itr->next;
 	}
-	g_list_free(currentRowData);
+	g_list_free(current_row_data);
 
 	gnt_box_set_alignment(GNT_BOX(vbox), GNT_ALIGN_MID);
 
 	gnt_box_set_title(GNT_BOX(win),"Key Capture");
 
-	tmp = g_strdup_printf("Type the new bindings for %s in a %s.",rebind_info->name,widgetName);
+	tmp = g_strdup_printf("Type the new bindings for %s in a %s.",rebind_info->name,widget_name);
 	label = gnt_label_new(tmp);
 	g_free(tmp);
 	gnt_box_add_widget(GNT_BOX(vbox),label);
 
-	key_label = gnt_label_new("KEY:\"\""); 
+	tmp = g_strdup_printf("KEY: \"%s\"",keys);
+	key_label = gnt_label_new(tmp); 
+	g_free(tmp);
 	gnt_widget_set_name(key_label,"keystroke");
 	gnt_box_add_widget(GNT_BOX(vbox),key_label);
 
@@ -1257,7 +1271,6 @@ gnt_wm_class_init(GntWMClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__POINTER,
 					 G_TYPE_NONE, 1, G_TYPE_POINTER);
-
 	signals[SIG_GIVE_FOCUS] = 
 		g_signal_new("give_focus",
 					 G_TYPE_FROM_CLASS(klass),
