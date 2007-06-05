@@ -504,7 +504,7 @@ static void tls_init(JabberStream *js)
 {
 	purple_input_remove(js->gc->inpa);
 	js->gc->inpa = 0;
-	js->gsc = purple_ssl_connect_with_host_fd(js->gc->account, js->fd,
+	js->gsc = purple_ssl_connect_fd_with_host(js->gc->account, js->fd,
 			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->serverFQDN, js->gc);
 }
 

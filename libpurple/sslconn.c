@@ -157,11 +157,11 @@ purple_ssl_connect_fd(PurpleAccount *account, int fd,
 					PurpleSslErrorFunction error_func,
                     void *data)
 {
-    return purple_ssl_connect_with_host_fd(account, fd, func, error_func, NULL, data);
+    return purple_ssl_connect_fd_with_host(account, fd, func, error_func, NULL, data);
 }
 
 PurpleSslConnection *
-purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
+purple_ssl_connect_fd_with_host(PurpleAccount *account, int fd,
                       PurpleSslInputFunction func,
                       PurpleSslErrorFunction error_func,
                       const char *host,
