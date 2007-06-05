@@ -166,11 +166,11 @@ int msim_incoming_action(MsimSession *session, MsimMessage *msg);
 unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state);
 
 gboolean msim_process_reply(MsimSession *session, MsimMessage *msg);
-gboolean msim_process(PurpleConnection *gc, MsimMessage *msg);
+
+gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg);
+gboolean msim_process(MsimSession *session, MsimMessage *msg);
 
 gboolean msim_error(MsimSession *session, MsimMessage *msg);
-void msim_status_cb(MsimSession *session, MsimMessage *userinfo, 
-		gpointer data);
 gboolean msim_status(MsimSession *session, MsimMessage *msg);
 
 void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);

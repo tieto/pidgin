@@ -694,7 +694,7 @@ void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
  *
  * @param session 
  * @param userinfo Message from server on user's info, containing UserName.
- * @param data A MsimMessage * of the incoming message.
+ * @param data A MsimMessage * of the incoming message, will be freed.
  */
 void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
@@ -717,6 +717,7 @@ void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer d
 
 	/* msim_msg_free(userinfo);   */ /* TODO: Should we? */
     g_hash_table_destroy(body);
+	/* Free copy cloned in msim_incoming_im(). */
 	msim_msg_free(msg);
 }
 
@@ -742,7 +743,7 @@ gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg)
 			"msim_incoming_im: got msg from <%s>, resolving username\n", userid);
 
 	/* TODO: don't use callbacks */
-	/* msg will be freed in callback */
+	/* Cloned msg will be freed in callback */
     msim_lookup_user(session, userid, msim_incoming_im_cb, msim_msg_clone(msg));
 
     return TRUE;
@@ -798,22 +799,83 @@ unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypi
 	return 0;
 }
 
+/** After a uid is resolved to username, tag it with the username and submit for processing. 
+ * 
+ * @param session
+ * @param userinfo Response messsage to resolving request.
+ * @param data MsimMessage *, the message to attach information to. 
+ */
+static void msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo, gpointer data)
+{
+	gchar *body_str;
+	GHashTable *body;
+	gchar *username;
+	MsimMessage *msg;
+
+	body_str = msim_msg_get_string(userinfo, "body");
+	g_return_if_fail(body_str != NULL);
+	body = msim_parse_body(body_str);
+	g_return_if_fail(body != NULL);
+	g_free(body_str);
+
+	username = g_hash_table_lookup(body, "UserName");
+	g_return_if_fail(username != NULL);
+
+	msg = (MsimMessage *)data;
+	/* Special elements name beginning with '_', we'll use internally within the
+	 * program (did not come from the wire). */
+	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, g_strdup(username));
+
+	msim_process(session, msg);
+
+	/* Free copy cloned in msim_preprocess_incoming(). */
+	/* TODO: find out freedom */
+	//XXX msim_msg_free(msg);
+	g_hash_table_destroy(body);
+}
+
+/** Preprocess incoming messages, resolving as needed, calling msim_process() when ready to process.
+ *
+ * TODO: if no uid to resolve, process immediately. if uid, check if know username,
+ * if so, tag and process immediately, if not, queue, send resolve msg, and process
+ * once get username.
+ *
+ * @param session
+ * @param msg MsimMessage *, freed by caller.
+ */
+gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
+{
+	if (msim_msg_get(msg, "bm") && msim_msg_get(msg, "f"))
+	{
+		/* 'f' = userid message is from, in buddy messages */
+
+		/* TODO: if know uid->username mapping already, process immediately */
+
+		/* Send lookup request. */
+		/* XXX: where is msim_msg_get_string() freed? make _strdup and _nonstrdup. */
+		purple_debug_info("msim", "msim_incoming: sending lookup, setting up callback\n");
+		msim_lookup_user(session, msim_msg_get_string(msg, "f"), msim_incoming_resolved, msim_msg_clone(msg)); 
+
+		/* indeterminate */
+		return TRUE;
+	} else {
+		/* Nothing to resolve - send directly to processing. */
+		return msim_process(session, msg);
+	}
+}
+
 /**
  * Process a message. 
  *
- * @param gc Connection.
- * @param msg Any message from the server.
+ * @param session
+ * @param msg A message from the server, ready for processing (possibly with resolved username information attached). Caller frees.
  *
  * @return TRUE if successful. FALSE if processing failed.
  */
-gboolean msim_process(PurpleConnection *gc, MsimMessage *msg)
+gboolean msim_process(MsimSession *session, MsimMessage *msg)
 {
-    MsimSession *session;
-
-    g_return_val_if_fail(gc != NULL, -1);
+    g_return_val_if_fail(session != NULL, -1);
     g_return_val_if_fail(msg != NULL, -1);
-
-    session = (MsimSession *)gc->proto_data;
 
 #ifdef MSIM_DEBUG_MSG
 	{
@@ -826,7 +888,7 @@ gboolean msim_process(PurpleConnection *gc, MsimMessage *msg)
         return msim_login_challenge(session, msg);
     } else if (msim_msg_get(msg, "sesskey")) {
 
-        purple_connection_update_progress(gc, _("Connected"), 3, 4);
+        purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
 
 		/* Freed in msim_session_destroy */
         session->sesskey = msim_msg_get_integer(msg, "sesskey");
@@ -837,7 +899,7 @@ gboolean msim_process(PurpleConnection *gc, MsimMessage *msg)
 		/* Freed in msim_session_destroy */
         session->userid = msim_msg_get_string(msg, "userid");
 
-        purple_connection_set_state(gc, PURPLE_CONNECTED);
+        purple_connection_set_state(session->gc, PURPLE_CONNECTED);
 
         return TRUE;
     } else if (msim_msg_get(msg, "bm"))  {
@@ -980,29 +1042,18 @@ gboolean msim_error(MsimSession *session, MsimMessage *msg)
     return TRUE;
 }
 
-#if 0
-/* Not sure about this */
-void msim_status_now(gchar *who, gpointer data)
-{
-    printf("msim_status_now: %s\n", who);
-}
-#endif
-
-/** 
- * Callback to update incoming status messages, after looked up username.
+/**
+ * Process incoming status messages.
  *
- * @param session 
- * @param userinfo Looked up user information from server.
- * @param data MsimMessage * The status message.
+ * @param session
+ * @param msg Status update message. Caller frees.
  *
+ * @return TRUE if successful.
  */
-void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
+gboolean msim_status(MsimSession *session, MsimMessage *msg)
 {
-	MsimMessage *msg;
     PurpleBuddyList *blist;
     PurpleBuddy *buddy;
-    GHashTable *body;
-	gchar *body_str;
     //PurpleStatus *status;
     gchar **status_array;
     GList *list;
@@ -1011,23 +1062,24 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
     gint i, status_code, purple_status_code;
     gchar *username;
 
-    g_return_if_fail(MSIM_SESSION_VALID(session));
-    g_return_if_fail(userinfo != NULL);
-
-	msg = (MsimMessage *)data;
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
 
     status_str = msim_msg_get_string(msg, "msg");
+	g_return_val_if_fail(status_str != NULL, FALSE);
 
-	body_str = msim_msg_get_string(userinfo, "body");
-    body = msim_parse_body(body_str);
-	g_free(body_str);
-	g_return_if_fail(body != NULL);
+	msim_msg_dump("msim_status msg=%s\n", msg);
 
-    username = g_hash_table_lookup(body, "UserName");
+	/* Helpfully looked up by msim_incoming_resolve() for us. */
+    username = msim_msg_get_string(msg, "_username");
     /* Note: DisplayName doesn't seem to be resolvable. It could be displayed on
      * the buddy list, if the UserID was stored along with it. */
 
-	g_return_if_fail(username != NULL);
+	if (username == NULL)
+	{
+		g_free(status_str);
+		g_return_val_if_fail(NULL, FALSE);
+	}
 
     purple_debug_info("msim", 
 			"msim_status_cb: updating status for <%s> to <%s>\n", 
@@ -1069,7 +1121,7 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 
         purple_blist_add_buddy(buddy, NULL, NULL, NULL);
 		/* All buddies on list should have 'uid' integer associated with them. */
-		purple_blist_node_set_int(&buddy->node, "uid", atoi(g_hash_table_lookup(body, "UserID")));
+		purple_blist_node_set_int(&buddy->node, "uid", msim_msg_get_integer(msg, "f"));
 		purple_debug_info("msim", "UID=%d\n", purple_blist_node_get_int(&buddy->node, "uid"));
     } else {
         purple_debug_info("msim", "msim_status: found buddy %s\n", username);
@@ -1093,43 +1145,8 @@ void msim_status_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 
     g_strfreev(status_array);
 	g_free(status_str);
+	g_free(username);
     g_list_free(list);
-    g_hash_table_destroy(body);
-	msim_msg_free(msg);
-}
-
-/**
- * Process incoming status messages.
- *
- * @param session
- * @param msg Status update message.
- *
- * @return TRUE if successful.
- */
-gboolean msim_status(MsimSession *session, MsimMessage *msg)
-{
-    gchar *userid;
-
-    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
-    g_return_val_if_fail(msg != NULL, FALSE);
-
-	/* TODO: free? */
-    userid = msim_msg_get_string(msg, "f");
-	g_return_val_if_fail(userid != NULL, FALSE);
-   
-    /* TODO: if buddies were identified on buddy list by uid, wouldn't have to lookup 
-     * before updating the status! Much more efficient. */
-    purple_debug_info("msim", 
-			"msim_status: got status for <%s>, scheduling lookup\n", userid);
-    
-    /* Actually update status, once username is obtained. 
-	 * status_str() will currently be freed by g_hash_table_destroy() on
-	 * user_lookup_cb_data (TODO: this is questionable, since it can also
-	 * store gpointers. Fix this, and the 2 other TODOs of the same problem.)
-	 */
-	/* TODO: don't use callbacks */
-	/* callback will free cloned msg */
-    msim_lookup_user(session, userid, msim_status_cb, msim_msg_clone(msg));
 
     return TRUE;
 }
@@ -1225,7 +1242,7 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
  * @param source File descriptor.
  * @param cond PURPLE_INPUT_READ
  *
- * Reads the input, and dispatches msim_process() to handle it.
+ * Reads the input, and calls msim_preprocess_incoming() to handle it.
  */
 void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
 {
@@ -1329,9 +1346,9 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
         {
             /* Process message and then free it (processing function should
 			 * clone message if it wants to keep it afterwards.) */
-            if (!msim_process(gc, msg))
+            if (!msim_preprocess_incoming(session, msg))
 			{
-				msim_msg_dump("msim_input_cb: processing message failed on msg: %s\n", msg);
+				msim_msg_dump("msim_input_cb: preprocessing message failed on msg: %s\n", msg);
 			}
 			msim_msg_free(msg);
         }
