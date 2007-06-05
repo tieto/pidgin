@@ -72,7 +72,7 @@ _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_mess
 		struct sockaddr_in *addr = (struct sockaddr_in*)g_slist_nth_data(hosts, 1);
 		BonjourBuddy* buddy = args->buddy;
 
-		buddy->ip = inet_ntoa(addr->sin_addr);
+		buddy->ip = g_strdup(inet_ntoa(addr->sin_addr));
 
 		/* finally, set up the continuous txt record watcher, and add the buddy to purple */
 
@@ -116,7 +116,7 @@ _mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint3
 	}
 	else
 	{
-		args->buddy->port_p2pj = port;
+		args->buddy->port_p2pj = ntohs(port);
 
 		/* parse the text record */
 		_mdns_parse_text_record(args->buddy, txtRecord, txtLen);
@@ -262,7 +262,7 @@ _mdns_publish(BonjourDnsSd *data, PublishType type)
 		{
 			case PUBLISH_START:
 				err = DNSServiceRegister(&data->advertisement, 0, 0, purple_account_get_username(data->account), ICHAT_SERVICE,
-					NULL, NULL, data->port_p2pj, TXTRecordGetLength(&dns_data), TXTRecordGetBytesPtr(&dns_data),
+					NULL, NULL, htons(data->port_p2pj), TXTRecordGetLength(&dns_data), TXTRecordGetBytesPtr(&dns_data),
 					_mdns_service_register_callback, NULL);
 				break;
 
