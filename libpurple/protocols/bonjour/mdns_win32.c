@@ -177,56 +177,18 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 	}
 }
 
-void 
+void
 _mdns_parse_text_record(BonjourBuddy* buddy, const char* record, uint16_t record_len)
 {
-	char *txt_entry;
+	const char *txt_entry;
 	uint8_t txt_len;
+	int i;
 
-	if (NULL != (txt_entry = (char*)TXTRecordGetValuePtr(record_len, record, "1st", &txt_len)))
-	{
-		set_bonjour_buddy_value(buddy, E_BUDDY_FIRST, txt_entry, txt_len);
+	for (i = 0; buddy_TXT_records[i] != NULL; i++) {
+		txt_entry = TXTRecordGetValuePtr(record_len, record, buddy_TXT_records[i], &txt_len);
+		if (txt_entry != NULL)
+			set_bonjour_buddy_value(buddy, buddy_TXT_records[i], txt_entry, txt_len);
 	}
-		
-	if (NULL != (txt_entry = (char*)TXTRecordGetValuePtr(record_len, record, "last", &txt_len)))
-	{
-		set_bonjour_buddy_value(buddy, E_BUDDY_LAST, txt_entry, txt_len);
-	}
-			
-	if (NULL != (txt_entry = (char*)TXTRecordGetValuePtr(record_len, record, "status", &txt_len)))
-	{
-		set_bonjour_buddy_value(buddy, E_BUDDY_STATUS, txt_entry, txt_len);
-	}
-				
-	if (NULL != (txt_entry = (char*)TXTRecordGetValuePtr(record_len, record, "email", &txt_len)))
-	{
-		set_bonjour_buddy_value(buddy, E_BUDDY_EMAIL, txt_entry, txt_len);
-	}
-		
-	if (NULL != (txt_entry = (char*)TXTRecordGetValuePtr(record_len, record, "jid", &txt_len)))
-	{
-		set_bonjour_buddy_value(buddy, E_BUDDY_JID, txt_entry, txt_len);
-	}
-		
-	if (NULL != (txt_entry = (char*)TXTRecordGetValuePtr(record_len, record, "AIM", &txt_len)))
-	{
-		set_bonjour_buddy_value(buddy, E_BUDDY_AIM, txt_entry, txt_len);
-	}
-	
-	if (NULL != (txt_entry = (char*)TXTRecordGetValuePtr(record_len, record, "VC", &txt_len)))
-	{
-		set_bonjour_buddy_value(buddy, E_BUDDY_VC, txt_entry, txt_len);
-	}
-	
-	if (NULL != (txt_entry = (char*)TXTRecordGetValuePtr(record_len, record, "phsh", &txt_len)))
-	{
-		set_bonjour_buddy_value(buddy, E_BUDDY_PHSH, txt_entry, txt_len);
-	}
-	
-	if (NULL != (txt_entry = (char*)TXTRecordGetValuePtr(record_len, record, "msg", &txt_len)))
-	{
-		set_bonjour_buddy_value(buddy, E_BUDDY_MSG, txt_entry, txt_len);
-	}	
 }
 
 int

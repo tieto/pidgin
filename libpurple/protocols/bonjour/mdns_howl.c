@@ -55,8 +55,6 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 {
 	BonjourBuddy *buddy;
 	PurpleAccount *account = (PurpleAccount*)extra;
-	/*gchar *txtvers = NULL;*/
-	/*gchar *version = NULL;*/
 	gint address_length = 16;
 	sw_text_record_iterator iterator;
 	char key[SW_TEXT_RECORD_MAX_LEN];
@@ -79,42 +77,9 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 	{
 		sw_text_record_iterator_init(&iterator, text_record, text_record_len);
 		while (sw_text_record_iterator_next(iterator, key, (sw_octet *)value, &value_length) == SW_OKAY)
-		{
-			/* Compare the keys with the possible ones and save them on */
-			/* the appropiate place of the buddy_list */
-			if (strcmp(key, "txtvers") == 0) {
-				/*txtvers = g_strdup(value);*/
-			} else if (strcmp(key, "version") == 0) {
-				/*version = g_strdup(value);*/
-			} else if (strcmp(key, "1st") == 0) {
-				g_free(buddy->first);
-				buddy->first = g_strdup(value);
-			} else if (strcmp(key, "status") == 0) {
-				g_free(buddy->status);
-				buddy->status = g_strdup(value);
-			} else if (strcmp(key, "email") == 0) {
-				g_free(buddy->email);
-				buddy->email = g_strdup(value);
-			} else if (strcmp(key, "last") == 0) {
-				g_free(buddy->last);
-				buddy->last = g_strdup(value);
-			} else if (strcmp(key, "jid") == 0) {
-				g_free(buddy->jid);
-				buddy->jid = g_strdup(value);
-			} else if (strcmp(key, "AIM") == 0) {
-				g_free(buddy->AIM);
-				buddy->AIM = g_strdup(value);
-			} else if (strcmp(key, "vc") == 0) {
-				g_free(buddy->vc);
-				buddy->vc = g_strdup(value);
-			} else if (strcmp(key, "phsh") == 0) {
-				g_free(buddy->phsh);
-				buddy->phsh = g_strdup(value);
-			} else if (strcmp(key, "msg") == 0) {
-				g_free(buddy->msg);
-				buddy->msg = g_strdup(value);
-	}
-		}
+			set_bonjour_buddy_value(buddy, key, value, value_length);
+
+		sw_text_record_iterator_fina(iterator);
 	}
 
 	if (!bonjour_buddy_check(buddy))
@@ -125,10 +90,6 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 
 	/* Add or update the buddy in our buddy list */
 	bonjour_buddy_add_to_purple(buddy);
-
-	/* Free all the temporal strings */
-	/*g_free(txtvers);*/
-	/*g_free(version);*/
 
 	return SW_OKAY;
 }

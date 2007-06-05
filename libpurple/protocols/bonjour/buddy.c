@@ -38,43 +38,42 @@ bonjour_buddy_new(const gchar *name, PurpleAccount* account)
 }
 
 void
-set_bonjour_buddy_value(BonjourBuddy* buddy, bonjour_buddy_member member, const char* value, uint32_t len)
-{
-	gchar **key = NULL;
-	switch (member)
-	{
-		case E_BUDDY_FIRST:
-			key = &buddy->first;
-			break;
-		case E_BUDDY_LAST:
-			key = &buddy->last;
-			break;
-		case E_BUDDY_STATUS:
-			key = &buddy->status;
-			break;
-		case E_BUDDY_EMAIL:
-			key = &buddy->email;
-			break;
-		case E_BUDDY_PHSH:
-			key = &buddy->phsh;
-			break;
-		case E_BUDDY_JID:
-			key = &buddy->jid;
-			break;
-		case E_BUDDY_AIM:
-			key = &buddy->AIM;
-			break;
-		case E_BUDDY_VC:
-			key = &buddy->vc;
-			break;
-		case E_BUDDY_MSG:
-			key = &buddy->msg;
-			break;
-	}
+set_bonjour_buddy_value(BonjourBuddy* buddy, const char *record_key, const char *value, uint32_t len){
+	gchar **fld = NULL;
 
-	g_free(*key);
-	*key = NULL;
-	*key = g_strndup(value, len);
+	if (!strcmp(record_key, "1st"))
+		fld = &buddy->first;
+	else if(!strcmp(record_key, "email"))
+		fld = &buddy->email;
+	else if(!strcmp(record_key, "ext"))
+		fld = &buddy->ext;
+	else if(!strcmp(record_key, "jid"))
+		fld = &buddy->jid;
+	else if(!strcmp(record_key, "last"))
+		fld = &buddy->last;
+	else if(!strcmp(record_key, "msg"))
+		fld = &buddy->msg;
+	else if(!strcmp(record_key, "nick"))
+		fld = &buddy->nick;
+	else if(!strcmp(record_key, "node"))
+		fld = &buddy->node;
+	else if(!strcmp(record_key, "phsh"))
+		fld = &buddy->phsh;
+	else if(!strcmp(record_key, "status"))
+		fld = &buddy->status;
+	else if(!strcmp(record_key, "vc"))
+		fld = &buddy->vc;
+	else if(!strcmp(record_key, "ver"))
+		fld = &buddy->ver;
+	else if(!strcmp(record_key, "AIM"))
+		fld = &buddy->AIM;
+
+	if(fld == NULL)
+		return;
+
+	g_free(*fld);
+	*fld = NULL;
+	*fld = g_strndup(value, len);
 }
 
 /**

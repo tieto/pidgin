@@ -34,8 +34,10 @@ typedef struct _BonjourBuddy
 	PurpleAccount *account;
 
 	gchar *name;
-	gchar *first;
+	gchar *ip;
 	gint port_p2pj;
+
+	gchar *first;
 	gchar *phsh;
 	gchar *status;
 	gchar *email;
@@ -43,40 +45,49 @@ typedef struct _BonjourBuddy
 	gchar *jid;
 	gchar *AIM;
 	gchar *vc;
-	gchar *ip;
 	gchar *msg;
-	
+	gchar *ext;
+	gchar *nick;
+	gchar *node;
+	gchar *ver;
+
 	BonjourJabberConversation *conversation;
-	
+
 #ifdef USE_BONJOUR_APPLE
 	DNSServiceRef txt_query;
 	int txt_query_fd;
 #endif
-	
+
 } BonjourBuddy;
 
-typedef enum _bonjour_buddy_member
-{
-	E_BUDDY_FIRST,
-	E_BUDDY_LAST,
-	E_BUDDY_STATUS,
-	E_BUDDY_EMAIL,
-	E_BUDDY_PHSH,
-	E_BUDDY_JID,
-	E_BUDDY_AIM,
-	E_BUDDY_VC,
-	E_BUDDY_MSG
-} bonjour_buddy_member;
+static const char *const buddy_TXT_records[] = {
+	"1st",
+	"email",
+	"ext",
+	"jid",
+	"last",
+	"msg",
+	"nick",
+	"node",
+	"phsh",
+/*	"port.p2pj", Deprecated - MUST ignore */
+	"status",
+/*	"txtvers", Deprecated - hardcoded to 1 */
+	"vc",
+	"ver",
+	"AIM", /* non standard */
+	NULL
+};
 
 /**
  * Creates a new buddy.
  */
-BonjourBuddy *bonjour_buddy_new(const gchar *name, PurpleAccount* account);
+BonjourBuddy *bonjour_buddy_new(const gchar *name, PurpleAccount *account);
 
 /**
  * Sets a value in the BonjourBuddy struct, destroying the old value
  */
-void set_bonjour_buddy_value(BonjourBuddy* buddy, bonjour_buddy_member member, const char* value, uint32_t len);
+void set_bonjour_buddy_value(BonjourBuddy* buddy, const char *record_key, const char *value, uint32_t len);
 
 /**
  * Check if all the compulsory buddy data is present.
