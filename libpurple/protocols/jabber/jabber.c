@@ -504,15 +504,13 @@ static void tls_init(JabberStream *js)
 {
 	purple_input_remove(js->gc->inpa);
 	js->gc->inpa = 0;
-	js->gsc = purple_ssl_connect_fd(js->gc->account, js->fd,
-			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->gc);
+	js->gsc = purple_ssl_connect_with_host_fd(js->gc->account, js->fd,
+			jabber_login_callback_ssl, jabber_ssl_connect_failure, js->serverFQDN, js->gc);
 }
 
 static void jabber_login_connect(JabberStream *js, const char *fqdn, const char *host, int port)
 {
-#ifdef HAVE_CYRUS_SASL
 	js->serverFQDN = g_strdup(fqdn);
-#endif
 
 	if (purple_proxy_connect(js->gc, js->gc->account, host,
 			port, jabber_login_callback, js->gc) == NULL)
@@ -1021,9 +1019,9 @@ void jabber_close(PurpleConnection *gc)
 		g_string_free(js->sasl_mechs, TRUE);
 	if(js->sasl_cb)
 		g_free(js->sasl_cb);
+#endif
 	if(js->serverFQDN)
 		g_free(js->serverFQDN);
-#endif
 	g_free(js->server_name);
 	g_free(js->gmail_last_time);
 	g_free(js->gmail_last_tid);
