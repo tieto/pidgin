@@ -17,9 +17,7 @@
 #ifndef _BONJOUR_MDNS_WIN32
 #define _BONJOUR_MDNS_WIN32
 
-#include "config.h"
-
-#ifdef USE_BONJOUR_APPLE 
+#ifdef USE_BONJOUR_APPLE
 
 #include <glib.h>
 #include "mdns_types.h"
@@ -27,39 +25,10 @@
 #include "dnsquery.h"
 #include "dns_sd_proxy.h"
 
-/* data structure for the resolve callback */
-typedef struct _ResolveCallbackArgs
-{
-	DNSServiceRef resolver;
-	int resolver_fd;
-	
-	PurpleDnsQueryData *query;
-	gchar *fqn; 
-	
-	BonjourBuddy* buddy;
-} ResolveCallbackArgs;
-
-
 /* Bonjour async callbacks */
-
-void _mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_message);
-
-void DNSSD_API _mdns_text_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags flags, uint32_t interfaceIndex,
-    DNSServiceErrorType errorCode, const char *fullname, uint16_t rrtype, uint16_t rrclass, uint16_t rdlen,
-    const void *rdata, uint32_t ttl, void *context);
-
-void DNSSD_API _mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, 
-    const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void *context);
-
-void DNSSD_API _mdns_service_register_callback(DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode,
-    const char *name, const char *regtype, const char *domain, void *context);
 
 void DNSSD_API _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex,
     DNSServiceErrorType errorCode, const char *serviceName, const char *regtype, const char *replyDomain, void *context);
-
-
-/* utility functions */
-void _mdns_parse_text_record(BonjourBuddy* buddy, const char* record, uint16_t record_len);
 
 /* interface functions */
 

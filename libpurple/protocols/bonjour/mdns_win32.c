@@ -18,67 +18,88 @@
 
 #include "debug.h"
 
-void 
-_mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_message)
+/* data structure for the resolve callback */
+typedef struct _ResolveCallbackArgs
 {
-	ResolveCallbackArgs* args = (ResolveCallbackArgs*)data;
+	DNSServiceRef resolver;
+	int resolver_fd;
 
-	if (!hosts || !hosts->data)
-	{
-		purple_debug_error("bonjour", "host resolution - callback error.\n");	
+	PurpleDnsQueryData *query;
+	gchar *fqn;
+
+	BonjourBuddy* buddy;
+} ResolveCallbackArgs;
+
+static void
+_mdns_parse_text_record(BonjourBuddy* buddy, const char* record, uint16_t record_len)
+{
+	const char *txt_entry;
+	uint8_t txt_len;
+	int i;
+
+	for (i = 0; buddy_TXT_records[i] != NULL; i++) {
+		txt_entry = TXTRecordGetValuePtr(record_len, record, buddy_TXT_records[i], &txt_len);
+		if (txt_entry != NULL)
+			set_bonjour_buddy_value(buddy, buddy_TXT_records[i], txt_entry, txt_len);
 	}
-	else
-	{
-		struct sockaddr_in *addr = (struct sockaddr_in*)g_slist_nth_data(hosts, 1);
-		BonjourBuddy* buddy = args->buddy;
-		
-		buddy->ip = inet_ntoa(addr->sin_addr);
-		
-		/* finally, set up the continuous txt record watcher, and add the buddy to purple */
-	
-		if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&buddy->txt_query, 0, 0, args->fqn, 
-				kDNSServiceType_TXT, kDNSServiceClass_IN, _mdns_text_record_query_callback, buddy))
-		{
-			gint fd = DNSServiceRefSockFD(buddy->txt_query);
-			buddy->txt_query_fd = purple_input_add(fd, PURPLE_INPUT_READ, _mdns_handle_event, buddy->txt_query);
-			
-			bonjour_buddy_add_to_purple(buddy);
-		}
-		else
-		{
-			bonjour_buddy_delete(buddy);
-		}
-		
-	}
-	
-	/* free the hosts list*/
-	g_slist_free(hosts);
-	
-	/* free the remaining args memory */				
-	purple_dnsquery_destroy(args->query);
-	g_free(args->fqn);
-	free(args);
 }
 
-void DNSSD_API 
-_mdns_text_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags flags, uint32_t interfaceIndex,
-    DNSServiceErrorType errorCode, const char *fullname, uint16_t rrtype, uint16_t rrclass, uint16_t rdlen,
-    const void *rdata, uint32_t ttl, void *context)
+static void DNSSD_API
+_mdns_text_record_query_callback(DNSServiceRef DNSServiceRef, DNSServiceFlags flags,
+	uint32_t interfaceIndex, DNSServiceErrorType errorCode, const char *fullname,
+	uint16_t rrtype, uint16_t rrclass, uint16_t rdlen, const void *rdata,
+	uint32_t ttl, void *context)
 {
 	if (kDNSServiceErr_NoError != errorCode)
-	{
 		purple_debug_error("bonjour", "text record query - callback error.\n");
-	}
 	else if (flags & kDNSServiceFlagsAdd)
 	{
-		BonjourBuddy *buddy = (BonjourBuddy*)context;	
+		BonjourBuddy *buddy = (BonjourBuddy*)context;
 		_mdns_parse_text_record(buddy, rdata, rdlen);
 		bonjour_buddy_add_to_purple(buddy);
 	}
 }
 
-void DNSSD_API 
-_mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode, 
+static void
+_mdns_resolve_host_callback(GSList *hosts, gpointer data, const char *error_message)
+{
+	ResolveCallbackArgs* args = (ResolveCallbackArgs*)data;
+
+	if (!hosts || !hosts->data)
+		purple_debug_error("bonjour", "host resolution - callback error.\n");
+	else
+	{
+		struct sockaddr_in *addr = (struct sockaddr_in*)g_slist_nth_data(hosts, 1);
+		BonjourBuddy* buddy = args->buddy;
+
+		buddy->ip = inet_ntoa(addr->sin_addr);
+
+		/* finally, set up the continuous txt record watcher, and add the buddy to purple */
+
+		if (kDNSServiceErr_NoError == DNSServiceQueryRecord(&buddy->txt_query, 0, 0, args->fqn,
+				kDNSServiceType_TXT, kDNSServiceClass_IN, _mdns_text_record_query_callback, buddy))
+		{
+			gint fd = DNSServiceRefSockFD(buddy->txt_query);
+			buddy->txt_query_fd = purple_input_add(fd, PURPLE_INPUT_READ, _mdns_handle_event, buddy->txt_query);
+
+			bonjour_buddy_add_to_purple(buddy);
+		}
+		else
+			bonjour_buddy_delete(buddy);
+
+	}
+
+	/* free the hosts list*/
+	g_slist_free(hosts);
+
+	/* free the remaining args memory */
+	purple_dnsquery_destroy(args->query);
+	g_free(args->fqn);
+	g_free(args);
+}
+
+static void DNSSD_API
+_mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex, DNSServiceErrorType errorCode,
     const char *fullname, const char *hosttarget, uint16_t port, uint16_t txtLen, const char *txtRecord, void *context)
 {
 	ResolveCallbackArgs *args = (ResolveCallbackArgs*)context;
@@ -91,69 +112,63 @@ _mdns_service_resolve_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint3
 	{
 		purple_debug_error("bonjour", "service resolver - callback error.\n");
 		bonjour_buddy_delete(args->buddy);
-		free(args);
+		g_free(args);
 	}
 	else
 	{
 		args->buddy->port_p2pj = port;
-				
+
 		/* parse the text record */
 		_mdns_parse_text_record(args->buddy, txtRecord, txtLen);
-		
+
 		/* set more arguments, and start the host resolver */
 		args->fqn = g_strdup(fullname);
-		
-		if (NULL == (args->query =
+
+		if (!(args->query =
 			purple_dnsquery_a(hosttarget, port, _mdns_resolve_host_callback, args)))
 		{
 			purple_debug_error("bonjour", "service resolver - host resolution failed.\n");
 			bonjour_buddy_delete(args->buddy);
 			g_free(args->fqn);
-			free(args);
+			g_free(args);
 		}
 	}
-	
+
 }
 
-void DNSSD_API 
+static void DNSSD_API
 _mdns_service_register_callback(DNSServiceRef sdRef, DNSServiceFlags flags, DNSServiceErrorType errorCode,
     const char *name, const char *regtype, const char *domain, void *context)
 {
 	/* we don't actually care about anything said in this callback - this is only here because Bonjour for windows is broken */
 	if (kDNSServiceErr_NoError != errorCode)
-		{
 		purple_debug_error("bonjour", "service advertisement - callback error.\n");
-		}
 	else
-		{
 		purple_debug_info("bonjour", "service advertisement - callback.\n");
-		}
 }
 
-void DNSSD_API 
+void DNSSD_API
 _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32_t interfaceIndex,
     DNSServiceErrorType errorCode, const char *serviceName, const char *regtype, const char *replyDomain, void *context)
 {
 	PurpleAccount *account = (PurpleAccount*)context;
 	PurpleBuddy *gb = NULL;
-	
+
 	if (kDNSServiceErr_NoError != errorCode)
-	{
 		purple_debug_error("bonjour", "service browser - callback error");
-	}
 	else if (flags & kDNSServiceFlagsAdd)
 	{
 		/* A presence service instance has been discovered... check it isn't us! */
-		if (0 != g_ascii_strcasecmp(serviceName, account->username))
+		if (g_ascii_strcasecmp(serviceName, account->username) != 0)
 		{
 			/* OK, lets go ahead and resolve it to add to the buddy list */
-			ResolveCallbackArgs *args = malloc(sizeof(ResolveCallbackArgs));
+			ResolveCallbackArgs *args = g_new0(ResolveCallbackArgs, 1);
 			args->buddy = bonjour_buddy_new(serviceName, account);
-			
+
 			if (kDNSServiceErr_NoError != DNSServiceResolve(&args->resolver, 0, 0, serviceName, regtype, replyDomain, _mdns_service_resolve_callback, args))
 			{
 				bonjour_buddy_delete(args->buddy);
-				free(args);
+				g_free(args);
 				purple_debug_error("bonjour", "service browser - failed to resolve service.\n");
 			}
 			else
@@ -174,20 +189,6 @@ _mdns_service_browse_callback(DNSServiceRef sdRef, DNSServiceFlags flags, uint32
 			bonjour_buddy_delete(gb->proto_data);
 			purple_blist_remove_buddy(gb);
 		}
-	}
-}
-
-void
-_mdns_parse_text_record(BonjourBuddy* buddy, const char* record, uint16_t record_len)
-{
-	const char *txt_entry;
-	uint8_t txt_len;
-	int i;
-
-	for (i = 0; buddy_TXT_records[i] != NULL; i++) {
-		txt_entry = TXTRecordGetValuePtr(record_len, record, buddy_TXT_records[i], &txt_len);
-		if (txt_entry != NULL)
-			set_bonjour_buddy_value(buddy, buddy_TXT_records[i], txt_entry, txt_len);
 	}
 }
 
@@ -254,9 +255,9 @@ _mdns_publish(BonjourDnsSd *data, PublishType type)
 	else
 	{
 		DNSServiceErrorType err = kDNSServiceErr_NoError;
-	
+
 		/* OK, we're done constructing the text record, (re)publish the service */
-		
+
 		switch (type)
 		{
 			case PUBLISH_START:
@@ -264,12 +265,12 @@ _mdns_publish(BonjourDnsSd *data, PublishType type)
 					NULL, NULL, data->port_p2pj, TXTRecordGetLength(&dns_data), TXTRecordGetBytesPtr(&dns_data),
 					_mdns_service_register_callback, NULL);
 				break;
-			
+
 			case PUBLISH_UPDATE:
 				err = DNSServiceUpdateRecord(data->advertisement, NULL, 0, TXTRecordGetLength(&dns_data), TXTRecordGetBytesPtr(&dns_data), 0);
 				break;
 		}
-		
+
 		if (kDNSServiceErr_NoError != err)
 		{
 			purple_debug_error("bonjour", "Failed to publish presence service.\n");
@@ -282,13 +283,13 @@ _mdns_publish(BonjourDnsSd *data, PublishType type)
 			data->advertisement_fd = purple_input_add(advertisement_fd, PURPLE_INPUT_READ, _mdns_handle_event, data->advertisement);
 		}
 	}
-	
+
 	/* Free the memory used by temp data */
 	TXTRecordDeallocate(&dns_data);
 	return ret;
 }
 
-void 
+void
 _mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition)
 {
 	DNSServiceProcessResult((DNSServiceRef)data);
