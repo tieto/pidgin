@@ -136,8 +136,6 @@ typedef struct _JabberStream
 	char *gmail_last_time;
 	char *gmail_last_tid;
 
-    char *serverFQDN;
-
 	/* OK, this stays at the end of the struct, so plugins can depend
 	 * on the rest of the stuff being in the right place
 	 */
@@ -148,6 +146,7 @@ typedef struct _JabberStream
 	int sasl_maxbuf;
 	GString *sasl_mechs;
 #endif
+    char *serverFQDN;
 
 } JabberStream;
 
