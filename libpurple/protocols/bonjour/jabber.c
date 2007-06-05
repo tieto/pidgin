@@ -51,18 +51,19 @@ _connect_to_buddy(PurpleBuddy *gb)
 	gint socket_fd;
 	gint retorno = 0;
 	struct sockaddr_in buddy_address;
+	BonjourBuddy *bb = gb->proto_data;
 
 	/* Create a socket and make it non-blocking */
 	socket_fd = socket(PF_INET, SOCK_STREAM, 0);
 
 	buddy_address.sin_family = PF_INET;
-	buddy_address.sin_port = htons(((BonjourBuddy*)(gb->proto_data))->port_p2pj);
-	inet_aton(((BonjourBuddy*)(gb->proto_data))->ip, &(buddy_address.sin_addr));
+	buddy_address.sin_port = htons(bb->port_p2pj);
+	inet_aton(bb->ip, &(buddy_address.sin_addr));
 	memset(&(buddy_address.sin_zero), '\0', 8);
 
 	retorno = connect(socket_fd, (struct sockaddr*)&buddy_address, sizeof(struct sockaddr));
 	if (retorno == -1) {
-		purple_debug_warning("bonjour", "connect error: %s\n", strerror(errno));
+		purple_debug_warning("bonjour", "Error connecting to buddy %s at %s:%d error: %s\n", purple_buddy_get_name(gb), bb->ip ? bb->ip : "(null)", buddy_address.sin_port, strerror(errno));
 	}
 	fcntl(socket_fd, F_SETFL, O_NONBLOCK);
 

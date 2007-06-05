@@ -14,43 +14,13 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#ifndef _BONJOUR_DNS_SD
-#define _BONJOUR_DNS_SD
+#ifndef _BONJOUR_MDNS_COMMON
+#define _BONJOUR_MDNS_COMMON
 
-#include <howl.h>
-#include <glib.h>
-#include "account.h"
+#include "mdns_types.h"
 
-#define ICHAT_SERVICE "_presence._tcp."
-
-/**
- * Data to be used by the dns-sd connection.
- */
-typedef struct _BonjourDnsSd
-{
-	sw_discovery session;
-	sw_discovery_oid session_id;
-	PurpleAccount *account;
-	gchar *name;
-	gchar *txtvers;
-	gchar *version;
-	gchar *first;
-	gchar *last;
-	gint port_p2pj;
-	gchar *phsh;
-	gchar *status;
-	gchar *email;
-	gchar *vc;
-	gchar *jid;
-	gchar *AIM;
-	gchar *msg;
-	GHashTable *buddies;
-} BonjourDnsSd;
-
-typedef enum _PublishType {
-	PUBLISH_START,
-	PUBLISH_UPDATE
-} PublishType;
+#include "mdns_win32.h"
+#include "mdns_howl.h"
 
 /**
  * Allocate space for the dns-sd data.

@@ -37,7 +37,7 @@
 #include "version.h"
 
 #include "bonjour.h"
-#include "dns_sd.h"
+#include "mdns_common.h"
 #include "jabber.h"
 #include "buddy.h"
 
@@ -120,7 +120,7 @@ bonjour_login(PurpleAccount *account)
 
 	/* Connect to the mDNS daemon looking for buddies in the LAN */
 	bd->dns_sd_data = bonjour_dns_sd_new();
-	bd->dns_sd_data->name = (sw_string)purple_account_get_username(account);
+	bd->dns_sd_data->name = purple_account_get_username(account);
 	bd->dns_sd_data->txtvers = g_strdup("1");
 	bd->dns_sd_data->version = g_strdup("1");
 	bd->dns_sd_data->first = g_strdup(purple_account_get_string(account, "first", default_firstname));
@@ -491,8 +491,8 @@ initialize_default_account_values()
 		LPUSER_INFO_10 user_info = NULL;
 		LPSERVER_INFO_100 server_info = NULL;
 		wchar_t *servername = NULL;
-		wchar_t username[UNLEN + 1] = {'\0'};
-		DWORD dwLenUsername = sizeof(username);
+		wchar_t username[UNLEN + 1];
+		DWORD dwLenUsername = UNLEN + 1;
 		FARPROC myNetServerEnum = wpurple_find_and_loadproc(
 			"Netapi32.dll", "NetServerEnum");
 		FARPROC myNetApiBufferFree = wpurple_find_and_loadproc(
@@ -517,7 +517,7 @@ initialize_default_account_values()
 			}
 		}
 
-		if (!GetUserNameW(&username, &dwLenUsername)) {
+		if (!GetUserNameW((LPWSTR) &username, &dwLenUsername)) {
 			purple_debug_warning("bonjour",
 				"Unable to look up username\n");
 		}
@@ -553,7 +553,7 @@ initialize_default_account_values()
 		 */
 		splitpoint = strchr(tmp, ',');
 		if (splitpoint != NULL)
-			default_lastname = g_strndup(tmp, splitpoint - tmp);			
+			default_lastname = g_strndup(tmp, splitpoint - tmp);
 		else
 			default_lastname = g_strdup(tmp);
 	}

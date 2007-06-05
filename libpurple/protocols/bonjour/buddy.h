@@ -17,14 +17,22 @@
 #ifndef _BONJOUR_BUDDY
 #define _BONJOUR_BUDDY
 
-#include <howl.h>
 #include <glib.h>
 
+#include "config.h"
 #include "account.h"
 #include "jabber.h"
 
+#ifdef USE_BONJOUR_APPLE 
+#include "dns_sd_proxy.h"
+#else /* USE_BONJOUR_HOWL */
+#include <howl.h>
+#endif
+
 typedef struct _BonjourBuddy
 {
+	PurpleAccount *account;
+
 	gchar *name;
 	gchar *first;
 	gint port_p2pj;
@@ -37,16 +45,38 @@ typedef struct _BonjourBuddy
 	gchar *vc;
 	gchar *ip;
 	gchar *msg;
+	
 	BonjourJabberConversation *conversation;
+	
+#ifdef USE_BONJOUR_APPLE
+	DNSServiceRef txt_query;
+	int txt_query_fd;
+#endif
+	
 } BonjourBuddy;
+
+typedef enum _bonjour_buddy_member
+{
+	E_BUDDY_FIRST,
+	E_BUDDY_LAST,
+	E_BUDDY_STATUS,
+	E_BUDDY_EMAIL,
+	E_BUDDY_PHSH,
+	E_BUDDY_JID,
+	E_BUDDY_AIM,
+	E_BUDDY_VC,
+	E_BUDDY_MSG
+} bonjour_buddy_member;
 
 /**
  * Creates a new buddy.
  */
-BonjourBuddy *bonjour_buddy_new(const gchar *name, const gchar *first,
-	gint port_p2pj, const gchar *phsh, const gchar *status,
-	const gchar *email, const gchar *last, const gchar *jid,
-	const gchar *AIM, const gchar *vc, const gchar *ip, const gchar *msg);
+BonjourBuddy *bonjour_buddy_new(const gchar *name, PurpleAccount* account);
+
+/**
+ * Sets a value in the BonjourBuddy struct, destroying the old value
+ */
+void set_bonjour_buddy_value(BonjourBuddy* buddy, bonjour_buddy_member member, const char* value, uint32_t len);
 
 /**
  * Check if all the compulsory buddy data is present.
@@ -56,7 +86,7 @@ gboolean bonjour_buddy_check(BonjourBuddy *buddy);
 /**
  * If the buddy doesn't previoulsy exists, it is created. Else, its data is changed (???)
  */
-void bonjour_buddy_add_to_purple(PurpleAccount *account, BonjourBuddy *buddy);
+void bonjour_buddy_add_to_purple(BonjourBuddy *buddy);
 
 /**
  * Deletes a buddy from memory.
