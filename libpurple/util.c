@@ -2663,7 +2663,7 @@ purple_util_get_image_extension(gconstpointer data, size_t len)
 		else if (!strncmp((char *)data, "MM", 2) ||
 				 !strncmp((char *)data, "II", 2))
 			return "tif";
-		ekse if (!strncmp((char *)data, "BM", 2))
+		else if (!strncmp((char *)data, "BM", 2))
 			return "bmp";
 	}
 
