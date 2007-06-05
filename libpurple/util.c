@@ -2654,14 +2654,17 @@ purple_util_get_image_extension(gconstpointer data, size_t len)
 
 	if (len >= 4)
 	{
-		if (!strncmp((char *)data, "BM", 2))
-			return "bmp";
-		else if (!strncmp((char *)data, "GIF8", 4))
+		if (!strncmp((char *)data, "GIF8", 4))
 			return "gif";
-		else if (!strncmp((char *)data, "\xff\xd8\xff\xe0", 4))
+		else if (!strncmp((char *)data, "\xff\xd8\xff", 3)) /* 4th may be e0 through ef */
 			return "jpg";
 		else if (!strncmp((char *)data, "\x89PNG", 4))
 			return "png";
+		else if (!strncmp((char *)data, "MM", 2) ||
+				 !strncmp((char *)data, "II", 2))
+			return "tif";
+		ekse if (!strncmp((char *)data, "BM", 2))
+			return "bmp";
 	}
 
 	return "icon";
