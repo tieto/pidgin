@@ -63,9 +63,9 @@ static gboolean ignore_keys = FALSE;
 
 typedef struct
 {
-	const char * keys; /* Keystrokes being bound to the action */
+	char * keys; /* Keystrokes being bound to the action */
 	GntBindableClass * klass; /* Class of the object that's getting keys rebound */
-	const char * name; /* The name of the action */
+	char * name; /* The name of the action */
 	GList * params; /* The list of paramaters */
 	
 } RebindInfo;
@@ -638,11 +638,33 @@ help_for_widget_activate(GntBindable *bindable, gpointer widget)
 }
 
 static gboolean
+build_help_window(GntWidget *widget){
+
+	GntWidget *tree,*win;
+	char *title;
+
+	tree = gnt_widget_bindings_view(widget);
+	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(help_for_widget_activate), widget);
+
+	win = gnt_window_new();
+	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(widget)));
+	gnt_box_set_title(GNT_BOX(win), title);
+	if (tree)
+		gnt_box_add_widget(GNT_BOX(win), tree);
+	else
+		gnt_box_add_widget(GNT_BOX(win), gnt_label_new("This widget has no customizable bindings."));
+
+	gnt_widget_show(win);
+
+	return TRUE;
+
+}
+
+static gboolean
 help_for_widget(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
-	GntWidget *widget, *tree, *win, *active;
-	char *title;
+	GntWidget *widget;
 
 	if (!wm->ordered)
 		return TRUE;
@@ -650,45 +672,16 @@ help_for_widget(GntBindable *bindable, GList *null)
 	widget = wm->ordered->data;
 	if (!GNT_IS_BOX(widget))
 		return TRUE;
-	active = GNT_BOX(widget)->active;
+	
+	return build_help_window(GNT_BOX(widget)->active);
 
-	tree = gnt_widget_bindings_view(active);
-	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(help_for_widget_activate), active);
 
-	win = gnt_window_new();
-	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(active)));
-	gnt_box_set_title(GNT_BOX(win), title);
-	if (tree)
-		gnt_box_add_widget(GNT_BOX(win), tree);
-	else
-		gnt_box_add_widget(GNT_BOX(win), gnt_label_new("This widget has no customizable bindings."));
-
-	gnt_widget_show(win);
-
-	return TRUE;
 }
 
 static gboolean
 help_for_wm(GntBindable *bindable, GList *null){
-	GntWM *wm = GNT_WM(bindable);
-	GntWidget *widget, *tree, *win;
-	char *title;
 
-	tree = gnt_widget_bindings_view(GNT_WIDGET(wm));
-
-	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(help_for_widget_activate), wm);
-
-	win = gnt_window_new();
-	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(wm)));
-	gnt_box_set_title(GNT_BOX(win), title);
-	if (tree)
-		gnt_box_add_widget(GNT_BOX(win), tree);
-	else
-		gnt_box_add_widget(GNT_BOX(win), gnt_label_new("This widget has no customizable bindings."));
-
-	gnt_widget_show(win);
-
-	return TRUE;
+	return build_help_window(GNT_WIDGET(bindable));
 
 }
 
