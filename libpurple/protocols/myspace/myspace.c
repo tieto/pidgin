@@ -721,15 +721,38 @@ gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg)
  *
  * @return TRUE if successful.
  *
- * INCOMPLETE
+ * UNTESTED
  */
 gboolean msim_incoming_action(MsimSession *session, MsimMessage *msg)
 {
-	/* TODO: process */
-	purple_debug_info("msim", "msim_incoming_action: action <%s> from <%d>\n",
-			msim_msg_get_string(msg, "msg"), msim_msg_get_integer(msg, "f"));
+	gchar *msg_text, *username;
+	gboolean rc;
 
-	return FALSE;
+	msg_text = msim_msg_get_string(msg, "msg");
+	username = msim_msg_get_string(msg, "_username");
+
+	purple_debug_info("msim", "msim_incoming_action: action <%s> from <%d>\n", msg_text, username);
+
+	if (strcmp(msg_text, "%typing%") == 0)
+	{
+		/* TODO: find out if msim repeatedly sends typing messages, so we can give it a timeout. */
+		serv_got_typing(session->gc, username, 0, PURPLE_TYPING);
+		rc = TRUE;
+	} else if (strcmp(msg_text, "%stoptyping%") == 0) {
+		serv_got_typing_stopped(session->gc, username);
+		rc = TRUE;
+	} else {
+		/* TODO: make a function, msim_unrecognized(), that logs all unhandled msgs to file. */
+		purple_debug_info("msim", "msim_incoming_action: for %s, unknown msg %s\n",
+				username, msg_text);
+		rc = FALSE;
+	}
+
+
+	g_free(msg_text);
+	g_free(username);
+
+	return rc;
 }
 
 /** 
