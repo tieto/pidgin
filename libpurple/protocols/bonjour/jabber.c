@@ -49,23 +49,32 @@ static gint
 _connect_to_buddy(PurpleBuddy *gb)
 {
 	gint socket_fd;
-	gint retorno = 0;
 	struct sockaddr_in buddy_address;
 	BonjourBuddy *bb = gb->proto_data;
 
+	purple_debug_info("bonjour", "Connecting to buddy %s at %s:%d.\n",
+		purple_buddy_get_name(gb), bb->ip ? bb->ip : "(null)", bb->port_p2pj);
+
 	/* Create a socket and make it non-blocking */
 	socket_fd = socket(PF_INET, SOCK_STREAM, 0);
+	if (socket_fd < 0) {
+		purple_debug_warning("bonjour", "Error opening socket: %s\n", strerror(errno));
+		return -1;
+	}
 
 	buddy_address.sin_family = PF_INET;
 	buddy_address.sin_port = htons(bb->port_p2pj);
 	inet_aton(bb->ip, &(buddy_address.sin_addr));
 	memset(&(buddy_address.sin_zero), '\0', 8);
 
-	retorno = connect(socket_fd, (struct sockaddr*)&buddy_address, sizeof(struct sockaddr));
-	if (retorno == -1) {
-		purple_debug_warning("bonjour", "Error connecting to buddy %s at %s:%d error: %s\n", purple_buddy_get_name(gb), bb->ip ? bb->ip : "(null)", buddy_address.sin_port, strerror(errno));
+	/* TODO: make this nonblocking before connecting */
+	if (connect(socket_fd, (struct sockaddr*)&buddy_address, sizeof(struct sockaddr)) == 0)
+		fcntl(socket_fd, F_SETFL, O_NONBLOCK);
+	else {
+		purple_debug_warning("bonjour", "Error connecting to buddy %s at %s:%d error: %s\n", purple_buddy_get_name(gb), bb->ip ? bb->ip : "(null)", bb->port_p2pj, strerror(errno));
+		close(socket_fd);
+		socket_fd = -1;
 	}
-	fcntl(socket_fd, F_SETFL, O_NONBLOCK);
 
 	return socket_fd;
 }
@@ -259,8 +268,8 @@ _read_data(gint socket, char **message)
 	/* Read chunks of 512 bytes till the end of the data */
 	while ((partial_message_length = recv(socket, partial_data, 512, 0)) > 0)
 	{
-			g_string_append_len(data, partial_data, partial_message_length);
-			total_message_length += partial_message_length;
+		g_string_append_len(data, partial_data, partial_message_length);
+		total_message_length += partial_message_length;
 	}
 
 	if (partial_message_length == -1)
@@ -441,7 +450,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 
 		/* Open a watcher for the client socket */
 		bb->conversation->watcher_id = purple_input_add(client_socket, PURPLE_INPUT_READ,
-													_client_socket_handler, gb);
+								_client_socket_handler, gb);
 	} else {
 		close(client_socket);
 	}
@@ -538,11 +547,28 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 	gint ret;
 
 	gb = purple_find_buddy(data->account, to);
-	if (gb == NULL)
+	if (gb == NULL) {
+		purple_debug_info("bonjour", "Can't send a message to an offline buddy (%s).\n", to);
 		/* You can not send a message to an offline buddy */
 		return -10000;
+	}
 
 	bb = (BonjourBuddy *)gb->proto_data;
+
+	/* Check if there is a previously open conversation */
+	if (bb->conversation == NULL)
+	{
+		int socket = _connect_to_buddy(gb);
+		if (socket < 0)
+			return -10001;
+
+		bb->conversation = g_new(BonjourJabberConversation, 1);
+		bb->conversation->socket = socket;
+		bb->conversation->stream_started = FALSE;
+		bb->conversation->buddy_name = g_strdup(gb->name);
+		bb->conversation->watcher_id = purple_input_add(bb->conversation->socket,
+				PURPLE_INPUT_READ, _client_socket_handler, gb);
+	}
 
 	/* Enclose the message from the UI within a "font" node */
 	message_body_node = xmlnode_new("body");
@@ -575,17 +601,6 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 
 	message = xmlnode_to_str(message_node, &message_length);
 	xmlnode_free(message_node);
-
-	/* Check if there is a previously open conversation */
-	if (bb->conversation == NULL)
-	{
-		bb->conversation = g_new(BonjourJabberConversation, 1);
-		bb->conversation->socket = _connect_to_buddy(gb);
-		bb->conversation->stream_started = FALSE;
-		bb->conversation->buddy_name = g_strdup(gb->name);
-		bb->conversation->watcher_id = purple_input_add(bb->conversation->socket,
-				PURPLE_INPUT_READ, _client_socket_handler, gb);
-	}
 
 	/* Check if the stream for the conversation has been started */
 	if (bb->conversation->stream_started == FALSE)
