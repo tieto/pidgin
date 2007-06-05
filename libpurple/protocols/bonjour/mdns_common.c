@@ -42,7 +42,10 @@ bonjour_dns_sd_free(BonjourDnsSd *data)
 {
 	g_free(data->first);
 	g_free(data->last);
-	g_free(data->email);
+	g_free(data->phsh);
+	g_free(data->status);
+	g_free(data->vc);
+	g_free(data->msg);
 	g_free(data);
 }
 
@@ -82,8 +85,7 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	gc = purple_account_get_connection(account);
 
 	/* Initialize the dns-sd data and session */
-	
-#ifndef USE_BONJOUR_APPLE 
+#ifndef USE_BONJOUR_APPLE
 	if (sw_discovery_init(&data->session) != SW_OKAY)
 	{
 		purple_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
@@ -105,7 +107,6 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	/* Advise the daemon that we are waiting for connections */
 	
 #ifdef USE_BONJOUR_APPLE
-	printf("account pointer here is %x\n,", account);
 	if (DNSServiceBrowse(&data->browser, 0, 0, ICHAT_SERVICE, NULL, _mdns_service_browse_callback, account) 
 			!= kDNSServiceErr_NoError)
 #else /* USE_BONJOUR_HOWL */
@@ -120,16 +121,16 @@ bonjour_dns_sd_start(BonjourDnsSd *data)
 	/* Get the socket that communicates with the mDNS daemon and bind it to a */
 	/* callback that will handle the dns_sd packets */
 
-#ifdef USE_BONJOUR_APPLE 
+#ifdef USE_BONJOUR_APPLE
 	dns_sd_socket = DNSServiceRefSockFD(data->browser);
 	opaque_data = data->browser;
 #else /* USE_BONJOUR_HOWL */
 	dns_sd_socket = sw_discovery_socket(data->session);
 	opaque_data = data->session;
 #endif
-	
+
 	gc->inpa = purple_input_add(dns_sd_socket, PURPLE_INPUT_READ,
-								_mdns_handle_event,	opaque_data);
+				    _mdns_handle_event, opaque_data);
 
 	return TRUE;
 }
@@ -144,14 +145,14 @@ bonjour_dns_sd_stop(BonjourDnsSd *data)
 	PurpleAccount *account;
 	PurpleConnection *gc;
 
-#ifdef USE_BONJOUR_APPLE 
-	if (NULL == data->advertisement || NULL == data->browser)
+#ifdef USE_BONJOUR_APPLE
+	if (data->advertisement == NULL || data->browser == NULL)
 #else /* USE_BONJOUR_HOWL */
 	if (data->session == NULL)
 #endif
 		return;
 
-#ifdef USE_BONJOUR_HOWL 
+#ifdef USE_BONJOUR_HOWL
 	sw_discovery_cancel(data->session, data->session_id);
 #endif
 
@@ -159,7 +160,7 @@ bonjour_dns_sd_stop(BonjourDnsSd *data)
 	gc = purple_account_get_connection(account);
 	purple_input_remove(gc->inpa);
 
-#ifdef USE_BONJOUR_APPLE 
+#ifdef USE_BONJOUR_APPLE
 	/* hack: for win32, we need to stop listening to the advertisement pipe too */
 	purple_input_remove(data->advertisement_fd);
 

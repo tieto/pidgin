@@ -113,7 +113,7 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 			} else if (strcmp(key, "msg") == 0) {
 				g_free(buddy->msg);
 				buddy->msg = g_strdup(value);
-			}
+	}
 		}
 	}
 
@@ -198,6 +198,7 @@ _mdns_publish(BonjourDnsSd *data, PublishType type)
 	sw_text_record dns_data;
 	sw_result publish_result = SW_OKAY;
 	char portstring[6];
+	const char *jid, *aim, *email;
 
 	/* Fill the data for the service */
 	if (sw_text_record_init(&dns_data) != SW_OKAY)
@@ -209,34 +210,46 @@ _mdns_publish(BonjourDnsSd *data, PublishType type)
 	/* Convert the port to a string */
 	snprintf(portstring, sizeof(portstring), "%d", data->port_p2pj);
 
-	/* Publish standard records */
-	sw_text_record_add_key_and_string_value(dns_data, "txtvers", data->txtvers);
-	sw_text_record_add_key_and_string_value(dns_data, "version", data->version);
+	jid = purple_account_get_string(data->account, "jid", NULL);
+	aim = purple_account_get_string(data->account, "AIM", NULL);
+	email = purple_account_get_string(data->account, "email", NULL);
+
+	/* We should try to follow XEP-0174, but some clients have "issues", so we humor them.
+	 * See http://telepathy.freedesktop.org/wiki/SalutInteroperability
+	 */
+
+	/* Needed by iChat */
+	sw_text_record_add_key_and_string_value(dns_data, "txtvers", "1");
+	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
 	sw_text_record_add_key_and_string_value(dns_data, "1st", data->first);
+	/* Needed by Gaim/Pidgin <= 2.0.1 (remove at some point) */
 	sw_text_record_add_key_and_string_value(dns_data, "last", data->last);
+	/* Needed by Adium */
 	sw_text_record_add_key_and_string_value(dns_data, "port.p2pj", portstring);
-	sw_text_record_add_key_and_string_value(dns_data, "phsh", data->phsh);
+	/* Needed by iChat, Gaim/Pidgin <= 2.0.1 */
 	sw_text_record_add_key_and_string_value(dns_data, "status", data->status);
+	/* Currently always set to "!" since we don't support AV and wont ever be in a conference */
 	sw_text_record_add_key_and_string_value(dns_data, "vc", data->vc);
-
-	/* Publish extra records */
-	if ((data->email != NULL) && (*data->email != '\0'))
-		sw_text_record_add_key_and_string_value(dns_data, "email", data->email);
-
-	if ((data->jid != NULL) && (*data->jid != '\0'))
-		sw_text_record_add_key_and_string_value(dns_data, "jid", data->jid);
-
-	if ((data->AIM != NULL) && (*data->AIM != '\0'))
-		sw_text_record_add_key_and_string_value(dns_data, "AIM", data->AIM);
-
-	if ((data->msg != NULL) && (*data->msg != '\0'))
+	sw_text_record_add_key_and_string_value(dns_data, "ver", VERSION);
+	if (email != NULL && *email != '\0')
+		sw_text_record_add_key_and_string_value(dns_data, "email", email);
+	if (jid != NULL && *jid != '\0')
+		sw_text_record_add_key_and_string_value(dns_data, "jid", jid);
+	/* Nonstandard, but used by iChat */
+	if (aim != NULL && *aim != '\0')
+		sw_text_record_add_key_and_string_value(dns_data, "AIM", aim);
+	if (data->msg != NULL && *data->msg != '\0')
 		sw_text_record_add_key_and_string_value(dns_data, "msg", data->msg);
+	if (data->phsh != NULL && *data->phsh != '\0')
+		sw_text_record_add_key_and_string_value(dns_data, "phsh", data->phsh);
+
+	/* TODO: ext, nick, node */
 
 	/* Publish the service */
 	switch (type)
 	{
 		case PUBLISH_START:
-			publish_result = sw_discovery_publish(data->session, 0, data->name, ICHAT_SERVICE, NULL,
+			publish_result = sw_discovery_publish(data->session, 0, purple_account_get_username(data->account), ICHAT_SERVICE, NULL,
 								NULL, data->port_p2pj, sw_text_record_bytes(dns_data), sw_text_record_len(dns_data),
 								_publish_reply, NULL, &data->session_id);
 			break;
