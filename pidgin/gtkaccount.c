@@ -484,7 +484,11 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		char *c;
 
 		if (dialog->account != NULL) {
-			c = strrchr(username,
+			if(purple_account_user_split_get_reverse(split))
+				c = strrchr(username,
+						purple_account_user_split_get_separator(split));
+			else
+				c = strchr(username,
 						purple_account_user_split_get_separator(split));
 
 			if (c != NULL) {
@@ -830,7 +834,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				item = gtk_menu_get_active(GTK_MENU(menu));
 				if (str_value == NULL && g_object_get_data(G_OBJECT(item), "fake") &&
 					!strcmp(_("Connect server"),  purple_account_option_get_text(option)))
-					str_value = "talk.google.com";	
+					str_value = "talk.google.com";
 		
 				if (str_value != NULL)
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);

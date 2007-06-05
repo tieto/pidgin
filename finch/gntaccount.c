@@ -282,7 +282,11 @@ update_user_splits(AccountEditDialog *dialog)
 
 		if (dialog->account)
 		{
-			s = strrchr(username, purple_account_user_split_get_separator(split));
+			if(purple_account_user_split_get_reverse(split))
+				s = strrchr(username, purple_account_user_split_get_separator(split));
+			else
+				s = strchr(username, purple_account_user_split_get_separator(split));
+
 			if (s != NULL)
 			{
 				*s = '\0';
