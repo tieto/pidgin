@@ -120,17 +120,11 @@ bonjour_login(PurpleAccount *account)
 
 	/* Connect to the mDNS daemon looking for buddies in the LAN */
 	bd->dns_sd_data = bonjour_dns_sd_new();
-	bd->dns_sd_data->name = purple_account_get_username(account);
-	bd->dns_sd_data->txtvers = g_strdup("1");
-	bd->dns_sd_data->version = g_strdup("1");
 	bd->dns_sd_data->first = g_strdup(purple_account_get_string(account, "first", default_firstname));
 	bd->dns_sd_data->last = g_strdup(purple_account_get_string(account, "last", default_lastname));
 	bd->dns_sd_data->port_p2pj = bd->jabber_data->port;
-	bd->dns_sd_data->phsh = g_strdup("");
-	bd->dns_sd_data->email = g_strdup(purple_account_get_string(account, "email", ""));
-	bd->dns_sd_data->vc = g_strdup("");
-	bd->dns_sd_data->jid = g_strdup(purple_account_get_string(account, "jid", ""));
-	bd->dns_sd_data->AIM = g_strdup(purple_account_get_string(account, "AIM", ""));
+	/* Not engaged in AV conference */
+	bd->dns_sd_data->vc = g_strdup("!");
 
 	status = purple_account_get_active_status(account);
 	presence = purple_account_get_presence(account);

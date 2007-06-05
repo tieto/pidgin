@@ -21,7 +21,7 @@
 #include "account.h"
 #include "config.h"
 
-#ifdef USE_BONJOUR_APPLE 
+#ifdef USE_BONJOUR_APPLE
 #include "dns_sd_proxy.h"
 #else /* USE_BONJOUR_HOWL */
 #include <howl.h>
@@ -34,10 +34,10 @@
  */
 typedef struct _BonjourDnsSd
 {
-#ifdef USE_BONJOUR_APPLE 
+#ifdef USE_BONJOUR_APPLE
 	DNSServiceRef advertisement;
 	DNSServiceRef browser;
-	
+
 	int advertisement_fd; /* hack... windows bonjour is broken, so we have to have this */
 #else /* USE_BONJOUR_HOWL */
 	sw_discovery session;
@@ -45,20 +45,13 @@ typedef struct _BonjourDnsSd
 #endif
 
 	PurpleAccount *account;
-	const char *name;
-	gchar *txtvers;
-	gchar *version;
 	gchar *first;
 	gchar *last;
 	gint port_p2pj;
 	gchar *phsh;
 	gchar *status;
-	gchar *email;
 	gchar *vc;
-	gchar *jid;
-	gchar *AIM;
 	gchar *msg;
-	GHashTable *buddies;
 } BonjourDnsSd;
 
 typedef enum _PublishType {
