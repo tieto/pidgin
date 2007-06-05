@@ -1099,7 +1099,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->font);
 	gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), button);
 
-	button = gtk_menu_item_new_with_mnemonic(_("_Foreground color"));
+	button = gtk_menu_item_new_with_mnemonic(_("Foreground _color"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->fgcolor);
 	gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), button);
 
