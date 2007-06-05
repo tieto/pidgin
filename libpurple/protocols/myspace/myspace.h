@@ -166,7 +166,13 @@ unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypi
 gboolean msim_process_reply(MsimSession *session, MsimMessage *msg);
 
 gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg);
+
 gboolean msim_process(MsimSession *session, MsimMessage *msg);
+
+void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar *username, 
+	gchar *uid_field_name, gchar *uid_before);
+
 
 gboolean msim_error(MsimSession *session, MsimMessage *msg);
 gboolean msim_status(MsimSession *session, MsimMessage *msg);

@@ -306,6 +306,7 @@ gboolean msim_login_challenge(MsimSession *session, MsimMessage *msg)
 
 	return msim_send(session, 
 			"login2", MSIM_TYPE_INTEGER, MSIM_AUTH_ALGORITHM,
+			/* This is actually user's email address. */
 			"username", MSIM_TYPE_STRING, g_strdup(account->username),
 			/* GString and gchar * response will be freed in msim_msg_free() in msim_send(). */
 			"response", MSIM_TYPE_BINARY, g_string_new_len(response, response_len),
@@ -781,7 +782,7 @@ unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypi
 			break;
 	}
 
-	purple_debug_info("msim", "msim_send_typing(%s): %d\n", name, state);
+	purple_debug_info("msim", "msim_send_typing(%s): %d (%s)\n", name, state, typing_str);
 	//msim_send_action(name, typing_str);
 	return 0;
 }
@@ -1181,6 +1182,85 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("persist command failed"));
 		return;
 	}
+}
+
+typedef struct _POSTPROCESS_INFO
+{
+	MsimMessage *msg;
+	gchar *username;
+	gchar *uid_field_name;
+	gchar *uid_before;
+} POSTPROCESS_INFO;
+
+/* Callback for msim_postprocess_outgoing() to add a uid field, after resolving username/email.  */
+void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
+{
+	gchar *body_str;
+	GHashTable *body;
+	gchar *uid;
+	POSTPROCESS_INFO *pi;
+
+	pi = (POSTPROCESS_INFO *)data;
+
+	/* Obtain userid from userinfo message. */
+	body_str = msim_msg_get_string(pi->msg, "body");
+	body = msim_parse_body(body_str);
+	g_free(body_str);
+
+	uid = g_strdup(g_hash_table_lookup(body, "UserID"));
+	g_hash_table_destroy(body);
+
+	/* Insert into outgoing message. */
+	pi->msg = msim_msg_insert_before(pi->msg, pi->uid_before,
+			pi->uid_field_name, MSIM_TYPE_STRING, uid);
+
+	/* Send */
+	g_return_if_fail(msim_msg_send(session, pi->msg));
+
+	g_free(pi);
+}
+
+/** Postprocess and send a message.
+ *
+ * @param session
+ * @param msg Message to postprocess.
+ * @param username Username to resolve.
+ * @param uid_field_name Name of new field to add, containing uid of username.
+ * @param uid_before Name of existing field to insert username field before.
+ *
+ * @return Postprocessed message.
+ */
+gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar *username, 
+	gchar *uid_field_name, gchar *uid_before)
+{
+    PurpleBuddy *buddy;
+	guint uid;
+	POSTPROCESS_INFO* pi;
+
+	pi = g_new0(POSTPROCESS_INFO, 1);
+
+	pi->msg = msim_msg_clone(msg);
+	pi->uid_before = uid_before;
+	pi->uid_field_name = uid_field_name;
+	pi->username = username;
+	
+	buddy = purple_find_buddy(session->account, username);
+	if (!buddy)
+	{
+		purple_debug_info("msim", "msim_postprocess_outgoing: couldn't find username %s in blist\n",
+				username);
+		msim_lookup_user(session, username, msim_postprocess_outgoing_cb, pi);
+		return TRUE;		/* not sure of status yet - haven't sent! */
+	}
+	
+	/* Already have uid, insert it and send msg. */
+	uid = purple_blist_node_get_int(&buddy->node, "uid");
+	purple_debug_info("msim", "msim_postprocess_outgoing: found username %s has uid %d\n",
+			username, uid);
+
+	msg = msim_msg_insert_before(msg, uid_before, uid_field_name, MSIM_TYPE_INTEGER, GUINT_TO_POINTER(uid));
+
+	return msim_msg_send(session, msg);
 }
 
 /** Remove a buddy from the user's buddy list. */
