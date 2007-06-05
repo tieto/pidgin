@@ -32,6 +32,7 @@
 #include "prefs.h"
 #include "util.h"
 #include "stringref.h"
+#include "imgstore.h"
 
 static GSList *loggers = NULL;
 
@@ -690,6 +691,109 @@ static char *log_get_timestamp(PurpleLog *log, time_t when)
 		return g_strdup(purple_time_format(&tm));
 }
 
+/* NOTE: This can return msg (which you may or may not want to g_free())
+ * NOTE: or a newly allocated string which you MUST g_free(). */
+static char *
+convert_image_tags(const PurpleLog *log, const char *msg)
+{
+	const char *tmp;
+	const char *start;
+	const char *end;
+	GData *attributes;
+	GString *newmsg = NULL;
+
+	tmp = msg;
+
+	newmsg = g_string_new("");
+
+	while (purple_markup_find_tag("img", tmp, &start, &end, &attributes)) {
+		int imgid = 0;
+		char *idstr = NULL;
+
+		if (newmsg == NULL)
+			newmsg = g_string_new("");
+
+		/* copy any text before the img tag */
+		if (tmp < start)
+			g_string_append_len(newmsg, tmp, start - tmp);
+
+		idstr = g_datalist_get_data(&attributes, "id");
+
+		imgid = atoi(idstr);
+		if (imgid != 0)
+		{
+			FILE *image_file;
+			char *dir;
+			PurpleStoredImage *image;
+			gconstpointer image_data;
+			char *new_filename = NULL;
+			char *path = NULL;
+			size_t image_byte_count;
+
+			image = purple_imgstore_find_by_id(imgid);
+			if (image == NULL)
+			{
+				/* This should never happen. */
+				g_string_free(newmsg, TRUE);
+				g_return_val_if_reached((char *)msg);
+			}
+
+			image_data       = purple_imgstore_get_data(image);
+			image_byte_count = purple_imgstore_get_size(image);
+			dir              = purple_log_get_log_dir(log->type, log->name, log->account);
+			new_filename     = purple_util_get_image_filename(image_data, image_byte_count);
+
+			path = g_build_filename(dir, new_filename, NULL);
+
+			/* Only save unique files. */
+			if (!g_file_test(path, G_FILE_TEST_EXISTS))
+			{
+				if ((image_file = g_fopen(path, "wb")) != NULL)
+				{
+					if (!fwrite(image_data, image_byte_count, 1, image_file))
+					{
+						purple_debug_error("log", "Error writing %s: %s\n",
+						                   path, strerror(errno));
+						fclose(image_file);
+
+						/* Attempt to not leave half-written files around. */
+						unlink(path);
+					}
+					else
+					{
+						purple_debug_info("log", "Wrote image file: %s\n", path);
+						fclose(image_file);
+					}
+				}
+				else
+				{
+					purple_debug_error("log", "Unable to create file %s: %s\n",
+					                   path, strerror(errno));
+				}
+			}
+
+			/* Write the new image tag */
+			g_string_append_printf(newmsg, "<IMG SRC=\"%s\">", new_filename);
+			g_free(new_filename);
+			g_free(path);
+		}
+
+		/* Continue from the end of the tag */
+		tmp = end + 1;
+	}
+
+	if (newmsg == NULL)
+	{
+		/* No images were found to change. */
+		return (char *)msg;
+	}
+
+	/* Append any remaining message data */
+	g_string_append(newmsg, tmp);
+
+	return g_string_free(newmsg, FALSE);
+}
+
 void purple_log_common_writer(PurpleLog *log, const char *ext)
 {
 	PurpleLogCommonLoggerData *data = log->logger_data;
@@ -1191,6 +1295,7 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 							  const char *from, time_t time, const char *message)
 {
 	char *msg_fixed;
+	char *image_corrected_msg;
 	char *date;
 	char *header;
 	PurplePlugin *plugin = purple_find_prpl(purple_account_get_protocol_id(log->account));
@@ -1231,7 +1336,14 @@ static gsize html_logger_write(PurpleLog *log, PurpleMessageFlags type,
 	if(!data->file)
 		return 0;
 
-	purple_markup_html_to_xhtml(message, &msg_fixed, NULL);
+	image_corrected_msg = convert_image_tags(log, message);
+	purple_markup_html_to_xhtml(image_corrected_msg, &msg_fixed, NULL);
+
+	/* Yes, this breaks encapsulation.  But it's a static function and
+	 * this saves a needless strdup(). */
+	if (image_corrected_msg != message)
+		g_free(image_corrected_msg);
+
 	date = log_get_timestamp(log, time);
 
 	if(log->type == PURPLE_LOG_SYSTEM){

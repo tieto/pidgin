@@ -22,6 +22,7 @@
  */
 #include "internal.h"
 
+#include "cipher.h"
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
@@ -1422,6 +1423,40 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						plain = g_string_append_c(plain, '\n');
 					continue;
 				}
+				if(!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
+					const char *p = c;
+					GString *src = NULL;
+					struct purple_parse_tag *pt;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "src=", strlen("src="))) {
+							const char *q = p + strlen("src=");
+							src = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								src = g_string_append_c(src, *q);
+								q++;
+							}
+							p = q;
+						}
+						p++;
+					}
+					if ((c = strchr(c, '>')) != NULL)
+						c++;
+					else
+						c = p;
+					pt = g_new0(struct purple_parse_tag, 1);
+					pt->src_tag = "img";
+					pt->dest_tag = "img";
+					tags = g_list_prepend(tags, pt);
+					if(xhtml && src && src->len)
+						g_string_append_printf(xhtml, "<img src='%s' alt=''>", g_strstrip(src->str));
+					else
+						pt->ignore = TRUE;
+					if (src)
+						g_string_free(src, TRUE);
+					continue;
+				}
 				if(!g_ascii_strncasecmp(c, "<b>", 3) || !g_ascii_strncasecmp(c, "<bold>", strlen("<bold>"))) {
 					struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1);
 					pt->src_tag = *(c+2) == '>' ? "b" : "bold";
@@ -1563,10 +1598,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
 					if(style->len)
-					{
-						if(xhtml)
-							g_string_append_printf(xhtml, "<span style='%s'>", g_strstrip(style->str));
-					}
+						g_string_append_printf(xhtml, "<span style='%s'>", g_strstrip(style->str));
 					else
 						pt->ignore = TRUE;
 					g_string_free(style, TRUE);
@@ -2690,6 +2722,33 @@ purple_util_get_image_extension(gconstpointer data, size_t len)
 	}
 
 	return "icon";
+}
+
+char *
+purple_util_get_image_filename(gconstpointer image_data, size_t image_len)
+{
+	PurpleCipherContext *context;
+	gchar digest[41];
+
+	context = purple_cipher_context_new_by_name("sha1", NULL);
+	if (context == NULL)
+	{
+		purple_debug_error("util", "Could not find sha1 cipher\n");
+		g_return_val_if_reached(NULL);
+	}
+
+	/* Hash the image data */
+	purple_cipher_context_append(context, image_data, image_len);
+	if (!purple_cipher_context_digest_to_str(context, sizeof(digest), digest, NULL))
+	{
+		purple_debug_error("util", "Failed to get SHA-1 digest.\n");
+		g_return_val_if_reached(NULL);
+	}
+	purple_cipher_context_destroy(context);
+
+	/* Return the filename */
+	return g_strdup_printf("%s.%s", digest,
+	                       purple_util_get_image_extension(image_data, image_len));
 }
 
 gboolean
