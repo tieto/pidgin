@@ -157,8 +157,6 @@ gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE],
 int msim_send_im(PurpleConnection *gc, const char *who, const char *message, 
 	PurpleMessageFlags flags);
 void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
-void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, 
-		               gpointer data);
 
 int msim_incoming_im(MsimSession *session, MsimMessage *msg);
 int msim_incoming_action(MsimSession *session, MsimMessage *msg);

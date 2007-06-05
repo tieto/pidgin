@@ -690,63 +690,27 @@ void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 } 
 
 /**
- * Callback to handle incoming messages, after resolving userid.
- *
- * @param session 
- * @param userinfo Message from server on user's info, containing UserName.
- * @param data A MsimMessage * of the incoming message, will be freed.
- */
-void msim_incoming_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
-{
-    gchar *username, *body_str;
-	MsimMessage *msg;
-    GHashTable *body;
-
-    g_return_if_fail(MSIM_SESSION_VALID(session));
-    g_return_if_fail(userinfo != NULL);
-
-	body_str = msim_msg_get_string(userinfo, "body");
-    body = msim_parse_body(body_str);
-	g_free(body_str);
-	g_return_if_fail(body != NULL);
-
-    username = g_hash_table_lookup(body, "UserName");
-
-    msg = (MsimMessage *)data;
-    serv_got_im(session->gc, username, msim_msg_get_string(msg, "msg"), PURPLE_MESSAGE_RECV, time(NULL));
-
-	/* msim_msg_free(userinfo);   */ /* TODO: Should we? */
-    g_hash_table_destroy(body);
-	/* Free copy cloned in msim_incoming_im(). */
-	msim_msg_free(msg);
-}
-
-/**
  * Handle an incoming instant message.
  *
  * @param session The session
- * @param msg Message from the server, containing 'f' (userid from) and 'msg'.
+ * @param msg Message from the server, containing 'f' (userid from) and 'msg'. 
+ * 			  Should also contain username in _username from preprocessing.
  *
  * @return TRUE if successful.
  */
 gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg)
 {
-    gchar *userid;
+    gchar *username;
 
-    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
-    g_return_val_if_fail(msg != NULL, FALSE);
+    username = msim_msg_get_string(msg, "_username");
 
-	/* TODO: where freed? */
-    userid = msim_msg_get_string(msg, "f");
-    
-    purple_debug_info("msim", 
-			"msim_incoming_im: got msg from <%s>, resolving username\n", userid);
+    serv_got_im(session->gc, username, msim_msg_get_string(msg, "msg"), PURPLE_MESSAGE_RECV, time(NULL));
 
-	/* TODO: don't use callbacks */
-	/* Cloned msg will be freed in callback */
-    msim_lookup_user(session, userid, msim_incoming_im_cb, msim_msg_clone(msg));
+	g_free(username);
+	/* TODO: Free copy cloned from msim_incoming_im(). */
+	//msim_msg_free(msg);
 
-    return TRUE;
+	return TRUE;
 }
 
 /**
@@ -828,8 +792,7 @@ static void msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo, 
 
 	msim_process(session, msg);
 
-	/* Free copy cloned in msim_preprocess_incoming(). */
-	/* TODO: find out freedom */
+	/* TODO: Free copy cloned from  msim_preprocess_incoming(). */
 	//XXX msim_msg_free(msg);
 	g_hash_table_destroy(body);
 }
