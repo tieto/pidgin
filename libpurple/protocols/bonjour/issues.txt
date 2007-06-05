@@ -6,4 +6,3 @@
 * Avatars
 * File transfers
 * Typing notifications
-* Check if it works on win32

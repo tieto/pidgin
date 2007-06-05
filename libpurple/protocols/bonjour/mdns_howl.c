@@ -14,16 +14,12 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
-#include <string.h>
+#include "mdns_howl.h"
 
-#include "dns_sd.h"
-#include "bonjour.h"
-#include "buddy.h"
 #include "debug.h"
+#include "buddy.h"
 
-/* Private functions */
-
-static sw_result HOWL_API
+sw_result HOWL_API
 _publish_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_discovery_publish_status status, sw_opaque extra)
 {
@@ -49,7 +45,7 @@ _publish_reply(sw_discovery discovery, sw_discovery_oid oid,
 	return SW_OKAY;
 }
 
-static sw_result HOWL_API
+sw_result HOWL_API
 _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_uint32 interface_index, sw_const_string name,
 			   sw_const_string type, sw_const_string domain,
@@ -59,19 +55,9 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 {
 	BonjourBuddy *buddy;
 	PurpleAccount *account = (PurpleAccount*)extra;
-	gchar *txtvers = NULL;
-	gchar *version = NULL;
-	gchar *first = NULL;
-	gchar *phsh = NULL;
-	gchar *status = NULL;
-	gchar *email = NULL;
-	gchar *last = NULL;
-	gchar *jid = NULL;
-	gchar *AIM = NULL;
-	gchar *vc = NULL;
-	gchar *msg = NULL;
+	/*gchar *txtvers = NULL;*/
+	/*gchar *version = NULL;*/
 	gint address_length = 16;
-	gchar *ip = NULL;
 	sw_text_record_iterator iterator;
 	char key[SW_TEXT_RECORD_MAX_LEN];
 	char value[SW_TEXT_RECORD_MAX_LEN];
@@ -79,9 +65,14 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 
 	sw_discovery_cancel(discovery, oid);
 
+	/* create a buddy record */
+	buddy = bonjour_buddy_new(name, account);
+
 	/* Get the ip as a string */
-	ip = malloc(address_length);
-	sw_ipv4_address_name(address, ip, address_length);
+	buddy->ip = g_malloc(address_length);
+	sw_ipv4_address_name(address, buddy->ip, address_length);
+
+	buddy->port_p2pj = port;
 
 	/* Obtain the parameters from the text_record */
 	if ((text_record_len > 0) && (text_record) && (*text_record != '\0'))
@@ -92,62 +83,57 @@ _resolve_reply(sw_discovery discovery, sw_discovery_oid oid,
 			/* Compare the keys with the possible ones and save them on */
 			/* the appropiate place of the buddy_list */
 			if (strcmp(key, "txtvers") == 0) {
-				txtvers = g_strdup(value);
+				/*txtvers = g_strdup(value);*/
 			} else if (strcmp(key, "version") == 0) {
-				version = g_strdup(value);
+				/*version = g_strdup(value);*/
 			} else if (strcmp(key, "1st") == 0) {
-				first = g_strdup(value);
+				g_free(buddy->first);
+				buddy->first = g_strdup(value);
 			} else if (strcmp(key, "status") == 0) {
-				status = g_strdup(value);
+				g_free(buddy->status);
+				buddy->status = g_strdup(value);
 			} else if (strcmp(key, "email") == 0) {
-				email = g_strdup(value);
+				g_free(buddy->email);
+				buddy->email = g_strdup(value);
 			} else if (strcmp(key, "last") == 0) {
-				last = g_strdup(value);
+				g_free(buddy->last);
+				buddy->last = g_strdup(value);
 			} else if (strcmp(key, "jid") == 0) {
-				jid = g_strdup(value);
+				g_free(buddy->jid);
+				buddy->jid = g_strdup(value);
 			} else if (strcmp(key, "AIM") == 0) {
-				AIM = g_strdup(value);
+				g_free(buddy->AIM);
+				buddy->AIM = g_strdup(value);
 			} else if (strcmp(key, "vc") == 0) {
-				vc = g_strdup(value);
+				g_free(buddy->vc);
+				buddy->vc = g_strdup(value);
 			} else if (strcmp(key, "phsh") == 0) {
-				phsh = g_strdup(value);
+				g_free(buddy->phsh);
+				buddy->phsh = g_strdup(value);
 			} else if (strcmp(key, "msg") == 0) {
-				msg = g_strdup(value);
+				g_free(buddy->msg);
+				buddy->msg = g_strdup(value);
 			}
 		}
 	}
 
-	/* Put the parameters of the text_record in a buddy and add the buddy to */
-	/* the buddy list */
-	buddy = bonjour_buddy_new(name, first, port, phsh,
-							  status, email, last, jid, AIM, vc, ip, msg);
-
-	if (bonjour_buddy_check(buddy) == FALSE)
+	if (!bonjour_buddy_check(buddy))
 	{
 		bonjour_buddy_delete(buddy);
 		return SW_DISCOVERY_E_UNKNOWN;
 	}
 
 	/* Add or update the buddy in our buddy list */
-	bonjour_buddy_add_to_purple(account, buddy);
+	bonjour_buddy_add_to_purple(buddy);
 
 	/* Free all the temporal strings */
-	g_free(txtvers);
-	g_free(version);
-	g_free(first);
-	g_free(last);
-	g_free(status);
-	g_free(email);
-	g_free(jid);
-	g_free(AIM);
-	g_free(vc);
-	g_free(phsh);
-	g_free(msg);
+	/*g_free(txtvers);*/
+	/*g_free(version);*/
 
 	return SW_OKAY;
 }
 
-static sw_result HOWL_API
+sw_result HOWL_API
 _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 			   sw_discovery_browse_status status,
 			   sw_uint32 interface_index, sw_const_string name,
@@ -206,8 +192,8 @@ _browser_reply(sw_discovery discovery, sw_discovery_oid oid,
 	return SW_OKAY;
 }
 
-static int
-_dns_sd_publish(BonjourDnsSd *data, PublishType type)
+int
+_mdns_publish(BonjourDnsSd *data, PublishType type)
 {
 	sw_text_record dns_data;
 	sw_result publish_result = SW_OKAY;
@@ -271,117 +257,8 @@ _dns_sd_publish(BonjourDnsSd *data, PublishType type)
 	return 0;
 }
 
-static void
-_dns_sd_handle_packets(gpointer data, gint source, PurpleInputCondition condition)
+void
+_mdns_handle_event(gpointer data, gint source, PurpleInputCondition condition)
 {
 	sw_discovery_read_socket((sw_discovery)data);
-}
-
-/* End private functions */
-
-/**
- * Allocate space for the dns-sd data.
- */
-BonjourDnsSd *
-bonjour_dns_sd_new()
-{
-	BonjourDnsSd *data = g_new0(BonjourDnsSd, 1);
-
-	return data;
-}
-
-/**
- * Deallocate the space of the dns-sd data.
- */
-void
-bonjour_dns_sd_free(BonjourDnsSd *data)
-{
-	g_free(data->first);
-	g_free(data->last);
-	g_free(data->email);
-	g_free(data);
-}
-
-/**
- * Send a new dns-sd packet updating our status.
- */
-void
-bonjour_dns_sd_send_status(BonjourDnsSd *data, const char *status, const char *status_message)
-{
-	g_free(data->status);
-	g_free(data->msg);
-
-	data->status = g_strdup(status);
-	data->msg = g_strdup(status_message);
-
-	/* Update our text record with the new status */
-	_dns_sd_publish(data, PUBLISH_UPDATE); /* <--We must control the errors */
-}
-
-/**
- * Advertise our presence within the dns-sd daemon and start browsing
- * for other bonjour peers.
- */
-gboolean
-bonjour_dns_sd_start(BonjourDnsSd *data)
-{
-	PurpleAccount *account;
-	PurpleConnection *gc;
-	gint dns_sd_socket;
-	sw_discovery_oid session_id;
-
-	account = data->account;
-	gc = purple_account_get_connection(account);
-
-	/* Initialize the dns-sd data and session */
-	if (sw_discovery_init(&data->session) != SW_OKAY)
-	{
-		purple_debug_error("bonjour", "Unable to initialize an mDNS session.\n");
-
-		/* In Avahi, sw_discovery_init frees data->session but doesn't clear it */
-		data->session = NULL;
-
-		return FALSE;
-	}
-
-	/* Publish our bonjour IM client at the mDNS daemon */
-	_dns_sd_publish(data, PUBLISH_START); /* <--We must control the errors */
-
-	/* Advise the daemon that we are waiting for connections */
-	if (sw_discovery_browse(data->session, 0, ICHAT_SERVICE, NULL, _browser_reply,
-			data->account, &session_id) != SW_OKAY)
-	{
-		purple_debug_error("bonjour", "Unable to get service.");
-		return FALSE;
-	}
-
-	/* Get the socket that communicates with the mDNS daemon and bind it to a */
-	/* callback that will handle the dns_sd packets */
-	dns_sd_socket = sw_discovery_socket(data->session);
-	gc->inpa = purple_input_add(dns_sd_socket, PURPLE_INPUT_READ,
-									_dns_sd_handle_packets, data->session);
-
-	return TRUE;
-}
-
-/**
- * Unregister the "_presence._tcp" service at the mDNS daemon.
- */
-void
-bonjour_dns_sd_stop(BonjourDnsSd *data)
-{
-	PurpleAccount *account;
-	PurpleConnection *gc;
-
-	if (data->session == NULL)
-		return;
-
-	sw_discovery_cancel(data->session, data->session_id);
-
-	account = data->account;
-	gc = purple_account_get_connection(account);
-	purple_input_remove(gc->inpa);
-
-	g_free(data->session);
-	data->session = NULL;
 }
