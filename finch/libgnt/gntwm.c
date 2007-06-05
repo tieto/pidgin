@@ -668,6 +668,30 @@ help_for_widget(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
+static gboolean
+help_for_wm(GntBindable *bindable, GList *null){
+	GntWM *wm = GNT_WM(bindable);
+	GntWidget *widget, *tree, *win;
+	char *title;
+
+	tree = gnt_widget_bindings_view(GNT_WIDGET(wm));
+
+	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(help_for_widget_activate), wm);
+
+	win = gnt_window_new();
+	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(wm)));
+	gnt_box_set_title(GNT_BOX(win), title);
+	if (tree)
+		gnt_box_add_widget(GNT_BOX(win), tree);
+	else
+		gnt_box_add_widget(GNT_BOX(win), gnt_label_new("This widget has no customizable bindings."));
+
+	gnt_widget_show(win);
+
+	return TRUE;
+
+}
+
 static void
 destroy__list(GntWidget *widget, GntWM *wm)
 {
@@ -1321,6 +1345,8 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" GNT_KEY_CTRL_K, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-widget", help_for_widget,
 				"\033" "/", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-wm", help_for_wm,
+				"\033" "\\", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard", toggle_clipboard, 
 				"\033" "C", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-start", ignore_keys_start, 
