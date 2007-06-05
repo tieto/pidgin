@@ -20,6 +20,8 @@ ifeq ($(TYPE),PLUGIN)
 endif
 endif
 
+CFLAGS += -DUSE_BONJOUR_APPLE
+
 ##
 ## INCLUDE PATHS
 ##
