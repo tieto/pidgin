@@ -563,18 +563,11 @@ gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE],
  * @param message Instant message text to send.
  * @param flags Flags.
  *
- * @return 1 in all cases, even if the message delivery is destined to fail.
+ * @return 1 if successful or postponed, -1 if failed
  *
  * Allows sending to a user by username, email address, or userid. If
  * a username or email address is given, the userid must be looked up.
- * This function does that by calling msim_lookup_user(), setting up
- * a msim_send_im_cb() callback function called when the userid
- * response is received from the server. 
- *
- * The callback function sends the actual message. But if a userid is 
- * specified directly, this function is called immediately here.
- *
- * TODO: change all that above.
+ * This function does that by calling msim_postprocess_outgoing().
  */
 int msim_send_im(PurpleConnection *gc, const char *who,
                             const char *message, PurpleMessageFlags flags)
@@ -602,41 +595,20 @@ int msim_send_im(PurpleConnection *gc, const char *who,
 			"msg", MSIM_TYPE_STRING, g_strdup(message),
 			NULL);
 
-    /* If numeric ID, can send message immediately without userid lookup */
-    if (msim_is_userid(who))
-    {
-        purple_debug_info("msim", 
-				"msim_send_im: numeric 'who' detected, sending asap\n");
-		/* 't' must be before 'cv', or error in parsing message. */
-		msg = msim_msg_insert_before(msg, "cv", "t", MSIM_TYPE_STRING, g_strdup(who));
+	if (msim_postprocess_outgoing(session, msg, (char *)who, "t", "cv"))
+	{
 
-		if (!msim_msg_send(session, msg))
-		{
-			msim_msg_free(msg);
-			return -1;
-		} else {
-			msim_msg_free(msg);
-			return 1;  /* Positive value on success */
-		}
-    }
+		/* Return 1 to have Purple show this IM as being sent, 0 to not. I always
+		 * return 1 even if the message could not be sent, since I don't know if
+		 * it has failed yet--because the IM is only sent after the userid is
+		 * retrieved from the server (which happens after this function returns).
+		 */
+		return 1;
+	} else {
+		return -1;
+	}
 
-	/* TODO XXX: if on buddy list, check if 'uid' is set, and if so, send it there! No lookup. */
-
-    /* Otherwise, add callback to IM when userid of destination is available */
-
-    /* Setup a callback for when the userid is available */
-
-    /* Send the request to lookup the userid */
-	/* TODO: don't use callbacks */
-    msim_lookup_user(session, who, msim_send_im_cb, msg); 
-
-    /* msim_send_im_cb will now be called once userid is looked up */
-
-    /* Return 1 to have Purple show this IM as being sent, 0 to not. I always
-     * return 1 even if the message could not be sent, since I don't know if
-     * it has failed yet--because the IM is only sent after the userid is
-     * retrieved from the server (which happens after this function returns).
-     *
+    /*
      * TODO: In MySpace, you login with your email address, but don't talk to other
      * users using their email address. So there is currently an asymmetry in the 
      * IM windows when using this plugin:
@@ -650,45 +622,6 @@ int msim_send_im(PurpleConnection *gc, const char *who,
      */
     return 1;
 }
-
-/**
- * Callback called when ready to send an IM by userid (the userid has been looked up).
- *
- * @param session 
- * @param userinfo User info message from server containing a 'body' field
- *                 with a 'UserID' key. This is where the user ID is taken from.
- *                 Will be destroyed after use.
- * @param data A MsimMessage * to send, which will have the 't' field added (userid to).
- *
- */
-void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
-{
-	MsimMessage *msg;
-    gchar *userid;
-    GHashTable *body;
-	gchar *body_str;
-
-    g_return_if_fail(MSIM_SESSION_VALID(session));
-    g_return_if_fail(userinfo != NULL);
-
-	body_str = msim_msg_get_string(userinfo, "body");
-    body = msim_parse_body(body_str);
-	g_free(body_str);
-	g_return_if_fail(body != NULL);
-
-    userid = g_hash_table_lookup(body, "UserID");
-
-    msg = (MsimMessage *)data;
-	/* 't' must be before 'cv', or get a server error parsing message. */
-	msg = msim_msg_insert_before(msg, "cv", "t", MSIM_TYPE_STRING, userid);
-
-	g_return_if_fail(msim_msg_send(session, msg));
-
-    g_hash_table_destroy(body);
-    /* g_hash_table_destroy(userinfo); */
-	/* TODO: do we need to free userinfo here? */
-	/* msim_msg_free(userinfo); */
-} 
 
 /**
  * Handle an incoming instant message.
@@ -836,7 +769,10 @@ gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 	{
 		/* 'f' = userid message is from, in buddy messages */
 
-		/* TODO: if know uid->username mapping already, process immediately */
+		/* TODO XXX IMPORTANT TODO: if know uid->username mapping already, process immediately */
+		/* TODO XXX Currently, uid is ALWAYS explicitly resolved, on each message, by sending
+		 * a getuserbyuserid message. This is very wasteful. TODO: Be frugal.
+		 */
 
 		/* Send lookup request. */
 		/* XXX: where is msim_msg_get_string() freed? make _strdup and _nonstrdup. */
@@ -1203,7 +1139,8 @@ void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, g
 	pi = (POSTPROCESS_INFO *)data;
 
 	/* Obtain userid from userinfo message. */
-	body_str = msim_msg_get_string(pi->msg, "body");
+	body_str = msim_msg_get_string(userinfo, "body");
+	g_return_if_fail(body_str != NULL);
 	body = msim_parse_body(body_str);
 	g_free(body_str);
 
@@ -1243,18 +1180,31 @@ gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar
 	pi->uid_before = uid_before;
 	pi->uid_field_name = uid_field_name;
 	pi->username = username;
-	
-	buddy = purple_find_buddy(session->account, username);
-	if (!buddy)
-	{
-		purple_debug_info("msim", "msim_postprocess_outgoing: couldn't find username %s in blist\n",
-				username);
-		msim_lookup_user(session, username, msim_postprocess_outgoing_cb, pi);
-		return TRUE;		/* not sure of status yet - haven't sent! */
+
+	/* First, try the most obvious. If numeric userid is given, use that directly. */
+    if (msim_is_userid(username))
+    {
+		uid = atol(username);
+    } else {
+		/* Next, see if on buddy list and know uid. */
+		buddy = purple_find_buddy(session->account, username);
+		if (buddy)
+		{
+			uid = purple_blist_node_get_int(&buddy->node, "uid");
+		} else {
+			uid = 0;
+		}
+
+		if (!buddy || !uid)
+		{
+			purple_debug_info("msim", ">>> msim_postprocess_outgoing: couldn't find username %s in blist\n",
+					username);
+			msim_lookup_user(session, username, msim_postprocess_outgoing_cb, pi);
+			return TRUE;		/* not sure of status yet - haven't sent! */
+		}
 	}
 	
 	/* Already have uid, insert it and send msg. */
-	uid = purple_blist_node_get_int(&buddy->node, "uid");
 	purple_debug_info("msim", "msim_postprocess_outgoing: found username %s has uid %d\n",
 			username, uid);
 
