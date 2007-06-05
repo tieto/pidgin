@@ -29,32 +29,15 @@
 BonjourBuddy *
 bonjour_buddy_new(const gchar *name, PurpleAccount* account)
 {
-	BonjourBuddy *buddy = malloc(sizeof(BonjourBuddy));
+	BonjourBuddy *buddy = g_new0(BonjourBuddy, 1);
 
 	buddy->account = account;
 	buddy->name = g_strdup(name);
-	buddy->first = NULL;
-	buddy->port_p2pj = 0;
-	buddy->phsh = NULL;
-	buddy->status = NULL;
-	buddy->email = NULL;
-	buddy->last = NULL;
-	buddy->jid = NULL;
-	buddy->AIM = NULL;
-	buddy->vc = NULL;
-	buddy->ip = NULL;
-	buddy->msg = NULL;
-	buddy->conversation = NULL;
-	
-#ifdef USE_BONJOUR_APPLE
-	buddy->txt_query = NULL;
-	buddy->txt_query_fd = 0;
-#endif
 
 	return buddy;
 }
 
-void 
+void
 set_bonjour_buddy_value(BonjourBuddy* buddy, bonjour_buddy_member member, const char* value, uint32_t len)
 {
 	gchar **key = NULL;
@@ -63,40 +46,32 @@ set_bonjour_buddy_value(BonjourBuddy* buddy, bonjour_buddy_member member, const 
 		case E_BUDDY_FIRST:
 			key = &buddy->first;
 			break;
-			
 		case E_BUDDY_LAST:
 			key = &buddy->last;
 			break;
-			
 		case E_BUDDY_STATUS:
 			key = &buddy->status;
 			break;
-			
 		case E_BUDDY_EMAIL:
 			key = &buddy->email;
 			break;
-			
 		case E_BUDDY_PHSH:
 			key = &buddy->phsh;
 			break;
-	
 		case E_BUDDY_JID:
 			key = &buddy->jid;
 			break;
-			
 		case E_BUDDY_AIM:
 			key = &buddy->AIM;
 			break;
-			
 		case E_BUDDY_VC:
 			key = &buddy->vc;
 			break;
-			
 		case E_BUDDY_MSG:
 			key = &buddy->msg;
 			break;
 	}
-	
+
 	g_free(*key);
 	*key = NULL;
 	*key = g_strndup(value, len);
@@ -109,29 +84,10 @@ gboolean
 bonjour_buddy_check(BonjourBuddy *buddy)
 {
 	if (buddy->account == NULL)
-	{
 		return FALSE;
-	}
-	
+
 	if (buddy->name == NULL)
-	{
 		return FALSE;
-	}
-	
-	if (buddy->first == NULL)
-	{
-		return FALSE;
-	}
-
-	if (buddy->last == NULL)
-	{
-		return FALSE;
-	}
-
-	if (buddy->status == NULL)
-	{
-		return FALSE;
-	}
 
 	return TRUE;
 }
@@ -147,8 +103,8 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
 	PurpleBuddy *buddy;
 	PurpleGroup *group;
 	const char *status_id, *first, *last;
-	char *alias;
-	
+	gchar *alias;
+
 	/* Translate between the Bonjour status and the Purple status */
 	if (g_ascii_strcasecmp("dnd", bonjour_buddy->status) == 0)
 		status_id = BONJOUR_STATUS_ID_AWAY;
@@ -168,7 +124,6 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
 							(first && *first && last && *last ? " " : ""),
 							(last && *last ? last : ""));
 
-
 	/* Make sure the Bonjour group exists in our buddy list */
 	group = purple_find_group(BONJOUR_GROUP_NAME); /* Use the buddy's domain, instead? */
 	if (group == NULL)
@@ -179,7 +134,7 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
 
 	/* Make sure the buddy exists in our buddy list */
 	buddy = purple_find_buddy(bonjour_buddy->account, bonjour_buddy->name);
-	
+
 	if (buddy == NULL)
 	{
 		buddy = purple_buddy_new(bonjour_buddy->account, bonjour_buddy->name, alias);
@@ -197,7 +152,6 @@ bonjour_buddy_add_to_purple(BonjourBuddy *bonjour_buddy)
 		purple_prpl_got_user_status(bonjour_buddy->account, buddy->name, status_id,
 								  NULL);
 	purple_prpl_got_user_idle(bonjour_buddy->account, buddy->name, FALSE, 0);
-
 
 	g_free(alias);
 }
@@ -225,14 +179,14 @@ bonjour_buddy_delete(BonjourBuddy *buddy)
 		g_free(buddy->conversation->buddy_name);
 		g_free(buddy->conversation);
 	}
-	
+
 #ifdef USE_BONJOUR_APPLE
-	if (NULL != buddy->txt_query)
-		{
+	if (buddy->txt_query != NULL)
+	{
 		purple_input_remove(buddy->txt_query_fd);
 		DNSServiceRefDeallocate(buddy->txt_query);
-		}
+	}
 #endif
 
-	free(buddy);
+	g_free(buddy);
 }
