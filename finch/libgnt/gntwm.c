@@ -61,16 +61,14 @@ static gboolean idle_update;
 
 static gboolean ignore_keys = FALSE;
 
-typedef struct
+static struct
 {
 	char * keys; /* Keystrokes being bound to the action */
 	GntBindableClass * klass; /* Class of the object that's getting keys rebound */
 	char * name; /* The name of the action */
 	GList * params; /* The list of paramaters */
 	
-} RebindInfo;
-
-RebindInfo * rebind_info;
+} rebind_info = {NULL,NULL,NULL,NULL};
 
 static GList *
 g_list_bring_to_front(GList *list, gpointer data)
@@ -501,16 +499,14 @@ window_close(GntBindable *bindable, GList *null)
 static void 
 free_rebind_info()
 {
-	g_free(rebind_info->name);
-	g_free(rebind_info->keys);
-	g_free(rebind_info);
+	g_free(rebind_info.name);
+	g_free(rebind_info.keys);
 }
 
 static gboolean
 help_for_widget_cancel_button_activate(GntBindable *bindable, gpointer data)
 {
 	free_rebind_info();
-
 	gnt_widget_destroy(GNT_WIDGET(data));
 	return TRUE;
 }
@@ -519,13 +515,12 @@ static gboolean
 help_for_widget_bind_button_activate(GntBindable *bindable, gpointer data)
 {
 
-	gnt_bindable_register_binding(rebind_info->klass,
-																rebind_info->name,
-																rebind_info->keys,
-																rebind_info->params);
-
+	gnt_bindable_register_binding(rebind_info.klass,
+																rebind_info.name,
+																rebind_info.keys,
+																rebind_info.params);
 	free_rebind_info();
-	
+
 	gnt_widget_destroy(GNT_WIDGET(data));
 
 	return TRUE;
@@ -549,7 +544,8 @@ help_for_widget_grab_key(GntBindable *bindable, const char *text, gpointer *data
 		new_text = g_strdup_printf("KEY: \"%s\"",tmp);
 		gnt_label_set_text(label,new_text);
 
-		rebind_info->keys = g_strdup(text);
+		g_free(rebind_info.keys);
+		rebind_info.keys = g_strdup(text);
 
 		g_free(new_text);
 
@@ -578,19 +574,15 @@ help_for_widget_activate(GntBindable *bindable, gpointer widget)
 	GList * current_row_data,*itr;
 	char * tmp;
 
-	rebind_info = g_new0(RebindInfo,1);
-
-	rebind_info->klass = GNT_BINDABLE_GET_CLASS(widget);
+	rebind_info.klass = GNT_BINDABLE_GET_CLASS(widget);
 
 	current_row_data = gnt_tree_get_selection_text_list(tree);
-	rebind_info->name = g_strdup(g_list_nth_data(current_row_data,1));
+	rebind_info.name = g_strdup(g_list_nth_data(current_row_data,1));
 
 	keys = gnt_tree_get_selection_data(tree);
-	rebind_info->keys = g_strdup(gnt_key_translate(keys));
+	rebind_info.keys = g_strdup(gnt_key_translate(keys));
 
-	rebind_info->params = NULL;
-
-	fprintf(stderr,"name: '%s' keys: '%s'\n",rebind_info->name,keys);
+	rebind_info.params = NULL;
 
 	itr = current_row_data;
 	while(itr){
@@ -603,7 +595,7 @@ help_for_widget_activate(GntBindable *bindable, gpointer widget)
 
 	gnt_box_set_title(GNT_BOX(win),"Key Capture");
 
-	tmp = g_strdup_printf("Type the new bindings for %s in a %s.",rebind_info->name,widget_name);
+	tmp = g_strdup_printf("Type the new bindings for %s in a %s.",rebind_info.name,widget_name);
 	label = gnt_label_new(tmp);
 	g_free(tmp);
 	gnt_box_add_widget(GNT_BOX(vbox),label);
