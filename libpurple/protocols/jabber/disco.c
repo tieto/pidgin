@@ -73,7 +73,6 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			xmlnode_set_attrib(query, "node", node);
 
 		if(!node || !strcmp(node, CAPS0115_NODE "#" VERSION)) {
-
 			identity = xmlnode_new_child(query, "identity");
 			xmlnode_set_attrib(identity, "category", "client");
 			xmlnode_set_attrib(identity, "type", "pc"); /* XXX: bot, console,
@@ -98,18 +97,60 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
 			SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
 			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0199.html#ns")
+                
+            if(!node) { /* non-caps disco#info, add all extensions */
+                GList *features;
+                for(features = js->features; features; features = features->next) {
+                    JabberFeature *feat = (JabberFeature*)features->data;
+                    SUPPORT_FEATURE(feat->namespace);
+                }
+            }
 		} else {
-			xmlnode *error, *inf;
+            const char *ext = NULL;
+            unsigned pos;
+            unsigned nodelen = strlen(node);
+            unsigned capslen = strlen(CAPS0115_NODE);
+            /* do a basic plausability check */
+            if(nodelen > capslen+1) {
+                /* verify that the string is CAPS0115#<ext> and get the pointer to the ext part */
+                for(pos = 0; pos < capslen+1; ++pos) {
+                    if(pos == capslen) {
+                        if(node[pos] == '#')
+                            ext = &node[pos+1];
+                        else
+                            break;
+                    } else if(node[pos] != CAPS0115_NODE[pos])
+                        break;
+                }
+                
+                if(ext != NULL) {
+                    /* look for that ext */
+                    GList *features;
+                    for(features = js->features; features; features = features->next) {
+                        JabberFeature *feat = (JabberFeature*)features->data;
+                        if(!strcmp(feat->shortname, ext)) {
+                            SUPPORT_FEATURE(feat->namespace);
+                            break;
+                        }
+                    }
+                    if(features == NULL)
+                        ext = NULL;
+                }
+            }
+            
+            if(ext == NULL) {
+                xmlnode *error, *inf;
 
-			/* XXX: gross hack, implement jabber_iq_set_type or something */
-			xmlnode_set_attrib(iq->node, "type", "error");
-			iq->type = JABBER_IQ_ERROR;
+                /* XXX: gross hack, implement jabber_iq_set_type or something */
+                xmlnode_set_attrib(iq->node, "type", "error");
+                iq->type = JABBER_IQ_ERROR;
 
-			error = xmlnode_new_child(query, "error");
-			xmlnode_set_attrib(error, "code", "404");
-			xmlnode_set_attrib(error, "type", "cancel");
-			inf = xmlnode_new_child(error, "item-not-found");
-			xmlnode_set_namespace(inf, "urn:ietf:params:xml:ns:xmpp-stanzas");
+                error = xmlnode_new_child(query, "error");
+                xmlnode_set_attrib(error, "code", "404");
+                xmlnode_set_attrib(error, "type", "cancel");
+                inf = xmlnode_new_child(error, "item-not-found");
+                xmlnode_set_namespace(inf, "urn:ietf:params:xml:ns:xmpp-stanzas");
+            }
 		}
 
 		jabber_iq_send(iq);

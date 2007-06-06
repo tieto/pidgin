@@ -1024,6 +1024,12 @@ void jabber_close(PurpleConnection *gc)
 #endif
 	if(js->serverFQDN)
 		g_free(js->serverFQDN);
+	while(js->features) {
+        g_free(((JabberFeature*)js->features->data)->shortname);
+        g_free(((JabberFeature*)js->features->data)->namespace);
+		g_free(js->features->data);
+		js->features = g_list_delete_link(js->features, js->features);
+	}
 	g_free(js->server_name);
 	g_free(js->gmail_last_time);
 	g_free(js->gmail_last_tid);
@@ -1091,6 +1097,32 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	JabberStream *js = gc->proto_data;
 
 	js->idle = idle ? time(NULL) - idle : idle;
+}
+
+void jabber_add_feature(JabberStream *js, const char *shortname, const char *namespace) {
+    JabberFeature *feat = g_new0(JabberFeature,1);
+    feat->shortname = g_strdup(shortname);
+    feat->namespace = g_strdup(namespace);
+    
+    /* try to remove just in case it already exists in the list */
+    jabber_remove_feature(js, shortname);
+    
+    js->features = g_list_append(js->features, feat);
+}
+
+void jabber_remove_feature(JabberStream *js, const char *shortname) {
+    GList *feature;
+    for(feature = js->features; feature; feature = feature->next) {
+        JabberFeature *feat = (JabberFeature*)feature->data;
+        if(!strcmp(feat->shortname, shortname)) {
+            g_free(feat->shortname);
+            g_free(feat->namespace);
+            
+            g_free(feature->data);
+            feature = g_list_delete_link(feature, feature);
+            break;
+        }
+    }
 }
 
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b)

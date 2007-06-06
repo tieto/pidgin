@@ -71,6 +71,12 @@ typedef enum {
 	JABBER_STREAM_CONNECTED
 } JabberStreamState;
 
+typedef struct _JabberFeature
+{
+    gchar *shortname;
+    gchar *namespace;
+} JabberFeature;
+
 typedef struct _JabberStream
 {
 	int fd;
@@ -149,7 +155,9 @@ typedef struct _JabberStream
 	GString *sasl_mechs;
 #endif
     char *serverFQDN;
-
+    
+    /* what kind of additional features as returned from disco#info are supported? */
+    GList *features;
 } JabberStream;
 
 void jabber_process_packet(JabberStream *js, xmlnode *packet);
@@ -164,6 +172,9 @@ void jabber_register_start(JabberStream *js);
 char *jabber_get_next_id(JabberStream *js);
 
 char *jabber_parse_error(JabberStream *js, xmlnode *packet);
+
+void jabber_add_feature(JabberStream *js, const gchar *shortname, const gchar *namespace);
+void jabber_remove_feature(JabberStream *js, const gchar *shortname);
 
 /** PRPL functions */
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b);

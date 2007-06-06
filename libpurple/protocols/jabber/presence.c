@@ -118,7 +118,7 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	purple_status_to_jabber(status, &state, &stripped, &priority);
 
 
-	presence = jabber_presence_create(state, stripped, priority);
+	presence = jabber_presence_create_js(js, state, stripped, priority);
 	g_free(stripped);
 
 	if(js->avatar_hash) {
@@ -137,6 +137,11 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 }
 
 xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int priority)
+{
+    return jabber_presence_create_js(NULL, state, msg, priority);
+}
+
+xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, const char *msg, int priority)
 {
 	xmlnode *show, *status, *presence, *pri, *c;
 	const char *show_string = NULL;
@@ -172,6 +177,31 @@ xmlnode *jabber_presence_create(JabberBuddyState state, const char *msg, int pri
 	xmlnode_set_namespace(c, "http://jabber.org/protocol/caps");
 	xmlnode_set_attrib(c, "node", CAPS0115_NODE);
 	xmlnode_set_attrib(c, "ver", VERSION);
+    
+    if(js != NULL) {
+        /* add the extensions */
+        char extlist[1024];
+        unsigned remaining = 1023; /* one less for the \0 */
+        GSList *feature;
+        
+        extlist[0] = '\0';
+        for(feature = js->features; feature && remaining > 0; feature = feature->next) {
+            JabberFeature *feat = (JabberFeature*)feature->data;
+            unsigned featlen = strlen(feat->shortname);
+            
+            /* cut off when we don't have any more space left in our buffer (too bad) */
+            if(featlen > remaining)
+                break;
+            
+            strncat(extlist,feat->shortname,remaining);
+            remaining -= featlen;
+            strncat(extlist," ",remaining);
+            --remaining;
+        }
+        /* did we add anything? */
+        if(remaining < 1023)
+            xmlnode_set_attrib(c, "ext", extlist);
+    }
 
 	return presence;
 }

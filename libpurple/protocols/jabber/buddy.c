@@ -1257,7 +1257,7 @@ static void jabber_buddy_set_invisibility(JabberStream *js, const char *who,
 	status    = purple_presence_get_active_status(gpresence);
 
 	purple_status_to_jabber(status, &state, &msg, &priority);
-	presence = jabber_presence_create(state, msg, priority);
+	presence = jabber_presence_create_js(js, state, msg, priority);
 
 	g_free(msg);
 
