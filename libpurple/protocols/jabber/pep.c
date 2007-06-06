@@ -20,6 +20,7 @@
  */
 
 #include "pep.h"
+#include "iq.h"
 
 void jabber_pep_init(JabberStream *js) {
     
@@ -28,4 +29,17 @@ void jabber_pep_init(JabberStream *js) {
 void jabber_handle_event(JabberMessage *jm) {
     /* this may be called even when the own server doesn't support pep! */
     
+}
+
+void jabber_pep_publish(JabberStream *js, xmlnode *publish) {
+    JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
+    
+    xmlnode *pubsub = xmlnode_new("pubsub");
+    xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub");
+    
+    xmlnode_insert_child(pubsub, publish);
+    
+    xmlnode_insert_child(iq->node, pubsub);
+    
+    jabber_iq_send(iq);
 }

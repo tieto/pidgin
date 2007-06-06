@@ -25,8 +25,17 @@
 #include "jabber.h"
 #include "message.h"
 
+/* called when the own server supports pep */
 void jabber_pep_init(JabberStream *js);
 
 void jabber_handle_event(JabberMessage *jm);
+
+/*
+ * Publishes PEP item(s)
+ *
+ * @parameter js      The JabberStream associated with the connection this event should be published
+ * @parameter publish The publish node. This could be for example &lt;publish node='http://jabber.org/protocol/tune'/> with an &lt;item/> as subnode
+ */
+void jabber_pep_publish(JabberStream *js, xmlnode *publish);
 
 #endif /* _PURPLE_JABBER_PEP_H_ */
