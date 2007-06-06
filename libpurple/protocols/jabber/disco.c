@@ -97,6 +97,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://jabber.org/protocol/si")
 			SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
 			SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
+			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0199.html#ns")
 		} else {
 			xmlnode *error, *inf;
 
@@ -164,6 +165,8 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 					capabilities |= JABBER_CAP_IQ_SEARCH;
 				else if(!strcmp(var, "jabber:iq:register"))
 					capabilities |= JABBER_CAP_IQ_REGISTER;
+				else if(!strcmp(var, "http://www.xmpp.org/extensions/xep-0199.html#ns"))
+					capabilities |= JABBER_CAP_PING;
 			}
 		}
 

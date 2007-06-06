@@ -27,6 +27,8 @@ JABBERSOURCES = auth.c \
 			  oob.h \
 			  parser.c \
 			  parser.h \
+			  ping.c \
+			  ping.h \
 			  presence.c \
 			  presence.h \
 			  roster.c \

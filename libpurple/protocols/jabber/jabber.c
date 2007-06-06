@@ -51,6 +51,7 @@
 #include "presence.h"
 #include "jabber.h"
 #include "roster.h"
+#include "ping.h"
 #include "si.h"
 #include "xdata.h"
 #include "pep.h"
@@ -1791,6 +1792,20 @@ static PurpleCmdRet jabber_cmd_chat_msg(PurpleConversation *conv,
 	return PURPLE_CMD_RET_OK;
 }
 
+static PurpleCmdRet jabber_cmd_ping(PurpleConversation *conv,
+		const char *cmd, char **args, char **error, void *data)
+{
+	if(!args || !args[0])
+		return PURPLE_CMD_RET_FAILED;
+
+	if(!jabber_ping_jid(conv, args[0])) {
+		*error = g_strdup_printf(_("Unable to ping user %s"), args[0]);
+		return PURPLE_CMD_RET_FAILED;
+	}
+
+	return PURPLE_CMD_RET_OK;
+}
+
 gboolean jabber_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
@@ -1868,6 +1883,13 @@ void jabber_register_commands(void)
 	                  "prpl-jabber", jabber_cmd_chat_msg,
 	                  _("msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."),
 	                  NULL);
+	purple_cmd_register("ping", "w", PURPLE_CMD_P_PRPL,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
+	                  PURPLE_CMD_FLAG_PRPL_ONLY,
+	                  "prpl-jabber", jabber_cmd_ping,
+	                  _("ping &lt;jid&gt;:  Ping a user/component/server."),
+	                  NULL);
+
 }
 
 void
