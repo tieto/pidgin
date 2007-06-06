@@ -35,6 +35,7 @@ typedef struct _JabberMessage {
 		JABBER_MESSAGE_HEADLINE,
 		JABBER_MESSAGE_ERROR,
 		JABBER_MESSAGE_GROUPCHAT_INVITE,
+        JABBER_MESSAGE_EVENT,
 		JABBER_MESSAGE_OTHER
 	} type;
 	time_t sent;
@@ -61,6 +62,7 @@ typedef struct _JabberMessage {
 		JM_STATE_GONE
 	} chat_state;
 	GList *etc;
+    GList *eventitems;
 } JabberMessage;
 
 void jabber_message_free(JabberMessage *jm);

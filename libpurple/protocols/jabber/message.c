@@ -30,6 +30,7 @@
 #include "google.h"
 #include "message.h"
 #include "xmlnode.h"
+#include "pep.h"
 
 void jabber_message_free(JabberMessage *jm)
 {
@@ -308,22 +309,25 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 	jm->id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
 	for(child = packet->child; child; child = child->next) {
+        const char *xmlns = xmlnode_get_namespace(child);
+        if(!xmlns)
+            xmlns = "";
 		if(child->type != XMLNODE_TYPE_TAG)
 			continue;
 
-		if(!strcmp(child->name, "subject")) {
+		if(!strcmp(child->name, "subject") && strlen(xmlns) == 0) {
 			if(!jm->subject)
 				jm->subject = xmlnode_get_data(child);
-		} else if(!strcmp(child->name, "thread")) {
+		} else if(!strcmp(child->name, "thread") && strlen(xmlns) == 0) {
 			if(!jm->thread_id)
 				jm->thread_id = xmlnode_get_data(child);
-		} else if(!strcmp(child->name, "body")) {
+		} else if(!strcmp(child->name, "body") && strlen(xmlns) == 0) {
 			if(!jm->body) {
 				char *msg = xmlnode_to_str(child, NULL);
 				jm->body = purple_strdup_withhtml(msg);
 				g_free(msg);
 			}
-		} else if(!strcmp(child->name, "html")) {
+		} else if(!strcmp(child->name, "html") && !strcmp(xmlns,"http://jabber.org/protocol/xhtml-im")) {
 			if(!jm->xhtml && xmlnode_get_child(child, "body")) {
 				char *c;
 				jm->xhtml = xmlnode_to_str(child, NULL);
@@ -335,21 +339,27 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 						*c = ' ';
 				}
 			}
-		} else if(!strcmp(child->name, "active")) {
+		} else if(!strcmp(child->name, "active") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_ACTIVE;
 			jm->typing_style |= JM_TS_JEP_0085;
-		} else if(!strcmp(child->name, "composing")) {
+		} else if(!strcmp(child->name, "composing") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_COMPOSING;
 			jm->typing_style |= JM_TS_JEP_0085;
-		} else if(!strcmp(child->name, "paused")) {
+		} else if(!strcmp(child->name, "paused") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_PAUSED;
 			jm->typing_style |= JM_TS_JEP_0085;
-		} else if(!strcmp(child->name, "inactive")) {
+		} else if(!strcmp(child->name, "inactive") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_INACTIVE;
 			jm->typing_style |= JM_TS_JEP_0085;
-		} else if(!strcmp(child->name, "gone")) {
+		} else if(!strcmp(child->name, "gone") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_GONE;
 			jm->typing_style |= JM_TS_JEP_0085;
+		} else if(!strcmp(child->name, "event") && jm->type == JABBER_MESSAGE_HEADLINE &&
+                  !strcmp(xmlns,"http://jabber.org/protocol/pubsub#event")) {
+            xmlnode *items;
+            jm->type = JABBER_MESSAGE_EVENT;
+            for(items = child->child; child; child = child->next)
+                jm->eventitems = g_list_append(jm->eventitems, items);
 		} else if(!strcmp(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");
 			char *code_txt = NULL;
@@ -365,7 +375,6 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			g_free(code_txt);
 			g_free(text);
 		} else if(!strcmp(child->name, "x")) {
-			const char *xmlns = xmlnode_get_namespace(child);
 			if(xmlns && !strcmp(xmlns, "jabber:x:event")) {
 				if(xmlnode_get_child(child, "composing")) {
 					if(jm->chat_state == JM_STATE_ACTIVE)
@@ -425,6 +434,9 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		case JABBER_MESSAGE_GROUPCHAT_INVITE:
 			handle_groupchat_invite(jm);
 			break;
+        case JABBER_MESSAGE_EVENT:
+            jabber_handle_event(jm);
+            break;
 		case JABBER_MESSAGE_ERROR:
 			handle_error(jm);
 			break;
@@ -461,6 +473,7 @@ void jabber_message_send(JabberMessage *jm)
 			type = "error";
 			break;
 		case JABBER_MESSAGE_OTHER:
+        default:
 			type = NULL;
 			break;
 	}

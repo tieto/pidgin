@@ -30,6 +30,7 @@
 #include "jabber.h"
 #include "presence.h"
 #include "roster.h"
+#include "pep.h"
 
 struct _jabber_disco_info_cb_data {
 	gpointer data;
@@ -261,9 +262,13 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 	     child = xmlnode_get_next_twin(child)) {
 		const char *category, *type, *name;
 		category = xmlnode_get_attrib(child, "category");
+		type = xmlnode_get_attrib(child, "type");
+        if(category && type && !strcmp(category, "pubsub") && !strcmp(type,"pep")) {
+            /* server supports pep, initialize it */
+            jabber_pep_init(js);
+        }
 		if (!category || strcmp(category, "server"))
 			continue;
-		type = xmlnode_get_attrib(child, "type");
 		if (!type || strcmp(type, "im"))
 			continue;
 

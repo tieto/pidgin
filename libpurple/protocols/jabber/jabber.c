@@ -53,6 +53,7 @@
 #include "roster.h"
 #include "si.h"
 #include "xdata.h"
+#include "pep.h"
 
 #define JABBER_CONNECT_STEPS (js->gsc ? 8 : 5)
 
