@@ -311,8 +311,13 @@ ssl_nss_close(PurpleSslConnection *gsc)
 	if(!nss_data)
 		return;
 
-	if (nss_data->in) PR_Close(nss_data->in);
-	/* if (nss_data->fd) PR_Close(nss_data->fd); */
+	if (nss_data->in) {
+		PR_Close(nss_data->in);
+		gsc->fd = -1;
+	} else if (nss_data->fd) {
+		PR_Close(nss_data->fd);
+		gsc->fd = -1;
+	}
 
 	if (nss_data->handshake_handler)
 		purple_input_remove(nss_data->handshake_handler);
