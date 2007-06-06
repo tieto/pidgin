@@ -165,9 +165,9 @@ class ClientBinding (Binding):
         self.returncode = []
 
     def flush(self):
-	paramslist = ", ".join(self.paramshdr)
-	if (paramslist == "") :
-	    paramslist = "void"
+        paramslist = ", ".join(self.paramshdr)
+        if (paramslist == "") :
+            paramslist = "void"
         print "%s %s(%s)" % (self.functiontype, self.function.name,
                              paramslist),
 
@@ -279,7 +279,7 @@ class ServerBinding (Binding):
         for decl in self.cdecls:
             print decl
 
-        print "\t%s(message_DBUS, error_DBUS, " % self.argfunc,
+        print "\t%s(message_DBUS, error_DBUS," % self.argfunc,
         for param in self.cparams:
             print "DBUS_TYPE_%s, &%s," % param,
         print "DBUS_TYPE_INVALID);"
@@ -289,14 +289,14 @@ class ServerBinding (Binding):
         for code in self.ccode:
             print code
 
-        print "\treply_DBUS =  dbus_message_new_method_return (message_DBUS);"
+        print "\treply_DBUS = dbus_message_new_method_return (message_DBUS);"
 
-        print "\tdbus_message_append_args(reply_DBUS, ",
+        print "\tdbus_message_append_args(reply_DBUS,",
         for param in self.cparamsout:
             if type(param) is str:
-                print "%s, " % param
+                print "%s," % param
             else:
-                print "DBUS_TYPE_%s, &%s, " % param,
+                print "DBUS_TYPE_%s, &%s," % param,
         print "DBUS_TYPE_INVALID);"
 
         for code in self.ccodeout:

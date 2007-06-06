@@ -1810,7 +1810,7 @@ purple_conv_chat_clear_users(PurpleConvChat *chat)
 	if (ops != NULL && ops->chat_remove_users != NULL) {
 		for (l = users; l; l = l->next) {
 			PurpleConvChatBuddy *cb = l->data;
-			names = g_list_append(names, cb->name);
+			names = g_list_prepend(names, cb->name);
 		}
 		ops->chat_remove_users(conv, names);
 		g_list_free(names);
