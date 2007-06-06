@@ -1104,6 +1104,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(font_button);
 
 	font_menu = gtk_menu_new();
+
 	
 	for (i = 0; buttons[i].label; i++) {
 		GtkWidget *old = *buttons[i].button;
@@ -1158,11 +1159,11 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(insert_button);
 
 	insert_menu = gtk_menu_new();
-	
+
 	button = gtk_menu_item_new_with_mnemonic(_("_Smiley"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
-	
+
 	button = gtk_menu_item_new_with_mnemonic(_("_Image"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
@@ -1170,7 +1171,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	button = gtk_menu_item_new_with_mnemonic(_("_Link"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
-	
+
 	g_signal_connect(G_OBJECT(insert_button), "clicked", G_CALLBACK(pidgin_menu_clicked), insert_menu);
 	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);
 	toolbar->sml = NULL;
@@ -1221,6 +1222,22 @@ void gtk_imhtmltoolbar_attach(GtkIMHtmlToolbar *toolbar, GtkWidget *imhtml)
 	g_signal_connect(G_OBJECT(imhtml), "format_buttons_update", G_CALLBACK(update_buttons_cb), toolbar);
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle", G_CALLBACK(toggle_button_cb), toolbar);
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_clear", G_CALLBACK(update_format_cb), toolbar);
+	g_signal_connect(G_OBJECT(imhtml), "format_function_update", G_CALLBACK(update_format_cb), toolbar);
+	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set", G_CALLBACK(mark_set_cb), toolbar);
+
+	buttons = gtk_imhtml_get_format_functions(GTK_IMHTML(imhtml));
+	update_buttons_cb(GTK_IMHTML(imhtml), buttons, toolbar);
+
+	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), &bold, &italic, &underline);
+
+	update_buttons(toolbar);
+}
+
+void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *proto_id)
+{
+	g_free(toolbar->sml);
+	toolbar->sml = g_strdup(proto_id);
+}
 	g_signal_connect(G_OBJECT(imhtml), "format_function_update", G_CALLBACK(update_format_cb), toolbar);
 	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set", G_CALLBACK(mark_set_cb), toolbar);
 

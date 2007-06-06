@@ -266,8 +266,6 @@ static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, g
 	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/blist/width",  event->width);
 	purple_prefs_set_int(PIDGIN_PREFS_ROOT "/blist/height", event->height);
 
-	gtk_widget_set_size_request(gtkblist->headline_label,
-				    purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25,-1);
 	/* continue to handle event normally */
 	return FALSE;
 }

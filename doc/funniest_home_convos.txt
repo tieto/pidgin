@@ -471,4 +471,6 @@ not :)
 14:08 <elb> "... yes"
 14:08 <elb> I mean, what do you say
 14:08 <Robot101> elb: was their nick "idi"?
-          
+
+19:23 <-- elb has quit (K-lined)
+
