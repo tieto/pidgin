@@ -25,7 +25,7 @@
 static void msim_msg_free_element(gpointer data, gpointer user_data);
 static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
 static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, gchar *sep, gchar *begin, gchar *end);
-static gchar *msim_msg_element_pack(MsimMessageElement *elem);
+static gchar *msim_msg_pack_element_data(MsimMessageElement *elem);
 static GList *msim_msg_get_node(MsimMessage *msg, gchar *name);
 static MsimMessage *msim_msg_new_v(va_list argp);
 
@@ -166,7 +166,7 @@ MsimMessage *msim_msg_clone(MsimMessage *old)
 {
 	MsimMessage *new;
 
-	if (!old)
+	if (old == NULL)
 		return NULL;
 
 	new = msim_msg_new(FALSE);
@@ -245,6 +245,8 @@ gboolean msim_msg_send(MsimSession *session, MsimMessage *msg)
 	raw = msim_msg_pack(msg);
 	success = msim_send_raw(session, raw);
 	g_free(raw);
+
+	msim_msg_dump("msim_msg_send()ing %s\n", msg);
 	
 	return success;
 }
@@ -473,7 +475,7 @@ void msim_msg_dump(gchar *fmt_string, MsimMessage *msg)
  * optimal for human consumption. For example, strings are escaped. Use 
  * msim_msg_get_string() if you want a string, which in some cases is same as this.
  */
-static gchar *msim_msg_element_pack(MsimMessageElement *elem)
+static gchar *msim_msg_pack_element_data(MsimMessageElement *elem)
 {
 	switch (elem->type)
 	{
@@ -482,7 +484,7 @@ static gchar *msim_msg_element_pack(MsimMessageElement *elem)
 
 		case MSIM_TYPE_RAW:
 			/* Not un-escaped - this is a raw element, already escaped if necessary. */
-			return (gchar *)elem->data;
+			return g_strdup((gchar *)elem->data);
 
 		case MSIM_TYPE_STRING:
 			/* Strings get escaped. msim_escape() creates a new string. */
@@ -498,9 +500,8 @@ static gchar *msim_msg_element_pack(MsimMessageElement *elem)
 			}
 
 		case MSIM_TYPE_BOOLEAN:
-			/* These strings are not actually used by the wire protocol
-			 * -- see msim_msg_pack_element. */
-			return g_strdup(GPOINTER_TO_UINT(elem->data) ? "True" : "False");
+			/* Not used by the wire protocol * -- see msim_msg_pack_element. */
+			return NULL;
 
 		case MSIM_TYPE_DICTIONARY:
 			/* TODO: pack using k=v\034k2=v2\034... */
@@ -535,7 +536,15 @@ static void msim_msg_pack_element(gpointer data, gpointer user_data)
 	elem = (MsimMessageElement *)data;
 	items = user_data;
 
-	data_string = msim_msg_element_pack(elem);
+	/* Exclude elements beginning with '_' from packed protocol messages. */
+	if (elem->name[0] == '_')
+	{
+		**items = g_strdup("");
+		++(*items);
+		return;
+	}
+
+	data_string = msim_msg_pack_element_data(elem);
 
 	switch (elem->type)
 	{
@@ -768,7 +777,7 @@ MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name)
  *
  * @return gchar * The data as a string. Caller must g_free().
  *
- * Note that msim_msg_element_pack() is similar, but returns a string
+ * Note that msim_msg_pack_element_data() is similar, but returns a string
  * for inclusion into a raw protocol string (escaped and everything).
  * This function unescapes the string for you, if needed.
  */

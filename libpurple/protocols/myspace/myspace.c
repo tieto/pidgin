@@ -1120,23 +1120,17 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 	}
 }
 
-typedef struct _POSTPROCESS_INFO
-{
-	MsimMessage *msg;
-	gchar *username;
-	gchar *uid_field_name;
-	gchar *uid_before;
-} POSTPROCESS_INFO;
-
 /* Callback for msim_postprocess_outgoing() to add a uid field, after resolving username/email.  */
 void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
 	gchar *body_str;
 	GHashTable *body;
-	gchar *uid;
-	POSTPROCESS_INFO *pi;
+	gchar *uid, *uid_field_name, *uid_before;
+	MsimMessage *msg;
 
-	pi = (POSTPROCESS_INFO *)data;
+	msg = (MsimMessage *)data;
+
+	msim_msg_dump("msim_postprocess_outgoing_cb() got msg=%s\n", msg);
 
 	/* Obtain userid from userinfo message. */
 	body_str = msim_msg_get_string(userinfo, "body");
@@ -1148,22 +1142,25 @@ void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, g
 	g_hash_table_destroy(body);
 
 	/* Insert into outgoing message. */
-	pi->msg = msim_msg_insert_before(pi->msg, pi->uid_before,
-			pi->uid_field_name, MSIM_TYPE_STRING, uid);
+	uid_field_name = msim_msg_get_string(msg, "_uid_field_name");
+	uid_before = msim_msg_get_string(msg, "_uid_before");
+
+	msg = msim_msg_insert_before(msg, uid_field_name, uid_before, MSIM_TYPE_STRING, uid);
+
+	g_free(uid_field_name);
+	g_free(uid_before);
 
 	/* Send */
-	g_return_if_fail(msim_msg_send(session, pi->msg));
-
-	g_free(pi);
+	g_return_if_fail(msim_msg_send(session, msg));
 }
 
 /** Postprocess and send a message.
  *
  * @param session
  * @param msg Message to postprocess.
- * @param username Username to resolve.
- * @param uid_field_name Name of new field to add, containing uid of username.
- * @param uid_before Name of existing field to insert username field before.
+ * @param username Username to resolve. Assumed to be a static string (will not be freed or copied).
+ * @param uid_field_name Name of new field to add, containing uid of username. Static string.
+ * @param uid_before Name of existing field to insert username field before. Static string.
  *
  * @return Postprocessed message.
  */
@@ -1172,14 +1169,13 @@ gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar
 {
     PurpleBuddy *buddy;
 	guint uid;
-	POSTPROCESS_INFO* pi;
 
-	pi = g_new0(POSTPROCESS_INFO, 1);
-
-	pi->msg = msim_msg_clone(msg);
-	pi->uid_before = uid_before;
-	pi->uid_field_name = uid_field_name;
-	pi->username = username;
+	/* Store information for msim_postprocess_outgoing_cb(). */
+	purple_debug_info("msim", "msim_postprocess_outgoing(u=%s,ufn=%s,ub=%s)\n",
+			username, uid_field_name, uid_before);
+	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, g_strdup(username));
+	msg = msim_msg_append(msg, "_uid_field_name", MSIM_TYPE_STRING, g_strdup(uid_field_name));
+	msg = msim_msg_append(msg, "_uid_before", MSIM_TYPE_STRING, g_strdup(uid_before));
 
 	/* First, try the most obvious. If numeric userid is given, use that directly. */
     if (msim_is_userid(username))
@@ -1199,7 +1195,7 @@ gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar
 		{
 			purple_debug_info("msim", ">>> msim_postprocess_outgoing: couldn't find username %s in blist\n",
 					username);
-			msim_lookup_user(session, username, msim_postprocess_outgoing_cb, pi);
+			msim_lookup_user(session, username, msim_postprocess_outgoing_cb, msim_msg_clone(msg));
 			return TRUE;		/* not sure of status yet - haven't sent! */
 		}
 	}
