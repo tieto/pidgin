@@ -272,12 +272,7 @@ static gboolean gtk_blist_configure_cb(GtkWidget *w, GdkEventConfigure *event, g
 
 static void gtk_blist_menu_info_cb(GtkWidget *w, PurpleBuddy *b)
 {
-	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
-	purple_notify_userinfo(b->account->gc, purple_buddy_get_name(b), info, NULL, NULL);
-	purple_notify_user_info_destroy(info);
-
-	serv_get_info(b->account->gc, b->name);
+	pidgin_retrieve_user_info(b->account->gc, purple_buddy_get_name(b));
 }
 
 static void gtk_blist_menu_im_cb(GtkWidget *w, PurpleBuddy *b)
@@ -1140,7 +1135,8 @@ pidgin_blist_make_buddy_menu(GtkWidget *menu, PurpleBuddy *buddy, gboolean sub) 
 }
 
 static gboolean
-gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data) {
+gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data)
+{
 	PurpleBlistNode *node;
 	GValue val;
 	GtkTreeIter iter;
@@ -1167,7 +1163,7 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data) {
 			return FALSE;
 		}
 		if(buddy)
-			serv_get_info(buddy->account->gc, buddy->name);
+			pidgin_retrieve_user_info(buddy->account->gc, buddy->name);
 	} else if (event->keyval == GDK_F2) {
 		gtk_blist_menu_alias_cb(tv, node);
 	}
@@ -1421,7 +1417,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 		if (prpl && prpl_info->get_info)
-			serv_get_info(b->account->gc, b->name);
+			pidgin_retrieve_user_info(b->account->gc, b->name);
 		handled = TRUE;
 	}
 
@@ -3835,15 +3831,17 @@ account_status_changed(PurpleAccount *account, PurpleStatus *old,
 static gboolean
 gtk_blist_window_key_press_cb(GtkWidget *w, GdkEventKey *event, PidginBuddyList *gtkblist)
 {
-	GtkWidget *imhtml;
+	GtkWidget *widget;
 
 	if (!gtkblist)
 		return FALSE;
 
-	imhtml = gtk_window_get_focus(GTK_WINDOW(gtkblist->window));
+	widget = gtk_window_get_focus(GTK_WINDOW(gtkblist->window));
 
-	if (GTK_IS_IMHTML(imhtml) && gtk_bindings_activate(GTK_OBJECT(imhtml), event->keyval, event->state))
-		return TRUE;
+	if (GTK_IS_IMHTML(widget) || GTK_IS_ENTRY(widget)) {
+		if (gtk_bindings_activate(GTK_OBJECT(widget), event->keyval, event->state))
+			return TRUE;
+	}
 	return FALSE;
 }
 
@@ -4206,7 +4204,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD }};
 	if (gtkblist && gtkblist->window) {
-		purple_blist_set_visible(purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/list_visible"));
+		purple_blist_set_visible(TRUE);
 		return;
 	}
 
@@ -4215,9 +4213,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 	gtkblist->empty_avatar = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, 32, 32);
 	gdk_pixbuf_fill(gtkblist->empty_avatar, 0x00000000);
 
-	gtkblist->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(gtkblist->window), "buddy_list");
-	gtk_window_set_title(GTK_WINDOW(gtkblist->window), _("Buddy List"));
+	gtkblist->window = pidgin_create_window(_("Buddy List"), 0, "buddy_list", TRUE);
 	g_signal_connect(G_OBJECT(gtkblist->window), "focus-in-event",
 			 G_CALLBACK(blist_focus_cb), gtkblist);
 	GTK_WINDOW(gtkblist->window)->allow_shrink = TRUE;

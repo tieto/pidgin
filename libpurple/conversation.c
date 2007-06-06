@@ -21,6 +21,7 @@
  */
 #include "internal.h"
 #include "blist.h"
+#include "cmds.h"
 #include "conversation.h"
 #include "dbus-maybe.h"
 #include "debug.h"
@@ -108,8 +109,12 @@ common_send(PurpleConversation *conv, const char *message, PurpleMessageFlags ms
 
 	type = purple_conversation_get_type(conv);
 
-	/* Always linkfy the text for display */
-	displayed = purple_markup_linkify(message);
+	/* Always linkfy the text for display, unless we're
+	 * explicitly asked to do otheriwse*/
+	if(msgflags & PURPLE_MESSAGE_NO_LINKIFY)
+		displayed = g_strdup(message);
+	else
+		displayed = purple_markup_linkify(message);
 
 	if ((conv->features & PURPLE_CONNECTION_HTML) &&
 		!(msgflags & PURPLE_MESSAGE_RAW))
@@ -1010,7 +1015,7 @@ purple_conv_im_start_typing_timeout(PurpleConvIm *im, int timeout)
 	conv = purple_conv_im_get_conversation(im);
 	name = purple_conversation_get_name(conv);
 
-	im->typing_timeout = purple_timeout_add(timeout * 1000, reset_typing_cb, conv);
+	im->typing_timeout = purple_timeout_add_seconds(timeout, reset_typing_cb, conv);
 }
 
 void
@@ -1578,7 +1583,9 @@ purple_conv_chat_add_users(PurpleConvChat *chat, GList *users, GList *extra_msgs
 			}
 			g_free(escaped);
 
-			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write(conv, NULL, tmp,
+					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
+					time(NULL));
 			g_free(tmp);
 		}
 
@@ -1704,7 +1711,9 @@ purple_conv_chat_rename_user(PurpleConvChat *chat, const char *old_user,
 			g_free(escaped2);
 		}
 
-		purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+		purple_conversation_write(conv, NULL, tmp,
+				PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
+				time(NULL));
 	}
 }
 
@@ -1781,7 +1790,9 @@ purple_conv_chat_remove_users(PurpleConvChat *chat, GList *users, const char *re
 			}
 			g_free(escaped);
 
-			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM, time(NULL));
+			purple_conversation_write(conv, NULL, tmp,
+					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
+					time(NULL));
 			g_free(tmp);
 		}
 
@@ -1991,6 +2002,29 @@ purple_conv_chat_cb_get_name(PurpleConvChatBuddy *cb)
 	g_return_val_if_fail(cb != NULL, NULL);
 
 	return cb->name;
+}
+
+GList *
+purple_conversation_get_extended_menu(PurpleConversation *conv)
+{
+	GList *menu = NULL;
+
+	g_return_val_if_fail(conv != NULL, NULL);
+
+	purple_signal_emit(purple_conversations_get_handle(),
+			"conversation-extended-menu", conv, &menu);
+	return menu;
+}
+
+gboolean
+purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline,
+				const gchar *markup, gchar **error)
+{
+	char *mark = (markup && *markup) ? NULL : g_markup_escape_text(cmdline, -1), *err = NULL;
+	PurpleCmdStatus status = purple_cmd_do_command(conv, cmdline, mark ? mark : markup, error ? error : &err);
+	g_free(mark);
+	g_free(err);
+	return (status == PURPLE_CMD_STATUS_OK);
 }
 
 void *
@@ -2256,6 +2290,12 @@ purple_conversations_init(void)
 										PURPLE_SUBTYPE_CONVERSATION),
 						 purple_value_new(PURPLE_TYPE_STRING),
 						 purple_value_new(PURPLE_TYPE_STRING));
+
+	purple_signal_register(handle, "conversation-extended-menu",
+			     purple_marshal_VOID__POINTER_POINTER, NULL, 2,
+			     purple_value_new(PURPLE_TYPE_SUBTYPE,
+					    PURPLE_SUBTYPE_CONVERSATION),
+			     purple_value_new(PURPLE_TYPE_BOXED, "GList **"));
 }
 
 void

@@ -72,7 +72,7 @@ update_keepalive(PurpleConnection *gc, gboolean on)
 	if (on && !gc->keepalive)
 	{
 		purple_debug_info("connection", "Activating keepalive.\n");
-		gc->keepalive = purple_timeout_add(30000, send_keepalive, gc);
+		gc->keepalive = purple_timeout_add_seconds(30, send_keepalive, gc);
 	}
 	else if (!on && gc->keepalive > 0)
 	{

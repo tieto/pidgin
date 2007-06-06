@@ -365,7 +365,7 @@ void
 purple_blist_schedule_save()
 {
 	if (save_timer == 0)
-		save_timer = purple_timeout_add(5000, save_cb, NULL);
+		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
 
 
@@ -2496,6 +2496,13 @@ purple_blist_node_get_flags(PurpleBlistNode *node)
 	g_return_val_if_fail(node != NULL, 0);
 
 	return node->flags;
+}
+
+PurpleBlistNodeType
+purple_blist_node_get_type(PurpleBlistNode *node)
+{
+	g_return_val_if_fail(node != NULL, PURPLE_BLIST_OTHER_NODE);
+	return node->type;
 }
 
 void

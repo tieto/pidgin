@@ -64,6 +64,9 @@ typedef struct
 	char *text;             /**< The text that will appear to the user. */
 	char *default_value;    /**< The default value.                     */
 	char  field_sep;        /**< The field separator.                   */
+	gboolean reverse;       /**< TRUE if the separator should be found
+							  starting a the end of the string, FALSE
+							  otherwise                                 */
 
 } PurpleAccountUserSplit;
 
@@ -352,6 +355,23 @@ const char *purple_account_user_split_get_default_value(
  * @return The field separator.
  */
 char purple_account_user_split_get_separator(const PurpleAccountUserSplit *split);
+
+/**
+ * Returns the 'reverse' value for an account split.
+ *
+ * @param split The account username split.
+ *
+ * @return The 'reverse' value.
+ */
+gboolean purple_account_user_split_get_reverse(const PurpleAccountUserSplit *split);
+
+/**
+ * Sets the 'reverse' value for an account split.
+ *
+ * @param split   The account username split.
+ * @param reverse The 'reverse' value
+ */
+void purple_account_user_split_set_reverse(PurpleAccountUserSplit *split, gboolean reverse);
 
 /*@}*/
 
