@@ -63,12 +63,13 @@ static gboolean ignore_keys = FALSE;
 
 static struct
 {
-	char * keys; /* Keystrokes being bound to the action */
+	char * okeys; /* Old keystrokes */
+	char * keys; /* New Keystrokes being bound to the action */
 	GntBindableClass * klass; /* Class of the object that's getting keys rebound */
 	char * name; /* The name of the action */
 	GList * params; /* The list of paramaters */
 	
-} rebind_info = {NULL,NULL,NULL,NULL};
+} rebind_info = {NULL,NULL,NULL,NULL,NULL};
 
 static GList *
 g_list_bring_to_front(GList *list, gpointer data)
@@ -501,6 +502,7 @@ free_rebind_info()
 {
 	g_free(rebind_info.name);
 	g_free(rebind_info.keys);
+	g_free(rebind_info.okeys);
 }
 
 static gboolean
@@ -515,6 +517,11 @@ static gboolean
 help_for_widget_bind_button_activate(GntBindable *bindable, gpointer data)
 {
 
+
+	gnt_bindable_register_binding(rebind_info.klass,
+																NULL,
+																rebind_info.okeys,
+																rebind_info.params);
 	gnt_bindable_register_binding(rebind_info.klass,
 																rebind_info.name,
 																rebind_info.keys,
@@ -580,7 +587,7 @@ help_for_widget_activate(GntBindable *bindable, gpointer widget)
 	rebind_info.name = g_strdup(g_list_nth_data(current_row_data,1));
 
 	keys = gnt_tree_get_selection_data(tree);
-	rebind_info.keys = g_strdup(gnt_key_translate(keys));
+	rebind_info.okeys = g_strdup(gnt_key_translate(keys));
 
 	rebind_info.params = NULL;
 
