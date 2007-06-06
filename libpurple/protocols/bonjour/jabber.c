@@ -668,8 +668,10 @@ bonjour_jabber_stop(BonjourJabber *data)
 	GSList *l;
 
 	/* Close the server socket and remove all the watcher */
-	close(data->socket);
-	purple_input_remove(data->watcher_id);
+	if (data->socket >= 0)
+		close(data->socket);
+	if (data->watcher_id > 0)
+		purple_input_remove(data->watcher_id);
 
 	/* Close all the sockets and remove all the watchers after sending end streams */
 	if (data->account->gc != NULL)
