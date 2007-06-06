@@ -857,19 +857,19 @@ static void mark_set_cb(GtkTextBuffer *buffer, GtkTextIter *location,
  * Copyright (C) 2003 Ricardo Fernandez Pascual
  * Copyright (C) 2004 Paolo Borelli
  */
-static void
 menu_position_func (GtkMenu           *menu,
                     int               *x,
                     int               *y,
                     gboolean          *push_in,
-                    gpointer data)
+                    GtkWidget         *widget)
 {
+  GtkRequisition req;
   GtkRequisition menu_req;
+  GtkOrientation orientation;
   GtkTextDirection direction;
   GdkRectangle monitor;
   gint monitor_num;
   GdkScreen *screen;
-  GtkWidget *widget = data;
 
   gtk_widget_size_request (GTK_WIDGET (widget), &menu_req);
 
@@ -902,7 +902,7 @@ menu_position_func (GtkMenu           *menu,
 }
 
 static void pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu) {
-	gtk_widget_show_all(GTK_WIDGET(menu));
+	gtk_widget_show_all(menu);
 	gtk_menu_popup(menu, NULL, NULL, menu_position_func, button, 0, gtk_get_current_event_time());
 }
 
@@ -1070,43 +1070,43 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(font_button);
 
 	font_menu = gtk_menu_new();
-
+	
 	button = gtk_check_menu_item_new_with_mnemonic(_("_Bold"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->bold);
-	gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), button);
+	gtk_menu_shell_append(font_menu, button);
 
 	button = gtk_check_menu_item_new_with_mnemonic(_("_Italic"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->italic);
-	gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), button);
-
+	gtk_menu_shell_append(font_menu, button);
+	
 	button = gtk_check_menu_item_new_with_mnemonic(_("_Underline"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->underline);
-	gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), button);
+	gtk_menu_shell_append(font_menu, button);
 
 	button = gtk_menu_item_new_with_mnemonic(_("_Larger"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->larger_size);
-	gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), button);
+	gtk_menu_shell_append(font_menu, button);
 
 	button = gtk_menu_item_new_with_mnemonic(_("_Normal"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->normal_size);
-	gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), button);
+	gtk_menu_shell_append(font_menu, button);
 
 	button = gtk_menu_item_new_with_mnemonic(_("_Smaller"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smaller_size);
-	gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), button);
+	gtk_menu_shell_append(font_menu, button);
 
 	button = gtk_menu_item_new_with_mnemonic(_("_Font face"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->font);
-	gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), button);
+	gtk_menu_shell_append(font_menu, button);
 
 	button = gtk_menu_item_new_with_mnemonic(_("_Foreground color"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->fgcolor);
-	gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), button);
+	gtk_menu_shell_append(font_menu, button);
 
 	button = gtk_menu_item_new_with_mnemonic(_("_Background color"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->bgcolor);
-	gtk_menu_shell_append(GTK_MENU_SHELL(font_menu), button);
-
+	gtk_menu_shell_append(font_menu, button);
+	
 	g_signal_connect(G_OBJECT(font_button), "clicked", G_CALLBACK(pidgin_menu_clicked), font_menu);
 	g_signal_connect(G_OBJECT(font_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), font_button);	
 
@@ -1148,21 +1148,21 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(insert_button);
 
 	insert_menu = gtk_menu_new();
-
+	
 	button = gtk_menu_item_new_with_mnemonic(_("_Smiley"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
-	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
-
+	gtk_menu_shell_append(insert_menu, button);
+	
 	button = gtk_menu_item_new_with_mnemonic(_("_Image"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->image);
-	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
+	gtk_menu_shell_append(insert_menu, button);
 
 	button = gtk_menu_item_new_with_mnemonic(_("_Link"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
-	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
-
+	gtk_menu_shell_append(insert_menu, button);
+	
 	g_signal_connect(G_OBJECT(insert_button), "clicked", G_CALLBACK(pidgin_menu_clicked), insert_menu);
-	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);
+	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);	
 	toolbar->sml = NULL;
 }
 
