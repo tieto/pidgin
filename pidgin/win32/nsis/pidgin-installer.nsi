@@ -690,6 +690,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\iconaway.dll"
     Delete "$INSTDIR\plugins\idle.dll"
     Delete "$INSTDIR\plugins\libaim.dll"
+    Delete "$INSTDIR\plugins\libbonjour.dll"
     Delete "$INSTDIR\plugins\libgg.dll"
     Delete "$INSTDIR\plugins\libicq.dll"
     Delete "$INSTDIR\plugins\libirc.dll"

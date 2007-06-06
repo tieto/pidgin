@@ -26,9 +26,7 @@
 #ifndef _BONJOUR_H_
 #define _BONJOUR_H_
 
-#include <howl.h>
-
-#include "dns_sd.h"
+#include "mdns_common.h"
 #include "internal.h"
 #include "jabber.h"
 

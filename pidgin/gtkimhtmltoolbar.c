@@ -1104,6 +1104,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(font_button);
 
 	font_menu = gtk_menu_new();
+
 	
 	for (i = 0; buttons[i].label; i++) {
 		GtkWidget *old = *buttons[i].button;
@@ -1158,11 +1159,11 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_widget_show_all(insert_button);
 
 	insert_menu = gtk_menu_new();
-	
+
 	button = gtk_menu_item_new_with_mnemonic(_("_Smiley"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
-	
+
 	button = gtk_menu_item_new_with_mnemonic(_("_Image"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->image);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
@@ -1170,7 +1171,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	button = gtk_menu_item_new_with_mnemonic(_("_Link"));
 	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
 	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
-	
+
 	g_signal_connect(G_OBJECT(insert_button), "clicked", G_CALLBACK(pidgin_menu_clicked), insert_menu);
 	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);
 	toolbar->sml = NULL;
