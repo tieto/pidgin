@@ -1238,3 +1238,19 @@ void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *
 	g_free(toolbar->sml);
 	toolbar->sml = g_strdup(proto_id);
 }
+	g_signal_connect(G_OBJECT(imhtml), "format_function_update", G_CALLBACK(update_format_cb), toolbar);
+	g_signal_connect_after(G_OBJECT(GTK_IMHTML(imhtml)->text_buffer), "mark-set", G_CALLBACK(mark_set_cb), toolbar);
+
+	buttons = gtk_imhtml_get_format_functions(GTK_IMHTML(imhtml));
+	update_buttons_cb(GTK_IMHTML(imhtml), buttons, toolbar);
+
+	gtk_imhtml_get_current_format(GTK_IMHTML(imhtml), &bold, &italic, &underline);
+
+	update_buttons(toolbar);
+}
+
+void gtk_imhtmltoolbar_associate_smileys(GtkIMHtmlToolbar *toolbar, const char *proto_id)
+{
+	g_free(toolbar->sml);
+	toolbar->sml = g_strdup(proto_id);
+}
