@@ -575,6 +575,7 @@ int msim_send_im(PurpleConnection *gc, const char *who,
     MsimSession *session;
 	MsimMessage *msg;
     const char *from_username = gc->account->username;
+	int rc;
 
     g_return_val_if_fail(gc != NULL, 0);
     g_return_val_if_fail(who != NULL, 0);
@@ -603,10 +604,13 @@ int msim_send_im(PurpleConnection *gc, const char *who,
 		 * it has failed yet--because the IM is only sent after the userid is
 		 * retrieved from the server (which happens after this function returns).
 		 */
-		return 1;
+		rc = 1;
 	} else {
-		return -1;
+		rc = -1;
 	}
+	msim_msg_free(msg);
+
+	return rc;
 
     /*
      * TODO: In MySpace, you login with your email address, but don't talk to other
@@ -620,7 +624,6 @@ int msim_send_im(PurpleConnection *gc, const char *who,
      * TODO: Make the sent IM's appear as from the user's username, instead of
      * their email address. Purple uses the login (in MSIM, the email)--change this.
      */
-    return 1;
 }
 
 /**
@@ -1078,25 +1081,31 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
 void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	MsimSession *session;
+	MsimMessage *msg;
 
 	session = (MsimSession *)gc->proto_data;
 	purple_debug_info("msim", "msim_add_buddy: want to add %s to %s\n", buddy->name,
 			group ? group->name : "(no group)");
 
-	if (!msim_send(session,
+	msg = msim_msg_new(TRUE,
 			"addbuddy", MSIM_TYPE_BOOLEAN, TRUE,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			/* Currently only allow numeric ID. TODO: Lookup username/email to uid. */
-			"newprofileid", MSIM_TYPE_STRING, g_strdup(buddy->name),
+			/* "newprofileid" will be inserted here with uid. */
 			"reason", MSIM_TYPE_STRING, g_strdup(""),
-			NULL))
+			NULL);
+
+	if (!msim_postprocess_outgoing(session, msg, buddy->name, "newprofileid", "reason"))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("'addbuddy' command failed."));
+		msim_msg_free(msg);
 		return;
 	}
+	msim_msg_free(msg);
 
 	/* TODO: update blocklist */
 
+#if 0
+	/* TODO */
 	if (!msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
@@ -1118,6 +1127,7 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("persist command failed"));
 		return;
 	}
+#endif
 }
 
 /* Callback for msim_postprocess_outgoing() to add a uid field, after resolving username/email.  */
@@ -1145,19 +1155,27 @@ void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, g
 	uid_field_name = msim_msg_get_string(msg, "_uid_field_name");
 	uid_before = msim_msg_get_string(msg, "_uid_before");
 
-	msg = msim_msg_insert_before(msg, uid_field_name, uid_before, MSIM_TYPE_STRING, uid);
+	msg = msim_msg_insert_before(msg, uid_before, uid_field_name, MSIM_TYPE_STRING, uid);
+	
+	/* Send */
+	if (!msim_msg_send(session, msg))
+	{
+		purple_debug_info("msim", "msim_postprocess_outgoing_cb: sending failed for message: %s\n", msg);
+	}
 
+	/* Free field names AFTER sending message, because MsimMessage does NOT copy
+	 * field names - instead, treats them as static strings (which they usually are).
+	 */
 	g_free(uid_field_name);
 	g_free(uid_before);
 
-	/* Send */
-	g_return_if_fail(msim_msg_send(session, msg));
+	//msim_msg_free(msg);
 }
 
 /** Postprocess and send a message.
  *
  * @param session
- * @param msg Message to postprocess.
+ * @param msg Message to postprocess. Will NOT be freed.
  * @param username Username to resolve. Assumed to be a static string (will not be freed or copied).
  * @param uid_field_name Name of new field to add, containing uid of username. Static string.
  * @param uid_before Name of existing field to insert username field before. Static string.
@@ -1169,6 +1187,7 @@ gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar
 {
     PurpleBuddy *buddy;
 	guint uid;
+	gboolean rc;
 
 	/* Store information for msim_postprocess_outgoing_cb(). */
 	purple_debug_info("msim", "msim_postprocess_outgoing(u=%s,ufn=%s,ub=%s)\n",
@@ -1195,38 +1214,49 @@ gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar
 		{
 			purple_debug_info("msim", ">>> msim_postprocess_outgoing: couldn't find username %s in blist\n",
 					username);
+			msim_msg_dump("msim_postprocess_outgoing - scheduling lookup, msg=%s\n", msg);
+			/* TODO: where is cloned message freed? Should be in _cb. */
 			msim_lookup_user(session, username, msim_postprocess_outgoing_cb, msim_msg_clone(msg));
 			return TRUE;		/* not sure of status yet - haven't sent! */
 		}
 	}
 	
-	/* Already have uid, insert it and send msg. */
+	/* Already have uid, insert it and send msg immediately. */
 	purple_debug_info("msim", "msim_postprocess_outgoing: found username %s has uid %d\n",
 			username, uid);
 
 	msg = msim_msg_insert_before(msg, uid_before, uid_field_name, MSIM_TYPE_INTEGER, GUINT_TO_POINTER(uid));
 
-	return msim_msg_send(session, msg);
+	rc = msim_msg_send(session, msg);
+
+	//msim_msg_free(msg);
+
+	return rc;
 }
 
 /** Remove a buddy from the user's buddy list. */
 void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	MsimSession *session;
+	MsimMessage *msg;
 
 	session = (MsimSession *)gc->proto_data;
 
-	if (!msim_send(session,
+	msg = msim_msg_new(FALSE,
 				"delbuddy", MSIM_TYPE_BOOLEAN, TRUE,
 				"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-				/* TODO: Lookup username/email to uid, currently on userid. */
-				"delprofileid", MSIM_TYPE_STRING, g_strdup(buddy->name),
-				NULL))
+				/* 'delprofileid' with uid will be inserted here. */
+				NULL);
+	/* TODO: free msg */
+	if (!msim_postprocess_outgoing(session, msg, buddy->name, "delprofileid", NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("'delbuddy' command failed"));
 		return;
 	}
+	
 
+	/* TODO */
+#if 0
 	if (!msim_send(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
@@ -1241,6 +1271,7 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("persist command failed"));	
 		return;
 	}
+#endif
 
 	/* TODO: update blocklist */
 }
@@ -1530,6 +1561,8 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
 
     purple_debug_info("msim", "msim_lookup_userid: "
 			"asynchronously looking up <%s>\n", user);
+
+	msim_msg_dump("msim_lookup_user: data=%s\n", (MsimMessage *)data);
 
     /* TODO: check if this user's info was cached and fresh; if so return immediately */
 #if 0
