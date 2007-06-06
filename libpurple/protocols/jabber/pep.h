@@ -25,8 +25,25 @@
 #include "jabber.h"
 #include "message.h"
 
-/* called when the own server supports pep */
-void jabber_pep_init(JabberStream *js);
+void jabber_pep_init(void);
+
+/*
+ * Callback for receiving PEP events.
+ *
+ * @parameter js    The JabberStream this item was received on
+ * @parameter items The &lt;items/>-tag with the &lt;item/>-children
+ */
+typedef void (JabberPEPHandler)(JabberStream *js, xmlnode *items);
+
+/*
+ * Registers a callback for PEP events. Also automatically announces this receiving capability via disco#info.
+ * Don't forget to use jabber_add_feature when supporting the sending of PEP events of this type.
+ *
+ * @parameter shortname   A short name for this feature for XEP-0115. It has no semantic meaning, it just has to be unique.
+ * @parameter xmlns       The namespace for this event
+ * @parameter handlerfunc The callback to be used when receiving an event with this namespace
+ */
+void jabber_pep_register_handler(const char *shortname, const char *xmlns, JabberPEPHandler handlerfunc);
 
 void jabber_handle_event(JabberMessage *jm);
 

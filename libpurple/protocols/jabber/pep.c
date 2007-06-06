@@ -21,18 +21,48 @@
 
 #include "pep.h"
 #include "iq.h"
+#include <string.h>
 
-void jabber_pep_init(JabberStream *js) {
-    
+static GHashTable *pep_handlers = NULL;
+
+void jabber_pep_init(void) {
+    if(!pep_handlers) {
+        pep_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+        
+        /* register PEP handlers here */
+    }
+}
+
+void jabber_pep_register_handler(const char *shortname, const char *xmlns, JabberPEPHandler handlerfunc) {
+    char *notifyns = malloc(strlen(xmlns) + 8);
+    sprintf(notifyns,"%s+notify", xmlns);
+    jabber_add_feature(shortname, notifyns);
+    free(notifyns);
+	g_hash_table_replace(pep_handlers, g_strdup(xmlns), handlerfunc);
 }
 
 void jabber_handle_event(JabberMessage *jm) {
     /* this may be called even when the own server doesn't support pep! */
+    JabberPEPHandler *jph;
+    GList *itemslist;
+    for(itemslist = jm->eventitems; itemslist; itemslist = itemslist->next) {
+        xmlnode *items = (xmlnode*)itemslist->data;
+        const char *xmlns = xmlnode_get_namespace(items);
+        
+        if((jph = g_hash_table_lookup(pep_handlers, xmlns)))
+            jph(jm->js, items);
+    }
     
+    /* discard items we don't have a handler for */
 }
 
 void jabber_pep_publish(JabberStream *js, xmlnode *publish) {
-    JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
+    JabberIq *iq;
+    
+    if(js->pep != TRUE) /* ignore when there's no PEP support on the server */
+        return;
+    
+    iq = jabber_iq_new(js, JABBER_IQ_SET);
     
     xmlnode *pubsub = xmlnode_new("pubsub");
     xmlnode_set_namespace(pubsub, "http://jabber.org/protocol/pubsub");

@@ -100,7 +100,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
                 
             if(!node) { /* non-caps disco#info, add all extensions */
                 GList *features;
-                for(features = js->features; features; features = features->next) {
+                for(features = jabber_features; features; features = features->next) {
                     JabberFeature *feat = (JabberFeature*)features->data;
                     SUPPORT_FEATURE(feat->namespace);
                 }
@@ -126,7 +126,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
                 if(ext != NULL) {
                     /* look for that ext */
                     GList *features;
-                    for(features = js->features; features; features = features->next) {
+                    for(features = jabber_features; features; features = features->next) {
                         JabberFeature *feat = (JabberFeature*)features->data;
                         if(!strcmp(feat->shortname, ext)) {
                             SUPPORT_FEATURE(feat->namespace);
@@ -307,10 +307,8 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		const char *category, *type, *name;
 		category = xmlnode_get_attrib(child, "category");
 		type = xmlnode_get_attrib(child, "type");
-        if(category && type && !strcmp(category, "pubsub") && !strcmp(type,"pep")) {
-            /* server supports pep, initialize it */
-            jabber_pep_init(js);
-        }
+        if(category && type && !strcmp(category, "pubsub") && !strcmp(type,"pep"))
+            js->pep = TRUE;
 		if (!category || strcmp(category, "server"))
 			continue;
 		if (!type || strcmp(type, "im"))

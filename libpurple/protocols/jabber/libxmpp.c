@@ -38,6 +38,7 @@
 #include "message.h"
 #include "presence.h"
 #include "google.h"
+#include "pep.h"
 
 static PurplePluginProtocolInfo prpl_info =
 {
@@ -229,6 +230,7 @@ init_plugin(PurplePlugin *plugin)
         jabber_register_commands();
 
         jabber_iq_init();
+        jabber_pep_init();
 }
 
 

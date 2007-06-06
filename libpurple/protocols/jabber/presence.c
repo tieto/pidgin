@@ -185,7 +185,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
         GList *feature;
         
         extlist[0] = '\0';
-        for(feature = js->features; feature && remaining > 0; feature = feature->next) {
+        for(feature = jabber_features; feature && remaining > 0; feature = feature->next) {
             JabberFeature *feat = (JabberFeature*)feature->data;
             unsigned featlen = strlen(feat->shortname);
             
