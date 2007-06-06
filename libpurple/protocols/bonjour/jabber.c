@@ -123,46 +123,41 @@ _font_size_ichat_to_purple(int size)
 
 	return "1";
 }
+
 static void
 _jabber_parse_and_write_message_to_ui(char *message, PurpleConnection *connection, PurpleBuddy *gb)
 {
-	xmlnode *body_node = NULL;
-	char *body = NULL;
-	xmlnode *html_node = NULL;
-	gboolean isHTML = FALSE;
-	xmlnode *html_body_node = NULL;
+	xmlnode *message_node, *body_node, *html_node, *events_node;
+	char *body, *html_body = NULL;
 	const char *ichat_balloon_color = NULL;
 	const char *ichat_text_color = NULL;
-	xmlnode *html_body_font_node = NULL;
 	const char *font_face = NULL;
 	const char *font_size = NULL;
 	const char *font_color = NULL;
-	char *html_body = NULL;
-	xmlnode *events_node = NULL;
 	gboolean composing_event = FALSE;
-	gint garbage = -1;
-	xmlnode *message_node = NULL;
 
 	/* Parsing of the message */
 	message_node = xmlnode_from_str(message, strlen(message));
-	if (message_node == NULL) {
+	if (message_node == NULL)
 		return;
-	}
 
 	body_node = xmlnode_get_child(message_node, "body");
-	if (body_node != NULL) {
-		body = xmlnode_get_data(body_node);
-	} else {
+	if (body_node == NULL) {
+		xmlnode_free(message_node);
 		return;
 	}
+	body = xmlnode_get_data(body_node);
 
 	html_node = xmlnode_get_child(message_node, "html");
 	if (html_node != NULL)
 	{
-		isHTML = TRUE;
+		xmlnode *html_body_node;
+
 		html_body_node = xmlnode_get_child(html_node, "body");
 		if (html_body_node != NULL)
 		{
+			xmlnode *html_body_font_node;
+
 			ichat_balloon_color = xmlnode_get_attrib(html_body_node, "ichatballooncolor");
 			ichat_text_color = xmlnode_get_attrib(html_body_node, "ichattextcolor");
 			html_body_font_node = xmlnode_get_child(html_body_node, "font");
@@ -172,23 +167,17 @@ _jabber_parse_and_write_message_to_ui(char *message, PurpleConnection *connectio
 				/* The absolute iChat font sizes should be converted to 1..7 range */
 				font_size = xmlnode_get_attrib(html_body_font_node, "ABSZ");
 				if (font_size != NULL)
-				{
 					font_size = _font_size_ichat_to_purple(atoi(font_size));
-				}
 				font_color = xmlnode_get_attrib(html_body_font_node, "color");
 				html_body = xmlnode_get_data(html_body_font_node);
 				if (html_body == NULL)
 				{
+					gint garbage = -1;
 					/* This is the kind of formated messages that Purple creates */
 					html_body = xmlnode_to_str(html_body_font_node, &garbage);
 				}
-			} else {
-				isHTML = FALSE;
 			}
-		} else {
-			isHTML = FALSE;
 		}
-
 	}
 
 	events_node = xmlnode_get_child_with_namespace(message_node, "x", "jabber:x:event");
@@ -201,6 +190,7 @@ _jabber_parse_and_write_message_to_ui(char *message, PurpleConnection *connectio
 		if (xmlnode_get_child(events_node, "id") != NULL)
 		{
 			/* The user is just typing */
+			/* TODO: Deal with typing notification */
 			xmlnode_free(message_node);
 			g_free(body);
 			g_free(html_body);
@@ -209,8 +199,10 @@ _jabber_parse_and_write_message_to_ui(char *message, PurpleConnection *connectio
 	}
 
 	/* Compose the message */
-	if (isHTML)
+	if (html_body != NULL)
 	{
+		g_free(body);
+
 		if (font_face == NULL) font_face = "Helvetica";
 		if (font_size == NULL) font_size = "3";
 		if (ichat_text_color == NULL) ichat_text_color = "#000000";
@@ -218,6 +210,8 @@ _jabber_parse_and_write_message_to_ui(char *message, PurpleConnection *connectio
 		body = g_strconcat("<font face='", font_face, "' size='", font_size, "' color='", ichat_text_color,
 							"' back='", ichat_balloon_color, "'>", html_body, "</font>", NULL);
 	}
+
+	/* TODO: Should we do something with "composing_event" here? */
 
 	/* Send the message to the UI */
 	serv_got_im(connection, gb->name, body, 0, time(NULL));
@@ -229,7 +223,7 @@ _jabber_parse_and_write_message_to_ui(char *message, PurpleConnection *connectio
 }
 
 struct _check_buddy_by_address_t {
-	char *address;
+	const char *address;
 	PurpleBuddy **gb;
 	BonjourJabber *bj;
 };
@@ -237,12 +231,9 @@ struct _check_buddy_by_address_t {
 static void
 _check_buddy_by_address(gpointer key, gpointer value, gpointer data)
 {
-	PurpleBuddy *gb = (PurpleBuddy*)value;
+	PurpleBuddy *gb = value;
 	BonjourBuddy *bb;
-	struct _check_buddy_by_address_t *cbba;
-
-	gb = value;
-	cbba = data;
+	struct _check_buddy_by_address_t *cbba = data;
 
 	/*
 	 * If the current PurpleBuddy's data is not null and the PurpleBuddy's account
@@ -274,14 +265,14 @@ _read_data(gint socket, char **message)
 
 	if (partial_message_length == -1)
 	{
-		purple_debug_warning("bonjour", "receive error: %s\n", strerror(errno));
+		if (errno != EAGAIN)
+			purple_debug_warning("bonjour", "receive error: %s\n", strerror(errno));
 		if (total_message_length == 0) {
 			return -1;
 		}
 	}
 
-	*message = data->str;
-	g_string_free(data, FALSE);
+	*message = g_string_free(data, FALSE);
 	if (total_message_length != 0)
 		purple_debug_info("bonjour", "Receive: -%s- %d bytes\n", *message, total_message_length);
 
@@ -313,17 +304,17 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 {
 	char *message = NULL;
 	gint message_length;
-	PurpleBuddy *gb = (PurpleBuddy*)data;
+	PurpleBuddy *gb = data;
 	PurpleAccount *account = gb->account;
 	PurpleConversation *conversation;
-	char *closed_conv_message;
-	BonjourBuddy *bb = (BonjourBuddy*)gb->proto_data;
+	BonjourBuddy *bb = gb->proto_data;
 	gboolean closed_conversation = FALSE;
-	xmlnode *message_node = NULL;
+	xmlnode *message_node;
 
 	/* Read the data from the socket */
 	if ((message_length = _read_data(socket, &message)) == -1) {
 		/* There have been an error reading from the socket */
+		/* TODO: Shouldn't we handle the error if it isn't EAGAIN? */
 		return;
 	} else if (message_length == 0) { /* The other end has closed the socket */
 		closed_conversation = TRUE;
@@ -345,8 +336,8 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 	{
 		/* Check if this is the start of the stream */
 		if ((message_node != NULL) &&
-		   g_ascii_strcasecmp(xmlnode_get_attrib(message_node, "xmlns"), "jabber:client") &&
-		   (xmlnode_get_attrib(message_node,"xmlns:stream") != NULL))
+			g_ascii_strcasecmp(xmlnode_get_attrib(message_node, "xmlns"), "jabber:client") &&
+			(xmlnode_get_attrib(message_node,"xmlns:stream") != NULL))
 		{
 			bb->conversation->stream_started = TRUE;
 		}
@@ -354,13 +345,9 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 		{
 			/* TODO: This needs to be nonblocking! */
 			if (send(bb->conversation->socket, DOCTYPE, strlen(DOCTYPE), 0) == -1)
-			{
 				purple_debug_error("bonjour", "Unable to start a conversation with %s\n", bb->name);
-			}
 			else
-			{
 				bb->conversation->stream_started = TRUE;
-			}
 		}
 	}
 
@@ -370,6 +357,8 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 	 * parsing an end tag
 	 */
 	if (purple_str_has_prefix(message, STREAM_END) || (closed_conversation == TRUE)) {
+		char *closed_conv_message;
+
 		/* Close the socket, clear the watcher and free memory */
 		if (bb->conversation != NULL) {
 			close(bb->conversation->socket);
@@ -400,21 +389,18 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	struct sockaddr_in their_addr; /* connector's address information */
 	socklen_t sin_size = sizeof(struct sockaddr);
 	int client_socket;
-	BonjourBuddy *bb = NULL;
-	BonjourJabber *bj = data;
+	BonjourBuddy *bb;
 	char *address_text = NULL;
 	PurpleBuddyList *bl = purple_get_blist();
 	struct _check_buddy_by_address_t *cbba;
 
 	/* Check that it is a read condition */
-	if (condition != PURPLE_INPUT_READ) {
+	if (condition != PURPLE_INPUT_READ)
 		return;
-	}
 
 	if ((client_socket = accept(server_socket, (struct sockaddr *)&their_addr, &sin_size)) == -1)
-	{
 		return;
-	}
+
 	fcntl(client_socket, F_SETFL, O_NONBLOCK);
 
 	/* Look for the buddy that has opened the conversation and fill information */
@@ -422,7 +408,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	cbba = g_new0(struct _check_buddy_by_address_t, 1);
 	cbba->address = address_text;
 	cbba->gb = &gb;
-	cbba->bj = bj;
+	cbba->bj = data;
 	g_hash_table_foreach(bl->buddies, _check_buddy_by_address, cbba);
 	g_free(cbba);
 	if (gb == NULL)
@@ -431,7 +417,7 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 		close(client_socket);
 		return;
 	}
-	bb = (BonjourBuddy*)gb->proto_data;
+	bb = gb->proto_data;
 
 	/* Check if the conversation has been previously started */
 	if (bb->conversation == NULL)
@@ -608,28 +594,28 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 		/* Start the stream */
 		if (send(bb->conversation->socket, DOCTYPE, strlen(DOCTYPE), 0) == -1)
 		{
-				purple_debug_error("bonjour", "Unable to start a conversation\n");
-				purple_debug_warning("bonjour", "send error: %s\n", strerror(errno));
-				conversation = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, data->account);
-				purple_conversation_write(conversation, NULL, 
-										_("Unable to send the message, the conversation couldn't be started."),
-										PURPLE_MESSAGE_SYSTEM, time(NULL));
-				close(bb->conversation->socket);
-				purple_input_remove(bb->conversation->watcher_id);
+			purple_debug_error("bonjour", "Unable to start a conversation\n");
+			purple_debug_warning("bonjour", "send error: %s\n", strerror(errno));
+			conversation = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, bb->name, data->account);
+			purple_conversation_write(conversation, NULL,
+						  _("Unable to send the message, the conversation couldn't be started."),
+						  PURPLE_MESSAGE_SYSTEM, time(NULL));
+			close(bb->conversation->socket);
+			purple_input_remove(bb->conversation->watcher_id);
 
-				/* Free all the data related to the conversation */
-				g_free(bb->conversation->buddy_name);
-				g_free(bb->conversation);
-				bb->conversation = NULL;
-				g_free(message);
-				return 0;
+			/* Free all the data related to the conversation */
+			g_free(bb->conversation->buddy_name);
+			g_free(bb->conversation);
+			bb->conversation = NULL;
+			g_free(message);
+			return 0;
 		}
 
 		bb->conversation->stream_started = TRUE;
 	}
 
 	/* Send the message */
-	ret = _send_data(bb->conversation->socket, message) == -1;
+	ret = (_send_data(bb->conversation->socket, message) == -1);
 	g_free(message);
 
 	if (ret == -1)
@@ -662,32 +648,21 @@ bonjour_jabber_close_conversation(BonjourJabber *data, PurpleBuddy *gb)
 void
 bonjour_jabber_stop(BonjourJabber *data)
 {
-	PurpleBuddy *gb = NULL;
-	BonjourBuddy *bb = NULL;
-	GSList *buddies;
-	GSList *l;
-
-	/* Close the server socket and remove all the watcher */
+	/* Close the server socket and remove the watcher */
 	if (data->socket >= 0)
 		close(data->socket);
 	if (data->watcher_id > 0)
 		purple_input_remove(data->watcher_id);
 
-	/* Close all the sockets and remove all the watchers after sending end streams */
+	/* Close all the conversation sockets and remove all the watchers after sending end streams */
 	if (data->account->gc != NULL)
 	{
+		GSList *buddies;
+		GSList *l;
+
 		buddies = purple_find_buddies(data->account, data->account->username);
 		for (l = buddies; l; l = l->next)
-		{
-			gb = (PurpleBuddy*)l->data;
-			bb = (BonjourBuddy*)gb->proto_data;
-			if (bb->conversation != NULL)
-			{
-				send(bb->conversation->socket, STREAM_END, strlen(STREAM_END), 0);
-				close(bb->conversation->socket);
-				purple_input_remove(bb->conversation->watcher_id);
-			}
-		}
+			bonjour_jabber_close_conversation(data, l->data);
 		g_slist_free(buddies);
 	}
 }
