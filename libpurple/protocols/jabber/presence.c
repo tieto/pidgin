@@ -182,7 +182,7 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
         /* add the extensions */
         char extlist[1024];
         unsigned remaining = 1023; /* one less for the \0 */
-        GSList *feature;
+        GList *feature;
         
         extlist[0] = '\0';
         for(feature = js->features; feature && remaining > 0; feature = feature->next) {
@@ -195,8 +195,10 @@ xmlnode *jabber_presence_create_js(JabberStream *js, JabberBuddyState state, con
             
             strncat(extlist,feat->shortname,remaining);
             remaining -= featlen;
-            strncat(extlist," ",remaining);
-            --remaining;
+            if(feature->next) { /* no space at the end */
+                strncat(extlist," ",remaining);
+                --remaining;
+            }
         }
         /* did we add anything? */
         if(remaining < 1023)
