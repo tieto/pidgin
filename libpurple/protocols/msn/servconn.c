@@ -195,6 +195,7 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 	}
 	else
 	{
+		purple_debug_error("msn", "Connection error: %s\n", error_message);
 		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_CONNECT);
 	}
 }
