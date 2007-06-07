@@ -176,7 +176,7 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 	PurpleConversation *conv;
-	GList *l;
+	const GList *l;
 
 	for (l = purple_get_conversations(); l != NULL; l = l->next) {
 		conv = (PurpleConversation *)l->data;
@@ -199,7 +199,7 @@ plugin_unload(PurplePlugin *plugin)
 {
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
-	GList *l;
+	const GList *l;
 
 	for (l = purple_get_conversations(); l != NULL; l = l->next) {
 		conv = (PurpleConversation *)l->data;

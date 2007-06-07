@@ -27,6 +27,9 @@
 #include <gtk/gtktextview.h>
 #include <gtk/gtktooltips.h>
 #include <gtk/gtkimage.h>
+#include "gtksourceundomanager.h"
+
+#include "connection.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -126,6 +129,7 @@ struct _GtkIMHtml {
 
 	GSList *im_images;
 	GtkIMHtmlFuncs *funcs;
+	GtkSourceUndoManager *undo_manager;
 };
 
 struct _GtkIMHtmlClass {
@@ -137,6 +141,8 @@ struct _GtkIMHtmlClass {
 	void (*clear_format)(GtkIMHtml *);
 	void (*update_format)(GtkIMHtml *);
 	gboolean (*message_send)(GtkIMHtml *);
+	void (*undo)(GtkIMHtml *);
+	void (*redo)(GtkIMHtml *);
 };
 
 struct _GtkIMHtmlFontDetail {
@@ -785,6 +791,14 @@ char **gtk_imhtml_get_markup_lines(GtkIMHtml *imhtml);
  * @return A string containing the unformatted text.
  */
 char *gtk_imhtml_get_text(GtkIMHtml *imhtml, GtkTextIter *start, GtkTextIter *stop);
+
+/**
+ * Setup formatting for an imhtml depending on the flags specified.
+ *
+ * @param imhtml  The GTK+ IM/HTML.
+ * @param flags   The connection flag which describes the allowed types of formatting.
+ */
+void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags);
 
 /*@}*/
 

@@ -169,6 +169,13 @@ const char *purple_dbus_get_init_error(void);
 void *purple_dbus_get_handle(void);
 
 /**
+ * Determines whether this instance owns the DBus service name
+ * 
+ * @since 2.1.0
+ */
+gboolean purple_dbus_is_owner(void);
+
+/**
  * Starts Purple's D-BUS server.  It is responsible for handling DBUS
  * requests from other applications.
  */

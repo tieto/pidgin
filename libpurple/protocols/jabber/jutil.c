@@ -221,7 +221,7 @@ PurpleConversation *
 jabber_find_unnormalized_conv(const char *name, PurpleAccount *account)
 {
 	PurpleConversation *c = NULL;
-	GList *cnv;
+	const GList *cnv;
 
 	g_return_val_if_fail(name != NULL, NULL);
 

@@ -1,3 +1,25 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #ifndef GNT_WIDGET_H
 #define GNT_WIDGET_H
 
@@ -112,39 +134,169 @@ struct _GntWidgetClass
 
 G_BEGIN_DECLS
 
+/**
+ * 
+ *
+ * @return
+ */
 GType gnt_widget_get_gtype(void);
+
+/**
+ * 
+ * @param widget
+ */
 void gnt_widget_destroy(GntWidget *widget);
+
+/**
+ * 
+ * @param widget
+ */
 void gnt_widget_show(GntWidget *widget);
+
+/**
+ * 
+ * @param widget
+ */
 void gnt_widget_draw(GntWidget *widget);
+
+/**
+ * 
+ * @param widget
+ * @param x
+ * @param y
+ * @param width
+ * @param height
+ */
 void gnt_widget_expose(GntWidget *widget, int x, int y, int width, int height);
+
+/**
+ * 
+ * @param widget
+ */
 void gnt_widget_hide(GntWidget *widget);
 
+/**
+ * 
+ * @param widget
+ * @param x
+ * @param y
+ */
 void gnt_widget_get_position(GntWidget *widget, int *x, int *y);
+
+/**
+ * 
+ * @param widget
+ * @param x
+ * @param y
+ */
 void gnt_widget_set_position(GntWidget *widget, int x, int y);
+
+/**
+ * 
+ * @param widget
+ */
 void gnt_widget_size_request(GntWidget *widget);
+
+/**
+ * 
+ * @param widget
+ * @param width
+ * @param height
+ */
 void gnt_widget_get_size(GntWidget *widget, int *width, int *height);
+
+/**
+ * 
+ * @param widget
+ * @param width
+ * @param height
+ *
+ * @return
+ */
 gboolean gnt_widget_set_size(GntWidget *widget, int width, int height);
+
+/**
+ * 
+ * @param widget
+ * @param width
+ * @param height
+ *
+ * @return
+ */
 gboolean gnt_widget_confirm_size(GntWidget *widget, int width, int height);
 
+/**
+ * 
+ * @param widget
+ * @param keys
+ *
+ * @return
+ */
 gboolean gnt_widget_key_pressed(GntWidget *widget, const char *keys);
 
+/**
+ * 
+ * @param widget
+ * @param event
+ * @param x
+ * @param y
+ *
+ * @return
+ */
 gboolean gnt_widget_clicked(GntWidget *widget, GntMouseEvent event, int x, int y);
 
+/**
+ * 
+ * @param widget
+ * @param set
+ *
+ * @return
+ */
 gboolean gnt_widget_set_focus(GntWidget *widget, gboolean set);
+
+/**
+ * 
+ * @param widget
+ */
 void gnt_widget_activate(GntWidget *widget);
 
+/**
+ * 
+ * @param widget
+ * @param name
+ */
 void gnt_widget_set_name(GntWidget *widget, const char *name);
 
 const char *gnt_widget_get_name(GntWidget *widget);
 
 /* Widget-subclasses should call this from the draw-callback.
  * Applications should just call gnt_widget_draw instead of this. */
+/**
+ * 
+ * @param widget
+ */
 void gnt_widget_queue_update(GntWidget *widget);
 
+/**
+ * 
+ * @param widget
+ * @param set
+ */
 void gnt_widget_set_take_focus(GntWidget *widget, gboolean set);
 
+/**
+ * 
+ * @param widget
+ * @param set
+ */
 void gnt_widget_set_visible(GntWidget *widget, gboolean set);
 
+/**
+ * 
+ * @param widget
+ *
+ * @return
+ */
 gboolean gnt_widget_has_shadow(GntWidget *widget);
 
 G_END_DECLS
