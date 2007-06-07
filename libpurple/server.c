@@ -92,7 +92,7 @@ get_last_auto_response(PurpleConnection *gc, const char *name)
 
 	/* because we're modifying or creating a lar, schedule the
 	 * function to expire them as the pref dictates */
-	purple_timeout_add((SECS_BEFORE_RESENDING_AUTORESPONSE + 1) * 1000, expire_last_auto_responses, NULL);
+	purple_timeout_add_seconds((SECS_BEFORE_RESENDING_AUTORESPONSE + 1), expire_last_auto_responses, NULL);
 
 	tmp = last_auto_responses;
 
@@ -233,8 +233,9 @@ serv_got_alias(PurpleConnection *gc, const char *who, const char *alias)
 			char *tmp = g_strdup_printf(_("%s is now known as %s.\n"),
 										who, alias);
 
-			purple_conversation_write(conv, NULL, tmp, PURPLE_MESSAGE_SYSTEM,
-									time(NULL));
+			purple_conversation_write(conv, NULL, tmp,
+					PURPLE_MESSAGE_SYSTEM | PURPLE_MESSAGE_NO_LINKIFY,
+					time(NULL));
 
 			g_free(tmp);
 		}

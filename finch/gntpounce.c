@@ -288,7 +288,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 	GntWidget *hbox, *vbox;
 	GntWidget *button;
 	GntWidget *combo;
-	GList *list;
+	const GList *list;
 
 	g_return_if_fail((cur_pounce != NULL) ||
 	                 (account != NULL) ||
@@ -303,7 +303,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 		dialog->pounce  = NULL;
 		dialog->account = account;
 	} else {
-		GList *connections = purple_connections_get_all();
+		const GList *connections = purple_connections_get_all();
 		PurpleConnection *gc;
 
 		if (connections != NULL) {

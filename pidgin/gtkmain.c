@@ -127,7 +127,7 @@ dologin_named(const char *name)
 		}
 		g_strfreev(names);
 	} else { /* no name given, use the first account */
-		GList *accounts;
+		const GList *accounts;
 
 		accounts = purple_accounts_get_all();
 		if (accounts != NULL)
@@ -441,7 +441,7 @@ int main(int argc, char *argv[])
 	char *opt_session_arg = NULL;
 	int dologin_ret = -1;
 	char *search_path;
-	GList *accounts;
+	const GList *accounts;
 #ifdef HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
@@ -456,6 +456,7 @@ int main(int argc, char *argv[])
 	gboolean gui_check;
 	gboolean debug_enabled;
 	gboolean migration_failed = FALSE;
+	GList *active_accounts;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},
@@ -733,6 +734,15 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
+	if (!purple_core_ensure_single_instance()) {
+		purple_core_quit();
+#ifdef HAVE_SIGNAL_H
+		g_free(segfault_message);
+#endif
+		return 0;
+	}
+		
+
 	/* TODO: Move blist loading into purple_blist_init() */
 	purple_set_blist(purple_blist_new());
 	purple_blist_load();
@@ -819,13 +829,13 @@ int main(int argc, char *argv[])
 		purple_accounts_restore_current_statuses();
 	}
 
-	if ((accounts = purple_accounts_get_all_active()) == NULL)
+	if ((active_accounts = purple_accounts_get_all_active()) == NULL)
 	{
 		pidgin_accounts_window_show();
 	}
 	else
 	{
-		g_list_free(accounts);
+		g_list_free(active_accounts);
 	}
 
 #ifdef HAVE_STARTUP_NOTIFICATION

@@ -246,11 +246,7 @@ gevo_new_person_dialog_show(EBook *book, EContact *contact,
 	dialog->book = book;
 	g_object_ref(book);
 
-	dialog->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(dialog->win), "new_person");
-	gtk_window_set_title(GTK_WINDOW(dialog->win), _("New Person"));	
-	gtk_window_set_resizable(GTK_WINDOW(dialog->win), FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(dialog->win), 12);
+	dialog->win = pidgin_create_window(_("New Person"), PIDGIN_HIG_BORDER, "new_person", FALSE);
 
 	g_signal_connect(G_OBJECT(dialog->win), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);

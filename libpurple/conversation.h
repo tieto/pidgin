@@ -116,7 +116,9 @@ typedef enum
 	PURPLE_MESSAGE_RAW         = 0x0800, /**< "Raw" message - don't
 	                                        apply formatting         */
 	PURPLE_MESSAGE_IMAGES      = 0x1000, /**< Message contains images  */
-	PURPLE_MESSAGE_NOTIFY      = 0x2000  /**< Message is a notification */
+	PURPLE_MESSAGE_NOTIFY      = 0x2000, /**< Message is a notification */
+	PURPLE_MESSAGE_NO_LINKIFY  = 0x4000  /**< Message should not be auto-
+										   linkified */
 
 } PurpleMessageFlags;
 
@@ -502,21 +504,21 @@ gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key)
  *
  * @return A GList of all conversations.
  */
-GList *purple_get_conversations(void);
+const GList *purple_get_conversations(void);
 
 /**
  * Returns a list of all IMs.
  *
  * @return A GList of all IMs.
  */
-GList *purple_get_ims(void);
+const GList *purple_get_ims(void);
 
 /**
  * Returns a list of all chats.
  *
  * @return A GList of all chats.
  */
-GList *purple_get_chats(void);
+const GList *purple_get_chats(void);
 
 /**
  * Finds a conversation with the specified type, name, and Purple account.
@@ -875,7 +877,7 @@ GList *purple_conv_chat_set_users(PurpleConvChat *chat, GList *users);
  *
  * @return The list of users.
  */
-GList *purple_conv_chat_get_users(const PurpleConvChat *chat);
+const GList *purple_conv_chat_get_users(const PurpleConvChat *chat);
 
 /**
  * Ignores a user in a chat room.
@@ -910,7 +912,7 @@ GList *purple_conv_chat_set_ignored(PurpleConvChat *chat, GList *ignored);
  *
  * @return The list of ignored users.
  */
-GList *purple_conv_chat_get_ignored(const PurpleConvChat *chat);
+const GList *purple_conv_chat_get_ignored(const PurpleConvChat *chat);
 
 /**
  * Returns the actual name of the specified ignored user, if it exists in
@@ -1189,6 +1191,30 @@ const char *purple_conv_chat_cb_get_name(PurpleConvChatBuddy *cb);
  * @param cb The chat buddy to destroy
  */
 void purple_conv_chat_cb_destroy(PurpleConvChatBuddy *cb);
+
+/**
+ * Retrieves the extended menu items for the conversation.
+ *
+ * @param conv The conversation.
+ * 
+ * @return  A list of PurpleMenuAction items, harvested by the
+ *          chat-extended-menu signal. The list and the menuaction
+ *          items should be freed by the caller.
+ */
+GList * purple_conversation_get_extended_menu(PurpleConversation *conv);
+
+/**
+ * Perform a command in a conversation. Similar to @see purple_cmd_do_command
+ *
+ * @param conv    The conversation.
+ * @param cmdline The entire command including the arguments.
+ * @param markup  @c NULL, or the formatted command line.
+ * @param error   If the command failed errormsg is filled in with the appropriate error
+ *                message, if not @c NULL. It must be freed by the caller with g_free().
+ *
+ * @return  @c TRUE if the command was executed successfully, @c FALSE otherwise.
+ */
+gboolean purple_conversation_do_command(PurpleConversation *conv, const gchar *cmdline, const gchar *markup, gchar **error);
 
 /*@}*/
 
