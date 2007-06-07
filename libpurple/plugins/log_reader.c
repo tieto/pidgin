@@ -1467,13 +1467,12 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	{
 		const char *link;
 		const char *footer = NULL;
-		GString *temp;
+		GString *temp = NULL;
 
-		c = strstr(c, "\n");
-
-		if (c) {
+		if ((c = strstr(c, "\n")))
+		{
 			*c = '\0';
-			++c;
+			c++;
 		}
 
 		/* Convert links.
@@ -1488,7 +1487,6 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		 * 
 		 * As implemented, this isn't perfect, but it should cover common cases.
 		 */
-		temp = g_string_sized_new(strlen(line));
 		while (line && (link = strstr(line, "(Link: ")))
 		{
 			const char *tmp = link;
@@ -1504,6 +1502,9 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 					/* Something is not as we expect.  Bail out. */
 					break;
 				}
+
+				if (!temp)
+					temp = g_string_sized_new(c ? (c - 1 - line) : strlen(line));
 
 				g_string_append_len(temp, line, (tmp - line));
 
@@ -1543,10 +1544,12 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			}
 		}
 
-		if (line) {
-			g_string_append(temp, line);
+		if (temp)
+		{
+			if (line)
+				g_string_append(temp, line);
+			line = temp->str;
 		}
-		line = temp->str;
 
 		if (*line == '[') {
 			const char *timestamp;
@@ -1672,21 +1675,19 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 		g_string_append(formatted, line);
 
+		line = c;
+		if (temp)
+			g_string_free(temp, TRUE);
+
 		if (footer)
 			g_string_append(formatted, footer);
 
 		g_string_append_c(formatted, '\n');
-
-		g_string_free(temp, TRUE);
-
-		line = c;
 	}
 
 	g_free(read);
-	read = formatted->str;
-	g_string_free(formatted, FALSE);
-
-	return read;
+	/* XXX: TODO: Avoid this g_strchomp() */
+	return g_strchomp(g_string_free(formatted, FALSE));
 }
 
 static int trillian_logger_size (PurpleLog *log)
