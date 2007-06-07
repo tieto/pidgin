@@ -463,7 +463,11 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 	JabberStream *js = gc->proto_data;
 
 	if (source < 0) {
-		purple_connection_error(gc, _("Couldn't connect to host"));
+		gchar *tmp;
+		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+				error);
+		purple_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
 	}
 
