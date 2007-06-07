@@ -117,6 +117,7 @@ typedef struct _MsimSession
     gchar *userid;                      /**< This user's numeric user ID */
     gint fd;                            /**< File descriptor to/from server */
 
+	/* TODO: Remove. */
     GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
     GHashTable *user_lookup_cb_data;    /**< Username -> userid lookup callback data */
     GHashTable *user_lookup_cache;      /**< Cached information on users */

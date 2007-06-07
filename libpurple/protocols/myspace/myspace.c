@@ -757,6 +757,94 @@ static void msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo, 
 	g_hash_table_destroy(body);
 }
 
+/* Lookup a username by userid, from buddy list. 
+ *
+ * @param wanted_uid
+ *
+ * @return Username of wanted_uid, if on blist, or NULL. Static string. 
+ *
+ * XXX WARNING: UNKNOWN MEMORY CORRUPTION HERE! 
+ */
+static const gchar *msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
+{
+	GSList *buddies, *buddies_head;
+
+	for (buddies = buddies_head = purple_find_buddies(session->account, NULL); 
+			buddies; 
+			buddies = g_slist_next(buddies))
+	{
+		PurpleBuddy *buddy;
+		guint uid;
+		gchar *name;
+
+		buddy = buddies->data;
+
+		uid = purple_blist_node_get_int(&buddy->node, "uid");
+
+		/* name = buddy->name; */								/* crash */
+		/* name = PURPLE_BLIST_NODE_NAME(&buddy->node);  */		/* crash */
+
+		/* XXX Is this right? Memory corruption here somehow. Happens only
+		 * when return one of these values. */
+		name = purple_buddy_get_name(buddy); 					/* crash */
+		/* return name; */										/* crash (with above) */
+
+		/* name = NULL; */										/* no crash */
+		/* return NULL; */										/* no crash (with anything) */
+
+		/* crash =
+*** glibc detected *** pidgin: realloc(): invalid pointer: 0x0000000000d2aec0 ***
+======= Backtrace: =========
+/lib/libc.so.6(__libc_realloc+0x323)[0x2b7bfc012e03]
+/usr/lib/libglib-2.0.so.0(g_realloc+0x31)[0x2b7bfba79a41]
+/usr/lib/libgtk-x11-2.0.so.0(gtk_tree_path_append_index+0x3a)[0x2b7bfa110d5a]
+/usr/lib/libgtk-x11-2.0.so.0[0x2b7bfa1287dc]
+/usr/lib/libgtk-x11-2.0.so.0[0x2b7bfa128e56]
+/usr/lib/libgtk-x11-2.0.so.0[0x2b7bfa128efd]
+/usr/lib/libglib-2.0.so.0(g_main_context_dispatch+0x1b4)[0x2b7bfba72c84]
+/usr/lib/libglib-2.0.so.0[0x2b7bfba75acd]
+/usr/lib/libglib-2.0.so.0(g_main_loop_run+0x1ca)[0x2b7bfba75dda]
+/usr/lib/libgtk-x11-2.0.so.0(gtk_main+0xa3)[0x2b7bfa0475f3]
+pidgin(main+0x8be)[0x46b45e]
+/lib/libc.so.6(__libc_start_main+0xf4)[0x2b7bfbfbf0c4]
+pidgin(gtk_widget_grab_focus+0x39)[0x429ab9]
+
+or:
+ *** glibc detected *** /usr/local/bin/pidgin: malloc(): memory corruption (fast): 0x0000000000c10076 ***
+ (gdb) bt
+#0  0x00002b4074ecd47b in raise () from /lib/libc.so.6
+#1  0x00002b4074eceda0 in abort () from /lib/libc.so.6
+#2  0x00002b4074f0453b in __fsetlocking () from /lib/libc.so.6
+#3  0x00002b4074f0c810 in free () from /lib/libc.so.6
+#4  0x00002b4074f0d6dd in malloc () from /lib/libc.so.6
+#5  0x00002b4074974b5b in g_malloc () from /usr/lib/libglib-2.0.so.0
+#6  0x00002b40749868bf in g_strdup () from /usr/lib/libglib-2.0.so.0
+#7  0x00002b407810969f in msim_parse (
+    raw=0xd2a910 "\\bm\\100\\f\\3656574\\msg\\|s|0|ss|Offline")
+	    at message.c:648
+#8  0x00002b407810889c in msim_input_cb (gc_uncasted=0xcf92c0, 
+    source=<value optimized out>, cond=<value optimized out>) at myspace.c:1478
+
+
+	Why is it crashing in msim_parse()'s g_strdup()?
+*/
+
+
+		purple_debug_info("msim", "msim_uid2username_from_blist: %s's uid=%d (want %d)\n",
+				name, uid, wanted_uid);
+
+		if (uid == wanted_uid)
+		{
+			g_slist_free(buddies_head);
+
+			return name;
+		}
+	}
+
+	g_slist_free(buddies_head);
+	return NULL;
+}
+
 /** Preprocess incoming messages, resolving as needed, calling msim_process() when ready to process.
  *
  * TODO: if no uid to resolve, process immediately. if uid, check if know username,
@@ -770,20 +858,38 @@ gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 {
 	if (msim_msg_get(msg, "bm") && msim_msg_get(msg, "f"))
 	{
+		guint uid;
+		const gchar *username;
+
 		/* 'f' = userid message is from, in buddy messages */
+		uid = msim_msg_get_integer(msg, "f");
 
-		/* TODO XXX IMPORTANT TODO: if know uid->username mapping already, process immediately */
-		/* TODO XXX Currently, uid is ALWAYS explicitly resolved, on each message, by sending
-		 * a getuserbyuserid message. This is very wasteful. TODO: Be frugal.
-		 */
+		/* TODO: Make caching work. Currently it is commented out because
+		 * it crashes for unknown reasons, memory realloc error. */
+//#define _MSIM_UID2USERNAME_WORKS
+#ifdef _MSIM_UID2USERNAME_WORKS
+		username = msim_uid2username_from_blist(session, uid); 
+#else
+		username = NULL;
+#endif
 
-		/* Send lookup request. */
-		/* XXX: where is msim_msg_get_string() freed? make _strdup and _nonstrdup. */
-		purple_debug_info("msim", "msim_incoming: sending lookup, setting up callback\n");
-		msim_lookup_user(session, msim_msg_get_string(msg, "f"), msim_incoming_resolved, msim_msg_clone(msg)); 
+		if (username)
+		{
+			/* Know username already, use it. */
+			purple_debug_info("msim", "msim_preprocess_incoming: tagging with _username=%s\n",
+					username);
+			msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, g_strdup(username));
+			return msim_process(session, msg);
 
-		/* indeterminate */
-		return TRUE;
+		} else {
+			/* Send lookup request. */
+			/* XXX: where is msim_msg_get_string() freed? make _strdup and _nonstrdup. */
+			purple_debug_info("msim", "msim_incoming: sending lookup, setting up callback\n");
+			msim_lookup_user(session, msim_msg_get_string(msg, "f"), msim_incoming_resolved, msim_msg_clone(msg)); 
+
+			/* indeterminate */
+			return TRUE;
+		}
 	} else {
 		/* Nothing to resolve - send directly to processing. */
 		return msim_process(session, msg);
@@ -898,9 +1004,21 @@ gboolean msim_process_reply(MsimSession *session, MsimMessage *msg)
         username = g_hash_table_lookup(body, "UserName");
         if (username)
         {
-			/* TODO: permanently associated with blist item, if in buddy in blist,
-			 * See purple_blist_node_set_int(). */
-            g_hash_table_insert(session->user_lookup_cache, g_strdup(username), body);
+			PurpleBuddy *buddy;
+			gchar *uid;
+
+			uid = g_hash_table_lookup(body, "UserID");
+			g_assert(uid);
+
+			/* Associate uid with user on buddy list. This is saved to blist.xml. */
+
+			purple_debug_info("msim", "associating %d with %s\n", uid, username);
+
+			buddy = purple_find_buddy(session->account, username);
+			if (buddy)
+			{
+				purple_blist_node_set_int(&buddy->node, "uid", atoi(uid));
+			} 
         } else {
             purple_debug_info("msim", 
 					"msim_process_reply: not caching body, no UserName\n");
@@ -1457,6 +1575,8 @@ MsimSession *msim_session_new(PurpleAccount *acct)
     session->account = acct;
     session->gc = purple_account_get_connection(acct);
     session->fd = -1;
+
+	/* TODO: Remove. */
     session->user_lookup_cb = g_hash_table_new_full(g_direct_hash, 
 			g_direct_equal, NULL, NULL);  /* do NOT free function pointers! (values) */
     session->user_lookup_cb_data = g_hash_table_new_full(g_direct_hash, 
@@ -1466,6 +1586,7 @@ MsimSession *msim_session_new(PurpleAccount *acct)
 											 Figure this out, once free cache. */
     session->user_lookup_cache = g_hash_table_new_full(g_str_hash, g_str_equal,
 		   	g_free, (GDestroyNotify)g_hash_table_destroy);
+
     session->rxoff = 0;
     session->rxbuf = g_new0(gchar, MSIM_READ_BUF_SIZE);
 	session->next_rid = 1;
@@ -1487,6 +1608,11 @@ void msim_session_destroy(MsimSession *session)
     g_free(session->rxbuf);
     g_free(session->userid);
 
+	/* TODO: Remove. */
+	g_hash_table_destroy(session->user_lookup_cb);
+	g_hash_table_destroy(session->user_lookup_cb_data);
+	g_hash_table_destroy(session->user_lookup_cache);
+	
     g_free(session);
 }
                  
