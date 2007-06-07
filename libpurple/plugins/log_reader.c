@@ -1536,6 +1536,11 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 				}
 				line = space;
 			}
+			else
+			{
+				/* Something is not as we expect.  Bail out. */
+				break;
+			}
 		}
 
 		if (line) {
