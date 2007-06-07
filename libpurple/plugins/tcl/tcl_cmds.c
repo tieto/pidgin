@@ -43,7 +43,7 @@ static PurpleConnection *tcl_validate_gc(Tcl_Obj *obj, Tcl_Interp *interp);
 static PurpleAccount *tcl_validate_account(Tcl_Obj *obj, Tcl_Interp *interp)
 {
 	PurpleAccount *account;
-	GList *cur;
+	const GList *cur;
 
 	account = purple_tcl_ref_get(interp, obj, PurpleTclRefAccount);
 
@@ -62,7 +62,7 @@ static PurpleAccount *tcl_validate_account(Tcl_Obj *obj, Tcl_Interp *interp)
 static PurpleConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *interp)
 {
 	PurpleConversation *convo;
-	GList *cur;
+	const GList *cur;
 
 	convo = purple_tcl_ref_get(interp, obj, PurpleTclRefConversation);
 
@@ -81,7 +81,7 @@ static PurpleConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *i
 static PurpleConnection *tcl_validate_gc(Tcl_Obj *obj, Tcl_Interp *interp)
 {
 	PurpleConnection *gc;
-	GList *cur;
+	const GList *cur;
 
 	gc = purple_tcl_ref_get(interp, obj, PurpleTclRefConnection);
 
@@ -612,7 +612,7 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 	const char *cmds[] = { "account", "displayname", "handle", "list", NULL };
 	enum { CMD_CONN_ACCOUNT, CMD_CONN_DISPLAYNAME, CMD_CONN_HANDLE, CMD_CONN_LIST } cmd;
 	int error;
-	GList *cur;
+	const GList *cur;
 	PurpleConnection *gc;
 
 	if (objc < 2) {
@@ -680,7 +680,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 	PurpleConversation *convo;
 	PurpleAccount *account;
 	PurpleConversationType type;
-	GList *cur;
+	const GList *cur;
 	char *opt, *from, *what;
 	int error, argsused, flags = 0;
 

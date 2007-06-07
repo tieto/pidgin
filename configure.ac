@@ -569,14 +569,15 @@ dnl #######################################################################
 AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
-PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], , [
-	AC_MSG_RESULT(no)
-	enable_gst="no"
-])
 if test "x$enable_gst" != "xno"; then
-	AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
-	AC_SUBST(GSTREAMER_CFLAGS)
-	AC_SUBST(GSTREAMER_LIBS)
+	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], [
+		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
+		AC_SUBST(GSTREAMER_CFLAGS)
+		AC_SUBST(GSTREAMER_LIBS)
+	], [
+		AC_MSG_RESULT(no)
+		enable_gst="no"
+	])
 fi
 
 dnl #######################################################################

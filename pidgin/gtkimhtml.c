@@ -27,6 +27,9 @@
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
+
+#include "pidgin.h"
+
 #include "debug.h"
 #include "util.h"
 #include "gtkimhtml.h"

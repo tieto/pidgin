@@ -199,7 +199,7 @@ check_idleness(void)
 	/* Idle reporting stuff */
 	if (report_idle && (time_idle >= IDLEMARK))
 	{
-		GList *l;
+		const GList *l;
 		for (l = purple_connections_get_all(); l != NULL; l = l->next)
 		{
 			PurpleConnection *gc = l->data;
