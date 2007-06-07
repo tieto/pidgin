@@ -1088,7 +1088,6 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_role(GTK_WINDOW(win), "status");
 	gtk_window_set_title(GTK_WINDOW(win), _("Status"));
-	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
@@ -1137,7 +1136,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 
 	/* Status message */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("_Message:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);

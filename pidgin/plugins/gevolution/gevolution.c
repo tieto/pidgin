@@ -38,7 +38,6 @@
 
 #include <libedata-book/Evolution-DataServer-Addressbook.h>
 
-#include <libebook/e-book-listener.h>
 #include <libedata-book/e-data-book-factory.h>
 #include <bonobo/bonobo-main.h>
 
