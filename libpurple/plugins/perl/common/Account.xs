@@ -290,7 +290,7 @@ purple_accounts_reorder(account, new_index)
 void
 purple_accounts_get_all()
 PREINIT:
-    GList *l;
+    const GList *l;
 PPCODE:
     for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
         XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Account")));

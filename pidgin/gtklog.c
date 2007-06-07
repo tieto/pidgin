@@ -757,7 +757,7 @@ void pidgin_log_show_contact(PurpleContact *contact) {
 
 void pidgin_syslog_show()
 {
-	GList *accounts = NULL;
+	const GList *accounts;
 	GList *logs = NULL;
 
 	if (syslog_viewer != NULL) {

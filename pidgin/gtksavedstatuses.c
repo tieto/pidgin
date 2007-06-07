@@ -1012,7 +1012,7 @@ status_editor_add_account(StatusEditor *dialog, PurpleAccount *account,
 static void
 status_editor_populate_list(StatusEditor *dialog, PurpleSavedStatus *saved_status)
 {
-	GList *iter;
+	const GList *iter;
 	PurpleSavedStatusSub *substatus;
 
 	gtk_list_store_clear(dialog->model);

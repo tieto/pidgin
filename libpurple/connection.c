@@ -456,7 +456,7 @@ purple_connection_error(PurpleConnection *gc, const char *text)
 void
 purple_connections_disconnect_all(void)
 {
-	GList *l;
+	const GList *l;
 	PurpleConnection *gc;
 
 	while ((l = purple_connections_get_all()) != NULL) {
@@ -466,13 +466,13 @@ purple_connections_disconnect_all(void)
 	}
 }
 
-GList *
+const GList *
 purple_connections_get_all(void)
 {
 	return connections;
 }
 
-GList *
+const GList *
 purple_connections_get_connecting(void)
 {
 	return connections_connecting;

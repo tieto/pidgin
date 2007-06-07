@@ -592,7 +592,7 @@ static void irc_input_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	struct irc_conn *irc = gc->proto_data;
 	int len;
 
-	if(!g_list_find(purple_connections_get_all(), gc)) {
+	if(!g_list_find((GList *)purple_connections_get_all(), gc)) {
 		purple_ssl_close(gsc);
 		return;
 	}

@@ -496,7 +496,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	}
 	else
 	{
-		GList *connections = purple_connections_get_all();
+		const GList *connections = purple_connections_get_all();
 		PurpleConnection *gc;
 
 		if (connections != NULL)
