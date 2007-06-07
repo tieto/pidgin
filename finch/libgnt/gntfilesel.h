@@ -1,3 +1,25 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #ifndef GNT_FILE_SEL_H
 #define GNT_FILE_SEL_H
 
@@ -71,32 +93,115 @@ struct _GntFile
 
 G_BEGIN_DECLS
 
+/**
+ * 
+ *
+ * @return
+ */
 GType gnt_file_sel_get_gtype(void);
 
-GntWidget *gnt_file_sel_new(void);
+/**
+ * 
+ *
+ * @return
+ */
+GntWidget * gnt_file_sel_new(void);
 
+/**
+ * 
+ * @param sel
+ * @param path
+ *
+ * @return
+ */
 gboolean gnt_file_sel_set_current_location(GntFileSel *sel, const char *path);
 
+/**
+ * 
+ * @param sel
+ * @param dirs
+ */
 void gnt_file_sel_set_dirs_only(GntFileSel *sel, gboolean dirs);
 
+/**
+ * 
+ * @param sel
+ *
+ * @return
+ */
 gboolean gnt_file_sel_get_dirs_only(GntFileSel *sel);
 
+/**
+ * 
+ * @param sel
+ * @param must
+ */
 void gnt_file_sel_set_must_exist(GntFileSel *sel, gboolean must);
 
+/**
+ * 
+ * @param sel
+ *
+ * @return
+ */
 gboolean gnt_file_sel_get_must_exist(GntFileSel *sel);
 
-char *gnt_file_sel_get_selected_file(GntFileSel *sel);  /* The returned value should be free'd */
+/**
+ * 
+ * @param sel
+ *
+ * @return
+ */
+char * gnt_file_sel_get_selected_file(GntFileSel *sel);
 
-GList *gnt_file_sel_get_selected_multi_files(GntFileSel *sel);
+  /* The returned value should be free'd */
 
+/**
+ * 
+ * @param sel
+ *
+ * @return
+ */
+GList * gnt_file_sel_get_selected_multi_files(GntFileSel *sel);
+
+/**
+ * 
+ * @param sel
+ * @param set
+ */
 void gnt_file_sel_set_multi_select(GntFileSel *sel, gboolean set);
 
+/**
+ * 
+ * @param sel
+ * @param suggest
+ */
 void gnt_file_sel_set_suggested_filename(GntFileSel *sel, const char *suggest);
 
+/**
+ * 
+ * @param sel
+ * @param path
+ * @param files
+ * @param error)
+ */
 void gnt_file_sel_set_read_fn(GntFileSel *sel, gboolean (*read_fn)(const char *path, GList **files, GError **error));
 
+/**
+ * 
+ * @param name
+ * @param size
+ *
+ * @return
+ */
 GntFile* gnt_file_new(const char *name, unsigned long size);
 
+/**
+ * 
+ * @param name
+ *
+ * @return
+ */
 GntFile* gnt_file_new_dir(const char *name);
 
 G_END_DECLS

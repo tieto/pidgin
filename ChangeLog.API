@@ -1,5 +1,45 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.1.0 (??/??/????):
+	Added:
+	* purple-remote: added getstatus command
+	* OPT_PROTO_SLASH_COMMANDS_NATIVE protocol option to indicate that
+	  slash commands are "native" to the protocol
+	* PURPLE_MESSAGE_NO_LINKIFY message flag to indicate that the message
+	  should not be auto-linkified
+	* PurpleEventLoopUiOps.timeout_add_seconds
+	    UIs can now use better scheduling for whole-second timers.  For
+	    example, clients based on the glib event loop can now use
+	    g_timeout_add_seconds().
+	* pidgin_create_window()
+	* purple_core_ensure_single_instance()
+	    This is for UIs to use to ensure only one copy is running.
+	* purple_dbus_is_owner()
+	* purple_image_data_calculate_filename()
+	* purple_timeout_add_seconds()
+	    Callers should prefer this to purple_timeout_add() for timers
+	    longer than 1 second away.  Be aware of the rounding, though.
+	* purple_timeout_add_seconds()
+	    Callers should prefer this to purple_timeout_add() for timers
+	    longer than 1 second away.  Be aware of the rounding, though.
+	* purple_conversation_get_extended_menu
+	* purple_conversation_do_command
+	* pidgin_retrieve_user_info, shows immediate feedback when getting
+	  information about a user.
+	* gtk_imhtml_setup_entry
+	* purple_xfer_get_remote_user
+	* purple_blist_node_get_type
+
+	Changed:
+	* pidgin_separator returns the separator added to the menu.
+	* pidgin_append_menu_action returns the menuitem added to the menu.
+
+	Signals - Added: (See the Doxygen docs for details on all signals.)
+	* "conversation-extended-menu"
+
+	Finch - Added:
+	* finch_retrieve_user_info
+
 version 2.0.0 (5/3/2007):
 	Please note all functions, defines, and data structures have been
 	re-namespaced to match the new names of Pidgin, Finch, and libpurple.
