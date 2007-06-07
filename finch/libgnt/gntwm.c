@@ -539,15 +539,16 @@ static gboolean
 help_for_widget_bind_button_activate(GntBindable *bindable, gpointer data)
 {
 
-
-	gnt_bindable_register_binding(rebind_info.klass,
-																NULL,
-																rebind_info.okeys,
-																rebind_info.params);
-	gnt_bindable_register_binding(rebind_info.klass,
-																rebind_info.name,
-																rebind_info.keys,
-																rebind_info.params);
+	if(rebind_info.keys){
+		gnt_bindable_register_binding(rebind_info.klass,
+																	NULL,
+																	rebind_info.okeys,
+																	rebind_info.params);
+		gnt_bindable_register_binding(rebind_info.klass,
+																	rebind_info.name,
+																	rebind_info.keys,
+																	rebind_info.params);
+	}
 	free_rebind_info();
 
 	gnt_widget_destroy(GNT_WIDGET(data));
