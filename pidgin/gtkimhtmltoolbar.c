@@ -1151,10 +1151,8 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	gtk_button_set_relief(GTK_BUTTON(insert_button), GTK_RELIEF_NONE);
 	bbox = gtk_hbox_new(FALSE, 3);
 	gtk_container_add(GTK_CONTAINER(insert_button), bbox);
-#if 0
 	image = gtk_image_new_from_stock(PIDGIN_STOCK_TOOLBAR_INSERT, gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL));
 	gtk_box_pack_start(GTK_BOX(bbox), image, FALSE, FALSE, 0);
-#endif
 	label = gtk_label_new_with_mnemonic(_("_Insert"));
 	gtk_box_pack_start(GTK_BOX(bbox), label, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(hbox), insert_button, FALSE, FALSE, 0);
