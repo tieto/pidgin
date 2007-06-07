@@ -559,7 +559,7 @@ static gboolean
 help_for_widget_grab_key(GntBindable *bindable, const char *text, gpointer *data)
 {
 
-	GntLabel *label = GNT_LABEL(data);
+	GntTextView *textview= GNT_TEXT_VIEW(data);
 	char *new_text;
 	const char *tmp;
 
@@ -571,12 +571,13 @@ help_for_widget_grab_key(GntBindable *bindable, const char *text, gpointer *data
 		
 		tmp = gnt_key_lookup(text);
 		new_text = g_strdup_printf("KEY: \"%s\"",tmp);
-		gnt_label_set_text(label,new_text);
+		gnt_text_view_clear(textview);
+		gnt_text_view_append_text_with_flags(textview,new_text,GNT_TEXT_FLAG_NORMAL);
+		g_free(new_text);
 
 		g_free(rebind_info.keys);
 		rebind_info.keys = g_strdup(text);
 
-		g_free(new_text);
 
 		return TRUE;
 	}
@@ -594,7 +595,7 @@ help_for_widget_activate(GntBindable *bindable, gpointer widget)
 	const char * widget_name = g_type_name(G_OBJECT_TYPE(widget));
 	char * keys;
 
-	GntWidget *key_label;
+	GntWidget *key_textview;
 	
 	GntWidget *bind_button, *cancel_button;
 	GntWidget *button_box;
@@ -630,12 +631,14 @@ help_for_widget_activate(GntBindable *bindable, gpointer widget)
 	gnt_box_add_widget(GNT_BOX(vbox),label);
 
 	tmp = g_strdup_printf("KEY: \"%s\"",keys);
-	key_label = gnt_label_new(tmp); 
+	key_textview = gnt_text_view_new();
+	gnt_widget_set_size(key_textview,key_textview->priv.x,2);
+	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(key_textview),tmp,GNT_TEXT_FLAG_NORMAL);
 	g_free(tmp);
-	gnt_widget_set_name(key_label,"keystroke");
-	gnt_box_add_widget(GNT_BOX(vbox),key_label);
+	gnt_widget_set_name(key_textview,"keystroke");
+	gnt_box_add_widget(GNT_BOX(vbox),key_textview);
 
-	g_signal_connect(G_OBJECT(win), "key_pressed", G_CALLBACK(help_for_widget_grab_key),key_label);
+	g_signal_connect(G_OBJECT(win), "key_pressed", G_CALLBACK(help_for_widget_grab_key),key_textview);
 
 	button_box = gnt_box_new(FALSE,FALSE);
 	
