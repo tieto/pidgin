@@ -281,7 +281,7 @@ docklet_x11_create(gboolean recreate)
 	 * The x11 docklet tracks whether it successfully embedded in a pref and
 	 * allows for a longer timeout period if it successfully embedded the last
 	 * time it was run. This should hopefully solve problems with the buddy
-	 * list not properly starting hidden when gaim is started on login.
+	 * list not properly starting hidden when Pidgin is started on login.
 	 */
 	if(!recreate) {
 		pidgin_docklet_embedded();
