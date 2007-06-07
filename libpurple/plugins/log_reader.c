@@ -1460,7 +1460,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	read = escaped;
 
 	/* Apply formatting... */
-	formatted = g_string_new("");
+	formatted = g_string_sized_new(strlen(read));
 	c = read;
 	line = read;
 	while (c)
