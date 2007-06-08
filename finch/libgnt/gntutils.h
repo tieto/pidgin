@@ -93,12 +93,16 @@ gboolean gnt_boolean_handled_accumulator(GSignalInvocationHint *ihint, GValue *r
 
 /**
  * Returns a GntTree populated with "key" -> "binding" for the widget.
+ *
+ * 
  */
 /**
  * 
  * @param widget
  *
  * @return
+ *
+ * @deprecated Consider using gnt_bindable_bindings_view instead.
  */
 GntWidget * gnt_widget_bindings_view(GntWidget *widget);
 

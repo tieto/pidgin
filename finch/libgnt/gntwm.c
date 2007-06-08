@@ -83,16 +83,6 @@ static gboolean idle_update;
 
 static gboolean ignore_keys = FALSE;
 
-static struct
-{
-	char * okeys; /* Old keystrokes */
-	char * keys; /* New Keystrokes being bound to the action */
-	GntBindableClass * klass; /* Class of the object that's getting keys rebound */
-	char * name; /* The name of the action */
-	GList * params; /* The list of paramaters */
-	
-} rebind_info = {NULL,NULL,NULL,NULL,NULL};
-
 static GList *
 g_list_bring_to_front(GList *list, gpointer data)
 {
@@ -519,196 +509,7 @@ window_close(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
-static void 
-free_rebind_info()
-{
-	g_free(rebind_info.name);
-	g_free(rebind_info.keys);
-	g_free(rebind_info.okeys);
-}
 
-static gboolean
-help_for_widget_cancel_button_activate(GntBindable *bindable, gpointer data)
-{
-	free_rebind_info();
-	gnt_widget_destroy(GNT_WIDGET(data));
-	return TRUE;
-}
-
-static gboolean
-help_for_widget_bind_button_activate(GntBindable *bindable, gpointer data)
-{
-
-	if(rebind_info.keys){
-		gnt_bindable_register_binding(rebind_info.klass,
-																	NULL,
-																	rebind_info.okeys,
-																	rebind_info.params);
-		gnt_bindable_register_binding(rebind_info.klass,
-																	rebind_info.name,
-																	rebind_info.keys,
-																	rebind_info.params);
-	}
-	free_rebind_info();
-
-	gnt_widget_destroy(GNT_WIDGET(data));
-
-	return TRUE;
-}
-
-static gboolean
-help_for_widget_grab_key(GntBindable *bindable, const char *text, gpointer *data)
-{
-
-	GntTextView *textview= GNT_TEXT_VIEW(data);
-	char *new_text;
-	const char *tmp;
-
-	if(text && *text){
-
-		if(!strcmp(text, GNT_KEY_CTRL_I) || !strcmp(text, GNT_KEY_ENTER)){
-			return FALSE;
-		}
-		
-		tmp = gnt_key_lookup(text);
-		new_text = g_strdup_printf("KEY: \"%s\"",tmp);
-		gnt_text_view_clear(textview);
-		gnt_text_view_append_text_with_flags(textview,new_text,GNT_TEXT_FLAG_NORMAL);
-		g_free(new_text);
-
-		g_free(rebind_info.keys);
-		rebind_info.keys = g_strdup(text);
-
-
-		return TRUE;
-	}
-	return FALSE;
-} 
-static void
-help_for_widget_activate(GntBindable *bindable, gpointer widget)
-{
-				
-	GntTree * tree = GNT_TREE(bindable);
-
-	GntWidget *vbox = gnt_box_new(FALSE,TRUE);
-
-	GntWidget *label;
-	const char * widget_name = g_type_name(G_OBJECT_TYPE(widget));
-	char * keys;
-
-	GntWidget *key_textview;
-	
-	GntWidget *bind_button, *cancel_button;
-	GntWidget *button_box;
-	
-	GntWidget *win = gnt_window_new();
-	GList * current_row_data,*itr;
-	char * tmp;
-
-	rebind_info.klass = GNT_BINDABLE_GET_CLASS(widget);
-
-	current_row_data = gnt_tree_get_selection_text_list(tree);
-	rebind_info.name = g_strdup(g_list_nth_data(current_row_data,1));
-
-	keys = gnt_tree_get_selection_data(tree);
-	rebind_info.okeys = g_strdup(gnt_key_translate(keys));
-
-	rebind_info.params = NULL;
-
-	itr = current_row_data;
-	while(itr){
-		g_free(itr->data);
-		itr = itr->next;
-	}
-	g_list_free(current_row_data);
-
-	gnt_box_set_alignment(GNT_BOX(vbox), GNT_ALIGN_MID);
-
-	gnt_box_set_title(GNT_BOX(win),"Key Capture");
-
-	tmp = g_strdup_printf("Type the new bindings for %s in a %s.",rebind_info.name,widget_name);
-	label = gnt_label_new(tmp);
-	g_free(tmp);
-	gnt_box_add_widget(GNT_BOX(vbox),label);
-
-	tmp = g_strdup_printf("KEY: \"%s\"",keys);
-	key_textview = gnt_text_view_new();
-	gnt_widget_set_size(key_textview,key_textview->priv.x,2);
-	gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(key_textview),tmp,GNT_TEXT_FLAG_NORMAL);
-	g_free(tmp);
-	gnt_widget_set_name(key_textview,"keystroke");
-	gnt_box_add_widget(GNT_BOX(vbox),key_textview);
-
-	g_signal_connect(G_OBJECT(win), "key_pressed", G_CALLBACK(help_for_widget_grab_key),key_textview);
-
-	button_box = gnt_box_new(FALSE,FALSE);
-	
-	bind_button = gnt_button_new("BIND");
-	gnt_widget_set_name(bind_button,"bind");
-	gnt_box_add_widget(GNT_BOX(button_box), bind_button);
-	
-	cancel_button = gnt_button_new("Cancel");
-	gnt_widget_set_name(cancel_button,"cancel");
-	gnt_box_add_widget(GNT_BOX(button_box),cancel_button);
-	
-	g_signal_connect(G_OBJECT(bind_button), "activate", G_CALLBACK(help_for_widget_bind_button_activate),win);
-	g_signal_connect(G_OBJECT(cancel_button), "activate", G_CALLBACK(help_for_widget_cancel_button_activate),win);
-	
-
-	gnt_box_add_widget(GNT_BOX(vbox),button_box);
-
-	gnt_box_add_widget(GNT_BOX(win),vbox);
-	gnt_widget_show(win);
-
-}
-
-static gboolean
-build_help_window(GntWidget *widget){
-
-	GntWidget *tree,*win;
-	char *title;
-
-	tree = gnt_widget_bindings_view(widget);
-	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(help_for_widget_activate), widget);
-
-	win = gnt_window_new();
-	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(widget)));
-	gnt_box_set_title(GNT_BOX(win), title);
-	if (tree)
-		gnt_box_add_widget(GNT_BOX(win), tree);
-	else
-		gnt_box_add_widget(GNT_BOX(win), gnt_label_new("This widget has no customizable bindings."));
-
-	gnt_widget_show(win);
-
-	return TRUE;
-
-}
-
-static gboolean
-help_for_widget(GntBindable *bindable, GList *null)
-{
-	GntWM *wm = GNT_WM(bindable);
-	GntWidget *widget;
-
-	if (!wm->ordered)
-		return TRUE;
-
-	widget = wm->ordered->data;
-	if (!GNT_IS_BOX(widget))
-		return TRUE;
-	
-	return build_help_window(GNT_BOX(widget)->active);
-
-
-}
-
-static gboolean
-help_for_wm(GntBindable *bindable, GList *null){
-
-	return build_help_window(GNT_WIDGET(bindable));
-
-}
 
 static void
 destroy__list(GntWidget *widget, GntWM *wm)
@@ -1230,10 +1031,67 @@ ignore_keys_end(GntBindable *bindable, GList *n){
 	return ignore_keys ? !(ignore_keys = FALSE) : FALSE;
 }
 
+static GntBox *
+check_for_window_exist(GntWM *wm, const char *title)
+{
+	GList *iter;
+	for(iter = wm->list;iter;iter = iter->next){
+		GntBox *box = GNT_BOX(iter->data);
+		if(!strcmp(box->title,title))
+			return box;
+	}
+	return NULL;
+}
+
+static gboolean
+help_for_bindable(GntWM *wm, GntBindable *bindable)
+{
+	GntBox *box;
+	char * title;
+	gboolean ret = TRUE;
+ 
+	title = g_strdup_printf("Bindings for %s",g_type_name(G_OBJECT_TYPE(bindable)));
+
+	if((box = check_for_window_exist(wm,title))){
+		gnt_wm_raise_window(wm,GNT_WIDGET(box));
+	}
+	else{
+		ret =  gnt_bindable_build_help_window(bindable);
+	}
+	g_free(title);
+	return ret;
+
+}
+
+static gboolean
+help_for_wm(GntBindable *bindable, GList *null)
+{
+	return help_for_bindable(GNT_WM(bindable),bindable);
+}
+
+static gboolean
+help_for_widget(GntBindable *bindable, GList *null)
+{
+	GntWM *wm = GNT_WM(bindable);
+	GntWidget *widget;
+
+	if (!wm->ordered)
+		return TRUE;
+
+	widget = wm->ordered->data;
+	if (!GNT_IS_BOX(widget))
+		return TRUE;
+
+	return help_for_bindable(wm,GNT_BINDABLE(GNT_BOX(widget)->active));
+
+}
+
 static void
 gnt_wm_class_init(GntWMClass *klass)
 {
 	int i;
+
+	
 
 	klass->new_window = gnt_wm_new_window_real;
 	klass->decorate_window = NULL;
