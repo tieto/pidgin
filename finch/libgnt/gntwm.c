@@ -1016,7 +1016,8 @@ toggle_clipboard(GntBindable *bindable, GList *n)
 }
 
 static gboolean
-ignore_keys_start(GntBindable *bindable, GList *n){
+ignore_keys_start(GntBindable *bindable, GList *n)
+{
 	GntWM *wm = GNT_WM(bindable);
 
 	if(!wm->menu && !wm->_list.window && wm->mode == GNT_KP_MODE_NORMAL){
@@ -1027,38 +1028,22 @@ ignore_keys_start(GntBindable *bindable, GList *n){
 }
 
 static gboolean
-ignore_keys_end(GntBindable *bindable, GList *n){
-	return ignore_keys ? !(ignore_keys = FALSE) : FALSE;
-}
-
-static GntBox *
-check_for_window_exist(GntWM *wm, const char *title)
+ignore_keys_end(GntBindable *bindable, GList *n)
 {
-	GList *iter;
-	for(iter = wm->list;iter;iter = iter->next){
-		GntBox *box = GNT_BOX(iter->data);
-		if(!strcmp(box->title,title))
-			return box;
-	}
-	return NULL;
+	return ignore_keys ? !(ignore_keys = FALSE) : FALSE;
 }
 
 static gboolean
 help_for_bindable(GntWM *wm, GntBindable *bindable)
 {
-	GntBox *box;
-	char * title;
 	gboolean ret = TRUE;
+	GntBindableClass *klass = GNT_BINDABLE_GET_CLASS(bindable);
  
-	title = g_strdup_printf("Bindings for %s",g_type_name(G_OBJECT_TYPE(bindable)));
-
-	if((box = check_for_window_exist(wm,title))){
-		gnt_wm_raise_window(wm,GNT_WIDGET(box));
-	}
-	else{
+	if (klass->help_window) {
+		gnt_wm_raise_window(wm, GNT_WIDGET(klass->help_window));
+	} else {
 		ret =  gnt_bindable_build_help_window(bindable);
 	}
-	g_free(title);
 	return ret;
 
 }
@@ -1082,7 +1067,7 @@ help_for_widget(GntBindable *bindable, GList *null)
 	if (!GNT_IS_BOX(widget))
 		return TRUE;
 
-	return help_for_bindable(wm,GNT_BINDABLE(GNT_BOX(widget)->active));
+	return help_for_bindable(wm, GNT_BINDABLE(GNT_BOX(widget)->active));
 
 }
 

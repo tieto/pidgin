@@ -65,15 +65,15 @@ static gboolean
 gnt_bindable_rebinding_rebind(GntBindable *bindable, gpointer data)
 {
 
-	if(rebind_info.keys){
+	if(rebind_info.keys) {
 		gnt_bindable_register_binding(rebind_info.klass,
-																	NULL,
-																	rebind_info.okeys,
-																	rebind_info.params);
+				NULL,
+				rebind_info.okeys,
+				rebind_info.params);
 		gnt_bindable_register_binding(rebind_info.klass,
-																	rebind_info.name,
-																	rebind_info.keys,
-																	rebind_info.params);
+				rebind_info.name,
+				rebind_info.keys,
+				rebind_info.params);
 	}
 	gnt_bindable_free_rebind_info();
 
@@ -189,8 +189,8 @@ gnt_bindable_rebinding_activate(GntBindable *data, gpointer bindable)
 }
 
 typedef struct {
-GHashTable *hash;
-GntTree *tree;
+	GHashTable *hash;
+	GntTree *tree;
 } BindingView;
 
 static void
@@ -211,13 +211,10 @@ add_binding(gpointer key, gpointer value, gpointer data)
 static void
 add_action(gpointer key, gpointer value, gpointer data)
 {
-BindingView *bv = data;
-g_hash_table_insert(bv->hash, value, key);
+	BindingView *bv = data;
+	g_hash_table_insert(bv->hash, value, key);
 }
 
-
-
-				
 static void
 gnt_bindable_class_init(GntBindableClass *klass)
 {
@@ -462,6 +459,12 @@ GntBindable * gnt_bindable_bindings_view(GntBindable *bind)
 	return tree;
 }
 
+static void
+reset_binding_window(GntBindableClass *klass)
+{
+	klass->help_window = NULL;
+}
+
 gboolean
 gnt_bindable_build_help_window(GntBindable *bindable)
 {
@@ -471,20 +474,20 @@ gnt_bindable_build_help_window(GntBindable *bindable)
 	char *title;
 
 	tree = GNT_WIDGET(gnt_bindable_bindings_view(bindable));
-	g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(gnt_bindable_rebinding_activate), bindable);
-	
+
 	klass->help_window = GNT_BINDABLE(gnt_window_new());
 	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(bindable)));
 	gnt_box_set_title(GNT_BOX(klass->help_window), title);
-	if (tree)
+	if (tree) {
+		g_signal_connect(G_OBJECT(tree), "activate", G_CALLBACK(gnt_bindable_rebinding_activate), bindable);
 		gnt_box_add_widget(GNT_BOX(klass->help_window), tree);
-	else
+	} else
 		gnt_box_add_widget(GNT_BOX(klass->help_window), gnt_label_new("This widget has no customizable bindings."));
 
+	g_signal_connect(G_OBJECT(klass->help_window), "destroy", G_CALLBACK(reset_binding_window), klass);
 	gnt_widget_show(GNT_WIDGET(klass->help_window));
+	g_free(title);
 
 	return TRUE;
-
 }
-
 
