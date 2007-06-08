@@ -38,7 +38,7 @@ typedef struct _BonjourDnsSd
 	DNSServiceRef advertisement;
 	DNSServiceRef browser;
 
-	int advertisement_fd; /* hack... windows bonjour is broken, so we have to have this */
+	int advertisement_handler; /* hack... windows bonjour is broken, so we have to have this */
 #else /* USE_BONJOUR_HOWL */
 	sw_discovery session;
 	sw_discovery_oid session_id;
