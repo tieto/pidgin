@@ -1024,7 +1024,7 @@ add_proxy_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	if (dialog->proxy_frame != NULL)
 		gtk_widget_destroy(dialog->proxy_frame);
 
-	frame = pidgin_make_frame(parent, _("Pro_xy Options"));
+	frame = pidgin_make_frame(parent, _("Proxy Options"));
 	dialog->proxy_frame = gtk_widget_get_parent(gtk_widget_get_parent(frame));
 
 	gtk_box_reorder_child(GTK_BOX(parent), dialog->proxy_frame, 1);
