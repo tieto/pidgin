@@ -108,6 +108,17 @@ _font_size_purple_to_ichat(int size)
 }
 #endif
 
+static BonjourJabberConversation *
+bonjour_jabber_conv_new(const char *name) {
+
+	BonjourJabberConversation *bconv = g_new0(BonjourJabberConversation, 1);
+	bconv->socket = -1;
+	bconv->buddy_name = g_strdup(name);
+	bconv->watcher_id = -1;
+
+	return bconv;
+}
+
 static const char *
 _font_size_ichat_to_purple(int size)
 {
@@ -357,13 +368,8 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 		char *closed_conv_message;
 
 		/* Close the socket, clear the watcher and free memory */
-		if (bb->conversation != NULL) {
-			close(bb->conversation->socket);
-			purple_input_remove(bb->conversation->watcher_id);
-			g_free(bb->conversation->buddy_name);
-			g_free(bb->conversation);
-			bb->conversation = NULL;
-		}
+		if (bb->conversation != NULL)
+			bonjour_jabber_close_conversation(pb);
 
 		/* Inform the user that the conversation has been closed */
 		conversation = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pb->name, account);
@@ -422,10 +428,8 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	/* Check if the conversation has been previously started */
 	if (bb->conversation == NULL)
 	{
-		bb->conversation = g_new(BonjourJabberConversation, 1);
+		bb->conversation = bonjour_jabber_conv_new(pb->name);
 		bb->conversation->socket = client_socket;
-		bb->conversation->stream_started = FALSE;
-		bb->conversation->buddy_name = g_strdup(pb->name);
 
 		if (bb->conversation->stream_started == FALSE) {
 			char *stream_start = g_strdup_printf(DOCTYPE, purple_account_get_username(pb->account),
@@ -541,10 +545,8 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 		if (socket < 0)
 			return -10001;
 
-		bb->conversation = g_new(BonjourJabberConversation, 1);
+		bb->conversation = bonjour_jabber_conv_new(pb->name);
 		bb->conversation->socket = socket;
-		bb->conversation->stream_started = FALSE;
-		bb->conversation->buddy_name = g_strdup(pb->name);
 		bb->conversation->watcher_id = purple_input_add(bb->conversation->socket,
 				PURPLE_INPUT_READ, _client_socket_handler, pb);
 	}
@@ -593,13 +595,9 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 			purple_conversation_write(conv, NULL,
 						  _("Unable to send the message, the conversation couldn't be started."),
 						  PURPLE_MESSAGE_SYSTEM, time(NULL));
-			close(bb->conversation->socket);
-			purple_input_remove(bb->conversation->watcher_id);
 
-			/* Free all the data related to the conversation */
-			g_free(bb->conversation->buddy_name);
-			g_free(bb->conversation);
-			bb->conversation = NULL;
+			bonjour_jabber_close_conversation(pb);
+
 			g_free(message);
 			g_free(stream_start);
 			return 0;
