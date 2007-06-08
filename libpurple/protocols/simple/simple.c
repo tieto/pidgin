@@ -1243,7 +1243,7 @@ static void process_incoming_subscribe(struct simple_account_data *sip, struct s
 					foundxpidf = TRUE;
 				if(tmp2) {
 					*tmp2 = ',';
-					tmp = tmp2;
+					tmp = tmp2 + 1;
 					while(*tmp == ' ') tmp++;
 				} else
 					tmp = 0;
