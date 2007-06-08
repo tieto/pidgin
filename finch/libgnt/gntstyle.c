@@ -22,10 +22,14 @@
 
 #include "gntstyle.h"
 #include "gntcolors.h"
+#include "gntws.h"
 
 #include <glib.h>
 #include <ctype.h>
+#include <glib/gprintf.h>
 #include <string.h>
+
+#define MAX_WORKSPACES 99
 
 #if GLIB_CHECK_VERSION(2,6,0)
 static GKeyFile *gkfile;
@@ -116,6 +120,45 @@ parse_key(const char *key)
 	return (char *)gnt_key_translate(key);
 }
 
+void gnt_style_read_workspaces(GntWM *wm)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	int i;
+	gchar *name;
+	gsize c;
+
+	for (i = 1; i < MAX_WORKSPACES; ++i) {
+		int j;
+		GntWS *ws;
+		gchar **titles;
+		char *group = calloc(12, 1);
+		g_sprintf(group, "Workspace-%d", i);
+		name = g_key_file_get_value(gkfile, group, "name", NULL);
+		if (!name)
+			return;
+
+		ws = g_object_new(GNT_TYPE_WS, NULL);
+		gnt_ws_set_name(ws, name);
+		gnt_wm_add_workspace(wm, ws);
+		g_free(name);
+
+		titles = g_key_file_get_string_list(gkfile, group, "window-names", &c, NULL);
+		if (titles) {
+			for (j = 0; j < c; ++j)
+				g_hash_table_replace(wm->name_places, g_strdup(titles[j]), ws);
+			g_strfreev(titles);
+		}
+
+		titles = g_key_file_get_string_list(gkfile, group, "window-titles", &c, NULL);
+		if (titles) {
+			for (j = 0; j < c; ++j)
+				g_hash_table_replace(wm->title_places, g_strdup(titles[j]), ws);
+			g_strfreev(titles);
+		}
+		g_free(group);
+	}
+#endif
+}
 void gnt_style_read_actions(GType type, GntBindableClass *klass)
 {
 #if GLIB_CHECK_VERSION(2,6,0)

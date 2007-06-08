@@ -640,9 +640,18 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 	{
 		PurpleBuddy *buddy = (PurpleBuddy *)node;
-		PurpleConversation *conv =  purple_conversation_new(PURPLE_CONV_TYPE_IM,
-					purple_buddy_get_account(buddy),
-					purple_buddy_get_name(buddy));
+		PurpleConversation *conv;
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+					purple_buddy_get_name(buddy),
+					purple_buddy_get_account(buddy));
+		if (!conv) {
+			conv =  purple_conversation_new(PURPLE_CONV_TYPE_IM,
+						purple_buddy_get_account(buddy),
+						purple_buddy_get_name(buddy));
+		} else {
+			FinchConv *ggconv = conv->ui_data;
+			gnt_window_present(ggconv->window);
+		}
 		finch_conversation_set_active(conv);
 	}
 	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
@@ -2307,6 +2316,8 @@ blist_show(PurpleBuddyList *list)
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "gained-focus", G_CALLBACK(draw_tooltip),
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "lost-focus", G_CALLBACK(remove_peripherals),
+				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
+	g_signal_connect_data(G_OBJECT(ggblist->window), "workspace-hidden", G_CALLBACK(remove_peripherals),
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 	g_signal_connect(G_OBJECT(ggblist->tree), "size_changed", G_CALLBACK(size_changed_cb), NULL);
 	g_signal_connect(G_OBJECT(ggblist->window), "position_set", G_CALLBACK(save_position_cb), NULL);

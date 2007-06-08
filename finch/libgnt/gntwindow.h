@@ -95,6 +95,9 @@ GntWidget * gnt_window_box_new(gboolean homo, gboolean vert);
  */
 void gnt_window_set_menu(GntWindow *window, GntMenu *menu);
 
+void gnt_window_workspace_hiding(GntWindow *);
+void gnt_window_workspace_showing(GntWindow *);
+
 G_END_DECLS
 
 #endif /* GNT_WINDOW_H */
