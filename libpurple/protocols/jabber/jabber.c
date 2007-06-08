@@ -1070,8 +1070,10 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			/* lets make sure our buddy icon is up to date
 			 * before we go letting people know we're here */
 			img = purple_buddy_icons_find_account_icon(js->gc->account);
-			jabber_set_buddy_icon(js->gc, img);
-			purple_imgstore_unref(img);
+			if(NULL != img) {
+				jabber_set_buddy_icon(js->gc, img);
+				purple_imgstore_unref(img);
+			}
 
 			/* now we can alert the core that we're ready to send status */
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
