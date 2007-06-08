@@ -27,6 +27,7 @@
 #define _BONJOUR_JABBER_H_
 
 #include "account.h"
+#include "circbuffer.h"
 
 typedef struct _BonjourJabber
 {
@@ -39,8 +40,12 @@ typedef struct _BonjourJabber
 typedef struct _BonjourJabberConversation
 {
 	gint socket;
-	gint watcher_id;
+	guint rx_handler;
+	guint tx_handler;
+	PurpleCircBuffer *tx_buf;
 	gboolean stream_started;
+	PurpleProxyConnectData *connect_data;
+	gpointer stream_data;
 } BonjourJabberConversation;
 
 /**
