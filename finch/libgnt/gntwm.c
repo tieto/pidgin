@@ -186,7 +186,7 @@ update_act_msg()
 		return;
 	for (iter = act; iter; iter = iter->next) {
 		GntWS *ws = iter->data;
-		g_string_sprintfa(text, "%s, ", gnt_ws_get_name(ws));
+		g_string_append_printf(text, "%s, ", gnt_ws_get_name(ws));
 	}
 	g_string_erase(text, text->len - 2, 2);
 	message = gnt_vbox_new(FALSE);
@@ -562,9 +562,6 @@ window_list_activate(GntTree *tree, GntWM *wm)
 	if (GNT_IS_WS(sel)) {
 		gnt_wm_switch_workspace(wm, g_list_index(wm->workspaces, sel));
 	} else {
-		GntNode *node = g_hash_table_lookup(wm->nodes, sel);
-		if (node && node->ws != wm->cws)
-			gnt_wm_switch_workspace(wm, g_list_index(wm->workspaces, node->ws));
 		gnt_wm_raise_window(wm, GNT_WIDGET(sel));
 	}
 }
@@ -1550,8 +1547,6 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 		}
 
 		if (wm->event_stack || node->me == wm->_list.window) {
-			if (wm->cws != ws)
-				gnt_wm_switch_workspace(wm, g_list_index(wm->workspaces, ws));
 			gnt_wm_raise_window(wm, node->me);
 		} else {
 			bottom_panel(node->panel);     /* New windows should not grab focus */
@@ -1928,6 +1923,9 @@ gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntW
 
 void gnt_wm_raise_window(GntWM *wm, GntWidget *widget)
 {
+	GntWS *ws = gnt_wm_widget_find_workspace(wm, widget);
+	if (wm->cws != ws)
+		gnt_wm_switch_workspace(wm, g_list_index(wm->workspaces, ws));
 	g_signal_emit(wm, signals[SIG_GIVE_FOCUS], 0, widget);
 }
 

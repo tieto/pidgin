@@ -484,6 +484,10 @@ void gnt_main()
  * Stuff for 'window management' *
  *********************************/
 
+void gnt_window_present(GntWidget *window) {
+	gnt_wm_raise_window(wm, window);
+}
+
 void gnt_screen_occupy(GntWidget *widget)
 {
 	gnt_wm_new_window(wm, widget);

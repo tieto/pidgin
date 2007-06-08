@@ -43,6 +43,7 @@ void gnt_main(void);
  */
 gboolean gnt_ascii_only(void);
 
+void gnt_window_present(GntWidget *window);
 /**
  * 
  * @param widget
