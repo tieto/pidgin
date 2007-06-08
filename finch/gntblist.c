@@ -640,9 +640,18 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 	{
 		PurpleBuddy *buddy = (PurpleBuddy *)node;
-		PurpleConversation *conv =  purple_conversation_new(PURPLE_CONV_TYPE_IM,
-					purple_buddy_get_account(buddy),
-					purple_buddy_get_name(buddy));
+		PurpleConversation *conv;
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+					purple_buddy_get_name(buddy),
+					purple_buddy_get_account(buddy));
+		if (!conv) {
+			conv =  purple_conversation_new(PURPLE_CONV_TYPE_IM,
+						purple_buddy_get_account(buddy),
+						purple_buddy_get_name(buddy));
+		} else {
+			FinchConv *ggconv = conv->ui_data;
+			gnt_window_present(ggconv->window);
+		}
 		finch_conversation_set_active(conv);
 	}
 	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
