@@ -21,6 +21,7 @@
  */
 
 #include "gnt.h"
+#include "gntwm.h"
 
 typedef enum
 {
@@ -65,6 +66,8 @@ void gnt_styles_get_keyremaps(GType type, GHashTable *hash);
  * @param klass
  */
 void gnt_style_read_actions(GType type, GntBindableClass *klass);
+
+void gnt_style_read_workspaces(GntWM *wm);
 
 /**
  * 

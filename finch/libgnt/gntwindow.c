@@ -27,8 +27,12 @@
 
 enum
 {
-	SIGS = 1,
+	SIG_WORKSPACE_HIDE,
+	SIG_WORKSPACE_SHOW,
+	SIGS,
 };
+
+static guint signals[SIGS] = { 0 };
 
 static GntBoxClass *parent_class = NULL;
 
@@ -63,6 +67,24 @@ gnt_window_class_init(GntWindowClass *klass)
 
 	org_destroy = wid_class->destroy;
 	wid_class->destroy = gnt_window_destroy;
+
+	signals[SIG_WORKSPACE_HIDE] =
+		g_signal_new("workspace-hidden",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 0,
+					 NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
+
+	signals[SIG_WORKSPACE_SHOW] =
+		g_signal_new("workspace-shown",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 0,
+					 NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
 
 	gnt_bindable_class_register_action(bindable, "show-menu", show_menu,
 				GNT_KEY_CTRL_O, NULL);
@@ -129,6 +151,20 @@ GntWidget *gnt_window_box_new(gboolean homo, gboolean vert)
 	box->alignment = vert ? GNT_ALIGN_LEFT : GNT_ALIGN_MID;
 
 	return wid;
+}
+
+void
+gnt_window_workspace_hiding(GntWindow *window)
+{
+	if (window->menu)
+		gnt_widget_hide(GNT_WIDGET(window->menu));
+	g_signal_emit(window, signals[SIG_WORKSPACE_HIDE], 0);
+}
+
+void
+gnt_window_workspace_showing(GntWindow *window)
+{
+	g_signal_emit(window, signals[SIG_WORKSPACE_SHOW], 0);
 }
 
 void gnt_window_set_menu(GntWindow *window, GntMenu *menu)

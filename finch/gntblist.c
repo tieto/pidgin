@@ -2308,6 +2308,8 @@ blist_show(PurpleBuddyList *list)
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "lost-focus", G_CALLBACK(remove_peripherals),
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
+	g_signal_connect_data(G_OBJECT(ggblist->window), "workspace-hidden", G_CALLBACK(remove_peripherals),
+				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 	g_signal_connect(G_OBJECT(ggblist->tree), "size_changed", G_CALLBACK(size_changed_cb), NULL);
 	g_signal_connect(G_OBJECT(ggblist->window), "position_set", G_CALLBACK(save_position_cb), NULL);
 	g_signal_connect(G_OBJECT(ggblist->window), "destroy", G_CALLBACK(reset_blist_window), NULL);
