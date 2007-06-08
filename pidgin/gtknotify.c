@@ -577,10 +577,8 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	char label_text[2048];
 	char *linked_text, *primary_esc, *secondary_esc;
 
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(window), title);
+	window = pidgin_create_window(title, PIDGIN_HIG_BORDER, NULL, TRUE);
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(formatted_close_cb), NULL);
@@ -712,10 +710,8 @@ pidgin_notify_searchresults(PurpleConnection *gc, const char *title,
 	data->results = results;
 
 	/* Create the window */
-	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(window), (title ? title :_("Search Results")));
+	window = pidgin_create_window(title ? title :_("Search Results"), PIDGIN_HIG_BORDER, NULL, TRUE);
 	gtk_window_set_type_hint(GTK_WINDOW(window), GDK_WINDOW_TYPE_HINT_DIALOG);
-	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
 
 	g_signal_connect_swapped(G_OBJECT(window), "delete_event",
 							 G_CALLBACK(searchresults_close_cb), data);

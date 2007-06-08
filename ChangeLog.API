@@ -1,5 +1,72 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+version 2.1.0 (??/??/????):
+	libpurple:
+		Added:
+		* purple-remote: added getstatus command
+		* conversation-extended-menu signal (See Doxygen docs)
+		* OPT_PROTO_SLASH_COMMANDS_NATIVE protocol option to indicate that
+		  slash commands are "native" to the protocol
+		* PURPLE_MESSAGE_NO_LINKIFY message flag to indicate that the message
+		  should not be auto-linkified
+		* PurpleEventLoopUiOps.timeout_add_seconds
+		    UIs can now use better scheduling for whole-second timers.  For
+		    example, clients based on the glib event loop can now use
+		    g_timeout_add_seconds.
+		* gtk_imhtml_setup_entry
+		* pidgin_create_window
+		* purple_blist_node_get_type
+		* purple_conversation_do_command
+		* purple_conversation_get_extended_menu
+		* purple_core_ensure_single_instance
+		    This is for UIs to use to ensure only one copy is running.
+		* purple_dbus_is_owner
+		* purple_dbusify_const_GList
+		* purple_dbusify_const_GSList
+		* purple_const_GList_to_array
+		* purple_const_GSList_to_array
+		* purple_image_data_calculate_filename
+		* pidgin_retrieve_user_info, shows immediate feedback when getting
+		  information about a user.
+		* purple_timeout_add_seconds
+		    Callers should prefer this to purple_timeout_add for timers
+		    longer than 1 second away.  Be aware of the rounding, though.
+		* purple_timeout_add_seconds
+		    Callers should prefer this to purple_timeout_add for timers
+		    longer than 1 second away.  Be aware of the rounding, though.
+		* purple_xfer_get_remote_user
+
+		Changed:
+		* Mark some return types const:
+			* purple_accounts_get_all
+			* purple_connections_get_all
+			* purple_connections_get_connecting
+			* purple_conv_chat_get_ignored
+			* purple_conv_chat_get_users
+			* purple_get_chats
+			* purple_get_conversations
+			* purple_get_ims
+			* purple_notify_user_info_get_entries
+
+		Deprecated:
+		* purple_dbusify_GList:  Use purple_dbusify_const_GList (and
+		  g_list_free if needed) if depending on 2.1.0 is okay.
+		* purple_dbusify_GSList:  Use purple_dbusify_const_GSList (and
+		  g_slist_free if needed) if depending on 2.1.0 is okay..
+		* purple_GList_to_array:  Use purple_const_GList_to_array (and
+		  g_list_free if needed) if depending on 2.1.0 is okay..
+		* purple_GSList_to_array:  Use purple_const_GSList_to_array (and
+		  g_slist_free if needed) if depending on 2.1.0 is okay..
+
+	Pidgin:
+		Changed:
+		* pidgin_append_menu_action returns the menuitem added to the menu.
+		* pidgin_separator returns the separator added to the menu.
+
+	Finch:
+		Added:
+		* finch_retrieve_user_info
+
 version 2.0.2 (6/14/2007):
 	Pidgin:
 		Deprecated:

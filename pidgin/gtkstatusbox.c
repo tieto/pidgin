@@ -1434,7 +1434,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 			}
 		}
 	} else {
-		GList *accounts;
+		const GList *accounts;
 		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			PurpleAccount *account = accounts->data;
 			PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(account));

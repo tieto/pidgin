@@ -72,7 +72,7 @@ purple_connections_disconnect_all()
 void
 purple_connections_get_all()
 PREINIT:
-	GList *l;
+	const GList *l;
 PPCODE:
 	for (l = purple_connections_get_all(); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Connection")));
@@ -81,7 +81,7 @@ PPCODE:
 void
 purple_connections_get_connecting()
 PREINIT:
-	GList *l;
+	const GList *l;
 PPCODE:
 	for (l = purple_connections_get_connecting(); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Connection")));

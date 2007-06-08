@@ -1,6 +1,6 @@
 EXTRA_DIST=genmarshal
 
-SUBDIRS = . wms
+SUBDIRS = . 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gnt.pc
 
@@ -32,6 +32,7 @@ libgnt_la_SOURCES = \
 	gntutils.c \
 	gntwindow.c \
 	gntwm.c \
+	gntws.c \
 	gntmain.c
 
 libgnt_la_headers = \
@@ -58,6 +59,7 @@ libgnt_la_headers = \
 	gntutils.h \
 	gntwindow.h \
 	gntwm.h \
+	gntws.h \
 	gnt.h
 
 CLEANFILES = \

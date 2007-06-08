@@ -886,7 +886,7 @@ void purple_accounts_reorder(PurpleAccount *account, gint new_index);
  *
  * @return A list of all accounts.
  */
-GList *purple_accounts_get_all(void);
+const GList *purple_accounts_get_all(void);
 
 /**
  * Returns a list of all enabled accounts

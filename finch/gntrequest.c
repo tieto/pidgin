@@ -490,7 +490,7 @@ finch_request_fields(const char *title, const char *primary,
 			{
 				gboolean all;
 				PurpleAccount *def;
-				GList *list;
+				const GList *list;
 				GntWidget *combo = gnt_combo_box_new();
 				gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
 				gnt_box_add_widget(GNT_BOX(hbox), combo);

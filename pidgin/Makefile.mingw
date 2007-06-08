@@ -85,6 +85,7 @@ PIDGIN_C_SRC =	\
 			gtkscrollbook.c \
 			gtksound.c \
 			gtksourceiter.c \
+			gtksourceundomanager.c \
 			gtkstatusbox.c \
 			gtkthemes.c \
 			gtkutils.c \
