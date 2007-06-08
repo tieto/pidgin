@@ -280,7 +280,7 @@ _mdns_publish(BonjourDnsSd *data, PublishType type)
 		{
 			/* hack: Bonjour on windows is broken. We don't care about the callback but we have to listen anyway */
 			gint advertisement_fd = DNSServiceRefSockFD(data->advertisement);
-			data->advertisement_fd = purple_input_add(advertisement_fd, PURPLE_INPUT_READ, _mdns_handle_event, data->advertisement);
+			data->advertisement_handler = purple_input_add(advertisement_fd, PURPLE_INPUT_READ, _mdns_handle_event, data->advertisement);
 		}
 	}
 

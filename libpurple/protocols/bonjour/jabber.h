@@ -28,9 +28,6 @@
 
 #include "account.h"
 
-#define STREAM_END "</stream:stream>"
-#define DOCTYPE "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\">"
-
 typedef struct _BonjourJabber
 {
 	gint port;
@@ -43,9 +40,7 @@ typedef struct _BonjourJabberConversation
 {
 	gint socket;
 	gint watcher_id;
-	gchar* buddy_name;
 	gboolean stream_started;
-	gint message_id;
 } BonjourJabberConversation;
 
 /**
@@ -58,7 +53,7 @@ gint bonjour_jabber_start(BonjourJabber *data);
 
 int bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body);
 
-void bonjour_jabber_close_conversation(BonjourJabber *data, PurpleBuddy *gb);
+void bonjour_jabber_close_conversation(BonjourJabberConversation *bconv);
 
 void bonjour_jabber_stop(BonjourJabber *data);
 
