@@ -40,7 +40,6 @@ typedef struct _BonjourJabberConversation
 {
 	gint socket;
 	gint watcher_id;
-	gchar* buddy_name;
 	gboolean stream_started;
 } BonjourJabberConversation;
 
@@ -54,7 +53,7 @@ gint bonjour_jabber_start(BonjourJabber *data);
 
 int bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *body);
 
-void bonjour_jabber_close_conversation(PurpleBuddy *gb);
+void bonjour_jabber_close_conversation(BonjourJabberConversation *bconv);
 
 void bonjour_jabber_stop(BonjourJabber *data);
 

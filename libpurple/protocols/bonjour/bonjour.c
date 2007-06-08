@@ -267,6 +267,7 @@ static void
 bonjour_convo_closed(PurpleConnection *connection, const char *who)
 {
 	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	BonjourBuddy *bb;
 
 	if (buddy == NULL)
 	{
@@ -277,7 +278,9 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 		return;
 	}
 
-	bonjour_jabber_close_conversation(buddy);
+	bb = buddy->proto_data;
+	bonjour_jabber_close_conversation(bb->conversation);
+	bb->conversation = NULL;
 }
 
 static char *
