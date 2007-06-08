@@ -28,9 +28,6 @@
 
 #include "account.h"
 
-#define STREAM_END "</stream:stream>"
-#define DOCTYPE "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n<stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\">"
-
 typedef struct _BonjourJabber
 {
 	gint port;

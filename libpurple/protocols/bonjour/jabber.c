@@ -44,6 +44,11 @@
 #include "bonjour.h"
 #include "buddy.h"
 
+#define STREAM_END "</stream:stream>"
+/* TODO: specify version='1.0' and send stream features */
+#define DOCTYPE "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n" \
+		"<stream:stream xmlns=\"jabber:client\" xmlns:stream=\"http://etherx.jabber.org/streams\" from=\"%s\" to=\"%s\">"
+
 static gint
 _connect_to_buddy(PurpleBuddy *gb)
 {
@@ -211,14 +216,14 @@ _jabber_parse_and_write_message_to_ui(xmlnode *message_node, PurpleConnection *c
 
 struct _check_buddy_by_address_t {
 	const char *address;
-	PurpleBuddy **gb;
+	PurpleBuddy **pb;
 	BonjourJabber *bj;
 };
 
 static void
 _check_buddy_by_address(gpointer key, gpointer value, gpointer data)
 {
-	PurpleBuddy *gb = value;
+	PurpleBuddy *pb = value;
 	BonjourBuddy *bb;
 	struct _check_buddy_by_address_t *cbba = data;
 
@@ -227,11 +232,11 @@ _check_buddy_by_address(gpointer key, gpointer value, gpointer data)
 	 * is the same as the account requesting the check then continue to determine
 	 * whether the buddies IP matches the target IP.
 	 */
-	if (cbba->bj->account == gb->account)
+	if (cbba->bj->account == pb->account)
 	{
-		bb = gb->proto_data;
+		bb = pb->proto_data;
 		if ((bb != NULL) && (g_ascii_strcasecmp(bb->ip, cbba->address) == 0))
-			*(cbba->gb) = gb;
+			*(cbba->pb) = pb;
 	}
 }
 
@@ -291,10 +296,10 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 {
 	char *message = NULL;
 	gint message_length;
-	PurpleBuddy *gb = data;
-	PurpleAccount *account = gb->account;
+	PurpleBuddy *pb = data;
+	PurpleAccount *account = pb->account;
 	PurpleConversation *conversation;
-	BonjourBuddy *bb = gb->proto_data;
+	BonjourBuddy *bb = pb->proto_data;
 	gboolean closed_conversation = FALSE;
 	xmlnode *message_node;
 
@@ -330,11 +335,16 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 		}
 		else
 		{
+			char *stream_start = g_strdup_printf(DOCTYPE, purple_account_get_username(pb->account),
+							     purple_buddy_get_name(pb));
+
 			/* TODO: This needs to be nonblocking! */
-			if (send(bb->conversation->socket, DOCTYPE, strlen(DOCTYPE), 0) == -1)
+			if (send(bb->conversation->socket, stream_start, strlen(stream_start), 0) == -1)
 				purple_debug_error("bonjour", "Unable to start a conversation with %s\n", bb->name);
 			else
 				bb->conversation->stream_started = TRUE;
+
+			g_free(stream_start);
 		}
 	}
 
@@ -356,13 +366,13 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 		}
 
 		/* Inform the user that the conversation has been closed */
-		conversation = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, gb->name, account);
-		closed_conv_message = g_strdup_printf(_("%s has closed the conversation."), gb->name);
+		conversation = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, pb->name, account);
+		closed_conv_message = g_strdup_printf(_("%s has closed the conversation."), pb->name);
 		purple_conversation_write(conversation, NULL, closed_conv_message, PURPLE_MESSAGE_SYSTEM, time(NULL));
 		g_free(closed_conv_message);
 	} else if (message_node != NULL) {
 		/* Parse the message to get the data and send to the ui */
-		_jabber_parse_and_write_message_to_ui(message_node, account->gc, gb);
+		_jabber_parse_and_write_message_to_ui(message_node, account->gc, pb);
 	} else {
 		/* TODO: Deal with receiving only a partial message */
 	}
@@ -375,7 +385,7 @@ _client_socket_handler(gpointer data, gint socket, PurpleInputCondition conditio
 static void
 _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition condition)
 {
-	PurpleBuddy *gb = NULL;
+	PurpleBuddy *pb = NULL;
 	struct sockaddr_in their_addr; /* connector's address information */
 	socklen_t sin_size = sizeof(struct sockaddr);
 	int client_socket;
@@ -397,17 +407,17 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 	address_text = inet_ntoa(their_addr.sin_addr);
 	cbba = g_new0(struct _check_buddy_by_address_t, 1);
 	cbba->address = address_text;
-	cbba->gb = &gb;
+	cbba->pb = &pb;
 	cbba->bj = data;
 	g_hash_table_foreach(bl->buddies, _check_buddy_by_address, cbba);
 	g_free(cbba);
-	if (gb == NULL)
+	if (pb == NULL)
 	{
 		purple_debug_info("bonjour", "We don't like invisible buddies, this is not a superheros comic\n");
 		close(client_socket);
 		return;
 	}
-	bb = gb->proto_data;
+	bb = pb->proto_data;
 
 	/* Check if the conversation has been previously started */
 	if (bb->conversation == NULL)
@@ -415,17 +425,20 @@ _server_socket_handler(gpointer data, int server_socket, PurpleInputCondition co
 		bb->conversation = g_new(BonjourJabberConversation, 1);
 		bb->conversation->socket = client_socket;
 		bb->conversation->stream_started = FALSE;
-		bb->conversation->buddy_name = g_strdup(gb->name);
+		bb->conversation->buddy_name = g_strdup(pb->name);
 
 		if (bb->conversation->stream_started == FALSE) {
+			char *stream_start = g_strdup_printf(DOCTYPE, purple_account_get_username(pb->account),
+							     purple_buddy_get_name(pb));
 			/* Start the stream */
-			send(bb->conversation->socket, DOCTYPE, strlen(DOCTYPE), 0);
+			send(bb->conversation->socket, stream_start, strlen(stream_start), 0);
 			bb->conversation->stream_started = TRUE;
+			g_free(stream_start);
 		}
 
 		/* Open a watcher for the client socket */
 		bb->conversation->watcher_id = purple_input_add(client_socket, PURPLE_INPUT_READ,
-								_client_socket_handler, gb);
+								_client_socket_handler, pb);
 	} else {
 		close(client_socket);
 	}
@@ -567,8 +580,10 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 	/* Check if the stream for the conversation has been started */
 	if (bb->conversation->stream_started == FALSE)
 	{
+		char *stream_start = g_strdup_printf(DOCTYPE, purple_account_get_username(pb->account),
+						     purple_buddy_get_name(pb));
 		/* Start the stream */
-		if (send(bb->conversation->socket, DOCTYPE, strlen(DOCTYPE), 0) == -1)
+		if (send(bb->conversation->socket, stream_start, strlen(stream_start), 0) == -1)
 		{
 			PurpleConversation *conv;
 
@@ -586,9 +601,11 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 			g_free(bb->conversation);
 			bb->conversation = NULL;
 			g_free(message);
+			g_free(stream_start);
 			return 0;
 		}
 
+		g_free(stream_start);
 		bb->conversation->stream_started = TRUE;
 	}
 
