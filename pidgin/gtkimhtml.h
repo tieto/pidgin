@@ -87,6 +87,8 @@ struct _GtkIMHtml {
 	char *protocol_name;
 	guint scroll_src;
 	GTimer *scroll_time;
+	GQueue *animations;
+	int num_animations;
 
 	gboolean show_comments;
 

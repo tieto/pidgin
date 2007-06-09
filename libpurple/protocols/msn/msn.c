@@ -73,6 +73,15 @@ typedef struct
 
 } MsnGetInfoStepTwoData;
 
+typedef struct
+{
+	PurpleConnection *gc;
+	const char *who;
+	char *msg;
+	PurpleMessageFlags flags;
+	time_t when;
+} MsnIMData;
+
 static const char *
 msn_normalize(const PurpleAccount *account, const char *str)
 {
@@ -247,7 +256,9 @@ msn_show_set_friendly_name(PurplePluginAction *action)
 						 "see you as."),
 					   purple_connection_get_display_name(gc), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_act_id),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static void
@@ -262,7 +273,9 @@ msn_show_set_home_phone(PurplePluginAction *action)
 	purple_request_input(gc, NULL, _("Set your home phone number."), NULL,
 					   msn_user_get_home_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_home_phone_cb),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static void
@@ -277,7 +290,9 @@ msn_show_set_work_phone(PurplePluginAction *action)
 	purple_request_input(gc, NULL, _("Set your work phone number."), NULL,
 					   msn_user_get_work_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_work_phone_cb),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static void
@@ -292,7 +307,9 @@ msn_show_set_mobile_phone(PurplePluginAction *action)
 	purple_request_input(gc, NULL, _("Set your mobile phone number."), NULL,
 					   msn_user_get_mobile_phone(session->user), FALSE, FALSE, NULL,
 					   _("OK"), G_CALLBACK(msn_set_mobile_phone_cb),
-					   _("Cancel"), NULL, gc);
+					   _("Cancel"), NULL,
+					   purple_connection_get_account(gc), NULL, NULL,
+					   gc);
 }
 
 static void
@@ -306,7 +323,9 @@ msn_show_set_mobile_pages(PurplePluginAction *action)
 						_("Do you want to allow or disallow people on "
 						  "your buddy list to send you MSN Mobile pages "
 						  "to your cell phone or other mobile device?"),
-						-1, gc, 3,
+						-1, 
+						purple_connection_get_account(gc), NULL, NULL,
+						gc, 3,
 						_("Allow"), G_CALLBACK(enable_msn_pages_cb),
 						_("Disallow"), G_CALLBACK(disable_msn_pages_cb),
 						_("Cancel"), NULL);
@@ -354,7 +373,17 @@ show_send_to_mobile_cb(PurpleBlistNode *node, gpointer ignored)
 					   NULL, TRUE, FALSE, NULL,
 					   _("Page"), G_CALLBACK(send_to_mobile_cb),
 					   _("Close"), G_CALLBACK(close_mobile_page_cb),
+					   purple_connection_get_account(gc), purple_buddy_get_name(buddy), NULL,
 					   data);
+}
+
+static gboolean
+msn_offline_message(const PurpleBuddy *buddy) {
+	MsnUser *user;
+	if (buddy == NULL)
+		return FALSE;
+	user = buddy->proto_data;
+	return user && user->mobile;
 }
 
 static void
@@ -389,33 +418,7 @@ initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 static void
 t_msn_xfer_init(PurpleXfer *xfer)
 {
-	MsnSlpLink *slplink;
-	const char *filename;
-	FILE *fp;
-
-	filename = purple_xfer_get_local_filename(xfer);
-
-	slplink = xfer->data;
-
-	if ((fp = g_fopen(filename, "rb")) == NULL)
-	{
-		PurpleAccount *account;
-		const char *who;
-		char *msg;
-
-		account = slplink->session->account;
-		who = slplink->remote_user;
-
-		msg = g_strdup_printf(_("Error reading %s: \n%s.\n"),
-							  filename, strerror(errno));
-		purple_xfer_error(purple_xfer_get_type(xfer), account, xfer->who, msg);
-		purple_xfer_cancel_local(xfer);
-		g_free(msg);
-
-		return;
-	}
-	fclose(fp);
-
+	MsnSlpLink *slplink = xfer->data;
 	msn_slplink_request_ft(slplink, xfer);
 }
 
@@ -616,7 +619,8 @@ msn_actions(PurplePlugin *plugin, gpointer context)
 	account = purple_connection_get_account(gc);
 	user = msn_normalize(account, purple_account_get_username(account));
 
-	if (strstr(user, "@hotmail.com") != NULL)
+	if ((strstr(user, "@hotmail.") != NULL) ||
+		(strstr(user, "@msn.com") != NULL))
 	{
 		m = g_list_append(m, NULL);
 		act = purple_plugin_action_new(_("Open Hotmail Inbox"),
@@ -733,6 +737,16 @@ msn_close(PurpleConnection *gc)
 	gc->proto_data = NULL;
 }
 
+static gboolean
+msn_send_me_im(gpointer data)
+{
+	MsnIMData *imdata = data;
+	serv_got_im(imdata->gc, imdata->who, imdata->msg, imdata->flags, imdata->when);
+	g_free(imdata->msg);
+	g_free(imdata);
+	return FALSE;
+}
+
 static int
 msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 			PurpleMessageFlags flags)
@@ -785,6 +799,7 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 	{
 		char *body_str, *body_enc, *pre, *post;
 		const char *format;
+		MsnIMData *imdata = g_new0(MsnIMData, 1);
 		/*
 		 * In MSN, you can't send messages to yourself, so
 		 * we'll fake like we received it ;)
@@ -802,8 +817,12 @@ msn_send_im(PurpleConnection *gc, const char *who, const char *message,
 		g_free(post);
 
 		serv_got_typing_stopped(gc, who);
-		serv_got_im(gc, who, body_str, flags, time(NULL));
-		g_free(body_str);
+		imdata->gc = gc;
+		imdata->who = who;
+		imdata->msg = body_str;
+		imdata->flags = flags;
+		imdata->when = time(NULL);
+		g_idle_add(msn_send_me_im, imdata);
 	}
 
 	msn_message_destroy(msg);
@@ -1278,7 +1297,12 @@ msn_convo_closed(PurpleConnection *gc, const char *who)
 
 	conv = swboard->conv;
 
-	msn_switchboard_release(swboard, MSN_SB_FLAG_IM);
+	/* If we release the switchboard here, it may still have messages
+	   pending ACK which would result in incorrect unsent message errors.
+	   Just let it timeout... This is *so* going to screw with people who
+	   use dumb clients that report "User has closed the conversation window" */
+	/* msn_switchboard_release(swboard, MSN_SB_FLAG_IM); */
+	swboard->conv = NULL;
 
 	/* If other switchboards managed to associate themselves with this
 	 * conv, make sure they know it's gone! */
@@ -1290,7 +1314,7 @@ msn_convo_closed(PurpleConnection *gc, const char *who)
 }
 
 static void
-msn_set_buddy_icon(PurpleConnection *gc, const char *filename)
+msn_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	MsnSession *session;
 	MsnUser *user;
@@ -1298,7 +1322,7 @@ msn_set_buddy_icon(PurpleConnection *gc, const char *filename)
 	session = gc->proto_data;
 	user = session->user;
 
-	msn_user_set_buddy_icon(user, filename);
+	msn_user_set_buddy_icon(user, img);
 
 	msn_change_status(session);
 }
@@ -1398,6 +1422,22 @@ static char *msn_info_date_reformat(const char *field, size_t len)
 			"\n" a ":", 0, "\n", 0, "Undisclosed", b, 0, NULL, NULL); \
 	if (found) \
 		sect_info = TRUE;
+
+#define MSN_GOT_INFO_GET_FIELD_NO_SEARCH(a, b) \
+	found = purple_markup_extract_info_field(stripped, stripped_len, user_info, \
+			"\n" a ":", 0, "\n", 0, "Undisclosed", b, 0, NULL, msn_info_strip_search_link); \
+	if (found) \
+		sect_info = TRUE;
+
+static char *
+msn_info_strip_search_link(const char *field, size_t len)
+{
+	const char *c;
+	if ((c = strstr(field, " (http://spaces.live.com/default.aspx?page=searchresults")) == NULL &&
+		(c = strstr(field, " (http://spaces.msn.com/default.aspx?page=searchresults")) == NULL)
+		return g_strndup(field, len);
+	return g_strndup(field, c - field);
+}
 
 static void
 msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
@@ -1514,10 +1554,10 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	
 	/* General */
 	MSN_GOT_INFO_GET_FIELD("Nickname", _("Nickname"));
-	MSN_GOT_INFO_GET_FIELD("Age", _("Age"));
-	MSN_GOT_INFO_GET_FIELD("Gender", _("Gender"));
-	MSN_GOT_INFO_GET_FIELD("Occupation", _("Occupation"));
-	MSN_GOT_INFO_GET_FIELD("Location", _("Location"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Age", _("Age"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Gender", _("Gender"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Occupation", _("Occupation"));
+	MSN_GOT_INFO_GET_FIELD_NO_SEARCH("Location", _("Location"));
 
 	/* Extract their Interests and put it in */
 	found = purple_markup_extract_info_field(stripped, stripped_len, user_info,
@@ -1778,7 +1818,10 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 		/* This doesn't work with the new spaces profiles - Stu 3/2/06
 		char *p = strstr(url_buffer, "Unknown Member </TITLE>");
 		 * This might not work for long either ... */
+		/* Nope, it failed some time before 5/2/07 :(
 		char *p = strstr(url_buffer, "form id=\"SpacesSearch\" name=\"SpacesSearch\"");
+		 * Let's see how long this one holds out for ... */
+		char *p = strstr(url_buffer, "<form id=\"profile_form\" name=\"profile_form\" action=\"http&#58;&#47;&#47;spaces.live.com&#47;profile.aspx&#63;cid&#61;0\"");
 		PurpleBuddy *b = purple_find_buddy
 				(purple_connection_get_account(info_data->gc), info_data->name);
 		purple_notify_user_info_add_pair(user_info, _("Error retrieving profile"),
@@ -1869,7 +1912,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 		{
 			char buf[1024];
 			purple_debug_info("msn", "%s is %d bytes\n", photo_url_text, len);
-			id = purple_imgstore_add(url_text, len, NULL);
+			id = purple_imgstore_add_with_id(g_memdup(url_text, len), len, NULL);
 			g_snprintf(buf, sizeof(buf), "<img id=\"%d\"><br>", id);
 			purple_notify_user_info_prepend_pair(user_info, NULL, buf);
 		}
@@ -1888,7 +1931,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	g_free(photo_url_text);
 	g_free(info2_data);
 	if (id != -1)
-		purple_imgstore_unref(id);
+		purple_imgstore_unref_by_id(id);
 #endif
 }
 
@@ -2054,10 +2097,16 @@ static PurplePluginProtocolInfo prpl_info =
 	msn_can_receive_file,	/* can_receive_file */
 	msn_send_file,			/* send_file */
 	msn_new_xfer,			/* new_xfer */
-	NULL,					/* offline_message */
+	msn_offline_message,			/* offline_message */
 	NULL,					/* whiteboard_prpl_ops */
 	NULL,					/* send_raw */
 	NULL,					/* roomlist_room_serialize */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -2088,7 +2137,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
-	msn_actions
+	msn_actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

@@ -108,7 +108,7 @@ ssl_nss_init_nss(void)
 {
 	char *lib;
 	PR_Init(PR_SYSTEM_THREAD, PR_PRIORITY_NORMAL, 1);
-	NSS_NoDB_Init(NULL);
+	NSS_NoDB_Init(".");
 
 	/* TODO: Fix this so autoconf does the work trying to find this lib. */
 #ifndef _WIN32
@@ -311,8 +311,13 @@ ssl_nss_close(PurpleSslConnection *gsc)
 	if(!nss_data)
 		return;
 
-	if (nss_data->in) PR_Close(nss_data->in);
-	/* if (nss_data->fd) PR_Close(nss_data->fd); */
+	if (nss_data->in) {
+		PR_Close(nss_data->in);
+		gsc->fd = -1;
+	} else if (nss_data->fd) {
+		PR_Close(nss_data->fd);
+		gsc->fd = -1;
+	}
 
 	if (nss_data->handshake_handler)
 		purple_input_remove(nss_data->handshake_handler);
@@ -359,7 +364,13 @@ static PurpleSslOps ssl_ops =
 	ssl_nss_connect,
 	ssl_nss_close,
 	ssl_nss_read,
-	ssl_nss_write
+	ssl_nss_write,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 #endif /* HAVE_NSS */
@@ -422,7 +433,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
-	NULL                                              /**< actions        */
+	NULL,                                             /**< actions        */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

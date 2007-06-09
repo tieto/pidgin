@@ -17,7 +17,7 @@ CFLAGS += -Wno-comment -Wno-unused
 ##
 ## INCLUDE PATHS
 ##
-INCLUDE_PATHS =		-I. \
+INCLUDE_PATHS +=		-I. \
 			-I$(PIDGIN_TREE_TOP) \
 			-I$(PURPLE_TOP) \
 			-I$(GTK_TOP)/include \
@@ -25,7 +25,7 @@ INCLUDE_PATHS =		-I. \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(PERL_LIB_TOP)/CORE
 
-LIB_PATHS = 		-L$(PERL_LIB_TOP) \
+LIB_PATHS += 		-L$(PERL_LIB_TOP) \
 			-L$(PERL_PLUGIN_TOP) \
 			-L$(PURPLE_TOP) \
 			-L$(GTK_TOP)/lib
@@ -66,9 +66,9 @@ XS_FILES =		Account.xs \
 				Status.xs \
 				Stringref.xs \
 				Util.xs \
-				XMLNode.xs \
+				XMLNode.xs
 
-FALLBACKS =	const-c.inc const-xs.inc
+#FALLBACKS =	const-c.inc const-xs.inc
 C_FILES = $(XS_FILES:%.xs=%.c)
 OBJECTS = $(C_FILES:%.c=%.o)
 

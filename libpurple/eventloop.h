@@ -81,6 +81,10 @@ struct _PurpleEventLoopUiOps
 	 */
 	int (*input_get_error)(int fd, int *error);
 
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 /**************************************************************************/

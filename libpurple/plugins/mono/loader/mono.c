@@ -194,7 +194,13 @@ static PurplePluginLoaderInfo loader_info =
 	probe_mono_plugin,
 	load_mono_plugin,
 	unload_mono_plugin,
-	destroy_mono_plugin
+	destroy_mono_plugin,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -219,6 +225,12 @@ static PurplePluginInfo info =
 	plugin_destroy,
 	NULL,
 	&loader_info,
+	NULL,
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
 	NULL,
 	NULL
 };

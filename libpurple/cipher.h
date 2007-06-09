@@ -102,6 +102,11 @@ struct _PurpleCipherOps {
 
 	/** The get key size function */
 	size_t (*get_key_size)(PurpleCipherContext *context);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 #ifdef __cplusplus

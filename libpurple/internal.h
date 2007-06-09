@@ -183,5 +183,22 @@
 #define purple_strlcat(dest, src) g_strlcat(dest, src, sizeof(dest))
 
 #define PURPLE_WEBSITE "http://pidgin.im/"
+#define PURPLE_DEVEL_WEBSITE "http://developer.pidgin.im/"
+
+/* This is for the accounts code to notify the buddy icon code that
+ * it's done loading.  We may want to replace this with a signal. */
+void
+_purple_buddy_icons_account_loaded_cb(void);
+
+/* This is for the buddy list to notify the buddy icon code that
+ * it's done loading.  We may want to replace this with a signal. */
+void
+_purple_buddy_icons_blist_loaded_cb(void);
+
+/* This is for the purple_core_migrate() code to tell the buddy
+ * icon subsystem about the old icons directory so it can
+ * migrate any icons in use. */
+void
+_purple_buddy_icon_set_old_icons_dir(const char *dirname);
 
 #endif /* _PURPLE_INTERNAL_H_ */

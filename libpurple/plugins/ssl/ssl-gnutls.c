@@ -123,6 +123,18 @@ ssl_gnutls_connect(PurpleSslConnection *gsc)
 	gnutls_data->handshake_handler = purple_input_add(gsc->fd,
 		PURPLE_INPUT_READ, ssl_gnutls_handshake_cb, gsc);
 
+	/* Orborde asks: Why are we configuring a callback, then
+	   immediately calling it?
+
+	   Answer: gnutls_handshake (up in handshake_cb) needs to be called
+	   once in order to get the ball rolling on the SSL connection.
+	   Once it has done so, only then will the server reply, triggering
+	   the callback.
+
+	   Since the logic driving gnutls_handshake is the same with the first
+	   and subsequent calls, we'll just fire the callback immediately to
+	   accomplish this.
+	*/
 	ssl_gnutls_handshake_cb(gsc, gsc->fd, PURPLE_INPUT_READ);
 }
 
@@ -208,7 +220,13 @@ static PurpleSslOps ssl_ops =
 	ssl_gnutls_connect,
 	ssl_gnutls_close,
 	ssl_gnutls_read,
-	ssl_gnutls_write
+	ssl_gnutls_write,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 #endif /* HAVE_GNUTLS */
@@ -270,7 +288,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
-	NULL                                              /**< actions        */
+	NULL,                                             /**< actions        */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

@@ -98,7 +98,7 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	int ret = 0;
 	aim_rxcallback_t userfunc;
 	struct aim_emailinfo *new;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	guint8 *cookie8, *cookie16;
 	int tmp, havenewmail = 0; /* Used to tell the client we have _new_ mail */
 
@@ -111,10 +111,10 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	for (new = od->emailinfo; (new && memcmp(cookie16, new->cookie16, 16)); new = new->next);
 	if (new) {
 		/* Free some of the old info, if it exists */
-		free(new->cookie8);
-		free(new->cookie16);
-		free(new->url);
-		free(new->domain);
+		g_free(new->cookie8);
+		g_free(new->cookie16);
+		g_free(new->url);
+		g_free(new->domain);
 	} else {
 		/* We don't already have info, so create a new struct for it */
 		new = g_new0(struct aim_emailinfo, 1);
@@ -152,10 +152,10 @@ parseinfo(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fra
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, new, havenewmail, alertitle, (alerturl ? alerturl + 2 : NULL));
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
-	free(alertitle);
-	free(alerturl);
+	g_free(alertitle);
+	g_free(alerturl);
 
 	return ret;
 }
@@ -210,11 +210,11 @@ email_shutdown(OscarData *od, aim_module_t *mod)
 	{
 		struct aim_emailinfo *tmp = od->emailinfo;
 		od->emailinfo = od->emailinfo->next;
-		free(tmp->cookie16);
-		free(tmp->cookie8);
-		free(tmp->url);
-		free(tmp->domain);
-		free(tmp);
+		g_free(tmp->cookie16);
+		g_free(tmp->cookie8);
+		g_free(tmp->url);
+		g_free(tmp->domain);
+		g_free(tmp);
 	}
 
 	return;

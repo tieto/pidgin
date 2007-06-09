@@ -119,7 +119,11 @@ static PurpleEventLoopUiOps eventloop_ops =
 	g_source_remove,
 	pidgin_input_add,
 	g_source_remove,
-	NULL /* input_get_error */
+	NULL, /* input_get_error */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleEventLoopUiOps *

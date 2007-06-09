@@ -1,6 +1,12 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.0.0:
+version 2.0.2 (6/14/2007):
+	Pidgin:
+		Deprecated:
+		* pidgin_dialogs_alias_contact:  This will be removed in 3.0.0
+		  unless there is sufficient demand to keep it.
+
+version 2.0.0 (5/3/2007):
 	Please note all functions, defines, and data structures have been
 	re-namespaced to match the new names of Pidgin, Finch, and libpurple.
 	All gaim_gtk_* functions are now pidgin_*, former libgaim functions are
@@ -164,6 +170,23 @@ version 2.0.0:
 	* gaim_gtk_buddy_icon_get_scale_size() was changed to accept an
 	  additional parameter which is used to determine what kind of
 	  scaling should be done, if any.
+	* purple_request_input(), purple_request_choice(),
+	  purple_request_choice_varg(), purple_request_action(),
+	  purple_request_action_varg(), purple_request_fields(),
+	  purple_request_yes_no(), purple_request_ok_cancel(),
+	  purple_request_accept_cancel(), purple_request_file(), and
+	  purple_request_folder() was changed to accept account, who, and
+	  conversation parameters for associating the request with an account, a
+	  buddy, or a conversation.
+	* Significant changes to the buddy icon and imgstore APIs.  If you
+	  were using any of it, it's best to look at the header files or
+	  Doxygen documentation, but here are some significant changes:
+	    purple_buddy_icon_new() now takes ownership of ("frees") icon_data
+	    purple_buddy_icon_set_data(): likewise for data
+	    purple_buddy_icon_set_for_user(): likewise for data
+	    purple_buddy_icon_set_for_user() now takes a checksum parameter
+	    purple_imgstore_add() was renamed to purple_imgstore_add_with_id()
+	      which takes ownership of data
 
 	Removed:
 	* gaim_gtk_sound_{get,set}_mute() (replaced by the /gaim/gtk/sound/mute
@@ -373,6 +396,7 @@ version 2.0.0:
 	* GtkGaimScrollBook and its functions.
 	* purple_markup_unescape_entity()
 	* purple_markup_get_css_property()
+	* purple_group_get_name()
 
 	Signals - Changed:  (See the Doxygen docs for details on all signals.)
 	* Signal propagation now stops after a handler returns a non-NULL value.

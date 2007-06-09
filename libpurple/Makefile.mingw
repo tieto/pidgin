@@ -13,7 +13,7 @@ NEEDED_DLLS = $(LIBXML2_TOP)/bin/libxml2.dll
 ##
 ## INCLUDE PATHS
 ##
-INCLUDE_PATHS =	\
+INCLUDE_PATHS +=	\
 			-I$(PURPLE_TOP) \
 			-I$(PURPLE_TOP)/win32 \
 			-I$(PIDGIN_TREE_TOP) \
@@ -22,7 +22,7 @@ INCLUDE_PATHS =	\
 			-I$(GTK_TOP)/lib/glib-2.0/include \
 			-I$(LIBXML2_TOP)/include
 
-LIB_PATHS =		-L$(GTK_TOP)/lib \
+LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(LIBXML2_TOP)/lib
 
 ##
@@ -117,17 +117,17 @@ install: install_shallow all
 	sed -e 's/@PURPLE_VERSION@/$(PURPLE_VERSION)/g' \
 	    $@.in > $@
 
-$(OBJECTS): $(PURPLE_CONFIG_H)
+$(OBJECTS): $(PURPLE_CONFIG_H) $(PURPLE_VERSION_H)
 
 $(TARGET).dll $(TARGET).dll.a: $(OBJECTS)
-	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
+	$(CC) -shared $(OBJECTS) $(LIB_PATHS) $(LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(TARGET).def,--out-implib,$(TARGET).dll.a -o $(TARGET).dll
 
 ##
 ## CLEAN RULES
 ##
 clean:
 	rm -f $(OBJECTS) $(RC_SRC)
-	rm -f $(TARGET).dll $(TARGET).dll.a
+	rm -f $(TARGET).dll $(TARGET).dll.a $(PURPLE_VERSION_H)
 	$(MAKE) -C $(PURPLE_PROTOS_TOP) -f $(MINGW_MAKEFILE) clean
 	$(MAKE) -C $(PURPLE_PLUGINS_TOP) -f $(MINGW_MAKEFILE) clean
 

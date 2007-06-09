@@ -33,7 +33,7 @@ INCLUDE_PATHS +=	\
 			-I$(PIDGIN_TOP) \
 			-I$(PIDGIN_TOP)/win32
 
-LIB_PATHS =		-L$(GTK_TOP)/lib \
+LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
 			-L$(PIDGIN_TOP)
 
@@ -58,13 +58,13 @@ LIBS =			-lgtk-win32-2.0 \
 .PHONY: all clean plugins install
 
 all: plugins
-#	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE)
+	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE)
 	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE)
 
 install: all $(PIDGIN_INSTALL_PLUGINS_DIR)
-#	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE) install
+	$(MAKE) -C $(GTKPERL_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(TICKER_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(TRANSPARENCY_PLUGIN) -f $(MINGW_MAKEFILE) install
 	$(MAKE) -C $(WINPREFS_PLUGIN) -f $(MINGW_MAKEFILE) install

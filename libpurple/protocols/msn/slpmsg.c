@@ -65,7 +65,11 @@ msn_slpmsg_destroy(MsnSlpMessage *slpmsg)
 	if (slpmsg->fp != NULL)
 		fclose(slpmsg->fp);
 
-	if (slpmsg->buffer != NULL)
+	purple_imgstore_unref(slpmsg->img);
+
+	/* We don't want to free the data of the PurpleStoredImage,
+	 * but to avoid code duplication, it's sharing buffer. */
+	if (slpmsg->img == NULL)
 		g_free(slpmsg->buffer);
 
 #ifdef MSN_DEBUG_SLP
@@ -101,6 +105,11 @@ void
 msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 						 long long size)
 {
+	/* We can only have one data source at a time. */
+	g_return_if_fail(slpmsg->buffer == NULL);
+	g_return_if_fail(slpmsg->img == NULL);
+	g_return_if_fail(slpmsg->fp == NULL);
+
 	if (body != NULL)
 		slpmsg->buffer = g_memdup(body, size);
 	else
@@ -110,9 +119,27 @@ msn_slpmsg_set_body(MsnSlpMessage *slpmsg, const char *body,
 }
 
 void
+msn_slpmsg_set_image(MsnSlpMessage *slpmsg, PurpleStoredImage *img)
+{
+	/* We can only have one data source at a time. */
+	g_return_if_fail(slpmsg->buffer == NULL);
+	g_return_if_fail(slpmsg->img == NULL);
+	g_return_if_fail(slpmsg->fp == NULL);
+
+	slpmsg->img = purple_imgstore_ref(img);
+	slpmsg->buffer = (guchar *)purple_imgstore_get_data(img);
+	slpmsg->size = purple_imgstore_get_size(img);
+}
+
+void
 msn_slpmsg_open_file(MsnSlpMessage *slpmsg, const char *file_name)
 {
 	struct stat st;
+
+	/* We can only have one data source at a time. */
+	g_return_if_fail(slpmsg->buffer == NULL);
+	g_return_if_fail(slpmsg->img == NULL);
+	g_return_if_fail(slpmsg->fp == NULL);
 
 	slpmsg->fp = g_fopen(file_name, "rb");
 

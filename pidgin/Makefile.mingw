@@ -31,7 +31,7 @@ PURPLE_INCLUDE_PATHS =	\
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include
 
-INCLUDE_PATHS =	\
+INCLUDE_PATHS +=	\
 			$(PURPLE_INCLUDE_PATHS) \
 			-I$(PIDGIN_IDLETRACK_TOP) \
 			-I$(PIDGIN_TOP) \
@@ -44,7 +44,7 @@ INCLUDE_PATHS =	\
 			-I$(GTKSPELL_TOP) \
 			-I$(ASPELL_TOP)/include
 
-LIB_PATHS =		-L$(GTK_TOP)/lib \
+LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP) \
 			-L$(PIDGIN_TOP) \
 			-L$(PIDGIN_IDLETRACK_TOP) \
@@ -106,26 +106,22 @@ EXE_OBJECTS = $(EXE_C_SRC:%.c=%.o) $(EXE_RC_SRC:%.rc=%.o)
 ##
 ## LIBRARIES
 ##
-LIBPURPLES =	\
-		-lpurple \
-		-lglib-2.0 \
-		-lgthread-2.0 \
-		-lgobject-2.0 \
-		-lgmodule-2.0 \
-		-lintl \
-		-lws2_32 \
-		-lwinmm \
-		-lz
 
-GTKPURPLES =	\
-		$(LIBPURPLES) \
+PIDGIN_LIBS =	\
+		-lintl \
+		-lglib-2.0 \
+		-lgobject-2.0 \
+		-lgthread-2.0 \
+		-lpurple \
+		-lz \
 		-lidletrack \
 		-lgtk-win32-2.0 \
 		-latk-1.0 \
 		-lpango-1.0 \
 		-lgdk-win32-2.0 \
 		-lgdk_pixbuf-2.0 \
-		-lgdi32
+		-lgdi32 \
+		-lwinmm
 
 include $(PIDGIN_COMMON_RULES)
 
@@ -159,7 +155,7 @@ win32/pidgin_dll_rc.rc: win32/pidgin_dll_rc.rc.in $(PIDGIN_TREE_TOP)/VERSION
 $(EXE_OBJECTS) $(PIDGIN_OBJECTS): $(PIDGIN_CONFIG_H)
 
 $(PIDGIN_TARGET).dll $(PIDGIN_TARGET).dll.a: $(PURPLE_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(PIDGIN_OBJECTS)
-	$(CC) -shared $(PIDGIN_OBJECTS) $(LIB_PATHS) $(GTKPURPLES) $(DLL_LD_FLAGS) -Wl,--out-implib,$(PIDGIN_TARGET).dll.a -o $(PIDGIN_TARGET).dll
+	$(CC) -shared $(PIDGIN_OBJECTS) $(LIB_PATHS) $(PIDGIN_LIBS) $(DLL_LD_FLAGS) -Wl,--output-def,$(PIDGIN_TARGET).def,--out-implib,$(PIDGIN_TARGET).dll.a -o $(PIDGIN_TARGET).dll
 
 $(EXE_TARGET).exe: $(PIDGIN_CONFIG_H) $(PIDGIN_DLL).a $(PIDGIN_IDLETRACK_DLL).a $(EXE_OBJECTS)
 	$(CC) $(LDFLAGS) $(EXE_OBJECTS) -o $(EXE_TARGET).exe

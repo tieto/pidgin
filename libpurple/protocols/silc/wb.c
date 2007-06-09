@@ -263,7 +263,7 @@ silcpurple_wb_request(SilcClient client, const unsigned char *message,
 	SilcPurple sg;
 
 	gc = client->application;
-        sg = gc->proto_data;
+	sg = gc->proto_data;
 
 	/* Open whiteboard automatically if requested */
 	if (purple_account_get_bool(sg->account, "open-wb", FALSE)) {
@@ -299,7 +299,8 @@ silcpurple_wb_request(SilcClient client, const unsigned char *message,
 	req->channel = channel;
 	req->sg = sg;
 
-	purple_request_action(gc, _("Whiteboard"), tmp, NULL, 1, req, 2,
+	purple_request_action(gc, _("Whiteboard"), tmp, NULL, 1,
+				sg->account, sender->nickname, NULL, req, 2,
 			    _("Yes"), G_CALLBACK(silcpurple_wb_request_cb),
 			    _("No"), G_CALLBACK(silcpurple_wb_request_cb));
 }
@@ -433,7 +434,7 @@ void silcpurple_wb_end(PurpleWhiteboard *wb)
 	wb->proto_data = NULL;
 }
 
-void silcpurple_wb_get_dimensions(PurpleWhiteboard *wb, int *width, int *height)
+void silcpurple_wb_get_dimensions(const PurpleWhiteboard *wb, int *width, int *height)
 {
 	SilcPurpleWb wbs = wb->proto_data;
 	*width = wbs->width;
@@ -452,7 +453,7 @@ void silcpurple_wb_set_dimensions(PurpleWhiteboard *wb, int width, int height)
 	purple_whiteboard_set_dimensions(wb, wbs->width, wbs->height);
 }
 
-void silcpurple_wb_get_brush(PurpleWhiteboard *wb, int *size, int *color)
+void silcpurple_wb_get_brush(const PurpleWhiteboard *wb, int *size, int *color)
 {
 	SilcPurpleWb wbs = wb->proto_data;
 	*size = wbs->brush_size;

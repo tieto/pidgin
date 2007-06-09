@@ -45,15 +45,12 @@ static const char *color_names[] = {
 static GtkWidget *color_widgets[G_N_ELEMENTS(color_prefs)];
 
 static const char *widget_size_prefs[] = {
-	"/plugins/gtk/purplerc/size/GtkTreeView::expander_size",
 	"/plugins/gtk/purplerc/size/GtkTreeView::horizontal_separator"
 };
 static const char *widget_size_prefs_set[] = {
-	"/plugins/gtk/purplerc/set/size/GtkTreeView::expander_size",
 	"/plugins/gtk/purplerc/set/size/GtkTreeView::horizontal_separator"
 };
 static const char *widget_size_names[] = {
-	N_("GtkTreeView Expander Size"),
 	N_("GtkTreeView Horizontal Separation")
 };
 static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
@@ -61,16 +58,16 @@ static GtkWidget *widget_size_widgets[G_N_ELEMENTS(widget_size_prefs)];
 static const char *font_prefs[] = {
 	"/plugins/gtk/purplerc/font/*pidgin_conv_entry",
 	"/plugins/gtk/purplerc/font/*pidgin_conv_imhtml",
-	"/plugins/gtk/purplerc/font/*pidginlog_imhtml",
-	"/plugins/gtk/purplerc/font/*pidginrequest_imhtml",
-	"/plugins/gtk/purplerc/font/*pidginnotify_imhtml",
+	"/plugins/gtk/purplerc/font/*pidgin_log_imhtml",
+	"/plugins/gtk/purplerc/font/*pidgin_request_imhtml",
+	"/plugins/gtk/purplerc/font/*pidgin_notify_imhtml",
 };
 static const char *font_prefs_set[] = {
 	"/plugins/gtk/purplerc/set/font/*pidgin_conv_entry",
 	"/plugins/gtk/purplerc/set/font/*pidgin_conv_imhtml",
-	"/plugins/gtk/purplerc/set/font/*pidginlog_imhtml",
-	"/plugins/gtk/purplerc/set/font/*pidginrequest_imhtml",
-	"/plugins/gtk/purplerc/set/font/*pidginnotify_imhtml",
+	"/plugins/gtk/purplerc/set/font/*pidgin_log_imhtml",
+	"/plugins/gtk/purplerc/set/font/*pidgin_request_imhtml",
+	"/plugins/gtk/purplerc/set/font/*pidgin_notify_imhtml",
 };
 static const char *font_names[] = {
 	N_("Conversation Entry"),
@@ -81,16 +78,15 @@ static const char *font_names[] = {
 };
 static GtkWidget *font_widgets[G_N_ELEMENTS(font_prefs)];
 
+/*
 static const char *widget_bool_prefs[] = {
-	"/plugins/gtk/purplerc/bool/GtkTreeView::indent_expanders",
 };
 static const char *widget_bool_prefs_set[] = {
-	"/plugins/gtk/purplerc/set/bool/GtkTreeView::indent_expanders",
 };
 static const char *widget_bool_names[] = {
-	N_("GtkTreeView Indent Expanders"),
 };
 static GtkWidget *widget_bool_widgets[G_N_ELEMENTS(widget_bool_prefs)];
+*/
 
 static void
 purplerc_make_changes()
@@ -143,6 +139,7 @@ purplerc_make_changes()
 		}
 	}
 
+	/*
 	for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
 		if (purple_prefs_get_bool(widget_bool_prefs_set[i])) {
 			prefbase = g_path_get_basename(widget_bool_prefs[i]);
@@ -152,6 +149,7 @@ purplerc_make_changes()
 			g_free(prefbase);
 		}
 	}
+	*/
 
 	g_string_append(style_string, "}");
 	g_string_append(style_string, "widget_class \"*\" style \"purplerc_style\"\n");
@@ -167,7 +165,7 @@ purplerc_make_changes()
 				g_string_append_printf(style_string,
 				                       "style \"%s_style\"\n"
 				                       "{font_name = \"%s\"}\n"
-				                       "widget \"%s\""
+				                       "widget \"%s\" "
 				                       "style \"%s_style\"\n",
 				                       prefbase, pref,
 				                       prefbase, prefbase);
@@ -236,6 +234,7 @@ purplerc_write(GtkWidget *widget, gpointer data)
 		}
 	}
 
+	/*
 	for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
 		if (purple_prefs_get_bool(widget_bool_prefs_set[i])) {
 			prefbase = g_path_get_basename(widget_bool_prefs[i]);
@@ -245,6 +244,7 @@ purplerc_write(GtkWidget *widget, gpointer data)
 			g_free(prefbase);
 		}
 	}
+	*/
 
 	g_string_append(style_string, "}");
 	g_string_append(style_string, "widget_class \"*\" style \"purplerc_style\"\n");
@@ -260,7 +260,7 @@ purplerc_write(GtkWidget *widget, gpointer data)
 				g_string_append_printf(style_string,
 				                       "style \"%s_style\"\n"
 				                       "{font_name = \"%s\"}\n"
-				                       "widget \"%s\""
+				                       "widget \"%s\" "
 				                       "style \"%s_style\"\n",
 				                       prefbase, pref,
 				                       prefbase, prefbase);
@@ -486,6 +486,7 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 	g_signal_connect(G_OBJECT(check), "toggled",
 	                 G_CALLBACK(pidgin_toggle_sensitive), widget);
 
+	/*
 	for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 		gtk_box_pack_start(GTK_BOX(frame), hbox, FALSE, FALSE, 0);
@@ -495,15 +496,16 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 		gtk_size_group_add_widget(labelsg, check);
 
 		widget_bool_widgets[i] = pidgin_prefs_checkbox("", widget_bool_prefs[i], hbox);
-		/*
+		*
 		gtk_size_group_add_widget(widgetsb, widget_bool_widgets[i]);
-		*/
+		*
 		gtk_widget_set_sensitive(widget_bool_widgets[i],
 		                         purple_prefs_get_bool(widget_bool_prefs_set[i]));
 		g_signal_connect(G_OBJECT(check), "toggled",
 		                 G_CALLBACK(pidgin_toggle_sensitive),
 		                 widget_bool_widgets[i]);
 	}
+	*/
 
 	frame = pidgin_make_frame(ret, _("Interface colors"));
 	/* imhtml stuff */
@@ -599,7 +601,13 @@ purplerc_get_config_frame(PurplePlugin *plugin)
 static PidginPluginUiInfo purplerc_ui_info =
 {
 	purplerc_get_config_frame,
-	0 /* page_num (Reserved) */
+	0, /* page_num (Reserved) */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo purplerc_info =
@@ -623,6 +631,12 @@ static PurplePluginInfo purplerc_info =
 	purplerc_plugin_unload,
 	NULL,
 	&purplerc_ui_info,
+	NULL,
+	NULL,
+	NULL,
+
+	/* padding */
+	NULL,
 	NULL,
 	NULL,
 	NULL
@@ -665,12 +679,14 @@ purplerc_init(PurplePlugin *plugin)
 		purple_prefs_add_bool(font_prefs_set[i], FALSE);
 	}
 
+	/*
 	purple_prefs_add_none("/plugins/gtk/purplerc/bool");
 	purple_prefs_add_none("/plugins/gtk/purplerc/set/bool");
 	for (i = 0; i < G_N_ELEMENTS(widget_bool_prefs); i++) {
 		purple_prefs_add_bool(widget_bool_prefs[i], TRUE);
 		purple_prefs_add_bool(widget_bool_prefs_set[i], FALSE);
 	}
+	*/
 }
 
 PURPLE_INIT_PLUGIN(purplerc, purplerc_init, purplerc_info)

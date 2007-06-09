@@ -159,7 +159,7 @@ nexus_login_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 	g_return_if_fail(session != NULL);
 
 	if (nexus->input_handler == 0)
-		//TODO: Use purple_ssl_input_add()?
+		/* TODO: Use purple_ssl_input_add()? */
 		nexus->input_handler = purple_input_add(nexus->gsc->fd,
 			PURPLE_INPUT_READ, nexus_login_written_cb, nexus);
 
@@ -247,6 +247,8 @@ nexus_login_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 				temp = g_strndup(error, c - error);
 				error = purple_url_decode(temp);
 				g_free(temp);
+				if ((temp = strstr(error, " Do one of the following or try again:")) != NULL)
+					*temp = '\0';
 			}
 		}
 
@@ -402,7 +404,7 @@ nexus_connect_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 	char *base, *c;
 
 	if (nexus->input_handler == 0)
-		//TODO: Use purple_ssl_input_add()?
+		/* TODO: Use purple_ssl_input_add()? */
 		nexus->input_handler = purple_input_add(nexus->gsc->fd,
 			PURPLE_INPUT_READ, nexus_connect_written_cb, nexus);
 

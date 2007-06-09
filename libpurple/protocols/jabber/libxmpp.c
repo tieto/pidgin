@@ -108,6 +108,12 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* whiteboard_prpl_ops */
 	jabber_prpl_send_raw,			/* send_raw */
 	jabber_roomlist_room_serialize, /* roomlist_room_serialize */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static gboolean load_plugin(PurplePlugin *plugin)
@@ -157,9 +163,9 @@ static PurplePluginInfo info =
 	"XMPP",                                           /**< name           */
 	VERSION,                                          /**< version        */
 	                                                  /**  summary        */
-	N_("Jabber Protocol Plugin"),
+	N_("XMPP Protocol Plugin"),
 	                                                  /**  description    */
-	N_("Jabber Protocol Plugin"),
+	N_("XMPP Protocol Plugin"),
 	NULL,                                             /**< author         */
 	PURPLE_WEBSITE,                                     /**< homepage       */
 
@@ -170,7 +176,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
-	jabber_actions
+	jabber_actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void
@@ -179,7 +191,8 @@ init_plugin(PurplePlugin *plugin)
         PurpleAccountUserSplit *split;
         PurpleAccountOption *option;
 
-        split = purple_account_user_split_new(_("Server"), "jabber.org", '@');
+	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
+        split = purple_account_user_split_new(_("Domain"), NULL, '@');
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
         split = purple_account_user_split_new(_("Resource"), "Home", '/');

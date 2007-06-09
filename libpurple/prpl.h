@@ -54,11 +54,14 @@ typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
  */
 #define NO_BUDDY_ICONS {NULL, 0, 0, 0, 0, 0, 0}
 
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 #include "blist.h"
 #include "conversation.h"
 #include "ft.h"
+#include "imgstore.h"
 #include "notify.h"
 #include "proxy.h"
 #include "plugin.h"
@@ -98,7 +101,7 @@ typedef enum
 	/**
 	 * Use a unique name, not an alias, for chat rooms.
 	 *
-	 * Jabber lets you choose what name you want for chat.
+	 * XMPP lets you choose what name you want for chat.
 	 * So it shouldn't be pulling the alias for when you're in chat;
 	 * it gets annoying.
 	 */
@@ -107,7 +110,7 @@ typedef enum
 	/**
 	 * Chat rooms have topics.
 	 *
-	 * IRC and Jabber support this.
+	 * IRC and XMPP support this.
 	 */
 	OPT_PROTO_CHAT_TOPIC = 0x00000008,
 
@@ -144,7 +147,7 @@ typedef enum
 	/**
 	 * Allows font size to be specified in sane point size
 	 *
-	 * Probably just Jabber and Y!M
+	 * Probably just XMPP and Y!M
 	 */
 	OPT_PROTO_USE_POINTSIZE = 0x00000100,
 
@@ -175,8 +178,11 @@ struct _PurplePluginProtocolInfo
 
 	/**
 	 * Returns the base icon name for the given buddy and account.
-	 * If buddy is NULL, it will return the name to use for the account's
-	 * icon.  This must be implemented.
+	 * If buddy is NULL and the account is non-NULL, it will return the 
+	 * name to use for the account's icon. If both are NULL, it will
+	 * return the name to use for the protocol's icon.
+	 *
+	 * This must be implemented.
 	 */
 	const char *(*list_icon)(PurpleAccount *account, PurpleBuddy *buddy);
 
@@ -281,7 +287,9 @@ struct _PurplePluginProtocolInfo
 
 	const char *(*normalize)(const PurpleAccount *, const char *);
 
-	void (*set_buddy_icon)(PurpleConnection *, const char *cached_path);
+	/* The prpl does NOT own a reference to img.  If it needs one, it
+	 * must purple_imgstore_ref(img) itself. */
+	void (*set_buddy_icon)(PurpleConnection *, PurpleStoredImage *img);
 
 	void (*remove_group)(PurpleConnection *gc, PurpleGroup *group);
 
@@ -309,6 +317,11 @@ struct _PurplePluginProtocolInfo
 
 	/* room list serialize */
 	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 #define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \

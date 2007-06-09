@@ -42,8 +42,10 @@
 #include <gdk/gdkkeysyms.h>
 
 #include "account.h"
+#include "buddyicon.h"
 #include "core.h"
 #include "internal.h"
+#include "imgstore.h"
 #include "network.h"
 #include "savedstatuses.h"
 #include "status.h"
@@ -106,12 +108,22 @@ enum {
 	/** A plain-English description of this item */
 	DESC_COLUMN,
 
-	/*
+	/**
 	 * This value depends on TYPE_COLUMN.  For POPULAR types,
 	 * this is the creation time.  For PRIMITIVE types,
 	 * this is the PurpleStatusPrimitive.
 	 */
 	DATA_COLUMN,
+
+	/**
+ 	 * This column stores the GdkPixbuf for the status emblem. Currently only 'saved' is stored
+ 	 */
+	EMBLEM_COLUMN,
+
+	/**
+ 	* This column stores whether to show the emblem.
+ 	*/
+	EMBLEM_VISIBLE_COLUMN,
 
 	NUM_COLUMNS
 };
@@ -373,13 +385,26 @@ setup_icon_box(PidginStatusBox *status_box)
 	if (status_box->account &&
 		!purple_account_get_bool(status_box->account, "use-global-buddyicon", TRUE))
 	{
-		char *string = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(status_box->account));
-		pidgin_status_box_set_buddy_icon(status_box, string);
-		g_free(string);
+		PurpleStoredImage *img = purple_buddy_icons_find_account_icon(status_box->account);
+		pidgin_status_box_set_buddy_icon(status_box, img);
+		purple_imgstore_unref(img);
 	}
 	else
 	{
-		pidgin_status_box_set_buddy_icon(status_box, purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon"));
+		const char *filename = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/accounts/buddyicon");
+		PurpleStoredImage *img = NULL;
+
+		if (filename != NULL)
+		{
+			gchar *contents;
+			gsize size;
+			if (g_file_get_contents(filename, &contents, &size, NULL))
+			{
+				img = purple_imgstore_add(contents, size, filename);
+			}
+		}
+
+		pidgin_status_box_set_buddy_icon(status_box, img);
 	}
 
 	status_box->hand_cursor = gdk_cursor_new (GDK_HAND2);
@@ -412,6 +437,8 @@ destroy_icon_box(PidginStatusBox *statusbox)
 	gdk_cursor_unref(statusbox->hand_cursor);
 	gdk_cursor_unref(statusbox->arrow_cursor);
 
+	purple_imgstore_unref(statusbox->buddy_icon_img);
+
 	g_object_unref(G_OBJECT(statusbox->buddy_icon));
 	g_object_unref(G_OBJECT(statusbox->buddy_icon_hover));
 
@@ -421,12 +448,10 @@ destroy_icon_box(PidginStatusBox *statusbox)
 	if (statusbox->icon_box_menu)
 		gtk_widget_destroy(statusbox->icon_box_menu);
 
-	g_free(statusbox->buddy_icon_path);
-
 	statusbox->icon = NULL;
 	statusbox->icon_box = NULL;
 	statusbox->icon_box_menu = NULL;
-	statusbox->buddy_icon_path = NULL;
+	statusbox->buddy_icon_img = NULL;
 	statusbox->buddy_icon = NULL;
 	statusbox->buddy_icon_hover = NULL;
 	statusbox->hand_cursor = NULL;
@@ -479,13 +504,12 @@ pidgin_status_box_finalize(GObject *obj)
 	gdk_cursor_unref(statusbox->hand_cursor);
 	gdk_cursor_unref(statusbox->arrow_cursor);
 
+	purple_imgstore_unref(statusbox->buddy_icon_img);
 	g_object_unref(G_OBJECT(statusbox->buddy_icon));
 	g_object_unref(G_OBJECT(statusbox->buddy_icon_hover));
 
 	if (statusbox->buddy_icon_sel)
 		gtk_widget_destroy(statusbox->buddy_icon_sel);
-
-	g_free(statusbox->buddy_icon_path);
 
 	G_OBJECT_CLASS(parent_class)->finalize(obj);
 }
@@ -670,36 +694,6 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 	    }
 
 		pixbuf = pidgin_status_box_get_pixbuf(status_box, prim);
-#if 0
-		if (account_status)
-			pixbuf = pidgin_create_prpl_icon_with_status(acct,
-						purple_status_get_type(purple_account_get_active_status(acct)),
-						0.5);
-		else
-			pixbuf = pidgin_create_purple_icon_with_status(
-						purple_savedstatus_get_type(saved_status),
-						0.5);
-
-		if (!purple_savedstatus_is_transient(saved_status))
-		{
-			GdkPixbuf *emblem;
-
-			/* Overlay a disk in the bottom left corner */
-			emblem = gtk_widget_render_icon(GTK_WIDGET(status_box->vbox),
-						GTK_STOCK_SAVE, icon_size, "PidginStatusBox");
-			if (emblem != NULL)
-			{
-				int width, height;
-				width = gdk_pixbuf_get_width(pixbuf) / 2;
-				height = gdk_pixbuf_get_height(pixbuf) / 2;
-				gdk_pixbuf_composite(emblem, pixbuf, 0, height,
-							width, height, 0, height,
-							0.5, 0.5, GDK_INTERP_BILINEAR, 255);
-				g_object_unref(G_OBJECT(emblem));
-			}
-		}
-#endif
-
 	}
 
 	if (status_box->account != NULL) {
@@ -903,6 +897,7 @@ add_popular_statuses(PidginStatusBox *statusbox)
 		const gchar *message;
 		gchar *stripped = NULL;
 		PurpleStatusPrimitive prim;
+		PidginStatusBoxItemType type = PIDGIN_STATUS_BOX_TYPE_POPULAR;
 
 		/* Get an appropriate status icon */
 		prim = purple_savedstatus_get_type(saved);
@@ -926,23 +921,10 @@ add_popular_statuses(PidginStatusBox *statusbox)
 				stripped = purple_markup_strip_html(message);
 				purple_util_chrreplace(stripped, '\n', ' ');
 			}
-#if 0
-			/* Overlay a disk in the bottom left corner */
-			emblem = gtk_widget_render_icon(GTK_WIDGET(statusbox->vbox),
-						GTK_STOCK_SAVE, icon_size, "PidginStatusBox");
-			if (emblem != NULL)
-			{
-				width = gdk_pixbuf_get_width(pixbuf) / 2;
-				height = gdk_pixbuf_get_height(pixbuf) / 2;
-				gdk_pixbuf_composite(emblem, pixbuf, 0, height,
-							width, height, 0, height,
-							0.5, 0.5, GDK_INTERP_BILINEAR, 255);
-				g_object_unref(G_OBJECT(emblem));
-			}
-#endif
+			type = PIDGIN_STATUS_BOX_TYPE_SAVED_POPULAR;
 		}
 
-		pidgin_status_box_add(statusbox, PIDGIN_STATUS_BOX_TYPE_POPULAR,
+		pidgin_status_box_add(statusbox, type,
 				pixbuf, purple_savedstatus_get_title(saved), stripped,
 				GINT_TO_POINTER(purple_savedstatus_get_creation_time(saved)));
 		g_free(stripped);
@@ -1079,8 +1061,8 @@ pidgin_status_box_regenerate(PidginStatusBox *status_box)
 		add_popular_statuses(status_box);
 
 		pidgin_status_box_add_separator(PIDGIN_STATUS_BOX(status_box));
-		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_CUSTOM, pixbuf, _("New..."), NULL, NULL);
-		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_SAVED, pixbuf, _("Saved..."), NULL, NULL);
+		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_CUSTOM, NULL, _("New..."), NULL, NULL);
+		pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_SAVED, NULL, _("Saved..."), NULL, NULL);
 		if (pixbuf)	g_object_unref(G_OBJECT(pixbuf));
 
 		status_menu_refresh_iter(status_box);
@@ -1275,8 +1257,10 @@ static gboolean button_pressed_cb(GtkWidget *widget, GdkEventButton *event, Pidg
 	if (event->button != 1)
 		return FALSE;
 	gtk_combo_box_popup(GTK_COMBO_BOX(box));
-	// Disabled until button_released_cb works
-	// gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), TRUE);
+	/* Disabled until button_released_cb works */
+#if 0
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(box->toggle_button), TRUE);
+#endif
 	return TRUE;
 }
 #endif
@@ -1432,20 +1416,21 @@ toggled_cb(GtkWidget *widget, PidginStatusBox *box)
 static void
 buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 {
+	PurpleStoredImage *img = NULL;
 
 	if (box->account) {
 		PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(box->account));
 		if (plug) {
 			PurplePluginProtocolInfo *prplinfo = PURPLE_PLUGIN_PROTOCOL_INFO(plug);
 			if (prplinfo && prplinfo->icon_spec.format) {
-				char *icon = NULL;
+				gpointer data = NULL;
+				size_t len = 0;
 				if (filename)
-					icon = pidgin_convert_buddy_icon(plug, filename);
-				purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
-				purple_account_set_ui_string(box->account, PIDGIN_UI, "non-global-buddyicon-cached-path", icon);
+					data = pidgin_convert_buddy_icon(plug, filename, &len);
+				img = purple_buddy_icons_set_account_icon(box->account, data, len);
 				purple_account_set_buddy_icon_path(box->account, filename);
-				purple_account_set_buddy_icon(box->account, icon);
-				g_free(icon);
+
+				purple_account_set_bool(box->account, "use-global-buddyicon", (filename != NULL));
 			}
 		}
 	} else {
@@ -1458,17 +1443,29 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 				if (prplinfo != NULL &&
 				    purple_account_get_bool(account, "use-global-buddyicon", TRUE) &&
 				    prplinfo->icon_spec.format) {
-					char *icon = NULL;
+					gpointer data = NULL;
+					size_t len = 0;
 					if (filename)
-						icon = pidgin_convert_buddy_icon(plug, filename);
+						data = pidgin_convert_buddy_icon(plug, filename, &len);
+					img = purple_buddy_icons_set_account_icon(account, data, len);
 					purple_account_set_buddy_icon_path(account, filename);
-					purple_account_set_buddy_icon(account, icon);
-					g_free(icon);
 				}
 			}
 		}
+
+		/* Even if no accounts were processed, load the icon that was set. */
+		if (filename != NULL)
+		{
+			gchar *contents;
+			gsize size;
+			if (g_file_get_contents(filename, &contents, &size, NULL))
+			{
+				img = purple_imgstore_add(contents, size, filename);
+			}
+		}
 	}
-	pidgin_status_box_set_buddy_icon(box, filename);
+
+	pidgin_status_box_set_buddy_icon(box, img);
 }
 
 static void
@@ -1513,7 +1510,6 @@ treeview_activate_current_selection(PidginStatusBox *status_box, GtkTreePath *pa
 		gtk_tree_row_reference_free(status_box->active_row);
 
 	status_box->active_row = gtk_tree_row_reference_new(GTK_TREE_MODEL(status_box->dropdown_store), path);
-
 	pidgin_status_box_popdown (status_box);
 	pidgin_status_box_changed(status_box);
 }
@@ -1586,6 +1582,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 {
 	GtkCellRenderer *text_rend;
 	GtkCellRenderer *icon_rend;
+	GtkCellRenderer *emblem_rend;
 	GtkTextBuffer *buffer;
 	GtkWidget *toplevel;
 	GtkTreeSelection *sel;
@@ -1601,9 +1598,11 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 	status_box->vsep = gtk_vseparator_new();
 	status_box->arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
 
-	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
-;
+	status_box->store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, G_TYPE_STRING, 
+					       G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
+	status_box->dropdown_store = gtk_list_store_new(NUM_COLUMNS, G_TYPE_INT, GDK_TYPE_PIXBUF, G_TYPE_STRING, 
+							G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER, G_TYPE_STRING, G_TYPE_BOOLEAN);
+
 	gtk_cell_view_set_model(GTK_CELL_VIEW(status_box->cell_view), GTK_TREE_MODEL(status_box->store));
 	gtk_list_store_append(status_box->store, &(status_box->iter));
 
@@ -1618,7 +1617,7 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 
 	text_rend = gtk_cell_renderer_text_new();
 	icon_rend = gtk_cell_renderer_pixbuf_new();
-
+	emblem_rend = gtk_cell_renderer_pixbuf_new();
 	status_box->popup_window = gtk_window_new (GTK_WINDOW_POPUP);
 
 	toplevel = gtk_widget_get_toplevel (GTK_WIDGET (status_box));
@@ -1669,8 +1668,10 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 			status_box->column);
 	gtk_tree_view_column_pack_start(status_box->column, icon_rend, FALSE);
 	gtk_tree_view_column_pack_start(status_box->column, text_rend, TRUE);
+	gtk_tree_view_column_pack_start(status_box->column, emblem_rend, FALSE);
 	gtk_tree_view_column_set_attributes(status_box->column, icon_rend, "pixbuf", ICON_COLUMN, NULL);
 	gtk_tree_view_column_set_attributes(status_box->column, text_rend, "markup", TEXT_COLUMN, NULL);
+	gtk_tree_view_column_set_attributes(status_box->column, emblem_rend, "stock-id", EMBLEM_COLUMN, "visible", EMBLEM_VISIBLE_COLUMN, NULL);
 	gtk_container_add(GTK_CONTAINER(status_box->scrolled_window), status_box->tree_view);
 	gtk_widget_show(status_box->tree_view);
 	gtk_tree_view_set_search_column(GTK_TREE_VIEW(status_box->tree_view), TEXT_COLUMN);
@@ -1982,6 +1983,8 @@ pidgin_status_box_add(PidginStatusBox *status_box, PidginStatusBoxItemType type,
 			TITLE_COLUMN, title,
 			DESC_COLUMN, desc,
 			DATA_COLUMN, data,
+			EMBLEM_VISIBLE_COLUMN, type == PIDGIN_STATUS_BOX_TYPE_SAVED_POPULAR,
+			EMBLEM_COLUMN, GTK_STOCK_SAVE,
 			-1);
 	g_free(text);
 }
@@ -2020,6 +2023,21 @@ pidgin_status_box_set_connecting(PidginStatusBox *status_box, gboolean connectin
 }
 
 static void
+pixbuf_size_prepared_cb(GdkPixbufLoader *loader, int width, int height, gpointer data)
+{
+#if GTK_CHECK_VERSION(2,2,0)
+	int w, h;
+	GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MEDIUM);
+	gtk_icon_size_lookup(icon_size, &w, &h);
+	if (height > width)
+		w = width * h  / height;
+	else if (width > height)
+		h = height * w / width;
+	gdk_pixbuf_loader_set_size(loader, w, h);
+#endif
+}
+
+static void
 pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 {
 
@@ -2034,22 +2052,27 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 	status_box->buddy_icon = NULL;
 	status_box->buddy_icon_hover = NULL;
 
-	if ((status_box->buddy_icon_path != NULL) &&
-			(*status_box->buddy_icon_path != '\0'))
-		status_box->buddy_icon = gdk_pixbuf_new_from_file_at_scale(status_box->buddy_icon_path,
-				status_box->icon_size, status_box->icon_size, FALSE, NULL);
+	if (status_box->buddy_icon_img != NULL)
+	{
+		GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
+		g_signal_connect(G_OBJECT(loader), "size-prepared", G_CALLBACK(pixbuf_size_prepared_cb), NULL);
+		gdk_pixbuf_loader_write(loader, purple_imgstore_get_data(status_box->buddy_icon_img),
+		                        purple_imgstore_get_size(status_box->buddy_icon_img), NULL);
+		gdk_pixbuf_loader_close(loader, NULL);
+		status_box->buddy_icon = gdk_pixbuf_loader_get_pixbuf(loader);
+	}
 
 	if (status_box->buddy_icon == NULL)
 	{
 		/* Show a placeholder icon */
-		GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
+		GtkIconSize icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL);
 		status_box->buddy_icon = gtk_widget_render_icon(GTK_WIDGET(status_box),
-		                                                PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE,
+		                                                PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR,
 		                                                icon_size, "PidginStatusBox");
 	}
 
 	if (status_box->buddy_icon != NULL) {
-	        status_box->icon_opaque = pidgin_gdk_pixbuf_is_opaque(status_box->buddy_icon);
+		status_box->icon_opaque = pidgin_gdk_pixbuf_is_opaque(status_box->buddy_icon);
 		gtk_image_set_from_pixbuf(GTK_IMAGE(status_box->icon), status_box->buddy_icon);
 		status_box->buddy_icon_hover = gdk_pixbuf_copy(status_box->buddy_icon);
 		do_colorshift(status_box->buddy_icon_hover, status_box->buddy_icon_hover, 32);
@@ -2058,18 +2081,14 @@ pidgin_status_box_redisplay_buddy_icon(PidginStatusBox *status_box)
 }
 
 void
-pidgin_status_box_set_buddy_icon(PidginStatusBox *status_box, const char *filename)
+pidgin_status_box_set_buddy_icon(PidginStatusBox *status_box, PurpleStoredImage *img)
 {
-	g_free(status_box->buddy_icon_path);
-	status_box->buddy_icon_path = g_strdup(filename);
+	purple_imgstore_unref(status_box->buddy_icon_img);
+	status_box->buddy_icon_img = img;
+	if (status_box->buddy_icon_img != NULL)
+		purple_imgstore_ref(status_box->buddy_icon_img);
 
 	pidgin_status_box_redisplay_buddy_icon(status_box);
-}
-
-const char*
-pidgin_status_box_get_buddy_icon(PidginStatusBox *box)
-{
-	return box->buddy_icon_path;
 }
 
 void
@@ -2221,7 +2240,8 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 							PurpleSavedStatusSub *sub = purple_savedstatus_get_substatus(ss, acct);
 							if (sub) {
 								const PurpleStatusType *sub_type = purple_savedstatus_substatus_get_type(sub);
-								if (!strcmp(purple_status_type_get_id(sub_type),
+								const char *subtype_status_id = purple_status_type_get_id(sub_type);
+								if (subtype_status_id && !strcmp(subtype_status_id,
 										purple_status_type_get_id(acct_status_type)))
 									found = TRUE;
 							}
@@ -2318,11 +2338,16 @@ static void update_size(PidginStatusBox *status_box)
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(status_box->imhtml));
 
+	height = 0;
 	wrapped_lines = 1;
 	gtk_text_buffer_get_start_iter(buffer, &iter);
-	gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
-	while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(status_box->imhtml), &iter))
+	do {
+		gtk_text_view_get_iter_location(GTK_TEXT_VIEW(status_box->imhtml), &iter, &oneline);
+		height += oneline.height;
 		wrapped_lines++;
+		if (wrapped_lines > 4)
+			break;
+	} while (gtk_text_view_forward_display_line(GTK_TEXT_VIEW(status_box->imhtml), &iter));
 
 	lines = gtk_text_buffer_get_line_count(buffer);
 
@@ -2334,8 +2359,8 @@ static void update_size(PidginStatusBox *status_box)
 	pad_bottom = gtk_text_view_get_pixels_below_lines(GTK_TEXT_VIEW(status_box->imhtml));
 	pad_inside = gtk_text_view_get_pixels_inside_wrap(GTK_TEXT_VIEW(status_box->imhtml));
 
-	height = (oneline.height + pad_top + pad_bottom) * lines;
-	height += (oneline.height + pad_inside) * (wrapped_lines - lines);
+	height += (pad_top + pad_bottom) * lines;
+	height += (pad_inside) * (wrapped_lines - lines);
 
 	gtk_widget_set_size_request(status_box->vbox, -1, height + PIDGIN_HIG_BOX_SPACE);
 }
@@ -2382,7 +2407,7 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 
 	if (GTK_WIDGET_IS_SENSITIVE(GTK_WIDGET(status_box)))
 	{
-		if (type == PIDGIN_STATUS_BOX_TYPE_POPULAR)
+		if (type == PIDGIN_STATUS_BOX_TYPE_POPULAR || type == PIDGIN_STATUS_BOX_TYPE_SAVED_POPULAR)
 		{
 			PurpleSavedStatus *saved;
 			saved = purple_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
@@ -2451,7 +2476,6 @@ static void pidgin_status_box_changed(PidginStatusBox *status_box)
 		{
 			gtk_widget_hide_all(status_box->vbox);
 			activate_currently_selected_status(status_box); /* This is where we actually set the status */
-			return;
 		}
 	}
 	pidgin_status_box_refresh(status_box);

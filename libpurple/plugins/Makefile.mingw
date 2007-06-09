@@ -25,7 +25,7 @@ INCLUDE_PATHS +=	\
 			-I$(PURPLE_TOP) \
 			-I$(PURPLE_TOP)/win32
 
-LIB_PATHS =		-L$(GTK_TOP)/lib \
+LIB_PATHS +=		-L$(GTK_TOP)/lib \
 			-L$(PURPLE_TOP)
 
 ##

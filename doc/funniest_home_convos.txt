@@ -451,3 +451,26 @@ not :)
 (07:54:03 PM) clueless21:  what's an im client?
 (07:54:25 PM) Nathan Walp: it lets you chat with other people, like we are chatting now
 (07:54:45 PM) clueless21:  oooooooooo... thanks
+
+23:58 -!- seanegan is now known as beta7
+23:58 <beta7> Hey, guys, remember me?
+23:59 <beta7> We were all supposed to be working on getting me out.
+23:59 <beta7> you guys remember that?
+23:59 -!- mode/#pidgin [+o elb] by ChanServ
+23:59 -!- beta7 was kicked from #pidgin by elb [getting feisty, are we?]
+23:59 -!- mode/#pidgin [-o elb] by ChanServ
+23:59 <marv> elb: good job getting beta7 out
+
+14:07 <elb> rizzo: I actually prefer elb, and used it for a long time -- but 
+            switched to Paco-Paco because people kept asking me what an 'elb'
+            was
+14:08 <rizzo> elb: tell them it's short for "elbow", and don't explain any 
+              further
+14:08 <elb> rizzo: I actually had people ASK about that
+14:08 <elb> 'is your nick elbow?'
+14:08 <elb> "... yes"
+14:08 <elb> I mean, what do you say
+14:08 <Robot101> elb: was their nick "idi"?
+
+19:23 <-- elb has quit (K-lined)
+

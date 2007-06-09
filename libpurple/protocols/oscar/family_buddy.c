@@ -47,7 +47,7 @@ static int
 rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	guint16 maxbuddies = 0, maxwatchers = 0;
 	int ret = 0;
 
@@ -82,7 +82,7 @@ rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame,
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, maxbuddies, maxwatchers);
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }
@@ -135,7 +135,7 @@ aim_buddylist_set(OscarData *od, FlapConnection *conn, const char *buddy_list)
 	char *localcpy = NULL;
 	char *tmpptr = NULL;
 
-	if (!buddy_list || !(localcpy = strdup(buddy_list)))
+	if (!buddy_list || !(localcpy = g_strdup(buddy_list)))
 		return -EINVAL;
 
 	for (tmpptr = strtok(localcpy, "&"); tmpptr; ) {
@@ -162,7 +162,7 @@ aim_buddylist_set(OscarData *od, FlapConnection *conn, const char *buddy_list)
 
 	flap_connection_send(conn, frame);
 
-	free(localcpy);
+	g_free(localcpy);
 
 	return 0;
 }

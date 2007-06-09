@@ -101,6 +101,11 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 	ppref = purple_plugin_pref_new_with_label(_("Conversation Placement"));
 	purple_plugin_pref_frame_add(frame, ppref);
 
+	/* Translators: "New conversations" should match the text in the preferences dialog and "By conversation count" should be the same text used above */
+	ppref = purple_plugin_pref_new_with_label(_("Note: The preference for \"New conversations\" must be set to \"By conversation count\"."));
+	purple_plugin_pref_set_type(ppref, PURPLE_PLUGIN_PREF_INFO);
+	purple_plugin_pref_frame_add(frame, ppref);
+
 	ppref = purple_plugin_pref_new_with_name_and_label(
 							"/plugins/gtk/extplacement/placement_number",
 							_("Number of conversations per window"));
@@ -118,7 +123,13 @@ get_plugin_pref_frame(PurplePlugin *plugin) {
 static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
 	0,   /* page_num (Reserved) */
-	NULL /* frame (Reserved) */
+	NULL, /* frame (Reserved) */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -146,7 +157,13 @@ static PurplePluginInfo info =
 	NULL,											/**< ui_info		*/
 	NULL,											/**< extra_info		*/
 	&prefs_info,									/**< prefs_info		*/
-	NULL											/**< actions		*/
+	NULL,											/**< actions		*/
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

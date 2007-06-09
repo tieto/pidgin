@@ -119,12 +119,12 @@ silcpurple_keepalive(PurpleConnection *gc)
 				NULL, 0);
 }
 
-static int
+static gboolean
 silcpurple_scheduler(gpointer *context)
 {
 	SilcPurple sg = (SilcPurple)context;
 	silc_client_run_one(sg->client);
-	return 1;
+	return TRUE;
 }
 
 static void
@@ -194,7 +194,7 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 		SilcUInt32 mask;
 		const char *tmp;
 #ifdef SILC_ATTRIBUTE_USER_ICON
-		char *icon;
+		PurpleStoredImage *img;
 #endif
 #ifdef HAVE_SYS_UTSNAME_H
 		struct utsname u;
@@ -233,9 +233,9 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 
 #ifdef SILC_ATTRIBUTE_USER_ICON
 		/* Set our buddy icon */
-		icon = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(account));
-		silcpurple_buddy_set_icon(gc, icon);
-		g_free(icon);
+		img = purple_buddy_icons_find_account_icon(account);
+		silcpurple_buddy_set_icon(gc, img);
+		purple_imgstore_unref(img);
 #endif
 	}
 
@@ -361,11 +361,7 @@ silcpurple_login(PurpleAccount *account)
 	}
 
 	/* Schedule SILC using Glib's event loop */
-#ifndef _WIN32
-	sg->scheduler = g_timeout_add(5, (GSourceFunc)silcpurple_scheduler, sg);
-#else
-	sg->scheduler = g_timeout_add(300, (GSourceFunc)silcpurple_scheduler, sg);
-#endif
+	sg->scheduler = purple_timeout_add(300, (GSourceFunc)silcpurple_scheduler, sg);
 }
 
 static int
@@ -391,13 +387,13 @@ silcpurple_close(PurpleConnection *gc)
 
 	/* Send QUIT */
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", "Download Purple: " PURPLE_WEBSITE, NULL);
+				 "QUIT", "Download this: " PURPLE_WEBSITE, NULL);
 
 	if (sg->conn)
 		silc_client_close_connection(sg->client, sg->conn);
 
-	g_source_remove(sg->scheduler);
-	g_timeout_add(1, (GSourceFunc)silcpurple_close_final, sg);
+	purple_timeout_remove(sg->scheduler);
+	purple_timeout_add(1, (GSourceFunc)silcpurple_close_final, sg);
 }
 
 
@@ -741,7 +737,8 @@ silcpurple_attrs(PurplePluginAction *action)
 			      "you would like other users to see about yourself."),
 			    fields,
 			    _("OK"), G_CALLBACK(silcpurple_attrs_cb),
-			    _("Cancel"), G_CALLBACK(silcpurple_attrs_cancel), gc);
+			    _("Cancel"), G_CALLBACK(silcpurple_attrs_cancel),
+				gc->account, NULL, NULL, gc);
 }
 
 static void
@@ -946,7 +943,8 @@ silcpurple_create_keypair(PurplePluginAction *action)
 	purple_request_fields(gc, _("Create New SILC Key Pair"),
 			    _("Create New SILC Key Pair"), NULL, fields,
 			    _("Generate Key Pair"), G_CALLBACK(silcpurple_create_keypair_cb),
-			    _("Cancel"), G_CALLBACK(silcpurple_create_keypair_cancel), gc);
+			    _("Cancel"), G_CALLBACK(silcpurple_create_keypair_cancel),
+				gc->account, NULL, NULL, gc);
 
 	g_strfreev(u);
 	silc_free(hostname);
@@ -1550,7 +1548,7 @@ static PurpleCmdRet silcpurple_cmd_quit(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	silc_client_command_call(sg->client, sg->conn, NULL,
-				 "QUIT", (args && args[0]) ? args[0] : "Download Purple: " PURPLE_WEBSITE, NULL);
+				 "QUIT", (args && args[0]) ? args[0] : "Download this: " PURPLE_WEBSITE, NULL);
 
 	return PURPLE_CMD_RET_OK;
 }
@@ -1714,6 +1712,12 @@ static PurpleWhiteboardPrplOps silcpurple_wb_ops =
 	silcpurple_wb_set_brush,
 	silcpurple_wb_send,
 	silcpurple_wb_clear,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginProtocolInfo prpl_info =
@@ -1794,6 +1798,12 @@ static PurplePluginProtocolInfo prpl_info =
 	&silcpurple_wb_ops,			/* whiteboard_prpl_ops */
 	NULL,                       /* send_raw */
 	NULL,                       /* roomlist_room_serialize */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -1824,7 +1834,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&prpl_info,                                       /**< extra_info     */
 	NULL,                                             /**< prefs_info     */
-	silcpurple_actions
+	silcpurple_actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

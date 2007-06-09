@@ -92,9 +92,10 @@ msn_object_new_from_string(const char *str)
 	GET_STRING_TAG(sha1c,    "SHA1C");
 
 	/* If we are missing any of the required elements then discard the object */
+	/* SHA1C is not always sent anymore */
 	if (obj->creator == NULL || obj->size == 0 || obj->type == 0
 			|| obj->location == NULL || obj->friendly == NULL
-			|| obj->sha1d == NULL || obj->sha1c == NULL) {
+			|| obj->sha1d == NULL /*|| obj->sha1c == NULL*/) {
 		purple_debug_error("msn", "Discarding invalid msnobj: '%s'\n", str);
 		msn_object_destroy(obj);
 		obj = NULL;
@@ -110,10 +111,11 @@ msn_object_destroy(MsnObject *obj)
 
 	g_free(obj->creator);
 	g_free(obj->location);
-	g_free(obj->real_location);
 	g_free(obj->friendly);
 	g_free(obj->sha1d);
 	g_free(obj->sha1c);
+
+	purple_imgstore_unref(obj->img);
 
 	if (obj->local)
 		local_objs = g_list_remove(local_objs, obj);
@@ -274,18 +276,30 @@ msn_object_get_sha1c(const MsnObject *obj)
 	return obj->sha1c;
 }
 
+const char *
+msn_object_get_sha1(const MsnObject *obj)
+{
+	g_return_val_if_fail(obj != NULL, NULL);
+
+	if(obj->sha1c != NULL) {
+		return obj->sha1c;
+	} else {
+		return obj->sha1d;
+	}
+}
+
 static MsnObject *
-msn_object_find_local(const char *sha1c)
+msn_object_find_local(const char *sha1)
 {
 	GList *l;
 
-	g_return_val_if_fail(sha1c != NULL, NULL);
+	g_return_val_if_fail(sha1 != NULL, NULL);
 
 	for (l = local_objs; l != NULL; l = l->next)
 	{
 		MsnObject *local_obj = l->data;
 
-		if (!strcmp(msn_object_get_sha1c(local_obj), sha1c))
+		if (!strcmp(msn_object_get_sha1(local_obj), sha1))
 			return local_obj;
 	}
 
@@ -304,30 +318,28 @@ msn_object_set_local(MsnObject *obj)
 }
 
 void
-msn_object_set_real_location(MsnObject *obj, const char *real_location)
+msn_object_set_image(MsnObject *obj, PurpleStoredImage *img)
 {
 	g_return_if_fail(obj != NULL);
+	g_return_if_fail(img != NULL);
 
 	/* obj->local = TRUE; */
 
-	if (obj->real_location != NULL)
-		g_free(obj->real_location);
-
-	obj->real_location =
-		(real_location == NULL ? NULL : g_strdup(real_location));
+	purple_imgstore_unref(obj->img);
+	obj->img = purple_imgstore_ref(img);
 }
 
-const char *
-msn_object_get_real_location(const MsnObject *obj)
+PurpleStoredImage *
+msn_object_get_image(const MsnObject *obj)
 {
 	MsnObject *local_obj;
 
 	g_return_val_if_fail(obj != NULL, NULL);
 
-	local_obj = msn_object_find_local(msn_object_get_sha1c(obj));
+	local_obj = msn_object_find_local(msn_object_get_sha1(obj));
 
 	if (local_obj != NULL)
-		return local_obj->real_location;
+		return local_obj->img;
 
 	return NULL;
 }

@@ -18,11 +18,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin Suoraviestintäohjelma (required)"
 !define GTK_SECTION_TITLE			"GTK+ runtime ympäristö (required)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ Teemat"
-!define GTK_NOTHEME_SECTION_TITLE		"Ei teemaa"
-!define GTK_WIMP_SECTION_TITLE		"Wimp Teema"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve Teema"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue Teema"
 !define PIDGIN_SECTION_DESCRIPTION		"Pidfinin ytimen tiedostot ja dll:t"
 !define GTK_SECTION_DESCRIPTION		"Monipohjainen GUI (käyttäjäulkoasu) työkalupakki, Pidginin käyttämä"
 
@@ -38,9 +33,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Virhe asennettaessa GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Antamasi polku ei toimi tai sitä ei voi luoda."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Sinulla ei ole valtuuksia asentaa GTK+ teemaa."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Asennuksen poistaja ei löytänyt reksiteristä tietoja Pidginista.$\rOn todennäköistä että joku muu käyttäjä on asentanut ohjelman."

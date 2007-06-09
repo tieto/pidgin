@@ -64,6 +64,11 @@ typedef struct _PurpleWhiteboardUiOps
 					  int x2, int y2,
 					  int color, int size);                            /**< draw_line function */
 	void (*clear)(PurpleWhiteboard *wb);                                 /**< clear function */
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 } PurpleWhiteboardUiOps;
 
 /**
@@ -79,6 +84,11 @@ struct _PurpleWhiteboardPrplOps
 	void (*set_brush) (PurpleWhiteboard *wb, int size, int color);         /**< set the brush size and color */
 	void (*send_draw_list)(PurpleWhiteboard *wb, GList *draw_list);        /**< send_draw_list function */
 	void (*clear)(PurpleWhiteboard *wb);                                   /**< clear function */
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 #ifdef __cplusplus

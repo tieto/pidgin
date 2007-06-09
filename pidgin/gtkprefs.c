@@ -382,7 +382,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	new_theme = current_smiley_theme;
 	description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 								"<span size='smaller' foreground='white'>%s</span>",
-								new_theme->name, new_theme->author, new_theme->desc);
+								_(new_theme->name), _(new_theme->author), _(new_theme->desc));
 	gtk_list_store_set(smiley_theme_store, &iter, 1, description, -1);
 	g_free(description);
 
@@ -391,7 +391,7 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 		if (gtk_tree_model_get_iter(model, &iter, oldpath)) {
 			description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 								"<span size='smaller' foreground='dim grey'>%s</span>",
-								old_theme->name, old_theme->author, old_theme->desc);
+								_(old_theme->name), _(old_theme->author), _(old_theme->desc));
 			gtk_list_store_set(smiley_theme_store, &iter, 1,
 				description, -1);
 			g_free(description);
@@ -426,7 +426,7 @@ static GtkTreeRowReference *theme_refresh_theme_list()
 		struct smiley_theme *theme = themes->data;
 		char *description = g_strdup_printf("<span size='larger' weight='bold'>%s</span> - %s\n"
 						    "<span size='smaller' foreground='dim grey'>%s</span>",
-						    theme->name, theme->author, theme->desc);
+						    _(theme->name), _(theme->author), _(theme->desc));
 		gtk_list_store_append (smiley_theme_store, &iter);
 
 		/*
@@ -881,6 +881,15 @@ interface_page()
 	return ret;
 }
 
+#if GTK_CHECK_VERSION(2,4,0)
+static void
+pidgin_custom_font_set(GtkFontButton *font_button, gpointer nul)
+{
+	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/conversations/custom_font",
+				gtk_font_button_get_font_name(font_button));
+}
+#endif
+
 static GtkWidget *
 conv_page()
 {
@@ -889,8 +898,16 @@ conv_page()
 	GtkWidget *toolbar;
 	GtkWidget *iconpref1;
 	GtkWidget *iconpref2;
+	GtkWidget *fontpref;
 	GtkWidget *imhtml;
 	GtkWidget *frame;
+
+#if GTK_CHECK_VERSION(2,4,0)
+	GtkWidget *hbox;
+	GtkWidget *label;
+	GtkWidget *font_button;
+	const char *font_name;
+#endif
 
 	ret = gtk_vbox_new(FALSE, PIDGIN_HIG_CAT_SPACE);
 	gtk_container_set_border_width(GTK_CONTAINER(ret), PIDGIN_HIG_BORDER);
@@ -910,7 +927,7 @@ conv_page()
 					 G_CALLBACK(pidgin_toggle_sensitive), iconpref2);
 
 	pidgin_prefs_checkbox(_("_Notify buddies that you are typing to them"),
-			"/core/conversations/im/send_typing", vbox);
+			"/purple/conversations/im/send_typing", vbox);
 #ifdef USE_GTKSPELL
 	pidgin_prefs_checkbox(_("Highlight _misspelled words"),
 			PIDGIN_PREFS_ROOT "/conversations/spellcheck", vbox);
@@ -920,6 +937,26 @@ conv_page()
 
 #ifdef _WIN32
 	pidgin_prefs_checkbox(_("F_lash window when IMs are received"), PIDGIN_PREFS_ROOT "/win32/blink_im", vbox);
+#endif
+
+#if GTK_CHECK_VERSION(2,4,0)
+	vbox = pidgin_make_frame(ret, _("Font"));
+	if (purple_running_gnome())
+		fontpref = pidgin_prefs_checkbox(_("Use document font from _theme"), PIDGIN_PREFS_ROOT "/conversations/use_theme_font", vbox);
+	else
+		fontpref = pidgin_prefs_checkbox(_("Use font from _theme"), PIDGIN_PREFS_ROOT "/conversations/use_theme_font", vbox);
+	hbox = gtk_hbox_new(FALSE, 3);
+	label = gtk_label_new_with_mnemonic(_("Conversation _font:"));
+	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	font_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
+	font_button = gtk_font_button_new_with_font(purple_prefs_get_string(font_name ? font_name : NULL));
+	gtk_font_button_set_show_style(GTK_FONT_BUTTON(font_button), TRUE);
+	gtk_box_pack_start(GTK_BOX(hbox), font_button, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font"))
+		gtk_widget_set_sensitive(hbox, FALSE);
+	g_signal_connect(G_OBJECT(fontpref), "clicked", G_CALLBACK(pidgin_toggle_sensitive), hbox);
+	g_signal_connect(G_OBJECT(font_button), "font-set", G_CALLBACK(pidgin_custom_font_set), NULL);
 #endif
 
 	vbox = pidgin_make_frame(ret, _("Default Formatting"));
@@ -991,13 +1028,13 @@ proxy_changed_cb(const char *name, PurplePrefType type,
 static void proxy_print_option(GtkEntry *entry, int entrynum)
 {
 	if (entrynum == PROXYHOST)
-		purple_prefs_set_string("/core/proxy/host", gtk_entry_get_text(entry));
+		purple_prefs_set_string("/purple/proxy/host", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPORT)
-		purple_prefs_set_int("/core/proxy/port", atoi(gtk_entry_get_text(entry)));
+		purple_prefs_set_int("/purple/proxy/port", atoi(gtk_entry_get_text(entry)));
 	else if (entrynum == PROXYUSER)
-		purple_prefs_set_string("/core/proxy/username", gtk_entry_get_text(entry));
+		purple_prefs_set_string("/purple/proxy/username", gtk_entry_get_text(entry));
 	else if (entrynum == PROXYPASS)
-		purple_prefs_set_string("/core/proxy/password", gtk_entry_get_text(entry));
+		purple_prefs_set_string("/purple/proxy/password", gtk_entry_get_text(entry));
 }
 
 static GtkWidget *
@@ -1015,7 +1052,7 @@ network_page()
 	vbox = pidgin_make_frame (ret, _("IP Address"));
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 	pidgin_prefs_labeled_entry(vbox,_("ST_UN server:"),
-			"/core/network/stun_server", sg);
+			"/purple/network/stun_server", sg);
 
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
@@ -1031,7 +1068,7 @@ network_page()
 	gtk_container_add(GTK_CONTAINER(hbox), label);
 
 	auto_ip_checkbox = pidgin_prefs_checkbox(_("_Autodetect IP address"),
-			"/core/network/auto_ip", vbox);
+			"/purple/network/auto_ip", vbox);
 
 	table = gtk_table_new(2, 2, FALSE);
 	gtk_container_set_border_width(GTK_CONTAINER(table), 0);
@@ -1061,7 +1098,7 @@ network_page()
 	pidgin_set_accessible_label (entry, label);
 
 
-	if (purple_prefs_get_bool("/core/network/auto_ip")) {
+	if (purple_prefs_get_bool("/purple/network/auto_ip")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(table), FALSE);
 	}
 
@@ -1072,18 +1109,18 @@ network_page()
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	ports_checkbox = pidgin_prefs_checkbox(_("_Manually specify range of ports to listen on"),
-			"/core/network/ports_range_use", vbox);
+			"/purple/network/ports_range_use", vbox);
 
 	spin_button = pidgin_prefs_labeled_spin_button(vbox, _("_Start port:"),
-			"/core/network/ports_range_start", 0, 65535, sg);
-	if (!purple_prefs_get_bool("/core/network/ports_range_use"))
+			"/purple/network/ports_range_start", 0, 65535, sg);
+	if (!purple_prefs_get_bool("/purple/network/ports_range_use"))
 		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
 
 	spin_button = pidgin_prefs_labeled_spin_button(vbox, _("_End port:"),
-			"/core/network/ports_range_end", 0, 65535, sg);
-	if (!purple_prefs_get_bool("/core/network/ports_range_use"))
+			"/purple/network/ports_range_end", 0, 65535, sg);
+	if (!purple_prefs_get_bool("/purple/network/ports_range_use"))
 		gtk_widget_set_sensitive(GTK_WIDGET(spin_button), FALSE);
 	g_signal_connect(G_OBJECT(ports_checkbox), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), spin_button);
@@ -1092,7 +1129,7 @@ network_page()
 		vbox = pidgin_make_frame(ret, _("Proxy Server"));
 		prefs_proxy_frame = gtk_vbox_new(FALSE, 0);
 		pidgin_prefs_dropdown(vbox, _("Proxy _type:"), PURPLE_PREF_STRING,
-					"/core/proxy/type",
+					"/purple/proxy/type",
 					_("No proxy"), "none",
 					"SOCKS 4", "socks4",
 					"SOCKS 5", "socks5",
@@ -1102,7 +1139,7 @@ network_page()
 		gtk_box_pack_start(GTK_BOX(vbox), prefs_proxy_frame, 0, 0, 0);
 		proxy_info = purple_global_proxy_get_info();
 
-		purple_prefs_connect_callback(prefs, "/core/proxy/type",
+		purple_prefs_connect_callback(prefs, "/purple/proxy/type",
 					    proxy_changed_cb, prefs_proxy_frame);
 
 		table = gtk_table_new(4, 2, FALSE);
@@ -1356,16 +1393,16 @@ logging_page()
 	names = purple_log_logger_get_options();
 
 	pidgin_prefs_dropdown_from_list(vbox, _("Log _format:"), PURPLE_PREF_STRING,
-				 "/core/logging/format", names);
+				 "/purple/logging/format", names);
 
 	g_list_free(names);
 
 	pidgin_prefs_checkbox(_("Log all _instant messages"),
-				  "/core/logging/log_ims", vbox);
+				  "/purple/logging/log_ims", vbox);
 	pidgin_prefs_checkbox(_("Log all c_hats"),
-				  "/core/logging/log_chats", vbox);
+				  "/purple/logging/log_chats", vbox);
 	pidgin_prefs_checkbox(_("Log all _status changes to system log"),
-				  "/core/logging/log_system", vbox);
+				  "/purple/logging/log_system", vbox);
 
 	gtk_widget_show_all(ret);
 
@@ -1472,7 +1509,7 @@ reset_sound(GtkWidget *button, gpointer i_am_also_NULL)
 	purple_prefs_set_path(pref, "");
 	g_free(pref);
 
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), "(default)");
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), _("(default)"));
 }
 
 static void
@@ -1511,7 +1548,9 @@ static void select_sound(GtkWidget *button, gpointer being_NULL_is_fun)
 		filename = NULL;
 
 	purple_request_file(prefs, _("Sound Selection"), filename, FALSE,
-					  G_CALLBACK(sound_chosen_cb), NULL, GINT_TO_POINTER(sound_row_sel));
+					  G_CALLBACK(sound_chosen_cb), NULL, 
+					  NULL, NULL, NULL,
+					  GINT_TO_POINTER(sound_row_sel));
 }
 
 #ifdef USE_GSTREAMER
@@ -1559,7 +1598,7 @@ static void prefs_sound_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	file = purple_prefs_get_path(pref);
 	g_free(pref);
 	if (sound_entry)
-		gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
+		gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : _("(default)"));
 	g_value_unset (&val);
 }
 
@@ -1600,6 +1639,7 @@ sound_page()
 #ifdef USE_GSTREAMER
 			_("Automatic"), "automatic",
 			"ESD", "esd",
+			"ALSA", "alsa",
 #endif
 			_("Command"), "custom",
 			_("No sounds"), "none",
@@ -1640,7 +1680,7 @@ sound_page()
 	pidgin_prefs_checkbox(_("Sounds when conversation has _focus"),
 				   PIDGIN_PREFS_ROOT "/sound/conv_focus", vbox);
 	pidgin_prefs_dropdown(vbox, _("Enable sounds:"),
-				 PURPLE_PREF_INT, "/core/sound/while_status",
+				 PURPLE_PREF_INT, "/purple/sound/while_status",
 				_("Only when available"), 1,
 				_("Only when not available"), 2,
 				_("Always"), 3,
@@ -1690,6 +1730,7 @@ sound_page()
 			vbox->parent->parent, TRUE, TRUE, 0, GTK_PACK_START);
 
 	sw = gtk_scrolled_window_new(NULL,NULL);
+	gtk_widget_set_size_request(sw, -1, 100);
 	gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(sw), GTK_POLICY_NEVER, GTK_POLICY_AUTOMATIC);
 	gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW(sw), GTK_SHADOW_IN);
 
@@ -1751,7 +1792,7 @@ sound_page()
 			       pidgin_sound_get_event_option(0));
 	file = purple_prefs_get_path(pref);
 	g_free(pref);
-	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : "(default)");
+	gtk_entry_set_text(GTK_ENTRY(sound_entry), (file && *file != '\0') ? file : _("(default)"));
 	gtk_editable_set_editable(GTK_EDITABLE(sound_entry), FALSE);
 	gtk_box_pack_start(GTK_BOX(hbox), sound_entry, FALSE, FALSE, PIDGIN_HIG_BOX_SPACE);
 
@@ -1776,13 +1817,13 @@ sound_page()
 static void
 set_idle_away(PurpleSavedStatus *status)
 {
-	purple_prefs_set_int("/core/savedstatus/idleaway", purple_savedstatus_get_creation_time(status));
+	purple_prefs_set_int("/purple/savedstatus/idleaway", purple_savedstatus_get_creation_time(status));
 }
 
 static void
 set_startupstatus(PurpleSavedStatus *status)
 {
-	purple_prefs_set_int("/core/savedstatus/startup", purple_savedstatus_get_creation_time(status));
+	purple_prefs_set_int("/purple/savedstatus/startup", purple_savedstatus_get_creation_time(status));
 }
 
 static GtkWidget *
@@ -1807,7 +1848,7 @@ away_page()
 	vbox = pidgin_make_frame(ret, _("Idle"));
 
 	dd = pidgin_prefs_dropdown(vbox, _("_Report idle time:"),
-		PURPLE_PREF_STRING, "/core/away/idle_reporting",
+		PURPLE_PREF_STRING, "/purple/away/idle_reporting",
 		_("Never"), "none",
 		_("From last sent message"), "purple",
 #if defined(USE_SCREENSAVER) || defined(HAVE_IOKIT)
@@ -1821,7 +1862,7 @@ away_page()
 	vbox = pidgin_make_frame(ret, _("Away"));
 
 	dd = pidgin_prefs_dropdown(vbox, _("_Auto-reply:"),
-		PURPLE_PREF_STRING, "/core/away/auto_reply",
+		PURPLE_PREF_STRING, "/purple/away/auto_reply",
 		_("Never"), "never",
 		_("When away"), "away",
 		_("When both away and idle"), "awayidle",
@@ -1833,10 +1874,10 @@ away_page()
 	vbox = pidgin_make_frame(ret, _("Auto-away"));
 
 	button = pidgin_prefs_checkbox(_("Change status when _idle"),
-						   "/core/away/away_when_idle", vbox);
+						   "/purple/away/away_when_idle", vbox);
 
 	select = pidgin_prefs_labeled_spin_button(vbox,
-			_("_Minutes before changing status:"), "/core/away/mins_before_away",
+			_("_Minutes before changing status:"), "/purple/away/mins_before_away",
 			1, 24 * 60, sg);
 	g_signal_connect(G_OBJECT(button), "clicked",
 					 G_CALLBACK(pidgin_toggle_sensitive), select);
@@ -1858,7 +1899,7 @@ away_page()
 			 G_CALLBACK(pidgin_toggle_sensitive), menu);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), menu);
 
-	if (!purple_prefs_get_bool("/core/away/away_when_idle")) {
+	if (!purple_prefs_get_bool("/purple/away/away_when_idle")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(select), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
@@ -1868,7 +1909,7 @@ away_page()
 	vbox = pidgin_make_frame(ret, _("Status at Startup"));
 
 	button = pidgin_prefs_checkbox(_("Use status from last _exit at startup"),
-		"/core/savedstatus/startup_current_status", vbox);
+		"/purple/savedstatus/startup_current_status", vbox);
 
 	hbox = gtk_hbox_new(FALSE, 0);
 	gtk_container_add(GTK_CONTAINER(vbox), hbox);
@@ -1887,7 +1928,7 @@ away_page()
 			 G_CALLBACK(pidgin_toggle_sensitive), menu);
 	gtk_label_set_mnemonic_widget(GTK_LABEL(label), menu);
 
-	if (purple_prefs_get_bool("/core/savedstatus/startup_current_status")) {
+	if (purple_prefs_get_bool("/purple/savedstatus/startup_current_status")) {
 		gtk_widget_set_sensitive(GTK_WIDGET(menu), FALSE);
 		gtk_widget_set_sensitive(GTK_WIDGET(label), FALSE);
 	}
@@ -2027,8 +2068,6 @@ smiley_theme_pref_cb(const char *name, PurplePrefType type,
 void
 pidgin_prefs_init(void)
 {
-	/* only change this when we have a sane prefs migration path */
-	purple_prefs_add_none("/gaim");
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "");
 	purple_prefs_add_none("/plugins/gtk");
 
@@ -2059,21 +2098,29 @@ pidgin_prefs_init(void)
 								smiley_theme_pref_cb, NULL);
 }
 
-void pidgin_prefs_update_old() {
+void pidgin_prefs_update_old()
+{
+	const char *str;
+
+	purple_prefs_rename("/gaim/gtk", PIDGIN_PREFS_ROOT);
+
 	/* Rename some old prefs */
-	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_ims", "/core/logging/log_ims");
-	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_chats", "/core/logging/log_chats");
-	purple_prefs_rename("/core/conversations/placement",
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_ims", "/purple/logging/log_ims");
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/logging/log_chats", "/purple/logging/log_chats");
+	purple_prefs_rename("/purple/conversations/placement",
 					  PIDGIN_PREFS_ROOT "/conversations/placement");
 
-	purple_prefs_rename(PIDGIN_PREFS_ROOT "/debug/timestamps", "/core/debug/timestamps");
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/debug/timestamps", "/purple/debug/timestamps");
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/conversations/im/raise_on_events", "/plugins/gtk/X11/notify/method_raise");
 
 	purple_prefs_rename_boolean_toggle(PIDGIN_PREFS_ROOT "/conversations/ignore_colors",
 									 PIDGIN_PREFS_ROOT "/conversations/show_incoming_formatting");
 
 	/* this string pref moved into the core, try to be friendly */
-	purple_prefs_rename(PIDGIN_PREFS_ROOT "/idle/reporting_method", "/core/away/idle_reporting");
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/idle/reporting_method", "/purple/away/idle_reporting");
+	if ((str = purple_prefs_get_string("/purple/away/idle_reporting")) &&
+			strcmp(str, "gaim") == 0)
+		purple_prefs_set_string("/purple/away/idle_reporting", "purple");
 
 	/* Remove some no-longer-used prefs */
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/blist/auto_expand_contacts");

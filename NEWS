@@ -1,6 +1,112 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-2.0.0:
+2.0.1 (5/24/2007):
+	Sean: 2.0.1! Three weeks later, as scheduled! It is so nice to have
+	regular, frequent, releases again! This is a bugfix release; We have
+	fixed over 100 issues reported to us at http://developer.pidgin.im.
+	Thanks to everyone for their great work, and look for the next release
+	in another three weeks!
+
+	Stu: Lots'o'fixes in this. I don't know how you users find so many
+	things for us to fix. 24 hours in a day (sadly). 24 is divisible by the
+	sum of its digits and by their product. It is the smallest composite
+	number, the product of whose divisors is a cube.
+
+	Luke: I requested that we have a bug fix release, and so we have!
+	Many, though unfortunately not all, of the reports that have been
+	submitted to us since 2.0.0 have been fixed now, and so you should
+	all have a much more stable experience with this release.  I also
+	want to thank the many users who have resubmitted their reports
+	as we close out the old Source Forge bug tracker.  If all goes well,
+	your report will get the attention it deserves as we continue to
+	work on Pidgin, Finch, and libpurple.
+
+	Nathan: A ton of fixes have gone into this release.  The feedback
+	we've gotten on 2.0.0 has been incredible.  Hopefully we've resolved
+	most of the critical issues with 2.0.1.  If we haven't, I'm sure
+	our wonderful users will let us hear about it.  I seem to be
+	forgetting something...oh, right, I haven't promised any cool new
+	features in the next release!  So, I promise at least one cool new
+	feature in the next release...you just might have to adjust your
+	definition of 'cool' to get it.
+
+	Etan: Perl plugins now have access to almost all of the savedstatus
+	API functions. I also removed a couple of the preferences from the
+	Pidgin GTK+ Theme Control plugin which should help many of the people
+	for whom the configuration dialog size was a problem. The removed
+	preferences no longer had the effects they were added to have anyway.
+
+2.0.0 (5/3/2007):
+	Sean: 2.0.0! It's real exciting to finally release Pidgin 2.0.0! I'm
+	really proud of all the work we've all done. I'm pumped. And, while
+	I could go on about all the amazing thing that have been added since
+	1.5.0, what I'm really excited about is getting back to a regular,
+	rapid, release cycle of active, open development, unhindered by legal
+	quandries. Huge thanks to everyone involved.
+
+	Luke: We have finally managed to get 2.0.0 out the door, after nearly
+	but not quite 2 years of effort and fustration.  No one regrets more
+	than I that we were unable to make any of betas 3-6 the actual release.
+	But at long last, it is out, and life can return to a more normal
+	state.  There were many tough calls to be made in the last 2 years.
+	Not everyone has agreed with the resulting decisions, that is un-
+	fortunate, but unavoidable.  Suffice it to say that despite what
+	some users appear to think, a ton of thought, argument, discussion,
+	and experimentation has gone into this release.  This release
+	builds on many years of experience, both as developers writing the
+	code, users using it, and in supporting other users.  I hope that
+	those who download and install this will give it a fair shot, and
+	attempt to avoid knee-jerk reactions.
+
+	Evan: One small step for bird, one giant leap for birdkind... except
+	this is hardly one small step. A lot more has changed from Gaim 1.5.0
+	than just the name. Pidgin has a *very* attractive new look, a whole
+	new member of the family (Finch, formerly gaim-console) has been born,
+	and libpurple has come into its own as a solid, full-featured library
+	powering the greatest IM clients around. Bugs were fixed and
+	features were added by the hundreds (thousands?) since the last
+	major release, all while improving performance and resisting feature
+	creep. As Luke said, a ton of thought and effort has gone into
+	Pidgin 2.0.0; I'm proud to have played a part.
+
+	Stu: We did it! finally, we have 2.0.0. It's been a long time coming,
+	but there's a great deal of goodness here. When I say a long time, I'm
+	not kidding - it's been 972 days since we branched off "oldstatus"
+	(aka 1.x). The early Greeks were uncertain as to whether 2 was a
+	number at all (or if we'd ever make this release) - it has a beginning
+	and an end but no middle (much like our unfortunately quiet development
+	period). 2 is the first prime number and the only even prime. 2 is also
+	the first deficient number (oh well). There are only 10 types of people
+	in the world - those who like our new names and those who do not.
+	Enjoy!
+
+	Richard: I'm very glad that we've finally gotten 2.0.0 released and
+	I look forward to returning to a more normal development schedule.
+	Again, a big thanks to everyone who helped in any way to get things
+	where they are today.  Congratulations everyone!
+
+	Sadrul: My first NEWS, and on what an occasion! Pidgin 2.0.0 is finally
+	released!! And it's *really* very good!!! Give your soul a break ...
+	Use Pidgin!
+
+	Daniel: There has been a fair amount of weeping and gnashing of teeth
+	due to the delays in getting this beast out.  I'm really happy that it
+	is done.  I'm also very happy with what we're releasing - I think it is
+	far more stable, packed with useful features and, dare I say, prettier
+	than any previous release.
+
+2.0.0beta7 (4/29/2007):
+	Sean: Beta 7. The final beta. A few major changes from beta6. For
+	starters, we have some new names. That's pretty cool. We have a new
+	logo, to go along with it. And a lot of great icons! As Nathan mentions
+	below, we're totally back in the open now, having a signed agreement
+	from AOL that puts us in the clear. We all really regret having to go
+	completely dark for so long. Anyway, unlike betas1-6, which were of
+	normal release quality, this one is actually beta quality. There are
+	a few significant known issues, and a lot of changes that need a lot
+	of real-world testing. So, if you'd like to help us out, give it a
+	whirl, and let us know if you run into any major issues.
+
 	Nathan:  So, the secret is out now.  We renamed to Pidgin.  I'd just
 	like to apologize to everyone we've had to keep in the dark for the
 	last however-many months.  I know it looked like development slowed
@@ -12,13 +118,35 @@ Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 	I was.  Scared, that is).  The bottom line is that we're out in the
 	open again, and fully plan to stay that way.  We're also opening up
 	the mail archives from the secretive past few months.  You can scan
-	though them if you want, or I can summarize.  "Are the lawyers done
+	through them if you want, or I can summarize.  "Are the lawyers done
 	yet?  No.  Now?  No.  How about now?  No."  All lawyer jokes aside,
 	I'm grateful to our legal team for crossing all the 't's and dotting
 	all the lowercase 'j's to get us the deal we got.  Anyways, thanks
 	for your patience, and on to 2.0.1!
 
-2.0.0beta6 (1/17/2006):
+	Gary: Well my silence, and our silence has ended.  Finally the name
+	change is over and done with and we can go back to a normal dev
+	cycle.  Now if I can just get myself back onto a normal dev cycle,
+	but that's another story all together.
+
+	Ethan: Not to be too "me-too", but I have to say that I'm really
+	excited about the project's new name and identity, and glad to be
+	out of the legal mess.  We're pushing beta 7 with all of the
+	branding and organizational changes that have been going on for
+	the last few months, so there are likely to be some snags --
+	please help us out by trying beta 7, searching for any bugs you
+	find in the bug tracker at http://developer.pidgin.im/, and
+	documenting them if they are unknown or you can provide new
+	information.  Help us make 2.0.0 final a release to be remembered
+	(in a good way)!  I'd like to give huge thanks to all of the
+	developers, our steadfast supporters, the crazy patch writers, and
+	everyone else who has made this transition to Pidgin possible, and
+	the improvements that go along with it.  I'd like to extend a
+	special thanks to Sean, for leading us through the legal issues
+	and taking care of all of the paperwork and overhead that no one
+	wants to deal with.
+
+2.0.0beta6 (1/17/2007):
 	Sean: Barring any seriously major new issues, we expect this to be
 	the final beta release before 2.0.0. This has a bunch of cool UI
 	changes, some Google Talk features, a bunch new plugins, and other

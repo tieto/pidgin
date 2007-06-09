@@ -20,11 +20,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin Instant Messaging Klient (nevyhnutnÈ)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime prostredie (nevyhnutnÈ)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ tÈmy"
-!define GTK_NOTHEME_SECTION_TITLE		"éiadna grafick· tÈma"
-!define GTK_WIMP_SECTION_TITLE			"Wimp grafick· tÈma"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve grafick· tÈma"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue grafick· tÈma"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"Z·stupcovia"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Plocha"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"ätart Menu"
@@ -47,9 +42,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Chyba pri inötal·cii GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Zadan· cesta nie je prÌstupn· alebo ju nie je moûnÈ vytvoriù."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Nem·te opr·vnenie na inötal·ciu GTK+ grafickej tÈmy."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Inötal·toru sa nepodarilo n·jsù poloûky v registri pre Pidgin.$\rJe moûnÈ, ûe t˙to aplik·ciu nainötaloval in˝ pouûÌvateæ."

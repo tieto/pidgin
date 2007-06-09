@@ -62,10 +62,12 @@ SMILEYS = 	act-up.png \
 		foot-in-mouth.png \
 		freaked-out.png \
 		ghost.png \
+		giggle.png \
 		girl.png \
 		glasses-cool.png \
 		glasses-nerdy.png \
 		go-away.png \
+		goat.png \
 		good.png \
 		hammer.png \
 		handcuffs.png \
@@ -87,6 +89,7 @@ SMILEYS = 	act-up.png \
 		love-over.png \
 		love.png \
 		lying.png \
+		mad-tongue.png \
 		mail.png \
 		mean.png \
 		meeting.png \
@@ -99,6 +102,7 @@ SMILEYS = 	act-up.png \
 		msn_online.png \
 		msn.png \
 		musical-note.png \
+		nailbiting.png \
 		neutral.png \
 		party.png \
 		peace.png \
@@ -133,6 +137,7 @@ SMILEYS = 	act-up.png \
 		sigarette.png \
 		silly.png \
 		skeleton.png \
+		skywalker.png \
 		sleepy.png \
 		smile-big.png \
 		smile.png \
@@ -158,16 +163,25 @@ SMILEYS = 	act-up.png \
 		umbrella.png \
 		vampire.png \
 		victory.png \
+		waiting.png \
 		watermelon.png \
 		weep.png \
 		wilt.png \
 		wink.png \
+		worship.png \
 		yawn.png \
 		yin-yang.png
 
 pidginsmileypixdir = $(datadir)/pixmaps/pidgin/emotes/default
+pidginsmileypix_in_files = default.theme.in
 pidginsmileypix_DATA = \
         $(SMILEYS) \
         theme
 
-EXTRA_DIST = $(pidginsmileypix_DATA)
+theme: default.theme.in
+	sed -e 's/^_Name=/Name=/' \
+	    -e 's/^_Description=/Description=/' \
+	    -e 's/^_Author=/Author=/' \
+	$< > $@
+
+EXTRA_DIST = $(pidginsmileypix_DATA) $(pidginsmileypix_in_files)

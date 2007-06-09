@@ -285,6 +285,7 @@ pidgin_request_input(const char *title, const char *primary,
 					   gboolean multiline, gboolean masked, gchar *hint,
 					   const char *ok_text, GCallback ok_cb,
 					   const char *cancel_text, GCallback cancel_cb,
+					   PurpleAccount *account, const char *who, PurpleConversation *conv,
 					   void *user_data)
 {
 	PidginRequestData *data;
@@ -322,7 +323,8 @@ pidgin_request_input(const char *title, const char *primary,
 	/* Setup the dialog */
 	gtk_container_set_border_width(GTK_CONTAINER(dialog), PIDGIN_HIG_BORDER/2);
 	gtk_container_set_border_width(GTK_CONTAINER(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER/2);
-	gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
+	if (!multiline)
+		gtk_window_set_resizable(GTK_WINDOW(dialog), FALSE);
 	gtk_dialog_set_has_separator(GTK_DIALOG(dialog), FALSE);
 	gtk_dialog_set_default_response(GTK_DIALOG(dialog), 0);
 	gtk_box_set_spacing(GTK_BOX(GTK_DIALOG(dialog)->vbox), PIDGIN_HIG_BORDER);
@@ -340,7 +342,7 @@ pidgin_request_input(const char *title, const char *primary,
 	/* Vertical box */
 	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BORDER);
 
-	gtk_box_pack_start(GTK_BOX(hbox), vbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), vbox, TRUE, TRUE, 0);
 
 	/* Descriptive label */
 	primary_esc = (primary != NULL) ? g_markup_escape_text(primary, -1) : NULL;
@@ -358,7 +360,7 @@ pidgin_request_input(const char *title, const char *primary,
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
 	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), label, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), label, FALSE, FALSE, 0);
 
 	g_free(label_text);
 
@@ -443,6 +445,7 @@ pidgin_request_choice(const char *title, const char *primary,
 			const char *secondary, unsigned int default_value,
 			const char *ok_text, GCallback ok_cb,
 			const char *cancel_text, GCallback cancel_cb,
+			PurpleAccount *account, const char *who, PurpleConversation *conv,
 			void *user_data, va_list args)
 {
 	PidginRequestData *data;
@@ -470,7 +473,9 @@ pidgin_request_choice(const char *title, const char *primary,
 
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
-
+#ifdef _WIN32
+		gtk_window_set_title(GTK_WINDOW(dialog), PIDGIN_ALERT_TITLE);
+#endif
 
 	gtk_dialog_add_button(GTK_DIALOG(dialog),
 			      text_to_stock(cancel_text), 0);
@@ -544,6 +549,7 @@ pidgin_request_choice(const char *title, const char *primary,
 static void *
 pidgin_request_action(const char *title, const char *primary,
 						const char *secondary, unsigned int default_action,
+					    PurpleAccount *account, const char *who, PurpleConversation *conv,
 						void *user_data, size_t action_count, va_list actions)
 {
 	PidginRequestData *data;
@@ -577,6 +583,9 @@ pidgin_request_action(const char *title, const char *primary,
 
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(dialog), title);
+#ifdef _WIN32
+		gtk_window_set_title(GTK_WINDOW(dialog), PIDGIN_ALERT_TITLE);
+#endif
 
 	for (i = 0; i < action_count; i++) {
 		gtk_dialog_add_button(GTK_DIALOG(dialog),
@@ -1025,6 +1034,7 @@ pidgin_request_fields(const char *title, const char *primary,
 						const char *secondary, PurpleRequestFields *fields,
 						const char *ok_text, GCallback ok_cb,
 						const char *cancel_text, GCallback cancel_cb,
+					    PurpleAccount *account, const char *who, PurpleConversation *conv,
 						void *user_data)
 {
 	PidginRequestData *data;
@@ -1064,6 +1074,9 @@ pidgin_request_fields(const char *title, const char *primary,
 
 	if (title != NULL)
 		gtk_window_set_title(GTK_WINDOW(win), title);
+#ifdef _WIN32
+		gtk_window_set_title(GTK_WINDOW(win), PIDGIN_ALERT_TITLE);
+#endif
 
 	gtk_window_set_role(GTK_WINDOW(win), "multifield");
 	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
@@ -1467,7 +1480,9 @@ file_ok_check_if_exists_cb(GtkWidget *button, PidginRequestData *data)
 	if ((data->u.file.savedialog == TRUE) &&
 		(g_file_test(data->u.file.name, G_FILE_TEST_EXISTS))) {
 		purple_request_action(data, NULL, _("That file already exists"),
-							_("Would you like to overwrite it?"), 0, data, 2,
+							_("Would you like to overwrite it?"), 0,
+							NULL, NULL, NULL,
+							data, 2,
 							_("Overwrite"), G_CALLBACK(file_yes_no_cb),
 							_("Choose New Name"), G_CALLBACK(file_yes_no_cb));
 	} else
@@ -1491,6 +1506,7 @@ static void *
 pidgin_request_file(const char *title, const char *filename,
 					  gboolean savedialog,
 					  GCallback ok_cb, GCallback cancel_cb,
+					  PurpleAccount *account, const char *who, PurpleConversation *conv,
 					  void *user_data)
 {
 	PidginRequestData *data;
@@ -1532,15 +1548,16 @@ pidgin_request_file(const char *title, const char *filename,
 	if ((filename != NULL) && (*filename != '\0')) {
 		if (savedialog)
 			gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(filesel), filename);
-		else
+		else if (g_file_test(filename, G_FILE_TEST_EXISTS))
 			gtk_file_chooser_set_filename(GTK_FILE_CHOOSER(filesel), filename);
 	}
-	if ((current_folder != NULL) && (*current_folder != '\0')) {
+	if ((filename == NULL || *filename == '\0' || !g_file_test(filename, G_FILE_TEST_EXISTS)) &&
+				(current_folder != NULL) && (*current_folder != '\0')) {
 		folder_set = gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(filesel), current_folder);
 	}
 
 #ifdef _WIN32
-	if (!folder_set) {
+	if (!folder_set && (filename == NULL || *filename == '\0' || !g_file_test(filename, G_FILE_TEST_EXISTS))) {
 		char *my_documents = wpurple_get_special_folder(CSIDL_PERSONAL);
 
 		if (my_documents != NULL) {
@@ -1588,6 +1605,7 @@ pidgin_request_file(const char *title, const char *filename,
 static void *
 pidgin_request_folder(const char *title, const char *dirname,
 					  GCallback ok_cb, GCallback cancel_cb,
+					  PurpleAccount *account, const char *who, PurpleConversation *conv,
 					  void *user_data)
 {
 	PidginRequestData *data;
@@ -1601,7 +1619,7 @@ pidgin_request_folder(const char *title, const char *dirname,
 	data->cbs[0] = cancel_cb;
 	data->cbs[1] = ok_cb;
 	data->u.file.savedialog = FALSE;
-	
+
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
 	dirsel = gtk_file_chooser_dialog_new(
 						title ? title : _("Select Folder..."),
@@ -1659,7 +1677,11 @@ static PurpleRequestUiOps ops =
 	pidgin_request_fields,
 	pidgin_request_file,
 	pidgin_close_request,
-	pidgin_request_folder
+	pidgin_request_folder,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleRequestUiOps *

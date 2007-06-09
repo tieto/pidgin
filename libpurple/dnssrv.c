@@ -92,7 +92,7 @@ responsecompare(gconstpointer ar, gconstpointer br)
 
 #ifndef _WIN32
 
-static void
+G_GNUC_NORETURN static void
 resolve(int in, int out)
 {
 	GList *ret = NULL;
@@ -192,11 +192,19 @@ resolved(gpointer data, gint source, PurpleInputCondition cond)
 	PurpleSrvCallback cb = query_data->cb;
 	int status;
 
-	read(source, &size, sizeof(int));
-	purple_debug_info("dnssrv","found %d SRV entries\n", size);
-	tmp = res = g_new0(PurpleSrvResponse, size);
-	for (i = 0; i < size; i++) {
-		read(source, tmp++, sizeof(PurpleSrvResponse));
+	if (read(source, &size, sizeof(int)) > 0)
+	{
+		purple_debug_info("dnssrv","found %d SRV entries\n", size);
+		tmp = res = g_new0(PurpleSrvResponse, size);
+		for (i = 0; i < size; i++) {
+			read(source, tmp++, sizeof(PurpleSrvResponse));
+		}
+	}
+	else
+	{
+		purple_debug_info("dnssrv","found 0 SRV entries; errno is %i\n", errno);
+		size = 0;
+		res = NULL;
 	}
 
 	cb(res, size, query_data->extradata);

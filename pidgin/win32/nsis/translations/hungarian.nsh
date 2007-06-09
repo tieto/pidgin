@@ -20,11 +20,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin azonnali üzenõ kliens (szükséges)"
 !define GTK_SECTION_TITLE			"GTK+ futtató környezet (szükséges)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ témák"
-!define GTK_NOTHEME_SECTION_TITLE		"Nincs téma"
-!define GTK_WIMP_SECTION_TITLE			"Wimp téma"
-!define GTK_BLUECURVE_SECTION_TITLE		"Bluecurve téma"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue téma"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"Parancsikonok"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Asztal"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Start Menü"
@@ -32,8 +27,8 @@
 !define GTK_SECTION_DESCRIPTION			"A Pidgin által használt többplatformos grafikus eszközkészlet"
 
 !define PIDGIN_SHORTCUTS_SECTION_DESCRIPTION	"Parancsikonok a Pidgin indításához"
-!define PIDGIN_DESKTOP_SHORTCUT_DESC		"Parancsikon létrehozása a Pidginhoz az asztalon"
-!define PIDGIN_STARTMENU_SHORTCUT_DESC		"Start Menü bejegyzés létrehozása a Pidginhoz"
+!define PIDGIN_DESKTOP_SHORTCUT_DESC		"Parancsikon létrehozása a Pidginhez az asztalon"
+!define PIDGIN_STARTMENU_SHORTCUT_DESC		"Start Menü bejegyzés létrehozása a Pidginhez"
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Egy régi verziójú GTK+ futtatókörnyezet van telepítve. Kívánja frissíteni?$\rMegjegyzés: a Pidgin nem fog mûködni, ha nem frissíti."
@@ -51,8 +46,7 @@
 !define GTK_INSTALL_ERROR			"Hiba a GTK+ futtatókörnyezet telepítése közben."
 !define GTK_BAD_INSTALL_PATH			"A megadott elérési út nem érhetõ el, vagy nem hozható létre."
 
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Nincs jogosultsága a GTK+ témák telepítéséhez."
+!define URI_HANDLERS_SECTION_TITLE		"URI kezelõk"
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Az eltávolító nem találta a Pidgin registry bejegyzéseket.$\rValószínüleg egy másik felhasználó telepítette az alkalmazást."

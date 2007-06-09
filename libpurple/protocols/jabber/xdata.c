@@ -64,6 +64,8 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 				case JABBER_X_DATA_JID_SINGLE:
 					{
 					const char *value = purple_request_field_string_get_value(field);
+					if (value == NULL)
+						break;
 					fieldnode = xmlnode_new_child(result, "field");
 					xmlnode_set_attrib(fieldnode, "var", id);
 					valuenode = xmlnode_new_child(fieldnode, "value");
@@ -75,6 +77,8 @@ static void jabber_x_data_ok_cb(struct jabber_x_data_data *data, PurpleRequestFi
 					{
 					char **pieces, **p;
 					const char *value = purple_request_field_string_get_value(field);
+					if (value == NULL)
+						break;
 					fieldnode = xmlnode_new_child(result, "field");
 					xmlnode_set_attrib(fieldnode, "var", id);
 
@@ -330,7 +334,9 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 
 	handle = purple_request_fields(js->gc, title, title, instructions, fields,
 			_("OK"), G_CALLBACK(jabber_x_data_ok_cb),
-			_("Cancel"), G_CALLBACK(jabber_x_data_cancel_cb), data);
+			_("Cancel"), G_CALLBACK(jabber_x_data_cancel_cb),
+			purple_connection_get_account(js->gc), /* XXX Do we have a who here? */ NULL, NULL,
+			data);
 
 	g_free(title);
 	g_free(instructions);

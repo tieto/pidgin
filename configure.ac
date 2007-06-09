@@ -1,13 +1,97 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([pidgin], [2.0.0beta7devel], [devel@pidgin.im])
+AC_PREREQ([2.50])
+
+# UPDATING VERSION NUMBERS FOR RELEASES
+#
+# purple_micro_version += 1
+#
+# If any functions have been added to libpurple, Pidgin, or Finch:
+#   purple_micro_version = 0
+#   purple_minor_version += 1
+#   purple_lt_current += 1
+#
+# If backwards compatibility has been broken in libpurple, Pidgin, or Finch:
+#   purple_micro_version = 0
+#   purple_minor_version = 0
+#   purple_major_version += 1;
+#   purple_lt_current += 1
+#
+# purple_version_suffix should be similar to one of the following:
+#   For beta releases:          [beta2]
+#   For code under development: [devel]
+#   For production releases:    []
+#
+#
+# If any code has changed in libgnt:
+#   gnt_micro_version += 1
+#
+# If any functions have been added to libgnt:
+#   gnt_micro_version = 0
+#   gnt_minor_version += 1
+#   gnt_lt_current += 1
+#
+# If backwards compatibility has been broken in libgnt:
+#   gnt_micro_version = 0
+#   gnt_minor_version = 0
+#   gnt_major_version += 1;
+#   gnt_lt_current += 1
+#
+# gnt_version_suffix should be similar to one of the following:
+#   For beta releases:          [beta2]
+#   For code under development: [devel]
+#   For production releases:    []
+#
+# Make sure to update finch/libgnt/configure.ac with libgnt version changes.
+#
+m4_define([purple_lt_current], [0])
+m4_define([purple_major_version], [2])
+m4_define([purple_minor_version], [0])
+m4_define([purple_micro_version], [2])
+m4_define([purple_version_suffix], [devel])
+m4_define([purple_version],
+          [purple_major_version.purple_minor_version.purple_micro_version])
+m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
+
+m4_define([gnt_lt_current], [0])
+m4_define([gnt_major_version], [1])
+m4_define([gnt_minor_version], [0])
+m4_define([gnt_micro_version], [2])
+m4_define([gnt_version_suffix], [devel])
+m4_define([gnt_version],
+          [gnt_major_version.gnt_minor_version.gnt_micro_version])
+m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
+
+
+AC_INIT([pidgin], [purple_display_version], [devel@pidgin.im])
+
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 #AM_INIT_AUTOMAKE([foreign dist-bzip2])
 
-AC_PREREQ([2.50])
+PURPLE_MAJOR_VERSION=purple_major_version
+PURPLE_MINOR_VERSION=purple_minor_version
+PURPLE_MICRO_VERSION=purple_micro_version
+PURPLE_VERSION=[purple_display_version]
+AC_SUBST(PURPLE_MAJOR_VERSION)
+AC_SUBST(PURPLE_MINOR_VERSION)
+AC_SUBST(PURPLE_MICRO_VERSION)
+AC_SUBST(PURPLE_VERSION)
 
-AC_DEFINE(PIDGIN_NAME, "Pidgin", [The user-visible application name])
+PURPLE_LT_VERSION_INFO="purple_lt_current:purple_micro_version:purple_minor_version"
+AC_SUBST(PURPLE_LT_VERSION_INFO)
+
+GNT_MAJOR_VERSION=gnt_major_version
+GNT_MINOR_VERSION=gnt_minor_version
+GNT_MICRO_VERSION=gnt_micro_version
+GNT_VERSION=[gnt_display_version]
+AC_SUBST(GNT_MAJOR_VERSION)
+AC_SUBST(GNT_MINOR_VERSION)
+AC_SUBST(GNT_MICRO_VERSION)
+AC_SUBST(GNT_VERSION)
+
+GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
+AC_SUBST(GNT_LT_VERSION_INFO)
 
 AC_PATH_PROG(sedpath, sed)
 
@@ -54,6 +138,19 @@ esac
 
 ALL_LINGUAS="af am ar az bg bn bs ca ca@valencia cs da de dz el en_AU en_CA en_GB eo es et eu fa fi fr gl gu he hi hu id it ja ka kn ko ku lt mk my_MM nb ne nl nn pa pl pt_BR pt ps ro ru sk sl sq sr sr@Latn sv ta te th tr uk vi xh zh_CN zh_HK zh_TW"
 AM_GLIB_GNU_GETTEXT
+
+dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
+dnl AM_GLIB_GNU_GETTEXT found it.
+
+if test x$MSGFMT = xno -o x$GMSGFMT = x
+then
+	AC_ERROR([
+
+The msgfmt command is required to build libpurple.  If it is installed
+on your system, ensure that it is in your path.  If it is not, install
+GNU gettext to continue.
+])
+fi
 
 dnl we don't use autobreak on cygwin!!
 dnl AC_CYGWIN
@@ -472,14 +569,15 @@ dnl #######################################################################
 AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
-PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], , [
-	AC_MSG_RESULT(no)
-	enable_gst="no"
-])
 if test "x$enable_gst" != "xno"; then
-	AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
-	AC_SUBST(GSTREAMER_CFLAGS)
-	AC_SUBST(GSTREAMER_LIBS)
+	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], [
+		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
+		AC_SUBST(GSTREAMER_CFLAGS)
+		AC_SUBST(GSTREAMER_LIBS)
+	], [
+		AC_MSG_RESULT(no)
+		enable_gst="no"
+	])
 fi
 
 dnl #######################################################################
@@ -642,6 +740,7 @@ else
 	GADU_LIBS="$GADU_LIBS -lgadu"
 	AC_CHECK_LIB(gadu, gg_libgadu_version, [gadu_libs=yes], , $GADU_LIBS)
 fi
+GADU_CFLAGS=`echo $GADU_CFLAGS |$sedpath 's/-Wall//'`
 
 if test "x$gadu_libs" = "xyes"; then
 	AC_MSG_CHECKING(for libgadu GPL compatibility)
@@ -835,10 +934,12 @@ if test "x$GCC" = "xyes"; then
 			"-Waggregate-return" \
 			"-Wcast-align" \
 			"-Wdeclaration-after-statement" \
+			"-Wendif-labels" \
 			"-Werror-implicit-function-declaration" \
 			"-Wextra -Wno-sign-compare -Wno-unused-parameter" \
 			"-Winit-self" \
 			"-Wmissing-declarations" \
+			"-Wmissing-noreturn" \
 			"-Wmissing-prototypes" \
 			"-Wnested-externs" \
 			"-Wpointer-arith" \
@@ -875,7 +976,7 @@ if test "x$GCC" = "xyes"; then
 			}
 		], [
 			AC_MSG_RESULT(yes)
-			DEBUG_CFLAGS="$DEBUG_CFLAGS -D_FORTIFY_SOURCE=2"
+			DEBUG_CFLAGS="$DEBUG_CFLAGS -Wp,-D_FORTIFY_SOURCE=2"
 		], [
 			AC_MSG_RESULT(no)
 		])
@@ -1083,7 +1184,7 @@ if test "$enable_perl" = yes ; then
 	PERL_CFLAGS=`$perlpath -MExtUtils::Embed -e ccopts 2>/dev/null`
 	if test "_$PERL_CFLAGS" = _ ; then
 		AC_MSG_RESULT([not found, building without perl.])
-		enable_perl = no
+		enable_perl=no
 	else
 		PERL_LIBS=`$perlpath -MExtUtils::Embed -e ldopts 2>/dev/null |$sedpath 's/-lgdbm //'`
 		PERL_LIBS=`echo $PERL_LIBS |$sedpath 's/-ldb //'`
@@ -1818,6 +1919,7 @@ AC_CHECK_HEADERS(malloc.h paths.h sgtty.h stdarg.h sys/cdefs.h)
 AC_CHECK_HEADERS(sys/file.h sys/filio.h sys/ioctl.h sys/msgbuf.h)
 AC_CHECK_HEADERS(sys/select.h sys/uio.h sys/utsname.h sys/wait.h)
 AC_CHECK_HEADERS(termios.h)
+AC_CHECK_HEADERS(sys/sysctl.h sys/socket.h)
 AC_VAR_TIMEZONE_EXTERNALS
 
 AC_CACHE_CHECK(for tm_gmtoff in struct tm, ac_cv_struct_tm_gmtoff,
@@ -1884,14 +1986,9 @@ AM_CONDITIONAL(HAVE_DOXYGEN, test "x$enable_doxygen" = "xyes")
 
 AC_ARG_ENABLE(debug, [AC_HELP_STRING([--enable-debug],
 	[compile with debugging support])], , enable_debug=no)
+
 if test "x$enable_debug" = "xyes" ; then
 	AC_DEFINE(DEBUG, 1, [Define if debugging is enabled.])
-fi
-
-AC_ARG_ENABLE(fatal-asserts, [AC_HELP_STRING([--enable-fatal-asserts],
-	[make assertions fatal (useful for debugging)])], , enable_fatal_asserts=no)
-if test "x$enable_fatal_asserts" = "xyes" ; then
-	AC_DEFINE(PURPLE_FATAL_ASSERTS, 1, [Define to make assertions fatal (useful for debugging).])
 fi
 
 AC_OUTPUT([Makefile
@@ -1953,9 +2050,13 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/toolbar/Makefile
 		   pidgin/pixmaps/toolbar/16/Makefile
 		   pidgin/pixmaps/toolbar/16/scalable/Makefile
+		   pidgin/pixmaps/toolbar/22/Makefile
+		   pidgin/pixmaps/toolbar/22/scalable/Makefile
 		   pidgin/pixmaps/tray/Makefile
 		   pidgin/pixmaps/tray/16/Makefile
+		   pidgin/pixmaps/tray/16/scalable/Makefile
 		   pidgin/pixmaps/tray/22/Makefile
+		   pidgin/pixmaps/tray/22/scalable/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile
@@ -1985,6 +2086,7 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/jabber/Makefile
 		   libpurple/protocols/msn/Makefile
 		   libpurple/protocols/novell/Makefile
+		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
 		   libpurple/protocols/qq/Makefile
 		   libpurple/protocols/sametime/Makefile
@@ -1994,6 +2096,7 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/yahoo/Makefile
 		   libpurple/protocols/zephyr/Makefile
 		   libpurple/tests/Makefile
+		   libpurple/version.h
 		   finch/Makefile
 		   finch/libgnt/Makefile
 		   finch/libgnt/gnt.pc
@@ -2037,7 +2140,6 @@ echo Build with Tcl support........ : $enable_tcl
 echo Build with Tk support......... : $enable_tk
 echo
 echo Print debugging messages...... : $enable_debug
-echo Assertions are fatal.......... : $enable_fatal_asserts
 echo
 eval eval echo Pidgin will be installed in $bindir.
 if test "x$pidginpath" != "x" ; then

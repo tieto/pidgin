@@ -362,7 +362,7 @@ in_addr_t get_real_ip()
 	if (ioctl(fd, SIOCGIFCONF, (char *) &ifc) < 0) return 0;
 	intrface = ifc.ifc_len / sizeof(struct ifreq);
 	for (i = 0; i < intrface; i++) {
-		//buf[intrface].ifr_name
+		/* buf[intrface].ifr_name */
 		if (ioctl(fd, SIOCGIFADDR, (char *) &buf[i]) >= 0)
 		{
 			ret = (((struct sockaddr_in *)(&buf[i].ifr_addr))->sin_addr).s_addr;

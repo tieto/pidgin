@@ -22,6 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "internal.h"
+#include "dbus-maybe.h"
 #include "notify.h"
 
 static PurpleNotifyUiOps *notify_ui_ops = NULL;
@@ -481,6 +483,7 @@ purple_notify_user_info_entry_new(const char *label, const char *value)
 	PurpleNotifyUserInfoEntry *user_info_entry;
 	
 	user_info_entry = g_new0(PurpleNotifyUserInfoEntry, 1);
+	PURPLE_DBUS_REGISTER_POINTER(user_info_entry, PurpleNotifyUserInfoEntry);
 	user_info_entry->label = g_strdup(label);
 	user_info_entry->value = g_strdup(value);
 	user_info_entry->type = PURPLE_NOTIFY_USER_INFO_ENTRY_PAIR;
@@ -495,6 +498,7 @@ purple_notify_user_info_entry_destroy(PurpleNotifyUserInfoEntry *user_info_entry
 	
 	g_free(user_info_entry->label);
 	g_free(user_info_entry->value);	
+	PURPLE_DBUS_UNREGISTER_POINTER(user_info_entry);
 	g_free(user_info_entry);
 }
 
@@ -504,6 +508,7 @@ purple_notify_user_info_new()
 	PurpleNotifyUserInfo *user_info;
 	
 	user_info = g_new0(PurpleNotifyUserInfo, 1);
+	PURPLE_DBUS_REGISTER_POINTER(user_info, PurpleNotifyUserInfo);
 	user_info->user_info_entries = NULL;
 	
 	return user_info;
@@ -521,6 +526,8 @@ purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info)
 	}
 	
 	g_list_free(user_info->user_info_entries);
+	PURPLE_DBUS_UNREGISTER_POINTER(user_info);
+	g_free(user_info);
 }
 
 GList *

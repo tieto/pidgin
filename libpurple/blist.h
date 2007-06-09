@@ -178,6 +178,11 @@ struct _PurpleBlistUiOps
 	void (*request_add_chat)(PurpleAccount *account, PurpleGroup *group,
 							 const char *alias, const char *name);
 	void (*request_add_group)(void);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 #ifdef __cplusplus
@@ -679,6 +684,15 @@ GSList *purple_group_get_accounts(PurpleGroup *g);
  * @return TRUE if there are any buddies in the group, or FALSE otherwise.
  */
 gboolean purple_group_on_account(PurpleGroup *g, PurpleAccount *account);
+
+/**
+ * Returns the name of a group.
+ *
+ * @param group The group.
+ *
+ * @return The name of the group.
+ */
+const char *purple_group_get_name(PurpleGroup *group);
 
 /**
  * Called when an account gets signed on.  Tells the UI to update all the

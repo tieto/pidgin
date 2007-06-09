@@ -1,10 +1,54 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT([libgnt], [0.0.0dev], [devel@pidgin.im])
+AC_PREREQ([2.50])
+
+# UPDATING VERSION NUMBERS FOR RELEASES
+#
+# gnt_micro_version += 1
+#
+# If any functions have been added to libgnt:
+#   gnt_micro_version = 0
+#   gnt_minor_version += 1
+#   gnt_lt_current += 1
+#
+# If backwards compatibility has been broken in libgnt:
+#   gnt_micro_version = 0
+#   gnt_minor_version = 0
+#   gnt_major_version += 1;
+#   gnt_lt_current += 1
+#
+# gnt_version_suffix should be similar to one of the following:
+#   For beta releases:          [beta2]
+#   For code under development: [devel]
+#   For production releases:    []
+#
+# Make sure to update ../../configure.ac with libgnt version changes.
+#
+
+m4_define([gnt_lt_current], [0])
+m4_define([gnt_major_version], [1])
+m4_define([gnt_minor_version], [0])
+m4_define([gnt_micro_version], [0])
+m4_define([gnt_version_suffix], [beta7])
+m4_define([gnt_version],
+          [gnt_major_version.gnt_minor_version.gnt_micro_version])
+m4_define([gnt_display_version], gnt_version[]m4_ifdef([gnt_version_suffix],[gnt_version_suffix]))
+
+AC_INIT([libgnt], [gnt_display_version], [devel@pidgin.im])
 AC_CANONICAL_SYSTEM
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 
-AC_PREREQ([2.50])
+GNT_MAJOR_VERSION=gnt_major_version
+GNT_MINOR_VERSION=gnt_minor_version
+GNT_MICRO_VERSION=gnt_micro_version
+GNT_VERSION=[gnt_display_version]
+AC_SUBST(GNT_MAJOR_VERSION)
+AC_SUBST(GNT_MINOR_VERSION)
+AC_SUBST(GNT_MICRO_VERSION)
+AC_SUBST(GNT_VERSION)
+
+GNT_LT_VERSION_INFO="gnt_lt_current:gnt_micro_version:gnt_minor_version"
+AC_SUBST(GNT_LT_VERSION_INFO)
 
 AC_PATH_PROG(sedpath, sed)
 

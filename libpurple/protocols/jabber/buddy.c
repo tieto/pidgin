@@ -383,7 +383,6 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	JabberIq *iq;
 	JabberStream *js = gc->proto_data;
 	xmlnode *vc_node;
-	char *avatar_file = NULL;
 	struct tag_attr *tag_attr;
 
 	g_free(js->avatar_hash);
@@ -393,7 +392,6 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	 * Send only if there's actually any *information* to send
 	 */
 	vc_node = info ? xmlnode_from_str(info, -1) : NULL;
-	avatar_file = purple_buddy_icons_get_full_path(purple_account_get_buddy_icon(gc->account));
 
 	if(!vc_node) {
 		vc_node = xmlnode_new("vCard");
@@ -403,26 +401,28 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 	if (vc_node->name &&
 			!g_ascii_strncasecmp(vc_node->name, "vCard", 5)) {
-		GError *error = NULL;
-		gchar *avatar_data_tmp;
-		guchar *avatar_data;
-		gsize avatar_len;
+		PurpleStoredImage *img;
 
-		if(avatar_file && g_file_get_contents(avatar_file, &avatar_data_tmp, &avatar_len, &error)) {
+		if ((img = purple_buddy_icons_find_account_icon(gc->account))) {
+			gconstpointer avatar_data;
+			gsize avatar_len;
 			xmlnode *photo, *binval;
 			gchar *enc;
 			int i;
 			unsigned char hashval[20];
 			char *p, hash[41];
 
-			avatar_data = (guchar *) avatar_data_tmp;
+			avatar_data = purple_imgstore_get_data(img);
+			avatar_len = purple_imgstore_get_size(img);
 			photo = xmlnode_new_child(vc_node, "PHOTO");
 			binval = xmlnode_new_child(photo, "BINVAL");
 			enc = purple_base64_encode(avatar_data, avatar_len);
 
-			purple_cipher_digest_region("sha1", (guchar *)avatar_data,
+			purple_cipher_digest_region("sha1", avatar_data,
 									  avatar_len, sizeof(hashval),
 									  hashval, NULL);
+
+			purple_imgstore_unref(img);
 
 			p = hash;
 			for(i=0; i<20; i++, p+=2)
@@ -431,11 +431,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 			xmlnode_insert_data(binval, enc, -1);
 			g_free(enc);
-			g_free(avatar_data);
-		} else if (error != NULL) {
-			g_error_free(error);
 		}
-		g_free(avatar_file);
 
 		iq = jabber_iq_new(js, JABBER_IQ_SET);
 		xmlnode_insert_child(iq->node, vc_node);
@@ -445,7 +441,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 	}
 }
 
-void jabber_set_buddy_icon(PurpleConnection *gc, const char *iconfile)
+void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	PurplePresence *gpresence;
 	PurpleStatus *status;
@@ -579,13 +575,14 @@ void jabber_setup_set_info(PurplePluginAction *action)
 	if(x_vc_data != NULL)
 		xmlnode_free(x_vc_data);
 
-	purple_request_fields(gc, _("Edit Jabber vCard"),
-						_("Edit Jabber vCard"),
+	purple_request_fields(gc, _("Edit XMPP vCard"),
+						_("Edit XMPP vCard"),
 						_("All items below are optional. Enter only the "
 						  "information with which you feel comfortable."),
 						fields,
 						_("Save"), G_CALLBACK(jabber_format_info),
 						_("Cancel"), NULL,
+						purple_connection_get_account(gc), NULL, NULL,
 						gc);
 }
 
@@ -714,7 +711,7 @@ static void jabber_buddy_info_show_if_ready(JabberBuddyInfo *jbi)
 	purple_notify_user_info_destroy(user_info);
 
 	while(jbi->vcard_imgids) {
-		purple_imgstore_unref(GPOINTER_TO_INT(jbi->vcard_imgids->data));
+		purple_imgstore_unref_by_id(GPOINTER_TO_INT(jbi->vcard_imgids->data));
 		jbi->vcard_imgids = g_slist_delete_link(jbi->vcard_imgids, jbi->vcard_imgids);
 	}
 
@@ -958,25 +955,23 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 					gboolean photo = (strcmp(child->name, "PHOTO") == 0);
 
 					data = purple_base64_decode(bintext, &size);
+					if (data) {
+						jbi->vcard_imgids = g_slist_prepend(jbi->vcard_imgids, GINT_TO_POINTER(purple_imgstore_add_with_id(g_memdup(data, size), size, "logo.png")));
+						g_string_append_printf(info_text,
+								"<b>%s:</b> <img id='%d'><br/>",
+								photo ? _("Photo") : _("Logo"),
+								GPOINTER_TO_INT(jbi->vcard_imgids->data));
+	
+						purple_cipher_digest_region("sha1", (guchar *)data, size,
+								sizeof(hashval), hashval, NULL);
+						p = hash;
+						for(i=0; i<20; i++, p+=2)
+							snprintf(p, 3, "%02x", hashval[i]);
 
-					jbi->vcard_imgids = g_slist_prepend(jbi->vcard_imgids, GINT_TO_POINTER(purple_imgstore_add(data, size, "logo.png")));
-					g_string_append_printf(info_text,
-							"<b>%s:</b> <img id='%d'><br/>",
-							photo ? _("Photo") : _("Logo"),
-							GPOINTER_TO_INT(jbi->vcard_imgids->data));
-
-					purple_buddy_icons_set_for_user(js->gc->account, bare_jid,
-							data, size);
-
-					purple_cipher_digest_region("sha1", (guchar *)data, size,
-							sizeof(hashval), hashval, NULL);
-					p = hash;
-					for(i=0; i<20; i++, p+=2)
-						snprintf(p, 3, "%02x", hashval[i]);
-					purple_blist_node_set_string((PurpleBlistNode*)b, "avatar_hash", hash);
-
-					g_free(data);
-					g_free(bintext);
+						purple_buddy_icons_set_for_user(js->gc->account, bare_jid,
+								data, size, hash);
+						g_free(bintext);
+					}
 				}
 			}
 			g_free(text);
@@ -1123,6 +1118,24 @@ static gboolean jabber_buddy_get_info_timeout(gpointer data)
 	return FALSE;
 }
 
+static gboolean _client_is_blacklisted(JabberBuddyResource *jbr, const char *ns)
+{
+	/* can't be blacklisted if we don't know what you're running yet */
+	if(!jbr->client.name)
+		return FALSE;
+
+	if(!strcmp(ns, "jabber:iq:last")) {
+		if(!strcmp(jbr->client.name, "Trillian")) {
+			if(!strcmp(jbr->client.version, "3.1.0.121")) {
+				/* verified by nwalp 2007/05/09 */
+				return TRUE;
+			}
+		}
+	}
+
+	return FALSE;
+}
+
 static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 {
 	JabberIq *iq;
@@ -1180,11 +1193,18 @@ static void jabber_buddy_get_info_for_jid(JabberStream *js, const char *jid)
 			jabber_iq_send(iq);
 		}
 
-		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
-		xmlnode_set_attrib(iq->node, "to", full_jid);
-		jabber_iq_set_callback(iq, jabber_last_parse, jbi);
-		jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
-		jabber_iq_send(iq);
+		/* this is to fix the feeling of irritation I get when trying
+		 * to get info on a friend running Trillian, which doesn't
+		 * respond (with an error or otherwise) to jabber:iq:last
+		 * requests.  There are a number of Trillian users in my
+		 * office. */
+		if(!_client_is_blacklisted(jbr, "jabber:iq:last")) {
+			iq = jabber_iq_new_query(js, JABBER_IQ_GET, "jabber:iq:last");
+			xmlnode_set_attrib(iq->node, "to", full_jid);
+			jabber_iq_set_callback(iq, jabber_last_parse, jbi);
+			jbi->ids = g_slist_prepend(jbi->ids, g_strdup(iq->id));
+			jabber_iq_send(iq);
+		}
 
 		g_free(full_jid);
 	}
@@ -1734,7 +1754,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		if(!instructions)
 		{
 			instructions = g_strdup(_("Fill in one or more fields to search "
-						  "for any matching Jabber users."));
+						  "for any matching XMPP users."));
 		}
 
 		if(xmlnode_get_child(query, "first")) {
@@ -1762,10 +1782,12 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 		usi->js = js;
 		usi->directory_server = g_strdup(from);
 
-		purple_request_fields(js->gc, _("Search for Jabber users"),
-				_("Search for Jabber users"), instructions, fields,
+		purple_request_fields(js->gc, _("Search for XMPP users"),
+				_("Search for XMPP users"), instructions, fields,
 				_("Search"), G_CALLBACK(user_search_cb),
-				_("Cancel"), G_CALLBACK(user_search_cancel_cb), usi);
+				_("Cancel"), G_CALLBACK(user_search_cancel_cb),
+				NULL, NULL, NULL,
+				usi);
 
 		g_free(instructions);
 	}
@@ -1796,10 +1818,12 @@ void jabber_user_search_begin(PurplePluginAction *action)
 
 	purple_request_input(gc, _("Enter a User Directory"), _("Enter a User Directory"),
 			_("Select a user directory to search"),
-			js->user_directories ? js->user_directories->data : "users.jabber.org",
+			js->user_directories ? js->user_directories->data : NULL,
 			FALSE, FALSE, NULL,
 			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search_ok),
-			_("Cancel"), NULL, js);
+			_("Cancel"), NULL,
+			NULL, NULL, NULL,
+			js);
 }
 
 

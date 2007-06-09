@@ -24,10 +24,10 @@ common_sources = \
 	common/GtkSound.xs \
 	common/GtkStatusBox.xs \
 	common/GtkThemes.xs \
-	common/GtkUI.pm \
-	common/GtkUI.xs \
 	common/GtkUtils.xs \
 	common/Makefile.PL.in \
+	common/Pidgin.pm \
+	common/Pidgin.xs \
 	common/gtkmodule.h \
 	common/typemap
 
@@ -95,9 +95,9 @@ distclean-generic:
 	@rm -f Makefile
 
 AM_CPPFLAGS = \
-	-DVERSION=\"$(VERSION)\" \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/pidgin \
 	$(DEBUG_CFLAGS) \
 	$(GTK_CFLAGS) \

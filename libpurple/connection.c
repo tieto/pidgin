@@ -161,7 +161,7 @@ void
 purple_connection_destroy(PurpleConnection *gc)
 {
 	PurpleAccount *account;
-	GSList *buddies, *tmp;
+	GSList *buddies;
 #if 0
 	GList *wins;
 #endif
@@ -197,11 +197,11 @@ purple_connection_destroy(PurpleConnection *gc)
 
 	/* Clear out the proto data that was freed in the prpl close method*/
 	buddies = purple_find_buddies(account, NULL);
-	for (tmp = buddies; tmp; tmp = tmp->next) {
-		PurpleBuddy *buddy = tmp->data;
+	while (buddies != NULL) {
+		PurpleBuddy *buddy = buddies->data;
 		buddy->proto_data = NULL;
+		buddies = g_slist_delete_link(buddies, buddies);
 	}
-	g_slist_free(buddies);
 
 	connections = g_list_remove(connections, gc);
 
@@ -284,7 +284,7 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 		/* Set the time the account came online */
 		purple_presence_set_login_time(presence, time(NULL));
 
-		if (purple_prefs_get_bool("/core/logging/log_system"))
+		if (purple_prefs_get_bool("/purple/logging/log_system"))
 		{
 			PurpleLog *log = purple_account_get_log(account, TRUE);
 
@@ -314,7 +314,7 @@ purple_connection_set_state(PurpleConnection *gc, PurpleConnectionState state)
 	else if (gc->state == PURPLE_DISCONNECTED) {
 		PurpleAccount *account = purple_connection_get_account(gc);
 
-		if (purple_prefs_get_bool("/core/logging/log_system"))
+		if (purple_prefs_get_bool("/purple/logging/log_system"))
 		{
 			PurpleLog *log = purple_account_get_log(account, FALSE);
 

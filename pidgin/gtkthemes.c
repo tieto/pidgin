@@ -146,11 +146,14 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 				list->next = child;
 			else
 				theme->list = child;
+			/* Reverse the Smiley list since it was built in reverse order for efficiency reasons */
+			if (list != NULL)
+				list->smileys = g_slist_reverse(list->smileys);
 			list = child;
 		} else if (!g_ascii_strncasecmp(i, "Name=", strlen("Name="))) {
 			int len;
 			g_free(theme->name);
-			theme->name = g_strdup(i+ strlen("Name="));
+			theme->name = g_strdup(i + strlen("Name="));
 			len = strlen(theme->name);
 			theme->name[len-1] = 0;
 			if(len > 2 && theme->name[len-2] == '\r')
@@ -200,10 +203,16 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 					i++;
 
 			}
+
+
 			if (!have_used_sfile)
 				g_free(sfile);
 		}
 	}
+
+	/* Reverse the Smiley list since it was built in reverse order for efficiency reasons */
+	if (list != NULL)
+		list->smileys = g_slist_reverse(list->smileys);
 
 	g_free(dirname);
 	fclose(f);

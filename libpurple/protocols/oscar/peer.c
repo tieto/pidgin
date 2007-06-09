@@ -173,12 +173,12 @@ peer_connection_close(PeerConnection *conn)
 		purple_input_remove(conn->watcher_outgoing);
 		conn->watcher_outgoing = 0;
 	}
-	if (conn->listenerfd != -1)
+	if (conn->listenerfd >= 0)
 	{
 		close(conn->listenerfd);
 		conn->listenerfd = -1;
 	}
-	if (conn->fd != -1)
+	if (conn->fd >= 0)
 	{
 		close(conn->fd);
 		conn->fd = -1;
@@ -310,7 +310,7 @@ peer_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 		}
 
 		/* If there was an error then close the connection */
-		if (read == -1)
+		if (read < 0)
 		{
 			if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 				/* No worries */
@@ -360,7 +360,7 @@ peer_connection_recv_cb(gpointer data, gint source, PurpleInputCondition cond)
 		return;
 	}
 
-	if (read == -1)
+	if (read < 0)
 	{
 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 			/* No worries */
@@ -422,7 +422,7 @@ send_cb(gpointer data, gint source, PurpleInputCondition cond)
 	wrotelen = send(conn->fd, conn->buffer_outgoing->outptr, writelen, 0);
 	if (wrotelen <= 0)
 	{
-		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
+		if (wrotelen < 0 && ((errno == EAGAIN) || (errno == EWOULDBLOCK)))
 			/* No worries */
 			return;
 
@@ -462,7 +462,7 @@ peer_connection_send(PeerConnection *conn, ByteStream *bs)
 	purple_circ_buffer_append(conn->buffer_outgoing, bs->data, bs->len);
 
 	/* If we haven't already started writing stuff, then start the cycle */
-	if ((conn->watcher_outgoing == 0) && (conn->fd != -1))
+	if ((conn->watcher_outgoing == 0) && (conn->fd >= 0))
 	{
 		conn->watcher_outgoing = purple_input_add(conn->fd,
 				PURPLE_INPUT_WRITE, send_cb, conn);
@@ -596,7 +596,7 @@ peer_connection_listen_cb(gpointer data, gint source, PurpleInputCondition cond)
 	purple_debug_info("oscar", "Accepting connection on listener socket.\n");
 
 	conn->fd = accept(conn->listenerfd, &addr, &addrlen);
-	if (conn->fd == -1)
+	if (conn->fd < 0)
 	{
 		if ((errno == EAGAIN) || (errno == EWOULDBLOCK))
 			/* No connection yet--no worries */
@@ -640,7 +640,7 @@ peer_connection_establish_listener_cb(int listenerfd, gpointer data)
 	conn = data;
 	conn->listen_data = NULL;
 
-	if (listenerfd == -1)
+	if (listenerfd < 0)
 	{
 		/* Could not open listener socket */
 		peer_connection_trynext(conn);
@@ -1016,7 +1016,9 @@ peer_connection_got_proposition(OscarData *od, const gchar *sn, const gchar *mes
 						  "Images.  Because your IP address will be "
 						  "revealed, this may be considered a privacy "
 						  "risk."),
-						PURPLE_DEFAULT_ACTION_NONE, conn, 2,
+						PURPLE_DEFAULT_ACTION_NONE,
+						account, sn, NULL,
+						conn, 2,
 						_("_Connect"), G_CALLBACK(peer_connection_got_proposition_yes_cb),
 						_("Cancel"), G_CALLBACK(peer_connection_got_proposition_no_cb));
 	}

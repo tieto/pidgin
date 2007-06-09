@@ -217,6 +217,14 @@ gboolean jabber_google_roster_incoming(JabberStream *js, xmlnode *item)
 	char *jid_norm = g_strdup(jabber_normalize(account, jid));
 
 	const char *grt = xmlnode_get_attrib_with_namespace(item, "t", "google:roster");
+	const char *subscription = xmlnode_get_attrib(item, "subscription");
+	
+	if (!subscription || !strcmp(subscription, "none")) {
+		/* The Google Talk servers will automatically add people from your Gmail address book
+		 * with subscription=none. If we see someone with subscription=none, ignore them.
+		 */
+		return FALSE;
+	}
 	
 	while (list) {
 		if (!strcmp(jid_norm, (char*)list->data)) {
@@ -398,7 +406,7 @@ char *jabber_google_format_to_html(const char *text)
 					*(p+1) == '<')) {
 				bold_count++;
 				in_bold = FALSE;
-			} else if (preceding_space && !in_bold) {
+			} else if (preceding_space && !in_bold && !g_unichar_isspace(*(p+1))) {
 				bold_count++;
 				in_bold = TRUE;
 			}
@@ -409,7 +417,7 @@ char *jabber_google_format_to_html(const char *text)
 					*(p+1) == '<')) {
 				italic_count++;
 				in_italic = FALSE;
-			} else if (preceding_space && !in_italic) {
+			} else if (preceding_space && !in_italic && !g_unichar_isspace(*(p+1))) {
 				italic_count++;
 				in_italic = TRUE;
 			}
@@ -445,7 +453,7 @@ char *jabber_google_format_to_html(const char *text)
 				str = g_string_append(str, "</b>");
 				in_bold = FALSE;
 				bold_count--;
-			} else if (preceding_space && bold_count > 1) {
+			} else if (preceding_space && bold_count > 1 && !g_unichar_isspace(*(p+1))) {
 				str = g_string_append(str, "<b>");
 				bold_count--;
 				in_bold = TRUE;
@@ -459,7 +467,7 @@ char *jabber_google_format_to_html(const char *text)
 				str = g_string_append(str, "</i>");
 				italic_count--;
 				in_italic = FALSE;
-			} else if (preceding_space && italic_count > 1) {
+			} else if (preceding_space && italic_count > 1 && !g_unichar_isspace(*(p+1))) {
 				str = g_string_append(str, "<i>");
 				italic_count--;
 				in_italic = TRUE;

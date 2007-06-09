@@ -5,12 +5,14 @@
 .*/perl/common/blib.*
 .*/perl/common/pm_to_blib$
 .*\.bs$
+.*\.def$
 .*\.dll$
 .*\.exe$
 intltool-.*
 Doxyfile$
 aclocal.m4
 compile
+config.cache
 config.guess
 config.h$
 config.h.in
@@ -30,7 +32,9 @@ pidgin.desktop$
 pidgin.spec$
 pidgin-.*.tar.gz
 pidgin-.*.tar.bz2
-pidgin/pidgin
+pidgin/pidgin$
+pidgin/pixmaps/emotes/default/22/theme
+pidgin/pixmaps/emotes/none/theme
 pidgin/plugins/musicmessaging/music-messaging-bindings.c
 pidgin/plugins/perl/common/Makefile.PL$
 pidgin/win32/pidgin_dll_rc.rc$
@@ -50,6 +54,7 @@ libpurple/purple-client-bindings.c
 libpurple/purple-client-bindings.h
 libpurple/purple-client-example
 libpurple/tests/check_libpurple
+libpurple/version.h$
 libpurple/win32/libpurplerc.rc$
 libtool
 local.mak

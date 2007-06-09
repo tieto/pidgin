@@ -61,6 +61,11 @@
 #include "gtkthemes.h"
 #include "gtkutils.h"
 
+typedef struct {
+	GtkWidget *menu;
+	gint default_item;
+} AopMenu;
+
 static guint accels_save_timer = 0;
 
 static gboolean
@@ -78,17 +83,18 @@ url_clicked_cb(GtkWidget *w, const char *uri)
 }
 
 static GtkIMHtmlFuncs gtkimhtml_cbs = {
-	(GtkIMHtmlGetImageFunc)purple_imgstore_get,
+	(GtkIMHtmlGetImageFunc)purple_imgstore_find_by_id,
 	(GtkIMHtmlGetImageDataFunc)purple_imgstore_get_data,
 	(GtkIMHtmlGetImageSizeFunc)purple_imgstore_get_size,
 	(GtkIMHtmlGetImageFilenameFunc)purple_imgstore_get_filename,
-	purple_imgstore_ref,
-	purple_imgstore_unref,
+	purple_imgstore_ref_by_id,
+	purple_imgstore_unref_by_id,
 };
 
 void
 pidgin_setup_imhtml(GtkWidget *imhtml)
 {
+	PangoFontDescription *desc = NULL;
 	g_return_if_fail(imhtml != NULL);
 	g_return_if_fail(GTK_IS_IMHTML(imhtml));
 
@@ -99,25 +105,27 @@ pidgin_setup_imhtml(GtkWidget *imhtml)
 
 	gtk_imhtml_set_funcs(GTK_IMHTML(imhtml), &gtkimhtml_cbs);
 
-	/* Use the GNOME "document" font, if applicable */
-	if (purple_running_gnome()) {
+	if (!purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font")) {
+		const char *font = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
+		desc = pango_font_description_from_string(font);
+	} else if (purple_running_gnome()) {
+		/* Use the GNOME "document" font, if applicable */
 		char *path, *font;
-		PangoFontDescription *desc = NULL;
-				
+
 		if ((path = g_find_program_in_path("gconftool-2"))) {
 			g_free(path);
 			if (!g_spawn_command_line_sync(
-					"gconftool-2 -g /desktop/gnome/interface/document_font_name", 
+					"gconftool-2 -g /desktop/gnome/interface/document_font_name",
 					&font, NULL, NULL, NULL))
 				return;
 		}
 		desc = pango_font_description_from_string(font);
 		g_free(font);
-		
-		if (desc) {
-			gtk_widget_modify_font(imhtml, desc);
-			pango_font_description_free(desc);
-		}
+	}
+	
+	if (desc) {
+		gtk_widget_modify_font(imhtml, desc);
+		pango_font_description_free(desc);
 	}
 }
 
@@ -430,54 +438,159 @@ pidgin_make_frame(GtkWidget *parent, const char *title)
 	return vbox;
 }
 
-static void
-protocol_menu_cb(GtkWidget *optmenu, GCallback cb)
+static gpointer
+aop_option_menu_get_selected(GtkWidget *optmenu, GtkWidget **p_item)
 {
-	GtkWidget *menu;
-	GtkWidget *item;
-	const char *protocol;
-	gpointer user_data;
-
-	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
-	item = gtk_menu_get_active(GTK_MENU(menu));
-
-	protocol = g_object_get_data(G_OBJECT(item), "protocol");
-	user_data = (g_object_get_data(G_OBJECT(optmenu), "user_data"));
-
-	if (cb != NULL)
-		((void (*)(GtkWidget *, const char *, gpointer))cb)(item, protocol,
-															user_data);
+	GtkWidget *menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
+	GtkWidget *item = gtk_menu_get_active(GTK_MENU(menu));
+	if (p_item)
+		(*p_item) = item;
+	return g_object_get_data(G_OBJECT(item), "aop_per_item_data");
 }
 
-GtkWidget *
-pidgin_protocol_option_menu_new(const char *id, GCallback cb,
-								  gpointer user_data)
+static void
+aop_menu_cb(GtkWidget *optmenu, GCallback cb)
 {
-	PurplePluginProtocolInfo *prpl_info;
-	PurplePlugin *plugin;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GtkWidget *optmenu;
-	GtkWidget *menu;
 	GtkWidget *item;
+	gpointer per_item_data;
+
+	per_item_data = aop_option_menu_get_selected(optmenu, &item);
+
+	if (cb != NULL) {
+		((void (*)(GtkWidget *, gpointer, gpointer))cb)(item, per_item_data, g_object_get_data(G_OBJECT(optmenu), "user_data"));
+	}
+}
+
+static GtkWidget *
+aop_menu_item_new(GtkSizeGroup *sg, GdkPixbuf *pixbuf, const char *lbl, gpointer per_item_data)
+{
+	GtkWidget *item;
+	GtkWidget *hbox;
 	GtkWidget *image;
-	GdkPixbuf *pixbuf;
-	GList *p;
-	GtkSizeGroup *sg;
-	char *filename;
-	const char *proto_name;
-	char buf[256];
-	int i, selected_index = -1;
+	GtkWidget *label;
+
+	item = gtk_menu_item_new();
+	gtk_widget_show(item);
+
+	hbox = gtk_hbox_new(FALSE, 4);
+	gtk_widget_show(hbox);
+
+	/* Create the image */
+	if (pixbuf == NULL)
+		image = gtk_image_new();
+	else
+		image = gtk_image_new_from_pixbuf(pixbuf);
+	gtk_widget_show(image);
+
+	if (sg)
+		gtk_size_group_add_widget(sg, image);
+
+	/* Create the label */
+	label = gtk_label_new (lbl);
+	gtk_widget_show (label);
+	gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
+	gtk_misc_set_alignment(GTK_MISC(label), 0.0, 0.5);
+	
+	gtk_container_add(GTK_CONTAINER(item), hbox);
+	gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+
+	g_object_set_data(G_OBJECT (item), "aop_per_item_data", per_item_data);
+
+	pidgin_set_accessible_label(item, label);
+
+	return item;
+}
+
+static GtkWidget *
+aop_option_menu_new(AopMenu *aop_menu, GCallback cb, gpointer user_data)
+{
+	GtkWidget *optmenu;
 
 	optmenu = gtk_option_menu_new();
 	gtk_widget_show(optmenu);
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), aop_menu->menu);
 
+	if (aop_menu->default_item != -1)
+		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), aop_menu->default_item);
+
+	g_object_set_data_full(G_OBJECT(optmenu), "aop_menu", aop_menu, (GDestroyNotify)g_free);
 	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data);
 
-	menu = gtk_menu_new();
-	gtk_widget_show(menu);
+	g_signal_connect(G_OBJECT(optmenu), "changed", G_CALLBACK(aop_menu_cb), cb);
 
+	return optmenu;
+}
+
+static void
+aop_option_menu_replace_menu(GtkWidget *optmenu, AopMenu *new_aop_menu)
+{
+	if (gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu)))
+		gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));
+
+	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), new_aop_menu->menu);
+
+	if (new_aop_menu->default_item != -1)
+		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), new_aop_menu->default_item);
+
+	g_object_set_data_full(G_OBJECT(optmenu), "aop_menu", new_aop_menu, (GDestroyNotify)g_free);
+}
+
+static void
+aop_option_menu_select_by_data(GtkWidget *optmenu, gpointer data)
+{
+	guint idx;
+	GList *llItr = NULL;
+
+	for (idx = 0, llItr = GTK_MENU_SHELL(gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu)))->children;
+	     llItr != NULL;
+	     llItr = llItr->next, idx++) {
+		if (data == g_object_get_data(G_OBJECT(llItr->data), "aop_per_item_data")) {
+			gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), idx);
+			break;
+		}
+	}
+}
+
+static GdkPixbuf *
+get_prpl_pixbuf(PurplePluginProtocolInfo *prpl_info)
+{
+	const char *proto_name;
+	GdkPixbuf *pixbuf = NULL;
+	char *filename;
+	char buf[256];
+
+	proto_name = prpl_info->list_icon(NULL, NULL);
+	g_return_val_if_fail(proto_name != NULL, NULL);
+
+	g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
+	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols", "16", buf, NULL);
+	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+	g_free(filename);
+
+	return pixbuf;
+}
+
+static AopMenu *
+create_protocols_menu(const char *default_proto_id)
+{
+	AopMenu *aop_menu = NULL;
+	PurplePluginProtocolInfo *prpl_info;
+	PurplePlugin *plugin;
+	GdkPixbuf *pixbuf = NULL;
+	GtkSizeGroup *sg;
+	GList *p;
+	const char *gtalk_name = NULL;
+	int i;
+
+	aop_menu = g_malloc0(sizeof(AopMenu));
+	aop_menu->default_item = -1;
+	aop_menu->menu = gtk_menu_new();
+	gtk_widget_show(aop_menu->menu);
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
+
+	if (purple_find_prpl("prpl-jabber"))
+		gtalk_name = _("Google Talk");
 
 	for (p = purple_plugins_get_protocols(), i = 0;
 		 p != NULL;
@@ -486,120 +599,74 @@ pidgin_protocol_option_menu_new(const char *id, GCallback cb,
 		plugin = (PurplePlugin *)p->data;
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
-		/* Create the item. */
-		item = gtk_menu_item_new();
+		if (gtalk_name && strcmp(gtalk_name, plugin->info->name) < 0) {
+			char *filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
+			                                  "16", "google-talk.png", NULL);
+			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
+			g_free(filename);
 
-		/* Create the hbox. */
-		hbox = gtk_hbox_new(FALSE, 4);
-		gtk_container_add(GTK_CONTAINER(item), hbox);
-		gtk_widget_show(hbox);
+			gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
+				aop_menu_item_new(sg, pixbuf, gtalk_name, "prpl-jabber"));
 
-		/* Load the image. */
-		proto_name = prpl_info->list_icon(NULL, NULL);
-		g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
+			if (pixbuf)
+				g_object_unref(pixbuf);
 
-		filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
-									"16", buf, NULL);
-		pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-		g_free(filename);
-
-		if (pixbuf) {
-			image = gtk_image_new_from_pixbuf(pixbuf);
-
-			g_object_unref(G_OBJECT(pixbuf));
+			gtalk_name = NULL;
+			i++;
 		}
-		else
-			image = gtk_image_new();
 
-		gtk_size_group_add_widget(sg, image);
+		pixbuf = get_prpl_pixbuf(prpl_info);
 
-		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
-		gtk_widget_show(image);
+		gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
+			aop_menu_item_new(sg, pixbuf, plugin->info->name, plugin->info->id));
 
-		/* Create the label. */
-		label = gtk_label_new(plugin->info->name);
-		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-		gtk_widget_show(label);
+		if (pixbuf)
+			g_object_unref(pixbuf);
 
-		g_object_set_data(G_OBJECT(item), "protocol", plugin->info->id);
-
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-		gtk_widget_show(item);
-		pidgin_set_accessible_label (item, label);
-
-		if (id != NULL && !strcmp(plugin->info->id, id))
-			selected_index = i;
+		if (default_proto_id != NULL && !strcmp(plugin->info->id, default_proto_id))
+			aop_menu->default_item = i;
 	}
-
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-
-	if (selected_index != -1)
-		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), selected_index);
-
-	g_signal_connect(G_OBJECT(optmenu), "changed",
-					 G_CALLBACK(protocol_menu_cb), cb);
 
 	g_object_unref(sg);
 
-	return optmenu;
+	return aop_menu;
+}
+
+GtkWidget *
+pidgin_protocol_option_menu_new(const char *id, GCallback cb,
+								  gpointer user_data)
+{
+	return aop_option_menu_new(create_protocols_menu(id), cb, user_data);
 }
 
 PurpleAccount *
 pidgin_account_option_menu_get_selected(GtkWidget *optmenu)
 {
-	GtkWidget *menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
-	GtkWidget *item = gtk_menu_get_active(GTK_MENU(menu));
-	return g_object_get_data(G_OBJECT(item), "account");
+	return (PurpleAccount *)aop_option_menu_get_selected(optmenu, NULL);
 }
 
-static void
-account_menu_cb(GtkWidget *optmenu, GCallback cb)
-{
-	GtkWidget *menu;
-	GtkWidget *item;
-	PurpleAccount *account;
-	gpointer user_data;
-
-	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
-	item = gtk_menu_get_active(GTK_MENU(menu));
-
-	account   = g_object_get_data(G_OBJECT(item),    "account");
-	user_data = g_object_get_data(G_OBJECT(optmenu), "user_data");
-
-	if (cb != NULL)
-		((void (*)(GtkWidget *, PurpleAccount *, gpointer))cb)(item, account,
-															 user_data);
-}
-
-static void
-create_account_menu(GtkWidget *optmenu, PurpleAccount *default_account,
+static AopMenu *
+create_account_menu(PurpleAccount *default_account,
 					PurpleFilterAccountFunc filter_func, gboolean show_all)
 {
+	AopMenu *aop_menu = NULL;
 	PurpleAccount *account;
-	GtkWidget *menu;
-	GtkWidget *item;
-	GtkWidget *image;
-	GtkWidget *hbox;
-	GtkWidget *label;
-	GdkPixbuf *pixbuf;
+	GdkPixbuf *pixbuf = NULL;
 	GList *list;
 	GList *p;
 	GtkSizeGroup *sg;
-	char *filename;
-	const char *proto_name;
+	int i;
 	char buf[256];
-	int i, selected_index = -1;
 
 	if (show_all)
 		list = purple_accounts_get_all();
 	else
 		list = purple_connections_get_all();
 
-	menu = gtk_menu_new();
-	gtk_widget_show(menu);
-
+	aop_menu = g_malloc0(sizeof(AopMenu));
+	aop_menu->default_item = -1;
+	aop_menu->menu = gtk_menu_new();
+	gtk_widget_show(aop_menu->menu);
 	sg = gtk_size_group_new(GTK_SIZE_GROUP_HORIZONTAL);
 
 	for (p = list, i = 0; p != NULL; p = p->next, i++) {
@@ -621,46 +688,19 @@ create_account_menu(GtkWidget *optmenu, PurpleAccount *default_account,
 
 		plugin = purple_find_prpl(purple_account_get_protocol_id(account));
 
-		if (plugin != NULL)
+		if (plugin)
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
-		/* Create the item. */
-		item = gtk_menu_item_new();
-
-		/* Create the hbox. */
-		hbox = gtk_hbox_new(FALSE, 4);
-		gtk_container_add(GTK_CONTAINER(item), hbox);
-		gtk_widget_show(hbox);
-
 		/* Load the image. */
-		if (prpl_info != NULL) {
-			proto_name = prpl_info->list_icon(account, NULL);
-			g_snprintf(buf, sizeof(buf), "%s.png", proto_name);
+		if (prpl_info) {
+			pixbuf = get_prpl_pixbuf(prpl_info);
 
-			filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
-			                            "16", buf, NULL);
-			pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-			g_free(filename);
-
-			if (pixbuf != NULL) {
+			if (pixbuf) {
 				if (purple_account_is_disconnected(account) && show_all &&
 						purple_connections_get_all())
 					gdk_pixbuf_saturate_and_pixelate(pixbuf, pixbuf, 0.0, FALSE);
-
-				image = gtk_image_new_from_pixbuf(pixbuf);
-
-				g_object_unref(G_OBJECT(pixbuf));
 			}
-			else
-				image = gtk_image_new();
 		}
-		else
-			image = gtk_image_new();
-
-		gtk_size_group_add_widget(sg, image);
-
-		gtk_box_pack_start(GTK_BOX(hbox), image, FALSE, FALSE, 0);
-		gtk_widget_show(image);
 
 		if (purple_account_get_alias(account)) {
 			g_snprintf(buf, sizeof(buf), "%s (%s) (%s)",
@@ -673,54 +713,33 @@ create_account_menu(GtkWidget *optmenu, PurpleAccount *default_account,
 					   purple_account_get_protocol_name(account));
 		}
 
-		/* Create the label. */
-		label = gtk_label_new(buf);
-		gtk_label_set_justify(GTK_LABEL(label), GTK_JUSTIFY_LEFT);
-		gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
-		gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
-		gtk_widget_show(label);
+		gtk_menu_shell_append(GTK_MENU_SHELL(aop_menu->menu),
+			aop_menu_item_new(sg, pixbuf, buf, account));
 
-		g_object_set_data(G_OBJECT(item), "account", account);
+		if (pixbuf)
+			g_object_unref(pixbuf);
 
-		gtk_menu_shell_append(GTK_MENU_SHELL(menu), item);
-		gtk_widget_show(item);
-		pidgin_set_accessible_label (item, label);
-
-		if (default_account != NULL && account == default_account)
-			selected_index = i;
+		if (default_account && account == default_account)
+			aop_menu->default_item = i;
 	}
 
 	g_object_unref(sg);
 
-	gtk_option_menu_set_menu(GTK_OPTION_MENU(optmenu), menu);
-
-	/* Set the place we should be at. */
-	if (selected_index != -1)
-		gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), selected_index);
+	return aop_menu;
 }
 
 static void
 regenerate_account_menu(GtkWidget *optmenu)
 {
-	GtkWidget *menu;
-	GtkWidget *item;
 	gboolean show_all;
 	PurpleAccount *account;
 	PurpleFilterAccountFunc filter_func;
 
-	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
-	item = gtk_menu_get_active(GTK_MENU(menu));
-	account = g_object_get_data(G_OBJECT(item), "account");
+	account = (PurpleAccount *)aop_option_menu_get_selected(optmenu, NULL);
+	show_all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(optmenu), "show_all"));
+	filter_func = g_object_get_data(G_OBJECT(optmenu), "filter_func");
 
-	show_all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(optmenu),
-												 "show_all"));
-
-	filter_func = g_object_get_data(G_OBJECT(optmenu),
-										   "filter_func");
-
-	gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));
-
-	create_account_menu(optmenu, account, filter_func, show_all);
+	aop_option_menu_replace_menu(optmenu, create_account_menu(account, filter_func, show_all));
 }
 
 static void
@@ -747,28 +766,7 @@ account_menu_destroyed_cb(GtkWidget *optmenu, GdkEvent *event,
 void
 pidgin_account_option_menu_set_selected(GtkWidget *optmenu, PurpleAccount *account)
 {
-	GtkWidget *menu;
-	GtkWidget *item;
-	gboolean show_all;
-	PurpleAccount *curaccount;
-	PurpleFilterAccountFunc filter_func;
-
-	menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu));
-	item = gtk_menu_get_active(GTK_MENU(menu));
-	curaccount = g_object_get_data(G_OBJECT(item), "account");
-
-	if (account == curaccount)
-		return;
-
-	show_all = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(optmenu),
-												 "show_all"));
-
-	filter_func = g_object_get_data(G_OBJECT(optmenu),
-										   "filter_func");
-
-	gtk_option_menu_remove_menu(GTK_OPTION_MENU(optmenu));
-
-	create_account_menu(optmenu, account, filter_func, show_all);
+	aop_option_menu_select_by_data(optmenu, account);
 }
 
 GtkWidget *
@@ -780,8 +778,7 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 	GtkWidget *optmenu;
 
 	/* Create the option menu */
-	optmenu = gtk_option_menu_new();
-	gtk_widget_show(optmenu);
+	optmenu = aop_option_menu_new(create_account_menu(default_account, filter_func, show_all), cb, user_data);
 
 	g_signal_connect(G_OBJECT(optmenu), "destroy",
 					 G_CALLBACK(account_menu_destroyed_cb), NULL);
@@ -803,15 +800,7 @@ pidgin_account_option_menu_new(PurpleAccount *default_account,
 	/* Set some data. */
 	g_object_set_data(G_OBJECT(optmenu), "user_data", user_data);
 	g_object_set_data(G_OBJECT(optmenu), "show_all", GINT_TO_POINTER(show_all));
-	g_object_set_data(G_OBJECT(optmenu), "filter_func",
-					  filter_func);
-
-	/* Create and set the actual menu. */
-	create_account_menu(optmenu, default_account, filter_func, show_all);
-
-	/* And now the last callback. */
-	g_signal_connect(G_OBJECT(optmenu), "changed",
-					 G_CALLBACK(account_menu_cb), cb);
+	g_object_set_data(G_OBJECT(optmenu), "filter_func", filter_func);
 
 	return optmenu;
 }
@@ -1350,13 +1339,12 @@ static void dnd_image_ok_callback(_DndData *data, int choice)
 
 			return;
 		}
-		id = purple_imgstore_add(filedata, size, data->filename);
-		g_free(filedata);
+		id = purple_imgstore_add_with_id(filedata, size, data->filename);
 
 		gtk_text_buffer_get_iter_at_mark(GTK_IMHTML(gtkconv->entry)->text_buffer, &iter,
 						 gtk_text_buffer_get_insert(GTK_IMHTML(gtkconv->entry)->text_buffer));
 		gtk_imhtml_insert_image_at_iter(GTK_IMHTML(gtkconv->entry), id, &iter);
-		purple_imgstore_unref(id);
+		purple_imgstore_unref_by_id(id);
 
 		break;
 	}
@@ -1418,7 +1406,7 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 			char *str, *str2;
 
 			str = g_strdup_printf(_("Cannot send folder %s."), basename);
-			str2 = g_strdup_printf(_("%s cannot transfer a folder. You will need to send the files within individually"), PIDGIN_NAME);
+			str2 = g_strdup_printf(_("%s cannot transfer a folder. You will need to send the files within individually."), PIDGIN_NAME);
 
 			purple_notify_error(NULL, NULL,
 					  str, str2);
@@ -1454,24 +1442,32 @@ pidgin_dnd_file_manage(GtkSelectionData *sd, PurpleAccount *account, const char 
 						    _("You can send this image as a file transfer, "
 						      "embed it into this message, or use it as the buddy icon for this user."),
 						    DND_FILE_TRANSFER, "OK", (GCallback)dnd_image_ok_callback,
-						    "Cancel", (GCallback)dnd_image_cancel_callback, data,
-						    _("Set as buddy icon"), DND_BUDDY_ICON,
+						    "Cancel", (GCallback)dnd_image_cancel_callback,
+							account, who, NULL,
+							data,
+							_("Set as buddy icon"), DND_BUDDY_ICON,
 						    _("Send image file"), DND_FILE_TRANSFER,
-						    _("Insert in message"), DND_IM_IMAGE, NULL);
+						    _("Insert in message"), DND_IM_IMAGE,
+							NULL);
 			else if (!(im || ft))
 				purple_request_yes_no(NULL, NULL, _("You have dragged an image"),
-						       _("Would you like to set it as the buddy icon for this user?"),
-						    0, data, (GCallback)dnd_set_icon_ok_cb, (GCallback)dnd_set_icon_cancel_cb);
+							_("Would you like to set it as the buddy icon for this user?"),
+							0,
+							account, who, NULL,
+							data, (GCallback)dnd_set_icon_ok_cb, (GCallback)dnd_set_icon_cancel_cb);
 			else
 				purple_request_choice(NULL, NULL,
 						    _("You have dragged an image"),
-						    ft ? _("You can send this image as a file transfer or "
-							   "embed it into this message, or use it as the buddy icon for this user.") :
-						    _("You can insert this image into this message, or use it as the buddy icon for this user"),
-						    ft ? DND_FILE_TRANSFER : DND_IM_IMAGE, "OK", (GCallback)dnd_image_ok_callback,
-						    "Cancel", (GCallback)dnd_image_cancel_callback, data,
+						    (ft ? _("You can send this image as a file transfer, or use it as the buddy icon for this user.") :
+						    _("You can insert this image into this message, or use it as the buddy icon for this user")),
+						    (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
+							"OK", (GCallback)dnd_image_ok_callback,
+						    "Cancel", (GCallback)dnd_image_cancel_callback,
+							account, who, NULL,
+							data,
 						    _("Set as buddy icon"), DND_BUDDY_ICON,
-						    ft ? _("Send image file") : _("Insert in message"), ft ? DND_FILE_TRANSFER : DND_IM_IMAGE, NULL);
+						    (ft ? _("Send image file") : _("Insert in message")), (ft ? DND_FILE_TRANSFER : DND_IM_IMAGE),
+							NULL);
 			return;
 		}
 
@@ -1843,21 +1839,8 @@ static gboolean screenname_completion_match_selected_cb(GtkEntryCompletion *comp
 	if (account == NULL)
 		return TRUE;
 
-	if (optmenu != NULL) {
-		GList *items;
-		guint index = 0;
-		pidgin_account_option_menu_set_selected(optmenu, account);
-		items = GTK_MENU_SHELL(gtk_option_menu_get_menu(GTK_OPTION_MENU(optmenu)))->children;
-
-		do {
-			if (account == g_object_get_data(G_OBJECT(items->data), "account")) {
-				/* Set the account in the GUI. */
-				gtk_option_menu_set_history(GTK_OPTION_MENU(optmenu), index);
-				return TRUE;
-			}
-			index++;
-		} while ((items = items->next) != NULL);
-	}
+	if (optmenu != NULL)
+		aop_option_menu_select_by_data(optmenu, account);
 
 	return TRUE;
 }
@@ -2269,20 +2252,10 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 		GTK_FILE_SELECTION(dialog->icon_filesel)));
 #endif /* FILECHOOSER */
 
-	if (!filename || g_stat(filename, &st))
+	if (!filename || g_stat(filename, &st) || !(pixbuf = gdk_pixbuf_new_from_file(filename, NULL)))
 	{
-		g_free(filename);
-		return;
-	}
-
-	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
-	if (!pixbuf) {
 		gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), NULL);
 		gtk_label_set_markup(GTK_LABEL(dialog->icon_text), "");
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-		gtk_file_chooser_set_preview_widget_active(
-					GTK_FILE_CHOOSER(dialog->icon_filesel), FALSE);
-#endif /* FILECHOOSER */
 		g_free(filename);
 		return;
 	}
@@ -2299,10 +2272,6 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 	scale = gdk_pixbuf_scale_simple(pixbuf, width * 50 / height,
 									50, GDK_INTERP_BILINEAR);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(dialog->icon_preview), scale);
-#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
-	gtk_file_chooser_set_preview_widget_active(
-					GTK_FILE_CHOOSER(dialog->icon_filesel), TRUE);
-#endif /* FILECHOOSER */
 	gtk_label_set_markup(GTK_LABEL(dialog->icon_text), markup);
 
 	g_object_unref(G_OBJECT(pixbuf));
@@ -2317,7 +2286,9 @@ icon_preview_change_cb(GtkTreeSelection *sel, struct _icon_chooser *dialog)
 GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(const char *, gpointer), gpointer data) {
 	struct _icon_chooser *dialog = g_new0(struct _icon_chooser, 1);
 
-#if !GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+#if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
+	GtkWidget *vbox;
+#else
 	GtkWidget *hbox;
 	GtkWidget *tv;
 	GtkTreeSelection *sel;
@@ -2348,9 +2319,17 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 
 	dialog->icon_preview = gtk_image_new();
 	dialog->icon_text = gtk_label_new(NULL);
-	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
-	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog->icon_filesel),
-					    GTK_WIDGET(dialog->icon_preview));
+
+	vbox = gtk_vbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
+	gtk_widget_set_size_request(GTK_WIDGET(vbox), -1, 50);
+	gtk_box_pack_start(GTK_BOX(vbox), GTK_WIDGET(dialog->icon_preview), TRUE, FALSE, 0);
+	gtk_box_pack_end(GTK_BOX(vbox), GTK_WIDGET(dialog->icon_text), FALSE, FALSE, 0);
+	gtk_widget_show_all(vbox);
+
+	gtk_file_chooser_set_preview_widget(GTK_FILE_CHOOSER(dialog->icon_filesel), vbox);
+	gtk_file_chooser_set_preview_widget_active(GTK_FILE_CHOOSER(dialog->icon_filesel), TRUE);
+	gtk_file_chooser_set_use_preview_label(GTK_FILE_CHOOSER(dialog->icon_filesel), FALSE);
+
 	g_signal_connect(G_OBJECT(dialog->icon_filesel), "update-preview",
 					 G_CALLBACK(icon_preview_change_cb), dialog);
 	g_signal_connect(G_OBJECT(dialog->icon_filesel), "response",
@@ -2364,7 +2343,7 @@ GtkWidget *pidgin_buddy_icon_chooser_new(GtkWindow *parent, void(*callback)(cons
 		gtk_file_selection_set_filename(GTK_FILE_SELECTION(dialog->icon_filesel),
 										current_folder);
 
-	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview), -1, 50);
+	gtk_widget_set_size_request(GTK_WIDGET(dialog->icon_preview),-1, 50);
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(
 		GTK_BOX(GTK_FILE_SELECTION(dialog->icon_filesel)->main_vbox),
@@ -2409,15 +2388,14 @@ str_array_match(char **a, char **b)
 }
 #endif
 
-char *
-pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
+gpointer
+pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path, size_t *len)
 {
 	PurplePluginProtocolInfo *prpl_info;
 #if GTK_CHECK_VERSION(2,2,0)
 	char **prpl_formats;
 	int width, height;
 	char **pixbuf_formats = NULL;
-	struct stat st;
 	GdkPixbufFormat *format;
 	GdkPixbuf *pixbuf;
 #if !GTK_CHECK_VERSION(2,4,0)
@@ -2426,28 +2404,11 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 #endif
 	gchar *contents;
 	gsize length;
-	const char *dirname;
-	char *random;
-	char *filename;
 
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(plugin);
 
 	g_return_val_if_fail(prpl_info->icon_spec.format != NULL, NULL);
 
-	dirname = purple_buddy_icons_get_cache_dir();
-	if (!g_file_test(dirname, G_FILE_TEST_IS_DIR)) {
-		purple_debug_info("buddyicon", "Creating icon cache directory.\n");
-
-		if (g_mkdir(dirname, S_IRUSR | S_IWUSR | S_IXUSR) < 0) {
-			purple_debug_error("buddyicon",
-							 "Unable to create directory %s: %s\n",
-							 dirname, strerror(errno));
-			return NULL;
-		}
-	}
-
-	random = g_strdup_printf("%x", g_random_int());
-	filename = g_build_filename(dirname, random, NULL);
 
 #if GTK_CHECK_VERSION(2,2,0)
 #if GTK_CHECK_VERSION(2,4,0)
@@ -2478,47 +2439,21 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		   prpl_info->icon_spec.max_height >= height)))                   /* The icon is the correct size */
 #endif
 	{
-		FILE *image;
-
 #if GTK_CHECK_VERSION(2,2,0)
 		g_strfreev(prpl_formats);
 		g_strfreev(pixbuf_formats);
 #endif
-
-		/* We don't need to scale the image, so copy it to the cache folder verbatim */
+		/* We don't need to scale the image. */
 
 		contents = NULL;
-		if (!g_file_get_contents(path, &contents, &length, NULL) ||
-		    (image = g_fopen(filename, "wb")) == NULL)
+		if (!g_file_get_contents(path, &contents, &length, NULL))
 		{
-			g_free(random);
-			g_free(filename);
 			g_free(contents);
-#if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
-			g_object_unref(G_OBJECT(pixbuf));
-#endif
-			return NULL;
-		}
-
-		if (fwrite(contents, 1, length, image) != length)
-		{
-			fclose(image);
-			g_unlink(filename);
-
-			g_free(random);
-			g_free(filename);
-			g_free(contents);
-#if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
-			g_object_unref(G_OBJECT(pixbuf));
-#endif
-			return NULL;
-		}
-		fclose(image);
-		g_free(contents);
-
 #if GTK_CHECK_VERSION(2,2,0) && !GTK_CHECK_VERSION(2,4,0)
 		g_object_unref(G_OBJECT(pixbuf));
 #endif
+			return NULL;
+		}
 	}
 #if GTK_CHECK_VERSION(2,2,0)
 	else
@@ -2527,6 +2462,7 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		GError *error = NULL;
 		GdkPixbuf *scale;
 		gboolean success = FALSE;
+		char *filename = NULL;
 
 		g_strfreev(pixbuf_formats);
 
@@ -2534,8 +2470,6 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		if (error) {
 			purple_debug_error("buddyicon", "Could not open icon for conversion: %s\n", error->message);
 			g_error_free(error);
-			g_free(random);
-			g_free(filename);
 			g_strfreev(prpl_formats);
 			return NULL;
 		}
@@ -2558,6 +2492,17 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		}
 
 		for (i = 0; prpl_formats[i]; i++) {
+			FILE *fp;
+
+			g_free(filename);
+			fp = purple_mkstemp(&filename, TRUE);
+			if (!fp)
+			{
+				g_free(filename);
+				return NULL;
+			}
+			fclose(fp);
+
 			purple_debug_info("buddyicon", "Converting buddy icon to %s as %s\n", prpl_formats[i], filename);
 			/* The "compression" param wasn't supported until gdk-pixbuf 2.8.
 			 * Using it in previous versions causes the save to fail (and an assert message).  */
@@ -2586,29 +2531,33 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		g_object_unref(G_OBJECT(pixbuf));
 		if (!success) {
 			purple_debug_error("buddyicon", "Could not convert icon to usable format.\n");
-			g_free(random);
+			return NULL;
+		}
+
+		contents = NULL;
+		if (!g_file_get_contents(filename, &contents, &length, NULL))
+		{
+			purple_debug_error("buddyicon",
+					"Could not read '%s', which we just wrote to disk.\n",
+					filename);
+
+			g_free(contents);
 			g_free(filename);
 			return NULL;
 		}
-	}
 
-	if (g_stat(filename, &st) != 0) {
-		purple_debug_error("buddyicon",
-				"Could not stat '%s', which we just wrote to disk: %s\n",
-				filename, strerror(errno));
-		g_free(random);
+		g_unlink(filename);
 		g_free(filename);
-		return NULL;
 	}
 
-	/* Check the file size */
+	/* Check the image size */
 	/*
 	 * TODO: If the file is too big, it would be cool if we checked if
 	 *       the prpl supported jpeg, and then we could convert to that
 	 *       and use a lower quality setting.
 	 */
 	if ((prpl_info->icon_spec.max_filesize != 0) &&
-		(st.st_size > prpl_info->icon_spec.max_filesize))
+	    (length > prpl_info->icon_spec.max_filesize))
 	{
 		gchar *tmp;
 		tmp = g_strdup_printf(_("The file '%s' is too large for %s.  Please try a smaller image.\n"),
@@ -2618,16 +2567,15 @@ pidgin_convert_buddy_icon(PurplePlugin *plugin, const char *path)
 		purple_debug_info("buddyicon",
 				"'%s' was converted to an image which is %" G_GSIZE_FORMAT
 				" bytes, but the maximum icon size for %s is %" G_GSIZE_FORMAT
-				" bytes\n", path, st.st_size, plugin->info->name,
+				" bytes\n", path, length, plugin->info->name,
 				prpl_info->icon_spec.max_filesize);
 		g_free(tmp);
-		g_free(random);
-		g_free(filename);
 		return NULL;
 	}
 
-	g_free(filename);
-	return random;
+	if (len)
+		*len = length;
+	return contents;
 #else
 	/*
 	 * The chosen icon wasn't the right size, and we're using
@@ -2780,10 +2728,10 @@ gdk_pixbuf_new_from_file_at_scale(const char *filename, int width, int height,
 
 void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const char *filename)
 {
-	PurpleConversation *conv;
 	PurpleBuddy *buddy;
-	PurpleBlistNode *node;
-	char *path = NULL;
+	PurpleContact *contact;
+	gpointer data = NULL;
+	size_t len = 0;
 
 	buddy = purple_find_buddy(account, who);
 	if (!buddy) {
@@ -2791,35 +2739,20 @@ void pidgin_set_custom_buddy_icon(PurpleAccount *account, const char *who, const
 		return;
 	}
 
-	node = (PurpleBlistNode*)purple_buddy_get_contact(buddy);
-	path = (char*)purple_blist_node_get_string(node, "custom_buddy_icon");
-	if (path) {
-		struct stat st;
-		if (g_stat(path, &st) == 0)
-			g_unlink(path);
-		path = NULL;
-	}
+	contact = purple_buddy_get_contact(buddy);
 
 	if (filename) {
-		char *newfile;
+		const char *prpl_id = purple_account_get_protocol_id(account);
+		PurplePlugin *prpl = purple_find_prpl(prpl_id);
 
-		newfile = pidgin_convert_buddy_icon(purple_find_prpl(purple_account_get_protocol_id(account)),
-						filename);
-		path = purple_buddy_icons_get_full_path(newfile);
-		g_free(newfile);
+		data = pidgin_convert_buddy_icon(prpl, filename, &len);
+
+		/* We don't want to delete the old icon if the new one didn't load. */
+		if (data == NULL)
+			return;
 	}
 
-	purple_blist_node_set_string(node, "custom_buddy_icon", path);
-	g_free(path);
-
-	/* Update the conversation */
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, who, account);
-	if (conv)
-		purple_conversation_update(conv, PURPLE_CONV_UPDATE_ICON);
-
-	/* Update the buddylist */
-	if (buddy)
-		purple_blist_update_buddy_icon(buddy);
+	purple_buddy_icons_set_custom_icon(contact, data, len);
 }
 
 char *pidgin_make_pretty_arrows(const char *str)
@@ -2898,16 +2831,16 @@ void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
 				void *user_data,  ...)
 {
 	GtkWidget *vbox;
-        GtkWidget *hbox;
-        GtkWidget *hbox2;
-        GtkWidget *label;
-        GtkWidget *button;
-        GtkWidget *img = NULL;
+	GtkWidget *hbox;
+	GtkWidget *hbox2;
+	GtkWidget *label;
+	GtkWidget *button;
+	GtkWidget *img = NULL;
 	GtkSizeGroup *sg = gtk_size_group_new(GTK_SIZE_GROUP_BOTH);
 	char label_text[2048];
 	const char *button_text;
 	GCallback callback;
-	char *primary_esc, *secondary_esc;
+	char *primary_esc, *secondary_esc = NULL;
 	va_list args;
 	static gboolean first_call = TRUE;
 
@@ -2915,7 +2848,7 @@ void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
 	gtk_misc_set_alignment(GTK_MISC(img), 0, 0);
 
 	vbox = gtk_vbox_new(FALSE,0);
-        gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BOX_SPACE);
+	gtk_container_set_border_width(GTK_CONTAINER(vbox), PIDGIN_HIG_BOX_SPACE);
 
 	g_object_set_data(G_OBJECT(vbox), "gc" ,gc);
 	minidialogs = g_slist_prepend(minidialogs, vbox);
@@ -2928,10 +2861,10 @@ void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
 				    PURPLE_CALLBACK(connection_signed_off_cb), NULL);
 	}
 
-      	hbox = gtk_hbox_new(FALSE, 0);
-        gtk_container_add(GTK_CONTAINER(vbox), hbox);
+	hbox = gtk_hbox_new(FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(vbox), hbox);
 
-        if (img != NULL)
+	if (img != NULL)
 		gtk_box_pack_start(GTK_BOX(hbox), img, FALSE, FALSE, 0);
 
 	primary_esc = g_markup_escape_text(primary, -1);
@@ -2940,14 +2873,15 @@ void *pidgin_make_mini_dialog(PurpleConnection *gc, const char *icon_name,
 		secondary_esc = g_markup_escape_text(secondary, -1);
 	g_snprintf(label_text, sizeof(label_text),
 		   "<span weight=\"bold\" size=\"smaller\">%s</span>%s<span size=\"smaller\">%s</span>",
-		   primary_esc, secondary ? "\n" : "", secondary?secondary_esc:"");
+		   primary_esc, secondary ? "\n" : "", secondary_esc ? secondary_esc : "");
 	g_free(primary_esc);
+	g_free(secondary_esc);
 	label = gtk_label_new(NULL);
 	gtk_widget_set_size_request(label, purple_prefs_get_int(PIDGIN_PREFS_ROOT "/blist/width")-25,-1);
 	gtk_label_set_markup(GTK_LABEL(label), label_text);
-        gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
-        gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
-        gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
+	gtk_label_set_line_wrap(GTK_LABEL(label), TRUE);
+	gtk_misc_set_alignment(GTK_MISC(label), 0, 0);
+	gtk_box_pack_start(GTK_BOX(hbox), label, TRUE, TRUE, 0);
 
 	hbox2 = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, FALSE, 0);
@@ -3006,7 +2940,7 @@ gboolean pidgin_tree_view_search_equal_func(GtkTreeModel *model, gint column,
 	PangoLogAttr *log_attrs;
 	gchar *word;
 
-	if (strcasecmp(key, "Global Thermonuclear War") == 0)
+	if (g_ascii_strcasecmp(key, "Global Thermonuclear War") == 0)
 	{
 		purple_notify_info(NULL, "WOPR",
 				"Wouldn't you prefer a nice game of chess?", NULL);
@@ -3100,21 +3034,20 @@ gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
 
         row = pixels;
         for (i = 3; i < rowstride; i+=4) {
-                if (row[i] != 0xff)
+                if (row[i] < 0xfe)
                         return FALSE;
         }
 
         for (i = 1; i < height - 1; i++) {
                 row = pixels + (i*rowstride);
-                if (row[3] != 0xff || row[rowstride-1] != 0xff) {
-                        printf("0: %d, last: %d\n", row[3], row[rowstride-1]);
+                if (row[3] < 0xfe || row[rowstride-1] < 0xfe) {
                         return FALSE;
-                }
+            }
         }
 
         row = pixels + ((height-1) * rowstride);
         for (i = 3; i < rowstride; i+=4) {
-                if (row[i] != 0xff)
+                if (row[i] < 0xfe)
                         return FALSE;
         }
 

@@ -399,6 +399,12 @@ static PurplePluginLoaderInfo tcl_loader_info =
 	tcl_load_plugin,
 	tcl_unload_plugin,
 	tcl_destroy_plugin,
+
+	/* pidgin */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo tcl_info =
@@ -424,6 +430,12 @@ static PurplePluginInfo tcl_info =
 	NULL,
 	&tcl_loader_info,
 	NULL,
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 
@@ -445,11 +457,23 @@ static gboolean tcl_win32_init() {
 
 	if ((version = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, regkey, "CurrentVersion"))
 			|| (version = wpurple_read_reg_string(HKEY_CURRENT_USER, regkey, "CurrentVersion"))) {
-		char *path;
+		char *path = NULL;
 		char *regkey2;
+		char **tokens;
+		int major = 0, minor = 0, micro = 0;
+
+		tokens = g_strsplit(version, ".", 0);
+		if (tokens[0] && tokens[1] && tokens[2]) {
+			major = atoi(tokens[0]);
+			minor = atoi(tokens[1]);
+			micro = atoi(tokens[2]);
+		}
+		g_strfreev(tokens);
 
 		regkey2 = g_strdup_printf("%s%s\\", regkey, version);
-		if ((path = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, regkey2, NULL)) || (path = wpurple_read_reg_string(HKEY_CURRENT_USER, regkey2, NULL))) {
+		if (!(major == 8 && minor == 4 && micro >= 5))
+			purple_debug(PURPLE_DEBUG_INFO, "tcl", "Unsupported ActiveTCL version %s found.\n", version);
+		else if ((path = wpurple_read_reg_string(HKEY_LOCAL_MACHINE, regkey2, NULL)) || (path = wpurple_read_reg_string(HKEY_CURRENT_USER, regkey2, NULL))) {
 			char *tclpath;
 			char *tkpath;
 

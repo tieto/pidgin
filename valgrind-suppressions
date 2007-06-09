@@ -1,0 +1,154 @@
+{
+   X oddness 1
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:_X11TransWrite
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:_XReply
+}
+{
+   NSS
+   Memcheck:Cond
+   obj:/usr/lib/libsoftokn3.so
+   obj:/usr/lib/libsoftokn3.so
+   obj:/usr/lib/libsoftokn3.so
+   obj:/usr/lib/libsoftokn3.so
+}
+{
+   X oddness 2
+   Memcheck:Param
+   writev(vector[...])
+   fun:writev
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:_X11TransWritev
+   fun:_XSend
+}
+{
+   X oddness 3
+   Memcheck:Cond
+   fun:XcursorImageHash
+   fun:XcursorNoticePutBitmap
+   fun:_XNoticePutBitmap
+   fun:XPutImage
+}
+{
+   X oddness 4
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:_X11TransWrite
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:XFlush
+}
+{
+   X oddness 5
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:_X11TransWrite
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:XDrawLine
+}
+{
+   X oddness 6
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:_X11TransWrite
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:_XEventsQueued
+}
+{
+   File selector
+   Memcheck:Value4
+   fun:_itoa_word
+   fun:_IO_vfprintf_internal
+   fun:_IO_vsprintf_internal
+   fun:_IO_sprintf
+}
+{
+   File selector 2
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:_X11TransWrite
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:XRenderComposite
+}
+{
+   TCL leak
+   Memcheck:Leak
+   fun:malloc
+   fun:TclpAlloc
+   fun:Tcl_Alloc
+   fun:Tcl_StaticPackage
+}
+{
+   FontConfig Maybe
+   Memcheck:Leak
+   fun:malloc
+   fun:FcStrCopy
+   fun:FcStrSetAdd
+   fun:FcLangSetCopy
+}
+{
+   File selector 3
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:_X11TransWrite
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:_XFlushGCCache
+}
+{
+   File selector 4
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:_X11TransWrite
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:XCreateGC
+}
+{
+   Something else
+   Memcheck:Param
+   write(buf)
+   fun:__write_nocancel
+   fun:_X11TransWrite
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:_XSetClipRectangles
+}
+{
+   New conversation windows
+   Memcheck:Cond
+   obj:/usr/lib/libgtk-x11-2.0.so.0.400.14
+   obj:/usr/lib/libgtk-x11-2.0.so.0.400.14
+   obj:/usr/lib/libgtk-x11-2.0.so.0.400.14
+   obj:/usr/lib/libgtk-x11-2.0.so.0.400.14
+}
+{
+   New conversation windows 2
+   Memcheck:Cond
+   obj:/usr/lib/libgtk-x11-2.0.so.0.400.14
+   obj:/usr/lib/libgtk-x11-2.0.so.0.400.14
+   obj:/usr/lib/libgtk-x11-2.0.so.0.400.14
+   obj:/usr/lib/libgobject-2.0.so.0.400.8
+}
+{
+   NSS Init
+   Memcheck:Leak
+   fun:malloc
+   fun:PR_Malloc
+   fun:PR_CreateStack
+   fun:_PR_InitFdCache
+   fun:_PR_InitIO
+   fun:_PR_ImplicitInitialization
+   fun:PR_Init
+   fun:rsa_nss_init
+   fun:GE_plugin_load
+   fun:purple_plugin_load
+   fun:purple_plugins_load_saved
+   fun:main
+}
+

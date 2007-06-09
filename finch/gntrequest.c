@@ -115,6 +115,7 @@ finch_request_input(const char *title, const char *primary,
 		gboolean multiline, gboolean masked, gchar *hint,
 		const char *ok_text, GCallback ok_cb,
 		const char *cancel_text, GCallback cancel_cb,
+		PurpleAccount *account, const char *who, PurpleConversation *conv,
 		void *user_data)
 {
 	GntWidget *window, *box, *entry;
@@ -139,6 +140,11 @@ static void
 finch_close_request(PurpleRequestType type, gpointer ui_handle)
 {
 	GntWidget *widget = GNT_WIDGET(ui_handle);
+	if (type == PURPLE_REQUEST_FIELDS) {
+		PurpleRequestFields *fields = g_object_get_data(G_OBJECT(widget), "fields");
+		purple_request_fields_destroy(fields);
+	}
+
 	while (widget->parent)
 		widget = widget->parent;
 	gnt_widget_destroy(widget);
@@ -165,6 +171,7 @@ finch_request_choice(const char *title, const char *primary,
 		const char *secondary, unsigned int default_value,
 		const char *ok_text, GCallback ok_cb,
 		const char *cancel_text, GCallback cancel_cb,
+		PurpleAccount *account, const char *who, PurpleConversation *conv,
 		void *user_data, va_list choices)
 {
 	GntWidget *window, *combo, *box;
@@ -207,6 +214,7 @@ request_action_cb(GntWidget *button, GntWidget *window)
 static void*
 finch_request_action(const char *title, const char *primary,
 		const char *secondary, unsigned int default_value,
+		PurpleAccount *account, const char *who, PurpleConversation *conv,
 		void *user_data, size_t actioncount,
 		va_list actions)
 {
@@ -243,7 +251,7 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 	gpointer data = g_object_get_data(G_OBJECT(button), "activate-userdata");
 	GList *list;
 
-	/* Update the data of the fields. GtkPurple does this differently. Instead of
+	/* Update the data of the fields. Pidgin does this differently. Instead of
 	 * updating the fields at the end like here, it updates the appropriate field
 	 * instantly whenever a change is made. That allows it to make sure the
 	 * 'required' fields are entered before the user can hit OK. It's not the case
@@ -334,6 +342,7 @@ finch_request_fields(const char *title, const char *primary,
 		const char *secondary, PurpleRequestFields *allfields,
 		const char *ok, GCallback ok_cb,
 		const char *cancel, GCallback cancel_cb,
+		PurpleAccount *account, const char *who, PurpleConversation *conv,
 		void *userdata)
 {
 	GntWidget *window, *box;
@@ -488,7 +497,9 @@ finch_request_fields(const char *title, const char *primary,
 				field->ui_data = combo;
 
 				all = purple_request_field_account_get_show_all(field);
-				def = purple_request_field_account_get_default_value(field);
+				def = purple_request_field_account_get_value(field);
+				if (!def)
+					def = purple_request_field_account_get_default_value(field);
 
 				if (all)
 					list = purple_accounts_get_all();
@@ -532,6 +543,8 @@ finch_request_fields(const char *title, const char *primary,
 	gnt_box_add_widget(GNT_BOX(window), box);
 
 	gnt_widget_show(window);
+
+	g_object_set_data(G_OBJECT(window), "fields", allfields);
 	
 	return window;
 }
@@ -569,6 +582,7 @@ static void *
 finch_request_file(const char *title, const char *filename,
 				gboolean savedialog,
 				GCallback ok_cb, GCallback cancel_cb,
+				PurpleAccount *account, const char *who, PurpleConversation *conv,
 				void *user_data)
 {
 	GntWidget *window = gnt_file_sel_new();
@@ -598,13 +612,17 @@ finch_request_file(const char *title, const char *filename,
 
 static PurpleRequestUiOps uiops =
 {
-	.request_input = finch_request_input,
-	.close_request = finch_close_request,
-	.request_choice = finch_request_choice,
-	.request_action = finch_request_action,
-	.request_fields = finch_request_fields,
-	.request_file = finch_request_file,
-	.request_folder = NULL                        /* No plans for this */
+	finch_request_input,
+	finch_request_choice,
+	finch_request_action,
+	finch_request_fields,
+	finch_request_file,
+	finch_close_request,
+	NULL,                       /* No plans for request_folder */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleRequestUiOps *finch_request_get_ui_ops()
@@ -618,5 +636,59 @@ void finch_request_init()
 
 void finch_request_uninit()
 {
+}
+
+void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *allfields)
+{
+	GList *list;
+	for (list = purple_request_fields_get_groups(allfields); list; list = list->next) {
+		PurpleRequestFieldGroup *group = list->data;
+		GList *fields = purple_request_field_group_get_fields(group);
+		
+		for (; fields ; fields = fields->next) {
+			PurpleRequestField *field = fields->data;
+			PurpleRequestFieldType type = purple_request_field_get_type(field);
+			PurplePrefType pt;
+			gpointer val = NULL;
+			const char *id = purple_request_field_get_id(field);
+
+			switch (type) {
+				case PURPLE_REQUEST_FIELD_LIST:
+					val = purple_request_field_list_get_selected(field)->data;
+					break;
+				case PURPLE_REQUEST_FIELD_BOOLEAN:
+					val = GINT_TO_POINTER(purple_request_field_bool_get_value(field));
+					break;
+				case PURPLE_REQUEST_FIELD_INTEGER:
+					val = GINT_TO_POINTER(purple_request_field_int_get_value(field));
+					break;
+				case PURPLE_REQUEST_FIELD_STRING:
+					val = (gpointer)purple_request_field_string_get_value(field);
+					break;
+				default:
+					break;
+			}
+
+			pt = purple_prefs_get_type(id);
+			switch (pt) {
+				case PURPLE_PREF_INT:
+				{
+					long int tmp;
+					if (type == PURPLE_REQUEST_FIELD_LIST) /* Lists always return string */
+						sscanf(val, "%ld", &tmp);
+					purple_prefs_set_int(id, (gint)tmp);
+					break;
+				}
+				case PURPLE_PREF_BOOLEAN:
+					purple_prefs_set_bool(id, GPOINTER_TO_INT(val));
+					break;
+				case PURPLE_PREF_STRING:
+					purple_prefs_set_string(id, val);
+					break;
+				default:
+					break;
+			}
+		}
+	}
 }
 

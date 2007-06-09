@@ -39,7 +39,7 @@ aim_bos_reqrights(OscarData *od, FlapConnection *conn)
 static int rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	guint16 maxpermits = 0, maxdenies = 0;
 	int ret = 0;
 
@@ -63,7 +63,7 @@ static int rights(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFr
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, maxpermits, maxdenies);
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }
@@ -136,7 +136,7 @@ int aim_bos_changevisibility(OscarData *od, FlapConnection *conn, int changetype
 	else
 		return -EINVAL;
 
-	localcpy = strdup(denylist);
+	localcpy = g_strdup(denylist);
 
 	listcount = aimutil_itemcnt(localcpy, '&');
 	packlen = aimutil_tokslen(localcpy, 99, '&') + listcount + 9;
@@ -152,9 +152,9 @@ int aim_bos_changevisibility(OscarData *od, FlapConnection *conn, int changetype
 		byte_stream_put8(&frame->data, strlen(tmpptr));
 		byte_stream_putstr(&frame->data, tmpptr);
 
-		free(tmpptr);
+		g_free(tmpptr);
 	}
-	free(localcpy);
+	g_free(localcpy);
 
 	flap_connection_send(conn, frame);
 

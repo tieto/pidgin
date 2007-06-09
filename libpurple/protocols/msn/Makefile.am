@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 		Makefile.mingw
 
-pkgdir = $(libdir)/libpurple
+pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 MSNSOURCES = \
 	cmdproc.c \
@@ -85,5 +85,6 @@ endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS)

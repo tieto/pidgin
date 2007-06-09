@@ -2,7 +2,7 @@
 EXTRA_DIST = Makefile.mingw
 
 
-pkgdir = $(libdir)/libpurple
+pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 
 noinst_HEADERS = sametime.h
@@ -34,7 +34,8 @@ libsametime_la_LIBADD = $(GLIB_LIBS) $(MEANWHILE_LIBS)
 AM_CFLAGS = \
 	$(GLIB_CFLAGS) $(MEANWHILE_CFLAGS) \
 	$(DEBUG_CFLAGS) \
-	-I$(top_srcdir)/libpurple
+	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple
 
 
 AM_CPPFLAGS = \

@@ -29,7 +29,7 @@ INCLUDE_PATHS =		-I. \
 			-I$(GTK_TOP)/lib/gtk-2.0/include \
 			-I$(PERL_LIB_TOP)/CORE
 
-LIB_PATHS = 		-L$(PERL_LIB_TOP) \
+LIB_PATHS += 		-L$(PERL_LIB_TOP) \
 			-L$(PURPLE_TOP) \
 			-L$(PIDGIN_TOP) \
 			-L$(PURPLE_PERL_TOP) \
@@ -39,7 +39,7 @@ LIB_PATHS = 		-L$(PERL_LIB_TOP) \
 ##  SOURCES, OBJECTS
 ##
 XS_FILES = \
-	GtkUI.xs \
+	Pidgin.xs \
 	GtkAccount.xs \
 	GtkBlist.xs \
 	GtkConn.xs \
@@ -91,8 +91,8 @@ $(PURPLE_INSTALL_PERLMOD_DIR)/Purple.pm:
 
 install: all $(PURPLE_INSTALL_PERLMOD_DIR)/Purple.pm
 	rm -f $(PIDGIN_INSTALL_PERLMOD_DIR)/$(TARGET).dll $(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin/$(TARGET).pm
-	mkdir -p $(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin
-	cp $(TARGET).pm $(PIDGIN_INSTALL_PERLMOD_DIR)/Pidgin/
+	mkdir -p $(PIDGIN_INSTALL_PERLMOD_DIR)
+	cp $(TARGET).pm $(PIDGIN_INSTALL_PERLMOD_DIR)
 	cp $(TARGET).dll $(PIDGIN_INSTALL_PERLMOD_DIR)
 
 $(C_FILES): $(PIDGIN_CONFIG_H)

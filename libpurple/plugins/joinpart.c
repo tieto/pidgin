@@ -156,7 +156,7 @@ static void received_chat_msg_cb(PurpleAccount *account, char *sender,
 static gboolean check_expire_time(struct joinpart_key *key,
                                   time_t *last_said, time_t *limit)
 {
-	purple_debug_info("joinpart", "Removing key for %s/%s\n", key->conv->name, key->user);
+	purple_debug_info("joinpart", "Removing key for %s\n", key->user);
 	return (*last_said < *limit);
 }
 
@@ -210,7 +210,7 @@ static gboolean plugin_unload(PurplePlugin *plugin)
 	 * we don't have to worry one will be called after this. */
 	g_hash_table_destroy((GHashTable *)data[0]);
 
-	g_source_remove(GPOINTER_TO_UINT(data[1]));
+	purple_timeout_remove(GPOINTER_TO_UINT(data[1]));
 	g_free(data);
 
 	return TRUE;
@@ -246,7 +246,13 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 static PurplePluginUiInfo prefs_info = {
 	get_plugin_pref_frame,
 	0,   /* page_num (reserved) */
-	NULL /* frame (reserved) */
+	NULL, /* frame (reserved) */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -279,7 +285,13 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	NULL,                                             /**< extra_info     */
 	&prefs_info,                                      /**< prefs_info     */
-	NULL                                              /**< actions        */
+	NULL,                                             /**< actions        */
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static void

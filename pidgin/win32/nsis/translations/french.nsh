@@ -1,4 +1,4 @@
-;;  vim:syn=winbatch:encoding=cp1252:
+;;  vim:syn=winbatch:fileencoding=cp1252:
 ;;
 ;;  french.nsh
 ;;
@@ -6,7 +6,7 @@
 ;;  Windows Code page: 1252
 ;;
 ;;  Version 3
-;;  Author: Eric Boumaour <zongo_fr@users.sourceforge.net>, 2003-2005.
+;;  Author: Eric Boumaour <zongo_fr@users.sourceforge.net>, 2003-2007.
 ;;
 
 ; Make sure to update the PIDGIN_MACRO_LANGUAGEFILE_END macro in
@@ -24,11 +24,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Pidgin client de messagerie instantanée (obligatoire)"
 !define GTK_SECTION_TITLE			"Bibliothèques GTK+ (obligatoire)"
-!define GTK_THEMES_SECTION_TITLE		"Thèmes GTK+"
-!define GTK_NOTHEME_SECTION_TITLE		"Pas de thème"
-!define GTK_WIMP_SECTION_TITLE			"Thème Wimp"
-!define GTK_BLUECURVE_SECTION_TITLE		"Thème Bluecurve"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Thème Light House Blue"
 !define PIDGIN_SHORTCUTS_SECTION_TITLE		"Raccourcis"
 !define PIDGIN_DESKTOP_SHORTCUT_SECTION_TITLE	"Bureau"
 !define PIDGIN_STARTMENU_SHORTCUT_SECTION_TITLE	"Menu Démarrer"
@@ -41,19 +36,21 @@
 
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Une ancienne version des bibliothèques GTK+ a été trouvée. Voulez-vous la mettre à jour ?$\rNote : $(^Name) peut ne pas fonctionner si vous ne le faites pas."
+!define GTK_WINDOWS_INCOMPATIBLE		"Windows 95/98/Me est incompatible avec GTK+ version 2.8.0 ou plus récentes.  GTK+ ${GTK_INSTALL_VERSION} ne sera pas installé.$\rSi vous n'avez pas installé GTK+ version ${GTK_MIN_VERSION} ou pkus récente, l'installation s'arrêtera."
 
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visitez la page web de Pidgin Windows" 
 
 ; Pidgin Section Prompts and Texts
 !define PIDGIN_UNINSTALL_DESC			"$(^Name) (supprimer uniquement)"
+!define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Impossible de désinstaller la version de Pidgin en place. La nouvelle version sera installée sans supprimer la version en place."
 
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Erreur lors de l'installation des bibliothèques GTK+"
 !define GTK_BAD_INSTALL_PATH			"Le dossier d'installation ne peut pas être créé ou n'est pas accessible."
 
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Vous n'avez pas les permissions pour installer un thème GTK+."
+; URL Handler section
+!define URI_HANDLERS_SECTION_TITLE		"Gestion des liens (URI)"
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Le programme de désinstallation n'a pas retrouvé les entrées de Pidgin dans la base de registres.$\rL'application a peut-être été installée par un utilisateur différent."

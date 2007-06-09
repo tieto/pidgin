@@ -21,6 +21,7 @@ EXTRA_DIST = \
 	gtklog-signals.dox \
 	gtkimhtml-signals.dox \
 	gtkrc-2.0 \
+	imgstore-signals.dox \
 	log-signals.dox \
 	notify-signals.dox \
 	pidgin.1.in \

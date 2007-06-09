@@ -1,7 +1,7 @@
 EXTRA_DIST = \
 		Makefile.mingw
 
-pkgdir = $(libdir)/libpurple
+pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 NOVELLSOURCES = \
 		nmfield.h \
@@ -52,5 +52,6 @@ endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
 	$(DEBUG_CFLAGS) \
 	$(GLIB_CFLAGS)

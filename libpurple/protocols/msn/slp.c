@@ -158,7 +158,9 @@ void
 msn_xfer_completed_cb(MsnSlpCall *slpcall, const guchar *body,
 					  gsize size)
 {
-	purple_xfer_set_completed(slpcall->xfer, TRUE);
+	PurpleXfer *xfer = slpcall->xfer;
+	purple_xfer_set_completed(xfer, TRUE);
+	purple_xfer_end(xfer);
 }
 
 /**************************************************************************
@@ -248,14 +250,14 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 	if (!strcmp(euf_guid, "A4268EEC-FEC5-49E5-95C3-F126696BDBF6"))
 	{
 		/* Emoticon or UserDisplay */
+		char *content;
+		gsize len;
 		MsnSlpSession *slpsession;
 		MsnSlpLink *slplink;
 		MsnSlpMessage *slpmsg;
 		MsnObject *obj;
 		char *msnobj_data;
-		const char *file_name;
-		char *content;
-		gsize len;
+		PurpleStoredImage *img;
 		int type;
 
 		/* Send Ok */
@@ -281,9 +283,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			g_return_if_reached();
 		}
 
-		file_name = msn_object_get_real_location(obj);
-
-		if (file_name == NULL)
+		img = msn_object_get_image(obj);
+		if (img == NULL)
 		{
 			purple_debug_error("msn", "Wrong object.\n");
 			msn_object_destroy(obj);
@@ -314,7 +315,7 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 #ifdef MSN_DEBUG_SLP
 		slpmsg->info = "SLP DATA";
 #endif
-		msn_slpmsg_open_file(slpmsg, file_name);
+		msn_slpmsg_set_image(slpmsg, img);
 		msn_slplink_queue_slpmsg(slplink, slpmsg);
 	}
 	else if (!strcmp(euf_guid, "5D3E02AB-6190-11D3-BBBB-00C04F795683"))
@@ -362,6 +363,8 @@ got_sessionreq(MsnSlpCall *slpcall, const char *branch,
 			purple_xfer_set_cancel_recv_fnc(xfer, msn_xfer_cancel);
 
 			slpcall->xfer = xfer;
+			purple_xfer_ref(slpcall->xfer);
+
 			xfer->data = slpcall;
 
 			purple_xfer_request(xfer);
@@ -445,7 +448,7 @@ got_invite(MsnSlpCall *slpcall,
 			char *ip_port;
 			int port;
 
-			/* ip_addr = purple_prefs_get_string("/core/ft/public_ip"); */
+			/* ip_addr = purple_prefs_get_string("/purple/ft/public_ip"); */
 			ip_port = "5190";
 			listening = "true";
 			nonce = rand_guid();
@@ -793,7 +796,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 	MsnObject *obj;
 	char **tokens;
 	char *smile, *body_str;
-	const char *body, *who, *sha1c;
+	const char *body, *who, *sha1;
 	guint tok;
 	size_t body_len;
 
@@ -825,7 +828,7 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			break;
 
 		who = msn_object_get_creator(obj);
-		sha1c = msn_object_get_sha1c(obj);
+		sha1 = msn_object_get_sha1(obj);
 
 		slplink = msn_session_get_slplink(session, who);
 
@@ -842,14 +845,14 @@ msn_emoticon_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
 			conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, session->account, who);
 		}
 
-		if (purple_conv_custom_smiley_add(conv, smile, "sha1", sha1c, TRUE)) {
+		if (purple_conv_custom_smiley_add(conv, smile, "sha1", sha1, TRUE)) {
 			msn_slplink_request_object(slplink, smile, got_emoticon, NULL, obj);
 		}
 
 		msn_object_destroy(obj);
 		obj =   NULL;
 		who =   NULL;
-		sha1c = NULL;
+		sha1 = NULL;
 	}
 	g_strfreev(tokens);
 }
@@ -870,15 +873,15 @@ buddy_icon_cached(PurpleConnection *gc, MsnObject *obj)
 	if (buddy == NULL)
 		return FALSE;
 
-	old = purple_blist_node_get_string((PurpleBlistNode *)buddy, "icon_checksum");
-	new = msn_object_get_sha1c(obj);
+	old = purple_buddy_icons_get_checksum_for_user(buddy);
+	new = msn_object_get_sha1(obj);
 
 	if (new == NULL)
 		return FALSE;
 
 	/* If the old and new checksums are the same, and the file actually exists,
 	 * then return TRUE */
-	if (old != NULL && !strcmp(old, new) && (purple_buddy_icons_find(account, purple_buddy_get_name(buddy)) != NULL))
+	if (old != NULL && !strcmp(old, new))
 		return TRUE;
 
 	return FALSE;
@@ -956,22 +959,7 @@ msn_queue_buddy_icon_request(MsnUser *user)
 
 	if (obj == NULL)
 	{
-		/* It seems the user has not set a msnobject */
-		GSList *sl, *list;
-
-		list = purple_find_buddies(account, user->passport);
-
-		for (sl = list; sl != NULL; sl = sl->next)
-		{
-			PurpleBuddy *buddy = (PurpleBuddy *)sl->data;
-			if (buddy->icon)
-				purple_blist_node_remove_setting((PurpleBlistNode*)buddy, "icon_checksum");
-		}
-		g_slist_free(list);
-
-		/* TODO: I think we need better buddy icon core functions. */
-		purple_buddy_icons_set_for_user(account, user->passport, NULL, 0);
-
+		purple_buddy_icons_set_for_user(account, user->passport, NULL, 0, NULL);
 		return;
 	}
 
@@ -1001,7 +989,6 @@ got_user_display(MsnSlpCall *slpcall,
 	MsnUserList *userlist;
 	const char *info;
 	PurpleAccount *account;
-	GSList *sl, *list;
 
 	g_return_if_fail(slpcall != NULL);
 
@@ -1013,18 +1000,8 @@ got_user_display(MsnSlpCall *slpcall,
 	userlist = slpcall->slplink->session->userlist;
 	account = slpcall->slplink->session->account;
 
-	/* TODO: I think we need better buddy icon core functions. */
 	purple_buddy_icons_set_for_user(account, slpcall->slplink->remote_user,
-								  (void *)data, size);
-
-	list = purple_find_buddies(account, slpcall->slplink->remote_user);
-
-	for (sl = list; sl != NULL; sl = sl->next)
-	{
-		PurpleBuddy *buddy = (PurpleBuddy *)sl->data;
-		purple_blist_node_set_string((PurpleBlistNode*)buddy, "icon_checksum", info);
-	}
-	g_slist_free(list);
+								  g_memdup(data, size), size, info);
 
 #if 0
 	/* Free one window slot */
@@ -1090,7 +1067,7 @@ msn_request_user_display(MsnUser *user)
 
 	obj = msn_user_get_object(user);
 
-	info = msn_object_get_sha1c(obj);
+	info = msn_object_get_sha1(obj);
 
 	if (g_ascii_strcasecmp(user->passport,
 						   purple_account_get_username(account)))
@@ -1101,9 +1078,8 @@ msn_request_user_display(MsnUser *user)
 	else
 	{
 		MsnObject *my_obj = NULL;
-		gchar *data = NULL;
-		gsize len = 0;
-		GSList *sl, *list;
+		gconstpointer data = NULL;
+		size_t len = 0;
 
 #ifdef MSN_DEBUG_UD
 		purple_debug_info("msn", "Requesting our own user display\n");
@@ -1113,24 +1089,12 @@ msn_request_user_display(MsnUser *user)
 
 		if (my_obj != NULL)
 		{
-			const char *filename = msn_object_get_real_location(my_obj);
-
-			if (filename != NULL)
-				g_file_get_contents(filename, &data, &len, NULL);
+			PurpleStoredImage *img = msn_object_get_image(my_obj);
+			data = purple_imgstore_get_data(img);
+			len = purple_imgstore_get_size(img);
 		}
 
-		/* TODO: I think we need better buddy icon core functions. */
-		purple_buddy_icons_set_for_user(account, user->passport, (void *)data, len);
-		g_free(data);
-
-		list = purple_find_buddies(account, user->passport);
-
-		for (sl = list; sl != NULL; sl = sl->next)
-		{
-			PurpleBuddy *buddy = (PurpleBuddy *)sl->data;
-			purple_blist_node_set_string((PurpleBlistNode*)buddy, "icon_checksum", info);
-		}
-		g_slist_free(list);
+		purple_buddy_icons_set_for_user(account, user->passport, g_memdup(data, len), len, info);
 
 		/* Free one window slot */
 		session->userlist->buddy_icon_window++;

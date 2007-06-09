@@ -206,7 +206,8 @@ purple_privacy_deny_remove(PurpleAccount *account, const char *who,
 static void
 add_buddies_in_permit(PurpleAccount *account, gboolean local)
 {
-	GSList *list, *iter;
+	GSList *list;
+
 	/* Remove anyone in the permit list who is not in the buddylist */
 	for (list = account->permit; list != NULL; ) {
 		char *person = list->data;
@@ -214,13 +215,16 @@ add_buddies_in_permit(PurpleAccount *account, gboolean local)
 		if (!purple_find_buddy(account, person))
 			purple_privacy_permit_remove(account, person, local);
 	}
+
 	/* Now make sure everyone in the buddylist is in the permit list */
-	for (iter = list = purple_find_buddies(account, NULL); iter; iter = iter->next) {
-		PurpleBuddy *buddy = iter->data;
+	list = purple_find_buddies(account, NULL);
+	while (list != NULL)
+	{
+		PurpleBuddy *buddy = list->data;
 		if (!g_slist_find_custom(account->permit, buddy->name, (GCompareFunc)g_utf8_collate))
 			purple_privacy_permit_add(account, buddy->name, local);
+		list = g_slist_delete_link(list, list);
 	}
-	g_slist_free(list);
 }
 
 void

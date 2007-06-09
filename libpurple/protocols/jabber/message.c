@@ -86,7 +86,6 @@ static void handle_chat(JabberMessage *jm)
 			PurpleConversation *conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
 					from, jm->js->gc->account);
 			if (conv && jid->node && jid->domain) {
-#if 0  /* String freeze... make sure to mark the message for translation */
 				char buf[256];
 				PurpleBuddy *buddy;
 
@@ -100,7 +99,7 @@ static void handle_chat(JabberMessage *jm)
 					escaped = g_markup_escape_text(who, -1);
 
 					g_snprintf(buf, sizeof(buf),
-					           "%s has left the conversation.", escaped);
+					           _("%s has left the conversation."), escaped);
 
 					/* At some point when we restructure PurpleConversation,
 					 * this should be able to be implemented by removing the
@@ -108,7 +107,6 @@ static void handle_chat(JabberMessage *jm)
 					purple_conversation_write(conv, "", buf,
 					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
-#endif
 			}
 			serv_got_typing_stopped(jm->js->gc, from);
 			
@@ -269,7 +267,7 @@ static void handle_error(JabberMessage *jm)
 	buf = g_strdup_printf(_("Message delivery to %s failed: %s"),
 			jm->from, jm->error ? jm->error : "");
 
-	purple_notify_formatted(jm->js->gc, _("Jabber Message Error"), _("Jabber Message Error"), buf,
+	purple_notify_formatted(jm->js->gc, _("XMPP Message Error"), _("XMPP Message Error"), buf,
 			jm->xhtml ? jm->xhtml : jm->body, NULL, NULL);
 
 	g_free(buf);
@@ -326,8 +324,17 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 				g_free(msg);
 			}
 		} else if(!strcmp(child->name, "html")) {
-			if(!jm->xhtml && xmlnode_get_child(child, "body"))
+			if(!jm->xhtml && xmlnode_get_child(child, "body")) {
+				char *c;
 				jm->xhtml = xmlnode_to_str(child, NULL);
+			        /* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
+			 	 * treated \n as a newline for compatibility with other protocols
+				 */
+				for (c = jm->xhtml; *c != '\0'; c++) {
+					if (*c == '\n') 
+						*c = ' ';
+				}
+			}
 		} else if(!strcmp(child->name, "active")) {
 			jm->chat_state = JM_STATE_ACTIVE;
 			jm->typing_style |= JM_TS_JEP_0085;
@@ -571,7 +578,7 @@ int jabber_message_send_im(PurpleConnection *gc, const char *who, const char *ms
 	}
 
 	buf = g_strdup_printf("<html xmlns='http://jabber.org/protocol/xhtml-im'><body xmlns='http://www.w3.org/1999/xhtml'>%s</body></html>", msg);
-
+	
 	purple_markup_html_to_xhtml(buf, &xhtml, &jm->body);
 	g_free(buf);
 

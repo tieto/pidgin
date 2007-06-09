@@ -75,6 +75,7 @@ static struct developer developers[] = {
 	{"Sadrul Habib Chowdhury",		N_("developer"), NULL},
 	{"Mark 'KingAnt' Doliner",		N_("developer"), NULL},
 	{"Christian 'ChipX86' Hammond",	N_("developer & webmaster"), NULL},
+	{"Casey Harkins",               N_("developer"),   NULL},
 	{"Gary 'grim' Kramlich",		N_("developer"), NULL},
 	{"Richard 'rlaager' Laager",	N_("developer"), NULL},
 	{"Richard 'wabz' Nelson",		N_("developer"), NULL},
@@ -92,10 +93,10 @@ static struct developer developers[] = {
 
 /* Order: Alphabetical by Last Name */
 static struct developer patch_writers[] = {
+	{"John 'rekkanoryo' Bailey",	NULL,	NULL},
 	{"Ka-Hing 'javabsp' Cheung",	NULL,	NULL},
 	{"Felipe 'shx' Contreras",		NULL,	NULL},
 	{"Decklin Foster",				NULL,	NULL},
-	{"Casey Harkins",               NULL,   NULL},
 	{"Peter 'Bleeter' Lawler",      NULL,   NULL},
 	{"Robert 'Robot101' McQueen",	NULL,	NULL},
 	{"Benjamin Miller",				NULL,	NULL},
@@ -107,11 +108,11 @@ static struct developer patch_writers[] = {
 static struct developer retired_developers[] = {
 	{"Herman Bloggs",		N_("win32 port"), "herman@bluedigits.com"},
 	{"Jim Duchek",			N_("maintainer"), "jim@linuxpimps.com"},
-	{"Rob Flynn",			N_("maintainer"), "purple@robflynn.com"},
+	{"Rob Flynn",			N_("maintainer"), NULL},
 	{"Adam Fritzler",		N_("libfaim maintainer"), NULL},
 	/* If "lazy bum" translates literally into a serious insult, use something else or omit it. */
 	{"Syd Logan",			N_("hacker and designated driver [lazy bum]"), NULL},
-	{"Jim Seymour",			N_("Jabber developer"), NULL},
+	{"Jim Seymour",			N_("XMPP developer"), NULL},
 	{"Mark Spencer",		N_("original author"), "markster@marko.net"},
 	{"Eric Warmenhoven",	N_("lead developer"), "warmenhoven@yahoo.com"},
 	{NULL, NULL, NULL}
@@ -155,21 +156,22 @@ static struct translator current_translators[] = {
 	{N_("French"),              "fr", "Éric Boumaour", "zongo_fr@users.sourceforge.net"},
 	{N_("Galician"),            "gl", "Ignacio Casal Quinteiro", "nacho.resa@gmail.com"},
 	{N_("Gujarati"),            "gu", "Ankit Patel", "ankit_patel@users.sf.net"},
-	{N_("Gujarati"),            "gu", "Gujarati Language Team", "indianoss-gujarati@lists.sourceforge.net"},
+	{N_("Gujarati"),            "gu", N_("Gujarati Language Team"), "indianoss-gujarati@lists.sourceforge.net"},
 	{N_("Hebrew"),              "he", "Shalom Craimer", "scraimer@gmail.com"},
 	{N_("Hindi"),               "hi", "Ravishankar Shrivastava", "raviratlami@yahoo.com"},
 	{N_("Hungarian"),           "hu", "Zoltan Sutto", "sutto.zoltan@rutinsoft.hu"},
 	{N_("Indonesian"),          "id", "Rai S. Regawa", "raireg@yahoo.com"},
 	{N_("Italian"),             "it", "Claudio Satriano", "satriano@na.infn.it"},
 	{N_("Japanese"),            "ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
-	{N_("Georgian"),            "ka", "Ubuntu Georgian Translators", "alexander.didebulidze@stusta.mhn.de"},
-	{N_("Kannada"),             "kn", "Kannada Translation team", "translation@sampada.info"},
+	{N_("Georgian"),            "ka", N_("Ubuntu Georgian Translators"), "alexander.didebulidze@stusta.mhn.de"},
+	{N_("Kannada"),             "kn", N_("Kannada Translation team"), "translation@sampada.info"},
 	{N_("Korean"),              "ko", "Kyung-uk Son", "vvs740@chol.com"},
 	{N_("Kurdish"),             "ku", "Erdal Ronahi", "erdal.ronahi@gmail.com"},
 	{N_("Kurdish"),             "ku", "Amed Ç. Jiyan", "amedcj@hotmail.com"},
 	{N_("Kurdish"),             "ku", "Rizoyê Xerzî", "rizoxerzi@hotmail.com"},
 	{N_("Lithuanian"),          "lt", "Laurynas Biveinis", "laurynas.biveinis@gmail.com"},
-	{N_("Macedonian"),          "mk", "Tomislav Markovski", "herrera@users.sf.net"},
+	{N_("Macedonian"),          "mk", "Arangel Angov ", "arangel@linux.net.mk"},
+	{N_("Macedonian"),          "mk", "Jovan Naumovski", "jovan@lugola.net"},
 	{N_("Bokmål Norwegian"),    "nb", "Hallvard Glad", "hallvard.glad@gmail.com"},
 	{N_("Nepali"),              "ne", "Shyam Krishna Bal", "shyamkrishna_bal@yahoo.com"},
 	{N_("Dutch, Flemish"),      "nl", "Vincent van Adrighem", "V.vanAdrighem@dirck.mine.nu"},
@@ -192,9 +194,10 @@ static struct translator current_translators[] = {
 	{N_("Tamil"),               "ta", "Viveka Nathan K", "vivekanathan@users.sourceforge.net"},
 	{N_("Telugu"),              "te", "Mr. Subbaramaih", "info.gist@cdac.in"},
 	{N_("Thai"),                "th", "Isriya Paireepairit", "markpeak@gmail.com"},
-	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", "prf_q@users.sf.net"},
+	{N_("Turkish"),             "tr", "Serdar Soytetir", "tulliana@gmail.com"},
 	{N_("Vietnamese"),          "vi", N_("T.M.Thanh and the Gnome-Vi Team"), "gnomevi-list@lists.sf.net"},
 	{N_("Simplified Chinese"),  "zh_CN", "Funda Wang", "fundawang@linux.net.cn"},
+	{N_("Hong Kong Chinese"),   "zh_HK", "Abel Cheung", "abelindsay@gmail.com"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Ambrose C. Li", "acli@ada.dhs.org"},
 	{N_("Hong Kong Chinese"),   "zh_HK", "Paladin R. Liu", "paladin@ms1.hinet.net"},
 	{N_("Traditional Chinese"), "zh_TW", "Ambrose C. Li", "acli@ada.dhs.org"},
@@ -229,6 +232,7 @@ static struct translator past_translators[] = {
 	{N_("Korean"),              "ko", "Sang-hyun S, A Ho-seok Lee", NULL},
 	{N_("Lithuanian"),          "lt", "Andrius Štikonas", NULL},
 	{N_("Lithuanian"),          "lt", "Gediminas Čičinskas", NULL},
+	{N_("Macedonian"),          "mk", "Tomislav Markovski", "herrera@users.sf.net"},
 	{N_("Polish"),              "pl", "Przemysław Sułek", NULL},
 	{N_("Russian"),             "ru", "Alexandre Prokoudine", NULL},
 	{N_("Russian"),             "ru", "Sergey Volozhanin", NULL},
@@ -237,6 +241,7 @@ static struct translator past_translators[] = {
 	{N_("Slovak"),              "sk", "Richard Golier", "golierr@gmail.com"},
 	{N_("Slovenian"),           "sl", "Matjaz Horvat", NULL},
 	{N_("Swedish"),             "sv", "Christian Rose", NULL},
+	{N_("Turkish"),             "tr", "Ahmet Alp BALKAN", "prf_q@users.sf.net"},
 	{N_("Simplified Chinese"),  "zh_CN", "Hashao, Rocky S. Lee", NULL},
 	{N_("Traditional Chinese"), "zh_TW", "Hashao, Rocky S. Lee", NULL},
 	{NULL, NULL, NULL, NULL}
@@ -264,7 +269,7 @@ static void destroy_about()
 }
 
 /* This function puts the version number onto the pixmap we use in the 'about' 
- * screen in Purple. */
+ * screen in Pidgin. */
 static void
 pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	GdkPixmap *pixmap;
@@ -285,7 +290,7 @@ pidgin_logo_versionize(GdkPixbuf **original, GtkWidget *widget) {
 	context = gtk_widget_get_pango_context(widget);
 	layout = pango_layout_new(context);
 
-	markup = g_strdup_printf("<span foreground=\"#FFFFFF\" size=\"larger\">%s</span>", VERSION);
+	markup = g_strdup_printf("<span foreground=\"#5c3566\">%s</span>", VERSION);
 	pango_layout_set_font_description(layout, style->font_desc);
 	pango_layout_set_markup(layout, markup, strlen(markup));
 	g_free(markup);
@@ -349,7 +354,9 @@ void pidgin_dialogs_about()
 	gdk_pixbuf_unref(pixbuf);
 	/* Insert the logo */
 	obj = gtk_widget_get_accessible(logo);
-	atk_object_set_description(obj, PIDGIN_NAME " " VERSION);
+	tmp = g_strconcat(PIDGIN_NAME, " " VERSION, NULL);
+	atk_object_set_description(obj, tmp);
+	g_free(tmp);
 	gtk_box_pack_start(GTK_BOX(vbox), logo, FALSE, FALSE, 0);
 
 	frame = pidgin_create_imhtml(FALSE, &text, NULL, NULL);
@@ -359,8 +366,9 @@ void pidgin_dialogs_about()
 	str = g_string_sized_new(4096);
 
 	g_string_append_printf(str,
-		_("%s is a modular messaging client capable of using "
-		  "AIM, MSN, Yahoo!, Jabber, ICQ, IRC, SILC, SIP/SIMPLE, "
+		_("%s is a graphical modular messaging client based on "
+		  "libpurple which is capable of connecting to "
+		  "AIM, MSN, Yahoo!, XMPP, ICQ, IRC, SILC, SIP/SIMPLE, "
 		  "Novell GroupWise, Lotus Sametime, Bonjour, Zephyr, "
 		  "Gadu-Gadu, and QQ all at once.  "
 		  "It is written using GTK+.<BR><BR>"
@@ -373,13 +381,8 @@ void pidgin_dialogs_about()
 
 	g_string_append(str, "<FONT SIZE=\"4\">URL:</FONT> <A HREF=\""
 					PURPLE_WEBSITE "\">" PURPLE_WEBSITE "</A><BR/><BR/>");
-#ifdef _WIN32
-	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
-						   "#pidgin-win32 on irc.freenode.net<BR><BR>"));
-#else
 	g_string_append_printf(str, _("<FONT SIZE=\"4\">IRC:</FONT> "
 						   "#pidgin on irc.freenode.net<BR><BR>"));
-#endif
 
 	/* Current Developers */
 	g_string_append_printf(str, "<FONT SIZE=\"4\">%s:</FONT><BR/>",
@@ -505,9 +508,9 @@ void pidgin_dialogs_about()
 #endif
 
 #ifdef HAVE_SSL
-	g_string_append(str, "  <b>SSL:</b> " PIDGIN_NAME " was compiled with SSL support.<br/>");
+	g_string_append(str, "  <b>SSL:</b> SSL support is present.<br/>");
 #else
-	g_string_append(str, "  <b>SSL:</b> " PIDGIN_NAME " was <b><i>NOT</i></b> compiled with any SSL support!<br/>");
+	g_string_append(str, "  <b>SSL:</b> SSL support was <b><i>NOT</i></b> compiled!<br/>");
 #endif
 
 /* This might be useful elsewhere too, but it is particularly useful for
@@ -719,6 +722,7 @@ pidgin_dialogs_im(void)
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_im_cb),
 						_("Cancel"), NULL,
+						NULL, NULL, NULL,
 						NULL);
 }
 
@@ -856,6 +860,7 @@ pidgin_dialogs_info(void)
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_info_cb),
 						_("Cancel"), NULL,
+						NULL, NULL, NULL,
 						NULL);
 }
 
@@ -947,6 +952,7 @@ pidgin_dialogs_log(void)
 						fields,
 						_("OK"), G_CALLBACK(pidgin_dialogs_log_cb),
 						_("Cancel"), NULL,
+						NULL, NULL, NULL,
 						NULL);
 }
 
@@ -965,7 +971,9 @@ pidgin_dialogs_alias_contact(PurpleContact *contact)
 					   _("Enter an alias for this contact."),
 					   contact->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_contact_cb),
-					   _("Cancel"), NULL, contact);
+					   _("Cancel"), NULL,
+					   NULL, purple_contact_get_alias(contact), NULL,
+					   contact);
 }
 
 static void
@@ -987,7 +995,9 @@ pidgin_dialogs_alias_buddy(PurpleBuddy *buddy)
 	purple_request_input(NULL, _("Alias Buddy"), NULL,
 					   secondary, buddy->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_buddy_cb),
-					   _("Cancel"), NULL, buddy);
+					   _("Cancel"), NULL,
+					   purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
+					   buddy);
 
 	g_free(secondary);
 }
@@ -1007,7 +1017,9 @@ pidgin_dialogs_alias_chat(PurpleChat *chat)
 					   _("Enter an alias for this chat."),
 					   chat->alias, FALSE, FALSE, NULL,
 					   _("Alias"), G_CALLBACK(pidgin_dialogs_alias_chat_cb),
-					   _("Cancel"), NULL, chat);
+					   _("Cancel"), NULL,
+					   chat->account, NULL, NULL,
+					   chat);
 }
 
 static void
@@ -1049,9 +1061,12 @@ pidgin_dialogs_remove_contact(PurpleContact *contact)
 						"want to continue?", contact->totalsize - 1),
 					buddy->name, contact->totalsize - 1);
 
-		purple_request_action(contact, NULL, _("Remove Contact"), text, 0, contact, 2,
+		purple_request_action(contact, NULL, _("Remove Contact"), text, 0,
+				NULL, purple_contact_get_alias(contact), NULL,
+				contact, 2,
 				_("_Remove Contact"), G_CALLBACK(pidgin_dialogs_remove_contact_cb),
-				_("Cancel"), NULL);
+				_("Cancel"),
+				NULL);
 
 		g_free(text);
 	}
@@ -1087,7 +1102,9 @@ pidgin_dialogs_merge_groups(PurpleGroup *source, const char *new_name)
 	ggp->parent = source;
 	ggp->new_name = g_strdup(new_name);
 	
-	purple_request_action(source, NULL, _("Merge Groups"), text, 0, ggp, 2,
+	purple_request_action(source, NULL, _("Merge Groups"), text, 0,
+			NULL, NULL, NULL,
+			ggp, 2,
 			_("_Merge Groups"), G_CALLBACK(pidgin_dialogs_merge_groups_cb),
 			_("Cancel"), G_CALLBACK(free_ggmo));
 
@@ -1141,7 +1158,9 @@ pidgin_dialogs_remove_group(PurpleGroup *group)
 	text = g_strdup_printf(_("You are about to remove the group %s and all its members from your buddy list.  Do you want to continue?"),
 						   group->name);
 
-	purple_request_action(group, NULL, _("Remove Group"), text, 0, group, 2,
+	purple_request_action(group, NULL, _("Remove Group"), text, 0,
+						NULL, NULL, NULL,
+						group, 2,
 						_("_Remove Group"), G_CALLBACK(pidgin_dialogs_remove_group_cb),
 						_("Cancel"), NULL);
 
@@ -1178,7 +1197,9 @@ pidgin_dialogs_remove_buddy(PurpleBuddy *buddy)
 	text = g_strdup_printf(_("You are about to remove %s from your buddy list.  Do you want to continue?"),
 						   buddy->name);
 
-	purple_request_action(buddy, NULL, _("Remove Buddy"), text, 0, buddy, 2,
+	purple_request_action(buddy, NULL, _("Remove Buddy"), text, 0,
+						purple_buddy_get_account(buddy), purple_buddy_get_name(buddy), NULL,
+						buddy, 2,
 						_("_Remove Buddy"), G_CALLBACK(pidgin_dialogs_remove_buddy_cb),
 						_("Cancel"), NULL);
 
@@ -1203,7 +1224,9 @@ pidgin_dialogs_remove_chat(PurpleChat *chat)
 	text = g_strdup_printf(_("You are about to remove the chat %s from your buddy list.  Do you want to continue?"),
 			name ? name : "");
 
-	purple_request_action(chat, NULL, _("Remove Chat"), text, 0, chat, 2,
+	purple_request_action(chat, NULL, _("Remove Chat"), text, 0,
+						chat->account, NULL, NULL,
+						chat, 2,
 						_("_Remove Chat"), G_CALLBACK(pidgin_dialogs_remove_chat_cb),
 						_("Cancel"), NULL);
 

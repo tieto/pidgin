@@ -153,7 +153,9 @@ filesel(GtkWidget *widget, gpointer data)
 	name = gtk_entry_get_text(GTK_ENTRY(entry));
 
 	purple_request_file(entry, _("Select a file"), name, FALSE,
-					  G_CALLBACK(pounce_update_entry_fields), NULL, entry);
+					  G_CALLBACK(pounce_update_entry_fields), NULL,
+					  NULL, NULL, NULL,
+					  entry);
 	g_signal_connect_swapped(G_OBJECT(entry), "destroy",
 			G_CALLBACK(purple_request_close_with_handle), entry);
 }
@@ -781,7 +783,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	gtk_widget_show(table);
 
 	dialog->on_away =
-		gtk_check_button_new_with_mnemonic(_("P_ounce only when my status is not available"));
+		gtk_check_button_new_with_mnemonic(_("P_ounce only when my status is not Available"));
 	gtk_table_attach(GTK_TABLE(table), dialog->on_away, 0, 1, 0, 1,
 					 GTK_FILL, 0, 0, 0);
 
@@ -1093,7 +1095,9 @@ pounces_manager_delete_foreach(GtkTreeModel *model, GtkTreePath *path,
 	pouncee = purple_pounce_get_pouncee(pounce);
 
 	buf = g_strdup_printf(_("Are you sure you want to delete the pounce on %s for %s?"), pouncee, pouncer);
-	purple_request_action(pounce, NULL, buf, NULL, 0, pounce, 2,
+	purple_request_action(pounce, NULL, buf, NULL, 0,
+						account, pouncee, NULL,
+						pounce, 2,
 						_("Delete"), pounces_manager_delete_confirm_cb,
 						_("Cancel"), NULL);
 	g_free(buf);

@@ -13,7 +13,7 @@ EXTRA_DIST = \
 	lib/pubdir50.c \
 	lib/pubdir.c
 
-pkgdir = $(libdir)/libpurple
+pkgdir = $(libdir)/purple-$(PURPLE_MAJOR_VERSION)
 
 if USE_INTERNAL_LIBGADU
 INTGGSOURCES = \
@@ -72,6 +72,7 @@ endif
 
 AM_CPPFLAGS = \
 	-I$(top_srcdir)/libpurple \
+	-I$(top_builddir)/libpurple \
 	$(INTGG_CFLAGS) \
 	$(GLIB_CFLAGS) \
 	$(DEBUG_CFLAGS)

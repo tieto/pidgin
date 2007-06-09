@@ -93,6 +93,8 @@ extern void boot_DynaLoader _((pTHX_ CV * cv)); /* perl is so wacky */
 #include "perl-common.h"
 #include "perl-handlers.h"
 
+#include <gmodule.h>
+
 #define PERL_PLUGIN_ID "core-perl"
 
 PerlInterpreter *my_perl = NULL;
@@ -101,7 +103,12 @@ static PurplePluginUiInfo ui_info =
 {
 	purple_perl_get_plugin_frame,
 	0,   /* page_num (Reserved) */
-	NULL /* frame (Reserved)    */
+	NULL, /* frame (Reserved)    */
+	/* Padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 #ifdef PURPLE_GTKPERL
@@ -570,7 +577,13 @@ static PurplePluginLoaderInfo loader_info =
 	probe_perl_plugin,                                /**< probe          */
 	load_perl_plugin,                                 /**< load           */
 	unload_perl_plugin,                               /**< unload         */
-	destroy_perl_plugin                               /**< destroy        */
+	destroy_perl_plugin,                              /**< destroy        */
+	
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 static PurplePluginInfo info =
@@ -578,11 +591,11 @@ static PurplePluginInfo info =
 	PURPLE_PLUGIN_MAGIC,
 	PURPLE_MAJOR_VERSION,
 	PURPLE_MINOR_VERSION,
-	PURPLE_PLUGIN_LOADER,                               /**< type           */
+	PURPLE_PLUGIN_LOADER,                             /**< type           */
 	NULL,                                             /**< ui_requirement */
 	0,                                                /**< flags          */
 	NULL,                                             /**< dependencies   */
-	PURPLE_PRIORITY_DEFAULT,                            /**< priority       */
+	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
 
 	PERL_PLUGIN_ID,                                   /**< id             */
 	N_("Perl Plugin Loader"),                         /**< name           */
@@ -590,7 +603,7 @@ static PurplePluginInfo info =
 	N_("Provides support for loading perl plugins."), /**< summary        */
 	N_("Provides support for loading perl plugins."), /**< description    */
 	"Christian Hammond <chipx86@gnupdate.org>",       /**< author         */
-	PURPLE_WEBSITE,                                     /**< homepage       */
+	PURPLE_WEBSITE,                                   /**< homepage       */
 
 	plugin_load,                                      /**< load           */
 	plugin_unload,                                    /**< unload         */
@@ -599,6 +612,12 @@ static PurplePluginInfo info =
 	NULL,                                             /**< ui_info        */
 	&loader_info,                                     /**< extra_info     */
 	NULL,
+	NULL,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
 	NULL
 };
 
@@ -606,6 +625,25 @@ static void
 init_plugin(PurplePlugin *plugin)
 {
 	loader_info.exts = g_list_append(loader_info.exts, "pl");
+}
+
+#ifdef __SUNPRO_C
+#pragma init (my_init)
+#else
+void __attribute__ ((constructor)) my_init(void);
+#endif
+
+void
+my_init(void)
+{
+	/* Mostly evil hack... puts perl.so's symbols in the global table but
+	 * does not create a circular dependency because g_module_open will
+	 * only open the library once. */
+	/* Do we need to keep track of the returned GModule here so that we
+	 * can g_module_close it when this plugin gets unloaded?
+	 * At the moment I don't think this plugin can ever get unloaded but
+	 * in case that becomes possible this wants to get noted. */
+	g_module_open("perl.so", 0);
 }
 
 PURPLE_INIT_PLUGIN(perl, init_plugin, info)

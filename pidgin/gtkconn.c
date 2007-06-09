@@ -248,7 +248,11 @@ static PurpleConnectionUiOps conn_ui_ops =
 	pidgin_connection_notice,
 	pidgin_connection_report_disconnect,
 	pidgin_connection_network_connected,
-	pidgin_connection_network_disconnected
+	pidgin_connection_network_disconnected,
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleConnectionUiOps *

@@ -49,6 +49,7 @@ struct _FinchConv
 	GntWidget *tv;            /* text-view */
 	GntWidget *menu;          /* future use */
 	GntWidget *info;
+	void *pad;
 
 	union
 	{
@@ -60,11 +61,14 @@ struct _FinchConv
 struct _FinchConvChat
 {
 	GntWidget *userlist;       /* the userlist */
+	void *pad1;
+	void *pad2;
 };
 
 struct _FinchConvIm
 {
 	void *nothing_for_now;
+	void *something_for_later;
 };
 
 /**

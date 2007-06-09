@@ -30,9 +30,11 @@
 #include <gnttree.h>
 
 #include "notify.h"
+#include "request.h"
 
 #include "finch.h"
 #include "gntplugin.h"
+#include "gntrequest.h"
 
 static struct
 {
@@ -43,6 +45,8 @@ static struct
 } plugins;
 
 static GHashTable *confwins;
+
+static void process_pref_frame(PurplePluginPrefFrame *frame);
 
 static void
 decide_conf_button(PurplePlugin *plugin)
@@ -63,11 +67,10 @@ decide_conf_button(PurplePlugin *plugin)
 static void
 plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 {
-	/* TODO: Mark these strings for translation after the freeze */
 	if (gnt_tree_get_choice(GNT_TREE(tree), plugin))
 	{
 		if (!purple_plugin_load(plugin)) {
-			purple_notify_error(NULL, "ERROR", "loading plugin failed", NULL);
+			purple_notify_error(NULL, _("ERROR"), _("loading plugin failed"), NULL);
 			gnt_tree_set_choice(GNT_TREE(tree), plugin, FALSE);
 		}
 	}
@@ -76,7 +79,7 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 		GntWidget *win;
 
 		if (!purple_plugin_unload(plugin)) {
-			purple_notify_error(NULL, "ERROR", "unloading plugin failed", NULL);
+			purple_notify_error(NULL, _("ERROR"), _("unloading plugin failed"), NULL);
 			gnt_tree_set_choice(GNT_TREE(tree), plugin, TRUE);
 		}
 
@@ -93,7 +96,7 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 void
 finch_plugins_save_loaded(void)
 {
-	purple_plugins_save_loaded("/purple/gnt/plugins/loaded");
+	purple_plugins_save_loaded("/finch/plugins/loaded");
 }
 
 static void
@@ -101,6 +104,20 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 {
 	PurplePlugin *plugin = current;
 	char *text;
+	GList *list = NULL, *iter = NULL;
+
+	/* If the selected plugin was unseen before, mark it as seen. But save the list
+	 * only when the plugin list is closed. So if the user enables a plugin, and it
+	 * crashes, it won't get marked as seen so the user can fix the bug and still
+	 * quickly find the plugin in the list.
+	 * I probably mean 'plugin developers' by 'users' here. */
+	list = g_object_get_data(G_OBJECT(widget), "seen-list");
+	if (list)
+		iter = g_list_find_custom(list, plugin->path, (GCompareFunc)strcmp);
+	if (!iter) {
+		list = g_list_prepend(list, g_strdup(plugin->path));
+		g_object_set_data(G_OBJECT(widget), "seen-list", list);
+	}
 
 	/* XXX: Use formatting and stuff */
 	gnt_text_view_clear(GNT_TEXT_VIEW(plugins.aboot));
@@ -117,6 +134,11 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 static void
 reset_plugin_window(GntWidget *window, gpointer null)
 {
+	GList *list = g_object_get_data(G_OBJECT(plugins.tree), "seen-list");
+	purple_prefs_set_path_list("/finch/plugins/seen", list);
+	g_list_foreach(list, (GFunc)g_free, NULL);
+	g_list_free(list);
+
 	plugins.window = NULL;
 	plugins.tree = NULL;
 	plugins.aboot = NULL;
@@ -195,8 +217,7 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	else if (plugin->info->prefs_info &&
 			plugin->info->prefs_info->get_plugin_pref_frame)
 	{
-		purple_notify_info(plugin, _("..."),
-			_("Still need to do something about this."), NULL);
+		process_pref_frame(plugin->info->prefs_info->get_plugin_pref_frame(plugin));
 		return;
 	}
 	else
@@ -211,6 +232,8 @@ void finch_plugins_show_all()
 {
 	GntWidget *window, *tree, *box, *aboot, *button;
 	GList *iter;
+	GList *seen;
+
 	if (plugins.window)
 		return;
 
@@ -241,6 +264,7 @@ void finch_plugins_show_all()
 	gnt_widget_set_size(aboot, 40, 20);
 	gnt_box_add_widget(GNT_BOX(box), aboot);
 
+	seen = purple_prefs_get_path_list("/finch/plugins/seen");
 	for (iter = purple_plugins_get_all(); iter; iter = iter->next)
 	{
 		PurplePlugin *plug = iter->data;
@@ -253,10 +277,13 @@ void finch_plugins_show_all()
 		gnt_tree_add_choice(GNT_TREE(tree), plug,
 				gnt_tree_create_row(GNT_TREE(tree), plug->info->name), NULL, NULL);
 		gnt_tree_set_choice(GNT_TREE(tree), plug, purple_plugin_is_loaded(plug));
+		if (!g_list_find_custom(seen, plug->path, (GCompareFunc)strcmp))
+			gnt_tree_set_row_flags(GNT_TREE(tree), plug, GNT_TEXT_FLAG_BOLD);
 	}
 	gnt_tree_set_col_width(GNT_TREE(tree), 0, 30);
 	g_signal_connect(G_OBJECT(tree), "toggled", G_CALLBACK(plugin_toggled_cb), NULL);
 	g_signal_connect(G_OBJECT(tree), "selection_changed", G_CALLBACK(selection_changed), NULL);
+	g_object_set_data(G_OBJECT(tree), "seen-list", seen);
 
 	box = gnt_hbox_new(FALSE);
 	gnt_box_add_widget(GNT_BOX(window), box);
@@ -275,5 +302,63 @@ void finch_plugins_show_all()
 	gnt_widget_show(window);
 
 	decide_conf_button(gnt_tree_get_selection_data(GNT_TREE(tree)));
+}
+
+static void
+process_pref_frame(PurplePluginPrefFrame *frame)
+{
+	PurpleRequestField *field;
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group = NULL;
+	GList *prefs;
+	
+	fields = purple_request_fields_new();
+
+	for (prefs = purple_plugin_pref_frame_get_prefs(frame); prefs; prefs = prefs->next) {
+		PurplePluginPref *pref = prefs->data;
+		const char *name = purple_plugin_pref_get_name(pref);
+		const char *label = purple_plugin_pref_get_label(pref);
+		if(name == NULL) {
+			if(label == NULL)
+				continue;
+
+			if(purple_plugin_pref_get_type(pref) == PURPLE_PLUGIN_PREF_INFO) {
+				field = purple_request_field_label_new("*", purple_plugin_pref_get_label(pref));
+				purple_request_field_group_add_field(group, field);
+			} else {
+				group = purple_request_field_group_new(label);
+				purple_request_fields_add_group(fields, group);
+			}
+			continue;
+		}
+
+		field = NULL;
+		switch(purple_prefs_get_type(name)) {
+			case PURPLE_PREF_BOOLEAN:
+				field = purple_request_field_bool_new(name, label, purple_prefs_get_bool(name));
+				break;
+			case PURPLE_PREF_INT:
+				field = purple_request_field_int_new(name, label, purple_prefs_get_int(name));
+				break;
+			case PURPLE_PREF_STRING:
+				field = purple_request_field_string_new(name, label, purple_prefs_get_string(name),
+						purple_plugin_pref_get_format_type(pref) & PURPLE_STRING_FORMAT_TYPE_MULTILINE);
+				break;
+			default:
+				break;
+		}
+		if (field) {
+			if (group == NULL) {
+				group = purple_request_field_group_new(_("Preferences"));
+				purple_request_fields_add_group(fields, group);
+			}
+			purple_request_field_group_add_field(group, field);
+		}
+	}
+
+	purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
+			_("Save"), G_CALLBACK(finch_request_save_in_prefs), _("Cancel"), NULL,
+			NULL, NULL, NULL,
+			NULL);
 }
 

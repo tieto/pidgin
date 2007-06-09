@@ -29,64 +29,58 @@
  */
 
 #include "nat-pmp.h"
+#include "internal.h"
 #include "debug.h"
 #include "signals.h"
 #include "network.h"
 
-#include <sys/types.h>
-#ifndef _WIN32
-#include <arpa/inet.h>
-#include <netinet/in.h>
-#include <sys/socket.h>
+#ifdef HAVE_SYS_SYSCTL_H
 #include <sys/sysctl.h>
-
-#include <net/if.h>
-#include <net/route.h>
-
-#include <netdb.h>
-#include <err.h>
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifdef HAVE_SYS_SOCKET_H
+#include <sys/socket.h>
+#endif
 
-#include <errno.h>
+/* We will need sysctl() and NET_RT_DUMP, both of which are not present
+ * on all platforms, to continue. */
+#if defined(HAVE_SYS_SYSCTL_H) && defined(NET_RT_DUMP)
 
-#ifdef NET_RT_DUMP
+#include <sys/types.h>
+#include <net/route.h>
 
 #define PMP_DEBUG	1
 
 typedef struct {
-	uint8_t	version;
-	uint8_t opcode;
+	guint8	version;
+	guint8 opcode;
 } PurplePmpIpRequest;
 
 typedef struct {
-	uint8_t		version;
-	uint8_t		opcode; // 128 + n
-	uint16_t	resultcode;
-	uint32_t	epoch;
-	uint32_t	address;
+	guint8		version;
+	guint8		opcode; /* 128 + n */
+	guint16		resultcode;
+	guint32		epoch;
+	guint32		address;
 } PurplePmpIpResponse;
 
 typedef struct {
-	uint8_t		version;
-	uint8_t		opcode;
+	guint8		version;
+	guint8		opcode;
 	char		reserved[2];
-	uint16_t	privateport;
-	uint16_t	publicport;
-	uint32_t	lifetime;
+	guint16		privateport;
+	guint16		publicport;
+	guint32		lifetime;
 } PurplePmpMapRequest;
 
 struct _PurplePmpMapResponse {
-	uint8_t		version;
-	uint8_t		opcode;
-	uint16_t	resultcode;
-	uint32_t	epoch;
-	uint16_t	privateport;
-	uint16_t	publicport;
-	uint32_t	lifetime;
+	guint8		version;
+	guint8		opcode;
+	guint16		resultcode;
+	guint32		epoch;
+	guint16		privateport;
+	guint16		publicport;
+	guint32		lifetime;
 };
 
 typedef struct _PurplePmpMapResponse PurplePmpMapResponse;
@@ -417,7 +411,7 @@ purple_pmp_create_map(PurplePmpType type, unsigned short privateport, unsigned s
 	bzero(&req, sizeof(PurplePmpMapRequest));
 	req.version = 0;
 	req.opcode	= ((type == PURPLE_PMP_TYPE_UDP) ? PMP_MAP_OPCODE_UDP : PMP_MAP_OPCODE_TCP);	
-	req.privateport = htons(privateport); //	What a difference byte ordering makes...d'oh!
+	req.privateport = htons(privateport); /* What a difference byte ordering makes...d'oh! */
 	req.publicport = htons(publicport);
 	req.lifetime = htonl(lifetime);
 
@@ -549,4 +543,4 @@ purple_pmp_init()
 {
 
 }
-#endif /* #ifndef NET_RT_DUMP */
+#endif /* #if !(defined(HAVE_SYS_SYCTL_H) && defined(NET_RT_DUMP)) */

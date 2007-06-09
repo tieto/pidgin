@@ -1,7 +1,12 @@
-version 2.0.0:
+version 2.0.2 (??/??/????):
+	* Add Bonjour protocol support thanks to Chris Davies. This requires
+	  Apple Bonjour for Windows from:
+	  http://www.apple.com/support/downloads/bonjourforwindows.html
+
+version 2.0.0 (5/3/2007):
 	* URI Handler support added via `pidgin.exe --protocolhandler=`
 	* Running a second instance will popup the Buddy List, if possible.
-	* Updated GTK+ to 2.10.11 (rev.a) (Win98/ME will need to use 2.6.10)
+	* Updated GTK+ to 2.10.11 (rev.b) (Win98/ME will need to use 2.6.10)
 	* The transparency plugin has been rewritten and enhanced.
 	* MSN open email bug fixed.
 	* Update SILC to use the 1.0.2 toolkit

@@ -583,12 +583,12 @@ void purple_log_init(void)
 {
 	void *handle = purple_log_get_handle();
 
-	purple_prefs_add_none("/core/logging");
-	purple_prefs_add_bool("/core/logging/log_ims", FALSE);
-	purple_prefs_add_bool("/core/logging/log_chats", FALSE);
-	purple_prefs_add_bool("/core/logging/log_system", FALSE);
+	purple_prefs_add_none("/purple/logging");
+	purple_prefs_add_bool("/purple/logging/log_ims", FALSE);
+	purple_prefs_add_bool("/purple/logging/log_chats", FALSE);
+	purple_prefs_add_bool("/purple/logging/log_system", FALSE);
 
-	purple_prefs_add_string("/core/logging/format", "txt");
+	purple_prefs_add_string("/purple/logging/format", "txt");
 
 	html_logger = purple_log_logger_new("html", _("HTML"), 11,
 									  NULL,
@@ -650,9 +650,9 @@ void purple_log_init(void)
 #endif
 	                     purple_value_new(PURPLE_TYPE_BOOLEAN));
 
-	purple_prefs_connect_callback(NULL, "/core/logging/format",
+	purple_prefs_connect_callback(NULL, "/purple/logging/format",
 							    logger_pref_cb, NULL);
-	purple_prefs_trigger_callback("/core/logging/format");
+	purple_prefs_trigger_callback("/purple/logging/format");
 
 	logsize_users = g_hash_table_new_full((GHashFunc)_purple_logsize_user_hash,
 			(GEqualFunc)_purple_logsize_user_equal,
@@ -778,7 +778,7 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name, PurpleAcco
 			if (tz_off != PURPLE_NO_TZ_OFF)
 				tm.tm_gmtoff = tz_off - tm.tm_gmtoff;
 
-			if (rest == NULL || (end = strchr(rest, '.')) == NULL || strchr(rest, ' ') != NULL)
+			if (stamp == 0 || rest == NULL || (end = strchr(rest, '.')) == NULL || strchr(rest, ' ') != NULL)
 			{
 				log = purple_log_new(type, name, account, NULL, stamp, NULL);
 			}
@@ -792,7 +792,7 @@ GList *purple_log_common_lister(PurpleLogType type, const char *name, PurpleAcco
 #else
 			time_t stamp = purple_str_to_time(filename, FALSE, &tm, NULL, NULL);
 
-			log = purple_log_new(type, name, account, NULL, stamp, &tm);
+			log = purple_log_new(type, name, account, NULL, stamp, (stamp != 0) ?  &tm : NULL);
 #endif
 
 			log->logger = logger;

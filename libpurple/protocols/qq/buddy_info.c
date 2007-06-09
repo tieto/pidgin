@@ -482,6 +482,7 @@ static void create_modify_info_dialogue(PurpleConnection *gc, const contact_info
 			_("Modify my information"), NULL, fields,
 			_("Update my information"), G_CALLBACK(modify_info_ok_cb),
 			_("Cancel"), G_CALLBACK(modify_info_cancel_cb),
+			purple_connection_get_account(gc), NULL, NULL,
 			mid);
 	}
 }
@@ -531,27 +532,21 @@ static void _qq_send_packet_modify_face(PurpleConnection *gc, gint face_num)
 	qq_send_packet_get_info(gc, qd->uid, FALSE);
 }
 
-void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const gchar *iconfile)
+void qq_set_buddy_icon_for_user(PurpleAccount *account, const gchar *who, const gchar *icon_num, const gchar *iconfile)
 {
-	FILE *file;
-	struct stat st;
+	gchar *data;
+	gsize len;
 
-	g_return_if_fail(g_stat(iconfile, &st) == 0);
-	file = g_fopen(iconfile, "rb");
-	if (file) {
-		PurpleBuddyIcon *icon;
-		size_t data_len;
-		gchar *data = g_new(gchar, st.st_size + 1);
-		data_len = fread(data, 1, st.st_size, file);
-		fclose(file);
-		purple_buddy_icons_set_for_user(account, who, data, data_len);
-		icon = purple_buddy_icons_find(account, who);
-		purple_buddy_icon_set_path(icon, iconfile);
+	if (!g_file_get_contents(iconfile, &data, &len, NULL))
+		g_return_if_reached();
+	else
+	{
+		purple_buddy_icons_set_for_user(account, who, data, len, icon_num);
 	}
 }
 
 /* TODO: custom faces for QQ members and users with level >= 16 */
-void qq_set_my_buddy_icon(PurpleConnection *gc, const gchar *iconfile)
+void qq_set_my_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	gchar *icon;
 	gint icon_num;
@@ -600,25 +595,32 @@ void qq_set_my_buddy_icon(PurpleConnection *gc, const gchar *iconfile)
 	/* tell server my icon changed */
 	_qq_send_packet_modify_face(gc, icon_num);
 	/* display in blist */
-	qq_set_buddy_icon_for_user(account, account->username, icon_path);
+	qq_set_buddy_icon_for_user(account, account->username, icon, icon_path);
 }
 
 
 static void _qq_update_buddy_icon(PurpleAccount *account, const gchar *name, gint face)
 {
-	gchar *icon_path;
-	PurpleBuddyIcon *icon = purple_buddy_icons_find(account, name);
+	PurpleBuddy *buddy;
 	gchar *icon_num_str = face_to_icon_str(face);
-	const gchar *old_path = purple_buddy_icon_get_path(icon);
-	const gchar *buddy_icon_dir = qq_buddy_icon_dir();
+	const gchar *old_icon_num = NULL;
 
-	icon_path = g_strconcat(buddy_icon_dir, G_DIR_SEPARATOR_S, QQ_ICON_PREFIX, 
-			icon_num_str, QQ_ICON_SUFFIX, NULL);
-	if (icon == NULL || old_path == NULL 
-		|| g_ascii_strcasecmp(icon_path, old_path) != 0)
-		qq_set_buddy_icon_for_user(account, name, icon_path);
+	if ((buddy = purple_find_buddy(account, name)))
+		old_icon_num = purple_buddy_icons_get_checksum_for_user(buddy);
+
+	if (old_icon_num == NULL ||
+	    strcmp(icon_num_str, old_icon_num))
+	{
+		gchar *icon_path;
+
+		icon_path = g_strconcat(qq_buddy_icon_dir(), G_DIR_SEPARATOR_S,
+		                        QQ_ICON_PREFIX, icon_num_str,
+		                        QQ_ICON_SUFFIX, NULL);
+
+		qq_set_buddy_icon_for_user(account, name, icon_num_str, icon_path);
+		g_free(icon_path);
+	}
 	g_free(icon_num_str);
-	g_free(icon_path);
 }
 
 /* after getting info or modify myself, refresh the buddy list accordingly */

@@ -48,6 +48,10 @@ static void gnt_wm_give_focus(GntWM *wm, GntWidget *widget);
 static void update_window_in_list(GntWM *wm, GntWidget *wid);
 static void shift_window(GntWM *wm, GntWidget *widget, int dir);
 
+#ifndef NO_WIDECHAR
+static int widestringwidth(wchar_t *wide);
+#endif
+
 static gboolean write_already(gpointer data);
 static int write_timeout;
 static time_t last_active_time;
@@ -136,6 +140,65 @@ copy_win(GntWidget *widget, GntNode *node)
 	copywin(src, dst, node->scroll, 0, 0, 0, getmaxy(dst) - 1, getmaxx(dst) - 1, 0);
 }
 
+/**
+ * The following is a workaround for a bug in most versions of ncursesw.
+ * Read about it in: http://article.gmane.org/gmane.comp.lib.ncurses.bugs/2751
+ * 
+ * In short, if a panel hides one cell of a multi-cell character, then the rest
+ * of the characters in that line get screwed. The workaround here is to erase
+ * any such character preemptively.
+ *
+ * Caveat: If a wide character is erased, and the panel above it is moved enough
+ * to expose the entire character, it is not always redrawn.
+ */
+static void
+work_around_for_ncurses_bug()
+{
+#ifndef NO_WIDECHAR
+	PANEL *panel = NULL;
+	while ((panel = panel_below(panel)) != NULL) {
+		int sx, ex, sy, ey, w, y;
+		cchar_t ch;
+		PANEL *below = panel;
+
+		sx = panel->win->_begx;
+		ex = panel->win->_maxx + sx;
+		sy = panel->win->_begy;
+		ey = panel->win->_maxy + sy;
+
+		while ((below = panel_below(below)) != NULL) {
+			if (sy > below->win->_begy + below->win->_maxy ||
+					ey < below->win->_begy)
+				continue;
+			if (sx > below->win->_begx + below->win->_maxx ||
+					ex < below->win->_begx)
+				continue;
+			for (y = MAX(sy, below->win->_begy); y <= MIN(ey, below->win->_begy + below->win->_maxy); y++) {
+				if (mvwin_wch(below->win, y - below->win->_begy, sx - 1 - below->win->_begx, &ch) != OK)
+					goto right;
+				w = widestringwidth(ch.chars);
+				if (w > 1 && (ch.attr & 1)) {
+					ch.chars[0] = ' ';
+					ch.attr &= ~ A_CHARTEXT;
+					mvwadd_wch(below->win, y - below->win->_begy, sx - 1 - below->win->_begx, &ch);
+					touchline(below->win, y - below->win->_begy, 1);
+				}
+right:
+				if (mvwin_wch(below->win, y - below->win->_begy, ex + 1 - below->win->_begx, &ch) != OK)
+					continue;
+				w = widestringwidth(ch.chars);
+				if (w > 1 && !(ch.attr & 1)) {
+					ch.chars[0] = ' ';
+					ch.attr &= ~ A_CHARTEXT;
+					mvwadd_wch(below->win, y - below->win->_begy, ex + 1 - below->win->_begx, &ch);
+					touchline(below->win, y - below->win->_begy, 1);
+				}
+			}
+		}
+	}
+#endif
+}
+
 static gboolean
 update_screen(GntWM *wm)
 {
@@ -148,6 +211,7 @@ update_screen(GntWM *wm)
 			top = top->submenu;
 		}
 	}
+	work_around_for_ncurses_bug();
 	update_panels();
 	doupdate();
 	return TRUE;
@@ -564,14 +628,40 @@ dump_screen(GntBindable *bindable, GList *null)
 	int x, y;
 	chtype old = 0, now = 0;
 	FILE *file = fopen("dump.html", "w");
+	struct {
+		char ascii;
+		char *unicode;
+	} unis[] = {
+		{'q', "&#x2500;"},
+		{'t', "&#x251c;"},
+		{'u', "&#x2524;"},
+		{'x', "&#x2502;"},
+		{'-', "&#x2191;"},
+		{'.', "&#x2193;"},
+		{'l', "&#x250c;"},
+		{'k', "&#x2510;"},
+		{'m', "&#x2514;"},
+		{'j', "&#x2518;"},
+		{'a', "&#x2592;"},
+		{'\0', NULL}
+	};
 
+	fprintf(file, "<head>\n  <meta http-equiv='Content-Type' content='text/html; charset=utf-8' />\n</head>\n<body>\n");
 	fprintf(file, "<pre>");
 	for (y = 0; y < getmaxy(stdscr); y++) {
 		for (x = 0; x < getmaxx(stdscr); x++) {
-			char ch;
+			char ch[2] = {0, 0}, *print;
+#ifdef NO_WIDECHAR
 			now = mvwinch(curscr, y, x);
-			ch = now & A_CHARTEXT;
-			now ^= ch;
+			ch[0] = now & A_CHARTEXT;
+			now ^= ch[0];
+#else
+			cchar_t wch;
+			char unicode[12];
+			mvwin_wch(curscr, y, x, &wch);
+			now = wch.attr;
+			ch[0] = (char)(wch.chars[0] & 0xff);
+#endif
 
 #define CHECK(attr, start, end) \
 			do \
@@ -607,7 +697,11 @@ dump_screen(GntBindable *bindable, GList *null)
 				if (bgp == -1)
 					bgp = COLOR_WHITE;
 				if (now & A_REVERSE)
-					fgp ^= bgp ^= fgp ^= bgp;  /* *wink* */
+				{
+					short tmp = fgp;
+					fgp = bgp;
+					bgp = tmp;
+				}
 				ret = color_content(fgp, &r, &g, &b);
 				fg.r = r; fg.b = b; fg.g = g;
 				ret = color_content(bgp, &r, &g, &b);
@@ -624,48 +718,39 @@ dump_screen(GntBindable *bindable, GList *null)
 				fprintf(file, "<span style=\"background:#%02x%02x%02x;color:#%02x%02x%02x\">",
 						bg.r, bg.g, bg.b, fg.r, fg.g, fg.b);
 			}
+			print = ch;
+#ifndef NO_WIDECHAR
+			if (wch.chars[0] > 255) {
+				snprintf(unicode, sizeof(unicode), "&#x%x;", wch.chars[0]);
+				print = unicode;
+			}
+#endif
 			if (now & A_ALTCHARSET)
 			{
-				switch (ch)
-				{
-					case 'q':
-						ch = '-'; break;
-					case 't':
-					case 'u':
-					case 'x':
-						ch = '|'; break;
-					case 'v':
-					case 'w':
-					case 'l':
-					case 'm':
-					case 'k':
-					case 'j':
-					case 'n':
-						ch = '+'; break;
-					case '-':
-						ch = '^'; break;
-					case '.':
-						ch = 'v'; break;
-					case 'a':
-						ch = '#'; break;
-					default:
-						ch = ' '; break;
+				int u;
+				for (u = 0; unis[u].ascii; u++) {
+					if (ch[0] == unis[u].ascii) {
+						print = unis[u].unicode;
+						break;
+					}
 				}
+				if (!unis[u].ascii)
+					print = " ";
 			}
-			if (ch == '&')
+			if (ch[0] == '&')
 				fprintf(file, "&amp;");
-			else if (ch == '<')
+			else if (ch[0] == '<')
 				fprintf(file, "&lt;");
-			else if (ch == '>')
+			else if (ch[0] == '>')
 				fprintf(file, "&gt;");
 			else
-				fprintf(file, "%c", ch);
+				fprintf(file, "%s", print);
 			old = now;
 		}
 		fprintf(file, "</span>\n");
 		old = 0;
 	}
-	fprintf(file, "</pre>");
+	fprintf(file, "</pre>\n</body>");
 	fclose(file);
 	return TRUE;
 }
@@ -905,6 +990,32 @@ refresh_screen(GntBindable *bindable, GList *null)
 	return FALSE;
 }
 
+static gboolean
+toggle_clipboard(GntBindable *bindable, GList *n)
+{
+	static GntWidget *clip;
+	gchar *text;
+	int maxx, maxy;
+	if (clip) {
+		gnt_widget_destroy(clip);
+		clip = NULL;
+		return TRUE;
+	}
+	getmaxyx(stdscr, maxy, maxx);
+	text = gnt_get_clipboard_string();
+	clip = gnt_hwindow_new(FALSE);
+	GNT_WIDGET_SET_FLAGS(clip, GNT_WIDGET_TRANSIENT);
+	GNT_WIDGET_SET_FLAGS(clip, GNT_WIDGET_NO_BORDER);
+	gnt_box_set_pad(GNT_BOX(clip), 0);
+	gnt_box_add_widget(GNT_BOX(clip), gnt_label_new(" "));
+	gnt_box_add_widget(GNT_BOX(clip), gnt_label_new(text));
+	gnt_box_add_widget(GNT_BOX(clip), gnt_label_new(" "));
+	gnt_widget_set_position(clip, 0, 0);
+	gnt_widget_draw(clip);
+	g_free(text);
+	return TRUE;
+}
+
 static void
 gnt_wm_class_init(GntWMClass *klass)
 {
@@ -1039,6 +1150,8 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" GNT_KEY_CTRL_K, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-widget", help_for_widget,
 				"\033" "/", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard",
+				toggle_clipboard, "\033" "C", NULL);
 
 	gnt_style_read_actions(G_OBJECT_CLASS_TYPE(klass), GNT_BINDABLE_CLASS(klass));
 

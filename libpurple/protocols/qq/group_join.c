@@ -135,7 +135,9 @@ static void _qq_group_join_auth(PurpleConnection *gc, qq_group *group)
 			   _("Would you be my friend?"), TRUE, FALSE, NULL,
 			   _("Send"),
 			   G_CALLBACK(_qq_group_join_auth_with_gc_and_id),
-			   _("Cancel"), G_CALLBACK(qq_do_nothing_with_gc_and_uid), g);
+			   _("Cancel"), G_CALLBACK(qq_do_nothing_with_gc_and_uid),
+			   purple_connection_get_account(gc), group->group_name_utf8, NULL,
+			   g);
 	g_free(msg);
 }
 
@@ -356,7 +358,9 @@ void qq_group_exit(PurpleConnection *gc, GHashTable *data)
 			    _("Are you sure to exit this Qun?"),
 			    _
 			    ("Note, if you are the creator, \nthis operation will eventually remove this Qun."),
-			    1, g, 2, _("Cancel"),
+			    1,
+				purple_connection_get_account(gc), NULL, NULL,
+			    g, 2, _("Cancel"),
 			    G_CALLBACK(qq_do_nothing_with_gc_and_uid),
 			    _("Go ahead"), G_CALLBACK(_qq_group_exit_with_gc_and_id));
 }

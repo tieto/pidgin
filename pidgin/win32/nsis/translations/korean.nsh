@@ -13,11 +13,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"가임 메신저 (필수)"
 !define GTK_SECTION_TITLE			"GTK+ 런타임 환경 (필수)"
-!define GTK_THEMES_SECTION_TITLE		"GTK+ 테마"
-!define GTK_NOTHEME_SECTION_TITLE		"테마 없음"
-!define GTK_WIMP_SECTION_TITLE		"윔프 테마"
-!define GTK_BLUECURVE_SECTION_TITLE		"블루커브 테마"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Light House Blue 테마"
 !define PIDGIN_SECTION_DESCRIPTION		"가임의 코어 파일과 dll"
 !define GTK_SECTION_DESCRIPTION		"가임이 사용하는 멀티 플랫폼 GUI 툴킷"
 
@@ -30,9 +25,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"GTK+ 런타임 설치 중 오류 발생."
 !define GTK_BAD_INSTALL_PATH			"입력하신 경로에 접근할 수 없거나 만들 수 없었습니다."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"GTK+ 테마를 설치할 권한이 없습니다."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1         "언인스톨러가 가임의 레지스트리 엔트리를 찾을 수 없습니다.$\r이 프로그램을 다른 유저 권한으로 설치한 것 같습니다."

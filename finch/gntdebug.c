@@ -24,10 +24,12 @@
  */
 #include <gnt.h>
 #include <gntbox.h>
-#include <gnttextview.h>
 #include <gntbutton.h>
 #include <gntcheckbox.h>
+#include <gntentry.h>
+#include <gntlabel.h>
 #include <gntline.h>
+#include <gnttextview.h>
 
 #include "gntdebug.h"
 #include "finch.h"
@@ -36,32 +38,42 @@
 #include <stdio.h>
 #include <string.h>
 
-#define PREF_ROOT "/purple/gnt/debug"
+#define PREF_ROOT "/finch/debug"
 
 static struct
 {
 	GntWidget *window;
 	GntWidget *tview;
+	GntWidget *search;
 	gboolean paused;
-	gboolean timestamps;
 } debug;
+
+static gboolean
+match_string(const char *category, const char *args)
+{
+	const char *str = gnt_entry_get_text(GNT_ENTRY(debug.search));
+	if (!str || !*str)
+		return TRUE;
+	if (g_strrstr(category, str) != NULL)
+		return TRUE;
+	if (g_strrstr(args, str) != NULL)
+		return TRUE;
+	return FALSE;
+}
 
 static void
 finch_debug_print(PurpleDebugLevel level, const char *category,
 		const char *args)
 {
-	if (debug.window && !debug.paused)
+	if (debug.window && !debug.paused && match_string(category, args))
 	{
 		int pos = gnt_text_view_get_lines_below(GNT_TEXT_VIEW(debug.tview));
 		GntTextFormatFlags flag = GNT_TEXT_FLAG_NORMAL;
-
-		if (debug.timestamps) {
-			const char *mdate;
-			time_t mtime = time(NULL);
-			mdate = purple_utf8_strftime("%H:%M:%S ", localtime(&mtime));
-			gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview),
-					mdate, flag);
-		}
+		const char *mdate;
+		time_t mtime = time(NULL);
+		mdate = purple_utf8_strftime("%H:%M:%S ", localtime(&mtime));
+		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview),
+				mdate, flag);
 
 		gnt_text_view_append_text_with_flags(GNT_TEXT_VIEW(debug.tview),
 				category, GNT_TEXT_FLAG_BOLD);
@@ -95,7 +107,13 @@ finch_debug_is_enabled(PurpleDebugLevel level, const char *category)
 static PurpleDebugUiOps uiops =
 {
 	finch_debug_print,
-	finch_debug_is_enabled
+	finch_debug_is_enabled,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 PurpleDebugUiOps *finch_debug_get_ui_ops()
@@ -106,7 +124,7 @@ PurpleDebugUiOps *finch_debug_get_ui_ops()
 static void
 reset_debug_win(GntWidget *w, gpointer null)
 {
-	debug.window = debug.tview = NULL;
+	debug.window = debug.tview = debug.search = NULL;
 }
 
 static void
@@ -129,13 +147,6 @@ static void
 toggle_pause(GntWidget *w, gpointer n)
 {
 	debug.paused = !debug.paused;
-}
-
-static void
-toggle_timestamps(GntWidget *w, gpointer n)
-{
-	debug.timestamps = !debug.timestamps;
-	purple_prefs_set_bool("/core/debug/timestamps", debug.timestamps);
 }
 
 /* Xerox */
@@ -193,10 +204,24 @@ size_changed_cb(GntWidget *widget, int oldw, int oldh)
 	purple_prefs_set_int(PREF_ROOT "/size/height", h);
 }
 
+static gboolean
+for_real(gpointer entry)
+{
+	purple_prefs_set_string(PREF_ROOT "/filter", gnt_entry_get_text(entry));
+	return FALSE;
+}
+
+static void
+update_filter_string(GntEntry *entry, gpointer null)
+{
+	int id = g_timeout_add(1000, for_real, entry);
+	g_object_set_data_full(G_OBJECT(entry), "update-filter", GINT_TO_POINTER(id),
+					(GDestroyNotify)g_source_remove);
+}
+
 void finch_debug_window_show()
 {
 	debug.paused = FALSE;
-	debug.timestamps = purple_prefs_get_bool("/core/debug/timestamps");
 	if (debug.window == NULL)
 	{
 		GntWidget *wid, *box;
@@ -228,14 +253,13 @@ void finch_debug_window_show()
 		GNT_WIDGET_SET_FLAGS(wid, GNT_WIDGET_GROW_Y);
 		gnt_box_add_widget(GNT_BOX(box), wid);
 
+		debug.search = gnt_entry_new(purple_prefs_get_string(PREF_ROOT "/filter"));
+		gnt_box_add_widget(GNT_BOX(box), gnt_label_new(_("Filter: ")));
+		gnt_box_add_widget(GNT_BOX(box), debug.search);
+		g_signal_connect(G_OBJECT(debug.search), "text_changed", G_CALLBACK(update_filter_string), NULL);
+
 		wid = gnt_check_box_new(_("Pause"));
 		g_signal_connect(G_OBJECT(wid), "toggled", G_CALLBACK(toggle_pause), NULL);
-		GNT_WIDGET_SET_FLAGS(wid, GNT_WIDGET_GROW_Y);
-		gnt_box_add_widget(GNT_BOX(box), wid);
-
-		wid = gnt_check_box_new(_("Timestamps"));
-		gnt_check_box_set_checked(GNT_CHECK_BOX(wid), debug.timestamps);
-		g_signal_connect(G_OBJECT(wid), "toggled", G_CALLBACK(toggle_timestamps), NULL);
 		GNT_WIDGET_SET_FLAGS(wid, GNT_WIDGET_GROW_Y);
 		gnt_box_add_widget(GNT_BOX(box), wid);
 
@@ -277,6 +301,7 @@ void finch_debug_init()
 	g_set_printerr_handler(suppress_error_messages);
 
 	purple_prefs_add_none(PREF_ROOT);
+	purple_prefs_add_string(PREF_ROOT "/filter", "");
 	purple_prefs_add_none(PREF_ROOT "/size");
 	purple_prefs_add_int(PREF_ROOT "/size/width", 60);
 	purple_prefs_add_int(PREF_ROOT "/size/height", 15);

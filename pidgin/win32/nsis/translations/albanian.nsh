@@ -18,11 +18,6 @@
 ; Components Page
 !define PIDGIN_SECTION_TITLE			"Klient Shkëmbimi Mesazhesh të Atypëratyshëm Pidgin (i nevojshëm)"
 !define GTK_SECTION_TITLE			"GTK+ Runtime Environment (i nevojshëm)"
-!define GTK_THEMES_SECTION_TITLE		"Tema GTK+"
-!define GTK_NOTHEME_SECTION_TITLE		"Pa Tema"
-!define GTK_WIMP_SECTION_TITLE		"Temë Wimp"
-!define GTK_BLUECURVE_SECTION_TITLE		"Temë Bluecurve"
-!define GTK_LIGHTHOUSEBLUE_SECTION_TITLE	"Temë Light House Blue"
 !define PIDGIN_SECTION_DESCRIPTION		"Kartela dhe dll bazë të Pidgin-it"
 !define GTK_SECTION_DESCRIPTION		"Një grup mjetesh shumëplatformësh për GUI, përdorur nga Pidgin-i"
 
@@ -39,9 +34,6 @@
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"gabim gjatë instalimit të GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Shtegu që treguat nuk mund të arrihet ose krijohet."
-
-; GTK+ Themes section
-!define GTK_NO_THEME_INSTALL_RIGHTS		"Nuk keni leje të instaloni tema GTK+."
 
 ; Uninstall Section Prompts
 !define un.PIDGIN_UNINSTALL_ERROR_1		"Çinstaluesi nuk gjeti dot zëra regjistri për Pidgin-in.$\rKa mundësi që këtë zbatim ta ketë instaluar një tjetër përdorues."

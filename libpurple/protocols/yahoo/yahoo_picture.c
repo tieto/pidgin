@@ -49,7 +49,6 @@ yahoo_fetch_picture_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 {
 	struct yahoo_fetch_picture_data *d;
 	struct yahoo_data *yd;
-	PurpleBuddy *b;
 
 	d = user_data;
 	yd = d->gc->proto_data;
@@ -60,10 +59,9 @@ yahoo_fetch_picture_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 	} else if (len == 0) {
 		purple_debug_error("yahoo", "Fetched an icon with length 0.  Strange.\n");
 	} else {
-		purple_buddy_icons_set_for_user(purple_connection_get_account(d->gc), d->who, (void *)pic_data, len);
-		b = purple_find_buddy(purple_connection_get_account(d->gc), d->who);
-		if (b)
-			purple_blist_node_set_int((PurpleBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY, d->checksum);
+		char *checksum = g_strdup_printf("%i", d->checksum);
+		purple_buddy_icons_set_for_user(purple_connection_get_account(d->gc), d->who, g_memdup(pic_data, len), len, checksum);
+		g_free(checksum);
 	}
 
 	g_free(d->who);
@@ -117,7 +115,11 @@ void yahoo_process_picture(PurpleConnection *gc, struct yahoo_packet *pkt)
 		PurpleUtilFetchUrlData *url_data;
 		struct yahoo_fetch_picture_data *data;
 		PurpleBuddy *b = purple_find_buddy(gc->account, who);
-		if (b && (checksum == purple_blist_node_get_int((PurpleBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY)))
+		const char *locksum = NULL;
+
+		/* FIXME: Cleanup this strtol() stuff if possible. */
+		if (b && (locksum = purple_buddy_icons_get_checksum_for_user(b)) != NULL && 
+				(checksum == strtol(locksum, NULL, 10)))
 			return;
 
 		data = g_new0(struct yahoo_fetch_picture_data, 1);
@@ -155,7 +157,10 @@ void yahoo_process_picture_update(PurpleConnection *gc, struct yahoo_packet *pkt
 		case 5:
 			/* us */
 			break;
+		/* NOTE: currently the server seems to only send 213; 206 was used
+		 * in older versions. Check whether it's still needed. */
 		case 206:
+		case 213:
 			icon = strtol(pair->value, NULL, 10);
 			break;
 		}
@@ -166,11 +171,8 @@ void yahoo_process_picture_update(PurpleConnection *gc, struct yahoo_packet *pkt
 		if (icon == 2)
 			yahoo_send_picture_request(gc, who);
 		else if ((icon == 0) || (icon == 1)) {
-			PurpleBuddy *b = purple_find_buddy(gc->account, who);
 			YahooFriend *f;
-			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0);
-			if (b)
-				purple_blist_node_remove_setting((PurpleBlistNode *)b, YAHOO_ICON_CHECKSUM_KEY);
+			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0, NULL);
 			if ((f = yahoo_friend_find(gc, who)))
 				yahoo_friend_set_buddy_icon_need_request(f, TRUE);
 			purple_debug_misc("yahoo", "Setting user %s's icon to NULL.\n", who);
@@ -203,8 +205,14 @@ void yahoo_process_picture_checksum(PurpleConnection *gc, struct yahoo_packet *p
 
 	if (who) {
 		PurpleBuddy *b = purple_find_buddy(gc->account, who);
-		if (b && (checksum != purple_blist_node_get_int((PurpleBlistNode*)b, YAHOO_ICON_CHECKSUM_KEY)))
-			yahoo_send_picture_request(gc, who);
+		const char *locksum = NULL;
+
+		/* FIXME: Cleanup this strtol() stuff if possible. */
+		if (b) {
+			locksum = purple_buddy_icons_get_checksum_for_user(b);
+			if (!locksum || (checksum != strtol(locksum, NULL, 10)))
+				yahoo_send_picture_request(gc, who);
+		}
 	}
 }
 
@@ -276,11 +284,8 @@ void yahoo_process_avatar_update(PurpleConnection *gc, struct yahoo_packet *pkt)
 		if (avatar == 2)
 			yahoo_send_picture_request(gc, who);
 		else if ((avatar == 0) || (avatar == 1)) {
-			PurpleBuddy *b = purple_find_buddy(gc->account, who);
 			YahooFriend *f;
-			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0);
-			if (b)
-				purple_blist_node_remove_setting((PurpleBlistNode *)b, YAHOO_ICON_CHECKSUM_KEY);
+			purple_buddy_icons_set_for_user(gc->account, who, NULL, 0, NULL);
 			if ((f = yahoo_friend_find(gc, who)))
 				yahoo_friend_set_buddy_icon_need_request(f, TRUE);
 			purple_debug_misc("yahoo", "Setting user %s's icon to NULL.\n", who);
@@ -518,15 +523,12 @@ void yahoo_buddy_icon_upload(PurpleConnection *gc, struct yahoo_buddy_icon_uploa
 	}
 }
 
-void yahoo_set_buddy_icon(PurpleConnection *gc, const char *iconfile)
+void yahoo_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	PurpleAccount *account = gc->account;
-	gchar *icondata;
-	gsize len;
-	GError *error = NULL;
 
-	if (iconfile == NULL) {
+	if (img == NULL) {
 		g_free(yd->picture_url);
 		yd->picture_url = NULL;
 
@@ -537,14 +539,21 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, const char *iconfile)
 			/* Tell everyone we ain't got one no more */
 			yahoo_send_picture_update(gc, 0);
 
-	} else if (g_file_get_contents(iconfile, &icondata, &len, &error)) {
-		GString *s = g_string_new_len(icondata, len);
+	} else {
+		gconstpointer data = purple_imgstore_get_data(img);
+		size_t len = purple_imgstore_get_size(img);
+		GString *s = g_string_new_len(data, len);
 		struct yahoo_buddy_icon_upload_data *d;
 		int oldcksum = purple_account_get_int(account, YAHOO_PICCKSUM_SETTING, 0);
 		int expire = purple_account_get_int(account, YAHOO_PICEXPIRE_SETTING, 0);
 		const char *oldurl = purple_account_get_string(account, YAHOO_PICURL_SETTING, NULL);
+		char *iconfile;
 
-		g_free(icondata);
+		/* TODO: At some point, it'd be nice to fix this for real, or
+		 * TODO: at least change it to be something like:
+		 * TODO: purple_imgstore_get_filename(img);
+		 * TODO: But it would be great if we knew how to calculate the
+		 * TODO: Checksum correctly. */
 		yd->picture_checksum = g_string_hash(s);
 
 		if ((yd->picture_checksum == oldcksum) &&
@@ -557,11 +566,13 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, const char *iconfile)
 			return;
 		}
 
+		/* We use this solely for sending a filename to the server */
+		iconfile = g_strdup(purple_imgstore_get_filename(img));
 		d = g_new0(struct yahoo_buddy_icon_upload_data, 1);
 		d->gc = gc;
 		d->str = s;
 		d->fd = -1;
-		d->filename = g_strdup(iconfile);
+		d->filename = iconfile;
 
 		if (!yd->logged_in) {
 			yd->picture_upload_todo = d;
@@ -570,10 +581,5 @@ void yahoo_set_buddy_icon(PurpleConnection *gc, const char *iconfile)
 
 		yahoo_buddy_icon_upload(gc, d);
 
-	} else {
-		purple_debug_error("yahoo",
-				"Could not read buddy icon file '%s': %s\n",
-				iconfile, error->message);
-		g_error_free(error);
 	}
 }

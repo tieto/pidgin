@@ -145,7 +145,7 @@ void silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 					 char **contactstr, char **langstr, char **devicestr,
 					 char **tzstr, char **geostr);
 #ifdef SILC_ATTRIBUTE_USER_ICON
-void silcpurple_buddy_set_icon(PurpleConnection *gc, const char *iconfile);
+void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img);
 #endif
 #ifdef HAVE_SILCMIME_H
 char *silcpurple_file2mime(const char *filename);

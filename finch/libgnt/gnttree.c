@@ -152,9 +152,7 @@ get_last_child(GntTreeRow *row)
 
 	while(row->next)
 		row = row->next;
-	if (!row->collapsed && row->child)
-		row = get_last_child(row->child);
-	return row;
+	return get_last_child(row);
 }
 
 static GntTreeRow *
@@ -1344,7 +1342,7 @@ void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *te
 	{
 		col = g_list_nth_data(row->columns, colno);
 		g_free(col->text);
-		col->text = g_strdup(text);
+		col->text = g_strdup(text ? text : "");
 
 		if (get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) >= 0)
 			redraw_tree(tree);

@@ -106,10 +106,11 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 		return;
 
 	disconnected = purple_account_is_disconnected(account);
-	primitive = purple_status_type_get_primitive(purple_status_get_type(status));
 
 	if(disconnected)
 		return;
+
+	primitive = purple_status_type_get_primitive(purple_status_get_type(status));
 
 	gc = purple_account_get_connection(account);
 	js = gc->proto_data;
@@ -201,7 +202,6 @@ static void deny_add_cb(struct _jabber_add_permit *jap)
 static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointer blah)
 {
 	JabberBuddy *jb = NULL;
-	PurpleBuddy *b = NULL;
 	xmlnode *vcard, *photo, *binval;
 	char *text;
 	guchar *data;
@@ -221,22 +221,19 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 				(( (binval = xmlnode_get_child(photo, "BINVAL")) &&
 				(text = xmlnode_get_data(binval))) ||
 				(text = xmlnode_get_data(photo)))) {
+			unsigned char hashval[20];
+			char hash[41], *p;
+			int i;
+
 			data = purple_base64_decode(text, &size);
 
-			purple_buddy_icons_set_for_user(js->gc->account, from, data, size);
-			if((b = purple_find_buddy(js->gc->account, from))) {
-				unsigned char hashval[20];
-				char hash[41], *p;
-				int i;
+			purple_cipher_digest_region("sha1", data, size,
+					sizeof(hashval), hashval, NULL);
+			p = hash;
+			for(i=0; i<20; i++, p+=2)
+				snprintf(p, 3, "%02x", hashval[i]);
 
-				purple_cipher_digest_region("sha1", data, size,
-						sizeof(hashval), hashval, NULL);
-				p = hash;
-				for(i=0; i<20; i++, p+=2)
-					snprintf(p, 3, "%02x", hashval[i]);
-				purple_blist_node_set_string((PurpleBlistNode*)b, "avatar_hash", hash);
-			}
-			g_free(data);
+			purple_buddy_icons_set_for_user(js->gc->account, from, data, size, hash);
 			g_free(text);
 		}
 	}
@@ -358,10 +355,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 										_("You are creating a new room.  Would"
 											" you like to configure it, or"
 											" accept the default settings?"),
-										1, chat, 2, _("_Configure Room"),
-										G_CALLBACK(jabber_chat_request_room_configure),
-										_("_Accept Defaults"),
-										G_CALLBACK(jabber_chat_create_instant_room));
+										/* Default Action */ 1,
+										purple_connection_get_account(js->gc), NULL, chat->conv,
+										chat, 2,
+										_("_Configure Room"), G_CALLBACK(jabber_chat_request_room_configure),
+										_("_Accept Defaults"), G_CALLBACK(jabber_chat_create_instant_room));
 						}
 					}
 				}
@@ -394,7 +392,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		static int i = 1;
 		char *room_jid = g_strdup_printf("%s@%s", jid->node, jid->domain);
 
-		if(state == JABBER_BUDDY_STATE_ERROR && jid->resource == NULL) {
+		if(state == JABBER_BUDDY_STATE_ERROR) {
 			char *title, *msg = jabber_parse_error(js, packet);
 
 			if(chat->conv) {
@@ -520,7 +518,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if(avatar_hash) {
-			const char *avatar_hash2 = purple_blist_node_get_string((PurpleBlistNode*)b, "avatar_hash");
+			const char *avatar_hash2 = purple_buddy_icons_get_checksum_for_user(b);
 			if(!avatar_hash2 || strcmp(avatar_hash, avatar_hash2)) {
 				JabberIq *iq;
 				xmlnode *vcard;

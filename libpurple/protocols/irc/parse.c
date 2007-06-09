@@ -64,6 +64,8 @@ static struct _irc_msg {
 	{ "318", "nt:", irc_msg_endwhois },	/* End of WHOIS			*/
 	{ "319", "nn:", irc_msg_whois },	/* Whois channels		*/
 	{ "320", "nn:", irc_msg_whois },	/* Whois (fn ident)		*/
+	{ "314", "nnvvv:", irc_msg_whois },	/* Whowas user			*/
+	{ "369", "nt:", irc_msg_endwhois },	/* End of WHOWAS		*/
 	{ "321", "*", irc_msg_list },		/* Start of list		*/
 	{ "322", "ncv:", irc_msg_list },	/* List.			*/
 	{ "323", ":", irc_msg_list },		/* End of list.			*/
@@ -78,6 +80,7 @@ static struct _irc_msg {
 	{ "376", "n:", irc_msg_motd },		/* End of MOTD			*/
 	{ "391", "nv:", irc_msg_time },		/* Time reply			*/
 	{ "401", "nt:", irc_msg_nonick },	/* No such nick/chan		*/
+	{ "406", "nt:", irc_msg_nonick },	/* No such nick for WHOWAS	*/
 	{ "403", "nc:", irc_msg_nochan },	/* No such channel		*/
 	{ "404", "nt:", irc_msg_nosend },	/* Cannot send to chan		*/
 	{ "421", "nv:", irc_msg_unknown },	/* Unknown command		*/
@@ -88,6 +91,7 @@ static struct _irc_msg {
 	{ "442", "nc:", irc_msg_notinchan },	/* Not in channel		*/
 	{ "473", "nc:", irc_msg_inviteonly },	/* Tried to join invite-only	*/
 	{ "474", "nc:", irc_msg_banned },	/* Banned from channel		*/
+	{ "477", "nc:", irc_msg_regonly },	/* Registration Required	*/
 	{ "478", "nct:", irc_msg_banfull },	/* Banlist is full		*/
 	{ "482", "nc:", irc_msg_notop },	/* Need to be op to do that	*/
 	{ "501", "n:", irc_msg_badmode },	/* Unknown mode flag		*/
@@ -148,6 +152,7 @@ static struct _irc_user_cmd {
 	{ "voice", ":", irc_cmd_op, N_("voice &lt;nick1&gt; [nick2] ...:  Grant channel voice status to someone. You must be a channel operator to do this.") },
 	{ "wallops", ":", irc_cmd_wallops, N_("wallops &lt;message&gt;:  If you don't know what this is, you probably can't use it.") },
 	{ "whois", "tt", irc_cmd_whois, N_("whois [server] &lt;nick&gt;:  Get information on a user.") },
+	{ "whowas", "t", irc_cmd_whowas, N_("whowas &lt;nick&gt;: Get information on a user that has logged off.") },
 	{ NULL, NULL, NULL, NULL }
 };
 
@@ -222,7 +227,7 @@ static char *irc_send_convert(struct irc_conn *irc, const char *string)
 	enclist = purple_account_get_string(irc->account, "encoding", IRC_DEFAULT_CHARSET);
 	encodings = g_strsplit(enclist, ",", 2);
 
-	if (encodings[0] == NULL || !strcasecmp("UTF-8", encodings[0])) {
+	if (encodings[0] == NULL || !g_ascii_strcasecmp("UTF-8", encodings[0])) {
 		g_strfreev(encodings);
 		return g_strdup(string);
 	}
@@ -259,7 +264,7 @@ static char *irc_recv_convert(struct irc_conn *irc, const char *string)
 		while (*charset == ' ')
 			charset++;
 
-		if (!strcasecmp("UTF-8", charset)) {
+		if (!g_ascii_strcasecmp("UTF-8", charset)) {
 			if (g_utf8_validate(string, -1, NULL))
 				utf8 = g_strdup(string);
 		} else {
@@ -397,6 +402,22 @@ char *irc_mirc2txt (const char *string)
 		switch (result[i]) {
 		case '\002':
 		case '\003':
+			/* Foreground color */
+			if (isdigit(result[i + 1]))
+				i++;
+			if (isdigit(result[i + 1]))
+				i++;
+			/* Optional comma and background color */
+			if (result[i + 1] == ',') {
+				i++;
+				if (isdigit(result[i + 1]))
+					i++;
+				if (isdigit(result[i + 1]))
+					i++;
+			}
+			/* Note that i still points to the last character
+			 * of the color selection string. */
+			continue;
 		case '\007':
 		case '\017':
 		case '\026':

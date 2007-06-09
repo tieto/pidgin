@@ -347,12 +347,6 @@ account_to_xmlnode(PurpleAccount *account)
 		xmlnode_insert_data(child, tmp, -1);
 	}
 
-	if ((tmp = purple_account_get_buddy_icon(account)) != NULL)
-	{
-		child = xmlnode_new_child(node, "buddyicon");
-		xmlnode_insert_data(child, tmp, -1);
-	}
-
 	if (g_hash_table_size(account->settings) > 0)
 	{
 		child = xmlnode_new_child(node, "settings");
@@ -554,9 +548,9 @@ parse_status(xmlnode *node, PurpleAccount *account)
 	data = xmlnode_get_attrib(node, "active");
 	if (data == NULL)
 		return;
-	if (strcasecmp(data, "true") == 0)
+	if (g_ascii_strcasecmp(data, "true") == 0)
 		active = TRUE;
-	else if (strcasecmp(data, "false") == 0)
+	else if (g_ascii_strcasecmp(data, "false") == 0)
 		active = FALSE;
 	else
 		return;
@@ -742,11 +736,30 @@ parse_account(xmlnode *node)
 		g_free(data);
 	}
 
-	/* Read the buddyicon */
+	/* Read an old buddyicon */
 	child = xmlnode_get_child(node, "buddyicon");
 	if ((child != NULL) && ((data = xmlnode_get_data(child)) != NULL))
 	{
-		purple_account_set_buddy_icon(ret, data);
+		const char *dirname = purple_buddy_icons_get_cache_dir();
+		char *filename = g_build_filename(dirname, data, NULL);
+		gchar *contents;
+		gsize len;
+
+		if (g_file_get_contents(filename, &contents, &len, NULL))
+		{
+			purple_buddy_icons_set_account_icon(ret, (guchar *)contents, len);
+		}
+		else
+		{
+			/* Try to see if the icon got left behind in the old cache. */
+			g_free(filename);
+			filename = g_build_filename(g_get_home_dir(), ".gaim", "icons", data, NULL);
+			if (g_file_get_contents(filename, &contents, &len, NULL)) {
+				purple_buddy_icons_set_account_icon(ret, (guchar*)contents, len);
+			}
+		}
+
+		g_free(filename);
 		g_free(data);
 	}
 
@@ -788,6 +801,8 @@ load_accounts(void)
 	}
 
 	xmlnode_free(node);
+
+	_purple_buddy_icons_account_loaded_cb();
 }
 
 
@@ -880,7 +895,6 @@ purple_account_destroy(PurpleAccount *account)
 	g_free(account->alias);
 	g_free(account->password);
 	g_free(account->user_info);
-	g_free(account->buddy_icon);
 	g_free(account->buddy_icon_path);
 	g_free(account->protocol_id);
 
@@ -968,6 +982,7 @@ purple_account_request_password(PurpleAccount *account, GCallback ok_cb,
                         fields,
                         _("OK"), ok_cb,
                         _("Cancel"), cancel_cb,
+						account, NULL, NULL,
                         user_data);
 	g_free(primary);
 }
@@ -1217,6 +1232,7 @@ purple_account_request_change_password(PurpleAccount *account)
 						fields,
 						_("OK"), G_CALLBACK(change_password_cb),
 						_("Cancel"), NULL,
+						account, NULL, NULL,
 						account);
 }
 
@@ -1250,7 +1266,9 @@ purple_account_request_change_user_info(PurpleAccount *account)
 					   TRUE, FALSE, ((gc != NULL) &&
 					   (gc->flags & PURPLE_CONNECTION_HTML) ? "html" : NULL),
 					   _("Save"), G_CALLBACK(set_user_info_cb),
-					   _("Cancel"), NULL, account);
+					   _("Cancel"), NULL,
+					   account, NULL, NULL,
+					   account);
 }
 
 void
@@ -1312,56 +1330,6 @@ purple_account_set_user_info(PurpleAccount *account, const char *user_info)
 
 	g_free(account->user_info);
 	account->user_info = g_strdup(user_info);
-
-	schedule_accounts_save();
-}
-
-void
-purple_account_set_buddy_icon(PurpleAccount *account, const char *icon)
-{
-	g_return_if_fail(account != NULL);
-
-	/* Delete an existing icon from the cache. */
-	if (account->buddy_icon != NULL && (icon == NULL || strcmp(account->buddy_icon, icon)))
-	{
-		const char *dirname = purple_buddy_icons_get_cache_dir();
-
-		if (g_file_test(account->buddy_icon, G_FILE_TEST_IS_REGULAR))
-		{
-			/* The file exists. This is a full path. */
-
-			/* XXX: This is a hack so we only delete the file if it's
-			 * in the cache dir. Otherwise, people who upgrade (who
-			 * may have buddy icon filenames set outside of the cache
-			 * dir) could lose files. */
-			if (!strncmp(dirname, account->buddy_icon, strlen(dirname)))
-				g_unlink(account->buddy_icon);
-		}
-		else
-		{
-			char *filename = g_build_filename(dirname, account->buddy_icon, NULL);
-			g_unlink(filename);
-			g_free(filename);
-		}
-	}
-
-	g_free(account->buddy_icon);
-	account->buddy_icon = g_strdup(icon);
-	if (purple_account_is_connected(account))
-	{
-		PurpleConnection *gc;
-		PurplePluginProtocolInfo *prpl_info;
-
-		gc = purple_account_get_connection(account);
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-		if (prpl_info && prpl_info->set_buddy_icon)
-		{
-			char *cached_path = purple_buddy_icons_get_full_path(icon);
-			prpl_info->set_buddy_icon(gc, cached_path);
-			g_free(cached_path);
-		}
-	}
 
 	schedule_accounts_save();
 }
@@ -1738,14 +1706,6 @@ purple_account_get_user_info(const PurpleAccount *account)
 	g_return_val_if_fail(account != NULL, NULL);
 
 	return account->user_info;
-}
-
-const char *
-purple_account_get_buddy_icon(const PurpleAccount *account)
-{
-	g_return_val_if_fail(account != NULL, NULL);
-
-	return account->buddy_icon;
 }
 
 const char *
@@ -2275,7 +2235,7 @@ purple_accounts_delete(PurpleAccount *account)
 	purple_pounce_destroy_all_by_account(account);
 
 	/* This will cause the deletion of an old buddy icon. */
-	purple_account_set_buddy_icon(account, NULL);
+	purple_buddy_icons_set_account_icon(account, NULL, 0);
 
 	purple_account_destroy(account);
 }

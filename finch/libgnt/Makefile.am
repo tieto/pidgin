@@ -64,19 +64,19 @@ CLEANFILES = \
 	gntmarshal.h \
 	gntmarshal.c
 
-gntmarshal.c: genmarshal gntmarshal.h
+gntmarshal.c: $(srcdir)/genmarshal gntmarshal.h
 	echo "#include \"gntmarshal.h\"" > $@
-	cat genmarshal | glib-genmarshal --prefix=gnt_closure_marshal --body >> $@
+	glib-genmarshal --prefix=gnt_closure_marshal --body $(srcdir)/genmarshal >> $@
 
-gntmarshal.h: genmarshal
-	cat genmarshal | glib-genmarshal --prefix=gnt_closure_marshal --header > $@
+gntmarshal.h: $(srcdir)/genmarshal
+	glib-genmarshal --prefix=gnt_closure_marshal --header $(srcdir)/genmarshal > $@
 
 libgnt_laincludedir=$(includedir)/gnt
 libgnt_lainclude_HEADERS = \
 	$(libgnt_la_headers)
 
 libgnt_la_DEPENDENCIES = 
-libgnt_la_LDFLAGS = -export-dynamic
+libgnt_la_LDFLAGS = -export-dynamic -version_info $(GNT_LT_VERSION_INFO) -no-undefined
 libgnt_la_LIBADD = \
 	$(GLIB_LIBS) \
 	$(GNT_LIBS) \

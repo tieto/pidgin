@@ -559,6 +559,22 @@ int irc_cmd_whois(struct irc_conn *irc, const char *cmd, const char *target, con
 	return 0;
 }
 
+int irc_cmd_whowas(struct irc_conn *irc, const char *cmd, const char *target, const char **args)
+{
+	char *buf;
+
+	if (!args || !args[0])
+		return 0;
+
+	buf = irc_format(irc, "vn", "WHOWAS", args[0]);
+	
+	irc->whois.nick = g_strdup(args[0]);
+	irc_send(irc, buf);
+	g_free(buf);
+
+	return 0;
+}
+
 static void irc_do_mode(struct irc_conn *irc, const char *target, const char *sign, char **ops)
 {
 	char *buf, mode[5];

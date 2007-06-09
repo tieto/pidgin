@@ -1,7 +1,36 @@
-Gaim: The Pimpin' Penguin IM Clone that's good for the soul!
+Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
-version 2.0.0:
+version 2.0.2
+	* English (British) translation updated (Luke Ross)
+	* Slovenian translation updated (Martin Srebotnjak)
+	* Slovenian win32 installer updated (Martin Srebotnjak)
+
+version 2.0.1
+	* Chinese (Hong Kong) translation added (Ambrose C. Li, Abel Cheung)
+	* Chinese (Simplified) translation updated (Funda Wang)
+	* Chinese (Traditional) translation updated (Ambrose C. Li)
+	* Chinese (Traditional) win32 translation updated (Ambrose C. Li)
+	* Finnish translation updated (Timo Jyrinki)
+	* French translation updated (Éric Boumaour)
+	* French win32 translation updated (Éric Boumaour)
+	* German translation updated (Bjoern Voigt)
+	* German win32 translation updated (Bjoern Voigt)
+	* Greek translation added (snos Bouklis)
+	* Hebrew translation updated (Shalom Craimer)
+	* Hebrew win32 translation updated (Shalom Craimer)
+	* Hungarian translation updated (Gabor Kelemen)
+	* Hungarian win32 installer updated (Gabor Kelemen)
+	* Macedonian translation updated (Арангел Ангов)
+	* Portuguese (Brazilian) translation updated (Mauricio de
+	  L R Collares Neto)
+	* Punjabi translation updated (Amanpreet Singh Alam)
+	* Russian translation updated (Dmitry Beloglazov)
+	* Spanish translation updated (Javier Fernandez-Sanguino Peña)
+	* Turkish Translation updated (Serdar Soytetir)
+
+version 2.0.0 (5/3/2007):
 	* Afrikaans translation added (Friedel Wolff)
+	* Afrikaans win32 translation added (Friedel Wolff)
 	* Albanian translation updated (Besnik Bleta)
 	* Arabic translation added (Mohamed Magdy)
 	* Bengali translation added (Indranil Das Gupta, Samia Nimatullah,

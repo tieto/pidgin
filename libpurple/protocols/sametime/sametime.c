@@ -611,9 +611,9 @@ static void mw_aware_list_clear(struct mwAwareList *list) {
 
 
 static struct mwAwareListHandler mw_aware_list_handler = {
-  .on_aware = mw_aware_list_on_aware,
-  .on_attrib = mw_aware_list_on_attrib,
-  .clear = mw_aware_list_clear,
+  mw_aware_list_on_aware,
+  mw_aware_list_on_attrib,
+  mw_aware_list_clear,
 };
 
 
@@ -1777,14 +1777,14 @@ static void mw_session_announce(struct mwSession *s,
 
 
 static struct mwSessionHandler mw_session_handler = {
-  .io_write = mw_session_io_write,
-  .io_close = mw_session_io_close,
-  .clear = mw_session_clear,
-  .on_stateChange = mw_session_stateChange,
-  .on_setPrivacyInfo = mw_session_setPrivacyInfo,
-  .on_setUserStatus = mw_session_setUserStatus,
-  .on_admin = mw_session_admin,
-  .on_announce = mw_session_announce,
+  mw_session_io_write,
+  mw_session_io_close,
+  mw_session_clear,
+  mw_session_stateChange,
+  mw_session_setPrivacyInfo,
+  mw_session_setUserStatus,
+  mw_session_admin,
+  mw_session_announce,
 };
 
 
@@ -1803,8 +1803,8 @@ static void mw_aware_clear(struct mwServiceAware *srvc) {
 
 
 static struct mwAwareHandler mw_aware_handler = {
-  .on_attrib = mw_aware_on_attrib,
-  .clear = mw_aware_clear,
+  mw_aware_on_attrib,
+  mw_aware_clear,
 };
 
 
@@ -2042,14 +2042,14 @@ static void mw_conf_clear(struct mwServiceConference *srvc) {
 
 
 static struct mwConferenceHandler mw_conference_handler = {
-  .on_invited = mw_conf_invited,
-  .conf_opened = mw_conf_opened,
-  .conf_closed = mw_conf_closed,
-  .on_peer_joined = mw_conf_peer_joined,
-  .on_peer_parted = mw_conf_peer_parted,
-  .on_text = mw_conf_text,
-  .on_typing = mw_conf_typing,
-  .clear = mw_conf_clear,
+  mw_conf_invited,
+  mw_conf_opened,
+  mw_conf_closed,
+  mw_conf_peer_joined,
+  mw_conf_peer_parted,
+  mw_conf_text,
+  mw_conf_typing,
+  mw_conf_clear,
 };
 
 
@@ -2287,12 +2287,12 @@ static void mw_ft_clear(struct mwServiceFileTransfer *srvc) {
 
 
 static struct mwFileTransferHandler mw_ft_handler = {
-  .ft_offered = mw_ft_offered,
-  .ft_opened = mw_ft_opened,
-  .ft_closed = mw_ft_closed,
-  .ft_recv = mw_ft_recv,
-  .ft_ack = mw_ft_ack,
-  .clear = mw_ft_clear,
+  mw_ft_offered,
+  mw_ft_opened,
+  mw_ft_closed,
+  mw_ft_recv,
+  mw_ft_ack,
+  mw_ft_clear,
 };
 
 
@@ -2698,8 +2698,7 @@ static void im_recv_mime(struct mwConversation *conv,
       cid = make_cid(cid);
 
       /* add image to the purple image store */
-      img = purple_imgstore_add(d_dat, d_len, cid);
-      g_free(d_dat);
+      img = purple_imgstore_add_with_id(d_dat, d_len, cid);
 
       /* map the cid to the image store identifier */
       g_hash_table_insert(img_by_cid, cid, GINT_TO_POINTER(img));
@@ -2772,7 +2771,7 @@ static void im_recv_mime(struct mwConversation *conv,
 
   /* dereference all the imgages */
   while(images) {
-    purple_imgstore_unref(GPOINTER_TO_INT(images->data));
+    purple_imgstore_unref_by_id(GPOINTER_TO_INT(images->data));
     images = g_list_delete_link(images, images);
   }
 }
@@ -2855,11 +2854,11 @@ static void mw_im_clear(struct mwServiceIm *srvc) {
 
 
 static struct mwImHandler mw_im_handler = {
-  .conversation_opened = mw_conversation_opened,
-  .conversation_closed = mw_conversation_closed,
-  .conversation_recv = mw_conversation_recv,
-  .place_invite = mw_place_invite,
-  .clear = mw_im_clear,
+  mw_conversation_opened,
+  mw_conversation_closed,
+  mw_conversation_recv,
+  mw_place_invite,
+  mw_im_clear,
 };
 
 
@@ -3053,14 +3052,14 @@ static void mw_place_clear(struct mwServicePlace *srvc) {
 
 
 static struct mwPlaceHandler mw_place_handler = {
-  .opened = mw_place_opened,
-  .closed = mw_place_closed,
-  .peerJoined = mw_place_peerJoined,
-  .peerParted = mw_place_peerParted,
-  .peerSetAttribute = mw_place_peerSetAttribute,
-  .peerUnsetAttribute = mw_place_peerUnsetAttribute,
-  .message = mw_place_message,
-  .clear = mw_place_clear,
+  mw_place_opened,
+  mw_place_closed,
+  mw_place_peerJoined,
+  mw_place_peerParted,
+  mw_place_peerSetAttribute,
+  mw_place_peerUnsetAttribute,
+  mw_place_message,
+  mw_place_clear,
 };
 
 
@@ -3387,6 +3386,7 @@ static void blist_menu_conf_create(PurpleBuddy *buddy, const char *msg) {
 		      msgA, msg1, fields,
 		      _("Create"), G_CALLBACK(conf_create_prompt_join),
 		      _("Cancel"), G_CALLBACK(conf_create_prompt_cancel),
+			  acct, purple_buddy_get_name(buddy), NULL,
 		      buddy);
   g_free(msg1);
 }
@@ -3472,6 +3472,7 @@ static void blist_menu_conf_list(PurpleBuddy *buddy,
 		      msgA, msg, fields,
 		      _("Invite"), G_CALLBACK(conf_select_prompt_invite),
 		      _("Cancel"), G_CALLBACK(conf_select_prompt_cancel),
+			  acct, purple_buddy_get_name(buddy), NULL,
 		      buddy);
   g_free(msg);
 }
@@ -3642,6 +3643,7 @@ static void prompt_host(PurpleConnection *gc) {
 		     MW_PLUGIN_DEFAULT_HOST, FALSE, FALSE, NULL,
 		     _("Connect"), G_CALLBACK(prompt_host_ok_cb),
 		     _("Cancel"), G_CALLBACK(prompt_host_cancel_cb),
+			 acct, NULL, NULL,
 		     gc);
 
   g_free(msg);
@@ -3856,7 +3858,7 @@ static char *im_mime_convert(PurpleConnection *gc,
     /* find the imgstore data by the id tag */
     id = g_datalist_get_data(&attr, "id");
     if(id && *id)
-      img = purple_imgstore_get(atoi(id));
+      img = purple_imgstore_find_by_id(atoi(id));
 
     if(img) {
       char *cid;
@@ -3882,9 +3884,8 @@ static char *im_mime_convert(PurpleConnection *gc,
 
       /* obtain and base64 encode the image data, and put it in the
 	 mime part */
-      data = purple_imgstore_get_data(img);
       size = purple_imgstore_get_size(img);
-      data = purple_base64_encode(data, (gsize) size);
+      data = purple_base64_encode(purple_imgstore_get_data(img), (gsize) size);
       purple_mime_part_set_data(part, data);
       g_free(data);
 
@@ -4574,9 +4575,9 @@ static void mw_prpl_set_permit_deny(PurpleConnection *gc) {
   struct mwSession *session;
 
   struct mwPrivacyInfo privacy = {
-    .deny = FALSE,
-    .count = 0,
-    .users = NULL,
+    FALSE, /* deny  */
+    0,     /* count */
+    NULL,  /* users */
   };
 
   g_return_if_fail(gc != NULL);
@@ -5166,7 +5167,13 @@ mw_plugin_get_plugin_pref_frame(PurplePlugin *plugin) {
 
 
 static PurplePluginUiInfo mw_plugin_ui_info = {
-  .get_plugin_pref_frame = mw_plugin_get_plugin_pref_frame,
+  mw_plugin_get_plugin_pref_frame,
+  0,    /* page_num */
+  NULL, /* frame */
+  NULL,
+  NULL,
+  NULL,
+  NULL
 };
 
 
@@ -5210,6 +5217,7 @@ static void st_import_action(PurplePluginAction *act) {
 
   purple_request_file(gc, title, NULL, FALSE,
 		    G_CALLBACK(st_import_action_cb), NULL,
+		    account, NULL, NULL,
 		    gc);
 
   g_free(title);
@@ -5249,6 +5257,7 @@ static void st_export_action(PurplePluginAction *act) {
 
   purple_request_file(gc, title, NULL, TRUE,
 		    G_CALLBACK(st_export_action_cb), NULL,
+			account, NULL, NULL,
 		    gc);
 
   g_free(title);
@@ -5386,6 +5395,7 @@ static void remote_group_multi(struct mwResolveResult *result,
 		      msgA, msg, fields,
 		      _("Add Group"), G_CALLBACK(remote_group_multi_cb),
 		      _("Cancel"), G_CALLBACK(remote_group_multi_cleanup),
+			  purple_connection_get_account(gc), result->name, NULL,
 		      pd);
 
   g_free(msg);
@@ -5475,6 +5485,7 @@ static void remote_group_action(PurplePluginAction *act) {
 		     FALSE, FALSE, NULL,
 		     _("Add"), G_CALLBACK(remote_group_action_cb),
 		     _("Cancel"), NULL,
+			 purple_connection_get_account(gc), NULL, NULL,
 		     gc);
 }
 
@@ -5599,7 +5610,8 @@ static void search_action(PurplePluginAction *act) {
 		     FALSE, FALSE, NULL,
 		     _("Search"), G_CALLBACK(search_action_cb),
 		     _("Cancel"), NULL,
-		     gc);
+			 purple_connection_get_account(gc), NULL, NULL,
+			 gc);
 }
 
 
@@ -5642,30 +5654,39 @@ static void mw_plugin_destroy(PurplePlugin *plugin) {
   g_log_remove_handler("meanwhile", log_handler[1]);
 }
 
+static PurplePluginInfo mw_plugin_info =
+{
+	PURPLE_PLUGIN_MAGIC,
+	PURPLE_MAJOR_VERSION,
+	PURPLE_MINOR_VERSION,
+	PURPLE_PLUGIN_PROTOCOL,                           /**< type           */
+	NULL,                                             /**< ui_requirement */
+	0,                                                /**< flags          */
+	NULL,                                             /**< dependencies   */
+	PURPLE_PRIORITY_DEFAULT,                          /**< priority       */
 
-static PurplePluginInfo mw_plugin_info = {
-  .magic           = PURPLE_PLUGIN_MAGIC,
-  .major_version   = PURPLE_MAJOR_VERSION,
-  .minor_version   = PURPLE_MINOR_VERSION,
-  .type            = PURPLE_PLUGIN_PROTOCOL,
-  .ui_requirement  = NULL,
-  .flags           = 0,
-  .dependencies    = NULL,
-  .priority        = PURPLE_PRIORITY_DEFAULT,
-  .id              = PLUGIN_ID,
-  .name            = PLUGIN_NAME,
-  .version         = VERSION,
-  .summary         = PLUGIN_SUMMARY,
-  .description     = PLUGIN_DESC,
-  .author          = PLUGIN_AUTHOR,
-  .homepage        = PLUGIN_HOMEPAGE,
-  .load            = mw_plugin_load,
-  .unload          = mw_plugin_unload,
-  .destroy         = mw_plugin_destroy,
-  .ui_info         = NULL,
-  .extra_info      = &mw_prpl_info,
-  .prefs_info      = &mw_plugin_ui_info,
-  .actions         = mw_plugin_actions,
+	PLUGIN_ID,                                        /**< id             */
+	PLUGIN_NAME,                                      /**< name           */
+	VERSION,                                          /**< version        */
+	PLUGIN_SUMMARY,                                   /**< summary        */
+	PLUGIN_DESC,                                      /**<  description    */
+	PLUGIN_AUTHOR,                                    /**< author         */
+	PLUGIN_HOMEPAGE,                                  /**< homepage       */
+
+	mw_plugin_load,                                   /**< load           */
+	mw_plugin_unload,                                 /**< unload         */
+	mw_plugin_destroy,                                /**< destroy        */
+
+	NULL,                                             /**< ui_info        */
+	&mw_prpl_info,                                    /**< extra_info     */
+	&mw_plugin_ui_info,                               /**< prefs_info     */
+	mw_plugin_actions,
+
+	/* padding */
+	NULL,
+	NULL,
+	NULL,
+	NULL
 };
 
 

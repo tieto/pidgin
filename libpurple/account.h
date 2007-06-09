@@ -66,6 +66,11 @@ struct _PurpleAccountUiOps
 				 const char *alias, const char *message, gboolean on_list, 
 				 GCallback authorize_cb, GCallback deny_cb, void *user_data);
 	void (*close_account_request)(void *ui_handle);
+
+	void (*_purple_reserved1)(void);
+	void (*_purple_reserved2)(void);
+	void (*_purple_reserved3)(void);
+	void (*_purple_reserved4)(void);
 };
 
 struct _PurpleAccount
@@ -75,7 +80,6 @@ struct _PurpleAccount
 	char *password;             /**< The account password.                  */
 	char *user_info;            /**< User information.                      */
 
-	char *buddy_icon;           /**< The buddy icon's cached path.          */
 	char *buddy_icon_path;      /**< The buddy icon's non-cached path.      */
 
 	gboolean remember_pass;     /**< Remember the password.                 */
@@ -282,14 +286,6 @@ void purple_account_set_alias(PurpleAccount *account, const char *alias);
  * @param user_info The user information.
  */
 void purple_account_set_user_info(PurpleAccount *account, const char *user_info);
-
-/**
- * Sets the account's buddy icon.
- *
- * @param account The account.
- * @param icon    The buddy icon file.
- */
-void purple_account_set_buddy_icon(PurpleAccount *account, const char *icon);
 
 /**
  * Sets the account's buddy icon path.
@@ -523,15 +519,6 @@ const char *purple_account_get_alias(const PurpleAccount *account);
  * @return The user information.
  */
 const char *purple_account_get_user_info(const PurpleAccount *account);
-
-/**
- * Returns the account's buddy icon filename.
- *
- * @param account The account.
- *
- * @return The buddy icon filename.
- */
-const char *purple_account_get_buddy_icon(const PurpleAccount *account);
 
 /**
  * Gets the account's buddy icon path.

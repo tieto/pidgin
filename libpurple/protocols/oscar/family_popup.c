@@ -37,25 +37,25 @@ static int
 parsepopup(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	aim_rxcallback_t userfunc;
-	aim_tlvlist_t *tl;
+	GSList *tlvlist;
 	int ret = 0;
 	char *msg, *url;
 	guint16 width, height, delay;
 
-	tl = aim_tlvlist_read(bs);
+	tlvlist = aim_tlvlist_read(bs);
 
-	msg = aim_tlv_getstr(tl, 0x0001, 1);
-	url = aim_tlv_getstr(tl, 0x0002, 1);
-	width = aim_tlv_get16(tl, 0x0003, 1);
-	height = aim_tlv_get16(tl, 0x0004, 1);
-	delay = aim_tlv_get16(tl, 0x0005, 1);
+	msg = aim_tlv_getstr(tlvlist, 0x0001, 1);
+	url = aim_tlv_getstr(tlvlist, 0x0002, 1);
+	width = aim_tlv_get16(tlvlist, 0x0003, 1);
+	height = aim_tlv_get16(tlvlist, 0x0004, 1);
+	delay = aim_tlv_get16(tlvlist, 0x0005, 1);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, msg, url, width, height, delay);
 
-	aim_tlvlist_free(&tl);
-	free(msg);
-	free(url);
+	aim_tlvlist_free(tlvlist);
+	g_free(msg);
+	g_free(url);
 
 	return ret;
 }

@@ -80,7 +80,7 @@ purple_perl_bless_object(void *object, const char *stash_name)
 	stash = gv_stashpv(stash_name, 1);
 
 	hv = newHV();
-	hv_store(hv, "_purple", 5, create_sv_ptr(object), 0);
+	hv_store(hv, "_purple", 7, create_sv_ptr(object), 0);
 
 	return sv_bless(newRV_noinc((SV *)hv), stash);
 }
@@ -94,7 +94,7 @@ purple_perl_is_ref_object(SV *o)
 	hv = hvref(o);
 
 	if (hv != NULL) {
-		sv = hv_fetch(hv, "_purple", 5, 0);
+		sv = hv_fetch(hv, "_purple", 7, 0);
 
 		if (sv != NULL)
 			return TRUE;
@@ -118,7 +118,7 @@ purple_perl_ref_object(SV *o)
 	if (hv == NULL)
 		return NULL;
 
-	sv = hv_fetch(hv, "_purple", 5, 0);
+	sv = hv_fetch(hv, "_purple", 7, 0);
 
 	if (sv == NULL)
 		croak("variable is damaged");
@@ -205,7 +205,7 @@ execute_perl(const char *function, int argc, char **args)
 		purple_debug(PURPLE_DEBUG_ERROR, "perl",
 				   "Perl function %s exited abnormally: %s\n",
 				   function, SvPV(ERRSV, na));
-		POPs;
+		(void)POPs;
 	} else if (count != 1) {
 		/*
 		 * This should NEVER happen.  G_SCALAR ensures that we WILL
