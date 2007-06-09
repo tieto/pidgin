@@ -1069,6 +1069,7 @@ void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 		return;
 	}
 
+#if 0
 	/* If the channel is not on buddy list, automatically add it there. */
 	chat = purple_blist_find_chat(sg->account, channel);
 	if (!chat) {
@@ -1082,6 +1083,7 @@ void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 		chat = purple_chat_new(sg->account, NULL, data);
 		purple_blist_add_chat(chat, NULL, NULL);
 	}
+#endif
 
 	/* XXX We should have other properties here as well:
 	   1. whether to try to authenticate to the channel
