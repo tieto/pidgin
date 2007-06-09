@@ -1013,7 +1013,9 @@ void silcpurple_chat_join(PurpleConnection *gc, GHashTable *data)
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	const char *channel, *passphrase, *parentch;
+#if 0
 	PurpleChat *chat;
+#endif
 
 	if (!conn)
 		return;
