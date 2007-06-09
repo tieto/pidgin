@@ -143,7 +143,15 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 	SilcClientConnection conn;
 	PurpleAccount *account;
 	SilcClientConnectionParams params;
-	const char *dfile;
+	SilcUInt32 mask;
+	const char *dfile, *tmp;
+#ifdef SILC_ATTRIBUTE_USER_ICON
+	PurpleStoredImage *img;
+#endif
+#ifdef HAVE_SYS_UTSNAME_H
+	struct utsname u;
+#endif
+
 
 	g_return_if_fail(gc != NULL);
 
@@ -190,54 +198,43 @@ silcpurple_login_connected(gpointer data, gint source, const gchar *error_messag
 	silc_client_start_key_exchange(sg->client, sg->conn, source);
 
 	/* Set default attributes */
-	if (!purple_account_get_bool(account, "reject-attrs", FALSE)) {
-		SilcUInt32 mask;
-		const char *tmp;
-#ifdef SILC_ATTRIBUTE_USER_ICON
-		PurpleStoredImage *img;
-#endif
+	mask = SILC_ATTRIBUTE_MOOD_NORMAL;
+	silc_client_attribute_add(client, conn,
+				  SILC_ATTRIBUTE_STATUS_MOOD,
+				  SILC_32_TO_PTR(mask),
+				  sizeof(SilcUInt32));
+	mask = SILC_ATTRIBUTE_CONTACT_CHAT;
+	silc_client_attribute_add(client, conn,
+				  SILC_ATTRIBUTE_PREFERRED_CONTACT,
+				  SILC_32_TO_PTR(mask),
+				  sizeof(SilcUInt32));
 #ifdef HAVE_SYS_UTSNAME_H
-		struct utsname u;
-#endif
-
-		mask = SILC_ATTRIBUTE_MOOD_NORMAL;
+	if (!uname(&u)) {
+		SilcAttributeObjDevice dev;
+		memset(&dev, 0, sizeof(dev));
+		dev.type = SILC_ATTRIBUTE_DEVICE_COMPUTER;
+		dev.version = u.release;
+		dev.model = u.sysname;
 		silc_client_attribute_add(client, conn,
-					  SILC_ATTRIBUTE_STATUS_MOOD,
-					  SILC_32_TO_PTR(mask),
-					  sizeof(SilcUInt32));
-		mask = SILC_ATTRIBUTE_CONTACT_CHAT;
-		silc_client_attribute_add(client, conn,
-					  SILC_ATTRIBUTE_PREFERRED_CONTACT,
-					  SILC_32_TO_PTR(mask),
-					  sizeof(SilcUInt32));
-#ifdef HAVE_SYS_UTSNAME_H
-		if (!uname(&u)) {
-			SilcAttributeObjDevice dev;
-			memset(&dev, 0, sizeof(dev));
-			dev.type = SILC_ATTRIBUTE_DEVICE_COMPUTER;
-			dev.version = u.release;
-			dev.model = u.sysname;
-			silc_client_attribute_add(client, conn,
-						  SILC_ATTRIBUTE_DEVICE_INFO,
-						  (void *)&dev, sizeof(dev));
-		}
+					  SILC_ATTRIBUTE_DEVICE_INFO,
+					  (void *)&dev, sizeof(dev));
+	}
 #endif
 #ifdef _WIN32
-		tmp = _tzname[0];
+	tmp = _tzname[0];
 #else
-		tmp = tzname[0];
+	tmp = tzname[0];
 #endif
-		silc_client_attribute_add(client, conn,
-					  SILC_ATTRIBUTE_TIMEZONE,
-					  (void *)tmp, strlen(tmp));
+	silc_client_attribute_add(client, conn,
+				  SILC_ATTRIBUTE_TIMEZONE,
+				  (void *)tmp, strlen(tmp));
 
 #ifdef SILC_ATTRIBUTE_USER_ICON
-		/* Set our buddy icon */
-		img = purple_buddy_icons_find_account_icon(account);
-		silcpurple_buddy_set_icon(gc, img);
-		purple_imgstore_unref(img);
+	/* Set our buddy icon */
+	img = purple_buddy_icons_find_account_icon(account);
+	silcpurple_buddy_set_icon(gc, img);
+	purple_imgstore_unref(img);
 #endif
-	}
 
 	silc_free(params.detach_data);
 }
@@ -262,8 +259,7 @@ silcpurple_login(PurpleAccount *account)
 	memset(&params, 0, sizeof(params));
 	strcat(params.nickname_format, "%n@%h%a");
 	params.nickname_parse = silcpurple_nickname_parse;
-	params.ignore_requested_attributes =
-		purple_account_get_bool(account, "reject-attrs", FALSE);
+	params.ignore_requested_attributes = FALSE;
 
 	/* Allocate SILC client */
 	client = silc_client_alloc(&ops, &params, gc, NULL);
@@ -982,15 +978,12 @@ silcpurple_set_info(PurpleConnection *gc, const char *text)
 static GList *
 silcpurple_actions(PurplePlugin *plugin, gpointer context)
 {
-	PurpleConnection *gc = context;
 	GList *list = NULL;
 	PurplePluginAction *act;
 
-	if (!purple_account_get_bool(gc->account, "reject-attrs", FALSE)) {
-		act = purple_plugin_action_new(_("Online Status"),
-				silcpurple_attrs);
-		list = g_list_append(list, act);
-	}
+	act = purple_plugin_action_new(_("Online Status"),
+			silcpurple_attrs);
+	list = g_list_append(list, act);
 
 	act = purple_plugin_action_new(_("Detach From Server"),
 			silcpurple_detach);
@@ -1896,17 +1889,8 @@ init_plugin(PurplePlugin *plugin)
 	option = purple_account_option_bool_new(_("Public key authentication"),
 					      "pubkey-auth", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = purple_account_option_bool_new(_("Reject watching by other users"),
-					      "reject-watch", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = purple_account_option_bool_new(_("Block invites"),
-					      "block-invites", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 	option = purple_account_option_bool_new(_("Block IMs without Key Exchange"),
 					      "block-ims", FALSE);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-	option = purple_account_option_bool_new(_("Reject online status attribute requests"),
-					      "reject-attrs", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 	option = purple_account_option_bool_new(_("Block messages to whiteboard"),
 					      "block-wb", FALSE);

@@ -1671,7 +1671,6 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 {
 	PurpleConnection *gc = client->application;
 	SilcPurple sg;
-	gboolean reject_watch, block_invites, block_ims;
 
 	if (gc == NULL) {
 		silc_client_close_connection(client, conn);
@@ -1690,17 +1689,9 @@ silc_connected(SilcClient client, SilcClientConnection conn,
 		g_unlink(silcpurple_session_file(purple_account_get_username(sg->account)));
 
 		/* Send any UMODEs configured for account */
-		reject_watch = purple_account_get_bool(sg->account, "reject-watch", FALSE);
-		block_invites = purple_account_get_bool(sg->account, "block-invites", FALSE);
-		block_ims = purple_account_get_bool(sg->account, "block-ims", FALSE);
-		if (reject_watch || block_invites || block_ims) {
-			char m[5];
-			g_snprintf(m, sizeof(m), "+%s%s%s",
-					   reject_watch ? "w" : "",
-					   block_invites ? "I" : "",
-					   block_ims ? "P" : "");
+		if (purple_account_get_bool(sg->account, "block-ims", FALSE)) {
 			silc_client_command_call(sg->client, sg->conn, NULL,
-					"UMODE", m, NULL);
+					"UMODE", "+P", NULL);
 		}
 
 		return;
