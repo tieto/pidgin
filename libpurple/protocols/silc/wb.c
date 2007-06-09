@@ -4,7 +4,7 @@
 
   Author: Pekka Riikonen <priikone@silcnet.org>
 
-  Copyright (C) 2005 Pekka Riikonen
+  Copyright (C) 2005 - 2007 Pekka Riikonen
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 */
 
-#include "silcincludes.h"
+#include "silc.h"
 #include "silcclient.h"
 #include "silcpurple.h"
 #include "wb.h"
@@ -30,7 +30,7 @@
   2 bytes	height
   4 bytes	brush color
   2 bytes	brush size
-  n bytes	data 
+  n bytes	data
 
   Data:
 
@@ -204,7 +204,7 @@ silcpurple_wb_parse(SilcPurpleWb wbs, PurpleWhiteboard *wb,
 		silc_buffer_pull(&buf, 8);
 		x = dx;
 		y = dy;
-		while (buf.len > 0) {
+		while (silc_buffer_len(&buf) > 0) {
 			ret = silc_buffer_unformat(&buf,
 						   SILC_STR_UI_INT(&dx),
 						   SILC_STR_UI_INT(&dy),
@@ -214,7 +214,7 @@ silcpurple_wb_parse(SilcPurpleWb wbs, PurpleWhiteboard *wb,
 			silc_buffer_pull(&buf, 8);
 
 			purple_whiteboard_draw_line(wb, x, y, x + dx, y + dy,
-						  brush_color, brush_size);
+						    brush_color, brush_size);
 			x += dx;
 			y += dy;
 		}
@@ -253,8 +253,8 @@ silcpurple_wb_request_cb(SilcPurpleWbRequest req, gint id)
 }
 
 static void
-silcpurple_wb_request(SilcClient client, const unsigned char *message, 
-		    SilcUInt32 message_len, SilcClientEntry sender, 
+silcpurple_wb_request(SilcClient client, const unsigned char *message,
+		    SilcUInt32 message_len, SilcClientEntry sender,
 		    SilcChannelEntry channel)
 {
 	char tmp[128];
@@ -406,16 +406,16 @@ void silcpurple_wb_send(PurpleWhiteboard *wb, GList *draw_list)
 	/* Send the message */
 	if (wbs->type == 0) {
 		/* Private message */
-		silc_client_send_private_message(sg->client, sg->conn, 
-						 wbs->u.client, 
-						 SILC_MESSAGE_FLAG_DATA,
-						 packet->head, len, TRUE);
+		silc_client_send_private_message(sg->client, sg->conn,
+						 wbs->u.client,
+						 SILC_MESSAGE_FLAG_DATA, NULL,
+						 packet->head, len);
 	} else if (wbs->type == 1) {
 		/* Channel message. Channel private keys are not supported. */
 		silc_client_send_channel_message(sg->client, sg->conn,
 						 wbs->u.channel, NULL,
-						 SILC_MESSAGE_FLAG_DATA,
-						 packet->head, len, TRUE);
+						 SILC_MESSAGE_FLAG_DATA, NULL,
+						 packet->head, len);
 	}
 
 	silc_buffer_free(packet);
@@ -501,16 +501,16 @@ void silcpurple_wb_clear(PurpleWhiteboard *wb)
 	/* Send the message */
 	if (wbs->type == 0) {
 		/* Private message */
-		silc_client_send_private_message(sg->client, sg->conn, 
-						 wbs->u.client, 
-						 SILC_MESSAGE_FLAG_DATA,
-						 packet->head, len, TRUE);
+		silc_client_send_private_message(sg->client, sg->conn,
+						 wbs->u.client,
+						 SILC_MESSAGE_FLAG_DATA, NULL,
+						 packet->head, len);
 	} else if (wbs->type == 1) {
 		/* Channel message */
 		silc_client_send_channel_message(sg->client, sg->conn,
 						 wbs->u.channel, NULL,
-						 SILC_MESSAGE_FLAG_DATA,
-						 packet->head, len, TRUE);
+						 SILC_MESSAGE_FLAG_DATA, NULL,
+						 packet->head, len);
 	}
 
 	silc_buffer_free(packet);
