@@ -803,13 +803,22 @@ extern_init=
 load_proto=
 for i in $STATIC_PRPLS ; do
 	dnl Ugly special case for "libsilcpurple.a":
-	if test "x$i" = "xsilc"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib${i}purple.a"
+	dnl ... and Ugly special case for multi-protocol oscar
+	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.a"
+		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
+		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
+		load_proto="$load_proto purple_init_aim_plugin();"
+		load_proto="$load_proto purple_init_icq_plugin();"
 	else
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib$i.a"
+		if test "x$i" = "xsilc"; then
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.a"
+		else
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.a"
+		fi
+		extern_init="$extern_init extern gboolean purple_init_${i}_plugin();"
+		load_proto="$load_proto purple_init_${i}_plugin();"
 	fi
-	extern_init="$extern_init extern gboolean purple_init_${i}_plugin();"
-	load_proto="$load_proto purple_init_${i}_plugin();"
 	case $i in
 		bonjour)	static_bonjour=yes ;;
 		gg)			static_gg=yes ;;
