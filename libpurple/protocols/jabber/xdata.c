@@ -191,8 +191,6 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 			value = xmlnode_get_data(valuenode);
 
 
-		/* XXX: handle <required/> */
-
 		if(!strcmp(type, "text-private")) {
 			if((valuenode = xmlnode_get_child(fn, "value")))
 				value = xmlnode_get_data(valuenode);
@@ -324,6 +322,9 @@ void *jabber_x_data_request(JabberStream *js, xmlnode *packet, jabber_x_data_cb 
 
 			g_free(value);
 		}
+        
+        if(field && xmlnode_get_child(fn, "required"))
+            purple_request_field_set_required(field,TRUE);
 	}
 
 	if((x = xmlnode_get_child(packet, "title")))

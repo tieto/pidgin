@@ -354,8 +354,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(child->name, "gone") && !strcmp(xmlns,"http://jabber.org/protocol/chatstates")) {
 			jm->chat_state = JM_STATE_GONE;
 			jm->typing_style |= JM_TS_JEP_0085;
-		} else if(!strcmp(child->name, "event") && jm->type == JABBER_MESSAGE_HEADLINE &&
-                  !strcmp(xmlns,"http://jabber.org/protocol/pubsub#event")) {
+		} else if(!strcmp(child->name, "event") && !strcmp(xmlns,"http://jabber.org/protocol/pubsub#event")) {
             xmlnode *items;
             jm->type = JABBER_MESSAGE_EVENT;
             for(items = child->child; child; child = child->next)
