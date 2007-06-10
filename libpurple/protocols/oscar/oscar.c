@@ -5356,7 +5356,6 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		return -EINVAL;
 
 	buf = purple_strdup_withhtml(message);
-	len = strlen(buf);
 
 	if (strstr(buf, "<IMG "))
 		purple_conversation_write(conv, "",
@@ -5376,11 +5375,10 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 
 		buf3 = purple_markup_strip_html(buf);
 		g_free(buf);
-		
+
 		buf = purple_strdup_withhtml(buf3);
 		g_free(buf3);
 
-		len = strlen(buf);
 		purple_plugin_oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
 
 		if ((len > c->maxlen) || (len > c->maxvis)) {
@@ -5389,10 +5387,10 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 			g_free(buf);
 			g_free(buf2);
 			return -E2BIG;
-		} else {
-			purple_debug_info("oscar", "Sending %s as %s because the original was too long.",
-					message, buf2);
 		}
+
+		purple_debug_info("oscar", "Sending %s as %s because the original was too long.",
+				message, buf2);
 	}
 
 	if (charset == AIM_CHARSET_ASCII)
