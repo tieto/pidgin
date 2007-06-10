@@ -3188,7 +3188,7 @@ image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 			gchar *fmt_ext = extensions[0];
 			const gchar* file_ext = filename + strlen(filename) - strlen(fmt_ext);
 
-			if(!strcmp(fmt_ext, file_ext)){
+			if(!g_ascii_strcasecmp(fmt_ext, file_ext)){
 				type = gdk_pixbuf_format_get_name(format);
 				break;
 			}
