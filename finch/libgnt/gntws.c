@@ -154,6 +154,13 @@ gnt_ws_get_gtype(void)
 	return type;
 }
 
+GntWS *gnt_ws_new(const char *name)
+{
+	GntWS *ws = GNT_WS(g_object_new(GNT_TYPE_WS, NULL));
+	ws->name = g_strdup(name ? name : "(noname)");
+	return ws;
+}
+
 const char * gnt_ws_get_name(GntWS *ws)
 {
 	return ws->name;
