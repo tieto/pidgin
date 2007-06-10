@@ -1238,9 +1238,7 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 	char *msg2, *tmp;
 	gboolean found = FALSE;
 	gboolean sign = purple_account_get_bool(sg->account, "sign-verify", FALSE);
-#ifdef HAVE_SILCMIME_H
 	SilcDList list;
-#endif
 
 	if (!msg || !conn)
 		return 0;
@@ -1309,7 +1307,6 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 		channel = chu->channel;
 	}
 
-#ifdef HAVE_SILCMIME_H
 	/* Check for images */
 	if (msgflags & PURPLE_MESSAGE_IMAGES) {
 		list = silcpurple_image_message(msg, &flags);
@@ -1334,7 +1331,6 @@ int silcpurple_chat_send(PurpleConnection *gc, int id, const char *msg,
 			return ret;
 		}
 	}
-#endif
 
 	/* Send channel message */
 	ret = silc_client_send_channel_message(client, conn, channel, key,
