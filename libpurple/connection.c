@@ -436,7 +436,7 @@ purple_connection_error(PurpleConnection *gc, const char *text)
 	g_return_if_fail(gc   != NULL);
 
 	if (text == NULL) {
-		g_critical("purple_connection_error: check `text != NULL' failed");
+		purple_debug_error("connection", "purple_connection_error: check `text != NULL' failed");
 		text = _("Unknown error");
 	}
 

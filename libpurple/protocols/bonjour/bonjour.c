@@ -267,6 +267,7 @@ static void
 bonjour_convo_closed(PurpleConnection *connection, const char *who)
 {
 	PurpleBuddy *buddy = purple_find_buddy(connection->account, who);
+	BonjourBuddy *bb;
 
 	if (buddy == NULL)
 	{
@@ -277,7 +278,9 @@ bonjour_convo_closed(PurpleConnection *connection, const char *who)
 		return;
 	}
 
-	bonjour_jabber_close_conversation(((BonjourData*)(connection->proto_data))->jabber_data, buddy);
+	bb = buddy->proto_data;
+	bonjour_jabber_close_conversation(bb->conversation);
+	bb->conversation = NULL;
 }
 
 static char *
@@ -320,6 +323,8 @@ bonjour_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboole
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
+	/* These shouldn't happen here because they are allocated in _init() */
+
 	g_free(default_firstname);
 	g_free(default_lastname);
 	g_free(default_hostname);

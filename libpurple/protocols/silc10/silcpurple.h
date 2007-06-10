@@ -4,7 +4,7 @@
 
   Author: Pekka Riikonen <priikone@silcnet.org>
 
-  Copyright (C) 2004 - 2007 Pekka Riikonen
+  Copyright (C) 2004 Pekka Riikonen
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -66,8 +66,6 @@ typedef struct {
 typedef struct SilcPurpleStruct {
 	SilcClient client;
 	SilcClientConnection conn;
-	SilcPublicKey public_key;
-	SilcPrivateKey private_key;
 
 	guint scheduler;
 	PurpleConnection *gc;
@@ -77,7 +75,9 @@ typedef struct SilcPurpleStruct {
 
 	char *motd;
 	PurpleRoomlist *roomlist;
+#ifdef HAVE_SILCMIME_H
 	SilcMimeAssembler mimeass;
+#endif
 	unsigned int detaching            : 1;
 	unsigned int resuming             : 1;
 	unsigned int roomlist_canceled    : 1;
@@ -85,29 +85,27 @@ typedef struct SilcPurpleStruct {
 } *SilcPurple;
 
 
-void silc_say(SilcClient client, SilcClientConnection conn,
-	      SilcClientMessageType type, char *msg, ...);
-SilcBool silcpurple_command_reply(SilcClient client, SilcClientConnection conn,
-				  SilcCommand command, SilcStatus status,
-				  SilcStatus error, void *context, va_list ap);
 gboolean silcpurple_check_silc_dir(PurpleConnection *gc);
+void silcpurple_chat_join_done(SilcClient client,
+			     SilcClientConnection conn,
+			     SilcClientEntry *clients,
+			     SilcUInt32 clients_count,
+			     void *context);
 const char *silcpurple_silcdir(void);
 const char *silcpurple_session_file(const char *account);
 void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
-				  const char *name,
-				  SilcConnectionType conn_type,
-				  SilcPublicKey public_key,
-				  SilcVerifyPublicKey completion,
-				  void *context);
+				const char *name, SilcSocketType conn_type,
+				unsigned char *pk, SilcUInt32 pk_len,
+				SilcSKEPKType pk_type,
+				SilcVerifyPublicKey completion, void *context);
 GList *silcpurple_buddy_menu(PurpleBuddy *buddy);
 void silcpurple_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void silcpurple_send_buddylist(PurpleConnection *gc);
 void silcpurple_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void silcpurple_buddy_keyagr_request(SilcClient client,
-				     SilcClientConnection conn,
-				     SilcClientEntry client_entry,
-				     const char *hostname, SilcUInt16 port,
-				     SilcUInt16 protocol);
+				   SilcClientConnection conn,
+				   SilcClientEntry client_entry,
+				   const char *hostname, SilcUInt16 port);
 void silcpurple_idle_set(PurpleConnection *gc, int idle);
 void silcpurple_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboolean full);
 char *silcpurple_status_text(PurpleBuddy *b);
@@ -142,13 +140,17 @@ void silcpurple_chat_set_topic(PurpleConnection *gc, int id, const char *topic);
 PurpleRoomlist *silcpurple_roomlist_get_list(PurpleConnection *gc);
 void silcpurple_roomlist_cancel(PurpleRoomlist *list);
 void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
-				 SilcDList channel_pubkeys);
+			       SilcBuffer channel_pubkeys);
 void silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 					 char **contactstr, char **langstr, char **devicestr,
 					 char **tzstr, char **geostr);
+#ifdef SILC_ATTRIBUTE_USER_ICON
 void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img);
+#endif
+#ifdef HAVE_SILCMIME_H
 char *silcpurple_file2mime(const char *filename);
 SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags);
+#endif
 
 #ifdef _WIN32
 typedef int uid_t;

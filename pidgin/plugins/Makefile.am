@@ -30,6 +30,7 @@ convcolors_la_LDFLAGS       = -module -avoid-version
 contact_priority_la_LDFLAGS = -module -avoid-version
 extplacement_la_LDFLAGS     = -module -avoid-version
 gtk_signals_test_la_LDFLAGS = -module -avoid-version
+gtkbuddynote_la_LDFLAGS     = -module -avoid-version
 history_la_LDFLAGS          = -module -avoid-version
 iconaway_la_LDFLAGS         = -module -avoid-version
 markerline_la_LDFLAGS       = -module -avoid-version
@@ -46,6 +47,7 @@ if PLUGINS
 plugin_LTLIBRARIES = \
 	convcolors.la       \
 	extplacement.la     \
+	gtkbuddynote.la     \
 	history.la          \
 	iconaway.la         \
 	markerline.la       \
@@ -65,6 +67,7 @@ convcolors_la_SOURCES       = convcolors.c
 contact_priority_la_SOURCES = contact_priority.c
 extplacement_la_SOURCES     = extplacement.c
 gtk_signals_test_la_SOURCES = gtk-signals-test.c
+gtkbuddynote_la_SOURCES     = gtkbuddynote.c
 history_la_SOURCES          = history.c
 iconaway_la_SOURCES         = iconaway.c
 markerline_la_SOURCES       = markerline.c
@@ -80,6 +83,7 @@ convcolors_la_LIBADD        = $(GTK_LIBS)
 contact_priority_la_LIBADD  = $(GTK_LIBS)
 extplacement_la_LIBADD      = $(GTK_LIBS)
 gtk_signals_test_la_LIBADD  = $(GTK_LIBS)
+gtkbuddynote_la_LIBADD      = $(GTK_LIBS)
 history_la_LIBADD           = $(GTK_LIBS)
 iconaway_la_LIBADD          = $(GTK_LIBS)
 markerline_la_LIBADD        = $(GTK_LIBS)
