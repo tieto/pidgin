@@ -178,11 +178,8 @@ bonjour_buddy_delete(BonjourBuddy *buddy)
 	g_free(buddy->node);
 	g_free(buddy->ver);
 
-	if (buddy->conversation != NULL)
-	{
-		g_free(buddy->conversation->buddy_name);
-		g_free(buddy->conversation);
-	}
+	bonjour_jabber_close_conversation(buddy->conversation);
+	buddy->conversation = NULL;
 
 #ifdef USE_BONJOUR_APPLE
 	if (buddy->txt_query != NULL)

@@ -461,7 +461,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		PurpleAccountUserSplit *split = l->data;
 		char *buf;
 
-		buf = g_strdup_printf("%s:", purple_account_user_split_get_text(split));
+		buf = g_strdup_printf("_%s:", purple_account_user_split_get_text(split));
 
 		entry = gtk_entry_new();
 
@@ -528,7 +528,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* Alias */
 	dialog->alias_entry = gtk_entry_new();
-	add_pref_box(dialog, vbox, _("Local _alias:"), dialog->alias_entry);
+	add_pref_box(dialog, vbox, _("_Local alias:"), dialog->alias_entry);
 
 	/* Remember Password */
 	dialog->remember_pass_check =
@@ -705,8 +705,8 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	PurpleKeyValuePair *kvp;
 	GList *l;
 	char buf[1024];
-	char *title;
-	const char *str_value;
+	char *title, *tmp;
+	const char *str_value, *protocol;
 	gboolean bool_value;
 
 	if (dialog->protocol_frame != NULL) {
@@ -762,8 +762,9 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 						purple_account_option_get_default_bool(option));
 				}
 
-				check = gtk_check_button_new_with_label(
-					purple_account_option_get_text(option));
+				tmp = g_strconcat("_", purple_account_option_get_text(option), NULL);
+				check = gtk_check_button_new_with_mnemonic(tmp);
+				g_free(tmp);
 
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check),
 											 bool_value);
@@ -795,7 +796,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				entry = gtk_entry_new();
 				gtk_entry_set_text(GTK_ENTRY(entry), buf);
 
-				title = g_strdup_printf("%s:",
+				title = g_strdup_printf("_%s:",
 						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, entry);
@@ -835,11 +836,11 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				if (str_value == NULL && g_object_get_data(G_OBJECT(item), "fake") &&
 					!strcmp(_("Connect server"),  purple_account_option_get_text(option)))
 					str_value = "talk.google.com";
-		
+
 				if (str_value != NULL)
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
 
-				title = g_strdup_printf("%s:",
+				title = g_strdup_printf("_%s:",
 						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, entry);
@@ -900,7 +901,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo),
 						renderer, "text", 0, NULL);
 
-				title = g_strdup_printf("%s:",
+				title = g_strdup_printf("_%s:",
 						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, combo);

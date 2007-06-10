@@ -4,7 +4,7 @@
 
   Author: Pekka Riikonen <priikone@silcnet.org>
 
-  Copyright (C) 2004 - 2007 Pekka Riikonen
+  Copyright (C) 2004 Pekka Riikonen
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@
 
 */
 
-#include "silc.h"
+#include "silcincludes.h"
 #include "silcclient.h"
 #include "silcpurple.h"
 
@@ -31,16 +31,18 @@ typedef struct {
 	char *entity_name;
 	char *fingerprint;
 	char *babbleprint;
-	SilcPublicKey public_key;
+	unsigned char *pk;
+	SilcUInt32 pk_len;
+	SilcSKEPKType pk_type;
 	SilcVerifyPublicKey completion;
 	void *context;
 	gboolean changed;
 } *PublicKeyVerify;
 
 static void silcpurple_verify_ask(const char *entity,
-				  const char *fingerprint,
-				  const char *babbleprint,
-				  PublicKeyVerify verify);
+				const char *fingerprint,
+				const char *babbleprint,
+				PublicKeyVerify verify);
 
 static void silcpurple_verify_cb(PublicKeyVerify verify, gint id)
 {
@@ -52,8 +54,8 @@ static void silcpurple_verify_cb(PublicKeyVerify verify, gint id)
 			verify->completion(TRUE, verify->context);
 
 		/* Save the key for future checking */
-		silc_pkcs_save_public_key(verify->filename, verify->public_key,
-					  SILC_PKCS_FILE_BASE64);
+		silc_pkcs_save_public_key_data(verify->filename, verify->pk,
+					       verify->pk_len, SILC_PKCS_FILE_PEM);
 	}
 
 	silc_free(verify->filename);
@@ -61,7 +63,7 @@ static void silcpurple_verify_cb(PublicKeyVerify verify, gint id)
 	silc_free(verify->entity_name);
 	silc_free(verify->fingerprint);
 	silc_free(verify->babbleprint);
-	silc_pkcs_public_key_free(verify->public_key);
+	silc_free(verify->pk);
 	silc_free(verify);
 }
 
@@ -72,23 +74,27 @@ static void silcpurple_verify_details_cb(PublicKeyVerify verify)
 	   should have option for the dialogs whether the buttons close them
 	   or not. */
 	silcpurple_verify_ask(verify->entity, verify->fingerprint,
-			      verify->babbleprint, verify);
+			    verify->babbleprint, verify);
 }
 
 static void silcpurple_verify_details(PublicKeyVerify verify, gint id)
 {
+	SilcPublicKey public_key;
 	PurpleConnection *gc = verify->client->application;
 	SilcPurple sg = gc->proto_data;
 
-	silcpurple_show_public_key(sg, verify->entity_name, verify->public_key,
-				   G_CALLBACK(silcpurple_verify_details_cb),
-				   verify);
+	silc_pkcs_public_key_decode(verify->pk, verify->pk_len,
+				    &public_key);
+	silcpurple_show_public_key(sg, verify->entity_name, public_key,
+				 G_CALLBACK(silcpurple_verify_details_cb),
+				 verify);
+	silc_pkcs_public_key_free(public_key);
 }
 
 static void silcpurple_verify_ask(const char *entity,
-				  const char *fingerprint,
-				  const char *babbleprint,
-				  PublicKeyVerify verify)
+				const char *fingerprint,
+				const char *babbleprint,
+				PublicKeyVerify verify)
 {
 	PurpleConnection *gc = verify->client->application;
 	char tmp[256], tmp2[256];
@@ -108,17 +114,18 @@ static void silcpurple_verify_ask(const char *entity,
 		     "%s\n%s\n"), entity, fingerprint, babbleprint);
 
 	purple_request_action(gc, _("Verify Public Key"), tmp, tmp2,
-			      PURPLE_DEFAULT_ACTION_NONE,
-			      purple_connection_get_account(gc), entity, NULL, verify, 3,
-			      _("Yes"), G_CALLBACK(silcpurple_verify_cb),
-			      _("No"), G_CALLBACK(silcpurple_verify_cb),
-			      _("_View..."), G_CALLBACK(silcpurple_verify_details));
+						PURPLE_DEFAULT_ACTION_NONE,
+						purple_connection_get_account(gc), entity, NULL, verify, 3,
+			    _("Yes"), G_CALLBACK(silcpurple_verify_cb),
+			    _("No"), G_CALLBACK(silcpurple_verify_cb),
+			    _("_View..."), G_CALLBACK(silcpurple_verify_details));
 }
 
 void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
-				  const char *name, SilcConnectionType conn_type,
-				  SilcPublicKey public_key,
-				  SilcVerifyPublicKey completion, void *context)
+				const char *name, SilcSocketType conn_type,
+				unsigned char *pk, SilcUInt32 pk_len,
+				SilcSKEPKType pk_type,
+				SilcVerifyPublicKey completion, void *context)
 {
 	PurpleConnection *gc = client->application;
 	int i;
@@ -126,18 +133,14 @@ void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
 	char *fingerprint, *babbleprint;
 	struct passwd *pw;
 	struct stat st;
-	char *entity = ((conn_type == SILC_CONN_SERVER ||
-			 conn_type == SILC_CONN_ROUTER) ?
+	char *entity = ((conn_type == SILC_SOCKET_TYPE_SERVER ||
+			 conn_type == SILC_SOCKET_TYPE_ROUTER) ?
 			"server" : "client");
 	PublicKeyVerify verify;
-	const char *ip, *hostname;
-	SilcUInt16 port;
-	unsigned char *pk;
-	SilcUInt32 pk_len;
 
-	if (silc_pkcs_get_type(public_key) != SILC_PKCS_SILC) {
+	if (pk_type != SILC_SKE_PK_TYPE_SILC) {
 		purple_notify_error(gc, _("Verify Public Key"),
-				    _("Unsupported public key type"), NULL);
+				  _("Unsupported public key type"), NULL);
 		if (completion)
 			completion(FALSE, context);
 		return;
@@ -154,22 +157,17 @@ void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
 	memset(filename2, 0, sizeof(filename2));
 	memset(file, 0, sizeof(file));
 
-	silc_socket_stream_get_info(silc_packet_stream_get_stream(conn->stream),
-				    NULL, &hostname, &ip, &port);
-
-	pk = silc_pkcs_public_key_encode(public_key, &pk_len);
-
-	if (conn_type == SILC_CONN_SERVER ||
-	    conn_type == SILC_CONN_ROUTER) {
+	if (conn_type == SILC_SOCKET_TYPE_SERVER ||
+	    conn_type == SILC_SOCKET_TYPE_ROUTER) {
 		if (!name) {
 			g_snprintf(file, sizeof(file) - 1, "%skey_%s_%d.pub", entity,
-				   ip, port);
+				   conn->sock->ip, conn->sock->port);
 			g_snprintf(filename, sizeof(filename) - 1,
 				   "%s" G_DIR_SEPARATOR_S "%skeys" G_DIR_SEPARATOR_S "%s",
 				   silcpurple_silcdir(), entity, file);
 
 			g_snprintf(file, sizeof(file) - 1, "%skey_%s_%d.pub", entity,
-				   hostname, port);
+				   conn->sock->hostname, conn->sock->port);
 			g_snprintf(filename2, sizeof(filename2) - 1,
 				   "%s" G_DIR_SEPARATOR_S "%skeys" G_DIR_SEPARATOR_S "%s",
 				   silcpurple_silcdir(), entity, file);
@@ -178,7 +176,7 @@ void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
 			hostf = filename2;
 		} else {
 			g_snprintf(file, sizeof(file) - 1, "%skey_%s_%d.pub", entity,
-				   name, port);
+				   name, conn->sock->port);
 			g_snprintf(filename, sizeof(filename) - 1,
 				   "%s" G_DIR_SEPARATOR_S "%skeys" G_DIR_SEPARATOR_S "%s",
 				   silcpurple_silcdir(), entity, file);
@@ -208,10 +206,12 @@ void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
 	verify->conn = conn;
 	verify->filename = strdup(ipf);
 	verify->entity = strdup(entity);
-	verify->entity_name = (conn_type != SILC_CONN_CLIENT ?
-			       (name ? strdup(name) : strdup(hostname))
+	verify->entity_name = (conn_type != SILC_SOCKET_TYPE_CLIENT ?
+			       (name ? strdup(name) : strdup(conn->sock->hostname))
 			       : NULL);
-	verify->public_key = silc_pkcs_public_key_copy(public_key);
+	verify->pk = silc_memdup(pk, pk_len);
+	verify->pk_len = pk_len;
+	verify->pk_type = pk_type;
 	verify->completion = completion;
 	verify->context = context;
 	fingerprint = verify->fingerprint = silc_hash_fingerprint(NULL, pk, pk_len);
@@ -221,7 +221,7 @@ void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
 	if (g_stat(ipf, &st) < 0 && (!hostf || g_stat(hostf, &st) < 0)) {
 		/* Key does not exist, ask user to verify the key and save it */
 		silcpurple_verify_ask(name ? name : entity,
-				      fingerprint, babbleprint, verify);
+				    fingerprint, babbleprint, verify);
 		return;
 	} else {
 		/* The key already exists, verify it. */
@@ -230,8 +230,14 @@ void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
 		SilcUInt32 encpk_len;
 
 		/* Load the key file, try for both IP filename and hostname filename */
-		if (!silc_pkcs_load_public_key(ipf, &public_key) &&
-		    (!hostf || (!silc_pkcs_load_public_key(hostf, &public_key)))) {
+		if (!silc_pkcs_load_public_key(ipf, &public_key,
+					       SILC_PKCS_FILE_PEM) &&
+		    !silc_pkcs_load_public_key(ipf, &public_key,
+					       SILC_PKCS_FILE_BIN) &&
+		    (!hostf || (!silc_pkcs_load_public_key(hostf, &public_key,
+							   SILC_PKCS_FILE_PEM) &&
+				!silc_pkcs_load_public_key(hostf, &public_key,
+							   SILC_PKCS_FILE_BIN)))) {
 			silcpurple_verify_ask(name ? name : entity,
 					    fingerprint, babbleprint, verify);
 			return;
@@ -260,9 +266,9 @@ void silcpurple_verify_public_key(SilcClient client, SilcClientConnection conn,
 		silc_free(verify->filename);
 		silc_free(verify->entity);
 		silc_free(verify->entity_name);
+		silc_free(verify->pk);
 		silc_free(verify->fingerprint);
 		silc_free(verify->babbleprint);
-		silc_pkcs_public_key_free(verify->public_key);
 		silc_free(verify);
 	}
 }

@@ -31,6 +31,7 @@ version 2.0.2 (??/??/????):
 	* Remove MSN's random "Authorization Failed" dialogs
 	* Fix MSN to correctly detect incorrect passwords and disable the account
 	* Get User Info on MSN is now more reliable & accurate
+	* Updated SILC protocol to support SILC Toolkit 1.1 (Pekka Riikonen)
 
 	Finch:
 	* Auto account reconnecting

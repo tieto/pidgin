@@ -162,7 +162,7 @@ bonjour_dns_sd_stop(BonjourDnsSd *data)
 
 #ifdef USE_BONJOUR_APPLE
 	/* hack: for win32, we need to stop listening to the advertisement pipe too */
-	purple_input_remove(data->advertisement_fd);
+	purple_input_remove(data->advertisement_handler);
 
 	DNSServiceRefDeallocate(data->advertisement);
 	DNSServiceRefDeallocate(data->browser);
