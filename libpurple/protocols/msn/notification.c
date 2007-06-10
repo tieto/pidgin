@@ -591,10 +591,21 @@ adg_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 qng_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
+	MsnSession *session;
 	static int count = 0;
-	MsnSession *session = cmdproc->session;
+	const char *passport;
+	PurpleAccount *account;
+
+	session = cmdproc->session;
+	account = session->account;
 
 	if (session->passport_info.file == NULL)
+		return;
+
+	passport = purple_normalize(account, purple_account_get_username(account));
+
+	if ((strstr(passport, "@hotmail.") != NULL) ||
+		(strstr(passport, "@msn.com") != NULL))
 		return;
 
 	if (count++ < 26)
