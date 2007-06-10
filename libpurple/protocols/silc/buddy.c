@@ -739,9 +739,7 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 	SilcAttribute attribute;
 	SilcVCardStruct vcard;
 	SilcMime message = NULL, extension = NULL;
-#ifdef SILC_ATTRIBUTE_USER_ICON
 	SilcMime usericon = NULL;
-#endif
 	SilcAttributeObjPk serverpk, usersign, serversign;
 	gboolean usign_success = TRUE, ssign_success = TRUE;
 	char filename[512], filename2[512], *fingerprint = NULL, *tmp;
@@ -827,14 +825,12 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 					continue;
 				break;
 
-#ifdef SILC_ATTRIBUTE_USER_ICON
 			case SILC_ATTRIBUTE_USER_ICON:
 				usericon = silc_mime_alloc();
 				if (!silc_attribute_get_object(attr, (void *)usericon,
 							       sizeof(*usericon)))
 					continue;
 				break;
-#endif
 
 			case SILC_ATTRIBUTE_SERVER_PUBLIC_KEY:
 				if (serverpk.type)
@@ -974,7 +970,6 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 			silc_mime_free(extension);
 		}
 
-#ifdef SILC_ATTRIBUTE_USER_ICON
 		/* Save user icon */
 		if (usericon) {
 			const char *type = silc_mime_get_field(usericon, "Content-Type");
@@ -993,7 +988,6 @@ silcpurple_add_buddy_save(SilcBool success, void *context)
 			}
 			silc_mime_free(usericon);
 		}
-#endif
 	}
 
 	/* Save the public key path to buddy properties, as it is used
@@ -1369,9 +1363,7 @@ silcpurple_add_buddy_i(PurpleConnection *gc, PurpleBuddy *b, gboolean init)
 						       SILC_ATTRIBUTE_PREFERRED_CONTACT,
 						       SILC_ATTRIBUTE_TIMEZONE,
 						       SILC_ATTRIBUTE_GEOLOCATION,
-#ifdef SILC_ATTRIBUTE_USER_ICON
 						       SILC_ATTRIBUTE_USER_ICON,
-#endif
 						       SILC_ATTRIBUTE_DEVICE_INFO, 0);
 		userpk.type = "silc-rsa";
 		userpk.data = silc_pkcs_public_key_encode(public_key, &userpk.data_len);
@@ -1691,7 +1683,6 @@ GList *silcpurple_buddy_menu(PurpleBuddy *buddy)
 	return m;
 }
 
-#ifdef SILC_ATTRIBUTE_USER_ICON
 void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	SilcPurple sg = gc->proto_data;
@@ -1729,4 +1720,3 @@ void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img)
 
 	silc_mime_free(mime);
 }
-#endif

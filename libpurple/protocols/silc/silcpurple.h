@@ -77,9 +77,7 @@ typedef struct SilcPurpleStruct {
 
 	char *motd;
 	PurpleRoomlist *roomlist;
-#ifdef HAVE_SILCMIME_H
 	SilcMimeAssembler mimeass;
-#endif
 	unsigned int detaching            : 1;
 	unsigned int resuming             : 1;
 	unsigned int roomlist_canceled    : 1;
@@ -148,13 +146,9 @@ void silcpurple_chat_chauth_show(SilcPurple sg, SilcChannelEntry channel,
 void silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 					 char **contactstr, char **langstr, char **devicestr,
 					 char **tzstr, char **geostr);
-#ifdef SILC_ATTRIBUTE_USER_ICON
 void silcpurple_buddy_set_icon(PurpleConnection *gc, PurpleStoredImage *img);
-#endif
-#ifdef HAVE_SILCMIME_H
 char *silcpurple_file2mime(const char *filename);
 SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags);
-#endif
 
 #ifdef _WIN32
 typedef int uid_t;

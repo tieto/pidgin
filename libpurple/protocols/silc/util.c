@@ -614,7 +614,6 @@ silcpurple_parse_attrs(SilcDList attrs, char **moodstr, char **statusstr,
 				geo.accuracy ? geo.accuracy : "");
 }
 
-#ifdef HAVE_SILCMIME_H
 /* Returns MIME type of filetype */
 
 char *silcpurple_file2mime(const char *filename)
@@ -772,5 +771,3 @@ SilcDList silcpurple_image_message(const char *msg, SilcUInt32 *mflags)
 
 	return list;
 }
-
-#endif /* HAVE_SILCMIME_H */

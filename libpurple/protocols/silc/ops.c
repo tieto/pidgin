@@ -61,7 +61,6 @@ void silc_say(SilcClient client, SilcClientConnection conn,
 	}
 }
 
-#ifdef HAVE_SILCMIME_H
 /* Processes incoming MIME message.  Can be private message or channel
    message.  Returns TRUE if the message `mime' was displayed. */
 
@@ -233,7 +232,6 @@ silcpurple_mime_message(SilcClient client, SilcClientConnection conn,
 		silc_mime_free(mime);
 	return ret;
 }
-#endif /* HAVE_SILCMIME_H */
 
 /* Message for a channel. The `sender' is the sender of the message
    The `channel' is the channel. The `message' is the message.  Note
@@ -282,30 +280,10 @@ silc_channel_message(SilcClient client, SilcClientConnection conn,
 
 	if (flags & SILC_MESSAGE_FLAG_DATA) {
 		/* Process MIME message */
-#ifdef HAVE_SILCMIME_H
 		SilcMime mime;
 		mime = silc_mime_decode(NULL, message, message_len);
 		silcpurple_mime_message(client, conn, sender, channel, payload,
 					key, flags, mime, FALSE);
-#else
-		char type[128], enc[128];
-		unsigned char *data;
-		SilcUInt32 data_len;
-
-		memset(type, 0, sizeof(type));
-		memset(enc, 0, sizeof(enc));
-
-		if (!silc_mime_parse(message, message_len, NULL, 0,
-		    type, sizeof(type) - 1, enc, sizeof(enc) - 1, &data,
-		    &data_len))
-			return;
-
-		if (!strcmp(type, "application/x-wb") &&
-		    !strcmp(enc, "binary") &&
-		    !purple_account_get_bool(sg->account, "block-wb", FALSE))
-			silcpurple_wb_receive_ch(client, conn, sender, channel,
-					       payload, flags, data, data_len);
-#endif
 		return;
 	}
 
@@ -378,31 +356,11 @@ silc_private_message(SilcClient client, SilcClientConnection conn,
 	}
 
 	if (flags & SILC_MESSAGE_FLAG_DATA) {
-#ifdef HAVE_SILCMIME_H
 		/* Process MIME message */
 		SilcMime mime;
 		mime = silc_mime_decode(NULL, message, message_len);
 		silcpurple_mime_message(client, conn, sender, NULL, payload,
 				      NULL, flags, mime, FALSE);
-#else
-		char type[128], enc[128];
-		unsigned char *data;
-		SilcUInt32 data_len;
-
-		memset(type, 0, sizeof(type));
-		memset(enc, 0, sizeof(enc));
-
-		if (!silc_mime_parse(message, message_len, NULL, 0,
-		    type, sizeof(type) - 1, enc, sizeof(enc) - 1, &data,
-		    &data_len))
-			return;
-
-		if (!strcmp(type, "application/x-wb") &&
-		    !strcmp(enc, "binary") &&
-		    !purple_account_get_bool(sg->account, "block-wb", FALSE))
-			silcpurple_wb_receive(client, conn, sender, payload,
-					    flags, data, data_len);
-#endif
 		return;
 	}
 

@@ -145,9 +145,7 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 	SilcPurple sg;
 	SilcUInt32 mask;
 	char tz[16];
-#ifdef SILC_ATTRIBUTE_USER_ICON
 	PurpleStoredImage *img;
-#endif
 #ifdef HAVE_SYS_UTSNAME_H
 	struct utsname u;
 #endif
@@ -201,12 +199,10 @@ silcpurple_connect_cb(SilcClient client, SilcClientConnection conn,
 					  SILC_ATTRIBUTE_TIMEZONE,
 					  (void *)tz, strlen(tz));
 
-#ifdef SILC_ATTRIBUTE_USER_ICON
 		/* Set our buddy icon */
 		img = purple_buddy_icons_find_account_icon(sg->account);
 		silcpurple_buddy_set_icon(gc, img);
 		purple_imgstore_unref(img);
-#endif
 
 		return;
 		break;
@@ -461,10 +457,8 @@ silcpurple_close_final(gpointer *context)
 	SilcPurple sg = (SilcPurple)context;
 	silc_client_stop(sg->client, NULL, NULL);
 	silc_client_free(sg->client);
-#ifdef HAVE_SILCMIME_H
 	if (sg->mimeass)
 		silc_mime_assembler_free(sg->mimeass);
-#endif
 	silc_free(sg);
 	return 0;
 }
@@ -1127,9 +1121,7 @@ silcpurple_send_im_resolved(SilcClient client,
 	PurpleConversation *convo;
 	char tmp[256];
 	SilcClientEntry client_entry;
-#ifdef HAVE_SILCMIME_H
 	SilcDList list;
-#endif
 
 	convo = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM, im->nick,
 						      sg->account);
@@ -1151,7 +1143,6 @@ silcpurple_send_im_resolved(SilcClient client,
 	silc_dlist_start(clients);
 	client_entry = silc_dlist_get(clients);
 
-#ifdef HAVE_SILCMIME_H
 	/* Check for images */
 	if (im->gflags & PURPLE_MESSAGE_IMAGES) {
 		list = silcpurple_image_message(im->message,
@@ -1173,7 +1164,6 @@ silcpurple_send_im_resolved(SilcClient client,
 			goto out;
 		}
 	}
-#endif
 
 	/* Send the message */
 	silc_client_send_private_message(client, conn, client_entry, im->flags,
@@ -1206,9 +1196,7 @@ silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
 	char *msg, *tmp;
 	int ret = 0;
 	gboolean sign = purple_account_get_bool(sg->account, "sign-verify", FALSE);
-#ifdef HAVE_SILCMIME_H
 	SilcDList list;
-#endif
 
 	if (!who || !message)
 		return 0;
@@ -1259,7 +1247,6 @@ silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
 	silc_dlist_start(clients);
 	client_entry = silc_dlist_get(clients);
 
-#ifdef HAVE_SILCMIME_H
 	/* Check for images */
 	if (flags & PURPLE_MESSAGE_IMAGES) {
 		list = silcpurple_image_message(message, &mflags);
@@ -1281,7 +1268,6 @@ silcpurple_send_im(PurpleConnection *gc, const char *who, const char *message,
 			return ret;
 		}
 	}
-#endif
 
 	/* Send private message directly */
 	ret = silc_client_send_private_message(client, conn, client_entry,
@@ -1800,20 +1786,11 @@ static PurpleWhiteboardPrplOps silcpurple_wb_ops =
 
 static PurplePluginProtocolInfo prpl_info =
 {
-#ifdef HAVE_SILCMIME_H
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
 	OPT_PROTO_PASSWORD_OPTIONAL | OPT_PROTO_IM_IMAGE,
-#else
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
-	OPT_PROTO_PASSWORD_OPTIONAL,
-#endif
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
-#ifdef SILC_ATTRIBUTE_USER_ICON
 	{"jpeg,gif,png,bmp", 0, 0, 96, 96, 0, PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
-#else
-	NO_BUDDY_ICONS,
-#endif
 	silcpurple_list_icon,	                /* list_icon */
 	NULL,					/* list_emblems */
 	silcpurple_status_text,			/* status_text */
@@ -1857,11 +1834,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,					/* buddy_free */
 	NULL,					/* convo_closed */
 	NULL,					/* normalize */
-#ifdef SILC_ATTRIBUTE_USER_ICON
 	silcpurple_buddy_set_icon,		/* set_buddy_icon */
-#else
-	NULL,
-#endif
 	NULL,					/* remove_group */
 	NULL,					/* get_cb_real_name */
 	silcpurple_chat_set_topic,		/* set_chat_topic */
