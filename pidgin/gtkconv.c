@@ -1856,6 +1856,9 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				if (!gtkconv->send_history)
 					break;
 
+				if (gtkconv->entry != entry)
+					break;
+
 				if (!gtkconv->send_history->prev) {
 					GtkTextIter start, end;
 
@@ -1902,6 +1905,9 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 			case GDK_Down:
 				if (!gtkconv->send_history)
+					break;
+
+				if (gtkconv->entry != entry)
 					break;
 
 				if (gtkconv->send_history->prev && gtkconv->send_history->prev->data) {
@@ -2007,6 +2013,8 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 		switch (event->keyval)
 		{
 			case GDK_Tab:
+				if (gtkconv->entry != entry)
+					break;
 				return tab_complete(conv);
 				break;
 
@@ -4254,6 +4262,8 @@ setup_chat_pane(PidginConversation *gtkconv)
 
 		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 0);
 		gtk_widget_show(gtkchat->topic_text);
+		g_signal_connect(G_OBJECT(gtkchat->topic_text), "key_press_event",
+			             G_CALLBACK(entry_key_press_cb), gtkconv);
 	}
 
 	/* Setup the horizontal pane. */
