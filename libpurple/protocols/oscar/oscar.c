@@ -2975,8 +2975,6 @@ static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *
 		purple_blist_update_buddy_status(b, status);
 	}
 
-	purple_signal_emit(purple_blist_get_handle(), "buddy-miscellaneous-changed", b);
-
 	return 1;
 }
 
