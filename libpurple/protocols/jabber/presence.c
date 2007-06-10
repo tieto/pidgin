@@ -608,7 +608,7 @@ void purple_status_to_jabber(const PurpleStatus *status, JabberBuddyState *state
 				formatted_msg = NULL;
 
 			if(formatted_msg)
-				purple_markup_html_to_xhtml(formatted_msg, NULL, msg);
+				*msg = purple_markup_strip_html(formatted_msg);
 		}
 
 		if(priority)
