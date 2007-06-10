@@ -706,7 +706,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	GList *l;
 	char buf[1024];
 	char *title, *tmp;
-	const char *str_value, *protocol;
+	const char *str_value;
 	gboolean bool_value;
 
 	if (dialog->protocol_frame != NULL) {
