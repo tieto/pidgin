@@ -250,8 +250,8 @@ update_detailed_info(PidginXferDialog *dialog, PurpleXfer *xfer)
 
 	status = g_strdup_printf("%d%% (%" G_GSIZE_FORMAT " of %" G_GSIZE_FORMAT " bytes)",
 							 (int)(purple_xfer_get_progress(xfer)*100),
-							 (unsigned long)purple_xfer_get_bytes_sent(xfer),
-							 (unsigned long)purple_xfer_get_size(xfer));
+							 purple_xfer_get_bytes_sent(xfer),
+							 purple_xfer_get_size(xfer));
 
 	if (purple_xfer_is_completed(xfer)) {
 
