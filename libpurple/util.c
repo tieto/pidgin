@@ -1013,7 +1013,6 @@ purple_markup_find_tag(const char *needle, const char *haystack,
 	g_return_val_if_fail(    needle != NULL, FALSE);
 	g_return_val_if_fail(   *needle != '\0', FALSE);
 	g_return_val_if_fail(  haystack != NULL, FALSE);
-	g_return_val_if_fail( *haystack != '\0', FALSE);
 	g_return_val_if_fail(     start != NULL, FALSE);
 	g_return_val_if_fail(       end != NULL, FALSE);
 	g_return_val_if_fail(attributes != NULL, FALSE);
