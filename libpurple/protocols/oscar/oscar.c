@@ -1825,9 +1825,8 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		signon = time(NULL) - info->sessionlen;
 	if (!aim_sncmp(purple_account_get_username(account), info->sn)) {
 		purple_connection_set_display_name(gc, info->sn);
-		od->timeoffset = signon - purple_presence_get_login_time(presence);
 	}
-	purple_prpl_got_user_login_time(account, info->sn, signon - od->timeoffset);
+	purple_prpl_got_user_login_time(account, info->sn, signon);
 
 	/* Idle time stuff */
 	/* info->idletime is the number of minutes that this user has been idle */
@@ -2849,12 +2848,12 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	g_free(tmp);
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
-		time_t t = userinfo->onlinesince - od->timeoffset;
+		time_t t = userinfo->onlinesince;
 		oscar_user_info_add_pair(user_info, _("Online Since"), purple_date_format_full(localtime(&t)));
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
-		time_t t = userinfo->membersince - od->timeoffset;
+		time_t t = userinfo->membersince;
 		oscar_user_info_add_pair(user_info, _("Member Since"), purple_date_format_full(localtime(&t)));
 	}
 
