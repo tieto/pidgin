@@ -757,6 +757,7 @@ static void msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo, 
 	g_hash_table_destroy(body);
 }
 
+#ifdef _MSIM_UID2USERNAME_WORKS
 /* Lookup a username by userid, from buddy list. 
  *
  * @param wanted_uid
@@ -844,6 +845,8 @@ or:
 	g_slist_free(buddies_head);
 	return NULL;
 }
+
+#endif
 
 /** Preprocess incoming messages, resolving as needed, calling msim_process() when ready to process.
  *
@@ -1000,8 +1003,15 @@ gboolean msim_process_reply(MsimSession *session, MsimMessage *msg)
         body = msim_parse_body(body_str);
 		g_free(body_str);
 
+
 		/* TODO: implement a better hash-like interface, and use it. */
         username = g_hash_table_lookup(body, "UserName");
+
+		/* TODO: Save user info reply for msim_tooltip_text. */
+		/* TODO: get rid of user_lookup_cache, and find another way to 
+		 * pass the relevant information to msim_tooltip_text. */
+		/* g_hash_table_insert(session->user_lookup_cache, username, body); */
+
         if (username)
         {
 			PurpleBuddy *buddy;
@@ -1421,7 +1431,8 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
     session = gc->proto_data;
 
     g_return_if_fail(cond == PURPLE_INPUT_READ);
-    g_return_if_fail(MSIM_SESSION_VALID(session));
+	/* TODO: fix bug #193, crash when re-login */
+	g_return_if_fail(MSIM_SESSION_VALID(session));
 
     /* Only can handle so much data at once... 
      * If this happens, try recompiling with a higher MSIM_READ_BUF_SIZE.
@@ -1625,11 +1636,19 @@ void msim_session_destroy(MsimSession *session)
  */
 void msim_close(PurpleConnection *gc)
 {
-    g_return_if_fail(gc != NULL);
+	MsimSession *session;
 
 	purple_debug_info("msim", "msim_close: destroying session\n");
-    
-    msim_session_destroy(gc->proto_data);
+
+	session = (MsimSession *)gc->proto_data;
+
+    g_return_if_fail(gc != NULL);
+	g_return_if_fail(session != NULL);
+	g_return_if_fail(MSIM_SESSION_VALID(session));
+
+   
+    purple_input_remove(session->fd);
+    msim_session_destroy(session);
 }
 
 
