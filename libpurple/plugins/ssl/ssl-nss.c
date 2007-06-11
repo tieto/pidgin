@@ -32,7 +32,6 @@
 #undef HAVE_LONG_LONG /* Make Mozilla less angry. If angry, Mozilla SMASH! */
 
 #include <nspr.h>
-#include <private/pprio.h>
 #include <nss.h>
 #include <pk11func.h>
 #include <prio.h>
@@ -41,6 +40,10 @@
 #include <ssl.h>
 #include <sslerr.h>
 #include <sslproto.h>
+
+/* This is defined in NSPR's <private/pprio.h>, but to avoid including a
+ * private header we duplicate the prototype here */
+NSPR_API(PRFileDesc*)  PR_ImportTCPSocket(PRInt32 osfd);
 
 typedef struct
 {

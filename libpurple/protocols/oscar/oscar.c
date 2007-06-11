@@ -1825,9 +1825,8 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		signon = time(NULL) - info->sessionlen;
 	if (!aim_sncmp(purple_account_get_username(account), info->sn)) {
 		purple_connection_set_display_name(gc, info->sn);
-		od->timeoffset = signon - purple_presence_get_login_time(presence);
 	}
-	purple_prpl_got_user_login_time(account, info->sn, signon - od->timeoffset);
+	purple_prpl_got_user_login_time(account, info->sn, signon);
 
 	/* Idle time stuff */
 	/* info->idletime is the number of minutes that this user has been idle */
@@ -2849,12 +2848,12 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	g_free(tmp);
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_ONLINESINCE) {
-		time_t t = userinfo->onlinesince - od->timeoffset;
+		time_t t = userinfo->onlinesince;
 		oscar_user_info_add_pair(user_info, _("Online Since"), purple_date_format_full(localtime(&t)));
 	}
 
 	if (userinfo->present & AIM_USERINFO_PRESENT_MEMBERSINCE) {
-		time_t t = userinfo->membersince - od->timeoffset;
+		time_t t = userinfo->membersince;
 		oscar_user_info_add_pair(user_info, _("Member Since"), purple_date_format_full(localtime(&t)));
 	}
 
@@ -4167,6 +4166,7 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	PeerConnection *conn;
 	int ret;
 	char *tmp1, *tmp2;
+	gboolean is_html;
 
 	od = (OscarData *)gc->proto_data;
 	account = purple_connection_get_account(gc);
@@ -4185,7 +4185,6 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 	} else {
 		struct buddyinfo *bi;
 		struct aim_sendimext_args args;
-		gsize len;
 		PurpleConversation *conv;
 		PurpleStoredImage *img;
 
@@ -4276,22 +4275,43 @@ oscar_send_im(PurpleConnection *gc, const char *name, const char *message, Purpl
 		if (aim_sn_is_sms(name)) {
 			/* Messaging an SMS (mobile) user */
 			tmp2 = purple_markup_strip_html(tmp1);
+			is_html = FALSE;
 		} else if (aim_sn_is_icq(purple_account_get_username(account))) {
-			if (aim_sn_is_icq(name))
+			if (aim_sn_is_icq(name)) {
 				/* From ICQ to ICQ */
 				tmp2 = purple_markup_strip_html(tmp1);
-			else
+				is_html = FALSE;
+			} else {
 				/* From ICQ to AIM */
 				tmp2 = g_strdup(tmp1);
+				is_html = TRUE;
+			}
 		} else {
 			/* From AIM to AIM and AIM to ICQ */
 			tmp2 = g_strdup(tmp1);
+			is_html = TRUE;
 		}
 		g_free(tmp1);
 		tmp1 = tmp2;
-		len = strlen(tmp1);
 
 		purple_plugin_oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
+		if (is_html && (args.msglen > MAXMSGLEN)) {
+			/* If the length was too long, try stripping the HTML and then running it back through
+			* purple_strdup_withhtml() and the encoding process. The result may be shorter. */
+			g_free((char *)args.msg);
+			
+			tmp2 = purple_markup_strip_html(tmp1);
+			g_free(tmp1);
+			
+			tmp1 = purple_strdup_withhtml(tmp2);
+			g_free(tmp2);
+			
+			purple_plugin_oscar_convert_to_best_encoding(gc, name, tmp1, (char **)&args.msg, &args.msglen, &args.charset, &args.charsubset);
+
+			purple_debug_info("oscar", "Sending %s as %s because the original was too long.",
+								  message, (char *)args.msg);
+		}
+
 		purple_debug_info("oscar", "Sending IM, charset=0x%04hx, charsubset=0x%04hx, length=%d\n",
 						args.charset, args.charsubset, args.msglen);
 		ret = aim_im_sendch1_ext(od, &args);
@@ -5323,7 +5343,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 	OscarData *od = (OscarData *)gc->proto_data;
 	PurpleConversation *conv = NULL;
 	struct chat_connection *c = NULL;
-	char *buf, *buf2;
+	char *buf, *buf2, *buf3;
 	guint16 charset, charsubset;
 	char *charsetstr = NULL;
 	int len;
@@ -5335,7 +5355,6 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		return -EINVAL;
 
 	buf = purple_strdup_withhtml(message);
-	len = strlen(buf);
 
 	if (strstr(buf, "<IMG "))
 		purple_conversation_write(conv, "",
@@ -5349,8 +5368,28 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 	 * visible characters" and not "number of bytes"
 	 */
 	if ((len > c->maxlen) || (len > c->maxvis)) {
+		/* If the length was too long, try stripping the HTML and then running it back through
+		 * purple_strdup_withhtml() and the encoding process. The result may be shorter. */
 		g_free(buf2);
-		return -E2BIG;
+
+		buf3 = purple_markup_strip_html(buf);
+		g_free(buf);
+
+		buf = purple_strdup_withhtml(buf3);
+		g_free(buf3);
+
+		purple_plugin_oscar_convert_to_best_encoding(gc, NULL, buf, &buf2, &len, &charset, &charsubset);
+
+		if ((len > c->maxlen) || (len > c->maxvis)) {
+			purple_debug_warning("oscar", "Could not send %s because (%i > maxlen %i) or (%i > maxvis %i)",
+					buf2, len, c->maxlen, len, c->maxvis);
+			g_free(buf);
+			g_free(buf2);
+			return -E2BIG;
+		}
+
+		purple_debug_info("oscar", "Sending %s as %s because the original was too long.",
+				message, buf2);
 	}
 
 	if (charset == AIM_CHARSET_ASCII)
@@ -5361,6 +5400,7 @@ int oscar_send_chat(PurpleConnection *gc, int id, const char *message, PurpleMes
 		charsetstr = "iso-8859-1";
 	aim_chat_send_im(od, c->conn, 0, buf2, len, charsetstr, "en");
 	g_free(buf2);
+	g_free(buf);
 
 	return 0;
 }

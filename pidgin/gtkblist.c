@@ -1167,7 +1167,7 @@ gtk_blist_key_press_cb(GtkWidget *tv, GdkEventKey *event, gpointer data) {
 			return FALSE;
 		}
 		if(buddy)
-			serv_get_info(buddy->account->gc, buddy->name);
+			gtk_blist_menu_info_cb(NULL, buddy);
 	} else if (event->keyval == GDK_F2) {
 		gtk_blist_menu_alias_cb(tv, node);
 	}
@@ -1421,7 +1421,7 @@ static gboolean gtk_blist_button_press_cb(GtkWidget *tv, GdkEventButton *event, 
 			prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
 		if (prpl && prpl_info->get_info)
-			serv_get_info(b->account->gc, b->name);
+			gtk_blist_menu_info_cb(NULL, b);
 		handled = TRUE;
 	}
 
@@ -2994,7 +2994,14 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		signon = purple_presence_get_login_time(presence);
 		if (full && PURPLE_BUDDY_IS_ONLINE(b) && signon > 0)
 		{
-			tmp = purple_str_seconds_to_string(time(NULL) - signon);
+			if (time(NULL) - signon > 63072000 /* 2 years */) {
+				/*
+				 * Our local clock must be wrong, show the actual
+				 * date instead of "4 days", etc.
+				 */
+				tmp = g_strdup(purple_date_format_long(localtime(&signon)));
+			} else
+				tmp = purple_str_seconds_to_string(time(NULL) - signon);
 			purple_notify_user_info_add_pair(user_info, _("Logged In"), tmp);
 			g_free(tmp);
 		}
