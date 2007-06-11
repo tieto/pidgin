@@ -447,7 +447,6 @@ struct _OscarData
 	guint icontimer;
 	guint getblisttimer;
 	guint getinfotimer;
-	gint timeoffset;
 
 	struct {
 		guint maxwatchers; /* max users who can watch you */
