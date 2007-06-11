@@ -3733,8 +3733,11 @@ static void pidgin_blist_new_node(PurpleBlistNode *node)
 
 gboolean pidgin_blist_node_is_contact_expanded(PurpleBlistNode *node)
 {
-	if PURPLE_BLIST_NODE_IS_BUDDY(node)
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		node = node->parent;
+		if (node == NULL)
+			return FALSE;
+	}
 
 	g_return_val_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node), FALSE);
 
