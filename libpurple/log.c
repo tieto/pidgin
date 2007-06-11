@@ -710,6 +710,7 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 		int imgid = 0;
 		char *idstr = NULL;
 
+		/* TODO: As implemented, this never happens */
 		if (newmsg == NULL)
 			newmsg = g_string_new("");
 
@@ -782,6 +783,7 @@ convert_image_tags(const PurpleLog *log, const char *msg)
 		tmp = end + 1;
 	}
 
+	/* TODO: As implemented, this never happens */
 	if (newmsg == NULL)
 	{
 		/* No images were found to change. */
