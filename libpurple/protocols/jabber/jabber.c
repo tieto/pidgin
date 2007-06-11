@@ -1271,6 +1271,8 @@ GList *jabber_status_types(PurpleAccount *account)
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+            "mood", _("Mood"), purple_value_new(PURPLE_TYPE_INT),
+            "moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1281,6 +1283,8 @@ GList *jabber_status_types(PurpleAccount *account)
 			_("Chatty"), TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+            "mood", _("Mood"), purple_value_new(PURPLE_TYPE_INT),
+            "moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1291,6 +1295,8 @@ GList *jabber_status_types(PurpleAccount *account)
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+            "mood", _("Mood"), purple_value_new(PURPLE_TYPE_INT),
+            "moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1301,6 +1307,8 @@ GList *jabber_status_types(PurpleAccount *account)
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+            "mood", _("Mood"), purple_value_new(PURPLE_TYPE_INT),
+            "moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1311,6 +1319,8 @@ GList *jabber_status_types(PurpleAccount *account)
 			_("Do Not Disturb"), TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
+            "mood", _("Mood"), purple_value_new(PURPLE_TYPE_INT),
+            "moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 

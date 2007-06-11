@@ -24,6 +24,7 @@
 
 #include "jabber.h"
 #include "message.h"
+#include "buddy.h"
 
 void jabber_pep_init(void);
 
@@ -33,7 +34,7 @@ void jabber_pep_init(void);
  * @parameter js    The JabberStream this item was received on
  * @parameter items The &lt;items/>-tag with the &lt;item/>-children
  */
-typedef void (JabberPEPHandler)(JabberStream *js, xmlnode *items);
+typedef void (JabberPEPHandler)(JabberStream *js, const char *from, xmlnode *items);
 
 /*
  * Registers a callback for PEP events. Also automatically announces this receiving capability via disco#info.

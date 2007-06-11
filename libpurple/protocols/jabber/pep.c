@@ -29,7 +29,8 @@ void jabber_pep_init(void) {
     if(!pep_handlers) {
         pep_handlers = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
         
-        /* register PEP handlers here */
+        /* register PEP handlers */
+        jabber_mood_init();
     }
 }
 
@@ -44,15 +45,18 @@ void jabber_handle_event(JabberMessage *jm) {
     /* this may be called even when the own server doesn't support pep! */
     JabberPEPHandler *jph;
     GList *itemslist;
+    char *jid = jabber_get_bare_jid(jm->from);
+    
     for(itemslist = jm->eventitems; itemslist; itemslist = itemslist->next) {
         xmlnode *items = (xmlnode*)itemslist->data;
         const char *xmlns = xmlnode_get_namespace(items);
         
         if((jph = g_hash_table_lookup(pep_handlers, xmlns)))
-            jph(jm->js, items);
+            jph(jm->js, jid, items);
     }
     
     /* discard items we don't have a handler for */
+    g_free(jid);
 }
 
 void jabber_pep_publish(JabberStream *js, xmlnode *publish) {

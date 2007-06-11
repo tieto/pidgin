@@ -23,6 +23,7 @@
 #define _PURPLE_JABBER_BUDDY_H_
 
 #include "jabber.h"
+#include "usermood.h"
 
 typedef enum {
 	JABBER_BUDDY_STATE_UNKNOWN = -2,
