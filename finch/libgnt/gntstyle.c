@@ -27,6 +27,7 @@
 #include <glib.h>
 #include <ctype.h>
 #include <glib/gprintf.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define MAX_WORKSPACES 99
