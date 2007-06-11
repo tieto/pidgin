@@ -35,6 +35,8 @@ version 2.1.0 (??/??/????):
 		    Callers should prefer this to purple_timeout_add for timers
 		    longer than 1 second away.  Be aware of the rounding, though.
 		* purple_xfer_get_remote_user
+		* gtk_imhtml_animation_new
+		    Can be used for inserting an animated image into an IMHTML.
 
 		Changed:
 		* Mark some return types const:

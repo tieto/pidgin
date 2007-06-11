@@ -3165,14 +3165,13 @@ void gtk_imhtml_page_down (GtkIMHtml *imhtml)
 GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, int id)
 {
 	GtkIMHtmlImage *im_image = g_malloc(sizeof(GtkIMHtmlImage));
-	GtkImage *image = GTK_IMAGE(gtk_image_new_from_pixbuf(img));
 
 	GTK_IMHTML_SCALABLE(im_image)->scale = gtk_imhtml_image_scale;
 	GTK_IMHTML_SCALABLE(im_image)->add_to = gtk_imhtml_image_add_to;
 	GTK_IMHTML_SCALABLE(im_image)->free = gtk_imhtml_image_free;
 
 	im_image->pixbuf = img;
-	im_image->image = image;
+	im_image->image = GTK_IMAGE(gtk_image_new_from_pixbuf(im_image->pixbuf));
 	im_image->width = gdk_pixbuf_get_width(img);
 	im_image->height = gdk_pixbuf_get_height(img);
 	im_image->mark = NULL;
@@ -3181,6 +3180,76 @@ GtkIMHtmlScalable *gtk_imhtml_image_new(GdkPixbuf *img, const gchar *filename, i
 	im_image->filesel = NULL;
 
 	g_object_ref(img);
+	return GTK_IMHTML_SCALABLE(im_image);
+}
+
+static gboolean
+animate_image_cb(gpointer data)
+{
+	GtkIMHtmlImage *im_image;
+	int width, height;
+	int delay;
+
+	im_image = data;
+
+	/* Update the pointer to this GdkPixbuf frame of the animation */
+	g_object_unref(G_OBJECT(im_image->pixbuf));
+	gdk_pixbuf_animation_iter_advance(GTK_IMHTML_ANIMATION(im_image)->iter, NULL);
+	im_image->pixbuf = gdk_pixbuf_animation_iter_get_pixbuf(GTK_IMHTML_ANIMATION(im_image)->iter);
+	g_object_ref(G_OBJECT(im_image->pixbuf));
+
+	/* Update the displayed GtkImage */
+	width = gdk_pixbuf_get_width(gtk_image_get_pixbuf(im_image->image));
+	height = gdk_pixbuf_get_height(gtk_image_get_pixbuf(im_image->image));
+	if (width > 0 && height > 0)
+	{
+		/* Need to scale the new frame to the same size as the old frame */
+		GdkPixbuf *tmp;
+		tmp = gdk_pixbuf_scale_simple(im_image->pixbuf, width, height, GDK_INTERP_BILINEAR);
+		gtk_image_set_from_pixbuf(im_image->image, tmp);
+		g_object_unref(G_OBJECT(tmp));
+	} else {
+		/* Display at full-size */
+		gtk_image_set_from_pixbuf(im_image->image, im_image->pixbuf);
+	}
+
+	delay = MIN(gdk_pixbuf_animation_iter_get_delay_time(GTK_IMHTML_ANIMATION(im_image)->iter), 100);
+	GTK_IMHTML_ANIMATION(im_image)->timer = g_timeout_add(delay, animate_image_cb, im_image);
+
+	return FALSE;
+}
+
+GtkIMHtmlScalable *gtk_imhtml_animation_new(GdkPixbufAnimation *anim, const gchar *filename, int id)
+{
+	GtkIMHtmlImage *im_image = g_malloc(sizeof(GtkIMHtmlAnimation));
+
+	GTK_IMHTML_SCALABLE(im_image)->scale = gtk_imhtml_image_scale;
+	GTK_IMHTML_SCALABLE(im_image)->add_to = gtk_imhtml_image_add_to;
+	GTK_IMHTML_SCALABLE(im_image)->free = gtk_imhtml_animation_free;
+
+	GTK_IMHTML_ANIMATION(im_image)->anim = anim;
+	if (gdk_pixbuf_animation_is_static_image(anim)) {
+		GTK_IMHTML_ANIMATION(im_image)->iter = NULL;
+		im_image->pixbuf = gdk_pixbuf_animation_get_static_image(anim);
+		GTK_IMHTML_ANIMATION(im_image)->timer = 0;
+	} else {
+		int delay;
+		GTK_IMHTML_ANIMATION(im_image)->iter = gdk_pixbuf_animation_get_iter(anim, NULL);
+		im_image->pixbuf = gdk_pixbuf_animation_iter_get_pixbuf(GTK_IMHTML_ANIMATION(im_image)->iter);
+		delay = MIN(gdk_pixbuf_animation_iter_get_delay_time(GTK_IMHTML_ANIMATION(im_image)->iter), 100);
+		GTK_IMHTML_ANIMATION(im_image)->timer = g_timeout_add(delay, animate_image_cb, im_image);
+	}
+	im_image->image = GTK_IMAGE(gtk_image_new_from_pixbuf(im_image->pixbuf));
+	im_image->width = gdk_pixbuf_animation_get_width(anim);
+	im_image->height = gdk_pixbuf_animation_get_height(anim);
+	im_image->mark = NULL;
+	im_image->filename = g_strdup(filename);
+	im_image->id = id;
+	im_image->filesel = NULL;
+
+	g_object_ref(anim);
+	g_object_ref(im_image->pixbuf);
+
 	return GTK_IMHTML_SCALABLE(im_image);
 }
 
@@ -3442,7 +3511,6 @@ static gboolean gtk_imhtml_image_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtm
 static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHtmlSmiley *smiley)
 {
 	GdkPixbufAnimation *anim = NULL;
-	GdkPixbuf *pix = NULL;
 	GtkIMHtmlScalable *image = NULL;
 	gboolean ret;
 	
@@ -3453,11 +3521,9 @@ static gboolean gtk_imhtml_smiley_clicked(GtkWidget *w, GdkEvent *event, GtkIMHt
 	if (!anim)
 		return FALSE;
 
-	pix = gdk_pixbuf_animation_get_static_image(anim);
-	image = gtk_imhtml_image_new(pix, smiley->smile, 0);
+	image = gtk_imhtml_animation_new(anim, smiley->smile, 0);
 	ret = gtk_imhtml_image_clicked(w, event, (GtkIMHtmlImage*)image);
 	g_object_set_data_full(G_OBJECT(w), "image-data", image, (GDestroyNotify)gtk_imhtml_image_free);
-	g_object_unref(G_OBJECT(pix));
 	return ret;
 }
 
@@ -3470,6 +3536,19 @@ void gtk_imhtml_image_free(GtkIMHtmlScalable *scale)
 	if (image->filesel)
 		gtk_widget_destroy(image->filesel);
 	g_free(scale);
+}
+
+void gtk_imhtml_animation_free(GtkIMHtmlScalable *scale)
+{
+	GtkIMHtmlAnimation *animation = (GtkIMHtmlAnimation *)scale;
+
+	if (animation->timer > 0)
+		g_source_remove(animation->timer);
+	if (animation->iter != NULL)
+		g_object_unref(animation->iter);
+	g_object_unref(animation->anim);
+
+	gtk_imhtml_image_free(scale);
 }
 
 void gtk_imhtml_image_add_to(GtkIMHtmlScalable *scale, GtkIMHtml *imhtml, GtkTextIter *iter)
@@ -4552,7 +4631,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 
 void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *iter)
 {
-	GdkPixbuf *pixbuf = NULL;
+	GdkPixbufAnimation *anim = NULL;
 	const char *filename = NULL;
 	gpointer image;
 	GdkRectangle rect;
@@ -4579,28 +4658,33 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 			GdkPixbufLoader *loader = gdk_pixbuf_loader_new();
 			gdk_pixbuf_loader_write(loader, data, len, NULL);
 			gdk_pixbuf_loader_close(loader, NULL);
-			pixbuf = gdk_pixbuf_loader_get_pixbuf(loader);
-			if (pixbuf)
-				g_object_ref(G_OBJECT(pixbuf));
+			anim = gdk_pixbuf_loader_get_animation(loader);
+			if (anim)
+				g_object_ref(G_OBJECT(anim));
 			g_object_unref(G_OBJECT(loader));
 		}
 
 	}
 
-	if (pixbuf) {
+	if (anim) {
 		struct im_image_data *t = g_new(struct im_image_data, 1);
 		filename = imhtml->funcs->image_get_filename(image);
 		imhtml->funcs->image_ref(id);
 		t->id = id;
 		t->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
 		imhtml->im_images = g_slist_prepend(imhtml->im_images, t);
+		scalable = gtk_imhtml_animation_new(anim, filename, id);
+		g_object_unref(G_OBJECT(anim));
 	} else {
+		GdkPixbuf *pixbuf;
 		pixbuf = gtk_widget_render_icon(GTK_WIDGET(imhtml), GTK_STOCK_MISSING_IMAGE,
 						GTK_ICON_SIZE_BUTTON, "gtkimhtml-missing-image");
+		scalable = gtk_imhtml_image_new(pixbuf, filename, id);
+		g_object_unref(G_OBJECT(pixbuf));
 	}
 
 	sd = g_new(struct scalable_data, 1);
-	sd->scalable = scalable = gtk_imhtml_image_new(pixbuf, filename, id);
+	sd->scalable = scalable;
 	sd->mark = gtk_text_buffer_create_mark(imhtml->text_buffer, NULL, iter, TRUE);
 	gtk_text_view_get_visible_rect(GTK_TEXT_VIEW(imhtml), &rect);
 	scalable->add_to(scalable, imhtml, iter);
@@ -4608,8 +4692,6 @@ void gtk_imhtml_insert_image_at_iter(GtkIMHtml *imhtml, int id, GtkTextIter *ite
 		gtk_text_view_get_right_margin(GTK_TEXT_VIEW(imhtml));
 	scalable->scale(scalable, rect.width - minus, rect.height);
 	imhtml->scalables = g_list_append(imhtml->scalables, sd);
-
-	g_object_unref(G_OBJECT(pixbuf));
 }
 
 static const gchar *tag_to_html_start(GtkTextTag *tag)
