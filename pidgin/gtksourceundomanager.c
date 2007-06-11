@@ -179,7 +179,8 @@ gtk_source_undo_manager_get_type (void)
         		NULL,           /* class_data */
         		sizeof (GtkSourceUndoManager),
         		0,              /* n_preallocs */
-        		(GInstanceInitFunc) gtk_source_undo_manager_init
+        		(GInstanceInitFunc) gtk_source_undo_manager_init,
+        		NULL		/* value_table */
       		};
 
       		undo_manager_type = g_type_register_static (G_TYPE_OBJECT,
