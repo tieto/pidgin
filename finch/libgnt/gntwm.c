@@ -1055,6 +1055,15 @@ help_for_wm(GntBindable *bindable, GList *null)
 }
 
 static gboolean
+help_for_window(GntBindable *bindable, GList *null)
+{
+	GntWM *wm = GNT_WM(bindable);
+	GntWidget *widget = wm->ordered->data;
+
+	return help_for_bindable(wm,GNT_BINDABLE(widget));
+}
+
+static gboolean
 help_for_widget(GntBindable *bindable, GList *null)
 {
 	GntWM *wm = GNT_WM(bindable);
@@ -1208,6 +1217,8 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" "/", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-wm", help_for_wm,
 				"\033" "\\", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-window", help_for_window,
+				"\033" "|", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "toggle-clipboard", toggle_clipboard, 
 				"\033" "C", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "ignore-keys-start", ignore_keys_start, 
