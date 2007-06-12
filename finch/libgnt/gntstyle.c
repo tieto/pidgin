@@ -22,6 +22,7 @@
 
 #include "gntstyle.h"
 #include "gntcolors.h"
+
 #include "gntws.h"
 
 #include <glib.h>
@@ -294,7 +295,6 @@ read_general_style(GKeyFile *kfile)
 			str_styles[styles[i].en] =
 					g_key_file_get_string(kfile, "general", styles[i].style, NULL);
 		}
-
 		for (i = 0; i < nkeys; i++)
 			g_hash_table_replace(unknowns, g_strdup(keys[i]),
 					g_strdup(g_key_file_get_string(kfile, "general", keys[i], NULL)));
@@ -338,7 +338,6 @@ void gnt_uninit_styles()
 	for (i = 0; i < GNT_STYLES; i++)
 		g_free(str_styles[i]);
 
-	g_hash_table_destroy(unknowns);
 #if GLIB_CHECK_VERSION(2,6,0)
 	g_key_file_free(gkfile);
 #endif

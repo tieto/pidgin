@@ -138,4 +138,3 @@ gchar * gnt_get_clipboard_string(void);
  * @param string
  */
 void gnt_set_clipboard_string(gchar *string);
-
