@@ -460,8 +460,9 @@ GntBindable * gnt_bindable_bindings_view(GntBindable *bind)
 }
 
 static void
-reset_binding_window(GntBindableClass *klass)
+reset_binding_window(GntBindableClass *window, gpointer k)
 {
+	GntBindableClass *klass = GNT_BINDABLE_CLASS(k);
 	klass->help_window = NULL;
 }
 
