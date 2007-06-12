@@ -21,12 +21,11 @@
 
 #include "usermood.h"
 #include "pep.h"
-
+#include <assert.h>
 #include <string.h>
 #include "internal.h"
 
 static char *moodstrings[] = {
-	"unknown",
 	"afraid",
 	"amazed",
 	"angry",
@@ -94,7 +93,7 @@ static char *moodstrings[] = {
 static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
 	xmlnode *item = xmlnode_get_child(items, "item");
-	JabberMood newmood = UNKNOWN;
+	char *newmood;
 	char *moodtext = NULL;
 	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
 	xmlnode *moodinfo, *mood;
@@ -112,22 +111,23 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 					moodtext = xmlnode_get_data(moodinfo);
 			} else {
 				int i;
-				for (i = 1; moodstrings[i]; ++i) {
+				for (i = 0; moodstrings[i]; ++i) {
+					/* verify that the mood is known (valid) */
 					if (!strcmp(moodinfo->name, moodstrings[i])) {
-						newmood = (JabberMood)i;
+						newmood = moodstrings[i];
 						break;
 					}
 				}
 			}
-			if (newmood != UNKNOWN && moodtext != NULL)
+			if (newmood != NULL && moodtext != NULL)
 			   break;
 		}
 	}
-	if (newmood != UNKNOWN) {
+	if (newmood != NULL) {
 		JabberBuddyResource *resource = jabber_buddy_find_resource(buddy, NULL);
 		const char *status_id = jabber_buddy_state_get_status_id(resource->state);
 		
-		purple_prpl_got_user_status(js->gc->account, from, status_id, "mood", _(moodstrings[newmood]), "moodtext", moodtext?moodtext:"", NULL);
+		purple_prpl_got_user_status(js->gc->account, from, status_id, "mood", _(newmood), "moodtext", moodtext?moodtext:"", NULL);
 	}
 	if (moodtext)
 		g_free(moodtext);
@@ -138,16 +138,16 @@ void jabber_mood_init(void) {
 	jabber_pep_register_handler("moodn", "http://jabber.org/protocol/mood", jabber_mood_cb);
 }
 
-void jabber_set_mood(JabberStream *js, JabberMood mood, const char *text) {
+void jabber_set_mood(JabberStream *js, const char *mood, const char *text) {
 	xmlnode *publish, *moodnode;
-	if (mood == UNKNOWN)
-		return;
+	
+	assert(mood != NULL);
 	
 	publish = xmlnode_new("publish");
 	xmlnode_set_attrib(publish,"node","http://jabber.org/protocol/mood");
 	moodnode = xmlnode_new_child(xmlnode_new_child(publish, "item"), "mood");
 	xmlnode_set_namespace(moodnode, "http://jabber.org/protocol/mood");
-	xmlnode_new_child(moodnode, moodstrings[mood]);
+	xmlnode_new_child(moodnode, mood);
 
 	if (text) {
 		xmlnode *textnode = xmlnode_new_child(moodnode, "text");

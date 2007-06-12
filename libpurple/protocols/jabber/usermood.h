@@ -26,73 +26,10 @@
 
 /* Implementation of XEP-0107 */
 
-typedef enum _JabberMood { /* wtf */
-	UNKNOWN = 0,
-	AFRAID,
-	AMAZED,
-	ANGRY,
-	ANNOYED,
-	ANXIOUS,
-	AROUSED,
-	ASHAMED,
-	BORED,
-	BRAVE,
-	CALM,
-	COLD,
-	CONFUSED,
-	CONTENTED,
-	CRANKY,
-	CURIOUS,
-	DEPRESSED,
-	DISAPPOINTED,
-	DISGUSTED,
-	DISTRACTED,
-	EMBARRASSED,
-	EXCITED,
-	FLIRTATIOUS,
-	FRUSTRATED,
-	GRUMPY,
-	GUILTY,
-	HAPPY,
-	HOT,
-	HUMBLED,
-	HUMILIATED,
-	HUNGRY,
-	HURT,
-	IMPRESSED,
-	IN_AWE,
-	IN_LOVE,
-	INDIGNANT,
-	INTERESTED,
-	INTOXICATED,
-	INVINCIBLE,
-	JEALOUS,
-	LONELY,
-	MEAN,
-	MOODY,
-	NERVOUS,
-	NEUTRAL,
-	OFFENDED,
-	PLAYFUL,
-	PROUD,
-	RELIEVED,
-	REMORSEFUL,
-	RESTLESS,
-	SAD,
-	SARCASTIC,
-	SERIOUS,
-	SHOCKED,
-	SHY,
-	SICK,
-	SLEEPY,
-	STRESSED,
-	SURPRISED,
-	THIRSTY,
-	WORRIED
-} JabberMood;
-
 void jabber_mood_init(void);
 
-void jabber_set_mood(JabberStream *js, JabberMood mood, const char *text /* might be NULL */);
+void jabber_set_mood(JabberStream *js,
+		     const char *mood, /* must be one of the valid strings defined in the XEP */
+		     const char *text /* might be NULL */);
 
 #endif /* _PURPLE_JABBER_USERMOOD_H_ */
