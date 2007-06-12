@@ -142,7 +142,7 @@ AM_GLIB_GNU_GETTEXT
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
 dnl AM_GLIB_GNU_GETTEXT found it.
 
-if test x$MSGFMT = xno -o x$GMSGFMT = x
+if test x$MSGFMT = xno
 then
 	AC_ERROR([
 
