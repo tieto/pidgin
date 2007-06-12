@@ -306,7 +306,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 	jm->from = g_strdup(xmlnode_get_attrib(packet, "from"));
 	jm->to = g_strdup(xmlnode_get_attrib(packet, "to"));
-	jm->id = g_strdup(xmlnode_get_attrib(packet, "id"));
+    jm->id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
 	for(child = packet->child; child; child = child->next) {
         const char *xmlns = xmlnode_get_namespace(child);
@@ -357,7 +357,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(child->name, "event") && !strcmp(xmlns,"http://jabber.org/protocol/pubsub#event")) {
             xmlnode *items;
             jm->type = JABBER_MESSAGE_EVENT;
-            for(items = child->child; child; child = child->next)
+            for(items = child->child; items; items = items->next)
                 jm->eventitems = g_list_append(jm->eventitems, items);
 		} else if(!strcmp(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");
