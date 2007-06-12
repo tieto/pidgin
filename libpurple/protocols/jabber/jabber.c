@@ -1192,6 +1192,9 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 		GList *l;
 
 		if (full) {
+			PurpleStatus *status;
+			PurpleValue *value;
+			
 			if(jb->subscription & JABBER_SUB_FROM) {
 				if(jb->subscription & JABBER_SUB_TO)
 					sub = _("Both");
@@ -1209,6 +1212,21 @@ void jabber_tooltip_text(PurpleBuddy *b, PurpleNotifyUserInfo *user_info, gboole
 			}
 			
 			purple_notify_user_info_add_pair(user_info, _("Subscription"), sub);
+			
+			status = purple_presence_get_active_status(purple_buddy_get_presence(b));
+			value = purple_status_get_attr_value(status, "mood");
+			if(value && purple_value_get_type(value) == PURPLE_TYPE_STRING) {
+				const char *mood = purple_value_get_string(value);
+				
+				value = purple_status_get_attr_value(status, "moodtext");
+				if(value && purple_value_get_type(value) == PURPLE_TYPE_STRING) {
+					char *moodplustext = g_strdup_printf("%s (%s)",mood,purple_value_get_string(value));
+					
+					purple_notify_user_info_add_pair(user_info, _("Mood"), moodplustext);
+					g_free(moodplustext);
+				} else
+					purple_notify_user_info_add_pair(user_info, _("Mood"), mood);
+			}
 		}
 
 		for(l=jb->resources; l; l = l->next) {

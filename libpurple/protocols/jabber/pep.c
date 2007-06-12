@@ -49,9 +49,9 @@ void jabber_handle_event(JabberMessage *jm) {
 	
 	for(itemslist = jm->eventitems; itemslist; itemslist = itemslist->next) {
 		xmlnode *items = (xmlnode*)itemslist->data;
-		const char *xmlns = xmlnode_get_namespace(items);
+		const char *nodename = xmlnode_get_attrib(items,"node");
 		
-		if((jph = g_hash_table_lookup(pep_handlers, xmlns)))
+		if(nodename && (jph = g_hash_table_lookup(pep_handlers, nodename)))
 			jph(jm->js, jid, items);
 	}
 	

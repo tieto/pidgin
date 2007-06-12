@@ -357,7 +357,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		} else if(!strcmp(child->name, "event") && !strcmp(xmlns,"http://jabber.org/protocol/pubsub#event")) {
 			xmlnode *items;
 			jm->type = JABBER_MESSAGE_EVENT;
-			for(items = child->child; items; items = items->next)
+			for(items = xmlnode_get_child(child,"items"); items; items = items->next)
 				jm->eventitems = g_list_append(jm->eventitems, items);
 		} else if(!strcmp(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");

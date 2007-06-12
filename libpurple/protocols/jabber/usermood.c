@@ -23,6 +23,7 @@
 #include "pep.h"
 
 #include <string.h>
+#include "internal.h"
 
 static char *moodstrings[] = {
 	"unknown",
@@ -126,7 +127,7 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 		JabberBuddyResource *resource = jabber_buddy_find_resource(buddy, NULL);
 		const char *status_id = jabber_buddy_state_get_status_id(resource->state);
 		
-		purple_prpl_got_user_status(js->gc->account, from, status_id, "mood", newmood, "moodtext", moodtext?moodtext:"", NULL);
+		purple_prpl_got_user_status(js->gc->account, from, status_id, "mood", _(moodstrings[newmood]), "moodtext", moodtext?moodtext:"", NULL);
 	}
 	if (moodtext)
 		g_free(moodtext);
