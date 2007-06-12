@@ -138,8 +138,7 @@ void gnt_style_read_workspaces(GntWM *wm)
 		if (!name)
 			return;
 
-		ws = g_object_new(GNT_TYPE_WS, NULL);
-		gnt_ws_set_name(ws, name);
+		ws = gnt_ws_new(name);
 		gnt_wm_add_workspace(wm, ws);
 		g_free(name);
 

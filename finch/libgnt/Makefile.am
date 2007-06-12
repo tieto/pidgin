@@ -1,6 +1,6 @@
 EXTRA_DIST=genmarshal
 
-SUBDIRS = . 
+SUBDIRS = . wms
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = gnt.pc
 

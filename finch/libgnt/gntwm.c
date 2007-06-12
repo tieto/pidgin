@@ -335,8 +335,7 @@ gnt_wm_init(GTypeInstance *instance, gpointer class)
 	wm->title_places = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	gnt_style_read_workspaces(wm);
 	if (wm->workspaces == NULL) {
-		wm->cws = g_object_new(GNT_TYPE_WS, NULL);
-		gnt_ws_set_name(wm->cws, "default");
+		wm->cws = gnt_ws_new("default");
 		gnt_wm_add_workspace(wm, wm->cws);
 	} else {
 		wm->cws = wm->workspaces->data;
@@ -1030,12 +1029,11 @@ refresh_screen(GntBindable *bindable, GList *null)
 	GntWM *wm = GNT_WM(bindable);
 
 	endwin();
-	refresh();
-	curs_set(0);   /* endwin resets the cursor to normal */
 
 	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, NULL);
 	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
+	curs_set(0);   /* endwin resets the cursor to normal */
 
 	return FALSE;
 }
@@ -1125,6 +1123,16 @@ workspace_list(GntBindable *b, GList *params)
 
 	list_of_windows(wm, TRUE);
 
+	return TRUE;
+}
+
+static gboolean
+workspace_new(GntBindable *bindable, GList *null)
+{
+	GntWM *wm = GNT_WM(bindable);
+	GntWS *ws = gnt_ws_new(NULL);
+	gnt_wm_add_workspace(wm, ws);
+	gnt_wm_switch_workspace(wm, g_list_index(wm->workspaces, ws));
 	return TRUE;
 }
 
@@ -1262,6 +1270,8 @@ gnt_wm_class_init(GntWMClass *klass)
 				"\033" GNT_KEY_CTRL_K, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "help-for-widget", help_for_widget,
 				"\033" "/", NULL);
+	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "workspace-new", workspace_new,
+				GNT_KEY_F9, NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "workspace-next", workspace_next,
 				"\033" ">", NULL);
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "workspace-prev", workspace_prev,
@@ -1316,6 +1326,7 @@ gnt_wm_get_gtype(void)
 
 	return type;
 }
+
 void
 gnt_wm_add_workspace(GntWM *wm, GntWS *ws)
 {

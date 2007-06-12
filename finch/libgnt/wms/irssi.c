@@ -192,7 +192,7 @@ irssi_update_window(GntWM *wm, GntNode *node)
 	const char *name = gnt_widget_get_name(win);
 	if (!name || !GNT_IS_BOX(win) || strcmp(name, "conversation-window"))
 		return;
-	g_object_set_data(G_OBJECT(win), "irssi-index", GINT_TO_POINTER(g_list_index(wm->list, win)));
+	g_object_set_data(G_OBJECT(win), "irssi-index", GINT_TO_POINTER(g_list_index(wm->cws->list, win)));
 	g_timeout_add(0, (GSourceFunc)update_conv_window_title, node);
 }
 
@@ -221,7 +221,7 @@ move_direction(GntBindable *bindable, GList *list)
 	int x, y, w, h;
 	GntWidget *win;
 
-	if (wm->ordered == NULL || is_budddylist(win = GNT_WIDGET(wm->ordered->data)))
+	if (wm->cws->ordered == NULL || is_budddylist(win = GNT_WIDGET(wm->cws->ordered->data)))
 		return FALSE;
 
 	find_window_position(irssi, win, &hor, &vert);
