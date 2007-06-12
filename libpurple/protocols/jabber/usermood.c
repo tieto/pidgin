@@ -92,7 +92,7 @@ static char *moodstrings[] = {
 static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
     /* it doesn't make sense to have more than one item here, so let's just pick the first one */
     xmlnode *item = xmlnode_get_child(items, "item");
-    jabber_mood newmood = unknown;
+    JabberMood newmood = UNKNOWN;
     char *moodtext = NULL;
     JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
     /* ignore the mood of people not on our buddy list */
@@ -112,18 +112,18 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
                         int i;
                         for(i = 0; moodstrings[i]; ++i) {
                             if(!strcmp(moodinfo->name, moodstrings[i])) {
-                                newmood = (jabber_mood)(i+1); /* 0 is "unknown", so we have to add 1 */
+                                newmood = (JabberMood)(i+1); /* 0 is "unknown", so we have to add 1 */
                                 break;
                             }
                         }
                     }
-                    if(newmood != unknown && moodtext != NULL)
+                    if(newmood != UNKNOWN && moodtext != NULL)
                        break;
                 }
             }
         }
     }
-    if(newmood != unknown) {
+    if(newmood != UNKNOWN) {
         JabberBuddyResource *resource = jabber_buddy_find_resource(buddy, NULL);
         const char *status_id = jabber_buddy_state_get_status_id(resource->state);
         
@@ -138,9 +138,9 @@ void jabber_mood_init(void) {
     jabber_pep_register_handler("moodn", "http://jabber.org/protocol/mood", jabber_mood_cb);
 }
 
-void jabber_set_mood(JabberStream *js, jabber_mood mood, const char *text) {
+void jabber_set_mood(JabberStream *js, JabberMood mood, const char *text) {
     xmlnode *publish, *moodnode;
-    if(mood == unknown)
+    if(mood == UNKNOWN)
         return;
     
     publish = xmlnode_new("publish");
