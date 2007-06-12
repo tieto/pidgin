@@ -1029,12 +1029,11 @@ refresh_screen(GntBindable *bindable, GList *null)
 	GntWM *wm = GNT_WM(bindable);
 
 	endwin();
-	refresh();
-	curs_set(0);   /* endwin resets the cursor to normal */
 
 	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, NULL);
 	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
+	curs_set(0);   /* endwin resets the cursor to normal */
 
 	return FALSE;
 }
