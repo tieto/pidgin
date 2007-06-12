@@ -573,45 +573,27 @@ int msim_send_im(PurpleConnection *gc, const char *who,
                             const char *message, PurpleMessageFlags flags)
 {
     MsimSession *session;
-	MsimMessage *msg;
-    const char *from_username = gc->account->username;
-	int rc;
-
+    
     g_return_val_if_fail(gc != NULL, 0);
     g_return_val_if_fail(who != NULL, 0);
     g_return_val_if_fail(message != NULL, 0);
 
 	/* 'flags' has many options, not used here. */
 
-    purple_debug_info("msim", "sending message from %s to %s: %s\n",
-                  from_username, who, message);
+	session = gc->proto_data;
 
-    session = gc->proto_data;
-
-	msg = msim_msg_new(TRUE,
-			"bm", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(MSIM_BM_INSTANT),
-			"sesskey", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(session->sesskey),
-			/* 't' will be inserted here */
-			"cv", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(MSIM_CLIENT_VERSION),
-			"msg", MSIM_TYPE_STRING, g_strdup(message),
-			NULL);
-
-	if (msim_postprocess_outgoing(session, msg, (char *)who, "t", "cv"))
+	/* TODO: const-correctness */
+	if (msim_send_bm(session, (char *)who, (char *)message, MSIM_BM_INSTANT))
 	{
-
 		/* Return 1 to have Purple show this IM as being sent, 0 to not. I always
 		 * return 1 even if the message could not be sent, since I don't know if
 		 * it has failed yet--because the IM is only sent after the userid is
 		 * retrieved from the server (which happens after this function returns).
 		 */
-		rc = 1;
+		return 1;
 	} else {
-		rc = -1;
+		return -1;
 	}
-	msim_msg_free(msg);
-
-	return rc;
-
     /*
      * TODO: In MySpace, you login with your email address, but don't talk to other
      * users using their email address. So there is currently an asymmetry in the 
@@ -624,6 +606,39 @@ int msim_send_im(PurpleConnection *gc, const char *who,
      * TODO: Make the sent IM's appear as from the user's username, instead of
      * their email address. Purple uses the login (in MSIM, the email)--change this.
      */
+}
+
+/** Send a buddy message of a given type.
+ *
+ * @param session
+ * @param who Username to send message to.
+ * @param text Message text to send. Not freed; will be copied.
+ * @param type A MSIM_BM_* constant.
+ *
+ * Buddy messages ('bm') include instant messages, action messages, status messages, etc.
+ */
+gboolean msim_send_bm(MsimSession *session, gchar *who, gchar *text, int type)
+{
+	gboolean rc;
+	MsimMessage *msg;
+    const char *from_username = session->account->username;
+
+    purple_debug_info("msim", "sending %d message from %s to %s: %s\n",
+                  type, from_username, who, text);
+
+	msg = msim_msg_new(TRUE,
+			"bm", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(type),
+			"sesskey", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(session->sesskey),
+			/* 't' will be inserted here */
+			"cv", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(MSIM_CLIENT_VERSION),
+			"msg", MSIM_TYPE_STRING, g_strdup(text),
+			NULL);
+
+	rc = msim_postprocess_outgoing(session, msg, (char *)who, "t", "cv");
+
+	msim_msg_free(msg);
+
+	return rc;
 }
 
 /**
@@ -704,6 +719,9 @@ gboolean msim_incoming_action(MsimSession *session, MsimMessage *msg)
 unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state)
 {
 	char *typing_str;
+	MsimSession *session;
+
+	session = (MsimSession *)gc->proto_data;
 
 	switch (state)
 	{	
@@ -719,7 +737,7 @@ unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypi
 	}
 
 	purple_debug_info("msim", "msim_send_typing(%s): %d (%s)\n", name, state, typing_str);
-	//msim_send_action(name, typing_str);
+	msim_send_bm(session, (gchar *)name, typing_str, MSIM_BM_ACTION);
 	return 0;
 }
 
