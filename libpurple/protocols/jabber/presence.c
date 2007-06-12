@@ -507,8 +507,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%x)",
 				buddy_name, purple_account_get_username(js->gc->account), js->gc->account);
 			jabber_id_free(jid);
-			if(avatar_hash)
-				g_free(avatar_hash);
+			g_free(avatar_hash);
 			g_free(buddy_name);
 			g_free(status);
 			return;
