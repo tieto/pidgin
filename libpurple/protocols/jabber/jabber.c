@@ -10,12 +10,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
  *
  */
 #include "internal.h"
@@ -66,7 +66,7 @@ static void jabber_stream_init(JabberStream *js)
 	char *open_stream;
 
 	open_stream = g_strdup_printf("<stream:stream to='%s' "
-				          "xmlns='jabber:client' "
+						  "xmlns='jabber:client' "
 						  "xmlns:stream='http://etherx.jabber.org/streams' "
 						  "version='1.0'>",
 						  js->user->domain);
@@ -951,14 +951,14 @@ void jabber_register_account(PurpleAccount *account)
 	if(!js->gsc) {
 		if (connect_server[0]) {
 			jabber_login_connect(js, js->user->domain, server,
-			                     purple_account_get_int(account,
-			                                          "port", 5222));
+								 purple_account_get_int(account,
+													  "port", 5222));
 		} else {
 			js->srv_query_data = purple_srv_resolve("xmpp-client",
-			                                      "tcp",
-			                                      js->user->domain,
-			                                      srv_resolved_cb,
-			                                      js);
+												  "tcp",
+												  js->user->domain,
+												  srv_resolved_cb,
+												  js);
 		}
 	}
 }
@@ -1095,29 +1095,29 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 }
 
 void jabber_add_feature(const char *shortname, const char *namespace) {
-    JabberFeature *feat = g_new0(JabberFeature,1);
-    feat->shortname = g_strdup(shortname);
-    feat->namespace = g_strdup(namespace);
-    
-    /* try to remove just in case it already exists in the list */
-    jabber_remove_feature(shortname);
-    
-    jabber_features = g_list_append(jabber_features, feat);
+	JabberFeature *feat = g_new0(JabberFeature,1);
+	feat->shortname = g_strdup(shortname);
+	feat->namespace = g_strdup(namespace);
+	
+	/* try to remove just in case it already exists in the list */
+	jabber_remove_feature(shortname);
+	
+	jabber_features = g_list_append(jabber_features, feat);
 }
 
 void jabber_remove_feature(const char *shortname) {
-    GList *feature;
-    for(feature = jabber_features; feature; feature = feature->next) {
-        JabberFeature *feat = (JabberFeature*)feature->data;
-        if(!strcmp(feat->shortname, shortname)) {
-            g_free(feat->shortname);
-            g_free(feat->namespace);
-            
-            g_free(feature->data);
-            feature = g_list_delete_link(feature, feature);
-            break;
-        }
-    }
+	GList *feature;
+	for(feature = jabber_features; feature; feature = feature->next) {
+		JabberFeature *feat = (JabberFeature*)feature->data;
+		if(!strcmp(feat->shortname, shortname)) {
+			g_free(feat->shortname);
+			g_free(feat->namespace);
+			
+			g_free(feature->data);
+			feature = g_list_delete_link(feature, feature);
+			break;
+		}
+	}
 }
 
 const char *jabber_list_icon(PurpleAccount *a, PurpleBuddy *b)
@@ -1271,8 +1271,8 @@ GList *jabber_status_types(PurpleAccount *account)
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-            "mood", _("Mood"), purple_value_new(PURPLE_TYPE_INT),
-            "moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
+			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1283,8 +1283,8 @@ GList *jabber_status_types(PurpleAccount *account)
 			_("Chatty"), TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-            "mood", _("Mood"), purple_value_new(PURPLE_TYPE_INT),
-            "moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
+			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1295,8 +1295,8 @@ GList *jabber_status_types(PurpleAccount *account)
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-            "mood", _("Mood"), purple_value_new(PURPLE_TYPE_INT),
-            "moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
+			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1307,8 +1307,8 @@ GList *jabber_status_types(PurpleAccount *account)
 			NULL, TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-            "mood", _("Mood"), purple_value_new(PURPLE_TYPE_INT),
-            "moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
+			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1319,8 +1319,8 @@ GList *jabber_status_types(PurpleAccount *account)
 			_("Do Not Disturb"), TRUE, TRUE, FALSE,
 			"priority", _("Priority"), priority_value,
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
-            "mood", _("Mood"), purple_value_new(PURPLE_TYPE_INT),
-            "moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
+			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
+			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1429,17 +1429,17 @@ GList *jabber_actions(PurplePlugin *plugin, gpointer context)
 	PurplePluginAction *act;
 
 	act = purple_plugin_action_new(_("Set User Info..."),
-	                             jabber_setup_set_info);
+								 jabber_setup_set_info);
 	m = g_list_append(m, act);
 
 	/* if (js->protocol_options & CHANGE_PASSWORD) { */
 		act = purple_plugin_action_new(_("Change Password..."),
-		                             jabber_password_change);
+									 jabber_password_change);
 		m = g_list_append(m, act);
 	/* } */
 
 	act = purple_plugin_action_new(_("Search for Users..."),
-	                             jabber_user_search_begin);
+								 jabber_user_search_begin);
 	m = g_list_append(m, act);
 
 	return m;
@@ -1720,10 +1720,10 @@ static PurpleCmdRet jabber_cmd_chat_affiliate(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	if (strcmp(args[1], "owner") != 0 && 
-	    strcmp(args[1], "admin") != 0 &&
-	    strcmp(args[1], "member") != 0 &&
-	    strcmp(args[1], "outcast") != 0 &&
-	    strcmp(args[1], "none") != 0) {
+		strcmp(args[1], "admin") != 0 &&
+		strcmp(args[1], "member") != 0 &&
+		strcmp(args[1], "outcast") != 0 &&
+		strcmp(args[1], "none") != 0) {
 		*error = g_strdup_printf(_("Unknown affiliation: \"%s\""), args[1]);
 		return PURPLE_CMD_RET_FAILED;
 	}
@@ -1745,9 +1745,9 @@ static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 		return PURPLE_CMD_RET_FAILED;
 
 	if (strcmp(args[1], "moderator") != 0 &&
-	    strcmp(args[1], "participant") != 0 &&
-	    strcmp(args[1], "visitor") != 0 &&
-	    strcmp(args[1], "none") != 0) {
+		strcmp(args[1], "participant") != 0 &&
+		strcmp(args[1], "visitor") != 0 &&
+		strcmp(args[1], "none") != 0) {
 		*error = g_strdup_printf(_("Unknown role: \"%s\""), args[1]);
 		return PURPLE_CMD_RET_FAILED;
 	}
@@ -1756,7 +1756,7 @@ static PurpleCmdRet jabber_cmd_chat_role(PurpleConversation *conv,
 
 	if (!jabber_chat_role_user(chat, args[0], args[1])) {
 		*error = g_strdup_printf(_("Unable to set role \"%s\" for user: %s"),
-		                         args[1], args[0]);
+								 args[1], args[0]);
 		return PURPLE_CMD_RET_FAILED;
 	}
 
@@ -1851,86 +1851,86 @@ gboolean jabber_offline_message(const PurpleBuddy *buddy)
 void jabber_register_commands(void)
 {
 	purple_cmd_register("config", "", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-jabber", jabber_cmd_chat_config,
-	                  _("config:  Configure a chat room."), NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+					  "prpl-jabber", jabber_cmd_chat_config,
+					  _("config:  Configure a chat room."), NULL);
 	purple_cmd_register("configure", "", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-jabber", jabber_cmd_chat_config,
-	                  _("configure:  Configure a chat room."), NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+					  "prpl-jabber", jabber_cmd_chat_config,
+					  _("configure:	 Configure a chat room."), NULL);
 	purple_cmd_register("nick", "s", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-jabber", jabber_cmd_chat_nick,
-	                  _("nick &lt;new nickname&gt;:  Change your nickname."),
-	                  NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+					  "prpl-jabber", jabber_cmd_chat_nick,
+					  _("nick &lt;new nickname&gt;:	 Change your nickname."),
+					  NULL);
 	purple_cmd_register("part", "s", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-	                  jabber_cmd_chat_part, _("part [room]:  Leave the room."),
-	                  NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+					  jabber_cmd_chat_part, _("part [room]:	 Leave the room."),
+					  NULL);
 	purple_cmd_register("register", "", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-jabber", jabber_cmd_chat_register,
-	                  _("register:  Register with a chat room."), NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+					  "prpl-jabber", jabber_cmd_chat_register,
+					  _("register:	Register with a chat room."), NULL);
 	/* XXX: there needs to be a core /topic cmd, methinks */
 	purple_cmd_register("topic", "s", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-	                  jabber_cmd_chat_topic,
-	                  _("topic [new topic]:  View or change the topic."),
-	                  NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+					  jabber_cmd_chat_topic,
+					  _("topic [new topic]:	 View or change the topic."),
+					  NULL);
 	purple_cmd_register("ban", "ws", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-	                  jabber_cmd_chat_ban,
-	                  _("ban &lt;user&gt; [room]:  Ban a user from the room."),
-	                  NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+					  jabber_cmd_chat_ban,
+					  _("ban &lt;user&gt; [room]:  Ban a user from the room."),
+					  NULL);
 	purple_cmd_register("affiliate", "ws", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-	                  jabber_cmd_chat_affiliate,
-	                  _("affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's affiliation with the room."),
-	                  NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+					  jabber_cmd_chat_affiliate,
+					  _("affiliate &lt;user&gt; &lt;owner|admin|member|outcast|none&gt;: Set a user's affiliation with the room."),
+					  NULL);
 	purple_cmd_register("role", "ws", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-	                  jabber_cmd_chat_role,
-	                  _("role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's role in the room."),
-	                  NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+					  jabber_cmd_chat_role,
+					  _("role &lt;user&gt; &lt;moderator|participant|visitor|none&gt;: Set a user's role in the room."),
+					  NULL);
 	purple_cmd_register("invite", "ws", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-	                  jabber_cmd_chat_invite,
-	                  _("invite &lt;user&gt; [message]:  Invite a user to the room."),
-	                  NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+					  jabber_cmd_chat_invite,
+					  _("invite &lt;user&gt; [message]:	 Invite a user to the room."),
+					  NULL);
 	purple_cmd_register("join", "ws", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-	                  jabber_cmd_chat_join,
-	                  _("join: &lt;room&gt; [server]:  Join a chat on this server."),
-	                  NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+					  jabber_cmd_chat_join,
+					  _("join: &lt;room&gt; [server]:  Join a chat on this server."),
+					  NULL);
 	purple_cmd_register("kick", "ws", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
-	                  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
-	                  jabber_cmd_chat_kick,
-	                  _("kick &lt;user&gt; [room]:  Kick a user from the room."),
-	                  NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY |
+					  PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, "prpl-jabber",
+					  jabber_cmd_chat_kick,
+					  _("kick &lt;user&gt; [room]:	Kick a user from the room."),
+					  NULL);
 	purple_cmd_register("msg", "ws", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-jabber", jabber_cmd_chat_msg,
-	                  _("msg &lt;user&gt; &lt;message&gt;:  Send a private message to another user."),
-	                  NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_PRPL_ONLY,
+					  "prpl-jabber", jabber_cmd_chat_msg,
+					  _("msg &lt;user&gt; &lt;message&gt;:	Send a private message to another user."),
+					  NULL);
 	purple_cmd_register("ping", "w", PURPLE_CMD_P_PRPL,
-	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
-	                  PURPLE_CMD_FLAG_PRPL_ONLY,
-	                  "prpl-jabber", jabber_cmd_ping,
-	                  _("ping &lt;jid&gt;:  Ping a user/component/server."),
-	                  NULL);
+					  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM |
+					  PURPLE_CMD_FLAG_PRPL_ONLY,
+					  "prpl-jabber", jabber_cmd_ping,
+					  _("ping &lt;jid&gt;:	Ping a user/component/server."),
+					  NULL);
 
 }
 
 void
 jabber_init_plugin(PurplePlugin *plugin)
 {
-        my_protocol = plugin;
+		my_protocol = plugin;
 }

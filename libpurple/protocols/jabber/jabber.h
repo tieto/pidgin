@@ -12,12 +12,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
  */
 #ifndef _PURPLE_JABBER_H_
 #define _PURPLE_JABBER_H_
@@ -40,26 +40,26 @@
 #define CAPS0115_NODE "http://pidgin.im/caps"
 
 typedef enum {
-	JABBER_CAP_NONE           = 0,
-	JABBER_CAP_XHTML          = 1 << 0,
-	JABBER_CAP_COMPOSING      = 1 << 1,
-	JABBER_CAP_SI             = 1 << 2,
-	JABBER_CAP_SI_FILE_XFER   = 1 << 3,
-	JABBER_CAP_BYTESTREAMS    = 1 << 4,
-	JABBER_CAP_IBB            = 1 << 5,
-	JABBER_CAP_CHAT_STATES    = 1 << 6,
-	JABBER_CAP_IQ_SEARCH      = 1 << 7,
-	JABBER_CAP_IQ_REGISTER    = 1 << 8,
+	JABBER_CAP_NONE			  = 0,
+	JABBER_CAP_XHTML		  = 1 << 0,
+	JABBER_CAP_COMPOSING	  = 1 << 1,
+	JABBER_CAP_SI			  = 1 << 2,
+	JABBER_CAP_SI_FILE_XFER	  = 1 << 3,
+	JABBER_CAP_BYTESTREAMS	  = 1 << 4,
+	JABBER_CAP_IBB			  = 1 << 5,
+	JABBER_CAP_CHAT_STATES	  = 1 << 6,
+	JABBER_CAP_IQ_SEARCH	  = 1 << 7,
+	JABBER_CAP_IQ_REGISTER	  = 1 << 8,
 
 	/* Google Talk extensions: 
 	 * http://code.google.com/apis/talk/jep_extensions/extensions.html
 	 */
-	JABBER_CAP_GMAIL_NOTIFY   = 1 << 9,
+	JABBER_CAP_GMAIL_NOTIFY	  = 1 << 9,
 	JABBER_CAP_GOOGLE_ROSTER  = 1 << 10,
 
-	JABBER_CAP_PING           = 1 << 11,
+	JABBER_CAP_PING			  = 1 << 11,
 
-	JABBER_CAP_RETRIEVED      = 1 << 31
+	JABBER_CAP_RETRIEVED	  = 1 << 31
 } JabberCapabilities;
 
 typedef enum {
@@ -148,10 +148,10 @@ typedef struct _JabberStream
 	int sasl_maxbuf;
 	GString *sasl_mechs;
 #endif
-    char *serverFQDN;
-    
-    /* does the local server support PEP? */
-    gboolean pep;
+	char *serverFQDN;
+	
+	/* does the local server support PEP? */
+	gboolean pep;
 } JabberStream;
 
 void jabber_process_packet(JabberStream *js, xmlnode *packet);
@@ -191,8 +191,8 @@ void jabber_init_plugin(PurplePlugin *plugin);
 
 typedef struct _JabberFeature
 {
-    gchar *shortname;
-    gchar *namespace;
+	gchar *shortname;
+	gchar *namespace;
 } JabberFeature;
 
 /* what kind of additional features as returned from disco#info are supported? */

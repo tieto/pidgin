@@ -12,12 +12,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
  */
 #ifndef _PURPLE_JABBER_MESSAGE_H_
 #define _PURPLE_JABBER_MESSAGE_H_
@@ -35,7 +35,7 @@ typedef struct _JabberMessage {
 		JABBER_MESSAGE_HEADLINE,
 		JABBER_MESSAGE_ERROR,
 		JABBER_MESSAGE_GROUPCHAT_INVITE,
-        JABBER_MESSAGE_EVENT,
+		JABBER_MESSAGE_EVENT,
 		JABBER_MESSAGE_OTHER
 	} type;
 	time_t sent;
@@ -62,7 +62,7 @@ typedef struct _JabberMessage {
 		JM_STATE_GONE
 	} chat_state;
 	GList *etc;
-    GList *eventitems;
+	GList *eventitems;
 } JabberMessage;
 
 void jabber_message_free(JabberMessage *jm);

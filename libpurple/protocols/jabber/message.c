@@ -10,12 +10,12 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA	 02111-1307	 USA
  *
  */
 #include "internal.h"
@@ -62,7 +62,7 @@ static void handle_chat(JabberMessage *jm)
 
 	if(jabber_find_unnormalized_conv(jm->from, jm->js->gc->account)) {
 		from = g_strdup(jm->from);
-	} else  if(jid->node) {
+	} else	if(jid->node) {
 		if(jid->resource) {
 			PurpleConversation *conv;
 
@@ -100,13 +100,13 @@ static void handle_chat(JabberMessage *jm)
 					escaped = g_markup_escape_text(who, -1);
 
 					g_snprintf(buf, sizeof(buf),
-					           _("%s has left the conversation."), escaped);
+							   _("%s has left the conversation."), escaped);
 
 					/* At some point when we restructure PurpleConversation,
 					 * this should be able to be implemented by removing the
 					 * user from the conversation like we do with chats now. */
 					purple_conversation_write(conv, "", buf,
-					                        PURPLE_MESSAGE_SYSTEM, time(NULL));
+											PURPLE_MESSAGE_SYSTEM, time(NULL));
 				}
 			}
 			serv_got_typing_stopped(jm->js->gc, from);
@@ -306,12 +306,12 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 	jm->from = g_strdup(xmlnode_get_attrib(packet, "from"));
 	jm->to = g_strdup(xmlnode_get_attrib(packet, "to"));
-    jm->id = g_strdup(xmlnode_get_attrib(packet, "id"));
+	jm->id = g_strdup(xmlnode_get_attrib(packet, "id"));
 
 	for(child = packet->child; child; child = child->next) {
-        const char *xmlns = xmlnode_get_namespace(child);
-        if(!xmlns)
-            xmlns = "";
+		const char *xmlns = xmlnode_get_namespace(child);
+		if(!xmlns)
+			xmlns = "";
 		if(child->type != XMLNODE_TYPE_TAG)
 			continue;
 
@@ -331,8 +331,8 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			if(!jm->xhtml && xmlnode_get_child(child, "body")) {
 				char *c;
 				jm->xhtml = xmlnode_to_str(child, NULL);
-			        /* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
-			 	 * treated \n as a newline for compatibility with other protocols
+					/* Convert all newlines to whitespace. Technically, even regular, non-XML HTML is supposed to ignore newlines, but Pidgin has, as convention
+				 * treated \n as a newline for compatibility with other protocols
 				 */
 				for (c = jm->xhtml; *c != '\0'; c++) {
 					if (*c == '\n') 
@@ -355,10 +355,10 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			jm->chat_state = JM_STATE_GONE;
 			jm->typing_style |= JM_TS_JEP_0085;
 		} else if(!strcmp(child->name, "event") && !strcmp(xmlns,"http://jabber.org/protocol/pubsub#event")) {
-            xmlnode *items;
-            jm->type = JABBER_MESSAGE_EVENT;
-            for(items = child->child; items; items = items->next)
-                jm->eventitems = g_list_append(jm->eventitems, items);
+			xmlnode *items;
+			jm->type = JABBER_MESSAGE_EVENT;
+			for(items = child->child; items; items = items->next)
+				jm->eventitems = g_list_append(jm->eventitems, items);
 		} else if(!strcmp(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");
 			char *code_txt = NULL;
@@ -433,9 +433,9 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		case JABBER_MESSAGE_GROUPCHAT_INVITE:
 			handle_groupchat_invite(jm);
 			break;
-        case JABBER_MESSAGE_EVENT:
-            jabber_handle_event(jm);
-            break;
+		case JABBER_MESSAGE_EVENT:
+			jabber_handle_event(jm);
+			break;
 		case JABBER_MESSAGE_ERROR:
 			handle_error(jm);
 			break;
@@ -472,7 +472,7 @@ void jabber_message_send(JabberMessage *jm)
 			type = "error";
 			break;
 		case JABBER_MESSAGE_OTHER:
-        default:
+		default:
 			type = NULL;
 			break;
 	}
