@@ -161,14 +161,17 @@ static struct SizedStockIcon {
 	{ PIDGIN_STOCK_TOOLBAR_SELECT_AVATAR, "toolbar", "select-avatar.png", FALSE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
 	{ PIDGIN_STOCK_TOOLBAR_SEND_FILE, "toolbar", "send-file.png", TRUE, FALSE, FALSE, FALSE, FALSE, FALSE, NULL  },
 
-	{ PIDGIN_STOCK_TRAY_AVAILABLE, "tray", "tray-online.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_INVISIBLE, "tray", "tray-invisible.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_AWAY, "tray", "tray-away.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_BUSY, "tray", "tray-busy.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_XA, "tray", "tray-extended-away.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_OFFLINE, "tray", "tray-offline.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_CONNECT, "tray", "tray-connecting.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  },
-	{ PIDGIN_STOCK_TRAY_PENDING, "tray", "tray-message.png", TRUE, TRUE, FALSE, FALSE, FALSE, FALSE, NULL  }
+	{ PIDGIN_STOCK_TRAY_AVAILABLE, "tray", "tray-online.png", TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_INVISIBLE, "tray", "tray-invisible.png", TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_AWAY, "tray", "tray-away.png", TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_BUSY, "tray", "tray-busy.png", TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_XA, "tray", "tray-extended-away.png", TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_OFFLINE, "tray", "tray-offline.png", TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_CONNECT, "tray", "tray-connecting.png", TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  },
+	{ PIDGIN_STOCK_TRAY_PENDING, "tray", "tray-new-im.png", TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  }
+/* Uncomment me after 2.0.2!
+ *	{ PIDGIN_STOCK_TRAY_EMAIL, "tray", "tray-message.png", TRUE, TRUE, TRUE, TRUE, FALSE, FALSE, NULL  }
+ */
 };
 
 static gchar *

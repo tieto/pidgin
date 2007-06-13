@@ -142,7 +142,7 @@ AM_GLIB_GNU_GETTEXT
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
 dnl AM_GLIB_GNU_GETTEXT found it.
 
-if test x$MSGFMT = xno -o x$GMSGFMT = x
+if test x$MSGFMT = xno
 then
 	AC_ERROR([
 
@@ -2104,6 +2104,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/tray/16/scalable/Makefile
 		   pidgin/pixmaps/tray/22/Makefile
 		   pidgin/pixmaps/tray/22/scalable/Makefile
+		   pidgin/pixmaps/tray/32/Makefile
+		   pidgin/pixmaps/tray/48/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile
