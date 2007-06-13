@@ -187,9 +187,6 @@ void msim_input_cb(gpointer gc_uncasted, gint source,
 
 guint msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb, gpointer data);
 
-void msim_get_own_uid_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
-void msim_get_own_uid(MsimSession *session);
-
 void msim_connect_cb(gpointer data, gint source, 
 		const gchar *error_message);
 

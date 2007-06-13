@@ -1440,7 +1440,7 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_DELETE,
 			"dsn", MSIM_TYPE_INTEGER, MD_DELETE_BUDDY_DSN,
 			"lid", MSIM_TYPE_INTEGER, MD_DELETE_BUDDY_LID,
-			"uid", MSIM_TYPE_INTEGER, 42, /* TODO: put YOUR userid here */
+			"uid", MSIM_TYPE_INTEGER, session->userid,
 			"rid", MSIM_TYPE_INTEGER, session->next_rid++,
 			"body", MSIM_TYPE_STRING, g_strdup("ContactID=%d"),
 			NULL);
@@ -1609,32 +1609,6 @@ guint msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb, gpoi
 	return rid;
 }
 
-/** Process reply to get our own userid. */
-void msim_get_own_uid_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
-{
-	/* TODO */
-	msim_msg_dump("msim_get_own_uid_cb: %s\n", userinfo);
-}
-
-/** Request our own userid. */
-void msim_get_own_uid(MsimSession *session)
-{
-	guint rid;
-
-	rid = msim_new_reply_callback(session, msim_get_own_uid_cb, NULL);
-    
-	g_return_if_fail(msim_send(session,
-			"persist", MSIM_TYPE_INTEGER, 1,
-			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			"cmd", MSIM_TYPE_INTEGER, 1,
-			"dsn", MSIM_TYPE_INTEGER, MG_OWN_MYSPACE_INFO_DSN,
-			"lid", MSIM_TYPE_INTEGER, MG_OWN_MYSPACE_INFO_LID,
-			"rid", MSIM_TYPE_INTEGER, rid,
-			"body", MSIM_TYPE_STRING, g_strdup(""),
-			NULL));
-} 
-
-
 /**
  * Callback when connected. Sets up input handlers.
  *
@@ -1717,7 +1691,6 @@ void msim_session_destroy(MsimSession *session)
     session->magic = -1;
 
     g_free(session->rxbuf);
-    g_free(session->userid);
 
 	/* TODO: Remove. */
 	g_hash_table_destroy(session->user_lookup_cb);
@@ -1848,7 +1821,7 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"cmd", MSIM_TYPE_INTEGER, 1,
 			"dsn", MSIM_TYPE_INTEGER, dsn,
-			"uid", MSIM_TYPE_STRING, g_strdup(session->userid),
+			"uid", MSIM_TYPE_INTEGER, session->userid,
 			"lid", MSIM_TYPE_INTEGER, lid,
 			"rid", MSIM_TYPE_INTEGER, rid,
 			/* TODO: dictionary field type */
