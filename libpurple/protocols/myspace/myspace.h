@@ -171,6 +171,7 @@ gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg);
 
 gboolean msim_process(MsimSession *session, MsimMessage *msg);
 
+MsimMessage *msim_do_postprocessing(MsimMessage *msg, gchar *uid_field_name, gchar *uid_before, guint uid);
 void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
 gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar *username, 
 	gchar *uid_field_name, gchar *uid_before);

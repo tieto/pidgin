@@ -1273,6 +1273,59 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 #endif
 }
 
+/** Perform actual postprocessing on a message, adding userid as specified.
+ *
+ * @param msg The message to postprocess.
+ * @param uid_before Name of field where to insert new field before, or NULL for end.
+ * @param uid_field_name Name of field to add uid to.
+ * @param uid The userid to insert.
+ *
+ * If the field named by uid_field_name already exists, then its string contents will
+ * be used for the field, except "<uid>" will be replaced by the userid.
+ *
+ * If the field named by uid_field_name does not exist, it will be added before the
+ * field named by uid_before, as an integer, with the userid.
+ *
+ * Does not handle sending, or scheduling userid lookup. For that, see msim_postprocess_outgoing().
+ */ 
+MsimMessage *msim_do_postprocessing(MsimMessage *msg, gchar *uid_before, gchar *uid_field_name, guint uid)
+{	
+	purple_debug_info("msim", "msim_do_postprocessing called with ufn=%s, ub=%s, uid=%d\n",
+			uid_field_name, uid_before, uid);
+	msim_msg_dump("msim_do_postprocessing msg: %s\n", msg);
+
+	/* First, check - if the field already exists, treat it as a format string. */
+	if (msim_msg_get(msg, uid_field_name))
+	{
+		MsimMessageElement *elem;
+		gchar *fmt_string;
+		gchar *uid_str;
+
+		/* Warning: this probably violates the encapsulation of MsimMessage */
+
+		elem = msim_msg_get(msg, uid_field_name);
+		g_return_val_if_fail(elem->type == MSIM_TYPE_STRING, NULL);
+
+		/* Get the raw string, not with msim_msg_get_string() since that copies it. 
+		 * Want the original string so can free it. */
+		fmt_string = (gchar *)(elem->data);
+
+		uid_str = g_strdup_printf("%d", uid);
+		elem->data = str_replace(fmt_string, "<uid>", uid_str);
+		g_free(uid_str);
+		g_free(fmt_string);
+
+		purple_debug_info("msim", "msim_postprocess_outgoing_cb: formatted new string, %s\n",
+				elem->data);
+
+	} else {
+		/* Otherwise, insert new field into outgoing message. */
+		msg = msim_msg_insert_before(msg, uid_before, uid_field_name, MSIM_TYPE_INTEGER, GUINT_TO_POINTER(uid));
+	}
+
+	return msg;
+}	
+
 /** Callback for msim_postprocess_outgoing() to add a userid to a message, and send it (once receiving userid).
  *
  * @param session
@@ -1285,12 +1338,7 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
  *  _uid_before: string, name of field before field to insert, or NULL for end
  *
  *
- * If the field named by _uid_field_name already exists, then its string contents will
- * be treated as a format string, containing a "%d", to be replaced by the userid.
- *
- * If the field named by _uid_field_name does not exist, it will be added before the
- * field named by _uid_before, as an integer, with the userid.
- */
+*/
 void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
 	gchar *body_str;
@@ -1314,33 +1362,14 @@ void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, g
 	uid_field_name = msim_msg_get_string(msg, "_uid_field_name");
 	uid_before = msim_msg_get_string(msg, "_uid_before");
 
-	/* First, check - if the field already exists, treat it as a format string. */
-	if (msim_msg_get(msg, uid_field_name))
-	{
-		MsimMessageElement *elem;
-		gchar *fmt_string;
+	msg = msim_do_postprocessing(msg, uid_before, uid_field_name, atol(uid));
 
-		elem = msim_msg_get(msg, uid_field_name);
-		g_return_if_fail(elem->type == MSIM_TYPE_STRING);
-
-		/* Get the raw string, not with msim_msg_get_string() since that copies it. 
-		 * Want the original string so can free it. */
-		fmt_string = (gchar *)(elem->data);
-
-		/* Format string: ....%d... */	
-		elem->data = g_strdup_printf(fmt_string, uid);
-
-		g_free(fmt_string);
-	} else {
-		/* Otherwise, insert new field into outgoing message. */
-		msg = msim_msg_insert_before(msg, uid_before, uid_field_name, MSIM_TYPE_STRING, uid);
-	}
-	
 	/* Send */
 	if (!msim_msg_send(session, msg))
 	{
 		purple_debug_info("msim", "msim_postprocess_outgoing_cb: sending failed for message: %s\n", msg);
 	}
+
 
 	/* Free field names AFTER sending message, because MsimMessage does NOT copy
 	 * field names - instead, treats them as static strings (which they usually are).
@@ -1371,6 +1400,7 @@ gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar
 	/* Store information for msim_postprocess_outgoing_cb(). */
 	purple_debug_info("msim", "msim_postprocess_outgoing(u=%s,ufn=%s,ub=%s)\n",
 			username, uid_field_name, uid_before);
+	msim_msg_dump("msim_postprocess_outgoing: msg before=%s\n", msg);
 	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, g_strdup(username));
 	msg = msim_msg_append(msg, "_uid_field_name", MSIM_TYPE_STRING, g_strdup(uid_field_name));
 	msg = msim_msg_append(msg, "_uid_before", MSIM_TYPE_STRING, g_strdup(uid_before));
@@ -1391,6 +1421,7 @@ gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar
 
 		if (!buddy || !uid)
 		{
+			/* Don't have uid offhand - need to ask for it, and wait until hear back before sending. */
 			purple_debug_info("msim", ">>> msim_postprocess_outgoing: couldn't find username %s in blist\n",
 					username);
 			msim_msg_dump("msim_postprocess_outgoing - scheduling lookup, msg=%s\n", msg);
@@ -1400,12 +1431,14 @@ gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar
 		}
 	}
 	
-	/* Already have uid, insert it and send msg immediately. */
+	/* Already have uid, postprocess and send msg immediately. */
 	purple_debug_info("msim", "msim_postprocess_outgoing: found username %s has uid %d\n",
 			username, uid);
 
-	msg = msim_msg_insert_before(msg, uid_before, uid_field_name, MSIM_TYPE_INTEGER, GUINT_TO_POINTER(uid));
+	msg = msim_do_postprocessing(msg, uid_before, uid_field_name, uid);
 
+	msim_msg_dump("msim_postprocess_outgoing: msg after (uid immediate)=%s\n", msg);
+	
 	rc = msim_msg_send(session, msg);
 
 	//msim_msg_free(msg);
@@ -1417,24 +1450,25 @@ gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar
 void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	MsimSession *session;
-	MsimMessage *msg;
+	MsimMessage *delbuddy_msg;
 	MsimMessage *persist_msg;
+	MsimMessage *blocklist_msg;
 
 	session = (MsimSession *)gc->proto_data;
 
-	msg = msim_msg_new(FALSE,
+	delbuddy_msg = msim_msg_new(TRUE,
 				"delbuddy", MSIM_TYPE_BOOLEAN, TRUE,
 				"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 				/* 'delprofileid' with uid will be inserted here. */
 				NULL);
 	/* TODO: free msg */
-	if (!msim_postprocess_outgoing(session, msg, buddy->name, "delprofileid", NULL))
+	if (!msim_postprocess_outgoing(session, delbuddy_msg, buddy->name, "delprofileid", NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("'delbuddy' command failed"));
 		return;
 	}
 
-	persist_msg = msim_msg_new(FALSE, 
+	persist_msg = msim_msg_new(TRUE, 
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_DELETE,
@@ -1442,13 +1476,27 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 			"lid", MSIM_TYPE_INTEGER, MD_DELETE_BUDDY_LID,
 			"uid", MSIM_TYPE_INTEGER, session->userid,
 			"rid", MSIM_TYPE_INTEGER, session->next_rid++,
-			"body", MSIM_TYPE_STRING, g_strdup("ContactID=%d"),
+			/* <uid> will be replaced by postprocessing */
+			"body", MSIM_TYPE_STRING, g_strdup("ContactID=<uid>"),
 			NULL);
 
 	/* TODO: free msg */
-	if (!msim_postprocess_outgoing(session, msg, buddy->name, "body", NULL))
+	if (!msim_postprocess_outgoing(session, persist_msg, buddy->name, "body", NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("persist command failed"));	
+		return;
+	}
+
+	blocklist_msg = msim_msg_new(TRUE,
+			"blocklist", MSIM_TYPE_BOOLEAN, TRUE,
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			/* TODO: MsimMessage lists */
+			"idlist", MSIM_TYPE_STRING, g_strdup("a-|<uid>|b-|<uid>"),
+			NULL);
+
+	if (!msim_postprocess_outgoing(session, blocklist_msg, buddy->name, "idlist", NULL))
+	{
+		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("blocklist command failed"));
 		return;
 	}
 
