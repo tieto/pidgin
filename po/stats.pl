@@ -33,6 +33,7 @@ $lang{my_MM} = "Burmese (Myanmar)";
 $lang{pt_BR} = "Portuguese (Brazilian)";
 $lang{'sr@Latn'} = "Serbian (Latin)";
 $lang{zh_CN} = "Chinese (Simplified)";
+$lang{zh_HK} = "Chinese (Hong Kong)";
 $lang{zh_TW} = "Chinese (Traditional)";
 
 opendir(DIR, ".") || die "can't open directory: $!";
