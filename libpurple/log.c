@@ -406,6 +406,9 @@ void purple_log_logger_add (PurpleLogLogger *logger)
 	if (g_slist_find(loggers, logger))
 		return;
 	loggers = g_slist_append(loggers, logger);
+	if (strcmp(purple_prefs_get_string("/purple/logging/format"), logger->id) == 0) {
+		purple_prefs_trigger_callback("/purple/logging/format");
+	}
 }
 
 void purple_log_logger_remove (PurpleLogLogger *logger)
