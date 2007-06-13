@@ -336,7 +336,7 @@ MsimMessage *msim_msg_append(MsimMessage *msg, gchar *name, MsimMessageType type
 /** Insert a new element into a message, before the given element name.
  *
  * @param name_before Name of the element to insert the new element before. If 
- * 					  could not be found, new element will be inserted at end.
+ * 					  could not be found or NULL, new element will be inserted at end.
  *
  * See msim_msg_append() for usage of other parameters, and an important note about return value.
  */
@@ -539,8 +539,6 @@ static void msim_msg_pack_element(gpointer data, gpointer user_data)
 	/* Exclude elements beginning with '_' from packed protocol messages. */
 	if (elem->name[0] == '_')
 	{
-		**items = g_strdup("");
-		++(*items);
 		return;
 	}
 
@@ -563,7 +561,7 @@ static void msim_msg_pack_element(gpointer data, gpointer user_data)
 			if (GPOINTER_TO_UINT(elem->data))
 			{
 				/* True - leave in, with blank value. */
-				string = g_strdup_printf("%s\\\\", elem->name);
+				string = g_strdup_printf("%s\\", elem->name);
 			} else {
 				/* False - leave out. */
 				string = g_strdup("");
@@ -727,12 +725,24 @@ GHashTable *msim_parse_body(const gchar *body_str)
 }
 
 /** Search for and return the node in msg, matching name, or NULL. 
+ *
+ * @param msg Message to search within.
+ * @param name Field name to search for.
+ *
+ * @return The GList * node for the MsimMessageElement with the given name, or NULL if not found or name is NULL.
+ *
  * For internal use - users probably want to use msim_msg_get() to
  * access the MsimMessageElement *, instead of the GList * container.
+ *
  */
 static GList *msim_msg_get_node(MsimMessage *msg, gchar *name)
 {
 	GList *i;
+
+	if (!name)
+	{
+		return NULL;
+	}
 
 	/* Linear search for the given name. O(n) but n is small. */
 	for (i = g_list_first(msg); i != NULL; i = g_list_next(i))
