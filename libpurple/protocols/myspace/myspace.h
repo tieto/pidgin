@@ -120,7 +120,6 @@ typedef struct _MsimSession
 	/* TODO: Remove. */
     GHashTable *user_lookup_cb;         /**< Username -> userid lookup callback */
     GHashTable *user_lookup_cb_data;    /**< Username -> userid lookup callback data */
-    GHashTable *user_lookup_cache;      /**< Cached information on users */
 
     gchar *rxbuf;                       /**< Receive buffer */
     guint rxoff;                        /**< Receive buffer offset */
