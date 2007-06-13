@@ -136,6 +136,9 @@
 #define PIDGIN_STOCK_TRAY_OFFLINE         "pidgin-tray-offline"
 #define PIDGIN_STOCK_TRAY_CONNECT         "pidgin-tray-connect"
 #define PIDGIN_STOCK_TRAY_PENDING         "pidgin-tray-pending"
+/* Uncomment me after 2.0.2! 
+ * #define PIDGIN_STOCK_TRAY_EMAIL		  "pidgin-tray-email"
+ */
 
 
 /*@}*/
