@@ -352,7 +352,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 
 		if (ret < 0 && errno == EAGAIN)
 			ret = 0;
-		if (ret < len) {
+		if (ret >= 0 && ret < len) {
 			if (servconn->tx_handler == -1)
 				servconn->tx_handler = purple_input_add(
 					servconn->fd, PURPLE_INPUT_WRITE,
