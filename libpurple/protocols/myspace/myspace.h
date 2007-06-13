@@ -114,7 +114,7 @@ typedef struct _MsimSession
     PurpleAccount *account;
     PurpleConnection *gc;
     guint sesskey;                      /**< Session key from server */
-    gchar *userid;                      /**< This user's numeric user ID */
+    guint userid;                       /**< This user's numeric user ID */
     gint fd;                            /**< File descriptor to/from server */
 
 	/* TODO: Remove. */
@@ -184,6 +184,12 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 
 void msim_input_cb(gpointer gc_uncasted, gint source, 
 		PurpleInputCondition cond);
+
+guint msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb, gpointer data);
+
+void msim_get_own_uid_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+void msim_get_own_uid(MsimSession *session);
+
 void msim_connect_cb(gpointer data, gint source, 
 		const gchar *error_message);
 

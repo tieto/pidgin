@@ -260,7 +260,6 @@ void msim_login(PurpleAccount *acct)
         purple_connection_error(gc, _("Couldn't create socket"));
         return;
     }
-
 }
 /**
  * Process a login challenge, sending a response. 
@@ -943,14 +942,12 @@ gboolean msim_process(MsimSession *session, MsimMessage *msg)
 
         purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
 
-		/* Freed in msim_session_destroy */
         session->sesskey = msim_msg_get_integer(msg, "sesskey");
         purple_debug_info("msim", "SESSKEY=<%d>\n", session->sesskey);
 
         /* Comes with: proof,profileid,userid,uniquenick -- all same values
-         * (at least for me). */
-		/* Freed in msim_session_destroy */
-        session->userid = msim_msg_get_string(msg, "userid");
+		 * some of the time, but can vary. */
+        session->userid = msim_msg_get_integer(msg, "userid");
 
         purple_connection_set_state(session->gc, PURPLE_CONNECTED);
 
@@ -1276,7 +1273,24 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 #endif
 }
 
-/* Callback for msim_postprocess_outgoing() to add a uid field, after resolving username/email.  */
+/** Callback for msim_postprocess_outgoing() to add a userid to a message, and send it (once receiving userid).
+ *
+ * @param session
+ * @param userinfo The user information reply message, containing the user ID
+ * @param data The message to postprocess and send.
+ *
+ * The data message should contain these fields:
+ *
+ *  _uid_field_name: string, name of field to add with userid from userinfo message
+ *  _uid_before: string, name of field before field to insert, or NULL for end
+ *
+ *
+ * If the field named by _uid_field_name already exists, then its string contents will
+ * be treated as a format string, containing a "%d", to be replaced by the userid.
+ *
+ * If the field named by _uid_field_name does not exist, it will be added before the
+ * field named by _uid_before, as an integer, with the userid.
+ */
 void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 {
 	gchar *body_str;
@@ -1297,11 +1311,30 @@ void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, g
 	uid = g_strdup(g_hash_table_lookup(body, "UserID"));
 	g_hash_table_destroy(body);
 
-	/* Insert into outgoing message. */
 	uid_field_name = msim_msg_get_string(msg, "_uid_field_name");
 	uid_before = msim_msg_get_string(msg, "_uid_before");
 
-	msg = msim_msg_insert_before(msg, uid_before, uid_field_name, MSIM_TYPE_STRING, uid);
+	/* First, check - if the field already exists, treat it as a format string. */
+	if (msim_msg_get(msg, uid_field_name))
+	{
+		MsimMessageElement *elem;
+		gchar *fmt_string;
+
+		elem = msim_msg_get(msg, uid_field_name);
+		g_return_if_fail(elem->type == MSIM_TYPE_STRING);
+
+		/* Get the raw string, not with msim_msg_get_string() since that copies it. 
+		 * Want the original string so can free it. */
+		fmt_string = (gchar *)(elem->data);
+
+		/* Format string: ....%d... */	
+		elem->data = g_strdup_printf(fmt_string, uid);
+
+		g_free(fmt_string);
+	} else {
+		/* Otherwise, insert new field into outgoing message. */
+		msg = msim_msg_insert_before(msg, uid_before, uid_field_name, MSIM_TYPE_STRING, uid);
+	}
 	
 	/* Send */
 	if (!msim_msg_send(session, msg))
@@ -1385,6 +1418,7 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 {
 	MsimSession *session;
 	MsimMessage *msg;
+	MsimMessage *persist_msg;
 
 	session = (MsimSession *)gc->proto_data;
 
@@ -1399,11 +1433,8 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("'delbuddy' command failed"));
 		return;
 	}
-	
 
-	/* TODO */
-#if 0
-	if (!msim_send(session,
+	persist_msg = msim_msg_new(FALSE, 
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_DELETE,
@@ -1411,13 +1442,15 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 			"lid", MSIM_TYPE_INTEGER, MD_DELETE_BUDDY_LID,
 			"uid", MSIM_TYPE_INTEGER, 42, /* TODO: put YOUR userid here */
 			"rid", MSIM_TYPE_INTEGER, session->next_rid++,
-			"body", MSIM_TYPE_STRING, g_strdup_printf("ContactID=%s", buddy->name),
-			NULL))
+			"body", MSIM_TYPE_STRING, g_strdup("ContactID=%d"),
+			NULL);
+
+	/* TODO: free msg */
+	if (!msim_postprocess_outgoing(session, msg, buddy->name, "body", NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("persist command failed"));	
 		return;
 	}
-#endif
 
 	/* TODO: update blocklist */
 }
@@ -1553,6 +1586,55 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
     }
 }
 
+/* Setup a callback, to be called when a reply is received with the returned rid.
+ *
+ * @param cb The callback, an MSIM_USER_LOOKUP_CB.
+ * @param data Arbitrary user data to be passed to callback (probably an MsimMessage *).
+ *
+ * @return The request/reply ID, used to link replies with requests. Put the rid in your request.
+ *
+ * TODO: Make more generic and more specific:
+ * 1) MSIM_USER_LOOKUP_CB - make it for PERSIST_REPLY, not just user lookup
+ * 2) data - make it an MsimMessage?
+ */
+guint msim_new_reply_callback(MsimSession *session, MSIM_USER_LOOKUP_CB cb, gpointer data)
+{
+	guint rid;
+
+	rid = session->next_rid++;
+
+    g_hash_table_insert(session->user_lookup_cb, GUINT_TO_POINTER(rid), cb);
+    g_hash_table_insert(session->user_lookup_cb_data, GUINT_TO_POINTER(rid), data);
+
+	return rid;
+}
+
+/** Process reply to get our own userid. */
+void msim_get_own_uid_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
+{
+	/* TODO */
+	msim_msg_dump("msim_get_own_uid_cb: %s\n", userinfo);
+}
+
+/** Request our own userid. */
+void msim_get_own_uid(MsimSession *session)
+{
+	guint rid;
+
+	rid = msim_new_reply_callback(session, msim_get_own_uid_cb, NULL);
+    
+	g_return_if_fail(msim_send(session,
+			"persist", MSIM_TYPE_INTEGER, 1,
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			"cmd", MSIM_TYPE_INTEGER, 1,
+			"dsn", MSIM_TYPE_INTEGER, MG_OWN_MYSPACE_INFO_DSN,
+			"lid", MSIM_TYPE_INTEGER, MG_OWN_MYSPACE_INFO_LID,
+			"rid", MSIM_TYPE_INTEGER, rid,
+			"body", MSIM_TYPE_STRING, g_strdup(""),
+			NULL));
+} 
+
+
 /**
  * Callback when connected. Sets up input handlers.
  *
@@ -1568,7 +1650,7 @@ void msim_connect_cb(gpointer data, gint source, const gchar *error_message)
     g_return_if_fail(data != NULL);
 
     gc = (PurpleConnection *)data;
-    session = gc->proto_data;
+    session = (MsimSession *)gc->proto_data;
 
     if (source < 0)
     {
@@ -1738,12 +1820,8 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
     }
 #endif
 
-    rid = session->next_rid;
-	++session->next_rid;
-
     /* Setup callback. Response will be associated with request using 'rid'. */
-    g_hash_table_insert(session->user_lookup_cb, GUINT_TO_POINTER(rid), cb);
-    g_hash_table_insert(session->user_lookup_cb_data, GUINT_TO_POINTER(rid), data);
+    rid = msim_new_reply_callback(session, cb, data);
 
     /* Send request */
 
