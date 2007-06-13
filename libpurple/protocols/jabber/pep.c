@@ -34,6 +34,11 @@ void jabber_pep_init(void) {
 	}
 }
 
+void jabber_pep_init_actions(GList **m) {
+	/* register the PEP-specific actions */
+	jabber_mood_init_action(m);
+}
+
 void jabber_pep_register_handler(const char *shortname, const char *xmlns, JabberPEPHandler handlerfunc) {
 	gchar *notifyns = g_strdup_printf("%s+notify", xmlns);
 	jabber_add_feature(shortname, notifyns);

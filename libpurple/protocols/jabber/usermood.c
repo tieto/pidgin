@@ -138,6 +138,15 @@ void jabber_mood_init(void) {
 	jabber_pep_register_handler("moodn", "http://jabber.org/protocol/mood", jabber_mood_cb);
 }
 
+static void do_mood_set_mood(PurplePluginAction *action) {
+	
+}
+
+void jabber_mood_init_action(GList **m) {
+	PurplePluginAction *act = purple_plugin_action_new(_("Set Mood..."), do_mood_set_mood);
+	*m = g_list_append(*m, act);
+}
+
 void jabber_set_mood(JabberStream *js, const char *mood, const char *text) {
 	xmlnode *publish, *moodnode;
 	

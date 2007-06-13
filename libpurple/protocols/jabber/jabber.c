@@ -1443,6 +1443,8 @@ static void jabber_password_change(PurplePluginAction *action)
 
 GList *jabber_actions(PurplePlugin *plugin, gpointer context)
 {
+	PurpleConnection *gc = (PurpleConnection *) context;
+	JabberStream *js = gc->proto_data;
 	GList *m = NULL;
 	PurplePluginAction *act;
 
@@ -1459,6 +1461,9 @@ GList *jabber_actions(PurplePlugin *plugin, gpointer context)
 	act = purple_plugin_action_new(_("Search for Users..."),
 								 jabber_user_search_begin);
 	m = g_list_append(m, act);
+	
+	if(js->pep)
+		jabber_pep_init_actions(&m);
 
 	return m;
 }

@@ -28,6 +28,8 @@
 
 void jabber_pep_init(void);
 
+void jabber_pep_init_actions(GList **m);
+
 /*
  * Callback for receiving PEP events.
  *
