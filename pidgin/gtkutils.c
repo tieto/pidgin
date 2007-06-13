@@ -2038,6 +2038,7 @@ add_completion_list(PidginCompletionData *data)
 static void
 screenname_autocomplete_destroyed_cb(GtkWidget *widget, gpointer data)
 {
+	g_free(data);
 	purple_signals_disconnect_by_handle(widget);
 }
 
@@ -2119,7 +2120,7 @@ pidgin_setup_screenname_autocomplete(GtkWidget *entry, GtkWidget *accountopt, gb
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed", entry,
 						PURPLE_CALLBACK(repopulate_autocomplete), cb_data);
 
-	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(screenname_autocomplete_destroyed_cb), NULL);
+	g_signal_connect(G_OBJECT(entry), "destroy", G_CALLBACK(screenname_autocomplete_destroyed_cb), data);
 }
 
 void pidgin_set_cursor(GtkWidget *widget, GdkCursorType cursor_type)
