@@ -1717,9 +1717,6 @@ MsimSession *msim_session_new(PurpleAccount *acct)
 											 they could be integers inside gpointers
 											 or strings, so I don't freed them.
 											 Figure this out, once free cache. */
-    session->user_lookup_cache = g_hash_table_new_full(g_str_hash, g_str_equal,
-		   	g_free, (GDestroyNotify)g_hash_table_destroy);
-
     session->rxoff = 0;
     session->rxbuf = g_new0(gchar, MSIM_READ_BUF_SIZE);
 	session->next_rid = 1;
@@ -1743,7 +1740,6 @@ void msim_session_destroy(MsimSession *session)
 	/* TODO: Remove. */
 	g_hash_table_destroy(session->user_lookup_cb);
 	g_hash_table_destroy(session->user_lookup_cb_data);
-	g_hash_table_destroy(session->user_lookup_cache);
 	
     g_free(session);
 }
@@ -1889,15 +1885,13 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
 char *msim_status_text(PurpleBuddy *buddy)
 {
     MsimSession *session;
-    GHashTable *userinfo;
-    gchar *display_name;
 
     g_return_val_if_fail(buddy != NULL, NULL);
 
     session = (MsimSession *)buddy->account->gc->proto_data;
     g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
-    g_return_val_if_fail(session->user_lookup_cache != NULL, NULL);
 
+	/*
     userinfo = g_hash_table_lookup(session->user_lookup_cache, buddy->name);
     if (!userinfo)
     {
@@ -1907,7 +1901,9 @@ char *msim_status_text(PurpleBuddy *buddy)
     display_name = g_hash_table_lookup(userinfo, "DisplayName");
     g_return_val_if_fail(display_name != NULL, NULL);
 
-    return g_strdup(display_name);
+    return g_strdup(display_name);*/
+
+	return g_strdup("TODO: DisplayName here");
 }
 
 /**
@@ -1926,17 +1922,12 @@ void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboo
     if (PURPLE_BUDDY_IS_ONLINE(buddy))
     {
         MsimSession *session;
-        GHashTable *userinfo;
 
         session = (MsimSession *)buddy->account->gc->proto_data;
 
         g_return_if_fail(MSIM_SESSION_VALID(session));
-        g_return_if_fail(session->user_lookup_cache);
 
-        userinfo = g_hash_table_lookup(session->user_lookup_cache, buddy->name);
-
-        g_return_if_fail(userinfo != NULL);
-
+		/*
         // TODO: if (full), do something different
         purple_notify_user_info_add_pair(user_info, "User ID", g_hash_table_lookup(userinfo, "UserID"));
         purple_notify_user_info_add_pair(user_info, "Display Name", g_hash_table_lookup(userinfo, "DisplayName"));
@@ -1945,7 +1936,8 @@ void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboo
         purple_notify_user_info_add_pair(user_info, "Song", 
                 g_strdup_printf("%s - %s",
                     (gchar *)g_hash_table_lookup(userinfo, "BandName"),
-                    (gchar *)g_hash_table_lookup(userinfo, "SongName")));
+                    (gchar *)g_hash_table_lookup(userinfo, "SongName")));*/
+		purple_notify_user_info_add_pair(user_info, "TODO", "TODO");
     }
 }
 
