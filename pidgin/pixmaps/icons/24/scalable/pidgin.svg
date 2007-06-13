@@ -14,7 +14,7 @@
    id="svg4345"
    sodipodi:version="0.32"
    inkscape:version="0.44.1"
-   sodipodi:docbase="/home/hbons/Desktop/experiment/icons/24/scalable"
+   sodipodi:docbase="/home/hbons/Desktop/2.0.2/pidgin/pixmaps/icons/24/scalable"
    sodipodi:docname="pidgin.svg"
    inkscape:export-filename="/home/hbons/Desktop/pidgin24.png"
    inkscape:export-xdpi="90"
@@ -184,7 +184,7 @@
        x1="15.645709"
        y1="40.434063"
        x2="15.645709"
-       y2="50.726673"
+       y2="43.693668"
        gradientUnits="userSpaceOnUse" />
     <linearGradient
        inkscape:collect="always"
@@ -458,13 +458,13 @@
      inkscape:pageshadow="2"
      inkscape:zoom="16.081777"
      inkscape:cx="21.855503"
-     inkscape:cy="14.904903"
+     inkscape:cy="14.873812"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
      inkscape:window-width="1434"
-     inkscape:window-height="844"
+     inkscape:window-height="840"
      inkscape:window-x="0"
      inkscape:window-y="0"
      showguides="true"
@@ -540,7 +540,7 @@
        sodipodi:rx="1.2410715"
        sodipodi:ry="1.2946428"
        d="M 11.410714 24.3125 A 1.2410715 1.2946428 0 1 1  8.928571,24.3125 A 1.2410715 1.2946428 0 1 1  11.410714 24.3125 z"
-       transform="matrix(0.805757,0,0,1.158621,-2.194263,-17.66897)" />
+       transform="matrix(1.208633,0,0,1.158621,-6.791366,-17.66897)" />
     <path
        transform="matrix(0.670792,0,0,0.486348,-3.805943,-3.90166)"
        style="fill:#3b1941;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1"
@@ -581,7 +581,7 @@
        sodipodi:rx="1.2410715"
        sodipodi:ry="1.2946428"
        d="M 11.410714 24.3125 A 1.2410715 1.2946428 0 1 1  8.928571,24.3125 A 1.2410715 1.2946428 0 1 1  11.410714 24.3125 z"
-       transform="matrix(0.805756,0,0,1.158621,6.70093,-17.66895)" />
+       transform="matrix(1.153827,0,0,1.158621,3.593156,-17.66895)" />
     <rect
        style="fill:#eeeeec;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect3140"
