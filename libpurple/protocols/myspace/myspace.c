@@ -930,10 +930,6 @@ or:
 
 /** Preprocess incoming messages, resolving as needed, calling msim_process() when ready to process.
  *
- * TODO: if no uid to resolve, process immediately. if uid, check if know username,
- * if so, tag and process immediately, if not, queue, send resolve msg, and process
- * once get username.
- *
  * @param session
  * @param msg MsimMessage *, freed by caller.
  */
@@ -1316,7 +1312,7 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
     return TRUE;
 }
 
-/** Add a buddy to user's buddy list. TODO: make work. Should receive statuses from added buddy. */
+/** Add a buddy to user's buddy list. */
 void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group)
 {
 	MsimSession *session;
@@ -1342,16 +1338,15 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 	msim_msg_free(msg);
 
 	/* TODO: update blocklist */
-
 #if 0
 	/* TODO */
-	if (!msim_send(session,
+	if (!msim_postprocess_outgoing(session,
 			"persist", MSIM_TYPE_INTEGER, 1,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
 			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_PUT,
 			"dsn", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_DSN,
 			"lid", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_LID,
-			/* TODO: msim_send_persist, to handle all this rid business */
+			/* TODO: Use msim_new_reply_callback to get rid. */
 			"rid", MSIM_TYPE_INTEGER, session->next_rid++,
 			"body", MSIM_TYPE_STRING,
 				g_strdup_printf("ContactID=%s\034"
@@ -1647,7 +1642,6 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
         purple_debug_error("msim", "msim_input_cb: %d-byte read buffer full!\n",
                 MSIM_READ_BUF_SIZE);
         purple_connection_error(gc, _("Read buffer full"));
-        /* TODO: fix 100% CPU after closing */
 
 		msim_close(session->gc);
         return;
@@ -1998,7 +1992,6 @@ char *msim_status_text(PurpleBuddy *buddy)
     session = (MsimSession *)buddy->account->gc->proto_data;
     g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
 
-	/* TODO: const correctness */
 	/* TODO: show Headline, or DisplayName, or selectable, or both? */
 	display_name = purple_blist_node_get_string(&buddy->node, "DisplayName");
 
