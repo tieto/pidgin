@@ -797,7 +797,7 @@ static const gchar *msim_uid2username_from_blist(MsimSession *session, guint wan
 
 		buddy = buddies->data;
 
-		uid = purple_blist_node_get_int(&buddy->node, "uid");
+		uid = purple_blist_node_get_int(&buddy->node, "UserID");
 
 		/* name = buddy->name; */								/* crash */
 		/* name = PURPLE_BLIST_NODE_NAME(&buddy->node);  */		/* crash */
@@ -985,6 +985,76 @@ gboolean msim_process(MsimSession *session, MsimMessage *msg)
     }
 }
 
+/** Store an field of information about a buddy. */
+void msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data)
+{
+	PurpleBuddy *buddy;
+	gchar *key_str, *value_str;
+
+	buddy = (PurpleBuddy *)user_data;
+	key_str = (gchar *)key;
+	value_str = (gchar *)value;
+
+	if (strcmp(key_str, "UserID") == 0 ||
+			strcmp(key_str, "Age") == 0 ||
+			strcmp(key_str, "TotalFriends") == 0)
+	{
+		/* Certain fields get set as integers, instead of strings, for
+		 * convenience. May not be the best way to do it, but having at least
+		 * UserID as an integer is convenient...until it overflows! */
+		purple_blist_node_set_int(&buddy->node, key_str, atol(value_str));
+	} else {
+		purple_blist_node_set_string(&buddy->node, key_str, value_str);
+	}
+}
+
+/** Save buddy information to the buddy list from a user info reply message.
+ *
+ * @param session
+ * @param msg The user information reply, with any amount of information.
+ *
+ * The information is saved to the buddy's blist node, which ends up in blist.xml.
+ */
+gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
+{
+	GHashTable *body;
+	gchar *username, *body_str, *uid;
+	PurpleBuddy *buddy;
+	guint rid;
+
+	rid = msim_msg_get_integer(msg, "rid");
+	
+	g_return_val_if_fail(rid != 0, FALSE);
+
+	body_str = msim_msg_get_string(msg, "body");
+	g_return_val_if_fail(body_str != NULL, FALSE);
+	body = msim_parse_body(body_str);
+	g_free(body_str);
+
+	/* TODO: implement a better hash-like interface, and use it. */
+	username = g_hash_table_lookup(body, "UserName");
+
+	if (!username)
+	{
+		purple_debug_info("msim", 
+			"msim_process_reply: not caching body, no UserName\n");
+		return FALSE;
+	}
+
+	uid = g_hash_table_lookup(body, "UserID");
+	g_return_val_if_fail(uid, FALSE);
+
+	purple_debug_info("msim", "associating uid %d with username %s\n", uid, username);
+
+	buddy = purple_find_buddy(session->account, username);
+	if (buddy)
+	{
+		g_hash_table_foreach(body, msim_store_buddy_info_each, buddy);
+	}
+
+	return TRUE;
+}
+
 /**
  * Process a persistance message reply from the server.
  *
@@ -1003,51 +1073,10 @@ gboolean msim_process_reply(MsimSession *session, MsimMessage *msg)
         MSIM_USER_LOOKUP_CB cb;
         gpointer data;
         guint rid;
-        GHashTable *body;
-        gchar *username, *body_str;
 
-        rid = msim_msg_get_integer(msg, "rid");
+		msim_store_buddy_info(session, msg);		
 
-        /* Cache the user info. Currently, the GHashTable of user info in
-         * this cache never expires so is never freed. TODO: expire and destroy
-         * 
-         * Some information never changes (username->userid map), some does.
-         * TODO: Cache what doesn't change only
-         */
-		body_str = msim_msg_get_string(msg, "body");
-        body = msim_parse_body(body_str);
-		g_free(body_str);
-
-
-		/* TODO: implement a better hash-like interface, and use it. */
-        username = g_hash_table_lookup(body, "UserName");
-
-		/* TODO: Save user info reply for msim_tooltip_text. */
-		/* TODO: get rid of user_lookup_cache, and find another way to 
-		 * pass the relevant information to msim_tooltip_text. */
-		/* g_hash_table_insert(session->user_lookup_cache, username, body); */
-
-        if (username)
-        {
-			PurpleBuddy *buddy;
-			gchar *uid;
-
-			uid = g_hash_table_lookup(body, "UserID");
-			g_assert(uid);
-
-			/* Associate uid with user on buddy list. This is saved to blist.xml. */
-
-			purple_debug_info("msim", "associating %d with %s\n", uid, username);
-
-			buddy = purple_find_buddy(session->account, username);
-			if (buddy)
-			{
-				purple_blist_node_set_int(&buddy->node, "uid", atoi(uid));
-			} 
-        } else {
-            purple_debug_info("msim", 
-					"msim_process_reply: not caching body, no UserName\n");
-        } 
+		rid = msim_msg_get_integer(msg, "rid");
 
         /* If a callback is registered for this userid lookup, call it. */
         cb = g_hash_table_lookup(session->user_lookup_cb, GUINT_TO_POINTER(rid));
@@ -1190,8 +1219,8 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
 
         purple_blist_add_buddy(buddy, NULL, NULL, NULL);
 		/* All buddies on list should have 'uid' integer associated with them. */
-		purple_blist_node_set_int(&buddy->node, "uid", msim_msg_get_integer(msg, "f"));
-		purple_debug_info("msim", "UID=%d\n", purple_blist_node_get_int(&buddy->node, "uid"));
+		purple_blist_node_set_int(&buddy->node, "UserID", msim_msg_get_integer(msg, "f"));
+		purple_debug_info("msim", "UID=%d\n", purple_blist_node_get_int(&buddy->node, "UserID"));
     } else {
         purple_debug_info("msim", "msim_status: found buddy %s\n", username);
     }
@@ -1414,7 +1443,7 @@ gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar
 		buddy = purple_find_buddy(session->account, username);
 		if (buddy)
 		{
-			uid = purple_blist_node_get_int(&buddy->node, "uid");
+			uid = purple_blist_node_get_int(&buddy->node, "UserID");
 		} else {
 			uid = 0;
 		}
@@ -1885,25 +1914,22 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
 char *msim_status_text(PurpleBuddy *buddy)
 {
     MsimSession *session;
+	gchar *display_name;
 
     g_return_val_if_fail(buddy != NULL, NULL);
 
     session = (MsimSession *)buddy->account->gc->proto_data;
     g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
 
-	/*
-    userinfo = g_hash_table_lookup(session->user_lookup_cache, buddy->name);
-    if (!userinfo)
-    {
-        return g_strdup("");
-    }
+	/* TODO: const correctness */
+	display_name = (gchar *)purple_blist_node_get_string(&buddy->node, "displayname");
 
-    display_name = g_hash_table_lookup(userinfo, "DisplayName");
-    g_return_val_if_fail(display_name != NULL, NULL);
-
-    return g_strdup(display_name);*/
-
-	return g_strdup("TODO: DisplayName here");
+	if (display_name)
+	{
+		return g_strdup(display_name);
+	} else {
+		return NULL;
+	}
 }
 
 /**
@@ -1927,17 +1953,28 @@ void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboo
 
         g_return_if_fail(MSIM_SESSION_VALID(session));
 
-		/*
-        // TODO: if (full), do something different
-        purple_notify_user_info_add_pair(user_info, "User ID", g_hash_table_lookup(userinfo, "UserID"));
-        purple_notify_user_info_add_pair(user_info, "Display Name", g_hash_table_lookup(userinfo, "DisplayName"));
-        purple_notify_user_info_add_pair(user_info, "User Name", g_hash_table_lookup(userinfo, "UserName"));
-        purple_notify_user_info_add_pair(user_info, "Total Friends", g_hash_table_lookup(userinfo, "TotalFriends"));
+        /* TODO: if (full), do something different */
+		purple_notify_user_info_add_pair(user_info, "User ID",
+				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "UserID")));
+		
+		purple_notify_user_info_add_pair(user_info, "Display Name",
+				purple_blist_node_get_string(&buddy->node, "DisplayName"));
+
+		/* Doesn't strike me as too useful.
+		purple_notify_user_info_add_pair(user_info, "User Name",
+				purple_blist_node_get_string(&buddy->node, "UserName")); 
+				*/
+		
+		purple_notify_user_info_add_pair(user_info, "Total Friends",
+				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "TotalFriends")));
+
+		purple_notify_user_info_add_pair(user_info, "Age",
+				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "Age")));
+
         purple_notify_user_info_add_pair(user_info, "Song", 
                 g_strdup_printf("%s - %s",
-                    (gchar *)g_hash_table_lookup(userinfo, "BandName"),
-                    (gchar *)g_hash_table_lookup(userinfo, "SongName")));*/
-		purple_notify_user_info_add_pair(user_info, "TODO", "TODO");
+					purple_blist_node_get_string(&buddy->node, "BandName"),
+					purple_blist_node_get_string(&buddy->node, "SongName")));
     }
 }
 
