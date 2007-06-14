@@ -946,8 +946,10 @@ gboolean msim_process(MsimSession *session, MsimMessage *msg)
         purple_debug_info("msim", "SESSKEY=<%d>\n", session->sesskey);
 
         /* Comes with: proof,profileid,userid,uniquenick -- all same values
-		 * some of the time, but can vary. */
+		 * some of the time, but can vary. This is our own user ID. */
         session->userid = msim_msg_get_integer(msg, "userid");
+
+		/* TODO: fake our own userid being online */
 
         purple_connection_set_state(session->gc, PURPLE_CONNECTED);
 
@@ -1218,14 +1220,16 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
         buddy = purple_buddy_new(session->account, username, NULL);
 
         purple_blist_add_buddy(buddy, NULL, NULL, NULL);
+
 		/* All buddies on list should have 'uid' integer associated with them. */
 		purple_blist_node_set_int(&buddy->node, "UserID", msim_msg_get_integer(msg, "f"));
-		purple_debug_info("msim", "UID=%d\n", purple_blist_node_get_int(&buddy->node, "UserID"));
+		
+		msim_store_buddy_info(session, msg);
     } else {
         purple_debug_info("msim", "msim_status: found buddy %s\n", username);
     }
 
-    /* TODO: show headline */
+	purple_blist_node_set_string(&buddy->node, "Headline", status_headline);
   
     /* Set user status */	
     switch (status_code)
@@ -1922,7 +1926,8 @@ char *msim_status_text(PurpleBuddy *buddy)
     g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
 
 	/* TODO: const correctness */
-	display_name = (gchar *)purple_blist_node_get_string(&buddy->node, "displayname");
+	/* TODO: show Headline, or DisplayName, or selectable, or both? */
+	display_name = (gchar *)purple_blist_node_get_string(&buddy->node, "DisplayName");
 
 	if (display_name)
 	{
@@ -1954,27 +1959,44 @@ void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboo
         g_return_if_fail(MSIM_SESSION_VALID(session));
 
         /* TODO: if (full), do something different */
+		
+		/* TODO: move to buddy profile 
 		purple_notify_user_info_add_pair(user_info, "User ID",
 				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "UserID")));
-		
-		purple_notify_user_info_add_pair(user_info, "Display Name",
-				purple_blist_node_get_string(&buddy->node, "DisplayName"));
-
-		/* Doesn't strike me as too useful.
-		purple_notify_user_info_add_pair(user_info, "User Name",
-				purple_blist_node_get_string(&buddy->node, "UserName")); 
 				*/
-		
-		purple_notify_user_info_add_pair(user_info, "Total Friends",
-				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "TotalFriends")));
 
+		/* 	Already shown in status text. 
+		purple_notify_user_info_add_pair(user_info, "Display Name",
+				purple_blist_node_get_string(&buddy->node, "DisplayName")); */
+
+		/* Useful to identify the account the tooltip refers to. Other prpls show this. */
+		purple_notify_user_info_add_pair(user_info, "Account",
+				purple_blist_node_get_string(&buddy->node, "UserName")); 
+
+
+		/* a/s/l...the vitals */	
 		purple_notify_user_info_add_pair(user_info, "Age",
 				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "Age")));
 
-        purple_notify_user_info_add_pair(user_info, "Song", 
+		purple_notify_user_info_add_pair(user_info, "Gender",
+				 purple_blist_node_get_string(&buddy->node, "Gender"));
+
+		purple_notify_user_info_add_pair(user_info, "Location",
+				purple_blist_node_get_string(&buddy->node, "Location"));
+
+		/* Other information */
+ 		if (purple_blist_node_get_string(&buddy->node, "Headline"))
+			purple_notify_user_info_add_pair(user_info, "Headline",
+					purple_blist_node_get_string(&buddy->node, "Headline")); 
+
+	    purple_notify_user_info_add_pair(user_info, "Song", 
                 g_strdup_printf("%s - %s",
 					purple_blist_node_get_string(&buddy->node, "BandName"),
 					purple_blist_node_get_string(&buddy->node, "SongName")));
+
+		purple_notify_user_info_add_pair(user_info, "Total Friends",
+				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "TotalFriends")));
+
     }
 }
 
