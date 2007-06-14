@@ -1,9 +1,15 @@
+2007-06-14 Jeff Connelly <jeff2@homing.pidgin.im> - 0.7
+* Add/delete buddy now functional (required many other code improvements).
+* Show improved buddy information in tooltip text.
+* Show user profile (in "Get Info" option) for buddies on buddy list.
+* Fix crash when re-logging in. 
+
 2007-06-12 Jeff Connelly <jeff2@homing.pidgin.im> - 0.6
 * Use RC4 code from Libpurple 2.0.1
 * Use a new implementation for sending and receiving messages (MsimMessage).
   This infrastructural change significantly improves extensibility.
 * Show online buddies as online.
-* Send and receive typing notifications.
+* Send and receive typing notifications (along with other required changes).
 
 2007-05-22 Jeff Connelly <jeff2@homing.pidgin.im> - 0.5
 * Add protocol escaping, so can now send and receive / and \ characters
