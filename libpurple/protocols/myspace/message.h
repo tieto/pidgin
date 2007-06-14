@@ -28,7 +28,7 @@
 #define MsimMessage GList		/* #define instead of typedef to avoid casting */
 typedef struct _MsimMessageElement
 {
-	gchar *name;					/**< Textual name of element. */
+	const gchar *name;				/**< Textual name of element. */
 	guint type;						/**< MSIM_TYPE_* code. */
 	gpointer data;					/**< Pointer to data, or GUINT_TO_POINTER for int/bool. */
 } MsimMessageElement;
@@ -49,9 +49,9 @@ MsimMessage *msim_msg_new(gboolean not_empty, ...);
 
 MsimMessage *msim_msg_clone(MsimMessage *old);
 void msim_msg_free(MsimMessage *msg);
-MsimMessage *msim_msg_append(MsimMessage *msg, gchar *name, MsimMessageType type, gpointer data);
-MsimMessage *msim_msg_insert_before(MsimMessage *msg, gchar *name_before, gchar *name, MsimMessageType type, gpointer data);
-void msim_msg_dump(char *fmt_string, MsimMessage *msg);
+MsimMessage *msim_msg_append(MsimMessage *msg, const gchar *name, MsimMessageType type, gpointer data);
+MsimMessage *msim_msg_insert_before(MsimMessage *msg, const gchar *name_before, const gchar *name, MsimMessageType type, gpointer data);
+void msim_msg_dump(const char *fmt_string, MsimMessage *msg);
 gchar *msim_msg_pack(MsimMessage *msg);
 
 /* Defined in myspace.h */
@@ -70,9 +70,9 @@ gboolean msim_msg_send(struct _MsimSession *session, MsimMessage *msg);
 MsimMessage *msim_parse(gchar *raw);
 GHashTable *msim_parse_body(const gchar *body_str);
 
-MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name);
-gchar *msim_msg_get_string(MsimMessage *msg, gchar *name);
-guint msim_msg_get_integer(MsimMessage *msg, gchar *name);
-gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data, gsize *binary_length);
+MsimMessageElement *msim_msg_get(MsimMessage *msg, const gchar *name);
+gchar *msim_msg_get_string(MsimMessage *msg, const gchar *name);
+guint msim_msg_get_integer(MsimMessage *msg, const gchar *name);
+gboolean msim_msg_get_binary(MsimMessage *msg, const gchar *name, gchar **binary_data, gsize *binary_length);
 
 #endif /* _MYSPACE_MESSAGE_H */

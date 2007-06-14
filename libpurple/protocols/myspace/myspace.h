@@ -150,20 +150,20 @@ gboolean msim_send_raw(MsimSession *session, const gchar *msg);
 
 void msim_login(PurpleAccount *acct);
 gboolean msim_login_challenge(MsimSession *session, MsimMessage *msg);
-gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE],
-		        gchar *email, gchar *password, guint *response_len);
+const gchar *msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
+		        const gchar *email, const gchar *password, guint *response_len);
 
 
-int msim_send_im(PurpleConnection *gc, const char *who, const char *message, 
+int msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message, 
 	PurpleMessageFlags flags);
-gboolean msim_send_bm(MsimSession *session, gchar *who, gchar *text, int type);
+gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
 void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
 
 int msim_incoming_im(MsimSession *session, MsimMessage *msg);
 int msim_incoming_action(MsimSession *session, MsimMessage *msg);
 
-unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state);
-void msim_get_info(PurpleConnection *gc, const char *name);
+unsigned int msim_send_typing(PurpleConnection *gc, const gchar *name, PurpleTypingState state);
+void msim_get_info(PurpleConnection *gc, const gchar *name);
 
 void msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg);
@@ -173,10 +173,10 @@ gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg);
 
 gboolean msim_process(MsimSession *session, MsimMessage *msg);
 
-MsimMessage *msim_do_postprocessing(MsimMessage *msg, gchar *uid_field_name, gchar *uid_before, guint uid);
+MsimMessage *msim_do_postprocessing(MsimMessage *msg, const gchar *uid_field_name, const gchar *uid_before, guint uid);
 void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
-gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar *username, 
-	gchar *uid_field_name, gchar *uid_before);
+gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, const gchar *username, 
+	const gchar *uid_field_name, const gchar *uid_before);
 
 
 gboolean msim_error(MsimSession *session, MsimMessage *msg);
@@ -239,15 +239,15 @@ void init_plugin(PurplePlugin *plugin);
 */
 
 typedef struct _rc4_state_struct {
-  unsigned char s_box[256];
-  unsigned char index_i;
-  unsigned char index_j;
+  guchar s_box[256];
+  guchar index_i;
+  guchar index_j;
 } rc4_state_struct;
 
 void crypt_rc4_init(rc4_state_struct *rc4_state,
-            const unsigned char *key, int key_len);
+            const guchar *key, int key_len);
 
-void crypt_rc4(rc4_state_struct *rc4_state, unsigned char *data, int data_len);
+void crypt_rc4(rc4_state_struct *rc4_state, guchar *data, int data_len);
 #endif	/* !MSIM_USE_PURPLE_RC4 */
 
 #endif /* !_MYSPACE_MYSPACE_H */

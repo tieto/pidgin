@@ -107,7 +107,7 @@ GList *msim_status_types(PurpleAccount *acct)
  */
 const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
 {
-    /* Use a MySpace icon submitted by hbons submitted one at
+    /* Use a MySpace icon submitted by hbons at
      * http://developer.pidgin.im/wiki/MySpaceIM. */
     return "myspace";
 }
@@ -161,8 +161,8 @@ gchar *msim_escape(const gchar *msg)
  */
 gchar *str_replace(const gchar *str, const gchar *old, const gchar *new)
 {
-	char **items;
-	char *ret;
+	gchar **items;
+	gchar *ret;
 
 	items = g_strsplit(str, old, -1);
 	ret = g_strjoinv(new, items);
@@ -176,7 +176,7 @@ gchar *str_replace(const gchar *str, const gchar *old, const gchar *new)
 #ifdef MSIM_DEBUG_MSG
 void print_hash_item(gpointer key, gpointer value, gpointer user_data)
 {
-    purple_debug_info("msim", "%s=%s\n", (char *)key, (char *)value);
+    purple_debug_info("msim", "%s=%s\n", (gchar *)key, (gchar *)value);
 }
 #endif
 
@@ -229,7 +229,7 @@ gboolean msim_send_raw(MsimSession *session, const gchar *msg)
 void msim_login(PurpleAccount *acct)
 {
     PurpleConnection *gc;
-    const char *host;
+    const gchar *host;
     int port;
 
     g_return_if_fail(acct != NULL);
@@ -272,7 +272,7 @@ void msim_login(PurpleAccount *acct)
 gboolean msim_login_challenge(MsimSession *session, MsimMessage *msg) 
 {
     PurpleAccount *account;
-    gchar *response;
+    const gchar *response;
 	guint response_len;
 	gchar *nc;
 	gsize nc_len;
@@ -360,23 +360,23 @@ gboolean msim_login_challenge(MsimSession *session, MsimMessage *msg)
 */
 
 void crypt_rc4_init(rc4_state_struct *rc4_state, 
-		    const unsigned char *key, int key_len)
+		    const guchar *key, int key_len)
 {
   int ind;
-  unsigned char j = 0;
-  unsigned char *s_box;
+  unsigned gchar j = 0;
+  unsigned gchar *s_box;
 
   memset(rc4_state, 0, sizeof(rc4_state_struct));
   s_box = rc4_state->s_box;
   
   for (ind = 0; ind < 256; ind++)
   {
-    s_box[ind] = (unsigned char)ind;
+    s_box[ind] = (guchar)ind;
   }
 
   for( ind = 0; ind < 256; ind++)
   {
-     unsigned char tc;
+     guchar tc;
 
      j += (s_box[ind] + key[ind%key_len]);
 
@@ -387,11 +387,11 @@ void crypt_rc4_init(rc4_state_struct *rc4_state,
 
 }
 
-void crypt_rc4(rc4_state_struct *rc4_state, unsigned char *data, int data_len)
+void crypt_rc4(rc4_state_struct *rc4_state, guchar *data, int data_len)
 {
-  unsigned char *s_box;
-  unsigned char index_i;
-  unsigned char index_j;
+  guchar *s_box;
+  guchar index_i;
+  guchar index_j;
   int ind;
 
   /* retrieve current state from the state struct (so we can resume where
@@ -402,8 +402,8 @@ void crypt_rc4(rc4_state_struct *rc4_state, unsigned char *data, int data_len)
 
   for( ind = 0; ind < data_len; ind++)
   {
-    unsigned char tc;
-    unsigned char t;
+    guchar tc;
+    guchar t;
 
     index_i++;
     index_j += s_box[index_i];
@@ -435,8 +435,8 @@ void crypt_rc4(rc4_state_struct *rc4_state, unsigned char *data, int data_len)
  * @return Binary login challenge response, ready to send to the server. Must be g_free()'d
  *         when finished.
  */
-gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE], 
-		gchar *email, gchar *password, guint *response_len)
+const gchar *msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE], 
+		const gchar *email, const gchar *password, guint *response_len)
 {
     PurpleCipherContext *key_context;
     PurpleCipher *sha1;
@@ -551,7 +551,7 @@ gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE],
 
 	*response_len = data_out_len;
 
-    return (gchar *)data_out;
+    return (const gchar *)data_out;
 }
 
 /**
@@ -568,8 +568,8 @@ gchar *msim_compute_login_response(gchar nonce[2 * NONCE_SIZE],
  * a username or email address is given, the userid must be looked up.
  * This function does that by calling msim_postprocess_outgoing().
  */
-int msim_send_im(PurpleConnection *gc, const char *who,
-                            const char *message, PurpleMessageFlags flags)
+int msim_send_im(PurpleConnection *gc, const gchar *who,
+                            const gchar *message, PurpleMessageFlags flags)
 {
     MsimSession *session;
     
@@ -581,8 +581,7 @@ int msim_send_im(PurpleConnection *gc, const char *who,
 
 	session = gc->proto_data;
 
-	/* TODO: const-correctness */
-	if (msim_send_bm(session, (char *)who, (char *)message, MSIM_BM_INSTANT))
+	if (msim_send_bm(session, who, message, MSIM_BM_INSTANT))
 	{
 		/* Return 1 to have Purple show this IM as being sent, 0 to not. I always
 		 * return 1 even if the message could not be sent, since I don't know if
@@ -616,11 +615,13 @@ int msim_send_im(PurpleConnection *gc, const char *who,
  *
  * Buddy messages ('bm') include instant messages, action messages, status messages, etc.
  */
-gboolean msim_send_bm(MsimSession *session, gchar *who, gchar *text, int type)
+gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type)
 {
 	gboolean rc;
 	MsimMessage *msg;
-    const char *from_username = session->account->username;
+    const gchar *from_username;
+   
+	from_username = session->account->username;
 
     purple_debug_info("msim", "sending %d message from %s to %s: %s\n",
                   type, from_username, who, text);
@@ -633,7 +634,7 @@ gboolean msim_send_bm(MsimSession *session, gchar *who, gchar *text, int type)
 			"msg", MSIM_TYPE_STRING, g_strdup(text),
 			NULL);
 
-	rc = msim_postprocess_outgoing(session, msg, (char *)who, "t", "cv");
+	rc = msim_postprocess_outgoing(session, msg, who, "t", "cv");
 
 	msim_msg_free(msg);
 
@@ -714,9 +715,9 @@ gboolean msim_incoming_action(MsimSession *session, MsimMessage *msg)
  * @param state PURPLE_TYPING, PURPLE_TYPED, PURPLE_NOT_TYPING
  *
  */
-unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state)
+unsigned int msim_send_typing(PurpleConnection *gc, const gchar *name, PurpleTypingState state)
 {
-	char *typing_str;
+	const gchar *typing_str;
 	MsimSession *session;
 
 	session = (MsimSession *)gc->proto_data;
@@ -735,12 +736,12 @@ unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypi
 	}
 
 	purple_debug_info("msim", "msim_send_typing(%s): %d (%s)\n", name, state, typing_str);
-	msim_send_bm(session, (gchar *)name, typing_str, MSIM_BM_ACTION);
+	msim_send_bm(session, name, typing_str, MSIM_BM_ACTION);
 	return 0;
 }
 
 /** Retrieve a user's profile. */
-void msim_get_info(PurpleConnection *gc, const char *name)
+void msim_get_info(PurpleConnection *gc, const gchar *name)
 {
 	PurpleNotifyUserInfo *user_info;
 	PurpleBuddy *buddy;
@@ -1383,7 +1384,7 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
  *
  * Does not handle sending, or scheduling userid lookup. For that, see msim_postprocess_outgoing().
  */ 
-MsimMessage *msim_do_postprocessing(MsimMessage *msg, gchar *uid_before, gchar *uid_field_name, guint uid)
+MsimMessage *msim_do_postprocessing(MsimMessage *msg, const gchar *uid_before, const gchar *uid_field_name, guint uid)
 {	
 	purple_debug_info("msim", "msim_do_postprocessing called with ufn=%s, ub=%s, uid=%d\n",
 			uid_field_name, uid_before, uid);
@@ -1485,8 +1486,8 @@ void msim_postprocess_outgoing_cb(MsimSession *session, MsimMessage *userinfo, g
  *
  * @return Postprocessed message.
  */
-gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, gchar *username, 
-	gchar *uid_field_name, gchar *uid_before)
+gboolean msim_postprocess_outgoing(MsimSession *session, MsimMessage *msg, const gchar *username, 
+	const gchar *uid_field_name, const gchar *uid_before)
 {
     PurpleBuddy *buddy;
 	guint uid;
@@ -1984,13 +1985,13 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
  *
  * @param buddy The buddy to obtain status text for.
  *
- * @return Status text, or NULL if error.
+ * @return Status text, or NULL if error. Caller g_free()'s.
  *
  */
 char *msim_status_text(PurpleBuddy *buddy)
 {
     MsimSession *session;
-	gchar *display_name;
+	const gchar *display_name;
 
     g_return_val_if_fail(buddy != NULL, NULL);
 
@@ -1999,7 +2000,7 @@ char *msim_status_text(PurpleBuddy *buddy)
 
 	/* TODO: const correctness */
 	/* TODO: show Headline, or DisplayName, or selectable, or both? */
-	display_name = (gchar *)purple_blist_node_get_string(&buddy->node, "DisplayName");
+	display_name = purple_blist_node_get_string(&buddy->node, "DisplayName");
 
 	if (display_name)
 	{

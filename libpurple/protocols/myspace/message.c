@@ -24,9 +24,9 @@
 
 static void msim_msg_free_element(gpointer data, gpointer user_data);
 static void msim_msg_debug_string_element(gpointer data, gpointer user_data);
-static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, gchar *sep, gchar *begin, gchar *end);
+static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, const gchar *sep, const gchar *begin, const gchar *end);
 static gchar *msim_msg_pack_element_data(MsimMessageElement *elem);
-static GList *msim_msg_get_node(MsimMessage *msg, gchar *name);
+static GList *msim_msg_get_node(MsimMessage *msg, const gchar *name);
 static MsimMessage *msim_msg_new_v(va_list argp);
 
 /** Create a new MsimMessage. 
@@ -287,7 +287,7 @@ gboolean msim_send(MsimSession *session, ...)
  *
  * For internal use; users probably want msim_msg_append() or msim_msg_insert_before(). 
  */
-static MsimMessageElement *msim_msg_element_new(gchar *name, MsimMessageType type, gpointer data)
+static MsimMessageElement *msim_msg_element_new(const gchar *name, MsimMessageType type, gpointer data)
 {
 	MsimMessageElement *elem;
 
@@ -328,7 +328,7 @@ static MsimMessageElement *msim_msg_element_new(gchar *name, MsimMessageType typ
  * * MSIM_TYPE_LIST: TODO
  *
  * */
-MsimMessage *msim_msg_append(MsimMessage *msg, gchar *name, MsimMessageType type, gpointer data)
+MsimMessage *msim_msg_append(MsimMessage *msg, const gchar *name, MsimMessageType type, gpointer data)
 {
 	return g_list_append(msg, msim_msg_element_new(name, type, data));
 }
@@ -340,7 +340,7 @@ MsimMessage *msim_msg_append(MsimMessage *msg, gchar *name, MsimMessageType type
  *
  * See msim_msg_append() for usage of other parameters, and an important note about return value.
  */
-MsimMessage *msim_msg_insert_before(MsimMessage *msg, gchar *name_before, gchar *name, MsimMessageType type, gpointer data)
+MsimMessage *msim_msg_insert_before(MsimMessage *msg, const gchar *name_before, const gchar *name, MsimMessageType type, gpointer data)
 {
 	MsimMessageElement *new_elem;
 	GList *node_before;
@@ -355,7 +355,7 @@ MsimMessage *msim_msg_insert_before(MsimMessage *msg, gchar *name_before, gchar 
 /** Pack a string using the given GFunc and seperator.
  * Used by msim_msg_dump() and msim_msg_pack().
  */
-static gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, gchar *sep, gchar *begin, gchar *end)
+gchar *msim_msg_pack_using(MsimMessage *msg, GFunc gf, const gchar *sep, const gchar *begin, const gchar *end)
 {
 	gchar **strings;
 	gchar **strings_tmp;
@@ -450,7 +450,7 @@ static void msim_msg_debug_string_element(gpointer data, gpointer user_data)
  *
  * @param fmt_string A static string, in which '%s' will be replaced.
  */
-void msim_msg_dump(gchar *fmt_string, MsimMessage *msg)
+void msim_msg_dump(const gchar *fmt_string, MsimMessage *msg)
 {
 	gchar *debug_str;
 
@@ -469,7 +469,7 @@ void msim_msg_dump(gchar *fmt_string, MsimMessage *msg)
 
 /** Return a message element data as a new string for a raw protocol message, converting from other types (integer, etc.) if necessary.
  *
- * @return gchar * The data as a string, or NULL. Caller must g_free().
+ * @return const gchar * The data as a string, or NULL. Caller must g_free().
  *
  * Returns a string suitable for inclusion in a raw protocol message, not necessarily
  * optimal for human consumption. For example, strings are escaped. Use 
@@ -484,7 +484,7 @@ static gchar *msim_msg_pack_element_data(MsimMessageElement *elem)
 
 		case MSIM_TYPE_RAW:
 			/* Not un-escaped - this is a raw element, already escaped if necessary. */
-			return g_strdup((gchar *)elem->data);
+			return (gchar *)g_strdup((gchar *)elem->data);
 
 		case MSIM_TYPE_STRING:
 			/* Strings get escaped. msim_escape() creates a new string. */
@@ -735,7 +735,7 @@ GHashTable *msim_parse_body(const gchar *body_str)
  * access the MsimMessageElement *, instead of the GList * container.
  *
  */
-static GList *msim_msg_get_node(MsimMessage *msg, gchar *name)
+static GList *msim_msg_get_node(MsimMessage *msg, const gchar *name)
 {
 	GList *i;
 
@@ -770,7 +770,7 @@ static GList *msim_msg_get_node(MsimMessage *msg, gchar *name)
  * you can access directly. But it is often more convenient to use
  * another msim_msg_get_* that converts the data to what type you want.
  */
-MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name)
+MsimMessageElement *msim_msg_get(MsimMessage *msg, const gchar *name)
 {
 	GList *node;
 
@@ -791,7 +791,7 @@ MsimMessageElement *msim_msg_get(MsimMessage *msg, gchar *name)
  * for inclusion into a raw protocol string (escaped and everything).
  * This function unescapes the string for you, if needed.
  */
-gchar *msim_msg_get_string(MsimMessage *msg, gchar *name)
+gchar *msim_msg_get_string(MsimMessage *msg, const gchar *name)
 {
 	MsimMessageElement *elem;
 
@@ -830,7 +830,7 @@ gchar *msim_msg_get_string(MsimMessage *msg, gchar *name)
  * even if it is not stored as an MSIM_TYPE_INTEGER. MSIM_TYPE_STRING will
  * be converted handled correctly, for example.
  */
-guint msim_msg_get_integer(MsimMessage *msg, gchar *name)
+guint msim_msg_get_integer(MsimMessage *msg, const gchar *name)
 {
 	MsimMessageElement *elem;
 
@@ -859,7 +859,7 @@ guint msim_msg_get_integer(MsimMessage *msg, gchar *name)
  *
  * @return TRUE if successful, FALSE if not.
  */
-gboolean msim_msg_get_binary(MsimMessage *msg, gchar *name, gchar **binary_data, gsize *binary_length)
+gboolean msim_msg_get_binary(MsimMessage *msg, const gchar *name, gchar **binary_data, gsize *binary_length)
 {
 	MsimMessageElement *elem;
 
