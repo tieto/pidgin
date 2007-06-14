@@ -1985,22 +1985,38 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
 char *msim_status_text(PurpleBuddy *buddy)
 {
     MsimSession *session;
-	const gchar *display_name;
+	const gchar *display_name, *headline;
 
     g_return_val_if_fail(buddy != NULL, NULL);
 
     session = (MsimSession *)buddy->account->gc->proto_data;
     g_return_val_if_fail(MSIM_SESSION_VALID(session), NULL);
 
-	/* TODO: show Headline, or DisplayName, or selectable, or both? */
-	display_name = purple_blist_node_get_string(&buddy->node, "DisplayName");
+	display_name = headline = NULL;
+
+	/* Retrieve display name and/or headline, depending on user preference. */
+    if (purple_account_get_bool(session->account, "show_display_name", TRUE))
+	{
+		display_name = purple_blist_node_get_string(&buddy->node, "DisplayName");
+	} 
+
+    if (purple_account_get_bool(session->account, "show_headline", FALSE))
+	{
+		headline = purple_blist_node_get_string(&buddy->node, "Headline");
+	}
+
+	/* Return appropriate combination of display name and/or headline, or neither. */
+
+	if (display_name && headline)
+		return g_strconcat(display_name, " ", headline, NULL);
 
 	if (display_name)
-	{
 		return g_strdup(display_name);
-	} else {
-		return NULL;
-	}
+
+	if (headline)
+		return g_strdup(headline);
+
+	return NULL;
 }
 
 /**
@@ -2207,6 +2223,12 @@ void init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", MSIM_PORT);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Show display name in status text"), "show_display_name", TRUE);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Show headline in status text"), "show_headline", TRUE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 }
 
