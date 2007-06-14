@@ -163,6 +163,7 @@ int msim_incoming_im(MsimSession *session, MsimMessage *msg);
 int msim_incoming_action(MsimSession *session, MsimMessage *msg);
 
 unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state);
+void msim_get_info(PurpleConnection *gc, const char *name);
 
 void msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg);

@@ -713,7 +713,6 @@ gboolean msim_incoming_action(MsimSession *session, MsimMessage *msg)
  * @param name The buddy name to which our user is typing to
  * @param state PURPLE_TYPING, PURPLE_TYPED, PURPLE_NOT_TYPING
  *
- * NOT CURRENTLY USED OR COMPLETE
  */
 unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypingState state)
 {
@@ -738,6 +737,69 @@ unsigned int msim_send_typing(PurpleConnection *gc, const char *name, PurpleTypi
 	purple_debug_info("msim", "msim_send_typing(%s): %d (%s)\n", name, state, typing_str);
 	msim_send_bm(session, (gchar *)name, typing_str, MSIM_BM_ACTION);
 	return 0;
+}
+
+/** Retrieve a user's profile. */
+void msim_get_info(PurpleConnection *gc, const char *name)
+{
+	PurpleNotifyUserInfo *user_info;
+	PurpleBuddy *buddy;
+	MsimSession *session;
+
+	session = (MsimSession *)gc->proto_data;
+
+	user_info = purple_notify_user_info_new();
+
+	buddy = purple_find_buddy(session->account, name);
+	if (!buddy)
+	{
+		/* TODO: profile of buddies not on blist! */
+		purple_notify_user_info_add_pair(user_info, NULL,
+				"Sorry, currently user information can only be retrieved from users on your buddy list.");
+		purple_notify_userinfo(gc, name, user_info, NULL, NULL);
+		purple_notify_user_info_destroy(user_info);
+		return;
+	}
+
+
+	/* Identification */
+	purple_notify_user_info_add_pair(user_info, "User Name",
+			purple_blist_node_get_string(&buddy->node, "UserName")); 
+
+
+	purple_notify_user_info_add_pair(user_info, "User ID",
+			g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "UserID")));
+
+	purple_notify_user_info_add_pair(user_info, "Display Name",
+			purple_blist_node_get_string(&buddy->node, "DisplayName")); 
+
+
+	/* a/s/l...the vitals */	
+	purple_notify_user_info_add_pair(user_info, "Age",
+			g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "Age")));
+
+	purple_notify_user_info_add_pair(user_info, "Gender",
+			 purple_blist_node_get_string(&buddy->node, "Gender"));
+
+	purple_notify_user_info_add_pair(user_info, "Location",
+			purple_blist_node_get_string(&buddy->node, "Location"));
+
+	/* Other information */
+	if (purple_blist_node_get_string(&buddy->node, "Headline"))
+		purple_notify_user_info_add_pair(user_info, "Headline",
+				purple_blist_node_get_string(&buddy->node, "Headline")); 
+
+	purple_notify_user_info_add_pair(user_info, "Song", 
+			g_strdup_printf("%s - %s",
+				purple_blist_node_get_string(&buddy->node, "BandName"),
+				purple_blist_node_get_string(&buddy->node, "SongName")));
+
+	purple_notify_user_info_add_pair(user_info, "Total Friends",
+			g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "TotalFriends")));
+
+
+	purple_notify_userinfo(gc, name, user_info, NULL, NULL);
+	purple_notify_user_info_destroy(user_info);
 }
 
 /** After a uid is resolved to username, tag it with the username and submit for processing. 
@@ -2030,7 +2092,7 @@ PurplePluginProtocolInfo prpl_info =
     msim_send_im,      /* send_im */
     NULL,              /* set_info */
     msim_send_typing,  /* send_typing */
-    NULL,              /* get_info */
+	msim_get_info, 	   /* get_info */
     NULL,              /* set_away */
     NULL,              /* set_idle */
     NULL,              /* change_passwd */
