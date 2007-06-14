@@ -1198,8 +1198,8 @@ gboolean msim_error(MsimSession *session, MsimMessage *msg)
     {
         purple_debug_info("msim", "fatal error, closing\n");
         purple_connection_error(session->gc, full_errmsg);
-        close(session->fd);
-		/* Do not call msim_session_destroy(session) - called in msim_close(). */
+
+		msim_close(session->gc);
     }
 
     return TRUE;
@@ -1636,7 +1636,6 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
     session = gc->proto_data;
 
     g_return_if_fail(cond == PURPLE_INPUT_READ);
-	/* TODO: fix bug #193, crash when re-login */
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
     /* Only can handle so much data at once... 
@@ -1649,7 +1648,8 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
                 MSIM_READ_BUF_SIZE);
         purple_connection_error(gc, _("Read buffer full"));
         /* TODO: fix 100% CPU after closing */
-        close(source);
+
+		msim_close(session->gc);
         return;
     }
 
@@ -1672,7 +1672,8 @@ void msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
         purple_debug_error("msim", "msim_input_cb: read error, ret=%d, "
 			"error=%s, source=%d, fd=%d (%X))\n", 
 			n, strerror(errno), source, session->fd, session->fd);
-        close(source);
+
+		msim_close(session->gc);
         return;
     } 
     else if (n == 0)
@@ -1869,8 +1870,7 @@ void msim_close(PurpleConnection *gc)
 	g_return_if_fail(session != NULL);
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
-   
-    purple_input_remove(session->fd);
+    purple_input_remove(session->gc->inpa);
     msim_session_destroy(session);
 }
 
