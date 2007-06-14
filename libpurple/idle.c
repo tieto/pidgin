@@ -300,6 +300,14 @@ purple_idle_get_handle()
 	return &handle;
 }
 
+static gboolean _do_purple_idle_touch_cb(gpointer data)
+{
+	purple_idle_touch();
+
+	return FALSE;
+}
+
+
 void
 purple_idle_init()
 {
@@ -319,7 +327,10 @@ purple_idle_init()
 	purple_prefs_connect_callback(purple_idle_get_handle(), "/purple/away/idle_reporting",
 	                              idle_reporting_cb, NULL);
 
-	purple_idle_touch();
+	/* Initialize the idleness asynchronously so it doesn't check idleness,
+	 * and potentially try to change the status before the UI is initialized */
+	g_idle_add(_do_purple_idle_touch_cb, NULL);
+
 }
 
 void
