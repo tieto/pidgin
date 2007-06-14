@@ -1,5 +1,6 @@
 /**
- * @defgroup finch Finch (GNT User Interface)
+ * @file gntsound.h GNT Sound API
+ * @ingroup finch
  *
  * finch
  *
@@ -21,10 +22,46 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-#include <glib.h>
+#ifndef _GNT_SOUND_H
+#define _GNT_SOUND_H
 
-#include "libpurple/internal.h"
+#include "sound.h"
 
-#define FINCH_UI "gnt-purple"
+/**********************************************************************/
+/** @name GNT Sound API																								*/
+/**********************************************************************/
+/*@{*/
 
-#define FINCH_PREFS_ROOT "/finch"
+/**
+* Get the prefs option for an event.
+*
+* @param event The event.
+* @return The option.
+*/
+const char *finch_sound_get_event_option(PurpleSoundEventID event);
+
+/**
+* Get the label for an event.
+*
+* @param event The event.
+* @return The label.
+*/
+const char *finch_sound_get_event_label(PurpleSoundEventID event);
+
+/**
+* Gets GNT sound UI ops.
+*
+* @return The UI operations structure.
+*/
+PurpleSoundUiOps *finch_sound_get_ui_ops(void);
+
+/**
+* Get the handle for the GNT sound system.
+*
+* @return The handle to the sound system
+*/
+void *finch_sound_get_handle(void);
+
+/*@}*/
+
+#endif

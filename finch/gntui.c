@@ -33,6 +33,7 @@
 #include "gntprefs.h"
 #include "gntrequest.h"
 #include "gntstatus.h"
+#include "gntsound.h"
 #include "internal.h"
 
 #include <prefs.h>
@@ -56,6 +57,9 @@ void gnt_ui_init()
 	/* Initialize the buddy list */
 	finch_blist_init();
 	purple_blist_set_ui_ops(finch_blist_get_ui_ops());
+
+	/* Initialize sound */
+	purple_sound_set_ui_ops(finch_sound_get_ui_ops());
 
 	/* Now the conversations */
 	finch_conversation_init();
