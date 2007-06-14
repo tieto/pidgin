@@ -375,7 +375,7 @@ bus_call (GstBus     *bus,
 		break;
 	case GST_MESSAGE_WARNING:
 		gst_message_parse_warning(msg, &err, NULL);
-		purple_debug_warning("gstreamer", "%s\n" err->message);
+		purple_debug_warning("gstreamer", "%s\n", err->message);
 		g_error_free(err);
 		break;
 	default:
