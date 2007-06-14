@@ -697,6 +697,7 @@ Section Uninstall
     Delete "$INSTDIR\plugins\history.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
     Delete "$INSTDIR\plugins\idle.dll"
+    Delete "$INSTDIR\plugins\joinpart.dll"
     Delete "$INSTDIR\plugins\libaim.dll"
     Delete "$INSTDIR\plugins\libbonjour.dll"
     Delete "$INSTDIR\plugins\libgg.dll"
