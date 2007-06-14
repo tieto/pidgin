@@ -934,7 +934,7 @@ struct aim_incomingim_ch4_args
 /* 0x0014 */ int aim_im_sendmtn(OscarData *od, guint16 type1, const char *sn, guint16 type2);
 void aim_icbm_makecookie(guchar* cookie);
 gchar *oscar_encoding_extract(const char *encoding);
-gchar *oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen);
+gchar *oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char *text, int textlen);
 gchar *purple_plugin_oscar_decode_im_part(PurpleAccount *account, const char *sourcesn, guint16 charset, guint16 charsubset, const gchar *data, gsize datalen);
 
 
