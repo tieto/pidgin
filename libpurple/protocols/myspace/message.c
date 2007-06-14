@@ -824,7 +824,7 @@ gchar *msim_msg_get_string(MsimMessage *msg, const gchar *name)
  *
  * @param name Name of element.
  *
- * @return guint Numeric representation of data, or 0 if could not be converted.
+ * @return guint Numeric representation of data, or 0 if could not be converted / not found.
  *
  * Useful to obtain an element's data if you know it should be an integer,
  * even if it is not stored as an MSIM_TYPE_INTEGER. MSIM_TYPE_STRING will
@@ -835,6 +835,9 @@ guint msim_msg_get_integer(MsimMessage *msg, const gchar *name)
 	MsimMessageElement *elem;
 
 	elem = msim_msg_get(msg, name);
+
+	if (!elem)
+		return 0;
 
 	switch (elem->type)
 	{
