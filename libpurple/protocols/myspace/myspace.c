@@ -1536,6 +1536,16 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 	/* TODO: update blocklist */
 }
 
+/** Return whether the buddy can be messaged while offline.
+ *
+ * I always return TRUE, to allow sending to buddies whose status has not yet
+ * been received. The protocol _does_ support offline messages, but not this plugin.
+ * TODO: Real offline message support.
+ */
+gboolean msim_offline_message(const PurpleBuddy *buddy)
+{
+	return TRUE;
+}
 
 
 /**
@@ -2061,7 +2071,7 @@ PurplePluginProtocolInfo prpl_info =
     NULL,              /* can_receive_file */
     NULL,              /* send_file */
     NULL,              /* new_xfer */
-    NULL,              /* offline_message */
+    msim_offline_message, /* offline_message */
     NULL,              /* whiteboard_prpl_ops */
     NULL,              /* send_raw */
     NULL,              /* roomlist_room_serialize */

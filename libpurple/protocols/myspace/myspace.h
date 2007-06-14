@@ -184,6 +184,8 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg);
 void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group);
 
+gboolean msim_offline_message(const PurpleBuddy *buddy);
+
 void msim_input_cb(gpointer gc_uncasted, gint source, 
 		PurpleInputCondition cond);
 
