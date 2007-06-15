@@ -106,6 +106,9 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 	char *text;
 	GList *list = NULL, *iter = NULL;
 
+	if (!plugin)
+		return;
+
 	/* If the selected plugin was unseen before, mark it as seen. But save the list
 	 * only when the plugin list is closed. So if the user enables a plugin, and it
 	 * crashes, it won't get marked as seen so the user can fix the bug and still

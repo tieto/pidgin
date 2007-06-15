@@ -1561,6 +1561,7 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 			gnt_wm_raise_window(wm, node->me);
 		} else {
 			bottom_panel(node->panel);     /* New windows should not grab focus */
+			gnt_widget_set_focus(node->me, FALSE);
 			gnt_widget_set_urgent(node->me);
 			if (wm->cws != ws)
 				gnt_ws_widget_hide(widget, wm->nodes);
