@@ -232,7 +232,8 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 
 		query = xmlnode_get_child(iq->node, "query");
 
-		xmlnode_insert_data(xmlnode_new_child(query, "name"), PACKAGE, -1);
+		/* TODO: ask the core for the version of libpurple and the name and version of the UI */
+		xmlnode_insert_data(xmlnode_new_child(query, "name"), "libpurple", -1);
 		xmlnode_insert_data(xmlnode_new_child(query, "version"), VERSION, -1);
 		if(os) {
 			xmlnode_insert_data(xmlnode_new_child(query, "os"), os, -1);
