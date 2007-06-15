@@ -94,7 +94,7 @@ static const char *moodstrings[] = {
 static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
 	xmlnode *item = xmlnode_get_child(items, "item");
-	char *newmood;
+	const char *newmood;
 	char *moodtext = NULL;
 	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
 	xmlnode *moodinfo, *mood;
@@ -202,12 +202,12 @@ void jabber_mood_set(JabberStream *js, const char *mood, const char *text) {
 	xmlnode_set_namespace(moodnode, "http://jabber.org/protocol/mood");
 	xmlnode_new_child(moodnode, mood);
 
-	if (text) {
+	if (text && text[0] != '\0') {
 		xmlnode *textnode = xmlnode_new_child(moodnode, "text");
 		xmlnode_insert_data(textnode, text, -1);
 	}
 	
 	jabber_pep_publish(js, publish);
-	
-	xmlnode_free(publish);
+	/* publish is freed by jabber_pep_publish -> jabber_iq_send -> jabber_iq_free
+	   (yay for well-defined memory management rules) */
 }
