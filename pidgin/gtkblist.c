@@ -498,7 +498,7 @@ static void gtk_blist_show_systemlog_cb()
 
 static void gtk_blist_show_onlinehelp_cb()
 {
-	purple_notify_uri(NULL, PURPLE_WEBSITE "documentation.php");
+	purple_notify_uri(NULL, PURPLE_WEBSITE "documentation");
 }
 
 static void
