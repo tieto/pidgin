@@ -24,6 +24,7 @@
 #include <assert.h>
 #include <string.h>
 #include "internal.h"
+#include "request.h"
 
 static char *moodstrings[] = {
 	"afraid",
@@ -134,7 +135,6 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 }
 
 static gboolean is_mood_supported(JabberStream *js, const gchar *shortname, const gchar *namespace) {
-	purple_debug_info("jabber", "is_mood_supported: have pep: %s\n", js->pep?"YES":"NO");
 	return js->pep;
 }
 
@@ -143,7 +143,46 @@ void jabber_mood_init(void) {
 	jabber_pep_register_handler("moodn", "http://jabber.org/protocol/mood", jabber_mood_cb);
 }
 
+static void do_mood_set_from_fields(PurpleConnection *gc, PurpleRequestFields *fields) {
+	JabberStream *js = gc->proto_data;
+	
+	jabber_mood_set(js, moodstrings[purple_request_fields_get_choice(fields, "mood")], purple_request_fields_get_string(fields, "text"));
+}
+
 static void do_mood_set_mood(PurplePluginAction *action) {
+	PurpleConnection *gc = (PurpleConnection *) action->context;
+
+	PurpleRequestFields *fields;
+	PurpleRequestFieldGroup *group;
+	PurpleRequestField *field;
+	int i;
+
+	fields = purple_request_fields_new();
+	group = purple_request_field_group_new(NULL);
+	purple_request_fields_add_group(fields, group);
+
+	field = purple_request_field_choice_new("mood",
+											_("Mood"), 0);
+	
+	for(i = 0; moodstrings[i]; ++i)
+		purple_request_field_choice_add(field, _(moodstrings[i]));
+	
+	purple_request_field_set_required(field, TRUE);
+	purple_request_field_group_add_field(group, field);
+
+	field = purple_request_field_string_new("text",
+											_("Description"), NULL,
+											FALSE);
+	purple_request_field_group_add_field(group, field);
+	
+	purple_request_fields(gc, _("Edit User Mood"),
+						  _("Edit User Mood"),
+						  _("Please select your mood from the list."),
+						  fields,
+						  _("Set"), G_CALLBACK(do_mood_set_from_fields),
+						  _("Cancel"), NULL,
+						  purple_connection_get_account(gc), NULL, NULL,
+						  gc);
 	
 }
 
@@ -152,7 +191,7 @@ void jabber_mood_init_action(GList **m) {
 	*m = g_list_append(*m, act);
 }
 
-void jabber_set_mood(JabberStream *js, const char *mood, const char *text) {
+void jabber_mood_set(JabberStream *js, const char *mood, const char *text) {
 	xmlnode *publish, *moodnode;
 	
 	assert(mood != NULL);

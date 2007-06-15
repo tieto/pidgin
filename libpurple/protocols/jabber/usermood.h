@@ -30,7 +30,7 @@ void jabber_mood_init(void);
 
 void jabber_mood_init_action(GList **m);
 
-void jabber_set_mood(JabberStream *js,
+void jabber_mood_set(JabberStream *js,
 		     const char *mood, /* must be one of the valid strings defined in the XEP */
 		     const char *text /* might be NULL */);
 
