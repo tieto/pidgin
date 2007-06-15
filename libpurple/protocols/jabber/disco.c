@@ -37,9 +37,10 @@ struct _jabber_disco_info_cb_data {
 	JabberDiscoInfoCallback *callback;
 };
 
-#define SUPPORT_FEATURE(x) \
+#define SUPPORT_FEATURE(x) { \
 	feature = xmlnode_new_child(query, "feature"); \
-	xmlnode_set_attrib(feature, "var", x);
+	xmlnode_set_attrib(feature, "var", x); \
+}
 
 
 void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
@@ -98,11 +99,12 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
 			SUPPORT_FEATURE("http://www.xmpp.org/extensions/xep-0199.html#ns")
                 
-            if(!node) { /* non-caps disco#info, add all extensions */
+            if(!node) { /* non-caps disco#info, add all enabled extensions */
                 GList *features;
                 for(features = jabber_features; features; features = features->next) {
                     JabberFeature *feat = (JabberFeature*)features->data;
-                    SUPPORT_FEATURE(feat->namespace);
+					if(feat->is_enabled == NULL || feat->is_enabled(js, feat->shortname, feat->namespace) == TRUE)
+						SUPPORT_FEATURE(feat->namespace);
                 }
             }
 		} else {
@@ -129,8 +131,8 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
                     for(features = jabber_features; features; features = features->next) {
                         JabberFeature *feat = (JabberFeature*)features->data;
                         if(!strcmp(feat->shortname, ext)) {
-                            SUPPORT_FEATURE(feat->namespace);
-                            break;
+							SUPPORT_FEATURE(feat->namespace);
+							break;
                         }
                     }
                     if(features == NULL)

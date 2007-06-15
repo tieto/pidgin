@@ -133,8 +133,13 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 		g_free(moodtext);
 }
 
+static gboolean is_mood_supported(JabberStream *js, const gchar *shortname, const gchar *namespace) {
+	purple_debug_info("jabber", "is_mood_supported: have pep: %s\n", js->pep?"YES":"NO");
+	return js->pep;
+}
+
 void jabber_mood_init(void) {
-	jabber_add_feature("mood", "http://jabber.org/protocol/mood");
+	jabber_add_feature("mood", "http://jabber.org/protocol/mood", is_mood_supported);
 	jabber_pep_register_handler("moodn", "http://jabber.org/protocol/mood", jabber_mood_cb);
 }
 

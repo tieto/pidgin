@@ -41,7 +41,7 @@ void jabber_pep_init_actions(GList **m) {
 
 void jabber_pep_register_handler(const char *shortname, const char *xmlns, JabberPEPHandler handlerfunc) {
 	gchar *notifyns = g_strdup_printf("%s+notify", xmlns);
-	jabber_add_feature(shortname, notifyns);
+	jabber_add_feature(shortname, notifyns, NULL); /* receiving PEPs is always supported */
 	g_free(notifyns);
 	g_hash_table_replace(pep_handlers, g_strdup(xmlns), handlerfunc);
 }

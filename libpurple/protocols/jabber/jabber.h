@@ -154,6 +154,18 @@ typedef struct _JabberStream
 	gboolean pep;
 } JabberStream;
 
+typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);
+
+typedef struct _JabberFeature
+{
+	gchar *shortname;
+	gchar *namespace;
+	JabberFeatureEnabled *is_enabled;
+} JabberFeature;
+
+/* what kind of additional features as returned from disco#info are supported? */
+extern GList *jabber_features;
+
 void jabber_process_packet(JabberStream *js, xmlnode *packet);
 void jabber_send(JabberStream *js, xmlnode *data);
 void jabber_send_raw(JabberStream *js, const char *data, int len);
@@ -167,7 +179,7 @@ char *jabber_get_next_id(JabberStream *js);
 
 char *jabber_parse_error(JabberStream *js, xmlnode *packet);
 
-void jabber_add_feature(const gchar *shortname, const gchar *namespace);
+void jabber_add_feature(const gchar *shortname, const gchar *namespace, JabberFeatureEnabled cb); /* cb may be NULL */
 void jabber_remove_feature(const gchar *shortname);
 
 /** PRPL functions */
@@ -188,14 +200,5 @@ int jabber_prpl_send_raw(PurpleConnection *gc, const char *buf, int len);
 GList *jabber_actions(PurplePlugin *plugin, gpointer context);
 void jabber_register_commands(void);
 void jabber_init_plugin(PurplePlugin *plugin);
-
-typedef struct _JabberFeature
-{
-	gchar *shortname;
-	gchar *namespace;
-} JabberFeature;
-
-/* what kind of additional features as returned from disco#info are supported? */
-extern GList *jabber_features;
 
 #endif /* _PURPLE_JABBER_H_ */

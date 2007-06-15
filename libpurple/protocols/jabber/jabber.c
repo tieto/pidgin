@@ -56,6 +56,8 @@
 #include "xdata.h"
 #include "pep.h"
 
+#include <assert.h>
+
 #define JABBER_CONNECT_STEPS (js->gsc ? 8 : 5)
 
 static PurplePlugin *my_protocol = NULL;
@@ -1094,10 +1096,16 @@ void jabber_idle_set(PurpleConnection *gc, int idle)
 	js->idle = idle ? time(NULL) - idle : idle;
 }
 
-void jabber_add_feature(const char *shortname, const char *namespace) {
-	JabberFeature *feat = g_new0(JabberFeature,1);
+void jabber_add_feature(const char *shortname, const char *namespace, JabberFeatureEnabled cb) {
+	JabberFeature *feat;
+	
+	assert(shortname != NULL);
+	assert(namespace != NULL);
+	
+	feat = g_new0(JabberFeature,1);
 	feat->shortname = g_strdup(shortname);
 	feat->namespace = g_strdup(namespace);
+	feat->is_enabled = cb;
 	
 	/* try to remove just in case it already exists in the list */
 	jabber_remove_feature(shortname);
@@ -1461,7 +1469,9 @@ GList *jabber_actions(PurplePlugin *plugin, gpointer context)
 	act = purple_plugin_action_new(_("Search for Users..."),
 								 jabber_user_search_begin);
 	m = g_list_append(m, act);
-	
+
+	purple_debug_info("jabber", "jabber_actions: have pep: %s\n", js->pep?"YES":"NO");
+
 	if(js->pep)
 		jabber_pep_init_actions(&m);
 
