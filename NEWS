@@ -1,6 +1,13 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
 2.0.2 (6/14/2007):
+	Sean: Another big maintenance release. Again, about 100 tickets were
+	resolved in this release, and they keep coming in. Lots of bug fixes,
+	some minor icon adjustements, hopefully we addressed some ICQ
+	internationalization issues, and support for Bonjour on Windows!
+	Our next release will be 2.1.0, and will come with some great new
+	features.
+
 	Stu: I think we're gradually getting the hang of this 3 week thing
 	again. This release includes yet more bug fixes. I'd also like to
 	specifically thank Pekka Riikonen for the patch to enable using SILC
