@@ -2500,6 +2500,13 @@ purple_blist_node_get_flags(PurpleBlistNode *node)
 	return node->flags;
 }
 
+PurpleBlistNodeType
+purple_blist_node_get_type(PurpleBlistNode *node)
+{
+	g_return_val_if_fail(node != NULL, PURPLE_BLIST_OTHER_NODE);
+	return node->type;
+}
+
 void
 purple_blist_node_set_bool(PurpleBlistNode* node, const char *key, gboolean data)
 {

@@ -6739,3 +6739,4 @@ pidgin_blist_update_sort_methods(void)
 	if (activeitem)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(activeitem), TRUE);
 }
+

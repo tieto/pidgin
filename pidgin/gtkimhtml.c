@@ -31,6 +31,7 @@
 #include "util.h"
 #include "gtkimhtml.h"
 #include "gtksourceiter.h"
+#include "pidgin.h"
 #include <gtk/gtk.h>
 #include <glib/gerror.h>
 #include <gdk/gdkkeysyms.h>
@@ -4899,3 +4900,69 @@ void gtk_imhtml_set_funcs(GtkIMHtml *imhtml, GtkIMHtmlFuncs *f)
 	g_return_if_fail(imhtml != NULL);
 	imhtml->funcs = f;
 }
+
+void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
+{
+	if (flags & PURPLE_CONNECTION_HTML) {
+		char color[8];
+		GdkColor fg_color, bg_color;
+
+		gtk_imhtml_set_format_functions(imhtml, GTK_IMHTML_ALL);
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold") != imhtml->edit.bold)
+			gtk_imhtml_toggle_bold(imhtml);
+
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic") != imhtml->edit.italic)
+			gtk_imhtml_toggle_italic(imhtml);
+
+		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline") != imhtml->edit.underline)
+			gtk_imhtml_toggle_underline(imhtml);
+
+		gtk_imhtml_toggle_fontface(imhtml,
+			purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/font_face"));
+
+		if (!(flags & PURPLE_CONNECTION_NO_FONTSIZE))
+		{
+			int size = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size");
+
+			/* 3 is the default. */
+			if (size != 3)
+				gtk_imhtml_font_set_size(imhtml, size);
+		}
+
+		if(strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"), "") != 0)
+		{
+			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"),
+							&fg_color);
+			g_snprintf(color, sizeof(color), "#%02x%02x%02x",
+									fg_color.red   / 256,
+									fg_color.green / 256,
+									fg_color.blue  / 256);
+		} else
+			strcpy(color, "");
+
+		gtk_imhtml_toggle_forecolor(imhtml, color);
+
+		if(!(flags & PURPLE_CONNECTION_NO_BGCOLOR) &&
+		   strcmp(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"), "") != 0)
+		{
+			gdk_color_parse(purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"),
+							&bg_color);
+			g_snprintf(color, sizeof(color), "#%02x%02x%02x",
+									bg_color.red   / 256,
+									bg_color.green / 256,
+									bg_color.blue  / 256);
+		} else
+			strcpy(color, "");
+
+		gtk_imhtml_toggle_background(imhtml, color);
+
+		if (flags & PURPLE_CONNECTION_FORMATTING_WBFO)
+			gtk_imhtml_set_whole_buffer_formatting_only(imhtml, TRUE);
+		else
+			gtk_imhtml_set_whole_buffer_formatting_only(imhtml, FALSE);
+	} else {
+		imhtml_clear_formatting(imhtml);
+		gtk_imhtml_set_format_functions(imhtml, 0);
+	}
+}
+
