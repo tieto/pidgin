@@ -949,7 +949,7 @@ conv_page()
 	label = gtk_label_new_with_mnemonic(_("Conversation _font:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	font_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
-	font_button = gtk_font_button_new_with_font(purple_prefs_get_string(font_name ? font_name : NULL));
+	font_button = gtk_font_button_new_with_font(font_name ? font_name : NULL);
 	gtk_font_button_set_show_style(GTK_FONT_BUTTON(font_button), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), font_button, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
