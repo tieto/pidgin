@@ -127,7 +127,7 @@ ReserveFile "${NSISDIR}\Plugins\System.dll"
   !define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_LINK			$(PIDGIN_FINISH_VISIT_WEB_SITE)
-  !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im/win32"
+  !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im"
 
 ;--------------------------------
 ;Pages
@@ -358,7 +358,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
   StrCmp $R0 "2" upgrade_gtk
   ;StrCmp $R0 "3" no_gtk no_gtk
 
-  no_gtk:
+  ;no_gtk:
     StrCmp $R1 "NONE" gtk_no_install_rights
     ClearErrors
     ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
