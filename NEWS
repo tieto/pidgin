@@ -1,5 +1,11 @@
 Pidgin and Finch: The Pimpin' Penguin IM Clients That're Good for the Soul
 
+2.0.2 (6/14/2007):
+	Stu: I think we're gradually getting the hang of this 3 week thing
+	again. This release includes yet more bug fixes. I'd also like to
+	specifically thank Pekka Riikonen for the patch to enable using SILC
+	Toolkit 1.1 with Pidgin/libpurple that is included in this release.
+
 2.0.1 (5/24/2007):
 	Sean: 2.0.1! Three weeks later, as scheduled! It is so nice to have
 	regular, frequent, releases again! This is a bugfix release; We have
