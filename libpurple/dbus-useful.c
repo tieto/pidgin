@@ -11,7 +11,7 @@ purple_accounts_find_ext(const char *name, const char *protocol_id,
 		       gboolean (*account_test)(const PurpleAccount *account))
 {
 	PurpleAccount *result = NULL;
-	GList *l;
+	const GList *l;
 	char *who;
 
 	if (name)

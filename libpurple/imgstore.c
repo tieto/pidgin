@@ -25,6 +25,7 @@
 */
 
 #include <glib.h>
+#include "dbus-maybe.h"
 #include "debug.h"
 #include "imgstore.h"
 #include "util.h"
@@ -56,6 +57,7 @@ purple_imgstore_add(gpointer data, size_t size, const char *filename)
 	g_return_val_if_fail(size > 0, 0);
 
 	img = g_new(PurpleStoredImage, 1);
+	PURPLE_DBUS_REGISTER_POINTER(img, PurpleStoredImage);
 	img->data = data;
 	img->size = size;
 	img->filename = g_strdup(filename);
@@ -159,6 +161,7 @@ purple_imgstore_unref(PurpleStoredImage *img)
 
 		g_free(img->data);
 		g_free(img->filename);
+		PURPLE_DBUS_UNREGISTER_POINTER(img);
 		g_free(img);
 		img = NULL;
 	}

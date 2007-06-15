@@ -333,8 +333,9 @@ xmlnode_get_data(xmlnode *node)
 	for(c = node->child; c; c = c->next) {
 		if(c->type == XMLNODE_TYPE_DATA) {
 			if(!str)
-				str = g_string_new("");
-			str = g_string_append_len(str, c->data, c->data_sz);
+				str = g_string_new_len(c->data, c->data_sz);
+			else
+				str = g_string_append_len(str, c->data, c->data_sz);
 		}
 	}
 
@@ -342,6 +343,18 @@ xmlnode_get_data(xmlnode *node)
 		return NULL;
 
 	return g_string_free(str, FALSE);
+}
+
+char *
+xmlnode_get_data_unescaped(xmlnode *node)
+{
+	char *escaped = xmlnode_get_data(node);
+
+	char *unescaped = escaped ? purple_unescape_html(escaped) : NULL;
+
+	g_free(escaped);
+
+	return unescaped;
 }
 
 static char *

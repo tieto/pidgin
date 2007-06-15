@@ -237,7 +237,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 	}
 
 	if (load) {
-		GList *cnv;
+		const GList *cnv;
 
 		if (current_smiley_theme)
 			pidgin_themes_destroy_smiley_theme(current_smiley_theme);

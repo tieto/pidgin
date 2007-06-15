@@ -530,7 +530,7 @@ purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info)
 	g_free(user_info);
 }
 
-GList *
+const GList *
 purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info)
 {
 	g_return_val_if_fail(user_info != NULL, NULL);
