@@ -4,6 +4,13 @@ version 2.0.2 (06/14/2007):
 	Pidgin:
 	* Added a custom conversation font option to preferences
 	* Fixed smiley ordering in the insert smiley popup to be more intuitive
+	* Conversation->More menu items work for Chats as well as Buddies,
+	  including those not on your buddy list
+	* newline plugin should work better with conversation colors plugin now
+	* Get Info on users now provides immediate feedback that something is
+	  happening
+	* Aliasing a buddy will not be interrupted by other buddy list activity
+	* Using the -l option to log in to a specific account works better
 
 	libpurple:
 	* Moving an ICQ buddy from one group to another no longer
@@ -14,6 +21,11 @@ version 2.0.2 (06/14/2007):
 	* Fix MSN to correctly detect incorrect passwords and disable the account
 	* Get User Info on MSN is now more reliable & accurate
 	* Updated SILC protocol to support SILC Toolkit 1.1 (Pekka Riikonen)
+	* Fix for some QQ authentication problems
+	* Fix for building on FreeBSD
+	* Prevent "Logged in:" times for AIM buddies being ridiculously high
+	* Updates and fixes to Bonjour support
+	* Improve ICQ encoding support for some non-latin languages
 
 	Finch:
 	* Auto account reconnecting
