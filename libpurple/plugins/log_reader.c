@@ -1766,9 +1766,6 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	gsize length;
 	gchar *c;
 
-	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-				"start\n");
-
 	g_return_val_if_fail(sn != NULL, list);
 	g_return_val_if_fail(account != NULL, list);
 
@@ -1826,15 +1823,12 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			purple_str_has_prefix(c, QIP_LOG_OUT_MESSAGE)) {
 			
 			/* find next line */
-			while(*c && *c != '\n') {
-				c++;
-			}
+			c = strstr(c, "\n");
 
 			if (*c) {
-				char *timestamp = c;
+				char *timestamp = ++c;
 				
-				while (*timestamp && (*timestamp !='('))
-					timestamp++;
+				timestamp = strstr(timestamp, "(");
 				
 				if (*timestamp == '(') {
 					struct tm tm;
@@ -1963,15 +1957,14 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			purple_debug(PURPLE_DEBUG_INFO, "QIP loggger read",
 					"%s message\n", (is_in_message) ? "incoming" : "Outgoing");
 			
-			/* find next line */
-			while(*c && *c!= '\n') 
-				c++;
+			/* find EOL */
+			c = strstr(c, "\n");
+
 			/* XXX: Do we need buddy_name when we have buddy->alias? */
-			buddy_name = c;
+			buddy_name = ++c;
 			
 			/* we hope that nickname hasn't '(' symbol */
-			while (*c && *c != '(') 
-				c++;
+			c = strstr(c, "(");
 
 			if (*c == '(') {
 				const char *timestamp = c;
@@ -2010,9 +2003,8 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 							"<b>%s</b></span>: ", acct_name);
 					}
 					
-					/* find next line */
-					while(c && *c != '\n') 
-						c++;
+					/* find EOF */
+					c = strstr(c, "\n");
 
 					line = ++c;
 
