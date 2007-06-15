@@ -488,6 +488,11 @@ static void gtk_blist_show_systemlog_cb()
 	pidgin_syslog_show();
 }
 
+static void gtk_blist_show_onlinehelp_cb()
+{
+	purple_notify_uri(NULL, PURPLE_WEBSITE "documentation.php");
+}
+
 static void
 do_join_chat(PidginJoinChatData *data)
 {
@@ -2840,7 +2845,6 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/Add C_hat..."), NULL, pidgin_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add _Group..."), NULL, purple_blist_request_add_group, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ "/Buddies/sep3", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Buddies/_About Pidgin"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
 	{ N_("/Buddies/_Quit"), "<CTL>Q", purple_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT },
 
 	/* Accounts menu */
@@ -2857,9 +2861,14 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<Item>", NULL },
-	{ N_("/Tools/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
+
+	/* Help */
+	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
+	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
+	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
 };
 
 /*********************************************************
