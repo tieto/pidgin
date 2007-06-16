@@ -211,7 +211,7 @@ add_pounce_to_treeview(GtkListStore *model, PurplePounce *pounce)
 static void
 populate_pounces_list(PouncesManager *dialog)
 {
-	const GList *pounces;
+	GList *pounces;
 
 	gtk_list_store_clear(dialog->model);
 
@@ -496,7 +496,7 @@ pidgin_pounce_editor_show(PurpleAccount *account, const char *name,
 	}
 	else
 	{
-		const GList *connections = purple_connections_get_all();
+		GList *connections = purple_connections_get_all();
 		PurpleConnection *gc;
 
 		if (connections != NULL)

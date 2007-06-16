@@ -451,7 +451,7 @@ purple_status_type_get_attr(const PurpleStatusType *status_type, const char *id)
 	return NULL;
 }
 
-const GList *
+GList *
 purple_status_type_get_attrs(const PurpleStatusType *status_type)
 {
 	g_return_val_if_fail(status_type != NULL, NULL);
@@ -548,7 +548,7 @@ PurpleStatus *
 purple_status_new(PurpleStatusType *status_type, PurplePresence *presence)
 {
 	PurpleStatus *status;
-	const GList *l;
+	GList *l;
 
 	g_return_val_if_fail(status_type != NULL, NULL);
 	g_return_val_if_fail(presence    != NULL, NULL);
@@ -719,10 +719,10 @@ purple_status_set_active_with_attrs(PurpleStatus *status, gboolean active, va_li
 
 void
 purple_status_set_active_with_attrs_list(PurpleStatus *status, gboolean active,
-									   const GList *attrs)
+									   GList *attrs)
 {
 	gboolean changed = FALSE;
-	const GList *l;
+	GList *l;
 	GList *specified_attr_ids = NULL;
 	PurpleStatusType *status_type;
 
@@ -1168,9 +1168,9 @@ purple_presence_add_status(PurplePresence *presence, PurpleStatus *status)
 }
 
 void
-purple_presence_add_list(PurplePresence *presence, const GList *source_list)
+purple_presence_add_list(PurplePresence *presence, GList *source_list)
 {
-	const GList *l;
+	GList *l;
 
 	g_return_if_fail(presence    != NULL);
 	g_return_if_fail(source_list != NULL);
@@ -1396,7 +1396,7 @@ purple_presence_get_buddy(const PurplePresence *presence)
 	return presence->u.buddy.buddy;
 }
 
-const GList *
+GList *
 purple_presence_get_statuses(const PurplePresence *presence)
 {
 	g_return_val_if_fail(presence != NULL, NULL);
@@ -1408,7 +1408,7 @@ PurpleStatus *
 purple_presence_get_status(const PurplePresence *presence, const char *status_id)
 {
 	PurpleStatus *status;
-	const GList *l = NULL;
+	GList *l = NULL;
 
 	g_return_val_if_fail(presence  != NULL, NULL);
 	g_return_val_if_fail(status_id != NULL, NULL);
@@ -1487,7 +1487,7 @@ gboolean
 purple_presence_is_status_primitive_active(const PurplePresence *presence,
 		PurpleStatusPrimitive primitive)
 {
-	const GList *l;
+	GList *l;
 
 	g_return_val_if_fail(presence  != NULL,              FALSE);
 	g_return_val_if_fail(primitive != PURPLE_STATUS_UNSET, FALSE);
@@ -1535,7 +1535,7 @@ purple_presence_compare(const PurplePresence *presence1,
 	gboolean idle1, idle2;
 	time_t idle_time_1, idle_time_2;
 	int score1 = 0, score2 = 0;
-	const GList *l;
+	GList *l;
 
 	if (presence1 == presence2)
 		return 0;

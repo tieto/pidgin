@@ -137,7 +137,7 @@ add_pounce_to_treeview(GntTree *tree, PurplePounce *pounce)
 static void
 populate_pounces_list(PouncesManager *dialog)
 {
-	const GList *pounces;
+	GList *pounces;
 
 	gnt_tree_remove_all(GNT_TREE(dialog->tree));
 
@@ -288,7 +288,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 	GntWidget *hbox, *vbox;
 	GntWidget *button;
 	GntWidget *combo;
-	const GList *list;
+	GList *list;
 
 	g_return_if_fail((cur_pounce != NULL) ||
 	                 (account != NULL) ||
@@ -303,7 +303,7 @@ finch_pounce_editor_show(PurpleAccount *account, const char *name,
 		dialog->pounce  = NULL;
 		dialog->account = account;
 	} else {
-		const GList *connections = purple_connections_get_all();
+		GList *connections = purple_connections_get_all();
 		PurpleConnection *gc;
 
 		if (connections != NULL) {

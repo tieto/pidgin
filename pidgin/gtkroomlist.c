@@ -343,7 +343,7 @@ static gboolean account_filter_func(PurpleAccount *account)
 gboolean
 pidgin_roomlist_is_showable()
 {
-	const GList *c;
+	GList *c;
 	PurpleConnection *gc;
 
 	for (c = purple_connections_get_all(); c != NULL; c = c->next) {

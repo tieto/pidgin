@@ -191,7 +191,7 @@ pidgin_status_box_get_property(GObject *object, guint param_id,
 static void
 update_to_reflect_account_status(PidginStatusBox *status_box, PurpleAccount *account, PurpleStatus *newstatus)
 {
-	const GList *l;
+	GList *l;
 	int status_no = -1;
 	const PurpleStatusType *statustype = NULL;
 	const char *message;
@@ -732,7 +732,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 static PurpleStatusType *
 find_status_type_by_index(const PurpleAccount *account, gint active)
 {
-	const GList *l = purple_account_get_status_types(account);
+	GList *l = purple_account_get_status_types(account);
 	gint i;
 
 	for (i = 0; l; l = l->next) {
@@ -941,7 +941,7 @@ static PurpleAccount* check_active_accounts_for_identical_statuses()
 {
 	PurpleAccount *acct = NULL, *acct2;
 	GList *tmp, *tmp2, *active_accts = purple_accounts_get_all_active();
-	const GList *s, *s1, *s2;
+	GList *s, *s1, *s2;
 
 	for (tmp = active_accts; tmp; tmp = tmp->next) {
 		acct = tmp->data;
@@ -989,7 +989,7 @@ static void
 add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 {
 	/* Per-account */
-	const GList *l;
+	GList *l;
 	GdkPixbuf *pixbuf;
 
 	for (l = purple_account_get_status_types(account); l != NULL; l = l->next)
@@ -1434,7 +1434,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 			}
 		}
 	} else {
-		const GList *accounts;
+		GList *accounts;
 		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			PurpleAccount *account = accounts->data;
 			PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(account));
@@ -2223,7 +2223,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 		{
 			/* Manually find the appropriate transient acct */
 			if (status_box->token_status_account) {
-				const GList *iter = purple_savedstatuses_get_all();
+				GList *iter = purple_savedstatuses_get_all();
 				GList *tmp, *active_accts = purple_accounts_get_all_active();
 
 				for (; iter != NULL; iter = iter->next) {

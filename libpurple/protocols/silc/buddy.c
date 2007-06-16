@@ -1117,7 +1117,7 @@ static void
 silcpurple_add_buddy_select_cb(SilcPurpleBuddyRes r, PurpleRequestFields *fields)
 {
 	PurpleRequestField *f;
-	const GList *list;
+	GList *list;
 	SilcClientEntry client_entry;
 	SilcDList clients;
 
