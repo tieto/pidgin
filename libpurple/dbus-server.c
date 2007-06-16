@@ -120,7 +120,7 @@ purple_dbus_pointer_to_id(gconstpointer node)
 	if ((id == 0) && (node != NULL))
 	{
 		purple_debug_warning("dbus",
-				"Need to register an object with the dbus subsystem. (If you are not a developer, please ignore)\n");
+				"Need to register an object with the dbus subsystem. (If you are not a developer, please ignore this message.)\n");
 		return 0;
 	}
 	return id;
