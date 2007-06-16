@@ -24,7 +24,7 @@
  */
 #include "account.h"
 #include "core.h"
-#include "connection.c"
+#include "connection.h"
 #include "debug.h"
 #include "request.h"
 

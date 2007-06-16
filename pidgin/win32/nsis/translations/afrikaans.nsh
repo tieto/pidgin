@@ -38,7 +38,6 @@
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Besoek die WinPidgin-webblad"
 
 ; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (slegs verwydering)"
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Kan nie die tans geïnstalleerde weergawe van Pidgin verwyder nie. Die nuwe weergawe sal geïnstalleer word sonder om die huidige een te verwyder."
 
 ; GTK+ Section Prompts

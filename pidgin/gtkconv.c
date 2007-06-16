@@ -49,6 +49,7 @@
 #include "prpl.h"
 #include "request.h"
 #include "util.h"
+#include "version.h"
 
 #include "gtkdnd-hints.h"
 #include "gtkblist.h"
@@ -1821,6 +1822,9 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				if (!gtkconv->send_history)
 					break;
 
+				if (gtkconv->entry != entry)
+					break;
+
 				if (!gtkconv->send_history->prev) {
 					GtkTextIter start, end;
 
@@ -1867,6 +1871,9 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 			case GDK_Down:
 				if (!gtkconv->send_history)
+					break;
+
+				if (gtkconv->entry != entry)
 					break;
 
 				if (gtkconv->send_history->prev && gtkconv->send_history->prev->data) {
@@ -1972,6 +1979,8 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 		switch (event->keyval)
 		{
 			case GDK_Tab:
+				if (gtkconv->entry != entry)
+					break;
 				return tab_complete(conv);
 				break;
 
@@ -2047,6 +2056,9 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 
 	return TRUE;
 }
+
+static void
+regenerate_options_items(PidginWindow *win);
 
 void
 pidgin_conv_switch_active_conversation(PurpleConversation *conv)
@@ -2148,6 +2160,8 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 
 	gray_stuff_out(gtkconv);
 	update_typing_icon(gtkconv);
+	g_object_set_data(G_OBJECT(entry), "transient_buddy", NULL);
+	regenerate_options_items(gtkconv->win);
 
 	gtk_window_set_title(GTK_WINDOW(gtkconv->win->window),
 	                     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
@@ -2894,10 +2908,44 @@ regenerate_options_items(PidginWindow *win)
 
 	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Conversation/More"));
 
-	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT)
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		chat = purple_blist_find_chat(conv->account, conv->name);
-	else
+
+		if ((chat == NULL) && (gtkconv->imhtml != NULL)) {
+			chat = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_chat");
+		}
+
+		if ((chat == NULL) && (gtkconv->imhtml != NULL)) {
+			GHashTable *components;
+			components = g_hash_table_new_full(g_str_hash, g_str_equal,
+					g_free, g_free);
+			g_hash_table_replace(components, g_strdup("channel"),
+					g_strdup(conv->name));
+			chat = purple_chat_new(conv->account, NULL, components);
+			purple_blist_node_set_flags((PurpleBlistNode *)chat,
+					PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+			g_object_set_data_full(G_OBJECT(gtkconv->imhtml), "transient_chat",
+					chat, (GDestroyNotify)purple_blist_remove_chat);
+		}
+	} else {
 		buddy = purple_find_buddy(conv->account, conv->name);
+
+		/* gotta remain bug-compatible :( libpurple < 2.0.2 didn't handle
+		 * removing "isolated" buddy nodes well */
+		if (purple_version_check(2, 0, 2) == NULL) {
+			if ((buddy == NULL) && (gtkconv->imhtml != NULL)) {
+				buddy = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_buddy");
+			}
+
+			if ((buddy == NULL) && (gtkconv->imhtml != NULL)) {
+				buddy = purple_buddy_new(conv->account, conv->name, NULL);
+				purple_blist_node_set_flags((PurpleBlistNode *)buddy,
+						PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+				g_object_set_data_full(G_OBJECT(gtkconv->imhtml), "transient_buddy",
+						buddy, (GDestroyNotify)purple_blist_remove_buddy);
+			}
+		}
+	}
 
 	if (chat)
 		node = (PurpleBlistNode *)chat;
@@ -4230,6 +4278,8 @@ setup_chat_topic(PidginConversation *gtkconv, GtkWidget *vbox)
 
 		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 0);
 		gtk_widget_show(gtkchat->topic_text);
+		g_signal_connect(G_OBJECT(gtkchat->topic_text), "key_press_event",
+			             G_CALLBACK(entry_key_press_cb), gtkconv);
 	}
 }
 

@@ -108,21 +108,19 @@ static int ignore_sig_list[] = {
 };
 #endif
 
-static int
+static void
 dologin_named(const char *name)
 {
 	PurpleAccount *account;
 	char **names;
 	int i;
-	int ret = -1;
 
 	if (name != NULL) { /* list of names given */
 		names = g_strsplit(name, ",", 64);
 		for (i = 0; names[i] != NULL; i++) {
 			account = purple_accounts_find(names[i], NULL);
 			if (account != NULL) { /* found a user */
-				ret = 0;
-				purple_account_connect(account);
+				purple_account_set_enabled(account, PIDGIN_UI, TRUE);
 			}
 		}
 		g_strfreev(names);
@@ -133,12 +131,9 @@ dologin_named(const char *name)
 		if (accounts != NULL)
 		{
 			account = (PurpleAccount *)accounts->data;
-			ret = 0;
-			purple_account_connect(account);
+			purple_account_set_enabled(account, PIDGIN_UI, TRUE);
 		}
 	}
-
-	return ret;
 }
 
 #ifdef HAVE_SIGNAL_H
@@ -439,7 +434,6 @@ int main(int argc, char *argv[])
 	char *opt_config_dir_arg = NULL;
 	char *opt_login_arg = NULL;
 	char *opt_session_arg = NULL;
-	int dologin_ret = -1;
 	char *search_path;
 	GList *accounts;
 #ifdef HAVE_SIGNAL_H
@@ -798,14 +792,23 @@ int main(int argc, char *argv[])
 		pidgin_debug_window_show();
 
 	if (opt_login) {
-		dologin_ret = dologin_named(opt_login_arg);
+		/* disable all accounts */
+		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
+			PurpleAccount *account = accounts->data;
+			purple_account_set_enabled(account, PIDGIN_UI, FALSE);
+		}
+		/* honor the startup status preference */
+		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
+			purple_savedstatus_activate(purple_savedstatus_get_startup());
+		/* now enable the requested ones */
+		dologin_named(opt_login_arg);
 		if (opt_login_arg != NULL) {
 			g_free(opt_login_arg);
 			opt_login_arg = NULL;
 		}
 	}
 
-	if (opt_nologin)
+	if (opt_nologin && !opt_login)
 	{
 		/* Set all accounts to "offline" */
 		PurpleSavedStatus *saved_status;
@@ -821,7 +824,7 @@ int main(int argc, char *argv[])
 		/* Set the status for each account */
 		purple_savedstatus_activate(saved_status);
 	}
-	else
+	else if (!opt_login)
 	{
 		/* Everything is good to go--sign on already */
 		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))

@@ -125,8 +125,12 @@ docklet_x11_update_icon(PurpleStatusPrimitive status, gboolean connecting, gbool
 		int icon_size;
 		if (docklet_height < 22)
 			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
-		else
+		else if (docklet_height < 32)
 			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_SMALL);
+		else if (docklet_height < 48)
+			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_MEDIUM);
+		else
+			icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_LARGE);
 
 		gtk_image_set_from_stock(GTK_IMAGE(image), icon_name, icon_size);
 	}
@@ -135,9 +139,9 @@ docklet_x11_update_icon(PurpleStatusPrimitive status, gboolean connecting, gbool
 static void
 docklet_x11_resize_icon(GtkWidget *widget)
 {
-	if (docklet_height == widget->allocation.height)
+	if (docklet_height == MIN(widget->allocation.height, widget->allocation.width))
 		return;
-	docklet_height = widget->allocation.height;
+	docklet_height = MIN(widget->allocation.height, widget->allocation.width);
 	pidgin_docklet_update_icon();
 }
 

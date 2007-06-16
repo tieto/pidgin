@@ -63,6 +63,7 @@ plugins: \
 		autoaccept.dll \
 		buddynote.dll \
 		idle.dll \
+		joinpart.dll \
 		log_reader.dll \
 		newline.dll \
 		offlinemsg.dll \

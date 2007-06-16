@@ -108,6 +108,7 @@ static GtkWidget *accountmenu = NULL;
 
 static guint visibility_manager_count = 0;
 static gboolean gtk_blist_obscured = FALSE;
+static gboolean editing_blist = FALSE;
 
 static GList *pidgin_blist_sort_methods = NULL;
 static struct pidgin_blist_sort_method *current_sort_method = NULL;
@@ -310,6 +311,12 @@ static void gtk_blist_menu_join_cb(GtkWidget *w, PurpleChat *chat)
 	gtk_blist_join_chat(chat);
 }
 
+static void gtk_blist_renderer_editing_cancelled_cb(GtkCellRenderer *renderer, PurpleBuddyList *list)
+{
+	editing_blist = FALSE;
+	pidgin_blist_refresh(list);
+}
+
 static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 		GtkCellEditable *editable,
 		gchar *path_str,
@@ -346,10 +353,11 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 		GtkEntry *entry = GTK_ENTRY (editable);
 		gtk_entry_set_text(entry, text);
 	}
+	editing_blist = TRUE;
 }
 
 static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
-					 char *arg2, gpointer nada)
+					 char *arg2, PurpleBuddyList *list)
 {
 	GtkTreeIter iter;
 	GtkTreePath *path;
@@ -357,6 +365,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 	PurpleBlistNode *node;
 	PurpleGroup *dest;
 
+	editing_blist = FALSE;
 	path = gtk_tree_path_new_from_string (arg1);
 	gtk_tree_model_get_iter (GTK_TREE_MODEL(gtkblist->treemodel), &iter, path);
 	gtk_tree_path_free (path);
@@ -401,6 +410,7 @@ static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *a
 		default:
 			break;
 	}
+	pidgin_blist_refresh(list);
 }
 
 static void gtk_blist_menu_alias_cb(GtkWidget *w, PurpleBlistNode *node)
@@ -479,6 +489,11 @@ static void gtk_blist_menu_showlog_cb(GtkWidget *w, PurpleBlistNode *node)
 static void gtk_blist_show_systemlog_cb()
 {
 	pidgin_syslog_show();
+}
+
+static void gtk_blist_show_onlinehelp_cb()
+{
+	purple_notify_uri(NULL, PURPLE_WEBSITE "documentation");
 }
 
 static void
@@ -2865,6 +2880,11 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
+	/* Help */
+	{ N_("/_Help"), NULL, NULL, 0, "<Branch>", NULL },
+	{ N_("/Help/Online _Help"), "F1", gtk_blist_show_onlinehelp_cb, 0, "<StockItem>", GTK_STOCK_HELP },
+	{ N_("/Help/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
+	{ N_("/Help/_About"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
 };
 
 /*********************************************************
@@ -2990,7 +3010,14 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		signon = purple_presence_get_login_time(presence);
 		if (full && PURPLE_BUDDY_IS_ONLINE(b) && signon > 0)
 		{
-			tmp = purple_str_seconds_to_string(time(NULL) - signon);
+			if (time(NULL) - signon > 63072000 /* 2 years */) {
+				/*
+				 * Our local clock must be wrong, show the actual
+				 * date instead of "4 days", etc.
+				 */
+				tmp = g_strdup(purple_date_format_long(localtime(&signon)));
+			} else
+				tmp = purple_str_seconds_to_string(time(NULL) - signon);
 			purple_notify_user_info_add_pair(user_info, _("Logged In"), tmp);
 			g_free(tmp);
 		}
@@ -3729,8 +3756,11 @@ static void pidgin_blist_new_node(PurpleBlistNode *node)
 
 gboolean pidgin_blist_node_is_contact_expanded(PurpleBlistNode *node)
 {
-	if PURPLE_BLIST_NODE_IS_BUDDY(node)
+	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		node = node->parent;
+		if (node == NULL)
+			return FALSE;
+	}
 
 	g_return_val_if_fail(PURPLE_BLIST_NODE_IS_CONTACT(node), FALSE);
 
@@ -4436,7 +4466,8 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 										"markup", NAME_COLUMN,
 										NULL);
 	g_signal_connect(G_OBJECT(rend), "editing-started", G_CALLBACK(gtk_blist_renderer_editing_started_cb), NULL);
-	g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(gtk_blist_renderer_edited_cb), NULL);
+	g_signal_connect(G_OBJECT(rend), "editing-canceled", G_CALLBACK(gtk_blist_renderer_editing_cancelled_cb), list);
+	g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(gtk_blist_renderer_edited_cb), list);
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 #if GTK_CHECK_VERSION(2,6,0)
 	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
@@ -4778,9 +4809,10 @@ static gboolean insert_node(PurpleBuddyList *list, PurpleBlistNode *node, GtkTre
 
 	gtk_tree_path_free(newpath);
 
-	gtk_tree_store_set(gtkblist->treemodel, iter,
-			NODE_COLUMN, node,
-			-1);
+	if (!editing_blist)
+		gtk_tree_store_set(gtkblist->treemodel, iter,
+				NODE_COLUMN, node,
+				-1);
 
 	if(node->parent) {
 		GtkTreePath *expand = NULL;
@@ -4813,6 +4845,9 @@ static void pidgin_blist_update_group(PurpleBuddyList *list, PurpleBlistNode *no
 
 	g_return_if_fail(node != NULL);
 
+	if (editing_blist)
+		return;
+	
 	if (PURPLE_BLIST_NODE_IS_GROUP(node))
 		gnode = node;
 	else if (PURPLE_BLIST_NODE_IS_BUDDY(node))
@@ -4914,6 +4949,9 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 	gboolean biglist = purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_buddy_icons");
 	presence = purple_buddy_get_presence(buddy);
 
+	if (editing_blist)
+		return;
+	
 	status = pidgin_blist_get_status_icon((PurpleBlistNode*)buddy,
 						PIDGIN_STATUS_ICON_SMALL);
 
@@ -4992,6 +5030,8 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 	PurpleContact *contact;
 	PurpleBuddy *buddy;
 	struct _pidgin_blist_node *gtknode;
+	if (editing_blist)
+		return;
 
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 		cnode = node->parent;
@@ -5088,6 +5128,8 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 	PurpleChat *chat;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
+	if (editing_blist)
+		return;
 
 	/* First things first, update the group */
 	pidgin_blist_update_group(list, node->parent);
