@@ -308,6 +308,7 @@ purple_account_user_split_new(const char *text, const char *default_value,
 	split->text = g_strdup(text);
 	split->field_sep = sep;
 	split->default_value = g_strdup(default_value);
+	split->reverse = TRUE;
 
 	return split;
 }
@@ -344,4 +345,20 @@ purple_account_user_split_get_separator(const PurpleAccountUserSplit *split)
 	g_return_val_if_fail(split != NULL, 0);
 
 	return split->field_sep;
+}
+
+gboolean
+purple_account_user_split_get_reverse(const PurpleAccountUserSplit *split)
+{
+	g_return_val_if_fail(split != NULL, FALSE);
+
+	return split->reverse;
+}
+
+void
+purple_account_user_split_set_reverse(PurpleAccountUserSplit *split, gboolean reverse)
+{
+	g_return_if_fail(split != NULL);
+
+	split->reverse = reverse;
 }

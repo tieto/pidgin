@@ -592,7 +592,7 @@ static void irc_input_cb_ssl(gpointer data, PurpleSslConnection *gsc,
 	struct irc_conn *irc = gc->proto_data;
 	int len;
 
-	if(!g_list_find(purple_connections_get_all(), gc)) {
+	if(!g_list_find((GList *)purple_connections_get_all(), gc)) {
 		purple_ssl_close(gsc);
 		return;
 	}
@@ -814,7 +814,8 @@ static void irc_keepalive(PurpleConnection *gc)
 
 static PurplePluginProtocolInfo prpl_info =
 {
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL,
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_PASSWORD_OPTIONAL |
+	OPT_PROTO_SLASH_COMMANDS_NATIVE,
 	NULL,					/* user_splits */
 	NULL,					/* protocol_options */
 	NO_BUDDY_ICONS,		/* icon_spec */

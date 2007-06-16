@@ -124,14 +124,24 @@ xmlnode *xmlnode_get_next_twin(xmlnode *node);
 void xmlnode_insert_data(xmlnode *node, const char *data, gssize size);
 
 /**
- * Gets data from a node.
+ * Gets (escaped) data from a node.
  *
  * @param node The node to get data from.
  *
- * @return The data from the node.  You must g_free
- *         this string when finished using it.
+ * @return The data from the node.  This data is in raw escaped format.
+ *         You must g_free this string when finished using it.
  */
 char *xmlnode_get_data(xmlnode *node);
+
+/**
+ * Gets unescaped data from a node.
+ *
+ * @param node The node to get data from.
+ *
+ * @return The data from the node, in unescaped form.   You must g_free
+ *         this string when finished using it.
+ */
+char *xmlnode_get_data_unescaped(xmlnode *node);
 
 /**
  * Sets an attribute for a node.

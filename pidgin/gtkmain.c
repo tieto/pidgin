@@ -108,37 +108,32 @@ static int ignore_sig_list[] = {
 };
 #endif
 
-static int
+static void
 dologin_named(const char *name)
 {
 	PurpleAccount *account;
 	char **names;
 	int i;
-	int ret = -1;
 
 	if (name != NULL) { /* list of names given */
 		names = g_strsplit(name, ",", 64);
 		for (i = 0; names[i] != NULL; i++) {
 			account = purple_accounts_find(names[i], NULL);
 			if (account != NULL) { /* found a user */
-				ret = 0;
-				purple_account_connect(account);
+				purple_account_set_enabled(account, PIDGIN_UI, TRUE);
 			}
 		}
 		g_strfreev(names);
 	} else { /* no name given, use the first account */
-		GList *accounts;
+		const GList *accounts;
 
 		accounts = purple_accounts_get_all();
 		if (accounts != NULL)
 		{
 			account = (PurpleAccount *)accounts->data;
-			ret = 0;
-			purple_account_connect(account);
+			purple_account_set_enabled(account, PIDGIN_UI, TRUE);
 		}
 	}
-
-	return ret;
 }
 
 #ifdef HAVE_SIGNAL_H
@@ -439,9 +434,8 @@ int main(int argc, char *argv[])
 	char *opt_config_dir_arg = NULL;
 	char *opt_login_arg = NULL;
 	char *opt_session_arg = NULL;
-	int dologin_ret = -1;
 	char *search_path;
-	GList *accounts;
+	const GList *accounts;
 #ifdef HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
@@ -456,6 +450,7 @@ int main(int argc, char *argv[])
 	gboolean gui_check;
 	gboolean debug_enabled;
 	gboolean migration_failed = FALSE;
+	GList *active_accounts;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},
@@ -733,6 +728,15 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
+	if (!purple_core_ensure_single_instance()) {
+		purple_core_quit();
+#ifdef HAVE_SIGNAL_H
+		g_free(segfault_message);
+#endif
+		return 0;
+	}
+		
+
 	/* TODO: Move blist loading into purple_blist_init() */
 	purple_set_blist(purple_blist_new());
 	purple_blist_load();
@@ -788,14 +792,23 @@ int main(int argc, char *argv[])
 		pidgin_debug_window_show();
 
 	if (opt_login) {
-		dologin_ret = dologin_named(opt_login_arg);
+		/* disable all accounts */
+		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
+			PurpleAccount *account = accounts->data;
+			purple_account_set_enabled(account, PIDGIN_UI, FALSE);
+		}
+		/* honor the startup status preference */
+		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
+			purple_savedstatus_activate(purple_savedstatus_get_startup());
+		/* now enable the requested ones */
+		dologin_named(opt_login_arg);
 		if (opt_login_arg != NULL) {
 			g_free(opt_login_arg);
 			opt_login_arg = NULL;
 		}
 	}
 
-	if (opt_nologin)
+	if (opt_nologin && !opt_login)
 	{
 		/* Set all accounts to "offline" */
 		PurpleSavedStatus *saved_status;
@@ -811,7 +824,7 @@ int main(int argc, char *argv[])
 		/* Set the status for each account */
 		purple_savedstatus_activate(saved_status);
 	}
-	else
+	else if (!opt_login)
 	{
 		/* Everything is good to go--sign on already */
 		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
@@ -819,13 +832,13 @@ int main(int argc, char *argv[])
 		purple_accounts_restore_current_statuses();
 	}
 
-	if ((accounts = purple_accounts_get_all_active()) == NULL)
+	if ((active_accounts = purple_accounts_get_all_active()) == NULL)
 	{
 		pidgin_accounts_window_show();
 	}
 	else
 	{
-		g_list_free(accounts);
+		g_list_free(active_accounts);
 	}
 
 #ifdef HAVE_STARTUP_NOTIFICATION

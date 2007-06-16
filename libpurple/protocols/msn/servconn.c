@@ -195,6 +195,7 @@ connect_cb(gpointer data, gint source, const char *error_msg)
 	}
 	else
 	{
+		purple_debug_error("msn", "Connection error: %s\n", error_message);
 		msn_servconn_got_error(servconn, MSN_SERVCONN_ERROR_CONNECT);
 	}
 }
@@ -353,7 +354,7 @@ msn_servconn_write(MsnServConn *servconn, const char *buf, size_t len)
 
 		if (ret < 0 && errno == EAGAIN)
 			ret = 0;
-		if (ret < len) {
+		if (ret >= 0 && ret < len) {
 			if (servconn->tx_handler == -1)
 				servconn->tx_handler = purple_input_add(
 					servconn->fd, PURPLE_INPUT_WRITE,

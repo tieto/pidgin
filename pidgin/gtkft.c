@@ -248,10 +248,10 @@ update_detailed_info(PidginXferDialog *dialog, PurpleXfer *xfer)
 
 	get_xfer_info_strings(xfer, &kbsec, &time_elapsed, &time_remaining);
 
-	status = g_strdup_printf("%ld%% (%ld of %ld bytes)",
-							 (unsigned long)(purple_xfer_get_progress(xfer)*100),
-							 (unsigned long)purple_xfer_get_bytes_sent(xfer),
-							 (unsigned long)purple_xfer_get_size(xfer));
+	status = g_strdup_printf("%d%% (%" G_GSIZE_FORMAT " of %" G_GSIZE_FORMAT " bytes)",
+							 (int)(purple_xfer_get_progress(xfer)*100),
+							 purple_xfer_get_bytes_sent(xfer),
+							 purple_xfer_get_size(xfer));
 
 	if (purple_xfer_is_completed(xfer)) {
 
@@ -758,10 +758,7 @@ pidgin_xfer_dialog_new(void)
 		purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/filetransfer/clear_finished");
 
 	/* Create the window. */
-	dialog->window = window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(window), "file transfer");
-	gtk_window_set_title(GTK_WINDOW(window), _("File Transfers"));
-	gtk_container_set_border_width(GTK_CONTAINER(window), PIDGIN_HIG_BORDER);
+	dialog->window = window = pidgin_create_window(_("File Transfers"), PIDGIN_HIG_BORDER, "file transfer", TRUE);
 
 	g_signal_connect(G_OBJECT(window), "delete_event",
 					 G_CALLBACK(delete_win_cb), dialog);

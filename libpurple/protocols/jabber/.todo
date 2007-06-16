@@ -38,7 +38,7 @@
             formatted. enhancement-request so that the birthday field in the setinfo form would split up into relevant fields allowing for a strict syntax (like year--month--day or so, perhaps even dropdown menus)
         </note>
         <note priority="low" time="1037890968">
-            have set info pre-fill values from the server when no local vcard exists. this will help people migrating to gaim
+            have set info pre-fill values from the server when no local vcard exists. this will help people migrating to libpurple-based clients
         </note>
     </note>
     <note priority="verylow" time="1036044192">

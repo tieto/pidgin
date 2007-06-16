@@ -33,9 +33,13 @@ excluded = [\
     ]
 
 # This is a list of functions that return a GList* whose elements are
-# string, not pointers to objects.  Don't put any functions here, it
-# won't work.
-stringlists = []
+# string, not pointers to objects.
+stringlists = [
+    "purple_prefs_get_path_list",
+    "purple_prefs_get_string_list",
+    "purple_uri_list_extract_filenames",
+    "purple_uri_list_extract_uris",
+]
 
 pointer = "#pointer#"
 myexception = "My Exception"
@@ -148,7 +152,7 @@ class Binding:
                 return self.outputpurplestructure(type, name)
 
             if type[0] in ["GList", "GSList"]:
-                return self.outputlist(type, name)
+                return self.outputlist(type, name, const)
 
         raise myexception
     
@@ -165,9 +169,9 @@ class ClientBinding (Binding):
         self.returncode = []
 
     def flush(self):
-	paramslist = ", ".join(self.paramshdr)
-	if (paramslist == "") :
-	    paramslist = "void"
+        paramslist = ", ".join(self.paramshdr)
+        if (paramslist == "") :
+            paramslist = "void"
         print "%s %s(%s)" % (self.functiontype, self.function.name,
                              paramslist),
 
@@ -250,7 +254,7 @@ class ClientBinding (Binding):
         self.returncode.append("return (%s*) GINT_TO_POINTER(%s);" % (type[0], name));
         self.definepurplestructure(type)
 
-    def outputlist(self, type, name):
+    def outputlist(self, type, name, const):
         self.functiontype = "%s*" % type[0]
         self.decls.append("GArray *%s;" % name)
         self.outputparams.append(('dbus_g_type_get_collection("GArray", G_TYPE_INT)', name))
@@ -279,7 +283,7 @@ class ServerBinding (Binding):
         for decl in self.cdecls:
             print decl
 
-        print "\t%s(message_DBUS, error_DBUS, " % self.argfunc,
+        print "\t%s(message_DBUS, error_DBUS," % self.argfunc,
         for param in self.cparams:
             print "DBUS_TYPE_%s, &%s," % param,
         print "DBUS_TYPE_INVALID);"
@@ -289,14 +293,14 @@ class ServerBinding (Binding):
         for code in self.ccode:
             print code
 
-        print "\treply_DBUS =  dbus_message_new_method_return (message_DBUS);"
+        print "\treply_DBUS = dbus_message_new_method_return (message_DBUS);"
 
-        print "\tdbus_message_append_args(reply_DBUS, ",
+        print "\tdbus_message_append_args(reply_DBUS,",
         for param in self.cparamsout:
             if type(param) is str:
-                print "%s, " % param
+                print "%s," % param
             else:
-                print "DBUS_TYPE_%s, &%s, " % param,
+                print "DBUS_TYPE_%s, &%s," % param,
         print "DBUS_TYPE_INVALID);"
 
         for code in self.ccodeout:
@@ -385,28 +389,40 @@ class ServerBinding (Binding):
         self.addouttype("i", name)
 
     # GList*, GSList*, assume that list is a list of objects
-
-    # fixme: at the moment, we do NOT free the memory occupied by
-    # the list, we should free it if the list has NOT been declared const
-
-    # fixme: we assume that this is a list of objects, not a list
-    # of strings
-
-    def outputlist(self, type, name):
+    # unless the function is in stringlists
+    def outputlist(self, type, name, const):
         self.cdecls.append("\tdbus_int32_t %s_LEN;" % name)
         self.ccodeout.append("\tg_free(%s);" % name)
 
+        if const:
+            const_prefix = "const_"
+        else:
+            const_prefix = ""
+
+        if (const):
+            self.cdecls.append("\tconst %s *list;" % type[0]);
+        else:
+            self.cdecls.append("\t%s *list;" % type[0]);
+
         if self.function.name in stringlists:
             self.cdecls.append("\tchar **%s;" % name)
-            self.ccode.append("\t%s = purple_%s_to_array(%s, FALSE, &%s_LEN);" % \
-                         (name, type[0], self.call, name))
+            self.ccode.append("\tlist = %s;" % self.call)
+            self.ccode.append("\t%s = (char **)purple_const_%s_to_array(list, &%s_LEN);" % \
+                         (name, type[0], name))
             self.cparamsout.append("\tDBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &%s, %s_LEN" \
                           % (name, name))
+            if (not const):
+                type_name = type[0].lower()[1:]
+                self.ccodeout.append("\tg_%s_foreach(list, (GFunc)g_free, NULL);" % type_name)
+                self.ccodeout.append("\tg_%s_free(list);" % type_name)
             self.addouttype("as", name)
         else:
             self.cdecls.append("\tdbus_int32_t *%s;" % name)
-            self.ccode.append("\t%s = purple_dbusify_%s(%s, FALSE, &%s_LEN);" % \
-                         (name, type[0], self.call, name))
+            self.ccode.append("\tlist = %s;" % self.call)
+            self.ccode.append("\t%s = purple_dbusify_const_%s(list, &%s_LEN);" % \
+                         (name, type[0], name))
+            if (not const):
+                self.ccode.append("\tg_%s_free(list);" % type[0].lower()[1:])
             self.cparamsout.append("\tDBUS_TYPE_ARRAY, DBUS_TYPE_INT32, &%s, %s_LEN" \
                               % (name, name))
             self.addouttype("ai", name)

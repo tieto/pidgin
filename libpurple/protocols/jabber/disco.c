@@ -96,6 +96,7 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 			SUPPORT_FEATURE("http://jabber.org/protocol/si")
 			SUPPORT_FEATURE("http://jabber.org/protocol/si/profile/file-transfer")
 			SUPPORT_FEATURE("http://jabber.org/protocol/xhtml-im")
+			SUPPORT_FEATURE("urn:xmpp:ping")
 		} else {
 			xmlnode *error, *inf;
 

@@ -109,6 +109,8 @@ pidgin_SOURCES = \
 	gtksession.c \
 	gtksound.c \
 	gtksourceiter.c \
+	gtksourceundomanager.c \
+	gtksourceview-marshal.c \
 	gtkstatusbox.c \
 	gtkthemes.c \
 	gtkutils.c \
@@ -156,6 +158,8 @@ pidgin_headers = \
 	gtksession.h \
 	gtksound.h \
 	gtksourceiter.h \
+	gtksourceundomanager.h \
+	gtksourceview-marshal.h \
 	gtkstatusbox.h \
 	pidginstock.h \
 	gtkthemes.h \
@@ -193,6 +197,7 @@ AM_CPPFLAGS = \
 	-DLIBDIR=\"$(libdir)/pidgin/\" \
 	-DLOCALEDIR=\"$(datadir)/locale\" \
 	-DSYSCONFDIR=\"$(sysconfdir)\" \
+	-I$(top_builddir)/libpurple \
 	-I$(top_srcdir)/libpurple/ \
 	$(GLIB_CFLAGS) \
 	$(GSTREAMER_CFLAGS) \

@@ -436,6 +436,7 @@ msn_session_finish_login(MsnSession *session)
 	PurpleAccount *account;
 	PurpleConnection *gc;
 	PurpleStoredImage *img;
+	const char *passport;
 
 	if (session->logged_in)
 		return;
@@ -459,6 +460,13 @@ msn_session_finish_login(MsnSession *session)
 	 * and @msn.com accounts don't automatically get the initial email
 	 * notification so we always request it on login
 	 */
-	msn_cmdproc_send(session->notification->cmdproc, "URL", "%s", "INBOX");
+
+	passport = purple_normalize(account, purple_account_get_username(account));
+
+	if ((strstr(passport, "@hotmail.") != NULL) ||
+		(strstr(passport, "@msn.com") != NULL))
+	{
+		msn_cmdproc_send(session->notification->cmdproc, "URL", "%s", "INBOX");
+	}
 }
 

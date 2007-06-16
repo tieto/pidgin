@@ -201,6 +201,25 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 		xmlnode_insert_data(xmlnode_new_child(query, "display"), date, -1);
 
 		jabber_iq_send(iq);
+	} else {
+		/* XXX: error */
+	}
+}
+
+static void urn_xmpp_ping_parse(JabberStream *js, xmlnode *packet)
+{
+	const char *type, *from, *id;
+	JabberIq *iq;
+	xmlnode *query;
+
+	if(type && !strcmp(type, "get")) {
+		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "urn:xmpp:ping");
+
+		jabber_iq_set_id(iq, id);
+
+		jabber_iq_send(iq);
+	} else {
+		/* XXX: error */
 	}
 }
 
@@ -232,7 +251,8 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 
 		query = xmlnode_get_child(iq->node, "query");
 
-		xmlnode_insert_data(xmlnode_new_child(query, "name"), PACKAGE, -1);
+		/* TODO: ask the core for the version of libpurple and the name and version of the UI */
+		xmlnode_insert_data(xmlnode_new_child(query, "name"), "libpurple", -1);
 		xmlnode_insert_data(xmlnode_new_child(query, "version"), VERSION, -1);
 		if(os) {
 			xmlnode_insert_data(xmlnode_new_child(query, "os"), os, -1);
@@ -327,6 +347,7 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("http://jabber.org/protocol/disco#info", jabber_disco_info_parse);
 	jabber_iq_register_handler("http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
 	jabber_iq_register_handler("jabber:iq:register", jabber_register_parse);
+	jabber_iq_register_handler("urn:xmpp:ping", urn_xmpp_ping_parse);
 }
 
 void jabber_iq_uninit(void)

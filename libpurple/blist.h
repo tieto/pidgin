@@ -864,6 +864,15 @@ void purple_blist_node_set_flags(PurpleBlistNode *node, PurpleBlistNodeFlags fla
  */
 PurpleBlistNodeFlags purple_blist_node_get_flags(PurpleBlistNode *node);
 
+/**
+ * Get the type of a given node.
+ *
+ * @param node The node.
+ *
+ * @return The type of the node.
+ */
+PurpleBlistNodeType purple_blist_node_get_type(PurpleBlistNode *node);
+
 /*@}*/
 
 /**

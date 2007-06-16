@@ -86,7 +86,7 @@ static gboolean should_hide_notice(PurpleConversation *conv, const char *name,
 	/* If the room is small, don't bother. */
 	chat = PURPLE_CONV_CHAT(conv);
 	threshold = purple_prefs_get_int(THRESHOLD_PREF);
-	if (g_list_length(purple_conv_chat_get_users(chat)) < threshold)
+	if (g_list_length((GList *)purple_conv_chat_get_users(chat)) < threshold)
 		return FALSE;
 
 	/* We always care about our buddies! */
@@ -210,7 +210,7 @@ static gboolean plugin_unload(PurplePlugin *plugin)
 	 * we don't have to worry one will be called after this. */
 	g_hash_table_destroy((GHashTable *)data[0]);
 
-	g_source_remove(GPOINTER_TO_UINT(data[1]));
+	purple_timeout_remove(GPOINTER_TO_UINT(data[1]));
 	g_free(data);
 
 	return TRUE;

@@ -15,15 +15,9 @@
             <note priority="veryhigh" time="1036040919">
                 some way to close direct connect w/out closing convo.
             </note>
-            <note priority="low" time="1036040970">
-                canceled direct im should still allow new attempt
-            </note>
             <note priority="low" time="1036041084">
                 failed direct im attempt should allow new attempt some way to cancel an attempt that isn't happening
             </note>
-        </note>
-        <note priority="low" time="1036041105">
-            Colors in Chat room are wrong (using Gold too much)
         </note>
         <note priority="verylow" time="1036041121">
             Voice Chat
@@ -44,7 +38,7 @@
             color support
         </note>
         <note priority="high" time="1036041251">
-            set status message and of course when gaim can set them, it needs to be able to get the ones it sets. (yes this is redundant. its a reflection of my current mood)
+            set status message and of course when libpurple can set them, it needs to be able to get the ones it sets. (yes this is redundant. its a reflection of my current mood)
         </note>
         <note priority="medium" time="1036041165">
             Chat (this is different from aim chat)
@@ -66,6 +60,6 @@
         </note>
     </note>
     <note priority="medium" time="1036040870">
-        The order of groups and buddies in the server list is not updated when groups and buddies are re-arranged locally in Gaim.
+        The order of groups and buddies in the server list is not updated when groups and buddies are re-arranged locally in libpurple.
     </note>
 </todo>

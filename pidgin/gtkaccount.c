@@ -184,6 +184,7 @@ add_pref_box(AccountPrefsDialog *dialog, GtkWidget *parent,
 	gtk_size_group_add_widget(dialog->sg, label);
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
+	gtk_label_set_mnemonic_widget(GTK_LABEL(label), widget);
 	gtk_widget_show(label);
 
 	gtk_box_pack_start(GTK_BOX(hbox), widget, TRUE, TRUE, PIDGIN_HIG_BORDER);
@@ -426,7 +427,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		gtk_widget_ref(dialog->protocol_menu);
 	}
 
-	hbox = add_pref_box(dialog, vbox, _("Protocol:"), dialog->protocol_menu);
+	hbox = add_pref_box(dialog, vbox, _("Pro_tocol:"), dialog->protocol_menu);
 	g_object_set_data(G_OBJECT(dialog->protocol_menu), "container", hbox);
 
 	gtk_widget_unref(dialog->protocol_menu);
@@ -437,7 +438,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	g_object_set(G_OBJECT(dialog->screenname_entry), "truncate-multiline", TRUE, NULL);
 #endif
 
-	add_pref_box(dialog, vbox, _("Screen name:"), dialog->screenname_entry);
+	add_pref_box(dialog, vbox, _("Screen _name:"), dialog->screenname_entry);
 
 	g_signal_connect(G_OBJECT(dialog->screenname_entry), "changed",
 					 G_CALLBACK(screenname_changed_cb), dialog);
@@ -460,7 +461,7 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		PurpleAccountUserSplit *split = l->data;
 		char *buf;
 
-		buf = g_strdup_printf("%s:", purple_account_user_split_get_text(split));
+		buf = g_strdup_printf("_%s:", purple_account_user_split_get_text(split));
 
 		entry = gtk_entry_new();
 
@@ -479,11 +480,15 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 		GtkWidget *entry = l->data;
 		PurpleAccountUserSplit *split = l2->data;
-		const char *value = NULL, *protocol = NULL;
+		const char *value = NULL;
 		char *c;
 
 		if (dialog->account != NULL) {
-			c = strrchr(username,
+			if(purple_account_user_split_get_reverse(split))
+				c = strrchr(username,
+						purple_account_user_split_get_separator(split));
+			else
+				c = strchr(username,
 						purple_account_user_split_get_separator(split));
 
 			if (c != NULL) {
@@ -499,9 +504,8 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 		/* Google Talk default domain hackery! */
 		menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
 		item = gtk_menu_get_active(GTK_MENU(menu));
-		protocol = g_object_get_data(G_OBJECT(item), "protocol");
-		if (value == NULL && protocol != NULL && !strcmp(protocol, "prpl-fake") &&
-				!strcmp(purple_account_user_split_get_text(split), _("Domain")))
+		if (value == NULL && g_object_get_data(G_OBJECT(item), "fake") && 
+			!strcmp(purple_account_user_split_get_text(split), _("Domain")))
 			value = "gmail.com";
 
 		if (value != NULL)
@@ -519,16 +523,16 @@ add_login_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	gtk_entry_set_visibility(GTK_ENTRY(dialog->password_entry), FALSE);
 	if (gtk_entry_get_invisible_char(GTK_ENTRY(dialog->password_entry)) == '*')
 		gtk_entry_set_invisible_char(GTK_ENTRY(dialog->password_entry), PIDGIN_INVISIBLE_CHAR);
-	dialog->password_box = add_pref_box(dialog, vbox, _("Password:"),
+	dialog->password_box = add_pref_box(dialog, vbox, _("_Password:"),
 										  dialog->password_entry);
 
 	/* Alias */
 	dialog->alias_entry = gtk_entry_new();
-	add_pref_box(dialog, vbox, _("Local alias:"), dialog->alias_entry);
+	add_pref_box(dialog, vbox, _("_Local alias:"), dialog->alias_entry);
 
 	/* Remember Password */
 	dialog->remember_pass_check =
-		gtk_check_button_new_with_label(_("Remember password"));
+		gtk_check_button_new_with_mnemonic(_("Remember pass_word"));
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(dialog->remember_pass_check),
 								 FALSE);
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->remember_pass_check,
@@ -599,12 +603,12 @@ add_user_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 
 	/* New mail notifications */
 	dialog->new_mail_check =
-		gtk_check_button_new_with_label(_("New mail notifications"));
+		gtk_check_button_new_with_mnemonic(_("New _mail notifications"));
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->new_mail_check, FALSE, FALSE, 0);
 	gtk_widget_show(dialog->new_mail_check);
 
 	/* Buddy icon */
-	dialog->icon_check = gtk_check_button_new_with_label(_("Use this buddy icon for this account:"));
+	dialog->icon_check = gtk_check_button_new_with_mnemonic(_("Use this buddy _icon for this account:"));
 	g_signal_connect(G_OBJECT(dialog->icon_check), "toggled", G_CALLBACK(icon_check_cb), dialog);
 	gtk_widget_show(dialog->icon_check);
 	gtk_box_pack_start(GTK_BOX(vbox), dialog->icon_check, FALSE, FALSE, 0);
@@ -701,8 +705,8 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	PurpleKeyValuePair *kvp;
 	GList *l;
 	char buf[1024];
-	char *title;
-	const char *str_value, *protocol;
+	char *title, *tmp;
+	const char *str_value;
 	gboolean bool_value;
 
 	if (dialog->protocol_frame != NULL) {
@@ -758,8 +762,9 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 						purple_account_option_get_default_bool(option));
 				}
 
-				check = gtk_check_button_new_with_label(
-					purple_account_option_get_text(option));
+				tmp = g_strconcat("_", purple_account_option_get_text(option), NULL);
+				check = gtk_check_button_new_with_mnemonic(tmp);
+				g_free(tmp);
 
 				gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check),
 											 bool_value);
@@ -791,7 +796,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				entry = gtk_entry_new();
 				gtk_entry_set_text(GTK_ENTRY(entry), buf);
 
-				title = g_strdup_printf("%s:",
+				title = g_strdup_printf("_%s:",
 						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, entry);
@@ -828,15 +833,14 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				/* Google Talk default domain hackery! */
 				menu = gtk_option_menu_get_menu(GTK_OPTION_MENU(dialog->protocol_menu));
 				item = gtk_menu_get_active(GTK_MENU(menu));
-				protocol = g_object_get_data(G_OBJECT(item), "protocol");
-				if (str_value == NULL && protocol != NULL && !strcmp(protocol, "prpl-fake") &&
+				if (str_value == NULL && g_object_get_data(G_OBJECT(item), "fake") &&
 					!strcmp(_("Connect server"),  purple_account_option_get_text(option)))
 					str_value = "talk.google.com";
-		
+
 				if (str_value != NULL)
 					gtk_entry_set_text(GTK_ENTRY(entry), str_value);
 
-				title = g_strdup_printf("%s:",
+				title = g_strdup_printf("_%s:",
 						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, entry);
@@ -897,7 +901,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 				gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(combo),
 						renderer, "text", 0, NULL);
 
-				title = g_strdup_printf("%s:",
+				title = g_strdup_printf("_%s:",
 						purple_account_option_get_text(option));
 
 				add_pref_box(dialog, vbox, title, combo);
@@ -1466,18 +1470,8 @@ pidgin_account_dialog_show(PidginAccountDialogType type,
 	if ((dialog->plugin = purple_find_prpl(dialog->protocol_id)) != NULL)
 		dialog->prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(dialog->plugin);
 
-
-	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(win), "account");
-
-	if (type == PIDGIN_ADD_ACCOUNT_DIALOG)
-		gtk_window_set_title(GTK_WINDOW(win), _("Add Account"));
-	else
-		gtk_window_set_title(GTK_WINDOW(win), _("Modify Account"));
-
-	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
-
-	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
+	dialog->window = win = pidgin_create_window((type == PIDGIN_ADD_ACCOUNT_DIALOG) ? _("Add Account") : _("Modify Account"),
+		PIDGIN_HIG_BORDER, "account", FALSE);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(account_win_destroy_cb), dialog);
@@ -1592,7 +1586,7 @@ signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 
 	account = purple_connection_get_account(gc);
 	model = GTK_TREE_MODEL(accounts_window->model);
-	index = g_list_index(purple_accounts_get_all(), account);
+	index = g_list_index((GList *)purple_accounts_get_all(), account);
 
 	if (gtk_tree_model_iter_nth_child(model, &iter, NULL, index))
 	{
@@ -1795,13 +1789,13 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 				case GTK_TREE_VIEW_DROP_INTO_OR_AFTER:
 					move_account_after(dialog->model, &dialog->drag_iter,
 									   &iter);
-					dest_index = g_list_index(purple_accounts_get_all(),
+					dest_index = g_list_index((GList *)purple_accounts_get_all(),
 											  account) + 1;
 					break;
 
 				case GTK_TREE_VIEW_DROP_BEFORE:
 				case GTK_TREE_VIEW_DROP_INTO_OR_BEFORE:
-					dest_index = g_list_index(purple_accounts_get_all(),
+					dest_index = g_list_index((GList *)purple_accounts_get_all(),
 											  account);
 
 					move_account_before(dialog->model, &dialog->drag_iter,
@@ -2100,7 +2094,7 @@ add_account_to_liststore(PurpleAccount *account, gpointer user_data)
 static gboolean
 populate_accounts_list(AccountsWindow *dialog)
 {
-	GList *l;
+	const GList *l;
 	gboolean ret = FALSE;
 	GdkPixbuf *global_buddyicon = NULL;
 	const char *path;
@@ -2304,7 +2298,7 @@ static void
 global_buddyicon_changed(const char *name, PurplePrefType type,
 			gconstpointer value, gpointer window)
 {
-	GList *list;
+	const GList *list;
 	for (list = purple_accounts_get_all(); list; list = list->next) {
 		account_modified_cb(list->data, window);
 	}
@@ -2321,7 +2315,6 @@ pidgin_accounts_window_show(void)
 	GtkWidget *button;
 	int width, height;
 
-
 	if (accounts_window != NULL) {
 		gtk_window_present(GTK_WINDOW(accounts_window->window));
 		return;
@@ -2332,11 +2325,8 @@ pidgin_accounts_window_show(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/accounts/dialog/height");
 
-	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	dialog->window = win = pidgin_create_window(_("Accounts"), PIDGIN_HIG_BORDER, "accounts", TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
-	gtk_window_set_role(GTK_WINDOW(win), "accounts");
-	gtk_window_set_title(GTK_WINDOW(win), _("Accounts"));
-	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(accedit_win_destroy_cb), accounts_window);
@@ -2439,7 +2429,7 @@ add_user_cb(PidginAccountAddUserData *data)
 {
 	PurpleConnection *gc = purple_account_get_connection(data->account);
 
-	if (g_list_find(purple_connections_get_all(), gc))
+	if (g_list_find((GList *)purple_connections_get_all(), gc))
 	{
 		purple_blist_request_add_buddy(data->account, data->username,
 									 NULL, data->alias);
