@@ -2827,6 +2827,7 @@ static int purple_parse_locerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	va_list ap;
 	guint16 reason;
 	char *destn;
+	PurpleNotifyUserInfo *user_info;
 
 	va_start(ap, fr);
 	reason = (guint16) va_arg(ap, unsigned int);
@@ -2836,12 +2837,12 @@ static int purple_parse_locerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	if (destn == NULL)
 		return 1;
 
+	user_info = purple_notify_user_info_new();
 	buf = g_strdup_printf(_("User information not available: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
-	if (!purple_conv_present_error(destn, purple_connection_get_account((PurpleConnection*)od->gc), buf)) {
-		g_free(buf);
-		buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
-		purple_notify_error(od->gc, NULL, buf, (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
-	}
+	purple_notify_user_info_add_pair(user_info, NULL, buf);
+	purple_notify_userinfo(od->gc, destn, user_info, NULL, NULL);
+	purple_notify_user_info_destroy(user_info);
+	purple_conv_present_error(destn, purple_connection_get_account(od->gc), buf);
 	g_free(buf);
 
 	return 1;
