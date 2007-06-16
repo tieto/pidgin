@@ -1586,7 +1586,7 @@ signed_on_off_cb(PurpleConnection *gc, gpointer user_data)
 
 	account = purple_connection_get_account(gc);
 	model = GTK_TREE_MODEL(accounts_window->model);
-	index = g_list_index((GList *)purple_accounts_get_all(), account);
+	index = g_list_index(purple_accounts_get_all(), account);
 
 	if (gtk_tree_model_iter_nth_child(model, &iter, NULL, index))
 	{
@@ -1789,13 +1789,13 @@ drag_data_received_cb(GtkWidget *widget, GdkDragContext *ctx,
 				case GTK_TREE_VIEW_DROP_INTO_OR_AFTER:
 					move_account_after(dialog->model, &dialog->drag_iter,
 									   &iter);
-					dest_index = g_list_index((GList *)purple_accounts_get_all(),
+					dest_index = g_list_index(purple_accounts_get_all(),
 											  account) + 1;
 					break;
 
 				case GTK_TREE_VIEW_DROP_BEFORE:
 				case GTK_TREE_VIEW_DROP_INTO_OR_BEFORE:
-					dest_index = g_list_index((GList *)purple_accounts_get_all(),
+					dest_index = g_list_index(purple_accounts_get_all(),
 											  account);
 
 					move_account_before(dialog->model, &dialog->drag_iter,
@@ -2094,7 +2094,7 @@ add_account_to_liststore(PurpleAccount *account, gpointer user_data)
 static gboolean
 populate_accounts_list(AccountsWindow *dialog)
 {
-	const GList *l;
+	GList *l;
 	gboolean ret = FALSE;
 	GdkPixbuf *global_buddyicon = NULL;
 	const char *path;
@@ -2298,7 +2298,7 @@ static void
 global_buddyicon_changed(const char *name, PurplePrefType type,
 			gconstpointer value, gpointer window)
 {
-	const GList *list;
+	GList *list;
 	for (list = purple_accounts_get_all(); list; list = list->next) {
 		account_modified_cb(list->data, window);
 	}
@@ -2429,7 +2429,7 @@ add_user_cb(PidginAccountAddUserData *data)
 {
 	PurpleConnection *gc = purple_account_get_connection(data->account);
 
-	if (g_list_find((GList *)purple_connections_get_all(), gc))
+	if (g_list_find(purple_connections_get_all(), gc))
 	{
 		purple_blist_request_add_buddy(data->account, data->username,
 									 NULL, data->alias);

@@ -2676,7 +2676,7 @@ pidgin_conversations_find_unseen_list(PurpleConversationType type,
 										gboolean hidden_only,
 										guint max_count)
 {
-	const GList *l;
+	GList *l;
 	GList *r = NULL;
 	guint c = 0;
 
@@ -3802,7 +3802,7 @@ tab_complete(PurpleConversation *conv)
 		g_list_free(list);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		PurpleConvChat *chat = PURPLE_CONV_CHAT(conv);
-		const GList *l = purple_conv_chat_get_users(chat);
+		GList *l = purple_conv_chat_get_users(chat);
 		GtkTreeModel *model = gtk_tree_view_get_model(GTK_TREE_VIEW(PIDGIN_CONVERSATION(conv)->u.chat->list));
 		GtkTreeIter iter;
 		int f;
@@ -5396,7 +5396,7 @@ pidgin_conv_chat_add_users(PurpleConversation *conv, GList *cbuddies, gboolean n
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
 
-	num_users = g_list_length((GList *)purple_conv_chat_get_users(chat));
+	num_users = g_list_length(purple_conv_chat_get_users(chat));
 
 	g_snprintf(tmp, sizeof(tmp),
 			   ngettext("%d person in room", "%d people in room",
@@ -5490,7 +5490,7 @@ pidgin_conv_chat_remove_users(PurpleConversation *conv, GList *users)
 	gtkconv = PIDGIN_CONVERSATION(conv);
 	gtkchat = gtkconv->u.chat;
 
-	num_users = g_list_length((GList *)purple_conv_chat_get_users(chat));
+	num_users = g_list_length(purple_conv_chat_get_users(chat));
 
 	for (l = users; l != NULL; l = l->next) {
 		model = gtk_tree_view_get_model(GTK_TREE_VIEW(gtkchat->list));
@@ -6487,7 +6487,7 @@ static void
 close_on_tabs_pref_cb(const char *name, PurplePrefType type,
 					  gconstpointer value, gpointer data)
 {
-	const GList *l;
+	GList *l;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 
@@ -6511,7 +6511,7 @@ spellcheck_pref_cb(const char *name, PurplePrefType type,
 				   gconstpointer value, gpointer data)
 {
 #ifdef USE_GTKSPELL
-	const GList *cl;
+	GList *cl;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 	GtkSpell *spell;
@@ -6558,7 +6558,7 @@ static void
 show_timestamps_pref_cb(const char *name, PurplePrefType type,
 						gconstpointer value, gpointer data)
 {
-	const GList *l;
+	GList *l;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 	PidginWindow *win;
@@ -6586,7 +6586,7 @@ static void
 show_formatting_toolbar_pref_cb(const char *name, PurplePrefType type,
 								gconstpointer value, gpointer data)
 {
-	const GList *l;
+	GList *l;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 	PidginWindow *win;
@@ -6616,7 +6616,7 @@ static void
 animate_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 							gconstpointer value, gpointer data)
 {
-	const GList *l;
+	GList *l;
 	PurpleConversation *conv;
 	PidginConversation *gtkconv;
 	PidginWindow *win;
@@ -6643,7 +6643,7 @@ static void
 show_buddy_icons_pref_cb(const char *name, PurplePrefType type,
 						 gconstpointer value, gpointer data)
 {
-	const GList *l;
+	GList *l;
 
 	for (l = purple_get_conversations(); l != NULL; l = l->next) {
 		PurpleConversation *conv = l->data;
@@ -6769,7 +6769,7 @@ get_gtkconv_with_contact(PurpleContact *contact)
 static void
 account_signed_off_cb(PurpleConnection *gc, gpointer event)
 {
-	const GList *iter;
+	GList *iter;
 
 	for (iter = purple_get_conversations(); iter; iter = iter->next)
 	{

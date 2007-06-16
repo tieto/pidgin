@@ -731,7 +731,7 @@ create_console()
 	GtkWidget *label;
 	GtkTextBuffer *buffer;
 	GtkWidget *toolbar;
-	const GList *connections;
+	GList *connections;
 #if GTK_CHECK_VERSION(2,4,0)
 	GtkToolItem *button;
 #endif

@@ -77,7 +77,7 @@ timestamp_displaying_conv_msg(PurpleAccount *account, const char *who,
 	time_t now = time(NULL) / interval * interval;
 	time_t then;
 
-	if (!g_list_find((GList *)purple_get_conversations(), conv))
+	if (!g_list_find(purple_get_conversations(), conv))
 		return FALSE;
 
 	then = GPOINTER_TO_INT(purple_conversation_get_data(
@@ -98,7 +98,7 @@ timestamp_new_convo(PurpleConversation *conv)
 	PidginConversation *gtk_conv = PIDGIN_CONVERSATION(conv);
 	GtkTextBuffer *buffer;
 
-	if (!g_list_find((GList *)purple_get_conversations(), conv))
+	if (!g_list_find(purple_get_conversations(), conv))
 		return;
 
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(gtk_conv->imhtml));

@@ -304,7 +304,7 @@ blist_to_xmlnode()
 {
 	xmlnode *node, *child, *grandchild;
 	PurpleBlistNode *gnode;
-	const GList *cur;
+	GList *cur;
 
 	node = xmlnode_new("purple");
 	xmlnode_set_attrib(node, "version", "1.0");
@@ -1893,7 +1893,7 @@ void purple_blist_remove_group(PurpleGroup *group)
 {
 	PurpleBlistUiOps *ops = purple_blist_get_ui_ops();
 	PurpleBlistNode *node;
-	const GList *l;
+	GList *l;
 
 	g_return_if_fail(group != NULL);
 
