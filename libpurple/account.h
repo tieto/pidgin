@@ -672,9 +672,9 @@ gboolean purple_account_is_status_active(const PurpleAccount *account,
  *
  * @param account The account.
  *
- * @return The account's status types.
+ * @constreturn The account's status types.
  */
-const GList *purple_account_get_status_types(const PurpleAccount *account);
+GList *purple_account_get_status_types(const PurpleAccount *account);
 
 /**
  * Returns a protocol-specific integer setting for an account.
@@ -884,7 +884,7 @@ void purple_accounts_reorder(PurpleAccount *account, gint new_index);
 /**
  * Returns a list of all accounts.
  *
- * @return A list of all accounts.
+ * @constreturn A list of all accounts.
  */
 GList *purple_accounts_get_all(void);
 

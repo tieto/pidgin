@@ -137,7 +137,7 @@ add_pounce_to_treeview(GntTree *tree, PurplePounce *pounce)
 static void
 populate_pounces_list(PouncesManager *dialog)
 {
-	const GList *pounces;
+	GList *pounces;
 
 	gnt_tree_remove_all(GNT_TREE(dialog->tree));
 

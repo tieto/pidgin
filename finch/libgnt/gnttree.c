@@ -1017,7 +1017,7 @@ int gnt_tree_get_visible_rows(GntTree *tree)
 	return ret;
 }
 
-const GList *gnt_tree_get_rows(GntTree *tree)
+GList *gnt_tree_get_rows(GntTree *tree)
 {
 	return tree->list;
 }

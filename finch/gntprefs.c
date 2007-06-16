@@ -89,7 +89,7 @@ static GList *
 get_status_titles()
 {
 	GList *list = NULL;
-	const GList *iter;
+	GList *iter;
 	for (iter = purple_savedstatuses_get_all(); iter; iter = iter->next) {
 		char *str;
 		if (purple_savedstatus_is_transient(iter->data))

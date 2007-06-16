@@ -396,7 +396,7 @@ void
 purple_request_field_list_get_items(field)
 	Purple::Request::Field field
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_request_field_list_get_items(field); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
@@ -410,7 +410,7 @@ void
 purple_request_field_list_get_selected(field)
 	Purple::Request::Field field
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_request_field_list_get_selected(field); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(newSVpv(l->data, 0)));
@@ -625,7 +625,7 @@ void
 purple_request_fields_get_required(fields)
 	Purple::Request::Fields fields
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_request_fields_get_required(fields); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Request::Field")));

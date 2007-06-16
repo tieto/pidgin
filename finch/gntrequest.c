@@ -297,7 +297,7 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 				GList *list = NULL;
 				if (purple_request_field_list_get_multi_select(field))
 				{
-					const GList *iter;
+					GList *iter;
 					GntWidget *tree = field->ui_data;
 
 					iter = purple_request_field_list_get_items(field);
@@ -433,7 +433,7 @@ finch_request_fields(const char *title, const char *primary,
 			else if (type == PURPLE_REQUEST_FIELD_CHOICE)
 			{
 				int id;
-				const GList *list;
+				GList *list;
 				GntWidget *combo = gnt_combo_box_new();
 				gnt_box_add_widget(GNT_BOX(hbox), combo);
 				field->ui_data = combo;
@@ -449,7 +449,7 @@ finch_request_fields(const char *title, const char *primary,
 			}
 			else if (type == PURPLE_REQUEST_FIELD_LIST)
 			{
-				const GList *list;
+				GList *list;
 				gboolean multi = purple_request_field_list_get_multi_select(field);
 				if (multi)
 				{

@@ -697,7 +697,7 @@ add_protocol_options(AccountPrefsDialog *dialog, GtkWidget *parent)
 	PurpleAccountOption *option;
 	PurpleAccount *account;
 	GtkWidget *frame, *vbox, *check, *entry, *combo, *menu, *item;
-	const GList *list, *node;
+	GList *list, *node;
 	gint i, idx, int_value;
 	GtkListStore *model;
 	GtkTreeIter iter;

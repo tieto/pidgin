@@ -296,9 +296,9 @@ purple_account_option_get_masked(const PurpleAccountOption *option);
  *
  * @param option The account option.
  *
- * @return The list values.
+ * @constreturn The list values.
  */
-const GList *purple_account_option_get_list(const PurpleAccountOption *option);
+GList *purple_account_option_get_list(const PurpleAccountOption *option);
 
 /*@}*/
 

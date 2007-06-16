@@ -86,7 +86,7 @@ enum
 static void
 update_title_progress()
 {
-	const GList *list;
+	GList *list;
 	int num_active_xfers = 0;
 	guint64 total_bytes_xferred = 0;
 	guint64 total_file_size = 0;
@@ -172,7 +172,7 @@ stop_button_cb(GntButton *button)
 void
 finch_xfer_dialog_new(void)
 {
-	const GList *iter;
+	GList *iter;
 	GntWidget *window;
 	GntWidget *bbox;
 	GntWidget *button;

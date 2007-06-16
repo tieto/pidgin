@@ -83,7 +83,7 @@ reset_status_window(GntWidget *widget, gpointer null)
 static void
 populate_statuses(GntTree *tree)
 {
-	const GList *list;
+	GList *list;
 
 	for (list = purple_savedstatuses_get_all(); list; list = list->next)
 	{
@@ -244,7 +244,7 @@ update_edit_list(GntWidget *widget, EditStatus *edit)
 static void
 set_substatuses(EditStatus *edit)
 {
-	const GList *iter;
+	GList *iter;
 	for (iter = gnt_tree_get_rows(GNT_TREE(edit->tree)); iter; iter = iter->next) {
 		RowInfo *key = iter->data;
 		if (gnt_tree_get_choice(GNT_TREE(edit->tree), key)) {
@@ -410,7 +410,7 @@ popup_substatus(GntTree *tree, const char *key, EditStatus *edit)
 		EditSubStatus *sub;
 		GntWidget *window, *combo, *entry, *box, *button, *l;
 		PurpleSavedStatusSub *substatus = NULL;
-		const GList *iter;
+		GList *iter;
 		char *name;
 		RowInfo *selected = gnt_tree_get_selection_data(tree);
 		PurpleAccount *account = selected->account;

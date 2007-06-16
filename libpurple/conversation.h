@@ -502,21 +502,21 @@ gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key)
  *
  * This list includes both IMs and chats.
  *
- * @return A GList of all conversations.
+ * @constreturn A GList of all conversations.
  */
 GList *purple_get_conversations(void);
 
 /**
  * Returns a list of all IMs.
  *
- * @return A GList of all IMs.
+ * @constreturn A GList of all IMs.
  */
 GList *purple_get_ims(void);
 
 /**
  * Returns a list of all chats.
  *
- * @return A GList of all chats.
+ * @constreturn A GList of all chats.
  */
 GList *purple_get_chats(void);
 
@@ -875,7 +875,7 @@ GList *purple_conv_chat_set_users(PurpleConvChat *chat, GList *users);
  *
  * @param chat The chat.
  *
- * @return The list of users.
+ * @constreturn The list of users.
  */
 GList *purple_conv_chat_get_users(const PurpleConvChat *chat);
 

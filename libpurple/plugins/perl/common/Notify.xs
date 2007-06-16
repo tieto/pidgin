@@ -140,7 +140,7 @@ void
 purple_notify_user_info_get_entries(user_info)
 	Purple::NotifyUserInfo user_info
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	l = purple_notify_user_info_get_entries(user_info);
 	for (; l != NULL; l = l->next) {
