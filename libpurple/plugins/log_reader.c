@@ -1290,9 +1290,16 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 						list = g_list_delete_link(list, last);
 					}
 				}
-			} else if (line[0] && line[1] && line [3] &&
+			} else if (line[0] && line[1] && line[2] &&
 					   purple_str_has_prefix(&line[3], "sion Start ")) {
-
+				/* The conditional is to make sure we're not reading off
+				 * the end of the string.  We don't want strlen(), as that'd
+				 * have to count the whole string needlessly.
+				 * 
+				 * The odd check here is because a Session Start at the
+				 * beginning of the file can be overwritten with a UTF-8
+				 * byte order mark.  Yes, it's weird.
+				 */
 				char *their_nickname = line;
 				char *timestamp;
 
