@@ -151,9 +151,9 @@ gboolean purple_savedstatus_delete(const char *title);
 /**
  * Returns all saved statuses.
  *
- * @return A list of saved statuses.
+ * @constreturn A list of saved statuses.
  */
-const GList *purple_savedstatuses_get_all(void);
+GList *purple_savedstatuses_get_all(void);
 
 /**
  * Returns the n most popular saved statuses.  "Popularity" is

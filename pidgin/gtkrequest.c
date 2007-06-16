@@ -974,7 +974,7 @@ create_list_field(PurpleRequestField *field)
 	GtkTreeSelection *sel;
 	GtkTreeViewColumn *column;
 	GtkTreeIter iter;
-	const GList *l;
+	GList *l;
 
 	/* Create the scrolled window */
 	sw = gtk_scrolled_window_new(NULL, NULL);

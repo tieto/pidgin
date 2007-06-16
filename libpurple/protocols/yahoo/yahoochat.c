@@ -633,10 +633,10 @@ void yahoo_process_chat_goto(PurpleConnection *gc, struct yahoo_packet *pkt)
  * I think conference names are always ascii.
  */
 
-void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, const GList *who)
+void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, GList *who)
 {
 	struct yahoo_packet *pkt;
-	const GList *w;
+	GList *w;
 
 	purple_debug_misc("yahoo", "leaving conference %s\n", room);
 	
@@ -653,11 +653,11 @@ void yahoo_conf_leave(struct yahoo_data *yd, const char *room, const char *dn, c
 }
 
 static int yahoo_conf_send(PurpleConnection *gc, const char *dn, const char *room,
-							const GList *members, const char *what)
+							GList *members, const char *what)
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
-	const GList *who;
+	GList *who;
 	char *msg, *msg2;
 	int utf8 = 1;
 
@@ -714,7 +714,7 @@ static void yahoo_conf_invite(PurpleConnection *gc, PurpleConversation *c,
 {
 	struct yahoo_data *yd = gc->proto_data;
 	struct yahoo_packet *pkt;
-	const GList *members;
+	GList *members;
 	char *msg2 = NULL;
 
 	if (msg)

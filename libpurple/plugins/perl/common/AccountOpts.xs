@@ -88,7 +88,7 @@ void
 purple_account_option_get_list(option)
 	Purple::Account::Option option
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_account_option_get_list(option); l != NULL; l = l->next) {
 		/* XXX These are actually PurpleKeyValuePairs but we don't have a

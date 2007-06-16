@@ -716,7 +716,7 @@ purple_savedstatus_delete(const char *title)
 	return TRUE;
 }
 
-const GList *
+GList *
 purple_savedstatuses_get_all(void)
 {
 	return saved_statuses;

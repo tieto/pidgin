@@ -687,8 +687,8 @@ create_account_menu(PurpleAccount *default_account,
 	AopMenu *aop_menu = NULL;
 	PurpleAccount *account;
 	GdkPixbuf *pixbuf = NULL;
-	const GList *list;
-	const GList *p;
+	GList *list;
+	GList *p;
 	GtkSizeGroup *sg;
 	int i;
 	char buf[256];
@@ -995,9 +995,9 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 		/* Check for a compatible account. */
 		if (ret_account != NULL)
 		{
-			const GList *list;
+			GList *list;
 			PurpleAccount *account = NULL;
-			const GList *l;
+			GList *l;
 			const char *protoname;
 
 			if (all_accounts)
