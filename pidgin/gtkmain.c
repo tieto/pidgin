@@ -456,6 +456,7 @@ int main(int argc, char *argv[])
 	gboolean gui_check;
 	gboolean debug_enabled;
 	gboolean migration_failed = FALSE;
+	GList *active_accounts;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},
@@ -828,13 +829,13 @@ int main(int argc, char *argv[])
 		purple_accounts_restore_current_statuses();
 	}
 
-	if ((accounts = purple_accounts_get_all_active()) == NULL)
+	if ((active_accounts = purple_accounts_get_all_active()) == NULL)
 	{
 		pidgin_accounts_window_show();
 	}
 	else
 	{
-		g_list_free(accounts);
+		g_list_free(active_accounts);
 	}
 
 #ifdef HAVE_STARTUP_NOTIFICATION
