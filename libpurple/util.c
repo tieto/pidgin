@@ -3135,7 +3135,7 @@ purple_strcasestr(const char *haystack, const char *needle)
 char *
 purple_str_size_to_units(size_t size)
 {
-	static const char *size_str[4] = { "bytes", "KB", "MB", "GB" };
+	static const char *size_str[4] = { "bytes", "KiB", "MiB", "GiB" };
 	float size_mag;
 	int size_index = 0;
 
