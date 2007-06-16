@@ -2686,3 +2686,4 @@ pidgin_account_uninit(void)
 	purple_signals_unregister_by_instance(pidgin_account_get_handle());
 }
 
+

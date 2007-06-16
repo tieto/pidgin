@@ -4234,7 +4234,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD }};
 	if (gtkblist && gtkblist->window) {
-		purple_blist_set_visible(TRUE);
+		purple_blist_set_visible(purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/list_visible"));
 		return;
 	}
 
@@ -5030,6 +5030,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 	PurpleContact *contact;
 	PurpleBuddy *buddy;
 	struct _pidgin_blist_node *gtknode;
+
 	if (editing_blist)
 		return;
 
@@ -5128,6 +5129,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 	PurpleChat *chat;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
+
 	if (editing_blist)
 		return;
 
@@ -6736,3 +6738,4 @@ pidgin_blist_update_sort_methods(void)
 	if (activeitem)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(activeitem), TRUE);
 }
+
