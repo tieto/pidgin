@@ -43,7 +43,9 @@ msn_session_new(PurpleAccount *account)
 	session->user = msn_user_new(session->userlist,
 								 purple_account_get_username(account), NULL);
 
-	session->protocol_ver = 9;
+	/*if you want to chat with Yahoo Messenger*/
+	//session->protocol_ver = WLM_YAHOO_PROT_VER;
+	session->protocol_ver = WLM_PROT_VER;
 	session->conv_seq = 1;
 
 	return session;
@@ -70,6 +72,8 @@ msn_session_destroy(MsnSession *session)
 
 	msn_userlist_destroy(session->userlist);
 
+	g_free(session->passport_info.t);
+	g_free(session->passport_info.p);
 	g_free(session->passport_info.kv);
 	g_free(session->passport_info.sid);
 	g_free(session->passport_info.mspauth);
@@ -86,6 +90,11 @@ msn_session_destroy(MsnSession *session)
 
 	if (session->nexus != NULL)
 		msn_nexus_destroy(session->nexus);
+
+	if (session->contact != NULL)
+		msn_contact_destroy(session->contact);
+	if (session->oim != NULL)
+		msn_oim_destroy(session->oim);
 
 	if (session->user != NULL)
 		msn_user_destroy(session->user);
@@ -152,6 +161,37 @@ msn_session_find_swboard(MsnSession *session, const char *username)
 	}
 
 	return NULL;
+}
+
+static PurpleConversation *
+msn_session_get_conv(MsnSession *session,const char *passport)
+{
+	PurpleAccount *account;
+	PurpleConversation * conv;
+
+	g_return_val_if_fail(session != NULL, NULL);
+	account = session->account;
+
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+									passport, account);
+	if(conv == NULL){
+		conv = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, passport);
+	}
+	return conv;
+}
+
+/* put Message to User Conversation
+ *
+ * 	passport - the one want to talk to you
+ */
+void
+msn_session_report_user(MsnSession *session,const char *passport,char *msg,PurpleMessageFlags flags)
+{
+	PurpleConversation * conv;
+
+	if ((conv = msn_session_get_conv(session,passport)) != NULL){
+		purple_conversation_write(conv, NULL, msg, flags, time(NULL));
+	}
 }
 
 MsnSwitchBoard *
@@ -229,13 +269,18 @@ msn_session_sync_users(MsnSession *session)
 
 	/* The core used to use msn_add_buddy to add all buddies before
 	 * being logged in. This no longer happens, so we manually iterate
-	 * over the whole buddy list to identify sync issues. */
-
-	for (gnode = purple_blist_get_root(); gnode; gnode = gnode->next) {
+	 * over the whole buddy list to identify sync issues. 
+	 */
+	for (gnode = purple_get_blist()->root; gnode; gnode = gnode->next) {
 		PurpleGroup *group = (PurpleGroup *)gnode;
-		const char *group_name = group->name;
+		const char *group_name;
 		if(!PURPLE_BLIST_NODE_IS_GROUP(gnode))
 			continue;
+		group_name = group->name;
+		if(!g_strcasecmp(group_name, MSN_INDIVIDUALS_GROUP_NAME)
+						||	!g_strcasecmp(group_name,MSN_NON_IM_GROUP_NAME)){
+			continue;
+		}
 		for(cnode = gnode->child; cnode; cnode = cnode->next) {
 			if(!PURPLE_BLIST_NODE_IS_CONTACT(cnode))
 				continue;
@@ -252,21 +297,26 @@ msn_session_sync_users(MsnSession *session)
 
 					if ((remote_user != NULL) && (remote_user->list_op & MSN_LIST_FL_OP))
 					{
-						int group_id;
+						const char *group_id;
 						GList *l;
 
+						purple_debug_info("MaYuan","remote user:{%s}\n",b->name);
 						group_id = msn_userlist_find_group_id(remote_user->userlist,
 								group_name);
+						if(group_id == NULL){
+							continue;
+						}
+						purple_debug_info("MaYuan","group_id:{%s}\n",group_id);
 
 						for (l = remote_user->group_ids; l != NULL; l = l->next)
 						{
-							if (group_id == GPOINTER_TO_INT(l->data))
+							purple_debug_info("MaYuan","l->data:{%s}\n",l->data);
+							if (!g_strcasecmp(group_id ,l->data))
 							{
 								found = TRUE;
 								break;
 							}
 						}
-
 					}
 
 					if (!found)
@@ -419,3 +469,4 @@ msn_session_finish_login(MsnSession *session)
 		msn_cmdproc_send(session->notification->cmdproc, "URL", "%s", "INBOX");
 	}
 }
+
