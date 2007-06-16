@@ -208,9 +208,8 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 
 static void urn_xmpp_ping_parse(JabberStream *js, xmlnode *packet)
 {
-	const char *type, *from, *id;
+	const char *type, *id;
 	JabberIq *iq;
-	xmlnode *query;
 
 	if(type && !strcmp(type, "get")) {
 		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "urn:xmpp:ping");
