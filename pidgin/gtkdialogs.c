@@ -1232,4 +1232,3 @@ pidgin_dialogs_remove_chat(PurpleChat *chat)
 
 	g_free(text);
 }
-}
