@@ -371,7 +371,7 @@ static xmlnode *
 accounts_to_xmlnode(void)
 {
 	xmlnode *node, *child;
-	const GList *cur;
+	GList *cur;
 
 	node = xmlnode_new("account");
 	xmlnode_set_attrib(node, "version", "1.0");
@@ -877,7 +877,7 @@ purple_account_new(const char *username, const char *protocol_id)
 void
 purple_account_destroy(PurpleAccount *account)
 {
-	const GList *l;
+	GList *l;
 
 	g_return_if_fail(account != NULL);
 
@@ -2272,7 +2272,7 @@ purple_accounts_reorder(PurpleAccount *account, gint new_index)
 	schedule_accounts_save();
 }
 
-const GList *
+GList *
 purple_accounts_get_all(void)
 {
 	return accounts;
@@ -2282,7 +2282,7 @@ GList *
 purple_accounts_get_all_active(void)
 {
 	GList *list = NULL;
-	const GList *all = purple_accounts_get_all();
+	GList *all = purple_accounts_get_all();
 
 	while (all != NULL) {
 		PurpleAccount *account = all->data;
@@ -2300,7 +2300,7 @@ PurpleAccount *
 purple_accounts_find(const char *name, const char *protocol_id)
 {
 	PurpleAccount *account = NULL;
-	const GList *l;
+	GList *l;
 	char *who;
 
 	g_return_val_if_fail(name != NULL, NULL);
@@ -2327,7 +2327,7 @@ purple_accounts_find(const char *name, const char *protocol_id)
 void
 purple_accounts_restore_current_statuses()
 {
-	const GList *l;
+	GList *l;
 	PurpleAccount *account;
 
 	/* If we're not connected to the Internet right now, we bail on this */

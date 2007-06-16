@@ -984,7 +984,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 		GDir *protocol_dir;
 		const gchar *username;
 		gchar *protocol_unescaped;
-		const GList *account_iter;
+		GList *account_iter;
 		GList *accounts = NULL;
 
 		if ((protocol_dir = g_dir_open(protocol_path, 0, NULL)) == NULL) {

@@ -497,7 +497,7 @@ void finch_savedstatus_edit(PurpleSavedStatus *saved)
 	GntWidget *window, *box, *button, *entry, *combo, *label, *tree;
 	PurpleStatusPrimitive prims[] = {PURPLE_STATUS_AVAILABLE, PURPLE_STATUS_AWAY,
 		PURPLE_STATUS_INVISIBLE, PURPLE_STATUS_OFFLINE, PURPLE_STATUS_UNSET}, current;
-	const GList *iter;
+	GList *iter;
 	int i;
 
 	if (saved)

@@ -681,7 +681,7 @@ chat_account_filter_func(PurpleAccount *account)
 gboolean
 pidgin_blist_joinchat_is_showable()
 {
-	const GList *c;
+	GList *c;
 	PurpleConnection *gc;
 
 	for (c = purple_connections_get_all(); c != NULL; c = c->next) {
@@ -1536,7 +1536,7 @@ static void
 add_buddies_from_vcard(const char *prpl_id, PurpleGroup *group, GList *list,
 					   const char *alias)
 {
-	const GList *l;
+	GList *l;
 	PurpleAccount *account = NULL;
 	PurpleConnection *gc;
 
@@ -2889,7 +2889,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-		if (g_list_length((GList *)purple_connections_get_all()) > 1)
+		if (g_list_length(purple_connections_get_all()) > 1)
 		{
 			tmp = g_markup_escape_text(chat->account->username, -1);
 			g_string_append_printf(str, _("\n<b>Account:</b> %s"), tmp);
@@ -2954,7 +2954,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		user_info = purple_notify_user_info_new();
 
 		/* Account */
-		if (full && g_list_length((GList *)purple_connections_get_all()) > 1)
+		if (full && g_list_length(purple_connections_get_all()) > 1)
 		{
 			tmp = g_markup_escape_text(purple_account_get_username(
 									   purple_buddy_get_account(b)), -1);
@@ -5689,7 +5689,7 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 {
 	PidginAddChatData *data;
 	PidginBuddyList *gtkblist;
-	const GList *l;
+	GList *l;
 	PurpleConnection *gc;
 	GtkWidget *label;
 	GtkWidget *rowbox;
@@ -6456,8 +6456,7 @@ pidgin_blist_update_accounts_menu(void)
 {
 	GtkWidget *menuitem = NULL, *submenu = NULL;
 	GtkAccelGroup *accel_group = NULL;
-	GList *l = NULL;
-	const GList *accounts;
+	GList *l = NULL, *accounts = NULL;
 	gboolean disabled_accounts = FALSE;
 
 	if (accountmenu == NULL)

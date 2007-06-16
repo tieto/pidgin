@@ -127,7 +127,7 @@ dologin_named(const char *name)
 		}
 		g_strfreev(names);
 	} else { /* no name given, use the first account */
-		const GList *accounts;
+		GList *accounts;
 
 		accounts = purple_accounts_get_all();
 		if (accounts != NULL)
@@ -441,7 +441,7 @@ int main(int argc, char *argv[])
 	char *opt_session_arg = NULL;
 	int dologin_ret = -1;
 	char *search_path;
-	const GList *accounts;
+	GList *accounts;
 #ifdef HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
@@ -456,7 +456,6 @@ int main(int argc, char *argv[])
 	gboolean gui_check;
 	gboolean debug_enabled;
 	gboolean migration_failed = FALSE;
-	GList *active_accounts;
 
 	struct option long_options[] = {
 		{"config",   required_argument, NULL, 'c'},
@@ -829,13 +828,13 @@ int main(int argc, char *argv[])
 		purple_accounts_restore_current_statuses();
 	}
 
-	if ((active_accounts = purple_accounts_get_all_active()) == NULL)
+	if ((accounts = purple_accounts_get_all_active()) == NULL)
 	{
 		pidgin_accounts_window_show();
 	}
 	else
 	{
-		g_list_free(active_accounts);
+		g_list_free(accounts);
 	}
 
 #ifdef HAVE_STARTUP_NOTIFICATION

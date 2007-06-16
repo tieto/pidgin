@@ -70,8 +70,7 @@ update_ims_from_contact(EContact *contact, const char *name,
 						const char *prpl_id, EContactField field)
 {
 	GList *ims = e_contact_get(contact, field);
-	const GList *l;
-	const GList *l2;
+	GList *l, *l2;
 
 	if (ims == NULL)
 		return;
@@ -402,7 +401,7 @@ get_config_frame(PurplePlugin *plugin)
 	GtkCellRenderer *renderer;
 	GdkPixbuf *pixbuf;
 	GtkListStore *model;
-	const GList *l;
+	GList *l;
 
 	/* Outside container */
 	ret = gtk_vbox_new(FALSE, 18);

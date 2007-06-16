@@ -504,21 +504,21 @@ gpointer purple_conversation_get_data(PurpleConversation *conv, const char *key)
  *
  * @return A GList of all conversations.
  */
-const GList *purple_get_conversations(void);
+GList *purple_get_conversations(void);
 
 /**
  * Returns a list of all IMs.
  *
  * @return A GList of all IMs.
  */
-const GList *purple_get_ims(void);
+GList *purple_get_ims(void);
 
 /**
  * Returns a list of all chats.
  *
  * @return A GList of all chats.
  */
-const GList *purple_get_chats(void);
+GList *purple_get_chats(void);
 
 /**
  * Finds a conversation with the specified type, name, and Purple account.
@@ -877,7 +877,7 @@ GList *purple_conv_chat_set_users(PurpleConvChat *chat, GList *users);
  *
  * @return The list of users.
  */
-const GList *purple_conv_chat_get_users(const PurpleConvChat *chat);
+GList *purple_conv_chat_get_users(const PurpleConvChat *chat);
 
 /**
  * Ignores a user in a chat room.
@@ -912,7 +912,7 @@ GList *purple_conv_chat_set_ignored(PurpleConvChat *chat, GList *ignored);
  *
  * @return The list of ignored users.
  */
-const GList *purple_conv_chat_get_ignored(const PurpleConvChat *chat);
+GList *purple_conv_chat_get_ignored(const PurpleConvChat *chat);
 
 /**
  * Returns the actual name of the specified ignored user, if it exists in
