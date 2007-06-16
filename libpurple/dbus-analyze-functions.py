@@ -298,7 +298,7 @@ class ServerBinding (Binding):
         print "\tdbus_message_append_args(reply_DBUS,",
         for param in self.cparamsout:
             if type(param) is str:
-                print "%s," % param
+                print "%s," % param,
             else:
                 print "DBUS_TYPE_%s, &%s," % param,
         print "DBUS_TYPE_INVALID);"
@@ -409,7 +409,7 @@ class ServerBinding (Binding):
             self.ccode.append("\tlist = %s;" % self.call)
             self.ccode.append("\t%s = (char **)purple_const_%s_to_array(list, &%s_LEN);" % \
                          (name, type[0], name))
-            self.cparamsout.append("\tDBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &%s, %s_LEN" \
+            self.cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_STRING, &%s, %s_LEN" \
                           % (name, name))
             if (not const):
                 type_name = type[0].lower()[1:]
@@ -423,7 +423,7 @@ class ServerBinding (Binding):
                          (name, type[0], name))
             if (not const):
                 self.ccode.append("\tg_%s_free(list);" % type[0].lower()[1:])
-            self.cparamsout.append("\tDBUS_TYPE_ARRAY, DBUS_TYPE_INT32, &%s, %s_LEN" \
+            self.cparamsout.append("DBUS_TYPE_ARRAY, DBUS_TYPE_INT32, &%s, %s_LEN" \
                               % (name, name))
             self.addouttype("ai", name)
 
