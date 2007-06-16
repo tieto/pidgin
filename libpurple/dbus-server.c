@@ -797,8 +797,18 @@ purple_dbus_init(void)
 void
 purple_dbus_uninit(void)
 {
-	/* Surely we must do SOME kind of uninitialization? */
+	DBusError error;
+	if (!purple_dbus_connection)
+		return;
 
+	dbus_error_init(&error);
+	dbus_connection_unregister_object_path(purple_dbus_connection, DBUS_PATH_PURPLE);
+	dbus_bus_release_name(purple_dbus_connection, DBUS_SERVICE_PURPLE, &error);
+	dbus_error_free(&error);
+	dbus_connection_unref(purple_dbus_connection);
+	purple_dbus_connection = NULL;
+	purple_signals_disconnect_by_handle(purple_dbus_get_handle());
 	g_free(init_error);
 	init_error = NULL;
 }
+
