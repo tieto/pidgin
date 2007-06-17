@@ -35,8 +35,6 @@
 #include "value.h"
 #include "xmlnode.h"
 
-#define PATHSIZE 1024
-
 static PurpleBlistUiOps *blist_ui_ops = NULL;
 
 static PurpleBuddyList *purplebuddylist = NULL;

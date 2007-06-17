@@ -525,7 +525,7 @@ pidgin_create_prpl_icon_from_prpl(PurplePlugin *prpl, PidginPrplIconSize size, P
 {
 	PurplePluginProtocolInfo *prpl_info;
 	const char *protoname = NULL;
-	char buf[MAXPATHLEN];
+	char *tmp;
 	char *filename = NULL;
 	GdkPixbuf *pixbuf;
 
@@ -541,12 +541,14 @@ pidgin_create_prpl_icon_from_prpl(PurplePlugin *prpl, PidginPrplIconSize size, P
 	 * Status icons will be themeable too, and then it will look up
 	 * protoname from the theme
 	 */
-	g_snprintf(buf, sizeof(buf), "%s.png", protoname);
+	tmp = g_strconcat(protoname, ".png", NULL);
 
 	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
 				    size == PIDGIN_PRPL_ICON_SMALL ? "16" :
 				    size == PIDGIN_PRPL_ICON_MEDIUM ? "22" : "48",
-				    buf, NULL);
+				    tmp, NULL);
+	g_free(tmp);
+
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 
