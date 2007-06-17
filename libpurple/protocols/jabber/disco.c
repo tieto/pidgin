@@ -218,9 +218,6 @@ void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
 static void
 jabber_disco_finish_server_info_result_cb(JabberStream *js)
 {
-	PurplePresence *gpresence;
-	PurpleStatus *status;
-
 	if (!(js->server_caps & JABBER_CAP_GOOGLE_ROSTER)) {
 		/* If the server supports JABBER_CAP_GOOGLE_ROSTER; we will have already requested it */
 		jabber_roster_request(js);
