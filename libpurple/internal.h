@@ -111,15 +111,9 @@
 # include <unistd.h>
 #endif
 
-#ifndef MAXPATHLEN
-# define MAXPATHLEN 1024
-#endif
-
 #ifndef HOST_NAME_MAX
 # define HOST_NAME_MAX 255
 #endif
-
-#define PATHSIZE 1024
 
 #include <glib.h>
 #if !GLIB_CHECK_VERSION(2,4,0)

@@ -66,8 +66,8 @@ struct _PurpleUtilFetchUrlData
 	unsigned long data_len;
 };
 
-static char custom_home_dir[MAXPATHLEN];
-static char home_dir[MAXPATHLEN] = "";
+static char *custom_user_dir = NULL;
+static char *home_dir = NULL;
 
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
@@ -2396,27 +2396,22 @@ purple_home_dir(void)
 const char *
 purple_user_dir(void)
 {
-	if (custom_home_dir != NULL && *custom_home_dir) {
-		strcpy ((char*) &home_dir, (char*) &custom_home_dir);
-	} else if (!*home_dir) {
-		const gchar *hd = purple_home_dir();
-
-		if (hd) {
-			g_strlcpy((char*) &home_dir, hd, sizeof(home_dir));
-			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".purple",
-					sizeof(home_dir));
-		}
-	}
+	if (custom_user_dir != NULL)
+		return custom_user_dir;
+	else if (!home_dir)
+		home_dir = g_build_filename(purple_home_dir(), ".purple", NULL);
 
 	return home_dir;
 }
 
 void purple_util_set_user_dir(const char *dir)
 {
-	if (dir != NULL && strlen(dir) > 0) {
-		g_strlcpy((char*) &custom_home_dir, dir,
-				sizeof(custom_home_dir));
-	}
+	g_free(custom_user_dir);
+
+	if (dir != NULL && *dir)
+		custom_user_dir = g_strdup(dir);
+	else
+		custom_user_dir = NULL;
 }
 
 int purple_build_dir (const char *path, int mode)
