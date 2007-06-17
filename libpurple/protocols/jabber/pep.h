@@ -57,8 +57,7 @@ void jabber_pep_register_handler(const char *shortname, const char *xmlns, Jabbe
  * @parameter id	The item id of the requested item (may be NULL)
  * @parameter cb	The callback to be used when this item is received
  *
- * ATTN: The items parameter of the callback will only point to the single <item> element here!
- * Additionally, the items element passed will be NULL if any error occured (like a permission error, node doesn't exist etc.)
+ * The items element passed to the callback will be NULL if any error occured (like a permission error, node doesn't exist etc.)
  */
 void jabber_pep_request_item(JabberStream *js, const char *to, const char *node, const char *id, JabberPEPHandler cb);
 

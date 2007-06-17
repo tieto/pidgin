@@ -1129,12 +1129,16 @@ static void do_buddy_avatar_update_fromurl(PurpleUtilFetchUrlData *url_data, gpo
 	g_free(info);
 }
 
-static void do_buddy_avatar_update_data(JabberStream *js, const char *from, xmlnode *item) {
-	xmlnode *data;
+static void do_buddy_avatar_update_data(JabberStream *js, const char *from, xmlnode *items) {
+	xmlnode *item, *data;
 	const char *checksum;
 	char *b64data;
 	void *img;
 	size_t size;
+	if(!items)
+		return;
+	
+	item = xmlnode_get_child(items, "item");
 	if(!item)
 		return;
 	
