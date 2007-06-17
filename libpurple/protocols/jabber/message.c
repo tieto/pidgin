@@ -315,13 +315,13 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		if(child->type != XMLNODE_TYPE_TAG)
 			continue;
 
-		if(!strcmp(child->name, "subject") && strlen(xmlns) == 0) {
+		if(!strcmp(child->name, "subject") && !strcmp(xmlns,"jabber:client")) {
 			if(!jm->subject)
 				jm->subject = xmlnode_get_data(child);
-		} else if(!strcmp(child->name, "thread") && strlen(xmlns) == 0) {
+		} else if(!strcmp(child->name, "thread") && !strcmp(xmlns,"jabber:client")) {
 			if(!jm->thread_id)
 				jm->thread_id = xmlnode_get_data(child);
-		} else if(!strcmp(child->name, "body") && strlen(xmlns) == 0) {
+		} else if(!strcmp(child->name, "body") && !strcmp(xmlns,"jabber:client")) {
 			if(!jm->body) {
 				char *msg = xmlnode_to_str(child, NULL);
 				jm->body = purple_strdup_withhtml(msg);
