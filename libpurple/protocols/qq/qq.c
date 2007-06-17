@@ -698,6 +698,7 @@ static PurplePluginProtocolInfo prpl_info	= {
 	NULL,							/* PurpleWhiteboardPrplOps */
 	NULL,							/* send_raw */
 	NULL,							/* roomlist_room_serialize */
+	NULL,							/* publish_tune */
 
 	/* padding */
 	NULL,

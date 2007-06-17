@@ -39,6 +39,7 @@
 #include "presence.h"
 #include "google.h"
 #include "pep.h"
+#include "usertune.h"
 
 static PurplePluginProtocolInfo prpl_info =
 {
@@ -109,6 +110,7 @@ static PurplePluginProtocolInfo prpl_info =
 	NULL,							/* whiteboard_prpl_ops */
 	jabber_prpl_send_raw,			/* send_raw */
 	jabber_roomlist_room_serialize, /* roomlist_room_serialize */
+	jabber_tune_set,				/* publish_tune */
 
 	/* padding */
 	NULL,

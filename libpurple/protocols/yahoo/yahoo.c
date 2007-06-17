@@ -4019,6 +4019,7 @@ static PurplePluginProtocolInfo prpl_info =
 	&yahoo_whiteboard_prpl_ops,
 	NULL, /* send_raw */
 	NULL, /* roomlist_room_serialize */
+	NULL, /* publish_tune */
 
 	/* padding */
 	NULL,

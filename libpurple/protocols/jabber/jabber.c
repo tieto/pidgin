@@ -1299,6 +1299,15 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_artist", _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_title", _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_album", _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_genre", _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_comment", _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_track", _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_time", _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
+			"tune_year", _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
+			"tune_url", _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1311,6 +1320,15 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_artist", _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_title", _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_album", _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_genre", _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_comment", _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_track", _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_time", _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
+			"tune_year", _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
+			"tune_url", _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1323,6 +1341,15 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_artist", _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_title", _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_album", _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_genre", _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_comment", _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_track", _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_time", _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
+			"tune_year", _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
+			"tune_url", _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1335,6 +1362,15 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_artist", _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_title", _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_album", _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_genre", _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_comment", _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_track", _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_time", _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
+			"tune_year", _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
+			"tune_url", _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
@@ -1347,6 +1383,15 @@ GList *jabber_status_types(PurpleAccount *account)
 			"message", _("Message"), purple_value_new(PURPLE_TYPE_STRING),
 			"mood", _("Mood"), purple_value_new(PURPLE_TYPE_STRING),
 			"moodtext", _("Mood Text"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_artist", _("Tune Artist"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_title", _("Tune Title"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_album", _("Tune Album"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_genre", _("Tune Genre"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_comment", _("Tune Comment"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_track", _("Tune Track"), purple_value_new(PURPLE_TYPE_STRING),
+			"tune_time", _("Tune Time"), purple_value_new(PURPLE_TYPE_INT),
+			"tune_year", _("Tune Year"), purple_value_new(PURPLE_TYPE_INT),
+			"tune_url", _("Tune URL"), purple_value_new(PURPLE_TYPE_STRING),
 			NULL);
 	types = g_list_append(types, type);
 
