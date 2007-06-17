@@ -138,7 +138,7 @@ class Binding:
             # strings
             if type[0] in ["char", "gchar"]:
                 if const:
-                    return self.inputstring(type, name)
+                    return self.inputstring(type, name, unsigned)
                 else:
                     raise myexception
 
@@ -244,8 +244,11 @@ class ClientBinding (Binding):
         else:
             self.inputparams.append(("G_TYPE_INT", name))
 
-    def inputstring(self, type, name):
-        self.paramshdr.append("const char *%s" % name)
+    def inputstring(self, type, name, us):
+        if us:
+            self.paramshdr.append("const unsigned char *%s" % name)
+        else:
+            self.paramshdr.append("const char *%s" % name)
         self.inputparams.append(("G_TYPE_STRING", name))
         
     def inputpurplestructure(self, type, name):
@@ -366,10 +369,13 @@ class ServerBinding (Binding):
             self.cparams.append(("UINT32", name))
             self.addintype("u", name)
 
-    def inputstring(self, type, name):
-        self.cdecls.append("\tconst char *%s;" % name)
+    def inputstring(self, type, name, us):
+        if us:
+            self.cdecls.append("\tconst unsigned char *%s;" % name)
+        else:
+            self.cdecls.append("\tconst char *%s;" % name)
         self.cparams.append(("STRING", name))
-        self.ccode  .append("\tNULLIFY(%s);" % name)
+        self.ccode.append("\t%s = (%s && %s[0]) ? %s : NULL;" % (name,name,name,name))
         self.addintype("s", name)
 
     def inputhash(self, type, name):
