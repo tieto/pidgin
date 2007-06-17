@@ -46,6 +46,10 @@ void jabber_pep_register_handler(const char *shortname, const char *xmlns, Jabbe
 	g_hash_table_replace(pep_handlers, g_strdup(xmlns), handlerfunc);
 }
 
+gboolean jabber_pep_namespace_only_when_pep_enabled_cb(JabberStream *js, const gchar *shortname, const gchar *namespace) {
+	return js->pep;
+}
+
 void jabber_handle_event(JabberMessage *jm) {
 	/* this may be called even when the own server doesn't support pep! */
 	JabberPEPHandler *jph;

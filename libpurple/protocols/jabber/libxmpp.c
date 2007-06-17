@@ -50,7 +50,7 @@ static PurplePluginProtocolInfo prpl_info =
 #endif
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
-	{"png,gif,jpeg", 32, 32, 96, 96, 8191, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
+	{"png", 32, 32, 96, 96, 8191, PURPLE_ICON_SCALE_SEND | PURPLE_ICON_SCALE_DISPLAY}, /* icon_spec */
 	jabber_list_icon,				/* list_icon */
 	jabber_list_emblem,			/* list_emblems */
 	jabber_status_text,				/* status_text */

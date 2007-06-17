@@ -48,6 +48,17 @@ typedef void (JabberPEPHandler)(JabberStream *js, const char *from, xmlnode *ite
  */
 void jabber_pep_register_handler(const char *shortname, const char *xmlns, JabberPEPHandler handlerfunc);
 
+/*
+ * Default callback that can be used for namespaces which should only be enabled when PEP is supported
+ *
+ * @parameter js	The JabberStream struct for this connection
+ * @parameter shortname	The namespace's shortname (for caps), ignored.
+ * @parameter namespace The namespace that's queried, ignored.
+ *
+ * @returns TRUE when PEP is enabled, FALSE otherwise
+ */
+gboolean jabber_pep_namespace_only_when_pep_enabled_cb(JabberStream *js, const gchar *shortname, const gchar *namespace);
+
 void jabber_handle_event(JabberMessage *jm);
 
 /*

@@ -34,6 +34,7 @@
 #include "iq.h"
 #include "presence.h"
 #include "xdata.h"
+#include "pep.h"
 
 typedef struct {
 	long idle_seconds;
@@ -406,7 +407,7 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 		if ((img = purple_buddy_icons_find_account_icon(gc->account))) {
 			gconstpointer avatar_data;
 			gsize avatar_len;
-			xmlnode *photo, *binval;
+			xmlnode *photo, *binval, *type;
 			gchar *enc;
 			int i;
 			unsigned char hashval[20];
@@ -415,6 +416,8 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 			avatar_data = purple_imgstore_get_data(img);
 			avatar_len = purple_imgstore_get_size(img);
 			photo = xmlnode_new_child(vc_node, "PHOTO");
+			type = xmlnode_new_child(photo, "TYPE");
+			xmlnode_insert_data(type, "image/png", -1);
 			binval = xmlnode_new_child(photo, "BINVAL");
 			enc = purple_base64_encode(avatar_data, avatar_len);
 
@@ -445,7 +448,128 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
 	PurplePresence *gpresence;
 	PurpleStatus *status;
+	
+	if(((JabberStream*)gc->proto_data)->pep) {
+		/* XEP-0084: User Avatars */
+		if(img) {
+			/* A PNG header, including the IHDR, but nothing else */
+			const struct {
+				guchar signature[8]; /* must be hex 89 50 4E 47 0D 0A 1A 0A */
+				struct {
+					guint32 length; /* must be 0x0d */
+					guchar type[4]; /* must be 'I' 'H' 'D' 'R' */
+					guint32 width;
+					guint32 height;
+					guchar bitdepth;
+					guchar colortype;
+					guchar compression;
+					guchar filter;
+					guchar interlace;
+				} ihdr;
+			} *png = purple_imgstore_get_data(img); /* ATTN: this is in network byte order! */
 
+			/* check if the data is a valid png file (well, at least to some extend) */
+			if(png->signature[0] == 0x89 &&
+			   png->signature[1] == 0x50 &&
+			   png->signature[2] == 0x4e &&
+			   png->signature[3] == 0x47 &&
+			   png->signature[4] == 0x0d &&
+			   png->signature[5] == 0x0a &&
+			   png->signature[6] == 0x1a &&
+			   png->signature[7] == 0x0a &&
+			   ntohl(png->ihdr.length) == 0x0d &&
+			   png->ihdr.type[0] == 'I' &&
+			   png->ihdr.type[1] == 'H' &&
+			   png->ihdr.type[2] == 'D' &&
+			   png->ihdr.type[3] == 'R') {
+				/* parse PNG header to get the size of the image (yes, this is required) */
+				guint32 width = ntohl(png->ihdr.width);
+				guint32 height = ntohl(png->ihdr.height);
+				xmlnode *publish, *item, *data, *metadata, *info;
+				char *lengthstring, *widthstring, *heightstring;
+				
+				/* compute the sha1 hash */
+				PurpleCipherContext *ctx;
+				unsigned char digest[20];
+				char *hash;
+				char *base64avatar;
+				
+				ctx = purple_cipher_context_new_by_name("sha1", NULL);
+				purple_cipher_context_append(ctx, purple_imgstore_get_data(img), purple_imgstore_get_size(img));
+				purple_cipher_context_digest(ctx, sizeof(digest), digest, NULL);
+				
+				/* convert digest to a string */
+				hash = g_strdup_printf("%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x",digest[0],digest[1],digest[2],digest[3],digest[4],digest[5],digest[6],digest[7],digest[8],digest[9],digest[10],digest[11],digest[12],digest[13],digest[14],digest[15],digest[16],digest[17],digest[18],digest[19]);
+				
+				publish = xmlnode_new("publish");
+				xmlnode_set_attrib(publish,"node","http://www.xmpp.org/extensions/xep-0084.html#ns-data");
+				
+				item = xmlnode_new_child(publish, "item");
+				xmlnode_set_attrib(item, "id", hash);
+				
+				data = xmlnode_new_child(item, "data");
+				xmlnode_set_namespace(data,"http://www.xmpp.org/extensions/xep-0084.html#ns-data");
+				
+				base64avatar = purple_base64_encode(purple_imgstore_get_data(img), purple_imgstore_get_size(img));
+				xmlnode_insert_data(data,base64avatar,-1);
+				g_free(base64avatar);
+				
+				/* publish the avatar itself */
+				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
+				
+				/* next step: publish the metadata */
+				publish = xmlnode_new("publish");
+				xmlnode_set_attrib(publish,"node","http://www.xmpp.org/extensions/xep-0084.html#ns-metadata");
+				
+				item = xmlnode_new_child(publish, "item");
+				xmlnode_set_attrib(item, "id", hash);
+				
+				metadata = xmlnode_new_child(item, "metadata");
+				xmlnode_set_namespace(metadata,"http://www.xmpp.org/extensions/xep-0084.html#ns-metadata");
+				
+				info = xmlnode_new_child(metadata, "info");
+				xmlnode_set_attrib(info, "id", hash);
+				xmlnode_set_attrib(info, "type", "image/png");
+				lengthstring = g_strdup_printf("%u", (unsigned)purple_imgstore_get_size(img));
+				xmlnode_set_attrib(info, "bytes", lengthstring);
+				g_free(lengthstring);
+				widthstring = g_strdup_printf("%u", width);
+				xmlnode_set_attrib(info, "width", widthstring);
+				g_free(widthstring);
+				heightstring = g_strdup_printf("%u", height);
+				xmlnode_set_attrib(info, "height", heightstring);
+				g_free(lengthstring);
+				
+				/* publish the metadata */
+				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
+				
+				g_free(hash);
+			} else { /* if(img) */
+				/* remove the metadata */
+				xmlnode *metadata, *item;
+				xmlnode *publish = xmlnode_new("publish");
+				xmlnode_set_attrib(publish,"node","http://www.xmpp.org/extensions/xep-0084.html#ns-metadata");
+				
+				item = xmlnode_new_child(publish, "item");
+				
+				metadata = xmlnode_new_child(item, "metadata");
+				xmlnode_set_namespace(metadata,"http://www.xmpp.org/extensions/xep-0084.html#ns-metadata");
+				
+				xmlnode_new_child(metadata, "stop");
+				
+				/* publish the metadata */
+				jabber_pep_publish((JabberStream*)gc->proto_data, publish);
+			}
+		} else {
+			purple_debug(PURPLE_DEBUG_ERROR, "jabber",
+						 "jabber_set_buddy_icon received non-png data");
+		}
+	}
+
+	/* even when the image is not png, we can still publish the vCard, since this
+	   one doesn't require a specific image type */
+
+	/* publish vCard for those poor older clients */
 	jabber_set_info(gc, purple_account_get_user_info(gc->account));
 
 	gpresence = purple_account_get_presence(gc->account);
@@ -985,6 +1109,9 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	jabber_buddy_info_show_if_ready(jbi);
 }
 
+void jabber_buddy_avatar_update_metadata(JabberStream *js, const char *from, xmlnode *items) {
+	
+}
 
 static void jabber_buddy_info_resource_free(gpointer data)
 {
