@@ -865,41 +865,21 @@ menu_position_func (GtkMenu           *menu,
                     gboolean          *push_in,
                     gpointer          data)
 {
-	GtkRequisition menu_req;
-	GtkTextDirection direction;
-	GdkRectangle monitor;
-	gint monitor_num;
-	GdkScreen *screen;
 	GtkWidget *widget = GTK_WIDGET(data);
+	GtkRequisition menu_req;
+	gint ythickness = widget->style->ythickness;
+	int savy;
 
-	gtk_widget_size_request (GTK_WIDGET (menu), &menu_req);
-
-	direction = gtk_widget_get_direction (widget);
-
-	screen = gtk_widget_get_screen (GTK_WIDGET (menu));
-	monitor_num = gdk_screen_get_monitor_at_window (screen, widget->window);
-	if (monitor_num < 0)
-		monitor_num = 0;
-	gdk_screen_get_monitor_geometry (screen, monitor_num, &monitor);
-
-	gdk_window_get_origin (widget->window, x, y);
+	gtk_widget_size_request(GTK_WIDGET (menu), &menu_req);
+	gdk_window_get_origin(widget->window, x, y);
 	*x += widget->allocation.x;
-	*y += widget->allocation.y;
+	*y += widget->allocation.y + widget->allocation.height;
+	savy = *y;
 
-	if (direction == GTK_TEXT_DIR_LTR)
-		*x += MAX (widget->allocation.width - menu_req.width, 0);
-	else if (menu_req.width > widget->allocation.width)
-		*x -= menu_req.width - widget->allocation.width;
+	pidgin_menu_position_func_helper(menu, x, y, push_in, data);
 
-	if ((*y + widget->allocation.height + menu_req.height) <= monitor.y + monitor.height)
-		*y += widget->allocation.height;
-	else if ((*y - menu_req.height) >= monitor.y)
-		*y -= menu_req.height;
-	else if (monitor.y + monitor.height - (*y + widget->allocation.height) > *y)
-		*y += widget->allocation.height;
-	else
-		*y -= menu_req.height;
-	*push_in = FALSE;
+	if (savy > *y + ythickness + 1)
+		*y -= widget->allocation.height;
 }
 
 static void pidgin_menu_clicked(GtkWidget *button, GtkMenu *menu)

@@ -1141,14 +1141,14 @@ pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
 	g_object_unref (relation);
 }
 
-#if GTK_CHECK_VERSION(2,2,0)
-static void
-pidgin_menu_position_func(GtkMenu *menu,
+void
+pidgin_menu_position_func_helper(GtkMenu *menu,
 							gint *x,
 							gint *y,
 							gboolean *push_in,
 							gpointer data)
 {
+#if GTK_CHECK_VERSION(2,2,0)
 	GtkWidget *widget;
 	GtkRequisition requisition;
 	GdkScreen *screen;
@@ -1289,9 +1289,9 @@ pidgin_menu_position_func(GtkMenu *menu,
 	{
 		*y = monitor.y;
 	}
+#endif
 }
 
-#endif
 
 void
 pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
@@ -1313,9 +1313,7 @@ pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
 
 	*x += rect.x+rect.width;
 	*y += rect.y+rect.height+ythickness;
-#if GTK_CHECK_VERSION(2,2,0)
-	pidgin_menu_position_func (menu, x, y, push_in, data);
-#endif
+	pidgin_menu_position_func_helper(menu, x, y, push_in, data);
 }
 
 enum {
