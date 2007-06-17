@@ -26,6 +26,7 @@
 #define _QQ_PACKED_PARSE_H_
 
 #include <glib.h>
+#include <time.h>
 
 /* According to "UNIX Network Programming", all TCP/IP implementations
  * must support a minimum IP datagram size of 576 bytes, regardless of the MTU.
