@@ -285,9 +285,9 @@ gboolean purple_request_fields_exists(const PurpleRequestFields *fields,
  *
  * @param fields The fields list.
  *
- * @return The list of required fields.
+ * @constreturn The list of required fields.
  */
-const GList *purple_request_fields_get_required(const PurpleRequestFields *fields);
+GList *purple_request_fields_get_required(const PurpleRequestFields *fields);
 
 /**
  * Returns whether or not a field with the specified ID is required.
@@ -917,10 +917,10 @@ void purple_request_field_list_clear_selected(PurpleRequestField *field);
  * Sets a list of selected items in a list field.
  *
  * @param field The field.
- * @param items The list of selected items.
+ * @param items The list of selected items, which is not modified or freed.
  */
 void purple_request_field_list_set_selected(PurpleRequestField *field,
-										  const GList *items);
+										  GList *items);
 
 /**
  * Returns whether or not a particular item is selected in a list field.
@@ -941,9 +941,9 @@ gboolean purple_request_field_list_is_selected(const PurpleRequestField *field,
  *
  * @param field The field.
  *
- * @return The list of selected items.
+ * @constreturn The list of selected items.
  */
-const GList *purple_request_field_list_get_selected(
+GList *purple_request_field_list_get_selected(
 	const PurpleRequestField *field);
 
 /**
@@ -951,9 +951,9 @@ const GList *purple_request_field_list_get_selected(
  *
  * @param field The field.
  *
- * @return The list of items.
+ * @constreturn The list of items.
  */
-const GList *purple_request_field_list_get_items(const PurpleRequestField *field);
+GList *purple_request_field_list_get_items(const PurpleRequestField *field);
 
 /*@}*/
 

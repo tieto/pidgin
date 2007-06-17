@@ -224,7 +224,11 @@ check_idleness_timer()
 	if (time_until_next_idle_event == 0)
 		idle_timer = 0;
 	else
-		idle_timer = purple_timeout_add(1000 * (time_until_next_idle_event + 1), check_idleness_timer, NULL);
+	{
+		/* +1 for the boundary,
+		 * +1 more for g_timeout_add_seconds rounding. */
+		idle_timer = purple_timeout_add_seconds(time_until_next_idle_event + 2, check_idleness_timer, NULL);
+	}
 	return FALSE;
 }
 
@@ -300,11 +304,21 @@ purple_idle_get_handle()
 	return &handle;
 }
 
+static gboolean _do_purple_idle_touch_cb(gpointer data)
+{
+	purple_idle_touch();
+
+	return FALSE;
+}
+
+
 void
 purple_idle_init()
 {
-	/* Add the timer to check if we're idle */
-	idle_timer = purple_timeout_add(1000 * (IDLEMARK + 1), check_idleness_timer, NULL);
+	/* Add the timer to check if we're idle.
+	 * IDLEMARK + 1 as the boundary,
+	 * +1 more for g_timeout_add_seconds rounding. */
+	idle_timer = purple_timeout_add_seconds((IDLEMARK + 2), check_idleness_timer, NULL);
 
 	purple_signal_connect(purple_conversations_get_handle(), "sent-im-msg",
 						purple_idle_get_handle(),
@@ -319,7 +333,10 @@ purple_idle_init()
 	purple_prefs_connect_callback(purple_idle_get_handle(), "/purple/away/idle_reporting",
 	                              idle_reporting_cb, NULL);
 
-	purple_idle_touch();
+	/* Initialize the idleness asynchronously so it doesn't check idleness,
+	 * and potentially try to change the status before the UI is initialized */
+	g_idle_add(_do_purple_idle_touch_cb, NULL);
+
 }
 
 void

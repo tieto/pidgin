@@ -389,7 +389,7 @@ add_status_to_saved_status_list(GtkListStore *model, PurpleSavedStatus *saved_st
 static void
 populate_saved_status_list(StatusWindow *dialog)
 {
-	const GList *saved_statuses;
+	GList *saved_statuses;
 
 	gtk_list_store_clear(dialog->model);
 
@@ -551,11 +551,8 @@ pidgin_status_window_show(void)
 	width  = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/status/dialog/width");
 	height = purple_prefs_get_int(PIDGIN_PREFS_ROOT "/status/dialog/height");
 
-	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	dialog->window = win = pidgin_create_window(_("Saved Statuses"), PIDGIN_HIG_BORDER, "statuses", TRUE);
 	gtk_window_set_default_size(GTK_WINDOW(win), width, height);
-	gtk_window_set_role(GTK_WINDOW(win), "statuses");
-	gtk_window_set_title(GTK_WINDOW(win), _("Saved Statuses"));
-	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(status_window_destroy_cb), dialog);
@@ -1085,10 +1082,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	if (edit)
 		dialog->original_title = g_strdup(purple_savedstatus_get_title(saved_status));
 
-	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(win), "status");
-	gtk_window_set_title(GTK_WINDOW(win), _("Status"));
-	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
+	dialog->window = win = pidgin_create_window (_("Status"), PIDGIN_HIG_BORDER, "status", FALSE) ;
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(status_editor_destroy_cb), dialog);
@@ -1399,7 +1393,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	GtkTreeIter iter;
 	GtkCellRenderer *rend;
 	const char *status_id = NULL;
-	const GList *list;
+	GList *list;
 	gboolean select = FALSE;
 
 	g_return_if_fail(status_editor != NULL);
@@ -1422,13 +1416,9 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	dialog->status_editor = status_editor;
 	dialog->account = account;
 
-	dialog->window = win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(win), "substatus");
 	tmp = g_strdup_printf(_("Status for %s"), purple_account_get_username(account));
-	gtk_window_set_title(GTK_WINDOW(win), tmp);
+	dialog->window = win = pidgin_create_window(tmp, PIDGIN_HIG_BORDER, "substatus", FALSE) ;
 	g_free(tmp);
-	gtk_window_set_resizable(GTK_WINDOW(win), FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(win), PIDGIN_HIG_BORDER);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(substatus_editor_destroy_cb), dialog);

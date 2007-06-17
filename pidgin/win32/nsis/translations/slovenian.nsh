@@ -38,7 +38,6 @@
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Obišèite spletno stran Windows Pidgin"
 
 ; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (samo odstrani)"
 !define PIDGIN_PROMPT_CONTINUE_WITHOUT_UNINSTALL	"Trenutno namešèene razlièice Pidgina ni mogoèe odstraniti. Nova razlièica bo namešèena brez odstranitve trenutno namešèene razlièice."
 
 ; GTK+ Section Prompts

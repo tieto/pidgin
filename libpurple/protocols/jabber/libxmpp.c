@@ -43,9 +43,11 @@ static PurplePluginProtocolInfo prpl_info =
 {
 #ifdef HAVE_CYRUS_SASL
 	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME |
-	OPT_PROTO_MAIL_CHECK | OPT_PROTO_PASSWORD_OPTIONAL,
+	OPT_PROTO_MAIL_CHECK | OPT_PROTO_PASSWORD_OPTIONAL |
+	OPT_PROTO_SLASH_COMMANDS_NATIVE,
 #else
-	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK,
+	OPT_PROTO_CHAT_TOPIC | OPT_PROTO_UNIQUE_CHATNAME | OPT_PROTO_MAIL_CHECK |
+	OPT_PROTO_SLASH_COMMANDS_NATIVE,
 #endif
 	NULL,							/* user_splits */
 	NULL,							/* protocol_options */
@@ -193,9 +195,11 @@ init_plugin(PurplePlugin *plugin)
 
 	/* Translators: 'domain' is used here in the context of Internet domains, e.g. pidgin.im */
         split = purple_account_user_split_new(_("Domain"), NULL, '@');
+		purple_account_user_split_set_reverse(split, FALSE);
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
         split = purple_account_user_split_new(_("Resource"), "Home", '/');
+		purple_account_user_split_set_reverse(split, FALSE);
         prpl_info.user_splits = g_list_append(prpl_info.user_splits, split);
 
         option = purple_account_option_bool_new(_("Force old (port 5223) SSL"), "old_ssl", FALSE);

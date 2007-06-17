@@ -1038,8 +1038,6 @@ void jabber_close(PurpleConnection *gc)
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 {
-	PurpleStoredImage *img;
-
 	js->state = state;
 	switch(state) {
 		case JABBER_STREAM_OFFLINE:
@@ -1071,14 +1069,6 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 
 			break;
 		case JABBER_STREAM_CONNECTED:
-			/* lets make sure our buddy icon is up to date
-			 * before we go letting people know we're here */
-			img = purple_buddy_icons_find_account_icon(js->gc->account);
-			if(NULL != img) {
-				jabber_set_buddy_icon(js->gc, img);
-				purple_imgstore_unref(img);
-			}
-
 			/* now we can alert the core that we're ready to send status */
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 			jabber_disco_items_server(js);

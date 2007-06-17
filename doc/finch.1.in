@@ -109,6 +109,15 @@ Jump to the 1st, 2nd ... 10th window.
 .B Ctrl \+ o
 Bring up the menu (if there is one) for a window. Note that currently only the
 buddylist has a menu.
+.TP
+.B Alt \+ Shift \+ .
+Switch to the next workspace
+.TP
+.B Alt \+ Shift \+ ,
+Switch to the previous workspace
+.TP
+.B Alt \+ s
+Show the workspace list
 
 .SH FILES
 \fI~/.gntrc\fR: configuration file for gnt applications.
@@ -131,6 +140,33 @@ wm = /usr/local/lib/purple/s.so
 # Remember window-positions based on the titles (on by default)
 .br
 remember_position = 1
+.br
+
+.br
+# Workspaces are created simply by adding Workspace-X groups as follows:
+.br
+[Workspace-1]
+.br
+name = blist
+.br
+# window-names specifies that windows with these semi-colon separated names are placed
+into this workspace
+.br
+window-names = buddylist;debug-window
+.br
+
+.br
+[Workspace-2]
+.br
+name = IM
+.br
+window-names = conversation-window
+.br
+# window-titles specifies that windows with these semi-colon separated titles are placed
+into this workspace. These are matched as substrings. Window titles take precedence over
+names.
+.br
+window-titles = Preferences;Pounce
 .br
 
 .br

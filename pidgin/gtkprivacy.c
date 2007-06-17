@@ -366,11 +366,7 @@ privacy_dialog_new(void)
 
 	dialog = g_new0(PidginPrivacyDialog, 1);
 
-	dialog->win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_resizable(GTK_WINDOW(dialog->win), FALSE);
-	gtk_window_set_role(GTK_WINDOW(dialog->win), "privacy");
-	gtk_window_set_title(GTK_WINDOW(dialog->win), _("Privacy"));
-	gtk_container_set_border_width(GTK_CONTAINER(dialog->win), PIDGIN_HIG_BORDER);
+	dialog->win = pidgin_create_window(_("Privacy"), PIDGIN_HIG_BORDER, "privacy", FALSE);
 
 	g_signal_connect(G_OBJECT(dialog->win), "delete_event",
 					 G_CALLBACK(destroy_cb), dialog);

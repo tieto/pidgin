@@ -118,9 +118,9 @@ update_buddies_from_contact(EContact *contact)
 }
 
 static void
-contacts_changed_cb(EBookView *book_view, const GList *contacts)
+contacts_changed_cb(EBookView *book_view, GList *contacts)
 {
-	const GList *l;
+	GList *l;
 
 	if (purple_connections_get_all() == NULL)
 		return;

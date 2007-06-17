@@ -29,6 +29,7 @@
 #if !GTK_CHECK_VERSION(2,4,0)
 #include "pidgincombobox.h"
 #endif
+#include "gtkutils.h"
 
 typedef struct {
 	PurpleConnection *gc;
@@ -742,10 +743,8 @@ create_console()
 	
 	console = g_new0(XmppConsole, 1);
 
-	console->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(console->window), _("XMPP Console"));
+	console->window = pidgin_create_window(_("XMPP Console"), PIDGIN_HIG_BORDER, NULL, TRUE);
 	g_signal_connect(G_OBJECT(console->window), "destroy", G_CALLBACK(console_destroy), NULL);
-	gtk_container_set_border_width(GTK_CONTAINER(console->window), 12);
 	gtk_window_set_default_size(GTK_WINDOW(console->window), 580, 400);
 	gtk_container_add(GTK_CONTAINER(console->window), vbox);
 

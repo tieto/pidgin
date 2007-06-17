@@ -298,7 +298,7 @@ oscar_encoding_extract(const char *encoding)
 }
 
 gchar *
-oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
+oscar_encoding_to_utf8(PurpleAccount *account, const char *encoding, const char *text, int textlen)
 {
 	gchar *utf8 = NULL;
 
@@ -311,7 +311,25 @@ oscar_encoding_to_utf8(const char *encoding, const char *text, int textlen)
 	{
 		utf8 = g_convert(text, textlen, "UTF-8", "Windows-1252", NULL, NULL, NULL);
 	} else if (!g_ascii_strcasecmp(encoding, "unicode-2-0")) {
-		utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
+		/* Some official ICQ clients are apparently total crack,
+		 * and have been known to save a UTF-8 string converted
+		 * from the locale character set to UCS-2 (not from UTF-8
+		 * to UCS-2!) in the away message.  This hack should find
+		 * and do something (un)reasonable with that, and not
+		 * mess up too much else. */
+		const gchar *charset = purple_account_get_string(account, "encoding", NULL);
+		if (charset) {
+			gsize len;
+			utf8 = g_convert(text, textlen, charset, "UCS-2BE", &len, NULL, NULL);
+			if (!utf8 || len != textlen || !g_utf8_validate(utf8, -1, NULL)) {
+				g_free(utf8);
+				utf8 = NULL;
+			} else {
+				purple_debug_info("oscar", "Used broken ICQ fallback encoding\n");
+			}
+		}
+		if (!utf8)
+			utf8 = g_convert(text, textlen, "UTF-8", "UCS-2BE", NULL, NULL, NULL);
 	} else if (g_ascii_strcasecmp(encoding, "utf-8")) {
 		purple_debug_warning("oscar", "Unrecognized character encoding \"%s\", "
 						   "attempting to convert to UTF-8 anyway\n", encoding);
@@ -1774,7 +1792,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 	{
 		have_status_message = TRUE;
 		if (info->status[0] != '\0')
-			message = oscar_encoding_to_utf8(info->status_encoding,
+			message = oscar_encoding_to_utf8(account, info->status_encoding,
 											 info->status, info->status_len);
 	}
 
@@ -1790,7 +1808,7 @@ static int purple_parse_oncoming(OscarData *od, FlapConnection *conn, FlapFrame 
 		if ((status_id == OSCAR_STATUS_ID_AVAILABLE) && (info->itmsurl != NULL))
 		{
 			char *itmsurl;
-			itmsurl = oscar_encoding_to_utf8(info->itmsurl_encoding,
+			itmsurl = oscar_encoding_to_utf8(account, info->itmsurl_encoding,
 					info->itmsurl, info->itmsurl_len);
 			purple_prpl_got_user_status(account, info->sn, status_id,
 					"message", message, "itmsurl", itmsurl, NULL);
@@ -2047,7 +2065,8 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 		{
 			char *encoding = NULL;
 			encoding = oscar_encoding_extract(args->encoding);
-			message = oscar_encoding_to_utf8(encoding, args->msg, args->msglen);
+			message = oscar_encoding_to_utf8(account, encoding, args->msg,
+			                                 args->msglen);
 			g_free(encoding);
 		} else {
 			if (g_utf8_validate(args->msg, args->msglen, NULL))
@@ -2065,7 +2084,7 @@ incomingim_chan2(OscarData *od, FlapConnection *conn, aim_userinfo_t *userinfo, 
 			return 1;
 		}
 		encoding = args->encoding ? oscar_encoding_extract(args->encoding) : NULL;
-		utf8name = oscar_encoding_to_utf8(encoding,
+		utf8name = oscar_encoding_to_utf8(account, encoding,
 				args->info.chat.roominfo.name,
 				args->info.chat.roominfo.namelen);
 		g_free(encoding);
@@ -2808,6 +2827,7 @@ static int purple_parse_locerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	va_list ap;
 	guint16 reason;
 	char *destn;
+	PurpleNotifyUserInfo *user_info;
 
 	va_start(ap, fr);
 	reason = (guint16) va_arg(ap, unsigned int);
@@ -2817,12 +2837,12 @@ static int purple_parse_locerr(OscarData *od, FlapConnection *conn, FlapFrame *f
 	if (destn == NULL)
 		return 1;
 
+	user_info = purple_notify_user_info_new();
 	buf = g_strdup_printf(_("User information not available: %s"), (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
-	if (!purple_conv_present_error(destn, purple_connection_get_account((PurpleConnection*)od->gc), buf)) {
-		g_free(buf);
-		buf = g_strdup_printf(_("User information for %s unavailable:"), destn);
-		purple_notify_error(od->gc, NULL, buf, (reason < msgerrreasonlen) ? _(msgerrreason[reason]) : _("Unknown reason."));
-	}
+	purple_notify_user_info_add_pair(user_info, NULL, buf);
+	purple_notify_userinfo(od->gc, destn, user_info, NULL, NULL);
+	purple_notify_user_info_destroy(user_info);
+	purple_conv_present_error(destn, purple_connection_get_account(od->gc), buf);
 	g_free(buf);
 
 	return 1;
@@ -2875,12 +2895,12 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	if ((userinfo->status != NULL) && !(userinfo->flags & AIM_FLAG_AWAY))
 	{
 		if (userinfo->status[0] != '\0')
-			tmp = oscar_encoding_to_utf8(userinfo->status_encoding,
+			tmp = oscar_encoding_to_utf8(account, userinfo->status_encoding,
 											 userinfo->status, userinfo->status_len);
 #if defined (_WIN32) || defined (__APPLE__)
 		if (userinfo->itmsurl && (userinfo->itmsurl[0] != '\0')) {
 			gchar *itmsurl, *tmp2;
-			itmsurl = oscar_encoding_to_utf8(userinfo->itmsurl_encoding,
+			itmsurl = oscar_encoding_to_utf8(account, userinfo->itmsurl_encoding,
 					userinfo->itmsurl, userinfo->itmsurl_len);
 			tmp2 = g_strdup_printf("<a href=\"%s\">%s</a>",
 					itmsurl, tmp);
@@ -2896,7 +2916,8 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	/* Away message */
 	if ((userinfo->flags & AIM_FLAG_AWAY) && (userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 		tmp = oscar_encoding_extract(userinfo->away_encoding);
-		away_utf8 = oscar_encoding_to_utf8(tmp, userinfo->away, userinfo->away_len);
+		away_utf8 = oscar_encoding_to_utf8(account, tmp, userinfo->away,
+		                                   userinfo->away_len);
 		g_free(tmp);
 		if (away_utf8 != NULL) {
 			tmp = purple_str_sub_away_formatters(away_utf8, purple_account_get_username(account));
@@ -2910,7 +2931,8 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 	/* Info */
 	if ((userinfo->info_len > 0) && (userinfo->info != NULL) && (userinfo->info_encoding != NULL)) {
 		tmp = oscar_encoding_extract(userinfo->info_encoding);
-		info_utf8 = oscar_encoding_to_utf8(tmp, userinfo->info, userinfo->info_len);
+		info_utf8 = oscar_encoding_to_utf8(account, tmp, userinfo->info,
+		                                   userinfo->info_len);
 		g_free(tmp);
 		if (info_utf8 != NULL) {
 			tmp = purple_str_sub_away_formatters(info_utf8, purple_account_get_username(account));
@@ -2930,6 +2952,7 @@ static int purple_parse_userinfo(OscarData *od, FlapConnection *conn, FlapFrame 
 static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...)
 {
 	PurpleConnection *gc = od->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	PurpleBuddy *b;
 	PurplePresence *presence;
 	PurpleStatus *status;
@@ -2942,7 +2965,7 @@ static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *
 	userinfo = va_arg(ap, aim_userinfo_t *);
 	va_end(ap);
 
-	b = purple_find_buddy(purple_connection_get_account(gc), userinfo->sn);
+	b = purple_find_buddy(account, userinfo->sn);
 	if (b == NULL)
 		return 1;
 
@@ -2962,7 +2985,9 @@ static int purple_got_infoblock(OscarData *od, FlapConnection *conn, FlapFrame *
 		if ((userinfo->flags & AIM_FLAG_AWAY) &&
 			(userinfo->away_len > 0) && (userinfo->away != NULL) && (userinfo->away_encoding != NULL)) {
 			gchar *charset = oscar_encoding_extract(userinfo->away_encoding);
-			message = oscar_encoding_to_utf8(charset, userinfo->away, userinfo->away_len);
+			message = oscar_encoding_to_utf8(account, charset,
+			                                 userinfo->away,
+			                                 userinfo->away_len);
 			g_free(charset);
 			purple_status_set_attr_string(status, "message", message);
 			g_free(message);
@@ -3158,6 +3183,7 @@ static int purple_conv_chat_info_update(OscarData *od, FlapConnection *conn, Fla
 
 static int purple_conv_chat_incoming_msg(OscarData *od, FlapConnection *conn, FlapFrame *fr, ...) {
 	PurpleConnection *gc = od->gc;
+	PurpleAccount *account = purple_connection_get_account(gc);
 	struct chat_connection *ccon = find_oscar_chat_by_conn(gc, conn);
 	gchar *utf8;
 	va_list ap;
@@ -3176,7 +3202,7 @@ static int purple_conv_chat_incoming_msg(OscarData *od, FlapConnection *conn, Fl
 	charset = va_arg(ap, char *);
 	va_end(ap);
 
-	utf8 = oscar_encoding_to_utf8(charset, msg, len);
+	utf8 = oscar_encoding_to_utf8(account, charset, msg, len);
 	if (utf8 == NULL)
 		/* The conversion failed! */
 		utf8 = g_strdup(_("[Unable to display a message from this user because it contained invalid characters.]"));

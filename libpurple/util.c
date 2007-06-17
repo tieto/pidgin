@@ -22,6 +22,7 @@
  */
 #include "internal.h"
 
+#include "cipher.h"
 #include "conversation.h"
 #include "core.h"
 #include "debug.h"
@@ -65,8 +66,8 @@ struct _PurpleUtilFetchUrlData
 	unsigned long data_len;
 };
 
-static char custom_home_dir[MAXPATHLEN];
-static char home_dir[MAXPATHLEN] = "";
+static char *custom_user_dir = NULL;
+static char *home_dir = NULL;
 
 PurpleMenuAction *
 purple_menu_action_new(const char *label, PurpleCallback callback, gpointer data,
@@ -155,6 +156,31 @@ purple_base16_decode(const char *str, gsize *ret_len)
 
 	return data;
 }
+
+gchar *
+purple_base16_encode_chunked(const guchar *data, gsize len)
+{
+	int i;
+	gchar *ascii = NULL;
+
+	g_return_val_if_fail(data != NULL, NULL);
+	g_return_val_if_fail(len > 0,   NULL);
+
+	/* For each byte of input, we need 2 bytes for the hex representation
+	 * and 1 for the colon.
+	 * The final colon will be replaced by a terminating NULL
+	 */
+	ascii = g_malloc(len * 3 + 1);
+
+	for (i = 0; i < len; i++)
+		g_snprintf(&ascii[i * 3], 4, "%02hhx:", data[i]);
+
+	/* Replace the final colon with NULL */
+	ascii[len * 3 - 1] = 0;
+
+	return ascii;
+}
+
 
 /**************************************************************************
  * Base64 Functions
@@ -987,7 +1013,6 @@ purple_markup_find_tag(const char *needle, const char *haystack,
 	g_return_val_if_fail(    needle != NULL, FALSE);
 	g_return_val_if_fail(   *needle != '\0', FALSE);
 	g_return_val_if_fail(  haystack != NULL, FALSE);
-	g_return_val_if_fail( *haystack != '\0', FALSE);
 	g_return_val_if_fail(     start != NULL, FALSE);
 	g_return_val_if_fail(       end != NULL, FALSE);
 	g_return_val_if_fail(attributes != NULL, FALSE);
@@ -1397,6 +1422,40 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 						plain = g_string_append_c(plain, '\n');
 					continue;
 				}
+				if(!g_ascii_strncasecmp(c, "<img", 4) && (*(c+4) == '>' || *(c+4) == ' ')) {
+					const char *p = c;
+					GString *src = NULL;
+					struct purple_parse_tag *pt;
+					while(*p && *p != '>') {
+						if(!g_ascii_strncasecmp(p, "src=", strlen("src="))) {
+							const char *q = p + strlen("src=");
+							src = g_string_new("");
+							if(*q == '\'' || *q == '\"')
+								q++;
+							while(*q && *q != '\"' && *q != '\'' && *q != ' ') {
+								src = g_string_append_c(src, *q);
+								q++;
+							}
+							p = q;
+						}
+						p++;
+					}
+					if ((c = strchr(c, '>')) != NULL)
+						c++;
+					else
+						c = p;
+					pt = g_new0(struct purple_parse_tag, 1);
+					pt->src_tag = "img";
+					pt->dest_tag = "img";
+					tags = g_list_prepend(tags, pt);
+					if(xhtml && src && src->len)
+						g_string_append_printf(xhtml, "<img src='%s' alt=''>", g_strstrip(src->str));
+					else
+						pt->ignore = TRUE;
+					if (src)
+						g_string_free(src, TRUE);
+					continue;
+				}
 				if(!g_ascii_strncasecmp(c, "<b>", 3) || !g_ascii_strncasecmp(c, "<bold>", strlen("<bold>"))) {
 					struct purple_parse_tag *pt = g_new0(struct purple_parse_tag, 1);
 					pt->src_tag = *(c+2) == '>' ? "b" : "bold";
@@ -1538,10 +1597,7 @@ purple_markup_html_to_xhtml(const char *html, char **xhtml_out,
 					pt->dest_tag = "span";
 					tags = g_list_prepend(tags, pt);
 					if(style->len)
-					{
-						if(xhtml)
-							g_string_append_printf(xhtml, "<span style='%s'>", g_strstrip(style->str));
-					}
+						g_string_append_printf(xhtml, "<span style='%s'>", g_strstrip(style->str));
 					else
 						pt->ignore = TRUE;
 					g_string_free(style, TRUE);
@@ -2340,27 +2396,22 @@ purple_home_dir(void)
 const char *
 purple_user_dir(void)
 {
-	if (custom_home_dir != NULL && *custom_home_dir) {
-		strcpy ((char*) &home_dir, (char*) &custom_home_dir);
-	} else if (!*home_dir) {
-		const gchar *hd = purple_home_dir();
-
-		if (hd) {
-			g_strlcpy((char*) &home_dir, hd, sizeof(home_dir));
-			g_strlcat((char*) &home_dir, G_DIR_SEPARATOR_S ".purple",
-					sizeof(home_dir));
-		}
-	}
+	if (custom_user_dir != NULL)
+		return custom_user_dir;
+	else if (!home_dir)
+		home_dir = g_build_filename(purple_home_dir(), ".purple", NULL);
 
 	return home_dir;
 }
 
 void purple_util_set_user_dir(const char *dir)
 {
-	if (dir != NULL && strlen(dir) > 0) {
-		g_strlcpy((char*) &custom_home_dir, dir,
-				sizeof(custom_home_dir));
-	}
+	g_free(custom_user_dir);
+
+	if (dir != NULL && *dir)
+		custom_user_dir = g_strdup(dir);
+	else
+		custom_user_dir = NULL;
 }
 
 int purple_build_dir (const char *path, int mode)
@@ -2668,6 +2719,33 @@ purple_util_get_image_extension(gconstpointer data, size_t len)
 	}
 
 	return "icon";
+}
+
+char *
+purple_util_get_image_filename(gconstpointer image_data, size_t image_len)
+{
+	PurpleCipherContext *context;
+	gchar digest[41];
+
+	context = purple_cipher_context_new_by_name("sha1", NULL);
+	if (context == NULL)
+	{
+		purple_debug_error("util", "Could not find sha1 cipher\n");
+		g_return_val_if_reached(NULL);
+	}
+
+	/* Hash the image data */
+	purple_cipher_context_append(context, image_data, image_len);
+	if (!purple_cipher_context_digest_to_str(context, sizeof(digest), digest, NULL))
+	{
+		purple_debug_error("util", "Failed to get SHA-1 digest.\n");
+		g_return_val_if_reached(NULL);
+	}
+	purple_cipher_context_destroy(context);
+
+	/* Return the filename */
+	return g_strdup_printf("%s.%s", digest,
+	                       purple_util_get_image_extension(image_data, image_len));
 }
 
 gboolean
@@ -3052,7 +3130,7 @@ purple_strcasestr(const char *haystack, const char *needle)
 char *
 purple_str_size_to_units(size_t size)
 {
-	static const char *size_str[4] = { "bytes", "KB", "MB", "GB" };
+	static const char *size_str[4] = { "bytes", "KiB", "MiB", "GiB" };
 	float size_mag;
 	int size_index = 0;
 

@@ -291,7 +291,7 @@ silcpurple_chat_chpk_cb(SilcPurpleChauth sgc, PurpleRequestFields *fields)
 	SilcClient client = sg->client;
 	SilcClientConnection conn = sg->conn;
 	PurpleRequestField *f;
-	const GList *list;
+	GList *list;
 	SilcPublicKey public_key;
 	SilcBuffer chpks, pk, chidp;
 	SilcUInt16 c = 0, ct;

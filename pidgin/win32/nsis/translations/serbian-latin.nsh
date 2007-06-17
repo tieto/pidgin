@@ -19,9 +19,6 @@
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Naðena je stara verzija GTK+ izvršne okoline. Da li želite da je unapredite?$\rPrimedba: Ukoliko to ne uradite, $(^Name) možda neæe raditi."
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (samo uklanjanje)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Greška prilikom instalacije GTK+ okoline za izvršavanje."
 !define GTK_BAD_INSTALL_PATH			"Putanja koju ste naveli se ne može ni napraviti niti joj se može priæi."

@@ -822,17 +822,8 @@ pidgin_dialogs_info_cb(gpointer data, PurpleRequestFields *fields)
 	if (username != NULL && purple_str_has_suffix(username, "rocksmyworld"))
 		found = pidgin_dialogs_ee(username);
 
-	if (!found && username != NULL && *username != '\0' && account != NULL) {
-
-		PurpleConnection *gc = purple_account_get_connection(account);
-
-		PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-		purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
-		purple_notify_userinfo(gc, username, info, NULL, NULL);
-		purple_notify_user_info_destroy(info);
-
-		serv_get_info(gc, username);
-	}
+	if (!found && username != NULL && *username != '\0' && account != NULL)
+		pidgin_retrieve_user_info(purple_account_get_connection(account), username);
 
 	g_free(username);
 }

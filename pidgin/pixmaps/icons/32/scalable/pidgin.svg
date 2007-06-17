@@ -14,7 +14,7 @@
    id="svg4345"
    sodipodi:version="0.32"
    inkscape:version="0.44.1"
-   sodipodi:docbase="/home/hbons/Desktop/experiment/icons/32/scalable"
+   sodipodi:docbase="/home/hbons/Desktop/2.0.2/pidgin/pixmaps/icons/32/scalable"
    sodipodi:docname="pidgin.svg"
    inkscape:export-filename="/home/hbons/Desktop/pidgin32.png"
    inkscape:export-xdpi="90"
@@ -348,14 +348,14 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="17.236022"
-     inkscape:cx="15.794751"
-     inkscape:cy="17.564006"
+     inkscape:cx="21.944662"
+     inkscape:cy="16.287609"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
-     inkscape:window-width="1440"
-     inkscape:window-height="849"
+     inkscape:window-width="1434"
+     inkscape:window-height="840"
      inkscape:window-x="0"
      inkscape:window-y="0"
      showguides="true"
@@ -431,7 +431,7 @@
        sodipodi:rx="1.2410715"
        sodipodi:ry="1.2946428"
        d="M 11.410714 24.3125 A 1.2410715 1.2946428 0 1 1  8.928571,24.3125 A 1.2410715 1.2946428 0 1 1  11.410714 24.3125 z"
-       transform="matrix(0.805757,0,0,1.158621,-0.194259,-12.66897)" />
+       transform="matrix(1.208633,0,0,1.158621,-4.791365,-12.66897)" />
     <path
        transform="matrix(0.596326,-0.813274,-0.562251,-0.766804,24.4163,42.47989)"
        style="opacity:1;fill:#975fa3;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1"
@@ -453,7 +453,7 @@
        sodipodi:rx="1.2410715"
        sodipodi:ry="1.2946428"
        d="M 11.410714 24.3125 A 1.2410715 1.2946428 0 1 1  8.928571,24.3125 A 1.2410715 1.2946428 0 1 1  11.410714 24.3125 z"
-       transform="matrix(0.805756,0,0,1.158621,8.80575,-12.66896)" />
+       transform="matrix(1.208633,0,0,1.158621,5.208632,-12.66896)" />
     <rect
        style="opacity:1;fill:#eeeeec;fill-opacity:1;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect5215"

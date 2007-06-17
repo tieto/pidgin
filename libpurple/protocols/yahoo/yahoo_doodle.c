@@ -491,7 +491,8 @@ void yahoo_doodle_end(PurpleWhiteboard *wb)
 
 	/* g_debug_debug("yahoo", "doodle: yahoo_doodle_end()\n"); */
 
-	yahoo_doodle_command_send_shutdown(gc, wb->who);
+	if (gc)
+		yahoo_doodle_command_send_shutdown(gc, wb->who);
 
 	g_free(wb->proto_data);
 }
