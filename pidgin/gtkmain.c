@@ -431,6 +431,7 @@ int main(int argc, char *argv[])
 	gboolean opt_login = FALSE;
 	gboolean opt_nologin = FALSE;
 	gboolean opt_version = FALSE;
+	gboolean opt_si = TRUE;     /* Check for single instance? */
 	char *opt_config_dir_arg = NULL;
 	char *opt_login_arg = NULL;
 	char *opt_session_arg = NULL;
@@ -570,7 +571,7 @@ int main(int argc, char *argv[])
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "c:dhnl::s:v",
+				  "c:dhmnl::s:v",
 #else
 				  "c:dhnl::v",
 #endif
@@ -601,6 +602,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'v':	/* version */
 			opt_version = TRUE;
+			break;
+		case 'm':   /* do not ensure single instance. */
+			opt_si = FALSE;
 			break;
 		case '?':	/* show terse help */
 		default:
@@ -728,7 +732,7 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
-	if (!purple_core_ensure_single_instance()) {
+	if (opt_si && !purple_core_ensure_single_instance()) {
 		purple_core_quit();
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
