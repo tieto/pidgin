@@ -474,7 +474,7 @@ int main(int argc, char *argv[])
 
 	/* This is the first Glib function call. Make sure to initialize GThread bfeore then */
 	g_thread_init(NULL);
-	
+
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
@@ -855,6 +855,7 @@ int main(int argc, char *argv[])
 	winpidgin_post_init();
 #endif
 
+	g_set_application_name(_("Pidgin"));
 	gtk_main();
 
 #ifdef HAVE_SIGNAL_H
