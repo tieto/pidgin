@@ -760,7 +760,7 @@ purple_dbus_signal_emit_purple(const char *name, int num_values,
 	dbus_message_iter_init_append(signal, &iter);
 
 	if (purple_dbus_message_append_purple_values(&iter, num_values, values, vargs))
-		purple_debug_warning("dbus", "The signal \"%s\" caused some dbus error. (If you are not a developer, please ignore)\n", name);
+		purple_debug_warning("dbus", "The signal \"%s\" caused some dbus error. (If you are not a developer, please ignore this message.)\n", name);
 
 	dbus_connection_send(purple_dbus_connection, signal, NULL);
 
