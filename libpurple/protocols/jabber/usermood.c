@@ -105,7 +105,7 @@ static void jabber_mood_cb(JabberStream *js, const char *from, xmlnode *items) {
 	mood = xmlnode_get_child_with_namespace(item, "mood", "http://jabber.org/protocol/mood");
 	if (!mood)
 		return;
-	for (moodinfo = mood->child; moodinfo != mood->lastchild; moodinfo = moodinfo->next) {
+	for (moodinfo = mood->child; moodinfo; moodinfo = moodinfo->next) {
 		if (moodinfo->type == XMLNODE_TYPE_TAG) {
 			if (!strcmp(moodinfo->name, "text")) {
 				if (!moodtext) /* only pick the first one */
