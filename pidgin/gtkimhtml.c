@@ -5036,9 +5036,23 @@ void gtk_imhtml_set_funcs(GtkIMHtml *imhtml, GtkIMHtmlFuncs *f)
 
 void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 {
+	GtkIMHtmlButtons buttons;
+
 	if (flags & PURPLE_CONNECTION_HTML) {
 		char color[8];
 		GdkColor fg_color, bg_color;
+
+		buttons = GTK_IMHTML_ALL;
+
+		if (flags & PURPLE_CONNECTION_NO_BGCOLOR)
+			buttons &= ~GTK_IMHTML_BACKCOLOR;
+		if (flags & PURPLE_CONNECTION_NO_FONTSIZE)
+		{
+			buttons &= ~GTK_IMHTML_GROW;
+			buttons &= ~GTK_IMHTML_SHRINK;
+		}
+		if (flags & PURPLE_CONNECTION_NO_URLDESC)
+			buttons &= ~GTK_IMHTML_LINKDESC;
 
 		gtk_imhtml_set_format_functions(imhtml, GTK_IMHTML_ALL);
 		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold") != imhtml->edit.bold)
@@ -5094,9 +5108,14 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 		else
 			gtk_imhtml_set_whole_buffer_formatting_only(imhtml, FALSE);
 	} else {
+		buttons = GTK_IMHTML_SMILEY | GTK_IMHTML_IMAGE;
 		imhtml_clear_formatting(imhtml);
-		gtk_imhtml_set_format_functions(imhtml, 0);
 	}
+
+	if (flags & PURPLE_CONNECTION_NO_IMAGES)
+		buttons &= ~GTK_IMHTML_IMAGE;
+
+	gtk_imhtml_set_format_functions(imhtml, buttons);
 }
 
 

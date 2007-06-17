@@ -5981,8 +5981,10 @@ gray_stuff_out(PidginConversation *gtkconv)
 			buttons = GTK_IMHTML_SMILEY | GTK_IMHTML_IMAGE;
 		}
 
-		if (!(prpl_info->options & OPT_PROTO_IM_IMAGE) ||
-				conv->features & PURPLE_CONNECTION_NO_IMAGES)
+		if (!(prpl_info->options & OPT_PROTO_IM_IMAGE))
+			conv->features |= PURPLE_CONNECTION_NO_IMAGES;
+
+		if(conv->features & PURPLE_CONNECTION_NO_IMAGES)
 			buttons &= ~GTK_IMHTML_IMAGE;
 
 		gtk_imhtml_set_format_functions(GTK_IMHTML(gtkconv->entry), buttons);
@@ -5995,7 +5997,7 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_widget_set_sensitive(win->menu.get_info, (prpl_info->get_info != NULL));
 		gtk_widget_set_sensitive(win->menu.invite, (prpl_info->chat_invite != NULL));
 		gtk_widget_set_sensitive(win->menu.insert_link, (conv->features & PURPLE_CONNECTION_HTML));
-		gtk_widget_set_sensitive(win->menu.insert_image, (prpl_info->options & OPT_PROTO_IM_IMAGE) && !(conv->features & PURPLE_CONNECTION_NO_IMAGES));
+		gtk_widget_set_sensitive(win->menu.insert_image, !(conv->features & PURPLE_CONNECTION_NO_IMAGES));
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		{

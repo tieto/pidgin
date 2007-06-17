@@ -1035,6 +1035,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	GtkWidget *font_button;
 	GtkWidget *font_menu;
 	GtkWidget *insert_menu;
+	GtkWidget *menuitem;
 	GtkWidget *button;
 	GtkWidget *sep;
 	int i;
@@ -1088,7 +1089,7 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 	
 	for (i = 0; buttons[i].label; i++) {
 		GtkWidget *old = *buttons[i].button;
-		GtkWidget *menuitem = gtk_check_menu_item_new_with_mnemonic(buttons[i].label);
+		menuitem = gtk_check_menu_item_new_with_mnemonic(buttons[i].label);
 		g_signal_connect_swapped(G_OBJECT(menuitem), "activate",
 				G_CALLBACK(gtk_button_clicked), old);
 		g_signal_connect_after(G_OBJECT(old), "toggled",
@@ -1140,17 +1141,23 @@ static void gtk_imhtmltoolbar_init (GtkIMHtmlToolbar *toolbar)
 
 	insert_menu = gtk_menu_new();
 
-	button = gtk_menu_item_new_with_mnemonic(_("_Smiley"));
-	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
-	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
+	menuitem = gtk_menu_item_new_with_mnemonic(_("_Smiley"));
+	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->smiley);
+	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->smiley), "notify::sensitive",
+			G_CALLBACK(button_sensitiveness_changed), menuitem);
 
-	button = gtk_menu_item_new_with_mnemonic(_("_Image"));
-	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->image);
-	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
+	menuitem = gtk_menu_item_new_with_mnemonic(_("_Image"));
+	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->image);
+	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->image), "notify::sensitive",
+			G_CALLBACK(button_sensitiveness_changed), menuitem);
 
-	button = gtk_menu_item_new_with_mnemonic(_("_Link"));
-	g_signal_connect_swapped(G_OBJECT(button), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
-	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), button);
+	menuitem = gtk_menu_item_new_with_mnemonic(_("_Link"));
+	g_signal_connect_swapped(G_OBJECT(menuitem), "activate", G_CALLBACK(gtk_button_clicked), toolbar->link);
+	gtk_menu_shell_append(GTK_MENU_SHELL(insert_menu), menuitem);
+	g_signal_connect(G_OBJECT(toolbar->link), "notify::sensitive",
+			G_CALLBACK(button_sensitiveness_changed), menuitem);
 
 	g_signal_connect(G_OBJECT(insert_button), "clicked", G_CALLBACK(pidgin_menu_clicked), insert_menu);
 	g_signal_connect(G_OBJECT(insert_menu), "deactivate", G_CALLBACK(pidgin_menu_deactivate), insert_button);
