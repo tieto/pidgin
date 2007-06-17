@@ -2096,6 +2096,7 @@ void pidgin_prefs_update_old()
 	purple_prefs_rename("/purple/conversations/placement",
 					  PIDGIN_PREFS_ROOT "/conversations/placement");
 
+	purple_prefs_rename(PIDGIN_PREFS_ROOT "/debug/timestamps", "/purple/debug/timestamps");
 	purple_prefs_rename(PIDGIN_PREFS_ROOT "/conversations/im/raise_on_events", "/plugins/gtk/X11/notify/method_raise");
 
 	purple_prefs_rename_boolean_toggle(PIDGIN_PREFS_ROOT "/conversations/ignore_colors",
@@ -2136,7 +2137,6 @@ void pidgin_prefs_update_old()
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/ignore_fonts");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/ignore_font_sizes");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/conversations/passthrough_unknown_commands");
-	purple_prefs_remove(PIDGIN_PREFS_ROOT "/debug/timestamps");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/idle");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/logging/individual_logs");
 	purple_prefs_remove(PIDGIN_PREFS_ROOT "/sound/signon");

@@ -1356,7 +1356,6 @@ purple_prefs_update_old()
 	purple_prefs_remove("/plugins/core/autorecon/restore_state");
 	purple_prefs_remove("/plugins/core/autorecon");
 	purple_prefs_remove("/purple/debug/timestamps");
-	purple_prefs_remove("/purple/debug");
 
 	/* Convert old sounds while_away pref to new 3-way pref. */
 	if (purple_prefs_exists("/purple/sound/while_away") &&
