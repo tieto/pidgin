@@ -372,6 +372,7 @@ show_usage(const char *name, gboolean terse)
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
 		       "  -h, --help          display this help and exit\n"
+		       "  -m, --multiple      do not ensure single instance\n"
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use, separated by commas)\n"
@@ -458,6 +459,7 @@ int main(int argc, char *argv[])
 		{"debug",    no_argument,       NULL, 'd'},
 		{"help",     no_argument,       NULL, 'h'},
 		{"login",    optional_argument, NULL, 'l'},
+		{"multiple", no_argument,       NULL, 'm'},
 		{"nologin",  no_argument,       NULL, 'n'},
 		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
