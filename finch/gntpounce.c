@@ -141,8 +141,8 @@ populate_pounces_list(PouncesManager *dialog)
 
 	gnt_tree_remove_all(GNT_TREE(dialog->tree));
 
-	for (pounces = purple_pounces_get_all(); pounces != NULL;
-			pounces = g_list_next(pounces))
+	for (pounces = purple_pounces_get_all_for_ui(FINCH_UI); pounces != NULL;
+			pounces = g_list_delete_link(pounces, pounces))
 	{
 		add_pounce_to_treeview(GNT_TREE(dialog->tree), pounces->data);
 	}

@@ -215,8 +215,8 @@ populate_pounces_list(PouncesManager *dialog)
 
 	gtk_list_store_clear(dialog->model);
 
-	for (pounces = purple_pounces_get_all(); pounces != NULL;
-			pounces = g_list_next(pounces))
+	for (pounces = purple_pounces_get_all_for_ui(PIDGIN_UI); pounces != NULL;
+			pounces = g_list_delete_link(pounces, pounces))
 	{
 		add_pounce_to_treeview(dialog->model, pounces->data);
 	}

@@ -3,7 +3,7 @@ import string
 import sys
 
 # types translated into "int"
-simpletypes = ["int", "gint", "guint", "gboolean"]
+simpletypes = ["int", "gint", "guint", "gboolean", "gpointer", "size_t", "gssize", "time_t"]
 
 # List "excluded" contains functions that shouldn't be exported via
 # DBus.  If you remove a function from this list, please make sure
@@ -119,21 +119,26 @@ class Binding:
 
     def processinput(self, type, name):
         const = False
+        unsigned = False
         if type[0] == "const":
             type = type[1:]
             const = True
 
+        if type[0] == "unsigned":
+            type = type[1:]
+            unsigned = True
+
         if len(type) == 1:
             # simple types (int, gboolean, etc.) and enums
             if (type[0] in simpletypes) or ((type[0].startswith("Purple") and not type[0].endswith("Callback"))):
-                return self.inputsimple(type, name)
+                return self.inputsimple(type, name, unsigned)
 
         # pointers ... 
         if (len(type) == 2) and (type[1] == pointer):
             # strings
             if type[0] in ["char", "gchar"]:
                 if const:
-                    return self.inputstring(type, name)
+                    return self.inputstring(type, name, unsigned)
                 else:
                     raise myexception
 
@@ -232,12 +237,18 @@ class ClientBinding (Binding):
             print "typedef struct _%s %s;" % (type[0], type[0])
             self.knowntypes.append(type[0])
 
-    def inputsimple(self, type, name):
+    def inputsimple(self, type, name, us):
         self.paramshdr.append("%s %s" % (type[0], name))
-        self.inputparams.append(("G_TYPE_INT", name))
+        if us:
+            self.inputparams.append(("G_TYPE_UINT", name))
+        else:
+            self.inputparams.append(("G_TYPE_INT", name))
 
-    def inputstring(self, type, name):
-        self.paramshdr.append("const char *%s" % name)
+    def inputstring(self, type, name, us):
+        if us:
+            self.paramshdr.append("const unsigned char *%s" % name)
+        else:
+            self.paramshdr.append("const char *%s" % name)
         self.inputparams.append(("G_TYPE_STRING", name))
         
     def inputpurplestructure(self, type, name):
@@ -348,15 +359,23 @@ class ServerBinding (Binding):
 
     # input parameters
 
-    def inputsimple(self, type, name):
-        self.cdecls.append("\tdbus_int32_t %s;" % name)
-        self.cparams.append(("INT32", name))
-        self.addintype("i", name)
+    def inputsimple(self, type, name, us):
+        if us:
+            self.cdecls.append("\tdbus_int32_t %s;" % name)
+            self.cparams.append(("INT32", name))
+            self.addintype("i", name)
+        else:
+            self.cdecls.append("\tdbus_uint32_t %s;" % name)
+            self.cparams.append(("UINT32", name))
+            self.addintype("u", name)
 
-    def inputstring(self, type, name):
-        self.cdecls.append("\tconst char *%s;" % name)
+    def inputstring(self, type, name, us):
+        if us:
+            self.cdecls.append("\tconst unsigned char *%s;" % name)
+        else:
+            self.cdecls.append("\tconst char *%s;" % name)
         self.cparams.append(("STRING", name))
-        self.ccode  .append("\tNULLIFY(%s);" % name)
+        self.ccode.append("\t%s = (%s && %s[0]) ? %s : NULL;" % (name,name,name,name))
         self.addintype("s", name)
 
     def inputhash(self, type, name):
