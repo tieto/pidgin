@@ -102,6 +102,11 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	JabberBuddyState state;
 	int priority;
 
+	if(NULL == status) {
+		PurplePresence *gpresence = purple_account_get_presence(account);
+		status = purple_presence_get_active_status(gpresence);
+	}
+
 	if(!purple_status_is_active(status))
 		return;
 
