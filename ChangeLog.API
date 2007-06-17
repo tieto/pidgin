@@ -13,8 +13,6 @@ version 2.1.0 (??/??/????):
 		    UIs can now use better scheduling for whole-second timers.  For
 		    example, clients based on the glib event loop can now use
 		    g_timeout_add_seconds.
-		* gtk_imhtml_setup_entry
-		* pidgin_create_window
 		* purple_blist_node_get_type
 		* purple_conversation_do_command
 		* purple_conversation_get_extended_menu
@@ -22,8 +20,6 @@ version 2.1.0 (??/??/????):
 		    This is for UIs to use to ensure only one copy is running.
 		* purple_dbus_is_owner
 		* purple_image_data_calculate_filename
-		* pidgin_retrieve_user_info, shows immediate feedback when getting
-		  information about a user.
 		* purple_timeout_add_seconds
 		    Callers should prefer this to purple_timeout_add for timers
 		    longer than 1 second away.  Be aware of the rounding, though.
@@ -31,8 +27,7 @@ version 2.1.0 (??/??/????):
 		    Callers should prefer this to purple_timeout_add for timers
 		    longer than 1 second away.  Be aware of the rounding, though.
 		* purple_xfer_get_remote_user
-		* gtk_imhtml_animation_new
-		    Can be used for inserting an animated image into an IMHTML.
+		* purple_pounces_get_all_for_ui
 
 		Changed:
 		* The documentation of the following functions now properly
@@ -68,6 +63,14 @@ version 2.1.0 (??/??/????):
 		  GLists.  The passed list is still not modified or freed.
 
 	Pidgin:
+		Added:
+		* gtk_imhtml_setup_entry
+		* pidgin_create_window
+		* pidgin_retrieve_user_info, shows immediate feedback when getting
+		  information about a user.
+		* gtk_imhtml_animation_new
+		    Can be used for inserting an animated image into an IMHTML.
+
 		Changed:
 		* pidgin_append_menu_action returns the menuitem added to the menu.
 		* pidgin_separator returns the separator added to the menu.
