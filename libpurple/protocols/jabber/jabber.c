@@ -1966,8 +1966,4 @@ void
 jabber_init_plugin(PurplePlugin *plugin)
 {
 	my_protocol = plugin;
-	jabber_add_feature("avatarmeta", "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata", jabber_pep_namespace_only_when_pep_enabled_cb);
-	jabber_add_feature("avatardata", "http://www.xmpp.org/extensions/xep-0084.html#ns-data", jabber_pep_namespace_only_when_pep_enabled_cb);
-	
-	jabber_pep_register_handler("avatar", "http://www.xmpp.org/extensions/xep-0084.html#ns-data", jabber_buddy_avatar_update_metadata);
 }

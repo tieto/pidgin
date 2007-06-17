@@ -49,6 +49,20 @@ typedef void (JabberPEPHandler)(JabberStream *js, const char *from, xmlnode *ite
 void jabber_pep_register_handler(const char *shortname, const char *xmlns, JabberPEPHandler handlerfunc);
 
 /*
+ * Request a specific item from another PEP node.
+ *
+ * @parameter js	The JabberStream that should be used
+ * @parameter to	The target PEP node
+ * @parameter node	The node name of the item that is requested
+ * @parameter id	The item id of the requested item (may be NULL)
+ * @parameter cb	The callback to be used when this item is received
+ *
+ * ATTN: The items parameter of the callback will only point to the single <item> element here!
+ * Additionally, the items element passed will be NULL if any error occured (like a permission error, node doesn't exist etc.)
+ */
+void jabber_pep_request_item(JabberStream *js, const char *to, const char *node, const char *id, JabberPEPHandler cb);
+
+/*
  * Default callback that can be used for namespaces which should only be enabled when PEP is supported
  *
  * @parameter js	The JabberStream struct for this connection

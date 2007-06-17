@@ -502,13 +502,13 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 				hash = g_strdup_printf("%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x%x",digest[0],digest[1],digest[2],digest[3],digest[4],digest[5],digest[6],digest[7],digest[8],digest[9],digest[10],digest[11],digest[12],digest[13],digest[14],digest[15],digest[16],digest[17],digest[18],digest[19]);
 				
 				publish = xmlnode_new("publish");
-				xmlnode_set_attrib(publish,"node","http://www.xmpp.org/extensions/xep-0084.html#ns-data");
+				xmlnode_set_attrib(publish,"node",AVATARNAMESPACEDATA);
 				
 				item = xmlnode_new_child(publish, "item");
 				xmlnode_set_attrib(item, "id", hash);
 				
 				data = xmlnode_new_child(item, "data");
-				xmlnode_set_namespace(data,"http://www.xmpp.org/extensions/xep-0084.html#ns-data");
+				xmlnode_set_namespace(data,AVATARNAMESPACEDATA);
 				
 				base64avatar = purple_base64_encode(purple_imgstore_get_data(img), purple_imgstore_get_size(img));
 				xmlnode_insert_data(data,base64avatar,-1);
@@ -519,13 +519,13 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 				
 				/* next step: publish the metadata */
 				publish = xmlnode_new("publish");
-				xmlnode_set_attrib(publish,"node","http://www.xmpp.org/extensions/xep-0084.html#ns-metadata");
+				xmlnode_set_attrib(publish,"node",AVATARNAMESPACEMETA);
 				
 				item = xmlnode_new_child(publish, "item");
 				xmlnode_set_attrib(item, "id", hash);
 				
 				metadata = xmlnode_new_child(item, "metadata");
-				xmlnode_set_namespace(metadata,"http://www.xmpp.org/extensions/xep-0084.html#ns-metadata");
+				xmlnode_set_namespace(metadata,AVATARNAMESPACEMETA);
 				
 				info = xmlnode_new_child(metadata, "info");
 				xmlnode_set_attrib(info, "id", hash);
@@ -548,12 +548,12 @@ void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 				/* remove the metadata */
 				xmlnode *metadata, *item;
 				xmlnode *publish = xmlnode_new("publish");
-				xmlnode_set_attrib(publish,"node","http://www.xmpp.org/extensions/xep-0084.html#ns-metadata");
+				xmlnode_set_attrib(publish,"node",AVATARNAMESPACEMETA);
 				
 				item = xmlnode_new_child(publish, "item");
 				
 				metadata = xmlnode_new_child(item, "metadata");
-				xmlnode_set_namespace(metadata,"http://www.xmpp.org/extensions/xep-0084.html#ns-metadata");
+				xmlnode_set_namespace(metadata,AVATARNAMESPACEMETA);
 				
 				xmlnode_new_child(metadata, "stop");
 				
@@ -1109,8 +1109,104 @@ static void jabber_vcard_parse(JabberStream *js, xmlnode *packet, gpointer data)
 	jabber_buddy_info_show_if_ready(jbi);
 }
 
-void jabber_buddy_avatar_update_metadata(JabberStream *js, const char *from, xmlnode *items) {
+typedef struct _JabberBuddyAvatarUpdateURLInfo {
+	JabberStream *js;
+	char *from;
+	char *id;
+} JabberBuddyAvatarUpdateURLInfo;
+
+static void do_buddy_avatar_update_fromurl(PurpleUtilFetchUrlData *url_data, gpointer user_data, const gchar *url_text, gsize len, const gchar *error_message) {
+	JabberBuddyAvatarUpdateURLInfo *info = user_data;
+	if(!url_text) {
+		purple_debug(PURPLE_DEBUG_ERROR, "jabber",
+					 "do_buddy_avatar_update_fromurl got error \"%s\"", error_message);
+		return;
+	}
 	
+	purple_buddy_icons_set_for_user(purple_connection_get_account(info->js->gc), info->from, (void*)url_text, len, info->id);
+	g_free(info->from);
+	g_free(info->id);
+	g_free(info);
+}
+
+static void do_buddy_avatar_update_data(JabberStream *js, const char *from, xmlnode *item) {
+	xmlnode *data;
+	const char *checksum;
+	char *b64data;
+	void *img;
+	size_t size;
+	if(!item)
+		return;
+	
+	data = xmlnode_get_child_with_namespace(item,"data",AVATARNAMESPACEDATA);
+	if(!data)
+		return;
+	
+	checksum = xmlnode_get_attrib(item,"id");
+	if(!checksum)
+		return;
+	
+	b64data = xmlnode_get_data(data);
+	if(!b64data)
+		return;
+	
+	img = purple_base64_decode(b64data, &size);
+	if(!img)
+		return;
+	
+	purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, img, size, checksum);
+}
+
+void jabber_buddy_avatar_update_metadata(JabberStream *js, const char *from, xmlnode *items) {
+	PurpleBuddy *buddy = purple_find_buddy(purple_connection_get_account(js->gc), from);
+	const char *checksum;
+	xmlnode *item, *metadata;
+	if(!buddy)
+		return;
+	
+	checksum = purple_buddy_icons_get_checksum_for_user(buddy);
+	item = xmlnode_get_child(items,"item");
+	metadata = xmlnode_get_child_with_namespace(item, "metadata", AVATARNAMESPACEMETA);
+	if(!metadata)
+		return;
+	/* check if we have received a stop */
+	if(xmlnode_get_child(metadata, "stop")) {
+		purple_buddy_icons_set_for_user(purple_connection_get_account(js->gc), from, NULL, 0, NULL);
+	} else {
+		xmlnode *info, *goodinfo = NULL;
+		
+		/* iterate over all info nodes to get one we can use */
+		for(info = metadata->child; info; info = info->next) {
+			if(info->type == XMLNODE_TYPE_TAG && !strcmp(info->name,"info")) {
+				const char *type = xmlnode_get_attrib(info,"type");
+				const char *id = xmlnode_get_attrib(info,"id");
+				
+				if(checksum && id && !strcmp(id, checksum)) {
+					/* we already have that avatar, so we don't have to do anything */
+					goodinfo = NULL;
+					break;
+				}
+				/* We'll only pick the png one for now. It's a very nice image format anyways. */
+				if(type && id && !goodinfo && !strcmp(type, "image/png"))
+					goodinfo = info;
+			}
+		}
+		if(goodinfo) {
+			const char *url = xmlnode_get_attrib(goodinfo,"url");
+			const char *id = xmlnode_get_attrib(goodinfo,"id");
+			
+			/* the avatar might either be stored in a pep node, or on a HTTP/HTTPS URL */
+			if(!url)
+				jabber_pep_request_item(js, from, AVATARNAMESPACEDATA, id, do_buddy_avatar_update_data);
+			else {
+				JabberBuddyAvatarUpdateURLInfo *info = g_new0(JabberBuddyAvatarUpdateURLInfo, 1);
+				info->js = js;
+				info->from = g_strdup(from);
+				info->id = g_strdup(id);
+				purple_util_fetch_url(url, TRUE, NULL, TRUE, do_buddy_avatar_update_fromurl, info);
+			}
+		}
+	}
 }
 
 static void jabber_buddy_info_resource_free(gpointer data)

@@ -25,6 +25,15 @@
 #include "jabber.h"
 #include "usermood.h"
 
+/* for some reason, Psi uses the first one instead of the second one as defined in the XEP */
+#ifndef USE_XEP_0084
+#define AVATARNAMESPACEDATA "http://jabber.org/protocol/avatar#data"
+#define AVATARNAMESPACEMETA "http://jabber.org/protocol/avatar#metadata"
+#else
+#define AVATARNAMESPACEDATA "http://www.xmpp.org/extensions/xep-0084.html#ns-data"
+#define AVATARNAMESPACEMETA "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata"
+#endif
+
 typedef enum {
 	JABBER_BUDDY_STATE_UNKNOWN = -2,
 	JABBER_BUDDY_STATE_ERROR = -1,

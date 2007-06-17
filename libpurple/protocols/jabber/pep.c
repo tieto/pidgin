@@ -46,6 +46,46 @@ void jabber_pep_register_handler(const char *shortname, const char *xmlns, Jabbe
 	g_hash_table_replace(pep_handlers, g_strdup(xmlns), handlerfunc);
 }
 
+static void do_pep_iq_request_item_callback(JabberStream *js, xmlnode *packet, gpointer data) {
+	const char *from = xmlnode_get_attrib(packet,"from");
+	xmlnode *pubsub = xmlnode_get_child_with_namespace(packet,"pubsub","http://jabber.org/protocol/pubsub#event");
+	xmlnode *item = NULL;
+	JabberPEPHandler *cb = data;
+	
+	if(pubsub) {
+		item = xmlnode_get_child(pubsub, "item");
+		if(!item) {
+			/* does not follow the spec, but the ejabberd PEP implementation behaves that way */
+			xmlnode *items = xmlnode_get_child(pubsub, "items");
+			if(items)
+				item = xmlnode_get_child(items, "item");
+		}
+	}
+	
+	cb(js, from, item);
+}
+
+void jabber_pep_request_item(JabberStream *js, const char *to, const char *node, const char *id, JabberPEPHandler cb) {
+	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_GET);
+	xmlnode *pubsub, *items, *item;
+	
+	xmlnode_set_attrib(iq->node,"to",to);
+	pubsub = xmlnode_new_child(iq->node,"pubsub");
+	
+	xmlnode_set_namespace(pubsub,"http://jabber.org/protocol/pubsub");
+	
+	items = xmlnode_new_child(pubsub, "items");
+	xmlnode_set_attrib(items,"node",node);
+	
+	item = xmlnode_new_child(items, "item");
+	if(id)
+		xmlnode_set_attrib(item, "id", id);
+	
+	jabber_iq_set_callback(iq,do_pep_iq_request_item_callback,(gpointer)cb);
+	
+	jabber_iq_send(iq);
+}
+
 gboolean jabber_pep_namespace_only_when_pep_enabled_cb(JabberStream *js, const gchar *shortname, const gchar *namespace) {
 	return js->pep;
 }
