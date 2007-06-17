@@ -443,14 +443,9 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 void jabber_set_buddy_icon(PurpleConnection *gc, PurpleStoredImage *img)
 {
-	PurplePresence *gpresence;
-	PurpleStatus *status;
-
 	jabber_set_info(gc, purple_account_get_user_info(gc->account));
 
-	gpresence = purple_account_get_presence(gc->account);
-	status = purple_presence_get_active_status(gpresence);
-	jabber_presence_send(gc->account, status);
+	jabber_presence_send(gc->account, NULL);
 }
 
 /*
