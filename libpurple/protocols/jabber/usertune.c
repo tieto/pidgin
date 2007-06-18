@@ -25,13 +25,14 @@
 #include <string.h>
 #include "internal.h"
 #include "request.h"
+#include "status.h"
 
 static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 	/* it doesn't make sense to have more than one item here, so let's just pick the first one */
 	xmlnode *item = xmlnode_get_child(items, "item");
 	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
 	xmlnode *tuneinfo, *tune;
-	PurpleTuneInfo tuneinfodata;
+	PurpleJabberTuneInfo tuneinfodata;
 	
 	/* ignore the tune of people not on our buddy list */
 	if (!buddy || !item)
@@ -40,11 +41,8 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 	tuneinfodata.artist = "";
 	tuneinfodata.title = "";
 	tuneinfodata.album = "";
-	tuneinfodata.genre = "";
-	tuneinfodata.comment = "";
 	tuneinfodata.track = "";
 	tuneinfodata.time = -1;
-	tuneinfodata.year = -1;
 	tuneinfodata.url = "";
 	
 	tune = xmlnode_get_child_with_namespace(item, "tune", "http://jabber.org/protocol/tune");
@@ -79,7 +77,7 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 	JabberBuddyResource *resource = jabber_buddy_find_resource(buddy, NULL);
 	const char *status_id = jabber_buddy_state_get_status_id(resource->state);
 
-	purple_prpl_got_user_status(js->gc->account, from, status_id, "tune_artist", tuneinfodata.artist, "tune_title", tuneinfodata.title, "tune_album", tuneinfodata.album, "tune_genre", tuneinfodata.genre, "tune_comment", tuneinfodata.comment, "tune_track", tuneinfodata.track, "tune_time", tuneinfodata.time, "tune_year", tuneinfodata.year, "tune_url", tuneinfodata.url, NULL);
+	purple_prpl_got_user_status(js->gc->account, from, status_id, PURPLE_TUNE_ARTIST, tuneinfodata.artist, PURPLE_TUNE_TITLE, tuneinfodata.title, PURPLE_TUNE_ALBUM, tuneinfodata.album, PURPLE_TUNE_TRACK, tuneinfodata.track, PURPLE_TUNE_TIME, tuneinfodata.time, PURPLE_TUNE_URL, tuneinfodata.url, NULL);
 }
 
 void jabber_tune_init(void) {
@@ -87,7 +85,7 @@ void jabber_tune_init(void) {
 	jabber_pep_register_handler("tunen", "http://jabber.org/protocol/tune", jabber_tune_cb);
 }
 
-void jabber_tune_set(PurpleConnection *gc, const PurpleTuneInfo *tuneinfo) {
+void jabber_tune_set(PurpleConnection *gc, const PurpleJabberTuneInfo *tuneinfo) {
 	xmlnode *publish, *tunenode;
 	JabberStream *js = gc->proto_data;
 	
@@ -97,20 +95,20 @@ void jabber_tune_set(PurpleConnection *gc, const PurpleTuneInfo *tuneinfo) {
 	xmlnode_set_namespace(tunenode, "http://jabber.org/protocol/tune");
 	
 	if(tuneinfo) {
-		if(tuneinfo->artist)
+		if(tuneinfo->artist && tuneinfo->artist[0] != '\0')
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "artist"),tuneinfo->artist,-1);
-		if(tuneinfo->title)
+		if(tuneinfo->title && tuneinfo->title[0] != '\0')
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "title"),tuneinfo->title,-1);
-		if(tuneinfo->album)
+		if(tuneinfo->album && tuneinfo->album[0] != '\0')
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "source"),tuneinfo->album,-1);
-		if(tuneinfo->url)
+		if(tuneinfo->url && tuneinfo->url[0] != '\0')
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "uri"),tuneinfo->url,-1);
 		if(tuneinfo->time >= 0) {
 			char *length = g_strdup_printf("%d", tuneinfo->time);
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "length"),length,-1);
 			g_free(length);
 		}
-		if(tuneinfo->track)
+		if(tuneinfo->track && tuneinfo->track[0] != '\0')
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "track"),tuneinfo->track,-1);
 	}
 	

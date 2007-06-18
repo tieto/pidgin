@@ -47,7 +47,6 @@ typedef enum {
  * Dimensions less than 1 should be ignored and the image not scaled.
  */
 typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
-typedef struct _PurpleTuneInfo PurpleTuneInfo;
 
 /**
  * This \#define exists just to make it easier to fill out the buddy icon
@@ -90,18 +89,6 @@ struct proto_chat_entry {
 	int min;
 	int max;
 	gboolean secret;
-};
-
-struct _PurpleTuneInfo {
-	char *artist;
-	char *title;
-	char *album;
-	char *genre;
-	char *comment;
-	char *track; /* either the index of the track in the album or the URL for a stream */
-	int time; /* in seconds, -1 for unknown */
-	int year; /* -1 for unknown (not compatible with very old music I guess) */
-	char *url;
 };
 
 /**
@@ -331,12 +318,10 @@ struct _PurplePluginProtocolInfo
 	/* room list serialize */
 	char *(*roomlist_room_serialize)(PurpleRoomlistRoom *room);
 	
-	void (*publish_tune)(PurpleConnection *gc, const PurpleTuneInfo *tuneinfo);
-
 	void (*_purple_reserved1)(void);
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
-/*	void (*_purple_reserved4)(void);*/
+	void (*_purple_reserved4)(void);
 };
 
 #define PURPLE_IS_PROTOCOL_PLUGIN(plugin) \

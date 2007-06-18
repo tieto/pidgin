@@ -22,23 +22,6 @@
 #ifndef _PURPLE_JABBER_H_
 #define _PURPLE_JABBER_H_
 
-#include <libxml/parser.h>
-#include <glib.h>
-#include "circbuffer.h"
-#include "connection.h"
-#include "dnssrv.h"
-#include "roomlist.h"
-#include "sslconn.h"
-
-#include "jutil.h"
-#include "xmlnode.h"
-
-#ifdef HAVE_CYRUS_SASL
-#include <sasl/sasl.h>
-#endif
-
-#define CAPS0115_NODE "http://pidgin.im/caps"
-
 typedef enum {
 	JABBER_CAP_NONE			  = 0,
 	JABBER_CAP_XHTML		  = 1 << 0,
@@ -50,17 +33,37 @@ typedef enum {
 	JABBER_CAP_CHAT_STATES	  = 1 << 6,
 	JABBER_CAP_IQ_SEARCH	  = 1 << 7,
 	JABBER_CAP_IQ_REGISTER	  = 1 << 8,
-
+	
 	/* Google Talk extensions: 
-	 * http://code.google.com/apis/talk/jep_extensions/extensions.html
-	 */
+	* http://code.google.com/apis/talk/jep_extensions/extensions.html
+	*/
 	JABBER_CAP_GMAIL_NOTIFY	  = 1 << 9,
 	JABBER_CAP_GOOGLE_ROSTER  = 1 << 10,
-
+	
 	JABBER_CAP_PING			  = 1 << 11,
-
+	
 	JABBER_CAP_RETRIEVED	  = 1 << 31
 } JabberCapabilities;
+
+typedef struct _JabberStream JabberStream;
+
+#include <libxml/parser.h>
+#include <glib.h>
+#include "circbuffer.h"
+#include "connection.h"
+#include "dnssrv.h"
+#include "roomlist.h"
+#include "sslconn.h"
+
+#include "jutil.h"
+#include "xmlnode.h"
+#include "buddy.h"
+
+#ifdef HAVE_CYRUS_SASL
+#include <sasl/sasl.h>
+#endif
+
+#define CAPS0115_NODE "http://pidgin.im/caps"
 
 typedef enum {
 	JABBER_STREAM_OFFLINE,
@@ -71,7 +74,7 @@ typedef enum {
 	JABBER_STREAM_CONNECTED
 } JabberStreamState;
 
-typedef struct _JabberStream
+struct _JabberStream
 {
 	int fd;
 
@@ -152,7 +155,21 @@ typedef struct _JabberStream
 	
 	/* does the local server support PEP? */
 	gboolean pep;
-} JabberStream;
+	
+	/* last presence update to check for differences */
+	JabberBuddyState old_state;
+	char *old_msg;
+	int old_priority;
+	char *old_avatarhash;
+	
+	/* same for user tune */
+	char *old_artist;
+	char *old_title;
+	char *old_source;
+	char *old_uri;
+	int old_length;
+	char *old_track;
+};
 
 typedef gboolean (JabberFeatureEnabled)(JabberStream *js, const gchar *shortname, const gchar *namespace);
 

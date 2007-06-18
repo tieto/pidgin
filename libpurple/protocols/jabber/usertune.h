@@ -26,8 +26,18 @@
 
 /* Implementation of XEP-0118 */
 
+typedef struct _PurpleJabberTuneInfo PurpleJabberTuneInfo;
+struct _PurpleJabberTuneInfo {
+	char *artist;
+	char *title;
+	char *album;
+	char *track; /* either the index of the track in the album or the URL for a stream */
+	int time; /* in seconds, -1 for unknown */
+	char *url;
+};
+
 void jabber_tune_init(void);
 
-void jabber_tune_set(PurpleConnection *gc, const PurpleTuneInfo *tuneinfo);
+void jabber_tune_set(PurpleConnection *gc, const PurpleJabberTuneInfo *tuneinfo);
 
 #endif /* _PURPLE_JABBER_USERTUNE_H_ */

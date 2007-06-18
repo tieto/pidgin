@@ -841,14 +841,6 @@ void purple_account_change_password(PurpleAccount *account, const char *orig_pw,
  */
 gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleBuddy *buddy);
 
-/**
- * Sets the current tune playing on the machine (if the prpl support setting this information)
- *
- * @param account	The account
- * @param info		The tune information
- */
-void purple_account_set_tune(PurpleAccount *account, const PurpleTuneInfo *info);
-
 /*@}*/
 
 /**************************************************************************/

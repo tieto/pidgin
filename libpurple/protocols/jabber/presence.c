@@ -37,6 +37,8 @@
 #include "iq.h"
 #include "jutil.h"
 
+#include "usertune.h"
+
 
 static void chats_send_presence_foreach(gpointer key, gpointer val,
 		gpointer user_data)
@@ -101,6 +103,8 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	char *stripped = NULL;
 	JabberBuddyState state;
 	int priority;
+	const char *artist, *title, *source, *uri, *track;
+	int length;
 
 	if(!purple_status_is_active(status))
 		return;
@@ -116,23 +120,80 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	js = gc->proto_data;
 
 	purple_status_to_jabber(status, &state, &stripped, &priority);
+	
+#define CHANGED(a,b) ((!a && b) || (a && a[0] == '\0' && b && b[0] != '\0') || \
+					  (a && !b) || (a && a[0] != '\0' && b && b[0] == '\0') || (a && b && strcmp(a,b)))
+	/* check if there are any differences to the <presence> and send them in that case */
+	if (js->old_state != state || CHANGED(js->old_msg, stripped) ||
+		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash)) {
+		presence = jabber_presence_create_js(js, state, stripped, priority);
+		g_free(stripped);
 
+		if(js->avatar_hash) {
+			x = xmlnode_new_child(presence, "x");
+			xmlnode_set_namespace(x, "vcard-temp:x:update");
+			photo = xmlnode_new_child(x, "photo");
+			xmlnode_insert_data(photo, js->avatar_hash, -1);
+		}
 
-	presence = jabber_presence_create_js(js, state, stripped, priority);
-	g_free(stripped);
+		jabber_send(js, presence);
 
-	if(js->avatar_hash) {
-		x = xmlnode_new_child(presence, "x");
-		xmlnode_set_namespace(x, "vcard-temp:x:update");
-		photo = xmlnode_new_child(x, "photo");
-		xmlnode_insert_data(photo, js->avatar_hash, -1);
+		g_hash_table_foreach(js->chats, chats_send_presence_foreach, presence);
+		xmlnode_free(presence);
+		
+		/* update old values */
+		
+		if(js->old_msg)
+			g_free(js->old_msg);
+		if(js->old_avatarhash)
+			g_free(js->old_avatarhash);
+		js->old_msg = g_strdup(stripped);
+		js->old_avatarhash = g_strdup(js->avatar_hash);
+		js->old_state = state;
+		js->old_priority = priority;
 	}
-
-	jabber_send(js, presence);
-
-	g_hash_table_foreach(js->chats, chats_send_presence_foreach, presence);
-	xmlnode_free(presence);
-
+	
+	/* next, check if there are any changes to the tune values */
+	artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
+	title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
+	source = purple_status_get_attr_string(status, PURPLE_TUNE_ALBUM);
+	uri = purple_status_get_attr_string(status, PURPLE_TUNE_URL);
+	track = purple_status_get_attr_string(status, PURPLE_TUNE_TRACK);
+	length = (!purple_status_get_attr_value(status, PURPLE_TUNE_TIME))?-1:purple_status_get_attr_int(status, PURPLE_TUNE_TIME);
+	
+	if(CHANGED(artist, js->old_artist) || CHANGED(title, js->old_title) || CHANGED(source, js->old_source) ||
+	   CHANGED(uri, js->old_uri) || CHANGED(track, js->old_track) || (length != js->old_length)) {
+		PurpleJabberTuneInfo tuneinfo = {
+			(char*)artist,
+			(char*)title,
+			(char*)source,
+			(char*)track,
+			length,
+			(char*)uri
+		};
+		jabber_tune_set(js->gc, &tuneinfo);
+		
+		/* update old values */
+		if(js->old_artist)
+			g_free(js->old_artist);
+		if(js->old_title)
+			g_free(js->old_title);
+		if(js->old_source)
+			g_free(js->old_source);
+		if(js->old_uri)
+			g_free(js->old_uri);
+		if(js->old_track)
+			g_free(js->old_track);
+		js->old_artist = g_strdup(artist);
+		js->old_title = g_strdup(title);
+		js->old_source = g_strdup(source);
+		js->old_uri = g_strdup(uri);
+		js->old_length = length;
+		js->old_track = g_strdup(track);
+	}
+	
+#undef CHANGED(a,b)
+	
 	jabber_presence_fake_to_self(js, status);
 }
 

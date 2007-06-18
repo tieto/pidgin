@@ -22,11 +22,6 @@
 #ifndef _PURPLE_JABBER_BUDDY_H_
 #define _PURPLE_JABBER_BUDDY_H_
 
-#include "jabber.h"
-
-#define AVATARNAMESPACEDATA "http://www.xmpp.org/extensions/xep-0084.html#ns-data"
-#define AVATARNAMESPACEMETA "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata"
-
 typedef enum {
 	JABBER_BUDDY_STATE_UNKNOWN = -2,
 	JABBER_BUDDY_STATE_ERROR = -1,
@@ -37,6 +32,11 @@ typedef enum {
 	JABBER_BUDDY_STATE_XA,
 	JABBER_BUDDY_STATE_DND
 } JabberBuddyState;
+
+#include "jabber.h"
+
+#define AVATARNAMESPACEDATA "http://www.xmpp.org/extensions/xep-0084.html#ns-data"
+#define AVATARNAMESPACEMETA "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata"
 
 typedef struct _JabberBuddy {
 	GList *resources;

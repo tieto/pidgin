@@ -562,6 +562,7 @@ jabber_login(PurpleAccount *account)
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
 	js->write_buffer = purple_circ_buffer_new(512);
+	js->old_length = -1;
 
 	if(!js->user) {
 		purple_connection_error(gc, _("Invalid XMPP ID"));
@@ -912,6 +913,7 @@ void jabber_register_account(PurpleAccount *account)
 			g_free, g_free);
 	js->user = jabber_id_new(purple_account_get_username(account));
 	js->next_id = g_random_int();
+	js->old_length = -1;
 
 	if(!js->user) {
 		purple_connection_error(gc, _("Invalid XMPP ID"));
@@ -1030,6 +1032,21 @@ void jabber_close(PurpleConnection *gc)
 	g_free(js->server_name);
 	g_free(js->gmail_last_time);
 	g_free(js->gmail_last_tid);
+	if(js->old_msg)
+		g_free(js->old_msg);
+	if(js->old_avatarhash)
+		g_free(js->old_avatarhash);
+	if(js->old_artist)
+		g_free(js->old_artist);
+	if(js->old_title)
+		g_free(js->old_title);
+	if(js->old_source)
+		g_free(js->old_source);
+	if(js->old_uri)
+		g_free(js->old_uri);
+	if(js->old_track)
+		g_free(js->old_track);
+	
 	g_free(js);
 
 	gc->proto_data = NULL;
