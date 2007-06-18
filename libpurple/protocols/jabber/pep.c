@@ -23,6 +23,7 @@
 #include "iq.h"
 #include <string.h>
 #include "usermood.h"
+#include "usernick.h"
 
 static GHashTable *pep_handlers = NULL;
 
@@ -32,12 +33,14 @@ void jabber_pep_init(void) {
 		
 		/* register PEP handlers */
 		jabber_mood_init();
+		jabber_nick_init();
 	}
 }
 
 void jabber_pep_init_actions(GList **m) {
 	/* register the PEP-specific actions */
 	jabber_mood_init_action(m);
+	jabber_nick_init_action(m);
 }
 
 void jabber_pep_register_handler(const char *shortname, const char *xmlns, JabberPEPHandler handlerfunc) {
