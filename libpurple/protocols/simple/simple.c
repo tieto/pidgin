@@ -1803,7 +1803,6 @@ static PurplePluginProtocolInfo prpl_info =
 	/* padding */
 	NULL,
 	NULL,
-	NULL,
 	NULL
 };
 
