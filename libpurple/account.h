@@ -369,7 +369,7 @@ void purple_account_set_status_types(PurpleAccount *account, GList *status_types
  *                  as a NULL-terminated list of id/value pairs.
  */
 void purple_account_set_status(PurpleAccount *account, const char *status_id,
-							 gboolean active, ...);
+							 gboolean active, ...) G_GNUC_NULL_TERMINATED;
 
 
 /**
