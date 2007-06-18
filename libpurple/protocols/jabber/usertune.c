@@ -33,6 +33,8 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 	JabberBuddy *buddy = jabber_buddy_find(js, from, FALSE);
 	xmlnode *tuneinfo, *tune;
 	PurpleJabberTuneInfo tuneinfodata;
+	JabberBuddyResource *resource;
+	const char *status_id;
 	
 	/* ignore the tune of people not on our buddy list */
 	if (!buddy || !item)
@@ -74,8 +76,8 @@ static void jabber_tune_cb(JabberStream *js, const char *from, xmlnode *items) {
 			}
 		}
 	}
-	JabberBuddyResource *resource = jabber_buddy_find_resource(buddy, NULL);
-	const char *status_id = jabber_buddy_state_get_status_id(resource->state);
+	resource = jabber_buddy_find_resource(buddy, NULL);
+	status_id = jabber_buddy_state_get_status_id(resource->state);
 
 	purple_prpl_got_user_status(js->gc->account, from, status_id, PURPLE_TUNE_ARTIST, tuneinfodata.artist, PURPLE_TUNE_TITLE, tuneinfodata.title, PURPLE_TUNE_ALBUM, tuneinfodata.album, PURPLE_TUNE_TRACK, tuneinfodata.track, PURPLE_TUNE_TIME, tuneinfodata.time, PURPLE_TUNE_URL, tuneinfodata.url, NULL);
 }
