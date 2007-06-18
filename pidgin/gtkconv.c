@@ -49,6 +49,7 @@
 #include "prpl.h"
 #include "request.h"
 #include "util.h"
+#include "version.h"
 
 #include "gtkdnd-hints.h"
 #include "gtkblist.h"
@@ -232,6 +233,10 @@ size_allocate_cb(GtkWidget *w, GtkAllocation *allocation, PidginConversation *gt
 		return FALSE;
 
 	if (gtkconv->auto_resize) {
+		return FALSE;
+	}
+
+	if (gdk_window_get_state(gtkconv->win->window->window) & GDK_WINDOW_STATE_MAXIMIZED) {
 		return FALSE;
 	}
 
@@ -1243,6 +1248,37 @@ menu_add_pounce_cb(gpointer data, guint action, GtkWidget *widget)
 }
 
 static void
+menu_insert_link_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	PidginWindow *win = data;
+	PidginConversation *gtkconv;
+	GtkIMHtmlToolbar *toolbar;
+
+	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	toolbar = GTK_IMHTMLTOOLBAR(gtkconv->toolbar);
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->link),
+			!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->link)));
+}
+
+static void
+menu_insert_image_cb(gpointer data, guint action, GtkWidget *widget)
+{
+	PidginWindow *win = data;
+	PurpleConversation *conv;
+	PidginConversation *gtkconv;
+	GtkIMHtmlToolbar *toolbar;
+
+	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
+	conv    = gtkconv->active_conv;
+	toolbar = GTK_IMHTMLTOOLBAR(gtkconv->toolbar);
+
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(toolbar->image),
+			!gtk_toggle_button_get_active(GTK_TOGGLE_BUTTON(toolbar->image)));
+}
+
+
+static void
 menu_alias_cb(gpointer data, guint action, GtkWidget *widget)
 {
 	PidginWindow *win = data;
@@ -1821,6 +1857,9 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 				if (!gtkconv->send_history)
 					break;
 
+				if (gtkconv->entry != entry)
+					break;
+
 				if (!gtkconv->send_history->prev) {
 					GtkTextIter start, end;
 
@@ -1867,6 +1906,9 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 
 			case GDK_Down:
 				if (!gtkconv->send_history)
+					break;
+
+				if (gtkconv->entry != entry)
 					break;
 
 				if (gtkconv->send_history->prev && gtkconv->send_history->prev->data) {
@@ -1972,6 +2014,8 @@ entry_key_press_cb(GtkWidget *entry, GdkEventKey *event, gpointer data)
 		switch (event->keyval)
 		{
 			case GDK_Tab:
+				if (gtkconv->entry != entry)
+					break;
 				return tab_complete(conv);
 				break;
 
@@ -2047,6 +2091,9 @@ refocus_entry_cb(GtkWidget *widget, GdkEventKey *event, gpointer data)
 
 	return TRUE;
 }
+
+static void
+regenerate_options_items(PidginWindow *win);
 
 void
 pidgin_conv_switch_active_conversation(PurpleConversation *conv)
@@ -2148,6 +2195,8 @@ pidgin_conv_switch_active_conversation(PurpleConversation *conv)
 
 	gray_stuff_out(gtkconv);
 	update_typing_icon(gtkconv);
+	g_object_set_data(G_OBJECT(entry), "transient_buddy", NULL);
+	regenerate_options_items(gtkconv->win);
 
 	gtk_window_set_title(GTK_WINDOW(gtkconv->win->window),
 	                     gtk_label_get_text(GTK_LABEL(gtkconv->tab_label)));
@@ -2814,6 +2863,14 @@ static GtkItemFactoryEntry menu_items[] =
 
 	{ "/Conversation/sep3", NULL, NULL, 0, "<Separator>", NULL },
 
+	{ N_("/Conversation/Insert Lin_k..."), NULL, menu_insert_link_cb, 0,
+		"<StockItem>", PIDGIN_STOCK_TOOLBAR_INSERT_LINK },
+	{ N_("/Conversation/Insert Imag_e..."), NULL, menu_insert_image_cb, 0,
+		"<StockItem>", PIDGIN_STOCK_TOOLBAR_INSERT_IMAGE },
+
+	{ "/Conversation/sep4", NULL, NULL, 0, "<Separator>", NULL },
+
+
 	{ N_("/Conversation/_Close"), NULL, menu_close_conv_cb, 0,
 			"<StockItem>", GTK_STOCK_CLOSE },
 
@@ -2893,13 +2950,58 @@ regenerate_options_items(PidginWindow *win)
 	GList *list;
 	PidginConversation *gtkconv;
 	PurpleConversation *conv;
-	PurpleBuddy *buddy;
+	PurpleBlistNode *node = NULL;
+	PurpleChat *chat = NULL;
+	PurpleBuddy *buddy = NULL;
 
 	gtkconv = pidgin_conv_window_get_active_gtkconv(win);
 	conv = gtkconv->active_conv;
-	buddy = purple_find_buddy(conv->account, conv->name);
 
 	menu = gtk_item_factory_get_widget(win->menu.item_factory, N_("/Conversation/More"));
+
+	if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+		chat = purple_blist_find_chat(conv->account, conv->name);
+
+		if ((chat == NULL) && (gtkconv->imhtml != NULL)) {
+			chat = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_chat");
+		}
+
+		if ((chat == NULL) && (gtkconv->imhtml != NULL)) {
+			GHashTable *components;
+			components = g_hash_table_new_full(g_str_hash, g_str_equal,
+					g_free, g_free);
+			g_hash_table_replace(components, g_strdup("channel"),
+					g_strdup(conv->name));
+			chat = purple_chat_new(conv->account, NULL, components);
+			purple_blist_node_set_flags((PurpleBlistNode *)chat,
+					PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+			g_object_set_data_full(G_OBJECT(gtkconv->imhtml), "transient_chat",
+					chat, (GDestroyNotify)purple_blist_remove_chat);
+		}
+	} else {
+		buddy = purple_find_buddy(conv->account, conv->name);
+
+		/* gotta remain bug-compatible :( libpurple < 2.0.2 didn't handle
+		 * removing "isolated" buddy nodes well */
+		if (purple_version_check(2, 0, 2) == NULL) {
+			if ((buddy == NULL) && (gtkconv->imhtml != NULL)) {
+				buddy = g_object_get_data(G_OBJECT(gtkconv->imhtml), "transient_buddy");
+			}
+
+			if ((buddy == NULL) && (gtkconv->imhtml != NULL)) {
+				buddy = purple_buddy_new(conv->account, conv->name, NULL);
+				purple_blist_node_set_flags((PurpleBlistNode *)buddy,
+						PURPLE_BLIST_NODE_FLAG_NO_SAVE);
+				g_object_set_data_full(G_OBJECT(gtkconv->imhtml), "transient_buddy",
+						buddy, (GDestroyNotify)purple_blist_remove_buddy);
+			}
+		}
+	}
+
+	if (chat)
+		node = (PurpleBlistNode *)chat;
+	else if (buddy)
+		node = (PurpleBlistNode *)buddy;
 
 	/* Remove the previous entries */
 	for (list = gtk_container_get_children(GTK_CONTAINER(menu)); list; )
@@ -2910,12 +3012,11 @@ regenerate_options_items(PidginWindow *win)
 	}
 
 	/* Now add the stuff */
-	if (buddy)
+	if (node)
 	{
 		if (purple_account_is_connected(conv->account))
-			pidgin_append_blist_node_proto_menu(menu, conv->account->gc,
-												  (PurpleBlistNode *)buddy);
-		pidgin_append_blist_node_extended_menu(menu, (PurpleBlistNode *)buddy);
+			pidgin_append_blist_node_proto_menu(menu, conv->account->gc, node);
+		pidgin_append_blist_node_extended_menu(menu, node);
 	}
 
 	if ((list = gtk_container_get_children(GTK_CONTAINER(menu))) == NULL)
@@ -3027,6 +3128,18 @@ setup_menubar(PidginWindow *win)
 	win->menu.remove =
 		gtk_item_factory_get_widget(win->menu.item_factory,
 		                            N_("/Conversation/Remove..."));
+
+	/* --- */
+
+	win->menu.insert_link =
+		gtk_item_factory_get_widget(win->menu.item_factory,
+				N_("/Conversation/Insert Link..."));
+
+	win->menu.insert_image =
+		gtk_item_factory_get_widget(win->menu.item_factory,
+				N_("/Conversation/Insert Image..."));
+
+	/* --- */
 
 	win->menu.logging =
 		gtk_item_factory_get_widget(win->menu.item_factory,
@@ -4189,6 +4302,8 @@ setup_chat_pane(PidginConversation *gtkconv)
 
 		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 0);
 		gtk_widget_show(gtkchat->topic_text);
+		g_signal_connect(G_OBJECT(gtkchat->topic_text), "key_press_event",
+			             G_CALLBACK(entry_key_press_cb), gtkconv);
 	}
 
 	/* Setup the horizontal pane. */
@@ -5893,6 +6008,8 @@ gray_stuff_out(PidginConversation *gtkconv)
 			gtk_widget_hide(win->menu.add);
 		}
 
+		gtk_widget_show(win->menu.insert_link);
+		gtk_widget_show(win->menu.insert_image);
 		gtk_widget_show(win->menu.show_icon);
 	} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 		/* Show stuff that applies to Chats, hide stuff that applies to IMs */
@@ -5918,6 +6035,8 @@ gray_stuff_out(PidginConversation *gtkconv)
 			gtk_widget_show(win->menu.remove);
 		}
 
+		gtk_widget_show(win->menu.insert_link);
+		gtk_widget_show(win->menu.insert_image);
 	}
 
 	/*
@@ -5959,6 +6078,8 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_widget_set_sensitive(win->menu.add_pounce, TRUE);
 		gtk_widget_set_sensitive(win->menu.get_info, (prpl_info->get_info != NULL));
 		gtk_widget_set_sensitive(win->menu.invite, (prpl_info->chat_invite != NULL));
+		gtk_widget_set_sensitive(win->menu.insert_link, (conv->features & PURPLE_CONNECTION_HTML));
+		gtk_widget_set_sensitive(win->menu.insert_image, (prpl_info->options & OPT_PROTO_IM_IMAGE) && !(conv->features & PURPLE_CONNECTION_NO_IMAGES));
 
 		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM)
 		{
@@ -5993,6 +6114,8 @@ gray_stuff_out(PidginConversation *gtkconv)
 		gtk_widget_set_sensitive(win->menu.alias, FALSE);
 		gtk_widget_set_sensitive(win->menu.add, FALSE);
 		gtk_widget_set_sensitive(win->menu.remove, FALSE);
+		gtk_widget_set_sensitive(win->menu.insert_link, TRUE);
+		gtk_widget_set_sensitive(win->menu.insert_image, FALSE);
 	}
 
 	/*
@@ -6950,6 +7073,9 @@ pidgin_conversations_init(void)
 	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/tabs", TRUE);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/tab_side", GTK_POS_TOP);
 	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/conversations/scrollback_lines", 4000);
+
+	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/conversations/use_theme_font", TRUE);
+	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/conversations/custom_font", "");
 
 	/* Conversations -> Chat */
 	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/conversations/chat");
@@ -7919,7 +8045,9 @@ alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConver
 	entry = gtk_entry_new();
 	gtk_entry_set_has_frame(GTK_ENTRY(entry), FALSE);
 	gtk_entry_set_width_chars(GTK_ENTRY(entry), 10);
+#if GTK_CHECK_VERSION(2,4,0)
 	gtk_entry_set_alignment(GTK_ENTRY(entry), 0.5);
+#endif
 
 	gtk_box_pack_start(GTK_BOX(gtkconv->tabby), entry, TRUE, TRUE, 0);
 	/* after the tab label */
@@ -8326,7 +8454,9 @@ pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv)
 	}
 
 	ebox = gtk_event_box_new();
+#if GTK_CHECK_VERSION(2,4,0)
 	gtk_event_box_set_visible_window(GTK_EVENT_BOX(ebox), FALSE);
+#endif
 	gtk_container_add(GTK_CONTAINER(ebox), gtkconv->tabby);
 	g_signal_connect(G_OBJECT(ebox), "button-press-event",
 					G_CALLBACK(alias_double_click_cb), gtkconv);

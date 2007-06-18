@@ -92,7 +92,7 @@ set_account_unidle(PurpleAccount *account)
 }
 
 
-static int no_away = 0;
+static gboolean no_away = FALSE;
 static gint time_until_next_idle_event;
 /*
  * This function should be called when you think your idle state
@@ -118,15 +118,15 @@ check_idleness(void)
 	time_t time_idle;
 	gboolean auto_away;
 	const gchar *idle_reporting;
-	gboolean report_idle;
-	GList *l;
+	gboolean report_idle = TRUE;
 	gint away_seconds = 0;
-	gint idle_recheck_interval;
+	gint idle_recheck_interval = 0;
 
 	purple_signal_emit(purple_blist_get_handle(), "update-idle");
 
 	idle_reporting = purple_prefs_get_string("/purple/away/idle_reporting");
-	report_idle = TRUE;
+	auto_away = purple_prefs_get_bool("/purple/away/away_when_idle");
+
 	if (!strcmp(idle_reporting, "system") &&
 		(idle_ui_ops != NULL) && (idle_ui_ops->get_time_idle != NULL))
 	{
@@ -145,15 +145,9 @@ check_idleness(void)
 		/* Don't report idle time */
 		time_idle = 0;
 		report_idle = FALSE;
-	}
 
-	/* Auto-away stuff */
-	auto_away = purple_prefs_get_bool("/purple/away/away_when_idle");
-
-	/* If we're not reporting idle, we can still do auto-away.
-	 * First try "system" and if that isn't possible, use "purple" */
-	if (!report_idle)
-	{
+		/* If we're not reporting idle, we can still do auto-away.
+		 * First try "system" and if that isn't possible, use "purple" */
 		if (auto_away)
 		{
 			if ((idle_ui_ops != NULL) && (idle_ui_ops->get_time_idle != NULL))
@@ -172,7 +166,7 @@ check_idleness(void)
 			if (!no_away)
 			{
 				purple_savedstatus_set_idleaway(FALSE);
-				no_away = 1;
+				no_away = TRUE;
 			}
 			time_until_next_idle_event = 0;
 			return;
@@ -192,11 +186,11 @@ check_idleness(void)
 	if (auto_away && time_idle > away_seconds)
 	{
 		purple_savedstatus_set_idleaway(TRUE);
-		no_away = 0;
+		no_away = FALSE;
 	}
 	else if (!no_away && time_idle < away_seconds)
 	{
-		no_away = 1;
+		no_away = TRUE;
 		purple_savedstatus_set_idleaway(FALSE);
 		if (time_until_next_idle_event == 0 || (away_seconds - time_idle) < time_until_next_idle_event)
 			time_until_next_idle_event = away_seconds - time_idle;
@@ -205,6 +199,7 @@ check_idleness(void)
 	/* Idle reporting stuff */
 	if (report_idle && (time_idle >= IDLEMARK))
 	{
+		GList *l;
 		for (l = purple_connections_get_all(); l != NULL; l = l->next)
 		{
 			PurpleConnection *gc = l->data;
@@ -305,6 +300,14 @@ purple_idle_get_handle()
 	return &handle;
 }
 
+static gboolean _do_purple_idle_touch_cb(gpointer data)
+{
+	purple_idle_touch();
+
+	return FALSE;
+}
+
+
 void
 purple_idle_init()
 {
@@ -324,7 +327,10 @@ purple_idle_init()
 	purple_prefs_connect_callback(purple_idle_get_handle(), "/purple/away/idle_reporting",
 	                              idle_reporting_cb, NULL);
 
-	purple_idle_touch();
+	/* Initialize the idleness asynchronously so it doesn't check idleness,
+	 * and potentially try to change the status before the UI is initialized */
+	g_idle_add(_do_purple_idle_touch_cb, NULL);
+
 }
 
 void

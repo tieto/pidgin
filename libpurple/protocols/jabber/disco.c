@@ -224,17 +224,17 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 		/* If the server supports JABBER_CAP_GOOGLE_ROSTER; we will have already requested it */
 		jabber_roster_request(js);
 	}
-	
+
 	/* Send initial presence; this will trigger receipt of presence for contacts on the roster */
 	gpresence = purple_account_get_presence(js->gc->account);
 	status = purple_presence_get_active_status(gpresence);
-	jabber_presence_send(js->gc->account, status);	
+	jabber_presence_send(js->gc->account, status);
 }
 
 static void
 jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
-  	xmlnode *query, *child;
+	xmlnode *query, *child;
 	const char *from = xmlnode_get_attrib(packet, "from");
 	const char *type = xmlnode_get_attrib(packet, "type");
 
@@ -257,7 +257,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		return;
 	}
 
-	for (child = xmlnode_get_child(query, "identity"); child; 
+	for (child = xmlnode_get_child(query, "identity"); child;
 	     child = xmlnode_get_next_twin(child)) {
 		const char *category, *type, *name;
 		category = xmlnode_get_attrib(child, "category");
@@ -266,7 +266,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		type = xmlnode_get_attrib(child, "type");
 		if (!type || strcmp(type, "im"))
 			continue;
-		
+
 		name = xmlnode_get_attrib(child, "name");
 		if (!name)
 			continue;
@@ -279,7 +279,7 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		}
 	}
 
-	for (child = xmlnode_get_child(query, "feature"); child; 
+	for (child = xmlnode_get_child(query, "feature"); child;
 	     child = xmlnode_get_next_twin(child)) {
 		const char *var;
 		var = xmlnode_get_attrib(child, "var");
@@ -324,9 +324,14 @@ jabber_disco_server_items_result_cb(JabberStream *js, xmlnode *packet, gpointer 
 	for(child = xmlnode_get_child(query, "item"); child;
 			child = xmlnode_get_next_twin(child)) {
 		JabberIq *iq;
-		const char *jid;
+		const char *jid, *node;
 
 		if(!(jid = xmlnode_get_attrib(child, "jid")))
+			continue;
+
+		/* we don't actually care about the specific nodes,
+		 * so we won't query them */
+		if((node = xmlnode_get_attrib(child, "node")))
 			continue;
 
 		iq = jabber_iq_new_query(js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#info");

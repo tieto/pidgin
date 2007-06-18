@@ -36,10 +36,15 @@ void pidgin_dialogs_im(void);
 void pidgin_dialogs_im_with_user(PurpleAccount *, const char *);
 void pidgin_dialogs_info(void);
 void pidgin_dialogs_log(void);
+
+/**
+ * @deprecated This function is no longer used and will be removed in
+ *             Pidgin 3.0.0 unless there is sufficient demand to keep it.
+ */
 void pidgin_dialogs_alias_contact(PurpleContact *);
+
 void pidgin_dialogs_alias_buddy(PurpleBuddy *);
 void pidgin_dialogs_alias_chat(PurpleChat *);
-
 void pidgin_dialogs_remove_buddy(PurpleBuddy *);
 void pidgin_dialogs_remove_group(PurpleGroup *);
 void pidgin_dialogs_remove_chat(PurpleChat *);

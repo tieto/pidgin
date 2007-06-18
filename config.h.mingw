@@ -306,7 +306,7 @@
 /* #undef HAVE_TZNAME */
 
 /* Define to 1 if you have the <unistd.h> header file. */
-#define HAVE_UNISTD_H 1
+/*#define HAVE_UNISTD_H 1*/
 
 /* Define to 1 if you have the `vprintf' function. */
 #define HAVE_VPRINTF 1
@@ -343,9 +343,6 @@
 
 /* Define to the version of this package. */
 /* #define PACKAGE_VERSION "2.0.0dev" */
-
-/* Define to make assertions fatal (useful for debugging). */
-/* #define PURPLE_FATAL_ASSERTS 1 */
 
 /* Define if plugins are enabled. */
 #define PURPLE_PLUGINS 1

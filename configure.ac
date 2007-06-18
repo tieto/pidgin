@@ -46,7 +46,7 @@ AC_PREREQ([2.50])
 m4_define([purple_lt_current], [0])
 m4_define([purple_major_version], [2])
 m4_define([purple_minor_version], [0])
-m4_define([purple_micro_version], [1])
+m4_define([purple_micro_version], [2])
 m4_define([purple_version_suffix], [])
 m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
@@ -55,7 +55,7 @@ m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suf
 m4_define([gnt_lt_current], [0])
 m4_define([gnt_major_version], [1])
 m4_define([gnt_minor_version], [0])
-m4_define([gnt_micro_version], [1])
+m4_define([gnt_micro_version], [2])
 m4_define([gnt_version_suffix], [])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -142,7 +142,7 @@ AM_GLIB_GNU_GETTEXT
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
 dnl AM_GLIB_GNU_GETTEXT found it.
 
-if test x$MSGFMT = xno -o x$GMSGFMT = x
+if test x$MSGFMT = xno
 then
 	AC_ERROR([
 
@@ -569,14 +569,15 @@ dnl #######################################################################
 AC_ARG_ENABLE(gstreamer,
 	[AC_HELP_STRING([--disable-gstreamer], [compile without GStreamer audio support])],
 	enable_gst="$enableval", enable_gst="yes")
-PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], , [
-	AC_MSG_RESULT(no)
-	enable_gst="no"
-])
 if test "x$enable_gst" != "xno"; then
-	AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
-	AC_SUBST(GSTREAMER_CFLAGS)
-	AC_SUBST(GSTREAMER_LIBS)
+	PKG_CHECK_MODULES(GSTREAMER, [gstreamer-0.10], [
+		AC_DEFINE(USE_GSTREAMER, 1, [Use GStreamer for playing sounds])
+		AC_SUBST(GSTREAMER_CFLAGS)
+		AC_SUBST(GSTREAMER_LIBS)
+	], [
+		AC_MSG_RESULT(no)
+		enable_gst="no"
+	])
 fi
 
 dnl #######################################################################
@@ -646,13 +647,14 @@ AC_ARG_WITH(silc-includes, [AC_HELP_STRING([--with-silc-includes=DIR], [compile 
 AC_ARG_WITH(silc-libs, [AC_HELP_STRING([--with-silc-libs=DIR], [compile the SILC plugin against the SILC libs in DIR])], [ac_silc_libs="$withval"], [ac_silc_libs="no"])
 SILC_CFLAGS=""
 SILC_LIBS=""
+have_silc="no"
 if test -n "$with_silc_includes" || test -n "$with_silc_libs"; then
 	silc_manual_check="yes"
 else
 	silc_manual_check="no"
 fi
 if test "x$silc_manual_check" = "xno"; then
-	PKG_CHECK_MODULES(SILC, silcclient, [
+	PKG_CHECK_MODULES(SILC, [silcclient >= 1.1], [
 		have_silc="yes"
 		silcincludes="yes"
 		silcclient="yes"
@@ -660,16 +662,26 @@ if test "x$silc_manual_check" = "xno"; then
 		AC_MSG_RESULT(no)
 		have_silc="no"
 	])
-	dnl If silcclient.pc wasn't found, check for just silc.pc
 	if test "x$have_silc" = "xno"; then
-		PKG_CHECK_MODULES(SILC, silc, [
+		PKG_CHECK_MODULES(SILC, silcclient, [
 			have_silc="yes"
-			silcincludes="yes"
-			silcclient="yes"
+			silc10includes="yes"
+			silc10client="yes"
 		], [
 			AC_MSG_RESULT(no)
 			have_silc="no"
 		])
+		dnl If silcclient.pc wasn't found, check for just silc.pc
+		if test "x$have_silc" = "xno"; then
+			PKG_CHECK_MODULES(SILC, silc, [
+				have_silc="yes"
+				silc10includes="yes"
+				silc10client="yes"
+			], [
+				AC_MSG_RESULT(no)
+				have_silc="no"
+			])
+		fi
 	fi
 else
 	if test "$ac_silc_includes" != "no"; then
@@ -677,7 +689,7 @@ else
 	fi
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
-	AC_CHECK_HEADER(silcincludes.h, [silcincludes=yes])
+	AC_CHECK_HEADER(silc.h, [silcincludes=yes])
 	CPPFLAGS="$CPPFLAGS_save"
 
 	if test "$ac_silc_libs" != "no"; then
@@ -685,11 +697,28 @@ else
 	fi
 	SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread $LIBDL"
 	AC_CHECK_LIB(silcclient, silc_client_init, [silcclient=yes], , $SILC_LIBS)
+
+	if test "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes"; then
+		have_silc="yes"
+	else
+		CPPFLAGS_save="$CPPFLAGS"
+		CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
+		AC_CHECK_HEADER(silcincludes.h, [silc10includes=yes])
+		CPPFLAGS="$CPPFLAGS_save"
+
+		SILC_LIBS="$SILC_LIBS -lsilc -lsilcclient -lpthread $LIBDL"
+		AC_CHECK_LIB(silcclient, silc_client_init, [silc10client=yes], , $SILC_LIBS)
+		if test "x$silc10includes" = "xyes" -a "x$silc10client" = "xyes"; then
+			have_silc="yes"
+		fi
+	fi
 fi
 AC_SUBST(SILC_LIBS)
 AC_SUBST(SILC_CFLAGS)
 dnl SILC Toolkit >= 1.0.1 has a new MIME API
 if test "x$silcclient" = "xyes"; then
+	AC_DEFINE(HAVE_SILCMIME_H, 1, [Define if we have silcmime.h])
+elif test "x$silc10client" = "xyes"; then
 	CPPFLAGS_save="$CPPFLAGS"
 	CPPFLAGS="$CPPFLAGS $SILC_CFLAGS"
 		AC_MSG_CHECKING(for silcmime.h)
@@ -794,7 +823,10 @@ if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
-	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc//'`
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc/silc10/'`
+fi
+if test "x$silc10includes" != "xyes" -o "x$silc10client" != "xyes"; then
+	STATIC_PRPLS=`echo $STATIC_PRPLS | $sedpath 's/silc10//'`
 fi
 AC_SUBST(STATIC_PRPLS)
 STATIC_LINK_LIBS=
@@ -802,13 +834,24 @@ extern_init=
 load_proto=
 for i in $STATIC_PRPLS ; do
 	dnl Ugly special case for "libsilcpurple.a":
-	if test "x$i" = "xsilc"; then
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib${i}purple.a"
+	dnl ... and Ugly special case for multi-protocol oscar
+	if test \( "x$i" = "xoscar" -o "x$i" = "xaim" -o "x$i" = "xicq" \) -a "x$static_oscar" != "xyes"; then
+		STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/oscar/liboscar.a"
+		extern_init="$extern_init extern gboolean purple_init_aim_plugin();"
+		extern_init="$extern_init extern gboolean purple_init_icq_plugin();"
+		load_proto="$load_proto purple_init_aim_plugin();"
+		load_proto="$load_proto purple_init_icq_plugin();"
 	else
-		STATIC_LINK_LIBS="$STATIC_LINK_LIBS protocols/$i/lib$i.a"
+		if test "x$i" = "xsilc"; then
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib${i}purple.a"
+		elif test "x$i" = "xsilc10"; then
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/libsilcpurple.a"
+		else
+			STATIC_LINK_LIBS="$STATIC_LINK_LIBS \$(top_builddir)/libpurple/protocols/$i/lib$i.a"
+		fi
+		extern_init="$extern_init extern gboolean purple_init_${i}_plugin();"
+		load_proto="$load_proto purple_init_${i}_plugin();"
 	fi
-	extern_init="$extern_init extern gboolean purple_init_${i}_plugin();"
-	load_proto="$load_proto purple_init_${i}_plugin();"
 	case $i in
 		bonjour)	static_bonjour=yes ;;
 		gg)			static_gg=yes ;;
@@ -823,6 +866,7 @@ for i in $STATIC_PRPLS ; do
 		qq)			static_qq=yes ;;
 		sametime)	static_sametime=yes ;;
 		silc)		static_silc=yes ;;
+		silc10)		static_silc=yes ;;
 		simple)		static_simple=yes ;;
 		toc)		static_toc=yes ;;
 		yahoo)		static_yahoo=yes ;;
@@ -840,7 +884,7 @@ AM_CONDITIONAL(STATIC_NOVELL, test "x$static_novell" = "xyes")
 AM_CONDITIONAL(STATIC_OSCAR, test "x$static_oscar" = "xyes")
 AM_CONDITIONAL(STATIC_QQ, test "x$static_qq" = "xyes")
 AM_CONDITIONAL(STATIC_SAMETIME, test "x$static_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
-AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
+AM_CONDITIONAL(STATIC_SILC, test "x$static_silc" = "xyes" -a "x$have_silc" = "xyes")
 AM_CONDITIONAL(STATIC_SIMPLE, test "x$static_simple" = "xyes")
 AM_CONDITIONAL(STATIC_TOC, test "x$static_toc" = "xyes")
 AM_CONDITIONAL(STATIC_YAHOO, test "x$static_yahoo" = "xyes")
@@ -860,7 +904,10 @@ if test "x$howlincludes" != "xyes" -o "x$howllibs" != "xyes"; then
 	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/bonjour//'`
 fi
 if test "x$silcincludes" != "xyes" -o "x$silcclient" != "xyes"; then
-	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc//'`
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc/silc10/'`
+fi
+if test "x$silc10includes" != "xyes" -o "x$silc10client" != "xyes"; then
+	DYNAMIC_PRPLS=`echo $DYNAMIC_PRPLS | $sedpath 's/silc10//'`
 fi
 AC_SUBST(DYNAMIC_PRPLS)
 for i in $DYNAMIC_PRPLS ; do
@@ -878,6 +925,7 @@ for i in $DYNAMIC_PRPLS ; do
 		qq)			dynamic_qq=yes ;;
 		sametime)	dynamic_sametime=yes ;;
 		silc)		dynamic_silc=yes ;;
+		silc10)		dynamic_silc=yes ;;
 		simple)		dynamic_simple=yes ;;
 		toc)		dynamic_toc=yes ;;
 		yahoo)		dynamic_yahoo=yes ;;
@@ -895,7 +943,7 @@ AM_CONDITIONAL(DYNAMIC_NOVELL, test "x$dynamic_novell" = "xyes")
 AM_CONDITIONAL(DYNAMIC_OSCAR, test "x$dynamic_oscar" = "xyes")
 AM_CONDITIONAL(DYNAMIC_QQ, test "x$dynamic_qq" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SAMETIME, test "x$dynamic_sametime" = "xyes" -a "x$have_meanwhile" = "xyes")
-AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$silcincludes" = "xyes" -a "x$silcclient" = "xyes")
+AM_CONDITIONAL(DYNAMIC_SILC, test "x$dynamic_silc" = "xyes" -a "x$have_silc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_SIMPLE, test "x$dynamic_simple" = "xyes")
 AM_CONDITIONAL(DYNAMIC_TOC, test "x$dynamic_toc" = "xyes")
 AM_CONDITIONAL(DYNAMIC_YAHOO, test "x$dynamic_yahoo" = "xyes")
@@ -2060,6 +2108,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/tray/16/scalable/Makefile
 		   pidgin/pixmaps/tray/22/Makefile
 		   pidgin/pixmaps/tray/22/scalable/Makefile
+		   pidgin/pixmaps/tray/32/Makefile
+		   pidgin/pixmaps/tray/48/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile
@@ -2090,10 +2140,12 @@ AC_OUTPUT([Makefile
 		   libpurple/protocols/msn/Makefile
 		   libpurple/protocols/myspace/Makefile
 		   libpurple/protocols/novell/Makefile
+		   libpurple/protocols/null/Makefile
 		   libpurple/protocols/oscar/Makefile
 		   libpurple/protocols/qq/Makefile
 		   libpurple/protocols/sametime/Makefile
 		   libpurple/protocols/silc/Makefile
+		   libpurple/protocols/silc10/Makefile
 		   libpurple/protocols/simple/Makefile
 		   libpurple/protocols/toc/Makefile
 		   libpurple/protocols/yahoo/Makefile

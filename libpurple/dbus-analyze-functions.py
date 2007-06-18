@@ -2,7 +2,6 @@ import re
 import string
 import sys
 
-
 # types translated into "int"
 simpletypes = ["int", "gint", "guint", "gboolean"]
 
@@ -166,8 +165,11 @@ class ClientBinding (Binding):
         self.returncode = []
 
     def flush(self):
+        paramslist = ", ".join(self.paramshdr)
+        if (paramslist == "") :
+            paramslist = "void"
         print "%s %s(%s)" % (self.functiontype, self.function.name,
-                             ", ".join(self.paramshdr)),
+                             paramslist),
 
         if self.headersonly:
             print ";"
@@ -277,7 +279,7 @@ class ServerBinding (Binding):
         for decl in self.cdecls:
             print decl
 
-        print "\t%s(message_DBUS, error_DBUS, " % self.argfunc,
+        print "\t%s(message_DBUS, error_DBUS," % self.argfunc,
         for param in self.cparams:
             print "DBUS_TYPE_%s, &%s," % param,
         print "DBUS_TYPE_INVALID);"
@@ -287,14 +289,14 @@ class ServerBinding (Binding):
         for code in self.ccode:
             print code
 
-        print "\treply_DBUS =  dbus_message_new_method_return (message_DBUS);"
+        print "\treply_DBUS = dbus_message_new_method_return (message_DBUS);"
 
-        print "\tdbus_message_append_args(reply_DBUS, ",
+        print "\tdbus_message_append_args(reply_DBUS,",
         for param in self.cparamsout:
             if type(param) is str:
-                print "%s, " % param
+                print "%s," % param
             else:
-                print "DBUS_TYPE_%s, &%s, " % param,
+                print "DBUS_TYPE_%s, &%s," % param,
         print "DBUS_TYPE_INVALID);"
 
         for code in self.ccodeout:
@@ -359,8 +361,12 @@ class ServerBinding (Binding):
         self.ccode.append("\t%s;" % self.call) # just call the function
 
     def outputstring(self, type, name, const):
-        self.cdecls.append("\tconst char *%s;" % name)
-        self.ccode.append("\t%s = null_to_empty(%s);" % (name, self.call))
+        if const:
+            self.cdecls.append("\tconst char *%s;" % name)
+        else:
+            self.cdecls.append("\tchar *%s;" % name)
+        self.ccode.append("\tif ((%s = %s) == NULL)" % (name, self.call))
+        self.ccode.append("\t\t%s = \"\";" % (name))
         self.cparamsout.append(("STRING", name))
         self.addouttype("s", name)
         if not const:
