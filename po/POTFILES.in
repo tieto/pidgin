@@ -95,6 +95,7 @@ libpurple/protocols/msn/session.c
 libpurple/protocols/msn/state.c
 libpurple/protocols/msn/switchboard.c
 libpurple/protocols/msn/userlist.c
+libpurple/protocols/myspace/myspace.c
 libpurple/protocols/novell/nmuser.c
 libpurple/protocols/novell/novell.c
 libpurple/protocols/oscar/flap_connection.c
