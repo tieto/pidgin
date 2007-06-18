@@ -28,9 +28,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Hãy xem trang chủ Windows Pidgin"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (chỉ bỏ cài đặt)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Lỗi cài đặt GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Đường dẫn mà bạn nhập có thể không truy cập được hay không tạo được."

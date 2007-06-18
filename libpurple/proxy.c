@@ -559,7 +559,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 	int len, headers_len, status = 0;
 	gboolean error;
 	PurpleProxyConnectData *connect_data = data;
-	guchar *p;
+	char *p;
 	gsize max_read;
 
 	if (connect_data->read_buffer == NULL)
@@ -569,7 +569,7 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 		connect_data->read_len = 0;
 	}
 
-	p = connect_data->read_buffer + connect_data->read_len;
+	p = (char *)connect_data->read_buffer + connect_data->read_len;
 	max_read = connect_data->read_buf_len - connect_data->read_len - 1;
 
 	len = read(connect_data->fd, p, max_read);
@@ -596,11 +596,11 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 	connect_data->read_len += len;
 	p[len] = '\0';
 
-	p = (guchar *)g_strstr_len((const gchar *)connect_data->read_buffer,
+	p = g_strstr_len((const gchar *)connect_data->read_buffer,
 			connect_data->read_len, "\r\n\r\n");
 	if (p != NULL) {
 		*p = '\0';
-		headers_len = (p - connect_data->read_buffer) + 4;
+		headers_len = (p - (char *)connect_data->read_buffer) + 4;
 	} else if(len == max_read)
 		headers_len = len;
 	else
@@ -610,34 +610,34 @@ http_canread(gpointer data, gint source, PurpleInputCondition cond)
 	if (!error)
 	{
 		int major;
-		p = connect_data->read_buffer + 5;
-		major = strtol((const char *)p, (char**)&p, 10);
+		p = (char *)connect_data->read_buffer + 5;
+		major = strtol(p, &p, 10);
 		error = (major == 0) || (*p != '.');
 		if(!error) {
 			int minor;
 			p++;
-			minor = strtol((const char *)p, (char **)&p, 10);
+			minor = strtol(p, &p, 10);
 			error = (*p != ' ');
 			if(!error) {
 				p++;
-				status = strtol((const char *)p, (char **)&p, 10);
+				status = strtol(p, &p, 10);
 				error = (*p != ' ');
 			}
 		}
 	}
 
 	/* Read the contents */
-	p = (guchar *)g_strrstr((const gchar *)connect_data->read_buffer, "Content-Length: ");
+	p = g_strrstr((const gchar *)connect_data->read_buffer, "Content-Length: ");
 	if (p != NULL)
 	{
 		gchar *tmp;
 		int len = 0;
 		char tmpc;
 		p += strlen("Content-Length: ");
-		tmp = strchr((const char *)p, '\r');
+		tmp = strchr(p, '\r');
 		if(tmp)
 			*tmp = '\0';
-		len = atoi((const char *)p);
+		len = atoi(p);
 		if(tmp)
 			*tmp = '\r';
 

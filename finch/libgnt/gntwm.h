@@ -1,6 +1,31 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#ifndef GNTWM_H
+#define GNTWM_H
 
 #include "gntwidget.h"
 #include "gntmenu.h"
+#include "gntws.h"
 
 #include <panel.h>
 #include <time.h>
@@ -26,9 +51,10 @@ typedef struct
 	WINDOW *window;
 	int scroll;
 	PANEL *panel;
+	GntWS *ws;
 } GntNode;
 
-typedef struct _GnttWM GntWM;
+typedef struct _GntWM GntWM;
 
 typedef struct _GntPosition
 {
@@ -45,14 +71,15 @@ typedef struct _GntAction
 	void (*callback)();
 } GntAction;
 
-struct _GnttWM
+struct _GntWM
 {
 	GntBindable inherit;
 
 	GMainLoop *loop;
 
-	GList *list;      /* List of windows ordered on their creation time */
-	GList *ordered;   /* List of windows ordered on their focus */
+	GList *workspaces;
+	GList *tagged; /* tagged windows */
+	GntWS *cws;
 
 	struct {
 		GntWidget *window;
@@ -62,6 +89,8 @@ struct _GnttWM
 		*actions;         /* Action-list window */
 
 	GHashTable *nodes;    /* GntWidget -> GntNode */
+	GHashTable *name_places;    /* window name -> ws*/
+	GHashTable *title_places;    /* window title -> ws */
 
 	GList *acts;          /* List of actions */
 
@@ -134,7 +163,7 @@ struct _GntWMClass
 	/* List of windows. Although the WM can keep a list of its own for the windows,
 	 * it'd be better if there was a way to share between the 'core' and the WM.
 	 */
-	/*const GList *(*window_list)();*/
+	/*GList *(*window_list)();*/
 
 	void (*res1)(void);
 	void (*res2)(void);
@@ -144,28 +173,111 @@ struct _GntWMClass
 
 G_BEGIN_DECLS
 
+/**
+ * 
+ *
+ * @return
+ */
 GType gnt_wm_get_gtype(void);
 
+void gnt_wm_add_workspace(GntWM *wm, GntWS *ws);
+
+gboolean gnt_wm_switch_workspace(GntWM *wm, gint n);
+gboolean gnt_wm_switch_workspace_prev(GntWM *wm);
+gboolean gnt_wm_switch_workspace_next(GntWM *wm);
+void gnt_wm_widget_move_workspace(GntWM *wm, GntWS *neww, GntWidget *widget);
+void gnt_wm_set_workspaces(GntWM *wm, GList *workspaces);
+GntWS *gnt_wm_widget_find_workspace(GntWM *wm, GntWidget *widget);
+
+/**
+ * 
+ * @param wm
+ * @param widget
+ */
 void gnt_wm_new_window(GntWM *wm, GntWidget *widget);
 
+/**
+ * 
+ * @param wm
+ * @param widget
+ */
 void gnt_wm_window_decorate(GntWM *wm, GntWidget *widget);
 
+/**
+ * 
+ * @param wm
+ * @param widget
+ */
 void gnt_wm_window_close(GntWM *wm, GntWidget *widget);
 
+/**
+ * 
+ * @param wm
+ * @param string
+ *
+ * @return
+ */
 gboolean gnt_wm_process_input(GntWM *wm, const char *string);
 
+/**
+ * 
+ * @param wm
+ * @param event
+ * @param x
+ * @param y
+ * @param widget
+ *
+ * @return
+ */
 gboolean gnt_wm_process_click(GntWM *wm, GntMouseEvent event, int x, int y, GntWidget *widget);
 
+/**
+ * 
+ * @param wm
+ * @param widget
+ * @param width
+ * @param height
+ */
 void gnt_wm_resize_window(GntWM *wm, GntWidget *widget, int width, int height);
 
+/**
+ * 
+ * @param wm
+ * @param widget
+ * @param x
+ * @param y
+ */
 void gnt_wm_move_window(GntWM *wm, GntWidget *widget, int x, int y);
 
+/**
+ * 
+ * @param wm
+ * @param widget
+ */
 void gnt_wm_update_window(GntWM *wm, GntWidget *widget);
 
+/**
+ * 
+ * @param wm
+ * @param widget
+ */
 void gnt_wm_raise_window(GntWM *wm, GntWidget *widget);
 
+/**
+ * 
+ * @param wm
+ * @param set
+ */
 void gnt_wm_set_event_stack(GntWM *wm, gboolean set);
 
+void gnt_wm_copy_win(GntWidget *widget, GntNode *node);
+
+/**
+ * 
+ *
+ * @return
+ */
 time_t gnt_wm_get_idle_time(void);
 
 G_END_DECLS
+#endif

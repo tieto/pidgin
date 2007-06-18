@@ -29,6 +29,7 @@
 #if !GTK_CHECK_VERSION(2,4,0)
 #include "pidgincombobox.h"
 #endif
+#include "gtkutils.h"
 
 typedef struct {
 	PurpleConnection *gc;
@@ -183,16 +184,17 @@ static void message_send_cb(GtkWidget *widget, gpointer p)
 	char *text;
 
 	gc = console->gc;
-	
-	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-	
+
+	if (gc)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+
 	buffer = gtk_text_view_get_buffer(GTK_TEXT_VIEW(console->entry));
 	gtk_text_buffer_get_start_iter(buffer, &start);
 	gtk_text_buffer_get_end_iter(buffer, &end);
-		
+
 	text = gtk_imhtml_get_text(GTK_IMHTML(console->entry), &start, &end);
-			
-	if (gc && prpl_info->convo_closed != NULL)
+
+	if (prpl_info && prpl_info->send_raw != NULL)
 		prpl_info->send_raw(gc, text, strlen(text));
 
 	g_free(text);
@@ -741,10 +743,8 @@ create_console()
 	
 	console = g_new0(XmppConsole, 1);
 
-	console->window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(console->window), _("XMPP Console"));
+	console->window = pidgin_create_window(_("XMPP Console"), PIDGIN_HIG_BORDER, NULL, TRUE);
 	g_signal_connect(G_OBJECT(console->window), "destroy", G_CALLBACK(console_destroy), NULL);
-	gtk_container_set_border_width(GTK_CONTAINER(console->window), 12);
 	gtk_window_set_default_size(GTK_WINDOW(console->window), 580, 400);
 	gtk_container_add(GTK_CONTAINER(console->window), vbox);
 

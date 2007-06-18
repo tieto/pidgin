@@ -90,6 +90,16 @@ gboolean finch_blist_get_size(int *width, int *height);
  */
 void finch_blist_set_size(int width, int height);
 
+/**
+ * Get information about a user. Show immediate feedback.
+ *
+ * @param conn   The connection to get information fro
+ * @param name   The user to get information about.
+ *
+ * @return  Returns the ui-handle for the userinfo notification.
+ */
+gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name);
+
 /*@}*/
 
 #endif

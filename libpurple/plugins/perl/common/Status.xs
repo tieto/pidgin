@@ -142,7 +142,7 @@ void
 purple_presence_get_statuses(presence)
 	Purple::Presence presence
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_presence_get_statuses(presence); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Status")));
@@ -392,7 +392,7 @@ void
 purple_status_type_get_attrs(status_type)
 	Purple::StatusType status_type
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_status_type_get_attrs(status_type); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::StatusAttr")));

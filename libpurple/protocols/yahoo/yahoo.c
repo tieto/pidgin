@@ -2310,7 +2310,7 @@ static void yahoo_pending(gpointer data, gint source, PurpleInputCondition cond)
 			 * are you trying to pull? */
 			guchar *start;
 
-			purple_debug_warning("yahoo", "Error in YMSG stream, got something not a YMSG packet!");
+			purple_debug_warning("yahoo", "Error in YMSG stream, got something not a YMSG packet!\n");
 
 			start = memchr(yd->rxqueue + 1, 'Y', yd->rxlen - 1);
 			if (start) {
@@ -2377,7 +2377,11 @@ static void yahoo_got_connected(gpointer data, gint source, const gchar *error_m
 	}
 
 	if (source < 0) {
-		purple_connection_error(gc, _("Unable to connect."));
+		gchar *tmp;
+		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+				error_message);
+		purple_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -2405,7 +2409,11 @@ static void yahoo_got_web_connected(gpointer data, gint source, const gchar *err
 	}
 
 	if (source < 0) {
-		purple_connection_error(gc, _("Unable to connect."));
+		gchar *tmp;
+		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+				error_message);
+		purple_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -2507,12 +2515,16 @@ static void yahoo_got_cookies_send_cb(gpointer data, gint source, PurpleInputCon
 	if (written < 0 && errno == EAGAIN)
 		written = 0;
 	else if (written <= 0) {
+		gchar *tmp;
 		g_free(yd->auth);
 		yd->auth = NULL;
 		if (gc->inpa)
 			purple_input_remove(gc->inpa);
 		gc->inpa = 0;
-		purple_connection_error(gc, _("Unable to connect."));
+		tmp = g_strdup_printf(_("Lost connection with %s:\n%s"),
+				"login.yahoo.com:80", strerror(errno));
+		purple_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -2533,7 +2545,11 @@ static void yahoo_got_cookies(gpointer data, gint source, const gchar *error_mes
 	PurpleConnection *gc = data;
 
 	if (source < 0) {
-		purple_connection_error(gc, _("Unable to connect."));
+		gchar *tmp;
+		tmp = g_strdup_printf(_("Could not establish a connection with %s:\n%s"),
+				"login.yahoo.com:80", error_message);
+		purple_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -2616,8 +2632,7 @@ yahoo_login_page_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	if (error_message != NULL)
 	{
-		/* TODO: Include error_message in the message below */
-		purple_connection_error(gc, _("Unable to connect."));
+		purple_connection_error(gc, error_message);
 		return;
 	}
 

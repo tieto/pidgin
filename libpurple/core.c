@@ -48,7 +48,11 @@
 #include "util.h"
 
 #ifdef HAVE_DBUS
+#  define DBUS_API_SUBJECT_TO_CHANGE
+#  include <dbus/dbus.h>
+#  include "dbus-purple.h"
 #  include "dbus-server.h"
+#  include "dbus-bindings.h"
 #endif
 
 struct PurpleCore
@@ -276,6 +280,91 @@ purple_core_get_ui_ops(void)
 	return _ops;
 }
 
+#ifdef HAVE_DBUS
+static char *purple_dbus_owner_user_dir(void)
+{
+	DBusMessage *msg = NULL, *reply = NULL;
+	DBusConnection *dbus_connection = NULL;
+	DBusError dbus_error;
+	char *remote_user_dir = NULL;
+
+	if ((dbus_connection = purple_dbus_get_connection()) == NULL)
+		return NULL;
+
+	if ((msg = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "PurpleUserDir")) == NULL)
+		return NULL;
+
+	dbus_error_init(&dbus_error);
+	reply = dbus_connection_send_with_reply_and_block(dbus_connection, msg, 5000, &dbus_error);
+	dbus_message_unref(msg);
+	dbus_error_free(&dbus_error);
+
+	if (reply)
+	{
+		dbus_error_init(&dbus_error);
+		dbus_message_get_args(reply, &dbus_error, DBUS_TYPE_STRING, &remote_user_dir, DBUS_TYPE_INVALID);
+		remote_user_dir = g_strdup(remote_user_dir);
+		dbus_error_free(&dbus_error);
+		dbus_message_unref(reply);
+	}
+
+	return remote_user_dir;
+}
+
+static void purple_dbus_owner_show_buddy_list(void)
+{
+	DBusError dbus_error;
+	DBusMessage *msg = NULL, *reply = NULL;
+	DBusConnection *dbus_connection = NULL;
+
+	if ((dbus_connection = purple_dbus_get_connection()) == NULL)
+		return;
+
+	if ((msg = dbus_message_new_method_call(DBUS_SERVICE_PURPLE, DBUS_PATH_PURPLE, DBUS_INTERFACE_PURPLE, "PurpleBlistShow")) == NULL)
+		return;
+
+	dbus_error_init(&dbus_error);
+	if ((reply = dbus_connection_send_with_reply_and_block(dbus_connection, msg, 5000, &dbus_error)) != NULL)
+	{
+		dbus_message_unref(msg);
+	}
+	dbus_error_free(&dbus_error);
+}
+#endif /* HAVE_DBUS */
+
+gboolean
+purple_core_ensure_single_instance()
+{
+	gboolean is_single_instance = TRUE;
+#ifdef HAVE_DBUS
+	/* in the future, other mechanisms might have already set this to FALSE */
+	if (is_single_instance)
+	{
+		if (!purple_dbus_is_owner())
+		{
+			const char *user_dir = purple_user_dir();
+			char *dbus_owner_user_dir = purple_dbus_owner_user_dir();
+
+			if (NULL == user_dir && NULL != dbus_owner_user_dir)
+				is_single_instance = TRUE;
+			else if (NULL != user_dir && NULL == dbus_owner_user_dir)
+				is_single_instance = TRUE;
+			else if (NULL == user_dir && NULL == dbus_owner_user_dir)
+				is_single_instance = FALSE;
+			else
+				is_single_instance = strcmp(dbus_owner_user_dir, user_dir);
+
+			if (!is_single_instance)
+				purple_dbus_owner_show_buddy_list();
+
+			g_free(dbus_owner_user_dir);
+		}
+	}
+#endif /* HAVE_DBUS */
+
+	return is_single_instance;
+}
+
 static gboolean
 move_and_symlink_dir(const char *path, const char *basename, const char *old_base, const char *new_base, const char *relative)
 {
@@ -400,13 +489,33 @@ purple_core_migrate(void)
 			/* We're only going to duplicate a logs symlink. */
 			if (!strcmp(entry, "logs"))
 			{
+				char *link;
+#if GLIB_CHECK_VERSION(2,4,0)
+				GError *err = NULL;
+
+				if ((link = g_file_read_link(name, &err)) == NULL)
+				{
+					char *name_utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
+					purple_debug_error("core", "Error reading symlink %s: %s. Please report this at http://developer.pidgin.im\n",
+					                   name_utf8 ? name_utf8 : name, err->message);
+					g_free(name_utf8);
+					g_error_free(err);
+					g_free(name);
+					g_dir_close(dir);
+					g_free(status_file);
+					g_free(old_user_dir);
+					return FALSE;
+				}
+#else
 				char buf[MAXPATHLEN];
 				size_t linklen;
 
 				if ((linklen = readlink(name, buf, sizeof(buf) - 1) == -1))
 				{
+					char *name_utf8 = g_filename_to_utf8(name);
 					purple_debug_error("core", "Error reading symlink %s: %s. Please report this at http://developer.pidgin.im\n",
-					                   name, strerror(errno));
+					                   name_utf8, strerror(errno));
+					g_free(name_utf8);
 					g_free(name);
 					g_dir_close(dir);
 					g_free(status_file);
@@ -415,13 +524,18 @@ purple_core_migrate(void)
 				}
 				buf[linklen] = '\0';
 
-				logs_dir = g_strconcat(user_dir, G_DIR_SEPARATOR_S "logs", NULL);
+				/* This way we don't have to GLIB_VERSION_CHECK every g_free(link) below. */
+				link = g_strdup(buf);
+#endif
 
-				if (!strcmp(buf, "../.purple/logs") || !strcmp(buf, logs_dir))
+				logs_dir = g_build_filename(user_dir, "logs", NULL);
+
+				if (!strcmp(link, "../.purple/logs") || !strcmp(link, logs_dir))
 				{
 					/* If the symlink points to the new directory, we're
 					 * likely just trying again after a failed migration,
 					 * so there's no need to fail here. */
+					g_free(link);
 					g_free(logs_dir);
 					continue;
 				}
@@ -433,12 +547,13 @@ purple_core_migrate(void)
 				g_unlink(logs_dir);
 
 				/* Relative links will most likely still be
-				 * valid from ~/.purple, though not it's not
+				 * valid from ~/.purple, though it's not
 				 * guaranteed.  Oh well. */
-				if (symlink(buf, logs_dir))
+				if (symlink(link, logs_dir))
 				{
 					purple_debug_error("core", "Error symlinking %s to %s: %s. Please report this at http://developer.pidgin.im\n",
-					                   logs_dir, buf, strerror(errno));
+					                   logs_dir, link, strerror(errno));
+					g_free(link);
 					g_free(name);
 					g_free(logs_dir);
 					g_dir_close(dir);
@@ -447,6 +562,7 @@ purple_core_migrate(void)
 					return FALSE;
 				}
 
+				g_free(link);
 				g_free(logs_dir);
 				continue;
 			}

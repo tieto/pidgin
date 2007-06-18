@@ -1290,9 +1290,16 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 						list = g_list_delete_link(list, last);
 					}
 				}
-			} else if (line[0] && line[1] && line [3] &&
+			} else if (line[0] && line[1] && line[2] &&
 					   purple_str_has_prefix(&line[3], "sion Start ")) {
-
+				/* The conditional is to make sure we're not reading off
+				 * the end of the string.  We don't want strlen(), as that'd
+				 * have to count the whole string needlessly.
+				 * 
+				 * The odd check here is because a Session Start at the
+				 * beginning of the file can be overwritten with a UTF-8
+				 * byte order mark.  Yes, it's weird.
+				 */
 				char *their_nickname = line;
 				char *timestamp;
 
@@ -1425,7 +1432,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	char *escaped;
 	GString *formatted;
 	char *c;
-	char *line;
+	const char *line;
 
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
@@ -1460,221 +1467,234 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	read = escaped;
 
 	/* Apply formatting... */
-	formatted = g_string_new("");
+	formatted = g_string_sized_new(strlen(read));
 	c = read;
 	line = read;
-	while (*c)
+	while (c)
 	{
-		if (*c == '\n')
+		const char *link;
+		const char *footer = NULL;
+		GString *temp = NULL;
+
+		if ((c = strstr(c, "\n")))
 		{
-			char *link_temp_line;
-			char *link;
-			char *timestamp;
-			char *footer = NULL;
 			*c = '\0';
+			c++;
+		}
 
-			/* Convert links.
-			 *
-			 * The format is (Link: URL)URL
-			 * So, I want to find each occurance of "(Link: " and replace that chunk with:
-			 * <a href="
-			 * Then, replace the next ")" with:
-			 * ">
-			 * Then, replace the next " " (or add this if the end-of-line is reached) with:
-			 * </a>
-			 */
-			link_temp_line = NULL;
-			while ((link = g_strstr_len(line, strlen(line), "(Link: "))) {
-				GString *temp;
+		/* Convert links.
+		 *
+		 * The format is (Link: URL)URL
+		 * So, I want to find each occurance of "(Link: " and replace that chunk with:
+		 * <a href="
+		 * Then, replace the next ")" with:
+		 * ">
+		 * Then, replace the next " " (or add this if the end-of-line is reached) with:
+		 * </a>
+		 * 
+		 * As implemented, this isn't perfect, but it should cover common cases.
+		 */
+		while (line && (link = strstr(line, "(Link: ")))
+		{
+			const char *tmp = link;
 
-				if (!*link)
-					continue;
+			link += 7;
+			if (*link)
+			{
+				char *end_paren;
+				char *space;
 
-				*link = '\0';
-				link++;
+				if (!(end_paren = strstr(link, ")")))
+				{
+					/* Something is not as we expect.  Bail out. */
+					break;
+				}
 
-				temp = g_string_new(line);
+				if (!temp)
+					temp = g_string_sized_new(c ? (c - 1 - line) : strlen(line));
+
+				g_string_append_len(temp, line, (tmp - line));
+
+				/* Start an <a> tag. */
 				g_string_append(temp, "<a href=\"");
 
-				if (strlen(link) >= 6) {
-					link += (sizeof("(Link: ") - 1);
+				/* Append up to the ) */
+				g_string_append_len(temp, link, end_paren - link);
 
-					while (*link && *link != ')') {
-						g_string_append_c(temp, *link);
-						link++;
-					}
-					if (link) {
-						link++;
+				/* Finish the <a> tag. */
+				g_string_append(temp, "\">");
 
-						g_string_append(temp, "\">");
-						while (*link && *link != ' ') {
-							g_string_append_c(temp, *link);
-							link++;
-						}
-						g_string_append(temp, "</a>");
-					}
+				/* The \r is a bit of a hack to keep there from being a \r in
+				 * the link text, which may not matter. */
+				if ((space = strstr(end_paren, " ")) || (space = strstr(end_paren, "\r")))
+				{
+					g_string_append_len(temp, end_paren + 1, space - end_paren - 1);
 
-					g_string_append(temp, link);
+					/* Close the <a> tag. */
+					g_string_append(temp, "</a>");
 
-					/* Free the last round's line. */
-					if (link_temp_line)
-						g_free(line);
-
-					line = temp->str;
-					g_string_free(temp, FALSE);
-
-					/* Save this memory location so we can free it later. */
-					link_temp_line = line;
+					space++;
 				}
+				else
+				{
+					/* There is no space before the end of the line. */
+					g_string_append(temp, end_paren + 1);
+					/* Close the <a> tag. */
+					g_string_append(temp, "</a>");
+				}
+				line = space;
 			}
+			else
+			{
+				/* Something is not as we expect.  Bail out. */
+				break;
+			}
+		}
 
-			timestamp = "";
-			if (*line == '[') {
-				timestamp = line;
-				while (*timestamp && *timestamp != ']')
-					timestamp++;
-				if (*timestamp == ']') {
-					*timestamp = '\0';
+		if (temp)
+		{
+			if (line)
+				g_string_append(temp, line);
+			line = temp->str;
+		}
+
+		if (*line == '[') {
+			const char *timestamp;
+
+			if ((timestamp = strstr(line, "]"))) {
+				line++;
+				/* TODO: Parse the timestamp and convert it to Purple's format. */
+				g_string_append(formatted, "<font size=\"2\">(");
+				g_string_append_len(formatted, line, (timestamp - line));
+				g_string_append(formatted,")</font> ");
+				line = timestamp + 1;
+				if (line[0] && line[1])
 					line++;
-					/* TODO: Parse the timestamp and convert it to Purple's format. */
-					g_string_append_printf(formatted,
-						"<font size=\"2\">(%s)</font> ", line);
-					line = timestamp;
-					if (line[1] && line[2])
-						line += 2;
-				}
-
-				if (purple_str_has_prefix(line, "*** ")) {
-					line += (sizeof("*** ") - 1);
-					g_string_append(formatted, "<b>");
-					footer = "</b>";
-					if (purple_str_has_prefix(line, "NOTE: This user is offline.")) {
-						line = _("User is offline.");
-					} else if (purple_str_has_prefix(line,
-							"NOTE: Your status is currently set to ")) {
-
-						line += (sizeof("NOTE: ") - 1);
-					} else if (purple_str_has_prefix(line, "Auto-response sent to ")) {
-						g_string_append(formatted, _("Auto-response sent:"));
-						while (*line && *line != ':')
-							line++;
-						if (*line)
-							line++;
-						g_string_append(formatted, "</b>");
-						footer = NULL;
-					} else if (strstr(line, " signed off ")) {
-						if (buddy != NULL && buddy->alias)
-							g_string_append_printf(formatted,
-								_("%s has signed off."), buddy->alias);
-						else
-							g_string_append_printf(formatted,
-								_("%s has signed off."), log->name);
-						line = "";
-					} else if (strstr(line, " signed on ")) {
-						if (buddy != NULL && buddy->alias)
-							g_string_append(formatted, buddy->alias);
-						else
-							g_string_append(formatted, log->name);
-						line = " logged in.";
-					} else if (purple_str_has_prefix(line,
-						"One or more messages may have been undeliverable.")) {
-
-						g_string_append(formatted,
-							"<span style=\"color: #ff0000;\">");
-						g_string_append(formatted,
-							_("One or more messages may have been "
-							  "undeliverable."));
-						line = "";
-						footer = "</span></b>";
-					} else if (purple_str_has_prefix(line,
-							"You have been disconnected.")) {
-
-						g_string_append(formatted,
-							"<span style=\"color: #ff0000;\">");
-						g_string_append(formatted,
-							_("You were disconnected from the server."));
-						line = "";
-						footer = "</span></b>";
-					} else if (purple_str_has_prefix(line,
-							"You are currently disconnected.")) {
-
-						g_string_append(formatted,
-							"<span style=\"color: #ff0000;\">");
-						line = _("You are currently disconnected. Messages "
-						         "will not be received unless you are "
-						         "logged in.");
-						footer = "</span></b>";
-					} else if (purple_str_has_prefix(line,
-							"Your previous message has not been sent.")) {
-
-						g_string_append(formatted,
-							"<span style=\"color: #ff0000;\">");
-
-						if (purple_str_has_prefix(line,
-							"Your previous message has not been sent.  "
-							"Reason: Maximum length exceeded.")) {
-
-							g_string_append(formatted,
-								_("Message could not be sent because "
-								  "the maximum length was exceeded."));
-							line = "";
-						} else {
-							g_string_append(formatted,
-								_("Message could not be sent."));
-							line += (sizeof(
-								"Your previous message "
-								"has not been sent. ") - 1);
-						}
-
-						footer = "</span></b>";
-					}
-				} else if (purple_str_has_prefix(line, data->their_nickname)) {
-					if (buddy != NULL && buddy->alias) {
-						line += strlen(data->their_nickname) + 2;
-						g_string_append_printf(formatted,
-							"<span style=\"color: #A82F2F;\">"
-							"<b>%s</b></span>: ", buddy->alias);
-					}
-				} else {
-					char *line2 = line;
-					while (*line2 && *line2 != ':')
-						line2++;
-					if (*line2 == ':') {
-						const char *acct_name;
-						line2++;
-						line = line2;
-						acct_name = purple_account_get_alias(log->account);
-						if (!acct_name)
-							acct_name = purple_account_get_username(log->account);
-
-						g_string_append_printf(formatted,
-							"<span style=\"color: #16569E;\">"
-							"<b>%s</b></span>:", acct_name);
-					}
-				}
 			}
 
-			g_string_append(formatted, line);
+			if (purple_str_has_prefix(line, "*** ")) {
+				line += (sizeof("*** ") - 1);
+				g_string_append(formatted, "<b>");
+				footer = "</b>";
+				if (purple_str_has_prefix(line, "NOTE: This user is offline.")) {
+					line = _("User is offline.");
+				} else if (purple_str_has_prefix(line,
+						"NOTE: Your status is currently set to ")) {
 
-			if (footer)
-				g_string_append(formatted, footer);
+					line += (sizeof("NOTE: ") - 1);
+				} else if (purple_str_has_prefix(line, "Auto-response sent to ")) {
+					g_string_append(formatted, _("Auto-response sent:"));
+					while (*line && *line != ':')
+						line++;
+					if (*line)
+						line++;
+					g_string_append(formatted, "</b>");
+					footer = NULL;
+				} else if (strstr(line, " signed off ")) {
+					if (buddy != NULL && buddy->alias)
+						g_string_append_printf(formatted,
+							_("%s has signed off."), buddy->alias);
+					else
+						g_string_append_printf(formatted,
+							_("%s has signed off."), log->name);
+					line = "";
+				} else if (strstr(line, " signed on ")) {
+					if (buddy != NULL && buddy->alias)
+						g_string_append(formatted, buddy->alias);
+					else
+						g_string_append(formatted, log->name);
+					line = " logged in.";
+				} else if (purple_str_has_prefix(line,
+					"One or more messages may have been undeliverable.")) {
 
-			g_string_append_c(formatted, '\n');
+					g_string_append(formatted,
+						"<span style=\"color: #ff0000;\">");
+					g_string_append(formatted,
+						_("One or more messages may have been "
+						  "undeliverable."));
+					line = "";
+					footer = "</span></b>";
+				} else if (purple_str_has_prefix(line,
+						"You have been disconnected.")) {
 
-			if (link_temp_line)
-				g_free(link_temp_line);
+					g_string_append(formatted,
+						"<span style=\"color: #ff0000;\">");
+					g_string_append(formatted,
+						_("You were disconnected from the server."));
+					line = "";
+					footer = "</span></b>";
+				} else if (purple_str_has_prefix(line,
+						"You are currently disconnected.")) {
 
-			c++;
-			line = c;
-		} else
-			c++;
+					g_string_append(formatted,
+						"<span style=\"color: #ff0000;\">");
+					line = _("You are currently disconnected. Messages "
+					         "will not be received unless you are "
+					         "logged in.");
+					footer = "</span></b>";
+				} else if (purple_str_has_prefix(line,
+						"Your previous message has not been sent.")) {
+
+					g_string_append(formatted,
+						"<span style=\"color: #ff0000;\">");
+
+					if (purple_str_has_prefix(line,
+						"Your previous message has not been sent.  "
+						"Reason: Maximum length exceeded.")) {
+
+						g_string_append(formatted,
+							_("Message could not be sent because "
+							  "the maximum length was exceeded."));
+						line = "";
+					} else {
+						g_string_append(formatted,
+							_("Message could not be sent."));
+						line += (sizeof(
+							"Your previous message "
+							"has not been sent. ") - 1);
+					}
+
+					footer = "</span></b>";
+				}
+			} else if (purple_str_has_prefix(line, data->their_nickname)) {
+				if (buddy != NULL && buddy->alias) {
+					line += strlen(data->their_nickname) + 2;
+					g_string_append_printf(formatted,
+						"<span style=\"color: #A82F2F;\">"
+						"<b>%s</b></span>: ", buddy->alias);
+				}
+			} else {
+				const char *line2 = strstr(line, ":");
+				if (line2) {
+					const char *acct_name;
+					line2++;
+					line = line2;
+					acct_name = purple_account_get_alias(log->account);
+					if (!acct_name)
+						acct_name = purple_account_get_username(log->account);
+
+					g_string_append_printf(formatted,
+						"<span style=\"color: #16569E;\">"
+						"<b>%s</b></span>:", acct_name);
+				}
+			}
+		}
+
+		g_string_append(formatted, line);
+
+		line = c;
+		if (temp)
+			g_string_free(temp, TRUE);
+
+		if (footer)
+			g_string_append(formatted, footer);
+
+		g_string_append_c(formatted, '\n');
 	}
 
 	g_free(read);
-	read = formatted->str;
-	g_string_free(formatted, FALSE);
-
-	return read;
+	/* XXX: TODO: Avoid this g_strchomp() */
+	return g_strchomp(g_string_free(formatted, FALSE));
 }
 
 static int trillian_logger_size (PurpleLog *log)

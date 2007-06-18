@@ -64,7 +64,7 @@ static void
 send_typing_notification(GntWidget *w, FinchConv *ggconv)
 {
 	const char *text = gnt_entry_get_text(GNT_ENTRY(ggconv->entry));
-	gboolean empty = (!text || !*text);
+	gboolean empty = (!text || !*text || (*text == '/'));
 	if (purple_prefs_get_bool("/finch/conversations/notify_typing")) {
 		PurpleConversation *conv = ggconv->active_conv;
 		PurpleConvIm *im = PURPLE_CONV_IM(conv);
@@ -313,12 +313,7 @@ static void
 get_info_cb(GntMenuItem *item, gpointer ggconv)
 {
 	FinchConv *ggc = ggconv;
-	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
-	purple_notify_userinfo(ggc->active_conv->account->gc, purple_conversation_get_name(ggc->active_conv), info, NULL, NULL);
-	purple_notify_user_info_destroy(info);
-
-	serv_get_info(purple_conversation_get_gc(ggc->active_conv),
+	finch_retrieve_user_info(purple_conversation_get_gc(ggc->active_conv),
 			purple_conversation_get_name(ggc->active_conv));
 }
 
@@ -445,6 +440,16 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 }
 
 static void
+gained_focus_cb(GntWindow *window, FinchConv *fc)
+{
+	GList *iter;
+	for (iter = fc->list; iter; iter = iter->next) {
+		purple_conversation_set_data(iter->data, "unseen-count", 0);
+		purple_conversation_update(iter->data, PURPLE_CONV_UPDATE_UNSEEN);
+	}
+}
+
+static void
 finch_create_conversation(PurpleConversation *conv)
 {
 	FinchConv *ggc = conv->ui_data;
@@ -534,6 +539,7 @@ finch_create_conversation(PurpleConversation *conv)
 
 	g_free(title);
 	gnt_box_give_focus_to_child(GNT_BOX(ggc->window), ggc->entry);
+	g_signal_connect(G_OBJECT(ggc->window), "gained-focus", G_CALLBACK(gained_focus_cb), ggc);
 }
 
 static void
@@ -627,6 +633,11 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 	if (flags & (PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_NICK | PURPLE_MESSAGE_ERROR))
 		gnt_widget_set_urgent(ggconv->tv);
+	if (flags & PURPLE_MESSAGE_RECV && !gnt_widget_has_focus(ggconv->window)) {
+		int count = GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count"));
+		purple_conversation_set_data(conv, "unseen-count", GINT_TO_POINTER(count + 1));
+		purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
+	}
 }
 
 static void

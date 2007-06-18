@@ -28,9 +28,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Besøg Windows Pidgin's hjemmeside"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (fjern)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fejl under installeringen af GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Stien du har angivet kan ikke findes eller oprettes."

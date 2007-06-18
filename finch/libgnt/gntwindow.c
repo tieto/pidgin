@@ -1,3 +1,25 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include "gntstyle.h"
 #include "gntwindow.h"
 
@@ -5,8 +27,12 @@
 
 enum
 {
-	SIGS = 1,
+	SIG_WORKSPACE_HIDE,
+	SIG_WORKSPACE_SHOW,
+	SIGS,
 };
+
+static guint signals[SIGS] = { 0 };
 
 static GntBoxClass *parent_class = NULL;
 
@@ -41,6 +67,24 @@ gnt_window_class_init(GntWindowClass *klass)
 
 	org_destroy = wid_class->destroy;
 	wid_class->destroy = gnt_window_destroy;
+
+	signals[SIG_WORKSPACE_HIDE] =
+		g_signal_new("workspace-hidden",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 0,
+					 NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
+
+	signals[SIG_WORKSPACE_SHOW] =
+		g_signal_new("workspace-shown",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 0,
+					 NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
 
 	gnt_bindable_class_register_action(bindable, "show-menu", show_menu,
 				GNT_KEY_CTRL_O, NULL);
@@ -107,6 +151,20 @@ GntWidget *gnt_window_box_new(gboolean homo, gboolean vert)
 	box->alignment = vert ? GNT_ALIGN_LEFT : GNT_ALIGN_MID;
 
 	return wid;
+}
+
+void
+gnt_window_workspace_hiding(GntWindow *window)
+{
+	if (window->menu)
+		gnt_widget_hide(GNT_WIDGET(window->menu));
+	g_signal_emit(window, signals[SIG_WORKSPACE_HIDE], 0);
+}
+
+void
+gnt_window_workspace_showing(GntWindow *window)
+{
+	g_signal_emit(window, signals[SIG_WORKSPACE_SHOW], 0);
 }
 
 void gnt_window_set_menu(GntWindow *window, GntMenu *menu)
