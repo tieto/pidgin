@@ -1970,8 +1970,11 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			/* XXX: Do we need buddy_name when we have buddy->alias? */
 			buddy_name = ++c;
 			
-			/* we hope that nickname hasn't '(' symbol */
-			c = strstr(c, "(");
+
+			/* searching '(' character from the end of the line */
+			c = strstr(c, "\n");
+			while (*c && *c != '(')
+				--c;
 
 			if (*c == '(') {
 				const char *timestamp = c;
