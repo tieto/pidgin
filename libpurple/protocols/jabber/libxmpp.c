@@ -233,6 +233,8 @@ init_plugin(PurplePlugin *plugin)
 
         jabber_iq_init();
         jabber_pep_init();
+		
+		jabber_tune_init();
 
 		jabber_add_feature("avatarmeta", AVATARNAMESPACEMETA, jabber_pep_namespace_only_when_pep_enabled_cb);
 		jabber_add_feature("avatardata", AVATARNAMESPACEDATA, jabber_pep_namespace_only_when_pep_enabled_cb);
