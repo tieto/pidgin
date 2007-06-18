@@ -23,7 +23,6 @@
 #define _PURPLE_JABBER_BUDDY_H_
 
 #include "jabber.h"
-#include "usermood.h"
 
 /* for some reason, Psi uses the first one instead of the second one as defined in the XEP */
 #ifndef USE_XEP_0084

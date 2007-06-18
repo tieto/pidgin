@@ -22,6 +22,7 @@
 #include "pep.h"
 #include "iq.h"
 #include <string.h>
+#include "usermood.h"
 
 static GHashTable *pep_handlers = NULL;
 
