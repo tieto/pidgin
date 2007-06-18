@@ -127,7 +127,6 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	if (js->old_state != state || CHANGED(js->old_msg, stripped) ||
 		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash)) {
 		presence = jabber_presence_create_js(js, state, stripped, priority);
-		g_free(stripped);
 
 		if(js->avatar_hash) {
 			x = xmlnode_new_child(presence, "x");
@@ -151,6 +150,7 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 		js->old_avatarhash = g_strdup(js->avatar_hash);
 		js->old_state = state;
 		js->old_priority = priority;
+		g_free(stripped);
 	}
 	
 	/* next, check if there are any changes to the tune values */
