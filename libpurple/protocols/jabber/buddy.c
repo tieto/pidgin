@@ -2013,7 +2013,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 				_("Search for XMPP users"), instructions, fields,
 				_("Search"), G_CALLBACK(user_search_cb),
 				_("Cancel"), G_CALLBACK(user_search_cancel_cb),
-				NULL, NULL, NULL,
+				purple_connection_get_account(js->gc), NULL, NULL,
 				usi);
 
 		g_free(instructions);
