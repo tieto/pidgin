@@ -47,6 +47,7 @@ typedef enum {
  * Dimensions less than 1 should be ignored and the image not scaled.
  */
 typedef struct _PurpleBuddyIconSpec PurpleBuddyIconSpec;
+typedef struct _PurpleTuneInfo PurpleTuneInfo;
 
 /**
  * This \#define exists just to make it easier to fill out the buddy icon
@@ -90,8 +91,6 @@ struct proto_chat_entry {
 	int max;
 	gboolean secret;
 };
-
-typedef struct _PurpleTuneInfo PurpleTuneInfo;
 
 struct _PurpleTuneInfo {
 	char *artist;

@@ -107,14 +107,11 @@ void jabber_tune_set(PurpleConnection *gc, const PurpleTuneInfo *tuneinfo) {
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "uri"),tuneinfo->url,-1);
 		if(tuneinfo->time >= 0) {
 			char *length = g_strdup_printf("%d", tuneinfo->time);
-			xmlnode_insert_data(xmlnode_new_child(tunenode, "length"),tuneinfo->artist,-1);
+			xmlnode_insert_data(xmlnode_new_child(tunenode, "length"),length,-1);
 			g_free(length);
 		}
-		if(tuneinfo->track >= 0) {
-			char *track = g_strdup_printf("%d", tuneinfo->year);
+		if(tuneinfo->track)
 			xmlnode_insert_data(xmlnode_new_child(tunenode, "track"),tuneinfo->track,-1);
-			g_free(track);
-		}
 	}
 	
 	jabber_pep_publish(js, publish);

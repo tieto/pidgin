@@ -2153,6 +2153,18 @@ gboolean purple_account_supports_offline_message(PurpleAccount *account, PurpleB
 }
 
 void
+purple_account_set_tune(PurpleAccount *account, const PurpleTuneInfo *info) {
+	PurplePluginProtocolInfo *prpl_info = NULL;
+	PurpleConnection *gc = purple_account_get_connection(account);
+	
+	if (gc != NULL && gc->prpl != NULL)
+		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
+	
+	if (prpl_info && prpl_info->publish_tune)
+		prpl_info->publish_tune(gc, info);
+}
+
+void
 purple_accounts_add(PurpleAccount *account)
 {
 	g_return_if_fail(account != NULL);
