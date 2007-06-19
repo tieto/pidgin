@@ -108,8 +108,11 @@ void jabber_handle_event(JabberMessage *jm) {
 void jabber_pep_publish(JabberStream *js, xmlnode *publish) {
 	JabberIq *iq;
 	
-	if(js->pep != TRUE) /* ignore when there's no PEP support on the server */
+	if(js->pep != TRUE) {
+		/* ignore when there's no PEP support on the server */
+		xmlnode_free(publish);
 		return;
+	}
 	
 	iq = jabber_iq_new(js, JABBER_IQ_SET);
 	
