@@ -696,7 +696,7 @@ chat_account_filter_func(PurpleAccount *account)
 gboolean
 pidgin_blist_joinchat_is_showable()
 {
-	const GList *c;
+	GList *c;
 	PurpleConnection *gc;
 
 	for (c = purple_connections_get_all(); c != NULL; c = c->next) {
@@ -1551,7 +1551,7 @@ static void
 add_buddies_from_vcard(const char *prpl_id, PurpleGroup *group, GList *list,
 					   const char *alias)
 {
-	const GList *l;
+	GList *l;
 	PurpleAccount *account = NULL;
 	PurpleConnection *gc;
 
@@ -2860,7 +2860,6 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Buddies/Add C_hat..."), NULL, pidgin_blist_add_chat_cb, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ N_("/Buddies/Add _Group..."), NULL, purple_blist_request_add_group, 0, "<StockItem>", GTK_STOCK_ADD },
 	{ "/Buddies/sep3", NULL, NULL, 0, "<Separator>", NULL },
-	{ N_("/Buddies/_About Pidgin"), NULL, pidgin_dialogs_about, 0,  "<Item>", NULL },
 	{ N_("/Buddies/_Quit"), "<CTL>Q", purple_core_quit, 0, "<StockItem>", GTK_STOCK_QUIT },
 
 	/* Accounts menu */
@@ -2877,7 +2876,6 @@ static GtkItemFactoryEntry blist_menu[] =
 	{ N_("/Tools/_File Transfers"), "<CTL>T", pidgin_xfer_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/R_oom List"), NULL, pidgin_roomlist_dialog_show, 0, "<Item>", NULL },
 	{ N_("/Tools/System _Log"), NULL, gtk_blist_show_systemlog_cb, 0, "<Item>", NULL },
-	{ N_("/Tools/_Debug Window"), NULL, toggle_debug, 0, "<Item>", NULL },
 	{ "/Tools/sep3", NULL, NULL, 0, "<Separator>", NULL },
 	{ N_("/Tools/Mute _Sounds"), "<CTL>S", pidgin_blist_mute_sounds_cb, 0, "<CheckItem>", NULL },
 	/* Help */
@@ -2909,7 +2907,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		prpl = purple_find_prpl(purple_account_get_protocol_id(chat->account));
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 
-		if (g_list_length((GList *)purple_connections_get_all()) > 1)
+		if (g_list_length(purple_connections_get_all()) > 1)
 		{
 			tmp = g_markup_escape_text(chat->account->username, -1);
 			g_string_append_printf(str, _("\n<b>Account:</b> %s"), tmp);
@@ -2974,7 +2972,7 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		user_info = purple_notify_user_info_new();
 
 		/* Account */
-		if (full && g_list_length((GList *)purple_connections_get_all()) > 1)
+		if (full && g_list_length(purple_connections_get_all()) > 1)
 		{
 			tmp = g_markup_escape_text(purple_account_get_username(
 									   purple_buddy_get_account(b)), -1);
@@ -3284,7 +3282,7 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 	return ret;
 }
 
-static gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected)
+gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected)
 {
 	const char *name;
 	char *esc, *text = NULL;
@@ -4234,7 +4232,7 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 				{"application/x-im-contact", 0, DRAG_BUDDY},
 				{"text/x-vcard", 0, DRAG_VCARD }};
 	if (gtkblist && gtkblist->window) {
-		purple_blist_set_visible(TRUE);
+		purple_blist_set_visible(purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/list_visible"));
 		return;
 	}
 
@@ -5030,6 +5028,7 @@ static void pidgin_blist_update_contact(PurpleBuddyList *list, PurpleBlistNode *
 	PurpleContact *contact;
 	PurpleBuddy *buddy;
 	struct _pidgin_blist_node *gtknode;
+
 	if (editing_blist)
 		return;
 
@@ -5128,6 +5127,7 @@ static void pidgin_blist_update_chat(PurpleBuddyList *list, PurpleBlistNode *nod
 	PurpleChat *chat;
 
 	g_return_if_fail(PURPLE_BLIST_NODE_IS_CHAT(node));
+
 	if (editing_blist)
 		return;
 
@@ -5731,7 +5731,7 @@ pidgin_blist_request_add_chat(PurpleAccount *account, PurpleGroup *group,
 {
 	PidginAddChatData *data;
 	PidginBuddyList *gtkblist;
-	const GList *l;
+	GList *l;
 	PurpleConnection *gc;
 	GtkWidget *label;
 	GtkWidget *rowbox;
@@ -6498,8 +6498,7 @@ pidgin_blist_update_accounts_menu(void)
 {
 	GtkWidget *menuitem = NULL, *submenu = NULL;
 	GtkAccelGroup *accel_group = NULL;
-	GList *l = NULL;
-	const GList *accounts;
+	GList *l = NULL, *accounts = NULL;
 	gboolean disabled_accounts = FALSE;
 
 	if (accountmenu == NULL)
@@ -6736,3 +6735,4 @@ pidgin_blist_update_sort_methods(void)
 	if (activeitem)
 		gtk_check_menu_item_set_active(GTK_CHECK_MENU_ITEM(activeitem), TRUE);
 }
+

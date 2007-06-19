@@ -303,7 +303,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 
 		notfirst = TRUE;
 
-		if (len > width - 2) {
+		if (len > width) {
 			len = width - 1;
 			cut = TRUE;
 		}
@@ -1017,7 +1017,7 @@ int gnt_tree_get_visible_rows(GntTree *tree)
 	return ret;
 }
 
-const GList *gnt_tree_get_rows(GntTree *tree)
+GList *gnt_tree_get_rows(GntTree *tree)
 {
 	return tree->list;
 }

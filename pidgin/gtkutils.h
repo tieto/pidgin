@@ -359,6 +359,21 @@ gboolean pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 void pidgin_set_accessible_label(GtkWidget *w, GtkWidget *l);
 
 /**
+ * A helper function for GtkMenuPositionFuncs. This ensures the menu will
+ * be kept on screen if possible.
+ *
+ * @param menu The menu we are positioning.
+ * @param x Address of the gint representing the horizontal position
+ *        where the menu shall be drawn. This is an output parameter.
+ * @param y Address of the gint representing the vertical position
+ *        where the menu shall be drawn. This is an output parameter.
+ * @param push_in This is an output parameter?
+ * @param user_data Not used by this particular position function.
+ */
+void pidgin_menu_position_func_helper(GtkMenu *menu, gint *x, gint *y,
+										gboolean *push_in, gpointer data);
+
+/**
  * A valid GtkMenuPositionFunc.  This is used to determine where 
  * to draw context menu's when the menu is activated with the 
  * keyboard (shift+F10).  If the menu is activated with the mouse, 

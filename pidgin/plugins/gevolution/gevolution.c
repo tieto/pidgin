@@ -69,8 +69,7 @@ update_ims_from_contact(EContact *contact, const char *name,
 						const char *prpl_id, EContactField field)
 {
 	GList *ims = e_contact_get(contact, field);
-	const GList *l;
-	const GList *l2;
+	GList *l, *l2;
 
 	if (ims == NULL)
 		return;
@@ -119,9 +118,9 @@ update_buddies_from_contact(EContact *contact)
 }
 
 static void
-contacts_changed_cb(EBookView *book_view, const GList *contacts)
+contacts_changed_cb(EBookView *book_view, GList *contacts)
 {
-	const GList *l;
+	GList *l;
 
 	if (purple_connections_get_all() == NULL)
 		return;
@@ -401,7 +400,7 @@ get_config_frame(PurplePlugin *plugin)
 	GtkCellRenderer *renderer;
 	GdkPixbuf *pixbuf;
 	GtkListStore *model;
-	const GList *l;
+	GList *l;
 
 	/* Outside container */
 	ret = gtk_vbox_new(FALSE, 18);

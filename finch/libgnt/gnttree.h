@@ -190,7 +190,13 @@ char * gnt_tree_get_selection_text(GntTree *tree);
  */
 GList * gnt_tree_get_selection_text_list(GntTree *tree);
 
-const GList *gnt_tree_get_rows(GntTree *tree);
+/**
+ *
+ * @param tree
+ *
+ * @constreturn
+ */
+GList *gnt_tree_get_rows(GntTree *tree);
 
 /**
  * 

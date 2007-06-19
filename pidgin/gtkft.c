@@ -130,7 +130,7 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 
 	if (kbsec != NULL) {
-		*kbsec = g_strdup_printf(_("%.2f KB/s"), kbps);
+		*kbsec = g_strdup_printf(_("%.2f KiB/s"), kbps);
 	}
 
 	if (time_elapsed != NULL)

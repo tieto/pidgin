@@ -1598,7 +1598,7 @@ msn_got_info(PurpleUtilFetchUrlData *url_data, gpointer data,
 	purple_debug_info("msn", "In msn_got_info,url_text:{%s}\n",url_text);
 
 	/* Make sure the connection is still valid */
-	if (g_list_find((GList *)purple_connections_get_all(), info_data->gc) == NULL)
+	if (g_list_find(purple_connections_get_all(), info_data->gc) == NULL)
 	{
 		purple_debug_warning("msn", "invalid connection. ignoring buddy info.\n");
 		g_free(info_data->name);
@@ -2019,7 +2019,7 @@ msn_got_photo(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	/* Make sure the connection is still valid if we got here by fetching a photo url */
 	if (url_text && (error_message != NULL ||
-					 g_list_find((GList *)purple_connections_get_all(), info_data->gc) == NULL))
+					 g_list_find(purple_connections_get_all(), info_data->gc) == NULL))
 	{
 		purple_debug_warning("msn", "invalid connection. ignoring buddy photo info.\n");
 		g_free(stripped);
@@ -2118,7 +2118,7 @@ static PurpleAccount *find_acct(const char *prpl, const char *acct_id)
 		if (acct && !purple_account_is_connected(acct))
 			acct = NULL;
 	} else { /* Otherwise find an active account for the protocol */
-		const GList *l = purple_accounts_get_all();
+		GList *l = purple_accounts_get_all();
 		while (l) {
 			if (!strcmp(prpl, purple_account_get_protocol_id(l->data))
 					&& purple_account_is_connected(l->data)) {

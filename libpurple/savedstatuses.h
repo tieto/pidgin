@@ -149,11 +149,21 @@ void purple_savedstatus_unset_substatus(PurpleSavedStatus *saved_status,
 gboolean purple_savedstatus_delete(const char *title);
 
 /**
+ * Delete a saved status.  This removes the saved status from the list
+ * of saved statuses, and writes the revised list to status.xml.
+ *
+ * @param saved_status the status to delete, the pointer is invalid after
+ *        the call
+ *
+ */
+void purple_savedstatus_delete_by_status(PurpleSavedStatus *saved_status);
+
+/**
  * Returns all saved statuses.
  *
- * @return A list of saved statuses.
+ * @constreturn A list of saved statuses.
  */
-const GList *purple_savedstatuses_get_all(void);
+GList *purple_savedstatuses_get_all(void);
 
 /**
  * Returns the n most popular saved statuses.  "Popularity" is

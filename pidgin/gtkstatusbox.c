@@ -47,6 +47,7 @@
 #include "internal.h"
 #include "imgstore.h"
 #include "network.h"
+#include "request.h"
 #include "savedstatuses.h"
 #include "status.h"
 #include "debug.h"
@@ -191,7 +192,7 @@ pidgin_status_box_get_property(GObject *object, guint param_id,
 static void
 update_to_reflect_account_status(PidginStatusBox *status_box, PurpleAccount *account, PurpleStatus *newstatus)
 {
-	const GList *l;
+	GList *l;
 	int status_no = -1;
 	const PurpleStatusType *statustype = NULL;
 	const char *message;
@@ -732,7 +733,7 @@ pidgin_status_box_refresh(PidginStatusBox *status_box)
 static PurpleStatusType *
 find_status_type_by_index(const PurpleAccount *account, gint active)
 {
-	const GList *l = purple_account_get_status_types(account);
+	GList *l = purple_account_get_status_types(account);
 	gint i;
 
 	for (i = 0; l; l = l->next) {
@@ -941,7 +942,7 @@ static PurpleAccount* check_active_accounts_for_identical_statuses()
 {
 	PurpleAccount *acct = NULL, *acct2;
 	GList *tmp, *tmp2, *active_accts = purple_accounts_get_all_active();
-	const GList *s, *s1, *s2;
+	GList *s, *s1, *s2;
 
 	for (tmp = active_accts; tmp; tmp = tmp->next) {
 		acct = tmp->data;
@@ -989,7 +990,7 @@ static void
 add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 {
 	/* Per-account */
-	const GList *l;
+	GList *l;
 	GdkPixbuf *pixbuf;
 
 	for (l = purple_account_get_status_types(account); l != NULL; l = l->next)
@@ -1223,6 +1224,12 @@ current_savedstatus_changed_cb(PurpleSavedStatus *now, PurpleSavedStatus *old, P
 }
 
 static void
+saved_status_updated_cb(PurpleSavedStatus *status, PidginStatusBox *status_box)
+{
+	pidgin_status_box_regenerate(status_box);
+}
+
+static void
 spellcheck_prefs_cb(const char *name, PurplePrefType type,
 					gconstpointer value, gpointer data)
 {
@@ -1434,7 +1441,7 @@ buddy_icon_set_cb(const char *filename, PidginStatusBox *box)
 			}
 		}
 	} else {
-		const GList *accounts;
+		GList *accounts;
 		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
 			PurpleAccount *account = accounts->data;
 			PurplePlugin *plug = purple_find_prpl(purple_account_get_protocol_id(account));
@@ -1514,6 +1521,56 @@ treeview_activate_current_selection(PidginStatusBox *status_box, GtkTreePath *pa
 	pidgin_status_box_changed(status_box);
 }
 
+static void tree_view_delete_current_selection_cb(gpointer data)
+{
+	PurpleSavedStatus *saved;
+
+	saved = purple_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
+	g_return_if_fail(saved != NULL);
+
+	if (purple_savedstatus_get_current() != saved)
+		purple_savedstatus_delete_by_status(saved);
+}
+
+static void
+tree_view_delete_current_selection(PidginStatusBox *status_box, GtkTreePath *path)
+{
+	GtkTreeIter iter;
+	gpointer data;
+	PurpleSavedStatus *saved;
+	gchar *msg;
+
+	if (status_box->active_row) {
+		/* don't delete active status */
+		if (gtk_tree_path_compare(path, gtk_tree_row_reference_get_path(status_box->active_row)) == 0)
+			return;
+	}
+
+	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL(status_box->dropdown_store), &iter, path))
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
+			   DATA_COLUMN, &data,
+			   -1);
+
+	saved = purple_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
+	g_return_if_fail(saved != NULL);
+	if (saved == purple_savedstatus_get_current())
+		return;
+
+	msg = g_strdup_printf(_("Are you sure you want to delete %s?"), purple_savedstatus_get_title(saved));
+
+	purple_request_action(pidgin_status_get_handle(), NULL, msg, NULL, 0,
+		NULL, NULL, NULL,
+		data, 2,
+		_("Delete"), tree_view_delete_current_selection_cb,
+		_("Cancel"), NULL);
+
+	g_free(msg);
+
+	pidgin_status_box_popdown(status_box);
+}
+
 static gboolean
 treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *status_box)
 {
@@ -1561,18 +1618,23 @@ treeview_key_press_event(GtkWidget *widget,
 		if (event->keyval == GDK_Escape) {
 			pidgin_status_box_popdown(box);
 			return TRUE;
-		} else if (event->keyval == GDK_Return) {
+		} else {
 			GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(box->tree_view));
 			GtkTreeIter iter;
 			GtkTreePath *path;
 
 			if (gtk_tree_selection_get_selected(sel, NULL, &iter)) {
 				path = gtk_tree_model_get_path(GTK_TREE_MODEL(box->dropdown_store), &iter);
-				treeview_activate_current_selection(box, path);
+				if (event->keyval == GDK_Return) {
+					treeview_activate_current_selection(box, path);
+				} else if (event->keyval == GDK_Delete) {
+					tree_view_delete_current_selection(box, path);
+				}
+
 				gtk_tree_path_free (path);
 				return TRUE;
 			}
-		}
+		} 
 	}
 	return FALSE;
 }
@@ -1742,6 +1804,15 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 						status_box,
 						PURPLE_CALLBACK(current_savedstatus_changed_cb),
 						status_box);
+	purple_signal_connect(purple_savedstatuses_get_handle(),
+			"savedstatus-added", status_box,
+			PURPLE_CALLBACK(saved_status_updated_cb), status_box);
+	purple_signal_connect(purple_savedstatuses_get_handle(),
+			"savedstatus-deleted", status_box,
+			PURPLE_CALLBACK(saved_status_updated_cb), status_box);
+	purple_signal_connect(purple_savedstatuses_get_handle(),
+			"savedstatus-modified", status_box,
+			PURPLE_CALLBACK(saved_status_updated_cb), status_box);
 	purple_signal_connect(purple_accounts_get_handle(), "account-enabled", status_box,
 						PURPLE_CALLBACK(account_enabled_cb),
 						status_box);
@@ -2223,7 +2294,7 @@ activate_currently_selected_status(PidginStatusBox *status_box)
 		{
 			/* Manually find the appropriate transient acct */
 			if (status_box->token_status_account) {
-				const GList *iter = purple_savedstatuses_get_all();
+				GList *iter = purple_savedstatuses_get_all();
 				GList *tmp, *active_accts = purple_accounts_get_all_active();
 
 				for (; iter != NULL; iter = iter->next) {

@@ -525,7 +525,7 @@ pidgin_create_prpl_icon_from_prpl(PurplePlugin *prpl, PidginPrplIconSize size, P
 {
 	PurplePluginProtocolInfo *prpl_info;
 	const char *protoname = NULL;
-	char buf[MAXPATHLEN];
+	char *tmp;
 	char *filename = NULL;
 	GdkPixbuf *pixbuf;
 
@@ -541,12 +541,14 @@ pidgin_create_prpl_icon_from_prpl(PurplePlugin *prpl, PidginPrplIconSize size, P
 	 * Status icons will be themeable too, and then it will look up
 	 * protoname from the theme
 	 */
-	g_snprintf(buf, sizeof(buf), "%s.png", protoname);
+	tmp = g_strconcat(protoname, ".png", NULL);
 
 	filename = g_build_filename(DATADIR, "pixmaps", "pidgin", "protocols",
 				    size == PIDGIN_PRPL_ICON_SMALL ? "16" :
 				    size == PIDGIN_PRPL_ICON_MEDIUM ? "22" : "48",
-				    buf, NULL);
+				    tmp, NULL);
+	g_free(tmp);
+
 	pixbuf = gdk_pixbuf_new_from_file(filename, NULL);
 	g_free(filename);
 
@@ -687,8 +689,8 @@ create_account_menu(PurpleAccount *default_account,
 	AopMenu *aop_menu = NULL;
 	PurpleAccount *account;
 	GdkPixbuf *pixbuf = NULL;
-	const GList *list;
-	const GList *p;
+	GList *list;
+	GList *p;
 	GtkSizeGroup *sg;
 	int i;
 	char buf[256];
@@ -995,9 +997,9 @@ pidgin_parse_x_im_contact(const char *msg, gboolean all_accounts,
 		/* Check for a compatible account. */
 		if (ret_account != NULL)
 		{
-			const GList *list;
+			GList *list;
 			PurpleAccount *account = NULL;
-			const GList *l;
+			GList *l;
 			const char *protoname;
 
 			if (all_accounts)
@@ -1139,14 +1141,14 @@ pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
 	g_object_unref (relation);
 }
 
-#if GTK_CHECK_VERSION(2,2,0)
-static void
-pidgin_menu_position_func(GtkMenu *menu,
+void
+pidgin_menu_position_func_helper(GtkMenu *menu,
 							gint *x,
 							gint *y,
 							gboolean *push_in,
 							gpointer data)
 {
+#if GTK_CHECK_VERSION(2,2,0)
 	GtkWidget *widget;
 	GtkRequisition requisition;
 	GdkScreen *screen;
@@ -1287,9 +1289,9 @@ pidgin_menu_position_func(GtkMenu *menu,
 	{
 		*y = monitor.y;
 	}
+#endif
 }
 
-#endif
 
 void
 pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
@@ -1311,9 +1313,7 @@ pidgin_treeview_popup_menu_position_func(GtkMenu *menu,
 
 	*x += rect.x+rect.width;
 	*y += rect.y+rect.height+ythickness;
-#if GTK_CHECK_VERSION(2,2,0)
-	pidgin_menu_position_func (menu, x, y, push_in, data);
-#endif
+	pidgin_menu_position_func_helper(menu, x, y, push_in, data);
 }
 
 enum {
@@ -3090,3 +3090,4 @@ gtk_tree_path_new_from_indices (gint first_index, ...)
 	return path;
 }
 #endif
+

@@ -282,7 +282,7 @@ purple_account_option_get_masked(const PurpleAccountOption *option)
 	return option->masked;
 }
 
-const GList *
+GList *
 purple_account_option_get_list(const PurpleAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, NULL);

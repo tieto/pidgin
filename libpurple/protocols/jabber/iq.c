@@ -208,14 +208,18 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 
 static void urn_xmpp_ping_parse(JabberStream *js, xmlnode *packet)
 {
-	const char *type, *from, *id;
+	const char *type, *id, *from;
 	JabberIq *iq;
-	xmlnode *query;
+
+	type = xmlnode_get_attrib(packet, "type");
+	from = xmlnode_get_attrib(packet, "from");
+	id = xmlnode_get_attrib(packet, "id");
 
 	if(type && !strcmp(type, "get")) {
 		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "urn:xmpp:ping");
 
 		jabber_iq_set_id(iq, id);
+		xmlnode_set_attrib(iq->node, "to", from);
 
 		jabber_iq_send(iq);
 	} else {

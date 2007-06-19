@@ -184,7 +184,7 @@ void
 purple_account_get_status_types(account)
     Purple::Account account
 PREINIT:
-    const GList *l;
+    GList *l;
 PPCODE:
     for (l = purple_account_get_status_types(account); l != NULL; l = l->next) {
         XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::StatusType")));
@@ -290,7 +290,7 @@ purple_accounts_reorder(account, new_index)
 void
 purple_accounts_get_all()
 PREINIT:
-    const GList *l;
+    GList *l;
 PPCODE:
     for (l = purple_accounts_get_all(); l != NULL; l = l->next) {
         XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Account")));

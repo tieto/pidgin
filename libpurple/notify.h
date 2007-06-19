@@ -456,9 +456,9 @@ void purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info);
  *
  * @param user_info          The PurpleNotifyUserInfo
  *
- * @result                   A GList of PurpleNotifyUserInfoEntry objects
+ * @constreturn              A GList of PurpleNotifyUserInfoEntry objects
  */
-const GList *purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info);
+GList *purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info);
 
 /**
  * Create a textual representation of a PurpleNotifyUserInfo, separating entries with newline

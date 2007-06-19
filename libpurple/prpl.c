@@ -265,7 +265,7 @@ GList *
 purple_prpl_get_statuses(PurpleAccount *account, PurplePresence *presence)
 {
 	GList *statuses = NULL;
-	const GList *l;
+	GList *l;
 	PurpleStatus *status;
 
 	g_return_val_if_fail(account  != NULL, NULL);

@@ -125,7 +125,7 @@ dologin_named(const char *name)
 		}
 		g_strfreev(names);
 	} else { /* no name given, use the first account */
-		const GList *accounts;
+		GList *accounts;
 
 		accounts = purple_accounts_get_all();
 		if (accounts != NULL)
@@ -372,6 +372,7 @@ show_usage(const char *name, gboolean terse)
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
 		       "  -h, --help          display this help and exit\n"
+		       "  -m, --multiple      do not ensure single instance\n"
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use, separated by commas)\n"
@@ -431,11 +432,12 @@ int main(int argc, char *argv[])
 	gboolean opt_login = FALSE;
 	gboolean opt_nologin = FALSE;
 	gboolean opt_version = FALSE;
+	gboolean opt_si = TRUE;     /* Check for single instance? */
 	char *opt_config_dir_arg = NULL;
 	char *opt_login_arg = NULL;
 	char *opt_session_arg = NULL;
 	char *search_path;
-	const GList *accounts;
+	GList *accounts;
 #ifdef HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
@@ -457,6 +459,7 @@ int main(int argc, char *argv[])
 		{"debug",    no_argument,       NULL, 'd'},
 		{"help",     no_argument,       NULL, 'h'},
 		{"login",    optional_argument, NULL, 'l'},
+		{"multiple", no_argument,       NULL, 'm'},
 		{"nologin",  no_argument,       NULL, 'n'},
 		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
@@ -471,7 +474,7 @@ int main(int argc, char *argv[])
 
 	/* This is the first Glib function call. Make sure to initialize GThread bfeore then */
 	g_thread_init(NULL);
-	
+
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
@@ -570,7 +573,7 @@ int main(int argc, char *argv[])
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "c:dhnl::s:v",
+				  "c:dhmnl::s:v",
 #else
 				  "c:dhnl::v",
 #endif
@@ -601,6 +604,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'v':	/* version */
 			opt_version = TRUE;
+			break;
+		case 'm':   /* do not ensure single instance. */
+			opt_si = FALSE;
 			break;
 		case '?':	/* show terse help */
 		default:
@@ -728,7 +734,7 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
-	if (!purple_core_ensure_single_instance()) {
+	if (opt_si && !purple_core_ensure_single_instance()) {
 		purple_core_quit();
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
@@ -849,6 +855,7 @@ int main(int argc, char *argv[])
 	winpidgin_post_init();
 #endif
 
+	g_set_application_name(_("Pidgin"));
 	gtk_main();
 
 #ifdef HAVE_SIGNAL_H

@@ -102,6 +102,11 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	JabberBuddyState state;
 	int priority;
 
+	if(NULL == status) {
+		PurplePresence *gpresence = purple_account_get_presence(account);
+		status = purple_presence_get_active_status(gpresence);
+	}
+
 	if(!purple_status_is_active(status))
 		return;
 
@@ -114,6 +119,12 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 
 	gc = purple_account_get_connection(account);
 	js = gc->proto_data;
+
+	/* we don't want to send presence before we've gotten our roster */
+	if(!js->roster_parsed) {
+		purple_debug_info("jabber", "attempt to send presence before roster retrieved\n");
+		return;
+	}
 
 	purple_status_to_jabber(status, &state, &stripped, &priority);
 

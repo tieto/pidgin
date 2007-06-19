@@ -177,7 +177,8 @@ update_conv_window_title(GntNode *node)
 {
 	char title[256];
 	snprintf(title, sizeof(title), "%d: %s",
-			(int)g_object_get_data(G_OBJECT(node->me), "irssi-index") + 1, GNT_BOX(node->me)->title);
+			GPOINTER_TO_INT(g_object_get_data(G_OBJECT(node->me), "irssi-index")) + 1,
+			GNT_BOX(node->me)->title);
 	wbkgdset(node->window, '\0' | COLOR_PAIR(gnt_widget_has_focus(node->me) ? GNT_COLOR_TITLE : GNT_COLOR_TITLE_D));
 	mvwaddstr(node->window, 0, 0, title);
 	update_panels();
@@ -226,7 +227,7 @@ move_direction(GntBindable *bindable, GList *list)
 
 	find_window_position(irssi, win, &hor, &vert);
 
-	switch ((int)list->data) {
+	switch (GPOINTER_TO_INT(list->data)) {
 		case 'k':
 			vert = MAX(0, vert - 1);
 			break;

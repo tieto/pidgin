@@ -569,6 +569,9 @@ purple_savedstatus_new(const char *title, PurpleStatusPrimitive type)
 
 	schedule_save();
 
+	purple_signal_emit(purple_savedstatuses_get_handle(), "savedstatus-added",
+		status);
+
 	return status;
 }
 
@@ -584,6 +587,9 @@ purple_savedstatus_set_title(PurpleSavedStatus *status, const char *title)
 	status->title = g_strdup(title);
 
 	schedule_save();
+
+	purple_signal_emit(purple_savedstatuses_get_handle(),
+			"savedstatus-modified", status);
 }
 
 void
@@ -594,6 +600,8 @@ purple_savedstatus_set_type(PurpleSavedStatus *status, PurpleStatusPrimitive typ
 	status->type = type;
 
 	schedule_save();
+	purple_signal_emit(purple_savedstatuses_get_handle(),
+			"savedstatus-modified", status);
 }
 
 void
@@ -608,6 +616,9 @@ purple_savedstatus_set_message(PurpleSavedStatus *status, const char *message)
 		status->message = g_strdup(message);
 
 	schedule_save();
+
+	purple_signal_emit(purple_savedstatuses_get_handle(),
+			"savedstatus-modified", status);
 }
 
 void
@@ -637,6 +648,8 @@ purple_savedstatus_set_substatus(PurpleSavedStatus *saved_status,
 	substatus->message = g_strdup(message);
 
 	schedule_save();
+	purple_signal_emit(purple_savedstatuses_get_handle(),
+			"savedstatus-modified", saved_status);
 }
 
 void
@@ -660,6 +673,9 @@ purple_savedstatus_unset_substatus(PurpleSavedStatus *saved_status,
 			return;
 		}
 	}
+
+	purple_signal_emit(purple_savedstatuses_get_handle(),
+			"savedstatus-modified", saved_status);
 }
 
 /*
@@ -683,16 +699,12 @@ purple_savedstatus_unset_all_substatuses(const PurpleAccount *account,
 	}
 }
 
-gboolean
-purple_savedstatus_delete(const char *title)
+void
+purple_savedstatus_delete_by_status(PurpleSavedStatus *status)
 {
-	PurpleSavedStatus *status;
 	time_t creation_time, current, idleaway;
 
-	status = purple_savedstatus_find(title);
-
-	if (status == NULL)
-		return FALSE;
+	g_return_if_fail(status != NULL);
 
 	saved_statuses = g_list_remove(saved_statuses, status);
 	creation_time = purple_savedstatus_get_creation_time(status);
@@ -713,10 +725,29 @@ purple_savedstatus_delete(const char *title)
 	if (idleaway == creation_time)
 		purple_prefs_set_int("/purple/savedstatus/idleaway", 0);
 
+	purple_signal_emit(purple_savedstatuses_get_handle(),
+			"savedstatus-deleted", status);
+}
+
+gboolean
+purple_savedstatus_delete(const char *title)
+{
+	PurpleSavedStatus *status;
+
+	status = purple_savedstatus_find(title);
+
+	if (status == NULL)
+		return FALSE;
+
+	if (purple_savedstatus_get_current() == status)
+		return FALSE;
+
+	purple_savedstatus_delete_by_status(status);
+
 	return TRUE;
 }
 
-const GList *
+GList *
 purple_savedstatuses_get_all(void)
 {
 	return saved_statuses;
@@ -1170,6 +1201,21 @@ purple_savedstatuses_init(void)
 									PURPLE_SUBTYPE_SAVEDSTATUS),
 					 purple_value_new(PURPLE_TYPE_SUBTYPE,
 									PURPLE_SUBTYPE_SAVEDSTATUS));
+
+	purple_signal_register(handle, "savedstatus-added",
+		purple_marshal_VOID__POINTER, NULL, 1,
+		purple_value_new(PURPLE_TYPE_SUBTYPE,
+			PURPLE_SUBTYPE_SAVEDSTATUS));
+
+	purple_signal_register(handle, "savedstatus-deleted",
+		purple_marshal_VOID__POINTER, NULL, 1,
+		purple_value_new(PURPLE_TYPE_SUBTYPE,
+			PURPLE_SUBTYPE_SAVEDSTATUS));
+
+	purple_signal_register(handle, "savedstatus-modified",
+		purple_marshal_VOID__POINTER, NULL, 1,
+		purple_value_new(PURPLE_TYPE_SUBTYPE,
+			PURPLE_SUBTYPE_SAVEDSTATUS));
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-removed",
 			handle,
