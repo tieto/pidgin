@@ -22,6 +22,8 @@
 
 #include <string.h>
 
+#include "internal.h"
+
 #include "account.h"
 #include "util.h"
 #include "cmds.h"

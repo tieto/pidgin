@@ -25,6 +25,8 @@
 */
 
 #include <glib.h>
+#include "internal.h"
+
 #include "dbus-maybe.h"
 #include "debug.h"
 #include "imgstore.h"
