@@ -2020,7 +2020,7 @@ static void user_search_fields_result_cb(JabberStream *js, xmlnode *packet, gpoi
 	}
 }
 
-static void jabber_user_search_ok(JabberStream *js, const char *directory)
+void jabber_user_search(JabberStream *js, const char *directory)
 {
 	JabberIq *iq;
 
@@ -2047,7 +2047,7 @@ void jabber_user_search_begin(PurplePluginAction *action)
 			_("Select a user directory to search"),
 			js->user_directories ? js->user_directories->data : NULL,
 			FALSE, FALSE, NULL,
-			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search_ok),
+			_("Search Directory"), PURPLE_CALLBACK(jabber_user_search),
 			_("Cancel"), NULL,
 			NULL, NULL, NULL,
 			js);

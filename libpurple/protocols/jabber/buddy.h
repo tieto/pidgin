@@ -103,6 +103,7 @@ const char *jabber_buddy_state_get_show(JabberBuddyState state);
 JabberBuddyState jabber_buddy_status_id_get_state(const char *id);
 JabberBuddyState jabber_buddy_show_get_state(const char *id);
 
+void jabber_user_search(JabberStream *js, const char *directory);
 void jabber_user_search_begin(PurplePluginAction *);
 
 void jabber_buddy_remove_all_pending_buddy_info_requests(JabberStream *js);
