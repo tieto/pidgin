@@ -296,7 +296,7 @@ ssl_gnutls_write(PurpleSslConnection *gsc, const void *data, size_t len)
 /* Forward declarations are fun!
    TODO: This is a stupid place for this */
 static Certificate *
-x509_import_from_datum(const gnutls_datum_t dt);
+x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode);
 
 static GList *
 ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
@@ -322,7 +322,8 @@ ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
 
 	/* Convert each certificate to a Certificate and append it to the list */
 	for (i = 0; i < cert_list_size; i++) {
-		Certificate * newcrt = x509_import_from_datum(cert_list[i]);
+		Certificate * newcrt = x509_import_from_datum(cert_list[i],
+							      GNUTLS_X509_FMT_DER);
 		/* Append is somewhat inefficient on linked lists, but is easy
 		   to read. If someone complains, I'll change it.
 		   TODO: Is anyone complaining? (Maybe elb?) */
@@ -348,12 +349,15 @@ static CertificateScheme x509_gnutls = {
 
 /** Transforms a gnutls_datum_t containing an X.509 certificate into a Certificate instance under the x509_gnutls scheme
  *
- * @param dt  Datum to transform
+ * @param dt   Datum to transform
+ * @param mode GnuTLS certificate format specifier (GNUTLS_X509_FMT_PEM for
+ *             reading from files, and GNUTLS_X509_FMT_DER for converting
+ *             "over the wire" certs for SSL)
  *
  * @return A newly allocated Certificate structure of the x509_gnutls scheme
  */
 static Certificate *
-x509_import_from_datum(const gnutls_datum_t dt)
+x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode)
 {
 	/* Internal certificate data structure */
 	gnutls_x509_crt_t *certdat;
@@ -366,7 +370,7 @@ x509_import_from_datum(const gnutls_datum_t dt)
 
 	/* Perform the actual certificate parse */
 	/* Yes, certdat SHOULD be dereferenced */
-	gnutls_x509_crt_import(*certdat, &dt, GNUTLS_X509_FMT_PEM);
+	gnutls_x509_crt_import(*certdat, &dt, mode);
 	
 	/* Allocate the certificate and load it with data */
 	crt = g_new(Certificate, 1);
@@ -408,7 +412,8 @@ x509_import_from_file(const gchar * filename)
 	dt.size = buf_sz;
 
 	/* Perform the conversion */
-	crt = x509_import_from_datum(dt);
+	crt = x509_import_from_datum(dt,
+				     GNUTLS_X509_FMT_PEM); // files should be in PEM format
 	
 	/* Cleanup */
 	g_free(buf);
