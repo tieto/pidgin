@@ -673,7 +673,7 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *allfields)
 			switch (pt) {
 				case PURPLE_PREF_INT:
 				{
-					long int tmp;
+					long int tmp = GPOINTER_TO_INT(val);
 					if (type == PURPLE_REQUEST_FIELD_LIST) /* Lists always return string */
 						sscanf(val, "%ld", &tmp);
 					purple_prefs_set_int(id, (gint)tmp);
