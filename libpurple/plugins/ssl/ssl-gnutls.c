@@ -344,7 +344,10 @@ const gchar * SCHEME_NAME = "x509";
 /* X.509 certificate operations provided by this plugin */
 /* TODO: Flesh this out! */
 static CertificateScheme x509_gnutls = {
-	"x509"   /* Scheme name */
+	"x509",                          /* Scheme name */
+	N_("X.509 Certificates"),        /* User-visible scheme name */
+	x509_import_from_file,           /* Certificate import function */
+	x509_destroy_certificate         /* Destroy cert */
 };
 
 /** Transforms a gnutls_datum_t containing an X.509 certificate into a Certificate instance under the x509_gnutls scheme

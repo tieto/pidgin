@@ -68,6 +68,30 @@ struct _CertificateScheme
 	 */
 	gchar * name;
 
+	/** User-friendly name for this type
+	 *  ex: N_("X.509 Certificates")
+	 */
+	gchar * fullname;
+
+	/** Imports a certificate from a file
+	 *
+	 *  @param filename   File to import the certificate from
+	 *  @return           Pointer to the newly allocated Certificate struct
+	 *                    or NULL on failure.
+	 */
+	Certificate * (* import_certificate)(gchar * filename);
+
+	/** Destroys and frees a Certificate structure
+	 *
+	 *  Destroys a Certificate's internal data structures and calls
+	 *  free(crt)
+	 *
+	 *  @param crt  Certificate instance to be destroyed. It WILL NOT be
+	 *              destroyed if it is not of the correct
+	 *              CertificateScheme. Can be NULL
+	 */
+	void (* destroy_certificate)(Certificate * crt);
+	
 	/* TODO: Fill out this structure */
 };
 
