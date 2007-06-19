@@ -79,7 +79,7 @@ struct _PurpleCertificateScheme
 	 *  @return           Pointer to the newly allocated Certificate struct
 	 *                    or NULL on failure.
 	 */
-	PurpleCertificate * (* import_certificate)(gchar * filename);
+	PurpleCertificate * (* import_certificate)(const gchar * filename);
 
 	/** Destroys and frees a Certificate structure
 	 *
