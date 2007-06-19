@@ -83,7 +83,7 @@ void jabber_adhoc_parse(JabberStream *js, xmlnode *packet) {
 		xmlnode *note = xmlnode_get_child(command,"note");
 		
 		if(note)
-			purple_request_action(js, xmlnode_get_attrib(packet, "from"), xmlnode_get_data(note), NULL, 0, purple_connection_get_account(js->gc), xmlnode_get_attrib(packet, "from"), NULL, NULL, 1, _("OK"), do_adhoc_ignoreme);
+			purple_notify_info(NULL, xmlnode_get_attrib(packet, "from"), xmlnode_get_data(note), NULL);
 		
 		if(xdata)
 			jabber_x_data_request(js, xdata, (jabber_x_data_cb)do_adhoc_ignoreme, NULL);
