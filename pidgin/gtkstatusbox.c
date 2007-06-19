@@ -1624,15 +1624,17 @@ treeview_key_press_event(GtkWidget *widget,
 			GtkTreePath *path;
 
 			if (gtk_tree_selection_get_selected(sel, NULL, &iter)) {
+				gboolean ret = TRUE;
 				path = gtk_tree_model_get_path(GTK_TREE_MODEL(box->dropdown_store), &iter);
 				if (event->keyval == GDK_Return) {
 					treeview_activate_current_selection(box, path);
 				} else if (event->keyval == GDK_Delete) {
 					tree_view_delete_current_selection(box, path);
-				}
+				} else
+					ret = FALSE;
 
 				gtk_tree_path_free (path);
-				return TRUE;
+				return ret;
 			}
 		} 
 	}
