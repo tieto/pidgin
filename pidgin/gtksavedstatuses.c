@@ -362,7 +362,7 @@ status_selected_cb(GtkTreeSelection *sel, gpointer user_data)
 	gtk_tree_selection_selected_foreach(sel, list_selected_helper, &sel_paths);
 #endif
 
-	for (tmp = sel_paths, num_selected = 0; tmp; tmp = sel_paths->next, num_selected++) {
+	for (tmp = sel_paths, num_selected = 0; tmp; tmp = tmp->next, num_selected++) {
 		GtkTreeIter iter;
 		char *title;
 
