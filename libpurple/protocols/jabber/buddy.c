@@ -1578,6 +1578,47 @@ static void jabber_buddy_unsubscribe(PurpleBlistNode *node, gpointer data)
 	jabber_presence_subscription_set(js, buddy->name, "unsubscribe");
 }
 
+static void jabber_buddy_login(PurpleBlistNode *node, gpointer data) {
+	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		/* simply create a directed presence of the current status */
+		PurpleBuddy *buddy = (PurpleBuddy *) node;
+		PurpleConnection *gc = purple_account_get_connection(buddy->account);
+		JabberStream *js = gc->proto_data;
+		PurpleAccount *account = purple_connection_get_account(gc);
+		PurplePresence *gpresence = purple_account_get_presence(account);
+		PurpleStatus *status = purple_presence_get_active_status(gpresence);
+		xmlnode *presence;
+		JabberBuddyState state;
+		char *msg;
+		int priority;
+		
+		purple_status_to_jabber(status, &state, &msg, &priority);
+		presence = jabber_presence_create_js(js, state, msg, priority);
+		
+		g_free(msg);
+		
+		xmlnode_set_attrib(presence, "to", buddy->name);
+		
+		jabber_send(js, presence);
+		xmlnode_free(presence);
+	}
+}
+
+static void jabber_buddy_logout(PurpleBlistNode *node, gpointer data) {
+	if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
+		/* simply create a directed unavailable presence */
+		PurpleBuddy *buddy = (PurpleBuddy *) node;
+		JabberStream *js = purple_account_get_connection(buddy->account)->proto_data;
+		xmlnode *presence;
+		
+		presence = jabber_presence_create_js(js, JABBER_BUDDY_STATE_UNAVAILABLE, NULL, 0);
+		
+		xmlnode_set_attrib(presence, "to", buddy->name);
+		
+		jabber_send(js, presence);
+		xmlnode_free(presence);
+	}
+}
 
 static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 {
@@ -1626,6 +1667,25 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 		act = purple_menu_action_new(_("Unsubscribe"),
 		                           PURPLE_CALLBACK(jabber_buddy_unsubscribe),
 		                           NULL, NULL);
+		m = g_list_append(m, act);
+	}
+	
+	/*
+	 * This if-condition implements parts of XEP-0100: Gateway Interaction
+	 *
+	 * According to stpeter, there is no way to know if a jid on the roster is a gateway without sending a disco#info.
+	 * However, since the gateway might appear offline to us, we cannot get that information. Therefore, I just assume
+	 * that gateways on the roster can be identified by having no '@' in their jid. This is a faily safe assumption, since
+	 * people don't tend to have a server or other service there.
+	 */
+	if (g_utf8_strchr(buddy->name, -1, '@') == NULL) {
+		act = purple_menu_action_new(_("Log In"),
+									 PURPLE_CALLBACK(jabber_buddy_login),
+									 NULL, NULL);
+		m = g_list_append(m, act);
+		act = purple_menu_action_new(_("Log Out"),
+									 PURPLE_CALLBACK(jabber_buddy_logout),
+									 NULL, NULL);
 		m = g_list_append(m, act);
 	}
 
