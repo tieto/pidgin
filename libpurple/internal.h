@@ -170,6 +170,10 @@
 #	endif
 #endif
 
+#ifndef G_GNUC_NULL_TERMINATED
+#	define G_GNUC_NULL_TERMINATED
+#endif
+
 /* Safer ways to work with static buffers. When using non-static
  * buffers, either use g_strdup_* functions (preferred) or use
  * g_strlcpy/g_strlcpy directly. */

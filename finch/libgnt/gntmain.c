@@ -429,10 +429,14 @@ void gnt_init()
 
 	setup_io();
 
+#ifdef NO_WIDECHAR
+	ascii_only = TRUE;
+#else
 	if (locale && (strstr(locale, "UTF") || strstr(locale, "utf")))
 		ascii_only = FALSE;
 	else
 		ascii_only = TRUE;
+#endif
 
 	initscr();
 	typeahead(-1);
