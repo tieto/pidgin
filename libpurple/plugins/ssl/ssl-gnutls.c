@@ -466,9 +466,9 @@ static PurpleSslOps ssl_ops =
 	ssl_gnutls_close,
 	ssl_gnutls_read,
 	ssl_gnutls_write,
+	ssl_gnutls_get_peer_certificates,
 
 	/* padding */
-	NULL,
 	NULL,
 	NULL,
 	NULL
