@@ -3282,7 +3282,7 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 	return ret;
 }
 
-static gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected)
+gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected)
 {
 	const char *name;
 	char *esc, *text = NULL;
