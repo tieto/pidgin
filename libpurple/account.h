@@ -31,6 +31,10 @@
 #include <glib.h>
 #include <glib-object.h>
 
+#ifndef G_GNUC_NULL_TERMINATED
+#define G_GNUC_NULL_TERMINATED
+#endif
+
 typedef struct _PurpleAccountUiOps PurpleAccountUiOps;
 typedef struct _PurpleAccount      PurpleAccount;
 
