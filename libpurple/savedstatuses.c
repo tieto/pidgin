@@ -29,6 +29,7 @@
 #include "notify.h"
 #include "savedstatuses.h"
 #include "dbus-maybe.h"
+#include "request.h"
 #include "status.h"
 #include "util.h"
 #include "xmlnode.h"
@@ -110,6 +111,7 @@ free_saved_status_sub(PurpleSavedStatusSub *substatus)
 	g_return_if_fail(substatus != NULL);
 
 	g_free(substatus->message);
+	purple_request_close_with_handle(substatus);
 	PURPLE_DBUS_UNREGISTER_POINTER(substatus);
 	g_free(substatus);
 }
@@ -128,7 +130,7 @@ free_saved_status(PurpleSavedStatus *status)
 		status->substatuses = g_list_remove(status->substatuses, substatus);
 		free_saved_status_sub(substatus);
 	}
-
+	purple_request_close_with_handle(status);
 	PURPLE_DBUS_UNREGISTER_POINTER(status);
 	g_free(status);
 }

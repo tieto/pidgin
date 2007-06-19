@@ -304,6 +304,7 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 	GList *sel_paths, *l, *sel_titles = NULL;
 	GtkTreeModel *model = GTK_TREE_MODEL(dialog->model);
 	char *title;
+	gpointer handle;
 
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(dialog->treeview));
 #if GTK_CHECK_VERSION(2,2,0)
@@ -326,13 +327,16 @@ status_window_delete_cb(GtkButton *button, gpointer user_data)
 	}
 	g_list_free(sel_paths);
 
-	if (g_list_length(sel_titles) == 1)
+	if (g_list_length(sel_titles) == 1) {
 		title = g_strdup_printf(_("Are you sure you want to delete %s?"),
 				(const gchar *)sel_titles->data);
-	else
+		handle = purple_savedstatus_find(sel_titles->data);
+	} else {
 		title = g_strdup(_("Are you sure you want to delete the selected saved statuses?"));
+		handle = dialog;
+	}
 
-	purple_request_action(dialog, NULL, title, NULL, 0,
+	purple_request_action(handle, NULL, title, NULL, 0,
 		 NULL, NULL, NULL,
 		 sel_titles, 2,
 		_("Delete"), status_window_delete_confirm_cb,
