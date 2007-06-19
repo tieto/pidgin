@@ -496,7 +496,7 @@ int main(int argc, char *argv[])
 			"no fault of your own.\n\n"
 			"If you can reproduce the crash, please notify the developers\n"
 			"by reporting a bug at:\n"
-			"%snewticket/\n\n"
+			"%ssimpleticket/\n\n"
 			"Please make sure to specify what you were doing at the time\n"
 			"and post the backtrace from the core file.  If you do not know\n"
 			"how to get the backtrace, please read the instructions at\n"
