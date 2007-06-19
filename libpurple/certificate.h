@@ -35,18 +35,18 @@
 extern "C" {
 #endif /* __cplusplus */
 
-typedef struct _Certificate Certificate;
-typedef struct _CertificateScheme CertificateScheme;
+typedef struct _PurpleCertificate PurpleCertificate;
+typedef struct _PurpleCertificateScheme PurpleCertificateScheme;
 
 /** A certificate instance
  *
  *  An opaque data structure representing a single certificate under some
  *  CertificateScheme
  */
-struct _Certificate
+struct _PurpleCertificate
 {
 	/** Scheme this certificate is under */
-	CertificateScheme * scheme;
+	PurpleCertificateScheme * scheme;
 	/** Opaque pointer to internal data */
 	gpointer data;
 };
@@ -59,7 +59,7 @@ struct _Certificate
  *  There may be only ONE CertificateScheme provided for each certificate
  *  type, as specified by the "name" field.
  */
-struct _CertificateScheme
+struct _PurpleCertificateScheme
 {
 	/** Name of the certificate type
 	 *  ex: "x509", "pgp", etc.
@@ -79,7 +79,7 @@ struct _CertificateScheme
 	 *  @return           Pointer to the newly allocated Certificate struct
 	 *                    or NULL on failure.
 	 */
-	Certificate * (* import_certificate)(gchar * filename);
+	PurpleCertificate * (* import_certificate)(gchar * filename);
 
 	/** Destroys and frees a Certificate structure
 	 *
@@ -90,7 +90,7 @@ struct _CertificateScheme
 	 *              destroyed if it is not of the correct
 	 *              CertificateScheme. Can be NULL
 	 */
-	void (* destroy_certificate)(Certificate * crt);
+	void (* destroy_certificate)(PurpleCertificate * crt);
 	
 	/* TODO: Fill out this structure */
 };

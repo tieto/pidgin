@@ -295,7 +295,7 @@ ssl_gnutls_write(PurpleSslConnection *gsc, const void *data, size_t len)
 
 /* Forward declarations are fun!
    TODO: This is a stupid place for this */
-static Certificate *
+static PurpleCertificate *
 x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode);
 
 static GList *
@@ -322,7 +322,7 @@ ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
 
 	/* Convert each certificate to a Certificate and append it to the list */
 	for (i = 0; i < cert_list_size; i++) {
-		Certificate * newcrt = x509_import_from_datum(cert_list[i],
+		PurpleCertificate * newcrt = x509_import_from_datum(cert_list[i],
 							      GNUTLS_X509_FMT_DER);
 		/* Append is somewhat inefficient on linked lists, but is easy
 		   to read. If someone complains, I'll change it.
@@ -341,14 +341,7 @@ ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
 /************************************************************************/
 const gchar * SCHEME_NAME = "x509";
 
-/* X.509 certificate operations provided by this plugin */
-/* TODO: Flesh this out! */
-static CertificateScheme x509_gnutls = {
-	"x509",                          /* Scheme name */
-	N_("X.509 Certificates"),        /* User-visible scheme name */
-	x509_import_from_file,           /* Certificate import function */
-	x509_destroy_certificate         /* Destroy cert */
-};
+static PurpleCertificateScheme x509_gnutls;
 
 /** Transforms a gnutls_datum_t containing an X.509 certificate into a Certificate instance under the x509_gnutls scheme
  *
@@ -359,13 +352,13 @@ static CertificateScheme x509_gnutls = {
  *
  * @return A newly allocated Certificate structure of the x509_gnutls scheme
  */
-static Certificate *
+static PurpleCertificate *
 x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode)
 {
 	/* Internal certificate data structure */
 	gnutls_x509_crt_t *certdat;
 	/* New certificate to return */
-	Certificate * crt;
+	PurpleCertificate * crt;
 
 	/* Allocate and prepare the internal certificate data */
 	certdat = g_new(gnutls_x509_crt_t, 1);
@@ -376,7 +369,7 @@ x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode)
 	gnutls_x509_crt_import(*certdat, &dt, mode);
 	
 	/* Allocate the certificate and load it with data */
-	crt = g_new(Certificate, 1);
+	crt = g_new(PurpleCertificate, 1);
 	crt->scheme = &x509_gnutls;
 	crt->data = certdat;
 
@@ -388,10 +381,10 @@ x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode)
  *
  * @return A newly allocated Certificate structure of the x509_gnutls scheme
  */
-static Certificate *
+static PurpleCertificate *
 x509_import_from_file(const gchar * filename)
 {
-	Certificate *crt;  /* Certificate being constructed */
+	PurpleCertificate *crt;  /* Certificate being constructed */
 	gchar *buf;        /* Used to load the raw file data */
 	gsize buf_sz;      /* Size of the above */
 	gnutls_datum_t dt; /* Struct to pass down to GnuTLS */
@@ -433,7 +426,7 @@ x509_import_from_file(const gchar * filename)
  *
  */
 static void
-x509_destroy_certificate(Certificate * crt)
+x509_destroy_certificate(PurpleCertificate * crt)
 {
 	/* TODO: Issue a warning here? */
 	if (NULL == crt) return;
@@ -460,6 +453,15 @@ x509_destroy_certificate(Certificate * crt)
 	/* Kill the structure itself */
 	g_free(crt);
 }
+
+/* X.509 certificate operations provided by this plugin */
+/* TODO: Flesh this out! */
+static PurpleCertificateScheme x509_gnutls = {
+	"x509",                          /* Scheme name */
+	N_("X.509 Certificates"),        /* User-visible scheme name */
+	x509_import_from_file,           /* Certificate import function */
+	x509_destroy_certificate         /* Destroy cert */
+};
 
 static PurpleSslOps ssl_ops =
 {
