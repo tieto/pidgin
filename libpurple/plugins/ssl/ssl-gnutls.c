@@ -454,6 +454,73 @@ x509_destroy_certificate(PurpleCertificate * crt)
 	g_free(crt);
 }
 
+/** Determines whether one certificate has been issued and signed by another
+ *
+ * @param crt       Certificate to check the signature of
+ * @param issuer    Issuer's certificate
+ *
+ * @return TRUE if crt was signed and issued by issuer, otherwise FALSE
+ * @TODO  Modify this function to return a reason for invalidity?
+ */
+static gboolean
+x509_certificate_signed_by(PurpleCertificate * crt,
+			   PurpleCertificate * issuer)
+{
+	gnutls_x509_crt_t crt_dat;
+	gnutls_x509_crt_t issuer_dat;
+	unsigned int verify; /* used to store details from GnuTLS verifier */
+	int ret;
+	
+	/* TODO: Change this error checking? */
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(issuer, FALSE);
+
+	/* Verify that both certs are the correct scheme */
+	g_return_val_if_fail(crt->scheme != &x509_gnutls, FALSE);
+	g_return_val_if_fail(issuer->scheme != &x509_gnutls, FALSE);
+
+	/* TODO: check for more nullness? */
+
+	crt_dat = *((gnutls_x509_crt_t *) crt->data);
+	issuer_dat = *((gnutls_x509_crt_t *) issuer->data);
+
+	/* First, let's check that crt.issuer is actually issuer */
+	ret = gnutls_x509_crt_check_issuer(crt_dat, issuer_dat);
+	if (ret <= 0) {
+
+		if (ret < 0) {
+			purple_debug_error("gnutls/x509",
+					   "GnuTLS error %d while checking certificate issuer match.",
+					   ret);
+		}
+
+		/* The issuer is not correct, or there were errors */
+		return FALSE;
+	}
+	
+	/* Now, check the signature */
+	/* The second argument is a ptr to an array of "trusted" issuer certs,
+	   but we're only using one trusted one */
+	ret = gnutls_x509_crt_verify(crt_dat, &issuer_dat, 1, 0, &verify);
+	
+	if (ret > 0) {
+		/* The certificate is good. */
+		return TRUE;
+	}
+	else if (ret < 0) {
+		purple_debug_error("gnutls/x509",
+				   "Attempted certificate verification caused a GnuTLS error code %d. I will just say the signature is bad, but you should look into this.\n", ret);
+		return FALSE;
+	}
+	else {
+		/* Signature didn't check out, but at least
+		   there were no errors*/
+		return FALSE;
+	} /* if (ret, etc.) */
+
+	/* Control does not reach this point */
+}
+
 /* X.509 certificate operations provided by this plugin */
 /* TODO: Flesh this out! */
 static PurpleCertificateScheme x509_gnutls = {
