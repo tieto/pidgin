@@ -1464,12 +1464,39 @@ match_title(gpointer title, gpointer n, gpointer wid_title)
 	return FALSE;
 }
 
+#if !GLIB_CHECK_VERSION(2,4,0)
+typedef struct
+{
+	GntWM *wm;
+	GntWS *ret;
+	gchar *title;
+} title_search;
+
+static void match_title_search(gpointer key, gpointer value, gpointer search)
+{
+	title_search *s = search;
+	if (s->ret)
+		return;
+	if (match_title(key, NULL, s->title))
+		s->ret = g_hash_table_lookup(s->wm->title_places, key);
+}
+#endif
+
 static GntWS *
 new_widget_find_workspace(GntWM *wm, GntWidget *widget, gchar *wid_title)
 {
 	GntWS *ret;
 	const gchar *name;
+#if GLIB_CHECK_VERSION(2,4,0)
 	ret = g_hash_table_find(wm->title_places, match_title, wid_title);
+#else
+	title_search *s = NULL;
+	s = g_new0(title_search, 1);
+	s->wm = wm;
+	s->title = wid_title;
+	g_hash_table_foreach(wm->title_places, match_title_search, s);
+	ret = s->ret;
+#endif
 	if (ret)
 		return ret;
 	name = gnt_widget_get_name(widget);
