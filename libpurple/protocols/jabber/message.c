@@ -373,6 +373,11 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 
 			g_free(code_txt);
 			g_free(text);
+		} else if(!strcmp(child->name, "delay") && xmlns && !strcmp(xmlns,"urn:xmpp:delay")) {
+			const char *timestamp = xmlnode_get_attrib(child, "stamp");
+			jm->delayed = TRUE;
+			if(timestamp)
+				jm->sent = purple_str_to_time(timestamp, TRUE, NULL, NULL, NULL);
 		} else if(!strcmp(child->name, "x")) {
 			if(xmlns && !strcmp(xmlns, "jabber:x:event")) {
 				if(xmlnode_get_child(child, "composing")) {
