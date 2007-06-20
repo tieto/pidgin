@@ -101,6 +101,24 @@ struct _PurpleCertificateScheme
 /*****************************************************************************/
 /*@{*/
 
+/** Look up a registered CertificateScheme by name
+ * @param name   The scheme name. Case insensitive.
+ * @return Pointer to the located Scheme, or NULL if it isn't found.
+ */
+PurpleCertificateScheme *
+purple_certificate_find_scheme(const gchar *name);
+
+/** Register a CertificateScheme with libpurple
+ *
+ * No two schemes can be registered with the same name; this function enforces
+ * that.
+ *
+ * @param scheme  Pointer to the scheme to register.
+ * @return TRUE if the scheme was successfully added, otherwise FALSE
+ */
+gboolean
+purple_certificate_register_scheme(PurpleCertificateScheme *scheme);
+
 /* TODO: ADD STUFF HERE */
 
 /*@}*/
