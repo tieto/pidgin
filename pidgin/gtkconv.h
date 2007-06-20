@@ -160,7 +160,7 @@ struct _PidginConversation
 	time_t newday;
 	GtkWidget *infopane_hbox;
 	GtkWidget *infopane;
-	GtkTreeModel *infopane_model;
+	GtkListStore *infopane_model;
 	GtkTreeIter infopane_iter;
 };
 

@@ -2356,7 +2356,8 @@ update_tab_icon(PurpleConversation *conv)
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->icon), status);
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->menu_icon), status);
 
-	gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
+	gtk_list_store_set(GTK_LIST_STORE(gtkconv->infopane_model), 
+			&(gtkconv->infopane_iter),
 			ICON_COLUMN, status, -1);
 
 	if (status != NULL)
@@ -2414,11 +2415,19 @@ redraw_icon(gpointer data)
 	gdk_pixbuf_animation_iter_advance(gtkconv->u.im->iter, NULL);
 	buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
 
-	pidgin_buddy_icon_get_scale_size(buf, &prpl_info->icon_spec,
-			PURPLE_ICON_SCALE_DISPLAY, &scale_width, &scale_height);
+ 	scale_width = gdk_pixbuf_get_width(buf);
+        scale_height = gdk_pixbuf_get_height(buf);
+        if (scale_width == scale_height) {
+		scale_width = scale_height = 32;
+	} else if (scale_height > scale_width) {
+                scale_width = 32 * scale_width / scale_height;
+                scale_height = 32;
+        } else {
+                scale_height = 32 * scale_height / scale_width;
+                scale_width = 32;
+        }
 
-	/* this code is ugly, and scares me */
-	scale = gdk_pixbuf_scale_simple(buf, 32, 32,
+	scale = gdk_pixbuf_scale_simple(buf, scale_width, scale_height,
 		GDK_INTERP_BILINEAR);
 	if (pidgin_gdk_pixbuf_is_opaque(scale))
 		pidgin_gdk_pixbuf_make_round(scale);
@@ -4406,7 +4415,8 @@ setup_common_pane(PidginConversation *gtkconv)
 
 	gtkconv->infopane = gtk_cell_view_new();
 	gtkconv->infopane_model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING);
-	gtk_cell_view_set_model(GTK_CELL_VIEW(gtkconv->infopane), gtkconv->infopane_model);
+	gtk_cell_view_set_model(GTK_CELL_VIEW(gtkconv->infopane), 
+				GTK_TREE_MODEL(gtkconv->infopane_model));
 	gtk_list_store_append(gtkconv->infopane_model, &(gtkconv->infopane_iter));
 	gtk_box_pack_start(GTK_BOX(gtkconv->infopane_hbox), gtkconv->infopane, TRUE, TRUE, 0);
         path = gtk_tree_path_new_from_string("0");
@@ -6459,7 +6469,18 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 			start_anim(NULL, gtkconv);
 	}
 
-	scale = gdk_pixbuf_scale_simple(buf, 32, 32,
+	scale_width = gdk_pixbuf_get_width(buf);
+	scale_height = gdk_pixbuf_get_height(buf);
+	if (scale_width == scale_height) {
+		scale_width = scale_height = 32;
+	} else if (scale_height > scale_width) {
+		scale_width = 32 * scale_width / scale_height;
+		scale_height = 32;
+	} else {
+		scale_height = 32 * scale_height / scale_width;
+		scale_width = 32;
+	}
+	scale = gdk_pixbuf_scale_simple(buf, scale_width, scale_height,
 				GDK_INTERP_BILINEAR);
 	g_object_unref(buf);
 	if (pidgin_gdk_pixbuf_is_opaque(scale))
