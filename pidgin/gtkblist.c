@@ -3284,7 +3284,7 @@ pidgin_blist_get_status_icon(PurpleBlistNode *node, PidginStatusIconSize size)
 	return ret;
 }
 
-gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected)
+gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean aliased)
 {
 	const char *name;
 	char *esc, *text = NULL;
@@ -3309,15 +3309,19 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected)
 	}
 
 	/* XXX Good luck cleaning up this crap */
+	if (aliased) {
+		contact = (PurpleContact*)((PurpleBlistNode*)b)->parent;
+		if(contact)
+			gtkcontactnode = ((PurpleBlistNode*)contact)->ui_data;
 
-	contact = (PurpleContact*)((PurpleBlistNode*)b)->parent;
-	if(contact)
-		gtkcontactnode = ((PurpleBlistNode*)contact)->ui_data;
-
-	if(gtkcontactnode && !gtkcontactnode->contact_expanded && contact->alias)
-		name = contact->alias;
-	else
-		name = purple_buddy_get_alias(b);
+		if(gtkcontactnode && !gtkcontactnode->contact_expanded && contact->alias)
+			name = contact->alias;
+		else
+			name = purple_buddy_get_alias(b);
+	} else {
+		name = b->name;
+	}
+	
 	esc = g_markup_escape_text(name, strlen(name));
 
 	presence = purple_buddy_get_presence(b);
@@ -4971,7 +4975,7 @@ static void buddy_node(PurpleBuddy *buddy, GtkTreeIter *iter, PurpleBlistNode *n
 	}
 
 	emblem = pidgin_blist_get_emblem((PurpleBlistNode*) buddy);
-	mark = pidgin_blist_get_name_markup(buddy, selected);
+	mark = pidgin_blist_get_name_markup(buddy, selected, TRUE);
 
 	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/blist/show_idle_time") &&
 		purple_presence_is_idle(presence) &&

@@ -6177,7 +6177,7 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 
 		buddy = purple_find_buddy(account, conv->name);
 		if (buddy)
-			markup = pidgin_blist_get_name_markup(buddy, FALSE);
+			markup = pidgin_blist_get_name_markup(buddy, FALSE, FALSE);
 		else
 			markup = title;
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
