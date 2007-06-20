@@ -512,7 +512,7 @@ purple_core_migrate(void)
 
 				if ((linklen = readlink(name, buf, sizeof(buf) - 1) == -1))
 				{
-					char *name_utf8 = g_filename_to_utf8(name);
+					char *name_utf8 = g_filename_to_utf8(name, -1, NULL, NULL, NULL);
 					purple_debug_error("core", "Error reading symlink %s: %s. Please report this at http://developer.pidgin.im\n",
 					                   name_utf8, strerror(errno));
 					g_free(name_utf8);
