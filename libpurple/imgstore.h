@@ -28,7 +28,6 @@
 
 #include <glib.h>
 
-struct _PurpleStoredImage;
 typedef struct _PurpleStoredImage PurpleStoredImage;
 
 #ifdef __cplusplus
