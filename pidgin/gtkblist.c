@@ -311,6 +311,7 @@ static void gtk_blist_menu_join_cb(GtkWidget *w, PurpleChat *chat)
 	gtk_blist_join_chat(chat);
 }
 
+#if GTK_CHECK_VERSION(2,6,0)
 static void gtk_blist_renderer_editing_cancelled_cb(GtkCellRenderer *renderer, PurpleBuddyList *list)
 {
 	editing_blist = FALSE;
@@ -355,6 +356,7 @@ static void gtk_blist_renderer_editing_started_cb(GtkCellRenderer *renderer,
 	}
 	editing_blist = TRUE;
 }
+#endif
 
 static void gtk_blist_renderer_edited_cb(GtkCellRendererText *text_rend, char *arg1,
 					 char *arg2, PurpleBuddyList *list)
