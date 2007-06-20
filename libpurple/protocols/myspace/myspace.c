@@ -1351,6 +1351,7 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 {
 	MsimSession *session;
 	MsimMessage *msg;
+    /* MsimMessage	*msg_blocklist; */
 
 	session = (MsimSession *)gc->proto_data;
 	purple_debug_info("msim", "msim_add_buddy: want to add %s to %s\n", buddy->name,
@@ -1370,31 +1371,36 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 		return;
 	}
 	msim_msg_free(msg);
+	
+	/* TODO: if addbuddy fails ('error' message is returned), delete added buddy from
+	 * buddy list since Purple adds it locally. */
 
-	/* TODO: update blocklist. Compare to delbuddy for how to do. */
+	/* TODO: Update blocklist. */
 #if 0
-	/* TODO */
-	if (!msim_postprocess_outgoing(session,
-			"persist", MSIM_TYPE_INTEGER, 1,
-			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
-			"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_PUT,
-			"dsn", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_DSN,
-			"lid", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_LID,
-			/* TODO: Use msim_new_reply_callback to get rid. */
-			"rid", MSIM_TYPE_INTEGER, session->next_rid++,
-			"body", MSIM_TYPE_STRING,
-				g_strdup_printf("ContactID=%s\034"
-				"GroupName=%s\034"
-				"Position=1000\034"
-				"Visibility=1\034"
-				"NickName=\034"
-				"NameSelect=0",
-				buddy->name, group->name),
-			NULL))
+	msg_blocklist = msim_msg_new(TRUE,
+		"persist", MSIM_TYPE_INTEGER, 1,
+		"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+		"cmd", MSIM_TYPE_INTEGER, MSIM_CMD_BIT_ACTION | MSIM_CMD_PUT,
+		"dsn", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_DSN,
+		"lid", MSIM_TYPE_INTEGER, MC_CONTACT_INFO_LID,
+		/* TODO: Use msim_new_reply_callback to get rid. */
+		"rid", MSIM_TYPE_INTEGER, session->next_rid++,
+		"body", MSIM_TYPE_STRING,
+			g_strdup_printf("ContactID=<uid>\034"
+			"GroupName=%s\034"
+			"Position=1000\034"
+			"Visibility=1\034"
+			"NickName=\034"
+			"NameSelect=0",
+			"Friends" /*group->name*/ ));
+
+	if (!msim_postprocess_outgoing(session, msg, buddy->name, "body", NULL))
 	{
 		purple_notify_error(NULL, NULL, _("Failed to add buddy"), _("persist command failed"));
+		msim_msg_free(msg_blocklist);
 		return;
 	}
+	msim_msg_free(msg_blocklist);
 #endif
 }
 
