@@ -572,6 +572,15 @@ gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf);
  */
 void pidgin_gdk_pixbuf_make_round(GdkPixbuf *pixbuf);
 
+/**
+ * Returns an HTML-style color string for use as a dim grey
+ * string
+ *
+ * @param widget  The widget to return dim grey for
+ * @return The dim grey string
+ */
+const char *pidgin_get_dim_grey_string(GtkWidget *widget);
+
 #if !GTK_CHECK_VERSION(2,2,0)
 /**
  * This is copied from Gtk to support Gtk 2.0

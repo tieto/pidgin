@@ -151,11 +151,7 @@ static char *dim_grey()
 	if (!gtkblist)
 		return "dim grey";
 	if (!dim_grey_string[0]) {
-		GtkStyle *style = gtk_widget_get_style(gtkblist->treeview);
-		snprintf(dim_grey_string, sizeof(dim_grey_string), "#%02x%02x%02x",
-			 style->text_aa[GTK_STATE_NORMAL].red >> 8,
-			 style->text_aa[GTK_STATE_NORMAL].green >> 8,
-			 style->text_aa[GTK_STATE_NORMAL].blue >> 8);
+		snprintf(dim_grey_string, sizeof(dim_grey_string), "%s", pidgin_get_dim_grey_string(gtkblist->treeview)); 
 	}
 	return dim_grey_string;
 }

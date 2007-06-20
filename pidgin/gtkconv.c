@@ -4277,11 +4277,9 @@ setup_chat_topic(PidginConversation *gtkconv, GtkWidget *vbox)
 		
 		hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
 		gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
-		gtk_widget_show(hbox);
 
 		label = gtk_label_new(_("Topic:"));
 		gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
-		gtk_widget_show(label);
 
 		gtkchat->topic_text = gtk_entry_new();
 
@@ -4293,7 +4291,6 @@ setup_chat_topic(PidginConversation *gtkconv, GtkWidget *vbox)
 		}
 
 		gtk_box_pack_start(GTK_BOX(hbox), gtkchat->topic_text, TRUE, TRUE, 0);
-		gtk_widget_show(gtkchat->topic_text);
 		g_signal_connect(G_OBJECT(gtkchat->topic_text), "key_press_event",
 			             G_CALLBACK(entry_key_press_cb), gtkconv);
 	}
@@ -6165,13 +6162,13 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		pidgin_themes_smiley_themeize(PIDGIN_CONVERSATION(conv)->imhtml);
 
 	if ((fields & PIDGIN_CONV_COLORIZE_TITLE) ||
-			(fields & PIDGIN_CONV_SET_TITLE))
+			(fields & PIDGIN_CONV_SET_TITLE) ||
+    			(fields & PIDGIN_CONV_TOPIC))
 	{
 		char *title;
 		PurpleConvIm *im = NULL;
 		PurpleAccount *account = purple_conversation_get_account(conv);
-		PurpleBuddy *buddy; 
-		char *markup;
+		char *markup = NULL;
 		AtkObject *accessibility_obj;
 		/* I think this is a little longer than it needs to be but I'm lazy. */
 		char style[51];
@@ -6187,11 +6184,19 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 		else
 			title = g_strdup(purple_conversation_get_title(conv));
 
-		buddy = purple_find_buddy(account, conv->name);
-		if (buddy)
-			markup = pidgin_blist_get_name_markup(buddy, FALSE, FALSE);
-		else
-			markup = title;
+		if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_IM) {
+		 	PurpleBuddy *buddy = purple_find_buddy(account, conv->name);
+			if (buddy)
+				markup = pidgin_blist_get_name_markup(buddy, FALSE, FALSE);
+			else
+				markup = title;
+		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
+			PurpleConvChat *chat = PURPLE_CONV_CHAT(conv);
+			markup = g_strdup_printf("%s\n<span color='%s' size='smaller'>%s</span>",
+						purple_conversation_get_title(conv),
+						pidgin_get_dim_grey_string(gtkconv->infopane),
+						purple_conv_chat_get_topic(chat));
+		}
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
 				TEXT_COLUMN, markup, -1);
 	

@@ -3107,6 +3107,24 @@ void pidgin_gdk_pixbuf_make_round(GdkPixbuf *pixbuf) {
         pixels[height * rowstride - 9] = 0xC0;
 }
 
+const char *pidgin_get_dim_grey_string(GtkWidget *widget) {
+	static char dim_grey_string[8] = "";
+	GtkStyle *style;
+
+	if (!widget)
+		return "dim grey";
+
+ 	style = gtk_widget_get_style(widget);
+	if (!style)
+		return "dim grey";
+	
+	snprintf(dim_grey_string, sizeof(dim_grey_string), "#%02x%02x%02x",
+	style->text_aa[GTK_STATE_NORMAL].red >> 8,
+	style->text_aa[GTK_STATE_NORMAL].green >> 8,
+	style->text_aa[GTK_STATE_NORMAL].blue >> 8);
+	return dim_grey_string;
+}
+
 #if !GTK_CHECK_VERSION(2,2,0)
 GtkTreePath *
 gtk_tree_path_new_from_indices (gint first_index, ...)
