@@ -6445,18 +6445,23 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 	}
 
 	if (gdk_pixbuf_animation_is_static_image(gtkconv->u.im->anim)) {
+		GdkPixbuf *stat;
 		gtkconv->u.im->iter = NULL;
-		buf = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+		stat = gdk_pixbuf_animation_get_static_image(gtkconv->u.im->anim);
+		buf = gdk_pixbuf_add_alpha(stat, FALSE, 0, 0, 0);
 	} else {
+		GdkPixbuf *stat;
 		gtkconv->u.im->iter =
 			gdk_pixbuf_animation_get_iter(gtkconv->u.im->anim, NULL); /* LEAK */
-		buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
+		stat = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
+		buf = gdk_pixbuf_add_alpha(stat, FALSE, 0, 0, 0);
 		if (gtkconv->u.im->animate)
 			start_anim(NULL, gtkconv);
 	}
 
 	scale = gdk_pixbuf_scale_simple(buf, 32, 32,
 				GDK_INTERP_BILINEAR);
+	g_object_unref(buf);
 	if (pidgin_gdk_pixbuf_is_opaque(scale))
 		pidgin_gdk_pixbuf_make_round(scale);
 	gtkconv->u.im->icon_container = gtk_vbox_new(FALSE, 0);
