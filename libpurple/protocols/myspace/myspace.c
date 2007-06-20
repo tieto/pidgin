@@ -665,12 +665,17 @@ gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg)
 {
     gchar *username;
+	gchar *msg_text;
 
     username = msim_msg_get_string(msg, "_username");
+	msg_text = msim_msg_get_string(msg, "msg");
 
-    serv_got_im(session->gc, username, msim_msg_get_string(msg, "msg"), PURPLE_MESSAGE_RECV, time(NULL));
+	/* TODO: replace msim-markup with gtkimhtml. */
+
+    serv_got_im(session->gc, username, msg_text, PURPLE_MESSAGE_RECV, time(NULL));
 
 	g_free(username);
+	g_free(msg_text);
 
 	return TRUE;
 }
@@ -2214,7 +2219,7 @@ PurplePluginInfo info =
     "MySpaceIM Protocol Plugin",
                                                       /**  description    */
     "MySpaceIM Protocol Plugin",
-    "Jeff Connelly <myspaceim@xyzzy.cjb.net>",        /**< author         */
+    "Jeff Connelly <jeff2@homing.pidgin.im>",         /**< author         */
     "http://developer.pidgin.im/wiki/MySpaceIM/",     /**< homepage       */
 
     msim_load,                                        /**< load           */
