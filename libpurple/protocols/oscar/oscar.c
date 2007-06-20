@@ -5573,7 +5573,7 @@ char *oscar_status_text(PurpleBuddy *b)
 	status = purple_presence_get_active_status(presence);
 	id = purple_status_get_id(status);
 
-	if (!purple_presence_is_online(presence))
+	if ((od != NULL) && !purple_presence_is_online(presence))
 	{
 		char *gname = aim_ssi_itemlist_findparentname(od->ssi.local, b->name);
 		if (aim_ssi_waitingforauth(od->ssi.local, gname, b->name))
