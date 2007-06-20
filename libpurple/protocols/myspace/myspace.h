@@ -69,7 +69,7 @@
 /* RC4 is in Libpurple 2.0.1, so define this. */
 #define MSIM_USE_PURPLE_RC4			
 
-/* TODO: when RC4 makes it into libpurple, use the PURPLE_VERSION_CHECK 
+/* TODO: (one release after) when RC4 makes it into libpurple, use the PURPLE_VERSION_CHECK 
  * macro to conditionally compile. And then later, get rid of our own
  * RC4 code and only support libpurple with RC4. */
 

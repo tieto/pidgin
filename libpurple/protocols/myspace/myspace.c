@@ -786,7 +786,10 @@ void msim_get_info(PurpleConnection *gc, const gchar *name)
 	buddy = purple_find_buddy(session->account, name);
 	if (!buddy)
 	{
-		/* TODO: profile of buddies not on blist! */
+		/* TODO: profile of buddies not on blist! Wouldn't be too hard,
+		 * just have to schedule a lookup, and when receive reply, 
+		 * call purple_notify_userinfo() etc.
+		 */
 		purple_notify_user_info_add_pair(user_info, NULL,
 				"Sorry, currently user information can only be retrieved from users on your buddy list.");
 		purple_notify_userinfo(gc, name, user_info, NULL, NULL);
@@ -1368,7 +1371,7 @@ void msim_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group
 	}
 	msim_msg_free(msg);
 
-	/* TODO: update blocklist */
+	/* TODO: update blocklist. Compare to delbuddy for how to do. */
 #if 0
 	/* TODO */
 	if (!msim_postprocess_outgoing(session,
