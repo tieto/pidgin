@@ -4463,8 +4463,10 @@ static void pidgin_blist_show(PurpleBuddyList *list)
 #endif
 										"markup", NAME_COLUMN,
 										NULL);
+#if GTK_CHECK_VERSION(2,6,0)
 	g_signal_connect(G_OBJECT(rend), "editing-started", G_CALLBACK(gtk_blist_renderer_editing_started_cb), NULL);
 	g_signal_connect(G_OBJECT(rend), "editing-canceled", G_CALLBACK(gtk_blist_renderer_editing_cancelled_cb), list);
+#endif
 	g_signal_connect(G_OBJECT(rend), "edited", G_CALLBACK(gtk_blist_renderer_edited_cb), list);
 	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 #if GTK_CHECK_VERSION(2,6,0)
