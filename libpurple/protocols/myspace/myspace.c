@@ -1055,6 +1055,10 @@ gboolean msim_process(MsimSession *session, MsimMessage *msg)
     } else if (msim_msg_get(msg, "error")) {
         return msim_error(session, msg);
     } else if (msim_msg_get(msg, "ka")) {
+		/* TODO: Setup a timer, if keep-alive is not received within ~3 minutes, then 
+		 * disconnect the user. As it stands, if Internet connection goes out (this
+		 * just happened here), msimprpl will appear to be connected forever, while
+		 * other plugins (oscar, etc.) will time out. Msimprpl should timeout too. */
         purple_debug_info("msim", "msim_process: got keep alive\n");
         return TRUE;
     } else {
