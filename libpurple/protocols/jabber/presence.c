@@ -432,6 +432,9 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				priority = atoi(p);
 				g_free(p);
 			}
+		} else if(!strcmp(y->name, "delay")) {
+			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
+			delayed = TRUE;
 		} else if(!strcmp(y->name, "x")) {
 			const char *xmlns = xmlnode_get_namespace(y);
 			if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
