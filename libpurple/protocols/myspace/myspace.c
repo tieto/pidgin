@@ -613,7 +613,7 @@ int msim_send_im(PurpleConnection *gc, const gchar *who,
 		return -1;
 	}
     /*
-     * TODO: In MySpace, you login with your email address, but don't talk to other
+     * In MySpace, you login with your email address, but don't talk to other
      * users using their email address. So there is currently an asymmetry in the 
      * IM windows when using this plugin:
      *
@@ -679,10 +679,30 @@ gboolean msim_incoming_im(MsimSession *session, MsimMessage *msg)
     serv_got_im(session->gc, username, msim_msg_get_string(msg, "msg"), PURPLE_MESSAGE_RECV, time(NULL));
 
 	g_free(username);
-	/* TODO: Free copy cloned from msim_incoming_im(). */
-	//msim_msg_free(msg);
 
 	return TRUE;
+}
+
+/**
+ * Handle an unrecognized message.
+ */
+void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
+{
+	/* TODO: Some more context, outwardly equivalent to a backtrace, for helping figure 
+	 * out what this msg is for. But not too much information so that a user
+	 * posting this dump reveals confidential information.
+	 */
+	/* TODO: dump unknown msgs to file, so user can send them to me
+	 * if they wish, to help add support for new messages (inspired
+	 * by Alexandr Shutko, who maintains OSCAR protocol documentation). */
+
+	purple_debug_info("msim", "Unrecognized message on account for %s\n", session->account->username);
+	if (note)
+	{
+		purple_debug_info("msim", "(Note: %s)\n", note);
+	}
+
+	msim_msg_dump("Unrecognized message dump: %s\n", msg);
 }
 
 /**
@@ -707,16 +727,16 @@ gboolean msim_incoming_action(MsimSession *session, MsimMessage *msg)
 
 	if (strcmp(msg_text, "%typing%") == 0)
 	{
-		/* TODO: find out if msim repeatedly sends typing messages, so we can give it a timeout. */
+		/* TODO: find out if msim repeatedly sends typing messages, so we can give it a timeout. 
+		 * Right now, there does seem to be an inordinately amount of time between typing/
+		 * stopped-typing notifications. */
 		serv_got_typing(session->gc, username, 0, PURPLE_TYPING);
 		rc = TRUE;
 	} else if (strcmp(msg_text, "%stoptyping%") == 0) {
 		serv_got_typing_stopped(session->gc, username);
 		rc = TRUE;
 	} else {
-		/* TODO: make a function, msim_unrecognized(), that logs all unhandled msgs to file. */
-		purple_debug_info("msim", "msim_incoming_action: for %s, unknown msg %s\n",
-				username, msg_text);
+		msim_unrecognized(session, msg, "got to msim_incoming_action but unrecognized value for 'msg'");
 		rc = FALSE;
 	}
 
@@ -1062,10 +1082,7 @@ gboolean msim_process(MsimSession *session, MsimMessage *msg)
         purple_debug_info("msim", "msim_process: got keep alive\n");
         return TRUE;
     } else {
-		/* TODO: dump unknown msgs to file, so user can send them to me
-		 * if they wish, to help add support for new messages (inspired
-		 * by Alexandr Shutko, who maintains OSCAR protocol documentation). */
-        purple_debug_info("msim", "msim_process: unhandled message\n");
+		msim_unrecognized(session, msg, "in msim_process");
         return FALSE;
     }
 }
@@ -2218,12 +2235,13 @@ PurplePluginInfo info =
 };
 
 
+#ifdef MSIM_SELF_TEST
 /** Test functions.
  * Used to test or try out the internal workings of msimprpl. If you're reading
  * this code for the first time, these functions can be instructive in how
  * msimprpl is architected.
  */
-void msim_test_all(void)
+void msim_test_all(void) __attribute__((__noreturn__()));
 {
 	guint failures;
 
@@ -2327,12 +2345,12 @@ int msim_test_escaping(void)
 
 	return failures;
 }
+#endif
 
 /** Initialize plugin. */
 void init_plugin(PurplePlugin *plugin) 
 {
 	PurpleAccountOption *option;
-#define MSIM_SELF_TEST
 #ifdef MSIM_SELF_TEST
 	msim_test_all();
 #endif /* MSIM_SELF_TEST */

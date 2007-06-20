@@ -58,6 +58,12 @@
 /*#define MSIM_DEBUG_LOGIN_CHALLENGE	*/
 /*#define MSIM_DEBUG_RXBUF				*/
 
+/* Define to cause init_plugin() to run some tests and print
+ * the results to the Purple debug log, then exit. Useful to 
+ * run with 'pidgin -d' to see the output. Don't define if
+ * you want to actually use the plugin! */
+/*#define MSIM_SELF_TEST				*/
+
 /* RC4 didn't make it into Libpurple 2.0.0's cipher suite, so we have
  * to use our own RC4 code (from Samba) by not defining this. */
 /* RC4 is in Libpurple 2.0.1, so define this. */
@@ -159,6 +165,8 @@ int msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 	PurpleMessageFlags flags);
 gboolean msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, int type);
 void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
+
+void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
 
 int msim_incoming_im(MsimSession *session, MsimMessage *msg);
 int msim_incoming_action(MsimSession *session, MsimMessage *msg);
