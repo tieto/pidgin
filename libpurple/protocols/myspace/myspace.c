@@ -112,23 +112,42 @@ const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
     return "myspace";
 }
 
+/* Replacement codes to be replaced with associated replacement text,
+ * used for protocol message escaping / unescaping. */
 static gchar* msim_replacement_code[] = { "/1", "/2", NULL };
 static gchar* msim_replacement_text[] = { "/", "\\", NULL };
 
 /**
- * Unescape a protocol message.
+ * Unescape or escape a protocol message.
  *
- * @return The unescaped message. Caller must g_free().
+ * @param msg The message to be unescaped or escaped. WILL BE FREED.
+ * @param escape TRUE to escape, FALSE to unescape.
+ *
+ * @return The unescaped or escaped message. Caller must g_free().
  */
-gchar *msim_unescape(const gchar *msg)
+gchar *msim_unescape_or_escape(gchar *msg, gboolean escape)
 {
-	/* TODO: make more elegant, refactor with msim_escape */
-	gchar *tmp, *ret;
+	gchar *tmp, *code, *text;
+	guint i;
+
+	/* Replace each code in msim_replacement_code with
+	 * corresponding entry in msim_replacement_text. */
+	for (i = 0; (code = msim_replacement_code[i])
+		   	&& (text = msim_replacement_text[i]); ++i)
+	{
+		if (escape)
+		{
+			tmp = str_replace(msg, text, code);
+		}
+		else
+		{
+			tmp = str_replace(msg, code, text);
+		}
+		g_free(msg);
+		msg = tmp;
+	}
 	
-	tmp = str_replace(msg, "/1", "/");
-	ret = str_replace(tmp, "/2", "\\");
-	g_free(tmp);
-	return ret;
+	return msg;
 }
 
 /**
@@ -138,14 +157,12 @@ gchar *msim_unescape(const gchar *msg)
  */
 gchar *msim_escape(const gchar *msg)
 {
-	/* TODO: make more elegant, refactor with msim_unescape */
-	gchar *tmp, *ret;
-	
-	tmp = str_replace(msg, "/", "/1");
-	ret = str_replace(tmp, "\\", "/2");
-	g_free(tmp);
+	return msim_unescape_or_escape(g_strdup(msg), TRUE);
+}
 
-	return ret;
+gchar *msim_unescape(const gchar *msg)
+{
+	return msim_unescape_or_escape(g_strdup(msg), FALSE);
 }
 
 /**

@@ -141,6 +141,7 @@ GList *msim_status_types(PurpleAccount *acct);
 const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy);
 
 /* TODO: move these three functions to message.c/h */
+gchar *msim_unescape_or_escape(gchar *msg, gboolean escape);
 gchar *msim_unescape(const gchar *msg);
 gchar *msim_escape(const gchar *msg);
 gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
