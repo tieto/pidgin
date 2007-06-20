@@ -107,8 +107,16 @@ typedef struct
 	* @return	The number of bytes written (may be less than len) or <0 on error
 	*/
 	size_t (*write)(PurpleSslConnection *gsc, const void *data, size_t len);
-
-	void (*_purple_reserved1)(void);
+	/** Obtains the certificate chain provided by the peer
+	 *
+	 * @param gsc   Connection context
+	 * @return      A newly allocated list containing the certificates
+	 *              the peer provided.
+	 * @todo        Decide whether the ordering of certificates in this
+	 *              list can be guaranteed.
+	 */
+	GList * (* get_peer_certificates)(PurpleSslConnection * gsc);
+	
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
