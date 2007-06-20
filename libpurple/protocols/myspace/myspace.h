@@ -98,6 +98,19 @@
 /* Authentication algorithm for login2 */
 #define MSIM_AUTH_ALGORITHM	196610
 
+/* TODO: obtain IPs of network interfaces from user's machine, instead of
+ * hardcoding these values below (used in msim_compute_login_response). 
+ * This is not immediately
+ * important because you can still connect and perform basic
+ * functions of the protocol. There is also a high chance that the addreses
+ * are RFC1918 private, so the servers couldn't do anything with them
+ * anyways except make note of that fact. Probably important for any
+ * kind of direct connection, or file transfer functionality.
+ */
+
+#define MSIM_LOGIN_IP_LIST  "\x00\x00\x00\x00\x05\x7f\x00\x00\x01\x00\x00\x00\x00\x0a\x00\x00\x40\xc0\xa8\x58\x01\xc0\xa8\x3c\x01"
+#define MSIM_LOGIN_IP_LIST_LEN	25
+
 /* Indexes into status string (0|1|2|3|..., but 0 always empty) */
 #define MSIM_STATUS_ORDINAL_EMPTY		0
 #define MSIM_STATUS_ORDINAL_UNKNOWNs	1

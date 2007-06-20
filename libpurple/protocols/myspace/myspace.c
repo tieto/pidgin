@@ -529,24 +529,16 @@ const gchar *msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	purple_cipher_context_set_key(rc4, key);
 #endif
 
-    /* TODO: obtain IPs of network interfaces. This is not immediately
-     * important because you can still connect and perform basic
-     * functions of the protocol. There is also a high chance that the addreses
-     * are RFC1918 private, so the servers couldn't do anything with them
-     * anyways except make note of that fact. Probably important for any
-     * kind of direct connection, or file transfer functionality.
-     */
+    /* TODO: obtain IPs of network interfaces */
+
     /* rc4 encrypt:
      * nonce1+email+IP list */
-    data_len = NONCE_SIZE + strlen(email) 
-		/* TODO: change to length of IP list */
-		+ 25;
+
+    data_len = NONCE_SIZE + strlen(email) + MSIM_LOGIN_IP_LIST_LEN;
     data = g_new0(guchar, data_len);
     memcpy(data, nonce, NONCE_SIZE);
     memcpy(data + NONCE_SIZE, email, strlen(email));
-    memcpy(data + NONCE_SIZE + strlen(email),
-            /* TODO: IP addresses of network interfaces */
-            "\x00\x00\x00\x00\x05\x7f\x00\x00\x01\x00\x00\x00\x00\x0a\x00\x00\x40\xc0\xa8\x58\x01\xc0\xa8\x3c\x01", 25);
+    memcpy(data + NONCE_SIZE + strlen(email), MSIM_LOGIN_IP_LIST, MSIM_LOGIN_IP_LIST_LEN);
 
 #ifdef MSIM_USE_PURPLE_RC4
 	data_out = g_new0(guchar, data_len);
@@ -1226,7 +1218,6 @@ gboolean msim_error(MsimSession *session, MsimMessage *msg)
 
     purple_debug_info("msim", "msim_error: %s\n", full_errmsg);
 
-    /* TODO: do something with the error # (localization of errmsg?)  */
     purple_notify_error(session->account, g_strdup(_("MySpaceIM Error")), 
             full_errmsg, NULL);
 
@@ -1314,7 +1305,6 @@ gboolean msim_status(MsimSession *session, MsimMessage *msg)
     buddy = purple_find_buddy(session->account, username);
     if (!buddy)
     {
-        /* TODO: purple aliases, userids and usernames */
         purple_debug_info("msim", 
 				"msim_status: making new buddy for %s\n", username);
         buddy = purple_buddy_new(session->account, username, NULL);
