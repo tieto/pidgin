@@ -29,6 +29,7 @@
 #endif
 
 #include "pidgin.h"
+#include "internal.h"
 
 #include "debug.h"
 #include "util.h"

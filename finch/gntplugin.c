@@ -29,10 +29,11 @@
 #include <gntline.h>
 #include <gnttree.h>
 
+#include "finch.h"
+
 #include "notify.h"
 #include "request.h"
 
-#include "finch.h"
 #include "gntplugin.h"
 #include "gntrequest.h"
 

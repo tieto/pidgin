@@ -23,8 +23,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#include "account.h"
 #include "internal.h"
+
+#include "account.h"
 #include "notify.h"
 #include "request.h"
 #include "savedstatuses.h"

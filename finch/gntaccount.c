@@ -33,6 +33,8 @@
 #include <gnttree.h>
 #include <gntwindow.h>
 
+#include "finch.h"
+
 #include <account.h>
 #include <accountopt.h>
 #include <connection.h>
@@ -42,7 +44,6 @@
 
 #include "gntaccount.h"
 #include "gntblist.h"
-#include "finch.h"
 
 #include <string.h>
 

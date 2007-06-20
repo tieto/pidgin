@@ -41,10 +41,11 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include "internal.h"
+
 #include "account.h"
 #include "buddyicon.h"
 #include "core.h"
-#include "internal.h"
 #include "imgstore.h"
 #include "network.h"
 #include "request.h"

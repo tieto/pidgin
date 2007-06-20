@@ -26,6 +26,8 @@
  *
  */
 
+#include "internal.h"
+
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #endif
@@ -37,7 +39,6 @@
 #include "conversation.h"
 #include "notify.h"
 #include "util.h"
-#include "internal.h"
 
 #include "yahoo.h"
 #include "yahoo_packet.h"

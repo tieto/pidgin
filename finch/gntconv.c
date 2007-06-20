@@ -24,12 +24,13 @@
  */
 #include <string.h>
 
+#include "finch.h"
+
 #include <cmds.h>
 #include <idle.h>
 #include <prefs.h>
 #include <util.h>
 
-#include "finch.h"
 #include "gntaccount.h"
 #include "gntblist.h"
 #include "gntconv.h"
