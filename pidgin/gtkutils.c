@@ -3066,6 +3066,47 @@ gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
         return TRUE;
 }
 
+void pidgin_gdk_pixbuf_make_round(GdkPixbuf *pixbuf) {
+	int width, height, rowstride;
+        guchar *pixels;
+        if (!gdk_pixbuf_get_has_alpha(pixbuf))
+                return;
+        width = gdk_pixbuf_get_width(pixbuf);
+        height = gdk_pixbuf_get_height(pixbuf);
+        rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+        pixels = gdk_pixbuf_get_pixels(pixbuf);
+
+        if (width < 6 || height < 6)
+                return;
+        /* Top left */
+        pixels[3] = 0;
+        pixels[7] = 0x80;
+        pixels[11] = 0xC0;
+        pixels[rowstride + 3] = 0x80;
+        pixels[rowstride * 2 + 3] = 0xC0;
+
+        /* Top right */
+        pixels[width * 4 - 1] = 0;
+        pixels[width * 4 - 5] = 0x80;
+        pixels[width * 4 - 9] = 0xC0;
+        pixels[rowstride + (width * 4) - 1] = 0x80;
+        pixels[(2 * rowstride) + (width * 4) - 1] = 0xC0;
+
+        /* Bottom left */
+        pixels[(height - 1) * rowstride + 3] = 0;
+        pixels[(height - 1) * rowstride + 7] = 0x80;
+        pixels[(height - 1) * rowstride + 11] = 0xC0;
+        pixels[(height - 2) * rowstride + 3] = 0x80;
+        pixels[(height - 3) * rowstride + 3] = 0xC0;
+
+        /* Bottom right */
+        pixels[height * rowstride - 1] = 0;
+        pixels[(height - 1) * rowstride - 1] = 0x80;
+        pixels[(height - 2) * rowstride - 1] = 0xC0;
+        pixels[height * rowstride - 5] = 0x80;
+        pixels[height * rowstride - 9] = 0xC0;
+}
+
 #if !GTK_CHECK_VERSION(2,2,0)
 GtkTreePath *
 gtk_tree_path_new_from_indices (gint first_index, ...)

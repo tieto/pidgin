@@ -565,6 +565,13 @@ void pidgin_set_urgent(GtkWindow *window, gboolean urgent);
  */
 gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf);
 
+/**
+ * Rounds the corners of a 32x32 GdkPixbuf in place
+ *
+ * @param pixbuf  The buddy icon to transform
+ */
+void pidgin_gdk_pixbuf_make_round(GdkPixbuf *pixbuf);
+
 #if !GTK_CHECK_VERSION(2,2,0)
 /**
  * This is copied from Gtk to support Gtk 2.0

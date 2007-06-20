@@ -2420,6 +2420,8 @@ redraw_icon(gpointer data)
 	/* this code is ugly, and scares me */
 	scale = gdk_pixbuf_scale_simple(buf, 32, 32,
 		GDK_INTERP_BILINEAR);
+	if (pidgin_gdk_pixbuf_is_opaque(scale))
+		pidgin_gdk_pixbuf_make_round(scale);
 
 	gtk_image_set_from_pixbuf(GTK_IMAGE(gtkconv->u.im->icon), scale);
 	g_object_unref(G_OBJECT(scale));
@@ -6455,7 +6457,8 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	scale = gdk_pixbuf_scale_simple(buf, 32, 32,
 				GDK_INTERP_BILINEAR);
-
+	if (pidgin_gdk_pixbuf_is_opaque(scale))
+		pidgin_gdk_pixbuf_make_round(scale);
 	gtkconv->u.im->icon_container = gtk_vbox_new(FALSE, 0);
 
 	event = gtk_event_box_new();
@@ -6466,8 +6469,6 @@ pidgin_conv_update_buddy_icon(PurpleConversation *conv)
 
 	gtkconv->u.im->icon = gtk_image_new_from_pixbuf(scale);
 	gtkconv->auto_resize = TRUE;
-	/* Reset the size request to allow the buddy icon to resize */
-	g_idle_add(reset_auto_resize_cb, gtkconv);
 	gtk_container_add(GTK_CONTAINER(event), gtkconv->u.im->icon);
 	gtk_widget_show(gtkconv->u.im->icon);
 
