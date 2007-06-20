@@ -112,6 +112,9 @@ const gchar *msim_list_icon(PurpleAccount *acct, PurpleBuddy *buddy)
     return "myspace";
 }
 
+static gchar* msim_replacement_code[] = { "/1", "/2", NULL };
+static gchar* msim_replacement_text[] = { "/", "\\", NULL };
+
 /**
  * Unescape a protocol message.
  *
@@ -2193,29 +2196,125 @@ PurplePluginInfo info =
 	NULL 											  /**< reserved4      */
 };
 
+
+/** Test functions.
+ * Used to test or try out the internal workings of msimprpl. If you're reading
+ * this code for the first time, these functions can be instructive in how
+ * msimprpl is architected.
+ */
+void msim_test_all(void)
+{
+	guint failures;
+
+	failures = 0;
+	failures += msim_test_msg();
+	failures += msim_test_escaping();
+
+	if (failures)
+	{
+		purple_debug_info("msim", "msim_test_all HAD FAILURES: %d\n", failures);
+	}
+	else
+	{
+		purple_debug_info("msim", "msim_test_all - all tests passed!\n");
+	}
+	exit(0);
+}
+
+/** Test MsimMessage for basic functionality. */
+int msim_test_msg(void)
+{
+	MsimMessage *msg, *msg_cloned;
+	gchar *packed, *packed_expected, *packed_cloned;
+	guint failures;
+
+	failures = 0;
+
+	purple_debug_info("msim", "\n\nTesting MsimMessage\n");
+	msg = msim_msg_new(FALSE);		/* Create a new, empty message. */
+
+	/* Append some new elements. */
+	msg = msim_msg_append(msg, "bx", MSIM_TYPE_BINARY, g_string_new_len(g_strdup("XXX"), 3));
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v1"));
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(42));
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v43"));
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v52/xxx\\yyy"));
+	msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v7"));
+	msim_msg_dump("msg debug str=%s\n", msg);
+	packed = msim_msg_pack(msg);
+
+	purple_debug_info("msim", "msg packed=%s\n", packed);
+
+	packed_expected = "\\bx\\WFhY\\k1\\v1\\k1\\42\\k1"
+		"\\v43\\k1\\v52/1xxx/2yyy\\k1\\v7\\final\\";
+
+	if (0 != strcmp(packed, packed_expected))
+	{
+		purple_debug_info("msim", "!!!(%d), msim_msg_pack not what expected: %s != %s\n",
+				++failures, packed, packed_expected);
+	}
+
+
+	msg_cloned = msim_msg_clone(msg);
+	packed_cloned = msim_msg_pack(msg_cloned);
+
+	purple_debug_info("msim", "msg cloned=%s\n", packed_cloned);
+	if (0 != strcmp(packed, packed_cloned))
+	{
+		purple_debug_info("msim", "!!!(%d), msim_msg_pack on cloned message not equal to original: %s != %s\n",
+				++failures, packed_cloned, packed);
+	}
+
+	g_free(packed);
+	g_free(packed_cloned);
+	msim_msg_free(msg_cloned);
+	msim_msg_free(msg);
+
+	return failures;
+}
+
+/** Test protocol-level escaping/unescaping. */
+int msim_test_escaping(void)
+{
+	guint failures;
+	gchar *raw, *escaped, *unescaped, *expected;
+
+	failures = 0;
+
+	purple_debug_info("msim", "\n\nTesting escaping\n");
+
+	raw = "hello/world\\hello/world";
+
+	escaped = msim_escape(raw);
+	purple_debug_info("msim", "msim_test_escaping: raw=%s, escaped=%s\n", raw, escaped);
+	expected = "hello/1world/2hello/1world";
+	if (0 != strcmp(escaped, expected))
+	{
+		purple_debug_info("msim", "!!!(%d), msim_escape failed: %s != %s\n",
+				++failures, escaped, expected);
+	}
+
+
+	unescaped = msim_unescape(escaped);
+	g_free(escaped);
+	purple_debug_info("msim", "msim_test_escaping: unescaped=%s\n", unescaped);
+	if (0 != strcmp(raw, unescaped))
+	{
+		purple_debug_info("msim", "!!!(%d), msim_unescape failed: %s != %s\n",
+				++failures, raw, unescaped);
+	}	
+
+	return failures;
+}
+
+/** Initialize plugin. */
 void init_plugin(PurplePlugin *plugin) 
 {
 	PurpleAccountOption *option;
-#ifdef  _TEST_MSIM_MSG
-	{
-		MsimMessage *msg;
-
-		purple_debug_info("msim", "testing MsimMessage\n");
-		msg = msim_msg_new(FALSE);
-		msg = msim_msg_append(msg, "bx", MSIM_TYPE_BINARY, g_string_new_len(g_strdup("XXX"), 3));
-		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v1"));
-		msg = msim_msg_append(msg, "k1", MSIM_TYPE_INTEGER, GUINT_TO_POINTER(42));
-		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v43"));
-		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v52/xxx\\yyy"));
-		msg = msim_msg_append(msg, "k1", MSIM_TYPE_STRING, g_strdup("v7"));
-		purple_debug_info("msim", "msg debug str=%s\n", msim_msg_debug_string(msg));
-		msim_msg_debug_dump("msg debug str=%s\n", msg);
-		purple_debug_info("msim", "msg packed=%s\n", msim_msg_pack(msg));
-		purple_debug_info("msim", "msg cloned=%s\n", msim_msg_pack(msim_msg_clone(msg)));
-		msim_msg_free(msg);
-		exit(0);
-	}
-#endif
+#define MSIM_SELF_TEST
+#ifdef MSIM_SELF_TEST
+	msim_test_all();
+#endif /* MSIM_SELF_TEST */
 
 	/* TODO: default to automatically try different ports. Make the user be
 	 * able to set the first port to try (like LastConnectedPort in Windows client).  */

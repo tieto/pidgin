@@ -210,7 +210,13 @@ char *msim_status_text(PurpleBuddy *buddy);
 void msim_tooltip_text(PurpleBuddy *buddy, 
 		PurpleNotifyUserInfo *user_info, gboolean full);
 
+void msim_test_all(void);
+int msim_test_msg(void);
+int msim_test_escaping(void);
+
 void init_plugin(PurplePlugin *plugin);
+
+
 
 #ifndef MSIM_USE_PURPLE_RC4
 /* 
@@ -249,5 +255,7 @@ void crypt_rc4_init(rc4_state_struct *rc4_state,
 
 void crypt_rc4(rc4_state_struct *rc4_state, guchar *data, int data_len);
 #endif	/* !MSIM_USE_PURPLE_RC4 */
+
+
 
 #endif /* !_MYSPACE_MYSPACE_H */
