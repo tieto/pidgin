@@ -63,7 +63,7 @@ jabber_parser_element_start_libxml(void *user_data,
 		if(js->protocol_version == JABBER_PROTO_0_9)
 			js->auth_type = JABBER_AUTH_IQ_AUTH;
 
-		if(js->state == JABBER_STREAM_INITIALIZING)
+		if(js->state == JABBER_STREAM_INITIALIZING || js->state == JABBER_STREAM_INITIALIZING_ENCRYPTION)
 			jabber_stream_set_state(js, JABBER_STREAM_AUTHENTICATING);
 	} else {
 

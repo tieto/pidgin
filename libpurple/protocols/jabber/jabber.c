@@ -58,7 +58,7 @@
 
 #include <assert.h>
 
-#define JABBER_CONNECT_STEPS (js->gsc ? 8 : 5)
+#define JABBER_CONNECT_STEPS (js->gsc ? 9 : 5)
 
 static PurplePlugin *my_protocol = NULL;
 GList *jabber_features;
@@ -453,11 +453,14 @@ jabber_login_callback_ssl(gpointer data, PurpleSslConnection *gsc,
 	}	
 
 	js = gc->proto_data;
-
+	
 	if(js->state == JABBER_STREAM_CONNECTING)
 		jabber_send_raw(js, "<?xml version='1.0' ?>", -1);
 	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING);
 	purple_ssl_input_add(gsc, jabber_recv_cb_ssl, gc);
+	
+	/* Tell the app that we're doing encryption */
+	jabber_stream_set_state(js, JABBER_STREAM_INITIALIZING_ENCRYPTION);
 }
 
 
@@ -1134,9 +1137,14 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 					js->gsc ? 5 : 2, JABBER_CONNECT_STEPS);
 			jabber_stream_init(js);
 			break;
+		case JABBER_STREAM_INITIALIZING_ENCRYPTION:
+			purple_connection_update_progress(js->gc, _("Initializing SSL/TLS"),
+											  6, JABBER_CONNECT_STEPS);
+			jabber_stream_init(js);
+			break;
 		case JABBER_STREAM_AUTHENTICATING:
 			purple_connection_update_progress(js->gc, _("Authenticating"),
-					js->gsc ? 6 : 3, JABBER_CONNECT_STEPS);
+					js->gsc ? 7 : 3, JABBER_CONNECT_STEPS);
 			if(js->protocol_version == JABBER_PROTO_0_9 && js->registration) {
 				jabber_register_start(js);
 			} else if(js->auth_type == JABBER_AUTH_IQ_AUTH) {
@@ -1145,7 +1153,7 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 			break;
 		case JABBER_STREAM_REINITIALIZING:
 			purple_connection_update_progress(js->gc, _("Re-initializing Stream"),
-					(js->gsc ? 7 : 4), JABBER_CONNECT_STEPS);
+					(js->gsc ? 8 : 4), JABBER_CONNECT_STEPS);
 
 			/* The stream will be reinitialized later, in jabber_recv_cb_ssl() */
 			js->reinit = TRUE;
