@@ -1744,10 +1744,6 @@ static void trillian_logger_finalize(PurpleLog *log)
 #define QIP_LOG_IN_MESSAGE_ESC (QIP_LOG_DELIMITER "&lt;-")
 #define QIP_LOG_OUT_MESSAGE_ESC (QIP_LOG_DELIMITER "&gt;-")
 
-#define DEBUG_MESSAGE(var, sign, value, title) if(var sign value) \
-						purple_debug(PURPLE_DEBUG_ERROR, title,	\
-						#var " " #sign " " #value "\n");
-
 static PurpleLogLogger *qip_logger;
 static void qip_logger_finalize(PurpleLog *log);
 
@@ -1900,150 +1896,135 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	struct qip_logger_data *data;
-	char *read;	
-	FILE *file;
 	PurpleBuddy *buddy;
 	char *escaped;
 	GString *formatted;
 	char *c;
 	const char *line;
+	GError *error = NULL;
+	gchar *contents = NULL;
+	gsize length;
 	
-	purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
-		"start\n");
-	
-	DEBUG_MESSAGE(log, ==, NULL, "QIP logger read");
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 	
 	data = log->logger_data;
 	
-	DEBUG_MESSAGE(data->path, ==, NULL, "QIP logger read");
 	g_return_val_if_fail(data->path != NULL, g_strdup(""));
-
-	DEBUG_MESSAGE(data->length, <=, 0, "QIP logger read");
 	g_return_val_if_fail(data->length > 0, g_strdup(""));
 
 
 	purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
 				"Reading %s\n", data->path);
 	
-	read = g_malloc(data->length + 2);
-	
-	file = g_fopen(data->path, "rb");
-	fseek(file, data->offset, SEEK_SET);
-	fread(read, data->length, 1, file);
-	fclose(file);
-	
-	if (read[data->length-1] == '\n') {
-		read[data->length] = '\0';
-	} else {
-		read[data->length] = '\n';
-		read[data->length+1] = '\0';
-	}
-	
-	/* Load miscellaneous data. */
-	buddy = purple_find_buddy(log->account, log->name);
-	
-	escaped = g_markup_escape_text(read, -1);
-	g_free(read);
-	read = escaped;
-	
-	/* Apply formatting... */
-	formatted = g_string_sized_new(strlen(read));
-	c = read;
-	line = read;
-	
-	while (*c)
-	{
-		gboolean is_in_message = FALSE;
+	if (!g_file_get_contents(data->path, &contents, &length, &error))
+		if (error)
+			g_error_free(error);
+			
+	if (contents) {
+		/* Load miscellaneous data. */
+		buddy = purple_find_buddy(log->account, log->name);
 		
-		if (purple_str_has_prefix(line, QIP_LOG_IN_MESSAGE_ESC) || 
-			purple_str_has_prefix(line, QIP_LOG_OUT_MESSAGE_ESC)) {
-			const char *buddy_name;
-			is_in_message = purple_str_has_prefix(line, QIP_LOG_IN_MESSAGE_ESC);
+		escaped = g_markup_escape_text(contents, -1);
+		g_free(contents);
+		contents = escaped;
+		
+		/* Apply formatting... */
+		formatted = g_string_sized_new(strlen(contents));
+		c = contents;
+		line = contents;
+		
+		while (*c)
+		{
+			gboolean is_in_message = FALSE;
 			
-			purple_debug(PURPLE_DEBUG_INFO, "QIP loggger read",
-					"%s message\n", (is_in_message) ? "incoming" : "Outgoing");
-			
-			/* find EOL */
-			c = strstr(c, "\n");
-
-			/* XXX: Do we need buddy_name when we have buddy->alias? */
-			buddy_name = ++c;
-			
-
-			/* searching '(' character from the end of the line */
-			c = strstr(c, "\n");
-			while (*c && *c != '(')
-				--c;
-
-			if (*c == '(') {
-				const char *timestamp = c;
-				int hour;
-				int min;
-				int sec;
+			if (purple_str_has_prefix(line, QIP_LOG_IN_MESSAGE_ESC) || 
+				purple_str_has_prefix(line, QIP_LOG_OUT_MESSAGE_ESC)) {
+				const char *buddy_name;
+				is_in_message = purple_str_has_prefix(line, QIP_LOG_IN_MESSAGE_ESC);
 				
-				timestamp++;
-					
-				/*  Parse the time, day, month and year */
-				if (sscanf(timestamp, "%u:%u:%u",
-							&hour, &min, &sec) != 3) 
-					purple_debug(PURPLE_DEBUG_ERROR, "QIP logger read",
-									"Parsing timestamp error\n");
-				else {
-					g_string_append(formatted, "<font size=\"2\">");
-					g_string_append_printf(formatted, 
-							"(%u:%02u:%02u) %cM ", hour % 12, 
-							min, sec, (hour >= 12) ? 'P': 'A');
-					g_string_append(formatted, "</font> ");
-					
-					if (is_in_message) {
-						if (buddy_name != NULL && buddy->alias) {
-							g_string_append_printf(formatted, 
-								"<span style=\"color: #A82F2F;\">"
-								"<b>%s</b></span>: ", buddy->alias);
-						}
-					} else {
-						const char *acct_name;
-						acct_name = purple_account_get_alias(log->account);
-						if (!acct_name)
-							acct_name = purple_account_get_username(log->account);
+				purple_debug(PURPLE_DEBUG_INFO, "QIP loggger read",
+						"%s message\n", (is_in_message) ? "incoming" : "Outgoing");
+				
+				/* find EOL */
+				c = strstr(c, "\n");
 
-						g_string_append_printf(formatted,
-							"<span style=\"color: #16569E;\">"
-							"<b>%s</b></span>: ", acct_name);
-					}
-					
-					/* find EOF */
-					c = strstr(c, "\n");
+				/* XXX: Do we need buddy_name when we have buddy->alias? */
+				buddy_name = ++c;
+				
+				/* searching '(' character from the end of the line */
+				c = strstr(c, "\n");
+				while (*c && *c != '(')
+					--c;
 
-					line = ++c;
-
-					if ((c = strstr(c, "\n")))
-						*c = '\0';
+				if (*c == '(') {
+					const char *timestamp = c;
+					int hour;
+					int min;
+					int sec;
 					
-					purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
-						"writing message: \"%s\"\n", line);
+					timestamp++;
 						
+					/*  Parse the time, day, month and year */
+					if (sscanf(timestamp, "%u:%u:%u",
+								&hour, &min, &sec) != 3) 
+						purple_debug(PURPLE_DEBUG_ERROR, "QIP logger read",
+										"Parsing timestamp error\n");
+					else {
+						g_string_append(formatted, "<font size=\"2\">");
+						g_string_append_printf(formatted, 
+								"(%u:%02u:%02u) %cM ", hour % 12, 
+								min, sec, (hour >= 12) ? 'P': 'A');
+						g_string_append(formatted, "</font> ");
+						
+						if (is_in_message) {
+							if (buddy_name != NULL && buddy->alias) {
+								g_string_append_printf(formatted, 
+									"<span style=\"color: #A82F2F;\">"
+									"<b>%s</b></span>: ", buddy->alias);
+							}
+						} else {
+							const char *acct_name;
+							acct_name = purple_account_get_alias(log->account);
+							if (!acct_name)
+								acct_name = purple_account_get_username(log->account);
+
+							g_string_append_printf(formatted,
+								"<span style=\"color: #16569E;\">"
+								"<b>%s</b></span>: ", acct_name);
+						}
+						
+						/* find EOF */
+						c = strstr(c, "\n");
+
+						line = ++c;
+
+						if ((c = strstr(c, "\n")))
+							*c = '\0';
+						
+						purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
+							"writing message: \"%s\"\n", line);
+							
+						g_string_append(formatted, line);
+						line = ++c;
+						g_string_append_c(formatted, '\n');
+					}
+				}
+			} else {
+				if ((c = strchr(c, '\n')))
+					*c = '\0';
+			
+				if (line[0] != '\n' && line[0] != '\r') {
+					purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
+						"line is not delimiter \"%s\"\n", line);
+					
 					g_string_append(formatted, line);
-					line = ++c;
 					g_string_append_c(formatted, '\n');
 				}
+				line = ++c;
 			}
-		} else {
-			if ((c = strchr(c, '\n')))
-				*c = '\0';
-		
-			if (line[0] != '\n' && line[0] != '\r') {
-				purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
-					"line is not delimiter \"%s\"\n", line);
-				
-				g_string_append(formatted, line);
-				g_string_append_c(formatted, '\n');
-			}
-			line = ++c;
 		}
 	}
-	g_free(read);
+	g_free(contents);
 	/* XXX: TODO: Avoid this g_strchomp() */
 	return g_strchomp(g_string_free(formatted, FALSE));
 }
