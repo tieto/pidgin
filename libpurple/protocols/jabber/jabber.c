@@ -622,6 +622,8 @@ conn_close_cb(gpointer data)
 {
 	JabberStream *js = data;
 	PurpleAccount *account = purple_connection_get_account(js->gc);
+	
+	jabber_parser_free(js);
 
 	purple_account_disconnect(account);
 
@@ -1054,6 +1056,8 @@ void jabber_close(PurpleConnection *gc)
 	}
 
 	jabber_buddy_remove_all_pending_buddy_info_requests(js);
+
+	jabber_parser_free(js);
 
 	if(js->iq_callbacks)
 		g_hash_table_destroy(js->iq_callbacks);

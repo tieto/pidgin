@@ -174,13 +174,16 @@ jabber_parser_setup(JabberStream *js)
 	 * the parser context when you try to use it (this way, it can figure
 	 * out the encoding at creation time. So, setting up the parser is
 	 * just a matter of destroying any current parser. */
+	jabber_parser_free(js);
+}
+
+void jabber_parser_free(JabberStream *js) {
 	if (js->context) {
 		xmlParseChunk(js->context, NULL,0,1);
 		xmlFreeParserCtxt(js->context);
 		js->context = NULL;
 	}
 }
-
 
 void jabber_parser_process(JabberStream *js, const char *buf, int len)
 {
