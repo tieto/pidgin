@@ -92,7 +92,7 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
 	ssize_t ret;
 
-	purple_debug_info("gnutls", "Handshaking\n");
+	purple_debug_info("gnutls", "Handshaking with %s\n", gsc->host);
 	ret = gnutls_handshake(gnutls_data->session);
 
 	if(ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED)
