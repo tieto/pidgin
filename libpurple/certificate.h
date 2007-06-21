@@ -102,6 +102,45 @@ struct _PurpleCertificateScheme
 	 *              CertificateScheme. Can be NULL
 	 */
 	void (* destroy_certificate)(PurpleCertificate * crt);
+
+	/**
+	 * Retrieves the certificate public key fingerprint using SHA1
+	 *
+	 * @param crt   Certificate instance
+	 * @return Binary representation of SHA1 hash
+	 */
+	GByteArray * (* get_fingerprint_sha1)(PurpleCertificate *crt);
+
+	/**
+	 * Reads "who the certificate is assigned to"
+	 *
+	 * For SSL X.509 certificates, this is something like
+	 * "gmail.com" or "jabber.org"
+	 *
+	 * @param crt   Certificate instance
+	 * @return Newly allocated string specifying "whose certificate this
+	 *         is"
+	 */
+	gchar * (* get_certificate_subject)(PurpleCertificate *crt);
+
+	/**
+	 * Retrieves a unique certificate identifier
+	 *
+	 * @param crt   Certificate instance
+	 * @return Newly allocated string that can be used to uniquely
+	 *         identify the certificate.
+	 */
+	gchar * (* get_unique_id)(PurpleCertificate *crt);
+
+	/**
+	 * Retrieves a unique identifier for the certificate's issuer
+	 *
+	 * @param crt   Certificate instance
+	 * @return Newly allocated string that can be used to uniquely
+	 *         identify the issuer's certificate.
+	 */
+	gchar * (* get_issuer_unique_id)(PurpleCertificate *crt);
+
 	
 	/* TODO: Fill out this structure */
 };
