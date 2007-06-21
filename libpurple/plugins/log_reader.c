@@ -1745,7 +1745,6 @@ static void trillian_logger_finalize(PurpleLog *log)
 #define QIP_LOG_OUT_MESSAGE_ESC (QIP_LOG_DELIMITER "&gt;-")
 
 static PurpleLogLogger *qip_logger;
-static void qip_logger_finalize(PurpleLog *log);
 
 struct qip_logger_data {
 	
@@ -1773,14 +1772,14 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_return_val_if_fail(account != NULL, list);
 
 	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-				"arguments not NULL\n");
+		"arguments not NULL\n");
 
 	/* QIP is ICQ messenger. Should we add prpl-aim? */
 	if (strcmp(account->protocol_id, "prpl-icq"))
 		return list;
 		
 	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-				"protocol is 'prpl-icq'\n");
+		"protocol is 'prpl-icq'\n");
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/qip/log_directory");
 
@@ -1798,20 +1797,22 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 	buddy_name = g_strdup(purple_normalize(account, sn));
 	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-				"buddy_name %s\n", buddy_name);
+		"buddy_name %s\n", buddy_name);
 
 	username = g_strdup(purple_normalize(account, account->username));
 	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-				"username %s\n", username);
-				
+		"username %s\n", username);
+	
 	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-				"sn %s\n", sn);
+		"sn %s\n", sn);
 	
 	filename = g_strdup_printf("%s.txt", buddy_name);
 	path = g_build_filename(
 		logdir, username, "History", filename, NULL);
+		
 	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-				"Reading %s\n", path);
+		"Reading %s\n", path);
+	
 	if (!g_file_get_contents(path, &contents, &length, &error))
 		if (error)
 			g_error_free(error);
@@ -1840,10 +1841,10 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 					
 					/*  Parse the time, day, month and year */
 					if (sscanf(timestamp, "%u:%u:%u %u/%u/%u",
-							&tm.tm_hour, &tm.tm_min, &tm.tm_sec,
-							&tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 6) {
-						purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
-										"Parsing timestamp error\n");
+						&tm.tm_hour, &tm.tm_min, &tm.tm_sec,
+						&tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 6) {
+							purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
+							"Parsing timestamp error\n");
 					} else {
 						PurpleLog *log;
 
@@ -1856,8 +1857,8 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 						purple_debug(PURPLE_DEBUG_INFO, 
 							"QIP logger list",
 							"Parsing timestamp: %u/%u/%u %u:%u:%u\n", 
-								tm.tm_year, tm.tm_mon, tm.tm_mday,
-								tm.tm_hour, tm.tm_min, tm.tm_sec);
+							tm.tm_year, tm.tm_mon, tm.tm_mday,
+							tm.tm_hour, tm.tm_min, tm.tm_sec);
 						
 						/* Let the C library deal with
 						* daylight savings time.
@@ -1943,7 +1944,7 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 				is_in_message = purple_str_has_prefix(line, QIP_LOG_IN_MESSAGE_ESC);
 				
 				purple_debug(PURPLE_DEBUG_INFO, "QIP loggger read",
-						"%s message\n", (is_in_message) ? "incoming" : "Outgoing");
+					"%s message\n", (is_in_message) ? "incoming" : "Outgoing");
 				
 				/* find EOL */
 				c = strstr(c, "\n");
@@ -1966,14 +1967,14 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 						
 					/*  Parse the time, day, month and year */
 					if (sscanf(timestamp, "%u:%u:%u",
-								&hour, &min, &sec) != 3) 
+							&hour, &min, &sec) != 3) 
 						purple_debug(PURPLE_DEBUG_ERROR, "QIP logger read",
-										"Parsing timestamp error\n");
+							"Parsing timestamp error\n");
 					else {
 						g_string_append(formatted, "<font size=\"2\">");
 						g_string_append_printf(formatted, 
-								"(%u:%02u:%02u) %cM ", hour % 12, 
-								min, sec, (hour >= 12) ? 'P': 'A');
+							"(%u:%02u:%02u) %cM ", hour % 12, 
+							min, sec, (hour >= 12) ? 'P': 'A');
 						g_string_append(formatted, "</font> ");
 						
 						if (is_in_message) {
