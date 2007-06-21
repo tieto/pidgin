@@ -154,7 +154,18 @@ purple_ssl_input_add(PurpleSslConnection *gsc, PurpleSslInputFunction func,
 PurpleSslConnection *
 purple_ssl_connect_fd(PurpleAccount *account, int fd,
 					PurpleSslInputFunction func,
-					PurpleSslErrorFunction error_func, void *data)
+					PurpleSslErrorFunction error_func,
+                    void *data)
+{
+    return purple_ssl_connect_with_host_fd(account, fd, func, error_func, NULL, data);
+}
+
+PurpleSslConnection *
+purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
+                      PurpleSslInputFunction func,
+                      PurpleSslErrorFunction error_func,
+                      const char *host,
+                      void *data)
 {
 	PurpleSslConnection *gsc;
 	PurpleSslOps *ops;
@@ -175,6 +186,8 @@ purple_ssl_connect_fd(PurpleAccount *account, int fd,
 	gsc->connect_cb      = func;
 	gsc->error_cb        = error_func;
 	gsc->fd              = fd;
+    if(host)
+        gsc->host            = g_strdup(host);
 
 	ops = purple_ssl_get_ops();
 	ops->connectfunc(gsc);
