@@ -77,3 +77,19 @@ purple_certificate_register_scheme(PurpleCertificateScheme *scheme)
 	/* TODO: Signalling and such? */
 	return TRUE;
 }
+
+gboolean
+purple_certificate_unregister_scheme(PurpleCertificateScheme *scheme)
+{
+	if (NULL == scheme) {
+		purple_debug_warning("certificate",
+				     "Attempting to unregister NULL scheme");
+	}
+
+	/* TODO: signalling? */
+
+	/* TODO: unregister all CertificatePools for this scheme! */
+	cert_schemes = g_list_remove(cert_schemes, scheme);
+
+	return TRUE;
+}

@@ -119,6 +119,16 @@ purple_certificate_find_scheme(const gchar *name);
 gboolean
 purple_certificate_register_scheme(PurpleCertificateScheme *scheme);
 
+/** Unregister a CertificateScheme from libpurple
+ *
+ * @param scheme    Scheme to unregister.
+ *                  If the scheme is not registered, this is a no-op.
+ *
+ * @return TRUE if the unregister completed successfully
+ */
+gboolean
+purple_certificate_unregister_scheme(PurpleCertificateScheme *scheme);
+
 /* TODO: ADD STUFF HERE */
 
 /*@}*/
