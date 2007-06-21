@@ -35,8 +35,17 @@
 extern "C" {
 #endif /* __cplusplus */
 
+
+typedef enum
+{
+	PURPLE_CERTIFICATE_INVALID = 0,
+	PURPLE_CERTIFICATE_VALID = 1
+} PurpleCertificateVerificationStatus;
+
 typedef struct _PurpleCertificate PurpleCertificate;
 typedef struct _PurpleCertificateScheme PurpleCertificateScheme;
+typedef struct _PurpleCertificateVerifier PurpleCertificateVerifier;
+typedef struct _PurpleCertificateVerificationRequest PurpleCertificateVerificationRequest;
 
 /** A certificate instance
  *
@@ -70,6 +79,8 @@ struct _PurpleCertificateScheme
 
 	/** User-friendly name for this type
 	 *  ex: N_("X.509 Certificates")
+	 *  When this is displayed anywhere, it should be i18ned
+	 *  ex: _(scheme->name)
 	 */
 	gchar * fullname;
 
@@ -95,6 +106,40 @@ struct _PurpleCertificateScheme
 	/* TODO: Fill out this structure */
 };
 
+/** A set of operations used to provide logic for verifying a Certificate's
+ *  authenticity.
+ */
+struct _PurpleCertificateVerifier
+{	
+	/** Scheme this Verifier operates on */
+	PurpleCertificateScheme *scheme;
+
+	/** Internal name used for lookups
+	 *
+	 * Case insensitive
+	 */
+	gchar * name;
+};
+
+/** Structure for a single certificate request
+ *
+ *  Useful for keeping track of the state of a verification that involves
+ *  several steps
+ */
+struct _PurpleCertificateVerificationRequest
+{
+	/** Reference to the verification logic used */
+	PurpleCertificateVerifier *verifier;
+
+	/** List of certificates in the chain to be verified.
+	 *
+	 * This is most relevant for X.509 certificates used in SSL sessions.
+	 */
+	GList *cert_chain;
+	
+	/** Internal data used by the Verifier code */
+	gpointer *data;
+};
 
 /*****************************************************************************/
 /** @name PurpleCertificate Subsystem API                                    */
