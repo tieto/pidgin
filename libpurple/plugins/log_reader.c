@@ -1829,15 +1829,13 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			"File %s is found\n", filename);
 			
 		/* We should convert file contents from Cp1251 to UTF-8 codeset */
-		if (!(utf8_string = g_convert(contents, length, "UTF-8", "Cp1251", NULL, NULL, &error)))
+		if (!(utf8_string = g_convert(contents, length, "UTF-8", "Cp1251", NULL, NULL, &error))) {
 			if (error) {
 				purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
 					"Couldn't convert file %s to UTF-8\n", filename);
 				g_error_free(error);
 			}
-			
-		if (utf8_string) {
-		
+		} else {
 			purple_debug(PURPLE_DEBUG_INFO, "QIP logger lise",
 				"File %s converted successfully\n", filename);
 			
@@ -1948,14 +1946,13 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		gchar * utf8_string;
 		
 		/* We should convert file contents from Cp1251 to UTF-8 codeset */
-		if (!(utf8_string = g_convert (contents, length, "UTF-8", "Cp1251", NULL, NULL, &error)))
+		if (!(utf8_string = g_convert (contents, length, "UTF-8", "Cp1251", NULL, NULL, &error))) {
 			if (error) {
 				purple_debug(PURPLE_DEBUG_ERROR, "QIP logger read",
 					"Couldn't convert file %s to UTF-8\n", data->path);
 				g_error_free(error);
 			}
-
-		if (utf8_string) {
+		} else {
 			char *escaped;
 
 			purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
