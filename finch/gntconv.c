@@ -554,7 +554,8 @@ finch_destroy_conversation(PurpleConversation *conv)
 	
 	if (ggc->list == NULL) {
 		g_free(ggc->u.chat);
-		gnt_widget_destroy(ggc->window);
+		if (ggc->window)
+			gnt_widget_destroy(ggc->window);
 		g_free(ggc);
 	}
 }
