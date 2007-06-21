@@ -131,9 +131,16 @@ struct _PurpleCertificateVerificationRequest
 	/** Reference to the verification logic used */
 	PurpleCertificateVerifier *verifier;
 
-	/** List of certificates in the chain to be verified.
+	/** Certificate subject's name.
+	 *
+	 * For X.509 certificates, this is the Common Name
+	 */
+	gchar *subject_name;
+	
+	/** List of certificates in the chain to be verified (such as that returned by purple_ssl_get_peer_certificates )
 	 *
 	 * This is most relevant for X.509 certificates used in SSL sessions.
+	 * The list order should be: certificate, issuer, issuer's issuer, etc.
 	 */
 	GList *cert_chain;
 	
