@@ -777,70 +777,127 @@ unsigned int msim_send_typing(PurpleConnection *gc, const gchar *name, PurpleTyp
 	return 0;
 }
 
-/** Retrieve a user's profile. */
-void msim_get_info(PurpleConnection *gc, const gchar *name)
+/** Callback for msim_get_info(), for when user info is received. */
+void msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, gpointer data)
 {
+	GHashTable *body;
+	gchar *body_str;
+	MsimMessage *msg;
+	gchar *user;
 	PurpleNotifyUserInfo *user_info;
 	PurpleBuddy *buddy;
-	MsimSession *session;
+	gchar *song;
 
-	session = (MsimSession *)gc->proto_data;
+
+	/* Get user{name,id} from msim_get_info, passed as an MsimMessage for orthogonality. */
+	msg = (MsimMessage *)data;
+	user = g_strdup(msim_msg_get_string(msg, "user"));	
+	purple_debug_info("msim", "msim_get_info_cb: got for user: %s\n", user);
+	msim_msg_free(msg);
+
+	
+	body_str = msim_msg_get_string(user_info_msg, "body");
+	body = msim_parse_body(body_str);
+	g_free(body_str);
+
+	buddy = purple_find_buddy(session->account, user);
+	/* Note: don't assume buddy is non-NULL; will be if lookup random user not on blist. */
 
 	user_info = purple_notify_user_info_new();
 
-	buddy = purple_find_buddy(session->account, name);
-	if (!buddy)
-	{
-		/* TODO: profile of buddies not on blist! Wouldn't be too hard,
-		 * just have to schedule a lookup, and when receive reply, 
-		 * call purple_notify_userinfo() etc.
-		 */
-		purple_notify_user_info_add_pair(user_info, NULL,
-				"Sorry, currently user information can only be retrieved from users on your buddy list.");
-		purple_notify_userinfo(gc, name, user_info, NULL, NULL);
-		purple_notify_user_info_destroy(user_info);
-		return;
-	}
-
-
 	/* Identification */
-	purple_notify_user_info_add_pair(user_info, "User Name",
-			purple_blist_node_get_string(&buddy->node, "UserName")); 
+	purple_notify_user_info_add_pair(user_info, _("User"), user);
 
-
-	purple_notify_user_info_add_pair(user_info, "User ID",
-			g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "UserID")));
-
-	purple_notify_user_info_add_pair(user_info, "Display Name",
-			purple_blist_node_get_string(&buddy->node, "DisplayName")); 
-
+	/* note: g_hash_table_lookup does not create a new string! */
+	purple_notify_user_info_add_pair(user_info, _("User ID"), 
+			g_strdup(g_hash_table_lookup(body, "UserID")));
 
 	/* a/s/l...the vitals */	
-	purple_notify_user_info_add_pair(user_info, "Age",
-			g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "Age")));
+	purple_notify_user_info_add_pair(user_info, _("Age"), 
+			g_strdup(g_hash_table_lookup(body, "Age")));
 
-	purple_notify_user_info_add_pair(user_info, "Gender",
-			 purple_blist_node_get_string(&buddy->node, "Gender"));
+	purple_notify_user_info_add_pair(user_info, _("Gender"), 
+			g_strdup(g_hash_table_lookup(body, "Gender")));
 
-	purple_notify_user_info_add_pair(user_info, "Location",
-			purple_blist_node_get_string(&buddy->node, "Location"));
+	purple_notify_user_info_add_pair(user_info, _("Location"), 
+			g_strdup(g_hash_table_lookup(body, "Location")));
 
 	/* Other information */
-	if (purple_blist_node_get_string(&buddy->node, "Headline"))
+
+	/* Headline comes from buddy status messages */
+	if (buddy && purple_blist_node_get_string(&buddy->node, "Headline"))
 		purple_notify_user_info_add_pair(user_info, "Headline",
 				purple_blist_node_get_string(&buddy->node, "Headline")); 
 
-	purple_notify_user_info_add_pair(user_info, "Song", 
-			g_strdup_printf("%s - %s",
-				purple_blist_node_get_string(&buddy->node, "BandName"),
-				purple_blist_node_get_string(&buddy->node, "SongName")));
-
-	purple_notify_user_info_add_pair(user_info, "Total Friends",
-			g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "TotalFriends")));
+	song = g_strdup_printf("%s - %s",
+		(gchar *)g_hash_table_lookup(body, "BandName"),
+		(gchar *)g_hash_table_lookup(body, "SongName"));
 
 
-	purple_notify_userinfo(gc, name, user_info, NULL, NULL);
-	purple_notify_user_info_destroy(user_info);
+	purple_notify_user_info_add_pair(user_info, _("Song"), song);
+	/* Do not free song - used by user_info. */
+
+	/* Total friends only available if looked up by uid, not username. */
+	if (g_hash_table_lookup(body, "TotalFriends"))
+		purple_notify_user_info_add_pair(user_info, _("Total Friends"), 
+				g_strdup(g_hash_table_lookup(body, "TotalFriends")));
+
+	purple_notify_userinfo(session->gc, user, user_info, NULL, NULL);
+	purple_debug_info("msim", "msim_get_info_cb: username=%s\n", user);
+	//purple_notify_user_info_destroy(user_info);
+	/* Do not free username, since it will be used by user_info. */
+
+	//g_hash_table_destroy(body);
+}
+
+/** Retrieve a user's profile. */
+void msim_get_info(PurpleConnection *gc, const gchar *user)
+{
+	PurpleBuddy *buddy;
+	MsimSession *session;
+	guint uid;
+	gchar *user_to_lookup;
+	MsimMessage *user_msg;
+
+	session = (MsimSession *)gc->proto_data;
+
+	/* Obtain uid of buddy. */
+	buddy = purple_find_buddy(session->account, user);
+	if (buddy)
+	{
+		uid = purple_blist_node_get_int(&buddy->node, "UserID");
+		if (!uid)
+		{
+			PurpleNotifyUserInfo *user_info;
+
+			user_info = purple_notify_user_info_new();
+			purple_notify_user_info_add_pair(user_info, NULL,
+					_("This buddy appears to not have a userid stored in the buddy list, can't look up. Is the user really on the buddy list?"));
+
+			purple_notify_userinfo(session->gc, user, user_info, NULL, NULL);
+			purple_notify_user_info_destroy(user_info);
+			return;
+		}
+
+		user_to_lookup = g_strdup_printf("%d", uid);
+	} else {
+
+		/* Looking up buddy not on blist. Lookup by whatever user entered. */
+		user_to_lookup = g_strdup(user);
+	}
+
+	/* Pass the username to msim_get_info_cb(), because since we lookup
+	 * by userid, the userinfo message will only contain the uid (not 
+	 * the username).
+	 */
+	user_msg = msim_msg_new(TRUE, 
+			"user", MSIM_TYPE_STRING, g_strdup(user),
+			NULL);
+	purple_debug_info("msim", "msim_get_info, setting up lookup, user=%s\n", user);
+
+	msim_lookup_user(session, user_to_lookup, msim_get_info_cb, user_msg);
+
+	g_free(user_to_lookup); 
 }
 
 /** After a uid is resolved to username, tag it with the username and submit for processing. 
@@ -1001,10 +1058,14 @@ gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 			return msim_process(session, msg);
 
 		} else {
+			gchar *from;
+
 			/* Send lookup request. */
 			/* XXX: where is msim_msg_get_string() freed? make _strdup and _nonstrdup. */
 			purple_debug_info("msim", "msim_incoming: sending lookup, setting up callback\n");
-			msim_lookup_user(session, msim_msg_get_string(msg, "f"), msim_incoming_resolved, msim_msg_clone(msg)); 
+			from = msim_msg_get_string(msg, "f");
+			msim_lookup_user(session, from, msim_incoming_resolved, msim_msg_clone(msg)); 
+			g_free(from);
 
 			/* indeterminate */
 			return TRUE;
@@ -1952,7 +2013,7 @@ gboolean msim_is_email(const gchar *user)
  * Asynchronously lookup user information, calling callback when receive result.
  *
  * @param session
- * @param user The user id, email address, or username.
+ * @param user The user id, email address, or username. Not freed.
  * @param cb Callback, called with user information when available.
  * @param data An arbitray data pointer passed to the callback.
  */
@@ -2097,31 +2158,30 @@ void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboo
 				purple_blist_node_get_string(&buddy->node, "DisplayName")); */
 
 		/* Useful to identify the account the tooltip refers to. Other prpls show this. */
-		purple_notify_user_info_add_pair(user_info, "Account",
-				purple_blist_node_get_string(&buddy->node, "UserName")); 
-
+		purple_notify_user_info_add_pair(user_info, _("User Name"),
+				(purple_blist_node_get_string(&buddy->node, "UserName"))); 
 
 		/* a/s/l...the vitals */	
-		purple_notify_user_info_add_pair(user_info, "Age",
+		purple_notify_user_info_add_pair(user_info, _("Age"),
 				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "Age")));
 
-		purple_notify_user_info_add_pair(user_info, "Gender",
-				 purple_blist_node_get_string(&buddy->node, "Gender"));
+		purple_notify_user_info_add_pair(user_info, _("Gender"),
+				(purple_blist_node_get_string(&buddy->node, "Gender")));
 
-		purple_notify_user_info_add_pair(user_info, "Location",
-				purple_blist_node_get_string(&buddy->node, "Location"));
+		purple_notify_user_info_add_pair(user_info, _("Location"),
+				(purple_blist_node_get_string(&buddy->node, "Location")));
 
 		/* Other information */
  		if (purple_blist_node_get_string(&buddy->node, "Headline"))
-			purple_notify_user_info_add_pair(user_info, "Headline",
-					purple_blist_node_get_string(&buddy->node, "Headline")); 
+			purple_notify_user_info_add_pair(user_info, _("Headline"),
+					(purple_blist_node_get_string(&buddy->node, "Headline"))); 
 
-	    purple_notify_user_info_add_pair(user_info, "Song", 
+	    purple_notify_user_info_add_pair(user_info, _("Song"), 
                 g_strdup_printf("%s - %s",
 					purple_blist_node_get_string(&buddy->node, "BandName"),
 					purple_blist_node_get_string(&buddy->node, "SongName")));
 
-		purple_notify_user_info_add_pair(user_info, "Total Friends",
+		purple_notify_user_info_add_pair(user_info, _("Total Friends"),
 				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "TotalFriends")));
 
     }
