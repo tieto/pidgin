@@ -1813,6 +1813,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
 		"Reading %s\n", path);
 	
+	error = NULL:
 	if (!g_file_get_contents(path, &contents, &length, &error)) 
 		if (error) {
 			purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
@@ -1829,6 +1830,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			"File %s is found\n", filename);
 			
 		/* We should convert file contents from Cp1251 to UTF-8 codeset */
+		error = NULL;
 		if (!(utf8_string = g_convert(contents, length, "UTF-8", "Cp1251", NULL, NULL, &error))) {
 			if (error) {
 				purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
@@ -1935,6 +1937,7 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
 				"Reading %s\n", data->path);
 	
+	error = NULL;
 	if (!g_file_get_contents(data->path, &contents, &length, &error)) 
 		if (error) {
 			purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
@@ -1946,6 +1949,7 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		gchar * utf8_string;
 		
 		/* We should convert file contents from Cp1251 to UTF-8 codeset */
+		error = NULL;
 		if (!(utf8_string = g_convert (contents, length, "UTF-8", "Cp1251", NULL, NULL, &error))) {
 			if (error) {
 				purple_debug(PURPLE_DEBUG_ERROR, "QIP logger read",
@@ -2265,6 +2269,8 @@ init_plugin(PurplePlugin *plugin)
 
 		purple_debug(PURPLE_DEBUG_INFO, "Trillian talk.ini read",
 				"Reading %s\n", path);
+				
+		error = NULL;
 		if (!g_key_file_load_from_file(key_file, path, G_KEY_FILE_NONE, GError &error)) {
 			purple_debug(PURPLE_DEBUG_ERROR, "Trillian talk.ini read",
 					"Error reading talk.ini\n");
