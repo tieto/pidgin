@@ -1019,7 +1019,7 @@ add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 static void
 pidgin_status_box_regenerate(PidginStatusBox *status_box)
 {
-	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
+	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4, *pixbuf5;
 	GtkIconSize icon_size;
 
 	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
@@ -1049,15 +1049,19 @@ pidgin_status_box_regenerate(PidginStatusBox *status_box)
 			                                  icon_size, "PidginStatusBox");
 			pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_STATUS_INVISIBLE,
 			                                  icon_size, "PidginStatusBox");
+			pixbuf5 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_STATUS_BUSY,
+							  icon_size, "PidginStatusBox");
 
 			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf, _("Available"), NULL, GINT_TO_POINTER(PURPLE_STATUS_AVAILABLE));
 			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf2, _("Away"), NULL, GINT_TO_POINTER(PURPLE_STATUS_AWAY));
+			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf5, _("Do not disturb"), NULL, GINT_TO_POINTER(PURPLE_STATUS_UNAVAILABLE));
 			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf4, _("Invisible"), NULL, GINT_TO_POINTER(PURPLE_STATUS_INVISIBLE));
 			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf3, _("Offline"), NULL, GINT_TO_POINTER(PURPLE_STATUS_OFFLINE));
 
 			if (pixbuf2)	g_object_unref(G_OBJECT(pixbuf2));
 			if (pixbuf3)	g_object_unref(G_OBJECT(pixbuf3));
 			if (pixbuf4)	g_object_unref(G_OBJECT(pixbuf4));
+			if (pixbuf5)	g_object_unref(G_OBJECT(pixbuf5));
 		}
 
 		add_popular_statuses(status_box);
