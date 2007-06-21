@@ -291,15 +291,30 @@ static void gtk_blist_menu_autojoin_cb(GtkWidget *w, PurpleChat *chat)
 static void gtk_blist_join_chat(PurpleChat *chat)
 {
 	PurpleConversation *conv;
+	PurplePluginProtocolInfo *prpl_info;
+	const char *name;
+	char *chat_name;
 
-	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT,
-											   purple_chat_get_name(chat),
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(purple_find_prpl(purple_account_get_protocol_id(chat->account)));
+
+	if (prpl_info && prpl_info->get_chat_name)
+		chat_name = prpl_info->get_chat_name(chat->components);
+	else
+		chat_name = NULL;
+
+	if (chat_name)
+		name = chat_name;
+	else
+		name = purple_chat_get_name(chat);
+
+	conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_CHAT, name,
 											   chat->account);
 
 	if (conv != NULL)
 		purple_conversation_present(conv);
 
 	serv_join_chat(chat->account->gc, chat->components);
+	g_free(chat_name);
 }
 
 static void gtk_blist_menu_join_cb(GtkWidget *w, PurpleChat *chat)
