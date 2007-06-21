@@ -1973,8 +1973,7 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			c = contents;
 			line = contents;
 			
-			while (*c)
-			{
+			while (*c) {
 				gboolean is_in_message = FALSE;
 				
 				if (purple_str_has_prefix(line, QIP_LOG_IN_MESSAGE_ESC) || 
