@@ -329,6 +329,15 @@ void pidgin_load_accels(void);
 void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name);
 
 /**
+ * Get information about a user in a chat. Show immediate feedback.
+ *
+ * @param conn   The connection to get information from.
+ * @param name   The user to get information about.
+ * @param chatid The chat id.
+ */
+void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name, int chatid);
+
+/**
  * Parses an application/x-im-contact MIME message and returns the
  * data inside.
  *

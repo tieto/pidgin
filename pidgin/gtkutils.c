@@ -913,13 +913,42 @@ pidgin_load_accels()
 	g_free(filename);
 }
 
-void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name)
+static void
+show_retrieveing_info(PurpleConnection *conn, const char *name)
 {
 	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
 	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
 	purple_notify_userinfo(conn, name, info, NULL, NULL);
 	purple_notify_user_info_destroy(info);
+}
+
+void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name)
+{
+	show_retrieveing_info(conn, name);
 	serv_get_info(conn, name);
+}
+
+void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name, int chat)
+{
+	char *who = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	if (chat < 0) {
+		pidgin_retrieve_user_info(conn, name);
+		return;
+	}
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(conn->prpl);
+	if (prpl_info == NULL || prpl_info->get_cb_info == NULL) {
+		pidgin_retrieve_user_info(conn, name);
+		return;
+	}
+
+	if (prpl_info->get_cb_real_name)
+		who = prpl_info->get_cb_real_name(conn, chat, name);
+	show_retrieveing_info(conn, who ? who : name);
+	prpl_info->get_cb_info(conn, chat, name);
+	g_free(who);
 }
 
 gboolean

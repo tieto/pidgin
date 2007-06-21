@@ -628,23 +628,10 @@ add_remove_cb(GtkWidget *widget, PidginConversation *gtkconv)
 static void chat_do_info(PidginConversation *gtkconv, const char *who)
 {
 	PurpleConversation *conv = gtkconv->active_conv;
-	PurplePluginProtocolInfo *prpl_info = NULL;
 	PurpleConnection *gc;
 
 	if ((gc = purple_conversation_get_gc(conv))) {
-		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(gc->prpl);
-
-		/*
-		 * If there are special needs for getting info on users in
-		 * buddy chat "rooms"...
-		 */
-		if (prpl_info->get_cb_info != NULL)
-		{
-			prpl_info->get_cb_info(gc,
-				purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)), who);
-		}
-		else
-			pidgin_retrieve_user_info(gc, who);
+		pidgin_retrieve_user_info_in_chat(gc, who, purple_conv_chat_get_id(PURPLE_CONV_CHAT(conv)));
 	}
 }
 
@@ -4416,20 +4403,21 @@ setup_common_pane(PidginConversation *gtkconv)
 				GTK_TREE_MODEL(gtkconv->infopane_model));
 	gtk_list_store_append(gtkconv->infopane_model, &(gtkconv->infopane_iter));
 	gtk_box_pack_start(GTK_BOX(gtkconv->infopane_hbox), gtkconv->infopane, TRUE, TRUE, 0);
-        path = gtk_tree_path_new_from_string("0");
-        gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(gtkconv->infopane), path);
+	path = gtk_tree_path_new_from_string("0");
+	gtk_cell_view_set_displayed_row(GTK_CELL_VIEW(gtkconv->infopane), path);
+	gtk_tree_path_free(path);
 	gtk_widget_set_size_request(gtkconv->infopane, -1, 32);
 	gtk_widget_show(gtkconv->infopane);
 
 	rend = gtk_cell_renderer_pixbuf_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, FALSE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "pixbuf", ICON_COLUMN, NULL);
-        g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
+	g_object_set(rend, "xalign", 0.0, "xpad", 6, "ypad", 0, NULL);
 
 	rend = gtk_cell_renderer_text_new();
 	gtk_cell_layout_pack_start(GTK_CELL_LAYOUT(gtkconv->infopane), rend, TRUE);
 	gtk_cell_layout_set_attributes(GTK_CELL_LAYOUT(gtkconv->infopane), rend, "markup", TEXT_COLUMN, NULL);
-        g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
+	g_object_set(rend, "ypad", 0, "yalign", 0.5, NULL);
 
 #if GTK_CHECK_VERSION(2, 6, 0)
 	g_object_set(rend, "ellipsize", PANGO_ELLIPSIZE_END, NULL);
