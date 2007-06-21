@@ -46,7 +46,6 @@ typedef struct _PurpleCertificate PurpleCertificate;
 typedef struct _PurpleCertificateScheme PurpleCertificateScheme;
 typedef struct _PurpleCertificateVerifier PurpleCertificateVerifier;
 typedef struct _PurpleCertificateVerificationRequest PurpleCertificateVerificationRequest;
-typedef struct _PurpleCertificatePiece PurpleCertificatePiece;
 
 /** A certificate instance
  *
@@ -147,18 +146,6 @@ struct _PurpleCertificateVerificationRequest
 	
 	/** Internal data used by the Verifier code */
 	gpointer *data;
-};
-
-/**
- * Tuple of data for human-readable display of certificate properties
- *
- * You should not be using this for actual verification purposes
- */
-struct _PurpleCertificatePiece
-{
-	gchar *name; /**< Internal name, i.e. "sha1sum" */
-	gchar *value; /**< Value of this element
-			 Must be human-readable */
 };
 
 /*****************************************************************************/
