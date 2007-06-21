@@ -552,6 +552,10 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 #ifdef HAVE_GNUTLS
+	/* Register that we're providing an X.509 CertScheme */
+	/* @TODO : error checking */
+	purple_certificate_register_scheme( &x509_gnutls );
+	
 	if(!purple_ssl_get_ops()) {
 		purple_ssl_set_ops(&ssl_ops);
 	}
@@ -572,6 +576,8 @@ plugin_unload(PurplePlugin *plugin)
 	if(purple_ssl_get_ops() == &ssl_ops) {
 		purple_ssl_set_ops(NULL);
 	}
+
+	purple_certificate_unregister_scheme( &x509_gnutls );
 #endif
 
 	return TRUE;
