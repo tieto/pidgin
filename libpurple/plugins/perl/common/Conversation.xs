@@ -62,6 +62,7 @@ BOOT:
 		const_iv(RAW),
 		const_iv(IMAGES),
 		const_iv(NOTIFY),
+		const_iv(NO_LINKIFY),
 	};
 	static const constiv cbflags_const_iv[] = {
 #undef const_iv
@@ -93,7 +94,7 @@ BOOT:
 void
 purple_get_ims()
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_get_ims(); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
@@ -102,7 +103,7 @@ PPCODE:
 void
 purple_get_conversations()
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_get_conversations(); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
@@ -111,7 +112,7 @@ PPCODE:
 void
 purple_get_chats()
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_get_chats(); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::Conversation")));
@@ -354,7 +355,7 @@ void
 purple_conv_chat_get_users(chat)
 	Purple::Conversation::Chat chat
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_conv_chat_get_users(chat); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListEntry")));
@@ -394,7 +395,7 @@ void
 purple_conv_chat_get_ignored(chat)
 	Purple::Conversation::Chat chat
 PREINIT:
-	const GList *l;
+	GList *l;
 PPCODE:
 	for (l = purple_conv_chat_get_ignored(chat); l != NULL; l = l->next) {
 		XPUSHs(sv_2mortal(purple_perl_bless_object(l->data, "Purple::ListEntry")));

@@ -29,6 +29,7 @@
 #endif
 
 #include "pidgin.h"
+#include "internal.h"
 
 #include "debug.h"
 #include "util.h"
@@ -51,19 +52,6 @@
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
 #include <windows.h>
-#endif
-
-#ifdef ENABLE_NLS
-#  include <libintl.h>
-#  define _(x) gettext(x)
-#  ifdef gettext_noop
-#    define N_(String) gettext_noop (String)
-#  else
-#    define N_(String) (String)
-#  endif
-#else
-#  define N_(String) (String)
-#  define _(x) (x)
 #endif
 
 #include <pango/pango-font.h>
@@ -3294,6 +3282,7 @@ image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 	char *basename = g_path_get_basename(filename);
 	char *ext = strrchr(basename, '.');
 #endif
+	char *newfilename;
 
 	gtk_widget_destroy(image->filesel);
 	image->filesel = NULL;
@@ -3308,7 +3297,7 @@ image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 			gchar *fmt_ext = extensions[0];
 			const gchar* file_ext = filename + strlen(filename) - strlen(fmt_ext);
 
-			if(!strcmp(fmt_ext, file_ext)){
+			if(!g_ascii_strcasecmp(fmt_ext, file_ext)){
 				type = gdk_pixbuf_format_get_name(format);
 				break;
 			}
@@ -3341,6 +3330,7 @@ image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 	/* If I can't find a valid type, I will just tell the user about it and then assume
 	   it's a png */
 	if (!type){
+		char *basename, *tmp;
 #if GTK_CHECK_VERSION(2,4,0)
 		GtkWidget *dialog = gtk_message_dialog_new_with_markup(NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
 						_("<span size='larger' weight='bold'>Unrecognized file type</span>\n\nDefaulting to PNG."));
@@ -3351,10 +3341,26 @@ image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 
 		g_signal_connect_swapped(dialog, "response", G_CALLBACK (gtk_widget_destroy), dialog);
 		gtk_widget_show(dialog);
+
 		type = g_strdup("png");
+		basename = g_path_get_basename(filename);
+		tmp = strrchr(basename, '.');
+		if (tmp != NULL)
+			tmp[0] = '\0';
+		newfilename = g_strdup_printf("%s.png", basename);
+		g_free(basename);
+	} else {
+		/*
+		 * We're able to save the file in it's original format, so we
+		 * can use the original file name.
+		 */
+		newfilename = g_strdup(filename);
 	}
 
-	gdk_pixbuf_save(image->pixbuf, filename, type, &error, NULL);
+	gdk_pixbuf_save(image->pixbuf, newfilename, type, &error, NULL);
+
+	g_free(newfilename);
+	g_free(type);
 
 	if (error){
 #if GTK_CHECK_VERSION(2,4,0)
@@ -3368,8 +3374,6 @@ image_save_yes_cb(GtkIMHtmlImage *image, const char *filename)
 		gtk_widget_show(dialog);
 		g_error_free(error);
 	}
-
-	g_free(type);
 }
 
 #if GTK_CHECK_VERSION(2,4,0) /* FILECHOOSER */
@@ -5020,9 +5024,23 @@ void gtk_imhtml_set_funcs(GtkIMHtml *imhtml, GtkIMHtmlFuncs *f)
 
 void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 {
+	GtkIMHtmlButtons buttons;
+
 	if (flags & PURPLE_CONNECTION_HTML) {
 		char color[8];
 		GdkColor fg_color, bg_color;
+
+		buttons = GTK_IMHTML_ALL;
+
+		if (flags & PURPLE_CONNECTION_NO_BGCOLOR)
+			buttons &= ~GTK_IMHTML_BACKCOLOR;
+		if (flags & PURPLE_CONNECTION_NO_FONTSIZE)
+		{
+			buttons &= ~GTK_IMHTML_GROW;
+			buttons &= ~GTK_IMHTML_SHRINK;
+		}
+		if (flags & PURPLE_CONNECTION_NO_URLDESC)
+			buttons &= ~GTK_IMHTML_LINKDESC;
 
 		gtk_imhtml_set_format_functions(imhtml, GTK_IMHTML_ALL);
 		if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold") != imhtml->edit.bold)
@@ -5078,9 +5096,14 @@ void gtk_imhtml_setup_entry(GtkIMHtml *imhtml, PurpleConnectionFlags flags)
 		else
 			gtk_imhtml_set_whole_buffer_formatting_only(imhtml, FALSE);
 	} else {
+		buttons = GTK_IMHTML_SMILEY | GTK_IMHTML_IMAGE;
 		imhtml_clear_formatting(imhtml);
-		gtk_imhtml_set_format_functions(imhtml, 0);
 	}
+
+	if (flags & PURPLE_CONNECTION_NO_IMAGES)
+		buttons &= ~GTK_IMHTML_IMAGE;
+
+	gtk_imhtml_set_format_functions(imhtml, buttons);
 }
 
 

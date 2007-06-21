@@ -33,6 +33,8 @@
 #include <gnttree.h>
 #include <gntwindow.h>
 
+#include "finch.h"
+
 #include <account.h>
 #include <accountopt.h>
 #include <connection.h>
@@ -42,7 +44,6 @@
 
 #include "gntaccount.h"
 #include "gntblist.h"
-#include "finch.h"
 
 #include <string.h>
 
@@ -641,7 +642,7 @@ reset_accounts_win(GntWidget *widget, gpointer null)
 
 void finch_accounts_show_all()
 {
-	const GList *iter;
+	GList *iter;
 	GntWidget *box, *button;
 
 	if (accounts.window)
@@ -734,7 +735,7 @@ account_abled_cb(PurpleAccount *account, gpointer user_data)
 
 void finch_accounts_init()
 {
-	const GList *iter;
+	GList *iter;
 
 	purple_signal_connect(purple_accounts_get_handle(), "account-added",
 			finch_accounts_get_handle(), PURPLE_CALLBACK(account_added_callback),
@@ -831,7 +832,7 @@ add_user_cb(AddUserData *data)
 {
 	PurpleConnection *gc = purple_account_get_connection(data->account);
 
-	if (g_list_find((GList *)purple_connections_get_all(), gc))
+	if (g_list_find(purple_connections_get_all(), gc))
 	{
 		purple_blist_request_add_buddy(data->account, data->username,
 									 NULL, data->alias);

@@ -2118,7 +2118,7 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 	void *conv_handle = purple_conversations_get_handle();
-	const GList *convs;
+	GList *convs;
 
 	load_conf();
 
@@ -2137,7 +2137,7 @@ plugin_load(PurplePlugin *plugin)
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
-	const GList *convs;
+	GList *convs;
 
 	/* Detach from existing conversations */
 	for (convs = purple_get_conversations(); convs != NULL; convs = convs->next)

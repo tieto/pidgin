@@ -25,6 +25,8 @@
 
 #include <glib.h>
 
+#include "internal.h"
+
 #include "account.h"
 #include "connection.h"
 #include "debug.h"

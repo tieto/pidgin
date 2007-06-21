@@ -624,7 +624,7 @@ options_entry_cb(GtkWidget *widget, GdkEventFocus *evt, gpointer data)
 static void
 apply_method()
 {
-	const GList *convs;
+	GList *convs;
 	PidginWindow *purplewin = NULL;
 
 	for (convs = purple_get_conversations(); convs != NULL;
@@ -644,7 +644,7 @@ apply_method()
 static void
 apply_notify()
 {
-	const GList *convs = purple_get_conversations();
+	GList *convs = purple_get_conversations();
 
 	while (convs) {
 		PurpleConversation *conv = (PurpleConversation *)convs->data;
@@ -818,7 +818,7 @@ get_config_frame(PurplePlugin *plugin)
 static gboolean
 plugin_load(PurplePlugin *plugin)
 {
-	const GList *convs = purple_get_conversations();
+	GList *convs = purple_get_conversations();
 	void *conv_handle = purple_conversations_get_handle();
 	void *gtk_conv_handle = pidgin_conversations_get_handle();
 
@@ -860,7 +860,7 @@ plugin_load(PurplePlugin *plugin)
 static gboolean
 plugin_unload(PurplePlugin *plugin)
 {
-	const GList *convs = purple_get_conversations();
+	GList *convs = purple_get_conversations();
 
 	while (convs) {
 		PurpleConversation *conv = (PurpleConversation *)convs->data;

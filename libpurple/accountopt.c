@@ -22,6 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "internal.h"
+
 #include "accountopt.h"
 #include "util.h"
 
@@ -282,7 +284,7 @@ purple_account_option_get_masked(const PurpleAccountOption *option)
 	return option->masked;
 }
 
-const GList *
+GList *
 purple_account_option_get_list(const PurpleAccountOption *option)
 {
 	g_return_val_if_fail(option != NULL, NULL);

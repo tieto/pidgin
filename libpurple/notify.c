@@ -530,7 +530,7 @@ purple_notify_user_info_destroy(PurpleNotifyUserInfo *user_info)
 	g_free(user_info);
 }
 
-const GList *
+GList *
 purple_notify_user_info_get_entries(PurpleNotifyUserInfo *user_info)
 {
 	g_return_val_if_fail(user_info != NULL, NULL);
@@ -749,17 +749,15 @@ purple_notify_close(PurpleNotifyType type, void *ui_handle)
 void
 purple_notify_close_with_handle(void *handle)
 {
-	GList *l, *l_next;
+	GList *l, *prev = NULL;
 	PurpleNotifyUiOps *ops;
 
 	g_return_if_fail(handle != NULL);
 
 	ops = purple_notify_get_ui_ops();
 
-	for (l = handles; l != NULL; l = l_next) {
+	for (l = handles; l != NULL; l = prev ? prev->next : handles) {
 		PurpleNotifyInfo *info = l->data;
-
-		l_next = l->next;
 
 		if (info->handle == handle) {
 			handles = g_list_remove(handles, info);
@@ -771,7 +769,8 @@ purple_notify_close_with_handle(void *handle)
 				info->cb(info->cb_user_data);
 
 			g_free(info);
-		}
+		} else
+			prev = l;
 	}
 }
 

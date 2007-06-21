@@ -39,16 +39,17 @@ style "my-style-name" {
 }
 widget_class "*" style "my-style-name"
 
-# This style sets the expander size on a treeview to 0, which has the result
+# This sets the expander size on a treeview to 0, which has the result
 # of reducing the indent for items in the tree. This can be applied to the
-# Pidgin buddy list to reduce it's width.
-style "my-narrow-tree"
-{
-  GtkTreeView::expander_size = 0
-}
-
+# Pidgin buddy list to reduce the width of group and contact rows.
+# With the recent (~2.0.0) buddy list changes this isn't particularly
+# important anymore.
+#style "my-narrow-tree"
+#{
+#  GtkTreeView::expander_size = 0
+#}
 # And apply the style to the buddy list:
-widget "*pidgin_blist_treeview" style "my-narrow-tree"
+#widget "*pidgin_blist_treeview" style "my-narrow-tree"
 
 # In Pidgin, you can set custom keybindings in your theme.
 # Here is an example to follow:

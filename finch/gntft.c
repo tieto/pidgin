@@ -86,7 +86,7 @@ enum
 static void
 update_title_progress()
 {
-	const GList *list;
+	GList *list;
 	int num_active_xfers = 0;
 	guint64 total_bytes_xferred = 0;
 	guint64 total_file_size = 0;
@@ -172,7 +172,7 @@ stop_button_cb(GntButton *button)
 void
 finch_xfer_dialog_new(void)
 {
-	const GList *iter;
+	GList *iter;
 	GntWidget *window;
 	GntWidget *bbox;
 	GntWidget *button;
@@ -411,7 +411,7 @@ finch_xfer_dialog_update_xfer(PurpleXfer *xfer)
 
 	size_str      = purple_str_size_to_units(purple_xfer_get_size(xfer));
 	remaining_str = purple_str_size_to_units(purple_xfer_get_bytes_remaining(xfer));
-	kbsec = g_strdup_printf(_("%.2f KB/s"), kbps);
+	kbsec = g_strdup_printf(_("%.2f KiB/s"), kbps);
 
 	gnt_tree_change_text(GNT_TREE(xfer_dialog->tree), xfer, COLUMN_PROGRESS,
 			g_ascii_dtostr(prog_str, sizeof(prog_str), purple_xfer_get_progress(xfer) * 100.));

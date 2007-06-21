@@ -29,10 +29,11 @@
 #include <gnttree.h>
 #include <gntutils.h>
 
+#include "finch.h"
+
 #include <util.h>
 
 #include "gntnotify.h"
-#include "finch.h"
 
 static struct
 {

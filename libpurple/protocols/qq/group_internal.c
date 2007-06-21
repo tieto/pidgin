@@ -22,13 +22,13 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "internal.h"
 #include "blist.h"
 #include "debug.h"
 
 #include "buddy_opt.h"
 #include "group_free.h"
 #include "group_internal.h"
-#include "group_misc.h"
 #include "utils.h"
 
 static gchar *_qq_group_set_my_status_desc(qq_group *group)

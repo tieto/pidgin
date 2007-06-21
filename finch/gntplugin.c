@@ -29,10 +29,11 @@
 #include <gntline.h>
 #include <gnttree.h>
 
+#include "finch.h"
+
 #include "notify.h"
 #include "request.h"
 
-#include "finch.h"
 #include "gntplugin.h"
 #include "gntrequest.h"
 
@@ -105,6 +106,9 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 	PurplePlugin *plugin = current;
 	char *text;
 	GList *list = NULL, *iter = NULL;
+
+	if (!plugin)
+		return;
 
 	/* If the selected plugin was unseen before, mark it as seen. But save the list
 	 * only when the plugin list is closed. So if the user enables a plugin, and it

@@ -40,6 +40,12 @@
 
 typedef struct
 {
+	GtkWidget *window;
+	int count;
+} PidginUserInfo;
+
+typedef struct
+{
 	PurpleAccount *account;
 	char *url;
 	GtkWidget *label;
@@ -622,7 +628,7 @@ pidgin_notify_formatted(const char *title, const char *primary,
 	gtk_widget_show(button);
 
 	g_signal_connect_swapped(G_OBJECT(button), "clicked",
-							 G_CALLBACK(formatted_close_cb), window);
+							 G_CALLBACK(gtk_widget_destroy), window);
 	g_signal_connect(G_OBJECT(window), "key_press_event",
 					 G_CALLBACK(formatted_input_cb), NULL);
 
@@ -874,6 +880,11 @@ userinfo_hash(PurpleAccount *account, const char *who)
 static void
 remove_userinfo(GtkWidget *widget, gpointer key)
 {
+	PidginUserInfo *pinfo = g_hash_table_lookup(userinfo, key);
+
+	while (pinfo->count--)
+		purple_notify_close(PURPLE_NOTIFY_USERINFO, widget);
+
 	g_hash_table_remove(userinfo, key);
 }
 
@@ -884,26 +895,33 @@ pidgin_notify_userinfo(PurpleConnection *gc, const char *who,
 	char *info;
 	void *ui_handle;
 	char *key = userinfo_hash(purple_connection_get_account(gc), who);
+	PidginUserInfo *pinfo = NULL;
 
 	if (!userinfo) {
-		userinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
+		userinfo = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 	}
 
 	info = purple_notify_user_info_get_text_with_newline(user_info, "<br />");
-	ui_handle = g_hash_table_lookup(userinfo, key);
-	if (ui_handle != NULL) {
-		GtkIMHtml *imhtml = g_object_get_data(G_OBJECT(ui_handle), "info-widget");
+	pinfo = g_hash_table_lookup(userinfo, key);
+	if (pinfo != NULL) {
+		GtkIMHtml *imhtml = g_object_get_data(G_OBJECT(pinfo->window), "info-widget");
 		char *linked_text = purple_markup_linkify(info);
 		gtk_imhtml_clear(imhtml);
 		gtk_imhtml_append_text(imhtml, linked_text, notify_imhtml_options());
 		g_free(linked_text);
 		g_free(key);
+		ui_handle = pinfo->window;
+		pinfo->count++;
 	} else {
 		char *primary = g_strdup_printf(_("Info for %s"), who);
 		ui_handle = pidgin_notify_formatted(_("Buddy Information"), primary, NULL, info);
-		g_hash_table_insert(userinfo, key, ui_handle);
+		g_signal_handlers_disconnect_by_func(G_OBJECT(ui_handle), G_CALLBACK(formatted_close_cb), NULL);
 		g_signal_connect(G_OBJECT(ui_handle), "destroy", G_CALLBACK(remove_userinfo), key);
 		g_free(primary);
+		pinfo = g_new0(PidginUserInfo, 1);
+		pinfo->window = ui_handle;
+		pinfo->count = 1;
+		g_hash_table_insert(userinfo, key, pinfo);
 	}
 	g_free(info);
 	return ui_handle;

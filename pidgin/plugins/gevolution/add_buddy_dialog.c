@@ -162,7 +162,7 @@ add_ims(GevoAddBuddyDialog *dialog, EContact *contact, const char *name,
 		GList *list, const char *id)
 {
 	PurpleAccount *account = NULL;
-	const GList *l;
+	GList *l;
 	GtkTreeIter iter;
 	GdkPixbuf *pixbuf;
 

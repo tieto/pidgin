@@ -130,7 +130,7 @@ get_xfer_info_strings(PurpleXfer *xfer, char **kbsec, char **time_elapsed,
 	kbps    = (elapsed > 0 ? (kb_sent / elapsed) : 0);
 
 	if (kbsec != NULL) {
-		*kbsec = g_strdup_printf(_("%.2f KB/s"), kbps);
+		*kbsec = g_strdup_printf(_("%.2f KiB/s"), kbps);
 	}
 
 	if (time_elapsed != NULL)
@@ -248,10 +248,10 @@ update_detailed_info(PidginXferDialog *dialog, PurpleXfer *xfer)
 
 	get_xfer_info_strings(xfer, &kbsec, &time_elapsed, &time_remaining);
 
-	status = g_strdup_printf("%ld%% (%ld of %ld bytes)",
-							 (unsigned long)(purple_xfer_get_progress(xfer)*100),
-							 (unsigned long)purple_xfer_get_bytes_sent(xfer),
-							 (unsigned long)purple_xfer_get_size(xfer));
+	status = g_strdup_printf("%d%% (%" G_GSIZE_FORMAT " of %" G_GSIZE_FORMAT " bytes)",
+							 (int)(purple_xfer_get_progress(xfer)*100),
+							 purple_xfer_get_bytes_sent(xfer),
+							 purple_xfer_get_size(xfer));
 
 	if (purple_xfer_is_completed(xfer)) {
 

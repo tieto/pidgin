@@ -21,9 +21,6 @@
 ; GTK+ Directory Page
 !define GTK_UPGRADE_PROMPT			"Стара версия GTK+ runtime е открита. Искате ли да обновите?$\rNote: Pidgin може да не сработи ако не го направите."
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (само премахване)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Грешка при инсталиране на GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Въведеният път не може да бъде достъпен или създаден."

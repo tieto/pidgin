@@ -109,8 +109,7 @@ get_pending_list(guint max)
 static gboolean
 docklet_update_status()
 {
-	GList *convs;
-	const GList *l;
+	GList *convs, *l;
 	int count;
 	PurpleSavedStatus *saved_status;
 	PurpleStatusPrimitive newstatus = PURPLE_STATUS_OFFLINE;
@@ -214,7 +213,8 @@ docklet_update_status()
 static gboolean
 online_account_supports_chat()
 {
-	const GList *c = purple_connections_get_all();
+	GList *c = NULL;
+	c = purple_connections_get_all();
 
 	while(c != NULL) {
 		PurpleConnection *gc = c->data;

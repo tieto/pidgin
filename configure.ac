@@ -52,10 +52,10 @@ m4_define([purple_version],
           [purple_major_version.purple_minor_version.purple_micro_version])
 m4_define([purple_display_version], purple_version[]m4_ifdef([purple_version_suffix],[purple_version_suffix]))
 
-m4_define([gnt_lt_current], [0])
-m4_define([gnt_major_version], [1])
+m4_define([gnt_lt_current], [1])
+m4_define([gnt_major_version], [2])
 m4_define([gnt_minor_version], [0])
-m4_define([gnt_micro_version], [1])
+m4_define([gnt_micro_version], [0])
 m4_define([gnt_version_suffix], [devel])
 m4_define([gnt_version],
           [gnt_major_version.gnt_minor_version.gnt_micro_version])
@@ -142,7 +142,7 @@ AM_GLIB_GNU_GETTEXT
 dnl If we don't have msgfmt, then po/ is going to fail -- ensure that
 dnl AM_GLIB_GNU_GETTEXT found it.
 
-if test x$MSGFMT = xno -o x$GMSGFMT = x
+if test x$MSGFMT = xno
 then
 	AC_ERROR([
 
@@ -2104,6 +2104,8 @@ AC_OUTPUT([Makefile
 		   pidgin/pixmaps/tray/16/scalable/Makefile
 		   pidgin/pixmaps/tray/22/Makefile
 		   pidgin/pixmaps/tray/22/scalable/Makefile
+		   pidgin/pixmaps/tray/32/Makefile
+		   pidgin/pixmaps/tray/48/Makefile
 		   pidgin/plugins/Makefile
 		   pidgin/plugins/cap/Makefile
 		   pidgin/plugins/gestures/Makefile

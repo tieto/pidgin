@@ -370,12 +370,12 @@ bus_call (GstBus     *bus,
 		break;
 	case GST_MESSAGE_ERROR:
 		gst_message_parse_error(msg, &err, NULL);
-		purple_debug_error("gstreamer", err->message);
+		purple_debug_error("gstreamer", "%s\n", err->message);
 		g_error_free(err);
 		break;
 	case GST_MESSAGE_WARNING:
 		gst_message_parse_warning(msg, &err, NULL);
-		purple_debug_warning("gstreamer", err->message);
+		purple_debug_warning("gstreamer", "%s\n", err->message);
 		g_error_free(err);
 		break;
 	default:
