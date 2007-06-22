@@ -159,6 +159,12 @@ struct _PurpleCertificateScheme
 
 /** A set of operations used to provide logic for verifying a Certificate's
  *  authenticity.
+ *
+ * A Verifier provider must fill out these fields, then register it using
+ * purple_certificate_register_verifier()
+ *
+ * The (scheme_name, name) value must be unique for each Verifier - you may not
+ * register more than one Verifier of the same name for each Scheme
  */
 struct _PurpleCertificateVerifier
 {
@@ -171,6 +177,18 @@ struct _PurpleCertificateVerifier
 	 * using this Verifier
 	 */
 	gchar *scheme_name;
+
+	/**
+	 * Start the verification process
+	 *
+	 * To be called from purple_certificate_verify once it has
+	 * constructed the request. This will use the information in the
+	 * given VerificationRequest to check the certificate and callback
+	 * the requester with the verification results.
+	 *
+	 * @param vrq      Request to process
+	 */
+	void (* start_verification)(PurpleCertificateVerificationRequest *vrq);
 };
 
 /** Structure for a single certificate request
@@ -182,6 +200,10 @@ struct _PurpleCertificateVerificationRequest
 {
 	/** Reference to the verification logic used */
 	PurpleCertificateVerifier *verifier;
+	/** Reference to the scheme used.
+	 *
+	 * This is looked up from the Verifier when the Request is generated
+	 */
 
 	/**
 	 * Name to check that the certificate is issued to
@@ -238,6 +260,33 @@ purple_certificate_register_scheme(PurpleCertificateScheme *scheme);
  */
 gboolean
 purple_certificate_unregister_scheme(PurpleCertificateScheme *scheme);
+
+/** Look up a registered PurpleCertificateVerifier by scheme and name
+ * @param scheme_name  Scheme name. Case insensitive.
+ * @param ver_name     The verifier name. Case insensitive.
+ * @return Pointer to the located Verifier, or NULL if it isn't found.
+ */
+PurpleCertificateVerifier *
+purple_certificate_find_verifier(const gchar *scheme_name, const gchar *ver_name);
+
+
+/**
+ * Register a CertificateVerifier with libpurple
+ *
+ * @param vr     Verifier to register.
+ * @return TRUE if register succeeded, otherwise FALSE
+ */
+gboolean
+purple_certificate_register_verifier(PurpleCertificateVerifier *vr);
+
+/**
+ * Unregister a CertificateVerifier with libpurple
+ *
+ * @param vr     Verifier to unregister.
+ * @return TRUE if register succeeded, otherwise FALSE
+ */
+gboolean
+purple_certificate_unregister_verifier(PurpleCertificateVerifier *vr);
 
 /* TODO: ADD STUFF HERE */
 

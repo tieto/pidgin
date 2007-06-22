@@ -33,6 +33,35 @@
 
 /** List holding pointers to all registered certificate schemes */
 static GList *cert_schemes = NULL;
+/** List of registered Verifiers */
+static GList *cert_verifiers = NULL;
+
+void
+purple_certificate_verify (PurpleCertificateVerificationRequest *vrq,
+			   gchar *scheme_name, gchar *ver_name,
+			   gchar *subject_name, GList *cert_chain,
+			   PurpleCertificateVerifiedCallback cb,
+			   gpointer cb_data)
+{
+	PurpleCertificateScheme *scheme;
+	PurpleCertificateVerifier *verifier;
+	
+	g_return_val_if_fail(ver_name != NULL, NULL);
+	g_return_val_if_fail(subject_name != NULL, NULL);
+	/* If you don't have a cert to check, why are you requesting that it
+	   be verified? */
+	g_return_val_if_fail(cert_chain != NULL, NULL);
+	g_return_val_if_fail(cb != NULL, NULL);
+
+	/* Locate the verifier, first */
+
+	/* Construct and fill in the request fields */
+	vrq = g_new(PurpleCertificateVerificationRequest, 1);
+	vrq->cert_chain = cert_chain;
+	vrq->cb = cb;
+	vrq->cb_data = cb_data;
+	vrq->subject_name = g_strdup(subject_name);
+}
 
 PurpleCertificateScheme *
 purple_certificate_find_scheme(const gchar *name)
@@ -88,8 +117,72 @@ purple_certificate_unregister_scheme(PurpleCertificateScheme *scheme)
 
 	/* TODO: signalling? */
 
-	/* TODO: unregister all CertificatePools for this scheme! */
+	/* TODO: unregister all CertificateVerifiers for this scheme?*/
+	/* TODO: unregister all CertificatePools for this scheme? */
+	/* Neither of the above should be necessary, though */
 	cert_schemes = g_list_remove(cert_schemes, scheme);
+
+	return TRUE;
+}
+
+PurpleCertificateVerifier *
+purple_certificate_find_verifier(const gchar *scheme_name, const gchar *ver_name)
+{
+	PurpleCertificateVerifier *vr = NULL;
+	GList *l;
+
+	g_return_val_if_fail(scheme_name, NULL);
+	g_return_val_if_fail(ver_name, NULL);
+
+	/* Traverse the list of registered verifiers and locate the
+	   one whose name matches */
+	for(l = cert_verifiers; l; l = l->next) {
+		vr = (PurpleCertificateVerifier *)(l->data);
+
+		/* Scheme and name match? */
+		if(!g_ascii_strcasecmp(vr->scheme_name, scheme_name) &&
+		   !g_ascii_strcasecmp(vr->name, ver_name))
+			return vr;
+	}
+
+	purple_debug_warning("certificate",
+			     "CertificateVerifier %s, %s requested but not found.\n",
+			     scheme_name, ver_name);
+
+	/* TODO: Signalling and such? */
+	
+	return NULL;
+}
+
+
+gboolean
+purple_certificate_register_verifier(PurpleCertificateVerifier *vr)
+{
+	g_return_val_if_fail(vr != NULL, FALSE);
+
+	/* Make sure no verifier is registered with the same scheme/name */
+	if (purple_certificate_find_verifier(vr->scheme_name, vr->name) != NULL) {
+		return FALSE;
+	}
+
+	/* Okay, we're golden. Register it. */
+	cert_verifiers = g_list_append(cert_verifiers, vr);
+
+	/* TODO: Signalling and such? */
+	return TRUE;
+}
+
+gboolean
+purple_certificate_unregister_verifier(PurpleCertificateVerifier *vr)
+{
+	if (NULL == vr) {
+		purple_debug_warning("certificate",
+				     "Attempting to unregister NULL verifier");
+	}
+
+	/* TODO: signalling? */
+
+	cert_verifiers = g_list_remove(cert_verifiers, vr);
 
 	return TRUE;
 }
