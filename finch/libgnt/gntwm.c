@@ -1517,7 +1517,7 @@ match_title(gpointer title, gpointer n, gpointer wid_title)
 #if !GLIB_CHECK_VERSION(2,4,0)
 typedef struct
 {
-	GntWM *wm;
+	GHashTable *table;
 	GntWS *ret;
 	gchar *title;
 } title_search;
@@ -1528,9 +1528,25 @@ static void match_title_search(gpointer key, gpointer value, gpointer search)
 	if (s->ret)
 		return;
 	if (match_title(key, NULL, s->title))
-		s->ret = g_hash_table_lookup(s->wm->title_places, key);
+		s->ret = g_hash_table_lookup(s->table, key);
+}
+
+static GntWS *
+gnt_hash_table_find(GHashTable * table, gchar *wid_title)
+{
+	GntWS * ret;
+	title_search *s = NULL;
+	s = g_new0(title_search, 1);
+	s->table = table;
+	s->title = wid_title;
+	g_hash_table_foreach(table, match_title_search, s);
+	ret = s->ret;
+
+	return ret;
+	
 }
 #endif
+
 
 static GntWS *
 new_widget_find_workspace(GntWM *wm, GntWidget *widget, gchar *wid_title)
@@ -1540,18 +1556,19 @@ new_widget_find_workspace(GntWM *wm, GntWidget *widget, gchar *wid_title)
 #if GLIB_CHECK_VERSION(2,4,0)
 	ret = g_hash_table_find(wm->title_places, match_title, wid_title);
 #else
-	title_search *s = NULL;
-	s = g_new0(title_search, 1);
-	s->wm = wm;
-	s->title = wid_title;
-	g_hash_table_foreach(wm->title_places, match_title_search, s);
-	ret = s->ret;
+	ret = gnt_hash_table_find(wm->title_places, wid_title);
 #endif
 	if (ret)
 		return ret;
 	name = gnt_widget_get_name(widget);
-	if (name)
-		ret = g_hash_table_lookup(wm->name_places, name);
+	if (name){
+#if GLIB_CHECK_VERSION(2,4,0)
+		ret = g_hash_table_find(wm->name_places, match_title,  (gchar *)name);
+#else
+		ret = gnt_hash_table_find(wm->name_places, (gchar *)name);
+
+#endif
+	}
 	return ret ? ret : wm->cws;
 }
 
