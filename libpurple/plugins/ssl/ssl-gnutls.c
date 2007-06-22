@@ -521,6 +521,34 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 	/* Control does not reach this point */
 }
 
+static GByteArray *
+x509_sha1sum(PurpleCertificate *crt)
+{
+	size_t hashlen = 20; /* SHA1 hashes are 20 bytes */
+	size_t tmpsz = hashlen; /* Throw-away variable for GnuTLS to stomp on*/
+	gnutls_x509_crt_t crt_dat;
+	GByteArray *hash; /**< Final hash container */
+	guchar hashbuf[hashlen]; /**< Temporary buffer to contain hash */
+
+	g_return_val_if_fail(crt, NULL);
+
+	crt_dat = *( (gnutls_x509_crt_t *) crt->data );
+
+	/* Extract the fingerprint */
+	/* TODO: Errorcheck? */
+	gnutls_x509_crt_get_fingerprint(crt_dat, GNUTLS_MAC_SHA,
+					hashbuf, &tmpsz);
+
+	/* This shouldn't happen */
+	g_return_val_if_fail(tmpsz == hashlen, NULL);
+	
+	/* Okay, now create and fill hash array */
+	hash = g_byte_array_new();
+	g_byte_array_append(hash, hashbuf, hashlen);
+
+	return hash;
+}
+
 /* X.509 certificate operations provided by this plugin */
 /* TODO: Flesh this out! */
 static PurpleCertificateScheme x509_gnutls = {
@@ -528,7 +556,7 @@ static PurpleCertificateScheme x509_gnutls = {
 	N_("X.509 Certificates"),        /* User-visible scheme name */
 	x509_import_from_file,           /* Certificate import function */
 	x509_destroy_certificate,        /* Destroy cert */
-	NULL,                            /* SHA1 fingerprint */
+	x509_sha1sum,                    /* SHA1 fingerprint */
 	NULL,                            /* Subject */
 	NULL,                            /* Unique ID */
 	NULL                             /* Issuer Unique ID */
