@@ -1743,6 +1743,7 @@ static void trillian_logger_finalize(PurpleLog *log)
 #define QIP_LOG_OUT_MESSAGE (QIP_LOG_DELIMITER ">-")
 #define QIP_LOG_IN_MESSAGE_ESC (QIP_LOG_DELIMITER "&lt;-")
 #define QIP_LOG_OUT_MESSAGE_ESC (QIP_LOG_DELIMITER "&gt;-")
+#define QIP_LOG_TIMEOUT (60*60)
 
 static PurpleLogLogger *qip_logger;
 
@@ -1763,10 +1764,9 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	char *username;
 	char *filename;
 	char *path;
+	gsize length;
 	GError *error = NULL;
 	gchar *contents = NULL;
-	gsize length;
-	gchar *c;
 
 	g_return_val_if_fail(sn != NULL, list);
 	g_return_val_if_fail(account != NULL, list);
@@ -1813,19 +1813,18 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
 		"Reading %s\n", path);
 	
-	error = NULL:
-	if (!g_file_get_contents(path, &contents, &length, &error)) 
+	error = NULL;
+	if (!g_file_get_contents(path, &contents, &length, &error)) {
 		if (error) {
 			purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
 				"Couldn't read file %s \n", path);
 
 			g_error_free(error);
 		}
-	
-	if (contents) {
+	} else if (contents) {
 		struct qip_logger_data *data = NULL;
 		gchar * utf8_string = NULL;
-		
+
 		purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
 			"File %s is found\n", filename);
 			
@@ -1838,73 +1837,131 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 				g_error_free(error);
 			}
 		} else {
+			struct tm prev_tm;
+			gboolean prev_tm_init = FALSE;
+			gchar *c;
+			gchar *start_log;
+			gchar *escaped;
+			int offset = 0;
+			
 			purple_debug(PURPLE_DEBUG_INFO, "QIP logger lise",
 				"File %s converted successfully\n", filename);
 			
 			g_free(contents);
-			contents = utf8_string;
-
+			escaped = g_markup_escape_text(utf8_string, -1);
+			contents = escaped;
+		
 			c = contents;
-			if (purple_str_has_prefix(c, QIP_LOG_IN_MESSAGE) || 
-				purple_str_has_prefix(c, QIP_LOG_OUT_MESSAGE)) {
-				
-				/* find next line */
-				c = strstr(c, "\n");
+			start_log = contents;
+			while (*c) {
+				if (purple_str_has_prefix(c, QIP_LOG_IN_MESSAGE_ESC) || 
+					purple_str_has_prefix(c, QIP_LOG_OUT_MESSAGE_ESC)) {
+					gchar *new_line = c;
 
-				if (*c) {
-					char *timestamp = ++c;
+					purple_debug(PURPLE_DEBUG_INFO, "QIP logger lise",
+						"Find message\n", filename);
 					
-					timestamp = strstr(timestamp, "(");
-					
-					if (*timestamp == '(') {
+					/* find EOL */
+					c = strstr(c, "\n");
+					c++;
+					/* searching '(' character from the end of the line */
+					c = strstr(c, "\n");
+					while (*c && *c != '(')
+						--c;
+
+					if (*c == '(') {
+						const char *timestamp = ++c;
 						struct tm tm;
+						purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
+							"Timestap found\n");
 						
-						timestamp++;
-						
-						/*  Parse the time, day, month and year */
+						/*  Parse the time, day, month and year  */
 						if (sscanf(timestamp, "%u:%u:%u %u/%u/%u",
 							&tm.tm_hour, &tm.tm_min, &tm.tm_sec,
 							&tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 6) {
 								purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
 								"Parsing timestamp error\n");
 						} else {
-							PurpleLog *log;
-
-							
 							/* cos month of year in [0,11] */
 							tm.tm_mon -= 1; 
-							/* cos years since 1900 */
+							/* cos years since 1900  */
 							tm.tm_year -= 1900;
 
-							purple_debug(PURPLE_DEBUG_INFO, 
-								"QIP logger list",
-								"Parsing timestamp: %u/%u/%u %u:%u:%u\n", 
-								tm.tm_year, tm.tm_mon, tm.tm_mday,
-								tm.tm_hour, tm.tm_min, tm.tm_sec);
-							
 							/* Let the C library deal with
-							* daylight savings time.
-							*/
+							* daylight savings time. */
 							tm.tm_isdst = -1;
 
-							data = g_new0(
-								struct qip_logger_data, 1);
-							data->path = g_strdup(path);
-							data->offset = 0;
-							data->length = strlen(contents);
+							if (!prev_tm_init) {
+								prev_tm = tm;
+								prev_tm_init = TRUE;
+								
+							} else {
+								double time_diff = 0;
+								
+								time_diff = difftime(mktime(&tm), mktime(&prev_tm));
+
+								if (time_diff > QIP_LOG_TIMEOUT) {
+									PurpleLog *log;
+									
+									/* filling data */
+									data = g_new0(
+										struct qip_logger_data, 1);
+									data->path = g_strdup(path);
+									data->length = new_line - start_log;
+									data->offset = offset;
+									offset += data->length;
+									
+									purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
+										"Creating log: path = (%s); length = (%d); offset = (%d)\n", data->path, data->length, data->offset);
+
+									/* XXX: Look into this later... Should we pass in a struct tm? */
+									log = purple_log_new(PURPLE_LOG_IM,
+										sn, account, NULL, mktime(&prev_tm), NULL);
+									
+									log->logger = qip_logger;
+									log->logger_data = data;
+									
+									list = g_list_append(list, log);
+									
+									prev_tm = tm;
+									start_log = new_line;
+								}
+							}
 							
-							/* XXX: Look into this later... Should we pass in a struct tm? */
-							log = purple_log_new(PURPLE_LOG_IM,
-								sn, account, NULL, mktime(&tm), NULL);
-							
-							log->logger = qip_logger;
-							log->logger_data = data;
-							
-							list = g_list_append(list, log);
-						} 
-					} 
-				} 
-			} 
+							/* find EOF */
+							c = strstr(c, "\n");
+							c++;
+						}
+					}
+				} else {
+					c = strstr(c, "\n");
+					c++;
+				}
+			}
+			
+			/* adding last log */
+			if (prev_tm_init) {
+				PurpleLog *log;
+			
+				/* filling data */
+				data = g_new0(
+				struct qip_logger_data, 1);
+				data->path = g_strdup(path);
+				data->length = c - start_log;
+				data->offset = offset;
+				offset += data->length;
+				purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
+					"Creating log: path = (%s); length = (%d); offset = (%d)\n", data->path, data->length, data->offset);
+
+					/* XXX: Look into this later... Should we pass in a struct tm? */
+				log = purple_log_new(PURPLE_LOG_IM,
+					sn, account, NULL, mktime(&prev_tm), NULL);
+
+					log->logger = qip_logger;
+				log->logger_data = data;
+
+				list = g_list_append(list, log);
+			}
 		}
 		g_free(contents); 
 	} 
@@ -1958,6 +2015,7 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			}
 		} else {
 			char *escaped;
+			char *selected;
 
 			purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
 				"File %s converted successfully\n", data->path);
@@ -1972,6 +2030,13 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			g_free(contents);
 			contents = escaped;
 			
+			selected = g_strndup(contents + data->offset, data->length + 2);
+			selected[data->length] = '\n';
+			selected[data->length + 1] = '\0';
+			
+			g_free(contents);
+			contents = selected;
+			
 			/* Apply formatting... */
 			formatted = g_string_sized_new(strlen(contents));
 			c = contents;
@@ -1984,9 +2049,6 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 					purple_str_has_prefix(line, QIP_LOG_OUT_MESSAGE_ESC)) {
 					const char *buddy_name;
 					is_in_message = purple_str_has_prefix(line, QIP_LOG_IN_MESSAGE_ESC);
-					
-					purple_debug(PURPLE_DEBUG_INFO, "QIP loggger read",
-						"%s message\n", (is_in_message) ? "incoming" : "Outgoing");
 					
 					/* find EOL */
 					c = strstr(c, "\n");
@@ -2038,27 +2100,14 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 							
 							/* find EOF */
 							c = strstr(c, "\n");
-
 							line = ++c;
-
-							if ((c = strstr(c, "\n")))
-								*c = '\0';
-							
-							purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
-								"writing message: \"%s\"\n", line);
-								
-							g_string_append(formatted, line);
-							line = ++c;
-							g_string_append_c(formatted, '\n');
 						}
 					}
 				} else {
-					if ((c = strchr(c, '\n')))
+					if ((c = strstr(c, "\n")))
 						*c = '\0';
 				
 					if (line[0] != '\n' && line[0] != '\r') {
-						purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
-							"line is not delimiter \"%s\"\n", line);
 						
 						g_string_append(formatted, line);
 						g_string_append_c(formatted, '\n');
