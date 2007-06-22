@@ -72,16 +72,6 @@ GList *msim_status_types(PurpleAccount *acct)
 
     types = NULL;
 
-	/* TODO: Fix these:
-	 *
-	 * g_log: purple_presence_get_active_status: assertion `presence != NULL' failed
-	 * g_log: purple_status_get_name: assertion `status != NULL' failed
-	 * [...]
-	 *
-	 * and 
-	 * g_log: purple_presence_set_status_active: assertion `status != NULL' failed
-	 * [...]
-	 */
     status = purple_status_type_new_full(PURPLE_STATUS_AVAILABLE, NULL, NULL, FALSE, TRUE, FALSE);
     types = g_list_append(types, status);
 
@@ -1704,7 +1694,6 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
  *
  * I always return TRUE, to allow sending to buddies whose status has not yet
  * been received. The protocol _does_ support offline messages, but not this plugin.
- * TODO: Real offline message support.
  */
 gboolean msim_offline_message(const PurpleBuddy *buddy)
 {
