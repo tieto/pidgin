@@ -113,6 +113,35 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 	} else {
 		purple_debug_info("gnutls", "Handshake complete\n");
 
+		/* TODO: Remove all this debugging babble */
+		/* Now we are cooking with gas! */
+		PurpleSslOps *ops = purple_ssl_get_ops();
+		GList * peers = ops->get_peer_certificates(gsc);
+		
+		PurpleCertificateScheme *x509 =
+			purple_certificate_find_scheme("x509");
+
+		GList * l;
+		for (l=peers; l; l = l->next) {
+			PurpleCertificate *crt = l->data;
+			GByteArray *z =
+				x509->get_fingerprint_sha1(crt);
+			gchar * fpr =
+				purple_base16_encode_chunked(z->data,
+							     z->len);
+
+			purple_debug_info("gnutls/x509",
+					  "Key print: %s\n",
+					  fpr);
+
+			/* Kill the cert! */
+			x509->destroy_certificate(crt);
+			
+			g_free(fpr);
+			g_byte_array_free(z, TRUE);
+		}
+		g_list_free(peers);
+		
 		{
 		  const gnutls_datum_t *cert_list;
 		  unsigned int cert_list_size = 0;
