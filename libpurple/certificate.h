@@ -107,7 +107,8 @@ struct _PurpleCertificateScheme
 	 * Retrieves the certificate public key fingerprint using SHA1
 	 *
 	 * @param crt   Certificate instance
-	 * @return Binary representation of SHA1 hash
+	 * @return Binary representation of SHA1 hash - must be freed using
+	 *         g_byte_array_free()
 	 */
 	GByteArray * (* get_fingerprint_sha1)(PurpleCertificate *crt);
 
