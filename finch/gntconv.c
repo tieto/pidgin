@@ -485,7 +485,24 @@ finch_create_conversation(PurpleConversation *conv)
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
 	gnt_box_set_pad(GNT_BOX(ggc->window), 0);
-	gnt_widget_set_name(ggc->window, "conversation-window");
+
+	switch(conv->type){
+		case PURPLE_CONV_TYPE_UNKNOWN:
+			gnt_widget_set_name(ggc->window, "conversation-window-unknown" );
+			break;
+		case PURPLE_CONV_TYPE_IM:
+			gnt_widget_set_name(ggc->window, "conversation-window-im" );
+			break;
+		case PURPLE_CONV_TYPE_CHAT:
+			gnt_widget_set_name(ggc->window, "conversation-window-chat" );
+			break;
+		case PURPLE_CONV_TYPE_MISC:
+			gnt_widget_set_name(ggc->window, "conversation-window-misc" );
+			break;
+		case PURPLE_CONV_TYPE_ANY:
+			gnt_widget_set_name(ggc->window, "conversation-window-any" );
+			break;
+	}
 
 	gg_create_menu(ggc);
 
