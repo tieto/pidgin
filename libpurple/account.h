@@ -36,7 +36,7 @@ typedef struct _PurpleAccount      PurpleAccount;
 
 typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
 typedef void (*PurpleAccountRequestAuthorizationCb)(void *);
-typedef void (*PurpleAccountRegistrationCb)(PurpleAccount *account, gboolean succeeded, const char *username, const char *password, void *user_data);
+typedef void (*PurpleAccountRegistrationCb)(PurpleAccount *account, gboolean succeeded, void *user_data);
 
 #include "connection.h"
 #include "log.h"
