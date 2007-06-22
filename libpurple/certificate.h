@@ -63,7 +63,7 @@ struct _PurpleCertificate
 /** A certificate type
  *
  *  A CertificateScheme must implement all of the fields in the structure,
- *  and register it using TODO:purple_register_certscheme()
+ *  and register it using purple_certificate_register_scheme()
  *
  *  There may be only ONE CertificateScheme provided for each certificate
  *  type, as specified by the "name" field.
