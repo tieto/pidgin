@@ -87,8 +87,12 @@ gnt_ws_init(GTypeInstance *instance, gpointer class)
 
 void gnt_ws_add_widget(GntWS *ws, GntWidget* wid)
 {
+	GntWidget *oldfocus;
+	oldfocus = ws->ordered ? ws->ordered->data : NULL;
 	ws->list = g_list_append(ws->list, wid);
 	ws->ordered = g_list_prepend(ws->ordered, wid);
+	if (oldfocus)
+		gnt_widget_set_focus(oldfocus, FALSE);
 }
 
 void gnt_ws_remove_widget(GntWS *ws, GntWidget* wid)
