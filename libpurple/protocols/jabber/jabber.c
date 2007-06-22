@@ -642,14 +642,26 @@ jabber_connection_schedule_close(JabberStream *js)
 static void
 jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 {
+	PurpleAccount *account = purple_connection_get_account(js->gc);
 	const char *type = xmlnode_get_attrib(packet, "type");
 	char *buf;
 	char *to = data;
 
 	if(!strcmp(type, "result")) {
-		if(js->registration)
+		if(js->registration) {
 			buf = g_strdup_printf(_("Registration of %s@%s successful"),
 				js->user->node, js->user->domain);
+			if(account->registration_cb) {
+				char *jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+				(account->registration_cb)(account, TRUE, jid, js->password, account->registration_cb_user_data);
+				g_free(jid);
+				/* the password shouldn't be kept around longer than necessary */
+				if(js->password) {
+					g_free(js->password);
+					js->password = NULL;
+				}
+			}
+		}
 		else
 			buf = g_strdup_printf(_("Registration to %s successful"),
 				to);
@@ -665,6 +677,16 @@ jabber_registration_result_cb(JabberStream *js, xmlnode *packet, gpointer data)
 		purple_notify_error(NULL, _("Registration Failed"),
 				_("Registration Failed"), msg);
 		g_free(msg);
+		if(account->registration_cb) {
+			char *jid = g_strdup_printf("%s@%s", js->user->node, js->user->domain);
+			(account->registration_cb)(account, FALSE, NULL, NULL, account->registration_cb_user_data);
+			g_free(jid);
+			/* the password shouldn't be kept around longer than necessary */
+			if(js->password) {
+				g_free(js->password);
+				js->password = NULL;
+			}
+		}
 	}
 	g_free(to);
 	if(js->registration)
@@ -733,6 +755,11 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 					g_free(cbdata->js->user->node);
 				cbdata->js->user->node = g_strdup(value);
 			}
+			if(cbdata->js->registration && !strcmp(id, "password")) {
+				if(cbdata->js->password)
+					g_free(cbdata->js->password);
+				cbdata->js->password = g_strdup(value);
+			}
 		}
 	}
 
@@ -752,8 +779,12 @@ jabber_register_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 static void
 jabber_register_cancel_cb(JabberRegisterCBData *cbdata, PurpleRequestFields *fields)
 {
-	if(cbdata->js->registration)
+	PurpleAccount *account = purple_connection_get_account(cbdata->js->gc);
+	if(cbdata->js->registration) {
+		if(account->registration_cb)
+			(account->registration_cb)(account, FALSE, NULL, NULL, account->registration_cb_user_data);
 		jabber_connection_schedule_close(cbdata->js);
+	}
 	g_free(cbdata->who);
 	g_free(cbdata);
 }
@@ -776,6 +807,7 @@ static void jabber_register_x_data_cb(JabberStream *js, xmlnode *result, gpointe
 
 void jabber_register_parse(JabberStream *js, xmlnode *packet)
 {
+	PurpleAccount *account = purple_connection_get_account(js->gc);
 	const char *type;
 	const char *from = xmlnode_get_attrib(packet, "from");
 	PurpleRequestFields *fields;
@@ -797,8 +829,11 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 	if(js->registration && xmlnode_get_child(query, "registered")) {
 		purple_notify_error(NULL, _("Already Registered"),
 				_("Already Registered"), NULL);
-		if(js->registration)
+		if(js->registration) {
+			if(account->registration_cb)
+				(account->registration_cb)(account, FALSE, NULL, NULL, account->registration_cb_user_data);
 			jabber_connection_schedule_close(js);
+		}
 		return;
 	}
 
@@ -817,6 +852,8 @@ void jabber_register_parse(JabberStream *js, xmlnode *packet)
 				g_free(href);
 				if(js->registration) {
 					js->gc->wants_to_die = TRUE;
+					if(account->registration_cb) /* succeeded, but we have no login info */
+						(account->registration_cb)(account, TRUE, NULL, NULL, account->registration_cb_user_data);
 					jabber_connection_schedule_close(js);
 				}
 				return;
@@ -1097,6 +1134,8 @@ void jabber_close(PurpleConnection *gc)
 #endif
 	if(js->serverFQDN)
 		g_free(js->serverFQDN);
+	if(js->password)
+		g_free(js->password);
 	g_free(js->server_name);
 	g_free(js->gmail_last_time);
 	g_free(js->gmail_last_tid);

@@ -154,6 +154,9 @@ struct _JabberStream
 #endif
 	char *serverFQDN;
 	
+	/* don't expect this to be filled in */
+	char *password;
+	
 	/* does the local server support PEP? */
 	gboolean pep;
 	

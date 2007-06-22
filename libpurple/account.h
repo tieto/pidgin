@@ -36,6 +36,7 @@ typedef struct _PurpleAccount      PurpleAccount;
 
 typedef gboolean (*PurpleFilterAccountFunc)(PurpleAccount *account);
 typedef void (*PurpleAccountRequestAuthorizationCb)(void *);
+typedef void (*PurpleAccountRegistrationCb)(PurpleAccount *account, gboolean succeeded, const char *username, const char *password, void *user_data);
 
 #include "connection.h"
 #include "log.h"
@@ -106,6 +107,8 @@ struct _PurpleAccount
 	PurpleLog *system_log;        /**< The system log                         */
 
 	void *ui_data;              /**< The UI can put data here.              */
+	PurpleAccountRegistrationCb registration_cb;
+	void *registration_cb_user_data;
 };
 
 #ifdef __cplusplus
@@ -140,6 +143,15 @@ void purple_account_destroy(PurpleAccount *account);
  * @param account The account to connect to.
  */
 void purple_account_connect(PurpleAccount *account);
+
+/**
+ * Sets the callback for successful registration.
+ *
+ * @param account	The account for which this callback should be used
+ * @param cb	The callback
+ * @param user_data	The user data passed to the callback
+ */
+void purple_account_set_register_callback(PurpleAccount *account, PurpleAccountRegistrationCb cb, void *user_data);
 
 /**
  * Registers an account.
