@@ -47,6 +47,17 @@ typedef struct _PurpleCertificateScheme PurpleCertificateScheme;
 typedef struct _PurpleCertificateVerifier PurpleCertificateVerifier;
 typedef struct _PurpleCertificateVerificationRequest PurpleCertificateVerificationRequest;
 
+/**
+ * Callback function for the results of a verification check
+ * @param vrq      Request structure operated on
+ * @param st       Status code
+ * @param userdata User-defined data
+ */
+typedef void (*PurpleCertificateVerifiedCallback)
+		(PurpleCertificateVerificationRequest *vrq,
+		 PurpleCertificateVerificationStatus,
+		 gpointer userdata);
+							  
 /** A certificate instance
  *
  *  An opaque data structure representing a single certificate under some
@@ -150,15 +161,16 @@ struct _PurpleCertificateScheme
  *  authenticity.
  */
 struct _PurpleCertificateVerifier
-{	
-	/** Scheme this Verifier operates on */
-	PurpleCertificateScheme *scheme;
-
-	/** Internal name used for lookups
+{
+	/** Name of the Verifier - case insensitive */
+	gchar *name;
+	
+	/** Name of the scheme this Verifier operates on
 	 *
-	 * Case insensitive
+	 * The scheme will be looked up by name when a Request is generated
+	 * using this Verifier
 	 */
-	gchar * name;
+	gchar *scheme_name;
 };
 
 /** Structure for a single certificate request
@@ -171,7 +183,8 @@ struct _PurpleCertificateVerificationRequest
 	/** Reference to the verification logic used */
 	PurpleCertificateVerifier *verifier;
 
-	/** Certificate subject's name.
+	/**
+	 * Name to check that the certificate is issued to
 	 *
 	 * For X.509 certificates, this is the Common Name
 	 */
@@ -185,7 +198,12 @@ struct _PurpleCertificateVerificationRequest
 	GList *cert_chain;
 	
 	/** Internal data used by the Verifier code */
-	gpointer *data;
+	gpointer data;
+
+	/** Function to call with the verification result */
+	PurpleCertificateVerifiedCallback cb;
+	/** Data to pass to the post-verification callback */
+	gpointer cb_data;
 };
 
 /*****************************************************************************/
