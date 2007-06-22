@@ -21,15 +21,18 @@
  */
 #include "internal.h"
 #include "debug.h"
+#include "certificate.h"
 #include "plugin.h"
 #include "sslconn.h"
 #include "version.h"
+#include "util.h"
 
 #define SSL_GNUTLS_PLUGIN_ID "ssl-gnutls"
 
 #ifdef HAVE_GNUTLS
 
 #include <gnutls/gnutls.h>
+#include <gnutls/x509.h>
 
 typedef struct
 {
@@ -44,9 +47,25 @@ static gnutls_certificate_client_credentials xcred;
 static void
 ssl_gnutls_init_gnutls(void)
 {
+	/* Configure GnuTLS to use glib memory management */
+	/* I expect that this isn't really necessary, but it may prevent
+	   some bugs */
+	/* TODO: It may be necessary to wrap this allocators for GnuTLS.
+	   If there are strange bugs, perhaps look here (yes, I am a
+	   hypocrite) */
+	gnutls_global_set_mem_functions(
+		(gnutls_alloc_function)   g_malloc0, /* malloc */
+		(gnutls_alloc_function)   g_malloc0, /* secure malloc */
+		NULL,      /* mem_is_secure */
+		(gnutls_realloc_function) g_realloc, /* realloc */
+		(gnutls_free_function)    g_free     /* free */
+		);
+	
 	gnutls_global_init();
 
 	gnutls_certificate_allocate_credentials(&xcred);
+
+	/* TODO: I can likely remove this */
 	gnutls_certificate_set_x509_trust_file(xcred, "ca.pem",
 		GNUTLS_X509_FMT_PEM);
 }
@@ -73,7 +92,7 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
 	ssize_t ret;
 
-	purple_debug_info("gnutls", "Handshaking\n");
+	purple_debug_info("gnutls", "Handshaking with %s\n", gsc->host);
 	ret = gnutls_handshake(gnutls_data->session);
 
 	if(ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED)
@@ -94,6 +113,96 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 	} else {
 		purple_debug_info("gnutls", "Handshake complete\n");
 
+		/* TODO: Remove all this debugging babble */
+		/* Now we are cooking with gas! */
+		PurpleSslOps *ops = purple_ssl_get_ops();
+		GList * peers = ops->get_peer_certificates(gsc);
+		
+		PurpleCertificateScheme *x509 =
+			purple_certificate_find_scheme("x509");
+
+		GList * l;
+		for (l=peers; l; l = l->next) {
+			PurpleCertificate *crt = l->data;
+			GByteArray *z =
+				x509->get_fingerprint_sha1(crt);
+			gchar * fpr =
+				purple_base16_encode_chunked(z->data,
+							     z->len);
+
+			purple_debug_info("gnutls/x509",
+					  "Key print: %s\n",
+					  fpr);
+
+			/* Kill the cert! */
+			x509->destroy_certificate(crt);
+			
+			g_free(fpr);
+			g_byte_array_free(z, TRUE);
+		}
+		g_list_free(peers);
+		
+		{
+		  const gnutls_datum_t *cert_list;
+		  unsigned int cert_list_size = 0;
+		  gnutls_session_t session=gnutls_data->session;
+		  
+		  cert_list =
+		    gnutls_certificate_get_peers(session, &cert_list_size);
+		  
+		  purple_debug_info("gnutls",
+				    "Peer provided %d certs\n",
+				    cert_list_size);
+		  int i;
+		  for (i=0; i<cert_list_size; i++)
+		    {
+		      gchar fpr_bin[256];
+		      gsize fpr_bin_sz = sizeof(fpr_bin);
+		      gchar * fpr_asc = NULL;
+		      gchar tbuf[256];
+		      gsize tsz=sizeof(tbuf);
+		      gchar * tasc = NULL;
+		      gnutls_x509_crt_t cert;
+		      
+		      gnutls_x509_crt_init(&cert);
+		      gnutls_x509_crt_import (cert, &cert_list[i],
+					      GNUTLS_X509_FMT_DER);
+		      
+		      gnutls_x509_crt_get_fingerprint(cert, GNUTLS_MAC_SHA,
+						      fpr_bin, &fpr_bin_sz);
+		      
+		      fpr_asc =
+			purple_base16_encode_chunked(fpr_bin,fpr_bin_sz);
+		      
+		      purple_debug_info("gnutls", 
+					"Lvl %d SHA1 fingerprint: %s\n",
+					i, fpr_asc);
+		      
+		      tsz=sizeof(tbuf);
+		      gnutls_x509_crt_get_serial(cert,tbuf,&tsz);
+		      tasc=
+			purple_base16_encode_chunked(tbuf, tsz);
+		      purple_debug_info("gnutls",
+					"Serial: %s\n",
+					tasc);
+		      g_free(tasc);
+
+		      tsz=sizeof(tbuf);
+		      gnutls_x509_crt_get_dn (cert, tbuf, &tsz);
+		      purple_debug_info("gnutls",
+					"Cert DN: %s\n",
+					tbuf);
+		      tsz=sizeof(tbuf);
+		      gnutls_x509_crt_get_issuer_dn (cert, tbuf, &tsz);
+		      purple_debug_info("gnutls",
+					"Cert Issuer DN: %s\n",
+					tbuf);
+
+		      g_free(fpr_asc); fpr_asc = NULL;
+		      gnutls_x509_crt_deinit(cert);
+		    }
+		  
+		}
 		gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
 	}
 
@@ -213,6 +322,275 @@ ssl_gnutls_write(PurpleSslConnection *gsc, const void *data, size_t len)
 	return s;
 }
 
+/* Forward declarations are fun!
+   TODO: This is a stupid place for this */
+static PurpleCertificate *
+x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode);
+
+static GList *
+ssl_gnutls_get_peer_certificates(PurpleSslConnection * gsc)
+{
+	PurpleSslGnutlsData *gnutls_data = PURPLE_SSL_GNUTLS_DATA(gsc);
+
+	/* List of Certificate instances to return */
+	GList * peer_certs = NULL;
+
+	/* List of raw certificates as given by GnuTLS */
+	const gnutls_datum_t *cert_list;
+	unsigned int cert_list_size = 0;
+
+	unsigned int i;
+	
+	/* This should never, ever happen. */
+	g_return_val_if_fail( gnutls_certificate_type_get (gnutls_data->session) == GNUTLS_CRT_X509, NULL);
+
+	/* Get the certificate list from GnuTLS */
+	/* TODO: I am _pretty sure_ this doesn't block or do other exciting things */
+	cert_list = gnutls_certificate_get_peers(gnutls_data->session,
+						 &cert_list_size);
+
+	/* Convert each certificate to a Certificate and append it to the list */
+	for (i = 0; i < cert_list_size; i++) {
+		PurpleCertificate * newcrt = x509_import_from_datum(cert_list[i],
+							      GNUTLS_X509_FMT_DER);
+		/* Append is somewhat inefficient on linked lists, but is easy
+		   to read. If someone complains, I'll change it.
+		   TODO: Is anyone complaining? (Maybe elb?) */
+		peer_certs = g_list_append(peer_certs, newcrt);
+	}
+
+	/* cert_list shouldn't need free()-ing */
+	/* TODO: double-check this */
+
+	return peer_certs;
+}
+
+/************************************************************************/
+/* X.509 functionality                                                  */
+/************************************************************************/
+const gchar * SCHEME_NAME = "x509";
+
+static PurpleCertificateScheme x509_gnutls;
+
+/** Transforms a gnutls_datum_t containing an X.509 certificate into a Certificate instance under the x509_gnutls scheme
+ *
+ * @param dt   Datum to transform
+ * @param mode GnuTLS certificate format specifier (GNUTLS_X509_FMT_PEM for
+ *             reading from files, and GNUTLS_X509_FMT_DER for converting
+ *             "over the wire" certs for SSL)
+ *
+ * @return A newly allocated Certificate structure of the x509_gnutls scheme
+ */
+static PurpleCertificate *
+x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode)
+{
+	/* Internal certificate data structure */
+	gnutls_x509_crt_t *certdat;
+	/* New certificate to return */
+	PurpleCertificate * crt;
+
+	/* Allocate and prepare the internal certificate data */
+	certdat = g_new(gnutls_x509_crt_t, 1);
+	gnutls_x509_crt_init(certdat);
+
+	/* Perform the actual certificate parse */
+	/* Yes, certdat SHOULD be dereferenced */
+	gnutls_x509_crt_import(*certdat, &dt, mode);
+	
+	/* Allocate the certificate and load it with data */
+	crt = g_new(PurpleCertificate, 1);
+	crt->scheme = &x509_gnutls;
+	crt->data = certdat;
+
+	return crt;
+}
+
+/** Imports a PEM-formatted X.509 certificate from the specified file.
+ * @param filename Filename to import from. Format is PEM
+ *
+ * @return A newly allocated Certificate structure of the x509_gnutls scheme
+ */
+static PurpleCertificate *
+x509_import_from_file(const gchar * filename)
+{
+	PurpleCertificate *crt;  /* Certificate being constructed */
+	gchar *buf;        /* Used to load the raw file data */
+	gsize buf_sz;      /* Size of the above */
+	gnutls_datum_t dt; /* Struct to pass down to GnuTLS */
+
+	purple_debug_info("gnutls",
+			  "Attempting to load X.509 certificate from %s\n",
+			  filename);
+	
+	/* Next, we'll simply yank the entire contents of the file
+	   into memory */
+	/* TODO: Should I worry about very large files here? */
+	/* TODO: Error checking */
+	g_file_get_contents(filename,
+			    &buf,
+			    &buf_sz,
+			    NULL      /* No error checking for now */
+		);
+	
+	/* Load the datum struct */
+	dt.data = (unsigned char *) buf;
+	dt.size = buf_sz;
+
+	/* Perform the conversion */
+	crt = x509_import_from_datum(dt,
+				     GNUTLS_X509_FMT_PEM); // files should be in PEM format
+	
+	/* Cleanup */
+	g_free(buf);
+
+	return crt;
+}
+
+/** Frees a Certificate
+ *
+ *  Destroys a Certificate's internal data structures and frees the pointer
+ *  given.
+ *  @param crt  Certificate instance to be destroyed. It WILL NOT be destroyed
+ *              if it is not of the correct CertificateScheme. Can be NULL
+ *
+ */
+static void
+x509_destroy_certificate(PurpleCertificate * crt)
+{
+	/* TODO: Issue a warning here? */
+	if (NULL == crt) return;
+
+	/* Check that the scheme is x509_gnutls */
+	if ( crt->scheme != &x509_gnutls ) {
+		purple_debug_error("gnutls",
+				   "destroy_certificate attempted on certificate of wrong scheme (scheme was %s, expected %s)\n",
+				   crt->scheme->name,
+				   SCHEME_NAME);
+		return;
+	}
+
+	/* TODO: Different error checking? */
+	g_return_if_fail(crt->data != NULL);
+	g_return_if_fail(crt->scheme != NULL);
+
+	/* Destroy the GnuTLS-specific data */
+	gnutls_x509_crt_deinit( *( (gnutls_x509_crt_t *) crt->data ) );
+	g_free(crt->data);
+
+	/* TODO: Reference counting here? */
+
+	/* Kill the structure itself */
+	g_free(crt);
+}
+
+/** Determines whether one certificate has been issued and signed by another
+ *
+ * @param crt       Certificate to check the signature of
+ * @param issuer    Issuer's certificate
+ *
+ * @return TRUE if crt was signed and issued by issuer, otherwise FALSE
+ * @TODO  Modify this function to return a reason for invalidity?
+ */
+static gboolean
+x509_certificate_signed_by(PurpleCertificate * crt,
+			   PurpleCertificate * issuer)
+{
+	gnutls_x509_crt_t crt_dat;
+	gnutls_x509_crt_t issuer_dat;
+	unsigned int verify; /* used to store details from GnuTLS verifier */
+	int ret;
+	
+	/* TODO: Change this error checking? */
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(issuer, FALSE);
+
+	/* Verify that both certs are the correct scheme */
+	g_return_val_if_fail(crt->scheme != &x509_gnutls, FALSE);
+	g_return_val_if_fail(issuer->scheme != &x509_gnutls, FALSE);
+
+	/* TODO: check for more nullness? */
+
+	crt_dat = *((gnutls_x509_crt_t *) crt->data);
+	issuer_dat = *((gnutls_x509_crt_t *) issuer->data);
+
+	/* First, let's check that crt.issuer is actually issuer */
+	ret = gnutls_x509_crt_check_issuer(crt_dat, issuer_dat);
+	if (ret <= 0) {
+
+		if (ret < 0) {
+			purple_debug_error("gnutls/x509",
+					   "GnuTLS error %d while checking certificate issuer match.",
+					   ret);
+		}
+
+		/* The issuer is not correct, or there were errors */
+		return FALSE;
+	}
+	
+	/* Now, check the signature */
+	/* The second argument is a ptr to an array of "trusted" issuer certs,
+	   but we're only using one trusted one */
+	ret = gnutls_x509_crt_verify(crt_dat, &issuer_dat, 1, 0, &verify);
+	
+	if (ret > 0) {
+		/* The certificate is good. */
+		return TRUE;
+	}
+	else if (ret < 0) {
+		purple_debug_error("gnutls/x509",
+				   "Attempted certificate verification caused a GnuTLS error code %d. I will just say the signature is bad, but you should look into this.\n", ret);
+		return FALSE;
+	}
+	else {
+		/* Signature didn't check out, but at least
+		   there were no errors*/
+		return FALSE;
+	} /* if (ret, etc.) */
+
+	/* Control does not reach this point */
+}
+
+static GByteArray *
+x509_sha1sum(PurpleCertificate *crt)
+{
+	size_t hashlen = 20; /* SHA1 hashes are 20 bytes */
+	size_t tmpsz = hashlen; /* Throw-away variable for GnuTLS to stomp on*/
+	gnutls_x509_crt_t crt_dat;
+	GByteArray *hash; /**< Final hash container */
+	guchar hashbuf[hashlen]; /**< Temporary buffer to contain hash */
+
+	g_return_val_if_fail(crt, NULL);
+
+	crt_dat = *( (gnutls_x509_crt_t *) crt->data );
+
+	/* Extract the fingerprint */
+	/* TODO: Errorcheck? */
+	gnutls_x509_crt_get_fingerprint(crt_dat, GNUTLS_MAC_SHA,
+					hashbuf, &tmpsz);
+
+	/* This shouldn't happen */
+	g_return_val_if_fail(tmpsz == hashlen, NULL);
+	
+	/* Okay, now create and fill hash array */
+	hash = g_byte_array_new();
+	g_byte_array_append(hash, hashbuf, hashlen);
+
+	return hash;
+}
+
+/* X.509 certificate operations provided by this plugin */
+/* TODO: Flesh this out! */
+static PurpleCertificateScheme x509_gnutls = {
+	"x509",                          /* Scheme name */
+	N_("X.509 Certificates"),        /* User-visible scheme name */
+	x509_import_from_file,           /* Certificate import function */
+	x509_destroy_certificate,        /* Destroy cert */
+	x509_sha1sum,                    /* SHA1 fingerprint */
+	NULL,                            /* Subject */
+	NULL,                            /* Unique ID */
+	NULL                             /* Issuer Unique ID */
+};
+
 static PurpleSslOps ssl_ops =
 {
 	ssl_gnutls_init,
@@ -221,9 +599,9 @@ static PurpleSslOps ssl_ops =
 	ssl_gnutls_close,
 	ssl_gnutls_read,
 	ssl_gnutls_write,
+	ssl_gnutls_get_peer_certificates,
 
 	/* padding */
-	NULL,
 	NULL,
 	NULL,
 	NULL
@@ -235,6 +613,10 @@ static gboolean
 plugin_load(PurplePlugin *plugin)
 {
 #ifdef HAVE_GNUTLS
+	/* Register that we're providing an X.509 CertScheme */
+	/* @TODO : error checking */
+	purple_certificate_register_scheme( &x509_gnutls );
+	
 	if(!purple_ssl_get_ops()) {
 		purple_ssl_set_ops(&ssl_ops);
 	}
@@ -255,6 +637,8 @@ plugin_unload(PurplePlugin *plugin)
 	if(purple_ssl_get_ops() == &ssl_ops) {
 		purple_ssl_set_ops(NULL);
 	}
+
+	purple_certificate_unregister_scheme( &x509_gnutls );
 #endif
 
 	return TRUE;

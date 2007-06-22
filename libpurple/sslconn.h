@@ -107,8 +107,16 @@ typedef struct
 	* @return	The number of bytes written (may be less than len) or <0 on error
 	*/
 	size_t (*write)(PurpleSslConnection *gsc, const void *data, size_t len);
-
-	void (*_purple_reserved1)(void);
+	/** Obtains the certificate chain provided by the peer
+	 *
+	 * @param gsc   Connection context
+	 * @return      A newly allocated list containing the certificates
+	 *              the peer provided.
+	 * @todo        Decide whether the ordering of certificates in this
+	 *              list can be guaranteed.
+	 */
+	GList * (* get_peer_certificates)(PurpleSslConnection * gsc);
+	
 	void (*_purple_reserved2)(void);
 	void (*_purple_reserved3)(void);
 	void (*_purple_reserved4)(void);
@@ -154,6 +162,7 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
 
 /**
  * Makes a SSL connection using an already open file descriptor.
+ * DEPRECATED. Use purple_ssl_connect_with_host_fd instead.
  *
  * @param account    The account making the connection.
  * @param fd         The file descriptor.
@@ -166,7 +175,25 @@ PurpleSslConnection *purple_ssl_connect(PurpleAccount *account, const char *host
 PurpleSslConnection *purple_ssl_connect_fd(PurpleAccount *account, int fd,
 									   PurpleSslInputFunction func,
 									   PurpleSslErrorFunction error_func,
-									   void *data);
+ 									   void *data);
+
+/**
+  * Makes a SSL connection using an already open file descriptor.
+  *
+  * @param account    The account making the connection.
+  * @param fd         The file descriptor.
+  * @param func       The SSL input handler function.
+  * @param error_func The SSL error handler function.
+  * @param host       The hostname of the other peer (to verify the CN)
+  * @param data       User-defined data.
+  *
+  * @return The SSL connection handle.
+  */
+PurpleSslConnection *purple_ssl_connect_with_host_fd(PurpleAccount *account, int fd,
+                                           PurpleSslInputFunction func,
+                                           PurpleSslErrorFunction error_func,
+                                           const char *host,
+                                           void *data);
 
 /**
  * Adds an input watcher for the specified SSL connection.
@@ -207,6 +234,16 @@ size_t purple_ssl_read(PurpleSslConnection *gsc, void *buffer, size_t len);
  * @return The number of bytes written.
  */
 size_t purple_ssl_write(PurpleSslConnection *gsc, const void *buffer, size_t len);
+
+/**
+ * Obtains the peer's presented certificates
+ *
+ * @param gsc    The SSL connection handle
+ *
+ * @return The peer certificate chain, in the order of certificate, issuer,
+ *         issuer's issuer, etc. NULL if no certificates have been provided,
+ */
+GList * purple_ssl_get_peer_certificates(PurpleSslConnection *gsc);
 
 /*@}*/
 
