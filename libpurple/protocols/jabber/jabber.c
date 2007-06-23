@@ -1116,9 +1116,11 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 
 char *jabber_status_text(PurpleBuddy *b)
 {
-	JabberBuddy *jb = jabber_buddy_find(b->account->gc->proto_data, b->name,
-			FALSE);
 	char *ret = NULL;
+	JabberBuddy *jb = NULL;
+	
+	if (b->account->gc && b->account->gc->proto_data)
+		jb = jabber_buddy_find(b->account->gc->proto_data, b->name, FALSE);
 
 	if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("Not Authorized"));
