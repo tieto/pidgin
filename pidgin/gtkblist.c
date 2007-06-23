@@ -2976,10 +2976,11 @@ static char *pidgin_get_tooltip_text(PurpleBlistNode *node, gboolean full)
 		signon = purple_presence_get_login_time(presence);
 		if (full && PURPLE_BUDDY_IS_ONLINE(b) && signon > 0)
 		{
-			if (time(NULL) - signon > 63072000 /* 2 years */) {
+			if (signon > time(NULL)) {
 				/*
-				 * Our local clock must be wrong, show the actual
-				 * date instead of "4 days", etc.
+				 * They signed on in the future?!  Our local clock
+				 * must be wrong, show the actual date instead of
+				 * "4 days", etc.
 				 */
 				tmp = g_strdup(purple_date_format_long(localtime(&signon)));
 			} else
