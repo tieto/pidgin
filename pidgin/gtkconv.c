@@ -8069,6 +8069,11 @@ alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConver
 		return FALSE;
 	}
 
+	if (!purple_account_is_connected(gtkconv->active_conv->account)) {
+		/* Do not allowing aliasing someone in a disconnected account. */
+		return FALSE;
+	}
+
 	/* alias label */
 	entry = gtk_entry_new();
 	gtk_entry_set_has_frame(GTK_ENTRY(entry), FALSE);
