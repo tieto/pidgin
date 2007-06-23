@@ -204,6 +204,7 @@ struct _PurpleCertificateVerificationRequest
 	 *
 	 * This is looked up from the Verifier when the Request is generated
 	 */
+	PurpleCertificateScheme *scheme;
 
 	/**
 	 * Name to check that the certificate is issued to
@@ -227,6 +228,34 @@ struct _PurpleCertificateVerificationRequest
 	/** Data to pass to the post-verification callback */
 	gpointer cb_data;
 };
+
+/**
+ * Constructs a verification request and passed control to the specified Verifier
+ *
+ * It is possible that the callback will be called immediately upon calling
+ * this function. Plan accordingly.
+ *
+ * @param verifier      Verification logic to use.
+ *                      @see purple_certificate_find_verifier()
+ *
+ * @param subject_name  Name that should match the first certificate in the
+ *                      chain for the certificate to be valid. Will be strdup'd
+ *                      into the Request struct
+ *
+ * @param cert_chain    Certificate chain to check. If there is more than one
+ *                      certificate in the chain (X.509), the peer's
+ *                      certificate comes first, then the issuer/signer's
+ *                      certificate, etc.
+ *
+ * @param cb            Callback function to be called with whether the
+ *                      certificate was approved or not.
+ * @param cb_data       User-defined data for the above.
+ */
+void
+purple_certificate_verify (PurpleCertificateVerifier *verifier,
+			   const gchar *subject_name, GList *cert_chain,
+			   PurpleCertificateVerifiedCallback cb,
+			   gpointer cb_data);
 
 /*****************************************************************************/
 /** @name PurpleCertificate Subsystem API                                    */

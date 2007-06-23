@@ -37,30 +37,35 @@ static GList *cert_schemes = NULL;
 static GList *cert_verifiers = NULL;
 
 void
-purple_certificate_verify (PurpleCertificateVerificationRequest *vrq,
-			   gchar *scheme_name, gchar *ver_name,
-			   gchar *subject_name, GList *cert_chain,
+purple_certificate_verify (PurpleCertificateVerifier *verifier,
+			   const gchar *subject_name, GList *cert_chain,
 			   PurpleCertificateVerifiedCallback cb,
 			   gpointer cb_data)
 {
+	PurpleCertificateVerificationRequest *vrq;
 	PurpleCertificateScheme *scheme;
-	PurpleCertificateVerifier *verifier;
 	
-	g_return_val_if_fail(ver_name != NULL, NULL);
-	g_return_val_if_fail(subject_name != NULL, NULL);
+	g_return_if_fail(subject_name != NULL);
 	/* If you don't have a cert to check, why are you requesting that it
 	   be verified? */
-	g_return_val_if_fail(cert_chain != NULL, NULL);
-	g_return_val_if_fail(cb != NULL, NULL);
+	g_return_if_fail(cert_chain != NULL);
+	g_return_if_fail(cb != NULL);
 
-	/* Locate the verifier, first */
+	/* Look up the CertificateScheme */
+	scheme = purple_certificate_find_scheme(verifier->scheme_name);
+	g_return_if_fail(scheme);
 
 	/* Construct and fill in the request fields */
 	vrq = g_new(PurpleCertificateVerificationRequest, 1);
+	vrq->verifier = verifier;
+	vrq->scheme = scheme;
+	vrq->subject_name = g_strdup(subject_name);
 	vrq->cert_chain = cert_chain;
 	vrq->cb = cb;
 	vrq->cb_data = cb_data;
-	vrq->subject_name = g_strdup(subject_name);
+
+	/* Initiate verification */
+	(verifier->start_verification)(vrq);
 }
 
 PurpleCertificateScheme *
