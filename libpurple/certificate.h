@@ -229,6 +229,11 @@ struct _PurpleCertificateVerificationRequest
 	gpointer cb_data;
 };
 
+/*****************************************************************************/
+/** @name PurpleCertificate API                                              */
+/*****************************************************************************/
+/*@{*/
+
 /**
  * Constructs a verification request and passed control to the specified Verifier
  *
@@ -256,6 +261,8 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 			   const gchar *subject_name, GList *cert_chain,
 			   PurpleCertificateVerifiedCallback cb,
 			   gpointer cb_data);
+
+/*@}*/
 
 /*****************************************************************************/
 /** @name PurpleCertificate Subsystem API                                    */
