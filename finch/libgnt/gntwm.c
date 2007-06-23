@@ -1508,67 +1508,51 @@ update_window_in_list(GntWM *wm, GntWidget *wid)
 static gboolean
 match_title(gpointer title, gpointer n, gpointer wid_title)
 {
-	/* maybe check for regex.h? */
+	/* XXX: do any regex magic here. */
 	if (g_strrstr((gchar *)wid_title, (gchar *)title))
 		return TRUE;
 	return FALSE;
 }
 
 #if !GLIB_CHECK_VERSION(2,4,0)
-typedef struct
+struct
 {
-	GHashTable *table;
-	GntWS *ret;
-	gchar *title;
-} title_search;
+	gpointer data;
+	gpointer value;
+} table_find_data;
 
-static void match_title_search(gpointer key, gpointer value, gpointer search)
+static void
+table_find_helper(gpointer key, gpointer value, gpointer data)
 {
-	title_search *s = search;
-	if (s->ret)
-		return;
-	if (match_title(key, NULL, s->title))
-		s->ret = g_hash_table_lookup(s->table, key);
+	GHRFunc func = data;
+	if (func(key, value, table_find_data.data))
+		table_find_data.value = value;
 }
 
-static GntWS *
-gnt_hash_table_find(GHashTable * table, gchar *wid_title)
+static gpointer
+g_hash_table_find(GHashTable * table, GHRFunc func, gpointer data)
 {
-	GntWS * ret;
-	title_search *s = NULL;
-	s = g_new0(title_search, 1);
-	s->table = table;
-	s->title = wid_title;
-	g_hash_table_foreach(table, match_title_search, s);
-	ret = s->ret;
-
-	return ret;
-	
+	table_find_data.data = data;
+	table_find_data.value = NULL;
+	g_hash_table_foreach(table, table_find_helper, func);
+	return table_find_data.value;
 }
 #endif
 
 
 static GntWS *
-new_widget_find_workspace(GntWM *wm, GntWidget *widget, gchar *wid_title)
+new_widget_find_workspace(GntWM *wm, GntWidget *widget)
 {
-	GntWS *ret;
-	const gchar *name;
-#if GLIB_CHECK_VERSION(2,4,0)
-	ret = g_hash_table_find(wm->title_places, match_title, wid_title);
-#else
-	ret = gnt_hash_table_find(wm->title_places, wid_title);
-#endif
+	GntWS *ret = NULL;
+	const gchar *name, *title;
+	title = GNT_BOX(widget)->title;
+	if (title)
+		ret = g_hash_table_find(wm->title_places, match_title, (gpointer)title);
 	if (ret)
 		return ret;
 	name = gnt_widget_get_name(widget);
-	if (name){
-#if GLIB_CHECK_VERSION(2,4,0)
-		ret = g_hash_table_find(wm->name_places, match_title,  (gchar *)name);
-#else
-		ret = gnt_hash_table_find(wm->name_places, (gchar *)name);
-
-#endif
-	}
+	if (name)
+		ret = g_hash_table_find(wm->name_places, match_title, (gpointer)name);
 	return ret ? ret : wm->cws;
 }
 
@@ -1631,8 +1615,7 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 			GntWidget *w = NULL;
 
 			if (GNT_IS_BOX(widget)) {
-				char *title = GNT_BOX(widget)->title;
-				ws = new_widget_find_workspace(wm, widget, title);
+				ws = new_widget_find_workspace(wm, widget);
 			}
 
 			if (ws->ordered)
