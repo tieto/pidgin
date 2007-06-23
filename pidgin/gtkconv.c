@@ -7736,6 +7736,7 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 static gboolean
 infopane_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
 {
+	return FALSE;
 }
 
 static gboolean
