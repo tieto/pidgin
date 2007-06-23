@@ -55,6 +55,11 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 	scheme = purple_certificate_find_scheme(verifier->scheme_name);
 	g_return_if_fail(scheme);
 
+	/* Check that at least the first cert in the chain matches the
+	   Verifier scheme */
+	g_return_if_fail(scheme !=
+			 ((PurpleCertificate *) (cert_chain->data))->scheme);
+
 	/* Construct and fill in the request fields */
 	vrq = g_new(PurpleCertificateVerificationRequest, 1);
 	vrq->verifier = verifier;
