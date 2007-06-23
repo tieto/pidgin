@@ -184,6 +184,8 @@ static gboolean color_is_visible(GdkColor foreground, GdkColor background, int c
 static void pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields);
 static void focus_out_from_menubar(GtkWidget *wid, PidginWindow *win);
 static void pidgin_conv_tab_pack(PidginWindow *win, PidginConversation *gtkconv);
+static gboolean infopane_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
+static gboolean infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *conv);
 
 static GdkColor *get_nick_color(PidginConversation *gtkconv, const char *name) {
 	static GdkColor col;
@@ -4377,7 +4379,7 @@ setup_chat_userlist(PidginConversation *gtkconv, GtkWidget *hpaned)
 static GtkWidget *
 setup_common_pane(PidginConversation *gtkconv)
 {
-	GtkWidget *paned, *vbox, *frame, *imhtml_sw;
+	GtkWidget *paned, *vbox, *frame, *imhtml_sw, *event_box;
 	GtkCellRenderer *rend;
 	GtkTreePath *path;
 	PurpleConversation *conv = gtkconv->active_conv;
@@ -4393,9 +4395,19 @@ setup_common_pane(PidginConversation *gtkconv)
 	gtk_widget_show(vbox);
 
 	/* Setup the info pane */
+	event_box = gtk_event_box_new();
+	gtk_widget_show(event_box);
 	gtkconv->infopane_hbox = gtk_hbox_new(FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(vbox), gtkconv->infopane_hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), event_box, FALSE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(event_box), gtkconv->infopane_hbox);
 	gtk_widget_show(gtkconv->infopane_hbox);
+	gtk_widget_add_events(event_box,
+	                      GDK_BUTTON1_MOTION_MASK | GDK_LEAVE_NOTIFY_MASK);
+	g_signal_connect(G_OBJECT(event_box), "button_press_event",
+	                 G_CALLBACK(infopane_press_cb), gtkconv);
+	g_signal_connect(G_OBJECT(event_box), "button_release_event",
+	                 G_CALLBACK(infopane_release_cb), gtkconv);
+
 
 	gtkconv->infopane = gtk_cell_view_new();
 	gtkconv->infopane_model = gtk_list_store_new(NUM_COLUMNS, GDK_TYPE_PIXBUF, G_TYPE_STRING);
@@ -7594,6 +7606,45 @@ notebook_leave_cb(GtkWidget *widget, GdkEventCrossing *e, PidginWindow *win)
 /*
  * THANK YOU GALEON!
  */
+
+static gboolean
+infopane_press_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
+{
+	int nb_x, nb_y;
+
+	if (e->button != 1 || e->type != GDK_BUTTON_PRESS)
+		return FALSE;
+
+	if (gtkconv->win->in_drag) {
+		  purple_debug(PURPLE_DEBUG_WARNING, "gtkconv",
+                           "Already in the middle of a window drag at tab_press_cb\n");
+                return TRUE;
+        }
+	
+	gtkconv->win->in_predrag = TRUE;
+	gtkconv->win->drag_tab = gtk_notebook_page_num(GTK_NOTEBOOK(gtkconv->win->notebook), gtkconv->tab_cont);
+
+        gdk_window_get_origin(gtkconv->infopane_hbox->window, &nb_x, &nb_y);
+
+        gtkconv->win->drag_min_x = gtkconv->infopane_hbox->allocation.x      + nb_x;
+        gtkconv->win->drag_min_y = gtkconv->infopane_hbox->allocation.y      + nb_y;
+        gtkconv->win->drag_max_x = gtkconv->infopane_hbox->allocation.width  + gtkconv->win->drag_min_x;
+        gtkconv->win->drag_max_y = gtkconv->infopane_hbox->allocation.height + gtkconv->win->drag_min_y;
+
+
+	/* Connect the new motion signals. */
+	gtkconv->win->drag_motion_signal =
+		g_signal_connect(G_OBJECT(gtkconv->win->notebook), "motion_notify_event",
+		                 G_CALLBACK(notebook_motion_cb), gtkconv->win);
+
+	gtkconv->win->drag_leave_signal =
+		g_signal_connect(G_OBJECT(gtkconv->win->notebook), "leave_notify_event",
+		                 G_CALLBACK(notebook_leave_cb), gtkconv->win);
+
+	return FALSE;
+
+}
+
 static gboolean
 notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 {
@@ -7680,6 +7731,11 @@ notebook_press_cb(GtkWidget *widget, GdkEventButton *e, PidginWindow *win)
 		                 G_CALLBACK(notebook_leave_cb), win);
 
 	return FALSE;
+}
+
+static gboolean
+infopane_release_cb(GtkWidget *widget, GdkEventButton *e, PidginConversation *gtkconv)
+{
 }
 
 static gboolean
@@ -8374,8 +8430,7 @@ pidgin_conv_window_add_gtkconv(PidginWindow *win, PidginConversation *gtkconv)
 		/* Er, bug in notebooks? Switch to the page manually. */
 		gtk_notebook_set_current_page(GTK_NOTEBOOK(win->notebook), 0);
 
-		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
-		                           purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/tabs"));
+		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), FALSE);
 	} else
 		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), TRUE);
 
@@ -8491,13 +8546,15 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 
 	gtk_notebook_remove_page(GTK_NOTEBOOK(win->notebook), index);
 
-	/* go back to tabless if need be */
+	/* go back to tabless */
 	if (pidgin_conv_window_get_gtkconv_count(win) <= 2) {
-		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook),
-		                           purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/tabs"));
+		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), FALSE);
 	}
 
 	win->gtkconvs = g_list_remove(win->gtkconvs, gtkconv);
+
+	if (!win->gtkconvs || !win->gtkconvs->next)
+		gtk_notebook_set_show_tabs(win->notebook, FALSE);
 
 	if (!win->gtkconvs && win != hidden_convwin)
 		pidgin_conv_window_destroy(win);
