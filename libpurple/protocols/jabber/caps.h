@@ -19,17 +19,31 @@
  *
  */
 
-#ifndef _PURPLE_JABBER_ADHOCCOMMANDS_H_
-#define _PURPLE_JABBER_ADHOCCOMMANDS_H_
+#ifndef _PURPLE_JABBER_CAPS_H_
+#define _PURPLE_JABBER_CAPS_H_
+
+typedef struct _JabberCapsClientInfo JabberCapsClientInfo;
 
 #include "jabber.h"
 
-/* Implementation of XEP-0050 */
+/* Implementation of XEP-0115 */
 
-void jabber_adhoc_parse(JabberStream *js, xmlnode *packet);
+typedef struct _JabberCapsIdentity {
+	char *category;
+	char *type;
+	char *name;
+} JabberCapsIdentity;
 
-void jabber_adhoc_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer data);
+struct _JabberCapsClientInfo {
+	GList *identities; /* JabberCapsIdentity */
+	GList *features; /* char * */
+};
 
-void jabber_adhoc_execute(PurpleBlistNode *node, gpointer data);
+typedef void (*jabber_caps_get_info_cb)(JabberCapsClientInfo *info, gpointer user_data);
 
-#endif /* _PURPLE_JABBER_ADHOCCOMMANDS_H_ */
+void jabber_caps_init(void);
+
+void jabber_caps_get_info(JabberStream *js, const char *who, const char *node, const char *ver, const char *ext, jabber_caps_get_info_cb cb, gpointer user_data);
+void jabber_caps_free_clientinfo(JabberCapsClientInfo *clientinfo);
+
+#endif /* _PURPLE_JABBER_CAPS_H_ */

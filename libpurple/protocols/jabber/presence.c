@@ -36,6 +36,7 @@
 #include "presence.h"
 #include "iq.h"
 #include "jutil.h"
+#include "adhoccommands.h"
 
 #include "usertune.h"
 
@@ -337,6 +338,35 @@ static void jabber_vcard_parse_avatar(JabberStream *js, xmlnode *packet, gpointe
 	}
 }
 
+typedef struct _JabberPresenceCapabilities {
+	JabberStream *js;
+	JabberBuddyResource *jbr;
+	char *from;
+} JabberPresenceCapabilities;
+
+static void jabber_presence_set_capabilities(JabberCapsClientInfo *info, gpointer user_data) {
+	JabberPresenceCapabilities *userdata = user_data;
+	GList *iter;
+	
+	if(userdata->jbr->caps)
+		jabber_caps_free_clientinfo(userdata->jbr->caps);
+	userdata->jbr->caps = info;
+	
+	for(iter = info->features; iter; iter = g_list_next(iter)) {
+		if(!strcmp((const char*)iter->data, "http://jabber.org/protocol/commands")) {
+			JabberIq *iq = jabber_iq_new_query(userdata->js, JABBER_IQ_GET, "http://jabber.org/protocol/disco#items");
+			xmlnode *query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#items");
+			xmlnode_set_attrib(iq->node, "to", userdata->from);
+			xmlnode_set_attrib(query, "node", "http://jabber.org/protocol/commands");
+			
+			jabber_iq_set_callback(iq, jabber_adhoc_disco_result_cb, NULL);
+			jabber_iq_send(iq);
+			break;
+		}
+	}
+	g_free(user_data);
+}
+
 void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 {
 	const char *from = xmlnode_get_attrib(packet, "from");
@@ -358,6 +388,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	xmlnode *y;
 	gboolean muc = FALSE;
 	char *avatar_hash = NULL;
+	xmlnode *caps = NULL;
 
 	if(!(jb = jabber_buddy_find(js, from, TRUE)))
 		return;
@@ -420,8 +451,10 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 
 
 	for(y = packet->child; y; y = y->next) {
+		const char *xmlns;
 		if(y->type != XMLNODE_TYPE_TAG)
 			continue;
+		xmlns = xmlnode_get_namespace(y);
 
 		if(!strcmp(y->name, "status")) {
 			g_free(status);
@@ -432,9 +465,11 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				priority = atoi(p);
 				g_free(p);
 			}
-		} else if(!strcmp(y->name, "delay")) {
+		} else if(!strcmp(y->name, "delay") && !strcmp(xmlns, "urn:xmpp:delay")) {
 			/* XXX: compare the time.  jabber:x:delay can happen on presence packets that aren't really and truly delayed */
 			delayed = TRUE;
+		} else if(!strcmp(y->name, "c") && !strcmp(xmlns, "http://jabber.org/protocol/caps")) {
+			caps = y; /* store for later, when creating buddy resource */
 		} else if(!strcmp(y->name, "x")) {
 			const char *xmlns = xmlnode_get_namespace(y);
 			if(xmlns && !strcmp(xmlns, "jabber:x:delay")) {
@@ -656,6 +691,19 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		} else {
 			jbr = jabber_buddy_track_resource(jb, jid->resource, priority,
 					state, status);
+			if(caps) {
+				const char *node = xmlnode_get_attrib(caps,"node");
+				const char *ver = xmlnode_get_attrib(caps,"ver");
+				const char *ext = xmlnode_get_attrib(caps,"ext");
+				
+				if(node && ver) {
+					JabberPresenceCapabilities *userdata = g_new0(JabberPresenceCapabilities, 1);
+					userdata->js = js;
+					userdata->jbr = jbr;
+					userdata->from = g_strdup(from);
+					jabber_caps_get_info(js, from, node, ver, ext, jabber_presence_set_capabilities, userdata);
+				}
+			}
 		}
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {

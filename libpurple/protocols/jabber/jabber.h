@@ -41,6 +41,7 @@ typedef enum {
 	JABBER_CAP_GOOGLE_ROSTER  = 1 << 10,
 	
 	JABBER_CAP_PING			  = 1 << 11,
+	JABBER_CAP_ADHOC		  = 1 << 12,
 	
 	JABBER_CAP_RETRIEVED	  = 1 << 31
 } JabberCapabilities;

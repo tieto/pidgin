@@ -34,6 +34,7 @@ typedef enum {
 } JabberBuddyState;
 
 #include "jabber.h"
+#include "caps.h"
 
 #define AVATARNAMESPACEDATA "http://www.xmpp.org/extensions/xep-0084.html#ns-data"
 #define AVATARNAMESPACEMETA "http://www.xmpp.org/extensions/xep-0084.html#ns-metadata"
@@ -56,6 +57,12 @@ typedef struct _JabberBuddy {
 	} subscription;
 } JabberBuddy;
 
+typedef struct _JabberAdHocCommands {
+	char *jid;
+	char *node;
+	char *name;
+} JabberAdHocCommands;
+
 typedef struct _JabberBuddyResource {
 	JabberBuddy *jb;
 	char *name;
@@ -74,6 +81,8 @@ typedef struct _JabberBuddyResource {
 		char *name;
 		char *os;
 	} client;
+	JabberCapsClientInfo *caps;
+	GList *commands;
 } JabberBuddyResource;
 
 void jabber_buddy_free(JabberBuddy *jb);

@@ -31,6 +31,8 @@
 #include "presence.h"
 #include "roster.h"
 #include "pep.h"
+#include "adhoccommands.h"
+
 
 struct _jabber_disco_info_cb_data {
 	gpointer data;
@@ -210,6 +212,9 @@ void jabber_disco_info_parse(JabberStream *js, xmlnode *packet) {
 					capabilities |= JABBER_CAP_IQ_REGISTER;
 				else if(!strcmp(var, "http://www.xmpp.org/extensions/xep-0199.html#ns"))
 					capabilities |= JABBER_CAP_PING;
+				else if(!strcmp(var, "http://jabber.org/protocol/commands")) {
+					capabilities |= JABBER_CAP_ADHOC;
+				}
 			}
 		}
 

@@ -35,6 +35,7 @@
 #include "presence.h"
 #include "xdata.h"
 #include "pep.h"
+#include "adhoccommands.h"
 
 typedef struct {
 	long idle_seconds;
@@ -117,7 +118,6 @@ JabberBuddyResource *jabber_buddy_track_resource(JabberBuddy *jb, const char *re
 		int priority, JabberBuddyState state, const char *status)
 {
 	JabberBuddyResource *jbr = jabber_buddy_find_resource(jb, resource);
-
 	if(!jbr) {
 		jbr = g_new0(JabberBuddyResource, 1);
 		jbr->jb = jb;
@@ -142,6 +142,17 @@ void jabber_buddy_resource_free(JabberBuddyResource *jbr)
 	g_return_if_fail(jbr != NULL);
 
 	jbr->jb->resources = g_list_remove(jbr->jb->resources, jbr);
+	
+	while(jbr->commands) {
+		JabberAdHocCommands *cmd = jbr->commands->data;
+		g_free(cmd->jid);
+		g_free(cmd->node);
+		g_free(cmd->name);
+		g_free(cmd);
+		jbr->commands = g_list_delete_link(jbr->commands, jbr->commands);
+	}
+	
+	jabber_caps_free_clientinfo(jbr->caps);
 
 	g_free(jbr->name);
 	g_free(jbr->status);
@@ -1625,6 +1636,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 	PurpleConnection *gc = purple_account_get_connection(buddy->account);
 	JabberStream *js = gc->proto_data;
 	JabberBuddy *jb = jabber_buddy_find(js, buddy->name, TRUE);
+	GList *jbrs;
 
 	GList *m = NULL;
 	PurpleMenuAction *act;
@@ -1687,6 +1699,19 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 									 PURPLE_CALLBACK(jabber_buddy_logout),
 									 NULL, NULL);
 		m = g_list_append(m, act);
+	}
+	
+	/* add all ad hoc commands to the action menu */
+	for(jbrs = jb->resources; jbrs; jbrs = g_list_next(jbrs)) {
+		JabberBuddyResource *jbr = jbrs->data;
+		GList *commands;
+		if (!jbr->commands)
+			continue;
+		for(commands = jbr->commands; commands; commands = g_list_next(commands)) {
+			JabberAdHocCommands *cmd = commands->data;
+			act = purple_menu_action_new(cmd->name, PURPLE_CALLBACK(jabber_adhoc_execute), cmd, NULL);
+			m = g_list_append(m, act);
+		}
 	}
 
 	return m;
