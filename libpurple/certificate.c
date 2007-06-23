@@ -73,6 +73,33 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 	(verifier->start_verification)(vrq);
 }
 
+void
+purple_certificate_destroy (PurpleCertificate *crt)
+{
+	PurpleCertificateScheme *scheme;
+	
+	if (NULL == crt) return;
+
+	scheme = crt->scheme;
+
+	(scheme->destroy_certificate)(crt);
+}
+
+void
+purple_certificate_destroy_list (GList * crt_list)
+{
+	PurpleCertificate *crt;
+	GList *l;
+
+	for (l=crt_list; l; l = l->next) {
+		crt = (PurpleCertificate *) l->data;
+		purple_certificate_destroy(crt);
+	}
+
+	g_list_free(crt_list);
+}
+
+
 PurpleCertificateScheme *
 purple_certificate_find_scheme(const gchar *name)
 {

@@ -262,6 +262,22 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 			   PurpleCertificateVerifiedCallback cb,
 			   gpointer cb_data);
 
+/**
+ * Destroys and free()'s a Certificate
+ *
+ * @param crt        Instance to destroy. May be NULL.
+ */
+void
+purple_certificate_destroy (PurpleCertificate *crt);
+
+/**
+ * Destroy an entire list of Certificate instances and the containing list
+ *
+ * @param crt_list   List of certificates to destroy. May be NULL.
+ */
+void
+purple_certificate_destroy_list (GList * crt_list);
+
 /*@}*/
 
 /*****************************************************************************/
