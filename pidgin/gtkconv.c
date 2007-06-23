@@ -8071,7 +8071,7 @@ alias_double_click_cb(GtkNotebook *notebook, GdkEventButton *event, PidginConver
 	}
 
 	if (!purple_account_is_connected(gtkconv->active_conv->account)) {
-		/* Do not allowing aliasing someone in a disconnected account. */
+		/* Do not allow aliasing someone on a disconnected account. */
 		return FALSE;
 	}
 
