@@ -25,6 +25,7 @@
 #ifndef _PURPLE_SSLCONN_H_
 #define _PURPLE_SSLCONN_H_
 
+#include "certificate.h"
 #include "proxy.h"
 
 #define PURPLE_SSL_DEFAULT_PORT 443
@@ -69,6 +70,9 @@ struct _PurpleSslConnection
 
 	/** Internal connection data managed by the SSL backend (GnuTLS/LibNSS/whatever) */
 	void *private_data;
+
+	/** Verifier to use in authenticating the peer */
+	PurpleCertificateVerifier *verifier;
 };
 
 /**
@@ -112,6 +116,7 @@ typedef struct
 	 * @param gsc   Connection context
 	 * @return      A newly allocated list containing the certificates
 	 *              the peer provided.
+	 * @see PurpleCertificate
 	 * @todo        Decide whether the ordering of certificates in this
 	 *              list can be guaranteed.
 	 */
