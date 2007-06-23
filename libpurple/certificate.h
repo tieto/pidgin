@@ -49,13 +49,11 @@ typedef struct _PurpleCertificateVerificationRequest PurpleCertificateVerificati
 
 /**
  * Callback function for the results of a verification check
- * @param vrq      Request structure operated on
  * @param st       Status code
  * @param userdata User-defined data
  */
 typedef void (*PurpleCertificateVerifiedCallback)
-		(PurpleCertificateVerificationRequest *vrq,
-		 PurpleCertificateVerificationStatus,
+		(PurpleCertificateVerificationStatus,
 		 gpointer userdata);
 							  
 /** A certificate instance
@@ -189,6 +187,13 @@ struct _PurpleCertificateVerifier
 	 * @param vrq      Request to process
 	 */
 	void (* start_verification)(PurpleCertificateVerificationRequest *vrq);
+
+	/**
+	 * Destroy a completed Request under this Verifier
+	 *
+	 * @param vrq       Request to destroy
+	 */
+	void (* destroy_request)(PurpleCertificateVerificationRequest *vrq);
 };
 
 /** Structure for a single certificate request
@@ -261,6 +266,15 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 			   const gchar *subject_name, GList *cert_chain,
 			   PurpleCertificateVerifiedCallback cb,
 			   gpointer cb_data);
+
+/**
+ * Disposes of a VerificationRequest once it is complete
+ *
+ * @param vrq           Request to destroy. Will be free()'d.
+ *                      The certificate chain involved will also be destroyed.
+ */
+void
+purple_certificate_verify_destroy (PurpleCertificateVerificationRequest *vrq);
 
 /**
  * Destroys and free()'s a Certificate

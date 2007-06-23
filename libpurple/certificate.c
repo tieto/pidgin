@@ -74,6 +74,23 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 }
 
 void
+purple_certificate_verify_destroy (PurpleCertificateVerificationRequest *vrq)
+{
+	PurpleCertificateVerifier *vr;
+
+	if (NULL == vrq) return;
+
+	/* TODO: Should I make it easier on the Verifier programmer and
+	   clean up some of vrq's internals here? */
+	
+	/* Fetch the Verifier responsible... */
+	vr = vrq->verifier;
+	/* ...and order it to KILL */
+	(vr->destroy_request)(vrq);
+}
+
+
+void
 purple_certificate_destroy (PurpleCertificate *crt)
 {
 	PurpleCertificateScheme *scheme;
