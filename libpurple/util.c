@@ -531,10 +531,9 @@ static long win32_get_tz_offset() {
 }
 #endif
 
-#ifndef HAVE_STRFTIME_Z_FORMAT
-static const char *get_tmoff(const struct tm *tm)
+const char *purple_get_tzoff_str(const struct tm *tm, gboolean iso)
 {
-	static char buf[6];
+	static char buf[7];
 	long off;
 	gint8 min;
 	gint8 hrs;
@@ -554,7 +553,7 @@ static const char *get_tmoff(const struct tm *tm)
 # else
 #  ifdef HAVE_TIMEZONE
 	tzset();
-	off = -timezone;
+	off = -1 * timezone;
 #  endif /* HAVE_TIMEZONE */
 # endif /* !HAVE_TM_GMTOFF */
 #endif /* _WIN32 */
@@ -562,12 +561,22 @@ static const char *get_tmoff(const struct tm *tm)
 	min = (off / 60) % 60;
 	hrs = ((off / 60) - min) / 60;
 
-	if (g_snprintf(buf, sizeof(buf), "%+03d%02d", hrs, ABS(min)) > 5)
-		g_return_val_if_reached("");
+	if(iso) {
+		if (0 == off) {
+			strcpy(buf, "Z");
+		} else {
+			/* please leave the colons...they're optional for iso, but jabber
+			 * wants them */
+			if(g_snprintf(buf, sizeof(buf), "%+03d:%02d", hrs, ABS(min)) > 6)
+				g_return_val_if_reached("");
+		}
+	} else {
+		if (g_snprintf(buf, sizeof(buf), "%+03d%02d", hrs, ABS(min)) > 5)
+			g_return_val_if_reached("");
+	}
 
 	return buf;
 }
-#endif
 
 /* Windows doesn't HAVE_STRFTIME_Z_FORMAT, but this seems clearer. -- rlaager */
 #if !defined(HAVE_STRFTIME_Z_FORMAT) || defined(_WIN32)
@@ -600,7 +609,7 @@ static size_t purple_internal_strftime(char *s, size_t max, const char *format, 
 			                            fmt ? fmt : "",
 			                            c - start - 1,
 			                            start,
-			                            get_tmoff(tm));
+			                            purple_get_tzoff_str(tm, FALSE));
 			g_free(fmt);
 			fmt = tmp;
 			start = c + 1;

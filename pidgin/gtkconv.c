@@ -8560,7 +8560,7 @@ pidgin_conv_window_remove_gtkconv(PidginWindow *win, PidginConversation *gtkconv
 	win->gtkconvs = g_list_remove(win->gtkconvs, gtkconv);
 
 	if (!win->gtkconvs || !win->gtkconvs->next)
-		gtk_notebook_set_show_tabs(win->notebook, FALSE);
+		gtk_notebook_set_show_tabs(GTK_NOTEBOOK(win->notebook), FALSE);
 
 	if (!win->gtkconvs && win != hidden_convwin)
 		pidgin_conv_window_destroy(win);
