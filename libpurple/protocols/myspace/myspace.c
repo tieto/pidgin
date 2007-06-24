@@ -191,45 +191,63 @@ void print_hash_item(gpointer key, gpointer value, gpointer user_data)
 #endif
 
 /** 
- * Send raw data to the server.
+ * Send raw data (given as a NUL-terminated string) to the server.
  *
  * @param session 
- * @param msg The raw data to send.
+ * @param msg The raw data to send, in a NUL-terminated string.
  *
  * @return TRUE if succeeded, FALSE if not.
  *
  */
 gboolean msim_send_raw(MsimSession *session, const gchar *msg)
 {
-	int total_bytes_sent, total_bytes;
-    
 	purple_debug_info("msim", "msim_send_raw: writing <%s>\n", msg);
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
     g_return_val_if_fail(msg != NULL, FALSE);
 
+	return msim_send_really_raw(session->gc, msg, strlen(msg)) ==
+		strlen(msg);
+}
 
+/** Send raw data to the server, possibly with embedded NULs. 
+ *
+ * Used in prpl_info struct, so that plugins can have the most possible
+ * control of what is sent over the connection. Inside this prpl, 
+ * msim_send_raw() is used, since it sends NUL-terminated strings (easier).
+ *
+ * @param gc PurpleConnection
+ * @param buf Buffer to send
+ * @param total_bytes Size of buffer to send
+ *
+ * @return Bytes successfully sent.
+ */
+int msim_send_really_raw(PurpleConnection *gc, const char *buf, int total_bytes)
+{
+	int total_bytes_sent;
+	
 	/* Loop until all data is sent, or a failure occurs. */
 	total_bytes_sent = 0;
-	total_bytes = strlen(msg);
 	do
 	{
 		int bytes_sent;
 
-		bytes_sent = send(session->fd, msg + total_bytes_sent, 
-			total_bytes - total_bytes_sent, 0);
+		bytes_sent = send(((MsimSession*)(gc->proto_data))->fd, 
+				buf + total_bytes_sent, total_bytes - total_bytes_sent, 0);
 
 		if (bytes_sent < 0)
 		{
 			purple_debug_info("msim", "msim_send_raw(%s): send() failed: %s\n",
-					msg, g_strerror(errno));
-			return FALSE;
+					buf, g_strerror(errno));
+			return total_bytes_sent;
 		}
 		total_bytes_sent += bytes_sent;
 
 	} while(total_bytes_sent < total_bytes);
-	return TRUE;
+
+	return total_bytes_sent;
 }
+
 
 /** 
  * Start logging in to the MSIM servers.
@@ -271,6 +289,7 @@ void msim_login(PurpleAccount *acct)
         return;
     }
 }
+
 /**
  * Process a login challenge, sending a response. 
  *
@@ -1698,7 +1717,6 @@ gboolean msim_offline_message(const PurpleBuddy *buddy)
 	return TRUE;
 }
 
-
 /**
  * Callback when input available.
  *
@@ -2217,7 +2235,7 @@ PurplePluginProtocolInfo prpl_info =
     NULL,              /* new_xfer */
     msim_offline_message, /* offline_message */
     NULL,              /* whiteboard_prpl_ops */
-    NULL,              /* send_raw */
+    msim_send_really_raw,     /* send_raw */
     NULL,              /* roomlist_room_serialize */
 	NULL,			   /* _purple_reserved1 */
 	NULL,			   /* _purple_reserved2 */

@@ -167,6 +167,7 @@ gchar *str_replace(const gchar *str, const gchar *old, const gchar *new);
 
 void print_hash_item(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_send_raw(MsimSession *session, const gchar *msg);
+int msim_send_really_raw(PurpleConnection *gc, const char *buf,int total_bytes);
 
 void msim_login(PurpleAccount *acct);
 gboolean msim_login_challenge(MsimSession *session, MsimMessage *msg);
