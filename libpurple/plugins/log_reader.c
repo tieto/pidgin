@@ -1288,7 +1288,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 				/* The conditional is to make sure we're not reading off
 				 * the end of the string.  We don't want strlen(), as that'd
 				 * have to count the whole string needlessly.
-				 * 
+				 *
 				 * The odd check here is because a Session Start at the
 				 * beginning of the file can be overwritten with a UTF-8
 				 * byte order mark.  Yes, it's weird.
@@ -1482,7 +1482,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		 * ">
 		 * Then, replace the next " " (or add this if the end-of-line is reached) with:
 		 * </a>
-		 * 
+		 *
 		 * As implemented, this isn't perfect, but it should cover common cases.
 		 */
 		while (line && (link = strstr(line, "(Link: ")))
@@ -1739,7 +1739,7 @@ static void trillian_logger_finalize(PurpleLog *log)
 static PurpleLogLogger *qip_logger;
 
 struct qip_logger_data {
-	
+
 	char *path; /* FIXME: Change this to use PurpleStringref like log.c:old_logger_list  */
 	int offset;
 	int length;
@@ -1794,7 +1794,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_free(filename);
 
 	purple_debug_info("QIP logger list", "Reading %s\n", path);
-	
+
 	error = NULL;
 	if (!g_file_get_contents(path, &contents, &length, &error)) {
 		purple_debug_error("QIP logger list",
@@ -1808,7 +1808,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_return_val_if_fail(contents != NULL, list);
 
 	purple_debug_info("QIP logger list", "File %s is found\n", path);
-		
+
 	/* Convert file contents from Cp1251 to UTF-8 codeset */
 	error = NULL;
 	if (!(utf8_string = g_convert(contents, length, "UTF-8", "Cp1251", NULL, NULL, &error))) {
@@ -1820,19 +1820,19 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		g_free(contents);
 		return list;
 	}
-	
+
 	g_free(contents);
 	contents = g_markup_escape_text(utf8_string, -1);
 	g_free(utf8_string);
-	
+
 	c = contents;
 	start_log = contents;
 	while (*c) {
-		if (purple_str_has_prefix(c, QIP_LOG_IN_MESSAGE_ESC) || 
+		if (purple_str_has_prefix(c, QIP_LOG_IN_MESSAGE_ESC) ||
 		    purple_str_has_prefix(c, QIP_LOG_OUT_MESSAGE_ESC)) {
 
 			gchar *new_line = c;
-			
+
 			/* find EOL */
 			c = strstr(c, "\n");
 			c++;
@@ -1850,7 +1850,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			if (c != NULL) {
 				const char *timestamp = ++c;
 				struct tm tm;
-				
+
 				/*  Parse the time, day, month and year  */
 				if (sscanf(timestamp, "%u:%u:%u %u/%u/%u",
 				           &tm.tm_hour, &tm.tm_min, &tm.tm_sec,
@@ -1859,7 +1859,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 						purple_debug_error("QIP logger list",
 						                   "Parsing timestamp error\n");
 				} else {
-					tm.tm_mon -= 1; 
+					tm.tm_mon -= 1;
 					tm.tm_year -= 1900;
 
 					/* Let the C library deal with
@@ -1868,37 +1868,37 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 					if (!prev_tm_init) {
 						prev_tm = tm;
-						prev_tm_init = TRUE;	
+						prev_tm_init = TRUE;
 					} else {
 						double time_diff = difftime(mktime(&tm), mktime(&prev_tm));
 
 						if (time_diff > QIP_LOG_TIMEOUT) {
 							PurpleLog *log;
-							
+
 							/* filling data */
 							data = g_new0(struct qip_logger_data, 1);
 							data->path = g_strdup(path);
 							data->length = new_line - start_log;
 							data->offset = offset;
 							offset += data->length;
-							
+
 							purple_debug_error("QIP logger list",
 							                   "Creating log: path = (%s); length = (%d); offset = (%d)\n", data->path, data->length, data->offset);
 
 							/* XXX: Look into this later... Should we pass in a struct tm? */
 							log = purple_log_new(PURPLE_LOG_IM, sn, account,
 							                     NULL, mktime(&prev_tm), NULL);
-							
+
 							log->logger = qip_logger;
 							log->logger_data = data;
-							
+
 							list = g_list_append(list, log);
-							
+
 							prev_tm = tm;
 							start_log = new_line;
 						}
 					}
-					
+
 					/* find EOF */
 					c = strstr(c, "\n");
 					c++;
@@ -1909,11 +1909,11 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			c++;
 		}
 	}
-	
+
 	/* adding last log */
 	if (prev_tm_init) {
 		PurpleLog *log;
-	
+
 		/* filling data */
 		data = g_new0(
 		struct qip_logger_data, 1);
@@ -1938,7 +1938,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_free(path);
 	return list;
 }
-	
+
 static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 {
 	struct qip_logger_data *data;
@@ -1949,18 +1949,18 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	GError *error = NULL;
 	gchar *contents = NULL;
 	gsize length;
-	
+
 	g_return_val_if_fail(log != NULL, g_strdup(""));
-	
+
 	data = log->logger_data;
-	
+
 	g_return_val_if_fail(data->path != NULL, g_strdup(""));
 	g_return_val_if_fail(data->length > 0, g_strdup(""));
 
 	purple_debug_info("QIP logger read", "Reading %s\n", data->path);
-	
+
 	error = NULL;
-	if (!g_file_get_contents(data->path, &contents, &length, &error)) 
+	if (!g_file_get_contents(data->path, &contents, &length, &error))
 		if (error) {
 			purple_debug_error("QIP logger list",
 			                   "Couldn't read file %s \n", data->path);
@@ -1969,7 +1969,7 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		}
 	if (contents) {
 		gchar * utf8_string;
-		
+
 		/* We should convert file contents from Cp1251 to UTF-8 codeset */
 		error = NULL;
 		if (!(utf8_string = g_convert (contents, length, "UTF-8", "Cp1251", NULL, NULL, &error))) {
@@ -1984,43 +1984,43 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 			purple_debug_info("QIP logger read",
 			                  "File %s converted successfully\n", data->path);
-			
+
 			g_free(contents);
 			contents = utf8_string;
-		
+
 			/* Load miscellaneous data. */
 			buddy = purple_find_buddy(log->account, log->name);
-			
+
 			escaped = g_markup_escape_text(contents, -1);
 			g_free(contents);
 			contents = escaped;
-			
+
 			selected = g_strndup(contents + data->offset, data->length + 2);
 			selected[data->length] = '\n';
 			selected[data->length + 1] = '\0';
-			
+
 			g_free(contents);
 			contents = selected;
-			
+
 			/* Apply formatting... */
 			formatted = g_string_sized_new(strlen(contents));
 			c = contents;
 			line = contents;
-			
+
 			while (*c) {
 				gboolean is_in_message = FALSE;
-				
-				if (purple_str_has_prefix(line, QIP_LOG_IN_MESSAGE_ESC) || 
+
+				if (purple_str_has_prefix(line, QIP_LOG_IN_MESSAGE_ESC) ||
 					purple_str_has_prefix(line, QIP_LOG_OUT_MESSAGE_ESC)) {
 					const char *buddy_name;
 					is_in_message = purple_str_has_prefix(line, QIP_LOG_IN_MESSAGE_ESC);
-					
+
 					/* find EOL */
 					c = strstr(c, "\n");
 
 					/* XXX: Do we need buddy_name when we have buddy->alias? */
 					buddy_name = ++c;
-					
+
 					/* searching '(' character from the end of the line */
 					c = strstr(c, "\n");
 					while (*c && *c != '(')
@@ -2031,9 +2031,9 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 						int hour;
 						int min;
 						int sec;
-						
+
 						timestamp++;
-							
+
 						/*  Parse the time, day, month and year */
 						if (sscanf(timestamp, "%u:%u:%u",
 								&hour, &min, &sec) != 3) {
@@ -2041,14 +2041,14 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 							                   "Parsing timestamp error\n");
 						} else {
 							g_string_append(formatted, "<font size=\"2\">");
-							g_string_append_printf(formatted, 
-								"(%u:%02u:%02u) %cM ", hour % 12, 
+							g_string_append_printf(formatted,
+								"(%u:%02u:%02u) %cM ", hour % 12,
 								min, sec, (hour >= 12) ? 'P': 'A');
 							g_string_append(formatted, "</font> ");
-							
+
 							if (is_in_message) {
 								if (buddy_name != NULL && buddy->alias) {
-									g_string_append_printf(formatted, 
+									g_string_append_printf(formatted,
 										"<span style=\"color: #A82F2F;\">"
 										"<b>%s</b></span>: ", buddy->alias);
 								}
@@ -2062,7 +2062,7 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 									"<span style=\"color: #16569E;\">"
 									"<b>%s</b></span>: ", acct_name);
 							}
-							
+
 							/* find EOF */
 							c = strstr(c, "\n");
 							line = ++c;
@@ -2071,9 +2071,9 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 				} else {
 					if ((c = strstr(c, "\n")))
 						*c = '\0';
-				
+
 					if (line[0] != '\n' && line[0] != '\r') {
-						
+
 						g_string_append(formatted, line);
 						g_string_append_c(formatted, '\n');
 					}
@@ -2101,7 +2101,7 @@ static int qip_logger_size (PurpleLog *log)
 		return data ? data->length : 0;
 	}
 
-	text = qip_logger_read(log, NULL); 
+	text = qip_logger_read(log, NULL);
 	size = strlen(text);
 	g_free(text);
 
@@ -2283,7 +2283,7 @@ init_plugin(PurplePlugin *plugin)
 		GKeyFile *key_file;
 
 		purple_debug_info("Trillian talk.ini read", "Reading %s\n", path);
-				
+
 		error = NULL;
 		if (!g_key_file_load_from_file(key_file, path, G_KEY_FILE_NONE, GError &error)) {
 			purple_debug_error("Trillian talk.ini read",
@@ -2372,13 +2372,13 @@ init_plugin(PurplePlugin *plugin)
 	/* Add QIP log directory preference. */
 	purple_prefs_add_none("/plugins/core/log_reader/qip");
 
-#ifdef _WIN32 
+#ifdef _WIN32
 	/* Calculate default Messenger Plus! log directory. */
 	folder = wpurple_get_special_folder(CSIDL_PROGRAM_FILES);
 	if (folder) {
 #endif
 	path = g_build_filename(
-#ifdef _WIN32 
+#ifdef _WIN32
 		folder,
 #else
 		PURPLE_LOG_READER_WINDOWS_MOUNT_POINT, "Program Files",
@@ -2435,7 +2435,7 @@ plugin_load(PurplePlugin *plugin)
 												messenger_plus_logger_read,
 												messenger_plus_logger_size);
 	purple_log_logger_add(messenger_plus_logger);
-	
+
 #endif
 
 	/* The names of IM clients are marked for translation at the request of
@@ -2449,7 +2449,7 @@ plugin_load(PurplePlugin *plugin)
 											qip_logger_read,
 											qip_logger_size);
 	purple_log_logger_add(qip_logger);
-		
+
 	/* The names of IM clients are marked for translation at the request of
 	   translators who wanted to transliterate them.  Many translators
 	   choose to leave them alone.  Choose what's best for your language. */
