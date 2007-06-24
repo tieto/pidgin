@@ -32,7 +32,7 @@ addnewline_msg_cb(PurpleAccount *account, char *sender, char **message,
 					 PurpleConversation *conv, int *flags, void *data)
 {
 	if (g_ascii_strncasecmp(*message, "/me ", strlen("/me "))) {
-		char *tmp = g_strdup_printf("\n%s", *message);
+		char *tmp = g_strdup_printf("<br/>%s", *message);
 		g_free(*message);
 		*message = tmp;
 	}

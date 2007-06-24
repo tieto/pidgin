@@ -736,15 +736,16 @@ bonjour_jabber_send_message(BonjourJabber *data, const gchar *to, const gchar *b
 	if (bb->conversation == NULL)
 	{
 		PurpleProxyConnectData *connect_data;
+		PurpleProxyInfo *proxy_info;
 
 		/* Make sure that the account always has a proxy of "none".
 		 * This is kind of dirty, but proxy_connect_none() isn't exposed. */
-		static PurpleProxyInfo *tmp_none_proxy_info = NULL;
-		if (!tmp_none_proxy_info) {
-			tmp_none_proxy_info = purple_proxy_info_new();
-			purple_proxy_info_set_type(tmp_none_proxy_info, PURPLE_PROXY_NONE);
+		proxy_info = purple_account_get_proxy_info(data->account);
+		if (proxy_info == NULL) {
+			proxy_info = purple_proxy_info_new();
+			purple_account_set_proxy_info(data->account, proxy_info);
 		}
-		purple_account_set_proxy_info(data->account, tmp_none_proxy_info);
+		purple_proxy_info_set_type(proxy_info, PURPLE_PROXY_NONE);
 
 		connect_data =
 			purple_proxy_connect(data->account->gc, data->account, bb->ip,

@@ -43,7 +43,7 @@ static PurpleConnection *tcl_validate_gc(Tcl_Obj *obj, Tcl_Interp *interp);
 static PurpleAccount *tcl_validate_account(Tcl_Obj *obj, Tcl_Interp *interp)
 {
 	PurpleAccount *account;
-	const GList *cur;
+	GList *cur;
 
 	account = purple_tcl_ref_get(interp, obj, PurpleTclRefAccount);
 
@@ -62,7 +62,7 @@ static PurpleAccount *tcl_validate_account(Tcl_Obj *obj, Tcl_Interp *interp)
 static PurpleConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *interp)
 {
 	PurpleConversation *convo;
-	const GList *cur;
+	GList *cur;
 
 	convo = purple_tcl_ref_get(interp, obj, PurpleTclRefConversation);
 
@@ -81,7 +81,7 @@ static PurpleConversation *tcl_validate_conversation(Tcl_Obj *obj, Tcl_Interp *i
 static PurpleConnection *tcl_validate_gc(Tcl_Obj *obj, Tcl_Interp *interp)
 {
 	PurpleConnection *gc;
-	const GList *cur;
+	GList *cur;
 
 	gc = purple_tcl_ref_get(interp, obj, PurpleTclRefConnection);
 
@@ -113,7 +113,7 @@ int tcl_cmd_account(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *CO
 	const char *listopts[] = { "-all", "-online", NULL };
 	enum { CMD_ACCOUNTLIST_ALL, CMD_ACCOUNTLIST_ONLINE } listopt;
 	const char *alias;
-	const GList *cur;
+	GList *cur;
 	PurpleAccount *account;
 	PurpleStatus *status;
 	PurpleStatusType *status_type;
@@ -612,7 +612,7 @@ int tcl_cmd_connection(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj 
 	const char *cmds[] = { "account", "displayname", "handle", "list", NULL };
 	enum { CMD_CONN_ACCOUNT, CMD_CONN_DISPLAYNAME, CMD_CONN_HANDLE, CMD_CONN_LIST } cmd;
 	int error;
-	const GList *cur;
+	GList *cur;
 	PurpleConnection *gc;
 
 	if (objc < 2) {
@@ -680,7 +680,7 @@ int tcl_cmd_conversation(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Ob
 	PurpleConversation *convo;
 	PurpleAccount *account;
 	PurpleConversationType type;
-	const GList *cur;
+	GList *cur;
 	char *opt, *from, *what;
 	int error, argsused, flags = 0;
 
@@ -1082,7 +1082,7 @@ int tcl_cmd_presence(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj *C
 	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	Tcl_Obj *list, *elem;
 	PurplePresence *presence;
-	const GList *cur;
+	GList *cur;
 	int error, idle, idle_time, login_time;
 
 	if (objc < 2) {
@@ -1524,7 +1524,7 @@ int tcl_cmd_status_type(ClientData unused, Tcl_Interp *interp, int objc, Tcl_Obj
 	Tcl_Obj *result = Tcl_GetObjResult(interp);
 	PurpleStatusType *status_type;
 	Tcl_Obj *list, *elem;
-	const GList *cur;
+	GList *cur;
 	int error;
 
 	if (objc < 2) {

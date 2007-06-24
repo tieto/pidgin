@@ -753,15 +753,16 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 			g_signal_emit(tree, signals[SIG_TOGGLED], 0, row->key);
 			redraw_tree(tree);
 		}
+	} else {
+		return FALSE;
 	}
 
 	if (old != tree->current)
 	{
 		tree_selection_changed(tree, old, tree->current);
-		return TRUE;
 	}
 
-	return FALSE;
+	return TRUE;
 }
 
 static void
@@ -1016,7 +1017,7 @@ int gnt_tree_get_visible_rows(GntTree *tree)
 	return ret;
 }
 
-const GList *gnt_tree_get_rows(GntTree *tree)
+GList *gnt_tree_get_rows(GntTree *tree)
 {
 	return tree->list;
 }

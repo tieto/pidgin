@@ -181,7 +181,7 @@ static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	/* 031-032: server listening port */
 	bytes += read_packet_w(data, &cursor, len, &lrop.server_port);
 	/* 033-036: login time for current session */
-	bytes += read_packet_dw(data, &cursor, len, (guint32 *) &lrop.login_time);
+	bytes += read_packet_time(data, &cursor, len, &lrop.login_time);
 	/* 037-062: 26 bytes, unknown */
 	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.unknown1, 26);
 	/* 063-066: unknown server1 ip address */
@@ -203,7 +203,7 @@ static gint _qq_process_login_ok(PurpleConnection *gc, guint8 *data, gint len)
 	/* 123-126: login IP of last session */
 	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.last_client_ip, 4);
 	/* 127-130: login time of last session */
-	bytes += read_packet_dw(data, &cursor, len, (guint32 *) &lrop.last_login_time);
+	bytes += read_packet_time(data, &cursor, len, &lrop.last_login_time);
 	/* 131-138: 8 bytes unknown */
 	bytes += read_packet_data(data, &cursor, len, (guint8 *) &lrop.unknown6, 8);
 

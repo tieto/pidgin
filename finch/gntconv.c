@@ -24,12 +24,13 @@
  */
 #include <string.h>
 
+#include "finch.h"
+
 #include <cmds.h>
 #include <idle.h>
 #include <prefs.h>
 #include <util.h>
 
-#include "finch.h"
 #include "gntaccount.h"
 #include "gntblist.h"
 #include "gntconv.h"
@@ -440,6 +441,16 @@ create_conv_from_userlist(GntWidget *widget, FinchConv *fc)
 }
 
 static void
+gained_focus_cb(GntWindow *window, FinchConv *fc)
+{
+	GList *iter;
+	for (iter = fc->list; iter; iter = iter->next) {
+		purple_conversation_set_data(iter->data, "unseen-count", 0);
+		purple_conversation_update(iter->data, PURPLE_CONV_UPDATE_UNSEEN);
+	}
+}
+
+static void
 finch_create_conversation(PurpleConversation *conv)
 {
 	FinchConv *ggc = conv->ui_data;
@@ -474,7 +485,24 @@ finch_create_conversation(PurpleConversation *conv)
 	gnt_box_set_title(GNT_BOX(ggc->window), title);
 	gnt_box_set_toplevel(GNT_BOX(ggc->window), TRUE);
 	gnt_box_set_pad(GNT_BOX(ggc->window), 0);
-	gnt_widget_set_name(ggc->window, "conversation-window");
+
+	switch(conv->type){
+		case PURPLE_CONV_TYPE_UNKNOWN:
+			gnt_widget_set_name(ggc->window, "conversation-window-unknown" );
+			break;
+		case PURPLE_CONV_TYPE_IM:
+			gnt_widget_set_name(ggc->window, "conversation-window-im" );
+			break;
+		case PURPLE_CONV_TYPE_CHAT:
+			gnt_widget_set_name(ggc->window, "conversation-window-chat" );
+			break;
+		case PURPLE_CONV_TYPE_MISC:
+			gnt_widget_set_name(ggc->window, "conversation-window-misc" );
+			break;
+		case PURPLE_CONV_TYPE_ANY:
+			gnt_widget_set_name(ggc->window, "conversation-window-any" );
+			break;
+	}
 
 	gg_create_menu(ggc);
 
@@ -529,6 +557,7 @@ finch_create_conversation(PurpleConversation *conv)
 
 	g_free(title);
 	gnt_box_give_focus_to_child(GNT_BOX(ggc->window), ggc->entry);
+	g_signal_connect(G_OBJECT(ggc->window), "gained-focus", G_CALLBACK(gained_focus_cb), ggc);
 }
 
 static void
@@ -622,6 +651,11 @@ finch_write_common(PurpleConversation *conv, const char *who, const char *messag
 
 	if (flags & (PURPLE_MESSAGE_RECV | PURPLE_MESSAGE_NICK | PURPLE_MESSAGE_ERROR))
 		gnt_widget_set_urgent(ggconv->tv);
+	if (flags & PURPLE_MESSAGE_RECV && !gnt_widget_has_focus(ggconv->window)) {
+		int count = GPOINTER_TO_INT(purple_conversation_get_data(conv, "unseen-count"));
+		purple_conversation_set_data(conv, "unseen-count", GINT_TO_POINTER(count + 1));
+		purple_conversation_update(conv, PURPLE_CONV_UPDATE_UNSEEN);
+	}
 }
 
 static void

@@ -108,37 +108,32 @@ static int ignore_sig_list[] = {
 };
 #endif
 
-static int
+static void
 dologin_named(const char *name)
 {
 	PurpleAccount *account;
 	char **names;
 	int i;
-	int ret = -1;
 
 	if (name != NULL) { /* list of names given */
 		names = g_strsplit(name, ",", 64);
 		for (i = 0; names[i] != NULL; i++) {
 			account = purple_accounts_find(names[i], NULL);
 			if (account != NULL) { /* found a user */
-				ret = 0;
-				purple_account_connect(account);
+				purple_account_set_enabled(account, PIDGIN_UI, TRUE);
 			}
 		}
 		g_strfreev(names);
 	} else { /* no name given, use the first account */
-		const GList *accounts;
+		GList *accounts;
 
 		accounts = purple_accounts_get_all();
 		if (accounts != NULL)
 		{
 			account = (PurpleAccount *)accounts->data;
-			ret = 0;
-			purple_account_connect(account);
+			purple_account_set_enabled(account, PIDGIN_UI, TRUE);
 		}
 	}
-
-	return ret;
 }
 
 #ifdef HAVE_SIGNAL_H
@@ -377,6 +372,7 @@ show_usage(const char *name, gboolean terse)
 		       "  -c, --config=DIR    use DIR for config files\n"
 		       "  -d, --debug         print debugging messages to stdout\n"
 		       "  -h, --help          display this help and exit\n"
+		       "  -m, --multiple      do not ensure single instance\n"
 		       "  -n, --nologin       don't automatically login\n"
 		       "  -l, --login[=NAME]  automatically login (optional argument NAME specifies\n"
 		       "                      account(s) to use, separated by commas)\n"
@@ -436,12 +432,12 @@ int main(int argc, char *argv[])
 	gboolean opt_login = FALSE;
 	gboolean opt_nologin = FALSE;
 	gboolean opt_version = FALSE;
+	gboolean opt_si = TRUE;     /* Check for single instance? */
 	char *opt_config_dir_arg = NULL;
 	char *opt_login_arg = NULL;
 	char *opt_session_arg = NULL;
-	int dologin_ret = -1;
 	char *search_path;
-	const GList *accounts;
+	GList *accounts;
 #ifdef HAVE_SIGNAL_H
 	int sig_indx;	/* for setting up signal catching */
 	sigset_t sigset;
@@ -463,6 +459,7 @@ int main(int argc, char *argv[])
 		{"debug",    no_argument,       NULL, 'd'},
 		{"help",     no_argument,       NULL, 'h'},
 		{"login",    optional_argument, NULL, 'l'},
+		{"multiple", no_argument,       NULL, 'm'},
 		{"nologin",  no_argument,       NULL, 'n'},
 		{"session",  required_argument, NULL, 's'},
 		{"version",  no_argument,       NULL, 'v'},
@@ -477,7 +474,7 @@ int main(int argc, char *argv[])
 
 	/* This is the first Glib function call. Make sure to initialize GThread bfeore then */
 	g_thread_init(NULL);
-	
+
 #ifdef ENABLE_NLS
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(PACKAGE, "UTF-8");
@@ -499,7 +496,7 @@ int main(int argc, char *argv[])
 			"no fault of your own.\n\n"
 			"If you can reproduce the crash, please notify the developers\n"
 			"by reporting a bug at:\n"
-			"%snewticket/\n\n"
+			"%ssimpleticket/\n\n"
 			"Please make sure to specify what you were doing at the time\n"
 			"and post the backtrace from the core file.  If you do not know\n"
 			"how to get the backtrace, please read the instructions at\n"
@@ -576,7 +573,7 @@ int main(int argc, char *argv[])
 	opterr = 1;
 	while ((opt = getopt_long(argc, argv,
 #ifndef _WIN32
-				  "c:dhnl::s:v",
+				  "c:dhmnl::s:v",
 #else
 				  "c:dhnl::v",
 #endif
@@ -607,6 +604,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'v':	/* version */
 			opt_version = TRUE;
+			break;
+		case 'm':   /* do not ensure single instance. */
+			opt_si = FALSE;
 			break;
 		case '?':	/* show terse help */
 		default:
@@ -734,7 +734,7 @@ int main(int argc, char *argv[])
 		abort();
 	}
 
-	if (!purple_core_ensure_single_instance()) {
+	if (opt_si && !purple_core_ensure_single_instance()) {
 		purple_core_quit();
 #ifdef HAVE_SIGNAL_H
 		g_free(segfault_message);
@@ -798,14 +798,23 @@ int main(int argc, char *argv[])
 		pidgin_debug_window_show();
 
 	if (opt_login) {
-		dologin_ret = dologin_named(opt_login_arg);
+		/* disable all accounts */
+		for (accounts = purple_accounts_get_all(); accounts != NULL; accounts = accounts->next) {
+			PurpleAccount *account = accounts->data;
+			purple_account_set_enabled(account, PIDGIN_UI, FALSE);
+		}
+		/* honor the startup status preference */
+		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
+			purple_savedstatus_activate(purple_savedstatus_get_startup());
+		/* now enable the requested ones */
+		dologin_named(opt_login_arg);
 		if (opt_login_arg != NULL) {
 			g_free(opt_login_arg);
 			opt_login_arg = NULL;
 		}
 	}
 
-	if (opt_nologin)
+	if (opt_nologin && !opt_login)
 	{
 		/* Set all accounts to "offline" */
 		PurpleSavedStatus *saved_status;
@@ -821,7 +830,7 @@ int main(int argc, char *argv[])
 		/* Set the status for each account */
 		purple_savedstatus_activate(saved_status);
 	}
-	else
+	else if (!opt_login)
 	{
 		/* Everything is good to go--sign on already */
 		if (!purple_prefs_get_bool("/purple/savedstatus/startup_current_status"))
@@ -846,6 +855,7 @@ int main(int argc, char *argv[])
 	winpidgin_post_init();
 #endif
 
+	g_set_application_name(_("Pidgin"));
 	gtk_main();
 
 #ifdef HAVE_SIGNAL_H

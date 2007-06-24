@@ -406,6 +406,9 @@ void purple_log_logger_add (PurpleLogLogger *logger)
 	if (g_slist_find(loggers, logger))
 		return;
 	loggers = g_slist_append(loggers, logger);
+	if (strcmp(purple_prefs_get_string("/purple/logging/format"), logger->id) == 0) {
+		purple_prefs_trigger_callback("/purple/logging/format");
+	}
 }
 
 void purple_log_logger_remove (PurpleLogLogger *logger)
@@ -982,7 +985,7 @@ static void log_get_log_sets_common(GHashTable *sets)
 		GDir *protocol_dir;
 		const gchar *username;
 		gchar *protocol_unescaped;
-		const GList *account_iter;
+		GList *account_iter;
 		GList *accounts = NULL;
 
 		if ((protocol_dir = g_dir_open(protocol_path, 0, NULL)) == NULL) {

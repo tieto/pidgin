@@ -27,9 +27,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Vieraile Pidinin Windows -sivustolla"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (vain poisto)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Virhe asennettaessa GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Antamasi polku ei toimi tai sitä ei voi luoda."

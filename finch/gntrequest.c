@@ -297,7 +297,7 @@ request_fields_cb(GntWidget *button, PurpleRequestFields *fields)
 				GList *list = NULL;
 				if (purple_request_field_list_get_multi_select(field))
 				{
-					const GList *iter;
+					GList *iter;
 					GntWidget *tree = field->ui_data;
 
 					iter = purple_request_field_list_get_items(field);
@@ -433,7 +433,7 @@ finch_request_fields(const char *title, const char *primary,
 			else if (type == PURPLE_REQUEST_FIELD_CHOICE)
 			{
 				int id;
-				const GList *list;
+				GList *list;
 				GntWidget *combo = gnt_combo_box_new();
 				gnt_box_add_widget(GNT_BOX(hbox), combo);
 				field->ui_data = combo;
@@ -449,7 +449,7 @@ finch_request_fields(const char *title, const char *primary,
 			}
 			else if (type == PURPLE_REQUEST_FIELD_LIST)
 			{
-				const GList *list;
+				GList *list;
 				gboolean multi = purple_request_field_list_get_multi_select(field);
 				if (multi)
 				{
@@ -490,7 +490,7 @@ finch_request_fields(const char *title, const char *primary,
 			{
 				gboolean all;
 				PurpleAccount *def;
-				const GList *list;
+				GList *list;
 				GntWidget *combo = gnt_combo_box_new();
 				gnt_box_set_alignment(GNT_BOX(hbox), GNT_ALIGN_MID);
 				gnt_box_add_widget(GNT_BOX(hbox), combo);
@@ -673,7 +673,7 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *allfields)
 			switch (pt) {
 				case PURPLE_PREF_INT:
 				{
-					long int tmp;
+					long int tmp = GPOINTER_TO_INT(val);
 					if (type == PURPLE_REQUEST_FIELD_LIST) /* Lists always return string */
 						sscanf(val, "%ld", &tmp);
 					purple_prefs_set_int(id, (gint)tmp);

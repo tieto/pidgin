@@ -28,9 +28,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Visite a páxina Web de Pidgin Windows"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (sólo eliminar)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Erro ao instalar o executable GTK+."
 !define GTK_BAD_INSTALL_PATH			"Non se puido acceder ou crear a ruta que vd. indicou."

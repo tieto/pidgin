@@ -163,7 +163,7 @@ struct _GntWMClass
 	/* List of windows. Although the WM can keep a list of its own for the windows,
 	 * it'd be better if there was a way to share between the 'core' and the WM.
 	 */
-	/*const GList *(*window_list)();*/
+	/*GList *(*window_list)();*/
 
 	void (*res1)(void);
 	void (*res2)(void);

@@ -45,6 +45,7 @@ G_BEGIN_DECLS
 
 GType gnt_ws_get_gtype(void);
 
+GntWS *gnt_ws_new(const char *name);
 void gnt_ws_set_name(GntWS *, const gchar *);
 void gnt_ws_add_widget(GntWS *, GntWidget *);
 void gnt_ws_remove_widget(GntWS *, GntWidget *);

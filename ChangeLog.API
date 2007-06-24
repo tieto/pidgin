@@ -13,21 +13,13 @@ version 2.1.0 (??/??/????):
 		    UIs can now use better scheduling for whole-second timers.  For
 		    example, clients based on the glib event loop can now use
 		    g_timeout_add_seconds.
-		* gtk_imhtml_setup_entry
-		* pidgin_create_window
 		* purple_blist_node_get_type
 		* purple_conversation_do_command
 		* purple_conversation_get_extended_menu
 		* purple_core_ensure_single_instance
 		    This is for UIs to use to ensure only one copy is running.
 		* purple_dbus_is_owner
-		* purple_dbusify_const_GList
-		* purple_dbusify_const_GSList
-		* purple_const_GList_to_array
-		* purple_const_GSList_to_array
 		* purple_image_data_calculate_filename
-		* pidgin_retrieve_user_info, shows immediate feedback when getting
-		  information about a user.
 		* purple_timeout_add_seconds
 		    Callers should prefer this to purple_timeout_add for timers
 		    longer than 1 second away.  Be aware of the rounding, though.
@@ -35,11 +27,12 @@ version 2.1.0 (??/??/????):
 		    Callers should prefer this to purple_timeout_add for timers
 		    longer than 1 second away.  Be aware of the rounding, though.
 		* purple_xfer_get_remote_user
-		* gtk_imhtml_animation_new
-		    Can be used for inserting an animated image into an IMHTML.
+		* purple_pounces_get_all_for_ui
 
 		Changed:
-		* Mark some return types const:
+		* The documentation of the following functions now properly
+		  declares that the returned value must not be modified or
+		  freed, which was always the case:
 			* purple_accounts_get_all
 			* purple_connections_get_all
 			* purple_connections_get_connecting
@@ -49,25 +42,56 @@ version 2.1.0 (??/??/????):
 			* purple_get_conversations
 			* purple_get_ims
 			* purple_notify_user_info_get_entries
-
-		Deprecated:
-		* purple_dbusify_GList:  Use purple_dbusify_const_GList (and
-		  g_list_free if needed) if depending on 2.1.0 is okay.
-		* purple_dbusify_GSList:  Use purple_dbusify_const_GSList (and
-		  g_slist_free if needed) if depending on 2.1.0 is okay..
-		* purple_GList_to_array:  Use purple_const_GList_to_array (and
-		  g_list_free if needed) if depending on 2.1.0 is okay..
-		* purple_GSList_to_array:  Use purple_const_GSList_to_array (and
-		  g_slist_free if needed) if depending on 2.1.0 is okay..
+		* The following functions now return a GList* instead of a
+		  const GList*, as const is not very useful with GLists.  The
+		  returned value still must not be modified or freed:
+			* purple_account_get_status_types
+			* purple_mime_document_get_fields
+			* purple_mime_document_get_parts
+			* purple_mime_part_get_fields
+			* purple_request_fields_get_required
+			* purple_request_field_list_get_selected
+			* purple_request_field_list_get_items
+			* purple_status_type_get_attrs
+			* purple_presence_get_statuses
+		* purple_request_field_list_set_selected now takes a GList*
+		  instead of a const GList* for items, as const is not very
+		  useful with GLists.  The passed list is still not modified
+		  or freed.
+		* purple_presence_add_list now takes a GList* instead of a
+		  const GList* for source_list, as const is not very useful with
+		  GLists.  The passed list is still not modified or freed.
 
 	Pidgin:
+		Added:
+		* gtk_imhtml_setup_entry
+		* pidgin_create_window
+		* pidgin_retrieve_user_info and pidgin_retrieve_user_info_in_chat,
+		  shows immediate feedback when getting information about a user.
+		* gtk_imhtml_animation_new
+		    Can be used for inserting an animated image into an IMHTML.
+		* pidgin_menu_position_func_helper
+		* pidgin_blist_get_name_markup, returns the buddy list markup
+		  text for a given buddy.
+
 		Changed:
 		* pidgin_append_menu_action returns the menuitem added to the menu.
 		* pidgin_separator returns the separator added to the menu.
+		* PidginConversation has struct members to handle the new info
+		  pane:
+		  	* infopane
+			* infopane_hbox
+			* infopane_model
+			* infopane_iter
 
 	Finch:
 		Added:
 		* finch_retrieve_user_info
+
+		Changed:
+		* gnt_tree_get_rows() now returns a GList* instead of a const
+		  GList*, as const is not very useful with GLists.  The
+		  returned value still must not be modified or freed.
 
 version 2.0.2 (6/14/2007):
 	Pidgin:
