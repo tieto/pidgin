@@ -1140,7 +1140,7 @@ pidgin_status_editor_show(gboolean edit, PurpleSavedStatus *saved_status)
 	if (edit)
 		dialog->original_title = g_strdup(purple_savedstatus_get_title(saved_status));
 
-	dialog->window = win = pidgin_create_window (_("Status"), PIDGIN_HIG_BORDER, "status", FALSE) ;
+	dialog->window = win = pidgin_create_window(_("Status"), PIDGIN_HIG_BORDER, "status", TRUE);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
 					 G_CALLBACK(status_editor_destroy_cb), dialog);
