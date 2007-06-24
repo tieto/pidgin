@@ -166,25 +166,6 @@ get_pref_field(Prefs *prefs)
 	return field;
 }
 
-static GList *
-get_sound_methods()
-{
-	GList *list = NULL;
-	list = g_list_append(list,(char *)_("Console Beep"));
-	list = g_list_append(list,"beep");
-	list = g_list_append(list,(char *)_("Automatic"));
-	list = g_list_append(list,"automatic");
-	list = g_list_append(list,(char *)_("ESD"));
-	list = g_list_append(list,"esd");
-	list = g_list_append(list,(char *)_("ALSA"));
-	list = g_list_append(list,"alsa");
-	list = g_list_append(list,(char *)_("Command"));
-	list = g_list_append(list,"custome");
-	list = g_list_append(list,(char *)_("No Sound"));
-	list = g_list_append(list,"none");
-	return list;
-}
-
 static Prefs blist[] = 
 {
 	{PURPLE_PREF_BOOLEAN, "/finch/blist/idletime", N_("Show Idle Time"), NULL},
@@ -217,14 +198,6 @@ static Prefs idle[] =
 	{PURPLE_PREF_INT, "/purple/savedstatus/idleaway", "Change status to", get_status_titles},
 	{PURPLE_PREF_NONE, NULL, NULL, NULL},
 };
-
-static Prefs sound[] =
-{
-	{PURPLE_PREF_STRING, FINCH_PREFS_ROOT "/sound/method", "Method", get_sound_methods},
-	{PURPLE_PREF_BOOLEAN, FINCH_PREFS_ROOT "/sound/mute", "Mute the Sound", NULL},
-	{PURPLE_PREF_NONE, NULL, NULL, NULL},
-};
-
 
 static void
 free_strings()
@@ -268,7 +241,6 @@ void finch_prefs_show_all()
 	add_pref_group(fields, _("Conversations"), convs);
 	add_pref_group(fields, _("Logging"), logging);
 	add_pref_group(fields, _("Idle"), idle);
-	add_pref_group(fields, _("Sound"),sound);
 
 	purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(save_cb), _("Cancel"), free_strings,
