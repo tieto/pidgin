@@ -1686,8 +1686,6 @@ void msim_remove_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *gr
 		purple_notify_error(NULL, NULL, _("Failed to remove buddy"), _("blocklist command failed"));
 		return;
 	}
-
-	/* TODO: update blocklist */
 }
 
 /** Return whether the buddy can be messaged while offline.
@@ -2021,17 +2019,6 @@ void msim_lookup_user(MsimSession *session, const gchar *user, MSIM_USER_LOOKUP_
 
 	msim_msg_dump("msim_lookup_user: data=%s\n", (MsimMessage *)data);
 
-    /* TODO: check if this user's info was cached and fresh; if so return immediately */
-#if 0
-    /* If already know userid, then call callback immediately */
-    cached_userid = g_hash_table_lookup(session->userid_cache, who);
-    if (cached_userid && !by_userid)
-    {
-        cb(cached_userid, NULL, NULL, data);
-        return;
-    }
-#endif
-
     /* Setup callback. Response will be associated with request using 'rid'. */
     rid = msim_new_reply_callback(session, cb, data);
 
@@ -2137,15 +2124,6 @@ void msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, gboo
 
         /* TODO: if (full), do something different */
 		
-		/* TODO: move to buddy profile 
-		purple_notify_user_info_add_pair(user_info, "User ID",
-				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "UserID")));
-				*/
-
-		/* 	Already shown in status text. 
-		purple_notify_user_info_add_pair(user_info, "Display Name",
-				purple_blist_node_get_string(&buddy->node, "DisplayName")); */
-
 		/* Useful to identify the account the tooltip refers to. Other prpls show this. */
 		purple_notify_user_info_add_pair(user_info, _("User Name"),
 				(purple_blist_node_get_string(&buddy->node, "UserName"))); 
