@@ -157,7 +157,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 					log->logger = adium_logger;
 					log->logger_data = data;
 
-					list = g_list_append(list, log);
+					list = g_list_prepend(list, log);
 				}
 			} else if (purple_str_has_suffix(file, ".adiumLog")) {
 				struct tm tm;
@@ -218,7 +218,7 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 					log->logger = adium_logger;
 					log->logger_data = data;
 
-					list = g_list_append(list, log);
+					list = g_list_prepend(list, log);
 				}
 			}
 		}
@@ -857,7 +857,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			log->logger = msn_logger;
 			log->logger_data = data;
 
-			list = g_list_append(list, log);
+			list = g_list_prepend(list, log);
 		}
 		old_session_id = session_id;
 	}
@@ -865,7 +865,7 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	if (data)
 		data->last_log = TRUE;
 
-	return list;
+	return g_list_reverse(list);
 }
 
 static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
@@ -1397,7 +1397,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 						log->logger = trillian_logger;
 						log->logger_data = data;
 
-						list = g_list_append(list, log);
+						list = g_list_prepend(list, log);
 					}
 				}
 			}
@@ -1412,7 +1412,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 
 	g_free(prpl_name);
 
-	return list;
+	return g_list_reverse(list);
 }
 
 static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
@@ -1892,7 +1892,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 							log->logger = qip_logger;
 							log->logger_data = data;
 
-							list = g_list_append(list, log);
+							list = g_list_prepend(list, log);
 
 							prev_tm = tm;
 							start_log = new_line;
@@ -1931,12 +1931,12 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		log->logger = qip_logger;
 		log->logger_data = data;
 
-		list = g_list_append(list, log);
+		list = g_list_prepend(list, log);
 	}
 
 	g_free(contents);
 	g_free(path);
-	return list;
+	return g_list_reverse(list);
 }
 
 static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
