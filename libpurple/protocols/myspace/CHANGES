@@ -1,3 +1,6 @@
+2007-XX-XX Jeff Connelly <jeff2@homing.pidgin.im> - 0.8
+* Allow "Get Info" on all users, by uid or username
+
 2007-06-14 Jeff Connelly <jeff2@homing.pidgin.im> - 0.7
 * Add/delete buddy now functional (required many other code improvements).
 * Show improved buddy information in tooltip text.
