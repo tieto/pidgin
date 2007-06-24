@@ -1475,7 +1475,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 	dialog->account = account;
 
 	tmp = g_strdup_printf(_("Status for %s"), purple_account_get_username(account));
-	dialog->window = win = pidgin_create_window(tmp, PIDGIN_HIG_BORDER, "substatus", FALSE) ;
+	dialog->window = win = pidgin_create_window(tmp, PIDGIN_HIG_BORDER, "substatus", TRUE);
 	g_free(tmp);
 
 	g_signal_connect(G_OBJECT(win), "delete_event",
@@ -1520,7 +1520,7 @@ edit_substatus(StatusEditor *status_editor, PurpleAccount *account)
 
 	/* Status mesage */
 	hbox = gtk_hbox_new(FALSE, PIDGIN_HIG_BOX_SPACE);
-	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), hbox, TRUE, TRUE, 0);
 
 	label = gtk_label_new_with_mnemonic(_("_Message:"));
 	gtk_misc_set_alignment(GTK_MISC(label), 0, 0.5);
