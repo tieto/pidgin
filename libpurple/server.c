@@ -198,7 +198,7 @@ void serv_alias_buddy(PurpleBuddy *b)
 {
 	PurplePluginProtocolInfo *prpl_info = NULL;
 
-	if (b != NULL && b->account->gc->prpl != NULL)
+	if (b != NULL && b->account->gc && b->account->gc->prpl != NULL)
 		prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(b->account->gc->prpl);
 
 	if (b && prpl_info && prpl_info->alias_buddy) {

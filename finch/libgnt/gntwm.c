@@ -1458,23 +1458,50 @@ update_window_in_list(GntWM *wm, GntWidget *wid)
 static gboolean
 match_title(gpointer title, gpointer n, gpointer wid_title)
 {
-	/* maybe check for regex.h? */
+	/* XXX: do any regex magic here. */
 	if (g_strrstr((gchar *)wid_title, (gchar *)title))
 		return TRUE;
 	return FALSE;
 }
 
-static GntWS *
-new_widget_find_workspace(GntWM *wm, GntWidget *widget, gchar *wid_title)
+#if !GLIB_CHECK_VERSION(2,4,0)
+struct
 {
-	GntWS *ret;
-	const gchar *name;
-	ret = g_hash_table_find(wm->title_places, match_title, wid_title);
+	gpointer data;
+	gpointer value;
+} table_find_data;
+
+static void
+table_find_helper(gpointer key, gpointer value, gpointer data)
+{
+	GHRFunc func = data;
+	if (func(key, value, table_find_data.data))
+		table_find_data.value = value;
+}
+
+static gpointer
+g_hash_table_find(GHashTable * table, GHRFunc func, gpointer data)
+{
+	table_find_data.data = data;
+	table_find_data.value = NULL;
+	g_hash_table_foreach(table, table_find_helper, func);
+	return table_find_data.value;
+}
+#endif
+
+static GntWS *
+new_widget_find_workspace(GntWM *wm, GntWidget *widget)
+{
+	GntWS *ret = NULL;
+	const gchar *name, *title;
+	title = GNT_BOX(widget)->title;
+	if (title)
+		ret = g_hash_table_find(wm->title_places, match_title, (gpointer)title);
 	if (ret)
 		return ret;
 	name = gnt_widget_get_name(widget);
 	if (name)
-		ret = g_hash_table_lookup(wm->name_places, name);
+		ret = g_hash_table_find(wm->name_places, match_title, (gpointer)name);
 	return ret ? ret : wm->cws;
 }
 
@@ -1537,8 +1564,7 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 			GntWidget *w = NULL;
 
 			if (GNT_IS_BOX(widget)) {
-				char *title = GNT_BOX(widget)->title;
-				ws = new_widget_find_workspace(wm, widget, title);
+				ws = new_widget_find_workspace(wm, widget);
 			}
 
 			if (ws->ordered)

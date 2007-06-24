@@ -1214,9 +1214,10 @@ network_page()
 	}
 
 	gtk_widget_show_all(ret);
-	if (proxy_info == NULL ||
+	/* Only hide table if not running gnome otherwise we hide the IP address table! */
+	if (!purple_running_gnome() && (proxy_info == NULL ||
 	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_NONE ||
-	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_ENVVAR)
+	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_ENVVAR))
 		gtk_widget_hide(table);
 	return ret;
 }

@@ -41,12 +41,14 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include "internal.h"
+
 #include "account.h"
 #include "buddyicon.h"
 #include "core.h"
-#include "internal.h"
 #include "imgstore.h"
 #include "network.h"
+#include "request.h"
 #include "savedstatuses.h"
 #include "status.h"
 #include "debug.h"
@@ -1017,7 +1019,7 @@ add_account_statuses(PidginStatusBox *status_box, PurpleAccount *account)
 static void
 pidgin_status_box_regenerate(PidginStatusBox *status_box)
 {
-	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4;
+	GdkPixbuf *pixbuf, *pixbuf2, *pixbuf3, *pixbuf4, *pixbuf5;
 	GtkIconSize icon_size;
 
 	icon_size = gtk_icon_size_from_name(PIDGIN_ICON_SIZE_TANGO_EXTRA_SMALL);
@@ -1047,15 +1049,19 @@ pidgin_status_box_regenerate(PidginStatusBox *status_box)
 			                                  icon_size, "PidginStatusBox");
 			pixbuf4 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_STATUS_INVISIBLE,
 			                                  icon_size, "PidginStatusBox");
+			pixbuf5 = gtk_widget_render_icon (GTK_WIDGET(status_box->vbox), PIDGIN_STOCK_STATUS_BUSY,
+							  icon_size, "PidginStatusBox");
 
 			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf, _("Available"), NULL, GINT_TO_POINTER(PURPLE_STATUS_AVAILABLE));
 			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf2, _("Away"), NULL, GINT_TO_POINTER(PURPLE_STATUS_AWAY));
+			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf5, _("Do not disturb"), NULL, GINT_TO_POINTER(PURPLE_STATUS_UNAVAILABLE));
 			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf4, _("Invisible"), NULL, GINT_TO_POINTER(PURPLE_STATUS_INVISIBLE));
 			pidgin_status_box_add(PIDGIN_STATUS_BOX(status_box), PIDGIN_STATUS_BOX_TYPE_PRIMITIVE, pixbuf3, _("Offline"), NULL, GINT_TO_POINTER(PURPLE_STATUS_OFFLINE));
 
 			if (pixbuf2)	g_object_unref(G_OBJECT(pixbuf2));
 			if (pixbuf3)	g_object_unref(G_OBJECT(pixbuf3));
 			if (pixbuf4)	g_object_unref(G_OBJECT(pixbuf4));
+			if (pixbuf5)	g_object_unref(G_OBJECT(pixbuf5));
 		}
 
 		add_popular_statuses(status_box);
@@ -1219,6 +1225,12 @@ static void
 current_savedstatus_changed_cb(PurpleSavedStatus *now, PurpleSavedStatus *old, PidginStatusBox *status_box)
 {
 	/* Make sure our current status is added to the list of popular statuses */
+	pidgin_status_box_regenerate(status_box);
+}
+
+static void
+saved_status_updated_cb(PurpleSavedStatus *status, PidginStatusBox *status_box)
+{
 	pidgin_status_box_regenerate(status_box);
 }
 
@@ -1514,6 +1526,56 @@ treeview_activate_current_selection(PidginStatusBox *status_box, GtkTreePath *pa
 	pidgin_status_box_changed(status_box);
 }
 
+static void tree_view_delete_current_selection_cb(gpointer data)
+{
+	PurpleSavedStatus *saved;
+
+	saved = purple_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
+	g_return_if_fail(saved != NULL);
+
+	if (purple_savedstatus_get_current() != saved)
+		purple_savedstatus_delete_by_status(saved);
+}
+
+static void
+tree_view_delete_current_selection(PidginStatusBox *status_box, GtkTreePath *path)
+{
+	GtkTreeIter iter;
+	gpointer data;
+	PurpleSavedStatus *saved;
+	gchar *msg;
+
+	if (status_box->active_row) {
+		/* don't delete active status */
+		if (gtk_tree_path_compare(path, gtk_tree_row_reference_get_path(status_box->active_row)) == 0)
+			return;
+	}
+
+	if (!gtk_tree_model_get_iter (GTK_TREE_MODEL(status_box->dropdown_store), &iter, path))
+		return;
+
+	gtk_tree_model_get(GTK_TREE_MODEL(status_box->dropdown_store), &iter,
+			   DATA_COLUMN, &data,
+			   -1);
+
+	saved = purple_savedstatus_find_by_creation_time(GPOINTER_TO_INT(data));
+	g_return_if_fail(saved != NULL);
+	if (saved == purple_savedstatus_get_current())
+		return;
+
+	msg = g_strdup_printf(_("Are you sure you want to delete %s?"), purple_savedstatus_get_title(saved));
+
+	purple_request_action(saved, NULL, msg, NULL, 0,
+		NULL, NULL, NULL,
+		data, 2,
+		_("Delete"), tree_view_delete_current_selection_cb,
+		_("Cancel"), NULL);
+
+	g_free(msg);
+
+	pidgin_status_box_popdown(status_box);
+}
+
 static gboolean
 treeview_button_release_cb(GtkWidget *widget, GdkEventButton *event, PidginStatusBox *status_box)
 {
@@ -1561,18 +1623,25 @@ treeview_key_press_event(GtkWidget *widget,
 		if (event->keyval == GDK_Escape) {
 			pidgin_status_box_popdown(box);
 			return TRUE;
-		} else if (event->keyval == GDK_Return) {
+		} else {
 			GtkTreeSelection *sel = gtk_tree_view_get_selection(GTK_TREE_VIEW(box->tree_view));
 			GtkTreeIter iter;
 			GtkTreePath *path;
 
 			if (gtk_tree_selection_get_selected(sel, NULL, &iter)) {
+				gboolean ret = TRUE;
 				path = gtk_tree_model_get_path(GTK_TREE_MODEL(box->dropdown_store), &iter);
-				treeview_activate_current_selection(box, path);
+				if (event->keyval == GDK_Return) {
+					treeview_activate_current_selection(box, path);
+				} else if (event->keyval == GDK_Delete) {
+					tree_view_delete_current_selection(box, path);
+				} else
+					ret = FALSE;
+
 				gtk_tree_path_free (path);
-				return TRUE;
+				return ret;
 			}
-		}
+		} 
 	}
 	return FALSE;
 }
@@ -1742,6 +1811,15 @@ pidgin_status_box_init (PidginStatusBox *status_box)
 						status_box,
 						PURPLE_CALLBACK(current_savedstatus_changed_cb),
 						status_box);
+	purple_signal_connect(purple_savedstatuses_get_handle(),
+			"savedstatus-added", status_box,
+			PURPLE_CALLBACK(saved_status_updated_cb), status_box);
+	purple_signal_connect(purple_savedstatuses_get_handle(),
+			"savedstatus-deleted", status_box,
+			PURPLE_CALLBACK(saved_status_updated_cb), status_box);
+	purple_signal_connect(purple_savedstatuses_get_handle(),
+			"savedstatus-modified", status_box,
+			PURPLE_CALLBACK(saved_status_updated_cb), status_box);
 	purple_signal_connect(purple_accounts_get_handle(), "account-enabled", status_box,
 						PURPLE_CALLBACK(account_enabled_cb),
 						status_box);

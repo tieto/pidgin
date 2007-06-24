@@ -46,6 +46,7 @@ enum
 static GntWindowClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
 static void (*orig_map)(GntWidget *widget);
+static void (*orig_size_request)(GntWidget *widget);
 
 static void
 gnt_file_sel_destroy(GntWidget *widget)
@@ -552,6 +553,19 @@ up_directory(GntBindable *bind, GList *null)
 }
 
 static void
+gnt_file_sel_size_request(GntWidget *widget)
+{
+	GntFileSel *sel;
+	if (widget->priv.height > 0)
+		return;
+
+	sel = GNT_FILE_SEL(widget);
+	sel->dirs->priv.height = 16;
+	sel->files->priv.height = 16;
+	orig_size_request(widget);
+}
+
+static void
 gnt_file_sel_class_init(GntFileSelClass *klass)
 {
 	GntBindableClass *bindable = GNT_BINDABLE_CLASS(klass);
@@ -560,6 +574,8 @@ gnt_file_sel_class_init(GntFileSelClass *klass)
 	kl->destroy = gnt_file_sel_destroy;
 	orig_map = kl->map;
 	kl->map = gnt_file_sel_map;
+	orig_size_request = kl->size_request;
+	kl->size_request = gnt_file_sel_size_request;
 
 	signals[SIG_FILE_SELECTED] = 
 		g_signal_new("file_selected",

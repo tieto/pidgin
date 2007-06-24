@@ -29,6 +29,7 @@
 #endif
 
 #include "pidgin.h"
+#include "internal.h"
 
 #include "debug.h"
 #include "util.h"
@@ -51,19 +52,6 @@
 #ifdef _WIN32
 #include <gdk/gdkwin32.h>
 #include <windows.h>
-#endif
-
-#ifdef ENABLE_NLS
-#  include <libintl.h>
-#  define _(x) gettext(x)
-#  ifdef gettext_noop
-#    define N_(String) gettext_noop (String)
-#  else
-#    define N_(String) (String)
-#  endif
-#else
-#  define N_(String) (String)
-#  define _(x) (x)
 #endif
 
 #include <pango/pango-font.h>

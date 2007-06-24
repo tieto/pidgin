@@ -913,13 +913,42 @@ pidgin_load_accels()
 	g_free(filename);
 }
 
-void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name)
+static void
+show_retrieveing_info(PurpleConnection *conn, const char *name)
 {
 	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
 	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
 	purple_notify_userinfo(conn, name, info, NULL, NULL);
 	purple_notify_user_info_destroy(info);
+}
+
+void pidgin_retrieve_user_info(PurpleConnection *conn, const char *name)
+{
+	show_retrieveing_info(conn, name);
 	serv_get_info(conn, name);
+}
+
+void pidgin_retrieve_user_info_in_chat(PurpleConnection *conn, const char *name, int chat)
+{
+	char *who = NULL;
+	PurplePluginProtocolInfo *prpl_info = NULL;
+
+	if (chat < 0) {
+		pidgin_retrieve_user_info(conn, name);
+		return;
+	}
+
+	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(conn->prpl);
+	if (prpl_info == NULL || prpl_info->get_cb_info == NULL) {
+		pidgin_retrieve_user_info(conn, name);
+		return;
+	}
+
+	if (prpl_info->get_cb_real_name)
+		who = prpl_info->get_cb_real_name(conn, chat, name);
+	show_retrieveing_info(conn, who ? who : name);
+	prpl_info->get_cb_info(conn, chat, name);
+	g_free(who);
 }
 
 gboolean
@@ -3064,6 +3093,65 @@ gboolean pidgin_gdk_pixbuf_is_opaque(GdkPixbuf *pixbuf) {
         }
 
         return TRUE;
+}
+
+void pidgin_gdk_pixbuf_make_round(GdkPixbuf *pixbuf) {
+	int width, height, rowstride;
+        guchar *pixels;
+        if (!gdk_pixbuf_get_has_alpha(pixbuf))
+                return;
+        width = gdk_pixbuf_get_width(pixbuf);
+        height = gdk_pixbuf_get_height(pixbuf);
+        rowstride = gdk_pixbuf_get_rowstride(pixbuf);
+        pixels = gdk_pixbuf_get_pixels(pixbuf);
+
+        if (width < 6 || height < 6)
+                return;
+        /* Top left */
+        pixels[3] = 0;
+        pixels[7] = 0x80;
+        pixels[11] = 0xC0;
+        pixels[rowstride + 3] = 0x80;
+        pixels[rowstride * 2 + 3] = 0xC0;
+
+        /* Top right */
+        pixels[width * 4 - 1] = 0;
+        pixels[width * 4 - 5] = 0x80;
+        pixels[width * 4 - 9] = 0xC0;
+        pixels[rowstride + (width * 4) - 1] = 0x80;
+        pixels[(2 * rowstride) + (width * 4) - 1] = 0xC0;
+
+        /* Bottom left */
+        pixels[(height - 1) * rowstride + 3] = 0;
+        pixels[(height - 1) * rowstride + 7] = 0x80;
+        pixels[(height - 1) * rowstride + 11] = 0xC0;
+        pixels[(height - 2) * rowstride + 3] = 0x80;
+        pixels[(height - 3) * rowstride + 3] = 0xC0;
+
+        /* Bottom right */
+        pixels[height * rowstride - 1] = 0;
+        pixels[(height - 1) * rowstride - 1] = 0x80;
+        pixels[(height - 2) * rowstride - 1] = 0xC0;
+        pixels[height * rowstride - 5] = 0x80;
+        pixels[height * rowstride - 9] = 0xC0;
+}
+
+const char *pidgin_get_dim_grey_string(GtkWidget *widget) {
+	static char dim_grey_string[8] = "";
+	GtkStyle *style;
+
+	if (!widget)
+		return "dim grey";
+
+ 	style = gtk_widget_get_style(widget);
+	if (!style)
+		return "dim grey";
+	
+	snprintf(dim_grey_string, sizeof(dim_grey_string), "#%02x%02x%02x",
+	style->text_aa[GTK_STATE_NORMAL].red >> 8,
+	style->text_aa[GTK_STATE_NORMAL].green >> 8,
+	style->text_aa[GTK_STATE_NORMAL].blue >> 8);
+	return dim_grey_string;
 }
 
 #if !GTK_CHECK_VERSION(2,2,0)

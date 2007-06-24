@@ -399,7 +399,7 @@ finch_request_fields(const char *title, const char *primary,
 							purple_request_field_string_get_default_value(field));
 				gnt_entry_set_masked(GNT_ENTRY(entry),
 						purple_request_field_string_is_masked(field));
-				if (purple_str_has_prefix(hint, "screenname")) {
+				if (hint && purple_str_has_prefix(hint, "screenname")) {
 					PurpleBlistNode *node = purple_blist_get_root();
 					gboolean offline = purple_str_has_suffix(hint, "all");
 					for (; node; node = purple_blist_node_next(node, offline)) {
@@ -673,7 +673,7 @@ void finch_request_save_in_prefs(gpointer null, PurpleRequestFields *allfields)
 			switch (pt) {
 				case PURPLE_PREF_INT:
 				{
-					long int tmp;
+					long int tmp = GPOINTER_TO_INT(val);
 					if (type == PURPLE_REQUEST_FIELD_LIST) /* Lists always return string */
 						sscanf(val, "%ld", &tmp);
 					purple_prefs_set_int(id, (gint)tmp);

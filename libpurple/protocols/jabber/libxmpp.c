@@ -25,8 +25,9 @@
  * share code.
  */
 
-#include "accountopt.h"
 #include "internal.h"
+
+#include "accountopt.h"
 #include "version.h"
 
 #include "iq.h"

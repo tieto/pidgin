@@ -31,10 +31,11 @@
 #include <gntline.h>
 #include <gnttree.h>
 
+#include "finch.h"
+
 #include <notify.h>
 #include <request.h>
 
-#include "finch.h"
 #include "gntstatus.h"
 
 static struct

@@ -111,6 +111,14 @@
 # include <unistd.h>
 #endif
 
+#ifndef MAXPATHLEN
+# ifdef PATH_MAX
+#  define MAXPATHLEN PATH_MAX
+# else
+#  define MAXPATHLEN 1024
+# endif
+#endif
+
 #ifndef HOST_NAME_MAX
 # define HOST_NAME_MAX 255
 #endif
@@ -167,6 +175,14 @@
 #		define G_GSIZE_FORMAT "lu"
 #	else
 #		define G_GSIZE_FORMAT "u"
+#	endif
+#endif
+
+#ifndef G_GNUC_NULL_TERMINATED
+#	if     __GNUC__ >= 4
+#		define G_GNUC_NULL_TERMINATED __attribute__((__sentinel__))
+#	else
+#		define G_GNUC_NULL_TERMINATED
 #	endif
 #endif
 
