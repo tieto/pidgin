@@ -277,6 +277,14 @@ void finch_plugins_show_all()
 	{
 		PurplePlugin *plug = iter->data;
 
+		if (plug->info->type == PURPLE_PLUGIN_LOADER) {
+			GList *cur;
+			for (cur = PURPLE_PLUGIN_LOADER_INFO(plug)->exts; cur != NULL;
+					 cur = cur->next)
+				purple_plugins_probe(cur->data);
+			continue;
+		}
+
 		if (plug->info->type != PURPLE_PLUGIN_STANDARD ||
 			(plug->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE) ||
 			plug->error)
