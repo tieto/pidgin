@@ -102,8 +102,8 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 				if (sscanf(date, "%u|%u|%u",
 						&tm.tm_year, &tm.tm_mon, &tm.tm_mday) != 3) {
 
-					purple_debug(PURPLE_DEBUG_ERROR, "Adium log parse",
-							"Filename timestamp parsing error\n");
+					purple_debug_error("Adium log parse",
+					                   "Filename timestamp parsing error\n");
 				} else {
 					char *filename = g_build_filename(path, file, NULL);
 					FILE *handle = g_fopen(filename, "rb");
@@ -137,8 +137,8 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 					if (sscanf(contents2, "%u.%u.%u",
 							&tm.tm_hour, &tm.tm_min, &tm.tm_sec) != 3) {
 
-						purple_debug(PURPLE_DEBUG_ERROR, "Adium log parse",
-								"Contents timestamp parsing error\n");
+						purple_debug_error("Adium log parse",
+						                   "Contents timestamp parsing error\n");
 						g_free(contents);
 						g_free(filename);
 						continue;
@@ -167,8 +167,8 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 				if (sscanf(date, "%u|%u|%u",
 						&tm.tm_year, &tm.tm_mon, &tm.tm_mday) != 3) {
 
-					purple_debug(PURPLE_DEBUG_ERROR, "Adium log parse",
-							"Filename timestamp parsing error\n");
+					purple_debug_error("Adium log parse",
+					                   "Filename timestamp parsing error\n");
 				} else {
 					char *filename = g_build_filename(path, file, NULL);
 					FILE *handle = g_fopen(filename, "rb");
@@ -197,8 +197,8 @@ static GList *adium_logger_list(PurpleLogType type, const char *sn, PurpleAccoun
 					if (sscanf(contents2, "%u.%u.%u",
 							&tm.tm_hour, &tm.tm_min, &tm.tm_sec) != 3) {
 
-						purple_debug(PURPLE_DEBUG_ERROR, "Adium log parse",
-								"Contents timestamp parsing error\n");
+						purple_debug_error("Adium log parse",
+						                   "Contents timestamp parsing error\n");
 						g_free(contents);
 						g_free(filename);
 						continue;
@@ -244,11 +244,9 @@ static char *adium_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 	g_return_val_if_fail(data->path != NULL, g_strdup(""));
 
-	purple_debug(PURPLE_DEBUG_INFO, "Adium log read",
-				"Reading %s\n", data->path);
+	purple_debug_info("Adium log read", "Reading %s\n", data->path);
 	if (!g_file_get_contents(data->path, &read, &length, &error)) {
-		purple_debug(PURPLE_DEBUG_ERROR, "Adium log read",
-				"Error reading log\n");
+		purple_debug_error("Adium log read", "Error reading log\n");
 		if (error)
 			g_error_free(error);
 		return g_strdup("");
@@ -477,7 +475,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 	if (!(datetime && *datetime))
 	{
 		purple_debug_error("MSN log timestamp parse",
-		                 "Attribute missing: %s\n", "DateTime");
+		                   "Attribute missing: %s\n", "DateTime");
 		return (time_t)0;
 	}
 
@@ -498,7 +496,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 	if (!(date && *date))
 	{
 		purple_debug_error("MSN log timestamp parse",
-		                 "Attribute missing: %s\n", "Date");
+		                   "Attribute missing: %s\n", "Date");
 		*tm_out = &tm2;
 		return stamp;
 	}
@@ -507,7 +505,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 	if (!(time && *time))
 	{
 		purple_debug_error("MSN log timestamp parse",
-		                 "Attribute missing: %s\n", "Time");
+		                   "Attribute missing: %s\n", "Time");
 		*tm_out = &tm2;
 		return stamp;
 	}
@@ -515,7 +513,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 	if (sscanf(date, "%u/%u/%u", &month, &day, &year) != 3)
 	{
 		purple_debug_error("MSN log timestamp parse",
-		                 "%s parsing error\n", "Date");
+		                   "%s parsing error\n", "Date");
 		*tm_out = &tm2;
 		return stamp;
 	}
@@ -532,7 +530,7 @@ static time_t msn_logger_parse_timestamp(xmlnode *message, struct tm **tm_out)
 	if (sscanf(time, "%u:%u:%u %c", &hour, &min, &sec, &am_pm) != 4)
 	{
 		purple_debug_error("MSN log timestamp parse",
-		                 "%s parsing error\n", "Time");
+		                   "%s parsing error\n", "Time");
 		*tm_out = &tm2;
 		return stamp;
 	}
@@ -799,12 +797,10 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		logfile = NULL; /* No sense saving the obvious buddy@domain.com. */
 	}
 
-	purple_debug(PURPLE_DEBUG_INFO, "MSN log read",
-				"Reading %s\n", path);
+	purple_debug_info("MSN log read", "Reading %s\n", path);
 	if (!g_file_get_contents(path, &contents, &length, &error)) {
 		g_free(path);
-		purple_debug(PURPLE_DEBUG_ERROR, "MSN log read",
-				"Error reading log\n");
+		purple_debug_error("MSN log read", "Error reading log\n");
 		if (error)
 			g_error_free(error);
 		return list;
@@ -833,8 +829,8 @@ static GList *msn_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 		session_id = xmlnode_get_attrib(message, "SessionID");
 		if (!session_id) {
-			purple_debug(PURPLE_DEBUG_ERROR, "MSN log parse",
-					"Error parsing message: %s\n", "SessionID missing");
+			purple_debug_error("MSN log parse",
+			                   "Error parsing message: %s\n", "SessionID missing");
 			continue;
 		}
 
@@ -894,8 +890,8 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 	if (!data->root || !data->message || !data->session_id) {
 		/* Something isn't allocated correctly. */
-		purple_debug(PURPLE_DEBUG_ERROR, "MSN log parse",
-				"Error parsing message: %s\n", "Internal variables inconsistent");
+		purple_debug_error("MSN log parse",
+		                   "Error parsing message: %s\n", "Internal variables inconsistent");
 		data->text = text;
 
 		return text->str;
@@ -922,8 +918,8 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 
 		/* If this triggers, something is wrong with the XML. */
 		if (!new_session_id) {
-			purple_debug(PURPLE_DEBUG_ERROR, "MSN log parse",
-					"Error parsing message: %s\n", "New SessionID missing");
+			purple_debug_error("MSN log parse",
+			                   "Error parsing message: %s\n", "New SessionID missing");
 			break;
 		}
 
@@ -1234,8 +1230,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 	path = g_build_filename(
 		logdir, prpl_name, filename, NULL);
 
-	purple_debug(PURPLE_DEBUG_INFO, "Trillian log list",
-				"Reading %s\n", path);
+	purple_debug_info("Trillian log list", "Reading %s\n", path);
 	/* FIXME: There's really no need to read the entire file at once.
 	 * See src/log.c:old_logger_list for a better approach.
 	 */
@@ -1248,8 +1243,7 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 
 		path = g_build_filename(
 			logdir, prpl_name, "Query", filename, NULL);
-		purple_debug(PURPLE_DEBUG_INFO, "Trillian log list",
-					"Reading %s\n", path);
+		purple_debug_info("Trillian log list", "Reading %s\n", path);
 		if (!g_file_get_contents(path, &contents, &length, &error)) {
 			if (error)
 				g_error_free(error);
@@ -1279,8 +1273,8 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 						/* This log had no data, so we remove it. */
 						GList *last = g_list_last(list);
 
-						purple_debug(PURPLE_DEBUG_INFO, "Trillian log list",
-							"Empty log. Offset %i\n", data->offset);
+						purple_debug_info("Trillian log list",
+						                  "Empty log. Offset %i\n", data->offset);
 
 						trillian_logger_finalize((PurpleLog *)last->data);
 						list = g_list_delete_link(list, last);
@@ -1344,9 +1338,8 @@ static GList *trillian_logger_list(PurpleLogType type, const char *sn, PurpleAcc
 							&tm.tm_min, &tm.tm_sec,
 							&tm.tm_year) != 5) {
 
-						purple_debug(PURPLE_DEBUG_ERROR,
-							"Trillian log timestamp parse",
-							"Session Start parsing error\n");
+						purple_debug_error("Trillian log timestamp parse",
+						                   "Session Start parsing error\n");
 					} else {
 						PurpleLog *log;
 
@@ -1438,8 +1431,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	g_return_val_if_fail(data->length > 0, g_strdup(""));
 	g_return_val_if_fail(data->their_nickname != NULL, g_strdup(""));
 
-	purple_debug(PURPLE_DEBUG_INFO, "Trillian log read",
-				"Reading %s\n", data->path);
+	purple_debug_info("Trillian log read", "Reading %s\n", data->path);
 
 	read = g_malloc(data->length + 2);
 
@@ -1767,15 +1759,9 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_return_val_if_fail(sn != NULL, list);
 	g_return_val_if_fail(account != NULL, list);
 
-	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-		"arguments not NULL\n");
-
 	/* QIP is ICQ messenger. Should we add prpl-aim? */
 	if (strcmp(account->protocol_id, "prpl-icq"))
 		return list;
-		
-	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-		"protocol is 'prpl-icq'\n");
 
 	logdir = purple_prefs_get_string("/plugins/core/log_reader/qip/log_directory");
 
@@ -1792,28 +1778,20 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		return NULL;
 
 	buddy_name = g_strdup(purple_normalize(account, sn));
-	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-		"buddy_name %s\n", buddy_name);
 
 	username = g_strdup(purple_normalize(account, account->username));
-	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-		"username %s\n", username);
-	
-	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-		"sn %s\n", sn);
 	
 	filename = g_strdup_printf("%s.txt", buddy_name);
 	path = g_build_filename(
 		logdir, username, "History", filename, NULL);
 		
-	purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-		"Reading %s\n", path);
+	purple_debug_info("QIP logger list", "Reading %s\n", path);
 	
 	error = NULL;
 	if (!g_file_get_contents(path, &contents, &length, &error)) {
 		if (error) {
-			purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
-				"Couldn't read file %s \n", path);
+			purple_debug_error("QIP logger list",
+			                   "Couldn't read file %s \n", path);
 
 			g_error_free(error);
 		}
@@ -1821,15 +1799,14 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		struct qip_logger_data *data = NULL;
 		gchar * utf8_string = NULL;
 
-		purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-			"File %s is found\n", filename);
+		purple_debug_info("QIP logger list", "File %s is found\n", filename);
 			
 		/* We should convert file contents from Cp1251 to UTF-8 codeset */
 		error = NULL;
 		if (!(utf8_string = g_convert(contents, length, "UTF-8", "Cp1251", NULL, NULL, &error))) {
 			if (error) {
-				purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
-					"Couldn't convert file %s to UTF-8\n", filename);
+				purple_debug_error("QIP logger list",
+				                   "Couldn't convert file %s to UTF-8\n", filename);
 				g_error_free(error);
 			}
 		} else {
@@ -1840,8 +1817,8 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			gchar *escaped;
 			int offset = 0;
 			
-			purple_debug(PURPLE_DEBUG_INFO, "QIP logger lise",
-				"File %s converted successfully\n", filename);
+			purple_debug_info("QIP logger list",
+			                  "File %s converted successfully\n", filename);
 			
 			g_free(contents);
 			escaped = g_markup_escape_text(utf8_string, -1);
@@ -1854,8 +1831,8 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 					purple_str_has_prefix(c, QIP_LOG_OUT_MESSAGE_ESC)) {
 					gchar *new_line = c;
 
-					purple_debug(PURPLE_DEBUG_INFO, "QIP logger lise",
-						"Find message\n", filename);
+					purple_debug_info("QIP logger list",
+					                  "Find message\n", filename);
 					
 					/* find EOL */
 					c = strstr(c, "\n");
@@ -1868,15 +1845,14 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 					if (*c == '(') {
 						const char *timestamp = ++c;
 						struct tm tm;
-						purple_debug(PURPLE_DEBUG_INFO, "QIP logger list",
-							"Timestap found\n");
+						purple_debug_info("QIP logger list", "Timestap found\n");
 						
 						/*  Parse the time, day, month and year  */
 						if (sscanf(timestamp, "%u:%u:%u %u/%u/%u",
 							&tm.tm_hour, &tm.tm_min, &tm.tm_sec,
 							&tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 6) {
-								purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
-								"Parsing timestamp error\n");
+								purple_debug_error("QIP logger list",
+								                   "Parsing timestamp error\n");
 						} else {
 							/* cos month of year in [0,11] */
 							tm.tm_mon -= 1; 
@@ -1907,8 +1883,8 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 									data->offset = offset;
 									offset += data->length;
 									
-									purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
-										"Creating log: path = (%s); length = (%d); offset = (%d)\n", data->path, data->length, data->offset);
+									purple_debug_error("QIP logger list",
+									                   "Creating log: path = (%s); length = (%d); offset = (%d)\n", data->path, data->length, data->offset);
 
 									/* XXX: Look into this later... Should we pass in a struct tm? */
 									log = purple_log_new(PURPLE_LOG_IM,
@@ -1946,14 +1922,14 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 				data->length = c - start_log;
 				data->offset = offset;
 				offset += data->length;
-				purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
-					"Creating log: path = (%s); length = (%d); offset = (%d)\n", data->path, data->length, data->offset);
+				purple_debug_error("QIP logger list",
+				                   "Creating log: path = (%s); length = (%d); offset = (%d)\n", data->path, data->length, data->offset);
 
-					/* XXX: Look into this later... Should we pass in a struct tm? */
-				log = purple_log_new(PURPLE_LOG_IM,
-					sn, account, NULL, mktime(&prev_tm), NULL);
+				/* XXX: Look into this later... Should we pass in a struct tm? */
+				log = purple_log_new(PURPLE_LOG_IM, sn, account,
+				                     NULL, mktime(&prev_tm), NULL);
 
-					log->logger = qip_logger;
+				log->logger = qip_logger;
 				log->logger_data = data;
 
 				list = g_list_append(list, log);
@@ -1987,14 +1963,13 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	g_return_val_if_fail(data->path != NULL, g_strdup(""));
 	g_return_val_if_fail(data->length > 0, g_strdup(""));
 
-	purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
-				"Reading %s\n", data->path);
+	purple_debug_info("QIP logger read", "Reading %s\n", data->path);
 	
 	error = NULL;
 	if (!g_file_get_contents(data->path, &contents, &length, &error)) 
 		if (error) {
-			purple_debug(PURPLE_DEBUG_ERROR, "QIP logger list",
-				"Couldn't read file %s \n", data->path);
+			purple_debug_error("QIP logger list",
+			                   "Couldn't read file %s \n", data->path);
 
 			g_error_free(error);
 		}
@@ -2005,16 +1980,16 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		error = NULL;
 		if (!(utf8_string = g_convert (contents, length, "UTF-8", "Cp1251", NULL, NULL, &error))) {
 			if (error) {
-				purple_debug(PURPLE_DEBUG_ERROR, "QIP logger read",
-					"Couldn't convert file %s to UTF-8\n", data->path);
+				purple_debug_error("QIP logger read",
+				                   "Couldn't convert file %s to UTF-8\n", data->path);
 				g_error_free(error);
 			}
 		} else {
 			char *escaped;
 			char *selected;
 
-			purple_debug(PURPLE_DEBUG_INFO, "QIP logger read",
-				"File %s converted successfully\n", data->path);
+			purple_debug_info("QIP logger read",
+			                  "File %s converted successfully\n", data->path);
 			
 			g_free(contents);
 			contents = utf8_string;
@@ -2067,10 +2042,10 @@ static char * qip_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 							
 						/*  Parse the time, day, month and year */
 						if (sscanf(timestamp, "%u:%u:%u",
-								&hour, &min, &sec) != 3) 
-							purple_debug(PURPLE_DEBUG_ERROR, "QIP logger read",
-								"Parsing timestamp error\n");
-						else {
+								&hour, &min, &sec) != 3) {
+							purple_debug_error("QIP logger read",
+							                   "Parsing timestamp error\n");
+						} else {
 							g_string_append(formatted, "<font size=\"2\">");
 							g_string_append_printf(formatted, 
 								"(%u:%02u:%02u) %cM ", hour % 12, 
@@ -2312,27 +2287,25 @@ init_plugin(PurplePlugin *plugin)
 #if 0 && GLIB_CHECK_VERSION(2,6,0) /* FIXME: Not tested yet. */
 		GKeyFile *key_file;
 
-		purple_debug(PURPLE_DEBUG_INFO, "Trillian talk.ini read",
-				"Reading %s\n", path);
+		purple_debug_info("Trillian talk.ini read", "Reading %s\n", path);
 				
 		error = NULL;
 		if (!g_key_file_load_from_file(key_file, path, G_KEY_FILE_NONE, GError &error)) {
-			purple_debug(PURPLE_DEBUG_ERROR, "Trillian talk.ini read",
-					"Error reading talk.ini\n");
+			purple_debug_error("Trillian talk.ini read",
+			                   "Error reading talk.ini\n");
 			if (error)
 				g_error_free(error);
 		} else {
 			char *logdir = g_key_file_get_string(key_file, "Logging", "Directory", &error);
 			if (error) {
-				purple_debug(PURPLE_DEBUG_ERROR, "Trillian talk.ini read",
-						"Error reading Directory value from Logging section\n");
+				purple_debug_error("Trillian talk.ini read",
+				                   "Error reading Directory value from Logging section\n");
 				g_error_free(error);
 			}
 
 			if (logdir) {
 				g_strchomp(logdir);
-				purple_prefs_add_string(
-					"/plugins/core/log_reader/trillian/log_directory", logdir);
+				purple_prefs_add_string("/plugins/core/log_reader/trillian/log_directory", logdir);
 				found = TRUE;
 			}
 
@@ -2342,11 +2315,11 @@ init_plugin(PurplePlugin *plugin)
 		gsize length;
 		gchar *contents = NULL;
 
-		purple_debug(PURPLE_DEBUG_INFO, "Trillian talk.ini read",
+		purple_debug_info("Trillian talk.ini read",
 					"Reading %s\n", path);
 		if (!g_file_get_contents(path, &contents, &length, &error)) {
-			purple_debug(PURPLE_DEBUG_ERROR, "Trillian talk.ini read",
-					"Error reading talk.ini\n");
+			purple_debug_error("Trillian talk.ini read",
+			                   "Error reading talk.ini\n");
 			if (error)
 				g_error_free(error);
 		} else {
@@ -2421,8 +2394,6 @@ init_plugin(PurplePlugin *plugin)
 	} else /* !folder */
 		path = g_strdup("");
 #endif
-
-	purple_debug(PURPLE_DEBUG_INFO, "QIP log reader", "QIP log directory %s\n", path);
 
 	purple_prefs_add_string("/plugins/core/log_reader/qip/log_directory", path);
 	g_free(path);
@@ -2575,7 +2546,6 @@ get_plugin_pref_frame(PurplePlugin *plugin)
 	ppref = purple_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/qip/log_directory", _("QIP"));
 	purple_plugin_pref_frame_add(frame, ppref);
-	purple_debug(PURPLE_DEBUG_INFO, "QIP log reader", "QIP creating directory\n");
 
 	ppref = purple_plugin_pref_new_with_name_and_label(
 		"/plugins/core/log_reader/msn/log_directory", _("MSN Messenger"));
