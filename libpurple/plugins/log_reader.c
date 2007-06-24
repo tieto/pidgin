@@ -314,6 +314,7 @@ static void adium_logger_finalize(PurpleLog *log)
 	data = log->logger_data;
 
 	g_free(data->path);
+	g_free(data);
 }
 
 
@@ -1168,6 +1169,8 @@ static void msn_logger_finalize(PurpleLog *log)
 
 	if (data->text)
 		g_string_free(data->text, FALSE);
+
+	g_free(data);
 }
 
 
@@ -1716,7 +1719,7 @@ static void trillian_logger_finalize(PurpleLog *log)
 
 	g_free(data->path);
 	g_free(data->their_nickname);
-
+	g_free(data);
 }
 
 /*****************************************************************************
@@ -2123,6 +2126,7 @@ static void qip_logger_finalize(PurpleLog *log)
 	data = log->logger_data;
 
 	g_free(data->path);
+	g_free(data);
 }
 
 /*****************************************************************************
