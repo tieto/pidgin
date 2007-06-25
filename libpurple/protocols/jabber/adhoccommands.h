@@ -32,4 +32,8 @@ void jabber_adhoc_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer da
 
 void jabber_adhoc_execute(PurpleBlistNode *node, gpointer data);
 
+void jabber_adhoc_server_get_list(JabberStream *js);
+
+void jabber_adhoc_init_server_commands(JabberStream *js, GList **m);
+
 #endif /* _PURPLE_JABBER_ADHOCCOMMANDS_H_ */

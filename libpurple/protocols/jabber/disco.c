@@ -281,6 +281,11 @@ jabber_disco_finish_server_info_result_cb(JabberStream *js)
 	gpresence = purple_account_get_presence(js->gc->account);
 	status = purple_presence_get_active_status(gpresence);
 	jabber_presence_send(js->gc->account, status);
+	
+	if (js->server_caps & JABBER_CAP_ADHOC) {
+		/* The server supports ad-hoc commands, so let's request the list */
+		jabber_adhoc_server_get_list(js);
+	}
 }
 
 static void
@@ -346,6 +351,8 @@ jabber_disco_server_info_result_cb(JabberStream *js, xmlnode *packet, gpointer d
 		} else if (!strcmp("google:roster", var)) {
 			js->server_caps |= JABBER_CAP_GOOGLE_ROSTER;
 			jabber_google_roster_init(js);
+		} else if (!strcmp("http://jabber.org/protocol/commands", var)) {
+			js->server_caps |= JABBER_CAP_ADHOC;
 		}
 	}
 

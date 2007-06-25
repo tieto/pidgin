@@ -55,6 +55,7 @@
 #include "si.h"
 #include "xdata.h"
 #include "pep.h"
+#include "adhoccommands.h"
 
 #include <assert.h>
 
@@ -1115,6 +1116,14 @@ void jabber_close(PurpleConnection *gc)
 #endif
 	if(js->serverFQDN)
 		g_free(js->serverFQDN);
+	while(js->commands) {
+		JabberAdHocCommands *cmd = js->commands->data;
+		g_free(cmd->jid);
+		g_free(cmd->node);
+		g_free(cmd->node);
+		g_free(cmd);
+		js->commands = g_list_delete_link(js->commands, js->commands);
+	}
 	g_free(js->server_name);
 	g_free(js->gmail_last_time);
 	g_free(js->gmail_last_tid);
@@ -1632,6 +1641,9 @@ GList *jabber_actions(PurplePlugin *plugin, gpointer context)
 
 	if(js->pep)
 		jabber_pep_init_actions(&m);
+	
+	if(js->commands)
+		jabber_adhoc_init_server_commands(js, &m);
 
 	return m;
 }

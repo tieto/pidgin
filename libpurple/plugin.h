@@ -184,6 +184,8 @@ struct _PurplePluginAction {
 	/** NULL for plugin actions menu, set to the PurpleConnection for
 	    account actions menu */
 	gpointer context;
+	
+	gpointer user_data;
 };
 
 #define PURPLE_PLUGIN_HAS_ACTIONS(plugin) \

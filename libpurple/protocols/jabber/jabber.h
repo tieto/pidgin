@@ -158,6 +158,9 @@ struct _JabberStream
 	/* does the local server support PEP? */
 	gboolean pep;
 	
+	/* A list of JabberAdHocCommands supported by the server */
+	GList *commands;
+	
 	/* last presence update to check for differences */
 	JabberBuddyState old_state;
 	char *old_msg;
