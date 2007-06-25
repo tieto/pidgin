@@ -37,6 +37,7 @@
  *   -- DMP.
  *
  */
+/* TODO: Get rid of this and use glib functions */
 int
 aimutil_tokslen(char *toSearch, int theindex, char dl)
 {
@@ -138,6 +139,7 @@ aimutil_iconsum(const guint8 *buf, int buflen)
  * Check if the given screen name is a valid AIM screen name.
  * Example: BobDole
  * Example: Henry_Ford@mac.com
+ * Example: 1KrazyKat@example.com
  *
  * @return TRUE if the screen name is valid, FALSE if not.
  */
@@ -146,9 +148,12 @@ aim_snvalid_aim(const char *sn)
 {
 	int i;
 
+	if (purple_email_is_valid(sn))
+		return TRUE;
+
 	for (i = 0; sn[i] != '\0'; i++) {
 		if (!isalnum(sn[i]) && (sn[i] != ' ') &&
-			(sn[i] != '@') && (sn[i] != '.') &&
+			(sn[i] != '.') &&
 			(sn[i] != '_') && (sn[i] != '-'))
 			return FALSE;
 	}
@@ -169,10 +174,10 @@ aim_snvalid_icq(const char *sn)
 
 	for (i = 0; sn[i] != '\0'; i++) {
 		if (!isdigit(sn[i]))
-			return 0;
+			return FALSE;
 	}
 
-	return 1;
+	return TRUE;
 }
 
 /**
@@ -187,14 +192,14 @@ aim_snvalid_sms(const char *sn)
 	int i;
 
 	if (sn[0] != '+')
-		return 0;
+		return FALSE;
 
 	for (i = 1; sn[i] != '\0'; i++) {
 		if (!isdigit(sn[i]))
-			return 0;
+			return FALSE;
 	}
 
-	return 1;
+	return TRUE;
 }
 
 /**
@@ -206,70 +211,37 @@ gboolean
 aim_snvalid(const char *sn)
 {
 	if ((sn == NULL) || (*sn == '\0'))
-		return 0;
+		return FALSE;
 
-	if (isalpha(sn[0]))
-		return aim_snvalid_aim(sn);
-	else if (isdigit(sn[0]))
-		return aim_snvalid_icq(sn);
-	else if (sn[0] == '+')
-		return aim_snvalid_sms(sn);
-
-	return 0;
+	return aim_snvalid_icq(sn) || aim_snvalid_sms(sn) || aim_snvalid_aim(sn);
 }
 
 /**
  * Determine if a given screen name is an ICQ screen name
- * (i.e. it begins with a number).
+ * (i.e. it is composed of only numbers).
  *
- * @sn A valid AIM or ICQ screen name.
+ * @param sn A valid AIM or ICQ screen name.
  * @return TRUE if the screen name is an ICQ screen name.  Otherwise
  *         FALSE is returned.
  */
 gboolean
 aim_sn_is_icq(const char *sn)
 {
-	if (isalpha(sn[0]))
-		return FALSE;
-	return TRUE;
+	return aim_snvalid_icq(sn);
 }
 
 /**
  * Determine if a given screen name is an SMS number
  * (i.e. it begins with a +).
  *
- * @sn A valid AIM or ICQ screen name.
+ * @param sn A valid AIM or ICQ screen name.
  * @return TRUE if the screen name is an SMS number.  Otherwise
  *         FALSE is returned.
  */
 gboolean
 aim_sn_is_sms(const char *sn)
 {
-	if (sn[0] != '+')
-		return FALSE;
-	return TRUE;
-}
-
-/**
- * This takes a screen name and returns its length without
- * spaces.  If there are no spaces in the SN, then the
- * return is equal to that of strlen().
- */
-int
-aim_snlen(const char *sn)
-{
-	int i = 0;
-
-	if (!sn)
-		return 0;
-
-	while (*sn != '\0') {
-		if (*sn != ' ')
-			i++;
-		sn++;
-	}
-
-	return i;
+	return (sn[0] == '+');
 }
 
 /**
@@ -279,9 +251,9 @@ aim_snlen(const char *sn)
  * ignored, with the exception that screen names can not start with
  * a space).
  *
- * Return: 0 if equal
- *     non-0 if different
+ * @return 0 if equal, non-0 if different
  */
+/* TODO: Do something different for email addresses. */
 int
 aim_sncmp(const char *sn1, const char *sn2)
 {
