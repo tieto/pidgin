@@ -677,6 +677,194 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	return rc;
 }
 
+/** Convert a font point size to purple's HTML font size.
+ *
+ * Based on libpurple/protocols/bonjour/jabber.c.
+ */
+static guint
+msim_font_size_to_purple(int size)
+{
+    if (size > 24) {
+        return 7;
+    } else if (size >= 21) {
+        return 6;
+    } else if (size >= 17) {
+        return 5;
+    } else if (size >= 14) {
+        return 4;
+    } else if (size >= 12) {
+        return 3;
+    } else if (size >= 10) {
+        return 2;
+    }
+
+    return 1;
+}
+
+/** Convert a msim markup font height to points. */
+static guint 
+msim_font_height_to_point(guint height)
+{
+	/* See also: libpurple/protocols/bonjour/jabber.c
+	 * _font_size_ichat_to_purple */
+	switch (height)
+	{
+	case 11: return 8;
+	case 12: return 9;
+	case 13: return 10;
+	case 14: 
+	case 15: return 11;
+	case 16: return 12;
+	case 17:
+	case 18: return 13;
+	case 19: return 14;
+	case 20: return 15;
+	case 21: return 16;	 
+	default: return 12;
+	}
+}
+
+/** Convert an xmlnode of msim markup to an HTML string.
+ * @return An HTML string. Caller frees.
+ */
+static gchar *msim_markup_xmlnode_to_html(xmlnode *root)
+{
+	xmlnode *node;
+	gchar *begin, *inner, *end;
+	gchar *final;
+
+	if (!root)
+		return g_strdup("");
+
+	purple_debug_info("msim", "msim_markup_xmlnode_to_html: got root=%s\n",
+			root->name);
+
+	begin = inner = end = NULL;
+
+	if (!strcmp(root->name, "f"))
+	{
+		const gchar *face, *height_str, *decor_str;
+		GString *gs_end, *gs_begin;
+		guint decor, height;
+	
+		face = xmlnode_get_attrib(root, "n");	
+		height_str = xmlnode_get_attrib(root, "h");
+		decor_str = xmlnode_get_attrib(root, "s");
+
+		if (height_str)
+			height = atol(height_str);
+		else
+			height = 12;
+
+		if (decor_str)
+		   	decor = atol(decor_str);
+		else
+			decor = 0;
+
+		gs_begin = g_string_new("");
+		g_string_printf(gs_begin, "<font face='%s' size='%d'>", face, 
+				msim_font_size_to_purple(msim_font_height_to_point(height)));
+		gs_end = g_string_new("</font>");
+
+		if (decor & 1)
+		{
+			g_string_append(gs_begin, "<b>");
+			g_string_prepend(gs_end, "</b>");
+		}
+	
+		if (decor & 2)
+		{
+			g_string_append(gs_begin, "<i>");
+			g_string_append(gs_end, "</i>");	
+		}
+
+		if (decor & 4)
+		{
+			g_string_append(gs_begin, "<u>");
+			g_string_append(gs_end, "</u>");	
+		}
+
+
+		begin = gs_begin->str;
+		end = gs_end->str;
+	} else {
+		purple_debug_info("msim", "msim_markup_xmlnode_to_html: "
+				"unknown tag name=%s, ignoring", root->name);
+		begin = g_strdup("");
+		end = g_strdup("");
+	}
+
+	/* Loop over all child nodes. */
+ 	for (node = root->child; node != NULL; node = node->next)
+	{
+		switch (node->type)
+		{
+		case XMLNODE_TYPE_ATTRIB:
+			/* Attributes handled above. */
+			break;
+
+		case XMLNODE_TYPE_TAG:
+			/* A tag or tag with attributes. Recursively descend. */
+			inner = msim_markup_xmlnode_to_html(node);
+
+			purple_debug_info("msim", " ** node name=%s\n", node->name);
+			break;
+		
+	
+		case XMLNODE_TYPE_DATA:	
+			/* Literal text. */
+			inner = g_new0(char, node->data_sz + 1);
+			strncpy(inner, node->data, node->data_sz);
+			inner[node->data_sz + 1] = 0;
+
+			purple_debug_info("msim", " ** node data=%s (%s)\n", inner,
+					node->data);
+			break;
+			
+		default:
+			purple_debug_info("msim",
+					"msim_markup_xmlnode_to_html: strange node\n");
+			inner = g_strdup("");
+		}
+	}
+
+	final = g_strconcat(begin, inner, end, NULL);
+	g_free(begin);
+	g_free(inner);
+	g_free(end);
+
+	purple_debug_info("msim", "msim_markup_xmlnode_to_gtkhtml: RETURNING %s\n",
+			final);
+
+	return final;
+}
+
+/** Convert MySpaceIM markup to GtkIMHtml markup. 
+ * TODO
+ *
+ * @return GtkIMHtml markup string, must be g_free()'d. */
+gchar *
+msim_markup_to_html(const gchar *raw)
+{
+	xmlnode *root;
+	gchar *str;
+
+	root = xmlnode_from_str(raw, -1);
+	if (!root)
+	{
+		purple_debug_info("msim", "msim_markup_to_html: couldn't parse "
+				"%s as XML, returning raw\n", raw);
+		return g_strdup(raw);
+	}
+
+	str = msim_markup_xmlnode_to_html(root);
+	purple_debug_info("msim", "msim_markup_to_html: returning %s\n", str);
+
+	xmlnode_free(root);
+
+	return g_strdup(str);
+}
+
 /**
  * Handle an incoming instant message.
  *
@@ -689,18 +877,19 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 gboolean 
 msim_incoming_im(MsimSession *session, MsimMessage *msg)
 {
-    gchar *username;
-	gchar *msg_text;
+    gchar *username, *msg_msim_markup, *msg_purple_markup;
 
     username = msim_msg_get_string(msg, "_username");
-	msg_text = msim_msg_get_string(msg, "msg");
+	msg_msim_markup = msim_msg_get_string(msg, "msg");
 
-	/* TODO: replace msim-markup with gtkimhtml. */
+	msg_purple_markup = msim_markup_to_html(msg_msim_markup);
+	g_free(msg_msim_markup);
 
-    serv_got_im(session->gc, username, msg_text, PURPLE_MESSAGE_RECV, time(NULL));
+    serv_got_im(session->gc, username, msg_purple_markup, 
+			PURPLE_MESSAGE_RECV, time(NULL));
 
 	g_free(username);
-	g_free(msg_text);
+	g_free(msg_purple_markup);
 
 	return TRUE;
 }
@@ -2342,11 +2531,13 @@ PurplePluginInfo info =
  * msimprpl is architected.
  */
 void 
-msim_test_all(void) __attribute__((__noreturn__()));
+msim_test_all(void) 
 {
 	guint failures;
 
+
 	failures = 0;
+	failures += msim_test_xml();
 	failures += msim_test_msg();
 	failures += msim_test_escaping();
 
@@ -2359,6 +2550,81 @@ msim_test_all(void) __attribute__((__noreturn__()));
 		purple_debug_info("msim", "msim_test_all - all tests passed!\n");
 	}
 	exit(0);
+}
+
+int 
+msim_test_xml(void)
+{
+	gchar *msg_text;
+	xmlnode *root, *n;
+	guint failures;
+	char *s;
+	int len;
+
+	failures = 0;
+	
+	msg_text = "<p><f n=\"Arial\" h=\"12\">woo!</f>xxx<c v='black'>yyy</c></p>";
+
+	purple_debug_info("msim", "msim_test_xml: msg_text=%s\n", msg_text);
+
+	root = xmlnode_from_str(msg_text, -1);
+	if (!root)
+	{
+		purple_debug_info("msim", "there is no root\n");
+		exit(0);
+	}
+
+	purple_debug_info("msim", "root name=%s, child name=%s\n", root->name,
+			root->child->name);
+
+	purple_debug_info("msim", "last child name=%s\n", root->lastchild->name);
+	purple_debug_info("msim", "Root xml=%s\n", 
+			xmlnode_to_str(root, &len));
+	purple_debug_info("msim", "Child xml=%s\n", 
+			xmlnode_to_str(root->child, &len));
+	purple_debug_info("msim", "Lastchild xml=%s\n", 
+			xmlnode_to_str(root->lastchild, &len));
+	purple_debug_info("msim", "Next xml=%s\n", 
+			xmlnode_to_str(root->next, &len));
+	purple_debug_info("msim", "Next data=%s\n", 
+			xmlnode_get_data(root->next));
+	purple_debug_info("msim", "Child->next xml=%s\n", 
+			xmlnode_to_str(root->child->next, &len));
+
+	for (n = root->child; n; n = n->next)
+	{
+		if (n->name) 
+		{
+			purple_debug_info("msim", " ** n=%s\n",n->name);
+		} else {
+			purple_debug_info("msim", " ** n data=%s\n", n->data);
+		}
+	}
+
+	purple_debug_info("msim", "root data=%s, child data=%s, child 'h'=%s\n", 
+			xmlnode_get_data(root),
+			xmlnode_get_data(root->child),
+			xmlnode_get_attrib(root->child, "h"));
+
+
+	for (n = root->child;
+			n != NULL;
+			n = n->next)
+	{
+		purple_debug_info("msim", "next name=%s\n", n->name);
+	}
+
+	s = xmlnode_to_str(root, &len);
+	s[len] = 0;
+
+	purple_debug_info("msim", "str: %s\n", s);
+	g_free(s);
+
+	xmlnode_free(root);
+
+	exit(0);
+
+	return failures;
 }
 
 /** Test MsimMessage for basic functionality. */

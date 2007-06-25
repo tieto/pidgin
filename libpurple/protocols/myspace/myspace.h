@@ -44,7 +44,7 @@
 #include "cipher.h"     /* for SHA-1 */
 #include "util.h"       /* for base64 */
 #include "debug.h"      /* for purple_debug_info */
-
+#include "xmlnode.h"
 
 /* MySpaceIM includes */
 #include "message.h"
@@ -182,6 +182,7 @@ void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 
 void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
 
+gchar *msim_markup_to_html(const gchar *raw);
 int msim_incoming_im(MsimSession *session, MsimMessage *msg);
 int msim_incoming_action(MsimSession *session, MsimMessage *msg);
 
@@ -234,9 +235,12 @@ char *msim_status_text(PurpleBuddy *buddy);
 void msim_tooltip_text(PurpleBuddy *buddy, 
 		PurpleNotifyUserInfo *user_info, gboolean full);
 
-void msim_test_all(void);
+#ifdef MSIM_SELF_TEST
+void msim_test_all(void) __attribute__((__noreturn__));
+int msim_test_xml(void);
 int msim_test_msg(void);
 int msim_test_escaping(void);
+#endif
 
 void init_plugin(PurplePlugin *plugin);
 
