@@ -2171,24 +2171,16 @@ msim_session_new(PurpleAccount *acct)
 void 
 msim_session_destroy(MsimSession *session)
 {
-	purple_debug_info("msim", ">>> going to check if valid\n");
-
     g_return_if_fail(MSIM_SESSION_VALID(session));
 	
-	purple_debug_info("msim", ">>> going to set magic\n");
-
     session->magic = -1;
 
-	purple_debug_info("msim", ">>> going to free rxbuf\n");
     g_free(session->rxbuf);
 
 	/* TODO: Remove. */
-	purple_debug_info("msim", ">>> going to free user_lookup_cb\n");
 	g_hash_table_destroy(session->user_lookup_cb);
-	purple_debug_info("msim", ">>> going to free user_lookup_cb_data\n");
 	g_hash_table_destroy(session->user_lookup_cb_data);
 	
-	purple_debug_info("msim", ">>> going to free session itself\n");
     g_free(session);
 }
                  
@@ -2202,27 +2194,21 @@ msim_close(PurpleConnection *gc)
 {
 	MsimSession *session;
 
-	purple_debug_info("msim", "msim_close: closing, gc=0x%x\n", gc);
-
 	if (gc == NULL)
 		return;
 
-	purple_debug_info("msim", "msim_close: dereferencing gc->proto_data\n");
 	session = (MsimSession *)gc->proto_data;
 	if (session == NULL)
 		return;
 
 	gc->proto_data = NULL;
 
-	purple_debug_info("msim", "msim_close: checking if session is valid\n");
 	if (!MSIM_SESSION_VALID(session))
 		return;
 
-	purple_debug_info("msim", "msim_close: about to remove inpa\n");
     if (session->gc->inpa)
 		purple_input_remove(session->gc->inpa);
 
-	purple_debug_info("msim", "msim_close: ready to destroy session\n");
     msim_session_destroy(session);
 }
 
