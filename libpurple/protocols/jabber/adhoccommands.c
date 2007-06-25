@@ -122,7 +122,7 @@ static void do_adhoc_action_cb(JabberStream *js, xmlnode *result, const char *ac
 	jabber_iq_send(iq);
 }
 
-void jabber_adhoc_parse(JabberStream *js, xmlnode *packet) {
+static void jabber_adhoc_parse(JabberStream *js, xmlnode *packet, gpointer data) {
 	xmlnode *command = xmlnode_get_child_with_namespace(packet, "command", "http://jabber.org/protocol/commands");
 	const char *status = xmlnode_get_attrib(command,"status");
 	xmlnode *xdata = xmlnode_get_child_with_namespace(command,"x","jabber:x:data");
@@ -181,21 +181,13 @@ void jabber_adhoc_parse(JabberStream *js, xmlnode *packet) {
 	}
 }
 
-void jabber_adhoc_execute(PurpleBlistNode *node, gpointer data) {
+void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data) {
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		JabberAdHocCommands *cmd = data;
 		PurpleBuddy *buddy = (PurpleBuddy *) node;
 		JabberStream *js = purple_account_get_connection(buddy->account)->proto_data;
-		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
-		xmlnode *command = xmlnode_new_child(iq->node,"command");
-		xmlnode_set_attrib(iq->node,"to",cmd->jid);
-		xmlnode_set_namespace(command,"http://jabber.org/protocol/commands");
-		xmlnode_set_attrib(command,"node",cmd->node);
-		xmlnode_set_attrib(command,"action","execute");
 		
-		/* we don't need to set a callback, since jabber_adhoc_parse is run for all replies */
-		
-		jabber_iq_send(iq);
+		jabber_adhoc_execute(js, cmd);
 	}
 }
 
@@ -243,22 +235,26 @@ void jabber_adhoc_server_get_list(JabberStream *js) {
 	jabber_iq_send(iq);
 }
 
+void jabber_adhoc_execute(JabberStream *js, JabberAdHocCommands *cmd) {
+	JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
+	xmlnode *command = xmlnode_new_child(iq->node,"command");
+	xmlnode_set_attrib(iq->node,"to",cmd->jid);
+	xmlnode_set_namespace(command,"http://jabber.org/protocol/commands");
+	xmlnode_set_attrib(command,"node",cmd->node);
+	xmlnode_set_attrib(command,"action","execute");
+	
+	jabber_iq_set_callback(iq,jabber_adhoc_parse,NULL);
+	
+	jabber_iq_send(iq);
+}
+
 void jabber_adhoc_server_execute(PurplePluginAction *action) {
 	JabberAdHocCommands *cmd = action->user_data;
 	if(cmd) {
 		PurpleConnection *gc = (PurpleConnection *) action->context;
 		JabberStream *js = gc->proto_data;
 		
-		JabberIq *iq = jabber_iq_new(js, JABBER_IQ_SET);
-		xmlnode *command = xmlnode_new_child(iq->node,"command");
-		xmlnode_set_attrib(iq->node,"to",cmd->jid);
-		xmlnode_set_namespace(command,"http://jabber.org/protocol/commands");
-		xmlnode_set_attrib(command,"node",cmd->node);
-		xmlnode_set_attrib(command,"action","execute");
-		
-		/* we don't need to set a callback, since jabber_adhoc_parse is run for all replies */
-		
-		jabber_iq_send(iq);
+		jabber_adhoc_execute(js, cmd);
 	}
 }
 

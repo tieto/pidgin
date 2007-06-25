@@ -1709,7 +1709,7 @@ static GList *jabber_buddy_menu(PurpleBuddy *buddy)
 			continue;
 		for(commands = jbr->commands; commands; commands = g_list_next(commands)) {
 			JabberAdHocCommands *cmd = commands->data;
-			act = purple_menu_action_new(cmd->name, PURPLE_CALLBACK(jabber_adhoc_execute), cmd, NULL);
+			act = purple_menu_action_new(cmd->name, PURPLE_CALLBACK(jabber_adhoc_execute_action), cmd, NULL);
 			m = g_list_append(m, act);
 		}
 	}

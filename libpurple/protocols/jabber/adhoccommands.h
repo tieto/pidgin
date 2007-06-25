@@ -26,11 +26,11 @@
 
 /* Implementation of XEP-0050 */
 
-void jabber_adhoc_parse(JabberStream *js, xmlnode *packet);
-
 void jabber_adhoc_disco_result_cb(JabberStream *js, xmlnode *packet, gpointer data);
 
-void jabber_adhoc_execute(PurpleBlistNode *node, gpointer data);
+void jabber_adhoc_execute(JabberStream *js, JabberAdHocCommands *cmd);
+
+void jabber_adhoc_execute_action(PurpleBlistNode *node, gpointer data);
 
 void jabber_adhoc_server_get_list(JabberStream *js);
 
