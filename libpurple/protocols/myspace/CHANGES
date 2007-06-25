@@ -1,11 +1,13 @@
 2007-XX-XX Jeff Connelly <jeff2@homing.pidgin.im> - 0.8
 * Allow "Get Info" on all users, by uid or username
+* Fix crash when re-logging in, if login failed.
+* Show descriptive error message if login password is too long.
 
 2007-06-14 Jeff Connelly <jeff2@homing.pidgin.im> - 0.7
 * Add/delete buddy now functional (required many other code improvements).
 * Show improved buddy information in tooltip text.
 * Show user profile (in "Get Info" option) for buddies on buddy list.
-* Fix crash when re-logging in. 
+* Fix crash when re-logging in, if login succeeded.
 
 2007-06-12 Jeff Connelly <jeff2@homing.pidgin.im> - 0.6
 * Use RC4 code from Libpurple 2.0.1
