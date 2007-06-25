@@ -576,7 +576,7 @@ gnt_widget_set_focus(GntWidget *widget, gboolean set)
 		GNT_WIDGET_SET_FLAGS(widget, GNT_WIDGET_HAS_FOCUS);
 		g_signal_emit(widget, signals[SIG_GIVE_FOCUS], 0);
 	}
-	else if (!set)
+	else if (!set && GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_HAS_FOCUS))
 	{
 		GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_HAS_FOCUS);
 		g_signal_emit(widget, signals[SIG_LOST_FOCUS], 0);

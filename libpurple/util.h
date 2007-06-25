@@ -257,6 +257,16 @@ char *purple_mime_decode_field(const char *str);
 const char *purple_utf8_strftime(const char *format, const struct tm *tm);
 
 /**
+ * Gets a string representation of the local timezone offset
+ *
+ * @param tm   The time to get the timezone for
+ * @param iso  TRUE to format the offset according to ISO-8601, FALSE to
+ *             not substitute 'Z' for 0 offset, and to not separate
+ *             hours and minutes with a colon.
+ */
+const char *purple_get_tzoff_str(const struct tm *tm, gboolean iso);
+
+/**
  * Formats a time into the user's preferred short date format.
  *
  * The returned string is stored in a static buffer, so the result

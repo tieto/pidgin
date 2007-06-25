@@ -419,6 +419,10 @@ void jabber_set_info(PurpleConnection *gc, const char *info)
 
 			avatar_data = purple_imgstore_get_data(img);
 			avatar_len = purple_imgstore_get_size(img);
+			/* have to get rid of the old PHOTO if it exists */
+			if((photo = xmlnode_get_child(vc_node, "PHOTO"))) {
+				xmlnode_free(photo);
+			}
 			photo = xmlnode_new_child(vc_node, "PHOTO");
 			binval = xmlnode_new_child(photo, "BINVAL");
 			enc = purple_base64_encode(avatar_data, avatar_len);
