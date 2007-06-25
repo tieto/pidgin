@@ -1258,7 +1258,7 @@ oscar_login(PurpleAccount *account)
 
 	if (!aim_snvalid(purple_account_get_username(account))) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
+		buf = g_strdup_printf(_("Unable to login: Could not sign on as %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), purple_account_get_username(account));
 		gc->wants_to_die = TRUE;
 		purple_connection_error(gc, buf);
 		g_free(buf);
@@ -4623,7 +4623,7 @@ oscar_add_buddy(PurpleConnection *gc, PurpleBuddy *buddy, PurpleGroup *group) {
 
 	if (!aim_snvalid(buddy->name)) {
 		gchar *buf;
-		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must either start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
+		buf = g_strdup_printf(_("Could not add the buddy %s because the screen name is invalid.  Screen names must be a valid email address, or start with a letter and contain only letters, numbers and spaces, or contain only numbers."), buddy->name);
 		if (!purple_conv_present_error(buddy->name, purple_connection_get_account(gc), buf))
 			purple_notify_error(gc, NULL, _("Unable To Add"), buf);
 		g_free(buf);
