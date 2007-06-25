@@ -2149,15 +2149,11 @@ init_plugin(PurplePlugin *plugin)
 
 	/* Calculate default Adium log directory. */
 #ifdef _WIN32
-		path = "";
+	purple_prefs_add_string("/plugins/core/log_reader/adium/log_directory", "");
 #else
-		path = g_build_filename(purple_home_dir(), "Library", "Application Support",
-			"Adium 2.0", "Users", "Default", "Logs", NULL);
-#endif
-
+	path = g_build_filename(purple_home_dir(), "Library", "Application Support",
+	                        "Adium 2.0", "Users", "Default", "Logs", NULL);
 	purple_prefs_add_string("/plugins/core/log_reader/adium/log_directory", path);
-
-#ifndef _WIN32
 	g_free(path);
 #endif
 
@@ -2167,15 +2163,11 @@ init_plugin(PurplePlugin *plugin)
 
 	/* Calculate default Fire log directory. */
 #ifdef _WIN32
-		path = "";
+	purple_prefs_add_string("/plugins/core/log_reader/fire/log_directory", "");
 #else
-		path = g_build_filename(purple_home_dir(), "Library", "Application Support",
-			"Fire", "Sessions", NULL);
-#endif
-
+	path = g_build_filename(purple_home_dir(), "Library", "Application Support",
+	                        "Fire", "Sessions", NULL);
 	purple_prefs_add_string("/plugins/core/log_reader/fire/log_directory", path);
-
-#ifndef _WIN32
 	g_free(path);
 #endif
 
@@ -2187,21 +2179,15 @@ init_plugin(PurplePlugin *plugin)
 #ifdef _WIN32
 	folder = wpurple_get_special_folder(CSIDL_PERSONAL);
 	if (folder) {
-#endif
-	path = g_build_filename(
-#ifdef _WIN32
-		folder,
-#else
-		PURPLE_LOG_READER_WINDOWS_MOUNT_POINT, "Documents and Settings",
-		g_get_user_name(), "My Documents",
-#endif
-		"My Chat Logs", NULL);
-#ifdef _WIN32
-	g_free(folder);
-	} else /* !folder */
+		path = g_build_filename(folder, "My Chat Logs", NULL);
+		g_free(folder);
+	} else
 		path = g_strdup("");
+#else
+	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
+	                        "Documents and Settings", g_get_user_name(),
+	                        "My Documents", "My Chat Logs", NULL);
 #endif
-
 	purple_prefs_add_string("/plugins/core/log_reader/messenger_plus/log_directory", path);
 	g_free(path);
 
@@ -2213,21 +2199,15 @@ init_plugin(PurplePlugin *plugin)
 #ifdef _WIN32
 	folder = wpurple_get_special_folder(CSIDL_PERSONAL);
 	if (folder) {
-#endif
-	path = g_build_filename(
-#ifdef _WIN32
-		folder,
-#else
-		PURPLE_LOG_READER_WINDOWS_MOUNT_POINT, "Documents and Settings",
-		g_get_user_name(), "My Documents",
-#endif
-		"My Received Files", NULL);
-#ifdef _WIN32
-	g_free(folder);
-	} else /* !folder */
+		path = g_build_filename(folder, "My Received Files", NULL);
+		g_free(folder);
+	} else
 		path = g_strdup("");
+#else
+	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
+	                        "Documents and Settings", g_get_user_name(),
+	                        "My Documents", "My Received Files", NULL);
 #endif
-
 	purple_prefs_add_string("/plugins/core/log_reader/msn/log_directory", path);
 	g_free(path);
 
@@ -2270,7 +2250,7 @@ init_plugin(PurplePlugin *plugin)
 		char *folder = wpurple_get_special_folder(CSIDL_PROGRAM_FILES);
 		if (folder) {
 			path = g_build_filename(folder, "Trillian",
-					"users", "default", "talk.ini", NULL);
+			                        "users", "default", "talk.ini", NULL);
 			g_free(folder);
 		}
 	}
@@ -2345,51 +2325,41 @@ init_plugin(PurplePlugin *plugin)
 	} /* path */
 
 	if (!found) {
-#endif /* defined(_WIN32) */
+		folder = wpurple_get_special_folder(CSIDL_PROGRAM_FILES);
+		if (folder) {
+			path = g_build_filename(folder, "Trillian", "users",
+			                        "default", "logs", NULL);
+			g_free(folder);
+		} else
+			path = g_strdup("");
+	}
+#else /* !defined(_WIN32) */
+	/* TODO: At some point, this could attempt to parse talk.ini
+	 * TODO: from the default Trillian install directory on the
+	 * TODO: Windows mount point. */
 
 	/* Calculate default Trillian log directory. */
-#ifdef _WIN32
-	folder = wpurple_get_special_folder(CSIDL_PROGRAM_FILES);
-	if (folder) {
-#endif
-	path = g_build_filename(
-#ifdef _WIN32
-		folder,
-#else
-		PURPLE_LOG_READER_WINDOWS_MOUNT_POINT, "Program Files",
-#endif
-		"Trillian", "users", "default", "logs", NULL);
-#ifdef _WIN32
-	g_free(folder);
-	} else /* !folder */
-		path = g_strdup("");
+	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
+	                        "Program Files", "Trillian", "users",
+	                        "default", "logs", NULL);
 #endif
 
-#ifdef _WIN32
-	} /* !found */
-#endif
 
 	/* Add QIP log directory preference. */
 	purple_prefs_add_none("/plugins/core/log_reader/qip");
 
+	/* Calculate default QIP log directory. */
 #ifdef _WIN32
-	/* Calculate default Messenger Plus! log directory. */
 	folder = wpurple_get_special_folder(CSIDL_PROGRAM_FILES);
 	if (folder) {
-#endif
-	path = g_build_filename(
-#ifdef _WIN32
-		folder,
-#else
-		PURPLE_LOG_READER_WINDOWS_MOUNT_POINT, "Program Files",
-#endif
-		"QIP", "Users", NULL);
-#ifdef _WIN32
-	g_free(folder);
-	} else /* !folder */
+		path = g_build_filename(folder, "QIP", "Users", NULL);
+		g_free(folder);
+	} else
 		path = g_strdup("");
+#else
+	path = g_build_filename(PURPLE_LOG_READER_WINDOWS_MOUNT_POINT,
+	                        "Program Files", "QIP", "Users", NULL);
 #endif
-
 	purple_prefs_add_string("/plugins/core/log_reader/qip/log_directory", path);
 	g_free(path);
 }
