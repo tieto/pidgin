@@ -1523,8 +1523,6 @@ msim_error(MsimSession *session, MsimMessage *msg)
     {
         purple_debug_info("msim", "fatal error, closing\n");
         purple_connection_error(session->gc, full_errmsg);
-
-		msim_close(session->gc);
     }
 
     return TRUE;
@@ -1982,8 +1980,6 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
         purple_debug_error("msim", "msim_input_cb: %d-byte read buffer full!\n",
                 MSIM_READ_BUF_SIZE);
         purple_connection_error(gc, _("Read buffer full"));
-
-		msim_close(session->gc);
         return;
     }
 
@@ -2002,12 +1998,10 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
     }
     else if (n < 0)
     {
-        purple_connection_error(gc, _("Read error"));
         purple_debug_error("msim", "msim_input_cb: read error, ret=%d, "
 			"error=%s, source=%d, fd=%d (%X))\n", 
 			n, strerror(errno), source, session->fd, session->fd);
-
-		msim_close(session->gc);
+        purple_connection_error(gc, _("Read error"));
         return;
     } 
     else if (n == 0)
@@ -2177,16 +2171,24 @@ msim_session_new(PurpleAccount *acct)
 void 
 msim_session_destroy(MsimSession *session)
 {
+	purple_debug_info("msim", ">>> going to check if valid\n");
+
     g_return_if_fail(MSIM_SESSION_VALID(session));
+	
+	purple_debug_info("msim", ">>> going to set magic\n");
 
     session->magic = -1;
 
+	purple_debug_info("msim", ">>> going to free rxbuf\n");
     g_free(session->rxbuf);
 
 	/* TODO: Remove. */
+	purple_debug_info("msim", ">>> going to free user_lookup_cb\n");
 	g_hash_table_destroy(session->user_lookup_cb);
+	purple_debug_info("msim", ">>> going to free user_lookup_cb_data\n");
 	g_hash_table_destroy(session->user_lookup_cb_data);
 	
+	purple_debug_info("msim", ">>> going to free session itself\n");
     g_free(session);
 }
                  
@@ -2200,15 +2202,27 @@ msim_close(PurpleConnection *gc)
 {
 	MsimSession *session;
 
-	purple_debug_info("msim", "msim_close: destroying session\n");
+	purple_debug_info("msim", "msim_close: closing, gc=0x%x\n", gc);
 
+	if (gc == NULL)
+		return;
+
+	purple_debug_info("msim", "msim_close: dereferencing gc->proto_data\n");
 	session = (MsimSession *)gc->proto_data;
+	if (session == NULL)
+		return;
 
-    g_return_if_fail(gc != NULL);
-	g_return_if_fail(session != NULL);
-	g_return_if_fail(MSIM_SESSION_VALID(session));
+	gc->proto_data = NULL;
 
-    purple_input_remove(session->gc->inpa);
+	purple_debug_info("msim", "msim_close: checking if session is valid\n");
+	if (!MSIM_SESSION_VALID(session))
+		return;
+
+	purple_debug_info("msim", "msim_close: about to remove inpa\n");
+    if (session->gc->inpa)
+		purple_input_remove(session->gc->inpa);
+
+	purple_debug_info("msim", "msim_close: ready to destroy session\n");
     msim_session_destroy(session);
 }
 
