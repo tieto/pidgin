@@ -151,6 +151,10 @@ aim_snvalid_aim(const char *sn)
 	if (purple_email_is_valid(sn))
 		return TRUE;
 
+	/* Normal AIM screen names can't start with a number */
+	if (isdigit(sn[0]))
+		return FALSE;
+
 	for (i = 0; sn[i] != '\0'; i++) {
 		if (!isalnum(sn[i]) && (sn[i] != ' ') &&
 			(sn[i] != '.') &&
