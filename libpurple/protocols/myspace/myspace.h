@@ -75,6 +75,8 @@
 
 /* Constants */
 
+#define MSIM_MAX_PASSWORD_LENGTH 	8
+
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
 #define MSIM_CLIENT_VERSION     673
 
