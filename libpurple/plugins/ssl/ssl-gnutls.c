@@ -84,6 +84,25 @@ ssl_gnutls_uninit(void)
 	gnutls_certificate_free_credentials(xcred);
 }
 
+static void
+ssl_gnutls_verified_cb(PurpleCertificateVerificationStatus st,
+		       gpointer userdata)
+{
+	PurpleSslConnection *gsc = (PurpleSslConnection *) userdata;
+
+	if (st == PURPLE_CERTIFICATE_VALID) {
+		/* Certificate valid? Good! Do the connection! */
+		gsc->connect_cb(gsc->connect_cb_data, gsc, PURPLE_INPUT_READ);
+	} else {
+		/* Otherwise, signal an error */
+		if(gsc->error_cb != NULL)
+			gsc->error_cb(gsc, PURPLE_SSL_CERTIFICATE_INVALID,
+				      gsc->connect_cb_data);
+		purple_ssl_close(gsc);
+	}
+}
+
+
 
 static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 		PurpleInputCondition cond)
@@ -203,7 +222,26 @@ static void ssl_gnutls_handshake_cb(gpointer data, gint source,
 		    }
 		  
 		}
-		gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
+
+		/* TODO: The following logic should really be in libpurple */
+		/* If a Verifier was given, hand control over to it */
+		if (gsc->verifier) {
+			GList *peers;
+			/* First, get the peer cert chain */
+			peers = purple_ssl_get_peer_certificates(gsc);
+
+			/* Now kick off the verification process */
+			purple_certificate_verify(gsc->verifier,
+						  gsc->host,
+						  peers,
+						  ssl_gnutls_verified_cb,
+						  gsc);
+						  
+		} else {
+			/* Otherwise, just call the "connection complete"
+			   callback */
+			gsc->connect_cb(gsc->connect_cb_data, gsc, cond);
+		}
 	}
 
 }
