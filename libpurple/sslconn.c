@@ -24,6 +24,7 @@
  */
 #include "internal.h"
 
+#include "certificate.h"
 #include "debug.h"
 #include "sslconn.h"
 
