@@ -1250,7 +1250,7 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
 	g_hash_table_destroy(body);
 }
 
-#ifdef _MSIM_UID2USERNAME_WORKS
+#if 0
 /* Lookup a username by userid, from buddy list. 
  *
  * @param wanted_uid
@@ -1262,19 +1262,30 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
 static const gchar *
 msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
 {
-	GSList *buddies, *buddies_head;
+	GSList *buddies, *cur;
 
-	for (buddies = buddies_head = purple_find_buddies(session->account, NULL); 
-			buddies; 
-			buddies = g_slist_next(buddies))
+	buddies = purple_find_buddies(session->account, NULL); 
+
+	if (!buddies)
+	{
+		purple_debug_info("msim", "msim_uid2username_from_blist: no buddies?");
+		return NULL;
+	}
+
+	for (cur = buddies; cur != NULL; cur = g_slist_next(cur))
 	{
 		PurpleBuddy *buddy;
+		//PurpleBlistNode *node;
 		guint uid;
-		gchar *name;
+		const gchar *name;
 
-		buddy = buddies->data;
+
+		/* See finch/gnthistory.c */
+		buddy = cur->data;
+		//node  = cur->data;
 
 		uid = purple_blist_node_get_int(&buddy->node, "UserID");
+		//uid = purple_blist_node_get_int(node, "UserID");
 
 		/* name = buddy->name; */								/* crash */
 		/* name = PURPLE_BLIST_NODE_NAME(&buddy->node);  */		/* crash */
@@ -1282,6 +1293,7 @@ msim_uid2username_from_blist(MsimSession *session, guint wanted_uid)
 		/* XXX Is this right? Memory corruption here somehow. Happens only
 		 * when return one of these values. */
 		name = purple_buddy_get_name(buddy); 					/* crash */
+		//name = purple_buddy_get_name((PurpleBuddy *)node); 	/* crash */
 		/* return name; */										/* crash (with above) */
 
 		/* name = NULL; */										/* no crash */
@@ -1323,23 +1335,24 @@ or:
 
 	Why is it crashing in msim_parse()'s g_strdup()?
 */
-
-
 		purple_debug_info("msim", "msim_uid2username_from_blist: %s's uid=%d (want %d)\n",
 				name, uid, wanted_uid);
 
 		if (uid == wanted_uid)
 		{
-			g_slist_free(buddies_head);
+			gchar *ret;
 
-			return name;
+			ret = g_strdup(name);
+
+			g_slist_free(buddies);
+
+			return ret;
 		}
 	}
 
-	g_slist_free(buddies_head);
+	g_slist_free(buddies);
 	return NULL;
 }
-
 #endif
 
 /** Preprocess incoming messages, resolving as needed, calling msim_process() when ready to process.
@@ -1360,11 +1373,10 @@ msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 
 		/* TODO: Make caching work. Currently it is commented out because
 		 * it crashes for unknown reasons, memory realloc error. */
-//#define _MSIM_UID2USERNAME_WORKS
-#ifdef _MSIM_UID2USERNAME_WORKS
+#if 0
 		username = msim_uid2username_from_blist(session, uid); 
 #else
-		username = NULL;
+		username = NULL; 
 #endif
 
 		if (username)
