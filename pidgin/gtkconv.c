@@ -541,13 +541,6 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	account = purple_conversation_get_account(conv);
 
-	if (!purple_account_is_connected(account))
-		return;
-
-	if ((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) &&
-		purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
-		return;
-
 	if (check_for_and_do_command(conv)) {
 		if (gtkconv->entry_growing) {
 			reset_default_size(gtkconv);
@@ -556,6 +549,13 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 		return;
 	}
+
+	if ((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) &&
+		purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
+		return;
+
+	if (!purple_account_is_connected(account))
+		return;
 
 	buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 	clean = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
