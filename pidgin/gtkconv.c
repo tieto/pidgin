@@ -347,15 +347,28 @@ debug_command_cb(PurpleConversation *conv,
 	}
 }
 
-static PurpleCmdRet
-clear_command_cb(PurpleConversation *conv,
-                 const char *cmd, char **args, char **error, void *data)
+static void clear_conversation_scrollback(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = NULL;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
+}
+
+static PurpleCmdRet
+clear_command_cb(PurpleConversation *conv,
+                 const char *cmd, char **args, char **error, void *data)
+{
+	clear_conversation_scrollback(conv);
+	return PURPLE_CMD_STATUS_OK;
+}
+
+static PurpleCmdRet
+clearall_command_cb(PurpleConversation *conv,
+                 const char *cmd, char **args, char **error, void *data)
+{
+	purple_conversation_foreach(clear_conversation_scrollback);
 	return PURPLE_CMD_STATUS_OK;
 }
 
@@ -7202,6 +7215,9 @@ pidgin_conversations_init(void)
 	purple_cmd_register("clear", "", PURPLE_CMD_P_DEFAULT,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
 	                  clear_command_cb, _("clear: Clears the conversation scrollback."), NULL);
+	purple_cmd_register("clearall", "", PURPLE_CMD_P_DEFAULT,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
+	                  clearall_command_cb, _("clear: Clears all conversation scrollbacks."), NULL);
 	purple_cmd_register("help", "w", PURPLE_CMD_P_DEFAULT,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, NULL,
 	                  help_command_cb, _("help &lt;command&gt;:  Help on a specific command."), NULL);
