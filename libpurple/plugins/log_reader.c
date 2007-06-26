@@ -1741,42 +1741,6 @@ struct qip_logger_data {
 	int length;
 };
 
-static char *qip_get_file_contents(const char *path)
-{
-	GError *error;
-	char *contents;
-	char *utf8_string;
-
-	purple_debug_info("QIP logger", "Reading %s\n", path);
-
-	error = NULL;
-	if (!g_file_get_contents(path, &contents, NULL, &error)) {
-		purple_debug_error("QIP logger",
-		                   "Couldn't read file %s: %s \n", path, error->message);
-		g_error_free(error);
-		return NULL;
-	}
-
-	g_return_val_if_fail(contents != NULL, NULL);
-
-	/* Convert file contents from Cp1251 to UTF-8 codeset */
-	error = NULL;
-	if (!(utf8_string = g_convert(contents, -1, "UTF-8", "Cp1251", NULL, NULL, &error))) {
-		purple_debug_error("QIP logger",
-		                   "Couldn't convert file %s to UTF-8: %s\n", path, error->message);
-		g_error_free(error);
-
-		g_free(contents);
-		return NULL;
-	}
-
-	g_free(contents);
-	contents = g_markup_escape_text(utf8_string, -1);
-	g_free(utf8_string);
-
-	return contents;
-}
-
 static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount *account)
 {
 	GList *list = NULL;
@@ -1796,6 +1760,7 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	char *start_log;
 	char *new_line;
 	int offset = 0;
+	GError *error;
 
 	g_return_val_if_fail(sn != NULL, list);
 	g_return_val_if_fail(account != NULL, list);
@@ -1824,8 +1789,13 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	g_free(username);
 	g_free(filename);
 
-	if ((contents = qip_get_file_contents(path)) == NULL)
-	{
+	purple_debug_info("QIP logger", "Reading %s\n", path);
+
+	error = NULL;
+	if (!g_file_get_contents(path, &contents, NULL, &error)) {
+		purple_debug_error("QIP logger",
+		                   "Couldn't read file %s: %s \n", path, error->message);
+		g_error_free(error);
 		g_free(path);
 		return list;
 	}
@@ -1837,8 +1807,8 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 		gboolean add_new_log = FALSE;
 
 		if (*c) {
-			if (purple_str_has_prefix(c, QIP_LOG_IN_MESSAGE_ESC) ||
-				purple_str_has_prefix(c, QIP_LOG_OUT_MESSAGE_ESC)) {
+			if (purple_str_has_prefix(c, QIP_LOG_IN_MESSAGE) ||
+				purple_str_has_prefix(c, QIP_LOG_OUT_MESSAGE)) {
 
 				char *tmp;
 				
@@ -1940,6 +1910,8 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	const char *line;
 	gchar *contents;
 	char *selected;
+	GError *error;
+	char *utf8_string;
 
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
@@ -1948,19 +1920,35 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	g_return_val_if_fail(data->path != NULL, g_strdup(""));
 	g_return_val_if_fail(data->length > 0, g_strdup(""));
 
-	if ((contents = qip_get_file_contents(data->path)) == NULL)
-	{
+	error = NULL;
+	if (!g_file_get_contents(data->path, &contents, NULL, &error)) {
+		purple_debug_error("QIP logger",
+			"Couldn't read file %s: %s \n", data->path, error->message);
+		g_error_free(error);
 		return g_strdup("");
 	}
-
-	buddy = purple_find_buddy(log->account, log->name);
 
 	selected = g_strndup(contents + data->offset, data->length + 2);
 	selected[data->length] = '\n';
 	selected[data->length + 1] = '\0';
-
 	g_free(contents);
 	contents = selected;
+
+	/* Convert file contents from Cp1251 to UTF-8 codeset */
+	error = NULL;
+	if (!(utf8_string = g_convert(contents, -1, "UTF-8", "Cp1251", NULL, NULL, &error))) {
+		purple_debug_error("QIP logger",
+			"Couldn't convert file %s to UTF-8: %s\n", data->path, error->message);
+		g_error_free(error);
+		g_free(contents);
+		return g_strdup("");
+	}
+
+	g_free(contents);
+	contents = g_markup_escape_text(utf8_string, -1);
+	g_free(utf8_string);
+
+	buddy = purple_find_buddy(log->account, log->name);
 
 	/* Apply formatting... */
 	formatted = g_string_sized_new(data->length + 2);
