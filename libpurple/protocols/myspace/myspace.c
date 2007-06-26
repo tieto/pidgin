@@ -746,6 +746,115 @@ msim_font_height_to_point(guint height)
 	}
 }
 
+/** Convert the msim markup <f> (font) tag into HTML. */
+static void msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
+{
+	const gchar *face, *height_str, *decor_str;
+	GString *gs_end, *gs_begin;
+	guint decor, height;
+
+	face = xmlnode_get_attrib(root, "n");	
+	height_str = xmlnode_get_attrib(root, "h");
+	decor_str = xmlnode_get_attrib(root, "s");
+
+	if (height_str)
+		height = atol(height_str);
+	else
+		height = 12;
+
+	if (decor_str)
+		decor = atol(decor_str);
+	else
+		decor = 0;
+
+	gs_begin = g_string_new("");
+	g_string_printf(gs_begin, "<font face='%s' size='%d'>", face, 
+			msim_font_size_to_purple(msim_font_height_to_point(height))); 
+	/* No support for font-size CSS? */
+	/* g_string_printf(gs_begin, "<span style='font-family: %s; font-size: %dpt'>", face, 
+			msim_font_height_to_point(height)); */
+
+	gs_end = g_string_new("</font>");
+
+	if (decor & 1)
+	{
+		g_string_append(gs_begin, "<b>");
+		g_string_prepend(gs_end, "</b>");
+	}
+
+	if (decor & 2)
+	{
+		g_string_append(gs_begin, "<i>");
+		g_string_append(gs_end, "</i>");	
+	}
+
+	if (decor & 4)
+	{
+		g_string_append(gs_begin, "<u>");
+		g_string_append(gs_end, "</u>");	
+	}
+
+
+	*begin = gs_begin->str;
+	*end = gs_end->str;
+}
+
+/** Convert the msim markup <p> (paragraph) tag into HTML. */
+static void msim_markup_p_to_html(xmlnode *root, gchar **begin, gchar **end)
+{
+	/* Just pass through unchanged. 
+	 *
+	 * Note: attributes currently aren't passed, if there are any. */
+	*begin = g_strdup("<p>");
+	*end = g_strdup("</p>");
+}
+
+/** Convert the msim markup <c> tag (text color) into HTML. TODO: Test */
+static void msim_markup_c_to_html(xmlnode *root, gchar **begin, gchar **end)
+{
+	const gchar *color;
+
+	color = xmlnode_get_attrib(root, "v");
+
+	/* TODO: parse rgb(255,0,0) into #FF0000, etc. 
+	 * And do something about rgba (alpha) and transparent.
+	 */
+	/* *begin = g_strdup_printf("<font color='%s'>", color); */
+	*begin = g_strdup_printf("<span style='color: %s'>", color);
+	*end = g_strdup("</p>");
+}
+
+/** Convert the msim markup <b> tag (background color) into HTML. TODO: Test */
+static void msim_markup_b_to_html(xmlnode *root, gchar **begin, gchar **end)
+{
+	const gchar *color;
+
+	color = xmlnode_get_attrib(root, "v");
+
+	/* TODO: parse color same as msim_markup_c_to_html(). */
+	*begin = g_strdup_printf("<span style='background-color: %s'>", color);
+	*end = g_strdup("</p>");
+}
+
+/** Convert the msim markup <i> tag (emoticon image) into HTML. TODO: Test */
+static void msim_markup_i_to_html(xmlnode *root, gchar **begin, gchar **end)
+{
+	const gchar *name;
+
+	name = xmlnode_get_attrib(root, "n");
+
+	/* TODO: Support these emoticons:
+	 *
+	 * bigsmile growl mad scared tongue devil happy messed sidefrown upset 
+	 * frazzled heart nerd sinister wink geek laugh oops smirk worried 
+	 * googles mohawk pirate straight kiss 
+	 */
+
+	*begin = g_strdup_printf("<img id='%s'>", name);
+	*end = g_strdup("</p>");
+}
+
+
 /** Convert an xmlnode of msim markup to an HTML string.
  * @return An HTML string. Caller frees.
  */
@@ -765,50 +874,15 @@ static gchar *msim_markup_xmlnode_to_html(xmlnode *root)
 
 	if (!strcmp(root->name, "f"))
 	{
-		const gchar *face, *height_str, *decor_str;
-		GString *gs_end, *gs_begin;
-		guint decor, height;
-	
-		face = xmlnode_get_attrib(root, "n");	
-		height_str = xmlnode_get_attrib(root, "h");
-		decor_str = xmlnode_get_attrib(root, "s");
-
-		if (height_str)
-			height = atol(height_str);
-		else
-			height = 12;
-
-		if (decor_str)
-		   	decor = atol(decor_str);
-		else
-			decor = 0;
-
-		gs_begin = g_string_new("");
-		g_string_printf(gs_begin, "<font face='%s' size='%d'>", face, 
-				msim_font_size_to_purple(msim_font_height_to_point(height)));
-		gs_end = g_string_new("</font>");
-
-		if (decor & 1)
-		{
-			g_string_append(gs_begin, "<b>");
-			g_string_prepend(gs_end, "</b>");
-		}
-	
-		if (decor & 2)
-		{
-			g_string_append(gs_begin, "<i>");
-			g_string_append(gs_end, "</i>");	
-		}
-
-		if (decor & 4)
-		{
-			g_string_append(gs_begin, "<u>");
-			g_string_append(gs_end, "</u>");	
-		}
-
-
-		begin = gs_begin->str;
-		end = gs_end->str;
+		msim_markup_f_to_html(root, &begin, &end);
+	} else if (!strcmp(root->name, "p")) {
+		msim_markup_p_to_html(root, &begin, &end);
+	} else if (!strcmp(root->name, "c")) {
+		msim_markup_c_to_html(root, &begin, &end);
+	} else if (!strcmp(root->name, "b")) {
+		msim_markup_b_to_html(root, &begin, &end);
+	} else if (!strcmp(root->name, "i")) {
+		msim_markup_i_to_html(root, &begin, &end);
 	} else {
 		purple_debug_info("msim", "msim_markup_xmlnode_to_html: "
 				"unknown tag name=%s, ignoring", root->name);
@@ -861,10 +935,9 @@ static gchar *msim_markup_xmlnode_to_html(xmlnode *root)
 	return final;
 }
 
-/** Convert MySpaceIM markup to GtkIMHtml markup. 
- * TODO
+/** Convert MySpaceIM markup to Purple (HTML) markup. 
  *
- * @return GtkIMHtml markup string, must be g_free()'d. */
+ * @return Purple markup string, must be g_free()'d. */
 gchar *
 msim_markup_to_html(const gchar *raw)
 {
