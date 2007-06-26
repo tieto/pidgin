@@ -166,9 +166,6 @@ struct _PurpleCertificateScheme
  */
 struct _PurpleCertificateVerifier
 {
-	/** Name of the Verifier - case insensitive */
-	gchar *name;
-	
 	/** Name of the scheme this Verifier operates on
 	 *
 	 * The scheme will be looked up by name when a Request is generated
@@ -176,6 +173,9 @@ struct _PurpleCertificateVerifier
 	 */
 	gchar *scheme_name;
 
+	/** Name of the Verifier - case insensitive */
+	gchar *name;
+	
 	/**
 	 * Start the verification process
 	 *
