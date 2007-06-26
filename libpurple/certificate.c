@@ -61,7 +61,7 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 			 ((PurpleCertificate *) (cert_chain->data))->scheme);
 
 	/* Construct and fill in the request fields */
-	vrq = g_new(PurpleCertificateVerificationRequest, 1);
+	vrq = g_new0(PurpleCertificateVerificationRequest, 1);
 	vrq->verifier = verifier;
 	vrq->scheme = scheme;
 	vrq->subject_name = g_strdup(subject_name);
