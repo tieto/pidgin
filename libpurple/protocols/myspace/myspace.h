@@ -69,6 +69,10 @@
 /* RC4 is in Libpurple 2.0.1, so define this. */
 #define MSIM_USE_PURPLE_RC4			
 
+/* Define to fake our own user account always being online. Needed
+ * because msim doesn't allow adding oneself to ones list. */
+#define MSIM_FAKE_SELF_ONLINE
+
 /* TODO: (one release after) when RC4 makes it into libpurple, use the PURPLE_VERSION_CHECK 
  * macro to conditionally compile. And then later, get rid of our own
  * RC4 code and only support libpurple with RC4. */
@@ -136,6 +140,7 @@ typedef struct _MsimSession
     PurpleConnection *gc;
     guint sesskey;                      /**< Session key from server */
     guint userid;                       /**< This user's numeric user ID */
+	gchar *username;					/**< This user's unique username */
     gint fd;                            /**< File descriptor to/from server */
 
 	/* TODO: Remove. */

@@ -1430,7 +1430,6 @@ msim_process(MsimSession *session, MsimMessage *msg)
     {
         return msim_login_challenge(session, msg);
     } else if (msim_msg_get(msg, "sesskey")) {
-
         purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
 
         session->sesskey = msim_msg_get_integer(msg, "sesskey");
@@ -1440,9 +1439,19 @@ msim_process(MsimSession *session, MsimMessage *msg)
 		 * some of the time, but can vary. This is our own user ID. */
         session->userid = msim_msg_get_integer(msg, "userid");
 
-		/* TODO: fake our own userid being online */
 
         purple_connection_set_state(session->gc, PURPLE_CONNECTED);
+	
+
+		/* We now know are our own username, only after we're logged in..
+		 * which is weird, but happens because you login with your email
+		 * address and not username. Will be freed in msim_session_destroy(). */
+		session->username = msim_msg_get_string(msg, "uniquenick");
+
+#ifdef MSIM_FAKE_SELF_ONLINE
+		/* Fake our self coming online. */
+		purple_prpl_got_user_status(session->account, session->username, purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE), NULL);
+#endif
 
         return TRUE;
     } else if (msim_msg_get(msg, "bm"))  {
@@ -1736,7 +1745,17 @@ msim_status(MsimSession *session, MsimMessage *msg)
 						username, status_code);
 				purple_status_code = PURPLE_STATUS_AVAILABLE;
 	}
-	purple_prpl_got_user_status(session->account, username, purple_primitive_get_id_from_type(purple_status_code), NULL);
+
+#ifdef MSIM_FAKE_SELF_ONLINE
+	if (!strcmp(username, session->username) && purple_status_code == PURPLE_STATUS_OFFLINE)
+	{
+		/* Hack to ignore offline status notices on self. */
+	} else {
+#endif
+		purple_prpl_got_user_status(session->account, username, purple_primitive_get_id_from_type(purple_status_code), NULL);
+#ifdef MSIM_FAKE_SELF_ONLINE
+	}
+#endif
 
     g_strfreev(status_array);
 	g_free(status_str);
@@ -2230,6 +2249,8 @@ msim_connect_cb(gpointer data, gint source, const gchar *error_message)
     session->fd = source; 
 
     gc->inpa = purple_input_add(source, PURPLE_INPUT_READ, msim_input_cb, gc);
+
+
 }
 
 /* Session methods */
@@ -2253,6 +2274,9 @@ msim_session_new(PurpleAccount *acct)
     session->magic = MSIM_SESSION_STRUCT_MAGIC;
     session->account = acct;
     session->gc = purple_account_get_connection(acct);
+	session->sesskey = 0;
+	session->userid = 0;
+	session->username = NULL;
     session->fd = -1;
 
 	/* TODO: Remove. */
@@ -2283,6 +2307,7 @@ msim_session_destroy(MsimSession *session)
     session->magic = -1;
 
     g_free(session->rxbuf);
+	g_free(session->username);
 
 	/* TODO: Remove. */
 	g_hash_table_destroy(session->user_lookup_cb);
