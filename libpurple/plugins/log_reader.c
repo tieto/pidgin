@@ -1841,9 +1841,10 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 			c++;
 
 			/* Find the last '(' character. */
-			if ((tmp = strstr(c, "\n")) != NULL)
-				c = g_strrstr(tmp, "(");
-			else {
+			if ((tmp = strstr(c, "\n")) != NULL) {
+				while (*tmp && *tmp != '(') --tmp;
+				c = tmp;
+			} else {
 				while (*c)
 					c++;
 				c--;
@@ -1901,11 +1902,10 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 							start_log = new_line;
 						}
 					}
-
-					/* find EOF */
-					c = strstr(c, "\n");
-					c++;
 				}
+				/* find EOF */
+				c = strstr(c, "\n");
+				c++;
 			}
 		} else {
 			c = strstr(c, "\n");
@@ -1996,9 +1996,10 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 			buddy_name = ++c;
 
 			/* Find the last '(' character. */
-			if ((tmp = strstr(c, "\n")) != NULL)
-				c = g_strrstr(tmp, "(");
-			else {
+			if ((tmp = strstr(c, "\n")) != NULL) {
+				while (*tmp && *tmp != '(') --tmp;
+				c = tmp;
+			} else {
 				while (*c)
 					c++;
 				c--;
