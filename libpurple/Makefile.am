@@ -157,10 +157,10 @@ dbus_exported = dbus-useful.h dbus-define-api.h account.h blist.h buddyicon.h \
 purple_build_coreheaders = $(addprefix $(srcdir)/, $(purple_coreheaders))
 dbus_build_exported = $(addprefix $(srcdir)/, $(dbus_exported))
 
-dbus-types.c: dbus-analyze-types.py $(purple_coreheaders)
+dbus-types.c: dbus-analyze-types.py $(purple_build_coreheaders)
 	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DEFINE_TYPE\(%s\) > $@
 
-dbus-types.h: dbus-analyze-types.py $(dbus_coreheaders)
+dbus-types.h: dbus-analyze-types.py $(purple_build_coreheaders)
 	cat $(purple_build_coreheaders) | $(PYTHON) $(srcdir)/dbus-analyze-types.py --pattern=PURPLE_DBUS_DECLARE_TYPE\(%s\) > $@
 
 dbus-bindings.c: dbus-analyze-functions.py $(dbus_exported)
