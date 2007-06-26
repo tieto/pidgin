@@ -1912,6 +1912,8 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	char *selected;
 	GError *error;
 	char *utf8_string;
+	FILE *file;
+
 
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
@@ -1921,18 +1923,18 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	g_return_val_if_fail(data->length > 0, g_strdup(""));
 
 	error = NULL;
-	if (!g_file_get_contents(data->path, &contents, NULL, &error)) {
-		purple_debug_error("QIP logger",
-			"Couldn't read file %s: %s \n", data->path, error->message);
-		g_error_free(error);
-		return g_strdup("");
-	}
+	
+	contents = g_malloc(data->length + 2);
 
-	selected = g_strndup(contents + data->offset, data->length + 2);
-	selected[data->length] = '\n';
-	selected[data->length + 1] = '\0';
-	g_free(contents);
-	contents = selected;
+	file = g_fopen(data->path, "rb");
+	g_return_val_if_fail(file != NULL, g_strdup(""));
+	
+	fseek(file, data->offset, SEEK_SET);
+	fread(contents, data->length, 1, file);
+	fclose(file);
+
+	contents[data->length] = '\n';
+	contents[data->length + 1] = '\0';
 
 	/* Convert file contents from Cp1251 to UTF-8 codeset */
 	error = NULL;
