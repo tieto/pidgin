@@ -115,7 +115,14 @@ purple_certificate_destroy_list (GList * crt_list)
 
 	g_list_free(crt_list);
 }
+/****************************************************************************/
+/* Subsystem                                                                */
+/****************************************************************************/
+void
+purple_certificate_register_builtins(void)
+{
 
+}
 
 PurpleCertificateScheme *
 purple_certificate_find_scheme(const gchar *name)

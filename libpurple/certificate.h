@@ -299,6 +299,13 @@ purple_certificate_destroy_list (GList * crt_list);
 /*****************************************************************************/
 /*@{*/
 
+/**
+ * Registers the "universal" PurpleCertificateVerifier and
+ * PurpleCertificatePool types that libpurple knows about
+ */
+void
+purple_certificate_register_builtins(void);
+
 /** Look up a registered CertificateScheme by name
  * @param name   The scheme name. Case insensitive.
  * @return Pointer to the located Scheme, or NULL if it isn't found.
