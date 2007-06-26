@@ -190,6 +190,9 @@ struct _PurpleCertificateVerifier
 
 	/**
 	 * Destroy a completed Request under this Verifier
+	 * The function pointed to here is only responsible for cleaning up
+	 * whatever PurpleCertificateVerificationRequest::data points to.
+	 * It should not call free(vrq)
 	 *
 	 * @param vrq       Request to destroy
 	 */

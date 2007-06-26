@@ -80,13 +80,17 @@ purple_certificate_verify_destroy (PurpleCertificateVerificationRequest *vrq)
 
 	if (NULL == vrq) return;
 
-	/* TODO: Should I make it easier on the Verifier programmer and
-	   clean up some of vrq's internals here? */
-	
 	/* Fetch the Verifier responsible... */
 	vr = vrq->verifier;
 	/* ...and order it to KILL */
 	(vr->destroy_request)(vrq);
+
+	/* Now the internals have been cleaned up, so clean up the libpurple-
+	   created elements */
+	g_free(vrq->subject_name);
+	purple_certificate_destroy_list(vrq->cert_chain);
+
+	g_free(vrq);
 }
 
 
