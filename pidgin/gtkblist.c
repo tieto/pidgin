@@ -174,6 +174,7 @@ static gboolean gtk_blist_visibility_cb(GtkWidget *w, GdkEventVisibility *event,
 
 static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *event, gpointer data)
 {
+#if GTK_CHECK_VERSION(2,2,0)
 	if(event->changed_mask & GDK_WINDOW_STATE_WITHDRAWN) {
 		if(event->new_window_state & GDK_WINDOW_STATE_WITHDRAWN)
 			purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_visible", FALSE);
@@ -195,6 +196,28 @@ static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *eve
 		if (!(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
 			pidgin_blist_refresh_timer(purple_get_blist());
 	}
+#else
+	/* At least gtk+ 2.0.6 does not properly set the change_mask when unsetting a
+	 * GdkWindowState flag. To work around, the window state will be explicitly
+	 * queried on these older versions of gtk+. See pidgin ticket #739.
+	 */
+	GdkWindowState new_window_state = gdk_window_get_state(G_OBJECT(gtkblist->window->window));
+
+	if(new_window_state & GDK_WINDOW_STATE_WITHDRAWN) {
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_visible", FALSE);
+	} else {
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_visible", TRUE);
+		pidgin_blist_refresh_timer(purple_get_blist());
+	}
+
+	if(new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_maximized", TRUE);
+	else
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_maximized", FALSE);
+
+	if (!(new_window_state & GDK_WINDOW_STATE_ICONIFIED))
+		pidgin_blist_refresh_timer(purple_get_blist());
+#endif
 
 	return FALSE;
 }

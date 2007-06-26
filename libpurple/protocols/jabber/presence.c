@@ -565,9 +565,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
-			if(!jbr || jbr == found_jbr) {
-				purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status, NULL);
-			}
+			purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status, NULL);
 		} else {
 			purple_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}
