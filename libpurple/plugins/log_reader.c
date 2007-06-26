@@ -1789,9 +1789,12 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 	char *contents;
 	struct qip_logger_data *data = NULL;
 	struct tm prev_tm;
+	struct tm tm;
 	gboolean prev_tm_init = FALSE;
+	gboolean main_cycle = TRUE;
 	char *c;
 	char *start_log;
+	char *new_line;
 	int offset = 0;
 
 	g_return_val_if_fail(sn != NULL, list);
@@ -1829,112 +1832,98 @@ static GList *qip_logger_list(PurpleLogType type, const char *sn, PurpleAccount 
 
 	c = contents;
 	start_log = contents;
-	while (*c) {
-		if (purple_str_has_prefix(c, QIP_LOG_IN_MESSAGE_ESC) ||
-		    purple_str_has_prefix(c, QIP_LOG_OUT_MESSAGE_ESC)) {
+	while (main_cycle) {
 
-			char *tmp;
-			char *new_line = c;
+		gboolean add_new_log = FALSE;
 
-			/* find EOL */
-			c = strstr(c, "\n");
-			c++;
+		if (*c) {
+			if (purple_str_has_prefix(c, QIP_LOG_IN_MESSAGE_ESC) ||
+				purple_str_has_prefix(c, QIP_LOG_OUT_MESSAGE_ESC)) {
 
-			/* Find the last '(' character. */
-			if ((tmp = strstr(c, "\n")) != NULL) {
-				while (*tmp && *tmp != '(') --tmp;
-				c = tmp;
-			} else {
-				while (*c)
-					c++;
-				c--;
-				c = g_strrstr(c, "(");
-			}
+				char *tmp;
+				
+				new_line = c;
 
-			if (c != NULL) {
-				const char *timestamp = ++c;
-				struct tm tm;
+				/* find EOL */
+				c = strstr(c, "\n");
+				c++;
 
-				/*  Parse the time, day, month and year  */
-				if (sscanf(timestamp, "%u:%u:%u %u/%u/%u",
-				           &tm.tm_hour, &tm.tm_min, &tm.tm_sec,
-				           &tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 6) {
+				/* Find the last '(' character. */
+				if ((tmp = strstr(c, "\n")) != NULL) {
+					while (*tmp && *tmp != '(') --tmp;
+					c = tmp;
+				} else {
+					while (*c)
+						c++;
+					c--;
+					c = g_strrstr(c, "(");
+				}
+
+				if (c != NULL) {
+					const char *timestamp = ++c;
+
+					/*  Parse the time, day, month and year  */
+					if (sscanf(timestamp, "%u:%u:%u %u/%u/%u",
+						&tm.tm_hour, &tm.tm_min, &tm.tm_sec,
+						&tm.tm_mday, &tm.tm_mon, &tm.tm_year) != 6) {
 
 						purple_debug_error("QIP logger list",
-						                   "Parsing timestamp error\n");
-				} else {
-					tm.tm_mon -= 1;
-					tm.tm_year -= 1900;
-
-					/* Let the C library deal with
-					 * daylight savings time. */
-					tm.tm_isdst = -1;
-
-					if (!prev_tm_init) {
-						prev_tm = tm;
-						prev_tm_init = TRUE;
+							"Parsing timestamp error\n");
 					} else {
-						double time_diff = difftime(mktime(&tm), mktime(&prev_tm));
+						tm.tm_mon -= 1;
+						tm.tm_year -= 1900;
 
-						if (time_diff > QIP_LOG_TIMEOUT) {
-							PurpleLog *log;
+						/* Let the C library deal with
+						 * daylight savings time. */
+						tm.tm_isdst = -1;
 
-							/* filling data */
-							data = g_new0(struct qip_logger_data, 1);
-							data->path = g_strdup(path);
-							data->length = new_line - start_log;
-							data->offset = offset;
-							offset += data->length;
-
-							purple_debug_info("QIP logger list",
-							                   "Creating log: path = (%s); length = (%d); offset = (%d)\n", data->path, data->length, data->offset);
-
-							/* XXX: Look into this later... Should we pass in a struct tm? */
-							log = purple_log_new(PURPLE_LOG_IM, sn, account,
-							                     NULL, mktime(&prev_tm), NULL);
-
-							log->logger = qip_logger;
-							log->logger_data = data;
-
-							list = g_list_prepend(list, log);
-
+						if (!prev_tm_init) {
 							prev_tm = tm;
-							start_log = new_line;
+							prev_tm_init = TRUE;
+						} else {
+							add_new_log = difftime(mktime(&tm), mktime(&prev_tm)) > QIP_LOG_TIMEOUT;
 						}
 					}
 				}
-				/* find EOF */
-				c = strstr(c, "\n");
-				c++;
 			}
 		} else {
+			add_new_log = TRUE;
+			main_cycle = FALSE;
+			new_line = c;
+		}
+
+		/* adding  log */
+		if (add_new_log && prev_tm_init) {
+			PurpleLog *log;
+
+			/* filling data */
+			data = g_new0(struct qip_logger_data, 1);
+			data->path = g_strdup(path);
+			data->length = new_line - start_log;
+			data->offset = offset;
+			offset += data->length;
+			purple_debug_info("QIP logger list",
+				"Creating log: path = (%s); length = (%d); offset = (%d)\n", 
+				data->path, data->length, data->offset);
+
+			/* XXX: Look into this later... Should we pass in a struct tm? */
+			log = purple_log_new(PURPLE_LOG_IM, sn, account,
+				NULL, mktime(&prev_tm), NULL);
+
+			log->logger = qip_logger;
+			log->logger_data = data;
+
+			list = g_list_prepend(list, log);
+
+			prev_tm = tm;
+			start_log = new_line;
+		}
+
+		if (*c) {
+			/* find EOF */
 			c = strstr(c, "\n");
 			c++;
 		}
-	}
-
-	/* adding last log */
-	if (prev_tm_init) {
-		PurpleLog *log;
-
-		/* filling data */
-		data = g_new0(
-		struct qip_logger_data, 1);
-		data->path = g_strdup(path);
-		data->length = c - start_log;
-		data->offset = offset;
-		offset += data->length;
-		purple_debug_info("QIP logger list",
-		                   "Creating log: path = (%s); length = (%d); offset = (%d)\n", data->path, data->length, data->offset);
-
-		/* XXX: Look into this later... Should we pass in a struct tm? */
-		log = purple_log_new(PURPLE_LOG_IM, sn, account,
-		                     NULL, mktime(&prev_tm), NULL);
-
-		log->logger = qip_logger;
-		log->logger_data = data;
-
-		list = g_list_prepend(list, log);
 	}
 
 	g_free(contents);
