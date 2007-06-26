@@ -53,7 +53,7 @@ typedef struct _PurpleCertificateVerificationRequest PurpleCertificateVerificati
  * @param userdata User-defined data
  */
 typedef void (*PurpleCertificateVerifiedCallback)
-		(PurpleCertificateVerificationStatus,
+		(PurpleCertificateVerificationStatus st,
 		 gpointer userdata);
 							  
 /** A certificate instance
@@ -294,6 +294,17 @@ purple_certificate_destroy (PurpleCertificate *crt);
  */
 void
 purple_certificate_destroy_list (GList * crt_list);
+
+/**
+ * Retrieves the certificate public key fingerprint using SHA1.
+ *
+ * @param crt        Certificate instance
+ * @return Binary representation of the hash. You are responsible for free()ing
+ *         this.
+ * @see purple_base16_encode_chunked()
+ */
+GByteArray *
+purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt);
 
 /*@}*/
 

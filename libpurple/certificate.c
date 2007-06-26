@@ -30,6 +30,9 @@
 
 #include "certificate.h"
 #include "debug.h"
+#include "internal.h"
+#include "request.h"
+#include "util.h"
 
 /** List holding pointers to all registered certificate schemes */
 static GList *cert_schemes = NULL;
@@ -119,13 +122,111 @@ purple_certificate_destroy_list (GList * crt_list)
 
 	g_list_free(crt_list);
 }
+
+GByteArray *
+purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
+{
+	PurpleCertificateScheme *scheme;
+	GByteArray *fpr;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme, NULL);
+
+	scheme = crt->scheme;
+	
+	g_return_val_if_fail(scheme->get_fingerprint_sha1, NULL);
+
+	fpr = (scheme->get_fingerprint_sha1)(crt);
+
+	return fpr;
+}
+
+/****************************************************************************/
+/* Builtin Verifiers, Pools, etc.                                           */
+/****************************************************************************/
+
+static void
+x509_singleuse_verify_cb (PurpleCertificateVerificationRequest *vrq, gint id)
+{
+	g_return_if_fail(vrq);
+
+	purple_debug_info("certificate/x509_singleuse",
+			  "VRQ on cert from %s gave %d\n",
+			  vrq->subject_name, id);
+
+	/* Signal what happened back to the caller */
+	if (1 == id) {		
+		/* Accepted! */
+		(vrq->cb)(PURPLE_CERTIFICATE_VALID, vrq->cb_data);
+	} else {
+		/* Not accepted */
+		(vrq->cb)(PURPLE_CERTIFICATE_INVALID, vrq->cb_data);
+	}
+
+	/* Now clean up the request */
+	purple_certificate_verify_destroy(vrq);
+}
+
+static void
+x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
+{
+	gchar *sha_asc;
+	GByteArray *sha_bin;
+	gchar *primary, *secondary;
+	PurpleCertificate *crt = (PurpleCertificate *) vrq->cert_chain->data;
+
+	/* Pull out the SHA1 checksum */
+	sha_bin = purple_certificate_get_fingerprint_sha1(crt);
+	/* Now decode it for display */
+	sha_asc = purple_base16_encode_chunked(sha_bin->data,
+					       sha_bin->len);
+
+	/* Make messages */
+	primary = g_strdup_printf(_("%s has presented the following certificate for just-this-once use:"), vrq->subject_name);
+	secondary = g_strdup_printf(_("Fingerprint (SHA1): %s"), sha_asc);
+	
+	/* Make a semi-pretty display */
+	purple_request_accept_cancel(
+		vrq->cb_data, /* TODO: Find what the handle ought to be */
+		_("Single-use Certificate Verification"),
+		primary,
+		secondary,
+		1,            /* Accept by default */
+		NULL,         /* No account */
+		NULL,         /* No other user */
+		NULL,         /* No associated conversation */
+		vrq,
+		x509_singleuse_verify_cb,
+		x509_singleuse_verify_cb );
+	
+	/* Cleanup */
+	g_free(primary);
+	g_free(secondary);
+	g_free(sha_asc);
+	g_byte_array_free(sha_bin, TRUE);
+}
+
+static void
+x509_singleuse_destroy_request (PurpleCertificateVerificationRequest *vrq)
+{
+	/* I don't do anything! */
+}
+
+PurpleCertificateVerifier x509_singleuse = {
+	"x509",                         /* Scheme name */
+	"singleuse",                    /* Verifier name */
+	x509_singleuse_start_verify,    /* start_verification function */
+	x509_singleuse_destroy_request  /* Request cleanup operation */
+};
+
+
 /****************************************************************************/
 /* Subsystem                                                                */
 /****************************************************************************/
 void
 purple_certificate_register_builtins(void)
 {
-
+	purple_certificate_register_verifier(&x509_singleuse);
 }
 
 PurpleCertificateScheme *
