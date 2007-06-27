@@ -6205,10 +6205,11 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 				markup = title;
 		} else if (purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) {
 			PurpleConvChat *chat = PURPLE_CONV_CHAT(conv);
-			markup = g_strdup_printf("%s\n<span color='%s' size='smaller'>%s</span>",
+			const char *topic = purple_conv_chat_get_topic(chat);
+			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",
 						purple_conversation_get_title(conv),
 						pidgin_get_dim_grey_string(gtkconv->infopane),
-						purple_conv_chat_get_topic(chat));
+						topic ? "\n" : "", topic ? topic : "");
 		}
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
 				TEXT_COLUMN, markup, -1);
