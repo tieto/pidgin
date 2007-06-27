@@ -8237,7 +8237,6 @@ pidgin_conv_window_new()
 
 	/* Create the window. */
 	win->window = pidgin_create_window(NULL, 0, "conversation", TRUE);
-	GTK_WINDOW(win->window)->allow_shrink = TRUE;
 
 	if (available_list == NULL) {
 		create_icon_lists(win->window);
