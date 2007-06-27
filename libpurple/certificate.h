@@ -314,11 +314,16 @@ purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt);
 /*@{*/
 
 /**
- * Registers the "universal" PurpleCertificateVerifier and
- * PurpleCertificatePool types that libpurple knows about
+ * Initialize the certificate system
  */
 void
-purple_certificate_register_builtins(void);
+purple_certificate_init(void);
+
+/**
+ * Un-initialize the certificate system
+ */
+void
+purple_certificate_uninit(void);
 
 /** Look up a registered CertificateScheme by name
  * @param name   The scheme name. Case insensitive.

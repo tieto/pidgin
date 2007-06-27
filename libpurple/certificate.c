@@ -224,9 +224,19 @@ PurpleCertificateVerifier x509_singleuse = {
 /* Subsystem                                                                */
 /****************************************************************************/
 void
-purple_certificate_register_builtins(void)
+purple_certificate_init(void)
 {
+	/* Register builtins */
 	purple_certificate_register_verifier(&x509_singleuse);
+}
+
+void
+purple_certificate_uninit(void)
+{
+	/* Unregister the builtins */
+	purple_certificate_unregister_verifier(&x509_singleuse);
+
+	/* TODO: Unregistering everything would be good... */
 }
 
 PurpleCertificateScheme *
