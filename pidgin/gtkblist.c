@@ -4911,10 +4911,17 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 	gboolean selected;
 	char group_count[12] = "";
 	char *mark, *esc;
+	PurpleBlistNode *selected_node = NULL;
+	GtkTreeIter iter;
 
 	group = (PurpleGroup*)gnode;
 	textcolor = gtkblist->treeview->style->fg[GTK_STATE_ACTIVE];
-	selected = gtkblist ? (gtkblist->selected_node == gnode) : FALSE;
+        
+	if (gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview)), NULL, &iter)) {
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
+				NODE_COLUMN, &selected_node, -1);
+	}
+	selected = (gnode == selected_node);
 
 	if (!expanded) {
 		g_snprintf(group_count, sizeof(group_count), " (%d/%d)",
