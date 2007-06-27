@@ -3684,7 +3684,7 @@ add_chat_buddy_common(PurpleConversation *conv, PurpleConvChatBuddy *cb, const c
 	if (!strcmp(chat->nick, purple_normalize(conv->account, old_name != NULL ? old_name : name)))
 		is_me = TRUE;
 
-	is_buddy = (purple_find_buddy(conv->account, name) != NULL);
+	is_buddy = cb->buddy;
 
 	tmp = g_utf8_casefold(alias, -1);
 	alias_key = g_utf8_collate_key(tmp, -1);
@@ -5576,7 +5576,7 @@ pidgin_conv_chat_rename_user(PurpleConversation *conv, const char *old_name,
 
 	g_return_if_fail(new_alias != NULL);
 
-	cbuddy = purple_conv_chat_cb_new(new_name, new_alias, flags);
+	cbuddy = purple_conv_chat_cb_find(chat, new_name);
 
 	add_chat_buddy_common(conv, cbuddy, old_name);
 }
