@@ -40,6 +40,7 @@ typedef struct _JabberMessage {
 	} type;
 	time_t sent;
 	gboolean delayed;
+	gboolean hasBuzz;
 	char *id;
 	char *from;
 	char *to;
