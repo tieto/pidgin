@@ -45,7 +45,7 @@ void gnt_style_read_configure_file(const char *filename);
 
 const char *gnt_style_get(GntStyle style);
 
-const char *gnt_style_get_from_name(const char *group, const char *key);
+char *gnt_style_get_from_name(const char *group, const char *key);
 
 /**
  * 

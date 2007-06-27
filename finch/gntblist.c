@@ -1422,9 +1422,10 @@ draw_tooltip_real(FinchBlist *ggblist)
 
 	str = make_sure_text_fits(str);
 	gnt_util_get_text_bound(str->str, &w, &h);
-	h = MAX(2, h);
+	h = MAX(1, h);
 	tv = gnt_text_view_new();
 	gnt_widget_set_size(tv, w + 1, h);
+	gnt_text_view_set_flag(GNT_TEXT_VIEW(tv), GNT_TEXT_VIEW_NO_SCROLL);
 	gnt_box_add_widget(GNT_BOX(box), tv);
 
 	gnt_widget_set_position(box, x, y);

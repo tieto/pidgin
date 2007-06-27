@@ -45,7 +45,7 @@ const char *gnt_style_get(GntStyle style)
 	return str_styles[style];
 }
 
-const char *gnt_style_get_from_name(const char *group, const char *key)
+char *gnt_style_get_from_name(const char *group, const char *key)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
 	return g_key_file_get_value(gkfile, group, key, NULL);
