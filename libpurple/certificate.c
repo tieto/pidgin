@@ -190,6 +190,8 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 {
 	gchar *sha_asc;
 	GByteArray *sha_bin;
+	gchar *cn;
+	const gchar *cn_match;
 	gchar *primary, *secondary;
 	PurpleCertificate *crt = (PurpleCertificate *) vrq->cert_chain->data;
 
@@ -199,9 +201,20 @@ x509_singleuse_start_verify (PurpleCertificateVerificationRequest *vrq)
 	sha_asc = purple_base16_encode_chunked(sha_bin->data,
 					       sha_bin->len);
 
+	/* Get the cert Common Name */
+	cn = purple_certificate_get_subject_name(crt);
+
+	/* Determine whether the name matches */
+	/* TODO: Worry about strcmp safety? */
+	if (!strcmp(cn, vrq->subject_name)) {
+		cn_match = _("");
+	} else {
+		cn_match = _("(DOES NOT MATCH)");
+	}
+	
 	/* Make messages */
 	primary = g_strdup_printf(_("%s has presented the following certificate for just-this-once use:"), vrq->subject_name);
-	secondary = g_strdup_printf(_("Fingerprint (SHA1): %s"), sha_asc);
+	secondary = g_strdup_printf(_("Common name: %s %s\nFingerprint (SHA1): %s"), cn, cn_match, sha_asc);
 	
 	/* Make a semi-pretty display */
 	purple_request_accept_cancel(
