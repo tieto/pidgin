@@ -543,8 +543,8 @@ x509_certificate_signed_by(PurpleCertificate * crt,
 	g_return_val_if_fail(issuer, FALSE);
 
 	/* Verify that both certs are the correct scheme */
-	g_return_val_if_fail(crt->scheme != &x509_gnutls, FALSE);
-	g_return_val_if_fail(issuer->scheme != &x509_gnutls, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_gnutls, FALSE);
+	g_return_val_if_fail(issuer->scheme == &x509_gnutls, FALSE);
 
 	/* TODO: check for more nullness? */
 
@@ -616,6 +616,41 @@ x509_sha1sum(PurpleCertificate *crt)
 	return hash;
 }
 
+static gchar *
+x509_common_name (PurpleCertificate *crt)
+{
+	gnutls_x509_crt_t cert_dat;
+	gchar *cn = NULL;
+	size_t cn_size;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme == &x509_gnutls, NULL);
+
+	cert_dat = *( (gnutls_x509_crt_t *) crt->data );
+
+	/* TODO: Not return values? */
+	
+	/* Figure out the length of the Common Name */
+	/* Claim that the buffer is size 0 so GnuTLS just tells us how much
+	   space it needs */
+	cn_size = 0;
+	gnutls_x509_crt_get_dn_by_oid(cert_dat,
+				      GNUTLS_OID_X520_COMMON_NAME,
+				      0, /* First CN found, please */
+				      0, /* Not in raw mode */
+				      cn, &cn_size);
+
+	/* Now allocate and get the Common Name */
+	cn = g_new0(gchar, cn_size);
+	gnutls_x509_crt_get_dn_by_oid(cert_dat,
+				      GNUTLS_OID_X520_COMMON_NAME,
+				      0, /* First CN found, please */
+				      0, /* Not in raw mode */
+				      cn, &cn_size);
+	
+	return cn;
+}
+
 /* X.509 certificate operations provided by this plugin */
 /* TODO: Flesh this out! */
 static PurpleCertificateScheme x509_gnutls = {
@@ -626,7 +661,8 @@ static PurpleCertificateScheme x509_gnutls = {
 	x509_sha1sum,                    /* SHA1 fingerprint */
 	NULL,                            /* Subject */
 	NULL,                            /* Unique ID */
-	NULL                             /* Issuer Unique ID */
+	NULL,                            /* Issuer Unique ID */
+	x509_common_name                 /* Subject name */
 };
 
 static PurpleSslOps ssl_ops =
