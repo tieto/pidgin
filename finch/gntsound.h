@@ -56,6 +56,11 @@ const char *finch_sound_get_event_label(PurpleSoundEventID event);
 PurpleSoundUiOps *finch_sound_get_ui_ops(void);
 
 /**
+ * Show the sound settings dialog.
+ */
+void finch_sounds_show_all(void);
+
+/**
 * Get the handle for the GNT sound system.
 *
 * @return The handle to the sound system

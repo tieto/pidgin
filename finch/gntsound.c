@@ -40,8 +40,15 @@
 #include "sound.h"
 #include "util.h"
 
+#include "gntbox.h"
+#include "gntwindow.h"
+#include "gntcombobox.h"
+#include "gntlabel.h"
 #include "gntconv.h"
 #include "gntsound.h"
+#include "gntwidget.h"
+#include "gntentry.h"
+#include "gntcheckbox.h"
 
 struct finch_sound_event {
 	char *label;
@@ -548,6 +555,62 @@ finch_sound_play_event(PurpleSoundEventID event)
 	g_free(enable_pref);
 	g_free(file_pref);
 }
+
+void
+finch_sounds_show_all(void){
+	GntWidget *win;
+
+	GntWidget *box;
+	GntWidget *cmbox;
+	GntWidget *entry;
+	
+	win = gnt_window_box_new(TRUE,TRUE);
+
+	cmbox = gnt_combo_box_new();
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"automatic",_("Automatic"));
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"alsa","ALSA");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"esd","ESD");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"beep",_("Console Beep"));
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"custom",_("Command"));
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"nosound",_("No Sound"));
+
+	box = gnt_hbox_new(TRUE);
+	gnt_box_set_fill(GNT_BOX(box),FALSE);
+	gnt_box_add_widget(GNT_BOX(box),gnt_label_new(_("Method: ")));
+	gnt_box_add_widget(GNT_BOX(box),cmbox);
+	gnt_box_add_widget(GNT_BOX(win),box); 
+
+	box = gnt_hbox_new(TRUE);
+	gnt_box_set_fill(GNT_BOX(box),FALSE);
+	gnt_box_add_widget(GNT_BOX(box),gnt_label_new(_("Sound Command\n%s for filename")));
+	entry = gnt_entry_new("cat %s > /dev/dsp");
+	gnt_box_add_widget(GNT_BOX(box),entry);
+	gnt_box_add_widget(GNT_BOX(win),box);
+
+	gnt_box_add_widget(GNT_BOX(win),gnt_check_box_new("Sounds when conversation has focus"));
+
+	box = gnt_hbox_new(TRUE);
+	gnt_box_set_fill(GNT_BOX(box),FALSE);
+	gnt_box_add_widget(GNT_BOX(box),gnt_label_new("Enable Sounds:"));
+	cmbox = gnt_combo_box_new();
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"always","Always");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"available","Only when available");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"navailable","Only when not available");
+	gnt_box_add_widget(GNT_BOX(box),cmbox);
+	gnt_box_add_widget(GNT_BOX(win),box);
+
+	box = gnt_hbox_new(TRUE);
+	gnt_box_set_fill(GNT_BOX(box),FALSE);
+	gnt_box_add_widget(GNT_BOX(box),gnt_label_new("Volume(0-100):"));
+	entry = gnt_entry_new("50");
+	gnt_box_add_widget(GNT_BOX(box),entry);
+	gnt_box_add_widget(GNT_BOX(win),box);
+
+
+	gnt_box_set_title(GNT_BOX(win),"Sound Preferences");
+	gnt_widget_show(win);
+
+}	
 
 static PurpleSoundUiOps sound_ui_ops =
 {
