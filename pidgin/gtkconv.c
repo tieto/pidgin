@@ -1749,6 +1749,9 @@ right_click_chat_cb(GtkWidget *widget, GdkEventButton *event,
 
 	gtk_tree_selection_select_path(GTK_TREE_SELECTION(
 			gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkchat->list))), path);
+	gtk_tree_view_set_cursor(GTK_TREE_VIEW(gtkchat->list),
+							 path, NULL, FALSE); 
+	gtk_widget_grab_focus(GTK_WIDGET(gtkchat->list));
 
 	gtk_tree_model_get_iter(GTK_TREE_MODEL(model), &iter, path);
 	gtk_tree_model_get(GTK_TREE_MODEL(model), &iter, CHAT_USERS_NAME_COLUMN, &who, -1);
