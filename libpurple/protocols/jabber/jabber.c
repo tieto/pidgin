@@ -494,19 +494,7 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 	js = gc->proto_data;
 	js->gsc = NULL;
 
-	switch(error) {
-		case PURPLE_SSL_CONNECT_FAILED:
-			purple_connection_error(gc, _("Connection Failed"));
-			break;
-		case PURPLE_SSL_HANDSHAKE_FAILED:
-			purple_connection_error(gc, _("SSL Handshake Failed"));
-			break;
-		case PURPLE_SSL_CERTIFICATE_INVALID:
-			purple_connection_error(gc, _("Peer presented invalid certificate"));
-			break;
-		default:
-			purple_connection_error(gc, _("Unknown SSL error"));
-	}
+	purple_connection_error(gc, purple_ssl_strerror(error));
 }
 
 static void tls_init(JabberStream *js)
