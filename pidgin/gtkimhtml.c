@@ -4939,9 +4939,6 @@ void gtk_imhtml_close_tags(GtkIMHtml *imhtml, GtkTextIter *iter)
 
 	if (imhtml->edit.link)
 		gtk_imhtml_toggle_link(imhtml, NULL);
-
-	gtk_text_buffer_remove_all_tags(imhtml->text_buffer, iter, iter);
-
 }
 
 char *gtk_imhtml_get_markup(GtkIMHtml *imhtml)
