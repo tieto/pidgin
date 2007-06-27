@@ -3116,6 +3116,15 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (PurpleBuddy*)node;
 		gtkbuddynode = node->ui_data;
+		p = purple_buddy_get_presence(buddy);
+		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
+			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", 
+						"16", "mobile.png", NULL);
+			ret = gdk_pixbuf_new_from_file(path, NULL);
+			g_free(path);
+			return ret;
+		}
+
 		if (((struct _pidgin_blist_node*)(node->parent->ui_data))->contact_expanded)
 			return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
 	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
