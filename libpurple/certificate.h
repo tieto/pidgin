@@ -151,7 +151,18 @@ struct _PurpleCertificateScheme
 	 */
 	gchar * (* get_issuer_unique_id)(PurpleCertificate *crt);
 
-	
+	/**
+	 * Gets the certificate subject's name
+	 *
+	 * For X.509, this is the "Common Name" field, as we're only using it
+	 * for hostname verification at the moment
+	 *
+	 * @see purple_certificate_get_subject_name()
+	 *
+	 * @param crt   Certificate instance
+	 * @return Newly allocated string with the certificate subject.
+	 */
+	gchar * (* get_subject_name)(PurpleCertificate *crt);
 	/* TODO: Fill out this structure */
 };
 
@@ -305,6 +316,19 @@ purple_certificate_destroy_list (GList * crt_list);
  */
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt);
+
+
+/**
+ * Gets the certificate subject's name
+ *
+ * For X.509, this is the "Common Name" field, as we're only using it
+ * for hostname verification at the moment
+ *
+ * @param crt   Certificate instance
+ * @return Newly allocated string with the certificate subject.
+ */
+gchar *
+purple_certificate_get_subject_name(PurpleCertificate *crt);
 
 /*@}*/
 

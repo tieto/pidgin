@@ -141,6 +141,24 @@ purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 	return fpr;
 }
 
+gchar *
+purple_certificate_get_subject_name(PurpleCertificate *crt)
+{
+	PurpleCertificateScheme *scheme;
+	gchar *subject_name;
+
+	g_return_val_if_fail(crt, NULL);
+	g_return_val_if_fail(crt->scheme, NULL);
+
+	scheme = crt->scheme;
+
+	g_return_val_if_fail(scheme->get_subject_name, NULL);
+
+	subject_name = (scheme->get_subject_name)(crt);
+
+	return subject_name;
+}
+
 /****************************************************************************/
 /* Builtin Verifiers, Pools, etc.                                           */
 /****************************************************************************/
