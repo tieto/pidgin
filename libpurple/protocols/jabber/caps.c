@@ -274,12 +274,13 @@ static JabberCapsClientInfo *jabber_caps_collect_info(const char *node, const ch
 	}
 	
 	for(iter = ext; iter; iter = g_list_next(iter)) {
-		const char *ext = iter->data;
-		JabberCapsValueExt *extinfo = g_hash_table_lookup(caps->ext,ext);
+		const char *extname = iter->data;
+		JabberCapsValueExt *extinfo = g_hash_table_lookup(caps->ext,extname);
 		
 		if(extinfo) {
-			for(iter = extinfo->identities; iter; iter = g_list_next(iter)) {
-				JabberCapsIdentity *id = iter->data;
+			GList *iter2;
+			for(iter2 = extinfo->identities; iter2; iter2 = g_list_next(iter2)) {
+				JabberCapsIdentity *id = iter2->data;
 				JabberCapsIdentity *newid = g_new0(JabberCapsIdentity, 1);
 				newid->category = g_strdup(id->category);
 				newid->type = g_strdup(id->type);
@@ -287,8 +288,8 @@ static JabberCapsClientInfo *jabber_caps_collect_info(const char *node, const ch
 				
 				result->identities = g_list_append(result->identities,newid);
 			}
-			for(iter = extinfo->features; iter; iter = g_list_next(iter)) {
-				const char *feat = iter->data;
+			for(iter2 = extinfo->features; iter2; iter2 = g_list_next(iter2)) {
+				const char *feat = iter2->data;
 				char *newfeat = g_strdup(feat);
 				
 				result->features = g_list_append(result->features,newfeat);
@@ -445,7 +446,7 @@ static void jabber_caps_client_iqcb(JabberStream *js, xmlnode *packet, gpointer 
 	for(iter = userdata->ext; iter; iter = g_list_next(iter)) {
 		JabberIq *iq = jabber_iq_new_query(js,JABBER_IQ_GET,"http://jabber.org/protocol/disco#info");
 		xmlnode *query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#info");
-		char *node = g_strdup_printf("%s#%s", node, (const char*)iter->data);
+		char *node = g_strdup_printf("%s#%s", userdata->node, (const char*)iter->data);
 		xmlnode_set_attrib(query, "node", node);
 		g_free(node);
 		xmlnode_set_attrib(iq->node, "to", userdata->who);
