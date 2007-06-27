@@ -36,7 +36,6 @@
 static GKeyFile *gkfile;
 #endif
 
-static GHashTable *unknowns;
 static char * str_styles[GNT_STYLES];
 static int int_styles[GNT_STYLES];
 static int bool_styles[GNT_STYLES];
@@ -46,9 +45,11 @@ const char *gnt_style_get(GntStyle style)
 	return str_styles[style];
 }
 
-const char *gnt_style_get_from_name(const char *name)
+const char *gnt_style_get_from_name(const char *group, const char *key)
 {
-	return g_hash_table_lookup(unknowns, name);
+#if GLIB_CHECK_VERSION(2,6,0)
+	return g_key_file_get_value(gkfile, group, key, NULL);
+#endif
 }
 
 gboolean gnt_style_get_bool(GntStyle style, gboolean def)
@@ -293,10 +294,6 @@ read_general_style(GKeyFile *kfile)
 			str_styles[styles[i].en] =
 					g_key_file_get_string(kfile, "general", styles[i].style, NULL);
 		}
-
-		for (i = 0; i < nkeys; i++)
-			g_hash_table_replace(unknowns, g_strdup(keys[i]),
-					g_strdup(g_key_file_get_string(kfile, "general", keys[i], NULL)));
 	}
 	g_strfreev(keys);
 }
@@ -307,9 +304,9 @@ void gnt_style_read_configure_file(const char *filename)
 #if GLIB_CHECK_VERSION(2,6,0)
 	GError *error = NULL;
 	gkfile = g_key_file_new();
-	unknowns = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free);
 
-	if (!g_key_file_load_from_file(gkfile, filename, G_KEY_FILE_NONE, &error))
+	if (!g_key_file_load_from_file(gkfile, filename,
+                G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, &error))
 	{
 		g_printerr("GntStyle: %s\n", error->message);
 		g_error_free(error);
@@ -337,7 +334,6 @@ void gnt_uninit_styles()
 	for (i = 0; i < GNT_STYLES; i++)
 		g_free(str_styles[i]);
 
-	g_hash_table_destroy(unknowns);
 #if GLIB_CHECK_VERSION(2,6,0)
 	g_key_file_free(gkfile);
 #endif
