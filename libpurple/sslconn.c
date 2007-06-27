@@ -156,6 +156,22 @@ purple_ssl_input_add(PurpleSslConnection *gsc, PurpleSslInputFunction func,
 	gsc->inpa = purple_input_add(gsc->fd, PURPLE_INPUT_READ, recv_cb, gsc);
 }
 
+const gchar *
+purple_ssl_strerror(PurpleSslErrorType error)
+{
+	switch(error) {
+		case PURPLE_SSL_CONNECT_FAILED:
+			return _("SSL Connection Failed");
+		case PURPLE_SSL_HANDSHAKE_FAILED:
+			return _("SSL Handshake Failed");
+		case PURPLE_SSL_CERTIFICATE_INVALID:
+			return _("SSL peer presented an invalid certificate");
+		default:
+			purple_debug_warning("sslconn", "Unknown SSL error code %d\n", error);
+			return _("Unknown SSL error");
+	}
+}
+
 PurpleSslConnection *
 purple_ssl_connect_fd(PurpleAccount *account, int fd,
 					PurpleSslInputFunction func,
