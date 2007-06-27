@@ -1,4 +1,8 @@
 /**
+ * @file gntwm.h Window-manager API
+ * @ingroup gnt
+ */
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous

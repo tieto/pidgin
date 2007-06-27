@@ -347,15 +347,28 @@ debug_command_cb(PurpleConversation *conv,
 	}
 }
 
-static PurpleCmdRet
-clear_command_cb(PurpleConversation *conv,
-                 const char *cmd, char **args, char **error, void *data)
+static void clear_conversation_scrollback(PurpleConversation *conv)
 {
 	PidginConversation *gtkconv = NULL;
 
 	gtkconv = PIDGIN_CONVERSATION(conv);
 
 	gtk_imhtml_clear(GTK_IMHTML(gtkconv->imhtml));
+}
+
+static PurpleCmdRet
+clear_command_cb(PurpleConversation *conv,
+                 const char *cmd, char **args, char **error, void *data)
+{
+	clear_conversation_scrollback(conv);
+	return PURPLE_CMD_STATUS_OK;
+}
+
+static PurpleCmdRet
+clearall_command_cb(PurpleConversation *conv,
+                 const char *cmd, char **args, char **error, void *data)
+{
+	purple_conversation_foreach(clear_conversation_scrollback);
 	return PURPLE_CMD_STATUS_OK;
 }
 
@@ -528,13 +541,6 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 
 	account = purple_conversation_get_account(conv);
 
-	if (!purple_account_is_connected(account))
-		return;
-
-	if ((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) &&
-		purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
-		return;
-
 	if (check_for_and_do_command(conv)) {
 		if (gtkconv->entry_growing) {
 			reset_default_size(gtkconv);
@@ -543,6 +549,13 @@ send_cb(GtkWidget *widget, PidginConversation *gtkconv)
 		gtk_imhtml_clear(GTK_IMHTML(gtkconv->entry));
 		return;
 	}
+
+	if ((purple_conversation_get_type(conv) == PURPLE_CONV_TYPE_CHAT) &&
+		purple_conv_chat_has_left(PURPLE_CONV_CHAT(conv)))
+		return;
+
+	if (!purple_account_is_connected(account))
+		return;
 
 	buf = gtk_imhtml_get_markup(GTK_IMHTML(gtkconv->entry));
 	clean = gtk_imhtml_get_text(GTK_IMHTML(gtkconv->entry), NULL, NULL);
@@ -3879,7 +3892,7 @@ tab_complete(PurpleConversation *conv)
 						   CHAT_USERS_ALIAS_COLUMN, &alias,
 						   -1);
 
-				if (strcmp(name, alias))
+				if (name && alias && strcmp(name, alias))
 					tab_complete_process_item(&most_matched, entered, &partial, nick_partial,
 										  &matches, FALSE, alias);
 				g_free(name);
@@ -7202,6 +7215,9 @@ pidgin_conversations_init(void)
 	purple_cmd_register("clear", "", PURPLE_CMD_P_DEFAULT,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
 	                  clear_command_cb, _("clear: Clears the conversation scrollback."), NULL);
+	purple_cmd_register("clearall", "", PURPLE_CMD_P_DEFAULT,
+	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM, NULL,
+	                  clearall_command_cb, _("clear: Clears all conversation scrollbacks."), NULL);
 	purple_cmd_register("help", "w", PURPLE_CMD_P_DEFAULT,
 	                  PURPLE_CMD_FLAG_CHAT | PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_ALLOW_WRONG_ARGS, NULL,
 	                  help_command_cb, _("help &lt;command&gt;:  Help on a specific command."), NULL);

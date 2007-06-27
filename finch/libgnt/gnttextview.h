@@ -1,4 +1,8 @@
 /**
+ * @file gnttextview.h Textview API
+ * @ingroup gnt
+ */
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
