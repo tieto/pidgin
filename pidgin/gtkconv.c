@@ -6211,8 +6211,9 @@ pidgin_conv_update_fields(PurpleConversation *conv, PidginConvFields fields)
 			const char *topic = purple_conv_chat_get_topic(chat);
 			markup = g_strdup_printf("%s%s<span color='%s' size='smaller'>%s</span>",
 						purple_conversation_get_title(conv),
+						topic ? "\n" : "",
 						pidgin_get_dim_grey_string(gtkconv->infopane),
-						topic ? "\n" : "", topic ? topic : "");
+						topic ? topic : "");
 		}
 		gtk_list_store_set(gtkconv->infopane_model, &(gtkconv->infopane_iter),
 				TEXT_COLUMN, markup, -1);
