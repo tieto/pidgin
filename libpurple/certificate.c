@@ -60,7 +60,7 @@ purple_certificate_verify (PurpleCertificateVerifier *verifier,
 
 	/* Check that at least the first cert in the chain matches the
 	   Verifier scheme */
-	g_return_if_fail(scheme !=
+	g_return_if_fail(scheme ==
 			 ((PurpleCertificate *) (cert_chain->data))->scheme);
 
 	/* Construct and fill in the request fields */
