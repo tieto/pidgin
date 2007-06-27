@@ -1,4 +1,14 @@
 /**
+ * @defgroup gnt GNT (GLib Ncurses Toolkit)
+ *
+ * GNT is an ncurses toolkit for creating text-mode graphical user interfaces
+ * in a fast and easy way.
+ */
+/**
+ * @file gnt.h GNT API
+ * @ingroup gnt
+ */
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
