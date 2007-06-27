@@ -3892,7 +3892,7 @@ tab_complete(PurpleConversation *conv)
 						   CHAT_USERS_ALIAS_COLUMN, &alias,
 						   -1);
 
-				if (strcmp(name, alias))
+				if (name && alias && strcmp(name, alias))
 					tab_complete_process_item(&most_matched, entered, &partial, nick_partial,
 										  &matches, FALSE, alias);
 				g_free(name);
