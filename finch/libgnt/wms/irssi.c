@@ -280,10 +280,10 @@ void gntwm_init(GntWM **wm)
 	irssi = g_object_new(TYPE_IRSSI, NULL);
 	*wm = GNT_WM(irssi);
 
-	style = gnt_style_get_from_name("irssi-split-v");
+	style = gnt_style_get_from_name("irssi", "split-v");
 	irssi->vert = style ? atoi(style) : 1;
 
-	style = gnt_style_get_from_name("irssi-split-h");
+	style = gnt_style_get_from_name("irssi", "split-h");
 	irssi->horiz = style ? atoi(style) : 1;
 
 	irssi->vert = MAX(irssi->vert, 1);
