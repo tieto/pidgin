@@ -22,9 +22,10 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "internal.h"
+
 #include "connection.h"
 #include "debug.h"
-#include "internal.h"
 #include "notify.h"
 #include "prefs.h"
 #include "request.h"

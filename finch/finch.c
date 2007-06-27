@@ -19,6 +19,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "finch.h"
+
 #include "account.h"
 #include "conversation.h"
 #include "core.h"
@@ -37,7 +39,6 @@
 #include "whiteboard.h"
 
 #include "gntdebug.h"
-#include "finch.h"
 #include "gntprefs.h"
 #include "gntui.h"
 #include "gntidle.h"
@@ -156,9 +157,13 @@ static PurpleEventLoopUiOps eventloop_ops =
 	gnt_input_add,
 	g_source_remove,
 	NULL, /* input_get_error */
+#if GLIB_CHECK_VERSION(2,14,0)
+	g_timeout_add_seconds,
+#else
+	NULL,
+#endif
 
 	/* padding */
-	NULL,
 	NULL,
 	NULL,
 	NULL

@@ -226,7 +226,7 @@ static void
 schedule_prefs_save(void)
 {
 	if (save_timer == 0)
-		save_timer = purple_timeout_add(5000, save_cb, NULL);
+		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
 
 
@@ -1355,7 +1355,6 @@ purple_prefs_update_old()
 	purple_prefs_remove("/plugins/core/autorecon/hide_reconnecting_dialog");
 	purple_prefs_remove("/plugins/core/autorecon/restore_state");
 	purple_prefs_remove("/plugins/core/autorecon");
-	purple_prefs_remove("/purple/debug/timestamps");
 
 	/* Convert old sounds while_away pref to new 3-way pref. */
 	if (purple_prefs_exists("/purple/sound/while_away") &&

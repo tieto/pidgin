@@ -823,7 +823,7 @@ static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestField
 {
 	GGPInfo *info = gc->proto_data;
 	PurpleRequestField *field;
-	const GList *sel;
+	GList *sel;
 
 	field = purple_request_fields_get_field(fields, "name");
 	sel = purple_request_field_list_get_selected(field);

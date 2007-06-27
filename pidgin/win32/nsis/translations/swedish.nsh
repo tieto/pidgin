@@ -39,9 +39,6 @@
 ; Installer Finish Page
 !define PIDGIN_FINISH_VISIT_WEB_SITE		"Besök Windows-Pidgin hemsida"
 
-; Pidgin Section Prompts and Texts
-!define PIDGIN_UNINSTALL_DESC			"$(^Name) (enbart för avinstallation)"
-
 ; GTK+ Section Prompts
 !define GTK_INSTALL_ERROR			"Fel vid installation av GTK+ runtime."
 !define GTK_BAD_INSTALL_PATH			"Den sökväg du angivit går inte att komma åt eller skapa."

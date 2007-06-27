@@ -65,6 +65,12 @@ static GHashTable *map_id_node;
 static GHashTable *map_id_type;
 
 static gchar *init_error;
+static int dbus_request_name_reply = DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER;
+
+gboolean purple_dbus_is_owner(void)
+{
+	return(DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER == dbus_request_name_reply);
+}
 
 /**
  * This function initializes the pointer-id traslation system.  It
@@ -114,8 +120,8 @@ purple_dbus_pointer_to_id(gconstpointer node)
 	if ((id == 0) && (node != NULL))
 	{
 		purple_debug_warning("dbus",
-				"Need to register an object with the dbus subsystem.\n");
-		g_return_val_if_reached(0);
+				"Need to register an object with the dbus subsystem. (If you are not a developer, please ignore this message.)\n");
+		return 0;
 	}
 	return id;
 }
@@ -291,7 +297,7 @@ purple_dbusify_GList(GList *list, gboolean free_memory, dbus_int32_t *len)
 	GList *elem;
 
 	*len = g_list_length(list);
-	array = g_new0(dbus_int32_t, g_list_length(list));
+	array = g_new0(dbus_int32_t, *len);
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = purple_dbus_pointer_to_id(elem->data);
 
@@ -309,7 +315,7 @@ purple_dbusify_GSList(GSList *list, gboolean free_memory, dbus_int32_t *len)
 	GSList *elem;
 
 	*len = g_slist_length(list);
-	array = g_new0(dbus_int32_t, g_slist_length(list));
+	array = g_new0(dbus_int32_t, *len);
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = purple_dbus_pointer_to_id(elem->data);
 
@@ -327,7 +333,7 @@ purple_GList_to_array(GList *list, gboolean free_memory, dbus_int32_t *len)
 	GList *elem;
 
 	*len = g_list_length(list);
-	array = g_new0(gpointer, g_list_length(list));
+	array = g_new0(gpointer, *len);
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = elem->data;
 
@@ -345,7 +351,7 @@ purple_GSList_to_array(GSList *list, gboolean free_memory, dbus_int32_t *len)
 	GSList *elem;
 
 	*len = g_slist_length(list);
-	array = g_new0(gpointer, g_slist_length(list));
+	array = g_new0(gpointer, *len);
 	for (i = 0, elem = list; elem != NULL; elem = elem->next, i++)
 		array[i] = elem->data;
 
@@ -592,6 +598,7 @@ purple_dbus_dispatch_init(void)
 		return;
 	}
 
+	dbus_request_name_reply =
 	result = dbus_bus_request_name(purple_dbus_connection,
 			DBUS_SERVICE_PURPLE, 0, &error);
 
@@ -753,7 +760,7 @@ purple_dbus_signal_emit_purple(const char *name, int num_values,
 	dbus_message_iter_init_append(signal, &iter);
 
 	if (purple_dbus_message_append_purple_values(&iter, num_values, values, vargs))
-		purple_debug_warning("dbus", "The signal \"%s\" caused some dbus error.\n", name);
+		purple_debug_warning("dbus", "The signal \"%s\" caused some dbus error. (If you are not a developer, please ignore this message.)\n", name);
 
 	dbus_connection_send(purple_dbus_connection, signal, NULL);
 
@@ -790,8 +797,18 @@ purple_dbus_init(void)
 void
 purple_dbus_uninit(void)
 {
-	/* Surely we must do SOME kind of uninitialization? */
+	DBusError error;
+	if (!purple_dbus_connection)
+		return;
 
+	dbus_error_init(&error);
+	dbus_connection_unregister_object_path(purple_dbus_connection, DBUS_PATH_PURPLE);
+	dbus_bus_release_name(purple_dbus_connection, DBUS_SERVICE_PURPLE, &error);
+	dbus_error_free(&error);
+	dbus_connection_unref(purple_dbus_connection);
+	purple_dbus_connection = NULL;
+	purple_signals_disconnect_by_handle(purple_dbus_get_handle());
 	g_free(init_error);
 	init_error = NULL;
 }
+

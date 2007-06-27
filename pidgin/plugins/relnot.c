@@ -69,19 +69,17 @@ version_fetch_cb(PurpleUtilFetchUrlData *url_data, gpointer user_data,
 
 	message = g_string_new("");
 	g_string_append_printf(message, _("You are using %s version %s.  The "
-			"current version is %s.<hr>"),
-			PIDGIN_NAME, purple_core_get_version(), cur_ver);
+			"current version is %s.  You can get it from "
+			"<a href=\"%s\">%s</a><hr>"),
+			PIDGIN_NAME, purple_core_get_version(), cur_ver,
+			PURPLE_WEBSITE, PURPLE_WEBSITE);
 
 	if(*changelog) {
 		formatted = purple_strdup_withhtml(changelog);
-		g_string_append_printf(message, _("<b>ChangeLog:</b>\n%s<br><br>"),
+		g_string_append_printf(message, _("<b>ChangeLog:</b><br>%s"),
 				formatted);
 		g_free(formatted);
 	}
-
-	g_string_append_printf(message, _("You can get version %s from:<br>"
-			"<a href=\"http://pidgin.im/\">"
-			"http://pidgin.im</a>."), cur_ver);
 
 	purple_notify_formatted(NULL, _("New Version Available"),
 			_("New Version Available"), NULL, message->str,

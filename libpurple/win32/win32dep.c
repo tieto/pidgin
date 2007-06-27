@@ -32,6 +32,7 @@
 #include <glib.h>
 #include <glib/gstdio.h>
 
+#include "internal.h"
 #include "debug.h"
 #include "notify.h"
 

@@ -1,13 +1,4 @@
 <todo version="0.1.19">
-    <note priority="verylow" time="1036043981" done="1089237837">
-        *sigh* file transfer (do we really need/want this?)
-        <comment>
-            faceprint did this
-        </comment>
-    </note>
-    <note priority="high" time="1036043427">
-        problem seeing buddies with long blist?
-    </note>
     <note priority="medium" time="1036044198">
         Browsing
     </note>
@@ -16,12 +7,6 @@
     </note>
     <note priority="medium" time="1036044448">
         Add option for user info to be published or not in JUD.
-    </note>
-    <note priority="medium" time="1036044571">
-        Show self on buddylist
-        <comment>
-            is this done?
-        </comment>
     </note>
     <note priority="medium" time="1036044583">
         Delete server account.
@@ -36,9 +21,6 @@
         info
         <note priority="medium" time="1037893000">
             formatted. enhancement-request so that the birthday field in the setinfo form would split up into relevant fields allowing for a strict syntax (like year--month--day or so, perhaps even dropdown menus)
-        </note>
-        <note priority="low" time="1037890968">
-            have set info pre-fill values from the server when no local vcard exists. this will help people migrating to gaim
         </note>
     </note>
     <note priority="verylow" time="1036044192">

@@ -1,5 +1,5 @@
-EXTRA_DIST = Makefile.mingw null/
+EXTRA_DIST = Makefile.mingw
 
-DIST_SUBDIRS = bonjour gg irc jabber msn novell null oscar qq sametime silc toc simple yahoo zephyr
+DIST_SUBDIRS = bonjour gg irc jabber msn novell null oscar qq sametime silc silc10 toc simple yahoo zephyr
 
 SUBDIRS = $(DYNAMIC_PRPLS) $(STATIC_PRPLS)

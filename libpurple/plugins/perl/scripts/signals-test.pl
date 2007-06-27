@@ -7,7 +7,7 @@ use Purple;
 	name => "Perl: $MODULE_NAME",
 	version => "0.1",
 	summary => "Signals Test plugin for the Perl interpreter.",
-	description => "Demonstrate the user of purple signals from " .
+	description => "Demonstrate the use of purple signals from " .
 		       "a perl plugin.",
 	author => "Sadrul Habib Chowdhury <sadrul\@pidgin.im>",
 	url => "http://developer.pidgin.im/wiki/sadrul/",

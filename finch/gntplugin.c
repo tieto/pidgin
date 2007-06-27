@@ -29,10 +29,11 @@
 #include <gntline.h>
 #include <gnttree.h>
 
+#include "finch.h"
+
 #include "notify.h"
 #include "request.h"
 
-#include "finch.h"
 #include "gntplugin.h"
 #include "gntrequest.h"
 
@@ -46,7 +47,7 @@ static struct
 
 static GHashTable *confwins;
 
-static void process_pref_frame(PurplePluginPrefFrame *frame);
+static GntWidget *process_pref_frame(PurplePluginPrefFrame *frame);
 
 static void
 decide_conf_button(PurplePlugin *plugin)
@@ -83,7 +84,7 @@ plugin_toggled_cb(GntWidget *tree, PurplePlugin *plugin, gpointer null)
 			gnt_tree_set_choice(GNT_TREE(tree), plugin, TRUE);
 		}
 
-		if ((win = g_hash_table_lookup(confwins, plugin)) != NULL)
+		if (confwins && (win = g_hash_table_lookup(confwins, plugin)) != NULL)
 		{
 			gnt_widget_destroy(win);
 		}
@@ -105,6 +106,9 @@ selection_changed(GntWidget *widget, gpointer old, gpointer current, gpointer nu
 	PurplePlugin *plugin = current;
 	char *text;
 	GList *list = NULL, *iter = NULL;
+
+	if (!plugin)
+		return;
 
 	/* If the selected plugin was unseen before, mark it as seen. But save the list
 	 * only when the plugin list is closed. So if the user enables a plugin, and it
@@ -217,7 +221,11 @@ configure_plugin_cb(GntWidget *button, gpointer null)
 	else if (plugin->info->prefs_info &&
 			plugin->info->prefs_info->get_plugin_pref_frame)
 	{
-		process_pref_frame(plugin->info->prefs_info->get_plugin_pref_frame(plugin));
+		GntWidget *win = process_pref_frame(plugin->info->prefs_info->get_plugin_pref_frame(plugin));
+		if (confwins == NULL)
+			confwin_init();
+		g_signal_connect(G_OBJECT(win), "destroy", G_CALLBACK(remove_confwin), plugin);
+		g_hash_table_insert(confwins, plugin, win);
 		return;
 	}
 	else
@@ -269,6 +277,14 @@ void finch_plugins_show_all()
 	{
 		PurplePlugin *plug = iter->data;
 
+		if (plug->info->type == PURPLE_PLUGIN_LOADER) {
+			GList *cur;
+			for (cur = PURPLE_PLUGIN_LOADER_INFO(plug)->exts; cur != NULL;
+					 cur = cur->next)
+				purple_plugins_probe(cur->data);
+			continue;
+		}
+
 		if (plug->info->type != PURPLE_PLUGIN_STANDARD ||
 			(plug->info->flags & PURPLE_PLUGIN_FLAG_INVISIBLE) ||
 			plug->error)
@@ -304,7 +320,7 @@ void finch_plugins_show_all()
 	decide_conf_button(gnt_tree_get_selection_data(GNT_TREE(tree)));
 }
 
-static void
+static GntWidget*
 process_pref_frame(PurplePluginPrefFrame *frame)
 {
 	PurpleRequestField *field;
@@ -356,7 +372,7 @@ process_pref_frame(PurplePluginPrefFrame *frame)
 		}
 	}
 
-	purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
+	return purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(finch_request_save_in_prefs), _("Cancel"), NULL,
 			NULL, NULL, NULL,
 			NULL);

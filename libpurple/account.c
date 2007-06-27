@@ -205,7 +205,7 @@ status_attrs_to_xmlnode(const PurpleStatus *status)
 {
 	PurpleStatusType *type = purple_status_get_type(status);
 	xmlnode *node, *child;
-	const GList *attrs, *attr;
+	GList *attrs, *attr;
 
 	node = xmlnode_new("attributes");
 
@@ -241,7 +241,7 @@ static xmlnode *
 statuses_to_xmlnode(const PurplePresence *presence)
 {
 	xmlnode *node, *child;
-	const GList *statuses, *status;
+	GList *statuses, *status;
 
 	node = xmlnode_new("statuses");
 
@@ -417,7 +417,7 @@ static void
 schedule_accounts_save()
 {
 	if (save_timer == 0)
-		save_timer = purple_timeout_add(5000, save_cb, NULL);
+		save_timer = purple_timeout_add_seconds(5, save_cb, NULL);
 }
 
 
@@ -1805,7 +1805,7 @@ purple_account_get_status(const PurpleAccount *account, const char *status_id)
 PurpleStatusType *
 purple_account_get_status_type(const PurpleAccount *account, const char *id)
 {
-	const GList *l;
+	GList *l;
 
 	g_return_val_if_fail(account != NULL, NULL);
 	g_return_val_if_fail(id      != NULL, NULL);
@@ -1824,7 +1824,7 @@ purple_account_get_status_type(const PurpleAccount *account, const char *id)
 PurpleStatusType *
 purple_account_get_status_type_with_primitive(const PurpleAccount *account, PurpleStatusPrimitive primitive)
 {
-	const GList *l;
+	GList *l;
 
 	g_return_val_if_fail(account != NULL, NULL);
 
@@ -1857,7 +1857,7 @@ purple_account_is_status_active(const PurpleAccount *account,
 	return purple_presence_is_status_active(account->presence, status_id);
 }
 
-const GList *
+GList *
 purple_account_get_status_types(const PurpleAccount *account)
 {
 	g_return_val_if_fail(account != NULL, NULL);

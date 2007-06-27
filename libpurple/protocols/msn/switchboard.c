@@ -419,7 +419,14 @@ msg_error_helper(MsnCmdProc *cmdproc, MsnMessage *msg, MsnMsgErrorType error)
 				case MSN_SB_ERROR_TOO_FAST:
 					str_reason = _("Message could not be sent "
 								   "because we are sending too quickly:");
-					break;					
+					break;
+				case MSN_SB_ERROR_AUTHFAILED:
+					str_reason = _("Message could not be sent "
+								   "because we were unable to establish a "
+								   "session with the server. This is "
+								   "likely a server problem, try again in "
+								   "a few minutes:");
+					break;
 				default:
 					str_reason = _("Message could not be sent "
 								   "because an error with "
@@ -963,9 +970,13 @@ nudge_msg(MsnCmdProc *cmdproc, MsnMessage *msg)
  * Connect stuff
  **************************************************************************/
 static void
+ans_usr_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error);
+
+static void
 connect_cb(MsnServConn *servconn)
 {
 	MsnSwitchBoard *swboard;
+	MsnTransaction *trans;
 	MsnCmdProc *cmdproc;
 	PurpleAccount *account;
 
@@ -980,16 +991,44 @@ connect_cb(MsnServConn *servconn)
 	{
 		swboard->empty = FALSE;
 
-		msn_cmdproc_send(cmdproc, "ANS", "%s %s %s",
-						 purple_account_get_username(account),
-						 swboard->auth_key, swboard->session_id);
+		trans = msn_transaction_new(cmdproc, "ANS", "%s %s %s",
+									purple_account_get_username(account),
+									swboard->auth_key, swboard->session_id);
 	}
 	else
 	{
-		msn_cmdproc_send(cmdproc, "USR", "%s %s",
-						 purple_account_get_username(account),
-						 swboard->auth_key);
+		trans = msn_transaction_new(cmdproc, "USR", "%s %s",
+									purple_account_get_username(account),
+									swboard->auth_key);
 	}
+
+	msn_transaction_set_error_cb(trans, ans_usr_error);
+	msn_transaction_set_data(trans, swboard);
+	msn_cmdproc_send_trans(cmdproc, trans);
+}
+
+static void
+ans_usr_error(MsnCmdProc *cmdproc, MsnTransaction *trans, int error)
+{
+	MsnSwitchBoard *swboard;
+	char **params;
+	char *passport;
+	int reason = MSN_SB_ERROR_UNKNOWN;
+
+	if (error == 911)
+	{
+		reason = MSN_SB_ERROR_AUTHFAILED;
+	}
+
+	purple_debug_warning("msn", "ans_usr_error: command %s gave error %i\n", trans->command, error);
+
+	params = g_strsplit(trans->params, " ", 0);
+	passport = params[0];
+	swboard = trans->data;
+
+	swboard_error_helper(swboard, reason, passport);
+
+	g_strfreev(params);
 }
 
 static void

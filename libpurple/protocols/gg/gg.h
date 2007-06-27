@@ -25,6 +25,7 @@
 #define _PURPLE_GG_H
 
 #include <libgadu.h>
+#include "internal.h"
 #include "search.h"
 #include "connection.h"
 

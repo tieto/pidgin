@@ -1026,7 +1026,7 @@ conv_page()
 	label = gtk_label_new_with_mnemonic(_("Conversation _font:"));
 	gtk_box_pack_start(GTK_BOX(hbox), label, FALSE, FALSE, 0);
 	font_name = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/custom_font");
-	font_button = gtk_font_button_new_with_font(purple_prefs_get_string(font_name ? font_name : NULL));
+	font_button = gtk_font_button_new_with_font(font_name ? font_name : NULL);
 	gtk_font_button_set_show_style(GTK_FONT_BUTTON(font_button), TRUE);
 	gtk_box_pack_start(GTK_BOX(hbox), font_button, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(vbox), hbox, FALSE, FALSE, 0);
@@ -1054,19 +1054,9 @@ conv_page()
 
 	gtk_imhtml_append_text(GTK_IMHTML(imhtml), _("This is how your outgoing message text will appear when you use protocols that support formatting. :)"), 0);
 
-	gtk_box_pack_start(GTK_BOX(vbox), frame, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_bold"))
-		gtk_imhtml_toggle_bold(GTK_IMHTML(imhtml));
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_italic"))
-		gtk_imhtml_toggle_italic(GTK_IMHTML(imhtml));
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/conversations/send_underline"))
-		gtk_imhtml_toggle_underline(GTK_IMHTML(imhtml));
-
-	gtk_imhtml_font_set_size(GTK_IMHTML(imhtml), purple_prefs_get_int(PIDGIN_PREFS_ROOT "/conversations/font_size"));
-	gtk_imhtml_toggle_forecolor(GTK_IMHTML(imhtml), purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/fgcolor"));
-	gtk_imhtml_toggle_background(GTK_IMHTML(imhtml), purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/bgcolor"));
-	gtk_imhtml_toggle_fontface(GTK_IMHTML(imhtml), purple_prefs_get_string(PIDGIN_PREFS_ROOT "/conversations/font_face"));
+	gtk_imhtml_setup_entry(GTK_IMHTML(imhtml), PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_FORMATTING_WBFO);
 
 	g_signal_connect_after(G_OBJECT(imhtml), "format_function_toggle",
 					 G_CALLBACK(formatting_toggle_cb), toolbar);
@@ -1301,9 +1291,10 @@ network_page()
 	}
 
 	gtk_widget_show_all(ret);
-	if (proxy_info == NULL ||
+	/* Only hide table if not running gnome otherwise we hide the IP address table! */
+	if (!purple_running_gnome() && (proxy_info == NULL ||
 	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_NONE ||
-	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_ENVVAR)
+	    purple_proxy_info_get_type(proxy_info) == PURPLE_PROXY_USE_ENVVAR))
 		gtk_widget_hide(table);
 	return ret;
 }
@@ -2064,11 +2055,7 @@ void pidgin_prefs_show(void)
 	/* Back to instant-apply! I win!  BU-HAHAHA! */
 
 	/* Create the window */
-	prefs = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_role(GTK_WINDOW(prefs), "preferences");
-	gtk_window_set_title(GTK_WINDOW(prefs), _("Preferences"));
-	gtk_window_set_resizable (GTK_WINDOW(prefs), FALSE);
-	gtk_container_set_border_width(GTK_CONTAINER(prefs), PIDGIN_HIG_BORDER);
+	prefs = pidgin_create_window(_("Preferences"), PIDGIN_HIG_BORDER, "preferences", FALSE);
 	g_signal_connect(G_OBJECT(prefs), "destroy",
 					 G_CALLBACK(delete_prefs), NULL);
 

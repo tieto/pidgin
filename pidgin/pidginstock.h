@@ -137,6 +137,7 @@
 #define PIDGIN_STOCK_TRAY_OFFLINE         "pidgin-tray-offline"
 #define PIDGIN_STOCK_TRAY_CONNECT         "pidgin-tray-connect"
 #define PIDGIN_STOCK_TRAY_PENDING         "pidgin-tray-pending"
+#define PIDGIN_STOCK_TRAY_EMAIL		  "pidgin-tray-email"
 
 
 /*@}*/

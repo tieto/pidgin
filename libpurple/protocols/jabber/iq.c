@@ -169,7 +169,7 @@ static void jabber_iq_last_parse(JabberStream *js, xmlnode *packet)
 
 static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 {
-	const char *type, *from, *id;
+	const char *type, *from, *id, *xmlns;
 	JabberIq *iq;
 	xmlnode *query;
 	time_t now_t;
@@ -182,25 +182,61 @@ static void jabber_iq_time_parse(JabberStream *js, xmlnode *packet)
 	from = xmlnode_get_attrib(packet, "from");
 	id = xmlnode_get_attrib(packet, "id");
 
+	/* we're gonna throw this away in a moment, but we need it
+	 * to get the xmlns, so we can figure out if this is
+	 * jabber:iq:time or urn:xmpp:time */
+	query = xmlnode_get_child(packet, "query");
+	xmlns = xmlnode_get_namespace(query);
+
 	if(type && !strcmp(type, "get")) {
+		xmlnode *utc;
 		const char *date;
 
-		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "jabber:iq:time");
+		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, xmlns);
 		jabber_iq_set_id(iq, id);
 		xmlnode_set_attrib(iq->node, "to", from);
 
 		query = xmlnode_get_child(iq->node, "query");
 
 		date = purple_utf8_strftime("%Y%m%dT%T", now);
-		xmlnode_insert_data(xmlnode_new_child(query, "utc"), date, -1);
+		utc = xmlnode_new_child(query, "utc");
+		xmlnode_insert_data(utc, date, -1);
 
-		date = purple_utf8_strftime("%Z", now);
-		xmlnode_insert_data(xmlnode_new_child(query, "tz"), date, -1);
+		if(!strcmp("urn:xmpp:time", xmlns)) {
+			xmlnode_insert_data(utc, "Z", 1); /* of COURSE the thing that is the same is different */
 
-		date = purple_utf8_strftime("%d %b %Y %T", now);
-		xmlnode_insert_data(xmlnode_new_child(query, "display"), date, -1);
+			date = purple_get_tzoff_str(now, TRUE);
+			xmlnode_insert_data(xmlnode_new_child(query, "tzo"), date, -1);
+		} else { /* jabber:iq:time */
+			date = purple_utf8_strftime("%Z", now);
+			xmlnode_insert_data(xmlnode_new_child(query, "tz"), date, -1);
+
+			date = purple_utf8_strftime("%d %b %Y %T", now);
+			xmlnode_insert_data(xmlnode_new_child(query, "display"), date, -1);
+		}
 
 		jabber_iq_send(iq);
+	}
+}
+
+static void urn_xmpp_ping_parse(JabberStream *js, xmlnode *packet)
+{
+	const char *type, *id, *from;
+	JabberIq *iq;
+
+	type = xmlnode_get_attrib(packet, "type");
+	from = xmlnode_get_attrib(packet, "from");
+	id = xmlnode_get_attrib(packet, "id");
+
+	if(type && !strcmp(type, "get")) {
+		iq = jabber_iq_new_query(js, JABBER_IQ_RESULT, "urn:xmpp:ping");
+
+		jabber_iq_set_id(iq, id);
+		xmlnode_set_attrib(iq->node, "to", from);
+
+		jabber_iq_send(iq);
+	} else {
+		/* XXX: error */
 	}
 }
 
@@ -232,7 +268,8 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 
 		query = xmlnode_get_child(iq->node, "query");
 
-		xmlnode_insert_data(xmlnode_new_child(query, "name"), PACKAGE, -1);
+		/* TODO: ask the core for the version of libpurple and the name and version of the UI */
+		xmlnode_insert_data(xmlnode_new_child(query, "name"), "libpurple", -1);
 		xmlnode_insert_data(xmlnode_new_child(query, "version"), VERSION, -1);
 		if(os) {
 			xmlnode_insert_data(xmlnode_new_child(query, "os"), os, -1);
@@ -323,10 +360,12 @@ void jabber_iq_init(void)
 	jabber_iq_register_handler("http://jabber.org/protocol/bytestreams", jabber_bytestreams_parse);
 	jabber_iq_register_handler("jabber:iq:last", jabber_iq_last_parse);
 	jabber_iq_register_handler("jabber:iq:time", jabber_iq_time_parse);
+	jabber_iq_register_handler("urn:xmpp:time", jabber_iq_time_parse);
 	jabber_iq_register_handler("jabber:iq:version", jabber_iq_version_parse);
 	jabber_iq_register_handler("http://jabber.org/protocol/disco#info", jabber_disco_info_parse);
 	jabber_iq_register_handler("http://jabber.org/protocol/disco#items", jabber_disco_items_parse);
 	jabber_iq_register_handler("jabber:iq:register", jabber_register_parse);
+	jabber_iq_register_handler("urn:xmpp:ping", urn_xmpp_ping_parse);
 }
 
 void jabber_iq_uninit(void)

@@ -22,6 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "finch.h"
+
 #include <account.h>
 #include <blist.h>
 #include <notify.h>
@@ -33,7 +35,6 @@
 #include <util.h>
 #include "debug.h"
 
-#include "finch.h"
 #include "gntbox.h"
 #include "gntcombobox.h"
 #include "gntentry.h"
@@ -104,6 +105,7 @@ static void add_contact(PurpleContact *contact, FinchBlist *ggblist);
 static void add_group(PurpleGroup *group, FinchBlist *ggblist);
 static void add_chat(PurpleChat *chat, FinchBlist *ggblist);
 static void add_node(PurpleBlistNode *node, FinchBlist *ggblist);
+static void node_update(PurpleBuddyList *list, PurpleBlistNode *node);
 static void draw_tooltip(FinchBlist *ggblist);
 static gboolean remove_typing_cb(gpointer null);
 static void remove_peripherals(FinchBlist *ggblist);
@@ -189,6 +191,8 @@ node_remove(PurpleBuddyList *list, PurpleBlistNode *node)
 		if ((!purple_prefs_get_bool(PREF_ROOT "/showoffline") && !is_contact_online(contact)) ||
 				contact->currentsize < 1)
 			node_remove(list, (PurpleBlistNode*)contact);
+		else
+			node_update(list, (PurpleBlistNode*)contact);
 	} else if (!PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		PurpleGroup *group = (PurpleGroup*)node->parent;
 		if ((!purple_prefs_get_bool(PREF_ROOT "/showoffline") && !is_group_online(group)) ||
@@ -214,6 +218,9 @@ node_update(PurpleBuddyList *list, PurpleBlistNode *node)
 
 	if (list->ui_data == NULL)
 		return;   /* XXX: this is probably the place to auto-join chats */
+
+	if (ggblist->window == NULL)
+		return;
 
 	if (node->ui_data != NULL) {
 		gnt_tree_change_text(GNT_TREE(ggblist->tree), node,
@@ -634,9 +641,18 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 	{
 		PurpleBuddy *buddy = (PurpleBuddy *)node;
-		PurpleConversation *conv =  purple_conversation_new(PURPLE_CONV_TYPE_IM,
-					purple_buddy_get_account(buddy),
-					purple_buddy_get_name(buddy));
+		PurpleConversation *conv;
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+					purple_buddy_get_name(buddy),
+					purple_buddy_get_account(buddy));
+		if (!conv) {
+			conv =  purple_conversation_new(PURPLE_CONV_TYPE_IM,
+						purple_buddy_get_account(buddy),
+						purple_buddy_get_name(buddy));
+		} else {
+			FinchConv *ggconv = conv->ui_data;
+			gnt_window_present(ggconv->window);
+		}
 		finch_conversation_set_active(conv);
 	}
 	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
@@ -824,17 +840,22 @@ create_group_menu(GntMenu *menu, PurpleGroup *group)
 			PURPLE_CALLBACK(finch_add_group), group);
 }
 
+gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name)
+{
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	gpointer uihandle;
+	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	uihandle = purple_notify_userinfo(conn, name, info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
+
+	serv_get_info(conn, name);
+	return uihandle;
+}
+
 static void
 finch_blist_get_buddy_info_cb(PurpleBuddy *buddy, PurpleBlistNode *selected)
 {
-	/* Add a userinfo with a "Retrieving information", which will later be updated
-	 * when the server finally returns the information. */
-	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
-	purple_notify_userinfo(buddy->account->gc, purple_buddy_get_name(buddy), info, NULL, NULL);
-	purple_notify_user_info_destroy(info);
-
-	serv_get_info(buddy->account->gc, purple_buddy_get_name(buddy));
+	finch_retrieve_user_info(buddy->account->gc, purple_buddy_get_name(buddy));
 }
 
 static void
@@ -2296,6 +2317,8 @@ blist_show(PurpleBuddyList *list)
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "gained-focus", G_CALLBACK(draw_tooltip),
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "lost-focus", G_CALLBACK(remove_peripherals),
+				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
+	g_signal_connect_data(G_OBJECT(ggblist->window), "workspace-hidden", G_CALLBACK(remove_peripherals),
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 	g_signal_connect(G_OBJECT(ggblist->tree), "size_changed", G_CALLBACK(size_changed_cb), NULL);
 	g_signal_connect(G_OBJECT(ggblist->window), "position_set", G_CALLBACK(save_position_cb), NULL);
