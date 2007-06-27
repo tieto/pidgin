@@ -428,7 +428,7 @@ x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode)
 	PurpleCertificate * crt;
 
 	/* Allocate and prepare the internal certificate data */
-	certdat = g_new(gnutls_x509_crt_t, 1);
+	certdat = g_new0(gnutls_x509_crt_t, 1);
 	gnutls_x509_crt_init(certdat);
 
 	/* Perform the actual certificate parse */
@@ -436,7 +436,7 @@ x509_import_from_datum(const gnutls_datum_t dt, gnutls_x509_crt_fmt_t mode)
 	gnutls_x509_crt_import(*certdat, &dt, mode);
 	
 	/* Allocate the certificate and load it with data */
-	crt = g_new(PurpleCertificate, 1);
+	crt = g_new0(PurpleCertificate, 1);
 	crt->scheme = &x509_gnutls;
 	crt->data = certdat;
 
