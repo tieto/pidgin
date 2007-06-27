@@ -501,6 +501,8 @@ jabber_ssl_connect_failure(PurpleSslConnection *gsc, PurpleSslErrorType error,
 		case PURPLE_SSL_HANDSHAKE_FAILED:
 			purple_connection_error(gc, _("SSL Handshake Failed"));
 			break;
+		default:
+			purple_connection_error(gc, _("Unknown SSL error"));
 	}
 }
 
