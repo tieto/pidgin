@@ -278,27 +278,6 @@ static void handle_error(JabberMessage *jm)
 	g_free(buf);
 }
 
-static void handle_buzz(JabberMessage *jm) {
-	PurpleBuddy *buddy;
-	PurpleAccount *account;
-	PurpleConversation *c;
-	char *username, *str;
-	
-	account = purple_connection_get_account(jm->js->gc);
-	c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, jm->from);
-	
-	if ((buddy = purple_find_buddy(account, jm->from)) != NULL)
-		username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
-	else
-		username = g_markup_escape_text(jm->from, -1);
-	
-	str = g_strdup_printf(_("%s just sent you a Buzz!"), username);
-	
-	purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
-	g_free(username);
-	g_free(str);
-}
-
 void jabber_message_parse(JabberStream *js, xmlnode *packet)
 {
 	JabberMessage *jm;
@@ -384,8 +363,6 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			jm->type = JABBER_MESSAGE_EVENT;
 			for(items = xmlnode_get_child(child,"items"); items; items = items->next)
 				jm->eventitems = g_list_append(jm->eventitems, items);
-		} else if(!strcmp(child->name, "buzz") && !strcmp(xmlns,"http://pidgin.im/xmpp/buzz")) {
-			jm->hasBuzz = TRUE;
 		} else if(!strcmp(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");
 			char *code_txt = NULL;
@@ -451,9 +428,6 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 		}
 	}
 	
-	if(jm->hasBuzz)
-		handle_buzz(jm);
-
 	switch(jm->type) {
 		case JABBER_MESSAGE_NORMAL:
 		case JABBER_MESSAGE_CHAT:
