@@ -274,17 +274,19 @@ irssi_class_init(IrssiClass *klass)
 
 void gntwm_init(GntWM **wm)
 {
-	const char *style = NULL;
+	char *style = NULL;
 	Irssi *irssi;
 
 	irssi = g_object_new(TYPE_IRSSI, NULL);
 	*wm = GNT_WM(irssi);
 
-	style = gnt_style_get_from_name("irssi-split-v");
+	style = gnt_style_get_from_name("irssi", "split-v");
 	irssi->vert = style ? atoi(style) : 1;
+	g_free(style);
 
-	style = gnt_style_get_from_name("irssi-split-h");
+	style = gnt_style_get_from_name("irssi", "split-h");
 	irssi->horiz = style ? atoi(style) : 1;
+	g_free(style);
 
 	irssi->vert = MAX(irssi->vert, 1);
 	irssi->horiz = MAX(irssi->horiz, 1);

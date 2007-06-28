@@ -1,4 +1,8 @@
 /**
+ * @file gnttextview.h Textview API
+ * @ingroup gnt
+ */
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -43,6 +47,11 @@ typedef struct _GntTextView			GntTextView;
 typedef struct _GntTextViewPriv		GntTextViewPriv;
 typedef struct _GntTextViewClass		GntTextViewClass;
 
+typedef enum {
+	GNT_TEXT_VIEW_NO_SCROLL     = 1 << 0,
+	GNT_TEXT_VIEW_WRAP_CHAR     = 1 << 1,
+} GntTextViewFlag;
+
 struct _GntTextView
 {
 	GntWidget parent;
@@ -51,6 +60,7 @@ struct _GntTextView
 	GList *list;        /* List of GntTextLine */
 
 	GList *tags;       /* A list of tags */
+	GntTextViewFlag flags;
 };
 
 typedef enum
@@ -172,6 +182,14 @@ int gnt_text_view_tag_change(GntTextView *view, const char *name, const char *te
  * @param widget
  */
 void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget);
+
+/**
+ * Set a GntTextViewFlag for the textview widget.
+ *
+ * @param view  The textview widget
+ * @param flag  The flag to set
+ */
+void gnt_text_view_set_flag(GntTextView *view, GntTextViewFlag flag);
 
 G_END_DECLS
 

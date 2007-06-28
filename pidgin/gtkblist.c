@@ -174,6 +174,7 @@ static gboolean gtk_blist_visibility_cb(GtkWidget *w, GdkEventVisibility *event,
 
 static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *event, gpointer data)
 {
+#if GTK_CHECK_VERSION(2,2,0)
 	if(event->changed_mask & GDK_WINDOW_STATE_WITHDRAWN) {
 		if(event->new_window_state & GDK_WINDOW_STATE_WITHDRAWN)
 			purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_visible", FALSE);
@@ -195,6 +196,28 @@ static gboolean gtk_blist_window_state_cb(GtkWidget *w, GdkEventWindowState *eve
 		if (!(event->new_window_state & GDK_WINDOW_STATE_ICONIFIED))
 			pidgin_blist_refresh_timer(purple_get_blist());
 	}
+#else
+	/* At least gtk+ 2.0.6 does not properly set the change_mask when unsetting a
+	 * GdkWindowState flag. To work around, the window state will be explicitly
+	 * queried on these older versions of gtk+. See pidgin ticket #739.
+	 */
+	GdkWindowState new_window_state = gdk_window_get_state(G_OBJECT(gtkblist->window->window));
+
+	if(new_window_state & GDK_WINDOW_STATE_WITHDRAWN) {
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_visible", FALSE);
+	} else {
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_visible", TRUE);
+		pidgin_blist_refresh_timer(purple_get_blist());
+	}
+
+	if(new_window_state & GDK_WINDOW_STATE_MAXIMIZED)
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_maximized", TRUE);
+	else
+		purple_prefs_set_bool(PIDGIN_PREFS_ROOT "/blist/list_maximized", FALSE);
+
+	if (!(new_window_state & GDK_WINDOW_STATE_ICONIFIED))
+		pidgin_blist_refresh_timer(purple_get_blist());
+#endif
 
 	return FALSE;
 }
@@ -3093,6 +3116,15 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (PurpleBuddy*)node;
 		gtkbuddynode = node->ui_data;
+		p = purple_buddy_get_presence(buddy);
+		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
+			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", 
+						"16", "mobile.png", NULL);
+			ret = gdk_pixbuf_new_from_file(path, NULL);
+			g_free(path);
+			return ret;
+		}
+
 		if (((struct _pidgin_blist_node*)(node->parent->ui_data))->contact_expanded)
 			return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
 	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
@@ -4888,10 +4920,17 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 	gboolean selected;
 	char group_count[12] = "";
 	char *mark, *esc;
+	PurpleBlistNode *selected_node = NULL;
+	GtkTreeIter iter;
 
 	group = (PurpleGroup*)gnode;
 	textcolor = gtkblist->treeview->style->fg[GTK_STATE_ACTIVE];
-	selected = gtkblist ? (gtkblist->selected_node == gnode) : FALSE;
+        
+	if (gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview)), NULL, &iter)) {
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
+				NODE_COLUMN, &selected_node, -1);
+	}
+	selected = (gnode == selected_node);
 
 	if (!expanded) {
 		g_snprintf(group_count, sizeof(group_count), " (%d/%d)",

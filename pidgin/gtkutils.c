@@ -1147,6 +1147,9 @@ pidgin_set_accessible_label (GtkWidget *w, GtkWidget *l)
 	acc = gtk_widget_get_accessible (w);
 	label = gtk_widget_get_accessible (l);
 
+	/* Make sure mnemonics work */
+        gtk_label_set_mnemonic_widget(GTK_LABEL(l), w);
+	
 	/* If this object has no name, set it's name with the label text */
 	existing_name = atk_object_get_name (acc);
 	if (!existing_name) {
