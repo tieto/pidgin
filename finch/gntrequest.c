@@ -67,8 +67,32 @@ setup_request_window(const char *title, const char *primary,
 	return window;
 }
 
+/**
+ * If the window is closed by the wm (ie, without triggering any of
+ * the buttons, then do some default callback.
+ */
+static void
+setup_default_callback(GntWidget *window, gpointer default_cb, gpointer data)
+{
+	g_signal_connect_swapped(G_OBJECT(window), "destroy", G_CALLBACK(default_cb), data);
+}
+
+static void
+action_performed(GntWidget *button, gpointer data)
+{
+	g_signal_handlers_disconnect_matched(data, G_SIGNAL_MATCH_FUNC,
+			0, 0, NULL, setup_default_callback, NULL);
+}
+
+/**
+ * window: this is the window
+ * userdata: the userdata to pass to the primary callbacks
+ * cb: the callback
+ * data: data for the callback
+ * (text, primary-callback) pairs, ended by a NULL
+ */
 static GntWidget *
-setup_button_box(gpointer userdata, gpointer cb, gpointer data, ...)
+setup_button_box(GntWidget *win, gpointer userdata, gpointer cb, gpointer data, ...)
 {
 	GntWidget *box, *button;
 	va_list list;
@@ -87,6 +111,7 @@ setup_button_box(gpointer userdata, gpointer cb, gpointer data, ...)
 		g_object_set_data(G_OBJECT(button), "activate-callback", callback);
 		g_object_set_data(G_OBJECT(button), "activate-userdata", userdata);
 		g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(cb), data);
+		g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(action_performed), win);
 	}
 
 	va_end(list);
@@ -127,10 +152,11 @@ finch_request_input(const char *title, const char *primary,
 		gnt_entry_set_masked(GNT_ENTRY(entry), TRUE);
 	gnt_box_add_widget(GNT_BOX(window), entry);
 
-	box = setup_button_box(user_data, notify_input_cb, entry,
+	box = setup_button_box(window, user_data, notify_input_cb, entry,
 			ok_text, ok_cb, cancel_text, cancel_cb, NULL);
 	gnt_box_add_widget(GNT_BOX(window), box);
 
+	setup_default_callback(window, cancel_cb, user_data);
 	gnt_widget_show(window);
 
 	return window;
@@ -189,10 +215,11 @@ finch_request_choice(const char *title, const char *primary,
 	}
 	gnt_combo_box_set_selected(GNT_COMBO_BOX(combo), GINT_TO_POINTER(default_value + 1));
 
-	box = setup_button_box(user_data, request_choice_cb, combo,
+	box = setup_button_box(window, user_data, request_choice_cb, combo,
 			ok_text, ok_cb, cancel_text, cancel_cb, NULL);
 	gnt_box_add_widget(GNT_BOX(window), box);
 
+	setup_default_callback(window, cancel_cb, user_data);
 	gnt_widget_show(window);
 	
 	return window;
@@ -538,10 +565,11 @@ finch_request_fields(const char *title, const char *primary,
 	}
 	gnt_box_add_widget(GNT_BOX(window), box);
 
-	box = setup_button_box(userdata, request_fields_cb, allfields,
+	box = setup_button_box(window, userdata, request_fields_cb, allfields,
 			ok, ok_cb, cancel, cancel_cb, NULL);
 	gnt_box_add_widget(GNT_BOX(window), box);
 
+	setup_default_callback(window, cancel_cb, userdata);
 	gnt_widget_show(window);
 
 	g_object_set_data(G_OBJECT(window), "fields", allfields);
