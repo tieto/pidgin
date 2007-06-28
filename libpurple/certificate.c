@@ -321,7 +321,8 @@ purple_certificate_uninit(void)
 {
 	/* Unregister the builtins */
 	purple_certificate_unregister_verifier(&x509_singleuse);
-
+	purple_certificate_unregister_pool(&x509_tls_peers);
+	
 	/* TODO: Unregistering everything would be good... */
 }
 
