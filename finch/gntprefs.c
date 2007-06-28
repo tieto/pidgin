@@ -30,11 +30,15 @@
 #include "gntprefs.h"
 #include "gntrequest.h"
 
+#include "gnt.h"
+#include "gntwidget.h"
+
 #include <string.h>
 
 static struct {
 	GList *freestrings;  /* strings to be freed when the pref-window is closed */
 	gboolean showing;
+	GntWidget *window;
 } pref_request;
 
 void finch_prefs_init()
@@ -239,8 +243,10 @@ void finch_prefs_show_all()
 {
 	PurpleRequestFields *fields;
 
-	if (pref_request.showing)
+	if (pref_request.showing) {
+		gnt_window_present(pref_request.window);
 		return;
+	}
 
 	fields = purple_request_fields_new();
 
@@ -250,7 +256,7 @@ void finch_prefs_show_all()
 	add_pref_group(fields, _("Idle"), idle);
 
 	pref_request.showing = TRUE;
-	purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
+	pref_request.window = purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(save_cb), _("Cancel"), free_strings,
 			NULL, NULL, NULL,
 			NULL);
