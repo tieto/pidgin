@@ -452,12 +452,36 @@ purple_certificate_register_verifier(PurpleCertificateVerifier *vr);
  * Unregister a CertificateVerifier with libpurple
  *
  * @param vr     Verifier to unregister.
- * @return TRUE if register succeeded, otherwise FALSE
+ * @return TRUE if unregister succeeded, otherwise FALSE
  */
 gboolean
 purple_certificate_unregister_verifier(PurpleCertificateVerifier *vr);
 
-/* TODO: ADD STUFF HERE */
+/** Look up a registered PurpleCertificatePool by scheme and name
+ * @param scheme_name  Scheme name. Case insensitive.
+ * @param pool_name    Pool name. Case insensitive.
+ * @return Pointer to the located Pool, or NULL if it isn't found.
+ */
+PurpleCertificatePool *
+purple_certificate_find_pool(const gchar *scheme_name, const gchar *pool_name);
+
+/**
+ * Register a CertificatePool with libpurple and call its init function
+ *
+ * @param pool   Pool to register.
+ * @return TRUE if the register succeeded, otherwise FALSE
+ */
+gboolean
+purple_certificate_register_pool(PurpleCertificatePool *pool);
+
+/**
+ * Unregister a CertificatePool with libpurple and call its uninit function
+ *
+ * @param pool   Pool to unregister.
+ * @return TRUE if the unregister succeeded, otherwise FALSE
+ */
+gboolean
+purple_certificate_unregister_pool(PurpleCertificatePool *pool);
 
 /*@}*/
 

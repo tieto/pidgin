@@ -38,6 +38,8 @@
 static GList *cert_schemes = NULL;
 /** List of registered Verifiers */
 static GList *cert_verifiers = NULL;
+/** List of registered Pools */
+static GList *cert_pools = NULL;
 
 void
 purple_certificate_verify (PurpleCertificateVerifier *verifier,
@@ -391,5 +393,99 @@ purple_certificate_unregister_verifier(PurpleCertificateVerifier *vr)
 
 	cert_verifiers = g_list_remove(cert_verifiers, vr);
 
+	return TRUE;
+}
+
+PurpleCertificatePool *
+purple_certificate_find_pool(const gchar *scheme_name, const gchar *pool_name)
+{
+	PurpleCertificatePool *pool = NULL;
+	GList *l;
+
+	g_return_val_if_fail(scheme_name, NULL);
+	g_return_val_if_fail(pool_name, NULL);
+
+	/* Traverse the list of registered pools and locate the
+	   one whose name matches */
+	for(l = cert_pools; l; l = l->next) {
+		pool = (PurpleCertificatePool *)(l->data);
+
+		/* Scheme and name match? */
+		if(!g_ascii_strcasecmp(pool->scheme_name, scheme_name) &&
+		   !g_ascii_strcasecmp(pool->name, pool_name))
+			return pool;
+	}
+
+	purple_debug_warning("certificate",
+			     "CertificatePool %s, %s requested but not found.\n",
+			     scheme_name, pool_name);
+
+	/* TODO: Signalling and such? */
+	
+	return NULL;
+
+}
+
+
+gboolean
+purple_certificate_register_pool(PurpleCertificatePool *pool)
+{
+	gboolean success = FALSE;
+	g_return_val_if_fail(pool, FALSE);
+	g_return_val_if_fail(pool->scheme_name, FALSE);
+	g_return_val_if_fail(pool->name, FALSE);
+	g_return_val_if_fail(pool->fullname, FALSE);
+
+	/* Make sure no pools are registered under this name */
+	if (purple_certificate_find_pool(pool->scheme_name, pool->name)) {
+		return FALSE;
+	}
+
+	/* Initialize the pool if needed */
+	if (pool->init) {
+		success = pool->init(pool);
+	} else {
+		success = TRUE;
+	}
+	
+	if (success) {
+		/* Register the Pool */
+		cert_pools = g_list_prepend(cert_pools, pool);
+
+		return TRUE;
+	} else {
+		return FALSE;
+	}
+	
+	/* Control does not reach this point */
+}
+
+gboolean
+purple_certificate_unregister_pool(PurpleCertificatePool *pool)
+{
+	/* TODO: Better error checking? */
+	if (NULL == pool) {
+		purple_debug_warning("certificate",
+				     "Attempting to unregister NULL pool\n");
+		return FALSE;
+	}
+
+	/* Check that the pool is registered */
+	if (!g_list_find(cert_pools, pool)) {
+		purple_debug_warning("certificate",
+				     "Pool to unregister isn't registered!\n");
+
+		return FALSE;
+	}
+
+	/* Uninit the pool if needed */
+	if (pool->uninit) {
+		pool->uninit(pool);
+	}
+
+	cert_pools = g_list_remove(cert_pools, pool);
+	
+	/* TODO: Signalling? */
+		
 	return TRUE;
 }
