@@ -310,7 +310,7 @@ purple_certificate_register_scheme(PurpleCertificateScheme *scheme)
 	}
 
 	/* Okay, we're golden. Register it. */
-	cert_schemes = g_list_append(cert_schemes, scheme);
+	cert_schemes = g_list_prepend(cert_schemes, scheme);
 
 	/* TODO: Signalling and such? */
 	return TRUE;
@@ -375,7 +375,7 @@ purple_certificate_register_verifier(PurpleCertificateVerifier *vr)
 	}
 
 	/* Okay, we're golden. Register it. */
-	cert_verifiers = g_list_append(cert_verifiers, vr);
+	cert_verifiers = g_list_prepend(cert_verifiers, vr);
 
 	/* TODO: Signalling and such? */
 	return TRUE;
