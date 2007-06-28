@@ -253,6 +253,58 @@ PurpleCertificateVerifier x509_singleuse = {
 };
 
 
+
+
+static PurpleCertificatePool x509_tls_peers;
+
+static gboolean
+x509_tls_peers_init(void)
+{
+	/* TODO: Set up key cache here if it isn't already done */
+
+	return TRUE;
+}
+
+static gboolean
+x509_tls_peers_cert_in_pool(const gchar *id)
+{
+	g_return_val_if_fail(id, FALSE);
+
+	/* TODO: Fill this out */
+	return FALSE;
+}
+
+static PurpleCertificate *
+x509_tls_peers_get_cert(const gchar *id)
+{
+	g_return_val_if_fail(id, NULL);
+
+	/* TODO: Fill this out */
+	return NULL;
+}
+
+static gboolean
+x509_tls_peers_put_cert(PurpleCertificate *crt)
+{
+	g_return_val_if_fail(crt, FALSE);
+
+	/* TODO: Fill this out */
+	return FALSE;
+}
+
+static PurpleCertificatePool x509_tls_peers = {
+	"x509",                       /* Scheme name */
+	"tls_peers",                  /* Pool name */
+	N_("SSL Peers Cache"),        /* User-friendly name */
+	NULL,                         /* Internal data */
+	x509_tls_peers_init,          /* init */
+	NULL,                         /* uninit not required */
+	x509_tls_peers_cert_in_pool,  /* Certificate exists? */
+	x509_tls_peers_get_cert,      /* Cert retriever */
+	x509_tls_peers_put_cert       /* Cert writer */
+};
+	
+
 /****************************************************************************/
 /* Subsystem                                                                */
 /****************************************************************************/
@@ -261,6 +313,7 @@ purple_certificate_init(void)
 {
 	/* Register builtins */
 	purple_certificate_register_verifier(&x509_singleuse);
+	purple_certificate_register_pool(&x509_tls_peers);
 }
 
 void
@@ -445,7 +498,7 @@ purple_certificate_register_pool(PurpleCertificatePool *pool)
 
 	/* Initialize the pool if needed */
 	if (pool->init) {
-		success = pool->init(pool);
+		success = pool->init();
 	} else {
 		success = TRUE;
 	}
@@ -482,7 +535,7 @@ purple_certificate_unregister_pool(PurpleCertificatePool *pool)
 
 	/* Uninit the pool if needed */
 	if (pool->uninit) {
-		pool->uninit(pool);
+		pool->uninit();
 	}
 
 	cert_pools = g_list_remove(cert_pools, pool);

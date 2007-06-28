@@ -95,21 +95,16 @@ struct _PurpleCertificatePool
 	 *
 	 * Upon calling purple_certificate_register_pool() , this function will
 	 * be called. May be NULL.
-	 * @param pool      Pool instance being registered. This will not be
-	 *                  relevant for most applications.
 	 * @return TRUE if the initialization succeeded, otherwise FALSE
 	 */
-	gboolean (* init)(PurpleCertificatePool *pool);
+	gboolean (* init)(void);
 
 	/**
 	 * Uninit the Pool's internal state
 	 *
 	 * Will be called by purple_certificate_unregister_pool() . May be NULL
-	 *
-	 * @param pool      Pool instance being unregistered. This will not be
-	 *                  relevant for most applications.
 	 */
-	void (* uninit)(PurpleCertificatePool *pool);
+	void (* uninit)(void);
 
 	/** Check for presence of a certificate in the pool using unique ID */
 	gboolean (* cert_in_pool)(const gchar *id);
