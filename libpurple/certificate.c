@@ -321,7 +321,8 @@ purple_certificate_unregister_scheme(PurpleCertificateScheme *scheme)
 {
 	if (NULL == scheme) {
 		purple_debug_warning("certificate",
-				     "Attempting to unregister NULL scheme");
+				     "Attempting to unregister NULL scheme\n");
+		return FALSE;
 	}
 
 	/* TODO: signalling? */
@@ -386,7 +387,8 @@ purple_certificate_unregister_verifier(PurpleCertificateVerifier *vr)
 {
 	if (NULL == vr) {
 		purple_debug_warning("certificate",
-				     "Attempting to unregister NULL verifier");
+				     "Attempting to unregister NULL verifier\n");
+		return FALSE;
 	}
 
 	/* TODO: signalling? */
