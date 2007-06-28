@@ -22,6 +22,7 @@
 
 #include "gntstyle.h"
 #include "gntcolors.h"
+
 #include "gntws.h"
 
 #include <glib.h>

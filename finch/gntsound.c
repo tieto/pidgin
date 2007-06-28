@@ -1,30 +1,29 @@
-/*
- * @file gtksound.c GTK+ Sound
- * @ingroup pidgin
- *
- * pidgin
- *
- * Pidgin is the legal property of its developers, whose names are too numerous
- * to list here.  Please refer to the COPYRIGHT file distributed with this
- * source distribution.
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- */
+/**
+* @file gntsound.c GNT Sound API
+* @ingroup finch
+*
+* finch
+*
+* Finch is the legal property of its developers, whose names are too numerous
+* to list here.  Please refer to the COPYRIGHT file distributed with this
+* source distribution.
+*
+* This program is free software; you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program; if not, write to the Free Software
+* Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+*/
 #include "internal.h"
-#include "pidgin.h"
+#include "finch.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -32,7 +31,7 @@
 #endif
 
 #ifdef USE_GSTREAMER
-# include <gst/gst.h>
+#include <gst/gst.h>
 #endif /* USE_GSTREAMER */
 
 #include "debug.h"
@@ -41,10 +40,17 @@
 #include "sound.h"
 #include "util.h"
 
-#include "gtkconv.h"
-#include "gtksound.h"
+#include "gntbox.h"
+#include "gntwindow.h"
+#include "gntcombobox.h"
+#include "gntlabel.h"
+#include "gntconv.h"
+#include "gntsound.h"
+#include "gntwidget.h"
+#include "gntentry.h"
+#include "gntcheckbox.h"
 
-struct pidgin_sound_event {
+struct finch_sound_event {
 	char *label;
 	char *pref;
 	char *def;
@@ -59,7 +65,7 @@ static gboolean mute_login_sounds = FALSE;
 static gboolean gst_init_failed;
 #endif /* USE_GSTREAMER */
 
-static struct pidgin_sound_event sounds[PURPLE_NUM_SOUNDS] = {
+static struct finch_sound_event sounds[PURPLE_NUM_SOUNDS] = {
 	{N_("Buddy logs in"), "login", "login.wav"},
 	{N_("Buddy logs out"), "logout", "logout.wav"},
 	{N_("Message received"), "im_recv", "receive.wav"},
@@ -116,17 +122,14 @@ play_conv_event(PurpleConversation *conv, PurpleSoundEventID event)
 	/* If we should not play the sound for some reason, then exit early */
 	if (conv != NULL)
 	{
-		PidginConversation *gtkconv;
-		PidginWindow *win;
+		FinchConv *gntconv;
 		gboolean has_focus;
 
-		gtkconv = PIDGIN_CONVERSATION(conv);
-		win = gtkconv->win;
+		gntconv = FINCH_CONV(conv);
 
 		has_focus = purple_conversation_has_focus(conv);
 
-		if (!gtkconv->make_sound ||
-			(has_focus && !purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/sound/conv_focus")))
+		if (has_focus && !purple_prefs_get_bool(FINCH_PREFS_ROOT "/sound/conv_focus"))
 		{
 			return;
 		}
@@ -149,10 +152,12 @@ im_msg_received_cb(PurpleAccount *account, char *sender,
 	if (flags & PURPLE_MESSAGE_DELAYED)
 		return;
 
-	if (conv==NULL)
+	if (conv==NULL){
 		purple_sound_play_event(PURPLE_SOUND_FIRST_RECEIVE, account);
-	else
+	}
+	else{
 		play_conv_event(conv, event);
+	}
 }
 
 static void
@@ -234,7 +239,7 @@ account_signon_cb(PurpleConnection *gc, gpointer data)
 }
 
 const char *
-pidgin_sound_get_event_option(PurpleSoundEventID event)
+finch_sound_get_event_option(PurpleSoundEventID event)
 {
 	if(event >= PURPLE_NUM_SOUNDS)
 		return 0;
@@ -243,7 +248,7 @@ pidgin_sound_get_event_option(PurpleSoundEventID event)
 }
 
 const char *
-pidgin_sound_get_event_label(PurpleSoundEventID event)
+finch_sound_get_event_label(PurpleSoundEventID event)
 {
 	if(event >= PURPLE_NUM_SOUNDS)
 		return NULL;
@@ -252,7 +257,7 @@ pidgin_sound_get_event_label(PurpleSoundEventID event)
 }
 
 void *
-pidgin_sound_get_handle()
+finch_sound_get_handle()
 {
 	static int handle;
 
@@ -260,9 +265,9 @@ pidgin_sound_get_handle()
 }
 
 static void
-pidgin_sound_init(void)
+finch_sound_init(void)
 {
-	void *gtk_sound_handle = pidgin_sound_get_handle();
+	void *gnt_sound_handle = finch_sound_get_handle();
 	void *blist_handle = purple_blist_get_handle();
 	void *conv_handle = purple_conversations_get_handle();
 #ifdef USE_GSTREAMER
@@ -270,39 +275,39 @@ pidgin_sound_init(void)
 #endif
 
 	purple_signal_connect(purple_connections_get_handle(), "signed-on",
-						gtk_sound_handle, PURPLE_CALLBACK(account_signon_cb),
+						gnt_sound_handle, PURPLE_CALLBACK(account_signon_cb),
 						NULL);
 
-	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/sound");
-	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/sound/enabled");
-	purple_prefs_add_none(PIDGIN_PREFS_ROOT "/sound/file");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/login", TRUE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/login", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/logout", TRUE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/logout", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/im_recv", TRUE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/im_recv", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/first_im_recv", FALSE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/first_im_recv", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/send_im", TRUE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/send_im", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/join_chat", FALSE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/join_chat", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/left_chat", FALSE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/left_chat", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/send_chat_msg", FALSE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/send_chat_msg", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/chat_msg_recv", FALSE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/chat_msg_recv", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/nick_said", FALSE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/nick_said", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/enabled/pounce_default", TRUE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/file/pounce_default", "");
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/conv_focus", TRUE);
-	purple_prefs_add_bool(PIDGIN_PREFS_ROOT "/sound/mute", FALSE);
-	purple_prefs_add_path(PIDGIN_PREFS_ROOT "/sound/command", "");
-	purple_prefs_add_string(PIDGIN_PREFS_ROOT "/sound/method", "automatic");
-	purple_prefs_add_int(PIDGIN_PREFS_ROOT "/sound/volume", 50);
+	purple_prefs_add_none(FINCH_PREFS_ROOT "/sound");
+	purple_prefs_add_none(FINCH_PREFS_ROOT "/sound/enabled");
+	purple_prefs_add_none(FINCH_PREFS_ROOT "/sound/file");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/enabled/login", TRUE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/file/login", "");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/enabled/logout", TRUE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/file/logout", "");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/enabled/im_recv", TRUE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/file/im_recv", "");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/enabled/first_im_recv", FALSE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/file/first_im_recv", "");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/enabled/send_im", TRUE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/file/send_im", "");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/enabled/join_chat", FALSE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/file/join_chat", "");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/enabled/left_chat", FALSE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/file/left_chat", "");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/enabled/send_chat_msg", FALSE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/file/send_chat_msg", "");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/enabled/chat_msg_recv", FALSE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/file/chat_msg_recv", "");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/enabled/nick_said", FALSE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/file/nick_said", "");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/enabled/pounce_default", TRUE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/file/pounce_default", "");
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/conv_focus", TRUE);
+	purple_prefs_add_bool(FINCH_PREFS_ROOT "/sound/mute", FALSE);
+	purple_prefs_add_path(FINCH_PREFS_ROOT "/sound/command", "");
+	purple_prefs_add_string(FINCH_PREFS_ROOT "/sound/method", "automatic");
+	purple_prefs_add_int(FINCH_PREFS_ROOT "/sound/volume", 50);
 
 #ifdef USE_GSTREAMER
 	purple_debug_info("sound", "Initializing sound output drivers.\n");
@@ -318,47 +323,45 @@ pidgin_sound_init(void)
 #endif /* USE_GSTREAMER */
 
 	purple_signal_connect(blist_handle, "buddy-signed-on",
-						gtk_sound_handle, PURPLE_CALLBACK(buddy_state_cb),
+						gnt_sound_handle, PURPLE_CALLBACK(buddy_state_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_BUDDY_ARRIVE));
 	purple_signal_connect(blist_handle, "buddy-signed-off",
-						gtk_sound_handle, PURPLE_CALLBACK(buddy_state_cb),
+						gnt_sound_handle, PURPLE_CALLBACK(buddy_state_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_BUDDY_LEAVE));
 	purple_signal_connect(conv_handle, "received-im-msg",
-						gtk_sound_handle, PURPLE_CALLBACK(im_msg_received_cb),
+						gnt_sound_handle, PURPLE_CALLBACK(im_msg_received_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_RECEIVE));
 	purple_signal_connect(conv_handle, "sent-im-msg",
-						gtk_sound_handle, PURPLE_CALLBACK(im_msg_sent_cb),
+						gnt_sound_handle, PURPLE_CALLBACK(im_msg_sent_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_SEND));
 	purple_signal_connect(conv_handle, "chat-buddy-joined",
-						gtk_sound_handle, PURPLE_CALLBACK(chat_buddy_join_cb),
+						gnt_sound_handle, PURPLE_CALLBACK(chat_buddy_join_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_JOIN));
 	purple_signal_connect(conv_handle, "chat-buddy-left",
-						gtk_sound_handle, PURPLE_CALLBACK(chat_buddy_left_cb),
+						gnt_sound_handle, PURPLE_CALLBACK(chat_buddy_left_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_LEAVE));
 	purple_signal_connect(conv_handle, "sent-chat-msg",
-						gtk_sound_handle, PURPLE_CALLBACK(chat_msg_sent_cb),
+						gnt_sound_handle, PURPLE_CALLBACK(chat_msg_sent_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_YOU_SAY));
 	purple_signal_connect(conv_handle, "received-chat-msg",
-						gtk_sound_handle, PURPLE_CALLBACK(chat_msg_received_cb),
+						gnt_sound_handle, PURPLE_CALLBACK(chat_msg_received_cb),
 						GINT_TO_POINTER(PURPLE_SOUND_CHAT_SAY));
 }
 
 static void
-pidgin_sound_uninit(void)
+finch_sound_uninit(void)
 {
 #ifdef USE_GSTREAMER
 	if (!gst_init_failed)
 		gst_deinit();
 #endif
 
-	purple_signals_disconnect_by_handle(pidgin_sound_get_handle());
+	purple_signals_disconnect_by_handle(finch_sound_get_handle());
 }
 
 #ifdef USE_GSTREAMER
 static gboolean
-bus_call (GstBus     *bus,
-	  GstMessage *msg,
-	  gpointer    data)
+bus_call (GstBus *bus, GstMessage *msg, gpointer data)
 {
 	GstElement *play = data;
 	GError *err = NULL;
@@ -370,12 +373,12 @@ bus_call (GstBus     *bus,
 		break;
 	case GST_MESSAGE_ERROR:
 		gst_message_parse_error(msg, &err, NULL);
-		purple_debug_error("gstreamer", "%s\n", err->message);
+		purple_debug_error("gstreamer", err->message);
 		g_error_free(err);
 		break;
 	case GST_MESSAGE_WARNING:
 		gst_message_parse_warning(msg, &err, NULL);
-		purple_debug_warning("gstreamer", "%s\n", err->message);
+		purple_debug_warning("gstreamer", err->message);
 		g_error_free(err);
 		break;
 	default:
@@ -386,7 +389,7 @@ bus_call (GstBus     *bus,
 #endif
 
 static void
-pidgin_sound_play_file(const char *filename)
+finch_sound_play_file(const char *filename)
 {
 	const char *method;
 #ifdef USE_GSTREAMER
@@ -396,21 +399,20 @@ pidgin_sound_play_file(const char *filename)
 	GstElement *play = NULL;
 	GstBus *bus = NULL;
 #endif
-
-	if (purple_prefs_get_bool(PIDGIN_PREFS_ROOT "/sound/mute"))
+	if (purple_prefs_get_bool(FINCH_PREFS_ROOT "/sound/mute"))
 		return;
 
-	method = purple_prefs_get_string(PIDGIN_PREFS_ROOT "/sound/method");
+	method = purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method");
 
 	if (!strcmp(method, "none")) {
 		return;
 	} else if (!strcmp(method, "beep")) {
-		gdk_beep();
+		beep();
 		return;
 	}
 
 	if (!g_file_test(filename, G_FILE_TEST_EXISTS)) {
-		purple_debug_error("gtksound", "sound file (%s) does not exist.\n", filename);
+		purple_debug_error("gntsound", "sound file (%s) does not exist.\n", filename);
 		return;
 	}
 
@@ -421,10 +423,10 @@ pidgin_sound_play_file(const char *filename)
 		char *esc_filename;
 		GError *error = NULL;
 
-		sound_cmd = purple_prefs_get_path(PIDGIN_PREFS_ROOT "/sound/command");
+		sound_cmd = purple_prefs_get_path(FINCH_PREFS_ROOT "/sound/command");
 
 		if (!sound_cmd || *sound_cmd == '\0') {
-			purple_debug_error("gtksound",
+			purple_debug_error("gntsound",
 					 "'Command' sound method has been chosen, "
 					 "but no command has been set.");
 			return;
@@ -438,7 +440,7 @@ pidgin_sound_play_file(const char *filename)
 			command = g_strdup_printf("%s %s", sound_cmd, esc_filename);
 
 		if(!g_spawn_command_line_async(command, &error)) {
-			purple_debug_error("gtksound", "sound command could not be launched: %s\n", error->message);
+			purple_debug_error("gntsound", "sound command could not be launched: %s\n", error->message);
 			g_error_free(error);
 		}
 
@@ -447,9 +449,9 @@ pidgin_sound_play_file(const char *filename)
 		return;
 	}
 #ifdef USE_GSTREAMER
-	if (gst_init_failed)  /* Perhaps do gdk_beep instead? */
+	if (gst_init_failed)  /* Perhaps do beep instead? */
 		return;
-	volume = (float)(CLAMP(purple_prefs_get_int(PIDGIN_PREFS_ROOT "/sound/volume"),0,100)) / 50;
+	volume = (float)(CLAMP(purple_prefs_get_int(FINCH_PREFS_ROOT "/sound/volume"),0,100)) / 50;
 	if (!strcmp(method, "automatic")) {
 		if (purple_running_gnome()) {
 			sink = gst_element_factory_make("gconfaudiosink", "sink");
@@ -498,7 +500,7 @@ pidgin_sound_play_file(const char *filename)
 	g_free(uri);
 
 #else /* USE_GSTREAMER */
-	gdk_beep();
+	beep();
 	return;
 #endif /* USE_GSTREAMER */
 #else /* _WIN32 */
@@ -521,11 +523,10 @@ pidgin_sound_play_file(const char *filename)
 }
 
 static void
-pidgin_sound_play_event(PurpleSoundEventID event)
+finch_sound_play_event(PurpleSoundEventID event)
 {
 	char *enable_pref;
 	char *file_pref;
-
 	if ((event == PURPLE_SOUND_BUDDY_ARRIVE) && mute_login_sounds)
 		return;
 
@@ -534,16 +535,16 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 		return;
 	}
 
-	enable_pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/enabled/%s",
+	enable_pref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/enabled/%s",
 			sounds[event].pref);
-	file_pref = g_strdup_printf(PIDGIN_PREFS_ROOT "/sound/file/%s", sounds[event].pref);
+	file_pref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/file/%s", sounds[event].pref);
 
 	/* check NULL for sounds that don't have an option, ie buddy pounce */
 	if (purple_prefs_get_bool(enable_pref)) {
 		char *filename = g_strdup(purple_prefs_get_path(file_pref));
 		if(!filename || !strlen(filename)) {
 			g_free(filename);
-			/* XXX Consider creating a constant for "sounds/purple" to be shared with Finch */
+			/* XXX Consider creating a constant for "sounds/purple" to be shared with Pidgin */
 			filename = g_build_filename(DATADIR, "sounds", "purple", sounds[event].def, NULL);
 		}
 
@@ -555,12 +556,68 @@ pidgin_sound_play_event(PurpleSoundEventID event)
 	g_free(file_pref);
 }
 
+void
+finch_sounds_show_all(void){
+	GntWidget *win;
+
+	GntWidget *box;
+	GntWidget *cmbox;
+	GntWidget *entry;
+	
+	win = gnt_window_box_new(TRUE,TRUE);
+
+	cmbox = gnt_combo_box_new();
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"automatic",_("Automatic"));
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"alsa","ALSA");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"esd","ESD");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"beep",_("Console Beep"));
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"custom",_("Command"));
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"nosound",_("No Sound"));
+
+	box = gnt_hbox_new(TRUE);
+	gnt_box_set_fill(GNT_BOX(box),FALSE);
+	gnt_box_add_widget(GNT_BOX(box),gnt_label_new(_("Method: ")));
+	gnt_box_add_widget(GNT_BOX(box),cmbox);
+	gnt_box_add_widget(GNT_BOX(win),box); 
+
+	box = gnt_hbox_new(TRUE);
+	gnt_box_set_fill(GNT_BOX(box),FALSE);
+	gnt_box_add_widget(GNT_BOX(box),gnt_label_new(_("Sound Command\n%s for filename")));
+	entry = gnt_entry_new("cat %s > /dev/dsp");
+	gnt_box_add_widget(GNT_BOX(box),entry);
+	gnt_box_add_widget(GNT_BOX(win),box);
+
+	gnt_box_add_widget(GNT_BOX(win),gnt_check_box_new("Sounds when conversation has focus"));
+
+	box = gnt_hbox_new(TRUE);
+	gnt_box_set_fill(GNT_BOX(box),FALSE);
+	gnt_box_add_widget(GNT_BOX(box),gnt_label_new("Enable Sounds:"));
+	cmbox = gnt_combo_box_new();
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"always","Always");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"available","Only when available");
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"navailable","Only when not available");
+	gnt_box_add_widget(GNT_BOX(box),cmbox);
+	gnt_box_add_widget(GNT_BOX(win),box);
+
+	box = gnt_hbox_new(TRUE);
+	gnt_box_set_fill(GNT_BOX(box),FALSE);
+	gnt_box_add_widget(GNT_BOX(box),gnt_label_new("Volume(0-100):"));
+	entry = gnt_entry_new("50");
+	gnt_box_add_widget(GNT_BOX(box),entry);
+	gnt_box_add_widget(GNT_BOX(win),box);
+
+
+	gnt_box_set_title(GNT_BOX(win),"Sound Preferences");
+	gnt_widget_show(win);
+
+}	
+
 static PurpleSoundUiOps sound_ui_ops =
 {
-	pidgin_sound_init,
-	pidgin_sound_uninit,
-	pidgin_sound_play_file,
-	pidgin_sound_play_event,
+	finch_sound_init,
+	finch_sound_uninit,
+	finch_sound_play_file,
+	finch_sound_play_event,
 	NULL,
 	NULL,
 	NULL,
@@ -568,7 +625,7 @@ static PurpleSoundUiOps sound_ui_ops =
 };
 
 PurpleSoundUiOps *
-pidgin_sound_get_ui_ops(void)
+finch_sound_get_ui_ops(void)
 {
 	return &sound_ui_ops;
 }
