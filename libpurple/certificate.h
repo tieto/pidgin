@@ -112,7 +112,7 @@ struct _PurpleCertificatePool
 	void (* uninit)(PurpleCertificatePool *pool);
 
 	/** Check for presence of a certificate in the pool using unique ID */
-	gboolean (* cert_in_pool_by_id)(const gchar *id);
+	gboolean (* cert_in_pool)(const gchar *id);
 	/** Retrieve a PurpleCertificate from the pool */
 	PurpleCertificate * (* get_cert)(const gchar *id);
 	/** Add a certificate to the pool. Must overwrite any other
