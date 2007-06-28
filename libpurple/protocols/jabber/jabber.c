@@ -1369,11 +1369,13 @@ static void jabber_password_change(PurplePluginAction *action)
 	field = purple_request_field_string_new("password1", _("Password"),
 			"", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("password2", _("Password (again)"),
 			"", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(js->gc, _("Change XMPP Password"),

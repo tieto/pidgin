@@ -1002,11 +1002,12 @@ static void imhtml_paste_insert(GtkIMHtml *imhtml, const char *text, gboolean pl
 		gtk_imhtml_close_tags(imhtml, &iter);
 
 	gtk_imhtml_insert_html_at_iter(imhtml, text, flags, &iter);
-	if (!imhtml->wbfo && !plaintext)
-		gtk_imhtml_close_tags(imhtml, &iter);
 	gtk_text_buffer_move_mark_by_name(imhtml->text_buffer, "insert", &iter);
 	gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW(imhtml), gtk_text_buffer_get_insert(imhtml->text_buffer),
 	                             0, FALSE, 0.0, 0.0);
+	if (!imhtml->wbfo && !plaintext)
+		gtk_imhtml_close_tags(imhtml, &iter);
+
 }
 
 static void paste_plaintext_received_cb (GtkClipboard *clipboard, const gchar *text, gpointer data)
@@ -4938,9 +4939,6 @@ void gtk_imhtml_close_tags(GtkIMHtml *imhtml, GtkTextIter *iter)
 
 	if (imhtml->edit.link)
 		gtk_imhtml_toggle_link(imhtml, NULL);
-
-	gtk_text_buffer_remove_all_tags(imhtml->text_buffer, iter, iter);
-
 }
 
 char *gtk_imhtml_get_markup(GtkIMHtml *imhtml)

@@ -1,4 +1,8 @@
 /**
+ * @file gntstyle.h Style API
+ * @ingroup gnt
+ */
+/*
  * GNT - The GLib Ncurses Toolkit
  *
  * GNT is the legal property of its developers, whose names are too numerous
@@ -41,7 +45,7 @@ void gnt_style_read_configure_file(const char *filename);
 
 const char *gnt_style_get(GntStyle style);
 
-const char *gnt_style_get_from_name(const char *key);
+char *gnt_style_get_from_name(const char *group, const char *key);
 
 /**
  * 
