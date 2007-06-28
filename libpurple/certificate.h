@@ -43,6 +43,7 @@ typedef enum
 } PurpleCertificateVerificationStatus;
 
 typedef struct _PurpleCertificate PurpleCertificate;
+typedef struct _PurpleCertificatePool PurpleCertificatePool;
 typedef struct _PurpleCertificateScheme PurpleCertificateScheme;
 typedef struct _PurpleCertificateVerifier PurpleCertificateVerifier;
 typedef struct _PurpleCertificateVerificationRequest PurpleCertificateVerificationRequest;
@@ -69,6 +70,58 @@ struct _PurpleCertificate
 	gpointer data;
 };
 
+/**
+ * Database for retrieval or storage of Certificates
+ */
+struct _PurpleCertificatePool
+{
+	/** Scheme this Pool operates for */
+	gchar *scheme_name;
+	/** Internal name to refer to the pool by */
+	gchar *name;
+
+	/** User-friendly name for this type
+	 *  ex: N_("SSL Servers")
+	 *  When this is displayed anywhere, it should be i18ned
+	 *  ex: _(pool->fullname)
+	 */
+	gchar *fullname;
+
+	/** Internal pool data */
+	gpointer data;
+	
+	/**
+	 * Set up the Pool's internal state
+	 *
+	 * Upon calling purple_certificate_register_pool() , this function will
+	 * be called. May be NULL.
+	 * @param pool      Pool instance being registered. This will not be
+	 *                  relevant for most applications.
+	 * @return TRUE if the initialization succeeded, otherwise FALSE
+	 */
+	gboolean (* init)(PurpleCertificatePool *pool);
+
+	/**
+	 * Uninit the Pool's internal state
+	 *
+	 * Will be called by purple_certificate_unregister_pool() . May be NULL
+	 *
+	 * @param pool      Pool instance being unregistered. This will not be
+	 *                  relevant for most applications.
+	 */
+	void (* uninit)(PurpleCertificatePool *pool);
+
+	/** Check for presence of a certificate in the pool using unique ID */
+	gboolean (* cert_in_pool_by_id)(const gchar *id);
+	/** Retrieve a PurpleCertificate from the pool */
+	PurpleCertificate * (* get_cert)(const gchar *id);
+	/** Add a certificate to the pool. Must overwrite any other
+	 *  certificates sharing the same ID in the pool.
+	 *  @return TRUE if the operation succeeded, otherwise FALSE
+	 */
+	gboolean (* put_cert)(PurpleCertificate *crt);
+};
+
 /** A certificate type
  *
  *  A CertificateScheme must implement all of the fields in the structure,
@@ -89,7 +142,7 @@ struct _PurpleCertificateScheme
 	/** User-friendly name for this type
 	 *  ex: N_("X.509 Certificates")
 	 *  When this is displayed anywhere, it should be i18ned
-	 *  ex: _(scheme->name)
+	 *  ex: _(scheme->fullname)
 	 */
 	gchar * fullname;
 
