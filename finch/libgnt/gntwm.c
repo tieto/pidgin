@@ -497,35 +497,6 @@ window_close(GntBindable *bindable, GList *null)
 	return TRUE;
 }
 
-static gboolean
-help_for_widget(GntBindable *bindable, GList *null)
-{
-	GntWM *wm = GNT_WM(bindable);
-	GntWidget *widget, *tree, *win, *active;
-	char *title;
-
-	if (!wm->cws->ordered)
-		return TRUE;
-
-	widget = wm->cws->ordered->data;
-	if (!GNT_IS_BOX(widget))
-		return TRUE;
-	active = GNT_BOX(widget)->active;
-
-	tree = gnt_widget_bindings_view(active);
-	win = gnt_window_new();
-	title = g_strdup_printf("Bindings for %s", g_type_name(G_OBJECT_TYPE(active)));
-	gnt_box_set_title(GNT_BOX(win), title);
-	if (tree)
-		gnt_box_add_widget(GNT_BOX(win), tree);
-	else
-		gnt_box_add_widget(GNT_BOX(win), gnt_label_new("This widget has no customizable bindings."));
-
-	gnt_widget_show(win);
-
-	return TRUE;
-}
-
 static void
 destroy__list(GntWidget *widget, GntWM *wm)
 {
