@@ -50,6 +50,7 @@
 #include "gntentry.h"
 #include "gntcheckbox.h"
 #include "gntline.h"
+#include "gntslider.h"
 
 struct finch_sound_event {
 	char *label;
@@ -67,8 +68,8 @@ typedef struct {
 } SoundPrefDialog;
 
 static struct {
-	const gchar *method;
-	const gchar *command;
+	gchar *method;
+	gchar *command;
 	gboolean conv_focus;
 	gint while_status;
 	gint volume;
@@ -586,8 +587,8 @@ static void init_pref_data()
 
 	/* TODO Setup the events tree */
 
-	sound_pref_data.method = purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method");
-	sound_pref_data.command = purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/command");
+	sound_pref_data.method = g_strdup(purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method"));
+	sound_pref_data.command = g_strdup(purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/command"));
 	sound_pref_data.conv_focus = purple_prefs_get_bool(FINCH_PREFS_ROOT "/sound/conv_focus");
 	sound_pref_data.while_status = purple_prefs_get_int(FINCH_PREFS_ROOT "/purple/sound/while_status");
 	sound_pref_data.volume = CLAMP(purple_prefs_get_int(FINCH_PREFS_ROOT "/sound/volume"),0,100);
@@ -610,7 +611,9 @@ cancel_cb(GntBindable *data, gpointer win)
 	return TRUE;
 }
 
-static void release_pref_window(GntBindable *data, gpointer null) {
+static void 
+release_pref_window(GntBindable *data, gpointer null) 
+{
 	g_free(sound_pref_data.dialog);
 	sound_pref_data.dialog = NULL;
 }
@@ -620,12 +623,12 @@ finch_sounds_show_all(void)
 {
 	GntWidget *box;
 	GntWidget *cmbox;
+	GntWidget *slider;
 	GntWidget *entry;
 	GntWidget *chkbox;
 	GntWidget *button;
 	GntWidget *label;
 	GntWidget *win;
-	gchar *buf;
 
 	if(sound_pref_data.dialog){
 		gnt_window_present(sound_pref_data.dialog->window);
@@ -643,7 +646,6 @@ finch_sounds_show_all(void)
 	gnt_box_set_title(GNT_BOX(win),_("Sound Preferences"));
 	gnt_box_set_fill(GNT_BOX(win),TRUE);
 	gnt_box_set_alignment(GNT_BOX(win),GNT_ALIGN_MID);
-	gnt_widget_set_name(win, "sounds");
 
 	sound_pref_data.dialog->method = cmbox = gnt_combo_box_new();
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"automatic",_("Automatic"));
@@ -699,11 +701,14 @@ finch_sounds_show_all(void)
 	gnt_box_set_fill(GNT_BOX(box),FALSE);
 	gnt_box_add_widget(GNT_BOX(box),gnt_label_new("Volume(0-100):"));
 
-	buf = g_strdup_printf("%d",sound_pref_data.volume);
-	sound_pref_data.dialog->volume = entry = gnt_entry_new(buf);
-	g_free(buf);
-	gnt_widget_set_name(entry,"volume");
-	gnt_box_add_widget(GNT_BOX(box),entry);
+	sound_pref_data.dialog->volume = slider = gnt_slider_new(FALSE,100,0);
+	gnt_slider_set_step(GNT_SLIDER(slider),5);
+	label = gnt_label_new("");
+	gnt_slider_reflect_label(GNT_SLIDER(slider),GNT_LABEL(label));
+	gnt_slider_set_value(GNT_SLIDER(slider),sound_pref_data.volume);
+	gnt_box_set_pad(GNT_BOX(box),1);
+	gnt_box_add_widget(GNT_BOX(box),slider);
+	gnt_box_add_widget(GNT_BOX(box),label);
 	gnt_box_add_widget(GNT_BOX(win),box);
 
 	gnt_box_add_widget(GNT_BOX(win), gnt_line_new(FALSE));
