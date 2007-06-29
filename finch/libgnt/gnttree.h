@@ -302,6 +302,15 @@ GntTreeRow * gnt_tree_create_row_from_list(GntTree *tree, GList *list);
 void gnt_tree_set_col_width(GntTree *tree, int col, int width);
 
 /**
+ * Set the title for a column.
+ *
+ * @param tree   The tree
+ * @param index  The index of the column
+ * @param title  The title for the column
+ */
+void gnt_tree_set_column_title(GntTree *tree, int index, const char *title);
+
+/**
  * 
  * @param tree
  */

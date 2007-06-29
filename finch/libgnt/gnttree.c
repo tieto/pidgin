@@ -1526,6 +1526,12 @@ void gnt_tree_set_col_width(GntTree *tree, int col, int width)
 	tree->columns[col].width = width;
 }
 
+void gnt_tree_set_column_title(GntTree *tree, int index, const char *title)
+{
+	g_free(tree->columns[index].title);
+	tree->columns[index].title = g_strdup(title);
+}
+
 void gnt_tree_set_column_titles(GntTree *tree, ...)
 {
 	int i;
