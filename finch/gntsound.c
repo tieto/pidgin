@@ -67,17 +67,7 @@ typedef struct {
 	GntWidget *window;
 } SoundPrefDialog;
 
-typedef struct {
-	gchar *method;
-	gchar *command;
-	gboolean conv_focus;
-	gint while_status;
-	gint volume;
-	GntTree *events;
-	SoundPrefDialog *dialog;
-} SoundPrefData;
-
-SoundPrefData *sound_pref_data;
+SoundPrefDialog *pref_dialog;
 
 #define PLAY_SOUND_TIMEOUT 15000
 
@@ -579,26 +569,6 @@ finch_sound_play_event(PurpleSoundEventID event)
 	g_free(file_pref);
 }
 
-static void init_pref_data()
-{
-	GntTree *events = NULL;
-
-	if(sound_pref_data)
-		return;
-
-	/* TODO Setup the events tree */
-
-	sound_pref_data = g_new0(SoundPrefData,1);
-	sound_pref_data->method = g_strdup(purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method"));
-	sound_pref_data->command = g_strdup(purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/command"));
-	sound_pref_data->conv_focus = purple_prefs_get_bool(FINCH_PREFS_ROOT "/sound/conv_focus");
-	sound_pref_data->while_status = purple_prefs_get_int(FINCH_PREFS_ROOT "/purple/sound/while_status");
-	sound_pref_data->volume = CLAMP(purple_prefs_get_int(FINCH_PREFS_ROOT "/sound/volume"),0,100);
-	sound_pref_data->events = events;
-
-	return;
-}	
-
 static gboolean
 save_cb(GntBindable *data, gpointer *win)
 {
@@ -614,11 +584,11 @@ cancel_cb(GntBindable *data, gpointer win)
 	return TRUE;
 }
 
-static void 
-release_pref_window(GntBindable *data, gpointer null) 
+static void
+release_pref_dialog(GntBindable *data, gpointer null)
 {
-	g_free(sound_pref_data->dialog);
-	sound_pref_data->dialog = NULL;
+	g_free(pref_dialog);
+	pref_dialog = NULL;
 }
 
 void
@@ -633,17 +603,17 @@ finch_sounds_show_all(void)
 	GntWidget *label;
 	GntWidget *win;
 
-	init_pref_data();
+	gchar *buf;
 
-	if(sound_pref_data->dialog){
-		gnt_window_present(sound_pref_data->dialog->window);
+	if(pref_dialog){
+		gnt_window_present(pref_dialog->window);
 		return;
 	}
 
 
-	sound_pref_data->dialog = g_new0(SoundPrefDialog,1);
+	pref_dialog = g_new0(SoundPrefDialog,1);
 
-	sound_pref_data->dialog->window = win = gnt_window_box_new(FALSE,TRUE);
+	pref_dialog->window = win = gnt_window_box_new(FALSE,TRUE);
 	gnt_box_set_pad(GNT_BOX(win),0);
 	gnt_box_set_fill(GNT_BOX(win),FALSE);
 	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
@@ -651,14 +621,16 @@ finch_sounds_show_all(void)
 	gnt_box_set_fill(GNT_BOX(win),TRUE);
 	gnt_box_set_alignment(GNT_BOX(win),GNT_ALIGN_MID);
 
-	sound_pref_data->dialog->method = cmbox = gnt_combo_box_new();
+	pref_dialog->method = cmbox = gnt_combo_box_new();
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"automatic",_("Automatic"));
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"alsa","ALSA");
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"esd","ESD");
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"beep",_("Console Beep"));
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"custom",_("Command"));
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"nosound",_("No Sound"));
-	gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),sound_pref_data->method);
+	buf = g_strdup(purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method"));
+	gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),buf);
+	g_free(buf);
 
 	label = gnt_label_new_with_format(_("Sound Method"),GNT_TEXT_FLAG_BOLD);
 	gnt_box_add_widget(GNT_BOX(win),label); 
@@ -673,26 +645,26 @@ finch_sounds_show_all(void)
 	gnt_box_set_pad(GNT_BOX(box),0);
 	gnt_box_set_fill(GNT_BOX(box),FALSE);
 	gnt_box_add_widget(GNT_BOX(box),gnt_label_new(_("Sound Command\n(%s for filename)")));
-	sound_pref_data->dialog->command = entry = gnt_entry_new(sound_pref_data->command);
+	pref_dialog->command = entry = gnt_entry_new(purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method"));
 	gnt_box_add_widget(GNT_BOX(box),entry);
 	gnt_box_add_widget(GNT_BOX(win),box);
 
 	gnt_box_add_widget(GNT_BOX(win), gnt_line_new(FALSE));
 
 	gnt_box_add_widget(GNT_BOX(win),gnt_label_new_with_format(_("Sound Options"),GNT_TEXT_FLAG_BOLD)); 
-	sound_pref_data->dialog->conv_focus = chkbox = gnt_check_box_new("Sounds when conversation has focus");
-	gnt_check_box_set_checked(GNT_CHECK_BOX(chkbox),sound_pref_data->conv_focus);
+	pref_dialog->conv_focus = chkbox = gnt_check_box_new("Sounds when conversation has focus");
+	gnt_check_box_set_checked(GNT_CHECK_BOX(chkbox),purple_prefs_get_bool(FINCH_PREFS_ROOT "/sound/conv_focus"));
 	gnt_box_add_widget(GNT_BOX(win),chkbox);
 
 	box = gnt_hbox_new(TRUE);
 	gnt_box_set_pad(GNT_BOX(box),0);
 	gnt_box_set_fill(GNT_BOX(box),FALSE);
 	gnt_box_add_widget(GNT_BOX(box),gnt_label_new("Enable Sounds:"));
-	sound_pref_data->dialog->while_status = cmbox = gnt_combo_box_new();
+	pref_dialog->while_status = cmbox = gnt_combo_box_new();
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"always","Always");
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"available","Only when available");
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"away","Only when not available");
-	switch(sound_pref_data->while_status){
+	switch(purple_prefs_get_int(FINCH_PREFS_ROOT "/sound/while_status")){
 		case 1:gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),"available");break;
 		case 2:gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),"away");break;
 		default:gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),"always");break;
@@ -705,11 +677,11 @@ finch_sounds_show_all(void)
 	gnt_box_set_fill(GNT_BOX(box),FALSE);
 	gnt_box_add_widget(GNT_BOX(box),gnt_label_new("Volume(0-100):"));
 
-	sound_pref_data->dialog->volume = slider = gnt_slider_new(FALSE,100,0);
+	pref_dialog->volume = slider = gnt_slider_new(FALSE,100,0);
 	gnt_slider_set_step(GNT_SLIDER(slider),5);
 	label = gnt_label_new("");
 	gnt_slider_reflect_label(GNT_SLIDER(slider),GNT_LABEL(label));
-	gnt_slider_set_value(GNT_SLIDER(slider),sound_pref_data->volume);
+	gnt_slider_set_value(GNT_SLIDER(slider),CLAMP(purple_prefs_get_int(FINCH_PREFS_ROOT "/sound/volume"),0,100));
 	gnt_box_set_pad(GNT_BOX(box),1);
 	gnt_box_add_widget(GNT_BOX(box),slider);
 	gnt_box_add_widget(GNT_BOX(box),label);
@@ -732,7 +704,7 @@ finch_sounds_show_all(void)
 	gnt_box_add_widget(GNT_BOX(win),box);
 
 
-	g_signal_connect(G_OBJECT(win),"destroy",G_CALLBACK(release_pref_window),NULL);
+	g_signal_connect(G_OBJECT(win),"destroy",G_CALLBACK(release_pref_dialog),NULL);
 
 	gnt_widget_show(win);
 
