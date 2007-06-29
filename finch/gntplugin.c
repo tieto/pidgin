@@ -242,8 +242,10 @@ void finch_plugins_show_all()
 	GList *iter;
 	GList *seen;
 
-	if (plugins.window)
+	if (plugins.window) {
+		gnt_window_present(plugins.window);
 		return;
+	}
 
 	purple_plugins_probe(G_MODULE_SUFFIX);
 

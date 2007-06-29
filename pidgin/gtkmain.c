@@ -677,6 +677,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	g_set_application_name(_("Pidgin"));
+
 #ifdef _WIN32
 	winpidgin_init(hint);
 #endif
@@ -855,7 +857,6 @@ int main(int argc, char *argv[])
 	winpidgin_post_init();
 #endif
 
-	g_set_application_name(_("Pidgin"));
 	gtk_main();
 
 #ifdef HAVE_SIGNAL_H

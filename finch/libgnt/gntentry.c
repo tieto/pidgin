@@ -179,7 +179,7 @@ gnt_entry_draw(GntWidget *widget)
 
 	stop = gnt_util_onscreen_width(entry->scroll, entry->end);
 	if (stop < widget->priv.width)
-		whline(widget->window, ENTRY_CHAR, widget->priv.width - stop);
+		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
 
 	if (focus)
 		mvwchgat(widget->window, 0, gnt_util_onscreen_width(entry->scroll, entry->cursor),

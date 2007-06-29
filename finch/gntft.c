@@ -262,6 +262,8 @@ finch_xfer_dialog_show()
 {
 	if (xfer_dialog == NULL)
 		finch_xfer_dialog_new();
+	else
+		gnt_window_present(xfer_dialog->window);
 }
 
 void

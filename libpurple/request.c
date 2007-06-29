@@ -150,7 +150,8 @@ purple_request_fields_all_required_filled(const PurpleRequestFields *fields)
 		switch (purple_request_field_get_type(field))
 		{
 			case PURPLE_REQUEST_FIELD_STRING:
-				if (purple_request_field_string_get_value(field) == NULL)
+				if (purple_request_field_string_get_value(field) == NULL ||
+				    *(purple_request_field_string_get_value(field)) == '\0')
 					return FALSE;
 
 				break;
