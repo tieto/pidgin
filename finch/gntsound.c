@@ -600,6 +600,7 @@ static void init_pref_data()
 static gboolean
 save_cb(GntBindable *data, gpointer *win)
 {
+	
 	gnt_widget_destroy(GNT_WIDGET(win));
 	return TRUE;
 }
