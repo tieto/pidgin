@@ -2046,6 +2046,57 @@ static PurpleCmdRet jabber_cmd_ping(PurpleConversation *conv,
 	return PURPLE_CMD_RET_OK;
 }
 
+static PurpleCmdRet jabber_cmd_buzz(PurpleConversation *conv,
+		const char *cmd, char **args, char **error, void *data)
+{
+	JabberStream *js = conv->account->gc->proto_data;
+	xmlnode *msg, *buzz;
+	JabberBuddy *jb;
+	JabberBuddyResource *jbr;
+	char *to;
+	GList *iter;
+
+	if(!args || !args[0])
+		return PURPLE_CMD_RET_FAILED;
+	
+	jb = jabber_buddy_find(js, args[0], FALSE);
+	if(!jb) {
+		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), args[0]);
+		return PURPLE_CMD_RET_FAILED;
+	}
+	
+	jbr = jabber_buddy_find_resource(jb, NULL);
+	if(!jbr) {
+		*error = g_strdup_printf(_("Unable to buzz, because user %s might be offline."), args[0]);
+		return PURPLE_CMD_RET_FAILED;
+	}
+	if(!jbr->caps) {
+		*error = g_strdup_printf(_("Unable to buzz, because there is nothing known about user %s."), args[0]);
+		return PURPLE_CMD_RET_FAILED;
+	}
+	for(iter = jbr->caps->features; iter; iter = g_list_next(iter)) {
+		if(!strcmp(iter->data, "http://pidgin.im/xmpp/buzz")) {
+			msg = xmlnode_new("message");
+			to = g_strdup_printf("%s/%s", args[0], jbr->name);
+			xmlnode_set_attrib(msg,"to",to);
+			g_free(to);
+			
+			/* avoid offline storage */
+			xmlnode_set_attrib(msg,"type","headline");
+			
+			buzz = xmlnode_new_child(msg,"buzz");
+			xmlnode_set_namespace(buzz,"http://pidgin.im/xmpp/buzz");
+			
+			jabber_send(js,msg);
+			xmlnode_free(msg);
+			
+			return PURPLE_CMD_RET_OK;
+		}
+	}
+	*error = g_strdup_printf(_("Unable to buzz, because the user %s does not support it."), args[0]);
+	return PURPLE_CMD_RET_FAILED;
+}
+
 gboolean jabber_offline_message(const PurpleBuddy *buddy)
 {
 	return TRUE;
@@ -2129,6 +2180,10 @@ void jabber_register_commands(void)
 					  "prpl-jabber", jabber_cmd_ping,
 					  _("ping &lt;jid&gt;:	Ping a user/component/server."),
 					  NULL);
+	purple_cmd_register("buzz", "s", PURPLE_CMD_P_PRPL,
+					  PURPLE_CMD_FLAG_IM | PURPLE_CMD_FLAG_PRPL_ONLY,
+					  "prpl-jabber", jabber_cmd_buzz,
+					  _("buzz: Buzz a user to get their attention"), NULL);
 }
 
 void
