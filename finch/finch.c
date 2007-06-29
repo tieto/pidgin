@@ -381,10 +381,12 @@ int main(int argc, char **argv)
 {
 	signal(SIGPIPE, SIG_IGN);
 
+	g_set_application_name(_("Finch"));
+
 	/* Initialize the libpurple stuff */
 	if (!init_libpurple(argc, argv))
 		return 0;
-
+ 
 	purple_blist_show();
 	gnt_main();
 

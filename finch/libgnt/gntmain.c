@@ -494,8 +494,12 @@ void gnt_main()
  * Stuff for 'window management' *
  *********************************/
 
-void gnt_window_present(GntWidget *window) {
-	gnt_wm_raise_window(wm, window);
+void gnt_window_present(GntWidget *window)
+{
+	if (wm->event_stack)
+		gnt_wm_raise_window(wm, window);
+	else
+		gnt_widget_set_urgent(window);
 }
 
 void gnt_screen_occupy(GntWidget *widget)

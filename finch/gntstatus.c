@@ -163,8 +163,10 @@ edit_savedstatus_cb(GntWidget *widget, gpointer null)
 void finch_savedstatus_show_all()
 {
 	GntWidget *window, *tree, *box, *button;
-	if (statuses.window)
+	if (statuses.window) {
+		gnt_window_present(statuses.window);
 		return;
+	}
 
 	statuses.window = window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);

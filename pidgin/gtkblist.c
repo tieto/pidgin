@@ -3116,6 +3116,15 @@ pidgin_blist_get_emblem(PurpleBlistNode *node)
 	} else if(PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		buddy = (PurpleBuddy*)node;
 		gtkbuddynode = node->ui_data;
+		p = purple_buddy_get_presence(buddy);
+		if (purple_presence_is_status_primitive_active(p, PURPLE_STATUS_MOBILE)) {
+			path = g_build_filename(DATADIR, "pixmaps", "pidgin", "emblems", 
+						"16", "mobile.png", NULL);
+			ret = gdk_pixbuf_new_from_file(path, NULL);
+			g_free(path);
+			return ret;
+		}
+
 		if (((struct _pidgin_blist_node*)(node->parent->ui_data))->contact_expanded)
 			return pidgin_create_prpl_icon(((PurpleBuddy*)node)->account, PIDGIN_PRPL_ICON_SMALL);
 	} else if(PURPLE_BLIST_NODE_IS_CHAT(node)) {
@@ -4911,10 +4920,17 @@ static char *pidgin_get_group_title(PurpleBlistNode *gnode, gboolean expanded)
 	gboolean selected;
 	char group_count[12] = "";
 	char *mark, *esc;
+	PurpleBlistNode *selected_node = NULL;
+	GtkTreeIter iter;
 
 	group = (PurpleGroup*)gnode;
 	textcolor = gtkblist->treeview->style->fg[GTK_STATE_ACTIVE];
-	selected = gtkblist ? (gtkblist->selected_node == gnode) : FALSE;
+        
+	if (gtk_tree_selection_get_selected(gtk_tree_view_get_selection(GTK_TREE_VIEW(gtkblist->treeview)), NULL, &iter)) {
+		gtk_tree_model_get(GTK_TREE_MODEL(gtkblist->treemodel), &iter,
+				NODE_COLUMN, &selected_node, -1);
+	}
+	selected = (gnode == selected_node);
 
 	if (!expanded) {
 		g_snprintf(group_count, sizeof(group_count), " (%d/%d)",

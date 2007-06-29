@@ -558,7 +558,6 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			jabber_buddy_remove_resource(jb, jid->resource);
 			if((conv = jabber_find_unnormalized_conv(from, js->gc->account)))
 				purple_conversation_set_name(conv, buddy_name);
-	printf("Removed resource\n");
 
 		} else {
 			jbr = jabber_buddy_track_resource(jb, jid->resource, priority,
