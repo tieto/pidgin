@@ -27,3 +27,4 @@
 
 #define FINCH_UI "gnt-purple"
 
+#define FINCH_PREFS_ROOT "/finch"

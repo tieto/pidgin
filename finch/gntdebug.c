@@ -301,7 +301,7 @@ void finch_debug_init()
 	REGISTER_G_LOG_HANDLER("GThread");
 
 	g_set_print_handler(print_stderr);   /* Redirect the debug messages to stderr */
-	g_set_printerr_handler(suppress_error_messages);
+//	g_set_printerr_handler(suppress_error_messages);
 
 	purple_prefs_add_none(PREF_ROOT);
 	purple_prefs_add_string(PREF_ROOT "/filter", "");
