@@ -74,6 +74,7 @@ setup_request_window(const char *title, const char *primary,
 static void
 setup_default_callback(GntWidget *window, gpointer default_cb, gpointer data)
 {
+	g_object_set_data(G_OBJECT(window), "default-callback", default_cb);
 	g_signal_connect_swapped(G_OBJECT(window), "destroy", G_CALLBACK(default_cb), data);
 }
 
@@ -81,7 +82,9 @@ static void
 action_performed(GntWidget *button, gpointer data)
 {
 	g_signal_handlers_disconnect_matched(data, G_SIGNAL_MATCH_FUNC,
-			0, 0, NULL, setup_default_callback, NULL);
+			0, 0, NULL,
+			g_object_get_data(data, "default-callback"),
+			 NULL);
 }
 
 /**
@@ -110,8 +113,8 @@ setup_button_box(GntWidget *win, gpointer userdata, gpointer cb, gpointer data, 
 		gnt_box_add_widget(GNT_BOX(box), button);
 		g_object_set_data(G_OBJECT(button), "activate-callback", callback);
 		g_object_set_data(G_OBJECT(button), "activate-userdata", userdata);
-		g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(cb), data);
 		g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(action_performed), win);
+		g_signal_connect(G_OBJECT(button), "activate", G_CALLBACK(cb), data);
 	}
 
 	va_end(list);
