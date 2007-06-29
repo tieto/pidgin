@@ -70,11 +70,9 @@ gnt_slider_draw(GntWidget *widget)
 	int position, size = 0;
 
 	if (slider->vertical)
-		mvwvline(widget->window, 0, 0, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL),
-				(size = widget->priv.height));
+		size = widget->priv.height;
 	else
-		mvwhline(widget->window, 0, 0, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL),
-				(size = widget->priv.width));
+		size = widget->priv.width;
 
 	if (gnt_widget_has_focus(widget))
 		attr |= GNT_COLOR_HIGHLIGHT;
@@ -85,10 +83,22 @@ gnt_slider_draw(GntWidget *widget)
 		position = ((size - 1) * (slider->current - slider->min)) / (slider->max - slider->min);
 	else
 		position = 0;
+	if (slider->vertical) {
+		mvwvline(widget->window, size-position, 0, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL) | A_BOLD,
+				position);
+		mvwvline(widget->window, 0, 0, ACS_VLINE | COLOR_PAIR(GNT_COLOR_NORMAL),
+				size-position);
+	} else {
+		mvwhline(widget->window, 0, 0, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL) | A_BOLD,
+				position);
+		mvwhline(widget->window, 0, position, ACS_HLINE | COLOR_PAIR(GNT_COLOR_NORMAL),
+				size - position);
+	}
+
 	mvwaddch(widget->window,
 			slider->vertical ? (size - position - 1) : 0,
 			slider->vertical ? 0 : position,
-			ACS_BLOCK | COLOR_PAIR(attr));
+			ACS_CKBOARD | COLOR_PAIR(attr));
 }
 
 static void
@@ -117,10 +127,7 @@ step_back(GntBindable *bindable, GList *null)
 	GntSlider *slider = GNT_SLIDER(bindable);
 	if (slider->current <= slider->min)
 		return FALSE;
-	slider->current -= slider->step;
-	sanitize_value(slider);
-	redraw_slider(slider);
-	slider_value_changed(slider);
+	gnt_slider_advance_step(slider, -1);
 	return TRUE;
 }
 
@@ -130,10 +137,7 @@ step_forward(GntBindable *bindable, GList *list)
 	GntSlider *slider = GNT_SLIDER(bindable);
 	if (slider->current >= slider->max)
 		return FALSE;
-	slider->current += slider->step;
-	sanitize_value(slider);
-	redraw_slider(slider);
-	slider_value_changed(slider);
+	gnt_slider_advance_step(slider, 1);
 	return TRUE;
 }
 
