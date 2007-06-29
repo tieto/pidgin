@@ -2406,9 +2406,6 @@ redraw_icon(gpointer data)
 		return FALSE;
 	}
 
-	gtkconv->auto_resize = TRUE;
-	g_idle_add(reset_auto_resize_cb, gtkconv);
-
 	gdk_pixbuf_animation_iter_advance(gtkconv->u.im->iter, NULL);
 	buf = gdk_pixbuf_animation_iter_get_pixbuf(gtkconv->u.im->iter);
 
@@ -4256,7 +4253,7 @@ static void resize_imhtml_cb(PidginConversation *gtkconv)
 	if (sr.height < height + PIDGIN_HIG_BOX_SPACE) {
 		gtkconv->auto_resize = TRUE;
 		gtkconv->entry_growing = TRUE;
-	        gtk_widget_set_size_request(gtkconv->lower_hbox, -1, height + PIDGIN_HIG_BOX_SPACE);
+	        gtk_widget_set_size_request(gtkconv->entry, -1, height);
 	        g_idle_add(reset_auto_resize_cb, gtkconv);
 	}
 }
