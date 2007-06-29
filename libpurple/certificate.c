@@ -125,6 +125,21 @@ purple_certificate_destroy_list (GList * crt_list)
 	g_list_free(crt_list);
 }
 
+gboolean
+purple_certificate_export(const gchar *filename, PurpleCertificate *crt)
+{
+	PurpleCertificateScheme *scheme;
+
+	g_return_val_if_fail(filename, FALSE);
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme, FALSE);
+
+	scheme = crt->scheme;
+	g_return_val_if_fail(scheme->export_certificate, FALSE);
+
+	return (scheme->export_certificate)(filename, crt);
+}
+
 GByteArray *
 purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt)
 {

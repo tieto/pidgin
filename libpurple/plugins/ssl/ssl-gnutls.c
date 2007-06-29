@@ -484,6 +484,62 @@ x509_import_from_file(const gchar * filename)
 	return crt;
 }
 
+/**
+ * Exports a PEM-formatted X.509 certificate to the specified file.
+ * @param filename Filename to export to. Format will be PEM
+ * @param crt      Certificate to export
+ *
+ * @return TRUE if success, otherwise FALSE
+ */
+static gboolean
+x509_export_certificate(const gchar *filename, PurpleCertificate *crt)
+{
+	gnutls_x509_crt_t crt_dat; /* GnuTLS cert struct */
+	int ret;
+	gchar * out_buf; /* Data to output */
+	size_t out_size; /* Output size */
+	gboolean success = FALSE;
+
+	/* Paranoia paranoia paranoia! */
+	g_return_val_if_fail(filename, FALSE);
+	g_return_val_if_fail(crt, FALSE);
+	g_return_val_if_fail(crt->scheme == &x509_gnutls, FALSE);
+	g_return_val_if_fail(crt->data, FALSE);
+
+	crt_dat = *( (gnutls_x509_crt_t *) crt->data);
+
+	/* Obtain the output size required */
+	ret = gnutls_x509_crt_export(crt_dat, GNUTLS_X509_FMT_PEM,
+				     NULL, /* Provide no buffer yet */
+				     &out_size /* Put size here */
+		);
+	g_return_val_if_fail(ret == 0, FALSE);
+
+	/* Now allocate a buffer and *really* export it */
+	out_buf = g_new0(gchar, out_size);
+	ret = gnutls_x509_crt_export(crt_dat, GNUTLS_X509_FMT_PEM,
+				     out_buf, /* Export to our new buffer */
+				     &out_size /* Put size here */
+		);
+	if (ret != 0) {
+		purple_debug_error("gnutls/x509",
+				   "Failed to export cert to buffer with code %d\n",
+				   ret);
+		g_free(out_buf);
+		return FALSE;
+	}
+
+	/* Write it out to an actual file */
+	success = purple_util_write_data_to_file(filename,
+						 out_buf,
+						 out_size);
+
+	
+	g_free(out_buf);
+	g_return_val_if_fail(success, FALSE);
+	return success;
+}
+
 /** Frees a Certificate
  *
  *  Destroys a Certificate's internal data structures and frees the pointer
@@ -657,6 +713,7 @@ static PurpleCertificateScheme x509_gnutls = {
 	"x509",                          /* Scheme name */
 	N_("X.509 Certificates"),        /* User-visible scheme name */
 	x509_import_from_file,           /* Certificate import function */
+	x509_export_certificate,         /* Certificate export function */
 	x509_destroy_certificate,        /* Destroy cert */
 	x509_sha1sum,                    /* SHA1 fingerprint */
 	NULL,                            /* Subject */

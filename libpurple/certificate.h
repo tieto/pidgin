@@ -149,6 +149,16 @@ struct _PurpleCertificateScheme
 	 */
 	PurpleCertificate * (* import_certificate)(const gchar * filename);
 
+	/**
+	 * Exports a certificate to a file
+	 *
+	 * @param filename    File to export the certificate to
+	 * @param crt         Certificate to export
+	 * @return TRUE if the export succeeded, otherwise FALSE
+	 * @see purple_certificate_export()
+	 */
+	gboolean (* export_certificate)(const gchar *filename, PurpleCertificate *crt);
+
 	/** Destroys and frees a Certificate structure
 	 *
 	 *  Destroys a Certificate's internal data structures and calls
@@ -353,6 +363,17 @@ purple_certificate_destroy (PurpleCertificate *crt);
  */
 void
 purple_certificate_destroy_list (GList * crt_list);
+
+/**
+ * Exports a PurpleCertificate to a file
+ *
+ * @param filename    File to export the certificate to
+ * @param crt         Certificate to export
+ * @return TRUE if the export succeeded, otherwise FALSE
+ */
+gboolean
+purple_certificate_export(const gchar *filename, PurpleCertificate *crt);
+
 
 /**
  * Retrieves the certificate public key fingerprint using SHA1.
