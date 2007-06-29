@@ -1,4 +1,4 @@
-/** @page conversation-signals Notification Signals
+/** @page notify-signals Notification Signals
 
  @signals
   @signal displaying-userinfo
