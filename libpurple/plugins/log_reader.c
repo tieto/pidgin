@@ -2035,7 +2035,7 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 			if (line[0] != '\n' && line[0] != '\r') {
 
 				g_string_append(formatted, line);
-				g_string_append_c(formatted, '\n');
+				g_string_append(formatted, "<br>");
 			}
 			line = ++c;
 		}
