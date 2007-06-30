@@ -11,6 +11,7 @@ version 2.1.0 (??/??/????):
 	  notifications in chats
 	* With the HTML logger, images in conversations are now saved.
 	  NOTE: Saved images are not yet displayed when loading logs.
+	* Added support for QIP logs to the Log Reader plugin (Michael Shkutkov)
 
 	Pidgin:
 	* Ensure only one copy of Pidgin is running with a given configuration

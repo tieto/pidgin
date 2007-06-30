@@ -60,6 +60,7 @@ static GtkWidget *prefsnotebook;
 
 static GtkWidget *sound_entry = NULL;
 static GtkListStore *smiley_theme_store = NULL;
+static GtkTreeSelection *smiley_theme_sel = NULL;
 static GtkWidget *prefs_proxy_frame = NULL;
 
 static GtkWidget *prefs = NULL;
@@ -366,9 +367,12 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	GValue val;
 	GtkTreePath *path, *oldpath;
 	struct smiley_theme *new_theme, *old_theme;
+	GtkWidget *remove_button = g_object_get_data(G_OBJECT(sel), "remove_button");
 
-	if (!gtk_tree_selection_get_selected(sel, &model, &iter))
+	if (!gtk_tree_selection_get_selected(sel, &model, &iter)) {
+		gtk_widget_set_sensitive(remove_button, FALSE);
 		return;
+	}
 
 	old_theme = current_smiley_theme;
 	val.g_type = 0;
@@ -376,6 +380,8 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	path = gtk_tree_model_get_path(model, &iter);
 	themename = g_value_get_string(&val);
 	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", themename);
+
+	gtk_widget_set_sensitive(remove_button, strcmp(themename, "none"));
 	g_value_unset (&val);
 
 	/* current_smiley_theme is set in callback for the above pref change */
@@ -514,8 +520,13 @@ static void theme_install_theme(char *path, char *extn) {
 	g_free(destdir);
 
 	theme_rowref = theme_refresh_theme_list();
-	if (theme_rowref != NULL)
+	if (theme_rowref != NULL) {
+		GtkTreePath *tp = gtk_tree_row_reference_get_path(theme_rowref);
+
+		if (tp)
+			gtk_tree_selection_select_path(smiley_theme_sel, tp);
 		gtk_tree_row_reference_free(theme_rowref);
+	}
 }
 
 static void
@@ -619,9 +630,55 @@ static gint pidgin_sort_smileys (GtkTreeModel	*model,
 	return ret;
 }
 
+static void
+request_theme_file_name_cb(gpointer data, char *theme_file_name)
+{
+	theme_install_theme(theme_file_name, NULL) ;
+}
+
+static void
+add_theme_button_clicked_cb(GtkWidget *widget, gpointer null)
+{
+	purple_request_file(NULL, "Install Theme", NULL, FALSE, (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, NULL) ;
+}
+
+static void
+remove_theme_button_clicked_cb(GtkWidget *button, GtkTreeView *tv)
+{
+	char *theme_name = NULL, *theme_file = NULL;
+	GtkTreeModel *tm;
+	GtkTreeIter itr;
+	GtkTreeRowReference *trr = NULL;
+
+	if ((tm = gtk_tree_view_get_model(tv)) == NULL)
+		return;
+	if (!gtk_tree_selection_get_selected(smiley_theme_sel, NULL, &itr))
+		return;
+	gtk_tree_model_get(tm, &itr, 2, &theme_file, 3, &theme_name, -1);
+
+	if (theme_file && theme_name && strcmp(theme_name, "none"))
+		pidgin_themes_remove_smiley_theme(theme_file);
+
+	if ((trr = theme_refresh_theme_list()) != NULL) {
+		GtkTreePath *tp = gtk_tree_row_reference_get_path(trr);
+
+		if (tp) {
+			gtk_tree_selection_select_path(smiley_theme_sel, tp);
+			gtk_tree_path_free(tp);
+		}
+		gtk_tree_row_reference_free(trr);
+	}
+
+	g_free(theme_file);
+	g_free(theme_name);
+}
+
 static GtkWidget *
 theme_page()
 {
+	GtkWidget *add_button, *remove_button;
+	GtkWidget *hbox_buttons;
+	GtkWidget *alignment;
 	GtkWidget *ret;
 	GtkWidget *sw;
 	GtkWidget *view;
@@ -661,7 +718,7 @@ theme_page()
 	g_signal_connect(G_OBJECT(view), "drag_data_received", G_CALLBACK(theme_dnd_recv), smiley_theme_store);
 
 	rend = gtk_cell_renderer_pixbuf_new();
-	sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+	smiley_theme_sel = sel = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
 
 	/* Custom sort so "none" theme is at top of list */
 	gtk_tree_sortable_set_sort_func(GTK_TREE_SORTABLE(smiley_theme_store),
@@ -686,6 +743,25 @@ theme_page()
 	gtk_container_add(GTK_CONTAINER(sw), view);
 
 	g_signal_connect(G_OBJECT(sel), "changed", G_CALLBACK(smiley_sel), NULL);
+
+	alignment = gtk_alignment_new(1.0, 0.5, 0.0, 1.0);
+	gtk_widget_show(alignment);
+	gtk_box_pack_start(GTK_BOX(ret), alignment, FALSE, TRUE, 0);
+
+	hbox_buttons = gtk_hbox_new(TRUE, PIDGIN_HIG_CAT_SPACE);
+	gtk_widget_show(hbox_buttons);
+	gtk_container_add(GTK_CONTAINER(alignment), hbox_buttons);
+
+	add_button = gtk_button_new_from_stock(GTK_STOCK_ADD);
+	gtk_widget_show(add_button);
+	gtk_box_pack_start(GTK_BOX(hbox_buttons), add_button, FALSE, TRUE, 0);
+	g_signal_connect(G_OBJECT(add_button), "clicked", (GCallback)add_theme_button_clicked_cb, view);
+
+	remove_button = gtk_button_new_from_stock(GTK_STOCK_REMOVE);
+	gtk_widget_show(remove_button);
+	gtk_box_pack_start(GTK_BOX(hbox_buttons), remove_button, FALSE, TRUE, 0);
+	g_signal_connect(G_OBJECT(remove_button), "clicked", (GCallback)remove_theme_button_clicked_cb, view);
+	g_object_set_data(G_OBJECT(sel), "remove_button", remove_button);
 
 	if (rowref) {
 		GtkTreePath *path = gtk_tree_row_reference_get_path(rowref);
