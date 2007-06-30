@@ -1051,7 +1051,7 @@ conv_page()
 									GTK_IMHTML_BACKCOLOR |
 									GTK_IMHTML_BACKGROUND);
 
-	gtk_imhtml_append_text(GTK_IMHTML(imhtml), _("This is how your outgoing message text will appear when you use protocols that support formatting. :)"), 0);
+	gtk_imhtml_append_text(GTK_IMHTML(imhtml), _("This is how your outgoing message text will appear when you use protocols that support formatting."), 0);
 
 	gtk_box_pack_start(GTK_BOX(vbox), frame, TRUE, TRUE, 0);
 
