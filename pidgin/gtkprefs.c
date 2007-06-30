@@ -631,15 +631,15 @@ static gint pidgin_sort_smileys (GtkTreeModel	*model,
 }
 
 static void
-request_theme_file_name_cb (gpointer data, char *theme_file_name)
+request_theme_file_name_cb(gpointer data, char *theme_file_name)
 {
-	theme_install_theme (theme_file_name, NULL) ;
+	theme_install_theme(theme_file_name, NULL) ;
 }
 
 static void
-add_theme_button_clicked_cb (GtkWidget *widget, gpointer null)
+add_theme_button_clicked_cb(GtkWidget *widget, gpointer null)
 {
-	purple_request_file (NULL, "Install Theme", NULL, FALSE, (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, NULL) ;
+	purple_request_file(NULL, "Install Theme", NULL, FALSE, (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, NULL) ;
 }
 
 static void
