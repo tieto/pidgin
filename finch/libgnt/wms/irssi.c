@@ -248,6 +248,12 @@ move_direction(GntBindable *bindable, GList *list)
 }
 
 static void
+irssi_terminal_refresh(GntWM *wm)
+{
+	draw_line_separators((Irssi*)wm);
+}
+
+static void
 irssi_class_init(IrssiClass *klass)
 {
 	GntWMClass *pclass = GNT_WM_CLASS(klass);
@@ -258,6 +264,7 @@ irssi_class_init(IrssiClass *klass)
 	pclass->window_resized = irssi_window_resized;
 	pclass->close_window = irssi_close_window;
 	pclass->window_update = irssi_update_window;
+	pclass->terminal_refresh = irssi_terminal_refresh;
 
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "move-up", move_direction,
 			"\033" "K", GINT_TO_POINTER('k'), NULL);
