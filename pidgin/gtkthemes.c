@@ -47,15 +47,16 @@ gboolean pidgin_themes_smileys_disabled()
 }
 
 static void
-pidgin_themes_destroy_smiley_theme(struct smiley_theme *theme) {
-			pidgin_themes_destroy_smiley_theme_smileys(theme);
+pidgin_themes_destroy_smiley_theme(struct smiley_theme *theme)
+{
+	pidgin_themes_destroy_smiley_theme_smileys(theme);
 
-			g_free(theme->name);
-			g_free(theme->desc);
-			g_free(theme->author);
-			g_free(theme->icon);
-			g_free(theme->path);
-			g_free(theme);
+	g_free(theme->name);
+	g_free(theme->desc);
+	g_free(theme->author);
+	g_free(theme->icon);
+	g_free(theme->path);
+	g_free(theme);
 }
 
 static void pidgin_themes_remove_theme_dir(const char *theme_dir_name)
@@ -166,18 +167,6 @@ pidgin_themes_destroy_smiley_theme_smileys(struct smiley_theme *theme)
 	g_hash_table_destroy(already_freed);
 }
 
-static void smiley_theme_free(struct smiley_theme *theme)
-{
-	pidgin_themes_destroy_smiley_theme(theme);
-
-	g_free(theme->name);
-	g_free(theme->desc);
-	g_free(theme->author);
-	g_free(theme->icon);
-	g_free(theme->path);
-	g_free(theme);
-}
-
 static void
 pidgin_smiley_themes_remove_non_existing()
 {
@@ -191,7 +180,7 @@ pidgin_smiley_themes_remove_non_existing()
 		if (!g_file_test(theme->path, G_FILE_TEST_EXISTS)) {
 			if (theme == current_smiley_theme)
 				current_smiley_theme = ((struct smiley_theme *)(NULL == iter->next ? NULL : iter->next->data));
-			smiley_theme_free(theme);
+			pidgin_themes_destroy_smiley_theme(theme);
 			iter->data = NULL;
 		}
 	}
@@ -332,7 +321,7 @@ void pidgin_themes_load_smiley_theme(const char *file, gboolean load)
 	if (!theme->name || !theme->desc || !theme->author) {
 		purple_debug_error("gtkthemes", "Invalid file format, not loading smiley theme from '%s'\n", file);
 
-		smiley_theme_free(theme);
+		pidgin_themes_destroy_smiley_theme(theme);
 		return;
 	}
 
