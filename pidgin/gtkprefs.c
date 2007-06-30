@@ -523,7 +523,7 @@ static void theme_install_theme(char *path, char *extn) {
 	if (theme_rowref != NULL) {
 		GtkTreePath *tp = gtk_tree_row_reference_get_path(theme_rowref);
 
-		if(tp)
+		if (tp)
 			gtk_tree_selection_select_path(smiley_theme_sel, tp);
 		gtk_tree_row_reference_free(theme_rowref);
 	}
@@ -650,15 +650,14 @@ remove_theme_button_clicked_cb(GtkWidget *button, GtkTreeView *tv)
 	GtkTreeIter itr;
 	GtkTreeRowReference *trr = NULL;
 
-	if ((tm = gtk_tree_view_get_model(tv)) == NULL) return;
-	if (!gtk_tree_selection_get_selected(smiley_theme_sel, NULL, &itr)) return;
+	if ((tm = gtk_tree_view_get_model(tv)) == NULL)
+		return;
+	if (!gtk_tree_selection_get_selected(smiley_theme_sel, NULL, &itr))
+		return;
 	gtk_tree_model_get(tm, &itr, 2, &theme_file, 3, &theme_name, -1);
 
-	if(theme_name && strcmp(theme_name, "none")) {
-		if (theme_file) {
-			pidgin_themes_remove_smiley_theme(theme_file);
-		}
-	}
+	if (theme_file && theme_name && strcmp(theme_name, "none"))
+		pidgin_themes_remove_smiley_theme(theme_file);
 
 	if ((trr = theme_refresh_theme_list()) != NULL) {
 		GtkTreePath *tp = gtk_tree_row_reference_get_path(trr);
