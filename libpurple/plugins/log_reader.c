@@ -234,7 +234,7 @@ static char *adium_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	gchar *read = NULL;
 	gsize length;
 
-	/* XXX: TODO: We probably want to set PURPLE_LOG_READ_NO_NEWLINES
+	/* XXX: TODO: We probably want to set PURPLE_LOG_READ_NO_NEWLINE
 	 * XXX: TODO: for HTML logs. */
 	*flags = 0;
 
