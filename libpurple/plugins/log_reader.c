@@ -874,6 +874,7 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	GString *text = NULL;
 	xmlnode *message;
 
+	*flags = PURPLE_LOG_READ_NO_NEWLINE;
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
 	data = log->logger_data;
@@ -1126,10 +1127,10 @@ static char * msn_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 			text = g_string_append(text, style);
 			text = g_string_append(text, "\">");
 			text = g_string_append(text, tmp);
-			text = g_string_append(text, "</span>\n");
+			text = g_string_append(text, "</span><br>");
 		} else {
 			text = g_string_append(text, tmp);
-			text = g_string_append(text, "\n");
+			text = g_string_append(text, "<br>");
 		}
 		g_free(tmp);
 	}
