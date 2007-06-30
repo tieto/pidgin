@@ -2250,8 +2250,10 @@ blist_show(PurpleBuddyList *list)
 {
 	if (ggblist == NULL)
 		new_list(list);
-	else if (ggblist->window)
+	else if (ggblist->window) {
+		gnt_window_present(ggblist->window);
 		return;
+	}
 
 	ggblist->window = gnt_vwindow_new(FALSE);
 	gnt_widget_set_name(ggblist->window, "buddylist");

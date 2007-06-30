@@ -672,6 +672,7 @@ finch_pounces_manager_show(void)
 	GntWidget *win;
 
 	if (pounces_manager != NULL) {
+		gnt_window_present(pounces_manager->window);
 		return;
 	}
 
