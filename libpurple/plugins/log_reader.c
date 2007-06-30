@@ -1422,6 +1422,7 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 	char *c;
 	const char *line;
 
+	*flags = PURPLE_LOG_READ_NO_NEWLINE;
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
 	data = log->logger_data;
@@ -1676,10 +1677,14 @@ static char * trillian_logger_read (PurpleLog *log, PurpleLogReadFlags *flags)
 		if (footer)
 			g_string_append(formatted, footer);
 
-		g_string_append_c(formatted, '\n');
+		g_string_append(formatted, "<br>");
 	}
 
 	g_free(read);
+
+	/* XXX: TODO: What can we do about removing \r characters?
+	 * XXX: TODO: and will that allow us to avoid this
+	 * XXX: TODO: g_strchomp(), or is that unrelated? */
 	/* XXX: TODO: Avoid this g_strchomp() */
 	return g_strchomp(g_string_free(formatted, FALSE));
 }
