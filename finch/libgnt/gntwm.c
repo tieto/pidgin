@@ -61,6 +61,7 @@ enum
 	SIG_GIVE_FOCUS,
 	SIG_KEY_PRESS,
 	SIG_MOUSE_CLICK,
+	SIG_TERMINAL_REFRESH,
 	SIGS
 };
 
@@ -1031,6 +1032,8 @@ refresh_screen(GntBindable *bindable, GList *null)
 	endwin();
 
 	g_hash_table_foreach(wm->nodes, (GHFunc)refresh_node, NULL);
+	refresh();
+	g_signal_emit(wm, signals[SIG_TERMINAL_REFRESH], 0);
 	update_screen(wm);
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
 	curs_set(0);   /* endwin resets the cursor to normal */
@@ -1237,6 +1240,15 @@ gnt_wm_class_init(GntWMClass *klass)
 					 gnt_boolean_handled_accumulator, NULL,
 					 gnt_closure_marshal_BOOLEAN__INT_INT_INT_POINTER,
 					 G_TYPE_BOOLEAN, 4, G_TYPE_INT, G_TYPE_INT, G_TYPE_INT, G_TYPE_POINTER);
+
+	signals[SIG_TERMINAL_REFRESH] = 
+		g_signal_new("terminal-refresh",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 G_STRUCT_OFFSET(GntWMClass, terminal_refresh),
+					 NULL, NULL,
+					 g_cclosure_marshal_VOID__VOID,
+					 G_TYPE_NONE, 0);
 
 	gnt_bindable_class_register_action(GNT_BINDABLE_CLASS(klass), "window-next", window_next,
 				"\033" "n", NULL);
