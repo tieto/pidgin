@@ -20,6 +20,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * @see @ref core-signals
  */
 #ifndef _PURPLE_CORE_H_
 #define _PURPLE_CORE_H_
@@ -120,6 +122,16 @@ PurpleCoreUiOps *purple_core_get_ui_ops(void);
  *         the application must display an error to the user and then exit.
  */
 gboolean purple_core_migrate(void);
+
+/**
+ * Ensures that only one instance is running.
+ *
+ * @return A boolean such that @c TRUE indicates that this is the first instance,
+ *         whereas @c FALSE indicates that there is another instance running.
+ *
+ * @since 2.1.0
+ */
+gboolean purple_core_ensure_single_instance(void);
 
 #ifdef __cplusplus
 }

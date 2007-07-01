@@ -129,7 +129,7 @@ static int
 goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *password, ClientInfo *ci)
 {
 	FlapFrame *frame;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 	int passwdlen;
 	guint8 *password_encoded;
 
@@ -143,24 +143,24 @@ goddamnicq2(OscarData *od, FlapConnection *conn, const char *sn, const char *pas
 	aim_encode_password(password, password_encoded);
 
 	byte_stream_put32(&frame->data, 0x00000001); /* FLAP Version */
-	aim_tlvlist_add_str(&tl, 0x0001, sn);
-	aim_tlvlist_add_raw(&tl, 0x0002, passwdlen, password_encoded);
+	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
+	aim_tlvlist_add_raw(&tlvlist, 0x0002, passwdlen, password_encoded);
 
 	if (ci->clientstring)
-		aim_tlvlist_add_str(&tl, 0x0003, ci->clientstring);
-	aim_tlvlist_add_16(&tl, 0x0016, (guint16)ci->clientid);
-	aim_tlvlist_add_16(&tl, 0x0017, (guint16)ci->major);
-	aim_tlvlist_add_16(&tl, 0x0018, (guint16)ci->minor);
-	aim_tlvlist_add_16(&tl, 0x0019, (guint16)ci->point);
-	aim_tlvlist_add_16(&tl, 0x001a, (guint16)ci->build);
-	aim_tlvlist_add_32(&tl, 0x0014, (guint32)ci->distrib); /* distribution chan */
-	aim_tlvlist_add_str(&tl, 0x000f, ci->lang);
-	aim_tlvlist_add_str(&tl, 0x000e, ci->country);
+		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
+	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
+	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
+	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
+	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
+	aim_tlvlist_add_32(&tlvlist, 0x0014, (guint32)ci->distrib); /* distribution chan */
+	aim_tlvlist_add_str(&tlvlist, 0x000f, ci->lang);
+	aim_tlvlist_add_str(&tlvlist, 0x000e, ci->country);
 
-	aim_tlvlist_write(&frame->data, &tl);
+	aim_tlvlist_write(&frame->data, &tlvlist);
 
 	g_free(password_encoded);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 
@@ -201,7 +201,7 @@ int
 aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *password, gboolean truncate_pass, ClientInfo *ci, const char *key)
 {
 	FlapFrame *frame;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 	guint8 digest[16];
 	aim_snacid_t snacid;
 	size_t password_len;
@@ -211,7 +211,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 
 #ifdef USE_XOR_FOR_ICQ
 	/* If we're signing on an ICQ account then use the older, XOR login method */
-	if (isdigit(sn[0]))
+	if (aim_sn_is_icq(sn))
 		return goddamnicq2(od, conn, sn, password, ci);
 #endif
 
@@ -220,43 +220,43 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 	snacid = aim_cachesnac(od, 0x0017, 0x0002, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, 0x0017, 0x0002, 0x0000, snacid);
 
-	aim_tlvlist_add_str(&tl, 0x0001, sn);
+	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 
 	/* Truncate ICQ and AOL passwords, if necessary */
 	password_len = strlen(password);
-	if (isdigit(sn[0]) && (password_len > MAXICQPASSLEN))
+	if (aim_sn_is_icq(sn) && (password_len > MAXICQPASSLEN))
 		password_len = MAXICQPASSLEN;
 	else if (truncate_pass && password_len > 8)
 		password_len = 8;
 
 	aim_encode_password_md5(password, password_len, key, digest);
 
-	aim_tlvlist_add_raw(&tl, 0x0025, 16, digest);
+	aim_tlvlist_add_raw(&tlvlist, 0x0025, 16, digest);
 
 #ifndef USE_OLD_MD5
-	aim_tlvlist_add_noval(&tl, 0x004c);
+	aim_tlvlist_add_noval(&tlvlist, 0x004c);
 #endif
 
 	if (ci->clientstring)
-		aim_tlvlist_add_str(&tl, 0x0003, ci->clientstring);
-	aim_tlvlist_add_16(&tl, 0x0016, (guint16)ci->clientid);
-	aim_tlvlist_add_16(&tl, 0x0017, (guint16)ci->major);
-	aim_tlvlist_add_16(&tl, 0x0018, (guint16)ci->minor);
-	aim_tlvlist_add_16(&tl, 0x0019, (guint16)ci->point);
-	aim_tlvlist_add_16(&tl, 0x001a, (guint16)ci->build);
-	aim_tlvlist_add_32(&tl, 0x0014, (guint32)ci->distrib);
-	aim_tlvlist_add_str(&tl, 0x000f, ci->lang);
-	aim_tlvlist_add_str(&tl, 0x000e, ci->country);
+		aim_tlvlist_add_str(&tlvlist, 0x0003, ci->clientstring);
+	aim_tlvlist_add_16(&tlvlist, 0x0016, (guint16)ci->clientid);
+	aim_tlvlist_add_16(&tlvlist, 0x0017, (guint16)ci->major);
+	aim_tlvlist_add_16(&tlvlist, 0x0018, (guint16)ci->minor);
+	aim_tlvlist_add_16(&tlvlist, 0x0019, (guint16)ci->point);
+	aim_tlvlist_add_16(&tlvlist, 0x001a, (guint16)ci->build);
+	aim_tlvlist_add_32(&tlvlist, 0x0014, (guint32)ci->distrib);
+	aim_tlvlist_add_str(&tlvlist, 0x000f, ci->lang);
+	aim_tlvlist_add_str(&tlvlist, 0x000e, ci->country);
 
 	/*
 	 * If set, old-fashioned buddy lists will not work. You will need
 	 * to use SSI.
 	 */
-	aim_tlvlist_add_8(&tl, 0x004a, 0x01);
+	aim_tlvlist_add_8(&tlvlist, 0x004a, 0x01);
 
-	aim_tlvlist_write(&frame->data, &tl);
+	aim_tlvlist_write(&frame->data, &tlvlist);
 
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 
@@ -274,7 +274,7 @@ aim_send_login(OscarData *od, FlapConnection *conn, const char *sn, const char *
 static int
 parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	aim_rxcallback_t userfunc;
 	struct aim_authresp_info *info;
 	int ret = 0;
@@ -402,7 +402,7 @@ parse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, 
 	if ((userfunc = aim_callhandler(od, snac ? snac->family : 0x0017, snac ? snac->subtype : 0x0003)))
 		ret = userfunc(od, conn, frame, info);
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }
@@ -471,13 +471,13 @@ aim_request_login(OscarData *od, FlapConnection *conn, const char *sn)
 {
 	FlapFrame *frame;
 	aim_snacid_t snacid;
-	aim_tlvlist_t *tl = NULL;
+	GSList *tlvlist = NULL;
 
 	if (!od || !conn || !sn)
 		return -EINVAL;
 
 #ifdef USE_XOR_FOR_ICQ
-	if (isdigit(sn[0]))
+	if (aim_sn_is_icq(sn))
 		return goddamnicq(od, conn, sn);
 #endif
 
@@ -486,16 +486,16 @@ aim_request_login(OscarData *od, FlapConnection *conn, const char *sn)
 	snacid = aim_cachesnac(od, 0x0017, 0x0006, 0x0000, NULL, 0);
 	aim_putsnac(&frame->data, 0x0017, 0x0006, 0x0000, snacid);
 
-	aim_tlvlist_add_str(&tl, 0x0001, sn);
+	aim_tlvlist_add_str(&tlvlist, 0x0001, sn);
 
 	/* Tell the server we support SecurID logins. */
-	aim_tlvlist_add_noval(&tl, 0x004b);
+	aim_tlvlist_add_noval(&tlvlist, 0x004b);
 
 	/* Unknown.  Sent in recent WinAIM clients.*/
-	aim_tlvlist_add_noval(&tl, 0x005a);
+	aim_tlvlist_add_noval(&tlvlist, 0x005a);
 
-	aim_tlvlist_write(&frame->data, &tl);
-	aim_tlvlist_free(&tl);
+	aim_tlvlist_write(&frame->data, &tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	flap_connection_send(conn, frame);
 
@@ -517,7 +517,7 @@ keyparse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 	int keylen, ret = 1;
 	aim_rxcallback_t userfunc;
 	char *keystr;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	gboolean truncate_pass;
 
 	keylen = byte_stream_get16(bs);
@@ -539,7 +539,7 @@ keyparse(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *fram
 		ret = userfunc(od, conn, frame, keystr, (int)truncate_pass);
 
 	g_free(keystr);
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	return ret;
 }

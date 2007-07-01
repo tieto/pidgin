@@ -165,7 +165,7 @@ static struct translator current_translators[] = {
 	{N_("Japanese"),            "ja", "Takashi Aihana", "aihana@gnome.gr.jp"},
 	{N_("Georgian"),            "ka", N_("Ubuntu Georgian Translators"), "alexander.didebulidze@stusta.mhn.de"},
 	{N_("Kannada"),             "kn", N_("Kannada Translation team"), "translation@sampada.info"},
-	{N_("Korean"),              "ko", "Kyung-uk Son", "vvs740@chol.com"},
+	{N_("Korean"),              "ko", "Sushizang", "sushizang@empal.com"},
 	{N_("Kurdish"),             "ku", "Erdal Ronahi", "erdal.ronahi@gmail.com"},
 	{N_("Kurdish"),             "ku", "Amed Ç. Jiyan", "amedcj@hotmail.com"},
 	{N_("Kurdish"),             "ku", "Rizoyê Xerzî", "rizoxerzi@hotmail.com"},
@@ -230,6 +230,7 @@ static struct translator past_translators[] = {
 	{N_("Japanese"),            "ja", "Junichi Uekawa", NULL},
 	{N_("Georgian"),            "ka", "Temuri Doghonadze", NULL},
 	{N_("Korean"),              "ko", "Sang-hyun S, A Ho-seok Lee", NULL},
+	{N_("Korean"),              "ko", "Kyeong-uk Son", "hey@gnome.or.kr"},
 	{N_("Lithuanian"),          "lt", "Andrius Štikonas", NULL},
 	{N_("Lithuanian"),          "lt", "Gediminas Čičinskas", NULL},
 	{N_("Macedonian"),          "mk", "Tomislav Markovski", "herrera@users.sf.net"},
@@ -823,7 +824,7 @@ pidgin_dialogs_info_cb(gpointer data, PurpleRequestFields *fields)
 		found = pidgin_dialogs_ee(username);
 
 	if (!found && username != NULL && *username != '\0' && account != NULL)
-		serv_get_info(purple_account_get_connection(account), username);
+		pidgin_retrieve_user_info(purple_account_get_connection(account), username);
 
 	g_free(username);
 }

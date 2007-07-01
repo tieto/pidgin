@@ -247,6 +247,8 @@ nexus_login_written_cb(gpointer data, gint source, PurpleInputCondition cond)
 				temp = g_strndup(error, c - error);
 				error = purple_url_decode(temp);
 				g_free(temp);
+				if ((temp = strstr(error, " Do one of the following or try again:")) != NULL)
+					*temp = '\0';
 			}
 		}
 

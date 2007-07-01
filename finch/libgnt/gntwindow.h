@@ -1,3 +1,29 @@
+/**
+ * @file gntwindow.h Window API
+ * @ingroup gnt
+ */
+/*
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #ifndef GNT_WINDOW_H
 #define GNT_WINDOW_H
 
@@ -40,16 +66,41 @@ struct _GntWindowClass
 
 G_BEGIN_DECLS
 
+/**
+ * 
+ *
+ * @return
+ */
 GType gnt_window_get_gtype(void);
 
 #define gnt_vwindow_new(homo) gnt_window_box_new(homo, TRUE)
 #define gnt_hwindow_new(homo) gnt_window_box_new(homo, FALSE)
 
-GntWidget *gnt_window_new(void);
+/**
+ * 
+ *
+ * @return
+ */
+GntWidget * gnt_window_new(void);
 
-GntWidget *gnt_window_box_new(gboolean homo, gboolean vert);
+/**
+ * 
+ * @param homo
+ * @param vert
+ *
+ * @return
+ */
+GntWidget * gnt_window_box_new(gboolean homo, gboolean vert);
 
+/**
+ * 
+ * @param window
+ * @param menu
+ */
 void gnt_window_set_menu(GntWindow *window, GntMenu *menu);
+
+void gnt_window_workspace_hiding(GntWindow *);
+void gnt_window_workspace_showing(GntWindow *);
 
 G_END_DECLS
 

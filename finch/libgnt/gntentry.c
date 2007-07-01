@@ -1,8 +1,31 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include <ctype.h>
 #include <string.h>
 
 #include "gntbox.h"
 #include "gntentry.h"
+#include "gntmarshal.h"
 #include "gntstyle.h"
 #include "gnttree.h"
 #include "gntutils.h"
@@ -10,6 +33,7 @@
 enum
 {
 	SIG_TEXT_CHANGED,
+	SIG_COMPLETION,
 	SIGS,
 };
 static guint signals[SIGS] = { 0 };
@@ -47,9 +71,12 @@ static gboolean
 complete_suggest(GntEntry *entry, const char *text)
 {
 	gboolean changed = FALSE;
+	int offstart = 0, offend = 0;
+
 	if (entry->word) {
 		char *s = get_beginning_of_word(entry);
 		const char *iter = text;
+		offstart = g_utf8_pointer_to_offset(entry->start, s);
 		while (*iter && toupper(*s) == toupper(*iter)) {
 			if (*s != *iter)
 				changed = TRUE;
@@ -59,10 +86,17 @@ complete_suggest(GntEntry *entry, const char *text)
 			gnt_entry_key_pressed(GNT_WIDGET(entry), iter);
 			changed = TRUE;
 		}
+		offend = g_utf8_pointer_to_offset(entry->start, entry->cursor);
 	} else {
+		offstart = 0;
 		gnt_entry_set_text_internal(entry, text);
 		changed = TRUE;
+		offend = g_utf8_strlen(text, -1);
 	}
+
+	if (changed)
+		g_signal_emit(G_OBJECT(entry), signals[SIG_COMPLETION], 0,
+				entry->start + offstart, entry->start + offend);
 	return changed;
 }
 
@@ -157,7 +191,7 @@ gnt_entry_draw(GntWidget *widget)
 
 	stop = gnt_util_onscreen_width(entry->scroll, entry->end);
 	if (stop < widget->priv.width)
-		whline(widget->window, ENTRY_CHAR, widget->priv.width - stop);
+		mvwhline(widget->window, 0, stop, ENTRY_CHAR, widget->priv.width - stop);
 
 	if (focus)
 		mvwchgat(widget->window, 0, gnt_util_onscreen_width(entry->scroll, entry->cursor),
@@ -664,6 +698,14 @@ gnt_entry_class_init(GntEntryClass *klass)
 					 NULL, NULL,
 					 g_cclosure_marshal_VOID__VOID,
 					 G_TYPE_NONE, 0);
+
+	signals[SIG_COMPLETION] =
+		g_signal_new("completion",
+					 G_TYPE_FROM_CLASS(klass),
+					 G_SIGNAL_RUN_LAST,
+					 0, NULL, NULL,
+					 gnt_closure_marshal_VOID__POINTER_POINTER,
+					 G_TYPE_NONE, 2, G_TYPE_POINTER, G_TYPE_POINTER);
 
 	gnt_bindable_class_register_action(bindable, "cursor-home", move_start,
 				GNT_KEY_CTRL_A, NULL);

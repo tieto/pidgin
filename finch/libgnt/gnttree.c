@@ -1,3 +1,25 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include "gntmarshal.h"
 #include "gntstyle.h"
 #include "gnttree.h"
@@ -731,15 +753,16 @@ gnt_tree_key_pressed(GntWidget *widget, const char *text)
 			g_signal_emit(tree, signals[SIG_TOGGLED], 0, row->key);
 			redraw_tree(tree);
 		}
+	} else {
+		return FALSE;
 	}
 
 	if (old != tree->current)
 	{
 		tree_selection_changed(tree, old, tree->current);
-		return TRUE;
 	}
 
-	return FALSE;
+	return TRUE;
 }
 
 static void
@@ -994,7 +1017,7 @@ int gnt_tree_get_visible_rows(GntTree *tree)
 	return ret;
 }
 
-const GList *gnt_tree_get_rows(GntTree *tree)
+GList *gnt_tree_get_rows(GntTree *tree)
 {
 	return tree->list;
 }
@@ -1501,6 +1524,12 @@ void gnt_tree_set_col_width(GntTree *tree, int col, int width)
 	g_return_if_fail(col < tree->ncol);
 
 	tree->columns[col].width = width;
+}
+
+void gnt_tree_set_column_title(GntTree *tree, int index, const char *title)
+{
+	g_free(tree->columns[index].title);
+	tree->columns[index].title = g_strdup(title);
 }
 
 void gnt_tree_set_column_titles(GntTree *tree, ...)

@@ -9,6 +9,9 @@
 #include <EXTERN.h>
 #include <perl.h>
 
+/* XXX: perl defines it's own _ but I think it's safe to undef it */
+#undef _
+#include "internal.h"
 #include "plugin.h"
 #include "value.h"
 

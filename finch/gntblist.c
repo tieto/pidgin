@@ -22,6 +22,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "finch.h"
+
 #include <account.h>
 #include <blist.h>
 #include <notify.h>
@@ -33,7 +35,6 @@
 #include <util.h>
 #include "debug.h"
 
-#include "finch.h"
 #include "gntbox.h"
 #include "gntcombobox.h"
 #include "gntentry.h"
@@ -104,6 +105,7 @@ static void add_contact(PurpleContact *contact, FinchBlist *ggblist);
 static void add_group(PurpleGroup *group, FinchBlist *ggblist);
 static void add_chat(PurpleChat *chat, FinchBlist *ggblist);
 static void add_node(PurpleBlistNode *node, FinchBlist *ggblist);
+static void node_update(PurpleBuddyList *list, PurpleBlistNode *node);
 static void draw_tooltip(FinchBlist *ggblist);
 static gboolean remove_typing_cb(gpointer null);
 static void remove_peripherals(FinchBlist *ggblist);
@@ -189,6 +191,8 @@ node_remove(PurpleBuddyList *list, PurpleBlistNode *node)
 		if ((!purple_prefs_get_bool(PREF_ROOT "/showoffline") && !is_contact_online(contact)) ||
 				contact->currentsize < 1)
 			node_remove(list, (PurpleBlistNode*)contact);
+		else
+			node_update(list, (PurpleBlistNode*)contact);
 	} else if (!PURPLE_BLIST_NODE_IS_GROUP(node)) {
 		PurpleGroup *group = (PurpleGroup*)node->parent;
 		if ((!purple_prefs_get_bool(PREF_ROOT "/showoffline") && !is_group_online(group)) ||
@@ -214,6 +218,9 @@ node_update(PurpleBuddyList *list, PurpleBlistNode *node)
 
 	if (list->ui_data == NULL)
 		return;   /* XXX: this is probably the place to auto-join chats */
+
+	if (ggblist->window == NULL)
+		return;
 
 	if (node->ui_data != NULL) {
 		gnt_tree_change_text(GNT_TREE(ggblist->tree), node,
@@ -634,9 +641,18 @@ selection_activate(GntWidget *widget, FinchBlist *ggblist)
 	if (PURPLE_BLIST_NODE_IS_BUDDY(node))
 	{
 		PurpleBuddy *buddy = (PurpleBuddy *)node;
-		PurpleConversation *conv =  purple_conversation_new(PURPLE_CONV_TYPE_IM,
-					purple_buddy_get_account(buddy),
-					purple_buddy_get_name(buddy));
+		PurpleConversation *conv;
+		conv = purple_find_conversation_with_account(PURPLE_CONV_TYPE_IM,
+					purple_buddy_get_name(buddy),
+					purple_buddy_get_account(buddy));
+		if (!conv) {
+			conv =  purple_conversation_new(PURPLE_CONV_TYPE_IM,
+						purple_buddy_get_account(buddy),
+						purple_buddy_get_name(buddy));
+		} else {
+			FinchConv *ggconv = conv->ui_data;
+			gnt_window_present(ggconv->window);
+		}
 		finch_conversation_set_active(conv);
 	}
 	else if (PURPLE_BLIST_NODE_IS_CHAT(node))
@@ -824,17 +840,22 @@ create_group_menu(GntMenu *menu, PurpleGroup *group)
 			PURPLE_CALLBACK(finch_add_group), group);
 }
 
+gpointer finch_retrieve_user_info(PurpleConnection *conn, const char *name)
+{
+	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
+	gpointer uihandle;
+	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
+	uihandle = purple_notify_userinfo(conn, name, info, NULL, NULL);
+	purple_notify_user_info_destroy(info);
+
+	serv_get_info(conn, name);
+	return uihandle;
+}
+
 static void
 finch_blist_get_buddy_info_cb(PurpleBuddy *buddy, PurpleBlistNode *selected)
 {
-	/* Add a userinfo with a "Retrieving information", which will later be updated
-	 * when the server finally returns the information. */
-	PurpleNotifyUserInfo *info = purple_notify_user_info_new();
-	purple_notify_user_info_add_pair(info, _("Information"), _("Retrieving..."));
-	purple_notify_userinfo(buddy->account->gc, purple_buddy_get_name(buddy), info, NULL, NULL);
-	purple_notify_user_info_destroy(info);
-
-	serv_get_info(buddy->account->gc, purple_buddy_get_name(buddy));
+	finch_retrieve_user_info(buddy->account->gc, purple_buddy_get_name(buddy));
 }
 
 static void
@@ -1239,7 +1260,7 @@ draw_context_menu(FinchBlist *ggblist)
 }
 
 static void
-tooltip_for_buddy(PurpleBuddy *buddy, GString *str)
+tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 {
 	PurplePlugin *prpl;
 	PurplePluginProtocolInfo *prpl_info;
@@ -1252,7 +1273,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str)
 
 	account = purple_buddy_get_account(buddy);
 
-	if (g_utf8_collate(purple_buddy_get_name(buddy), alias))
+	if (!full || g_utf8_collate(purple_buddy_get_name(buddy), alias))
 		purple_notify_user_info_add_pair(user_info, _("Nickname"), alias);
 
 	tmp = g_strdup_printf("%s (%s)",
@@ -1264,7 +1285,7 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str)
 	prpl = purple_find_prpl(purple_account_get_protocol_id(account));
 	prpl_info = PURPLE_PLUGIN_PROTOCOL_INFO(prpl);
 	if (prpl_info && prpl_info->tooltip_text) {
-		prpl_info->tooltip_text(buddy, user_info, TRUE);
+		prpl_info->tooltip_text(buddy, user_info, full);
 	}
 
 	if (purple_prefs_get_bool("/finch/blist/idletime")) {
@@ -1336,7 +1357,7 @@ draw_tooltip_real(FinchBlist *ggblist)
 		const char *name = purple_buddy_get_name(pr);
 
 		title = g_strdup(name);
-		tooltip_for_buddy(pr, str);
+		tooltip_for_buddy(pr, str, TRUE);
 		for (node = node->child; node; node = node->next) {
 			PurpleBuddy *buddy = (PurpleBuddy*)node;
 			if (offline) {
@@ -1351,11 +1372,11 @@ draw_tooltip_real(FinchBlist *ggblist)
 			if (!showoffline && !PURPLE_BUDDY_IS_ONLINE(buddy))
 				continue;
 			str = g_string_append(str, "\n----------\n");
-			tooltip_for_buddy(buddy, str);
+			tooltip_for_buddy(buddy, str, FALSE);
 		}
 	} else if (PURPLE_BLIST_NODE_IS_BUDDY(node)) {
 		PurpleBuddy *buddy = (PurpleBuddy *)node;
-		tooltip_for_buddy(buddy, str);
+		tooltip_for_buddy(buddy, str, TRUE);
 		title = g_strdup(purple_buddy_get_name(buddy));
 		if (!PURPLE_BUDDY_IS_ONLINE((PurpleBuddy*)node))
 			lastseen = purple_blist_node_get_int(node, "last_seen");
@@ -1401,9 +1422,10 @@ draw_tooltip_real(FinchBlist *ggblist)
 
 	str = make_sure_text_fits(str);
 	gnt_util_get_text_bound(str->str, &w, &h);
-	h = MAX(2, h);
+	h = MAX(1, h);
 	tv = gnt_text_view_new();
 	gnt_widget_set_size(tv, w + 1, h);
+	gnt_text_view_set_flag(GNT_TEXT_VIEW(tv), GNT_TEXT_VIEW_NO_SCROLL);
 	gnt_box_add_widget(GNT_BOX(box), tv);
 
 	gnt_widget_set_position(box, x, y);
@@ -2228,8 +2250,10 @@ blist_show(PurpleBuddyList *list)
 {
 	if (ggblist == NULL)
 		new_list(list);
-	else if (ggblist->window)
+	else if (ggblist->window) {
+		gnt_window_present(ggblist->window);
 		return;
+	}
 
 	ggblist->window = gnt_vwindow_new(FALSE);
 	gnt_widget_set_name(ggblist->window, "buddylist");
@@ -2296,6 +2320,8 @@ blist_show(PurpleBuddyList *list)
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "gained-focus", G_CALLBACK(draw_tooltip),
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 	g_signal_connect_data(G_OBJECT(ggblist->tree), "lost-focus", G_CALLBACK(remove_peripherals),
+				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
+	g_signal_connect_data(G_OBJECT(ggblist->window), "workspace-hidden", G_CALLBACK(remove_peripherals),
 				ggblist, 0, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 	g_signal_connect(G_OBJECT(ggblist->tree), "size_changed", G_CALLBACK(size_changed_cb), NULL);
 	g_signal_connect(G_OBJECT(ggblist->window), "position_set", G_CALLBACK(save_position_cb), NULL);

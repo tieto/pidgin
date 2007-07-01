@@ -28,6 +28,8 @@
  * Puzzlebird, Nov-Dec 2002
  */
 
+#include "internal.h"
+
 #include "debug.h"
 #include "server.h"
 

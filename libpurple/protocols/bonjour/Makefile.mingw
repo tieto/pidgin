@@ -8,7 +8,6 @@ PIDGIN_TREE_TOP := ../../..
 include $(PIDGIN_TREE_TOP)/libpurple/win32/global.mak
 
 TARGET = libbonjour
-NEEDED_DLLS = $(HOWL_TOP)/bin/libhowl-1.dll
 TYPE = PLUGIN
 
 # Static or Plugin...
@@ -21,20 +20,22 @@ ifeq ($(TYPE),PLUGIN)
 endif
 endif
 
+CFLAGS += -DUSE_BONJOUR_APPLE
+
 ##
 ## INCLUDE PATHS
 ##
-INCLUDE_PATHS +=	-I$(BONJOUR_ROOT) \
+INCLUDE_PATHS +=	-I. \
 			-I$(GTK_TOP)/include \
 			-I$(GTK_TOP)/include/glib-2.0 \
 			-I$(GTK_TOP)/lib/glib-2.0/include \
-			-I$(HOWL_TOP)/include \
+			-I$(BONJOUR_TOP)/include \
 			-I$(PURPLE_TOP) \
 			-I$(PURPLE_TOP)/win32 \
 			-I$(PIDGIN_TREE_TOP)
 
 LIB_PATHS +=		-L$(GTK_TOP)/lib \
-			-L$(HOWL_TOP)/lib \
+			-L$(BONJOUR_TOP)/lib \
 			-L$(PURPLE_TOP)
 
 ##
@@ -42,7 +43,8 @@ LIB_PATHS +=		-L$(GTK_TOP)/lib \
 ##
 C_SRC =			bonjour.c \
 			buddy.c \
-			dns_sd.c \
+			mdns_common.c \
+			mdns_win32.c \
 			jabber.c
 
 OBJECTS = $(C_SRC:%.c=%.o)
@@ -54,7 +56,7 @@ LIBS =	\
 			-lglib-2.0 \
 			-lws2_32 \
 			-lintl \
-			-lhowl \
+			-ldnssd \
 			-lpurple
 
 include $(PIDGIN_COMMON_RULES)
@@ -68,7 +70,6 @@ all: $(TARGET).dll
 
 install: all $(DLL_INSTALL_DIR)
 	cp $(TARGET).dll $(DLL_INSTALL_DIR)
-	cp $(NEEDED_DLLS) $(PURPLE_INSTALL_DIR)
 
 $(OBJECTS): $(PURPLE_CONFIG_H)
 

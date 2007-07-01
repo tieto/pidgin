@@ -463,7 +463,11 @@ jabber_login_callback(gpointer data, gint source, const gchar *error)
 	JabberStream *js = gc->proto_data;
 
 	if (source < 0) {
-		purple_connection_error(gc, _("Couldn't connect to host"));
+		gchar *tmp;
+		tmp = g_strdup_printf(_("Could not establish a connection with the server:\n%s"),
+				error);
+		purple_connection_error(gc, tmp);
+		g_free(tmp);
 		return;
 	}
 
@@ -1034,8 +1038,6 @@ void jabber_close(PurpleConnection *gc)
 
 void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 {
-	PurpleStoredImage *img;
-
 	js->state = state;
 	switch(state) {
 		case JABBER_STREAM_OFFLINE:
@@ -1067,12 +1069,6 @@ void jabber_stream_set_state(JabberStream *js, JabberStreamState state)
 
 			break;
 		case JABBER_STREAM_CONNECTED:
-			/* lets make sure our buddy icon is up to date
-			 * before we go letting people know we're here */
-			img = purple_buddy_icons_find_account_icon(js->gc->account);
-			jabber_set_buddy_icon(js->gc, img);
-			purple_imgstore_unref(img);
-
 			/* now we can alert the core that we're ready to send status */
 			purple_connection_set_state(js->gc, PURPLE_CONNECTED);
 			jabber_disco_items_server(js);
@@ -1120,9 +1116,11 @@ const char* jabber_list_emblem(PurpleBuddy *b)
 
 char *jabber_status_text(PurpleBuddy *b)
 {
-	JabberBuddy *jb = jabber_buddy_find(b->account->gc->proto_data, b->name,
-			FALSE);
 	char *ret = NULL;
+	JabberBuddy *jb = NULL;
+	
+	if (b->account->gc && b->account->gc->proto_data)
+		jb = jabber_buddy_find(b->account->gc->proto_data, b->name, FALSE);
 
 	if(jb && !PURPLE_BUDDY_IS_ONLINE(b) && (jb->subscription & JABBER_SUB_PENDING || !(jb->subscription & JABBER_SUB_TO))) {
 		ret = g_strdup(_("Not Authorized"));
@@ -1371,11 +1369,13 @@ static void jabber_password_change(PurplePluginAction *action)
 	field = purple_request_field_string_new("password1", _("Password"),
 			"", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	field = purple_request_field_string_new("password2", _("Password (again)"),
 			"", FALSE);
 	purple_request_field_string_set_masked(field, TRUE);
+	purple_request_field_set_required(field, TRUE);
 	purple_request_field_group_add_field(group, field);
 
 	purple_request_fields(js->gc, _("Change XMPP Password"),

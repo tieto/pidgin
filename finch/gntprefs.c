@@ -22,16 +22,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
+#include "finch.h"
+
 #include <prefs.h>
 #include <savedstatuses.h>
 
-#include "finch.h"
 #include "gntprefs.h"
 #include "gntrequest.h"
 
+#include "gnt.h"
+#include "gntwidget.h"
+
 #include <string.h>
 
-static GList *freestrings;  /* strings to be freed when the pref-window is closed */
+static struct {
+	GList *freestrings;  /* strings to be freed when the pref-window is closed */
+	gboolean showing;
+	GntWidget *window;
+} pref_request;
 
 void finch_prefs_init()
 {
@@ -89,7 +97,7 @@ static GList *
 get_status_titles()
 {
 	GList *list = NULL;
-	const GList *iter;
+	GList *iter;
 	for (iter = purple_savedstatuses_get_all(); iter; iter = iter->next) {
 		char *str;
 		if (purple_savedstatus_is_transient(iter->data))
@@ -97,7 +105,7 @@ get_status_titles()
 		str = g_strdup_printf("%ld", purple_savedstatus_get_creation_time(iter->data));
 		list = g_list_append(list, (char*)purple_savedstatus_get_title(iter->data));
 		list = g_list_append(list, str);
-		freestrings = g_list_prepend(freestrings, str);
+		pref_request.freestrings = g_list_prepend(pref_request.freestrings, str);
 	}
 	return list;
 }
@@ -189,22 +197,22 @@ static Prefs logging[] =
 	{PURPLE_PREF_NONE, NULL, NULL, NULL},
 };
 
-/* XXX: Translate after the freeze */
 static Prefs idle[] =
 {
-	{PURPLE_PREF_STRING, "/purple/away/idle_reporting", "Report Idle time", get_idle_options},
-	{PURPLE_PREF_BOOLEAN, "/purple/away/away_when_idle", "Change status when idle", NULL},
-	{PURPLE_PREF_INT, "/purple/away/mins_before_away", "Minutes before changing status", NULL},
-	{PURPLE_PREF_INT, "/purple/savedstatus/idleaway", "Change status to", get_status_titles},
+	{PURPLE_PREF_STRING, "/purple/away/idle_reporting", N_("Report Idle time"), get_idle_options},
+	{PURPLE_PREF_BOOLEAN, "/purple/away/away_when_idle", N_("Change status when idle"), NULL},
+	{PURPLE_PREF_INT, "/purple/away/mins_before_away", N_("Minutes before changing status"), NULL},
+	{PURPLE_PREF_INT, "/purple/savedstatus/idleaway", N_("Change status to"), get_status_titles},
 	{PURPLE_PREF_NONE, NULL, NULL, NULL},
 };
 
 static void
 free_strings()
 {
-	g_list_foreach(freestrings, (GFunc)g_free, NULL);
-	g_list_free(freestrings);
-	freestrings = NULL;
+	g_list_foreach(pref_request.freestrings, (GFunc)g_free, NULL);
+	g_list_free(pref_request.freestrings);
+	pref_request.freestrings = NULL;
+	pref_request.showing = FALSE;
 }
 
 static void
@@ -235,6 +243,11 @@ void finch_prefs_show_all()
 {
 	PurpleRequestFields *fields;
 
+	if (pref_request.showing) {
+		gnt_window_present(pref_request.window);
+		return;
+	}
+
 	fields = purple_request_fields_new();
 
 	add_pref_group(fields, _("Buddy List"), blist);
@@ -242,7 +255,8 @@ void finch_prefs_show_all()
 	add_pref_group(fields, _("Logging"), logging);
 	add_pref_group(fields, _("Idle"), idle);
 
-	purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
+	pref_request.showing = TRUE;
+	pref_request.window = purple_request_fields(NULL, _("Preferences"), NULL, NULL, fields,
 			_("Save"), G_CALLBACK(save_cb), _("Cancel"), free_strings,
 			NULL, NULL, NULL,
 			NULL);

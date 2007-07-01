@@ -31,10 +31,11 @@
 #include <gntline.h>
 #include <gnttree.h>
 
+#include "finch.h"
+
 #include <notify.h>
 #include <request.h>
 
-#include "finch.h"
 #include "gntstatus.h"
 
 static struct
@@ -83,7 +84,7 @@ reset_status_window(GntWidget *widget, gpointer null)
 static void
 populate_statuses(GntTree *tree)
 {
-	const GList *list;
+	GList *list;
 
 	for (list = purple_savedstatuses_get_all(); list; list = list->next)
 	{
@@ -162,8 +163,10 @@ edit_savedstatus_cb(GntWidget *widget, gpointer null)
 void finch_savedstatus_show_all()
 {
 	GntWidget *window, *tree, *box, *button;
-	if (statuses.window)
+	if (statuses.window) {
+		gnt_window_present(statuses.window);
 		return;
+	}
 
 	statuses.window = window = gnt_vbox_new(FALSE);
 	gnt_box_set_toplevel(GNT_BOX(window), TRUE);
@@ -244,7 +247,7 @@ update_edit_list(GntWidget *widget, EditStatus *edit)
 static void
 set_substatuses(EditStatus *edit)
 {
-	const GList *iter;
+	GList *iter;
 	for (iter = gnt_tree_get_rows(GNT_TREE(edit->tree)); iter; iter = iter->next) {
 		RowInfo *key = iter->data;
 		if (gnt_tree_get_choice(GNT_TREE(edit->tree), key)) {
@@ -410,7 +413,7 @@ popup_substatus(GntTree *tree, const char *key, EditStatus *edit)
 		EditSubStatus *sub;
 		GntWidget *window, *combo, *entry, *box, *button, *l;
 		PurpleSavedStatusSub *substatus = NULL;
-		const GList *iter;
+		GList *iter;
 		char *name;
 		RowInfo *selected = gnt_tree_get_selection_data(tree);
 		PurpleAccount *account = selected->account;

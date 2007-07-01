@@ -2660,7 +2660,7 @@ static void im_recv_mime(struct mwConversation *conv,
   GString *str;
 
   PurpleMimeDocument *doc;
-  const GList *parts;
+  GList *parts;
 
   img_by_cid = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, NULL);
   images = NULL;
@@ -3401,7 +3401,7 @@ static void conf_select_prompt_cancel(PurpleBuddy *buddy,
 static void conf_select_prompt_invite(PurpleBuddy *buddy,
 				      PurpleRequestFields *fields) {
   PurpleRequestField *f;
-  const GList *l;
+  GList *l;
   const char *msg;
   
   f = purple_request_fields_get_field(fields, CHAT_KEY_INVITE);
@@ -5268,7 +5268,7 @@ static void remote_group_multi_cleanup(gpointer ignore,
 				       PurpleRequestFields *fields) {
   
   PurpleRequestField *f;
-  const GList *l;
+  GList *l;
 
   f = purple_request_fields_get_field(fields, "group");
   l = purple_request_field_list_get_items(f);
@@ -5334,7 +5334,7 @@ static void remote_group_done(struct mwPurplePluginData *pd,
 static void remote_group_multi_cb(struct mwPurplePluginData *pd,
 				  PurpleRequestFields *fields) {
   PurpleRequestField *f;
-  const GList *l;
+  GList *l;
 
   f = purple_request_fields_get_field(fields, "group");
   l = purple_request_field_list_get_selected(f);

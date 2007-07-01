@@ -12,6 +12,7 @@ intltool-.*
 Doxyfile$
 aclocal.m4
 compile
+config.cache
 config.guess
 config.h$
 config.h.in
@@ -32,6 +33,8 @@ pidgin.spec$
 pidgin-.*.tar.gz
 pidgin-.*.tar.bz2
 pidgin/pidgin$
+pidgin/pixmaps/emotes/default/22/theme
+pidgin/pixmaps/emotes/none/theme
 pidgin/plugins/musicmessaging/music-messaging-bindings.c
 pidgin/plugins/perl/common/Makefile.PL$
 pidgin/win32/pidgin_dll_rc.rc$

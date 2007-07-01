@@ -360,4 +360,14 @@ void pidgin_blist_update_account_error_state(PurpleAccount *account, const char 
 void pidgin_blist_set_headline(const char *text, GdkPixbuf *pixbuf, GCallback callback, gpointer user_data,
 		GDestroyNotify destroy);
 
+/**
+ * Returns a buddy's Pango markup appropriate for setting in a GtkCellRenderer.
+ *
+ * @param buddy The buddy to return markup from
+ * @param selected  Whether this buddy is selected. If TRUE, the markup will not change the color.
+ * @param aliased  TRUE to return the appropriate alias of this buddy, FALSE to return its screenname
+ * @return The markup for this buddy
+ */
+gchar *pidgin_blist_get_name_markup(PurpleBuddy *buddy, gboolean selected, gboolean aliased);
+
 #endif /* _PIDGINBLIST_H_ */

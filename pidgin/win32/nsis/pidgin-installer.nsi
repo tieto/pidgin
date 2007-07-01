@@ -2,7 +2,7 @@
 ; Original Author: Herman Bloggs <hermanator12002@yahoo.com>
 ; Updated By: Daniel Atallah <daniel_atallah@yahoo.com>
 
-; NOTE: this .NSI script is intended for NSIS 2.08
+; NOTE: this .NSI script is intended for NSIS 2.27
 ;
 
 ;--------------------------------
@@ -38,6 +38,8 @@ SetDateSave on
 
 !include "MUI.nsh"
 !include "Sections.nsh"
+!include "WinVer.nsh"
+!include "LogicLib.nsh"
 
 !include "FileFunc.nsh"
 !insertmacro GetParameters
@@ -94,6 +96,13 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
 !endif
 
 ;--------------------------------
+;Reserve files used in .onInit
+;for faster start-up
+ReserveFile "${NSISDIR}\Plugins\System.dll"
+!insertmacro MUI_RESERVEFILE_INSTALLOPTIONS
+!insertmacro MUI_RESERVEFILE_LANGDLL
+
+;--------------------------------
 ;Modern UI Configuration
 
   !define MUI_ICON				".\pixmaps\pidgin-install.ico"
@@ -118,7 +127,7 @@ VIAddVersionKey "FileDescription" "Pidgin Installer (w/o GTK+ Installer)"
   !define MUI_FINISHPAGE_RUN			"$INSTDIR\pidgin.exe"
   !define MUI_FINISHPAGE_RUN_NOTCHECKED
   !define MUI_FINISHPAGE_LINK			$(PIDGIN_FINISH_VISIT_WEB_SITE)
-  !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im/win32"
+  !define MUI_FINISHPAGE_LINK_LOCATION		"http://pidgin.im"
 
 ;--------------------------------
 ;Pages
@@ -349,7 +358,7 @@ Section $(GTK_SECTION_TITLE) SecGtk
   StrCmp $R0 "2" upgrade_gtk
   ;StrCmp $R0 "3" no_gtk no_gtk
 
-  no_gtk:
+  ;no_gtk:
     StrCmp $R1 "NONE" gtk_no_install_rights
     ClearErrors
     ExecWait '"$TEMP\gtk-runtime.exe" /L=$LANGUAGE $ISSILENT /D=$GTK_FOLDER'
@@ -422,7 +431,11 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     WriteRegStr HKLM "${HKLM_APP_PATHS_KEY}" "Path" "$R1\bin"
     WriteRegStr HKLM ${PIDGIN_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKLM ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
-    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayName" $(PIDGIN_UNINSTALL_DESC)
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "DisplayVersion" "${PIDGIN_VERSION}"
+    WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "http://developer.pidgin.im/wiki/Using Pidgin"
+    WriteRegDWORD HKLM "${PIDGIN_UNINSTALL_KEY}" "NoModify" 1
+    WriteRegDWORD HKLM "${PIDGIN_UNINSTALL_KEY}" "NoRepair" 1
     WriteRegStr HKLM "${PIDGIN_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${PIDGIN_UNINST_EXE}"
     ; Sets scope of the desktop and Start Menu entries for all users.
     SetShellVarContext "all"
@@ -435,7 +448,11 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
 
     WriteRegStr HKCU ${PIDGIN_REG_KEY} "" "$INSTDIR"
     WriteRegStr HKCU ${PIDGIN_REG_KEY} "Version" "${PIDGIN_VERSION}"
-    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayName" $(PIDGIN_UNINSTALL_DESC)
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayName" "Pidgin"
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "DisplayVersion" "${PIDGIN_VERSION}"
+    WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "HelpLink" "http://developer.pidgin.im/wiki/Using Pidgin"
+    WriteRegDWORD HKCU "${PIDGIN_UNINSTALL_KEY}" "NoModify" 1
+    WriteRegDWORD HKCU "${PIDGIN_UNINSTALL_KEY}" "NoRepair" 1
     WriteRegStr HKCU "${PIDGIN_UNINSTALL_KEY}" "UninstallString" "$INSTDIR\${PIDGIN_UNINST_EXE}"
     Goto pidgin_install_files
 
@@ -481,12 +498,12 @@ Section $(PIDGIN_SECTION_TITLE) SecPidgin
     ; If this is under NT4, delete the SILC support stuff
     ; there is a bug that will prevent any account from connecting
     ; See https://lists.silcnet.org/pipermail/silc-devel/2005-January/001588.html
-    Call GetWindowsVersion
-    Pop $R2
-    StrCmp $R2 "NT 4.0" +1 +4
-    Delete "$INSTDIR\plugins\libsilc.dll"
-    Delete "$INSTDIR\silcclient.dll"
-    Delete "$INSTDIR\silc.dll"
+    ${If} ${IsNT}
+    ${AndIf} ${IsWinNT4}
+      Delete "$INSTDIR\plugins\libsilc.dll"
+      Delete "$INSTDIR\silcclient.dll"
+      Delete "$INSTDIR\silc.dll"
+    ${EndIf}
 
     SetOutPath "$INSTDIR"
 
@@ -680,7 +697,9 @@ Section Uninstall
     Delete "$INSTDIR\plugins\history.dll"
     Delete "$INSTDIR\plugins\iconaway.dll"
     Delete "$INSTDIR\plugins\idle.dll"
+    Delete "$INSTDIR\plugins\joinpart.dll"
     Delete "$INSTDIR\plugins\libaim.dll"
+    Delete "$INSTDIR\plugins\libbonjour.dll"
     Delete "$INSTDIR\plugins\libgg.dll"
     Delete "$INSTDIR\plugins\libicq.dll"
     Delete "$INSTDIR\plugins\libirc.dll"
@@ -1058,6 +1077,7 @@ Function DoWeNeedGtk
 
   have_gtk:
     ; GTK+ is already installed; check version.
+	; Change this to not even run the GTK installer if this version is already installed.
     ${VersionCompare} ${GTK_INSTALL_VERSION} $0 $3
     IntCmp $3 1 +1 good_version good_version
     ${VersionCompare} ${GTK_MIN_VERSION} $0 $3
@@ -1310,19 +1330,13 @@ Function preWelcomePage
   gtk_not_mandatory:
 
   ; If on Win95/98/ME warn them that the GTK+ version wont work
-  Call GetWindowsVersion
-  Pop $R1
-  StrCmp $R1 "95" win_ver_bad
-  StrCmp $R1 "98" win_ver_bad
-  StrCmp $R1 "ME" win_ver_bad
-  Goto done
-
-  win_ver_bad:
+  ${Unless} ${IsNT}
     !insertmacro UnselectSection ${SecGtk}
     !insertmacro SetSectionFlag ${SecGtk} ${SF_RO}
     MessageBox MB_OK $(GTK_WINDOWS_INCOMPATIBLE) /SD IDOK
     IntCmp $R0 1 done done ; Upgrade isn't optional - abort if we don't have a suitable version
     Quit
+  ${EndIf}
 
   done:
   Pop $R2
@@ -1384,98 +1398,6 @@ Function postGtkDirPage
   Pop $R0
 FunctionEnd
 !endif
-
-; GetWindowsVersion
-;
-; Based on Yazno's function, http://yazno.tripod.com/powerpimpit/
-; Updated by Joost Verburg
-;
-; Returns on top of stack
-;
-; Windows Version (95, 98, ME, NT x.x, 2000, XP, 2003, Vista)
-; or
-; '' (Unknown Windows Version)
-;
-; Usage:
-;   Call GetWindowsVersion
-;   Pop $R0
-;
-; at this point $R0 is "NT 4.0" or whatnot
-Function GetWindowsVersion
-
-  Push $R0
-  Push $R1
-
-  ClearErrors
-  ReadRegStr $R0 HKLM \
-  "SOFTWARE\Microsoft\Windows NT\CurrentVersion" CurrentVersion
-
-  IfErrors 0 lbl_winnt
-
-  ; we are not NT
-  ReadRegStr $R0 HKLM \
-  "SOFTWARE\Microsoft\Windows\CurrentVersion" VersionNumber
-
-  StrCpy $R1 $R0 1
-  StrCmp $R1 '4' 0 lbl_error
-
-  StrCpy $R1 $R0 3
-
-  StrCmp $R1 '4.0' lbl_win32_95
-  StrCmp $R1 '4.9' lbl_win32_ME lbl_win32_98
-
-  lbl_win32_95:
-    StrCpy $R0 '95'
-  Goto lbl_done
-
-  lbl_win32_98:
-    StrCpy $R0 '98'
-  Goto lbl_done
-
-  lbl_win32_ME:
-    StrCpy $R0 'ME'
-  Goto lbl_done
-
-  lbl_winnt:
-    StrCpy $R1 $R0 1
-
-    StrCmp $R1 '3' lbl_winnt_x
-    StrCmp $R1 '4' lbl_winnt_x
-
-    StrCpy $R1 $R0 3
-
-    StrCmp $R1 '5.0' lbl_winnt_2000
-    StrCmp $R1 '5.1' lbl_winnt_XP
-    StrCmp $R1 '5.2' lbl_winnt_2003
-    StrCmp $R1 '6.0' lbl_winnt_vista lbl_error
-
-  lbl_winnt_x:
-    StrCpy $R0 "NT $R0" 6
-  Goto lbl_done
-
-  lbl_winnt_2000:
-    Strcpy $R0 '2000'
-  Goto lbl_done
-
-  lbl_winnt_XP:
-    Strcpy $R0 'XP'
-  Goto lbl_done
-
-  lbl_winnt_2003:
-    Strcpy $R0 '2003'
-  Goto lbl_done
-
-  lbl_winnt_vista:
-    Strcpy $R0 'Vista'
-  Goto lbl_done
-
-  lbl_error:
-    Strcpy $R0 ''
-  lbl_done:
-
-  Pop $R1
-  Exch $R0
-FunctionEnd
 
 ; SpellChecker Related Functions
 ;-------------------------------

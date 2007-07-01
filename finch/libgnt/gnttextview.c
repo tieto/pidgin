@@ -1,3 +1,25 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include "gnttextview.h"
 #include "gntutils.h"
 
@@ -43,6 +65,7 @@ gnt_text_view_draw(GntWidget *widget)
 	int i = 0;
 	GList *lines;
 	int rows, scrcol;
+	gboolean has_scroll = !(view->flags & GNT_TEXT_VIEW_NO_SCROLL);
 
 	wbkgd(widget->window, COLOR_PAIR(GNT_COLOR_NORMAL));
 	werase(widget->window);
@@ -89,12 +112,12 @@ gnt_text_view_draw(GntWidget *widget)
 			*end = back;
 		}
 		wattroff(widget->window, A_UNDERLINE | A_BLINK | A_REVERSE);
-		whline(widget->window, ' ', widget->priv.width - line->length - 1);
+		whline(widget->window, ' ', widget->priv.width - line->length - has_scroll);
 	}
 
 	scrcol = widget->priv.width - 1;
 	rows = widget->priv.height - 2;
-	if (rows > 0)
+	if (has_scroll && rows > 0)
 	{
 		int total = g_list_length(g_list_first(view->list));
 		int showing, position, up, down;
@@ -121,11 +144,13 @@ gnt_text_view_draw(GntWidget *widget)
 				ACS_CKBOARD | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D), showing);
 	}
 
-	mvwaddch(widget->window, 0, scrcol,
-			(lines ? ACS_UARROW : ' ') | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
-	mvwaddch(widget->window, widget->priv.height - 1, scrcol,
-			((view->list && view->list->prev) ? ACS_DARROW : ' ') |
-				COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+	if (has_scroll) {
+		mvwaddch(widget->window, 0, scrcol,
+				(lines ? ACS_UARROW : ' ') | COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+		mvwaddch(widget->window, widget->priv.height - 1, scrcol,
+				((view->list && view->list->prev) ? ACS_DARROW : ' ') |
+					COLOR_PAIR(GNT_COLOR_HIGHLIGHT_D));
+	}
 
 	GNTDEBUG;
 }
@@ -461,6 +486,8 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 	GList *list = view->list;
 	GntTextLine *line;
 	int len;
+	gboolean has_scroll = !(view->flags & GNT_TEXT_VIEW_NO_SCROLL);
+	gboolean wrap_word = !(view->flags & GNT_TEXT_VIEW_WRAP_CHAR);
 
 	if (text == NULL || *text == '\0')
 		return;
@@ -497,7 +524,7 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 		}
 
 		line = view->list->data;
-		if (line->length == widget->priv.width - 1) {
+		if (line->length == widget->priv.width - has_scroll) {
 			/* The last added line was exactly the same width as the widget */
 			line = g_new0(GntTextLine, 1);
 			line->soft = TRUE;
@@ -506,15 +533,15 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 
 		if ((end = strchr(start, '\r')) != NULL ||
 			(end = strchr(start, '\n')) != NULL) {
-			len = gnt_util_onscreen_width(start, end - 1);
-			if (len >= widget->priv.width - line->length - 1) {
+			len = gnt_util_onscreen_width(start, end - has_scroll);
+			if (len >= widget->priv.width - line->length - has_scroll) {
 				end = NULL;
 			}
 		}
 
 		if (end == NULL)
 			end = gnt_util_onscreen_width_to_pointer(start,
-					widget->priv.width - line->length - 1, &len);
+					widget->priv.width - line->length - has_scroll, &len);
 
 		/* Try to append to the previous segment if possible */
 		if (line->segments) {
@@ -532,7 +559,7 @@ void gnt_text_view_append_text_with_tag(GntTextView *view, const char *text,
 		}
 
 		oldl = line;
-		if (*end && *end != '\n' && *end != '\r') {
+		if (wrap_word && *end && *end != '\n' && *end != '\r') {
 			const char *tmp = end;
 			while (end && *end != '\n' && *end != '\r' && !g_ascii_isspace(*end)) {
 				end = g_utf8_find_prev_char(seg->start + view->string->str, end);
@@ -759,5 +786,10 @@ scroll_tv(GntWidget *wid, const char *key, GntTextView *tv)
 void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget)
 {
 	g_signal_connect(G_OBJECT(widget), "key_pressed", G_CALLBACK(scroll_tv), view);
+}
+
+void gnt_text_view_set_flag(GntTextView *view, GntTextViewFlag flag)
+{
+	view->flags |= flag;
 }
 

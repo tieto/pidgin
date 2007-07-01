@@ -102,17 +102,29 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	JabberBuddyState state;
 	int priority;
 
+	if(NULL == status) {
+		PurplePresence *gpresence = purple_account_get_presence(account);
+		status = purple_presence_get_active_status(gpresence);
+	}
+
 	if(!purple_status_is_active(status))
 		return;
 
 	disconnected = purple_account_is_disconnected(account);
-	primitive = purple_status_type_get_primitive(purple_status_get_type(status));
 
 	if(disconnected)
 		return;
 
+	primitive = purple_status_type_get_primitive(purple_status_get_type(status));
+
 	gc = purple_account_get_connection(account);
 	js = gc->proto_data;
+
+	/* we don't want to send presence before we've gotten our roster */
+	if(!js->roster_parsed) {
+		purple_debug_info("jabber", "attempt to send presence before roster retrieved\n");
+		return;
+	}
 
 	purple_status_to_jabber(status, &state, &stripped, &priority);
 
@@ -378,8 +390,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			} else if(xmlns && !strcmp(xmlns, "vcard-temp:x:update")) {
 				xmlnode *photo = xmlnode_get_child(y, "photo");
 				if(photo) {
-					if(avatar_hash)
-						g_free(avatar_hash);
+					g_free(avatar_hash);
 					avatar_hash = xmlnode_get_data(photo);
 				}
 			}
@@ -408,8 +419,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 			jabber_id_free(jid);
 			g_free(status);
 			g_free(room_jid);
-			if(avatar_hash)
-				g_free(avatar_hash);
+			g_free(avatar_hash);
 			return;
 		}
 
@@ -425,8 +435,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 				jabber_id_free(jid);
 				g_free(status);
 				g_free(room_jid);
-				if(avatar_hash)
-					g_free(avatar_hash);
+				g_free(avatar_hash);
 				return;
 			}
 
@@ -506,11 +515,10 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		buddy_name = g_strdup_printf("%s%s%s", jid->node ? jid->node : "",
 				jid->node ? "@" : "", jid->domain);
 		if((b = purple_find_buddy(js->gc->account, buddy_name)) == NULL) {
-			purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%x)",
+			purple_debug_warning("jabber", "Got presence for unknown buddy %s on account %s (%x)\n",
 				buddy_name, purple_account_get_username(js->gc->account), js->gc->account);
 			jabber_id_free(jid);
-			if(avatar_hash)
-				g_free(avatar_hash);
+			g_free(avatar_hash);
 			g_free(buddy_name);
 			g_free(status);
 			return;
@@ -557,9 +565,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if((found_jbr = jabber_buddy_find_resource(jb, NULL))) {
-			if(!jbr || jbr == found_jbr) {
-				purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status, NULL);
-			}
+			purple_prpl_got_user_status(js->gc->account, buddy_name, jabber_buddy_state_get_status_id(found_jbr->state), "priority", found_jbr->priority, found_jbr->status ? "message" : NULL, found_jbr->status, NULL);
 		} else {
 			purple_prpl_got_user_status(js->gc->account, buddy_name, "offline", status ? "message" : NULL, status, NULL);
 		}
@@ -567,8 +573,7 @@ void jabber_presence_parse(JabberStream *js, xmlnode *packet)
 	}
 	g_free(status);
 	jabber_id_free(jid);
-	if(avatar_hash)
-		g_free(avatar_hash);
+	g_free(avatar_hash);
 }
 
 void jabber_presence_subscription_set(JabberStream *js, const char *who, const char *type)
@@ -607,7 +612,7 @@ void purple_status_to_jabber(const PurpleStatus *status, JabberBuddyState *state
 				formatted_msg = NULL;
 
 			if(formatted_msg)
-				purple_markup_html_to_xhtml(formatted_msg, NULL, msg);
+				*msg = purple_markup_strip_html(formatted_msg);
 		}
 
 		if(priority)

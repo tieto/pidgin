@@ -23,6 +23,7 @@
  */
 
 #include <string.h>
+#include "internal.h"
 #include "debug.h"
 #include "prefs.h"
 

@@ -1,8 +1,36 @@
+/**
+ * GNT - The GLib Ncurses Toolkit
+ *
+ * GNT is the legal property of its developers, whose names are too numerous
+ * to list here.  Please refer to the COPYRIGHT file distributed with this
+ * source distribution.
+ *
+ * This library is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
 #include "gntstyle.h"
 #include "gntcolors.h"
+#include "gntws.h"
 
+#include <glib.h>
 #include <ctype.h>
+#include <glib/gprintf.h>
+#include <stdlib.h>
 #include <string.h>
+
+#define MAX_WORKSPACES 99
 
 #if GLIB_CHECK_VERSION(2,6,0)
 static GKeyFile *gkfile;
@@ -15,6 +43,13 @@ static int bool_styles[GNT_STYLES];
 const char *gnt_style_get(GntStyle style)
 {
 	return str_styles[style];
+}
+
+char *gnt_style_get_from_name(const char *group, const char *key)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	return g_key_file_get_value(gkfile, group, key, NULL);
+#endif
 }
 
 gboolean gnt_style_get_bool(GntStyle style, gboolean def)
@@ -87,6 +122,44 @@ parse_key(const char *key)
 	return (char *)gnt_key_translate(key);
 }
 
+void gnt_style_read_workspaces(GntWM *wm)
+{
+#if GLIB_CHECK_VERSION(2,6,0)
+	int i;
+	gchar *name;
+	gsize c;
+
+	for (i = 1; i < MAX_WORKSPACES; ++i) {
+		int j;
+		GntWS *ws;
+		gchar **titles;
+		char *group = calloc(12, 1);
+		g_sprintf(group, "Workspace-%d", i);
+		name = g_key_file_get_value(gkfile, group, "name", NULL);
+		if (!name)
+			return;
+
+		ws = gnt_ws_new(name);
+		gnt_wm_add_workspace(wm, ws);
+		g_free(name);
+
+		titles = g_key_file_get_string_list(gkfile, group, "window-names", &c, NULL);
+		if (titles) {
+			for (j = 0; j < c; ++j)
+				g_hash_table_replace(wm->name_places, g_strdup(titles[j]), ws);
+			g_strfreev(titles);
+		}
+
+		titles = g_key_file_get_string_list(gkfile, group, "window-titles", &c, NULL);
+		if (titles) {
+			for (j = 0; j < c; ++j)
+				g_hash_table_replace(wm->title_places, g_strdup(titles[j]), ws);
+			g_strfreev(titles);
+		}
+		g_free(group);
+	}
+#endif
+}
 void gnt_style_read_actions(GType type, GntBindableClass *klass)
 {
 #if GLIB_CHECK_VERSION(2,6,0)
@@ -196,7 +269,8 @@ read_general_style(GKeyFile *kfile)
 {
 	GError *error = NULL;
 	gsize nkeys;
-	char **keys = g_key_file_get_keys(kfile, "general", &nkeys, &error);
+	const char *prgname = g_get_prgname();
+	char **keys = NULL;
 	int i;
 	struct
 	{
@@ -209,6 +283,14 @@ read_general_style(GKeyFile *kfile)
 	              {"remember_position", GNT_STYLE_REMPOS},
 	              {NULL, 0}};
 
+	if (prgname && *prgname)
+		keys = g_key_file_get_keys(kfile, prgname, &nkeys, NULL);
+
+	if (keys == NULL) {
+		prgname = "general";
+		keys = g_key_file_get_keys(kfile, prgname, &nkeys, &error);
+	}
+
 	if (error)
 	{
 		g_printerr("GntStyle: %s\n", error->message);
@@ -219,7 +301,7 @@ read_general_style(GKeyFile *kfile)
 		for (i = 0; styles[i].style; i++)
 		{
 			str_styles[styles[i].en] =
-					g_key_file_get_string(kfile, "general", styles[i].style, NULL);
+					g_key_file_get_string(kfile, prgname, styles[i].style, NULL);
 		}
 	}
 	g_strfreev(keys);
@@ -232,7 +314,8 @@ void gnt_style_read_configure_file(const char *filename)
 	GError *error = NULL;
 	gkfile = g_key_file_new();
 
-	if (!g_key_file_load_from_file(gkfile, filename, G_KEY_FILE_NONE, &error))
+	if (!g_key_file_load_from_file(gkfile, filename,
+                G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, &error))
 	{
 		g_printerr("GntStyle: %s\n", error->message);
 		g_error_free(error);

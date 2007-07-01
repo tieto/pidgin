@@ -253,8 +253,8 @@ static void ggp_action_buddylist_delete(PurplePluginAction *action)
 
 /*
  */
-/* static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, gchar *file) {{{ */
-static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, gchar *file)
+/* static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *file) {{{ */
+static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, const char *file)
 {
 	PurpleAccount *account = purple_connection_get_account(gc);
 
@@ -277,7 +277,7 @@ static void ggp_callback_buddylist_save_ok(PurpleConnection *gc, gchar *file)
 		purple_debug_error("gg", "Could not open file: %s\n", file);
 		purple_notify_error(account, _("Couldn't open file"), msg, NULL);
 		g_free(msg);
-		g_free(file);
+		g_free(buddylist);
 		return;
 	}
 
@@ -823,7 +823,7 @@ static void ggp_callback_add_to_chat_ok(PurpleConnection *gc, PurpleRequestField
 {
 	GGPInfo *info = gc->proto_data;
 	PurpleRequestField *field;
-	const GList *sel;
+	GList *sel;
 
 	field = purple_request_fields_get_field(fields, "name");
 	sel = purple_request_field_list_get_selected(field);

@@ -89,7 +89,7 @@ int aim_search_address(OscarData *od, const char *address)
 static int reply(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFrame *frame, aim_modsnac_t *snac, ByteStream *bs)
 {
 	int j = 0, m, ret = 0;
-	aim_tlvlist_t *tlvlist;
+	GSList *tlvlist;
 	char *cur = NULL, *buf = NULL;
 	aim_rxcallback_t userfunc;
 	aim_snac_t *snac2;
@@ -99,7 +99,7 @@ static int reply(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 		searchaddr = (const char *)snac2->data;
 
 	tlvlist = aim_tlvlist_read(bs);
-	m = aim_tlvlist_count(&tlvlist);
+	m = aim_tlvlist_count(tlvlist);
 
 	/* XXX uhm.
 	 * This is the only place that uses something other than 1 for the 3rd
@@ -116,7 +116,7 @@ static int reply(OscarData *od, FlapConnection *conn, aim_module_t *mod, FlapFra
 	}
 	g_free(cur);
 
-	aim_tlvlist_free(&tlvlist);
+	aim_tlvlist_free(tlvlist);
 
 	if ((userfunc = aim_callhandler(od, snac->family, snac->subtype)))
 		ret = userfunc(od, conn, frame, searchaddr, j, buf);
