@@ -646,14 +646,14 @@ smiley_is_unique(GSList *list, GtkIMHtmlSmiley *smiley)
 static gboolean
 smiley_dialog_input_cb(GtkWidget *dialog, GdkEvent *event, GtkIMHtmlToolbar *toolbar)
 {
-	gboolean close_dialog = 
-		(GDK_KEY_PRESS    == event->type) ? (GDK_Escape == event->key.keyval) :
-		(GDK_BUTTON_PRESS == event->type) ? (1 == event->button.button) : FALSE;
-
-	if (close_dialog)
+	if ((event->type == GDK_KEY_PRESS && event->key.keyval == GDK_Escape) ||
+	    (event->type == GDK_BUTTON_PRESS && event->button.button == 1))
+	{
 		close_smiley_dialog(NULL, NULL, toolbar);
+		return TRUE;
+	}
 
-	return close_dialog;
+	return FALSE;
 }
 
 static void
