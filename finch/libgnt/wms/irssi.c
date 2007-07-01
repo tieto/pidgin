@@ -126,7 +126,7 @@ irssi_new_window(GntWM *wm, GntWidget *win)
 	int x, y, w, h;
 
 	name = gnt_widget_get_name(win);
-	if (!name || strcmp(name, "conversation-window")) {
+	if (!name || !strstr(name, "conversation-window")) {
 		if (!GNT_IS_MENU(win) && !GNT_WIDGET_IS_FLAG_SET(win, GNT_WIDGET_TRANSIENT)) {
 			if ((!name || strcmp(name, "buddylist"))) {
 				gnt_widget_get_size(win, &w, &h);
@@ -191,7 +191,7 @@ irssi_update_window(GntWM *wm, GntNode *node)
 {
 	GntWidget *win = node->me;
 	const char *name = gnt_widget_get_name(win);
-	if (!name || !GNT_IS_BOX(win) || strcmp(name, "conversation-window"))
+	if (!name || !GNT_IS_BOX(win) || !strstr(name, "conversation-window"))
 		return;
 	g_object_set_data(G_OBJECT(win), "irssi-index", GINT_TO_POINTER(g_list_index(wm->cws->list, win)));
 	g_timeout_add(0, (GSourceFunc)update_conv_window_title, node);
