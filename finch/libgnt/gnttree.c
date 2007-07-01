@@ -82,7 +82,7 @@ readjust_columns(GntTree *tree)
 {
 	int i, col, total;
 	int width;
-#define WIDTH(i) tree->columns[i].width_ratio ? tree->columns[i].width_ratio : tree->columns[i].width
+#define WIDTH(i) (tree->columns[i].width_ratio ? tree->columns[i].width_ratio : tree->columns[i].width)
 	gnt_widget_get_size(GNT_WIDGET(tree), &width, NULL);
 	for (i = 0, total = 0; i < tree->ncol ; i++) {
 		if (tree->columns[i].flags & GNT_TREE_COLUMN_INVISIBLE)
@@ -102,7 +102,7 @@ readjust_columns(GntTree *tree)
 		if (tree->columns[i].flags & GNT_TREE_COLUMN_FIXED_SIZE)
 			col = WIDTH(i);
 		else
-			col = WIDTH(i) * width / total;
+			col = (WIDTH(i) * width) / total;
 		gnt_tree_set_col_width(GNT_TREE(tree), i, col);
 	}
 }
