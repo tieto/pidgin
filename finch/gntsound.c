@@ -572,7 +572,12 @@ finch_sound_play_event(PurpleSoundEventID event)
 static gboolean
 save_cb(GntBindable *data, gpointer *win)
 {
-	
+	purple_prefs_set_string(FINCH_PREFS_ROOT "/sound/method", gnt_combo_box_get_selected_data(GNT_COMBO_BOX(pref_dialog->method)));
+	purple_prefs_set_path(FINCH_PREFS_ROOT "/sound/command", gnt_entry_get_text(GNT_ENTRY(pref_dialog->command)));
+	purple_prefs_set_bool(FINCH_PREFS_ROOT "/sound/conv_focus",gnt_check_box_get_checked(GNT_CHECK_BOX(pref_dialog->conv_focus)));
+	purple_prefs_set_int("/purple/sound/while_status",GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(pref_dialog->while_status))));
+	purple_prefs_set_int(FINCH_PREFS_ROOT "/sound/volume",gnt_slider_get_value(GNT_SLIDER(pref_dialog->volume)));
+
 	gnt_widget_destroy(GNT_WIDGET(win));
 	return TRUE;
 }
@@ -622,6 +627,7 @@ finch_sounds_show_all(void)
 	gnt_box_set_alignment(GNT_BOX(win),GNT_ALIGN_MID);
 
 	pref_dialog->method = cmbox = gnt_combo_box_new();
+	gnt_tree_set_hash_fns(GNT_TREE(GNT_COMBO_BOX(cmbox)->dropdown), g_str_hash, g_str_equal, NULL);
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"automatic",_("Automatic"));
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"alsa","ALSA");
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"esd","ESD");
@@ -629,6 +635,7 @@ finch_sounds_show_all(void)
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"custom",_("Command"));
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"nosound",_("No Sound"));
 	buf = g_strdup(purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method"));
+	purple_debug_warning("method","%s",buf);
 	gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),buf);
 	g_free(buf);
 
@@ -645,14 +652,14 @@ finch_sounds_show_all(void)
 	gnt_box_set_pad(GNT_BOX(box),0);
 	gnt_box_set_fill(GNT_BOX(box),FALSE);
 	gnt_box_add_widget(GNT_BOX(box),gnt_label_new(_("Sound Command\n(%s for filename)")));
-	pref_dialog->command = entry = gnt_entry_new(purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method"));
+	pref_dialog->command = entry = gnt_entry_new(purple_prefs_get_path(FINCH_PREFS_ROOT "/sound/command"));
 	gnt_box_add_widget(GNT_BOX(box),entry);
 	gnt_box_add_widget(GNT_BOX(win),box);
 
 	gnt_box_add_widget(GNT_BOX(win), gnt_line_new(FALSE));
 
 	gnt_box_add_widget(GNT_BOX(win),gnt_label_new_with_format(_("Sound Options"),GNT_TEXT_FLAG_BOLD)); 
-	pref_dialog->conv_focus = chkbox = gnt_check_box_new("Sounds when conversation has focus");
+	pref_dialog->conv_focus = chkbox = gnt_check_box_new(_("Sounds when conversation has focus"));
 	gnt_check_box_set_checked(GNT_CHECK_BOX(chkbox),purple_prefs_get_bool(FINCH_PREFS_ROOT "/sound/conv_focus"));
 	gnt_box_add_widget(GNT_BOX(win),chkbox);
 
@@ -661,21 +668,17 @@ finch_sounds_show_all(void)
 	gnt_box_set_fill(GNT_BOX(box),FALSE);
 	gnt_box_add_widget(GNT_BOX(box),gnt_label_new("Enable Sounds:"));
 	pref_dialog->while_status = cmbox = gnt_combo_box_new();
-	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"always","Always");
-	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"available","Only when available");
-	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"away","Only when not available");
-	switch(purple_prefs_get_int(FINCH_PREFS_ROOT "/sound/while_status")){
-		case 1:gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),"available");break;
-		case 2:gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),"away");break;
-		default:gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),"always");break;
-	}
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),GINT_TO_POINTER(3),_("Always"));
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),GINT_TO_POINTER(1),_("Only when available"));
+	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),GINT_TO_POINTER(2),_("Only when not available"));
+	gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),GINT_TO_POINTER(purple_prefs_get_int("/purple" "/sound/while_status")));
 	gnt_box_add_widget(GNT_BOX(box),cmbox);
 	gnt_box_add_widget(GNT_BOX(win),box);
 
 	box = gnt_hbox_new(TRUE);
 	gnt_box_set_pad(GNT_BOX(box),0);
 	gnt_box_set_fill(GNT_BOX(box),FALSE);
-	gnt_box_add_widget(GNT_BOX(box),gnt_label_new("Volume(0-100):"));
+	gnt_box_add_widget(GNT_BOX(box),gnt_label_new(_("Volume(0-100):")));
 
 	pref_dialog->volume = slider = gnt_slider_new(FALSE,100,0);
 	gnt_slider_set_step(GNT_SLIDER(slider),5);
@@ -696,7 +699,7 @@ finch_sounds_show_all(void)
 	gnt_box_set_pad(GNT_BOX(box),0);
 	gnt_box_set_fill(GNT_BOX(box),TRUE);
 	button = gnt_button_new("Save");
-	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(save_cb),NULL);
+	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(save_cb),win);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	button = gnt_button_new("Cancel");
 	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(cancel_cb),NULL);
