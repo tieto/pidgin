@@ -1924,7 +1924,7 @@ static char *qip_logger_read(PurpleLog *log, PurpleLogReadFlags *flags)
 	char *utf8_string;
 	FILE *file;
 
-
+	*flags = PURPLE_LOG_READ_NO_NEWLINE;
 	g_return_val_if_fail(log != NULL, g_strdup(""));
 
 	data = log->logger_data;
