@@ -2140,6 +2140,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
     /* Null terminate */
     session->rxbuf[session->rxoff + n] = 0;
 
+#ifdef MSIM_CHECK_EMBEDDED_NULLS
     /* Check for embedded NULs. I don't handle them, and they shouldn't occur. */
     if (strlen(session->rxbuf + session->rxoff) != n)
     {
@@ -2150,6 +2151,7 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
         //purple_connection_error(gc, "Invalid message - null byte on input");
         return;
     }
+#endif
 
     session->rxoff += n;
     purple_debug_info("msim", "msim_input_cb: read=%d\n", n);
