@@ -349,7 +349,7 @@ int gg_http_watch_fd(struct gg_http *h)
 			gg_debug(GG_DEBUG_MISC, "=> -----BEGIN-HTTP-HEADER-----\n%s\n=> -----END-HTTP-HEADER-----\n", h->header);
 
 			while (line) {
-				if (!strncasecmp(line, "Content-length: ", 16)) {
+				if (!g_ascii_strncasecmp(line, "Content-length: ", 16)) {
 					h->body_size = atoi(line + 16);
 				}
 				line = strchr(line, '\n');

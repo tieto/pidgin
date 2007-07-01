@@ -2162,7 +2162,7 @@ static int gtk_imhtml_is_protocol(const char *text)
 	gint i;
 
 	for(i=0; i<accepted_protocols_size; i++){
-		if( strncasecmp(text, accepted_protocols[i], strlen(accepted_protocols[i])) == 0  ){
+		if( g_ascii_strncasecmp(text, accepted_protocols[i], strlen(accepted_protocols[i])) == 0  ){
 			return strlen(accepted_protocols[i]);
 		}
 	}
@@ -2735,7 +2735,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						/* NEW_BIT (NEW_TEXT_BIT); */
 
 						/* Bi-Directional text support */
-						if (direction && (!strncasecmp(direction, "RTL", 3))) {
+						if (direction && (!g_ascii_strncasecmp(direction, "RTL", 3))) {
 							rtl_direction = TRUE;
 							/* insert RLE character to set direction */
 							ws[wpos++]  = 0xE2;
@@ -2747,7 +2747,7 @@ void gtk_imhtml_insert_html_at_iter(GtkIMHtml        *imhtml,
 						}
 						g_free(direction);
 
-						if (alignment && (!strncasecmp(alignment, "RIGHT", 5))) {
+						if (alignment && (!g_ascii_strncasecmp(alignment, "RIGHT", 5))) {
 							align_right = TRUE;
 							align_line = gtk_text_iter_get_line(iter);
 						}
