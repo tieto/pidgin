@@ -46,11 +46,11 @@ wpurple_socket( namespace, style, protocol )
 #define connect( socket, addr, length ) \
 wpurple_connect( socket, addr, length )
 
-#define getsockopt( args... ) \
-wpurple_getsockopt( args )
+#define getsockopt( socket, level, optname, optval, optlenptr ) \
+wpurple_getsockopt( socket, level, optname, optval, optlenptr )
 
-#define setsockopt( args... ) \
-wpurple_setsockopt( args )
+#define setsockopt( socket, level, optname, optval, optlen ) \
+wpurple_setsockopt( socket, level, optname, optval, optlen )
 
 #define getsockname( socket, addr, lenptr ) \
 wpurple_getsockname( socket, addr, lenptr )
