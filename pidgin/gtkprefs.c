@@ -640,7 +640,7 @@ request_theme_file_name_cb(gpointer data, char *theme_file_name)
 static void
 add_theme_button_clicked_cb(GtkWidget *widget, gpointer null)
 {
-	purple_request_file(NULL, "Install Theme", NULL, FALSE, (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, NULL) ;
+	purple_request_file(NULL, _("Install Theme"), NULL, FALSE, (GCallback)request_theme_file_name_cb, NULL, NULL, NULL, NULL, NULL) ;
 }
 
 static void
