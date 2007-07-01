@@ -733,14 +733,16 @@ insert_smiley_cb(GtkWidget *smiley, GtkIMHtmlToolbar *toolbar)
 			free(it_tmp);
 		}
 		gtk_box_pack_start(GTK_BOX(smiley_table), line, FALSE, TRUE, 0);
+
+		gtk_widget_add_events(dialog, GDK_KEY_PRESS_MASK);
 	}
 	else {
 		smiley_table = gtk_label_new(_("This theme has no available smileys."));
+		gtk_widget_add_events(dialog, GDK_KEY_PRESS_MASK | GDK_BUTTON_PRESS_MASK);
+		g_signal_connect(G_OBJECT(dialog), "button-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
 	}
 
-	gtk_widget_add_events(dialog, GDK_KEY_PRESS_MASK | GDK_BUTTON_PRESS_MASK);
 	g_signal_connect(G_OBJECT(dialog), "key-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
-	g_signal_connect(G_OBJECT(dialog), "button-press-event", (GCallback)smiley_dialog_input_cb, toolbar);
 	gtk_container_add(GTK_CONTAINER(dialog), smiley_table);
 
 	gtk_widget_show(smiley_table);
