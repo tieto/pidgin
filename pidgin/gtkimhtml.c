@@ -494,6 +494,8 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 	GSList *tags = NULL, *templist = NULL;
 	GdkColor *norm, *pre;
 	GtkTextTag *tag = NULL, *oldprelit_tag;
+	GtkTextChildAnchor* anchor;
+	gboolean hand = TRUE;
 
 	oldprelit_tag = GTK_IMHTML(imhtml)->prelit_tag;
 
@@ -551,8 +553,15 @@ gtk_motion_event_notify(GtkWidget *imhtml, GdkEventMotion *event, gpointer data)
 		GTK_IMHTML(imhtml)->tip_timer = 0;
 	}
 
+	/* If we don't have a tip from a URL, let's see if we have a tip from a smiley */
+	anchor = gtk_text_iter_get_child_anchor(&iter);
+	if (anchor) {
+		tip = g_object_get_data(G_OBJECT(anchor), "gtkimhtml_plaintext");
+		hand = FALSE;
+	}
+
 	if (tip){
-		if (!GTK_IMHTML(imhtml)->editable)
+		if (!GTK_IMHTML(imhtml)->editable && hand)
 			gdk_window_set_cursor(win, GTK_IMHTML(imhtml)->hand_cursor);
 		GTK_IMHTML(imhtml)->tip_timer = g_timeout_add (TOOLTIP_TIMEOUT,
 							       gtk_imhtml_tip, imhtml);
@@ -4621,6 +4630,7 @@ void gtk_imhtml_insert_smiley_at_iter(GtkIMHtml *imhtml, const char *sml, char *
 			GtkWidget *img = gtk_image_new_from_stock(GTK_STOCK_MISSING_IMAGE, GTK_ICON_SIZE_MENU);
 			gtk_container_add(GTK_CONTAINER(ebox), img);
 			gtk_widget_show(img);
+			g_object_set_data_full(G_OBJECT(anchor), "gtkimhtml_plaintext", g_strdup(unescaped), g_free);
 			gtk_text_view_add_child_at_anchor(GTK_TEXT_VIEW(imhtml), ebox, anchor);
 		}
 	} else {
