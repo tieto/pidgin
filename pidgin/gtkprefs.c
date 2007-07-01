@@ -381,7 +381,8 @@ static void smiley_sel(GtkTreeSelection *sel, GtkTreeModel *model) {
 	themename = g_value_get_string(&val);
 	purple_prefs_set_string(PIDGIN_PREFS_ROOT "/smileys/theme", themename);
 
-	gtk_widget_set_sensitive(remove_button, strcmp(themename, "none"));
+	gtk_widget_set_sensitive(remove_button, (strcmp(themename, "none") &&
+	                                         strcmp(themename, _("Default"))));
 	g_value_unset (&val);
 
 	/* current_smiley_theme is set in callback for the above pref change */
