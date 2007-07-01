@@ -2503,6 +2503,9 @@ void
 msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info, 
 		gboolean full)
 {
+	const gchar *str, *str2;
+	gint n;
+
     g_return_if_fail(buddy != NULL);
     g_return_if_fail(user_info != NULL);
 
@@ -2516,32 +2519,43 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 
         /* TODO: if (full), do something different */
 		
-		/* Useful to identify the account the tooltip refers to. Other prpls show this. */
-		purple_notify_user_info_add_pair(user_info, _("User Name"),
-				(purple_blist_node_get_string(&buddy->node, "UserName"))); 
+		/* Useful to identify the account the tooltip refers to. 
+		 *  Other prpls show this. */
+		str = purple_blist_node_get_string(&buddy->node, "UserName"); 
+		if (str)
+			purple_notify_user_info_add_pair(user_info, _("User Name"), str);
 
 		/* a/s/l...the vitals */	
-		purple_notify_user_info_add_pair(user_info, _("Age"),
-				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "Age")));
+		n = purple_blist_node_get_int(&buddy->node, "Age");
+		if (n)
+			purple_notify_user_info_add_pair(user_info, _("Age"),
+					g_strdup_printf("%d", n));
 
-		purple_notify_user_info_add_pair(user_info, _("Gender"),
-				(purple_blist_node_get_string(&buddy->node, "Gender")));
+		str = purple_blist_node_get_string(&buddy->node, "Gender");
+		if (str)
+			purple_notify_user_info_add_pair(user_info, _("Gender"), str);
 
-		purple_notify_user_info_add_pair(user_info, _("Location"),
-				(purple_blist_node_get_string(&buddy->node, "Location")));
+		str = purple_blist_node_get_string(&buddy->node, "Location");
+		if (str)
+			purple_notify_user_info_add_pair(user_info, _("Location"), str);
 
 		/* Other information */
- 		if (purple_blist_node_get_string(&buddy->node, "Headline"))
-			purple_notify_user_info_add_pair(user_info, _("Headline"),
-					(purple_blist_node_get_string(&buddy->node, "Headline"))); 
+ 		str = purple_blist_node_get_string(&buddy->node, "Headline");
+		if (str)
+			purple_notify_user_info_add_pair(user_info, _("Headline"), str);
 
-	    purple_notify_user_info_add_pair(user_info, _("Song"), 
+		str = purple_blist_node_get_string(&buddy->node, "BandName");
+		str2 = purple_blist_node_get_string(&buddy->node, "SongName");
+		if (str || str2)
+			purple_notify_user_info_add_pair(user_info, _("Song"), 
                 g_strdup_printf("%s - %s",
-					purple_blist_node_get_string(&buddy->node, "BandName"),
-					purple_blist_node_get_string(&buddy->node, "SongName")));
+					str ? str : _("Unknown Artist"),
+					str2 ? str2 : _("Unknown Song")));
 
-		purple_notify_user_info_add_pair(user_info, _("Total Friends"),
-				g_strdup_printf("%d", purple_blist_node_get_int(&buddy->node, "TotalFriends")));
+		n = purple_blist_node_get_int(&buddy->node, "TotalFriends");
+		if (n)
+			purple_notify_user_info_add_pair(user_info, _("Total Friends"),
+				g_strdup_printf("%d", n));
 
     }
 }
