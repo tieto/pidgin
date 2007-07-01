@@ -19,6 +19,13 @@ version 2.1.0 (??/??/????):
 	  second time will raise the buddy list.  (Gabriel Schulhof)
 	* Undo capability in the conversation window
 
+	Finch:
+	* There's support for workspaces now (details in the manpage)
+	* There's a new custom window manager, Irssi
+	* Some improvements for tab-completion, tooltip and the password entries
+	* Some bugs regarding search results fixed
+	* A new DBus-script to create a docklet for finch
+
 version 2.0.2 (06/14/2007):
 	Pidgin:
 	* Added a custom conversation font option to preferences
