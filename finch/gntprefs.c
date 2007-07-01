@@ -52,6 +52,10 @@ void finch_prefs_init()
 	purple_prefs_add_none("/finch/conversations");
 	purple_prefs_add_bool("/finch/conversations/timestamps", TRUE);
 	purple_prefs_add_bool("/finch/conversations/notify_typing", FALSE);
+
+	purple_prefs_add_none("/finch/filelocations");
+	purple_prefs_add_path("/finch/filelocations/last_save_folder", "");
+	purple_prefs_add_path("/finch/filelocations/last_save_folder", "");
 }
 
 void finch_prefs_update_old()
