@@ -29,6 +29,16 @@
 #include "libc_internal.h"
 #include <glib.h>
 
+#ifdef _MSC_VER
+#define S_IRUSR S_IREAD
+#define S_IWUSR S_IWRITE
+#define S_IXUSR S_IEXEC
+
+#define S_ISDIR(m)	 (((m)&S_IFDIR)==S_IFDIR)
+
+#define F_OK 0
+#endif
+
 /* sys/socket.h */
 #define socket( namespace, style, protocol ) \
 wpurple_socket( namespace, style, protocol )
