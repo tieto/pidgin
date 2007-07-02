@@ -1,5 +1,5 @@
 2007-07-xx Jeff Connelly <jeff22homing.pidgin.im> - 0.10
-* Handle incoming text color formatting.
+* On incoming instant messages, support: text color, font face.
 
 2007-07-01 Jeff Connelly <jeff2@homing.pidgin.im> - 0.9
 * Fix crash on Windows when logging in (bug #1990)

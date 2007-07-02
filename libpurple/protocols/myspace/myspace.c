@@ -702,30 +702,6 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	return rc;
 }
 
-/** Convert a font point size to purple's HTML font size.
- *
- * Based on libpurple/protocols/bonjour/jabber.c.
- */
-static guint
-msim_font_size_to_purple(int size)
-{
-    if (size > 24) {
-        return 7;
-    } else if (size >= 21) {
-        return 6;
-    } else if (size >= 17) {
-        return 5;
-    } else if (size >= 14) {
-        return 4;
-    } else if (size >= 12) {
-        return 3;
-    } else if (size >= 10) {
-        return 2;
-    }
-
-    return 1;
-}
-
 /** Convert a msim markup font height to points. */
 static guint 
 msim_font_height_to_point(guint height)
@@ -756,7 +732,7 @@ static void msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
 	GString *gs_end, *gs_begin;
 	guint decor, height;
 
-	face = xmlnode_get_attrib(root, "n");	
+	face = xmlnode_get_attrib(root, "f");	
 	height_str = xmlnode_get_attrib(root, "h");
 	decor_str = xmlnode_get_attrib(root, "s");
 
@@ -771,12 +747,23 @@ static void msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
 		decor = 0;
 
 	gs_begin = g_string_new("");
+#ifdef MSIM_FONT_SIZE_WORKS
+	/* TODO: get font size working */
 	if (!face)
 		g_string_printf(gs_begin, "<font size='%d'>",
-				msim_font_size_to_purple(msim_font_height_to_point(height))); 
+				msim_font_height_to_point(height)); 
 	else
 		g_string_printf(gs_begin, "<font face='%s' size='%d'>", face, 
-				msim_font_size_to_purple(msim_font_height_to_point(height))); 
+				msim_font_height_to_point(height)); 
+#else
+	if (face)
+	{
+		g_string_printf(gs_begin, "<font face='%s'>", face);
+	} else {
+		g_string_printf(gs_begin, "<font>");
+	}
+#endif
+
 
 	/* No support for font-size CSS? */
 	/* g_string_printf(gs_begin, "<span style='font-family: %s; font-size: %dpt'>", face, 
@@ -977,8 +964,7 @@ static gchar *msim_markup_xmlnode_to_html(xmlnode *root)
 			strncpy(inner, node->data, node->data_sz);
 			inner[node->data_sz + 1] = 0;
 
-			purple_debug_info("msim", " ** node data=%s (%s)\n", inner,
-					node->data);
+			purple_debug_info("msim", " ** node data=%s\n", inner);
 			break;
 			
 		default:
@@ -2660,7 +2646,11 @@ msim_tooltip_text(PurpleBuddy *buddy, PurpleNotifyUserInfo *user_info,
 /** Callbacks called by Purple, to access this plugin. */
 PurplePluginProtocolInfo prpl_info =
 {
-    OPT_PROTO_MAIL_CHECK,/* options - TODO: myspace will notify of mail */
+	/* options */
+    OPT_PROTO_USE_POINTSIZE		/* specify font size in sane point size */
+	/* | OPT_PROTO_MAIL_CHECK - TODO: myspace will notify of mail */
+	/* | OPT_PROTO_IM_IMAGE - TODO: direct images. */	
+	,
     NULL,              /* user_splits */
     NULL,              /* protocol_options */
     NO_BUDDY_ICONS,    /* icon_spec - TODO: eventually should add this */
