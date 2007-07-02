@@ -1,3 +1,7 @@
+2007-07-01 Jeff Connelly <jeff2@homing.pidgin.im> - 0.9
+* Fix crash on Windows when logging in (bug #1990)
+* Fix crash on Windows when viewing tooltip text (bug #1999)
+
 2007-06-30 Jeff Connelly <jeff2@homing.pidgin.im> - 0.8
 * Allow "Get Info" on all users, by uid or username
 * Fix crash when re-logging in, if login failed.
