@@ -569,8 +569,8 @@ finch_sound_play_event(PurpleSoundEventID event)
 	g_free(file_pref);
 }
 
-static gboolean
-save_cb(GntBindable *data, gpointer *win)
+static void
+save_cb(GntWidget *button, gpointer win)
 {
 	purple_prefs_set_string(FINCH_PREFS_ROOT "/sound/method", gnt_combo_box_get_selected_data(GNT_COMBO_BOX(pref_dialog->method)));
 	purple_prefs_set_path(FINCH_PREFS_ROOT "/sound/command", gnt_entry_get_text(GNT_ENTRY(pref_dialog->command)));
@@ -579,14 +579,12 @@ save_cb(GntBindable *data, gpointer *win)
 	purple_prefs_set_int(FINCH_PREFS_ROOT "/sound/volume",gnt_slider_get_value(GNT_SLIDER(pref_dialog->volume)));
 
 	gnt_widget_destroy(GNT_WIDGET(win));
-	return TRUE;
 }
 
-static gboolean
-cancel_cb(GntBindable *data, gpointer win)
+static void
+cancel_cb(GntWidget *button, gpointer win)
 {
 	gnt_widget_destroy(GNT_WIDGET(win));
-	return TRUE;
 }
 
 static void

@@ -53,16 +53,15 @@ gnt_bindable_free_rebind_info()
 	g_free(rebind_info.okeys);
 }
 
-static gboolean
-gnt_bindable_rebinding_cancel(GntBindable *bindable, gpointer data)
+static void
+gnt_bindable_rebinding_cancel(GntWidget *button, gpointer data)
 {
 	gnt_bindable_free_rebind_info();
 	gnt_widget_destroy(GNT_WIDGET(data));
-	return TRUE;
 }
 
-static gboolean
-gnt_bindable_rebinding_rebind(GntBindable *bindable, gpointer data)
+static void
+gnt_bindable_rebinding_rebind(GntWidget *button, gpointer data)
 {
 
 	if(rebind_info.keys) {
@@ -78,8 +77,6 @@ gnt_bindable_rebinding_rebind(GntBindable *bindable, gpointer data)
 	gnt_bindable_free_rebind_info();
 
 	gnt_widget_destroy(GNT_WIDGET(data));
-
-	return TRUE;
 }
 
 static gboolean
