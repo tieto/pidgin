@@ -377,13 +377,7 @@ switch_window(GntWM *wm, int direction)
 	else if (pos >= 0)
 		wid = g_list_nth_data(wm->cws->list, pos);
 
-	wm->cws->ordered = g_list_bring_to_front(wm->cws->ordered, wid);
-
-	gnt_wm_raise_window(wm, wm->cws->ordered->data);
-
-	if (w != wid) {
-		gnt_widget_set_focus(w, FALSE);
-	}
+	gnt_wm_raise_window(wm, wid);
 }
 
 static gboolean
@@ -406,7 +400,6 @@ static gboolean
 switch_window_n(GntBindable *bind, GList *list)
 {
 	GntWM *wm = GNT_WM(bind);
-	GntWidget *w = NULL;
 	GList *l;
 	int n;
 
@@ -418,17 +411,11 @@ switch_window_n(GntBindable *bind, GList *list)
 	else
 		n = 0;
 
-	w = wm->cws->ordered->data;
-
 	if ((l = g_list_nth(wm->cws->list, n)) != NULL)
 	{
 		gnt_wm_raise_window(wm, l->data);
 	}
 
-	if (l && w != l->data)
-	{
-		gnt_widget_set_focus(w, FALSE);
-	}
 	return TRUE;
 }
 
@@ -1362,7 +1349,6 @@ gnt_wm_switch_workspace(GntWM *wm, gint n)
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
 	update_screen(wm);
 	if (wm->cws->ordered) {
-		gnt_widget_set_focus(wm->cws->ordered->data, TRUE);
 		gnt_wm_raise_window(wm, wm->cws->ordered->data);
 	}
 
@@ -1573,14 +1559,10 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 	if (!transient) {
 		GntWS *ws = wm->cws;
 		if (node->me != wm->_list.window) {
-			GntWidget *w = NULL;
 
 			if (GNT_IS_BOX(widget)) {
 				ws = new_widget_find_workspace(wm, widget);
 			}
-
-			if (ws->ordered)
-				w = ws->ordered->data;
 
 			node->ws = ws;
 			ws->list = g_list_append(ws->list, widget);
@@ -1589,13 +1571,10 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 				ws->ordered = g_list_prepend(ws->ordered, widget);
 			else
 				ws->ordered = g_list_append(ws->ordered, widget);
-
-			gnt_widget_set_focus(widget, TRUE);
-			if (w)
-				gnt_widget_set_focus(w, FALSE);
 		}
 
-		if (wm->event_stack || node->me == wm->_list.window) {
+		if (wm->event_stack || node->me == wm->_list.window ||
+				node->me == wm->cws->ordered->data) {
 			gnt_wm_raise_window(wm, node->me);
 		} else {
 			bottom_panel(node->panel);     /* New windows should not grab focus */
@@ -1976,6 +1955,14 @@ void gnt_wm_raise_window(GntWM *wm, GntWidget *widget)
 	GntWS *ws = gnt_wm_widget_find_workspace(wm, widget);
 	if (wm->cws != ws)
 		gnt_wm_switch_workspace(wm, g_list_index(wm->workspaces, ws));
+	if (widget != wm->cws->ordered->data) {
+		GntWidget *wid = wm->cws->ordered->data;
+		wm->cws->ordered = g_list_bring_to_front(wm->cws->ordered, widget);
+		gnt_widget_set_focus(wid, FALSE);
+		gnt_widget_draw(wid);
+	}
+	gnt_widget_set_focus(widget, TRUE);
+	gnt_widget_draw(widget);
 	g_signal_emit(wm, signals[SIG_GIVE_FOCUS], 0, widget);
 }
 

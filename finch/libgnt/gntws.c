@@ -114,11 +114,13 @@ gnt_ws_hide(GntWS *ws, GHashTable *nodes)
 	g_list_foreach(ws->ordered, widget_hide, nodes);
 }
 
-void gnt_ws_widget_hide(GntWidget *widget, GHashTable *nodes) {
+void gnt_ws_widget_hide(GntWidget *widget, GHashTable *nodes)
+{
 	widget_hide(widget, nodes);
 }
 
-void gnt_ws_widget_show(GntWidget *widget, GHashTable *nodes) {
+void gnt_ws_widget_show(GntWidget *widget, GHashTable *nodes)
+{
 	widget_show(widget, nodes);
 }
 
