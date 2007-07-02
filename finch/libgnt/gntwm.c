@@ -1559,22 +1559,16 @@ gnt_wm_new_window_real(GntWM *wm, GntWidget *widget)
 	if (!transient) {
 		GntWS *ws = wm->cws;
 		if (node->me != wm->_list.window) {
-
 			if (GNT_IS_BOX(widget)) {
 				ws = new_widget_find_workspace(wm, widget);
 			}
-
 			node->ws = ws;
 			ws->list = g_list_append(ws->list, widget);
-
-			if (wm->event_stack)
-				ws->ordered = g_list_prepend(ws->ordered, widget);
-			else
-				ws->ordered = g_list_append(ws->ordered, widget);
+			ws->ordered = g_list_append(ws->ordered, widget);
 		}
 
 		if (wm->event_stack || node->me == wm->_list.window ||
-				node->me == wm->cws->ordered->data) {
+				node->me == ws->ordered->data) {
 			gnt_wm_raise_window(wm, node->me);
 		} else {
 			bottom_panel(node->panel);     /* New windows should not grab focus */
