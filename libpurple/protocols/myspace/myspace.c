@@ -1736,12 +1736,20 @@ msim_status(MsimSession *session, MsimMessage *msg)
     /* Set user status */	
     switch (status_code)
 	{
-		case 1: purple_status_code = PURPLE_STATUS_AVAILABLE;
-				break;
-		case 0: purple_status_code = PURPLE_STATUS_OFFLINE;	
-				break;
+		case MSIM_STATUS_CODE_OFFLINE: 
+			purple_status_code = PURPLE_STATUS_OFFLINE;	
+			break;
+
+		case MSIM_STATUS_CODE_ONLINE: 
+			purple_status_code = PURPLE_STATUS_AVAILABLE;
+			break;
+
+		case MSIM_STATUS_CODE_AWAY:
+			purple_status_code = PURPLE_STATUS_AWAY;
+			break;
+
 		default:
-				purple_debug_info("msim", "msim_status_cb for %s, unknown status code %d\n",
+				purple_debug_info("msim", "msim_status_cb for %s, unknown status code %d, treating as available\n",
 						username, status_code);
 				purple_status_code = PURPLE_STATUS_AVAILABLE;
 	}

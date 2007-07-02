@@ -129,6 +129,11 @@
 #define MSIM_STATUS_ORDINAL_UNKNOWNp	8
 #define MSIM_STATUS_ORDINAL_UNKNOWN2	9
 
+/* Status codes - states a buddy (or you!) can be in. */
+#define MSIM_STATUS_CODE_OFFLINE		0	/* or hidden */
+#define MSIM_STATUS_CODE_ONLINE			1
+#define MSIM_STATUS_CODE_AWAY			5
+
 /* Random number in every MsimSession, to ensure it is valid. */
 #define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
 
