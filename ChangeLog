@@ -18,6 +18,10 @@ version 2.1.0 (??/??/????):
 	  directory.  The net effect of this is that trying to start Pidgin a
 	  second time will raise the buddy list.  (Gabriel Schulhof)
 	* Undo capability in the conversation window
+	* The formatting toolbar has been reorganized to be more concise.
+	* A new status area has been added to the top of conversations to
+	  provide additional detail about the buddy, including buddy icon,
+	  protocol and status message.
 
 	Finch:
 	* There's support for workspaces now (details in the manpage)
