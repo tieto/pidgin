@@ -133,6 +133,7 @@
 #define MSIM_STATUS_CODE_OFFLINE		0	/* or hidden */
 #define MSIM_STATUS_CODE_ONLINE			1
 #define MSIM_STATUS_CODE_AWAY			5
+/* TODO: hidden */
 
 /* Random number in every MsimSession, to ensure it is valid. */
 #define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
@@ -201,6 +202,8 @@ int msim_incoming_action(MsimSession *session, MsimMessage *msg);
 unsigned int msim_send_typing(PurpleConnection *gc, const gchar *name, PurpleTypingState state);
 void msim_get_info_cb(MsimSession *session, MsimMessage *userinfo, gpointer data);
 void msim_get_info(PurpleConnection *gc, const gchar *name);
+
+void msim_set_status(PurpleAccount *account, PurpleStatus *status);
 
 void msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg);

@@ -1285,6 +1285,53 @@ msim_get_info(PurpleConnection *gc, const gchar *user)
 	g_free(user_to_lookup); 
 }
 
+/* Set your status. */
+/* TODO: set status to online, when go online, if not invisible? */
+void
+msim_set_status(PurpleAccount *account, PurpleStatus *status)
+{
+	PurpleStatusType *type;
+	guint status_code;
+	MsimSession *session;
+
+	session = (MsimSession *)account->gc->proto_data;
+
+	type = purple_status_get_type(status);
+
+	switch (purple_status_type_get_primitive(type))
+	{
+		case PURPLE_STATUS_AVAILABLE:
+			status_code = MSIM_STATUS_CODE_ONLINE;
+			break;
+
+#if 0
+		case PURPLE_STATUS_INVISIBLE:
+			status_code = MSIM_STATUS_CODE_HIDDEN;
+			break;
+#endif
+
+		case PURPLE_STATUS_AWAY:
+			status_code = MSIM_STATUS_CODE_AWAY;
+			break;
+
+		default:
+			purple_debug_info("msim", "msim_set_status: unknown "
+					"status interpreting as online");
+			status_code = MSIM_STATUS_CODE_ONLINE;
+			break;
+	}
+
+	if (!msim_send(session,
+			"status", MSIM_TYPE_INTEGER, status_code,
+			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
+			"statstring", MSIM_TYPE_STRING, g_strdup(""),
+			"locstring", MSIM_TYPE_STRING, g_strdup("")))
+	{
+		purple_debug_info("msim", "msim_set_status: failed to set status");
+	}
+
+}
+
 /** After a uid is resolved to username, tag it with the username and submit for processing. 
  * 
  * @param session
@@ -2668,7 +2715,7 @@ PurplePluginProtocolInfo prpl_info =
     NULL,              /* set_info */
     msim_send_typing,  /* send_typing */
 	msim_get_info, 	   /* get_info */
-    NULL,              /* set_away */
+    msim_set_status,   /* set_status */
     NULL,              /* set_idle */
     NULL,              /* change_passwd */
     msim_add_buddy,    /* add_buddy */
