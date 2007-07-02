@@ -284,8 +284,11 @@ msim_login(PurpleAccount *acct)
 		 * long passwords, but reportedly the official IM client does not
 		 * allow more than 8 characters to be entered. Just entering the first
 		 * 8 does not, on first try, appear to work. */
-		str = g_strdup_printf(_("Sorry, passwords over %d characters in length (yours is %d) are "
-					"currently not supported by the MySpaceIM plugin."), MSIM_MAX_PASSWORD_LENGTH,
+		/* Note: official client lets you have 10 characters in password. */
+		str = g_strdup_printf(
+				_("Sorry, passwords over %d characters in length (yours is "
+				"%d) are currently not supported by the MySpaceIM plugin."), 
+				MSIM_MAX_PASSWORD_LENGTH,
 				(int)strlen(acct->password));
 
 		/* Notify an error message also, because this is important! */
@@ -768,8 +771,13 @@ static void msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
 		decor = 0;
 
 	gs_begin = g_string_new("");
-	g_string_printf(gs_begin, "<font face='%s' size='%d'>", face, 
-			msim_font_size_to_purple(msim_font_height_to_point(height))); 
+	if (!face)
+		g_string_printf(gs_begin, "<font size='%d'>",
+				msim_font_size_to_purple(msim_font_height_to_point(height))); 
+	else
+		g_string_printf(gs_begin, "<font face='%s' size='%d'>", face, 
+				msim_font_size_to_purple(msim_font_height_to_point(height))); 
+
 	/* No support for font-size CSS? */
 	/* g_string_printf(gs_begin, "<span style='font-family: %s; font-size: %dpt'>", face, 
 			msim_font_height_to_point(height)); */
@@ -815,13 +823,21 @@ static void msim_markup_c_to_html(xmlnode *root, gchar **begin, gchar **end)
 	const gchar *color;
 
 	color = xmlnode_get_attrib(root, "v");
+	if (!color)
+	{
+		purple_debug_info("msim", "msim_markup_c_to_html: <c> tag w/o v attr");
+		*begin = g_strdup("");
+		*end = g_strdup("");
+		/* TODO: log as unrecognized */
+		return;
+	}
 
 	/* TODO: parse rgb(255,0,0) into #FF0000, etc. 
 	 * And do something about rgba (alpha) and transparent.
 	 */
-	/* *begin = g_strdup_printf("<font color='%s'>", color); */
-	*begin = g_strdup_printf("<span style='color: %s'>", color);
-	*end = g_strdup("</p>");
+	*begin = g_strdup_printf("<font color='%s'>", color); 
+	/* *begin = g_strdup_printf("<span style='color: %s'>", color); */
+	*end = g_strdup("</font>");
 }
 
 /** Convert the msim markup <b> tag (background color) into HTML. TODO: Test */
@@ -830,8 +846,17 @@ static void msim_markup_b_to_html(xmlnode *root, gchar **begin, gchar **end)
 	const gchar *color;
 
 	color = xmlnode_get_attrib(root, "v");
+	if (!color)
+	{
+		*begin = g_strdup("");
+		*end = g_strdup("");
+		purple_debug_info("msim", "msim_markup_b_to_html: <b> w/o v attr");
+		/* TODO: log as unrecognized. */
+		return;
+	}
 
 	/* TODO: parse color same as msim_markup_c_to_html(). */
+	/* TODO: find out how to set background color. */
 	*begin = g_strdup_printf("<span style='background-color: %s'>", color);
 	*end = g_strdup("</p>");
 }
@@ -842,6 +867,14 @@ static void msim_markup_i_to_html(xmlnode *root, gchar **begin, gchar **end)
 	const gchar *name;
 
 	name = xmlnode_get_attrib(root, "n");
+	if (!name)
+	{
+		purple_debug_info("msim", "msim_markup_i_to_html: <i> w/o n");
+		*begin = g_strdup("");
+		*end = g_strdup("");
+		/* TODO: log as unrecognized */
+		return;
+	}
 
 	/* TODO: Support these emoticons:
 	 *
@@ -864,7 +897,7 @@ static gchar *msim_markup_xmlnode_to_html(xmlnode *root)
 	gchar *begin, *inner, *end;
 	gchar *final;
 
-	if (!root)
+	if (!root || !root->name)
 		return g_strdup("");
 
 	purple_debug_info("msim", "msim_markup_xmlnode_to_html: got root=%s\n",
@@ -1099,12 +1132,19 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, gpointer data
 	gchar *user;
 	PurpleNotifyUserInfo *user_info;
 	PurpleBuddy *buddy;
-	gchar *song;
+	const gchar *str, *str2;
 
 
-	/* Get user{name,id} from msim_get_info, passed as an MsimMessage for orthogonality. */
+	/* Get user{name,id} from msim_get_info, passed as an MsimMessage for 
+	   orthogonality. */
 	msg = (MsimMessage *)data;
-	user = g_strdup(msim_msg_get_string(msg, "user"));	
+	user = msim_msg_get_string(msg, "user");
+	if (!user)
+	{
+		purple_debug_info("msim", "msim_get_info_cb: no 'user' in msg");
+		return;
+	}
+
 	purple_debug_info("msim", "msim_get_info_cb: got for user: %s\n", user);
 	msim_msg_free(msg);
 
@@ -1119,41 +1159,55 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, gpointer data
 	user_info = purple_notify_user_info_new();
 
 	/* Identification */
-	purple_notify_user_info_add_pair(user_info, _("User"), user);
+	purple_notify_user_info_add_pair(user_info, _("User"), g_strdup(user));
 
 	/* note: g_hash_table_lookup does not create a new string! */
-	purple_notify_user_info_add_pair(user_info, _("User ID"), 
-			g_strdup(g_hash_table_lookup(body, "UserID")));
+	str = g_hash_table_lookup(body, "UserID");
+	if (str)
+		purple_notify_user_info_add_pair(user_info, _("User ID"), 
+				g_strdup(str));
 
 	/* a/s/l...the vitals */	
-	purple_notify_user_info_add_pair(user_info, _("Age"), 
-			g_strdup(g_hash_table_lookup(body, "Age")));
+	str = g_hash_table_lookup(body, "Age");
+	if (str)
+		purple_notify_user_info_add_pair(user_info, _("Age"), g_strdup(str));
 
-	purple_notify_user_info_add_pair(user_info, _("Gender"), 
-			g_strdup(g_hash_table_lookup(body, "Gender")));
+	str = g_hash_table_lookup(body, "Gender");
+	if (str)
+		purple_notify_user_info_add_pair(user_info, _("Gender"), g_strdup(str));
 
-	purple_notify_user_info_add_pair(user_info, _("Location"), 
-			g_strdup(g_hash_table_lookup(body, "Location")));
+	str = g_hash_table_lookup(body, "Location");
+	if (str)
+		purple_notify_user_info_add_pair(user_info, _("Location"), 
+				g_strdup(str));
 
 	/* Other information */
 
 	/* Headline comes from buddy status messages */
-	if (buddy && purple_blist_node_get_string(&buddy->node, "Headline"))
-		purple_notify_user_info_add_pair(user_info, "Headline",
-				purple_blist_node_get_string(&buddy->node, "Headline")); 
+	if (buddy)
+	{
+		str = purple_blist_node_get_string(&buddy->node, "Headline");
+		if (str)
+			purple_notify_user_info_add_pair(user_info, "Headline", str);
+	}
 
-	song = g_strdup_printf("%s - %s",
-		(gchar *)g_hash_table_lookup(body, "BandName"),
-		(gchar *)g_hash_table_lookup(body, "SongName"));
 
+	str = g_hash_table_lookup(body, "BandName");
+	str2 = g_hash_table_lookup(body, "SongName");
+	if (str || str2)
+	{
+		purple_notify_user_info_add_pair(user_info, _("Song"), 
+			g_strdup_printf("%s - %s",
+				str ? str : "Unknown Artist",
+				str2 ? str2 : "Unknown Song"));
+	}
 
-	purple_notify_user_info_add_pair(user_info, _("Song"), song);
-	/* Do not free song - used by user_info. */
 
 	/* Total friends only available if looked up by uid, not username. */
-	if (g_hash_table_lookup(body, "TotalFriends"))
+	str = g_hash_table_lookup(body, "TotalFriends");
+	if (str)
 		purple_notify_user_info_add_pair(user_info, _("Total Friends"), 
-				g_strdup(g_hash_table_lookup(body, "TotalFriends")));
+			g_strdup(str));
 
 	purple_notify_userinfo(session->gc, user, user_info, NULL, NULL);
 	purple_debug_info("msim", "msim_get_info_cb: username=%s\n", user);
@@ -1625,7 +1679,8 @@ msim_error(MsimSession *session, MsimMessage *msg)
     err = msim_msg_get_integer(msg, "err");
     errmsg = msim_msg_get_string(msg, "errmsg");
 
-    full_errmsg = g_strdup_printf(_("Protocol error, code %d: %s"), err, errmsg);
+    full_errmsg = g_strdup_printf(_("Protocol error, code %d: %s"), err, 
+			errmsg ? errmsg : "no 'errmsg' given");
 
 	g_free(errmsg);
 
@@ -2251,8 +2306,10 @@ msim_connect_cb(gpointer data, gint source, const gchar *error_message)
     if (source < 0)
     {
         purple_connection_error(gc, _("Couldn't connect to host"));
-        purple_connection_error(gc, g_strdup_printf(_("Couldn't connect to host: %s (%d)"), 
-                    error_message, source));
+        purple_connection_error(gc, g_strdup_printf(
+					_("Couldn't connect to host: %s (%d)"), 
+                    error_message ? error_message : "no message given", 
+					source));
         return;
     }
 
@@ -2448,7 +2505,8 @@ msim_lookup_user(MsimSession *session, const gchar *user,
 			"lid", MSIM_TYPE_INTEGER, lid,
 			"rid", MSIM_TYPE_INTEGER, rid,
 			/* TODO: dictionary field type */
-			"body", MSIM_TYPE_STRING, g_strdup_printf("%s=%s", field_name, user),
+			"body", MSIM_TYPE_STRING, 
+				g_strdup_printf("%s=%s", field_name, user),
 			NULL));
 } 
 
