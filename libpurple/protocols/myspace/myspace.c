@@ -807,6 +807,29 @@ static void msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
 	*end = gs_end->str;
 }
 
+/** Convert a msim markup color to a color suitable for libpurple.
+  *
+  * @param msim Either a color name, or an rgb(x,y,z) code.
+  *
+  * @return A new string, either a color name or #rrggbb code. Must g_free(). 
+  */
+static char *msim_color_to_purple(const char *msim)
+{
+	guint red, green, blue;
+
+	if (!msim)
+		return g_strdup("black");
+
+	if (sscanf(msim, "rgb(%d,%d,%d)", &red, &green, &blue) != 3)
+	{
+		/* Color name. */
+		return g_strdup(msim);
+	}
+	/* TODO: rgba (alpha). */
+
+	return g_strdup_printf("#%.2x%.2x%.2x", red, green, blue);
+}	
+
 /** Convert the msim markup <p> (paragraph) tag into HTML. */
 static void msim_markup_p_to_html(xmlnode *root, gchar **begin, gchar **end)
 {
@@ -821,6 +844,7 @@ static void msim_markup_p_to_html(xmlnode *root, gchar **begin, gchar **end)
 static void msim_markup_c_to_html(xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *color;
+	gchar *purple_color;
 
 	color = xmlnode_get_attrib(root, "v");
 	if (!color)
@@ -832,10 +856,12 @@ static void msim_markup_c_to_html(xmlnode *root, gchar **begin, gchar **end)
 		return;
 	}
 
-	/* TODO: parse rgb(255,0,0) into #FF0000, etc. 
-	 * And do something about rgba (alpha) and transparent.
-	 */
-	*begin = g_strdup_printf("<font color='%s'>", color); 
+	purple_color = msim_color_to_purple(color);
+
+	*begin = g_strdup_printf("<font color='%s'>", purple_color); 
+
+	g_free(purple_color);
+
 	/* *begin = g_strdup_printf("<span style='color: %s'>", color); */
 	*end = g_strdup("</font>");
 }
@@ -844,6 +870,7 @@ static void msim_markup_c_to_html(xmlnode *root, gchar **begin, gchar **end)
 static void msim_markup_b_to_html(xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *color;
+	gchar *purple_color;
 
 	color = xmlnode_get_attrib(root, "v");
 	if (!color)
@@ -855,9 +882,13 @@ static void msim_markup_b_to_html(xmlnode *root, gchar **begin, gchar **end)
 		return;
 	}
 
-	/* TODO: parse color same as msim_markup_c_to_html(). */
+	purple_color = msim_color_to_purple(color);
+
 	/* TODO: find out how to set background color. */
-	*begin = g_strdup_printf("<span style='background-color: %s'>", color);
+	*begin = g_strdup_printf("<span style='background-color: %s'>", 
+			purple_color);
+	g_free(purple_color);
+
 	*end = g_strdup("</p>");
 }
 
