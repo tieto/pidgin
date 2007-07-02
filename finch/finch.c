@@ -381,6 +381,7 @@ int main(int argc, char **argv)
 {
 	signal(SIGPIPE, SIG_IGN);
 
+	g_set_prgname("Finch");
 	g_set_application_name(_("Finch"));
 
 	/* Initialize the libpurple stuff */

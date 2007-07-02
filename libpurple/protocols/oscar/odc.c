@@ -314,7 +314,7 @@ peer_odc_handle_payload(PeerConnection *conn, const char *msg, size_t len, int e
 			tmp += size;
 
 			/* Skip past the closing </data> tag */
-			if (strncasecmp(tmp, "</data>", 7))
+			if (g_ascii_strncasecmp(tmp, "</data>", 7))
 			{
 				g_free(embedded_data);
 				break;

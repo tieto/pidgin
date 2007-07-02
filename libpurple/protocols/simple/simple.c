@@ -337,7 +337,7 @@ static void fill_auth(struct simple_account_data *sip, gchar *hdr, struct sip_au
 		return;
 	}
 
-	if(!g_strncasecmp(hdr, "NTLM", 4)) {
+	if(!g_ascii_strncasecmp(hdr, "NTLM", 4)) {
 		purple_debug_info("simple", "found NTLM\n");
 		auth->type = 2;
 		parts = g_strsplit(hdr+5, "\", ", 0);

@@ -31,6 +31,8 @@
 #define SEARCH_TIMEOUT 4000   /* 4 secs */
 #define SEARCHING(tree)  (tree->search && tree->search->len > 0)
 
+#define COLUMN_INVISIBLE(tree, index)  (tree->columns[index].flags & GNT_TREE_COLUMN_INVISIBLE)
+
 enum
 {
 	SIG_SELECTION_CHANGED,
@@ -74,6 +76,36 @@ static void tree_selection_changed(GntTree *, GntTreeRow *, GntTreeRow *);
 
 static GntWidgetClass *parent_class = NULL;
 static guint signals[SIGS] = { 0 };
+
+static void
+readjust_columns(GntTree *tree)
+{
+	int i, col, total;
+	int width;
+#define WIDTH(i) (tree->columns[i].width_ratio ? tree->columns[i].width_ratio : tree->columns[i].width)
+	gnt_widget_get_size(GNT_WIDGET(tree), &width, NULL);
+	for (i = 0, total = 0; i < tree->ncol ; i++) {
+		if (tree->columns[i].flags & GNT_TREE_COLUMN_INVISIBLE)
+			continue;
+		if (tree->columns[i].flags & GNT_TREE_COLUMN_FIXED_SIZE)
+			width -= WIDTH(i);
+		else
+			total += WIDTH(i);
+	}
+
+	if (total == 0)
+		return;
+
+	for (i = 0; i < tree->ncol; i++) {
+		if (tree->columns[i].flags & GNT_TREE_COLUMN_INVISIBLE)
+			continue;
+		if (tree->columns[i].flags & GNT_TREE_COLUMN_FIXED_SIZE)
+			col = WIDTH(i);
+		else
+			col = (WIDTH(i) * width) / total;
+		gnt_tree_set_col_width(GNT_TREE(tree), i, col);
+	}
+}
 
 /* Move the item at position old to position new */
 static GList *
@@ -249,7 +281,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 	gboolean notfirst = FALSE;
 	int lastvisible = tree->ncol;
 
-	while (lastvisible && tree->columns[lastvisible].invisible)
+	while (lastvisible && COLUMN_INVISIBLE(tree, lastvisible))
 		lastvisible--;
 
 	for (i = 0, iter = row->columns; i < tree->ncol && iter; i++, iter = iter->next)
@@ -261,7 +293,7 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 		gboolean cut = FALSE;
 		int width;
 
-		if (tree->columns[i].invisible)
+		if (COLUMN_INVISIBLE(tree, i))
 			continue;
 
 		if (i == lastvisible)
@@ -335,11 +367,11 @@ tree_mark_columns(GntTree *tree, int pos, int y, chtype type)
 
 	for (i = 0; i < tree->ncol - 1; i++)
 	{
-		if (!tree->columns[i].invisible) {
+		if (!COLUMN_INVISIBLE(tree, i)) {
 			notfirst = TRUE;
 			NEXT_X;
 		}
-		if (!tree->columns[i+1].invisible && notfirst)
+		if (!COLUMN_INVISIBLE(tree, i+1) && notfirst)
 			mvwaddch(widget->window, y, x, type);
 	}
 }
@@ -383,7 +415,7 @@ redraw_tree(GntTree *tree)
 
 		for (i = 0; i < tree->ncol; i++)
 		{
-			if (tree->columns[i].invisible) {
+			if (COLUMN_INVISIBLE(tree, i)) {
 				continue;
 			}
 			mvwaddstr(widget->window, pos, x + 1, tree->columns[i].title);
@@ -555,7 +587,7 @@ gnt_tree_size_request(GntWidget *widget)
 		GntTree *tree = GNT_TREE(widget);
 		int i, width = 0;
 		for (i = 0; i < tree->ncol; i++)
-			if (!tree->columns[i].invisible)
+			if (!COLUMN_INVISIBLE(tree, i))
 				width += tree->columns[i].width + 1;
 		widget->priv.width = width;
 	}
@@ -829,16 +861,10 @@ static void
 gnt_tree_size_changed(GntWidget *widget, int w, int h)
 {
 	GntTree *tree = GNT_TREE(widget);
-	int i;
-	int n = 0;
 	if (widget->priv.width <= 0)
 		return;
-	for (i = 0; i < tree->ncol; ++i)
-		n += tree->columns[i].width;
-	if (GNT_WIDGET_IS_FLAG_SET(widget, GNT_WIDGET_NO_BORDER))
-		tree->columns[tree->ncol - 1].width += widget->priv.width - n - 1 * tree->ncol;
-	else
-		tree->columns[tree->ncol - 1].width += widget->priv.width - n - 2 - 1 * tree->ncol;
+
+	readjust_columns(tree);
 }
 
 static gboolean
@@ -1524,6 +1550,8 @@ void gnt_tree_set_col_width(GntTree *tree, int col, int width)
 	g_return_if_fail(col < tree->ncol);
 
 	tree->columns[col].width = width;
+	if (tree->columns[col].width_ratio == 0)
+		tree->columns[col].width_ratio = width;
 }
 
 void gnt_tree_set_column_title(GntTree *tree, int index, const char *title)
@@ -1598,7 +1626,7 @@ void gnt_tree_adjust_columns(GntTree *tree)
 	twidth = 1 + 2 * (!GNT_WIDGET_IS_FLAG_SET(GNT_WIDGET(tree), GNT_WIDGET_NO_BORDER));
 	for (i = 0; i < tree->ncol; i++) {
 		gnt_tree_set_col_width(tree, i, widths[i]);
-		if (!tree->columns[i].invisible)
+		if (!COLUMN_INVISIBLE(tree, i))
 			twidth += widths[i] + (tree->show_separator ? 1 : 0) + 1;
 	}
 	g_free(widths);
@@ -1613,9 +1641,32 @@ void gnt_tree_set_hash_fns(GntTree *tree, gpointer hash, gpointer eq, gpointer k
 	tree->hash = g_hash_table_new_full(hash, eq, kd, free_tree_row);
 }
 
+static void
+set_column_flag(GntTree *tree, int col, GntTreeColumnFlag flag, gboolean set)
+{
+	if (set)
+		tree->columns[col].flags |= flag;
+	else
+		tree->columns[col].flags &= ~flag;
+}
+
 void gnt_tree_set_column_visible(GntTree *tree, int col, gboolean vis)
 {
 	g_return_if_fail(col < tree->ncol);
-	tree->columns[col].invisible = !vis;
+	set_column_flag(tree, col, GNT_TREE_COLUMN_INVISIBLE, !vis);
+}
+
+void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res)
+{
+	g_return_if_fail(col < tree->ncol);
+	set_column_flag(tree, col, GNT_TREE_COLUMN_FIXED_SIZE, !res);
+}
+
+void gnt_tree_set_column_width_ratio(GntTree *tree, int cols[])
+{
+	int i;
+	for (i = 0; i < tree->ncol && cols[i]; i++) {
+		tree->columns[i].width_ratio = cols[i];
+	}
 }
 

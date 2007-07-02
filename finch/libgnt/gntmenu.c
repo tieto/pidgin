@@ -329,6 +329,7 @@ GntWidget *gnt_menu_new(GntMenuType type)
 		GNT_TREE(widget)->show_separator = FALSE;
 		_gnt_tree_init_internals(GNT_TREE(widget), 2);
 		gnt_tree_set_col_width(GNT_TREE(widget), 1, 1);  /* The second column is to indicate that it has a submenu */
+		gnt_tree_set_column_resizable(GNT_TREE(widget), 1, FALSE);
 		GNT_WIDGET_UNSET_FLAGS(widget, GNT_WIDGET_NO_BORDER);
 	}
 

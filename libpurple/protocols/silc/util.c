@@ -623,15 +623,15 @@ char *silcpurple_file2mime(const char *filename)
 	ct = strrchr(filename, '.');
 	if (!ct)
 		return NULL;
-	else if (!strcasecmp(".png", ct))
+	else if (!g_ascii_strcasecmp(".png", ct))
 		return strdup("image/png");
-	else if (!strcasecmp(".jpg", ct))
+	else if (!g_ascii_strcasecmp(".jpg", ct))
 		return strdup("image/jpeg");
-	else if (!strcasecmp(".jpeg", ct))
+	else if (!g_ascii_strcasecmp(".jpeg", ct))
 		return strdup("image/jpeg");
-	else if (!strcasecmp(".gif", ct))
+	else if (!g_ascii_strcasecmp(".gif", ct))
 		return strdup("image/gif");
-	else if (!strcasecmp(".tiff", ct))
+	else if (!g_ascii_strcasecmp(".tiff", ct))
 		return strdup("image/tiff");
 
 	return NULL;
