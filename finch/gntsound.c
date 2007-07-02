@@ -51,6 +51,7 @@
 #include "gntcheckbox.h"
 #include "gntline.h"
 #include "gntslider.h"
+#include "gnttree.h"
 
 struct finch_sound_event {
 	char *label;
@@ -64,6 +65,7 @@ typedef struct {
 	GntWidget *conv_focus;
 	GntWidget *while_status;
 	GntWidget *volume;
+	GntWidget *events;
 	GntWidget *window;
 } SoundPrefDialog;
 
@@ -572,15 +574,24 @@ finch_sound_play_event(PurpleSoundEventID event)
 static void
 save_cb(GntWidget *button, gpointer win)
 {
+	gint i;
+
 	purple_prefs_set_string(FINCH_PREFS_ROOT "/sound/method", gnt_combo_box_get_selected_data(GNT_COMBO_BOX(pref_dialog->method)));
 	purple_prefs_set_path(FINCH_PREFS_ROOT "/sound/command", gnt_entry_get_text(GNT_ENTRY(pref_dialog->command)));
 	purple_prefs_set_bool(FINCH_PREFS_ROOT "/sound/conv_focus",gnt_check_box_get_checked(GNT_CHECK_BOX(pref_dialog->conv_focus)));
 	purple_prefs_set_int("/purple/sound/while_status",GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(pref_dialog->while_status))));
 	purple_prefs_set_int(FINCH_PREFS_ROOT "/sound/volume",gnt_slider_get_value(GNT_SLIDER(pref_dialog->volume)));
 
+	for(i = 0;i < PURPLE_NUM_SOUNDS;i++){
+		const gchar * option = finch_sound_get_event_option(i);
+		gchar *pref =  g_strdup_printf(FINCH_PREFS_ROOT "/sound/enabled/%s",
+										option);
+		gboolean choice = gnt_tree_get_choice(GNT_TREE(pref_dialog->events),GINT_TO_POINTER(g_str_hash(option)));
+		purple_prefs_set_bool(pref,choice);
+		g_free(pref);
+	}
 	gnt_widget_destroy(GNT_WIDGET(win));
 }
-
 static void
 cancel_cb(GntWidget *button, gpointer win)
 {
@@ -604,9 +615,11 @@ finch_sounds_show_all(void)
 	GntWidget *chkbox;
 	GntWidget *button;
 	GntWidget *label;
+	GntWidget *tree;
 	GntWidget *win;
 
 	gchar *buf;
+	gint i;
 
 	if(pref_dialog){
 		gnt_window_present(pref_dialog->window);
@@ -691,7 +704,35 @@ finch_sounds_show_all(void)
 	gnt_box_add_widget(GNT_BOX(win), gnt_line_new(FALSE));
 
 	gnt_box_add_widget(GNT_BOX(win),gnt_label_new_with_format(_("Sound Events"),GNT_TEXT_FLAG_BOLD)); 
-	/* Put events tree here */
+
+	pref_dialog->events = tree = gnt_tree_new_with_columns(1);
+	gnt_tree_set_column_titles(GNT_TREE(tree),_("Play"),_("Event"));
+	gnt_tree_set_show_title(GNT_TREE(tree),TRUE);
+	fprintf(stderr,"got here\n");
+
+	for(i = 0;i < PURPLE_NUM_SOUNDS;i++){
+		const gchar *option = finch_sound_get_event_option(i);
+		gchar *pref =  g_strdup_printf(FINCH_PREFS_ROOT "/sound/enabled/%s",
+										option);
+		const gchar *label = finch_sound_get_event_label(i);
+
+		gnt_tree_add_choice(GNT_TREE(tree), GINT_TO_POINTER(g_str_hash(option)),
+			gnt_tree_create_row(GNT_TREE(tree),_(label)),
+			NULL, NULL);
+		gnt_tree_set_choice(GNT_TREE(tree),GINT_TO_POINTER(g_str_hash(option)),purple_prefs_get_bool(pref));
+		g_free(pref);
+	}
+
+	gnt_box_add_widget(GNT_BOX(win),tree);
+
+	box = gnt_hbox_new(TRUE);
+	button = gnt_button_new("Test");
+	gnt_box_add_widget(GNT_BOX(box),button);
+	button = gnt_button_new("Reset");
+	gnt_box_add_widget(GNT_BOX(box),button);
+	button = gnt_button_new("Choose...");
+	gnt_box_add_widget(GNT_BOX(box),button);
+	gnt_box_add_widget(GNT_BOX(win),box);
 
 	box = gnt_hbox_new(TRUE);
 	gnt_box_set_pad(GNT_BOX(box),0);
@@ -700,7 +741,7 @@ finch_sounds_show_all(void)
 	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(save_cb),win);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	button = gnt_button_new("Cancel");
-	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(cancel_cb),NULL);
+	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(cancel_cb),win);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	gnt_box_add_widget(GNT_BOX(win),box);
 
