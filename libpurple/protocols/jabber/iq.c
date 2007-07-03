@@ -279,10 +279,10 @@ static void jabber_iq_version_parse(JabberStream *js, xmlnode *packet)
 		}
 
 		if(NULL != ui_name && NULL != ui_version) {
-			char *name_complete = g_strdup_printf("%s (libpurple " VERSION ")", ui_name);
-			xmlnode_insert_data(xmlnode_new_child(query, "name"), name_complete, -1);
-			xmlnode_insert_data(xmlnode_new_child(query, "version"), ui_version, -1);
-			g_free(name_complete);
+			char *version_complete = g_strdup_printf("%s (libpurple " VERSION ")", ui_version);
+			xmlnode_insert_data(xmlnode_new_child(query, "name"), ui_name, -1);
+			xmlnode_insert_data(xmlnode_new_child(query, "version"), version_complete, -1);
+			g_free(version_complete);
 		} else {
 			xmlnode_insert_data(xmlnode_new_child(query, "name"), "libpurple", -1);
 			xmlnode_insert_data(xmlnode_new_child(query, "version"), VERSION, -1);
