@@ -1,5 +1,6 @@
 2007-07-xx Jeff Connelly <jeff2@soc.pidgin.im> - 0.10
 * On incoming instant messages, support: text color, font face.
+* Add option to sign on as hidden, default off (previously, always was hidden)
 
 2007-07-01 Jeff Connelly <jeff2@soc.pidgin.im> - 0.9
 * Fix crash on Windows when logging in (bug #1990)
