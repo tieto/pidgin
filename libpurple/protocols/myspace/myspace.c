@@ -43,19 +43,17 @@
 gboolean 
 msim_load(PurplePlugin *plugin)
 {
-#ifdef MSIM_USE_PURPLE_RC4
 	/* If compiled to use RC4 from libpurple, check if it is really there. */
 	if (!purple_ciphers_find_cipher("rc4"))
 	{
-		purple_debug_error("msim", "compiled with MSIM_USE_PURPLE_RC4 but rc4 not in libpurple - not loading MySpaceIM plugin!\n");
+		purple_debug_error("msim", "rc4 not in libpurple, but it is required - not loading MySpaceIM plugin!\n");
 		purple_notify_error(plugin, _("Missing Cipher"), 
 				_("The RC4 cipher could not be found"),
-				_("Recompile without MSIM_USE_PURPLE_RC4, or upgrade "
+				_("Upgrade "
 					"to a libpurple with RC4 support (>= 2.0.1). MySpaceIM "
 					"plugin will not be loaded."));
 		return FALSE;
 	}
-#endif
 	return TRUE;
 }
 
@@ -379,116 +377,6 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
 			NULL);
 }
 
-#ifndef MSIM_USE_PURPLE_RC4
-/* No RC4 in this version of libpurple, so bring our own. */
-
-/* 
-   Unix SMB/CIFS implementation.
-
-   a partial implementation of RC4 designed for use in the 
-   SMB authentication protocol
-
-   Copyright (C) Andrew Tridgell 1998
-
-   $Id: crypt-rc4.c 12116 2004-09-27 23:29:22Z guy $
-   
-   This program is free software; you can redistribute it and/or modify
-   it under the terms of the GNU General Public License as published by
-   the Free Software Foundation; either version 2 of the License, or
-   (at your option) any later version.
-   
-   This program is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-   GNU General Public License for more details.
-   
-   You should have received a copy of the GNU General Public License
-   along with this program; if not, write to the Free Software
-   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-   
-   Modified by Jeff Connelly for MySpaceIM Gaim plugin.
-*/
-
-#include <glib.h>
-#include <string.h>
-
-/* Perform RC4 on a block of data using specified key.  "data" is a pointer
-   to the block to be processed.  Output is written to same memory as input,
-   so caller may need to make a copy before calling this function, since
-   the input will be overwritten.  
-   
-   Taken from Samba source code.  Modified to allow us to maintain state
-   between calls to crypt_rc4.
-*/
-
-void 
-crypt_rc4_init(rc4_state_struct *rc4_state, 
-		    const guchar *key, int key_len)
-{
-  int ind;
-  unsigned gchar j = 0;
-  unsigned gchar *s_box;
-
-  memset(rc4_state, 0, sizeof(rc4_state_struct));
-  s_box = rc4_state->s_box;
-  
-  for (ind = 0; ind < 256; ind++)
-  {
-    s_box[ind] = (guchar)ind;
-  }
-
-  for( ind = 0; ind < 256; ind++)
-  {
-     guchar tc;
-
-     j += (s_box[ind] + key[ind%key_len]);
-
-     tc = s_box[ind];
-     s_box[ind] = s_box[j];
-     s_box[j] = tc;
-  }
-
-}
-
-void 
-crypt_rc4(rc4_state_struct *rc4_state, guchar *data, int data_len)
-{
-  guchar *s_box;
-  guchar index_i;
-  guchar index_j;
-  int ind;
-
-  /* retrieve current state from the state struct (so we can resume where
-     we left off) */
-  index_i = rc4_state->index_i;
-  index_j = rc4_state->index_j;
-  s_box = rc4_state->s_box;
-
-  for( ind = 0; ind < data_len; ind++)
-  {
-    guchar tc;
-    guchar t;
-
-    index_i++;
-    index_j += s_box[index_i];
-
-    tc = s_box[index_i];
-    s_box[index_i] = s_box[index_j];
-    s_box[index_j] = tc;
-
-    t = s_box[index_i] + s_box[index_j];
-    data[ind] = data[ind] ^ s_box[t];
-  }
-
-  /* Store the updated state */
-  rc4_state->index_i = index_i;
-  rc4_state->index_j = index_j;
-}
-
-#endif /* !MSIM_USE_PURPLE_RC4 */
-
-
 /**
  * Compute the base64'd login challenge response based on username, password, nonce, and IPs.
  *
@@ -506,11 +394,7 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 {
     PurpleCipherContext *key_context;
     PurpleCipher *sha1;
-#ifdef MSIM_USE_PURPLE_RC4
 	PurpleCipherContext *rc4;
-#else
-	rc4_state_struct rc4;
-#endif
 
     guchar hash_pw[HASH_SIZE];
     guchar key[HASH_SIZE];
@@ -566,14 +450,12 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
     purple_debug_info("msim", "\n");
 #endif
 
-#ifdef MSIM_USE_PURPLE_RC4
 	rc4 = purple_cipher_context_new_by_name("rc4", NULL);
 
     /* Note: 'key' variable is 0x14 bytes (from SHA-1 hash), 
      * but only first 0x10 used for the RC4 key. */
 	purple_cipher_context_set_option(rc4, "key_len", (gpointer)0x10);
 	purple_cipher_context_set_key(rc4, key);
-#endif
 
     /* TODO: obtain IPs of network interfaces */
 
@@ -586,20 +468,11 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
     memcpy(data + NONCE_SIZE, email, strlen(email));
     memcpy(data + NONCE_SIZE + strlen(email), MSIM_LOGIN_IP_LIST, MSIM_LOGIN_IP_LIST_LEN);
 
-#ifdef MSIM_USE_PURPLE_RC4
 	data_out = g_new0(guchar, data_len);
 
     purple_cipher_context_encrypt(rc4, (const guchar *)data, 
 			data_len, data_out, &data_out_len);
 	purple_cipher_context_destroy(rc4);
-#else
-	/* Use our own RC4 code */
-	purple_debug_info("msim", "Using non-purple RC4 cipher code in this version\n");
-	crypt_rc4_init(&rc4, key, 0x10);
-	crypt_rc4(&rc4, data, data_len);
-	data_out_len = data_len;
-	data_out = data;
-#endif
 
 	g_assert(data_out_len == data_len);
 
