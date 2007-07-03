@@ -32,6 +32,7 @@
 #define SEARCHING(tree)  (tree->search && tree->search->len > 0)
 
 #define COLUMN_INVISIBLE(tree, index)  (tree->columns[index].flags & GNT_TREE_COLUMN_INVISIBLE)
+#define BINARY_DATA(tree, index)       (tree->columns[index].flags & GNT_TREE_COLUMN_BINARY_DATA)
 
 enum
 {
@@ -69,6 +70,7 @@ struct _GntTreeRow
 struct _GntTreeCol
 {
 	char *text;
+	gboolean isbinary;
 	int span;       /* How many columns does it span? */
 };
 
@@ -136,6 +138,8 @@ row_matches_search(GntTreeRow *row)
 {
 	GntTree *t = row->tree;
 	if (t->search && t->search->len > 0) {
+		/* XXX: Allow setting the search column. And make sure the search column
+		 * doesn't contain binary data. */
 		char *one = g_utf8_casefold(((GntTreeCol*)row->columns->data)->text, -1);
 		char *two = g_utf8_casefold(t->search->str, -1);
 		char *z = strstr(one, two);
@@ -288,13 +292,21 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 	{
 		GntTreeCol *col = iter->data;
 		const char *text;
-		int len = gnt_util_onscreen_width(col->text, NULL);
+		int len;
 		int fl = 0;
 		gboolean cut = FALSE;
 		int width;
+		const char *display;
 
 		if (COLUMN_INVISIBLE(tree, i))
 			continue;
+
+		if (BINARY_DATA(tree, i))
+			display = "";
+		else
+			display = col->text;
+
+		len = gnt_util_onscreen_width(display, NULL);
 
 		if (i == lastvisible)
 			width = GNT_WIDGET(tree)->priv.width - gnt_util_onscreen_width(string->str, NULL);
@@ -339,8 +351,8 @@ update_row_text(GntTree *tree, GntTreeRow *row)
 			len = width - 1;
 			cut = TRUE;
 		}
-		text = gnt_util_onscreen_width_to_pointer(col->text, len - fl, NULL);
-		string = g_string_append_len(string, col->text, text - col->text);
+		text = gnt_util_onscreen_width_to_pointer(display, len - fl, NULL);
+		string = g_string_append_len(string, display, text - display);
 		if (cut) { /* ellipsis */
 			if (gnt_ascii_only())
 				g_string_append_c(string, '~');
@@ -1003,8 +1015,8 @@ static void
 free_tree_col(gpointer data)
 {
 	GntTreeCol *col = data;
-
-	g_free(col->text);
+	if (col->isbinary)
+		g_free(col->text);
 	g_free(col);
 }
 
@@ -1390,8 +1402,12 @@ void gnt_tree_change_text(GntTree *tree, gpointer key, int colno, const char *te
 	if (row)
 	{
 		col = g_list_nth_data(row->columns, colno);
-		g_free(col->text);
-		col->text = g_strdup(text ? text : "");
+		if (BINARY_DATA(tree, colno)) {
+			col->text = (gpointer)text;
+		} else {
+			g_free(col->text);
+			col->text = g_strdup(text ? text : "");
+		}
 
 		if (get_distance(tree->top, row) >= 0 && get_distance(row, tree->bottom) >= 0)
 			redraw_tree(tree);
@@ -1517,7 +1533,13 @@ GntTreeRow *gnt_tree_create_row_from_list(GntTree *tree, GList *list)
 	{
 		GntTreeCol *col = g_new0(GntTreeCol, 1);
 		col->span = 1;
-		col->text = g_strdup(iter->data ? iter->data : "");
+		if (BINARY_DATA(tree, i)) {
+			col->text = iter->data;
+			col->isbinary = TRUE;
+		} else {
+			col->text = g_strdup(iter->data ? iter->data : "");
+			col->isbinary = FALSE;
+		}
 
 		row->columns = g_list_append(row->columns, col);
 	}
@@ -1660,6 +1682,12 @@ void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res)
 {
 	g_return_if_fail(col < tree->ncol);
 	set_column_flag(tree, col, GNT_TREE_COLUMN_FIXED_SIZE, !res);
+}
+
+void gnt_tree_set_column_is_binary(GntTree *tree, int col, gboolean bin)
+{
+	g_return_if_fail(col < tree->ncol);
+	set_column_flag(tree, col, GNT_TREE_COLUMN_FIXED_SIZE, bin);
 }
 
 void gnt_tree_set_column_width_ratio(GntTree *tree, int cols[])

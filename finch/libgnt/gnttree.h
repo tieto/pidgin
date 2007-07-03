@@ -50,6 +50,7 @@ typedef struct _GntTreeCol		GntTreeCol;
 typedef enum {
 	GNT_TREE_COLUMN_INVISIBLE    = 1 << 0,
 	GNT_TREE_COLUMN_FIXED_SIZE   = 1 << 1,
+	GNT_TREE_COLUMN_BINARY_DATA  = 1 << 2,
 } GntTreeColumnFlag;
 
 struct _GntTree
@@ -467,6 +468,16 @@ void gnt_tree_set_column_visible(GntTree *tree, int col, gboolean vis);
  * @see gnt_tree_set_column_width_ratio
  */
 void gnt_tree_set_column_resizable(GntTree *tree, int col, gboolean res);
+
+/**
+ * Set whether data in a column should be considered as binary data, and
+ * not as strings. A column containing binary data will be display empty text.
+ *
+ * @param tree  The tree
+ * @param col   The index of the column
+ * @param bin   @c TRUE if the data for the column is binary
+ */
+void gnt_tree_set_column_is_binary(GntTree *tree, int col, gboolean bin);
 
 /**
  * Set column widths to use when calculating column widths after a tree
