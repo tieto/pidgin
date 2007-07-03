@@ -274,6 +274,7 @@ void finch_debug_window_show()
 
 	g_signal_connect(G_OBJECT(debug.window), "destroy", G_CALLBACK(reset_debug_win), NULL);
 	gnt_text_view_attach_scroll_widget(GNT_TEXT_VIEW(debug.tview), debug.window);
+	gnt_text_view_attach_pager_widget(GNT_TEXT_VIEW(debug.tview), debug.window);
 
 	gnt_widget_show(debug.window);
 }
