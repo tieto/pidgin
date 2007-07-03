@@ -288,6 +288,10 @@ static void handle_buzz(JabberMessage *jm) {
 	if(jm->delayed)
 		return;
 	
+	/* Reject buzz when it's not enabled */
+	if(!jm->js->allowBuzz)
+		return;
+	
 	account = purple_connection_get_account(jm->js->gc);
 	
 	if ((buddy = purple_find_buddy(account, jm->from)) != NULL)
@@ -737,3 +741,8 @@ void jabber_message_conv_closed(JabberStream *js, const char *who)
 	jabber_message_send(jm);
 	jabber_message_free(jm);
 }
+
+gboolean jabber_buzz_isenabled(JabberStream *js, const gchar *shortname, const gchar *namespace) {
+	return js->allowBuzz;
+}
+

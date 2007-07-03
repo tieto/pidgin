@@ -158,6 +158,9 @@ struct _JabberStream
 	/* does the local server support PEP? */
 	gboolean pep;
 	
+	/* Is Buzz enabled? */
+	gboolean allowBuzz;
+	
 	/* A list of JabberAdHocCommands supported by the server */
 	GList *commands;
 	

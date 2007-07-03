@@ -106,6 +106,7 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	int priority;
 	const char *artist, *title, *source, *uri, *track;
 	int length;
+	gboolean allowBuzz;
 
 	if(!purple_status_is_active(status))
 		return;
@@ -122,11 +123,16 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 
 	purple_status_to_jabber(status, &state, &stripped, &priority);
 	
+	/* check for buzz support */
+	allowBuzz = purple_status_get_attr_boolean(status,"buzz");
+	/* changing the buzz state has to trigger a re-broadcasting of the presence for caps */
+	
 #define CHANGED(a,b) ((!a && b) || (a && a[0] == '\0' && b && b[0] != '\0') || \
 					  (a && !b) || (a && a[0] != '\0' && b && b[0] == '\0') || (a && b && strcmp(a,b)))
 	/* check if there are any differences to the <presence> and send them in that case */
-	if (js->old_state != state || CHANGED(js->old_msg, stripped) ||
+	if (allowBuzz != js->allowBuzz || js->old_state != state || CHANGED(js->old_msg, stripped) ||
 		js->old_priority != priority || CHANGED(js->old_avatarhash, js->avatar_hash)) {
+		js->allowBuzz = allowBuzz;
 		presence = jabber_presence_create_js(js, state, stripped, priority);
 
 		if(js->avatar_hash) {
@@ -153,7 +159,7 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 		js->old_priority = priority;
 		g_free(stripped);
 	}
-	
+					  	
 	/* next, check if there are any changes to the tune values */
 	artist = purple_status_get_attr_string(status, PURPLE_TUNE_ARTIST);
 	title = purple_status_get_attr_string(status, PURPLE_TUNE_TITLE);
@@ -194,7 +200,7 @@ void jabber_presence_send(PurpleAccount *account, PurpleStatus *status)
 	}
 	
 #undef CHANGED(a,b)
-	
+		
 	jabber_presence_fake_to_self(js, status);
 }
 
