@@ -65,6 +65,7 @@
  */
 
 static GIOChannel *channel = NULL;
+static int channel_read_callback;
 
 static gboolean ascii_only;
 static gboolean mouse_enabled;
@@ -293,7 +294,7 @@ setup_io()
 	g_io_channel_set_flags(channel, G_IO_FLAG_NONBLOCK, NULL );
 #endif
 
-	result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
+	channel_read_callback = result = g_io_add_watch_full(channel,  G_PRIORITY_HIGH,
 					(G_IO_IN | G_IO_HUP | G_IO_ERR | G_IO_PRI),
 					io_invoke, NULL, NULL);
 	
@@ -656,6 +657,7 @@ gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
 			&pid, stin, stout, sterr, NULL))
 		return FALSE;
 
+	g_source_remove(channel_read_callback);
 	wm->mode = GNT_KP_MODE_WAIT_ON_CHILD;
 	g_child_watch_add(pid, reap_child, NULL);
 
