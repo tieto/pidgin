@@ -204,12 +204,15 @@ void msim_get_info_cb(MsimSession *session, MsimMessage *userinfo, gpointer data
 void msim_get_info(PurpleConnection *gc, const gchar *name);
 
 void msim_set_status(PurpleAccount *account, PurpleStatus *status);
+void msim_set_status_primitive(MsimSession *session, guint code);
 
 void msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg);
 gboolean msim_process_reply(MsimSession *session, MsimMessage *msg);
 
 gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg);
+
+gboolean msim_we_are_logged_on(MsimSession *session, MsimMessage *msg);
 
 gboolean msim_process(MsimSession *session, MsimMessage *msg);
 

@@ -702,6 +702,8 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	return rc;
 }
 
+
+#ifdef MSIM_FONT_SIZE_WORKS
 /** Convert a msim markup font height to points. */
 static guint 
 msim_font_height_to_point(guint height)
@@ -724,6 +726,7 @@ msim_font_height_to_point(guint height)
 	default: return 12;
 	}
 }
+#endif
 
 /** Convert the msim markup <f> (font) tag into HTML. */
 static void msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
@@ -1285,20 +1288,27 @@ msim_get_info(PurpleConnection *gc, const gchar *user)
 	g_free(user_to_lookup); 
 }
 
-/* Set your status. */
-/* TODO: set status to online, when go online, if not invisible? */
+/** Set your status - callback for when user manually sets it. */
 void
 msim_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleStatusType *type;
-	guint status_code;
 	MsimSession *session;
 
 	session = (MsimSession *)account->gc->proto_data;
 
 	type = purple_status_get_type(status);
 
-	switch (purple_status_type_get_primitive(type))
+    msim_set_status_primitive(session, purple_status_type_get_primitive(type));
+}
+
+/** Set status using a status primitive type. */
+void 
+msim_set_status_primitive(MsimSession *session, guint code)
+{
+    guint status_code;
+
+	switch (code)
 	{
 		case PURPLE_STATUS_AVAILABLE:
 			status_code = MSIM_STATUS_CODE_ONLINE;
@@ -1522,6 +1532,42 @@ msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 	}
 }
 
+/** Called when the session key arrives. */
+gboolean
+msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
+{
+    purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
+
+    session->sesskey = msim_msg_get_integer(msg, "sesskey");
+    purple_debug_info("msim", "SESSKEY=<%d>\n", session->sesskey);
+
+    /* Comes with: proof,profileid,userid,uniquenick -- all same values
+     * some of the time, but can vary. This is our own user ID. */
+    session->userid = msim_msg_get_integer(msg, "userid");
+
+
+    purple_connection_set_state(session->gc, PURPLE_CONNECTED);
+
+
+    /* We now know are our own username, only after we're logged in..
+     * which is weird, but happens because you login with your email
+     * address and not username. Will be freed in msim_session_destroy(). */
+    session->username = msim_msg_get_string(msg, "uniquenick");
+
+#ifdef MSIM_FAKE_SELF_ONLINE
+    /* Fake our self coming online. */
+    purple_prpl_got_user_status(session->account, session->username, purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE), NULL);
+#endif
+
+    /* Set status depending on preference. */
+    msim_set_status_primitive(session, 
+            purple_account_get_bool(session->account, "hidden", FALSE) 
+            ?  PURPLE_STATUS_INVISIBLE
+            : PURPLE_STATUS_AVAILABLE);
+
+    return TRUE;
+}
+
 /**
  * Process a message. 
  *
@@ -1546,30 +1592,7 @@ msim_process(MsimSession *session, MsimMessage *msg)
     {
         return msim_login_challenge(session, msg);
     } else if (msim_msg_get(msg, "sesskey")) {
-        purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
-
-        session->sesskey = msim_msg_get_integer(msg, "sesskey");
-        purple_debug_info("msim", "SESSKEY=<%d>\n", session->sesskey);
-
-        /* Comes with: proof,profileid,userid,uniquenick -- all same values
-		 * some of the time, but can vary. This is our own user ID. */
-        session->userid = msim_msg_get_integer(msg, "userid");
-
-
-        purple_connection_set_state(session->gc, PURPLE_CONNECTED);
-	
-
-		/* We now know are our own username, only after we're logged in..
-		 * which is weird, but happens because you login with your email
-		 * address and not username. Will be freed in msim_session_destroy(). */
-		session->username = msim_msg_get_string(msg, "uniquenick");
-
-#ifdef MSIM_FAKE_SELF_ONLINE
-		/* Fake our self coming online. */
-		purple_prpl_got_user_status(session->account, session->username, purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE), NULL);
-#endif
-
-        return TRUE;
+        return msim_we_are_logged_on(session, msg);
     } else if (msim_msg_get(msg, "bm"))  {
         guint bm;
        
@@ -3011,6 +3034,9 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", MSIM_PORT);
+	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
+
+	option = purple_account_option_bool_new(_("Sign on as hidden"), "hidden", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Show display name in status text"), "show_display_name", TRUE);
