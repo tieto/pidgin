@@ -1120,7 +1120,7 @@ void jabber_close(PurpleConnection *gc)
 		JabberAdHocCommands *cmd = js->commands->data;
 		g_free(cmd->jid);
 		g_free(cmd->node);
-		g_free(cmd->node);
+		g_free(cmd->name);
 		g_free(cmd);
 		js->commands = g_list_delete_link(js->commands, js->commands);
 	}
