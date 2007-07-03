@@ -284,14 +284,19 @@ static void handle_buzz(JabberMessage *jm) {
 	PurpleConversation *c;
 	char *username, *str;
 	
+	/* Delayed buzz MUST NOT be accepted */
+	if(jm->delayed)
+		return;
+	
 	account = purple_connection_get_account(jm->js->gc);
-	c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, jm->from);
 	
 	if ((buddy = purple_find_buddy(account, jm->from)) != NULL)
 		username = g_markup_escape_text(purple_buddy_get_alias(buddy), -1);
 	else
-		username = g_markup_escape_text(jm->from, -1);
-	
+		return; /* Do not accept buzzes from unknown people */
+
+	c = purple_conversation_new(PURPLE_CONV_TYPE_IM, account, jm->from);
+
 	str = g_strdup_printf(_("%s just sent you a Buzz!"), username);
 	
 	purple_conversation_write(c, NULL, str, PURPLE_MESSAGE_SYSTEM|PURPLE_MESSAGE_NOTIFY, time(NULL));
@@ -384,7 +389,7 @@ void jabber_message_parse(JabberStream *js, xmlnode *packet)
 			jm->type = JABBER_MESSAGE_EVENT;
 			for(items = xmlnode_get_child(child,"items"); items; items = items->next)
 				jm->eventitems = g_list_append(jm->eventitems, items);
-		} else if(!strcmp(child->name, "buzz") && !strcmp(xmlns,"http://pidgin.im/xmpp/buzz")) {
+		} else if(!strcmp(child->name, "attention") && !strcmp(xmlns,"http://pidgin.im/libpurple/xmpp/attention")) {
 			jm->hasBuzz = TRUE;
 		} else if(!strcmp(child->name, "error")) {
 			const char *code = xmlnode_get_attrib(child, "code");
