@@ -2,7 +2,7 @@
  *
  * \author Jeff Connelly
  *
- * Copyright (C) 2007, Jeff Connelly <jeff2@homing.pidgin.im>
+ * Copyright (C) 2007, Jeff Connelly <jeff2@soc.pidgin.im>
  *
  * Based on Purple's "C Plugin HOWTO" hello world example.
  *
@@ -1304,11 +1304,9 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 			status_code = MSIM_STATUS_CODE_ONLINE;
 			break;
 
-#if 0
 		case PURPLE_STATUS_INVISIBLE:
-			status_code = MSIM_STATUS_CODE_HIDDEN;
+			status_code = MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN;
 			break;
-#endif
 
 		case PURPLE_STATUS_AWAY:
 			status_code = MSIM_STATUS_CODE_AWAY;
@@ -1855,7 +1853,7 @@ msim_status(MsimSession *session, MsimMessage *msg)
     /* Set user status */	
     switch (status_code)
 	{
-		case MSIM_STATUS_CODE_OFFLINE: 
+		case MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN: 
 			purple_status_code = PURPLE_STATUS_OFFLINE;	
 			break;
 
@@ -2786,7 +2784,7 @@ PurplePluginInfo info =
     "MySpaceIM Protocol Plugin",
                                                       /**  description    */
     "MySpaceIM Protocol Plugin",
-    "Jeff Connelly <jeff2@homing.pidgin.im>",         /**< author         */
+    "Jeff Connelly <jeff2@soc.pidgin.im>",         /**< author         */
     "http://developer.pidgin.im/wiki/MySpaceIM/",     /**< homepage       */
 
     msim_load,                                        /**< load           */

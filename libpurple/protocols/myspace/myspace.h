@@ -1,6 +1,6 @@
 /* MySpaceIM Protocol Plugin, header file
  *
- * Copyright (C) 2007, Jeff Connelly <jeff2@homing.pidgin.im>
+ * Copyright (C) 2007, Jeff Connelly <jeff2@soc.pidgin.im>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@
 #define MSIM_STATUS_ORDINAL_UNKNOWN2	9
 
 /* Status codes - states a buddy (or you!) can be in. */
-#define MSIM_STATUS_CODE_OFFLINE		0	/* or hidden */
+#define MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN		0
 #define MSIM_STATUS_CODE_ONLINE			1
 #define MSIM_STATUS_CODE_AWAY			5
 /* TODO: hidden */

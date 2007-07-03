@@ -1,11 +1,11 @@
-2007-07-xx Jeff Connelly <jeff22homing.pidgin.im> - 0.10
+2007-07-xx Jeff Connelly <jeff2@soc.pidgin.im> - 0.10
 * On incoming instant messages, support: text color, font face.
 
-2007-07-01 Jeff Connelly <jeff2@homing.pidgin.im> - 0.9
+2007-07-01 Jeff Connelly <jeff2@soc.pidgin.im> - 0.9
 * Fix crash on Windows when logging in (bug #1990)
 * Fix crash on Windows when viewing tooltip text (bug #1999)
 
-2007-06-30 Jeff Connelly <jeff2@homing.pidgin.im> - 0.8
+2007-06-30 Jeff Connelly <jeff2@soc.pidgin.im> - 0.8
 * Allow "Get Info" on all users, by uid or username
 * Fix crash when re-logging in, if login failed.
 * Show descriptive error message if login password is too long.
@@ -13,27 +13,27 @@
 * Update for Libpurple 2.0.2.
 * Partial support for formatting on incoming instant messages.
 
-2007-06-14 Jeff Connelly <jeff2@homing.pidgin.im> - 0.7
+2007-06-14 Jeff Connelly <jeff2@soc.pidgin.im> - 0.7
 * Add/delete buddy now functional (required many other code improvements).
 * Show improved buddy information in tooltip text.
 * Show user profile (in "Get Info" option) for buddies on buddy list.
 * Fix crash when re-logging in, if login succeeded.
 
-2007-06-12 Jeff Connelly <jeff2@homing.pidgin.im> - 0.6
+2007-06-12 Jeff Connelly <jeff2@soc.pidgin.im> - 0.6
 * Use RC4 code from Libpurple 2.0.1
 * Use a new implementation for sending and receiving messages (MsimMessage).
   This infrastructural change significantly improves extensibility.
 * Show online buddies as online.
 * Send and receive typing notifications (along with other required changes).
 
-2007-05-22 Jeff Connelly <jeff2@homing.pidgin.im> - 0.5
+2007-05-22 Jeff Connelly <jeff2@soc.pidgin.im> - 0.5
 * Add protocol escaping, so can now send and receive / and \ characters
 * Designed Pidgin 2.0.0beta7
 * Use RC4 code from Samba
 * Use translations (_ macro)
 * No major changes to code, still getting familiar with tools & community
 
-2007-04-29 Jeff Connelly <jeff2@homing.pidgin.im> 
+2007-04-29 Jeff Connelly <jeff2@soc.pidgin.im> 
 
 * NOTE: This code is now being developed under Monotone, in the
   im.pidgin.soc.2007.msimprpl branch on my local computer, which
