@@ -204,6 +204,9 @@ update_act_msg()
 static gboolean
 update_screen(GntWM *wm)
 {
+	if (wm->mode == GNT_KP_MODE_WAIT_ON_CHILD)
+		return TRUE;
+
 	if (wm->menu) {
 		GntMenu *top = wm->menu;
 		while (top) {

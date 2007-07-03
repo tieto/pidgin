@@ -112,7 +112,7 @@ void gnt_widget_set_urgent(GntWidget *widget);
 /**
  * 
  * @param label
- * @param callback)()
+ * @param callback
  */
 void gnt_register_action(const char *label, void (*callback)());
 
@@ -148,4 +148,12 @@ gchar * gnt_get_clipboard_string(void);
  * @param string
  */
 void gnt_set_clipboard_string(gchar *string);
+
+/**
+ * Spawn a different application that will consume the console.
+ */
+gboolean gnt_giveup_console(const char *wd, char **argv, char **envp,
+		gint *stin, gint *stout, gint *sterr);
+
+gboolean gnt_is_refugee(void);
 
