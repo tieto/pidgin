@@ -191,7 +191,7 @@ typedef struct _JabberFeature
 /* what kind of additional features as returned from disco#info are supported? */
 extern GList *jabber_features;
 
-void jabber_process_packet(JabberStream *js, xmlnode *packet);
+void jabber_process_packet(JabberStream *js, xmlnode **packet);
 void jabber_send(JabberStream *js, xmlnode *data);
 void jabber_send_raw(JabberStream *js, const char *data, int len);
 

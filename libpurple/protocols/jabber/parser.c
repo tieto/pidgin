@@ -113,7 +113,7 @@ jabber_parser_element_end_libxml(void *user_data, const xmlChar *element_name,
 	} else {
 		xmlnode *packet = js->current;
 		js->current = NULL;
-		jabber_process_packet(js, packet);
+		jabber_process_packet(js, &packet);
 		xmlnode_free(packet);
 	}
 }

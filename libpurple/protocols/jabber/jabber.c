@@ -175,49 +175,49 @@ static void jabber_stream_handle_error(JabberStream *js, xmlnode *packet)
 
 static void tls_init(JabberStream *js);
 
-void jabber_process_packet(JabberStream *js, xmlnode *packet)
+void jabber_process_packet(JabberStream *js, xmlnode **packet)
 {
 	const char *xmlns;
 
-	purple_signal_emit(my_protocol, "jabber-receiving-xmlnode", js->gc, &packet);
+	purple_signal_emit(my_protocol, "jabber-receiving-xmlnode", js->gc, packet);
 
 	/* if the signal leaves us with a null packet, we're done */
-	if(NULL == packet)
+	if(NULL == *packet)
 		return;
 
-	xmlns = xmlnode_get_namespace(packet);
+	xmlns = xmlnode_get_namespace(*packet);
 
-	if(!strcmp(packet->name, "iq")) {
-		jabber_iq_parse(js, packet);
-	} else if(!strcmp(packet->name, "presence")) {
-		jabber_presence_parse(js, packet);
-	} else if(!strcmp(packet->name, "message")) {
-		jabber_message_parse(js, packet);
-	} else if(!strcmp(packet->name, "stream:features")) {
-		jabber_stream_features_parse(js, packet);
-	} else if (!strcmp(packet->name, "features") &&
+	if(!strcmp((*packet)->name, "iq")) {
+		jabber_iq_parse(js, *packet);
+	} else if(!strcmp((*packet)->name, "presence")) {
+		jabber_presence_parse(js, *packet);
+	} else if(!strcmp((*packet)->name, "message")) {
+		jabber_message_parse(js, *packet);
+	} else if(!strcmp((*packet)->name, "stream:features")) {
+		jabber_stream_features_parse(js, *packet);
+	} else if (!strcmp((*packet)->name, "features") &&
 		   !strcmp(xmlns, "http://etherx.jabber.org/streams")) {
-		jabber_stream_features_parse(js, packet);
-	} else if(!strcmp(packet->name, "stream:error") ||
-			 (!strcmp(packet->name, "error") &&
+		jabber_stream_features_parse(js, *packet);
+	} else if(!strcmp((*packet)->name, "stream:error") ||
+			 (!strcmp((*packet)->name, "error") &&
 				!strcmp(xmlns, "http://etherx.jabber.org/streams")))
 	{
-		jabber_stream_handle_error(js, packet);
-	} else if(!strcmp(packet->name, "challenge")) {
+		jabber_stream_handle_error(js, *packet);
+	} else if(!strcmp((*packet)->name, "challenge")) {
 		if(js->state == JABBER_STREAM_AUTHENTICATING)
-			jabber_auth_handle_challenge(js, packet);
-	} else if(!strcmp(packet->name, "success")) {
+			jabber_auth_handle_challenge(js, *packet);
+	} else if(!strcmp((*packet)->name, "success")) {
 		if(js->state == JABBER_STREAM_AUTHENTICATING)
-			jabber_auth_handle_success(js, packet);
-	} else if(!strcmp(packet->name, "failure")) {
+			jabber_auth_handle_success(js, *packet);
+	} else if(!strcmp((*packet)->name, "failure")) {
 		if(js->state == JABBER_STREAM_AUTHENTICATING)
-			jabber_auth_handle_failure(js, packet);
-	} else if(!strcmp(packet->name, "proceed")) {
+			jabber_auth_handle_failure(js, *packet);
+	} else if(!strcmp((*packet)->name, "proceed")) {
 		if(js->state == JABBER_STREAM_AUTHENTICATING && !js->gsc)
 			tls_init(js);
 	} else {
 		purple_debug(PURPLE_DEBUG_WARNING, "jabber", "Unknown packet: %s\n",
-				packet->name);
+				(*packet)->name);
 	}
 }
 
