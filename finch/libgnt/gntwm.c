@@ -1028,7 +1028,7 @@ refresh_screen(GntBindable *bindable, GList *null)
 	gnt_ws_draw_taskbar(wm->cws, TRUE);
 	curs_set(0);   /* endwin resets the cursor to normal */
 
-	return FALSE;
+	return TRUE;
 }
 
 static gboolean
