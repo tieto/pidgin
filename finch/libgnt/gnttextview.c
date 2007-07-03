@@ -20,9 +20,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#include "gntstyle.h"
 #include "gnttextview.h"
 #include "gntutils.h"
 
+#include <stdlib.h>
 #include <string.h>
 
 enum
@@ -791,5 +793,45 @@ void gnt_text_view_attach_scroll_widget(GntTextView *view, GntWidget *widget)
 void gnt_text_view_set_flag(GntTextView *view, GntTextViewFlag flag)
 {
 	view->flags |= flag;
+}
+
+static gboolean
+check_for_pager_cb(GntWidget *widget, const char *key, GntTextView *view)
+{
+	static const char *combin = NULL;
+	char *argv[] = {NULL, NULL, NULL};
+	static char path[1024];
+	static int len = -1;
+	FILE *file;
+
+	if (combin == NULL) {
+		combin = gnt_key_translate(gnt_style_get_from_name("pager", "key"));
+		if (combin == NULL)
+			combin = "\033" "v";
+		len = g_snprintf(path, sizeof(path), "%s" G_DIR_SEPARATOR_S "gnt", g_get_tmp_dir());
+	} else {
+		g_snprintf(path + len, sizeof(path) - len, "XXXXXX");
+	}
+
+	if (strcmp(key, combin)) {
+		return FALSE;
+	}
+
+	file = fdopen(g_mkstemp(path), "wb");
+	if (!file)
+		return FALSE;
+
+	fprintf(file, "%s", view->string->str);
+	fclose(file);
+	argv[0] = gnt_style_get_from_name("pager", "path");
+	argv[0] = argv[0] ? argv[0] : getenv("PAGER");
+	argv[0] = argv[0] ? argv[0] : "less";
+	argv[1] = path;
+	return gnt_giveup_console(NULL, argv, NULL, NULL, NULL, NULL);
+}
+
+void gnt_text_view_attach_pager_widget(GntTextView *view, GntWidget *pager)
+{
+	g_signal_connect(pager, "key_pressed", G_CALLBACK(check_for_pager_cb), view);
 }
 
