@@ -258,6 +258,17 @@ void jabber_disco_items_parse(JabberStream *js, xmlnode *packet) {
 	if(type && !strcmp(type, "get")) {
 		JabberIq *iq = jabber_iq_new_query(js, JABBER_IQ_RESULT,
 				"http://jabber.org/protocol/disco#items");
+		
+		/* preserve node */
+		xmlnode *iq_query = xmlnode_get_child_with_namespace(iq->node,"query","http://jabber.org/protocol/disco#items");
+		if(iq_query) {
+			xmlnode *query = xmlnode_get_child_with_namespace(packet,"query","http://jabber.org/protocol/disco#items");
+			if(query) {
+				const char *node = xmlnode_get_attrib(query,"node");
+				if(node)
+					xmlnode_set_attrib(iq_query,"node",node);
+			}
+		}
 
 		jabber_iq_set_id(iq, xmlnode_get_attrib(packet, "id"));
 
