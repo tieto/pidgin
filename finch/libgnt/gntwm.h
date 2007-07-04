@@ -46,6 +46,7 @@ typedef enum
 	GNT_KP_MODE_NORMAL,
 	GNT_KP_MODE_RESIZE,
 	GNT_KP_MODE_MOVE,
+	GNT_KP_MODE_WAIT_ON_CHILD
 } GntKeyPressMode;
 
 typedef struct

@@ -181,8 +181,10 @@ update_conv_window_title(GntNode *node)
 			GNT_BOX(node->me)->title);
 	wbkgdset(node->window, '\0' | COLOR_PAIR(gnt_widget_has_focus(node->me) ? GNT_COLOR_TITLE : GNT_COLOR_TITLE_D));
 	mvwaddstr(node->window, 0, 0, title);
-	update_panels();
-	doupdate();
+	if (!gnt_is_refugee()) {
+		update_panels();
+		doupdate();
+	}
 	return FALSE;
 }
 

@@ -154,7 +154,7 @@ void gnt_keys_refine(char *text)
 
 const char *gnt_key_translate(const char *name)
 {
-	return g_hash_table_lookup(specials, name);
+	return name ? g_hash_table_lookup(specials, name) : NULL;
 }
 
 typedef struct {
