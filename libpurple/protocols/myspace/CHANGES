@@ -1,6 +1,8 @@
 2007-07-xx Jeff Connelly <jeff2@soc.pidgin.im> - 0.11
 * Allow going idle (tested with I'dle Ma'ker) and viewing idle status of buddies
- (thanks to Scott Ellis for finding the idle status code.)
+ (thanks to Scott Ellis, developing a MySpaceIM plugin for Miranda IM,
+  for finding the idle status code.)
+* Time out if no data from server within a certain amount of time (keep alives).
 
 2007-07-03 Jeff Connelly <jeff2@soc.pidgin.im> - 0.10
 * On incoming instant messages, add support for:

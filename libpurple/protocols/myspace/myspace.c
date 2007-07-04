@@ -1421,6 +1421,36 @@ msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 	}
 }
 
+/** Check if the connection is still alive, based on last communication. */
+gboolean
+msim_check_alive(gpointer data)
+{
+    MsimSession *session;
+    time_t delta;
+    gchar *errmsg;
+
+    session = (MsimSession *)data;
+
+    delta = time(NULL) - session->last_comm;
+    purple_debug_info("msim", "msim_check_alive: delta=%d\n", delta);
+    if (delta >= MSIM_KEEPALIVE_INTERVAL)
+    {
+        errmsg = g_strdup_printf(_("Connection to server lost (no data received within %d seconds)"), delta);
+
+        purple_debug_info("msim", "msim_check_alive: %s > interval of %d, presumed dead\n",
+                errmsg, MSIM_KEEPALIVE_INTERVAL);
+        purple_connection_error(session->gc, errmsg);
+
+        purple_notify_error(session->gc, NULL, errmsg, NULL);
+
+        g_free(errmsg);
+
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
 /** Called when the session key arrives. */
 gboolean
 msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
@@ -1449,10 +1479,14 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 #endif
 
     /* Set status depending on preference. */
+    /* TODO: set status to current status, change status to hidden if sign on as hidden. 
+     * Or remove this preference alltogether, and set status to current status? */
     msim_set_status_code(session, 
             purple_account_get_bool(session->account, "hidden", FALSE) 
             ?  PURPLE_STATUS_INVISIBLE
             : PURPLE_STATUS_AVAILABLE);
+
+    purple_timeout_add(MSIM_KEEPALIVE_INTERVAL_CHECK, msim_check_alive, session);
 
     return TRUE;
 }
@@ -2148,6 +2182,9 @@ msim_input_cb(gpointer gc_uncasted, gint source, PurpleInputCondition cond)
     g_return_if_fail(cond == PURPLE_INPUT_READ);
 	g_return_if_fail(MSIM_SESSION_VALID(session));
 
+    /* Mark down that we got data, so don't timeout. */
+    session->last_comm = time(NULL);
+
     /* Only can handle so much data at once... 
      * If this happens, try recompiling with a higher MSIM_READ_BUF_SIZE.
      * Should be large enough to hold the largest protocol message.
@@ -2345,6 +2382,7 @@ msim_session_new(PurpleAccount *acct)
     session->rxoff = 0;
     session->rxbuf = g_new0(gchar, MSIM_READ_BUF_SIZE);
 	session->next_rid = 1;
+    session->last_comm = time(NULL);
     
     return session;
 }

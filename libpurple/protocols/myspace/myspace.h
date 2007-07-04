@@ -83,10 +83,15 @@
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
 #define MSIM_CLIENT_VERSION     673
 
-/* Server */
+/* Default server */
 #define MSIM_SERVER         "im.myspace.akadns.net"
-//#define MSIM_SERVER         "localhost"
 #define MSIM_PORT           1863        /* TODO: alternate ports and automatic */
+
+/* Time between keepalives (seconds) - if no data within this time, is dead. */
+#define MSIM_KEEPALIVE_INTERVAL         (3 * 60)
+
+/* Time to check if alive (milliseconds) */
+#define MSIM_KEEPALIVE_INTERVAL_CHECK   (MSIM_KEEPALIVE_INTERVAL * 1000 / 5)
 
 /* Constants */
 #define HASH_SIZE           0x14        /**< Size of SHA-1 hash for login */
@@ -156,6 +161,7 @@ typedef struct _MsimSession
     gchar *rxbuf;                       /**< Receive buffer */
     guint rxoff;                        /**< Receive buffer offset */
 	guint next_rid;						/**< Next request/response ID */
+    time_t last_comm;                   /**< Time received last communication */
 } MsimSession;
 
 /* Check if an MsimSession is valid */
@@ -213,6 +219,7 @@ gboolean msim_process_reply(MsimSession *session, MsimMessage *msg);
 
 gboolean msim_preprocess_incoming(MsimSession *session, MsimMessage *msg);
 
+gboolean msim_check_alive(gpointer data);
 gboolean msim_we_are_logged_on(MsimSession *session, MsimMessage *msg);
 
 gboolean msim_process(MsimSession *session, MsimMessage *msg);
