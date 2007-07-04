@@ -370,7 +370,7 @@ connect_cb(gpointer data, gint source, const gchar *error_message)
 	else
 	{
 		struct sockaddr_in client_addr;
-		unsigned int client;
+		socklen_t client;
 		fd = accept (source, (struct sockaddr *)&client_addr, &client);
 	}
 
