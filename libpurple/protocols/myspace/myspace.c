@@ -1543,9 +1543,6 @@ msim_process(MsimSession *session, MsimMessage *msg)
 		 * just happened here), msimprpl will appear to be connected forever, while
 		 * other plugins (oscar, etc.) will time out. Msimprpl should timeout too. */
         purple_debug_info("msim", "msim_process: got keep alive\n");
-        purple_debug_info("msim", "msim_process: last ka was %d s ago\n",
-                time(NULL) - session->last_ka);
-        session->last_ka = time(NULL);
         return TRUE;
     } else {
 		msim_unrecognized(session, msg, "in msim_process");

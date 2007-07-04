@@ -162,8 +162,6 @@ typedef struct _MsimSession
     guint rxoff;                        /**< Receive buffer offset */
 	guint next_rid;						/**< Next request/response ID */
     time_t last_comm;                   /**< Time received last communication */
-
-    time_t last_ka;
 } MsimSession;
 
 /* Check if an MsimSession is valid */
