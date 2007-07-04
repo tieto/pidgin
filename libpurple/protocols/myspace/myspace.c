@@ -273,16 +273,12 @@ msim_login(PurpleAccount *acct)
     gc = purple_account_get_connection(acct);
     gc->proto_data = msim_session_new(acct);
 
+    /* Passwords are limited in length. */
 	if (strlen(acct->password) > MSIM_MAX_PASSWORD_LENGTH)
 	{
 		gchar *str;
 
 
-		/* TODO: Find out why >8 is problematic. The web site lets you have
-		 * long passwords, but reportedly the official IM client does not
-		 * allow more than 8 characters to be entered. Just entering the first
-		 * 8 does not, on first try, appear to work. */
-		/* Note: official client lets you have 10 characters in password. */
 		str = g_strdup_printf(
 				_("Sorry, passwords over %d characters in length (yours is "
 				"%d) are currently not supported by the MySpaceIM plugin."), 
@@ -296,7 +292,6 @@ msim_login(PurpleAccount *acct)
 		
 		g_free(str);
 	}
-
 
     /* 1. connect to server */
     purple_connection_update_progress(gc, _("Connecting"),

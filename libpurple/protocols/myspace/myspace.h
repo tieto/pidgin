@@ -74,7 +74,11 @@
 
 /* Constants */
 
-#define MSIM_MAX_PASSWORD_LENGTH 	8
+/* Maximum length of a password that is acceptable. This is the limit
+ * on the official client (build 679) and on the 'new password' field at
+ * http://settings.myspace.com/index.cfm?fuseaction=user.changepassword
+ * (though curiously, not on the 'current password' field). */
+#define MSIM_MAX_PASSWORD_LENGTH 	10
 
 /* Build version of MySpaceIM to report to servers (1.0.xxx.0) */
 #define MSIM_CLIENT_VERSION     673
