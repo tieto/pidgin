@@ -224,12 +224,21 @@ msim_send_raw(MsimSession *session, const gchar *msg)
  * @param buf Buffer to send
  * @param total_bytes Size of buffer to send
  *
- * @return Bytes successfully sent.
+ * @return Bytes successfully sent, or -1 on error.
  */
 int 
 msim_send_really_raw(PurpleConnection *gc, const char *buf, int total_bytes)
 {
 	int total_bytes_sent;
+    MsimSession *session;
+
+    g_return_val_if_fail(gc != NULL, -1);
+    g_return_val_if_fail(buf != NULL, -1);
+    g_return_val_if_fail(total_bytes >= 0, -1);
+
+    session = (MsimSession *)(gc->proto_data);
+
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), -1);
 	
 	/* Loop until all data is sent, or a failure occurs. */
 	total_bytes_sent = 0;
@@ -237,8 +246,8 @@ msim_send_really_raw(PurpleConnection *gc, const char *buf, int total_bytes)
 	{
 		int bytes_sent;
 
-		bytes_sent = send(((MsimSession*)(gc->proto_data))->fd, 
-				buf + total_bytes_sent, total_bytes - total_bytes_sent, 0);
+		bytes_sent = send(session->fd, buf + total_bytes_sent, 
+                total_bytes - total_bytes_sent, 0);
 
 		if (bytes_sent < 0)
 		{
@@ -267,6 +276,7 @@ msim_login(PurpleAccount *acct)
     int port;
 
     g_return_if_fail(acct != NULL);
+    g_return_if_fail(acct->username != NULL);
 
     purple_debug_info("myspace", "logging in %s\n", acct->username);
 
@@ -278,10 +288,9 @@ msim_login(PurpleAccount *acct)
 	{
 		gchar *str;
 
-
 		str = g_strdup_printf(
 				_("Sorry, passwords over %d characters in length (yours is "
-				"%d) are currently not supported by the MySpaceIM plugin."), 
+				"%d) are not supported by the MySpaceIM plugin."), 
 				MSIM_MAX_PASSWORD_LENGTH,
 				(int)strlen(acct->password));
 
@@ -380,8 +389,8 @@ msim_login_challenge(MsimSession *session, MsimMessage *msg)
  * @param password User's cleartext password.
  * @param response_len Will be written with response length.
  *
- * @return Binary login challenge response, ready to send to the server. Must be g_free()'d
- *         when finished.
+ * @return Binary login challenge response, ready to send to the server. 
+ * Must be g_free()'d when finished. NULL if error.
  */
 const gchar *
 msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE], 
@@ -403,18 +412,26 @@ msim_compute_login_response(const gchar nonce[2 * NONCE_SIZE],
 	int i;
 #endif
 
+    g_return_val_if_fail(nonce != NULL, NULL);
+    g_return_val_if_fail(email != NULL, NULL);
+    g_return_val_if_fail(password != NULL, NULL);
+    g_return_val_if_fail(response_len != NULL, NULL);
+
     /* Convert ASCII password to UTF16 little endian */
     purple_debug_info("msim", "converting password to UTF-16LE\n");
 	conv_error = NULL;
 	password_utf16le = g_convert(password, -1, "UTF-16LE", "UTF-8", 
 			&conv_bytes_read, &conv_bytes_written, &conv_error);
-	g_assert(conv_bytes_read == strlen(password));
+
+	g_return_val_if_fail(conv_bytes_read == strlen(password), NULL);
+
 	if (conv_error != NULL)
 	{
 		purple_debug_error("msim", 
 				"g_convert password UTF8->UTF16LE failed: %s",
 				conv_error->message);
 		g_error_free(conv_error);
+        return NULL;
 	}
 
     /* Compute password hash */ 
@@ -500,13 +517,15 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 {
     MsimSession *session;
     
-    g_return_val_if_fail(gc != NULL, 0);
-    g_return_val_if_fail(who != NULL, 0);
-    g_return_val_if_fail(message != NULL, 0);
+    g_return_val_if_fail(gc != NULL, -1);
+    g_return_val_if_fail(who != NULL, -1);
+    g_return_val_if_fail(message != NULL, -1);
 
 	/* 'flags' has many options, not used here. */
 
-	session = gc->proto_data;
+	session = (MsimSession *)gc->proto_data;
+
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), -1);
 
 	if (msim_send_bm(session, who, message, MSIM_BM_INSTANT))
 	{
@@ -515,6 +534,9 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 		 * it has failed yet--because the IM is only sent after the userid is
 		 * retrieved from the server (which happens after this function returns).
 		 */
+        /* TODO: maybe if message is delayed, don't echo to conv window,
+         * but do echo it to conv window manually once it is actually
+         * sent? Would be complicated. */
 		return 1;
 	} else {
 		return -1;
@@ -540,7 +562,10 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
  * @param text Message text to send. Not freed; will be copied.
  * @param type A MSIM_BM_* constant.
  *
+ * @return TRUE if success, FALSE if fail.
+ *
  * Buddy messages ('bm') include instant messages, action messages, status messages, etc.
+ *
  */
 gboolean 
 msim_send_bm(MsimSession *session, const gchar *who, const gchar *text, 
@@ -549,6 +574,10 @@ msim_send_bm(MsimSession *session, const gchar *who, const gchar *text,
 	gboolean rc;
 	MsimMessage *msg;
     const gchar *from_username;
+
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(who != NULL, FALSE);
+    g_return_val_if_fail(text != NULL, FALSE);
    
 	from_username = session->account->username;
 
@@ -597,7 +626,8 @@ msim_font_height_to_point(guint height)
 #endif
 
 /** Convert the msim markup <f> (font) tag into HTML. */
-static void msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
+static void 
+msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *face, *height_str, *decor_str;
 	GString *gs_end, *gs_begin;
@@ -642,19 +672,19 @@ static void msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
 
 	gs_end = g_string_new("</font>");
 
-	if (decor & 1)
+	if (decor & MSIM_TEXT_BOLD)
 	{
 		g_string_append(gs_begin, "<b>");
 		g_string_prepend(gs_end, "</b>");
 	}
 
-	if (decor & 2)
+	if (decor & MSIM_TEXT_ITALICS)
 	{
 		g_string_append(gs_begin, "<i>");
 		g_string_append(gs_end, "</i>");	
 	}
 
-	if (decor & 4)
+	if (decor & MSIM_TEXT_UNDERLINE)
 	{
 		g_string_append(gs_begin, "<u>");
 		g_string_append(gs_end, "</u>");	
@@ -671,7 +701,8 @@ static void msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
   *
   * @return A new string, either a color name or #rrggbb code. Must g_free(). 
   */
-static char *msim_color_to_purple(const char *msim)
+static char *
+msim_color_to_purple(const char *msim)
 {
 	guint red, green, blue;
 
@@ -689,9 +720,10 @@ static char *msim_color_to_purple(const char *msim)
 }	
 
 /** Convert the msim markup <p> (paragraph) tag into HTML. */
-static void msim_markup_p_to_html(xmlnode *root, gchar **begin, gchar **end)
+static void 
+msim_markup_p_to_html(xmlnode *root, gchar **begin, gchar **end)
 {
-	/* Just pass through unchanged. 
+    /* Just pass through unchanged. 
 	 *
 	 * Note: attributes currently aren't passed, if there are any. */
 	*begin = g_strdup("<p>");
@@ -699,7 +731,8 @@ static void msim_markup_p_to_html(xmlnode *root, gchar **begin, gchar **end)
 }
 
 /** Convert the msim markup <c> tag (text color) into HTML. TODO: Test */
-static void msim_markup_c_to_html(xmlnode *root, gchar **begin, gchar **end)
+static void 
+msim_markup_c_to_html(xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *color;
 	gchar *purple_color;
@@ -725,7 +758,8 @@ static void msim_markup_c_to_html(xmlnode *root, gchar **begin, gchar **end)
 }
 
 /** Convert the msim markup <b> tag (background color) into HTML. TODO: Test */
-static void msim_markup_b_to_html(xmlnode *root, gchar **begin, gchar **end)
+static void 
+msim_markup_b_to_html(xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *color;
 	gchar *purple_color;
@@ -751,7 +785,8 @@ static void msim_markup_b_to_html(xmlnode *root, gchar **begin, gchar **end)
 }
 
 /** Convert the msim markup <i> tag (emoticon image) into HTML. TODO: Test */
-static void msim_markup_i_to_html(xmlnode *root, gchar **begin, gchar **end)
+static void 
+msim_markup_i_to_html(xmlnode *root, gchar **begin, gchar **end)
 {
 	const gchar *name;
 
@@ -780,7 +815,8 @@ static void msim_markup_i_to_html(xmlnode *root, gchar **begin, gchar **end)
 /** Convert an xmlnode of msim markup to an HTML string.
  * @return An HTML string. Caller frees.
  */
-static gchar *msim_markup_xmlnode_to_html(xmlnode *root)
+static gchar *
+msim_markup_xmlnode_to_html(xmlnode *root)
 {
 	xmlnode *node;
 	gchar *begin, *inner, *end;
@@ -824,10 +860,10 @@ static gchar *msim_markup_xmlnode_to_html(xmlnode *root)
 		case XMLNODE_TYPE_TAG:
 			/* A tag or tag with attributes. Recursively descend. */
 			inner = msim_markup_xmlnode_to_html(node);
+            g_return_val_if_fail(inner != NULL, NULL);
 
 			purple_debug_info("msim", " ** node name=%s\n", node->name);
 			break;
-		
 	
 		case XMLNODE_TYPE_DATA:	
 			/* Literal text. */
@@ -895,8 +931,14 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg)
 {
     gchar *username, *msg_msim_markup, *msg_purple_markup;
 
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
+
     username = msim_msg_get_string(msg, "_username");
+    g_return_val_if_fail(username != NULL, FALSE);
+
 	msg_msim_markup = msim_msg_get_string(msg, "msg");
+    g_return_val_if_fail(msg_msim_markup != NULL, FALSE);
 
 	msg_purple_markup = msim_markup_to_html(msg_msim_markup);
 	g_free(msg_msim_markup);
@@ -911,26 +953,36 @@ msim_incoming_im(MsimSession *session, MsimMessage *msg)
 }
 
 /**
- * Handle an unrecognized message.
+ * Process unrecognized information.
+ *
+ * @param session
+ * @param msg An MsimMessage that was unrecognized, or NULL.
+ * @param note Information on what was unrecognized, or NULL.
  */
 void 
 msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note)
 {
-	/* TODO: Some more context, outwardly equivalent to a backtrace, for helping figure 
-	 * out what this msg is for. But not too much information so that a user
+	/* TODO: Some more context, outwardly equivalent to a backtrace, 
+     * for helping figure out what this msg is for. What was going on?
+     * But not too much information so that a user
 	 * posting this dump reveals confidential information.
 	 */
+
 	/* TODO: dump unknown msgs to file, so user can send them to me
 	 * if they wish, to help add support for new messages (inspired
 	 * by Alexandr Shutko, who maintains OSCAR protocol documentation). */
 
-	purple_debug_info("msim", "Unrecognized message on account for %s\n", session->account->username);
+	purple_debug_info("msim", "Unrecognized data on account for %s\n", 
+            session->account->username);
 	if (note)
 	{
 		purple_debug_info("msim", "(Note: %s)\n", note);
 	}
 
-	msim_msg_dump("Unrecognized message dump: %s\n", msg);
+    if (msg)
+    {
+        msim_msg_dump("Unrecognized message dump: %s\n", msg);
+    }
 }
 
 /**
@@ -949,26 +1001,33 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
 	gchar *msg_text, *username;
 	gboolean rc;
 
-	msg_text = msim_msg_get_string(msg, "msg");
-	username = msim_msg_get_string(msg, "_username");
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
 
-	purple_debug_info("msim", "msim_incoming_action: action <%s> from <%d>\n", msg_text, username);
+	msg_text = msim_msg_get_string(msg, "msg");
+    g_return_val_if_fail(msg_text != NULL, FALSE);
+
+	username = msim_msg_get_string(msg, "_username");
+    g_return_val_if_fail(username != NULL, FALSE);
+
+	purple_debug_info("msim", "msim_incoming_action: action <%s> from <%d>\n", 
+            msg_text, username);
 
 	if (strcmp(msg_text, "%typing%") == 0)
 	{
-		/* TODO: find out if msim repeatedly sends typing messages, so we can give it a timeout. 
-		 * Right now, there does seem to be an inordinately amount of time between typing/
-		 * stopped-typing notifications. */
+		/* TODO: find out if msim repeatedly sends typing messages, so we can 
+         * give it a timeout. Right now, there does seem to be an inordinately 
+         * amount of time between typing stopped-typing notifications. */
 		serv_got_typing(session->gc, username, 0, PURPLE_TYPING);
 		rc = TRUE;
 	} else if (strcmp(msg_text, "%stoptyping%") == 0) {
 		serv_got_typing_stopped(session->gc, username);
 		rc = TRUE;
 	} else {
-		msim_unrecognized(session, msg, "got to msim_incoming_action but unrecognized value for 'msg'");
+		msim_unrecognized(session, msg, 
+                "got to msim_incoming_action but unrecognized value for 'msg'");
 		rc = FALSE;
 	}
-
 
 	g_free(msg_text);
 	g_free(username);
@@ -983,14 +1042,21 @@ msim_incoming_action(MsimSession *session, MsimMessage *msg)
  * @param name The buddy name to which our user is typing to
  * @param state PURPLE_TYPING, PURPLE_TYPED, PURPLE_NOT_TYPING
  *
+ * @return 0
  */
 unsigned int 
-msim_send_typing(PurpleConnection *gc, const gchar *name, PurpleTypingState state)
+msim_send_typing(PurpleConnection *gc, const gchar *name, 
+        PurpleTypingState state)
 {
 	const gchar *typing_str;
 	MsimSession *session;
 
+    g_return_val_if_fail(gc != NULL, 0);
+    g_return_val_if_fail(name != NULL, 0);
+
 	session = (MsimSession *)gc->proto_data;
+
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), 0);
 
 	switch (state)
 	{	
@@ -1022,10 +1088,13 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, gpointer data
 	PurpleBuddy *buddy;
 	const gchar *str, *str2;
 
+    g_return_if_fail(MSIM_SESSION_VALID(session));
 
 	/* Get user{name,id} from msim_get_info, passed as an MsimMessage for 
 	   orthogonality. */
 	msg = (MsimMessage *)data;
+    g_return_if_fail(msg != NULL);
+
 	user = msim_msg_get_string(msg, "user");
 	if (!user)
 	{
@@ -1036,13 +1105,14 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, gpointer data
 	purple_debug_info("msim", "msim_get_info_cb: got for user: %s\n", user);
 	msim_msg_free(msg);
 
-	
 	body_str = msim_msg_get_string(user_info_msg, "body");
+    g_return_if_fail(body_str != NULL);
 	body = msim_parse_body(body_str);
 	g_free(body_str);
 
 	buddy = purple_find_buddy(session->account, user);
-	/* Note: don't assume buddy is non-NULL; will be if lookup random user not on blist. */
+	/* Note: don't assume buddy is non-NULL; will be if lookup random user 
+     * not on blist. */
 
 	user_info = purple_notify_user_info_new();
 
@@ -1115,7 +1185,12 @@ msim_get_info(PurpleConnection *gc, const gchar *user)
 	gchar *user_to_lookup;
 	MsimMessage *user_msg;
 
+    g_return_if_fail(gc != NULL);
+    g_return_if_fail(user != NULL);
+
 	session = (MsimSession *)gc->proto_data;
+
+    g_return_if_fail(MSIM_SESSION_VALID(session));
 
 	/* Obtain uid of buddy. */
 	buddy = purple_find_buddy(session->account, user);
@@ -1166,6 +1241,8 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 
 	session = (MsimSession *)account->gc->proto_data;
 
+    g_return_if_fail(MSIM_SESSION_VALID(session));
+
 	type = purple_status_get_type(status);
 
 	switch (purple_status_type_get_primitive(type))
@@ -1199,7 +1276,11 @@ msim_set_idle(PurpleConnection *gc, int time)
 {
     MsimSession *session;
 
+    g_return_if_fail(gc != NULL);
+
     session = (MsimSession *)gc->proto_data;
+
+    g_return_if_fail(MSIM_SESSION_VALID(session));
 
     if (time == 0)
     {
@@ -1209,7 +1290,7 @@ msim_set_idle(PurpleConnection *gc, int time)
          */
         msim_set_status_code(session, MSIM_STATUS_CODE_ONLINE);
     } else {
-        /* msim doesn't support idle time */
+        /* msim doesn't support idle time, so just go idle */
         msim_set_status_code(session, MSIM_STATUS_CODE_IDLE);
     }
 }
@@ -1218,6 +1299,8 @@ msim_set_idle(PurpleConnection *gc, int time)
 void 
 msim_set_status_code(MsimSession *session, guint status_code)
 {
+    g_return_if_fail(MSIM_SESSION_VALID(session));
+
 	if (!msim_send(session,
 			"status", MSIM_TYPE_INTEGER, status_code,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
@@ -1244,6 +1327,9 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
 	gchar *username;
 	MsimMessage *msg;
 
+    g_return_if_fail(MSIM_SESSION_VALID(session));
+    g_return_if_fail(userinfo != NULL);
+
 	body_str = msim_msg_get_string(userinfo, "body");
 	g_return_if_fail(body_str != NULL);
 	body = msim_parse_body(body_str);
@@ -1254,6 +1340,8 @@ msim_incoming_resolved(MsimSession *session, MsimMessage *userinfo,
 	g_return_if_fail(username != NULL);
 
 	msg = (MsimMessage *)data;
+    g_return_if_fail(msg != NULL);
+
 	/* Special elements name beginning with '_', we'll use internally within the
 	 * program (did not come from the wire). */
 	msg = msim_msg_append(msg, "_username", MSIM_TYPE_STRING, g_strdup(username));
@@ -1378,6 +1466,9 @@ or:
 gboolean 
 msim_preprocess_incoming(MsimSession *session, MsimMessage *msg)
 {
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
+
 	if (msim_msg_get(msg, "bm") && msim_msg_get(msg, "f"))
 	{
 		guint uid;
@@ -1431,6 +1522,8 @@ msim_check_alive(gpointer data)
 
     session = (MsimSession *)data;
 
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+
     delta = time(NULL) - session->last_comm;
     purple_debug_info("msim", "msim_check_alive: delta=%d\n", delta);
     if (delta >= MSIM_KEEPALIVE_INTERVAL)
@@ -1455,6 +1548,9 @@ msim_check_alive(gpointer data)
 gboolean
 msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 {
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
+
     purple_connection_update_progress(session->gc, _("Connected"), 3, 4);
 
     session->sesskey = msim_msg_get_integer(msg, "sesskey");
@@ -1464,9 +1560,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
      * some of the time, but can vary. This is our own user ID. */
     session->userid = msim_msg_get_integer(msg, "userid");
 
-
     purple_connection_set_state(session->gc, PURPLE_CONNECTED);
-
 
     /* We now know are our own username, only after we're logged in..
      * which is weird, but happens because you login with your email
@@ -1502,8 +1596,8 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 gboolean 
 msim_process(MsimSession *session, MsimMessage *msg)
 {
-    g_return_val_if_fail(session != NULL, -1);
-    g_return_val_if_fail(msg != NULL, -1);
+    g_return_val_if_fail(session != NULL, FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
 
 #ifdef MSIM_DEBUG_MSG
 	{
@@ -1589,6 +1683,9 @@ msim_store_buddy_info(MsimSession *session, MsimMessage *msg)
 	PurpleBuddy *buddy;
 	guint rid;
 
+    g_return_val_if_fail(MSIM_SESSION_VALID(session), FALSE);
+    g_return_val_if_fail(msg != NULL, FALSE);
+ 
 	rid = msim_msg_get_integer(msg, "rid");
 	
 	g_return_val_if_fail(rid != 0, FALSE);

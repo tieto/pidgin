@@ -138,7 +138,11 @@
 #define MSIM_STATUS_CODE_ONLINE			1
 #define MSIM_STATUS_CODE_IDLE           2
 #define MSIM_STATUS_CODE_AWAY			5
-/* TODO: hidden */
+
+/* Text formatting bits for <f s=#> */
+#define MSIM_TEXT_BOLD                  1
+#define MSIM_TEXT_ITALICS               2   
+#define MSIM_TEXT_UNDERLINE             4
 
 /* Random number in every MsimSession, to ensure it is valid. */
 #define MSIM_SESSION_STRUCT_MAGIC       0xe4a6752b
