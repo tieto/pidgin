@@ -4,7 +4,7 @@
 
 # Package a new msimprpl for release. Must be run with bash.
 
-VERSION=0.9
+VERSION=0.10
 make
 cd ..
 # Include 'myspace' directory in archive, so it can easily be unextracted

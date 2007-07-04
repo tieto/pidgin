@@ -1,10 +1,10 @@
-2007-07-xx Jeff Connelly <jeff2@soc.pidgin.im> - 0.10
+2007-07-03 Jeff Connelly <jeff2@soc.pidgin.im> - 0.10
 * On incoming instant messages, add support for:
  * Text color
  * Font face
 * Add option to sign on as hidden, default off (previously, always was hidden)
 * Add ability to change status to hidden, available, away
-* Increase password length limit to 10 to match official client
+* Increase password length limit to 10 to match official client (bug #2010)
 
 2007-07-01 Jeff Connelly <jeff2@soc.pidgin.im> - 0.9
 * Fix crash on Windows when logging in (bug #1990)
