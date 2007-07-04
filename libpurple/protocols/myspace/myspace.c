@@ -1162,21 +1162,13 @@ msim_set_status(PurpleAccount *account, PurpleStatus *status)
 {
 	PurpleStatusType *type;
 	MsimSession *session;
+    guint status_code;
 
 	session = (MsimSession *)account->gc->proto_data;
 
 	type = purple_status_get_type(status);
 
-    msim_set_status_primitive(session, purple_status_type_get_primitive(type));
-}
-
-/** Set status using a status primitive type. */
-void 
-msim_set_status_primitive(MsimSession *session, guint code)
-{
-    guint status_code;
-
-	switch (code)
+	switch (purple_status_type_get_primitive(type))
 	{
 		case PURPLE_STATUS_AVAILABLE:
 			status_code = MSIM_STATUS_CODE_ONLINE;
@@ -1197,6 +1189,35 @@ msim_set_status_primitive(MsimSession *session, guint code)
 			break;
 	}
 
+
+    msim_set_status_code(session, status_code);
+}
+
+/** Go idle. */
+void
+msim_set_idle(PurpleConnection *gc, int time)
+{
+    MsimSession *session;
+
+    session = (MsimSession *)gc->proto_data;
+
+    if (time == 0)
+    {
+        /* Going back from idle. In msim, idle is mutually exclusive 
+         * from the other states (you can only be away or idle, but not
+         * both, for example), so by going non-idle I go online.
+         */
+        msim_set_status_code(session, MSIM_STATUS_CODE_ONLINE);
+    } else {
+        /* msim doesn't support idle time */
+        msim_set_status_code(session, MSIM_STATUS_CODE_IDLE);
+    }
+}
+
+/** Set status using an MSIM_STATUS_CODE_* value. (TODO: also set message) */
+void 
+msim_set_status_code(MsimSession *session, guint status_code)
+{
 	if (!msim_send(session,
 			"status", MSIM_TYPE_INTEGER, status_code,
 			"sesskey", MSIM_TYPE_INTEGER, session->sesskey,
@@ -1428,7 +1449,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
 #endif
 
     /* Set status depending on preference. */
-    msim_set_status_primitive(session, 
+    msim_set_status_code(session, 
             purple_account_get_bool(session->account, "hidden", FALSE) 
             ?  PURPLE_STATUS_INVISIBLE
             : PURPLE_STATUS_AVAILABLE);
@@ -1756,6 +1777,11 @@ msim_status(MsimSession *session, MsimMessage *msg)
 			purple_status_code = PURPLE_STATUS_AWAY;
 			break;
 
+        case MSIM_STATUS_CODE_IDLE:
+            /* will be handled below */
+            purple_status_code = -1;
+            break;
+
 		default:
 				purple_debug_info("msim", "msim_status_cb for %s, unknown status code %d, treating as available\n",
 						username, status_code);
@@ -1766,12 +1792,21 @@ msim_status(MsimSession *session, MsimMessage *msg)
 	if (!strcmp(username, session->username) && purple_status_code == PURPLE_STATUS_OFFLINE)
 	{
 		/* Hack to ignore offline status notices on self. */
-	} else {
+	} else if (status_code != MSIM_STATUS_CODE_IDLE) {
 #endif
 		purple_prpl_got_user_status(session->account, username, purple_primitive_get_id_from_type(purple_status_code), NULL);
 #ifdef MSIM_FAKE_SELF_ONLINE
 	}
 #endif
+
+    if (status_code == MSIM_STATUS_CODE_IDLE)
+    {
+        purple_debug_info("msim", "msim_status: got idle: %s\n", username);
+        purple_prpl_got_user_idle(session->account, username, TRUE, time(NULL));
+    } else {
+        /* All other statuses indicate going back to non-idle. */
+        purple_prpl_got_user_idle(session->account, username, FALSE, time(NULL));
+    }
 
     g_strfreev(status_array);
 	g_free(status_str);
@@ -2605,7 +2640,7 @@ PurplePluginProtocolInfo prpl_info =
     msim_send_typing,  /* send_typing */
 	msim_get_info, 	   /* get_info */
     msim_set_status,   /* set_status */
-    NULL,              /* set_idle */
+    msim_set_idle,     /* set_idle */
     NULL,              /* change_passwd */
     msim_add_buddy,    /* add_buddy */
     NULL,              /* add_buddies */

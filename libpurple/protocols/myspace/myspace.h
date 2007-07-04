@@ -131,6 +131,7 @@
 /* Status codes - states a buddy (or you!) can be in. */
 #define MSIM_STATUS_CODE_OFFLINE_OR_HIDDEN		0
 #define MSIM_STATUS_CODE_ONLINE			1
+#define MSIM_STATUS_CODE_IDLE           2
 #define MSIM_STATUS_CODE_AWAY			5
 /* TODO: hidden */
 
@@ -203,7 +204,8 @@ void msim_get_info_cb(MsimSession *session, MsimMessage *userinfo, gpointer data
 void msim_get_info(PurpleConnection *gc, const gchar *name);
 
 void msim_set_status(PurpleAccount *account, PurpleStatus *status);
-void msim_set_status_primitive(MsimSession *session, guint code);
+void msim_set_idle(PurpleConnection *gc, int time);
+void msim_set_status_code(MsimSession *session, guint code);
 
 void msim_store_buddy_info_each(gpointer key, gpointer value, gpointer user_data);
 gboolean msim_store_buddy_info(MsimSession *session, MsimMessage *msg);
