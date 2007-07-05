@@ -590,6 +590,9 @@ add_buddy(PurpleBuddy *buddy, FinchBlist *ggblist)
 	if (node->ui_data)
 		return;
 
+	if (!purple_account_is_connected(buddy->account))
+		return;
+
 	contact = (PurpleContact*)node->parent;
 	if (!contact)   /* When a new buddy is added and show-offline is set */
 		return;
@@ -2135,7 +2138,7 @@ static void sort_blist_change_cb(GntMenuItem *item, gpointer n)
 	purple_prefs_set_string(PREF_ROOT "/sort_type", n);
 }
 
-/* XXX: send_im_select* -- Xerox */
+/* send_im_select* -- Xerox */
 static void
 send_im_select_cb(gpointer data, PurpleRequestFields *fields)
 {

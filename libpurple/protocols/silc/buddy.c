@@ -1252,7 +1252,7 @@ silcpurple_add_buddy_resolved(SilcClient client,
 			SilcClientEntry entry;
 			silc_dlist_start(clients);
 			while ((entry = silc_dlist_get(clients))) {
-				if (!strncasecmp(b->name, entry->nickname,
+				if (!g_ascii_strncasecmp(b->name, entry->nickname,
 						 strlen(b->name))) {
 					client_entry = entry;
 					break;

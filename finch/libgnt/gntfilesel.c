@@ -448,6 +448,9 @@ gnt_file_sel_map(GntWidget *widget)
 	GntFileSel *sel = GNT_FILE_SEL(widget);
 	GntWidget *hbox, *vbox;
 
+	if (sel->current == NULL)
+		gnt_file_sel_set_current_location(sel, g_get_home_dir());
+
 	vbox = gnt_vbox_new(FALSE);
 	gnt_box_set_pad(GNT_BOX(vbox), 0);
 	gnt_box_set_alignment(GNT_BOX(vbox), GNT_ALIGN_MID);
