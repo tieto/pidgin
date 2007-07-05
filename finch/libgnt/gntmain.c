@@ -352,6 +352,14 @@ ask_before_exit()
 	static GntWidget *win = NULL;
 	GntWidget *bbox, *button;
 
+	if (wm->menu) {
+		do {
+			gnt_widget_hide(GNT_WIDGET(wm->menu));
+			if (wm->menu)
+				wm->menu = wm->menu->parentmenu;
+		} while (wm->menu);
+	}
+
 	if (win)
 		goto raise;
 
