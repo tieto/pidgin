@@ -17,6 +17,7 @@ version 2.1.0 (??/??/????):
 	  directory.  The net effect of this is that trying to start Pidgin a
 	  second time will raise the buddy list.  (Gabriel Schulhof)
 	* Undo capability in the conversation window
+	* Show idle times in the buddy list as days, hours, seconds
 
 version 2.0.2 (06/14/2007):
 	Pidgin:

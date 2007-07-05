@@ -3380,13 +3380,16 @@ gchar *pidgin_blist_get_name_markup(PurpleBuddy *b, gboolean selected, gboolean 
 			time_t idle_secs = purple_presence_get_idle_time(presence);
 
 			if (idle_secs > 0) {
-				int ihrs, imin;
+				int iday, ihrs, imin;
 
 				time(&t);
-				ihrs = (t - idle_secs) / 3600;
+				iday = (t - idle_secs) / (24 * 60 * 60);
+				ihrs = ((t - idle_secs) / 60 / 60) % 24;
 				imin = ((t - idle_secs) / 60) % 60;
 
-				if (ihrs)
+                if (iday)
+					idletime = g_strdup_printf(_("Idle %dd %dh %02dm"), iday, ihrs, imin);
+				else if (ihrs)
 					idletime = g_strdup_printf(_("Idle %dh %02dm"), ihrs, imin);
 				else
 					idletime = g_strdup_printf(_("Idle %dm"), imin);
