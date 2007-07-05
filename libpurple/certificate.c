@@ -186,6 +186,7 @@ purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
 	g_return_val_if_fail(pool->name, NULL);
 
 	path = g_build_filename(purple_user_dir(),
+				"certificates", /* TODO: constantize this? */
 				pool->scheme_name,
 				pool->name,
 				id,
