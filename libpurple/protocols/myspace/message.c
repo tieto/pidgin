@@ -104,7 +104,7 @@ msim_msg_new_v(va_list argp)
 				break;
 
 			default:
-				purple_debug_info("msim", "msim_send: unknown type %d (%c)\n", type, type);
+				purple_debug_info("msim", "msim_send: unknown type %d\n", type);
 				break;
 		}
 	} while(key);
@@ -152,7 +152,7 @@ msim_msg_clone_element(gpointer data, gpointer user_data)
 			break;
 		/* TODO: other types */
 		default:
-			purple_debug_info("msim", "msim_msg_clone_element: unknown type %d (%c)\n", elem->type, elem->type);
+			purple_debug_info("msim", "msim_msg_clone_element: unknown type %d\n", elem->type);
 			g_return_if_fail(NULL);
 	}
 
@@ -220,8 +220,7 @@ msim_msg_free_element(gpointer data, gpointer user_data)
 			break;
 
 		default:
-			purple_debug_info("msim", "msim_msg_free_element: not freeing unknown type %d (%c)\n",
-					elem->type, elem->type);
+			purple_debug_info("msim", "msim_msg_free_element: not freeing unknown type %d\n", elem->type);
 			break;
 	}
 
@@ -454,7 +453,7 @@ msim_msg_debug_string_element(gpointer data, gpointer user_data)
 			break;
 
 		default:
-			string = g_strdup_printf("%s(unknown type %d (%c)", elem->name, elem->type, elem->type);
+			string = g_strdup_printf("%s(unknown type %d", elem->name, elem->type);
 			break;
 	}
 
@@ -530,7 +529,7 @@ msim_msg_pack_element_data(MsimMessageElement *elem)
 			return NULL;
 
 		default:
-			purple_debug_info("msim", "field %s, unknown type %d (%c)\n", elem->name, elem->type, elem->type);
+			purple_debug_info("msim", "field %s, unknown type %d\n", elem->name, elem->type);
 			return NULL;
 	}
 }
