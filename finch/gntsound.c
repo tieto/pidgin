@@ -681,7 +681,6 @@ finch_sounds_show_all(void)
 	GntWidget *tree;
 	GntWidget *win;
 
-	gchar *buf;
 	gint i;
 
 	if(pref_dialog){
@@ -766,7 +765,6 @@ finch_sounds_show_all(void)
 	gnt_box_add_widget(GNT_BOX(win), gnt_line_new(FALSE));
 
 	gnt_box_add_widget(GNT_BOX(win),gnt_label_new_with_format(_("Sound Events"),GNT_TEXT_FLAG_BOLD)); 
-
 	pref_dialog->events = tree = gnt_tree_new_with_columns(2);
 	gnt_tree_set_column_titles(GNT_TREE(tree),_("Event"),_("File"));
 	gnt_tree_set_show_title(GNT_TREE(tree),TRUE);
