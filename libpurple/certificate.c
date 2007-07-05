@@ -293,8 +293,16 @@ static PurpleCertificatePool x509_tls_peers;
 static gboolean
 x509_tls_peers_init(void)
 {
-	/* TODO: Set up key cache here if it isn't already done */
+	gchar *poolpath;
+	int ret;
+	
+	/* Set up key cache here if it isn't already done */
+	poolpath = purple_certificate_pool_mkpath(&x509_tls_peers, NULL);
+	ret = purple_build_dir(poolpath, 0700); /* Make it this user only */
 
+	g_free(poolpath);
+
+	g_return_val_if_fail(ret == 0, FALSE);
 	return TRUE;
 }
 
