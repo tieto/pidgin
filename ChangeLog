@@ -22,6 +22,7 @@ version 2.1.0 (??/??/????):
 	* A new status area has been added to the top of conversations to
 	  provide additional detail about the buddy, including buddy icon,
 	  protocol and status message.
+	* Show idle times in the buddy list as days, hours, seconds
 
 	Finch:
 	* There's support for workspaces now (details in the manpage)
