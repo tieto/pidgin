@@ -507,21 +507,24 @@ get_display_name(PurpleBlistNode *node)
 		gboolean ascii = gnt_ascii_only();
 		
 		presence = purple_buddy_get_presence(buddy);
-		now = purple_presence_get_active_status(presence);
+		if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE))
+			strncpy(status, ascii ? ":" : "☎", sizeof(status) - 1);
+		else {
+			now = purple_presence_get_active_status(presence);
 
-		prim = purple_status_type_get_primitive(purple_status_get_type(now));
+			prim = purple_status_type_get_primitive(purple_status_get_type(now));
 
-		switch(prim)
-		{
-			case PURPLE_STATUS_OFFLINE:
-				strncpy(status, ascii ? "x" : "⊗", sizeof(status) - 1);
-				break;
-			case PURPLE_STATUS_AVAILABLE:
-				strncpy(status, ascii ? "o" : "◯", sizeof(status) - 1);
-				break;
-			default:
-				strncpy(status, ascii ? "." : "⊖", sizeof(status) - 1);
-				break;
+			switch(prim) {
+				case PURPLE_STATUS_OFFLINE:
+					strncpy(status, ascii ? "x" : "⊗", sizeof(status) - 1);
+					break;
+				case PURPLE_STATUS_AVAILABLE:
+					strncpy(status, ascii ? "o" : "◯", sizeof(status) - 1);
+					break;
+				default:
+					strncpy(status, ascii ? "." : "⊖", sizeof(status) - 1);
+					break;
+			}
 		}
 		name = purple_buddy_get_alias(buddy);
 	}
@@ -1269,12 +1272,14 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 	PurplePluginProtocolInfo *prpl_info;
 	PurpleAccount *account;
 	PurpleNotifyUserInfo *user_info;
+	PurplePresence *presence;
 	const char *alias = purple_buddy_get_alias(buddy);
 	char *tmp, *strip;
 
 	user_info = purple_notify_user_info_new();
 
 	account = purple_buddy_get_account(buddy);
+	presence = purple_buddy_get_presence(buddy);
 
 	if (!full || g_utf8_collate(purple_buddy_get_name(buddy), alias))
 		purple_notify_user_info_add_pair(user_info, _("Nickname"), alias);
@@ -1308,6 +1313,10 @@ tooltip_for_buddy(PurpleBuddy *buddy, GString *str, gboolean full)
 
 	strip = purple_markup_strip_html(tmp);
 	g_string_append(str, strip);
+
+	if (purple_presence_is_status_primitive_active(presence, PURPLE_STATUS_MOBILE))
+		g_string_append(str, _("On Mobile"));
+
 	g_free(strip);
 	g_free(tmp);
 }
