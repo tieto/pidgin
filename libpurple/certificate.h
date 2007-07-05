@@ -114,7 +114,7 @@ struct _PurpleCertificatePool
 	 *  certificates sharing the same ID in the pool.
 	 *  @return TRUE if the operation succeeded, otherwise FALSE
 	 */
-	gboolean (* put_cert)(PurpleCertificate *crt);
+	gboolean (* put_cert)(const gchar *id, PurpleCertificate *crt);
 };
 
 /** A certificate type

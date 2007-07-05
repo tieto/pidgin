@@ -299,7 +299,7 @@ x509_tls_peers_get_cert(const gchar *id)
 }
 
 static gboolean
-x509_tls_peers_put_cert(PurpleCertificate *crt)
+x509_tls_peers_put_cert(const gchar *id, PurpleCertificate *crt)
 {
 	g_return_val_if_fail(crt, FALSE);
 
