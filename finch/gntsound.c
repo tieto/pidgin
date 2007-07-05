@@ -58,13 +58,8 @@ typedef struct {
 	char *label;
 	char *pref;
 	char *def;
-	PurpleSoundEventID id;
-} FinchSoundEvent;
-
-typedef struct {
-	FinchSoundEvent *event;
 	char *file;
-} FinchSoundPrefEvent;
+} FinchSoundEvent;
 
 typedef struct {
 	GntWidget *method;
@@ -88,18 +83,18 @@ static gboolean gst_init_failed;
 #endif /* USE_GSTREAMER */
 
 static FinchSoundEvent sounds[PURPLE_NUM_SOUNDS] = {
-	{N_("Buddy logs in"), "login", "login.wav",PURPLE_SOUND_BUDDY_ARRIVE},
-	{N_("Buddy logs out"), "logout", "logout.wav",PURPLE_SOUND_BUDDY_LEAVE},
-	{N_("Message received"), "im_recv", "receive.wav",PURPLE_SOUND_RECEIVE},
-	{N_("Message received begins conversation"), "first_im_recv", "receive.wav",PURPLE_SOUND_FIRST_RECEIVE},
-	{N_("Message sent"), "send_im", "send.wav",PURPLE_SOUND_SEND},
-	{N_("Person enters chat"), "join_chat", "login.wav",PURPLE_SOUND_CHAT_JOIN},
-	{N_("Person leaves chat"), "left_chat", "logout.wav",PURPLE_SOUND_CHAT_LEAVE},
-	{N_("You talk in chat"), "send_chat_msg", "send.wav",PURPLE_SOUND_CHAT_YOU_SAY},
-	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav",PURPLE_SOUND_CHAT_SAY},
+	{N_("Buddy logs in"), "login", "login.wav",NULL},
+	{N_("Buddy logs out"), "logout", "logout.wav",NULL},
+	{N_("Message received"), "im_recv", "receive.wav",NULL},
+	{N_("Message received begins conversation"), "first_im_recv", "receive.wav",NULL},
+	{N_("Message sent"), "send_im", "send.wav",NULL},
+	{N_("Person enters chat"), "join_chat", "login.wav",NULL},
+	{N_("Person leaves chat"), "left_chat", "logout.wav",NULL},
+	{N_("You talk in chat"), "send_chat_msg", "send.wav",NULL},
+	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav",NULL},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
-	{NULL, "pounce_default", "alert.wav",PURPLE_SOUND_POUNCE_DEFAULT},
-	{N_("Someone says your screen name in chat"), "nick_said", "alert.wav",PURPLE_SOUND_CHAT_NICK}
+	{NULL, "pounce_default", "alert.wav",NULL},
+	{N_("Someone says your screen name in chat"), "nick_said", "alert.wav",NULL}
 };
 
 static gboolean
@@ -581,7 +576,7 @@ finch_sound_play_event(PurpleSoundEventID event)
 static void
 save_cb(GntWidget *button, gpointer win)
 {
-	gint i;
+	GList * itr;
 
 	purple_prefs_set_string(FINCH_PREFS_ROOT "/sound/method", gnt_combo_box_get_selected_data(GNT_COMBO_BOX(pref_dialog->method)));
 	purple_prefs_set_path(FINCH_PREFS_ROOT "/sound/command", gnt_entry_get_text(GNT_ENTRY(pref_dialog->command)));
@@ -589,15 +584,13 @@ save_cb(GntWidget *button, gpointer win)
 	purple_prefs_set_int("/purple/sound/while_status",GPOINTER_TO_INT(gnt_combo_box_get_selected_data(GNT_COMBO_BOX(pref_dialog->while_status))));
 	purple_prefs_set_int(FINCH_PREFS_ROOT "/sound/volume",gnt_slider_get_value(GNT_SLIDER(pref_dialog->volume)));
 
-	for(i = 0;i < PURPLE_NUM_SOUNDS;i++){
-		GList * itr = gnt_tree_get_rows(GNT_TREE(pref_dialog->events));
-		for(;itr;itr = itr->next){
-			FinchSoundPrefEvent * event = itr->data;
-			char * pref = g_strdup_printf("%s/sound/file/%s",FINCH_PREFS_ROOT,event->event->pref);
-			if(event->file)
-				purple_prefs_set_path(pref,event->file);
-			g_free(pref);
-		}
+	for(itr = gnt_tree_get_rows(GNT_TREE(pref_dialog->events));itr;itr = itr->next){
+		FinchSoundEvent * event = &sounds[GPOINTER_TO_INT(itr->data)];
+		char * filepref = g_strdup_printf("%s/sound/file/%s",FINCH_PREFS_ROOT,event->pref);
+		char * boolpref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/enabled/%s",event->pref);
+		purple_prefs_set_bool(boolpref,gnt_tree_get_choice(GNT_TREE(pref_dialog->events),itr->data));
+		purple_prefs_set_path(filepref,event->file ? event->file : "");
+		g_free(filepref);
 	}
 	gnt_widget_destroy(GNT_WIDGET(win));
 }
@@ -606,10 +599,9 @@ file_cb(GntWidget *w, gpointer data)
 {
 	GntFileSel *sel = GNT_FILE_SEL(data);
 	const char * file = gnt_file_sel_get_selected_file(sel);
-	FinchSoundPrefEvent * event = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events));
+	FinchSoundEvent * event = &sounds[GPOINTER_TO_INT(gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events)))];
 
-	if(event->file)
-		g_free(event->file);
+	g_free(event->file);
 	event->file = g_strdup(file);
 	
 	gnt_widget_destroy(GNT_WIDGET(data));
@@ -618,18 +610,19 @@ file_cb(GntWidget *w, gpointer data)
 static void
 test_cb(GntWidget *button, gpointer null)
 {
-	FinchSoundPrefEvent * event = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events));
+	PurpleSoundEventID id = GPOINTER_TO_INT(gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events)));
+	FinchSoundEvent * event = &sounds[id];
 	char *pref;
 	gboolean temp_value;
 
 	pref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/enabled/%s",
-			event->event->pref);
+			event->pref);
 
 	temp_value = purple_prefs_get_bool(pref);
 
 	if (!temp_value) purple_prefs_set_bool(pref, TRUE);
 
-	purple_sound_play_event(event->event->id, NULL);
+	purple_sound_play_event(id, NULL);
 
 	if (!temp_value) purple_prefs_set_bool(pref, FALSE);
 
@@ -639,7 +632,13 @@ test_cb(GntWidget *button, gpointer null)
 static void
 reset_cb(GntWidget *button,gpointer null)
 {
+	/* Don't dereference this pointer ! */
+	gpointer key = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events)); 
 
+	FinchSoundEvent * event = &sounds[GPOINTER_TO_INT(key)];
+	g_free(event->file);
+	event->file = NULL;
+	gnt_tree_change_text(GNT_TREE(pref_dialog->events),key,1,"");
 }
 
 static void
@@ -661,7 +660,8 @@ release_pref_dialog(GntBindable *data, gpointer null)
 {
 	GList * itr;
 	for(itr = gnt_tree_get_rows(GNT_TREE(pref_dialog->events));itr;itr = itr->next){
-		FinchSoundPrefEvent * e = (FinchSoundPrefEvent *)itr->data;
+		PurpleSoundEventID id = GPOINTER_TO_INT(itr->data);
+		FinchSoundEvent * e = &sounds[id];
 		g_free(e->file);
 	}
 	g_free(pref_dialog);
@@ -768,28 +768,26 @@ finch_sounds_show_all(void)
 	gnt_box_add_widget(GNT_BOX(win),gnt_label_new_with_format(_("Sound Events"),GNT_TEXT_FLAG_BOLD)); 
 
 	pref_dialog->events = tree = gnt_tree_new_with_columns(2);
-	gnt_tree_set_hash_fns(GNT_TREE(tree),NULL,NULL,g_free);
 	gnt_tree_set_column_titles(GNT_TREE(tree),_("Event"),_("File"));
 	gnt_tree_set_show_title(GNT_TREE(tree),TRUE);
 
 	for(i = 0;i < PURPLE_NUM_SOUNDS;i++){
-		FinchSoundPrefEvent * event = g_new0(FinchSoundPrefEvent,1);
+		FinchSoundEvent * event = &sounds[i];
 		gchar *boolpref;
 		gchar *filepref;
 
-		event->event = &sounds[i];
-		boolpref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/enabled/%s", event->event->pref);
+		boolpref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/enabled/%s", event->pref);
 
-		filepref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/file/%s", event->event->pref);
+		filepref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/file/%s", event->pref);
 		event->file = g_strdup(purple_prefs_get_path(filepref));
-		if(event->event->label == NULL){
+		if(event->label == NULL){
 			continue;
 		}
 
-		gnt_tree_add_choice(GNT_TREE(tree), event,
-			gnt_tree_create_row(GNT_TREE(tree),event->event->label,event->file[0] ? g_path_get_basename(event->file) : ""),
+		gnt_tree_add_choice(GNT_TREE(tree), GINT_TO_POINTER(i),
+			gnt_tree_create_row(GNT_TREE(tree),event->label,event->file[0] ? g_path_get_basename(event->file) : ""),
 			NULL, NULL);
-		gnt_tree_set_choice(GNT_TREE(tree),event,purple_prefs_get_bool(boolpref));
+		gnt_tree_set_choice(GNT_TREE(tree),GINT_TO_POINTER(i),purple_prefs_get_bool(boolpref));
 		g_free(boolpref);
 		g_free(filepref);
 	}
