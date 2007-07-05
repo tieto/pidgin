@@ -402,6 +402,19 @@ purple_certificate_get_fingerprint_sha1(PurpleCertificate *crt);
 gchar *
 purple_certificate_get_subject_name(PurpleCertificate *crt);
 
+/**
+ * Helper function for generating file paths in ~/.purple/certificates for
+ * CertificatePools that use them.
+ *
+ * @todo Passing in filesystem-unfriendly characters will cause breakage!
+ * @param pool   CertificatePool to build a path for
+ * @param id     Key to look up a Certificate by. May be NULL.
+ * @return A newly allocated path of the form
+ *         ~/.purple/certificates/scheme_name/pool_name/unique_id
+ */
+gchar *
+purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id);
+
 /*@}*/
 
 /*****************************************************************************/

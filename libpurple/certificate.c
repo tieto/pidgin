@@ -176,6 +176,24 @@ purple_certificate_get_subject_name(PurpleCertificate *crt)
 	return subject_name;
 }
 
+gchar *
+purple_certificate_pool_mkpath(PurpleCertificatePool *pool, const gchar *id)
+{
+	gchar *path;
+	
+	g_return_val_if_fail(pool, NULL);
+	g_return_val_if_fail(pool->scheme_name, NULL);
+	g_return_val_if_fail(pool->name, NULL);
+
+	path = g_build_filename(purple_user_dir(),
+				pool->scheme_name,
+				pool->name,
+				id,
+				NULL);
+	return path;
+}
+
+
 /****************************************************************************/
 /* Builtin Verifiers, Pools, etc.                                           */
 /****************************************************************************/
