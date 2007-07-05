@@ -603,7 +603,6 @@ finch_sounds_show_all(void)
 	GntWidget *label;
 	GntWidget *win;
 
-	gchar *buf;
 
 	if(pref_dialog){
 		gnt_window_present(pref_dialog->window);
@@ -628,9 +627,7 @@ finch_sounds_show_all(void)
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"beep",_("Console Beep"));
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"custom",_("Command"));
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"nosound",_("No Sound"));
-	buf = g_strdup(purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method"));
-	gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),buf);
-	g_free(buf);
+	gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),(gchar *)purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method"));
 
 	label = gnt_label_new_with_format(_("Sound Method"),GNT_TEXT_FLAG_BOLD);
 	gnt_box_add_widget(GNT_BOX(win),label); 
