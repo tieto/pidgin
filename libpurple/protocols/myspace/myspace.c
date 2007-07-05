@@ -1572,13 +1572,10 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
     purple_prpl_got_user_status(session->account, session->username, purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE), NULL);
 #endif
 
-    /* Set status depending on preference. */
-    /* TODO: set status to current status, change status to hidden if sign on as hidden. 
-     * Or remove this preference alltogether, and set status to current status? */
-    msim_set_status_code(session, 
-            purple_account_get_bool(session->account, "hidden", FALSE) 
-            ?  PURPLE_STATUS_INVISIBLE
-            : PURPLE_STATUS_AVAILABLE);
+
+    /* Set status to current status. */
+    msim_set_status(session->account,
+            purple_account_get_active_status(session->account));
 
     purple_timeout_add(MSIM_KEEPALIVE_INTERVAL_CHECK, msim_check_alive, session);
 
@@ -1845,7 +1842,7 @@ msim_status(MsimSession *session, MsimMessage *msg)
 	}
 
     purple_debug_info("msim", 
-			"msim_status_cb: updating status for <%s> to <%s>\n", 
+			"msim_status: updating status for <%s> to <%s>\n", 
 			username, status_str);
 
     /* TODO: generic functions to split into a GList, part of MsimMessage */
@@ -1868,7 +1865,7 @@ msim_status(MsimSession *session, MsimMessage *msg)
 	 */
 
     status_code = atoi(g_list_nth_data(list, MSIM_STATUS_ORDINAL_ONLINE));
-	purple_debug_info("msim", "msim_status_cb: %s's status code = %d\n", username, status_code);
+	purple_debug_info("msim", "msim_status: %s's status code = %d\n", username, status_code);
     status_headline = g_list_nth_data(list, MSIM_STATUS_ORDINAL_HEADLINE);
 
     blist = purple_get_blist();
@@ -1914,7 +1911,7 @@ msim_status(MsimSession *session, MsimMessage *msg)
             break;
 
 		default:
-				purple_debug_info("msim", "msim_status_cb for %s, unknown status code %d, treating as available\n",
+				purple_debug_info("msim", "msim_status for %s, unknown status code %d, treating as available\n",
 						username, status_code);
 				purple_status_code = PURPLE_STATUS_AVAILABLE;
 	}
@@ -3072,9 +3069,6 @@ init_plugin(PurplePlugin *plugin)
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_int_new(_("Connect port"), "port", MSIM_PORT);
-	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
-
-	option = purple_account_option_bool_new(_("Sign on as hidden"), "hidden", FALSE);
 	prpl_info.protocol_options = g_list_append(prpl_info.protocol_options, option);
 
 	option = purple_account_option_bool_new(_("Show display name in status text"), "show_display_name", TRUE);
