@@ -407,6 +407,28 @@ msn_offline_message(const PurpleBuddy *buddy) {
 	return user && user->mobile;
 }
 
+void
+msn_send_privacy(PurpleConnection *gc)
+{
+       PurpleAccount *account;
+        MsnSession *session;
+        MsnCmdProc *cmdproc;
+
+        account = purple_connection_get_account(gc);
+        session = gc->proto_data;
+        cmdproc = session->notification->cmdproc;
+
+        if (account->perm_deny == PURPLE_PRIVACY_ALLOW_ALL ||
+                account->perm_deny == PURPLE_PRIVACY_DENY_USERS)
+        {
+                msn_cmdproc_send(cmdproc, "BLP", "%s", "AL");
+        }
+        else
+        {
+                msn_cmdproc_send(cmdproc, "BLP", "%s", "BL");
+        }
+}
+
 static void
 initiate_chat_cb(PurpleBlistNode *node, gpointer data)
 {
@@ -1228,23 +1250,7 @@ msn_rem_deny(PurpleConnection *gc, const char *who)
 static void
 msn_set_permit_deny(PurpleConnection *gc)
 {
-	PurpleAccount *account;
-	MsnSession *session;
-	MsnCmdProc *cmdproc;
-
-	account = purple_connection_get_account(gc);
-	session = gc->proto_data;
-	cmdproc = session->notification->cmdproc;
-
-	if (account->perm_deny == PURPLE_PRIVACY_ALLOW_ALL ||
-		account->perm_deny == PURPLE_PRIVACY_DENY_USERS)
-	{
-		msn_cmdproc_send(cmdproc, "BLP", "%s", "AL");
-	}
-	else
-	{
-		msn_cmdproc_send(cmdproc, "BLP", "%s", "BL");
-	}
+	msn_send_privacy(gc);
 }
 
 static void

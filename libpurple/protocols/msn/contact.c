@@ -544,9 +544,10 @@ msn_get_address_cb(gpointer data, gint source, PurpleInputCondition cond)
 
 //	purple_debug_misc("msn", "soap contact server Reply: {%s}\n", soapconn->read_buf);
 	if (msn_parse_addressbook(contact)) {
+		msn_send_privacy(session->account->gc);
 		msn_notification_dump_contact(session);
-		msn_set_psm(session);
-		msn_session_finish_login(session);
+//		msn_set_psm(session);
+//		msn_session_finish_login(session);
 	} else {
 		msn_get_address_book(contact, NULL, NULL);
 	}

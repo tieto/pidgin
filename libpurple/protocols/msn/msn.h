@@ -142,6 +142,6 @@ typedef enum
 	 (MSN_CLIENT_ID_CAPABILITIES))
 
 void msn_act_id(PurpleConnection *gc, const char *entry);
-
+void msn_send_privacy(PurpleConnection *gc);
 
 #endif /* _MSN_H_ */
