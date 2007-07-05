@@ -5,6 +5,7 @@
 * Time out if no data from server within a certain amount of time (keep alives).
 * Remove "Sign on as hidden" option, and always set status to current status
   when signing on.
+* Some support for sending formatted text.
 
 2007-07-03 Jeff Connelly <jeff2@soc.pidgin.im> - 0.10
 * On incoming instant messages, add support for:

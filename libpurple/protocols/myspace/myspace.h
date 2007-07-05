@@ -141,7 +141,7 @@
 
 /* Text formatting bits for <f s=#> */
 #define MSIM_TEXT_BOLD                  1
-#define MSIM_TEXT_ITALICS               2   
+#define MSIM_TEXT_ITALIC                2   
 #define MSIM_TEXT_UNDERLINE             4
 
 /* Random number in every MsimSession, to ensure it is valid. */
@@ -205,7 +205,16 @@ void msim_send_im_cb(MsimSession *session, MsimMessage *userinfo, gpointer data)
 
 void msim_unrecognized(MsimSession *session, MsimMessage *msg, gchar *note);
 
+
+typedef void (*MSIM_XMLNODE_CONVERT)(xmlnode *, gchar **, gchar **);
+void msim_markup_tag_to_html(xmlnode *root, gchar **begin, gchar **end);
+void html_tag_to_msim_markup(xmlnode *root, gchar **begin, gchar **end);
+gchar *msim_convert_xml(const gchar *raw, MSIM_XMLNODE_CONVERT f);
+
+/* High-level msim markup <=> html conversion functions. */
 gchar *msim_markup_to_html(const gchar *raw);
+gchar *html_to_msim_markup(const gchar *raw);
+
 int msim_incoming_im(MsimSession *session, MsimMessage *msg);
 int msim_incoming_action(MsimSession *session, MsimMessage *msg);
 

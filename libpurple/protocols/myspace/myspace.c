@@ -282,6 +282,7 @@ msim_login(PurpleAccount *acct)
 
     gc = purple_account_get_connection(acct);
     gc->proto_data = msim_session_new(acct);
+    gc->flags |= PURPLE_CONNECTION_HTML | PURPLE_CONNECTION_NO_URLDESC;
 
     /* Passwords are limited in length. */
 	if (strlen(acct->password) > MSIM_MAX_PASSWORD_LENGTH)
@@ -516,6 +517,8 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 		PurpleMessageFlags flags)
 {
     MsimSession *session;
+    gchar *message_msim;
+    int rc;
     
     g_return_val_if_fail(gc != NULL, -1);
     g_return_val_if_fail(who != NULL, -1);
@@ -527,7 +530,9 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
 
     g_return_val_if_fail(MSIM_SESSION_VALID(session), -1);
 
-	if (msim_send_bm(session, who, message, MSIM_BM_INSTANT))
+    message_msim = html_to_msim_markup(message);
+
+	if (msim_send_bm(session, who, message_msim, MSIM_BM_INSTANT))
 	{
 		/* Return 1 to have Purple show this IM as being sent, 0 to not. I always
 		 * return 1 even if the message could not be sent, since I don't know if
@@ -537,10 +542,13 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
         /* TODO: maybe if message is delayed, don't echo to conv window,
          * but do echo it to conv window manually once it is actually
          * sent? Would be complicated. */
-		return 1;
+		rc = 1;
 	} else {
-		return -1;
+		rc = -1;
 	}
+
+    g_free(message_msim);
+
     /*
      * In MySpace, you login with your email address, but don't talk to other
      * users using their email address. So there is currently an asymmetry in the 
@@ -553,6 +561,8 @@ msim_send_im(PurpleConnection *gc, const gchar *who, const gchar *message,
      * TODO: Make the sent IM's appear as from the user's username, instead of
      * their email address. Purple uses the login (in MSIM, the email)--change this.
      */
+
+    return rc;
 }
 
 /** Send a buddy message of a given type.
@@ -678,7 +688,7 @@ msim_markup_f_to_html(xmlnode *root, gchar **begin, gchar **end)
 		g_string_prepend(gs_end, "</b>");
 	}
 
-	if (decor & MSIM_TEXT_ITALICS)
+	if (decor & MSIM_TEXT_ITALIC)
 	{
 		g_string_append(gs_begin, "<i>");
 		g_string_append(gs_end, "</i>");	
@@ -811,12 +821,84 @@ msim_markup_i_to_html(xmlnode *root, gchar **begin, gchar **end)
 	*end = g_strdup("</p>");
 }
 
+/** Convert an individual msim markup tag to HTML. */
+void msim_markup_tag_to_html(xmlnode *root, gchar **begin, gchar **end)
+{
+	if (!strcmp(root->name, "f"))
+	{
+		msim_markup_f_to_html(root, begin, end);
+	} else if (!strcmp(root->name, "p")) {
+		msim_markup_p_to_html(root, begin, end);
+	} else if (!strcmp(root->name, "c")) {
+		msim_markup_c_to_html(root, begin, end);
+	} else if (!strcmp(root->name, "b")) {
+		msim_markup_b_to_html(root, begin, end);
+	} else if (!strcmp(root->name, "i")) {
+		msim_markup_i_to_html(root, begin, end);
+	} else {
+		purple_debug_info("msim", "msim_markup_tag_to_html: "
+				"unknown tag name=%s, ignoring", root->name);
+		*begin = g_strdup("");
+		*end = g_strdup("");
+	}
+}
 
-/** Convert an xmlnode of msim markup to an HTML string.
+/** Convert an individual HTML tag to msim markup. */
+void html_tag_to_msim_markup(xmlnode *root, gchar **begin, gchar **end)
+{
+    /* TODO: TODO XXX */
+    /*
+    *begin = g_strdup_printf("[begin-%s]", root->name);
+    *end = g_strdup_printf("[end-%s]", root->name);
+    */
+
+    /* TODO: Coalesce nested tags into one <f> tag!
+     * Currently, the 's' value will be overwritten when b/i/u is nested
+     * within another one, and only the inner-most formatting will be 
+     * applied to the text. */
+    if (!strcmp(root->name, "b"))
+    {
+        *begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_BOLD);
+        *end = g_strdup("</f>");
+    } else if (!strcmp(root->name, "i")) {
+        *begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_ITALIC);
+        *end = g_strdup("</f>");
+    } else if (!strcmp(root->name, "u")) {
+        *begin = g_strdup_printf("<f s='%d'>", MSIM_TEXT_UNDERLINE);
+        *end = g_strdup("</f>");
+    } else if (!strcmp(root->name, "font")) {
+        const gchar *size;
+        const gchar *face;
+
+        size = xmlnode_get_attrib(root, "size");
+        face = xmlnode_get_attrib(root, "face");
+
+        if (face && size)
+            *begin = g_strdup_printf("<f f='%s' h='%s'>", face, size);
+        else if (face)
+            *begin = g_strdup_printf("<f f='%s'>", face);
+        else if (size)
+            *begin = g_strdup_printf("<f h='%s'>", face);
+        else
+            *begin = g_strdup("<f>");
+
+        *end = g_strdup("</f>");
+
+        /* TODO: color (bg uses <body>), emoticons */
+    } else {
+        *begin = g_strdup_printf("[%s]", root->name);
+        *end = g_strdup_printf("[/%s]", root->name);
+    }
+}
+
+/** Convert an xmlnode of msim markup or HTML to an HTML string or msim markup.
+ *
+ * @param f Function to convert tags.
+ *
  * @return An HTML string. Caller frees.
  */
 static gchar *
-msim_markup_xmlnode_to_html(xmlnode *root)
+msim_convert_xmlnode(xmlnode *root, MSIM_XMLNODE_CONVERT f)
 {
 	xmlnode *node;
 	gchar *begin, *inner, *end;
@@ -825,28 +907,12 @@ msim_markup_xmlnode_to_html(xmlnode *root)
 	if (!root || !root->name)
 		return g_strdup("");
 
-	purple_debug_info("msim", "msim_markup_xmlnode_to_html: got root=%s\n",
+	purple_debug_info("msim", "msim_convert_xmlnode: got root=%s\n",
 			root->name);
 
 	begin = inner = end = NULL;
 
-	if (!strcmp(root->name, "f"))
-	{
-		msim_markup_f_to_html(root, &begin, &end);
-	} else if (!strcmp(root->name, "p")) {
-		msim_markup_p_to_html(root, &begin, &end);
-	} else if (!strcmp(root->name, "c")) {
-		msim_markup_c_to_html(root, &begin, &end);
-	} else if (!strcmp(root->name, "b")) {
-		msim_markup_b_to_html(root, &begin, &end);
-	} else if (!strcmp(root->name, "i")) {
-		msim_markup_i_to_html(root, &begin, &end);
-	} else {
-		purple_debug_info("msim", "msim_markup_xmlnode_to_html: "
-				"unknown tag name=%s, ignoring", root->name);
-		begin = g_strdup("");
-		end = g_strdup("");
-	}
+    f(root, &begin, &end);
 
 	/* Loop over all child nodes. */
  	for (node = root->child; node != NULL; node = node->next)
@@ -859,7 +925,7 @@ msim_markup_xmlnode_to_html(xmlnode *root)
 
 		case XMLNODE_TYPE_TAG:
 			/* A tag or tag with attributes. Recursively descend. */
-			inner = msim_markup_xmlnode_to_html(node);
+			inner = msim_convert_xmlnode(node, f);
             g_return_val_if_fail(inner != NULL, NULL);
 
 			purple_debug_info("msim", " ** node name=%s\n", node->name);
@@ -876,7 +942,7 @@ msim_markup_xmlnode_to_html(xmlnode *root)
 			
 		default:
 			purple_debug_info("msim",
-					"msim_markup_xmlnode_to_html: strange node\n");
+					"msim_convert_xmlnode: strange node\n");
 			inner = g_strdup("");
 		}
 	}
@@ -892,11 +958,9 @@ msim_markup_xmlnode_to_html(xmlnode *root)
 	return final;
 }
 
-/** Convert MySpaceIM markup to Purple (HTML) markup. 
- *
- * @return Purple markup string, must be g_free()'d. */
+/** Convert XML to something based on MSIM_XMLNODE_CONVERT. */
 gchar *
-msim_markup_to_html(const gchar *raw)
+msim_convert_xml(const gchar *raw, MSIM_XMLNODE_CONVERT f)
 {
 	xmlnode *root;
 	gchar *str;
@@ -909,12 +973,32 @@ msim_markup_to_html(const gchar *raw)
 		return g_strdup(raw);
 	}
 
-	str = msim_markup_xmlnode_to_html(root);
+	str = msim_convert_xmlnode(root, f);
 	purple_debug_info("msim", "msim_markup_to_html: returning %s\n", str);
 
 	xmlnode_free(root);
 
-	return g_strdup(str);
+	return str;
+}
+
+/** High-level function to convert MySpaceIM markup to Purple (HTML) markup. 
+ *
+ * @return Purple markup string, must be g_free()'d. */
+gchar *
+msim_markup_to_html(const gchar *raw)
+{
+    return msim_convert_xml(raw, 
+            (MSIM_XMLNODE_CONVERT)(msim_markup_tag_to_html));
+}
+
+/** High-level function to convert Purple (HTML) to MySpaceIM markup.
+ *
+ * @return HTML markup string, must be g_free()'d. */
+gchar *
+html_to_msim_markup(const gchar *raw)
+{
+    return msim_convert_xml(raw,
+            (MSIM_XMLNODE_CONVERT)(html_tag_to_msim_markup));
 }
 
 /**
@@ -1572,8 +1656,7 @@ msim_we_are_logged_on(MsimSession *session, MsimMessage *msg)
     purple_prpl_got_user_status(session->account, session->username, purple_primitive_get_id_from_type(PURPLE_STATUS_AVAILABLE), NULL);
 #endif
 
-
-    /* Set status to current status. */
+    /* Notify servers of our current status. */
     msim_set_status(session->account,
             purple_account_get_active_status(session->account));
 
