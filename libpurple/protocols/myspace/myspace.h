@@ -88,7 +88,7 @@
 #define MSIM_PORT           1863        /* TODO: alternate ports and automatic */
 
 /* Time between keepalives (seconds) - if no data within this time, is dead. */
-#define MSIM_KEEPALIVE_INTERVAL         (2 * 60)
+#define MSIM_KEEPALIVE_INTERVAL         (3 * 60)
 
 /* Time to check if alive (milliseconds) */
 #define MSIM_KEEPALIVE_INTERVAL_CHECK   (30 * 1000)

@@ -834,7 +834,7 @@ msim_msg_get_string(MsimMessage *msg, const gchar *name)
 
 		case MSIM_TYPE_STRING:
 			/* Already unescaped. */
-			return (gchar *)elem->data;
+			return g_strdup((gchar *)elem->data);
 
 		default:
 			purple_debug_info("msim", "msim_msg_get_string: type %d unknown, name %s\n",

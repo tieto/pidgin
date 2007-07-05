@@ -1102,8 +1102,8 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, gpointer data
 		return;
 	}
 
-	purple_debug_info("msim", "msim_get_info_cb: got for user: %s\n", user);
 	msim_msg_free(msg);
+	purple_debug_info("msim", "msim_get_info_cb: got for user: %s\n", user);
 
 	body_str = msim_msg_get_string(user_info_msg, "body");
     g_return_if_fail(body_str != NULL);
@@ -1117,7 +1117,7 @@ msim_get_info_cb(MsimSession *session, MsimMessage *user_info_msg, gpointer data
 	user_info = purple_notify_user_info_new();
 
 	/* Identification */
-	purple_notify_user_info_add_pair(user_info, _("User"), g_strdup(user));
+	purple_notify_user_info_add_pair(user_info, _("User"), user);
 
 	/* note: g_hash_table_lookup does not create a new string! */
 	str = g_hash_table_lookup(body, "UserID");
