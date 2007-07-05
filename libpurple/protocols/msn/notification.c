@@ -744,7 +744,7 @@ blp_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 static void
 adl_cmd(MsnCmdProc *cmdproc, MsnCommand *cmd)
 {
-	static initial;
+	static int initial;
 
 	purple_debug_info("MaYuan","Process ADL\n");
 
