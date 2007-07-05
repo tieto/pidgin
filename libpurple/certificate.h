@@ -72,6 +72,9 @@ struct _PurpleCertificate
 
 /**
  * Database for retrieval or storage of Certificates
+ *
+ * More or less a hash table; all lookups and writes are performed by a string
+ * key.
  */
 struct _PurpleCertificatePool
 {
