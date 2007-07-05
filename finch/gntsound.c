@@ -52,12 +52,19 @@
 #include "gntline.h"
 #include "gntslider.h"
 #include "gnttree.h"
+#include "gntfilesel.h"
 
-struct finch_sound_event {
+typedef struct {
 	char *label;
 	char *pref;
 	char *def;
-};
+	PurpleSoundEventID id;
+} FinchSoundEvent;
+
+typedef struct {
+	FinchSoundEvent *event;
+	char *file;
+} FinchSoundPrefEvent;
 
 typedef struct {
 	GntWidget *method;
@@ -80,19 +87,19 @@ static gboolean mute_login_sounds = FALSE;
 static gboolean gst_init_failed;
 #endif /* USE_GSTREAMER */
 
-static struct finch_sound_event sounds[PURPLE_NUM_SOUNDS] = {
-	{N_("Buddy logs in"), "login", "login.wav"},
-	{N_("Buddy logs out"), "logout", "logout.wav"},
-	{N_("Message received"), "im_recv", "receive.wav"},
-	{N_("Message received begins conversation"), "first_im_recv", "receive.wav"},
-	{N_("Message sent"), "send_im", "send.wav"},
-	{N_("Person enters chat"), "join_chat", "login.wav"},
-	{N_("Person leaves chat"), "left_chat", "logout.wav"},
-	{N_("You talk in chat"), "send_chat_msg", "send.wav"},
-	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav"},
+static FinchSoundEvent sounds[PURPLE_NUM_SOUNDS] = {
+	{N_("Buddy logs in"), "login", "login.wav",PURPLE_SOUND_BUDDY_ARRIVE},
+	{N_("Buddy logs out"), "logout", "logout.wav",PURPLE_SOUND_BUDDY_LEAVE},
+	{N_("Message received"), "im_recv", "receive.wav",PURPLE_SOUND_RECEIVE},
+	{N_("Message received begins conversation"), "first_im_recv", "receive.wav",PURPLE_SOUND_FIRST_RECEIVE},
+	{N_("Message sent"), "send_im", "send.wav",PURPLE_SOUND_SEND},
+	{N_("Person enters chat"), "join_chat", "login.wav",PURPLE_SOUND_CHAT_JOIN},
+	{N_("Person leaves chat"), "left_chat", "logout.wav",PURPLE_SOUND_CHAT_LEAVE},
+	{N_("You talk in chat"), "send_chat_msg", "send.wav",PURPLE_SOUND_CHAT_YOU_SAY},
+	{N_("Others talk in chat"), "chat_msg_recv", "receive.wav",PURPLE_SOUND_CHAT_SAY},
 	/* this isn't a terminator, it's the buddy pounce default sound event ;-) */
-	{NULL, "pounce_default", "alert.wav"},
-	{N_("Someone says your screen name in chat"), "nick_said", "alert.wav"}
+	{NULL, "pounce_default", "alert.wav",PURPLE_SOUND_POUNCE_DEFAULT},
+	{N_("Someone says your screen name in chat"), "nick_said", "alert.wav",PURPLE_SOUND_CHAT_NICK}
 };
 
 static gboolean
@@ -583,24 +590,80 @@ save_cb(GntWidget *button, gpointer win)
 	purple_prefs_set_int(FINCH_PREFS_ROOT "/sound/volume",gnt_slider_get_value(GNT_SLIDER(pref_dialog->volume)));
 
 	for(i = 0;i < PURPLE_NUM_SOUNDS;i++){
-		const gchar * option = finch_sound_get_event_option(i);
-		gchar *pref =  g_strdup_printf(FINCH_PREFS_ROOT "/sound/enabled/%s",
-										option);
-		gboolean choice = gnt_tree_get_choice(GNT_TREE(pref_dialog->events),GINT_TO_POINTER(g_str_hash(option)));
-		purple_prefs_set_bool(pref,choice);
-		g_free(pref);
+		GList * itr = gnt_tree_get_rows(GNT_TREE(pref_dialog->events));
+		for(;itr;itr = itr->next){
+			FinchSoundPrefEvent * event = itr->data;
+			char * pref = g_strdup_printf("%s/sound/file/%s",FINCH_PREFS_ROOT,event->event->pref);
+			if(event->file)
+				purple_prefs_set_path(pref,event->file);
+			g_free(pref);
+		}
 	}
 	gnt_widget_destroy(GNT_WIDGET(win));
 }
 static void
-cancel_cb(GntWidget *button, gpointer win)
+file_cb(GntWidget *w, gpointer data)
 {
-	gnt_widget_destroy(GNT_WIDGET(win));
+	GntFileSel *sel = GNT_FILE_SEL(data);
+	const char * file = gnt_file_sel_get_selected_file(sel);
+	FinchSoundPrefEvent * event = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events));
+
+	if(event->file)
+		g_free(event->file);
+	event->file = g_strdup(file);
+	
+	gnt_widget_destroy(GNT_WIDGET(data));
+}
+
+static void
+test_cb(GntWidget *button, gpointer null)
+{
+	FinchSoundPrefEvent * event = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events));
+	char *pref;
+	gboolean temp_value;
+
+	pref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/enabled/%s",
+			event->event->pref);
+
+	temp_value = purple_prefs_get_bool(pref);
+
+	if (!temp_value) purple_prefs_set_bool(pref, TRUE);
+
+	purple_sound_play_event(event->event->id, NULL);
+
+	if (!temp_value) purple_prefs_set_bool(pref, FALSE);
+
+	g_free(pref);
+}
+
+static void
+reset_cb(GntWidget *button,gpointer null)
+{
+
+}
+
+static void
+choose_cb(GntWidget *button, gpointer null)
+{
+	GntWidget *w = gnt_file_sel_new();
+
+	GntFileSel *sel = GNT_FILE_SEL(w);
+	gnt_file_sel_set_current_location(sel,purple_home_dir());
+
+	g_signal_connect_swapped(G_OBJECT(sel->cancel),"activate",G_CALLBACK(gnt_widget_destroy),sel);
+	g_signal_connect(G_OBJECT(sel->select),"activate",G_CALLBACK(file_cb),sel);
+
+	gnt_widget_show(w);
 }
 
 static void
 release_pref_dialog(GntBindable *data, gpointer null)
 {
+	GList * itr;
+	for(itr = gnt_tree_get_rows(GNT_TREE(pref_dialog->events));itr;itr = itr->next){
+		FinchSoundPrefEvent * e = (FinchSoundPrefEvent *)itr->data;
+		g_free(e->file);
+	}
 	g_free(pref_dialog);
 	pref_dialog = NULL;
 }
@@ -635,7 +698,7 @@ finch_sounds_show_all(void)
 	gnt_box_set_toplevel(GNT_BOX(win), TRUE);
 	gnt_box_set_title(GNT_BOX(win),_("Sound Preferences"));
 	gnt_box_set_fill(GNT_BOX(win),TRUE);
-	gnt_box_set_alignment(GNT_BOX(win),GNT_ALIGN_MID);
+	gnt_box_set_alignment(GNT_BOX(win),GNT_ALIGN_LEFT);
 
 	pref_dialog->method = cmbox = gnt_combo_box_new();
 	gnt_tree_set_hash_fns(GNT_TREE(GNT_COMBO_BOX(cmbox)->dropdown), g_str_hash, g_str_equal, NULL);
@@ -646,7 +709,6 @@ finch_sounds_show_all(void)
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"custom",_("Command"));
 	gnt_combo_box_add_data(GNT_COMBO_BOX(cmbox),"nosound",_("No Sound"));
 	buf = g_strdup(purple_prefs_get_string(FINCH_PREFS_ROOT "/sound/method"));
-	purple_debug_warning("method","%s",buf);
 	gnt_combo_box_set_selected(GNT_COMBO_BOX(cmbox),buf);
 	g_free(buf);
 
@@ -705,32 +767,45 @@ finch_sounds_show_all(void)
 
 	gnt_box_add_widget(GNT_BOX(win),gnt_label_new_with_format(_("Sound Events"),GNT_TEXT_FLAG_BOLD)); 
 
-	pref_dialog->events = tree = gnt_tree_new_with_columns(1);
-	gnt_tree_set_column_titles(GNT_TREE(tree),_("Play"),_("Event"));
+	pref_dialog->events = tree = gnt_tree_new_with_columns(2);
+	gnt_tree_set_hash_fns(GNT_TREE(tree),NULL,NULL,g_free);
+	gnt_tree_set_column_titles(GNT_TREE(tree),_("Event"),_("File"));
 	gnt_tree_set_show_title(GNT_TREE(tree),TRUE);
-	fprintf(stderr,"got here\n");
 
 	for(i = 0;i < PURPLE_NUM_SOUNDS;i++){
-		const gchar *option = finch_sound_get_event_option(i);
-		gchar *pref =  g_strdup_printf(FINCH_PREFS_ROOT "/sound/enabled/%s",
-										option);
-		const gchar *label = finch_sound_get_event_label(i);
+		FinchSoundPrefEvent * event = g_new0(FinchSoundPrefEvent,1);
+		gchar *boolpref;
+		gchar *filepref;
 
-		gnt_tree_add_choice(GNT_TREE(tree), GINT_TO_POINTER(g_str_hash(option)),
-			gnt_tree_create_row(GNT_TREE(tree),_(label)),
+		event->event = &sounds[i];
+		boolpref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/enabled/%s", event->event->pref);
+
+		filepref = g_strdup_printf(FINCH_PREFS_ROOT "/sound/file/%s", event->event->pref);
+		event->file = g_strdup(purple_prefs_get_path(filepref));
+		if(event->event->label == NULL){
+			continue;
+		}
+
+		gnt_tree_add_choice(GNT_TREE(tree), event,
+			gnt_tree_create_row(GNT_TREE(tree),event->event->label,event->file[0] ? g_path_get_basename(event->file) : ""),
 			NULL, NULL);
-		gnt_tree_set_choice(GNT_TREE(tree),GINT_TO_POINTER(g_str_hash(option)),purple_prefs_get_bool(pref));
-		g_free(pref);
+		gnt_tree_set_choice(GNT_TREE(tree),event,purple_prefs_get_bool(boolpref));
+		g_free(boolpref);
+		g_free(filepref);
 	}
 
+	gnt_tree_adjust_columns(GNT_TREE(tree));
 	gnt_box_add_widget(GNT_BOX(win),tree);
 
 	box = gnt_hbox_new(TRUE);
 	button = gnt_button_new("Test");
+	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(test_cb),NULL);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	button = gnt_button_new("Reset");
+	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(reset_cb),NULL);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	button = gnt_button_new("Choose...");
+	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(choose_cb),NULL);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	gnt_box_add_widget(GNT_BOX(win),box);
 
@@ -741,7 +816,7 @@ finch_sounds_show_all(void)
 	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(save_cb),win);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	button = gnt_button_new("Cancel");
-	g_signal_connect(G_OBJECT(button),"activate",G_CALLBACK(cancel_cb),win);
+	g_signal_connect_swapped(G_OBJECT(button),"activate",G_CALLBACK(gnt_widget_destroy),win);
 	gnt_box_add_widget(GNT_BOX(box),button);
 	gnt_box_add_widget(GNT_BOX(win),box);
 
