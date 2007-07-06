@@ -43,8 +43,6 @@
 /*
  *  DEFINES & MACROS
  */
-#define _(x) gettext(x)
-
 #define WIN32_PROXY_REGKEY "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings"
 
 /* For shfolder.dll */
