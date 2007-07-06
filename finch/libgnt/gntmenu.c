@@ -23,6 +23,7 @@
 #include "gntmenu.h"
 #include "gntmenuitemcheck.h"
 
+#include <ctype.h>
 #include <string.h>
 
 enum
@@ -94,7 +95,7 @@ menu_tree_add(GntMenu *menu, GntMenuItem *item, GntMenuItem *parent)
 {
 	char trigger[4] = "\0 )\0";
 
-	if ((trigger[1] = gnt_menuitem_get_trigger(item)))
+	if ((trigger[1] = gnt_menuitem_get_trigger(item)) && trigger[1] != ' ')
 		trigger[0] = '(';
 
 	if (GNT_IS_MENU_ITEM_CHECK(item)) {
@@ -115,6 +116,43 @@ menu_tree_add(GntMenu *menu, GntMenuItem *item, GntMenuItem *parent)
 	}
 }
 
+#define GET_VAL(ch)  ((ch >= '0' && ch <= '9') ? (ch - '0') : (ch >= 'a' && ch <= 'z') ? (10 + ch - 'a') : ch)
+
+static void
+assign_triggers(GntMenu *menu)
+{
+	GList *iter;
+	gboolean bools[36];
+
+	memset(bools, 0, sizeof(bools));
+	for (iter = menu->list; iter; iter = iter->next) {
+		GntMenuItem *item = iter->data;
+		char trigger = gnt_menuitem_get_trigger(item);
+		if (trigger == '\0' || trigger == ' ')
+			continue;
+		bools[(int)GET_VAL(trigger)] = 1;
+	}
+
+	for (iter = menu->list; iter; iter = iter->next) {
+		GntMenuItem *item = iter->data;
+		char trigger = gnt_menuitem_get_trigger(item);
+		const char *text = item->text;
+		if (trigger != '\0')
+			continue;
+		while (*text) {
+			char ch = tolower(*text++);
+			if (bools[(int)GET_VAL(ch)])
+				continue;
+			trigger = ch;
+			break;
+		}
+		if (trigger == 0)
+			trigger = item->text[0];
+		gnt_menuitem_set_trigger(item, trigger);
+		bools[(int)GET_VAL(trigger)] = 1;
+	}
+}
+
 static void
 gnt_menu_map(GntWidget *widget)
 {
@@ -126,6 +164,8 @@ gnt_menu_map(GntWidget *widget)
 		/* Populate the tree */
 		GList *iter;
 		gnt_tree_remove_all(GNT_TREE(widget));
+		/* Try to assign some trigger for the items */
+		assign_triggers(menu);
 		for (iter = menu->list; iter; iter = iter->next) {
 			GntMenuItem *item = GNT_MENU_ITEM(iter->data);
 			menu_tree_add(menu, item, NULL);
