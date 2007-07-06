@@ -353,10 +353,11 @@ x509_tls_peers_get_cert(const gchar *id)
 
 	/* Okay, now find and load that key */
 	keypath = purple_certificate_pool_mkpath(&x509_tls_peers, id);
+	crt = purple_certificate_import(x509, keypath);
 
-	/* TODO: finish this */
+	g_free(keypath);
 
-	return NULL;
+	return crt;
 }
 
 static gboolean
