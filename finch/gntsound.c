@@ -600,10 +600,13 @@ file_cb(GntWidget *w, gpointer data)
 {
 	GntFileSel *sel = GNT_FILE_SEL(data);
 	const char * file = gnt_file_sel_get_selected_file(sel);
-	FinchSoundEvent * event = &sounds[GPOINTER_TO_INT(gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events)))];
+	gpointer key = gnt_tree_get_selection_data(GNT_TREE(pref_dialog->events));
+	FinchSoundEvent * event = &sounds[GPOINTER_TO_INT(key)];
 
 	g_free(event->file);
 	event->file = g_strdup(file);
+
+	gnt_tree_change_text(GNT_TREE(pref_dialog->events),key,1,g_path_get_basename(file));
 	
 	gnt_widget_destroy(GNT_WIDGET(data));
 }
@@ -639,7 +642,7 @@ reset_cb(GntWidget *button,gpointer null)
 	FinchSoundEvent * event = &sounds[GPOINTER_TO_INT(key)];
 	g_free(event->file);
 	event->file = NULL;
-	gnt_tree_change_text(GNT_TREE(pref_dialog->events),key,1,"");
+	gnt_tree_change_text(GNT_TREE(pref_dialog->events),key,1,"(default)");
 }
 
 static void
@@ -782,7 +785,7 @@ finch_sounds_show_all(void)
 		}
 
 		gnt_tree_add_choice(GNT_TREE(tree), GINT_TO_POINTER(i),
-			gnt_tree_create_row(GNT_TREE(tree),event->label,event->file[0] ? g_path_get_basename(event->file) : ""),
+			gnt_tree_create_row(GNT_TREE(tree),event->label,event->file[0] ? g_path_get_basename(event->file) : "(default)"),
 			NULL, NULL);
 		gnt_tree_set_choice(GNT_TREE(tree),GINT_TO_POINTER(i),purple_prefs_get_bool(boolpref));
 		g_free(boolpref);
