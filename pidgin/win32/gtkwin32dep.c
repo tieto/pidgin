@@ -36,6 +36,8 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkwin32.h>
 
+#include "internal.h"
+
 #include "debug.h"
 #include "notify.h"
 
